@@ -31,8 +31,8 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 
-extern char at_resp_buf[MOSH_AT_CMD_RESPONSE_MAX_LEN];
-extern struct k_mutex at_resp_buf_mutex;
+extern char mosh_at_resp_buf[MOSH_AT_CMD_RESPONSE_MAX_LEN];
+extern struct k_mutex mosh_at_resp_buf_mutex;
 
 #define AT_CMD_PDP_CONTEXTS_READ "AT+CGDCONT?"
 #define AT_CMD_PDP_CONTEXTS_READ_PARAM_COUNT 12
@@ -58,8 +58,8 @@ static void link_api_context_info_fill_activation_status(
 {
 	char buf[16] = { 0 };
 	const char *p;
-	/* Cannot use global at_resp_buf because this used from link_api_pdp_contexts_read()
-	 * where global at_resp_buf is already used
+	/* Cannot use global mosh_at_resp_buf because this used from link_api_pdp_contexts_read()
+	 * where global mosh_at_resp_buf is already used
 	 */
 	char at_response_str[256];
 	int ret;
@@ -352,8 +352,8 @@ static int link_api_pdp_context_dynamic_params_get(struct pdp_context_info *popu
 	struct at_param_list param_list = { 0 };
 	size_t param_str_len;
 
-	/* Cannot use global at_resp_buf because this used from link_api_pdp_contexts_read()
-	 * where global at_resp_buf is already used
+	/* Cannot use global mosh_at_resp_buf because this used from link_api_pdp_contexts_read()
+	 * where global mosh_at_resp_buf is already used
 	 */
 	char cgcontrdp_at_rsp_buf[512];
 	char *next_param_str;
@@ -529,11 +529,11 @@ int link_api_pdp_contexts_read(struct pdp_context_info_array *pdp_info)
 
 	memset(pdp_info, 0, sizeof(struct pdp_context_info_array));
 
-	k_mutex_lock(&at_resp_buf_mutex, K_FOREVER);
-	at_ptr = at_resp_buf;
-	tmp_ptr = at_resp_buf;
+	k_mutex_lock(&mosh_at_resp_buf_mutex, K_FOREVER);
+	at_ptr = mosh_at_resp_buf;
+	tmp_ptr = mosh_at_resp_buf;
 
-	ret = nrf_modem_at_cmd(at_resp_buf, sizeof(at_resp_buf),
+	ret = nrf_modem_at_cmd(mosh_at_resp_buf, sizeof(mosh_at_resp_buf),
 			       AT_CMD_PDP_CONTEXTS_READ);
 	if (ret) {
 		mosh_error("nrf_modem_at_cmd returned err: %d", ret);
@@ -684,7 +684,7 @@ clean_exit:
 	at_params_list_free(&param_list);
 	/* User need to free pdp_info->array also in case of error */
 
-	k_mutex_unlock(&at_resp_buf_mutex);
+	k_mutex_unlock(&mosh_at_resp_buf_mutex);
 
 	return ret;
 }

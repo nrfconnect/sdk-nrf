@@ -373,6 +373,7 @@ nRF9160 samples
     * MQTT support for ``gnss`` command A-GPS and P-GPS.
     * An application-specific modem fault handler.
       The modem fault handler halts application execution in case of a modem crash.
+    * Support for SEGGER's Real Time Transfer (RTT) instead of UART.
 
   * Updated:
 

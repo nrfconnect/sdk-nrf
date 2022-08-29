@@ -17,7 +17,11 @@
 #include <zephyr/dfu/mcuboot.h>
 
 #include <zephyr/shell/shell.h>
+#if defined(CONFIG_SHELL_BACKEND_SERIAL)
 #include <zephyr/shell/shell_uart.h>
+#else
+#include <zephyr/shell/shell_rtt.h>
+#endif
 
 #include <modem/nrf_modem_lib.h>
 #include <modem/at_monitor.h>
@@ -61,6 +65,10 @@
 #include "at_cmd_mode_sett.h"
 #endif
 
+BUILD_ASSERT(IS_ENABLED(CONFIG_SHELL_BACKEND_SERIAL) || IS_ENABLED(CONFIG_SHELL_BACKEND_RTT),
+	     "CONFIG_SHELL_BACKEND_SERIAL or CONFIG_SHELL_BACKEND_RTT shell backend must be "
+	     "enabled");
+
 /***** Work queue and work item definitions *****/
 
 #define MOSH_COMMON_WORKQ_PRIORITY CONFIG_MOSH_COMMON_WORKQUEUE_PRIORITY
@@ -68,13 +76,13 @@ K_THREAD_STACK_DEFINE(mosh_common_workq_stack, CONFIG_MOSH_COMMON_WORKQUEUE_STAC
 struct k_work_q mosh_common_work_q;
 
 /* Global variables */
-struct modem_param_info modem_param;
+const struct shell *mosh_shell;
 struct k_poll_signal mosh_signal;
 
-char at_resp_buf[MOSH_AT_CMD_RESPONSE_MAX_LEN];
-K_MUTEX_DEFINE(at_resp_buf_mutex);
+char mosh_at_resp_buf[MOSH_AT_CMD_RESPONSE_MAX_LEN];
+K_MUTEX_DEFINE(mosh_at_resp_buf_mutex);
 
-K_SEM_DEFINE(nrf_carrier_lib_initialized, 0, 1);
+K_SEM_DEFINE(mosh_carrier_lib_initialized, 0, 1);
 
 static const char *modem_crash_reason_get(uint32_t reason)
 {
@@ -186,10 +194,17 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 void main(void)
 {
 	int err;
-	const struct shell *shell = shell_backend_uart_get_ptr();
 	struct k_work_queue_config cfg = {
 		.name = "mosh_common_workq",
 	};
+
+#if defined(CONFIG_SHELL_BACKEND_SERIAL)
+	mosh_shell = shell_backend_uart_get_ptr();
+#else
+	mosh_shell = shell_backend_rtt_get_ptr();
+#endif
+
+	__ASSERT(mosh_shell != NULL, "Failed to get shell backend");
 
 	mosh_print_version_info();
 
@@ -232,7 +247,7 @@ void main(void)
 	}
 #else
 	/* Wait until the LwM2M carrier library has initialized the modem library. */
-	k_sem_take(&nrf_carrier_lib_initialized, K_FOREVER);
+	k_sem_take(&mosh_carrier_lib_initialized, K_FOREVER);
 #endif
 	lte_lc_init();
 #if defined(CONFIG_MOSH_PPP)
@@ -262,12 +277,11 @@ void main(void)
 		printk("Modem info could not be established: %d\n", err);
 		return;
 	}
-	modem_info_params_init(&modem_param);
 #endif
 
 	err = dk_buttons_init(button_handler);
 	if (err) {
-		printk("Failed to initialize DK buttons library, error: %d", err);
+		printk("Failed to initialize DK buttons library, error: %d\n", err);
 	}
 
 	/* Application started successfully, mark image as OK to prevent
@@ -280,11 +294,13 @@ void main(void)
 
 	err = dk_leds_init();
 	if (err) {
-		printk("Cannot initialize LEDs (err: %d)", err);
+		printk("Cannot initialize LEDs (err: %d)\n", err);
 	}
 
+#if defined(CONFIG_SHELL_BACKEND_SERIAL)
 	/* Resize terminal width and height of the shell to have proper command editing. */
-	shell_execute_cmd(shell, "resize");
+	shell_execute_cmd(mosh_shell, "resize");
+#endif
 
 #if defined(CONFIG_MOSH_STARTUP_CMDS)
 	startup_cmd_ctrl_init();
@@ -294,7 +310,7 @@ void main(void)
 	at_cmd_mode_sett_init();
 	if (at_cmd_mode_sett_is_autostart_enabled()) {
 		/* Start directly in AT cmd mode */
-		at_cmd_mode_start(shell);
+		at_cmd_mode_start(mosh_shell);
 	}
 #endif
 }

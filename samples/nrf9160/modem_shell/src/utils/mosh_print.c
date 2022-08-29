@@ -13,12 +13,11 @@
 #include <zephyr/posix/time.h>
 #include <zephyr/sys/cbprintf.h>
 #include <zephyr/shell/shell.h>
-#include <zephyr/shell/shell_uart.h>
 #include <net/nrf_cloud.h>
 
 #include "mosh_print.h"
 
-static const struct shell *mosh_shell;
+extern const struct shell *mosh_shell;
 
 #if defined(CONFIG_MOSH_AT_CMD_MODE)
 extern bool at_cmd_mode_dont_print;
@@ -38,19 +37,6 @@ static char timestamp_str[30];
 static char mosh_print_buf[CONFIG_MOSH_PRINT_BUFFER_SIZE];
 /** Mutex for protecting mosh_print_buf */
 K_MUTEX_DEFINE(mosh_print_buf_mutex);
-
-static bool mosh_print_shell_ptr_update(void)
-{
-	if (mosh_shell == NULL) {
-		mosh_shell = shell_backend_uart_get_ptr();
-		if (mosh_shell == NULL) {
-			printk("%s: CANNOT OBTAIN SHELL BACKEND. THIS IS FATAL INTERNAL ERROR.\n",
-			       __func__);
-			return false;
-		}
-	}
-	return true;
-}
 
 bool create_timestamp_string(char *timestamp_buf, int timestamp_buf_len)
 {
@@ -102,12 +88,6 @@ void mosh_fprintf_valist(enum mosh_print_level print_level, const char *fmt, va_
 
 	k_mutex_lock(&mosh_print_buf_mutex, K_FOREVER);
 
-	if (!mosh_print_shell_ptr_update()) {
-		vsnprintf(mosh_print_buf, sizeof(mosh_print_buf), fmt, args);
-		printk("%s", mosh_print_buf);
-		goto exit;
-	}
-
 	/* Add timestamp to print buffer if requested */
 	if (mosh_print_timestamp_use) {
 		(void)create_timestamp_string(timestamp_str, sizeof(timestamp_str));
@@ -158,7 +138,7 @@ void mosh_fprintf_valist(enum mosh_print_level print_level, const char *fmt, va_
 		nrf_cloud_sensor_data_stream(&mosh_cloud_print);
 	}
 #endif
-exit:
+
 	k_mutex_unlock(&mosh_print_buf_mutex);
 }
 
@@ -173,10 +153,5 @@ void mosh_fprintf(enum mosh_print_level print_level, const char *fmt, ...)
 
 void mosh_print_no_format(const char *usage)
 {
-	if (!mosh_print_shell_ptr_update()) {
-		printk("%s", usage);
-		return;
-	}
-
 	shell_print(mosh_shell, "%s", usage);
 }

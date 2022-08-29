@@ -121,7 +121,7 @@ int sms_send_msg(char *number, char *text)
 
 	ret = sms_send_text(number, text);
 	if (ret) {
-		printk("Sending SMS failed with error: %d\n", ret);
+		mosh_error("Sending SMS failed with error: %d", ret);
 	}
 
 	return ret;
