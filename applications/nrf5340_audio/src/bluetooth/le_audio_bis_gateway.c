@@ -82,7 +82,7 @@ static int get_stream_index(struct bt_audio_stream *stream, uint8_t *index)
 		}
 	}
 
-	LOG_WRN("Stream not found");
+	LOG_WRN("Stream %p not found", (void *)stream);
 
 	return -EINVAL;
 }
@@ -97,7 +97,7 @@ static void stream_sent_cb(struct bt_audio_stream *stream)
 	if (atomic_get(&iso_tx_pool_alloc[index])) {
 		atomic_dec(&iso_tx_pool_alloc[index]);
 	} else {
-		LOG_WRN("Decreasing atomic variable failed");
+		LOG_WRN("Decreasing atomic variable for stream %u failed", index);
 	}
 
 	sent_cnt[index]++;
@@ -111,10 +111,12 @@ static void stream_started_cb(struct bt_audio_stream *stream)
 {
 	int ret;
 
+	memset(seq_num, 0, ARRAY_SIZE(seq_num));
+
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
 	ERR_CHK(ret);
 
-	LOG_INF("Broadcast source started");
+	LOG_INF("Broadcast source %p started", (void *)stream);
 }
 
 static void stream_stopped_cb(struct bt_audio_stream *stream)
@@ -124,19 +126,19 @@ static void stream_stopped_cb(struct bt_audio_stream *stream)
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
 
-	LOG_INF("Broadcast source stopped");
+	LOG_INF("Broadcast source %p stopped", (void *)stream);
 
 	if (delete_broadcast_src && broadcast_source != NULL) {
 		ret = bt_audio_broadcast_source_delete(broadcast_source);
 		if (ret) {
-			LOG_ERR("Unable to delete broadcast source");
+			LOG_ERR("Unable to delete broadcast source %p", (void *)stream);
 			delete_broadcast_src = false;
 			return;
 		}
 
 		broadcast_source = NULL;
 
-		LOG_INF("Broadcast source deleted");
+		LOG_INF("Broadcast source %p deleted", (void *)stream);
 
 		delete_broadcast_src = false;
 	}
