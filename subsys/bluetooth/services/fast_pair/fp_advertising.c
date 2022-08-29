@@ -27,14 +27,14 @@ enum fp_field_type {
 };
 
 static const uint16_t fast_pair_uuid = FP_SERVICE_UUID;
-static const uint8_t flags;
+static const uint8_t version_and_flags;
 static const uint8_t empty_account_key_list;
 
 static size_t bt_fast_pair_adv_data_size_non_discoverable(size_t account_key_cnt)
 {
 	size_t res = 0;
 
-	res += sizeof(flags);
+	res += sizeof(version_and_flags);
 
 	if (account_key_cnt == 0) {
 		res += sizeof(empty_account_key_list);
@@ -83,7 +83,7 @@ size_t bt_fast_pair_adv_data_size(enum bt_fast_pair_adv_mode fp_adv_mode)
 static int fp_adv_data_fill_non_discoverable(struct net_buf_simple *buf, size_t account_key_cnt,
 					     enum fp_field_type ak_filter_type)
 {
-	net_buf_simple_add_u8(buf, flags);
+	net_buf_simple_add_u8(buf, version_and_flags);
 
 	if (account_key_cnt == 0) {
 		net_buf_simple_add_u8(buf, empty_account_key_list);
