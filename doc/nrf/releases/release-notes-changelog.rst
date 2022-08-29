@@ -139,6 +139,13 @@ RF Front-End Modules
   You cannot use other MPSL features when this option is enabled.
 * Added the possibility to add custom models which split the requested TX power between the power on SoC output and the FEM gain in a way desired by the user.
 
+Secure Partition Manager (SPM)
+==============================
+
+* The Secure Partition Manager (SPM), the Kconfig option :kconfig:option:`CONFIG_SPM`, is deprecated.
+  It is replaced by the Trusted Firmware-M (TF-M) as the supported trusted execution solution.
+  See :ref:`ug_tfm` for more information about the TF-M.
+
 Applications
 ============
 

@@ -13,4 +13,6 @@ zephyr_include_directories(
   ${ARCH_DIR}/${ARCH}/include
 )
 
+zephyr_compile_options(-Wno-deprecated-declarations)
+
 zephyr_library_sources(src/main.c)

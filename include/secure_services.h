@@ -60,7 +60,7 @@ ret __attribute__((naked)) name(__VA_ARGS__) \
  *
  * Rebooting is not available from the Non-Secure Firmware.
  */
-void spm_request_system_reboot(void);
+__deprecated void spm_request_system_reboot(void);
 
 /** Request a random number from the Secure Firmware.
  *
@@ -72,7 +72,7 @@ void spm_request_system_reboot(void);
  *
  * @return non-negative on success, negative errno code on fail
  */
-int spm_request_random_number(uint8_t *output, size_t len, size_t *olen);
+__deprecated int spm_request_random_number(uint8_t *output, size_t len, size_t *olen);
 
 /** Request a read operation to be executed from Secure Firmware.
  *
@@ -85,7 +85,7 @@ int spm_request_random_number(uint8_t *output, size_t len, size_t *olen);
  * @retval -EINVAL  If destination is NULL, or if len is <= 0.
  * @retval -EPERM   If source is outside of allowed ranges.
  */
-int spm_request_read(void *destination, uint32_t addr, size_t len);
+__deprecated int spm_request_read(void *destination, uint32_t addr, size_t len);
 
 /** Check if S0 is the active B1 slot.
  *
@@ -96,7 +96,7 @@ int spm_request_read(void *destination, uint32_t addr, size_t len);
  * @retval 0        If successful.
  * @retval -EINVAL  If info for both slots are NULL.
  */
-int spm_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active);
+__deprecated int spm_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active);
 
 /** Search for the fw_info structure in firmware image located at address.
  *
@@ -107,7 +107,7 @@ int spm_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active);
  * @retval -EINVAL  If info is NULL.
  * @retval -EFAULT  If no info is found.
  */
-int spm_firmware_info(uint32_t fw_address, struct fw_info *info);
+__deprecated int spm_firmware_info(uint32_t fw_address, struct fw_info *info);
 
 /** Prevalidate a B1 update
  *
@@ -121,7 +121,7 @@ int spm_firmware_info(uint32_t fw_address, struct fw_info *info);
  * @retval 0         If the upgrade is invalid.
  * @retval -ENOTSUP  If the functionality is unavailable.
  */
-int spm_prevalidate_b1_upgrade(uint32_t dst_addr, uint32_t src_addr);
+__deprecated int spm_prevalidate_b1_upgrade(uint32_t dst_addr, uint32_t src_addr);
 
 /** Busy wait in secure mode (debug function)
  *
@@ -130,7 +130,7 @@ int spm_prevalidate_b1_upgrade(uint32_t dst_addr, uint32_t src_addr);
  *
  * @param[in]  busy_wait_us  The number of microseconds to wait for.
  */
-void spm_busy_wait(uint32_t busy_wait_us);
+__deprecated void spm_busy_wait(uint32_t busy_wait_us);
 
 /** @brief Prototype of the function that is called in non-secure context from
  *	   secure fault handler context.
@@ -150,13 +150,13 @@ typedef void (*spm_ns_on_fatal_error_t)(void);
  * @retval -ENOTSUP if feature is disabled.
  * @retval 0 on success.
  */
-int spm_set_ns_fatal_error_handler(spm_ns_on_fatal_error_t handler);
+__deprecated int spm_set_ns_fatal_error_handler(spm_ns_on_fatal_error_t handler);
 
 /** @brief Call non-secure fatal error handler.
  *
  * Must be called from fatal error handler.
  */
-void z_spm_ns_fatal_error_handler(void);
+__deprecated void z_spm_ns_fatal_error_handler(void);
 
 #ifdef __cplusplus
 }

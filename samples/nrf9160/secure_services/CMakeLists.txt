@@ -10,5 +10,6 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(secure_services)
 
 # NORDIC SDK APP START
+zephyr_compile_options(-Wno-deprecated-declarations)
 target_sources(app PRIVATE src/main.c)
 # NORDIC SDK APP END
