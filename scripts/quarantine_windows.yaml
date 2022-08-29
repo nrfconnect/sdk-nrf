@@ -21,6 +21,8 @@
 - scenarios:
     - asset_tracker_v2.debug_module_test.tester
     - asset_tracker_v2.gnss_module_test.tester
+    - asset_tracker_v2.lwm2m_codec
+    - asset_tracker_v2.lwm2m_integration
     - asset_tracker_v2.ui_module_test.tester
   platforms:
     - all
