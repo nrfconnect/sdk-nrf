@@ -192,7 +192,7 @@ arduino_i2c: &i2c1 {
 		status = "okay";
 		compatible = "nordic,nrf7002-qspi";
 		reg = <1>;
-		sck-frequency = <8000000>;
+		sck-frequency = <24000000>;
 		quad-mode;
 		/* Wi-Fi Pins used */
 		iovdd-ctrl-gpios = <&gpio0 31 GPIO_ACTIVE_HIGH>;

@@ -111,6 +111,18 @@ struct qspi_nor_data {
 #endif /* CONFIG_MULTITHREADING */
 };
 
+static inline int qspi_freq_to_sckfreq(int freq)
+{
+#if defined(CONFIG_SOC_SERIES_NRF53X)
+	/* QSPIM (6-96MHz) : 192MHz / (2*(SCKFREQ + 1)) */
+	return ((192 / freq) / 2) - 1;
+#else
+	/* QSPIM (2-32MHz): 32 MHz / (SCKFREQ + 1) */
+	return (32 / freq) - 1;
+#endif
+}
+
+
 static inline int qspi_get_mode(bool cpol, bool cpha)
 {
 	register int ret = -EINVAL;
@@ -980,6 +992,11 @@ int qspi_wait_while_rpu_awake(const struct device *dev)
 		k_msleep(1);
 	}
 
+	/* Configure DTS settings */
+	if (val & RPU_AWAKE_BIT) {
+		nrf_qspi_ifconfig1_set(NRF_QSPI, &QSPIconfig.phy_if);
+	}
+
 	return val;
 }
 
@@ -1046,7 +1063,19 @@ int qspi_WRSR2(const struct device *dev, uint8_t data)
 
 int qspi_cmd_wakeup_rpu(const struct device *dev, uint8_t data)
 {
-	return qspi_WRSR2(dev, data);
+	int ret;
+	/* Use lowest 8MHz for waking up RPU */
+	const nrf_qspi_phy_conf_t qspi_phy_8mhz = {
+		.sck_freq = qspi_freq_to_sckfreq(8 * 1000 * 1000),
+		.sck_delay = QSPI_SCK_DELAY,
+		.spi_mode = NRF_QSPI_MODE_0
+	};
+
+	nrf_qspi_ifconfig1_set(NRF_QSPI, &qspi_phy_8mhz);
+
+	ret = qspi_WRSR2(dev, data);
+
+	return ret;
 }
 
 struct device qspi_perip = {
@@ -1066,13 +1095,7 @@ int qspi_init(struct qspi_config *config)
 
 	qspi_config = config;
 
-#if defined(CONFIG_SOC_SERIES_NRF53X)
-	/* QSPIM (6-96Mhz) : 192Mhz / (2*(SCKFREQ + 1)) */
-	config->sckfreq = ((192 / config->freq) / 2) - 1;
-#else
-	/* QSPIM (2-32Mhz): 32 MHz / (SCKFREQ + 1) */
-	config->sckfreq = (32 / config->freq) - 1;
-#endif
+	config->sckfreq = qspi_freq_to_sckfreq(config->freq);
 
 	config->readoc = config->quad_spi ? NRF_QSPI_READOC_READ4IO : NRF_QSPI_READOC_FASTREAD;
 	config->writeoc = config->quad_spi ? NRF_QSPI_WRITEOC_PP4IO : NRF_QSPI_WRITEOC_PP;
