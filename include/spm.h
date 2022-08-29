@@ -11,6 +11,8 @@
 #ifndef SPM_H_
 #define SPM_H_
 
+#include <zephyr/toolchain.h>
+
 /**
  * @defgroup secure_partition_manager Secure Partition Manager
  * @{
@@ -31,7 +33,7 @@ extern "C" {
  * DT_FLASH_AREA_IMAGE_0_NONSECURE_OFFSET_0 and configures the MSP
  * accordingly before jumping to VTOR_NS[1].
  */
-void spm_jump(void);
+__deprecated void spm_jump(void);
 
 
 /** @brief Configure security attributes of flash, RAM, and peripherals.
@@ -39,7 +41,7 @@ void spm_jump(void);
  * This function reads the security attribute options set for peripherals in
  * Kconfig. The RAM and flash partitioning is configured statically.
  */
-void spm_config(void);
+__deprecated void spm_config(void);
 
 #ifdef __cplusplus
 }

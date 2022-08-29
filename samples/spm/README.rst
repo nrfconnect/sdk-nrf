@@ -11,7 +11,8 @@ The Secure Partition Manager sample provides a reference use of the System Prote
 This firmware sets up an nRF device with Trusted Execution (|trusted_execution|) so that it can run user applications in the non-secure domain.
 
 .. note::
-   SPM is an alternative for using the Trusted Firmware-M (TF-M). See :ref:`ug_tfm`.
+   SPM is deprecated as of |NCS| v2.1.0 and will be removed in a future version of the SDK.
+   :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` will replace SPM as the trusted execution solution.
 
 To use the Secure Partition Manager instead of TF-M, do the following:
 

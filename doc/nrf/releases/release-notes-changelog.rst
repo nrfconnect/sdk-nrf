@@ -138,6 +138,13 @@ RF Front-End Modules
   The :ref:`MPSL library <nrfxlib:mpsl>` is linked into the build without initialization.
   You cannot use other MPSL features when this option is enabled.
 
+Secure Partition Manager (SPM)
+==============================
+
+* The Secure Partition Manager (SPM), the Kconfig option :kconfig:option:`CONFIG_SPM`, is deprecated.
+  It is replaced by the Trusted Firmware-M (TF-M) as the supported trusted execution solution.
+  See :ref:`ug_tfm` for more information about the TF-M.
+
 Applications
 ============
 
