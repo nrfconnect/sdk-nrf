@@ -547,6 +547,7 @@
 .. _`Registering the device with Azure IoT Hub`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal#register-a-new-device-in-the-iot-hub
 .. _`Azure IoT TLS: Critical changes`: https://techcommunity.microsoft.com/t5/internet-of-things-blog/azure-iot-tls-critical-changes-are-almost-here-and-why-you/ba-p/2393169
 .. _`Azure SDK for Embedded C`: https://azure.github.io/azure-sdk-for-c/
+.. _`Azure SDK for Embedded C IoT client libraries`: https://github.com/nrfconnect/azure-sdk-for-c/blob/main/sdk/docs/iot/README.md
 
 
 .. _`Windows Hardware Lab Kit`: https://docs.microsoft.com/en-us/windows-hardware/test/hlk/
