@@ -591,8 +591,8 @@ Examples
    #XSOCKETOPT: (0,1),<name>,<value>
    OK
 
-Secure Socket options #XSOCKETOPT
-=================================
+Secure Socket options #XSSOCKETOPT
+==================================
 
 The ``#XSSOCKETOPT`` command allows you to set secure socket options.
 
@@ -1171,16 +1171,16 @@ Examples
 ::
 
    AT#XPOLL=2000,0
-   #XPOLL: 0,"0x00000001"
+   #XPOLL: 0,"0x0001"
    OK
 
    AT#XPOLL=2000,1
-   #XPOLL: 1,"0x00000001"
+   #XPOLL: 1,"0x0001"
    OK
 
    AT#XPOLL=2000
-   #XPOLL: 0,"0x00000001"
-   #XPOLL: 1,"0x00000001"
+   #XPOLL: 0,"0x0001"
+   #XPOLL: 1,"0x0001"
    OK
 
 Read command
