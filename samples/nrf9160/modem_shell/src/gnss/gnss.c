@@ -456,12 +456,6 @@ static int gnss_enable_all_nmeas(void)
 static int serving_cell_info_get(struct lte_lc_cell *serving_cell)
 {
 	int err;
-
-	err = modem_info_init();
-	if (err) {
-		return err;
-	}
-
 	char resp_buf[MODEM_INFO_MAX_RESPONSE_SIZE];
 
 	err = modem_info_string_get(MODEM_INFO_CELLID,

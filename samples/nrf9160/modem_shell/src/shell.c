@@ -51,7 +51,7 @@
 #include "uart/uart_shell.h"
 #include "mosh_print.h"
 
-extern struct k_sem nrf_carrier_lib_initialized;
+extern struct k_sem mosh_carrier_lib_initialized;
 extern struct k_poll_signal mosh_signal;
 
 #if defined(CONFIG_LWM2M_CARRIER)
@@ -126,7 +126,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	switch (event->type) {
 	case LWM2M_CARRIER_EVENT_INIT:
 		mosh_print("LwM2M carrier event: carrier lib initialized");
-		k_sem_give(&nrf_carrier_lib_initialized);
+		k_sem_give(&mosh_carrier_lib_initialized);
 		break;
 	case LWM2M_CARRIER_EVENT_LTE_LINK_UP:
 		mosh_print("LwM2M carrier event: request LTE Link up");

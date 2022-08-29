@@ -1101,6 +1101,18 @@ DK #2, where MoSh is used in observer (scanning) role:
       Scan successfully stopped
       mosh:~$
 
+SEGGER RTT support
+==================
+
+To build the MoSh sample with SEGGER's Real Time Transfer (RTT) support, use the ``-DOVERLAY_CONFIG=overlay-rtt.conf`` option.
+When running this configuration, RTT is used as the shell backend instead of UART.
+
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-rtt.conf
+
 References
 **********
 
