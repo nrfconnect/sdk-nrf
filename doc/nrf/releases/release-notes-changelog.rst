@@ -35,6 +35,11 @@ Application development
 
 * Added information about :ref:`app_build_output_files` on the :ref:`app_build_system` page.
 
+Board support
+-------------
+
+* TF-M is now enabled by default on Thingy:91
+
 Partition Manager
 -----------------
 
