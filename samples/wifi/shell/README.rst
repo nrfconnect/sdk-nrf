@@ -51,47 +51,30 @@ See also :ref:`cmake_options` for instructions on how to provide CMake options.
 Supported CLI commands
 ======================
 
-``wpa_cli`` is the Wi-Fi command line and supports the following UART CLI subcommands:
+``wifi`` is the Wi-Fi command line and supports the following UART CLI subcommands:
 
-+-----------------+----------------------------------------------------------------------------+
-|Subcommands      |Description                                                                 |
-+=================+============================================================================+
-|scan             |Scan AP                                                                     |
-+-----------------+----------------------------------------------------------------------------+
-|connect          |<SSID>                                                                      |
-|                 |<Passphrase> (optional: valid only for secured SSIDs)                       |
-|                 |<KEY_MGMT> (optional: 0-None, 1-WPA2, 2-WPA2-256, 3-WPA3)                   |
-+-----------------+----------------------------------------------------------------------------+
-|add_network      |Add Network network id/number                                               |
-+-----------------+----------------------------------------------------------------------------+
-|set_network      |Set Network params                                                          |
-+-----------------+----------------------------------------------------------------------------+
-|set              |Set Global params                                                           |
-+-----------------+----------------------------------------------------------------------------+
-|get              |Get Global params                                                           |
-+-----------------+----------------------------------------------------------------------------+
-|enable_network   |Enable Network                                                              |
-+-----------------+----------------------------------------------------------------------------+
-|remove_network   |Remove Network                                                              |
-+-----------------+----------------------------------------------------------------------------+
-|get_network      |Get Network                                                                 |
-+-----------------+----------------------------------------------------------------------------+
-|select_network   |Select Network which will be enabled; rest of the networks will be disabled |
-+-----------------+----------------------------------------------------------------------------+
-|disable_network  |                                                                            |
-+-----------------+----------------------------------------------------------------------------+
-|disconnect       |                                                                            |
-+-----------------+----------------------------------------------------------------------------+
-|reassociate      |                                                                            |
-+-----------------+----------------------------------------------------------------------------+
-|status           |Get client status                                                           |
-+-----------------+----------------------------------------------------------------------------+
-|bssid            |Associate with this BSSID                                                   |
-+-----------------+----------------------------------------------------------------------------+
-|sta_autoconnect  |                                                                            |
-+-----------------+----------------------------------------------------------------------------+
-|signal_poll      |                                                                            |
-+-----------------+----------------------------------------------------------------------------+
+.. list-table:: Wi-Fi shell subcommands
+   :header-rows: 1
+
+   * - Subcommands
+     - Description
+   * - scan
+     - Scan for access points in the vicinity
+   * - connect
+     - | Connect to an access point with below parameters
+       | <SSID>
+       | <Passphrase> (optional: valid only for secured SSIDs)
+       | <KEY_MGMT> (optional: 0-None, 1-WPA2, 2-WPA2-256, 3-WPA3)
+   * - disconnect
+     - Disconnect from the current access point
+   * - status
+     - Get the status of the Wi-Fi interface
+   * - statistics
+     - Get the statistics of the Wi-Fi interface
+   * - ap_enable
+     - Configure the Wi-Fi interface as access point mode
+   * - ap_disable
+     - Configure the Wi-Fi interface as station mode
 
 Testing
 =======
@@ -102,7 +85,7 @@ Testing
 #. |connect_terminal|
 #. Scan for the Wi-FI networks in range using the following command::
 
-     wpa_cli scan
+     wifi scan
 
    The output should be similar to the following::
 
@@ -115,29 +98,28 @@ Testing
 
 #. Connect to your preferred network using the following command::
 
-     wpa_cli connect <SSID> <passphrase>
+     wifi connect <SSID> <passphrase>
 
    ``<SSID>`` is the SSID of the network you want to connect to, and ``<passphrase>`` is its passphrase.
 
 #. Check the connection status after a while, using the following command::
 
-     wpa_cli status
+     wifi status
 
    If the connection is established, you should see an output similar to the following::
 
-      Reply: bssid=c0:06:c3:1d:cf:9e
-      freq=0
-      ssid=ASUS_RTAX88U11g
-      id=0
-      mode=station
-      pairwise_cipher=CCMP
-      group_cipher=CCMP
-      key_mgmt=WPA2-PSK
-      pmf=1
-      mgmt_group_cipher=BIP
-      wpa_state=COMPLETED
-      ip_address=192.168.0.206
-      address=f4:ce:36:00:00:16
+      Status: successful
+      ==================
+      State: COMPLETED
+      Interface Mode: STATION
+      Link Mode: WIFI 6 (802.11ax/HE)
+      SSID: OpenWrt
+      BSSID: C0:06:C3:1D:CF:9E
+      Band: 5GHz
+      Channel: 157
+      Security: WPA2-PSK
+      PMF: Optional
+      RSSI: 0
 
 #. Initiate a ping and verify data connectivity using the following commands::
 
