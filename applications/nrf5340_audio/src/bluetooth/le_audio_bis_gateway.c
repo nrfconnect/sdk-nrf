@@ -110,8 +110,10 @@ static void stream_sent_cb(struct bt_audio_stream *stream)
 static void stream_started_cb(struct bt_audio_stream *stream)
 {
 	int ret;
+	uint8_t index;
 
-	memset(seq_num, 0, ARRAY_SIZE(seq_num));
+	get_stream_index(stream, &index);
+	seq_num[index] = 0;
 
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
 	ERR_CHK(ret);
@@ -218,11 +220,12 @@ int le_audio_send(uint8_t const *const data, size_t size)
 	size_t num_streams = ARRAY_SIZE(streams);
 	size_t data_size = size / num_streams;
 
-	if (streams[0].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
-		return -ECANCELED;
-	}
-
 	for (size_t i = 0U; i < num_streams; i++) {
+		if (streams[i].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+			LOG_DBG("Stream %d not in streaming state", i);
+			continue;
+		}
+
 		if (is_iso_buffer_full(i)) {
 			if (!wrn_printed[i]) {
 				LOG_WRN("HCI ISO TX overrun on ch %d - Single print", i);
@@ -261,7 +264,7 @@ int le_audio_send(uint8_t const *const data, size_t size)
 	ret = bt_iso_chan_get_tx_sync(streams[0].iso, &tx_info);
 
 	if (ret) {
-		LOG_WRN("Error getting ISO TX anchor point: %d", ret);
+		LOG_DBG("Error getting ISO TX anchor point: %d", ret);
 	} else {
 		audio_datapath_sdu_ref_update(tx_info.ts);
 	}

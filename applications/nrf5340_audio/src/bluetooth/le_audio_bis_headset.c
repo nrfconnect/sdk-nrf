@@ -280,7 +280,7 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 
 	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, streams_p, NULL);
 	if (ret) {
-		LOG_ERR("Unable to sync to broadcast source");
+		LOG_WRN("Unable to sync to broadcast source, ret: %d", ret);
 		return;
 	}
 
