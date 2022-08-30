@@ -107,7 +107,11 @@ Matter network commissioning
 
 The commissioning in Matter is a process of joining a device to a fabric (operational network).
 The process takes place between a commissioner device and a commissionee device.
-It consists of the following stages:
+
+To start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
+The data payload, which includes the device discriminator and setup passcode, is encoded within a QR code, printed to the UART console, and can be shared using an NFC tag.
+
+The commissioning procedure consists of the following stages:
 
 1. Device discovery -- The commissioner discovers devices that can be commissioned onto the network.
    If the node is being added to its first Matter fabric, the device discovery uses Bluetooth LE.

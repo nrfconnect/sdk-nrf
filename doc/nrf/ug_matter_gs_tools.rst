@@ -1,4 +1,5 @@
 .. _ug_matter_tools:
+.. _ug_matter_gs_tools:
 
 Matter tools
 ############
