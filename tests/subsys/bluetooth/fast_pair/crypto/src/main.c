@@ -53,7 +53,7 @@ static void test_hmac_sha256(void)
 			  "Invalid hashing result.");
 }
 
-static void test_aes128(void)
+static void test_aes128_ecb(void)
 {
 	static const uint8_t plaintext[] = {0xF3, 0x0F, 0x4E, 0x78, 0x6C, 0x59, 0xA7, 0xBB, 0xF3,
 					    0x87, 0x3B, 0x5A, 0x49, 0xBA, 0x97, 0xEA};
@@ -67,12 +67,12 @@ static void test_aes128(void)
 	uint8_t result_buf[FP_CRYPTO_AES128_BLOCK_LEN];
 
 	zassert_equal(sizeof(result_buf), sizeof(ciphertext), "Invalid size of expected result.");
-	zassert_ok(fp_crypto_aes128_encrypt(result_buf, plaintext, key),
+	zassert_ok(fp_crypto_aes128_ecb_encrypt(result_buf, plaintext, key),
 		   "Error during value encryption.");
 	zassert_mem_equal(result_buf, ciphertext, sizeof(ciphertext), "Invalid encryption result.");
 
 	zassert_equal(sizeof(result_buf), sizeof(plaintext), "Invalid size of expected result.");
-	zassert_ok(fp_crypto_aes128_decrypt(result_buf, ciphertext, key),
+	zassert_ok(fp_crypto_aes128_ecb_decrypt(result_buf, ciphertext, key),
 		   "Error during value decryption.");
 	zassert_mem_equal(result_buf, plaintext, sizeof(plaintext), "Invalid decryption result.");
 }
@@ -308,7 +308,7 @@ void test_main(void)
 	ztest_test_suite(fast_pair_crypto_tests,
 			 ztest_unit_test(test_sha256),
 			 ztest_unit_test(test_hmac_sha256),
-			 ztest_unit_test(test_aes128),
+			 ztest_unit_test(test_aes128_ecb),
 			 ztest_unit_test(test_aes128_ctr),
 			 ztest_unit_test(test_ecdh),
 			 ztest_unit_test(test_aes_key_from_ecdh_shared_secret),

@@ -104,7 +104,7 @@ int fp_keys_encrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 	}
 
 	if (!err) {
-		err = fp_crypto_aes128_encrypt(out, in, proc->aes_key);
+		err = fp_crypto_aes128_ecb_encrypt(out, in, proc->aes_key);
 	}
 
 	return err;
@@ -127,7 +127,7 @@ int fp_keys_decrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 	}
 
 	if (!err) {
-		err = fp_crypto_aes128_decrypt(out, in, proc->aes_key);
+		err = fp_crypto_aes128_ecb_decrypt(out, in, proc->aes_key);
 	}
 
 	return err;
