@@ -51,7 +51,7 @@ int fp_crypto_hmac_sha256(uint8_t *out,
 	return 0;
 }
 
-int fp_crypto_aes128_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
+int fp_crypto_aes128_ecb_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 {
 	struct tc_aes_key_sched_struct s;
 
@@ -64,7 +64,7 @@ int fp_crypto_aes128_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 	return 0;
 }
 
-int fp_crypto_aes128_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
+int fp_crypto_aes128_ecb_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 {
 	struct tc_aes_key_sched_struct s;
 

@@ -49,7 +49,7 @@ int fp_crypto_aes128_ctr_encrypt(uint8_t *out, const uint8_t *in, size_t data_le
 	for (size_t i = 0; i < block_cnt; i++) {
 		aes_input[0] = (uint8_t)i;
 
-		err = fp_crypto_aes128_encrypt(aes_block, aes_input, key);
+		err = fp_crypto_aes128_ecb_encrypt(aes_block, aes_input, key);
 		if (err) {
 			return err;
 		}

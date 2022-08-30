@@ -136,12 +136,12 @@ cleanup:
 	return ret;
 }
 
-int fp_crypto_aes128_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
+int fp_crypto_aes128_ecb_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 {
 	return aes128_ecb_crypt(out, in, k, true);
 }
 
-int fp_crypto_aes128_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
+int fp_crypto_aes128_ecb_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 {
 	return aes128_ecb_crypt(out, in, k, false);
 }

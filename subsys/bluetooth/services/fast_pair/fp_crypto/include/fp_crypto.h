@@ -63,7 +63,7 @@ int fp_crypto_hmac_sha256(uint8_t *out,
 			  const uint8_t *hmac_key,
 			  size_t hmac_key_len);
 
-/** Encrypt message using AES-128.
+/** Encrypt message using AES-128-ECB.
  *
  * @param[out] out 128-bit (16-byte) buffer to receive encrypted message.
  * @param[in] in 128-bit (16-byte) plaintext message.
@@ -71,9 +71,9 @@ int fp_crypto_hmac_sha256(uint8_t *out,
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_crypto_aes128_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k);
+int fp_crypto_aes128_ecb_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k);
 
-/** Decrypt message using AES-128.
+/** Decrypt message using AES-128-ECB.
  *
  * @param[out] out 128-bit (16-byte) buffer to receive plaintext message.
  * @param[in] in 128-bit (16-byte) ciphertext message.
@@ -81,7 +81,7 @@ int fp_crypto_aes128_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k);
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_crypto_aes128_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k);
+int fp_crypto_aes128_ecb_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k);
 
 /** Encrypt data using AES-128-CTR.
  *
