@@ -36,6 +36,12 @@ config BT_FAST_PAIR_CRYPTO_MBEDTLS
 	help
 	  Select MbedTLS cryptographic backend for Fast Pair.
 
+config BT_FAST_PAIR_CRYPTO_OBERON
+	bool "Fast Pair with Oberon cryptographic backend"
+	select NRF_OBERON
+	help
+	  Select Oberon cryptographic backend for Fast Pair.
+
 endchoice
 
 module = FP_CRYPTO
