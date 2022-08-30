@@ -17,7 +17,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/tfm_spm_thingy91.txt
+.. include:: /includes/tfm.txt
 
 
 Overview
@@ -130,7 +130,7 @@ Building and running
 
    Before building the sample, you must configure a location provider and an API key as instructed in :ref:`lib_multicell_location`.
 
-.. include:: /includes/thingy91_build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 
 Testing
@@ -237,7 +237,6 @@ It uses the following Zephyr libraries:
 
   * ``include/kernel.h``
 
-In addition, it uses the following secure firmware components:
+In addition, it uses the following secure firmware component:
 
-* :ref:`secure_partition_manager`
 * :ref:`Trusted Firmware-M <ug_tfm>`

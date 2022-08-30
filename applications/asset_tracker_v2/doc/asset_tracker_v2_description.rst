@@ -20,7 +20,7 @@ Requirements
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/tfm_spm_thingy91.txt
+.. include:: /includes/tfm.txt
 
 Overview
 ********
@@ -226,7 +226,6 @@ It uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_modem`
 
-In addition, it uses the following secure firmware components:
+In addition, it uses the following secure firmware component:
 
-* :ref:`secure_partition_manager`
 * :ref:`Trusted Firmware-M <ug_tfm>`

@@ -130,13 +130,12 @@
 			<title>Sheet.1784</title>
 			<g id="shape1767-43" v:mID="1767" v:groupContext="shape">
 				<title>Sheet.1767</title>
-				<desc>Trusted Firmware-M/Secure Partition Manager</desc>
+				<desc>Trusted Firmware-M</desc>
 				<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 				<v:textRect cx="79.7955" cy="314.536" width="159.6" height="41.9528"/>
 				<rect x="0" y="293.559" width="159.591" height="41.9528" class="st9"/>
-				<text x="10.72" y="310.94" class="st12" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>Trusted Firmware-M/Secure <tspan
-							x="35.35" dy="1.2em" class="st5">Partition Manager</tspan></text>			</g>
-			<g id="shape1769-47" v:mID="1769" v:groupContext="shape" transform="translate(0,-51.721)">
+				<text x="29.55" y="318.14" class="st12" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>Trusted Firmware-M</text>			</g>
+			<g id="shape1769-46" v:mID="1769" v:groupContext="shape" transform="translate(0,-51.721)">
 				<title>Sheet.1769</title>
 				<desc>Bootloader chain</desc>
 				<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>

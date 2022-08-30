@@ -39,7 +39,7 @@ Application development
 Board support
 -------------
 
-* TF-M is now enabled by default on Thingy:91.
+* :ref:`TF-M <ug_tfm>` is now enabled by default on Thingy:91.
 
 Partition Manager
 -----------------
@@ -361,6 +361,7 @@ nRF9160 samples
 ---------------
 
 * Added :ref:`modem_trace_backend_sample` sample, demonstrating how to add a custom modem trace backend. The custom backend prints the amount of trace data received in bytes, trace data throughput, and CPU load.
+* :ref:`TF-M <ug_tfm>` is enabled by default for the applications and samples that support Thingy:91.
 * :ref:`lwm2m_client` sample:
 
   * Fixed:
