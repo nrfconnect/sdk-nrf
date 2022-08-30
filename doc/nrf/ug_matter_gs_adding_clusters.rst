@@ -1,13 +1,14 @@
 .. _ug_matter_creating_accessory:
+.. _ug_matter_gs_adding_cluster:
 
-Creating Matter device
-######################
+Adding clusters to Matter application
+#####################################
 
 .. contents::
    :local:
    :depth: 2
 
-As part of this guide, you will modify the :ref:`Matter template <matter_template_sample>` sample to create a Matter sensor device that measures temperature and can be turned on and off.
+As part of this guide, you will modify the :ref:`Matter template <matter_template_sample>` sample by adding new application clusters in order to create a Matter sensor device that measures temperature and can be turned on and off.
 The sensor will periodically generate the simulated temperature sensor value and update the corresponding cluster attributes.
 This application will form a Matter device within a Matter network.
 
@@ -25,7 +26,7 @@ The device is formed by the development kit and the application that is running 
 Each Matter application consists of the following layers:
 
 * Matter stack that provides the Matter core components.
-* Data model layer in the form of clusters, which contains commands and attributes that are to be accessible over the Matter network.
+* Data Model layer in the form of clusters, which contains commands and attributes that are to be accessible over the Matter network.
   This layer can be further broken down into the following groups:
 
   * Utility clusters - These clusters represent management and diagnostic features of a Matter node.
@@ -42,7 +43,7 @@ By default, the template sample includes only mandatory Matter clusters, necessa
 
    Creating Matter device
 
-Cluster is a data model building block in Matter.
+Cluster is a Data Model building block in Matter.
 It is a representation of a single functionality within a Matter device, such as turning a device on and off.
 Each cluster contains attributes, commands, and events, which can be mandatory or optional.
 Attributes are stored in the device's memory, while commands can be used to modify or read the state of the device, including the cluster attributes.
@@ -54,7 +55,7 @@ Application clusters are usually assigned to endpoints with IDs ``1`` and higher
 An application can implement appropriate callback functions to be informed about specific cluster state changes.
 These functions can be used to alter the device's behavior when the state of a cluster is changing as a result of some external event.
 
-.. _ug_matter_creating_accessory_requirements:
+For more information about the Data Model layer, see :ref:`ug_matter_architecture_overview_dm` section on the Matter architecture documentation page.
 
 Requirements
 ************
