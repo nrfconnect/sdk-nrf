@@ -85,6 +85,16 @@ static bool bitrate_check(const struct bt_codec *codec)
 	return true;
 }
 
+static bool adv_data_parse(struct bt_data *data, void *user_data)
+{
+	if (data->type == BT_DATA_NAME_COMPLETE && data->data_len == DEVICE_NAME_PEER_LEN) {
+		memcpy((char *)user_data, data->data, data->data_len);
+		return false;
+	}
+
+	return true;
+}
+
 static void stream_started_cb(struct bt_audio_stream *stream)
 {
 	int ret;
@@ -135,9 +145,16 @@ static struct bt_audio_stream_ops stream_ops = { .started = stream_started_cb,
 static bool scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf_simple *ad,
 			 uint32_t broadcast_id)
 {
-	LOG_DBG("Broadcast source found, waiting for PA sync");
+	char name[DEVICE_NAME_PEER_LEN];
 
-	return true;
+	bt_data_parse(ad, adv_data_parse, (void *)name);
+
+	if (strcmp(name, DEVICE_NAME_PEER) == 0) {
+		LOG_INF("Broadcast source %s found", name);
+		return true;
+	}
+
+	return false;
 }
 
 static void scan_term_cb(int err)
