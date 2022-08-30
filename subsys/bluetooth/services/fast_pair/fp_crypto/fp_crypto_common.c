@@ -23,42 +23,6 @@ LOG_MODULE_REGISTER(fp_crypto, CONFIG_FP_CRYPTO_LOG_LEVEL);
 					 FP_CRYPTO_ADDITIONAL_DATA_NONCE_LEN)
 
 
-int fp_crypto_hmac_sha256(uint8_t *out, const uint8_t *in, size_t data_len, const uint8_t *aes_key)
-{
-	static const uint8_t hmac_sha_pad_len = 64;
-	static const uint8_t inner_sha_data_pos = hmac_sha_pad_len;
-	static const uint8_t hmac_sha_inner_sha_pos = hmac_sha_pad_len;
-	static const uint8_t hmac_sha_opad_val = 0x5C;
-	static const uint8_t hmac_sha_ipad_val = 0x36;
-
-	uint8_t inner_sha_input[hmac_sha_pad_len + data_len];
-	uint8_t sha_input[hmac_sha_pad_len + FP_CRYPTO_SHA256_HASH_LEN];
-	int err;
-
-	for (size_t i = 0; i < FP_CRYPTO_AES128_KEY_LEN; i++) {
-		inner_sha_input[i] = aes_key[i] ^ hmac_sha_ipad_val;
-	}
-
-	memset(&inner_sha_input[FP_CRYPTO_AES128_KEY_LEN], hmac_sha_ipad_val,
-	       hmac_sha_pad_len - FP_CRYPTO_AES128_KEY_LEN);
-	memcpy(&inner_sha_input[inner_sha_data_pos], in, data_len);
-
-	err = fp_crypto_sha256(&sha_input[hmac_sha_inner_sha_pos], inner_sha_input,
-			       sizeof(inner_sha_input));
-	if (err) {
-		return err;
-	}
-
-	for (size_t i = 0; i < FP_CRYPTO_AES128_KEY_LEN; i++) {
-		sha_input[i] = aes_key[i] ^ hmac_sha_opad_val;
-	}
-
-	memset(&sha_input[FP_CRYPTO_AES128_KEY_LEN], hmac_sha_opad_val,
-	       hmac_sha_pad_len - FP_CRYPTO_AES128_KEY_LEN);
-
-	return fp_crypto_sha256(out, sha_input, sizeof(sha_input));
-}
-
 int fp_crypto_aes128_ctr_encrypt(uint8_t *out, const uint8_t *in, size_t data_len,
 				 const uint8_t *key, const uint8_t *nonce)
 {

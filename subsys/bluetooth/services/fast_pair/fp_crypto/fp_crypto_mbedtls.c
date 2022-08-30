@@ -12,6 +12,7 @@
 #include <mbedtls/bignum.h>
 #include <mbedtls/ecdh.h>
 #include <mbedtls/ecp.h>
+#include <mbedtls/md.h>
 #include <mbedtls/sha256.h>
 
 #include <zephyr/random/rand32.h>
@@ -79,6 +80,26 @@ cleanup:
 	mbedtls_sha256_free(&sha256_context);
 
 	return ret;
+}
+
+int fp_crypto_hmac_sha256(uint8_t *out, const uint8_t *in, size_t data_len, const uint8_t *aes_key)
+{
+	int ret;
+	const mbedtls_md_info_t *md_info;
+
+	md_info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
+	if (!md_info) {
+		LOG_ERR("hmac sha256: message-digest information not found");
+		return MBEDTLS_ERR_MD_FEATURE_UNAVAILABLE;
+	}
+
+	ret = mbedtls_md_hmac(md_info, aes_key, FP_CRYPTO_AES128_KEY_LEN, in, data_len, out);
+	if (ret) {
+		LOG_ERR("hmac sha256: mbedtls_md_hmac failed: %d", ret);
+		return ret;
+	}
+
+	return 0;
 }
 
 static int aes128_ecb_crypt(uint8_t *out, const uint8_t *in, const uint8_t *k, bool encrypt)
