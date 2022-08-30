@@ -343,8 +343,8 @@ After building this and the :ref:`Matter Light Bulb <matter_light_bulb_sample>` 
    See :ref:`matter_light_switch_sample_remote_control_commissioning` for more information.
    During the commissioning process, write down the values for the light switch node ID and the light bulb node ID (or IDs, if you are using more than one light bulb).
    These IDs are going to be used in the next steps (*<light_switch_node_ID>* and *<light_bulb_node_ID>*, respectively).
-#. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the light bulb device.
-   Depending on the number of the light bulb devices you are using, use one of the following commands, with *<light_switch_node_ID>* and *<light_bulb_node_ID>* values from the previous step about commissioning:
+#. If you are using only one light bulb device, use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the light bulb device.
+   Run the following command, with *<light_switch_node_ID>* and *<light_bulb_node_ID>* values from the previous step about commissioning:
 
    * If you are using only one light bulb device, run the following command for the light bulb device:
 
