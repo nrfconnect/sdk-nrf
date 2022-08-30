@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <tinycrypt/constants.h>
 #include <tinycrypt/sha256.h>
+#include <tinycrypt/hmac.h>
 #include <tinycrypt/aes.h>
 #include <tinycrypt/ecc_dh.h>
 #include "fp_crypto.h"
@@ -22,6 +23,25 @@ int fp_crypto_sha256(uint8_t *out, const uint8_t *in, size_t data_len)
 		return -EINVAL;
 	}
 	if (tc_sha256_final(out, &s) != TC_CRYPTO_SUCCESS) {
+		return -EINVAL;
+	}
+	return 0;
+}
+
+int fp_crypto_hmac_sha256(uint8_t *out, const uint8_t *in, size_t data_len, const uint8_t *aes_key)
+{
+	struct tc_hmac_state_struct s;
+
+	if (tc_hmac_set_key(&s, aes_key, FP_CRYPTO_AES128_KEY_LEN) != TC_CRYPTO_SUCCESS) {
+		return -EINVAL;
+	}
+	if (tc_hmac_init(&s) != TC_CRYPTO_SUCCESS) {
+		return -EINVAL;
+	}
+	if (tc_hmac_update(&s, in, data_len) != TC_CRYPTO_SUCCESS) {
+		return -EINVAL;
+	}
+	if (tc_hmac_final(out, FP_CRYPTO_SHA256_HASH_LEN, &s) != TC_CRYPTO_SUCCESS) {
 		return -EINVAL;
 	}
 	return 0;
