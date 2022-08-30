@@ -478,6 +478,11 @@ void test_lwm2m_cloud_codec_encode_data(void)
 		.env_ts = 1000,
 		.queued = true,
 	};
+	struct cloud_data_impact impact = {
+		.magnitude = 300.0,
+		.ts = 1000,
+		.queued = true,
+	};
 	double alt, acc, spd;
 
 	alt = (double)gnss.pvt.alt;
@@ -624,7 +629,8 @@ void test_lwm2m_cloud_codec_encode_data(void)
 	 * when calling cloud_codec_encode_data(). Therefore they are set to NULL.
 	 */
 	TEST_ASSERT_EQUAL(0, cloud_codec_encode_data(&codec, &gnss, &sensor, &modem_static,
-						     &modem_dynamic, NULL, NULL, &battery));
+						     &modem_dynamic, NULL, NULL,
+						     &impact, &battery));
 
 	TEST_ASSERT_EQUAL(ARRAY_SIZE(path_list), codec.valid_object_paths);
 
@@ -767,7 +773,7 @@ void test_lwm2m_codec_non_supported_funcs(void)
 	TEST_ASSERT_EQUAL(-ENOTSUP, cloud_codec_encode_pgps_request(NULL, NULL));
 	TEST_ASSERT_EQUAL(-ENOTSUP, cloud_codec_encode_batch_data(
 						NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-						NULL, 0, 0, 0, 0, 0, 0, 0));
+						NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0));
 }
 
 void main(void)
