@@ -44,9 +44,14 @@ Matter over Thread
 
 .. raw:: html
 
-   <div style="text-align: center;">
-   <iframe width="560" height="315" src="https://www.youtube.com/embed/XWWJYraNZPs" title="Matter development environment video overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-   </div>
+   <h1 align="center">
+   <iframe id="Matter_over_Thread_overview"
+           title="Matter over Thread environment video overview"
+           width="560"
+           height="315"
+           src="https://www.youtube.com/embed/XWWJYraNZPs">
+   </iframe>
+   </h1>
 
 Matter over Wi-Fi
   To enable the IPv6 communication with the Matter accessory device over the Wi-Fi network, you need a Wi-Fi Access Point, for example a Wi-Fi router, so that the Matter controller can interact with any Wi-Fi device directly.
