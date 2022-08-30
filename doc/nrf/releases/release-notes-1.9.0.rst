@@ -365,7 +365,7 @@ nRF9160 samples
 
     * Updated the samples to set the modem in power off mode after the firmware image download completes. This avoids ungraceful disconnects from the network upon pressing the reset button on the kit.
 
-  * :ref:`aws_fota_sample` sample:
+  * nRF9160: AWS FOTA sample:
 
     * Updated the Troubleshooting section in the sample documentation.
 

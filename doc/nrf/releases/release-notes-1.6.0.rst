@@ -200,7 +200,7 @@ nRF9160
     * Added :file:`overlay-pgps.conf` to enable P-GPS support.
     * Added :file:`overlay-agps-pgps.conf` to enable A-GPS and P-GPS support.
 
-  * :ref:`aws_fota_sample` sample:
+  * nRF9160: AWS FOTA sample:
 
     * Removed nRF Cloud support code, because ``fota_v1`` is no longer supported in nRF Cloud.
     * Removed provisioning using :ref:`modem_key_mgmt` and :file:`certificates.h`, because this is not the recommended way of provisioning private certificates.
@@ -610,7 +610,7 @@ Applications and samples
 
    * :ref:`serial_lte_modem` - Added links to AT command reference guides.
    * :ref:`agps_sample` - Added a section on using nRF Cloud A-GPS or P-GPS.
-   * :ref:`aws_fota_sample` - Changes in the sample configuration section.
+   * nRF9160: AWS FOTA sample - Changes in the sample configuration section.
    * :ref:`fmfu_smp_svr_sample` - Updated the Building and running section.
    * :ref:`gps_with_supl_support_sample` - Changes in the Overview to reflect the introduction of GNSS interface.
    * :ref:`lwm2m_client` - Added information about additional configurations.

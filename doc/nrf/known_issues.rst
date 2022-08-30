@@ -1587,7 +1587,7 @@ Offset not retained with an MCUboot target
 .. rst-class:: v1-1-0
 
 Download stopped on socket connection timeout
-  In the :ref:`aws_fota_sample` and :ref:`http_application_update_sample` samples, the download is stopped if the socket connection times out before the modem can delete the modem firmware.
+  In the nRF9160: AWS FOTA and :ref:`http_application_update_sample` samples, the download is stopped if the socket connection times out before the modem can delete the modem firmware.
   A fix for this issue is available in commit `38625ba7 <https://github.com/nrfconnect/sdk-nrf/commit/38625ba775adda3cdc7dbf516eeb3943c7403227>`_.
 
   **Workaround:** Call :cpp:func:`fota_download_start` again with the same arguments.
