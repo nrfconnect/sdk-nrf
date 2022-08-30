@@ -33,7 +33,6 @@ Currently, you can use the sample with the following location services supported
 
 * `nRF Cloud Location Services`_
 * `HERE Positioning`_
-* `Polte Location API`_
 
 Before you use the services, see the :ref:`lib_multicell_location` library documentation and the respective location service documentation for the required setup.
 
@@ -116,7 +115,6 @@ Check and configure the following library options that are used by the sample:
 
 * :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
 * :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
-* :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_POLTE` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_CUSTOMER_ID` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN`
 
 See :ref:`lib_multicell_location` for more information on the various configuration options available for the services.
 

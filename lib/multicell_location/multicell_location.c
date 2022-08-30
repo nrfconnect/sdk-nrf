@@ -19,8 +19,7 @@
 LOG_MODULE_REGISTER(multicell_location, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 
 BUILD_ASSERT(IS_ENABLED(CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD) ||
-	     IS_ENABLED(CONFIG_MULTICELL_LOCATION_SERVICE_HERE) ||
-	     IS_ENABLED(CONFIG_MULTICELL_LOCATION_SERVICE_POLTE),
+	     IS_ENABLED(CONFIG_MULTICELL_LOCATION_SERVICE_HERE),
 	     "At least one location service must be enabled");
 
 
@@ -114,15 +113,6 @@ int multicell_location_provision_certificate(bool overwrite)
 	ret = multicell_location_provision_service_certificate(
 		CONFIG_MULTICELL_LOCATION_HERE_TLS_SEC_TAG,
 		location_service_get_certificate(MULTICELL_SERVICE_HERE),
-		overwrite);
-	if (ret) {
-		return ret;
-	}
-#endif
-#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_POLTE)
-	ret = multicell_location_provision_service_certificate(
-		CONFIG_MULTICELL_LOCATION_POLTE_TLS_SEC_TAG,
-		location_service_get_certificate(MULTICELL_SERVICE_POLTE),
 		overwrite);
 	if (ret) {
 		return ret;

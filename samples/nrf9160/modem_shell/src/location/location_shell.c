@@ -69,7 +69,7 @@ static const char location_get_usage_str[] =
 	"  --gnss_cloud_pvt,   Send acquired GNSS location to nRF Cloud formatted as PVT\n"
 	"  --cellular_timeout, Cellular timeout in milliseconds. Zero means timeout is disabled.\n"
 	"  --cellular_service, Used cellular positioning service:\n"
-	"                      'any' (default), 'nrf', 'here' or 'polte'\n"
+	"                      'any' (default), 'nrf' or 'here'\n"
 	"  --wifi_timeout,     Wi-Fi timeout in milliseconds. Zero means timeout is disabled.\n"
 	"  --wifi_service,     Used Wi-Fi positioning service:\n"
 	"                      'any' (default), 'nrf' or 'here'\n";
@@ -141,8 +141,6 @@ static enum location_service location_shell_string_to_service(const char *servic
 		service = LOCATION_SERVICE_NRF_CLOUD;
 	} else if (strcmp(service_str, "here") == 0) {
 		service = LOCATION_SERVICE_HERE;
-	} else if (strcmp(service_str, "polte") == 0) {
-		service = LOCATION_SERVICE_POLTE;
 	}
 
 	return service;
@@ -405,8 +403,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 		case LOCATION_SHELL_OPT_WIFI_SERVICE:
 			wifi_service = location_shell_string_to_service(optarg);
-			if (wifi_service == MOSH_LOC_SERVICE_NONE ||
-			    wifi_service == LOCATION_SERVICE_POLTE) {
+			if (wifi_service == MOSH_LOC_SERVICE_NONE) {
 				mosh_error("Unknown Wi-Fi positioning service. See usage:");
 				goto show_usage;
 			}

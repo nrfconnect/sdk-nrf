@@ -86,9 +86,7 @@ enum location_service {
 	/** nRF Cloud location service. */
 	LOCATION_SERVICE_NRF_CLOUD,
 	/** HERE location service. */
-	LOCATION_SERVICE_HERE,
-	/** Polte location service. */
-	LOCATION_SERVICE_POLTE
+	LOCATION_SERVICE_HERE
 };
 
 /** Date and time (UTC). */

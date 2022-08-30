@@ -10,4 +10,3 @@ zephyr_library_sources(location_service.c)
 
 zephyr_library_sources_ifdef(CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD nrf_cloud_integration.c)
 zephyr_library_sources_ifdef(CONFIG_MULTICELL_LOCATION_SERVICE_HERE here_integration.c)
-zephyr_library_sources_ifdef(CONFIG_MULTICELL_LOCATION_SERVICE_POLTE polte_integration.c)
