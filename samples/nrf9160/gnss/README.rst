@@ -20,7 +20,7 @@ The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 Overview
 ********
