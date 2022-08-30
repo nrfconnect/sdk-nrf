@@ -23,6 +23,7 @@ The sample supports the following development kits:
    * The boards ``nrf52dk_nrf52810``, ``nrf52840dk_nrf52811``, and ``nrf52833dk_nrf52820`` only support the `Minimal sample variant`_.
    * When used with :ref:`zephyr:thingy53_nrf5340`, the sample supports the MCUboot bootloader with serial recovery and SMP DFU over Bluetooth.
      Thingy:53 has no built-in SEGGER chip, so the UART 0 peripheral is not gated to a USB CDC virtual serial port.
+   * When used with :ref:`zephyr:nrf5340dk_nrf5340`, the sample might support the MCUboot bootloader with serial recovery of the networking core image.
 
 The sample also requires a smartphone or tablet running a compatible application.
 The `Testing`_ instructions refer to `nRF Connect for Mobile`_, but you can also use other similar applications (for example, `nRF Blinky`_ or `nRF Toolbox`_).
@@ -96,6 +97,12 @@ Async adapter experimental module
    The module requires the :kconfig:option:`CONFIG_BT_NUS_UART_ASYNC_ADAPTER` to be set to ``y``.
    For more information about the adapter, see the :file:`uart_async_adapter` source files available in the :file:`peripheral_uart/src` directory.
 
+MCUboot with serial recovery of the networking core image
+=========================================================
+
+For the ``nrf5340dk_nrf5340_cpuapp``, it is possible to enable serial recovery of the network core while multi-image update is not enabled in the MCUboot.
+See :ref:`peripheral_uart_sample_activating_variants` for details on how to build the sample with this feature using the :file:`nrf5340dk_app_sr_net.conf` and :file:`nrf5340dk_mcuboot_sr_net.conf` files.
+
 User interface
 **************
 
@@ -146,6 +153,8 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
 * For the minimal build variant, set :file:`prj_minimal.conf`.
 * For the USB CDC ACM extension, set :file:`prj_cdc.conf`.
   Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
+* For the MCUboot with serial recovery of the networking core image feature, set the :file:`nrf5340dk_app_sr_net.conf` file.
+  You also need to set the :makevar:`mcuboot_OVERLAY_CONFIG` variant to :file:`nrf5340dk_mcuboot_sr_net.conf`.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
