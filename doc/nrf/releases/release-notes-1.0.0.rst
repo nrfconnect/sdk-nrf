@@ -95,7 +95,7 @@ nRF9160
 
 * Added the following samples:
 
-  * :ref:`aws_fota_sample` - shows how to perform over-the-air firmware updates of an nRF9160 through the use of AWS IoT Jobs with MQTT and HTTP.
+  * nRF9160: AWS FOTA - shows how to perform over-the-air firmware updates of an nRF9160 through the use of AWS IoT Jobs with MQTT and HTTP.
   * :ref:`secure_services` - demonstrates using the reboot and random number services.
 
 * Added the following libraries:
@@ -212,7 +212,7 @@ Documentation
 
     * :ref:`secure_services`
     * :ref:`secure_partition_manager`
-    * :ref:`aws_fota_sample`
+    * nRF9160: AWS FOTA
     * :ref:`lte_sensor_gateway`
 
   * Bluetooth Low Energy:

@@ -371,6 +371,8 @@ nRF9160 samples
 ---------------
 
 * Added :ref:`modem_trace_backend_sample` sample, demonstrating how to add a custom modem trace backend. The custom backend prints the amount of trace data received in bytes, trace data throughput, and CPU load.
+* Removed the AWS FOTA sample.
+  The :ref:`aws_iot` sample must be used, which implements :ref:`lib_aws_fota` through :ref:`lib_aws_iot`.
 * :ref:`TF-M <ug_tfm>` is enabled by default for the applications and samples that support Thingy:91.
 * :ref:`lwm2m_client` sample:
 
