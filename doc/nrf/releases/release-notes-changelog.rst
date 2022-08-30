@@ -33,12 +33,13 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
+* Added information about :ref:`gs_supported_OS` to the :ref:`gs_recommended_versions` page.
 * Added information about :ref:`app_build_output_files` on the :ref:`app_build_system` page.
 
 Board support
 -------------
 
-* TF-M is now enabled by default on Thingy:91
+* TF-M is now enabled by default on Thingy:91.
 
 Partition Manager
 -----------------
@@ -73,6 +74,8 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
 Matter
 ------
 
+* Introduced support for Matter over Wi-Fi to several samples.
+* Updated :ref:`ug_matter` with new pages about Matter SDK as well as information about Matter over Wi-Fi.
 * Removed the low-power configuration build type from all Matter samples.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
@@ -865,32 +868,31 @@ Documentation
 
 * Added:
 
+  * Software maturity entries for security features: TF-M, PSA crypto, Immutable bootloader, HW unique key.
+  * Documentation for :ref:`ug_nrf70`.
   * Documentation for the :ref:`lib_flash_map_pm` library.
   * Documentation for the :ref:`lib_adp536x` library.
   * Documentation for the :ref:`lib_flash_patch` library.
   * :ref:`gs_debugging` section on the :ref:`gs_testing`.
     Also added links to this section in different areas of documentation.
   * :ref:`ug_thread_prebuilt_libs` as a separate page instead of being part of :ref:`ug_thread_configuring`.
-  * Added software maturity entries for security features: TF-M, PSA crypto, Immutable bootloader, HW unique key.
   * A section about NFC in the :ref:`app_memory` page.
   * A section about :ref:`modem_trace_backend_uart_custom_board` in the :ref:`nrf_modem_lib_readme` page.
   * A note in the :ref:`ug_ble_controller` about the usage of the Zephyr LE Controller.
-  * Documentation for the :ref:`ug_nrf70`.
   * A section about :ref:`modem_trace` in the :ref:`ug_nrf91_features` page.
 
 * Updated:
 
+  * :ref:`gs_recommended_versions` page with a new section about :ref:`gs_supported_OS`.
+  * :ref:`ug_nrf91` with the following changes:
+
+    * In the :ref:`ug_nrf9160_gs` guide, :ref:`nrf9160_gs_updating_fw_modem` section is now moved before :ref:`nrf9160_gs_updating_fw_application` because updating modem firmware erases application firmware.
+    * In the :ref:`ug_nrf9160` guide, the :ref:`build_pgm_nrf9160` section now mentions |VSC| and command line instructions.
+    * In the :ref:`ug_thingy91_gsg` guide, :ref:`programming_thingy` and :ref:`connect_nRF_cloud` sections now have different structure.
+    * The instructions and images in the :ref:`ug_thingy91_gsg` and :ref:`ug_nrf9160_gs` documentation pages now also mention accepting :term:`eUICC Identifier (EID)` when activating your iBasis SIM card from the `nRF Cloud`_ website.
+
   * :ref:`ug_thread_configuring` page to better indicate what is required and what is optional.
     Also added further clarifications to the page to make everything clearer.
-  * :ref:`ug_nrf9160_gs` guide by moving :ref:`nrf9160_gs_updating_fw_modem` section before :ref:`nrf9160_gs_updating_fw_application` because updating modem firmware erases application firmware.
   * :ref:`ug_matter_tools` page with a new section about the ZAP tool.
-  * :ref:`build_pgm_nrf9160` section in the :ref:`ug_nrf9160` documentation by adding |VSC| and command line instructions.
-  * Restructured the :ref:`programming_thingy` and :ref:`connect_nRF_cloud` sections in the :ref:`ug_thingy91_gsg` documentation.
-  * The instructions and images in the :ref:`ug_thingy91_gsg` and :ref:`ug_nrf9160_gs` documentations about also accepting :term:`eUICC Identifier (EID)` when activating your iBasis SIM card from the `nRF Cloud`_ website.
-  * :ref:`gs_recommended_versions` page with a new section about :ref:`gs_supported_OS`.
-
-* Removed:
-
-  * |no_changes_yet_note|
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
