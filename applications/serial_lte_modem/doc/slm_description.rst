@@ -25,7 +25,7 @@ The application supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/tfm_spm_thingy91.txt
+.. include:: /includes/tfm.txt
 
 Configuration
 *************
@@ -323,7 +323,7 @@ Building and running
 
 .. |sample path| replace:: :file:`applications/serial_lte_modem`
 
-.. include:: /includes/thingy91_build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. _slm_connecting_9160dk:
 
@@ -498,7 +498,6 @@ It uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:nrf_modem`
 
-In addition, it uses the following secure firmware components:
+In addition, it uses the following secure firmware component:
 
-* :ref:`secure_partition_manager`
 * :ref:`Trusted Firmware-M <ug_tfm>`

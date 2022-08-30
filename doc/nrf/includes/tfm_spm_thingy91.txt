@@ -1,8 +1,0 @@
-The sample is configured to compile and run as a non-secure application.
-Therefore, it automatically includes an additional secure firmware component that prepares the required peripherals and secure services to be available for the application.
-
-For nRF9160 DK, when the sample is built using the ``nrf9160dk_nrf9160_ns`` build target, it automatically includes :ref:`Trusted Firmware-M <ug_tfm>`.
-You can also configure it to use the :ref:`secure_partition_manager` instead of Trusted Firmware-M.
-
-For Thingy:91, when the sample is built using the ``thingy91_nrf9160_ns`` build target, it automatically includes the :ref:`secure_partition_manager`.
-You can also configure it to use :ref:`TF-M <ug_tfm>` instead of Secure Partition Manager.
