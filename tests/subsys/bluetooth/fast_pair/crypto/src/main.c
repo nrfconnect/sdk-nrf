@@ -46,7 +46,8 @@ static void test_hmac_sha256(void)
 
 	zassert_equal(sizeof(result_buf), sizeof(hashed_result),
 		      "Invalid size of expected result.");
-	zassert_ok(fp_crypto_hmac_sha256(result_buf, input_data, sizeof(input_data), aes_key),
+	zassert_ok(fp_crypto_hmac_sha256(
+		   result_buf, input_data, sizeof(input_data), aes_key, sizeof(aes_key)),
 		   "Error during hashing data.");
 	zassert_mem_equal(result_buf, hashed_result, sizeof(hashed_result),
 			  "Invalid hashing result.");
