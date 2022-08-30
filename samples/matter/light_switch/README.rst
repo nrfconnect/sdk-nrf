@@ -162,39 +162,39 @@ All LEDs:
    :end-before: matter_door_lock_sample_button1_end
 
 Button 2:
-    * On nRF52840 DK, nRF5340 DK and nRF21540 DK:
+   * On nRF52840 DK, nRF5340 DK and nRF21540 DK:
 
-      * Controls the light on the bound lighting device.
-        Depending on how long you press the button:
+     * Controls the light on the bound lighting device.
+       Depending on how long you press the button:
 
-        * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
-        * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
-          The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
+       * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
+       * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
+         The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
 
-    * On nRF7002 DK:
+   * On nRF7002 DK:
 
-      * If the device is not commissioned to a Matter network, it starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
-        This button is used during the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
-      * If the device is commissioned to a Matter network, it controls the light on the bound lighting device.
-        Depending on how long you press the button:
+     * If the device is not commissioned to a Matter network, it starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
+       This button is used during the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
+     * If the device is commissioned to a Matter network, it controls the light on the bound lighting device.
+       Depending on how long you press the button:
 
-        * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
-        * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
-          The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
+       * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
+       * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
+         The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
 
 Button 4:
-    * On nRF52840 DK, nRF5340 DK and nRF21540 DK:
-      Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
-      This button is used during the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
+   * On nRF52840 DK, nRF5340 DK and nRF21540 DK:
+     Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
+     This button is used during the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
 
-    * On nRF7002 DK: Not available.
+   * On nRF7002 DK: Not available.
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_jlink_start
     :end-before: matter_door_lock_sample_jlink_end
 
 NFC port with antenna attached:
-    Optionally used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
+   Optionally used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
 
 .. _matter_light_switch_sample_ui_matter_cli:
 
@@ -205,7 +205,7 @@ If you build the application with the :ref:`matter_light_switch_sample_remote_co
 These commands can be sent to one device (unicast) or a group of devices (groupcast).
 
 Unicast commands
------------------
+----------------
 
 You can use the following commands for direct communication with the single lighting device:
 
@@ -344,21 +344,24 @@ After building this and the :ref:`Matter Light Bulb <matter_light_bulb_sample>` 
    During the commissioning process, write down the values for the light switch node ID and the light bulb node ID (or IDs, if you are using more than one light bulb).
    These IDs are going to be used in the next steps (*<light_switch_node_ID>* and *<light_bulb_node_ID>*, respectively).
 #. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the light bulb device.
-   Run the following command, with *<light_switch_node_ID>* and *<light_bulb_node_ID>* values from the previous step about commissioning:
+   Depending on the number of the light bulb devices you are using, use one of the following commands, with *<light_switch_node_ID>* and *<light_bulb_node_ID>* values from the previous step about commissioning:
 
-   .. parsed-literal::
-      :class: highlight
+   * If you are using only one light bulb device, run the following command for the light bulb device:
 
-      chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 3, "authMode": 2, "subjects": [<light_switch_node_ID>], "targets": [{"cluster": 6, "endpoint": 1, "deviceType": null}, {"cluster": 8, "endpoint": 1, "deviceType": null}]}]' <light_bulb_node_ID> 0
+     .. parsed-literal::
+        :class: highlight
 
-#. If you are using more than one light bulb device, connect all devices to the multicast group by running the following command for each device, including the light switch:
+        chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 3, "authMode": 2, "subjects": [<light_switch_node_ID>], "targets": [{"cluster": 6, "endpoint": 1, "deviceType": null}, {"cluster": 8, "endpoint": 1, "deviceType": null}]}]' <light_bulb_node_ID> 0
 
-   .. parsed-literal::
-      :class: highlight
+   * If you are using more than one light bulb device, connect all devices to the multicast group by running the following command for each device, including the light switch:
 
-      chip-tool tests TestGroupDemoConfig --nodeId <node_ID>
+     .. parsed-literal::
+        :class: highlight
 
-   Use the *<node_ID>* values from the commissioning step.
+        chip-tool tests TestGroupDemoConfig --nodeId <node_ID>
+
+     Use the *<node_ID>* values from the commissioning step.
+
 #. Write a binding table to the light switch to inform the device about all endpoints by running this command (only for light switch):
 
    * For unicast binding to bind the light switch with only one light Bulb:
