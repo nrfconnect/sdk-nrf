@@ -82,7 +82,11 @@ cleanup:
 	return ret;
 }
 
-int fp_crypto_hmac_sha256(uint8_t *out, const uint8_t *in, size_t data_len, const uint8_t *aes_key)
+int fp_crypto_hmac_sha256(uint8_t *out,
+			  const uint8_t *in,
+			  size_t data_len,
+			  const uint8_t *hmac_key,
+			  size_t hmac_key_len)
 {
 	int ret;
 	const mbedtls_md_info_t *md_info;
@@ -93,7 +97,7 @@ int fp_crypto_hmac_sha256(uint8_t *out, const uint8_t *in, size_t data_len, cons
 		return MBEDTLS_ERR_MD_FEATURE_UNAVAILABLE;
 	}
 
-	ret = mbedtls_md_hmac(md_info, aes_key, FP_CRYPTO_AES128_KEY_LEN, in, data_len, out);
+	ret = mbedtls_md_hmac(md_info, hmac_key, hmac_key_len, in, data_len, out);
 	if (ret) {
 		LOG_ERR("hmac sha256: mbedtls_md_hmac failed: %d", ret);
 		return ret;

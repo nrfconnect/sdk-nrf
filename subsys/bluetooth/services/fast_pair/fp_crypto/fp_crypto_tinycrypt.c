@@ -28,11 +28,15 @@ int fp_crypto_sha256(uint8_t *out, const uint8_t *in, size_t data_len)
 	return 0;
 }
 
-int fp_crypto_hmac_sha256(uint8_t *out, const uint8_t *in, size_t data_len, const uint8_t *aes_key)
+int fp_crypto_hmac_sha256(uint8_t *out,
+			  const uint8_t *in,
+			  size_t data_len,
+			  const uint8_t *hmac_key,
+			  size_t hmac_key_len)
 {
 	struct tc_hmac_state_struct s;
 
-	if (tc_hmac_set_key(&s, aes_key, FP_CRYPTO_AES128_KEY_LEN) != TC_CRYPTO_SUCCESS) {
+	if (tc_hmac_set_key(&s, hmac_key, hmac_key_len) != TC_CRYPTO_SUCCESS) {
 		return -EINVAL;
 	}
 	if (tc_hmac_init(&s) != TC_CRYPTO_SUCCESS) {

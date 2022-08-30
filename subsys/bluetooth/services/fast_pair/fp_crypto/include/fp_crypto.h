@@ -52,11 +52,16 @@ int fp_crypto_sha256(uint8_t *out, const uint8_t *in, size_t data_len);
  * @param[out] out 256-bit (32-byte) buffer to receive hashed result.
  * @param[in] in Input data.
  * @param[in] data_len Length of input data.
- * @param[in] aes_key 128-bit (16-byte) AES key used to encrypt data.
+ * @param[in] hmac_key HMAC key used to encrypt data.
+ * @param[in] hmac_key_len Length of HMAC key.
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_crypto_hmac_sha256(uint8_t *out, const uint8_t *in, size_t data_len, const uint8_t *aes_key);
+int fp_crypto_hmac_sha256(uint8_t *out,
+			  const uint8_t *in,
+			  size_t data_len,
+			  const uint8_t *hmac_key,
+			  size_t hmac_key_len);
 
 /** Encrypt message using AES-128.
  *
