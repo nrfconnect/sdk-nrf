@@ -9,7 +9,7 @@ Matter: Template
 
 This sample demonstrates a minimal implementation of the :ref:`Matter <ug_matter>` application layer.
 This basic implementation enables the commissioning on the device, which allows it to join a Matter network built on top of a low-power, 802.15.4 Thread network or on top of a Wi-Fi network.
-Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol can be supported for a specific lock device.
+Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol can be supported for a specific Matter device.
 In case of Thread, this device works as a Thread :ref:`Minimal End Device <thread_ot_device_types>`.
 
 Use this sample as a reference for developing your own application.
