@@ -166,15 +166,21 @@ static int adv_start_internal(enum bt_fast_pair_adv_mode fp_adv_mode)
 	}
 
 	/* According to Fast Pair specification, the advertising interval should be no longer than
-	 * 100 ms when discoverable and no longer than 250 ms when not discoverable.
+	 * 100 ms when discoverable and at most 250 ms when not discoverable.
 	 */
-	static const struct bt_le_adv_param adv_param = {
-		.id = BT_ID_DEFAULT,
-		.options = (BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME),
-		.interval_min = BT_GAP_ADV_FAST_INT_MIN_1,
-		.interval_max = BT_GAP_ADV_FAST_INT_MAX_1,
-		.peer = NULL,
-	};
+	struct bt_le_adv_param adv_param;
+
+	memset(&adv_param, 0, sizeof(adv_param));
+	adv_param.id = BT_ID_DEFAULT;
+	adv_param.options = (BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME);
+
+	if (fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) {
+		adv_param.interval_min = BT_GAP_ADV_FAST_INT_MIN_1;	/* 30 ms */
+		adv_param.interval_max = BT_GAP_ADV_FAST_INT_MAX_1;	/* 60 ms */
+	} else {
+		adv_param.interval_min = 0x190;				/* 250 ms */
+		adv_param.interval_max = 0x200;				/* 320 ms */
+	}
 
 	err = bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 
