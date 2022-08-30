@@ -9,7 +9,6 @@
 
 #include <zephyr.h>
 
-/* These defined name only used by CIS */
 #define DEVICE_NAME_PEER CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_PEER_LEN (sizeof(DEVICE_NAME_PEER) - 1)
 
