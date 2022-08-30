@@ -372,11 +372,8 @@ The Zephyr Software Development Kit (SDK) contains toolchains for each of Zephyr
 It also includes additional host tools, such as custom QEMU and OpenOCD builds.
 
 .. note::
-
-   Set the following environment variables to ensure the Zephyr SDK is detected correctly:
-
-   * :envvar:`ZEPHYR_TOOLCHAIN_VARIANT` to ``zephyr``
-   * :envvar:`ZEPHYR_SDK_INSTALL_DIR` to the path of the Zephyr SDK
+   When updating Zephyr SDK, :ref:`verify the Zephyr SDK variables <zephyr:toolchain_zephyr_sdk_update>`.
+   Make sure that the ``zephyr`` toolchain is selected, not ``gnuarmemb``.
 
 .. ncs-include:: develop/getting_started/index.rst
    :docset: zephyr
