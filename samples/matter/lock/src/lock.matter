@@ -82,6 +82,7 @@ server cluster AccessControl = 31 {
   readonly attribute int16u targetsPerAccessControlEntry = 3;
   readonly attribute int16u accessControlEntriesPerFabric = 4;
   readonly attribute attrib_id attributeList[] = 65531;
+  readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
 }
 
@@ -262,38 +263,6 @@ server cluster OtaSoftwareUpdateRequestor = 42 {
   }
 
   command AnnounceOtaProvider(AnnounceOtaProviderRequest): DefaultSuccess = 0;
-}
-
-server cluster LocalizationConfiguration = 43 {
-  readonly attribute CHAR_STRING supportedLocales[] = 1;
-  readonly attribute int16u clusterRevision = 65533;
-}
-
-server cluster TimeFormatLocalization = 44 {
-  enum CalendarType : ENUM8 {
-    kBuddhist = 0;
-    kChinese = 1;
-    kCoptic = 2;
-    kEthiopian = 3;
-    kGregorian = 4;
-    kHebrew = 5;
-    kIndian = 6;
-    kIslamic = 7;
-    kJapanese = 8;
-    kKorean = 9;
-    kPersian = 10;
-    kTaiwanese = 11;
-  }
-
-  enum HourFormat : ENUM8 {
-    k12hr = 0;
-    k24hr = 1;
-  }
-
-  attribute HourFormat hourFormat = 0;
-  attribute CalendarType activeCalendarType = 1;
-  readonly attribute CalendarType supportedCalendarTypes[] = 2;
-  readonly attribute int16u clusterRevision = 65533;
 }
 
 server cluster GeneralCommissioning = 48 {
@@ -489,36 +458,6 @@ server cluster NetworkCommissioning = 49 {
   command access(invoke: administer) ReorderNetwork(ReorderNetworkRequest): NetworkConfigResponse = 8;
 }
 
-server cluster DiagnosticLogs = 50 {
-  enum LogsIntent : ENUM8 {
-    kEndUserSupport = 0;
-    kNetworkDiag = 1;
-    kCrashLogs = 2;
-  }
-
-  enum LogsStatus : ENUM8 {
-    kSuccess = 0;
-    kExhausted = 1;
-    kNoLogs = 2;
-    kBusy = 3;
-    kDenied = 4;
-  }
-
-  enum LogsTransferProtocol : ENUM8 {
-    kResponsePayload = 0;
-    kBdx = 1;
-  }
-
-
-  request struct RetrieveLogsRequestRequest {
-    LogsIntent intent = 0;
-    LogsTransferProtocol requestedProtocol = 1;
-    OCTET_STRING transferFileDesignator = 2;
-  }
-
-  command RetrieveLogsRequest(RetrieveLogsRequestRequest): RetrieveLogsResponse = 0;
-}
-
 server cluster GeneralDiagnostics = 51 {
   enum BootReasonType : ENUM8 {
     kUnspecified = 0;
@@ -607,6 +546,7 @@ server cluster GeneralDiagnostics = 51 {
   readonly attribute ENUM8 activeHardwareFaults[] = 5;
   readonly attribute ENUM8 activeRadioFaults[] = 6;
   readonly attribute ENUM8 activeNetworkFaults[] = 7;
+  readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
 }
 
@@ -615,21 +555,12 @@ server cluster SoftwareDiagnostics = 52 {
     kWaterMarks = 0x1;
   }
 
-  struct ThreadMetrics {
-    int64u id = 0;
-    optional char_string<8> name = 1;
-    optional int32u stackFreeCurrent = 2;
-    optional int32u stackFreeMinimum = 3;
-    optional int32u stackSize = 4;
-  }
-
   info event SoftwareFault = 0 {
     INT64U id = 0;
     optional CHAR_STRING name = 1;
     optional OCTET_STRING faultRecording = 2;
   }
 
-  readonly attribute ThreadMetrics threadMetrics[] = 0;
   readonly attribute int64u currentHeapFree = 1;
   readonly attribute int64u currentHeapUsed = 2;
   readonly attribute int64u currentHeapHighWatermark = 3;
@@ -723,6 +654,11 @@ server cluster ThreadNetworkDiagnostics = 53 {
     ThreadConnectionStatus connectionStatus = 0;
   }
 
+  info event NetworkFaultChange = 1 {
+    NetworkFault current[] = 0;
+    NetworkFault previous[] = 1;
+  }
+
   readonly attribute nullable int16u channel = 0;
   readonly attribute nullable RoutingRole routingRole = 1;
   readonly attribute nullable char_string<16> networkName = 2;
@@ -783,9 +719,10 @@ server cluster ThreadNetworkDiagnostics = 53 {
   readonly attribute nullable int64u pendingTimestamp = 57;
   readonly attribute nullable int32u delay = 58;
   readonly attribute nullable SecurityPolicy securityPolicy = 59;
-  readonly attribute nullable octet_string<4> channelMask = 60;
+  readonly attribute nullable octet_string<4> channelPage0Mask = 60;
   readonly attribute nullable OperationalDatasetComponents operationalDatasetComponents = 61;
   readonly attribute NetworkFault activeNetworkFaultsList[] = 62;
+  readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
 
   command ResetCounts(): DefaultSuccess = 0;
@@ -840,14 +777,14 @@ server cluster WiFiNetworkDiagnostics = 54 {
   readonly attribute nullable WiFiVersionType wiFiVersion = 2;
   readonly attribute nullable int16u channelNumber = 3;
   readonly attribute nullable int8s rssi = 4;
-  readonly attribute int32u beaconLostCount = 5;
-  readonly attribute int32u beaconRxCount = 6;
-  readonly attribute int32u packetMulticastRxCount = 7;
-  readonly attribute int32u packetMulticastTxCount = 8;
-  readonly attribute int32u packetUnicastRxCount = 9;
-  readonly attribute int32u packetUnicastTxCount = 10;
-  readonly attribute int64u currentMaxRate = 11;
-  readonly attribute int64u overrunCount = 12;
+  readonly attribute nullable int32u beaconLostCount = 5;
+  readonly attribute nullable int32u beaconRxCount = 6;
+  readonly attribute nullable int32u packetMulticastRxCount = 7;
+  readonly attribute nullable int32u packetMulticastTxCount = 8;
+  readonly attribute nullable int32u packetUnicastRxCount = 9;
+  readonly attribute nullable int32u packetUnicastTxCount = 10;
+  readonly attribute nullable int64u currentMaxRate = 11;
+  readonly attribute nullable int64u overrunCount = 12;
   readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
 
@@ -862,12 +799,12 @@ server cluster AdministratorCommissioning = 60 {
   }
 
   enum StatusCode : ENUM8 {
-    kBusy = 1;
-    kPAKEParameterError = 2;
-    kWindowNotOpen = 3;
+    kBusy = 2;
+    kPAKEParameterError = 3;
+    kWindowNotOpen = 4;
   }
 
-  readonly attribute int8u windowStatus = 0;
+  readonly attribute CommissioningWindowStatus windowStatus = 0;
   readonly attribute nullable fabric_idx adminFabricIndex = 1;
   readonly attribute nullable int16u adminVendorId = 2;
   readonly attribute bitmap32 featureMap = 65532;
@@ -925,6 +862,7 @@ server cluster OperationalCredentials = 62 {
   readonly attribute int8u commissionedFabrics = 3;
   readonly attribute OCTET_STRING trustedRootCertificates[] = 4;
   readonly attribute int8u currentFabricIndex = 5;
+  readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
 
   request struct AttestationRequestRequest {
@@ -997,11 +935,13 @@ server cluster OperationalCredentials = 62 {
 
 server cluster FixedLabel = 64 {
   readonly attribute LabelStruct labelList[] = 0;
+  readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
 }
 
 server cluster UserLabel = 65 {
   attribute access(write: manage) LabelStruct labelList[] = 0;
+  readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
 }
 
@@ -1335,6 +1275,11 @@ server cluster DoorLock = 257 {
     kHolidaySchedules = 0x800;
   }
 
+  struct DlCredential {
+    DlCredentialType credentialType = 0;
+    int16u credentialIndex = 1;
+  }
+
   critical event DoorLockAlarm = 0 {
     DlAlarmCode alarmCode = 0;
   }
@@ -1396,9 +1341,6 @@ server cluster DoorLock = 257 {
   attribute access(write: administer) int8u wrongCodeEntryLimit = 48;
   attribute access(write: administer) int8u userCodeTemporaryDisableTime = 49;
   attribute access(write: administer) boolean requirePINforRemoteOperation = 51;
-  readonly attribute command_id generatedCommandList[] = 65528;
-  readonly attribute command_id acceptedCommandList[] = 65529;
-  readonly attribute attrib_id attributeList[] = 65531;
   readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
 
@@ -1415,9 +1357,77 @@ server cluster DoorLock = 257 {
     optional OCTET_STRING pinCode = 1;
   }
 
+  request struct SetUserRequest {
+    DlDataOperationType operationType = 0;
+    INT16U userIndex = 1;
+    nullable CHAR_STRING userName = 2;
+    nullable INT32U userUniqueId = 3;
+    nullable DlUserStatus userStatus = 4;
+    nullable DlUserType userType = 5;
+    nullable DlCredentialRule credentialRule = 6;
+  }
+
+  request struct GetUserRequest {
+    INT16U userIndex = 0;
+  }
+
+  request struct ClearUserRequest {
+    INT16U userIndex = 0;
+  }
+
+  request struct SetCredentialRequest {
+    DlDataOperationType operationType = 0;
+    DlCredential credential = 1;
+    LONG_OCTET_STRING credentialData = 2;
+    nullable INT16U userIndex = 3;
+    nullable DlUserStatus userStatus = 4;
+    nullable DlUserType userType = 5;
+  }
+
+  request struct GetCredentialStatusRequest {
+    DlCredential credential = 0;
+  }
+
+  request struct ClearCredentialRequest {
+    nullable DlCredential credential = 0;
+  }
+
+  response struct GetUserResponse = 28 {
+    INT16U userIndex = 0;
+    nullable CHAR_STRING userName = 1;
+    nullable INT32U userUniqueId = 2;
+    nullable DlUserStatus userStatus = 3;
+    nullable DlUserType userType = 4;
+    nullable DlCredentialRule credentialRule = 5;
+    nullable DlCredential credentials[] = 6;
+    nullable fabric_idx creatorFabricIndex = 7;
+    nullable fabric_idx lastModifiedFabricIndex = 8;
+    nullable INT16U nextUserIndex = 9;
+  }
+
+  response struct SetCredentialResponse = 35 {
+    DlStatus status = 0;
+    nullable INT16U userIndex = 1;
+    nullable INT16U nextCredentialIndex = 2;
+  }
+
+  response struct GetCredentialStatusResponse = 37 {
+    boolean credentialExists = 0;
+    nullable INT16U userIndex = 1;
+    nullable fabric_idx creatorFabricIndex = 2;
+    nullable fabric_idx lastModifiedFabricIndex = 3;
+    nullable INT16U nextCredentialIndex = 4;
+  }
+
   timed command LockDoor(LockDoorRequest): DefaultSuccess = 0;
   timed command UnlockDoor(UnlockDoorRequest): DefaultSuccess = 1;
   timed command UnlockWithTimeout(UnlockWithTimeoutRequest): DefaultSuccess = 3;
+  timed command access(invoke: administer) SetUser(SetUserRequest): DefaultSuccess = 26;
+  command access(invoke: administer) GetUser(GetUserRequest): GetUserResponse = 27;
+  timed command access(invoke: administer) ClearUser(ClearUserRequest): DefaultSuccess = 29;
+  timed command access(invoke: administer) SetCredential(SetCredentialRequest): SetCredentialResponse = 34;
+  command access(invoke: administer) GetCredentialStatus(GetCredentialStatusRequest): GetCredentialStatusResponse = 36;
+  timed command access(invoke: administer) ClearCredential(ClearCredentialRequest): DefaultSuccess = 38;
 }
 
 endpoint 0 {
@@ -1429,7 +1439,8 @@ endpoint 0 {
     callback attribute serverList;
     callback attribute clientList;
     callback attribute partsList;
-    ram      attribute clusterRevision default = 1;
+    ram      attribute featureMap;
+    callback attribute clusterRevision default = 1;
   }
 
   server cluster AccessControl {
@@ -1439,17 +1450,18 @@ endpoint 0 {
     callback attribute targetsPerAccessControlEntry default = 3;
     callback attribute accessControlEntriesPerFabric default = 3;
     callback attribute attributeList;
+    ram      attribute featureMap;
     ram      attribute clusterRevision default = 1;
   }
 
   server cluster Basic {
-    callback attribute dataModelRevision;
+    callback attribute dataModelRevision default = 10;
     callback attribute vendorName;
     callback attribute vendorID;
     callback attribute productName;
     callback attribute productID;
-    ram      attribute nodeLabel;
-    callback attribute location;
+    persist  attribute nodeLabel;
+    callback attribute location default = "XX";
     callback attribute hardwareVersion;
     callback attribute hardwareVersionString;
     callback attribute softwareVersion;
@@ -1459,12 +1471,12 @@ endpoint 0 {
     callback attribute productURL;
     callback attribute productLabel;
     callback attribute serialNumber;
-    ram      attribute localConfigDisabled;
+    persist  attribute localConfigDisabled;
     ram      attribute reachable default = 1;
     callback attribute uniqueID;
     callback attribute capabilityMinima;
     ram      attribute featureMap;
-    ram      attribute clusterRevision default = 3;
+    ram      attribute clusterRevision default = 1;
   }
 
   server cluster OtaSoftwareUpdateRequestor {
@@ -1476,26 +1488,14 @@ endpoint 0 {
     ram      attribute clusterRevision default = 1;
   }
 
-  server cluster LocalizationConfiguration {
-    callback attribute supportedLocales default = en-US;
-    ram      attribute clusterRevision default = 1;
-  }
-
-  server cluster TimeFormatLocalization {
-    ram      attribute hourFormat;
-    ram      attribute activeCalendarType;
-    callback attribute supportedCalendarTypes;
-    ram      attribute clusterRevision default = 1;
-  }
-
   server cluster GeneralCommissioning {
     ram      attribute breadcrumb;
     callback attribute basicCommissioningInfo;
     callback attribute regulatoryConfig;
     callback attribute locationCapability;
     callback attribute supportsConcurrentConnection default = 1;
-    ram      attribute featureMap default = 6;
-    ram      attribute clusterRevision default = 0x0001;
+    ram      attribute featureMap;
+    ram      attribute clusterRevision default = 1;
   }
 
   server cluster NetworkCommissioning {
@@ -1508,10 +1508,7 @@ endpoint 0 {
     ram      attribute lastNetworkID;
     ram      attribute lastConnectErrorValue;
     ram      attribute featureMap default = 2;
-    ram      attribute clusterRevision default = 0x0001;
-  }
-
-  server cluster DiagnosticLogs {
+    ram      attribute clusterRevision default = 1;
   }
 
   server cluster GeneralDiagnostics {
@@ -1523,16 +1520,16 @@ endpoint 0 {
     callback attribute activeHardwareFaults;
     callback attribute activeRadioFaults;
     callback attribute activeNetworkFaults;
-    ram      attribute clusterRevision default = 0x0001;
+    ram      attribute featureMap;
+    ram      attribute clusterRevision default = 1;
   }
 
   server cluster SoftwareDiagnostics {
-    callback attribute threadMetrics;
     callback attribute currentHeapFree;
     callback attribute currentHeapUsed;
     callback attribute currentHeapHighWatermark;
-    ram      attribute featureMap;
-    ram      attribute clusterRevision default = 0x0001;
+    ram      attribute featureMap default = 1;
+    ram      attribute clusterRevision default = 1;
   }
 
   server cluster ThreadNetworkDiagnostics {
@@ -1596,10 +1593,11 @@ endpoint 0 {
     callback attribute pendingTimestamp;
     callback attribute delay;
     callback attribute securityPolicy;
-    callback attribute channelMask;
+    callback attribute channelPage0Mask;
     callback attribute operationalDatasetComponents;
     callback attribute activeNetworkFaultsList;
-    ram      attribute clusterRevision default = 0x0001;
+    ram      attribute featureMap default = 0x000F;
+    ram      attribute clusterRevision default = 1;
   }
 
   server cluster WiFiNetworkDiagnostics {
@@ -1635,16 +1633,19 @@ endpoint 0 {
     callback attribute commissionedFabrics;
     callback attribute trustedRootCertificates;
     callback attribute currentFabricIndex;
-    ram      attribute clusterRevision default = 0x0001;
+    ram      attribute featureMap;
+    ram      attribute clusterRevision default = 1;
   }
 
   server cluster FixedLabel {
     callback attribute labelList;
+    ram      attribute featureMap;
     ram      attribute clusterRevision default = 1;
   }
 
   server cluster UserLabel {
     callback attribute labelList;
+    ram      attribute featureMap;
     ram      attribute clusterRevision default = 1;
   }
 }
@@ -1657,7 +1658,7 @@ endpoint 1 {
     callback attribute clientList;
     callback attribute partsList;
     ram      attribute featureMap;
-    ram      attribute clusterRevision default = 1;
+    callback attribute clusterRevision default = 1;
   }
 
   server cluster DoorLock {
@@ -1683,12 +1684,9 @@ endpoint 1 {
     ram      attribute enableOneTouchLocking;
     ram      attribute enablePrivacyModeButton;
     ram      attribute wrongCodeEntryLimit default = 3;
-    ram      attribute userCodeTemporaryDisableTime;
+    ram      attribute userCodeTemporaryDisableTime default = 10;
     ram      attribute requirePINforRemoteOperation;
-    callback attribute generatedCommandList;
-    callback attribute acceptedCommandList;
-    callback attribute attributeList;
-    ram      attribute featureMap default = 0x101;
+    ram      attribute featureMap default = 0xDB3;
     ram      attribute clusterRevision default = 6;
   }
 }

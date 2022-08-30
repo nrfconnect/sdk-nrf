@@ -33,11 +33,11 @@
 #endif // DEFINETOKENS
 
 // Macro snippet that loads all the attributes from tokens
-#define GENERATED_TOKEN_LOADER(endpoint)                                                                               \
-	do {                                                                                                           \
+#define GENERATED_TOKEN_LOADER(endpoint)                                                           \
+	do {                                                                                       \
 	} while (false)
 
 // Macro snippet that saves the attribute to token
-#define GENERATED_TOKEN_SAVER                                                                                          \
-	do {                                                                                                           \
+#define GENERATED_TOKEN_SAVER                                                                      \
+	do {                                                                                       \
 	} while (false)

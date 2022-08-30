@@ -1,5 +1,5 @@
 {
-  "featureLevel": 77,
+  "featureLevel": 80,
   "creator": "zap",
   "keyValuePairs": [
     {
@@ -770,7 +770,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "bitmap32",
-              "included": 0,
+              "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
@@ -787,7 +787,7 @@
               "side": "server",
               "type": "int16u",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "1",
@@ -982,7 +982,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "bitmap32",
-              "included": 0,
+              "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
@@ -1080,7 +1080,7 @@
               "storageOption": "External",
               "singleton": 1,
               "bounded": 0,
-              "defaultValue": "",
+              "defaultValue": "10",
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -1157,7 +1157,7 @@
               "side": "server",
               "type": "char_string",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "NVM",
               "singleton": 1,
               "bounded": 0,
               "defaultValue": "",
@@ -1176,7 +1176,7 @@
               "storageOption": "External",
               "singleton": 1,
               "bounded": 0,
-              "defaultValue": "",
+              "defaultValue": "XX",
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -1258,8 +1258,8 @@
               "bounded": 0,
               "defaultValue": "20210614123456ZZ",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -1274,8 +1274,8 @@
               "bounded": 0,
               "defaultValue": "",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -1290,8 +1290,8 @@
               "bounded": 0,
               "defaultValue": "",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -1306,8 +1306,8 @@
               "bounded": 0,
               "defaultValue": "",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -1322,8 +1322,8 @@
               "bounded": 0,
               "defaultValue": "",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -1333,13 +1333,13 @@
               "side": "server",
               "type": "boolean",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "NVM",
               "singleton": 1,
               "bounded": 0,
               "defaultValue": "0",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -1354,8 +1354,8 @@
               "bounded": 0,
               "defaultValue": "1",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -1370,8 +1370,8 @@
               "bounded": 0,
               "defaultValue": "",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -1382,7 +1382,7 @@
               "type": "CapabilityMinimaStruct",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
               "reportable": 1,
@@ -1446,7 +1446,7 @@
               "type": "bitmap32",
               "included": 1,
               "storageOption": "RAM",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": "0",
               "reportable": 1,
@@ -1464,7 +1464,7 @@
               "storageOption": "RAM",
               "singleton": 1,
               "bounded": 0,
-              "defaultValue": "3",
+              "defaultValue": "1",
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -1620,8 +1620,8 @@
               "bounded": 0,
               "defaultValue": "1",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -1636,8 +1636,8 @@
               "bounded": 0,
               "defaultValue": "0",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -1650,7 +1650,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "",
+              "defaultValue": "0",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -1732,8 +1732,8 @@
               "bounded": 0,
               "defaultValue": "1",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             }
           ]
@@ -1752,8 +1752,24 @@
           "mfgCode": null,
           "define": "LOCALIZATION_CONFIGURATION_CLUSTER",
           "side": "server",
-          "enabled": 1,
+          "enabled": 0,
           "attributes": [
+            {
+              "name": "ActiveLocale",
+              "code": 0,
+              "mfgCode": null,
+              "side": "server",
+              "type": "char_string",
+              "included": 1,
+              "storageOption": "NVM",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "en-US",
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
             {
               "name": "SupportedLocales",
               "code": 1,
@@ -1764,7 +1780,7 @@
               "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "en-US",
+              "defaultValue": "0",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -1824,7 +1840,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "bitmap32",
-              "included": 0,
+              "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
@@ -1866,7 +1882,7 @@
           "mfgCode": null,
           "define": "TIME_FORMAT_LOCALIZATION_CLUSTER",
           "side": "server",
-          "enabled": 1,
+          "enabled": 0,
           "attributes": [
             {
               "name": "HourFormat",
@@ -1875,7 +1891,7 @@
               "side": "server",
               "type": "HourFormat",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "NVM",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "0",
@@ -1891,7 +1907,7 @@
               "side": "server",
               "type": "CalendarType",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "NVM",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "0",
@@ -1970,7 +1986,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "bitmap32",
-              "included": 0,
+              "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
@@ -2832,7 +2848,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "6",
+              "defaultValue": "0",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -2848,7 +2864,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0x0001",
+              "defaultValue": "1",
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -3184,7 +3200,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0x0001",
+              "defaultValue": "1",
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -3216,7 +3232,7 @@
           "mfgCode": null,
           "define": "DIAGNOSTIC_LOGS_CLUSTER",
           "side": "server",
-          "enabled": 1,
+          "enabled": 0,
           "attributes": [
             {
               "name": "GeneratedCommandList",
@@ -3272,7 +3288,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "bitmap32",
-              "included": 0,
+              "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
@@ -3288,7 +3304,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "int16u",
-              "included": 0,
+              "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
@@ -3532,7 +3548,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "bitmap32",
-              "included": 0,
+              "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
@@ -3552,7 +3568,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0x0001",
+              "defaultValue": "1",
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -3610,7 +3626,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "array",
-              "included": 1,
+              "included": 0,
               "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
@@ -3726,7 +3742,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0",
+              "defaultValue": "1",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -3742,7 +3758,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0x0001",
+              "defaultValue": "1",
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -4723,7 +4739,7 @@
               "reportableChange": 0
             },
             {
-              "name": "delay",
+              "name": "Delay",
               "code": 58,
               "mfgCode": null,
               "side": "server",
@@ -4755,7 +4771,7 @@
               "reportableChange": 0
             },
             {
-              "name": "ChannelMask",
+              "name": "ChannelPage0Mask",
               "code": 60,
               "mfgCode": null,
               "side": "server",
@@ -4824,11 +4840,11 @@
               "mfgCode": null,
               "side": "server",
               "type": "bitmap32",
-              "included": 0,
+              "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0",
+              "defaultValue": "0x000F",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -4844,7 +4860,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0x0001",
+              "defaultValue": "1",
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -5361,7 +5377,7 @@
               "code": 0,
               "mfgCode": null,
               "side": "server",
-              "type": "int8u",
+              "type": "CommissioningWindowStatus",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -5480,8 +5496,8 @@
               "bounded": 0,
               "defaultValue": "1",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             }
           ]
@@ -5680,8 +5696,8 @@
               "bounded": 0,
               "defaultValue": "0",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -5696,8 +5712,8 @@
               "bounded": 0,
               "defaultValue": "0",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -5712,8 +5728,8 @@
               "bounded": 0,
               "defaultValue": "",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -5786,7 +5802,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "bitmap32",
-              "included": 0,
+              "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
@@ -5806,7 +5822,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0x0001",
+              "defaultValue": "1",
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -6116,7 +6132,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "bitmap32",
-              "included": 0,
+              "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
@@ -6230,7 +6246,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "bitmap32",
-              "included": 0,
+              "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
@@ -7439,7 +7455,7 @@
               "side": "server",
               "type": "int16u",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "1",
@@ -7809,6 +7825,54 @@
               "source": "client",
               "incoming": 1,
               "outgoing": 0
+            },
+            {
+              "name": "SetUser",
+              "code": 26,
+              "mfgCode": null,
+              "source": "client",
+              "incoming": 1,
+              "outgoing": 0
+            },
+            {
+              "name": "GetUser",
+              "code": 27,
+              "mfgCode": null,
+              "source": "client",
+              "incoming": 1,
+              "outgoing": 0
+            },
+            {
+              "name": "ClearUser",
+              "code": 29,
+              "mfgCode": null,
+              "source": "client",
+              "incoming": 1,
+              "outgoing": 0
+            },
+            {
+              "name": "SetCredential",
+              "code": 34,
+              "mfgCode": null,
+              "source": "client",
+              "incoming": 1,
+              "outgoing": 0
+            },
+            {
+              "name": "GetCredentialStatus",
+              "code": 36,
+              "mfgCode": null,
+              "source": "client",
+              "incoming": 1,
+              "outgoing": 0
+            },
+            {
+              "name": "ClearCredential",
+              "code": 38,
+              "mfgCode": null,
+              "source": "client",
+              "incoming": 1,
+              "outgoing": 0
             }
           ],
           "attributes": [
@@ -7853,6 +7917,32 @@
           "define": "DOOR_LOCK_CLUSTER",
           "side": "server",
           "enabled": 1,
+          "commands": [
+            {
+              "name": "GetUserResponse",
+              "code": 28,
+              "mfgCode": null,
+              "source": "server",
+              "incoming": 0,
+              "outgoing": 1
+            },
+            {
+              "name": "SetCredentialResponse",
+              "code": 35,
+              "mfgCode": null,
+              "source": "server",
+              "incoming": 0,
+              "outgoing": 1
+            },
+            {
+              "name": "GetCredentialStatusResponse",
+              "code": 37,
+              "mfgCode": null,
+              "source": "server",
+              "incoming": 0,
+              "outgoing": 1
+            }
+          ],
           "attributes": [
             {
               "name": "LockState",
@@ -7864,10 +7954,10 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "",
+              "defaultValue": "0",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -7882,8 +7972,8 @@
               "bounded": 0,
               "defaultValue": "0",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -7898,8 +7988,8 @@
               "bounded": 0,
               "defaultValue": "",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -7914,8 +8004,8 @@
               "bounded": 0,
               "defaultValue": "",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -8056,7 +8146,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0",
+              "defaultValue": "10",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -8170,8 +8260,8 @@
               "bounded": 0,
               "defaultValue": "en",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -8202,8 +8292,8 @@
               "bounded": 0,
               "defaultValue": "0",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -8218,8 +8308,8 @@
               "bounded": 0,
               "defaultValue": "0",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -8232,10 +8322,10 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "",
+              "defaultValue": "0",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -8298,8 +8388,8 @@
               "bounded": 0,
               "defaultValue": "0",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -8330,8 +8420,8 @@
               "bounded": 0,
               "defaultValue": "0",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -8362,8 +8452,8 @@
               "bounded": 0,
               "defaultValue": "3",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -8376,10 +8466,10 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "",
+              "defaultValue": "10",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             },
             {
@@ -8436,7 +8526,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "array",
-              "included": 1,
+              "included": 0,
               "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
@@ -8452,7 +8542,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "array",
-              "included": 1,
+              "included": 0,
               "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
@@ -8468,7 +8558,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "array",
-              "included": 1,
+              "included": 0,
               "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
@@ -8488,7 +8578,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0x101",
+              "defaultValue": "0xDB3",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -8506,8 +8596,8 @@
               "bounded": 0,
               "defaultValue": "6",
               "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
+              "minInterval": 0,
+              "maxInterval": 65344,
               "reportableChange": 0
             }
           ]
