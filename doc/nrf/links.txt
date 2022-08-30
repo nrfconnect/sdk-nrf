@@ -952,8 +952,6 @@
 
 .. _`HERE Positioning`: https://www.here.com/platform/positioning
 
-.. _`Polte Location API`: https://www.polte.com/solutions/polte-location-api
-
 .. _`SPDX tool`: https://spdx.dev/
 .. _`SPDX identifier`: https://spdx.dev/ids/
 .. _`SPDX License List`: https://spdx.org/licenses/

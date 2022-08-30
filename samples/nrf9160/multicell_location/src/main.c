@@ -336,9 +336,6 @@ void main(void)
 #if defined(CONFIG_MULTICELL_LOCATION_SERVICE_HERE)
 		request_location(MULTICELL_SERVICE_HERE, "HERE");
 #endif
-#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_POLTE)
-		request_location(MULTICELL_SERVICE_POLTE, "Polte");
-#endif
 		request_location(MULTICELL_SERVICE_ANY, "Any");
 	}
 }

@@ -711,11 +711,16 @@ Libraries for networking
       * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
       * Function :c:func:`nrf_cloud_fota_is_type_enabled` no longer depends on :kconfig:option:`CONFIG_NRF_CLOUD_FOTA`.
 
+  * :ref:`lib_location` library:
+
+    * Removed PoLTE support as the service is discontinued.
+
   * :ref:`lib_multicell_location` library:
 
     * Added timeout parameter.
     * Made a structure for input parameters for multicell_location_get() to make updates easier in the future.
     * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
+    * Removed PoLTE support as the service is discontinued.
 
   * :ref:`lib_rest_client` library:
 
