@@ -462,6 +462,7 @@ Matter samples
 
 * Removed the low-power configuration build type from all Matter samples.
 * Optimized the usage of the QSPI NOR flash sleep mode to reduce power consumption during the Matter commissioning.
+* Reduced the size of MCUBoot partition on ``nrf5340dk_nrf5340_cpuapp`` by 16kB.
 
 * :ref:`matter_light_switch_sample`:
 
