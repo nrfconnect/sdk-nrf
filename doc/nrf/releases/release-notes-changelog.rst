@@ -573,6 +573,9 @@ Bluetooth libraries and services
       *  :ref:`bt_mesh_lightness_srv_readme`
       * Replay protection list (RPL)
 
+  * Updated:
+
+    * The ``bt_mesh_sensor_ch_str_real`` function is now replaced with the :c:func:`bt_mesh_sensor_ch_str` function, which was previously a macro.
 
 Bootloader libraries
 --------------------
