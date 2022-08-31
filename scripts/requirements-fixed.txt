@@ -130,6 +130,6 @@ tomlkit==0.11.4
 typing_extensions==4.3.0
 urllib3==1.26.12
 wcwidth==0.2.5
-west==0.13.1
+west==0.14.0
 wrapt==1.14.1
 zcbor==0.5.1
