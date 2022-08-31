@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/zephyr.h>
+#include <zephyr/sys/__assert.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/settings/settings.h>
@@ -43,11 +44,17 @@ static void advertising_start(void)
 {
 	int err = bt_adv_helper_adv_start(fp_adv_mode);
 
+	int ret = k_work_cancel_delayable(&fp_discoverable_adv_timeout);
+
+	__ASSERT_NO_MSG(ret == 0);
+	ARG_UNUSED(ret);
+
 	if ((fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) && !err) {
-		k_work_reschedule(&fp_discoverable_adv_timeout,
-				  K_MINUTES(FP_DISCOVERABLE_ADV_TIMEOUT_MINUTES));
-	} else {
-		k_work_cancel_delayable(&fp_discoverable_adv_timeout);
+		ret = k_work_schedule(&fp_discoverable_adv_timeout,
+				      K_MINUTES(FP_DISCOVERABLE_ADV_TIMEOUT_MINUTES));
+
+		__ASSERT_NO_MSG(ret == 1);
+		ARG_UNUSED(ret);
 	}
 
 	if (!err) {
@@ -73,6 +80,9 @@ static void fp_adv_mode_status_led_handle_fn(struct k_work *w)
 	ARG_UNUSED(w);
 
 	static bool led_on = true;
+	int ret;
+
+	ARG_UNUSED(ret);
 
 	switch (fp_adv_mode) {
 	case BT_FAST_PAIR_ADV_MODE_DISCOVERABLE:
@@ -82,15 +92,17 @@ static void fp_adv_mode_status_led_handle_fn(struct k_work *w)
 	case BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND:
 		dk_set_led(FP_ADV_MODE_STATUS_LED, led_on);
 		led_on = !led_on;
-		k_work_reschedule(&fp_adv_mode_status_led_handle,
-				  K_MSEC(FP_ADV_MODE_SHOW_UI_INDICATION_LED_BLINK_INTERVAL_MS));
+		ret = k_work_reschedule(&fp_adv_mode_status_led_handle,
+				K_MSEC(FP_ADV_MODE_SHOW_UI_INDICATION_LED_BLINK_INTERVAL_MS));
+		__ASSERT_NO_MSG(ret == 1);
 		break;
 
 	case BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_HIDE_UI_IND:
 		dk_set_led(FP_ADV_MODE_STATUS_LED, led_on);
 		led_on = !led_on;
-		k_work_reschedule(&fp_adv_mode_status_led_handle,
-				  K_MSEC(FP_ADV_MODE_HIDE_UI_INDICATION_LED_BLINK_INTERVAL_MS));
+		ret = k_work_reschedule(&fp_adv_mode_status_led_handle,
+				K_MSEC(FP_ADV_MODE_HIDE_UI_INDICATION_LED_BLINK_INTERVAL_MS));
+		__ASSERT_NO_MSG(ret == 1);
 		break;
 
 	default:
@@ -115,15 +127,20 @@ static void fp_discoverable_adv_timeout_fn(struct k_work *w)
 
 static void connected(struct bt_conn *conn, uint8_t err)
 {
-	k_work_cancel_delayable(&fp_discoverable_adv_timeout);
-	k_work_cancel(&bt_adv_restart);
+	int ret = k_work_cancel_delayable(&fp_discoverable_adv_timeout);
+
+	__ASSERT_NO_MSG(ret == 0);
+	ret = k_work_cancel(&bt_adv_restart);
+	__ASSERT_NO_MSG(ret == 0);
+	ARG_UNUSED(ret);
 
 	/* Multiple simultaneous connections are not supported by the sample. */
 	__ASSERT_NO_MSG(!peer);
 
 	if (err) {
 		LOG_WRN("Connection failed (err %u)", err);
-		k_work_submit(&bt_adv_restart);
+		ret = k_work_submit(&bt_adv_restart);
+		__ASSERT_NO_MSG(ret == 1);
 		return;
 	}
 
@@ -140,7 +157,10 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	dk_set_led_off(CON_STATUS_LED);
 	peer = NULL;
 
-	k_work_submit(&bt_adv_restart);
+	int ret = k_work_submit(&bt_adv_restart);
+
+	__ASSERT_NO_MSG(ret == 1);
+	ARG_UNUSED(ret);
 }
 
 static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
@@ -166,7 +186,10 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
 	if (bonded && (fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE)) {
 		fp_adv_mode = BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND;
-		k_work_reschedule(&fp_adv_mode_status_led_handle, K_NO_WAIT);
+		int ret = k_work_reschedule(&fp_adv_mode_status_led_handle, K_NO_WAIT);
+
+		__ASSERT_NO_MSG((ret == 0) || (ret == 1));
+		ARG_UNUSED(ret);
 	}
 }
 
@@ -242,10 +265,14 @@ static void fp_adv_mode_btn_handle(uint32_t button_state, uint32_t has_changed)
 
 	if (button_pressed & FP_ADV_MODE_BUTTON_MASK) {
 		fp_adv_mode = (fp_adv_mode + 1) % BT_FAST_PAIR_ADV_MODE_COUNT;
-		k_work_reschedule(&fp_adv_mode_status_led_handle, K_NO_WAIT);
 		if (!peer) {
 			advertising_start();
 		}
+
+		int ret = k_work_reschedule(&fp_adv_mode_status_led_handle, K_NO_WAIT);
+
+		__ASSERT_NO_MSG((ret == 0) || (ret == 1));
+		ARG_UNUSED(ret);
 	}
 }
 
@@ -306,8 +333,12 @@ void main(void)
 	k_work_init_delayable(&fp_adv_mode_status_led_handle, fp_adv_mode_status_led_handle_fn);
 	k_work_init_delayable(&fp_discoverable_adv_timeout, fp_discoverable_adv_timeout_fn);
 
-	k_work_schedule(&fp_adv_mode_status_led_handle, K_NO_WAIT);
-	k_work_submit(&bt_adv_restart);
+	int ret = k_work_schedule(&fp_adv_mode_status_led_handle, K_NO_WAIT);
+
+	__ASSERT_NO_MSG(ret == 1);
+	ret = k_work_submit(&bt_adv_restart);
+	__ASSERT_NO_MSG(ret == 1);
+	ARG_UNUSED(ret);
 
 	err = dk_buttons_init(button_changed);
 	if (err) {
