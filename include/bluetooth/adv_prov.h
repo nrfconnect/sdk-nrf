@@ -8,8 +8,8 @@
  * @brief Bluetooth LE advertising providers subsystem header.
  */
 
-#ifndef BT_LE_ADV_PROV_H_
-#define BT_LE_ADV_PROV_H_
+#ifndef BT_ADV_PROV_H_
+#define BT_ADV_PROV_H_
 
 #include <zephyr/bluetooth/bluetooth.h>
 
@@ -157,4 +157,4 @@ int bt_le_adv_prov_get_sd(struct bt_data *sd, size_t *sd_len,
  * @}
  */
 
-#endif /* BT_LE_ADV_PROV_H_ */
+#endif /* BT_ADV_PROV_H_ */

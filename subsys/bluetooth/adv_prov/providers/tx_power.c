@@ -9,10 +9,10 @@
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/hci_vs.h>
 
-#include <bluetooth/bt_le_adv_prov.h>
+#include <bluetooth/adv_prov.h>
 
 #include <logging/log.h>
-LOG_MODULE_DECLARE(bt_le_adv_prov, CONFIG_BT_LE_ADV_PROV_LOG_LEVEL);
+LOG_MODULE_DECLARE(bt_le_adv_prov, CONFIG_BT_ADV_PROV_LOG_LEVEL);
 
 
 static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *state,

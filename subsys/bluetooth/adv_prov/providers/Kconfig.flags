@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config BT_LE_ADV_PROV_FLAGS
+config BT_ADV_PROV_FLAGS
 	bool "Advertising flags"
 	help
 	  Adds flag indicating that BR/EDR is not supported. If used Bluetooth

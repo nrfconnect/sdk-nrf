@@ -79,7 +79,7 @@ If any advertising data provider requests non-zero grace period time, the stoppi
 Instead of instantly stopping, the advertising enters the grace period.
 After the grace period ends, the advertising stops.
 
-The grace period is requested for example by the `Swift Pair`_ advertising data provider (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_SWIFT_PAIR`).
+The grace period is requested for example by the `Swift Pair`_ advertising data provider (:kconfig:option:`CONFIG_BT_ADV_PROV_SWIFT_PAIR`).
 During the grace period, Swift Pair data is removed from the advertising packet and the device enters Swift Pair's cool-down phase.
 This is done to ensure that the user does not try to connect to the device that is no longer available.
 

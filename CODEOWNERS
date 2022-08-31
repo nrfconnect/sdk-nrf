@@ -72,7 +72,7 @@ Kconfig*                                  @tejlmand
 /include/net/nrf_cloud_*                  @plskeggs @jayteemo @glarsennordic
 /include/bluetooth/                       @alwa-nordic @KAGA164
 /include/bluetooth/services/fast_pair.h   @MarekPieta @kapi-no @KAGA164
-/include/bluetooth/bt_le_adv_prov.h       @MarekPieta @kapi-no @KAGA164
+/include/bluetooth/adv_prov.h             @MarekPieta @kapi-no @KAGA164
 /include/bluetooth/mesh/                  @ludvigsj
 /include/caf/                             @pdunaj
 /include/debug/ppi_trace.h                @nordic-krch @anangl
@@ -162,7 +162,7 @@ Kconfig*                                  @tejlmand
 /subsys/bluetooth/                        @alwa-nordic @carlescufi @KAGA164
 /subsys/bluetooth/mesh/                   @ludvigsj
 /subsys/bluetooth/controller/             @rugeGerritsen
-/subsys/bluetooth/bt_le_adv_prov/         @MarekPieta @kapi-no @KAGA164
+/subsys/bluetooth/adv_prov/               @MarekPieta @kapi-no @KAGA164
 /subsys/bluetooth/services/fast_pair/     @MarekPieta @kapi-no @KAGA164
 /subsys/bootloader/                       @hakonfam @SebastianBoe
 /subsys/caf/                              @pdunaj

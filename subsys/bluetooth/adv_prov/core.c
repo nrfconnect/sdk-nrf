@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/bt_le_adv_prov.h>
+#include <bluetooth/adv_prov.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bt_le_adv_prov, CONFIG_BT_LE_ADV_PROV_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_le_adv_prov, CONFIG_BT_ADV_PROV_LOG_LEVEL);
 
 enum provider_set {
 	PROVIDER_SET_AD,

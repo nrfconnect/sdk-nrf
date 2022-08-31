@@ -8,7 +8,7 @@ menuconfig CAF_BLE_ADV
 	bool "Enable Bluetooth LE advertising"
 	depends on BT_PERIPHERAL
 	depends on CAF_BLE_COMMON_EVENTS
-	select BT_LE_ADV_PROV
+	select BT_ADV_PROV
 
 if CAF_BLE_ADV
 
@@ -111,7 +111,7 @@ config CAF_BLE_ADV_FILTER_ACCEPT_LIST
 config CAF_BLE_ADV_GRACE_PERIOD
 	bool "Enable grace period feature"
 	depends on CAF_BLE_ADV_PM_EVENTS
-	default y if BT_LE_ADV_PROV_SWIFT_PAIR
+	default y if BT_ADV_PROV_SWIFT_PAIR
 	help
 	  The module advertises in grace period for predefined time before
 	  advertising is turned off. During the grace period, the module
