@@ -60,9 +60,14 @@ void bt_fast_pair_set_pairing_mode(bool pairing_mode)
 static void invalidate_key(struct fp_procedure *proc)
 {
 	if (proc->state != FP_STATE_INITIAL) {
+		int ret;
+
 		proc->state = FP_STATE_INITIAL;
 		memset(proc->aes_key, EMPTY_AES_KEY_BYTE, sizeof(proc->aes_key));
-		(void)k_work_cancel_delayable(&proc->timeout);
+
+		ret = k_work_cancel_delayable(&proc->timeout);
+		__ASSERT_NO_MSG(ret == 0);
+		ARG_UNUSED(ret);
 	}
 }
 
@@ -236,14 +241,22 @@ int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_param
 		invalidate_key(proc);
 		key_gen_failure_cnt++;
 		if (key_gen_failure_cnt >= FP_KEY_GEN_FAILURE_MAX_CNT) {
+			int ret;
+
 			LOG_WRN("Key generation failure limit exceeded");
-			(void)k_work_schedule(&key_gen_failure_cnt_reset,
+			ret = k_work_schedule(&key_gen_failure_cnt_reset,
 					      FP_KEY_GEN_FAILURE_CNT_RESET_TIMEOUT);
+			__ASSERT_NO_MSG(ret == 1);
+			ARG_UNUSED(ret);
 		}
 	} else {
 		key_gen_failure_cnt = 0;
 		if (proc->state == FP_STATE_USE_TEMP_KEY) {
-			(void)k_work_reschedule(&proc->timeout, FP_KEY_TIMEOUT);
+			int ret;
+
+			ret = k_work_schedule(&proc->timeout, FP_KEY_TIMEOUT);
+			__ASSERT_NO_MSG(ret == 1);
+			ARG_UNUSED(ret);
 		}
 	}
 
@@ -282,7 +295,14 @@ void fp_keys_bt_auth_progress(const struct bt_conn *conn, bool authenticated)
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 
 	if (proc->state == FP_STATE_USE_TEMP_KEY) {
-		(void)k_work_reschedule(&proc->timeout, FP_KEY_TIMEOUT);
+		int ret;
+
+		ret = k_work_cancel_delayable(&proc->timeout);
+		__ASSERT_NO_MSG(ret == 0);
+		ret = k_work_schedule(&proc->timeout, FP_KEY_TIMEOUT);
+		__ASSERT_NO_MSG(ret == 1);
+		ARG_UNUSED(ret);
+
 		if (authenticated) {
 			proc->state = FP_STATE_WAIT_FOR_ACCOUNT_KEY;
 		}
