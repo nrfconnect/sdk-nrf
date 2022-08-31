@@ -621,6 +621,8 @@ If the HEX files overlap, the conflict is resolved as follows:
 
 This means that you can overwrite a partition's HEX file by wrapping that partition in another partition and assigning a HEX file to the new partition.
 
+.. _pm_generated_output_and_usage_pm_report:
+
 Partition Manager report
 ------------------------
 

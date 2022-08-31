@@ -10,25 +10,16 @@ The development kit and the application running Matter stack that is programmed 
 
 The |NCS| supports Matter stack that is built on top of a low-power, 802.15.4-compatible Thread network, or on top of a Wi-Fi network.
 To control the Matter accessory device remotely over either of these networks, you need to set up a Matter controller on a mobile or a PC.
-Matter controller is a role within the Matter environment.
-This controller interacts with the accessory devices using the following protocols:
 
-* Bluetooth® LE during the commissioning process - to securely pass the network credentials and provision the accessory device into the Thread network during commissioning.
-  At this stage, the controller has the commissioner role.
-  When the commissioning has completed, the device has joined the IPv6 network and is equipped with all information needed to securely operate in the Matter network with other IPv6 devices.
-  For more information about the commissioning process, see :ref:`ug_matter_network_topologies_commissioning`.
-* Regular IPv6 communication after the accessory device joins the Thread or Wi-Fi network - to interact with each other by exchanging application messages.
-  For example, to report temperature measurements of a sensor.
+|matter_controller_def_nolink|
 
-The following figure shows the protocol types and the available Matter controllers.
+.. include:: ug_matter_overview_network_topologies.rst
+   :start-after: matter_controller_start
+   :end-before: matter_controller_end
 
-.. figure:: images/matter_setup_controllers_generic.png
-   :width: 600
-   :alt: Protocol types and controllers used by Matter
+You can read more about the Matter controller on the :ref:`Matter network topologies <ug_matter_configuring_controller>` page.
 
-   Protocol types and controllers used by Matter
-
-Matter development environment depends on the network type:
+Matter development environment also depends on the network type:
 
 Matter over Thread
   To enable the IPv6 communication with the Matter accessory device over the Thread network, the Matter controller requires the Thread Border Router.
@@ -42,28 +33,23 @@ Matter over Thread
 
   Watch the following video for an overview of the Matter over Thread setup.
 
-.. raw:: html
+  .. raw:: html
 
-   <h1 align="center">
-   <iframe id="Matter_over_Thread_overview"
-           title="Matter over Thread environment video overview"
-           width="560"
-           height="315"
-           src="https://www.youtube.com/embed/XWWJYraNZPs">
-   </iframe>
-   </h1>
+     <div style="text-align: center;">
+     <iframe width="560" height="315" src="https://www.youtube.com/embed/XWWJYraNZPs" title="Matter over Thread environment overview video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+     </div>
 
 Matter over Wi-Fi
   To enable the IPv6 communication with the Matter accessory device over the Wi-Fi network, you need a Wi-Fi Access Point, for example a Wi-Fi router, so that the Matter controller can interact with any Wi-Fi device directly.
 
-The following subpages describe how to set up different development environments.
+The following subpages describe how to set up different development environments, including Matter controller.
 
 .. toctree::
    :maxdepth: 1
    :caption: Subpages:
 
-   ug_matter_configuring_controller.rst
-   ug_matter_gs_testing_thread_separate_otbr.rst
+   ug_matter_gs_testing_thread_separate_otbr_linux_macos.rst
+   ug_matter_gs_testing_thread_separate_otbr_android.rst
    ug_matter_gs_testing_thread_one_otbr.rst
    ug_matter_gs_testing_wifi_pc.rst
    ug_matter_gs_testing_wifi_mobile.rst

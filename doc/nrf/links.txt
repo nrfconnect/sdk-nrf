@@ -94,6 +94,7 @@
 .. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
 
 .. _`Matter GitHub repository`: https://github.com/project-chip/connectedhomeip
+.. _`dedicated Matter fork`: https://github.com/nrfconnect/sdk-connectedhomeip
 .. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/4b3e81a0/src/android/CHIPTool
 .. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/4b3e81a0/src/controller
 .. _`ZCL Advanced Platform`: https://github.com/project-chip/zap

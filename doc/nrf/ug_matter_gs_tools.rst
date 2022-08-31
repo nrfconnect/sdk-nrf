@@ -22,11 +22,12 @@ If you are updating from the |NCS| version earlier than v1.5.0 or you are instal
 Matter controller tools
 ***********************
 
-.. include:: ug_matter_configuring_controller.rst
+.. include:: ug_matter_overview_network_topologies.rst
    :start-after: matter_controller_start
    :end-before: matter_controller_end
 
-See the :ref:`ug_matter_configuring_controller` page for information about how to build and configure the Matter controller.
+You can read more about the Matter controller on the :ref:`Matter network topologies <ug_matter_configuring_controller>` page.
+For information about how to build and configure the Matter controller, see the pages in the :ref:`ug_matter_gs_testing` section.
 
 ZAP tool
 ********

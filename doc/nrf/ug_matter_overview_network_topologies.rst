@@ -38,11 +38,6 @@ Matter network concepts
 
 The Matter network is using the following concepts, listed in alphabetical order:
 
-Border Router
-  A network device used for ensuring interoperability of different IPv6 networks that are supported by Matter.
-  The main task of a Border Router is coordinating cross-network communication.
-  Multiple Border Routers can operate within a network to ensure no-single-point-of-failure approach.
-
 Bridge
   A network device used for exposing mesh networking devices that are not compatible with Matter to a Matter network (for example, Zigbee devices).
   Such *bridged devices* can then work with Matter devices in a fabric and communicate on different application layers.
@@ -50,6 +45,13 @@ Bridge
 
 Controller
   |matter_controller_def|
+  For more information, see the following section.
+
+Edge Router
+  A network device used for ensuring interoperability of different IPv6 networks that are supported by Matter.
+  The main task of a Edge Router is coordinating cross-network communication.
+  Multiple Edge Routers can operate within a network to ensure no-single-point-of-failure approach.
+  Examples of Edge Routers include Thread Border Router and Wi-Fi Access Point.
 
 Fabric
   This is a logical set of nodes that communicate with each other and can belong to different networks.
@@ -72,6 +74,43 @@ OTA Requestor
   A Matter node that can request information about available software update images to the OTA Provider node and receive update packages from it during the OTA software update process.
   An OTA Requestor can also handle announcements about the available OTA Providers in the Matter network.
 
+.. _ug_matter_configuring_controller:
+
+Matter controller
+=================
+
+|matter_controller_def|
+
+.. matter_controller_start
+
+The following figure shows the available Matter controllers in the |NCS|.
+
+.. figure:: images/matter_setup_controllers_generic.png
+   :width: 600
+   :alt: Controllers used by Matter
+
+   Controllers used by Matter
+
+.. matter_controller_end
+
+The Matter controller interacts with the accessory devices using the following protocols:
+
+* Bluetooth LE during the commissioning process - to securely pass the network credentials and provision the accessory device into the Thread network during commissioning.
+  At this stage, the controller has the commissioner role.
+  When the commissioning has completed, the device has joined the IPv6 network and is equipped with all information needed to securely operate in the Matter network with other IPv6 devices.
+  For more information about the commissioning process, see :ref:`ug_matter_network_topologies_commissioning`.
+* Regular IPv6 communication after the accessory device joins the Thread or Wi-Fi network - to interact with each other by exchanging application messages.
+  For example, to report temperature measurements of a sensor.
+
+The following Matter controllers can be used for testing Matter applications based on the |NCS|:
+
+* **Recommended:** CHIP Tool for Linux or macOS
+* CHIP Tool for Android
+
+These controller types are compatible with the |NCS| implementation of Matter.
+For information about how to build and configure them, see the pages in the :ref:`ug_matter_gs_testing` section.
+In the Matter upstream repository, you can find information and resources for implementing `other controller setups`_ (for example, mobile Matter controller for iOS).
+
 .. _ug_matter_network_topologies_concepts_security:
 
 Matter network security
@@ -79,25 +118,47 @@ Matter network security
 
 The Matter network security aims at authenticating only trustworthy devices to the Matter fabric and protecting the confidentiality of messages exchanged between the fabric nodes.
 
-Device authentication
+Session establishment
 =====================
+
+Session establishment is a process that serves two purposes.
+It is used to exchange keys required for establishing a safe communication between nodes.
+It also involves node authentication, which verifies that both nodes that initiate communication trust each other.
+
+The Matter protocol uses elliptic curve cryptography as the principal mean of both public and private key protection and for providing digital signatures.
+The elliptic curve cryptography is based on the NIST P-256 curve (secp256r1).
+
+The following session establishment methods are available:
+
+* Password-Authenticated Session Establishment (PASE)
+* Certificate-Authenticated Session Establishment (CASE)
+
+Password-Authenticated Session Establishment (PASE)
+---------------------------------------------------
+
+When using PASE, both nodes share the same secret.
+This process takes place when commissioning the device.
+
+PASE uses the `SPAKE2+`_ algorithm to ensure a safe exchange of keys over non-secure channel.
+With the SPAKE2+ algorithm, only one of the communicating parties actively uses the password during the execution of the protocol.
+This is a reinforced version of the Password Authenticated Key Exchange (PAKE) protocol, where both parties are involved in creating a shared key and both actively use the password.
+
+Certificate-Authenticated Session Establishment (CASE)
+------------------------------------------------------
+
+When using CASE, both nodes own operational certificates that chain back to the same root of trust.
+This process takes place while establishing the secured communication between nodes that are already commissioned.
+
+CASE uses the `SIGMA`_ algorithm to ensure a safe exchange of keys over non-secure channel.
 
 Root of trust is a concept within Matter that is centered around a certification authority (CA), identified by Root Public Key (Root PK).
 The CA is a device tasked with issuing and assigning Node Operational Credentials (NOCs).
-NOCs are used to identify a node within a fabric and are protected by the Root Private Key.
-This process takes place during the security setup with Certificate-Authenticated Session Establishment step.
+NOCs are used to identify a node within a fabric and are signed by the Root Private Key.
 NOCs are installed during the :ref:`ug_matter_network_topologies_commissioning` by the commissioner together with Trusted Root CA Certificates.
-
-Both nodes and fabrics are referenced with tuples consisting of the Root PK and the Node ID (for nodes) or Fabric ID (for fabrics).
 
 Message confidentiality
 =======================
 
-The Matter protocol uses elliptic curve cryptography as the principal mean of both public and private key protection and for providing digital signatures.
-The elliptic curve cryptography is based on the NIST P-256 curve (secp256r1).
-To prevent the communication from intercepting and unwanted decryption, Matter uses the `SPAKE2+`_ and `SIGMA`_ algorithms that ensure a safe exchange of keys over non-secure channel.
-With the SPAKE2+ algorithm, only one of the communicating parties actively uses the password during the execution of the protocol.
-This is a reinforced version of the Password Authenticated Key Exchange (PAKE) protocol, where both parties are involved in creating a shared key and both actively use the password.
 After exchanging the keys and establishing secure channel, the commonly available AES modes of operation are used to provide shared key cryptographic operations.
 
 .. _ug_matter_network_topologies_commissioning:
@@ -126,6 +187,8 @@ The commissioning procedure consists of the following stages:
    The verification can fail if the device is not able to prove the validity and ownership of mandatory :ref:`ug_matter_device_attestation` elements.
 #. Installing operational credentials -- The commissioner installs Node Operational Certificate (NOC) and Operational ID on the commissionee.
    The commissionee becomes the new node of the Matter fabric.
+   The node is identified by a tuple consisting of the Root PK, Fabric ID, and Node ID.
+   (While the fabric is identified by a tuple consisting of the Root PK and the Fabric ID.)
 #. Network commissioning -- The commissioner provisions the commissionee node with the operational network credentials, either Wi-Fi or Thread, and requests the commissionee to connect to the network.
 #. Operational discovery -- The commissioner discovers the commissionee node on the operational network using DNS-SD.
    This way, the commissioner learns the IP address of the node.
