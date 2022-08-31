@@ -78,6 +78,8 @@ The behavior of the functions in the OS abstraction layer is dependent on the |N
 This is relevant for functions such as :c:func:`nrf_modem_os_shm_tx_alloc`, which uses :ref:`Zephyr's Heap implementation <zephyr:heap_v2>` to dynamically allocate memory.
 In this case, the characteristics of the allocations made by these functions depend on the heap implementation by Zephyr.
 
+.. _modem_trace_module:
+
 Modem trace module
 ******************
 The modem trace module is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib_trace.c`.
@@ -86,6 +88,17 @@ The module implements a thread that initializes, deinitializes, and forwards mod
 
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` to send modem traces over UARTE1
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT` to send modem traces over SEGGER RTT
+
+To reduce the amount of trace data sent from the modem, a different trace level can be selected.
+Complete the following steps to configure the modem trace level at compile time:
+
+#. Set :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE` to ``y`` in your project configuration.
+#. Enable any one of the following Kconfig options by setting it to ``y`` in your project configuration:
+
+   * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_FULL`
+   * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP`
+   * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY`
+   * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY`
 
 The application can use the :c:func:`nrf_modem_lib_trace_level_set` function to set the desired trace level.
 Passing ``NRF_MODEM_LIB_TRACE_LEVEL_OFF`` to the :c:func:`nrf_modem_lib_trace_level_set` function disables trace output.
@@ -178,6 +191,55 @@ Complete the following steps to add a custom trace backend:
       CONFIG_NRF_MODEM_LIB_TRACE=y
       CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_MY_TRACE_BACKEND=y
 
+.. _modem_trace_backend_uart_custom_board:
+
+Sending traces over UART1 on a custom board
+===========================================
+
+When sending modem traces over UART1 on a custom board, configuration must be added for the UART1 device in the devicetree.
+This is done by adding the following code snippet to the board devicetree or overlay file, where the pin numbers (``0``, ``1``, ``14``, and ``15``) must be updated to match your board.
+
+.. code-block:: dts
+
+   &pinctrl {
+      uart1_default: uart1_default {
+         group1 {
+            psels = <NRF_PSEL(UART_TX, 0, 1)>,
+               <NRF_PSEL(UART_RTS, 0, 14)>;
+         };
+         group2 {
+            psels = <NRF_PSEL(UART_RX, 0, 0)>,
+               <NRF_PSEL(UART_CTS, 0, 15)>;
+            bias-pull-up;
+         };
+      };
+
+      uart1_sleep: uart1_sleep {
+         group1 {
+            psels = <NRF_PSEL(UART_TX, 0, 1)>,
+               <NRF_PSEL(UART_RX, 0, 0)>,
+               <NRF_PSEL(UART_RTS, 0, 14)>,
+               <NRF_PSEL(UART_CTS, 0, 15)>;
+            low-power-enable;
+         };
+      };
+   };
+
+   &uart1 {
+      ...
+      pinctrl-0 = <&uart1_default>;
+      pinctrl-1 = <&uart1_sleep>;
+      pinctrl-names = "default", "sleep";
+      ...
+   };
+
+The UART trace backends allow the pins and UART1 interrupt priority to be set using the devicetree.
+Other configurations set in the devicetree, such as the current speed, are overwritten by the UART trace backends.
+
+.. note::
+
+   When one of the UART trace backends is enabled by either the Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` or :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_SYNC`, it initializes the UART1 driver, regardless of its status in the devicetree.
+
 Modem fault handling
 ********************
 If a fault occurs in the modem, the application is notified through the fault handler function that is registered with the Modem library during initialization.
@@ -254,12 +316,11 @@ When the Modem library is initialized by the integration layer in |NCS|, the int
 Diagnostic functionality
 ************************
 
-The Modem library integration layer in |NCS| provides some diagnostic functionalities to log the allocations on the Modem library heap and the TX memory region.
-These functionalities can be turned on by the :kconfig:option:`CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC` options.
+The Modem library integration layer in |NCS| provides some memory diagnostic functionality that is enabled by the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG` option.
 
-The contents of both the Modem library heap and the TX memory region can be examined through the :c:func:`nrf_modem_lib_heap_diagnose` and :c:func:`nrf_modem_lib_shm_tx_diagnose` functions, respectively.
-Additionally, it is possible to schedule a periodic report of the contents of these two areas of memory by using the :kconfig:option:`CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC` options, respectively.
-The report will be printed by a dedicated work queue that is distinct from the system work queue at configurable time intervals.
+The application can retrieve runtime statistics for the library and TX memory region heaps by enabling the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG` option and calling the :c:func:`nrf_modem_lib_diag_stats_get` function.
+The application can schedule a periodic report of the runtime statistics of the library and TX memory region heaps, by enabling the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG_DUMP` option.
+The application can log the allocations on the Modem library heap and the TX memory region by enabling the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG_ALLOC` option.
 
 API documentation
 *****************

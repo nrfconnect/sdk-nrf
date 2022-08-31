@@ -13,11 +13,12 @@
 #include <stdlib.h>
 
 #include <zephyr/device.h>
+#include <zephyr/logging/log.h>
 
 #include "zephyr_fmac_main.h"
 #include "zephyr_wpa_supp_if.h"
-#include "wpa_supplicant_i.h"
-#include "bss.h"
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 /* TODO: Move this to driver_zephyr.c */
 extern struct wpa_supplicant *wpa_s_0;
@@ -91,9 +92,6 @@ void wifi_nrf_wpa_supp_event_proc_scan_start(void *if_priv)
 	if (vif_ctx_zep->supp_callbk_fns.scan_start) {
 		vif_ctx_zep->supp_callbk_fns.scan_start(vif_ctx_zep->supp_drv_if_ctx);
 	}
-
-	/* TODO: Fix this when FW starts sending SCAN_DONE before scan results */
-	wpa_supp_event_handler(vif_ctx_zep, NULL, wifi_nrf_wpa_supp_event_proc_scan_done);
 }
 
 void wifi_nrf_wpa_supp_event_proc_scan_done(void *if_priv,
@@ -102,29 +100,19 @@ void wifi_nrf_wpa_supp_event_proc_scan_done(void *if_priv,
 					    int aborted)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	union wpa_event_data *event = NULL;
+	union wpa_event_data event;
 	struct scan_info *info = NULL;
-
-	/* TODO: Fix this when FW starts sending SCAN_DONE before scan results */
-	if (scan_done_event) {
-		return;
-	}
 
 	vif_ctx_zep = if_priv;
 
-	event = k_calloc(sizeof(*event), sizeof(char));
+	memset(&event, 0, sizeof(event));
 
-	if (!event) {
-		LOG_ERR("%s: Unable to allocate memory\n", __func__);
-		return;
-	}
-
-	info = &event->scan_info;
+	info = &event.scan_info;
 
 	info->aborted = aborted;
 	info->external_scan = 0;
 	info->nl_scan_event = 1;
-	vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx, event);
+	vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx, &event);
 }
 
 void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
@@ -225,6 +213,8 @@ void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
 	}
 
 	vif_ctx_zep->supp_callbk_fns.scan_res(vif_ctx_zep->supp_drv_if_ctx, r, more_res);
+
+	k_free(r);
 }
 
 void wifi_nrf_wpa_supp_event_proc_auth_resp(void *if_priv,
@@ -312,6 +302,7 @@ void wifi_nrf_wpa_supp_event_proc_assoc_resp(void *if_priv,
 		event.assoc_info.addr = mgmt->bssid;
 		event.assoc_info.resp_frame = frame;
 		event.assoc_info.resp_frame_len = frame_len;
+		event.assoc_info.freq = vif_ctx_zep->assoc_freq;
 
 		if (frame_len > 24 + sizeof(mgmt->u.assoc_resp)) {
 			event.assoc_info.resp_ies = (unsigned char *)mgmt->u.assoc_resp.variable;
@@ -479,13 +470,26 @@ out:
 int wifi_nrf_wpa_supp_scan_abort(void *if_priv)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 
 	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
-	/* TODO: No support in UMAC for scan abort yet */
-	LOG_ERR("%s: Scan abort not supported yet\n", __func__);
+	if (!vif_ctx_zep->scan_in_progress) {
+		LOG_INF("%s:Ignore scan abort, no scan in progress", __func__);
+		goto out;
+	}
 
-	return 0;
+	status = wifi_nrf_fmac_abort_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		LOG_ERR("%s: Scan trigger failed\n", __func__);
+		goto out;
+	}
+
+out:
+	return status;
 }
 
 int wifi_nrf_wpa_supp_scan_results_get(void *if_priv)
@@ -583,10 +587,10 @@ int wifi_nrf_wpa_supp_add_key(struct img_umac_key_info *key_info, enum wpa_alg a
 	return 0;
 }
 
-int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params *params)
+int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params *params,
+				struct wpa_bss *curr_bss)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wpa_bss *curr_bss = NULL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
 	struct img_umac_auth_info auth_info;
@@ -622,12 +626,6 @@ int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 	if (params->ie) {
 		memcpy(auth_info.bss_ie.ie, params->ie, params->ie_len);
 	} else {
-		/* TODO: Move this to driver_zephyr.c */
-		/* TODO: See why the ie info is not being passed as part of
-		 * wpa_driver_auth_params
-		 */
-		curr_bss = wpa_bss_get(wpa_s_0, params->bssid, params->ssid, params->ssid_len);
-
 		memcpy(auth_info.bss_ie.ie, (const unsigned char *)(curr_bss + 1), IMG_MAX_IE_LEN);
 
 		auth_info.bss_ie.ie_len = curr_bss->ie_len;

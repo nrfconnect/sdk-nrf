@@ -7,7 +7,8 @@ tests:
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
     tags: ci_build
   sample.matter.template.release:
     build_only: true
@@ -15,14 +16,23 @@ tests:
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
     tags: ci_build
   sample.matter.template.no_dfu:
     build_only: true
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840 nrf7002dk_nrf5340_cpuapp
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf21540dk_nrf52840
+      - nrf7002dk_nrf5340_cpuapp
     tags: ci_build
     extra_args: CONF_FILE=prj_no_dfu.conf
+  sample.matter.template.no_dfu.nrf7002_ek:
+    build_only: true
+    extra_args: SHIELD=nrf7002_ek CONF_FILE=prj_no_dfu.conf
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: ci_build

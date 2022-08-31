@@ -18,8 +18,6 @@
 #include "pal.h"
 
 
-
-
 static enum wifi_nrf_status
 wifi_nrf_hal_rpu_pktram_buf_map_init(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 {
@@ -280,7 +278,7 @@ out:
 }
 
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 enum wifi_nrf_status hal_rpu_ps_wake(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 {
 	unsigned int reg_val = 0;
@@ -447,7 +445,7 @@ static void hal_rpu_ps_set_state(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 {
 	hal_dev_ctx->rpu_ps_state = ps_state;
 }
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 
 static bool hal_rpu_hpq_is_empty(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
@@ -1125,7 +1123,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 				   (unsigned long)hal_dev_ctx);
 
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	status = hal_rpu_ps_init(hal_dev_ctx);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
@@ -1147,7 +1145,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		hal_dev_ctx = NULL;
 		goto out;
 	}
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	hal_dev_ctx->bal_dev_ctx = wifi_nrf_bal_dev_add(hpriv->bpriv,
 							hal_dev_ctx);
@@ -1346,9 +1344,9 @@ void wifi_nrf_hal_dev_rem(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 			      hal_dev_ctx->cmd_q);
 
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	hal_rpu_ps_deinit(hal_dev_ctx);
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	hal_dev_ctx->hpriv->num_devs--;
 
@@ -1371,9 +1369,9 @@ enum wifi_nrf_status wifi_nrf_hal_dev_init(struct wifi_nrf_hal_dev_ctx *hal_dev_
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	hal_dev_ctx->rpu_fw_booted = true;
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	status = wifi_nrf_bal_dev_init(hal_dev_ctx->bal_dev_ctx);
 
@@ -1428,9 +1426,9 @@ enum wifi_nrf_status wifi_nrf_hal_irq_handler(void *data)
 	struct wifi_nrf_hal_dev_ctx *hal_dev_ctx = NULL;
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	unsigned long flags = 0;
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	enum RPU_PS_STATE ps_state = RPU_PS_STATE_ASLEEP;
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	hal_dev_ctx = (struct wifi_nrf_hal_dev_ctx *)data;
 
@@ -1438,24 +1436,24 @@ enum wifi_nrf_status wifi_nrf_hal_irq_handler(void *data)
 					hal_dev_ctx->lock_rx,
 					&flags);
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	ps_state = hal_dev_ctx->rpu_ps_state;
 	hal_rpu_ps_set_state(hal_dev_ctx,
 			     RPU_PS_STATE_AWAKE);
-#ifdef RPU_SLEEP_DBG
+#ifdef CONFIG_NRF_WIFI_LOW_POWER_DBG
 	hal_dev_ctx->irq_ctx = true;
-#endif /* RPU_SLEEP_DBG */
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER_DBG */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	status = hal_rpu_irq_process(hal_dev_ctx);
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	hal_rpu_ps_set_state(hal_dev_ctx,
 			     ps_state);
-#ifdef RPU_SLEEP_DBG
+#ifdef CONFIG_NRF_WIFI_LOW_POWER_DBG
 	hal_dev_ctx->irq_ctx = false;
-#endif /* RPU_SLEEP_DBG */
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER_DBG */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	wifi_nrf_osal_spinlock_irq_rel(hal_dev_ctx->hpriv->opriv,
 				       hal_dev_ctx->lock_rx,

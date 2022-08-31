@@ -28,7 +28,7 @@ struct zep_work_item zep_work_item[CONFIG_NRF700X_WORKQ_MAX_ITEMS];
 
 int get_free_work_item_index(void)
 {
-	unsigned int i;
+	int i;
 
 	for (i = 0; i < CONFIG_NRF700X_WORKQ_MAX_ITEMS; i++) {
 		if (zep_work_item[i].in_use)
@@ -48,7 +48,7 @@ void workqueue_callback(struct k_work *work)
 
 struct zep_work_item *work_alloc(void)
 {
-	unsigned int free_work_index = get_free_work_item_index();
+	int free_work_index = get_free_work_item_index();
 
 	if (free_work_index < 0) {
 		LOG_ERR("%s: Reached maximum work items", __func__);

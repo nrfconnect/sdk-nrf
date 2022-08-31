@@ -287,7 +287,7 @@ Commissioning the device
 
 .. matter_light_bulb_sample_commissioning_start
 
-To commission the device, go to the :ref:`ug_matter_configuring_env` guide and complete the steps for the Matter controller you want to use.
+To commission the device, go to the :ref:`ug_matter_gs_testing` page and complete the steps for the Matter controller you want to use.
 The guide walks you through the following steps:
 
 * Configure the Thread Border Router.

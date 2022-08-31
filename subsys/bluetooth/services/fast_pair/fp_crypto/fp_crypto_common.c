@@ -130,23 +130,35 @@ size_t fp_crypto_account_key_filter_size(size_t n)
 }
 
 int fp_crypto_account_key_filter(uint8_t *out, const struct fp_account_key *account_key_list,
-				 size_t n, uint8_t salt)
+				 size_t n, uint8_t salt, const uint8_t *battery_info)
 {
 	size_t s = fp_crypto_account_key_filter_size(n);
-	uint8_t v[FP_ACCOUNT_KEY_LEN + sizeof(salt)];
+	uint8_t v[FP_ACCOUNT_KEY_LEN + sizeof(salt) + FP_CRYPTO_BATTERY_INFO_LEN];
 	uint8_t h[FP_CRYPTO_SHA256_HASH_LEN];
 	uint32_t x;
 	uint32_t m;
+	int err;
 
 	memset(out, 0, s);
 	for (size_t i = 0; i < n; i++) {
-		memcpy(v, account_key_list[i].key, FP_ACCOUNT_KEY_LEN);
-		v[FP_ACCOUNT_KEY_LEN] = salt;
-		int err = fp_crypto_sha256(h, v, sizeof(v));
+		size_t pos = 0;
 
+		memcpy(v, account_key_list[i].key, FP_ACCOUNT_KEY_LEN);
+		pos += FP_ACCOUNT_KEY_LEN;
+
+		v[pos] = salt;
+		pos++;
+
+		if (battery_info) {
+			memcpy(&v[pos], battery_info, FP_CRYPTO_BATTERY_INFO_LEN);
+			pos += FP_CRYPTO_BATTERY_INFO_LEN;
+		}
+
+		err = fp_crypto_sha256(h, v, pos);
 		if (err) {
 			return err;
 		}
+
 		for (size_t j = 0; j < FP_CRYPTO_SHA256_HASH_LEN / sizeof(x); j++) {
 			x = sys_get_be32(&h[j * sizeof(x)]);
 			m = x % (s * __CHAR_BIT__);

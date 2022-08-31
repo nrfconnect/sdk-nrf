@@ -456,8 +456,11 @@ static unsigned int hal_rpu_event_get_all(struct wifi_nrf_hal_dev_ctx *hal_dev_c
 			goto out;
 		}
 
-		/* No more events to read */
-		if (!event_addr) {
+		/* No more events to read. Sometimes when low power mode is enabled
+		 * we see a wrong address, but it work after a while, so, add a
+		 * check for that.
+		 */
+		if (!event_addr || event_addr == 0xAAAAAAAA) {
 			break;
 		}
 

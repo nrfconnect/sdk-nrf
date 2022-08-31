@@ -6,7 +6,11 @@
 
 add_subdirectory_ifdef(CONFIG_SENSOR sensor)
 add_subdirectory_ifdef(CONFIG_NETWORKING net)
-add_subdirectory_ifdef(CONFIG_MPSL mpsl)
+
+if (CONFIG_MPSL AND NOT CONFIG_MPSL_FEM_ONLY)
+  add_subdirectory(mpsl)
+endif()
+
 add_subdirectory(hw_cc310)
 add_subdirectory(entropy)
 add_subdirectory(serial)

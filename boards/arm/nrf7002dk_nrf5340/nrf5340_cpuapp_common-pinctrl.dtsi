@@ -90,7 +90,7 @@
 		};
 	};
 
-	spi4_default: spi4_default {
+	spi3_default: spi3_default {
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 1, 15)>,
 				<NRF_PSEL(SPIM_MISO, 1, 14)>,
@@ -98,11 +98,28 @@
 		};
 	};
 
-	spi4_sleep: spi4_sleep {
+	spi3_sleep: spi3_sleep {
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 1, 15)>,
 				<NRF_PSEL(SPIM_MISO, 1, 14)>,
 				<NRF_PSEL(SPIM_MOSI, 1, 13)>;
+			low-power-enable;
+		};
+	};
+
+	spi4_default: spi4_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
+				<NRF_PSEL(SPIM_MISO, 0, 10)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 9)>;
+		};
+	};
+
+	spi4_sleep: spi4_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
+				<NRF_PSEL(SPIM_MISO, 0, 10)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 9)>;
 			low-power-enable;
 		};
 	};

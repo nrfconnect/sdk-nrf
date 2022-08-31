@@ -512,8 +512,8 @@ void on_sub_state_passive(struct app_msg_data *msg)
 	}
 
 	if ((IS_EVENT(msg, ui, UI_EVT_BUTTON_DATA_READY)) ||
-	    (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED))) {
-
+	    (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED)) ||
+	    (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_IMPACT_DETECTED))) {
 		if (IS_EVENT(msg, ui, UI_EVT_BUTTON_DATA_READY) &&
 		    msg->module.ui.data.ui.button_number != 2) {
 			return;

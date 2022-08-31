@@ -340,6 +340,14 @@ The following configuration files can be defined for any supported board:
   You must define a :file:`_def` file for every module that requires it and enable it in the configuration for the given board.
   The :file:`_def` files that are common for all the boards and build types are located in the :file:`applications/machine_learning/configuration/common` directory.
 
+Advertising configuration
+-------------------------
+
+If a given build type enables Bluetooth, the :ref:`caf_ble_adv` is used to control the Bluetooth advertising.
+This CAF module relies on :ref:`bt_le_adv_prov_readme` to manage advertising data and scan response data.
+The nRF Machine Learning application configures the data providers in :file:`src/util/Kconfig`.
+By default, the application enables a set of data providers available in the |NCS| and adds a custom provider that appends UUID128 of Nordic UART Service (NUS) to the scan response data if the NUS is enabled in the configuration and the Bluetooth local identity in use has no bond.
+
 Multi-image builds
 ------------------
 

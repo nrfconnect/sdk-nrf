@@ -4,6 +4,20 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+if (NOT CONFIG_TFM_BUILD_NS)
+  zephyr_library_named(tfm_api_nrf)
+
+  # The non-secure API files are located in a folder associated with the TF-M
+  # build system. Usually the cmake INSTALL mechanism is used to move these
+  # API source files to be built by the zephyr build system.
+  # For convenience we instead refer directly to the source files here.
+  set(src_dir ${CMAKE_CURRENT_LIST_DIR}/../tfm/boards/src)
+
+  zephyr_library_sources_ifdef(CONFIG_TFM_PARTITION_PLATFORM
+    ${src_dir}/tfm_ioctl_ns_api.c
+    )
+endif()
+
 if (CONFIG_TFM_BL2)
   # Add the mcuboot hex file built by TFM as the contents of the bl2 partitions,
   # so it can be flashed together with the app/tfm hex files.
@@ -28,6 +42,13 @@ else()
       tfm_nonsecure_PM_HEX_FILE $<TARGET_PROPERTY:tfm,TFM_NS_HEX_FILE>
       )
   endif()
+endif()
+
+if (CONFIG_BOOTLOADER_MCUBOOT AND NOT CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
+  # Configure the secondary partition to be non-secure
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_NS_SECONDARY=ON
+  )
 endif()
 
 if (CONFIG_TFM_HW_INIT_RESET_ON_BOOT)
@@ -123,6 +144,8 @@ endif()
 set_property(TARGET zephyr_property_target
   APPEND PROPERTY TFM_CMAKE_OPTIONS
     -DCRYPTO_ENGINE_BUF_SIZE=${CONFIG_TFM_CRYPTO_ENGINE_BUF_SIZE}
+    -DCRYPTO_CONC_OPER_NUM=${CONFIG_TFM_CRYPTO_CONC_OPER_NUM}
+    -DCRYPTO_IOVEC_BUFFER_SIZE=${CONFIG_TFM_CRYPTO_IOVEC_BUFFER_SIZE}
 )
 
 zephyr_include_directories(${NRF_DIR}/include/tfm)

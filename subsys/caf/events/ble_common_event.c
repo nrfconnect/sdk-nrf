@@ -80,6 +80,18 @@ APP_EVENT_TYPE_DEFINE(ble_peer_search_event,
 				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 
+static void log_ble_adv_data_update_event(const struct app_event_header *aeh)
+{
+	APP_EVENT_MANAGER_LOG(aeh, "");
+}
+
+APP_EVENT_TYPE_DEFINE(ble_adv_data_update_event,
+		      log_ble_adv_data_update_event,
+		      NULL,
+		      APP_EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_BLE_ADV_DATA_UPDATE_EVENTS,
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+
 static const char * const op_name[] = {
 	"SELECT",
 	"SELECTED",

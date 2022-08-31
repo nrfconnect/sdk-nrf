@@ -53,14 +53,8 @@ uint32_t rpu_7002_memmap[][3] = {
 	{ 0x300000, 0x338000, 1 }
 };
 
-static struct gpio_callback irq_callback_data;
 static const struct qspi_dev *qdev;
 static struct qspi_config *cfg;
-
-void irq_handler(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
-{
-	LOG_DBG("\n !!! IRQ Hit !!!!\n");
-}
 
 static int validate_addr_blk(uint32_t start_addr,
 							 uint32_t end_addr,
@@ -276,22 +270,19 @@ int rpu_wrsr2(uint8_t data)
 int rpu_rdsr2(void)
 {
 #if CONFIG_NRF700X_ON_QSPI
-	qspi_validate_rpu_wake_writecmd(&qspi_perip);
+	return qspi_validate_rpu_wake_writecmd(&qspi_perip);
 #else
-	spi_validate_rpu_wake_writecmd();
+	return spi_validate_rpu_wake_writecmd();
 #endif
-
-	return 0;
 }
 
 int rpu_rdsr1(void)
 {
 #if CONFIG_NRF700X_ON_QSPI
-	qspi_wait_while_rpu_awake(&qspi_perip);
+	return qspi_wait_while_rpu_awake(&qspi_perip);
 #else
-	spim_wait_while_rpu_awake();
+	return spim_wait_while_rpu_awake();
 #endif
-	return 0;
 }
 
 
@@ -313,8 +304,6 @@ int rpu_enable(void)
 	rpu_qspi_init();
 	rpu_wakeup();
 	rpu_clks_on();
-
-	rpu_irq_config(&irq_callback_data, irq_handler);
 
 	return 0;
 }

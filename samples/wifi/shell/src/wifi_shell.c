@@ -25,6 +25,9 @@
 #include <src/utils/common.h>
 #include <wpa_supplicant/config.h>
 #include <wpa_supplicant/wpa_supplicant_i.h>
+
+#include "zephyr_disp_scan.h"
+#include "supp_main.h"
 #endif /* CONFIG_WPA_SUPP */
 
 static struct {
@@ -44,16 +47,40 @@ static uint32_t scan_result;
 
 int cli_main(int argc, const char **argv);
 
-extern struct wpa_supplicant *wpa_s_0;
+extern struct wpa_global *global;
+
+/* TODO: Take this an input from shell */
+static const char *if_name = "wlan0";
 
 struct wpa_ssid *ssid_0;
 
 #define MAX_SSID_LEN 32
 
+static inline const char *driver_security_to_string(int security)
+{
+	switch (security) {
+	case IMG_WEP:
+		return "WEP";
+	case IMG_WPA:
+		return "WPA";
+	case IMG_WPA2:
+		return "WPA2";
+	case IMG_WPA3:
+		return "WPA3";
+	case IMG_WAPI:
+		return "WAPI";
+	case IMG_OPEN:
+		return "OPEN";
+	case IMG_EAP:
+		return "EAP";
+	default:
+		return "Unknown";
+	}
+}
 
-static void scan_result_cb(struct net_if *iface,
+static void driver_scan_result_cb(struct net_if *iface,
 			   int status,
-			   struct wifi_scan_result *entry)
+			   struct wifi_driver_scan_result *entry)
 {
 	if (!iface) {
 		return;
@@ -62,13 +89,13 @@ static void scan_result_cb(struct net_if *iface,
 	if (!entry) {
 		if (status) {
 			shell_fprintf(context.shell,
-				      SHELL_WARNING,
-				      "Scan request failed (%d)\n",
-				      status);
+				SHELL_WARNING,
+				"Scan request failed (%d)\n",
+				status);
 		} else {
 			shell_fprintf(context.shell,
-				      SHELL_NORMAL,
-				      "Scan request done\n");
+				SHELL_NORMAL,
+				"Scan request done\n");
 		}
 
 		return;
@@ -78,20 +105,25 @@ static void scan_result_cb(struct net_if *iface,
 
 	if (scan_result == 1U) {
 		shell_fprintf(context.shell,
-			      SHELL_NORMAL,
-			      "\n%-4s | %-32s %-5s | %-4s | %-4s | %-5s\n", "Num", "SSID",
-			      "(len)", "Chan", "RSSI", "Sec");
+			SHELL_NORMAL,
+			"\n%-4s | %-32s %-5s | %-4s | %-4s | %-8s | %-12s\n", "Num", "SSID",
+			"(len)", "Chan", "RSSI", "Sec", "BSSID");
 	}
 
 	shell_fprintf(context.shell,
-		      SHELL_NORMAL,
-		      "%-4d | %-32s %-5u | %-4u | %-4d | %-5s\n",
-		      scan_result,
-		      entry->ssid,
-		      entry->ssid_length,
-		      entry->channel,
-		      entry->rssi,
-		      (entry->security == WIFI_SECURITY_TYPE_PSK ? "WPA/WPA2" : "Open"));
+		SHELL_NORMAL,
+		"%-4d | %-32s %-5u | %-4u | %-4d | %-8s | "
+		"%02x:%02x:%02x:%02x:%02x:%02x\n",
+		scan_result,
+		entry->ssid,
+		entry->ssid_length,
+		entry->channel,
+		entry->rssi,
+		driver_security_to_string(entry->security),
+		entry->mac[0], entry->mac[1],
+		entry->mac[2], entry->mac[3],
+		entry->mac[4], entry->mac[5]
+	);
 }
 
 
@@ -106,7 +138,7 @@ static int cmd_wifi_scan(const struct shell *shell,
 	context.shell = shell;
 
 	return dev_ops->off_api.disp_scan(dev,
-					  scan_result_cb);
+					  driver_scan_result_cb);
 }
 
 
@@ -143,6 +175,16 @@ static int __wifi_args_to_params(size_t argc,
 	return 0;
 }
 
+static int send_wpa_supplicant_dummy_event(void)
+{
+	struct wpa_supplicant_event_msg msg = { 0 };
+
+	msg.ignore_msg = true;
+	wpa_printf(MSG_INFO, "Msg:Dummy, size: %d", sizeof(msg));
+
+	return send_wpa_supplicant_event(&msg);
+}
+
 
 static int cmd_supplicant_connect(const struct shell *shell,
 				  size_t argc,
@@ -152,6 +194,7 @@ static int cmd_supplicant_connect(const struct shell *shell,
 	struct wifi_connect_req_params *params;
 	struct wpa_ssid *ssid = NULL;
 	bool pmf = true;
+	struct wpa_supplicant *wpa_s;
 
 	if (__wifi_args_to_params(argc - 1,
 				  &argv[1],
@@ -162,7 +205,8 @@ static int cmd_supplicant_connect(const struct shell *shell,
 
 	params = &cnx_params;
 
-	if (!wpa_s_0) {
+	wpa_s = wpa_supplicant_get_iface(global, if_name);
+	if (!wpa_s) {
 		shell_fprintf(context.shell,
 			      SHELL_ERROR,
 			      "%s: wpa_supplicant is not initialized, dropping connect\n",
@@ -170,7 +214,9 @@ static int cmd_supplicant_connect(const struct shell *shell,
 		return -1;
 	}
 
-	ssid = wpa_supplicant_add_network(wpa_s_0);
+	wpa_supplicant_remove_all_networks(wpa_s);
+
+	ssid = wpa_supplicant_add_network(wpa_s);
 	ssid->ssid = os_zalloc(sizeof(u8) * MAX_SSID_LEN);
 
 	memcpy(ssid->ssid, params->ssid, params->ssid_length);
@@ -178,8 +224,8 @@ static int cmd_supplicant_connect(const struct shell *shell,
 	ssid->disabled = 1;
 	ssid->key_mgmt = WPA_KEY_MGMT_NONE;
 
-	wpa_s_0->conf->filter_ssids = 1;
-	wpa_s_0->conf->ap_scan = 1;
+	wpa_s->conf->filter_ssids = 1;
+	wpa_s->conf->ap_scan = 1;
 
 	if (params->psk) {
 		// TODO: Extend enum wifi_security_type
@@ -220,11 +266,13 @@ static int cmd_supplicant_connect(const struct shell *shell,
 
 	}
 
-	wpa_supplicant_enable_network(wpa_s_0,
+	wpa_supplicant_enable_network(wpa_s,
 				      ssid);
 
-	wpa_supplicant_select_network(wpa_s_0,
+	wpa_supplicant_select_network(wpa_s,
 				      ssid);
+
+	send_wpa_supplicant_dummy_event();
 
 	return 0;
 }
@@ -234,8 +282,23 @@ static int cmd_supplicant(const struct shell *shell,
 			  size_t argc,
 			  const char *argv[])
 {
-	return cli_main(argc,
-			argv);
+	int ret;
+	struct wpa_supplicant *wpa_s = wpa_supplicant_get_iface(global, if_name);
+
+	if (!wpa_s) {
+		shell_fprintf(shell,
+			SHELL_ERROR,
+			"%s: wpa_supplicant is not initialized, dropping connect\n",
+			__func__);
+		return -1;
+	}
+
+	ret =  cli_main(argc, argv);
+	if (!ret) {
+		send_wpa_supplicant_dummy_event();
+	}
+
+	return ret;
 }
 #endif /* CONFIG_WPA_SUPP */
 
@@ -311,6 +374,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD(signal_poll,
 		  NULL,
 		  "\"\"",
+		  cmd_supplicant),
+	SHELL_CMD(abort_scan,
+		  NULL,
+		  "\"Abort an ongoing scan\"",
 		  cmd_supplicant),
 #endif /* CONFIG_WPA_SUPP */
 	SHELL_SUBCMD_SET_END);

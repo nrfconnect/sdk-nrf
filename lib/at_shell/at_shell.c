@@ -54,7 +54,7 @@ int at_shell(const struct shell *shell, size_t argc, char **argv)
 		at_monitor_pause(&at_shell_monitor);
 		shell_print(shell, "AT command event handler disabled");
 	} else {
-		err = nrf_modem_at_cmd(response, sizeof(response), command);
+		err = nrf_modem_at_cmd(response, sizeof(response), "%s", command);
 		if (err < 0) {
 			shell_print(shell, "Sending AT command failed with error code %d", err);
 			return err;

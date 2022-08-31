@@ -197,8 +197,12 @@ def __populate_hex_paths(dev, options):
 
         if options.mcuboot != '':
             temp_dest_folder = str(temp_dest_folder)
-            indices = [i for i, c in enumerate(temp_dest_folder) if c == '/']
-            final_file_prefix = temp_dest_folder[indices[-2]+1:].replace('/', '_')+'_'
+            if os.name == 'nt':
+                folder_slash ='\\'
+            else:
+                folder_slash ='/'
+            indices = [i for i, c in enumerate(temp_dest_folder) if c == folder_slash]
+            final_file_prefix = temp_dest_folder[indices[-2]+1:].replace(folder_slash, '_')+'_'
             dev.hex_path_net = dest_folder / f"{final_file_prefix}pcft_CPUNET.hex"
         else:
             for hex_file in reversed(hex_files_found):

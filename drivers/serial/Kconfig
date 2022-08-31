@@ -13,6 +13,10 @@ config NRF_SW_LPUART
 
 if NRF_SW_LPUART
 
+# Set number of event handlers used by the lpuart driver
+config NRFX_GPIOTE_NUM_OF_EVT_HANDLERS
+	default 2
+
 config NRF_SW_LPUART_INIT_PRIORITY
 	int "Initialization priority"
 	default 45

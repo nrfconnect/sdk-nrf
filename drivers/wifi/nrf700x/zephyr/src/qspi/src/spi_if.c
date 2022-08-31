@@ -164,7 +164,7 @@ int _spim_wait_while_rpu_awake(void)
 		k_msleep(1);
 	}
 
-	return ret;
+	return val;
 }
 
 /* Wait until RDSR2 confirms RPU_WAKEUP_NOW write is successful */

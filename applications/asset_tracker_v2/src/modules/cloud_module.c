@@ -876,7 +876,8 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 				true);
 	}
 
-	if (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND)) {
+	if ((IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND)) ||
+	    (IS_EVENT(msg, data, DATA_EVT_IMPACT_DATA_SEND))) {
 
 		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
 

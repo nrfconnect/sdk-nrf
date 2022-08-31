@@ -9,7 +9,6 @@
 #include <net/nrf_cloud.h>
 #include <nrf_cloud_fsm.h>
 #include <zephyr/shell/shell.h>
-#include <zephyr/shell/shell_uart.h>
 #include "mosh_print.h"
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
@@ -26,6 +25,7 @@ BUILD_ASSERT(
 	IS_ENABLED(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD));
 
 extern struct k_work_q mosh_common_work_q;
+extern const struct shell *mosh_shell;
 
 static struct k_work_delayable cloud_reconnect_work;
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -78,9 +78,7 @@ static void notify_pgps(struct k_work *work)
 
 static void cloud_cmd_execute(struct k_work *work)
 {
-	const struct shell *shell = shell_backend_uart_get_ptr();
-
-	shell_execute_cmd(shell, shell_cmd);
+	shell_execute_cmd(mosh_shell, shell_cmd);
 	memset(shell_cmd, 0, CLOUD_CMD_MAX_LENGTH);
 }
 

@@ -524,7 +524,6 @@ static int cmd_gnss_agps(const struct shell *shell, size_t argc, char **argv)
 
 static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **argv)
 {
-	size_t bin_array_length = 0;
 	int ret = 0;
 
 	if (argc == 1) {
@@ -532,6 +531,9 @@ static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **a
 		ret = gnss_inject_agps_data();
 	} else if (argc == 2) {
 		/* Assistance data provided as command line argument */
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+		size_t bin_array_length = 0;
+
 		if (strlen(argv[1]) <= AGPS_CMD_LINE_INJECT_MAX_LENGTH) {
 			char *buf = k_malloc(sizeof(char) * AGPS_CMD_LINE_INJECT_MAX_LENGTH);
 
@@ -558,6 +560,11 @@ static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **a
 				   AGPS_CMD_LINE_INJECT_MAX_LENGTH);
 			ret = -EINVAL;
 		}
+#else
+		mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGPS to enable the processing of "
+			   "A-GPS data");
+		ret = -EOPNOTSUPP;
+#endif
 	}
 	return ret;
 }

@@ -13,6 +13,7 @@ if SENSOR
 
 rsource "bh1749/Kconfig"
 rsource "sensor_sim/Kconfig"
+rsource "sensor_stub/Kconfig"
 rsource "pmw3360/Kconfig"
 rsource "paw3212/Kconfig"
 

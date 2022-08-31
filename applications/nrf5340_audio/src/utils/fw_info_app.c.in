@@ -16,71 +16,69 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(fw_info);
 
-static const char COMPILE_DATE[]    = "@NRF5340_AUDIO_CORE_APP_COMP_DATE@";
-static const char NRF5340_CORE[]    = "nRF5340 Audio nRF5340 Audio DK cpuapp";
+static const char COMPILE_DATE[] = "@NRF5340_AUDIO_CORE_APP_COMP_DATE@";
+static const char NRF5340_CORE[] = "nRF5340 Audio nRF5340 Audio DK cpuapp";
 
 #define VER_STRING_SIZE_MAX 12
-static const uint8_t FW_VERSION_MAJOR = @NRF5340_AUDIO_VERSION_MAJOR@;
-static const uint8_t FW_VERSION_MINOR = @NRF5340_AUDIO_VERSION_MINOR@;
-static const uint8_t FW_VERSION_PATCH = @NRF5340_AUDIO_VERSION_PATCH@;
+static const uint8_t FW_VERSION_MAJOR = @NCS_VERSION_MAJOR@;
+static const uint8_t FW_VERSION_MINOR = @NCS_VERSION_MINOR@;
+static const uint8_t FW_VERSION_PATCH = @NCS_VERSION_PATCH@;
 static char version_string[VER_STRING_SIZE_MAX];
 
 int fw_info_app_print(void)
 {
 	int ret;
 
-	ret = sprintf(version_string, "%d.%d.%d", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
+	ret = sprintf(version_string, "%d.%d.%d", FW_VERSION_MAJOR, FW_VERSION_MINOR,
+		      FW_VERSION_PATCH);
 	if (ret < 0) {
 		return ret;
 	}
 
-	LOG_INF(COLOR_GREEN"\r\n\t %s \
-			    \r\n\t FW Version: %s \
-			    \r\n\t Cmake run : %s"COLOR_RESET,
-	NRF5340_CORE, version_string, COMPILE_DATE);
+	LOG_INF(COLOR_GREEN "\r\n\t %s \
+			    \r\n\t NCS Version: %s \
+			    \r\n\t Cmake run : %s" COLOR_RESET,
+		NRF5340_CORE, version_string, COMPILE_DATE);
 
 #if (CONFIG_DEBUG)
 	LOG_INF("------- DEBUG BUILD -------");
 
-	#if (CONFIG_AUDIO_DEV==HEADSET)
-		enum audio_channel channel;
+#if (CONFIG_AUDIO_DEV == HEADSET)
+	enum audio_channel channel;
 
-		ret = channel_assignment_get(&channel);
-		if (ret) {
-			channel = AUDIO_CHANNEL_DEFAULT;
-			static const char log_tag[] = "HL";
-			ret = log_set_tag(log_tag);
-			if (ret) {
-				return ret;
-			}
-			LOG_INF(COLOR_CYAN"\r\n\t HEADSET <no ch selected> defaulting to " STRINGIFY(AUDIO_CHANNEL_DEFAULT)" "COLOR_RESET);
-		}
-		if (channel == AUDIO_CH_L) {
-			static const char log_tag[] = "HL";
-			ret = log_set_tag(log_tag);
-			if (ret) {
-				return ret;
-			}
-			LOG_INF(COLOR_CYAN"\r\n\t HEADSET left device"COLOR_RESET);
-		} else if (channel == AUDIO_CH_R) {
-			static const char log_tag[] = "HR";
-			ret = log_set_tag(log_tag);
-			if (ret) {
-				return ret;
-			}
-			LOG_INF(COLOR_CYAN"\r\n\t HEADSET right device"COLOR_RESET);
-		} else {
-			__ASSERT(false, "Unknown channel");
-		}
-
-	#elif CONFIG_AUDIO_DEV==GATEWAY
-		static const char log_tag[] = "GW";
-		ret = log_set_tag(log_tag);
+	ret = channel_assignment_get(&channel);
+	if (ret) {
+		channel = AUDIO_CHANNEL_DEFAULT;
+		ret = log_set_tag(CH_L_TAG);
 		if (ret) {
 			return ret;
 		}
-		LOG_INF(COLOR_CYAN"\r\n\t Compiled for GATEWAY device"COLOR_RESET);
-	#endif /* (CONFIG_AUDIO_DEV==HEADSET) */
+		LOG_INF(COLOR_CYAN "\r\n\t HEADSET <no ch selected> defaulting to " STRINGIFY(
+			AUDIO_CHANNEL_DEFAULT) " " COLOR_RESET);
+	}
+	if (channel == AUDIO_CH_L) {
+		ret = log_set_tag(CH_L_TAG);
+		if (ret) {
+			return ret;
+		}
+		LOG_INF(COLOR_CYAN "\r\n\t HEADSET left device" COLOR_RESET);
+	} else if (channel == AUDIO_CH_R) {
+		ret = log_set_tag(CH_R_TAG);
+		if (ret) {
+			return ret;
+		}
+		LOG_INF(COLOR_CYAN "\r\n\t HEADSET right device" COLOR_RESET);
+	} else {
+		__ASSERT(false, "Unknown channel");
+	}
+
+#elif CONFIG_AUDIO_DEV == GATEWAY
+	ret = log_set_tag(GW_TAG);
+	if (ret) {
+		return ret;
+	}
+	LOG_INF(COLOR_CYAN "\r\n\t Compiled for GATEWAY device" COLOR_RESET);
+#endif /* (CONFIG_AUDIO_DEV == HEADSET) */
 #endif /* (CONFIG_DEBUG) */
 
 	return 0;

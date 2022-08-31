@@ -22,8 +22,17 @@ config NRF_MODEM_LIB_LOG_FW_VERSION_UUID
 	depends on LOG
 	bool "Log FW version and UUID during initialization"
 
+config NRF_MODEM_LIB_TRACE_ENABLED
+	bool "Enable proprietary traces (DEPRECATED)"
+	help
+	  Deprecated, use NRF_MODEM_LIB_TRACE instead.
+	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
+	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
+	  Trace data is output on the chosen trace backend.
+
 config NRF_MODEM_LIB_TRACE
-	bool "Enable proprietary traces"
+	bool "Enable proprietary traces" if !NRF_MODEM_LIB_TRACE_ENABLED
+	default y if NRF_MODEM_LIB_TRACE_ENABLED
 	help
 	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
 	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
@@ -138,58 +147,47 @@ choice NRF_MODEM_LIB_ON_FAULT
 config NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
 	bool "Do nothing"
 	help
-	  Do nothing but log the fault if the application is notified of a fault in the modem.
+	  Let the fault handler log the fault and return.
 
 config NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
 	bool "Reset modem"
 	help
-	  If the application is notified of a fault in the modem it will shut down and reinitialize
-	  the modem and modem library. The reinitialization will destroy all sockets and state of
-	  the modem, and it is up to the application to recover properly.
+	  Let the fault handler reset the modem.
 
 config NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
 	bool "Application defined"
 	help
-	  If the application is notified of a fault in the modem it will call an application
-	  specific handler named nrf_modem_fault_handler.
+	  Let the application define the fault handler function.
 
 endchoice # NRF_MODEM_LIB_ON_FAULT
 
-menu "Diagnostics"
-
-config NRF_MODEM_LIB_DEBUG_ALLOC
-	depends on LOG
-	bool "Debug allocations on the library heap"
+menuconfig NRF_MODEM_LIB_MEM_DIAG
+	bool "Memory diagnostic"
+	select SYS_HEAP_LISTENER
+	select SYS_HEAP_RUNTIME_STATS
 	help
-	   Log all nrf_modem_os_alloc() and nrf_modem_os_free() calls.
+	  Keep track of the library and shared memory heap usage.
 
-config NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC
-	depends on LOG
-	bool "Debug allocations on the TX region"
+if (NRF_MODEM_LIB_MEM_DIAG && LOG)
+
+config NRF_MODEM_LIB_MEM_DIAG_ALLOC
+	bool "Log all memory allocations"
 	help
-	  Log all nrf_modem_os_shm_tx_alloc() and nrf_modem_os_shm_tx_free() calls.
+	   Log all nrf_modem_os_alloc(), nrf_modem_os_free()
+	   nrf_modem_os_shm_tx_alloc() and nrf_modem_os_shm_tx_free() calls.
 
-config NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
-	bool "Periodically print library heap info"
+config NRF_MODEM_LIB_MEM_DIAG_DUMP
+	bool "Periodically log shared memory and heap statistics"
 	help
-	  Schedule a periodic system workqueue task to print the library heap info.
+	  Schedule a periodic system workqueue task to print
+	  the library and shared memory heap runtime statistics.
 
-config NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS
-	depends on NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
+config NRF_MODEM_LIB_MEM_DIAG_DUMP_PERIOD_MS
+	depends on NRF_MODEM_LIB_MEM_DIAG_DUMP
 	int "Period (millisec)"
 	default 20000
 
-config NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
-	bool "Periodically print the TX region heap info"
-	help
-	  Schedule a periodic system workqueue task to print the library TX region heap info.
-
-config NRF_MODEM_LIB_SHMEM_TX_DUMP_PERIOD_MS
-	depends on NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
-	int "Period (millisec)"
-	default 20000
-
-endmenu
+endif
 
 module = NRF_MODEM_LIB
 module-str = Modem library

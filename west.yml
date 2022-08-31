@@ -50,7 +50,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: f7b06162027da4421bd7df097137b601a21ceb8d
+      revision: b341c1ffbee9e1694f07a62f55b76b3f4947f603
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -100,10 +100,10 @@ manifest:
     # changes.
     - name: sdk-hostap
       path: modules/lib/hostap
-      revision: 386a52e67193f5166090f40a59a5bb0951900ce4
+      revision: 40e297d14ed7a1b8292819f6e60caf4e4fc9eda3
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: b3e43db105b3eeb6490e0c9ea31c33d76b55361d
+      revision: 74b34fe10bde956ddecd84104536dcb78a612e5f
       path: bootloader/mcuboot
     - name: mbedtls-nrf
       path: mbedtls
@@ -112,11 +112,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: bc8ce220451320eb0fd74e8e5b7bd74093b6a784
+      revision: 45f861abcfc2e2299860e56014cb98ccf43acd54
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 3adf5462ee7f0f4e4ae24837fc3f2aba470cea97
+      revision: 48b6f0742160abf679ce27dc28ba1b6cdd4b8c96
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -124,7 +124,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: bb3c75702852ed7efaf6058a38b5a86a71581fa4
+      revision: b4344f5f229640000fa0c4e957f213087d50082f
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -146,7 +146,7 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: f5f0d2540d99d1d6c43a6a9bf796e8dfeced059c
+      revision: 4296c2ad29120d3f7897e996623857d89554e2ff
       groups:
       - homekit
     - name: find-my
@@ -159,6 +159,10 @@ manifest:
       path: modules/lib/lc3
       groups:
       - nrf5340_audio
+    - name: azure-sdk-for-c
+      repo-path: azure-sdk-for-c
+      path: modules/lib/azure-sdk-for-c
+      revision: 308c171cb4b5eed266649012a68406487ec81fb2
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
@@ -167,7 +171,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 36a634536d2cd3c455545f0b97c926275772153c
+      revision: 0.33.0
       remote: memfault
     - name: cirrus
       repo-path: sdk-mcu-drivers

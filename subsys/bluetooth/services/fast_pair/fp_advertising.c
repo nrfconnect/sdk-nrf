@@ -114,7 +114,7 @@ static int fp_adv_data_fill_non_discoverable(struct net_buf_simple *buf, size_t 
 		net_buf_simple_add_u8(buf, ENCODE_FIELD_LEN_TYPE(ak_filter_size, ak_filter_type));
 
 		err = fp_crypto_account_key_filter(net_buf_simple_add(buf, ak_filter_size), ak,
-						   account_key_cnt, salt);
+						   account_key_cnt, salt, NULL);
 		if (err) {
 			return err;
 		}

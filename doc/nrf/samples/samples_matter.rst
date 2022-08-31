@@ -46,7 +46,7 @@ The following table lists variants and extensions available out of the box for e
       -
       - ✔
       - ✔
-      -
+      - ✔
       -
 
 See the sample documentation pages for instructions about how to enable these variants and extenstions.

@@ -20,11 +20,11 @@
 
 #define MAX_HAL_RPU_READY_WAIT (1 * 1000 * 1000) /* 1 sec */
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 #define RPU_PS_IDLE_TIMEOUT 10  /* msecs */
 #define RPU_PS_POLL_IDLE_TIMEOUT 10  /* msecs */
 #define RPU_PS_WAKE_TIMEOUT 1  /* secs */
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 
 enum RPU_PROC_TYPE {
@@ -58,13 +58,13 @@ enum WIFI_NRF_HAL_MSG_TYPE {
 	WIFI_NRF_HAL_MSG_TYPE_MAX,
 };
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 enum RPU_PS_STATE {
 	RPU_PS_STATE_ASLEEP,
 	RPU_PS_STATE_AWAKE,
 	RPU_PS_STATE_MAX
 };
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 
 struct wifi_nrf_hal_cfg_params {
@@ -211,14 +211,14 @@ struct wifi_nrf_hal_dev_ctx {
 	unsigned long addr_rpu_pktram_base_rx;
 	unsigned long addr_rpu_pktram_base_rx_pool[MAX_NUM_OF_RX_QUEUES];
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	enum RPU_PS_STATE rpu_ps_state;
 	void *rpu_ps_timer;
 	void *rpu_ps_lock;
 	bool dbg_enable;
 	bool irq_ctx;
 	bool rpu_fw_booted;
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 	char *event_data;
 	char *event_data_curr;
 	unsigned int event_data_len;

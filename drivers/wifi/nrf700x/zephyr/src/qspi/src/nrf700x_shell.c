@@ -284,9 +284,30 @@ static int cmd_rpuclks_on(const struct shell *shell, size_t argc, char **argv)
 	return shell_ret(rpu_clks_on());
 }
 
+
+static void dummy_irq_handler(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
+{
+	LOG_DBG("\n !!! IRQ Hit !!!!\n");
+}
+
 static int cmd_wifi_on(const struct shell *shell, size_t argc, char **argv)
 {
-	return shell_ret(rpu_enable());
+	int ret;
+	struct gpio_callback irq_callback_data;
+
+	ret = rpu_enable();
+	if (ret) {
+		goto err;
+	}
+
+	ret = rpu_irq_config(&irq_callback_data, dummy_irq_handler);
+	if (ret) {
+		goto err;
+	}
+
+	return SHELL_OK;
+err:
+	return SHELL_FAIL;
 }
 
 static int cmd_wifi_off(const struct shell *shell, size_t argc, char **argv)

@@ -28,7 +28,6 @@ If you are new to Matter, you can follow along with the video tutorials on Nordi
    :maxdepth: 1
    :caption: Subpages:
 
-   ug_matter_architecture.rst
-   ug_matter_configuring.rst
-   ug_matter_tools.rst
-   ug_matter_creating_accessory.rst
+   ug_matter_intro_overview.rst
+   ug_matter_intro_gs.rst
+   ug_matter_intro_device.rst

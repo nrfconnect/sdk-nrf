@@ -481,22 +481,27 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 		sHaveBLEConnections = ConnectivityMgr().NumBLEConnections() != 0;
 		UpdateStatusLED();
 		break;
-	case DeviceEventType::kThreadStateChange:
-	case DeviceEventType::kWiFiConnectivityChange:
 #if defined(CONFIG_NET_L2_OPENTHREAD)
-		sIsNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned();
-		sIsNetworkEnabled = ConnectivityMgr().IsThreadEnabled();
-#elif defined(CONFIG_CHIP_WIFI)
-		sIsNetworkProvisioned = ConnectivityMgr().IsWiFiStationProvisioned();
-		sIsNetworkEnabled = ConnectivityMgr().IsWiFiStationEnabled();
-#endif
-		UpdateStatusLED();
-		break;
 	case DeviceEventType::kDnssdPlatformInitialized:
 #if CONFIG_CHIP_OTA_REQUESTOR
 		InitBasicOTARequestor();
-#endif
+#endif /* CONFIG_CHIP_OTA_REQUESTOR */
 		break;
+	case DeviceEventType::kThreadStateChange:
+		sIsNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned();
+		sIsNetworkEnabled = ConnectivityMgr().IsThreadEnabled();
+#elif defined(CONFIG_CHIP_WIFI)
+	case DeviceEventType::kWiFiConnectivityChange:
+		sIsNetworkProvisioned = ConnectivityMgr().IsWiFiStationProvisioned();
+		sIsNetworkEnabled = ConnectivityMgr().IsWiFiStationEnabled();
+#if CONFIG_CHIP_OTA_REQUESTOR
+		if (event->WiFiConnectivityChange.Result == kConnectivity_Established) {
+			InitBasicOTARequestor();
+		}
+#endif /* CONFIG_CHIP_OTA_REQUESTOR */
+		UpdateStatusLED();
+		break;
+#endif
 	default:
 		break;
 	}

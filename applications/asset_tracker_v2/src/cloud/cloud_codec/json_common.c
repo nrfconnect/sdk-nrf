@@ -574,6 +574,57 @@ exit:
 	return err;
 }
 
+int json_common_impact_data_add(cJSON *parent,
+				struct cloud_data_impact *data,
+				enum json_common_op_code op,
+				const char *object_label,
+				cJSON **parent_ref)
+{
+	int err;
+
+	if (!data->queued) {
+		return -ENODATA;
+	}
+
+	err = date_time_uptime_to_unix_time_ms(&data->ts);
+	if (err) {
+		LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
+		return err;
+	}
+
+	cJSON *impact_obj = cJSON_CreateObject();
+
+	if (impact_obj == NULL) {
+		err = -ENOMEM;
+		goto exit;
+	}
+
+	err = json_add_number(impact_obj, DATA_VALUE, data->magnitude);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(impact_obj, DATA_TIMESTAMP, data->ts);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = op_code_handle(parent, op, object_label, impact_obj, parent_ref);
+	if (err) {
+		goto exit;
+	}
+
+	data->queued = false;
+
+	return 0;
+
+exit:
+	cJSON_Delete(impact_obj);
+	return err;
+}
+
 int json_common_neighbor_cells_data_add(cJSON *parent,
 					struct cloud_data_neighbor_cells *data,
 					enum json_common_op_code op)
@@ -1122,6 +1173,16 @@ int json_common_batch_data_add(cJSON *parent, enum json_common_buffer_type type,
 			struct cloud_data_ui *data =
 					(struct cloud_data_ui *)buf;
 			err = json_common_ui_data_add(array_obj,
+						      &data[i],
+						      JSON_COMMON_ADD_DATA_TO_ARRAY,
+						      NULL,
+						      NULL);
+		}
+			break;
+		case JSON_COMMON_IMPACT: {
+			struct cloud_data_impact *data =
+					(struct cloud_data_impact *)buf;
+			err = json_common_impact_data_add(array_obj,
 						      &data[i],
 						      JSON_COMMON_ADD_DATA_TO_ARRAY,
 						      NULL,

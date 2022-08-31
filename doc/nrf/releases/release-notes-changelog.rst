@@ -35,6 +35,11 @@ Application development
 
 * Added information about :ref:`app_build_output_files` on the :ref:`app_build_system` page.
 
+Board support
+-------------
+
+* TF-M is now enabled by default on Thingy:91
+
 Partition Manager
 -----------------
 
@@ -114,10 +119,21 @@ nRF IEEE 802.15.4 radio driver
 
 * Added option to configure IEEE 802.15.4 ACK frame timeout at build time using :kconfig:option:`CONFIG_NRF_802154_ACK_TIMEOUT_CUSTOM_US`.
 
+Wi-Fi
+-----
+
+* Added support for nRF700x DK that supports Wi-Fi SoC, which implements IEEE 802.11 protocols.
+
+See `Wi-Fi samples`_ for details about how to use Wi-Fi in your application.
+
+
 RF Front-End Modules
 ====================
 
 * Fixed a build error that occurred when building an application for nRF53 SoCs with Simple GPIO Front-End Module support enabled.
+* Added the :kconfig:option:`CONFIG_MPSL_FEM_ONLY` Kconfig option that allows the :ref:`nrfxlib:mpsl_fem` API to be used without other MPSL features.
+  The :ref:`MPSL library <nrfxlib:mpsl>` is linked into the build without initialization.
+  You cannot use other MPSL features when this option is enabled.
 
 Applications
 ============
@@ -127,11 +143,16 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
+  * Added:
+
+    * :ref:`motion_impact_detection` using the ADXL372 accelerometer.
+
   * Removed:
 
     * ``CONFIG_APP_REQUEST_GNSS_ON_INITIAL_SAMPLING`` option.
     * ``CONFIG_APP_REQUEST_NEIGHBOR_CELLS_DATA`` option.
     * ``CONFIG_EXTERNAL_SENSORS_ACTIVITY_DETECTION_AUTO`` option.
+    * ``CONFIG_MODEM_CONVERT_RSRP_AND_RSPQ_TO_DB`` option.
 
   * Updated:
 
@@ -141,6 +162,7 @@ nRF9160: Asset Tracker v2
     * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
     * Bootstrapping has been disabled by default to be able to connect to the default LwM2M service AVSystem's `Coiote Device Management`_ using free tier accounts.
     * Added support for full modem FOTA updates for nRF Cloud builds.
+    * ``CONFIG_DATA_DEVICE_MODE`` option is now a choice that can be set to either ``CONFIG_DATA_DEVICE_MODE_ACTIVE`` or ``CONFIG_DATA_DEVICE_MODE_PASSIVE`` depending on the desired device mode.
 
   * Fixed:
 
@@ -177,6 +199,7 @@ nRF5340 Audio
   * Bonding between gateway and headsets in the CIS (Connected Isochronous Stream).
   * DFU support for internal and external flash layouts.
     See :ref:`nrf53_audio_app_configuration_configure_fota` in the application documentation for details.
+  * DFU advertising name based on role.
 
 * Updated:
 
@@ -193,7 +216,10 @@ nRF5340 Audio
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-|no_changes_yet_note|
+* Added configuration of :ref:`bt_le_adv_prov_readme`.
+  The subsystem is now used instead of the :file:`*.def` file to configure advertising data and scan response data in :ref:`caf_ble_adv`.
+* Updated Bluetooth advertising data and scan response data logic.
+  The UUID128 of Nordic UART Service (NUS) is now added to the scan response data only if the NUS is enabled and the Bluetooth local identity in use has no bond.
 
 nRF Desktop
 -----------
@@ -202,8 +228,13 @@ nRF Desktop
   The feature can be turned on using :kconfig:option:`CONFIG_CAF_BLE_STATE_SECURITY_REQ`.
 * nRF Desktop dongles start peripheral discovery immediately after Bluetooth LE connection is established.
   The dongles no longer wait until the connection is secured.
+* Added configuration of :ref:`bt_le_adv_prov_readme`.
+  The subsystem is now used instead of the :file:`*.def` file to configure advertising data and scan response data in :ref:`caf_ble_adv`.
+* Updated Bluetooth advertising data and scan response data logic.
 
-|no_changes_yet_note|
+  * The TX power included in the advertising packet is no longer hardcoded, the application reads it from the Bluetooth controller.
+    The TX power is included in advertising packets even if the Bluetooth local identity in use has bond.
+  * The UUID16 of Battery Service (BAS) and Human Interface Device Service (HIDS) are included in advertising packets only if the Bluetooth local identity in use has no bond.
 
 Thingy:53 Zigbee weather station
 --------------------------------
@@ -323,6 +354,14 @@ nRF9160 samples
     * CoAP max message size is set to 1280 by default.
     * Number of SenML CBOR records is set to a higher value to cope with data exchange after registration with Coiote server.
 
+  * Updated:
+
+    * The sample now uses TF-M instead of SPM.
+
+* :ref:`memfault_sample` sample:
+
+  * Updated the sample to reflect changes in logging to the `Memfault SDK`_.
+
 * :ref:`modem_shell_application` sample:
 
   * Added:
@@ -336,6 +375,9 @@ nRF9160 samples
     * New command ``link search`` for setting periodic modem search parameters.
     * Added printing of modem domain events.
     * MQTT support for ``gnss`` command A-GPS and P-GPS.
+    * An application-specific modem fault handler.
+      The modem fault handler halts application execution in case of a modem crash.
+    * Support for SEGGER's Real Time Transfer (RTT) instead of UART.
 
   * Updated:
 
@@ -388,6 +430,10 @@ Matter samples
   * Set :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` to be enabled by default.
   * Introduced support for Matter over Wi-Fi on ``nrf7002dk_nrf5340_cpuapp`` and on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield.
 
+* :ref:`matter_template_sample`:
+
+  * Introduced support for Matter over Wi-Fi on ``nrf7002dk_nrf5340_cpuapp`` and on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield.
+
 * :ref:`matter_window_covering_sample`:
 
   * Set :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` and :kconfig:option:`CONFIG_CHIP_THREAD_SSED` to be enabled by default.
@@ -424,11 +470,19 @@ Zigbee samples
 
   * Set :kconfig:option:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` to be disabled by default for NCP over USB variant.
 
+Wi-Fi samples
+-------------
+
+* Added :ref:`wifi_shell_sample` sample with the shell support.
+
 Other samples
 -------------
 
 * :ref:`radio_test` sample:
    * Fixed the way of setting gain for the nRF21540 Front-end Module with nRF5340.
+
+* :ref:`caf_sensor_manager_sample` sample:
+  * Added configuration with :ref:`sensor_stub`.
 
 Devicetree configuration
 ========================
@@ -443,7 +497,7 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-|no_changes_yet_note|
+* Added :ref:`sensor_stub`
 
 Libraries
 =========
@@ -465,7 +519,10 @@ Bluetooth libraries and services
 
 * Added:
 
-  * :ref:`mds_readme`
+  * :ref:`mds_readme`.
+  * :ref:`bt_le_adv_prov_readme`.
+    The subsystem manages Bluetooth LE advertising data and scan response data.
+    The subsystem does not control Bluetooth LE advertising by itself.
 
 * :ref:`bt_fast_pair_readme` service:
 
@@ -546,7 +603,11 @@ Modem libraries
       * The trace module has been updated to use the new APIs in Modem library.
         The modem trace output is now handled by a dedicated thread that starts automatically.
         The trace thread is synchronized with the initialization and shutdown operations of the Modem library.
-      * The Kconfig option ``CONFIG_NRF_MODEM_LIB_TRACE_ENABLED`` has been renamed to :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE`.
+      * The Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` is replaced by the Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE`. The Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` is now deprecated and will be removed in the future.
+      * Added the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG` option to enable the :c:func:`nrf_modem_lib_diag_stats_get` function that retrieves memory runtime statistics, replacing the ``nrf_modem_lib_heap_diagnose`` and ``nrf_modem_lib_shm_tx_diagnose`` functions.
+      * Consolidated ``CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC`` and ``CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC`` into the new :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG_ALLOC` option.
+      * Consolidated ``CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC`` and ``CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC`` into the new :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG_DUMP` option.
+      * Consolidated ``CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS`` and ``CONFIG_NRF_MODEM_LIB_SHMEM_TX_DUMP_PERIOD_MS`` into the new :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG_DUMP_PERIOD_MS` option.
 
     * Removed:
 
@@ -557,11 +618,19 @@ Modem libraries
         * ``CONFIG_NRF_MODEM_LIB_TRACE_HEAP_SIZE_OVERRIDE``
         * ``CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC``
         * ``CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS``
+        * ``CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC``
+        * ``CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC``
+        * ``CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC``
+        * ``CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS``
+        * ``CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC``
+        * ``CONFIG_NRF_MODEM_LIB_SHMEM_TX_DUMP_PERIOD_MS``
 
       * The following functions:
 
         * ``nrf_modem_lib_trace_start``
         * ``nrf_modem_lib_trace_stop``
+        * ``nrf_modem_lib_heap_diagnose``
+        * ``nrf_modem_lib_shm_tx_diagnose``
 
   * :ref:`lib_location` library:
 
@@ -636,6 +705,11 @@ Libraries for networking
     * Added the :c:func:`nrf_cloud_pgps_process_update` function that stores a portion of a P-GPS download to flash.
     * Added the :c:func:`nrf_cloud_pgps_finish_update` function that a user of the P-GPS library calls when the custom download completes.
 
+  * :ref:`lib_azure_iot_hub` library:
+
+    * The library has been reworked to use `Azure SDK for Embedded C`_.
+    * The APIs for both IoT Hub and DPS interaction have changed and the applications and samples that use the library have been updated.
+
 Libraries for NFC
 -----------------
 
@@ -677,6 +751,12 @@ Common Application Framework (CAF)
 
   * Added :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST` Kconfig option.
     The option is used instead of :kconfig:option:`CONFIG_BT_FILTER_ACCEPT_LIST` option to enable the filter accept list.
+  * Integrated :ref:`bt_le_adv_prov_readme`.
+    The subsystem is now used instead of the :file:`*.def` file to configure advertising data and scan response data.
+  * Bluetooth device name is no longer automatically included in scan response data.
+    A dedicated data provider (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_DEVICE_NAME`) can be used to add the Bluetooth device name to the scan response data.
+  * Added :c:struct:`ble_adv_data_update_event` that can be used to trigger update of advertising data and scan response data during undirected advertising.
+    When the event is received, the module gets new data from providers and updates advertising payload.
 
 * :ref:`caf_ble_state`:
 
@@ -793,7 +873,10 @@ Documentation
   * :ref:`ug_thread_prebuilt_libs` as a separate page instead of being part of :ref:`ug_thread_configuring`.
   * Added software maturity entries for security features: TF-M, PSA crypto, Immutable bootloader, HW unique key.
   * A section about NFC in the :ref:`app_memory` page.
+  * A section about :ref:`modem_trace_backend_uart_custom_board` in the :ref:`nrf_modem_lib_readme` page.
   * A note in the :ref:`ug_ble_controller` about the usage of the Zephyr LE Controller.
+  * Documentation for the :ref:`ug_nrf70`.
+  * A section about :ref:`modem_trace` in the :ref:`ug_nrf91_features` page.
 
 * Updated:
 
@@ -804,6 +887,7 @@ Documentation
   * :ref:`build_pgm_nrf9160` section in the :ref:`ug_nrf9160` documentation by adding |VSC| and command line instructions.
   * Restructured the :ref:`programming_thingy` and :ref:`connect_nRF_cloud` sections in the :ref:`ug_thingy91_gsg` documentation.
   * The instructions and images in the :ref:`ug_thingy91_gsg` and :ref:`ug_nrf9160_gs` documentations about also accepting :term:`eUICC Identifier (EID)` when activating your iBasis SIM card from the `nRF Cloud`_ website.
+  * :ref:`gs_recommended_versions` page with a new section about :ref:`gs_supported_OS`.
 
 * Removed:
 

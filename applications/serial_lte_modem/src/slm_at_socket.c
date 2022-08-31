@@ -8,8 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <zephyr/net/socket.h>
-#include "nrf_socket.h"
-#include <modem/modem_key_mgmt.h>
 #include <zephyr/net/tls_credentials.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
@@ -928,7 +926,7 @@ static int do_poll(int timeout)
 		for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
 			/* If fd is equal to -1	then revents is cleared (set to zero) */
 			if (fds[i].revents != 0) {
-				sprintf(rsp_buf, "\r\n#XPOLL: %d,\"0x%08x\"\r\n",
+				sprintf(rsp_buf, "\r\n#XPOLL: %d,\"0x%04x\"\r\n",
 					fds[i].fd, fds[i].revents);
 				rsp_send(rsp_buf, strlen(rsp_buf));
 			}

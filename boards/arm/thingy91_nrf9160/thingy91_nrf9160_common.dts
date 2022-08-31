@@ -84,6 +84,7 @@
 		pwm-led2 = &pwm_led2;
 		rgb-pwm = &pwm0;
 		nmos-pwm = &pwm2;
+		mcuboot-button0 = &button0;
 	};
 };
 

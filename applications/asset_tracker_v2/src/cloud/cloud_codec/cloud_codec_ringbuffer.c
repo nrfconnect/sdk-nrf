@@ -90,6 +90,27 @@ void cloud_codec_populate_accel_buffer(
 		buffer_count - 1);
 }
 
+void cloud_codec_populate_impact_buffer(
+				struct cloud_data_impact *impact_buf,
+				struct cloud_data_impact *new_impact_data,
+				int *head_impact_buf,
+				size_t buffer_count)
+{
+	if (!new_impact_data->queued) {
+		return;
+	}
+
+	/* Go to start of buffer if end is reached. */
+	*head_impact_buf += 1;
+	if (*head_impact_buf == buffer_count) {
+		*head_impact_buf = 0;
+	}
+
+	impact_buf[*head_impact_buf] = *new_impact_data;
+
+	LOG_DBG("Entry: %d of %d in impact buffer filled", *head_impact_buf, buffer_count - 1);
+}
+
 void cloud_codec_populate_bat_buffer(struct cloud_data_battery *bat_buffer,
 				     struct cloud_data_battery *new_bat_data,
 				     int *head_bat_buf,

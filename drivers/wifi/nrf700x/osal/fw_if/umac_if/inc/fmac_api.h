@@ -226,7 +226,20 @@ enum wifi_nrf_status wifi_nrf_fmac_scan_res_get(void *fmac_dev_ctx,
 						unsigned char if_idx,
 						int scan_type);
 
-
+/**
+ * wifi_nrf_fmac_scan() - Issue abort of an ongoing scan to the RPU.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: Index of the interface on which the scan results are to be fetched.
+ *
+ * This function is used to send a command to
+ * instruct the firmware to abort an ongoing scan.
+ *
+ * Returns: Status
+ *		Pass: %WIFI_NRF_STATUS_SUCCESS
+ *		Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_abort_scan(void *dev_ctx,
+						unsigned char if_idx);
 /**
  * wifi_nrf_fmac_auth() - Issue a authentication request to the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.

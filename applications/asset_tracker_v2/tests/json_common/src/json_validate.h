@@ -90,6 +90,14 @@
 					"}"							\
 				"}"
 
+#define TEST_VALIDATE_IMPACT_JSON_SCHEMA							\
+				"{"								\
+					"\"impact\":{"						\
+						"\"v\":300,"					\
+						"\"ts\":1563968747123"				\
+					"}"							\
+				"}"
+
 #define TEST_VALIDATE_NEIGHBOR_CELLS_JSON_SCHEMA						\
 				"{"								\
 					"\"mcc\":242,"						\
@@ -229,6 +237,14 @@
 					"}"							\
 				"]"
 
+#define TEST_VALIDATE_ARRAY_IMPACT_JSON_SCHEMA							\
+				"["								\
+					"{"							\
+						"\"v\":300,"					\
+						"\"ts\":1563968747123"				\
+					"}"							\
+				"]"
+
 #define TEST_VALIDATE_ARRAY_ACCELEROMETER_JSON_SCHEMA						\
 				"["								\
 					"{"							\
@@ -276,6 +292,16 @@
 					"},"							\
 					"{"							\
 						"\"v\":1,"					\
+						"\"ts\":1563968747123"				\
+					"}"							\
+				"],"								\
+				"\"impact\":["							\
+					"{"							\
+						"\"v\":300,"					\
+						"\"ts\":1563968747123"				\
+					"},"							\
+					"{"							\
+						"\"v\":300,"					\
 						"\"ts\":1563968747123"				\
 					"}"							\
 				"],"								\

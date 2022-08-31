@@ -29,28 +29,18 @@
 
 LOG_MODULE_REGISTER(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
-struct mem_diagnostic_info {
-	uint32_t failed_allocs;
-};
-
 struct sleeping_thread {
 	sys_snode_t node;
 	struct k_sem sem;
 };
 
-/* Shared memory heap
- * This heap is not initialized with the K_HEAP macro because
- * it should be initialized in the shared memory area reserved by
- * the Partition Manager. This happens in `nrf_modem_os_init()`.
- */
-static struct k_heap shmem_heap;
+/* Heaps, extern in diag.c */
 
-/* Library heap, defined here in application RAM */
-static K_HEAP_DEFINE(library_heap, CONFIG_NRF_MODEM_LIB_HEAP_SIZE);
-
-/* Store information about failed allocations */
-static struct mem_diagnostic_info shmem_diag;
-static struct mem_diagnostic_info heap_diag;
+/* Shared memory heap */
+struct k_heap nrf_modem_lib_shmem_heap;
+/* Library heap */
+struct k_heap nrf_modem_lib_heap;
+static uint8_t library_heap_buf[CONFIG_NRF_MODEM_LIB_HEAP_SIZE];
 
 /* An array of thread ID and RPC counter pairs, used to avoid race conditions.
  * It allows to identify whether it is safe to put the thread to sleep or not.
@@ -326,15 +316,11 @@ void read_task_create(void)
 
 void *nrf_modem_os_alloc(size_t bytes)
 {
-	void *addr = k_heap_alloc(&library_heap, bytes, K_NO_WAIT);
+	extern uint32_t nrf_modem_lib_failed_allocs;
+	void * const addr = k_heap_alloc(&nrf_modem_lib_heap, bytes, K_NO_WAIT);
 
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC)) {
-		if (addr) {
-			LOG_DBG("alloc(%d) -> %p", bytes, addr);
-		} else {
-			LOG_WRN("alloc(%d) -> NULL", bytes);
-			heap_diag.failed_allocs++;
-		}
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_MEM_DIAG_ALLOC) && !addr) {
+		nrf_modem_lib_failed_allocs++;
 	}
 
 	return addr;
@@ -342,92 +328,25 @@ void *nrf_modem_os_alloc(size_t bytes)
 
 void nrf_modem_os_free(void *mem)
 {
-	k_heap_free(&library_heap, mem);
-
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC)) {
-		LOG_DBG("free(%p)", mem);
-	}
+	k_heap_free(&nrf_modem_lib_heap, mem);
 }
 
 void *nrf_modem_os_shm_tx_alloc(size_t bytes)
 {
-	void *addr = k_heap_alloc(&shmem_heap, bytes, K_NO_WAIT);
+	extern uint32_t nrf_modem_lib_shmem_failed_allocs;
+	void * const addr = k_heap_alloc(&nrf_modem_lib_shmem_heap, bytes, K_NO_WAIT);
 
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC)) {
-		if (addr) {
-			LOG_DBG("shm_tx_alloc(%d) -> %p", bytes, addr);
-		} else {
-			LOG_WRN("shm_tx_alloc(%d) -> NULL", bytes);
-			shmem_diag.failed_allocs++;
-		}
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_MEM_DIAG_ALLOC) && !addr) {
+		nrf_modem_lib_shmem_failed_allocs++;
 	}
+
 	return addr;
 }
 
 void nrf_modem_os_shm_tx_free(void *mem)
 {
-	k_heap_free(&shmem_heap, mem);
-
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC)) {
-		LOG_DBG("shm_tx_free(%p)", mem);
-	}
+	k_heap_free(&nrf_modem_lib_shmem_heap, mem);
 }
-
-void nrf_modem_lib_heap_diagnose(void)
-{
-	printk("\nnrf_modem heap dump:\n");
-	sys_heap_print_info(&library_heap.heap, false);
-	printk("Failed allocations: %u\n", heap_diag.failed_allocs);
-}
-
-void nrf_modem_lib_shm_tx_diagnose(void)
-{
-	printk("\nnrf_modem tx dump:\n");
-	sys_heap_print_info(&shmem_heap.heap, false);
-	printk("Failed allocations: %u\n", shmem_diag.failed_allocs);
-}
-
-#if defined(CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC) || \
-	defined(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC)
-
-enum heap_type {
-	SHMEM, LIBRARY
-};
-
-struct task {
-	struct k_work_delayable work;
-	enum heap_type type;
-};
-
-#ifdef CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
-static struct task shmem_task = { .type = SHMEM };
-#endif
-#ifdef CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
-static struct task heap_task  = { .type = LIBRARY };
-#endif
-
-static void diag_task(struct k_work *item)
-{
-	struct task *t = CONTAINER_OF(item, struct task, work);
-
-	switch (t->type) {
-	case SHMEM:
-#ifdef CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
-		nrf_modem_lib_shm_tx_diagnose();
-		k_work_reschedule(&shmem_task.work,
-			K_MSEC(CONFIG_NRF_MODEM_LIB_SHMEM_TX_DUMP_PERIOD_MS));
-#endif
-		break;
-	case LIBRARY:
-#ifdef CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
-		nrf_modem_lib_heap_diagnose();
-		k_work_reschedule(&heap_task.work,
-			K_MSEC(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS));
-#endif
-		break;
-	}
-}
-#endif
 
 #if defined(CONFIG_LOG)
 static uint8_t log_level_translate(uint8_t level)
@@ -528,25 +447,10 @@ void nrf_modem_os_init(void)
 {
 	read_task_create();
 
-	memset(&heap_diag, 0x00, sizeof(heap_diag));
-	memset(&shmem_diag, 0x00, sizeof(shmem_diag));
-
-	/* Initialize TX heap */
-	k_heap_init(&shmem_heap,
-		    (void *)PM_NRF_MODEM_LIB_TX_ADDRESS,
+	/* Initialize heaps */
+	k_heap_init(&nrf_modem_lib_heap, library_heap_buf, sizeof(library_heap_buf));
+	k_heap_init(&nrf_modem_lib_shmem_heap, (void *)PM_NRF_MODEM_LIB_TX_ADDRESS,
 		    CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE);
-
-#ifdef CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
-	k_work_init_delayable(&shmem_task.work, diag_task);
-	k_work_reschedule(&shmem_task.work,
-		K_MSEC(CONFIG_NRF_MODEM_LIB_SHMEM_TX_DUMP_PERIOD_MS));
-#endif
-
-#ifdef CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
-	k_work_init_delayable(&heap_task.work, diag_task);
-	k_work_reschedule(&heap_task.work,
-		K_MSEC(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS));
-#endif
 }
 
 void nrf_modem_os_shutdown(void)

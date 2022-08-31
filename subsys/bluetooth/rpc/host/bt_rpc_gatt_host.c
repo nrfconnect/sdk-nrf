@@ -694,6 +694,7 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_send_desc_attr,
 			 BT_RPC_GATT_SEND_DESC_ATTR_RPC_CMD,
 			 bt_rpc_gatt_send_desc_attr_rpc_handler, NULL);
 
+#if defined(CONFIG_BT_GATT_DYNAMIC_DB)
 static int bt_rpc_gatt_end_service(void)
 {
 	int err;
@@ -759,6 +760,7 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_service_unregister,
 			 BT_RPC_GATT_SERVICE_UNREGISTER_RPC_CMD,
 			 bt_rpc_gatt_service_unregister_rpc_handler, NULL);
+#endif /* CONFIG_BT_GATT_DYNAMIC_DB */
 
 static inline void bt_gatt_complete_func_t_callback(struct bt_conn *conn, void *user_data,
 						    uint32_t callback_slot)

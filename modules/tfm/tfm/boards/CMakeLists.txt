@@ -31,11 +31,6 @@ target_compile_definitions(platform_s
   EXT_API_MAGIC=${EXT_API_MAGIC}
   )
 
-if (CONFIG_BOOTLOADER_MCUBOOT)
-  # Needed to compile in the MCUBoot secondary region in flash layout.
-  target_compile_definitions(platform_region_defs INTERFACE BL2)
-endif()
-
 target_include_directories(platform_s
   PUBLIC ${partition_includes} ${board_includes}
   ${NRF_DIR}/include
@@ -49,7 +44,6 @@ target_sources(platform_s
   )
 
 # Disabling UART stdout not supported in NS Image, which is always built even when not needed.
-# TODO: Remove when not building NS image.
 target_sources(platform_ns
   PRIVATE
   $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_UART_STDOUT}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_uart_stdout.c>

@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <zephyr/drivers/gpio.h>
 
-#define SLEEP_TIME_MS 2
+#define SLEEP_TIME_MS 10
 
 enum {
 	SYSBUS = 0,

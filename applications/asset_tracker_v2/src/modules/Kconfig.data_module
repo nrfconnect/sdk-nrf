@@ -63,6 +63,11 @@ config DATA_ACCELEROMETER_BUFFER_COUNT
 	range 1 100
 	default 3
 
+config DATA_IMPACT_BUFFER_COUNT
+	int "Number of impact data ringbuffer entries"
+	range 1 100
+	default 1
+
 config DATA_BATTERY_BUFFER_COUNT
 	int "Number of battery data ringbuffer entries"
 	range 1 100
@@ -91,13 +96,24 @@ config DATA_UI_BUFFER_STORE
 	bool "Store UI data received from the UI module"
 	default y
 
-config DATA_DEVICE_MODE
-	bool "Default device mode"
-	default y
+choice DATA_DEVICE_MODE
+	prompt "Device mode"
+	default DATA_DEVICE_MODE_ACTIVE
 	help
-	  Either active or passive mode. True evaluates to active mode. In active mode the device
-	  samples and publishes data at regular intervals. In passive mode the device samples and
-	  publishes data only if movement has been detected.
+	  The device can be in either active or passive mode.
+	  In active mode the device samples and sends data at regular intervals set by
+	  CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS.
+	  In passive mode the device samples and sends data only if movement has been detected and
+	  the movement resolution timer set by CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS has
+	  expired.
+
+config DATA_DEVICE_MODE_ACTIVE
+	bool "Active mode"
+
+config DATA_DEVICE_MODE_PASSIVE
+	bool "Passive mode"
+
+endchoice # DATA_DEVICE_MODE #
 
 config DATA_ACTIVE_TIMEOUT_SECONDS
 	int "Default active wait timeout in seconds"

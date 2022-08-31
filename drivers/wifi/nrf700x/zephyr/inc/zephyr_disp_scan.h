@@ -13,11 +13,10 @@
 #define __ZEPHYR_DISP_SCAN_H__
 
 #include <zephyr/device.h>
-#include <zephyr/net/wifi_mgmt.h>
 
 #include "osal_api.h"
 
-int wifi_nrf_disp_scan_zep(const struct device *dev, scan_result_cb_t cb);
+int wifi_nrf_disp_scan_zep(const struct device *dev, driver_scan_result_cb_t cb);
 
 enum wifi_nrf_status wifi_nrf_disp_scan_res_get_zep(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep);
 

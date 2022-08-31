@@ -10,13 +10,18 @@
  */
 
 #include <stdlib.h>
-#include <zephyr.h>
+
+#include <zephyr/zephyr.h>
+#include <zephyr/logging/log.h>
+
 #include "fmac_api.h"
 #include "zephyr_fmac_main.h"
 #include "zephyr_disp_scan.h"
 
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
+
 int wifi_nrf_disp_scan_zep(const struct device *dev,
-			   scan_result_cb_t cb)
+			   driver_scan_result_cb_t cb)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
@@ -25,10 +30,14 @@ int wifi_nrf_disp_scan_zep(const struct device *dev,
 	int ret = -1;
 
 	vif_ctx_zep = dev->data;
-	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		goto out;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
 		goto out;
 	}
 
@@ -80,12 +89,10 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 					   unsigned int event_len,
 					   bool more_res)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = vif_ctx;
 	struct umac_display_results *r = NULL;
-	struct wifi_scan_result res;
+	struct wifi_driver_scan_result res;
 	unsigned int i = 0;
-
-	vif_ctx_zep = vif_ctx;
 
 	for (i = 0; i < scan_res->event_bss_count; i++) {
 		memset(&res, 0x0, sizeof(res));
@@ -97,14 +104,13 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 		res.channel = r->nwk_channel;
 		res.security = WIFI_SECURITY_TYPE_NONE;
 
-		/* TODO : show other security modes as PSK */
-		if (r->security_type != IMG_OPEN) {
-			res.security = WIFI_SECURITY_TYPE_PSK;
-		}
+		res.security = r->security_type;
 
 		memcpy(res.ssid,
 		       r->ssid.img_ssid,
 		       res.ssid_length);
+
+		memcpy(res.mac,	r->mac_addr, IMG_ETH_ALEN);
 
 		if (r->signal.signal_type == IMG_SIGNAL_TYPE_MBM) {
 			int val = (r->signal.signal.mbm_signal);
@@ -115,8 +121,8 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 		}
 
 		vif_ctx_zep->disp_scan_cb(vif_ctx_zep->zep_net_if_ctx,
-					  0,
-					  &res);
+								  0,
+								  &res);
 
 		/* NET_MGMT dropping events if too many are queued */
 		k_yield();

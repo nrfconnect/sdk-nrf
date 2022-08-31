@@ -68,6 +68,9 @@ Glossary
       A configuration of the :term:`Isochronous channels (ISO)` feature of the :term:`LE Audio` standard.
       In this configuration, one audio source can broadcast audio to multiple audio receivers.
 
+   Buffer Status Report (BSR)
+      Carries the information on the amount of data available for each Logical Channel Group (LCG) from UE to eNB.
+
    Carrier Wave (CW)
       A single-frequency electromagnetic wave that can be modulated in amplitude, frequency, or phase to convey information.
 
@@ -172,6 +175,9 @@ Glossary
 
    Evaluation Kit (EK)
       A platform used to evaluate different development platforms.
+
+   Evolved Node B (eNB)
+      Base stations connected to the network that communicate wirelessly with mobile handsets in a 4G LTE network or 5G non-standalone (NSA) mode.
 
    Extended Discontinuous Reception (eDRX)
       A method to conserve the battery of an Internet of Things (IoT) device by allowing it to remain inactive for extended periods.
@@ -529,6 +535,9 @@ Glossary
    Received Signal Strength Indication (RSSI)
       An indication of the power of a received radio signal.
 
+   Release Assistance Indication (RAI)
+      Release assistance indication (RAI) for access stratum (AS) is a 3GPP Release 14 feature that allows the LTE-M/NB-IoT UE to trigger a buffer status report (BSR) with zero-byte size to indicate to the eNB that it has no more uplink data, and that the UE does not anticipate receiving further downlink data.
+
    Remote Procedure Call (RPC)
       A form of inter-process communication that allows for calling a function on remote processors from a local processor, both synchronously and asynchronously.
 
@@ -644,6 +653,10 @@ Glossary
    User Datagram Protocol (UDP)
       One of the core IP protocols.
       UDP with its connectionless model, no handshaking dialogues makes it a suitable transport for systems with constrained bandwidth like Bluetooth low energy.
+
+   User equipment (UE)
+      Any device used directly by an end-user to communicate.
+      It can be a hand-held telephone, a laptop computer equipped with a mobile broadband adapter, or any other device.
 
    User Information Configuration Registers (UICR)
       Non-volatile memory registers used to configure user-specific settings.

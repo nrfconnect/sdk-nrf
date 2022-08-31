@@ -8,12 +8,12 @@
 #include <stdio.h>
 
 #include <zephyr/shell/shell.h>
-#include <zephyr/shell/shell_uart.h>
 
 #include "mosh_print.h"
 #include "startup_cmd_settings.h"
 
 extern struct k_work_q mosh_common_work_q;
+extern const struct shell *mosh_shell;
 
 /* Work for running commands: */
 struct startup_cmd_worker_data {
@@ -26,7 +26,6 @@ static bool running;
 
 static void startup_cmd_worker(struct k_work *work_item)
 {
-	const struct shell *shell = shell_backend_uart_get_ptr();
 	char *shell_cmd_str;
 	int len = 0;
 	struct startup_cmd_worker_data *data_ptr =
@@ -38,7 +37,7 @@ static void startup_cmd_worker(struct k_work *work_item)
 	if (len) {
 		mosh_print("Starting to execute sett_cmd %d \"%s\"...",
 			data_ptr->running_mem_slot, shell_cmd_str);
-		shell_execute_cmd(shell, shell_cmd_str);
+		shell_execute_cmd(mosh_shell, shell_cmd_str);
 	}
 
 	/* We are done for this one. Schedule next stored command. */

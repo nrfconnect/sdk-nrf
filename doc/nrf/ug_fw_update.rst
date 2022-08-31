@@ -85,13 +85,13 @@ See below for examples of imgtool used to create some commonly used key types:
 
       .. code-block:: console
 
-         python3 bootlooader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k priv.pem
+         python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k priv.pem
 
    .. group-tab:: RSA-2048
 
       .. code-block:: console
 
-         python3 bootlooader/mcuboot/scripts/imgtool.py keygen -t rsa-2048 -k priv.pem
+         python3 bootloader/mcuboot/scripts/imgtool.py keygen -t rsa-2048 -k priv.pem
 
 For a full list of supported types, use the ``--help`` argument with the tool or any of its commands.
 

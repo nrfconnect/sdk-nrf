@@ -123,6 +123,10 @@ config BT_DEVICE_NAME_GATT_WRITABLE
 	bool
 	default n
 
+config BT_DEVICE_NAME_MAX
+	int
+	default 30
+
 endif # AUDIO_DFU = 1 and AUDIO_DFU = 2 (INTERNAL/EXTERNAL)
 
 if AUDIO_DFU = 1

@@ -9,6 +9,8 @@
 
 #include "flash_layout.h"
 
+#define CRYPTO_STACK_SIZE       (CONFIG_TFM_CRYPTO_PARTITION_STACK_SIZE)
+
 #define BL2_HEAP_SIZE           (0x00001000)
 #define BL2_MSP_STACK_SIZE      (0x00001800)
 
@@ -38,12 +40,12 @@
 
 
 #if !defined(LINK_TO_SECONDARY_PARTITION)
-#ifdef BL2
+#ifdef NRF_NS_SECONDARY
 #define S_IMAGE_PRIMARY_PARTITION_OFFSET   (PM_MCUBOOT_PRIMARY_ADDRESS)
 #define S_IMAGE_SECONDARY_PARTITION_OFFSET (PM_MCUBOOT_SECONDARY_ADDRESS)
 #else
 #define S_IMAGE_PRIMARY_PARTITION_OFFSET   (PM_TFM_SECURE_ADDRESS)
-#endif /* BL2 */
+#endif /* NRF_NS_SECONDARY */
 #define NS_IMAGE_PRIMARY_PARTITION_OFFSET  (PM_TFM_NONSECURE_ADDRESS)
 #else
 #error "Execute from secondary partition is not supported!"

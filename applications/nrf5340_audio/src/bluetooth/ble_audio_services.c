@@ -4,17 +4,18 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "ble_audio_services.h"
+
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/vcs.h>
+
 #include "macros_common.h"
-#include "ble_audio_services.h"
 #include "hw_codec.h"
 
-#define LOG_LEVEL CONFIG_LOG_AUDIO_SERVICES_LEVEL
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(ble_audio_services);
+LOG_MODULE_REGISTER(ble_audio_services, CONFIG_LOG_AUDIO_SERVICES_LEVEL);
 
 #define VOLUME_DEFAULT 195
 #define VOLUME_STEP 16
@@ -89,7 +90,7 @@ static void vcs_state_cb_handler(struct bt_vcs *vcs, int err, uint8_t volume, ui
 		}
 	}
 #endif /* (CONFIG_BT_VCS_CLIENT) */
-	LOG_DBG("Volume = %d, mute state = %d", volume, mute);
+	LOG_INF("Volume = %d, mute state = %d", volume, mute);
 	if (CONFIG_AUDIO_DEV == HEADSET) {
 		ret = hw_codec_volume_set(vcs_vol_conversion(volume));
 		ERR_CHK_MSG(ret, "Error setting HW codec volume");

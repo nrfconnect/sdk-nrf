@@ -801,12 +801,12 @@ void link_sett_defaults_set(void)
 	mosh_print("link settings reseted");
 }
 
-void link_sett_modem_factory_reset(enum link_sett_modem_reset_type type)
+void link_sett_modem_factory_reset(enum lte_lc_factory_reset_type type)
 {
 	int err;
 
 	/* Reset modem factory settings by type */
-	err = nrf_modem_at_printf("AT%%XFACTORYRESET=%d", type);
+	err = lte_lc_factory_reset(type);
 	if (err) {
 		mosh_error("Resetting modem factory settings failed, err %d", err);
 	} else {

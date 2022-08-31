@@ -73,6 +73,7 @@ static struct cloud_data_gnss gnss_buf[CONFIG_DATA_GNSS_BUFFER_COUNT];
 static struct cloud_data_sensors sensors_buf[CONFIG_DATA_SENSOR_BUFFER_COUNT];
 static struct cloud_data_ui ui_buf[CONFIG_DATA_UI_BUFFER_COUNT];
 static struct cloud_data_accelerometer accel_buf[CONFIG_DATA_ACCELEROMETER_BUFFER_COUNT];
+static struct cloud_data_impact impact_buf[CONFIG_DATA_IMPACT_BUFFER_COUNT];
 static struct cloud_data_battery bat_buf[CONFIG_DATA_BATTERY_BUFFER_COUNT];
 static struct cloud_data_modem_dynamic modem_dyn_buf[CONFIG_DATA_MODEM_DYNAMIC_BUFFER_COUNT];
 static struct cloud_data_neighbor_cells neighbor_cells;
@@ -92,22 +93,21 @@ static int head_sensor_buf;
 static int head_modem_dyn_buf;
 static int head_ui_buf;
 static int head_accel_buf;
+static int head_impact_buf;
 static int head_bat_buf;
 
 static K_SEM_DEFINE(config_load_sem, 0, 1);
 
 /* Default device configuration. */
 static struct cloud_data_cfg current_cfg = {
-	.gnss_timeout			= CONFIG_DATA_GNSS_TIMEOUT_SECONDS,
-	.active_mode			= (IS_ENABLED(CONFIG_DATA_DEVICE_MODE) ? true : false),
-	.active_wait_timeout		= CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS,
-	.movement_resolution		= CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS,
-	.movement_timeout		= CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS,
-	.accelerometer_threshold	= CONFIG_DATA_ACCELEROMETER_THRESHOLD,
-	.no_data.gnss			= (IS_ENABLED(CONFIG_DATA_SAMPLE_GNSS_DEFAULT)
-					   ? false : true),
-	.no_data.neighbor_cell		= (IS_ENABLED(CONFIG_DATA_SAMPLE_NEIGHBOR_CELLS_DEFAULT)
-					   ? false : true)
+	.gnss_timeout		 = CONFIG_DATA_GNSS_TIMEOUT_SECONDS,
+	.active_mode		 = IS_ENABLED(CONFIG_DATA_DEVICE_MODE_ACTIVE),
+	.active_wait_timeout	 = CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS,
+	.movement_resolution	 = CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS,
+	.movement_timeout	 = CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS,
+	.accelerometer_threshold = CONFIG_DATA_ACCELEROMETER_THRESHOLD,
+	.no_data.gnss		 = !IS_ENABLED(CONFIG_DATA_SAMPLE_GNSS_DEFAULT),
+	.no_data.neighbor_cell	 = !IS_ENABLED(CONFIG_DATA_SAMPLE_NEIGHBOR_CELLS_DEFAULT)
 };
 
 static struct k_work_delayable data_send_work;
@@ -591,6 +591,7 @@ static void data_encode(void)
 					      &modem_dyn_buf[head_modem_dyn_buf],
 					      &ui_buf[head_ui_buf],
 					      &accel_buf[head_accel_buf],
+					      &impact_buf[head_impact_buf],
 					      &bat_buf[head_bat_buf]);
 		switch (err) {
 		case 0:
@@ -620,6 +621,7 @@ static void data_encode(void)
 						    &modem_stat,
 						    modem_dyn_buf,
 						    ui_buf,
+						    impact_buf,
 						    accel_buf,
 						    bat_buf,
 						    ARRAY_SIZE(gnss_buf),
@@ -627,6 +629,7 @@ static void data_encode(void)
 						    MODEM_STATIC_ARRAY_SIZE,
 						    ARRAY_SIZE(modem_dyn_buf),
 						    ARRAY_SIZE(ui_buf),
+						    ARRAY_SIZE(impact_buf),
 						    ARRAY_SIZE(accel_buf),
 						    ARRAY_SIZE(bat_buf));
 		switch (err) {
@@ -797,6 +800,31 @@ static void data_ui_send(void)
 	}
 
 	data_send(DATA_EVT_UI_DATA_SEND, &codec);
+}
+
+static void data_impact_send(void)
+{
+	int err;
+	struct cloud_codec_data codec = {0};
+
+	if (!date_time_is_valid()) {
+		return;
+	}
+
+	err = cloud_codec_encode_impact_data(&codec, &impact_buf[head_impact_buf]);
+	if (err == -ENODATA) {
+		LOG_DBG("No new impact data to encode, error: %d", err);
+		return;
+	} else if (err == -ENOTSUP) {
+		LOG_WRN("Encoding of impact data is not supported, error: %d", err);
+		return;
+	} else if (err) {
+		LOG_ERR("Encoding impact data failed, error: %d", err);
+		SEND_ERROR(data, DATA_EVT_ERROR, err);
+		return;
+	}
+
+	data_send(DATA_EVT_IMPACT_DATA_SEND, &codec);
 }
 
 static void requested_data_clear(void)
@@ -1094,6 +1122,11 @@ static void on_cloud_state_connected(struct data_msg_data *msg)
 		return;
 	}
 
+	if (IS_EVENT(msg, data, DATA_EVT_IMPACT_DATA_READY)) {
+		data_impact_send();
+		return;
+	}
+
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_DISCONNECTED)) {
 		state_set(STATE_CLOUD_DISCONNECTED);
 		return;
@@ -1318,6 +1351,20 @@ static void on_all_states(struct data_msg_data *msg)
 		cloud_codec_populate_accel_buffer(accel_buf, &new_movement_data,
 						  &head_accel_buf,
 						  ARRAY_SIZE(accel_buf));
+	}
+
+	if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_IMPACT_DETECTED)) {
+		struct cloud_data_impact new_impact_data = {
+			.magnitude = msg->module.sensor.data.impact.magnitude,
+			.ts = msg->module.sensor.data.impact.timestamp,
+			.queued = true
+		};
+
+		cloud_codec_populate_impact_buffer(impact_buf, &new_impact_data,
+						   &head_impact_buf,
+						   ARRAY_SIZE(impact_buf));
+		SEND_EVENT(data, DATA_EVT_IMPACT_DATA_READY);
+		return;
 	}
 
 	if (IS_EVENT(msg, gnss, GNSS_EVT_DATA_READY)) {

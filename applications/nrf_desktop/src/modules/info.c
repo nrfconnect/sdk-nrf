@@ -5,7 +5,6 @@
  */
 
 #include <zephyr/kernel.h>
-#include <zephyr/sys/byteorder.h>
 
 #include "hwid.h"
 #include "config_event.h"

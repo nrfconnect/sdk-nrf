@@ -5,82 +5,123 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
-#include <net/azure_iot_hub.h>
-#include <cJSON.h>
-#include <cJSON_os.h>
 #include <zephyr/settings/settings.h>
 
-#include "azure_iot_hub_dps.h"
-#include "azure_iot_hub_topic.h"
+#include <net/azure_iot_hub.h>
+#include <net/azure_iot_hub_dps.h>
+
+#include <azure/az_core.h>
+#include <azure/az_iot.h>
+
+#include "azure_iot_hub_dps_private.h"
+#include "azure_iot_hub_mqtt.h"
 
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(azure_iot_hub_dps, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
 
-#define DPS_REG_STATUS_UPDATE_MAX_RETRIES	10
-#define DPS_OPERATION_ID_MAX_LEN		60
-#define DPS_REGISTERED_HUB_MAX_LEN		100
-#define DPS_SETTINGS_KEY			"azure_iot_hub"
-#define DPS_SETTINGS_HOSTNAME_LEN_KEY		"hostname_len"
-#define DPS_SETTINGS_HOSTNAME_KEY		"hostname"
+/* Define a custom AZ_DPS_STATIC macro that exposes internal variables when unit testing. */
+#if defined(CONFIG_UNITY)
+#define AZ_DPS_STATIC
+#else
+#define AZ_DPS_STATIC static
+#endif
 
-/* Periodically send messages to receive registration status.
- * Keep polling as long as returned status code to $dps/registrations/res/#
- * is 202. If it's 200, registration succeeded.
- */
-#define DPS_TOPIC_REG_STATUS	\
-	"$dps/registrations/GET/iotdps-get-operationstatus/" \
-	"?$rid=%s&operationId=%s"
-#define DPS_TOPIC_OPERATION_ID_MAX_LEN (DPS_OPERATION_ID_MAX_LEN + \
-					sizeof(DPS_TOPIC_REG_STATUS) + \
-					CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN)
-#define DPS_TOPIC_REG		"$dps/registrations/res/"
-#define DPS_TOPIC_REG_SUB	DPS_TOPIC_REG "#"
-#define DPS_TOPIC_REG_PUB	"$dps/registrations/PUT/iotdps-register/" \
-				"?$rid=%s"
-
-#define DPS_REG_PAYLOAD "{registrationId:\"%s\"}"
-
-struct dps_reg_status {
-	enum dps_reg_state state;
-	struct k_work_delayable poll_work;
-	uint32_t retry;
-	/* Add 1 to make sure null termination can be used */
-	char reg_id[CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN + 1];
-	char operation_id[DPS_OPERATION_ID_MAX_LEN];
-	char assigned_hub[DPS_REGISTERED_HUB_MAX_LEN];
-	uint32_t assigned_hub_len;
-	struct k_sem registration_finished;
-	struct k_sem settings_loaded;
-};
-
-static dps_handler_t cb_handler;
-static struct dps_reg_status dps_reg_status;
-static struct mqtt_client *mqtt_client;
-static char dps_topic_reg_pub[sizeof(DPS_TOPIC_REG_PUB) +
-			      sizeof(dps_reg_status.reg_id)];
-
-/* Build time asserts */
-
-/* If DPS is enabled, the ID scope must be defined */
-BUILD_ASSERT(sizeof(CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE) - 1 > 0,
-	     "The DPS ID scope must be defined");
-
-/* The device ID is used as DPS registration ID, and will be received back
- * in response to registration request. Therefore the size of a property bag
- * must be at least as large as the maximum device ID.
- */
-BUILD_ASSERT(CONFIG_AZURE_IOT_HUB_TOPIC_ELEMENT_MAX_LEN >=
-	     CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN,
-	     "CONFIG_AZURE_IOT_HUB_TOPIC_ELEMENT_MAX_LEN must be at least as "
-	     "large as CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN "
-	     "when DPS is enabled");
+AZ_DPS_STATIC enum dps_state dps_state = DPS_STATE_UNINIT;
+AZ_DPS_STATIC struct dps_reg_ctx dps_reg_ctx;
+static char operation_id_buf[CONFIG_AZURE_IOT_HUB_DPS_OPERATION_ID_BUFFER_SIZE];
+static char assigned_hub_buf[CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME_MAX_LEN];
+static char assigned_device_id_buf[CONFIG_AZURE_IOT_HUB_DPS_DEVICE_ID_MAX_LEN];
 
 /* Forward declarations */
+static void timeout_work_stop(void);
 static int dps_on_settings_loaded(void);
 static int dps_settings_handler(const char *key, size_t len,
 				settings_read_cb read_cb, void *cb_arg);
+
+static const char *state_name_get(enum dps_state state)
+{
+	switch (state) {
+	case DPS_STATE_UNINIT: return "DPS_STATE_UNINIT";
+	case DPS_STATE_DISCONNECTED: return "DPS_STATE_DISCONNECTED";
+	case DPS_STATE_CONNECTING: return "DPS_STATE_CONNECTING";
+	case DPS_STATE_TRANSPORT_CONNECTED: return "DPS_STATE_TRANSPORT_CONNECTED";
+	case DPS_STATE_CONNECTED: return "DPS_STATE_CONNECTED";
+	case DPS_STATE_DISCONNECTING: return "DPS_STATE_DISCONNECTING";
+	default: return "DPS_STATE_UNKNOWN";
+	}
+}
+
+static bool dps_state_verify(enum dps_state state)
+{
+	return (dps_state == state);
+}
+
+static void dps_state_set(enum dps_state new_state)
+{
+	bool notify_error = false;
+
+	if (dps_state == new_state) {
+		return;
+	}
+
+	/* Check for legal state transitions. */
+	switch (dps_state) {
+	case DPS_STATE_UNINIT:
+		if (new_state != DPS_STATE_DISCONNECTED) {
+			notify_error = true;
+		}
+		break;
+	case DPS_STATE_DISCONNECTED:
+		if (new_state != DPS_STATE_CONNECTING) {
+			notify_error = true;
+		}
+		break;
+	case DPS_STATE_CONNECTING:
+		if (new_state != DPS_STATE_CONNECTED &&
+		    new_state != DPS_STATE_DISCONNECTING &&
+		    new_state != DPS_STATE_DISCONNECTED) {
+			notify_error = true;
+		}
+		break;
+	case DPS_STATE_TRANSPORT_CONNECTED:
+		if (new_state != DPS_STATE_CONNECTING) {
+			notify_error = true;
+		}
+		break;
+	case DPS_STATE_CONNECTED:
+		if (new_state != DPS_STATE_DISCONNECTING &&
+		    new_state != DPS_STATE_DISCONNECTED) {
+			notify_error = true;
+		}
+		break;
+	case DPS_STATE_DISCONNECTING:
+		if ((new_state != DPS_STATE_DISCONNECTED) &&
+		    (new_state != DPS_STATE_TRANSPORT_CONNECTED)) {
+			notify_error = true;
+		}
+		break;
+	default:
+		LOG_ERR("New DPS state is unknown");
+		notify_error = true;
+		break;
+	}
+
+	if (notify_error) {
+		LOG_ERR("Invalid connection state transition, %s --> %s",
+			state_name_get(dps_state),
+			state_name_get(new_state));
+		return;
+	}
+
+	LOG_DBG("State transition: %s --> %s",
+		state_name_get(dps_state),
+		state_name_get(new_state));
+
+	dps_state = new_state;
+}
 
 SETTINGS_STATIC_HANDLER_DEFINE(azure_iot_hub_dps, DPS_SETTINGS_KEY, NULL,
 			       dps_settings_handler, dps_on_settings_loaded,
@@ -91,54 +132,127 @@ static int dps_settings_handler(const char *key, size_t len,
 				settings_read_cb read_cb, void *cb_arg)
 {
 	int err;
+	static uint32_t hostname_len;
+	static uint32_t device_id_len;
 
 	if (strcmp(key, DPS_SETTINGS_HOSTNAME_LEN_KEY) == 0) {
-		err = read_cb(cb_arg, &dps_reg_status.assigned_hub_len,
-			      sizeof(dps_reg_status.assigned_hub_len));
+		err = read_cb(cb_arg, &hostname_len, sizeof(hostname_len));
 		if (err < 0) {
-			LOG_ERR("Failed to read hostname length, error: %d",
-				err);
+			LOG_ERR("Failed to read hostname length, error: %d", err);
 			return err;
 		}
+
+		LOG_DBG("Azure IoT Hub hostname length found: %d", hostname_len);
 
 		return 0;
 	}
 
 	if (strcmp(key, DPS_SETTINGS_HOSTNAME_KEY) == 0) {
-		err = read_cb(cb_arg, dps_reg_status.assigned_hub,
-			      dps_reg_status.assigned_hub_len);
+		err = read_cb(cb_arg, assigned_hub_buf,
+			      MIN(sizeof(assigned_hub_buf), hostname_len));
 		if (err < 0) {
 			LOG_ERR("Failed to read hostname, error: %d", err);
 			return err;
 		}
 
-		dps_reg_status.state = DPS_STATE_REGISTERED;
+		dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNED;
+		dps_reg_ctx.assigned_hub = az_span_create(assigned_hub_buf,
+						MIN(sizeof(assigned_hub_buf), hostname_len));
 
-		LOG_DBG("Azure IoT Hub hostname found, DPS not needed: %s",
-			dps_reg_status.assigned_hub);
+		LOG_DBG("Azure IoT Hub hostname found: %.*s",
+			az_span_size(dps_reg_ctx.assigned_hub),
+			(char *)az_span_ptr(dps_reg_ctx.assigned_hub));
+	}
+
+	if (strcmp(key, DPS_SETTINGS_DEVICE_ID_LEN_KEY) == 0) {
+		err = read_cb(cb_arg, &device_id_len, sizeof(device_id_len));
+		if (err < 0) {
+			LOG_ERR("Failed to read device ID length, error: %d", err);
+			return err;
+		}
+
+		LOG_DBG("Assigned device ID length found: %d", device_id_len);
+
+		return 0;
+	}
+
+	if (strcmp(key, DPS_SETTINGS_DEVICE_ID_KEY) == 0) {
+		err = read_cb(cb_arg, assigned_device_id_buf,
+			      MIN(sizeof(assigned_device_id_buf), device_id_len));
+		if (err < 0) {
+			LOG_ERR("Failed to read device ID, error: %d", err);
+			return err;
+		}
+
+		dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNED;
+		dps_reg_ctx.assigned_device_id =
+			az_span_create(assigned_device_id_buf,
+				       MIN(sizeof(assigned_device_id_buf), device_id_len));
+
+		LOG_DBG("Assigned device ID found: %.*s",
+			az_span_size(dps_reg_ctx.assigned_device_id),
+			(char *)az_span_ptr(dps_reg_ctx.assigned_device_id));
 	}
 
 	return 0;
 }
 
-static int dps_save_hostname(const uint8_t *buf, uint32_t buf_len)
+AZ_DPS_STATIC int dps_save_hostname(char *hostname_ptr, size_t hostname_len)
 {
 	int err;
+	size_t buf_hostname_len = MIN(sizeof(assigned_hub_buf) - 1, hostname_len);
 
-	err = settings_save_one(
-		DPS_SETTINGS_KEY "/" DPS_SETTINGS_HOSTNAME_LEN_KEY,
-		&buf_len, sizeof(buf_len));
+	memcpy(assigned_hub_buf, hostname_ptr,  buf_hostname_len);
+	assigned_hub_buf[hostname_len] = '\0';
+
+	dps_reg_ctx.assigned_hub = az_span_create(assigned_hub_buf, buf_hostname_len);
+
+	err = settings_save_one(DPS_SETTINGS_KEY "/" DPS_SETTINGS_HOSTNAME_LEN_KEY,
+				&hostname_len, sizeof(hostname_len));
 	if (err) {
 		return err;
 	}
 
 	err = settings_save_one(DPS_SETTINGS_KEY "/" DPS_SETTINGS_HOSTNAME_KEY,
-				buf, buf_len);
+				assigned_hub_buf, hostname_len);
 	if (err) {
 		return err;
 	}
 
-	LOG_DBG("Azure IoT Hub acquired using DPS was successfully saved");
+	LOG_DBG("Assigned IoT Hub updated (size: %d): %.*s",
+		az_span_size(dps_reg_ctx.assigned_hub),
+		az_span_size(dps_reg_ctx.assigned_hub),
+		(char *)az_span_ptr(dps_reg_ctx.assigned_hub));
+
+	return 0;
+}
+
+AZ_DPS_STATIC int dps_save_device_id(char *device_id_ptr, size_t device_id_len)
+{
+	int err;
+	size_t buf_device_id_len = MIN(sizeof(assigned_device_id_buf) - 1, device_id_len);
+
+	memcpy(assigned_device_id_buf, device_id_ptr,  buf_device_id_len);
+	assigned_device_id_buf[buf_device_id_len] = '\0';
+
+	dps_reg_ctx.assigned_device_id = az_span_create(assigned_device_id_buf, buf_device_id_len);
+
+	err = settings_save_one(DPS_SETTINGS_KEY "/" DPS_SETTINGS_DEVICE_ID_LEN_KEY,
+				&device_id_len, sizeof(device_id_len));
+	if (err) {
+		return err;
+	}
+
+	err = settings_save_one(DPS_SETTINGS_KEY "/" DPS_SETTINGS_DEVICE_ID_KEY,
+				assigned_device_id_buf, device_id_len);
+	if (err) {
+		return err;
+	}
+
+	LOG_DBG("Assigned device ID updated (size: %d): %.*s",
+		az_span_size(dps_reg_ctx.assigned_device_id),
+		az_span_size(dps_reg_ctx.assigned_device_id),
+		(char *)az_span_ptr(dps_reg_ctx.assigned_device_id));
 
 	return 0;
 }
@@ -147,7 +261,7 @@ static int dps_on_settings_loaded(void)
 {
 	LOG_DBG("Settings fully loaded");
 
-	k_sem_give(&dps_reg_status.settings_loaded);
+	k_sem_give(&dps_reg_ctx.settings_loaded);
 
 	return 0;
 }
@@ -173,7 +287,107 @@ static int dps_settings_init(void)
 	return 0;
 }
 
-static void dps_reg_status_work_fn(struct k_work *work)
+static bool dps_is_assigned(az_iot_provisioning_client_register_response *msg)
+{
+	if (msg->operation_status != AZ_IOT_PROVISIONING_STATUS_ASSIGNED) {
+		LOG_ERR("The device was not assigned to hub");
+		LOG_DBG("Registration state: %d", msg->operation_status);
+		LOG_DBG("Operation status: %d", msg->status);
+		LOG_DBG("Extended error code: %d",
+			msg->registration_state.extended_error_code);
+		LOG_DBG("Error message: %.*s ",
+			az_span_size(msg->registration_state.error_message),
+			az_span_ptr(msg->registration_state.error_message));
+		LOG_DBG("Error timestamp: %.*s",
+			az_span_size(msg->registration_state.error_timestamp),
+			az_span_ptr(msg->registration_state.error_timestamp));
+		LOG_DBG("Error tracking ID: %.*s",
+			az_span_size(msg->registration_state.error_tracking_id),
+			az_span_ptr(msg->registration_state.error_tracking_id));
+
+		return false;
+	}
+
+	return true;
+}
+
+/* To be called when registration is completed, both in case of success and failure.
+ *
+ * @param msg can be NULL if the failure might not be contained within the message.
+ */
+AZ_DPS_STATIC void on_reg_completed(az_iot_provisioning_client_register_response *msg)
+{
+	int err;
+	char *hostname_ptr;
+	size_t hostname_len;
+	char *device_id_ptr;
+	size_t device_id_len;
+
+	if (!dps_state_verify(DPS_STATE_DISCONNECTED) &&
+	    !dps_state_verify(DPS_STATE_DISCONNECTING)) {
+		dps_state_set(DPS_STATE_DISCONNECTING);
+	}
+
+	timeout_work_stop();
+
+	err = mqtt_helper_disconnect();
+	if (err) {
+		LOG_ERR("Failed to disconnect gracefully, error: %d", err);
+		dps_state_set(DPS_STATE_DISCONNECTED);
+		mqtt_helper_deinit();
+	}
+
+	if (msg == NULL) {
+		LOG_ERR("There was a failure during DPS registration, process is stopped");
+
+		dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_FAILED;
+		dps_reg_ctx.cb(dps_reg_ctx.status);
+
+		return;
+	}
+
+	/* Check if an IoT hub has been assigned and copy the hostname if it was. */
+	if (!dps_is_assigned(msg)) {
+		LOG_ERR("The registration was not successful, no IoT Hub was assigned");
+
+		dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_FAILED;
+		dps_reg_ctx.cb(dps_reg_ctx.status);
+
+		return;
+	}
+
+	hostname_ptr = az_span_ptr(msg->registration_state.assigned_hub_hostname);
+	hostname_len = az_span_size(msg->registration_state.assigned_hub_hostname);
+
+	err = dps_save_hostname(hostname_ptr, hostname_len);
+	if (err) {
+		LOG_ERR("Failed to save hostname to flash, error: %d", err);
+	}
+
+	device_id_ptr = az_span_ptr(msg->registration_state.device_id);
+	device_id_len = az_span_size(msg->registration_state.device_id);
+
+	err = dps_save_device_id(device_id_ptr, device_id_len);
+	if (err) {
+		LOG_ERR("Failed to save device ID to flash, error: %d", err);
+	}
+
+	LOG_DBG("Device ID %.*s is now registered to %.*s",
+		az_span_size(dps_reg_ctx.reg_id),
+		(char *)az_span_ptr(dps_reg_ctx.reg_id),
+		az_span_size(dps_reg_ctx.assigned_hub),
+		(char *)az_span_ptr(dps_reg_ctx.assigned_hub));
+
+	dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNED;
+	dps_reg_ctx.cb(dps_reg_ctx.status);
+}
+
+static void on_reg_failed(void)
+{
+	on_reg_completed(NULL);
+}
+
+static void reg_status_request_send(void)
 {
 	int err;
 	struct mqtt_publish_param param = {
@@ -182,384 +396,222 @@ static void dps_reg_status_work_fn(struct k_work *work)
 		.message.topic.qos = MQTT_QOS_1_AT_LEAST_ONCE,
 		.message_id = k_uptime_get_32(),
 	};
-	static uint32_t retry_count;
-	struct dps_reg_status *reg_status =
-		CONTAINER_OF(work, struct dps_reg_status, poll_work);
-	char topic[DPS_TOPIC_OPERATION_ID_MAX_LEN];
+	char topic[CONFIG_AZURE_IOT_HUB_DPS_TOPIC_BUFFER_SIZE];
 	size_t topic_len;
 
-	if (dps_reg_status.state != DPS_STATE_REGISTERING) {
-		return;
-	}
+	dps_reg_ctx.retry_count++;
 
-	retry_count++;
-
-	if ((retry_count <= DPS_REG_STATUS_UPDATE_MAX_RETRIES) &&
-	    (reg_status->state == DPS_STATE_REGISTERING)) {
-		k_work_reschedule(
-			k_work_delayable_from_work(work),
-			K_SECONDS(reg_status->retry));
-	} else if (retry_count > DPS_REG_STATUS_UPDATE_MAX_RETRIES) {
-		LOG_ERR("DPS retry max count (%d) exceeded",
-			DPS_REG_STATUS_UPDATE_MAX_RETRIES);
-		reg_status->state = DPS_STATE_FAILED;
-		cb_handler(reg_status->state);
+	if (dps_reg_ctx.retry_count > AZURE_IOT_HUB_DPS_REG_STATUS_UPDATE_MAX_RETRIES) {
+		LOG_ERR("DPS retry max count (%d) exceeded, disconnecting",
+			AZURE_IOT_HUB_DPS_REG_STATUS_UPDATE_MAX_RETRIES);
+		on_reg_failed();
 
 		return;
 	}
 
-	topic_len = snprintk(topic, sizeof(topic),
-			     DPS_TOPIC_REG_STATUS,
-			     dps_reg_status.reg_id,
-			     dps_reg_status.operation_id);
+	err = az_iot_provisioning_client_query_status_get_publish_topic(
+		&dps_reg_ctx.dps_client,
+		dps_reg_ctx.operation_id,
+		topic,
+		sizeof(topic),
+		&topic_len);
+	if (az_result_failed(err)) {
+		LOG_ERR("Failed to get status query topic, az error: %d", err);
+		on_reg_failed();
+		return;
+	}
+
+	LOG_DBG("Status query topic: %.*s", topic_len, topic);
 
 	param.message.topic.topic.utf8 = topic;
 	param.message.topic.topic.size = topic_len;
 
 	LOG_DBG("Requesting DPS status update");
 
-	err = mqtt_publish(mqtt_client, &param);
+	err = mqtt_helper_publish(&param);
 	if (err) {
 		LOG_ERR("Failed to send status request, err: %d", err);
+		on_reg_failed();
 		return;
 	}
 }
 
-static int dps_get_operation_id(char *json)
+/* When this delayable work function is called, it means that a timeout has happened, and the
+ * registration process has for some reason stalled for CONFIG_AZURE_IOT_HUB_DPS_TIMEOUT_SEC.
+ */
+static void timeout_work_fn(struct k_work *work)
 {
-	cJSON *root_obj, *op_id_obj;
-	char *op_id_str;
-	int err = 0;
-
-	root_obj = cJSON_Parse(json);
-	if (root_obj == NULL) {
-		LOG_DBG("[%s:%d] Unable to parse input", __func__, __LINE__);
-		return -ENOMEM;
-	}
-
-	op_id_obj = cJSON_GetObjectItem(root_obj, "operationId");
-	if (op_id_obj == NULL) {
-		LOG_ERR("Could not find operationId object");
-		err = -ENOMEM;
-		goto exit;
-	}
-
-	op_id_str = cJSON_GetStringValue(op_id_obj);
-	if (op_id_str == NULL) {
-		LOG_ERR("Failed to get operation ID string");
-		err = -ENOMEM;
-		goto exit;
-	}
-
-	strncpy(dps_reg_status.operation_id, op_id_str,
-		sizeof(dps_reg_status.operation_id));
-
-exit:
-	cJSON_Delete(root_obj);
-
-	return err;
+	LOG_ERR("A timeout occurred, the registration process is terminated");
+	on_reg_failed();
 }
 
-static int dps_check_reg_success(char *json)
+static void timeout_work_restart_timer(void)
 {
-	cJSON *root_obj, *reg_status_obj, *status_item, *assigned_hub_item;
-	char *status_str, *assigned_hub_str;
-	int err = 0;
+	LOG_DBG("Restarting timeout: %d sec", CONFIG_AZURE_IOT_HUB_DPS_TIMEOUT_SEC);
 
-	root_obj = cJSON_Parse(json);
-	if (root_obj == NULL) {
-		LOG_DBG("[%s:%d] Unable to parse input", __func__, __LINE__);
-		return -ENOMEM;
-	}
-
-	reg_status_obj =
-		cJSON_GetObjectItem(root_obj, "registrationState");
-	if (reg_status_obj == NULL) {
-		LOG_ERR("Did not find registrationState object");
-		err = -ENOMEM;
-		goto exit;
-	}
-
-	status_item =
-		cJSON_GetObjectItem(reg_status_obj, "status");
-	if (status_item == NULL) {
-		LOG_ERR("Did not find status object");
-		err = -ENOMEM;
-		goto exit;
-	}
-
-	status_str = cJSON_GetStringValue(status_item);
-	if (status_str == NULL) {
-		LOG_ERR("Failed to get status string");
-		err = -ENOMEM;
-		goto exit;
-	}
-
-	if (strcmp("assigned", status_str) != 0) {
-		LOG_ERR("The device was not assigned to hub, status: %s",
-			status_str);
-		goto exit;
-	}
-
-	LOG_DBG("Registration status: %s", status_str);
-
-	assigned_hub_item =
-		cJSON_GetObjectItem(reg_status_obj, "assignedHub");
-	if (assigned_hub_item == NULL) {
-		LOG_ERR("Did not find assignedHub object");
-		err = -ENOMEM;
-		goto exit;
-	}
-
-	assigned_hub_str = cJSON_GetStringValue(assigned_hub_item);
-	if (assigned_hub_str == NULL) {
-		LOG_ERR("Failed to get assignedHub string");
-		err = -ENOMEM;
-		goto exit;
-	}
-
-	strncpy(dps_reg_status.assigned_hub, assigned_hub_str,
-		sizeof(dps_reg_status.assigned_hub));
-
-	err = dps_save_hostname(assigned_hub_str, strlen(assigned_hub_str) + 1);
-	if (err) {
-		LOG_ERR("Failed to save hostname");
-	}
-exit:
-	cJSON_Delete(root_obj);
-
-	return err;
+	k_work_reschedule(&dps_reg_ctx.timeout_work,
+			  K_SECONDS(CONFIG_AZURE_IOT_HUB_DPS_TIMEOUT_SEC));
 }
 
-static void dps_parse_reg_update(struct topic_parser_data *topic, char *payload,
-				 size_t payload_len)
+static void timeout_work_stop(void)
+{
+	LOG_DBG("Stopping timeout timer");
+
+	k_work_cancel_delayable(&dps_reg_ctx.timeout_work);
+}
+
+static void handle_reg_update(az_span topic_span, az_span payload_span)
 {
 	int err;
-	char *reg_id_str = NULL;
-	char *retry_str = NULL;
-	char *end_ptr;
+	az_iot_provisioning_client_register_response msg = {0};
+
+	err = az_iot_provisioning_client_parse_received_topic_and_payload(
+		&dps_reg_ctx.dps_client,
+		topic_span,
+		payload_span,
+		&msg);
+	if (az_result_failed(err)) {
+		LOG_WRN("The incoming message was not a registration response message");
+		LOG_HEXDUMP_DBG(az_span_ptr(topic_span), az_span_size(topic_span), "Topic: ");
+		LOG_HEXDUMP_DBG(az_span_ptr(payload_span), az_span_size(payload_span), "Payload: ");
+
+		/* This should not happen while DPS is the only user of the MQTT helper, so consider
+		 * it an unexpected event, report failure and stop DPS process.
+		 */
+
+		on_reg_failed();
+		return;
+	}
 
 	LOG_DBG("DPS registration request response received");
+	LOG_DBG("Status code is %d", msg.status);
 
-	/* Response codes:
-	 *	200: Device registration has been processed
-	 *	202: Registration pending, keep polling
-	 *	All others: Failure
+	/* Check if the request was successful, and if not whether we should continue to poll the
+	 * status for it.
 	 */
-	if (topic->status == 200) {
-		/* If the cancellation fails, the work handler will return
-		 * early on the dps_reg_status.state check and will not
-		 * be rescheduled.
-		 */
-		(void)k_work_cancel_delayable(&dps_reg_status.poll_work);
+	if (!az_iot_status_succeeded(msg.status)) {
+		if (!az_iot_status_retriable(msg.status)) {
+			LOG_WRN("The status code %d indicates a non-retriable error", msg.status);
 
-		/* The assigned IoT hub is stored as JSON in the payload */
-		err = dps_check_reg_success(payload);
-		if (err) {
-			LOG_ERR("The registration was not successful");
+			dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_FAILED;
 
-			dps_reg_status.state = DPS_STATE_FAILED;
-			cb_handler(dps_reg_status.state);
-
+			on_reg_completed(&msg);
 			return;
 		}
 
-		LOG_INF("Device ID %s is now registered to %s",
-			dps_reg_status.reg_id,
-			dps_reg_status.assigned_hub);
+		/* The status should be polled again */
+	}
 
-		dps_reg_status.state = DPS_STATE_REGISTERED;
-		cb_handler(dps_reg_status.state);
-		return;
-	} else if (topic->status != 202) {
-		/* Invalid response code */
-		LOG_ERR("DPS registration request not successful");
-		LOG_ERR("Code was %d, while 202 was expected", topic->status);
+	if (az_iot_provisioning_client_operation_complete(msg.operation_status)) {
+		on_reg_completed(&msg);
 		return;
 	}
 
-	/* The property bag count shall be 2, and in its raw format, the
-	 * property bag part of the topic looks like this:
-	 *	?$rid={request_id}&retry-after=x
+	/* The registration process is still pending, and a new request should
+	 * be sent after waiting the indicated retry time.
 	 */
-	if (topic->prop_bag_count != 2) {
-		LOG_WRN("Invalid property bag count");
-		return;
-	}
 
-	/* Usually the registration ID comes first. */
-	if (strcmp("$rid", topic->prop_bag[0].key) == 0) {
-		reg_id_str = topic->prop_bag[0].value;
-	} else if (strcmp("retry-after", topic->prop_bag[0].key) == 0) {
-		retry_str = topic->prop_bag[0].value;
+	dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNING;
+
+	if (msg.retry_after_seconds == 0) {
+		LOG_DBG("No retry time found, using default value of %d", RETRY_AFTER_SEC_DEFAULT);
+		msg.retry_after_seconds = RETRY_AFTER_SEC_DEFAULT;
+
 	} else {
-		LOG_WRN("Unexpected property bag keys: \"%s\", \"%s\"",
-			topic->prop_bag[0].key,
-			topic->prop_bag[1].key);
+		LOG_DBG("Received retry value: %d", msg.retry_after_seconds);
+	}
+
+	if (az_span_size(msg.operation_id) > sizeof(operation_id_buf)) {
+		LOG_ERR("Operation ID is too large for the buffer, aborting DPS registration");
+		/* This is a critical error and status can't be requested without the ID */
+
+		on_reg_completed(&msg);
 		return;
 	}
 
-	/* Usually the retry-after property comes second. */
-	if (strcmp("retry-after", topic->prop_bag[1].key) == 0) {
-		retry_str = topic->prop_bag[1].value;
-	} else if (strcmp("$rid", topic->prop_bag[1].key) == 0) {
-		reg_id_str = topic->prop_bag[1].value;
-	} else {
-		LOG_WRN("Unexpected property bag keys: \"%s\", \"%s\"",
-			topic->prop_bag[0].key,
-			topic->prop_bag[1].key);
-		return;
-	}
+	(void)az_span_copy(dps_reg_ctx.operation_id, msg.operation_id);
+	dps_reg_ctx.operation_id = az_span_slice(dps_reg_ctx.operation_id, 0,
+						 az_span_size(msg.operation_id));
 
-	if ((reg_id_str == NULL) || (retry_str == NULL)) {
-		LOG_ERR("Retry value or request ID was not be found in topic");
-		return;
-	}
+	LOG_DBG("Operation ID: %.*s",
+		az_span_size(dps_reg_ctx.operation_id),
+		(char *)az_span_ptr(dps_reg_ctx.operation_id));
 
-	err = strcmp(dps_reg_status.reg_id, reg_id_str);
-	if (err != 0) {
-		LOG_ERR("Mismatch in received registration ID");
-		return;
-	}
+	dps_reg_ctx.cb(dps_reg_ctx.status);
 
-	LOG_DBG("Correct registration ID verified");
+	/* Waiting for retry. It is okay to wait here, as this happens in the MQTT helper thread
+	 * context, and there is no other activity pending there.
+	 */
+	k_sleep(K_SECONDS(msg.retry_after_seconds));
 
-	/* Convert retry value from string to integer */
-	errno = 0;
-	dps_reg_status.retry = strtoul(retry_str, &end_ptr, 10);
-
-	if ((errno == ERANGE) || (*end_ptr != '\0')) {
-		LOG_WRN("Retry value could not be parsed and applied");
-		return;
-	}
-
-	LOG_DBG("Received retry value: %d", dps_reg_status.retry);
-
-	/* Get operation ID and store to global status struct */
-	err = dps_get_operation_id(payload);
-	if (err) {
-		dps_reg_status.state = DPS_STATE_FAILED;
-		LOG_ERR("Failed to get operation ID, error: %d", err);
-		return;
-	}
-
-	LOG_DBG("Operation ID: %s", dps_reg_status.operation_id);
-	k_work_reschedule(&dps_reg_status.poll_work,
-			  K_SECONDS(dps_reg_status.retry));
+	reg_status_request_send();
 }
 
-static int dps_reg_id_set(const char *id, size_t id_len)
+static int dps_id_scope_set(struct azure_iot_hub_buf id_scope)
 {
-	ssize_t len;
+	char *id = id_scope.ptr;
+	size_t id_len = id_scope.size;
 
-	if (id_len > (sizeof(dps_reg_status.reg_id) - 1)) {
-		LOG_ERR("The registration ID is too big for buffer");
-		return -EMSGSIZE;
+	if ((id == NULL) || (id_len == 0)) {
+		LOG_DBG("No ID scope provided, using ID scope from Kconfig: %s",
+			CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE);
+
+		id = CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE;
+		id_len = MAX(sizeof(CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE) - 1, 0);
 	}
 
-	LOG_INF("Setting DPS registration ID: %s", id);
+	dps_reg_ctx.id_scope = az_span_create(id, id_len);
 
-	memcpy(dps_reg_status.reg_id, id, id_len);
-	dps_reg_status.reg_id[id_len] = '\0';
-
-	LOG_DBG("Saved DPS registration ID: %s", dps_reg_status.reg_id);
-
-	/* Populate registration status topic with ID */
-	len = snprintk(dps_topic_reg_pub, sizeof(dps_topic_reg_pub),
-		       DPS_TOPIC_REG_PUB, id);
-	if ((len < 0) || (len > sizeof(dps_topic_reg_pub))) {
-		LOG_ERR("The registration topic is too big for buffer");
-		return -ENOMEM;
-	}
+	LOG_DBG("Setting DPS ID scope: %.*s",
+		az_span_size(dps_reg_ctx.id_scope),
+		(char *)az_span_ptr(dps_reg_ctx.id_scope));
 
 	return 0;
 }
 
-/* Public interface */
-
-int dps_init(struct dps_config *cfg)
+static int dps_reg_id_set(struct azure_iot_hub_buf reg_id)
 {
-	int err;
+	char *id = reg_id.ptr;
+	size_t id_len = reg_id.size;
 
-	mqtt_client = (struct mqtt_client *)cfg->mqtt_client;
-	cb_handler = cfg->handler;
-	dps_reg_status.state = DPS_STATE_NOT_STARTED;
+	if ((id == NULL) || (id_len == 0)) {
+		LOG_DBG("No registration ID provided, using ID from Kconfig: %s",
+			CONFIG_AZURE_IOT_HUB_DPS_REG_ID);
 
-	err = dps_reg_id_set(cfg->reg_id, cfg->reg_id_len);
-	if (err) {
-		return err;
+		id = CONFIG_AZURE_IOT_HUB_DPS_REG_ID;
+		id_len = MAX(sizeof(CONFIG_AZURE_IOT_HUB_DPS_REG_ID) - 1, 0);
 	}
 
-	k_work_init_delayable(&dps_reg_status.poll_work, dps_reg_status_work_fn);
-	k_sem_init(&dps_reg_status.settings_loaded, 0, 1);
-	cJSON_Init();
+	dps_reg_ctx.reg_id = az_span_create(id, id_len);
 
-	return dps_settings_init();
-}
-
-int dps_start(void)
-{
-	int err;
-	static bool initial_load_done;
-
-	dps_reg_status.state = DPS_STATE_NOT_STARTED;
-
-	if (!initial_load_done) {
-		err = k_sem_take(&dps_reg_status.settings_loaded, K_SECONDS(1));
-		if (err) {
-			LOG_ERR("Settings were not loaded in time");
-			return -ETIMEDOUT;
-		}
-
-		initial_load_done = true;
-	}
-
-	if (strlen(dps_reg_status.assigned_hub) > 0) {
-		LOG_INF("Device is assigned to IoT hub: %s",
-			dps_reg_status.assigned_hub);
-
-		dps_reg_status.state = DPS_STATE_REGISTERED;
-
-		return -EALREADY;
-	}
-
-	dps_reg_status.state = DPS_STATE_REGISTERING;
+	LOG_DBG("Setting DPS registration ID: %.*s",
+		az_span_size(dps_reg_ctx.reg_id),
+		(char *)az_span_ptr(dps_reg_ctx.reg_id));
 
 	return 0;
 }
 
-char *dps_hostname_get(void)
-{
-	if (strlen(dps_reg_status.assigned_hub) == 0) {
-		LOG_DBG("No assigned hub found");
-		return NULL;
-	}
-
-	return dps_reg_status.assigned_hub;
-}
-
-int dps_subscribe(void)
+static int topic_subscribe(void)
 {
 	int err;
-	struct mqtt_topic dps_sub_topics[] = {
-		{
-			.topic = {
-				.utf8 = DPS_TOPIC_REG_SUB,
-				.size = sizeof(DPS_TOPIC_REG_SUB) - 1,
-			},
+	struct mqtt_topic dps_sub_topic = {
+		.topic = {
+			.utf8 = AZ_IOT_PROVISIONING_CLIENT_REGISTER_SUBSCRIBE_TOPIC,
+			.size = sizeof(AZ_IOT_PROVISIONING_CLIENT_REGISTER_SUBSCRIBE_TOPIC) - 1,
 		},
 	};
 	struct mqtt_subscription_list sub_list = {
-		.list = dps_sub_topics,
-		.list_count = ARRAY_SIZE(dps_sub_topics),
+		.list = &dps_sub_topic,
+		.list_count = 1,
 		.message_id = k_uptime_get_32(),
 	};
 
 	for (size_t i = 0; i < sub_list.list_count; i++) {
-		LOG_DBG("Subscribing to: %s", (char *)sub_list.list[i].topic.utf8);
+		LOG_DBG("Subscribing to: %.*s", sub_list.list[i].topic.size,
+						(char *)sub_list.list[i].topic.utf8);
 	}
 
-	err = mqtt_subscribe(mqtt_client, &sub_list);
+	err = mqtt_helper_subscribe(&sub_list);
 	if (err) {
 		LOG_ERR("Failed to subscribe to topic list, error: %d", err);
 		return err;
@@ -570,103 +622,440 @@ int dps_subscribe(void)
 	return 0;
 }
 
-int dps_send_reg_request(void)
+static int dps_send_reg_request(void)
 {
 	struct mqtt_publish_param param = {
 		.message.topic.qos = MQTT_QOS_1_AT_LEAST_ONCE,
 		.message_id = k_uptime_get_32(),
 	};
-	size_t topic_len = sizeof(DPS_TOPIC_REG_PUB) +
-			   CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN;
-	size_t payload_len = sizeof(DPS_REG_PAYLOAD) +
-			   CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN;
-	char topic_buf[topic_len];
-	char payload_buf[payload_len];
+	char topic_buf[CONFIG_AZURE_IOT_HUB_DPS_TOPIC_BUFFER_SIZE];
+	size_t topic_len = sizeof(topic_buf);
+	int err;
 
-	topic_len = snprintk(topic_buf, sizeof(topic_buf),
-		DPS_TOPIC_REG_PUB, dps_reg_status.reg_id);
-	if (topic_len < 0 || topic_len > sizeof(topic_buf)) {
-		LOG_ERR("Failed to create DPS request topic");
+	err = az_iot_provisioning_client_register_get_publish_topic(
+		&dps_reg_ctx.dps_client,
+		topic_buf,
+		sizeof(topic_buf),
+		&topic_len);
+	if (az_result_failed(err)) {
+		LOG_ERR("Failed to get registration topic, error: %d", err);
 		return -EMSGSIZE;
 	}
 
-	payload_len = snprintk(payload_buf, sizeof(payload_buf),
-		DPS_REG_PAYLOAD, dps_reg_status.reg_id);
-	if (payload_len < 0 || payload_len > sizeof(payload_buf)) {
-		LOG_ERR("Failed to create DPS request payload");
-		return -EMSGSIZE;
-	}
+	LOG_DBG("Topic buffer size is %d, actual topic size is: %d", sizeof(topic_buf), topic_len);
 
 	param.message.topic.topic.utf8 = topic_buf;
 	param.message.topic.topic.size = topic_len;
-	param.message.payload.data = payload_buf;
-	param.message.payload.len = payload_len;
 
-	LOG_DBG("Publishing to DPS registration topic: %s, msg: %s",
-		(char *)param.message.topic.topic.utf8,
-		(char *)param.message.payload.data);
+	LOG_DBG("Publishing to DPS registration topic: %.*s, no payload",
+		param.message.topic.topic.size,
+		(char *)param.message.topic.topic.utf8);
 
-	return mqtt_publish(mqtt_client, &param);
+	return mqtt_helper_publish(&param);
 }
 
-bool dps_process_message(struct azure_iot_hub_evt *evt,
-			 struct topic_parser_data *topic_data)
+AZ_DPS_STATIC int provisioning_client_init(struct mqtt_helper_conn_params *conn_params)
 {
-	if (evt->type == AZURE_IOT_HUB_EVT_DISCONNECTED) {
-		LOG_WRN("DPS disconnected unexpectedly");
+	int err;
+	az_span dps_hostname = AZ_SPAN_LITERAL_FROM_STR(CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME);
 
-		dps_reg_status.state = DPS_STATE_FAILED;
-		cb_handler(dps_reg_status.state);
-		return true;
+	dps_reg_ctx.operation_id = az_span_create(operation_id_buf, sizeof(operation_id_buf));
+	dps_reg_ctx.assigned_hub = az_span_create(assigned_hub_buf, sizeof(assigned_hub_buf));
+	dps_reg_ctx.assigned_device_id = az_span_create(assigned_device_id_buf,
+							sizeof(assigned_device_id_buf));
+	dps_reg_ctx.retry_count = 0;
+
+	/* Reset the Azure SDK client */
+	memset(&dps_reg_ctx.dps_client, 0, sizeof(dps_reg_ctx.dps_client));
+
+	err = az_iot_provisioning_client_init(
+		&dps_reg_ctx.dps_client,
+		dps_hostname,
+		dps_reg_ctx.id_scope,
+		dps_reg_ctx.reg_id,
+		NULL);
+	if (az_result_failed(err)) {
+		LOG_ERR("Failed to initialize DPS client, error: 0x%08x", err);
+		return -EFAULT;
 	}
 
-	if (topic_data == NULL) {
-		LOG_DBG("No topic data provided, message won't be processed");
-		return false;
+	err = az_iot_provisioning_client_get_client_id(
+		&dps_reg_ctx.dps_client,
+		conn_params->device_id.ptr,
+		conn_params->device_id.size,
+		&conn_params->device_id.size);
+	if (az_result_failed(err)) {
+		LOG_ERR("Failed to get client ID, error: 0x%08x", err);
+		return -EFAULT;
 	}
 
-	if (topic_data->type != TOPIC_TYPE_DPS_REG_RESULT) {
-		LOG_DBG("Not a DPS result update, ignoring");
-		return false;
+	LOG_DBG("Client ID (size: %d): %.*s", conn_params->device_id.size,
+		conn_params->device_id.size, conn_params->device_id.ptr);
+
+	err = az_iot_provisioning_client_get_user_name(
+		&dps_reg_ctx.dps_client,
+		conn_params->user_name.ptr,
+		conn_params->user_name.size,
+		&conn_params->user_name.size);
+	if (az_result_failed(err)) {
+		LOG_ERR("Failed to get user name, error: 0x%08x", err);
+		return -EFAULT;
 	}
 
-	dps_parse_reg_update(topic_data, evt->data.msg.ptr, evt->data.msg.len);
+	LOG_DBG("User name (size: %d): %.*s", conn_params->user_name.size,
+		conn_params->user_name.size, conn_params->user_name.ptr);
 
-	LOG_DBG("Incoming DPS data consumed");
-
-	return true;
+	return 0;
 }
 
-bool dps_reg_in_progress(void)
+AZ_DPS_STATIC void on_publish(struct azure_iot_hub_buf topic, struct azure_iot_hub_buf payload)
 {
-	return dps_reg_status.state == DPS_STATE_REGISTERING;
+	az_span topic_span = az_span_create(topic.ptr, topic.size);
+	az_span payload_span = az_span_create(payload.ptr, payload.size);
+
+	timeout_work_restart_timer();
+	handle_reg_update(topic_span, payload_span);
 }
 
-enum dps_reg_state dps_get_reg_state(void)
-{
-	return dps_reg_status.state;
-}
-
-int dps_reset(void)
+static void on_connack(enum mqtt_conn_return_code return_code)
 {
 	int err;
 
-	dps_reg_status.state = DPS_STATE_NOT_STARTED;
-	dps_reg_status.assigned_hub[0] = '\0';
+	if (return_code != MQTT_CONNECTION_ACCEPTED) {
+		LOG_ERR("Connection was rejected with return code %d", return_code);
+		LOG_WRN("Is the device certificate valid?");
+		on_reg_failed();
+		return;
+	}
+
+	dps_state_set(DPS_STATE_CONNECTED);
+
+	LOG_DBG("MQTT connected");
+
+	err = topic_subscribe();
+	if (err) {
+		LOG_ERR("Failed to subscribe to topics, err: %d", err);
+		on_reg_failed();
+		return;
+	}
+
+	timeout_work_restart_timer();
+}
+
+static void on_disconnect(int result)
+{
+	ARG_UNUSED(result);
+	dps_state_set(DPS_STATE_DISCONNECTED);
+	mqtt_helper_deinit();
+}
+
+static void on_puback(uint16_t message_id, int result)
+{
+	timeout_work_restart_timer();
+}
+
+static void on_suback(uint16_t message_id, int result)
+{
+	int err;
+
+	err = dps_send_reg_request();
+	if (err) {
+		LOG_ERR("Failed to send DPS registration request, error: %d", err);
+		on_reg_failed();
+		return;
+	}
+
+	dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNING;
+	dps_reg_ctx.cb(dps_reg_ctx.status);
+
+	timeout_work_restart_timer();
+}
+
+/* Public interface */
+
+int azure_iot_hub_dps_init(struct azure_iot_hub_dps_config *cfg)
+{
+	int err;
+
+	if ((cfg == NULL) || (cfg->handler == NULL)) {
+		return -EINVAL;
+	}
+
+	if (!dps_state_verify(DPS_STATE_UNINIT) && !dps_state_verify(DPS_STATE_DISCONNECTED))  {
+		LOG_ERR("DPS cannot start in the current state (%s)", state_name_get(dps_state));
+	}
+
+	dps_reg_ctx.cb = cfg->handler;
+
+	err = dps_reg_id_set(cfg->reg_id);
+	if (err) {
+		return err;
+	}
+
+	if (az_span_size(dps_reg_ctx.reg_id) == 0) {
+		LOG_ERR("Registration ID length is zero, DPS cannot proceed");
+		return -EFAULT;
+	}
+
+	err = dps_id_scope_set(cfg->id_scope);
+	if (err) {
+		return err;
+	}
+
+	if (az_span_size(dps_reg_ctx.id_scope) == 0) {
+		LOG_ERR("ID scope length is zero, DPS cannot proceed");
+		return -EFAULT;
+	}
+
+	dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_NOT_STARTED;
+
+	k_sem_init(&dps_reg_ctx.settings_loaded, 0, 1);
+	k_work_init_delayable(&dps_reg_ctx.timeout_work, timeout_work_fn);
+
+	err = dps_settings_init();
+	if (err) {
+		return err;
+	}
+
+	dps_state_set(DPS_STATE_DISCONNECTED);
+
+	dps_reg_ctx.is_init = true;
+
+	dps_reg_ctx.cb(AZURE_IOT_HUB_DPS_REG_STATUS_NOT_STARTED);
+
+	return 0;
+}
+
+int azure_iot_hub_dps_start(void)
+{
+	int err;
+	char client_id_buf[CONFIG_AZURE_IOT_HUB_DPS_DEVICE_ID_MAX_LEN];
+	char user_name_buf[CONFIG_AZURE_IOT_HUB_DPS_USER_NAME_BUFFER_SIZE];
+	static bool initial_load_done;
+	struct mqtt_helper_conn_params conn_params = {
+		.port = CONFIG_AZURE_IOT_HUB_PORT,
+		.hostname = {
+			.ptr = CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME,
+			.size = sizeof(CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME) - 1,
+		},
+		.user_name = {
+			.ptr = user_name_buf,
+			.size = sizeof(user_name_buf),
+		},
+		.device_id = {
+			.ptr = client_id_buf,
+			.size = sizeof(client_id_buf),
+		},
+	};
+	struct mqtt_helper_cfg cfg = {
+		.cb = {
+			.on_connack = on_connack,
+			.on_disconnect = on_disconnect,
+			.on_publish = on_publish,
+			.on_puback = on_puback,
+			.on_suback = on_suback,
+		},
+	};
+
+	if (!dps_state_verify(DPS_STATE_DISCONNECTED)) {
+		LOG_ERR("DPS cannot start in the current state (%s)", state_name_get(dps_state));
+		return -EACCES;
+	}
+
+	if (dps_reg_ctx.status == AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNING) {
+		LOG_ERR("Registration is already ongoing");
+		return -EALREADY;
+	}
+
+	if (!initial_load_done) {
+		err = k_sem_take(&dps_reg_ctx.settings_loaded, K_SECONDS(1));
+		if (err) {
+			LOG_ERR("Settings were not loaded in time");
+			dps_state_set(DPS_STATE_DISCONNECTED);
+
+			return -ETIMEDOUT;
+		}
+
+		initial_load_done = true;
+	}
+
+	if ((az_span_size(dps_reg_ctx.assigned_hub) > 0) &&
+	    (az_span_size(dps_reg_ctx.assigned_device_id) > 0)) {
+		LOG_DBG("Device \"%.*s\" is assigned to IoT hub: %.*s",
+			az_span_size(dps_reg_ctx.assigned_device_id),
+			(char *)az_span_ptr(dps_reg_ctx.assigned_device_id),
+			az_span_size(dps_reg_ctx.assigned_hub),
+			(char *)az_span_ptr(dps_reg_ctx.assigned_hub));
+
+		LOG_DBG("To re-register, call azure_iot_hub_dps_reset() first");
+
+		dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNED;
+
+		return -EALREADY;
+	}
+
+	dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_NOT_STARTED;
+
+	err = provisioning_client_init(&conn_params);
+	if (err) {
+		return err;
+	}
+
+	err = mqtt_helper_init(&cfg);
+	if (err) {
+		LOG_ERR("mqtt_helper_init failed, error: %d", err);
+		return -EFAULT;
+	}
+
+	err = mqtt_helper_connect(&conn_params);
+	if (err) {
+		LOG_ERR("mqtt_helper_connect failed, error: %d", err);
+		return err;
+	}
+
+	dps_state_set(DPS_STATE_CONNECTING);
+
+	timeout_work_restart_timer();
+
+	return 0;
+}
+
+int azure_iot_hub_dps_hostname_get(struct azure_iot_hub_buf *buf)
+{
+	size_t hostname_len = az_span_size(dps_reg_ctx.assigned_hub);
+	char *hostname_ptr = az_span_ptr(dps_reg_ctx.assigned_hub);
+
+	LOG_DBG("hostname_ptr: %p, hostname_len: %d", hostname_ptr, hostname_len);
+
+	if (buf == NULL) {
+		return -EINVAL;
+	}
+
+	if ((hostname_len == 0) || (hostname_ptr == NULL)) {
+		LOG_DBG("No assigned hub found");
+		return -ENOENT;
+	}
+
+	buf->ptr = hostname_ptr;
+	buf->size = hostname_len;
+
+	return 0;
+}
+
+int azure_iot_hub_dps_device_id_get(struct azure_iot_hub_buf *buf)
+{
+	size_t dev_id_len = az_span_size(dps_reg_ctx.assigned_device_id);
+	char *dev_id_ptr = az_span_ptr(dps_reg_ctx.assigned_device_id);
+
+	LOG_DBG("dev_id_ptr: %p, dev_id_len: %d", dev_id_ptr, dev_id_len);
+
+	if (buf == NULL) {
+		return -EINVAL;
+	}
+
+	if ((dev_id_len == 0) || (dev_id_ptr == NULL)) {
+		LOG_DBG("No assigned device ID found");
+		return -ENOENT;
+	}
+
+	buf->ptr = dev_id_ptr;
+	buf->size = dev_id_len;
+
+	return 0;
+}
+
+int azure_iot_hub_dps_hostname_delete(void)
+{
+	int err;
 
 	err = settings_delete(DPS_SETTINGS_KEY "/" DPS_SETTINGS_HOSTNAME_KEY);
-	if (err) {
+	if (err == -ENOENT) {
+		LOG_DBG("No hostname was stored");
+		goto exit_on_success;
+	} else if (err) {
 		LOG_ERR("Failed to delete Azure IoT Hub hostname, error: %d", err);
 
-		return err;
+		return -EFAULT;
 	}
 
 	err = settings_delete(DPS_SETTINGS_KEY "/" DPS_SETTINGS_HOSTNAME_LEN_KEY);
-	if (err) {
+	if (err == -ENOENT) {
+		LOG_DBG("No hostname length was stored");
+		goto exit_on_success;
+	} else if (err) {
 		LOG_ERR("Failed to delete Azure IoT Hub hostname length, error: %d", err);
 
-		return err;
+		return -EFAULT;
 	}
+
+exit_on_success:
+	dps_reg_ctx.assigned_hub = AZ_SPAN_EMPTY;
+
+	return 0;
+}
+
+int azure_iot_hub_dps_device_id_delete(void)
+{
+	int err;
+
+	err = settings_delete(DPS_SETTINGS_KEY "/" DPS_SETTINGS_DEVICE_ID_KEY);
+	if (err == -ENOENT) {
+		LOG_DBG("No device ID was stored");
+		goto exit_on_success;
+	} else if (err) {
+		LOG_ERR("Failed to delete assigned device ID, error: %d", err);
+
+		return -EFAULT;
+	}
+
+	err = settings_delete(DPS_SETTINGS_KEY "/" DPS_SETTINGS_DEVICE_ID_LEN_KEY);
+	if (err == -ENOENT) {
+		LOG_DBG("No device ID length was stored");
+		goto exit_on_success;
+	} else if (err) {
+		LOG_ERR("Failed to delete assigned device ID length, error: %d", err);
+
+		return -EFAULT;
+	}
+
+exit_on_success:
+	dps_reg_ctx.assigned_device_id = AZ_SPAN_EMPTY;
+
+	return 0;
+}
+
+int azure_iot_hub_dps_reset(void)
+{
+	int err;
+	struct azure_iot_hub_buf empty_buf = {0};
+
+	/* Close active MQTT connection before proceeding with cleanup. */
+	if (!dps_state_verify(DPS_STATE_UNINIT) && !dps_state_verify(DPS_STATE_DISCONNECTED)) {
+		err = mqtt_helper_disconnect();
+		if (err) {
+			LOG_ERR("Failed to disconnect MQTT, abandoning connection, error: %d", err);
+		} else {
+			LOG_WRN("The MQTT connection has been closed");
+		}
+	}
+
+	dps_state = DPS_STATE_UNINIT;
+
+	memset(&dps_reg_ctx, 0, sizeof(dps_reg_ctx));
+	dps_id_scope_set(empty_buf);
+	dps_reg_id_set(empty_buf);
+
+	dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_NOT_STARTED;
+
+	err = azure_iot_hub_dps_hostname_delete();
+	if (err == -EFAULT) {
+		return err;
+	};
+
+	err = azure_iot_hub_dps_device_id_delete();
+	if (err == -EFAULT) {
+		return err;
+	};
 
 	return 0;
 }

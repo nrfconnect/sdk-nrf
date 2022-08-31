@@ -32,6 +32,7 @@ static const struct sm_sampled_channel accel_chan[] = {
 };
 
 static const struct sm_sensor_config sensor_configs[] = {
+#if IS_ENABLED(CONFIG_SENSOR_SIM)
 	{
 		.dev = DEVICE_DT_GET(DT_NODELABEL(sensor_sim)),
 		.event_descr = DT_PROP(DT_NODELABEL(agg0), sensor_descr),
@@ -40,4 +41,15 @@ static const struct sm_sensor_config sensor_configs[] = {
 		.sampling_period_ms = 20,
 		.active_events_limit = 3,
 	},
+#endif /* IS_ENABLED(CONFIG_SENSOR_SIM) */
+#if IS_ENABLED(CONFIG_SENSOR_STUB)
+	{
+		.dev = DEVICE_DT_GET(DT_NODELABEL(sensor_stub)),
+		.event_descr = DT_PROP(DT_NODELABEL(agg0), sensor_descr),
+		.chans = accel_chan,
+		.chan_cnt = ARRAY_SIZE(accel_chan),
+		.sampling_period_ms = 20,
+		.active_events_limit = 3,
+	},
+#endif
 };

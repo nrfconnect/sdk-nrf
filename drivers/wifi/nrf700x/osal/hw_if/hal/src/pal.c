@@ -46,12 +46,12 @@ out:
 
 
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 unsigned long pal_rpu_ps_ctrl_reg_addr_get(void)
 {
 	return SOC_MMAP_ADDR_RPU_PS_CTRL;
 }
-#endif
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 char *pal_ops_get_fw_loc(struct wifi_nrf_osal_priv *opriv,
 			 enum wifi_nrf_fw_type fw_type,

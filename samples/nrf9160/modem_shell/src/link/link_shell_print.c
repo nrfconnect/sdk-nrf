@@ -109,6 +109,18 @@ const char *link_shell_funmode_to_string(int funmode, char *out_str_buff)
 	return link_shell_map_to_string(mapping_table, funmode, out_str_buff);
 }
 
+const char *link_shell_redmob_mode_to_string(int funmode, char *out_str_buff)
+{
+	struct mapping_tbl_item const mapping_table[] = {
+		{ LTE_LC_REDUCED_MOBILITY_DEFAULT, "default" },
+		{ LTE_LC_REDUCED_MOBILITY_NORDIC, "nordic" },
+		{ LTE_LC_REDUCED_MOBILITY_DISABLED, "disabled" },
+		{ -1, NULL }
+	};
+
+	return link_shell_map_to_string(mapping_table, funmode, out_str_buff);
+}
+
 const char *link_shell_sysmode_to_string(int sysmode, char *out_str_buff)
 {
 	struct mapping_tbl_item const mapping_table[] = {
