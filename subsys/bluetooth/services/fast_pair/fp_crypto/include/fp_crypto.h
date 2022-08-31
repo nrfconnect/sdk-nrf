@@ -7,6 +7,8 @@
 #ifndef _FP_CRYPTO_H_
 #define _FP_CRYPTO_H_
 
+#include <zephyr/types.h>
+
 #include "fp_common.h"
 
 /**
