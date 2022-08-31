@@ -926,5 +926,6 @@ Documentation
   * :ref:`ug_thread_configuring` page to better indicate what is required and what is optional.
     Also added further clarifications to the page to make everything clearer.
   * :ref:`ug_matter_tools` page with a new section about the ZAP tool.
+  * Updated TF-M/SPM related files, included in samples and applications with _ns build targets, to no longer include SPM as an alternative to TF-M.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
