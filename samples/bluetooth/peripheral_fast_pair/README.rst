@@ -46,6 +46,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 .. include:: /includes/hci_rpmsg_overlay.txt
 
 Fast Pair device registration
@@ -135,7 +137,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_fast_pair`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 When building the sample, you must provide the Fast Pair Model ID (:c:macro:`FP_MODEL_ID`) and the Fast Pair Anti Spoofing Key (:c:macro:`FP_ANTI_SPOOFING_KEY`) as CMake options.
 See :ref:`ug_bt_fast_pair_provisioning` for detailed guide.
@@ -238,3 +240,7 @@ This sample uses the :ref:`bt_fast_pair_readme` and its dependencies and is conf
 See :ref:`ug_bt_fast_pair` for details about integrating Fast Pair in the |NCS|.
 
 The :ref:`bt_fast_pair_provision_script` is used by the build system to automatically generate the hexadecimal file that contains Fast Pair Model ID and Anti Spoofing Private Key.
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

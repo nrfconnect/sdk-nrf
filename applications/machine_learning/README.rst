@@ -605,6 +605,10 @@ The application uses the following |NCS| libraries and drivers:
 * :ref:`ei_wrapper`
 * :ref:`nus_service_readme`
 
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`
+
 In addition, you can use the :ref:`central_uart` sample together with the application.
 The sample is used to receive data over NUS and forward it to the host over UART.
 

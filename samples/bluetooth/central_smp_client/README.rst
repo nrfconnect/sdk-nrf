@@ -32,6 +32,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 The sample also requires a device running `mcumgr`_ with transport protocol over Bluetooth® Low Energy, for example, another development kit running the :ref:`smp_svr_sample`.
 
 .. note::
@@ -49,7 +51,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/central_smp_client`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. _bluetooth_central_dfu_smp_testing:
 
@@ -110,3 +112,7 @@ It uses the following Zephyr libraries:
 In addition, it uses the following external library that is distributed with Zephyr:
 
 * `zcbor`_
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

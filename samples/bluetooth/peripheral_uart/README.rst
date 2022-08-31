@@ -17,6 +17,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 .. note::
    * The boards ``nrf52dk_nrf52810``, ``nrf52840dk_nrf52811``, and ``nrf52833dk_nrf52820`` only support the `Minimal sample variant`_.
    * When used with :ref:`zephyr:thingy53_nrf5340`, the sample supports the MCUboot bootloader with serial recovery and SMP DFU over Bluetooth.
@@ -132,7 +134,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_uart`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. _peripheral_uart_sample_activating_variants:
 
@@ -210,3 +212,7 @@ In addition, it uses the following Zephyr libraries:
   * ``include/bluetooth/gatt.h``
   * ``include/bluetooth/hci.h``
   * ``include/bluetooth/uuid.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

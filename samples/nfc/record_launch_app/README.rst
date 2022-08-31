@@ -17,6 +17,8 @@ This sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 The sample also requires a smartphone or a tablet.
 You need to have the `nRF Toolbox`_ app installed for iOS devices.
 
@@ -39,7 +41,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nfc/record_launch_app`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. note::
    |nfc_nfct_driver_note|
@@ -74,3 +76,7 @@ The sample uses the following Zephyr libraries:
 
 * ``include/zephyr.h``
 * ``include/power/reboot.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

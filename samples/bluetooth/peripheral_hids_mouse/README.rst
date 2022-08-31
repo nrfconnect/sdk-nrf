@@ -33,6 +33,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 .. include:: /includes/hci_rpmsg_overlay.txt
 
 User interface
@@ -68,7 +70,7 @@ Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_hids_mouse`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======
@@ -153,6 +155,10 @@ In addition, it uses the following Zephyr libraries:
   * ``include/bluetooth/uuid.h``
   * ``include/bluetooth/gatt.h``
   * ``samples/bluetooth/gatt/bas.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`
 
 References
 **********

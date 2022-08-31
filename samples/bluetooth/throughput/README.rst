@@ -17,6 +17,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 You can use any two of the development kits listed above and mix different development kits.
 
 .. include:: /includes/hci_rpmsg_overlay.txt
@@ -102,7 +104,7 @@ Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/throughput`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======
@@ -279,6 +281,9 @@ In addition, it uses the following Zephyr libraries:
 
   * ``include/shell/shell.h``
 
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`
 
 References
 ***********

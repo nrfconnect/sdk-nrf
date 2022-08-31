@@ -16,6 +16,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 Overview
 ********
 
@@ -48,7 +50,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nfc/tnep_tag`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. note::
    |nfc_nfct_driver_note|
@@ -79,3 +81,7 @@ This sample uses the following |NCS| libraries:
 In addition, it uses the following Zephyr libraries:
 
 * ``include/sys/until.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

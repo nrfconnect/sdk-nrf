@@ -41,13 +41,15 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 The sample also requires another development kit running a compatible application (see :ref:`peripheral_uart`).
 
 Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/central_uart`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 
 .. _central_uart_testing:
@@ -99,3 +101,7 @@ In addition, it uses the following Zephyr libraries:
   * ``include/bluetooth/gatt.h``
   * ``include/bluetooth/hci.h``
   * ``include/bluetooth/uuid.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

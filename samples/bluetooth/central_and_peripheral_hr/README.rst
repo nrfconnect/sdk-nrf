@@ -31,6 +31,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 To test just the Bluetooth® LE Central Role operation, you need one of the following setups:
 
   * A smartphone or a tablet running a compatible application.
@@ -62,7 +64,7 @@ Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/central_and_peripheral_hr`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 
 .. _central_and_peripheral_hrs_testing:
@@ -168,3 +170,7 @@ In addition, it uses the following Zephyr libraries:
   * ``include/bluetooth/uuid.h``
   * ``include/bluetooth/services/hrs.h``
   * ``include/bluetooth/services/bas.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

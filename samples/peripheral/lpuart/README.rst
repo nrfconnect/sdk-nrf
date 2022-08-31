@@ -16,6 +16,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 The sample also requires the following pins to be shorted:
 
 * TX (Arduino Digital Pin 10 (4 on nRF21540 DK)) with RX (Arduino Digital Pin 11 (5 on nRF21540 DK))
@@ -43,7 +45,7 @@ Building and running
 ********************
 .. |sample path| replace:: :file:`samples/peripheral/lpuart`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======
@@ -66,3 +68,7 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:device_model_api`
 * :ref:`zephyr:logging_api`
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

@@ -16,6 +16,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 The sample also requires a device running an AMS Server to connect with (for example, an iPhone which runs iOS, or a Bluetooth® Low Energy dongle and nRF Connect for Desktop).
 
 Overview
@@ -55,7 +57,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_ams_client`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. _peripheral_ams_client_testing:
 
@@ -278,3 +280,7 @@ In addition, it uses the following Zephyr libraries:
   * ``include/bluetooth/conn.h``
   * ``include/bluetooth/uuid.h``
   * ``include/bluetooth/gatt.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

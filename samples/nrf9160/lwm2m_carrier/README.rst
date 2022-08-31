@@ -16,15 +16,14 @@ The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
-The sample is configured to compile and run as a non-secure application on nRF91's Cortex-M33.
-Therefore, it automatically includes the :ref:`secure_partition_manager` that prepares the required peripherals to be available for the application.
+.. include:: /includes/tfm.txt
 
 Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/nrf9160/lwm2m_carrier`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======
@@ -65,6 +64,6 @@ It uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_modem`
 
-In addition, it uses the following sample:
+In addition, it uses the following secure firmware component:
 
-* :ref:`secure_partition_manager`
+* :ref:`Trusted Firmware-M <ug_tfm>`

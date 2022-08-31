@@ -17,6 +17,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 The sample also requires a smartphone or tablet with the NFC feature.
 
 Overview
@@ -67,7 +69,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nfc/system_off`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. note::
    |nfc_nfct_driver_note|
@@ -108,3 +110,7 @@ The sample uses the following Zephyr libraries:
 * ``include/device.h``
 * ``include/power/power.h``
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`
