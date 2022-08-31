@@ -6,21 +6,21 @@
 
 menu "Utilities"
 
-if BT_LE_ADV_PROV
+if BT_ADV_PROV
 
-config BT_LE_ADV_PROV_FLAGS
+config BT_ADV_PROV_FLAGS
 	default y
 
-config BT_LE_ADV_PROV_GAP_APPEARANCE
+config BT_ADV_PROV_GAP_APPEARANCE
 	default y
 
-config BT_LE_ADV_PROV_DEVICE_NAME
+config BT_ADV_PROV_DEVICE_NAME
 	default y
 
-config BT_LE_ADV_PROV_SWIFT_PAIR
+config BT_ADV_PROV_SWIFT_PAIR
 	default y
 
-config BT_LE_ADV_PROV_TX_POWER
+config BT_ADV_PROV_TX_POWER
 	default y
 
 config DESKTOP_ADV_PROV_UUID16_ALL
@@ -31,6 +31,6 @@ config DESKTOP_ADV_PROV_UUID16_ALL
 	  Adds all UUID16 to the advertising payload if used Bluetooth local
 	  identity has no bond.
 
-endif # BT_LE_ADV_PROV
+endif # BT_ADV_PROV
 
 endmenu

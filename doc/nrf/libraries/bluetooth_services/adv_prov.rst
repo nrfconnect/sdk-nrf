@@ -51,7 +51,7 @@ The provided Bluetooth data can depend on any of the following options:
 
 For example, a provider may fill in the Bluetooth data only if the used Bluetooth local identity has no bond.
 The provider returns ``-ENOENT`` to desist from providing data if bonded.
-Examples of provider implementations can be found in the :file:`subsys/bluetooth/bt_le_adv_prov/providers/` folder.
+Examples of provider implementations can be found in the :file:`subsys/bluetooth/adv_prov/providers/` folder.
 
 Advertising control
 ===================
@@ -79,30 +79,30 @@ See mentioned structures' documentation for detailed description of individual m
 Configuration
 *************
 
-Set :kconfig:option:`CONFIG_BT_LE_ADV_PROV` to enable the Bluetooth LE advertising providers subsystem.
+Set :kconfig:option:`CONFIG_BT_ADV_PROV` to enable the Bluetooth LE advertising providers subsystem.
 
 Predefined providers
 ====================
 
 The |NCS| provides a set of predefined providers.
 Each provider is enabled using a dedicated Kconfig option.
-These options share a common Kconfig option prefix of ``CONFIG_BT_LE_ADV_PROV_``.
+These options share a common Kconfig option prefix of ``CONFIG_BT_ADV_PROV_``.
 
 Among others, the following providers are available:
 
-* Advertising Flags (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_FLAGS`),
-* GAP Appearance (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_GAP_APPEARANCE`),
-* Microsoft Swift Pair (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_SWIFT_PAIR`),
-* TX Power (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_TX_POWER`).
-* Bluetooth device name (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_DEVICE_NAME`).
+* Advertising Flags (:kconfig:option:`CONFIG_BT_ADV_PROV_FLAGS`),
+* GAP Appearance (:kconfig:option:`CONFIG_BT_ADV_PROV_GAP_APPEARANCE`),
+* Microsoft Swift Pair (:kconfig:option:`CONFIG_BT_ADV_PROV_SWIFT_PAIR`),
+* TX Power (:kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER`).
+* Bluetooth device name (:kconfig:option:`CONFIG_BT_ADV_PROV_DEVICE_NAME`).
 
 For details about each advertising provider, see the Kconfig option description.
 
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/bt_le_adv_prov.h`
-| Source files: :file:`subsys/bluetooth/bt_le_adv_prov/`
+| Header file: :file:`include/bluetooth/adv_prov.h`
+| Source files: :file:`subsys/bluetooth/adv_prov/`
 
 .. doxygengroup:: bt_le_adv_prov
    :project: nrf

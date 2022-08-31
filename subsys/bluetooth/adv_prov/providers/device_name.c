@@ -7,7 +7,7 @@
 #include <string.h>
 #include <zephyr/bluetooth/bluetooth.h>
 
-#include <bluetooth/bt_le_adv_prov.h>
+#include <bluetooth/adv_prov.h>
 
 
 static int get_data(struct bt_data *sd, const struct bt_le_adv_prov_adv_state *state,

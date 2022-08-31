@@ -4,16 +4,16 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config BT_LE_ADV_PROV_SWIFT_PAIR
+config BT_ADV_PROV_SWIFT_PAIR
 	bool "Microsoft Swift Pair"
 	help
 	  Adds Microsoft Swfit Pair manufacturer data to advertising data if
 	  used Bluetooth local identity has no bonds and advertising has not
 	  entered grace period.
 
-if BT_LE_ADV_PROV_SWIFT_PAIR
+if BT_ADV_PROV_SWIFT_PAIR
 
-config BT_LE_ADV_PROV_SWIFT_PAIR_COOL_DOWN_DURATION
+config BT_ADV_PROV_SWIFT_PAIR_COOL_DOWN_DURATION
 	int "Swift Pair cool down duration [s]"
 	default 30
 	range 30 600
@@ -26,4 +26,4 @@ config BT_LE_ADV_PROV_SWIFT_PAIR_COOL_DOWN_DURATION
 	  The cool down phase is reported as requested grace period. The used
 	  grace period is greater than or equal to the requested value.
 
-endif # BT_LE_ADV_PROV_SWIFT_PAIR
+endif # BT_ADV_PROV_SWIFT_PAIR

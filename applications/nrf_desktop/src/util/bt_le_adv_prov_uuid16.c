@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/sys/byteorder.h>
-#include <bluetooth/bt_le_adv_prov.h>
+#include <bluetooth/adv_prov.h>
 
 
 static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *state,

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config BT_LE_ADV_PROV_DEVICE_NAME
+config BT_ADV_PROV_DEVICE_NAME
 	bool "Bluetooth device name"
 	help
 	  Adds Bluetooth device name to scan response data.

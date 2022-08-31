@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config BT_LE_ADV_PROV_GAP_APPEARANCE
+config BT_ADV_PROV_GAP_APPEARANCE
 	bool "GAP appearance"
 	help
 	  Adds GAP appearance to advertising data if used Bluetooth local

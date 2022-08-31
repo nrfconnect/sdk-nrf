@@ -4,10 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/sys/byteorder.h>
-#include <bluetooth/bt_le_adv_prov.h>
+#include <bluetooth/adv_prov.h>
 
-#define GRACE_PERIOD_S	CONFIG_BT_LE_ADV_PROV_SWIFT_PAIR_COOL_DOWN_DURATION
+#define GRACE_PERIOD_S	CONFIG_BT_ADV_PROV_SWIFT_PAIR_COOL_DOWN_DURATION
 
 
 static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *state,

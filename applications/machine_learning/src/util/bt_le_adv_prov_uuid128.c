@@ -4,9 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/sys/byteorder.h>
 #include <bluetooth/services/nus.h>
-#include <bluetooth/bt_le_adv_prov.h>
+#include <bluetooth/adv_prov.h>
 
 static const struct bt_data data = BT_DATA_BYTES(BT_DATA_UUID128_ALL,
 						 BT_UUID_NUS_VAL);
