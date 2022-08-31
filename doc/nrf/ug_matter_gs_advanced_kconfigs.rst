@@ -35,9 +35,13 @@ This option enables logging for both the stack and Zephyr's :ref:`zephyr:logging
 Zephyr allows you to configure log levels of different software modules independently.
 To change the log level configuration for the Matter module, set one of the available options:
 
+* :kconfig:option:`CONFIG_MATTER_LOG_LEVEL_INF` (default)
 * :kconfig:option:`CONFIG_MATTER_LOG_LEVEL_ERR`
-* :kconfig:option:`CONFIG_MATTER_LOG_LEVEL_INFO`
 * :kconfig:option:`CONFIG_MATTER_LOG_LEVEL_DBG`
+* :kconfig:option:`CONFIG_MATTER_LOG_LEVEL_OFF`
+
+.. note::
+    :kconfig:option:`CONFIG_MATTER_LOG_LEVEL_WRN` is not used in Matter.
 
 .. _ug_matter_configuring_optional_shell:
 

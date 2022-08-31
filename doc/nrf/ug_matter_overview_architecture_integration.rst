@@ -7,10 +7,24 @@ Matter integration in the |NCS|
    :local:
    :depth: 2
 
-Matter is included in the |NCS| as one of the submodule repositories managed with the :ref:`zephyr:west` tool, using a dedicated fork ``nrfconnect/sdk-connectedhomeip``.
+Matter is included in the |NCS| as one of the submodule repositories managed with the :ref:`zephyr:west` tool, using a `dedicated Matter fork`_.
 That is, the code used for the |NCS| and Matter integration is stored in the Matter repository (nRF Connect platform) and is compiled when building one of the available :ref:`matter_samples`.
+
+.. figure:: images/matter_components_integration_ncs.svg
+   :alt: A graphical depiction of the |NCS| repository structure
+
+   The |NCS| repository structure
+
 Both instances depend on each other, but their development is independent to ensure that they both support the latest stable version of one another.
-The fork is maintained and verified as a part of the |NCS| release process.
+The fork is maintained and verified as a part of the |NCS| release process as an :ref:`OSS repository <dm_repo_types>`.
+
+The Matter repository fetched into the fork also includes documentation files.
+A selection of these pages is included in the |NCS| documentation under the :ref:`matter_index` tab.
+
+.. _ug_matter_overview_architecture_integration_stack:
+
+Matter stack in the |NCS|
+*************************
 
 Matter is located on the top application layer of the integration model, looking from the networking point of view.
 The |NCS| and Zephyr provide the Bluetooth® LE, Thread, and Wi-Fi stacks, which must be integrated with the Matter stack using a special intermediate layer.
@@ -22,6 +36,8 @@ In case of Matter over Thread, the |NCS|'s Multiprotocol Service Layer (MPSL) dr
    nRF Connect platform in Matter
 
 For detailed description, see the :doc:`matter:nrfconnect_platform_overview` page in the Matter documentation.
+
+.. _ug_matter_overview_architecture_integration_designs:
 
 Matter platform designs (System-on-Chip, multiprotocol)
 *******************************************************

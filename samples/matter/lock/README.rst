@@ -301,15 +301,15 @@ Commissioning the device
 
 .. matter_door_lock_sample_commissioning_start
 
-To commission the device, go to the :ref:`ug_matter_gs_testing` page and complete the steps for the Matter controller you want to use.
-The guide walks you through the following steps:
+To commission the device, go to the :ref:`ug_matter_gs_testing` page and complete the steps for the Matter network environment and the Matter controller you want to use.
+After choosing the configuration, the guide walks you through the following steps:
 
 * Only if you are configuring Matter over Thread: Configure the Thread Border Router.
 * Build and install the Matter controller.
 * Commission the device.
 * Send Matter commands that cover scenarios described in the `Testing`_ section.
 
-If you are new to Matter, the recommended approach is to use :ref:`ug_matter_configuring_controller_chip_tool`.
+If you are new to Matter, the recommended approach is to use :ref:`CHIP Tool for Linux or macOS <ug_matter_configuring_controller>`.
 
 .. matter_door_lock_sample_commissioning_end
 
