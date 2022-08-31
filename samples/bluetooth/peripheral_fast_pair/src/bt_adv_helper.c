@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/random/rand32.h>
+#include <zephyr/sys/__assert.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
@@ -73,10 +74,11 @@ static K_WORK_DELAYABLE_DEFINE(rpa_rotate, rpa_rotate_fn);
 
 static void connected(struct bt_conn *conn, uint8_t err)
 {
-	struct k_work_sync sync;
-
 	if (!err) {
-		k_work_cancel_delayable_sync(&rpa_rotate, &sync);
+		int ret = k_work_cancel_delayable(&rpa_rotate);
+
+		__ASSERT_NO_MSG(ret == 0);
+		ARG_UNUSED(ret);
 	}
 }
 
@@ -191,7 +193,10 @@ static int adv_start_internal(enum bt_fast_pair_adv_mode fp_adv_mode)
 		}
 
 		__ASSERT_NO_MSG(rpa_timeout_ms <= RPA_TIMEOUT_FAST_PAIR_MAX * MSEC_PER_SEC);
-		k_work_schedule(&rpa_rotate, K_MSEC(rpa_timeout_ms));
+		int ret = k_work_schedule(&rpa_rotate, K_MSEC(rpa_timeout_ms));
+
+		__ASSERT_NO_MSG(ret == 1);
+		ARG_UNUSED(ret);
 	}
 
 	return err;
@@ -205,9 +210,10 @@ static void rpa_rotate_fn(struct k_work *w)
 
 int bt_adv_helper_adv_start(enum bt_fast_pair_adv_mode fp_adv_mode)
 {
-	struct k_work_sync sync;
+	int ret = k_work_cancel_delayable(&rpa_rotate);
 
-	k_work_cancel_delayable_sync(&rpa_rotate, &sync);
+	__ASSERT_NO_MSG(ret == 0);
+	ARG_UNUSED(ret);
 
 	adv_helper_fp_adv_mode = fp_adv_mode;
 
@@ -216,9 +222,10 @@ int bt_adv_helper_adv_start(enum bt_fast_pair_adv_mode fp_adv_mode)
 
 int bt_adv_helper_adv_stop(void)
 {
-	struct k_work_sync sync;
+	int ret = k_work_cancel_delayable(&rpa_rotate);
 
-	k_work_cancel_delayable_sync(&rpa_rotate, &sync);
+	__ASSERT_NO_MSG(ret == 0);
+	ARG_UNUSED(ret);
 
 	return bt_le_adv_stop();
 }
