@@ -712,7 +712,12 @@ void link_api_modem_info_get_for_shell(bool connected)
 	}
 
 	/* Get the device id used with nRF Cloud */
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS) || \
+	defined(CONFIG_NRF_CLOUD_MQTT) || defined(CONFIG_NRF_CLOUD_REST)
 	ret = nrf_cloud_client_id_get(device_id, sizeof(device_id));
+#else
+	ret = -ENOTSUP;
+#endif
 	mosh_print("Device ID:             %s", (ret) ? "Not known" : device_id);
 
 	if (connected) {
