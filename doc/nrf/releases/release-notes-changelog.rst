@@ -865,6 +865,12 @@ For the list of |NCS| specific commits, including commits cherry-picked from ups
 
 The current |NCS| main branch is based on revision ``fb802fb6c0`` of Zephyr.
 
+
+Additions specific to |NCS|
+---------------------------
+
+Added Wi-Fi L2 layer, this is a fork of Zephyr's Wi-Fi L2 with the added support for WPA supplicant.
+
 zcbor
 =====
 
