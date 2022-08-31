@@ -1344,6 +1344,14 @@ To use the nRF5340 Audio application with your custom board:
 #. Build the application by selecting the name of the new board (for example, ``new_audio_board_name``) in your build system.
    For example, when building from the command line, add ``-b new_audio_board_name`` to your build command.
 
+FOTA for end products
+=====================
+
+Do not use the default MCUBoot key for end products.
+See :ref:`ug_fw_update` and :ref:`west-sign` for more information.
+
+To create your own app that supports DFU, you can use the `nRF Connect Device Manager`_ libraries for Android and iOS.
+
 Dependencies
 ************
 
