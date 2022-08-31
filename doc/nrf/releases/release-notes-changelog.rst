@@ -943,6 +943,7 @@ Documentation
   * A section about :ref:`modem_trace_backend_uart_custom_board` in the :ref:`nrf_modem_lib_readme` page.
   * A note in the :ref:`ug_ble_controller` about the usage of the Zephyr LE Controller.
   * A section about :ref:`modem_trace` in the :ref:`ug_nrf91_features` page.
+  * A section about Gazell in the :ref:`app_memory` page.
 
 * Updated:
 
