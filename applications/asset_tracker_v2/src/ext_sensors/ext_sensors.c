@@ -384,8 +384,9 @@ int ext_sensors_accelerometer_threshold_set(double threshold, bool upper)
 
 	enum sensor_attribute attr = upper ? SENSOR_ATTR_UPPER_THRESH : SENSOR_ATTR_LOWER_THRESH;
 
+	/* SENSOR_CHAN_ACCEL_XYZ is not supported by the driver in this case. */
 	err = sensor_attr_set(accel_sensor_lp.dev,
-		SENSOR_CHAN_ACCEL_XYZ,
+		SENSOR_CHAN_ACCEL_X,
 		attr,
 		&data);
 	if (err) {
