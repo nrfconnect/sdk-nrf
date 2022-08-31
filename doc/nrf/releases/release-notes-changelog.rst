@@ -873,6 +873,7 @@ Documentation
   * A note in the :ref:`ug_ble_controller` about the usage of the Zephyr LE Controller.
   * Documentation for the :ref:`ug_nrf70`.
   * A section about :ref:`modem_trace` in the :ref:`ug_nrf91_features` page.
+  * A section about Gazell in the :ref:`app_memory` page.
 
 * Updated:
 
