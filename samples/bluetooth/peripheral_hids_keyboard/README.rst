@@ -44,6 +44,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 .. include:: /includes/hci_rpmsg_overlay.txt
 
 If the `NFC_OOB_PAIRING` feature is enabled, the sample requires  a smartphone or a tablet with Android v8.0.0 or newer.
@@ -92,7 +94,7 @@ Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_hids_keyboard`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======
@@ -234,3 +236,7 @@ References
 * `HID usage tables`_
 * `Bluetooth Secure Simple Pairing Using NFC`_
 * `Bluetooth Core Specification`_ Volume 3 Part H Chapter 2
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

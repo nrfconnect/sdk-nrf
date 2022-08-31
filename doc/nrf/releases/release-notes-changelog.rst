@@ -151,6 +151,9 @@ Applications
 
 This section provides detailed lists of changes by :ref:`application <applications>`.
 
+* All applications running on non-secure boards are documented to use TF-M as the trusted execution solution by default.
+  SPM is deprecated.
+
 nRF9160: Asset Tracker v2
 -------------------------
 
@@ -287,6 +290,9 @@ Samples
 
 This section provides detailed lists of changes by :ref:`sample <sample>`, including protocol-related samples.
 For lists of protocol-specific changes, see `Protocols`_.
+
+* All samples running on non-secure boards are documented to use TF-M as the trusted execution solution, as SPM is deprecated.
+  Sample :ref:`secure_partition_manager` is the exception.
 
 Bluetooth samples
 -----------------

@@ -41,6 +41,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 Configuration
 *************
 
@@ -50,7 +52,7 @@ Building and running
 ********************
 .. |sample path| replace:: :file:`samples/app_event_manager`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 
 Testing
@@ -89,3 +91,7 @@ This sample uses the following |NCS| subsystems:
 In addition, it uses the following Zephyr subsystems:
 
 * :ref:`zephyr:logging_api`
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

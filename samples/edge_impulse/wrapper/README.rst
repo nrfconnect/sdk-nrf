@@ -17,6 +17,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 Overview
 ********
 
@@ -78,7 +80,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/edge_impulse/wrapper`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======
@@ -117,3 +119,7 @@ Dependencies
 This sample uses the following |NCS| subsystems:
 
 * :ref:`ei_wrapper`
+
+In addition, it uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

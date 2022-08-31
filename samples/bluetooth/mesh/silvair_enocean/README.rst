@@ -201,3 +201,7 @@ In addition, it uses the following Zephyr libraries:
 * :ref:`zephyr:bluetooth_mesh`:
 
   * ``include/bluetooth/mesh.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

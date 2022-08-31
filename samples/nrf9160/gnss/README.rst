@@ -165,7 +165,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/gnss`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 If the sample is to be used with the SUPL client library, the library must be downloaded and enabled in the sample configuration.
 You can download it from the `Nordic Semiconductor website`_.
@@ -313,7 +313,6 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :ref:`secure_partition_manager`
 * :ref:`lib_nrf_cloud_agps`
 * :ref:`lib_nrf_cloud_pgps`
 * :ref:`lib_nrf_cloud_rest`
@@ -328,3 +327,7 @@ It uses the following Zephyr library:
 
 * :ref:`net_socket_offloading`
 * :ref:`settings_api`
+
+In addition, it uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

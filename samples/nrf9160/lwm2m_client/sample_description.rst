@@ -19,7 +19,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 Additionally, the sample requires an activated SIM card, and an LwM2M server such as `Leshan Demo Server`_ or `Coiote Device Management`_ server.
 
@@ -212,7 +212,7 @@ The following instructions describe how to register your device to `Leshan Demo 
          #. Enter the following data and click :guilabel:`ADD`:
 
             * Endpoint - urn\:imei\:*your Device IMEI*.
-	      The IMEI value is printed on the development kit.
+              The IMEI value is printed on the development kit.
             * Security Mode - psk
             * Identity: - urn\:imei\:*your Device IMEI*
             * Key - 000102030405060708090a0b0c0d0e0f
@@ -226,7 +226,7 @@ The following instructions describe how to register your device to `Leshan Demo 
          #. Enter the following data and click :guilabel:`Add device`:
 
             * Endpoint - urn\:imei\:*your Device IMEI*.
-	      The IMEI value is printed on the development kit.
+              The IMEI value is printed on the development kit.
             * Friendly Name - *recognizable name*.
             * Security mode - psk (Pre-Shared Key).
             * Key - 000102030405060708090a0b0c0d0e0f.
@@ -494,7 +494,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/lwm2m_client`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 After building and running the sample, you can locate your device in the server:
 
@@ -594,6 +594,6 @@ It uses the following Zephyr libraries:
 * :ref:`pwm_api`
 * :ref:`sensor_api`
 
-In addition, it uses the following sample:
+In addition, it uses the following secure firmware component:
 
-* :ref:`secure_partition_manager`
+* :ref:`Trusted Firmware-M <ug_tfm>`

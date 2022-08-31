@@ -29,6 +29,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 The sample also requires a HIDS device to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` or :ref:`peripheral_hids_keyboard` sample, or a Bluetooth® Low Energy dongle and nRF Connect for Desktop).
 
 User interface
@@ -56,7 +58,7 @@ Building and Running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/central_hids`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 
 Testing
@@ -182,3 +184,7 @@ In addition, it uses the following Zephyr libraries:
   * ``include/bluetooth/hci.h``
   * ``include/bluetooth/conn.h``
   * ``include/bluetooth/uuid.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

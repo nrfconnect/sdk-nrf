@@ -100,3 +100,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`modem_info_readme`
 * :ref:`app_event_manager`
 * :ref:`caf_overview`
+
+In addition, it uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

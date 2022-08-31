@@ -24,6 +24,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 The sample also requires a phone or tablet running a compatible application, for example `nRF Connect for Mobile`_ or `nRF Toolbox`_.
 
 
@@ -40,7 +42,7 @@ Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_rscs`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. _peripheral_rscs_testing:
 
@@ -91,3 +93,7 @@ In addition, it uses the following Zephyr libraries:
   * ``include/bluetooth/conn.h``
   * ``include/bluetooth/uuid.h``
   * ``include/bluetooth/gatt.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`
