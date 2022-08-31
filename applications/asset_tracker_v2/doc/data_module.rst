@@ -93,10 +93,20 @@ CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS
 CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS
    This configuration sets the movement timeout value.
 
-.. _CONFIG_DATA_ACCELEROMETER_THRESHOLD:
+.. _CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD:
 
-CONFIG_DATA_ACCELEROMETER_THRESHOLD
-   This configuration sets the accelerometer threshold value.
+CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD
+   This configuration sets the upper accelerometer threshold value.
+
+.. _CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD:
+
+CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD
+   This configuration sets the lower accelerometer threshold value.
+
+.. _CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS:
+
+CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS
+   This configuration sets a timeout in seconds after which the accelerometer reports inactivity.
 
 .. _CONFIG_DATA_GNSS_TIMEOUT_SECONDS:
 

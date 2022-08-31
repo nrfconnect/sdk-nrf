@@ -830,7 +830,9 @@ static void test_encode_configuration_data_object(void)
 		.movement_resolution = 120,
 		.movement_timeout = 3600,
 		.gnss_timeout = 60,
-		.accelerometer_threshold = 2,
+		.accelerometer_activity_threshold = 10,
+		.accelerometer_inactivity_threshold = 5,
+		.accelerometer_inactivity_timeout = 80,
 		.no_data.gnss = true,
 		.no_data.neighbor_cell = true
 	};
@@ -870,7 +872,9 @@ static void test_decode_configuration_data(void)
 	zassert_equal(120, data.active_wait_timeout, "Configuration is wrong");
 	zassert_equal(120, data.movement_resolution, "Configuration is wrong");
 	zassert_equal(3600, data.movement_timeout, "Configuration is wrong");
-	zassert_equal(2, data.accelerometer_threshold, "Configuration is wrong");
+	zassert_equal(10, data.accelerometer_activity_threshold, "Configuration is wrong");
+	zassert_equal(5, data.accelerometer_inactivity_threshold, "Configuration is wrong");
+	zassert_equal(80, data.accelerometer_inactivity_timeout, "Configuration is wrong");
 
 	cJSON_Delete(root_obj);
 }
@@ -1279,7 +1283,9 @@ static void test_floating_point_encoding_configuration(void)
 	cJSON *decoded_config_obj;
 	struct cloud_data_cfg decoded_values = {0};
 	struct cloud_data_cfg data = {
-		.accelerometer_threshold = 2.22
+		.accelerometer_activity_threshold = 2.22,
+		.accelerometer_inactivity_threshold = 1.11,
+		.accelerometer_inactivity_timeout = 20.0,
 	};
 
 	ret = json_common_config_add(dummy.root_obj, &data, DATA_CONFIG);
@@ -1294,13 +1300,31 @@ static void test_floating_point_encoding_configuration(void)
 	decoded_config_obj = json_object_decode(decoded_root_obj, DATA_CONFIG);
 	zassert_not_null(decoded_config_obj, "Decoded Configruation object is NULL");
 
-	cJSON *accel_thresh = cJSON_GetObjectItem(decoded_config_obj, CONFIG_ACC_THRESHOLD);
+	cJSON *accel_act_thresh =
+		cJSON_GetObjectItem(decoded_config_obj, CONFIG_ACC_ACT_THRESHOLD);
+	cJSON *accel_inact_thresh =
+		cJSON_GetObjectItem(decoded_config_obj, CONFIG_ACC_INACT_THRESHOLD);
+	cJSON *accel_inact_timeout =
+		cJSON_GetObjectItem(decoded_config_obj, CONFIG_ACC_INACT_TIMEOUT);
 
-	zassert_not_null(accel_thresh, "Accelerometer threshold is NULL");
+	zassert_not_null(accel_act_thresh, "Accelerometer activity threshold is NULL");
+	zassert_not_null(accel_inact_thresh, "Accelerometer inactivity threshold is NULL");
+	zassert_not_null(accel_inact_timeout, "Accelerometer inactivity timeout is NULL");
 
-	decoded_values.accelerometer_threshold = accel_thresh->valuedouble;
+	decoded_values.accelerometer_activity_threshold = accel_act_thresh->valuedouble;
+	decoded_values.accelerometer_inactivity_threshold = accel_inact_thresh->valuedouble;
+	decoded_values.accelerometer_inactivity_timeout = accel_inact_timeout->valuedouble;
 
-	zassert_within(decoded_values.accelerometer_threshold, data.accelerometer_threshold, 0.1,
+	zassert_within(decoded_values.accelerometer_activity_threshold,
+		       data.accelerometer_activity_threshold, 0.1,
+		       "Decoded value is not within delta");
+
+	zassert_within(decoded_values.accelerometer_inactivity_threshold,
+		       data.accelerometer_inactivity_threshold, 0.1,
+		       "Decoded value is not within delta");
+
+	zassert_within(decoded_values.accelerometer_inactivity_timeout,
+		       data.accelerometer_inactivity_timeout, 0.1,
 		       "Decoded value is not within delta");
 
 	cJSON_Delete(decoded_root_obj);

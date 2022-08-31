@@ -59,14 +59,14 @@
                 <Description><![CDATA[Number of seconds between each sampling/publication in passive mode, whether the device is moving or not.]]></Description>
             </Item>
             <Item ID="5">
-                <Name>Accelerometer threshold</Name>
+                <Name>Accelerometer activity threshold</Name>
                 <Operations>RW</Operations>
                 <MultipleInstances>Single</MultipleInstances>
                 <Mandatory>Mandatory</Mandatory>
                 <Type>Float</Type>
                 <RangeEnumeration></RangeEnumeration>
                 <Units></Units>
-                <Description><![CDATA[Accelerometer threshold in m/s². Minimal absolute value in m/s² for accelerometer readings to be considered valid movement.]]></Description>
+                <Description><![CDATA[Accelerometer activity threshold in m/s². Minimum absolute value in m/s² for accelerometer readings to be considered valid movement.]]></Description>
             </Item>
             <Item ID="6">
                 <Name>GNSS enable</Name>
@@ -87,6 +87,26 @@
                 <RangeEnumeration></RangeEnumeration>
                 <Units></Units>
                 <Description><![CDATA[Enable neighbor cell measurements.]]></Description>
+            </Item>
+            <Item ID="8">
+                <Name>Accelerometer inactivity threshold</Name>
+                <Operations>RW</Operations>
+                <MultipleInstances>Single</MultipleInstances>
+                <Mandatory>Mandatory</Mandatory>
+                <Type>Float</Type>
+                <RangeEnumeration></RangeEnumeration>
+                <Units></Units>
+                <Description><![CDATA[Accelerometer inactivity threshold in m/s². Maximum absolute value in m/s² for accelerometer readings to be considered stillness.]]></Description>
+            </Item>
+            <Item ID="9">
+                <Name>Accelerometer inactivity timeout</Name>
+                <Operations>RW</Operations>
+                <MultipleInstances>Single</MultipleInstances>
+                <Mandatory>Mandatory</Mandatory>
+                <Type>Float</Type>
+                <RangeEnumeration></RangeEnumeration>
+                <Units></Units>
+                <Description><![CDATA[Accelerometer inactivity timeout in seconds. Minimum time without movement for being considered inactivity.]]></Description>
             </Item>
         </Resources>
         <Description2></Description2>

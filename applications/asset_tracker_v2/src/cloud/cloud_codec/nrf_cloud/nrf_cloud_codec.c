@@ -414,7 +414,22 @@ static int config_add(cJSON *parent, struct cloud_data_cfg *data, const char *ob
 		goto exit;
 	}
 
-	err = json_add_number(config_obj, CONFIG_ACC_THRESHOLD, data->accelerometer_threshold);
+	err = json_add_number(config_obj,
+			      CONFIG_ACC_ACT_THRESHOLD, data->accelerometer_activity_threshold);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(config_obj,
+			      CONFIG_ACC_INACT_THRESHOLD, data->accelerometer_inactivity_threshold);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(config_obj,
+			      CONFIG_ACC_INACT_TIMEOUT, data->accelerometer_inactivity_timeout);
 	if (err) {
 		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
@@ -472,7 +487,9 @@ static void config_get(cJSON *parent, struct cloud_data_cfg *data)
 	cJSON *active_wait = cJSON_GetObjectItem(parent, CONFIG_ACTIVE_TIMEOUT);
 	cJSON *move_res = cJSON_GetObjectItem(parent, CONFIG_MOVE_RES);
 	cJSON *move_timeout = cJSON_GetObjectItem(parent, CONFIG_MOVE_TIMEOUT);
-	cJSON *acc_thres = cJSON_GetObjectItem(parent, CONFIG_ACC_THRESHOLD);
+	cJSON *acc_act_thres = cJSON_GetObjectItem(parent, CONFIG_ACC_ACT_THRESHOLD);
+	cJSON *acc_inact_thres = cJSON_GetObjectItem(parent, CONFIG_ACC_INACT_THRESHOLD);
+	cJSON *acc_inact_timeout = cJSON_GetObjectItem(parent, CONFIG_ACC_INACT_TIMEOUT);
 	cJSON *nod_list = cJSON_GetObjectItem(parent, CONFIG_NO_DATA_LIST);
 
 	if (gnss_timeout != NULL) {
@@ -495,8 +512,16 @@ static void config_get(cJSON *parent, struct cloud_data_cfg *data)
 		data->movement_timeout = move_timeout->valueint;
 	}
 
-	if (acc_thres != NULL) {
-		data->accelerometer_threshold = acc_thres->valuedouble;
+	if (acc_act_thres != NULL) {
+		data->accelerometer_activity_threshold = acc_act_thres->valuedouble;
+	}
+
+	if (acc_inact_thres != NULL) {
+		data->accelerometer_inactivity_threshold = acc_inact_thres->valuedouble;
+	}
+
+	if (acc_inact_timeout != NULL) {
+		data->accelerometer_inactivity_timeout = acc_inact_timeout->valuedouble;
 	}
 
 	if (nod_list != NULL && cJSON_IsArray(nod_list)) {

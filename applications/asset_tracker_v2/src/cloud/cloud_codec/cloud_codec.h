@@ -105,8 +105,12 @@ struct cloud_data_cfg {
 	 *  in Passive mode.
 	 */
 	int movement_timeout;
-	/** Accelerometer trigger threshold value in m/s2. */
-	double accelerometer_threshold;
+	/** Accelerometer activity-trigger threshold value in m/s2 */
+	double accelerometer_activity_threshold;
+	/** Accelerometer inactivity-trigger threshold value in m/s2 */
+	double accelerometer_inactivity_threshold;
+	/** Accelerometer inactivity-trigger timeout value in seconds */
+	double accelerometer_inactivity_timeout;
 	/** Variable used to govern what data types are requested by the application. */
 	struct cloud_data_no_data no_data;
 };
