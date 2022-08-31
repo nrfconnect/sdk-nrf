@@ -40,11 +40,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DATA_MODULE_LOG_LEVEL);
 #define DEVICE_SETTINGS_KEY			"data_module"
 #define DEVICE_SETTINGS_CONFIG_KEY		"config"
 
-/* Value that is used to limit the maximum allowed device configuration value
- * for the accelerometer threshold. 100 m/s2 ~ 10.2g.
- */
-#define ACCELEROMETER_S_M2_MAX 100
-
 struct data_msg_data {
 	union {
 		struct modem_module_event modem;
@@ -105,7 +100,9 @@ static struct cloud_data_cfg current_cfg = {
 	.active_wait_timeout	 = CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS,
 	.movement_resolution	 = CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS,
 	.movement_timeout	 = CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS,
-	.accelerometer_threshold = CONFIG_DATA_ACCELEROMETER_THRESHOLD,
+	.accelerometer_activity_threshold	= CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD,
+	.accelerometer_inactivity_threshold	= CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD,
+	.accelerometer_inactivity_timeout	= CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS,
 	.no_data.gnss		 = !IS_ENABLED(CONFIG_DATA_SAMPLE_GNSS_DEFAULT),
 	.no_data.neighbor_cell	 = !IS_ENABLED(CONFIG_DATA_SAMPLE_NEIGHBOR_CELLS_DEFAULT)
 };
@@ -473,7 +470,12 @@ static void config_print_all(void)
 	LOG_DBG("Movement resolution: %d", current_cfg.movement_resolution);
 	LOG_DBG("Movement timeout: %d", current_cfg.movement_timeout);
 	LOG_DBG("GPS timeout: %d", current_cfg.gnss_timeout);
-	LOG_DBG("Accelerometer threshold: %.2f", current_cfg.accelerometer_threshold);
+	LOG_DBG("Accelerometer act threshold: %.2f",
+		 current_cfg.accelerometer_activity_threshold);
+	LOG_DBG("Accelerometer inact threshold: %.2f",
+		 current_cfg.accelerometer_inactivity_threshold);
+	LOG_DBG("Accelerometer inact timeout: %.2f",
+		 current_cfg.accelerometer_inactivity_timeout);
 
 	if (!current_cfg.no_data.neighbor_cell) {
 		LOG_DBG("Requesting of neighbor cell data is enabled");
@@ -970,19 +972,29 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		LOG_ERR("New Movement timeout out of range: %d", new_config->movement_timeout);
 	}
 
-	if ((new_config->accelerometer_threshold < ACCELEROMETER_S_M2_MAX) &&
-	    (new_config->accelerometer_threshold > 0)) {
-		if (current_cfg.accelerometer_threshold != new_config->accelerometer_threshold) {
-			current_cfg.accelerometer_threshold = new_config->accelerometer_threshold;
-
-			LOG_WRN("New Accelerometer threshold: %.2f",
-				current_cfg.accelerometer_threshold);
-
-			config_change = true;
-		}
-	} else {
-		LOG_ERR("New Accelerometer threshold out of range: %.2f",
-			new_config->accelerometer_threshold);
+	if (current_cfg.accelerometer_activity_threshold !=
+	    new_config->accelerometer_activity_threshold) {
+		current_cfg.accelerometer_activity_threshold =
+		new_config->accelerometer_activity_threshold;
+		LOG_WRN("New Accelerometer act threshold: %.2f",
+			current_cfg.accelerometer_activity_threshold);
+		config_change = true;
+	}
+	if (current_cfg.accelerometer_inactivity_threshold !=
+	    new_config->accelerometer_inactivity_threshold) {
+		current_cfg.accelerometer_inactivity_threshold =
+		new_config->accelerometer_inactivity_threshold;
+		LOG_WRN("New Accelerometer inact threshold: %.2f",
+			current_cfg.accelerometer_inactivity_threshold);
+		config_change = true;
+	}
+	if (current_cfg.accelerometer_inactivity_timeout !=
+	    new_config->accelerometer_inactivity_timeout) {
+		current_cfg.accelerometer_inactivity_timeout =
+		new_config->accelerometer_inactivity_timeout;
+		LOG_WRN("New Accelerometer inact timeout: %.2f",
+			current_cfg.accelerometer_inactivity_timeout);
+		config_change = true;
 	}
 
 	/* If there has been a change in the currently applied device configuration we want to store
@@ -1159,8 +1171,12 @@ static void on_all_states(struct data_msg_data *msg)
 				msg->module.cloud.data.config.movement_timeout,
 			.gnss_timeout =
 				msg->module.cloud.data.config.gnss_timeout,
-			.accelerometer_threshold =
-				msg->module.cloud.data.config.accelerometer_threshold,
+			.accelerometer_activity_threshold =
+				msg->module.cloud.data.config.accelerometer_activity_threshold,
+			.accelerometer_inactivity_threshold =
+				msg->module.cloud.data.config.accelerometer_inactivity_threshold,
+			.accelerometer_inactivity_timeout =
+				msg->module.cloud.data.config.accelerometer_inactivity_timeout,
 			.no_data.gnss =
 				msg->module.cloud.data.config.no_data.gnss,
 			.no_data.neighbor_cell =

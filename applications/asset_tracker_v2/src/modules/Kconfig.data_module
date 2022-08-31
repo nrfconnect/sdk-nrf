@@ -136,11 +136,23 @@ config DATA_MOVEMENT_TIMEOUT_SECONDS
 	  movement. Used as a fail-safe to ensure updates even if the device is not moving for
 	  longer durations.
 
-config DATA_ACCELEROMETER_THRESHOLD
-	int "Default accelerometer threshold in m/s²"
+config DATA_ACCELEROMETER_ACT_THRESHOLD
+	int "Default accelerometer activity threshold in m/s²"
 	default 10
 	help
 	  Minimum absolute value in m/s² that is considered movement in passive mode.
+
+config DATA_ACCELEROMETER_INACT_THRESHOLD
+	int "Default accelerometer inactivity threshold in m/s²"
+	default 5
+	help
+	  Maximum absolute value in m/s² that is considered stillness in passive mode.
+
+config DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS
+	int "Default accelerometer inactivity timeout in seconds"
+	default 1
+	help
+	  Minimum time for lack of movement to be considered stillness in passive mode.
 
 config DATA_GNSS_TIMEOUT_SECONDS
 	int "Default GNSS timeout"

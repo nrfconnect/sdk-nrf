@@ -26,11 +26,13 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define RESOURCE_ACTIVE_WAIT_TIMEOUT		2
 #define RESOURCE_MOVEMENT_RESOLUTION		3
 #define RESOURCE_MOVEMENT_TIMEOUT		4
-#define RESOURCE_ACCELEROMETER_THRESHOLD	5
+#define RESOURCE_ACCELEROMETER_ACT_THRESHOLD	5
 #define RESOURCE_GNSS_ENABLE			6
 #define RESOURCE_NEIGHBOR_CELL_ENABLE		7
+#define RESOURCE_ACCELEROMETER_INACT_THRESHOLD	8
+#define RESOURCE_ACCELEROMETER_INACT_TIMEOUT	9
 
-#define RESOURCES_MAX_ID			8
+#define RESOURCES_MAX_ID			10
 #define RESOURCE_INSTANCE_COUNT	(RESOURCES_MAX_ID)
 
 /* Storage variables to hold configuration values. */
@@ -39,7 +41,9 @@ static int gnss_timeout;
 static int active_wait_timeout;
 static int movement_resolution;
 static int movement_timeout;
-static double accelerometer_threshold;
+static double accelerometer_activity_threshold;
+static double accelerometer_inactivity_threshold;
+static double accelerometer_inactivity_timeout;
 static bool gnss_enable;
 static bool ncell_enable;
 
@@ -50,7 +54,9 @@ static struct lwm2m_engine_obj_field fields[] = {
 	OBJ_FIELD_DATA(RESOURCE_ACTIVE_WAIT_TIMEOUT, RW, S32),
 	OBJ_FIELD_DATA(RESOURCE_MOVEMENT_RESOLUTION, RW, S32),
 	OBJ_FIELD_DATA(RESOURCE_MOVEMENT_TIMEOUT, RW, S32),
-	OBJ_FIELD_DATA(RESOURCE_ACCELEROMETER_THRESHOLD, RW, FLOAT),
+	OBJ_FIELD_DATA(RESOURCE_ACCELEROMETER_ACT_THRESHOLD, RW, FLOAT),
+	OBJ_FIELD_DATA(RESOURCE_ACCELEROMETER_INACT_THRESHOLD, RW, FLOAT),
+	OBJ_FIELD_DATA(RESOURCE_ACCELEROMETER_INACT_TIMEOUT, RW, FLOAT),
 	OBJ_FIELD_DATA(RESOURCE_GNSS_ENABLE, RW, BOOL),
 	OBJ_FIELD_DATA(RESOURCE_NEIGHBOR_CELL_ENABLE, RW, BOOL)
 };
@@ -76,8 +82,15 @@ static struct lwm2m_engine_obj_inst *object_create(uint16_t obj_inst_id)
 			  &movement_resolution, sizeof(movement_resolution));
 	INIT_OBJ_RES_DATA(RESOURCE_MOVEMENT_TIMEOUT, res, i, res_inst, j,
 			  &movement_timeout, sizeof(movement_timeout));
-	INIT_OBJ_RES_DATA(RESOURCE_ACCELEROMETER_THRESHOLD, res, i, res_inst, j,
-			  &accelerometer_threshold, sizeof(accelerometer_threshold));
+	INIT_OBJ_RES_DATA(RESOURCE_ACCELEROMETER_ACT_THRESHOLD, res, i, res_inst, j,
+			  &accelerometer_activity_threshold,
+			  sizeof(accelerometer_activity_threshold));
+	INIT_OBJ_RES_DATA(RESOURCE_ACCELEROMETER_INACT_THRESHOLD, res, i, res_inst, j,
+			  &accelerometer_inactivity_threshold,
+			  sizeof(accelerometer_inactivity_threshold));
+	INIT_OBJ_RES_DATA(RESOURCE_ACCELEROMETER_INACT_TIMEOUT, res, i, res_inst, j,
+			  &accelerometer_inactivity_timeout,
+			  sizeof(accelerometer_inactivity_timeout));
 	INIT_OBJ_RES_DATA(RESOURCE_GNSS_ENABLE, res, i, res_inst, j,
 			  &gnss_enable, sizeof(gnss_enable));
 	INIT_OBJ_RES_DATA(RESOURCE_NEIGHBOR_CELL_ENABLE, res, i, res_inst, j,

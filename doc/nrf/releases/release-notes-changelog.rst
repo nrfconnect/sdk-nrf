@@ -149,6 +149,11 @@ nRF9160: Asset Tracker v2
   * Added:
 
     * :ref:`motion_impact_detection` using the ADXL372 accelerometer.
+    * Added the following Kconfig options to set the threshold and timeout values:
+
+      * :ref:`CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD>`
+      * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD>`
+      * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS <CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS>`
 
   * Removed:
 
@@ -156,12 +161,22 @@ nRF9160: Asset Tracker v2
     * ``CONFIG_APP_REQUEST_NEIGHBOR_CELLS_DATA`` option.
     * ``CONFIG_EXTERNAL_SENSORS_ACTIVITY_DETECTION_AUTO`` option.
     * ``CONFIG_MODEM_CONVERT_RSRP_AND_RSPQ_TO_DB`` option.
+    * ``CONFIG_DATA_ACCELEROMETER_THRESHOLD`` option.
 
   * Updated:
 
     * The default value of the GNSS timeout in the application's :ref:`Real-time configurations <real_time_configs>` is now 30 seconds.
     * GNSS fixes are now published in PVT format instead of NMEA for nRF Cloud builds. To revert to NMEA, set the :ref:`CONFIG_GNSS_MODULE_NMEA <CONFIG_GNSS_MODULE_NMEA>` option.
     * The sensor module now forwards :c:enum:`SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED` and :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` events.
+    * The :ref:`Real-time configurations <real_time_configs>` can now configure the upper and lower thresholds for motion detection.
+      You can also configure the timeout after which the sensor reports inactivity.
+      The following Kconfig options set the threshold and timeout values:
+
+      * :ref:`CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD>`
+      * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD>`
+      * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS <CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS>`
+    * LwM2M schema has been updated.
+      To use the new parameters, upload the updated ``config_object_descript.xml`` to AVSystem.
     * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
     * Bootstrapping has been disabled by default to be able to connect to the default LwM2M service AVSystem's `Coiote Device Management`_ using free tier accounts.
     * Added support for full modem FOTA updates for nRF Cloud builds.

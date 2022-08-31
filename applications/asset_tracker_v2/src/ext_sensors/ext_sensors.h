@@ -119,14 +119,27 @@ int ext_sensors_pressure_get(double *press);
 int ext_sensors_air_quality_get(uint16_t *bsec_air_quality);
 
 /**
- * @brief Set the threshold that triggeres callback on accelerometer data.
+ * @brief Set the threshold that triggers callback on accelerometer data.
  *
- * @param[in] threshold_new Variable that sets the accelerometer threshold value
- *			    in m/s2.
+ * @param[in] threshold Variable that sets the accelerometer threshold value
+ *				in m/s2. Must be a value larger than 0 and smaller than the
+ *				configured range (default 2G: ~= 19.6133 m/s2).
+ * @param[in] upper Flag indicating if the given threshold is for
+ *				activity detection (true) or inactivity detection (false).
  *
  * @return 0 on success or negative error value on failure.
  */
-int ext_sensors_mov_thres_set(double threshold_new);
+int ext_sensors_accelerometer_threshold_set(double threshold, bool upper);
+
+/**
+ * @brief Set the timeout for the inactivity detection of the accelerometer.
+ *
+ * @param[in] inact_time Variable that sets the accelerometer inactivity timeout
+ *				in s. Must be a value larger than 0 and smaller than the
+ *				configured range (default ODR=12.5Hz, max timeout: 5242.880)
+ *
+ */
+int ext_sensors_inactivity_timeout_set(double inact_time);
 
 /**
  * @brief Enable or disable accelerometer trigger handler.
