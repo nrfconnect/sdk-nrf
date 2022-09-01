@@ -14,10 +14,13 @@ menuconfig BT_FAST_PAIR
 if BT_FAST_PAIR
 
 config BT_FAST_PAIR_EXT_PN
-	bool "Personalized Name extension"
+	bool
 	select BT_FAST_PAIR_STORAGE_EXT_PN
 	help
 	  Enable Fast Pair Personalized Name extension.
+
+	  The feature is not fully supported. Fast Pair Service's Additional
+	  Data characteristic is not implemented.
 
 rsource "fp_crypto/Kconfig.fp_crypto"
 rsource "fp_storage/Kconfig.fp_storage"
