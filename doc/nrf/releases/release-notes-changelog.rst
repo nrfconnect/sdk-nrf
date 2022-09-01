@@ -609,6 +609,10 @@ Modem libraries
 
 * Updated:
 
+  * :ref:`lte_lc_readme` library:
+
+    * Fixed an issue that caused stack corruption in the :c:func:`lte_lc_nw_reg_status_get` function.
+
   * :ref:`at_monitor_readme` library:
 
     * The :c:func:`at_monitor_pause` and :c:func:`at_monitor_resume` macros are now functions, and take a pointer to the AT monitor entry.
