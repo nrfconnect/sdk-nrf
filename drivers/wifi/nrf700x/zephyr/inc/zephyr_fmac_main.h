@@ -71,11 +71,4 @@ struct wifi_nrf_drv_priv_zep {
 	/* TODO: Replace with a linked list to handle unlimited RPUs */
 	struct wifi_nrf_ctx_zep rpu_ctx_zep;
 };
-
-#ifndef CONFIG_NRF700X_RADIO_TEST
-struct wifi_nrf_dev_offload_ops {
-	int (*disp_scan)(const struct device *dev,
-			 scan_result_cb_t cb);
-};
-#endif /* !CONFIG_NRF700X_RADIO_TEST */
 #endif /* __ZEPHYR_FMAC_MAIN_H__ */
