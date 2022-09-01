@@ -46,12 +46,15 @@ static void advertising_start(void)
 
 	int ret = k_work_cancel_delayable(&fp_discoverable_adv_timeout);
 
-	__ASSERT_NO_MSG(ret == 0);
+	/* The advertising_start function may be called from discoverable advertising timeout work
+	 * handler. In that case work would initially be in a running state.
+	 */
+	__ASSERT_NO_MSG((ret & ~(K_WORK_RUNNING | K_WORK_CANCELING)) == 0);
 	ARG_UNUSED(ret);
 
 	if ((fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) && !err) {
-		ret = k_work_schedule(&fp_discoverable_adv_timeout,
-				      K_MINUTES(FP_DISCOVERABLE_ADV_TIMEOUT_MINUTES));
+		ret = k_work_reschedule(&fp_discoverable_adv_timeout,
+					K_MINUTES(FP_DISCOVERABLE_ADV_TIMEOUT_MINUTES));
 
 		__ASSERT_NO_MSG(ret == 1);
 		ARG_UNUSED(ret);
