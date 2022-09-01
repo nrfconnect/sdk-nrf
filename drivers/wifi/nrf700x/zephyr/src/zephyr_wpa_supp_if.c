@@ -8,8 +8,6 @@
  * @brief File containing WPA supplicant interface specific definitions for the
  * Zephyr OS layer of the Wi-Fi driver.
  */
-
-#ifdef CONFIG_WPA_SUPP
 #include <stdlib.h>
 
 #include <zephyr/device.h>
@@ -1018,4 +1016,3 @@ void wifi_nrf_wpa_supp_event_proc_get_if(void *if_priv,
 
 	k_sem_give(&wait_for_event_sem);
 }
-#endif /* CONFIG_WPA_SUPP */
