@@ -367,7 +367,7 @@ Immutable bootloader
 Secure Partition Manager (SPM)
 ------------------------------
 
-* Added support for disabling some services in the :ref:`secure_services` sample.
+* Added support for disabling some services in the nRF9160: Secure Services sample.
   It now works in more bootloader configurations.
 * Disabled :kconfig:option:`CONFIG_SPM_SERVICE_PREVALIDATE` in the :ref:`lib_spm` library, because this option requires the immutable bootloader.
 * Updated the :ref:`lib_spm` library to make it compatible with nRF5340 (with or without `anomaly 19`_).

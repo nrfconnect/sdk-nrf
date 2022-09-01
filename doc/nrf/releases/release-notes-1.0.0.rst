@@ -96,7 +96,7 @@ nRF9160
 * Added the following samples:
 
   * nRF9160: AWS FOTA - shows how to perform over-the-air firmware updates of an nRF9160 through the use of AWS IoT Jobs with MQTT and HTTP.
-  * :ref:`secure_services` - demonstrates using the reboot and random number services.
+  * nRF9160: Secure Services - demonstrates using the reboot and random number services.
 
 * Added the following libraries:
 
@@ -210,7 +210,7 @@ Documentation
 
   * nRF9160:
 
-    * :ref:`secure_services`
+    * nRF9160: Secure Services
     * :ref:`secure_partition_manager`
     * nRF9160: AWS FOTA
     * :ref:`lte_sensor_gateway`

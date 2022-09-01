@@ -46,7 +46,6 @@ Secure Services
 
 The SPM can provide the application firmware with access to Secure Services.
 See the :ref:`lib_spm` library for information about the available services.
-For an example code using them, see :ref:`secure_services`.
 
 Requirements for the application firmware
 =========================================
