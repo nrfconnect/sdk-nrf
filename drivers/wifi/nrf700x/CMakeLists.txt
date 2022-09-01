@@ -53,6 +53,9 @@ zephyr_library_sources_ifndef(CONFIG_NRF700X_RADIO_TEST
 	osal/fw_if/umac_if/src/fmac_util.c
 	zephyr/src/zephyr_disp_scan.c
 	zephyr/src/zephyr_net_if.c
+)
+
+zephyr_library_sources_ifdef(CONFIG_WPA_SUPP
 	zephyr/src/zephyr_wpa_supp_if.c
 )
 

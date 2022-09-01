@@ -69,7 +69,7 @@ out:
 	return status;
 }
 
-
+#ifdef CONFIG_WPA_SUPP
 static void umac_event_connect(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			       void *event_data)
 {
@@ -126,7 +126,7 @@ static void umac_event_connect(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	return;
 
 }
-
+#endif /* CONFIG_WPA_SUPP */
 
 static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						    void *event_data,
@@ -379,11 +379,13 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 	case NRF_WIFI_UMAC_EVENT_DISCONNECT:
 		/* Nothing to be done */
 		break;
+#ifdef CONFIG_WPA_SUPP
 	case NRF_WIFI_UMAC_EVENT_NEW_STATION:
 	case NRF_WIFI_UMAC_EVENT_DEL_STATION:
 		umac_event_connect(fmac_dev_ctx,
 				   event_data);
 		break;
+#endif /* CONFIG_WPA_SUPP */
 	case NRF_WIFI_UMAC_EVENT_REMAIN_ON_CHANNEL:
 		if (callbk_fns->roc_callbk_fn)
 			callbk_fns->roc_callbk_fn(vif_ctx->os_vif_ctx,

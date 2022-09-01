@@ -981,7 +981,7 @@ out:
 	return status;
 }
 
-
+#ifdef CONFIG_WPA_SUPP
 enum wifi_nrf_status wifi_nrf_fmac_auth(void *dev_ctx,
 					unsigned char if_idx,
 					struct nrf_wifi_umac_auth_info *auth_info)
