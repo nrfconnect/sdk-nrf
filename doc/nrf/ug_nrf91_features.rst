@@ -69,25 +69,12 @@ Trusted Firmware-M (TF-M)
 -------------------------
 
 Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
-It has replaced Secure Partition Manager as the default solution used by most |NCS| applications and samples.
+It has replaced Secure Partition Manager as the solution used by |NCS| applications and samples.
 This means that when you build your application for ``_ns`` build targets, TF-M is automatically included in the build.
 TF-M is a framework for functions and use cases beyond the scope of Secure Partition Manager.
 
 For more information about the TF-M, see :ref:`ug_tfm`.
 See also :ref:`tfm_hello_world` for a sample that demonstrates how to add TF-M to an application.
-
-.. _nrf9160_ug_secure_partition_manager:
-
-Secure Partition Manager
-------------------------
-
-The :ref:`secure_partition_manager` sample provides a reference implementation of a Secure Partition Manager firmware.
-You can use :ref:`secure_partition_manager` as an alternative to Trusted Firmware-M (TF-M) for running an application from the non-secure area of the memory.
-
-To use the Secure Partition Manager instead of TF-M, do the following:
-
-* Disable the automatic inclusion of TF-M by setting the option :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n`` in the project configuration.
-* Set the option :kconfig:option:`CONFIG_SPM` to ``y``.
 
 Application
 -----------
