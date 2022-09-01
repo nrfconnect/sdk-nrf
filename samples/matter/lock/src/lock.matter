@@ -1684,9 +1684,9 @@ endpoint 1 {
     ram      attribute enableOneTouchLocking;
     ram      attribute enablePrivacyModeButton;
     ram      attribute wrongCodeEntryLimit default = 3;
-    ram      attribute userCodeTemporaryDisableTime default = 10;
+    ram      attribute userCodeTemporaryDisableTime;
     ram      attribute requirePINforRemoteOperation;
-    ram      attribute featureMap default = 0xDB3;
+    ram      attribute featureMap default = 0x101;
     ram      attribute clusterRevision default = 6;
   }
 }

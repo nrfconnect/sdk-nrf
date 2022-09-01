@@ -436,9 +436,8 @@ void AppTask::LockStateChanged(BoltLockManager::State state, BoltLockManager::Op
 		break;
 	}
 
-	if (source != BoltLockManager::OperationSource::kRemote) {
-		sAppTask.UpdateClusterState(state, source);
-	}
+	/* Handle changing attribute state in the application */
+	sAppTask.UpdateClusterState(state, source);
 }
 
 void AppTask::UpdateStatusLED()
@@ -499,9 +498,9 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 			InitBasicOTARequestor();
 		}
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
+#endif
 		UpdateStatusLED();
 		break;
-#endif
 	default:
 		break;
 	}

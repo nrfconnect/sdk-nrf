@@ -23,11 +23,17 @@ void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &a
 	VerifyOrReturn(attributePath.mClusterId == DoorLock::Id &&
 		       attributePath.mAttributeId == DoorLock::Attributes::LockState::Id);
 
+	/* Post events only if current lock state is different than given */
 	switch (*value) {
 	case to_underlying(DlLockState::kLocked):
-		GetAppTask().PostEvent(AppEvent(AppEvent::Lock, BoltLockManager::OperationSource::kRemote));
+		if (!BoltLockMgr().IsLocked()) {
+			GetAppTask().PostEvent(AppEvent(AppEvent::Lock, BoltLockManager::OperationSource::kRemote));
+		}
 		break;
 	case to_underlying(DlLockState::kUnlocked):
+		if (BoltLockMgr().IsLocked()) {
+			GetAppTask().PostEvent(AppEvent(AppEvent::Lock, BoltLockManager::OperationSource::kRemote));
+		}
 		GetAppTask().PostEvent(AppEvent(AppEvent::Unlock, BoltLockManager::OperationSource::kRemote));
 		break;
 	default:
@@ -67,13 +73,27 @@ bool emberAfPluginDoorLockSetCredential(EndpointId endpointId, uint16_t credenti
 bool emberAfPluginDoorLockOnDoorLockCommand(EndpointId endpointId, const Optional<ByteSpan> &pinCode,
 					    DlOperationError &err)
 {
-	return BoltLockMgr().ValidatePIN(pinCode, err);
+	bool result = BoltLockMgr().ValidatePIN(pinCode, err);
+
+	/* Handle changing attribute state on command reception */
+	if (result) {
+		GetAppTask().PostEvent(AppEvent(AppEvent::Lock, BoltLockManager::OperationSource::kRemote));
+	}
+
+	return result;
 }
 
 bool emberAfPluginDoorLockOnDoorUnlockCommand(EndpointId endpointId, const Optional<ByteSpan> &pinCode,
 					      DlOperationError &err)
 {
-	return BoltLockMgr().ValidatePIN(pinCode, err);
+	bool result = BoltLockMgr().ValidatePIN(pinCode, err);
+
+	/* Handle changing attribute state on command reception */
+	if (result) {
+		GetAppTask().PostEvent(AppEvent(AppEvent::Unlock, BoltLockManager::OperationSource::kRemote));
+	}
+
+	return result;
 }
 
 void emberAfDoorLockClusterInitCallback(EndpointId endpoint)
