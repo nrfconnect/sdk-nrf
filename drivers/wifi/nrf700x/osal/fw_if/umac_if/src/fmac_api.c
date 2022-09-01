@@ -1426,7 +1426,77 @@ out:
 	return status;
 }
 
+enum wifi_nrf_status wifi_nrf_fmac_chg_sta(void *dev_ctx,
+					   unsigned char if_idx,
+					   struct nrf_wifi_umac_chg_sta_info *chg_sta_info)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_umac_cmd_chg_sta *chg_sta_cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 
+	fmac_dev_ctx = dev_ctx;
+
+	chg_sta_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+					       sizeof(*chg_sta_cmd));
+
+	if (!chg_sta_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+
+	chg_sta_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_SET_STATION;
+	chg_sta_cmd->umac_hdr.ids.wdev_id = if_idx;
+	chg_sta_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+
+	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+			      &chg_sta_cmd->info,
+			      chg_sta_info,
+			      sizeof(chg_sta_cmd->info));
+
+	if (chg_sta_info->aid) {
+		chg_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_SET_STATION_AID_VALID;
+	}
+
+
+	if (chg_sta_info->supported_channels.supported_channels_len > 0) {
+		chg_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_SET_STATION_SUPPORTED_CHANNELS_VALID;
+	}
+
+	if (chg_sta_info->supported_oper_classes.supported_oper_classes_len > 0) {
+		chg_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_SET_STATION_SUPPORTED_OPER_CLASSES_VALID;
+	}
+
+	chg_sta_cmd->valid_fields |= NRF_WIFI_CMD_SET_STATION_STA_FLAGS2_VALID;
+
+	if (chg_sta_info->opmode_notif) {
+		chg_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_SET_STATION_OPMODE_NOTIF_VALID;
+	}
+
+	if (chg_sta_info->wme_max_sp) {
+		chg_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_SET_STATION_STA_WME_MAX_SP_VALID;
+	}
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      chg_sta_cmd,
+			      sizeof(*chg_sta_cmd));
+
+out:
+	if (chg_sta_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       chg_sta_cmd);
+	}
+
+	return status;
+}
+
+#ifdef CONFIG_NRF700X_AP_MODE
 enum wifi_nrf_status wifi_nrf_fmac_set_bss(void *dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_bss_info *bss_info)
@@ -1787,6 +1857,209 @@ out:
 	return status;
 }
 
+enum wifi_nrf_status wifi_nrf_fmac_del_sta(void *dev_ctx,
+					   unsigned char if_idx,
+					   struct img_umac_del_sta_info *del_sta_info)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct img_umac_cmd_del_sta *del_sta_cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	fmac_dev_ctx = dev_ctx;
+
+	del_sta_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+					       sizeof(*del_sta_cmd));
+
+	if (!del_sta_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+
+	del_sta_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_DEL_STATION;
+	del_sta_cmd->umac_hdr.ids.wdev_id = if_idx;
+	del_sta_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+
+	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+			      &del_sta_cmd->info,
+			      del_sta_info,
+			      sizeof(del_sta_cmd->info));
+
+	if (!wifi_nrf_util_is_arr_zero(del_sta_info->mac_addr,
+				       sizeof(del_sta_info->mac_addr))) {
+		del_sta_cmd->valid_fields |= NRF_WIFI_CMD_DEL_STATION_MAC_ADDR_VALID;
+	}
+
+	if (del_sta_info->mgmt_subtype) {
+		del_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_DEL_STATION_MGMT_SUBTYPE_VALID;
+	}
+
+	if (del_sta_info->reason_code) {
+		del_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_DEL_STATION_REASON_CODE_VALID;
+	}
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      del_sta_cmd,
+			      sizeof(*del_sta_cmd));
+
+out:
+	if (del_sta_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       del_sta_cmd);
+	}
+
+	return status;
+}
+
+
+enum wifi_nrf_status wifi_nrf_fmac_add_sta(void *dev_ctx,
+					   unsigned char if_idx,
+					   struct img_umac_add_sta_info *add_sta_info)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct img_umac_cmd_add_sta *add_sta_cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	fmac_dev_ctx = dev_ctx;
+
+	add_sta_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+					       sizeof(*add_sta_cmd));
+
+	if (!add_sta_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+
+	add_sta_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_NEW_STATION;
+	add_sta_cmd->umac_hdr.ids.wdev_id = if_idx;
+	add_sta_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+
+	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+			      &add_sta_cmd->info,
+			      add_sta_info,
+			      sizeof(add_sta_cmd->info));
+
+	if (add_sta_info->aid) {
+		add_sta_cmd->valid_fields |= NRF_WIFI_CMD_NEW_STATION_AID_VALID;
+	}
+
+	if (add_sta_info->sta_capability) {
+		add_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_NEW_STATION_STA_CAPABILITY_VALID;
+	}
+
+	add_sta_cmd->valid_fields |= NRF_WIFI_CMD_NEW_STATION_LISTEN_INTERVAL_VALID;
+
+	if (add_sta_info->supp_rates.img_num_rates > 0) {
+		add_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_NEW_STATION_SUPP_RATES_VALID;
+	}
+
+	if (add_sta_info->ext_capability.ext_capability_len > 0) {
+		add_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_NEW_STATION_EXT_CAPABILITY_VALID;
+	}
+
+	if (add_sta_info->supported_channels.supported_channels_len > 0) {
+		add_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_NEW_STATION_SUPPORTED_CHANNELS_VALID;
+	}
+
+	if (add_sta_info->supported_oper_classes.supported_oper_classes_len > 0) {
+		add_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_NEW_STATION_SUPPORTED_OPER_CLASSES_VALID;
+	}
+
+	add_sta_cmd->valid_fields |= NRF_WIFI_CMD_NEW_STATION_STA_FLAGS2_VALID;
+
+	if (!wifi_nrf_util_is_arr_zero(add_sta_info->ht_capability,
+				       sizeof(add_sta_info->ht_capability))) {
+		add_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_NEW_STATION_HT_CAPABILITY_VALID;
+	}
+
+	if (!wifi_nrf_util_is_arr_zero(add_sta_info->vht_capability,
+				       sizeof(add_sta_info->vht_capability))) {
+		add_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_NEW_STATION_VHT_CAPABILITY_VALID;
+	}
+
+	if (add_sta_info->opmode_notif) {
+		add_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_NEW_STATION_OPMODE_NOTIF_VALID;
+	}
+
+	if (add_sta_info->wme_uapsd_queues) {
+		add_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_NEW_STATION_STA_WME_UAPSD_QUEUES_VALID;
+	}
+
+	if (add_sta_info->wme_max_sp) {
+		add_sta_cmd->valid_fields |=
+			NRF_WIFI_CMD_NEW_STATION_STA_WME_MAX_SP_VALID;
+	}
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      add_sta_cmd,
+			      sizeof(*add_sta_cmd));
+
+out:
+	if (add_sta_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       add_sta_cmd);
+	}
+
+	return status;
+}
+
+enum wifi_nrf_status wifi_nrf_fmac_mgmt_frame_reg(void *dev_ctx,
+						  unsigned char if_idx,
+						  struct img_umac_mgmt_frame_info *frame_info)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct img_umac_cmd_mgmt_frame_reg *frame_reg_cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	fmac_dev_ctx = dev_ctx;
+
+	frame_reg_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+						 sizeof(*frame_reg_cmd));
+
+	if (!frame_reg_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+
+	frame_reg_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_REGISTER_FRAME;
+	frame_reg_cmd->umac_hdr.ids.wdev_id = if_idx;
+	frame_reg_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+
+	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+			      &frame_reg_cmd->info,
+			      frame_info,
+			      sizeof(frame_reg_cmd->info));
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      frame_reg_cmd,
+			      sizeof(*frame_reg_cmd));
+
+out:
+	if (frame_reg_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       frame_reg_cmd);
+	}
+
+	return status;
+}
+
+#endif /* CONFIG_NRF700X_AP_MODE */
 
 enum wifi_nrf_status wifi_nrf_fmac_p2p_dev_start(void *dev_ctx,
 						 unsigned char if_idx)
@@ -2000,281 +2273,6 @@ out:
 	if (mgmt_tx_cmd) {
 		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
 				       mgmt_tx_cmd);
-	}
-
-	return status;
-}
-
-
-enum wifi_nrf_status wifi_nrf_fmac_del_sta(void *dev_ctx,
-					   unsigned char if_idx,
-					   struct nrf_wifi_umac_del_sta_info *del_sta_info)
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct nrf_wifi_umac_cmd_del_sta *del_sta_cmd = NULL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
-
-	fmac_dev_ctx = dev_ctx;
-
-	del_sta_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
-					       sizeof(*del_sta_cmd));
-
-	if (!del_sta_cmd) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Unable to allocate memory\n",
-				      __func__);
-		goto out;
-	}
-
-	del_sta_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_DEL_STATION;
-	del_sta_cmd->umac_hdr.ids.wdev_id = if_idx;
-	del_sta_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
-
-	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
-			      &del_sta_cmd->info,
-			      del_sta_info,
-			      sizeof(del_sta_cmd->info));
-
-	if (!wifi_nrf_util_is_arr_zero(del_sta_info->mac_addr,
-				       sizeof(del_sta_info->mac_addr))) {
-		del_sta_cmd->valid_fields |= NRF_WIFI_CMD_DEL_STATION_MAC_ADDR_VALID;
-	}
-
-	if (del_sta_info->mgmt_subtype) {
-		del_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_DEL_STATION_MGMT_SUBTYPE_VALID;
-	}
-
-	if (del_sta_info->reason_code) {
-		del_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_DEL_STATION_REASON_CODE_VALID;
-	}
-
-	status = umac_cmd_cfg(fmac_dev_ctx,
-			      del_sta_cmd,
-			      sizeof(*del_sta_cmd));
-
-out:
-	if (del_sta_cmd) {
-		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
-				       del_sta_cmd);
-	}
-
-	return status;
-}
-
-
-enum wifi_nrf_status wifi_nrf_fmac_add_sta(void *dev_ctx,
-					   unsigned char if_idx,
-					   struct nrf_wifi_umac_add_sta_info *add_sta_info)
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct nrf_wifi_umac_cmd_add_sta *add_sta_cmd = NULL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
-
-	fmac_dev_ctx = dev_ctx;
-
-	add_sta_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
-					       sizeof(*add_sta_cmd));
-
-	if (!add_sta_cmd) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Unable to allocate memory\n",
-				      __func__);
-		goto out;
-	}
-
-	add_sta_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_NEW_STATION;
-	add_sta_cmd->umac_hdr.ids.wdev_id = if_idx;
-	add_sta_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
-
-	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
-			      &add_sta_cmd->info,
-			      add_sta_info,
-			      sizeof(add_sta_cmd->info));
-
-	if (add_sta_info->aid) {
-		add_sta_cmd->valid_fields |= NRF_WIFI_CMD_NEW_STATION_AID_VALID;
-	}
-
-	if (add_sta_info->sta_capability) {
-		add_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_NEW_STATION_STA_CAPABILITY_VALID;
-	}
-
-	add_sta_cmd->valid_fields |= NRF_WIFI_CMD_NEW_STATION_LISTEN_INTERVAL_VALID;
-
-	if (add_sta_info->supp_rates.nrf_wifi_num_rates > 0) {
-		add_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_NEW_STATION_SUPP_RATES_VALID;
-	}
-
-	if (add_sta_info->ext_capability.ext_capability_len > 0) {
-		add_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_NEW_STATION_EXT_CAPABILITY_VALID;
-	}
-
-	if (add_sta_info->supported_channels.supported_channels_len > 0) {
-		add_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_NEW_STATION_SUPPORTED_CHANNELS_VALID;
-	}
-
-	if (add_sta_info->supported_oper_classes.supported_oper_classes_len > 0) {
-		add_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_NEW_STATION_SUPPORTED_OPER_CLASSES_VALID;
-	}
-
-	add_sta_cmd->valid_fields |= NRF_WIFI_CMD_NEW_STATION_STA_FLAGS2_VALID;
-
-	if (!wifi_nrf_util_is_arr_zero(add_sta_info->ht_capability,
-				       sizeof(add_sta_info->ht_capability))) {
-		add_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_NEW_STATION_HT_CAPABILITY_VALID;
-	}
-
-	if (!wifi_nrf_util_is_arr_zero(add_sta_info->vht_capability,
-				       sizeof(add_sta_info->vht_capability))) {
-		add_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_NEW_STATION_VHT_CAPABILITY_VALID;
-	}
-
-	if (add_sta_info->opmode_notif) {
-		add_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_NEW_STATION_OPMODE_NOTIF_VALID;
-	}
-
-	if (add_sta_info->wme_uapsd_queues) {
-		add_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_NEW_STATION_STA_WME_UAPSD_QUEUES_VALID;
-	}
-
-	if (add_sta_info->wme_max_sp) {
-		add_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_NEW_STATION_STA_WME_MAX_SP_VALID;
-	}
-
-	status = umac_cmd_cfg(fmac_dev_ctx,
-			      add_sta_cmd,
-			      sizeof(*add_sta_cmd));
-
-out:
-	if (add_sta_cmd) {
-		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
-				       add_sta_cmd);
-	}
-
-	return status;
-}
-
-
-enum wifi_nrf_status wifi_nrf_fmac_chg_sta(void *dev_ctx,
-					   unsigned char if_idx,
-					   struct nrf_wifi_umac_chg_sta_info *chg_sta_info)
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct nrf_wifi_umac_cmd_chg_sta *chg_sta_cmd = NULL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
-
-	fmac_dev_ctx = dev_ctx;
-
-	chg_sta_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
-					       sizeof(*chg_sta_cmd));
-
-	if (!chg_sta_cmd) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Unable to allocate memory\n",
-				      __func__);
-		goto out;
-	}
-
-	chg_sta_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_SET_STATION;
-	chg_sta_cmd->umac_hdr.ids.wdev_id = if_idx;
-	chg_sta_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
-
-	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
-			      &chg_sta_cmd->info,
-			      chg_sta_info,
-			      sizeof(chg_sta_cmd->info));
-
-	if (chg_sta_info->aid) {
-		chg_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_SET_STATION_AID_VALID;
-	}
-
-
-	if (chg_sta_info->supported_channels.supported_channels_len > 0) {
-		chg_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_SET_STATION_SUPPORTED_CHANNELS_VALID;
-	}
-
-	if (chg_sta_info->supported_oper_classes.supported_oper_classes_len > 0) {
-		chg_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_SET_STATION_SUPPORTED_OPER_CLASSES_VALID;
-	}
-
-	chg_sta_cmd->valid_fields |= NRF_WIFI_CMD_SET_STATION_STA_FLAGS2_VALID;
-
-	if (chg_sta_info->opmode_notif) {
-		chg_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_SET_STATION_OPMODE_NOTIF_VALID;
-	}
-
-	if (chg_sta_info->wme_max_sp) {
-		chg_sta_cmd->valid_fields |=
-			NRF_WIFI_CMD_SET_STATION_STA_WME_MAX_SP_VALID;
-	}
-
-	status = umac_cmd_cfg(fmac_dev_ctx,
-			      chg_sta_cmd,
-			      sizeof(*chg_sta_cmd));
-
-out:
-	if (chg_sta_cmd) {
-		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
-				       chg_sta_cmd);
-	}
-
-	return status;
-}
-
-
-enum wifi_nrf_status wifi_nrf_fmac_mgmt_frame_reg(void *dev_ctx,
-						  unsigned char if_idx,
-						  struct nrf_wifi_umac_mgmt_frame_info *frame_info)
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct nrf_wifi_umac_cmd_mgmt_frame_reg *frame_reg_cmd = NULL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
-
-	fmac_dev_ctx = dev_ctx;
-
-	frame_reg_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
-						 sizeof(*frame_reg_cmd));
-
-	if (!frame_reg_cmd) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Unable to allocate memory\n",
-				      __func__);
-		goto out;
-	}
-
-	frame_reg_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_REGISTER_FRAME;
-	frame_reg_cmd->umac_hdr.ids.wdev_id = if_idx;
-	frame_reg_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
-
-	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
-			      &frame_reg_cmd->info,
-			      frame_info,
-			      sizeof(frame_reg_cmd->info));
-
-	status = umac_cmd_cfg(fmac_dev_ctx,
-			      frame_reg_cmd,
-			      sizeof(*frame_reg_cmd));
-
-out:
-	if (frame_reg_cmd) {
-		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
-				       frame_reg_cmd);
 	}
 
 	return status;
