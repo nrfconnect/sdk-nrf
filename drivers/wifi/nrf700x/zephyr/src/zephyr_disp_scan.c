@@ -129,6 +129,7 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 		       res.ssid_length);
 
 		memcpy(res.mac,	r->mac_addr, IMG_ETH_ALEN);
+		res.mac_length = IMG_ETH_ALEN;
 
 		if (r->signal.signal_type == IMG_SIGNAL_TYPE_MBM) {
 			int val = (r->signal.signal.mbm_signal);
