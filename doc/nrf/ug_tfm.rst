@@ -77,7 +77,7 @@ A minimal version of the TF-M secure application is provided in |NCS| to show ho
 
 The secure services supported by this minimal version allow for generating random numbers, and the platform services.
 
-This corresponds to the feature set provided by the :ref:`secure_partition_manager` (SPM).
+This corresponds to the feature set provided by the deprecated :ref:`secure_partition_manager` (SPM).
 
 The minimal version of TF-M is disabled by setting the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` option or one of the other build profiles.
 

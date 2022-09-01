@@ -1624,6 +1624,8 @@ Unstable NFC tag samples
 Secure Partition Manager (SPM)
 ==============================
 
+The Secure Partition Manager (SPM) is deprecated as of |NCS| v2.1.0, replaced by the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
+
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSIDB-114: Default logging causes crash
