@@ -39,6 +39,8 @@ const uint32_t z_mpsl_used_nrf_ppi_groups;
 #define IRQ_CONNECT_FLAGS 0
 #endif
 
+extern void sys_clock_zli_idle_exit(void);
+
 static struct k_work mpsl_low_prio_work;
 struct k_work_q mpsl_work_q;
 static K_THREAD_STACK_DEFINE(mpsl_work_stack, CONFIG_MPSL_WORK_STACK_SIZE);
@@ -76,9 +78,7 @@ static void mpsl_low_prio_work_handler(struct k_work *item)
 ISR_DIRECT_DECLARE(mpsl_timer0_isr_wrapper)
 {
 	MPSL_IRQ_TIMER0_Handler();
-
-	ISR_DIRECT_PM();
-
+	sys_clock_zli_idle_exit();
 
 	/* We may need to reschedule in case a radio timeslot callback
 	 * accesses zephyr primitives.
@@ -89,8 +89,7 @@ ISR_DIRECT_DECLARE(mpsl_timer0_isr_wrapper)
 ISR_DIRECT_DECLARE(mpsl_rtc0_isr_wrapper)
 {
 	MPSL_IRQ_RTC0_Handler();
-
-	ISR_DIRECT_PM();
+	sys_clock_zli_idle_exit();
 
 	/* No need for rescheduling, because the interrupt handler
 	 * does not access zephyr primitives.
@@ -101,8 +100,7 @@ ISR_DIRECT_DECLARE(mpsl_rtc0_isr_wrapper)
 ISR_DIRECT_DECLARE(mpsl_radio_isr_wrapper)
 {
 	MPSL_IRQ_RADIO_Handler();
-
-	ISR_DIRECT_PM();
+	sys_clock_zli_idle_exit();
 
 	/* We may need to reschedule in case a radio timeslot callback
 	 * accesses zephyr primitives.
