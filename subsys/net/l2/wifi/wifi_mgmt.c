@@ -12,7 +12,9 @@ LOG_MODULE_REGISTER(net_wifi_mgmt, CONFIG_NET_L2_NRF_WIFI_MGMT_LOG_LEVEL);
 #include <zephyr/net/net_core.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
+#ifdef CONFIG_WPA_SUPP
 #include "supp_api.h"
+#endif
 
 static int wifi_connect(uint32_t mgmt_request, struct net_if *iface,
 			void *data, size_t len)
