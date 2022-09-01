@@ -90,11 +90,12 @@ Testing
    The output should be similar to the following::
 
       Scan requested
-      Num  | SSID                             (len) | Chan | RSSI | Sec
-      1    | dlink-7D64                       10    | 1    | 0    | WPA/WPA2
-      2    | abcd_527_24                      11    | 4    | 0    | Open
-      3    | ASUS_RTAX88U11g                  15    | 3    | 0    | WPA/WPA2
-      4    | TP-Link_6BA8                     12    | 9    | 0    | WPA/WPA2
+
+      Num  | SSID                             (len) | Chan | RSSI | Security        | BSSID
+      1    | xyza                             4     | 1    | -27  | WPA2-PSK        | xx:xx:xx:xx:xx:xx
+      2    | abcd                             4     | 1    | -28  | WPA2-PSK        | yy:yy:yy:yy:yy:yy
+
+
 
 #. Connect to your preferred network using the following command::
 
