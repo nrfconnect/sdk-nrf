@@ -89,7 +89,7 @@ TCP client
          :class: highlight
 
          **AT#XSOCKET=1,1,0**
-         #XSOCKET: 1,1,0,6
+         #XSOCKET: 1,1,6
          OK
 
          **AT#XSOCKET?**
@@ -150,7 +150,7 @@ TCP client
          :class: highlight
 
          **AT#XSOCKET=1,1,0**
-         #XSOCKET: 1,1,0,6
+         #XSOCKET: 1,1,6
          OK
 
          **AT#XCONNECT="google.com",80**
@@ -274,7 +274,7 @@ UDP client
          :class: highlight
 
          **AT#XSOCKET=1,2,0**
-         #XSOCKET: 1,2,0,17
+         #XSOCKET: 1,2,17
          OK
          **AT#XSOCKET?**
          #XSOCKET: 1,17,0
@@ -313,7 +313,7 @@ UDP client
          :class: highlight
 
          **AT#XSOCKET=1,2,0**
-         #XSOCKET: 1,2,0,17
+         #XSOCKET: 1,2,17
          OK
 
          **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
@@ -414,7 +414,7 @@ You must register the corresponding credentials on the server side.
          :class: highlight
 
          **AT#XSOCKET=1,1,0,16842755**
-         #XSOCKET: 1,1,0,258
+         #XSOCKET: 1,1,258
          OK
 
          **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
@@ -524,7 +524,7 @@ You must register the same PSK and PSK identity on the server side.
 		 :class: highlight
 
 		 **AT#XSOCKET=1,2,0,16842756**
-		 #XSOCKET: 1,2,0,273
+		 #XSOCKET: 1,2,273
 		 OK
 
 		 **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
@@ -635,7 +635,7 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          **AT#XSOCKET=1,1,1**
-         #XSOCKET: 2,1,1,6
+         #XSOCKET: 2,1,6
          OK
 
          **AT#XBIND=**\ *1234*
@@ -863,7 +863,7 @@ To act as a UDP server, |global_private_address|
          :class: highlight
 
          **AT#XSOCKET=1,2,1**
-         #XSOCKET: 2,2,1,17
+         #XSOCKET: 2,2,17
          OK
 
          **AT#XBIND=**\ *1234*
@@ -1083,7 +1083,7 @@ After opening a client-role socket, you can configure various options.
       :class: highlight
 
       **AT#XSOCKET=1,1,0**
-      #XSOCKET: 2,1,0,6
+      #XSOCKET: 2,1,6
       OK
 
 #. Test to set and get socket options.
