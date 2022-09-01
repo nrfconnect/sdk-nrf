@@ -47,20 +47,33 @@ zephyr_library_sources(
 
 zephyr_library_sources_ifndef(CONFIG_NRF700X_RADIO_TEST
 	osal/fw_if/umac_if/src/rx.c
-	osal/fw_if/umac_if/src/tx.c
 	osal/fw_if/umac_if/src/fmac_vif.c
-	osal/fw_if/umac_if/src/fmac_peer.c
 	osal/fw_if/umac_if/src/fmac_util.c
 	zephyr/src/zephyr_disp_scan.c
 	zephyr/src/zephyr_net_if.c
 )
 
+zephyr_library_sources_ifdef(CONFIG_NRF700X_DATA_TX
+	osal/fw_if/umac_if/src/tx.c
+	osal/fw_if/umac_if/src/fmac_peer.c
+)
+
 zephyr_library_sources_ifdef(CONFIG_WPA_SUPP
 	zephyr/src/zephyr_wpa_supp_if.c
+	osal/fw_if/umac_if/src/fmac_peer.c
+	osal/fw_if/umac_if/src/fmac_util.c
 )
 
 zephyr_library_sources_ifdef(NRF700X_AP_MODE
-       osal/fw_if/umac_if/src/fmac_ap.c
+	osal/fw_if/umac_if/src/fmac_ap.c
+)
+
+
+# Without WPA supplicant we only support scan
+zephyr_library_sources_ifdef(CONFIG_WPA_SUPP
+	zephyr/src/zephyr_wpa_supp_if.c
+	osal/fw_if/umac_if/src/fmac_peer.c
+	osal/fw_if/umac_if/src/fmac_util.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_ON_QSPI

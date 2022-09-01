@@ -197,6 +197,8 @@ enum wifi_nrf_status wifi_nrf_fmac_scan_res_get(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_abort_scan(void *dev_ctx,
 						unsigned char if_idx);
+
+#ifdef CONFIG_WPA_SUPP
 /**
  * wifi_nrf_fmac_auth() - Issue a authentication request to the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
@@ -579,7 +581,7 @@ enum wifi_nrf_status wifi_nrf_fmac_mgmt_frame_reg(void *fmac_dev_ctx,
 						  unsigned char if_idx,
 						  struct nrf_wifi_umac_mgmt_frame_info *frame_info);
 
-
+#endif /* CONFIG_WPA_SUPP */
 /**
  * wifi_nrf_fmac_mac_addr() - Get unused MAC address from base mac address.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
