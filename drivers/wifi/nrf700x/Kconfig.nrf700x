@@ -42,4 +42,10 @@ config NRF700x_MAX_TX_PENDING_QLEN
 
 config NRF700X_RADIO_TEST
 	bool "Radio test mode of the nRF700x driver"
+	depends on !NRF700X_AP_MODE
+
+config NRF700X_AP_MODE
+	bool "Enable Access point mode"
+	select WPA_SUPP
+
 endif
