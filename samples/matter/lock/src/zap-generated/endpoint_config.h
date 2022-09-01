@@ -84,7 +84,7 @@
 			{ (uint16_t)0x0, (uint16_t)0x0, (uint16_t)0x4 }, /* OperatingMode */                           \
 			{ (uint16_t)0x3, (uint16_t)0x1, (uint16_t)0xFF }, /* WrongCodeEntryLimit */                    \
 		{                                                                                                      \
-			(uint16_t)0xA, (uint16_t)0x1, (uint16_t)0xFF                                                   \
+			(uint16_t)0x0, (uint16_t)0x1, (uint16_t)0xFF                                                   \
 		} /* UserCodeTemporaryDisableTime */                                                                   \
 	}
 
@@ -545,7 +545,7 @@
 			  ZAP_MIN_MAX_DEFAULTS_INDEX(3) }, /* UserCodeTemporaryDisableTime */                                            \
 			{ 0x00000033, ZAP_TYPE(BOOLEAN), 1, ZAP_ATTRIBUTE_MASK(WRITABLE),                                                \
 			  ZAP_SIMPLE_DEFAULT(0) }, /* RequirePINforRemoteOperation */                                                    \
-			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_SIMPLE_DEFAULT(0xDB3) }, /* FeatureMap */                            \
+			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_SIMPLE_DEFAULT(0x101) }, /* FeatureMap */                            \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(6) }, /* ClusterRevision */                             \
 	}
 
