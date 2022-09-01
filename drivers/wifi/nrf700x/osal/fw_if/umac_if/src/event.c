@@ -386,6 +386,7 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 				   event_data);
 		break;
 #endif /* CONFIG_WPA_SUPP */
+#ifdef CONFIG_NRF700X_P2P_MODE
 	case NRF_WIFI_UMAC_EVENT_REMAIN_ON_CHANNEL:
 		if (callbk_fns->roc_callbk_fn)
 			callbk_fns->roc_callbk_fn(vif_ctx->os_vif_ctx,
@@ -408,6 +409,7 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 					      __func__,
 					      umac_hdr->cmd_evnt);
 		break;
+#endif /* CONFIG_NRF700X_P2P_MODE */
 	default:
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: No callback registered for event %d\n",
