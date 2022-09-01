@@ -1234,7 +1234,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 			goto out;
 		}
 	}
-
+#ifdef CONFIG_NRF700X_DATA_TX
 	size = (hal_dev_ctx->hpriv->cfg_params.max_tx_frms *
 		sizeof(struct wifi_nrf_hal_buf_map_info));
 
@@ -1270,6 +1270,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 		goto out;
 	}
+#endif /* CONFIG_NRF700X_DATA_TX */
 
 	status = wifi_nrf_hal_rpu_pktram_buf_map_init(hal_dev_ctx);
 

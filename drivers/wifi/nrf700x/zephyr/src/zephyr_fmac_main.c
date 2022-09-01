@@ -30,6 +30,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
+#ifdef CONFIG_NRF700X_DATA_TX
 static const unsigned char aggregation = 1;
 static const unsigned char wmm = 1;
 static const unsigned char max_num_tx_agg_sessions = 4;
@@ -48,6 +49,18 @@ static const unsigned int rx2_buf_sz = 1600;
 static const unsigned int rx3_buf_sz = 1600;
 
 static const unsigned char rate_protection_type;
+#else
+/* Reduce buffers to Scan only operation */
+static const unsigned int rx1_num_bufs = 2;
+static const unsigned int rx2_num_bufs = 2;
+static const unsigned int rx3_num_bufs = 2;
+
+static const unsigned int rx1_buf_sz = 1000;
+static const unsigned int rx2_buf_sz = 1000;
+static const unsigned int rx3_buf_sz = 1000;
+#endif
+
+struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 
 void wifi_nrf_event_proc_scan_start_zep(void *if_priv,
 					struct nrf_wifi_umac_event_trigger_scan *scan_start_event,
@@ -372,11 +385,12 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 #ifndef CONFIG_NRF700X_RADIO_TEST
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_fmac_callbk_fns callbk_fns = { 0 };
-	struct nrf_wifi_data_config_params data_config;
+	struct nrf_wifi_data_config_params data_config = { 0 };
 	struct rx_buf_pool_params rx_buf_pools[MAX_NUM_OF_RX_QUEUES];
 
 	vif_ctx_zep = dev->data;
 
+#ifdef CONFIG_NRF700X_DATA_TX
 	data_config.aggregation = aggregation;
 	data_config.wmm = wmm;
 	data_config.max_num_tx_agg_sessions = max_num_tx_agg_sessions;
@@ -386,6 +400,9 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	data_config.max_rxampdu_size = max_rxampdu_size;
 	data_config.rate_protection_type = rate_protection_type;
 
+	callbk_fns.if_state_chg_callbk_fn = wifi_nrf_if_state_chg;
+	callbk_fns.rx_frm_callbk_fn = wifi_nrf_if_rx_frm;
+#endif
 	rx_buf_pools[0].num_bufs = rx1_num_bufs;
 	rx_buf_pools[1].num_bufs = rx2_num_bufs;
 	rx_buf_pools[2].num_bufs = rx3_num_bufs;
@@ -393,8 +410,6 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	rx_buf_pools[1].buf_sz = rx2_buf_sz;
 	rx_buf_pools[2].buf_sz = rx3_buf_sz;
 
-	callbk_fns.if_state_chg_callbk_fn = wifi_nrf_if_state_chg;
-	callbk_fns.rx_frm_callbk_fn = wifi_nrf_if_rx_frm;
 	callbk_fns.scan_start_callbk_fn = wifi_nrf_event_proc_scan_start_zep;
 	callbk_fns.scan_done_callbk_fn = wifi_nrf_event_proc_scan_done_zep;
 	callbk_fns.disp_scan_res_callbk_fn = wifi_nrf_event_proc_disp_scan_res_zep;

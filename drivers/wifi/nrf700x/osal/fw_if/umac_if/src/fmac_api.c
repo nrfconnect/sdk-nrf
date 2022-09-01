@@ -36,6 +36,7 @@ static unsigned char wifi_nrf_fmac_vif_idx_get(struct wifi_nrf_fmac_dev_ctx *fma
 }
 
 
+#ifdef CONFIG_NRF700X_DATA_TX
 static enum wifi_nrf_status wifi_nrf_fmac_init_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 {
 	struct wifi_nrf_fmac_priv *fpriv = NULL;
@@ -77,6 +78,7 @@ static void wifi_nrf_fmac_deinit_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 			       fmac_dev_ctx->tx_buf_info);
 }
 
+#endif /* CONFIG_NRF700X_DATA_TX */
 
 static enum wifi_nrf_status wifi_nrf_fmac_init_rx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 {
@@ -170,6 +172,7 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 			      mac,
 			      NRF_WIFI_ETH_ADDR_LEN);
 
+#ifdef CONFIG_NRF700X_DATA_TX
 	status = wifi_nrf_fmac_init_tx(fmac_dev_ctx);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
@@ -178,6 +181,7 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 				      __func__);
 		goto out;
 	}
+#endif /* CONFIG_NRF700X_DATA_TX */
 
 	status = wifi_nrf_fmac_init_rx(fmac_dev_ctx);
 
@@ -185,10 +189,11 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: Init RX failed\n",
 				      __func__);
+#ifdef CONFIG_NRF700X_DATA_TX
 		wifi_nrf_fmac_deinit_tx(fmac_dev_ctx);
+#endif
 		goto out;
 	}
-
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 	status = umac_cmd_init(fmac_dev_ctx,
@@ -210,13 +215,13 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 				      __func__);
 #ifndef CONFIG_NRF700X_RADIO_TEST
 		wifi_nrf_fmac_deinit_rx(fmac_dev_ctx);
+#ifdef CONFIG_NRF700X_DATA_TX
 		wifi_nrf_fmac_deinit_tx(fmac_dev_ctx);
+#endif /* CONFIG_NRF700X_DATA_TX */
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 		goto out;
 	}
-
 	start_time_us = wifi_nrf_osal_time_get_curr_us(fmac_dev_ctx->fpriv->opriv);
-
 	while (!fmac_dev_ctx->init_done) {
 		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv, 100);
 #define MAX_INIT_WAIT (5 * 1000 * 1000)
@@ -232,7 +237,9 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 				      __func__);
 #ifndef CONFIG_NRF700X_RADIO_TEST
 		wifi_nrf_fmac_deinit_rx(fmac_dev_ctx);
+#ifdef CONFIG_NRF700X_DATA_TX
 		wifi_nrf_fmac_deinit_tx(fmac_dev_ctx);
+#endif /* CONFIG_NRF700X_DATA_TX */
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 		status = WIFI_NRF_STATUS_FAIL;
 		goto out;
@@ -278,9 +285,10 @@ static void wifi_nrf_fmac_fw_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 		goto out;
 	}
 out:
-
 	wifi_nrf_fmac_deinit_rx(fmac_dev_ctx);
+#ifdef CONFIG_NRF700X_DATA_TX
 	wifi_nrf_fmac_deinit_tx(fmac_dev_ctx);
+#endif /* CONFIG_NRF700X_DATA_TX */
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 }
 
