@@ -10,6 +10,7 @@
  */
 
 #include "host_rpu_umac_if.h"
+#include "hal_mem.h"
 #include "fmac_rx.h"
 #include "fmac_tx.h"
 #include "fmac_peer.h"
@@ -559,6 +560,73 @@ out:
 	return status;
 }
 
+#else /* CONFIG_NRF700X_RADIO_TEST */
+static enum wifi_nrf_status umac_event_rf_test_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						       void *event)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct img_event_rftest *rf_test_event = NULL;
+
+	if (!event) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Invalid parameters\n",
+				      __func__);
+		goto out;
+	}
+
+	rf_test_event = ((struct img_event_rftest *)event);
+
+	if (rf_test_event->rf_test_info.rfevent[0] != fmac_dev_ctx->rf_test_type) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Invalid event type (%d) recd for RF test type (%d)\n",
+				      __func__,
+				      rf_test_event->rf_test_info.rfevent[0],
+				      fmac_dev_ctx->rf_test_type);
+		goto out;
+	}
+
+	switch (rf_test_event->rf_test_info.rfevent[0]) {
+	case NRF_WIFI_RF_TEST_EVENT_RX_ADC_CAP:
+	case NRF_WIFI_RF_TEST_EVENT_RX_STAT_PKT_CAP:
+	case NRF_WIFI_RF_TEST_EVENT_RX_DYN_PKT_CAP:
+		status = hal_rpu_mem_read(fmac_dev_ctx->hal_dev_ctx,
+					  fmac_dev_ctx->rf_test_cap_data,
+					  RPU_MEM_RF_TEST_CAP_BASE,
+					  fmac_dev_ctx->rf_test_cap_sz);
+
+		break;
+	case NRF_WIFI_RF_TEST_EVENT_TX_TONE_START:
+	case NRF_WIFI_RF_TEST_EVENT_TX_TONE_STOP:
+	case NRF_WIFI_RF_TEST_EVENT_DPD_ENABLE:
+	case NRF_WIFI_RF_TEST_EVENT_DPD_BYPASS:
+		break;	
+#ifdef notyet
+	case NRF_WIFI_RF_TEST_EVENT_RF_RSSI_MEAS:
+	case NRF_WIFI_RF_TEST_EVENT_SLEEP:
+	case NRF_WIFI_RF_TEST_EVENT_TEMP_MEAS;	
+		memcpy(&temperatureEvent, (const unsigned char*)&rf_test_event->rf_test_info.rfevent[1], sizeof(temperatureEvent));
+
+		if(temperatureEvent.readTemperatureStatus) {
+			rpu_osal_log_err("Temperature reading failed\n");
+		}
+		else
+		{
+			rpu_osal_log_err("Temperature reading success: \t");
+			rpu_osal_log_err("The temperature is = %d degree celsius \n",temperatureEvent.temperature);
+		}
+		break;		
+#endif /* notyet */
+	default:
+		break;
+	}
+
+	fmac_dev_ctx->rf_test_type = NRF_WIFI_RF_TEST_MAX;
+	status = WIFI_NRF_STATUS_SUCCESS;
+
+out:
+	return status;
+}
+
 
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
@@ -620,6 +688,12 @@ static enum wifi_nrf_status umac_process_sys_events(struct wifi_nrf_fmac_dev_ctx
 		fmac_dev_ctx->deinit_done = 1;
 		status = WIFI_NRF_STATUS_SUCCESS;
 		break;
+#ifdef CONFIG_NRF700X_RADIO_TEST
+	case IMG_EVENT_RF_TEST:
+		status = umac_event_rf_test_process(fmac_dev_ctx,
+						    sys_head);
+		break;
+#endif /* CONFIG_NRF700X_RADIO_TEST */
 	default:
 		status = WIFI_NRF_STATUS_FAIL;
 		break;

@@ -77,6 +77,9 @@ struct wifi_nrf_fmac_dev_ctx {
 	unsigned char base_mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 	bool init_done;
 	bool deinit_done;
+	enum nrf_wifi_rf_test rf_test_type;
+	void *rf_test_cap_data;
+	unsigned int rf_test_cap_sz;
 };
 
 #else /* CONFIG_NRF700X_RADIO_TEST */

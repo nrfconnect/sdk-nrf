@@ -60,6 +60,8 @@ struct wifi_nrf_ctx_zep {
 	void *rpu_ctx;
 #ifdef CONFIG_NRF700X_RADIO_TEST
 	struct rpu_conf_params conf_params;
+	bool rf_test_run;
+	unsigned char rf_test;
 #else /* CONFIG_NRF700X_RADIO_TEST */
 	struct wifi_nrf_vif_ctx_zep vif_ctx_zep[MAX_NUM_VIFS];
 	struct net_eth_addr mac_addr;

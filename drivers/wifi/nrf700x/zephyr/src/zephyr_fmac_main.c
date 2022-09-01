@@ -207,8 +207,6 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: wifi_nrf_fmac_ver_get failed\n", __func__);
 		wifi_nrf_fmac_dev_rem(rpu_ctx);
-		k_free(rpu_ctx_zep);
-		rpu_ctx_zep = NULL;
 		goto out;
 	}
 
@@ -259,7 +257,6 @@ enum wifi_nrf_status wifi_nrf_fmac_def_vif_add_zep(struct wifi_nrf_ctx_zep *rpu_
 
 	if (vif_ctx_zep->vif_idx != 0) {
 		LOG_ERR("%s: FMAC returned non 0 index for default interface\n", __func__);
-		k_free(vif_ctx_zep);
 		goto out;
 	}
 

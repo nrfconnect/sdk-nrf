@@ -13,6 +13,9 @@
 #define __FMAC_CMD_H__
 
 #define WIFI_NRF_FMAC_STATS_RECV_TIMEOUT 50 /* ms */
+#ifdef CONFIG_NRF700X_RADIO_TEST
+#define WIFI_NRF_FMAC_RF_TEST_EVNT_TIMEOUT 50 /* 5s */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 struct host_rpu_msg *umac_cmd_alloc(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				    int type,
@@ -51,6 +54,10 @@ enum wifi_nrf_status umac_cmd_prog_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx
 
 enum wifi_nrf_status umac_cmd_prog_rx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				      struct rpu_conf_rx_radio_test_params *rx_params);
+
+enum wifi_nrf_status umac_cmd_prog_rf_test(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					   void *rf_test_params,
+					   unsigned int rf_test_params_sz);
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 
 enum wifi_nrf_status umac_cmd_prog_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
