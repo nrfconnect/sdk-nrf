@@ -149,12 +149,9 @@ def __build_module(build_config, options):
         raise Exception("cmake error: " + str(ret_val))
 
     if options.mcuboot != '':
-        if options.min_b0n:
-            pcft_sign_cmd = f"python {BUILDPROG_FOLDER}/pcft_sign.py -i\
-            {TARGET_CORE_APP_FOLDER}/dfu/bin/ble5-ctr-rpmsg_shifted_min.hex -b {dest_folder}"
-        else:
-            pcft_sign_cmd = f"python {BUILDPROG_FOLDER}/pcft_sign.py -i\
-            {TARGET_CORE_APP_FOLDER}/dfu/bin/ble5-ctr-rpmsg_shifted.hex -b {dest_folder}"
+        pcft_sign_cmd = f"python {BUILDPROG_FOLDER}/pcft_sign.py -I\
+        {TARGET_CORE_APP_FOLDER}/dfu/bin/ -b {dest_folder}\
+        {'-m' if options.min_b0n else ''}"
         ret_val = os.system(pcft_sign_cmd)
         if ret_val:
             raise Exception("generate pcft+b0n error: " + str(ret_val))

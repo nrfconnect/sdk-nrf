@@ -13,20 +13,25 @@ import sys
 import shutil
 import os
 from pathlib import Path
+import re
 
-PCFT_HEX = "new_fw_info_pcft.hex"
-FINAL_PCFT_HEX = "pcft_CPUNET.hex"
-FINAL_PCFT_UPDATE_BIN = "pcft_net_core_update.bin"
-ZEPHYR_BASE = os.environ["ZEPHYR_BASE"]
+PCFT_HEX = 'new_fw_info_pcft.hex'
+FINAL_PCFT_HEX = 'pcft_CPUNET.hex'
+FINAL_PCFT_UPDATE_BIN = 'pcft_net_core_update.bin'
+ORIG_PCFT_PATTERN = r'ble5-ctr-rpmsg_shifted_\d{4}.hex'
+ORIG_PCFT_MIN_PATTERN = r'ble5-ctr-rpmsg_shifted_min_\d{4}.hex'
+
+
+ZEPHYR_BASE = os.environ['ZEPHYR_BASE']
 MANUALLY_SIGN_DIR = Path(__file__).resolve().parent
-BIN_DIR = (MANUALLY_SIGN_DIR / "../../bin").resolve()
+BIN_DIR = (MANUALLY_SIGN_DIR / '../../bin').resolve()
 
 
 def awklike(field_str, filename):
     """ A function like unix awk to split string"""
     ret = ''
     try:
-        with open(filename, encoding="utf8") as file_pointer:
+        with open(filename, encoding='utf8') as file_pointer:
             for line in file_pointer:
                 if field_str in line:
                     ret = line.replace(field_str, '').replace(
@@ -41,13 +46,14 @@ def sign(orig_pcft_hex, build_dir):
     """ A function to combine and sign PCFT"""
 
     if os.name == 'nt':
-        folder_slash ='\\'
+        folder_slash = '\\'
     else:
-        folder_slash ='/'
+        folder_slash = '/'
 
     # Make sure we input build_dir as absolute path
     indices = [i for i, c in enumerate(build_dir) if c == folder_slash]
-    final_file_prefix = build_dir[indices[-2]+1:].replace(folder_slash, '_')+'_'
+    final_file_prefix = build_dir[indices[-2] +
+                                  1:].replace(folder_slash, '_')+'_'
 
     # RETEIVE setting value from .config
     # "${ZEPHYR_BASE}/../bootloader/mcuboot/root-rsa-2048.pem"
@@ -55,8 +61,8 @@ def sign(orig_pcft_hex, build_dir):
     mcuboot_rsa_key = awklike('CONFIG_BOOT_SIGNATURE_KEY_FILE=', build_dir +
                               '/mcuboot/zephyr/.config')
 
-    #'\\' is used for Windows, '/' is used for other Operating Systems like Linux.
-    if ('/' in mcuboot_rsa_key) or ('\\' in  mcuboot_rsa_key):
+    # '\\' is used for Windows, '/' is used for other Operating Systems like Linux.
+    if ('/' in mcuboot_rsa_key) or ('\\' in mcuboot_rsa_key):
         print('absolute path')
         # Zephyr script convert folder separator to '/'. Should do the same here no matter Windows or not.
         if folder_slash in mcuboot_rsa_key:
@@ -121,7 +127,7 @@ def sign(orig_pcft_hex, build_dir):
     config_board = awklike('CONFIG_BOARD=', build_dir + '/zephyr/.config')
 
     net_core_fw_info_address = (pm_net_app_address + fw_info_offset)
-    net_core_fw_info_address = f"0x{net_core_fw_info_address:08X}"
+    net_core_fw_info_address = f'0x{net_core_fw_info_address:08X}'
 
     # Inject FW_INFO from .config
     os_cmd = f'python fw_info_data.py  --input {orig_pcft_hex} --output-hex {build_dir}/{PCFT_HEX}\
@@ -130,7 +136,7 @@ def sign(orig_pcft_hex, build_dir):
 
     ret_val = os.system(os_cmd)
     if ret_val:
-        raise Exception("python error: " + str(ret_val))
+        raise Exception('python error: ' + str(ret_val))
 
     # 240
     num_ver_counter_slots = int(awklike('CONFIG_SB_NUM_VER_COUNTER_SLOTS=', build_dir +
@@ -149,7 +155,7 @@ def sign(orig_pcft_hex, build_dir):
 
     ret_val = os.system(os_cmd)
     if ret_val:
-        raise Exception("python error: " + str(ret_val))
+        raise Exception('python error: ' + str(ret_val))
 
     os_cmd = f'python {ZEPHYR_BASE}/../nrf/scripts/bootloader/do_sign.py --private-key\
     {build_dir}/hci_rpmsg/zephyr/GENERATED_NON_SECURE_SIGN_KEY_PRIVATE.pem --in\
@@ -157,7 +163,7 @@ def sign(orig_pcft_hex, build_dir):
 
     ret_val = os.system(os_cmd)
     if ret_val:
-        raise Exception("python error: " + str(ret_val))
+        raise Exception('python error: ' + str(ret_val))
 
     os_cmd = f'python {ZEPHYR_BASE}/../nrf/scripts/bootloader/validation_data.py\
     --input {build_dir}/{PCFT_HEX} --output-hex {build_dir}/signed_by_b0_pcft.hex\
@@ -168,7 +174,7 @@ def sign(orig_pcft_hex, build_dir):
 
     ret_val = os.system(os_cmd)
     if ret_val:
-        raise Exception("python error: " + str(ret_val))
+        raise Exception('python error: ' + str(ret_val))
 
     # Generate net_core_app_update.bin
     os_cmd = f'python {ZEPHYR_BASE}/../bootloader/mcuboot/scripts/imgtool.py sign --key\
@@ -178,7 +184,7 @@ def sign(orig_pcft_hex, build_dir):
 
     ret_val = os.system(os_cmd)
     if ret_val:
-        raise Exception("python error: " + str(ret_val))
+        raise Exception('python error: ' + str(ret_val))
 
     os_cmd = f'python {ZEPHYR_BASE}/../nrf/scripts/bootloader/provision.py\
     --s0-addr {cpunet_pm_app_address} --provision-addr {pm_provision_address}\
@@ -190,14 +196,14 @@ def sign(orig_pcft_hex, build_dir):
 
     ret_val = os.system(os_cmd)
     if ret_val:
-        raise Exception("python error: " + str(ret_val))
+        raise Exception('python error: ' + str(ret_val))
 
     os_cmd = f'python {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/b0n_container.hex\
     {build_dir}/{PCFT_HEX} {build_dir}/provision.hex'
 
     ret_val = os.system(os_cmd)
     if ret_val:
-        raise Exception("python error: " + str(ret_val))
+        raise Exception('python error: ' + str(ret_val))
 
     os_cmd = f'python {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/{FINAL_PCFT_HEX}\
     --overlap=replace {build_dir}/hci_rpmsg/b0n/zephyr/zephyr.hex  {build_dir}/b0n_container.hex\
@@ -205,7 +211,7 @@ def sign(orig_pcft_hex, build_dir):
 
     ret_val = os.system(os_cmd)
     if ret_val:
-        raise Exception("python error: " + str(ret_val))
+        raise Exception('python error: ' + str(ret_val))
 
     # Replace built net_core
     src_path = f'{build_dir}/{FINAL_PCFT_UPDATE_BIN}'
@@ -279,18 +285,44 @@ def sign(orig_pcft_hex, build_dir):
                 f'{BIN_DIR}/{final_file_prefix}net_core_app_update_{fw_info_firmware_version}.bin')
 
 
+def find_hex_name(options):
+
+    in_path = Path(options.input_folder).resolve()
+
+    # Add files only match pattern filename and 4 digits build number
+    pattern_found = sorted([
+        file for file in in_path.iterdir()\
+        if re.match(ORIG_PCFT_MIN_PATTERN if options.min_b0n else ORIG_PCFT_PATTERN, file.name)\
+        is not None
+    ])
+
+    # Last hex file should be latest version.
+    return pattern_found[-1]
+
+
 def __main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description="This script sign and generate netcore hex and upgradable binary for the\
-         nRF5340 Audio project on Windows and Linux")
-    parser.add_argument('-i', '--input', required=True, type=str,
-                        help='Input hex file.')
-    parser.add_argument("-b", "--build_dir", required=True, type=str,
+        description='This script sign and generate netcore hex and upgradable binary for the\
+         nRF5340 Audio project on Windows and Linux')
+    parser.add_argument('-i', '--input_file', type=str,
+                        help='Input hex file name. Higher priority than -I')
+    parser.add_argument('-b', '--build_dir', required=True, type=str,
                         help='Build folder.')
+    parser.add_argument('-I', '--input_folder', type=str,
+                        help='Input hex folder, let script choose filename automatically.\
+                        Lower priority than -i')
+    parser.add_argument('-m', '--min_b0n', default=False, action='store_true',
+                        help='B0N use minimal. Only valid if -I is assigned')
     options = parser.parse_args(args=sys.argv[1:])
-    sign(options.input, options.build_dir)
+
+    if options.input_file is not None:
+        input_file_name = options.input_file
+    elif options.input_folder is not None:
+        input_file_name = find_hex_name(options)
+    print(f'input hex name {input_file_name}')
+    sign(input_file_name, options.build_dir)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     __main()
