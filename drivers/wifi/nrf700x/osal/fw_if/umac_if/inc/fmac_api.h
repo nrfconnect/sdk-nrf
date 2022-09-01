@@ -92,6 +92,58 @@ enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_tx(struct wifi_nrf_fmac_dev_c
 enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_rx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						      struct rpu_conf_params *params);
 
+
+/**
+ * nrf_wifi_fmac_rf_test_rx_cap() - Start RF test capture in radio test mode.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @cap_data: Pointer to the memory where the RF test capture is to be stored.
+ * @num_samples: Number of RF test samples to capture.
+ *
+ * This function is used to send a command to RPU to start
+ * the RF test capture in radio test mode.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						  enum nrf_wifi_rf_test rf_test_type,
+						  void *cap_data,
+						  unsigned long num_samples);
+
+
+/**
+ * nrf_wifi_fmac_rf_test_tx_tone() - Start/Stop RF TX tone test in radio test mode.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @enable: Enable/Disable TX tone test.
+ *
+ * This function is used to send a command to RPU to start
+ * the RF TX tone test in radio test mode.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						  unsigned char enable);
+
+
+
+/**
+ * nrf_wifi_fmac_rf_test_dpd() - Start/Stop RF DPD test in radio test mode.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @enable: Enable/Disable DPD test.
+ *
+ * This function is used to send a command to RPU to start
+ * the RF DPD test in radio test mode.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status nrf_wifi_fmac_rf_test_dpd(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					       unsigned char enable);
+
 #else
 
 /**

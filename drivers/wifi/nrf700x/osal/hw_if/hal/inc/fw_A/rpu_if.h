@@ -179,7 +179,10 @@
 #define NRF_WIFI_RPU_RF_CLK_TYPE_MAX 2
 #endif /* RPU_RF_C0_SUPPORT */
 
-#define RPU_PKTRAM_SIZE (RPU_ADDR_PKTRAM_END - RPU_ADDR_PKTRAM_START + 1)
+#ifdef CONFIG_NRF700X_RADIO_TEST
+#define RPU_MEM_RF_TEST_CAP_BASE 0xB0006000
+#endif /* CONFIG_NRF700X_RADIO_TEST */
+
 
 /**
  * struct nrf_wifi_rpu_pwr_data - Data that host may want to read from the Power IP.
