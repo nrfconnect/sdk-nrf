@@ -57,13 +57,18 @@ void bt_fast_pair_set_pairing_mode(bool pairing_mode)
 	user_pairing_mode = pairing_mode;
 }
 
+static void key_timeout(struct fp_procedure *proc)
+{
+	proc->state = FP_STATE_INITIAL;
+	memset(proc->aes_key, EMPTY_AES_KEY_BYTE, sizeof(proc->aes_key));
+}
+
 static void invalidate_key(struct fp_procedure *proc)
 {
 	if (proc->state != FP_STATE_INITIAL) {
 		int ret;
 
-		proc->state = FP_STATE_INITIAL;
-		memset(proc->aes_key, EMPTY_AES_KEY_BYTE, sizeof(proc->aes_key));
+		key_timeout(proc);
 
 		ret = k_work_cancel_delayable(&proc->timeout);
 		__ASSERT_NO_MSG(ret == 0);
@@ -324,8 +329,11 @@ static void timeout_fn(struct k_work *w)
 {
 	struct fp_procedure *proc = CONTAINER_OF(w, struct fp_procedure, timeout);
 
+	__ASSERT_NO_MSG((proc->state == FP_STATE_USE_TEMP_KEY) ||
+			(proc->state == FP_STATE_WAIT_FOR_ACCOUNT_KEY));
+
 	LOG_WRN("Key discarded (timeout)");
-	invalidate_key(proc);
+	key_timeout(proc);
 }
 
 static int fp_keys_init(const struct device *unused)
