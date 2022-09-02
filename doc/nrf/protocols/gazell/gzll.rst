@@ -40,7 +40,7 @@ Configuration
 To enable the Gazell support in the |NCS|, set the following Kconfig options:
 
 * :kconfig:option:`CONFIG_GZLL` - This option enables the :ref:`nrfxlib:gzll` library.
-* :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF` - This option enables HFCLK controller support for the nRF52 Series devices.
+* :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF` - This option enables HFCLK controller support.
 * :kconfig:option:`CONFIG_GAZELL` - This option enables the :ref:`gzll_glue` module.
 
 .. _ug_gzll_resources:
@@ -48,12 +48,12 @@ To enable the Gazell support in the |NCS|, set the following Kconfig options:
 Resources required
 ******************
 
-Gazell uses a fixed set of peripheral resources in System on Chips of the nRF52 series.
+Gazell uses a fixed set of peripheral resources in the 2.4 GHz SoC.
 To ensure correct operation, Gazell requires exclusive access to the following resources:
 
 * Radio
 * Timer
-* Three PPI channels
+* Three PPI/DPPI channels
 * Software interrupt (SWI)
 
 The :ref:`gzll_glue` module specifies the resources used by the :ref:`nrfxlib:gzll` library.
@@ -204,8 +204,8 @@ Each logical address on the nodes is termed a *pipe*.
 Each pipe maps to one on-air address used when transmitting or receiving packets.
 
 The on-air addresses are composed of a 2-4 bytes long "base address" in addition to a 1-byte prefix address.
-The radio of the nRF52 Series uses an alternating sequence of 0s and 1s as the preamble of the packet.
-Therefore, for packets to be received correctly, the most significant byte of the base address should not be an alternating sequence of 0s and 1s, that is, it should not be 0x55 or 0xAA.
+The 2.4 GHz proprietary radio uses an alternating sequence of 0 s and 1 s as the preamble of the packet.
+Therefore, for packets to be received correctly, the most significant byte of the base address should not be an alternating sequence of 0 s and 1 s, that is, it should not be 0x55 or 0xAA.
 
 Pipe 0 has its own unique base address, which is base address 0, while pipes 1-7 use the same base address, which is base address 1.
 
@@ -216,7 +216,7 @@ The most significant byte of the four bytes long base address is the first trans
 
 .. note::
 
-   The byte order in Gazell and the nRF52 Series radio peripheral are not the same.
+   The byte order in Gazell and the nRF52 and nRF53 Series radio peripheral are not the same.
    This is because the address bytes are rearranged in Gazell to match radio of the nRF24L IC.
 
 FIFOs
@@ -413,7 +413,7 @@ Backwards compatibility
 The Gazell Link Layer examples are not fully compatible out of the box with the legacy examples provided in the nRFgo SDK for the nRF24L IC.
 
 The default timeslot period and channel tables require adjustment, as well as some setup to emulate the Gazell roles.
-The Gazell Low Power Host role (Host role 1) is not supported in the nRF52 Series.
+The Gazell Low Power Host role (Host role 1) is not supported in the nRF52 and nRF53 Series.
 
 Channel tables
 ==============
@@ -423,15 +423,15 @@ The default channel tables require adjustment.
 Depending on your project, do one of the following:
 
 * Edit the :file:`gzll_params.h` file used in the nRF24L IC projects.
-* Use the :c:func:`nrf_gzll_set_channel_table()` function in the nRF52 Series projects.
+* Use the :c:func:`nrf_gzll_set_channel_table()` function in the nRF52 and nRF53 Series projects.
 
 Timeslot periods
 ================
 
 The Gazell Link Layer supports the following minimum timeslot periods:
 
-* 600 us timeslot period, nRF52 Series Gazell Device to nRF52 Series Gazell Host.
-* 504 us timeslot period, nRF52 Series Gazell Device to nRF24L IC Gazell Host.
+* 600 us timeslot period, nRF52 and nRF53 Series Gazell Device to nRF52 and nRF53 Series Gazell Host.
+* 504 us timeslot period, nRF52 and nRF53 Series Gazell Device to nRF24L IC Gazell Host.
 
 When using 504 us timeslot period, the following restrictions apply:
 
@@ -446,12 +446,12 @@ In addition, the relation between the Device and Host timing parameters should b
 Depending on your project, do one of the following:
 
 * Edit the :file:`gzll_params.h` file used in the nRF24L IC projects.
-* Use the :c:func:`nrf_gzll_set_timeslot_period()` function in the nRF52 Series projects (nRF52 Series Gazell timeslot period = 0.5*GZLL_RX_PERIOD).
+* Use the :c:func:`nrf_gzll_set_timeslot_period()` function in the nRF52 and nRF53 Series projects (nRF52 and nRF53 Series Gazell timeslot period = 0.5*GZLL_RX_PERIOD).
 
 Emulating legacy Gazell roles
 =============================
 
-The Gazell Link Layer protocol for the nRF52 Series is compatible with the most useful roles of the Gazell Link Layer for the nRF24L IC.
+The Gazell Link Layer protocol for the nRF52 and nRF53 Series is compatible with the most useful roles of the Gazell Link Layer for the nRF24L IC.
 
 Emulating legacy Gazell Device role 2 and Host role 0 on the nRF24 IC
 ---------------------------------------------------------------------

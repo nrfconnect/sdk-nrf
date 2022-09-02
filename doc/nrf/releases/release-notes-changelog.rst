@@ -116,6 +116,11 @@ Enhanced ShockBurst (ESB)
 
 |no_changes_yet_note|
 
+Gazell
+------
+
+* Added support for the nRF5340 network core.
+
 nRF IEEE 802.15.4 radio driver
 ------------------------------
 
@@ -257,7 +262,7 @@ nRF5340 samples
 Gazell samples
 --------------
 
-|no_changes_yet_note|
+* Added support for the nRF5340 DK.
 
 Zigbee samples
 --------------

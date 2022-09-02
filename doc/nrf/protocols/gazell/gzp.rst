@@ -7,7 +7,7 @@ Gazell Pairing
    :local:
    :depth: 2
 
-The Gazell Pairing library for the nRF52 Series enables applications to use the Gazell Link Layer to provide a secure wireless link between Gazell nodes.
+The Gazell Pairing library enables applications to use the Gazell Link Layer to provide a secure wireless link between Gazell nodes.
 The library is customized for pairing a Device (for example, a mouse, keyboard, or remote control) with a Host (typically a USB dongle) using Gazell.
 
 Gazell Pairing also uses additional hardware peripherals and restricts the usage of the Gazell Link Layer.
@@ -51,7 +51,7 @@ See `Terminology`_ for a description of each of these security features.
 
 .. note::
    Gazell only allows pairing when the Host and Device are in close proximity to each other.
-   The Received Signal Strength Indication (RSSI) is used on the Host side of the nRF52 Series so that only Devices residing close (<30 cm) to the Host are allowed to pair (on the nRF24L IC Host nodes, the carrier detect functionality is employed).
+   The Received Signal Strength Indication (RSSI) is used on the Host side so that only Devices residing close (<30 cm) to the Host are allowed to pair.
    Proximity estimation is essential to avoid confusion when pairing in certain environments, for example in an office.
 
 

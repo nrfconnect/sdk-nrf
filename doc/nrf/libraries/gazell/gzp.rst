@@ -23,7 +23,7 @@ Requirements
 
 The Gazell Pairing library requires the same resources as the :ref:`Gazell Link Layer <ug_gzll_resources>`.
 
-In addition, the Gazell Pairing library also employs three nRF52 Series peripherals:
+In addition, the Gazell Pairing library also employs three nRF52 and nRF53 Series peripherals:
 
 * Random Number Generator, for generating keys and tokens.
 * AES Electronic Codebook (ECB), for encryption and decryption.
