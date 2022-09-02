@@ -22,6 +22,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 /* TODO: Move this to driver_zephyr.c */
 extern struct wpa_supplicant *wpa_s_0;
+K_SEM_DEFINE(wait_for_event_sem, 0, 1);
 
 static int get_wifi_nrf_auth_type(int wpa_auth_alg)
 {
@@ -81,6 +82,27 @@ static unsigned int wpa_alg_to_cipher_suite(enum wpa_alg alg, size_t key_len)
 
 	LOG_ERR("%s: Unsupported encryption algorithm %d", __func__, alg);
 	return 0;
+}
+
+static enum chan_width drv2supp_chan_width(int width)
+{
+	switch (width) {
+	case IMG_CHAN_WIDTH_20_NOHT:
+		return CHAN_WIDTH_20_NOHT;
+	case IMG_CHAN_WIDTH_20:
+		return CHAN_WIDTH_20;
+	case IMG_CHAN_WIDTH_40:
+		return CHAN_WIDTH_40;
+	case IMG_CHAN_WIDTH_80:
+		return CHAN_WIDTH_80;
+	case IMG_CHAN_WIDTH_80P80:
+		return CHAN_WIDTH_80P80;
+	case IMG_CHAN_WIDTH_160:
+		return CHAN_WIDTH_160;
+	default:
+		break;
+	}
+	return CHAN_WIDTH_UNKNOWN;
 }
 
 void wifi_nrf_wpa_supp_event_proc_scan_start(void *if_priv)
@@ -877,5 +899,111 @@ int wifi_nrf_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 	}
 
 	return wifi_nrf_fmac_chg_sta(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &chg_sta_info);
+}
+
+int wifi_nrf_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, unsigned char *bssid)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	enum wifi_nrf_status ret = WIFI_NRF_STATUS_FAIL;
+
+	if (!if_priv || !si || !bssid) {
+		LOG_ERR("%s: Invalid params\n", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+
+	vif_ctx_zep->signal_info = si;
+	ret = wifi_nrf_fmac_get_station(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, bssid);
+	if (ret != WIFI_NRF_STATUS_SUCCESS) {
+		LOG_ERR("%s: Failed to get station info\n", __func__);
+		goto out;
+	}
+
+	k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
+
+	ret = wifi_nrf_fmac_get_interface(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
+	if (ret != WIFI_NRF_STATUS_SUCCESS) {
+		LOG_ERR("%s: Failed to get interface info\n", __func__);
+		goto out;
+	}
+
+	k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
+	vif_ctx_zep->signal_info->frequency = vif_ctx_zep->assoc_freq;
+out:
+	return ret;
+}
+
+void wifi_nrf_wpa_supp_event_proc_get_sta(void *if_priv,
+					   struct img_umac_event_new_station *info,
+					   unsigned int event_len)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wpa_signal_info *signal_info = NULL;
+
+	if (!if_priv || !info) {
+		LOG_ERR("%s: Invalid params\n", __func__);
+		k_sem_give(&wait_for_event_sem);
+		return;
+	}
+	vif_ctx_zep = if_priv;
+	signal_info = vif_ctx_zep->signal_info;
+
+	if (info->sta_info.valid_fields & IMG_STA_INFO_SIGNAL_VALID) {
+		signal_info->current_signal = info->sta_info.signal;
+	} else {
+		signal_info->current_signal = -WPA_INVALID_NOISE;
+	}
+
+	if (info->sta_info.valid_fields & IMG_STA_INFO_SIGNAL_AVG_VALID) {
+		signal_info->avg_signal = info->sta_info.signal_avg;
+	} else {
+		signal_info->avg_signal = -WPA_INVALID_NOISE;
+	}
+
+	if (info->sta_info.valid_fields & IMG_STA_INFO_RX_BEACON_SIGNAL_AVG_VALID) {
+		signal_info->avg_beacon_signal = info->sta_info.rx_beacon_signal_avg;
+	} else {
+		signal_info->avg_beacon_signal = -WPA_INVALID_NOISE;
+	}
+
+	signal_info->current_txrate = 0;
+
+	if (info->sta_info.valid_fields & IMG_STA_INFO_TX_BITRATE_VALID) {
+		if (info->sta_info.tx_bitrate.valid_fields & IMG_IMG_RATE_INFO_BITRATE_VALID) {
+			signal_info->current_txrate = info->sta_info.tx_bitrate.bitrate * 100;
+		}
+	}
+
+	k_sem_give(&wait_for_event_sem);
+}
+
+void wifi_nrf_wpa_supp_event_proc_get_if(void *if_priv,
+					   struct img_interface_info *info,
+					   unsigned int event_len)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct img_chan_definition *chan_def_info = NULL;
+	struct wpa_signal_info *signal_info = NULL;
+
+	if (!if_priv || !info) {
+		LOG_ERR("%s: Invalid params\n", __func__);
+		k_sem_give(&wait_for_event_sem);
+		return;
+	}
+
+	vif_ctx_zep = if_priv;
+	signal_info = vif_ctx_zep->signal_info;
+
+	chan_def_info = (struct img_chan_definition *)(&info->chan_def);
+	signal_info->chanwidth = drv2supp_chan_width(chan_def_info->width);
+	signal_info->center_frq1 = chan_def_info->center_frequency1;
+	signal_info->center_frq2 = chan_def_info->center_frequency2;
+
+	k_sem_give(&wait_for_event_sem);
 }
 #endif /* CONFIG_WPA_SUPP */

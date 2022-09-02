@@ -774,6 +774,22 @@ enum wifi_nrf_status wifi_nrf_fmac_get_station(void *fmac_dev_ctx,
 					       unsigned char *mac);
 
 
+/* wifi_nrf_fmac_get_interface() - Get interface statistics
+ *
+ * @dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: VIF index.
+ *
+ * This function is used to send a command
+ * to get interface statistics using interface index.
+ *
+ * Returns: Status
+ *              Pass: %WIFI_NRF_STATUS_SUCCESS
+ *              Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_get_interface(void *dev_ctx,
+					       unsigned int if_idx);
+
+
 /**
  * wifi_nrf_fmac_set_power_save() - Configure WLAN power management.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
