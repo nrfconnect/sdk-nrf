@@ -198,7 +198,7 @@ Zigbee samples
 Wi-Fi samples
 -------------
 
-|no_changes_yet_note|
+* Added :ref:`wifi_radio_test` sample with the radio test support.
 
 Other samples
 -------------
