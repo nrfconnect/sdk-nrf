@@ -241,6 +241,8 @@ int zephyr_supp_status(const struct device *dev,
 				struct wifi_iface_status *status)
 {
 	struct wpa_supplicant *wpa_s;
+	struct wpa_signal_info si;
+	int ret = -1;
 
 	wpa_s = get_wpa_s_handle(dev);
 	if (!wpa_s) {
@@ -279,6 +281,14 @@ int zephyr_supp_status(const struct device *dev,
 			status->iface_mode = ssid->mode;
 			/* TODO: Derive this based on association IEs */
 			status->link_mode = WIFI_6;
+		}
+		ret = wpa_drv_signal_poll(wpa_s, &si);
+		if (!ret) {
+			status->rssi = si.current_signal;
+		} else {
+			wpa_printf(MSG_ERROR, "%s:Failed to read RSSI\n",
+				__func__);
+			status->rssi = -WPA_INVALID_NOISE;
 		}
 	}
 
