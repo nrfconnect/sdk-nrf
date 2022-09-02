@@ -210,6 +210,14 @@ struct wifi_nrf_fmac_callbk_fns {
 	void (*roc_cancel_callbk_fn)(void *os_vif_ctx,
 				     struct img_event_remain_on_channel *roc_cancel_event,
 				     unsigned int event_len);
+
+	void (*get_station_callbk_fn)(void *os_vif_ctx,
+				     struct img_umac_event_new_station *info,
+				     unsigned int event_len);
+
+	void (*get_interface_callbk_fn)(void *os_vif_ctx,
+				     struct img_interface_info *info,
+				     unsigned int event_len);
 };
 
 

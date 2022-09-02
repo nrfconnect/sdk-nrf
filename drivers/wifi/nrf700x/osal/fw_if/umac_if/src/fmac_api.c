@@ -2787,6 +2787,44 @@ out:
 	return status;
 }
 
+enum wifi_nrf_status wifi_nrf_fmac_get_interface(void *dev_ctx,
+					       unsigned int if_idx)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct img_cmd_get_interface *cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	if (!dev_ctx || if_idx > MAX_NUM_VIFS) {
+		goto out;
+	}
+	fmac_dev_ctx = dev_ctx;
+
+	cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+				       sizeof(*cmd));
+
+	if (!cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+
+	cmd->umac_hdr.cmd_evnt = IMG_UMAC_CMD_GET_INTERFACE;
+	cmd->umac_hdr.ids.wdev_id = if_idx;
+	cmd->umac_hdr.ids.valid_fields |= IMG_INDEX_IDS_WDEV_ID_VALID;
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      cmd,
+			      sizeof(*cmd));
+out:
+	if (cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       cmd);
+	}
+
+	return status;
+}
+
 
 enum wifi_nrf_status wifi_nrf_fmac_resume(void *dev_ctx)
 {

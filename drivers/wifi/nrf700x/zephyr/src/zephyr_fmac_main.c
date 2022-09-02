@@ -404,6 +404,8 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	callbk_fns.assoc_resp_callbk_fn = wifi_nrf_wpa_supp_event_proc_assoc_resp;
 	callbk_fns.deauth_callbk_fn = wifi_nrf_wpa_supp_event_proc_deauth;
 	callbk_fns.disassoc_callbk_fn = wifi_nrf_wpa_supp_event_proc_disassoc;
+	callbk_fns.get_station_callbk_fn = wifi_nrf_wpa_supp_event_proc_get_sta;
+	callbk_fns.get_interface_callbk_fn = wifi_nrf_wpa_supp_event_proc_get_if;
 #endif /* CONFIG_WPA_SUPP */
 
 	rpu_drv_priv_zep.fmac_priv = wifi_nrf_fmac_init(&data_config,
@@ -490,6 +492,7 @@ static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 	.associate = wifi_nrf_wpa_supp_associate,
 	.set_supp_port = wifi_nrf_wpa_set_supp_port,
 	.set_key = wifi_nrf_wpa_supp_set_key,
+	.signal_poll = wifi_nrf_wpa_supp_signal_poll,
 };
 #endif /* CONFIG_WPA_SUPP */
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
