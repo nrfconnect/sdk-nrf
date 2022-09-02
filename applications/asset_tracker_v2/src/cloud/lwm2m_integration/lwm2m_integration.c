@@ -333,15 +333,19 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	 */
 #if defined(CONFIG_LWM2M_INTEGRATION_PROVISION_CREDENTIALS)
 	if (IS_ENABLED(CONFIG_LWM2M_DTLS_SUPPORT) && sizeof(CONFIG_LWM2M_INTEGRATION_PSK) > 1) {
-		char buf[1 + sizeof(CONFIG_LWM2M_INTEGRATION_PSK) / 2];
-		size_t len = hex2bin(CONFIG_LWM2M_INTEGRATION_PSK,
-				     sizeof(CONFIG_LWM2M_INTEGRATION_PSK) - 1, buf,
-				     sizeof(buf));
+		if (!IS_ENABLED(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP) ||
+		    (IS_ENABLED(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP) &&
+		     lwm2m_security_needs_bootstrap())) {
+			char buf[1 + sizeof(CONFIG_LWM2M_INTEGRATION_PSK) / 2];
+			size_t len =
+				hex2bin(CONFIG_LWM2M_INTEGRATION_PSK,
+					sizeof(CONFIG_LWM2M_INTEGRATION_PSK) - 1, buf, sizeof(buf));
 
-		err = lwm2m_engine_set_opaque("0/0/5", buf, len);
-		if (err) {
-			LOG_ERR("Failed setting PSK, error: %d", err);
-			return err;
+			err = lwm2m_engine_set_opaque("0/0/5", buf, len);
+			if (err) {
+				LOG_ERR("Failed setting PSK, error: %d", err);
+				return err;
+			}
 		}
 	}
 #endif /* CONFIG_LWM2M_INTEGRATION_PROVISION_CREDENTIALS */
