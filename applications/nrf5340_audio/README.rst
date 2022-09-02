@@ -1395,7 +1395,6 @@ Additional Disclaimer for the nRF5340 Audio application
    This application and the LE Audio Controller Subsystem for nRF53 are marked as :ref:`experimental <software_maturity>`.
    The DFU/FOTA functionality in this application is also marked as :ref:`experimental <software_maturity>`.
 
-   The LE Audio Controller Subsystem for nRF53 associated with this release comes with QDID 181316.
    This LE Audio link controller is tested and works in configurations used by the present reference code (for example, 2 concurrent CIS, or BIS).
    No other configurations than the ones used in the reference application are tested nor documented in this release.
 
