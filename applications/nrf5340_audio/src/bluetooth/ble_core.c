@@ -40,6 +40,7 @@ static void net_core_timeout_handler(struct k_timer *timer_id)
 	ERR_CHK_MSG(-EIO, "No response from NET core, check if NET core is programmed");
 }
 
+#if !(CONFIG_BT_PRIVACY)
 /* Use unique FICR device ID to set random static address */
 static void ble_core_setup_random_static_addr(void)
 {
@@ -71,6 +72,7 @@ static void ble_core_setup_random_static_addr(void)
 		 */
 	}
 }
+#endif /* !(CONFIG_BT_PRIVACY) */
 
 static void mac_print(void)
 {
@@ -186,7 +188,10 @@ int ble_core_init(ble_core_ready_t ready_callback)
 	k_timer_start(&net_core_timeout_alarm_timer, K_MSEC(NET_CORE_RESPONSE_TIMEOUT_MS),
 		      K_NO_WAIT);
 
+#if !(CONFIG_BT_PRIVACY)
 	ble_core_setup_random_static_addr();
+#endif /* !(CONFIG_BT_PRIVACY) */
+
 	/* Enable Bluetooth, with callback function that
 	 * will be called when Bluetooth is ready
 	 */
