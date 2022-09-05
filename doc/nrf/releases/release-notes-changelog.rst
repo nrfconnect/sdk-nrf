@@ -159,7 +159,11 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
-|no_changes_yet_note|
+* :ref:`lwm2m_client` sample:
+
+  * Added:
+
+    * Ability to use buttons to generate location assistance requests.
 
 Thread samples
 --------------

@@ -6,6 +6,11 @@ Location assistance
 The LwM2M Client sample supports a proprietary mechanism to fetch location assistance data from `nRF Cloud`_ by proxying it through the LwM2M server.
 This is achieved by using LwM2M objects ECID-Signal Measurement Information object(ID 10256) and proprietary Location assistance object (ID 50001).
 
+To trigger location assistance, use the following buttons on the board:
+
+* **Button 1** - For GNSS
+* **Button 2** - For cell location
+
 .. note::
    This feature is currently under development and as of now, only AVSystem's Coiote LwM2M server can be used for utilizing the location assistance data from nRF Cloud.
 
