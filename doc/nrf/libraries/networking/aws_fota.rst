@@ -15,9 +15,8 @@ This means that the data sent in each MQTT message is encrypted.
 When an update is available, the library receives a notification that contains metadata about the update.
 This metadata contains the location of the uploaded firmware image.
 The library then uses HTTP to download the firmware image, replacing the current firmware with the downloaded firmware.
+After the new firmware image is downloaded, the application must perform a reboot to run the new image and complete the FOTA process.
 The library supports the updating of delta images for both the application and modem firmware.
-
-The application that uses the library can restart the device when the FOTA is complete.
 
 See :ref:`AWS FOTA implementation <aws_fota_implementation>` for information about the download procedure, and `AWS IoT Developer Guide`_ for general information about the Amazon Web Services IoT service.
 

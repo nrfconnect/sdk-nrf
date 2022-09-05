@@ -110,13 +110,13 @@ To subscribe to the various `AWS IoT Device Shadow Topics`_, set the following o
 
 Other options:
 
-* :kconfig:option:`AWS_IOT_LAST_WILL`
-* :kconfig:option:`AWS_IOT_LAST_WILL_TOPIC`
-* :kconfig:option:`AWS_IOT_LAST_WILL_MESSAGE`
-* :kconfig:option:`AWS_IOT_MQTT_RX_TX_BUFFER_LEN`
+* :kconfig:option:`CONFIG_AWS_IOT_LAST_WILL`
+* :kconfig:option:`CONFIG_AWS_IOT_LAST_WILL_TOPIC`
+* :kconfig:option:`CONFIG_AWS_IOT_LAST_WILL_MESSAGE`
+* :kconfig:option:`CONFIG_AWS_IOT_MQTT_RX_TX_BUFFER_LEN`
 * :kconfig:option:`CONFIG_AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN`
-* :kconfig:option:`AWS_IOT_CLIENT_ID_APP`
-* :kconfig:option:`AWS_IOT_CLIENT_ID_STATIC`
+* :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_APP`
+* :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC`
 * :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN`
 
 
