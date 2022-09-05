@@ -339,8 +339,7 @@ nRF5340 Audio
   * Network controller.
   * Documentation in the :ref:`nrf53_audio_app_building_script` section.
     The text now mentions how to recover the device if programming using script fails.
-  * Documentation of the operating temperature maximum range in the
-    :ref:`nrf53_audio_app_dk_features` and :ref:`nrf53_audio_app_dk_legal` sections.
+  * Documentation of the operating temperature maximum range in the :ref:`nrf53_audio_app_dk_features` and :ref:`nrf53_audio_app_dk_legal` sections.
 
 * Removed support for SBC.
 
@@ -418,10 +417,6 @@ Bluetooth samples
   * Added configuration for the nRF5340 target.
   * Fixed scanning start on the nRF5340 target with the Zephyr LL controller.
     Previously, it was not possible to start scanning, because the :kconfig:option:`CONFIG_BT_EXT_ADV` option was disabled for the Zephyr LL controller.
-
-* :ref:`ble_nrf_dm` sample:
-
-  * Added support for the nRF5340 target.
 
 * :ref:`peripheral_fast_pair` sample:
 
@@ -786,6 +781,8 @@ Modem libraries
       * ``nrf_modem_lib_heap_diagnose``
       * ``nrf_modem_lib_shm_tx_diagnose``
 
+    * The ``nrf_modem_lib_get_init_ret`` function is now deprecated.
+
 * :ref:`lib_location` library:
 
   * Updated the timeout parameters' type from uint16_t to int32_t, unit from seconds to milliseconds, and value to disable them from 0 to ``SYS_FOREVER_MS``.
@@ -898,6 +895,7 @@ Other libraries
 
   * Documentation for the :ref:`lib_adp536x` library.
   * Documentation for the :ref:`lib_flash_map_pm` library.
+  * :ref:`lib_identity_key` library.
 
 * :ref:`lib_flash_patch` library:
 
@@ -1025,8 +1023,8 @@ The following list summarizes both the main changes inherited from upstream MCUb
 
   * Removed:
 
-    * The Zephyr Test Plan page in the MCUboot documentation set.
-    * The Building and using MCUboot with Zephyr page in the MCUboot documentation set.
+    * The "Zephyr Test Plan" page in the MCUboot documentation set.
+    * The "Building and using MCUboot with Zephyr" page in the MCUboot documentation set.
 
 Zephyr
 ======
