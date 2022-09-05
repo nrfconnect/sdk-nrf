@@ -50,7 +50,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: c4cfa3b6d9dd9e18f69da0499339336aa46263c9
+      revision: v3.1.99-ncs1-rc1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -103,16 +103,16 @@ manifest:
       revision: 8c5ed9a2d35543bed588018353f7fd2106c0d2ae
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 74b34fe10bde956ddecd84104536dcb78a612e5f
+      revision: v1.9.99-ncs2-rc1
       path: bootloader/mcuboot
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: sdk-mbedtls
-      revision: 30c4a6c658799086cd19db4a6c2fa6c7ef026dbb
+      revision: v3.1.0-ncs1-rc1
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 80997193bb9a1e41d73eae04e38619daded42190
+      revision: v2.1.0-rc1
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -120,11 +120,11 @@ manifest:
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
-      revision: v1.7.2-ncs1
+      revision: v1.7.2-ncs2-rc1
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 4b3e81a0c8d44c6d3509a8ab33716669addf3d5e
+      revision: v2.1.0-rc1
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -137,7 +137,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 735126ec13c50bc38764ce5a271b57d27180c75f
+      revision: v2.1.0-rc1
       groups:
       - nrf-802154
     - name: cjson
@@ -146,12 +146,12 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: 94419ca2a69d2a9b9a2e13e0fd3473951295a880
+      revision: v2.1.0-rc1
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 60e5499a00d8699c7604940e2be2cd6ec4466725
+      revision: v2.1.0-rc1
       groups:
       - find-my
     - name: sdk-lc3
