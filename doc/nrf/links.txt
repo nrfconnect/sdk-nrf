@@ -308,7 +308,7 @@
 
 .. _`iBasis network coverage spreadsheet`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/3rd-party/iBasis-simplified-coverage-map-for-web.pdf?la=en&hash=CA7DBF400243D8A7A7BDA94873B50E73C26B4FAC
 
-.. _`nRF Connect SDK v2.1.0 webinar`:
+.. _`nRF Connect SDK v2.1.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v210?utm_campaign=2022%20Webinars&utm_source=Documentation&utm_medium=Link%20to%20webinar%20%7C%20from%20documentation&utm_content=Link%20to%20webinar%20%7C%20from%20documentation
 .. _`nRF Connect SDK v2.0.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v2?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0&utm_content=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0
 .. _`nRF Connect SDK v1.9.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v19?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=In-line%20text%20%7C%20nRF%20Connect%20SDK%20v1.9%20%7C%20Link%20to%20webinar
 

@@ -158,6 +158,8 @@ Serial LTE Modem
 NCSDK-13895: Build failure for target Thingy:91 with secure_bootloader overlay
   Building the application for Thingy:91 fails if secure_bootloader overlay is included.
 
+.. _known_issues_other:
+
 Other issues
 ============
 
