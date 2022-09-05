@@ -41,8 +41,8 @@ The following table shows the operating system versions that support the |NCS| t
      - Tier 3
      - Not supported
    * - `Windows 10`_
+     - Tier 3
      - Tier 1
-     - Tier 2
      - Not supported
    * - `Linux - Ubuntu 22.04 LTS`_
      - Not supported
