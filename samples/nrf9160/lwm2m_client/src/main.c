@@ -38,6 +38,11 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #include "gnss_module.h"
 #include "lwm2m_engine.h"
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT)
+#include "ui_input.h"
+#include "ui_input_event.h"
+#endif
+
 #if !defined(CONFIG_LTE_LINK_CONTROL)
 #error "Missing CONFIG_LTE_LINK_CONTROL"
 #endif
@@ -77,6 +82,45 @@ void ncell_meas_work_handler(struct k_work *work)
 }
 #endif
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT)
+static bool button_callback(const struct app_event_header *aeh)
+{
+	if (is_ui_input_event(aeh)) {
+		struct ui_input_event *event = cast_ui_input_event(aeh);
+
+		if (event->type != PUSH_BUTTON || event->state == 0) {
+			return false;
+		}
+
+		switch (event->device_number) {
+		case 1:
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+			LOG_INF("Starting GNSS");
+			start_gnss();
+#else
+			LOG_INF("A-GPS not enabled");
+#endif
+			break;
+		case 2:
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
+			LOG_INF("Send cell location request event");
+			struct cell_location_request_event *cell_event =
+				new_cell_location_request_event();
+
+			APP_EVENT_SUBMIT(cell_event);
+#else
+			LOG_INF("Cell location not enabled");
+#endif
+			break;
+		}
+	}
+	return false;
+}
+
+
+APP_EVENT_LISTENER(app_lwm2m_client, button_callback);
+APP_EVENT_SUBSCRIBE(app_lwm2m_client, ui_input_event);
+#endif
 
 #if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
 static struct k_work_delayable send_periodical_work;
@@ -304,18 +348,8 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 #if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
 		lwm2m_register_server_send_mute_cb();
 #endif
-
 		/* Get current time and date */
 		date_time_update_async(date_time_event_handler);
-#if defined(CONFIG_APP_GNSS)
-		start_gnss();
-#endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
-		LOG_INF("Send cell location request event");
-		struct cell_location_request_event *event = new_cell_location_request_event();
-
-		APP_EVENT_SUBMIT(event);
-#endif
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE:
