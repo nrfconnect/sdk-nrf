@@ -330,7 +330,11 @@ void *net_pkt_from_nbuf(void *iface, void *frm)
 
 	data = zep_shim_nbuf_data_get(nwb);
 
-	pkt = net_pkt_rx_alloc_with_buffer(iface, len, AF_UNSPEC, 0, K_FOREVER);
+	pkt = net_pkt_rx_alloc_with_buffer(iface, len, AF_UNSPEC, 0, K_MSEC(100));
+
+	if (!pkt) {
+		return NULL;
+	}
 
 	if (net_pkt_write(pkt, data, len)) {
 		LOG_ERR("Out of memory for received frame");
