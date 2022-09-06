@@ -46,11 +46,19 @@ LOG_MODULE_REGISTER(bt_ddfs, CONFIG_BT_DDFS_LOG_LEVEL);
 /* DFF Distance Measurement Flags */
 #define DDF_DM_RTT_PRESENT		BIT(0)
 #define DDF_DM_MCPD_PRESENT		BIT(1)
+#define DDF_DM_HIGH_PRECISION_PRESENT	BIT(2)
 
 /* Attribute indexes */
 #define DDF_SVC_DISTANCE_MEAS_ATTR_IDX	1
 #define DDF_SVC_AZIMUTH_MEAS_ATTR_IDX	4
 #define DDF_SVC_ELEVATION_MEAS_ATTR_IDX	7
+
+/* Buffer sizes */
+#define DDF_CP_READ_CONF_BUF_SIZE	2
+
+/* High Precision state*/
+#define DDF_DM_HIGH_PRECISION_ENABLED	1
+#define DDF_DM_HIGH_PRECISION_DISABLED	0
 
 static struct {
 	struct bt_gatt_indicate_params ind_params;
@@ -175,6 +183,7 @@ static void indicate_destroy(struct bt_gatt_indicate_params *params)
 static ssize_t dm_write_ctrl_point(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 				const void *buf, uint16_t len, uint16_t offset, uint8_t flags)
 {
+	NET_BUF_SIMPLE_DEFINE(conf_buf, DDF_CP_READ_CONF_BUF_SIZE);
 	const struct write_ctrl_point_req *req = buf;
 	struct bt_ddfs_dm_config dm_config;
 	uint8_t status;
@@ -219,8 +228,10 @@ static ssize_t dm_write_ctrl_point(struct bt_conn *conn, const struct bt_gatt_at
 		if (ddfs_inst.cb && ddfs_inst.cb->dm_config_read) {
 			if (!ddfs_inst.cb->dm_config_read(&dm_config)) {
 				status = DDF_CP_RSP_SUCCESS;
-				ctrl_point_ind(conn, req->op, status, (uint8_t *)(&dm_config.mode),
-					       sizeof(uint8_t));
+				net_buf_simple_add_u8(&conf_buf, dm_config.mode);
+				net_buf_simple_add_u8(&conf_buf, dm_config.high_precision ?
+				    DDF_DM_HIGH_PRECISION_ENABLED : DDF_DM_HIGH_PRECISION_DISABLED);
+				ctrl_point_ind(conn, req->op, status, conf_buf.data, conf_buf.len);
 				return len;
 			}
 			status = DDF_CP_RSP_FAILED;
@@ -304,6 +315,7 @@ int bt_ddfs_distance_measurement_notify(struct bt_conn *conn,
 
 	bool is_rtt = measurement->ranging_mode == BT_DDFS_DM_RANGING_MODE_RTT;
 	bool is_mcpd = measurement->ranging_mode == BT_DDFS_DM_RANGING_MODE_MCPD;
+
 	struct ddfs_meas_notify *dist_meas_notify;
 
 	NET_BUF_SIMPLE_DEFINE(buf, sizeof(*dist_meas_notify) +
@@ -326,6 +338,10 @@ int bt_ddfs_distance_measurement_notify(struct bt_conn *conn,
 		net_buf_simple_add_le16(&buf, measurement->dist_estimates.mcpd.phase_slope);
 		net_buf_simple_add_le16(&buf, measurement->dist_estimates.mcpd.rssi_openspace);
 		net_buf_simple_add_le16(&buf, measurement->dist_estimates.mcpd.best);
+#ifdef CONFIG_DM_HIGH_PRECISION_CALC
+		dist_meas_notify->flags |= DDF_DM_HIGH_PRECISION_PRESENT;
+		net_buf_simple_add_le16(&buf, measurement->dist_estimates.mcpd.high_precision);
+#endif
 	}
 
 	if (!conn) {
