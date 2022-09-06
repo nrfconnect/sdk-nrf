@@ -127,7 +127,7 @@ Values are provided in kilobytes (KB).
       The following table lists memory requirements for samples running on the :ref:`Thingy:53 <gs_programming_board_names>` (:ref:`thingy53_nrf5340 <zephyr:thingy53_nrf5340>`).
 
       +-------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+-------------+
-      | Sample                                                      |   MCUBoot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM |
+      | Application                                                 |   MCUBoot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM |
       +=============================================================+===============+===================+================+============+=============+=============+
       | :ref:`Weather Station <matter_weather_station_app>` (Debug) |            64 |               786 |              0 |         64 |         914 |         239 |
       +-------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+-------------+

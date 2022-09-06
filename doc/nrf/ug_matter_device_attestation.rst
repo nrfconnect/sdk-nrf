@@ -69,7 +69,7 @@ It is the distribution point of PAA certificates.
 
    Device Attestation certification authorities with PKI and DCL
 
-To read more about DCL and how to use it, see the :ref:`ug_matter_device_certification` page.
+To read more about DCL and how to use it, see the :ref:`ug_matter_device_dcl` page.
 
 .. _ug_matter_device_attestation_device_data:
 
