@@ -294,7 +294,6 @@ This section provides detailed lists of changes by :ref:`sample <sample>`, inclu
 For lists of protocol-specific changes, see `Protocols`_.
 
 * All samples running on non-secure boards are documented to use TF-M as the trusted execution solution, as SPM is deprecated.
-  Sample :ref:`secure_partition_manager` is the exception.
 
 Bluetooth samples
 -----------------
