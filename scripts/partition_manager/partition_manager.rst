@@ -15,7 +15,7 @@ See :ref:`ug_multi_image` for more information about multi-image builds.
 The Partition Manager is activated for all multi-image builds, regardless of which build strategy is used for the child image.
 
 .. note::
-   When you build a multi-image application using the Partition Manager, the Device Tree Source flash partitions are ignored.
+   When you build a multi-image application using the Partition Manager, the devicetree source flash partitions are ignored.
 
 .. _pm_overview:
 
@@ -23,7 +23,7 @@ Overview
 ********
 
 The Partition Manager script reads the configuration files named :file:`pm.yml`, which define flash and RAM partitions.
-A definition of a flash partition includes the name and the constraints on both size and placement in the flash.
+A definition of a flash partition includes the name and the constraints on both size and placement in the flash memory.
 A definition of a RAM partition includes the name and the constraints on its size.
 The Partition Manager allocates a start address and, when set, a size to each partition in a way that complies with these constraints.
 
@@ -32,22 +32,21 @@ There are different types of *flash partitions* and *RAM partitions*, as describ
 Flash partition types
 =====================
 
-
-
 Image partitions
-   An image partition is the flash area reserved for an image to which the image binary is written.
+   An image partition is the flash memory area reserved for an image to which the image binary is written.
 
    When the Partition Manager is active, there is one *root image* and one or more *child images*.
-   The name of the root image is ``app``; it is always implicitly defined.
+   The name of the root image is ``app``.
+   It is always implicitly defined.
    Child images are explicitly defined in :file:`pm.yml` files.
    The size of the root image partition is dynamic, while the sizes of all child image partitions are statically defined.
 
 Placeholder partitions
    A placeholder partition does not contain an image, but reserves space for other uses.
-   For example, you might want to reserve space in flash to hold an updated application image while it is being downloaded and before it is copied to the application image partition.
+   For example, you might want to reserve space in the flash memory to hold an updated application image while it is being downloaded and before it is copied to the application image partition.
 
 Container partitions
-   A container partition does not reserve space but is used to logically and/or physically group other partitions.
+   A container partition does not reserve space but is used to logically and (or) physically group other partitions.
 
 The start addresses and sizes of image partitions are used in the preprocessing of the linker script for each image.
 
@@ -524,7 +523,12 @@ After the ``nordic,pm-ext-flash`` value is set, you can place partitions in the 
      size: CONFIG_EXTERNAL_PLZ_SIZE
 
 .. note::
-    If the external flash device is not using the :ref:`QSPI NOR <zephyr:dtbinding_nordic_qspi_nor>` driver, :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` must be enabled to override the Partition Manager's external flash driver check, and the required driver must also be enabled for all applications that need it.
+
+   * Use the :kconfig:option:`CONFIG_PM_PARTITION_REGION_LITTLEFS_EXTERNAL`, :kconfig:option:`CONFIG_PM_PARTITION_REGION_SETTINGS_STORAGE_EXTERNAL`, and :kconfig:option:`CONFIG_PM_PARTITION_REGION_NVS_STORAGE_EXTERNAL` to specify that the relevant partition must be located in external flash memory.
+     You must add a ``chosen`` entry for ``nordic,pm-ext-flash`` in your devicetree to make this option available.
+     See :file:`tests/subsys/partition_manager` for example configurations.
+
+   * If the external flash device is not using the :ref:`QSPI NOR <zephyr:dtbinding_nordic_qspi_nor>` driver, you must enable :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` to override the Partition Manager's external flash driver check, and the required driver must also be enabled for all applications that need it.
 
 See :ref:`ug_bootloader_external_flash` for more details on using external flash memory with MCUboot.
 
