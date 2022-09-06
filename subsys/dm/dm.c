@@ -37,28 +37,34 @@
 
 LOG_MODULE_REGISTER(nrf_dm, CONFIG_DM_MODULE_LOG_LEVEL);
 
-#ifdef CONFIG_NRF_DM_TIMER0
-#define NRF_DM_TIMER NRF_TIMER0
+#ifdef CONFIG_DM_TIMER0
+#define DM_TIMER NRF_TIMER0
 #endif
-#ifdef CONFIG_NRF_DM_TIMER1
-#define NRF_DM_TIMER NRF_TIMER1
+#ifdef CONFIG_DM_TIMER1
+#define DM_TIMER NRF_TIMER1
 #endif
-#ifdef CONFIG_NRF_DM_TIMER2
-#define NRF_DM_TIMER NRF_TIMER2
+#ifdef CONFIG_DM_TIMER2
+#define DM_TIMER NRF_TIMER2
 #endif
-#ifdef CONFIG_NRF_DM_TIMER3
-#define NRF_DM_TIMER NRF_TIMER3
+#ifdef CONFIG_DM_TIMER3
+#define DM_TIMER NRF_TIMER3
 #endif
-#ifdef CONFIG_NRF_DM_TIMER4
-#define NRF_DM_TIMER NRF_TIMER4
+#ifdef CONFIG_DM_TIMER4
+#define DM_TIMER NRF_TIMER4
 #endif
 
 #define PPI_CH_COUNT                 2
 
 #define MPSL_THREAD_PRIO             CONFIG_MPSL_THREAD_COOP_PRIO
-#define STACKSIZE                    CONFIG_MAIN_STACK_SIZE
-#define DM_THREAD_PRIORITY           K_HIGHEST_APPLICATION_THREAD_PRIO
+#define MPSL_THREAD_STACK_SIZE       CONFIG_MAIN_STACK_SIZE
+#define DM_THREAD_PRIORITY           0
 #define TIMESLOT_TIMEOUT_STEP_MS     120000
+
+#if CONFIG_DM_HIGH_PRECISION_CALC && !defined(NRF5340_XXAA)
+#define DM_THREAD_STACK_SIZE         2560
+#else
+#define DM_THREAD_STACK_SIZE         1536
+#endif
 
 #define DM_TIMESLOT_OVERHEAD_US      400
 #define DM_REFLECTOR_OVERHEAD_US     2000
@@ -176,6 +182,7 @@ static mpsl_timeslot_signal_return_param_t *mpsl_timeslot_callback(
 		dm_io_set(DM_IO_RANGING);
 
 		if (atomic_get(&timeslot_ctx.state) == TIMESLOT_STATE_EARLY_PENDING) {
+			dm_io_clear(DM_IO_RANGING);
 			return p_ret_val;
 		}
 
@@ -258,7 +265,7 @@ static void mpsl_nonpreemptible_thread(void)
 	}
 }
 
-static void process_data(const nrf_dm_report_t *data)
+static void process_data(const nrf_dm_report_t *data, float high_precision_estimate)
 {
 	if (!data) {
 		result.status = false;
@@ -287,6 +294,9 @@ static void process_data(const nrf_dm_report_t *data)
 		result.dist_estimates.mcpd.best = data->distance_estimates.mcpd.best;
 		result.dist_estimates.mcpd.rssi_openspace =
 						      data->distance_estimates.mcpd.rssi_openspace;
+#ifdef CONFIG_DM_HIGH_PRECISION_CALC
+		result.dist_estimates.mcpd.high_precision = high_precision_estimate;
+#endif
 	}
 }
 
@@ -350,11 +360,6 @@ static void dm_start_ranging(void)
 	timeslot_queue_remove_first();
 
 	uint32_t distance = time_distance_get(timeslot_ctx.last_start, req->start_time);
-	uint32_t distance_now = time_distance_get(timeslot_ctx.last_start, time_now());
-
-	if (distance_now > distance) {
-		goto out;
-	}
 
 	atomic_set(&timeslot_ctx.state, TIMESLOT_STATE_PENDING);
 	err = timeslot_request(TICKS_TO_US(distance));
@@ -378,7 +383,7 @@ static void dm_reschedule(void)
 			timeslot_len_us = timeslot_ctx.curr_req.timeslot_length_us;
 
 			err = timeslot_queue_append(&timeslot_ctx.curr_req.dm_req,
-					   timeslot_ctx.last_start, window_len_us, timeslot_len_us);
+					   time_now(), window_len_us, timeslot_len_us);
 			if (err) {
 				LOG_DBG("Timeslot allocator failed (err %d)", err);
 			}
@@ -400,11 +405,17 @@ static void calculation(void)
 		}
 	} else {
 		static nrf_dm_report_t report;
+		float high_precision_estimate = 0;
 
 		nrf_dm_populate_report(&report);
 		nrf_dm_calc(&report);
-		process_data(&report);
 
+#ifdef CONFIG_DM_HIGH_PRECISION_CALC
+		if (report.ranging_mode == NRF_DM_RANGING_MODE_MCPD) {
+			high_precision_estimate = nrf_dm_high_precision_calc(&report);
+		}
+#endif
+		process_data(&report, high_precision_estimate);
 		if (dm_context.cb->data_ready != NULL) {
 			dm_context.cb->data_ready(&result);
 		}
@@ -506,7 +517,7 @@ int dm_init(struct dm_init_param *init_param)
 		ppi_ch[i] = (uint8_t)channel;
 	}
 
-	nrf_dm_init(&ppi_conf, &ant_conf, NRF_DM_TIMER);
+	nrf_dm_init(&ppi_conf, &ant_conf, DM_TIMER);
 
 	ver = nrf_dm_version_string_get();
 	LOG_DBG("Initialized NRF_DM version %s", ver);
@@ -522,7 +533,8 @@ int dm_init(struct dm_init_param *init_param)
 	return 0;
 }
 
-K_THREAD_DEFINE(dm_thread_id, STACKSIZE, dm_thread, NULL, NULL, NULL, DM_THREAD_PRIORITY, 0, 0);
+K_THREAD_DEFINE(dm_thread_id, DM_THREAD_STACK_SIZE,
+		dm_thread, NULL, NULL, NULL, DM_THREAD_PRIORITY, 0, 0);
 
-K_THREAD_DEFINE(mpsl_nonpreemptible_thread_id, STACKSIZE,
+K_THREAD_DEFINE(mpsl_nonpreemptible_thread_id, MPSL_THREAD_STACK_SIZE,
 		mpsl_nonpreemptible_thread, NULL, NULL, NULL, K_PRIO_COOP(MPSL_THREAD_PRIO), 0, 0);

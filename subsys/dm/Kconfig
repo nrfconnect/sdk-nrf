@@ -15,31 +15,40 @@ if DM_MODULE
 
 menu "nRF DM (Distance Measurement)"
 
-choice NRF_DM_TIMER
-	default NRF_DM_TIMER2
-	prompt "Timer to use for the nrf_dm library"
+choice DM_TIMER
+	default DM_TIMER2
+	prompt "Timer to use for the nrf_dm library."
 
-config NRF_DM_TIMER0
+config DM_TIMER0
 	depends on HAS_HW_NRF_TIMER0
 	bool "TIMER0"
 
-config NRF_DM_TIMER1
+config DM_TIMER1
 	depends on HAS_HW_NRF_TIMER1
 	bool "TIMER1"
 
-config NRF_DM_TIMER2
+config DM_TIMER2
 	depends on HAS_HW_NRF_TIMER2
 	bool "TIMER2"
 
-config NRF_DM_TIMER3
+config DM_TIMER3
 	depends on HAS_HW_NRF_TIMER3
 	bool "TIMER3"
 
-config NRF_DM_TIMER4
+config DM_TIMER4
 	depends on HAS_HW_NRF_TIMER4
 	bool "TIMER4"
 
 endchoice
+
+config DM_HIGH_PRECISION_CALC
+	# Due to memory limitations, functionality is not provided for nrf52832.
+	depends on !SOC_NRF52832
+	default n
+	bool "Use high-precision distance estimation"
+	help
+		"Use a more compute-intensive algorithm for the distance estimation.
+		Only works with MCPD ranging mode"
 
 config DM_TIMESLOT_RESCHEDULE
 	bool "Timeslot reschedule"
@@ -55,6 +64,7 @@ config DM_INITIATOR_DELAY_US
 
 config DM_MIN_TIME_BETWEEN_TIMESLOTS_US
 	int "Minimum time between two timeslots"
+	default 180000 if DM_HIGH_PRECISION_CALC
 	default 8000
 	help
 	  "Minimum time between two timeslots.
