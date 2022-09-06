@@ -155,6 +155,10 @@ Bluetooth samples
 
 * :ref: `ble_nrf_dm` sample:
 
+  * Added:
+
+    * Support for high-precision distance estimate using more compute-intensive algorithms.
+
   * Changed:
 
     * Added energy consumption information to documentation.
