@@ -35,7 +35,7 @@ LOG_MODULE_REGISTER(memfault_ncs, CONFIG_MEMFAULT_NCS_LOG_LEVEL);
 
 /* Project key check */
 BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_PROJECT_KEY) > 1,
-	"Memfault Project Key not configured. Please visit " MEMFAULT_URL);
+	"Memfault Project Key not configured. Please visit " MEMFAULT_URL " ");
 
 /* Firmware type check */
 BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_FW_TYPE) > 1, "Firmware type must be configured");
