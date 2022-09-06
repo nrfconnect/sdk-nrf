@@ -93,6 +93,11 @@ struct dm_result {
 
 			/** Best effort distance estimate. */
 			float best;
+
+#ifdef CONFIG_DM_HIGH_PRECISION_CALC
+			/* MCPD: Distance estimate based on advanced algorithms */
+			float high_precision;
+#endif
 		} mcpd;
 		struct rtt {
 			/** RTT: Distance estimate based on RTT measurement. */
