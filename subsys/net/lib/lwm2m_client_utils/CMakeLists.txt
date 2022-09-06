@@ -21,3 +21,5 @@ zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPO
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS
 			     location/location_events.c
 			     location/location_event_handler.c)
+zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
+			     lwm2m/lwm2m_cellconn_obj.c)

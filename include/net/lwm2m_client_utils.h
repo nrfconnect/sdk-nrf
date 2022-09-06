@@ -173,6 +173,11 @@ void location_assist_cell_request_set(void);
 void location_assist_cell_inform_set(void);
 #endif
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT)
+#define LWM2M_OBJECT_CELLULAR_CONNECTIVITY_ID 10
+int lwm2m_init_cellular_connectivity_object(void);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
