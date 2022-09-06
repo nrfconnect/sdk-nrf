@@ -8,6 +8,10 @@ Secure Partition Manager (SPM)
    :depth: 2
 
 The Secure Partition Manager (SPM) provides functionality for the Trusted Execution Environment of the nRF9160 SiP and the nRF5340 SoC.
+As of |NCS| v2.1.0, the Secure Partition Manager is replaced by the Trusted Firmware-M (TF-M) and deprecated.
+It will be removed in a future release of the |NCS|.
+
+See :ref:`ug_tfm` for more information about the TF-M.
 
 Overview
 ********
