@@ -147,6 +147,20 @@ config LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER
 
 endif # LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
 
+config LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
+	bool "Support for cellular connectivity object (ID 10)"
+
+if LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
+
+config LWM2M_CELL_CONN_OBJ_VERSION_1_1
+	bool "Use cellular connectivity object version 1.1"
+	default y
+
+config LWM2M_CELL_CONN_APN_PROFILE_COUNT
+	int "Maximum number of APN connection profiles"
+	default 3
+
+endif #LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
 
 module = LWM2M_CLIENT_UTILS
 module-dep = LOG
