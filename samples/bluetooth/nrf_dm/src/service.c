@@ -44,6 +44,12 @@ static int dm_config_read(struct bt_ddfs_dm_config *config)
 		return -1;
 	}
 
+	if (IS_ENABLED(CONFIG_DM_HIGH_PRECISION_CALC)) {
+		config->high_precision = true;
+	} else {
+		config->high_precision = false;
+	}
+
 	return 0;
 }
 
@@ -90,6 +96,10 @@ void service_distance_measurement_update(const bt_addr_le_t *addr, const struct 
 				meter_to_decimeter(result->dist_estimates.mcpd.rssi_openspace);
 		measurement.dist_estimates.mcpd.best =
 				meter_to_decimeter(result->dist_estimates.mcpd.best);
+#ifdef CONFIG_DM_HIGH_PRECISION_CALC
+		measurement.dist_estimates.mcpd.high_precision =
+				meter_to_decimeter(result->dist_estimates.mcpd.high_precision);
+#endif
 	}
 
 	bt_addr_le_copy(&measurement.bt_addr, addr);

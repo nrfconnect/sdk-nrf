@@ -78,6 +78,9 @@ The addresses of these devices are stored in a list.
 When a device does not respond within a certain period of time, it is removed from the list.
 Also the last measurement results with the peers are stored in this list.
 
+For the nRF5340, the ranging procedure is performed on the network core, while the calculation takes place on the application core.
+The distance calculation uses a floating-point unit (FPU).
+
 Power consumption
 *****************
 
@@ -107,6 +110,14 @@ At the application runtime, the additional delay of measurement execution is con
 This option helps in adjusting the synchronization.
 The :kconfig:option:`CONFIG_DM_INITIATOR_DELAY_US` Kconfig option defines the initiator delay.
 Increasing the values of these parameters increases the latency and power consumption.
+
+High-precision calculation
+**************************
+
+The sample supports distance estimation using a more compute-intensive high-precision algorithm.
+The :kconfig:option:`CONFIG_DM_HIGH_PRECISION_CALC` Kconfig option enables high-precision calculations.
+High-precision calculation has an impact on MCPD ranging mode only.
+Due to its limited memory, the nRF52 Development Kit (nrf52dk_nrf52832) does not support high-precision calculations.
 
 User interface
 **************

@@ -42,16 +42,16 @@ static struct adv_mfg_data mfg_data;
 struct bt_le_adv_param adv_param_conn =
 	BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONNECTABLE |
 			     BT_LE_ADV_OPT_NOTIFY_SCAN_REQ,
-			     BT_GAP_ADV_FAST_INT_MIN_1,
-			     BT_GAP_ADV_FAST_INT_MAX_1,
+			     BT_GAP_ADV_FAST_INT_MIN_2,
+			     BT_GAP_ADV_FAST_INT_MAX_2,
 			     NULL);
 
 struct bt_le_adv_param adv_param_noconn =
 	BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_USE_IDENTITY |
 			     BT_LE_ADV_OPT_SCANNABLE |
 			     BT_LE_ADV_OPT_NOTIFY_SCAN_REQ,
-			     BT_GAP_ADV_FAST_INT_MIN_1,
-			     BT_GAP_ADV_FAST_INT_MAX_1,
+			     BT_GAP_ADV_FAST_INT_MIN_2,
+			     BT_GAP_ADV_FAST_INT_MAX_2,
 			     NULL);
 
 
