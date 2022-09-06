@@ -332,7 +332,7 @@ static int handle_at_datactrl(enum at_cmd_type cmd_type)
 		if (ret) {
 			return ret;
 		}
-		if (verify_datamode_control(time_limit, NULL)) {
+		if (time_limit > 0 && verify_datamode_control(time_limit, NULL)) {
 			datamode_time_limit = time_limit;
 		} else {
 			return -EINVAL;
