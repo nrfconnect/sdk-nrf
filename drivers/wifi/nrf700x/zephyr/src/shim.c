@@ -306,7 +306,6 @@ void *net_pkt_to_nbuf(struct net_pkt *pkt)
 	nwb = zep_shim_nbuf_alloc(len + 100);
 
 	if (!nwb) {
-		LOG_ERR("Out of memory for sending frame\n");
 		return NULL;
 	}
 
@@ -337,7 +336,6 @@ void *net_pkt_from_nbuf(void *iface, void *frm)
 	}
 
 	if (net_pkt_write(pkt, data, len)) {
-		LOG_ERR("Out of memory for received frame");
 		net_pkt_unref(pkt);
 		pkt = NULL;
 	}
