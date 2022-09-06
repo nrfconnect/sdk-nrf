@@ -89,3 +89,5 @@ For this design, the Wi-Fi driver on the application core communicates with the 
 
 .. figure:: /images/matter_platform_design_nRF53_wifi.svg
    :alt: Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF53 with the nRF7002 Wi-Fi 6 Companion IC)
+
+   Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF53 with the nRF7002 Wi-Fi 6 Companion IC)
