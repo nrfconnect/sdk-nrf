@@ -46,7 +46,7 @@ The following table shows the operating system versions that support the |NCS| t
      - Not supported
    * - `Linux - Ubuntu 22.04 LTS`_
      - Not supported
-     - Not supported
+     - Tier 3
      - Not supported
    * - `Linux - Ubuntu 20.04 LTS`_
      - Not supported
