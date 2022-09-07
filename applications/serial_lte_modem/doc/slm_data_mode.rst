@@ -76,10 +76,9 @@ Triggering the transmission
 
 The SLM application buffers all the arbitrary data received from the UART bus before initiating the transmission.
 
-Two triggers can initiate the transmission of the buffered data to the LTE network:
-
-* The time limit trigger, which triggers the transmission when a defined timer times out.
-* The single RX trigger, where there is no timer defined and SLM keeps receiving data.
+The transmission of the buffered data to the LTE network is triggered by the time limit when the defined inactivity timer times out.
+If there is no time limit configured, the minimum required value applies.
+For more information, see the `Data mode control #XDATACTRL`_  command.
 
 Flow control in data mode
 =========================

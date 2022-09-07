@@ -388,7 +388,35 @@ Connecting with an external MCU
 If you run your user application on an external MCU (for example, an nRF52 Series development kit), you can control the modem on nRF9160 directly from the application.
 See the `nRF52 client for Serial LTE Modem application`_ repository for a sample implementation of such an application.
 
-To connect with an external MCU, set the :kconfig:option:`CONFIG_UART_2_NRF_HW_ASYNC_TIMER` and :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` configuration options in the Serial LTE Modem application configuration.
+To connect with an external MCU using UART_2, change the configuration files for the default board as follows:
+
+* In the :file:`nrf9160dk_nrf9160_ns.conf` file::
+
+   # Use UART_0 (when working with PC terminal)
+   # unmask the following config
+   #CONFIG_SLM_CONNECT_UART_0=y
+   #CONFIG_UART_0_NRF_HW_ASYNC_TIMER=2
+   #CONFIG_UART_0_NRF_HW_ASYNC=y
+   #CONFIG_SLM_WAKEUP_PIN=6
+   #CONFIG_SLM_INDICATE_PIN=2
+
+   # Use UART_2 (when working with external MCU)
+   # unmask the following config
+   CONFIG_SLM_CONNECT_UART_2=y
+   CONFIG_UART_2_NRF_HW_ASYNC_TIMER=2
+   CONFIG_UART_2_NRF_HW_ASYNC=y
+   CONFIG_SLM_WAKEUP_PIN=31
+   CONFIG_SLM_INDICATE_PIN=30
+
+
+* In the :file:`nrf9160dk_nrf9160_ns.overlay` file::
+
+   &uart0 {
+      status = "disabled";
+
+   &uart2 {
+      status = "okay";
+
 
 The following table shows how to connect an nRF52 Series development kit to the nRF9160 DK to be able to communicate through UART:
 
