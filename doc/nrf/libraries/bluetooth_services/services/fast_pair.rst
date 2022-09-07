@@ -31,9 +31,10 @@ Set the :kconfig:option:`CONFIG_BT_FAST_PAIR` to enable the module.
 The following Kconfig options are also available for this module:
 
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX` - The option configures maximum number of stored Account Keys.
-* :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_TINYCRYPT`, :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_MBEDTLS` - These options are used to select cryptographic backend for Fast Pair.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_TINYCRYPT`, :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_MBEDTLS`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_OBERON` - These options are used to select the cryptographic backend for Fast Pair.
   MbedTLS is used by default, whereas Tinycrypt is used by default for cases of building with TF-M as the Secure Execution Environment (:kconfig:option:`CONFIG_BUILD_WITH_TFM`).
   This is because in such case the MbedTLS API cannot be directly used by the Fast Pair service.
+  The Oberon backend can be used to limit memory consumption.
 
 See the Kconfig help for details.
 
@@ -60,8 +61,8 @@ Therefore, consider the following points:
 Bluetooth Security Manager Protocol (SMP)
 -----------------------------------------
 
-The service selects :kconfig:option:`CONFIG_BT_SMP` and :kconfig:option:`CONFIG_BT_SMP_APP_PAIRING_ACCEPT`.
-The Fast Pair specification requires support for Bluetooth LE pairing.
+The service selects :kconfig:option:`CONFIG_BT_SMP`, :kconfig:option:`CONFIG_BT_SMP_APP_PAIRING_ACCEPT`, and :kconfig:option:`CONFIG_BT_SMP_ENFORCE_MITM`.
+The Fast Pair specification requires support for Bluetooth LE pairing and enforcing :term:`Man-in-the-Middle (MITM)` protection during the Fast Pair procedure.
 
 Firmware Revision characteristic
 --------------------------------
