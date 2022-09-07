@@ -142,7 +142,7 @@ config DATA_ACCELEROMETER_INACT_THRESHOLD
 
 config DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS
 	int "Default accelerometer inactivity timeout in seconds"
-	default 1
+	default 60
 	help
 	  Minimum time for lack of movement to be considered stillness in passive mode.
 

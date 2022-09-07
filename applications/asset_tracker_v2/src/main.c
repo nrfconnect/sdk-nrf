@@ -90,6 +90,9 @@ static bool modem_static_sampled;
  */
 static void data_sample_timer_handler(struct k_timer *timer);
 
+/* Timer callback used to reset the activity trigger flag */
+static void movement_resolution_timer_handler(struct k_timer *timer);
+
 /* Application module message queue. */
 #define APP_QUEUE_ENTRY_COUNT		10
 #define APP_QUEUE_BYTE_ALIGNMENT	4
@@ -101,6 +104,9 @@ static void data_sample_timer_handler(struct k_timer *timer);
  */
 #define DATA_FETCH_TIMEOUT_NEIGHBORHOOD_SEARCH 11
 
+/* Flag to prevent multiple activity events within one movement resolution cycle */
+static bool activity_triggered = true;
+static bool inactivity_triggered = true;
 
 K_MSGQ_DEFINE(msgq_app, sizeof(struct app_msg_data), APP_QUEUE_ENTRY_COUNT,
 	      APP_QUEUE_BYTE_ALIGNMENT);
@@ -116,7 +122,7 @@ K_TIMER_DEFINE(movement_timeout_timer, data_sample_timer_handler, NULL);
  * lower power consumption by limiting how often GNSS search is performed and
  * data is sent on air.
  */
-K_TIMER_DEFINE(movement_resolution_timer, NULL, NULL);
+K_TIMER_DEFINE(movement_resolution_timer, movement_resolution_timer_handler, NULL);
 
 /* Module data structure to hold information of the application module, which
  * opens up for using convenience functions available for modules.
@@ -380,6 +386,13 @@ static void data_sample_timer_handler(struct k_timer *timer)
 	SEND_EVENT(app, APP_EVT_DATA_GET_ALL);
 }
 
+static void movement_resolution_timer_handler(struct k_timer *timer)
+{
+	ARG_UNUSED(timer);
+	activity_triggered = false;
+	inactivity_triggered = false;
+}
+
 /* Static module functions. */
 static void passive_mode_timers_start_all(void)
 {
@@ -527,6 +540,13 @@ void on_sub_state_passive(struct app_msg_data *msg)
 			return;
 		}
 
+		if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED)) {
+			if (activity_triggered) {
+				return;
+			}
+			activity_triggered = true;
+		}
+
 		/* Trigger a sample request if button 2 has been pushed on the DK or activity has
 		 * been detected. The data request can only be triggered if the movement
 		 * resolution timer has timed out.
@@ -542,7 +562,10 @@ void on_sub_state_passive(struct app_msg_data *msg)
 		/* Trigger a sample request if there has been inactivity after
 		 * activity was triggered.
 		 */
-		data_sample_timer_handler(NULL);
+		if (!inactivity_triggered) {
+			data_sample_timer_handler(NULL);
+			inactivity_triggered = true;
+		}
 	}
 }
 
