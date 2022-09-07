@@ -44,6 +44,8 @@ if __name__ == "__main__":
 
     dev.at_client = ATclient(dev.com_port)
 
+    dev.at_client.at_cmd("AT+CFUN=4")
+
     imei = dev.get_imei()
     identity = f'urn:imei:{imei}'
     logging.info('Identity: %s', identity)
