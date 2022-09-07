@@ -59,6 +59,10 @@ html_theme_options = {"docset": "nrfxlib", "docsets": utils.ALL_DOCSETS}
 
 intersphinx_mapping = dict()
 
+zephyr_mapping = utils.get_intersphinx_mapping("zephyr")
+if zephyr_mapping:
+    intersphinx_mapping["zephyr"] = zephyr_mapping
+
 kconfig_mapping = utils.get_intersphinx_mapping("kconfig")
 if kconfig_mapping:
     intersphinx_mapping["kconfig"] = kconfig_mapping
