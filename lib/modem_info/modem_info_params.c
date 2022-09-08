@@ -137,8 +137,11 @@ int modem_info_params_get(struct modem_param_info *modem)
 		return -EINVAL;
 	}
 
-	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_NETWORK)) {
+	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_NETWORK) ||
+	    IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM) ||
+	    IS_ENABLED(CONFIG_MODEM_INFO_ADD_DEVICE)) {
 		struct lte_param *params[] = {
+#if IS_ENABLED(CONFIG_MODEM_INFO_ADD_NETWORK)
 			&modem->network.current_band,
 			&modem->network.sup_band,
 			&modem->network.ip_address,
@@ -150,6 +153,7 @@ int modem_info_params_get(struct modem_param_info *modem)
 			&modem->network.nbiot_mode,
 			&modem->network.gps_mode,
 			&modem->network.apn,
+#endif
 #if IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM_ICCID)
 			&modem->sim.iccid,
 #endif
@@ -169,7 +173,9 @@ int modem_info_params_get(struct modem_param_info *modem)
 				return ret;
 			}
 		}
+	}
 
+	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_NETWORK)) {
 		if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_DATE_TIME)) {
 			ret = modem_data_get(&modem->network.date_time);
 			if (ret) {
