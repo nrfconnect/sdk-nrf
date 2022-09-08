@@ -56,10 +56,13 @@ enum radio_test_mode {
 
 /**@brief Radio test front-end module (FEM) configuration */
 struct radio_test_fem {
-	/* Front-end module activation delay. */
-	uint32_t active_delay;
+	/* Front-end module radio ramp-up time in microseconds. */
+	uint32_t ramp_up_time;
 
-	/* Front-end module TX gain. */
+	/* Front-end module TX gain in arbitrary unit specific to given front-end module.
+	 * For nRF21540 GPIO/SPI, this is a register value.
+	 * For nRF21540 GPIO, this is MODE pin value.
+	 */
 	uint8_t gain;
 };
 
