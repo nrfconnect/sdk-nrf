@@ -139,6 +139,20 @@ if (CONFIG_BOOTLOADER_MCUBOOT)
     )
 endif()
 
+if (CONFIG_TFM_ISOLATION_TEST_MEM_CHECK)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DTFM_ISOLATION_TEST_MEM_CHECK=TRUE
+    )
+endif()
+
+if (CONFIG_TFM_ISOLATION_TEST_APP_2_PSA)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DTFM_ISOLATION_TEST_APP_2_PSA=TRUE
+    )
+endif()
+
 # The ENGINE_BUF_SIZE holds the dynamic allocation buffer for
 # TF-M, which is the equivalent of dynamic allocation in MBEDTLS
 set_property(TARGET zephyr_property_target

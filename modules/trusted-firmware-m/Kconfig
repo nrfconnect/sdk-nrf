@@ -56,6 +56,18 @@ config TFM_PROFILE_TYPE_MINIMAL
 	  and reproduce the desired configuration through kconfig fragments.
 endchoice
 
+config TFM_ISOLATION_TEST_APP_2_PSA
+	bool
+	default y
+	depends on TFM_ISOLATION_LEVEL = 2
+	depends on TFM_REGRESSION_S || TFM_REGRESSION_NS
+
+config TFM_ISOLATION_TEST_MEM_CHECK
+	bool
+	default y
+	depends on TFM_ISOLATION_LEVEL = 2
+	depends on TFM_REGRESSION_S || TFM_REGRESSION_NS
+
 config TFM_EXPERIMENTAL
 	bool
 	select EXPERIMENTAL
