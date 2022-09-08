@@ -50,7 +50,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: v3.1.99-ncs1-snapshot1
+      revision: 3afbbacd2ea218f0f203a1c45cb55d5f0eba2820
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -103,12 +103,12 @@ manifest:
       revision: 76bd09efa5424a4039a234a7244fe32fa495d9cf
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v1.9.99-ncs2-snapshot1
+      revision: 1d535d0ccbf4d213752a58b235e8e46c6a39a6a1
       path: bootloader/mcuboot
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.1.0-ncs1-rc1
+      revision: cfc83308dd686c4e923e9f278afbdbda7e21af9a
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
@@ -116,7 +116,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: v1.6.0-ncs1-snapshot1
+      revision: 43782540336a256fe24c28d5d6bf02d8e2b3a706
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -124,7 +124,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v2.1.0-snapshot1
+      revision: 5faaee50ed398de2109881d1aa5320f489131264
       submodules:
         - name: nlio
           path: third_party/nlio/repo
