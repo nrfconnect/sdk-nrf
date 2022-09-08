@@ -10,10 +10,11 @@
 
 import argparse
 import logging
+
 from secrets import token_hex
 from coiote import Coiote
 from device import Device
-
+from atclient import ATclient
 
 if __name__ == "__main__":
     try:
@@ -24,17 +25,24 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         description='nRF91 device provisioning example')
-    parser.add_argument('serial', help='nRF91 Serial port')
+    parser.add_argument('-f', help='Build and flash the AT client', action='store_true')
     parser.add_argument('-d', help='Enable debug logs', action='store_true')
     parser.add_argument('-p', '--purge', dest='purge', help='Wipe the security tags and remove the device from the server', action='store_true')
     args = parser.parse_args()
 
     if args.d:
-        logging.basicConfig(level=logging.DEBUG, format='%(message)s')
+        logging.basicConfig(level=logging.DEBUG, format='[%(levelname)s] %(filename)s - %(message)s')
     else:
-        logging.basicConfig(level=logging.INFO, format='%(message)s')
+        logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(filename)s - %(message)s')
 
-    dev = Device(args.serial)
+    dev = Device()
+
+    if args.f:
+        dev.build_at_client()
+        dev.flash_at_client()
+        dev.wait_for_uart_string("The AT host sample started")
+
+    dev.at_client = ATclient(dev.com_port)
 
     imei = dev.get_imei()
     identity = f'urn:imei:{imei}'
