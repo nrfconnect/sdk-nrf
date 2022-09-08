@@ -795,7 +795,7 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 		err = azure_iot_hub_dps_init(&dps_cfg);
 		if (err) {
 			LOG_ERR("azure_iot_hub_dps_init failed, error: %d", err);
-			return err;
+			goto exit;
 		}
 
 		err = azure_iot_hub_dps_start();
@@ -804,7 +804,8 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 			err = k_sem_take(&dps_sem, K_SECONDS(CONFIG_AZURE_IOT_HUB_DPS_TIMEOUT_SEC));
 			if (err != 0) {
 				LOG_ERR("DPS timed out, connection attempt terminated");
-				return -ETIMEDOUT;
+				err = -ETIMEDOUT;
+				goto exit;
 			}
 
 			break;
@@ -813,13 +814,14 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 			break;
 		default:
 			LOG_ERR("azure_iot_hub_dps_start failed, error: %d", err);
-			return err;
+			goto exit;
 		}
 
 		err = azure_iot_hub_dps_hostname_get(&conn_params.hostname);
 		if (err) {
 			LOG_ERR("Failed to get the stored hostname from DPS, error: %d", err);
-			return -EFAULT;
+			err = -EFAULT;
+			goto exit;
 		}
 
 		LOG_DBG("Using the assigned hub (size: %d): %s",
@@ -828,7 +830,8 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 		err = azure_iot_hub_dps_device_id_get(&conn_params.device_id);
 		if (err) {
 			LOG_ERR("Failed to get the stored device ID from DPS, error: %d", err);
-			return -EFAULT;
+			err = -EFAULT;
+			goto exit;
 		}
 
 		LOG_DBG("Using the assigned device ID: %.*s",
@@ -841,7 +844,8 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 	err = mqtt_helper_init(&cfg);
 	if (err) {
 		LOG_ERR("mqtt_helper_init failed, error: %d", err);
-		return -EFAULT;
+		err = -EFAULT;
+		goto exit;
 	}
 
 	hostname_span = az_span_create(conn_params.hostname.ptr, conn_params.hostname.size);
@@ -855,9 +859,8 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 		NULL);
 	if (az_result_failed(err)) {
 		LOG_ERR("Failed to initialize IoT Hub mqtt_client, result code: %d", err);
-		iot_hub_state_set(STATE_DISCONNECTED);
-
-		return -EFAULT;
+		err = -EFAULT;
+		goto exit;
 	}
 
 	err = az_iot_hub_client_get_user_name(&iot_hub_client,
@@ -866,7 +869,8 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 					      &user_name_len);
 	if (az_result_failed(err)) {
 		LOG_ERR("Failed to get user name, az error: 0x%08x", err);
-		return -EFAULT;
+		err = -EFAULT;
+		goto exit;
 	}
 
 	conn_params.user_name.size = user_name_len;
@@ -878,10 +882,14 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 	err = mqtt_helper_connect(&conn_params);
 	if (err) {
 		LOG_ERR("mqtt_helper_connect failed, error: %d", err);
-		return err;
+		goto exit;
 	}
 
 	return 0;
+
+exit:
+	iot_hub_state_set(STATE_DISCONNECTED);
+	return err;
 }
 
 int azure_iot_hub_send(const struct azure_iot_hub_msg *const msg)
