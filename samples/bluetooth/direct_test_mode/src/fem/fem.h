@@ -7,6 +7,12 @@
 #ifndef FEM_H_
 #define FEM_H_
 
+/**
+ * @brief Front-end module API.
+ *        This file is an abstraction for the MPSL FEM API and provides API for controlling
+ *        front-end modules in samples.
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -15,16 +21,6 @@ extern "C" {
 #include <stdbool.h>
 
 #include <hal/nrf_radio.h>
-
-/**@brief Value used as event zero-address - for immediate function execution.
- *        This is useful in functions with 'activate_event' input parameter.
- */
-#define FEM_EXECUTE_NOW ((uint32_t) 0)
-
-/**@brief Value used as event zero-address - for no-execute the event action.
- *        This is useful in functions with 'deactivate_event' input parameter.
- */
-#define FEM_EVENT_UNUSED ((uint32_t) 0)
 
 /**@brief The front-end module (FEM) antennas.
  */
@@ -35,6 +31,17 @@ enum fem_antenna {
 	/** Second antenna. */
 	FEM_ANTENNA_2
 };
+
+/**@brief Initialize the front-end module.
+ *
+ * @param[in] timer_instance Pointer to a 1-us resolution timer instance.
+ * @param[in] compare_channel_mask Mask of the compare channels that can be used by
+ *                                 the Front End Module to schedule its own tasks.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fem_init(NRF_TIMER_Type *timer_instance, uint8_t compare_channel_mask);
 
 /**@brief Power-up the front-end module.
  *
@@ -59,91 +66,55 @@ int fem_power_up(void);
  */
 int fem_power_down(void);
 
-/**@brief Set the front-end module to TX mode (PA).
+/**@brief Configure Tx gain of the front-end module in arbitrary units.
  *
- * @note Transition from the Program State to the Transmit State takes
- *       a specific settle time for the device (in microseconds) and is triggered by
- *       the PA pin. Check your FEM specification to obtain that value.
- *       Suitable timing can be achieved by the @p active_delay parameters.
- *       This function triggers the @ref NRF_RADIO_TASK_TXEN task when activate_event
- *       occurs or triggers it immediately when @ref FEM_EXECUTE_NOW is used.
- *
- * @param[in] activate_event An event that triggers start of procedure - this
- *                           event will be connected to appropriate PPI channel.
- *                           @ref FEM_EXECUTE_NOW value starts the
- *                           procedure immediately.
- * @param[in] deactivate_event An event that triggers deactivation of the Tx -
- *                             this event will be connected to appropriate PPI
- *                             channel.
- * @param[in] activation_delay Tx PA activation delay between
- *                             @ref NRF_RADIO_TASK_TXEN and Tx pin setting.
- *
- * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
- */
-int fem_tx_configure(uint32_t activate_event, uint32_t deactivate_event,
-		     uint32_t activation_delay);
-
-/**@brief Set the front-end module to RX mode (LNA).
- *
- * @note Transition from the Program State to the Receive State takes
- *       specific settle time for device in microseconds and is triggered by
- *       the LNA pin. Check your FEM specification to obtain that value.
- *       Suitable timing can be achieved by the @p active_delay parameters.
- *       This function triggers the NRF_RADIO_TASK_RXEN task when activate_event
- *       occurs or triggers it immediately when @ref FEM_EXECUTE_NOW is used.
- *
- * @param[in] activate_event An event that triggers start of procedure - this
- *                           event will be connected to appropriate PPI channel.
- *                           @ref FEM_EXECUTE_NOW value causes start
- *                           procedure immediately.
- * @param[in] deactivate_event An event that triggers deactivation of the Rx -
- *                             this event will be connected to appropriate PPI
- *                             channel.
- * @param[in] activation_delay Rx LNA activation delay between
- *                             @ref NRF_RADIO_TASK_RXEN and Rx pin setting.
- *
- * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
- */
-int fem_rx_configure(uint32_t activate_event, uint32_t deactivate_event,
-		     uint32_t activation_delay);
-
-/**@brief Clears up the configuration provided by the @fem_tx_configure
- *        or @ref fem_rx_configure.
- */
-void fem_txrx_configuration_clear(void);
-
-/**@brief Stop the front-end module RX/TX mode immediately.
- *
- * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
- */
-int fem_txrx_stop(void);
-
-/**@brief Configures Tx gain of the front-end module in arbitrary units.
- *
- * Tx gain value might be set by a synchronous interface like for example
- * the SPI interface in blocking mode.
- *
- * @param[in] gain Tx gain in arbitrary units.
+ * @param[in] gain Tx gain in arbitrary units specific for used front-end module implementation.
+ *                 For nRF21540 GPIO/SPI, this is a register value.
+ *                 For nRF21540 GPIO, this is MODE pin value.
+ *                 Check your front-end module product specification for gain value range.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
 int fem_tx_gain_set(uint32_t gain);
 
-/**@brief Calculate the default front-end module delay between PA/LNA GPIO pin activation and
- *        radio readiness for reception or transmission.
+/**@brief Get the default radio ramp-up time for reception or transmission with a given data rate
+ *        and modulation.
  *
- * @param[in] rx Calculate a delay for radio reception. If set to false
- *               calculate a delay for radio transmission.
+ * @param[in] rx Get a delay for radio reception. If set to false
+ *               get a delay for radio transmission.
  * @param[in] mode Radio data rate and modulation.
  *
  * @return The activation delay value in microseconds.
  */
-uint32_t fem_default_active_delay_calculate(bool rx,
-					    nrf_radio_mode_t mode);
+uint32_t fem_default_ramp_up_time_get(bool rx, nrf_radio_mode_t mode);
+
+/**@brief Configure the front-end module to TX mode (PA).
+ *
+ * @param[in] ramp_up_time rump_up_time
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fem_tx_configure(uint32_t ramp_up_time);
+
+/**@brief Configure the front-end module to RX mode (LNA).
+ *
+ * @param[in] ramp_up_time Radio ramp-up time.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fem_rx_configure(uint32_t ramp_up_time);
+
+/**@brief Clear up the configuration provided by the @fem_tx_configure
+ *        or @ref fem_rx_configure.
+ */
+int fem_txrx_configuration_clear(void);
+
+/**@brief Stop the front-end module RX/TX mode immediately.
+ */
+void fem_txrx_stop(void);
 
 /**@brief Chooses one of two physical antenna outputs.
  *
@@ -153,6 +124,24 @@ uint32_t fem_default_active_delay_calculate(bool rx,
  *           Otherwise, a (negative) error code is returned.
  */
 int fem_antenna_select(enum fem_antenna ant);
+
+/**@brief @brief Get the radio ramp-up time in transmit mode.
+ *
+ * @param[in] fast The radio is in the fast ramp-up mode.
+ * @param[in] mode Radio mode.
+ *
+ * @retval Radio ramp-up time in microseconds.
+ */
+uint32_t fem_radio_tx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode);
+
+/**@brief Get the radio ramp-up time in receive mode.
+ *
+ * @param[in] fast The radio is in the fast ramp-up mode.
+ * @param[in] mode Radio mode.
+ *
+ * @retval Radio ramp-up time in microseconds.
+ */
+uint32_t fem_radio_rx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode);
 
 #ifdef __cplusplus
 }

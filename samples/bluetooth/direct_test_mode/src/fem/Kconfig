@@ -4,56 +4,35 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-DT_COMPAT_NORDIC_NRF21540 := nordic,nrf21540-fem
-DT_COMPAT_GENERIC_FEM_2_CTRL_PIN := generic-fem-two-ctrl-pins
-
-config NRF21540_FEM_SUPPORTED
-	bool
-	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF21540))
-
-if NRF21540_FEM_SUPPORTED
-
-config NRF21540_FEM_SPI_SUPPORTED
-	bool
-	default $(dt_nodelabel_has_prop,nrf_radio_fem,spi-if)
-
-endif # NRF21540_FEM_SPI_SUPPORTED
-
-config GENERIC_FEM_SUPPORTED
-	bool
-	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_GENERIC_FEM_2_CTRL_PIN))
-
 config FEM
 	bool "Front-end module (FEM) support"
 	default y
-	depends on NRF21540_FEM_SUPPORTED || GENERIC_FEM_SUPPORTED
+	select MPSL
+	select MPSL_FEM_ONLY
+	depends on MPSL_FEM_ANY_SUPPORT
 	help
 	  Controls if front-end module (FEM) is to be configured and enabled.
 	  Default type of FEM to use depends on which compatible nodes are in devicetree.
 
 if FEM
 
-choice FEM_CHOICE
-	prompt "Radio front-end module (FEM) type"
-
+# Helper symbol for detecting nRF21540 Front-end module.
 config NRF21540_FEM
-	bool "nRF21540 front-end module"
-	depends on NRF21540_FEM_SUPPORTED
-	select SPI if !SOC_NRF5340_CPUNET && NRF21540_FEM_SPI_SUPPORTED
-	select NRFX_SPIM0 if SOC_NRF5340_CPUNET && NRF21540_FEM_SPI_SUPPORTED
-	select NRFX_TIMER2
-	help
-	  Enable nRF21540 front-end module support.
+	bool
+	default y
+	select MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL
+	depends on MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI
 
-config GENERIC_FEM
-	bool "Generic front-end module with two-pin control"
-	depends on GENERIC_FEM_SUPPORTED
-	select NRFX_TIMER2
-	help
-	  FEM device has a generic two-pin control interface.
+config MPSL_FEM_NRF21540_TX_GAIN_DB
+	depends on NRF21540_FEM
+	default MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA
 
-endchoice #FEM_CHOICE
-if GENERIC_FEM
+choice MPSL_FEM_CHOICE
+	depends on MPSL_FEM_NRF21540_GPIO_SPI_SUPPORT
+	default MPSL_FEM_NRF21540_GPIO_SPI
+endchoice
+
+if MPSL_FEM_SIMPLE_GPIO
 
 # The Skyworks front-end module devices specific configuration.
 choice SKYWORKS_MODE
@@ -80,6 +59,5 @@ config SKYWORKS_BYPASS_MODE
 
 endchoice # SKYWORKS_MODE
 
-endif # GENERIC_FEM
-
+endif # MPSL_FEM_SIMPLE_GPIO
 endif # FEM

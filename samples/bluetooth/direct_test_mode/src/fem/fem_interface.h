@@ -7,6 +7,13 @@
 #ifndef FEM_INTERFACE_H_
 #define FEM_INTERFACE_H_
 
+/**
+ * @brief Front-end module interface definition.
+ *        This file defines interface for Front-end module specific behaviors which are not covered
+ *        by the MPSL FEM API. This API is intended to be used to implement additional features
+ *        specific for given Front-end module.
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -21,13 +28,8 @@ extern "C" {
 struct fem_interface_api {
 	int (*power_up)(void);
 	int (*power_down)(void);
-	int (*tx_configure)(uint32_t activate_event, uint32_t deactivate_event,
-			    uint32_t active_delay);
-	int (*rx_configure)(uint32_t activate_event, uint32_t deactivate_event,
-			    uint32_t active_delay);
-	void (*txrx_configuration_clear)(void);
-	int (*txrx_stop)(void);
-	int (*tx_gain_set)(uint32_t gain);
+	int (*tx_gain_validate)(uint32_t gain);
+	uint32_t (*tx_default_gain_get)(void);
 	uint32_t (*default_active_delay_calculate)(bool rx, nrf_radio_mode_t mode);
 	int (*antenna_select)(enum fem_antenna ant);
 };
@@ -40,24 +42,6 @@ struct fem_interface_api {
  * @retval -EINVAL Invalid parameter provided.
  */
 int fem_interface_api_set(const struct fem_interface_api *api);
-
-/**@brief Function for getting a radio ramp-up time in the transmit mode.
- *
- * @param[in] fast The radio is in the fast ramp-up mode.
- * @param[in] mode Radio mode.
- *
- * @retval Radio ramp-up time in microseconds.
- */
-uint32_t fem_radio_tx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode);
-
-/**@brief Function for getting the radio ramp-up time in a receive mode.
- *
- * @param[in] fast The radio is in the fast ramp-up mode.
- * @param[in] mode Radio mode.
- *
- * @retval Radio ramp-up time in microseconds.
- */
-uint32_t fem_radio_rx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode);
 
 #ifdef __cplusplus
 }

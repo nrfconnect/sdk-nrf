@@ -12,29 +12,19 @@
 #include "dtm_hw_config.h"
 
 #if CONFIG_FEM
-#include "fem.h"
-#endif
+#include <fem.h>
+#endif /* CONFIG_FEM */
 
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
+#include <hal/nrf_egu.h>
 #include <hal/nrf_nvmc.h>
 #include <hal/nrf_radio.h>
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
 #include <nrf_erratas.h>
-
-#if defined(CONFIG_HAS_HW_NRF_PPI)
-#include <nrfx_ppi.h>
-#define gppi_channel_t nrf_ppi_channel_t
-#define gppi_channel_alloc nrfx_ppi_channel_alloc
-#elif defined(CONFIG_HAS_HW_NRF_DPPIC)
-#include <nrfx_dppi.h>
-#define gppi_channel_t uint8_t
-#define gppi_channel_alloc nrfx_dppi_channel_alloc
-#else
-#error "No PPI or DPPI"
-#endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(uart0), current_speed)
 /* UART Baudrate used to communicate with the DTM library. */
@@ -92,12 +82,16 @@ BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(ANOMALY_172_TIMER_INSTANCE) == 1,
 	     "Anomaly DTM timer needs additional KConfig configuration");
 #endif
 
+#define DTM_EGU       NRF_EGU0
+#define DTM_EGU_EVENT NRF_EGU_EVENT_TRIGGERED0
+#define DTM_EGU_TASK  NRF_EGU_TASK_TRIGGER0
+
 /* Values that for now are "constants" - they could be configured by a function
  * setting them, but most of these are set by the BLE DTM standard, so changing
  * them is not relevant.
  * RF-PHY test packet patterns, for the repeated octet packets.
  */
-#define RFPHY_TEST_0X0F_REF_PATTERN  0x0f
+#define RFPHY_TEST_0X0F_REF_PATTERN  0x0F
 #define RFPHY_TEST_0X55_REF_PATTERN  0x55
 #define RFPHY_TEST_0XFF_REF_PATTERN  0xFF
 
@@ -296,13 +290,16 @@ struct dtm_cte_info {
 };
 
 struct fem_parameters {
-	/* Front-end module activation delay. */
-	uint32_t active_delay;
+	/* Front-end module ramp-up time in microseconds. */
+	uint32_t ramp_up_time;
 
-	/* Front-end module vendor activation delay. */
-	uint32_t vendor_active_delay;
+	/* Front-end module vendor ramp-up time in microseconds. */
+	uint32_t vendor_ramp_up_time;
 
-	/* Front-end module Tx gain. */
+	/* Front-end module Tx gain in unit specific for used FEM.
+	 * For nRF21540 GPIO/SPI, this is a register value.
+	 * For nRF21540 GPIO, this is MODE pin value.
+	 */
 	uint32_t gain;
 };
 
@@ -379,8 +376,8 @@ static struct dtm_instance {
 	/* Front-end module (FEM) parameters. */
 	struct fem_parameters fem;
 
-	/* Radio TX Enable PPI channel. */
-	gppi_channel_t ppi_radio_txen;
+	/* Radio Enable PPI channel. */
+	uint8_t ppi_radio_start;
 } dtm_inst = {
 	.state = STATE_UNINITIALIZED,
 	.packet_hdr_plen = NRF_RADIO_PREAMBLE_LENGTH_8BIT,
@@ -610,14 +607,6 @@ static int timer_init(void)
 	IRQ_CONNECT(DEFAULT_TIMER_IRQ, CONFIG_DTM_TIMER_IRQ_PRIORITY,
 		    DEFAULT_TIMER_IRQ_HANDLER, NULL, 0);
 
-	nrfx_timer_extended_compare(&dtm_inst.timer,
-			NRF_TIMER_CC_CHANNEL0,
-			nrfx_timer_us_to_ticks(&dtm_inst.timer, TX_INTERVAL),
-			NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK,
-			false);
-
-	nrfx_timer_enable(&dtm_inst.timer);
-
 	return 0;
 }
 
@@ -683,9 +672,9 @@ static int gppi_init(void)
 {
 	nrfx_err_t err;
 
-	err = gppi_channel_alloc(&dtm_inst.ppi_radio_txen);
+	err = nrfx_gppi_channel_alloc(&dtm_inst.ppi_radio_start);
 	if (err != NRFX_SUCCESS) {
-		printk("gppi_channel_alloc failed with: %d\n", err);
+		printk("nrfx_gppi_channel_alloc failed with: %d\n", err);
 		return -EAGAIN;
 	}
 
@@ -694,8 +683,6 @@ static int gppi_init(void)
 
 static void radio_reset(void)
 {
-	nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_txen));
-
 	nrf_radio_shorts_set(NRF_RADIO, 0);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 
@@ -805,6 +792,14 @@ int dtm_init(void)
 	if (err) {
 		return err;
 	}
+
+#if CONFIG_FEM
+	err = fem_init(dtm_inst.timer.p_reg,
+		       (BIT(NRF_TIMER_CC_CHANNEL1) | BIT(NRF_TIMER_CC_CHANNEL2)));
+	if (err) {
+		return err;
+	}
+#endif /* CONFIG_FEM */
 
 	/** Connect radio interrupts. */
 	IRQ_CONNECT(RADIO_IRQn, CONFIG_DTM_RADIO_IRQ_PRIORITY, radio_handler,
@@ -1010,29 +1005,101 @@ static void anomaly_172_strict_mode_set(bool enable)
 }
 #endif
 
+static void radio_ppi_clear(void)
+{
+	nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_start));
+	nrf_egu_event_clear(DTM_EGU,
+			    nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT));
+
+	/* Break connection from timer to radio to stop transmit loop */
+	nrfx_gppi_event_endpoint_clear(dtm_inst.ppi_radio_start,
+		nrf_timer_event_address_get(dtm_inst.timer.p_reg, NRF_TIMER_EVENT_COMPARE0));
+
+	if (dtm_inst.state == STATE_TRANSMITTER_TEST) {
+		nrfx_gppi_task_endpoint_clear(dtm_inst.ppi_radio_start,
+				nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
+	} else if (dtm_inst.state == STATE_RECEIVER_TEST) {
+		nrfx_gppi_task_endpoint_clear(dtm_inst.ppi_radio_start,
+				nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_RXEN));
+	}
+
+	nrfx_gppi_event_endpoint_clear(dtm_inst.ppi_radio_start,
+			nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT));
+	nrfx_gppi_fork_endpoint_clear(dtm_inst.ppi_radio_start,
+			nrf_timer_task_address_get(dtm_inst.timer.p_reg, NRF_TIMER_TASK_START));
+}
+
+static void radio_ppi_configure(bool rx, uint32_t timer_short_mask)
+{
+	nrfx_gppi_channel_endpoints_setup(
+		dtm_inst.ppi_radio_start,
+		nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT),
+		nrf_radio_task_address_get(NRF_RADIO,
+					   rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN));
+	nrfx_gppi_fork_endpoint_setup(dtm_inst.ppi_radio_start,
+		nrf_timer_task_address_get(dtm_inst.timer.p_reg, NRF_TIMER_TASK_START));
+	nrfx_gppi_channels_enable(BIT(dtm_inst.ppi_radio_start));
+
+	if (timer_short_mask) {
+		nrf_timer_shorts_set(dtm_inst.timer.p_reg, timer_short_mask);
+	}
+}
+
+static void radio_tx_ppi_reconfigure(void)
+{
+	nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_start));
+	nrfx_gppi_fork_endpoint_clear(dtm_inst.ppi_radio_start,
+		nrf_timer_task_address_get(dtm_inst.timer.p_reg, NRF_TIMER_TASK_START));
+	nrfx_gppi_event_endpoint_clear(dtm_inst.ppi_radio_start,
+		nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT));
+	nrfx_gppi_event_endpoint_setup(dtm_inst.ppi_radio_start,
+		nrf_timer_event_address_get(dtm_inst.timer.p_reg, NRF_TIMER_EVENT_COMPARE0));
+
+	nrfx_gppi_channel_endpoints_setup(
+		dtm_inst.ppi_radio_start,
+		nrf_timer_event_address_get(dtm_inst.timer.p_reg, NRF_TIMER_EVENT_COMPARE0),
+		nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
+	nrfx_gppi_channels_enable(BIT(dtm_inst.ppi_radio_start));
+}
+
 static void dtm_test_done(void)
 {
-	nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_txen));
-	/* Break connection from timer to radio to stop transmit loop */
-	nrfx_gppi_event_endpoint_clear(dtm_inst.ppi_radio_txen,
-			(uint32_t) nrf_timer_event_address_get(
-			       dtm_inst.timer.p_reg,
-			       NRF_TIMER_EVENT_COMPARE0));
-	nrfx_gppi_task_endpoint_clear(dtm_inst.ppi_radio_txen,
-			nrf_radio_task_address_get(NRF_RADIO,
-				NRF_RADIO_TASK_TXEN));
+	nrfx_timer_disable(&dtm_inst.timer);
+
+	radio_ppi_clear();
+
+	/* Disable all timer shorts and interrupts. */
+	nrf_timer_shorts_set(dtm_inst.timer.p_reg, 0);
+	nrf_timer_int_disable(dtm_inst.timer.p_reg, ~((uint32_t)0));
+
+	nrfx_timer_clear(&dtm_inst.timer);
 
 #ifdef NRF52840_XXAA
 	nrfx_timer_disable(&dtm_inst.anomaly_timer);
 #endif
 
 	radio_reset();
+
 #if CONFIG_FEM
-	(void) fem_txrx_configuration_clear();
-	(void) fem_txrx_stop();
-	(void) fem_power_down();
+	fem_txrx_configuration_clear();
+	fem_txrx_stop();
+	(void)fem_power_down();
 #endif /* CONFIG_FEM */
+
 	dtm_inst.state = STATE_IDLE;
+}
+
+static void radio_start(bool rx, bool force_egu)
+{
+	if (IS_ENABLED(CONFIG_FEM) || force_egu) {
+		nrf_egu_event_clear(DTM_EGU,
+			    nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT));
+		nrf_egu_task_trigger(DTM_EGU,
+			     nrf_egu_task_address_get(DTM_EGU, DTM_EGU_TASK));
+	} else {
+		/* Shorts will start radio in RX mode when it is ready */
+		nrf_radio_task_trigger(NRF_RADIO, rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN);
+	}
 }
 
 static void radio_prepare(bool rx)
@@ -1068,16 +1135,17 @@ static void radio_prepare(bool rx)
 			     NRF_RADIO_SHORT_END_DISABLE_MASK);
 #endif /* DIRECTION_FINDING_SUPPORTED */
 
+
 #if CONFIG_FEM
-	if (dtm_inst.fem.vendor_active_delay == 0) {
-		dtm_inst.fem.active_delay =
-			fem_default_active_delay_calculate(rx,
-							   dtm_inst.radio_mode);
+	if (dtm_inst.fem.vendor_ramp_up_time == 0) {
+		dtm_inst.fem.ramp_up_time =
+			fem_default_ramp_up_time_get(rx, dtm_inst.radio_mode);
 	} else {
-		dtm_inst.fem.active_delay =
-				dtm_inst.fem.vendor_active_delay;
+		dtm_inst.fem.ramp_up_time =
+				dtm_inst.fem.vendor_ramp_up_time;
 	}
-#endif
+#endif /* CONFIG_FEM */
+
 	NVIC_ClearPendingIRQ(RADIO_IRQn);
 	irq_enable(RADIO_IRQn);
 	nrf_radio_int_enable(NRF_RADIO,
@@ -1096,16 +1164,14 @@ static void radio_prepare(bool rx)
 		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
 
 #if CONFIG_FEM
-		(void) fem_power_up();
-		(void) fem_rx_configure(FEM_EXECUTE_NOW,
-			nrf_radio_event_address_get(
-						NRF_RADIO,
-						NRF_RADIO_EVENT_DISABLED),
-			dtm_inst.fem.active_delay);
-#else
-		/* Shorts will start radio in RX mode when it is ready */
-		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
+		radio_ppi_configure(rx,
+			(NRF_TIMER_SHORT_COMPARE1_STOP_MASK | NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK));
+
+		(void)fem_power_up();
+		(void)fem_rx_configure(dtm_inst.fem.ramp_up_time);
 #endif /* CONFIG_FEM */
+
+		radio_start(rx, false);
 	} else { /* tx */
 		nrf_radio_txpower_set(NRF_RADIO, dtm_inst.txpower);
 
@@ -1176,8 +1242,6 @@ static enum dtm_err_code  dtm_vendor_specific_pkt(uint32_t vendor_cmd,
 				     NRF_RADIO_SHORT_READY_START_MASK);
 
 #if CONFIG_FEM
-		(void) fem_power_up();
-
 		if (dtm_inst.fem.gain != FEM_USE_DEFAULT_GAIN) {
 			if (fem_tx_gain_set(dtm_inst.fem.gain) != 0) {
 				dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
@@ -1185,14 +1249,13 @@ static enum dtm_err_code  dtm_vendor_specific_pkt(uint32_t vendor_cmd,
 			}
 		}
 
-		(void) fem_tx_configure(FEM_EXECUTE_NOW,
-			nrf_radio_event_address_get(NRF_RADIO,
-						    NRF_RADIO_EVENT_DISABLED),
-			dtm_inst.fem.active_delay);
-#else
-		/* Shortcut will start radio in Tx mode when it is ready */
-		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_TXEN);
+		radio_ppi_configure(false,
+			(NRF_TIMER_SHORT_COMPARE1_STOP_MASK | NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK));
+		(void)fem_power_up();
+		(void)fem_tx_configure(dtm_inst.fem.ramp_up_time);
 #endif /* CONFIG_FEM */
+
+		radio_start(false, false);
 		dtm_inst.state = STATE_CARRIER_TEST;
 		break;
 
@@ -1217,14 +1280,14 @@ static enum dtm_err_code  dtm_vendor_specific_pkt(uint32_t vendor_cmd,
 
 		break;
 
-	case FEM_ACTIVE_DELAY_SET:
-		dtm_inst.fem.vendor_active_delay = vendor_option;
+	case FEM_RAMP_UP_SET:
+		dtm_inst.fem.vendor_ramp_up_time = vendor_option;
 
 		break;
 
 	case FEM_DEFAULT_PARAMS_SET:
 		dtm_inst.fem.gain = FEM_USE_DEFAULT_GAIN;
-		dtm_inst.fem.vendor_active_delay = 0;
+		dtm_inst.fem.vendor_ramp_up_time = 0;
 
 		if (fem_antenna_select(FEM_ANTENNA_1) != 0) {
 			dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
@@ -1915,16 +1978,11 @@ static enum dtm_err_code on_test_transmit_cmd(uint32_t length, uint32_t freq)
 	 * packet is described in the Bluetooth Core Spsification
 	 * version 4.2 Vol. 6 Part F Section 4.1.6.
 	 */
-	nrfx_timer_compare(&dtm_inst.timer,
-			   NRF_TIMER_CC_CHANNEL0,
-			   dtm_packet_interval_calculate(
-				   dtm_inst.packet_len,
-				   dtm_inst.radio_mode),
-			   false);
+	nrfx_timer_extended_compare(&dtm_inst.timer, NRF_TIMER_CC_CHANNEL0,
+			dtm_packet_interval_calculate(dtm_inst.packet_len, dtm_inst.radio_mode),
+			NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK, false);
 
 #if CONFIG_FEM
-	(void) fem_power_up();
-
 	if (dtm_inst.fem.gain != FEM_USE_DEFAULT_GAIN) {
 		if (fem_tx_gain_set(dtm_inst.fem.gain) != 0) {
 			dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
@@ -1932,26 +1990,20 @@ static enum dtm_err_code on_test_transmit_cmd(uint32_t length, uint32_t freq)
 		}
 	}
 
-	(void) fem_tx_configure(nrf_timer_event_address_get(
-						dtm_inst.timer.p_reg,
-						NRF_TIMER_EVENT_COMPARE0),
-				     nrf_radio_event_address_get(
-						NRF_RADIO,
-						NRF_RADIO_EVENT_DISABLED),
-				     dtm_inst.fem.active_delay);
-#else
-	/* Configure PPI so that timer will activate radio every
-	 * 625 us
-	 */
-	nrfx_gppi_channel_endpoints_setup(
-			dtm_inst.ppi_radio_txen,
-			(uint32_t) nrf_timer_event_address_get(
-						dtm_inst.timer.p_reg,
-						NRF_TIMER_EVENT_COMPARE0),
-			nrf_radio_task_address_get(NRF_RADIO,
-						   NRF_RADIO_TASK_TXEN));
-	nrfx_gppi_channels_enable(BIT(dtm_inst.ppi_radio_txen));
+	(void)fem_power_up();
+	(void)fem_tx_configure(dtm_inst.fem.ramp_up_time);
 #endif /* CONFIG_FEM */
+
+	radio_ppi_configure(false, 0);
+
+	unsigned int key = irq_lock();
+	/* Trigger first radio and timer start. */
+	radio_start(false, true);
+
+	/* Reconfigure radio TX trigger event. */
+	radio_tx_ppi_reconfigure();
+
+	irq_unlock(key);
 
 	dtm_inst.state = STATE_TRANSMITTER_TEST;
 
@@ -2085,18 +2137,7 @@ static void on_radio_end_event(void)
 
 	struct dtm_pdu *received_pdu = radio_buffer_swap();
 
-#if CONFIG_FEM
-	(void) fem_txrx_configuration_clear();
-	(void) fem_txrx_stop();
-
-	(void) fem_rx_configure(FEM_EXECUTE_NOW,
-				nrf_radio_event_address_get(
-					NRF_RADIO,
-					NRF_RADIO_EVENT_DISABLED),
-				dtm_inst.fem.active_delay);
-#else
-	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
-#endif /* CONFIG_FEM */
+	radio_start(true, false);
 
 #ifdef NRF52840_XXAA
 	if (dtm_inst.anomaly_172_wa_enabled) {
