@@ -60,6 +60,10 @@ To enable Wi-Fi Coexistence, do as follows:
 #. On the nRF5340, you must apply the settings to the Kconfig options mentioned in steps 1 and 2 also to the network core.
    See :ref:`ug_multi_image`.
 
+.. note::
+   When using the :ref:`ug_radio_cx_nrf700x_impl` implementation manually selecting the :kconfig:option:`CONFIG_MPSL_CX` Kconfig option is not needed.
+   If a ``nordic,nrf700x-coex`` compatible node is present in the device tree and :kconfig:option:`CONFIG_WIFI` is set to ``y``, :kconfig:option:`CONFIG_MPSL_CX` and :kconfig:option:`MPSL_CX_NRF700X` will be selected by default.
+
 .. _ug_radio_cx_hardware_description:
 
 Hardware description
@@ -71,18 +75,70 @@ To enable CX support for the currently supported CX implementation, you must add
 You can also provide the node using the devicetree source file of the target board or an overlay file.
 See :ref:`zephyr:dt-guide` for more information about the DTS data structure, and :ref:`zephyr:dt_vs_kconfig` for information about differences between DTS and Kconfig.
 
-For the CX implementation currently supported, the ``nrf_radio_coex`` node has the ``compatible`` property set to ``generic-radio-coex-three-wire``.
-Devicetree nodes compatible with ``generic-radio-coex-three-wire`` can be used when a three-wire interface to the PTA is provided (like the one shown in the following image).
+The following CX hardware interfaces are currently supported:
+
+* :ref:`ug_radio_cx_nrf700x_hw_if`
+* :ref:`ug_radio_cx_generic_3_wire_hw_if`
+
+Both supported hardware interfaces can be used when a three-wire interface to the PTA is provided (like the one shown in the following image).
 However, the role of each of the pins is dependent on the Wi-Fi Coexistence implementation used.
 
 .. note::
    * When using one of the supported implementations, you must use the ``nrf_radio_coex`` name for the node.
      However, if you add a custom user implementation, you can also use a different name.
-
-   * You can add a new device binding and use it as the ``compatible`` property for the node, if ``generic-radio-coex-three-wire`` is unsuitable.
+   * You can add a new device binding and use it as the ``compatible`` property for the node, if the provided hardware interfaces are unsuitable.
 
 .. figure:: images/coex_generic_3pin_pta.svg
    :alt: PTA interface supported by the ``nrf_radio_coex`` node with an nRF52 Series SoC
+
+
+.. _ug_radio_cx_nrf700x_hw_if:
+
+nRF700x Coexistence hardware interface
+======================================
+
+To configure the hardware for a PTA inside the nRF700x series chips:
+
+1. Add the following node in the devicetree source file:
+
+   .. code-block::
+
+      / {
+            nrf_radio_coex: nrf7002-coex {
+               status = "okay";
+               compatible = "nordic,nrf700x-coex";
+               req-gpios =     <&gpio0 24 (GPIO_ACTIVE_HIGH)>;
+               status0-gpios = <&gpio0 14 (GPIO_ACTIVE_HIGH)>;
+               grant-gpios =   <&gpio0 25 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+         };
+      };
+
+#. Optionally replace the node name ``nrf7002-coex`` with a custom one.
+#. Replace the pin numbers provided for each of the required properties:
+
+   * ``req-gpios`` - GPIO characteristic of the device that controls the ``REQUEST`` signal of the PTA.
+   * ``status0-gpios`` - GPIO characteristic of the device that controls the ``PRIORITY`` signal of the PTA.
+   * ``grant-gpios`` - GPIO characteristic of the device that controls the ``GRANT`` signal of the PTA (RF medium access granted).
+     Note that ``GPIO_PULL_UP`` is added to avoid a floating input pin and is required on some boards only.
+     If the target board is designed to avoid this signal being left floating, you can remove ``GPIO_PULL_UP`` to save power.
+
+   The ``phandle-array`` type is used, as it is commonly used in Zephyr's devicetree to describe GPIO signals.
+   The first element ``&gpio0`` indicates the GPIO port (``port 0`` has been selected in the example shown).
+   The second element is the pin number on that port.
+
+#. On the nRF5340, you must also apply the same devicetree node mentioned in step 1 to the network core.
+   To do so, apply the overlay to the correct network-core child image by creating an overlay file named :file:`child_image/*childImageName*.overlay` in your application directory, for example :file:`child_image/multiprotocol_rpmsg.overlay`.
+
+   The ``*childImageName*`` string must assume one of the following values:
+
+   *  ``multiprotocol_rpmsg`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
+   *  ``802154_rpmsg`` for applications having support for 802.15.4, but not for Bluetooth.
+   *  ``hci_rpmsg`` for application having support for Bluetooth, but not for 802.15.4.
+
+.. _ug_radio_cx_generic_3_wire_hw_if:
+
+Generic three wire Coexistence hardware interface
+=================================================
 
 To configure the hardware for a PTA using a 3-wire interface:
 
@@ -113,7 +169,7 @@ To configure the hardware for a PTA using a 3-wire interface:
    The first element ``&gpio0`` indicates the GPIO port (``port 0`` has been selected in the example shown).
    The second element is the pin number on that port.
 
-#. On the nRF5340, you must also apply the same devicetree node mentioned in step 2 to the network core.
+#. On the nRF5340, you must also apply the same devicetree node mentioned in step 1 to the network core.
    To do so, apply the overlay to the correct network-core child image by creating an overlay file named :file:`child_image/*childImageName*.overlay` in your application directory, for example :file:`child_image/multiprotocol_rpmsg.overlay`.
 
    The ``*childImageName*`` string must assume one of the following values:
@@ -129,7 +185,7 @@ Wi-Fi Coexistence implementations
 
 The following CX implementations are available:
 
-* :ref:`ug_radio_cx_generic_3pin_impl`
+* :ref:`ug_radio_cx_nrf700x_impl`
 * :ref:`ug_radio_cx_thread_impl`
 
 Each implementation is a plugin composed of one or more C source files interfacing with the MPSL API, which, in turn, communicates with the SR protocol drivers.
@@ -137,10 +193,10 @@ Each implementation is a plugin composed of one or more C source files interfaci
 When one of the CX variants is enabled, the driver requests access to the RF medium from the PTA and informs it about the operation it is about to perform.
 It also reacts properly to the information from the PTA that access to the RF medium was either granted or denied.
 
-.. _ug_radio_cx_generic_3pin_impl:
+.. _ug_radio_cx_nrf700x_impl:
 
-Generic 3-pin interface implementation
-======================================
+nRF700x interface implementation
+================================
 
 This implementation uses the following pins to communicate with the PTA:
 
@@ -149,21 +205,23 @@ This implementation uses the following pins to communicate with the PTA:
   It can be configured by setting the ``req-gpios`` property of the ``nrf_radio_coex`` devicetree node.
 * PRIORITY pin - It is the output controlled by the protocol driver.
   It contains information about the type of operation (either RX or TX) to perform.
-  It can be configured by setting the ``pri-dir-gpios`` property of the ``nrf_radio_coex`` devicetree node.
+  It can be configured by setting the ``status0-gpios`` property of the ``nrf_radio_coex`` devicetree node.
 * GRANT pin - It is the input of the SoC controlled by the PTA.
   It asserts when PTA grants access to the RF to the 802.15.4 and deasserts when it denies the access.
   It can be configured by setting the ``grant-gpios`` property of the ``nrf_radio_coex`` devicetree node.
 
 The support for this interface is provided in a single-file plugin located in the sdk-nrf repo, in the :file:`subsys/mpsl/cx` directory.
 
-Adding support for the CX generic 3-pin interface
--------------------------------------------------
+Adding support for the CX nRF700x interface
+-------------------------------------------
 
-The generic 3-pin interface is supported out of the box.
+The nRF700x interface is supported out of the box.
 To use it, complete the following steps:
 
-1. Set the :kconfig:option:`CONFIG_MPSL_CX_GENERIC_3PIN` Kconfig option to ``y``.
-2. Add the devicetree `nrf_radio_coex` node as described in :ref:`ug_radio_cx_hardware_description`.
+1. Add the devicetree `nrf_radio_coex` node as described in :ref:`ug_radio_cx_nrf700x_hw_if`.
+2. If :kconfig:option:`CONFIG_WIFI` is set to ``y`` and one of the supported SR protocols is enabled no additional steps are needed.
+   If you do not wish to use the radio coexistence implementation, you must set  :kconfig:option:`CONFIG_MPSL_CX` to ``n``
+3. If :kconfig:option:`CONFIG_WIFI` is disabled or none of the supported SR protocols are enabled the implementation must be enabled manually with :kconfig:option:`CONFIG_MPSL_CX` and :kconfig:option:`CONFIG_MPSL_CX_NRF700X`
 
 .. _ug_radio_cx_thread_impl:
 

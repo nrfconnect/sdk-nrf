@@ -6,7 +6,7 @@
 
 /**
  * @file
- *   This file implements a generic 3-pin Coexistence interface.
+ *   This file implements the nRF700x Coexistence interface.
  *
  */
 
@@ -30,11 +30,11 @@
  * Typical part of device tree describing coex (sample port and pin numbers).
  *
  * / {
- *     nrf_radio_coex: radio_coex_three_wire {
+ *     nrf_radio_coex: nrf7002-coex {
  *         status = "okay";
- *         compatible = "generic-radio-coex-three-wire";
+ *         compatible = "nordic,nrf700x-coex";
  *         req-gpios =     <&gpio0 24 (GPIO_ACTIVE_HIGH)>;
- *         pri-dir-gpios = <&gpio0 14 (GPIO_ACTIVE_HIGH)>;
+ *         status0-gpios = <&gpio0 14 (GPIO_ACTIVE_HIGH)>;
  *         grant-gpios =   <&gpio0 25 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
  *     };
  * };
@@ -53,7 +53,7 @@
 #define REQUEST_LEAD_TIME 0U
 
 static const struct gpio_dt_spec req_spec     = GPIO_DT_SPEC_GET(CX_NODE, req_gpios);
-static const struct gpio_dt_spec pri_dir_spec = GPIO_DT_SPEC_GET(CX_NODE, pri_dir_gpios);
+static const struct gpio_dt_spec status0_spec = GPIO_DT_SPEC_GET(CX_NODE, status0_gpios);
 static const struct gpio_dt_spec grant_spec   = GPIO_DT_SPEC_GET(CX_NODE, grant_gpios);
 
 static mpsl_cx_cb_t callback;
@@ -152,9 +152,9 @@ static int sig_dir_level_calc(mpsl_cx_op_map_t ops)
  * @param   ops Operations requested
  * @return      Result of gpio control
  */
-static int32_t gpio_drive_pri_dir_to_dir(mpsl_cx_op_map_t ops)
+static int32_t gpio_drive_status0_to_dir(mpsl_cx_op_map_t ops)
 {
-	return gpio_pin_set_dt(&pri_dir_spec, sig_dir_level_calc(ops));
+	return gpio_pin_set_dt(&status0_spec, sig_dir_level_calc(ops));
 }
 
 /**
@@ -176,7 +176,7 @@ static int32_t request(const mpsl_cx_request_t *req_params)
 		return -NRF_EINVAL;
 	}
 
-	ret = gpio_drive_pri_dir_to_dir(req_params->ops);
+	ret = gpio_drive_status0_to_dir(req_params->ops);
 
 	if (ret < 0) {
 		return -NRF_EPERM;
@@ -200,7 +200,7 @@ static int32_t release(void)
 		return -NRF_EPERM;
 	}
 
-	ret = gpio_drive_pri_dir_to_dir(0);
+	ret = gpio_drive_status0_to_dir(0);
 
 	if (ret < 0) {
 		return -NRF_EPERM;
@@ -245,7 +245,7 @@ static int mpsl_cx_init(const struct device *dev)
 		return ret;
 	}
 
-	ret = gpio_pin_configure_dt(&pri_dir_spec, GPIO_OUTPUT_INACTIVE);
+	ret = gpio_pin_configure_dt(&status0_spec, GPIO_OUTPUT_INACTIVE);
 	if (ret != 0) {
 		return ret;
 	}
@@ -269,7 +269,7 @@ static int mpsl_cx_init(const struct device *dev)
 		return ret;
 	}
 
-	ret = gpio_drive_pri_dir_to_dir(0);
+	ret = gpio_drive_status0_to_dir(0);
 	if (ret != 0) {
 		return ret;
 	}
@@ -287,10 +287,10 @@ static int mpsl_cx_init(const struct device *dev)
 
 	soc_secure_gpio_pin_mcu_select(req_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
 #endif
-#if DT_NODE_HAS_PROP(CX_NODE, pri_dir_gpios)
-	uint8_t pri_dir_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, pri_dir_gpios);
+#if DT_NODE_HAS_PROP(CX_NODE, status0_gpios)
+	uint8_t status0_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, status0_gpios);
 
-	soc_secure_gpio_pin_mcu_select(pri_dir_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(status0_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
 #endif
 #if DT_NODE_HAS_PROP(CX_NODE, grant_gpios)
 	uint8_t grant_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, grant_gpios);

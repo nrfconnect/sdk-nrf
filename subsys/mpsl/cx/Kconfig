@@ -4,8 +4,20 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+DT_COMPAT_CX_NRF700X := nordic,nrf700x-coex
+
+config MPSL_CX_ANY_SUPPORT
+	bool
+	default $(dt_nodelabel_enabled,nrf_radio_coex)
+
+config MPSL_CX_NRF700X_SUPPORT
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_coex,$(DT_COMPAT_CX_NRF700X))
+
 config MPSL_CX
 	bool "Radio Coexistence interface support"
+	depends on MPSL_CX_ANY_SUPPORT
+	default WIFI && (BT || NRF_802154_RADIO_DRIVER || NRF_802154_SER_HOST)
 	help
 	  Controls if Radio Coexistence interface is to be configured and enabled
 	  when MPSL is initialized.
@@ -30,6 +42,14 @@ config MPSL_CX_INIT_PRIORITY
 
 choice MPSL_CX_CHOICE
 	prompt "Radio Coexistence interface implementation"
+
+config MPSL_CX_NRF700X
+	depends on MPSL_CX_NRF700X_SUPPORT
+	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
+	select GPIO if !MPSL_CX_PIN_FORWARDER
+	bool "nRF700x Radio Coexistence"
+	help
+	  Radio Coexistence supporting nRF700x interface.
 
 config MPSL_CX_THREAD
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
@@ -62,14 +82,6 @@ config MPSL_CX_BT_1WIRE
 	help
 	  Radio Coexistence interface implementation using a simple 1-wire PTA
 	  implementation for co-located radios.
-
-config MPSL_CX_GENERIC_3PIN
-	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
-	select GPIO if !MPSL_CX_PIN_FORWARDER
-	bool "Generic 3-pin Radio Coexistence support [EXPERIMENTAL]"
-	select EXPERIMENTAL
-	help
-	  Radio Coexistence supporting Generic 3-pin interface.
 
 endchoice # MPSL_CX_CHOICE
 
