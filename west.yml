@@ -37,7 +37,7 @@ manifest:
   defaults:
     remote: ncs
 
-  group-filter: [-homekit, -nrf-802154, -find-my, -nrf5340_audio]
+  group-filter: [-homekit, -nrf-802154, -find-my]
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -112,7 +112,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: ee0d1c66944f15a47d08883c4826b3b4b4cb317e
+      revision: 9a6637e12575807dc4f6843acc14cc78de4601d5
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -154,11 +154,6 @@ manifest:
       revision: 42821a3b1bf876b843dded6b28003a9031c3c3da
       groups:
       - find-my
-    - name: sdk-lc3
-      revision: c47d9ee21c9cd8626a903c2e2f0c80c0920a1eb8
-      path: modules/lib/lc3
-      groups:
-      - nrf5340_audio
     - name: azure-sdk-for-c
       repo-path: azure-sdk-for-c
       path: modules/lib/azure-sdk-for-c
@@ -177,8 +172,6 @@ manifest:
       repo-path: sdk-mcu-drivers
       path: modules/hal/cirrus-logic
       revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
-      groups:
-      - nrf5340_audio
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
