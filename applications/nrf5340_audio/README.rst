@@ -10,7 +10,7 @@ nRF5340 Audio
 The nRF5340 Audio application demonstrates audio playback over isochronous channels (ISO) using LC3 codec compression and decompression, as per `Bluetooth® LE Audio specifications`_.
 It is developed for use with the :ref:`nrf53_audio_app_dk`.
 
-In its default configuration, the application requires access to the external repository containing the LC3 software codec.
+In its default configuration, the application requires the :ref:`LC3 software codec <nrfxlib:lc3>`.
 The application also comes with various tools, including the :file:`buildprog.py` Python script that simplifies building and programming the firmware.
 
 .. _nrf53_audio_app_overview:
@@ -121,6 +121,7 @@ These modules include the following major ones:
   * TWI/I2C
   * UART (debug)
   * Timer
+  * LC3 encoder/decoder
 
 * Application-specific Bluetooth modules for handling the Bluetooth connection:
 
@@ -136,10 +137,6 @@ These modules include the following major ones:
     It also handles events from Bluetooth LE and buttons, receives audio from the host, and forwards the audio data to the next module.
   * FIFO buffers
   * Synchronization module (part of `I2S-based firmware for gateway and headsets`_) - See `Synchronization module overview`_ for more information.
-
-* Application-specific modules from external sources:
-
-  * LC3 encoder/decoder (default)
 
 Since the application architecture is uniform and the firmware code is shared, the set of audio modules in use depends on the chosen stream mode (BIS or CIS), the chosen audio inputs and outputs (USB or analog jack), and if the gateway or the headset configuration is selected.
 
@@ -296,11 +293,7 @@ For CIS with TWS in mind, three kits are required.
 Software codec requirements
 ===========================
 
-The nRF5340 Audio application only supports the LC3 software codec, developed specifically for use with LE Audio.
-The codec is not open-source and you need to obtain access to its repository.
-To do so, `contact the sales department <Contact Us_>`_.
-
-Once you obtain the access, the codec requires :ref:`adding its own repository before building and running <nrf53_audio_app_configuration_repos>`.
+The nRF5340 Audio application only supports the :ref:`LC3 software codec <nrfxlib:lc3>`, developed specifically for use with LE Audio.
 
 .. _nrf53_audio_app_dk:
 
@@ -764,37 +757,6 @@ Configuration
 
 |config|
 
-.. _nrf53_audio_app_configuration_repos:
-
-Setting up the nRF5340 Audio repositories
-=========================================
-
-The application relies on the following repositories that need to be pulled using west:
-
-* LC3 software codec repository - The default software codec for the application, which is not open-source.
-  The application only supports the LC3 software codec.
-* Hardware codec driver repository - One of the :ref:`external OSS repositories <dm_code_base>`.
-
-To have these repositories managed by west, complete the following steps:
-
-1. Obtain access to the LC3 codec repository.
-   To do so, `contact the sales department <Contact Us_>`_.
-#. Add the group filter specific to the nRF5340 Audio application to the west manifest file of your project by running the following command:
-
-   .. code-block:: console
-
-      west config manifest.group-filter +nrf5340_audio
-
-#. Update west to fetch the repositories in the nRF5340 Audio group:
-
-   .. code-block:: console
-
-      west update
-
-If west can fetch the repositories correctly, you can now build the application.
-
-For more information about west, see :ref:`Zephyr's documentation page <zephyr:west>`.
-
 .. _nrf53_audio_app_configuration_select_bis:
 
 Selecting the BIS mode
@@ -908,14 +870,7 @@ You can build and program the application in one of the following ways:
 * :ref:`nrf53_audio_app_building_standard`.
   Using this method requires building and programming each development kit separately.
 
-Prerequisites
-=============
-
-Before building the application, make sure to meet the following prerequisites described in the :ref:`nrf53_audio_app_configuration` section:
-
-* :ref:`nrf53_audio_app_configuration_repos`
-
-You might also want to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>`.
+You might want to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` before building and programming the application.
 
 Testing out of the box
 ======================
