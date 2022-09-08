@@ -179,12 +179,16 @@ static void incoming_message_handle(struct azure_iot_hub_evt *event)
 		}
 
 		/* Property bags are null terminated strings. */
-		if (!strcmp(event->topic.properties[i].key.ptr, PROP_BAG_AGPS_KEY) &&
-		    !strcmp(event->topic.properties[i].value.ptr, PROP_BAG_AGPS_RESPONSE_VALUE)) {
+		if (!strncmp(event->topic.properties[i].key.ptr, PROP_BAG_AGPS_KEY,
+			     event->topic.properties[i].key.size) &&
+		    !strncmp(event->topic.properties[i].value.ptr, PROP_BAG_AGPS_RESPONSE_VALUE,
+			     event->topic.properties[i].value.size)) {
 			cloud_wrap_evt.type = CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED;
-		} else if (!strcmp(event->topic.properties[i].key.ptr, PROP_BAG_PGPS_KEY) &&
-			   !strcmp(event->topic.properties[i].value.ptr,
-				   PROP_BAG_PGPS_RESPONSE_VALUE)) {
+		} else if (!strncmp(event->topic.properties[i].key.ptr, PROP_BAG_PGPS_KEY,
+				    event->topic.properties[i].key.size) &&
+			   !strncmp(event->topic.properties[i].value.ptr,
+				    PROP_BAG_PGPS_RESPONSE_VALUE,
+				    event->topic.properties[i].value.size)) {
 			cloud_wrap_evt.type = CLOUD_WRAP_EVT_PGPS_DATA_RECEIVED;
 		}
 	}

@@ -405,7 +405,7 @@ AZ_HUB_STATIC void on_publish(struct azure_iot_hub_buf topic, struct azure_iot_h
 		}
 
 		if (property_idx > 0) {
-			evt.topic.property_count = property_idx + 1;
+			evt.topic.property_count = property_idx;
 
 			LOG_DBG("Property bag count: %d", evt.topic.property_count);
 		}
