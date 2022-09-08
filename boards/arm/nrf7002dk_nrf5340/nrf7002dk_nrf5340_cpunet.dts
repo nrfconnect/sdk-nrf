@@ -77,6 +77,15 @@
 			   <21 0 &gpio1 3 0>;	/* D15 */
 	};
 
+	nrf_radio_coex: nrf7002-coex {
+		status = "okay";
+		compatible = "nordic,nrf700x-coex";
+		req-gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>;
+		status0-gpios = <&gpio0 30 GPIO_ACTIVE_HIGH>;
+		grant-gpios = <&gpio0 24 GPIO_ACTIVE_HIGH>;
+		swctrl1-gpios = <&gpio0 29 GPIO_ACTIVE_HIGH>;
+	};
+
 	/* These aliases are provided for compatibility with samples */
 	aliases {
 		led0 = &led0;
