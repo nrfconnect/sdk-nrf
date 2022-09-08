@@ -19,7 +19,7 @@ config TFM_IPC
 	default y
 
 config TFM_ISOLATION_LEVEL
-	default 2 if TFM_IPC
+	default 1 if SOC_NRF5340_CPUAPP || SOC_NRF9160
 
 config TFM_BL2
 	bool
