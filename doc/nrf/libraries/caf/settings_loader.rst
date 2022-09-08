@@ -45,6 +45,12 @@ To use the module, you must complete the following steps:
 This function is called on the settings loader module initialization.
 After each of modules that sets bit in :c:func:`get_req_modules` is initialized, the |settings_loader| calls :c:func:`settings_load` function and starts loading all the settings from non-volatile memory.
 
+File system as settings backend
+===============================
+
+If the settings backend is a file system (set with the :kconfig:option:`CONFIG_SETTINGS_FS` Kconfig option), make sure that the application mounts the file system before the Zephyr settings subsystem is initialized.
+The CAF settings loader module calls the :c:func:`settings_subsys_init` initialization function during the system boot with the ``APPLICATION`` level and the initialization priority set by the :kconfig:option:`CONFIG_APPLICATION_INIT_PRIORITY` Kconfig option.
+
 Implementation details
 **********************
 
