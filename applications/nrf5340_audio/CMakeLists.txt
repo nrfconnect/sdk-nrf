@@ -73,28 +73,11 @@ add_subdirectory(src/events)
 add_subdirectory(src/modules)
 add_subdirectory(src/utils)
 
-## LC3
-if (CONFIG_SW_CODEC_LC3_T2_SOFTWARE)
-    if (ZEPHYR_SDK_LC3_MODULE_DIR)
-        add_subdirectory(${ZEPHYR_SDK_LC3_MODULE_DIR} sdk_lc3_bin_dir)
-    else()
-        message(FATAL_ERROR "LC3 repository not found\n"
-                "Path: ${ZEPHYR_SDK_LC3_MODULE_DIR}/CMakeLists.txt\n"
-                "Run 'west config manifest.group-filter +nrf5340_audio' "
-                "and then 'west update'.\n"
-                "If access is denied, contact local Nordic Semiconductor "
-                "support")
-    endif()
-endif()
-
 ## Cirrus Logic
 if (CONFIG_HW_CODEC_CIRRUS_LOGIC)
     if (ZEPHYR_CIRRUS_LOGIC_MODULE_DIR)
         add_subdirectory(${ZEPHYR_CIRRUS_LOGIC_MODULE_DIR} cirrus_logic_bin_dir)
     else()
-        message(FATAL_ERROR "Cirrus Logic/sdk-mcu-drivers repository not found\n"
-            "Path: ${ZEPHYR_CIRRUS_LOGIC_MODULE_DIR}/CMakeLists.txt\n"
-            "Run 'west config manifest.group-filter +nrf5340_audio' "
-            "and then 'west update'.\n")
+        message(FATAL_ERROR "Cirrus Logic/sdk-mcu-drivers repository not found\n")
     endif()
 endif()
