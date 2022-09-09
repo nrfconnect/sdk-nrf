@@ -70,6 +70,7 @@ Bluetooth mesh
 
 * Added support for usage of :ref:`emds_readme`.
   For details, see `Bluetooth mesh samples`_ and `Bluetooth libraries and services`_.
+* API change in :ref:`bt_mesh_sensor_srv_readme`, column get callback now gets called with column index instead pointer to column, to support series for sensors with one or two channels.
 
 See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh samples.
 
