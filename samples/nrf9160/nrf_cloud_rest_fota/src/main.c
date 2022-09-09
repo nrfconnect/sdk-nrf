@@ -8,7 +8,6 @@
 #include <modem/nrf_modem_lib.h>
 #include <nrf_modem_at.h>
 #include <modem/modem_info.h>
-#include <zephyr/dfu/mcuboot.h>
 #include <zephyr/settings/settings.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
@@ -568,7 +567,7 @@ static int connect_to_network(void)
 	if (err) {
 		LOG_ERR("Failed to init modem, error: %d", err);
 	} else {
-		k_sem_take(&lte_connected, K_FOREVER);
+		(void)k_sem_take(&lte_connected, K_FOREVER);
 		(void)set_led(1);
 		LOG_INF("Connected");
 	}
@@ -735,7 +734,6 @@ static void handle_download_succeeded_and_reboot(void)
 	err = save_pending_job();
 	if (err) {
 		LOG_WRN("FOTA job will be marked as successful without validation");
-		err = 0;
 		fota_status_details = FOTA_STATUS_DETAILS_NO_VALIDATE;
 		(void)update_job_status();
 	}

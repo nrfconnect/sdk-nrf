@@ -8,7 +8,6 @@
 #include <zephyr/sys/reboot.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <net/nrf_cloud.h>
-#include "connection.h"
 
 #include "fota_support.h"
 

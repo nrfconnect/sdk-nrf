@@ -363,7 +363,8 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 	switch (msg->topic_type) {
 	case NRF_CLOUD_TOPIC_STATE: {
 		if (current_state < STATE_CC_CONNECTED) {
-			return -EACCES;
+			err = -EACCES;
+			break;
 		}
 		const struct nct_cc_data shadow_data = {
 			.opcode = NCT_CC_OPCODE_UPDATE_REQ,
@@ -375,14 +376,14 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		err = nct_cc_send(&shadow_data);
 		if (err) {
 			LOG_ERR("nct_cc_send failed, error: %d\n", err);
-			return err;
 		}
 
 		break;
 	}
 	case NRF_CLOUD_TOPIC_MESSAGE: {
 		if (current_state != STATE_DC_CONNECTED) {
-			return -EACCES;
+			err = -EACCES;
+			break;
 		}
 		const struct nct_dc_data buf = {
 			.data.ptr = msg->data.ptr,
@@ -392,19 +393,25 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 
 		if (msg->qos == MQTT_QOS_0_AT_MOST_ONCE) {
 			err = nct_dc_stream(&buf);
+			if (err) {
+				LOG_ERR("nct_dc_stream failed, error: %d", err);
+			}
 		} else if (msg->qos == MQTT_QOS_1_AT_LEAST_ONCE) {
 			err = nct_dc_send(&buf);
+			if (err) {
+				LOG_ERR("nct_dc_send failed, error: %d", err);
+			}
 		} else {
 			err = -EINVAL;
 			LOG_ERR("Unsupported QoS setting");
-			return err;
 		}
 
 		break;
 	}
 	case NRF_CLOUD_TOPIC_BULK: {
 		if (current_state != STATE_DC_CONNECTED) {
-			return -EACCES;
+			err = -EACCES;
+			break;
 		}
 		const struct nct_dc_data buf = {
 			.data.ptr = msg->data.ptr,
@@ -415,17 +422,16 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		err = nct_dc_bulk_send(&buf, msg->qos);
 		if (err) {
 			LOG_ERR("nct_dc_bulk_send failed, error: %d", err);
-			return err;
 		}
 
 		break;
 	}
 	default:
 		LOG_ERR("Unknown topic type");
-		return -ENODATA;
+		err = -ENODATA;
 	}
 
-	return 0;
+	return err;
 }
 
 int nrf_cloud_tenant_id_get(char *id_buf, size_t id_len)
@@ -504,6 +510,7 @@ start:
 	atomic_set(&transport_disconnected, 0);
 
 	while (true) {
+		fds[0].revents = 0;
 		ret = poll(fds, ARRAY_SIZE(fds), nct_keepalive_time_left());
 
 		/* If poll returns 0 the timeout has expired. */
@@ -516,6 +523,13 @@ start:
 				break;
 			}
 			continue;
+		}
+
+		if (ret < 0) {
+			LOG_ERR("poll() returned an error: %d; revents: 0x%x",
+				ret, fds[0].revents);
+			evt.status = NRF_CLOUD_DISCONNECT_MISC;
+			break;
 		}
 
 		if ((fds[0].revents & POLLIN) == POLLIN) {
@@ -533,12 +547,6 @@ start:
 			}
 
 			continue;
-		}
-
-		if (ret < 0) {
-			LOG_ERR("poll() returned an error: %d", ret);
-			evt.status = NRF_CLOUD_DISCONNECT_MISC;
-			break;
 		}
 
 		if ((fds[0].revents & POLLNVAL) == POLLNVAL) {

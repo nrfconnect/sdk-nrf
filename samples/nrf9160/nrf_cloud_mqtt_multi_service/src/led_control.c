@@ -239,7 +239,7 @@ void led_animation_thread_fn(void)
 
 	while (true) {
 		/* Wait for a pattern to be started */
-		k_event_wait(&led_events, LED_PATTERN_REQUESTED, false, K_FOREVER);
+		(void)k_event_wait(&led_events, LED_PATTERN_REQUESTED, false, K_FOREVER);
 
 		LOG_DBG("LED Pattern Started");
 		while (true) {

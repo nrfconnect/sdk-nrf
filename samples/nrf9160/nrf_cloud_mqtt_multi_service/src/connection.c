@@ -525,14 +525,14 @@ int consume_device_message(void)
 int send_device_message(const char *const msg)
 {
 	/* Copy message data onto the heap (will be freed by the message consumer when done). */
-
-	char *msg_buf = k_malloc(strlen(msg) + 1);
+	size_t len = strlen(msg) + 1;
+	char *msg_buf = k_malloc(len);
 
 	if (!msg_buf) {
 		LOG_ERR("Could not alloc memory for new device message");
 		return -ENOMEM;
 	}
-	strcpy(msg_buf, msg);
+	strncpy(msg_buf, msg, len);
 	LOG_DBG("Enqueued message: %s", msg_buf);
 
 	/* Attempt to append data onto message queue. */
