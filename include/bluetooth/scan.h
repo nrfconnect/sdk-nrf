@@ -174,10 +174,12 @@ struct bt_scan_init_param {
 	 */
 	const struct bt_le_scan_param *scan_param;
 
+#if CONFIG_BT_CENTRAL
 	/** If set to true, the module automatically
 	 * connects after a filter match.
 	 */
 	bool connect_if_match;
+#endif /* CONFIG_BT_CENTRAL */
 
 	/** Connection parameters. Can be initialized as NULL.
 	 * If NULL, the default static configuration is used.
@@ -308,12 +310,13 @@ struct bt_scan_device_info {
  * @param[in] connecting_fun Connecting data function pointer.
  */
 
+#if CONFIG_BT_CENTRAL
 #define BT_SCAN_CB_INIT(_name,				\
 			match_fun,			\
 			no_match_fun,			\
 			error_fun,			\
 			connecting_fun)			\
-	static const struct cb_data _name ## _data = { 	\
+	static const struct cb_data _name ## _data = {	\
 		.filter_match = match_fun,		\
 		.filter_no_match = no_match_fun,	\
 		.connecting_error = error_fun,		\
@@ -322,6 +325,20 @@ struct bt_scan_device_info {
 	static struct bt_scan_cb _name = {		\
 		.cb_addr = &_name ## _data,		\
 	}
+#else
+#define BT_SCAN_CB_INIT(_name,				\
+			match_fun,			\
+			no_match_fun,			\
+			error_fun,			\
+			connecting_fun)			\
+	static const struct cb_data _name ## _data = {	\
+		.filter_match = match_fun,		\
+		.filter_no_match = no_match_fun,	\
+	};						\
+	static struct bt_scan_cb _name = {		\
+		.cb_addr = &_name ## _data,		\
+	}
+#endif /* CONFIG_BT_CENTRAL */
 
 /** @brief Data for scanning callback structure.
  *
@@ -354,12 +371,14 @@ struct cb_data {
 	void (*filter_no_match)(struct bt_scan_device_info *device_info,
 				bool connectable);
 
+#if CONFIG_BT_CENTRAL
 	/**@brief Error when connecting.
 	 *
 	 * @param[in] device_info Data needed to establish
 	 *                        connection and advertising information.
 	 */
 	void (*connecting_error)(struct bt_scan_device_info *device_info);
+
 	/**@brief Connecting data.
 	 *
 	 * @param[in] device_info Data needed to establish
@@ -368,7 +387,7 @@ struct cb_data {
 	 */
 	void (*connecting)(struct bt_scan_device_info *device_info,
 			   struct bt_conn *conn);
-
+#endif /* CONFIG_BT_CENTRAL */
 };
 
 /** @brief Scanning callback structure.
