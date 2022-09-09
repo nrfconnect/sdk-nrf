@@ -638,24 +638,76 @@ static int connect_cloud(void)
 }
 
 /**
- * @brief Set up modem and start trying to connect to LTE.
+ * @brief Set up the modem library.
  *
  * @return int - 0 on success, otherwise a negative error code.
  */
-static int setup_lte(void)
+static int setup_modem(void)
 {
-	int err;
-
 	/* Initialize the modem library if required */
 	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
-		err = nrf_modem_lib_init(NORMAL_MODE);
-		if (err) {
-			LOG_ERR("Modem library initialization failed, error: %d", err);
+		/*
+		 * If there is a pending modem delta firmware update stored, nrf_modem_lib_init will
+		 * attempt to install it before initializing the modem library, and return a
+		 * positive value to indicate that this occurred. This code can be used to
+		 * determine whether the update was successful.
+		 */
+		int ret = nrf_modem_lib_init(NORMAL_MODE);
+
+		if (ret < 0) {
+			LOG_ERR("Modem library initialization failed, error: %d", ret);
+			return ret;
+		} else if (ret == MODEM_DFU_RESULT_OK) {
+			LOG_DBG("Modem library initialized after "
+				"successful modem firmware update.");
+		} else if (ret > 0) {
+			LOG_ERR("Modem library initialized after "
+				"failed modem firmware update, error: %d", ret);
+		} else {
+			LOG_DBG("Modem library initialized.");
 		}
 	}
 
 	/* Register to be notified when the modem has figured out the current time. */
 	date_time_register_handler(date_time_evt_handler);
+
+	return 0;
+}
+
+
+/**
+ * @brief Set up the nRF Cloud library
+ * Must be called before setup_lte, so that pending FOTA jobs can be checked before LTE init.
+ * @return int - 0 on success, otherwise negative error code.
+ */
+static int setup_cloud(void)
+{
+	/* Initialize nrf_cloud library. */
+	struct nrf_cloud_init_param params = {
+		.event_handler = cloud_event_handler,
+		.fmfu_dev_inf = get_full_modem_fota_fdev()
+	};
+
+	int err = nrf_cloud_init(&params);
+
+	if (err) {
+		LOG_ERR("nRF Cloud library could not be initialized, error: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
+
+/**
+ * @brief Set up LTE and start trying to connect.
+ *
+ * Must be called AFTER setup_cloud to ensure proper operation of FOTA.
+ * @return int - 0 on success, otherwise a negative error code.
+ */
+static int setup_lte(void)
+{
+	int err;
 
 	/* Perform Configuration */
 	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
@@ -702,29 +754,6 @@ static int setup_lte(void)
 	return 0;
 }
 
-/**
- * @brief Set up the nRF Cloud library
- *
- * @return int - 0 on success, otherwise negative error code.
- */
-static int setup_cloud(void)
-{
-	/* Initialize nrf_cloud library. */
-	struct nrf_cloud_init_param params = {
-		.event_handler = cloud_event_handler,
-		.fmfu_dev_inf = get_full_modem_fota_fdev()
-	};
-
-	int err = nrf_cloud_init(&params);
-
-	if (err) {
-		LOG_ERR("nRF Cloud library could not be initialized, error: %d", err);
-		return err;
-	}
-
-	return 0;
-}
-
 void message_queue_thread_fn(void)
 {
 	/* Continually attempt to consume device messages */
@@ -735,16 +764,12 @@ void message_queue_thread_fn(void)
 
 void connection_management_thread_fn(void)
 {
-	/* Enable the modem and start trying to connect to LTE.
-	 * This is done once only, since the modem handles connection persistence then after.
-	 *
-	 * (Once we request connection, the modem will automatically try to reconnect whenever
-	 *  connection is lost).
-	 */
-	LOG_INF("Setting up LTE...");
 	long_led_pattern(LED_WAITING);
-	if (setup_lte()) {
-		LOG_ERR("Fatal: LTE setup failed");
+
+	/* Enable the modem */
+	LOG_INF("Setting up modem...");
+	if (setup_modem()) {
+		LOG_ERR("Fatal: Modem setup failed");
 		long_led_pattern(LED_FAILURE);
 		return;
 	}
@@ -755,6 +780,19 @@ void connection_management_thread_fn(void)
 	LOG_INF("Setting up nRF Cloud library...");
 	if (setup_cloud()) {
 		LOG_ERR("Fatal: nRF Cloud library setup failed");
+		long_led_pattern(LED_FAILURE);
+		return;
+	}
+
+	/* Set up LTE and start trying to connect.
+	 * This is done once only, since the modem handles connection persistence then after.
+	 *
+	 * (Once we request connection, the modem will automatically try to reconnect whenever
+	 *  connection is lost).
+	 */
+	LOG_INF("Setting up LTE...");
+	if (setup_lte()) {
+		LOG_ERR("Fatal: LTE setup failed");
 		long_led_pattern(LED_FAILURE);
 		return;
 	}
