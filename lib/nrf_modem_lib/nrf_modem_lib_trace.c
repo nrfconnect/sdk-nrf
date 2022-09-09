@@ -36,6 +36,89 @@ K_SEM_DEFINE(trace_done_sem, 1, 1);
 static int trace_init(void);
 static int trace_deinit(void);
 
+#if CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
+static uint32_t backend_bps_avg;
+static uint32_t backend_bps_tot;
+static uint32_t backend_bps_samples;
+static int64_t backend_measurement_start;
+
+#define BACKEND_BPS_AVG_UPDATE_PERIOD K_MSEC(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_PERIOD_MS)
+
+static void backend_bps_reset(void)
+{
+	backend_bps_tot = 0;
+	backend_bps_samples = 0;
+}
+
+static void backend_bps_update(int bps)
+{
+	backend_bps_tot += bps;
+	backend_bps_samples++;
+}
+
+static void backend_bps_avg_update(struct k_work *item);
+
+K_WORK_DELAYABLE_DEFINE(backend_bps_avg_update_work, backend_bps_avg_update);
+
+static void backend_bps_avg_update(struct k_work *item)
+{
+	if (backend_bps_samples != 0) {
+		backend_bps_avg = backend_bps_tot / backend_bps_samples;
+	} else {
+		/* With 0 samples the average is 0 */
+		backend_bps_avg = 0;
+	}
+
+	backend_bps_reset();
+
+	k_work_schedule(&backend_bps_avg_update_work, BACKEND_BPS_AVG_UPDATE_PERIOD);
+}
+
+uint32_t nrf_modem_lib_trace_backend_bitrate_get(void)
+{
+	return backend_bps_avg;
+}
+
+static void trace_backend_bitrate_perf_start(void)
+{
+	backend_measurement_start = k_uptime_ticks();
+}
+
+static void trace_backend_bitrate_perf_end(int size)
+{
+	int64_t delta;
+	uint32_t bps;
+
+	delta = k_uptime_ticks() - backend_measurement_start;
+
+	if (size > 0 && delta > 0) {
+		bps = size * 8 * CONFIG_SYS_CLOCK_TICKS_PER_SEC / delta;
+		backend_bps_update(bps);
+	}
+}
+
+#define PERF_START trace_backend_bitrate_perf_start
+#define PERF_END(size) trace_backend_bitrate_perf_end(size)
+#else
+#define PERF_START(...)
+#define PERF_END(...)
+#endif
+
+#if CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
+#define BACKEND_BPS_LOG_PERIOD K_MSEC(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG_PERIOD_MS)
+
+static void backend_bps_log(struct k_work *item);
+
+K_WORK_DELAYABLE_DEFINE(backend_bps_log_work, backend_bps_log);
+
+static void backend_bps_log(struct k_work *item)
+{
+	LOG_INF("Trace backend bitrate (bps): %u", backend_bps_avg);
+
+	k_work_schedule(&backend_bps_log_work, BACKEND_BPS_LOG_PERIOD);
+}
+#endif
+
 int nrf_modem_lib_trace_processing_done_wait(k_timeout_t timeout)
 {
 	int err;
@@ -56,8 +139,13 @@ static int trace_fragment_write(struct nrf_modem_trace_data *frag)
 	size_t remaining = frag->len;
 
 	while (remaining) {
+		PERF_START();
+
 		ret = trace_backend_write((void *)((uint8_t *)frag->data + frag->len - remaining),
 					  remaining);
+
+		PERF_END(ret);
+
 		if (ret < 0) {
 			LOG_ERR("trace_backend_write failed with err: %d", ret);
 
@@ -135,6 +223,14 @@ static int trace_init(void)
 
 	LOG_INF("Trace tread ready");
 	k_sem_give(&trace_sem);
+
+#if CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
+	k_work_schedule(&backend_bps_avg_update_work, BACKEND_BPS_AVG_UPDATE_PERIOD);
+#endif
+
+#if CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
+	k_work_schedule(&backend_bps_log_work, BACKEND_BPS_LOG_PERIOD);
+#endif
 
 	return 0;
 }

@@ -77,6 +77,29 @@ config NRF_MODEM_LIB_TRACE_THREAD_PRIO
 	depends on NRF_MODEM_LIB_TRACE_THREAD_PRIO_OVERRIDE
 	default 0
 
+config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
+	bool "Measure trace backend bitrate"
+
+if NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
+
+config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_PERIOD_MS
+	int "Rolling interval where the bitrate is measured (millisec)"
+	default 1000
+
+config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
+	depends on LOG
+	bool "Log trace backend bitrate"
+
+if NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
+
+config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG_PERIOD_MS
+	int "Bitrate log interval (millisec)"
+	default 5000
+
+endif # NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
+
+endif # NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
+
 # Add trace backends
 rsource "trace_backends/Kconfig"
 

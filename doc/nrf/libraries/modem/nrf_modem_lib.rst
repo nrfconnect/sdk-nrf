@@ -106,6 +106,12 @@ Passing ``NRF_MODEM_LIB_TRACE_LEVEL_OFF`` to the :c:func:`nrf_modem_lib_trace_le
 During tracing, the integration layer ensures that modem traces are always flushed before the Modem library is re-initialized (including when the modem has crashed).
 The application can synchronize with the flushing of modem traces by calling the :c:func:`nrf_modem_lib_trace_processing_done_wait` function.
 
+To enable the measurement of the modem trace backend bitrate, set the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE` Kconfig option to ``y`` in your project configuration.
+After enabling this Kconfig option, the application can use the :c:func:`nrf_modem_lib_trace_backend_bitrate_get` function to retrieve the rolling average bitrate of the modem trace backend, measured over the period defined by the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_PERIOD_MS` Kconfig option.
+To enable logging of the modem trace backend bitrate, set the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG` Kconfig option to ``y``.
+The logging happens at an interval set by the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG_PERIOD_MS` Kconfig option.
+If the difference in the values of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_PERIOD_MS` Kconfig option and the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG_PERIOD_MS` Kconfig option is very high, you can sometimes observe high variation in measurements due to the short period over which the rolling average is calculated.
+
 .. _adding_custom_modem_trace_backends:
 
 Adding custom trace backends
