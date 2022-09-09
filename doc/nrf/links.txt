@@ -139,6 +139,7 @@
 .. _`Installing on Linux`: https://nrfconnect.github.io/vscode-nrf-connect/connect/install.html#installing-on-linux
 .. _`Creating an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/create_app.html
 .. _`Building an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/build_app.html
+.. _`Building nRF Connect SDK application quick guide`: https://nrfconnect.github.io/vscode-nrf-connect/connect/build_app_ncs.html
 .. _`Testing an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/test_app.html
 .. _`Debugging an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/debug_app.html
 .. _`West integration`: https://nrfconnect.github.io/vscode-nrf-connect/connect/west.html
