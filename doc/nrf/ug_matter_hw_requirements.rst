@@ -42,7 +42,6 @@ RAM and flash memory requirement values differ depending on the DK and the progr
 The following tables list memory requirement values for Matter samples.
 
 Values are provided in kilobytes (KB).
-``n/a`` indicates that the sample with the given variant is not supported on the DK.
 
 .. tabs::
 
