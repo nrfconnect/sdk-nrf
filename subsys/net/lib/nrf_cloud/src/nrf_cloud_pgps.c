@@ -10,13 +10,10 @@
 #include <zephyr/storage/stream_flash.h>
 
 #include <cJSON.h>
-#include <cJSON_os.h>
 #include <modem/modem_info.h>
 #include <date_time.h>
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
-#include <zephyr/settings/settings.h>
-#include <zephyr/sys/reboot.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <pm_config.h>
 
@@ -326,7 +323,7 @@ static int validate_stored_predictions(uint16_t *first_bad_day,
 static void get_prediction_day_time(int pnum, int64_t *gps_sec, uint16_t *gps_day,
 				    uint32_t *gps_time_of_day)
 {
-	int64_t psec = index.start_sec + (uint32_t)pnum * index.period_sec;
+	int64_t psec = index.start_sec + (int64_t)pnum * index.period_sec;
 
 	if (gps_sec) {
 		*gps_sec = psec;
@@ -532,16 +529,6 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 		return -ENODATA;
 	}
 
-	err = npgps_get_shifted_time(&cur_gps_sec, &cur_gps_day,
-				     &cur_gps_time_of_day, PREDICTION_MIDPOINT_SHIFT_SEC);
-	if (err < 0) {
-		LOG_INF("Unknown current time");
-		cur_gps_sec = 0;
-	}
-
-	print_time_details("Looking for prediction for:",
-			   cur_gps_sec, cur_gps_day, cur_gps_time_of_day);
-
 	if ((start_day == 0) && (start_time == 0)) {
 		if (nrf_cloud_pgps_loading()) {
 			LOG_WRN("Predictions not loaded yet");
@@ -553,6 +540,16 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 		LOG_WRN("No data stored");
 		return -ENODATA;
 	}
+
+	err = npgps_get_shifted_time(&cur_gps_sec, &cur_gps_day,
+				     &cur_gps_time_of_day, PREDICTION_MIDPOINT_SHIFT_SEC);
+	if (err < 0) {
+		LOG_INF("Unknown current time");
+		return err;
+	}
+
+	print_time_details("Looking for prediction for:",
+			   cur_gps_sec, cur_gps_day, cur_gps_time_of_day);
 
 	offset_sec = cur_gps_sec - start_sec;
 
@@ -1272,7 +1269,7 @@ static void cache_pgps_header(const struct nrf_cloud_pgps_header *header)
 						    index.header.gps_time_of_day);
 	index.period_sec = index.header.prediction_period_min * SEC_PER_MIN;
 	index.end_sec = index.start_sec +
-			index.period_sec * index.header.prediction_count;
+			(int64_t)index.period_sec * index.header.prediction_count;
 }
 
 static size_t get_next_pgps_element(struct nrf_cloud_apgs_element *element,

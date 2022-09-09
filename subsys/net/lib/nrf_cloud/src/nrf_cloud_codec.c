@@ -350,6 +350,10 @@ int nrf_cloud_encode_sensor_data(const struct nrf_cloud_sensor_data *sensor,
 	buffer = cJSON_PrintUnformatted(root_obj);
 	cJSON_Delete(root_obj);
 
+	if (buffer == NULL) {
+		return -ENOMEM;
+	}
+
 	output->ptr = buffer;
 	output->len = strlen(buffer);
 
@@ -542,6 +546,10 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 		ret += json_add_null_cs(reported_obj, JSON_KEY_STAGE);
 		ret += json_add_null_cs(reported_obj, JSON_KEY_TOPIC_PRFX);
 		ret += json_add_null_cs(connection_obj, JSON_KEY_KEEPALIVE);
+		if (ret != 0) {
+			cJSON_Delete(root_obj);
+			return -ENOMEM;
+		}
 		break;
 	}
 	case STATE_UA_PIN_COMPLETE: {
@@ -1615,10 +1623,6 @@ int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf
 		for (uint8_t j = 0; nmr_array && (j < lte->ncells_count); ++j) {
 			struct lte_lc_ncell *ncell = lte->neighbor_cells + j;
 
-			if (ncell == NULL) {
-				break;
-			}
-
 			ncell_obj = cJSON_CreateObject();
 
 			if (!ncell_obj) {
@@ -1800,7 +1804,7 @@ clean_up:
 int nrf_cloud_parse_cell_pos_response(const char *const buf,
 				      struct nrf_cloud_cell_pos_result *result)
 {
-	int ret = 1; /* 1: cell-based location not found */
+	int ret;
 	cJSON *cell_pos_obj;
 	cJSON *data_obj;
 
@@ -1811,7 +1815,7 @@ int nrf_cloud_parse_cell_pos_response(const char *const buf,
 	cell_pos_obj = cJSON_Parse(buf);
 	if (!cell_pos_obj) {
 		LOG_DBG("No JSON found for cellular positioning");
-		return 1;
+		return 1;  /* 1: cell-based location not found */
 	}
 
 	/* First, check to see if this is a REST payload, which is not wrapped in
@@ -2053,11 +2057,10 @@ int nrf_cloud_gnss_msg_json_encode(const struct nrf_cloud_gnss_data * const gnss
 			ret = ENOMEM;
 			goto cleanup;
 		}
-
 		/* data_obj now belongs to gnss_msg_obj */
-		data_obj = NULL;
 
 		break;
+
 	case NRF_CLOUD_GNSS_TYPE_MODEM_NMEA:
 	case NRF_CLOUD_GNSS_TYPE_NMEA:
 		if (gnss->type == NRF_CLOUD_GNSS_TYPE_MODEM_NMEA) {

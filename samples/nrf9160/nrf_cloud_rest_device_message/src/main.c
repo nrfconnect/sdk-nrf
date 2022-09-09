@@ -11,7 +11,6 @@
 #include <zephyr/settings/settings.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
-#include <zephyr/sys/reboot.h>
 #include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
 

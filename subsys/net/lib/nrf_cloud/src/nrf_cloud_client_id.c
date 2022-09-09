@@ -36,13 +36,15 @@ BUILD_ASSERT(IMEI_CLIENT_ID_LEN <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
 
 int nrf_cloud_client_id_get(char *id_buf, size_t id_len)
 {
-	int ret = -ENODEV;
+	int ret;
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 	/* For MQTT, the client ID is allocated and generated when nrf_cloud_init is called,
 	 * so just get a copy.
 	 */
 	ret = nct_client_id_get(id_buf, id_len);
+#else
+	ret = -ENODEV;
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_REST)

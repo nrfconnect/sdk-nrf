@@ -8,10 +8,8 @@
 #include <modem/location.h>
 #include <net/nrf_cloud.h>
 #include "nrf_cloud_codec.h"
-#include <stdio.h>
 #include <date_time.h>
 #include <cJSON.h>
-#include <math.h>
 
 #include "application.h"
 #include "temperature.h"

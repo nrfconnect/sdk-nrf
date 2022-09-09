@@ -9,7 +9,6 @@
 #include "application.h"
 #include "connection.h"
 #include "led_control.h"
-#include "fota_support.h"
 
 LOG_MODULE_REGISTER(main, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 

@@ -8,7 +8,6 @@
 #include <zephyr/net/socket.h>
 #include <nrf_modem_gnss.h>
 #include <cJSON.h>
-#include <cJSON_os.h>
 #include <modem/modem_info.h>
 #include <net/nrf_cloud_agps.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -478,7 +477,7 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 
 		processed.data_flags |= NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
 		return send_to_modem(agps_data->integrity,
-				     sizeof(agps_data->integrity),
+				     sizeof(*(agps_data->integrity)),
 				     NRF_MODEM_GNSS_AGPS_INTEGRITY);
 	default:
 		LOG_WRN("Unknown AGPS data type: %d", agps_data->type);
