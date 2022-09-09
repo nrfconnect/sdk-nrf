@@ -238,10 +238,12 @@ static struct bt_scan {
 	/* Filter data. */
 	struct bt_scan_filters scan_filters;
 
+#if CONFIG_BT_CENTRAL
 	/* If set to true, the module automatically connects
 	 * after a filter match.
 	 */
 	bool connect_if_match;
+#endif /* CONFIG_BT_CENTRAL */
 
 	/* Scan parameters required to initialize the module.
 	 * Can be initialized as NULL. If NULL, the parameters required to
@@ -303,6 +305,7 @@ static void notify_filter_no_match(struct bt_scan_device_info *device_info,
 	}
 }
 
+#if CONFIG_BT_CENTRAL
 static void notify_connecting(struct bt_scan_device_info *device_info,
 			      struct bt_conn *conn)
 {
@@ -325,6 +328,7 @@ static void notify_connecting_error(struct bt_scan_device_info *device_info)
 		}
 	}
 }
+#endif /* CONFIG_BT_CENTRAL */
 
 #if CONFIG_BT_SCAN_BLOCKLIST
 static bool blocklist_device_check(const bt_addr_le_t *addr)
@@ -467,6 +471,7 @@ static bool scan_device_filter_check(const bt_addr_le_t *addr)
 	return true;
 }
 
+#if CONFIG_BT_CENTRAL
 static void scan_connect_with_target(struct bt_scan_control *control,
 				     const bt_addr_le_t *addr)
 {
@@ -499,6 +504,7 @@ static void scan_connect_with_target(struct bt_scan_control *control,
 		bt_conn_unref(conn);
 	}
 }
+#endif /* CONFIG_BT_CENTRAL */
 
 static bool adv_addr_compare(const bt_addr_le_t *target_addr,
 			     struct bt_scan_control *control)
@@ -1335,7 +1341,9 @@ void bt_scan_init(const struct bt_scan_init_param *init)
 	 * use it to scan the configuration.
 	 */
 	if (init) {
+#if CONFIG_BT_CENTRAL
 		bt_scan.connect_if_match = init->connect_if_match;
+#endif /* CONFIG_BT_CENTRAL */
 
 		if (init->scan_param) {
 			bt_scan.scan_param = *init->scan_param;
@@ -1355,7 +1363,9 @@ void bt_scan_init(const struct bt_scan_init_param *init)
 		scan_default_param_set();
 		scan_default_conn_param_set();
 
+#if CONFIG_BT_CENTRAL
 		bt_scan.connect_if_match = false;
+#endif /* CONFIG_BT_CENTRAL */
 	}
 
 #if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
@@ -1459,7 +1469,9 @@ static void filter_state_check(struct bt_scan_control *control,
 		notify_filter_matched(&control->device_info,
 				      &control->filter_status,
 				      control->connectable);
+#if CONFIG_BT_CENTRAL
 		scan_connect_with_target(control, addr);
+#endif /* CONFIG_BT_CENTRAL */
 	}
 
 	/* In the normal filter mode, only one filter match is
@@ -1469,7 +1481,9 @@ static void filter_state_check(struct bt_scan_control *control,
 		notify_filter_matched(&control->device_info,
 				      &control->filter_status,
 				      control->connectable);
+#if CONFIG_BT_CENTRAL
 		scan_connect_with_target(control, addr);
+#endif /* CONFIG_BT_CENTRAL */
 	} else {
 		notify_filter_no_match(&control->device_info,
 				       control->connectable);

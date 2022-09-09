@@ -5,7 +5,7 @@
 #
 
 menuconfig BT_SCAN
-	depends on BT_CENTRAL
+	depends on BT_OBSERVER
 	bool "Scan library"
 	default n
 	help
