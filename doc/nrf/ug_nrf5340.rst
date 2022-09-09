@@ -552,6 +552,12 @@ To enable the simultaneous update of multiple images in the MCUboot, set the fol
 * :kconfig:option:`CONFIG_PCD_APP` - Enable commands exchange with the network core.
 * :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` - Enable support for multiple update partitions by setting this option to ``2``.
 
+.. note::
+
+   The application core can be reverted, but doing so bricks the network core upon revertion, as the reversion process fills the network core with the content currently in the RAM that pcd uses.
+   To enable this, define the ``USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY`` kconfig option in the project-level KConfig file.
+   When this is option is defined, you can enable it by setting :kconfig:option`CONFIG_USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY`.
+
 The :kconfig:option:`CONFIG_NRF53_MULTI_IMAGE_UPDATE` option selects this feature by default if these options and all its other dependencies are asserted.
 
 To enable the simultaneous update of multiple images in the application, in addition to enabling the MCUboot support, set the following options:

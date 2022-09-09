@@ -728,7 +728,9 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-* |no_changes_yet_note|
+* Added:
+    * :kconfig:option:`CONFIG_USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY` Kconfig option to specify that you want to use nRF53 multi image upgrade without the upgrade only setting set in MCUBoot. Enabling this option has drawbacks see :ref:`ug_nrf5340` for details.
+
 
 Zephyr
 ======
