@@ -236,7 +236,11 @@ void main(void)
 	modem_configure();
 	k_sem_take(&network_connected_sem, K_FOREVER);
 
-	err = azure_iot_hub_connect(NULL);
+	static struct azure_iot_hub_config config = {
+		.use_dps = IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS),
+	};
+
+	err = azure_iot_hub_connect(&config);
 	if (err < 0) {
 		printk("azure_iot_hub_connect failed: %d\n", err);
 		return;
