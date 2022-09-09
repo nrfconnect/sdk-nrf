@@ -64,6 +64,14 @@ config MCUBOOT_USB_SUPPORT
 	bool
 	default y if "$(dt_nodelabel_enabled,zephyr_udc0)"
 
+config USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY
+	bool
+	help
+	  Enabling this option allows you to use NRF53_MULTI_IMAGE update
+	  without having BOOT_UPGRADE_ONLY enabled, allowing you to use
+	  different swapping methods. This will however give you the potential
+	  of bricking the network core upon reverts.
+
 config DFU_MULTI_IMAGE_PACKAGE_BUILD
 	bool "Build DFU Multi Image package"
 	depends on BOOTLOADER_MCUBOOT
