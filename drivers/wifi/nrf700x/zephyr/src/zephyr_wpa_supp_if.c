@@ -20,8 +20,6 @@
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
-/* TODO: Move this to driver_zephyr.c */
-extern struct wpa_supplicant *wpa_s_0;
 K_SEM_DEFINE(wait_for_event_sem, 0, 1);
 
 static int get_wifi_nrf_auth_type(int wpa_auth_alg)
