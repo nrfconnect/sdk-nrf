@@ -1607,10 +1607,10 @@ enum wifi_nrf_status wifi_nrf_hal_fw_chk_boot(struct wifi_nrf_hal_dev_ctx *hal_d
 
 	if (rpu_proc == RPU_PROC_TYPE_MCU_LMAC) {
 		addr = RPU_MEM_LMAC_BOOT_SIG;
-		exp_val = IMG_WLAN_LMAC_BOOT_SIG;
+		exp_val = NRF_WIFI_LMAC_BOOT_SIG;
 	} else if (rpu_proc == RPU_PROC_TYPE_MCU_UMAC) {
 		addr = RPU_MEM_UMAC_BOOT_SIG;
-		exp_val = IMG_WLAN_UMAC_BOOT_SIG;
+		exp_val = NRF_WIFI_UMAC_BOOT_SIG;
 	} else {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Invalid RPU processor (%d)\n",

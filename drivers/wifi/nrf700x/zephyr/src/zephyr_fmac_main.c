@@ -270,7 +270,7 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init_zep(struct wifi_nrf_ctx_zep *rpu_ctx
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_fmac_init_dev_params params;
 	int ret = -1;
-	char *rf_params = DEF_RF_PARAMS;
+	char *rf_params = NRF_WIFI_DEF_RF_PARAMS;
 	struct host_rpu_umac_info *umac_info;
 
 	memset(&params, 0, sizeof(params));
@@ -292,7 +292,7 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init_zep(struct wifi_nrf_ctx_zep *rpu_ctx
 		params.rf_params_valid = false;
 	}
 
-	params.phy_calib = DEF_PHY_CALIB;
+	params.phy_calib = NRF_WIFI_DEF_PHY_CALIB;
 
 	umac_info = wifi_nrf_fmac_umac_info(rpu_ctx_zep->rpu_ctx);
 

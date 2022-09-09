@@ -45,6 +45,8 @@
 
 #define IMG_ETH_ADDR_LEN 6
 
+#define PHY_THRESHOLD_NORMAL    (-65)
+#define PHY_THRESHOLD_PROD_MODE (-93)
 #define MAX_NUM_VIFS 2
 #define MAX_NUM_STAS 2
 #define MAX_NUM_APS 1
@@ -201,7 +203,7 @@ struct chan_params {
 struct rpu_conf_rx_prod_mode_params {
 	unsigned char nss;
 	/* Input to the RF for operation */
-	unsigned char rf_params[RF_PARAMS_SIZE];
+	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
 	struct chan_params chan;
 	char phy_threshold;
 	unsigned int phy_calib;
@@ -505,7 +507,7 @@ struct img_sys_params {
 	unsigned int phy_calib;
 #ifdef REG_DEBUG_MODE_SUPPORT
 	unsigned char mac_addr[IMG_ETH_ADDR_LEN];
-	unsigned char rf_params[RF_PARAMS_SIZE];
+	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
 	unsigned char rf_params_valid;
 #endif /* REG_DEBUG_MODE_SUPPORT */
 } __IMG_PKD;
@@ -598,7 +600,7 @@ struct img_cmd_mode {
 struct rpu_conf_params {
 	unsigned char nss;
 	unsigned char antenna_sel;
-	unsigned char rf_params[RF_PARAMS_SIZE];
+	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
 	unsigned char tx_pkt_chnl_bw;
 	unsigned char tx_pkt_tput_mode;
 	unsigned char tx_pkt_sgi;
@@ -637,6 +639,7 @@ struct rpu_conf_params {
 	unsigned char set_he_ltf_gi;
 	unsigned char power_save;
 	unsigned int rts_threshold;
+	unsigned int tx_pkt_gap_us;
 } __IMG_PKD;
 
 /**
