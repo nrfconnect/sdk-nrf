@@ -31,13 +31,15 @@ manifest:
       url-base: https://github.com/NordicSemiconductor
     - name: memfault
       url-base: https://github.com/memfault
+    - name: ant-nrfconnect
+      url-base: https://github.com/ant-nrfconnect
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
   defaults:
     remote: ncs
 
-  group-filter: [-homekit, -nrf-802154, -find-my]
+  group-filter: [-homekit, -nrf-802154, -find-my, -ant]
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -176,6 +178,12 @@ manifest:
       repo-path: sdk-openthread
       path: modules/lib/openthread
       revision: bacf8d625f50dd5c4b415caee754c934ba1a262c
+    - name: ant
+      repo-path: sdk-ant
+      revision: d2d96e4c725f635ff7813313c8727fe007d1e4b5
+      remote: ant-nrfconnect
+      groups:
+      - ant
 
   # West-related configuration for the nrf repository.
   self:
