@@ -187,10 +187,7 @@ int nrf_flash_sync_exe(struct flash_op_desc *op_desc)
 	}
 
 	/* This will cancel the timeslot if it is still in progress. */
-	errcode = MULTITHREADING_LOCK_ACQUIRE();
-	__ASSERT_NO_MSG(errcode == 0);
 	mpsl_timeslot_session_close(_context.session_id);
-	MULTITHREADING_LOCK_RELEASE();
 
 	/* Reset the semaphore after timeout, in case if the operation _did_
 	 * complete before closing the session. */
