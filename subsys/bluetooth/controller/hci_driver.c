@@ -272,6 +272,7 @@ static bool event_packet_is_discardable(const uint8_t *hci_buf)
 
 		switch (me->subevent) {
 		case BT_HCI_EVT_LE_ADVERTISING_REPORT:
+		case BT_HCI_EVT_LE_EXT_ADVERTISING_REPORT:
 			return true;
 		default:
 			return false;
