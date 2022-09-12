@@ -5,15 +5,15 @@
 #
 
 choice
-	prompt "Request to use the $(EXT_API) EXT_API."
+	prompt "Request to use the $(EXT_API) EXT_API"
 	default $(EXT_API)_EXT_API_UNUSED
 
 config $(EXT_API)_EXT_API_UNUSED
-	bool "Don't request the $(EXT_API) EXT_API."
+	bool "Don't request the $(EXT_API) EXT_API"
 	depends on !$(EXT_API)_EXT_API_ATLEAST_OPTIONAL && !$(EXT_API)_EXT_API_ATLEAST_REQUIRED
 
 config $(EXT_API)_EXT_API_OPTIONAL
-	bool "Request to use the $(EXT_API) EXT_API (optional)."
+	bool "Request to use the $(EXT_API) EXT_API (optional)"
 	depends on !$(EXT_API)_EXT_API_ATLEAST_REQUIRED
 	help
 	  Include client code for this EXT_API. This also puts a request for
@@ -21,7 +21,7 @@ config $(EXT_API)_EXT_API_OPTIONAL
 	  check that it is present before using it.
 
 config $(EXT_API)_EXT_API_REQUIRED
-	bool "Request to use the $(EXT_API) EXT_API (required)."
+	bool "Request to use the $(EXT_API) EXT_API (required)"
 	help
 	  Include client code for this EXT_API. This also puts a request for
 	  this EXT_API into the firmware info, marked as required.
@@ -38,7 +38,7 @@ config $(EXT_API)_EXT_API_ATLEAST_REQUIRED
 	  Can be selected to force REQUIRED
 
 config $(EXT_API)_EXT_API_ENABLED
-	bool "Provide the $(EXT_API) EXT_API to other images."
+	bool "Provide the $(EXT_API) EXT_API to other images"
 	help
 	  Provide this EXT_API to other images.
 

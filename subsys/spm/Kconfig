@@ -7,8 +7,7 @@
 menu "SPM"
 
 config SPM
-	bool "Use Secure Partition Manager"
-	default y if TRUSTED_EXECUTION_NONSECURE
+	bool "Use Secure Partition Manager [DEPRECATED]"
 	depends on !BUILD_WITH_TFM
 	select FW_INFO
 	select ENTROPY_CC3XX

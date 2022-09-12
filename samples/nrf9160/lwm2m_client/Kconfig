@@ -145,7 +145,7 @@ config APP_MCUBOOT_FLASH_BUF_SZ
 	  Buffer size must be aligned to the minimal flash write block size.
 
 config APP_CUSTOM_VERSION
-	string "Application version. Leave empty to use NCS version."
+	string "Application version. Leave empty to use NCS version"
 
 config APP_NEIGHBOUR_CELL_SCAN_INTERVAL
 	int "Interval time [s] between neighbour cell scans"

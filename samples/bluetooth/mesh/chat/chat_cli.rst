@@ -57,13 +57,13 @@ Presence Get
 Message
    Used to send a non-private text message.
    The payload consists of the text string terminated by ``\0``.
-   The length of the text string can be configured at the compile-time using `BT_MESH_CHAT_CLI_MESSAGE_LENGTH` option.
+   The length of the text string can be configured at the compile-time using :ref:`CONFIG_BT_MESH_CHAT_CLI_MESSAGE_LENGTH <CONFIG_BT_MESH_CHAT_CLI_MESSAGE_LENGTH>` option.
 
 Private Message
    Used to send a private text message.
    When the model receives this message, it replies with the Message Reply.
    The payload consists of the text string terminated by ``\0``.
-   The length of the text string can be configured at the compile-time using `BT_MESH_CHAT_CLI_MESSAGE_LENGTH` option.
+   The length of the text string can be configured at the compile-time using :ref:`CONFIG_BT_MESH_CHAT_CLI_MESSAGE_LENGTH <CONFIG_BT_MESH_CHAT_CLI_MESSAGE_LENGTH>` option.
 
 Message Reply
    Used to reply on the received Private Message to confirm the reception.
@@ -71,10 +71,17 @@ Message Reply
 
 Configuration
 *************
+|config|
+
+Configuration options
+=====================
 
 The following configuration parameters are associated with the Chat Client model:
 
-* `BT_MESH_CHAT_CLI_MESSAGE_LENGTH` - Max length of the message to be sent over the mesh network.
+.. _CONFIG_BT_MESH_CHAT_CLI_MESSAGE_LENGTH:
+
+CONFIG_BT_MESH_CHAT_CLI_MESSAGE_LENGTH - Message length configuration
+   Maximum length of the message to be sent over the mesh network.
 
 .. _bt_mesh_chat_client_model_states:
 

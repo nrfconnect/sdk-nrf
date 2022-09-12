@@ -59,7 +59,7 @@ menu "Hardware selection (alter with care)"
 
 choice ESB_SYS_TIMER
 	default ESB_SYS_TIMER2
-	prompt "Timer to use for the ESB system timer."
+	prompt "Timer to use for the ESB system timer"
 
 config ESB_SYS_TIMER0
 	bool "TIMER0"

@@ -130,31 +130,31 @@ enum wifi_nrf_status wifi_nrf_hal_fw_patch_boot(struct wifi_nrf_hal_dev_ctx *hal
 		boot_sig_addr = RPU_MEM_LMAC_BOOT_SIG;
 		run_addr = RPU_REG_MIPS_MCU_CONTROL;
 		boot_excp_0_addr = RPU_REG_MIPS_MCU_BOOT_EXCP_INSTR_0;
-		boot_excp_0_val = IMG_WLAN_LMAC_BOOT_EXCP_VECT_0;
+		boot_excp_0_val = NRF_WIFI_LMAC_BOOT_EXCP_VECT_0;
 		boot_excp_1_addr = RPU_REG_MIPS_MCU_BOOT_EXCP_INSTR_1;
-		boot_excp_1_val = IMG_WLAN_LMAC_BOOT_EXCP_VECT_1;
+		boot_excp_1_val = NRF_WIFI_LMAC_BOOT_EXCP_VECT_1;
 		boot_excp_2_addr = RPU_REG_MIPS_MCU_BOOT_EXCP_INSTR_2;
-		boot_excp_2_val = IMG_WLAN_LMAC_BOOT_EXCP_VECT_2;
+		boot_excp_2_val = NRF_WIFI_LMAC_BOOT_EXCP_VECT_2;
 		boot_excp_3_addr = RPU_REG_MIPS_MCU_BOOT_EXCP_INSTR_3;
-		boot_excp_3_val = IMG_WLAN_LMAC_BOOT_EXCP_VECT_3;
+		boot_excp_3_val = NRF_WIFI_LMAC_BOOT_EXCP_VECT_3;
 		if (is_patch_present) {
 			sleepctrl_addr = RPU_REG_UCC_SLEEP_CTRL_DATA_0;
-			sleepctrl_val = IMG_WLAN_LMAC_ROM_PATCH_OFFSET;
+			sleepctrl_val = NRF_WIFI_LMAC_ROM_PATCH_OFFSET;
 		}
 	} else if (rpu_proc == RPU_PROC_TYPE_MCU_UMAC) {
 		boot_sig_addr = RPU_MEM_UMAC_BOOT_SIG;
 		run_addr = RPU_REG_MIPS_MCU2_CONTROL;
 		boot_excp_0_addr = RPU_REG_MIPS_MCU2_BOOT_EXCP_INSTR_0;
-		boot_excp_0_val = IMG_WLAN_UMAC_BOOT_EXCP_VECT_0;
+		boot_excp_0_val = NRF_WIFI_UMAC_BOOT_EXCP_VECT_0;
 		boot_excp_1_addr = RPU_REG_MIPS_MCU2_BOOT_EXCP_INSTR_1;
-		boot_excp_1_val = IMG_WLAN_UMAC_BOOT_EXCP_VECT_1;
+		boot_excp_1_val = NRF_WIFI_UMAC_BOOT_EXCP_VECT_1;
 		boot_excp_2_addr = RPU_REG_MIPS_MCU2_BOOT_EXCP_INSTR_2;
-		boot_excp_2_val = IMG_WLAN_UMAC_BOOT_EXCP_VECT_2;
+		boot_excp_2_val = NRF_WIFI_UMAC_BOOT_EXCP_VECT_2;
 		boot_excp_3_addr = RPU_REG_MIPS_MCU2_BOOT_EXCP_INSTR_3;
-		boot_excp_3_val = IMG_WLAN_UMAC_BOOT_EXCP_VECT_3;
+		boot_excp_3_val = NRF_WIFI_UMAC_BOOT_EXCP_VECT_3;
 		if (is_patch_present) {
 			sleepctrl_addr = RPU_REG_UCC_SLEEP_CTRL_DATA_1;
-			sleepctrl_val = IMG_WLAN_UMAC_ROM_PATCH_OFFSET;
+			sleepctrl_val = NRF_WIFI_UMAC_ROM_PATCH_OFFSET;
 		}
 	} else {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,

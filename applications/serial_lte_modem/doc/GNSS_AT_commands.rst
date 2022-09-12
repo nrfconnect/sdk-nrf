@@ -42,11 +42,11 @@ It accepts the following integer values:
   The fix interval is set to the specified value.
 
 In periodic navigation mode, the ``<timeout>`` parameter controls the maximum time in seconds that the GNSS receiver is allowed to run while trying to produce a valid PVT estimate.
-In continuous navigation mode, this parameter doesn't have any effect.
+In continuous navigation mode, this parameter does not have any effect.
 It accepts the following integer values:
 
-* ``0`` - the GNSS receiver runs indefinitely until a valid PVT estimate is produced.
-* Any positive integer lower than the ``<interval>`` value - the GNSS receiver is turned off after the specified time is up, even if a valid PVT estimate was not produced.
+* ``0`` - The GNSS receiver runs indefinitely until a valid PVT estimate is produced.
+* Any positive integer lower than the ``<interval>`` value - The GNSS receiver is turned off after the specified time is up, even if a valid PVT estimate was not produced.
 
 When not specified, it defaults to a timeout value of 60 seconds.
 
@@ -360,10 +360,10 @@ It accepts the following integer values:
   The fix interval is set to the specified value.
 
 In periodic navigation mode, the ``<timeout>`` parameter controls the maximum time in seconds that the GNSS receiver is allowed to run while trying to produce a valid PVT estimate.
-In continuous navigation mode, this parameter doesn't have any effect.
+In continuous navigation mode, this parameter does not have any effect.
 It accepts the following integer values:
 
-* ``0`` - the GNSS receiver runs indefinitely until a valid PVT estimate is produced.
+* ``0`` - The GNSS receiver runs indefinitely until a valid PVT estimate is produced.
 * Any positive integer lower than the ``<interval>`` value - the GNSS receiver is turned off after the specified time is up, even if a valid PVT estimate was not produced.
 
 When not specified, it defaults to a timeout value of 60 seconds.
@@ -531,11 +531,11 @@ It accepts the following integer values:
   The fix interval is set to the specified value.
 
 In periodic navigation mode, the ``<timeout>`` parameter controls the maximum time in seconds that the GNSS receiver is allowed to run while trying to produce a valid PVT estimate.
-In continuous navigation mode, this parameter doesn't have any effect.
+In continuous navigation mode, this parameter does not have any effect.
 It accepts the following integer values:
 
-* ``0`` - the GNSS receiver runs indefinitely until a valid PVT estimate is produced.
-* Any positive integer lower than the ``<interval>`` value - the GNSS receiver is turned off after the specified time is up, even if a valid PVT estimate was not produced.
+* ``0`` - The GNSS receiver runs indefinitely until a valid PVT estimate is produced.
+* Any positive integer lower than the ``<interval>`` value - The GNSS receiver is turned off after the specified time is up, even if a valid PVT estimate was not produced.
 
 When not specified, it defaults to a timeout value of 60 seconds.
 
@@ -829,7 +829,7 @@ Response syntax
    #XCELLPOS: <gnss_service>,<cellpos_status>
 
 * The ``<gnss_service>`` value is an integer.
-   When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and is activated in ``+CFUN``.
+  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and is activated in ``+CFUN``.
 
 .. note::
    CELLPOS does not require the GNSS service in modem.

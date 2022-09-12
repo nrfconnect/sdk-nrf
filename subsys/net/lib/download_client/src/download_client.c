@@ -433,7 +433,7 @@ static size_t socket_recv(struct download_client *dl)
 	case IPPROTO_DTLS_1_2:
 		if (IS_ENABLED(CONFIG_COAP)) {
 			timeout = coap_get_recv_timeout(dl);
-			if (timeout <= 0) {
+			if (timeout == 0) {
 				errno = ETIMEDOUT;
 				return -1;
 			}

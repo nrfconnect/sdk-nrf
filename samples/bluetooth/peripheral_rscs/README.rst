@@ -9,14 +9,6 @@ Bluetooth: Peripheral Running Speed and Cadence Service (RSCS)
 
 The peripheral RSCS sample demonstrates how to use the :ref:`rscs_readme`.
 
-Overview
-********
-
-This sample demonstrates the use of Running Speed and Cadence Service.
-It simulates a sensor and sends measurements to the connected device, such as a phone or a tablet.
-
-The mobile application on the device can configure sensor parameters using the SC Control Point characteristic.
-
 Requirements
 ************
 
@@ -24,8 +16,17 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 The sample also requires a phone or tablet running a compatible application, for example `nRF Connect for Mobile`_ or `nRF Toolbox`_.
 
+Overview
+********
+
+This sample demonstrates the use of Running Speed and Cadence Service.
+It simulates a sensor and sends measurements to the connected device, such as a phone or a tablet.
+
+The mobile application on the device can configure sensor parameters using the SC Control Point characteristic.
 
 User interface
 **************
@@ -40,7 +41,7 @@ Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_rscs`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. _peripheral_rscs_testing:
 
@@ -91,3 +92,7 @@ In addition, it uses the following Zephyr libraries:
   * ``include/bluetooth/conn.h``
   * ``include/bluetooth/uuid.h``
   * ``include/bluetooth/gatt.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

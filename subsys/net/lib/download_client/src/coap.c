@@ -9,6 +9,7 @@
 #include <net/download_client.h>
 #include <zephyr/logging/log.h>
 #include <string.h>
+#include <zephyr/sys/__assert.h>
 
 LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
@@ -53,10 +54,7 @@ int coap_get_recv_timeout(struct download_client *dl)
 {
 	int timeout;
 
-	if (!has_pending(dl)) {
-		LOG_ERR("Must have coap pending");
-		return -1;
-	}
+	__ASSERT(has_pending(dl), "Must have coap pending");
 
 	/* Retransmission is cycled in case recv() times out. In case sending request
 	 * blocks, the time that is used for sending request must be substracted next time
@@ -154,8 +152,6 @@ int coap_parse(struct download_client *client, size_t len)
 		return -1;
 	}
 
-	coap_pending_clear(&client->coap.pending);
-
 	err = coap_block_update(client, &response, &blk_off);
 	if (err) {
 		return err;
@@ -165,6 +161,8 @@ int coap_parse(struct download_client *client, size_t len)
 		LOG_ERR("Response is not pending");
 		return -1;
 	}
+
+	coap_pending_clear(&client->coap.pending);
 
 	if (coap_header_get_type(&response) != COAP_TYPE_ACK) {
 		LOG_ERR("Response must be of coap type ACK");

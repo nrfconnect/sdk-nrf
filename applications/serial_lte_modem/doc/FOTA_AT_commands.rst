@@ -33,7 +33,7 @@ Syntax
   * ``2`` - Start FOTA for modem delta update.
   * ``6`` - Read application image size and version (optional for application FOTA).
   * ``7`` - Read modem scratch space size and offset (optional for modem FOTA).
-  * ``8`` - Erase mcuboot secondary slot (optional for application FOTA).
+  * ``8`` - Erase MCUboot secondary slot (optional for application FOTA).
   * ``9`` - Erase modem scratch space (optional for modem FOTA).
 
 * The ``<file url>`` parameter is a string.

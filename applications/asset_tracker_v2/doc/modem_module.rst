@@ -79,7 +79,7 @@ Neighbor cell measurements
 ==========================
 
 Neighbor cell measurements can be requested by the application by sending an ``APP_EVT_DATA_GET`` event where ``APP_DATA_NEIGHBOR_CELLS`` is part of the requested data list.
-Upon reception of that event, the modem module uses the LTE link controller to start a neighbor cell  search of type :c:enum:`LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT`.
+Upon reception of that event, the modem module uses the LTE link controller to start a neighbor cell search of type :kconfig:option:`CONFIG_MODEM_NEIGHBOR_SEARCH_TYPE`.
 See :ref:`lte_lc_readme` for more details on the available search types.
 When the search completes, the module sends a :c:enum:`MODEM_EVT_NEIGHBOR_CELLS_DATA_READY` event containing the cell information received from the modem.
 If the search fails, a :c:enum:`MODEM_EVT_NEIGHBOR_CELLS_DATA_NOT_READY` event is sent.

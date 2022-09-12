@@ -58,11 +58,6 @@ config DATA_UI_BUFFER_COUNT
 	range 1 100
 	default 3
 
-config DATA_ACCELEROMETER_BUFFER_COUNT
-	int "Number of accelerometer data ringbuffer entries"
-	range 1 100
-	default 3
-
 config DATA_IMPACT_BUFFER_COUNT
 	int "Number of impact data ringbuffer entries"
 	range 1 100
@@ -80,9 +75,6 @@ config DATA_GNSS_BUFFER_STORE
 config DATA_SENSOR_BUFFER_STORE
 	bool "Store environmental sensor data received from the sensor module"
 	default y
-
-config DATA_ACCELEROMETER_BUFFER_STORE
-	bool "Store accelerometer data received from the sensor module"
 
 config DATA_DYNAMIC_MODEM_BUFFER_STORE
 	bool "Store dynamic modem data received from the modem module"
@@ -136,11 +128,23 @@ config DATA_MOVEMENT_TIMEOUT_SECONDS
 	  movement. Used as a fail-safe to ensure updates even if the device is not moving for
 	  longer durations.
 
-config DATA_ACCELEROMETER_THRESHOLD
-	int "Default accelerometer threshold in m/s²"
+config DATA_ACCELEROMETER_ACT_THRESHOLD
+	int "Default accelerometer activity threshold in m/s²"
 	default 10
 	help
 	  Minimum absolute value in m/s² that is considered movement in passive mode.
+
+config DATA_ACCELEROMETER_INACT_THRESHOLD
+	int "Default accelerometer inactivity threshold in m/s²"
+	default 5
+	help
+	  Maximum absolute value in m/s² that is considered stillness in passive mode.
+
+config DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS
+	int "Default accelerometer inactivity timeout in seconds"
+	default 60
+	help
+	  Minimum time for lack of movement to be considered stillness in passive mode.
 
 config DATA_GNSS_TIMEOUT_SECONDS
 	int "Default GNSS timeout"

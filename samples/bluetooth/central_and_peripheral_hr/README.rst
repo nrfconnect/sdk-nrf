@@ -12,24 +12,14 @@ It also demonstrates how to use the :ref:`lib_hrs_client_readme` library.
 It uses the HRS Client to retrieve heart rate measurement data from a remote device that provides a Heart Rate service.
 It relays this data to another remote device that provides a Heart Rate Service client implementation.
 
-Overview
-********
-
-The sample demonstrates both Bluetooth® LE roles:
-  * Central role - scans for a remote device providing Heart Rate Service.
-  * Peripheral role - advertises and exposes a Heart Rate Service.
-
-When a device is connected as central, the sample starts the service discovery procedure to search for the Heart Rate Service.
-If this succeeds, the sample reads the Body Sensor Location characteristic and subscribes to the Heart Rate Measurement characteristic to receive notifications.
-When connected also as peripheral to the device acting as a Heart Rate Service client, the sample starts working as relay.
-It collects data from a remote device with Heart Rate Service that is sending notifications and sends this data to another remote device providing a Heart Rate Service client.
-
 Requirements
 ************
 
 The sample supports the following development kits:
 
 .. table-from-sample-yaml::
+
+.. include:: /includes/tfm.txt
 
 To test just the Bluetooth® LE Central Role operation, you need one of the following setups:
 
@@ -45,6 +35,19 @@ To test the Relay mode operation, you need one of the following setups:
 You can also mix devices when testing this sample.
 For a simple echo test, you only need one additional device.
 Alternatively, you can use a smartphone providing the HRS functionality and a development kit running the :ref:`zephyr:bluetooth_central_hr` sample.
+
+Overview
+********
+
+The sample demonstrates the following Bluetooth® LE roles:
+
+  * Central role - Scans for a remote device providing Heart Rate Service.
+  * Peripheral role - Advertises and exposes a Heart Rate Service.
+
+When a device is connected as central, the sample starts the service discovery procedure to search for the Heart Rate Service.
+If this succeeds, the sample reads the Body Sensor Location characteristic and subscribes to the Heart Rate Measurement characteristic to receive notifications.
+When connected also as peripheral to the device acting as a Heart Rate Service client, the sample starts working as relay.
+It collects data from a remote device with Heart Rate Service that is sending notifications and sends this data to another remote device providing a Heart Rate Service client.
 
 User interface
 **************
@@ -62,7 +65,7 @@ Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/central_and_peripheral_hr`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 
 .. _central_and_peripheral_hrs_testing:
@@ -168,3 +171,7 @@ In addition, it uses the following Zephyr libraries:
   * ``include/bluetooth/uuid.h``
   * ``include/bluetooth/services/hrs.h``
   * ``include/bluetooth/services/bas.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

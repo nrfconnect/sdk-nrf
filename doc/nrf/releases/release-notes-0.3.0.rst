@@ -241,7 +241,7 @@ Bootloader
 ----------
 
 * Building and programming the immutable bootloader (see :ref:`ug_bootloader`) is not supported in SEGGER Embedded Studio.
-* The immutable bootlader can only be used with the following boards:
+* The immutable bootloader can only be used with the following boards:
 
   * nrf52840_pca10056
   * nrf9160_pca10090

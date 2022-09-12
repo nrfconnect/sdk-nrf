@@ -98,14 +98,10 @@ For additional documentation on the various FOTA implementations, refer to the r
 
 Full modem FOTA updates are only supported by nRF Cloud.
 This application implements full modem FOTA only for the nRF9160 development kit version 1.0.1 and higher.
-To enable full modem FOTA, add the following parameter to your build command:
-
-``-DOVERLAY_CONFIG=overlay-full_modem_fota.conf``
+To enable full modem FOTA, add the ``-DOVERLAY_CONFIG=overlay-full_modem_fota.conf`` parameter to your build command.
 
 Also, specify your development kit version by appending it to the board name.
-For example, if your development kit version is 1.0.1, use the following board name in your build command:
-
-``nrf9160dk_nrf9160_ns@1_0_1``
+For example, if your development kit version is 1.0.1, use the board name ``nrf9160dk_nrf9160_ns@1_0_1`` in your build command.
 
 Connection awareness
 ====================
@@ -181,10 +177,13 @@ Configurations for Azure IoT Hub library
 
 To enable communication with Azure IoT Hub, set the following options in the :file:`overlay-azure.conf` file:
 
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME`
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE`
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_SEC_TAG`
 * :kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG`
+
+If not using the default DPS (Device Provisioning Service) host, ensure that the hostname option is correctly set using the following Kconfig option:
+
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME`
 
 Configurations for LwM2M integration layer
 ------------------------------------------

@@ -21,6 +21,19 @@
 #include <zephyr/logging/log.h>
 #include <net/nrf_cloud.h>
 
+#if defined(CONFIG_NRF_MODEM_LIB)
+NRF_MODEM_LIB_ON_INIT(nrf_cloud_fota_common_init_hook,
+		      on_modem_lib_init, NULL);
+
+/* Initialized to value different than success (0) */
+static int modem_lib_init_result = -1;
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	modem_lib_init_result = ret;
+}
+#endif
+
 LOG_MODULE_REGISTER(nrf_cloud_fota_common, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
 #if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
@@ -162,8 +175,6 @@ static enum nrf_cloud_fota_validate_status app_fota_validate_get(void)
 static enum nrf_cloud_fota_validate_status modem_delta_fota_validate_get(void)
 {
 #if defined(CONFIG_NRF_MODEM_LIB)
-	int modem_lib_init_result = nrf_modem_lib_get_init_ret();
-
 	switch (modem_lib_init_result) {
 	case MODEM_DFU_RESULT_OK:
 		LOG_INF("Modem FOTA update confirmed");

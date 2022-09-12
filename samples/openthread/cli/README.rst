@@ -88,7 +88,7 @@ The following configuration files are available:
 * :file:`overlay-logging.conf` - Sets more detailed logging.
 * :file:`overlay-rtt.conf` - Redirects logs to RTT.
   For more information about RTT please refer to :ref:`RTT logging <ug_logging>`.
-* :file:`overlay-debug.conf` - Enables debbuging the Thread sample with GDB thread awareness.
+* :file:`overlay-debug.conf` - Enables debugging the Thread sample with GDB thread awareness.
 * :file:`overlay-ci.conf` - Disables boot banner and shell prompt.
 * :file:`overlay-multiprotocol.conf` - Enables Bluetooth LE support in this sample.
 
@@ -539,3 +539,7 @@ The following dependencies are added by the optional multiprotocol Bluetooth® L
   * ``include/bluetooth/gatt.h``
   * ``include/bluetooth/hci.h``
   * ``include/bluetooth/uuid.h``
+
+In addition, it uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

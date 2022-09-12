@@ -45,7 +45,7 @@ If you discover any bugs in the :file:`main.c`, :file:`slm_at_host.h`, or :file:
 Error handling
 **************
 
-The serial LTE modem application returns error codes that are defined in :file:`zephyr/lib/libc/minimal/include/errno.h`.
+The Serial LTE modem application returns error codes that are defined in :file:`zephyr/lib/libc/minimal/include/errno.h`.
 See the comments in that file for information about a specific error.
 
 If an error occurs during TCP/IP processing, the socket is usually closed.

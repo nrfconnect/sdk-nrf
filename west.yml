@@ -37,7 +37,7 @@ manifest:
   defaults:
     remote: ncs
 
-  group-filter: [-homekit, -nrf-802154, -find-my, -nrf5340_audio]
+  group-filter: [-homekit, -nrf-802154, -find-my]
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -50,7 +50,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: b341c1ffbee9e1694f07a62f55b76b3f4947f603
+      revision: v3.1.99-ncs1-rc2
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -100,31 +100,31 @@ manifest:
     # changes.
     - name: sdk-hostap
       path: modules/lib/hostap
-      revision: 40e297d14ed7a1b8292819f6e60caf4e4fc9eda3
+      revision: 47399f055431513b5dfcd9d1fd1ec5dc5c96a252
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 74b34fe10bde956ddecd84104536dcb78a612e5f
+      revision: v1.9.99-ncs2-rc2
       path: bootloader/mcuboot
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: sdk-mbedtls
-      revision: 30c4a6c658799086cd19db4a6c2fa6c7ef026dbb
+      revision: v3.1.0-ncs1-rc2
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 45f861abcfc2e2299860e56014cb98ccf43acd54
+      revision: 11763cfb22b596e2f40377a63abdf98e142cd333
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 48b6f0742160abf679ce27dc28ba1b6cdd4b8c96
+      revision: v1.6.0-ncs1-rc2
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
-      revision: v1.7.2-ncs1
+      revision: v1.7.2-ncs2-rc2
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: b4344f5f229640000fa0c4e957f213087d50082f
+      revision: v2.1.0-rc2
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -137,7 +137,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 9b267b837af92f018d61b2689dec174b17eb975c
+      revision: v2.1.0-rc2
       groups:
       - nrf-802154
     - name: cjson
@@ -146,19 +146,14 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: 4296c2ad29120d3f7897e996623857d89554e2ff
+      revision: v2.1.0-rc2
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 60e5499a00d8699c7604940e2be2cd6ec4466725
+      revision: v2.1.0-rc2
       groups:
       - find-my
-    - name: sdk-lc3
-      revision: c47d9ee21c9cd8626a903c2e2f0c80c0920a1eb8
-      path: modules/lib/lc3
-      groups:
-      - nrf5340_audio
     - name: azure-sdk-for-c
       repo-path: azure-sdk-for-c
       path: modules/lib/azure-sdk-for-c
@@ -171,14 +166,12 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.33.0
+      revision: 0.33.2
       remote: memfault
     - name: cirrus
       repo-path: sdk-mcu-drivers
       path: modules/hal/cirrus-logic
       revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
-      groups:
-      - nrf5340_audio
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread

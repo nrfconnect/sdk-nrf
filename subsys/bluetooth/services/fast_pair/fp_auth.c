@@ -90,6 +90,8 @@ enum bt_security_err auth_pairing_accept(struct bt_conn *conn,
 		return BT_SECURITY_ERR_AUTH_REQUIREMENT;
 	}
 
+	fp_keys_bt_auth_progress(conn, false);
+
 	return BT_SECURITY_ERR_SUCCESS;
 }
 
@@ -169,6 +171,7 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 	}
 
 	LOG_WRN("Pairing failed");
+	fp_keys_drop_key(conn);
 	update_conn_handling(conn, false);
 }
 
@@ -206,12 +209,6 @@ int fp_auth_start(struct bt_conn *conn, bool send_pairing_req)
 	if (is_conn_handled(conn)) {
 		LOG_ERR("Auth started twice for connection %p", (void *)conn);
 		return -EALREADY;
-	}
-
-	/* Peer is already bonded. Allow to write the account key. */
-	if (bt_conn_get_security(conn) >= BT_SECURITY_L4) {
-		fp_keys_bt_auth_progress(conn, true);
-		return 0;
 	}
 
 	err = bt_conn_auth_cb_overlay(conn, &conn_auth_callbacks);

@@ -345,7 +345,7 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 		LOG_DBG("LE audio evt streaming");
 
 		if (strm_state == STATE_STREAMING) {
-			LOG_WRN("Got streaming event in streaming state");
+			LOG_DBG("Got streaming event in streaming state");
 			break;
 		}
 
@@ -360,7 +360,7 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 		LOG_DBG("LE audio evt not_streaming");
 
 		if (strm_state == STATE_PAUSED) {
-			LOG_WRN("Got not_streaming event in paused state");
+			LOG_DBG("Got not_streaming event in paused state");
 			break;
 		}
 

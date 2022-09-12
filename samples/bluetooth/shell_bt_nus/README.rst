@@ -13,7 +13,7 @@ Overview
 ********
 
 When the connection is established, you can connect to the sample through the :ref:`nus_service_readme` by using a host application.
-You can then send shell commands, that are executed on the device that runs the sample, and see the logs.
+You can then send shell commands that are executed on the device running the sample, and see the logs.
 See :ref:`shell_bt_nus_host_tools` for more information about the host tools available, in |NCS|, for communicating with the sample.
 
 Requirements
@@ -23,6 +23,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 You also need an additional nRF52 development kit, like the PCA10040 for connecting using the :file:`bt_nus_shell.py` script.
 Alternatively, you can use :ref:`ble_console_readme` for connecting, using Linux only.
 
@@ -31,7 +33,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/shell_bt_nus`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 *******
@@ -93,3 +95,7 @@ In addition, it uses the following Zephyr libraries:
   * ``include/bluetooth/gatt.h``
   * ``samples/bluetooth/gatt/bas.h``
 * :ref:`zephyr:logging_api`
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

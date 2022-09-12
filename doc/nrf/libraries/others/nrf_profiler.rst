@@ -193,7 +193,7 @@ In this diagram:
 
 The GUI also supports the following actions:
 
-* Scrolling on the diagam using the mouse wheel can zoom the diagram in or out.
+* Scrolling on the diagram using the mouse wheel zooms it in or out.
 
   * When plotting is paused, scrolling zooms to the cursor location.
   * When plotting in running, scrolling zooms to the right edge of the plot.

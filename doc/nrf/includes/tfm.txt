@@ -1,4 +1,2 @@
 When built for an ``_ns`` build target, the sample is configured to compile and run as a non-secure application.
 Therefore, it automatically includes :ref:`Trusted Firmware-M <ug_tfm>` that prepares the required peripherals and secure services to be available for the application.
-
-You can also configure it to use the :ref:`secure_partition_manager`.

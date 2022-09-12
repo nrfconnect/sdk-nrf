@@ -101,7 +101,7 @@ config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_INSTANCE_COUNT
 	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
 
 config LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER
-	bool "Use a listener to populate signal measurement objects."
+	bool "Use a listener to populate signal measurement objects"
 	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
 	default y
 
@@ -110,7 +110,7 @@ config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
 	select EXPERIMENTAL
 
 config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS
-	bool "Use events to send lwm2m-messages to lwm2m-server to request assistance."
+	bool "Use events to send lwm2m-messages to lwm2m-server to request assistance"
 	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
 
 if LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT

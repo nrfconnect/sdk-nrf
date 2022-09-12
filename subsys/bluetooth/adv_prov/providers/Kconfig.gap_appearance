@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_ADV_PROV_GAP_APPEARANCE
+	bool "GAP appearance"
+	help
+	  Adds GAP appearance to advertising data if used Bluetooth local
+	  identity has no bonds.

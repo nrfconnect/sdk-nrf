@@ -26,7 +26,7 @@ config NRF_CLOUD_PGPS_REQUEST_UPON_INIT
 	  or if the replacement threshold is reached.
 
 config NRF_CLOUD_PGPS_PREDICTION_PERIOD
-	int "Desired time in minutes between predictions."
+	int "Desired time in minutes between predictions"
 	range 60 480
 	default 240
 	help
@@ -36,7 +36,7 @@ config NRF_CLOUD_PGPS_PREDICTION_PERIOD
 	  space in flash.
 
 config NRF_CLOUD_PGPS_NUM_PREDICTIONS
-	int "Desired number of predictions."
+	int "Desired number of predictions"
 	range 2 84
 	default 42
 	help
@@ -46,7 +46,7 @@ config NRF_CLOUD_PGPS_NUM_PREDICTIONS
 	  are not allowed.
 
 config NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD
-	int "Number of predictions remaining before fetching more."
+	int "Number of predictions remaining before fetching more"
 	range 0 82
 	default 0
 	help

@@ -138,10 +138,24 @@ static int config_update_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_
 	}
 
 	err = lwm2m_engine_get_float(LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0,
-						ACCELEROMETER_THRESHOLD_RID),
-				     &cfg.accelerometer_threshold);
+				     ACCELEROMETER_ACT_THRESHOLD_RID),
+				     &cfg.accelerometer_activity_threshold);
 	if (err) {
-		LOG_ERR("Failed getting Accelerometer threshold resource value.");
+		LOG_ERR("Failed getting Accelerometer activity threshold resource value.");
+	}
+
+	err = lwm2m_engine_get_float(LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0,
+				     ACCELEROMETER_INACT_THRESHOLD_RID),
+				     &cfg.accelerometer_inactivity_threshold);
+	if (err) {
+		LOG_ERR("Failed getting Accelerometer inactivity threshold resource value.");
+	}
+
+	err = lwm2m_engine_get_float(LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0,
+				     ACCELEROMETER_INACT_TIMEOUT_RID),
+				     &cfg.accelerometer_inactivity_timeout);
+	if (err) {
+		LOG_ERR("Failed getting Accelerometer inactivity timeout resource value.");
 	}
 
 	/* If the GNSS and neighbor cell entry in the No data structure is set, its disabled in the
@@ -372,8 +386,22 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 	}
 
 	err = lwm2m_engine_set_float(LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0,
-						ACCELEROMETER_THRESHOLD_RID),
-				     &cfg->accelerometer_threshold);
+						ACCELEROMETER_ACT_THRESHOLD_RID),
+				     &cfg->accelerometer_activity_threshold);
+	if (err) {
+		return err;
+	}
+
+	err = lwm2m_engine_set_float(LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0,
+						ACCELEROMETER_INACT_THRESHOLD_RID),
+				     &cfg->accelerometer_inactivity_threshold);
+	if (err) {
+		return err;
+	}
+
+	err = lwm2m_engine_set_float(LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0,
+						ACCELEROMETER_INACT_TIMEOUT_RID),
+				     &cfg->accelerometer_inactivity_timeout);
 	if (err) {
 		return err;
 	}
@@ -431,9 +459,26 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 		return err;
 	}
 
-	err = lwm2m_engine_register_post_write_callback(LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0,
-								   ACCELEROMETER_THRESHOLD_RID),
-							config_update_cb);
+	err = lwm2m_engine_register_post_write_callback(
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0,
+			   ACCELEROMETER_ACT_THRESHOLD_RID),
+		config_update_cb);
+	if (err) {
+		return err;
+	}
+
+	err = lwm2m_engine_register_post_write_callback(
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0,
+			   ACCELEROMETER_INACT_THRESHOLD_RID),
+		config_update_cb);
+	if (err) {
+		return err;
+	}
+
+	err = lwm2m_engine_register_post_write_callback(
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0,
+			   ACCELEROMETER_INACT_TIMEOUT_RID),
+		config_update_cb);
 	if (err) {
 		return err;
 	}
@@ -715,11 +760,9 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			    struct cloud_data_modem_static *modem_stat_buf,
 			    struct cloud_data_modem_dynamic *modem_dyn_buf,
 			    struct cloud_data_ui *ui_buf,
-			    struct cloud_data_accelerometer *accel_buf,
 			    struct cloud_data_impact *impact_buf,
 			    struct cloud_data_battery *bat_buf)
 {
-	ARG_UNUSED(accel_buf);
 	ARG_UNUSED(ui_buf);
 
 	int err;
@@ -1168,7 +1211,6 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  struct cloud_data_modem_dynamic *modem_dyn_buf,
 				  struct cloud_data_ui *ui_buf,
 				  struct cloud_data_impact *impact_buf,
-				  struct cloud_data_accelerometer *accel_buf,
 				  struct cloud_data_battery *bat_buf,
 				  size_t gnss_buf_count,
 				  size_t sensor_buf_count,
@@ -1176,7 +1218,6 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  size_t modem_dyn_buf_count,
 				  size_t ui_buf_count,
 				  size_t impact_buf_count,
-				  size_t accel_buf_count,
 				  size_t bat_buf_count)
 {
 	return -ENOTSUP;

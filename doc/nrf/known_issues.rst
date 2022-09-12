@@ -567,7 +567,7 @@ KRKNWK-12115: Simultaneous commissioning of many devices can cause the Coordinat
         #define ZB_CONFIG_SCHEDULER_Q_SIZE 56
         */
 
-  #. Replace the code you've just located with the following code:
+  #. Replace the code you have just located with the following code:
 
      .. code-block:: c
 
@@ -604,7 +604,7 @@ KRKNWK-12522: Incorrect Read Attributes Response on reading multiple attributes 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0
 
 KRKNWK-12017: Zigbee End Device does not recover from broken rejoin procedure
-  If the Device Announcement packet is not acknowledged by the End Device's parent, joiner logic is stopped and device doesn't recover.
+  If the Device Announcement packet is not acknowledged by the End Device's parent, joiner logic is stopped and the device does not recover.
 
   **Workaround:** Complete the following steps to detect when the rejoin procedure breaks and reset the device:
 
@@ -1587,7 +1587,7 @@ Offset not retained with an MCUboot target
 .. rst-class:: v1-1-0
 
 Download stopped on socket connection timeout
-  In the :ref:`aws_fota_sample` and :ref:`http_application_update_sample` samples, the download is stopped if the socket connection times out before the modem can delete the modem firmware.
+  In the nRF9160: AWS FOTA and :ref:`http_application_update_sample` samples, the download is stopped if the socket connection times out before the modem can delete the modem firmware.
   A fix for this issue is available in commit `38625ba7 <https://github.com/nrfconnect/sdk-nrf/commit/38625ba775adda3cdc7dbf516eeb3943c7403227>`_.
 
   **Workaround:** Call :cpp:func:`fota_download_start` again with the same arguments.
@@ -1624,6 +1624,8 @@ Unstable NFC tag samples
 Secure Partition Manager (SPM)
 ==============================
 
+The Secure Partition Manager (SPM) is deprecated as of |NCS| v2.1.0, replaced by the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
+
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSIDB-114: Default logging causes crash
@@ -1650,7 +1652,7 @@ MCUboot
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
 NCSDK-15494: Unable to build with RSA and ECIES-X25519 image encryptions
-  Building MCUboot with either RSA and ECIES-X25519 image encryptions feature enabled is not possible.
+  Building MCUboot with either RSA or ECIES-X25519 image encryptions feature enabled is not possible.
 
   **Workaround:** To fix the issue, update the ``sdk-mcuboot`` repository by cherry-picking the upstream commits with the following hashes: ``7315e424b91503819307d33ebbc3140103470dd8`` and ``0f7db390d3537bff0feee20f900f9720f90f33f9``.
 

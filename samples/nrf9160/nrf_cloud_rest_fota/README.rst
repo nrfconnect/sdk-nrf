@@ -124,3 +124,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`dk_buttons_and_leds_readme`
 * :ref:`modem_info_readme`
 * :ref:`lib_at_host`
+
+In addition, it uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

@@ -270,7 +270,7 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init_zep(struct wifi_nrf_ctx_zep *rpu_ctx
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_fmac_init_dev_params params;
 	int ret = -1;
-	char *rf_params = DEF_RF_PARAMS;
+	char *rf_params = NRF_WIFI_DEF_RF_PARAMS;
 	struct host_rpu_umac_info *umac_info;
 
 	memset(&params, 0, sizeof(params));
@@ -292,7 +292,7 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init_zep(struct wifi_nrf_ctx_zep *rpu_ctx
 		params.rf_params_valid = false;
 	}
 
-	params.phy_calib = DEF_PHY_CALIB;
+	params.phy_calib = NRF_WIFI_DEF_PHY_CALIB;
 
 	umac_info = wifi_nrf_fmac_umac_info(rpu_ctx_zep->rpu_ctx);
 
@@ -426,12 +426,11 @@ err:
 	return -1;
 }
 
-static const struct wifi_nrf_dev_ops dev_ops = {
-	.if_api.iface_api.init = wifi_nrf_if_init,
-	.if_api.get_capabilities = wifi_nrf_if_caps_get,
-	.if_api.send = wifi_nrf_if_send,
-
-	.off_api.disp_scan = wifi_nrf_disp_scan_zep,
+static const struct net_wifi_mgmt_offload wifi_offload_ops = {
+	.wifi_iface.iface_api.init = wifi_nrf_if_init,
+	.wifi_iface.get_capabilities = wifi_nrf_if_caps_get,
+	.wifi_iface.send = wifi_nrf_if_send,
+	.scan = wifi_nrf_disp_scan_zep,
 };
 
 
@@ -462,5 +461,5 @@ ETH_NET_DEVICE_INIT(wlan0, /* name - token */
 		    NULL, /* cfg */
 #endif /* !CONFIG_WPA_SUPP */
 		    CONFIG_WIFI_INIT_PRIORITY, /* prio */
-		    &dev_ops, /* api */
+		    &wifi_offload_ops, /* api */
 		    1500); /*mtu */

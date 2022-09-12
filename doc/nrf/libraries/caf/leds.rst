@@ -18,7 +18,7 @@ Use the GPIO-based implementation if your board does not support PWM or if you w
 Configuration
 *************
 
-To use the module, you must conplete the following requirements:
+To use the module, you must fulfill the following requirements:
 
 1. Enable the following Kconfig options:
 

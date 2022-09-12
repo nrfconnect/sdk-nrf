@@ -1,0 +1,34 @@
+.. ### This page lists links used in the nrfxlib docs.
+       Links are grouped by source URL if three or more have the same source URL.
+       Otherwise, they are placed in "Source: other".
+       Links not separated by blank line are related to one another.
+
+.. ### Source: github.com
+
+.. _`sdk-nrf`: https://github.com/nrfconnect/sdk-nrf
+
+.. ### Source: infocenter.nordicsemi.com
+
+.. _`Infocenter`: https://infocenter.nordicsemi.com/index.jsp
+
+.. ### Source: www.nordicsemi.com
+
+.. _`Nordic Semiconductor`: https://www.nordicsemi.com/
+
+.. ### Source:  https://developer.nordicsemi.com/
+
+.. _`Immutable first-stage bootloader`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader.html#first-stage-immutable-bootloader
+.. _`Upgradable second-stage bootloader`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader.html#second-stage-upgradable-bootloader
+.. _`Secure bootloader chain`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader.html
+.. _`Adding a bootloader chain`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader_adding.html
+.. _`Testing the bootloader chain`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader_testing.html
+.. _`Using external memory partitions`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader_external_flash.html
+.. _`Customizing the bootloader`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader_config.html
+.. _`Firmware updates`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_fw_update.html
+.. _`Multi-image builds`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_multi_image.html
+
+.. ### Source: other
+
+.. _`Zephyr`: https://www.zephyrproject.org
+
+.. _`Appropriate Language Mapping Table`: https://www.bluetooth.com/language-mapping/Appropriate-Language-Mapping-Table

@@ -9,15 +9,6 @@ Bluetooth: EnOcean
 
 The Bluetooth® EnOcean sample demonstrates the basic usage of the :ref:`bt_enocean_readme` library.
 
-Overview
-********
-
-The EnOcean sample sets up a basic Bluetooth observer for both EnOcean switches and sensors.
-
-The observer device forwards incoming advertisements to the EnOcean library for processing.
-The application receives events from the EnOcean library through callbacks, and prints the outcome to console.
-The LEDs of the kit also respond to button presses from an EnOcean switch.
-
 Requirements
 ************
 
@@ -29,6 +20,15 @@ The sample also requires at least one :ref:`supported EnOcean device <bt_enocean
 
 .. note::
     The sample supports up to four devices at a time that work with one kit.
+
+Overview
+********
+
+The EnOcean sample sets up a basic Bluetooth observer for both EnOcean switches and sensors.
+
+The observer device forwards incoming advertisements to the EnOcean library for processing.
+The application receives events from the EnOcean library through callbacks, and prints the outcome to the console.
+The LEDs of the kit also respond to button presses from an EnOcean switch.
 
 User interface
 **************
@@ -58,7 +58,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+|test_sample|
 
 1. :ref:`Commission one or more EnOcean devices <bt_enocean_commissioning>`.
    The LEDs will blink when each of the devices has been successfully commissioned.
@@ -67,10 +67,10 @@ After programming the sample to your development kit, test it by performing the 
 #. |connect_terminal_specific|
 #. Depending on the EnOcean devices you commissioned:
 
-    * If you commissioned a light switch, press any of its buttons or toggle the rocker to control the LEDs.
-      The LEDs light on and off as detailed in `User interface`_, and the received values are printed to the console.
-    * Sensor devices will automatically start reporting their sensor values to the application.
-      The values are printed to the console.
+   * If you commissioned a light switch, press any of its buttons or toggle the rocker to control the LEDs.
+     The LEDs turn on and off as detailed in `User interface`_, and the received values are printed to the console.
+   * Sensor devices will automatically start reporting their sensor values to the application.
+     The values are printed to the console.
 
 The following code sample shows the light switch output when Button 4 on the EnOcean device was pressed and released:
 

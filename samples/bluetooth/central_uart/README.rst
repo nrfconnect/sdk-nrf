@@ -10,6 +10,17 @@ Bluetooth: Central UART
 The Central UART sample demonstrates how to use the :ref:`nus_client_readme`.
 It uses the NUS Client to send data back and forth between a UART connection and a Bluetooth® LE connection, emulating a serial port over Bluetooth LE.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-sample-yaml::
+
+.. include:: /includes/tfm.txt
+
+The sample also requires another development kit running a compatible application (see :ref:`peripheral_uart`).
+
 Overview
 ********
 
@@ -34,20 +45,12 @@ FEM support
 
 .. include:: /includes/sample_fem_support.txt
 
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-sample-yaml::
-
-The sample also requires another development kit running a compatible application (see :ref:`peripheral_uart`).
 
 Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/central_uart`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 
 .. _central_uart_testing:
@@ -55,9 +58,9 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+|test_sample|
 
-1. Connect the kit to the computer using a USB cable. The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+1. |connect_kit|
 #. |connect_terminal_specific|
 #. Optionally, connect the RTT console to display debug messages. See :ref:`central_uart_debug`.
 #. Reset the kit.
@@ -99,3 +102,7 @@ In addition, it uses the following Zephyr libraries:
   * ``include/bluetooth/gatt.h``
   * ``include/bluetooth/hci.h``
   * ``include/bluetooth/uuid.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

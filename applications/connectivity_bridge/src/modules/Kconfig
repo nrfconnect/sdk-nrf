@@ -73,7 +73,7 @@ endif
 
 config BRIDGE_BUF_SIZE
 	int "Transport interface buffer size"
-	default 2048
+	default 4096
 	help
 	  Size of transmit/receive buffer for transfer between interfaces.
 

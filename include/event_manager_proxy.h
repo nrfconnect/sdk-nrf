@@ -73,7 +73,7 @@ int event_manager_proxy_add_remote(const struct device *instance);
  *
  * @retval 0 On success.
  * @retval -EACCES Function called after @ref event_manager_proxy_start.
- * @retval -EPIPE  The remote core did not bonded in during timeout period. No communication.
+ * @retval -EPIPE  The remote core did not bond in during timeout period. No communication.
  * @retval -ETIME  Timeout while waiting for the response from the other core.
  * @retval other errno code.
  */
@@ -91,7 +91,7 @@ int event_manager_proxy_subscribe(
  * cannot be used anymore.
  *
  * @retval 0 On success.
- * @retval -EPIPE  The remote core did not bonded in during timeout period. No communication.
+ * @retval -EPIPE  The remote core did not bond in during timeout period. No communication.
  * @retval other errno code.
  */
 int event_manager_proxy_start(void);
@@ -99,7 +99,7 @@ int event_manager_proxy_start(void);
 /**
  * @brief Wait for all the remote cores to report their readiness.
  *
- * This function stops the current thread if there is any remote that did not finished its
+ * This function stops the current thread if there is any remote that did not finish its
  * initialization.
  *
  * @note

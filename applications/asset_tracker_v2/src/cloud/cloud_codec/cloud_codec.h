@@ -105,19 +105,14 @@ struct cloud_data_cfg {
 	 *  in Passive mode.
 	 */
 	int movement_timeout;
-	/** Accelerometer trigger threshold value in m/s2. */
-	double accelerometer_threshold;
+	/** Accelerometer activity-trigger threshold value in m/s2 */
+	double accelerometer_activity_threshold;
+	/** Accelerometer inactivity-trigger threshold value in m/s2 */
+	double accelerometer_inactivity_threshold;
+	/** Accelerometer inactivity-trigger timeout value in seconds */
+	double accelerometer_inactivity_timeout;
 	/** Variable used to govern what data types are requested by the application. */
 	struct cloud_data_no_data no_data;
-};
-
-struct cloud_data_accelerometer {
-	/** Accelerometer readings timestamp. UNIX milliseconds. */
-	int64_t ts;
-	/** Accelerometer readings. */
-	double values[3];
-	/** Flag signifying that the data entry is to be published. */
-	bool queued : 1;
 };
 
 /** Structure containing the magnitude of an impact event detected by the high-G Accelerometer. */
@@ -376,7 +371,6 @@ int cloud_codec_encode_config(struct cloud_codec_data *output,
  * @param[in] modem_stat_buf pointer to static modem data
  * @param[in] modem_dyn_buf pointer to dynamic modem data
  * @param[in] ui_buf pointer to button data
- * @param[in] accel_buf pointer to accelerometer data
  * @param[in] impact_buf pointer to impact data
  * @param[in] bat_buf pointer to battery data
  *
@@ -392,7 +386,6 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			    struct cloud_data_modem_static *modem_stat_buf,
 			    struct cloud_data_modem_dynamic *modem_dyn_buf,
 			    struct cloud_data_ui *ui_buf,
-			    struct cloud_data_accelerometer *accel_buf,
 			    struct cloud_data_impact *impact_buf,
 			    struct cloud_data_battery *bat_buf);
 
@@ -434,7 +427,6 @@ int cloud_codec_encode_impact_data(struct cloud_codec_data *output,
  * @param[in] modem_dyn_buf dynamic modem data buffer
  * @param[in] ui_buf button data buffer
  * @param[in] impact_buf impact data buffer
- * @param[in] accel_buf accelerometer data buffer
  * @param[in] bat_buf battery data buffer
  * @param[in] gnss_buf_count length of GNSS data buffer
  * @param[in] sensor_buf_count length of Sensor data buffer
@@ -442,7 +434,6 @@ int cloud_codec_encode_impact_data(struct cloud_codec_data *output,
  * @param[in] modem_dyn_buf_count length of dynamic modem data buffer
  * @param[in] ui_buf_count length of button data buffer
  * @param[in] impact_buf_count length of impact data buffer
- * @param[in] accel_buf_count length of accelerometer data buffer
  * @param[in] bat_buf_count length of battery data buffer
  *
  * @retval 0 on success
@@ -458,7 +449,6 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  struct cloud_data_modem_dynamic *modem_dyn_buf,
 				  struct cloud_data_ui *ui_buf,
 				  struct cloud_data_impact *impact_buf,
-				  struct cloud_data_accelerometer *accel_buf,
 				  struct cloud_data_battery *bat_buf,
 				  size_t gnss_buf_count,
 				  size_t sensor_buf_count,
@@ -466,7 +456,6 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  size_t modem_dyn_buf_count,
 				  size_t ui_buf_count,
 				  size_t impact_buf_count,
-				  size_t accel_buf_count,
 				  size_t bat_buf_count);
 
 void cloud_codec_populate_sensor_buffer(
@@ -479,12 +468,6 @@ void cloud_codec_populate_ui_buffer(struct cloud_data_ui *ui_buffer,
 				    struct cloud_data_ui *new_ui_data,
 				    int *head_ui_buf,
 				    size_t buffer_count);
-
-void cloud_codec_populate_accel_buffer(
-				struct cloud_data_accelerometer *accel_buf,
-				struct cloud_data_accelerometer *new_accel_data,
-				int *head_accel_buf,
-				size_t buffer_count);
 
 void cloud_codec_populate_impact_buffer(
 				struct cloud_data_impact *impact_buf,

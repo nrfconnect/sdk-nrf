@@ -431,7 +431,7 @@ extern const struct bt_mesh_sensor_type bt_mesh_sensor_magnetic_declination;
 /** Magnetic Flux Density - 2D
  *
  * @note The Magnetic Flux Density unit is measured in tesla in the
- *       specification. In the API, it is measured in microtesla to accomodate
+ *       specification. In the API, it is measured in microtesla to accommodate
  *       the 6 digit format of the sensor values.
  *
  *  Channels:
@@ -449,7 +449,7 @@ extern const struct bt_mesh_sensor_type bt_mesh_sensor_magnetic_flux_density_2d;
 /** Magnetic Flux Density - 3D
  *
  * @note The Magnetic Flux Density unit is measured in tesla in the
- *       specification. In the API, it is measured in microtesla to accomodate
+ *       specification. In the API, it is measured in microtesla to accommodate
  *       the 6 digit format of the sensor values.
  *
  *  Channels:

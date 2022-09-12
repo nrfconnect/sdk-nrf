@@ -33,12 +33,13 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
+* Added information about :ref:`gs_supported_OS` to the :ref:`gs_recommended_versions` page.
 * Added information about :ref:`app_build_output_files` on the :ref:`app_build_system` page.
 
 Board support
 -------------
 
-* TF-M is now enabled by default on Thingy:91
+* :ref:`TF-M <ug_tfm>` is now enabled by default on Thingy:91.
 
 Partition Manager
 -----------------
@@ -46,6 +47,8 @@ Partition Manager
 * Added :kconfig:option:`CONFIG_PM_PARTITION_REGION_LITTLEFS_EXTERNAL`, :kconfig:option:`CONFIG_PM_PARTITION_REGION_SETTINGS_STORAGE_EXTERNAL`, and :kconfig:option:`CONFIG_PM_PARTITION_REGION_NVS_STORAGE_EXTERNAL` to specify that the relevant partition must be located in external flash memory.
   You must add a ``chosen`` entry for ``nordic,pm-ext-flash`` in your devicetree to make this option available.
   See :file:`tests/subsys/partition_manager/region` for example configurations.
+* Added :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` to override the external driver check.
+  This is needed when using an external flash which is not using the :ref:`QSPI NOR <zephyr:dtbinding_nordic_qspi_nor>` driver from Zephyr.
 
 Protocols
 =========
@@ -73,6 +76,8 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
 Matter
 ------
 
+* Introduced support for Matter over Wi-Fi to several samples.
+* Updated :ref:`ug_matter` with new pages about Matter SDK as well as information about Matter over Wi-Fi.
 * Removed the low-power configuration build type from all Matter samples.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
@@ -80,7 +85,7 @@ See `Matter samples`_ for the list of changes for the Matter samples.
 Matter fork
 +++++++++++
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``41cb8220744f2587413d0723e24847f07d6ac59f``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``708685f4821df2aa0304f02db2773c429ad25eb8``.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
@@ -134,11 +139,22 @@ RF Front-End Modules
 * Added the :kconfig:option:`CONFIG_MPSL_FEM_ONLY` Kconfig option that allows the :ref:`nrfxlib:mpsl_fem` API to be used without other MPSL features.
   The :ref:`MPSL library <nrfxlib:mpsl>` is linked into the build without initialization.
   You cannot use other MPSL features when this option is enabled.
+* Added the possibility to add custom models which split the requested TX power between the power on SoC output and the FEM gain in a way desired by the user.
+
+Secure Partition Manager (SPM)
+==============================
+
+* The Secure Partition Manager (SPM), the Kconfig option :kconfig:option:`CONFIG_SPM`, is deprecated.
+  It is replaced by the Trusted Firmware-M (TF-M) as the supported trusted execution solution.
+  See :ref:`ug_tfm` for more information about the TF-M.
 
 Applications
 ============
 
 This section provides detailed lists of changes by :ref:`application <applications>`.
+
+* All applications running on non-secure boards are documented to use TF-M as the trusted execution solution by default.
+  SPM is deprecated.
 
 nRF9160: Asset Tracker v2
 -------------------------
@@ -146,6 +162,13 @@ nRF9160: Asset Tracker v2
   * Added:
 
     * :ref:`motion_impact_detection` using the ADXL372 accelerometer.
+    * Added the following Kconfig options to set the threshold and timeout values:
+
+      * :ref:`CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD>`
+      * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD>`
+      * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS <CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS>`
+    * Data sampling is now performed when the device detects both activity and inactivity in passive mode, notified by the :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` event of the :ref:`sensor module <asset_tracker_v2_sensor_module>`.
+    * ``CONFIG_MODEM_NEIGHBOR_SEARCH_TYPE`` option.
 
   * Removed:
 
@@ -153,16 +176,31 @@ nRF9160: Asset Tracker v2
     * ``CONFIG_APP_REQUEST_NEIGHBOR_CELLS_DATA`` option.
     * ``CONFIG_EXTERNAL_SENSORS_ACTIVITY_DETECTION_AUTO`` option.
     * ``CONFIG_MODEM_CONVERT_RSRP_AND_RSPQ_TO_DB`` option.
+    * ``CONFIG_DATA_ACCELEROMETER_THRESHOLD`` option.
+    * ``CONFIG_DATA_ACCELEROMETER_BUFFER_STORE`` option.
+    * ``CONFIG_DATA_ACCELEROMETER_BUFFER_COUNT`` option.
+    * ``SENSOR_EVT_MOVEMENT_DATA_READY`` event.
 
   * Updated:
 
     * The default value of the GNSS timeout in the application's :ref:`Real-time configurations <real_time_configs>` is now 30 seconds.
     * GNSS fixes are now published in PVT format instead of NMEA for nRF Cloud builds. To revert to NMEA, set the :ref:`CONFIG_GNSS_MODULE_NMEA <CONFIG_GNSS_MODULE_NMEA>` option.
     * The sensor module now forwards :c:enum:`SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED` and :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` events.
+    * The :ref:`Real-time configurations <real_time_configs>` can now configure the upper and lower thresholds for motion detection.
+      You can also configure the timeout after which the sensor reports inactivity.
+      The following Kconfig options set the threshold and timeout values:
+
+      * :ref:`CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD>`
+      * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD>`
+      * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS <CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS>`
+    * LwM2M schema has been updated.
+      To use the new parameters, upload the updated ``config_object_descript.xml`` to AVSystem.
     * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
     * Bootstrapping has been disabled by default to be able to connect to the default LwM2M service AVSystem's `Coiote Device Management`_ using free tier accounts.
     * Added support for full modem FOTA updates for nRF Cloud builds.
     * ``CONFIG_DATA_DEVICE_MODE`` option is now a choice that can be set to either ``CONFIG_DATA_DEVICE_MODE_ACTIVE`` or ``CONFIG_DATA_DEVICE_MODE_PASSIVE`` depending on the desired device mode.
+    * Restructured the documentation.
+    * The default sample timeout for sample requests that include neighbor cell searches is now 11 seconds.
 
   * Fixed:
 
@@ -255,12 +293,15 @@ Samples
 This section provides detailed lists of changes by :ref:`sample <sample>`, including protocol-related samples.
 For lists of protocol-specific changes, see `Protocols`_.
 
+* All samples running on non-secure boards are documented to use TF-M as the trusted execution solution, as SPM is deprecated.
+
 Bluetooth samples
 -----------------
 
 * Added:
 
   * :ref:`peripheral_mds` sample, that demonstrates how to send Memfault diagnostic data through Bluetooth.
+  * :ref:`power_profiling` sample, that uses the system off mode and can be used for power consumption measurement.
 
 * :ref:`ble_nrf_dm` sample:
 
@@ -338,6 +379,9 @@ nRF9160 samples
 ---------------
 
 * Added :ref:`modem_trace_backend_sample` sample, demonstrating how to add a custom modem trace backend. The custom backend prints the amount of trace data received in bytes, trace data throughput, and CPU load.
+* Removed the AWS FOTA sample.
+  The :ref:`aws_iot` sample must be used, which implements :ref:`lib_aws_fota` through :ref:`lib_aws_iot`.
+* :ref:`TF-M <ug_tfm>` is enabled by default for the applications and samples that support Thingy:91.
 * :ref:`lwm2m_client` sample:
 
   * Fixed:
@@ -391,7 +435,7 @@ nRF9160 samples
     * This sample now uses the :ref:`lib_modem_antenna` library to configure the GNSS antenna instead of configuring it directly.
     * Minor logging and function structure improvements
     * :ref:`lib_nrf_cloud` library is no longer de-initialized and re-initialized on disconnect and reconnect.
-    * The :ref:lib_nrf_cloud library function :c:func:nrf_cloud_gnss_msg_json_encode is used to send PVT location data instead of building an NMEA sentence.
+    * The :ref:`lib_nrf_cloud` library function :c:func:`nrf_cloud_gnss_msg_json_encode` is used to send PVT location data instead of building an NMEA sentence.
 
   * Added:
 
@@ -419,6 +463,7 @@ Matter samples
 
 * Removed the low-power configuration build type from all Matter samples.
 * Optimized the usage of the QSPI NOR flash sleep mode to reduce power consumption during the Matter commissioning.
+* Reduced the size of MCUBoot partition on ``nrf5340dk_nrf5340_cpuapp`` by 16kB.
 
 * :ref:`matter_light_switch_sample`:
 
@@ -479,10 +524,16 @@ Other samples
 -------------
 
 * :ref:`radio_test` sample:
-   * Fixed the way of setting gain for the nRF21540 Front-end Module with nRF5340.
+
+  * Fixed the way of setting gain for the nRF21540 Front-end Module with nRF5340.
 
 * :ref:`caf_sensor_manager_sample` sample:
-  * Added configuration with :ref:`sensor_stub`.
+
+  * Added :ref:`configuration<sensor_stub_config>` for the Sensor stub driver.
+
+* Added :ref:`identity_key_generate` sample to show generation of an identity key that is stored in the Key Management Unit (KMU).
+
+* Added :ref:`identity_key_usage` sample to show how to make use of a Key Management Unit (KMU) stored identity key.
 
 Devicetree configuration
 ========================
@@ -509,10 +560,8 @@ Binary libraries
 
 * :ref:`liblwm2m_carrier_readme` library:
 
-  * Updated to v0.30.1.
+  * Updated to v0.30.2.
     See the :ref:`liblwm2m_carrier_changelog` for detailed information.
-  * Projects that use the LwM2M carrier library cannot use TF-M for this release, since the LwM2M carrier library requires hard floating point.
-    For more information, see the :ref:`TF-M <ug_tfm>` documentation.
 
 Bluetooth libraries and services
 --------------------------------
@@ -549,16 +598,25 @@ Bluetooth libraries and services
       *  :ref:`bt_mesh_lightness_srv_readme`
       * Replay protection list (RPL)
 
+  * Updated:
+
+    * The ``bt_mesh_sensor_ch_str_real`` function is now replaced with the :c:func:`bt_mesh_sensor_ch_str` function, which was previously a macro.
 
 Bootloader libraries
 --------------------
 
-|no_changes_yet_note|
+* :ref:`lib_dfu_target` library:
+
+   * Moved the :c:func:`dfu_ctx_mcuboot_set_b1_file` function to :ref:`lib_fota_download` and renamed to :c:func:`fota_download_parse_dual_resource_locator`.
 
 Modem libraries
 ---------------
 
 * Updated:
+
+  * :ref:`lte_lc_readme` library:
+
+    * Fixed an issue that caused stack corruption in the :c:func:`lte_lc_nw_reg_status_get` function.
 
   * :ref:`at_monitor_readme` library:
 
@@ -632,6 +690,8 @@ Modem libraries
         * ``nrf_modem_lib_heap_diagnose``
         * ``nrf_modem_lib_shm_tx_diagnose``
 
+    * Deprecated the ``nrf_modem_lib_get_init_ret`` function.
+
   * :ref:`lib_location` library:
 
     * Changed timeout parameters' type from uint16_t to int32_t, unit from seconds to milliseconds, and value to disable them from 0 to SYS_FOREVER_MS.
@@ -675,17 +735,23 @@ Libraries for networking
       * :c:func:`nrf_cloud_fota_is_type_enabled` function that determines if the specified FOTA type is enabled by the configuration.
       * :c:func:`nrf_cloud_gnss_msg_json_encode` function that encodes GNSS data (PVT or NMEA) into an nRF Cloud device message.
       * :c:func:`nrf_cloud_fota_pending_job_type_get` function that retreives the FOTA type of a pending FOTA job.
+      * Added unit test for the :c:func:`nrf_cloud_init` function.
 
     * Updated:
 
       * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
       * Function :c:func:`nrf_cloud_fota_is_type_enabled` no longer depends on :kconfig:option:`CONFIG_NRF_CLOUD_FOTA`.
 
+  * :ref:`lib_location` library:
+
+    * Removed PoLTE support as the service is discontinued.
+
   * :ref:`lib_multicell_location` library:
 
     * Added timeout parameter.
     * Made a structure for input parameters for multicell_location_get() to make updates easier in the future.
     * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
+    * Removed PoLTE support as the service is discontinued.
 
   * :ref:`lib_rest_client` library:
 
@@ -695,7 +761,7 @@ Libraries for networking
 
   * :ref:`lib_nrf_cloud_rest` library:
 
-    * Updated the :c:func:`nrf_cloud_rest_send_location` function to accept a :c:struct `nrf_cloud_gnss_data` pointer instead of an NMEA sentence.
+    * Updated the :c:func:`nrf_cloud_rest_send_location` function to accept a :c:struct:`nrf_cloud_gnss_data` pointer instead of an NMEA sentence.
 
   * :ref:`lib_nrf_cloud_pgps` library:
 
@@ -710,6 +776,11 @@ Libraries for networking
     * The library has been reworked to use `Azure SDK for Embedded C`_.
     * The APIs for both IoT Hub and DPS interaction have changed and the applications and samples that use the library have been updated.
 
+  * :ref:`lib_download_client` library:
+
+    * Fixed handling of duplicated CoAP packets.
+    * Fixed handling of timeout errors when using CoAP.
+
 Libraries for NFC
 -----------------
 
@@ -721,6 +792,7 @@ Other libraries
 * Added:
 
   * :ref:`nrf_rpc_ipc_readme` library.
+  * :ref:`lib_identity_key` library.
 
 * :ref:`lib_flash_patch` library:
 
@@ -737,7 +809,7 @@ Other libraries
 
 * :ref:`emds_readme`
 
-  * Updated :c:func:`emds_entry_add` to no longer use heap, but instead require a pointer to the dynamic entry structure :c:struct `emds_dynamic_entry`.
+  * Updated :c:func:`emds_entry_add` to no longer use heap, but instead require a pointer to the dynamic entry structure :c:struct:`emds_dynamic_entry`.
     The dynamic entry structure should be allocated in advance.
 
 * :ref:`mod_memfault`:
@@ -754,9 +826,11 @@ Common Application Framework (CAF)
   * Integrated :ref:`bt_le_adv_prov_readme`.
     The subsystem is now used instead of the :file:`*.def` file to configure advertising data and scan response data.
   * Bluetooth device name is no longer automatically included in scan response data.
-    A dedicated data provider (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_DEVICE_NAME`) can be used to add the Bluetooth device name to the scan response data.
+    A dedicated data provider (:kconfig:option:`CONFIG_BT_ADV_PROV_DEVICE_NAME`) can be used to add the Bluetooth device name to the scan response data.
   * Added :c:struct:`ble_adv_data_update_event` that can be used to trigger update of advertising data and scan response data during undirected advertising.
     When the event is received, the module gets new data from providers and updates advertising payload.
+  * Added a wakeup call when connection is made in the grace period.
+    With this change, the call wakes up the whole system to avoid inconsistent power state between modules.
 
 * :ref:`caf_ble_state`:
 
@@ -811,45 +885,71 @@ Unity
 MCUboot
 =======
 
-The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``e86f575f68fdac2cab1898e0a893c8c6d8fd0fa1``, plus some |NCS| specific additions.
+The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``1d4404116a9a6b54d54ea9aa3dd2575286e666cd``, plus some |NCS| specific additions.
 
 The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/modules/mcuboot` folder.
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-* |no_changes_yet_note|
+* boot_serial:
+
+  * Refactored and optimized the code, mainly in what affects the progressive erase implementation.
+  * Fixed a compilation issue with the echo command code.
+  * Upgraded from cddl-gen v0.1.0 to zcbor v0.4.0.
+
+* imgtool: Added support for providing signature through a third party.
+
+* zephyr:
+
+  * Added initial support for leveraging the RAM-LOAD mode with the zephyr-rtos port.
+  * Added the MCUboot status callback support.
+    See :kconfig:option:`CONFIG_MCUBOOT_ACTION_HOOKS`.
+  * Edited includes to have the ``zephyr/`` prefix.
+  * Edited the DFU detection's GPIO-pin configuration to be done through DTS using the ``mcuboot-button0`` pin alias.
+  * Edited the LED usage to prefer DTS' ``mcuboot-led0`` alias over the ``bootloader-led0`` alias.
+  * Removed :c:func:`device_get_binding()` usage in favor of :c:func:`DEVICE_DT_GET()`.
 
 Zephyr
 ======
 
 .. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each NCS release.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``fb802fb6c0af80dbd383e744065bcf1745ecbc66``, plus some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``71ef669ea4a73495b255f27024bcd5d542bf038c``, plus some |NCS| specific additions.
 
 For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into nRF Connect SDK since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline fb802fb6c0 ^45ef0d2
+   git log --oneline 71ef669ea4 ^45ef0d2
 
 For the list of |NCS| specific commits, including commits cherry-picked from upstream, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^fb802fb6c0
+   git log --oneline manifest-rev ^71ef669ea4
 
-The current |NCS| main branch is based on revision ``fb802fb6c0`` of Zephyr.
+The current |NCS| main branch is based on revision ``71ef669ea4`` of Zephyr.
+
+
+Additions specific to |NCS|
+---------------------------
+
+Added Wi-Fi L2 layer, this is a fork of Zephyr's Wi-Fi L2 with the added support for WPA supplicant.
 
 zcbor
 =====
 
 The `zcbor`_ module has been updated from version 0.4.0 to 0.5.1.
-Release notes for 0.5.0 and 0.5.1 can be found in :file:`ncs/nrf/modules/lib/zcbor/RELEASE_NOTES.md`.
+Release notes for 0.5.0 and 0.5.1 can be found in :file:`ncs/modules/lib/zcbor/RELEASE_NOTES.md`.
 :ref:`lib_fmfu_fdev` code has been regenerated using zcbor 0.5.1.
 
 
 Trusted Firmware-M
 ==================
+
+* Added:
+
+  * Added support for an identity key that can be used as a PSA attestation key
 
 * Fixed:
 
@@ -865,32 +965,33 @@ Documentation
 
 * Added:
 
+  * Software maturity entries for security features: TF-M, PSA crypto, Immutable bootloader, HW unique key.
+  * Documentation for :ref:`ug_nrf70`.
   * Documentation for the :ref:`lib_flash_map_pm` library.
   * Documentation for the :ref:`lib_adp536x` library.
   * Documentation for the :ref:`lib_flash_patch` library.
   * :ref:`gs_debugging` section on the :ref:`gs_testing`.
     Also added links to this section in different areas of documentation.
   * :ref:`ug_thread_prebuilt_libs` as a separate page instead of being part of :ref:`ug_thread_configuring`.
-  * Added software maturity entries for security features: TF-M, PSA crypto, Immutable bootloader, HW unique key.
   * A section about NFC in the :ref:`app_memory` page.
   * A section about :ref:`modem_trace_backend_uart_custom_board` in the :ref:`nrf_modem_lib_readme` page.
   * A note in the :ref:`ug_ble_controller` about the usage of the Zephyr LE Controller.
-  * Documentation for the :ref:`ug_nrf70`.
   * A section about :ref:`modem_trace` in the :ref:`ug_nrf91_features` page.
+  * A section about Gazell in the :ref:`app_memory` page.
 
 * Updated:
 
+  * :ref:`gs_recommended_versions` page with a new section about :ref:`gs_supported_OS`.
+  * :ref:`ug_nrf91` with the following changes:
+
+    * In the :ref:`ug_nrf9160_gs` guide, :ref:`nrf9160_gs_updating_fw_modem` section is now moved before :ref:`nrf9160_gs_updating_fw_application` because updating modem firmware erases application firmware.
+    * In the :ref:`ug_nrf9160` guide, the :ref:`build_pgm_nrf9160` section now mentions |VSC| and command line instructions.
+    * In the :ref:`ug_thingy91_gsg` guide, :ref:`programming_thingy` and :ref:`connect_nRF_cloud` sections now have different structure.
+    * The instructions and images in the :ref:`ug_thingy91_gsg` and :ref:`ug_nrf9160_gs` documentation pages now also mention accepting :term:`eUICC Identifier (EID)` when activating your iBasis SIM card from the `nRF Cloud`_ website.
+
   * :ref:`ug_thread_configuring` page to better indicate what is required and what is optional.
     Also added further clarifications to the page to make everything clearer.
-  * :ref:`ug_nrf9160_gs` guide by moving :ref:`nrf9160_gs_updating_fw_modem` section before :ref:`nrf9160_gs_updating_fw_application` because updating modem firmware erases application firmware.
   * :ref:`ug_matter_tools` page with a new section about the ZAP tool.
-  * :ref:`build_pgm_nrf9160` section in the :ref:`ug_nrf9160` documentation by adding |VSC| and command line instructions.
-  * Restructured the :ref:`programming_thingy` and :ref:`connect_nRF_cloud` sections in the :ref:`ug_thingy91_gsg` documentation.
-  * The instructions and images in the :ref:`ug_thingy91_gsg` and :ref:`ug_nrf9160_gs` documentations about also accepting :term:`eUICC Identifier (EID)` when activating your iBasis SIM card from the `nRF Cloud`_ website.
-  * :ref:`gs_recommended_versions` page with a new section about :ref:`gs_supported_OS`.
-
-* Removed:
-
-  * |no_changes_yet_note|
+  * Updated TF-M/SPM related files, included in samples and applications with _ns build targets, to no longer include SPM as an alternative to TF-M.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.

@@ -23,6 +23,8 @@ if(CONFIG_BOARD_THINGY91_NRF9160_NS)
 	# because it is used in other CMake files.
 	if (CONFIG_SPM)
 		set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_LIST_DIR}/thingy91_pm_static_spm.yml CACHE INTERNAL "")
+	elseif(CONFIG_LWM2M_CARRIER)
+		set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_LIST_DIR}/thingy91_pm_static_lwm2m_carrier.yml CACHE INTERNAL "")
 	else()
 		set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_LIST_DIR}/thingy91_pm_static.yml CACHE INTERNAL "")
 	endif()

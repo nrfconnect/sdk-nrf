@@ -12,6 +12,7 @@
 #include <mbedtls/bignum.h>
 #include <mbedtls/ecdh.h>
 #include <mbedtls/ecp.h>
+#include <mbedtls/md.h>
 #include <mbedtls/sha256.h>
 
 #include <zephyr/random/rand32.h>
@@ -81,6 +82,30 @@ cleanup:
 	return ret;
 }
 
+int fp_crypto_hmac_sha256(uint8_t *out,
+			  const uint8_t *in,
+			  size_t data_len,
+			  const uint8_t *hmac_key,
+			  size_t hmac_key_len)
+{
+	int ret;
+	const mbedtls_md_info_t *md_info;
+
+	md_info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
+	if (!md_info) {
+		LOG_ERR("hmac sha256: message-digest information not found");
+		return MBEDTLS_ERR_MD_FEATURE_UNAVAILABLE;
+	}
+
+	ret = mbedtls_md_hmac(md_info, hmac_key, hmac_key_len, in, data_len, out);
+	if (ret) {
+		LOG_ERR("hmac sha256: mbedtls_md_hmac failed: %d", ret);
+		return ret;
+	}
+
+	return 0;
+}
+
 static int aes128_ecb_crypt(uint8_t *out, const uint8_t *in, const uint8_t *k, bool encrypt)
 {
 	int ret;
@@ -111,12 +136,12 @@ cleanup:
 	return ret;
 }
 
-int fp_crypto_aes128_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
+int fp_crypto_aes128_ecb_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 {
 	return aes128_ecb_crypt(out, in, k, true);
 }
 
-int fp_crypto_aes128_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
+int fp_crypto_aes128_ecb_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 {
 	return aes128_ecb_crypt(out, in, k, false);
 }

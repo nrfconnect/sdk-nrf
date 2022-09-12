@@ -201,17 +201,15 @@ class Coiote():
                 line_tot += 1
 
                 if line_cnt == lines:
-                    if arg.debug:
-                        logging.debug("Sending POST:")
-                        logging.debug(json.dumps(objs,indent=2))
+                    logging.debug("Sending POST:")
+                    logging.debug(json.dumps(objs,indent=2))
 
                     resp = self.post(f"/devices/batch",json.dumps(objs),False)
                     obj,status_code,tmp_s,tmp_f = Coiote.handle_batch_response(resp)
 
-                    if arg.debug:
-                        logging.debug("Received response (status %d):",status_code)
-                        if obj:
-                            logging.debug(json.dumps(obj,indent=2))
+                    logging.debug("Received response (status %d):",status_code)
+                    if obj:
+                        logging.debug(json.dumps(obj,indent=2))
 
                     succeeded += tmp_s
                     failed += tmp_f
@@ -220,17 +218,15 @@ class Coiote():
                     line_cnt = 0
 
             if line_cnt > 0:
-                if arg.debug:
-                    logging.debug("Sending POST:")
-                    logging.debug(json.dumps(objs,indent=2))
+                logging.debug("Sending POST:")
+                logging.debug(json.dumps(objs,indent=2))
 
                 resp = self.post(f"/devices/batch",json.dumps(objs),False)
                 obj,status_code,tmp_s,tmp_f = Coiote.handle_batch_response(resp)
 
-                if arg.debug:
-                    logging.debug("Received response (status %d):",status_code)
-                    if obj:
-                        logging.debug(json.dumps(obj,indent=2))
+                logging.debug("Received response (status %d):",status_code)
+                if obj:
+                    logging.debug(json.dumps(obj,indent=2))
 
                 succeeded += tmp_s
                 failed += tmp_f
@@ -261,8 +257,7 @@ class Coiote():
         if model:
             obj["properties"]["genericModelName"] = model
 
-        if arg.debug:
-            logging.debug(json.dumps(obj,indent=2))
+        logging.debug(json.dumps(obj,indent=2))
 
 
         if self.post('/devices', json.dumps(obj)) is None:
@@ -281,7 +276,7 @@ class Coiote():
 #
 #
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG, format='%(message)s')
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
 
     try:
         from dotenv import load_dotenv
@@ -361,4 +356,6 @@ if __name__ == "__main__":
     if arg.func is None:
         parser.print_help()
         sys.exit(0)
+    if arg.debug:
+        logging.basicConfig(level=logging.DEBUG, format='%(message)s')
     arg.func(arg)

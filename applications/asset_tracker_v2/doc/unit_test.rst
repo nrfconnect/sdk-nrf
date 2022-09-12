@@ -8,12 +8,14 @@ Unit tests
    :depth: 2
 
 The internal modules of the :ref:`asset_tracker_v2` application have a set of unit tests in the :file:`asset_tracker_v2/tests` folder.
-Following are the modules which contain unit tests:
+Following are the modules that have unit tests:
 
-* :ref:`asset_tracker_v2_debug_module`
-* :ref:`asset_tracker_v2_ui_module`
-* :ref:`asset_tracker_v2_gnss_module`
-* json_common
+* :ref:`asset_tracker_v2_debug_module` - :file:`asset_tracker_v2/src/modules/debug_module.c`
+* :ref:`asset_tracker_v2_ui_module` - :file:`asset_tracker_v2/src/modules/ui_module.c`
+* :ref:`asset_tracker_v2_gnss_module` - :file:`asset_tracker_v2/src/modules/gnss_module.c`
+* JSON common library - :file:`asset_tracker_v2/src/cloud/cloud_codec/json_common.c`
+* LwM2M codec backend - :file:`asset_tracker_v2/src/cloud/cloud_codec/lwm2m/lwm2m_codec.c`
+* LwM2M integration layer - :file:`asset_tracker_v2/src/cloud/lwm2m_integration/lwm2m_integration.c`
 
 Running the unit test
 *********************

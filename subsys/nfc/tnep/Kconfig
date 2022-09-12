@@ -5,7 +5,7 @@
 #
 
 config NFC_TNEP_TAG
-	bool "Tag NDEF Exchange Protocol."
+	bool "Tag NDEF Exchange Protocol"
 	select NFC_NDEF
 	select NFC_NDEF_MSG
 	select NFC_NDEF_TNEP_RECORD

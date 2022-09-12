@@ -27,12 +27,12 @@ extern "C" {
 /** @brief Azure IoT Hub notification events used to notify the user. */
 enum azure_iot_hub_evt_type {
 	/** Connecting to Azure IoT Hub.
-	 *  The event has no assosicated data.
+	 *  The event has no associated data.
 	 */
 	AZURE_IOT_HUB_EVT_CONNECTING = 0x1,
 
 	/** Connected to Azure IoT Hub.
-	 *  The event has no assosicated data.
+	 *  The event has no associated data.
 	 */
 	AZURE_IOT_HUB_EVT_CONNECTED,
 
@@ -43,12 +43,12 @@ enum azure_iot_hub_evt_type {
 	AZURE_IOT_HUB_EVT_CONNECTION_FAILED,
 
 	/** Azure IoT Hub connection established and ready to receive data.
-	 *  The event has no assosicated data.
+	 *  The event has no associated data.
 	 */
 	AZURE_IOT_HUB_EVT_READY,
 
 	/** Disconnected from Azure IoT Hub.
-	 *  The event has no assosicated data.
+	 *  The event has no associated data.
 	 */
 	AZURE_IOT_HUB_EVT_DISCONNECTED,
 
@@ -65,7 +65,7 @@ enum azure_iot_hub_evt_type {
 	AZURE_IOT_HUB_EVT_PUBACK,
 
 	/** Acknowledgment for ping request message sent to Azure IoT Hub.
-	 *  The event has no assosicated data.
+	 *  The event has no associated data.
 	 */
 	AZURE_IOT_HUB_EVT_PINGRESP,
 
@@ -106,38 +106,38 @@ enum azure_iot_hub_evt_type {
 	AZURE_IOT_HUB_EVT_DIRECT_METHOD,
 
 	/** FOTA download starting.
-	 *  The event has no assosicated data.
+	 *  The event has no associated data.
 	 */
 	AZURE_IOT_HUB_EVT_FOTA_START,
 
 	/** FOTA update done, reboot required to apply update.
-	 *  The event has no assosicated data.
+	 *  The event has no associated data.
 	 */
 	AZURE_IOT_HUB_EVT_FOTA_DONE,
 
 	/** FOTA erase pending. On nRF9160-based devices this is typically
 	 *  caused by an active LTE connection preventing erase operation.
-	 *  The event has no assosicated data.
+	 *  The event has no associated data.
 	 */
 	AZURE_IOT_HUB_EVT_FOTA_ERASE_PENDING,
 
 	/** FOTA erase done.
-	 *  The event has no assosicated data.
+	 *  The event has no associated data.
 	 */
 	AZURE_IOT_HUB_EVT_FOTA_ERASE_DONE,
 
 	/** FOTA failed.
-	 *  The event has no assosicated data.
+	 *  The event has no associated data.
 	 */
 	AZURE_IOT_HUB_EVT_FOTA_ERROR,
 
 	/** A received message is too large for the payload buffer and can not be processed.
-	 *  The event has no assosicated data.
+	 *  The event has no associated data.
 	 */
 	AZURE_IOT_HUB_EVT_ERROR_MSG_SIZE,
 
 	/** Internal library error.
-	 *  The event has no assosicated data.
+	 *  The event has no associated data.
 	 */
 	AZURE_IOT_HUB_EVT_ERROR
 };

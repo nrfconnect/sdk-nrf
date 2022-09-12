@@ -1,21 +1,21 @@
 .. _sensor_stub:
 
-Simple simulated sensor driver
-##############################
+Sensor stub driver
+##################
 
 .. contents::
    :local:
    :depth: 2
 
-The sensor stub is just blind interface between sensor API and simple callback functions to fetch and get data.
-The sensor stub was designed to implement sensor simulation with minimal required resources.
-It can be used also to provide some real sensor data from the application in simplest way possible.
-Muliple instances of the sensor stub are supported.
+The sensor stub, a simple simulated sensor driver, is an interface between the sensor API and simple callback functions to fetch and forward the data.
+The sensor stub implements sensor simulation with minimal required resources.
+It can also be used to provide some real sensor data from the application in the simplest way possible.
+The application or the sample supports multiple instances of the sensor stub driver.
 
 Configuration
 *************
 
-You can define instances of the sensor stub on Devicethree like this:
+You can define instances of the sensor stub on devicetree like this:
 
 .. code-block:: devicetree
 
@@ -27,12 +27,13 @@ You can define instances of the sensor stub on Devicethree like this:
         };
 
 The most important setting here is the ``generator`` property.
-The driver would require the user to implement following functions:
-- ``int <generator>_init(const struct device *dev)`` - initialize the driver
-- ``int <generator>_get(const struct device *dev, enum sensor_channel ch, struct sensor_value *val)`` - get the measure value
-- ``int <generator>_fetch(const struct device *dev, enum sensor_channel ch)`` - fetch (prepare) the measured value
+The driver requires the following functions to be implemented:
 
-The functions has to have global linkage - they would be connected directly in the sensor stub driver.
+- ``int <generator>_init(const struct device *dev)`` - This function initializes the driver.
+- ``int <generator>_get(const struct device *dev, enum sensor_channel ch, struct sensor_value *val)`` - This function gets the measured value.
+- ``int <generator>_fetch(const struct device *dev, enum sensor_channel ch)`` - This function fetches (prepares) the measured value.
+
+The functions must have global linkage and connect directly to the sensor stub driver.
 
 API documentation
 *****************

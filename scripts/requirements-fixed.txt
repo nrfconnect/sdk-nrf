@@ -100,7 +100,7 @@ typed-ast==1.4.2
 typing-extensions==3.7.4.3
 urllib3==1.26.4
 wcwidth==0.2.5
-west==0.13.1
+west==0.14.0
 wrapt==1.12.1
 zcbor==0.5.1
 zipp==3.4.0

@@ -9,7 +9,7 @@ Bluetooth LE scanning module
 
 The nRF Desktop's |ble_scan| is based on the |NCS|'s :ref:`nrf_bt_scan_readme`.
 
-Use the |ble_scan| to:
+Use the |ble_scan| for the following purposes:
 
 * Apply scanning filters.
 * Control the Bluetooth scanning.

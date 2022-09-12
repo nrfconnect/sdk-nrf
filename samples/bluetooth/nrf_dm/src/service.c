@@ -95,7 +95,7 @@ void service_distance_measurement_update(const bt_addr_le_t *addr, const struct 
 	bt_addr_le_copy(&measurement.bt_addr, addr);
 
 	err = bt_ddfs_distance_measurement_notify(NULL, &measurement);
-	if (err && err != -EACCES) {
+	if (err && (err != -EACCES) && (err != -ENOTCONN)) {
 		printk("Failed to send distance measurement (err %d)\n", err);
 	}
 }

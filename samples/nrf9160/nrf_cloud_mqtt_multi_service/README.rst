@@ -20,7 +20,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/tfm_spm_thingy91.txt
+.. include:: /includes/tfm.txt
 
 .. _nrf_cloud_mqtt_multi_service_features:
 
@@ -296,7 +296,7 @@ Otherwise, the four-LED option (:ref:`CONFIG_LED_INDICATION_GPIO <CONFIG_LED_IND
 The four-LED option should work even if there are not four LEDs available, as long as an appropriate devicetree entry exists.
 However, if fewer than four LEDs are available, the patterns may be difficult to identify.
 
-To add your own LED indication implementations, you can add values to the ``LED_INDICATOR`` KConfig choice and modify the :file:`src/led_control.c` file accordingly.
+To add your own LED indication implementations, you can add values to the ``LED_INDICATOR`` Kconfig choice and modify the :file:`src/led_control.c` file accordingly.
 
 To disable LED indication, enable the :ref:`CONFIG_LED_INDICATION_DISABLED <CONFIG_LED_INDICATION_DISABLED>` option.
 
@@ -499,7 +499,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/nrf_cloud_mqtt_multi_service`
 
-.. include:: /includes/thingy91_build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. _nrf_cloud_mqtt_multi_service_dependencies:
 
@@ -517,7 +517,6 @@ It uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_modem`
 
-In addition, it uses the following secure firmware components:
+In addition, it uses the following secure firmware component:
 
-* :ref:`secure_partition_manager`
 * :ref:`Trusted Firmware-M <ug_tfm>`

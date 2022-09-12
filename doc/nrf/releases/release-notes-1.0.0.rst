@@ -95,8 +95,8 @@ nRF9160
 
 * Added the following samples:
 
-  * :ref:`aws_fota_sample` - shows how to perform over-the-air firmware updates of an nRF9160 through the use of AWS IoT Jobs with MQTT and HTTP.
-  * :ref:`secure_services` - demonstrates using the reboot and random number services.
+  * nRF9160: AWS FOTA - shows how to perform over-the-air firmware updates of an nRF9160 through the use of AWS IoT Jobs with MQTT and HTTP.
+  * nRF9160: Secure Services - demonstrates using the reboot and random number services.
 
 * Added the following libraries:
 
@@ -210,9 +210,9 @@ Documentation
 
   * nRF9160:
 
-    * :ref:`secure_services`
+    * nRF9160: Secure Services
     * :ref:`secure_partition_manager`
-    * :ref:`aws_fota_sample`
+    * nRF9160: AWS FOTA
     * :ref:`lte_sensor_gateway`
 
   * Bluetooth Low Energy:
@@ -297,7 +297,7 @@ Bootloader
 ----------
 
 * Building and programming the immutable bootloader (see :ref:`ug_bootloader`) is not supported in SEGGER Embedded Studio.
-* The immutable bootlader can only be used with the following boards:
+* The immutable bootloader can only be used with the following boards:
 
   * nrf52840_pca10056
   * nrf9160_pca10090

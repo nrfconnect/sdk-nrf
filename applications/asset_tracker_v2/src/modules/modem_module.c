@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/kernel.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <app_event_manager.h>
 #include <math.h>
@@ -441,7 +442,12 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *evt)
 		LOG_ERR("LWM2M_CARRIER_EVENT_ERROR");
 		print_carrier_error(evt);
 
-		if (err->type == LWM2M_CARRIER_ERROR_FOTA_FAIL) {
+		bool fota_error = err->type == LWM2M_CARRIER_ERROR_FOTA_PKG ||
+				  err->type == LWM2M_CARRIER_ERROR_FOTA_PROTO ||
+				  err->type == LWM2M_CARRIER_ERROR_FOTA_CONN ||
+				  err->type == LWM2M_CARRIER_ERROR_FOTA_CONN_LOST ||
+				  err->type == LWM2M_CARRIER_ERROR_FOTA_FAIL;
+		if (fota_error) {
 			SEND_EVENT(modem, MODEM_EVT_CARRIER_FOTA_STOPPED);
 		}
 		break;
@@ -800,8 +806,15 @@ static int battery_data_get(void)
 static int neighbor_cells_measurement_start(void)
 {
 	int err;
+	enum lte_lc_neighbor_search_type type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
 
-	err = lte_lc_neighbor_cell_measurement(LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT);
+	if (IS_ENABLED(CONFIG_MODEM_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT)) {
+		type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT;
+	} else if (IS_ENABLED(CONFIG_MODEM_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE)) {
+		type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE;
+	}
+
+	err = lte_lc_neighbor_cell_measurement(type);
 	if (err) {
 		LOG_ERR("Failed to start neighbor cell measurements, error: %d", err);
 		return err;

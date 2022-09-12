@@ -326,7 +326,7 @@ Prepare for testing
 After building this and the :ref:`Matter Light Bulb <matter_light_bulb_sample>` samples, and programming them to the development kits, complete the following steps:
 
 .. note::
-   In both samples (light switch and light bulb), a Bluetooth LE discriminator is set with the same value by default (hexidecimal: ``0xF00``; decimal: ``3840``).
+   In both samples (light switch and light bulb), a Bluetooth LE discriminator is set with the same value by default (hexadecimal: ``0xF00``; decimal: ``3840``).
    This means that only one uncommissioned device can be powered up before commissioning.
    If both are powered up at the same time, the CHIP Tool can commission a random device and the node ID assignment is also random.
    When one device is commissioned, power up the next device and perform the commissioning.

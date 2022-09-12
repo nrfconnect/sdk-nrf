@@ -997,7 +997,7 @@ int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
 
 /** @brief Function for requesting modem to enable or disable
  *         use of eDRX using values set by `lte_lc_edrx_param_set`. The
- *         default values are defined in kconfig.
+ *         default values are defined in Kconfig.
  *         For reference see 3GPP 27.007 Ch. 7.40.
  *
  * @param enable Boolean value enabling or disabling the use of eDRX.

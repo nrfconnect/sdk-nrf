@@ -11,7 +11,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 
-#include <bluetooth/bt_le_adv_prov.h>
+#include <bluetooth/adv_prov.h>
 
 #define MODULE ble_adv
 #include <caf/events/module_state_event.h>
@@ -527,9 +527,19 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 
 	switch (event->state) {
 	case PEER_STATE_CONNECTED:
-		err = ble_adv_stop();
-		break;
+	{
+		bool wu = false;
 
+		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_GRACE_PERIOD) &&
+		    (state == STATE_GRACE_PERIOD)) {
+			wu = true;
+		}
+		err = ble_adv_stop();
+		if (wu) {
+			APP_EVENT_SUBMIT(new_wake_up_event());
+		}
+		break;
+	}
 	case PEER_STATE_SECURED:
 		if (peer_is_rpa[cur_identity] == PEER_RPA_ERASED) {
 			if (bt_addr_le_is_rpa(bt_conn_get_dst(event->id))) {

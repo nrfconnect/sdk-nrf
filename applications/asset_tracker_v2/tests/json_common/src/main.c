@@ -744,81 +744,6 @@ static void test_encode_impact_data_array(void)
 	zassert_equal(0, ret, "Return value %d is wrong", ret);
 }
 
-/* Accelerometer */
-
-static void test_encode_accelerometer_data_object(void)
-{
-	int ret;
-	struct cloud_data_accelerometer data = {
-		.values[0] = 1,
-		.values[1] = 2,
-		.values[2] = 3,
-		.ts = 1000,
-		.queued = true
-	};
-
-	ret = json_common_accel_data_add(dummy.root_obj,
-					 &data,
-					 JSON_COMMON_ADD_DATA_TO_OBJECT,
-					 DATA_MOVEMENT,
-					 NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
-
-	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_ACCELEROMETER_JSON_SCHEMA,
-				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
-
-	/* Check for invalid inputs. */
-
-	data.queued = false;
-
-	ret = json_common_accel_data_add(dummy.root_obj,
-					 &data,
-					 JSON_COMMON_ADD_DATA_TO_OBJECT,
-					 "",
-					 NULL);
-	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
-
-	data.queued = true;
-
-	ret = json_common_accel_data_add(NULL,
-					 &data,
-					 JSON_COMMON_ADD_DATA_TO_OBJECT,
-					 "",
-					 NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
-
-	ret = json_common_accel_data_add(dummy.root_obj,
-					 &data,
-					 JSON_COMMON_ADD_DATA_TO_OBJECT,
-					 NULL,
-					 NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
-}
-
-static void test_encode_accelerometer_data_array(void)
-{
-	int ret;
-	struct cloud_data_accelerometer data = {
-		.values[0] = 1,
-		.values[1] = 2,
-		.values[2] = 3,
-		.ts = 1000,
-		.queued = true
-	};
-
-	ret = json_common_accel_data_add(dummy.array_obj,
-					 &data,
-					 JSON_COMMON_ADD_DATA_TO_ARRAY,
-					 NULL,
-					 NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
-
-	ret = encoded_output_check(dummy.array_obj, TEST_VALIDATE_ARRAY_ACCELEROMETER_JSON_SCHEMA,
-				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
-}
-
 /* Configuration encode */
 
 static void test_encode_configuration_data_object(void)
@@ -830,7 +755,9 @@ static void test_encode_configuration_data_object(void)
 		.movement_resolution = 120,
 		.movement_timeout = 3600,
 		.gnss_timeout = 60,
-		.accelerometer_threshold = 2,
+		.accelerometer_activity_threshold = 10,
+		.accelerometer_inactivity_threshold = 5,
+		.accelerometer_inactivity_timeout = 80,
 		.no_data.gnss = true,
 		.no_data.neighbor_cell = true
 	};
@@ -870,7 +797,9 @@ static void test_decode_configuration_data(void)
 	zassert_equal(120, data.active_wait_timeout, "Configuration is wrong");
 	zassert_equal(120, data.movement_resolution, "Configuration is wrong");
 	zassert_equal(3600, data.movement_timeout, "Configuration is wrong");
-	zassert_equal(2, data.accelerometer_threshold, "Configuration is wrong");
+	zassert_equal(10, data.accelerometer_activity_threshold, "Configuration is wrong");
+	zassert_equal(5, data.accelerometer_inactivity_threshold, "Configuration is wrong");
+	zassert_equal(80, data.accelerometer_inactivity_timeout, "Configuration is wrong");
 
 	cJSON_Delete(root_obj);
 }
@@ -980,19 +909,6 @@ static void test_encode_batch_data_object(void)
 		[1].ts = 1000,
 		[1].queued = true
 	};
-	struct cloud_data_accelerometer accelerometer[2] = {
-		[0].values[0] = 1,
-		[0].values[1] = 2,
-		[0].values[2] = 3,
-		[0].ts = 1000,
-		[0].queued = true,
-		/* Second entry */
-		[1].values[0] = 1,
-		[1].values[1] = 2,
-		[1].values[2] = 3,
-		[1].ts = 1000,
-		[1].queued = true
-	};
 	struct cloud_data_sensors environmental[2] = {
 		[0].humidity = 50,
 		[0].temperature = 23,
@@ -1042,13 +958,6 @@ static void test_encode_batch_data_object(void)
 					 &environmental,
 					 ARRAY_SIZE(environmental),
 					 DATA_ENVIRONMENTALS);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
-
-	ret = json_common_batch_data_add(dummy.root_obj,
-					 JSON_COMMON_ACCELEROMETER,
-					 &accelerometer,
-					 ARRAY_SIZE(accelerometer),
-					 DATA_MOVEMENT);
 	zassert_equal(0, ret, "Return value %d is wrong", ret);
 
 	ret = json_common_batch_data_add(dummy.root_obj,
@@ -1158,63 +1067,6 @@ static void test_floating_point_encoding_gnss(void)
 	cJSON_Delete(decoded_root_obj);
 }
 
-static void test_floating_point_encoding_accelerometer(void)
-{
-	int ret;
-	cJSON *decoded_root_obj;
-	cJSON *decoded_acc_obj;
-	cJSON *decoded_value_obj;
-	struct cloud_data_accelerometer decoded_values = {0};
-	struct cloud_data_accelerometer data = {
-		.values[0] = 1.49061,
-		.values[1] = 0.617818,
-		.values[2] = -9.924329,
-		.ts = 1000,
-		.queued = true
-	};
-
-	ret = json_common_accel_data_add(dummy.root_obj,
-					 &data,
-					 JSON_COMMON_ADD_DATA_TO_OBJECT,
-					 DATA_MOVEMENT,
-					 NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
-	zassert_false(data.queued, "Queued flag was not set to false by function %s", __func__);
-
-	dummy.buffer = cJSON_PrintUnformatted(dummy.root_obj);
-	zassert_not_null(dummy.buffer, "Printed JSON string is NULL");
-
-	decoded_root_obj = cJSON_Parse(dummy.buffer);
-	zassert_not_null(decoded_root_obj, "Root object is NULL");
-
-	decoded_acc_obj = json_object_decode(decoded_root_obj, DATA_MOVEMENT);
-	zassert_not_null(decoded_acc_obj, "Decoded Accelerometer object is NULL");
-
-	decoded_value_obj = json_object_decode(decoded_acc_obj, DATA_VALUE);
-	zassert_not_null(decoded_value_obj, "Decoded value object is NULL");
-
-	cJSON *x_axis = cJSON_GetObjectItem(decoded_value_obj, DATA_MOVEMENT_X);
-	cJSON *y_axis = cJSON_GetObjectItem(decoded_value_obj, DATA_MOVEMENT_Y);
-	cJSON *z_axis = cJSON_GetObjectItem(decoded_value_obj, DATA_MOVEMENT_Z);
-
-	zassert_not_null(x_axis, "X-axis is NULL");
-	zassert_not_null(y_axis, "Y-axis is NULL");
-	zassert_not_null(z_axis, "Z-axis is NULL");
-
-	decoded_values.values[0] = x_axis->valuedouble;
-	decoded_values.values[1] = y_axis->valuedouble;
-	decoded_values.values[2] = z_axis->valuedouble;
-
-	zassert_within(decoded_values.values[0], data.values[0], 0.1,
-		       "Decoded value is not within delta");
-	zassert_within(decoded_values.values[1], data.values[1], 0.1,
-		       "Decoded value is not within delta");
-	zassert_within(decoded_values.values[2], data.values[2], 0.1,
-		       "Decoded value is not within delta");
-
-	cJSON_Delete(decoded_root_obj);
-}
-
 static void test_floating_point_encoding_environmental(void)
 {
 	int ret;
@@ -1279,7 +1131,9 @@ static void test_floating_point_encoding_configuration(void)
 	cJSON *decoded_config_obj;
 	struct cloud_data_cfg decoded_values = {0};
 	struct cloud_data_cfg data = {
-		.accelerometer_threshold = 2.22
+		.accelerometer_activity_threshold = 2.22,
+		.accelerometer_inactivity_threshold = 1.11,
+		.accelerometer_inactivity_timeout = 20.0,
 	};
 
 	ret = json_common_config_add(dummy.root_obj, &data, DATA_CONFIG);
@@ -1294,13 +1148,31 @@ static void test_floating_point_encoding_configuration(void)
 	decoded_config_obj = json_object_decode(decoded_root_obj, DATA_CONFIG);
 	zassert_not_null(decoded_config_obj, "Decoded Configruation object is NULL");
 
-	cJSON *accel_thresh = cJSON_GetObjectItem(decoded_config_obj, CONFIG_ACC_THRESHOLD);
+	cJSON *accel_act_thresh =
+		cJSON_GetObjectItem(decoded_config_obj, CONFIG_ACC_ACT_THRESHOLD);
+	cJSON *accel_inact_thresh =
+		cJSON_GetObjectItem(decoded_config_obj, CONFIG_ACC_INACT_THRESHOLD);
+	cJSON *accel_inact_timeout =
+		cJSON_GetObjectItem(decoded_config_obj, CONFIG_ACC_INACT_TIMEOUT);
 
-	zassert_not_null(accel_thresh, "Accelerometer threshold is NULL");
+	zassert_not_null(accel_act_thresh, "Accelerometer activity threshold is NULL");
+	zassert_not_null(accel_inact_thresh, "Accelerometer inactivity threshold is NULL");
+	zassert_not_null(accel_inact_timeout, "Accelerometer inactivity timeout is NULL");
 
-	decoded_values.accelerometer_threshold = accel_thresh->valuedouble;
+	decoded_values.accelerometer_activity_threshold = accel_act_thresh->valuedouble;
+	decoded_values.accelerometer_inactivity_threshold = accel_inact_thresh->valuedouble;
+	decoded_values.accelerometer_inactivity_timeout = accel_inact_timeout->valuedouble;
 
-	zassert_within(decoded_values.accelerometer_threshold, data.accelerometer_threshold, 0.1,
+	zassert_within(decoded_values.accelerometer_activity_threshold,
+		       data.accelerometer_activity_threshold, 0.1,
+		       "Decoded value is not within delta");
+
+	zassert_within(decoded_values.accelerometer_inactivity_threshold,
+		       data.accelerometer_inactivity_threshold, 0.1,
+		       "Decoded value is not within delta");
+
+	zassert_within(decoded_values.accelerometer_inactivity_timeout,
+		       data.accelerometer_inactivity_timeout, 0.1,
 		       "Decoded value is not within delta");
 
 	cJSON_Delete(decoded_root_obj);
@@ -1414,14 +1286,6 @@ void test_main(void)
 					       test_setup_object,
 					       test_teardown_object),
 
-		/* Accelerometer */
-		ztest_unit_test_setup_teardown(test_encode_accelerometer_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-		ztest_unit_test_setup_teardown(test_encode_accelerometer_data_array,
-					       test_setup_array,
-					       test_teardown_array),
-
 		/* Configuration encode */
 		ztest_unit_test_setup_teardown(test_encode_configuration_data_object,
 					       test_setup_object,
@@ -1440,12 +1304,7 @@ void test_main(void)
 					       test_setup_object,
 					       test_teardown_object),
 
-		/* Accelerometer floating point values comparison */
-		ztest_unit_test_setup_teardown(test_floating_point_encoding_accelerometer,
-					       test_setup_object,
-					       test_teardown_object),
-
-		/* Accelerometer floating point values comparison */
+		/* Environmental floating point values comparison */
 		ztest_unit_test_setup_teardown(test_floating_point_encoding_environmental,
 					       test_setup_object,
 					       test_teardown_object),

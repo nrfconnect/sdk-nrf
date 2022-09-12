@@ -5,5 +5,5 @@
 #
 
 config SECURE_BOOT_STORAGE
-	bool "Functions for accessing the bootloader storage."
+	bool "Functions for accessing the bootloader storage"
 	depends on SECURE_BOOT_CRYPTO

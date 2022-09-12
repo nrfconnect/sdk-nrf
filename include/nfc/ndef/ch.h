@@ -51,7 +51,7 @@ struct nfc_ndef_ch_hc_rec {
 		/** Carrier type field length. */
 		uint8_t type_len;
 
-		/** A unique identification od the alternative carrier.
+		/** A unique identification of the alternative carrier.
 		 *  It shall follow the structure, encoding, and format
 		 *  implied by the value of the CTF field.
 		 */

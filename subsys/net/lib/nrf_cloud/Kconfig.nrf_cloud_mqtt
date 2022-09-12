@@ -50,7 +50,7 @@ config NRF_CLOUD_PORT
 	default 8883
 
 config NRF_CLOUD_IPV6
-	bool "Configure nRF Cloud library to use IPv6 addressing. Otherwise IPv4 is used."
+	bool "Configure nRF Cloud library to use IPv6 addressing. Otherwise IPv4 is used"
 
 choice NRF_CLOUD_SEND_SOCKET
 	prompt "Socket behavior when sending"
@@ -88,14 +88,14 @@ config NRF_CLOUD_SEND_TIMEOUT_SEC
 	  send with a timeout by enabling NRF_CLOUD_SEND_TIMEOUT.
 
 config NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN
-	int "Size of the buffer for MQTT library."
+	int "Size of the buffer for MQTT library"
 	default 256
 	help
 	  Specifies maximum message size can be transmitted/received through
 	  MQTT (exluding MQTT PUBLISH payload).
 
 config NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN
-	int "Size of the buffer for MQTT PUBLISH payload."
+	int "Size of the buffer for MQTT PUBLISH payload"
 	default 2144 if NRF_CLOUD_AGPS
 	default 2048
 

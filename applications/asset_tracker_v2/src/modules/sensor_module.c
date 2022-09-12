@@ -147,20 +147,6 @@ static void activity_data_send(const struct ext_sensor_evt *const acc_data)
 	APP_EVENT_SUBMIT(sensor_module_event);
 }
 
-static void movement_data_send(const struct ext_sensor_evt *const acc_data)
-{
-	struct sensor_module_event *sensor_module_event =
-			new_sensor_module_event();
-
-	sensor_module_event->data.accel.values[0] = acc_data->value_array[0];
-	sensor_module_event->data.accel.values[1] = acc_data->value_array[1];
-	sensor_module_event->data.accel.values[2] = acc_data->value_array[2];
-	sensor_module_event->data.accel.timestamp = k_uptime_get();
-	sensor_module_event->type = SENSOR_EVT_MOVEMENT_DATA_READY;
-
-	APP_EVENT_SUBMIT(sensor_module_event);
-}
-
 static void impact_data_send(const struct ext_sensor_evt *const evt)
 {
 	struct sensor_module_event *sensor_module_event = new_sensor_module_event();
@@ -176,7 +162,6 @@ static void ext_sensor_handler(const struct ext_sensor_evt *const evt)
 {
 	switch (evt->type) {
 	case EXT_SENSOR_EVT_ACCELEROMETER_ACT_TRIGGER:
-		movement_data_send(evt);
 		activity_data_send(evt);
 		break;
 	case EXT_SENSOR_EVT_ACCELEROMETER_INACT_TRIGGER:
@@ -206,19 +191,44 @@ static void ext_sensor_handler(const struct ext_sensor_evt *const evt)
 }
 #endif /* CONFIG_EXTERNAL_SENSORS */
 
+#if defined(CONFIG_EXTERNAL_SENSORS)
+static void configure_acc(const struct cloud_data_cfg *cfg)
+{
+		int err;
+		double accelerometer_activity_threshold =
+			cfg->accelerometer_activity_threshold;
+		double accelerometer_inactivity_threshold =
+			cfg->accelerometer_inactivity_threshold;
+		double accelerometer_inactivity_timeout =
+			cfg->accelerometer_inactivity_timeout;
+
+		err = ext_sensors_accelerometer_threshold_set(accelerometer_activity_threshold,
+							      true);
+		if (err == -ENOTSUP) {
+			LOG_WRN("The requested act threshold value not valid");
+		} else if (err) {
+			LOG_ERR("Failed to set act threshold, error: %d", err);
+		}
+		err = ext_sensors_accelerometer_threshold_set(accelerometer_inactivity_threshold,
+							      false);
+		if (err == -ENOTSUP) {
+			LOG_WRN("The requested inact threshold value not valid");
+		} else if (err) {
+			LOG_ERR("Failed to set inact threshold, error: %d", err);
+		}
+		err = ext_sensors_inactivity_timeout_set(accelerometer_inactivity_timeout);
+		if (err == -ENOTSUP) {
+			LOG_WRN("The requested timeout value not valid");
+		} else if (err) {
+			LOG_ERR("Failed to set timeout, error: %d", err);
+		}
+}
+#endif
+
 static void apply_config(struct sensor_msg_data *msg)
 {
 #if defined(CONFIG_EXTERNAL_SENSORS)
-	int err;
-	double accelerometer_threshold =
-		msg->module.data.data.cfg.accelerometer_threshold;
-
-	err = ext_sensors_mov_thres_set(accelerometer_threshold);
-	if (err == -ENOTSUP) {
-		LOG_WRN("Passed in threshold value not valid");
-	} else if (err) {
-		LOG_ERR("Failed to set threshold, error: %d", err);
-	}
+	configure_acc(&msg->module.data.data.cfg);
 
 	if (msg->module.data.data.cfg.active_mode) {
 		accelerometer_callback_set(false);

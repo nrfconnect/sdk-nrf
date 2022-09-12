@@ -805,7 +805,7 @@ This command sends the Add Group command (ZCL specification 3.6.2.3.2) as groupc
 zcl groups add_if_identify
 ==========================
 
-Add the endpoints on the remote nodes to the group if the endpoints are are in the Identify mode.
+Add the endpoints on the remote nodes to the group if the endpoints are in the Identify mode.
 
 .. parsed-literal::
    :class: highlight

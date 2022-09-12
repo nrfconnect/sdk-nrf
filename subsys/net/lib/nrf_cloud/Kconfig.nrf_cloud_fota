@@ -23,7 +23,7 @@ config NRF_CLOUD_FOTA_PROGRESS_PCT_INCREMENT
 	  0 disables progress report.
 
 config NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE
-	int "Fragment size for FOTA downloads."
+	int "Fragment size for FOTA downloads"
 	range 128 1700
 	default 1700
 

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig PPI_TRACE
+config PPI_TRACE
 	bool "Enable PPI trace"
 	select NRFX_GPIOTE
 	select NRFX_PPI if HAS_HW_NRF_PPI

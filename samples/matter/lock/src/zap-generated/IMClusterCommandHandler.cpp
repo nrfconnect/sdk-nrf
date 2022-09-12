@@ -106,50 +106,6 @@ namespace app
 
 		} // namespace AdministratorCommissioning
 
-		namespace DiagnosticLogs
-		{
-			void DispatchServerCommand(CommandHandler *apCommandObj,
-						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
-			{
-				CHIP_ERROR TLVError = CHIP_NO_ERROR;
-				bool wasHandled = false;
-				{
-					switch (aCommandPath.mCommandId) {
-					case Commands::RetrieveLogsRequest::Id: {
-						Commands::RetrieveLogsRequest::DecodableType commandData;
-						TLVError = DataModel::Decode(aDataTlv, commandData);
-						if (TLVError == CHIP_NO_ERROR) {
-							wasHandled =
-								emberAfDiagnosticLogsClusterRetrieveLogsRequestCallback(
-									apCommandObj, aCommandPath, commandData);
-						}
-						break;
-					}
-					default: {
-						// Unrecognized command ID, error status will apply.
-						apCommandObj->AddStatus(
-							aCommandPath,
-							Protocols::InteractionModel::Status::UnsupportedCommand);
-						ChipLogError(Zcl,
-							     "Unknown command " ChipLogFormatMEI
-							     " for cluster " ChipLogFormatMEI,
-							     ChipLogValueMEI(aCommandPath.mCommandId),
-							     ChipLogValueMEI(aCommandPath.mClusterId));
-						return;
-					}
-					}
-				}
-
-				if (CHIP_NO_ERROR != TLVError || !wasHandled) {
-					apCommandObj->AddStatus(aCommandPath,
-								Protocols::InteractionModel::Status::InvalidCommand);
-					ChipLogProgress(Zcl, "Failed to dispatch command, TLVError=%" CHIP_ERROR_FORMAT,
-							TLVError.Format());
-				}
-			}
-
-		} // namespace DiagnosticLogs
-
 		namespace DoorLock
 		{
 			void DispatchServerCommand(CommandHandler *apCommandObj,
@@ -182,6 +138,60 @@ namespace app
 						TLVError = DataModel::Decode(aDataTlv, commandData);
 						if (TLVError == CHIP_NO_ERROR) {
 							wasHandled = emberAfDoorLockClusterUnlockWithTimeoutCallback(
+								apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
+					case Commands::SetUser::Id: {
+						Commands::SetUser::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled = emberAfDoorLockClusterSetUserCallback(
+								apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
+					case Commands::GetUser::Id: {
+						Commands::GetUser::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled = emberAfDoorLockClusterGetUserCallback(
+								apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
+					case Commands::ClearUser::Id: {
+						Commands::ClearUser::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled = emberAfDoorLockClusterClearUserCallback(
+								apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
+					case Commands::SetCredential::Id: {
+						Commands::SetCredential::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled = emberAfDoorLockClusterSetCredentialCallback(
+								apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
+					case Commands::GetCredentialStatus::Id: {
+						Commands::GetCredentialStatus::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled = emberAfDoorLockClusterGetCredentialStatusCallback(
+								apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
+					case Commands::ClearCredential::Id: {
+						Commands::ClearCredential::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled = emberAfDoorLockClusterClearCredentialCallback(
 								apCommandObj, aCommandPath, commandData);
 						}
 						break;
@@ -669,9 +679,6 @@ namespace app
 		case Clusters::AdministratorCommissioning::Id:
 			Clusters::AdministratorCommissioning::DispatchServerCommand(apCommandObj, aCommandPath,
 										    aReader);
-			break;
-		case Clusters::DiagnosticLogs::Id:
-			Clusters::DiagnosticLogs::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
 			break;
 		case Clusters::DoorLock::Id:
 			Clusters::DoorLock::DispatchServerCommand(apCommandObj, aCommandPath, aReader);

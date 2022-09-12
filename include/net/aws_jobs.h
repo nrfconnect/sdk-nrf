@@ -280,7 +280,7 @@ int aws_jobs_get_job_execution(struct mqtt_client *const client,
  * @param[in] sub     Topic subscribed to
  * @param[in] pub     Published topic
  * @param[in] pub_len Length of published topic
- * @param[in] suffix  Suffix to match. Can not be NULL. Must be empty string
+ * @param[in] suffix  Suffix to match. Cannot be NULL. Must be empty string
  *                    for sub topics not ending with '#'.
  *
  * @return true if topics with given suffix match, false otherwise.

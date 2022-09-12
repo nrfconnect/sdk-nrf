@@ -135,7 +135,7 @@ Sensor attributes
 =================
 
 The sensor supports a custom set of attributes that are not part of generic sensor attributes defined by Zephyr's :ref:`zephyr:sensor_api` API.
-The attribues are defined as private to the motion sensor in the sensor's header file.
+The attributes are defined as private to the motion sensor in the sensor's header file.
 See API documentation for details.
 
 API documentation

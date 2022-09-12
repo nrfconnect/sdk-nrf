@@ -23,42 +23,6 @@ LOG_MODULE_REGISTER(fp_crypto, CONFIG_FP_CRYPTO_LOG_LEVEL);
 					 FP_CRYPTO_ADDITIONAL_DATA_NONCE_LEN)
 
 
-int fp_crypto_hmac_sha256(uint8_t *out, const uint8_t *in, size_t data_len, const uint8_t *aes_key)
-{
-	static const uint8_t hmac_sha_pad_len = 64;
-	static const uint8_t inner_sha_data_pos = hmac_sha_pad_len;
-	static const uint8_t hmac_sha_inner_sha_pos = hmac_sha_pad_len;
-	static const uint8_t hmac_sha_opad_val = 0x5C;
-	static const uint8_t hmac_sha_ipad_val = 0x36;
-
-	uint8_t inner_sha_input[hmac_sha_pad_len + data_len];
-	uint8_t sha_input[hmac_sha_pad_len + FP_CRYPTO_SHA256_HASH_LEN];
-	int err;
-
-	for (size_t i = 0; i < FP_CRYPTO_AES128_KEY_LEN; i++) {
-		inner_sha_input[i] = aes_key[i] ^ hmac_sha_ipad_val;
-	}
-
-	memset(&inner_sha_input[FP_CRYPTO_AES128_KEY_LEN], hmac_sha_ipad_val,
-	       hmac_sha_pad_len - FP_CRYPTO_AES128_KEY_LEN);
-	memcpy(&inner_sha_input[inner_sha_data_pos], in, data_len);
-
-	err = fp_crypto_sha256(&sha_input[hmac_sha_inner_sha_pos], inner_sha_input,
-			       sizeof(inner_sha_input));
-	if (err) {
-		return err;
-	}
-
-	for (size_t i = 0; i < FP_CRYPTO_AES128_KEY_LEN; i++) {
-		sha_input[i] = aes_key[i] ^ hmac_sha_opad_val;
-	}
-
-	memset(&sha_input[FP_CRYPTO_AES128_KEY_LEN], hmac_sha_opad_val,
-	       hmac_sha_pad_len - FP_CRYPTO_AES128_KEY_LEN);
-
-	return fp_crypto_sha256(out, sha_input, sizeof(sha_input));
-}
-
 int fp_crypto_aes128_ctr_encrypt(uint8_t *out, const uint8_t *in, size_t data_len,
 				 const uint8_t *key, const uint8_t *nonce)
 {
@@ -85,7 +49,7 @@ int fp_crypto_aes128_ctr_encrypt(uint8_t *out, const uint8_t *in, size_t data_le
 	for (size_t i = 0; i < block_cnt; i++) {
 		aes_input[0] = (uint8_t)i;
 
-		err = fp_crypto_aes128_encrypt(aes_block, aes_input, key);
+		err = fp_crypto_aes128_ecb_encrypt(aes_block, aes_input, key);
 		if (err) {
 			return err;
 		}
@@ -183,7 +147,8 @@ int fp_crypto_additional_data_encode(uint8_t *out_packet, const uint8_t *data, s
 	}
 
 	err = fp_crypto_hmac_sha256(hmac_sha256_buf, &out_packet[ADDITIONAL_DATA_NONCE_POS],
-				    FP_CRYPTO_ADDITIONAL_DATA_NONCE_LEN + data_len, aes_key);
+				    FP_CRYPTO_ADDITIONAL_DATA_NONCE_LEN + data_len,
+				    aes_key, FP_CRYPTO_AES128_KEY_LEN);
 	if (err) {
 		return err;
 	}
@@ -210,7 +175,8 @@ int fp_crypto_additional_data_decode(uint8_t *out_data, const uint8_t *in_packet
 	}
 
 	err = fp_crypto_hmac_sha256(hmac_sha256_buf, &in_packet[ADDITIONAL_DATA_NONCE_POS],
-				    packet_len - ADDITIONAL_DATA_SHA_LEN, aes_key);
+				    packet_len - ADDITIONAL_DATA_SHA_LEN,
+				    aes_key, FP_CRYPTO_AES128_KEY_LEN);
 	if (err) {
 		return err;
 	}

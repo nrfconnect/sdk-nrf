@@ -37,8 +37,8 @@ The sample uses the following CAF modules:
 Additionally, the sample uses its own custom module called ``led_state``.
 This custom module serves the following purposes:
 
-* Listening to button events sent by the :ref:`caf_buttons` module.
-* Sending LED effect events to the :ref:`caf_leds` module.
+* Listening to button events sent by the :ref:`caf_buttons`.
+* Sending LED effect events to the :ref:`caf_leds`.
 
 For more information about adding your own modules, see :ref:`caf_overview_modules_custom` on the CAF overview page.
 
@@ -78,7 +78,7 @@ For example, the sample defines a few LED effects that can be displayed on LEDs.
 By pressing the buttons, you can change the displayed effect for the LED or toggle another LED.
 
 The LED effects are defined in :file:`led_state_def.h` file.
-The following snippet demonstrates the default LED effetct configuration:
+The following snippet demonstrates the default LED effect configuration:
 
   .. code-block:: none
 

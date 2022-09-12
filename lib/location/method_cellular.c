@@ -19,8 +19,7 @@ LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 BUILD_ASSERT(
 	(int)LOCATION_SERVICE_ANY == (int)MULTICELL_SERVICE_ANY &&
 	(int)LOCATION_SERVICE_NRF_CLOUD == (int)MULTICELL_SERVICE_NRF_CLOUD &&
-	(int)LOCATION_SERVICE_HERE == (int)MULTICELL_SERVICE_HERE &&
-	(int)LOCATION_SERVICE_POLTE == (int)MULTICELL_SERVICE_POLTE,
+	(int)LOCATION_SERVICE_HERE == (int)MULTICELL_SERVICE_HERE,
 	"Incompatible enums location_service and multicell_service");
 
 struct method_cellular_positioning_work_args {

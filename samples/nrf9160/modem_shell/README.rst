@@ -766,7 +766,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/modem_shell`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 See :ref:`cmake_options` for instructions on how to provide CMake options, for example to use a configuration overlay.
 
@@ -1054,7 +1054,7 @@ Compile as follows:
 
 Additionally, you need to program the nRF52840 side of the nRF9160 DK as instructed in :ref:`lte_sensor_gateway`.
 
-Compile the :ref:`bluetooth-hci-lpuart-sample` as follows:
+Compile the :ref:`bluetooth-hci-lpuart-sample` sample as follows:
 
 .. code-block:: console
 
@@ -1131,3 +1131,7 @@ This sample uses the following |NCS| libraries:
 This sample uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:nrf_modem`
+
+In addition, it uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

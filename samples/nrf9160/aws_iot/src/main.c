@@ -34,6 +34,18 @@ static bool cloud_connected;
 static K_SEM_DEFINE(lte_connected, 0, 1);
 static K_SEM_DEFINE(date_time_obtained, 0, 1);
 
+#if defined(CONFIG_NRF_MODEM_LIB)
+NRF_MODEM_LIB_ON_INIT(aws_iot_init_hook, on_modem_lib_init, NULL);
+
+/* Initialized to value different than success (0) */
+static int modem_lib_init_result = -1;
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	modem_lib_init_result = ret;
+}
+#endif
+
 static int json_add_obj(cJSON *parent, const char *str, cJSON *item)
 {
 	cJSON_AddItemToObject(parent, str, item);
@@ -407,7 +419,7 @@ static void nrf_modem_lib_dfu_handler(void)
 {
 	int err;
 
-	err = nrf_modem_lib_get_init_ret();
+	err = modem_lib_init_result;
 
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:

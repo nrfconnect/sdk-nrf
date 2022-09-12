@@ -105,7 +105,6 @@ After programming the sample to your development kit, test it by performing the 
 
    .. code-block::
 
-      SPM: prepare to jump to Non-Secure image
       ***** Booting Zephyr OS v1.13.99 *****
 
 #. Observe that **LED 1** is lit.

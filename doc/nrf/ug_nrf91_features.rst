@@ -54,8 +54,7 @@ Application MCU
 
 The M33 TrustZone divides the application MCU into secure and non-secure domains.
 When the MCU boots, it always starts executing from the secure area.
-The secure bootloader chain starts the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` when using nRF9160 DK or the :ref:`nrf9160_ug_secure_partition_manager` when using Thingy:91.
-The secure firmware component configures a part of memory and peripherals to be non-secure, and then jumps to the main application located in the non-secure area.
+The secure bootloader chain starts the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`, which configures a part of memory and peripherals to be non-secure, and then jumps to the main application located in the non-secure area.
 
 Secure bootloader chain
 -----------------------
@@ -70,25 +69,12 @@ Trusted Firmware-M (TF-M)
 -------------------------
 
 Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
-It has replaced Secure Partition Manager as the default solution used by most |NCS| applications and samples when using nRF9160 DK but not for Thingy:91.
-This means that when you build your application for ``nrf9160dk_nrf9160_ns`` build target, the TF-M is automatically included in the build and when you build your application for ``thingy91_nrf9160_ns`` build target, the Secure Partition Manager is automatically included in the build.
+It has replaced Secure Partition Manager as the solution used by |NCS| applications and samples.
+This means that when you build your application for ``_ns`` build targets, TF-M is automatically included in the build.
 TF-M is a framework for functions and use cases beyond the scope of Secure Partition Manager.
 
 For more information about the TF-M, see :ref:`ug_tfm`.
 See also :ref:`tfm_hello_world` for a sample that demonstrates how to add TF-M to an application.
-
-.. _nrf9160_ug_secure_partition_manager:
-
-Secure Partition Manager
-------------------------
-
-The :ref:`secure_partition_manager` sample provides a reference implementation of a Secure Partition Manager firmware.
-You can use :ref:`secure_partition_manager` as an alternative to Trusted Firmware-M (TF-M) for running an application from the non-secure area of the memory.
-
-To use the Secure Partition Manager instead of TF-M, do the following:
-
-* Disable the automatic inclusion of TF-M by setting the option :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n`` in the project configuration.
-* Set the option :kconfig:option:`CONFIG_SPM` to ``y``.
 
 Application
 -----------
@@ -242,7 +228,7 @@ FOTA upgrades using other cloud services
 
 FOTA upgrades can alternatively be hosted from a customer-developed cloud services such as solutions based on AWS and Azure.
 If you are uploading the files to an Amazon Web Services Simple Storage Service (AWS S3) bucket, see the :ref:`lib_aws_fota` documentation for instructions.
-Samples are provided in |NCS| for AWS (:ref:`aws_fota_sample` sample) and Azure (:ref:`azure_fota_sample` sample).
+Samples are provided in |NCS| for AWS (:ref:`aws_iot` sample) and Azure (:ref:`azure_fota_sample` sample).
 
 Your application must be able to retrieve the host and file name for the binary file.
 See the :ref:`lib_fota_download` library documentation for information about the format of this information, especially when providing two files for a bootloader upgrade.
@@ -254,7 +240,7 @@ Samples and applications implementing FOTA
 * :ref:`http_full_modem_update_sample` sample - performs a full firmware OTA update of the modem.
 * :ref:`http_modem_delta_update_sample` sample - performs a delta OTA update of the modem firmware.
 * :ref:`http_application_update_sample` sample - performs a basic application FOTA update.
-* :ref:`aws_fota_sample` sample - performs a FOTA update using MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
+* :ref:`aws_iot` sample - performs a FOTA update using MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
 * :ref:`azure_fota_sample` sample - performs a FOTA update from the Azure IoT Hub.
 * :ref:`asset_tracker_v2` application - performs FOTA updates of the application, modem (delta), and boot (if enabled). It also supports nRF Cloud FOTA as well as AWS or Azure FOTA. Only one must be configured at a time.
 

@@ -170,7 +170,7 @@ BUILD_ASSERT(ARRAY_SIZE(fw_info_allowed_offsets) == FW_INFO_OFFSET_COUNT,
  *
  * Populate the other firmware's @c ext_api_in with EXT_APIs from other images.
  *
- * @note This is should be called immediately before booting the other firmware
+ * @note This should be called immediately before booting the other firmware
  *       since it will likely corrupt the memory of the running firmware.
  *
  * @param[in]  fwinfo   Pointer to the other firmware's information structure.
@@ -178,7 +178,7 @@ BUILD_ASSERT(ARRAY_SIZE(fw_info_allowed_offsets) == FW_INFO_OFFSET_COUNT,
  *                      If false, only check whether requirements can be
  *                      satisfied.
  *
- * @return Whether requirements could be satisified.
+ * @return Whether requirements could be satisfied.
  */
 bool fw_info_ext_api_provide(const struct fw_info *fwinfo, bool provide);
 

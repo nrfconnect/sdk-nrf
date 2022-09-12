@@ -12,7 +12,6 @@
 #include "location_service.h"
 #include "nrf_cloud_integration.h"
 #include "here_integration.h"
-#include "polte_integration.h"
 
 static char recv_buf[CONFIG_MULTICELL_LOCATION_RECV_BUF_SIZE];
 
@@ -26,11 +25,6 @@ const char *location_service_get_certificate(enum multicell_service service)
 #if defined(CONFIG_MULTICELL_LOCATION_SERVICE_HERE)
 	if (service == MULTICELL_SERVICE_HERE) {
 		return location_service_get_certificate_here();
-	}
-#endif
-#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_POLTE)
-	if (service == MULTICELL_SERVICE_POLTE) {
-		return location_service_get_certificate_polte();
 	}
 #endif
 	return NULL;
@@ -51,13 +45,6 @@ int location_service_get_cell_location(
 	if (params->service == MULTICELL_SERVICE_HERE ||
 	    params->service == MULTICELL_SERVICE_ANY) {
 		return location_service_get_cell_location_here(
-			params, recv_buf, sizeof(recv_buf), location);
-	}
-#endif
-#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_POLTE)
-	if (params->service == MULTICELL_SERVICE_POLTE ||
-	    params->service == MULTICELL_SERVICE_ANY) {
-		return location_service_get_cell_location_polte(
 			params, recv_buf, sizeof(recv_buf), location);
 	}
 #endif

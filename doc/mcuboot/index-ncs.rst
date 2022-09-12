@@ -1,7 +1,7 @@
 .. _mcuboot_index_ncs:
 
-MCUboot
-#######
+Introduction to MCUboot
+#######################
 
 .. contents::
    :local:

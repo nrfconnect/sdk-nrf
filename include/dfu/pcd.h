@@ -73,7 +73,7 @@ int pcd_network_core_update(const void *src_addr, size_t len);
  *	   firmware update. Then boots the network core and initiates the
  *	   update procedure. The function will return before the update
  *	   procedure on the network core has completed or failed, and will
- *	   indicate succes as long as the initialization of the update
+ *	   indicate success as long as the initialization of the update
  *	   procedure was successful. The network core will still be in a
  *	   powered on state when this function returns.
  *

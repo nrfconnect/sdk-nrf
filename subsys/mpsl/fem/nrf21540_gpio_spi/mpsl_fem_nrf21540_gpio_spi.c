@@ -16,6 +16,9 @@
 #include <mpsl_fem_utils.h>
 
 #include <mpsl_fem_config_nrf21540_gpio_spi.h>
+#if IS_ENABLED(CONFIG_MPSL_FEM_POWER_MODEL)
+#include "mpsl_fem_power_model_interface.h"
+#endif
 #include <nrfx_gpiote.h>
 #if IS_ENABLED(CONFIG_HAS_HW_NRF_PPI)
 #include <nrfx_ppi.h>
@@ -365,9 +368,18 @@ static int fem_nrf21540_gpio_spi_configure(void)
 	}
 #endif
 
-	(void)err;
+#if IS_ENABLED(CONFIG_MPSL_FEM_POWER_MODEL)
+	const mpsl_fem_power_model_t *power_model = mpsl_fem_power_model_to_use_get();
 
-	return mpsl_fem_nrf21540_gpio_spi_interface_config_set(&cfg);
+	mpsl_fem_power_model_set(power_model);
+
+	if (err) {
+		return err;
+	}
+#endif /* IS_ENABLED(CONFIG_MPSL_FEM_POWER_MODEL) */
+
+	err = mpsl_fem_nrf21540_gpio_spi_interface_config_set(&cfg);
+	return err;
 }
 #endif
 

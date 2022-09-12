@@ -9,6 +9,38 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 0.30.2
+***********************
+
+Release for modem firmware version 1.3.3.
+
+Certification status
+====================
+
+For certification status, see `Mobile network operator certifications`_.
+
+Changes
+=======
+
+* Added the functions :c:func:`lwm2m_os_lte_modes_get` and :c:func:`lwm2m_os_lte_mode_request`.
+
+  * This makes it possible for the LwM2M library to make the device switch between NB-IoT and LTE-M networks.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            | 72186         | 15840      |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            | 93784         | 38968      |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
+
 liblwm2m_carrier 0.30.1
 ***********************
 

@@ -279,7 +279,7 @@ int ftp_open(const char *hostname, uint16_t port, int sec_tag);
 /**@brief FTP server login.
  *
  * @param username user name
- * @param password passoword
+ * @param password The password
  *
  * @retval ftp_reply_code or negative if error
  */
@@ -315,7 +315,7 @@ int ftp_pwd(void);
 /**@brief List information of folder or file
  *
  * @param options List options, refer to Linux "man ls"
- * @param target file or diretory to list. If not specified, list current folder
+ * @param target file or directory to list. If not specified, list current folder
  *
  * @retval ftp_reply_code or negative if error
  */

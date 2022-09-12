@@ -112,3 +112,11 @@ tests:
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="PROJECTKEY"
     extra_args: OVERLAY_CONFIG="overlay-lwm2m.conf;overlay-debug.conf;overlay-memfault.conf"
     tags: ci_build
+  applications.asset_tracker_v2.memfault-low-power:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    extra_configs:
+      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="PROJECTKEY"
+    extra_args: OVERLAY_CONFIG="overlay-low-power.conf;overlay-memfault.conf"
+    tags: ci_build

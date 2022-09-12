@@ -150,7 +150,7 @@ enum bt_mesh_light_ctrl_prop {
 
 /** Light Control Regulator Coefficients */
 enum bt_mesh_light_ctrl_coeff {
-	/** Regulator downwards integral coeffient (Kid).
+	/** Regulator downwards integral coefficient (Kid).
 	 *
 	 *  - Unit: Unitless
 	 *  - Encoding: 32 bit floating point.
@@ -158,7 +158,7 @@ enum bt_mesh_light_ctrl_coeff {
 	 */
 	BT_MESH_LIGHT_CTRL_COEFF_KID = BT_MESH_PROP_ID_LIGHT_CTRL_REG_KID,
 
-	/** Regulator upwards integral coeffient (Kiu).
+	/** Regulator upwards integral coefficient (Kiu).
 	 *
 	 *  - Unit: Unitless
 	 *  - Encoding: 32 bit floating point.
@@ -166,7 +166,7 @@ enum bt_mesh_light_ctrl_coeff {
 	 */
 	BT_MESH_LIGHT_CTRL_COEFF_KIU = BT_MESH_PROP_ID_LIGHT_CTRL_REG_KIU,
 
-	/** Regulator downwards proportional coeffient (Kpd).
+	/** Regulator downwards proportional coefficient (Kpd).
 	 *
 	 *  - Unit: Unitless
 	 *  - Encoding: 32 bit floating point.

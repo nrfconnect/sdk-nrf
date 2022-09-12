@@ -119,8 +119,8 @@ Sampling thread
 
 The motion module uses a dedicated sampling thread to sample data from the motion sensor.
 The reason for using the sampling thread is the long time required for data to be ready.
-Using a dedicated thread also simplifies the module, because the interaction with the sensor becomes sequential.
-The sampling thread priority is set to 0 (the highest preemptive thread priority), because it is assumed that the data sampling will happen in the background.
+Using a dedicated thread also simplifies the module because the interaction with the sensor becomes sequential.
+The sampling thread priority is set to 0 (the highest preemptive thread priority) because it is assumed that the data sampling happens in the background.
 
 The sampling thread stays in the unready state blocked on a semaphore.
 The semaphore is triggered when the motion sensor trigger sends a notification that the data is available or when other application event requires the module interaction with the sensor (for example, when configuration is submitted from the host).

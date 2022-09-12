@@ -123,3 +123,7 @@ In addition, it uses the following Zephyr libraries:
 OpenThread CoAP API is used in this sample:
 
 * `OpenThread CoAP API`_
+
+In addition, it uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

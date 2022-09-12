@@ -23,6 +23,7 @@ config BT_FAST_PAIR_CRYPTO_TINYCRYPT
 	bool "Fast Pair with Tinycrypt cryptographic backend"
 	select TINYCRYPT
 	select TINYCRYPT_SHA256
+	select TINYCRYPT_SHA256_HMAC
 	select TINYCRYPT_AES
 	select TINYCRYPT_ECC_DH
 	help
@@ -34,6 +35,12 @@ config BT_FAST_PAIR_CRYPTO_MBEDTLS
 	select MBEDTLS_ENABLE_HEAP
 	help
 	  Select MbedTLS cryptographic backend for Fast Pair.
+
+config BT_FAST_PAIR_CRYPTO_OBERON
+	bool "Fast Pair with Oberon cryptographic backend"
+	select NRF_OBERON
+	help
+	  Select Oberon cryptographic backend for Fast Pair.
 
 endchoice
 

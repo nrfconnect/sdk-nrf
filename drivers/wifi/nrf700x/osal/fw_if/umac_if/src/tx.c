@@ -510,6 +510,8 @@ int tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	unsigned char *data = NULL;
 	struct tx_cmd_prep_info info;
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	unsigned char vif_id = fmac_dev_ctx->tx_config.peers[peer_id].if_idx;
+	struct wifi_nrf_fmac_vif_ctx *vif_ctx = fmac_dev_ctx->vif_ctx[vif_id];
 
 	txq_len = wifi_nrf_utils_list_len(fmac_dev_ctx->fpriv->opriv,
 					  txq);
@@ -586,12 +588,10 @@ int tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	fmac_dev_ctx->host_stats.total_tx_pkts += config->num_tx_pkts;
 	config->wdev_id = fmac_dev_ctx->tx_config.peers[peer_id].if_idx;
 
-	len = pending_frames_count(fmac_dev_ctx, peer_id);
-
-	if (len == 0) {
-		fmac_dev_ctx->tx_config.peers[peer_id].ps_token_count = 0;
-		config->mac_hdr_info.more_data = 0;
-	} else {
+	if ((vif_ctx->if_type == IMG_IFTYPE_AP ||
+	    vif_ctx->if_type == IMG_IFTYPE_AP_VLAN ||
+	    vif_ctx->if_type == IMG_IFTYPE_MESH_POINT) &&
+		pending_frames_count(fmac_dev_ctx, peer_id) != 0) {
 		config->mac_hdr_info.more_data = 1;
 	}
 
@@ -709,7 +709,7 @@ enum wifi_nrf_status tx_enqueue(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	qlen = wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv, queue);
 
-	if (qlen >= MAX_PENDING_QUEUE_LEN) {
+	if (qlen >= CONFIG_NRF700x_MAX_TX_PENDING_QLEN) {
 		wifi_nrf_osal_nbuf_free(fmac_dev_ctx->fpriv->opriv,
 					nwb);
 		goto out;

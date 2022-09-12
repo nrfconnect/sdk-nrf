@@ -16,7 +16,10 @@
 if BUILD_WITH_TFM
 
 config TFM_IPC
-	default y if TFM_PROFILE_TYPE_MINIMAL
+	default y
+
+config TFM_ISOLATION_LEVEL
+	default 1 if SOC_NRF5340_CPUAPP || SOC_NRF9160
 
 config TFM_BL2
 	bool
@@ -91,6 +94,7 @@ config TFM_CRYPTO_IOVEC_BUFFER_SIZE
 	prompt "TF-M Crypto - PSA FF IO vector buffer size" if !TFM_PROFILE_TYPE_MINIMAL
 	depends on TFM_IPC
 	default 1024 if TFM_PROFILE_TYPE_MINIMAL
+	default 16384 if TFM_REGRESSION_S || TFM_REGRESSION_NS
 	default 5120
 	help
 	  This parameter applies only to IPC model builds. In IPC model,
@@ -195,7 +199,7 @@ if BUILD_WITH_TFM
 
 config PM_PARTITION_SIZE_TFM_SRAM
 	hex
-	prompt "Memory reserved for TFM_RAM." if !TFM_PROFILE_TYPE_MINIMAL
+	prompt "Memory reserved for TFM_RAM" if !TFM_PROFILE_TYPE_MINIMAL
 	default 0x8000 if TFM_PROFILE_TYPE_MINIMAL
 	default 0x16000 if SOC_NRF9160
 	default 0x40000 if SOC_NRF5340_CPUAPP

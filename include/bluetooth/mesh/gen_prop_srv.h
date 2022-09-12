@@ -192,7 +192,7 @@ struct bt_mesh_prop_srv {
 	 *
 	 * @param[in] srv Property Server instance whose property to set.
 	 * @param[in] ctx Message context for the message that triggered the
-	 * change, or NULL if the change is not coming from a messge.
+	 * change, or NULL if the change is not coming from a message.
 	 * @param[in,out] val Property value to set. Any changes to the value
 	 * will be reflected in the response message.
 	 */
@@ -209,7 +209,7 @@ struct bt_mesh_prop_srv {
 	 *
 	 * @param[in] srv Property Server instance whose property to set.
 	 * @param[in] ctx Message context for the message that triggered the
-	 * change, or NULL if the change is not coming from a messge.
+	 * change, or NULL if the change is not coming from a message.
 	 * @param[in,out] val Property value to get. Any changes to the value
 	 * will be reflected in the response message.
 	 */

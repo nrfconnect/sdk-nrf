@@ -20,7 +20,7 @@ It contains reference applications, sample source code, and libraries for Blueto
 Highlights
 **********
 
-* Updated the :ref:`lib_fota_download` library (used by the :ref:`aws_fota_sample` sample, the nRF9160: Asset Tracker application, and the :ref:`http_application_update_sample` sample) to support delta updates of the modem firmware in addition to application updates.
+* Updated the :ref:`lib_fota_download` library (used by the nRF9160: AWS FOTA sample, the nRF9160: Asset Tracker application, and the :ref:`http_application_update_sample` sample) to support delta updates of the modem firmware in addition to application updates.
 * Updated the nRF9160: Asset Tracker application with new features and firmware over-the-air (FOTA) support.
 * Added an :ref:`lwm2m_carrier` sample that demonstrates how to set up and use the :ref:`liblwm2m_carrier_readme` library to connect to an operator network.
   The new :ref:`liblwm2m_carrier_readme` library provides Verizon network support.
@@ -138,7 +138,7 @@ Updated samples and applications
   * Added light sensor handling.
   * Added firmware over-the-air (FOTA) support for application updates and delta updates of the modem firmware.
 
-* :ref:`aws_fota_sample`:
+* nRF9160: AWS FOTA:
 
   * Added a warning message when provisioning certificates stating that the certificates are stored in application core flash (readable flash) and are visible on modem traces.
   * Changed the default security tag to not be the same as nRF Connect for Cloud's security tag, to ensure that users do not overwrite their nRF Connect for Cloud certificates.
@@ -426,7 +426,7 @@ Documentation
     * :ref:`at_client_sample`
     * :ref:`lwm2m_carrier`
     * :ref:`lwm2m_client`
-    * :ref:`aws_fota_sample`
+    * nRF9160: AWS FOTA
     * :ref:`http_application_update_sample`
 
   * Bluetooth Low Energy:
@@ -538,7 +538,7 @@ Bootloader
 * Public keys are not revoked when subsequent keys are used.
 * The bootloader does not work properly on nRF51.
 * Building and programming the immutable bootloader (see :ref:`ug_bootloader`) is not supported in SEGGER Embedded Studio.
-* The immutable bootlader can only be used with the following boards:
+* The immutable bootloader can only be used with the following boards:
 
   * nrf52840_pca10056
   * nrf9160_pca10090
@@ -552,7 +552,7 @@ DFU and FOTA
 * :ref:`lib_fota_download` does not resume a download if the device loses the connection.
   As a workaround, call :c:func:`fota_download_start` again with the same arguments when the connection is re-established to resume the download.
 * When using the mcuboot target in :ref:`lib_dfu_target`, the write/downloaded offset is not retained when the device is reset.
-* In the :ref:`aws_fota_sample` and :ref:`http_application_update_sample` samples, the download is stopped if the socket connection times out before the modem can delete the modem firmware.
+* In the nRF9160: AWS FOTA and :ref:`http_application_update_sample` samples, the download is stopped if the socket connection times out before the modem can delete the modem firmware.
   As a workaround, call :c:func:`fota_download_start` again with the same arguments.
   A fix for this issue is available in commit `38625ba7 <https://github.com/nrfconnect/sdk-nrf/commit/38625ba775adda3cdc7dbf516eeb3943c7403227>`_.
 * If the last fragment of a :ref:`lib_fota_download` is received but is corrupted, or if the last write is unsuccessful, the library emits an error event as expected.

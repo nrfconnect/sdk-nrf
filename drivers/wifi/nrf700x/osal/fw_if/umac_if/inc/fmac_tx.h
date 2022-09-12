@@ -17,7 +17,6 @@
 
 #define TX_DESC_BUCKET_BOUND 32
 #define DOT11_WMM_PARAMS_LEN 2
-#define MAX_PENDING_QUEUE_LEN 128
 
 
 struct tx_pkt_info {

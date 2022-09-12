@@ -7,11 +7,12 @@ Secure Partition Manager
    :local:
    :depth: 2
 
-The Secure Partition Manager sample provides a reference use of the System Protection Unit peripheral.
+The Secure Partition Manager (SPM) sample provides a reference use of the System Protection Unit peripheral.
 This firmware sets up an nRF device with Trusted Execution (|trusted_execution|) so that it can run user applications in the non-secure domain.
 
 .. note::
-   SPM is an alternative for using the Trusted Firmware-M (TF-M). See :ref:`ug_tfm`.
+   SPM is deprecated as of |NCS| v2.1.0 and will be removed in a future version of the SDK.
+   :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` has replaced SPM as the trusted execution solution.
 
 To use the Secure Partition Manager instead of TF-M, do the following:
 
@@ -45,7 +46,6 @@ Secure Services
 
 The SPM can provide the application firmware with access to Secure Services.
 See the :ref:`lib_spm` library for information about the available services.
-For an example code using them, see :ref:`secure_services`.
 
 Requirements for the application firmware
 =========================================

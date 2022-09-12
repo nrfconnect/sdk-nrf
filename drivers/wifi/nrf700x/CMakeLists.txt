@@ -70,10 +70,6 @@ zephyr_library_sources(
 	zephyr/src/qspi/src/rpu_hw_if.c
 )
 
-zephyr_library_sources_ifdef(CONFIG_SHELL
-	zephyr/src/qspi/src/nrf700x_shell.c
-)
-
 zephyr_library_sources_ifdef(CONFIG_NRF700X_ON_QSPI
 	zephyr/src/qspi/src/qspi_if.c
 )

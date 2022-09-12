@@ -63,7 +63,8 @@ Check and configure the following library Kconfig options:
 * :kconfig:option:`CONFIG_AZURE_FOTA_TLS` - Enables HTTPS for downloads. By default, TLS is enabled and currently, the transport protocol must be configured at compile time.
 * :kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG` - Sets the security tag for TLS credentials when using HTTPS as the transport layer. See :ref:`certificates` for more details.
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_HOSTNAME` - Sets the Azure IoT Hub host name. If DPS is used, the sample assumes that the IoT hub host name is unknown, and the configuration is ignored.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Specifies the device ID, which is used when connecting to Azure IoT Hub or when DPS is enabled.
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Specifies the device ID, which is used when connecting to Azure IoT Hub.
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_REG_ID` - Specifies the device registration ID used for DPS.
 
 .. note::
    To provide the device ID used in the connection towards Azure IoT Hub at run time, set the ``device_id`` member of the :c:struct:`azure_iot_hub_config` structure when calling the :c:func:`azure_iot_hub_connect` function.

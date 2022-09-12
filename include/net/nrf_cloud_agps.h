@@ -58,7 +58,7 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len);
 /**@brief Query which A-GPS elements were actually received
  *
  * @param received_elements return copy of requested elements received
- * since agps request made
+ * since A-GPS request was made
  */
 void nrf_cloud_agps_processed(struct nrf_modem_gnss_agps_data_frame *received_elements);
 

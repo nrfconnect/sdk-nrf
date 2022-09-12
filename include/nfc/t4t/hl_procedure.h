@@ -35,7 +35,7 @@ enum nfc_t4t_hl_procedure_select {
 
 /**@brief NFC T4T High Level Procedure callback structure.
  *
- * This structure is used to control command exchenge with
+ * This structure is used to control command exchange with
  * NFC Type 4 Tag.
  */
 struct nfc_t4t_hl_procedure_cb {
@@ -71,7 +71,7 @@ struct nfc_t4t_hl_procedure_cb {
 
 	/**@brief HL Procedure NDEF file updated callback.
 	 *
-	 * The NDEF file of Typ 4 Tag update  operation is
+	 * The NDEF file of Type 4 Tag update  operation is
 	 * completed successfully.
 	 *
 	 * @param[in] file id File Identifier.
@@ -120,7 +120,7 @@ int nfc_t4t_hl_procedure_cc_select(void);
 
 /**@brief Perform Capability Container Read Procedure.
  *
- * @param[out] cc Pointer to the Capability Cointainer descriptor.
+ * @param[out] cc Pointer to the Capability Container descriptor.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.

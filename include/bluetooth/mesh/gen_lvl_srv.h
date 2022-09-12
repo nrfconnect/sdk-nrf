@@ -98,7 +98,7 @@ struct bt_mesh_lvl_srv_handlers {
 	 *
 	 * @param[in] srv Level server to change the state of.
 	 * @param[in] ctx Message context for the message that triggered the
-	 * change, or NULL if the change is not coming from a messge.
+	 * change, or NULL if the change is not coming from a message.
 	 * @param[in] delta_set Parameters of the state change. Note that the
 	 * transition will always be non-NULL.
 	 * @param[out] rsp Response structure to be filled.
@@ -125,7 +125,7 @@ struct bt_mesh_lvl_srv_handlers {
 	 *
 	 * @param[in] srv Level server to change the state of.
 	 * @param[in] ctx Message context for the message that triggered the
-	 * change, or NULL if the change is not coming from a messge.
+	 * change, or NULL if the change is not coming from a message.
 	 * @param[in] move_set Parameters of the state change. Note that the
 	 * transition will always be non-NULL.
 	 * @param[out] rsp Response structure to be filled.

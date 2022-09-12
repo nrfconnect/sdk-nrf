@@ -16,7 +16,7 @@ This library is an enhancement to the :ref:`lib_nrf_cloud` library.
 Configuration
 *************
 
-Configure the following options to enable or disable the use of this library:
+Configure the following Kconfig option to enable or disable the use of this library:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_CELL_POS`
 

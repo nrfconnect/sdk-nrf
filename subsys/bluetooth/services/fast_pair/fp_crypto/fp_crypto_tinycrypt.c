@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <tinycrypt/constants.h>
 #include <tinycrypt/sha256.h>
+#include <tinycrypt/hmac.h>
 #include <tinycrypt/aes.h>
 #include <tinycrypt/ecc_dh.h>
 #include "fp_crypto.h"
@@ -27,7 +28,30 @@ int fp_crypto_sha256(uint8_t *out, const uint8_t *in, size_t data_len)
 	return 0;
 }
 
-int fp_crypto_aes128_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
+int fp_crypto_hmac_sha256(uint8_t *out,
+			  const uint8_t *in,
+			  size_t data_len,
+			  const uint8_t *hmac_key,
+			  size_t hmac_key_len)
+{
+	struct tc_hmac_state_struct s;
+
+	if (tc_hmac_set_key(&s, hmac_key, hmac_key_len) != TC_CRYPTO_SUCCESS) {
+		return -EINVAL;
+	}
+	if (tc_hmac_init(&s) != TC_CRYPTO_SUCCESS) {
+		return -EINVAL;
+	}
+	if (tc_hmac_update(&s, in, data_len) != TC_CRYPTO_SUCCESS) {
+		return -EINVAL;
+	}
+	if (tc_hmac_final(out, FP_CRYPTO_SHA256_HASH_LEN, &s) != TC_CRYPTO_SUCCESS) {
+		return -EINVAL;
+	}
+	return 0;
+}
+
+int fp_crypto_aes128_ecb_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 {
 	struct tc_aes_key_sched_struct s;
 
@@ -40,7 +64,7 @@ int fp_crypto_aes128_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 	return 0;
 }
 
-int fp_crypto_aes128_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
+int fp_crypto_aes128_ecb_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 {
 	struct tc_aes_key_sched_struct s;
 

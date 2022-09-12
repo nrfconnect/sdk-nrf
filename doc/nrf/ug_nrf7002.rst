@@ -7,12 +7,12 @@ Getting started with nRF7002 DK
    :local:
    :depth: 2
 
-The nRF7002 DK (PCA10143) is a single-board development kit for evaluation and development on the Nordic nRF7002, a Wi-Fi companion chip to Nordic nRF5340 System-on-Chip (SoC) host processor.
+The nRF7002 DK (PCA10143) is a single-board development kit for evaluation and development on the Nordic nRF7002, a Wi-Fi companion IC to Nordic nRF5340 System-on-Chip (SoC) host processor.
 
 Overview
 ********
 
-The nRF7002 is an IEEE 802.11ax (Wi-Fi 6) compliant SoC that implements the Wi-Fi physical layer and MAC layer protocols.
+The nRF7002 is an IEEE 802.11ax (Wi-Fi 6) compliant solution that implements the Wi-Fi physical layer and MAC layer protocols.
 It implements the Wi-Fi driver software on the nRF5340 host processor communicating over the QSPI bus.
 
 The nRF5340 host is a dual-core SoC based on the Arm® Cortex®-M33 architecture.
@@ -29,9 +29,8 @@ The ``nrf7002dk_nrf5340_cpunet`` build target provides support for the network c
      :align: center
      :alt: nRF7002 DK
 
-     nRF7002 DK (Credit: Nordic Semiconductor)
+     nRF7002 PDK (Preview DK will later be replaced by the certified nRF7002 DK)
 
-Visit the `Nordic Semiconductor Wi-Fi products`_ page for more information on the development kit and `Infocenter <Nordic Semiconductor Infocenter>`_ for the processor's information and the datasheet.
 
 Hardware
 ********

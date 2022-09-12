@@ -228,7 +228,13 @@ get_shared(
   PROPERTY NRF53_MULTI_IMAGE_UPDATE
   )
 
-if (DEFINED mcuboot_NRF53_MULTI_IMAGE_UPDATE)
+get_shared(
+  mcuboot_NRF53_RECOVERY_NETWORK_CORE
+  IMAGE mcuboot
+  PROPERTY NRF53_RECOVERY_NETWORK_CORE
+  )
+
+if ((DEFINED mcuboot_NRF53_MULTI_IMAGE_UPDATE) OR (DEFINED mcuboot_NRF53_RECOVERY_NETWORK_CORE))
   # This region will contain the 'mcuboot_secondary' partition, and the banked
   # updates for the network core will be stored here.
   get_shared(ram_flash_label IMAGE mcuboot PROPERTY RAM_FLASH_LABEL)

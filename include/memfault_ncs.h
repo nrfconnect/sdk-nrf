@@ -30,7 +30,7 @@ extern "C" {
  *	  must be enabled.
  *
  *  @param device_id Pointer to device ID buffer
- *  @param len Length of device ID. Can not exceed CONFIG_MEMFAULT_NCS_DEVICE_ID_MAX_LEN.
+ *  @param len Length of device ID. Cannot exceed CONFIG_MEMFAULT_NCS_DEVICE_ID_MAX_LEN.
  *
  *  @return 0 on success, otherwise a negative error code
  */

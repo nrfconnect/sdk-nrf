@@ -106,24 +106,35 @@ The following scenarios are possible:
 * Multi-core - Two or more firmware image files are generated for two or more cores.
 
 +---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
-| File                            | File format                                                                                     | Programming scenario                                                     |
+| File                            | Description                                                                                     | Programming scenario                                                     |
 +=================================+=================================================================================================+==========================================================================+
 | :file:`zephyr.hex`              | Default full image.                                                                             | * Programming non-secure domain (``_ns``) or single-image build targets. |
-|                                 | In a multi-image build, several :file:`zephyr.hex` are generated, one for each image.           | * Testing DFU procedure with nrfjprog.                                   |
+|                                 | In a multi-image build, several :file:`zephyr.hex` are generated, one for each image.           | * Testing DFU procedure with nrfjprog (programming directly to device).  |
 +---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :file:`merged.hex`              | The result of merging all :file:`zephyr.hex` files for all images for a core                    | * Programming multi-core application.                                    |
-|                                 | in a multi-image build. Used by Nordic Semiconductor's build targets in single-core             | * Testing DFU procedure with nrfjprog.                                   |
+|                                 | in a multi-image build. Used by Nordic Semiconductor's build targets in single-core             | * Testing DFU procedure with nrfjprog (programming directly to device).  |
 |                                 | multi-image builds. In multi-core builds, several :file:`merged_<domain_name>.hex` fields       |                                                                          |
 |                                 | are generated, where *<domain-name>* indicates the core.                                        |                                                                          |
 +---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :file:`merged_domain.hex`       | The result of merging all :file:`merged.hex` files for all cores or domains                     | * Programming secure domain (``_s``) and multi-core build targets.       |
-|                                 | (:file:`merged.hex` for the application core and :file:`merged.hex` or :file:`zephyr.hex`       | * Testing DFU procedure with nrfjprog.                                   |
+|                                 | (:file:`merged.hex` for the application core and :file:`merged.hex` or :file:`zephyr.hex`       | * Testing DFU procedure with nrfjprog (programming directly to device).  |
 |                                 | for the network core).                                                                          |                                                                          |
 +---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
-| :file:`app_update.bin`          | Application core update file used to create :file:`dfu_application.zip`.                        | DFU process for single-image build targets and the application core      |
-|                                 | Contains the signed version of the application.                                                 | of the multi-core build targets.                                         |
+| :file:`tfm_s.hex`               | Secure firmware image created by the TF-M build system in the background of the Zephyr build.   | Programming secure domain (``_s``) and multi-core build targets.         |
+|                                 | It is used together with the :file:`zephyr.hex`, which is intended for the non-secure           |                                                                          |
+|                                 | domain. Located in :file:`build/tfm/bin`.                                                       |                                                                          |
++---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :file:`app_update.bin`          | Application core update file used to create :file:`dfu_application.zip` for multi-core DFU.     | DFU process for single-image build targets and the application core      |
+|                                 | Can also be used standalone for a single-image DFU.                                             | of the multi-core build targets.                                         |
+|                                 | Contains the signed version of the application.                                                 |                                                                          |
 |                                 | This file is transferred in the real-life update procedure, as opposed to HEX files             |                                                                          |
 |                                 | that are transferred with nrfjprog when emulating an update procedure.                          |                                                                          |
+|                                 | :ref:`Compatible with MCUboot <mcuboot:mcuboot_ncs>`.                                           |                                                                          |
++---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :file:`app_signed.hex`          | HEX file variant of the :file:`app_update.bin`.                                                 | Programming single-image build targets and the application core          |
+|                                 | Can also be used standalone for a single-image DFU.                                             | of the multi-core build targets.                                         |
+|                                 | Contains the signed version of the application.                                                 |                                                                          |
+|                                 | :ref:`Compatible with MCUboot <mcuboot:mcuboot_ncs>`.                                           |                                                                          |
 +---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :file:`net_core_app_update.bin` | Network core update file used to create :file:`dfu_application.zip`.                            | DFU process for the network core of multi-core build targets.            |
 |                                 | This file is transferred in the real-life update procedure, as opposed to HEX files             |                                                                          |
@@ -158,9 +169,16 @@ The following table lists secondary build files that can be generated when build
 +---------------------------------+----------------------------------------------------------------------------------------------------------+
 | :file:`zephyr.meta`             | A file with the Zephyr and nRF Connect SDK git hashes for the commits used to build the application.     |
 +---------------------------------+----------------------------------------------------------------------------------------------------------+
+| :file:`tfm_s.elf`               | An ELF file for the TF-M image that is being built. Can be used for debugging purposes.                  |
++---------------------------------+----------------------------------------------------------------------------------------------------------+
 | :file:`manifest.json`           | Output artifact that uses information from the :file:`zephyr.meta` output file.                          |
 +---------------------------------+----------------------------------------------------------------------------------------------------------+
 | :file:`dfu_multi_image.bin`     | Multi-image package that contains a CBOR manifest and a set of user-selected update images,              |
 |                                 | such as firmware images for different cores.                                                             |
 |                                 | Used for DFU purposes by :ref:`ug_matter` and :ref:`ug_zigbee` protocols.                                |
 +---------------------------------+----------------------------------------------------------------------------------------------------------+
+
+MCUboot output build files
+--------------------------
+
+Read the :ref:`mcuboot:mcuboot_ncs` page in the MCUboot documentation for the list of all the FOTA upgrade files that are automatically generated when using MCUboot.

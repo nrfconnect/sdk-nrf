@@ -46,7 +46,7 @@ struct nfc_tnep_ch_record {
 	uint8_t minor_ver;
 };
 
-/**@brief Connection Handover Request Record strucure. */
+/**@brief Connection Handover Request Record structure. */
 struct nfc_tnep_ch_request {
 	/** Pointer to the Collision Resolution Record data. */
 	const struct nfc_ndef_ch_cr_rec *cr;

@@ -97,7 +97,7 @@ In other words, not all of the :ref:`nrf_desktop_app_internal_modules` need to b
 Gaming mouse module set
 -----------------------
 
-The following figure shows the modules that are enabled when the application is working as a gaming mouse.
+The following figure shows the modules that are enabled when the application is working as a gaming mouse:
 
 .. figure:: /images/nrf_desktop_arch_gmouse.svg
    :alt: nRF Desktop high-level design (gaming mouse)
@@ -107,7 +107,7 @@ The following figure shows the modules that are enabled when the application is 
 Desktop mouse module set
 ------------------------
 
-The following figure shows the modules that are enabled when the application is working as a desktop mouse.
+The following figure shows the modules that are enabled when the application is working as a desktop mouse:
 
 .. figure:: /images/nrf_desktop_arch_dmouse.svg
    :alt: nRF Desktop high-level design (desktop mouse)
@@ -117,7 +117,7 @@ The following figure shows the modules that are enabled when the application is 
 Keyboard module set
 -------------------
 
-The following figure shows the modules that are enabled when the application is working as a keyboard.
+The following figure shows the modules that are enabled when the application is working as a keyboard:
 
 .. figure:: /images/nrf_desktop_arch_kbd.svg
    :alt: nRF Desktop high-level design (keyboard)
@@ -127,7 +127,7 @@ The following figure shows the modules that are enabled when the application is 
 Dongle module set
 -----------------
 
-The following figure shows the modules that are enabled when the application is working as a dongle.
+The following figure shows the modules that are enabled when the application is working as a dongle:
 
 .. figure:: /images/nrf_desktop_arch_dongle.svg
    :alt: nRF Desktop high-level design (dongle)
@@ -261,7 +261,7 @@ The nRF Desktop supports the HID keyboard LED report.
 The report is used by the host to update the state of the keyboard LEDs, for example to indicate that the Caps Lock key is active.
 
 .. note::
-   Only the nrf52840dk_nrf52840 in ``keyboard`` configuration has hardware LEDs that can be used to disaply state of the Caps Lock and Num Lock.
+   Only the nrf52840dk_nrf52840 in ``keyboard`` configuration has hardware LEDs that can be used to display the Caps Lock and Num Lock state.
 
 The following diagrams show the HID output report data exchange between the application modules.
 
@@ -396,10 +396,10 @@ The following build types are available for various boards in the nRF Desktop:
 
 * Bootloader-enabled configurations with support for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>` are set as default if they fit in flash memory.
   See :ref:`nrf_desktop_board_configuration_files` for details about which boards have bootloader included in their default configuration.
-* ``release`` -- Release version of the application with no debugging features.
-* ``debug`` -- Debug version of the application; the same as the ``release`` build type, but with debug options enabled.
-* ``shell`` -- ``debug`` build type with the shell enabled.
-* ``wwcb`` -- ``debug`` build type with the support for the B0 bootloader enabled for `Works With ChromeBook (WWCB)`_.
+* ``release`` - Release version of the application with no debugging features.
+* ``debug`` - Debug version of the application; the same as the ``release`` build type, but with debug options enabled.
+* ``shell`` - ``debug`` build type with the shell enabled.
+* ``wwcb`` - ``debug`` build type with the support for the B0 bootloader enabled for `Works With ChromeBook (WWCB)`_.
 
 In nRF Desktop, not every development kit can support every build type mentioned above.
 If the given build type is not supported on the selected DK, an error message will appear when `Building and running`_.
@@ -1113,8 +1113,10 @@ While |NCS| provides support for two motion sensor drivers (PMW3360 and PAW3212)
 
 Complete the steps described in the following sections to add a new motion sensor.
 
-1. Add a new sensor driver
---------------------------
+.. rst-class:: numbered-step
+
+Add a new sensor driver
+-----------------------
 
 First, create a new motion sensor driver that will provide code for communication with the sensor.
 Use the two existing |NCS| sensor drivers as an example.
@@ -1127,22 +1129,26 @@ The application starts a process of retrieving a motion data sample.
 The motion module calls ``sensor_sample_fetch`` and then ``sensor_channel_get`` on two sensor channels, ``SENSOR_CHAN_POS_DX`` and ``SENSOR_CHAN_POS_DY``.
 The driver must support these two channels.
 
-2. Create a DTS binding
------------------------
+.. rst-class:: numbered-step
+
+Create a DTS binding
+--------------------
 
 Zephyr recommends to use DTS for hardware configuration (see :ref:`zephyr:dt_vs_kconfig`).
 For the new motion sensor configuration to be recognized by DTS, define a dedicated DTS binding.
 See :ref:`dt-bindings` for more information, and refer to :file:`dts/bindings/sensor` for binding examples.
 
-3. Configure sensor through DTS
--------------------------------
+.. rst-class:: numbered-step
+
+Configure sensor through DTS
+----------------------------
 
 Once binding is defined, it is possible to set the sensor configuration.
 This is done by editing the DTS file that describes the board.
 For more information, see :ref:`devicetree-intro`.
 
 As an example, take a look at the PMW3360 sensor that already exists in |NCS|.
-The following code excerpt is taken from :file:`boards/arm/nrf52840gmouse_nrf52840/nrf52840gmouse_nrf52840.dts`.
+The following code excerpt is taken from :file:`boards/arm/nrf52840gmouse_nrf52840/nrf52840gmouse_nrf52840.dts`:
 
 .. code-block:: none
 
@@ -1190,8 +1196,10 @@ It refers to the PIN to which the motion sensor IRQ line is connected.
 
 If a different kind of bus is used for the new sensor, the DTS layout will be different.
 
-4. Include sensor in the application
-------------------------------------
+.. rst-class:: numbered-step
+
+Include sensor in the application
+---------------------------------
 
 Once the new sensor is supported by |NCS| and board configuration is updated, you can include it in the nRF Desktop application.
 
@@ -1207,8 +1215,10 @@ You can translate the new sensor-specific attributes to a generic abstraction by
     If an attribute is not supported by the sensor, it does not have to be defined.
     In such case, set the attribute to ``-ENOTSUP``.
 
-5. Select the new sensor
-------------------------
+.. rst-class:: numbered-step
+
+Select the new sensor
+---------------------
 
 The application can now use the new sensor.
 Edit the application configuration files for your board to enable it.
@@ -1448,7 +1458,7 @@ Optionally, you can also enable the following module:
   The module can be used only with the SoftDevice Link Layer.
 
 .. note::
-   The nRF Destkop devices enable :kconfig:option:`CONFIG_BT_SETTINGS`.
+   The nRF Desktop devices enable :kconfig:option:`CONFIG_BT_SETTINGS`.
    When this option is enabled, the application is responsible for calling the :c:func:`settings_load` function - this is handled by the :ref:`nrf_desktop_settings_loader`.
 
 .. _nrf_desktop_bluetooth_guide_peripheral:
@@ -1493,7 +1503,7 @@ The central must also control the Bluetooth connection parameters.
 These features are implemented by the following application modules:
 
 * :ref:`nrf_desktop_ble_scan` - Controls the Bluetooth scanning.
-* :ref:`nrf_desktop_ble_conn_params` - Control the Bluetooth connection parameters and react on connection slave latency update requests received from the connected peripherals.
+* :ref:`nrf_desktop_ble_conn_params` - Controls the Bluetooth connection parameters and reacts on latency update requests received from the connected peripherals.
 * :ref:`nrf_desktop_ble_discovery` - Handles discovering and reading the GATT Characteristics from the connected peripheral.
 * :ref:`nrf_desktop_hid_forward` - Subscribes for HID reports from the Bluetooth Peripherals (HID over GATT) and forwards data using application events.
 
@@ -1585,14 +1595,14 @@ Update image generation
 
 The update image is generated in the build directory when building the firmware if the bootloader is enabled in the configuration:
 
-* The :file:`zephyr/dfu_application.zip` is used by both B0 and MCUboot bootloader for the background DFU through the :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu`.
+* The :file:`zephyr/dfu_application.zip` file is used by both B0 and MCUboot bootloader for the background DFU through the :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu`.
   This package contains firmware images along with additional metadata.
 
   .. note::
       By default, the build process for the B0 bootloader will construct an image for the first slot (slot 0 or S0).
       To ensure that application is built for both slots, select the :kconfig:option:`CONFIG_BUILD_S1_VARIANT` Kconfig option.
 
-      When this option is selected, the :file:`zephyr/dfu_application.zip` contains both images.
+      When this option is selected, the :file:`zephyr/dfu_application.zip` file contains both images.
       The update tool checks if the currently running image runs from either slot 0 or slot 1.
       It then transfers the update image that can be run from the unused slot.
 
@@ -1686,7 +1696,7 @@ fwupd support
 =============
 
 fwupd is an open-source project providing tools and daemon for managing the installation of firmware updates on Linux-based systems.
-Together with the `LVFS (Linux Vendor Firmware Serivce) <LVFS_>`_, it provides a solution for vendors to easily distribute firmware for compatible devices.
+Together with the `LVFS (Linux Vendor Firmware Service) <LVFS_>`_, it provides a solution for vendors to easily distribute firmware for compatible devices.
 
 The fwupd tools can communicate with the devices running the nRF Desktop application with the :ref:`nrf_desktop_bootloader_background_dfu` feature enabled.
 

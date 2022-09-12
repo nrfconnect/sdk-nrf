@@ -8,7 +8,8 @@ nRF9160: AWS IoT
    :depth: 2
 
 The AWS IoT sample demonstrates how an nRF9160-based device communicates with the AWS IoT message broker over MQTT.
-This sample uses the :ref:`lib_aws_iot` library.
+This sample showcases the use of the :ref:`lib_aws_iot` library.
+The sample implements :ref:`lib_aws_fota` through :ref:`lib_aws_iot`.
 
 Requirements
 ************
@@ -17,7 +18,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/tfm_spm_thingy91.txt
+.. include:: /includes/tfm.txt
 
 Overview
 ********
@@ -31,10 +32,11 @@ Below are the two types of messages that are published:
 
 * Type 2: The message adds a configurable firmware version number to type 1 messages.
   This firmware version number is used in correlation with FOTA DFU, which is supported by the sample and the :ref:`lib_aws_iot` library.
+  See the :ref:`lib_aws_fota` library for information on how to create FOTA jobs.
 
 A type 2 message is only published upon an initial connection to the sample, while a type 1 message is published sequentially with a configurable time in between each publishing of the data.
 In addition to publishing data, the sample also subscribes to the AWS IoT shadow delta topic, and two customizable application-specific topics.
-The customizable topics are not part of the AWS IoT shadow and must therefore be passed to the :ref:`lib_aws_iot` library using the :c:func:`aws_iot_subscription_topics_add` function.
+The customizable topics are not part of the AWS IoT shadow service and must therefore be passed to the :ref:`lib_aws_iot` library using the :c:func:`aws_iot_subscription_topics_add` function.
 
 Configuration
 *************
@@ -46,17 +48,16 @@ Configuration
 Setup
 =====
 
-Before starting this sample, complete the following steps that are described in the :ref:`lib_aws_iot` library documentation:
+To run this sample and connect to AWS IoT, complete the steps described in the :ref:`lib_aws_iot` documentation.
+This documentation retrieves the AWS IoT broker *hostname*, *security tag*, and *client ID*.
+The corresponding options that must be set for each of the aforementioned values are:
 
-1. `Set up an AWS account <Setting up an AWS account_>`_.
-#. :ref:`Set up a connection to AWS IoT <set_up_conn_to_iot>`.
-#. :ref:`Program device certificates <flash_certi_device>`.
-#. :ref:`Configure the sample options <configure_options>`.
+* :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
+* :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG`
+* :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC`
 
-This retrieves the AWS IoT broker hostname, security tag, and client-id.
-Set the :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`, :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG`, and :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` options to reflect the values retrieved during the setup process.
-
-For documentation related to FOTA DFU, see :ref:`aws_fota_sample`.
+Set these options in the project configuration file located at :file:`samples/nrf9160/aws_iot/prj.conf`.
+For documentation related to FOTA DFU, see :ref:`lib_aws_fota`.
 
 .. _configure_options:
 
@@ -93,11 +94,11 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/aws_iot`
 
-.. include:: /includes/thingy91_build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. note::
 
-   The sample might require increasing the values of :kconfig:option:`CONFIG_AWS_IOT_MQTT_RX_TX_BUFFER_LEN` and :kconfig:option:`CONFIG_AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN` options.
+   The sample might require increasing the values of the :kconfig:option:`CONFIG_AWS_IOT_MQTT_RX_TX_BUFFER_LEN` and :kconfig:option:`CONFIG_AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN` options.
 
 After building the sample, program it to your development kit.
 
@@ -180,7 +181,6 @@ It uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_modem`
 
-In addition, it uses the following secure firmware components:
+In addition, it uses the following secure firmware component:
 
-* :ref:`secure_partition_manager`
 * :ref:`Trusted Firmware-M <ug_tfm>`

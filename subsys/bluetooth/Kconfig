@@ -24,7 +24,7 @@ endif
 comment "BLE Libraries"
 rsource "Kconfig.pool"
 rsource "Kconfig.discovery"
-rsource "bt_le_adv_prov/Kconfig"
+rsource "adv_prov/Kconfig"
 rsource "Kconfig.scan"
 rsource "Kconfig.link"
 rsource "Kconfig.enocean"

@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/device.h>
 #include <zephyr/settings/settings.h>
 
 #include <app_event_manager.h>
@@ -114,3 +115,21 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+
+static int caf_settings_init(const struct device *unused)
+{
+	ARG_UNUSED(unused);
+
+	/* Initialize settings subsystem on system start to ensure that the subsystem is initialized
+	 * before the application starts using it (e.g. before registering runtime handlers).
+	 */
+	int err = settings_subsys_init();
+
+	if (err) {
+		LOG_ERR("Settings init failed (%d)", err);
+	}
+
+	return err;
+}
+
+SYS_INIT(caf_settings_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

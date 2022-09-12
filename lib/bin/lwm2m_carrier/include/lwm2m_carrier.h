@@ -327,7 +327,7 @@ void lwm2m_carrier_run(void);
  *
  * @param[out] utc_time   Pointer to time since Epoch in seconds.
  * @param[out] utc_offset Pointer to UTC offset in minutes.
- * @param[out] tz         Pointer to null-terminated timezone string pointer.
+ * @param[out] tz         Pointer to null-terminated time zone string pointer.
  */
 void lwm2m_carrier_time_read(int32_t *utc_time, int *utc_offset, const char **tz);
 
@@ -350,11 +350,11 @@ int32_t lwm2m_carrier_utc_time_read(void);
 int lwm2m_carrier_utc_offset_read(void);
 
 /**
- * @brief Function to read timezone
+ * @brief Function to read time zone
  *
  * @note This function can be implemented by the application, if custom time management is needed.
  *
- * @return  Null-terminated timezone string pointer, IANA Timezone (TZ) database format.
+ * @return  Null-terminated time zone string pointer, IANA Time zone (TZ) database format.
  */
 char *lwm2m_carrier_timezone_read(void);
 
@@ -366,7 +366,6 @@ char *lwm2m_carrier_timezone_read(void);
  * @param[in] time Time since Epoch in seconds.
  *
  * @retval  0      If success.
- * @retval -EINVAL If value of time is less than 0.
  */
 int lwm2m_carrier_utc_time_write(int32_t time);
 
@@ -382,11 +381,11 @@ int lwm2m_carrier_utc_time_write(int32_t time);
 int lwm2m_carrier_utc_offset_write(int offset);
 
 /**
- * @brief Function to write timezone (LwM2M server write operation).
+ * @brief Function to write time zone (LwM2M server write operation).
  *
  * @note This function can be implemented by the application, if custom time management is needed.
  *
- * @param[in] tz Null-terminated timezone string pointer.
+ * @param[in] tz Null-terminated time zone string pointer.
  *
  * @retval 0      If success.
  */

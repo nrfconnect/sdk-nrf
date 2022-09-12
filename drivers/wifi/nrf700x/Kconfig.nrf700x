@@ -11,12 +11,12 @@ DT_COMPAT_NORDIC_NRF7002_SPI := nordic,nrf7002-spi
 config WIFI_NRF700X
 	bool "nRF700x driver"
 	depends on WIFI
+	select WIFI_USE_NATIVE_NETWORKING
 	help
 	  Nordic Wi-Fi Driver
 
 config NRF_WIFI_LOW_POWER
 	bool "Enable low power mode in nRF Wi-Fi chipsets"
-	default y
 
 if WIFI_NRF700X
 
@@ -35,5 +35,9 @@ config NRF700X_WORKQ_STACK_SIZE
 config NRF700X_WORKQ_MAX_ITEMS
 	int "Maximum work items for workqueue"
 	default 10
+
+config NRF700x_MAX_TX_PENDING_QLEN
+	int "Maximum number of pending TX packets"
+	default 1024
 
 endif

@@ -52,21 +52,24 @@ When data sampling has been carried out, the :c:enum:`SENSOR_EVT_ENVIRONMENTAL_D
 Motion activity detection
 =========================
 
-Motion activity is detected when acceleration in either X, Y or Z plane exceeds the configured threshold value.
-The threshold is set in one of the following two ways:
+Motion activity is detected when acceleration in either X, Y or Z plane exceeds the configured activity threshold value.
+Stillness is detected when the acceleration is less than the configured inactivity threshold value for the duration of the inactivity time.
+The threshold values are set in one of the following two ways:
 
 * When receiving the :c:enum:`DATA_EVT_CONFIG_INIT` event after boot.
-  This event contains the default threshold value set by the :ref:`CONFIG_DATA_ACCELEROMETER_THRESHOLD <CONFIG_DATA_ACCELEROMETER_THRESHOLD>` option or retrieved from flash.
+  This event contains the default threshold values set by the options :ref:`CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD>` and :ref:`CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD>` or retrieved from flash.
 * When receiving the :c:enum:`DATA_EVT_CONFIG_READY` event.
   This occurs when a new threshold value has been updated from cloud.
 
-Both events contain an accelerometer threshold value ``accelerometer_threshold`` in m/s2, present in the event structure.
+Both events contain upper and lower accelerometer threshold values ``accelerometer_activity_threshold`` and ``accelerometer_inactivity_threshold`` in m/s2, present in the event structure.
+Further, they contain a timeout value ``accelerometer_inactivity_timeout`` in seconds.
 
 Motion detection is enabled and disabled according to the device mode parameter, received in the configuration events.
 It is enabled in the passive mode and disabled in the active mode.
+Data sampling requests are sent out both on activity events and inactivity events.
 
 The sensor module sends out a :c:enum:`SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED` event if it detects movement.
-Similarly, :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` is sent out if there is no movement in a while.
+Similarly, :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` is sent out if there is no movement within the configured timeout.
 
 .. note::
    The DK does not have an external accelerometer.
@@ -121,11 +124,6 @@ Configuration options
 
 CONFIG_SENSOR_THREAD_STACK_SIZE - Sensor module thread stack size
    This option configures the sensor module's internal thread stack size.
-
-.. _CONFIG_DATA_ACCELEROMETER_THRESHOLD:
-
-CONFIG_DATA_ACCELEROMETER_THRESHOLD
-   This configuration sets the accelerometer threshold value.
 
 .. _CONFIG_EXTERNAL_SENSORS_IMPACT_DETECTION:
 

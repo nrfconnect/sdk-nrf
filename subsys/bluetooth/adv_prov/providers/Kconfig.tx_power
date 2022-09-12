@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_ADV_PROV_TX_POWER
+	bool "TX power"
+	select BT_CTLR_TX_PWR_DYNAMIC_CONTROL
+	help
+	  Adds TX power to advertising data. Provider reads the advertising TX
+	  power from Bluetooth controller.

@@ -36,9 +36,7 @@ enum multicell_service {
 	/** nRF Cloud location service. */
 	MULTICELL_SERVICE_NRF_CLOUD,
 	/** Here location service. */
-	MULTICELL_SERVICE_HERE,
-	/** Polte location service. */
-	MULTICELL_SERVICE_POLTE
+	MULTICELL_SERVICE_HERE
 };
 
 /** Cellular positioning input parameters. */

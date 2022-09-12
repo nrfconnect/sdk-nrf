@@ -18,6 +18,9 @@ See the subpages for detailed documentation on the application and its internal 
    :caption: Subpages:
 
    doc/asset_tracker_v2_description
+   doc/app_behavior
+   doc/firmware_architecture
+   doc/lwm2m_carrier_library
    doc/app_module
    doc/data_module
    doc/cloud_module

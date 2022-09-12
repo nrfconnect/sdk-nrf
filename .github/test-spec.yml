@@ -1,4 +1,17 @@
 # This is the Jenkins ci variant of the .github/labler.yaml
+
+"CI-tool-test-linux":
+  - "scripts/requirements*.txt"
+  - "scripts/tools-versions-linux.txt"
+
+"CI-tool-test-win":
+  - "scripts/requirements*.txt"
+  - "scripts/tools-versions-win10.txt"
+
+"CI-tool-test-darwin":
+  - "scripts/requirements*.txt"
+  - "scripts/tools-versions-darwin.txt"
+
 "CI-iot-zephyr-lwm2m-test":
   - "lib/nrf_modem_lib/**/*"
   - "lib/at_monitor/**/*"
@@ -40,7 +53,6 @@
   - "samples/nrf9160/http_update/**/*"
   - "samples/nrf9160/https_client/**/*"
   - "samples/nrf9160/mqtt_simple/**/*"
-  - "samples/nrf9160/secure_services/**/*"
   - "samples/nrf9160/sms/**/*"
   - "subsys/net/lib/download_client/**/*"
 

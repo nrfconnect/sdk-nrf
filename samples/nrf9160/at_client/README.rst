@@ -54,7 +54,7 @@ After programming the sample to your development kit, test it by performing the 
 #. Observe that the LTE Link Monitor terminal display also shows :command:`AT+CFUN=1` followed by ``OK`` indicating that the modem has changed to the normal mode.
 #. Run the following commands from the LTE Link Monitor terminal:
 
-   a. Enter the command: :command:`AT+CFUN?`
+   a. Enter the command: :command:`AT+CFUN?`.
 
       This command reads the current functional mode of the modem and triggers the command :command:`AT+CFUN=1` which sets the functional mode of the modem to normal.
 
@@ -63,28 +63,25 @@ After programming the sample to your development kit, test it by performing the 
       The UART/Modem/UICC/LTE/PDN indicators in the LTE Link Monitor side panel turn green.
       This command also automatically launches a series of commands like:
 
-     * :command:`AT+CGSN=1` which displays the product serial identification number (IMEI).
-     * :command:`AT+CGMI`   which displays the manufacturer name.
-     * :command:`AT+CGMM`   which displays the model identification name.
-     * :command:`AT+CGMR`   which displays the revision identification.
-     * :command:`AT+CEMODE` which displays the current mode of operation.
+      * :command:`AT+CGSN=1`, which displays the product serial identification number (IMEI).
+      * :command:`AT+CGMI`, which displays the manufacturer name.
+      * :command:`AT+CGMM`, which displays the model identification name.
+      * :command:`AT+CGMR`, which displays the revision identification.
+      * :command:`AT+CEMODE`, which displays the current mode of operation.
 
-   c. Enter the command: :command:`AT%XOPERID`
+   #. Enter the command: :command:`AT%XOPERID`.
 
       This command returns the network operator ID.
 
-
-   #. Enter the command: :command:`AT%XMONITOR`
+   #. Enter the command: :command:`AT%XMONITOR`.
 
       This command returns the modem parameters.
 
-
-   #. Enter the command: :command:`AT%XTEMP?`
+   #. Enter the command: :command:`AT%XTEMP?`.
 
       This command displays the current modem temperature.
 
-
-   #. Enter the command: :command:`AT%CMNG=1`
+   #. Enter the command: :command:`AT%CMNG=1`.
 
       This command displays a list of all certificates that are stored on your device.
       If you add the device to nRF Cloud, a CA certificate, a client certificate, and a private key with security tag 16842753 (which is the security tag for nRF Cloud credentials) are displayed.
@@ -93,7 +90,7 @@ After programming the sample to your development kit, test it by performing the 
 Sample output
 =============
 
-The following is a sample output of the command: :command:`AT%XMONITOR`
+Following is a sample output of the command :command:`AT%XMONITOR`:
 
 .. code-block:: console
 
@@ -116,7 +113,7 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`lib_at_host` which includes:
 
-   * :ref:`at_monitor_readme`
+  * :ref:`at_monitor_readme`
 
 It uses the following `sdk-nrfxlib`_ library:
 

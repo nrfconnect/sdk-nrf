@@ -38,8 +38,6 @@ Requirements
    * If several kits are required to test the sample, state it after the table (for example, "You can use one or more of the development kits listed above and mix different development kits.").
    * Mention additional requirements after the table.
    * If TFM is included in the sample, add ``.. include:: /includes/tfm.txt`` to include the standard text that states this.
-     Else, if SPM is included in the sample, add ``.. include:: /includes/spm.txt`` to include the standard text that states this.
-     For samples that support both nRF9160 DK and Thingy:91, use ``.. include:: /includes/tfm_spm_thingy91.txt`` standard text.
 
 The sample supports the following development kits:
 
@@ -49,7 +47,7 @@ The sample supports the following development kits:
 
 The sample also requires ...
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 
 Overview
@@ -177,8 +175,7 @@ Building and running
 ********************
 
 .. note::
-   * Include the standard text for building - either ``.. include:: /includes/build_and_run.txt`` or ``.. include:: /includes/build_and_run_ns.txt``.
-     For samples that support both nRF9160 DK and Thingy:91, use ``.. include:: /includes/thingy91_build_and_run.txt`` standard text.
+   * Include the standard text for building - either ``.. include:: /includes/build_and_run.txt``, or ``.. include:: /includes/build_and_run_ns.txt`` for the non-secure build targets.
    * The main supported IDE for |NCS| is |VSC|, with the |nRFVSC| installed.
      Therefore, build instructions for the |nRFVSC| are required.
      Build instructions for the command line are optional.
@@ -242,7 +239,7 @@ References*
 .. tip::
    * Do not duplicate links that have been mentioned in other sections before.
    * Do not include links to documents that are common to all or many of our samples.
-     For example, the Bluetooth Spec or the DK user guides are always important, but shouldn't be listed.
+     For example, the Bluetooth Spec or the DK user guides are always important, but should not be listed.
    * Include specific links, like a chapter in the Bluetooth Spec if the sample demonstrates the respective feature, or a link to the hardware pictures in the DK user guide if there is a lot of wiring required, or specific information about the feature that is presented in the sample.
 
 Dependencies*

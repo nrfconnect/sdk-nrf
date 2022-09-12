@@ -12,8 +12,6 @@
 static char *get_evt_type_str(enum sensor_module_event_type type)
 {
 	switch (type) {
-	case SENSOR_EVT_MOVEMENT_DATA_READY:
-		return "SENSOR_EVT_MOVEMENT_DATA_READY";
 	case SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED:
 		return "SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED";
 	case SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED:
@@ -40,13 +38,6 @@ static void log_event(const struct app_event_header *aeh)
 	if (event->type == SENSOR_EVT_ERROR) {
 		APP_EVENT_MANAGER_LOG(aeh, "%s - Error code %d",
 				get_evt_type_str(event->type), event->data.err);
-	} else if (event->type == SENSOR_EVT_MOVEMENT_DATA_READY) {
-		APP_EVENT_MANAGER_LOG(aeh, "%s - X: %.2f, Y: %.2f, Z: %.2f",
-				get_evt_type_str(event->type),
-				event->data.accel.values[0],
-				event->data.accel.values[1],
-				event->data.accel.values[2]);
-
 	} else {
 		APP_EVENT_MANAGER_LOG(aeh, "%s", get_evt_type_str(event->type));
 	}

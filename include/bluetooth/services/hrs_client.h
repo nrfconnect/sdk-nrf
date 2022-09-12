@@ -98,7 +98,7 @@ struct bt_hrs_client_measurement {
 	uint8_t rr_intervals_count;
 
 	/** RR-intervals represented by 1/1024 second as unit. Present if
-	 * @ref bt_hrs_flags.rr_intervals_present is set. The interval with index 0 is older then
+	 * @ref bt_hrs_flags.rr_intervals_present is set. The interval with index 0 is older than
 	 * the interval with index 1.
 	 */
 	uint16_t rr_intervals[CONFIG_BT_HRS_CLIENT_RR_INTERVALS_COUNT];
@@ -120,7 +120,7 @@ struct bt_hrs_client;
 /**@brief Heart Rate Measurement notification callback.
  *
  * This function is called every time the client receives a notification
- * with Heart Rate Measuremet data.
+ * with Heart Rate Measurement data.
  *
  * @param[in] hrs_c Heart Rate Service Client instance.
  * @param[in] meas Heart Rate Measurement received data.
@@ -288,7 +288,7 @@ int bt_hrs_client_control_point_write(struct bt_hrs_client *hrs_c,
 /**@brief Check if Heart Rate Service has the Heart Rate Control Point characteristic.
  *
  * This function can be called after @ref bt_hrs_client_handles_assign to check
- * if the Heart Rate Control Pointcharacteristic was found during service discovery.
+ * if the Heart Rate Control Point characteristic was found during service discovery.
  *
  * @retval true  If the Heart Rate Control Point is found.
  * @retval false If the Heart Rate Control Point is not found.

@@ -25,7 +25,9 @@
 #define ACTIVE_WAIT_TIMEOUT 120
 #define MOVEMENT_RESOLUTION 120
 #define MOVEMENT_TIMEOUT 3600
-#define ACCELEROMETER_THRES 10
+#define ACCELEROMETER_ACT_THRES 10
+#define ACCELEROMETER_INACT_THRES 5
+#define ACCELEROMETER_INACT_TIMEOUT 1
 #define NOD_NEIGHBOR_CELL false
 #define NOD_GNSS true
 
@@ -92,7 +94,12 @@ static void cloud_codec_event_handler(const struct cloud_codec_evt *evt)
 	TEST_ASSERT_EQUAL(ACTIVE_WAIT_TIMEOUT, evt->config_update.active_wait_timeout);
 	TEST_ASSERT_EQUAL(MOVEMENT_RESOLUTION, evt->config_update.movement_resolution);
 	TEST_ASSERT_EQUAL(MOVEMENT_TIMEOUT, evt->config_update.movement_timeout);
-	TEST_ASSERT_EQUAL_FLOAT(ACCELEROMETER_THRES, evt->config_update.accelerometer_threshold);
+	TEST_ASSERT_EQUAL_FLOAT(ACCELEROMETER_ACT_THRES,
+				evt->config_update.accelerometer_activity_threshold);
+	TEST_ASSERT_EQUAL_FLOAT(ACCELEROMETER_INACT_THRES,
+				evt->config_update.accelerometer_inactivity_threshold);
+	TEST_ASSERT_EQUAL_FLOAT(ACCELEROMETER_INACT_TIMEOUT,
+				evt->config_update.accelerometer_inactivity_timeout);
 	TEST_ASSERT_EQUAL(NOD_GNSS, evt->config_update.no_data.gnss);
 	TEST_ASSERT_EQUAL(NOD_NEIGHBOR_CELL, evt->config_update.no_data.neighbor_cell);
 }
@@ -105,7 +112,9 @@ void test_lwm2m_cloud_codec_init(void)
 		.active_wait_timeout = ACTIVE_WAIT_TIMEOUT,
 		.movement_resolution = MOVEMENT_RESOLUTION,
 		.movement_timeout = MOVEMENT_TIMEOUT,
-		.accelerometer_threshold = ACCELEROMETER_THRES,
+		.accelerometer_activity_threshold = ACCELEROMETER_ACT_THRES,
+		.accelerometer_inactivity_threshold = ACCELEROMETER_INACT_THRES,
+		.accelerometer_inactivity_timeout = ACCELEROMETER_INACT_TIMEOUT,
 		.no_data.gnss = NOD_GNSS,
 		.no_data.neighbor_cell = NOD_NEIGHBOR_CELL
 	};
@@ -229,8 +238,16 @@ void test_lwm2m_cloud_codec_init(void)
 		&pressure_max_range_val, 0);
 
 	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
-		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_THRESHOLD_RID),
-		&cfg.accelerometer_threshold, 0);
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_ACT_THRESHOLD_RID),
+		&cfg.accelerometer_activity_threshold, 0);
+
+	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_INACT_THRESHOLD_RID),
+		&cfg.accelerometer_inactivity_threshold, 0);
+
+	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_INACT_TIMEOUT_RID),
+		&cfg.accelerometer_inactivity_timeout, 0);
 
 	/* Set integers and booleans. */
 	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
@@ -288,7 +305,17 @@ void test_lwm2m_cloud_codec_init(void)
 	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
 	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
-		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_THRESHOLD_RID),
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_ACT_THRESHOLD_RID),
+		NULL, 0);
+	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
+
+	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_INACT_THRESHOLD_RID),
+		NULL, 0);
+	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
+
+	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_INACT_TIMEOUT_RID),
 		NULL, 0);
 	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
@@ -629,7 +656,7 @@ void test_lwm2m_cloud_codec_encode_data(void)
 	 * when calling cloud_codec_encode_data(). Therefore they are set to NULL.
 	 */
 	TEST_ASSERT_EQUAL(0, cloud_codec_encode_data(&codec, &gnss, &sensor, &modem_static,
-						     &modem_dynamic, NULL, NULL,
+						     &modem_dynamic, NULL,
 						     &impact, &battery));
 
 	TEST_ASSERT_EQUAL(ARRAY_SIZE(path_list), codec.valid_object_paths);
@@ -708,7 +735,9 @@ void test_lwm2m_codec_config_update(void)
 		.active_wait_timeout = ACTIVE_WAIT_TIMEOUT,
 		.movement_resolution = MOVEMENT_RESOLUTION,
 		.movement_timeout = MOVEMENT_TIMEOUT,
-		.accelerometer_threshold = ACCELEROMETER_THRES,
+		.accelerometer_activity_threshold = ACCELEROMETER_ACT_THRES,
+		.accelerometer_inactivity_threshold = ACCELEROMETER_INACT_THRES,
+		.accelerometer_inactivity_timeout = ACCELEROMETER_INACT_TIMEOUT,
 		.no_data.gnss = NOD_GNSS,
 		.no_data.neighbor_cell = NOD_NEIGHBOR_CELL
 	};
@@ -742,9 +771,19 @@ void test_lwm2m_codec_config_update(void)
 	__wrap_lwm2m_engine_get_s32_ReturnThruPtr_value(&cfg.movement_timeout);
 
 	__wrap_lwm2m_engine_get_float_ExpectAndReturn(
-		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_THRESHOLD_RID), 0, 0);
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_ACT_THRESHOLD_RID), 0, 0);
 	__wrap_lwm2m_engine_get_float_IgnoreArg_buf();
-	__wrap_lwm2m_engine_get_float_ReturnThruPtr_buf(&cfg.accelerometer_threshold);
+	__wrap_lwm2m_engine_get_float_ReturnThruPtr_buf(&cfg.accelerometer_activity_threshold);
+
+	__wrap_lwm2m_engine_get_float_ExpectAndReturn(
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_INACT_THRESHOLD_RID), 0, 0);
+	__wrap_lwm2m_engine_get_float_IgnoreArg_buf();
+	__wrap_lwm2m_engine_get_float_ReturnThruPtr_buf(&cfg.accelerometer_inactivity_threshold);
+
+	__wrap_lwm2m_engine_get_float_ExpectAndReturn(
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_INACT_TIMEOUT_RID), 0, 0);
+	__wrap_lwm2m_engine_get_float_IgnoreArg_buf();
+	__wrap_lwm2m_engine_get_float_ReturnThruPtr_buf(&cfg.accelerometer_inactivity_timeout);
 
 	__wrap_lwm2m_engine_get_bool_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, PASSIVE_MODE_RID), 0, 0);
@@ -773,7 +812,7 @@ void test_lwm2m_codec_non_supported_funcs(void)
 	TEST_ASSERT_EQUAL(-ENOTSUP, cloud_codec_encode_pgps_request(NULL, NULL));
 	TEST_ASSERT_EQUAL(-ENOTSUP, cloud_codec_encode_batch_data(
 						NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-						NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0));
+						NULL, 0, 0, 0, 0, 0, 0, 0));
 }
 
 void main(void)

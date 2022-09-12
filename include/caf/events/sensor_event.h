@@ -114,11 +114,11 @@ static inline struct sensor_value *sensor_event_get_data_ptr(const struct sensor
 }
 
 /**
- * @brief Helper function for checking if one sensor_value is greater then other.
+ * @brief Helper function for checking if one sensor_value is greater than the other.
  *
  * @param sensor_val1 First compered sensor value.
  * @param sensor_val2 Second compered sensor value.
- * @return True if sensor_val1 is greater then sensor_val2, false otherwise.
+ * @return True if sensor_val1 is greater than sensor_val2, false otherwise.
  */
 static inline bool sensor_value_greater_then(struct sensor_value sensor_val1,
 					     struct sensor_value sensor_val2)

@@ -454,75 +454,6 @@ exit:
 	return err;
 }
 
-int json_common_accel_data_add(cJSON *parent,
-			       struct cloud_data_accelerometer *data,
-			       enum json_common_op_code op,
-			       const char *object_label,
-			       cJSON **parent_ref)
-{
-	int err;
-
-	if (!data->queued) {
-		return -ENODATA;
-	}
-
-	err = date_time_uptime_to_unix_time_ms(&data->ts);
-	if (err) {
-		LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
-		return err;
-	}
-
-	cJSON *accel_obj = cJSON_CreateObject();
-	cJSON *accel_val_obj = cJSON_CreateObject();
-
-	if (accel_obj == NULL || accel_val_obj == NULL) {
-		err = -ENOMEM;
-		goto exit;
-	}
-
-	err = json_add_number(accel_val_obj, DATA_MOVEMENT_X, data->values[0]);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	err = json_add_number(accel_val_obj, DATA_MOVEMENT_Y, data->values[1]);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	err = json_add_number(accel_val_obj, DATA_MOVEMENT_Z, data->values[2]);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	json_add_obj(accel_obj, DATA_VALUE, accel_val_obj);
-
-	err = json_add_number(accel_obj, DATA_TIMESTAMP, data->ts);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		cJSON_Delete(accel_obj);
-		return err;
-	}
-
-	err = op_code_handle(parent, op, object_label, accel_obj, parent_ref);
-	if (err) {
-		cJSON_Delete(accel_obj);
-		return err;
-	}
-
-	data->queued = false;
-
-	return 0;
-
-exit:
-	cJSON_Delete(accel_obj);
-	cJSON_Delete(accel_val_obj);
-	return err;
-}
-
 int json_common_ui_data_add(cJSON *parent,
 			    struct cloud_data_ui *data,
 			    enum json_common_op_code op,
@@ -1040,7 +971,22 @@ int json_common_config_add(cJSON *parent, struct cloud_data_cfg *data, const cha
 		goto exit;
 	}
 
-	err = json_add_number(config_obj, CONFIG_ACC_THRESHOLD, data->accelerometer_threshold);
+	err = json_add_number(config_obj, CONFIG_ACC_ACT_THRESHOLD,
+			      data->accelerometer_activity_threshold);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(config_obj, CONFIG_ACC_INACT_THRESHOLD,
+			      data->accelerometer_inactivity_threshold);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(config_obj, CONFIG_ACC_INACT_TIMEOUT,
+			      data->accelerometer_inactivity_timeout);
 	if (err) {
 		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
@@ -1098,7 +1044,9 @@ void json_common_config_get(cJSON *parent, struct cloud_data_cfg *data)
 	cJSON *active_wait = cJSON_GetObjectItem(parent, CONFIG_ACTIVE_TIMEOUT);
 	cJSON *move_res = cJSON_GetObjectItem(parent, CONFIG_MOVE_RES);
 	cJSON *move_timeout = cJSON_GetObjectItem(parent, CONFIG_MOVE_TIMEOUT);
-	cJSON *acc_thres = cJSON_GetObjectItem(parent, CONFIG_ACC_THRESHOLD);
+	cJSON *acc_act_thres = cJSON_GetObjectItem(parent, CONFIG_ACC_ACT_THRESHOLD);
+	cJSON *acc_inact_thres = cJSON_GetObjectItem(parent, CONFIG_ACC_INACT_THRESHOLD);
+	cJSON *acc_inact_time = cJSON_GetObjectItem(parent, CONFIG_ACC_INACT_TIMEOUT);
 	cJSON *nod_list = cJSON_GetObjectItem(parent, CONFIG_NO_DATA_LIST);
 
 	if (gnss_timeout != NULL) {
@@ -1121,8 +1069,16 @@ void json_common_config_get(cJSON *parent, struct cloud_data_cfg *data)
 		data->movement_timeout = move_timeout->valueint;
 	}
 
-	if (acc_thres != NULL) {
-		data->accelerometer_threshold = acc_thres->valuedouble;
+	if (acc_act_thres != NULL) {
+		data->accelerometer_activity_threshold = acc_act_thres->valuedouble;
+	}
+
+	if (acc_inact_thres != NULL) {
+		data->accelerometer_inactivity_threshold = acc_inact_thres->valuedouble;
+	}
+
+	if (acc_inact_time != NULL) {
+		data->accelerometer_inactivity_timeout = acc_inact_time->valuedouble;
 	}
 
 	if (nod_list != NULL && cJSON_IsArray(nod_list)) {
@@ -1227,16 +1183,6 @@ int json_common_batch_data_add(cJSON *parent, enum json_common_buffer_type type,
 							  JSON_COMMON_ADD_DATA_TO_ARRAY,
 							  NULL,
 							  NULL);
-		}
-			break;
-		case JSON_COMMON_ACCELEROMETER: {
-			struct cloud_data_accelerometer *data =
-					(struct cloud_data_accelerometer *)buf;
-			err = json_common_accel_data_add(array_obj,
-							 &data[i],
-							 JSON_COMMON_ADD_DATA_TO_ARRAY,
-							 NULL,
-							 NULL);
 		}
 			break;
 		case JSON_COMMON_BATTERY: {

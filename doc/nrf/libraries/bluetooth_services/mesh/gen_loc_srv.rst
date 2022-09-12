@@ -22,7 +22,7 @@ These model instances share the states of the Generic Location Server, but accep
 This allows for a fine-grained control of the access rights for the location states, as the two model instances can be bound to different application keys:
 
 * The Generic Location Server allows observation of the location states, as it only exposes get-messages for the location states.
-  This is typically the user-facing model instance, as the device location shouldn't normally be configurable by the users.
+  This is typically the user-facing model instance, as the device location should not normally be configurable by the users.
 * The Generic Location Setup Server allows configuration of the location states by exposing set-messages for the location states.
   This model instance can be used to configure the location information of the device, for instance during deployment.
 

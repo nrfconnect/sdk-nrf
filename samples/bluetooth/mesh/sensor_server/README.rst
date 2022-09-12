@@ -82,7 +82,7 @@ The models are used for the following purposes:
 
 The model handling is implemented in :file:`src/model_handler.c`.
 It uses the TEMP_NRF5 or BME680 temperature sensor depending on the platform.
-The :ref:dk_buttons_and_leds_readme library is used to detect button presses.
+The :ref:`dk_buttons_and_leds_readme` library is used to detect button presses.
 
 User interface
 **************
@@ -186,3 +186,7 @@ In addition, it uses the following Zephyr libraries:
 * :ref:`zephyr:bluetooth_mesh`:
 
   * ``include/bluetooth/mesh.h``
+
+The sample also uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

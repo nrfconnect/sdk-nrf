@@ -291,7 +291,6 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			    struct cloud_data_modem_static *modem_stat_buf,
 			    struct cloud_data_modem_dynamic *modem_dyn_buf,
 			    struct cloud_data_ui *ui_buf,
-			    struct cloud_data_accelerometer *accel_buf,
 			    struct cloud_data_impact *impact_buf,
 			    struct cloud_data_battery *bat_buf)
 {
@@ -364,16 +363,6 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 					  JSON_COMMON_ADD_DATA_TO_OBJECT,
 					  DATA_ENVIRONMENTALS,
 					  NULL);
-	if (err == 0) {
-		object_added = true;
-	} else if (err != -ENODATA) {
-		goto add_object;
-	}
-
-	err = json_common_accel_data_add(rep_obj, accel_buf,
-					 JSON_COMMON_ADD_DATA_TO_OBJECT,
-					 DATA_MOVEMENT,
-					 NULL);
 	if (err == 0) {
 		object_added = true;
 	} else if (err != -ENODATA) {
@@ -523,7 +512,6 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  struct cloud_data_modem_dynamic *modem_dyn_buf,
 				  struct cloud_data_ui *ui_buf,
 				  struct cloud_data_impact *impact_buf,
-				  struct cloud_data_accelerometer *accel_buf,
 				  struct cloud_data_battery *bat_buf,
 				  size_t gnss_buf_count,
 				  size_t sensor_buf_count,
@@ -531,7 +519,6 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  size_t modem_dyn_buf_count,
 				  size_t ui_buf_count,
 				  size_t impact_buf_count,
-				  size_t accel_buf_count,
 				  size_t bat_buf_count)
 {
 	int err;
@@ -602,15 +589,6 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 	err = json_common_batch_data_add(root_obj, JSON_COMMON_BATTERY,
 					 bat_buf, bat_buf_count,
 					 DATA_BATTERY);
-	if (err == 0) {
-		object_added = true;
-	} else if (err != -ENODATA) {
-		goto exit;
-	}
-
-	err = json_common_batch_data_add(root_obj, JSON_COMMON_ACCELEROMETER,
-					 accel_buf, accel_buf_count,
-					 DATA_MOVEMENT);
 	if (err == 0) {
 		object_added = true;
 	} else if (err != -ENODATA) {

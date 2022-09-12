@@ -305,9 +305,9 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 			InitBasicOTARequestor();
 		}
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
+#endif
 		UpdateStatusLED();
 		break;
-#endif
 	default:
 		break;
 	}
