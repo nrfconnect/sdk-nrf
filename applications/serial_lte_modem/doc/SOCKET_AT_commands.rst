@@ -621,11 +621,11 @@ Syntax
     It accepts the IANA assigned ciphersuite identifier of the chosen ciphersuite.
   * ``5`` - ``TLS_PEER_VERIFY``.
     ``<value>`` is an integer and can be either ``0`` or ``1``.
-  * ``10`` - ``TLS_SESSION_CACHE``.
+  * ``12`` - ``TLS_SESSION_CACHE``.
     ``<value>`` is an integer and can be either ``0`` or ``1``.
-  * ``11`` - ``TLS_SESSION_CACHE_PURGE``.
+  * ``13`` - ``TLS_SESSION_CACHE_PURGE``.
     ``<value>`` can accept any integer value.
-  * ``12`` - ``TLS_DTLS_HANDSHAKE_TIMEO``.
+  * ``14`` - ``TLS_DTLS_HANDSHAKE_TIMEO``.
     ``<value>`` is the timeout in seconds and can be one of the following integers: ``1``, ``3``, ``7``, ``15``, ``31``, ``63``, ``123``.
 
 For a complete list of the supported ``<name>`` accepted parameters, see the `SETSOCKETOPT Service Spec Reference`_.
