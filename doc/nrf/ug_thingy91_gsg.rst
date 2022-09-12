@@ -85,17 +85,24 @@ The data is transmitted to nRF Cloud.
 
 Before you start using the Thingy:91, it is recommended that you update the application firmware to :ref:`asset_tracker_v2`.
 You must also update the modem firmware.
-You can do this through :term:`Universal Serial Bus (USB)` (MCUboot) or an external debug probe by using the Programmer application.
+You can update the application and modem firmware on a Thingy:91 through a :term:`Universal Serial Bus (USB)` cable using MCUboot.
+MCUboot is a secure bootloader that is used to update applications if you do not have an external debugger.
 
 .. note::
    To update the Thingy:91 through USB, the nRF9160 SiP and nRF52840 SoC bootloaders must be factory-compatible.
    The bootloaders might not be factory-compatible if the nRF9160 SiP or nRF52840 SoC has been updated with an external debug probe.
    To restore the bootloaders, program the nRF9160 SiP or nRF52840 SoC with the Thingy:91 firmware files through an external debug probe.
 
+Alternatively, you can use an external debug probe.
 
 .. note::
    The external debug probe must support Arm Cortex-M33, such as the nRF9160 DK.
    You need a 10-pin 2x5 socket-socket 1.27 mm IDC (:term:`Serial Wire Debug (SWD)`) JTAG cable to connect to the external debug probe.
+
+The board enters bootloader mode if any of the following buttons are pressed while the Thingy:91 is being powered on (using **SW1**):
+
+* **SW3** - The main button used to flash the nRF9160 SiP.
+* **SW4** - The button used to update the nRF52840 SoC.
 
 Following are the three recommended steps when you start to program a Thingy:91:
 
