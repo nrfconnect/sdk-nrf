@@ -11,6 +11,7 @@
 #include <mock_app_event_manager_priv.h>
 #include <mock_date_time.h>
 #include <mock_nrf_modem_at.h>
+#include <mock_lte_lc.h>
 #include <mock_nrf_modem_gnss.h>
 
 #include "app_module_event.h"
@@ -260,6 +261,9 @@ static void setup_gnss_module_in_init_state(void)
 		&nrf_modem_gnss_event_handler_set_callback);
 	__wrap_nrf_modem_gnss_event_handler_set_ExpectAnyArgsAndReturn(0);
 	__wrap_module_start_Stub(&module_start_stub);
+	__wrap_lte_lc_func_mode_set_ExpectAndReturn(LTE_LC_FUNC_MODE_ACTIVATE_GNSS, 0);
+	__wrap_nrf_modem_gnss_use_case_set_ExpectAndReturn(
+		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 
 	app_module_event->type = APP_EVT_START;
 
@@ -306,6 +310,8 @@ void test_gnss_start(void)
 	/* NMEA mask (GPGGA only). */
 	__wrap_nrf_modem_gnss_nmea_mask_set_ExpectAndReturn(NRF_MODEM_GNSS_NMEA_GGA_MASK, 0);
 	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
+	__wrap_nrf_modem_gnss_dyn_mode_change_ExpectAndReturn(
+		NRF_MODEM_GNSS_DYNAMICS_GENERAL_PURPOSE, 0);
 
 	/* Set callback to validate GNSS module events. */
 	__wrap__event_submit_Stub(&validate_gnss_evt);
@@ -349,6 +355,8 @@ void test_gnss_fix(void)
 	/* NMEA mask (GPGGA only). */
 	__wrap_nrf_modem_gnss_nmea_mask_set_ExpectAndReturn(NRF_MODEM_GNSS_NMEA_GGA_MASK, 0);
 	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
+	__wrap_nrf_modem_gnss_dyn_mode_change_ExpectAndReturn(
+		NRF_MODEM_GNSS_DYNAMICS_GENERAL_PURPOSE, 0);
 
 	/* Set callback to validate GNSS module events. */
 	__wrap__event_submit_Stub(&validate_gnss_evt);
@@ -406,6 +414,8 @@ void test_agps_request(void)
 	/* NMEA mask (GPGGA only). */
 	__wrap_nrf_modem_gnss_nmea_mask_set_ExpectAndReturn(NRF_MODEM_GNSS_NMEA_GGA_MASK, 0);
 	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
+	__wrap_nrf_modem_gnss_dyn_mode_change_ExpectAndReturn(
+		NRF_MODEM_GNSS_DYNAMICS_GENERAL_PURPOSE, 0);
 
 	/* Set callback to validate GNSS module events. */
 	__wrap__event_submit_Stub(&validate_gnss_evt);
@@ -457,6 +467,8 @@ void test_msgq_full(void)
 	/* NMEA mask (GPGGA only). */
 	__wrap_nrf_modem_gnss_nmea_mask_set_ExpectAndReturn(NRF_MODEM_GNSS_NMEA_GGA_MASK, 0);
 	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
+	__wrap_nrf_modem_gnss_dyn_mode_change_ExpectAndReturn(
+		NRF_MODEM_GNSS_DYNAMICS_GENERAL_PURPOSE, 0);
 
 	/* Set callback to validate GNSS module events. */
 	__wrap__event_submit_Stub(&validate_gnss_evt);

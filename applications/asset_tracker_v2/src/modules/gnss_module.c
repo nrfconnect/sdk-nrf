@@ -470,6 +470,20 @@ static void search_start(void)
 		return;
 	}
 
+	/* GNSS dynamics mode has to be set while GNSS is running. */
+	if (IS_ENABLED(CONFIG_GNSS_MODULE_DYNAMICS_MODE_STATIONARY)) {
+		err = nrf_modem_gnss_dyn_mode_change(NRF_MODEM_GNSS_DYNAMICS_STATIONARY);
+	} else if (IS_ENABLED(CONFIG_GNSS_MODULE_DYNAMICS_MODE_PEDESTRIAN)) {
+		err = nrf_modem_gnss_dyn_mode_change(NRF_MODEM_GNSS_DYNAMICS_PEDESTRIAN);
+	} else if (IS_ENABLED(CONFIG_GNSS_MODULE_DYNAMICS_MODE_AUTOMOTIVE)) {
+		err = nrf_modem_gnss_dyn_mode_change(NRF_MODEM_GNSS_DYNAMICS_AUTOMOTIVE);
+	} else {
+		err = nrf_modem_gnss_dyn_mode_change(NRF_MODEM_GNSS_DYNAMICS_GENERAL_PURPOSE);
+	}
+	if (err) {
+		LOG_ERR("Failed to set GNSS dynamics mode, error %d", err);
+	}
+
 	SEND_EVENT(gnss, GNSS_EVT_ACTIVE);
 	stats.start_uptime = k_uptime_get();
 }
@@ -511,10 +525,28 @@ static bool gnss_data_requested(enum app_module_data_type *data_list,
 static int setup(void)
 {
 	int err;
+	uint8_t use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
 
 	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
 	if (err) {
 		LOG_ERR("Failed to set GNSS event handler, error %d", err);
+		return err;
+	}
+
+	if (IS_ENABLED(CONFIG_GNSS_MODULE_ALLOW_LOW_ACCURACY)) {
+		use_case |= NRF_MODEM_GNSS_USE_CASE_LOW_ACCURACY;
+	}
+	if (IS_ENABLED(CONFIG_GNSS_MODULE_DISABLE_SCHED_DOWNLOAD)) {
+		use_case |= NRF_MODEM_GNSS_USE_CASE_SCHED_DOWNLOAD_DISABLE;
+	}
+	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_GNSS);
+	if (err) {
+		LOG_ERR("Failed to activate GNSS functional mode %d", err);
+		return -1;
+	}
+	err = nrf_modem_gnss_use_case_set(use_case);
+	if (err) {
+		LOG_ERR("Failed to set GNSS use case, error %d", err);
 		return err;
 	}
 

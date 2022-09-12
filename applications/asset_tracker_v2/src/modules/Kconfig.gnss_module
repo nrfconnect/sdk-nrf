@@ -48,6 +48,37 @@ config GNSS_MODULE_ELEVATION_MASK
 	default NRF_CLOUD_AGPS_ELEVATION_MASK
 	depends on NRF_CLOUD_AGPS_FILTERED
 
+choice GNSS_MODULE_DYNAMICS_MODE
+	prompt "Tune GNSS performance for a specific use case"
+	default GNSS_MODULE_DYNAMICS_MODE_GENERAL_PURPOSE
+	help
+	  Dynamics mode can be used to tune GNSS performance for a specific use case.
+	  Use of a matching dynamics mode improves the positioning performance.
+
+config GNSS_MODULE_DYNAMICS_MODE_GENERAL_PURPOSE
+	bool "General purpose mode."
+
+config GNSS_MODULE_DYNAMICS_MODE_STATIONARY
+	bool "Optimize for stationary use case."
+
+config GNSS_MODULE_DYNAMICS_MODE_PEDESTRIAN
+	bool "Optimize for pedestrian use case."
+
+config GNSS_MODULE_DYNAMICS_MODE_AUTOMOTIVE
+	bool "Optimize for automotive use case."
+endchoice
+
+config GNSS_MODULE_ALLOW_LOW_ACCURACY
+	bool "Allow for low accuracy fixes using as few as three satellites."
+	default n
+
+config GNSS_MODULE_DISABLE_SCHED_DOWNLOAD
+	bool "Disable scheduled downloads of ephemerides and almanacs."
+	default n
+	help
+	  Should only be used with A-GPS. Otherwise, GNSS will never get some data
+	  (for example ionospheric corrections), which may affect the accuracy.
+
 endif # GNSS_MODULE
 
 module = GNSS_MODULE
