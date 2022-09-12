@@ -43,6 +43,9 @@ int fota_update_counter_update(enum counter_type type, uint32_t new_value);
 
 /**
  * @brief Initialize FOTA settings
+ *
+ * @retval -EALREADY if FOTA settings has already been initialized.
+ * @return Zero on success, otherwise a negative value is returned.
  */
 int fota_settings_init(void);
 

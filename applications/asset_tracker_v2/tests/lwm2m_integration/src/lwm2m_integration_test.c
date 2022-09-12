@@ -6,8 +6,6 @@
 #include <unity.h>
 #include <stdbool.h>
 #include <string.h>
-#include <net/lwm2m.h>
-#include <net/lwm2m_client_utils.h>
 
 #include "lwm2m_client_utils/mock_lwm2m_client_utils.h"
 #include "lwm2m/mock_lwm2m.h"
@@ -21,18 +19,26 @@
 #define LIFETIME_PATH			"1/0/1"
 #define REBOOT_PATH			"3/0/4"
 #define ENDPOINT_NAME_EXPECTED		":urn:id:test"
+#define FIRMWARE_UPDATE_RESULT_PATH	"5/0/5"
 
 static struct lwm2m_ctx client;
 static char endpoint_name[sizeof(CONFIG_LWM2M_INTEGRATION_ENDPOINT_PREFIX) +
 			  LWM2M_INTEGRATION_CLIENT_ID_LEN] = ":urn:id:test";
-static cloud_wrap_evt_handler_t wrapper_evt_handler;
 
-static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt) {};
+/* Structure used to check the last cloud wrap API event callback type. */
+static enum cloud_wrap_event_type last_cb_type;
+
+static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
+{
+	last_cb_type = evt->type;
+};
 
 /* Handlers used to invoke specific events in the uut. */
 static lwm2m_ctx_event_cb_t rd_client_callback;
 static lwm2m_engine_execute_cb_t engine_execute_cb;
 static modem_mode_cb_t modem_mode_change_cb;
+static lwm2m_firmware_get_update_state_cb_t firmware_update_state_cb;
+static lwm2m_engine_execute_cb_t firmware_update_cb;
 
 /* Forward declarations. */
 static int register_exec_callback_stub(const char *pathstr,
@@ -42,6 +48,10 @@ static int init_security_callback_stub(struct lwm2m_ctx *ctx,
 				       char *endpoint,
 				       struct modem_mode_change *mmode,
 				       int no_of_calls);
+static void set_update_state_callback_stub(lwm2m_firmware_get_update_state_cb_t cb,
+					   int no_of_calls);
+static void set_update_callback_stub(lwm2m_engine_execute_cb_t cb,
+				     int no_of_calls);
 
 extern int unity_main(void);
 
@@ -70,10 +80,16 @@ void setUp(void)
 
 	__wrap_lwm2m_init_security_AddCallback(&init_security_callback_stub);
 
+	__wrap_lwm2m_firmware_set_update_state_cb_ExpectAnyArgs();
+	__wrap_lwm2m_firmware_set_update_cb_ExpectAnyArgs();
+
 	__wrap_lwm2m_engine_register_exec_callback_ExpectAndReturn(REBOOT_PATH, NULL, 0);
 	__wrap_lwm2m_engine_register_exec_callback_IgnoreArg_cb();
 
 	__wrap_lwm2m_engine_register_exec_callback_AddCallback(&register_exec_callback_stub);
+	__wrap_lwm2m_firmware_set_update_state_cb_AddCallback(&set_update_state_callback_stub);
+	__wrap_lwm2m_firmware_set_update_cb_AddCallback(&set_update_callback_stub);
+
 	TEST_ASSERT_EQUAL(0, cloud_wrap_init(cloud_wrap_event_handler));
 }
 
@@ -128,25 +144,14 @@ static int init_security_callback_stub(struct lwm2m_ctx *ctx,
 	return 0;
 }
 
-/* Handlers used to verify that specific events are called back via the cloud wrapper API. */
-static void event_handler_mode_change_offline(const struct cloud_wrap_event *const evt)
+void set_update_state_callback_stub(lwm2m_firmware_get_update_state_cb_t cb, int no_of_calls)
 {
-	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_LTE_DISCONNECT_REQUEST, evt->type);
-};
-
-static void event_handler_mode_change_online(const struct cloud_wrap_event *const evt)
-{
-	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_LTE_CONNECT_REQUEST, evt->type);
-};
-
-static void event_handler_reboot_request(const struct cloud_wrap_event *const evt)
-{
-	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_REBOOT_REQUEST, evt->type);
+	firmware_update_state_cb = cb;
 }
 
-static void event_handler_disconnect(const struct cloud_wrap_event *const evt)
+void set_update_callback_stub(lwm2m_engine_execute_cb_t cb, int no_of_calls)
 {
-	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_DISCONNECTED, evt->type);
+	firmware_update_cb = cb;
 }
 
 /* Tests */
@@ -294,8 +299,8 @@ void test_lwm2m_integration_mode_change_offline(void)
 
 	__wrap_lte_lc_func_mode_get_ExpectAndReturn(&mode_current, 0);
 
-	wrapper_evt_handler = event_handler_mode_change_offline;
 	modem_mode_change_cb(LTE_LC_FUNC_MODE_OFFLINE, NULL);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_LTE_DISCONNECT_REQUEST, last_cb_type);
 }
 
 void test_lwm2m_integration_mode_change_online(void)
@@ -304,44 +309,136 @@ void test_lwm2m_integration_mode_change_online(void)
 
 	__wrap_lte_lc_func_mode_get_ExpectAndReturn(&mode_current, 0);
 
-	wrapper_evt_handler = event_handler_mode_change_online;
 	modem_mode_change_cb(LTE_LC_FUNC_MODE_NORMAL, NULL);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_LTE_CONNECT_REQUEST, last_cb_type);
 }
 
 void test_lwm2m_integration_reboot_request(void)
 {
-	wrapper_evt_handler = event_handler_reboot_request;
 	engine_execute_cb(0, NULL, 0);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_REBOOT_REQUEST, last_cb_type);
 }
 
 void test_lwm2m_integration_bootstrap_registration_failure(void)
 {
-	wrapper_evt_handler = event_handler_disconnect;
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_FAILURE);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_DISCONNECTED, last_cb_type);
 }
 
 void test_lwm2m_integration_registration_failure(void)
 {
-	wrapper_evt_handler = event_handler_disconnect;
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REGISTRATION_FAILURE);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_DISCONNECTED, last_cb_type);
 }
 
 void test_lwm2m_integration_registration_update_failure(void)
 {
-	wrapper_evt_handler = event_handler_disconnect;
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_DISCONNECTED, last_cb_type);
 }
 
 void test_lwm2m_integration_deregistration_failure(void)
 {
-	wrapper_evt_handler = event_handler_disconnect;
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_DISCONNECTED, last_cb_type);
 }
 
 void test_lwm2m_integration_network_error(void)
 {
-	wrapper_evt_handler = event_handler_disconnect;
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_NETWORK_ERROR);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_DISCONNECTED, last_cb_type);
+}
+
+void test_lwm2m_integration_fota_result_get(void)
+{
+	/* Expect the FOTA update result to be retrieved for any update in FOTA state. */
+	uint8_t update_result;
+
+	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, &update_result, 0);
+	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, &update_result, 0);
+	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, &update_result, 0);
+	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, &update_result, 0);
+
+	firmware_update_state_cb(STATE_IDLE);
+	firmware_update_state_cb(STATE_DOWNLOADING);
+	firmware_update_state_cb(STATE_DOWNLOADED);
+	firmware_update_state_cb(STATE_UPDATING);
+}
+
+void test_lwm2m_integration_fota_result_get_error(void)
+{
+	__wrap_lwm2m_engine_get_u8_ExpectAnyArgsAndReturn(-1);
+
+	firmware_update_state_cb(STATE_DOWNLOADING);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_ERROR, last_cb_type);
+}
+
+void test_lwm2m_integration_fota_error(void)
+{
+	__wrap_lwm2m_engine_get_u8_IgnoreAndReturn(0);
+
+	/* Expect an error event to be returned if FOTA state reverts to STATE_IDLE. */
+	firmware_update_state_cb(STATE_IDLE);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_FOTA_ERROR, last_cb_type);
+}
+
+void test_lwm2m_integration_fota_downloading(void)
+{
+	__wrap_lwm2m_engine_get_u8_IgnoreAndReturn(0);
+
+	firmware_update_state_cb(STATE_DOWNLOADING);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_FOTA_START, last_cb_type);
+}
+
+void test_lwm2m_integration_fota_downloaded(void)
+{
+	__wrap_lwm2m_engine_get_u8_IgnoreAndReturn(0);
+
+	/* Expect no event to be called by setting last_cb_type to UINT8_MAX and verifying that
+	 * the value has not changed after the state change.
+	 */
+	last_cb_type = UINT8_MAX;
+
+	firmware_update_state_cb(STATE_DOWNLOADED);
+	TEST_ASSERT_EQUAL(UINT8_MAX, last_cb_type);
+}
+
+void test_lwm2m_integration_fota_updating(void)
+{
+	__wrap_lwm2m_engine_get_u8_IgnoreAndReturn(0);
+
+	/* Expect no event to be called by setting last_cb_type to UINT8_MAX and verifying that
+	 * the value has not changed after the state change.
+	 */
+	last_cb_type = UINT8_MAX;
+
+	firmware_update_state_cb(STATE_UPDATING);
+	TEST_ASSERT_EQUAL(UINT8_MAX, last_cb_type);
+}
+
+void test_lwm2m_integration_fota_unexpected_event(void)
+{
+	__wrap_lwm2m_engine_get_u8_IgnoreAndReturn(0);
+
+	/* Trigger an event update with an unknown event type. */
+	firmware_update_state_cb(UINT8_MAX);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_FOTA_ERROR, last_cb_type);
+}
+
+void test_lwm2m_integration_fota_done(void)
+{
+	__wrap_lwm2m_firmware_apply_update_ExpectAndReturn(0, 0);
+
+	firmware_update_cb(0, NULL, 0);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_FOTA_DONE, last_cb_type);
+}
+
+void test_lwm2m_integration_fota_done_error(void)
+{
+	__wrap_lwm2m_firmware_apply_update_ExpectAndReturn(0, -1);
+
+	firmware_update_cb(0, NULL, 0);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_FOTA_ERROR, last_cb_type);
 }
 
 void main(void)
