@@ -435,7 +435,7 @@ void main(void)
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	ret = fota_settings_init();
-	if (ret < 0) {
+	if (ret < 0 && ret != -EALREADY) {
 		LOG_WRN("Unable to init settings (%d)", ret);
 	}
 	/* Modem FW update needs to be verified before modem is used. */

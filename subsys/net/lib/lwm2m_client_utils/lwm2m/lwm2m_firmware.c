@@ -95,7 +95,6 @@ static void apply_fmfu_from_ext_flash(struct k_work *work)
 		return;
 	}
 	LOG_INF("Modem firmware update completed\n");
-	LOG_INF("Rebooting device");
 
 	k_work_schedule(&reboot_work, REBOOT_DELAY);
 }
@@ -129,8 +128,11 @@ static int configure_full_modem_update(void)
 
 static void reboot_work_handler(struct k_work *work)
 {
-	LOG_PANIC();
-	sys_reboot(SYS_REBOOT_COLD);
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_REBOOT)) {
+		LOG_INF("Rebooting device");
+		LOG_PANIC();
+		sys_reboot(SYS_REBOOT_COLD);
+	}
 }
 
 static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args,
@@ -166,7 +168,6 @@ static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args,
 	} else
 #endif
 	{
-		LOG_INF("Rebooting device");
 		k_work_schedule(&reboot_work, REBOOT_DELAY);
 	}
 
@@ -539,6 +540,12 @@ void lwm2m_verify_modem_fw_update(void)
 	case MODEM_DFU_RESULT_OK:
 		LOG_INF("MODEM UPDATE OK. Will run new firmware");
 
+		ret = fota_settings_init();
+		if (ret < 0 && ret != -EALREADY) {
+			LOG_WRN("Unable to init settings (%d)", ret);
+			break;
+		}
+
 		ret = fota_update_counter_read(&counter);
 		if (ret != 0) {
 			LOG_ERR("Failed read the update counter, err: %d", ret);
@@ -570,8 +577,7 @@ void lwm2m_verify_modem_fw_update(void)
 		return;
 	}
 
-	LOG_PANIC();
-	sys_reboot(SYS_REBOOT_COLD);
+	k_work_schedule(&reboot_work, K_NO_WAIT);
 }
 
 int lwm2m_init_image(void)

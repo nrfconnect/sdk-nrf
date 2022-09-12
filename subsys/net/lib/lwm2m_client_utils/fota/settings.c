@@ -66,6 +66,11 @@ static struct settings_handler fota_settings = {
 int fota_settings_init(void)
 {
 	int err;
+	static bool init;
+
+	if (init) {
+		return -EALREADY;
+	}
 
 	err = settings_subsys_init();
 	if (err) {
@@ -84,6 +89,8 @@ int fota_settings_init(void)
 		LOG_ERR("settings_load_subtree() failed, %d", err);
 		return err;
 	}
+
+	init = true;
 
 	return 0;
 }
