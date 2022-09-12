@@ -246,6 +246,10 @@ Bluetooth libraries and services
 
 See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh samples.
 
+* :ref:`nrf_bt_scan_readme`:
+
+  * Added the ability to use the module when the Bluetooth Observer role is enabled.
+
 Bootloader libraries
 --------------------
 
