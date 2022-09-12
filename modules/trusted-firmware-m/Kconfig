@@ -106,7 +106,7 @@ config TFM_CRYPTO_IOVEC_BUFFER_SIZE
 config TFM_CRYPTO_PARTITION_STACK_SIZE
 	hex
 	prompt "TF-M Crypto Partition - Stack size" if !TFM_PROFILE_TYPE_MINIMAL
-	default 0x400 if TFM_PROFILE_TYPE_MINIMAL
+	default 0x800 if TFM_PROFILE_TYPE_MINIMAL
 	default 0x2000
 	help
 	  The stack size of the Crypto Secure Partition
