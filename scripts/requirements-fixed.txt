@@ -13,6 +13,7 @@ Babel==2.9.1
 breathe==4.26.1
 canopen==1.2.0
 cbor==1.0.0
+cbor2==5.4.3
 certifi==2020.12.5
 cffi==1.14.4
 chardet==4.0.0
@@ -21,7 +22,7 @@ cmsis-pack-manager==0.2.10
 colorama==0.4.4
 commonmark==0.9.1
 coverage==5.4
-cryptography==3.3.1
+cryptography==3.4.8
 docopt==0.6.2
 docutils==0.16
 ecdsa==0.16.1
@@ -46,7 +47,7 @@ MarkupSafe==1.1.1
 mccabe==0.6.1
 milksnake==0.1.5
 mock==4.0.3
-mypy==0.800
+mypy==0.921
 mypy-extensions==0.4.3
 naturalsort==1.5.1
 packaging==20.8
@@ -59,7 +60,7 @@ psutil==5.8.0
 py==1.10.0
 pycparser==2.20
 pyelftools==0.27
-pygit2==1.6.1
+pygit2==1.10.0
 Pygments==2.7.4
 pykwalify==1.8.0
 pylink-square==0.8.1
@@ -77,8 +78,8 @@ PyYAML==5.4.1
 recommonmark==0.6.0
 regex==2022.3.15
 requests==2.25.1
-ruamel.yaml==0.16.12
-ruamel.yaml.clib==0.2.2
+ruamel.yaml==0.17.21
+ruamel.yaml.clib==0.2.6
 sh==1.14.1
 six==1.15.0
 snowballstemmer==2.1.0
@@ -96,7 +97,8 @@ sphinxcontrib-serializinghtml==1.1.4
 sphinxcontrib-svg2pdfconverter==1.1.1
 tabulate==0.8.7
 toml==0.10.2
-typed-ast==1.4.2
+tomli==2.0.1
+typed-ast==1.5.4
 typing-extensions==3.7.4.3
 urllib3==1.26.4
 wcwidth==0.2.5
