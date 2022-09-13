@@ -9,6 +9,9 @@ Distance Measurement
 
 The Distance Measurement module provides an integration of :ref:`nrfxlib:nrf_dm` into |NCS|.
 
+.. note::
+   The current implementation is :ref:`experimental <software_maturity>`.
+
 Overview
 ********
 
