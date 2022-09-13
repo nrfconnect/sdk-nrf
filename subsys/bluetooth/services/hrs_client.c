@@ -61,7 +61,7 @@ static int hrs_measurement_data_parse(struct bt_hrs_client_measurement *meas,
 						1 : 0;
 	meas->flags.energy_expended_present = (flags & HRS_MEASUREMENT_FLAGS_ENERGY_EXPENDED) ?
 						1 : 0;
-	meas->flags.rr_intervals_present = (false & HRS_MEASUREMENT_FLAGS_RR_INTERVALS) ? 1 : 0;
+	meas->flags.rr_intervals_present = (flags & HRS_MEASUREMENT_FLAGS_RR_INTERVALS) ? 1 : 0;
 
 	length--;
 
