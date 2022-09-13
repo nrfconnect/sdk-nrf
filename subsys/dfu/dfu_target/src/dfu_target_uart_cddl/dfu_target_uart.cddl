@@ -1,0 +1,29 @@
+;
+; Copyright (c) 2022 Nordic Semiconductor ASA
+;
+
+; The envelop that will be prepended to the update binary.
+
+DFU_UART_target_Envelope = [
+	; The magic number needs to be set to the correct value for the
+	; correct target type to be chosen.
+	magic: uint,
+
+	; The remote target identifier.
+	; Used if multiple remote targets are available.
+	rem_target: uint .size 1,
+]
+
+DFU_UART_target_RemoteFnc = [
+	type: ((init: 1) / (write: 2) / (offset: 3) / (done: 4)),
+	?data: (
+		success: bool //
+		file_size: uint .size 4, image_num: uint .size 1 //
+		payload: bstr
+	)
+]
+
+DFU_UART_target_RemoteResp = [
+	type: ((init: 1) / (write: 2) / (offset: 3) / (done: 4)),
+	error: int,
+]

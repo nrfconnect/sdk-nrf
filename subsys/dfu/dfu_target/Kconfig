@@ -69,6 +69,21 @@ config DFU_TARGET_MODEM_TIMEOUT
 
 endif # DFU_TARGET_MODEM_DELTA
 
+config DFU_TARGET_UART
+	bool "UART update support"
+	depends on SERIAL
+	select RING_BUFFER
+	help
+	  Enable support for updates sent over UART.
+
+if (DFU_TARGET_UART)
+
+config DFU_TARGET_UART_TIMEOUT
+	int "Timeout on UART response, in ms"
+	default 500
+
+endif # DFU_TARGET_UART
+
 config DFU_TARGET_FULL_MODEM
 	bool "Full Modem update support"
 	depends on SOC_NRF9160_SICA

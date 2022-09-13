@@ -39,5 +39,6 @@ rsource "modem_antenna/Kconfig"
 rsource "qos/Kconfig"
 rsource "identity_key/Kconfig"
 rsource "sfloat/Kconfig"
+rsource "dfu_target_uart_host/Kconfig"
 
 endmenu

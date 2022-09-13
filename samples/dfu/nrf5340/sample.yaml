@@ -1,0 +1,9 @@
+sample:
+  name: FOTA over LTE through UART sample, remote core
+tests:
+  sample.dfu.nrf5340:
+    build_only: true
+    integration_platforms:
+      - nrf5340dk_cpuapp_ns
+    platform_allow: nrf5340dk_cpuapp_ns
+    tags: ci_build

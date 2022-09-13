@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "DFU target type UART sample"
+
+config DOWNLOAD_HOST
+	string "Application update host name"
+	help
+	  Host part of URL to application update binary. For example
+	  if the file is stored in http://foo.bar/update.bin the value
+	  of this configuration should be 'foo.bar'
+
+config DOWNLOAD_FILE
+	string "Application downgrade file name (application version 1)"
+	help
+	  File part of URL to application update binary version 1. For example
+	  if the file is stored in http://foo.bar/downgrade.bin the value
+	  of this configuration should be 'downgrade.bin'
+
+config APPLICATION_VERSION
+	int "Application version"
+	default 1
+
+module = APP
+module-dep = LOG
+module-str = Log level for sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu

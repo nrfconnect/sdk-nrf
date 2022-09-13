@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "UART DFU host library"
+
+config DFU_TARGET_UART_HOST
+	bool "UART DFU library"
+	depends on DFU_TARGET
+	depends on DFU_TARGET_MCUBOOT
+	depends on SERIAL
+	depends on UART_INTERRUPT_DRIVEN
+	select RING_BUFFER
+
+if DFU_TARGET_UART_HOST
+
+config DFU_TARGET_UART_HOST_HANDLER_STACK_SIZE
+	int "Thread stack size"
+	default 512
+
+config DFU_TARGET_UART_HOST_HANDLER_PRIORITY
+	int "Thread priority"
+	default 4
+
+config DFU_TARGET_UART_HOST_IN_BUFFER_SIZE
+	int "Input buffer size"
+	default 4096
+
+config DFU_TARGET_UART_HOST_OUT_BUFFER_SIZE
+	int "Output buffer size"
+	default 128
+
+module=DFU_TARGET_UART_HOST
+module-dep=LOG
+module-str=Device Firmware Upgrade using UART
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # DFU_TARGET_UART_HOST
+
+endmenu
