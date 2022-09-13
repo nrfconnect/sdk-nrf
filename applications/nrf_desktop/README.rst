@@ -1675,9 +1675,13 @@ Select the following Kconfig options to enable the serial recovery DFU:
         The USB subsystem must be enabled and properly configured.
         See :ref:`usb_api` for more information.
 
-* ``CONFIG_BOOT_SERIAL_DETECT_PORT`` and ``CONFIG_BOOT_SERIAL_DETECT_PIN`` - These options select the pin used for triggering the serial recovery mode.
-  To enter the serial recovery mode, set the pin to a logic value defined by ``CONFIG_BOOT_SERIAL_DETECT_PIN_VAL`` when the device boots.
-  By default, the selected GPIO pin should be set to low.
+The GPIO pin used to trigger the serial recovery mode is configured using Devicetree Specification (DTS).
+The pin is configured with the ``mcuboot-button0`` alias.
+The ``mcuboot-led0`` alias can be used to define LED activated in the serial recovery mode.
+The ``CONFIG_MCUBOOT_INDICATION_LED`` Kconfig option must be selected to enable the LED.
+
+By default, both the GPIO pin and the LED are defined in board's DTS file.
+See :file:`boards/arm/nrf52833dongle_nrf52833/nrf52833dongle_nrf52833.dts` for an example of configuration.
 
 Once the device enters the serial recovery mode, you can use the :ref:`mcumgr <zephyr:device_mgmt>` to:
 
