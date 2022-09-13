@@ -10,6 +10,8 @@
 #include <zephyr/kernel.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/conn.h>
+#include <settings/settings.h>
+
 #include "button_assignments.h"
 #include "ble_core.h"
 #include "button_handler.h"
@@ -123,6 +125,10 @@ static void dfu_set_bt_name(void)
 
 static void on_ble_core_ready_dfu_entry(void)
 {
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		settings_load();
+	}
+
 	bt_conn_cb_register(&dfu_conn_callbacks);
 	adv_param = *BT_LE_ADV_CONN_NAME;
 	dfu_set_bt_name();
