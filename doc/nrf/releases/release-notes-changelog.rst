@@ -370,7 +370,9 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-* |no_changes_yet_note|
+* :ref:`west_sbom`
+
+  * SPDX License List database updated to version 3.18.
 
 MCUboot
 =======
