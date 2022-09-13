@@ -16,7 +16,6 @@ A "99" at the end of the version number of this documentation indicates continuo
    :caption: Contents
 
    introduction
-   glossary
    getting_started
    ug_dev_model
    ug_app_dev
@@ -36,5 +35,6 @@ A "99" at the end of the version number of this documentation indicates continuo
    known_issues
    software_maturity
    documentation
+   glossary
 
 ..   cheat_sheet
