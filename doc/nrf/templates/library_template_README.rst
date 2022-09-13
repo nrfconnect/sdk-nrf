@@ -30,24 +30,25 @@ Template: Library
 
    * Include a tech writer in the PR review.
 
-Overview*
-*********
+Overview
+********
 
 .. note::
    Use this section to give a general overview of the library.
-   This is optional if the library is so small the initial short description also gives an overview of the library.
 
-Implementation
-==============
+Implementation*
+===============
 
 .. note::
    Use this section to describe the library architecture and implementation.
+   This is optional.
 
-Supported features
-==================
+Supported features*
+===================
 
 .. note::
    Use this section to describe the features supported by the library.
+   This is optional.
 
 Supported backends*
 ===================
@@ -80,8 +81,8 @@ Shell commands list*
    Use this section to list available library shell commands, if applicable.
    This is optional.
 
-Usage*
-******
+Usage
+*****
 
 .. note::
    Use this section to explain how to use the library.
