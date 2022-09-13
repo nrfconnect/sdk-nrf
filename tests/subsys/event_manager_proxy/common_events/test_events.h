@@ -45,7 +45,7 @@ enum test_id {
 struct test_start_event {
 	struct app_event_header header;
 
-	enum test_id test_id;
+	uint8_t test_id;
 };
 
 APP_EVENT_TYPE_DECLARE(test_start_event);
@@ -59,7 +59,7 @@ APP_EVENT_TYPE_DECLARE(test_start_event);
 struct test_start_ack_event {
 	struct app_event_header header;
 
-	enum test_id test_id;
+	uint8_t test_id;
 };
 
 APP_EVENT_TYPE_DECLARE(test_start_ack_event);
@@ -72,7 +72,7 @@ APP_EVENT_TYPE_DECLARE(test_start_ack_event);
 struct test_end_event {
 	struct app_event_header header;
 
-	enum test_id test_id;
+	uint8_t test_id;
 };
 
 APP_EVENT_TYPE_DECLARE(test_end_event);
@@ -85,7 +85,7 @@ APP_EVENT_TYPE_DECLARE(test_end_event);
 struct test_end_remote_event {
 	struct app_event_header header;
 
-	enum test_id test_id;
+	uint8_t test_id;
 	int res;
 };
 
@@ -96,7 +96,8 @@ static inline void submit_test_start_event(enum test_id id)
 {
 	struct test_start_event *event = new_test_start_event();
 
-	event->test_id = id;
+	__ASSERT_NO_MSG(id < UINT8_MAX);
+	event->test_id = (uint8_t)id;
 	APP_EVENT_SUBMIT(event);
 }
 
@@ -104,7 +105,8 @@ static inline void submit_test_start_ack_event(enum test_id id)
 {
 	struct test_start_ack_event *event = new_test_start_ack_event();
 
-	event->test_id = id;
+	__ASSERT_NO_MSG(id < UINT8_MAX);
+	event->test_id = (uint8_t)id;
 	APP_EVENT_SUBMIT(event);
 }
 
@@ -112,7 +114,8 @@ static inline void submit_test_end_event(enum test_id id)
 {
 	struct test_end_event *event = new_test_end_event();
 
-	event->test_id = id;
+	__ASSERT_NO_MSG(id < UINT8_MAX);
+	event->test_id = (uint8_t)id;
 	APP_EVENT_SUBMIT(event);
 }
 
@@ -120,7 +123,8 @@ static inline void submit_test_end_remote_event(enum test_id id, int res)
 {
 	struct test_end_remote_event *event = new_test_end_remote_event();
 
-	event->test_id = id;
+	__ASSERT_NO_MSG(id < UINT8_MAX);
+	event->test_id = (uint8_t)id;
 	event->res = res;
 	APP_EVENT_SUBMIT(event);
 }
