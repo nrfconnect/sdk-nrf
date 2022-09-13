@@ -53,7 +53,7 @@ static void test_data_response(void)
 
 	APP_EVENT_SUBMIT(event);
 
-	int err = k_sem_take(&waiting_response_sem, K_SECONDS(1));
+	int err = k_sem_take(&waiting_response_sem, K_SECONDS(RESPONSE_TIMEOUT_S));
 	zassert_ok(err, "No data response event received");
 
 	zassert_equal(rand_test_data.val1, data_response.val1, "Unexpected value in response");
@@ -83,7 +83,7 @@ static void test_data_big_response(void)
 
 	APP_EVENT_SUBMIT(event);
 
-	int err = k_sem_take(&waiting_response_sem, K_SECONDS(1));
+	int err = k_sem_take(&waiting_response_sem, K_SECONDS(RESPONSE_TIMEOUT_S));
 	zassert_ok(err, "No data response event received");
 
 	zassert_mem_equal(&data_big_response.block,
@@ -157,7 +157,7 @@ static void test_data_ping_pong_performance(void)
 		event->val3u = (uint32_t)cnt;
 
 		proxy_direct_submit_event(&event->header);
-		err = k_sem_take(&waiting_response_sem, K_SECONDS(1));
+		err = k_sem_take(&waiting_response_sem, K_SECONDS(RESPONSE_TIMEOUT_S));
 		zassert_ok(err, "No data event received");
 
 		zassert_equal(event->val1, data_response.val1, "Unexpected value in response");
@@ -243,7 +243,7 @@ static void test_data_big_ping_pong_performance(void)
 		}
 
 		proxy_direct_submit_event(&event->header);
-		err = k_sem_take(&waiting_response_sem, K_SECONDS(1));
+		err = k_sem_take(&waiting_response_sem, K_SECONDS(RESPONSE_TIMEOUT_S));
 		zassert_ok(err, "No data event received");
 
 		zassert_mem_equal(&data_big_response.block, &event->block, sizeof(event->block),

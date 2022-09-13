@@ -6,6 +6,7 @@
 #include <ztest.h>
 #include <app_event_manager.h>
 
+#include "test_config.h"
 #include "test_utils.h"
 
 #define MODULE test_utils
@@ -48,7 +49,7 @@ void test_start(enum test_id test_id)
 
 void test_start_ack_wait(void)
 {
-	int err = k_sem_take(&test_ack_sem, K_SECONDS(1));
+	int err = k_sem_take(&test_ack_sem, K_SECONDS(TEST_TIMEOUT_BASE_S));
 
 	zassert_ok(err, "No test start acknowledge from remote");
 }
@@ -58,14 +59,14 @@ void test_end(enum test_id test_id)
 	zassert_equal(cur_test_id, test_id, "Current test ID does not match the id of test to end");
 	submit_test_end_event(test_id);
 
-	int err = k_sem_take(&test_end_sem, K_SECONDS(1));
+	int err = k_sem_take(&test_end_sem, K_SECONDS(TEST_TIMEOUT_BASE_S));
 
 	zassert_ok(err, "Test execution hanged");
 }
 
 void test_end_wait(enum test_id test_id)
 {
-	int err = k_sem_take(&test_end_sem, K_SECONDS(30));
+	int err = k_sem_take(&test_end_sem, K_SECONDS(30 * TEST_TIMEOUT_BASE_S));
 
 	zassert_ok(err, "Test execution hanged");
 }
