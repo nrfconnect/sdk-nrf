@@ -46,7 +46,7 @@ Below are the maximum total fragment sizes in different scenarios:
 It is up to the application that uses the library to restart the device when the FOTA completes and an :c:enumerator:`AZURE_FOTA_EVT_DONE` event is received.
 
 .. note::
-   The current implementation is experimental and may be enhanced in future releases.
+   The current implementation is :ref:`experimental <software_maturity>`.
 
 Configuration
 *************

@@ -46,7 +46,7 @@ You can alter the default values of the :ref:`Real-time configurations <real_tim
 Connection evaluation
 =====================
 
-This is an experimental feature.
+This is an :ref:`experimental <software_maturity>` feature.
 The module can decide to hold off encoding and sending of sampled data based on evaluation of the LTE connection and estimated energy consumed to send the data.
 This feature is enabled by setting the :ref:`CONFIG_DATA_GRANT_SEND_ON_CONNECTION_QUALITY <CONFIG_DATA_GRANT_SEND_ON_CONNECTION_QUALITY>` Kconfig option.
 The module can deny the sending of data a number of times before it is sent regardless.

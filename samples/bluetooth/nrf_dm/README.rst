@@ -13,6 +13,10 @@ The Bluetooth® :ref:`ddfs_readme` is running simultaneously.
 
 Sample is configured to use Nordic's SoftDevice link layer.
 
+.. note::
+   The Distance Measurement support in the |NCS| is :ref:`experimental <software_maturity>`.
+   See :ref:`mod_dm` for details.
+
 Requirements
 ************
 

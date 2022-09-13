@@ -17,9 +17,9 @@ The stack comes with the following features:
 * Base Device Behavior
 * Devices definitions for devices that were implemented for Zigbee Home Automation and Light Link profiles
 * Zigbee Green Power Proxy Basic
-* Experimental support for ``ZB_ZCL_WWAH``
+* :ref:`Experimental <software_maturity>` support for ``ZB_ZCL_WWAH``
 
-Experimental support means the feature is either not certified or no sample is provided for the given feature (or both).
+Experimental support also means that the feature is either not certified or no sample is provided for the given feature (or both).
 
 See the :ref:`nrfxlib:zboss` page in nrfxlib and the `external ZBOSS development guide and API documentation`_ for more information about the ZBOSS library.
 

@@ -13,7 +13,7 @@ The device works as a Matter accessory device, meaning it can be paired and cont
 You can use this application as a reference for creating your own application.
 
 .. note::
-    The Matter protocol is in an early development stage and must be treated as an experimental feature.
+    The Matter protocol is in an early development stage and must be treated as an :ref:`experimental <software_maturity>` feature.
 
 Requirements
 ************
