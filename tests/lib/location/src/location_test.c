@@ -66,6 +66,9 @@ static char *const http_headers[] = {
 	NULL
 };
 
+/* Variable to check if the call to nrf_modem_at_scanf() was expected or not. */
+static bool expect_nrf_modem_at_scanf;
+
 /* at_monitor_dispatch() is implemented in at_monitor library and
  * we'll call it directly to fake received AT commands/notifications
  */
@@ -124,6 +127,13 @@ void tearDown(void)
 		k_sem_take(&event_handler_called_sem, K_SECONDS(3));
 	}
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
+
+	/* Check that nrf_modem_at_scanf() was called if it was expected. We do so by checking if
+	 * expect_nrf_modem_at_scanf was reset to false by the mock function. If it was never
+	 * expected by the test case, then the value of expect_nrf_modem_at_scanf always remains
+	 * false (i.e the init value).
+	 */
+	TEST_ASSERT_FALSE(expect_nrf_modem_at_scanf);
 
 	mock_nrf_modem_at_Verify();
 	mock_nrf_modem_gnss_Verify();
@@ -246,6 +256,39 @@ void test_location_method_str(void)
 	TEST_ASSERT_EQUAL_STRING("Unknown", method);
 }
 
+/* Since CMock cannot return values by reference to variadic functions, we write our own mock
+ * function for this.
+ * For this test suite, this mock will always test the arguments against fixed values. It will
+ * always return a fixed System Mode.
+ */
+int __wrap_nrf_modem_at_scanf(const char *cmd, const char *fmt, ...)
+{
+	TEST_ASSERT_TRUE(expect_nrf_modem_at_scanf);
+
+	expect_nrf_modem_at_scanf = false;
+
+	TEST_ASSERT_EQUAL_STRING("AT%XSYSTEMMODE?", cmd);
+	TEST_ASSERT_EQUAL_STRING("%%XSYSTEMMODE: %d,%d,%d,%d", fmt);
+
+	va_list args;
+
+	va_start(args, fmt);
+
+	int *ltem_mode = va_arg(args, int *);
+	int *nbiot_mode = va_arg(args, int *);
+	int *gps_mode = va_arg(args, int *);
+	int *mode_preference = va_arg(args, int *);
+
+	va_end(args);
+
+	*ltem_mode = 1;
+	*nbiot_mode = 1;
+	*gps_mode = 1;
+	*mode_preference = 0;
+
+	return 4;
+}
+
 /********* GNSS POSITIONING TESTS ***********************/
 
 /* Test successful GNSS location request. */
@@ -293,9 +336,7 @@ void test_location_gnss(void)
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
 
-	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__wrap_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+	expect_nrf_modem_at_scanf = true;
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
 
@@ -493,10 +534,7 @@ void test_location_request_default(void)
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
 
-	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__wrap_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
-
+	expect_nrf_modem_at_scanf = true;
 	err = location_request(NULL);
 	TEST_ASSERT_EQUAL(0, err);
 
@@ -613,9 +651,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
 
-	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__wrap_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+	expect_nrf_modem_at_scanf = true;
 
 	__wrap_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__wrap_nrf_modem_at_cmd_IgnoreArg_buf();
@@ -679,9 +715,7 @@ void test_location_request_timeout_cellular_gnss_mode_all(void)
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
 
-	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__wrap_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+	expect_nrf_modem_at_scanf = true;
 
 	__wrap_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__wrap_nrf_modem_at_cmd_IgnoreArg_buf();
@@ -744,9 +778,8 @@ void test_location_gnss_periodic(void)
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
 
-	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__wrap_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+	expect_nrf_modem_at_scanf = true;
+
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
 
@@ -778,9 +811,7 @@ void test_location_gnss_periodic(void)
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
 
-	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__wrap_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+	expect_nrf_modem_at_scanf = true;
 
 	__wrap_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__wrap_nrf_modem_at_cmd_IgnoreArg_buf();
