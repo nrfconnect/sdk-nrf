@@ -81,7 +81,6 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-
 Programming the sample
 ======================
 
@@ -96,6 +95,17 @@ Program the board controller as follows:
 1. Set the **SW10** switch, marked as *debug/prog*, in the **NRF52** position.
    On nRF9160 DK board version 0.9.0 and earlier versions, the switch was called **SW5**.
 #. Build the :ref:`bluetooth-hci-lpuart-sample` sample for the nrf9160dk_nrf52840 build target and program the board controller with it.
+
+   .. note::
+      To build the sample successfully, you must specify the board version along with the build target.
+      The board version is printed on the label of your DK, just below the PCA number.
+      For example, for board version 1.1.0, the sample must be built in the following way:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build --board nrf9160dk_nrf52840_ns@1.1.0
+
 #. Verify that the programming was successful.
    Use a terminal emulator, like PuTTY, to connect to the second serial port and check the output.
    See :ref:`putty` for the required settings.
@@ -106,6 +116,16 @@ Program the main controller as follows:
 1. Set the **SW10** switch, marked as *debug/prog*, in the **NRF91** position.
    On nRF9160 DK board version 0.9.0 and earlier versions, the switch was called **SW5**.
 #. Build the LTE Sensor Gateway sample (this sample) for the nrf9160dk_nrf9160_ns build target and program the main controller with it.
+
+   .. note::
+      To build the sample successfully, you must specify the board version along with the build target.
+      For example, for board version 1.1.0, the sample must be built in the following way:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build --board nrf9160dk_nrf9160_ns@1.1.0
+
 #. Verify that the programming was successful.
    To do so, use a terminal emulator, like PuTTY, to connect to the first serial port and check the output.
    See :ref:`putty` for the required settings.
