@@ -11,9 +11,6 @@
 The SDK includes open source projects (TF-M, MCUboot, OpenThread, Matter, and the Zephyr RTOS), which are continuously integrated and redistributed with the SDK.
 
 Release notes might refer to "experimental" support for features, which indicates that the feature is incomplete in functionality or verification, and can be expected to change in future releases.
-The feature is made available in its current state though the design and interfaces can change between release tags.
-The feature will also be labeled with "EXPERIMENTAL" in Kconfig files to indicate this status.
-Build warnings will be generated to indicate when features labeled EXPERIMENTAL are included in builds unless the Kconfig option :kconfig:option:`CONFIG_WARN_EXPERIMENTAL` is disabled.
 To learn more, see :ref:`software_maturity`.
 
 Highlights

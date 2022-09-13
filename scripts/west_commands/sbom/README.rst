@@ -11,7 +11,7 @@ The Software Bill of Materials (SBOM) is a :ref:`west <zephyr:west>` extension c
 It provides a list of used licenses for an application build or specific files.
 
 .. note::
-    Generating a list of licenses from an application build is experimental.
+    Generating a list of licenses from an application build is :ref:`experimental <software_maturity>`.
     The accuracy of detection is constantly verified.
     Both implementation and usage may change in the future.
 

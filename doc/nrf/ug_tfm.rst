@@ -18,7 +18,8 @@ It provides a highly configurable set of software components to create a Trusted
 This is achieved by a set of secure run time services such as Secure Storage, Cryptography, Audit Logs, and Attestation.
 Additionally, secure boot through MCUboot in TF-M ensures integrity of runtime software and supports firmware upgrade.
 
-Support for TF-M with :ref:`minimal version <tfm_minimal_build>` disabled in |NCS| is currently experimental.
+.. note::
+   Support for TF-M with :ref:`minimal version <tfm_minimal_build>` disabled in |NCS| is currently :ref:`experimental <software_maturity>`.
 
 For official documentation, see the `TF-M documentation`_.
 

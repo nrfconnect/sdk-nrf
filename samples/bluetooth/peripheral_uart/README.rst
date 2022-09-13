@@ -89,13 +89,15 @@ This build uses the sample-specific UART async adapter module that acts as a bri
 See :ref:`peripheral_uart_sample_activating_variants` for details about how to build the sample with this extension using the :file:`prj_cdc.conf`.
 
 Async adapter experimental module
-   The default sample configuration uses the UART async API.
-   The UART async adapter creates and initializes an instance of the async module.
-   This is needed because the USB CDC ACM implementation provides only the interrupt interface.
-   The adapter uses data provided in the :c:struct:`uart_async_adapter_data` to connect to the UART device that does not use the asynchronous interface.
+---------------------------------
 
-   The module requires the :kconfig:option:`CONFIG_BT_NUS_UART_ASYNC_ADAPTER` to be set to ``y``.
-   For more information about the adapter, see the :file:`uart_async_adapter` source files available in the :file:`peripheral_uart/src` directory.
+The default sample configuration uses the UART async API, which is an :ref:`experimental <software_maturity>` module.
+The UART async adapter creates and initializes an instance of the async module.
+This is needed because the USB CDC ACM implementation provides only the interrupt interface.
+The adapter uses data provided in the :c:struct:`uart_async_adapter_data` to connect to the UART device that does not use the asynchronous interface.
+
+The module requires the :kconfig:option:`CONFIG_BT_NUS_UART_ASYNC_ADAPTER` to be set to ``y``.
+For more information about the adapter, see the :file:`uart_async_adapter` source files available in the :file:`peripheral_uart/src` directory.
 
 MCUboot with serial recovery of the networking core image
 =========================================================

@@ -109,14 +109,11 @@ To perform the split differently (for example, to compensate for external condit
 
 To use FEM power models, set the :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL` Kconfig option to ``y``  and either select one of the built-in models or provide a custom model, as described in the following chapters.
 
-Using nRF21540 GPIO SPI built-in power model (Experimental)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Using nRF21540 GPIO SPI built-in power model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 .. note::
-   The software maturity level of this feature is :ref:`Experimental <software_maturity>`.
-   The feature can be used for development, but it is not recommended for production.
-   This feature is incomplete in functionality or verification and can be expected to change in future releases.
-   The feature is made available in its current state, but the design and interfaces can change between release tags.
-   The feature is also labeled as ``EXPERIMENTAL`` in Kconfig files to indicate this status.
+   This is an :ref:`experimental <software_maturity>` feature.
 
 To use this model, set :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL` and :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL_NRF21540_USE_BUILTIN` to ``y``.
 
