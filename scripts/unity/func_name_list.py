@@ -8,7 +8,7 @@ import re
 import argparse
 
 
-def func_names_from_header(in_file, out_file):
+def func_names_from_header(in_file, out_file, exclude=None):
     with open(in_file) as f_in:
         content = f_in.read()
 
@@ -17,8 +17,10 @@ def func_names_from_header(in_file, out_file):
         # Tests for validating the regex in tests/unity/wrap
         x = re.findall(r"(?!^\s*static)^\s*(?:\w+[*\s]+)+(\w+?)\s*\([\w\s,*\.\[\]]*?\)\s*;",
                        content, re.M | re.S)
+        exclude_regex = None if exclude is None else "^((" + ")|(".join(exclude) + "))"
         for item in x:
-            f_out.write(item + "\n")
+            if exclude_regex is None or re.match(exclude_regex, item) is None:
+                f_out.write(item + "\n")
 
 
 if __name__ == "__main__":
@@ -27,6 +29,8 @@ if __name__ == "__main__":
                         help="input header file", required=True)
     parser.add_argument("-o", "--output", type=str,
                         help="output function list file", required=True)
+    parser.add_argument("-e", "--exclude", type=str, action='append',
+                        help="exclude functions matching pattern given")
     args = parser.parse_args()
 
-    func_names_from_header(args.input, args.output)
+    func_names_from_header(args.input, args.output, args.exclude)
