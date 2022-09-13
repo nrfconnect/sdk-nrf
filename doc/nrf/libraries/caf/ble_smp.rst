@@ -38,6 +38,9 @@ Implementation details
 During the initialization, the module registers the SMP Bluetooth service, which allows to perform DFU over Bluetooth LE.
 
 The module registers the :c:func:`upload_confirm` callback that is used to submit ``ble_smp_transfer_event``.
+The module registers itself as the final subscriber of the event to track the number of submitted events.
+If an ``ble_smp_transfer_event`` was already submitted, but was not yet processed, the module desists from submitting subsequent event.
+After the previously submitted event is processed, the module submits a subsequent event when :c:func:`upload_confirm` callback is called.
 
 The application user must not perform more than one firmware upgrade at a time.
 The modification of the data by multiple application modules can result in a broken image that is going to be rejected by the bootloader.
