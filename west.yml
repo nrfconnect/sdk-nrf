@@ -107,7 +107,7 @@ manifest:
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.1.0-ncs1
+      revision: abce0e893c8ad219370100dadaed0ae11a3e4d63
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
