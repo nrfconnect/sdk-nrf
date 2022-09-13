@@ -171,6 +171,8 @@ struct download_client {
 	k_tid_t tid;
 	/** Internal download thread. */
 	struct k_thread thread;
+	/** Ensure that thread is ready for download */
+	struct k_sem wait_for_download;
 	/* Internal thread stack. */
 	K_THREAD_STACK_MEMBER(thread_stack,
 			      CONFIG_DOWNLOAD_CLIENT_STACK_SIZE);
