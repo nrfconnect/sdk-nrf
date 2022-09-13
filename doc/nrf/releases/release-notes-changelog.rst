@@ -259,6 +259,7 @@ Libraries for networking
 * :ref:`lib_download_client` library:
 
   * Updated the library so that it does not retry download on disconnect.
+  * Fixed a race condition when starting the download.
 
 Libraries for NFC
 -----------------
