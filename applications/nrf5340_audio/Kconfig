@@ -56,6 +56,12 @@ config PRINT_STACK_USAGE_MS
 
 endmenu # Log levels
 
+config BT_HCI_VS
+	default y if BT
+
+config BT_ECC
+	default y if BT
+
 #----------------------------------------------------------------------------#
 endif # NRF5340_AUDIO
 
