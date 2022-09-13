@@ -330,6 +330,29 @@ NCSDK-9441: Fmfu SMP server sample is unstable with the newest J-Link version
 
   **Workaround:** Downgrade the debugger chip to the firmware released with J-Link 6.88a or use another way of transferring serial data to the chip.
 
+.. rst-class:: v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+LTE Sensor Gateway fails to run
+  The :ref:`lte_sensor_gateway` sample system faults when the board version is not included with the build target while building the sample.
+  This is due to an issue with the low-power UART and HCI drivers.
+
+  **Workaround:** Include the board version when building the :ref:`bluetooth-hci-lpuart-sample` sample and the :ref:`lte_sensor_gateway` sample.
+  For example, for board version 1.1.0, the samples must be built in the following way:
+
+  The :ref:`bluetooth-hci-lpuart-sample` sample:
+
+  .. parsed-literal::
+    :class: highlight
+
+    west build --board nrf9160dk_nrf52840_ns@1.1.0
+
+  The :ref:`lte_sensor_gateway` sample:
+
+  .. parsed-literal::
+    :class: highlight
+
+    west build --board nrf9160dk_nrf9160_ns@1.1.0
+
 nRF5
 ****
 
