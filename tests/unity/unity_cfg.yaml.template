@@ -30,7 +30,7 @@
         'uint32_t': 'HEX32'
         'int64_t': 'INT64'
         'uint64_t': 'HEX64'
-
+    ${CMOCK_STRIPPABLES}
 :unity:
     :suite_teardown: >
        extern int test_suiteTearDown(int); return test_suiteTearDown(num_failures);
