@@ -47,6 +47,10 @@ int wifi_nrf_disp_scan_zep(const struct device *dev,
 
 	scan_info.scan_mode = AUTO_SCAN;
 	scan_info.scan_reason = SCAN_DISPLAY;
+	/* Wildcard SSID to trigger active scan */
+	scan_info.scan_params.num_scan_ssids = 1;
+	scan_info.scan_params.scan_ssids[0].img_ssid_len = 0;
+	scan_info.scan_params.scan_ssids[0].img_ssid[0] = 0;
 
 	status = wifi_nrf_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &scan_info);
 
