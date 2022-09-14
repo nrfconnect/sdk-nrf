@@ -452,6 +452,16 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	scan_info.scan_mode = 0;
 	scan_info.scan_reason = SCAN_CONNECT;
 
+	/* Copy extra_ies */
+	if (params->extra_ies_len && params->extra_ies_len <= IMG_MAX_IE_LEN) {
+		memcpy(scan_info.scan_params.ie.ie, params->extra_ies, params->extra_ies_len);
+		scan_info.scan_params.ie.ie_len = params->extra_ies_len;
+	} else if (params->extra_ies_len) {
+		LOG_ERR("%s: extra_ies_len %d is greater than max IE len %d\n",
+			__func__, params->extra_ies_len, IMG_MAX_IE_LEN);
+		goto out;
+	}
+
 	status = wifi_nrf_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &scan_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
