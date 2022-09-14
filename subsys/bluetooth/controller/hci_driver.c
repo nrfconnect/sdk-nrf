@@ -332,6 +332,7 @@ static void event_packet_process(uint8_t *hci_buf)
 		}
 
 		BT_ERR("No event buffer available");
+		k_oops();
 		return;
 	}
 
