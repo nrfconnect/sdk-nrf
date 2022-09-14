@@ -206,6 +206,7 @@ nRF9160: Asset Tracker v2
 
     * An issue that reports GNSS altitude, accuracy, and speed incorrectly when using LwM2M engine.
     * An issue that caused modem FOTA jobs to be reported as not validated to nRF Cloud.
+    * An issue that caused the memfault event storage buffer getting full which in turn resulted in lost memfault events.
 
 nRF9160: Serial LTE modem
 -------------------------
