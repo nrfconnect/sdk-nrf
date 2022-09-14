@@ -86,6 +86,9 @@ trace_reset:
 	while (true) {
 		err = nrf_modem_trace_get(&frags, &n_frags);
 		switch (err) {
+		case 0:
+			/* Success */
+			break;
 		case -NRF_ESHUTDOWN:
 			LOG_INF("Modem was turned off, no more traces");
 			goto out;
@@ -94,6 +97,9 @@ trace_reset:
 			goto out;
 		case -NRF_EINPROGRESS:
 			__ASSERT(0, "Error in transport backend");
+			goto out;
+		default:
+			__ASSERT(0, "Unhandled err %d", err);
 			goto out;
 		}
 
