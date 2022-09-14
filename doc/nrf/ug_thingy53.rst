@@ -236,7 +236,7 @@ Use the following Kconfig options to enable the MCUboot bootloader:
 
 In addition, set the :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` option to ``2`` and set an image version, such as ``"1.0.0+0"``, using the :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` Kconfig option.
 
-See :file:`thingy53_nrf5430_cpuapp.conf` in a compatible sample for how this is done.
+See :file:`thingy53_nrf5340_cpuapp.conf` in a compatible sample for how this is done.
 
 .. _thingy53_app_usb:
 
