@@ -124,6 +124,8 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 
 		res.ssid_length = MIN(sizeof(res.ssid), r->ssid.img_ssid_len);
 
+		res.band = r->nwk_band;
+
 		res.channel = r->nwk_channel;
 
 		res.security = drv_to_wifi_mgmt(r->security_type);
