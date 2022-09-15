@@ -24,10 +24,22 @@ This guide gives you more information on the various aspects of Thingy:91.
 Connecting to Thingy:91
 ***********************
 
-For connecting to Thingy:91, you can use `LTE Link Monitor`_, `Trace Collector`_, or a serial terminal.
+You can connect to Thingy:91 wirelessly (using the `nRF Toolbox`_ app) or over a serial connection (using `LTE Link Monitor`_, `Trace Collector`_, or a serial terminal).
 
-Using serial ports
-==================
+Using nRF Toolbox
+=================
+
+To connect to your Thingy:91 wirelessly, you need to meet the following prerequisites:
+
+* The :ref:`connectivity_bridge` installed on your Thingy:91.
+* The :ref:`nus_service_readme` enabled.
+
+  .. note::
+     By default, the Bluetooth LE interface is off, as the connection is not encrypted or authenticated.
+     To turn it on at runtime, set the appropriate option in the :file:`Config.txt` file located on the USB Mass storage Device.
+
+Using a serial terminal
+=======================
 
 If you prefer to use a standard serial terminal, the baud rate has to be specified manually.
 
@@ -43,7 +55,6 @@ Thingy:91 uses the following UART baud rate configuration:
      - 115200
    * - UART_1
      - 1000000
-
 
 Using LTE Link Monitor
 ======================

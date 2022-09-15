@@ -568,3 +568,4 @@ See the following links for where to go next:
 
 * :ref:`ug_thingy91` for more advanced topics related to the Thingy:91.
 * The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
+* :ref:`connectivity_bridge` about using the nRF UART Service with Thingy:91.
