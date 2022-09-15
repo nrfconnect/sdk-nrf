@@ -12,6 +12,7 @@ menuconfig BT_ADV_PROV_FAST_PAIR
 
 	  If device is in pairing mode, provider uses Fast Pair discoverable
 	  advertising. Otherwise, Fast Pair not discoverable advertising is used.
+	  By default, battery data is included in not discoverable advertising payload.
 
 	  Application can control the generated payload using provider's Kconfig
 	  options or dedicated API.
@@ -32,6 +33,29 @@ config BT_ADV_PROV_FAST_PAIR_SHOW_UI_PAIRING
 	help
 	  The UI indication should be displayed if device is ready for pairing.
 	  The provider also exposes API to show/hide UI indication in runtime.
+
+choice BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_MODE
+	prompt "Select advertising battery data mode"
+	default BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_SHOW_UI
+	help
+	  The provider also exposes API to change battery data advertising mode in runtime.
+
+config BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_SHOW_UI
+	bool "Include battery data in Fast Pair not discoverable advertising and show UI indication"
+	help
+	  When this option is enabled, battery data is included in Fast Pair not discoverable
+	  advertising and the show battery data UI indication mode is enabled.
+
+config BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_HIDE_UI
+	bool "Include battery data in Fast Pair not discoverable advertising and hide UI indication"
+	help
+	  When this option is enabled, battery data is included in Fast Pair not discoverable
+	  advertising and the hide battery data UI indication mode is enabled.
+
+config BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_NONE
+	bool "Do not include battery data in Fast Pair advertising"
+
+endchoice
 
 config BT_ADV_PROV_FAST_PAIR_AUTO_SET_PAIRING_MODE
 	bool "Automatically set Fast Pair pairing mode"

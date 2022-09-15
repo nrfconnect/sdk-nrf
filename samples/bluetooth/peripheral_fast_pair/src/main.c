@@ -10,6 +10,7 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/settings/settings.h>
 #include <bluetooth/services/fast_pair.h>
+#include <bluetooth/adv_prov/fast_pair.h>
 
 #include <dk_buttons_and_leds.h>
 
@@ -18,6 +19,7 @@ LOG_MODULE_REGISTER(fp_sample, LOG_LEVEL_INF);
 
 #include "bt_adv_helper.h"
 #include "hids_helper.h"
+#include "battery_module.h"
 
 #define RUN_STATUS_LED						DK_LED1
 #define CON_STATUS_LED						DK_LED2
@@ -393,6 +395,18 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		LOG_ERR("LEDs init failed (err %d)", err);
+		return;
+	}
+
+	err = battery_module_init();
+	if (err) {
+		LOG_ERR("Battery module init failed (err %d)", err);
+		return;
+	}
+
+	err = bt_le_adv_prov_fast_pair_set_battery_mode(BT_FAST_PAIR_ADV_BATTERY_MODE_SHOW_UI_IND);
+	if (err) {
+		LOG_ERR("Setting advertising battery mode failed (err %d)", err);
 		return;
 	}
 
