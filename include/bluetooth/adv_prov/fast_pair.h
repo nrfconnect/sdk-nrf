@@ -40,6 +40,20 @@ void bt_le_adv_prov_fast_pair_enable(bool enable);
  */
 void bt_le_adv_prov_fast_pair_show_ui_pairing(bool enable);
 
+/** Set advertising battery mode in Fast Pair not dicoverable advertising.
+ *
+ * To prevent tracking, the Fast Pair Provider should not include battery data in the advertising
+ * packet all the time.
+ *
+ * User shall make sure that this function is not called while Fast Pair advertising data provider
+ * is providing advertising data.
+ *
+ * @param[in] mode		Advertising battery mode.
+ *
+ * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int bt_le_adv_prov_fast_pair_set_battery_mode(enum bt_fast_pair_adv_battery_mode mode);
+
 #ifdef __cplusplus
 }
 #endif
