@@ -107,12 +107,21 @@ config LWM2M_LTE_EVENT_LISTENER
 	help
 	  Enable this flag for select lte event listener module to build.
 
-config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
-	bool "Support for location assist object (ID 50001) EXPERIMENTAL"
+config LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT
+	bool "Support ground fix object"
 	select EXPERIMENTAL
-	select LWM2M_LTE_EVENT_LISTENER
+	select LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
 
-if LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
+config LWM2M_CLIENT_UTILS_GNSS_ASSIST_OBJ_SUPPORT
+	bool "Support GNSS assistance obj"
+	select EXPERIMENTAL
+	select LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
+	bool
+
+
+if LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
 
 config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS
 	bool "Use events to send lwm2m-messages to lwm2m-server to request assistance"
@@ -130,10 +139,54 @@ config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS
 	  A-GPS assistance data is requested from lwm2m server and fed to the GNSS module
 	  after the data has been received.
 
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	bool "Use location based on P-GPS"
+	help
+	  P-GPS assistance data is requested from lwm2m server and fed to the GNSS module
+	  after the data has been received.
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_PREDICTION_COUNT
+	int "Number of predictions to be requested"
+	default 42
+	range 1 168
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	help
+	  Default values give 6 predictions per day for a week. Depends on the starting day
+	  and the prediction interval.
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_PREDICTION_INTERVAL
+	int "Interval between predictions in minutes"
+	default 240
+	range 120 480
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	help
+	  By default, 240 (4 hours) is used. Valid values are: 120, 240, 360, 480
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_STARTING_DAY
+	int "Starting day of the predictions as GPS day"
+	default 0
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	help
+	  Do not override if you are not sure about the date. By default, the value
+	  is not provided to the server and the current GPS day is used.
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_STARTING_TIME
+	int "Starting time of the day of predictions"
+	default 0
+	range 0 86399
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	help
+	  The starting time of the predictions.
+
 config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_BUF_SIZE
 	int "Size of the buffer for storing the assistance data coming from server"
 	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS
 	default 4096
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_ELEVATION_MASK
+	int "Minimum elevation angle for visible satellites."
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS
+	default 5
 
 config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
 	bool "Signal measurement information object support (ID 10256)"
