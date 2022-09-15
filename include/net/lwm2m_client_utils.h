@@ -203,17 +203,93 @@ int lwm2m_ncell_handler_register(void);
 void lwm2m_ncell_schedule_measurement(void);
 #endif
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT)
-#define LOCATION_ASSIST_OBJECT_ID 50001
-void location_assist_agps_request_set(uint32_t request_mask);
-void location_assist_cell_request_set(void);
-void location_assist_cell_inform_set(void);
-#endif
-
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT)
 #define LWM2M_OBJECT_CELLULAR_CONNECTIVITY_ID 10
 int lwm2m_init_cellular_connectivity_object(void);
 #endif
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_GNSS_ASSIST_OBJ_SUPPORT)
+#define GNSS_ASSIST_OBJECT_ID 33625
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+
+/**
+ * @brief Set an A-GPS assistance request mask for the object
+ *
+ * @param request_mask A bitmask containing the requested parameters from the server
+ */
+void location_assist_agps_request_set(uint32_t request_mask);
+
+/**
+ * @brief Set the satellite elevation mask angle above the ground. Satellites
+ *        below the angle will be filtered in the response.
+ *
+ * @param elevation_mask Elevation mask angle in degrees above the ground level
+ */
+void location_assist_agps_set_elevation_mask(int32_t elevation_mask);
+
+/**
+ * @brief Get the satellite elevation mask currently stored in the resource.
+ *
+ * @return int32_t
+ */
+int32_t location_assist_agps_get_elevation_mask(void);
+#endif /* CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS */
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
+/**
+ * @brief Set prediction count for the P-GPS query
+ *
+ * @param predictions Amount of predictions requested
+ * @return Returns a negative error code (errno.h) indicating
+ *         reason of failure or 0 for success.
+ */
+int location_assist_pgps_set_prediction_count(int32_t predictions);
+
+/**
+ * @brief Set prediction interval as minutes for the P-GPS query
+ *
+ * @param interval Time in minutes between each query
+ * @return Returns a negative error code (errno.h) indicating
+ *         reason of failure or 0 for success.
+ */
+int location_assist_pgps_set_prediction_interval(int32_t interval);
+
+/**
+ * @brief Set starting GPS day as days since GPS epoch. Setting the day as 0,
+ *        will use the default value for the request which will be current GPS day.
+ *
+ * @param gps_day Day as a GPS days since GPS epoch.
+ */
+void location_assist_pgps_set_start_gps_day(int32_t gps_day);
+
+/**
+ * @brief Get the GPS start day stored currently in the resource.
+ *
+ * @return Returns the currently stored value for GPS start day.
+ */
+int32_t location_assist_pgps_get_start_gps_day(void);
+
+/**
+ * @brief Set the GPS start time in seconds.
+ *
+ * @param start_time Time of day in seconds.
+ * @return Returns a negative error code (errno.h) indicating
+ *         reason of failure or 0 for success.
+ */
+int location_assist_pgps_set_start_time(int32_t start_time);
+
+/**
+ * @brief Set the GNSS request to P-GPS request.
+ */
+void location_assist_pgps_request_set(void);
+#endif /* CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS */
+
+/**
+ * @brief Get the result code of the location request.
+ *
+ * @return int32_t Returns a result code from the LwM2M server.
+ */
+int32_t location_assist_gnss_get_result_code(void);
+#endif /* CONFIG_LWM2M_CLIENT_UTILS_GNSS_ASSIST_OBJ_SUPPORT */
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)
 #define GROUND_FIX_OBJECT_ID 33626
