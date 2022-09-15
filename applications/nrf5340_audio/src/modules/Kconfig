@@ -82,7 +82,7 @@ config LOG_BUTTON_HANDLER_LEVEL
 
 config LOG_SD_CARD_LEVEL
 	int "Log level for SD card"
-	default 2
+	default 3
 
 endmenu # Log levels
 
