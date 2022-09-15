@@ -430,7 +430,7 @@ static enum wifi_nrf_status
 wifi_nrf_fmac_data_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				 void *umac_head)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_SUCCESS;
 	int event = -1;
 
 	if (!fmac_dev_ctx) {
