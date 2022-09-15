@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <logging/log_ctrl.h>
 #include "channel_assignment.h"
+#include "ncs_version.h"
 
 #include "macros_common.h"
 
@@ -19,26 +20,14 @@ LOG_MODULE_REGISTER(fw_info);
 static const char COMPILE_DATE[] = "@NRF5340_AUDIO_CORE_APP_COMP_DATE@";
 static const char NRF5340_CORE[] = "nRF5340 Audio nRF5340 Audio DK cpuapp";
 
-#define VER_STRING_SIZE_MAX 12
-static const uint8_t FW_VERSION_MAJOR = @NCS_VERSION_MAJOR@;
-static const uint8_t FW_VERSION_MINOR = @NCS_VERSION_MINOR@;
-static const uint8_t FW_VERSION_PATCH = @NCS_VERSION_PATCH@;
-static char version_string[VER_STRING_SIZE_MAX];
-
 int fw_info_app_print(void)
 {
 	int ret;
 
-	ret = sprintf(version_string, "%d.%d.%d", FW_VERSION_MAJOR, FW_VERSION_MINOR,
-		      FW_VERSION_PATCH);
-	if (ret < 0) {
-		return ret;
-	}
-
 	LOG_INF(COLOR_GREEN "\r\n\t %s \
-			    \r\n\t NCS Version: %s \
+			    \r\n\t NCS base version: %s \
 			    \r\n\t Cmake run : %s" COLOR_RESET,
-		NRF5340_CORE, version_string, COMPILE_DATE);
+		NRF5340_CORE, NCS_VERSION_STRING, COMPILE_DATE);
 
 #if (CONFIG_DEBUG)
 	LOG_INF("------- DEBUG BUILD -------");
@@ -53,7 +42,7 @@ int fw_info_app_print(void)
 		if (ret) {
 			return ret;
 		}
-		LOG_INF(COLOR_CYAN "\r\n\t HEADSET <no ch selected> defaulting to " STRINGIFY(
+		LOG_INF(COLOR_CYAN "HEADSET <no ch selected> defaulting to " STRINGIFY(
 			AUDIO_CHANNEL_DEFAULT) " " COLOR_RESET);
 	}
 	if (channel == AUDIO_CH_L) {
@@ -61,13 +50,13 @@ int fw_info_app_print(void)
 		if (ret) {
 			return ret;
 		}
-		LOG_INF(COLOR_CYAN "\r\n\t HEADSET left device" COLOR_RESET);
+		LOG_INF(COLOR_CYAN "HEADSET left device" COLOR_RESET);
 	} else if (channel == AUDIO_CH_R) {
 		ret = log_set_tag(CH_R_TAG);
 		if (ret) {
 			return ret;
 		}
-		LOG_INF(COLOR_CYAN "\r\n\t HEADSET right device" COLOR_RESET);
+		LOG_INF(COLOR_CYAN "HEADSET right device" COLOR_RESET);
 	} else {
 		__ASSERT(false, "Unknown channel");
 	}
@@ -77,7 +66,7 @@ int fw_info_app_print(void)
 	if (ret) {
 		return ret;
 	}
-	LOG_INF(COLOR_CYAN "\r\n\t Compiled for GATEWAY device" COLOR_RESET);
+	LOG_INF(COLOR_CYAN "Compiled for GATEWAY device" COLOR_RESET);
 #endif /* (CONFIG_AUDIO_DEV == HEADSET) */
 #endif /* (CONFIG_DEBUG) */
 
