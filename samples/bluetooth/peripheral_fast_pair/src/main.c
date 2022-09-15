@@ -33,7 +33,11 @@ LOG_MODULE_REGISTER(fp_sample, LOG_LEVEL_INF);
 
 #define FP_DISCOVERABLE_ADV_TIMEOUT_MINUTES			(10)
 
-static enum bt_fast_pair_adv_mode fp_adv_mode = BT_FAST_PAIR_ADV_MODE_DISCOVERABLE;
+static struct bt_fast_pair_adv_info fp_adv_info = {
+	.adv_mode = BT_FAST_PAIR_ADV_MODE_DISCOVERABLE,
+	.adv_battery_mode = BT_FAST_PAIR_ADV_BATTERY_MODE_SHOW_UI_IND
+	};
+
 static struct bt_conn *peer;
 
 static struct k_work bt_adv_restart;
@@ -42,7 +46,7 @@ static struct k_work_delayable fp_discoverable_adv_timeout;
 
 static void advertising_start(void)
 {
-	int err = bt_adv_helper_adv_start(fp_adv_mode);
+	int err = bt_adv_helper_adv_start(fp_adv_info);
 
 	int ret = k_work_cancel_delayable(&fp_discoverable_adv_timeout);
 
@@ -52,7 +56,7 @@ static void advertising_start(void)
 	__ASSERT_NO_MSG((ret & ~(K_WORK_RUNNING | K_WORK_CANCELING)) == 0);
 	ARG_UNUSED(ret);
 
-	if ((fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) && !err) {
+	if ((fp_adv_info.adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) && !err) {
 		ret = k_work_reschedule(&fp_discoverable_adv_timeout,
 					K_MINUTES(FP_DISCOVERABLE_ADV_TIMEOUT_MINUTES));
 
@@ -61,12 +65,13 @@ static void advertising_start(void)
 	}
 
 	if (!err) {
-		if (fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) {
+		if (fp_adv_info.adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) {
 			LOG_INF("Discoverable advertising started");
 		} else {
 			LOG_INF("Non-discoverable advertising started, %s UI indication enabled",
-				(fp_adv_mode == BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND)
-					? "show" : "hide");
+				(fp_adv_info.adv_mode ==
+					BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND)
+						? "show" : "hide");
 		}
 	} else {
 		LOG_ERR("Advertising failed to start (err %d)", err);
@@ -87,7 +92,7 @@ static void fp_adv_mode_status_led_handle_fn(struct k_work *w)
 
 	ARG_UNUSED(ret);
 
-	switch (fp_adv_mode) {
+	switch (fp_adv_info.adv_mode) {
 	case BT_FAST_PAIR_ADV_MODE_DISCOVERABLE:
 		dk_set_led_on(FP_ADV_MODE_STATUS_LED);
 		break;
@@ -117,13 +122,13 @@ static void fp_discoverable_adv_timeout_fn(struct k_work *w)
 {
 	ARG_UNUSED(w);
 
-	__ASSERT_NO_MSG(fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE);
+	__ASSERT_NO_MSG(fp_adv_info.adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE);
 	__ASSERT_NO_MSG(!peer);
 
 	LOG_INF("Discoverable advertising timed out");
 
 	/* Switch to not discoverable advertising showing UI indication. */
-	fp_adv_mode = BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND;
+	fp_adv_info.adv_mode = BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND;
 	fp_adv_mode_status_led_handle_fn(NULL);
 	advertising_start();
 }
@@ -187,8 +192,8 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
-	if (bonded && (fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE)) {
-		fp_adv_mode = BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND;
+	if (bonded && (fp_adv_info.adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE)) {
+		fp_adv_info.adv_mode = BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND;
 		int ret = k_work_reschedule(&fp_adv_mode_status_led_handle, K_NO_WAIT);
 
 		__ASSERT_NO_MSG((ret == 0) || (ret == 1));
@@ -267,7 +272,7 @@ static void fp_adv_mode_btn_handle(uint32_t button_state, uint32_t has_changed)
 	uint32_t button_pressed = button_state & has_changed;
 
 	if (button_pressed & FP_ADV_MODE_BUTTON_MASK) {
-		fp_adv_mode = (fp_adv_mode + 1) % BT_FAST_PAIR_ADV_MODE_COUNT;
+		fp_adv_info.adv_mode = (fp_adv_info.adv_mode + 1) % BT_FAST_PAIR_ADV_MODE_COUNT;
 		if (!peer) {
 			advertising_start();
 		}
@@ -330,6 +335,17 @@ void main(void)
 	if (err) {
 		LOG_ERR("LEDs init failed (err %d)", err);
 		return;
+	}
+
+	struct bt_fast_pair_battery_data fp_battery_data = {
+		.left_bud = { .charging = true, .level = 67},
+		.right_bud = { .charging = false, .level = 100},
+		.bud_case = { .charging = false, .level = 1}
+		};
+
+	err = bt_fast_pair_set_battery_data(fp_battery_data);
+	if (err) {
+		LOG_ERR("Unable to set battery data (err %d)", err);
 	}
 
 	k_work_init(&bt_adv_restart, bt_adv_restart_fn);
