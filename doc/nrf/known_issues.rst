@@ -2480,6 +2480,14 @@ NCSDK-13949: TF-M Secure Image copies FICR to RAM on nRF9160
 Zephyr
 ******
 
+.. rst-class:: v2-1-0
+
+NCSIDB-840: Compilation of I2C TWIM driver fails when PINCTRL is disabled
+  The I2C driver for TWIM peripherals (:file:`i2c_nrfx_twim.c`) cannot be compiled with :kconfig:option:`CONFIG_PINCTRL` set to ``n``.
+
+  **Workaround:** Wrap the call to ``pinctrl_apply_state()`` on line 292 of :file:`i2c_nrfx_twim.c` in a ``#ifdef CONFIG_PINCTRL`` block.
+  Additionally, when :kconfig:option:`CONFIG_PM_DEVICE` is set to ``y``, ``#ifdef CONFIG_PINCTRL`` from line 307 and the corresponding ``#endif`` need to be removed.
+
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0
 
 The time returned by clock_gettime() API becomes incorrect after one week of uptime
