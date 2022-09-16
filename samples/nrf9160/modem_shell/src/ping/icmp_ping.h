@@ -38,7 +38,7 @@ struct icmp_ping_shell_cmd_argv {
 	char *print_buf;
 	int print_buf_len;
 
-	char target_name[ICMP_MAX_URL];
+	char target_name[ICMP_MAX_URL + 1];
 	struct addrinfo *src;
 	struct addrinfo *dest;
 	struct in_addr current_addr4;
