@@ -11,7 +11,7 @@ if AT_MONITOR
 
 config AT_MONITOR_HEAP_SIZE
 	int "Heap size for notifications"
-	range 64 2048
+	range 64 4096
 	default 256
 
 config SYSTEM_WORKQUEUE_STACK_SIZE
