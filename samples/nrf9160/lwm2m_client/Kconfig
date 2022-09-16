@@ -137,13 +137,6 @@ config APP_HOLD_TIME_RSRP
 	  The minimum time in seconds that notifications can be sent to observers of the
 	  Connectivity Monitoring data.
 
-config APP_MCUBOOT_FLASH_BUF_SZ
-	int "Size of buffer used for flash write operations during MCUboot updates"
-	depends on DFU_TARGET_MCUBOOT
-	default 512
-	help
-	  Buffer size must be aligned to the minimal flash write block size.
-
 config APP_CUSTOM_VERSION
 	string "Application version. Leave empty to use NCS version"
 

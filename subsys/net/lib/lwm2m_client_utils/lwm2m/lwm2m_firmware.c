@@ -44,7 +44,7 @@ static struct k_work full_modem_update_work;
 #endif
 
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
-static uint8_t mcuboot_buf[CONFIG_APP_MCUBOOT_FLASH_BUF_SZ] __aligned(4);
+static uint8_t mcuboot_buf[CONFIG_LWM2M_CLIENT_UTILS_MCUBOOT_FLASH_BUF_SIZE] __aligned(4);
 #endif
 
 static int image_type = DFU_TARGET_IMAGE_TYPE_ANY;
