@@ -52,12 +52,10 @@ void ping_fprintf(struct icmp_ping_shell_cmd_argv *ping_args, enum mosh_print_le
 	/* Add timestamp to print buffer if requested */
 	if (mosh_print_timestamp_use) {
 		(void)create_timestamp_string(timestamp_str, sizeof(timestamp_str));
-		chars = snprintf(linebuffer + strlen(linebuffer),
-				 PING_PRINT_LINEBUFF_LEN, "%s", timestamp_str);
-		if (chars < 0) {
-			snprintf(linebuffer, PING_PRINT_LINEBUFF_LEN,
-				 "Error while printing timestamp...");
-			chars = 0;
+		chars = strlen(linebuffer);
+		if (snprintf(linebuffer + chars,
+			     PING_PRINT_LINEBUFF_LEN - chars, "%s", timestamp_str) < 0) {
+			sprintf(linebuffer, "Error while printing timestamp...");
 		}
 	}
 	chars = strlen(linebuffer);
