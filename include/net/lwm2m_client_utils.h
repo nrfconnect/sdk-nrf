@@ -309,6 +309,10 @@ void ground_fix_set_report_back(bool report_back);
 int32_t ground_fix_get_result_code(void);
 #endif
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT)
+#define VISIBLE_WIFI_AP_OBJECT_ID 33627
+#endif
+
 #ifdef __cplusplus
 }
 #endif
