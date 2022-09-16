@@ -151,6 +151,7 @@ static void date_time_at_xtime_handler(const char *notif)
 
 	if (time_buf_len < sizeof(time_buf)) {
 		LOG_ERR("%%XTIME notification decoding failed (ret=%d): %s", time_buf_len, notif);
+		return;
 	}
 
 	date_time.tm_year = semioctet_to_dec(time_buf[0]);
