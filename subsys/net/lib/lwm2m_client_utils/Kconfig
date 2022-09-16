@@ -94,36 +94,18 @@ config LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG
 
 endif # LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
 
-config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
-	bool "Signal measurement information object support (ID 10256)"
-	default y
-	help
-	  This object is used in combination with Connectivity Monitor object (ID 4)
-	  and provides information about neighbouring cells. It is used to assist
-	  with the device location services.
-
-config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_INSTANCE_COUNT
-	int "Maximum # of signal measurement objects"
-	default 3
-	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
-
-config LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER
-	bool "Use a listener to populate signal measurement objects"
-	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
-	default y
-
 config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
 	bool "Support for location assist object (ID 50001) EXPERIMENTAL"
 	select EXPERIMENTAL
 
+if LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
+
 config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS
 	bool "Use events to send lwm2m-messages to lwm2m-server to request assistance"
-	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
-
-if LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
 
 config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL
 	bool "Use location based on current cell and possibly neighboring cells"
+	imply LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
 	help
 	  Information of current cell and neighboring cells are sent to lwm2m server to
 	  obtain coarse location.
@@ -138,6 +120,23 @@ config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_BUF_SIZE
 	int "Size of the buffer for storing the assistance data coming from server"
 	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS
 	default 4096
+
+config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
+	bool "Signal measurement information object support (ID 10256)"
+	help
+	  This object is used in combination with Connectivity Monitor object (ID 4)
+	  and provides information about neighbouring cells. It is used to assist
+	  with the device location services.
+
+config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_INSTANCE_COUNT
+	int "Maximum # of signal measurement objects"
+	default 3
+	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER
+	bool "Use a listener to populate signal measurement objects"
+	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
+	default y
 
 endif # LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
 
