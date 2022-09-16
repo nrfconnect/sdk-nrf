@@ -34,7 +34,7 @@ Updating in Toolchain Manager
    The SDK versions available in Toolchain Manager are for specific releases.
    Updating the SDK repositories in Toolchain Manager might therefore be required only in exceptional situations.
 
-If you installed the |NCS| automatically using the :ref:`gs_app_tcm`, complete the following steps to update the repositories in Toolchain Manager:
+If you installed the |NCS| automatically using the :ref:`Toolchain Manager <gs_app_tcm>`, complete the following steps to update the repositories in Toolchain Manager:
 
 1. Open the Toolchain Manager application in nRF Connect for Desktop.
 #. Click the button with the arrow pointing down next to the installed |NCS| version to expand the drop-down menu with options.
@@ -108,7 +108,7 @@ If you disabled automatic updates:
 Updating toolchain in Toolchain Manager
 ***************************************
 
-If you installed the |NCS| automatically using the :ref:`gs_app_tcm`, complete the following steps to update the toolchain in Toolchain Manager:
+If you installed the |NCS| automatically using the :ref:`Toolchain Manager <gs_app_tcm>`, complete the following steps to update the toolchain in Toolchain Manager:
 
 1. Open the Toolchain Manager application in nRF Connect for Desktop.
 #. Click the button with the arrow pointing down next to the installed |NCS| version to expand the drop-down menu with options.

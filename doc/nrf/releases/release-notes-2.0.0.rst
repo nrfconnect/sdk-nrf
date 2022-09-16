@@ -55,7 +55,7 @@ IDE and tool support
 `nRF Connect extension for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ is the only officially supported IDE for |NCS| v2.0.0.
 SEGGER Embedded Studio Nordic Edition is no longer tested and recommended for new projects.
 
-:ref:`gs_app_tcm`, used to install the |NCS| automatically from `nRF Connect for Desktop`_, is now also available for Linux, in addition to the previously available version for Windows and macOS.
+:ref:`Toolchain Manager <gs_app_tcm>`, used to install the |NCS| automatically from `nRF Connect for Desktop`_, is now also available for Linux, in addition to the previously available version for Windows and macOS.
 The Linux version only supports installing the |NCS| v2.0.0 and later.
 
 Supported modem firmware
