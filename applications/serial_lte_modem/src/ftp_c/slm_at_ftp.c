@@ -464,10 +464,9 @@ static int ftp_put_handler(const uint8_t *data, int len)
 
 	if (strlen(filepath) > 0 && data != NULL) {
 		ret = ftp_put(filepath, data, len, FTP_PUT_NORMAL);
-	}
-
-	if (exit_datamode(0)) {
-		ftp_data_mode_handler = NULL;
+		if (ret != FTP_CODE_226) {
+			(void) exit_datamode(-EAGAIN);
+		}
 	}
 
 	return (ret == FTP_CODE_226) ? 0 : -1;
@@ -490,9 +489,7 @@ static int do_ftp_put(void)
 		if (ret) {
 			return ret;
 		}
-
 		ftp_data_mode_handler = ftp_put_handler;
-		return 0;
 	} else {
 		char data[TCP_MAX_PAYLOAD_IPV4] = {0};
 		int size = TCP_MAX_PAYLOAD_IPV4;
@@ -516,14 +513,10 @@ static int ftp_uput_handler(const uint8_t *data, int len)
 
 	if (data != NULL) {
 		ret = ftp_put(NULL, data, len, FTP_PUT_UNIQUE);
+		if (ret != FTP_CODE_226) {
+			(void) exit_datamode(-EAGAIN);
+		}
 	}
-
-	if (ret == FTP_CODE_226) {
-		(void) exit_datamode(0);
-	} else {
-		(void) exit_datamode(-EAGAIN);
-	}
-	ftp_data_mode_handler = NULL;
 
 	return (ret == FTP_CODE_226) ? 0 : -1;
 }
@@ -539,9 +532,7 @@ static int do_ftp_uput(void)
 		if (ret) {
 			return ret;
 		}
-
 		ftp_data_mode_handler = ftp_uput_handler;
-		return 0;
 	} else {
 		char data[TCP_MAX_PAYLOAD_IPV4] = {0};
 		int size = TCP_MAX_PAYLOAD_IPV4;
@@ -587,9 +578,7 @@ static int do_ftp_mput(void)
 		if (ret) {
 			return ret;
 		}
-
 		ftp_data_mode_handler = ftp_mput_handler;
-		return 0;
 	} else {
 		char data[TCP_MAX_PAYLOAD_IPV4] = {0};
 		int size = TCP_MAX_PAYLOAD_IPV4;

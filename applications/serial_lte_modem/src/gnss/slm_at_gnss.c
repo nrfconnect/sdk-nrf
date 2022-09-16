@@ -845,8 +845,6 @@ static int nrf_cloud_datamode_callback(uint8_t op, const uint8_t *data, int len)
 		LOG_INF("datamode send: %d", ret);
 		if (ret < 0) {
 			(void)exit_datamode(ret);
-		} else {
-			(void)exit_datamode(0);
 		}
 	} else if (op == DATAMODE_EXIT) {
 		LOG_DBG("datamode exit");

@@ -235,8 +235,9 @@ Example
   #XNRFCLOUD: 1,0
 
   AT#XNRFCLOUD=2
-  {"msg":"Hello, nRF Cloud"}
   OK
+  {"msg":"Hello, nRF Cloud"}+++
+  #XDATAMODE: 0
 
   #XNRFCLOUD: {"msg":"Hello"}
 

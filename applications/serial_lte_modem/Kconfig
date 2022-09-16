@@ -128,6 +128,11 @@ config SLM_DATAMODE_TERMINATOR
 	help
 	  Use a pattern to terminate data mode
 
+config SLM_DATAMODE_URC
+	bool "Send URC in data mode"
+	help
+	  Report result of data mode sending
+
 #
 # Configurable services
 #
