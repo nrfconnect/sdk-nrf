@@ -29,5 +29,7 @@ if (CONFIG_ZTEST AND
   endif()
 endif()
 
+zephyr_include_directories(include)
 
 add_subdirectory_ifdef(CONFIG_UNITY	unity)
+add_subdirectory(mocks)
