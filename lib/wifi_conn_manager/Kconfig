@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig WIFI_CONN_MGR
+	bool "nRF700x Wi-Fi Connection Manager"
+
+if WIFI_CONN_MGR
+
+config WIFI_CONN_MGR_SUPPORTED_CREDS
+	int "Number of supported network credentials"
+	default 5
+	help
+		How many different network credentials
+		the library supports
+
+
+module = WIFI_CONN_MGR
+module-dep = LOG
+module-str = WiFi Connection Manager library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # WIFI_CONN_MGR
