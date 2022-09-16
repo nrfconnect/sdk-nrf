@@ -55,7 +55,7 @@ static const char *const sensor_type_str[] = {
 #define JSON_KEY_SRVC_INFO	"serviceInfo"
 #define JSON_KEY_SRVC_INFO_UI	"ui"
 #define JSON_KEY_SRVC_INFO_FOTA	NRF_CLOUD_FOTA_VER_STR
-#define JSON_KEY_CFG		"config"
+#define JSON_KEY_CFG		NRF_CLOUD_SHADOW_CONFIG_STR
 #define JSON_KEY_TOPICS		"topics"
 #define JSON_KEY_STAGE		"stage"
 #define JSON_KEY_PAIRING	"pairing"
@@ -435,7 +435,8 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 	if (compare(state_str, DUA_PIN_STR)) {
 		(*requested_state) = STATE_UA_PIN_WAIT;
 	} else {
-		LOG_ERR("Deprecated state. Delete device from nRF Cloud and update device with JITP certificates.");
+		LOG_ERR("Deprecated state. "
+			"Delete device from nRF Cloud and update device's certificates.");
 		cJSON_Delete(root_obj);
 		return -ENOTSUP;
 	}
@@ -445,80 +446,23 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 	return 0;
 }
 
-int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
-				     struct nrf_cloud_data *const output,
-				     bool *const has_config)
+bool nrf_cloud_shadow_update_has_config(struct nrf_cloud_data const *const input)
 {
-	__ASSERT_NO_MSG(output != NULL);
-	__ASSERT_NO_MSG(input != NULL);
-
-	char *buffer = NULL;
-	cJSON *root_obj = NULL;
-	cJSON *desired_obj = NULL;
-	cJSON *reported_obj = NULL;
+	bool has_config;
 	cJSON *state_obj = NULL;
-	cJSON *config_obj = NULL;
-	cJSON *input_obj = input ? cJSON_Parse(input->ptr) : NULL;
+	cJSON *input_obj = cJSON_Parse(input->ptr);
 
 	if (input_obj == NULL) {
-		return -ESRCH; /* invalid input or no JSON parsed */
+		return false; /* invalid input or no JSON parsed */
 	}
 
 	/* A delta update will have the config inside of state */
-	state_obj = cJSON_DetachItemFromObject(input_obj, JSON_KEY_STATE);
-	config_obj = cJSON_DetachItemFromObject(
-		state_obj ? state_obj : input_obj, JSON_KEY_CFG);
+	state_obj = cJSON_GetObjectItem(input_obj, JSON_KEY_STATE);
+	has_config = (bool)cJSON_HasObjectItem(state_obj ? state_obj : input_obj, JSON_KEY_CFG);
+
 	cJSON_Delete(input_obj);
 
-	if (has_config) {
-		*has_config = (config_obj != NULL);
-	}
-
-	/* If this is not a delta update, no response data is required */
-	if ((state_obj == NULL) || (config_obj == NULL)) {
-		cJSON_Delete(state_obj);
-		cJSON_Delete(config_obj);
-		output->ptr = NULL;
-		output->len = 0;
-		return 0;
-	}
-
-	/* Prepare JSON response for the delta */
-	root_obj = cJSON_CreateObject();
-	desired_obj = cJSON_AddObjectToObjectCS(root_obj, JSON_KEY_DES);
-	reported_obj = cJSON_AddObjectToObjectCS(root_obj, JSON_KEY_REP);
-
-	/* Add a null config to desired and add the delta config to reported */
-	if (json_add_null_cs(desired_obj, JSON_KEY_CFG) ||
-	    json_add_obj_cs(reported_obj, JSON_KEY_CFG, config_obj)) {
-		cJSON_Delete(root_obj);
-		cJSON_Delete(config_obj);
-		cJSON_Delete(state_obj);
-		return -ENOMEM;
-	}
-
-	/* Cleanup received state obj and re-use for the response */
-	cJSON_Delete(state_obj);
-	state_obj = cJSON_CreateObject();
-	if (state_obj) {
-		if (json_add_obj_cs(state_obj, JSON_KEY_STATE, root_obj)) {
-			cJSON_Delete(root_obj);
-		} else {
-			buffer = cJSON_PrintUnformatted(state_obj);
-		}
-		cJSON_Delete(state_obj);
-	} else {
-		cJSON_Delete(root_obj);
-	}
-
-	if (buffer == NULL) {
-		return -ENOMEM;
-	}
-
-	output->ptr = buffer;
-	output->len = strlen(buffer);
-
-	return 0;
+	return has_config;
 }
 
 int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *output)
