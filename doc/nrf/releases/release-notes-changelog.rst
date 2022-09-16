@@ -113,7 +113,13 @@ nRF9160: Asset Tracker v2
 nRF9160: Serial LTE modem
 -------------------------
 
-|no_changes_yet_note|
+* Added
+
+  * Added optional data modem flow control option CONFIG_SLM_DATAMODE_URC.
+
+* Updated:
+
+  * Removed automatic quit of data mode in GNSS, FTP and HTTP services.
 
 nRF5340 Audio
 -------------

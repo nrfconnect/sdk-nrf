@@ -533,10 +533,19 @@ static void raw_send(struct k_work *work)
 			}
 
 			if (datamode_off_pending) {
+#if defined(CONFIG_SLM_DATAMODE_URC)
+				sprintf(rsp_buf, "\r\n#XDATAMODE: %d\r\n",
+					size_finish - quit_str_len);
+				rsp_send(rsp_buf, strlen(rsp_buf));
+#endif
 				k_work_submit(&datamode_quit_work);
 				LOG_INF("datamode off pending");
 				return;
 			}
+#if defined(CONFIG_SLM_DATAMODE_URC)
+			sprintf(rsp_buf, "\r\n#XDATAMODE: %d\r\n", size_finish);
+			rsp_send(rsp_buf, strlen(rsp_buf));
+#endif
 		} else {
 			break;
 		}
