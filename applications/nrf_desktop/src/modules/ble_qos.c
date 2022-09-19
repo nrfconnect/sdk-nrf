@@ -84,7 +84,7 @@ struct params_blacklist {
 	uint16_t wifi_chn_bitmask;
 } __packed;
 
-static uint8_t chmap_instance_buf[CHMAP_FILTER_INST_SIZE];
+static uint8_t chmap_instance_buf[CHMAP_FILTER_INST_SIZE] __aligned(CHMAP_FILTER_INST_ALIGN);
 static struct chmap_instance *chmap_inst;
 static uint8_t current_chmap[CHMAP_BLE_BITMASK_SIZE] = CHMAP_BLE_BITMASK_DEFAULT;
 static atomic_t processing;
