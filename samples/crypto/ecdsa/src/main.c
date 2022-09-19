@@ -35,8 +35,8 @@ LOG_MODULE_REGISTER(ecdsa, LOG_LEVEL_DBG);
 
 #define NRF_CRYPTO_EXAMPLE_ECDSA_TEXT_SIZE (100)
 
-#define NRF_CRYPTO_EXAMPLE_ECDSA_PUBLIC_KEY_SIZE (65)
-#define NRF_CRYPTO_EXAMPLE_ECDSA_PRIVATE_KEY_SIZE (65)
+#define NRF_CRYPTO_EXAMPLE_ECDSA_PUBLIC_KEY_SIZE (32)
+#define NRF_CRYPTO_EXAMPLE_ECDSA_PRIVATE_KEY_SIZE (32)
 #define NRF_CRYPTO_EXAMPLE_ECDSA_SIGNATURE_SIZE (64)
 #define NRF_CRYPTO_EXAMPLE_ECDSA_HASH_SIZE (32)
 
@@ -101,7 +101,7 @@ int generate_ecdsa_keypair(void)
 	/* Configure the key attributes */
 	psa_set_key_usage_flags(&key_attributes, PSA_KEY_USAGE_EXPORT);
 	psa_set_key_lifetime(&key_attributes, PSA_KEY_LIFETIME_VOLATILE);
-	psa_set_key_algorithm(&key_attributes, PSA_ALG_PURE_EDDSA);
+	psa_set_key_algorithm(&key_attributes, PSA_ALG_ECDSA_ANY);
 	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS));
 	psa_set_key_bits(&key_attributes, 255);
 
@@ -243,6 +243,7 @@ int main(void)
 		return APP_ERROR;
 	}
 
+	/* DNM: skip steps
 	status = import_ecdsa_pub_key();
 	if (status != APP_SUCCESS) {
 		LOG_INF(APP_ERROR_MESSAGE);
@@ -260,6 +261,7 @@ int main(void)
 		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
+	*/
 
 	status = crypto_finish();
 	if (status != APP_SUCCESS) {
