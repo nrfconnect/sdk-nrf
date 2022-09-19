@@ -371,6 +371,7 @@ cJSON
 Documentation
 =============
 
+* :ref:`app_memory`: Added configuration options affecting memory footprint for Bluetooth mesh, that can be used to optimize the application.
 * Added documentation for the :ref:`lib_bh1749`.
 * Updated:
 
