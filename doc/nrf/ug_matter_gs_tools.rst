@@ -33,7 +33,14 @@ ZAP tool
 ********
 
 ZCL Advanced Platform, in short ZAP tool, is a third-party tool that is a generic node.js-based templating engine for applications and libraries based on Zigbee Cluster Library.
-This tool is provided with the Matter submodule in the |NCS| and uses ZAP files specific to each Matter application.
+
+Installation
+============
+
+The tool is provided with the Matter submodule in the |NCS| and does not require a separate installation, but you must make sure that you have installed ZAP tool prerequisites, as mentioned in the Quick instructions section in the :file:`README.md` file in the official `ZCL Advanced Platform`_ repository.
+
+Usage
+=====
 
 You can use the ZAP tool for the following Matter use cases:
 

@@ -94,13 +94,17 @@ This tool is provided with the Matter submodule.
 
 To edit clusters using the ZAP tool, complete the following steps:
 
-1. Open your installation directory for the |NCS| in a command line.
+1. Make sure that you have installed the ZAP tool prerequisites, as mentioned in the Quick instructions section in the :file:`README.md` file in the official `ZCL Advanced Platform`_ repository.
+#. Open your installation directory for the |NCS| in a command line.
 #. Navigate to :file:`modules/lib/matter`.
 #. Open the :file:`src/template.zap` for editing by running the following command, where ``samples/matter/sensor`` stands for the path where you copied the template sample in the first step of this guide.
 
    .. code-block::
 
       ./scripts/tools/zap/run_zaptool.sh ../../../nrf/samples/matter/sensor/src/template.zap
+
+   .. note::
+       The :file:`run_zaptool.sh` script will run the bootstrap procedure to install all required ZAP tool dependencies (Node.js packages).
 
    The ZAP tool's Zigbee Cluster Configurator window appears.
 
