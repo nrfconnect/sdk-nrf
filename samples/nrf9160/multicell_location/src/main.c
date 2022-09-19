@@ -33,6 +33,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 
 static atomic_t connected;
 static K_SEM_DEFINE(lte_connected, 0, 1);
+static K_SEM_DEFINE(rrc_idle, 0, 1);
 static K_SEM_DEFINE(cell_data_ready, 0, 1);
 #if defined(CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_CELL_CHANGE)
 static struct k_work cell_change_search_work;
@@ -79,6 +80,11 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		LOG_INF("RRC mode: %s",
 			evt->rrc_mode == LTE_LC_RRC_MODE_CONNECTED ?
 			"Connected" : "Idle");
+		if (evt->rrc_mode == LTE_LC_RRC_MODE_IDLE) {
+			k_sem_give(&rrc_idle);
+		} else {
+			k_sem_take(&rrc_idle, K_NO_WAIT);
+		}
 		break;
 	case LTE_LC_EVT_CELL_UPDATE: {
 		LOG_INF("LTE cell changed: Cell ID: %d, Tracking area: %d",
@@ -325,6 +331,11 @@ void main(void)
 	atomic_set(&connected, 1);
 
 	LOG_INF("Connected to LTE network");
+
+	/* Wait until RRC connection has been released, otherwise modem will not be able to
+	 * measure neighbor cells unless currently configured by the network.
+	 */
+	k_sem_take(&rrc_idle, K_FOREVER);
 
 #if defined(CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_PERIODIC)
 	LOG_INF("Requesting neighbor cell information every %d seconds",
