@@ -16,16 +16,16 @@
 #include <tfm_ns_interface.h>
 #endif
 
-#define APP_SUCCESS		(0)
-#define APP_ERROR		(-1)
+#define APP_SUCCESS             (0)
+#define APP_ERROR               (-1)
 #define APP_SUCCESS_MESSAGE "Example finished successfully!"
 #define APP_ERROR_MESSAGE "Example exited with error!"
 
-#define PRINT_HEX(p_label, p_text, len)\
-	({\
-		LOG_INF("---- %s (len: %u): ----", p_label, len);\
-		LOG_HEXDUMP_INF(p_text, len, "Content:");\
-		LOG_INF("---- %s end  ----", p_label);\
+#define PRINT_HEX(p_label, p_text, len)				  \
+	({							  \
+		LOG_INF("---- %s (len: %u): ----", p_label, len); \
+		LOG_HEXDUMP_INF(p_text, len, "Content:");	  \
+		LOG_INF("---- %s end  ----", p_label);		  \
 	})
 
 LOG_MODULE_REGISTER(ecdsa, LOG_LEVEL_DBG);
@@ -36,6 +36,7 @@ LOG_MODULE_REGISTER(ecdsa, LOG_LEVEL_DBG);
 #define NRF_CRYPTO_EXAMPLE_ECDSA_TEXT_SIZE (100)
 
 #define NRF_CRYPTO_EXAMPLE_ECDSA_PUBLIC_KEY_SIZE (65)
+#define NRF_CRYPTO_EXAMPLE_ECDSA_PRIVATE_KEY_SIZE (65)
 #define NRF_CRYPTO_EXAMPLE_ECDSA_SIGNATURE_SIZE (64)
 #define NRF_CRYPTO_EXAMPLE_ECDSA_HASH_SIZE (32)
 
@@ -45,6 +46,7 @@ static uint8_t m_plain_text[NRF_CRYPTO_EXAMPLE_ECDSA_TEXT_SIZE] = {
 };
 
 static uint8_t m_pub_key[NRF_CRYPTO_EXAMPLE_ECDSA_PUBLIC_KEY_SIZE];
+static uint8_t m_priv_key[NRF_CRYPTO_EXAMPLE_ECDSA_PRIVATE_KEY_SIZE]; 
 
 static uint8_t m_signature[NRF_CRYPTO_EXAMPLE_ECDSA_SIGNATURE_SIZE];
 static uint8_t m_hash[NRF_CRYPTO_EXAMPLE_ECDSA_HASH_SIZE];
@@ -59,8 +61,9 @@ int crypto_init(void)
 
 	/* Initialize PSA Crypto */
 	status = psa_crypto_init();
-	if (status != PSA_SUCCESS)
+	if (status != PSA_SUCCESS) {
 		return APP_ERROR;
+	}
 
 	return APP_SUCCESS;
 }
@@ -96,7 +99,7 @@ int generate_ecdsa_keypair(void)
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
 
 	/* Configure the key attributes */
-	psa_set_key_usage_flags(&key_attributes, PSA_KEY_USAGE_SIGN_HASH);
+	psa_set_key_usage_flags(&key_attributes, PSA_KEY_USAGE_EXPORT);
 	psa_set_key_lifetime(&key_attributes, PSA_KEY_LIFETIME_VOLATILE);
 	psa_set_key_algorithm(&key_attributes, PSA_ALG_ECDSA(PSA_ALG_SHA_256));
 	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
@@ -111,6 +114,13 @@ int generate_ecdsa_keypair(void)
 		return APP_ERROR;
 	}
 
+	/* Export the private key */
+	status = psa_export_key(keypair_handle, m_priv_key, sizeof(m_priv_key), &olen);
+	if (status != PSA_SUCCESS) {
+		LOG_INF("psa_export_key (private) failed! (Error: %d)", status);
+		return APP_ERROR;
+	}
+
 	/* Export the public key */
 	status = psa_export_public_key(keypair_handle, m_pub_key, sizeof(m_pub_key), &olen);
 	if (status != PSA_SUCCESS) {
@@ -120,6 +130,9 @@ int generate_ecdsa_keypair(void)
 
 	/* After the key handle is acquired the attributes are not needed */
 	psa_reset_key_attributes(&key_attributes);
+
+	PRINT_HEX("pub key", m_pub_key, sizeof(m_pub_key));
+	PRINT_HEX("prv key", m_priv_key, sizeof(m_priv_key));
 
 	return APP_SUCCESS;
 }
