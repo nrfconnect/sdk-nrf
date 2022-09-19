@@ -245,6 +245,12 @@ Bluetooth samples
 
     * Aligned timers' configurations to the new nrfx API.
 
+* :ref:`peripheral_hids_keyboard` sample:
+
+  * Changed:
+
+    * Fixed an interoperability issue with iOS devices by setting the report IDs of HID input and output reports to zero.
+
 Bluetooth mesh samples
 ----------------------
 
