@@ -38,8 +38,8 @@
 
 #define OUTPUT_REPORT_MAX_LEN            1
 #define OUTPUT_REPORT_BIT_MASK_CAPS_LOCK 0x02
-#define INPUT_REP_KEYS_REF_ID            1
-#define OUTPUT_REP_KEYS_REF_ID           1
+#define INPUT_REP_KEYS_REF_ID            0
+#define OUTPUT_REP_KEYS_REF_ID           0
 #define MODIFIER_KEY_POS                 0
 #define SHIFT_KEY_CODE                   0x02
 #define SCAN_CODE_POS                    2

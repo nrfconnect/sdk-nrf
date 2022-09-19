@@ -278,6 +278,12 @@ Bluetooth samples
 
     * A new seed value is generated after each synchronization to provide different hopping sequences.
 
+* :ref:`peripheral_hids_keyboard` sample:
+
+  * Changed:
+
+    * Fixed an interoperability issue with iOS devices by setting the report IDs of HID input and output reports to zero.
+
 Bluetooth mesh samples
 ----------------------
 
