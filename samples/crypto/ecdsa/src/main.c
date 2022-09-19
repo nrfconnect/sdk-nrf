@@ -101,9 +101,9 @@ int generate_ecdsa_keypair(void)
 	/* Configure the key attributes */
 	psa_set_key_usage_flags(&key_attributes, PSA_KEY_USAGE_EXPORT);
 	psa_set_key_lifetime(&key_attributes, PSA_KEY_LIFETIME_VOLATILE);
-	psa_set_key_algorithm(&key_attributes, PSA_ALG_ECDSA(PSA_ALG_SHA_256));
-	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
-	psa_set_key_bits(&key_attributes, 256);
+	psa_set_key_algorithm(&key_attributes, PSA_ALG_PURE_EDDSA);
+	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS));
+	psa_set_key_bits(&key_attributes, 255);
 
 	/* Generate a random keypair. The keypair is not exposed to the application,
 	 * we can use it to signing/verification the key handle.
