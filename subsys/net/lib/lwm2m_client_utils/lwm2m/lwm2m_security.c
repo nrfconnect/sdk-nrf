@@ -74,15 +74,19 @@ static int write_credential_type(int sec_obj_inst, int sec_tag, int res_id,
 	int ret;
 	void *cred = NULL;
 	uint16_t cred_len;
-	uint8_t cred_flags;
 	char pathstr[sizeof("0/0/0")];
 	char psk_hex[65];
 
 	snprintk(pathstr, sizeof(pathstr), "0/%d/%d", sec_obj_inst, res_id);
-	ret = lwm2m_engine_get_res_buf(pathstr, &cred, NULL, &cred_len,  &cred_flags);
+	ret = lwm2m_engine_get_res_buf(pathstr, &cred, NULL, &cred_len,  NULL);
 	if (ret < 0) {
 		LOG_ERR("Unable to get resource data for '%s'", pathstr);
 		return ret;
+	}
+
+	if (cred_len == 0) {
+		LOG_ERR("No credential on %s", pathstr);
+		return -ENOENT;
 	}
 
 	/* Convert binary PSK key to hex format, which is expect by modem */
@@ -109,11 +113,10 @@ static bool sec_obj_has_credentials(int sec_obj_inst)
 	int ret;
 	void *cred = NULL;
 	uint16_t cred_len;
-	uint8_t cred_flags;
 	char pathstr[sizeof("0/0/0")];
 
 	snprintk(pathstr, sizeof(pathstr), "0/%d/%d", sec_obj_inst, SECURITY_SECRET_KEY_ID);
-	ret = lwm2m_engine_get_res_buf(pathstr, &cred, NULL, &cred_len, &cred_flags);
+	ret = lwm2m_engine_get_res_buf(pathstr, &cred, NULL, &cred_len, NULL);
 	if (ret < 0) {
 		LOG_ERR("Unable to get resource data for '%s'", pathstr);
 		return false;
@@ -153,7 +156,7 @@ static int load_credentials_to_modem(struct lwm2m_ctx *ctx)
 		return 0;
 	}
 
-	if (!exist && !has_credentials) {
+	if (!has_credentials) {
 		LOG_ERR("No security credentials provisioned");
 		return -ENOENT;
 	}
