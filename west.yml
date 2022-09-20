@@ -174,7 +174,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 0d19f9112101e87722ec80b3a247bc7a1c54b232
+      revision: bacf8d625f50dd5c4b415caee754c934ba1a262c
 
   # West-related configuration for the nrf repository.
   self:
