@@ -37,7 +37,7 @@ It can also receive activation commands such as buzzer activation and light cont
    You can disable the GNSS module by setting the configuration option :ref:`CONFIG_APP_GNSS <CONFIG_APP_GNSS>` to ``n``.
 
 
-The following LwM2M objects are implemented in this sample:
+The sample implements the following LwM2M objects:
 
 .. list-table:: LwM2M objects
    :header-rows: 1
@@ -186,9 +186,9 @@ Setup
 
 Before building and running the sample, complete the following steps:
 
-1. Select the device to be tested.
-#. Select the LwM2M server to be used for testing and register the device on it.
-   You can also optionally enable notifications for the resources so that the resources are actively monitored by the server.
+1. Select the device you plan to test.
+#. Select the LwM2M server for testing and register the device on it.
+   You can also optionally enable notifications for the resources so that the server actively monitors the resources.
 #. Setup the LwM2M server by completing the steps listed in :ref:`server_setup_lwm2m`.
    This step retrieves the server address and the security tag that will be needed during the next steps.
 #. :ref:`server_addr_PSK`.
@@ -359,7 +359,7 @@ Server options
 .. _CONFIG_APP_LWM2M_PSK:
 
 CONFIG_APP_LWM2M_PSK - Configuration for Pre-Shared Key
-   The sample configuration is used to set the hexadecimal representation of the PSK used when registering the device with the server.
+   The sample configuration sets the hexadecimal representation of the PSK used when registering the device with the server.
 
 .. _CONFIG_APP_ENDPOINT_PREFIX:
 
@@ -372,10 +372,10 @@ LwM2M objects options
 .. _CONFIG_APP_TEMP_SENSOR:
 
 CONFIG_APP_TEMP_SENSOR - Configuration for enabling an LwM2M Temperature sensor object
-   The sample configuration is used to enable an LwM2M Temperature sensor object.
+   The sample configuration enables an LwM2M Temperature sensor object.
    All compatible objects are enabled by default.
    Disabled objects will not be visible in the server.
-   This configuration option can be used for other LwM2M objects also by modifying the option accordingly.
+   You can use this configuration option for other LwM2M objects also by modifying the option accordingly.
 
 .. _CONFIG_APP_GNSS:
 
@@ -391,17 +391,20 @@ CONFIG_GNSS_PRIORITY_ON_FIRST_FIX - Configuration for prioritizing GNSS over LTE
 .. _CONFIG_LWM2M_IPSO_APP_COLOUR_SENSOR_VERSION_1_0:
 
 CONFIG_LWM2M_IPSO_APP_COLOUR_SENSOR_VERSION_1_0 - Configuration for selecting the IPSO Color sensor object version
-   The configuration option sets the version of the OMA IPSO object specification that is to be used by the user defined Color sensor IPSO object to 1.0.
+   The configuration option sets the version of the OMA IPSO object specification to 1.0.
+   The user-defined Color sensor IPSO object uses this version.
 
 .. _CONFIG_LWM2M_IPSO_APP_COLOUR_SENSOR_VERSION_1_1:
 
 CONFIG_LWM2M_IPSO_APP_COLOUR_SENSOR_VERSION_1_1 - Configuration for selecting the IPSO Color sensor object version
-   The configuration option sets the version of the OMA IPSO object specification that is to be used by the user defined Color sensor IPSO object to 1.1.
+   The configuration option sets the version of the OMA IPSO object specification to 1.1.
+   The user-defined Color sensor IPSO object uses this version.
 
 .. _CONFIG_APP_CUSTOM_VERSION:
 
 CONFIG_APP_CUSTOM_VERSION - Configuration to set custom application version reported in the Device object
-   The configuration option allows to specify custom application version reported to the LwM2M server. By default, the current |NCS| version is used.
+   The configuration option allows to specify custom application version to be reported to the LwM2M server.
+   The option has the current |NCS| version as the default value.
 
 .. _sensor_module_options:
 
@@ -411,9 +414,8 @@ Sensor module options
 .. _CONFIG_SENSOR_MODULE:
 
 CONFIG_SENSOR_MODULE - Configuration for periodic sensor reading
-   This configuration option enables periodic reading of sensors and updating the resource values when
-   the change is sufficiently large.
-   The server is notified if a change in one or more resources is observed.
+   This configuration option enables periodic reading of sensors and updating the resource values when the change is sufficiently large.
+   If you enable the option, the sample notifies the server if a change in one or more resources is observed.
 
 .. _CONFIG_SENSOR_MODULE_TEMP:
 
@@ -445,14 +447,21 @@ Additional configuration
 Check and configure the following LwM2M options that are used by the sample:
 
 * :kconfig:option:`CONFIG_LWM2M_PEER_PORT` - LwM2M server port
-* :kconfig:option:`CONFIG_LWM2M_ENGINE_MAX_OBSERVER` - Maximum number of resources that can be tracked. This must be increased if you want to observe more than 10 resources.
-* :kconfig:option:`CONFIG_LWM2M_ENGINE_MAX_MESSAGES` - Maximum number of LwM2M message objects. This value must be increased if many notifications will be sent at once.
-* :kconfig:option:`CONFIG_LWM2M_ENGINE_MAX_PENDING` - Maximum number of pending LwM2M message objects. The value needs to be increased if many notifications will be sent at once.
-* :kconfig:option:`CONFIG_LWM2M_ENGINE_MAX_REPLIES` - Maximum number of LwM2M reply objects. The value needs to be increased if many notifications will be sent at once.
+* :kconfig:option:`CONFIG_LWM2M_ENGINE_MAX_OBSERVER` - Maximum number of resources that can be tracked.
+  You must increase this value if you want to observe more than 10 resources.
+* :kconfig:option:`CONFIG_LWM2M_ENGINE_MAX_MESSAGES` - Maximum number of LwM2M message objects.
+  You must increase this value if many notifications will be sent at once.
+* :kconfig:option:`CONFIG_LWM2M_ENGINE_MAX_PENDING` - Maximum number of pending LwM2M message objects.
+  You must increase this value if you want to observe more than 10 resources.
+* :kconfig:option:`CONFIG_LWM2M_ENGINE_MAX_REPLIES` - Maximum number of LwM2M reply objects.
+  You must increase this value if many notifications will be sent at once.
 * :kconfig:option:`CONFIG_LWM2M_COAP_BLOCK_SIZE` - Increase if you need to add several new LwM2M objects to the sample, as the registration procedure contains information about all the LwM2M objects in one block.
 * :kconfig:option:`CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME` - Set this option to configure how often the client sends ``I'm alive`` messages to the server.
-* :kconfig:option:`CONFIG_LWM2M_IPSO_TEMP_SENSOR_VERSION_1_0` - Sets the IPSO Temperature sensor object version to 1.0. You can use this configuration option for other IPSO objects also by modifying the option accordingly. See the `LwM2M Object and Resource Registry`_ for a list of objects and their available versions.
-* :kconfig:option:`CONFIG_LWM2M_IPSO_TEMP_SENSOR_VERSION_1_1` - Sets the IPSO Temperature sensor object version to 1.1. You can use this configuration option for other IPSO objects also by modifying the option accordingly. See the `LwM2M Object and Resource Registry`_ for a list of objects and their available versions.
+* :kconfig:option:`CONFIG_LWM2M_IPSO_TEMP_SENSOR_VERSION_1_0` - Sets the IPSO Temperature sensor object version to 1.0.
+  You can use this configuration option for other IPSO objects also by modifying the option accordingly.
+  See the `LwM2M Object and Resource Registry`_ for a list of objects and their available versions.
+* :kconfig:option:`CONFIG_LWM2M_IPSO_TEMP_SENSOR_VERSION_1_1` - Sets the IPSO Temperature sensor object version to 1.1.
+  You can use this configuration option for other IPSO objects also by modifying the option accordingly. See the `LwM2M Object and Resource Registry`_ for a list of objects and their available versions.
 
 .. note::
    Changing lifetime might not work correctly if you set it to a value beyond 60 seconds.
@@ -461,9 +470,7 @@ Check and configure the following LwM2M options that are used by the sample:
 For Thingy:91, configure the ADXL362 accelerometer sensor range by choosing one of the following options (default value is |plusminus| 2 g):
 
 * :kconfig:option:`CONFIG_ADXL362_ACCEL_RANGE_2G` - Sensor range of |plusminus| 2 g.
-
 * :kconfig:option:`CONFIG_ADXL362_ACCEL_RANGE_4G` - Sensor range of |plusminus| 4 g.
-
 * :kconfig:option:`CONFIG_ADXL362_ACCEL_RANGE_8G` - Sensor range of |plusminus| 8 g.
 
 Resolution depends on range: |plusminus| 2 g has higher resolution than |plusminus| 4 g, which again has higher resolution than |plusminus| 8 g.
@@ -485,7 +492,7 @@ The following files are available:
 * :file:`overlay-avsystem.conf` - Uses `Coiote Device Management`_ server.
 * :file:`overlay-avsystem-bootstrap.conf` - Uses Coiote in bootstrap mode.
 
-The sample can either be configured by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
+You can configure the sample either by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
 
 .. _build_lwm2m:
 
@@ -513,7 +520,8 @@ To use the LwM2M Client with LwM2M Queue Mode support, build it with the ``-DOVE
 Bootstrap support
 =================
 
-To successfully run the bootstrap procedure, the device must first be registered in the LwM2M bootstrap server.
+To successfully run the bootstrap procedure, you must first register the device in the LwM2M bootstrap server.
+
 See :ref:`Registering your device to an LwM2M boot strap server <bootstrap_server_reg>` for instructions.
 
 To build the LwM2M Client with LwM2M bootstrap support, build it with the ``-DOVERLAY_CONFIG=overlay-bootstrap.conf`` option:
@@ -563,7 +571,7 @@ To update the firmware, complete the following steps:
    #. Click :guilabel:`Upgrade`.
    #. Observe in the terminal window that the image file is being downloaded.
       The download will take some time.
-      If the server lifetime is not increased, the Coiote server might drop the connection to the device. The device reconnects later.
+      If you do not increase the server lifetime, the Coiote server might drop the connection to the device. The device reconnects later.
    #. When the download is complete, the device restarts on its own after installing the firmware.
       Restart the device manually if it has not started automatically.
       The device runs the updated firmware and reconnects to Coiote Device Management server automatically.
