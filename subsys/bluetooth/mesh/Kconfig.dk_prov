@@ -30,6 +30,12 @@ config BT_MESH_DK_PROV_OOB_LOG
 	depends on LOG_PRINTK
 	default y
 
+config BT_MESH_DK_LEGACY_UUID_GEN
+	bool "Use legacy generation of UUID"
+	help
+	  Use legacy generation of UUID. For most platforms this will generate UUIDs
+	  with trailing zeros.
+
 module = BT_MESH_DK_PROV
 module-str = DK BT mesh provisioning library
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

@@ -225,7 +225,13 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`bt_mesh` library:
+
+  * :ref:`bt_mesh_dk_prov` module: Changed the UUID generation to prevent trailing zeros in the UUID.
+
+    **Migration notes:** To retain the legacy generation of UUID, enable the option ``CONFIG_BT_MESH_DK_LEGACY_UUID_GEN``.
+
+See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh samples.
 
 Bootloader libraries
 --------------------
