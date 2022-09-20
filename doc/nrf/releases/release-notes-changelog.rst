@@ -160,7 +160,19 @@ Bluetooth samples
 Bluetooth mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* :ref:`bluetooth_mesh_sensor_server` sample:
+
+  * Added:
+
+    * Ability to limit the reported temperatures based on :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` as a setting for the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor type.
+    * Ability to persistently store the above-mentioned setting.
+    * A sensor descriptor of the temperature sensor.
+
+* :ref:`bluetooth_mesh_sensor_client` sample:
+
+  * Added:
+
+    * Ability to use buttons to send get and set messages for a sensor setting, as well as a get message for a sensor descriptor.
 
 nRF9160 samples
 ---------------

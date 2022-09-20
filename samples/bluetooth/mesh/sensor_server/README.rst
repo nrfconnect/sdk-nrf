@@ -9,7 +9,7 @@ Bluetooth: Mesh sensor
 
 The Bluetooth® mesh sensor sample demonstrates how to set up a basic mesh Sensor Server model application that provides sensor data to one :ref:`bt_mesh_sensor_cli_readme` model.
 Four different sensor types are used to showcase different ways for the server to publish data.
-In addition, the sample demonstrates usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`.
+In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`, as well as how to add and write to a sensor setting.
 
 .. note::
    This sample must be paired with the :ref:`bluetooth_mesh_sensor_client` sample to show any functionality.
@@ -41,6 +41,7 @@ Overview
 The following Bluetooth mesh sensor types are used in this sample:
 
 * :c:var:`bt_mesh_sensor_present_dev_op_temp` - Published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`).
+* :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` - Used as a setting for the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor type to set the range of reported temperatures.
 * :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` - Periodically requested by the client.
 * :c:var:`bt_mesh_sensor_presence_detected` - Published when a button is pressed on the server.
 * :c:var:`bt_mesh_sensor_time_since_presence_detected` - Periodically requested by the client and published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`).
@@ -82,7 +83,13 @@ The models are used for the following purposes:
 
 The model handling is implemented in :file:`src/model_handler.c`.
 It uses the TEMP_NRF5 or BME680 temperature sensor depending on the platform.
+
+The sample has a descriptor related to the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, which specifies tolerance values for the ``TEMP_NRF5`` temperature sensor calculated based on the `nRF52832 Temperature Sensor Electrical Specification`_.
+The descriptor also specifies the temperature sensor's sampling type, which is :c:var:`BT_MESH_SENSOR_SAMPLING_INSTANTANEOUS`.
+
 The :ref:`dk_buttons_and_leds_readme` library is used to detect button presses.
+
+The :ref:`Zephyr settings API <zephyr:settings_api>` is used to persistently store the sensor range setting for the temperature sensor, given that :kconfig:option:`CONFIG_BT_SETTING` is enabled.
 
 User interface
 **************
@@ -159,6 +166,14 @@ Configure the Sensor Server model on the **Mesh Sensor** node:
 
 The Sensor Server model is now configured and able to send data to the Sensor Client.
 
+Configure the Sensor Setup Server model on the **Mesh Sensor** node:
+
+* Bind the model to **Application Key 1**.
+
+* Set the subscription parameters: Select an existing group or create a new one, but make sure that the Sensor Client publishes to the same group.
+
+The Sensor Setup Server model is now configured and able to receive sensor setting messages from the Sensor Client.
+
 .. note::
    To enable Sensor Server configuration by a Sensor Client, an application key must be bound to the Sensor Setup Server.
    This functionality must also be programmed in the :ref:`bt_mesh_sensor_cli_readme` device.
@@ -186,6 +201,10 @@ In addition, it uses the following Zephyr libraries:
 * :ref:`zephyr:bluetooth_mesh`:
 
   * ``include/bluetooth/mesh.h``
+
+* :ref:`zephyr:settings_api`:
+
+  * ``include/settings/settings.h``
 
 The sample also uses the following secure firmware component:
 
