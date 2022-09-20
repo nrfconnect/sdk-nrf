@@ -8,6 +8,7 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/mesh/models.h>
+#include <bluetooth/mesh/sensor_types.h>
 #include <dk_buttons_and_leds.h>
 #include "model_handler.h"
 
@@ -33,6 +34,14 @@ static const struct bt_mesh_sensor_column columns[] = {
 	{ { 30 }, { 100 } },
 };
 
+#define DEFAULT_TEMP_RANGE_LOW 0
+#define DEFAULT_TEMP_RANGE_HIGH 100
+/* Range limiting the reported values of the chip temperature */
+static struct bt_mesh_sensor_column temp_range = {
+	.start = { .val1 = DEFAULT_TEMP_RANGE_LOW, .val2 = 0},
+	.end = { .val1 = DEFAULT_TEMP_RANGE_HIGH, .val2 = 0},
+};
+
 static const struct device *dev = DEVICE_DT_GET(SENSOR_NODE);
 static uint32_t tot_temp_samps;
 static uint32_t col_samps[ARRAY_SIZE(columns)];
@@ -54,6 +63,19 @@ static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
 		printk("Error getting temperature sensor data (%d)\n", err);
 	}
 
+	if (!bt_mesh_sensor_value_in_column(rsp, &temp_range)) {
+		if (temp_range.start.val1 == temp_range.end.val1) {
+			if (rsp->val2 <= temp_range.start.val2) {
+				*rsp = temp_range.start;
+			} else {
+				*rsp = temp_range.end;
+			}
+		} else if (rsp->val1 <= temp_range.start.val1) {
+			*rsp = temp_range.start;
+		} else {
+			*rsp = temp_range.end;
+		}
+	}
 	for (int i = 0; i < ARRAY_SIZE(columns); ++i) {
 		if (bt_mesh_sensor_value_in_column(rsp, &columns[i])) {
 			col_samps[i]++;
@@ -66,9 +88,91 @@ static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
 	return err;
 }
 
+/* Tolerance is based on the nRF52832's temperature sensor's accuracy and range (5/125 = 4%). */
+static const struct bt_mesh_sensor_descriptor chip_temp_descriptor = {
+	.tolerance = {
+		.negative = {
+			.val1 = 4,
+		},
+		.positive = {
+			.val1 = 4,
+		}
+	},
+	.sampling_type = BT_MESH_SENSOR_SAMPLING_INSTANTANEOUS,
+};
+
+static void chip_temp_range_get(struct bt_mesh_sensor_srv *srv, struct bt_mesh_sensor *sensor,
+				const struct bt_mesh_sensor_setting *setting,
+				struct bt_mesh_msg_ctx *ctx, struct sensor_value *rsp)
+{
+	rsp[0] = temp_range.start;
+	rsp[1] = temp_range.end;
+	printk("Temperature sensor lower limit: %u\n", rsp[0].val1);
+	printk("Temperature sensor upper limit: %u\n", rsp[1].val1);
+}
+
+static int chip_temp_range_set(struct bt_mesh_sensor_srv *srv, struct bt_mesh_sensor *sensor,
+			       const struct bt_mesh_sensor_setting *setting,
+			       struct bt_mesh_msg_ctx *ctx, const struct sensor_value *value)
+{
+	temp_range.start = value[0];
+	temp_range.end = value[1];
+	printk("Temperature sensor lower limit: %u\n", value[0].val1);
+	printk("Temperature sensor upper limit: %u\n", value[1].val1);
+
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		int err;
+
+		err = settings_save_one("temp/range", &temp_range, sizeof(temp_range));
+		if (err) {
+			printk("Error storing setting (%d)\n", err);
+		} else {
+			printk("Stored setting\n");
+		}
+	}
+	return 0;
+}
+
+static struct bt_mesh_sensor_setting chip_temp_setting[] = { {
+	.type = &bt_mesh_sensor_dev_op_temp_range_spec,
+	.get = chip_temp_range_get,
+	.set = chip_temp_range_set,
+} };
+
+static int chip_temp_range_settings_restore(const char *name, size_t len, settings_read_cb read_cb,
+					    void *cb_arg)
+{
+	const char *next;
+	int rc;
+
+	if (!(settings_name_steq(name, "range", &next) && !next)) {
+		return -ENOENT;
+	}
+
+	if (len != sizeof(temp_range)) {
+		return -EINVAL;
+	}
+
+	rc = read_cb(cb_arg, &temp_range, sizeof(temp_range));
+	if (rc < 0) {
+		return rc;
+	}
+
+	printk("Restored temperature range setting\n");
+	return 0;
+}
+
+struct settings_handler temp_range_conf = { .name = "temp",
+					    .h_set = chip_temp_range_settings_restore };
+
 static struct bt_mesh_sensor chip_temp = {
 	.type = &bt_mesh_sensor_present_dev_op_temp,
 	.get = chip_temp_get,
+	.descriptor = &chip_temp_descriptor,
+	.settings = {
+		.list = (const struct bt_mesh_sensor_setting *)&chip_temp_setting,
+		.count = ARRAY_SIZE(chip_temp_setting),
+	},
 };
 
 static int relative_runtime_in_chip_temp_get(struct bt_mesh_sensor_srv *srv,
@@ -158,7 +262,11 @@ static void end_of_presence(struct k_work *work)
 
 static void button_handler_cb(uint32_t pressed, uint32_t changed)
 {
-	if ((pressed & BIT(0))) {
+	if (!bt_mesh_is_provisioned()) {
+		return;
+	}
+
+	if (pressed & BIT(0)) {
 		int err;
 
 		/* This sensor value must be boolean -
@@ -267,6 +375,11 @@ const struct bt_mesh_comp *model_handler_init(void)
 	}
 
 	dk_button_handler_add(&button_handler);
+
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		settings_subsys_init();
+		settings_register(&temp_range_conf);
+	}
 
 	return &comp;
 }

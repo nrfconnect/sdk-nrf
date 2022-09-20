@@ -9,7 +9,7 @@ Bluetooth: Mesh sensor observer
 
 The Bluetooth® mesh sensor observer sample demonstrates how to set up a basic Bluetooth mesh :ref:`bt_mesh_sensor_cli_readme` model application that gets sensor data from one :ref:`bt_mesh_sensor_srv_readme` model.
 Four different sensor types are used to showcase different ways for the server to publish data.
-In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`.
+In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`, as well as how to add and write to a sensor setting.
 
 .. note::
    This sample must be paired with :ref:`bluetooth_mesh_sensor_server` to show any functionality.
@@ -35,6 +35,7 @@ Overview
 The following Bluetooth mesh sensor types are used in this sample:
 
 * :c:var:`bt_mesh_sensor_present_dev_op_temp` - Published by the server according to its publishing period.
+* :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` - Used as a setting for the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor type to set the range of reported temperatures.
 * :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` - Periodically requested by the client.
 * :c:var:`bt_mesh_sensor_presence_detected` - Published when a button is pressed on the server.
 * :c:var:`bt_mesh_sensor_time_since_presence_detected` - Periodically requested by the client and published by the server according to its publishing period.
@@ -79,6 +80,17 @@ User interface
 Buttons:
    Can be used to input the OOB authentication value during provisioning.
    All buttons have the same functionality during the provisioning procedure.
+
+Once the provisioning procedure has completed, the buttons will have the following functionality:
+
+Button 1:
+   Sends a get message for a setting.
+
+Button 2:
+   Sends a set message for a setting, switching between the ranges specified in the :c:var:`temp_ranges` variable.
+
+Button 3:
+   Sends a get message for a descriptor, requesting information about the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
 
 Terminal:
    All sensor values gathered from the server are printed over UART.

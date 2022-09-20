@@ -373,6 +373,7 @@
 
 .. _`nRF52 Series`: https://infocenter.nordicsemi.com/topic/struct_nrf52/struct/nrf52.html
 .. _`nRF52832 Product Specification`: https://infocenter.nordicsemi.com/topic/struct_nrf52/struct/nrf52832_ps.html
+.. _`nRF52832 Temperature Sensor Electrical Specification`: https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.nrf52832.ps.v1.1/temp.html?cp=4_2_0_26_1_0#unique_339758917
 
 .. _`nRF52 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52832_dk/UG/nrf52_DK/intro.html
 
