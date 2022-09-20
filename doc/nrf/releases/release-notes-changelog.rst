@@ -123,7 +123,7 @@ nRF5340 Audio
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-|no_changes_yet_note|
+* Thingy:52 (``thingy52_nrf52832``) is no longer supported.
 
 nRF Desktop
 -----------
