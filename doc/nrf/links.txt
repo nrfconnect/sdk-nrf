@@ -727,25 +727,23 @@
 .. _`nRF Cloud REST API (v1)`:
 .. _`nRF Cloud Device API`: https://api.nrfcloud.com/v1
 .. _`nRF Cloud REST API ListMessages`: https://api.nrfcloud.com/v1#operation/ListMessages
-.. _`nRF Cloud Device Messages`: https://docs.nrfcloud.com/Reference/DeviceMessages/
-.. _`nRF Cloud Device Shadows`: https://docs.nrfcloud.com/Reference/Devices/Shadows/
+.. _`nRF Cloud Device Messages`: https://docs.nrfcloud.com/Devices/Messages/DeviceMessages
+.. _`nRF Cloud Device Shadows`: https://docs.nrfcloud.com/Devices/DeviceProperties/Shadows
 .. _`nRF Cloud REST API`:
-.. _`nRF Connect for Cloud REST API`: https://docs.nrfcloud.com/Reference/Interacting/REST#the-nrf-cloud-rest-api
+.. _`nRF Connect for Cloud REST API`: https://docs.nrfcloud.com/APIs/REST/RESTIntro
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
 .. _`nRF Cloud RegisterPublicKeys Endpoint`: https://api.nrfcloud.com/v1/#operation/RegisterPublicKeys
-.. _`nRF Cloud Location Services documentation`: https://docs.nrfcloud.com/Reference/LocationServices
-.. _`nRF Cloud MQTT API`: https://docs.nrfcloud.com/Reference/Interacting/MQTT
-.. _`nRF Cloud Security`: https://docs.nrfcloud.com/Reference/Devices/Security/
-.. _`nRF Cloud MQTT Topics`: https://docs.nrfcloud.com/Reference/Interacting/MQTT/#message-and-location-services-topics
-.. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nrfcloud.com/Reference/DeviceManagement/Provisioning/#just-in-time-provisioning
-.. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/Reference/DeviceManagement/Provisioning/
-
-.. _`nRF Cloud Security`: https://docs.nrfcloud.com/Reference/Devices/Security/
-
-.. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nrfcloud.com/Guides/GettingStarted/FOTA/
-
+.. _`nRF Cloud Location Services documentation`: https://docs.nrfcloud.com/LocationServices/LocationServicesOverview
+.. _`nRF Cloud MQTT API`: https://docs.nrfcloud.com/APIs/MQTT
+.. _`nRF Cloud Security`: https://docs.nrfcloud.com/Devices/DeviceSecurity/Security
+.. _`nRF Cloud MQTT Topics`: https://docs.nrfcloud.com/APIs/MQTT#message-topics
+.. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nrfcloud.com/Devices/DeviceAssociations/Provisioning#just-in-time-provisioning
+.. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/Devices/DeviceAssociations/Provisioning/
+.. _`nRF Cloud Security`: https://docs.nrfcloud.com/Devices/DeviceSecurity/Security
+.. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTATutorial
 .. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
-.. _`Securely Generating Credentials on the nRF9160`: https://docs.nrfcloud.com/Guides/GettingStarted/Devices#securely-generating-credentials-on-the-nrf9160
+.. _`Securely Generating Credentials on the nRF9160`: https://docs.nrfcloud.com/Devices/DeviceSecurity/Credentials
+
 
 .. ### Source: zigbeealliance.org & csa-iot.org
 
