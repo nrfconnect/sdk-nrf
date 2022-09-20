@@ -1092,6 +1092,14 @@ NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth® L
 
   **Workaround:** Use BlueZ in version 5.56 or higher.
 
+.. rst-class:: v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
+
+NCSDK-17088: :ref:`nrf_desktop_ble_qos` may crash on application start
+  The Bluetooth LE Quality of Service (QoS) module may trigger an ARM fault on application start.
+  The ARM fault is caused by invalid memory alignment.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``f236a8eff32adbe201d486cd11d4fa8853b90bd7``).
+
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0
 
 NCSDK-13858: Possible crash at the start of Bluetooth LE advertising when using SW Split Link Layer
