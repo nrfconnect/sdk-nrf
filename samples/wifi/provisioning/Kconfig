@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+menu "Wi-Fi Provisioning"
+
+config WIFI_PROVISIONING_PROTO_BUILD_TIME_GENERATION
+	bool "Generate c implementation of protocol buffers from .proto files when building the sample"
+	default n
+
+config WIFI_PROVISIONING_NVM_SETTINGS
+	bool "Store Wi-Fi credentials in NVM"
+	default y
+
+module = WIFI_PROVISIONING
+module-str = wifi provisioning service
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu
+
+source "Kconfig.zephyr"

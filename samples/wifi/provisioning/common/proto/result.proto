@@ -1,0 +1,43 @@
+syntax = "proto2";
+
+import "common.proto";
+
+option java_multiple_files = true;
+option java_package = "no.nordicsemi.android.wifi.provisioning";
+
+// States are sent over Data Out characteristic
+
+/* Single Wi-Fi scan result. */
+message ScanRecord {
+  optional WifiInfo wifi          = 1;
+  optional int32 rssi             = 2;
+}
+
+/*
+  This type is returned by the Data Out characteristic using notifications.
+  Scan records are returned when WiFi scanning is enabled.
+  WiFi state is notified whenever connection state changes, or during provisioning.
+  */
+message Result {
+  optional ScanRecord scan_record = 1;
+  optional ConnectionState state  = 2;
+  // The failure reason is set when the state is CONNECTION_FAILED.
+  optional ConnectionFailureReason reason = 3;
+}
+
+/*
+message Test {
+  message InnerTest {
+    required uint32 req_uint32 = 1;
+    optional uint32 opt_uint32 = 2;
+  }
+  required InnerTest req_inner_test = 1;
+  optional InnerTest opt_inner_test = 2;
+  optional AuthMode auto_mode       = 3;
+  oneof either {
+    bool null    = 4;
+    AuthMode am  = 5;
+    InnerTest it = 6;
+  }
+}
+*/

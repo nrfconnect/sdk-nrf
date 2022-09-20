@@ -1,0 +1,44 @@
+syntax = "proto2";
+
+import "common.proto";
+
+option java_multiple_files = true;
+option java_package = "no.nordicsemi.android.wifi.provisioning";
+
+// Responses
+
+/* Information about the Wi-Fi connected state. */
+message ConnectionInfo {
+  optional bytes ip4_addr = 1;
+}
+
+/* Response payload for GET_STATUS request. */
+message DeviceStatus {
+  // The current state of the Wifi connection.
+  optional ConnectionState state = 1;
+
+  // Parameters:
+
+  // The network information if provisioned to a network.
+  // This can be set even if connection failed.
+  optional WifiInfo provisioning_info     = 10;
+  // The connection info is set when the device is connected
+  // to the network and received the IP.
+  optional ConnectionInfo connection_info = 11;
+  // Set if the device is scanning.
+  // The period_ms contains remaining scanning period.
+  optional ScanParams scan_info           = 12;
+}
+
+/* A response type which is sent back from the device. */
+message Response {
+  // Request op code.
+  optional OpCode request_op_code         = 1;
+  // Status of the operation.
+  optional Status status                  = 2;
+
+  // Parameters:
+
+  // The device status is set as a response to GET_STATUS.
+  optional DeviceStatus device_status     = 10;
+}

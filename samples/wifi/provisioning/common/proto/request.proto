@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+import "common.proto";
+
+option java_multiple_files = true;
+option java_package = "no.nordicsemi.android.wifi.provisioning";
+
+// Requests
+
+/* Wi-Fi provisioning configuration for SET_CONFIG request. */
+message WifiConfig {
+  optional WifiInfo wifi          = 1;
+  optional bytes passphrase       = 2; // Default: empty string
+  // Should the Wi-Fi config be kept only in RAM and be removed after device reboot.
+  optional bool volatileMemory    = 3; // Default: false
+}
+
+/* The request type, sent to the device. */
+message Request {
+  // The op_code has to be optional, as new op codes may be added in the future.
+  // They would fail to be decoded in earlier versions, causing am error.
+  // With the optional modifier, they will be decoded as null.
+  optional OpCode op_code         = 1;
+
+  // Parameters:
+
+  // The parameter for START_SCAN request.
+  optional ScanParams scan_params = 10;
+  // The parameter for SET_CONFIG request.
+  optional WifiConfig config      = 11;
+}
