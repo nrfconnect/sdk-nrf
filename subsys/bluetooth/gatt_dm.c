@@ -74,7 +74,7 @@ struct bt_gatt_dm {
 };
 
 /* Currently only one instance is supported */
-static struct bt_gatt_dm bt_gatt_dm_inst;
+static struct bt_gatt_dm bt_gatt_dm_inst = { 0 };
 
 /* Returns pointer to newly allocated space in a dm->data_chunk */
 static void *user_data_alloc(struct bt_gatt_dm *dm,
