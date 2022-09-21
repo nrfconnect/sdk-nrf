@@ -13,7 +13,7 @@
 void main(void)
 {
 	int err;
-	const struct device *uart = DEVICE_DT_GET(DT_NODELABEL(uart0));
+	const struct device *uart = DEVICE_DT_GET(DT_CHOSEN(ncs_dtm_uart));
 	bool is_msb_read = false;
 	uint8_t rx_byte;
 	uint16_t dtm_cmd;
