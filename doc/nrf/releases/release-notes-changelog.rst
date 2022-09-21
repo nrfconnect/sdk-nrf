@@ -127,6 +127,8 @@ nRF5340 Audio
 * Added:
 
   * Kconfig options for different sample rates and BAP presets.
+  * Added Kconfig options for different sample rates and BAP presets.
+  * Added bidirectional mode for the CIS mode.
 
 * Updated:
 

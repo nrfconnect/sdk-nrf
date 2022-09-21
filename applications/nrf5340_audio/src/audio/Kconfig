@@ -196,10 +196,11 @@ config BUF_BLE_RX_PACKET_NUM
 	  gaps due to BLE retransmits.
 
 config STREAM_BIDIRECTIONAL
-	bool "Enable bi-directional stream - Currently not supported"
+	depends on TRANSPORT_CIS
+	bool "Bidirectional stream"
 	default n
 	help
-	  Bi-directional stream enables encoder and decoder on both sides,
+	  Bidirectional stream enables encoder and decoder on both sides,
 	  and one device can both send and receive audio.
 
 endmenu # Stream
@@ -251,7 +252,7 @@ menu "Stack sizes"
 
 config ENCODER_STACK_SIZE
 	int "Stack size for encoder thread"
-	default 6750 if AUDIO_BIT_DEPTH_16
+	default 7500 if AUDIO_BIT_DEPTH_16
 	default 11264 if AUDIO_BIT_DEPTH_32
 
 config AUDIO_DATAPATH_STACK_SIZE

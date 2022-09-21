@@ -125,27 +125,32 @@ The following table indicates the software maturity levels of the support for th
           * Configuration: 48 kHz, 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
 
         - Experimental
-      * - **Unicast source**
+      * - **Unicast client**
         - BAP unicast, one Connected Isochronous Group (CIG) with two Connected Isochronous Streams (CIS).
 
-          Transmitting unidirectional audio using CIG and CIS.
+          Transmitting unidirectional or transceiving bidirectional audio using CIG and CIS.
 
           Play and pause emulated by disabling and enabling stream, respectively.
         - The following limitations apply:
 
           * BAP unicast, one CIG with two CIS.
+          * Bidirectional mode only supports connecting to *one* unicast server.
           * Audio input: USB or I2S (Line in or using Pulse Density Modulation).
+          * Audio output: USB or I2S/Analog headset output.
           * Configuration: 48 kHz, 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
 
         - Experimental
-      * - **Unicast sink**
+      * - **Unicast server**
         - BAP unicast, 1 CIG with 2 CIS streams.
+
+          Receiving unidirectional or transceiving bidirectional audio using CIG and CIS.
 
           To emulate play and pause, the available context type for media is added or removed. This enables and disables streaming, respectively.
         - The following limitations apply:
 
           * BAP unicast, one CIG, one of the two CIS streams (selectable).
           * Audio output: I2S/Analog headset output.
+          * Audio input: PDM microphone over I2S.
           * Configuration: 48 kHz, 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
 
         - Experimental

@@ -11,6 +11,7 @@
 #include <bluetooth/conn.h>
 #include <bluetooth/audio/audio.h>
 #include <bluetooth/audio/capabilities.h>
+#include <../subsys/bluetooth/audio/endpoint.h>
 
 #include "macros_common.h"
 #include "ctrl_events.h"
@@ -28,8 +29,22 @@ LOG_MODULE_REGISTER(cis_headset, CONFIG_LOG_BLE_LEVEL);
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE, BT_GAP_ADV_FAST_INT_MIN_1,                      \
 			BT_GAP_ADV_FAST_INT_MAX_1, NULL)
 
-/* Advertising data for peer connection */
+#if CONFIG_STREAM_BIDIRECTIONAL
+#define HCI_ISO_BUF_ALLOC_PER_CHAN 2
+/* For being able to dynamically define iso_tx_pools */
+#define NET_BUF_POOL_ITERATE(i, _)                                                                 \
+	NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool_##i, HCI_ISO_BUF_ALLOC_PER_CHAN,                     \
+				  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU), 8, NULL);
+#define NET_BUF_POOL_PTR_ITERATE(i, ...) IDENTITY(&iso_tx_pool_##i)
+LISTIFY(CONFIG_BT_ASCS_ASE_SRC_COUNT, NET_BUF_POOL_ITERATE, (;))
 
+/* clang-format off */
+static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ASCS_ASE_SRC_COUNT,
+						       NET_BUF_POOL_PTR_ITERATE, (,)) };
+/* clang-format on */
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+
+/* Advertising data for peer connection */
 static const struct bt_data ad_peer[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME_PEER, DEVICE_NAME_PEER_LEN),
@@ -37,21 +52,49 @@ static const struct bt_data ad_peer[] = {
 
 static le_audio_receive_cb receive_cb;
 static struct bt_audio_capability_ops lc3_cap_codec_ops;
+
 static struct bt_codec lc3_codec = BT_CODEC_LC3(
 	BT_CODEC_LC3_FREQ_48KHZ, (BT_CODEC_LC3_DURATION_10 | BT_CODEC_LC3_DURATION_PREFER_10),
 	CHANNEL_COUNT_1, LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
 	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, BT_AUDIO_CONTEXT_TYPE_MEDIA);
-static struct bt_audio_capability caps = {
-	.dir = BT_AUDIO_DIR_SINK,
-	.pref = BT_AUDIO_CAPABILITY_PREF(BT_AUDIO_CAPABILITY_UNFRAMED_SUPPORTED, BT_GAP_LE_PHY_2M,
-					 BLE_ISO_RETRANSMITS, BLE_ISO_LATENCY_MS, MIN_PRES_DLY_US,
-					 MAX_PRES_DLY_US, MIN_PRES_DLY_US, MAX_PRES_DLY_US),
-	.codec = &lc3_codec,
-	.ops = &lc3_cap_codec_ops,
+
+static struct bt_audio_capability caps[] = {
+	{
+		.dir = BT_AUDIO_DIR_SINK,
+		.pref = BT_AUDIO_CAPABILITY_PREF(BT_AUDIO_CAPABILITY_UNFRAMED_SUPPORTED,
+						 BT_GAP_LE_PHY_2M, BLE_ISO_RETRANSMITS,
+						 BLE_ISO_LATENCY_MS, MIN_PRES_DLY_US,
+						 MAX_PRES_DLY_US, MIN_PRES_DLY_US, MAX_PRES_DLY_US),
+		.codec = &lc3_codec,
+		.ops = &lc3_cap_codec_ops,
+	},
+#if CONFIG_STREAM_BIDIRECTIONAL
+	{
+		.dir = BT_AUDIO_DIR_SOURCE,
+		.pref = BT_AUDIO_CAPABILITY_PREF(BT_AUDIO_CAPABILITY_UNFRAMED_SUPPORTED,
+						 BT_GAP_LE_PHY_2M, BLE_ISO_RETRANSMITS,
+						 BLE_ISO_LATENCY_MS, MIN_PRES_DLY_US,
+						 MAX_PRES_DLY_US, MIN_PRES_DLY_US, MAX_PRES_DLY_US),
+		.codec = &lc3_codec,
+		.ops = &lc3_cap_codec_ops,
+	}
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
 };
-static struct bt_conn *default_conn;
-static struct bt_audio_stream audio_stream;
+
 static struct k_work adv_work;
+static struct bt_conn *default_conn;
+static struct bt_audio_stream
+	audio_streams[CONFIG_BT_ASCS_ASE_SNK_COUNT + CONFIG_BT_ASCS_ASE_SRC_COUNT];
+
+#if CONFIG_STREAM_BIDIRECTIONAL
+static struct bt_audio_source {
+	struct bt_audio_stream *stream;
+	uint32_t seq_num;
+} sources[CONFIG_BT_ASCS_ASE_SRC_COUNT];
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+
+/* Left or right channel headset */
+static enum audio_channel channel;
 
 /* Bonded address queue */
 K_MSGQ_DEFINE(bonds_queue, sizeof(bt_addr_le_t), CONFIG_BT_MAX_PAIRED, 4);
@@ -96,7 +139,6 @@ static void advertising_process(struct k_work *work)
 		adv_param.options |= BT_LE_ADV_OPT_DIR_ADDR_RPA;
 
 		ret = bt_le_adv_start(&adv_param, NULL, 0, NULL, 0);
-
 		if (ret) {
 			LOG_ERR("Directed advertising failed to start");
 			return;
@@ -105,13 +147,12 @@ static void advertising_process(struct k_work *work)
 		bt_addr_le_to_str(&addr, addr_buf, BT_ADDR_LE_STR_LEN);
 		LOG_INF("Direct advertising to %s started", addr_buf);
 	} else
-#endif
+#endif /* CONFIG_BT_BONDABLE */
 	{
 		adv_param = *BT_LE_ADV_CONN;
 		adv_param.options |= BT_LE_ADV_OPT_ONE_TIME;
 
 		ret = bt_le_adv_start(&adv_param, ad_peer, ARRAY_SIZE(ad_peer), NULL, 0);
-
 		if (ret) {
 			LOG_ERR("Advertising failed to start (ret %d)", ret);
 			return;
@@ -141,14 +182,14 @@ static void bond_find(const struct bt_bond_info *info, void *user_data)
 		LOG_WRN("No space in the queue for the bond");
 	}
 }
-#endif
+#endif /* CONFIG_BT_BONDABLE */
 
 static void advertising_start(void)
 {
 #if CONFIG_BT_BONDABLE
 	k_msgq_purge(&bonds_queue);
 	bt_foreach_bond(BT_ID_DEFAULT, bond_find, NULL);
-#endif
+#endif /* CONFIG_BT_BONDABLE */
 
 	k_work_submit(&adv_work);
 }
@@ -159,27 +200,47 @@ static struct bt_audio_stream *lc3_cap_config_cb(struct bt_conn *conn, struct bt
 						 struct bt_codec *codec)
 {
 	int ret;
-	struct bt_audio_stream *stream = &audio_stream;
+#if CONFIG_STREAM_BIDIRECTIONAL
+	static size_t configured_source_stream_count;
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
 
-	if (!stream->conn) {
-		LOG_DBG("ASE Codec Config stream %p", (void *)stream);
+	for (size_t i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+		struct bt_audio_stream *stream = &audio_streams[i];
 
-		print_codec(codec);
+		if (!stream->conn) {
+			LOG_DBG("ASE Codec Config stream %p", (void *)stream);
 
-		uint32_t octets_per_sdu = bt_codec_cfg_get_octets_per_frame(codec);
+			uint32_t octets_per_sdu = bt_codec_cfg_get_octets_per_frame(codec);
 
-		if (octets_per_sdu > LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX)) {
-			LOG_WRN("Too high bitrate");
-			return NULL;
-		} else if (octets_per_sdu < LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN)) {
-			LOG_WRN("Too low bitrate");
-			return NULL;
+			if (octets_per_sdu > LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX)) {
+				LOG_WRN("Too high bitrate");
+				return NULL;
+			} else if (octets_per_sdu <
+				   LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN)) {
+				LOG_WRN("Too low bitrate");
+				return NULL;
+			}
+
+			if (dir == BT_AUDIO_DIR_SINK) {
+				LOG_DBG("BT_AUDIO_DIR_SINK");
+				print_codec(codec);
+				ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_CONFIG_RECEIVED);
+				ERR_CHK(ret);
+			}
+#if CONFIG_STREAM_BIDIRECTIONAL
+			else if (dir == BT_AUDIO_DIR_SOURCE) {
+				LOG_DBG("BT_AUDIO_DIR_SOURCE");
+				print_codec(codec);
+				sources[configured_source_stream_count++].stream = stream;
+			}
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+			else {
+				LOG_ERR("UNKNOWN DIR");
+				return NULL;
+			}
+
+			return stream;
 		}
-
-		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_CONFIG_RECEIVED);
-		ERR_CHK(ret);
-
-		return stream;
 	}
 
 	LOG_WRN("No audio_stream available");
@@ -219,7 +280,7 @@ static int lc3_cap_enable_cb(struct bt_audio_stream *stream, struct bt_codec_dat
 
 static int lc3_cap_start_cb(struct bt_audio_stream *stream)
 {
-	LOG_INF("Stream started");
+	LOG_DBG("Stream started %p", (void *)stream);
 	return 0;
 }
 
@@ -345,7 +406,6 @@ static int initialize(le_audio_receive_cb recv_cb)
 {
 	int ret;
 	static bool initialized;
-	enum audio_channel channel;
 
 	if (!initialized) {
 		bt_conn_cb_register(&conn_callbacks);
@@ -363,23 +423,56 @@ static int initialize(le_audio_receive_cb recv_cb)
 			/* Channel is not assigned yet: use default */
 			channel = AUDIO_CHANNEL_DEFAULT;
 		}
+
+		for (size_t i = 0; i < ARRAY_SIZE(caps); i++) {
+			ret = bt_audio_capability_register(&caps[i]);
+			if (ret) {
+				LOG_ERR("Capability register failed");
+				return ret;
+			}
+		}
 		if (channel == AUDIO_CH_L) {
 			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
 							       BT_AUDIO_LOCATION_FRONT_LEFT);
+			if (ret) {
+				LOG_ERR("Location set failed");
+				return ret;
+			}
+
 		} else {
 			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
 							       BT_AUDIO_LOCATION_FRONT_RIGHT);
+			if (ret) {
+				LOG_ERR("Location set failed");
+				return ret;
+			}
 		}
+#if CONFIG_STREAM_BIDIRECTIONAL
+		ret = bt_audio_capability_set_available_contexts(
+			BT_AUDIO_DIR_SINK, BT_AUDIO_CONTEXT_TYPE_MEDIA |
+						   BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL |
+						   BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
+		if (ret) {
+			LOG_ERR("Available context set failed");
+			return ret;
+		}
+
+		ret = bt_audio_capability_set_available_contexts(
+			BT_AUDIO_DIR_SOURCE, BT_AUDIO_CONTEXT_TYPE_MEDIA |
+						     BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL |
+						     BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
+		if (ret) {
+			LOG_ERR("Available context set failed");
+			return ret;
+		}
+
+		ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SOURCE,
+						       BT_AUDIO_LOCATION_FRONT_LEFT);
 		if (ret) {
 			LOG_ERR("Location set failed");
 			return ret;
 		}
-		ret = bt_audio_capability_register(&caps);
-		if (ret) {
-			LOG_ERR("Capability register failed");
-			return ret;
-		}
-
+#else
 		ret = bt_audio_capability_set_available_contexts(
 			BT_AUDIO_DIR_SINK,
 			BT_AUDIO_CONTEXT_TYPE_MEDIA | BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
@@ -387,20 +480,25 @@ static int initialize(le_audio_receive_cb recv_cb)
 			LOG_ERR("Available context set failed");
 			return ret;
 		}
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+		for (size_t i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+			bt_audio_stream_cb_register(&audio_streams[i], &stream_ops);
+		}
 
-		bt_audio_stream_cb_register(&audio_stream, &stream_ops);
 		k_work_init(&adv_work, advertising_process);
 		initialized = true;
 	}
+
 	return 0;
 }
 
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 {
-	int frames_per_sec = 1000000 / bt_codec_cfg_get_frame_duration_us(audio_stream.codec);
-	int bits_per_frame = bt_codec_cfg_get_octets_per_frame(audio_stream.codec) * 8;
+	/* Get the configuration for the sink stream */
+	int frames_per_sec = 1000000 / bt_codec_cfg_get_frame_duration_us(audio_streams[0].codec);
+	int bits_per_frame = bt_codec_cfg_get_octets_per_frame(audio_streams[0].codec) * 8;
 
-	*sampling_rate = bt_codec_cfg_get_freq(audio_stream.codec);
+	*sampling_rate = bt_codec_cfg_get_freq(audio_streams[0].codec);
 	*bitrate = frames_per_sec * bits_per_frame;
 	return 0;
 }
@@ -476,6 +574,32 @@ int le_audio_pause(void)
 
 int le_audio_send(uint8_t const *const data, size_t size)
 {
+#if CONFIG_STREAM_BIDIRECTIONAL
+	int ret;
+	struct net_buf *buf;
+
+	if (sources[0].stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+		LOG_DBG("Return channel not connected");
+		return 0;
+	}
+
+	buf = net_buf_alloc(iso_tx_pools[0], K_NO_WAIT);
+	if (buf == NULL) {
+		LOG_WRN("Out of TX buffers");
+		return -ENOMEM;
+	}
+
+	net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
+	net_buf_add_mem(buf, data, size);
+
+	ret = bt_audio_stream_send(sources[0].stream, buf, sources[0].seq_num++,
+				   BT_ISO_TIMESTAMP_NONE);
+	if (ret < 0) {
+		LOG_WRN("Failed to send audio data: %d", ret);
+		net_buf_unref(buf);
+	}
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+
 	return 0;
 }
 
