@@ -40,12 +40,6 @@ int multicell_location_get(
 		return -ENOENT;
 	}
 
-	if (params->cell_data->ncells_count > CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS) {
-		LOG_WRN("Found %d neighbor cells, but %d cells will be used in location request",
-			params->cell_data->ncells_count, CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS);
-		LOG_WRN("Increase CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS to use more cells");
-	}
-
 	return location_service_get_cell_location(params, location);
 }
 

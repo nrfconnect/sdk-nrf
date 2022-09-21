@@ -122,15 +122,6 @@ config MULTICELL_LOCATION_HERE_TLS_SEC_TAG
 
 endif # MULTICELL_LOCATION_SERVICE_HERE
 
-config MULTICELL_LOCATION_MAX_NEIGHBORS
-	int "Max number of neighbor cells"
-	range 0 17
-	default 8
-	help
-	  Maximum number of neighbor cells to use when creating HTTP request.
-	  Increasing the max number will increase the library's RAM usage
-	  proportionally.
-
 config MULTICELL_LOCATION_RECV_BUF_SIZE
 	int "Receive buffer size"
 	default 512
