@@ -60,7 +60,7 @@ const uint32_t pdm_mic_enable_configure[][2] = {
 	{ CS47L63_MICBIAS_CTRL5, 0x0272 },
 
 	/* Enable IN1L */
-	{ CS47L63_INPUT_CONTROL, 0x000E },
+	{ CS47L63_INPUT_CONTROL, 0x000F },
 
 	/* Enable PDM mic as digital input */
 	{ CS47L63_INPUT1_CONTROL1, 0x50021 },
@@ -78,7 +78,7 @@ const uint32_t pdm_mic_enable_configure[][2] = {
 };
 
 /* Set up input */
-const uint32_t input_enable[][2] = {
+const uint32_t line_in_enable[][2] = {
 	/* Select LINE-IN as analog input */
 	{ CS47L63_INPUT2_CONTROL1, 0x50020 },
 
@@ -91,7 +91,7 @@ const uint32_t input_enable[][2] = {
 	{ CS47L63_IN2R_CONTROL2, 0x800080 },
 
 	/* Enable IN2L and IN2R */
-	{ CS47L63_INPUT_CONTROL, 0x000E },
+	{ CS47L63_INPUT_CONTROL, 0x000F },
 
 	/* Volume Update */
 	{ CS47L63_INPUT_CONTROL3, 0x20000000 },

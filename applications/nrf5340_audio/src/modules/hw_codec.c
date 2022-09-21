@@ -9,8 +9,10 @@
 #include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <ctype.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/device.h>
+#include <zephyr/shell/shell.h>
 
 #include "macros_common.h"
 #include "cs47l63.h"
@@ -23,6 +25,7 @@ LOG_MODULE_REGISTER(HW_CODEC, CONFIG_LOG_HW_CODEC_LEVEL);
 
 #define VOLUME_ADJUST_STEP_DB 3
 #define HW_CODEC_SELECT_DELAY_MS 2
+#define BASE_10 10
 
 static cs47l63_t cs47l63_driver;
 static const struct gpio_dt_spec hw_codec_sel =
@@ -252,7 +255,7 @@ int hw_codec_default_conf_enable(void)
 	}
 
 #if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_I2S))
-	ret = cs47l63_comm_reg_conf_write(input_enable, ARRAY_SIZE(input_enable));
+	ret = cs47l63_comm_reg_conf_write(line_in_enable, ARRAY_SIZE(line_in_enable));
 	if (ret) {
 		return ret;
 	}
@@ -316,3 +319,103 @@ int hw_codec_init(void)
 
 	return 0;
 }
+
+static int cmd_input(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	uint8_t idx;
+
+	enum hw_codec_input {
+		LINE_IN,
+		PDM_MIC,
+		NUM_INPUTS,
+	};
+
+	if (argc != 2) {
+		shell_error(shell, "Only one argument required, provided: %d", argc);
+		return -EINVAL;
+	}
+
+	if ((CONFIG_AUDIO_DEV == GATEWAY) && IS_ENABLED(CONFIG_AUDIO_SOURCE_USB)) {
+		shell_error(shell, "Can't select PDM mic if audio source is USB");
+		return -EINVAL;
+	}
+
+	if ((CONFIG_AUDIO_DEV == HEADSET) && !IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+		shell_error(shell, "Can't select input if headset is not in bidirectional stream");
+		return -EINVAL;
+	}
+
+	if (!isdigit((int)argv[1][0])) {
+		shell_error(shell, "Supplied argument is not numeric");
+		return -EINVAL;
+	}
+
+	idx = strtoul(argv[1], NULL, BASE_10);
+
+	switch (idx) {
+	case LINE_IN: {
+		if (CONFIG_AUDIO_DEV == HEADSET) {
+			ret = cs47l63_comm_reg_conf_write(line_in_enable,
+							  ARRAY_SIZE(line_in_enable));
+			if (ret) {
+				shell_error(shell, "Failed to enable LINE-IN");
+				return ret;
+			}
+		}
+
+		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_ASP1TX1_INPUT1, 0x800012);
+		if (ret) {
+			shell_error(shell, "Failed to route LINE-IN to I2S");
+			return ret;
+		}
+
+		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_ASP1TX2_INPUT1, 0x800013);
+		if (ret) {
+			shell_error(shell, "Failed to route LINE-IN to I2S");
+			return ret;
+		}
+
+		shell_print(shell, "Selected LINE-IN as input");
+		break;
+	}
+	case PDM_MIC: {
+		if (CONFIG_AUDIO_DEV == GATEWAY) {
+			ret = cs47l63_comm_reg_conf_write(pdm_mic_enable_configure,
+							  ARRAY_SIZE(pdm_mic_enable_configure));
+			if (ret) {
+				shell_error(shell, "Failed to enable PDM mic");
+				return ret;
+			}
+		}
+
+		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_ASP1TX1_INPUT1, 0x800010);
+		if (ret) {
+			shell_error(shell, "Failed to route PDM mic to I2S");
+			return ret;
+		}
+
+		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_ASP1TX2_INPUT1, 0x800011);
+		if (ret) {
+			shell_error(shell, "Failed to route PDM mic to I2S");
+			return ret;
+		}
+
+		shell_print(shell, "Selected PDM mic as input");
+		break;
+	}
+	default:
+		shell_error(shell, "Invalid input");
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(hw_codec_cmd,
+			       SHELL_COND_CMD(CONFIG_SHELL, input, NULL,
+					      " Select input\n\t0: LINE_IN\n\t\t1: PDM_MIC",
+					      cmd_input),
+			       SHELL_SUBCMD_SET_END);
+
+SHELL_CMD_REGISTER(hw_codec, &hw_codec_cmd, "Change settings on HW codec", NULL);
