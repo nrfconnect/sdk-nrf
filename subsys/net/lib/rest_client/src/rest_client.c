@@ -378,8 +378,14 @@ int rest_client_request(struct rest_client_req_context *req_ctx,
 
 	if (req_ctx->body != NULL) {
 		http_req.payload = req_ctx->body;
-		http_req.payload_len = strlen(http_req.payload);
-		LOG_DBG("Payload: %s", http_req.payload);
+		http_req.payload_len =
+			req_ctx->body_len ? req_ctx->body_len : strlen(http_req.payload);
+
+		if (req_ctx->body_len) {
+			LOG_HEXDUMP_DBG(req_ctx->body, req_ctx->body_len, "Payload:");
+		} else {
+			LOG_DBG("Payload: %s", http_req.payload);
+		}
 	}
 
 	ret = rest_client_do_api_call(&http_req, req_ctx, resp_ctx);
@@ -391,7 +397,7 @@ int rest_client_request(struct rest_client_req_context *req_ctx,
 	if (!resp_ctx->response || !resp_ctx->response_len) {
 		char *end_ptr = &req_ctx->resp_buff[resp_ctx->total_response_len];
 
-		LOG_WRN("No data in a response body");
+		LOG_DBG("No data in a response body");
 		/* Make it as zero length string */
 		*end_ptr = '\0';
 		resp_ctx->response = end_ptr;
