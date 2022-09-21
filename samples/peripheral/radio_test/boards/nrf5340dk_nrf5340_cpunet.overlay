@@ -3,3 +3,7 @@
 		zephyr,shell-ipc = &ipc0;
 	};
 };
+
+&uart0 {
+	status = "disabled";
+};

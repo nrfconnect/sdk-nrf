@@ -26,9 +26,11 @@
 #include <nrfx_timer.h>
 #include <nrf_erratas.h>
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(uart0), current_speed)
+#define DTM_UART DT_CHOSEN(ncs_dtm_uart)
+
+#if DT_NODE_HAS_PROP(DTM_UART, current_speed)
 /* UART Baudrate used to communicate with the DTM library. */
-#define DTM_UART_BAUDRATE DT_PROP(DT_NODELABEL(uart0), current_speed)
+#define DTM_UART_BAUDRATE DT_PROP(DTM_UART, current_speed)
 
 /* The UART poll cycle in micro seconds.
  * A baud rate of e.g. 19200 bits / second, and 8 data bits, 1 start/stop bit,
@@ -39,7 +41,7 @@
 #define DTM_UART_POLL_CYCLE ((uint32_t) (10 * 1e6 / DTM_UART_BAUDRATE / 2))
 #else
 #error "DTM UART node not found"
-#endif /* DT_NODE_HAS_PROP(DT_NODELABEL(uart0), currrent_speed) */
+#endif /* DT_NODE_HAS_PROP(DTM_UART, currrent_speed) */
 
 /* Default timer used for timing. */
 #define DEFAULT_TIMER_INSTANCE     0
