@@ -379,7 +379,7 @@ static void hids_pm_evt_handler(enum bt_hids_pm_evt evt,
 static void hid_init(void)
 {
 	int err;
-	struct bt_hids_init_param hids_init_param;
+	struct bt_hids_init_param hids_init_param = {0};
 	struct bt_hids_inp_rep *hids_inp_rep;
 	static const uint8_t mouse_movement_mask[ceiling_fraction(INPUT_REP_MOVEMENT_LEN, 8)] = {0};
 
@@ -758,7 +758,7 @@ void main(void)
 
 	printk("Starting Bluetooth Peripheral HIDS mouse example\n");
 
-	printk("Booting up Bluetooth Peripheral HIDS mouse example\n");
+	printk("Boot up Bluetooth Peripheral HIDS mouse example\n");
 
 	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_ENABLED)) {
 		err = bt_conn_auth_cb_register(&conn_auth_callbacks);
