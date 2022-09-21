@@ -1,0 +1,7 @@
+description: LE Audio Controller Subsystem for nRF53
+git_revision: a9f200249a788ca81320201885048d0b4055efc1
+ll_subversion_number: '0x0CE7'
+ll_version_number: '0x0B'
+ll_subversion_number_decimal: '3303'
+ll_version_number_decimal: '11'
+timestamp: '2022-08-31T08:07:34Z'

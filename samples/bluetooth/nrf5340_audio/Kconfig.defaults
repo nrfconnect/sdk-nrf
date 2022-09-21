@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config REBOOT
+	bool
+	default y
+
+config MAIN_THREAD_PRIORITY
+	int
+	default 10
+
+config MAIN_STACK_SIZE
+	int
+	default 3616
+
+config SYSTEM_WORKQUEUE_STACK_SIZE
+	int
+	default 4096
+
+# As long as thread names are used, config must be set to "y"
+config THREAD_NAME
+	bool
+	default y
+
+# Workaround to not use fatal_error.c in NCS. Note that the system may still
+# reset on error depending on the build configuraion
+config RESET_ON_FATAL_ERROR
+	bool
+	default n

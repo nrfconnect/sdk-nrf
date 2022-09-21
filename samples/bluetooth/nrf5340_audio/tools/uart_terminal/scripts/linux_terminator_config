@@ -1,0 +1,62 @@
+[global_config]
+  suppress_multiple_term_dialog = True
+[keybindings]
+[profiles]
+  [[default]]
+    cursor_color = "#aaaaaa"
+    scrollback_infinite = True
+[layouts]
+  [[default]]
+    [[[child0]]]
+      type = Window
+      parent = ""
+      order = 0
+      position = 72:35
+      maximised = False
+      fullscreen = False
+      size = 2000, 1000
+      title = nRF5340 Audio DK
+      last_active_window = True
+    [[[child1]]]
+      type = VPaned
+      parent = child0
+      order = 0
+      position = 540
+      ratio = 0.5
+    [[[child2]]]
+      type = HPaned
+      parent = child1
+      order = 0
+      position = 600
+      ratio = 0.5
+    [[[terminal3]]]
+      type = Terminal
+      parent = child2
+      order = 0
+      profile = default
+      command = python3 scripts/open_terminator.py 0; sh
+    [[[terminal4]]]
+      type = Terminal
+      parent = child2
+      order = 1
+      profile = default
+      command = python3 scripts/open_terminator.py 1; sh
+    [[[child5]]]
+      type = HPaned
+      parent = child1
+      order = 1
+      position = 600
+      ratio = 0.5
+    [[[terminal6]]]
+      type = Terminal
+      parent = child5
+      order = 0
+      profile = default
+      command = python3 scripts/open_terminator.py 2; sh
+    [[[terminal7]]]
+      type = Terminal
+      parent = child5
+      order = 1
+      profile = default
+      command = echo Available ttyACM devices: && cd /dev/ && ls -l | grep "ttyACM"; bash
+[plugins]

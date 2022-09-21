@@ -1,0 +1,61 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF5340_AUDIO
+	 bool "nRF5340 Audio [EXPERIMENTAL]"
+	 select EXPERIMENTAL
+
+if NRF5340_AUDIO
+
+config AUDIO_DEV
+	int "Select which device type to compile for. 1=HEADSET or 2=GATEWAY"
+	range 1 2
+	default 1
+	help
+	  Setting this variable to 1 selects that the project is compiled
+	  as a HEADSET device.
+	  Setting to 2 will compile as a GATEWAY.
+
+choice NRF5340_AUDIO_TRANSPORT_MODE
+	prompt "Choose BIS or CIS for ISO transport"
+	default TRANSPORT_CIS
+
+config TRANSPORT_BIS
+	bool "Use BIS (Broadcast Isochronous Stream)"
+
+config TRANSPORT_CIS
+	bool "Use CIS (Connected Isochronous Stream)"
+
+endchoice
+
+#----------------------------------------------------------------------------#
+rsource "Kconfig.defaults"
+rsource "src/audio/Kconfig"
+rsource "src/bluetooth/Kconfig"
+rsource "src/drivers/Kconfig"
+rsource "src/events/Kconfig"
+rsource "src/modules/Kconfig"
+rsource "src/utils/Kconfig"
+rsource "dfu/conf/Kconfig.dfu"
+
+#----------------------------------------------------------------------------#
+menu "Logging"
+
+config LOG_MAIN_LEVEL
+	int "Log level for main file"
+	default 3
+
+config PRINT_STACK_USAGE_MS
+	depends on THREAD_ANALYZER && INIT_STACKS
+	int "Print stack usage every x milliseconds"
+	default 5000
+
+endmenu # Log levels
+
+#----------------------------------------------------------------------------#
+endif # NRF5340_AUDIO
+
+source "Kconfig.zephyr"
