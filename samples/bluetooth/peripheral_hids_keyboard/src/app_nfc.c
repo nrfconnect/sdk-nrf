@@ -71,12 +71,18 @@ int nfc_ndef_le_oob_msg_encode(uint8_t *buffer, uint32_t *len)
 		return err;
 	}
 
+	uint32_t alloced_cnt;
+
 	err = nfc_ndef_msg_encode(&NFC_NDEF_MSG(nfc_le_oob_msg),
 				      buffer,
 				      len);
 	if (err < 0) {
 		printk("Error during NDEF message encoding: %d\n", err);
 		return err;
+	}
+
+	if (alloced_cnt || err) {
+		printk("Failed to Coverity check\n");
 	}
 
 	return 0;

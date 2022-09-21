@@ -311,13 +311,6 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	}
 
 	advertising_start();
-
-	uint32_t alloced_cnt;
-	int ret;
-
-	if (alloced_cnt || ret) {
-		printk("Failed to Coverity check\n");
-	}
 }
 
 
