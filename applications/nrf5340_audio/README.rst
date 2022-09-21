@@ -13,6 +13,19 @@ It is developed for use with the :ref:`nrf53_audio_app_dk`.
 In its default configuration, the application requires the :ref:`LC3 software codec <nrfxlib:lc3>`.
 The application also comes with various tools, including the :file:`buildprog.py` Python script that simplifies building and programming the firmware.
 
+.. _nrf53_audio_app_overview_features:
+
+Feature support matrix
+   The following table lists features of the nRF5340 Audio application and their respective limitations and maturity level.
+   For an explanation of the maturity levels, see :ref:`Software maturity levels <software_maturity>`.
+
+   .. note::
+      Features not listed are not supported.
+
+   .. include:: ../../doc/nrf/software_maturity.rst
+      :start-after: software_maturity_application_nrf5340audio_table:
+      :end-before: software_maturity_protocol
+
 .. _nrf53_audio_app_overview:
 
 Overview

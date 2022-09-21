@@ -73,10 +73,89 @@ See the following table for more details:
      - Incomplete verification
      - Not applicable.
 
+.. _software_maturity_application:
+
+Application support
+*******************
+
+The following subsections indicate the software maturity levels of the support for :ref:`applications <applications>`.
+
+.. note::
+    Features not listed are not supported.
+
+.. _software_maturity_application_nrf5340audio:
+
+nRF5340 Audio
+=============
+
+The following table indicates the software maturity levels of the support for the :ref:`nrf53_audio_app` application.
+
+.. _software_maturity_application_nrf5340audio_table:
+
+.. toggle::
+
+   .. list-table:: nRF5340 Audio application feature support
+      :header-rows: 1
+      :align: center
+      :widths: auto
+
+      * - Feature
+        - Description
+        - Limitations
+        - Maturity level
+      * - **Broadcast source**
+        - Transmitting broadcast audio using Broadcast Isochronous Stream (BIS) and Broadcast Isochronous Group (BIG).
+
+          Play and pause emulated by disabling and enabling stream, respectively.
+        - The following limitations apply:
+
+          * Basic Audio Profile (BAP) broadcast, one BIG with two BIS streams.
+          * Audio input: USB or I2S (Line in or using Pulse Density Modulation).
+          * Configuration: 48 kHz, 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
+
+        - Experimental
+      * - **Broadcast sink**
+        - Receiving broadcast audio using BIS and BIG.
+
+          Synchronizes and unsynchronizes with the stream.
+        - The following limitations apply:
+
+          * BAP broadcast, one BIG, one of the two BIS streams (selectable).
+          * Audio output: I2S/Analog headset output.
+          * Configuration: 48 kHz, 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
+
+        - Experimental
+      * - **Unicast source**
+        - BAP unicast, one Connected Isochronous Group (CIG) with two Connected Isochronous Streams (CIS).
+
+          Transmitting unidirectional audio using CIG and CIS.
+
+          Play and pause emulated by disabling and enabling stream, respectively.
+        - The following limitations apply:
+
+          * BAP unicast, one CIG with two CIS.
+          * Audio input: USB or I2S (Line in or using Pulse Density Modulation).
+          * Configuration: 48 kHz, 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
+
+        - Experimental
+      * - **Unicast sink**
+        - BAP unicast, 1 CIG with 2 CIS streams.
+
+          To emulate play and pause, the available context type for media is added or removed. This enables and disables streaming, respectively.
+        - The following limitations apply:
+
+          * BAP unicast, one CIG, one of the two CIS streams (selectable).
+          * Audio output: I2S/Analog headset output.
+          * Configuration: 48 kHz, 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
+
+        - Experimental
+
+.. _software_maturity_protocol:
+
 Protocol support
 ****************
 
-The following table indicates the software maturity levels of the support for each protocol:
+The following table indicates the software maturity levels of the support for each :ref:`protocol <protocols>`:
 
 .. sml-table:: top_level
 
@@ -127,28 +206,28 @@ The following sections contain the tables indicating the software maturity level
 * Hardware Unique Key
 
 Trusted Firmware-M support
---------------------------
+==========================
 
 .. toggle::
 
   .. sml-table:: trusted_firmware_m
 
 PSA Crypto support
-------------------
+==================
 
 .. toggle::
 
   .. sml-table:: psa_crypto
 
 |NSIB|
-------
+======
 
 .. toggle::
 
   .. sml-table:: immutable_bootloader
 
 Hardware Unique Key
--------------------
+===================
 
 .. toggle::
 
