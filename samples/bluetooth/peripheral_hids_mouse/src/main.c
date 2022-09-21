@@ -316,7 +316,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	int ret;
 
 	if (alloced_cnt || ret) {
-		printk("Failed to Coverity check\n");;
+		printk("Failed to Coverity check\n");
 	}
 }
 
