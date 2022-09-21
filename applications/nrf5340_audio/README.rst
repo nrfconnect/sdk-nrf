@@ -34,6 +34,7 @@ Overview
 The application can work as a gateway or a headset.
 The gateway receives the audio data from external sources (USB or I2S) and forwards it to one or more headsets.
 The headset is a receiver device that plays back the audio it gets from the gateway.
+It is also possible to enable a bidirectional mode where one gateway and one headset can send and receive audio to and from each other at the same time.
 
 Both device types use the same code base, but different firmware, and you need both types of devices for testing the application.
 Gateways and headsets can both run in one of the available application modes, either the *connected isochronous stream* (CIS) mode or in the *broadcast isochronous stream* (BIS) mode.
@@ -62,11 +63,6 @@ Regardless of the configuration, the application handles the audio data in the f
 
 #. Decoded audio data is sent to the hardware audio output over I2S.
 
-.. note::
-   Currently, only a unidirectional stream is supported (gateway to headsets).
-   In addition, only the gateway uses USB.
-   This means that no decoded audio data is sent over USB in the current version.
-
 In the `I2S-based firmware for gateway and headsets`_, sending the audio data through the application layers includes a mandatory synchronization step using the synchronization module.
 This proprietary module ensures that the audio is played at the same time with the correct speed.
 For more information, see `Synchronization module overview`_.
@@ -91,10 +87,12 @@ Connected Isochronous Stream (CIS)
   In this configuration, you can use the nRF5340 Audio development kit in the role of the gateway, the left headset, or the right headset.
 
   .. note::
-     In the current version of the nRF5340 Audio application, the CIS mode offers only monodirectional communication.
+     In the current version of the nRF5340 Audio application, the CIS mode offers both unidirectional and bidirectional communication.
+     In the bidirectional mode, the headset device will send audio from the on-board PDM microphone.
+     Note that only one headset device can be connected when testing the bidirectional mode
 
 Broadcast Isochronous Stream (BIS)
-  BIS is a monodirectional communication protocol that allows for broadcasting one or more audio streams from a source device to an unlimited number of receivers that are not connected to the source.
+  BIS is a unidirectional communication protocol that allows for broadcasting one or more audio streams from a source device to an unlimited number of receivers that are not connected to the source.
 
   In this configuration, you can use the nRF5340 Audio development kit in the role of the gateway or as one of the headsets.
   Use multiple nRF5340 Audio development kits to test BIS having multiple receiving headsets.
@@ -777,6 +775,17 @@ Selecting the BIS mode
 The CIS mode is the default operating mode for the application.
 You can switch to the BIS mode by adding the ``CONFIG_TRANSPORT_BIS`` Kconfig option set to ``y``  to the :file:`prj.conf` file for the debug version and the :file:`prj_release.conf` file for the release version.
 
+.. _nrf53_audio_app_configuration_select_bidirectional:
+
+Selecting the CIS bidirectional communication
+=============================================
+
+The CIS unidirectional mode is the default operating mode for the application.
+You can switch to the bidirectional mode by adding the :kconfig:option:`CONFIG_STREAM_BIDIRECTIONAL` Kconfig option set to ``y``  to the :file:`prj.conf` file (for the debug version) or to the :file:`prj_release.conf` file (for the release version).
+
+.. note::
+   Only one headset can be connected when using the bidirectional mode.
+
 .. _nrf53_audio_app_configuration_select_i2s:
 
 Selecting the I2S serial
@@ -1157,7 +1166,7 @@ This is the default setting.
 Testing the default CIS mode
 ----------------------------
 
-Complete the following steps to test the CIS mode for one gateway and two headset devices:
+Complete the following steps to test the unidirectional CIS mode for one gateway and two headset devices:
 
 1. Make sure that the development kits are still plugged into the USB ports and are turned on.
    After programming, **RGB2** starts blinking green on every device to indicate the ongoing CPU activity on the network core.
