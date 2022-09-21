@@ -927,7 +927,7 @@ static int add_modem_info_data(struct lte_param *param, cJSON *json_obj)
 		}
 	}
 
-	return ret;
+	return 0;
 }
 
 static int encode_modem_info_network(struct network_param *network, cJSON *json_obj)
@@ -991,7 +991,7 @@ static int encode_modem_info_network(struct network_param *network, cJSON *json_
 		return -EINVAL;
 	}
 
-	return ret;
+	return 0;
 }
 
 static int encode_modem_info_sim(struct sim_param *sim, cJSON *json_obj)
@@ -1053,7 +1053,7 @@ static int encode_modem_info_device(struct device_param *device, cJSON *json_obj
 		return -EINVAL;
 	}
 
-	return ret;
+	return 0;
 }
 
 static int encode_modem_info_json_object(struct modem_param_info *modem,
