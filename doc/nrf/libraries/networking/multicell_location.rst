@@ -82,10 +82,11 @@ Following are the options that can usually have default values:
 *  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_HTTPS_PORT`
 *  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_HOSTNAME`
 *  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_TLS_SEC_TAG`
-*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS`
 *  :kconfig:option:`CONFIG_MULTICELL_LOCATION_RECV_BUF_SIZE`
 
 Other relevant options for configuring location retrieval can be found from :ref:`lib_nrf_cloud_rest` and :ref:`lib_rest_client`.
+
+The maximum number of supported neighbor cell measurements for HERE location services depend on :kconfig:option:`CONFIG_LTE_NEIGHBOR_CELLS_MAX`.
 
 Limitations
 ***********

@@ -31,7 +31,7 @@ static struct method_cellular_positioning_work_args method_cellular_positioning_
 
 static K_SEM_DEFINE(cellmeas_data_ready, 0, 1);
 
-static struct lte_lc_ncell neighbor_cells[CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS];
+static struct lte_lc_ncell neighbor_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
 static struct lte_lc_cells_info cell_data = {
 	.neighbor_cells = neighbor_cells,
 };

@@ -246,7 +246,10 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* :ref:`lib_multicell_location` library:
+
+  * Removed Kconfig option :kconfig:option:`CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS`.
+    The maximum number of supported neighbor cell measurements for HERE location services depend on :kconfig:option:`CONFIG_LTE_NEIGHBOR_CELLS_MAX`.
 
   * :ref:`modem_info_readme` library:
 
