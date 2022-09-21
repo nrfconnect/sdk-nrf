@@ -332,6 +332,7 @@ function(add_child_image_from_source)
       EXTRA_KCONFIG_TARGETS
       NCS_TOOLCHAIN_VERSION
       PM_DOMAINS
+      SHIELD
       ${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION
       )
 
