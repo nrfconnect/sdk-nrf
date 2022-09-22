@@ -129,7 +129,7 @@ manifest:
       path: nrf-802154
       revision: 5216309d0610b838526d5b9c43815603aad2adaa
       groups:
-      - nrf-802154
+        - nrf-802154
     - name: cjson
       repo-path: sdk-cjson
       path: modules/lib/cjson
@@ -164,12 +164,12 @@ manifest:
       repo-path: sdk-homekit
       revision: 5d36cf6696e9d8c5f589934a8a6e7964b58c0d84
       groups:
-      - homekit
+        - homekit
     - name: find-my
       repo-path: sdk-find-my
       revision: 7d5abb066c35c01a65ee6c0c5525ff13caec939c
       groups:
-      - find-my
+        - find-my
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
       revision: 0.27.1
