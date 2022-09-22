@@ -233,6 +233,11 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
+* :ref:`bt_le_adv_prov_readme`:
+
+  * Added the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` option to TX power advertising data provider (:kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER`).
+    The option adds a predefined value to the TX power, that is included in the advertising data.
+
 * :ref:`bt_mesh` library:
 
   * :ref:`bt_mesh_dk_prov` module: Changed the UUID generation to prevent trailing zeros in the UUID.
