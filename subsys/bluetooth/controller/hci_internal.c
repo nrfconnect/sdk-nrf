@@ -971,6 +971,10 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_WRITE_BD_ADDR:
 		return sdc_hci_cmd_vs_zephyr_write_bd_addr((void *)cmd_params);
 
+	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_READ_CHIP_TEMP:
+		*param_length_out += sizeof(sdc_hci_cmd_vs_zephyr_read_chip_temp_return_t);
+		return sdc_hci_cmd_vs_zephyr_read_chip_temp((void *)event_out_params);
+
 #if defined(CONFIG_BT_CTLR_TX_PWR_DYNAMIC_CONTROL)
 	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_WRITE_TX_POWER:
 		*param_length_out += sizeof(sdc_hci_cmd_vs_zephyr_write_tx_power_return_t);
