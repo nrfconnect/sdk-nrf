@@ -38,7 +38,7 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #include "gnss_module.h"
 #include "lwm2m_engine.h"
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE)
 #include "ui_input.h"
 #include "ui_input_event.h"
 #endif
@@ -93,7 +93,7 @@ void ncell_meas_work_handler(struct k_work *work)
 }
 #endif
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE)
 static bool button_callback(const struct app_event_header *aeh)
 {
 	if (is_ui_input_event(aeh)) {
@@ -105,7 +105,8 @@ static bool button_callback(const struct app_event_header *aeh)
 
 		switch (event->device_number) {
 		case 1:
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS) || \
+defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 			LOG_INF("Starting GNSS");
 			start_gnss();
 #else
@@ -261,7 +262,7 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_PORTFOLIO_OBJ_SUPPORT)
 	lwm2m_init_portfolio_object();
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT) && \
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE) && \
 	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS)
 	location_event_handler_init(&client);
 #endif
