@@ -33,6 +33,8 @@ static struct
 	uint8_t raw_event[BT_BUF_EVT_RX_SIZE];
 } cmd_complete_or_status;
 
+static hci_internal_user_cmd_handler_t user_cmd_handler;
+
 static bool command_generates_command_complete_event(uint16_t hci_opcode)
 {
 	switch (hci_opcode) {
@@ -519,6 +521,16 @@ static void le_read_supported_states(uint8_t *buf)
 	states1 &= ~(BIT(22) | BIT(23));
 	*buf = states1;
 	*(buf + 4) = states2;
+}
+
+int hci_internal_user_cmd_handler_register(const hci_internal_user_cmd_handler_t handler)
+{
+	if (user_cmd_handler) {
+		return -EAGAIN;
+	}
+
+	user_cmd_handler = handler;
+	return 0;
 }
 
 #if defined(CONFIG_BT_CONN)
@@ -1018,52 +1030,65 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 
 static void cmd_put(uint8_t *cmd_in, uint8_t * const raw_event_out)
 {
-	uint8_t status;
+	uint8_t status = BT_HCI_ERR_UNKNOWN_CMD;
 	uint16_t opcode = sys_get_le16(cmd_in);
+	bool generate_command_status_event;
 
 	/* Assume command complete */
 	uint8_t return_param_length = sizeof(struct bt_hci_evt_cmd_complete)
 				      + sizeof(struct bt_hci_evt_cc_status);
 
-	switch (BT_OGF(opcode)) {
-#if defined(CONFIG_BT_CONN)
-	case BT_OGF_LINK_CTRL:
-		status = link_control_cmd_put(cmd_in);
-		break;
-#endif
-	case BT_OGF_BASEBAND:
-		status = controller_and_baseband_cmd_put(cmd_in,
-							 raw_event_out,
-							 &return_param_length);
-		break;
-	case BT_OGF_INFO:
-		status = info_param_cmd_put(cmd_in,
-					    raw_event_out,
-					    &return_param_length);
-		break;
-	case BT_OGF_STATUS:
-		status = status_param_cmd_put(cmd_in,
-					      raw_event_out,
-					      &return_param_length);
-		break;
-	case BT_OGF_LE:
-		status = le_controller_cmd_put(cmd_in,
-					       raw_event_out,
-					       &return_param_length);
-		break;
-#if defined(CONFIG_BT_HCI_VS)
-	case BT_OGF_VS:
-		status = vs_cmd_put(cmd_in,
-				    raw_event_out,
-				    &return_param_length);
-		break;
-#endif
-	default:
-		status = BT_HCI_ERR_UNKNOWN_CMD;
-		break;
+	if (user_cmd_handler) {
+		status = user_cmd_handler(cmd_in,
+					  raw_event_out,
+					  &return_param_length,
+					  &generate_command_status_event);
 	}
 
-	if (!command_generates_command_complete_event(opcode) ||
+	if (status == BT_HCI_ERR_UNKNOWN_CMD) {
+
+		switch (BT_OGF(opcode)) {
+#if defined(CONFIG_BT_CONN)
+		case BT_OGF_LINK_CTRL:
+			status = link_control_cmd_put(cmd_in);
+			break;
+#endif
+		case BT_OGF_BASEBAND:
+			status = controller_and_baseband_cmd_put(cmd_in,
+								 raw_event_out,
+								 &return_param_length);
+			break;
+		case BT_OGF_INFO:
+			status = info_param_cmd_put(cmd_in,
+						    raw_event_out,
+						    &return_param_length);
+			break;
+		case BT_OGF_STATUS:
+			status = status_param_cmd_put(cmd_in,
+						      raw_event_out,
+						      &return_param_length);
+			break;
+		case BT_OGF_LE:
+			status = le_controller_cmd_put(cmd_in,
+						       raw_event_out,
+						       &return_param_length);
+			break;
+#if defined(CONFIG_BT_HCI_VS)
+		case BT_OGF_VS:
+			status = vs_cmd_put(cmd_in,
+					    raw_event_out,
+					    &return_param_length);
+			break;
+#endif
+		default:
+			status = BT_HCI_ERR_UNKNOWN_CMD;
+			break;
+		}
+
+		generate_command_status_event = !command_generates_command_complete_event(opcode);
+	}
+
+	if (generate_command_status_event ||
 	    (status == BT_HCI_ERR_UNKNOWN_CMD))	{
 		encode_command_status(raw_event_out, opcode, status);
 	} else {
