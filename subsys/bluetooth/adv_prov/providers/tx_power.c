@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <limits.h>
 #include <zephyr/sys/byteorder.h>
 
 #include <zephyr/bluetooth/hci.h>
@@ -42,7 +43,13 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 		LOG_ERR("Read Tx power err: %d", err);
 	} else {
 		rp = (struct bt_hci_rp_vs_read_tx_power_level *)rsp->data;
-		tx_power = (uint8_t)rp->tx_power_level;
+
+		int readout = rp->tx_power_level;
+
+		readout += CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL;
+		__ASSERT_NO_MSG((readout >= INT8_MIN) && (readout <= INT8_MAX));
+		tx_power = (uint8_t)readout;
+
 		net_buf_unref(rsp);
 
 		ad->type = BT_DATA_TX_POWER;

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config BT_ADV_PROV_SWIFT_PAIR
+menuconfig BT_ADV_PROV_SWIFT_PAIR
 	bool "Microsoft Swift Pair"
 	help
 	  Adds Microsoft Swfit Pair manufacturer data to advertising data if

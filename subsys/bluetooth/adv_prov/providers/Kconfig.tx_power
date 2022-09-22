@@ -4,9 +4,22 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config BT_ADV_PROV_TX_POWER
+menuconfig BT_ADV_PROV_TX_POWER
 	bool "TX power"
 	select BT_CTLR_TX_PWR_DYNAMIC_CONTROL
 	help
 	  Adds TX power to advertising data. Provider reads the advertising TX
-	  power from Bluetooth controller.
+	  power from Bluetooth controller and adds predefined correction value
+	  to it.
+
+if BT_ADV_PROV_TX_POWER
+
+config BT_ADV_PROV_TX_POWER_CORRECTION_VAL
+	int "TX power correction value"
+	default 0
+	help
+	  The configured value is added to the TX power incluced in the
+	  advertising data. The correction may be needed to take into acccount
+	  hardware configuration (e.g. used antenna, device's casing).
+
+endif # BT_ADV_PROV_TX_POWER
