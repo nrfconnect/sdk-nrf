@@ -241,7 +241,9 @@ Wi-Fi samples
 
 * Added :ref:`wifi_radio_test` sample with the radio test support.
 
-* Added :ref:`wifi_scan_sample` sample for Wi-Fi Scan functionality.
+* Added :ref:`wifi_scan_sample` sample that demonstrates how to scan for the access points.
+
+* Added :ref:`wifi_station_sample` sample that demonstrates how to connect the Wi-Fi station to a specified access point.
 
 Other samples
 -------------
