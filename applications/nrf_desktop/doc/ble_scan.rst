@@ -73,7 +73,7 @@ Complete the following steps to enable the |ble_scan|:
       The Bluetooth device name for given peripheral is defined as the :kconfig:option:`CONFIG_BT_DEVICE_NAME` Kconfig option in the peripheral's configuration.
       For more detailed information about the Bluetooth advertising configuration in the nRF Desktop application, see the :ref:`nrf_desktop_ble_adv` documentation.
 
-#. Set the :ref:`CONFIG_DESKTOP_BLE_SCANNING_ENABLE <config_desktop_app_options>` option to enable the |ble_scan|.
+#. Set the :ref:`CONFIG_DESKTOP_BLE_SCAN_ENABLE <config_desktop_app_options>` option to enable the |ble_scan|.
 #. Set the :ref:`CONFIG_DESKTOP_BLE_SCAN_PM_EVENTS <config_desktop_app_options>` to block scanning in the power down mode to decrease the power consumption.
 
 By default, the nRF Desktop central always looks for both bonded and unbonded peripherals.
