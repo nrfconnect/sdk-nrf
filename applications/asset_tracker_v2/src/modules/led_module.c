@@ -21,6 +21,8 @@ static void send_led_event(size_t led_id, const struct led_effect *led_effect)
 
 	struct led_event *event = new_led_event();
 
+	__ASSERT(event, "Not enough heap left to allocate event");
+
 	event->led_id = led_id;
 	event->led_effect = led_effect;
 	APP_EVENT_SUBMIT(event);

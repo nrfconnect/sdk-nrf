@@ -235,6 +235,8 @@ static void timeout_send(void)
 {
 	struct gnss_module_event *gnss_module_event = new_gnss_module_event();
 
+	__ASSERT(gnss_module_event, "Not enough heap left to allocate event");
+
 	gnss_module_event->data.gnss.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 	gnss_module_event->data.gnss.satellites_tracked =
 				set_satellites_tracked(pvt_data.sv, ARRAY_SIZE(pvt_data.sv));
@@ -326,6 +328,8 @@ static void gnss_event_thread_fn(void)
 
 			struct gnss_module_event *gnss_module_event = new_gnss_module_event();
 
+			__ASSERT(gnss_module_event, "Not enough heap left to allocate event");
+
 			gnss_module_event->data.agps_request = agps_data;
 			gnss_module_event->type = GNSS_EVT_AGPS_NEEDED;
 			APP_EVENT_SUBMIT(gnss_module_event);
@@ -366,6 +370,8 @@ static void data_send_pvt(void)
 {
 	struct gnss_module_event *gnss_module_event = new_gnss_module_event();
 
+	__ASSERT(gnss_module_event, "Not enough heap left to allocate event");
+
 	gnss_module_event->data.gnss.pvt.longitude = pvt_data.longitude;
 	gnss_module_event->data.gnss.pvt.latitude = pvt_data.latitude;
 	gnss_module_event->data.gnss.pvt.altitude = pvt_data.altitude;
@@ -385,6 +391,8 @@ static void data_send_pvt(void)
 static void data_send_nmea(void)
 {
 	struct gnss_module_event *gnss_module_event = new_gnss_module_event();
+
+	__ASSERT(gnss_module_event, "Not enough heap left to allocate event");
 
 	strncpy(gnss_module_event->data.gnss.nmea, nmea_data.nmea_str,
 		sizeof(gnss_module_event->data.gnss.nmea) - 1);

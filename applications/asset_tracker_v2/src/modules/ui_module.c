@@ -261,8 +261,9 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
 	if (has_changed & button_states & DK_BTN1_MSK) {
 
-		struct ui_module_event *ui_module_event =
-				new_ui_module_event();
+		struct ui_module_event *ui_module_event = new_ui_module_event();
+
+		__ASSERT(ui_module_event, "Not enough heap left to allocate event");
 
 		ui_module_event->type = UI_EVT_BUTTON_DATA_READY;
 		ui_module_event->data.ui.button_number = 1;
@@ -274,8 +275,9 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 #if defined(CONFIG_BOARD_NRF9160DK_NRF9160_NS)
 	if (has_changed & button_states & DK_BTN2_MSK) {
 
-		struct ui_module_event *ui_module_event =
-				new_ui_module_event();
+		struct ui_module_event *ui_module_event = new_ui_module_event();
+
+		__ASSERT(ui_module_event, "Not enough heap left to allocate event");
 
 		ui_module_event->type = UI_EVT_BUTTON_DATA_READY;
 		ui_module_event->data.ui.button_number = 2;
@@ -292,6 +294,8 @@ static void update_led_pattern(enum led_state pattern)
 {
 #if defined(CONFIG_LED_CONTROL)
 	struct led_state_event *event = new_led_state_event();
+
+	__ASSERT(event, "Not enough heap left to allocate event");
 
 	event->state = pattern;
 	APP_EVENT_SUBMIT(event);

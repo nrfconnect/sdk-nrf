@@ -138,6 +138,8 @@ static void activity_data_send(const struct ext_sensor_evt *const acc_data)
 {
 	struct sensor_module_event *sensor_module_event = new_sensor_module_event();
 
+	__ASSERT(sensor_module_event, "Not enough heap left to allocate event");
+
 	if (acc_data->type == EXT_SENSOR_EVT_ACCELEROMETER_ACT_TRIGGER)	{
 		sensor_module_event->type = SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED;
 	} else {
@@ -150,6 +152,8 @@ static void activity_data_send(const struct ext_sensor_evt *const acc_data)
 static void impact_data_send(const struct ext_sensor_evt *const evt)
 {
 	struct sensor_module_event *sensor_module_event = new_sensor_module_event();
+
+	__ASSERT(sensor_module_event, "Not enough heap left to allocate event");
 
 	sensor_module_event->data.impact.magnitude = evt->value;
 	sensor_module_event->data.impact.timestamp = k_uptime_get();
@@ -272,6 +276,9 @@ static void environmental_data_get(void)
 	}
 
 	sensor_module_event = new_sensor_module_event();
+
+	__ASSERT(sensor_module_event, "Not enough heap left to allocate event");
+
 	sensor_module_event->data.sensors.timestamp = k_uptime_get();
 	sensor_module_event->data.sensors.temperature = temperature;
 	sensor_module_event->data.sensors.humidity = humidity;
@@ -292,6 +299,9 @@ static void environmental_data_get(void)
 	 * This makes sure that the entry is not stored in the circular buffer.
 	 */
 	sensor_module_event = new_sensor_module_event();
+
+	__ASSERT(sensor_module_event, "Not enough heap left to allocate event");
+
 	sensor_module_event->type = SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED;
 #endif
 	APP_EVENT_SUBMIT(sensor_module_event);

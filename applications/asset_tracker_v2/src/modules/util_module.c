@@ -187,14 +187,14 @@ static void send_reboot_request(enum shutdown_reason reason)
 	static bool error_signaled;
 
 	if (!error_signaled) {
-		struct util_module_event *util_module_event =
-				new_util_module_event();
+		struct util_module_event *util_module_event = new_util_module_event();
+
+		__ASSERT(util_module_event, "Not enough heap left to allocate event");
 
 		util_module_event->type = UTIL_EVT_SHUTDOWN_REQUEST;
 		util_module_event->reason = reason;
 
-		k_work_reschedule(&reboot_work,
-				      K_SECONDS(CONFIG_REBOOT_TIMEOUT));
+		k_work_reschedule(&reboot_work, K_SECONDS(CONFIG_REBOOT_TIMEOUT));
 
 		APP_EVENT_SUBMIT(util_module_event);
 

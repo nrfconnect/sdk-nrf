@@ -470,6 +470,8 @@ static void send_cell_update(uint32_t cell_id, uint32_t tac)
 {
 	struct modem_module_event *evt = new_modem_module_event();
 
+	__ASSERT(evt, "Not enough heap left to allocate event");
+
 	evt->type = MODEM_EVT_LTE_CELL_UPDATE;
 	evt->data.cell.cell_id = cell_id;
 	evt->data.cell.tac = tac;
@@ -481,6 +483,8 @@ static void send_psm_update(int tau, int active_time)
 {
 	struct modem_module_event *evt = new_modem_module_event();
 
+	__ASSERT(evt, "Not enough heap left to allocate event");
+
 	evt->type = MODEM_EVT_LTE_PSM_UPDATE;
 	evt->data.psm.tau = tau;
 	evt->data.psm.active_time = active_time;
@@ -491,6 +495,8 @@ static void send_psm_update(int tau, int active_time)
 static void send_edrx_update(float edrx, float ptw)
 {
 	struct modem_module_event *evt = new_modem_module_event();
+
+	__ASSERT(evt, "Not enough heap left to allocate event");
 
 	evt->type = MODEM_EVT_LTE_EDRX_UPDATE;
 	evt->data.edrx.edrx = edrx;
@@ -532,6 +538,8 @@ static inline int adjust_rsrq(int input)
 static void send_neighbor_cell_update(struct lte_lc_cells_info *cell_info)
 {
 	struct modem_module_event *evt = new_modem_module_event();
+
+	__ASSERT(evt, "Not enough heap left to allocate event");
 
 	BUILD_ASSERT(sizeof(evt->data.neighbor_cells.cell_data) ==
 		     sizeof(struct lte_lc_cells_info));
@@ -575,6 +583,8 @@ static int static_modem_data_get(void)
 	}
 
 	struct modem_module_event *modem_module_event = new_modem_module_event();
+
+	__ASSERT(modem_module_event, "Not enough heap left to allocate event");
 
 	strncpy(modem_module_event->data.modem_static.app_version,
 		CONFIG_ASSET_TRACKER_V2_APP_VERSION,
@@ -765,6 +775,8 @@ static int dynamic_modem_data_get(void)
 
 	struct modem_module_event *modem_module_event = new_modem_module_event();
 
+	__ASSERT(modem_module_event, "Not enough heap left to allocate event");
+
 	populate_event_with_dynamic_modem_data(modem_module_event, &modem_param);
 
 	APP_EVENT_SUBMIT(modem_module_event);
@@ -797,11 +809,11 @@ static int battery_data_get(void)
 		return err;
 	}
 
-	struct modem_module_event *modem_module_event =
-			new_modem_module_event();
+	struct modem_module_event *modem_module_event = new_modem_module_event();
 
-	modem_module_event->data.bat.battery_voltage =
-			modem_param.device.battery.value;
+	__ASSERT(modem_module_event, "Not enough heap left to allocate event");
+
+	modem_module_event->data.bat.battery_voltage = modem_param.device.battery.value;
 	modem_module_event->data.bat.timestamp = k_uptime_get();
 	modem_module_event->type = MODEM_EVT_BATTERY_DATA_READY;
 
