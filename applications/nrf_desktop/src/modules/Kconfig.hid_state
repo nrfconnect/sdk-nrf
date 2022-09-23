@@ -10,7 +10,7 @@ config DESKTOP_HID_STATE_ENABLE
 	bool "Enable HID state"
 	depends on BT_PERIPHERAL
 	help
-	  HID events processing module.
+	  The module generates HID reports based on user input.
 
 if DESKTOP_HID_STATE_ENABLE
 

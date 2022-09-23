@@ -6,7 +6,6 @@
 
 menu "Application modules"
 
-rsource "Kconfig.hid"
 rsource "Kconfig.hid_state"
 rsource "Kconfig.led_state"
 rsource "Kconfig.led_stream"
