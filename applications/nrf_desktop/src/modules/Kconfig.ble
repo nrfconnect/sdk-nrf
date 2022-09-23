@@ -262,7 +262,7 @@ if BT_CENTRAL
 config DESKTOP_BLE_USB_MANAGED_CI
 	bool "Manage connection intervals on the USB state change"
 	default y
-	depends on DESKTOP_HID_DONGLE
+	depends on DESKTOP_ROLE_HID_DONGLE
 	depends on DESKTOP_USB_ENABLE
 	help
 	  Manage BLE connection intervals depending on the USB state.
