@@ -47,7 +47,7 @@ The service also enables some of the functionalities using Kconfig select statem
 Bluetooth privacy
 -----------------
 
-The service selects Bluetooth privacy (:kconfig:option:`CONFIG_BT_PRIVACY`) and sets the default value of :kconfig:option:`CONFIG_BT_RPA_TIMEOUT` to 3600 seconds.
+The service selects Bluetooth privacy (:kconfig:option:`CONFIG_BT_PRIVACY`).
 
 During not discoverable advertising, the Resolvable Private Address (RPA) rotation must be done together with the Fast Pair payload update.
 Because of this, the RPA cannot be rotated by Zephyr in the background.

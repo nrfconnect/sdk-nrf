@@ -29,22 +29,14 @@ LOG_MODULE_DECLARE(fp_sample, LOG_LEVEL_INF);
 /* According to Fast Pair specification RPA rotation must be synchronized with generating new salt
  * for Acount Key Filter advertising data. The RPA rotation must occur at least every 15 minutes
  * while the device is actively advertising in Fast Pair not discoverable mode. The value of this
- * timeout must be lower than CONFIG_BT_RPA_TIMEOUT (3600 seconds) to ensure that RPA rotation will
- * always trigger update of Account Key Filter advertising data.
+ * timeout must be lower than CONFIG_BT_RPA_TIMEOUT to ensure that RPA rotation will always trigger
+ * update of Account Key Filter advertising data.
  */
 #define RPA_TIMEOUT_NON_DISCOVERABLE	(13 * SEC_PER_MIN)
 #define RPA_TIMEOUT_OFFSET_MAX		(2 * SEC_PER_MIN)
 #define RPA_TIMEOUT_FAST_PAIR_MAX	(15 * SEC_PER_MIN)
 
-/* The Bluetooth Core Specification v5.2 (Vol. 4, Part E, 7.8.45) allows for time range between
- * 1 second and 3600 seconds. In case of Fast Pair we should avoid RPA address rotation when device
- * is Fast Pair discoverable. If not discoverable, the RPA address rotation should be done together
- * with Fast Pair payload update (responsibility of sample/application).
- */
-BUILD_ASSERT(CONFIG_BT_RPA_TIMEOUT == 3600);
-
-/* Make sure that RPA rotation will be done together with Fast Pair payload update. */
-BUILD_ASSERT(RPA_TIMEOUT_NON_DISCOVERABLE < CONFIG_BT_RPA_TIMEOUT);
+BUILD_ASSERT(RPA_TIMEOUT_FAST_PAIR_MAX < CONFIG_BT_RPA_TIMEOUT);
 
 static struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
