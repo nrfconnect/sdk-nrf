@@ -146,6 +146,11 @@ set_property(TARGET zephyr_property_target
     -DCRYPTO_ENGINE_BUF_SIZE=${CONFIG_TFM_CRYPTO_ENGINE_BUF_SIZE}
     -DCRYPTO_CONC_OPER_NUM=${CONFIG_TFM_CRYPTO_CONC_OPER_NUM}
     -DCRYPTO_IOVEC_BUFFER_SIZE=${CONFIG_TFM_CRYPTO_IOVEC_BUFFER_SIZE}
+    # Pass Zephyr Python to TF-M so both uses identical Python.
+    -DPython3_EXECUTABLE=${Python3_EXECUTABLE}
+    # TF-M calls back into nrf_security which loads Zephyr Python lookup
+    # mechanism, thus also set PYTHON_PREFER.
+    -DPYTHON_PREFER=${Python3_EXECUTABLE}
 )
 
 zephyr_include_directories(${NRF_DIR}/include/tfm)
