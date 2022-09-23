@@ -73,6 +73,13 @@ The following FEM implementations are supported:
 * The nRF21540 2-pin simple GPIO implementation.
   To use it, set the :kconfig:option:`CONFIG_MPSL_FEM_SIMPLE_GPIO` Kconfig option to ``y``.
 
+It is possible to only use the :ref:`nrfxlib:mpsl_fem` API if your application does not require other MPSL features.
+This could be useful when you want to run simple radio protocols that are not intended to be used concurrently with other protocols.
+You can do that by setting the :kconfig:option:`CONFIG_MPSL_FEM_ONLY` Kconfig option to ``y``.
+
+Some applications can perform calls to the :ref:`nrfxlib:mpsl_fem` API even though no RF Front-End module is physically connected to the device and the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option is set to ``n``.
+In that case, ensure that the :kconfig:option:`CONFIG_MPSL_FEM_API_AVAILABLE` Kconfig option is set to ``y``.
+
 Setting the FEM output power
 ----------------------------
 
@@ -91,13 +98,6 @@ To enable runtime control of the gain, set the :kconfig:option:`CONFIG_MPSL_FEM_
 This option makes the gain of the FEM to be adjusted dynamically during runtime, depending on the power requested by the protocol driver for each transmission.
 For the nRF21540 GPIO implementation, you must enable the **MODE** pin in devicetree.
 For the nRF21540 GPIO SPI implementation, no additional configuration is needed as the gain setting is transmitted over the SPI bus to the nRF21540.
-
-You can use only the :ref:`nrfxlib:mpsl_fem` API if your application does not require other MPSL features.
-This might be useful when you want to run simple radio protocols that are not intended to be used concurrently with other protocols.
-Enable the following Kconfig options:
-
-* :kconfig:option:`CONFIG_MPSL`
-* :kconfig:option:`CONFIG_MPSL_FEM_ONLY`
 
 Using FEM power models
 ----------------------

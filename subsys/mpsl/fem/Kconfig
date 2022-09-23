@@ -28,6 +28,12 @@ config MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool
 	default n
 
+config MPSL_FEM_API_AVAILABLE
+	bool
+	# Must be set to y for MPSL FEM protocol API to be available
+	depends on MPSL
+	default y
+
 config MPSL_FEM
 	bool "Radio front-end module (FEM) support"
 	# MPSL_FEM_GENERIC_TWO_CTRL_PINS is not supported on nRF53 yet
