@@ -7,5 +7,5 @@
 config BT_ADV_PROV_FLAGS
 	bool "Advertising flags"
 	help
-	  Adds flag indicating that BR/EDR is not supported. If used Bluetooth
-	  local identity has no bonds, adds also General Discoverable flag.
+	  Adds flag indicating that BR/EDR is not supported. If device is
+	  in pairing mode, adds also General Discoverable flag.

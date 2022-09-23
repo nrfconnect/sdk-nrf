@@ -241,6 +241,8 @@ Bluetooth libraries and services
 
   * Added the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` option to TX power advertising data provider (:kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER`).
     The option adds a predefined value to the TX power, that is included in the advertising data.
+  * Changed :c:member:`bt_le_adv_prov_adv_state.bond_cnt` to :c:member:`bt_le_adv_prov_adv_state.pairing_mode`.
+    The information about whether the advertising device is looking for a new peer is more meaningful for the Bluetooth LE data providers.
 
 * :ref:`bt_mesh` library:
 

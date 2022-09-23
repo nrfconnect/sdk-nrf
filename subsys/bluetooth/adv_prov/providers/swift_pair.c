@@ -19,7 +19,7 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 		0x80		/* Reserved RSSI Byte */
 	};
 
-	if (state->in_grace_period || (state->bond_cnt > 0)) {
+	if (state->in_grace_period || (!state->pairing_mode)) {
 		return -ENOENT;
 	}
 
