@@ -42,6 +42,7 @@ extern "C" {
  */
 #define SEND_EVENT(_mod, _type)								\
 	struct _mod ## _module_event *event = new_ ## _mod ## _module_event();		\
+	__ASSERT(event, "Not enough heap left to allocate event");			\
 	event->type = _type;								\
 	APP_EVENT_SUBMIT(event)
 
@@ -53,6 +54,7 @@ extern "C" {
  */
 #define SEND_ERROR(_mod, _type, _error_code)						\
 	struct _mod ## _module_event *event = new_ ## _mod ## _module_event();		\
+	__ASSERT(event, "Not enough heap left to allocate event");			\
 	event->type = _type;								\
 	event->data.err = _error_code;							\
 	APP_EVENT_SUBMIT(event)
@@ -65,6 +67,7 @@ extern "C" {
  */
 #define SEND_SHUTDOWN_ACK(_mod, _type, _id)						\
 	struct _mod ## _module_event *event = new_ ## _mod ## _module_event();		\
+	__ASSERT(event, "Not enough heap left to allocate event");			\
 	event->type = _type;								\
 	event->data.id = _id;								\
 	APP_EVENT_SUBMIT(event)

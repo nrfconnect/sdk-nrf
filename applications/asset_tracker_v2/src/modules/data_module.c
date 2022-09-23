@@ -492,6 +492,8 @@ static void config_distribute(enum data_module_event_type type)
 {
 	struct data_module_event *data_module_event = new_data_module_event();
 
+	__ASSERT(data_module_event, "Not enough heap left to allocate event");
+
 	data_module_event->type = type;
 	data_module_event->data.cfg = current_cfg;
 
@@ -502,6 +504,9 @@ static void data_send(enum data_module_event_type event,
 		      struct cloud_codec_data *data)
 {
 	struct data_module_event *module_event = new_data_module_event();
+
+	__ASSERT(module_event, "Not enough heap left to allocate event");
+
 	module_event->type = event;
 
 	BUILD_ASSERT((sizeof(data->paths) == sizeof(module_event->data.buffer.paths)),
