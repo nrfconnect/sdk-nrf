@@ -9,20 +9,14 @@
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
-#include <zephyr/bluetooth/uuid.h>
+#include <bluetooth/adv_prov.h>
+#include <bluetooth/adv_prov/fast_pair.h>
 #include <bluetooth/services/fast_pair.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fp_sample, LOG_LEVEL_INF);
 
-#include "bt_tx_power_adv.h"
 #include "bt_adv_helper.h"
-
-#define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
-
-#define TX_POWER_ADV_DATA_POS	(ARRAY_SIZE(ad) - 2)
-#define FAST_PAIR_ADV_DATA_POS	(ARRAY_SIZE(ad) - 1)
 
 #define SEC_PER_MIN		60U
 
@@ -37,26 +31,6 @@ LOG_MODULE_DECLARE(fp_sample, LOG_LEVEL_INF);
 #define RPA_TIMEOUT_FAST_PAIR_MAX	(15 * SEC_PER_MIN)
 
 BUILD_ASSERT(RPA_TIMEOUT_FAST_PAIR_MAX < CONFIG_BT_RPA_TIMEOUT);
-
-static struct bt_data ad[] = {
-	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
-		      BT_UUID_16_ENCODE(BT_UUID_HIDS_VAL),
-		      BT_UUID_16_ENCODE(BT_UUID_BAS_VAL)),
-	/* Empty placeholder for TX power advertising data. */
-	{
-	},
-	/* Empty placeholder for Fast Pair advertising data. */
-	{
-	},
-};
-
-static const struct bt_data sd[] = {
-	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
-	BT_DATA_BYTES(BT_DATA_GAP_APPEARANCE,
-		      (CONFIG_BT_DEVICE_APPEARANCE & BIT_MASK(__CHAR_BIT__)),
-		      (CONFIG_BT_DEVICE_APPEARANCE >> __CHAR_BIT__)),
-};
 
 static enum bt_fast_pair_adv_mode adv_helper_fp_adv_mode;
 
@@ -78,56 +52,20 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected        = connected,
 };
 
-static int bt_adv_helper_fast_pair_prepare(struct bt_data *adv_data,
-					   enum bt_fast_pair_adv_mode fp_adv_mode)
+static void bond_count_helper(const struct bt_bond_info *info, void *user_data)
 {
-	/* Make sure that Fast Pair data was freed and set to NULL to prevent memory leaks. */
-	if (adv_data->data) {
-		k_free((void *)adv_data->data);
-		adv_data->data = NULL;
-	}
+	ARG_UNUSED(info);
+	size_t *cnt = user_data;
 
-	/* Fast Pair pairing mode must be manually set by the sample. */
-	bt_fast_pair_set_pairing_mode(fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE);
-
-	size_t buf_size = bt_fast_pair_adv_data_size(fp_adv_mode);
-	uint8_t *buf = k_malloc(buf_size);
-
-	if (!buf) {
-		return -ENOMEM;
-	}
-
-	int err = bt_fast_pair_adv_data_fill(adv_data, buf, buf_size, fp_adv_mode);
-
-	if (err) {
-		k_free(buf);
-	}
-
-	return err;
+	(*cnt)++;
 }
 
-static int bt_adv_helper_tx_power_prepare(struct bt_data *adv_data)
+static bool pairing_mode(void)
 {
-	/* Make sure that TX power data was freed and set to NULL to prevent memory leaks. */
-	if (adv_data->data) {
-		k_free((void *)adv_data->data);
-		adv_data->data = NULL;
-	}
+	size_t res = 0;
 
-	size_t buf_size = bt_tx_power_adv_data_size();
-	uint8_t *buf = k_malloc(buf_size);
-
-	if (!buf) {
-		return -ENOMEM;
-	}
-
-	int err = bt_tx_power_adv_data_fill(adv_data, buf, buf_size);
-
-	if (err) {
-		k_free(buf);
-	}
-
-	return err;
+	bt_foreach_bond(BT_ID_DEFAULT, bond_count_helper, &res);
+	return (res < CONFIG_BT_MAX_PAIRED);
 }
 
 static int adv_start_internal(enum bt_fast_pair_adv_mode fp_adv_mode)
@@ -140,15 +78,29 @@ static int adv_start_internal(enum bt_fast_pair_adv_mode fp_adv_mode)
 		return err;
 	}
 
-	err = bt_adv_helper_fast_pair_prepare(&ad[FAST_PAIR_ADV_DATA_POS], fp_adv_mode);
+	/* Set advertising mode of Fast Pair advertising data provider. */
+	bt_adv_prov_fast_pair_mode_set(fp_adv_mode);
+
+	size_t ad_len = bt_le_adv_prov_get_ad_prov_cnt();
+	size_t sd_len = bt_le_adv_prov_get_sd_prov_cnt();
+	struct bt_data ad[ad_len];
+	struct bt_data sd[sd_len];
+
+	struct bt_le_adv_prov_adv_state state;
+	struct bt_le_adv_prov_feedback fb;
+
+	state.pairing_mode = pairing_mode();
+	state.in_grace_period = false;
+
+	err = bt_le_adv_prov_get_ad(ad, &ad_len, &state, &fb);
 	if (err) {
-		LOG_ERR("Cannot prepare Fast Pair advertising data (err: %d)", err);
+		LOG_ERR("Cannot get advertising data (err: %d)", err);
 		return err;
 	}
 
-	err = bt_adv_helper_tx_power_prepare(&ad[TX_POWER_ADV_DATA_POS]);
+	err = bt_le_adv_prov_get_sd(sd, &sd_len, &state, &fb);
 	if (err) {
-		LOG_ERR("Cannot prepare TX power advertising data (err: %d)", err);
+		LOG_ERR("Cannot get scan response data (err: %d)", err);
 		return err;
 	}
 
@@ -170,7 +122,7 @@ static int adv_start_internal(enum bt_fast_pair_adv_mode fp_adv_mode)
 		.peer = NULL,
 	};
 
-	err = bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+	err = bt_le_adv_start(&adv_param, ad, ad_len, sd, sd_len);
 
 	if ((!err) && (fp_adv_mode != BT_FAST_PAIR_ADV_MODE_DISCOVERABLE)) {
 		unsigned int rpa_timeout_ms = RPA_TIMEOUT_NON_DISCOVERABLE * MSEC_PER_SEC;
@@ -208,6 +160,7 @@ int bt_adv_helper_adv_start(enum bt_fast_pair_adv_mode fp_adv_mode)
 	ARG_UNUSED(ret);
 
 	adv_helper_fp_adv_mode = fp_adv_mode;
+	LOG_INF("Looking for a new peer: %s", pairing_mode() ? "yes" : "no");
 
 	return adv_start_internal(fp_adv_mode);
 }
