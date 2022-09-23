@@ -121,7 +121,6 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		LOG_WRN("LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_FAILURE");
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_DISCONNECTED;
 		notify = true;
-		state = DISCONNECTED;
 		break;
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_COMPLETE:
 		LOG_DBG("LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_COMPLETE");
@@ -141,7 +140,6 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		LOG_WRN("LWM2M_RD_CLIENT_EVENT_REGISTRATION_FAILURE");
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_DISCONNECTED;
 		notify = true;
-		state = DISCONNECTED;
 		break;
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_COMPLETE:
 		LOG_DBG("LWM2M_RD_CLIENT_EVENT_REGISTRATION_COMPLETE");
@@ -157,18 +155,22 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		break;
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE:
 		LOG_WRN("LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE");
-		cloud_wrap_evt.type = CLOUD_WRAP_EVT_DISCONNECTED;
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_CONNECTING;
+		state = CONNECTING;
 		notify = true;
-		state = DISCONNECTED;
 		break;
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_COMPLETE:
 		LOG_DBG("LWM2M_RD_CLIENT_EVENT_REG_UPDATE_COMPLETE");
+		if (state == CONNECTING) {
+			cloud_wrap_evt.type = CLOUD_WRAP_EVT_CONNECTED;
+			notify = true;
+			state = CONNECTED;
+		}
 		break;
 	case LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE:
 		LOG_WRN("LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE");
-		cloud_wrap_evt.type = CLOUD_WRAP_EVT_DISCONNECTED;
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
 		notify = true;
-		state = DISCONNECTED;
 		break;
 	case LWM2M_RD_CLIENT_EVENT_DISCONNECT:
 		LOG_DBG("LWM2M_RD_CLIENT_EVENT_DISCONNECT");
@@ -178,13 +180,25 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		break;
 	case LWM2M_RD_CLIENT_EVENT_NETWORK_ERROR:
 		LOG_ERR("LWM2M_RD_CLIENT_EVENT_NETWORK_ERROR");
-		cloud_wrap_evt.type = CLOUD_WRAP_EVT_DISCONNECTED;
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
 		notify = true;
-		state = DISCONNECTED;
 		break;
 	default:
 		LOG_ERR("Unknown event: %d", client_event);
 		break;
+	}
+
+	/* If a LwM2M failure has occurred, we explicitly stop the engine before the cloud module
+	 * is notified with the CLOUD_WRAP_EVT_DISCONNECTED event. This is to clear up any
+	 * LwM2M engine state to ensure that we are able to perform a clean restart of the engine.
+	 */
+	if (notify && cloud_wrap_evt.type == CLOUD_WRAP_EVT_DISCONNECTED) {
+		int err = cloud_wrap_disconnect();
+
+		if (err) {
+			LOG_ERR("cloud_wrap_disconnect, error: %d", err);
+			cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
+		}
 	}
 
 	if (notify) {
