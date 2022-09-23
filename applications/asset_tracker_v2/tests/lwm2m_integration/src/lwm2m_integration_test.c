@@ -321,12 +321,20 @@ void test_lwm2m_integration_reboot_request(void)
 
 void test_lwm2m_integration_bootstrap_registration_failure(void)
 {
+	test_lwm2m_integration_connect();
+
+	__wrap_lwm2m_rd_client_stop_ExpectAnyArgsAndReturn(0);
+
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_FAILURE);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_DISCONNECTED, last_cb_type);
 }
 
 void test_lwm2m_integration_registration_failure(void)
 {
+	test_lwm2m_integration_connect();
+
+	__wrap_lwm2m_rd_client_stop_ExpectAnyArgsAndReturn(0);
+
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REGISTRATION_FAILURE);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_DISCONNECTED, last_cb_type);
 }
@@ -334,19 +342,28 @@ void test_lwm2m_integration_registration_failure(void)
 void test_lwm2m_integration_registration_update_failure(void)
 {
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE);
-	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_DISCONNECTED, last_cb_type);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_CONNECTING, last_cb_type);
+}
+
+void test_lwm2m_integration_registration_update_success(void)
+{
+	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_CONNECTING, last_cb_type);
+
+	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REG_UPDATE_COMPLETE);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_CONNECTED, last_cb_type);
 }
 
 void test_lwm2m_integration_deregistration_failure(void)
 {
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE);
-	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_DISCONNECTED, last_cb_type);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_ERROR, last_cb_type);
 }
 
 void test_lwm2m_integration_network_error(void)
 {
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_NETWORK_ERROR);
-	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_DISCONNECTED, last_cb_type);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_ERROR, last_cb_type);
 }
 
 void test_lwm2m_integration_fota_result_get(void)
