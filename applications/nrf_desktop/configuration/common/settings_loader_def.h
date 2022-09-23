@@ -32,7 +32,7 @@ static inline void get_req_modules(struct module_flags *mf)
 #if CONFIG_DESKTOP_MOTION_SENSOR_ENABLE
 	module_flags_set_bit(mf, MODULE_IDX(motion));
 #endif
-#if CONFIG_DESKTOP_BLE_SCANNING_ENABLE
+#if CONFIG_DESKTOP_BLE_SCAN_ENABLE
 	module_flags_set_bit(mf, MODULE_IDX(ble_scan));
 #endif
 #if CONFIG_DESKTOP_FAILSAFE_ENABLE

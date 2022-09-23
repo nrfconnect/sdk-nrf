@@ -160,17 +160,36 @@ endif
 
 comment "BLE Scanning"
 
-config DESKTOP_BLE_SCANNING_ENABLE
+config DESKTOP_BLE_SCAN_ENABLE
 	bool "Enable BLE scanning"
-	default n
+	select BT_SCAN
+	select BT_SCAN_FILTER_ENABLE
 	depends on BT_CENTRAL
 	help
 	  Enable device to scan for peripheral devices.
 
+if DESKTOP_BLE_SCAN_ENABLE
+
+config BT_SCAN_NAME_CNT
+	default 2
+	help
+	  The nRF Desktop by default uses two name filters. The peripheral
+	  device may advertise either as mouse or as keyboard.
+
+config BT_SCAN_ADDRESS_CNT
+	default BT_MAX_PAIRED
+	help
+	  The nRF Desktop needs an address filter per every bonded peripheral.
+
+config BT_SCAN_CONN_ATTEMPTS_FILTER
+	default y
+	help
+	  The connection attempts filter is enabled by default to limit number
+	  of attempts to connect to the device.
+
 config DESKTOP_BLE_SCAN_START_TIMEOUT_S
 	int "Scan start timeout [s]"
 	default 5
-	depends on DESKTOP_BLE_SCANNING_ENABLE
 	help
 	  After disabled, scanning is re-enabled after defined time of connected
 	  peripherals inactivity (scanning has negative impact on user
@@ -178,8 +197,7 @@ config DESKTOP_BLE_SCAN_START_TIMEOUT_S
 
 config DESKTOP_BLE_SCAN_DURATION_S
 	int "Scan duration [s]"
-	default 5
-	depends on DESKTOP_BLE_SCANNING_ENABLE
+	default 30
 	help
 	  After this time scan is disabled if any peripheral is connected.
 
@@ -187,37 +205,32 @@ config DESKTOP_BLE_SCAN_MOUSE_LIMIT
 	int "Maximum number of bonded mice"
 	default 1
 	range 0 255
-	depends on DESKTOP_BLE_SCANNING_ENABLE
 
 config DESKTOP_BLE_SCAN_KEYBOARD_LIMIT
 	int "Maximum number of bonded keyboards"
 	default 1
 	range 0 255
-	depends on DESKTOP_BLE_SCANNING_ENABLE
 
 config DESKTOP_BLE_SCAN_PM_EVENTS
 	bool "Stop and block scanning in the power down mode"
 	default y
-	depends on DESKTOP_BLE_SCANNING_ENABLE
 	depends on CAF_PM_EVENTS
 	help
 	  Stop and block scanning for peers if the central switched to the power down mode
 	  to reduce power consumption.
 
-if DESKTOP_BLE_SCANNING_ENABLE
-
-module = DESKTOP_BLE_SCANNING
-module-str = BLE scanning
+module = DESKTOP_BLE_SCAN
+module-str = BLE scan
 source "subsys/logging/Kconfig.template.log_config"
 
-endif
+endif # DESKTOP_BLE_SCAN_ENABLE
 
 
 comment "BLE Discovery"
 
 config DESKTOP_BLE_DISCOVERY_ENABLE
 	bool "Enable BLE discovery"
-	depends on DESKTOP_BLE_SCANNING_ENABLE
+	depends on DESKTOP_BLE_SCAN_ENABLE
 	help
 	  Enable device to read device description (custom GATT Service),
 	  Device Information Service and discover HIDS.

@@ -19,7 +19,7 @@ target_sources_ifdef(CONFIG_BT_CENTRAL
 target_sources_ifdef(CONFIG_DESKTOP_BLE_DISCOVERY_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_discovery.c)
 
-target_sources_ifdef(CONFIG_DESKTOP_BLE_SCANNING_ENABLE
+target_sources_ifdef(CONFIG_DESKTOP_BLE_SCAN_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_scan.c)
 
 target_sources_ifdef(CONFIG_DESKTOP_BLE_QOS_ENABLE
