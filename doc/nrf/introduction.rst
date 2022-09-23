@@ -1,18 +1,25 @@
 .. _ncs_introduction:
 
-About the |NCS|
-###############
+Introduction
+############
 
 .. contents::
    :local:
    :depth: 2
 
-The |NCS| enables you to develop applications for nRF52, nRF53, and nRF91 Series devices.
-It is a combination of software developed by Nordic Semiconductor and open source projects, hosted as `Git`_ repositories in the `nrfconnect GitHub organization`_.
+The |NCS| is a scalable and unified software development kit for building low-power wireless applications based on the Nordic Semiconductor nRF52, nRF53, and nRF91 Series wireless devices.
+It offers an extensible framework for building size-optimized software for memory-constrained devices as well as powerful and complex software for more advanced devices and applications.
 
-Every |NCS| release consists of a combination of all those repositories at different revisions.
-See the :ref:`repos_and_revs` section for a comprehensive list of repositories and their current revisions.
-The revision of each of those repositories is determined by the current revision of the main (manifest) repository, ``sdk-nrf``, which contains the SDK manifest file that helps manage the repositories as one :ref:`code base <dm_code_base>` with the :ref:`ncs_west_intro` tool.
+It integrates the Zephyr™ real-time operating system (RTOS) and a wide range of complete applications, samples, and protocol stacks such as Bluetooth® Low Energy, Bluetooth mesh, Matter, Thread/Zigbee and LTE-M/NB-IoT/GPS, TCP/IP.
+It also includes middleware such as CoAP, MQTT, LwM2M, various libraries, hardware drivers, Trusted Firmware-M for security, and a secure bootloader (MCUBoot).
+
+
+Repositories
+************
+
+The |NCS| is a combination of software developed by Nordic Semiconductor and open source projects, hosted as `Git`_ repositories in the `nrfconnect GitHub organization`_.
+
+The ``sdk-nrf`` repository contains the SDK manifest file that manages the repositories as one :ref:`code base <dm_code_base>` with the :ref:`ncs_west_intro` tool.
 
 Some notable repositories include:
 
@@ -25,9 +32,70 @@ Some notable repositories include:
   You can find the fork in :file:`bootloader/mcuboot` after obtaining the |NCS| source code.
   See the :doc:`documentation <mcuboot:index-ncs>` in Nordic Semiconductor’s MCUboot fork.
 
+Every |NCS| release consists of a combination of all included repositories at different revisions.
+See the :ref:`repos_and_revs` section for a comprehensive list of repositories and their current revisions.
+The revision of each of those repositories is determined by the current revision of the main (manifest) repository ``sdk-nrf``.
 
-About the |NCS| license
+Tools and configuration
 ***********************
+
+The figure below visualizes the tools and configuration methods in the |NCS|.
+They are based on the :ref:`Zephyr project <zephyr:getting_started>`.
+All of them have a role in the creation of an application, from configuring the libraries or applications to building them.
+
+.. figure:: images/ncs-toolchain.svg
+   :alt: nRF Connect SDK tools and configuration
+
+   |NCS| tools and configuration methods
+
+* :ref:`zephyr:kconfig` generates definitions that configure libraries and subsystems.
+* :ref:`Devicetree <zephyr:dt-guide>` describes the hardware.
+* CMake generates build files based on the provided :file:`CMakeLists.txt` files, which use information from Kconfig and devicetree.
+  See the `CMake documentation`_.
+* Ninja (comparable to make) uses the build files to build the program, see the `Ninja documentation`_.
+* The `GCC compiler`_ creates the executables.
+
+Git
+===
+
+`Git`_ is a free and open source distributed version control system that allows managing the changes in the code or other collections of information (set of files) over time.
+
+Git offers a lot of flexibility in how users manage changes, and repositories are easily duplicated.
+In |NCS|, forking is the agreed-upon Git workflow.
+To contribute, the official public repository in GitHub is forked.
+
+A fork can be hosted on any server, including a public Git hosting site like `GitHub`_.
+It is, however, important to differentiate between the generic concept of a fork and GitHub's concept of a `GitHub fork`_.
+When you create a GitHub fork, GitHub copies the original repository and tags the downstream repository (the fork) with a flag that allows users to send pull requests from the fork to its upstream repository.
+GitHub also supports creating forks without linking them to the upstream repository.
+See the `GitHub documentation <GitHub duplicate_>`_ for information about how to do this.
+
+.. _ncs_west_intro:
+
+West
+====
+
+The Zephyr project includes a tool called west.
+The |NCS| uses :ref:`west <zephyr:west>` to manage the combination of multiple Git repositories and versions.
+
+Some of west’s features are similar to those provided by Git Submodules and Google’s Repo tool.
+But west also includes custom features required by the Zephyr project that were not sufficiently supported by the existing tools.
+
+West's workspace contains exactly one :ref:`manifest repository <zephyr:west-basics>`, which is a main Git repository containing a `west manifest file`_.
+Additional Git repositories in the workspace managed by west are called projects.
+The manifest repository controls which commits to use from the different projects through the manifest file.
+In the |NCS|, the main repository `sdk-nrf`_ contains a west manifest file :file:`west.yml`, that determines the revision of all other repositories.
+This means that `sdk-nrf`_ acts as the manifest repository, while the other repositories are projects.
+
+When developing in the |NCS|, your application will use libraries and features from folders that are cloned from different repositories or projects.
+The west tool keeps control of which commits to use from the different projects.
+It also makes it fairly simple to add and remove modules.
+
+See :ref:`getting_started` for information about how to install the |NCS| and about the first steps.
+See :ref:`dev-model` for more information about the |NCS| code base and how to manage it.
+
+Licenses
+********
 
 Licenses are located close to the source files.
 You can find a :file:`LICENSE` file, containing the details of the license, at the top of every |NCS| repository.
@@ -54,116 +122,18 @@ Documentation pages
    :start-after: doc_structure_start
    :end-before: doc_structure_end
 
+To access different versions of the |NCS| documentation, use the version drop-down in the top right corner.
+A "99" at the end of the version number of this documentation indicates continuous updates on the main branch since the previous major.minor release.
+
 The |NCS| documentation contains all information that is specific to the |NCS| and describes our libraries, samples, and applications.
 API documentation is extracted from the source code and included with the library documentation.
 
 For instructions about building the documentation locally, see :ref:`doc_build`.
 For more information about the documentation conventions and templates, see :ref:`documentation`.
 
-Tools and configuration
-***********************
-
-The figure below visualizes the tools and configuration methods in the |NCS|.
-They are based on the :ref:`Zephyr project <zephyr:getting_started>`.
-All of them have a role in the creation of an application, from configuring the libraries or applications to building them.
-
-.. figure:: images/ncs-toolchain.svg
-   :alt: nRF Connect SDK tools and configuration
-
-   |NCS| tools and configuration methods
-
-* :ref:`zephyr:kconfig` generates definitions that configure libraries and subsystems.
-* :ref:`Devicetree <zephyr:dt-guide>` describes the hardware.
-* CMake generates build files based on the provided :file:`CMakeLists.txt` files, which use information from Kconfig and devicetree.
-  See the `CMake documentation`_.
-* Ninja (comparable to make) uses the build files to build the program, see the `Ninja documentation`_.
-* The `GCC compiler`_ creates the executables.
-
-Git
-===
-
-`Git`_ is a free and open source distributed version control system that allows managing the changes in the code or other collections of information (set of files) over time.
-
-Git organizes data (files or directories) in project repositories.
-The data is managed like a series of snapshots.
-Every time you commit, or save the state of your project, Git takes a snapshot of what the files look like at that exact moment and stores a reference to that snapshot.
-For unchanged files, Git provides just a link to the previous identical file it has already stored.
-
-Git offers a lot of flexibility in how users manage changes, and repositories are easily duplicated.
-In |NCS|, forking is the agreed-upon Git workflow.
-To contribute, the official public repository in GitHub is forked.
-
-When you say you are *forking* a repository, you are creating a copy of the repository under your GitHub ID.
-This means that you are creating an identical copy that might diverge from the original over time.
-This copy is your personal public repository that nobody else is allowed to push to, but changes can be pulled from it.
-
-The original repository is called the *upstream* repository, and the newly created copy the *downstream* repository.
-Any changes made to the original repository are reflected back to your forked repositories by using fetch and rebase commands.
-
-A ``git clone`` command is used to get a copy of your downstream repository onto your local machine.
-This serves as a private development environment.
-
-Local commits are pushed to your own downstream repository, and not the official one.
-To integrate the changes into the main upstream repository, a pull request is created explicitly.
-Before it is merged, the pull request also serves as a convenient discussion thread if there are issues with the contributed code.
-If your pull request is approved, the changes are merged with the existing original content.
-Until then, your changes are reflected only in the copy you forked.
-
-A fork can be hosted on any server, including a public Git hosting site like `GitHub`_.
-It is, however, important to differentiate between the generic concept of a fork and GitHub's concept of a `GitHub fork`_.
-When you create a GitHub fork, GitHub copies the original repository and tags the downstream repository (the fork) with a flag that allows users to send pull requests from the fork to its upstream repository.
-GitHub also supports creating forks without linking them to the upstream repository.
-See the `GitHub documentation <GitHub duplicate_>`_ for information about how to do this.
-
-Everything in Git is checksummed before it is stored and is then referred to by that checksum.
-The mechanism that Git uses for this checksumming is called a SHA-1 hash.
-This hash is a 40-character string, composed of hexadecimal characters (0–9 and a–f), and calculated based on the contents of a file or directory structure in Git.
-
-.. _ncs_west_intro:
-
-West
-====
-
-The Zephyr project includes a tool called west.
-The |NCS| uses :ref:`west <zephyr:west>` to manage the combination of multiple Git repositories and versions.
-
-Some of west’s features are similar to those provided by Git Submodules and Google’s Repo tool.
-But west also includes custom features required by the Zephyr project that were not sufficiently supported by the existing tools.
-
-For more details about the reasons behind the introduction of west, see the :ref:`zephyr:west-history` section of the Zephyr documentation.
-
-West's workspace contains exactly one :ref:`manifest repository <zephyr:west-basics>`, which is a main Git repository containing a `west manifest file`_.
-Additional Git repositories in the workspace managed by west are called projects.
-The manifest repository controls which commits to use from the different projects through the manifest file.
-In the |NCS|, the main repository `sdk-nrf`_ contains a west manifest file :file:`west.yml`, that determines the revision of all other repositories.
-This means that sdk-nrf acts as the manifest repository, while the other repositories are projects.
-
-When developing in the |NCS|, your application will use libraries and features from folders that are cloned from different repositories or projects.
-The west tool keeps control of which commits to use from the different projects.
-It also makes it fairly simple to add and remove modules.
-
-Some west commands are related to Git commands with the same name, but operate on the entire west workspace.
-Some west commands take projects as arguments.
-The two most important workspace-related commands in west are ``west init`` and ``west update``.
-
-The ``west init`` command creates a west workspace, and you typically need to run it only once to initialize west with the revision of the |NCS| that you want to check out.
-It clones the manifest repository into the workspace.
-However, the content of the manifest repository is managed using Git commands, since west does not modify or update it.
-
-To clone the project repositories, use the ``west update`` command.
-This command makes sure your workspace contains Git repositories matching the projects defined in the manifest file.
-Whenever you check out a different revision in your manifest repository, you should run ``west update`` to make sure your workspace contains the project repositories the new revision expects (according to the manifest file).
-
-For more information about ``west init``, ``west update``, and other built-in commands, see :ref:`zephyr:west-built-in-cmds`.
-
-For more information about the west tool, see the :ref:`zephyr:west` user guide.
-
-See :ref:`getting_started` for information about how to install the |NCS| and about the first steps.
-See :ref:`dev-model` for more information about the |NCS| code base and how to manage it.
-
 .. _repos_and_revs:
 
-Repositories and revisions
+|NCS| repository revisions
 **************************
 
 The following table lists all the repositories (and their respective revisions) that are included as part of |NCS| |version| release:
