@@ -7,5 +7,4 @@
 config BT_ADV_PROV_GAP_APPEARANCE
 	bool "GAP appearance"
 	help
-	  Adds GAP appearance to advertising data if used Bluetooth local
-	  identity has no bonds.
+	  Adds GAP appearance to advertising data if device is in pairing mode.

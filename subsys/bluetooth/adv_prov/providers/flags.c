@@ -14,7 +14,7 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 
 	static uint8_t flags = BT_LE_AD_NO_BREDR;
 
-	if (state->bond_cnt == 0) {
+	if (state->pairing_mode) {
 		flags |= BT_LE_AD_GENERAL;
 	} else {
 		flags &= ~BT_LE_AD_GENERAL;

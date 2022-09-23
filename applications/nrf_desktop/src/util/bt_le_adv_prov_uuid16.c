@@ -12,7 +12,7 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 {
 	ARG_UNUSED(fb);
 
-	if (state->bond_cnt > 0) {
+	if (!state->pairing_mode) {
 		return -ENOENT;
 	}
 

@@ -8,8 +8,8 @@ menuconfig BT_ADV_PROV_SWIFT_PAIR
 	bool "Microsoft Swift Pair"
 	help
 	  Adds Microsoft Swfit Pair manufacturer data to advertising data if
-	  used Bluetooth local identity has no bonds and advertising has not
-	  entered grace period.
+	  device is in pairing mode and advertising has not entered grace
+	  period.
 
 if BT_ADV_PROV_SWIFT_PAIR
 

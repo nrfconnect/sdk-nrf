@@ -189,9 +189,9 @@ static int update_undirected_advertising(struct bt_le_adv_param *adv_param, bool
 	struct bt_le_adv_prov_feedback fb;
 
 	if (bt_addr_le_cmp(&bond_find_data.peer_address, BT_ADDR_LE_ANY)) {
-		state.bond_cnt = 1;
+		state.pairing_mode = false;
 	} else {
-		state.bond_cnt = 0;
+		state.pairing_mode = true;
 	}
 
 	state.in_grace_period = in_grace_period;
