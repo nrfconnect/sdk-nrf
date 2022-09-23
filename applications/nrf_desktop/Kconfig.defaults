@@ -24,4 +24,10 @@ choice SETTINGS_BACKEND
 	default SETTINGS_NVS
 endchoice
 
+config SETTINGS_DYNAMIC_HANDLERS
+	default n
+	help
+	  The nRF Desktop does not use dynamic settings handlers. Disable the
+	  functionality by default to save memory.
+
 endif # DESKTOP_SETTINGS
