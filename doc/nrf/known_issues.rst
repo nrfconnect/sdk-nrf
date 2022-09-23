@@ -1853,6 +1853,19 @@ Closing sockets
   Moreover, closing a socket does not properly clean up all memory resources.
   If a socket is opened and closed multiple times, this  might starve the system.
 
+Modem Library
+=============
+
+.. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+NCSDK-14312: The :c:func:`nrf_recv` function crashes occasionally
+  During execution, in rare cases, the :c:func:`nrf_recv` function crashes because of a race condition.
+
+.. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+NCSDK-13360: The :c:func:`nrf_recv` function crashes if closed by another thread while receiving data
+  When calling the :c:func:`nrf_recv` function, closing the socket from another thread while it is receiving data causes a crash.
+
 Multiprotocol Service Layer (MPSL)
 ==================================
 
