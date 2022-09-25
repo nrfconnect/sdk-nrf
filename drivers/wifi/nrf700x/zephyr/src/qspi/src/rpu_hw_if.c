@@ -172,28 +172,6 @@ int rpu_qspi_init(void)
 
 	qdev->init(cfg);
 
-	LOG_INF("QSPI/SPIM freq = %d MHz\n", cfg->freq);
-	LOG_INF("QSPI/SPIM latency = %d\n", cfg->qspi_slave_latency);
-
-	return 0;
-}
-
-int rpu_qspi_config(uint32_t freq, uint32_t latency, uint32_t mem_block)
-{
-	struct qspi_config *cfg;
-
-	/* Re-initialize cfg */
-	cfg = qspi_defconfig();
-
-	cfg->freq = freq;
-	rpu_7002_memmap[mem_block][2] = mem_block;
-	cfg->qspi_slave_latency = latency;
-
-	qdev->init(cfg);
-
-	LOG_INF("QSPIM freq = %d MHz\n", cfg->freq);
-	LOG_INF("QSPIM latency = %d\n", cfg->qspi_slave_latency);
-
 	return 0;
 }
 

@@ -222,6 +222,14 @@ int spim_init(struct qspi_config *config)
 
 	k_sem_init(&spim_config->lock, 1, 1);
 
+	if (spi_spec.config.frequency >= MHZ(16)) {
+		spim_config->qspi_slave_latency = 1;
+	}
+
+	LOG_INF("SPIM %s: freq = %d MHz\n", spi_spec.bus->name,
+		spi_spec.config.frequency / MHZ(1));
+	LOG_INF("SPIM %s: latency = %d\n", spi_spec.bus->name, spim_config->qspi_slave_latency);
+
 	return 0;
 }
 

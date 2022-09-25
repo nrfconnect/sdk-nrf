@@ -28,8 +28,6 @@ struct qspi_config {
 	nrf_qspi_writeoc_t writeoc;
 	nrf_qspi_frequency_t sckfreq;
 #endif
-	unsigned int freq;
-	unsigned int spimfreq;
 	unsigned char RDC4IO;
 	bool easydma;
 	bool single_op;
