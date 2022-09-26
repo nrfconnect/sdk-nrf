@@ -15,9 +15,6 @@
 
 if BUILD_WITH_TFM
 
-config TFM_IPC
-	default y
-
 config TFM_ISOLATION_LEVEL
 	default 1 if SOC_NRF5340_CPUAPP || SOC_NRF9160
 
@@ -92,7 +89,7 @@ config TFM_CRYPTO_CONC_OPER_NUM
 config TFM_CRYPTO_IOVEC_BUFFER_SIZE
 	int
 	prompt "TF-M Crypto - PSA FF IO vector buffer size" if !TFM_PROFILE_TYPE_MINIMAL
-	depends on TFM_IPC
+	depends on !TFM_LIBRARY
 	default 1024 if TFM_PROFILE_TYPE_MINIMAL
 	default 16384 if TFM_REGRESSION_S || TFM_REGRESSION_NS
 	default 5120
