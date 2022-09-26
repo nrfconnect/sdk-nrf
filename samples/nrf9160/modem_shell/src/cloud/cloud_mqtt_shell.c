@@ -188,7 +188,7 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		}
 		break;
 	case NRF_CLOUD_EVT_ERROR:
-		mosh_print("NRF_CLOUD_EVT_ERROR");
+		mosh_print("NRF_CLOUD_EVT_ERROR: %d", evt->status);
 		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		mosh_print("NRF_CLOUD_EVT_SENSOR_DATA_ACK");

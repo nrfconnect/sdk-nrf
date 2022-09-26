@@ -141,7 +141,18 @@ void error_handler(enum error_type err_type, int err)
 
 void nrf_cloud_error_handler(int err)
 {
-	error_handler(ERROR_NRF_CLOUD, err);
+	switch (err) {
+	case NRF_CLOUD_ERR_STATUS_MQTT_CONN_FAIL:
+	case NRF_CLOUD_ERR_STATUS_MQTT_CONN_BAD_PROT_VER:
+	case NRF_CLOUD_ERR_STATUS_MQTT_CONN_ID_REJECTED:
+	case NRF_CLOUD_ERR_STATUS_MQTT_CONN_SERVER_UNAVAIL:
+	case NRF_CLOUD_ERR_STATUS_MQTT_CONN_BAD_USR_PWD:
+	case NRF_CLOUD_ERR_STATUS_MQTT_CONN_NOT_AUTH:
+	case NRF_CLOUD_ERR_STATUS_MQTT_SUB_FAIL:
+		error_handler(ERROR_NRF_CLOUD, err);
+	default:
+		return;
+	}
 }
 
 /**@brief Modem fault handler. */

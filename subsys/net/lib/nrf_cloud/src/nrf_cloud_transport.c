@@ -844,6 +844,39 @@ static int publish_get_payload(struct mqtt_client *client, size_t length)
 	return ret;
 }
 
+static int translate_mqtt_connack_result(const int mqtt_result)
+{
+	switch (mqtt_result) {
+	case MQTT_CONNECTION_ACCEPTED:
+		return NRF_CLOUD_ERR_STATUS_NONE;
+	case MQTT_UNACCEPTABLE_PROTOCOL_VERSION:
+		return NRF_CLOUD_ERR_STATUS_MQTT_CONN_BAD_PROT_VER;
+	case MQTT_IDENTIFIER_REJECTED:
+		return NRF_CLOUD_ERR_STATUS_MQTT_CONN_ID_REJECTED;
+	case MQTT_SERVER_UNAVAILABLE:
+		return NRF_CLOUD_ERR_STATUS_MQTT_CONN_SERVER_UNAVAIL;
+	case MQTT_BAD_USER_NAME_OR_PASSWORD:
+		return NRF_CLOUD_ERR_STATUS_MQTT_CONN_BAD_USR_PWD;
+	case MQTT_NOT_AUTHORIZED:
+		return NRF_CLOUD_ERR_STATUS_MQTT_CONN_NOT_AUTH;
+	default:
+		return NRF_CLOUD_ERR_STATUS_MQTT_CONN_FAIL;
+	}
+}
+
+static int translate_mqtt_suback_result(const int mqtt_result)
+{
+	switch (mqtt_result) {
+	case MQTT_SUBACK_SUCCESS_QoS_0:
+	case MQTT_SUBACK_SUCCESS_QoS_1:
+	case MQTT_SUBACK_SUCCESS_QoS_2:
+		return NRF_CLOUD_ERR_STATUS_NONE;
+	case MQTT_SUBACK_FAILURE:
+	default:
+		return NRF_CLOUD_ERR_STATUS_MQTT_SUB_FAIL;
+	}
+}
+
 /* Handle MQTT events. */
 static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 				 const struct mqtt_evt *_mqtt_evt)
@@ -878,6 +911,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			nct_save_session_state(0);
 		}
 
+		evt.status = translate_mqtt_connack_result(_mqtt_evt->result);
 		evt.type = NCT_EVT_CONNECTED;
 		event_notify = true;
 		break;
@@ -941,6 +975,8 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	case MQTT_EVT_SUBACK: {
 		LOG_DBG("MQTT_EVT_SUBACK: id = %d result = %d",
 			_mqtt_evt->param.suback.message_id, _mqtt_evt->result);
+
+		evt.status = translate_mqtt_suback_result(_mqtt_evt->result);
 
 		if (_mqtt_evt->param.suback.message_id == NCT_MSG_ID_CC_SUB) {
 			evt.type = NCT_EVT_CC_CONNECTED;

@@ -192,7 +192,7 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		notify = true;
 		break;
 	case NRF_CLOUD_EVT_ERROR:
-		LOG_ERR("NRF_CLOUD_EVT_ERROR");
+		LOG_ERR("NRF_CLOUD_EVT_ERROR: %d", evt->status);
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
 		notify = true;
 		break;

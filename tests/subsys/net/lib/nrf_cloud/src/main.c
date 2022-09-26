@@ -26,7 +26,7 @@ void event_handler(const struct nrf_cloud_evt *const evt)
 		printk("Device is connected and ready");
 		break;
 	case NRF_CLOUD_EVT_ERROR:
-		printk("Failed to connect to cloud");
+		printk("Cloud error: %d", evt->status);
 		break;
 	default:
 		break;
