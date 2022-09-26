@@ -47,6 +47,9 @@ extern "C" {
 /* Filter instance size [bytes] */
 #define CHMAP_FILTER_INST_SIZE 580
 
+/* Filter instance alignment [bytes] */
+#define CHMAP_FILTER_INST_ALIGN 4
+
 /* Static parameters */
 /* Target evaluation keepout for minimum size channel map */
 #define CHMAP_PARAM_DYN_EVAL_TARGET 10
@@ -143,7 +146,8 @@ void chmap_filter_init(void);
 /**@brief Initialize channel map filter instance.
  *
  * @details Sufficient memory should be supplied to hold filter state.
- * Allocate @ref CHMAP_FILTER_INST_SIZE bytes for this purpose.
+ * Allocate @ref CHMAP_FILTER_INST_SIZE bytes for this purpose. Make sure that
+ * used memory is aligned to @ref CHMAP_FILTER_INST_ALIGN.
  *
  * @param[in] p_inst Pointer to instance buffer
  * @param[in] size Size of instance buffer

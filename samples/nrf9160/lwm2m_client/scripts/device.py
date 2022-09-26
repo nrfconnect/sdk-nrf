@@ -9,12 +9,52 @@
 import sys
 import argparse
 import logging
-from atclient import ATclient
+import os
+import subprocess
+import serial
+import time
+import re
+
+from serial.tools.list_ports import comports
+
+NRF91_VID = 4966
 
 class Device:
     """Generate requests for device using AT commands"""
-    def __init__(self, serial_path):
-        self.at_client = ATclient(serial_path)
+    def __init__(self):
+        self.sid = self.select_device()
+        self.com_port = self.get_com_ports(self.sid)[0]
+        self.sample_path = os.path.join("/".join(os.path.abspath(__file__).split("/")[:-3]), "at_client")
+        self.at_client = None
+
+    def wait_for_uart_string(self, string, timeout=10):
+        with serial.Serial(self.com_port, baudrate=115200, timeout=0.1) as uart:
+            data = ""
+            t_start, t_sleep = time.perf_counter(), 0.01
+            while string not in data:
+                data = uart.readline().decode()
+                time.sleep(t_sleep)
+                if time.perf_counter() - t_start > timeout:
+                    logging.error(f"Timed out waiting for string {string}")
+                    sys.exit(1)
+
+    def build_at_client(self):
+        logging.info("Building AT client")
+        cmd = f"west build --board nrf9160dk_nrf9160_ns --build-dir build --pristine always {self.sample_path}"
+        subprocess.run(cmd.split(), cwd=self.sample_path, check=True, capture_output=True)
+        logging.info("Done!")
+
+    def flash_at_client(self):
+        logging.info(f"Erasing device {self.sid}")
+        cmd = f"nrfjprog --snr {self.sid} --eraseall"
+        subprocess.run(cmd.split(), check=True, capture_output=True)
+        logging.info("Done!")
+
+        logging.info(f"Programming device {self.sid} at port {self.com_port}")
+        at_hex_path = os.path.join(self.sample_path, "build", "zephyr", "merged.hex")
+        cmd = f"nrfjprog --snr {self.sid} --program {at_hex_path} --verify --reset"
+        subprocess.run(cmd.split(), check=True, capture_output=True)
+        logging.info("Done!")
 
     def get_imei(self):
         """Request for IMEI code"""
@@ -42,7 +82,7 @@ class Device:
         if tag is not None:
             resp = self.at_client.at_cmd(f'AT%CMNG=1,{tag}')
         else:
-            resp = self.at_client.at_cmd(f'AT%CMNG=1')
+            resp = self.at_client.at_cmd('AT%CMNG=1')
         if len(resp) == 0:
             return []
         tags = []
@@ -60,6 +100,50 @@ class Device:
         self.store_sec_tag(tag, 3, psk)
         logging.info('PSK credentials stored to sec_tag %d', int(tag))
 
+    def select_device(self):
+        sids = self.get_devices(NRF91_VID)
+
+        # No connected devices, abort
+        if len(sids) == 0:
+            logging.error("No connected devices")
+            sys.exit(1)
+
+        # Only 1 connected device, return it
+        if len(sids) == 1:
+            return sids[0]
+
+        # Multiple connected devices, make the user choose
+        for i, x in enumerate(sids):
+            print("{}) {}".format(i + 1, x))
+
+        while True:
+            index = input("Select device (number): ")
+            index = int(index) - 1
+            if index < 0 or index >= len(sids):
+                print("Invalid choice, please try again")
+                continue
+            break
+
+        return sids[index]
+
+    def get_devices(self, vid):
+        sids = []
+        for item in comports():
+            if item.vid == vid:
+                snr = item.serial_number.lstrip("0")
+                if snr not in sids:
+                    sids.append(snr)
+        return sids
+
+    def get_com_ports(self, sid):
+        com_ports = []
+        for item in comports():
+            if item.manufacturer == "SEGGER" and item.serial_number.lstrip("0") == sid:
+                com_ports.append(item.device)
+        # Sort com ports on their integer identifiers, which takes care of corner case
+        # where we have a cross-over from N digit to N + 1 digit identifiers
+        return sorted(com_ports, key=lambda x: int(re.search(r"\d+", x).group(0)))
+
 if __name__ == "__main__":
     try:
         from dotenv import load_dotenv
@@ -71,24 +155,22 @@ if __name__ == "__main__":
         """Delete content of sec_tag"""
         dev.delete_sec_tag(args.tag)
 
-    def imei(args):
+    def imei():
         print(dev.get_imei())
 
     def read(args):
         for line in dev.read_sec_tag(args.tag):
             print(line)
 
-    def list(args):
+    def list():
         for line in dev.read_sec_tag(None):
             print(line)
 
     def store(args):
         dev.store_psk(args.tag, args.identity, args.psk)
 
-    parser = argparse.ArgumentParser(
-        description='nRF91 Secure Tag management')
+    parser = argparse.ArgumentParser(description='nRF91 Secure Tag management')
     parser.set_defaults(func=None)
-    parser.add_argument('serial', help='nRF91 Serial port')
     parser.add_argument('-d', help='Enable debug logs', action='store_true')
 
     subparsers = parser.add_subparsers(title='commands')
@@ -124,5 +206,5 @@ if __name__ == "__main__":
     else:
         logging.basicConfig(level=logging.INFO, format='%(message)s')
 
-    dev = Device(arg.serial)
+    dev = Device()
     arg.func(arg)

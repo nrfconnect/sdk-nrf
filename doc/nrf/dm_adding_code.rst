@@ -30,8 +30,8 @@ All workflows are described under the following basic assumptions:
 * The term *application* refers to the application code and any board definitions and libraries it requires.
 * The application(s) will require updates of the |NCS| revision.
 
-Workflow 1: Eschew Git and west
-===============================
+Workflow 1: Avoid Git and west
+==============================
 
 If you have your own version control tools, you might want to simply not use Git or west at all, and instead rely on your own toolset.
 In such case, you must obtain a copy of the |NCS| on your file system and then manage the source code of both the SDK and your application yourself.
@@ -92,7 +92,7 @@ This is demonstrated by the following code:
        - name: nrf
          repo-path: sdk-nrf
          remote: ncs
-         revision: v2.0.2
+         revision: v2.1.0
          import: true
      self:
        path: application
@@ -119,7 +119,7 @@ For example:
      projects:
        - name: nrf
          remote: ncs
-         revision: v2.0.2
+         revision: v2.1.0
          import: true
        # Example for how to override a repository in the nRF Connect SDK with your own:
        - name: mcuboot

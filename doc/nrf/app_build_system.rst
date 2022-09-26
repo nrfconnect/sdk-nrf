@@ -46,6 +46,7 @@ You must be aware of these additions when you start writing your own application
 
      warning: Experimental symbol BT_EXT_ADV is enabled.
 
+  For more information, see :ref:`software_maturity`.
 * The |NCS| provides an additional :file:`boilerplate.cmake` that is automatically included when using the Zephyr CMake package in the :file:`CMakeLists.txt` file of your application::
 
     find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})

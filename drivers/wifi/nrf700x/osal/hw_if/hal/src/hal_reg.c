@@ -33,6 +33,7 @@ enum wifi_nrf_status hal_rpu_reg_read(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	unsigned long addr_offset = 0;
+
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	unsigned long flags = 0;
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
@@ -97,6 +98,7 @@ out:
 				       hal_dev_ctx->rpu_ps_lock,
 				       &flags);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
+
 	return status;
 }
 
@@ -106,6 +108,7 @@ enum wifi_nrf_status hal_rpu_reg_write(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	unsigned long addr_offset = 0;
+
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	unsigned long flags = 0;
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
@@ -160,5 +163,6 @@ out:
 				       hal_dev_ctx->rpu_ps_lock,
 				       &flags);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
+
 	return status;
 }

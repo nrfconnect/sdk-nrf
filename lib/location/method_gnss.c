@@ -551,7 +551,10 @@ static bool method_gnss_allowed_to_start(void)
 {
 	enum lte_lc_system_mode mode;
 
-	lte_lc_system_mode_get(&mode, NULL);
+	if (lte_lc_system_mode_get(&mode, NULL) != 0) {
+		/* Failed to get system mode, try to start GNSS anyway */
+		return true;
+	}
 
 	/* Don't care about LTE state if we are in GNSS only mode */
 	if (mode == LTE_LC_SYSTEM_MODE_GPS) {

@@ -12,8 +12,6 @@
 #include <hw_unique_key.h>
 #include <zephyr/sys/util.h>
 #include <psa/crypto.h>
-#include <nrfx.h>
-#include <nrfx_nvmc.h>
 
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/__assert.h>
@@ -110,24 +108,7 @@ bool identity_key_mkek_is_written(void)
 
 bool identity_key_is_written(void)
 {
-	int perm;
-
-	for (int i = 0; i < 2; i++) {
-		NRF_KMU->SELECTKEYSLOT = KMU_SELECT_SLOT(NRF_KMU_SLOT_KIDENT + i);
-
-		perm = nrfx_nvmc_uicr_word_read(
-			&NRF_UICR_S->KEYSLOT.CONFIG[NRF_KMU_SLOT_KIDENT + i].PERM);
-
-		NRF_KMU->SELECTKEYSLOT = 0;
-
-		/* If the slot permissions are wrong we can assume that the key is not written. */
-		if (perm != NRF_CC3XX_PLATFORM_KMU_IDENTITY_KEY_PERMISSIONS) {
-			return false;
-		}
-	}
-
-	/* Both slots have the correct permissions set */
-	return true;
+	return nrf_cc3xx_platform_identity_key_is_stored(NRF_KMU_SLOT_KIDENT);
 }
 
 int identity_key_read(uint8_t key[IDENTITY_KEY_SIZE_BYTES])

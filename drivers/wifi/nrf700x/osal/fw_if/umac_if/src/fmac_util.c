@@ -13,9 +13,6 @@
 #include "fmac_util.h"
 #include "host_rpu_umac_if.h"
 
-
-
-
 bool wifi_nrf_util_is_multicast_addr(const unsigned char *addr)
 {
 	return (0x01 & *addr);

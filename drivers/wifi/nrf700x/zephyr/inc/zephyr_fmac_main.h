@@ -15,15 +15,21 @@
 #include <stdio.h>
 
 #include <zephyr/zephyr.h>
+#ifndef CONFIG_NRF700X_RADIO_TEST
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/ethernet.h>
-
-#include "fmac_api.h"
-#include "host_rpu_umac_if.h"
+#ifdef CONFIG_NETWORKING
+#include <zephyr_net_if.h>
+#endif /* CONFIG_NETWORKING */
 #ifdef CONFIG_WPA_SUPP
-#include "drivers/driver_zephyr.h"
+#include <drivers/driver_zephyr.h>
 #endif /* CONFIG_WPA_SUPP */
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
+#include <fmac_api.h>
+#include <host_rpu_umac_if.h>
+
+#ifndef CONFIG_NRF700X_RADIO_TEST
 struct wifi_nrf_vif_ctx_zep {
 	const struct device *zep_dev_ctx;
 	struct net_if *zep_net_if_ctx;
@@ -37,6 +43,7 @@ struct wifi_nrf_vif_ctx_zep {
 
 	unsigned int assoc_freq;
 	enum wifi_nrf_fmac_if_state if_state;
+	struct wpa_signal_info *signal_info;
 #ifdef CONFIG_WPA_SUPP
 	struct zep_wpa_supp_dev_callbk_fns supp_callbk_fns;
 #endif /* CONFIG_WPA_SUPP */
@@ -46,12 +53,17 @@ struct wifi_nrf_vif_ctx_map {
 	const char *ifname;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx;
 };
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 struct wifi_nrf_ctx_zep {
 	void *drv_priv_zep;
 	void *rpu_ctx;
+#ifdef CONFIG_NRF700X_RADIO_TEST
+	struct rpu_conf_params conf_params;
+#else /* CONFIG_NRF700X_RADIO_TEST */
 	struct wifi_nrf_vif_ctx_zep vif_ctx_zep[MAX_NUM_VIFS];
 	struct net_eth_addr mac_addr;
+#endif /* CONFIG_NRF700X_RADIO_TEST */
 };
 
 struct wifi_nrf_drv_priv_zep {
@@ -60,10 +72,10 @@ struct wifi_nrf_drv_priv_zep {
 	struct wifi_nrf_ctx_zep rpu_ctx_zep;
 };
 
-
+#ifndef CONFIG_NRF700X_RADIO_TEST
 struct wifi_nrf_dev_offload_ops {
 	int (*disp_scan)(const struct device *dev,
 			 scan_result_cb_t cb);
 };
-
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 #endif /* __ZEPHYR_FMAC_MAIN_H__ */

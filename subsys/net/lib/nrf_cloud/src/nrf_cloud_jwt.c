@@ -7,7 +7,6 @@
 #include <net/nrf_cloud.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include "nrf_cloud_client_id.h"
 #include <modem/modem_jwt.h>
 #include <nrf_modem_at.h>
 

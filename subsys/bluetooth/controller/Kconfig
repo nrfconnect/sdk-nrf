@@ -166,13 +166,6 @@ config BT_CTLR_SDC_RX_PRIO
 	int
 	default BT_DRIVER_RX_HIGH_PRIO
 
-config BT_CTLR_SDC_RX_STACK_SIZE
-	int "Size of the receive thread stack"
-	default 1024
-	help
-	  Size of the receiving thread stack, used to retrieve HCI events and
-	  data from the controller.
-
 # CONFIG_BT_CTLR_DF is declared in Zephyr and also here for a second time,
 # to avoid BT_CTLR_DF_SUPPORT dependency.
 config BT_CTLR_DF

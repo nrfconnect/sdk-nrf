@@ -38,13 +38,29 @@ It consists of two applications, a Device and a Host.
 
 * Device
    A Device sends a packet and adds a new packet to the TX queue every time it receives an ACK from Host.
-   Before adding a packet to the TX queue, the contents of the buttons are copied to the first payload byte (byte 0).
+   Before adding a packet to the TX queue, the contents of the buttons are copied to the first payload byte.
    When the Device receives an ACK, the contents of the first payload byte of the ACK are output to the LEDs.
 
 * Host
    A Host listens for a packet and sends an ACK when it has received the packet.
    The contents of the first payload byte of the received packet is output to LEDs.
-   The contents of buttons are sent in the first payload byte (byte 0) of the ACK packet.
+   The contents of buttons are sent in the first payload byte of the ACK packet.
+
+.. msc::
+   hscale = "1.3";
+   Device,Host;
+   Host note Host      [label="Add button contents to the first payload byte"];
+   Host note Host      [label="Add new packet to TX FIFO"];
+   Device note Device  [label="Copy button contents to the first payload byte"],Host note Host [label="Listen for a packet"];
+   Device note Device  [label="Add new packet to TX FIFO"];
+   Device=>Host        [label="Packet"];
+   Host note Host      [label="Send ACK"];
+   Host=>Device        [label="ACK"];
+   Host note Host      [label="Output first payload byte of packet to LEDs"];
+   Device note Device  [label="Output first payload byte of ACK to LEDs"],Host note Host [label="Add button contents to the first payload byte"];
+   Device note Device  [label="Copy button contents to the first payload byte"],Host note Host [label="Add new packet to TX FIFO"];
+   Device note Device  [label="Add new packet to TX FIFO"];
+   Device=>Host        [label="Packet"];
 
 The Device transmits packets with its buttons state and the Host acknowledges all successfully received packets from the Device and adds its buttons state in the ACK packets it transmits.
 Both devices display the peer's buttons state on their LEDs

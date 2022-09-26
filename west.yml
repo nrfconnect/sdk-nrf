@@ -50,7 +50,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: v3.1.99-ncs1-rc2
+      revision: 97c4a1a6d1bda83f0272d9bbf68b211efadc7b4a
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -72,7 +72,7 @@ manifest:
           - fatfs
           - fff
           - hal_nordic
-          - hal_st
+          - hal_st # required for ST sensors (unrealted to STM32 MCUs)
           - liblc3codec
           - libmetal
           - littlefs
@@ -100,31 +100,31 @@ manifest:
     # changes.
     - name: sdk-hostap
       path: modules/lib/hostap
-      revision: 47399f055431513b5dfcd9d1fd1ec5dc5c96a252
+      revision: 4848da7c1a45aee06f8b3475daf1ea37f5684060
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v1.9.99-ncs2-rc2
+      revision: v1.9.99-ncs2
       path: bootloader/mcuboot
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.1.0-ncs1-rc2
+      revision: abce0e893c8ad219370100dadaed0ae11a3e4d63
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 11763cfb22b596e2f40377a63abdf98e142cd333
+      revision: 509282420c01627bc25f0d6b6433c6e6340c4bc3
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: v1.6.0-ncs1-rc2
+      revision: v1.6.0-ncs1
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
-      revision: v1.7.2-ncs2-rc2
+      revision: v1.7.2-ncs2
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v2.1.0-rc2
+      revision: v2.1.0
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -137,7 +137,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v2.1.0-rc2
+      revision: v2.1.0
       groups:
       - nrf-802154
     - name: cjson
@@ -146,12 +146,12 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: v2.1.0-rc2
+      revision: ad45f481cb94825b491acde3ae059852ce4729d3
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: v2.1.0-rc2
+      revision: bd898885f52e62b032bc4da38cfc505dc46b0f32
       groups:
       - find-my
     - name: azure-sdk-for-c
@@ -175,7 +175,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 0d19f9112101e87722ec80b3a247bc7a1c54b232
+      revision: bacf8d625f50dd5c4b415caee754c934ba1a262c
 
   # West-related configuration for the nrf repository.
   self:

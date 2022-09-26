@@ -95,6 +95,15 @@
 		};
 	};
 
+	nrf_radio_coex: nrf7002-coex {
+		status = "okay";
+		compatible = "nordic,nrf700x-coex";
+		req-gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>;
+		status0-gpios = <&gpio0 30 GPIO_ACTIVE_HIGH>;
+		grant-gpios = <&gpio0 24 GPIO_ACTIVE_HIGH>;
+		swctrl1-gpios = <&gpio0 29 GPIO_ACTIVE_HIGH>;
+	};
+
 	/* These aliases are provided for compatibility with samples */
 	aliases {
 		led0 = &led0;
@@ -103,6 +112,8 @@
 		sw0 = &button0;
 		sw1 = &button1;
 		bootloader-led0 = &led0;
+		mcuboot-button0 = &button0;
+		mcuboot-led0 = &led0;
 	};
 };
 
@@ -181,16 +192,12 @@ arduino_i2c: &i2c1 {
 		status = "okay";
 		compatible = "nordic,nrf7002-qspi";
 		reg = <1>;
-		sck-frequency = <8000000>;
+		sck-frequency = <24000000>;
 		quad-mode;
 		/* Wi-Fi Pins used */
 		iovdd-ctrl-gpios = <&gpio0 31 GPIO_ACTIVE_HIGH>;
 		bucken-gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>;
 		host-irq-gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
-		coex-req-gpios = <&gpio0 30 GPIO_ACTIVE_HIGH>;
-		coex-status0-gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>;
-		coex-grant-gpios = <&gpio0 24 GPIO_ACTIVE_HIGH>;
-		swctrl1-gpios = <&gpio0 29 GPIO_ACTIVE_HIGH>;
 	};
 };
 

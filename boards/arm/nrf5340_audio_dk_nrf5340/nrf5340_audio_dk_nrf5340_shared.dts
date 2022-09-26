@@ -129,5 +129,7 @@ leds:	leds {
 		sw2 = &button3;
 		sw3 = &button4;
 		sw4 = &button5;
+		mcuboot-led0 = &led1_blue;
+		mcuboot-button0 = &button3;
 	};
 };

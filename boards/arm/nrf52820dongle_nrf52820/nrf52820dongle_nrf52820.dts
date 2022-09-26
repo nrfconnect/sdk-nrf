@@ -57,6 +57,8 @@
 		led1-red   = &led1_red;
 		led1-green = &led1_green;
 		led1-blue  = &led1_blue;
+		mcuboot-button0 = &button0;
+		mcuboot-led0 = &led1_blue;
 	};
 };
 

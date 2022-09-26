@@ -13,7 +13,6 @@ import logging
 import json
 import requests
 
-
 class Coiote():
     """Interact with Coiote server"""
     def __init__(self):
@@ -23,23 +22,20 @@ class Coiote():
         if self.base_url is None:
             self.base_url = 'https://eu.iot.avsystem.cloud'
 
-        #
         self.api_url = f"{self.base_url}/api/coiotedm/v3"
 
-        #
-        self.user = os.environ.get("COIOTE_USER")
-
-        #
+        self.user   = os.environ.get("COIOTE_USER")
         self.passwd = os.environ.get("COIOTE_PASSWD")
 
-        #
+        if not self.user or not self.passwd:
+            logging.error("COIOTE_USER or COIOTE_PASSWD not set")
+            sys.exit(1)
+
         self.headers = {'accept': 'application/json',
                         'content-type': 'application/json'}
 
-        #
         self.domain = os.environ.get("COIOTE_DOMAIN")
 
-        #
         token = os.environ.get("COIOTE_TOKEN")
 
         if token is not None:
@@ -47,7 +43,6 @@ class Coiote():
                             'content-type': 'application/json',
                             'authorization': f'Bearer {token}'}
 
-        #
         if self.user and self.passwd:
             self.auth = (self.user, self.passwd)
         else:
@@ -204,7 +199,7 @@ class Coiote():
                     logging.debug("Sending POST:")
                     logging.debug(json.dumps(objs,indent=2))
 
-                    resp = self.post(f"/devices/batch",json.dumps(objs),False)
+                    resp = self.post("/devices/batch",json.dumps(objs),False)
                     obj,status_code,tmp_s,tmp_f = Coiote.handle_batch_response(resp)
 
                     logging.debug("Received response (status %d):",status_code)
@@ -221,7 +216,7 @@ class Coiote():
                 logging.debug("Sending POST:")
                 logging.debug(json.dumps(objs,indent=2))
 
-                resp = self.post(f"/devices/batch",json.dumps(objs),False)
+                resp = self.post("/devices/batch",json.dumps(objs),False)
                 obj,status_code,tmp_s,tmp_f = Coiote.handle_batch_response(resp)
 
                 logging.debug("Received response (status %d):",status_code)
@@ -231,7 +226,7 @@ class Coiote():
                 succeeded += tmp_s
                 failed += tmp_f
 
-        logging.info(f"Coiote: uploaded %d devices into domain '%s', %d succeeded, %d failed.",
+        logging.info("Coiote: uploaded %d devices into domain '%s', %d succeeded, %d failed.",
                 line_tot,self.domain,succeeded,failed)
 
 
@@ -264,7 +259,7 @@ class Coiote():
             logging.error('Coiote: Failed to create device %s', dev_id)
         else:
             logging.info(
-                'Coiote: Creted device %s to domain %s', dev_id, domain)
+                'Coiote: Created device %s to domain %s', dev_id, domain)
 
     def get_domain(self):
         """Get list of domains for current user"""
@@ -293,7 +288,7 @@ if __name__ == "__main__":
         coiote.passwd = getpass()
         coiote.authenticate()
 
-    def get_domain(args):
+    def get_domain():
         """Get domain"""
         domain = coiote.get_domain()
         if domain is not None:

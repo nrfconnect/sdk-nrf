@@ -136,6 +136,7 @@ static void pairing_confirm(struct bt_conn *conn)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
+	__ASSERT_NO_MSG(!pairing_confirmation_conn);
 	pairing_confirmation_conn = bt_conn_ref(conn);
 
 	printk("Pairing confirmation required for %s\n", addr);
@@ -160,8 +161,8 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
 
 	if (pairing_confirmation_conn) {
-		pairing_confirmation_conn = NULL;
 		bt_conn_unref(pairing_confirmation_conn);
+		pairing_confirmation_conn = NULL;
 	}
 }
 
@@ -180,12 +181,11 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 	int err;
 	uint32_t buttons = button_state & has_changed;
 
-	if (pairing_confirmation_conn) {
+	if (buttons & KEY_PAIRING_ACCEPT) {
 		struct bt_conn *conn = pairing_confirmation_conn;
+		pairing_confirmation_conn = NULL;
 
-		if (buttons & KEY_PAIRING_ACCEPT) {
-			pairing_confirmation_conn = NULL;
-
+		if (conn) {
 			err = bt_conn_auth_pairing_confirm(conn);
 			if (err) {
 				printk("Failed to confirm the pairing: %d\n", err);
@@ -194,13 +194,15 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 			}
 
 			bt_conn_unref(conn);
-
-			return;
+			conn = NULL;
 		}
+	}
 
-		if (buttons & KEY_PAIRING_REJECT) {
-			pairing_confirmation_conn = NULL;
+	if (buttons & KEY_PAIRING_REJECT) {
+		struct bt_conn *conn = pairing_confirmation_conn;
+		pairing_confirmation_conn = NULL;
 
+		if (conn) {
 			err = bt_conn_auth_cancel(conn);
 			if (err) {
 				printk("Failed to reject the pairing: %d\n", err);
@@ -209,8 +211,7 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 			}
 
 			bt_conn_unref(conn);
-
-			return;
+			conn = NULL;
 		}
 	}
 }

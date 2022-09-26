@@ -103,9 +103,6 @@ Matter features support
 
 The following table indicates the software maturity levels of the support for each Matter feature:
 
-.. caution::
-   Matter features are still considered experimental.
-
 .. toggle::
 
   .. sml-table:: matter

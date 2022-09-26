@@ -12,7 +12,7 @@ Google also provides additional features built upon the Fast Pair standard.
 For detailed information about supported functionalities, see the official `Fast Pair`_ documentation.
 
 .. note::
-   The Fast Pair support in the |NCS| is experimental.
+   The Fast Pair support in the |NCS| is :ref:`experimental <software_maturity>`.
    The implementation is not yet ready for production and extensions are not supported.
 
    The implementation does not pass end-to-end integration tests in the Fast Pair Validator.

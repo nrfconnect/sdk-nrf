@@ -315,7 +315,7 @@ add_dependencies(merge-search-indexes
 
 add_dependencies(zephyr-all kconfig-all)
 add_dependencies(mcuboot-all kconfig-all)
-add_dependencies(nrfxlib-inventory-all kconfig-all)
+add_dependencies(nrfxlib-inventory-all kconfig-all zephyr-all)
 add_dependencies(nrf-all zephyr-all nrfxlib-inventory-all mcuboot-all matter-all kconfig-all)
 add_dependencies(nrf-all zephyr-all nrfxlib-inventory-all mcuboot-all tfm-all kconfig-all)
 add_dependencies(nrfxlib-all nrf-all)

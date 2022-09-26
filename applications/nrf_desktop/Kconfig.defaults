@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config DESKTOP_SETTINGS
+	bool
+	default y
+	select CAF_SETTINGS_LOADER
+	select SETTINGS
+	imply NVS
+	imply FLASH
+	imply FLASH_MAP
+	imply FLASH_PAGE_LAYOUT
+	help
+	  Enable settings handling using CAF settings loader module. By default
+	  settings use non-volatile storage backend and the settings partition
+	  is located in internal FLASH.
+
+if DESKTOP_SETTINGS
+
+choice SETTINGS_BACKEND
+	default SETTINGS_NVS
+endchoice
+
+endif # DESKTOP_SETTINGS

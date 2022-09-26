@@ -10,7 +10,6 @@
 #include <nrf_socket.h>
 
 #include <cJSON.h>
-#include <cJSON_os.h>
 #include <net/nrf_cloud_cell_pos.h>
 #include "nrf_cloud_fsm.h"
 

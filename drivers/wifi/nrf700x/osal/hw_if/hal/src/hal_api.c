@@ -18,6 +18,7 @@
 #include "pal.h"
 
 
+#ifndef CONFIG_NRF700X_RADIO_TEST
 static enum wifi_nrf_status
 wifi_nrf_hal_rpu_pktram_buf_map_init(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 {
@@ -276,6 +277,7 @@ unsigned long wifi_nrf_hal_buf_unmap_tx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx
 out:
 	return virt_addr;
 }
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
@@ -1009,9 +1011,11 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_hal_dev_ctx *hal_dev_ctx = NULL;
+#ifndef CONFIG_NRF700X_RADIO_TEST
 	unsigned int i = 0;
 	unsigned int num_rx_bufs = 0;
 	unsigned int size = 0;
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 	hal_dev_ctx = wifi_nrf_osal_mem_zalloc(hpriv->opriv,
 					       sizeof(*hal_dev_ctx));
@@ -1171,8 +1175,6 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		goto out;
 	}
 
-
-
 	status = hal_rpu_irq_enable(hal_dev_ctx);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
@@ -1198,6 +1200,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		goto out;
 	}
 
+#ifndef CONFIG_NRF700X_RADIO_TEST
 	for (i = 0; i < MAX_NUM_OF_RX_QUEUES; i++) {
 		num_rx_bufs = hal_dev_ctx->hpriv->cfg_params.rx_buf_pool[i].num_bufs;
 
@@ -1303,6 +1306,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		hal_dev_ctx = NULL;
 		goto out;
 	}
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 out:
 	return hal_dev_ctx;
@@ -1342,7 +1346,6 @@ void wifi_nrf_hal_dev_rem(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 
 	wifi_nrf_utils_q_free(hal_dev_ctx->hpriv->opriv,
 			      hal_dev_ctx->cmd_q);
-
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	hal_rpu_ps_deinit(hal_dev_ctx);

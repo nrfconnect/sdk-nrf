@@ -4,7 +4,7 @@ Matter samples
 ##############
 
 The |NCS| provides several samples showcasing the :ref:`Matter <ug_matter>` protocol.
-You can build the samples boards and configure them for different usage scenarios.
+You can build the samples for a variety of board targets and configure them for different usage scenarios.
 
 The following table lists variants and extensions available out of the box for each Matter sample:
 

@@ -15,6 +15,7 @@
 #include <zephyr/net/net_pkt.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/ethernet.h>
+#include <fmac_structs.h>
 
 void wifi_nrf_if_init(struct net_if *iface);
 enum ethernet_hw_caps wifi_nrf_if_caps_get(const struct device *dev);

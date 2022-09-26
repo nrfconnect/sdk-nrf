@@ -33,9 +33,14 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 
 static atomic_t connected;
 static K_SEM_DEFINE(lte_connected, 0, 1);
+static K_SEM_DEFINE(rrc_idle, 0, 1);
 static K_SEM_DEFINE(cell_data_ready, 0, 1);
-static struct k_work_delayable periodic_search_work;
+#if defined(CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_CELL_CHANGE)
 static struct k_work cell_change_search_work;
+#endif
+#if defined(CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_PERIODIC)
+static struct k_work_delayable periodic_search_work;
+#endif
 static struct lte_lc_ncell neighbor_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
 static struct lte_lc_cells_info cell_data = {
 	.neighbor_cells = neighbor_cells,
@@ -75,6 +80,11 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		LOG_INF("RRC mode: %s",
 			evt->rrc_mode == LTE_LC_RRC_MODE_CONNECTED ?
 			"Connected" : "Idle");
+		if (evt->rrc_mode == LTE_LC_RRC_MODE_IDLE) {
+			k_sem_give(&rrc_idle);
+		} else {
+			k_sem_take(&rrc_idle, K_NO_WAIT);
+		}
 		break;
 	case LTE_LC_EVT_CELL_UPDATE: {
 		LOG_INF("LTE cell changed: Cell ID: %d, Tracking area: %d",
@@ -203,6 +213,7 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 	}
 }
 
+#if defined(CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_CELL_CHANGE)
 static void cell_change_search_work_fn(struct k_work *work)
 {
 	ARG_UNUSED(work);
@@ -214,7 +225,9 @@ static void cell_change_search_work_fn(struct k_work *work)
 	LOG_INF("Cell change triggered start of cell measurements");
 	start_cell_measurements();
 }
+#endif
 
+#if defined(CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_PERIODIC)
 static void periodic_search_work_fn(struct k_work *work)
 {
 	LOG_INF("Periodical start of cell measurements");
@@ -223,6 +236,7 @@ static void periodic_search_work_fn(struct k_work *work)
 	k_work_reschedule(k_work_delayable_from_work(work),
 		K_SECONDS(CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_PERIODIC_INTERVAL));
 }
+#endif
 
 static void print_cell_data(void)
 {
@@ -287,8 +301,12 @@ void main(void)
 
 	LOG_INF("Multicell location sample has started");
 
+#if defined(CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_CELL_CHANGE)
 	k_work_init(&cell_change_search_work, cell_change_search_work_fn);
+#endif
+#if defined(CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_PERIODIC)
 	k_work_init_delayable(&periodic_search_work, periodic_search_work_fn);
+#endif
 
 	err = multicell_location_provision_certificate(false);
 	if (err) {
@@ -314,13 +332,18 @@ void main(void)
 
 	LOG_INF("Connected to LTE network");
 
-	if (IS_ENABLED(CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_PERIODIC)) {
-		LOG_INF("Requesting neighbor cell information every %d seconds",
-			CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_PERIODIC_INTERVAL);
-		k_work_schedule(&periodic_search_work, K_NO_WAIT);
-	} else {
-		start_cell_measurements();
-	}
+	/* Wait until RRC connection has been released, otherwise modem will not be able to
+	 * measure neighbor cells unless currently configured by the network.
+	 */
+	k_sem_take(&rrc_idle, K_FOREVER);
+
+#if defined(CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_PERIODIC)
+	LOG_INF("Requesting neighbor cell information every %d seconds",
+		CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_PERIODIC_INTERVAL);
+	k_work_schedule(&periodic_search_work, K_NO_WAIT);
+#else
+	start_cell_measurements();
+#endif
 
 	while (true) {
 		k_sem_take(&cell_data_ready, K_FOREVER);

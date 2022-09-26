@@ -482,19 +482,21 @@ For example, see the following definitions for default regions:
 
 .. code-block:: cmake
 
-  add_region(     # Define region without device name
-    otp           # Name
-    756           # Size
-    0xff8108      # Base address
-    start_to_end  # Placement strategy
+  add_region(                           # Define region without device name
+    NAME otp                            # Name
+    SIZE 756                            # Size
+    BASE 0xff8108                       # Base address
+    PLACEMENT start_to_end              # Placement strategy
     )
 
-  add_region_with_dev(           # Define region with device name
-    flash_primary                # Name
-    ${flash_size}                # Size
-    ${CONFIG_FLASH_BASE_ADDRESS} # Base address
-    complex                      # Placement strategy
-    NRF_FLASH_DRV_NAME           # Device name
+  add_region(                           # Define region with device name
+    NAME flash_primary                  # Name
+    SIZE ${flash_size}                  # Size
+    BASE ${CONFIG_FLASH_BASE_ADDRESS}   # Base address
+    PLACEMENT complex                   # Placement strategy
+    DEVICE flash_controller             # DTS node label of flash controllel
+    DEFAULT_DRIVER_KCONFIG	        # Kconfig option that should be set for
+                                        # for the driver to be compiled in
     )
 
 .. _pm_external_flash:
@@ -506,7 +508,7 @@ The Partition Manager supports partitions in the external flash memory through t
 Any placeholder partition can specify that it should be stored in the external flash memory region.
 External flash memory regions always use the *start_to_end* placement strategy.
 
-To store partitions in the external flash memory, you must choose a value for the ``nordic,pm-ext-flash`` property in the devicetree.
+To store partitions in the external flash memory, you can either choose a value for the ``nordic,pm-ext-flash`` property in the devicetree, or directly use an external flash DTS node label as ``DEVICE``.
 See the following example of an overlay file that sets this value:
 
 .. literalinclude:: ../../tests/modules/mcuboot/external_flash/boards/nrf52840dk_nrf52840.overlay
@@ -533,6 +535,12 @@ After the ``nordic,pm-ext-flash`` value is set, you can place partitions in the 
 See :ref:`ug_bootloader_external_flash` for more details on using external flash memory with MCUboot.
 
 .. _pm_build_system:
+
+You must enable device drivers for each flash partition.
+Set the ``DEFAULT_DRIVER_KCONFIG`` parameter to the Kconfig option that enables the driver during compilation.
+When a driver for a partition is not enabled, the partition will not be included in the partition manager and will not be accessible at runtime.
+You can use the :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` Kconfig option to override the behavior and prevent compile-time check for external flash memory devices.
+This is useful when the external device does not have a driver controlled by Kconfig options.
 
 Build system
 ************

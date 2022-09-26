@@ -233,6 +233,12 @@ static void test_async_api_stress(void)
 
 void test_main(void)
 {
+	/* Read first random number. There are some generators which do not support
+	 * reading first random number from an interrupt context (initialization
+	 * is performed at the first read).
+	 */
+	(void)sys_rand32_get();
+
 	ztest_test_suite(lpuart_test,
 			 ztest_unit_test(test_async_api_stress)
 			);

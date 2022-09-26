@@ -23,17 +23,12 @@ void BindingHandler::Init()
 	DeviceLayer::PlatformMgr().ScheduleWork(InitInternal);
 }
 
-void BindingHandler::OnInvokeCommandFailure(DeviceProxy *aDevice, BindingData &aBindingData, CHIP_ERROR aError)
+void BindingHandler::OnInvokeCommandFailure(BindingData &aBindingData, CHIP_ERROR aError)
 {
 	CHIP_ERROR error;
 
 	if (aError == CHIP_ERROR_TIMEOUT && !BindingHandler::GetInstance().mCaseSessionRecovered) {
 		LOG_INF("Response timeout for invoked command, trying to recover CASE session.");
-		if (!aDevice)
-			return;
-
-		/* Release current CASE session. */
-		aDevice->Disconnect();
 
 		/* Set flag to not try recover session multiple times. */
 		BindingHandler::GetInstance().mCaseSessionRecovered = true;
@@ -69,8 +64,8 @@ void BindingHandler::OnOffProcessCommand(CommandId aCommandId, const EmberBindin
 			BindingHandler::GetInstance().mCaseSessionRecovered = false;
 	};
 
-	auto onFailure = [aDevice, dataRef = *data](CHIP_ERROR aError) mutable {
-		BindingHandler::OnInvokeCommandFailure(aDevice, dataRef, aError);
+	auto onFailure = [dataRef = *data](CHIP_ERROR aError) mutable {
+		BindingHandler::OnInvokeCommandFailure(dataRef, aError);
 	};
 
 	if (aDevice) {
@@ -140,8 +135,8 @@ void BindingHandler::LevelControlProcessCommand(CommandId aCommandId, const Embe
 			BindingHandler::GetInstance().mCaseSessionRecovered = false;
 	};
 
-	auto onFailure = [aDevice, dataRef = *data](CHIP_ERROR aError) mutable {
-		BindingHandler::OnInvokeCommandFailure(aDevice, dataRef, aError);
+	auto onFailure = [dataRef = *data](CHIP_ERROR aError) mutable {
+		BindingHandler::OnInvokeCommandFailure(dataRef, aError);
 	};
 
 	CHIP_ERROR ret = CHIP_NO_ERROR;

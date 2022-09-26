@@ -55,7 +55,7 @@ BUILD_ASSERT(sizeof(API_APP_ID) > 1, "App ID must be configured");
 /* Buffer size for neighbor element objects */
 #define NEIGHBOR_ELEMENT_SIZE	72
 /* Neighbor buffer size that will hold all neighbor cell objects */
-#define NEIGHBOR_BUFFER_SIZE	(CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS * NEIGHBOR_ELEMENT_SIZE)
+#define NEIGHBOR_BUFFER_SIZE	(CONFIG_LTE_NEIGHBOR_CELLS_MAX * NEIGHBOR_ELEMENT_SIZE)
 /* Estimated size for HTTP request body */
 #define HTTP_BODY_SIZE		(CURRENT_CELL_SIZE + NEIGHBOR_BUFFER_SIZE)
 
@@ -205,14 +205,12 @@ static int location_service_generate_request(
 	size_t buf_len)
 {
 	int len;
-	size_t neighbors_to_use =
-		MIN(CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS, cell_data->ncells_count);
 
 	if ((cell_data == NULL) || (buf == NULL) || (buf_len == 0)) {
 		return -EINVAL;
 	}
 
-	if (neighbors_to_use == 0) {
+	if (cell_data->ncells_count == 0) {
 		len = snprintk(buf, buf_len, HTTP_REQUEST_BODY_NO_NEIGHBORS,
 			       cell_data->current_cell.mcc,
 			       cell_data->current_cell.mnc,
@@ -232,7 +230,7 @@ static int location_service_generate_request(
 
 	neighbors[0] = '\0';
 
-	for (size_t i = 0; i < neighbors_to_use; i++) {
+	for (size_t i = 0; i < cell_data->ncells_count; i++) {
 		char element[NEIGHBOR_ELEMENT_SIZE];
 
 		len = snprintk(element, sizeof(element) - 1 /* ',' */,
@@ -250,12 +248,12 @@ static int location_service_generate_request(
 		if (strlen(element) > (sizeof(neighbors) - strlen(neighbors))) {
 			LOG_ERR("Not enough space in neighbor buffer to add cell");
 			LOG_WRN("No more cells can be added, using %d of %d cells",
-				i, neighbors_to_use);
+				i, cell_data->ncells_count);
 			break;
 		}
 
 		/* Append ',' if this is not the last element in the array */
-		if (i < (neighbors_to_use - 1)) {
+		if (i < (cell_data->ncells_count - 1)) {
 			strncat(element, ",", sizeof(element) - strlen(element));
 		}
 

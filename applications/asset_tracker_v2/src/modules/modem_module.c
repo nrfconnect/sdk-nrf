@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <app_event_manager.h>
 #include <math.h>
+#include <nrf_modem.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
 #include <modem/pdn.h>
@@ -177,6 +178,12 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	}
 
 	return false;
+}
+
+void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
+{
+	LOG_ERR("Modem error: 0x%x, PC: 0x%x", fault_info->reason, fault_info->program_counter);
+	SEND_ERROR(modem, MODEM_EVT_ERROR, -EFAULT);
 }
 
 static void lte_evt_handler(const struct lte_lc_evt *const evt)

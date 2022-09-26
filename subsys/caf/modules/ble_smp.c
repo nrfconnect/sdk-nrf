@@ -17,26 +17,32 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_SMP_LOG_LEVEL);
 
+static atomic_t event_active = ATOMIC_INIT(false);
 
-static void submit_smp_transfer_event(void)
-{
-	struct ble_smp_transfer_event *event = new_ble_smp_transfer_event();
-
-	APP_EVENT_SUBMIT(event);
-}
 
 static int upload_confirm(const struct img_mgmt_upload_req req,
 			  const struct img_mgmt_upload_action action)
 {
-	submit_smp_transfer_event();
+	if (atomic_cas(&event_active, false, true)) {
+		APP_EVENT_SUBMIT(new_ble_smp_transfer_event());
+	}
 
 	return 0;
 }
 
 static bool app_event_handler(const struct app_event_header *aeh)
 {
+	if (is_ble_smp_transfer_event(aeh)) {
+		bool res = atomic_cas(&event_active, true, false);
+
+		__ASSERT_NO_MSG(res);
+		ARG_UNUSED(res);
+
+		return false;
+	}
+
 	if (is_module_state_event(aeh)) {
-		struct module_state_event *event = cast_module_state_event(aeh);
+		const struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			img_mgmt_set_upload_cb(upload_confirm);
@@ -61,6 +67,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 				module_set_state(MODULE_STATE_READY);
 			}
 		}
+
 		return false;
 	}
 
@@ -71,3 +78,4 @@ static bool app_event_handler(const struct app_event_header *aeh)
 }
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, ble_smp_transfer_event);

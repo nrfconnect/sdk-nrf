@@ -21,7 +21,7 @@ NRFXLIB_BASE = utils.get_projdir("nrfxlib")
 project = "nrfxlib"
 copyright = "2019-2022, Nordic Semiconductor"
 author = "Nordic Semiconductor"
-version = release = "2.0.99"
+version = release = "2.1.99"
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
@@ -58,6 +58,10 @@ html_theme_options = {"docset": "nrfxlib", "docsets": utils.ALL_DOCSETS}
 # Options for intersphinx ------------------------------------------------------
 
 intersphinx_mapping = dict()
+
+zephyr_mapping = utils.get_intersphinx_mapping("zephyr")
+if zephyr_mapping:
+    intersphinx_mapping["zephyr"] = zephyr_mapping
 
 kconfig_mapping = utils.get_intersphinx_mapping("kconfig")
 if kconfig_mapping:

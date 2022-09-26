@@ -5,7 +5,6 @@
  */
 
 #include <zephyr/kernel.h>
-#include <pm_config.h>
 #include <stdlib.h>
 
 #include <net/nrf_cloud_pgps.h>
@@ -278,7 +277,7 @@ int npgps_get_shifted_time(int64_t *gps_sec,
 
 	err = date_time_now(&now);
 	if (!err) {
-		now += shift * MSEC_PER_SEC;
+		now += (int64_t)shift * MSEC_PER_SEC;
 		now = utc_to_gps_sec(now, NULL);
 		npgps_gps_sec_to_day_time(now, gps_day, gps_time_of_day);
 		if (gps_sec != NULL) {
