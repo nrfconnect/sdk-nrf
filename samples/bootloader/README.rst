@@ -1,4 +1,4 @@
- .. _bootloader:
+.. _bootloader:
 
 |NSIB|
 ######
@@ -94,7 +94,7 @@ By default, the bootloader sample automatically generates and provisions public 
 Alternatively, to facilitate the manufacturing process of a device using the bootloader sample, it is possible to decouple this process and program the sample HEX file and the HEX file containing the public key hashes separately.
 If you choose to do so, use the Python scripts located in the :file:`scripts/bootloader` folder to create and provision the keys manually.
 
-In both cases, the bootloader access the provisioned data using the :ref:`doc_bl_storage` library.
+In both cases, the bootloader accesses the provisioned data using the :ref:`doc_bl_storage` library.
 
 .. _bootloader_provisioning_otp:
 
@@ -218,7 +218,15 @@ Firmware versions using the |NSIB| are kept in the form of a *monotonic counter*
 Counter values are kept as slots in the flash memory, with each new counter value occupying a new slot.
 See :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER` for more details.
 
-To set the counter value of an application, build it using the :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` option:
+You can set the counter value for different elements in the bootloader sequence.
+Using :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` option in ``prj.conf`` will allow you to change the version of the application image.
+However, in order to specify :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` for the MCUboot image do the following:
+
+1. Create a ``child_image`` folder in the project directory.
+#. In the ``child_image`` directory create a file named ``mcuboot.conf``
+#. Add the :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` option to this file.
+
+For more information regarding the child image configuration refer to :ref:`ug_multi_image_variables` section.
 
 .. code-block::
 

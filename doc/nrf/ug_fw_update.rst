@@ -333,3 +333,10 @@ If this image has, in order of precedence, a *major*, *minor*, or *revision* val
 
    The optional label or build number specified after the ``+`` character is ignored when evaluating the version.
    An existing application image with version ``0.1.2+3`` can be overwritten by an uploaded image with ``0.1.2+2``, but not by one with ``0.1.1+2``.
+
+.. _ug_fw_mcuboot_output:
+
+MCUboot output build files
+--------------------------
+
+Read the :ref:`app_build_mcuboot_output` page for the list of all the FOTA upgrade files that are automatically generated when using MCUboot.

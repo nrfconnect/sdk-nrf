@@ -21,27 +21,10 @@ See the following user guides for more information on adding, configuring, and t
 * `Customizing the bootloader`_
 * `Firmware updates`_
 
-When you add MCUboot to your application build, the following files that can be used for firmware over-the-air (FOTA) upgrades are automatically generated:
+When you add MCUboot to your application build, the files that can be used for firmware over-the-air (FOTA) upgrades are automatically generated.
+See the `MCUboot output build files`_ page for a list of all these files.
 
-* :file:`app_update.bin` - Signed variant of the firmware in binary format (as opposed to intelhex).
-  This file can be uploaded to a server as FOTA image.
-
-* :file:`app_to_sign.bin` - Unsigned variant of the firmware in binary format.
-
-* :file:`app_signed.hex` - Signed variant of the firmware in intelhex format.
-  This HEX file is linked to the same address as the application.
-  Programming this file to the device will overwrite the existing application.
-  It will not trigger a DFU procedure.
-
-* :file:`app_test_update.hex` - Same as :file:`app_signed.hex` except that it contains metadata that instructs MCUboot to test this firmware upon boot.
-  As :file:`app_signed.hex`, this HEX file is linked against the same address as the application.
-  Programming this file to the device will overwrite the existing application.
-  It will not trigger a DFU procedure.
-
-* :file:`app_moved_test_update.hex` - Same as :file:`app_test_update.hex` except that it is linked to the address used to store the upgrade candidates.
-  When this file is programmed to the device, MCUboot will trigger the DFU procedure upon reboot.
-
-See the `Multi-image builds`_ user guide for more information on image files in multi-image builds.
+See the `Multi-image builds`_ page for more information on image files in multi-image builds.
 
 .. note::
    When you use MCUboot in the direct-xip mode, enable the :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT` Kconfig option to let the build system generate an additional set of files for the second application slot.

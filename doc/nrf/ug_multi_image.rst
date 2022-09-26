@@ -15,7 +15,7 @@ The most common use cases for builds composed of multiple images are application
 
 .. _ug_multi_image_what_are_images:
 
-What are image files
+What image files are
 ********************
 
 .. include:: app_build_system.rst
@@ -33,6 +33,8 @@ Using multiple images has the following advantages:
 .. include:: app_build_system.rst
    :start-after: output_build_files_table_start
    :end-before: output_build_files_table_end
+
+For more information on other build output files refer to :ref:`app_build_system` page.
 
 .. _ug_multi_image_when_to_use_images:
 
