@@ -94,7 +94,7 @@ By default, the bootloader sample automatically generates and provisions public 
 Alternatively, to facilitate the manufacturing process of a device using the bootloader sample, it is possible to decouple this process and program the sample HEX file and the HEX file containing the public key hashes separately.
 If you choose to do so, use the Python scripts located in the :file:`scripts/bootloader` folder to create and provision the keys manually.
 
-In both cases, the bootloader access the provisioned data using the :ref:`doc_bl_storage` library.
+In both cases, the bootloader accesses the provisioned data using the :ref:`doc_bl_storage` library.
 
 .. _bootloader_provisioning_otp:
 
@@ -218,11 +218,17 @@ Firmware versions using the |NSIB| are kept in the form of a *monotonic counter*
 Counter values are kept as slots in the flash memory, with each new counter value occupying a new slot.
 See :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER` for more details.
 
-To set the counter value of an application, build it using the :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` option:
+You can set the counter value for different elements in the bootloader sequence.
+For example, if your sample has both nRF Secure Immutable Bootloader (``b0``) and MCUboot (``b1``), you need to change the configuration value for the MCUboot by using :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` option.
 
 .. code-block::
 
    CONFIG_FW_INFO_FIRMWARE_VERSION=<integer>
+
+For more instructions refer to :ref:`ug_fw_update_image_versions_mcuboot`.
+
+.. note::
+   You can also set the counter value for the application upgrade, by using :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` option.
 
 The number of slots available for counter values depends on the type of nRF devices being used.
 For default values and ranges, see :kconfig:option:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`.
