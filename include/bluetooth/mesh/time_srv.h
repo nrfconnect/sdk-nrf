@@ -127,7 +127,9 @@ struct bt_mesh_time_srv {
  * @param[in] ctx    Message context, or NULL to publish with the configured
  *                   parameters.
  *
- * @return 0              Successfully published the current Light state.
+ * @return 0              Successfully published the current Time state.
+ * @retval -EOPNOTSUPP    The server Time Role state does not support sending
+ *                        of unsolicited Time Status messages.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  *                        not configured.
  * @retval -EAGAIN        The device has not been provisioned.

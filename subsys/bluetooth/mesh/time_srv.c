@@ -477,6 +477,15 @@ int bt_mesh_time_srv_time_status_send(struct bt_mesh_time_srv *srv,
 				      struct bt_mesh_msg_ctx *ctx)
 {
 	srv->model->pub->ttl = 0;
+
+	/** Mesh Model Specification 5.3.1.2.2:
+	 * The message (Time Status) may be sent as an unsolicited message at any time
+	 * if the value of the Time Role state is 0x01 (Time Authority) or 0x02 (Time Relay).
+	 */
+	if ((srv->data.role != BT_MESH_TIME_AUTHORITY) && (srv->data.role != BT_MESH_TIME_RELAY)) {
+		return -EOPNOTSUPP;
+	}
+
 	return send_time_status(srv->model, ctx, k_uptime_get());
 }
 
