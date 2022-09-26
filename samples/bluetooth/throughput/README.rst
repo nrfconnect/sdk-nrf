@@ -113,10 +113,8 @@ After programming the sample to both kits, complete following steps to test it:
 
 1. |connect_terminal_both_ANSI|
 #. Reset both kits.
-#. Press **Button 1** on the first development kit or type ``central`` in the terminal
-   connected to the first kit to set it into the central (tester) role.
-#. Press **Button 2** on the second development kit or type ``peripheral`` in the terminal
-   connected to the second kit to set it into the peripheral (peer) role.
+#. Press **Button 1** on the first development kit or type ``central`` in the terminal connected to the first kit to set it into the central (tester) role.
+#. Press **Button 2** on the second development kit or type ``peripheral`` in the terminal connected to the second kit to set it into the peripheral (peer) role.
 #. Observe that the kits establish a connection.
    The tester outputs the following information::
 
@@ -270,23 +268,23 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/console.h``
+* :file:`include/console.h`
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :file:`include/kernel.h`
 
-* ``include/sys/printk.h``
-* ``include/zephyr/types.h``
+* :file:`include/sys/printk.h`
+* :file:`include/zephyr/types.h`
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/conn.h``
-  * ``include/bluetooth/gatt.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/uuid.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/conn.h`
+  * :file:`include/bluetooth/gatt.h`
+  * :file:`include/bluetooth/hci.h`
+  * :file:`include/bluetooth/uuid.h`
 * :ref:`zephyr:shell_api`:
 
-  * ``include/shell/shell.h``
+  * :file:`include/shell/shell.h`
 
 The sample also uses the following secure firmware component:
 

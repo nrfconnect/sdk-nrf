@@ -54,7 +54,7 @@ Controller
 
 Edge Router
   A network device used for ensuring interoperability of different IPv6 networks that are supported by Matter.
-  The main task of a Edge Router is coordinating cross-network communication.
+  The main task of an Edge Router is coordinating cross-network communication.
   Multiple Edge Routers can operate within a network to ensure no-single-point-of-failure approach.
   Examples of Edge Routers include Thread Border Router and Wi-Fi Access Point.
 

@@ -283,7 +283,7 @@ function(add_child_image_from_source)
     #
     # Note: The folder `child_image/<ACI_NAME>` is only need when configurations
     #       files must be used instead of the child image default configs.
-    #       The append a child image default config, place the addetional settings
+    #       The append a child image default config, place the additional settings
     #       in `child_image/<ACI_NAME>.conf`.
     set(ACI_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image)
     set(ACI_NAME_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image/${ACI_NAME})

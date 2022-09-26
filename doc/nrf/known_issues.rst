@@ -224,7 +224,7 @@ NCSDK-12912: LwM2M carrier library does not recover if initial network connectio
 
 NCSDK-12913: LwM2M carrier library will fail to initialize if phone number is not present in SIM
   The SIM phone number is needed during the :ref:`liblwm2m_carrier_readme` library start-up.
-  For new SIM cards, it may take some time before the phone number is received by the network.
+  For new SIM cards, it might take some time before the phone number is received by the network.
   The LwM2M carrier library does not wait for this to happen.
   Thus, the device can fail to connect to the carrier's device management servers.
 
@@ -283,7 +283,7 @@ NCSDK-7914: The ``nrf_cc3xx`` RSA implementation does not deduce missing paramet
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 NRF91-989: Unable to bootstrap after changing SIMs
-  In some cases, swapping the SIM card may trigger the bootstrap Pre-Shared Key to be deleted from the device. This can prevent future bootstraps from succeeding.
+  In some cases, swapping the SIM card might trigger the bootstrap Pre-Shared Key to be deleted from the device. This can prevent future bootstraps from succeeding.
 
 .. rst-class:: v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
@@ -829,7 +829,7 @@ KRKNWK-6348: ZCL Occupancy Sensing cluster is not complete
 
 .. rst-class:: v1-5-2 v1-5-1
 
-KRKNWK-6336: OTA transfer may be aborted after the MAC-level packet retransmission
+KRKNWK-6336: OTA transfer might be aborted after the MAC-level packet retransmission
   If the device receives the APS ACK for a packet that was not successfully acknowledged on the MAC level, the OTA client cluster implementation stops the image transfer.
 
   **Workaround:** Add a watchdog timer that will restart the OTA image transfer.
@@ -902,7 +902,7 @@ KRKNWK-15749: Invalid ZAP Tool revision used
 .. rst-class:: v2-1-2 v2-1-1 v2-1-0
 
 KRKNWK-14473: Unreliable communication with the window covering sample
-  The :ref:`window covering sample <matter_window_covering_sample>` may rarely become unresponsive for a couple of seconds after commissioning to the Matter network.
+  The :ref:`window covering sample <matter_window_covering_sample>` might rarely become unresponsive for a couple of seconds after commissioning to the Matter network.
 
   **Workaround:** Switch from SSED to SED role.
 
@@ -917,14 +917,14 @@ KRKNWK-15088: Android CHIP Tool shuts down on changing the sensor type
 
 KRKNWK-14748: Matter command times out when a Matter device becomes a Thread router
   When a Full Thread Device becomes a router, it will ignore incoming packets for a short period of time, typically between 1-2 seconds.
-  This may disrupt the communication over Matter and lead to transaction timeouts.
+  This might disrupt the communication over Matter and lead to transaction timeouts.
 
   In more recent versions of Matter, this problem has been eliminated by enhancing Matter's Message Reliability Protocol.
   This fix will be included in the future versions of the |NCS|.
 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
-KRKNWK-14206: CHIP Tool for Android may crash when using Cluster Interactive Tool screen
+KRKNWK-14206: CHIP Tool for Android might crash when using Cluster Interactive Tool screen
   Cluster Interaction Tool screen crashes when trying to send a command that takes an optional argument.
 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
@@ -963,8 +963,8 @@ KRKNWK-10387: Matter service is needlessly advertised over Bluetooth® LE during
 
 .. rst-class:: v1-5-2 v1-5-1 v1-5-0
 
-KRKNWK-9214: Pigweed submodule may not be accessible from some regions
-  The ``west update`` command may generate log notifications about the failure to access the pigweed submodule.
+KRKNWK-9214: Pigweed submodule might not be accessible from some regions
+  The ``west update`` command might generate log notifications about the failure to access the pigweed submodule.
   As a result, the Matter samples will not build.
 
   **Workaround:** Execute the following commands in the root folder:
@@ -1110,8 +1110,8 @@ NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth® L
 
 .. rst-class:: v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
-NCSDK-17088: :ref:`nrf_desktop_ble_qos` may crash on application start
-  The Bluetooth LE Quality of Service (QoS) module may trigger an ARM fault on application start.
+NCSDK-17088: :ref:`nrf_desktop_ble_qos` might crash on application start
+  The Bluetooth LE Quality of Service (QoS) module might trigger an ARM fault on application start.
   The ARM fault is caused by invalid memory alignment.
 
   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``f236a8eff32adbe201d486cd11d4fa8853b90bd7``).
@@ -1120,7 +1120,7 @@ NCSDK-17088: :ref:`nrf_desktop_ble_qos` may crash on application start
 
 NCSDK-17706: :ref:`nrf_desktop_failsafe` does not continue an interrupted settings erase operation
   The failsafe module does not continue an interrupted settings erase operation on a subsequent boot.
-  Because of that, the application may be booted with only partially erased settings.
+  Because of that, the application might be booted with only partially erased settings.
 
   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``0581d50bab2ba54d78c1cb7ad37397bccf1fec5b``).
 
@@ -1144,7 +1144,7 @@ NCSDK-12337: Possible assertion failure at boot of an USB-connected host
 .. rst-class:: v1-7-1 v1-7-0
 
 NCSDK-11626: HID keyboard LEDs are not turned off when host disconnects
-  The HID keyboard LEDs, indicating among others state of Caps Lock and Num Lock, may not be updated after host disconnection.
+  The HID keyboard LEDs, indicating among others state of Caps Lock and Num Lock, might not be updated after host disconnection.
   The problem replicates only if there is no other connected host.
 
   **Workaround:** Do not use HID keyboard LEDs.
@@ -1153,7 +1153,7 @@ NCSDK-11626: HID keyboard LEDs are not turned off when host disconnects
 
 NCSDK-11378: Empty HID boot report forwarding issue
   An empty HID boot report is not forwarded to the host computer by the nRF Desktop dongle upon peripheral disconnection.
-  The host computer may not receive information that key that was previously reported as pressed was released.
+  The host computer might not receive information that key that was previously reported as pressed was released.
 
   **Workaround:** Do not enable HID boot protocol on the nRF Desktop dongle.
 
@@ -1204,8 +1204,8 @@ nRF Machine Learning
 
 .. rst-class:: v1-9-0
 
-NCSDK-13923: Device may crash during Bluetooth bonding
-  The device programmed with the nRF Machine Learning application may crash during Bluetooth bonding because of insufficient Bluetooth RX thread stack size.
+NCSDK-13923: Device might crash during Bluetooth bonding
+  The device programmed with the nRF Machine Learning application might crash during Bluetooth bonding because of insufficient Bluetooth RX thread stack size.
 
   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``4870fcd8316bd3a4b53ca0054f0ce35e1a8c567d``).
 
@@ -1242,14 +1242,14 @@ NCSDK-13247: Sensor manager dereferences NULL pointer on wake up for sensors wit
 
 NCSDK-13058: Directed advertising does not work
   The directed advertising feature enabled with the :kconfig:option:`CONFIG_CAF_BLE_ADV_DIRECT_ADV` option does not work as intended.
-  Using directed advertising towards peers that enable privacy may result in connection establishing problems.
+  Using directed advertising towards peers that enable privacy might result in connection establishing problems.
 
   **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``c61c677872943bcf7905ddeec8b24b07ae50752e``).
 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
 NCSDK-15675: Possible advertising start failure and module state error in :ref:`caf_ble_adv`
-  If a new peer is selected twice in a quick succession, the second peer selection may cause an advertising start failure and a module state error reported by the :ref:`caf_ble_adv`.
+  If a new peer is selected twice in a quick succession, the second peer selection might cause an advertising start failure and a module state error reported by the :ref:`caf_ble_adv`.
   See the commit with fix mentioned in the workaround for details.
 
   **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``934a25ac23125758e350b64bca23885486682109``).
@@ -1269,7 +1269,7 @@ NCSDK-15707: Visual glitches when updating an RGB LED's color in :ref:`caf_leds`
 .. rst-class:: v2-1-2 v2-1-1 v2-1-0
 
 NCSDK-16644: :ref:`caf_sensor_manager` macro incorrectly converts float to sensor value
-  :ref:`caf_sensor_manager` macro :c:macro:`FLOAT_TO_SENSOR_VALUE` may convert float to sensor value incorrectly, because of missing brackets around macro argument.
+  :ref:`caf_sensor_manager` macro :c:macro:`FLOAT_TO_SENSOR_VALUE` might convert float to sensor value incorrectly, because of missing brackets around macro argument.
 
   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``7e8c23a6632632f0cee885abe955e37a6942911d``).
 
@@ -1282,7 +1282,7 @@ Bluetooth® LE
 .. rst-class:: v2-0-2
 
 DRGN-17695: The BT RX thread stack might overflow if the :kconfig:option:`CONFIG_BT_SMP` is enabled
-  When performing SMP pairing MPU FAULTs may be triggered because the stack is not large enough.
+  When performing SMP pairing MPU FAULTs might be triggered because the stack is not large enough.
 
   **Workaround:** Increase the stack size manually in the project configuration file (:file:`prj.conf`) using :kconfig:option:`CONFIG_BT_RX_STACK_SIZE`.
 
@@ -1505,20 +1505,20 @@ NCSDK-16800: RPL is not cleared on IV index recovery
 
 .. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
 
-NCSDK-16798: Friend Subsciption List may have duplicate entries
+NCSDK-16798: Friend Subsciption List might have duplicate entries
   If a Low Power node loses a Friend Subscription List Add Confirm message, it repeats the request.
   The Friend does not check both the transaction number and the presence of the addresses in the subscription list.
   This causes a situation where the Friend fills the subscription list with duplicate addresses.
 
 .. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
-NCSDK-16782: The extended advertiser may not work with Bluetooth mesh
+NCSDK-16782: The extended advertiser might not work with Bluetooth mesh
   Using the extended advertiser instead of the legacy advertiser can lead to getting composition data while provisioning to fail.
-  This problem may manifest in the sample :ref:`bluetooth_ble_peripheral_lbs_coex`, as it is using the extended advertiser.
+  This problem might manifest in the sample :ref:`bluetooth_ble_peripheral_lbs_coex`, as it is using the extended advertiser.
 
 .. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0
 
-NCSDK-16579: Advertising Node Identity and Network ID may not work with the extended advertiser
+NCSDK-16579: Advertising Node Identity and Network ID might not work with the extended advertiser
   Advertising Node Identity and Network ID do not work with the extended advertising API when the :kconfig:option:`CONFIG_BT_MESH_ADV_EXT_GATT_SEPARATE` option is enabled.
 
   **Workaround:** Don't enable the :kconfig:option:`CONFIG_BT_MESH_ADV_EXT_GATT_SEPARATE` option.
@@ -1526,7 +1526,7 @@ NCSDK-16579: Advertising Node Identity and Network ID may not work with the exte
 .. rst-class:: v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
 
 NCSDK-14399: Legacy advertiser can occasionally do more message retransmissions than requested
-  When using the legacy advertiser, the stack sleeps for at least 50 ms after starting advertising a message, which may result in more messages to be advertised than requested.
+  When using the legacy advertiser, the stack sleeps for at least 50 ms after starting advertising a message, which might result in more messages to be advertised than requested.
 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
 
@@ -1665,9 +1665,9 @@ Flash commands only program one core
 
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
 
-NCSDK-11234: Statically defined "pcd_sram" partition may cause ARM usage fault
+NCSDK-11234: Statically defined "pcd_sram" partition might cause ARM usage fault
   Inconsistency between SRAM memory partitions in Partition Manager and DTS could lead to improper memory usage.
-  For example, one SRAM region may be used for multiple purposes at the same time.
+  For example, one SRAM region might be used for multiple purposes at the same time.
 
   **Workaround:** Ensure that partitions defined by DTS and Partition Manager are consistent.
 
@@ -1695,7 +1695,7 @@ NCSDK-11308: Powering off device immediately after serial recovery of the nRF53 
 
 .. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
-NCSDK-6238: Socket API calls may hang when using Download client
+NCSDK-6238: Socket API calls might hang when using Download client
   When using the :ref:`lib_download_client` library with HTTP (without TLS), the application might not process incoming fragments fast enough, which can starve the :ref:`nrfxlib:nrf_modem` buffers and make calls to the Modem library hang.
   Samples and applications that are affected include those that use :ref:`lib_download_client` to download files through HTTP, or those that use :ref:`lib_fota_download` with modem updates enabled.
 
@@ -1848,7 +1848,7 @@ NCSDK-13900: Limited AES CBC PKCS7 support in PSA Crypto APIs
 .. rst-class:: v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
 NCSDK-5883: CMAC behavior issues
-  CMAC glued with multiple backends may behave incorrectly due to memory allocation issues.
+  CMAC glued with multiple backends might behave incorrectly due to memory allocation issues.
 
   **Workaround:** Disable glued CMAC and use only one of the enabled backends.
 
@@ -1896,7 +1896,7 @@ NMEA strings might return wrong length
 Closing sockets
   Sockets can only be closed when GPS is in stopped mode.
   Moreover, closing a socket does not properly clean up all memory resources.
-  If a socket is opened and closed multiple times, this  might starve the system.
+  If a socket is opened and closed multiple times, this might starve the system.
 
 Modem Library
 =============
@@ -2064,7 +2064,7 @@ DRGN-17710: Periodic advertiser delay
 
 DRGN-17710: Scanner packet reception delay
   The scanner attempts to receive the first ``AUX_SYNC_IND`` packet 40 us later than the one indicated in the ``SyncInfo`` of the ``AUX_ADV_IND``.
-  This may result in the device failing to establish a synchronization to the periodic advertiser.
+  This might result in the device failing to establish a synchronization to the periodic advertiser.
 
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0
 
@@ -2078,7 +2078,7 @@ DRGN-17110: The Advertiser Address Type in the LE Periodic Advertising Sync Esta
 
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
-DRGN-16859: The vendor-specific HCI commands Zephyr Write TX Power Level and Zephyr Read TX Power Level may return "Unknown Advertiser Identifier (0x42)" when setting advertising output power
+DRGN-16859: The vendor-specific HCI commands Zephyr Write TX Power Level and Zephyr Read TX Power Level might return "Unknown Advertiser Identifier (0x42)" when setting advertising output power
   The SoftDevice Controller will return this error code if the command is issued before advertising parameters are set.
 
   **Workaround:** Configure the advertiser before setting TX Power using HCI LE Set Advertising Parameters
@@ -2093,7 +2093,7 @@ DRGN-16808: Assertion on nRF53 Series devices when the RC oscillator is used as 
 .. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
 DRGN-16650: Undefined behavior when extended scanning is enabled
-  When extended scanning is enabled and :kconfig:option:`CONFIG_BT_BUF_ACL_RX_SIZE` is set to a value less than 251, it may result in asserts or undefined behavior.
+  When extended scanning is enabled and :kconfig:option:`CONFIG_BT_BUF_ACL_RX_SIZE` is set to a value less than 251, it might result in asserts or undefined behavior.
 
   **Workaround:** Set :kconfig:option:`CONFIG_BT_BUF_EVT_RX_SIZE` to 255 when extended scanning is enabled.
 
@@ -2109,7 +2109,7 @@ DRGN-16394: The peripheral accepts a channel map where all channels are marked a
 
 .. rst-class:: v1-8-0 v1-7-1 v1-7-0
 
-DRGN-16317: The SoftDevice Controller may discard LE Extended Advertising Reports
+DRGN-16317: The SoftDevice Controller might discard LE Extended Advertising Reports
   If there is insufficient memory available or the Host is not able to process HCI events in time, the SoftDevice Controller can discard LE Extended Advertising Reports.
   If advertising data is split across multiple reports and any of these are discarded, the Host will not be able to reassemble the data.
 
@@ -2117,7 +2117,7 @@ DRGN-16317: The SoftDevice Controller may discard LE Extended Advertising Report
 
 .. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
-DRGN-16341: The SoftDevice Controller may discard LE Extended Advertising Reports
+DRGN-16341: The SoftDevice Controller might discard LE Extended Advertising Reports
   Extended Advertising Reports with data length of 228 are discarded.
 
 .. rst-class:: v1-7-1 v1-7-0
@@ -2173,7 +2173,7 @@ DRGN-15586: "HCI LE Set Scan Parameters" accepts a scan window greater than the 
 .. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 DRGN-15547: Assertion when updating PHY and the event length is configured too low
-  The SoftDevice Controller may assert if:
+  The SoftDevice Controller might assert in the following cases:
 
   * :c:union:`sdc_cfg_t` with :c:member:`event_length` is set to less than 2500 us and the PHY is updated from 2M to 1M, or from either 1M or 2M to Coded PHY.
   * :c:union:`sdc_cfg_t` with :c:member:`event_length` is set to less than 7500 us and a PHY update to Coded PHY is performed.
@@ -2192,7 +2192,7 @@ DRGN-13594: The channel map provided by the LE Host Set Channel Classification H
 
 .. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
-DRGN-15338: Extended scanner may generate reports containing truncated data from chained advertising PDUs
+DRGN-15338: Extended scanner might generate reports containing truncated data from chained advertising PDUs
   The scanner reports partial data from advertising PDUs when there is not enough storage space for the full report.
 
 .. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
@@ -2216,7 +2216,7 @@ DRGN-15694: An assert can occur when running an extended advertiser with maximum
 
 .. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
-DRGN-15484: A connectable or scannable advertiser may end with sending a packet without listening for the ``CONNECT_IND``, ``AUX_CONNECT_REQ``, ``SCAN_REQ``, or ``AUX_SCAN_REQ``
+DRGN-15484: A connectable or scannable advertiser might end with sending a packet without listening for the ``CONNECT_IND``, ``AUX_CONNECT_REQ``, ``SCAN_REQ``, or ``AUX_SCAN_REQ``
   These packets sent by the scanner or initiator can end up ignored in some cases.
 
 .. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
@@ -2229,7 +2229,7 @@ DRGN-15531: The coding scheme provided by the LE Set PHY HCI Command is ignored 
 
 .. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
-DRGN-15758: The controller may still have pending events after :c:func:`sdc_hci_evt_get()` returns false
+DRGN-15758: The controller might still have pending events after :c:func:`sdc_hci_evt_get()` returns false
   This will only occur if the host has masked out events.
 
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
@@ -2284,7 +2284,7 @@ DRGN-14008: The advertising data is cleared every time the advertising set is co
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-15291: The generation of QoS Connection events is not disabled after an HCI reset
-  Some event reports may still occur after a reset.
+  Some event reports might still occur after a reset.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
@@ -2314,12 +2314,12 @@ DRGN-10367: Advertiser times out earlier than expected
 
 .. rst-class:: v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
-DRGN-11222: A Central may disconnect prematurely if there are scheduling conflicts while doing a control procedure with an instant
+DRGN-11222: A Central might disconnect prematurely if there are scheduling conflicts while doing a control procedure with an instant
   This bug will only be triggered in extremely rare cases.
 
 .. rst-class:: v1-1-0 v1-0-0
 
-DRGN-13231: A control packet may be sent twice even after the packet is ACKed
+DRGN-13231: A control packet might be sent twice even after the packet is ACKed
   This only occurs if the radio is forced off due to an unforeseen condition.
 
 .. rst-class:: v1-1-0 v1-0-0
@@ -2375,7 +2375,7 @@ Sending control packet twice
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-13029: The application will not immediately restart a connectable advertiser after a high duty cycle advertiser times out
-  In some cases, the host may restart advertising sooner than the SoftDevice Controller is able to free its connection context.
+  In some cases, the host might restart advertising sooner than the SoftDevice Controller is able to free its connection context.
 
   **Workaround:** Wait 500 ms before restarting a connectable advertiser
 
@@ -2387,7 +2387,7 @@ Assert risk after performing a DLE procedure
 .. rst-class:: v1-0-0
 
 No data issue when connected to multiple devices
-  :c:func:`hci_data_get()` may return "No data available" when there is data available.
+  :c:func:`hci_data_get()` might return "No data available" when there is data available.
   This issue will only occur when connected to multiple devices at the same time.
 
 .. rst-class:: v1-0-0
@@ -2408,12 +2408,12 @@ Assert if advertising data is set after HCI Reset
 .. rst-class:: v1-0-0
 
 Assert on writing to flash
-  The controller may assert when writing to flash.
+  The controller might assert when writing to flash.
 
 .. rst-class:: v1-0-0
 
 Timeout without sending packet
-  A directed advertiser may time out without sending a packet on air.
+  A directed advertiser might time out without sending a packet on air.
 
 nrfx
 ****
@@ -2458,7 +2458,7 @@ Trusted Firmware-M (TF-M)
 
 .. rst-class:: v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
-NCSDK-15909: TF-M may fail to build due to flash overflow with Zephyr SDK 0.14.2
+NCSDK-15909: TF-M might fail to build due to flash overflow with Zephyr SDK 0.14.2
   when TFM_PROFILE_TYPE_NOT_SET=y.
 
   **Workaround:** Use one of the following workarounds:
@@ -2468,7 +2468,7 @@ NCSDK-15909: TF-M may fail to build due to flash overflow with Zephyr SDK 0.14.2
 
 .. rst-class:: v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
-NCSDK-16916: TF-M non-secure storage size may be incorrect when having multiple storage partitions
+NCSDK-16916: TF-M non-secure storage size might be incorrect when having multiple storage partitions
   TF-M non-secure storage partition ``nonsecure_storage`` size is incorrectly calculated when it has multiple storage partitions inside.
 
   **Workaround:** Use one of the following workarounds:

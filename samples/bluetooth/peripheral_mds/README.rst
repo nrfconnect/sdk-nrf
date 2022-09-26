@@ -285,9 +285,9 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/conn.h``
-  * ``samples/bluetooth/gatt/bas.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/conn.h`
+  * :file:`samples/bluetooth/gatt/bas.h`
 
 The sample also uses the following secure firmware component:
 

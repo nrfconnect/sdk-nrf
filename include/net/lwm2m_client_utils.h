@@ -63,7 +63,7 @@ struct modem_mode_change {
  * storage using Zephyr settings API. Credential are stored to
  * modem and no keys would enter the flash.
  *
- * @note This API calls settings_subsys_init() so should
+ * @note This API calls settings_subsys_init() and should
  *       only be called after the settings backend (Flash or FS)
  *       is ready.
  */
@@ -73,7 +73,7 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode
  * @brief Set security object to PSK mode.
  *
  * Any pointer can be given as a NULL, which means that data related to this field is set to
- * zero legth in the engine. Effectively, it causes that relative data is not written into
+ * zero length in the engine. Effectively, it causes that relative data is not written into
  * the modem. This can be used if the given data is already provisioned to the modem.
  *
  * @param sec_obj_inst Security object ID to modify.
@@ -147,7 +147,7 @@ int lwm2m_init_location(void);
 /**
  * @brief Firmware update state change event callback.
  *
- * @param[in] update_state LWM2M Firmware Update object states
+ * @param[in] update_state LwM2M Firmware Update object states
  *
  * @return Callback returns a negative error code (errno.h) indicating
  *         reason of failure or 0 for success.

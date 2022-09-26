@@ -107,8 +107,8 @@ The USB device VID and PID are configured by the sample's Kconfig file.
 When you change the communication channel to nRF USB with :file:`prj_usb.conf` and select any of the :file:`<board>_usb.overlay` files, :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` are printed by default using ``uart1``.
 This is configured in the :file:`prj_usb.conf` file with the following settings:
 
-* :kconfig:option:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - to enable binary format.
-* :kconfig:option:`CONFIG_ZBOSS_TRACE_UART_LOGGING` - to select the UART serial over the nRF USB serial.
+* :kconfig:option:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - To enable binary format.
+* :kconfig:option:`CONFIG_ZBOSS_TRACE_UART_LOGGING` - To select the UART serial over the nRF USB serial.
   This option is set by default when the binary format is enabled.
 
 And, in the overlay file like this:

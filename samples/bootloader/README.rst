@@ -9,7 +9,7 @@
 
 The |NSIB| (NSIB), previously also known as *B0* or ``b0``, is a secure bootloader built and maintained by Nordic Semiconductor.
 It is specifically tailored for the :ref:`immutable bootloader architecture <immutable_bootloader>` of a secure boot chain.
-It can verify and boot a second-stage bootloader or application while providing a persistent and reliable *Root of Trust* (RoT).
+It can verify and boot a second-stage bootloader or application while providing a persistent and reliable :term:`Root of Trust (RoT)`.
 
 See :ref:`ug_bootloader` for more information about the full bootloader chain.
 
@@ -32,7 +32,7 @@ The NSIB can only boot images that enable the firmware information module, see t
 Overview
 ********
 
-The NSIB implements a simple and reliable *Root of Trust* (RoT) for a secure boot chain:
+The NSIB implements a simple and reliable :term:`Root of Trust (RoT)` for a secure boot chain:
 
 1. Locks the flash memory.
 
@@ -290,5 +290,8 @@ The following |NCS| libraries are used:
 * :ref:`doc_bl_crypto`
 * :ref:`doc_bl_validation`
 * :ref:`doc_bl_storage`
+
+It uses the following `sdk-nrfxlib`_ libraries:
+
 * :ref:`nrfxlib:nrf_cc310_bl_readme`
 * :ref:`nrfxlib:nrf_oberon_readme`

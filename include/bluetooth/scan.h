@@ -500,7 +500,7 @@ int bt_scan_filter_status_get(struct bt_filter_status *status);
  *          if the same filter has not already been set.
  *
  * @param[in] type Filter type.
- * @param[in] data Pointer to The filter data to add.
+ * @param[in] data Pointer to the filter data to add.
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error
  *	     code is returned.

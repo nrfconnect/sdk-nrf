@@ -281,4 +281,4 @@ This sample uses the following Zephyr library:
 
 * :ref:`zephyr:shell_api`:
 
-  * ``include/shell/shell.h``
+  * :file:`include/shell/shell.h`

@@ -215,7 +215,7 @@ For Bluetooth® Low Energy, this happens every time the channel changes.
    Failing to meet the timing requirements will lead to an undefined behavior of the protocol stacks.
 
 
-The ``fetch`` callback must fill out all the fields of the  the ``p_output`` output parameter.
+The ``fetch`` callback must fill out all the fields of the ``p_output`` output parameter.
 For more details, see the ``mpsl_fem_power_model_output_t`` type documentation.
 
 .. note::

@@ -52,7 +52,7 @@ extern "C" {
 #define RSRQ_IDX_TO_DB(rsrq) ((((float)(rsrq)) * RSRQ_SCALE_VAL) - \
 			      RSRQ_OFFSET_VAL)
 
-/**@brief RSRP event handler function protoype. */
+/**@brief RSRP event handler function prototype. */
 typedef void (*rsrp_cb_t)(char rsrp_value);
 
 /**@brief LTE link information data. */

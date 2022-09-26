@@ -608,7 +608,7 @@ Glossary
       A general management protocol for enabling a host device to communicate with and manage co-processors, like a network co-processor (NCP) or a radio co-processor (RCP).
 
    Station mode (STA)
-      Device operating as a IEEE 802.11 station.
+      Device operating as an IEEE 802.11 station.
 
    Submodule
       A child of another Git :term:`repository <Repository>`, managed using the ``git submodule`` command family.

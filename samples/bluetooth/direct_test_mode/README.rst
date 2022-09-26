@@ -268,7 +268,7 @@ The overlay files for the :ref:`nrf5340_remote_shell` child image are located in
 
 .. note::
    On the nRF5340 development kit, the physical UART interface of the application core is used for communication with the tester device.
-   This sample uses the :ref:`uart_ipc` driver for sending responses and receiving commands through the UART interface of the application core.
+   This sample uses the :ref:`uart_ipc` for sending responses and receiving commands through the UART interface of the application core.
 
 Debugging
 *********
@@ -497,10 +497,10 @@ This sample uses the following |NCS| driver:
 
 This sample has the following nrfx dependencies:
 
-  * ``nrfx/drivers/include/nrfx_timer.h``
-  * ``nrfx/hal/nrf_nvmc.h``
-  * ``nrfx/hal/nrf_radio.h``
-  * ``nrfx/helpers/nrfx_gppi.h``
+  * :file:`nrfx/drivers/include/nrfx_timer.h`
+  * :file:`nrfx/hal/nrf_nvmc.h`
+  * :file:`nrfx/hal/nrf_radio.h`
+  * :file:`nrfx/helpers/nrfx_gppi.h`
 
 The sample also has the following nrfxlib dependency:
 
@@ -510,5 +510,5 @@ In addition, it has the following Zephyr dependencies:
 
 * :ref:`zephyr:device_model_api`:
 
-   * ``drivers/clock_control.h``
-   * ``drivers/uart.h``
+   * :file:`drivers/clock_control.h`
+   * :file:`drivers/uart.h`

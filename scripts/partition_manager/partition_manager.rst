@@ -494,9 +494,9 @@ For example, see the following definitions for default regions:
     SIZE ${flash_size}                  # Size
     BASE ${CONFIG_FLASH_BASE_ADDRESS}   # Base address
     PLACEMENT complex                   # Placement strategy
-    DEVICE flash_controller             # DTS node label of flash controllel
+    DEVICE flash_controller             # DTS node label of flash controller
     DEFAULT_DRIVER_KCONFIG	        # Kconfig option that should be set for
-                                        # for the driver to be compiled in
+                                        # the driver to be compiled in
     )
 
 .. _pm_external_flash:
@@ -691,7 +691,7 @@ For example, if you generate a partition placement report on the build of :file:
    | 0xff000: EMPTY_2 (0x1000)                |
    +------------------------------------------+
 
-The sizes of each partition are determined by the associated `pm.yml` file, such as :file:`nrf/samples/bootloader/pm.yml` for |NSIB| and :file:`bootloader/mcuboot/boot/zephyr/pm.yml` for MCUboot.
+The sizes of each partition are determined by the associated :file:`pm.yml` file, such as :file:`nrf/samples/bootloader/pm.yml` for |NSIB| and :file:`bootloader/mcuboot/boot/zephyr/pm.yml` for MCUboot.
 
 .. _ug_pm_static:
 

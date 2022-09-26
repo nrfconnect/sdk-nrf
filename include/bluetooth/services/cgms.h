@@ -73,7 +73,7 @@ struct bt_cgms_measurement {
 struct bt_cgms_cb {
 	/** @brief Callback when the state of session changes.
 	 *
-	 *  The aaplication may start or stop glucose measurement based on
+	 *  The application may start or stop glucose measurement based on
 	 *  the latest state of a session.
 	 *
 	 *  @param session_state The state of current session. True if session starts,
@@ -87,7 +87,7 @@ struct bt_cgms_init_param {
 	/** Continuous Glucose Monitoring type. */
 	enum bt_cgms_feat_type type;
 
-	/** CGM sample location. */
+	/** CGMS sample location. */
 	enum bt_cgms_feat_loc sample_location;
 
 	/** The session run time in uint of hour. It shall be positive. */
@@ -115,7 +115,7 @@ int bt_cgms_measurement_add(struct bt_cgms_measurement measurement);
  * This will initialize components used in CGMS.
  *
  *  @param[in] init_params The parameter used to initialize the corresponding
- *             values of CGMS monule.
+ *             values of CGMS module.
  *
  *  @return Zero in case of success and error code in case of error.
  */
