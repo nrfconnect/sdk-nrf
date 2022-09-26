@@ -394,6 +394,7 @@ static void start_fota_download(struct k_work *work)
 	ret = configure_full_modem_update();
 	if (ret) {
 		LOG_ERR("configure_full_modem_update() failed, return code %d", ret);
+		lwm2m_firmware_set_update_result(RESULT_NO_STORAGE);
 		goto err;
 	}
 #endif
@@ -401,17 +402,16 @@ static void start_fota_download(struct k_work *work)
 	ret = fota_download_start(fota_host, fota_path, fota_sec_tag, 0, 0);
 	if (ret) {
 		LOG_ERR("fota_download_start() failed, return code %d", ret);
+		lwm2m_firmware_set_update_result(RESULT_CONNECTION_LOST);
 		goto err;
 	}
 
-	lwm2m_firmware_set_update_state(STATE_DOWNLOADING);
 	return;
 
 err:
 	k_free(fota_host);
 	fota_host = NULL;
 	fota_path = NULL;
-	lwm2m_firmware_set_update_result(RESULT_DEFAULT);
 	return;
 }
 
@@ -479,12 +479,28 @@ static int write_dl_uri(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst
 	state = lwm2m_firmware_get_update_state();
 
 	if (state == STATE_IDLE) {
-		lwm2m_firmware_set_update_result(RESULT_DEFAULT);
+		lwm2m_firmware_set_update_state_inst(obj_inst_id, STATE_DOWNLOADING);
 
 		if (data_len > 0) {
 			ret = init_start_download(package_uri);
-			if (ret) {
-				lwm2m_firmware_set_update_result(RESULT_DEFAULT);
+			switch (ret) {
+			case 0:
+				/* OK */
+				break;
+			case -EINVAL:
+				lwm2m_firmware_set_update_result_inst(obj_inst_id,
+								      RESULT_INVALID_URI);
+				break;
+			case -EBUSY:
+				/* Failed to init MCUBoot or download client */
+				lwm2m_firmware_set_update_result_inst(obj_inst_id,
+								      RESULT_NO_STORAGE);
+				break;
+			default: /* Remaining errors from init_start_download() are mostly
+				  * reflected by OUT OF MEMORY situations
+				  */
+				lwm2m_firmware_set_update_result_inst(obj_inst_id,
+								      RESULT_OUT_OF_MEM);
 			}
 		}
 	} else if (state == STATE_DOWNLOADED && data_len == 0U) {
