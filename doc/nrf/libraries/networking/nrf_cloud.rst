@@ -137,8 +137,8 @@ Additionally, :c:func:`nrf_cloud_shadow_device_status_update` can be used to gen
 
 Following are the supported FOTA types:
 
-* ``"APP"`` - updates the application.
-* ``"BOOT"`` - updates the :ref:`upgradable_bootloader`.
+* ``"APP"`` - Updates the application.
+* ``"BOOT"`` - Updates the :ref:`upgradable_bootloader`.
 * ``"MDM_FULL"`` - :ref:`Full modem FOTA <full_dfu>` updates the entire modem firmware image. Full modem updates require |external_flash_size| of available space. For the nRF9160, a full modem firmware image is approximately 2 MB. Consider the power and network costs before deploying full modem FOTA updates.
 * ``"MODEM"`` - :ref:`Delta modem FOTA <nrf_modem_delta_dfu>` applies incremental changes between specific versions of the modem firmware. Delta modem updates are much smaller in size and do not require external memory.
 

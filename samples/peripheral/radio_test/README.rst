@@ -243,9 +243,9 @@ This sample uses the following |NCS| library:
 
 This sample has the following nrfx dependencies:
 
-  * ``nrfx/drivers/include/nrfx_timer.h``
-  * ``nrfx/hal/nrf_power.h``
-  * ``nrfx/hal/nrf_radio.h``
+  * :file:`nrfx/drivers/include/nrfx_timer.h`
+  * :file:`nrfx/hal/nrf_power.h`
+  * :file:`nrfx/hal/nrf_radio.h`
 
 The sample also has the following nrfxlib dependency:
 
@@ -255,12 +255,12 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:device_model_api`:
 
-   * ``drivers/clock_control.h``
+   * :file:`drivers/clock_control.h`
 
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/init.h``
+  * :file:`include/init.h`
 
 * :ref:`zephyr:shell_api`:
 
-  * ``include/shell/shell.h``
+  * :file:`include/shell/shell.h`

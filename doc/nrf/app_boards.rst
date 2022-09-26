@@ -21,13 +21,13 @@ The build target column uses several entries for multi-core hardware platforms:
 
 * For core type:
 
-  * ``cpuapp`` -- When you choose this target, you build the application core firmware.
-  * ``cpunet`` -- When you choose this target, you build the network core firmware.
+  * ``cpuapp`` - When you choose this target, you build the application core firmware.
+  * ``cpunet`` - When you choose this target, you build the network core firmware.
 
 * For usage of Cortex-M Security Extensions (CMSE):
 
-  * Entries without ``*_ns`` (``cpuapp``) -- When you choose this target, you build the application core firmware as a single execution environment that does not use CMSE (:ref:`Trusted Firmware-M (TF-M) <ug_tfm>`).
-  * Entries with ``*_ns`` (for example, ``cpuapp_ns``) -- When you choose this target, you build the application with CMSE.
+  * Entries without ``*_ns`` (``cpuapp``) - When you choose this target, you build the application core firmware as a single execution environment that does not use CMSE (:ref:`Trusted Firmware-M (TF-M) <ug_tfm>`).
+  * Entries with ``*_ns`` (for example, ``cpuapp_ns``) - When you choose this target, you build the application with CMSE.
     The application core firmware is placed in Non-Secure Processing Environment (NSPE) and uses Secure Processing Environment (SPE) for security features.
     By default, the build system automatically includes :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` in SPE and merges it with NSPE.
 

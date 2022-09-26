@@ -284,7 +284,7 @@ int nrf_cloud_pgps_process_update(uint8_t *buf, size_t len);
 int nrf_cloud_pgps_finish_update(void);
 
 /** @brief If previous request for P-GPS data failed, re-enable future retries.
- * This is should be called by the application after it attempts to
+ * This should be called by the application after it attempts to
  * handle PGPS_EVT_REQUEST, but is unable to complete it successfully. For
  * example, it should be called if the cloud connection being used to transmit
  * the request is temporarily unavailable.

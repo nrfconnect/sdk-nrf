@@ -65,7 +65,7 @@ Complete the following steps to prepare for the certification tests:
 #. Build the certification image.
 
    Use the :ref:`ot_cli_sample` sample as a base, and apply the :file:`overlay-ci.conf` and :file:`overlay-multiprotocol.conf` overlay files.
-   Also set :kconfig:option:`CONFIG_LOG` to ``n`` and :kconfig:option:`CONFIG_ASSERT` to ``n``.
+   Also, set :kconfig:option:`CONFIG_LOG` to ``n`` and :kconfig:option:`CONFIG_ASSERT` to ``n``.
 
    * If building on the command line, use the following command:
 

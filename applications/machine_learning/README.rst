@@ -294,7 +294,7 @@ By default, the application uses the following LED effects:
 Configuration
 *************
 
-The nRF Machine Learning application is modular and event-driven.
+The nRF Machine Learning application is modular and event driven.
 You can enable and configure the modules separately for selected board and build type.
 See the documentation page of selected module for information about functionalities provided by the module and its configuration.
 See :ref:`nrf_machine_learning_app_internal_modules` for list of modules available in the application.
@@ -440,7 +440,7 @@ After programming the application, perform the following steps to test the nRF M
    After the mode is switched, the LED color changes to red and the LED starts blinking very slowly.
 #. Program the :ref:`central_uart` sample to a compatible development kit, for example the nRF52840 Development Kit.
 #. Turn on the programmed device.
-   After a brief delay the Bluetooth® connection between the sample and the Thingy is established.
+   After a brief delay, the Bluetooth® connection between the sample and the Thingy is established.
    The Thingy forwards the sensor readouts over NUS.
    The LED on the Thingy starts to blink rapidly.
 #. Connect to the Bluetooth® Central UART sample with a terminal emulator (for example, PuTTY).
@@ -554,7 +554,7 @@ The nRF Machine Learning application also uses the following dedicated applicati
 ``ml_runner``
   The module uses :ref:`ei_wrapper` API to control running the machine learning model.
   It provides the prediction results using :c:struct:`ml_result_event`.
-  The module runs the machine learning model and provides results only if there is an active subsriber.
+  The module runs the machine learning model and provides results only if there is an active subscriber.
   An application module can inform that it is actively listening for results using :c:struct:`ml_result_signin_event`.
 
 ``ml_app_mode``

@@ -222,17 +222,17 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`zephyr:logging_api`:
 
-  * ``include/logging/log.h``
+  * :file:`include/logging/log.h``
 
 * :ref:`zephyr:bsd_sockets_interface`:
 
-  * ``net/socket.h``
+  * :file:`net/socket.h`
 
-* ``net/net_core.h``
-* ``net/tls_credentials.h``
+* :file:`net/net_core.h`
+* :file:`net/tls_credentials.h`
 
 It also uses the following TF-M libraries:
 
-* ``tfm_ns_interface.h``
-* ``psa/storage_common.h``
-* ``psa/protected_storage.h``
+* :file:`tfm_ns_interface.h`
+* :file:`psa/storage_common.h`
+* :file:`psa/protected_storage.h`

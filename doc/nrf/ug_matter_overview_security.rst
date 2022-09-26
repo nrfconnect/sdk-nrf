@@ -56,9 +56,9 @@ After exchanging the keys and establishing secure channel, the 128-bit AES-CCM a
 
 A Matter message consists of the following elements:
 
-* Message Header - which carries session and transport-related information.
-* Protocol Header - which describes semantics of the message.
-* Payload - which is the actual protocol-specific content of the message.
+* Message Header - Carries session and transport-related information.
+* Protocol Header - Describes semantics of the message.
+* Payload - Actual protocol-specific content of the message.
 
 While the AES-CCM algorithm ensures the integrity of all three elements, only Protocol Header and Payload get encrypted.
 This is because Message Header contains fields, such as Security Flags and Message Counter, which are used to calculate the AES-CCM Nonce that is necessary to decrypt the remaining part of a message.

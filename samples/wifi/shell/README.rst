@@ -38,17 +38,23 @@ Currently, the following configurations are supported:
 
 
 To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
-The following is an example of the CLI command::
+The following is an example of the CLI command:
+
+.. code-block:: console
 
    west build -b nrf7002dk_nrf5340_cpuapp
 
 To build for the nRF7002 EK, use the ``nrf7002dk_nrf5340_cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002_ek``.
-The following is an example of the CLI command::
+The following is an example of the CLI command:
+
+.. code-block:: console
 
    west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002_ek
 
 To build for the nRF9160 DK, use the ``nrf9160dk_nrf9160_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002_ek`` and scan-only overlay configuration.
-The following is an example of the CLI command::
+The following is an example of the CLI command:
+
+.. code-block:: console
 
    west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-scan-only.conf -DSHIELD=nrf7002_ek
 
