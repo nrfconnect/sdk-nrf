@@ -118,8 +118,35 @@ enum nrf_cloud_evt_type {
 	NRF_CLOUD_EVT_FOTA_DONE,
 	/** An error occurred during the FOTA update. */
 	NRF_CLOUD_EVT_FOTA_ERROR,
-	/** There was an error communicating with the cloud. */
+	/** An error occurred. The status field in the event struct will
+	 * be populated with a @ref nrf_cloud_error_status value
+	 */
 	NRF_CLOUD_EVT_ERROR = 0xFF
+};
+
+/**@ nRF Cloud error status, used to describe NRF_CLOUD_EVT_ERROR */
+enum nrf_cloud_error_status {
+	/** No error */
+	NRF_CLOUD_ERR_STATUS_NONE = 0,
+
+	/** MQTT connection failed */
+	NRF_CLOUD_ERR_STATUS_MQTT_CONN_FAIL,
+	/** MQTT protocol version not supported by server */
+	NRF_CLOUD_ERR_STATUS_MQTT_CONN_BAD_PROT_VER,
+	/** MQTT client identifier rejected by server */
+	NRF_CLOUD_ERR_STATUS_MQTT_CONN_ID_REJECTED,
+	/** MQTT service is unavailable */
+	NRF_CLOUD_ERR_STATUS_MQTT_CONN_SERVER_UNAVAIL,
+	/** Malformed user name or password */
+	NRF_CLOUD_ERR_STATUS_MQTT_CONN_BAD_USR_PWD,
+	/** Client is not authorized to connect */
+	NRF_CLOUD_ERR_STATUS_MQTT_CONN_NOT_AUTH,
+	/** Failed to subscribe to MQTT topic */
+	NRF_CLOUD_ERR_STATUS_MQTT_SUB_FAIL,
+	/** Error processing A-GPS data */
+	NRF_CLOUD_ERR_STATUS_AGPS_PROC,
+	/** Error processing P-GPS data */
+	NRF_CLOUD_ERR_STATUS_PGPS_PROC,
 };
 
 /**@ nRF Cloud disconnect status. */
@@ -151,7 +178,10 @@ enum nrf_cloud_connect_result {
 	NRF_CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED = -11,
 };
 
-/**@ nRF Cloud error codes. */
+/**@ nRF Cloud error codes.
+ * See the <a href="https://api.nrfcloud.com/v1#section/Error-Codes">Error Codes</a>
+ * section of nRF Cloud API documentation for more information.
+ */
 enum nrf_cloud_error {
 	NRF_CLOUD_ERROR_UNKNOWN			= -1,
 	NRF_CLOUD_ERROR_NONE			= 0,

@@ -278,12 +278,15 @@ static int drop_event_handler(const struct nct_evt *nct_evt)
 static int connection_handler(const struct nct_evt *nct_evt)
 {
 	int err;
-	struct nrf_cloud_evt evt;
+	struct nrf_cloud_evt evt = {
+		.type = NRF_CLOUD_EVT_TRANSPORT_CONNECTED,
+		.status = nct_evt->status
+	};
 
 	/* Notify the application of the connection event.
 	 * State transitions according to the event result.
 	 */
-	if (nct_evt->status != 0) {
+	if (nct_evt->status != NRF_CLOUD_ERR_STATUS_NONE) {
 		evt.type = NRF_CLOUD_EVT_ERROR;
 		evt.status = nct_evt->status;
 		nfsm_set_current_state_and_notify(nfsm_get_current_state(),
@@ -291,7 +294,7 @@ static int connection_handler(const struct nct_evt *nct_evt)
 		return 0;
 	}
 
-	evt.type = NRF_CLOUD_EVT_TRANSPORT_CONNECTED;
+	/* For a connected event, status indicates if a persistent session is present */
 	evt.status = nct_evt->param.flag;
 	nfsm_set_current_state_and_notify(STATE_CONNECTED, &evt);
 
@@ -339,17 +342,17 @@ static int cc_connection_handler(const struct nct_evt *nct_evt)
 	/* Set the state according to the status of the event.
 	 * If status the connection, request state synchronization.
 	 */
-	static const struct nct_cc_data get_request = {
+	const struct nct_cc_data get_request = {
 		.opcode = NCT_CC_OPCODE_GET_REQ,
 		.message_id = NCT_MSG_ID_STATE_REQUEST,
 	};
-
 	int err;
 	const struct nrf_cloud_evt evt = {
 		.type = NRF_CLOUD_EVT_ERROR,
+		.status = nct_evt->status
 	};
 
-	if (nct_evt->status != 0) {
+	if (nct_evt->status != NRF_CLOUD_ERR_STATUS_NONE) {
 		/* Send error event and initiate disconnect */
 		nfsm_set_current_state_and_notify(nfsm_get_current_state(), &evt);
 		(void)nct_dc_disconnect();
@@ -514,13 +517,18 @@ static int cc_disconnection_handler(const struct nct_evt *nct_evt)
 
 static int dc_connection_handler(const struct nct_evt *nct_evt)
 {
-	if (nct_evt->status == 0) {
-		struct nrf_cloud_evt evt = {
-			.type = NRF_CLOUD_EVT_READY,
-		};
+	struct nrf_cloud_evt evt = {
+		.type = NRF_CLOUD_EVT_READY,
+		.status = nct_evt->status
+	};
 
+	if (nct_evt->status != NRF_CLOUD_ERR_STATUS_NONE) {
+		evt.type = NRF_CLOUD_EVT_ERROR;
+		nfsm_set_current_state_and_notify(nfsm_get_current_state(), &evt);
+	} else {
 		nfsm_set_current_state_and_notify(STATE_DC_CONNECTED, &evt);
 	}
+
 	return 0;
 }
 
@@ -529,7 +537,17 @@ static void agps_process(const char * const buf, const size_t buf_len)
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	int ret = nrf_cloud_agps_process(buf, buf_len);
 
-	LOG_DBG("A-GPS data processed; result: %d", ret);
+	if (ret) {
+		struct nrf_cloud_evt evt = {
+			.type = NRF_CLOUD_EVT_ERROR,
+			.status = NRF_CLOUD_ERR_STATUS_AGPS_PROC
+		};
+
+		LOG_ERR("Error processing A-GPS data: %d", ret);
+		nfsm_set_current_state_and_notify(nfsm_get_current_state(), &evt);
+	} else {
+		LOG_DBG("A-GPS data processed");
+	}
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	/* If both A-GPS and P-GPS are enabled, everything but ephemerides and almanacs
@@ -553,7 +571,17 @@ static void pgps_process(const char * const buf, const size_t buf_len)
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	int ret = nrf_cloud_pgps_process(buf, buf_len);
 
-	LOG_DBG("P-GPS data processed; result: %d", ret);
+	if (ret) {
+		struct nrf_cloud_evt evt = {
+			.type = NRF_CLOUD_EVT_ERROR,
+			.status = NRF_CLOUD_ERR_STATUS_PGPS_PROC
+		};
+
+		LOG_ERR("Error processing P-GPS data: %d", ret);
+		nfsm_set_current_state_and_notify(nfsm_get_current_state(), &evt);
+	} else {
+		LOG_DBG("P-GPS data processed");
+	}
 #endif
 }
 
