@@ -1,7 +1,7 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.1.99
-###########################
+Changelog for |NCS| v2.1.99-dev1
+################################
 
 .. contents::
    :local:
@@ -229,7 +229,7 @@ Bluetooth libraries and services
 
   * :ref:`bt_mesh_dk_prov` module: Changed the UUID generation to prevent trailing zeros in the UUID.
 
-    **Migration notes:** To retain the legacy generation of UUID, enable the option ``CONFIG_BT_MESH_DK_LEGACY_UUID_GEN``.
+    Migration note: To retain the legacy generation of UUID, enable the option :kconfig:option:`CONFIG_BT_MESH_DK_LEGACY_UUID_GEN`.
 
 See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh samples.
 
@@ -241,22 +241,20 @@ Bootloader libraries
 Modem libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`modem_info_readme` library:
+
+  * Removed :c:func:`modem_info_json_string_encode` and :c:func:`modem_info_json_object_encode` functions.
+  * Removed network_mode field from :c:struct:`network_param`.
+  * Removed ``MODEM_INFO_NETWORK_MODE_MAX_SIZE``.
+  * Removed ``CONFIG_MODEM_INFO_ADD_BOARD``.
 
 Libraries for networking
 ------------------------
 
 * :ref:`lib_multicell_location` library:
 
-  * Removed Kconfig option :kconfig:option:`CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS`.
-    The maximum number of supported neighbor cell measurements for HERE location services depend on :kconfig:option:`CONFIG_LTE_NEIGHBOR_CELLS_MAX`.
-
-  * :ref:`modem_info_readme` library:
-
-    * Removed :c:func:`modem_info_json_string_encode` and :c:func:`modem_info_json_object_encode` functions.
-    * Removed network_mode field from :c:struct:`network_param`.
-    * Removed ``MODEM_INFO_NETWORK_MODE_MAX_SIZE``.
-    * Removed ``CONFIG_MODEM_INFO_ADD_BOARD``.
+  * Removed the Kconfig option :kconfig:option:`CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS`.
+    The maximum number of supported neighbor cell measurements for HERE location services depends on the :kconfig:option:`CONFIG_LTE_NEIGHBOR_CELLS_MAX` Kconfig option.
 
 * :ref:`lib_download_client` library:
 
