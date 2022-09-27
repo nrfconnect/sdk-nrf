@@ -37,6 +37,8 @@ zephyr_library_compile_definitions(
 	CONFIG_CTRL_IFACE
 	CONFIG_CTRL_IFACE_UDP
 	CONFIG_NO_RANDOM_POOL
+	CONFIG_MBO
+	CONFIG_WNM
 	)
 
 zephyr_library_include_directories(
@@ -86,6 +88,8 @@ zephyr_library_sources(
 	${WPA_SUPPLICANT_BASE}/ctrl_iface.c
 	${WPA_SUPPLICANT_BASE}/ctrl_iface_udp.c
 	${WPA_SUPPLICANT_BASE}/wpa_cli.c
+	${WPA_SUPPLICANT_BASE}/mbo.c
+	${WPA_SUPPLICANT_BASE}/wnm_sta.c
 	# Zephyr main
 	src/supp_main.c
 	src/utils/wpa_debug.c
