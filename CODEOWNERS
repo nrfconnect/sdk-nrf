@@ -102,6 +102,7 @@ Kconfig*                                  @tejlmand
 /lib/pdn/                                 @lemrey @rlubos
 /lib/ram_pwrdn/                           @mariuszpos @MarekPorwisz
 /lib/fatal_error/                         @SebastianBoe
+/lib/sfloat/                              @kapi-no @maje-emb
 /lib/sms/                                 @trantanen @tokangas
 /lib/st25r3911b/                          @grochu
 /lib/supl/                                @rlubos @tokangas
@@ -220,6 +221,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/modem_jwt/                     @SeppoTakalo
 /tests/lib/modem_info/                    @maxd-nordic
 /tests/lib/qos/                           @simensrostad
+/tests/lib/sfloat/                        @kapi-no @maje-emb
 /tests/lib/sms/                           @trantanen @tokangas
 /tests/lib/nrf_modem_lib/                 @lemrey @MirkoCovizzi
 /tests/lib/nrf_modem_lib/nrf91_sockets/   @MirkoCovizzi
