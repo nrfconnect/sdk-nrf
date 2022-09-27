@@ -57,6 +57,8 @@ enum fota_download_error_cause {
 	FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE,
 	/** Actual firmware type does not match expected. Retry will not help. */
 	FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH,
+	/** Generic error on device side. */
+	FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL,
 };
 
 /**

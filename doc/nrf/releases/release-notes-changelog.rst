@@ -379,6 +379,9 @@ Libraries for networking
 
   * Added support for using X509 certificates.
 
+* :ref:`lib_fota_download` library:
+
+  * Added an error code :c:enumerator:`FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL` to indicate that the source of error is not network related.
 
 Libraries for NFC
 -----------------
