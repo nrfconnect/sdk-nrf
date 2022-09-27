@@ -89,6 +89,29 @@ struct sensor_event {
 	struct event_dyndata dyndata; /**< Sensor data. Provided as floating-point values. */
 };
 
+/** @brief Set sensor period event.
+ *
+ * The set sensor period event can be submitted by user to change sensor sampling period.
+ *
+ * The description field is a pointer to a string that is used to identify the sensor by the
+ * application. The Common Application Framework does not impose any standard way of describing
+ * sensors. Format and content of the sensor description are defined by the application.
+ *
+ * @note The set sensor period event related to the given sensor must use the same description as
+ *       #sensor_event related to the sensor.
+ */
+struct set_sensor_period_event {
+	/** Event header. */
+	struct app_event_header header;
+
+	/** Description of the sensor. */
+	const char *descr;
+	/** Sensors new sampling period in ms. */
+	int sampling_period;
+};
+
+APP_EVENT_TYPE_DECLARE(set_sensor_period_event);
+
 /** @brief Get size of sensor data.
  *
  * @param[in] event       Pointer to the sensor_event.

@@ -61,3 +61,17 @@ APP_EVENT_TYPE_DEFINE(sensor_state_event,
 		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_SENSOR_STATE_EVENTS,
 				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+
+static void log_set_sensor_period_event(const struct app_event_header *aeh)
+{
+	const struct set_sensor_period_event *event = cast_set_sensor_period_event(aeh);
+
+	APP_EVENT_MANAGER_LOG(aeh, "sensor %s sample period changed to: %d",
+				 event->descr, event->sampling_period);
+}
+
+
+APP_EVENT_TYPE_DEFINE(set_sensor_period_event,
+		  log_set_sensor_period_event,
+		  NULL,
+		  APP_EVENT_FLAGS_CREATE(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));
