@@ -266,7 +266,8 @@ Common Application Framework (CAF)
 
   * Added:
 
-    * Dynamic control for the :ref:`sensor sample period<sensor_sample_period>`. 
+    * Dynamic control for the :ref:`sensor sample period<sensor_sample_period>`.
+    * Test for the sample.
 
 Shell libraries
 ---------------
