@@ -1,0 +1,24 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ / {
+	sensor_sim_1: sensor_sim_1 {
+		compatible = "nordic,sensor-sim";
+		label = "SENSOR_SIM_1";
+		acc-signal = "wave";
+	};
+
+	sensor_sim_2: sensor_sim_2 {
+		compatible = "nordic,sensor-sim";
+		label = "SENSOR_SIM_2";
+		acc-signal = "wave";
+	};
+	sensor_sim_3: sensor_sim_3 {
+		compatible = "nordic,sensor-sim";
+		label = "SENSOR_SIM_3";
+		acc-signal = "wave";
+	};
+};
