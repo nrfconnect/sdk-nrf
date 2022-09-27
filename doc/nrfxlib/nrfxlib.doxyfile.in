@@ -1996,7 +1996,8 @@ PREDEFINED             = "MBEDTLS_CONFIG_FILE=\"@OUTPUT_DIRECTORY@/mbedtls_doxyg
 			 "MBEDTLS_AES_C=" \
 			 "MBEDTLS_CCM_C=" \
 			 "MBEDTLS_GCM_C=" \
-			 "MBEDTLS_CONFIG_FILE="
+			 "MBEDTLS_CONFIG_FILE=" \
+                         "OSALCALL="
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
