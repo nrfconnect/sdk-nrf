@@ -8,7 +8,7 @@
     coex-pta-grant-gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
   };
 
-  radio_coex_1w: radio_coex_one_wire {
+  nrf_radio_coex: radio_coex_one_wire {
     status = "okay";
     compatible = "sdc-radio-coex-one-wire";
     grant-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
@@ -17,5 +17,5 @@
 };
 
 &radio {
-  coex = <&radio_coex_1w>;
+  coex = <&nrf_radio_coex>;
 };
