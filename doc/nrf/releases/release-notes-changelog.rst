@@ -273,7 +273,11 @@ Other libraries
 Common Application Framework (CAF)
 ----------------------------------
 
-|no_changes_yet_note|
+  * :ref:`caf_sensor_manager`
+
+  * Added:
+
+    * Dynamic control for the :ref:`sensor sample period<sensor_sample_period>`. 
 
 Shell libraries
 ---------------

@@ -318,3 +318,21 @@ Sending :c:struct:`wake_up_event` to other modules results in waking up the whol
    Do not include the configuration file in other source files.
 .. |device_pm_note| replace:: Not all device power states might be supported by the sensor's device.
    Check the sensor's driver implementation before configuring :c:member:`sm_sensor_config.suspend`.
+
+.. _sensor_sample_period:
+
+Changing sensor sample period
+=============================
+
+In order to change sensor sample period you have to send :c:struct:set_sensor_period_event with new period value in milliseconds.
+To identify which sensor sampling period you want to change, set the sensor description in :c:struct:`set_sensor_period_event`.
+The following code shows an example of changing accelerometer sampling to 400 ms:
+
+   .. code-block:: c
+
+        #include <caf/events/sensor_event.h>
+
+        struct set_sensor_period_event *event = new_set_sensor_period_event();
+        event->sampling_period = 400;
+        event->descr = "accel_sim_xyz";
+        APP_EVENT_SUBMIT(event);

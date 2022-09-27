@@ -507,6 +507,46 @@ static bool handle_wake_up_event(const struct app_event_header *aeh)
 	return false;
 }
 
+static bool handle_sensor_event(const struct app_event_header *aeh)
+{
+	const struct sensor_event *event = cast_sensor_event(aeh);
+
+	for (size_t i = 0; i < ARRAY_SIZE(sensor_configs); i++) {
+		if (event->descr == sensor_configs[i].event_descr) {
+			struct sensor_data *sd = &sensor_data[i];
+
+			atomic_dec(&sd->event_cnt);
+			__ASSERT_NO_MSG(!(atomic_get(&sd->event_cnt) < 0));
+			return false;
+		}
+	}
+
+	return false;
+}
+
+static bool handle_set_sensor_period_event(const struct app_event_header *aeh)
+{
+	const struct set_sensor_period_event *event = cast_set_sensor_period_event(aeh);
+
+	for (size_t i = 0; i < ARRAY_SIZE(sensor_data); i++) {
+		const struct sm_sensor_config *sc = &sensor_configs[i];
+
+		if (event->descr == sc->event_descr) {
+			struct sensor_data *sd = &sensor_data[i];
+
+			sd->sampling_period = event->sampling_period;
+			sd->sample_timeout = k_uptime_get() + event->sampling_period;
+			if (sd->state == SENSOR_STATE_ACTIVE) {
+				k_sem_give(&can_sample);
+			}
+
+			break;
+		}
+	}
+
+	return false;
+}
+
 static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_module_state_event(aeh)) {
@@ -524,19 +564,11 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	}
 
 	if (is_sensor_event(aeh)) {
-		const struct sensor_event *event = cast_sensor_event(aeh);
+		return handle_sensor_event(aeh);
+	}
 
-		for (size_t i = 0; i < ARRAY_SIZE(sensor_configs); i++) {
-			if (event->descr == sensor_configs[i].event_descr) {
-				struct sensor_data *sd = &sensor_data[i];
-
-				atomic_dec(&sd->event_cnt);
-				__ASSERT_NO_MSG(!(atomic_get(&sd->event_cnt) < 0));
-				return false;
-			}
-		}
-
-		return false;
+	if (is_set_sensor_period_event(aeh)) {
+		return handle_set_sensor_period_event(aeh);
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_SENSOR_MANAGER_PM) && is_power_down_event(aeh)) {
@@ -555,6 +587,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, set_sensor_period_event);
 APP_EVENT_SUBSCRIBE_FINAL(MODULE, sensor_event);
 #if CONFIG_CAF_SENSOR_MANAGER_PM
 APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
