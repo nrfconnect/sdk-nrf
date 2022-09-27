@@ -61,10 +61,12 @@ Supported CLI commands
    * - scan
      - Scan for access points in the vicinity
    * - connect
-     - | Connect to an access point with below parameters
+     - | Connect to an access point with below parameters:
        | <SSID>
+       | <Channel number> (optional: 0 means all)
        | <Passphrase> (optional: valid only for secured SSIDs)
        | <KEY_MGMT> (optional: 0-None, 1-WPA2, 2-WPA2-256, 3-WPA3)
+       | <MFP> (optional: 0-Disable, 1-Optional, 2-Required)
    * - disconnect
      - Disconnect from the current access point
    * - status
@@ -91,9 +93,9 @@ Testing
 
       Scan requested
 
-      Num  | SSID                             (len) | Chan | RSSI | Security        | BSSID
-      1    | xyza                             4     | 1    | -27  | WPA2-PSK        | xx:xx:xx:xx:xx:xx
-      2    | abcd                             4     | 1    | -28  | WPA2-PSK        | yy:yy:yy:yy:yy:yy
+      Num  | SSID                             (len) | Chan (Band)    | RSSI | Security        | BSSID
+      1    | xyza                             4     | 1    (2.4GHz)  | -27  | WPA2-PSK        | xx:xx:xx:xx:xx:xx
+      2    | abcd                             4     | 149  (5GHz  )  | -28  | WPA2-PSK        | yy:yy:yy:yy:yy:yy
 
 
 
