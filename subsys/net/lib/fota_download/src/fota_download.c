@@ -110,14 +110,18 @@ static int download_client_callback(const struct download_client_evt *event)
 			if (err != 0) {
 				LOG_DBG("download_client_file_size_get err: %d",
 					err);
-				send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
+				send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL);
 				return err;
 			}
 			first_fragment = false;
 			img_type = dfu_target_img_type(event->fragment.buf,
 							event->fragment.len);
 
-			if ((img_type_expected != DFU_TARGET_IMAGE_TYPE_ANY) &&
+			if (img_type < 0) {
+				LOG_ERR("Unknown image type");
+				err_cause = FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE;
+				err = -EFAULT;
+			} else if ((img_type_expected != DFU_TARGET_IMAGE_TYPE_ANY) &&
 			    (img_type_expected != img_type)) {
 				LOG_ERR("FOTA image type %d does not match expected type %d",
 					img_type, img_type_expected);
@@ -126,9 +130,12 @@ static int download_client_callback(const struct download_client_evt *event)
 			} else {
 				err = dfu_target_init(img_type, 0, file_size,
 						      dfu_target_callback_handler);
-				if ((err < 0) && (err != -EBUSY)) {
+				if (err == -EFBIG) {
+					LOG_ERR("Image too big");
+					err_cause = FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE;
+				} else if (err < 0) {
 					LOG_ERR("dfu_target_init error %d", err);
-					err_cause = FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED;
+					err_cause = FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL;
 				}
 			}
 
