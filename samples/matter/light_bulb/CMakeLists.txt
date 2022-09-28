@@ -35,13 +35,13 @@ target_include_directories(app PRIVATE
 
 target_sources(app PRIVATE
     src/app_task.cpp
-    src/lighting_manager.cpp
     src/main.cpp
     src/zcl_callbacks.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
     ${COMMON_ROOT}/src/led_widget.cpp
     ${COMMON_ROOT}/src/thread_util.cpp
+    ${COMMON_ROOT}/src/pwm_device.cpp
 )
 
 if(CONFIG_CHIP_OTA_REQUESTOR)

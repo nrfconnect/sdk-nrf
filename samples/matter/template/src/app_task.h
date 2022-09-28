@@ -19,42 +19,37 @@ struct k_timer;
 
 class AppTask {
 public:
+	static AppTask &Instance()
+	{
+		static AppTask sAppTask;
+		return sAppTask;
+	};
+
 	CHIP_ERROR StartApp();
 
-	void PostEvent(const AppEvent &aEvent);
+	static void PostEvent(const AppEvent &event);
 
 private:
 	CHIP_ERROR Init();
 
-	void CancelFunctionTimer();
-	void StartFunctionTimer(uint32_t timeoutInMs);
+	void CancelTimer();
+	void StartTimer(uint32_t timeoutInMs);
 
-	void DispatchEvent(const AppEvent &event);
-	void FunctionPressHandler();
-	void FunctionReleaseHandler();
-	void FunctionTimerEventHandler();
+	static void DispatchEvent(const AppEvent &event);
+	static void UpdateLedStateEventHandler(const AppEvent &event);
+	static void FunctionHandler(const AppEvent &event);
+	static void FunctionTimerEventHandler(const AppEvent &event);
 
-	static void UpdateStatusLED();
-	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
 	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 	static void ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged);
-	static void TimerEventHandler(k_timer *timer);
+	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
+	static void FunctionTimerTimeoutCallback(k_timer *timer);
+	static void UpdateStatusLED();
 
-	friend AppTask &GetAppTask();
-
-	enum class TimerFunction { NoneSelected = 0, FactoryReset };
-
-	TimerFunction mFunction = TimerFunction::NoneSelected;
-
-	static AppTask sAppTask;
+	FunctionEvent mFunction = FunctionEvent::NoneSelected;
 	bool mFunctionTimerActive = false;
 
 #if CONFIG_CHIP_FACTORY_DATA
 	chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> mFactoryDataProvider;
 #endif
 };
-
-inline AppTask &GetAppTask()
-{
-	return AppTask::sAppTask;
-}
