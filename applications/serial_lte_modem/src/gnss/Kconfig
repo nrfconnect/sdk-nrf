@@ -26,7 +26,7 @@ config SLM_PGPS
 config SLM_CELL_POS
 	bool "Use nRF Cloud cellular positioning"
 	depends on AT_MONITOR
-	depends on NRF_CLOUD_CELL_POS
+	depends on NRF_CLOUD_LOCATION
 	depends on NRF_CLOUD_MQTT
 	help
 	  Request nRF Cloud cellular positioning service

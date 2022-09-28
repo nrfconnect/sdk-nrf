@@ -113,11 +113,11 @@ static bool persistent_session;
  */
 static bool c2d_topic_modified;
 
-#if defined(CONFIG_NRF_CLOUD_CELL_POS) && defined(CONFIG_NRF_CLOUD_MQTT)
-static nrf_cloud_cell_pos_response_t cell_pos_cb;
-void nfsm_set_cell_pos_response_cb(nrf_cloud_cell_pos_response_t cb)
+#if defined(CONFIG_NRF_CLOUD_LOCATION) && defined(CONFIG_NRF_CLOUD_MQTT)
+static nrf_cloud_location_response_t location_cb;
+void nfsm_set_location_response_cb(nrf_cloud_location_response_t cb)
 {
-	cell_pos_cb = cb;
+	location_cb = cb;
 }
 #endif
 
@@ -585,24 +585,24 @@ static void pgps_process(const char * const buf, const size_t buf_len)
 #endif
 }
 
-static int cell_pos_process(const char * const buf)
+static int location_process(const char * const buf)
 {
-#if defined(CONFIG_NRF_CLOUD_CELL_POS) && defined(CONFIG_NRF_CLOUD_MQTT)
-	if (cell_pos_cb) {
-		struct nrf_cloud_cell_pos_result res;
-		int ret = nrf_cloud_cell_pos_process(buf, &res);
+#if defined(CONFIG_NRF_CLOUD_LOCATION) && defined(CONFIG_NRF_CLOUD_MQTT)
+	if (location_cb) {
+		struct nrf_cloud_location_result res;
+		int ret = nrf_cloud_location_process(buf, &res);
 
 		if (ret <= 0) {
-			/* A cell-pos response was received, send to callback */
-			cell_pos_cb(&res);
+			/* A location response was received, send to callback */
+			location_cb(&res);
 
-			LOG_DBG("Cellular positioning data sent to provided callback");
+			LOG_DBG("Location data sent to provided callback");
 
 			/* Clear the callback after use */
-			nfsm_set_cell_pos_response_cb(NULL);
+			nfsm_set_location_response_cb(NULL);
 			return 0;
 		}
-		/* ret == 1 indicates that no cell pos data was found */
+		/* ret == 1 indicates that no location data was found */
 	}
 #endif
 	return -EFTYPE;
@@ -627,12 +627,12 @@ static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 	case NRF_CLOUD_RCV_TOPIC_PGPS:
 		pgps_process(cloud_evt.data.ptr, cloud_evt.data.len);
 		return 0;
-	case NRF_CLOUD_RCV_TOPIC_CELL_POS:
-		if (cell_pos_process(cloud_evt.data.ptr) == 0) {
-			/* Data was sent to cell pos cb, do not send to application */
+	case NRF_CLOUD_RCV_TOPIC_LOCATION:
+		if (location_process(cloud_evt.data.ptr) == 0) {
+			/* Data was sent to cb, do not send to application */
 			return 0;
 		}
-		cloud_evt.type = NRF_CLOUD_EVT_RX_DATA_CELL_POS;
+		cloud_evt.type = NRF_CLOUD_EVT_RX_DATA_LOCATION;
 		break;
 	case NRF_CLOUD_RCV_TOPIC_UNKNOWN:
 		LOG_DBG("Received data on unknown topic: %s",

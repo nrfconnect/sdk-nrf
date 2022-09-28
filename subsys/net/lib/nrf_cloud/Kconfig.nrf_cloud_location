@@ -1,10 +1,10 @@
-# Copyright (c) 2021 Nordic Semiconductor
+# Copyright (c) 2022 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config NRF_CLOUD_CELL_POS
-	bool "Enable nRF Cloud Cellular Positioning over MQTT"
+config NRF_CLOUD_LOCATION
+	bool "Enable nRF Cloud Location (cellular and/or Wi-Fi) over MQTT"
 	imply FPU
 	depends on MODEM_INFO
 	depends on MODEM_INFO_ADD_NETWORK

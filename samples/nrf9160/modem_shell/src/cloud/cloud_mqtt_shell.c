@@ -210,8 +210,8 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 	case NRF_CLOUD_EVT_RX_DATA_SHADOW:
 		mosh_print("NRF_CLOUD_EVT_RX_DATA_SHADOW");
 		break;
-	case NRF_CLOUD_EVT_RX_DATA_CELL_POS:
-		mosh_print("NRF_CLOUD_EVT_RX_DATA_CELL_POS");
+	case NRF_CLOUD_EVT_RX_DATA_LOCATION:
+		mosh_print("NRF_CLOUD_EVT_RX_DATA_LOCATION");
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		mosh_print("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");

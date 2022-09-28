@@ -233,8 +233,8 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		cloud_wrap_evt.data.len = evt->data.len;
 		notify = true;
 		break;
-	case NRF_CLOUD_EVT_RX_DATA_CELL_POS:
-		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_CELL_POS");
+	case NRF_CLOUD_EVT_RX_DATA_LOCATION:
+		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_LOCATION");
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		LOG_WRN("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");

@@ -69,7 +69,7 @@ static struct nrf_cloud_rest_context rest_ctx = {
 };
 
 /* Type of data to be sent in the cellular positioning request */
-enum nrf_cloud_cell_pos_type active_cell_pos_type = CELL_POS_TYPE_SINGLE;
+enum nrf_cloud_location_type active_cell_pos_type = LOCATION_TYPE_SINGLE_CELL;
 
 /* Search type used for neighbor cell measurements; modem FW version depenedent */
 static enum lte_lc_neighbor_search_type search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
@@ -84,8 +84,9 @@ static struct modem_param_info mdm_param;
 static struct lte_lc_cells_info cell_info;
 
 /* REST request structure to contain cell info to be sent to nRF Cloud */
-static struct nrf_cloud_rest_cell_pos_request cell_pos_req = {
-	.net_info = &cell_info
+static struct nrf_cloud_rest_location_request cell_pos_req = {
+	.cell_info = &cell_info,
+	.wifi_info = NULL
 };
 
 /* Flag to indicate that the device is ready to perform requests */
@@ -162,7 +163,7 @@ static void get_cell_info(void)
 
 	int err;
 
-	if (active_cell_pos_type == CELL_POS_TYPE_SINGLE) {
+	if (active_cell_pos_type == LOCATION_TYPE_SINGLE_CELL) {
 		LOG_INF("Getting current cell info...");
 
 		/* Use the modem info library to easily obtain the required network info
@@ -184,9 +185,9 @@ static void get_cell_info(void)
 		/* Optional */
 		cell_info.current_cell.rsrp	= mdm_param.network.rsrp.value;
 		/* Omitted - optional parameters not available from modem_info */
-		cell_info.current_cell.timing_advance	= NRF_CLOUD_CELL_POS_OMIT_TIME_ADV;
-		cell_info.current_cell.rsrq		= NRF_CLOUD_CELL_POS_OMIT_RSRQ;
-		cell_info.current_cell.earfcn		= NRF_CLOUD_CELL_POS_OMIT_EARFCN;
+		cell_info.current_cell.timing_advance	= NRF_CLOUD_LOCATION_CELL_OMIT_TIME_ADV;
+		cell_info.current_cell.rsrq		= NRF_CLOUD_LOCATION_CELL_OMIT_RSRQ;
+		cell_info.current_cell.earfcn		= NRF_CLOUD_LOCATION_CELL_OMIT_EARFCN;
 		(void)k_mutex_unlock(&cell_info_mutex);
 
 		k_sem_give(&cell_info_ready_sem);
@@ -219,10 +220,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 	if (ready) {
 		/* Toggle active cell pos type */
-		if (active_cell_pos_type == CELL_POS_TYPE_SINGLE) {
-			active_cell_pos_type = CELL_POS_TYPE_MULTI;
+		if (active_cell_pos_type == LOCATION_TYPE_SINGLE_CELL) {
+			active_cell_pos_type = LOCATION_TYPE_MULTI_CELL;
 		} else {
-			active_cell_pos_type = CELL_POS_TYPE_SINGLE;
+			active_cell_pos_type = LOCATION_TYPE_SINGLE_CELL;
 		}
 
 		/* Get latest cell info on button press */
@@ -541,7 +542,7 @@ void main(void)
 	get_cell_info();
 
 	while (1) {
-		struct nrf_cloud_cell_pos_result cell_pos_result;
+		struct nrf_cloud_location_result cell_pos_result;
 
 		/* Wait for cell info to become available; triggered by
 		 * a button press or a change in cell ID.
@@ -562,7 +563,7 @@ void main(void)
 		}
 
 		/* Perform REST call */
-		err = nrf_cloud_rest_cell_pos_get(&rest_ctx, &cell_pos_req, &cell_pos_result);
+		err = nrf_cloud_rest_location_get(&rest_ctx, &cell_pos_req, &cell_pos_result);
 
 		(void)k_mutex_unlock(&cell_info_mutex);
 
@@ -575,9 +576,9 @@ void main(void)
 		}
 
 		LOG_INF("Cellular location request fulfilled with %s",
-			cell_pos_result.type == CELL_POS_TYPE_SINGLE ? "single-cell" :
-			cell_pos_result.type == CELL_POS_TYPE_MULTI ?  "multi-cell" :
-								       "unknown");
+			cell_pos_result.type == LOCATION_TYPE_SINGLE_CELL ? "single-cell" :
+			cell_pos_result.type == LOCATION_TYPE_MULTI_CELL ?  "multi-cell" :
+									      "unknown");
 
 		LOG_INF("Lat: %f, Lon: %f, Uncertainty: %u",
 			cell_pos_result.lat,

@@ -12,7 +12,7 @@
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
-#include <net/nrf_cloud_cell_pos.h>
+#include <net/nrf_cloud_location.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_gnss.h"
@@ -44,7 +44,7 @@ static struct k_work agps_req;
 static struct k_work pgps_req;
 static struct k_work fix_rep;
 static struct k_work cell_pos_req;
-static enum nrf_cloud_cell_pos_type cell_pos_type;
+static enum nrf_cloud_location_type cell_pos_type;
 
 static bool nrf_cloud_ready;
 static bool location_signify;
@@ -307,7 +307,7 @@ static void ncell_meas_mon(const char *notify)
 	}
 
 	/* omit timing_advance */
-	cell_data.current_cell.timing_advance = NRF_CLOUD_CELL_POS_OMIT_TIME_ADV;
+	cell_data.current_cell.timing_advance = NRF_CLOUD_LOCATION_CELL_OMIT_TIME_ADV;
 
 	/* parse EARFCN */
 	err = at_params_unsigned_int_get(&at_param_list, 6, &cell_data.current_cell.earfcn);
@@ -385,16 +385,26 @@ static void cell_pos_req_wk(struct k_work *work)
 
 	ARG_UNUSED(work);
 
-	if (cell_pos_type == CELL_POS_TYPE_SINGLE) {
-		err = nrf_cloud_cell_pos_request(NULL, true, NULL);
+	if (cell_pos_type == LOCATION_TYPE_SINGLE_CELL) {
+		struct lte_lc_cells_info scell_inf = {.ncells_count = 0};
+
+		/* Obtain the single cell info from the modem */
+		err = nrf_cloud_location_scell_data_get(&scell_inf.current_cell);
+		if (err) {
+			LOG_ERR("Failed to obtain cellular network info, error: %d", err);
+			return;
+		}
+
+		/* Request location using only the single cell info */
+		err = nrf_cloud_location_request(&scell_inf, NULL, true, NULL);
 		if (err) {
 			LOG_ERR("Failed to request SCELL, error: %d", err);
 		} else {
 			LOG_INF("nRF Cloud SCELL requested");
 		}
-	} else {
+	} else if (cell_pos_type == LOCATION_TYPE_MULTI_CELL) {
 		if (ncell_meas_status == 0 && cell_data.current_cell.id != 0) {
-			err = nrf_cloud_cell_pos_request(&cell_data, true, NULL);
+			err = nrf_cloud_location_request(&cell_data, NULL, true, NULL);
 			if (err) {
 				LOG_ERR("Failed to request MCELL, error: %d", err);
 			} else {
@@ -741,9 +751,9 @@ static void on_cloud_evt_cell_pos_data_received(const struct nrf_cloud_data *con
 	}
 
 	int err;
-	struct nrf_cloud_cell_pos_result result;
+	struct nrf_cloud_location_result result;
 
-	err = nrf_cloud_cell_pos_process(data->ptr, &result);
+	err = nrf_cloud_location_process(data->ptr, &result);
 	if (err == 0) {
 		if (ttft_start != 0) {
 			LOG_INF("TTFF %ds", (int)k_uptime_delta(&ttft_start)/1000);
@@ -804,8 +814,8 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 		LOG_INF("NRF_CLOUD_EVT_RX_DATA_GENERAL");
 		on_cloud_evt_data_received(&evt->data);
 		break;
-	case NRF_CLOUD_EVT_RX_DATA_CELL_POS:
-		LOG_INF("NRF_CLOUD_EVT_RX_DATA_CELL_POS");
+	case NRF_CLOUD_EVT_RX_DATA_LOCATION:
+		LOG_INF("NRF_CLOUD_EVT_RX_DATA_LOCATION");
 		on_cloud_evt_cell_pos_data_received(&evt->data);
 		break;
 	case NRF_CLOUD_EVT_RX_DATA_SHADOW:
@@ -1221,9 +1231,9 @@ int handle_at_cellpos(enum at_cmd_type cmd_type)
 		if ((op == CELLPOS_START_SCELL || op == CELLPOS_START_MCELL) &&
 		    nrf_cloud_ready && run_type == RUN_TYPE_NONE) {
 			if (op == CELLPOS_START_SCELL) {
-				cell_pos_type = CELL_POS_TYPE_SINGLE;
+				cell_pos_type = LOCATION_TYPE_SINGLE_CELL;
 			} else {
-				cell_pos_type = CELL_POS_TYPE_MULTI;
+				cell_pos_type = LOCATION_TYPE_MULTI_CELL;
 			}
 			ttft_start = k_uptime_get();
 			k_work_submit_to_queue(&slm_work_q, &cell_pos_req);

@@ -17,7 +17,7 @@ rsource "Kconfig.nrf_cloud_pgps"
 
 rsource "Kconfig.nrf_cloud_rest"
 
-rsource "Kconfig.nrf_cloud_cell_pos"
+rsource "Kconfig.nrf_cloud_location"
 
 config NRF_CLOUD_GATEWAY
 	bool "nRF Cloud Gateway"

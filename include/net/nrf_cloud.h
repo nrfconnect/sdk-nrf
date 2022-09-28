@@ -100,10 +100,10 @@ enum nrf_cloud_evt_type {
 	NRF_CLOUD_EVT_READY,
 	/** The device received non-specific data from the cloud. */
 	NRF_CLOUD_EVT_RX_DATA_GENERAL,
-	/** The device received cellular positioning data from the cloud
+	/** The device received location data from the cloud
 	 *  and no response callback was registered
 	 */
-	NRF_CLOUD_EVT_RX_DATA_CELL_POS,
+	NRF_CLOUD_EVT_RX_DATA_LOCATION,
 	/** The device received shadow related data from the cloud. */
 	NRF_CLOUD_EVT_RX_DATA_SHADOW,
 	/** The device has received a ping response from the cloud. */

@@ -6,7 +6,7 @@
 
 #include <zephyr/kernel.h>
 #if defined(CONFIG_NRF_CLOUD_MQTT)
-#include <net/nrf_cloud_cell_pos.h>
+#include <net/nrf_cloud_location.h>
 #else
 #include <net/nrf_cloud_rest.h>
 #endif
@@ -24,10 +24,10 @@ BUILD_ASSERT(
 
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
-/* Verify that CELL_POS is enabled if MQTT is enabled */
+/* Verify that LOCATION is enabled if MQTT is enabled */
 BUILD_ASSERT(
-	IS_ENABLED(CONFIG_NRF_CLOUD_CELL_POS),
-	"If CONFIG_NRF_CLOUD_MQTT is enabled also CONFIG_NRF_CLOUD_CELL_POS must be enabled");
+	IS_ENABLED(CONFIG_NRF_CLOUD_LOCATION),
+	"If CONFIG_NRF_CLOUD_MQTT is enabled also CONFIG_NRF_CLOUD_LOCATION must be enabled");
 
 static struct multicell_location nrf_cloud_location;
 static K_SEM_DEFINE(location_ready, 0, 1);
@@ -76,7 +76,7 @@ const char *location_service_get_certificate_nrf_cloud(void)
 }
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
-static void location_service_location_ready_cb(const struct nrf_cloud_cell_pos_result *const result)
+static void location_service_location_ready_cb(const struct nrf_cloud_location_result *const result)
 {
 	if ((result != NULL) && (result->err == NRF_CLOUD_ERROR_NONE)) {
 		nrf_cloud_location.latitude = result->lat;
@@ -110,8 +110,8 @@ int location_service_get_cell_location_nrf_cloud(
 	k_sem_reset(&location_ready);
 
 	LOG_DBG("Sending cellular positioning request (MQTT)");
-	err = nrf_cloud_cell_pos_request(
-		params->cell_data, true, location_service_location_ready_cb);
+	err = nrf_cloud_location_request(
+		params->cell_data, NULL, true, location_service_location_ready_cb);
 	if (err == -EACCES) {
 		LOG_ERR("Cloud connection is not established");
 		return err;
@@ -140,7 +140,7 @@ int location_service_get_cell_location_nrf_cloud(
 	struct multicell_location *const location)
 {
 	int err;
-	struct nrf_cloud_cell_pos_result result;
+	struct nrf_cloud_location_result result;
 	struct nrf_cloud_rest_context rest_ctx = {
 		.connect_socket = -1,
 		.keep_alive = false,
@@ -149,12 +149,13 @@ int location_service_get_cell_location_nrf_cloud(
 		.rx_buf_len = rcv_buf_len,
 		.fragment_size = 0
 	};
-	const struct nrf_cloud_rest_cell_pos_request loc_req = {
-		.net_info = (struct lte_lc_cells_info *)params->cell_data
+	const struct nrf_cloud_rest_location_request loc_req = {
+		.cell_info = (struct lte_lc_cells_info *)params->cell_data,
+		.wifi_info = NULL
 	};
 
 	LOG_DBG("Sending cellular positioning request (REST)");
-	err = nrf_cloud_rest_cell_pos_get(&rest_ctx, &loc_req, &result);
+	err = nrf_cloud_rest_location_get(&rest_ctx, &loc_req, &result);
 	if (!err) {
 		location->accuracy = (double)result.unc;
 		location->latitude = result.lat;
