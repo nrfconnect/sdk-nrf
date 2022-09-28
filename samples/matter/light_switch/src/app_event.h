@@ -6,33 +6,27 @@
 
 #pragma once
 
-#include <inet/IPAddress.h>
-
 #include <cstdint>
 
-#include "led_widget.h"
+#include "event_types.h"
 
-struct AppEvent;
-typedef void (*EventHandler)(AppEvent *);
+class LEDWidget;
+
+enum class AppEventType : uint8_t {
+	None = 0,
+	Button,
+	ButtonPushed,
+	ButtonReleased,
+	Timer,
+	UpdateLedState,
+	IdentifyStart,
+	IdentifyStop,
+	StartSMPAdvertising
+};
+
+enum class FunctionEvent : uint8_t { NoneSelected = 0, SoftwareUpdate = 0, FactoryReset };
 
 struct AppEvent {
-	constexpr static uint8_t kButtonPushEvent = 1;
-	constexpr static uint8_t kButtonReleaseEvent = 0;
-
-	enum AppEventTypes : uint8_t {
-		kEventType_StartBLEAdvertising,
-		kEventType_Button,
-		kEventType_Timer,
-		kEventType_UpdateLedState,
-		kEventType_IdentifyStart,
-		kEventType_IdentifyStop,
-#ifdef CONFIG_MCUMGR_SMP_BT
-		kEventType_StartSMPAdvertising,
-#endif
-	};
-
-	uint8_t Type;
-
 	union {
 		struct {
 			uint8_t PinNo;
@@ -47,5 +41,6 @@ struct AppEvent {
 		} UpdateLedStateEvent;
 	};
 
+	AppEventType Type{ AppEventType::None };
 	EventHandler Handler;
 };

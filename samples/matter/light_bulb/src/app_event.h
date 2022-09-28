@@ -8,47 +8,41 @@
 
 #include <cstdint>
 
-#include "led_widget.h"
+#include "event_types.h"
+
+class LEDWidget;
+
+enum class AppEventType : uint8_t {
+	None = 0,
+	Button,
+	ButtonPushed,
+	ButtonReleased,
+	Timer,
+	UpdateLedState,
+	Lighting,
+	StartSMPAdvertising
+};
+
+enum class FunctionEvent : uint8_t { NoneSelected = 0, SoftwareUpdate = 0, FactoryReset };
 
 struct AppEvent {
-	enum LightEventType : uint8_t { On, Off, Toggle, Level };
-
-	enum FunctionEventType : uint8_t { FunctionPress = Level + 1, FunctionRelease, FunctionTimer };
-
-	enum UpdateLedStateEventType : uint8_t { UpdateLedState = FunctionTimer + 1 };
-
-	enum OtherEventType : uint8_t {
-		StartBleAdvertising = UpdateLedState + 1,
-		PublishLightBulbService,
-#ifdef CONFIG_MCUMGR_SMP_BT
-		StartSMPAdvertising
-#endif
-	};
-
-	AppEvent() = default;
-
-	AppEvent(LightEventType type, uint8_t value, bool chipInitiated)
-		: Type(type), LightEvent{ value, chipInitiated }
-	{
-	}
-
-	AppEvent(FunctionEventType type) : Type(type) {}
-
-	AppEvent(UpdateLedStateEventType type, LEDWidget *ledWidget) : Type(type), UpdateLedStateEvent{ ledWidget } {}
-
-	AppEvent(OtherEventType type) : Type(type) {}
-
-	uint8_t Type;
-
 	union {
 		struct {
-			/* value indicating light brightness in the scope (0-255) */
-			uint8_t Value;
-			/* was the event triggered by CHIP Data Model layer */
-			bool ChipInitiated;
-		} LightEvent;
+			uint8_t PinNo;
+			uint8_t Action;
+		} ButtonEvent;
+		struct {
+			void *Context;
+		} TimerEvent;
+		struct {
+			uint8_t Action;
+			int32_t Actor;
+		} LightingEvent;
 		struct {
 			LEDWidget *LedWidget;
 		} UpdateLedStateEvent;
 	};
+
+	AppEventType Type{ AppEventType::None };
+	EventHandler Handler;
 };

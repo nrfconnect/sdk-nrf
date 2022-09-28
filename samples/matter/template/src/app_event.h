@@ -8,20 +8,28 @@
 
 #include <cstdint>
 
-#include "led_widget.h"
+#include "event_types.h"
+
+class LEDWidget;
+
+enum class AppEventType : uint8_t { None = 0, Button, ButtonPushed, ButtonReleased, Timer, UpdateLedState };
+
+enum class FunctionEvent : uint8_t { NoneSelected = 0, FactoryReset };
 
 struct AppEvent {
-	enum EventType : uint8_t { FunctionPress, FunctionRelease, FunctionTimer };
+	union {
+		struct {
+			uint8_t PinNo;
+			uint8_t Action;
+		} ButtonEvent;
+		struct {
+			void *Context;
+		} TimerEvent;
+		struct {
+			LEDWidget *LedWidget;
+		} UpdateLedStateEvent;
+	};
 
-	enum UpdateLedStateEventType : uint8_t { UpdateLedState = FunctionTimer + 1 };
-
-	AppEvent() = default;
-	explicit AppEvent(EventType type) : Type(type) {}
-	AppEvent(UpdateLedStateEventType type, LEDWidget *ledWidget) : Type(type), UpdateLedStateEvent{ ledWidget } {}
-
-	uint8_t Type;
-
-	struct {
-		LEDWidget *LedWidget;
-	} UpdateLedStateEvent;
+	AppEventType Type{ AppEventType::None };
+	EventHandler Handler;
 };

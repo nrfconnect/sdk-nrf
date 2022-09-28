@@ -6,7 +6,10 @@
 
 #pragma once
 
+#include "app_event.h"
+#include "led_widget.h"
 #include "window_covering.h"
+
 #include <platform/CHIPDeviceLayer.h>
 
 #if CONFIG_CHIP_FACTORY_DATA
@@ -18,52 +21,50 @@
 #endif
 
 struct k_timer;
-class AppEvent;
-class LEDWidget;
 
 class AppTask {
 public:
-	static AppTask &Instance(void)
+	static AppTask &Instance()
 	{
 		static AppTask sAppTask;
 		return sAppTask;
 	};
+
 	CHIP_ERROR StartApp();
 
 private:
-	enum class OperatingMode : uint8_t { Normal, FactoryReset, FirmwareUpdate, MoveSelection, Movement, Invalid };
 	CHIP_ERROR Init();
-	void DispatchEvent(AppEvent *aEvent);
 	void ToggleMoveType();
 
-	/* statics needed to interact with zephyr C API */
 	static void CancelTimer();
-	static void StartTimer(uint32_t aTimeoutInMs);
-	static void FunctionTimerEventHandler(AppEvent *aEvent);
-	static void MovementTimerEventHandler(AppEvent *aEvent);
-	static void FunctionHandler(AppEvent *aEvent);
-	static void ButtonEventHandler(uint32_t aButtonsState, uint32_t aHasChanged);
-	static void TimerTimeoutCallback(k_timer *aTimer);
-	static void FunctionTimerTimeoutCallback(k_timer *aTimer);
-	static void PostEvent(AppEvent *aEvent);
+	static void StartTimer(uint32_t timeoutMs);
+
+	static void PostEvent(const AppEvent &event);
+	static void DispatchEvent(const AppEvent &event);
+	static void FunctionTimerEventHandler(const AppEvent &event);
+	static void FunctionHandler(const AppEvent &event);
+	static void UpdateLedStateEventHandler(const AppEvent &event);
+	static void StartBLEAdvertisementHandler(const AppEvent &event);
+	static void MovementTimerEventHandler(const AppEvent &event);
+	static void OpenHandler(const AppEvent &event);
+	static void CloseHandler(const AppEvent &event);
+
+	static void TimerTimeoutCallback(k_timer *timer);
+	static void FunctionTimerTimeoutCallback(k_timer *timer);
+	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
+
+	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
+	static void ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged);
 	static void UpdateStatusLED();
-	static void LEDStateUpdateHandler(LEDWidget &aLedWidget);
-	static void UpdateLedStateEventHandler(AppEvent *aEvent);
-	static void StartBLEAdvertisementHandler(AppEvent *aEvent);
-	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *aEvent, intptr_t aArg);
-	static void OpenHandler(AppEvent *aEvent);
-	static void CloseHandler(AppEvent *aEvent);
+
 #ifdef CONFIG_MCUMGR_SMP_BT
 	static void RequestSMPAdvertisingStart(void);
 #endif
 
-	OperatingMode mMode{ OperatingMode::Normal };
+	FunctionEvent mFunction{ FunctionEvent::NoneSelected };
 	OperationalState mMoveType{ OperationalState::MovingUpOrOpen };
 	bool mFunctionTimerActive{ false };
 	bool mMovementTimerActive{ false };
-	bool mIsThreadProvisioned{ false };
-	bool mIsThreadEnabled{ false };
-	bool mHaveBLEConnections{ false };
 	bool mOpenButtonIsPressed{ false };
 	bool mCloseButtonIsPressed{ false };
 	bool mMoveTypeRecentlyChanged{ false };

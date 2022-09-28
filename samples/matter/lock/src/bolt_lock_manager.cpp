@@ -156,17 +156,27 @@ void BoltLockManager::ActuatorTimerEventHandler(k_timer *timer)
 	 * context of the application thread.
 	 */
 
-	GetAppTask().PostEvent(AppEvent(AppEvent::CompleteLockAction, BoltLockManager::OperationSource{}));
+	AppEvent event;
+	event.Type = AppEventType::Timer;
+	event.TimerEvent.Context = static_cast<BoltLockManager *>(k_timer_user_data_get(timer));
+	event.Handler = BoltLockManager::ActuatorAppEventHandler;
+	AppTask::Instance().PostEvent(event);
 }
 
-void BoltLockManager::CompleteLockAction()
+void BoltLockManager::ActuatorAppEventHandler(const AppEvent &event)
 {
-	switch (mState) {
+	BoltLockManager *lock = static_cast<BoltLockManager *>(event.TimerEvent.Context);
+
+	if (!lock) {
+		return;
+	}
+
+	switch (lock->mState) {
 	case State::kLockingInitiated:
-		SetState(State::kLockingCompleted, mActuatorOperationSource);
+		lock->SetState(State::kLockingCompleted, lock->mActuatorOperationSource);
 		break;
 	case State::kUnlockingInitiated:
-		SetState(State::kUnlockingCompleted, mActuatorOperationSource);
+		lock->SetState(State::kUnlockingCompleted, lock->mActuatorOperationSource);
 		break;
 	default:
 		break;
