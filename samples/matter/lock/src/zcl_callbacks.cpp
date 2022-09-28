@@ -26,15 +26,10 @@ void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &a
 	/* Post events only if current lock state is different than given */
 	switch (*value) {
 	case to_underlying(DlLockState::kLocked):
-		if (!BoltLockMgr().IsLocked()) {
-			GetAppTask().PostEvent(AppEvent(AppEvent::Lock, BoltLockManager::OperationSource::kRemote));
-		}
+		BoltLockMgr().Lock(BoltLockManager::OperationSource::kRemote);
 		break;
 	case to_underlying(DlLockState::kUnlocked):
-		if (BoltLockMgr().IsLocked()) {
-			GetAppTask().PostEvent(AppEvent(AppEvent::Lock, BoltLockManager::OperationSource::kRemote));
-		}
-		GetAppTask().PostEvent(AppEvent(AppEvent::Unlock, BoltLockManager::OperationSource::kRemote));
+		BoltLockMgr().Unlock(BoltLockManager::OperationSource::kRemote);
 		break;
 	default:
 		break;
@@ -77,7 +72,7 @@ bool emberAfPluginDoorLockOnDoorLockCommand(EndpointId endpointId, const Optiona
 
 	/* Handle changing attribute state on command reception */
 	if (result) {
-		GetAppTask().PostEvent(AppEvent(AppEvent::Lock, BoltLockManager::OperationSource::kRemote));
+		BoltLockMgr().Lock(BoltLockManager::OperationSource::kRemote);
 	}
 
 	return result;
@@ -90,7 +85,7 @@ bool emberAfPluginDoorLockOnDoorUnlockCommand(EndpointId endpointId, const Optio
 
 	/* Handle changing attribute state on command reception */
 	if (result) {
-		GetAppTask().PostEvent(AppEvent(AppEvent::Unlock, BoltLockManager::OperationSource::kRemote));
+		BoltLockMgr().Unlock(BoltLockManager::OperationSource::kRemote);
 	}
 
 	return result;
@@ -122,5 +117,6 @@ void emberAfDoorLockClusterInitCallback(EndpointId endpoint)
 	 */
 	logOnFailure(DoorLock::Attributes::FeatureMap::Set(endpoint, 0x101), "feature map");
 
-	GetAppTask().UpdateClusterState(BoltLockMgr().GetState(), BoltLockManager::OperationSource::kUnspecified);
+	AppTask::Instance().UpdateClusterState(BoltLockMgr().GetState(),
+					       BoltLockManager::OperationSource::kUnspecified);
 }
