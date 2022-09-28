@@ -9,7 +9,7 @@
 
 #include <stdbool.h>
 #include <net/nrf_cloud.h>
-#include <net/nrf_cloud_cell_pos.h>
+#include <net/nrf_cloud_location.h>
 #include "nrf_cloud_transport.h"
 
 #ifdef __cplusplus
@@ -34,7 +34,7 @@ enum nfsm_state {
 /**@brief Initialize the FSM. */
 int nfsm_init(void);
 
-/**@brief Handles incoming transport events based on the current state. */
+/**@brief Handle incoming transport events based on the current state. */
 int nfsm_handle_incoming_event(const struct nct_evt *evt,
 			       enum nfsm_state current_state);
 
@@ -64,11 +64,11 @@ void nfsm_disconnect(void);
  */
 bool nfsm_get_disconnect_requested(void);
 
-#if defined(CONFIG_NRF_CLOUD_CELL_POS) && defined(CONFIG_NRF_CLOUD_MQTT)
-/**@brief Sets a callback from the nrf_cloud_cell_pos module to
- * handle the cellular positioning response data from the cloud.
+#if defined(CONFIG_NRF_CLOUD_LOCATION) && defined(CONFIG_NRF_CLOUD_MQTT)
+/**@brief Set a callback from the nrf_cloud_location module to
+ * handle the location response data from the cloud.
  */
-void nfsm_set_cell_pos_response_cb(nrf_cloud_cell_pos_response_t cb);
+void nfsm_set_location_response_cb(nrf_cloud_location_response_t cb);
 #endif
 
 #ifdef __cplusplus

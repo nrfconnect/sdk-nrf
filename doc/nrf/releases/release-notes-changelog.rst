@@ -556,6 +556,7 @@ Libraries for networking
     * The library now processes A-GPS and P-GPS data; it is no longer passed to the application.
     * The status field of :c:enum:`NRF_CLOUD_EVT_ERROR` events uses values from the enumeration :c:enumerator:`nrf_cloud_error_status`.
     * UI service info and sensor type strings now refer to ``GNSS`` instead of ``GPS``.
+    * The enumeration value NRF_CLOUD_EVT_RX_DATA_CELL_POS is now named :c:enum:`NRF_CLOUD_EVT_RX_DATA_LOCATION`.
 
   * Removed:
 
@@ -569,9 +570,18 @@ Libraries for networking
 
   * Added an error code :c:enumerator:`FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL` to indicate that the source of error is not network related.
 
+* :ref:`lib_nrf_cloud_rest` library:
+
+  * Replaced the ``nrf_cloud_rest_cell_pos_get`` function with :c:func:`nrf_cloud_rest_location_get`.
+
 * Added:
 
   * :ref:`lib_lwm2m_location_assistance` library that has support for using A-GPS, P-GPS and ground fix assistance from nRF Cloud using an LwM2M server.
+
+* Changed:
+
+  * The nRF Cloud cellular positioning library is now renamed to :ref:`lib_nrf_cloud_location`.
+    In addition to cellular, the library now supports device location from nRF Cloud using Wi-Fi network information.
 
 Libraries for NFC
 -----------------

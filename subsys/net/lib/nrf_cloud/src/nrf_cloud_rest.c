@@ -69,7 +69,7 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 #define API_UPDATE_FOTA_DETAILS_TMPLT	"{\"status\":\"%s\", \"details\":\"%s\"}"
 
 #define API_LOCATION			"/location"
-#define API_GET_CELL_POS_TEMPLATE	API_VER API_LOCATION "/cell"
+#define API_GET_LOCATION_TEMPLATE	API_VER API_LOCATION "/ground-fix"
 #define API_GET_AGPS_BASE		API_VER API_LOCATION "/agps?"
 #define AGPS_FILTERED			"filtered=true"
 #define AGPS_ELEVATION_MASK		"&mask=%u"
@@ -595,13 +595,13 @@ void nrf_cloud_rest_fota_job_free(struct nrf_cloud_fota_job_info *const job)
 	nrf_cloud_fota_job_free(job);
 }
 
-int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
-	struct nrf_cloud_rest_cell_pos_request const *const request,
-	struct nrf_cloud_cell_pos_result *const result)
+int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
+	struct nrf_cloud_rest_location_request const *const request,
+	struct nrf_cloud_location_result *const result)
 {
 	__ASSERT_NO_MSG(rest_ctx != NULL);
 	__ASSERT_NO_MSG(request != NULL);
-	__ASSERT_NO_MSG(request->net_info != NULL);
+	__ASSERT_NO_MSG((request->cell_info != NULL) || (request->wifi_info != NULL));
 
 	int ret;
 	char *auth_hdr = NULL;
@@ -612,7 +612,7 @@ int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
 	memset(&resp, 0, sizeof(resp));
 	init_rest_client_request(rest_ctx, &req, HTTP_POST);
 
-	req.url = API_GET_CELL_POS_TEMPLATE;
+	req.url = API_GET_LOCATION_TEMPLATE;
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
@@ -631,9 +631,9 @@ int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
 	req.header_fields = (const char **)headers;
 
 	/* Get payload */
-	ret = nrf_cloud_format_cell_pos_req(request->net_info, 1, &payload);
+	ret = nrf_cloud_format_location_req(request->cell_info, request->wifi_info, &payload);
 	if (ret) {
-		LOG_ERR("Failed to generate cellular positioning request, err: %d", ret);
+		LOG_ERR("Failed to generate location request, err: %d", ret);
 		goto clean_up;
 	}
 
@@ -647,7 +647,7 @@ int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
 	}
 
 	if (result) {
-		ret = nrf_cloud_parse_cell_pos_response(rest_ctx->response, result);
+		ret = nrf_cloud_parse_location_response(rest_ctx->response, result);
 		if (ret != 0) {
 			if (ret > 0) {
 				ret = -EBADMSG;
@@ -665,7 +665,7 @@ clean_up:
 	}
 
 	if (result) {
-		/* Add the nRF Cloud error to the cell pos response */
+		/* Add the nRF Cloud error to the response */
 		result->err = rest_ctx->nrf_err;
 	}
 
