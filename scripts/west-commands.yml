@@ -8,6 +8,9 @@ west-commands:
       - name: ncs-compare
         class: NcsCompare
         help: compare upstream manifest with NCS
+      - name: ncs-upmerger
+        class: NcsUpmerger
+        help: perform upmerge for project (e.g. Zephyr)
   - file: scripts/west_commands/sbom/ncs_sbom_command.py
     commands:
       - name: ncs-sbom
