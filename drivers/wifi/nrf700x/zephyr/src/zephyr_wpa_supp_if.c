@@ -234,6 +234,10 @@ void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
 
 	vif_ctx_zep->supp_callbk_fns.scan_res(vif_ctx_zep->supp_drv_if_ctx, r, more_res);
 
+	if (!more_res) {
+		vif_ctx_zep->scan_in_progress = false;
+	}
+
 	k_free(r);
 }
 
@@ -452,6 +456,12 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	if (vif_ctx_zep->scan_in_progress) {
+		LOG_INF("%s: Scan already in progress\n", __func__);
+		ret = -EBUSY;
+		goto out;
+	}
 
 	memset(&scan_info, 0x0, sizeof(scan_info));
 

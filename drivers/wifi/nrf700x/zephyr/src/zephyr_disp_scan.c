@@ -41,6 +41,12 @@ int wifi_nrf_disp_scan_zep(const struct device *dev,
 		goto out;
 	}
 
+	if (vif_ctx_zep->scan_in_progress) {
+		LOG_INF("%s: Scan already in progress\n", __func__);
+		ret = -EBUSY;
+		goto out;
+	}
+
 	vif_ctx_zep->disp_scan_cb = cb;
 
 	memset(&scan_info, 0, sizeof(scan_info));
