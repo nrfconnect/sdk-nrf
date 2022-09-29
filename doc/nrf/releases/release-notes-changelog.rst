@@ -56,6 +56,7 @@ Build system
 ------------
 
 * Fixed an issue with the |NCS| Toolchain where protoc and nanopb would not be correctly detected by the build system, resulting in builds trying to find locally installed versions instead of the version shipped with the |NCS| Toolchain.
+* Fixed an issue with passing quoted settings to child images.
 
 Protocols
 =========
