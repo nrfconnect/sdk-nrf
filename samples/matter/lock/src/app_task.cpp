@@ -308,18 +308,19 @@ void AppTask::FunctionTimerTimeoutCallback(k_timer *timer)
 
 void AppTask::FunctionTimerEventHandler(const AppEvent &event)
 {
-	if (event.Type != AppEventType::Timer)
+	if (event.Type != AppEventType::Timer || !Instance().mFunctionTimerActive) {
 		return;
+	}
 
 	/* If we reached here, the button was held past kFactoryResetTriggerTimeout, initiate factory reset */
-	if (Instance().mFunctionTimerActive && Instance().mFunction == FunctionEvent::SoftwareUpdate) {
+	if (Instance().mFunction == FunctionEvent::SoftwareUpdate) {
 		LOG_INF("Factory Reset Triggered. Release button within %ums to cancel.", kFactoryResetTriggerTimeout);
 
 		/* Start timer for kFactoryResetCancelWindowTimeout to allow user to cancel, if required. */
 		Instance().StartTimer(kFactoryResetCancelWindowTimeout);
 		Instance().mFunction = FunctionEvent::FactoryReset;
 
-		/* Turn off all LEDs before starting blink to make sure blink is co-ordinated. */
+		/* Turn off all LEDs before starting blink to make sure blink is coordinated. */
 		sStatusLED.Set(false);
 #if NUMBER_OF_LEDS == 4
 		sFactoryResetLEDs.Set(false);
@@ -329,11 +330,17 @@ void AppTask::FunctionTimerEventHandler(const AppEvent &event)
 #if NUMBER_OF_LEDS == 4
 		sFactoryResetLEDs.Blink(LedConsts::kBlinkRate_ms);
 #endif
-	} else if (Instance().mFunctionTimerActive && Instance().mFunction == FunctionEvent::FactoryReset) {
+	} else if (Instance().mFunction == FunctionEvent::FactoryReset) {
 		/* Actually trigger Factory Reset */
 		Instance().mFunction = FunctionEvent::NoneSelected;
-
 		chip::Server::GetInstance().ScheduleFactoryReset();
+
+	} else if (Instance().mFunction == FunctionEvent::AdvertisingStart) {
+		/* The button was held past kAdvertisingTriggerTimeout, start BLE advertisement
+		   if we have 2 buttons UI*/
+#if NUMBER_OF_BUTTONS == 2
+		StartBLEAdvertisementHandler(event);
+#endif
 	}
 }
 
