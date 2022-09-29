@@ -371,10 +371,9 @@ function(add_child_image_from_source)
     list(FILTER VARIABLES        INCLUDE REGEX ${regex})
     list(FILTER VARIABLES_CACHED INCLUDE REGEX ${regex})
 
-    foreach(var_name
-        ${VARIABLES}
-        ${VARIABLES_CACHED}
-        )
+    set(VARIABLES_ALL ${VARIABLES} ${VARIABLES_CACHED})
+    list(REMOVE_DUPLICATES VARIABLES_ALL)
+    foreach(var_name ${VARIABLES_ALL})
       # This regex is guaranteed to match due to the filtering done
       # above, we only re-run the regex to extract the part after
       # '_'. We run the regex twice because it is believed that
