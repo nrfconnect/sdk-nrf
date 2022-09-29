@@ -324,7 +324,7 @@ Sending :c:struct:`wake_up_event` to other modules results in waking up the whol
 Changing sensor sample period
 =============================
 
-In order to change sensor sample period you have to send :c:struct:set_sensor_period_event with new period value in milliseconds.
+To change sensor sample period you have to send :c:struct:`set_sensor_period_event` with new period value in milliseconds.
 To identify which sensor sampling period you want to change, set the sensor description in :c:struct:`set_sensor_period_event`.
 The following code shows an example of changing accelerometer sampling to 400 ms:
 
