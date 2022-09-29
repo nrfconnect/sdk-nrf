@@ -353,13 +353,23 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #endif
 
 #if defined(CONFIG_BT_CTLR_DF_ADV_CTE_TX)
+	cmds->hci_le_set_connectionless_cte_transmit_parameters = 1;
+	cmds->hci_le_set_connectionless_cte_transmit_enable = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_DF_CONN_CTE_RSP)
+	cmds->hci_le_connection_cte_response_enable = 1;
+	cmds->hci_le_set_connection_cte_transmit_parameters = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_DF_CONN_CTE_RSP) || defined(CONFIG_BT_CTLR_DF_ADV_CTE_TX)
 	/* NOTE: The DTM commands are *not* supported by the SoftDevice
 	 * controller. See doc/nrf/known_issues.rst.
 	 */
 	cmds->hci_le_transmitter_test_v3 = 1;
+#endif
 
-	cmds->hci_le_set_connectionless_cte_transmit_parameters = 1;
-	cmds->hci_le_set_connectionless_cte_transmit_enable = 1;
+#if defined(CONFIG_BT_CTLR_DF)
 	cmds->hci_le_read_antenna_information = 1;
 #endif
 
@@ -457,6 +467,10 @@ static void le_supported_features(sdc_hci_le_le_features_t *features)
 
 #if defined(CONFIG_BT_CTLR_ADV_PERIODIC_ADI_SUPPORT)
 	features->periodic_advertising_adi_support = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_DF_CONN_CTE_RSP)
+	features->connection_cte_response = 1;
 #endif
 }
 
@@ -941,7 +955,21 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 
 	case SDC_HCI_OPCODE_CMD_LE_SET_CONNLESS_CTE_TRANSMIT_ENABLE:
 		return sdc_hci_cmd_le_set_connless_cte_transmit_enable((void *)cmd_params);
+#endif
 
+#if defined(CONFIG_BT_CTLR_DF_CONN_CTE_RSP)
+	case SDC_HCI_OPCODE_CMD_LE_SET_CONN_CTE_TRANSMIT_PARAMS:
+		*param_length_out += sizeof(sdc_hci_cmd_le_set_conn_cte_transmit_params_return_t);
+		return sdc_hci_cmd_le_set_conn_cte_transmit_params((void *)cmd_params,
+								   (void *)event_out_params);
+
+	case SDC_HCI_OPCODE_CMD_LE_CONN_CTE_RESPONSE_ENABLE:
+		*param_length_out += sizeof(sdc_hci_cmd_le_conn_cte_response_enable_return_t);
+		return sdc_hci_cmd_le_conn_cte_response_enable((void *)cmd_params,
+							       (void *)event_out_params);
+#endif
+
+#if defined(CONFIG_BT_CTLR_DF)
 	case SDC_HCI_OPCODE_CMD_LE_READ_ANTENNA_INFORMATION:
 		*param_length_out += sizeof(sdc_hci_cmd_le_read_antenna_information_return_t);
 		return sdc_hci_cmd_le_read_antenna_information((void *)event_out_params);
