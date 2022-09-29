@@ -81,10 +81,11 @@ else()
   endforeach()
 
   foreach(app_var_name ${application_vars})
+    string(REPLACE "\"" "\\\"" app_var_value "${${app_var_name}}")
     file(
       APPEND
       ${base_image_preload_file}
-      "set(${app_var_name} \"${${app_var_name}}\" CACHE INTERNAL \"NCS child image controlled\")\n"
+      "set(${app_var_name} \"${app_var_value}\" CACHE INTERNAL \"NCS child image controlled\")\n"
       )
   endforeach()
 
@@ -374,6 +375,7 @@ function(add_child_image_from_source)
     set(VARIABLES_ALL ${VARIABLES} ${VARIABLES_CACHED})
     list(REMOVE_DUPLICATES VARIABLES_ALL)
     foreach(var_name ${VARIABLES_ALL})
+      string(REPLACE "\"" "\\\"" ${var_name} "${${var_name}}")
       # This regex is guaranteed to match due to the filtering done
       # above, we only re-run the regex to extract the part after
       # '_'. We run the regex twice because it is believed that
