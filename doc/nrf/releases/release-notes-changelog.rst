@@ -254,6 +254,10 @@ Modem libraries
   * Removed ``MODEM_INFO_NETWORK_MODE_MAX_SIZE``.
   * Removed ``CONFIG_MODEM_INFO_ADD_BOARD``.
 
+* :ref:`nrf_modem_lib_readme`:
+
+  * Added offloading implementation for the :c:func:`getsockname` function.
+
 Libraries for networking
 ------------------------
 

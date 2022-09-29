@@ -525,6 +525,14 @@ static int nrf91_socket_offload_getsockopt(void *obj, int level, int optname,
 	return retval;
 }
 
+static int nrf91_socket_offload_getsockname((void *obj, struct sockaddr *addr,
+					    socklen_t *addrlen)
+{
+	/* Not implemented. */
+	errno = ENOSYS;
+	return -1;
+}
+
 static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 					     int flags, struct sockaddr *from,
 					     socklen_t *fromlen)
@@ -949,6 +957,7 @@ static const struct socket_op_vtable nrf91_socket_fd_op_vtable = {
 	.recvfrom = nrf91_socket_offload_recvfrom,
 	.getsockopt = nrf91_socket_offload_getsockopt,
 	.setsockopt = nrf91_socket_offload_setsockopt,
+	.getsockname = nrf91_socket_offload_getsockname,
 };
 
 static inline bool proto_is_secure(int proto)
