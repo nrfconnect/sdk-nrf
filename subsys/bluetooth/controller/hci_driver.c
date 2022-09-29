@@ -597,6 +597,20 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_DF_CONN_CTE_RSP) && IS_ENABLED(CONFIG_BT_CENTRAL)) {
+		err = sdc_support_le_conn_cte_rsp_central();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_DF_CONN_CTE_RSP) && IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+		err = sdc_support_le_conn_cte_rsp_peripheral();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 #if RADIO_TXP_DEFAULT != 0
 	err = sdc_default_tx_power_set(RADIO_TXP_DEFAULT);
 	if (err) {
