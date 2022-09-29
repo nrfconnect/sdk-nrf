@@ -11,6 +11,7 @@
 #include <zephyr/random/rand32.h>
 #include <zephyr/net/mqtt.h>
 #include <zephyr/net/socket.h>
+#include <zephyr/shell/shell.h>
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <nrf_modem_at.h>
 #endif /* CONFIG_NRF_MODEM_LIB */
@@ -508,6 +509,31 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 	}
 }
 #endif
+
+static int shell_mqtt_publish(const struct shell *shell, size_t argc, char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	int ret;
+
+	ret = data_publish(&client,
+			   MQTT_QOS_1_AT_LEAST_ONCE,
+			   CONFIG_BUTTON_EVENT_PUBLISH_MSG,
+			   sizeof(CONFIG_BUTTON_EVENT_PUBLISH_MSG) - 1);
+	if (ret) {
+		LOG_ERR("Publish failed: %d", ret);
+	}
+
+	return ret;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(mqtt_sub,
+		SHELL_CMD(publish, NULL, "Publish data to configured publish topic",
+			shell_mqtt_publish),
+		SHELL_SUBCMD_SET_END /* Array terminated. */
+);
+SHELL_CMD_REGISTER(mqtt, &mqtt_sub, "MQTT operations", NULL);
 
 /**@brief Configures modem to provide LTE link. Blocks until link is
  * successfully established.

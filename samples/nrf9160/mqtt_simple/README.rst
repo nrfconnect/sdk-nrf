@@ -24,7 +24,7 @@ Overview
 *********
 
 The sample connects to an MQTT broker and publishes the data it receives on the configured subscribe topic to the configured publish topic.
-On a button press event, the sample publishes the configured message to the configured publish topic.
+On a button press event or typing ``mqtt publish`` in the terminal emulator, the sample publishes the configured message to the configured publish topic.
 By default, the sample can establish a secure (TLS) connection or a non-secure connection to the configured MQTT broker.
 The sample disables power saving modes (PSM and eDRX) so that network events are processed as soon as possible.
 
@@ -182,6 +182,7 @@ It uses the following `sdk-nrfxlib`_ library:
 It uses the following Zephyr library:
 
 * :ref:`MQTT <zephyr:networking_api>`
+* :ref:`zephyr:shell_api`
 
 In addition, it uses the following secure firmware component:
 
