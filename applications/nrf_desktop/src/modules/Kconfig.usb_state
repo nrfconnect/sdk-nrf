@@ -4,18 +4,27 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if USB_DEVICE_HID
-
-menu "USB state"
-
-config DESKTOP_USB_ENABLE
+menuconfig DESKTOP_USB_ENABLE
 	bool "Enable USB module"
+	select USB_DEVICE_STACK
+	select USB_DEVICE_HID
 	help
-	  Enables USB module.
+	  Enables USB module. The module allows to transfer HID reports over
+	  USB.
+
+if DESKTOP_USB_ENABLE
+
+config DESKTOP_USB_REMOTE_WAKEUP
+	bool "Enable USB remote wakeup"
+	default y
+	select USB_DEVICE_REMOTE_WAKEUP
+	depends on CAF_PM_EVENTS
+	help
+	  Enable USB remote wakeup functionality. The USB wakeup request is
+	  triggered on wake_up_event.
 
 config DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
 	bool "Subscribe only for predefined subset of HID reports"
-	depends on DESKTOP_USB_ENABLE
 	depends on DESKTOP_HID_STATE_ENABLE
 	help
 	  By default, every USB HID instance subscribes for all the HID reports.
@@ -26,21 +35,51 @@ config DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
 
 config DESKTOP_USB_PM_ENABLE
 	bool "Enable USB power manager integration"
-	depends on DESKTOP_USB_ENABLE
-	depends on CAF_POWER_MANAGER
+	depends on CAF_PM_EVENTS
 	select CAF_FORCE_POWER_DOWN_EVENTS
 	default y
 	help
 	  This enables small module that blocks power down if the USB is active.
 
-if DESKTOP_USB_ENABLE
+config USB_HID_POLL_INTERVAL_MS
+	default 1
+	help
+	  Use small USB HID Device polling interval to ensure low latency.
+
+config USB_HID_DEVICE_COUNT
+	default DESKTOP_HID_DONGLE_BOND_COUNT if DESKTOP_ROLE_HID_DONGLE
+	default 1 if DESKTOP_ROLE_HID_PERIPHERAL
+	help
+	  By default, dongle uses a dedicated USB HID instance to forward data
+	  from given peripheral to the host. On memory-limited dongles, a
+	  single USB HID instance can be used to forward HID reports from all
+	  of the connected peripherals.
+
+	  By default, peripheral uses a single USB HID instance to send all of
+	  the HID reports.
+
+config USB_HID_BOOT_PROTOCOL
+	default y if DESKTOP_HID_BOOT_INTERFACE_MOUSE
+	default y if DESKTOP_HID_BOOT_INTERFACE_KEYBOARD
+
+config USB_HID_PROTOCOL_CODE
+	default 2 if DESKTOP_HID_BOOT_INTERFACE_MOUSE
+	default 1 if DESKTOP_HID_BOOT_INTERFACE_KEYBOARD
+
+choice USB_DEVICE_LOG_LEVEL_CHOICE
+	default USB_DEVICE_LOG_LEVEL_OFF
+	help
+	  Disable USB device logs to avoid flooding logs.
+endchoice
+
+choice USB_DRIVER_LOG_LEVEL_CHOICE
+	default USB_DRIVER_LOG_LEVEL_OFF
+	help
+	  Disable USB driver logs to avoid flooding logs.
+endchoice
 
 module = DESKTOP_USB_STATE
 module-str = USB state
 source "subsys/logging/Kconfig.template.log_config"
 
-endif
-
-endmenu
-
-endif
+endif # DESKTOP_USB_ENABLE
