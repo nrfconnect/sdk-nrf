@@ -166,7 +166,7 @@ static void gnss_event_handler(int event_id)
 		 */
 		if (operation_mode == GNSS_OP_MODE_PERIODIC_FIX) {
 			k_work_cancel_delayable(&gnss_timeout_work);
-			k_work_submit_to_queue(&mosh_common_work_q, &gnss_stop_work);
+			k_work_submit(&gnss_stop_work);
 		}
 		break;
 
@@ -706,14 +706,10 @@ static void start_gnss_work_fn(struct k_work *item)
 		}
 	}
 
-	k_work_schedule_for_queue(&mosh_common_work_q,
-				  &gnss_start_work,
-				  K_SECONDS(periodic_fix_interval));
+	k_work_schedule(&gnss_start_work, K_SECONDS(periodic_fix_interval));
 
 	if (periodic_fix_retry > 0 && periodic_fix_retry < periodic_fix_interval) {
-		k_work_schedule_for_queue(&mosh_common_work_q,
-					  &gnss_timeout_work,
-					  K_SECONDS(periodic_fix_retry));
+		k_work_schedule(&gnss_timeout_work, K_SECONDS(periodic_fix_retry));
 	}
 }
 
@@ -913,7 +909,7 @@ int gnss_start(void)
 	}
 
 	if (operation_mode == GNSS_OP_MODE_PERIODIC_FIX) {
-		k_work_schedule_for_queue(&mosh_common_work_q, &gnss_start_work, K_NO_WAIT);
+		k_work_schedule(&gnss_start_work, K_NO_WAIT);
 		return 0;
 	}
 
