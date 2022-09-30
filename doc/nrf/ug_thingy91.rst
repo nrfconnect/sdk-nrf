@@ -150,7 +150,7 @@ The table below shows the different types of build files that are generated and 
 For an overview of different types of build files in the |NCS|, see :ref:`app_build_output_files`.
 
 There are multiple methods of programming a sample or application onto a Thingy:91.
-You can choose the method based on the availability or absence of an external debug probe to program.
+It is recommended to use an external debug probe to program the Thingy:91.
 
 .. note::
 

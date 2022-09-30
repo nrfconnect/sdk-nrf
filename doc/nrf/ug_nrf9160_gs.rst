@@ -288,8 +288,6 @@ To activate the iBasis Subscriber Identity Module (SIM) card that comes shipped 
 .. nrf_cloud_connection_end
 
 5. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the nRF9160 DK.
-#. **Optional:** If you want to test the optional GPS functionality and you have an external GPS antenna for your nRF9160 DK, attach it to connector **J2** to the left of the LTE antenna.
-   See `nRF9160 DK GPS`_ for more information.
 #. Connect the nRF9160 DK to the computer with a USB cable and turn it on, or reset the device if it is already turned on.
 #. Wait up to three minutes for the device to find the cellular network and connect to the nRF Cloud server.
 

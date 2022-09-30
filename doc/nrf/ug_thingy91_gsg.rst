@@ -25,8 +25,18 @@ Hardware
 ========
 
 * nano-Subscriber Identity Module (SIM) card that supports LTE-M or Narrowband Internet of Things (NB-IoT) (The Thingy:91 comes shipped with an iBasis SIM card.)
-* Micro-USB 2.0 cable
 * Computer
+* For firmware updates through USB:
+
+  * Micro-USB 2.0 cable
+
+* For firmware updates through an external debug probe:
+
+  * 10-pin JTAG cable
+  * External debug probe supporting Arm Cortex-M33 (for example, nRF9160 DK)
+
+.. note::
+   It is recommended to use an external debug probe when you start developing with your Thingy:91.
 
 Software
 ========
