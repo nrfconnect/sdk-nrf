@@ -16,6 +16,11 @@ config WIFI_CONN_MGR_SUPPORTED_CREDS
 		How many different network credentials
 		the library supports
 
+config WIFI_CONN_MGR_PSA_UID
+	int "UID number where wifi credentials are stored in PSA Protected Storage"
+	default 9
+	help
+		This UID shall be unique and not be used by other parts of the app.
 
 module = WIFI_CONN_MGR
 module-dep = LOG

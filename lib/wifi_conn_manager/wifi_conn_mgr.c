@@ -8,7 +8,10 @@
 #include <zephyr/zephyr.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_event.h>
+#include <zephyr/net/wifi.h>
 #include <wifi/conn_mgr.h>
+#include <psa/storage_common.h>
+#include <psa/protected_storage.h>
 
 #define WIFI_CONN_MGR_SCAN_TIMEOUT K_SECONDS(45)
 #define WIFI_CONN_MGR_CONN_MANAGEMENT_PERIOD K_SECONDS(10)
@@ -17,9 +20,22 @@
 LOG_MODULE_REGISTER(wifi_conn_mgr, CONFIG_WIFI_CONN_MGR_LOG_LEVEL);
 
 struct connection_params {
-    int8_t rssi_status;        /* 0 is unconfigured, 1 is configured, negative is RSSI value */
-    struct wifi_connect_req_params params;
-}; 
+	int8_t rssi_status;        /* 0 is unconfigured, 1 is configured, negative is RSSI value */
+	struct wifi_connect_req_params params;
+	uint8_t ssid[WIFI_SSID_MAX_LEN]; /* buffer to hold ssid */
+	uint8_t psk[WIFI_PSK_MAX_LEN]; /* buffer to hold psk */
+};
+
+/**
+ * @brief fixed size version of wifi credentials for saving in secure storage
+ */
+struct wifi_credentials_fixed_size
+{
+	uint8_t ssid[WIFI_SSID_MAX_LEN];
+	uint8_t ssid_length;
+	uint8_t psk[WIFI_PSK_MAX_LEN];
+	uint8_t psk_length;
+};
 
 struct connection_params cnx_params[CONFIG_WIFI_CONN_MGR_SUPPORTED_CREDS] = { 0 };
 
@@ -43,17 +59,85 @@ enum state_type {
     DISCONNECTING
 } state;
 
+void wifi_mgr_save_credentials(void) {
+	if (IS_ENABLED(CONFIG_BUILD_WITH_TFM)) {
+		struct wifi_credentials_fixed_size credential_storage[CONFIG_WIFI_CONN_MGR_SUPPORTED_CREDS] = {0};
+		size_t credential_storage_idx = 0;
+		for (size_t idx = 0; idx < CONFIG_WIFI_CONN_MGR_SUPPORTED_CREDS; ++idx) {
+			if (cnx_params[idx].rssi_status != 0) {
+				struct wifi_credentials_fixed_size *creds = &credential_storage[credential_storage_idx];
+				creds->ssid_length = cnx_params[idx].params.ssid_length;
+				creds->psk_length = cnx_params[idx].params.psk_length;
+				memcpy(creds->ssid, cnx_params[idx].params.ssid, creds->ssid_length);
+				memcpy(creds->psk, cnx_params[idx].params.psk, creds->psk_length);
+				credential_storage_idx++;
+			}
+		}
+		int ret = psa_ps_set(CONFIG_WIFI_CONN_MGR_PSA_UID, sizeof(credential_storage), credential_storage, PSA_STORAGE_FLAG_NONE);
+
+		if (ret != PSA_SUCCESS) {
+			LOG_ERR("wifi credentials could not be saved to secure storage");
+		}
+		LOG_ERR("wifi credentials saved successfully");
+	}
+}
+
+void wifi_mgr_load_credentials(void) {
+	struct wifi_credentials_fixed_size credential_storage[CONFIG_WIFI_CONN_MGR_SUPPORTED_CREDS] = {0};
+	size_t data_length = 0;
+
+	int ret = psa_ps_get(CONFIG_WIFI_CONN_MGR_PSA_UID, 0, sizeof(credential_storage), credential_storage, &data_length);
+
+	if (ret != PSA_SUCCESS || data_length != sizeof(credential_storage)) {
+		LOG_ERR("wifi credentials could not be loaded from secure storage");
+		return;
+	}
+
+	for (size_t idx = 0; idx < CONFIG_WIFI_CONN_MGR_SUPPORTED_CREDS; ++idx) {
+		struct wifi_connect_req_params new_param = {
+			.ssid = credential_storage[idx].ssid,
+			.ssid_length = credential_storage[idx].ssid_length,
+			.psk = credential_storage[idx].psk,
+			.psk_length = credential_storage[idx].psk_length,
+		};
+		wifi_mgr_add_credential(&new_param);
+	}
+}
+
 int wifi_mgr_add_credential(struct wifi_connect_req_params *new_param)
-{
-    for (size_t idx = 0; idx < CONFIG_WIFI_CONN_MGR_SUPPORTED_CREDS; ++idx) {
-        if (cnx_params[idx].rssi_status == 0) {
-            memcpy(&cnx_params[idx].params, new_param, sizeof(struct wifi_connect_req_params));
-            cnx_params[idx].rssi_status = 1;
-            return 0;
-        }
-    }
-    LOG_WRN("No more credential storage available");
-    return -ENOMEM;
+{	
+	size_t dest_idx = CONFIG_WIFI_CONN_MGR_SUPPORTED_CREDS;
+
+	/* look if ssid is already listed */
+	for (size_t idx = 0; idx < CONFIG_WIFI_CONN_MGR_SUPPORTED_CREDS; ++idx) {
+		if (strcmp(cnx_params[idx].params.ssid, new_param->ssid) == 0) {
+			dest_idx = idx;
+			break;
+		}
+	}
+
+	/* if ssid is not found, try to find empty new spot */
+	if (dest_idx == CONFIG_WIFI_CONN_MGR_SUPPORTED_CREDS) {
+		for (size_t idx = 0; idx < CONFIG_WIFI_CONN_MGR_SUPPORTED_CREDS; ++idx) {
+			if (cnx_params[idx].rssi_status == 0) {
+				dest_idx = idx;
+				break;
+			}
+		}
+	}
+	if (dest_idx < CONFIG_WIFI_CONN_MGR_SUPPORTED_CREDS) {
+		memcpy(&cnx_params[dest_idx].params, new_param, sizeof(struct wifi_connect_req_params));
+		cnx_params[dest_idx].rssi_status = 1;
+		/* copy strings to internal buffers */
+		strncpy(cnx_params[dest_idx].ssid, new_param->ssid, WIFI_SSID_MAX_LEN);
+		strncpy(cnx_params[dest_idx].psk, new_param->psk, WIFI_PSK_MAX_LEN);
+		cnx_params[dest_idx].params.ssid = cnx_params[dest_idx].ssid;
+		cnx_params[dest_idx].params.psk = cnx_params[dest_idx].psk;
+		wifi_mgr_save_credentials();
+		return 0;
+	}
+	LOG_WRN("No more credential storage available");
+	return -ENOMEM;
 }
 
 int wifi_mgr_wait_connection(k_timeout_t wait)
@@ -255,6 +339,7 @@ static void wifi_mgr_worker_fn(struct k_work *item)
 
 static int wifi_mgr_init(const struct device *unused)
 {
+    wifi_mgr_load_credentials();
     ARG_UNUSED(unused);
     net_mgmt_init_event_callback(&wifi_conn_mgr_cb,
                 wifi_mgr_event_handler,
