@@ -22,6 +22,7 @@ config DESKTOP_ROLE_HID_PERIPHERAL
 config DESKTOP_ROLE_HID_DONGLE
 	bool "HID dongle"
 	select DESKTOP_HID_FORWARD_ENABLE
+	select DESKTOP_USB_ENABLE
 	help
 	  The option enables support for the nRF Desktop HID dongle role.
 	  The dongle receives HID reports from Bluetooth connected peripherals
@@ -29,6 +30,25 @@ config DESKTOP_ROLE_HID_DONGLE
 	  generate HID reports by itself.
 
 endchoice # DESKTOP_ROLE
+
+if DESKTOP_ROLE_HID_DONGLE
+
+config DESKTOP_HID_DONGLE_BOND_COUNT
+	int "Supported number of HID peripherals"
+	default 2
+	help
+	  Supported number of HID peripherals bonded to the dongle. By default
+	  dongle supports two HID peripherals - mouse and keyboard.
+
+config DESKTOP_HID_DONGLE_CONN_COUNT
+	int "Supported number of simultaneously connected HID peripherals"
+	default 2
+	help
+	  Supported number of HID peripherals simultaneously connected to the
+	  dongle. By default dongle can handle up to two HID peripherals at the
+	  same time - mouse and keyboard.
+
+endif # DESKTOP_ROLE_HID_DONGLE
 
 config DESKTOP_HID_DONGLE_ENABLED_REPORTS
 	bool
