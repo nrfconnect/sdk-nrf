@@ -141,7 +141,7 @@ manifest:
       path: nrf-802154
       revision: v2.1.0
       groups:
-      - nrf-802154
+        - nrf-802154
     - name: cjson
       repo-path: sdk-cjson
       path: modules/lib/cjson
@@ -150,12 +150,12 @@ manifest:
       repo-path: sdk-homekit
       revision: ad45f481cb94825b491acde3ae059852ce4729d3
       groups:
-      - homekit
+        - homekit
     - name: find-my
       repo-path: sdk-find-my
       revision: bd898885f52e62b032bc4da38cfc505dc46b0f32
       groups:
-      - find-my
+        - find-my
     - name: azure-sdk-for-c
       repo-path: azure-sdk-for-c
       path: modules/lib/azure-sdk-for-c
@@ -177,13 +177,13 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: bacf8d625f50dd5c4b415caee754c934ba1a262c
+      revision: f6df50cde654d55bc55ce511daf2a077f2bc68a3
     - name: ant
       repo-path: sdk-ant
       revision: d2d96e4c725f635ff7813313c8727fe007d1e4b5
       remote: ant-nrfconnect
       groups:
-      - ant
+        - ant
 
   # West-related configuration for the nrf repository.
   self:
