@@ -86,8 +86,6 @@ endmenu
 
 menu "Peripheral Secure mapping"
 
-rsource "${ZEPHYR_BASE}/modules/hal_nordic/Kconfig.dt"
-
 peripheral=FPU
 peripheral_depends=CPU_HAS_FPU
 rsource "Kconfig.template.peripheral_secure"
