@@ -7,7 +7,7 @@
 #ifndef _COMMON_UTILS_H_
 #define _COMMON_UTILS_H_
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <app_event_manager.h>
 

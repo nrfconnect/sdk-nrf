@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <../subsys/bootloader/bl_validation/bl_validation_internal.h>
 
 void test_within(void)

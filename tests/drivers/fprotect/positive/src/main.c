@@ -11,7 +11,7 @@
  * have been set up to be protected by SPU/ACL etc. depending on the chip used
  */
 
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/flash.h>
 

@@ -8,18 +8,18 @@
 #include <zephyr/types.h>
 #include <stdbool.h>
 #include <string.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <lwm2m_resource_ids.h>
-#include <net/lwm2m.h>
+#include <zephyr/net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
 #include <net/lwm2m_client_utils_location.h>
 #include <date_time.h>
 
 #include "lwm2m_codec_defines.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(cloud_codec, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
 /* Some resources does not have designated buffers. Therefore we define those in here. */

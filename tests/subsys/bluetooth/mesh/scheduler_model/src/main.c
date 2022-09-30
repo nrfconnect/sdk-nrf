@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/timeutil.h>
 #include <bluetooth/mesh/gen_onoff_srv.h>

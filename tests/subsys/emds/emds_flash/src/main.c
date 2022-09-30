@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <errno.h>
-#include <zephyr.h>
-#include <storage/flash_map.h>
-#include <drivers/flash.h>
-#include <sys/crc.h>
+#include <zephyr/kernel.h>
+#include <zephyr/storage/flash_map.h>
+#include <zephyr/drivers/flash.h>
+#include <zephyr/sys/crc.h>
 #include <dk_buttons_and_leds.h>
 #include <emds_flash.h>
 

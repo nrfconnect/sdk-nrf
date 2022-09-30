@@ -18,15 +18,15 @@
 #include <modem/modem_key_mgmt.h>
 #include <modem/sms.h>
 #include <net/download_client.h>
-#include <storage/flash_map.h>
-#include <sys/reboot.h>
-#include <sys/__assert.h>
-#include <sys/util.h>
-#include <random/rand32.h>
-#include <toolchain.h>
-#include <fs/nvs.h>
-#include <logging/log.h>
-#include <logging/log_ctrl.h>
+#include <zephyr/storage/flash_map.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/sys/__assert.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/random/rand32.h>
+#include <zephyr/toolchain.h>
+#include <zephyr/fs/nvs.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 #include <nrf_errno.h>
 #include <modem/at_monitor.h>
 
@@ -717,7 +717,7 @@ int lwm2m_os_sec_identity_delete(uint32_t sec_tag)
 #include <dfu/dfu_target_mcuboot.h>
 #include <dfu/dfu_target_stream.h>
 #include <pm_config.h>
-#include <sys/crc.h>
+#include <zephyr/sys/crc.h>
 
 static bool dfu_started;
 static bool dfu_in_progress;

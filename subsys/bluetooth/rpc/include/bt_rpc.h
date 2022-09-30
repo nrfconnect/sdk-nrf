@@ -7,7 +7,7 @@
 #ifndef BT_RPC_H_
 #define BT_RPC_H_
 
-#include "bluetooth/gatt.h"
+#include <zephyr/bluetooth/gatt.h>
 
 /**
  * @file

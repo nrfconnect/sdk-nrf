@@ -7,7 +7,7 @@
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/drivers/gpio.h>
 #include "ble_hci_vsc.h"
-#include "bluetooth/hci.h"
+#include <zephyr/bluetooth/hci.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(ble, CONFIG_LOG_BLE_LEVEL);

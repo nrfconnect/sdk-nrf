@@ -8,11 +8,11 @@
  * @brief nRF Wi-Fi radio-test mode shell module
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <shell/shell.h>
-#include <init.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/init.h>
 #include <ctype.h>
 #include <host_rpu_sys_if.h>
 #include <fmac_structs.h>

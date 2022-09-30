@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <errno.h>
-#include <tc_util.h>
+#include <zephyr/tc_util.h>
 #include "contin_array.h"
 
 /* clang-format off */

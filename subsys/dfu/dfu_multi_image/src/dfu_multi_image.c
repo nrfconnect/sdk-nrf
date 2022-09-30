@@ -5,8 +5,8 @@
  */
 
 #include <dfu/dfu_multi_image.h>
-#include <sys/byteorder.h>
-#include <sys/util.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/util.h>
 #include <zcbor_decode.h>
 
 #include <errno.h>

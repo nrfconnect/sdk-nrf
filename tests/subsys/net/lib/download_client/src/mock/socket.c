@@ -5,7 +5,7 @@
  */
 #include <zephyr/net/socket_offload.h>
 #include <sockets_internal.h>
-#include <ztest.h>
+#include <zephyr/ztest.h>
 
 #include "mock/socket.h"
 

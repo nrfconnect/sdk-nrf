@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
 #include <lwm2m_resource_ids.h>
 #include <lwm2m_rd_client.h>
 #include <nrf_modem_at.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 
 #include "cloud/cloud_wrapper.h"
 
 #define MODULE lwm2m_integration
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 
 #if !defined(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM)

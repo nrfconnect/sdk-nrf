@@ -6,8 +6,8 @@
 
 #include "le_audio.h"
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/audio/audio.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/audio/audio.h>
 #include <../subsys/bluetooth/audio/endpoint.h>
 
 #include "macros_common.h"
@@ -16,7 +16,7 @@
 #include "ble_audio_services.h"
 #include "channel_assignment.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(cis_gateway, CONFIG_LOG_BLE_LEVEL);
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2

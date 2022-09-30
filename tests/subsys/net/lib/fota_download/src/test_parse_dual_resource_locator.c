@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/types.h>
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <fota_download_util.h>
 #include "test_fota_download_common.h"
 

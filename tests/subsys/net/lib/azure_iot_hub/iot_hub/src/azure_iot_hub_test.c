@@ -5,9 +5,9 @@
  */
 #include <unity.h>
 #include <stdbool.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <string.h>
-#include <init.h>
+#include <zephyr/init.h>
 
 #include <net/azure_iot_hub.h>
 

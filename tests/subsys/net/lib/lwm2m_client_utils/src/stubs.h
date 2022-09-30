@@ -13,7 +13,7 @@
 #include <net/lwm2m_client_utils.h>
 #include <modem/modem_key_mgmt.h>
 #include <modem/lte_lc.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_u16, const char *, uint16_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_u8, const char *, uint8_t);

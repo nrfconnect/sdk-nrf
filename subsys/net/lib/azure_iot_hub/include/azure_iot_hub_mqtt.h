@@ -9,7 +9,7 @@
 
 #include <stdio.h>
 #include <net/azure_iot_hub.h>
-#include <net/mqtt.h>
+#include <zephyr/net/mqtt.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <app_event_manager.h>
 
 #include "test_config.h"

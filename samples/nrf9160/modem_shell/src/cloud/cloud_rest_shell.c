@@ -5,13 +5,13 @@
  */
 
 #include <stdlib.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
 
-#include <shell/shell.h>
-#include <shell/shell_uart.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_uart.h>
 
 #include "mosh_print.h"
 

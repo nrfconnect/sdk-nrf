@@ -7,8 +7,8 @@
 #ifndef _LE_AUDIO_H_
 #define _LE_AUDIO_H_
 
-#include <zephyr.h>
-#include <bluetooth/audio/audio.h>
+#include <zephyr/kernel.h>
+#include <zephyr/bluetooth/audio/audio.h>
 
 #define DEVICE_NAME_PEER CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_PEER_LEN (sizeof(DEVICE_NAME_PEER) - 1)

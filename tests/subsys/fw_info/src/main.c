@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <ztest.h>
+#include <zephyr/ztest.h>
 
 #include <fw_info.h>
 #include <pm_config.h>

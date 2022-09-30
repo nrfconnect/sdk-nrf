@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <errno.h>
-#include <net/lwm2m.h>
+#include <zephyr/net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
 
 #include "lwm2m_client_utils/mock_lwm2m_client_utils.h"

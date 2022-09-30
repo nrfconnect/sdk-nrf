@@ -14,7 +14,7 @@
 
 #include <stdio.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #ifndef CONFIG_NRF700X_RADIO_TEST
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/ethernet.h>

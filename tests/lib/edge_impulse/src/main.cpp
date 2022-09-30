@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <ztest.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/ztest.h>
+#include <zephyr/kernel.h>
 #include <ei_test_params.h>
 #include <ei_wrapper.h>
 

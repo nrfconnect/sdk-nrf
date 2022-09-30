@@ -5,8 +5,8 @@
  */
 
 
-#include "bluetooth/bluetooth.h"
-#include "bluetooth/conn.h"
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
 
 #include "bt_rpc_common.h"
 #include "serialize.h"

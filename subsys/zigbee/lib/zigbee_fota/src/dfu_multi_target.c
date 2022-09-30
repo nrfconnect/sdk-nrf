@@ -6,7 +6,7 @@
 
 #include <zephyr/logging/log.h>
 #include <dfu/dfu_multi_image.h>
-#include <dfu/mcuboot.h>
+#include <zephyr/dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_mcuboot.h>
 #include <pm_config.h>

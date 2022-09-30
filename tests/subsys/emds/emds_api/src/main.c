@@ -5,14 +5,14 @@
  */
 
 #include <stdint.h>
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <emds/emds.h>
 #if CONFIG_SETTINGS
-#include <settings/settings.h>
-#include <sys/reboot.h>
+#include <zephyr/settings/settings.h>
+#include <zephyr/sys/reboot.h>
 #endif
 #if defined(CONFIG_BT) && !defined(CONFIG_BT_LL_SW_SPLIT)
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <sdc.h>
 #include <mpsl.h>
 #endif

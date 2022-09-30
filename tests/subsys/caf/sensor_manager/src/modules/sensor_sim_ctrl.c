@@ -9,7 +9,7 @@
 
 #include "sensor_sim_ctrl_def.h"
 #include "test_events.h"
-#include <ztest.h>
+#include <zephyr/ztest.h>
 
 
 static int set_wave(void)

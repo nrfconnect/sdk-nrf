@@ -9,8 +9,8 @@
 #include <zephyr/device.h>
 #include <string.h>
 
-#include <bluetooth/bluetooth.h>
-#include <settings/settings.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/settings/settings.h>
 
 #include "macros_common.h"
 #include "fw_info_app.h"

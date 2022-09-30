@@ -9,9 +9,9 @@
 
 #include <sys/types.h>
 
-#include "bluetooth/bluetooth.h"
-#include "bluetooth/att.h"
-#include "bluetooth/gatt.h"
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/att.h>
+#include <zephyr/bluetooth/gatt.h>
 
 #include "bt_rpc_common.h"
 #include "bt_rpc_gatt_common.h"

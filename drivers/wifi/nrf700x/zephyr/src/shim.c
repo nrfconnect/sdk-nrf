@@ -13,7 +13,7 @@
 #include <string.h>
 #include <sys/time.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/logging/log.h>
@@ -292,8 +292,8 @@ static void *zep_shim_nbuf_data_pull(void *nbuf, unsigned int size)
 	return nwb->data;
 }
 
-#include <net/ethernet.h>
-#include <net/net_core.h>
+#include <zephyr/net/ethernet.h>
+#include <zephyr/net/net_core.h>
 
 void *net_pkt_to_nbuf(struct net_pkt *pkt)
 {

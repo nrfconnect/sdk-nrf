@@ -6,7 +6,7 @@
 #include <string.h>
 #include <zephyr/types.h>
 #include <stdbool.h>
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <aws_fota_json.h>
 
 static void test_parse_job_execution(void)

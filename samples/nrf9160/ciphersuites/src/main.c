@@ -6,9 +6,9 @@
 
 #include <string.h>
 
-#include <zephyr.h>
-#include <net/socket.h>
-#include <net/tls_credentials.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/socket.h>
+#include <zephyr/net/tls_credentials.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
 

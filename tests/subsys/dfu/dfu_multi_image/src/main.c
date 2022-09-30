@@ -5,8 +5,8 @@
  */
 
 #include <dfu/dfu_multi_image.h>
-#include <sys/util.h>
-#include <ztest.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/ztest.h>
 
 #include <string.h>
 #include <stdint.h>

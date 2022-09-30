@@ -5,7 +5,7 @@
  */
 #include <app_event_manager.h>
 #include <event_manager_proxy.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include "test_config.h"
 #include "common_utils.h"

@@ -5,7 +5,7 @@
  */
 
 
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <app_event_manager.h>
 #include "test_events.h"
 #include <caf/events/sensor_event.h>

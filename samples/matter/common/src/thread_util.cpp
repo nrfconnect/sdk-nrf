@@ -8,7 +8,7 @@
 
 #include <platform/CHIPDeviceLayer.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #ifdef CONFIG_OPENTHREAD_DEFAULT_TX_POWER
 #include <openthread/platform/radio.h>

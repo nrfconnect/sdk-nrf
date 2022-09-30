@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <float.h>
 
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <bluetooth/mesh/properties.h>
 #include <bluetooth/mesh/sensor_types.h>
 #include <model_utils.h>

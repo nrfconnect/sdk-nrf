@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- #include <ztest.h>
+ #include <zephyr/ztest.h>
  #include <tfm_ns_interface.h>
  #include <tfm_ioctl_api.h>
  #include <pm_config.h>
