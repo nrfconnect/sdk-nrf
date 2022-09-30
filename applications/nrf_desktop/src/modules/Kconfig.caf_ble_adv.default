@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# nRF Desktop specific configuration overlay for CAF BLE advertising module.
+
+if CAF_BLE_ADV
+
+config CAF_BLE_ADV_DIRECT_ADV
+	default n
+	help
+	  By default, nRF Desktop peripherals do not use direct advertising.
+
+config CAF_BLE_ADV_FAST_ADV
+	default y
+	help
+	  By default, nRF Desktop peripherals use fast advertising.
+
+config CAF_BLE_ADV_FILTER_ACCEPT_LIST
+	default y
+	help
+	  By default, nRF Desktop peripherals enable filter accept list.
+
+endif # CAF_BLE_ADV

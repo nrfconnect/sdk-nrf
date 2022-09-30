@@ -6,6 +6,7 @@
 
 menu "Application modules"
 
+rsource "Kconfig.caf_ble_adv.default"
 rsource "Kconfig.caf_settings_loader.default"
 
 rsource "Kconfig.hid_state"
