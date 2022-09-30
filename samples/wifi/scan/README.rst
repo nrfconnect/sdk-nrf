@@ -7,7 +7,7 @@ Wi-Fi: Scan
    :local:
    :depth: 2
 
-This sample allows the Nordic Wi-Fi chipset to scan for the Access points.
+The Scan sample demonstrates how to use the Nordic Semiconductor's Wi-Fi chipset to scan for the access points without using the wpa_supplicant.
 
 Requirements
 ************
@@ -19,9 +19,9 @@ The sample supports the following development kit:
 Overview
 ********
 
-This sample can perform Wi-Fi "Scan" operation over both 2.4GHz and 5GHz
+This sample can perform Wi-Fi scan operation in the 2.4GHz and 5GHz bands.
 
-Using this sample, the development kit can scan for available Access Points in :abbr:`STA (Station)` mode.
+Using this sample, the development kit can scan for available access points in :abbr:`STA (Station)` mode.
 
 Building and running
 ********************
@@ -30,13 +30,10 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-Currently, the following board(s) are supported:
-
-* nRF7002 DK
-
-
 To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
-The following is an example of the CLI command::
+The following is an example of the CLI command:
+
+.. code-block:: console
 
    west build -b nrf7002dk_nrf5340_cpuapp
 
@@ -47,7 +44,10 @@ Testing
 
 #. |connect_kit|
 #. |connect_terminal|
-   The output should be similar to the following::
+
+   The sample shows the following output:
+
+   .. code-block:: console
 
       <inf> scan: Scan requested
       Num  | SSID                             (len) | Chan | RSSI | Security | BSSID
