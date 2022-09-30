@@ -171,6 +171,10 @@ nRF9160 samples
 
     * Ability to use buttons to generate location assistance requests.
 
+  * Changed:
+
+   * :ref:`nrf_cloud_rest_cell_pos_sample` sample moved from :file:`samples/nrf9160/nrf_cloud_rest_cell_pos` to :file:`samples/nrf9160/nrf_cloud_rest_cell_location`.
+
 Thread samples
 --------------
 

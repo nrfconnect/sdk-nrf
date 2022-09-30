@@ -18,8 +18,8 @@
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
 
-LOG_MODULE_REGISTER(nrf_cloud_rest_cell_pos_sample,
-		    CONFIG_NRF_CLOUD_REST_CELL_POS_SAMPLE_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_cloud_rest_cell_location_sample,
+		    CONFIG_NRF_CLOUD_REST_CELL_LOCATION_SAMPLE_LOG_LEVEL);
 
 #define BTN_NUM			1 /* See include/buttons_def.h */
 #define JITP_REQ_WAIT_SEC	10
@@ -96,7 +96,7 @@ static bool ready;
  */
 static bool location_card_enable;
 
-#if defined(CONFIG_REST_CELL_POS_DO_JITP)
+#if defined(CONFIG_REST_CELL_LOCATION_DO_JITP)
 /* Flag to indicate if the user requested JITP to be performed */
 static bool jitp_requested;
 #endif
@@ -245,7 +245,7 @@ static void modem_time_wait(void)
 	LOG_INF("Network time obtained");
 }
 
-#if defined(CONFIG_REST_CELL_POS_DO_JITP)
+#if defined(CONFIG_REST_CELL_LOCATION_DO_JITP)
 static void request_jitp(void)
 {
 	int err;
@@ -399,7 +399,7 @@ int init(void)
 	/* Inform the app event manager that this module is ready to receive events */
 	module_set_state(MODULE_STATE_READY);
 
-#if defined(CONFIG_REST_CELL_POS_DO_JITP)
+#if defined(CONFIG_REST_CELL_LOCATION_DO_JITP)
 	/* Present option for JITP via REST */
 	request_jitp();
 #endif
@@ -509,7 +509,7 @@ void main(void)
 {
 	int err;
 
-	LOG_INF("nRF Cloud REST Cellular Positioning Sample");
+	LOG_INF("nRF Cloud REST Cellular Location Sample");
 
 	err = init();
 	if (err) {
@@ -519,7 +519,7 @@ void main(void)
 
 	connect_to_network();
 
-#if defined(CONFIG_REST_CELL_POS_DO_JITP)
+#if defined(CONFIG_REST_CELL_LOCATION_DO_JITP)
 	if (jitp_requested) {
 		/* Perform JITP via REST */
 		do_jitp();
@@ -569,7 +569,7 @@ void main(void)
 			continue;
 		}
 
-		LOG_INF("Cellular positioning request fulfilled with %s",
+		LOG_INF("Cellular location request fulfilled with %s",
 			cell_pos_result.type == CELL_POS_TYPE_SINGLE ? "single-cell" :
 			cell_pos_result.type == CELL_POS_TYPE_MULTI ?  "multi-cell" :
 								       "unknown");
