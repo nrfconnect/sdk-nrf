@@ -22,10 +22,6 @@ choice ADXL372_OP_MODE
 	default ADXL372_PEAK_DETECT_MODE
 endchoice
 
-choice ADXL372_BUS_TYPE
-	default ADXL372_SPI
-endchoice
-
 choice ADXL372_TRIGGER_MODE
 	default ADXL372_TRIGGER_GLOBAL_THREAD
 endchoice
