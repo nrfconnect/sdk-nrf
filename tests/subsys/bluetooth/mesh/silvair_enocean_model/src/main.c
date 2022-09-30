@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <bluetooth/enocean.h>
 #include <zephyr/bluetooth/mesh.h>
 #include <bluetooth/mesh/models.h>

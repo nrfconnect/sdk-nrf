@@ -13,7 +13,7 @@
 #include <zephyr/drivers/entropy.h>
 
 #if defined(CONFIG_ZTEST)
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #endif
 
 #include <mbedtls/platform.h>

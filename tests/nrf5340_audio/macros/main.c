@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <errno.h>
-#include <tc_util.h>
+#include <zephyr/tc_util.h>
 #include <zephyr/kernel_structs.h>
 
 FUNC_NORETURN void _SysFatalErrorHandler(unsigned int reason, const z_arch_esf_t *pEsf)

@@ -10,7 +10,7 @@
 #include <net/lwm2m_client_utils.h>
 #include <modem/modem_key_mgmt.h>
 #include <modem/lte_lc.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 #include "stubs.h"
 
 /*

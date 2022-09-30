@@ -8,7 +8,7 @@
 #include <zephyr/types.h>
 #include <zephyr/drivers/flash.h>
 #include <stdbool.h>
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <dfu/dfu_target_stream.h>
 
 #define FLASH_BASE (64*1024)

@@ -12,7 +12,7 @@
 
 #include <bluetooth/adv_prov.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(bt_le_adv_prov, CONFIG_BT_ADV_PROV_LOG_LEVEL);
 
 

@@ -7,12 +7,12 @@
 #include <stdlib.h>
 #include <string.h>
 #if defined(CONFIG_POSIX_API)
-#include <posix/arpa/inet.h>
-#include <posix/netdb.h>
-#include <posix/sys/socket.h>
-#include <posix/poll.h>
+#include <zephyr/posix/arpa/inet.h>
+#include <zephyr/posix/netdb.h>
+#include <zephyr/posix/sys/socket.h>
+#include <zephyr/posix/poll.h>
 #else
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #endif /* CONFIG_POSIX_API */
 #include <net/azure_iot_hub.h>
 #include <net/azure_iot_hub_dps.h>
@@ -22,7 +22,7 @@
 #if defined(CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES)
 #include CONFIG_AZURE_IOT_HUB_CERTIFICATES_FILE
 #endif /* CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES */
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(azure_iot_hub_mqtt, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
 

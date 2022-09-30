@@ -7,7 +7,7 @@
 
 #include <zephyr/kernel.h>
 
-#include "bluetooth/crypto.h"
+#include <zephyr/bluetooth/crypto.h>
 
 #include "bt_rpc_common.h"
 #include "serialize.h"

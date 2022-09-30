@@ -16,8 +16,8 @@
 
 #include <stddef.h>
 #include <sys/types.h>
-#include <sys/util.h>
-#include <sys/slist.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/sys/slist.h>
 
 #ifdef __cplusplus
 extern "C" {

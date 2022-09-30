@@ -6,9 +6,8 @@
 
 #include "audio_sync_timer.h"
 
-#include <zephyr.h>
 #include <zephyr/kernel.h>
-#include <init.h>
+#include <zephyr/init.h>
 #include <nrfx_timer.h>
 #include <nrfx_dppi.h>
 #include <nrfx_i2s.h>

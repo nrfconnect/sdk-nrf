@@ -7,7 +7,7 @@
 #ifndef NRF_MODEM_LIB_TRACE_H__
 #define NRF_MODEM_LIB_TRACE_H__
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 #ifdef __cplusplus
 extern "C" {

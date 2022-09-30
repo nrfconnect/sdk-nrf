@@ -1,4 +1,4 @@
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/init.h>
 #include <zephyr/sys/sys_heap.h>
 #include <zephyr/sys/heap_listener.h>

@@ -6,7 +6,7 @@
 
 #include <string.h>
 #include <unity.h>
-#include <toolchain/common.h>
+#include <zephyr/toolchain/common.h>
 #include <zephyr/logging/log.h>
 #include <syscalls/rand32.h>
 #include <modem/nrf_modem_lib.h>

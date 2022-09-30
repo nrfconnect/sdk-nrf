@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <hw_unique_key.h>
 #include "../../../../lib/hw_unique_key/hw_unique_key_internal.h"
 #include <nrf_cc3xx_platform_kmu.h>

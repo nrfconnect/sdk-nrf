@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <errno.h>
-#include <tc_util.h>
+#include <zephyr/tc_util.h>
 #include "tone.h"
 
 static int32_t tone_sum(int16_t *tone, size_t size)

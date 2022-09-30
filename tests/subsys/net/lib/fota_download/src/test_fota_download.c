@@ -7,7 +7,7 @@
 #include <string.h>
 #include <zephyr/types.h>
 #include <stdbool.h>
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <download_client.h>
 #include <fw_info.h>
 #include <pm_config.h>

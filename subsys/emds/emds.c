@@ -6,12 +6,12 @@
 
 #include <emds/emds.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/storage/flash_map.h>
 #include <zephyr/drivers/flash.h>
 #include "emds_flash.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(emds, CONFIG_EMDS_LOG_LEVEL);
 
 K_SEM_DEFINE(emds_sem, 0, 1);

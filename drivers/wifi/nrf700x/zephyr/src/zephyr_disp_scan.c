@@ -11,7 +11,7 @@
 
 #include <stdlib.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
 #include "fmac_api.h"

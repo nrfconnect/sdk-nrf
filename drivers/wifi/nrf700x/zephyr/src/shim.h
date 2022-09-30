@@ -12,7 +12,7 @@
 #ifndef __SHIM_H__
 #define __SHIM_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/net/net_pkt.h>
 

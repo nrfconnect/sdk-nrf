@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/kernel.h>
-#include <ztest.h>
+#include <zephyr/ztest.h>
 
 #include "test_events.h"
 #include "data_event.h"

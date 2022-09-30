@@ -10,9 +10,9 @@
 #include <nrf_rpc/nrf_rpc_ipc.h>
 
 #include <openamp/rpmsg.h>
-#include <ipc/ipc_service.h>
+#include <zephyr/ipc/ipc_service.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nrf_rpc_ipc, CONFIG_NRF_RPC_TR_LOG_LEVEL);
 

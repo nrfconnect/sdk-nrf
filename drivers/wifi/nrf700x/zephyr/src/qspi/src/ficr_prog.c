@@ -9,7 +9,7 @@
  */
 
 #include <zephyr/logging/log.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include "rpu_hw_if.h"
 #include "ficr_prog.h"
 

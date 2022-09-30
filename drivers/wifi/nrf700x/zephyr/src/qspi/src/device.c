@@ -9,7 +9,7 @@
  * Zephyr OS layer of the Wi-Fi driver.
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/drivers/gpio.h>
 #include <stdio.h>

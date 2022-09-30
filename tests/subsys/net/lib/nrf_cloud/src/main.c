@@ -5,7 +5,7 @@
  */
 
 #include <unity.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <net/nrf_cloud.h>
 #include <mock_nrf_cloud_transport.h>

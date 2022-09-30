@@ -9,7 +9,7 @@
 #include <app/clusters/door-lock-server/door-lock-server.h>
 #include <lib/core/ClusterEnums.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #include <cstdint>
 

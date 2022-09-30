@@ -12,7 +12,7 @@
 #include <string.h>
 #include <sys/time.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/dt-bindings/gpio/nordic-nrf-gpio.h>

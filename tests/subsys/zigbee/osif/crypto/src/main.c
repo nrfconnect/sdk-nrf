@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <zephyr/logging/log.h>
 #include <zb_nrf_crypto.h>
 #include <zboss_api.h>

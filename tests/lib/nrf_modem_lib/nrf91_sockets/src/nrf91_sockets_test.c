@@ -6,10 +6,10 @@
 
 #include <unity.h>
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <fcntl.h>
-#include <sys/fdtable.h>
-#include <net/socket.h>
+#include <zephyr/sys/fdtable.h>
+#include <zephyr/net/socket.h>
 
 #include <nrf_gai_errors.h>
 

@@ -11,7 +11,7 @@
 #define ZB_TRACE_MASK  0x00000800
 
 #include <zephyr/types.h>
-#include <ztest.h>
+#include <zephyr/ztest.h>
 #include <zboss_api.h>
 #include "log_mock.h"
 
