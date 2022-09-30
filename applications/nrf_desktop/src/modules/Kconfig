@@ -6,6 +6,8 @@
 
 menu "Application modules"
 
+rsource "Kconfig.caf_settings_loader.default"
+
 rsource "Kconfig.hid_state"
 rsource "Kconfig.led_state"
 rsource "Kconfig.led_stream"
