@@ -1,13 +1,13 @@
 .. _nrf_cloud_rest_cell_pos_sample:
 
-nRF9160: nRF Cloud REST cellular positioning
-############################################
+nRF9160: nRF Cloud REST cellular location
+#########################################
 
 .. contents::
    :local:
    :depth: 2
 
-This sample demonstrates how to use the `nRF Cloud REST API`_ for nRF Cloud's cellular positioning location service on your device.
+This sample demonstrates how to use the `nRF Cloud REST API`_ for nRF Cloud's cellular location service on your device.
 
 Requirements
 ************
@@ -49,7 +49,7 @@ Without a valid date and time, the modem cannot generate JWTs with an expiration
 User interface
 **************
 
-If you have the option :ref:`CONFIG_REST_CELL_POS_DO_JITP <CONFIG_REST_CELL_POS_DO_JITP>` enabled and you press **button 1** when prompted at startup, it requests for just-in-time provisioning (JITP) with nRF Cloud through REST.
+If you have the option :ref:`CONFIG_REST_CELL_LOCATION_DO_JITP <CONFIG_REST_CELL_LOCATION_DO_JITP>` enabled and you press **button 1** when prompted at startup, it requests for just-in-time provisioning (JITP) with nRF Cloud through REST.
 This is useful when initially provisioning and associating a device on nRF Cloud.
 You only need to do this once for each device.
 
@@ -66,25 +66,22 @@ Configuration
 *************
 |config|
 
+
 Configuration options
 =====================
 
 Check and configure the following Kconfig options for the sample:
 
-.. _CONFIG_REST_CELL_POS_DO_JITP:
+.. _CONFIG_REST_CELL_LOCATION_DO_JITP:
 
-CONFIG_REST_CELL_POS_DO_JITP - Enable prompt to perform JITP via REST
+CONFIG_REST_CELL_LOCATION_DO_JITP - Enable prompt to perform JITP via REST
    This configuration option defines whether the application prompts the user for just-in-time provisioning on startup.
 
-.. _CONFIG_REST_CELL_POS_BUTTON_EVT_NUM:
-
-CONFIG_REST_CELL_POS_BUTTON_EVT_NUM - Button number
-   This configuration option defines the button to use for device interactions.
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf9160/nrf_cloud_rest_cell_pos`
+.. |sample path| replace:: :file:`samples/nrf9160/nrf_cloud_rest_cell_location`
 
 .. include:: /includes/build_and_run_ns.txt
 

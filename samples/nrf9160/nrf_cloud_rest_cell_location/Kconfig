@@ -4,9 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "nRF Cloud REST Cellular Positioning Sample"
+menu "nRF Cloud REST Cellular Location Sample"
 
-config REST_CELL_POS_DO_JITP
+config REST_CELL_LOCATION_DO_JITP
 	bool "Ask to perform just-in-time provisioning (JITP) via REST on startup"
 	help
 	  If a device has JITP certificates and has not yet been provisioned to
@@ -19,6 +19,6 @@ menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
 
-module = NRF_CLOUD_REST_CELL_POS_SAMPLE
-module-str = nRF Cloud REST Cellular Positioning Sample
+module = NRF_CLOUD_REST_CELL_LOCATION_SAMPLE
+module-str = nRF Cloud REST Cellular Location Sample
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
