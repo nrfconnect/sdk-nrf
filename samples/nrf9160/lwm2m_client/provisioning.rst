@@ -9,7 +9,7 @@ Preparing for production
 
 To use the :ref:`lwm2m_client` sample in production, you must prepare the sample for production by completing the following steps:
 
-1. Program the :ref:`at_client_sample` sample to the device.
+#. Program the :ref:`at_client_sample` sample to your device.
 #. Provision the identity and security credentials.
 #. Program the LwM2M client sample.
 
@@ -21,20 +21,14 @@ To use the :ref:`lwm2m_client` sample in production, you must prepare the sample
 The following sections provide the guidelines on setting up the sample for production using AVSystem's `Coiote Device Management`_ server.
 
 Programming the AT Client sample
-================================
+********************************
 
-To configure the sample and to program the AT Client sample, complete the following steps:
-
-1. Make the sample programmable to multiple devices by removing all hard coded credentials. This can be done by setting the :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` Kconfig option to empty value.
-#. Enable bootstrapping using the configuration overlay file :file:`overlay-avsystem-bootstrap.conf`. Bootstrapping is required for an LwM2M client to rotate security credentials.
-#. Prepare the production script or steps for your nRF9160-based device.
-#. Store the bootstrap credentials for the security tag that you have specified in  :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG` Kconfig option into the nRF9160 modem.
-
-#. Program the :ref:`at_client_sample` sample to your device to control the security tags in the modem.
-   See `nRF91 AT Commands Reference Guide <AT Commands Reference Guide_>`_ for documentation on each AT command.
+You must program the :ref:`at_client_sample` sample to your device to control the security tags in the modem.
+See `nRF91 AT Commands Reference Guide <AT Commands Reference Guide_>`_ for documentation on each AT command.
+Also, you must provision the bootstrap credentials for the security tag (that you have specified in :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG` Kconfig option) to the nRF9160 modem.
 
 Provisioning the identity and security credentials
-==================================================
+**************************************************
 
 To provision the credentials, complete the following steps:
 
@@ -57,7 +51,8 @@ To provision the credentials, complete the following steps:
 #. Create an identity ``urn:imei:<IMEI CODE>`` based on the IMEI of your device.
    For the example in previous step, the identity of the device is ``urn:imei:352656100367872``.
 
-#. Generate a secure PSK key and store that to the security tag:
+#. Generate a secure PSK key and store that to the security tag.
+   For example, to write the key ``000102030405060708090a0b0c0d0e0f``, run the following commands:
 
    .. code-block:: none
 
@@ -67,9 +62,9 @@ To provision the credentials, complete the following steps:
       OK
 
 Automated provisioning
-++++++++++++++++++++++
+----------------------
 
-For automated provisioning of credentials, you can use the script that is provided at :file:`scripts/provision.py`.
+For automated provisioning of credentials, you can use the script :file:`provision.py` that is available in the :file:`samples/nrf9160/lwm2m_client/scripts/` folder.
 To set up the script, you must set your username and password for the AVSystem's Coiote Device Management server as environment variables and pass the device serial port as a parameter when you run the script.
 See the following code:
 
@@ -97,3 +92,14 @@ See the following code:
 
 
 You can now program the device with the final sample image.
+
+Configuring and programing the sample
+*************************************
+
+To configure and program the sample, complete the following steps:
+
+1. Make the sample programmable to multiple devices by removing all hard coded credentials. This can be done by setting the :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` Kconfig option to empty value.
+#. Enable bootstrapping using the configuration overlay file :file:`overlay-avsystem-bootstrap.conf`.
+   Bootstrapping is required for an LwM2M client to rotate security credentials.
+#. Prepare the production script or steps for your nRF9160-based device.
+#. Program the sample.
