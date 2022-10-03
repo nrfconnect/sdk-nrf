@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_BLE_ENABLE_PASSKEY
+	bool "Bluetooth LE passkey module"
+	depends on !DESKTOP_PASSKEY_NONE
+	depends on BT_PERIPHERAL
+	help
+	  Enable passkey based pairing for increased security.
+
+if DESKTOP_BLE_ENABLE_PASSKEY
+
+module = DESKTOP_BLE_PASSKEY
+module-str = BLE passkey
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_BLE_ENABLE_PASSKEY

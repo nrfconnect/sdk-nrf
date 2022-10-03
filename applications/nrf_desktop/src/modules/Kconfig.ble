@@ -6,23 +6,6 @@
 
 menu "BLE"
 
-comment "BLE Passkey"
-
-config DESKTOP_BLE_ENABLE_PASSKEY
-	bool "Enable passkey based pairing"
-	depends on !DESKTOP_PASSKEY_NONE
-	depends on BT_PERIPHERAL
-	help
-	  Enable passkey based pairing for increased security.
-
-if DESKTOP_BLE_ENABLE_PASSKEY
-
-module = DESKTOP_BLE_PASSKEY
-module-str = BLE passkey
-source "subsys/logging/Kconfig.template.log_config"
-
-endif
-
 comment "BLE Bond"
 
 config DESKTOP_BLE_BOND_ENABLE
@@ -158,91 +141,6 @@ source "subsys/logging/Kconfig.template.log_config"
 
 endif
 
-comment "BLE Scanning"
-
-config DESKTOP_BLE_SCAN_ENABLE
-	bool "Enable BLE scanning"
-	select BT_SCAN
-	select BT_SCAN_FILTER_ENABLE
-	depends on BT_CENTRAL
-	help
-	  Enable device to scan for peripheral devices.
-
-if DESKTOP_BLE_SCAN_ENABLE
-
-config BT_SCAN_NAME_CNT
-	default 2
-	help
-	  The nRF Desktop by default uses two name filters. The peripheral
-	  device may advertise either as mouse or as keyboard.
-
-config BT_SCAN_ADDRESS_CNT
-	default BT_MAX_PAIRED
-	help
-	  The nRF Desktop needs an address filter per every bonded peripheral.
-
-config BT_SCAN_CONN_ATTEMPTS_FILTER
-	default y
-	help
-	  The connection attempts filter is enabled by default to limit number
-	  of attempts to connect to the device.
-
-config DESKTOP_BLE_SCAN_START_TIMEOUT_S
-	int "Scan start timeout [s]"
-	default 5
-	help
-	  After disabled, scanning is re-enabled after defined time of connected
-	  peripherals inactivity (scanning has negative impact on user
-	  experience - e.g. may cause mouse pointer lags).
-
-config DESKTOP_BLE_SCAN_DURATION_S
-	int "Scan duration [s]"
-	default 30
-	help
-	  After this time scan is disabled if any peripheral is connected.
-
-config DESKTOP_BLE_SCAN_MOUSE_LIMIT
-	int "Maximum number of bonded mice"
-	default 1
-	range 0 255
-
-config DESKTOP_BLE_SCAN_KEYBOARD_LIMIT
-	int "Maximum number of bonded keyboards"
-	default 1
-	range 0 255
-
-config DESKTOP_BLE_SCAN_PM_EVENTS
-	bool "Stop and block scanning in the power down mode"
-	default y
-	depends on CAF_PM_EVENTS
-	help
-	  Stop and block scanning for peers if the central switched to the power down mode
-	  to reduce power consumption.
-
-module = DESKTOP_BLE_SCAN
-module-str = BLE scan
-source "subsys/logging/Kconfig.template.log_config"
-
-endif # DESKTOP_BLE_SCAN_ENABLE
-
-
-comment "BLE Discovery"
-
-config DESKTOP_BLE_DISCOVERY_ENABLE
-	bool "Enable BLE discovery"
-	depends on DESKTOP_BLE_SCAN_ENABLE
-	help
-	  Enable device to read device description (custom GATT Service),
-	  Device Information Service and discover HIDS.
-
-if DESKTOP_BLE_DISCOVERY_ENABLE
-
-module = DESKTOP_BLE_DISCOVERY
-module-str = BLE discovery
-source "subsys/logging/Kconfig.template.log_config"
-
-endif
-
 comment "BLE connection parameters"
 
 if BT_PERIPHERAL
@@ -304,60 +202,6 @@ endif
 
 module = DESKTOP_BLE_CONN_PARAMS
 module-str = BLE connection parameters
-source "subsys/logging/Kconfig.template.log_config"
-
-endif
-
-comment "BLE QoS management"
-
-config DESKTOP_BLE_QOS_ENABLE
-	bool "Enable BLE channel map management"
-	depends on BT_LL_SOFTDEVICE
-	depends on CPU_CORTEX_M4
-	select BT_HCI_VS_EVT_USER
-	help
-	  Enable device to avoid congested RF channels.
-
-config DESKTOP_BLE_QOS_INTERVAL
-	int "Processing interval for QoS thread [ms]"
-	default 1000
-	depends on DESKTOP_BLE_QOS_ENABLE
-	help
-	  Configure processing interval for QoS algorithm.
-	  Longer intervals means more time to accumulate CRC stats,
-	  and vice versa.
-
-config DESKTOP_BLE_QOS_STACK_SIZE
-	int "Base stack size for QoS thread"
-	default 512
-	depends on DESKTOP_BLE_QOS_ENABLE
-	help
-	  Configure base stack size for QoS processing thread.
-
-config DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
-	bool "Enable BLE QoS statistics printout"
-	depends on DESKTOP_BLE_QOS_ENABLE
-	depends on USB_DEVICE_STACK
-	select USB_COMPOSITE_DEVICE
-	select USB_CDC_ACM
-	select SERIAL
-	select UART_LINE_CTRL
-	select UART_INTERRUPT_DRIVEN
-	help
-	  Enable to get real-time QoS information printouts via CDC ACM.
-
-config DESKTOP_BLE_QOS_STATS_PRINT_STACK_SIZE
-	int "Stack size addition for QoS printout"
-	default 784
-	depends on DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
-	help
-	  This size increase is added to the QoS base stack size
-	  to facilitate statistics printout.
-
-if DESKTOP_BLE_QOS_ENABLE
-
-module = DESKTOP_BLE_QOS
-module-str = BLE channel map management
 source "subsys/logging/Kconfig.template.log_config"
 
 endif
