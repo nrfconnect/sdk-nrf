@@ -16,3 +16,20 @@ tests:
       - nrf5340dk_nrf5340_cpunet
     platform_allow: nrf5340dk_nrf5340_cpunet
     tags: bluetooth ci_build
+  sample.bluetooth.direct_test_mode.nrf5340_usb:
+    build_only: true
+    extra_configs:
+      - CONFIG_DTM_USB=y
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpunet
+    platform_allow: nrf5340dk_nrf5340_cpunet
+    tags: bluetooth ci_build
+  sample.bluetooth.direct_test_mode.nrf5340_nrf21540_usb:
+    build_only: true
+    extra_args: SHIELD=nrf21540_ek
+    extra_configs:
+      - CONFIG_DTM_USB=y
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpunet
+    platform_allow: nrf5340dk_nrf5340_cpunet
+    tags: bluetooth ci_build

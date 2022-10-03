@@ -6,19 +6,27 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-# Propagate shields to the Remote Shell child image, we want to build for nRF53 series
-# in the same way like for nRF52 series.
-# Use following command to build for nRF5340 with nRF21540 EK shield:
-# west build nrf5340dk_nrf5340_cpunet -- -DSHIELD nrf21540_ek
-# The shield will added to child image automatically.
-# Yoy can also use standard command:
-# west build -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540_ek -Dremote_shell_SHIELD=nrf21540ek
-if (DEFINED SHIELD)
-  # Do this only if user did not specify shield for this child image.
-  if (NOT DEFINED remote_shell_SHIELD)
-    message(STATUS "Set shields: ${SHIELD} for the child image")
-    set(remote_shell_SHIELD ${remote_shell_SHIELD};${SHIELD})
-  endif()
+if (DEFINED SHIELD AND ${BOARD} STREQUAL "nrf5340dk_nrf5340_cpunet")
+  string(REPLACE " " ";" SHIELD_LIST "${SHIELD}")
+  foreach(sh IN_LIST SHIELD_LIST)
+    if (${sh} STREQUAL "nrf21540_ek")
+      if (CONFIG_RADIO_TEST_USB)
+        set(remote_shell_DTC_OVERLAY_FILE ${CMAKE_CURRENT_LIST_DIR}/conf/remote_shell/nrf21540_ek_usb.overlay)
+      else()
+        set(remote_shell_DTC_OVERLAY_FILE ${CMAKE_CURRENT_LIST_DIR}/conf/remote_shell/nrf21540_ek.overlay)
+      endif()
+
+      break()
+    endif()
+  endforeach()
+endif()
+
+if (NOT DEFINED remote_shell_DTC_OVERLAY_FILE AND CONFIG_RADIO_TEST_USB)
+  set(remote_shell_DTC_OVERLAY_FILE ${CMAKE_CURRENT_LIST_DIR}/conf/remote_shell/usb.overlay)
+endif()
+
+if (CONFIG_RADIO_TEST_USB)
+  set(remote_shell_CONF_FILE ${CMAKE_CURRENT_LIST_DIR}/conf/remote_shell/prj_usb.conf)
 endif()
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})

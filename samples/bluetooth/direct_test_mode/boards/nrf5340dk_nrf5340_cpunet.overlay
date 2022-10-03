@@ -9,7 +9,7 @@
 	compatible = "nordic,nrf-ipc-uart";
 	ipc = <&ipc0>;
 	ept-name = "remote shell";
-	current-speed = <9600>;
+	current-speed = <19200>;
 };
 
 &radio {
