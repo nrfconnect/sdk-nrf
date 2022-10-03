@@ -46,7 +46,7 @@ static int buzzer_intensity_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t r
 			       uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
 {
 	int ret;
-	uint8_t intensity = *data;
+	uint8_t intensity = *(double *)data;
 
 	ret = ui_buzzer_set_intensity(intensity);
 	if (ret) {
