@@ -126,11 +126,16 @@ nRF5340 Audio
 
 * Added:
 
-  * Added Kconfig options for different sample rates and BAP presets
+  * Added Kconfig options for different sample rates and BAP presets.
 
 * Updated:
 
   * LE Audio Controller Subsystem for nRF53 from version 3303 to version 3307.
+
+* Fixed:
+
+  * An issue with the figure for :ref:`nrf53_audio_app_overview_architecture_i2s` in the :ref:`nrf53_audio_app` documentation.
+    The figure now correctly shows the interaction with the Bluetooth modules.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -417,8 +422,11 @@ cJSON
 Documentation
 =============
 
-* :ref:`app_memory`: Added configuration options affecting memory footprint for Bluetooth mesh, that can be used to optimize the application.
-* Added documentation for the :ref:`lib_bh1749`.
+* Added:
+
+  * :ref:`app_memory`: Configuration options affecting memory footprint for Bluetooth mesh, that can be used to optimize the application.
+  * Documentation for the :ref:`lib_bh1749`.
+
 * Updated:
 
   * :ref:`gs_assistant` steps to reflect the fact that the |nRFVSC| is the default recommended IDE.
