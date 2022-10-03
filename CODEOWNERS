@@ -232,7 +232,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/bluetooth/mesh/             @ludvigsj
 /tests/subsys/bluetooth/fast_pair/        @MarekPieta @kapi-no @KAGA164
 /tests/subsys/bootloader/                 @hakonfam
-/tests/subsys/caf/sensor_data_aggregator/ @zycz
+/tests/subsys/caf/                        @zycz
 /tests/subsys/debug/cpu_load/             @nordic-krch
 /tests/subsys/dfu/                        @hakonfam @sigvartmh
 /tests/subsys/dfu/dfu_multi_image/        @Damian-Nordic
