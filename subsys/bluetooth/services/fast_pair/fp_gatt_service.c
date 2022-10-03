@@ -163,7 +163,7 @@ static int parse_key_based_pairing_req(const struct bt_conn *conn,
 		err = -EINVAL;
 	}
 
-	return 0;
+	return err;
 }
 
 static int handle_key_based_pairing_req(struct bt_conn *conn,
