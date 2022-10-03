@@ -4,12 +4,4 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	chosen {
-		zephyr,shell-ipc = &ipc0;
-	};
-};
-
-&uart0 {
-	status = "disabled";
-};
+#include "usb.dts"

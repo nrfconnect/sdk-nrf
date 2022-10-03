@@ -7,6 +7,13 @@
 / {
 	chosen {
 		zephyr,shell-ipc = &ipc0;
+		ncs,remote-shell-uart = &cdc_acm0;
+	};
+};
+
+&zephyr_udc0 {
+	cdc_acm0: cdc_acm0 {
+		compatible = "zephyr,cdc-acm-uart";
 	};
 };
 

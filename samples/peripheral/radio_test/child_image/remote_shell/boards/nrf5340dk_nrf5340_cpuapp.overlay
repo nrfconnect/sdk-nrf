@@ -10,3 +10,7 @@
 		ncs,remote-shell-uart = &uart0;
 	};
 };
+
+&uart0 {
+	status = "okay";
+};
