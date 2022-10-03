@@ -70,6 +70,12 @@ config BT_FAST_PAIR_GATT_SERVICE
 
 if BT_FAST_PAIR_GATT_SERVICE
 
+config BT_GATT_AUTO_SEC_REQ
+	default n
+	help
+	  Disable automatic security re-establishment request as a peripheral
+	  to allow Fast Pair Seeker to control the security re-establishment.
+
 config BT_L2CAP_TX_MTU
 	default 83
 	help
