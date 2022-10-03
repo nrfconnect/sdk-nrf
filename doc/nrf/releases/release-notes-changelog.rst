@@ -193,6 +193,7 @@ nRF9160 samples
   * Added:
 
     * Ability to use buttons to generate location assistance requests.
+    * Documentation on :ref:`lwmwm_client_testing_shell`.
 
   * Changed:
 
