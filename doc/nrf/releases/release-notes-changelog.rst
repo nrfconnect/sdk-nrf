@@ -268,6 +268,10 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
 
   * Added the ability to use the module when the Bluetooth Observer role is enabled.
 
+* :ref:`bt_fast_pair_readme` service:
+
+  * Disabled automatic security re-establishment request as a peripheral (:kconfig:option:`CONFIG_BT_GATT_AUTO_SEC_REQ`) to allow the Fast Pair Seeker to control the security re-establishment.
+
 Bootloader libraries
 --------------------
 

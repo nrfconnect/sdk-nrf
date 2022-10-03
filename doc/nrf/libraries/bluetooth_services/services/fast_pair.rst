@@ -87,6 +87,12 @@ Because of this requirement, the default values of the following Kconfig options
    In case of :ref:`nRF53 Series <ug_nrf53>`, this part of the configuration cannot be automatically updated for the network core and you must manually align it.
    The listed options must be set on the network core to default values specified by the GFPS Kconfig options.
 
+Security re-establishment
+-------------------------
+
+By default, the Fast Pair service disables the automatic security re-establishment request as a peripheral (:kconfig:option:`CONFIG_BT_GATT_AUTO_SEC_REQ`).
+This is done to allow Fast Pair Seeker to control the security re-establishment.
+
 Partition Manager
 -----------------
 
