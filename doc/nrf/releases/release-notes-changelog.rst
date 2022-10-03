@@ -124,7 +124,7 @@ nRF9160: Serial LTE modem
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Updated LE Audio Controller Subsystem for nRF53 from version 3303 to version 3307.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
