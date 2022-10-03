@@ -335,6 +335,12 @@ Libraries for networking
   * Updated the library so that it does not retry download on disconnect.
   * Fixed a race condition when starting the download.
 
+* :ref:`lib_nrf_cloud` library:
+
+  * Updated:
+
+    * The stack size of the MQTT connection monitoring thread can now be adjusted by setting the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE` Kconfig option.
+
 Libraries for NFC
 -----------------
 

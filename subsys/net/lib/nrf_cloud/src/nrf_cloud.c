@@ -616,13 +616,7 @@ reset:
 	k_sem_take(&connection_poll_sem, K_NO_WAIT);
 	goto start;
 }
-
-#ifdef CONFIG_BOARD_QEMU_X86
-#define POLL_THREAD_STACK_SIZE 4096
-#else
-#define POLL_THREAD_STACK_SIZE 3072
-#endif
-K_THREAD_DEFINE(nrfcloud_connection_poll_thread, POLL_THREAD_STACK_SIZE,
+K_THREAD_DEFINE(nrfcloud_connection_poll_thread, CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE,
 		nrf_cloud_run, NULL, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 #endif

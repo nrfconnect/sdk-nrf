@@ -30,12 +30,18 @@ If this API fails, the application must not use any APIs of the module.
 
 Connecting
 **********
-The application can use :c:func:`nrf_cloud_connect` to connect to the cloud.
+The application can use the :c:func:`nrf_cloud_connect` function to connect to the cloud.
 This API triggers a series of events and actions in the system.
 If the API fails, the application must retry to connect.
-If the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is not enabled, the application should monitor the connection socket. :c:func:`nrf_cloud_connect` blocks and returns success when the MQTT connection to the cloud completes.
-If the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabled, an nRF Cloud library thread monitors the connection socket. :c:func:`nrf_cloud_connect` does not block and returns success if the connection monitoring thread has started.
-When :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` is enabled, an additional event, :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECTING`, is sent to the application.
+
+If the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is not enabled, the application should monitor the connection socket.
+The :c:func:`nrf_cloud_connect` function blocks and returns success when the MQTT connection to the cloud completes.
+
+If the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabled, an nRF Cloud library thread monitors the connection socket.
+The :c:func:`nrf_cloud_connect` function does not block and returns success if the connection monitoring thread has started.
+
+When the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabled, an additional event, :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECTING`, is sent to the application.
+To adjust the stack size of the connection monitoring thread, set the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE` Kconfig option.
 The status field of :c:struct:`nrf_cloud_evt` contains the connection status that is defined by :c:enumerator:`nrf_cloud_connect_result`.
 The event :c:enumerator:`NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED` also contains additional information in the status field that is defined by :c:enumerator:`nrf_cloud_disconnect_status`.
 

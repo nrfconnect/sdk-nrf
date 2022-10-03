@@ -103,6 +103,16 @@ config NRF_CLOUD_CONNECTION_POLL_THREAD
 	bool "Poll cloud connection in a separate thread"
 	default y
 
+
+if NRF_CLOUD_CONNECTION_POLL_THREAD
+
+config NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE
+	int "Stack size for nRF Cloud connection poll thread."
+	default 4096 if BOARD_QEMU_X86
+	default 3072
+
+endif
+
 config NRF_CLOUD_MQTT_KEEPALIVE
 	int "Maximum number of keep alive time for MQTT (in seconds)"
 	default 1200
