@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_BLE_QOS_ENABLE
+	bool "Bluetooth LE QoS module"
+	depends on BT_LL_SOFTDEVICE
+	depends on CPU_CORTEX_M4
+	select BT_HCI_VS_EVT_USER
+	help
+	  Enable device to avoid congested RF channels.
+
+if DESKTOP_BLE_QOS_ENABLE
+
+config DESKTOP_BLE_QOS_INTERVAL
+	int "Processing interval for QoS thread [ms]"
+	default 1000
+	help
+	  Configure processing interval for QoS algorithm.
+	  Longer intervals means more time to accumulate CRC stats,
+	  and vice versa.
+
+config DESKTOP_BLE_QOS_STACK_SIZE
+	int "Base stack size for QoS thread"
+	default 512
+	help
+	  Configure base stack size for QoS processing thread.
+
+config DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
+	bool "Enable BLE QoS statistics printout"
+	depends on USB_DEVICE_STACK
+	select USB_COMPOSITE_DEVICE
+	select USB_CDC_ACM
+	select SERIAL
+	select UART_LINE_CTRL
+	select UART_INTERRUPT_DRIVEN
+	help
+	  Enable to get real-time QoS information printouts via CDC ACM.
+
+config DESKTOP_BLE_QOS_STATS_PRINT_STACK_SIZE
+	int "Stack size addition for QoS printout"
+	default 784
+	depends on DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
+	help
+	  This size increase is added to the QoS base stack size
+	  to facilitate statistics printout.
+
+module = DESKTOP_BLE_QOS
+module-str = BLE channel map management
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_BLE_QOS_ENABLE
