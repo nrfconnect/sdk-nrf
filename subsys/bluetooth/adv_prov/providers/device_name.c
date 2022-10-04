@@ -10,7 +10,7 @@
 #include <bluetooth/adv_prov.h>
 
 
-static int get_data(struct bt_data *sd, const struct bt_le_adv_prov_adv_state *state,
+static int get_data(struct bt_data *d, const struct bt_le_adv_prov_adv_state *state,
 		    struct bt_le_adv_prov_feedback *fb)
 {
 	ARG_UNUSED(state);
@@ -18,11 +18,15 @@ static int get_data(struct bt_data *sd, const struct bt_le_adv_prov_adv_state *s
 
 	const char *name = bt_get_name();
 
-	sd->type = BT_DATA_NAME_COMPLETE;
-	sd->data_len = strlen(name);
-	sd->data = name;
+	d->type = BT_DATA_NAME_COMPLETE;
+	d->data_len = strlen(name);
+	d->data = name;
 
 	return 0;
 }
 
+#if CONFIG_BT_ADV_PROV_DEVICE_NAME_SD
 BT_LE_ADV_PROV_SD_PROVIDER_REGISTER(device_name, get_data);
+#else
+BT_LE_ADV_PROV_AD_PROVIDER_REGISTER(device_name, get_data);
+#endif /* CONFIG_BT_ADV_PROV_DEVICE_NAME_SD */
