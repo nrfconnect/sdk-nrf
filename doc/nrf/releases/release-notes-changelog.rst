@@ -198,6 +198,15 @@ Bluetooth samples
 
     * Added a documentation section about testing with the `nRF Memfault for Android`_ and the `nRF Memfault for iOS`_ mobile applications to the documentation.
 
+* :ref:`direct_test_mode` sample:
+
+  * Changed:
+
+    * Front-end module support is now provided by the :ref:`nrfxlib:mpsl_fem` API instead of the custom driver that was part of this sample.
+    * On the nRF5340 development kit, the :ref:`nrf5340_remote_shell` is now a mandatory sample that must be programmed to the application core.
+    * On the nRF5340 development kit, the application core UART interface is used for communication with testers instead of the network core UART interface.
+    * On the nRF5340 development kit, added support for the USB CDC ACM interface.
+
 Bluetooth mesh samples
 ----------------------
 
@@ -325,12 +334,20 @@ Other samples
   * Removed the FEM support section.
 * Added :ref:`hw_id_sample` sample.
 
+* :ref:`radio_test` sample:
+
+  * Changed:
+
+    * Front-end module support is now provided by the :ref:`nrfxlib:mpsl_fem` API instead of the custom driver that was part of this sample.
+    * On the nRF5340 development kit, the :ref:`nrf5340_remote_shell` is now a mandatory sample that must be programmed to the application core.
+    * On the nRF5340 development kit, this sample uses the :ref:`shell_ipc_readme` library to forward shell data through the physical application core UART interface.
+
 Drivers
 =======
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-* |no_changes_yet_note|
+* Added :ref:`uart_ipc`
 
 Libraries
 =========
