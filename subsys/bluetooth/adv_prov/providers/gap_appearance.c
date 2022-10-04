@@ -10,7 +10,7 @@
 #include <bluetooth/adv_prov.h>
 
 
-static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *state,
+static int get_data(struct bt_data *d, const struct bt_le_adv_prov_adv_state *state,
 		    struct bt_le_adv_prov_feedback *fb)
 {
 	ARG_UNUSED(fb);
@@ -23,11 +23,15 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 
 	sys_put_le16(bt_get_appearance(), data);
 
-	ad->type = BT_DATA_GAP_APPEARANCE;
-	ad->data_len = sizeof(data);
-	ad->data = data;
+	d->type = BT_DATA_GAP_APPEARANCE;
+	d->data_len = sizeof(data);
+	d->data = data;
 
 	return 0;
 }
 
+#if CONFIG_BT_ADV_PROV_GAP_APPEARANCE_SD
+BT_LE_ADV_PROV_SD_PROVIDER_REGISTER(gap_appearance, get_data);
+#else
 BT_LE_ADV_PROV_AD_PROVIDER_REGISTER(gap_appearance, get_data);
+#endif /* CONFIG_BT_ADV_PROV_GAP_APPEARANCE_SD */
