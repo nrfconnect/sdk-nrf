@@ -75,21 +75,21 @@ struct wifi_nrf_fmac_ieee80211_hdr {
 	unsigned char addr_3[WIFI_NRF_FMAC_ETH_ADDR_LEN];
 	unsigned short seq_ctrl;
 	unsigned char addr_4[WIFI_NRF_FMAC_ETH_ADDR_LEN];
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 
 struct wifi_nrf_fmac_eth_hdr {
 	unsigned char dst[WIFI_NRF_FMAC_ETH_ADDR_LEN]; /* destination eth addr */
 	unsigned char src[WIFI_NRF_FMAC_ETH_ADDR_LEN]; /* source ether addr */
 	unsigned short proto; /* packet type ID field */
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 
 struct wifi_nrf_fmac_amsdu_hdr {
 	unsigned char dst[WIFI_NRF_FMAC_ETH_ADDR_LEN]; /* destination eth addr */
 	unsigned char src[WIFI_NRF_FMAC_ETH_ADDR_LEN]; /* source ether addr */
 	unsigned short length; /* length*/
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 bool wifi_nrf_util_is_multicast_addr(const unsigned char *addr);
 

@@ -167,27 +167,27 @@
 
 #define MAX_NUM_OF_RX_QUEUES 3
 
-#define IMG_RPU_PWR_DATA_TYPE_LFC_ERR 0
-#define IMG_RPU_PWR_DATA_TYPE_VBAT_MON 1
-#define IMG_RPU_PWR_DATA_TYPE_TEMP 2
-#define IMG_RPU_PWR_DATA_TYPE_ALL 3
-#define IMG_RPU_PWR_DATA_TYPE_MAX 4
+#define NRF_WIFI_RPU_PWR_DATA_TYPE_LFC_ERR 0
+#define NRF_WIFI_RPU_PWR_DATA_TYPE_VBAT_MON 1
+#define NRF_WIFI_RPU_PWR_DATA_TYPE_TEMP 2
+#define NRF_WIFI_RPU_PWR_DATA_TYPE_ALL 3
+#define NRF_WIFI_RPU_PWR_DATA_TYPE_MAX 4
 
 #ifndef RPU_RF_C0_SUPPORT
-#define IMG_RPU_RF_CLK_TYPE_20 0
-#define IMG_RPU_RF_CLK_TYPE_40 1
-#define IMG_RPU_RF_CLK_TYPE_MAX 2
+#define NRF_WIFI_RPU_RF_CLK_TYPE_20 0
+#define NRF_WIFI_RPU_RF_CLK_TYPE_40 1
+#define NRF_WIFI_RPU_RF_CLK_TYPE_MAX 2
 #endif /* RPU_RF_C0_SUPPORT */
 
 /**
- * struct img_rpu_pwr_data - Data that host may want to read from the Power IP.
+ * struct nrf_wifi_rpu_pwr_data - Data that host may want to read from the Power IP.
  * @lfc_err: Estimated Lo Frequency Clock error in ppm.
  * @vbat_mon: Vbat monitor readout. The actual Vbat in volt equals 2.5 + 0.07*vbat_mon.
  * @temp: Estimated die temperature (degC).
  *
  * This structure represents the Power IP monitoring data.
  */
-struct img_rpu_pwr_data {
+struct nrf_wifi_rpu_pwr_data {
 	int lfc_err;
 	int vbat_mon;
 	int temp;
@@ -204,7 +204,7 @@ struct img_rpu_pwr_data {
 
 struct host_rpu_rx_buf_info {
 	unsigned int addr;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
  * struct host_rpu_hpq - Hostport Queue (HPQ) information.
@@ -219,7 +219,7 @@ struct host_rpu_rx_buf_info {
 struct host_rpu_hpq {
 	unsigned int enqueue_addr;
 	unsigned int dequeue_addr;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
  * struct host_rpu_hpqm_info - Information about Hostport Queues (HPQ) to be used
@@ -241,7 +241,7 @@ struct host_rpu_hpqm_info {
 	struct host_rpu_hpq cmd_busy_queue;
 	struct host_rpu_hpq cmd_avl_queue;
 	struct host_rpu_hpq rx_buf_busy_queue[MAX_NUM_OF_RX_QUEUES];
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
  * struct host_rpu_msg_hdr - Common header included in each command/event.
@@ -256,7 +256,7 @@ struct host_rpu_hpqm_info {
 struct host_rpu_msg_hdr {
 	unsigned int len;
 	unsigned int resubmit;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 #define BT_INIT 0x1
 #define BT_MODE 0x2
@@ -300,6 +300,6 @@ struct pta_ext_params {
 	 * is with reference to BT_ACTIVE assert time.
 	 */
 	unsigned int dec_time;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 #endif /* __RPU_IF_H__ */

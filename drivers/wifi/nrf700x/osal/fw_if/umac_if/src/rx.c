@@ -164,7 +164,7 @@ out:
 
 
 enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-						    struct img_rx_buff *config)
+						    struct nrf_wifi_rx_buff *config)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
@@ -237,7 +237,7 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx
 		rx_buf_info->nwb = 0;
 		rx_buf_info->mapped = false;
 
-		if (config->rx_pkt_type == IMG_RX_PKT_DATA) {
+		if (config->rx_pkt_type == NRF_WIFI_RX_PKT_DATA) {
 			switch (config->rx_buff_info[i].pkt_type) {
 			case PKT_TYPE_MPDU:
 				wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
@@ -285,7 +285,7 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx
 
 			fmac_dev_ctx->fpriv->callbk_fns.rx_frm_callbk_fn(vif_ctx->os_vif_ctx,
 									 nwb);
-		} else if (config->rx_pkt_type == IMG_RX_PKT_BCN_PRB_RSP) {
+		} else if (config->rx_pkt_type == NRF_WIFI_RX_PKT_BCN_PRB_RSP) {
 			wifi_nrf_osal_nbuf_free(fmac_dev_ctx->fpriv->opriv,
 						nwb);
 		} else {

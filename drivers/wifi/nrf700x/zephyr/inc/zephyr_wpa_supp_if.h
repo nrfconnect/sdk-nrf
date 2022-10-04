@@ -56,37 +56,37 @@ int wifi_nrf_wpa_supp_set_key(void *if_priv,
 void wifi_nrf_wpa_supp_event_proc_scan_start(void *if_priv);
 
 void wifi_nrf_wpa_supp_event_proc_scan_done(void *if_priv,
-					    struct img_umac_event_trigger_scan *scan_done_event,
-					    unsigned int event_len,
-					    int aborted);
+					struct nrf_wifi_umac_event_trigger_scan *scan_done_event,
+					unsigned int event_len,
+					int aborted);
 
 void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
-					   struct img_umac_event_new_scan_results *scan_res,
-					   unsigned int event_len,
-					   bool more_res);
+					struct nrf_wifi_umac_event_new_scan_results *scan_res,
+					unsigned int event_len,
+					bool more_res);
 
 void wifi_nrf_wpa_supp_event_proc_auth_resp(void *if_priv,
-					    struct img_umac_event_mlme *auth_resp,
+					    struct nrf_wifi_umac_event_mlme *auth_resp,
 					    unsigned int event_len);
 
 void wifi_nrf_wpa_supp_event_proc_assoc_resp(void *if_priv,
-					     struct img_umac_event_mlme *assoc_resp,
+					     struct nrf_wifi_umac_event_mlme *assoc_resp,
 					     unsigned int event_len);
 
 void wifi_nrf_wpa_supp_event_proc_deauth(void *if_priv,
-					 struct img_umac_event_mlme *deauth,
+					 struct nrf_wifi_umac_event_mlme *deauth,
 					 unsigned int event_len);
 
 void wifi_nrf_wpa_supp_event_proc_disassoc(void *if_priv,
-					   struct img_umac_event_mlme *disassoc,
+					   struct nrf_wifi_umac_event_mlme *disassoc,
 					   unsigned int event_len);
 
 void wifi_nrf_wpa_supp_event_proc_get_sta(void *if_priv,
-					   struct img_umac_event_new_station *info,
+					   struct nrf_wifi_umac_event_new_station *info,
 					   unsigned int event_len);
 
 void wifi_nrf_wpa_supp_event_proc_get_if(void *if_priv,
-					   struct img_interface_info *info,
+					   struct nrf_wifi_interface_info *info,
 					   unsigned int event_len);
 #endif /* CONFIG_WPA_SUPP */
 #endif /*  __ZEPHYR_WPA_SUPP_IF_H__ */

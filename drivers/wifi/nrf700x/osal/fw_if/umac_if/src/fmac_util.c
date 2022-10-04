@@ -318,7 +318,7 @@ unsigned char *wifi_nrf_util_get_dest(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx
 unsigned char *wifi_nrf_util_get_ra(struct wifi_nrf_fmac_vif_ctx *vif,
 				    void *nwb)
 {
-	if (vif->if_type == IMG_IFTYPE_STATION) {
+	if (vif->if_type == NRF_WIFI_IFTYPE_STATION) {
 		return vif->bssid;
 	}
 

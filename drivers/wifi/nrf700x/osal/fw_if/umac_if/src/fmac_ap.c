@@ -15,7 +15,7 @@
 #include "fmac_tx.h"
 
 enum wifi_nrf_status sap_client_ps_get_frames(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					      struct img_sap_ps_get_frames *config)
+					      struct nrf_wifi_sap_ps_get_frames *config)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct peers_info *peer = NULL;
@@ -77,7 +77,7 @@ out:
 
 
 enum wifi_nrf_status sap_client_update_pmmode(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					      struct img_sap_client_pwrsave *config)
+					      struct nrf_wifi_sap_client_pwrsave *config)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct peers_info *peer = NULL;
@@ -115,7 +115,7 @@ enum wifi_nrf_status sap_client_update_pmmode(struct wifi_nrf_fmac_dev_ctx *fmac
 	peer = &fmac_dev_ctx->tx_config.peers[id];
 	peer->ps_state = config->sta_ps_state;
 
-	if (peer->ps_state == IMG_CLIENT_ACTIVE) {
+	if (peer->ps_state == NRF_WIFI_CLIENT_ACTIVE) {
 		wakeup_client_q = fmac_dev_ctx->tx_config.wakeup_client_q;
 
 		if (wakeup_client_q) {

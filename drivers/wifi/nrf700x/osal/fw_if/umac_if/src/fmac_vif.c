@@ -17,8 +17,8 @@ int wifi_nrf_fmac_vif_check_if_limit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				     int if_type)
 {
 	switch (if_type) {
-	case IMG_IFTYPE_STATION:
-	case IMG_IFTYPE_P2P_CLIENT:
+	case NRF_WIFI_IFTYPE_STATION:
+	case NRF_WIFI_IFTYPE_P2P_CLIENT:
 		if (fmac_dev_ctx->num_sta >= MAX_NUM_STAS) {
 			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 					      "%s: Maximum STA Interface type exceeded\n",
@@ -26,8 +26,8 @@ int wifi_nrf_fmac_vif_check_if_limit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			return -1;
 		}
 		break;
-	case IMG_IFTYPE_AP:
-	case IMG_IFTYPE_P2P_GO:
+	case NRF_WIFI_IFTYPE_AP:
+	case NRF_WIFI_IFTYPE_P2P_GO:
 		if (fmac_dev_ctx->num_ap >= MAX_NUM_APS) {
 			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 					      "%s: Maximum AP Interface type exceeded\n",
@@ -50,12 +50,12 @@ void wifi_nrf_fmac_vif_incr_if_type(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				    int if_type)
 {
 	switch (if_type) {
-	case IMG_IFTYPE_STATION:
-	case IMG_IFTYPE_P2P_CLIENT:
+	case NRF_WIFI_IFTYPE_STATION:
+	case NRF_WIFI_IFTYPE_P2P_CLIENT:
 		fmac_dev_ctx->num_sta++;
 		break;
-	case IMG_IFTYPE_AP:
-	case IMG_IFTYPE_P2P_GO:
+	case NRF_WIFI_IFTYPE_AP:
+	case NRF_WIFI_IFTYPE_P2P_GO:
 		fmac_dev_ctx->num_ap++;
 		break;
 	default:
@@ -70,12 +70,12 @@ void wifi_nrf_fmac_vif_decr_if_type(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				    int if_type)
 {
 	switch (if_type) {
-	case IMG_IFTYPE_STATION:
-	case IMG_IFTYPE_P2P_CLIENT:
+	case NRF_WIFI_IFTYPE_STATION:
+	case NRF_WIFI_IFTYPE_P2P_CLIENT:
 		fmac_dev_ctx->num_sta--;
 		break;
-	case IMG_IFTYPE_AP:
-	case IMG_IFTYPE_P2P_GO:
+	case NRF_WIFI_IFTYPE_AP:
+	case NRF_WIFI_IFTYPE_P2P_GO:
 		fmac_dev_ctx->num_ap--;
 		break;
 	default:

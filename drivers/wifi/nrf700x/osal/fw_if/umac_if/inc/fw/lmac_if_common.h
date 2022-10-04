@@ -5,7 +5,7 @@
  */
 
 /**
- * @brief Common structures and definations.
+ * @brief Common structures and definitions.
  */
 
 #ifndef __LMAC_IF_COMMON__
@@ -52,8 +52,8 @@
 #define PKT_TYPE_MSDU_WITH_MAC 1
 #define PKT_TYPE_MSDU 2
 
-#define IMG_RPU_PWR_STATUS_SUCCESS 0
-#define IMG_RPU_PWR_STATUS_FAIL -1
+#define NRF_WIFI_RPU_PWR_STATUS_SUCCESS 0
+#define NRF_WIFI_RPU_PWR_STATUS_FAIL -1
 
 /**
  * struct lmac_prod_stats : used to get the production mode stats
@@ -122,7 +122,7 @@ struct hpqm_queue {
 	unsigned int id_num;
 	unsigned int status_addr;
 	unsigned int status_mask;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 struct INT_HPQ {
 	unsigned int id;
@@ -132,7 +132,7 @@ struct INT_HPQ {
 	 */
 	unsigned int head;
 	unsigned int tail;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
  * struct lmac_fw_config_params:lmac firmware config params
@@ -183,14 +183,14 @@ struct lmac_fw_config_params {
 #define NUM_32_QUEUES 4
 	struct INT_HPQ hpq32[NUM_32_QUEUES];
 
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 #define MAX_NUM_OF_RX_QUEUES 3
 
 struct rx_buf_pool_params {
 	unsigned short buf_sz;
 	unsigned short num_bufs;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 struct temp_vbat_config {
 	unsigned int temp_based_calib_en;
 	unsigned int temp_calib_bitmap;
@@ -201,5 +201,5 @@ struct temp_vbat_config {
 	int vth_hi;
 	int temp_threshold;
 	int vbat_threshold;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 #endif

@@ -9,8 +9,8 @@
  *
  *@brief <Common interface between host and RPU>
  */
-#ifndef __IMG_HOST_RPU_COMMON_IFACE_H__
-#define __IMG_HOST_RPU_COMMON_IFACE_H__
+#ifndef __NRF_WIFI_HOST_RPU_COMMON_IFACE_H__
+#define __NRF_WIFI_HOST_RPU_COMMON_IFACE_H__
 
 #include "rpu_if.h"
 
@@ -36,20 +36,20 @@
 #define NRF_WIFI_UMAC_BOOT_EXCP_VECT_3 0x00000000
 
 /**
- * enum img_host_rpu_msg_type - RPU message type
- * @IMG_HOST_RPU_MSG_TYPE_SYSTEM: Unused
- * @IMG_HOST_RPU_MSG_TYPE_SUPPLICANT: Unused
- * @IMG_HOST_RPU_MSG_TYPE_DATA: Data path and System messages
- * @IMG_HOST_RPU_MSG_TYPE_UMAC: Control path messages
+ * enum nrf_wifi_host_rpu_msg_type - RPU message type
+ * @NRF_WIFI_HOST_RPU_MSG_TYPE_SYSTEM: Unused
+ * @NRF_WIFI_HOST_RPU_MSG_TYPE_SUPPLICANT: Unused
+ * @NRF_WIFI_HOST_RPU_MSG_TYPE_DATA: Data path and System messages
+ * @NRF_WIFI_HOST_RPU_MSG_TYPE_UMAC: Control path messages
  *
  * Different categories of messages that can passed between the Host and
  * the RPU.
  */
 /* INIT command may send using system type */
-#define IMG_HOST_RPU_MSG_TYPE_SYSTEM 0
-#define IMG_HOST_RPU_MSG_TYPE_SUPPLICANT 1
-#define IMG_HOST_RPU_MSG_TYPE_DATA 2
-#define IMG_HOST_RPU_MSG_TYPE_UMAC 3
+#define NRF_WIFI_HOST_RPU_MSG_TYPE_SYSTEM 0
+#define NRF_WIFI_HOST_RPU_MSG_TYPE_SUPPLICANT 1
+#define NRF_WIFI_HOST_RPU_MSG_TYPE_DATA 2
+#define NRF_WIFI_HOST_RPU_MSG_TYPE_UMAC 3
 
 /**
  * struct host_rpu_msg - Message header for HOST-RPU interaction
@@ -65,12 +65,12 @@ struct host_rpu_msg {
 	struct host_rpu_msg_hdr hdr;
 	int type;
 	char msg[0]; /* actual message */
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
-#define IMG_PENDING_FRAMES_BITMAP_AC_VO (1 << 0)
-#define IMG_PENDING_FRAMES_BITMAP_AC_VI (1 << 1)
-#define IMG_PENDING_FRAMES_BITMAP_AC_BE (1 << 2)
-#define IMG_PENDING_FRAMES_BITMAP_AC_BK (1 << 3)
+#define NRF_WIFI_PENDING_FRAMES_BITMAP_AC_VO (1 << 0)
+#define NRF_WIFI_PENDING_FRAMES_BITMAP_AC_VI (1 << 1)
+#define NRF_WIFI_PENDING_FRAMES_BITMAP_AC_BE (1 << 2)
+#define NRF_WIFI_PENDING_FRAMES_BITMAP_AC_BK (1 << 3)
 
 /**
  * struct sta_pend_frames_bitmap - STA pending frames bitmap in SoftAP power save mode.
@@ -81,7 +81,7 @@ struct host_rpu_msg {
 struct sap_pend_frames_bitmap {
 	unsigned char mac_addr[6];
 	unsigned char pend_frames_bitmap;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 struct host_rpu_umac_info {
 	unsigned int boot_status;
@@ -98,5 +98,5 @@ struct host_rpu_umac_info {
 	unsigned int mac_address0[2];
 	unsigned int mac_address1[2];
 	unsigned int calib[9];
-} __IMG_PKD;
-#endif /* __IMG_HOST_RPU_IFACE_H__ */
+} __NRF_WIFI_PKD;
+#endif /* __NRF_WIFI_HOST_RPU_IFACE_H__ */

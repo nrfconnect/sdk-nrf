@@ -50,7 +50,7 @@ static const unsigned int rx3_buf_sz = 1600;
 static const unsigned char rate_protection_type;
 
 void wifi_nrf_event_proc_scan_start_zep(void *if_priv,
-					struct img_umac_event_trigger_scan *scan_start_event,
+					struct nrf_wifi_umac_event_trigger_scan *scan_start_event,
 					unsigned int event_len)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -68,7 +68,7 @@ void wifi_nrf_event_proc_scan_start_zep(void *if_priv,
 
 
 void wifi_nrf_event_proc_scan_done_zep(void *vif_ctx,
-				       struct img_umac_event_trigger_scan *scan_done_event,
+				       struct nrf_wifi_umac_event_trigger_scan *scan_done_event,
 				       unsigned int event_len)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
@@ -124,7 +124,7 @@ static int wifi_nrf_umac_info(struct wifi_nrf_ctx_zep *rpu_ctx_zep)
 
 	memcpy(&rpu_ctx_zep->mac_addr,
 	       umac_info->mac_address0,
-	       IMG_ETH_ALEN);
+	       NRF_WIFI_ETH_ADDR_LEN);
 
 	return 0;
 }
@@ -209,7 +209,7 @@ enum wifi_nrf_status wifi_nrf_fmac_def_vif_add_zep(struct wifi_nrf_ctx_zep *rpu_
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct img_umac_add_vif_info add_vif_info;
+	struct nrf_wifi_umac_add_vif_info add_vif_info;
 
 	vif_ctx_zep = &rpu_ctx_zep->vif_ctx_zep[vif_idx];
 
@@ -218,7 +218,7 @@ enum wifi_nrf_status wifi_nrf_fmac_def_vif_add_zep(struct wifi_nrf_ctx_zep *rpu_
 
 	memset(&add_vif_info, 0, sizeof(add_vif_info));
 
-	add_vif_info.iftype = IMG_IFTYPE_STATION;
+	add_vif_info.iftype = NRF_WIFI_IFTYPE_STATION;
 
 	memcpy(add_vif_info.ifacename, "wlan0", strlen("wlan0"));
 
@@ -254,7 +254,7 @@ enum wifi_nrf_status wifi_nrf_fmac_def_vif_state_chg(struct wifi_nrf_vif_ctx_zep
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct img_umac_chg_vif_state_info vif_info;
+	struct nrf_wifi_umac_chg_vif_state_info vif_info;
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
@@ -372,7 +372,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 #ifndef CONFIG_NRF700X_RADIO_TEST
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_fmac_callbk_fns callbk_fns = { 0 };
-	struct img_data_config_params data_config;
+	struct nrf_wifi_data_config_params data_config;
 	struct rx_buf_pool_params rx_buf_pools[MAX_NUM_OF_RX_QUEUES];
 
 	vif_ctx_zep = dev->data;

@@ -25,22 +25,22 @@ K_SEM_DEFINE(wait_for_event_sem, 0, 1);
 static int get_wifi_nrf_auth_type(int wpa_auth_alg)
 {
 	if (wpa_auth_alg & WPA_AUTH_ALG_OPEN) {
-		return IMG_AUTHTYPE_OPEN_SYSTEM;
+		return NRF_WIFI_AUTHTYPE_OPEN_SYSTEM;
 	}
 	if (wpa_auth_alg & WPA_AUTH_ALG_SHARED) {
-		return IMG_AUTHTYPE_SHARED_KEY;
+		return NRF_WIFI_AUTHTYPE_SHARED_KEY;
 	}
 	if (wpa_auth_alg & WPA_AUTH_ALG_LEAP) {
-		return IMG_AUTHTYPE_NETWORK_EAP;
+		return NRF_WIFI_AUTHTYPE_NETWORK_EAP;
 	}
 	if (wpa_auth_alg & WPA_AUTH_ALG_FT) {
-		return IMG_AUTHTYPE_FT;
+		return NRF_WIFI_AUTHTYPE_FT;
 	}
 	if (wpa_auth_alg & WPA_AUTH_ALG_SAE) {
-		return IMG_AUTHTYPE_SAE;
+		return NRF_WIFI_AUTHTYPE_SAE;
 	}
 
-	return IMG_AUTHTYPE_MAX;
+	return NRF_WIFI_AUTHTYPE_MAX;
 }
 
 static unsigned int wpa_alg_to_cipher_suite(enum wpa_alg alg, size_t key_len)
@@ -85,17 +85,17 @@ static unsigned int wpa_alg_to_cipher_suite(enum wpa_alg alg, size_t key_len)
 static enum chan_width drv2supp_chan_width(int width)
 {
 	switch (width) {
-	case IMG_CHAN_WIDTH_20_NOHT:
+	case NRF_WIFI_CHAN_WIDTH_20_NOHT:
 		return CHAN_WIDTH_20_NOHT;
-	case IMG_CHAN_WIDTH_20:
+	case NRF_WIFI_CHAN_WIDTH_20:
 		return CHAN_WIDTH_20;
-	case IMG_CHAN_WIDTH_40:
+	case NRF_WIFI_CHAN_WIDTH_40:
 		return CHAN_WIDTH_40;
-	case IMG_CHAN_WIDTH_80:
+	case NRF_WIFI_CHAN_WIDTH_80:
 		return CHAN_WIDTH_80;
-	case IMG_CHAN_WIDTH_80P80:
+	case NRF_WIFI_CHAN_WIDTH_80P80:
 		return CHAN_WIDTH_80P80;
-	case IMG_CHAN_WIDTH_160:
+	case NRF_WIFI_CHAN_WIDTH_160:
 		return CHAN_WIDTH_160;
 	default:
 		break;
@@ -115,9 +115,9 @@ void wifi_nrf_wpa_supp_event_proc_scan_start(void *if_priv)
 }
 
 void wifi_nrf_wpa_supp_event_proc_scan_done(void *if_priv,
-					    struct img_umac_event_trigger_scan *scan_done_event,
-					    unsigned int event_len,
-					    int aborted)
+					struct nrf_wifi_umac_event_trigger_scan *scan_done_event,
+					unsigned int event_len,
+					int aborted)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	union wpa_event_data event;
@@ -136,9 +136,9 @@ void wifi_nrf_wpa_supp_event_proc_scan_done(void *if_priv,
 }
 
 void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
-					   struct img_umac_event_new_scan_results *scan_res,
-					   unsigned int event_len,
-					   bool more_res)
+					struct nrf_wifi_umac_event_new_scan_results *scan_res,
+					unsigned int event_len,
+					bool more_res)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wpa_scan_res *r = NULL;
@@ -150,12 +150,12 @@ void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
 
 	vif_ctx_zep = if_priv;
 
-	if (scan_res->valid_fields & IMG_EVENT_NEW_SCAN_RESULTS_IES_VALID) {
+	if (scan_res->valid_fields & NRF_WIFI_EVENT_NEW_SCAN_RESULTS_IES_VALID) {
 		ie = scan_res->ies.ie;
 		ie_len = scan_res->ies.ie_len;
 	}
 
-	if (scan_res->valid_fields & IMG_EVENT_NEW_SCAN_RESULTS_BEACON_IES_VALID) {
+	if (scan_res->valid_fields & NRF_WIFI_EVENT_NEW_SCAN_RESULTS_BEACON_IES_VALID) {
 		beacon_ie = scan_res->beacon_ies.ie;
 		beacon_ie_len = scan_res->beacon_ies.ie_len;
 	}
@@ -167,13 +167,13 @@ void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
 		return;
 	}
 
-	if (scan_res->valid_fields & IMG_EVENT_NEW_SCAN_RESULTS_MAC_ADDR_VALID) {
+	if (scan_res->valid_fields & NRF_WIFI_EVENT_NEW_SCAN_RESULTS_MAC_ADDR_VALID) {
 		memcpy(r->bssid, scan_res->mac_addr, ETH_ALEN);
 	}
 
 	r->freq = scan_res->frequency;
 
-	if (scan_res->valid_fields & IMG_EVENT_NEW_SCAN_RESULTS_BEACON_INTERVAL_VALID) {
+	if (scan_res->valid_fields & NRF_WIFI_EVENT_NEW_SCAN_RESULTS_BEACON_INTERVAL_VALID) {
 		r->beacon_int = scan_res->beacon_interval;
 	}
 
@@ -181,22 +181,22 @@ void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
 
 	r->flags |= WPA_SCAN_NOISE_INVALID;
 
-	if (scan_res->signal.signal_type == IMG_SIGNAL_TYPE_MBM) {
+	if (scan_res->signal.signal_type == NRF_WIFI_SIGNAL_TYPE_MBM) {
 		r->level = scan_res->signal.signal.mbm_signal;
 		r->level /= 100; /* mBm to dBm */
 		r->flags |= (WPA_SCAN_LEVEL_DBM | WPA_SCAN_QUAL_INVALID);
-	} else if (scan_res->signal.signal_type == IMG_SIGNAL_TYPE_UNSPEC) {
+	} else if (scan_res->signal.signal_type == NRF_WIFI_SIGNAL_TYPE_UNSPEC) {
 		r->level = scan_res->signal.signal.unspec_signal;
 		r->flags |= WPA_SCAN_QUAL_INVALID;
 	} else {
 		r->flags |= (WPA_SCAN_LEVEL_INVALID | WPA_SCAN_QUAL_INVALID);
 	}
 
-	if (scan_res->valid_fields & IMG_EVENT_NEW_SCAN_RESULTS_IES_TSF_VALID) {
+	if (scan_res->valid_fields & NRF_WIFI_EVENT_NEW_SCAN_RESULTS_IES_TSF_VALID) {
 		r->tsf = scan_res->ies_tsf;
 	}
 
-	if (scan_res->valid_fields & IMG_EVENT_NEW_SCAN_RESULTS_BEACON_IES_TSF_VALID) {
+	if (scan_res->valid_fields & NRF_WIFI_EVENT_NEW_SCAN_RESULTS_BEACON_IES_TSF_VALID) {
 		if (scan_res->beacon_ies_tsf > r->tsf) {
 			r->tsf = scan_res->beacon_ies_tsf;
 		}
@@ -222,9 +222,9 @@ void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
 		memcpy(pos, beacon_ie, beacon_ie_len);
 	}
 
-	if (scan_res->valid_fields & IMG_EVENT_NEW_SCAN_RESULTS_STATUS_VALID) {
+	if (scan_res->valid_fields & NRF_WIFI_EVENT_NEW_SCAN_RESULTS_STATUS_VALID) {
 		switch (scan_res->status) {
-		case IMG_BSS_STATUS_ASSOCIATED:
+		case NRF_WIFI_BSS_STATUS_ASSOCIATED:
 			r->flags |= WPA_SCAN_ASSOCIATED;
 			break;
 		default:
@@ -238,7 +238,7 @@ void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
 }
 
 void wifi_nrf_wpa_supp_event_proc_auth_resp(void *if_priv,
-					    struct img_umac_event_mlme *auth_resp,
+					    struct nrf_wifi_umac_event_mlme *auth_resp,
 					    unsigned int event_len)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -253,7 +253,7 @@ void wifi_nrf_wpa_supp_event_proc_auth_resp(void *if_priv,
 	frame_len = auth_resp->frame.frame_len;
 	mgmt = (const struct ieee80211_mgmt *)frame;
 
-	if (frame_len < 4 + (2 * IMG_ETH_ALEN)) {
+	if (frame_len < 4 + (2 * NRF_WIFI_ETH_ADDR_LEN)) {
 		LOG_ERR("%s: MLME event too short\n", __func__);
 		return;
 	}
@@ -283,7 +283,7 @@ void wifi_nrf_wpa_supp_event_proc_auth_resp(void *if_priv,
 }
 
 void wifi_nrf_wpa_supp_event_proc_assoc_resp(void *if_priv,
-					     struct img_umac_event_mlme *assoc_resp,
+					     struct nrf_wifi_umac_event_mlme *assoc_resp,
 					     unsigned int event_len)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -336,7 +336,7 @@ void wifi_nrf_wpa_supp_event_proc_assoc_resp(void *if_priv,
 }
 
 void wifi_nrf_wpa_supp_event_proc_deauth(void *if_priv,
-					 struct img_umac_event_mlme *deauth,
+					 struct nrf_wifi_umac_event_mlme *deauth,
 					 unsigned int event_len)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -369,7 +369,7 @@ void wifi_nrf_wpa_supp_event_proc_deauth(void *if_priv,
 }
 
 void wifi_nrf_wpa_supp_event_proc_disassoc(void *if_priv,
-					   struct img_umac_event_mlme *disassoc,
+					   struct nrf_wifi_umac_event_mlme *disassoc,
 					   unsigned int event_len)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -441,7 +441,7 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct img_umac_scan_info scan_info;
+	struct nrf_wifi_umac_scan_info scan_info;
 	int indx = 0;
 	int ret = -1;
 
@@ -459,11 +459,11 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 		scan_info.scan_params.num_scan_ssids = params->num_filter_ssids;
 
 		for (indx = 0; indx < params->num_filter_ssids; indx++) {
-			memcpy(scan_info.scan_params.scan_ssids[indx].img_ssid,
+			memcpy(scan_info.scan_params.scan_ssids[indx].nrf_wifi_ssid,
 			       params->filter_ssids[indx].ssid,
 			       params->filter_ssids[indx].ssid_len);
 
-			scan_info.scan_params.scan_ssids[indx].img_ssid_len =
+			scan_info.scan_params.scan_ssids[indx].nrf_wifi_ssid_len =
 				params->filter_ssids[indx].ssid_len;
 		}
 	}
@@ -473,12 +473,12 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	scan_info.scan_reason = SCAN_CONNECT;
 
 	/* Copy extra_ies */
-	if (params->extra_ies_len && params->extra_ies_len <= IMG_MAX_IE_LEN) {
+	if (params->extra_ies_len && params->extra_ies_len <= NRF_WIFI_MAX_IE_LEN) {
 		memcpy(scan_info.scan_params.ie.ie, params->extra_ies, params->extra_ies_len);
 		scan_info.scan_params.ie.ie_len = params->extra_ies_len;
 	} else if (params->extra_ies_len) {
 		LOG_ERR("%s: extra_ies_len %d is greater than max IE len %d\n",
-			__func__, params->extra_ies_len, IMG_MAX_IE_LEN);
+			__func__, params->extra_ies_len, NRF_WIFI_MAX_IE_LEN);
 		goto out;
 	}
 
@@ -555,7 +555,7 @@ int wifi_nrf_wpa_supp_deauthenticate(void *if_priv, const char *addr, unsigned s
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct img_umac_disconn_info deauth_info;
+	struct nrf_wifi_umac_disconn_info deauth_info;
 	int ret = -1;
 
 	if ((!if_priv) || (!addr)) {
@@ -584,7 +584,8 @@ out:
 	return ret;
 }
 
-int wifi_nrf_wpa_supp_add_key(struct img_umac_key_info *key_info, enum wpa_alg alg, int key_idx,
+int wifi_nrf_wpa_supp_add_key(struct nrf_wifi_umac_key_info *key_info, enum wpa_alg alg,
+			      int key_idx,
 			      int defkey, const unsigned char *seq, size_t seq_len,
 			      const unsigned char *key, size_t key_len)
 {
@@ -597,21 +598,21 @@ int wifi_nrf_wpa_supp_add_key(struct img_umac_key_info *key_info, enum wpa_alg a
 	}
 
 	if (defkey && alg == WPA_ALG_BIP_CMAC_128) {
-		key_info->img_flags = IMG_KEY_DEFAULT_MGMT;
+		key_info->nrf_wifi_flags = NRF_WIFI_KEY_DEFAULT_MGMT;
 	} else if (defkey) {
-		key_info->img_flags = IMG_KEY_DEFAULT;
+		key_info->nrf_wifi_flags = NRF_WIFI_KEY_DEFAULT;
 	}
 
 	key_info->key_idx = key_idx;
 	key_info->cipher_suite = suite;
 
 	if (key && key_len) {
-		memcpy(key_info->key.img_key, key, key_len);
-		key_info->key.img_key_len = key_len;
+		memcpy(key_info->key.nrf_wifi_key, key, key_len);
+		key_info->key.nrf_wifi_key_len = key_len;
 	}
 	if (seq && seq_len) {
-		memcpy(key_info->seq.img_seq, seq, seq_len);
-		key_info->seq.img_seq_len = seq_len;
+		memcpy(key_info->seq.nrf_wifi_seq, seq, seq_len);
+		key_info->seq.nrf_wifi_seq_len = seq_len;
 	}
 
 	return 0;
@@ -623,7 +624,7 @@ int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct img_umac_auth_info auth_info;
+	struct nrf_wifi_umac_auth_info auth_info;
 	int ret = -1;
 	int type;
 	int count = 0;
@@ -640,7 +641,7 @@ int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 
 
 	if (params->bssid) {
-		memcpy(auth_info.img_bssid, params->bssid, ETH_ALEN);
+		memcpy(auth_info.nrf_wifi_bssid, params->bssid, ETH_ALEN);
 	}
 
 	if (params->freq) {
@@ -648,19 +649,20 @@ int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 	}
 
 	if (params->ssid) {
-		memcpy(auth_info.ssid.img_ssid, params->ssid, params->ssid_len);
+		memcpy(auth_info.ssid.nrf_wifi_ssid, params->ssid, params->ssid_len);
 
-		auth_info.ssid.img_ssid_len = params->ssid_len;
+		auth_info.ssid.nrf_wifi_ssid_len = params->ssid_len;
 	}
 
 	if (params->ie) {
 		memcpy(auth_info.bss_ie.ie, params->ie, params->ie_len);
 	} else {
-		memcpy(auth_info.bss_ie.ie, (const unsigned char *)(curr_bss + 1), IMG_MAX_IE_LEN);
-
+		memcpy(auth_info.bss_ie.ie,
+			   (const unsigned char *)(curr_bss + 1),
+			   NRF_WIFI_MAX_IE_LEN);
 		auth_info.bss_ie.ie_len = curr_bss->ie_len;
 		auth_info.scan_width = 0; /* hard coded */
-		auth_info.img_signal = curr_bss->level;
+		auth_info.nrf_wifi_signal = curr_bss->level;
 		auth_info.capability = curr_bss->caps;
 		auth_info.beacon_interval = curr_bss->beacon_int;
 		auth_info.tsf = curr_bss->tsf;
@@ -675,12 +677,12 @@ int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 
 	type = get_wifi_nrf_auth_type(params->auth_alg);
 
-	if (type != IMG_AUTHTYPE_MAX) {
+	if (type != NRF_WIFI_AUTHTYPE_MAX) {
 		auth_info.auth_type = type;
 	}
 
 	if (params->local_state_change) {
-		auth_info.img_flags |= IMG_CMD_AUTHENTICATE_LOCAL_STATE_CHANGE;
+		auth_info.nrf_wifi_flags |= NRF_WIFI_CMD_AUTHENTICATE_LOCAL_STATE_CHANGE;
 	}
 
 	status = wifi_nrf_fmac_auth(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &auth_info);
@@ -702,7 +704,7 @@ int wifi_nrf_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct img_umac_assoc_info assoc_info;
+	struct nrf_wifi_umac_assoc_info assoc_info;
 	int ret = -1;
 
 	if ((!if_priv) || (!params)) {
@@ -716,7 +718,7 @@ int wifi_nrf_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 	memset(&assoc_info, 0, sizeof(assoc_info));
 
 	if (params->bssid) {
-		memcpy(assoc_info.img_bssid, params->bssid, sizeof(assoc_info.img_bssid));
+		memcpy(assoc_info.nrf_wifi_bssid, params->bssid, sizeof(assoc_info.nrf_wifi_bssid));
 	}
 
 	if (params->freq.freq) {
@@ -727,9 +729,9 @@ int wifi_nrf_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 	}
 
 	if (params->ssid) {
-		assoc_info.ssid.img_ssid_len = params->ssid_len;
+		assoc_info.ssid.nrf_wifi_ssid_len = params->ssid_len;
 
-		memcpy(assoc_info.ssid.img_ssid, params->ssid, params->ssid_len);
+		memcpy(assoc_info.ssid.nrf_wifi_ssid, params->ssid, params->ssid_len);
 
 	}
 
@@ -741,7 +743,7 @@ int wifi_nrf_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 	assoc_info.control_port = 1;
 
 	if (params->mgmt_frame_protection == MGMT_FRAME_PROTECTION_REQUIRED) {
-		assoc_info.use_mfp = IMG_MFP_REQUIRED;
+		assoc_info.use_mfp = NRF_WIFI_MFP_REQUIRED;
 	}
 
 	status = wifi_nrf_fmac_assoc(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &assoc_info);
@@ -765,7 +767,7 @@ int wifi_nrf_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct img_umac_key_info key_info;
+	struct nrf_wifi_umac_key_info key_info;
 	const unsigned char *mac_addr = NULL;
 	unsigned int suite;
 	int ret = -1;
@@ -788,36 +790,36 @@ int wifi_nrf_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 			goto out;
 		}
 
-		memcpy(key_info.key.img_key, key, key_len);
+		memcpy(key_info.key.nrf_wifi_key, key, key_len);
 
-		key_info.key.img_key_len = key_len;
+		key_info.key.nrf_wifi_key_len = key_len;
 		key_info.cipher_suite = suite;
 
-		key_info.valid_fields |= (IMG_CIPHER_SUITE_VALID | IMG_KEY_VALID);
+		key_info.valid_fields |= (NRF_WIFI_CIPHER_SUITE_VALID | NRF_WIFI_KEY_VALID);
 	}
 
 	if (seq && seq_len) {
-		memcpy(key_info.seq.img_seq, seq, seq_len);
+		memcpy(key_info.seq.nrf_wifi_seq, seq, seq_len);
 
-		key_info.seq.img_seq_len = seq_len;
-		key_info.valid_fields |= IMG_SEQ_VALID;
+		key_info.seq.nrf_wifi_seq_len = seq_len;
+		key_info.valid_fields |= NRF_WIFI_SEQ_VALID;
 	}
 
 
 	/* TODO: Implement/check set_tx */
 	if (addr && !is_broadcast_ether_addr(addr)) {
 		mac_addr = addr;
-		key_info.key_type = IMG_KEYTYPE_PAIRWISE;
-		key_info.valid_fields |= IMG_KEY_TYPE_VALID;
+		key_info.key_type = NRF_WIFI_KEYTYPE_PAIRWISE;
+		key_info.valid_fields |= NRF_WIFI_KEY_TYPE_VALID;
 	} else if (addr && is_broadcast_ether_addr(addr)) {
 		mac_addr = NULL;
-		key_info.key_type = IMG_KEYTYPE_GROUP;
-		key_info.valid_fields |= IMG_KEY_TYPE_VALID;
-		key_info.img_flags |= IMG_KEY_DEFAULT_TYPE_MULTICAST;
+		key_info.key_type = NRF_WIFI_KEYTYPE_GROUP;
+		key_info.valid_fields |= NRF_WIFI_KEY_TYPE_VALID;
+		key_info.nrf_wifi_flags |= NRF_WIFI_KEY_DEFAULT_TYPE_MULTICAST;
 	}
 
 	key_info.key_idx = key_idx;
-	key_info.valid_fields |= IMG_KEY_IDX_VALID;
+	key_info.valid_fields |= NRF_WIFI_KEY_IDX_VALID;
 
 	if (alg == WPA_ALG_NONE) {
 		status = wifi_nrf_fmac_del_key(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
@@ -851,19 +853,19 @@ int wifi_nrf_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 	memset(&key_info, 0, sizeof(key_info));
 
 	key_info.key_idx = key_idx;
-	key_info.valid_fields |= IMG_KEY_IDX_VALID;
+	key_info.valid_fields |= NRF_WIFI_KEY_IDX_VALID;
 
 	if (alg == WPA_ALG_BIP_CMAC_128 || alg == WPA_ALG_BIP_GMAC_128 ||
 	    alg == WPA_ALG_BIP_GMAC_256 || alg == WPA_ALG_BIP_CMAC_256) {
-		key_info.img_flags = IMG_KEY_DEFAULT_MGMT;
+		key_info.nrf_wifi_flags = NRF_WIFI_KEY_DEFAULT_MGMT;
 	} else {
-		key_info.img_flags = IMG_KEY_DEFAULT;
+		key_info.nrf_wifi_flags = NRF_WIFI_KEY_DEFAULT;
 	}
 
 	if (addr && is_broadcast_ether_addr(addr)) {
-		key_info.img_flags |= IMG_KEY_DEFAULT_TYPE_MULTICAST;
+		key_info.nrf_wifi_flags |= NRF_WIFI_KEY_DEFAULT_TYPE_MULTICAST;
 	} else if (addr) {
-		key_info.img_flags |= IMG_KEY_DEFAULT_TYPE_UNICAST;
+		key_info.nrf_wifi_flags |= NRF_WIFI_KEY_DEFAULT_TYPE_UNICAST;
 	}
 
 	status = wifi_nrf_fmac_set_key(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &key_info);
@@ -881,7 +883,7 @@ out:
 int wifi_nrf_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct img_umac_chg_sta_info chg_sta_info;
+	struct nrf_wifi_umac_chg_sta_info chg_sta_info;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
 
 	vif_ctx_zep = if_priv;
@@ -892,8 +894,10 @@ int wifi_nrf_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 	os_memcpy(chg_sta_info.mac_addr, bssid, ETH_ALEN);
 
 	if (authorized) {
-		chg_sta_info.sta_flags2.img_mask = 1 << 1; /* BIT(NL80211_STA_FLAG_AUTHORIZED) */
-		chg_sta_info.sta_flags2.img_set = 1 << 1; /* BIT(NL80211_STA_FLAG_AUTHORIZED) */
+		/* BIT(NL80211_STA_FLAG_AUTHORIZED) */
+		chg_sta_info.sta_flags2.nrf_wifi_mask = 1 << 1;
+		/* BIT(NL80211_STA_FLAG_AUTHORIZED) */
+		chg_sta_info.sta_flags2.nrf_wifi_set = 1 << 1;
 	}
 
 	return wifi_nrf_fmac_chg_sta(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &chg_sta_info);
@@ -937,7 +941,7 @@ out:
 }
 
 void wifi_nrf_wpa_supp_event_proc_get_sta(void *if_priv,
-					   struct img_umac_event_new_station *info,
+					   struct nrf_wifi_umac_event_new_station *info,
 					   unsigned int event_len)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -951,19 +955,19 @@ void wifi_nrf_wpa_supp_event_proc_get_sta(void *if_priv,
 	vif_ctx_zep = if_priv;
 	signal_info = vif_ctx_zep->signal_info;
 
-	if (info->sta_info.valid_fields & IMG_STA_INFO_SIGNAL_VALID) {
+	if (info->sta_info.valid_fields & NRF_WIFI_STA_INFO_SIGNAL_VALID) {
 		signal_info->current_signal = info->sta_info.signal;
 	} else {
 		signal_info->current_signal = -WPA_INVALID_NOISE;
 	}
 
-	if (info->sta_info.valid_fields & IMG_STA_INFO_SIGNAL_AVG_VALID) {
+	if (info->sta_info.valid_fields & NRF_WIFI_STA_INFO_SIGNAL_AVG_VALID) {
 		signal_info->avg_signal = info->sta_info.signal_avg;
 	} else {
 		signal_info->avg_signal = -WPA_INVALID_NOISE;
 	}
 
-	if (info->sta_info.valid_fields & IMG_STA_INFO_RX_BEACON_SIGNAL_AVG_VALID) {
+	if (info->sta_info.valid_fields & NRF_WIFI_STA_INFO_RX_BEACON_SIGNAL_AVG_VALID) {
 		signal_info->avg_beacon_signal = info->sta_info.rx_beacon_signal_avg;
 	} else {
 		signal_info->avg_beacon_signal = -WPA_INVALID_NOISE;
@@ -971,8 +975,8 @@ void wifi_nrf_wpa_supp_event_proc_get_sta(void *if_priv,
 
 	signal_info->current_txrate = 0;
 
-	if (info->sta_info.valid_fields & IMG_STA_INFO_TX_BITRATE_VALID) {
-		if (info->sta_info.tx_bitrate.valid_fields & IMG_IMG_RATE_INFO_BITRATE_VALID) {
+	if (info->sta_info.valid_fields & NRF_WIFI_STA_INFO_TX_BITRATE_VALID) {
+		if (info->sta_info.tx_bitrate.valid_fields & NRF_WIFI_RATE_INFO_BITRATE_VALID) {
 			signal_info->current_txrate = info->sta_info.tx_bitrate.bitrate * 100;
 		}
 	}
@@ -981,11 +985,11 @@ void wifi_nrf_wpa_supp_event_proc_get_sta(void *if_priv,
 }
 
 void wifi_nrf_wpa_supp_event_proc_get_if(void *if_priv,
-					   struct img_interface_info *info,
+					   struct nrf_wifi_interface_info *info,
 					   unsigned int event_len)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct img_chan_definition *chan_def_info = NULL;
+	struct nrf_wifi_chan_definition *chan_def_info = NULL;
 	struct wpa_signal_info *signal_info = NULL;
 
 	if (!if_priv || !info) {
@@ -997,7 +1001,7 @@ void wifi_nrf_wpa_supp_event_proc_get_if(void *if_priv,
 	vif_ctx_zep = if_priv;
 	signal_info = vif_ctx_zep->signal_info;
 
-	chan_def_info = (struct img_chan_definition *)(&info->chan_def);
+	chan_def_info = (struct nrf_wifi_chan_definition *)(&info->chan_def);
 	signal_info->chanwidth = drv2supp_chan_width(chan_def_info->width);
 	signal_info->center_frq1 = chan_def_info->center_frequency1;
 	signal_info->center_frq2 = chan_def_info->center_frequency2;

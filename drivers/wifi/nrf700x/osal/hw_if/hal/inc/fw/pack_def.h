@@ -11,6 +11,6 @@
 #ifndef __PACK_DEF__
 #define __PACK_DEF__
 
-#define __IMG_PKD __attribute__((__packed__))
+#define __NRF_WIFI_PKD __attribute__((__packed__))
 
 #endif

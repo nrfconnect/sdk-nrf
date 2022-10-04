@@ -52,7 +52,7 @@ int wifi_nrf_fmac_peer_add(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 
 	if (wifi_nrf_util_is_multicast_addr(mac_addr)
-	    && (vif_ctx->if_type == IMG_IFTYPE_AP)) {
+	    && (vif_ctx->if_type == NRF_WIFI_IFTYPE_AP)) {
 
 		fmac_dev_ctx->tx_config.peers[MAX_PEERS].if_idx = if_idx;
 		fmac_dev_ctx->tx_config.peers[MAX_PEERS].peer_id = MAX_PEERS;
@@ -69,12 +69,12 @@ int wifi_nrf_fmac_peer_add(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 					      peer->ra_addr,
 					      mac_addr,
-					      IMG_ETH_ALEN);
+					      NRF_WIFI_ETH_ADDR_LEN);
 			peer->if_idx = if_idx;
 			peer->peer_id = i;
 			peer->is_legacy = is_legacy;
 			peer->qos_supported = qos_supported;
-			if (vif_ctx->if_type == IMG_IFTYPE_AP) {
+			if (vif_ctx->if_type == NRF_WIFI_IFTYPE_AP) {
 				hal_rpu_mem_write(fmac_dev_ctx->hal_dev_ctx,
 						  (RPU_MEM_UMAC_PEND_Q_BMP +
 						   sizeof(struct sap_pend_frames_bitmap) * i),
@@ -109,7 +109,7 @@ void wifi_nrf_fmac_peer_remove(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			      sizeof(struct peers_info));
 	peer->peer_id = -1;
 
-	if (vif_ctx->if_type == IMG_IFTYPE_AP) {
+	if (vif_ctx->if_type == NRF_WIFI_IFTYPE_AP) {
 		hal_rpu_mem_write(fmac_dev_ctx->hal_dev_ctx,
 				  (RPU_MEM_UMAC_PEND_Q_BMP +
 				   (sizeof(struct sap_pend_frames_bitmap) * peer_id)),
@@ -139,7 +139,7 @@ void wifi_nrf_fmac_peers_flush(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					      sizeof(struct peers_info));
 			peer->peer_id = -1;
 
-			if (vif_ctx->if_type == IMG_IFTYPE_AP) {
+			if (vif_ctx->if_type == NRF_WIFI_IFTYPE_AP) {
 				hal_rpu_mem_write(fmac_dev_ctx->hal_dev_ctx,
 						  (RPU_MEM_UMAC_PEND_Q_BMP +
 						   sizeof(struct sap_pend_frames_bitmap) * i),

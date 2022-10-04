@@ -26,7 +26,7 @@ struct tx_pkt_info {
 
 struct tx_cmd_prep_info {
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx;
-	struct img_tx_buff *config;
+	struct nrf_wifi_tx_buff *config;
 };
 
 enum wifi_nrf_status tx_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
@@ -34,7 +34,7 @@ enum wifi_nrf_status tx_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 void tx_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 
 enum wifi_nrf_status wifi_nrf_fmac_tx_done_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-							 struct img_tx_buff_done *config);
+							 struct nrf_wifi_tx_buff_done *config);
 
 unsigned int tx_desc_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			 int queue);
