@@ -30,7 +30,7 @@ static bool last_coredump_cleared;
 void memfault_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info)
 {
 	*info = (sMfltCoredumpStorageInfo) {
-		.size = FLASH_AREA_SIZE(MEMFAULT_STORAGE),
+		.size = FIXED_PARTITION_SIZE(MEMFAULT_STORAGE),
 	};
 }
 
@@ -53,7 +53,7 @@ bool memfault_platform_coredump_storage_read(uint32_t offset, void *data, size_t
 	}
 
 	/* Note: internal flash is memory mapped so we can just memcpy it out */
-	const uint32_t address = FLASH_AREA_OFFSET(MEMFAULT_STORAGE) + offset;
+	const uint32_t address = FIXED_PARTITION_OFFSET(MEMFAULT_STORAGE) + offset;
 
 	memcpy(data, (void *)address, read_len);
 	return true;
@@ -75,7 +75,7 @@ bool memfault_platform_coredump_storage_erase(uint32_t offset, size_t erase_size
 	}
 
 	for (size_t page = offset; page < erase_size; page += page_size) {
-		const uint32_t address = FLASH_AREA_OFFSET(MEMFAULT_STORAGE) + page;
+		const uint32_t address = FIXED_PARTITION_OFFSET(MEMFAULT_STORAGE) + page;
 
 		nrfx_nvmc_page_erase(address);
 	}
@@ -88,7 +88,7 @@ bool memfault_platform_coredump_storage_erase(uint32_t offset, size_t erase_size
  */
 bool memfault_platform_coredump_storage_buffered_write(sCoredumpWorkingBuffer *blk)
 {
-	const uint32_t start_addr = FLASH_AREA_OFFSET(MEMFAULT_STORAGE);
+	const uint32_t start_addr = FIXED_PARTITION_OFFSET(MEMFAULT_STORAGE);
 	const uint32_t addr = start_addr + blk->write_offset;
 
 	if (!prv_op_within_flash_bounds(blk->write_offset, MEMFAULT_COREDUMP_STORAGE_WRITE_SIZE)) {
@@ -122,7 +122,7 @@ void memfault_platform_coredump_storage_clear(void)
 	const struct flash_area *flash_area;
 	int err;
 
-	err = flash_area_open(FLASH_AREA_ID(MEMFAULT_STORAGE), &flash_area);
+	err = flash_area_open(FIXED_PARTITION_ID(MEMFAULT_STORAGE), &flash_area);
 	if (err) {
 		MEMFAULT_LOG_ERROR("Unable to open coredump storage: 0x%x", err);
 		return;
