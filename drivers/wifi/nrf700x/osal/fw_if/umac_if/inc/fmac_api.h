@@ -110,7 +110,7 @@ enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_rx(struct wifi_nrf_fmac_dev_c
  *
  * Returns: Pointer to the context of the UMAC IF layer.
  */
-struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct img_data_config_params *data_config,
+struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params *data_config,
 					      struct rx_buf_pool_params *rx_buf_pools,
 					      struct wifi_nrf_fmac_callbk_fns *callbk_fns);
 
@@ -163,7 +163,7 @@ enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
  */
 enum wifi_nrf_status wifi_nrf_fmac_scan(void *fmac_dev_ctx,
 					unsigned char if_idx,
-					struct img_umac_scan_info *scan_info);
+					struct nrf_wifi_umac_scan_info *scan_info);
 
 
 /**
@@ -215,7 +215,7 @@ enum wifi_nrf_status wifi_nrf_fmac_abort_scan(void *dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_auth(void *fmac_dev_ctx,
 					unsigned char if_idx,
-					struct img_umac_auth_info *auth_info);
+					struct nrf_wifi_umac_auth_info *auth_info);
 
 
 /**
@@ -235,7 +235,7 @@ enum wifi_nrf_status wifi_nrf_fmac_auth(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_deauth(void *fmac_dev_ctx,
 					  unsigned char if_idx,
-					  struct img_umac_disconn_info *deauth_info);
+					  struct nrf_wifi_umac_disconn_info *deauth_info);
 
 
 /**
@@ -256,7 +256,7 @@ enum wifi_nrf_status wifi_nrf_fmac_deauth(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_assoc(void *fmac_dev_ctx,
 					 unsigned char if_idx,
-					 struct img_umac_assoc_info *assoc_info);
+					 struct nrf_wifi_umac_assoc_info *assoc_info);
 
 
 /**
@@ -276,7 +276,7 @@ enum wifi_nrf_status wifi_nrf_fmac_assoc(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_disassoc(void *fmac_dev_ctx,
 					    unsigned char if_idx,
-					    struct img_umac_disconn_info *disassoc_info);
+					    struct nrf_wifi_umac_disconn_info *disassoc_info);
 
 
 /**
@@ -297,7 +297,7 @@ enum wifi_nrf_status wifi_nrf_fmac_disassoc(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_add_key(void *fmac_dev_ctx,
 					   unsigned char if_idx,
-					   struct img_umac_key_info *key_info,
+					   struct nrf_wifi_umac_key_info *key_info,
 					   const char *mac_addr);
 
 
@@ -319,7 +319,7 @@ enum wifi_nrf_status wifi_nrf_fmac_add_key(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_del_key(void *fmac_dev_ctx,
 					   unsigned char if_idx,
-					   struct img_umac_key_info *key_info,
+					   struct nrf_wifi_umac_key_info *key_info,
 					   const char *mac_addr);
 
 
@@ -341,7 +341,7 @@ enum wifi_nrf_status wifi_nrf_fmac_del_key(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_set_key(void *fmac_dev_ctx,
 					   unsigned char if_idx,
-					   struct img_umac_key_info *key_info);
+					   struct nrf_wifi_umac_key_info *key_info);
 
 
 /**
@@ -360,7 +360,7 @@ enum wifi_nrf_status wifi_nrf_fmac_set_key(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_set_bss(void *fmac_dev_ctx,
 					   unsigned char if_idx,
-					   struct img_umac_bss_info *bss_info);
+					   struct nrf_wifi_umac_bss_info *bss_info);
 
 
 /**
@@ -378,7 +378,7 @@ enum wifi_nrf_status wifi_nrf_fmac_set_bss(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_chg_bcn(void *fmac_dev_ctx,
 					   unsigned char if_idx,
-					   struct img_umac_set_beacon_info *data);
+					   struct nrf_wifi_umac_set_beacon_info *data);
 
 /**
  * wifi_nrf_fmac_start_ap() - Start a SoftAP.
@@ -397,7 +397,7 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_bcn(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_start_ap(void *fmac_dev_ctx,
 					    unsigned char if_idx,
-					    struct img_umac_start_ap_info *ap_info);
+					    struct nrf_wifi_umac_start_ap_info *ap_info);
 
 
 /**
@@ -501,7 +501,7 @@ enum wifi_nrf_status wifi_nrf_fmac_p2p_roc_stop(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_mgmt_tx(void *fmac_dev_ctx,
 					   unsigned char if_idx,
-					   struct img_umac_mgmt_tx_info *mgmt_tx_info);
+					   struct nrf_wifi_umac_mgmt_tx_info *mgmt_tx_info);
 
 
 /**
@@ -519,7 +519,7 @@ enum wifi_nrf_status wifi_nrf_fmac_mgmt_tx(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_del_sta(void *fmac_dev_ctx,
 					   unsigned char if_idx,
-					   struct img_umac_del_sta_info *del_sta_info);
+					   struct nrf_wifi_umac_del_sta_info *del_sta_info);
 
 
 /**
@@ -537,7 +537,7 @@ enum wifi_nrf_status wifi_nrf_fmac_del_sta(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_add_sta(void *fmac_dev_ctx,
 					   unsigned char if_idx,
-					   struct img_umac_add_sta_info *add_sta_info);
+					   struct nrf_wifi_umac_add_sta_info *add_sta_info);
 
 /**
  * wifi_nrf_fmac_chg_sta() - Indicate changes to STA connection parameters to
@@ -555,7 +555,7 @@ enum wifi_nrf_status wifi_nrf_fmac_add_sta(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_chg_sta(void *fmac_dev_ctx,
 					   unsigned char if_idx,
-					   struct img_umac_chg_sta_info *chg_sta_info);
+					   struct nrf_wifi_umac_chg_sta_info *chg_sta_info);
 
 
 
@@ -577,7 +577,7 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_sta(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_mgmt_frame_reg(void *fmac_dev_ctx,
 						  unsigned char if_idx,
-						  struct img_umac_mgmt_frame_info *frame_info);
+						  struct nrf_wifi_umac_mgmt_frame_info *frame_info);
 
 
 /**
@@ -609,7 +609,7 @@ enum wifi_nrf_status wifi_nrf_fmac_mac_addr(struct wifi_nrf_fmac_dev_ctx *fmac_d
  */
 unsigned char wifi_nrf_fmac_add_vif(void *fmac_dev_ctx,
 				    void *os_vif_ctx,
-				    struct img_umac_add_vif_info *vif_info);
+				    struct nrf_wifi_umac_add_vif_info *vif_info);
 
 
 /**
@@ -645,7 +645,7 @@ enum wifi_nrf_status wifi_nrf_fmac_del_vif(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_chg_vif(void *fmac_dev_ctx,
 					   unsigned char if_idx,
-					   struct img_umac_chg_vif_attr_info *vif_info);
+					   struct nrf_wifi_umac_chg_vif_attr_info *vif_info);
 
 
 /**
@@ -664,7 +664,7 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *fmac_dev_ctx,
 						 unsigned char if_idx,
-						 struct img_umac_chg_vif_state_info *vif_info);
+						 struct nrf_wifi_umac_chg_vif_state_info *vif_info);
 
 
 /**
@@ -822,7 +822,7 @@ enum wifi_nrf_status wifi_nrf_fmac_set_power_save(void *fmac_dev_ctx,
  */
 enum wifi_nrf_status wifi_nrf_fmac_set_qos_map(void *fmac_dev_ctx,
 					       unsigned char if_idx,
-					       struct img_umac_qos_map_info *qos_info);
+					       struct nrf_wifi_umac_qos_map_info *qos_info);
 
 
 /**
@@ -854,8 +854,8 @@ enum wifi_nrf_status wifi_nrf_fmac_set_wowlan(void *fmac_dev_ctx,
  */
 
 enum wifi_nrf_status wifi_nrf_fmac_set_wiphy_params(void *fmac_dev_ctx,
-						    unsigned char if_idx,
-						    struct img_umac_set_wiphy_info *wiphy_info);
+						 unsigned char if_idx,
+						 struct nrf_wifi_umac_set_wiphy_info *wiphy_info);
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 

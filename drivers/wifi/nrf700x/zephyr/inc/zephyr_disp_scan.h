@@ -22,7 +22,7 @@ int wifi_nrf_disp_scan_zep(const struct device *dev, scan_result_cb_t cb);
 enum wifi_nrf_status wifi_nrf_disp_scan_res_get_zep(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep);
 
 void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
-					   struct img_umac_event_new_scan_display_results *scan_res,
-					   unsigned int event_len,
-					   bool is_last);
+				struct nrf_wifi_umac_event_new_scan_display_results *scan_res,
+				unsigned int event_len,
+				bool is_last);
 #endif /*  __ZEPHYR_DISP_SCAN_H__ */

@@ -74,7 +74,7 @@ struct wifi_nrf_fmac_dev_ctx {
 	struct rpu_fw_stats *fw_stats;
 	unsigned int umac_ver;
 	unsigned int lmac_ver;
-	unsigned char base_mac_addr[IMG_ETH_ADDR_LEN];
+	unsigned char base_mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 	bool init_done;
 	bool deinit_done;
 };
@@ -134,89 +134,89 @@ struct wifi_nrf_fmac_callbk_fns {
 				 void *frm);
 
 	void (*scan_start_callbk_fn)(void *os_vif_ctx,
-				     struct img_umac_event_trigger_scan *scan_start_event,
+				     struct nrf_wifi_umac_event_trigger_scan *scan_start_event,
 				     unsigned int event_len);
 
 	void (*scan_done_callbk_fn)(void *os_vif_ctx,
-				    struct img_umac_event_trigger_scan *scan_done_event,
+				    struct nrf_wifi_umac_event_trigger_scan *scan_done_event,
 				    unsigned int event_len);
 
 	void (*scan_abort_callbk_fn)(void *os_vif_ctx,
-				     struct img_umac_event_trigger_scan *scan_done_event,
+				     struct nrf_wifi_umac_event_trigger_scan *scan_done_event,
 				     unsigned int event_len);
 
 	void (*scan_res_callbk_fn)(void *os_vif_ctx,
-				   struct img_umac_event_new_scan_results *scan_res,
+				   struct nrf_wifi_umac_event_new_scan_results *scan_res,
 				   unsigned int event_len,
 				   bool more_res);
 
 	void (*disp_scan_res_callbk_fn)(void *os_vif_ctx,
-					struct img_umac_event_new_scan_display_results *scan_res,
-					unsigned int event_len,
-					bool more_res);
+				  struct nrf_wifi_umac_event_new_scan_display_results *scan_res,
+				  unsigned int event_len,
+				  bool more_res);
 
 	void (*auth_resp_callbk_fn)(void *os_vif_ctx,
-				    struct img_umac_event_mlme *auth_resp_event,
+				    struct nrf_wifi_umac_event_mlme *auth_resp_event,
 				    unsigned int event_len);
 
 	void (*assoc_resp_callbk_fn)(void *os_vif_ctx,
-				     struct img_umac_event_mlme *assoc_resp_event,
+				     struct nrf_wifi_umac_event_mlme *assoc_resp_event,
 				     unsigned int event_len);
 
 	void (*deauth_callbk_fn)(void *os_vif_ctx,
-				 struct img_umac_event_mlme *deauth_event,
+				 struct nrf_wifi_umac_event_mlme *deauth_event,
 				 unsigned int event_len);
 
 	void (*disassoc_callbk_fn)(void *os_vif_ctx,
-				   struct img_umac_event_mlme *disassoc_event,
+				   struct nrf_wifi_umac_event_mlme *disassoc_event,
 				   unsigned int event_len);
 
 	void (*mgmt_rx_callbk_fn)(void *os_vif_ctx,
-				  struct img_umac_event_mlme *mgmt_rx_event,
+				  struct nrf_wifi_umac_event_mlme *mgmt_rx_event,
 				  unsigned int event_len);
 
 	void (*unprot_mlme_mgmt_rx_callbk_fn)(void *os_vif_ctx,
-					      struct img_umac_event_mlme *unprot_mlme_event,
+					      struct nrf_wifi_umac_event_mlme *unprot_mlme_event,
 					      unsigned int event_len);
 
 	void (*tx_pwr_get_callbk_fn)(void *os_vif_ctx,
-				     struct img_umac_event_get_tx_power *info,
+				     struct nrf_wifi_umac_event_get_tx_power *info,
 				     unsigned int event_len);
 
 	void (*chnl_get_callbk_fn)(void *os_vif_ctx,
-				   struct img_umac_event_get_channel *info,
+				   struct nrf_wifi_umac_event_get_channel *info,
 				   unsigned int event_len);
 
 	void (*sta_get_callbk_fn)(void *os_vif_ctx,
-				  struct img_umac_event_new_station *info,
+				  struct nrf_wifi_umac_event_new_station *info,
 				  unsigned int event_len);
 
 	void (*cookie_rsp_callbk_fn)(void *os_vif_ctx,
-				     struct img_umac_event_cookie_rsp *cookie_rsp,
+				     struct nrf_wifi_umac_event_cookie_rsp *cookie_rsp,
 				     unsigned int event_len);
 
 	void (*tx_status_callbk_fn)(void *os_vif_ctx,
-				    struct img_umac_event_mlme *tx_status_event,
+				    struct nrf_wifi_umac_event_mlme *tx_status_event,
 				    unsigned int event_len);
 
 	void (*set_if_callbk_fn)(void *os_vif_ctx,
-				 struct img_umac_event_set_interface *set_if_event,
+				 struct nrf_wifi_umac_event_set_interface *set_if_event,
 				 unsigned int event_len);
 
 	void (*roc_callbk_fn)(void *os_vif_ctx,
-			      struct img_event_remain_on_channel *roc_event,
+			      struct nrf_wifi_event_remain_on_channel *roc_event,
 			      unsigned int event_len);
 
 	void (*roc_cancel_callbk_fn)(void *os_vif_ctx,
-				     struct img_event_remain_on_channel *roc_cancel_event,
+				     struct nrf_wifi_event_remain_on_channel *roc_cancel_event,
 				     unsigned int event_len);
 
 	void (*get_station_callbk_fn)(void *os_vif_ctx,
-				     struct img_umac_event_new_station *info,
+				     struct nrf_wifi_umac_event_new_station *info,
 				     unsigned int event_len);
 
 	void (*get_interface_callbk_fn)(void *os_vif_ctx,
-				     struct img_interface_info *info,
+				     struct nrf_wifi_interface_info *info,
 				     unsigned int event_len);
 };
 
@@ -285,7 +285,7 @@ struct peers_info {
 	unsigned char is_legacy;
 	unsigned char qos_supported;
 	unsigned char pend_q_bmp;
-	unsigned char ra_addr[IMG_ETH_ADDR_LEN];
+	unsigned char ra_addr[NRF_WIFI_ETH_ADDR_LEN];
 	unsigned int pairwise_cipher;
 	int ps_token_count;
 };
@@ -353,7 +353,7 @@ struct wifi_nrf_fmac_priv {
 	struct wifi_nrf_osal_priv *opriv;
 	struct wifi_nrf_hal_priv *hpriv;
 
-	struct img_data_config_params data_config;
+	struct nrf_wifi_data_config_params data_config;
 	unsigned char num_tx_tokens;
 	unsigned char num_tx_tokens_per_ac;
 	unsigned char num_tx_tokens_spare;
@@ -410,7 +410,7 @@ struct wifi_nrf_fmac_dev_ctx {
 	struct rpu_fw_stats *fw_stats;
 	unsigned int umac_ver;
 	unsigned int lmac_ver;
-	unsigned char base_mac_addr[IMG_ETH_ADDR_LEN];
+	unsigned char base_mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 	bool init_done;
 	bool deinit_done;
 };
@@ -435,11 +435,11 @@ struct wifi_nrf_fmac_dev_ctx {
 struct wifi_nrf_fmac_vif_ctx {
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx;
 	void *os_vif_ctx;
-	char mac_addr[IMG_ETH_ADDR_LEN];
+	char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 	int groupwise_cipher;
 	bool ifflags;
 	int if_type;
-	unsigned char bssid[IMG_ETH_ADDR_LEN];
+	unsigned char bssid[NRF_WIFI_ETH_ADDR_LEN];
 };
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
@@ -459,7 +459,7 @@ struct wifi_nrf_fmac_vif_ctx {
  */
 struct wifi_nrf_fmac_init_dev_params {
 #ifndef CONFIG_NRF700X_RADIO_TEST
-	unsigned char base_mac_addr[IMG_ETH_ADDR_LEN];
+	unsigned char base_mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 	unsigned char def_vif_idx;
 	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
 	bool rf_params_valid;

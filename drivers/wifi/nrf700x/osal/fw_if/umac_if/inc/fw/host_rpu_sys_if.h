@@ -43,7 +43,7 @@
 /*#define ETH_ADDR_LEN		6*/
 #define MAX_RF_CALIB_DATA 900
 
-#define IMG_ETH_ADDR_LEN 6
+#define NRF_WIFI_ETH_ADDR_LEN 6
 
 #define PHY_THRESHOLD_NORMAL    (-65)
 #define PHY_THRESHOLD_PROD_MODE (-93)
@@ -52,48 +52,48 @@
 #define MAX_NUM_APS 1
 
 /**
- * enum img_sys_iftype - Interface types based on functionality.
+ * enum nrf_wifi_sys_iftype - Interface types based on functionality.
  *
- * @IMG_UMAC_IFTYPE_UNSPECIFIED: Unspecified type, driver decides.
- * @IMG_UMAC_IFTYPE_ADHOC: Independent BSS member.
- * @IMG_UMAC_IFTYPE_STATION: Managed BSS member.
- * @IMG_UMAC_IFTYPE_AP: Access point.
- * @IMG_UMAC_IFTYPE_AP_VLAN: VLAN interface for access points; VLAN interfaces
+ * @NRF_WIFI_UMAC_IFTYPE_UNSPECIFIED: Unspecified type, driver decides.
+ * @NRF_WIFI_UMAC_IFTYPE_ADHOC: Independent BSS member.
+ * @NRF_WIFI_UMAC_IFTYPE_STATION: Managed BSS member.
+ * @NRF_WIFI_UMAC_IFTYPE_AP: Access point.
+ * @NRF_WIFI_UMAC_IFTYPE_AP_VLAN: VLAN interface for access points; VLAN interfaces
  *	are a bit special in that they must always be tied to a pre-existing
  *	AP type interface.
- * @IMG_UMAC_IFTYPE_WDS: Wireless Distribution System.
- * @IMG_UMAC_IFTYPE_MONITOR: Monitor interface receiving all frames.
- * @IMG_UMAC_IFTYPE_MESH_POINT: Mesh point.
- * @IMG_UMAC_IFTYPE_P2P_CLIENT: P2P client.
- * @IMG_UMAC_IFTYPE_P2P_GO: P2P group owner.
- * @IMG_UMAC_IFTYPE_P2P_DEVICE: P2P device interface type, this is not a netdev
+ * @NRF_WIFI_UMAC_IFTYPE_WDS: Wireless Distribution System.
+ * @NRF_WIFI_UMAC_IFTYPE_MONITOR: Monitor interface receiving all frames.
+ * @NRF_WIFI_UMAC_IFTYPE_MESH_POINT: Mesh point.
+ * @NRF_WIFI_UMAC_IFTYPE_P2P_CLIENT: P2P client.
+ * @NRF_WIFI_UMAC_IFTYPE_P2P_GO: P2P group owner.
+ * @NRF_WIFI_UMAC_IFTYPE_P2P_DEVICE: P2P device interface type, this is not a netdev
  *	and therefore can't be created in the normal ways, use the
- *	%IMG_UMAC_CMD_START_P2P_DEVICE and %IMG_UMAC_CMD_STOP_P2P_DEVICE
- *	commands (Refer &enum img_umac_commands) to create and destroy one.
- * @IMG_UMAC_IFTYPE_OCB: Outside Context of a BSS.
+ *	%NRF_WIFI_UMAC_CMD_START_P2P_DEVICE and %NRF_WIFI_UMAC_CMD_STOP_P2P_DEVICE
+ *	commands (Refer &enum nrf_wifi_umac_commands) to create and destroy one.
+ * @NRF_WIFI_UMAC_IFTYPE_OCB: Outside Context of a BSS.
  *	This mode corresponds to the MIB variable dot11OCBActivated=true.
- * @IMG_UMAC_IFTYPE_MAX: Highest interface type number currently defined.
- * @IMG_UMAC_IFTYPES: Number of defined interface types.
+ * @NRF_WIFI_UMAC_IFTYPE_MAX: Highest interface type number currently defined.
+ * @NRF_WIFI_UMAC_IFTYPES: Number of defined interface types.
  *
  * Lists the different interface types based on how they are configured
  * functionally.
  */
-#define IMG_UMAC_IFTYPE_UNSPECIFIED 0
-#define IMG_UMAC_IFTYPE_ADHOC 1
-#define IMG_UMAC_IFTYPE_STATION 2
-#define IMG_UMAC_IFTYPE_AP 3
-#define IMG_UMAC_IFTYPE_AP_VLAN 4
-#define IMG_UMAC_IFTYPE_WDS 5
-#define IMG_UMAC_IFTYPE_MONITOR 6
-#define IMG_UMAC_IFTYPE_MESH_POINT 7
-#define IMG_UMAC_IFTYPE_P2P_CLIENT 8
-#define IMG_UMAC_IFTYPE_P2P_GO 9
-#define IMG_UMAC_IFTYPE_P2P_DEVICE 10
-#define IMG_UMAC_IFTYPE_OCB 11
+#define NRF_WIFI_UMAC_IFTYPE_UNSPECIFIED 0
+#define NRF_WIFI_UMAC_IFTYPE_ADHOC 1
+#define NRF_WIFI_UMAC_IFTYPE_STATION 2
+#define NRF_WIFI_UMAC_IFTYPE_AP 3
+#define NRF_WIFI_UMAC_IFTYPE_AP_VLAN 4
+#define NRF_WIFI_UMAC_IFTYPE_WDS 5
+#define NRF_WIFI_UMAC_IFTYPE_MONITOR 6
+#define NRF_WIFI_UMAC_IFTYPE_MESH_POINT 7
+#define NRF_WIFI_UMAC_IFTYPE_P2P_CLIENT 8
+#define NRF_WIFI_UMAC_IFTYPE_P2P_GO 9
+#define NRF_WIFI_UMAC_IFTYPE_P2P_DEVICE 10
+#define NRF_WIFI_UMAC_IFTYPE_OCB 11
 
 /* keep last */
-#define IMG_UMAC_IFTYPES 12
-#define IMG_UMAC_IFTYPE_MAX (IMG_UMAC_IFTYPES - 1)
+#define NRF_WIFI_UMAC_IFTYPES 12
+#define NRF_WIFI_UMAC_IFTYPE_MAX (NRF_WIFI_UMAC_IFTYPES - 1)
 
 /**
  * enum rpu_op_mode - operating modes.
@@ -120,7 +120,7 @@
  *
  * To obtain statistics relevant to the operation mode set via op_mode
  * parameter.
- * Statistics will be updated in: /sys/kernel/debug/img/wlan/stats
+ * Statistics will be updated in: /sys/kernel/debug/nrf_wifi/wlan/stats
  */
 
 #define RPU_STATS_TYPE_ALL 0
@@ -143,51 +143,51 @@
 #define RPU_TPUT_MODE_MAX 5
 
 /**
- * enum img_sys_commands - system commands
- * @IMG_CMD_INIT: After host driver bringup host sends the IMG_CMD_INIT
+ * enum nrf_wifi_sys_commands - system commands
+ * @NRF_WIFI_CMD_INIT: After host driver bringup host sends the NRF_WIFI_CMD_INIT
  *	to the RPU. then RPU initializes and responds with
- *	IMG_EVENT_BUFF_CONFIG.
- * @IMG_CMD_BUFF_CONFIG_COMPLETE: Host sends this command to RPU after
+ *	NRF_WIFI_EVENT_BUFF_CONFIG.
+ * @NRF_WIFI_CMD_BUFF_CONFIG_COMPLETE: Host sends this command to RPU after
  *	completion of all buffers configuration
- * @IMG_CMD_TX: command to send a Tx packet
- * @IMG_CMD_MODE: command to specify mode of operation
- * @IMG_CMD_GET_STATS: command to get statistics
- * @IMG_CMD_CLEAR_STATS: command to clear statistics
- * @IMG_CMD_RX: command to ENABLE/DISABLE receiving packets in radio test mode
- * @IMG_CMD_DEINIT: RPU De-initialization
- * @IMG_CMD_HE_GI_LTF_CONFIG: Configure HE_GI & HE_LTF.
+ * @NRF_WIFI_CMD_TX: command to send a Tx packet
+ * @NRF_WIFI_CMD_MODE: command to specify mode of operation
+ * @NRF_WIFI_CMD_GET_STATS: command to get statistics
+ * @NRF_WIFI_CMD_CLEAR_STATS: command to clear statistics
+ * @NRF_WIFI_CMD_RX: command to ENABLE/DISABLE receiving packets in radio test mode
+ * @NRF_WIFI_CMD_DEINIT: RPU De-initialization
+ * @NRF_WIFI_CMD_HE_GI_LTF_CONFIG: Configure HE_GI & HE_LTF.
  *
  */
-#define IMG_CMD_INIT 0
-#define IMG_CMD_TX 1
-#define IMG_CMD_IF_TYPE 2
-#define IMG_CMD_MODE 3
-#define IMG_CMD_GET_STATS 4
-#define IMG_CMD_CLEAR_STATS 5
-#define IMG_CMD_RX 6
-#define IMG_CMD_PWR 7
-#define IMG_CMD_DEINIT 8
-#define IMG_CMD_BTCOEX 9
-#define IMG_CMD_RF_TEST 10
-#define IMG_CMD_HE_GI_LTF_CONFIG 11
+#define NRF_WIFI_CMD_INIT 0
+#define NRF_WIFI_CMD_TX 1
+#define NRF_WIFI_CMD_IF_TYPE 2
+#define NRF_WIFI_CMD_MODE 3
+#define NRF_WIFI_CMD_GET_STATS 4
+#define NRF_WIFI_CMD_CLEAR_STATS 5
+#define NRF_WIFI_CMD_RX 6
+#define NRF_WIFI_CMD_PWR 7
+#define NRF_WIFI_CMD_DEINIT 8
+#define NRF_WIFI_CMD_BTCOEX 9
+#define NRF_WIFI_CMD_RF_TEST 10
+#define NRF_WIFI_CMD_HE_GI_LTF_CONFIG 11
 
 /**
- * enum img_sys_events -
- * @IMG_EVENT_BUFF_CONFIG: Response to IMG_CMD_INIT
- *	see &struct img_event_buffs_config
- * @IMG_EVENT_BUFF_CONFIG_DONE: Response to IMG_CMD_BUFF_CONFIG_COMPLETE
- * @IMG_EVENT_STATS: Response to IMG_CMD_GET_STATS
- * @IMG_EVENT_DEINIT_DONE: Response to IMG_CMD_DEINIT
+ * enum nrf_wifi_sys_events -
+ * @NRF_WIFI_EVENT_BUFF_CONFIG: Response to NRF_WIFI_CMD_INIT
+ *	see &struct nrf_wifi_event_buffs_config
+ * @NRF_WIFI_EVENT_BUFF_CONFIG_DONE: Response to NRF_WIFI_CMD_BUFF_CONFIG_COMPLETE
+ * @NRF_WIFI_EVENT_STATS: Response to NRF_WIFI_CMD_GET_STATS
+ * @NRF_WIFI_EVENT_DEINIT_DONE: Response to NRF_WIFI_CMD_DEINIT
  *
  * Events from the RPU for different commands.
  */
-#define IMG_EVENT_PWR_DATA 0
+#define NRF_WIFI_EVENT_PWR_DATA 0
 
-#define IMG_EVENT_INIT_DONE 1
-#define IMG_EVENT_STATS 2
-#define IMG_EVENT_DEINIT_DONE 3
-#define IMG_EVENT_RF_TEST 4
-#define IMG_EVENT_COEX_CONFIG 5
+#define NRF_WIFI_EVENT_INIT_DONE 1
+#define NRF_WIFI_EVENT_STATS 2
+#define NRF_WIFI_EVENT_DEINIT_DONE 3
+#define NRF_WIFI_EVENT_RF_TEST 4
+#define NRF_WIFI_EVENT_COEX_CONFIG 5
 
 #define RPU_CH_BW_20 0
 #define RPU_CH_BW_40 1
@@ -198,7 +198,7 @@ struct chan_params {
 	unsigned char bw;
 	int sec_20_offset;
 	int sec_40_offset;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 struct rpu_conf_rx_radio_test_params {
 	unsigned char nss;
@@ -208,7 +208,7 @@ struct rpu_conf_rx_radio_test_params {
 	signed char phy_threshold;
 	unsigned int phy_calib;
 	unsigned char rx;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 struct umac_tx_dbg_params {
 	unsigned int tx_cmd;
@@ -248,7 +248,7 @@ struct umac_tx_dbg_params {
 	unsigned int tx_packet_other_mgmt_count;
 	unsigned int tx_packet_non_mgmt_data_count;
 
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 struct umac_rx_dbg_params {
 	unsigned int lmac_events;
@@ -296,7 +296,7 @@ struct umac_rx_dbg_params {
 	unsigned int null_skb_pointer_from_lmac;
 	unsigned int unexpected_mgmt_pkt;
 
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 struct umac_cmd_evnt_dbg_params {
 	unsigned char cmd_init;
@@ -336,7 +336,7 @@ struct umac_cmd_evnt_dbg_params {
 	unsigned char cmd_rf_test;
 	unsigned int LMAC_CMD_PS;
 	unsigned int CURR_STATE;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
 
@@ -344,7 +344,7 @@ struct rpu_umac_stats {
 	struct umac_tx_dbg_params tx_dbg_params;
 	struct umac_rx_dbg_params rx_dbg_params;
 	struct umac_cmd_evnt_dbg_params cmd_evnt_dbg_params;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 struct rpu_lmac_stats {
 	/*LMAC DEBUG Stats*/
@@ -384,7 +384,7 @@ struct rpu_lmac_stats {
 	unsigned int scan_abort_complete;
 	unsigned int internal_buf_pool_null;
 	/*END:LMAC DEBUG Stats*/
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
@@ -395,10 +395,10 @@ struct rpu_phy_stats {
 	unsigned int ofdm_crc32_fail_cnt;
 	unsigned int dsss_crc32_pass_cnt;
 	unsigned int dsss_crc32_fail_cnt;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
- * struct img_sys_head - Command/Event header.
+ * struct nrf_wifi_sys_head - Command/Event header.
  * @cmd: Command/Event id.
  * @len: Payload length.
  *
@@ -406,11 +406,11 @@ struct rpu_phy_stats {
  * id info in case of events.
  */
 
-struct img_sys_head {
+struct nrf_wifi_sys_head {
 	unsigned int cmd_event;
 	unsigned int len;
 
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
  * struct bgscan_params - Background Scan parameters.
@@ -431,7 +431,7 @@ struct img_sys_head {
  * Background Scan.
  */
 
-struct img_bgscan_params {
+struct nrf_wifi_bgscan_params {
 	unsigned int enabled;
 	unsigned char channel_list[50];
 	unsigned char channel_flags[50];
@@ -439,15 +439,15 @@ struct img_bgscan_params {
 	unsigned int channel_dur;
 	unsigned int serv_channel_dur;
 	unsigned int num_channels;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
- * @IMG_FEATURE_DISABLE: Feature Disable.
- * @IMG_FEATURE_ENABLE: Feature Enable.
+ * @NRF_WIFI_FEATURE_DISABLE: Feature Disable.
+ * @NRF_WIFI_FEATURE_ENABLE: Feature Enable.
  *
  */
-#define IMG_FEATURE_DISABLE 0
-#define IMG_FEATURE_ENABLE 1
+#define NRF_WIFI_FEATURE_DISABLE 0
+#define NRF_WIFI_FEATURE_ENABLE 1
 
 /**
  * enum max_rx_ampdu_size - Max Rx AMPDU size in KB
@@ -460,19 +460,20 @@ struct img_bgscan_params {
 #define MAX_RX_AMPDU_SIZE_64KB 3
 
 /**
- * struct img_data_config_params - Data config parameters
+ * struct nrf_wifi_data_config_params - Data config parameters
  * @rate_protection_type:0->NONE, 1->RTS/CTS, 2->CTS2SELF
- * @aggregation: Agreegation is enabled(IMG_FEATURE_ENABLE) or disabled(IMG_FEATURE_DISABLE)
- * @wmm: WMM is enabled(IMG_FEATURE_ENABLE) or disabled(IMG_FEATURE_DISABLE)
+ * @aggregation: Agreegation is enabled(NRF_WIFI_FEATURE_ENABLE) or
+ *               disabled(NRF_WIFI_FEATURE_DISABLE)
+ * @wmm: WMM is enabled(NRF_WIFI_FEATURE_ENABLE) or disabled(NRF_WIFI_FEATURE_DISABLE)
  * @max_num_tx_agg_sessions: Max number of aggregated TX sessions
  * @max_num_rx_agg_sessions: Max number of aggregated RX sessions
  * @reorder_buf_size: Reorder buffer size (1 to 64)
  * @max_rxampdu_size: Max RX AMPDU size (8/16/32/64 KB), see enum max_rx_ampdu_size
  *
- * Data configuration parameters provided in command IMG_CMD_INIT
+ * Data configuration parameters provided in command NRF_WIFI_CMD_INIT
  */
 
-struct img_data_config_params {
+struct nrf_wifi_data_config_params {
 	unsigned char rate_protection_type;
 	unsigned char aggregation;
 	unsigned char wmm;
@@ -481,10 +482,10 @@ struct img_data_config_params {
 	unsigned char max_tx_aggregation;
 	unsigned char reorder_buf_size;
 	int max_rxampdu_size;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
- * struct img_sys_params - Init parameters during IMG_CMD_INIT
+ * struct nrf_wifi_sys_params - Init parameters during NRF_WIFI_CMD_INIT
  * @mac_addr: MAC address of the interface
  * @sleep_enable: enable rpu sleep
  * @hw_bringup_time:
@@ -495,10 +496,10 @@ struct img_data_config_params {
  * @rf_params_valid: Indicates whether the @rf_params has a valid value.
  * @phy_calib: PHY calibration parameters
  *
- * System parameters provided for command IMG_CMD_INIT
+ * System parameters provided for command NRF_WIFI_CMD_INIT
  */
 
-struct img_sys_params {
+struct nrf_wifi_sys_params {
 	unsigned int sleep_enable;
 	unsigned int hw_bringup_time;
 	unsigned int sw_bringup_time;
@@ -506,81 +507,81 @@ struct img_sys_params {
 	unsigned int calib_sleep_clk;
 	unsigned int phy_calib;
 #ifndef CONFIG_NRF700X_RADIO_TEST
-	unsigned char mac_addr[IMG_ETH_ADDR_LEN];
+	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
 	unsigned char rf_params_valid;
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
- * struct img_cmd_sys_init - Initialize UMAC
- * @sys_head: umac header, see &img_sys_head
+ * struct nrf_wifi_cmd_sys_init - Initialize UMAC
+ * @sys_head: umac header, see &nrf_wifi_sys_head
  * @wdev_id : id of the interface.
- * @sys_params: iftype, mac address, see img_sys_params
+ * @sys_params: iftype, mac address, see nrf_wifi_sys_params
  * @rx_buf_pools: LMAC Rx buffs pool params, see struct rx_buf_pool_params
- * @data_config_params: Data configuration params, see struct img_data_config_params
- * After host driver bringup host sends the IMG_CMD_INIT to the RPU.
- * then RPU initializes and responds with IMG_EVENT_BUFF_CONFIG.
+ * @data_config_params: Data configuration params, see struct nrf_wifi_data_config_params
+ * After host driver bringup host sends the NRF_WIFI_CMD_INIT to the RPU.
+ * then RPU initializes and responds with NRF_WIFI_EVENT_BUFF_CONFIG.
  */
 
-struct img_cmd_sys_init {
-	struct img_sys_head sys_head;
+struct nrf_wifi_cmd_sys_init {
+	struct nrf_wifi_sys_head sys_head;
 	unsigned int wdev_id;
-	struct img_sys_params sys_params;
+	struct nrf_wifi_sys_params sys_params;
 	struct rx_buf_pool_params rx_buf_pools[MAX_NUM_OF_RX_QUEUES];
-	struct img_data_config_params data_config_params;
+	struct nrf_wifi_data_config_params data_config_params;
 	struct temp_vbat_config temp_vbat_config_params;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
- * struct img_cmd_sys_deinit - De-initialize UMAC
- * @sys_head: umac header, see &img_sys_head
+ * struct nrf_wifi_cmd_sys_deinit - De-initialize UMAC
+ * @sys_head: umac header, see &nrf_wifi_sys_head
  *
  * De-initializes the RPU.
  */
 
-struct img_cmd_sys_deinit {
-	struct img_sys_head sys_head;
-} __IMG_PKD;
+struct nrf_wifi_cmd_sys_deinit {
+	struct nrf_wifi_sys_head sys_head;
+} __NRF_WIFI_PKD;
 
-#define IMG_HE_GI_800NS 0
-#define IMG_HE_GI_1600NS 1
-#define IMG_HE_GI_3200NS 2
+#define NRF_WIFI_HE_GI_800NS 0
+#define NRF_WIFI_HE_GI_1600NS 1
+#define NRF_WIFI_HE_GI_3200NS 2
 
-#define IMG_HE_LTF_3200NS 0
-#define IMG_HE_LTF_6400NS 1
-#define IMG_HE_LTF_12800NS 2
+#define NRF_WIFI_HE_LTF_3200NS 0
+#define NRF_WIFI_HE_LTF_6400NS 1
+#define NRF_WIFI_HE_LTF_12800NS 2
 
 /**
- * struct img_cmd_he_gi_ltf_config - Confure HE-GI and HE-LTF.
- * @sys_head: umac header, see &img_sys_head
+ * struct nrf_wifi_cmd_he_gi_ltf_config - Confure HE-GI and HE-LTF.
+ * @sys_head: umac header, see &nrf_wifi_sys_head
  * @wdev_id: wdev interface id.
- * @he_gi_type: HE GI type(IMG_HE_GI_800NS/IMG_HE_GI_1600NS/IMG_HE_GI_3200NS).
- * @he_ltf: HE LTF(IMG_HE_LTF_3200NS/IMG_HE_LTF_6400NS/IMG_HE_LTF_12800NS).
+ * @he_gi_type: HE GI type(NRF_WIFI_HE_GI_800NS/NRF_WIFI_HE_GI_1600NS/NRF_WIFI_HE_GI_3200NS).
+ * @he_ltf: HE LTF(NRF_WIFI_HE_LTF_3200NS/NRF_WIFI_HE_LTF_6400NS/NRF_WIFI_HE_LTF_12800NS).
  * @enable: Fixed HE GI & LTF values can be enabled and disabled
  * Host configures the HE-GI & HE-LTF for testing purpose
  * need to use this values in Tx command sending to LMAC.
  */
 
-struct img_cmd_he_gi_ltf_config {
-	struct img_sys_head sys_head;
+struct nrf_wifi_cmd_he_gi_ltf_config {
+	struct nrf_wifi_sys_head sys_head;
 	unsigned char wdev_id;
-#define IMG_HE_GI_800NS 0
-#define IMG_HE_GI_1600NS 1
-#define IMG_HE_GI_3200NS 2
+#define NRF_WIFI_HE_GI_800NS 0
+#define NRF_WIFI_HE_GI_1600NS 1
+#define NRF_WIFI_HE_GI_3200NS 2
 	unsigned char he_gi_type;
 	unsigned char he_ltf;
 	unsigned char enable;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
-/* host has to use img_data_buff_config_complete structure to inform rpu about
- * completin of buffers configuration. fill IMG_CMD_BUFF_CONFIG_COMPLETE in cmd
+/* host has to use nrf_wifi_data_buff_config_complete structure to inform rpu about
+ * completin of buffers configuration. fill NRF_WIFI_CMD_BUFF_CONFIG_COMPLETE in cmd
  * field.
  */
 
-struct img_cmd_buff_config_complete {
-	struct img_sys_head sys_head;
-} __IMG_PKD;
+struct nrf_wifi_cmd_buff_config_complete {
+	struct nrf_wifi_sys_head sys_head;
+} __NRF_WIFI_PKD;
 
 enum opt { DISABLE, ENABLE };
 
@@ -589,11 +590,11 @@ enum opt { DISABLE, ENABLE };
 #define RPU_PKT_PREAMBLE_MIXED 2
 #define RPU_PKT_PREAMBLE_MAX 3
 
-struct img_cmd_mode {
-	struct img_sys_head sys_head;
+struct nrf_wifi_cmd_mode {
+	struct nrf_wifi_sys_head sys_head;
 	int mode;
 
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 
 struct rpu_conf_params {
@@ -628,27 +629,27 @@ struct rpu_conf_params {
 	unsigned char power_save;
 	unsigned int rts_threshold;
 	unsigned int tx_pkt_gap_us;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
- * struct img_cmd_mode_params
- * @sys_head: UMAC header, See &struct img_sys_head
+ * struct nrf_wifi_cmd_mode_params
+ * @sys_head: UMAC header, See &struct nrf_wifi_sys_head
  * @conf: configuration parameters of different modes see &union rpu_conf_params
  *
  * configures the RPU with config parameters provided in this command
  */
 
-struct img_cmd_mode_params {
-	struct img_sys_head sys_head;
+struct nrf_wifi_cmd_mode_params {
+	struct nrf_wifi_sys_head sys_head;
 	struct rpu_conf_params conf;
 	unsigned short pkt_length[MAX_TX_AGG_SIZE];
 	unsigned int ddr_ptrs[MAX_TX_AGG_SIZE];
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 
 /**
- * struct img_cmd_rx - command rx
- * @sys_head: UMAC header, See &struct img_sys_head
+ * struct nrf_wifi_cmd_rx - command rx
+ * @sys_head: UMAC header, See &struct nrf_wifi_sys_head
  * @conf: rx configuration parameters see &struct rpu_conf_rx_radio_test_params
  * @:rx_enable: 1-Enable Rx to receive packets contineously on specified channel
  *	0-Disable Rx stop receiving packets and clear statistics
@@ -656,14 +657,14 @@ struct img_cmd_mode_params {
  * Command RPU to Enable/Disable Rx
  */
 
-struct img_cmd_rx {
-	struct img_sys_head sys_head;
+struct nrf_wifi_cmd_rx {
+	struct nrf_wifi_sys_head sys_head;
 	struct rpu_conf_rx_radio_test_params conf;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
- * struct img_cmd_get_stats - Get statistics
- * @sys_head: UMAC header, See &struct img_sys_head
+ * struct nrf_wifi_cmd_get_stats - Get statistics
+ * @sys_head: UMAC header, See &struct nrf_wifi_sys_head
  * @stats_type: Statistics type see &enum rpu_stats_type
  * @op_mode: Production mode or FCM mode
  *
@@ -672,88 +673,88 @@ struct img_cmd_rx {
  *
  */
 
-struct img_cmd_get_stats {
-	struct img_sys_head sys_head;
+struct nrf_wifi_cmd_get_stats {
+	struct nrf_wifi_sys_head sys_head;
 	int stats_type;
 	int op_mode;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
- * struct img_cmd_clear_stats - clear statistics
- * @sys_head: UMAC header, See &struct img_sys_head.
+ * struct nrf_wifi_cmd_clear_stats - clear statistics
+ * @sys_head: UMAC header, See &struct nrf_wifi_sys_head.
  * @stats_type: Type of statistics to clear see &enum rpu_stats_type
  *
  * This command is to clear the statistics corresponding to stats_type selected
  */
 
-struct img_cmd_clear_stats {
-	struct img_sys_head sys_head;
+struct nrf_wifi_cmd_clear_stats {
+	struct nrf_wifi_sys_head sys_head;
 	int stats_type;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
-struct img_cmd_pwr {
-	struct img_sys_head sys_head;
+struct nrf_wifi_cmd_pwr {
+	struct nrf_wifi_sys_head sys_head;
 	int data_type;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 struct rpu_btcoex {
 	int coex_cmd_ctrl;
 	int bt_mode;
 	int bt_ctrl;
 	struct pta_ext_params pta_params;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
-struct img_cmd_btcoex {
-	struct img_sys_head sys_head;
+struct nrf_wifi_cmd_btcoex {
+	struct nrf_wifi_sys_head sys_head;
 	struct rpu_btcoex conf;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 struct rpu_cmd_coex_config_info {
 	unsigned int len;
 	unsigned char coex_cmd[0];
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
-struct img_cmd_coex_config {
-	struct img_sys_head sys_head;
+struct nrf_wifi_cmd_coex_config {
+	struct nrf_wifi_sys_head sys_head;
 	struct rpu_cmd_coex_config_info coex_config_info;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 struct rpu_evnt_coex_config_info {
 	unsigned int len;
 	unsigned char coex_event[0];
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
-struct img_event_coex_config {
-	struct img_sys_head sys_head;
+struct nrf_wifi_event_coex_config {
+	struct nrf_wifi_sys_head sys_head;
 	struct rpu_evnt_coex_config_info coex_config_info;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 struct rpu_cmd_rftest_info {
 	unsigned int len;
 	unsigned char rfcmd[0];
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
-struct img_cmd_rftest {
-	struct img_sys_head sys_head;
+struct nrf_wifi_cmd_rftest {
+	struct nrf_wifi_sys_head sys_head;
 	struct rpu_cmd_rftest_info rf_test_info;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 struct rpu_evnt_rftest_info {
 	unsigned int len;
 	unsigned char rfevent[0];
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
-struct img_event_rftest {
-	struct img_sys_head sys_head;
+struct nrf_wifi_event_rftest {
+	struct nrf_wifi_sys_head sys_head;
 	struct rpu_evnt_rftest_info rf_test_info;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
-struct img_event_pwr_data {
-	struct img_sys_head sys_head;
+struct nrf_wifi_event_pwr_data {
+	struct nrf_wifi_sys_head sys_head;
 	int mon_status;
 	int data_type;
-	struct img_rpu_pwr_data data;
-} __IMG_PKD;
+	struct nrf_wifi_rpu_pwr_data data;
+} __NRF_WIFI_PKD;
 
 /**
  * struct rpu_fw_stats - FW statistics
@@ -772,86 +773,86 @@ struct rpu_fw_stats {
 	struct rpu_lmac_stats lmac;
 	struct rpu_umac_stats umac;
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
- * struct img_umac_event_stats - statistics event
- * @sys_head: UMAC header, See &struct img_sys_head.
+ * struct nrf_wifi_umac_event_stats - statistics event
+ * @sys_head: UMAC header, See &struct nrf_wifi_sys_head.
  * @fw: All the statistics that the firmware can provide.
  *
- * This event is the response to command IMG_CMD_GET_STATS.
+ * This event is the response to command NRF_WIFI_CMD_GET_STATS.
  *
  */
 
-struct img_umac_event_stats {
-	struct img_sys_head sys_head;
+struct nrf_wifi_umac_event_stats {
+	struct nrf_wifi_sys_head sys_head;
 	struct rpu_fw_stats fw;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
 /**
- * struct img_event_buff_config_done - Buffers configuration done
- * @sys_head: UMAC header, See &struct img_sys_head.
+ * struct nrf_wifi_event_buff_config_done - Buffers configuration done
+ * @sys_head: UMAC header, See &struct nrf_wifi_sys_head.
  * @mac_addr: Mac address of the RPU
  *
- * RPU sends this event in response to IMG_CMD_BUFF_CONFIG_COMPLETE informing
+ * RPU sends this event in response to NRF_WIFI_CMD_BUFF_CONFIG_COMPLETE informing
  * RPU is initialized
  */
 
-struct img_event_buff_config_done {
-	struct img_sys_head sys_head;
-	unsigned char mac_addr[IMG_ETH_ADDR_LEN];
+struct nrf_wifi_event_buff_config_done {
+	struct nrf_wifi_sys_head sys_head;
+	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 /**
- * struct img_txrx_buffs_config - TX/RX buffers config event.
- * @sys_head: UMAC header, See &struct img_sys_head.
+ * struct nrf_wifi_txrx_buffs_config - TX/RX buffers config event.
+ * @sys_head: UMAC header, See &struct nrf_wifi_sys_head.
  * @max_tx_descs: Max number of tx descriptors.
  * @max_2k_rx_descs: Max number of 2k rx descriptors.
  * @num_8k_rx_descs: Max number of 2k rx descriptors.
  * @num_mgmt_descs: Max number of mgmt buffers.
  *
- * After initialization RPU sends IMG_EVENT_BUFF_CONFIG
+ * After initialization RPU sends NRF_WIFI_EVENT_BUFF_CONFIG
  * to inform host regarding descriptors.
  * 8K buffer are for internal purpose. At initialization time host
  * submits the 8K buffer and UMAC uses buffers to configure LMAC
  * for receiving AMSDU packets.
  */
 
-struct img_event_buffs_config {
-	struct img_sys_head sys_head;
+struct nrf_wifi_event_buffs_config {
+	struct nrf_wifi_sys_head sys_head;
 	unsigned int max_tx_descs;
 	unsigned int max_2k_rx_descs;
 	unsigned int num_8k_rx_descs;
 	unsigned int num_mgmt_descs;
 
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 /**
- * struct img_event_init_done - UMAC initialization done
- * @sys_head: UMAC header, See &struct img_sys_head.
+ * struct nrf_wifi_event_init_done - UMAC initialization done
+ * @sys_head: UMAC header, See &struct nrf_wifi_sys_head.
  *
- * RPU sends this event in response to IMG_CMD_INIT indicating that the RPU is
+ * RPU sends this event in response to NRF_WIFI_CMD_INIT indicating that the RPU is
  * initialized
  */
 
-struct img_event_init_done {
-	struct img_sys_head sys_head;
-} __IMG_PKD;
+struct nrf_wifi_event_init_done {
+	struct nrf_wifi_sys_head sys_head;
+} __NRF_WIFI_PKD;
 
 /**
- * struct img_event_deinit_done - UMAC deinitialization done
- * @sys_head: UMAC header, See &struct img_sys_head.
+ * struct nrf_wifi_event_deinit_done - UMAC deinitialization done
+ * @sys_head: UMAC header, See &struct nrf_wifi_sys_head.
  *
- * RPU sends this event in response to IMG_CMD_DEINIT indicating that the RPU is
+ * RPU sends this event in response to NRF_WIFI_CMD_DEINIT indicating that the RPU is
  * deinitialized
  */
 
-struct img_event_deinit_done {
-	struct img_sys_head sys_head;
-} __IMG_PKD;
+struct nrf_wifi_event_deinit_done {
+	struct nrf_wifi_sys_head sys_head;
+} __NRF_WIFI_PKD;
 
 #endif /* __HOST_RPU_SYS_IF_H__ */

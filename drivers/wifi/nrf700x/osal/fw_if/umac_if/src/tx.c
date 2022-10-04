@@ -52,7 +52,7 @@ enum wifi_nrf_status update_pend_q_bmp(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ct
 	vif_id = fmac_dev_ctx->tx_config.peers[peer_id].if_idx;
 	vif_ctx = fmac_dev_ctx->vif_ctx[vif_id];
 
-	if (vif_ctx->if_type == IMG_IFTYPE_AP &&
+	if (vif_ctx->if_type == NRF_WIFI_IFTYPE_AP &&
 	    peer_id < MAX_PEERS) {
 		bmp = &fmac_dev_ctx->tx_config.peers[peer_id].pend_q_bmp;
 		pend_pkt_q = fmac_dev_ctx->tx_config.data_pending_txq[peer_id][ac];
@@ -317,7 +317,7 @@ int tx_curr_peer_opp_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 		ps_state = fmac_dev_ctx->tx_config.peers[curr_peer_opp].ps_state;
 
-		if (ps_state == IMG_CLIENT_PS_MODE) {
+		if (ps_state == NRF_WIFI_CLIENT_PS_MODE) {
 			continue;
 		}
 
@@ -436,7 +436,7 @@ enum wifi_nrf_status tx_cmd_prep_callbk_fn(void *callbk_data,
 	unsigned long nwb_data = 0;
 	unsigned long phy_addr = 0;
 	struct tx_cmd_prep_info *info = NULL;
-	struct img_tx_buff *config = NULL;
+	struct nrf_wifi_tx_buff *config = NULL;
 	unsigned int desc_id = 0;
 	unsigned int buf_len = 0;
 
@@ -501,7 +501,7 @@ int tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		   void *txq,
 		   int peer_id)
 {
-	struct img_tx_buff *config = NULL;
+	struct nrf_wifi_tx_buff *config = NULL;
 	int len = 0;
 	void *nwb = NULL;
 	void *nwb_data = NULL;
@@ -531,7 +531,7 @@ int tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	fmac_dev_ctx->tx_config.send_pkt_coalesce_count_p[desc] = txq_len;
 
-	config = (struct img_tx_buff *)(umac_cmd->msg);
+	config = (struct nrf_wifi_tx_buff *)(umac_cmd->msg);
 
 	data = wifi_nrf_osal_nbuf_data_get(fmac_dev_ctx->fpriv->opriv,
 					   nwb);
@@ -539,10 +539,10 @@ int tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	len = wifi_nrf_osal_nbuf_data_size(fmac_dev_ctx->fpriv->opriv,
 					   nwb);
 
-	config->umac_head.cmd = IMG_CMD_TX_BUFF;
+	config->umac_head.cmd = NRF_WIFI_CMD_TX_BUFF;
 
-	config->umac_head.len += sizeof(struct img_tx_buff);
-	config->umac_head.len += sizeof(struct img_tx_buff_info) * txq_len;
+	config->umac_head.len += sizeof(struct nrf_wifi_tx_buff);
+	config->umac_head.len += sizeof(struct nrf_wifi_tx_buff_info) * txq_len;
 
 	config->tx_desc_num = desc;
 
@@ -552,12 +552,12 @@ int tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 			      config->mac_hdr_info.dest,
 			      wifi_nrf_util_get_dest(fmac_dev_ctx, nwb),
-			      IMG_ETH_ALEN);
+			      NRF_WIFI_ETH_ADDR_LEN);
 
 	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 			      config->mac_hdr_info.src,
 			      wifi_nrf_util_get_src(fmac_dev_ctx, nwb),
-			      IMG_ETH_ALEN);
+			      NRF_WIFI_ETH_ADDR_LEN);
 
 	nwb_data = wifi_nrf_osal_nbuf_data_get(fmac_dev_ctx->fpriv->opriv,
 					       nwb);
@@ -588,9 +588,9 @@ int tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	fmac_dev_ctx->host_stats.total_tx_pkts += config->num_tx_pkts;
 	config->wdev_id = fmac_dev_ctx->tx_config.peers[peer_id].if_idx;
 
-	if ((vif_ctx->if_type == IMG_IFTYPE_AP ||
-	    vif_ctx->if_type == IMG_IFTYPE_AP_VLAN ||
-	    vif_ctx->if_type == IMG_IFTYPE_MESH_POINT) &&
+	if ((vif_ctx->if_type == NRF_WIFI_IFTYPE_AP ||
+	    vif_ctx->if_type == NRF_WIFI_IFTYPE_AP_VLAN ||
+	    vif_ctx->if_type == NRF_WIFI_IFTYPE_MESH_POINT) &&
 		pending_frames_count(fmac_dev_ctx, peer_id) != 0) {
 		config->mac_hdr_info.more_data = 1;
 	}
@@ -602,7 +602,7 @@ int tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 		config->mac_hdr_info.eosp = 1;
 
-		if (fmac_dev_ctx->tx_config.peers[peer_id].ps_state == IMG_CLIENT_PS_MODE) {
+		if (fmac_dev_ctx->tx_config.peers[peer_id].ps_state == NRF_WIFI_CLIENT_PS_MODE) {
 		}
 	} else {
 		config->mac_hdr_info.eosp = 0;
@@ -621,13 +621,13 @@ enum wifi_nrf_status tx_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	struct host_rpu_msg *umac_cmd = NULL;
 	unsigned int len = 0;
 
-	len += sizeof(struct img_tx_buff_info);
+	len += sizeof(struct nrf_wifi_tx_buff_info);
 	len *= wifi_nrf_utils_list_len(fmac_dev_ctx->fpriv->opriv, txq);
 
-	len += sizeof(struct img_tx_buff);
+	len += sizeof(struct nrf_wifi_tx_buff);
 
 	umac_cmd = umac_cmd_alloc(fmac_dev_ctx,
-				  IMG_HOST_RPU_MSG_TYPE_DATA,
+				  NRF_WIFI_HOST_RPU_MSG_TYPE_DATA,
 				  len);
 
 	status = tx_cmd_prepare(fmac_dev_ctx,
@@ -758,7 +758,7 @@ enum wifi_nrf_status tx_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	ps_state = fmac_dev_ctx->tx_config.peers[peer_id].ps_state;
 
-	if (ps_state == IMG_CLIENT_PS_MODE) {
+	if (ps_state == NRF_WIFI_CLIENT_PS_MODE) {
 		goto out;
 	}
 
@@ -811,7 +811,7 @@ out:
 
 
 unsigned int tx_buff_req_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-			      struct img_tx_buff_done *config,
+			      struct nrf_wifi_tx_buff_done *config,
 			      unsigned char *ac)
 {
 	struct wifi_nrf_fmac_priv *fpriv = NULL;
@@ -894,7 +894,7 @@ unsigned int tx_buff_req_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 
 enum wifi_nrf_status tx_done_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-				     struct img_tx_buff_done *config)
+				     struct nrf_wifi_tx_buff_done *config)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_fmac_priv *fpriv = NULL;
@@ -996,7 +996,7 @@ out:
 
 
 enum wifi_nrf_status wifi_nrf_fmac_tx_done_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-							 struct img_tx_buff_done *config)
+							 struct nrf_wifi_tx_buff_done *config)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 

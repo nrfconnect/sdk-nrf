@@ -35,6 +35,6 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_cmd_send(struct wifi_nrf_fmac_dev_ctx *fma
 					       unsigned int desc_id);
 
 enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-						    struct img_rx_buff *config);
+						    struct nrf_wifi_rx_buff *config);
 
 #endif /* __FMAC_RX_H__ */
