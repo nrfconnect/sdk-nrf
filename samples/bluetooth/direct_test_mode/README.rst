@@ -263,7 +263,12 @@ The DTM-to-Serial adaptation layer
 :file:`main.c` is an implementation of the UART interface specified in the `Bluetooth Core Specification`_: Vol. 6, Part F, Chap. 3.
 
 The default selection of UART pins is defined in :file:`zephyr/boards/arm/board_name/board_name.dts`.
-You can change the defaults using the symbols ``tx-pin`` and ``rx-pin`` in the DTS overlay file at the project level.
+You can change the defaults using the symbols ``tx-pin`` and ``rx-pin`` in the DTS overlay file of the child image at the project level.
+The overlay files for the :ref:`nrf5340_remote_shell` child image are located in at :file:`child_image/remote_shell` directory.
+
+.. note::
+   On the nRF5340 development kit, the physical UART interface of the application core is used for communication with the tester device.
+   This sample uses the :ref:`uart_ipc` driver for sending responses and receiving commands through the UART interface of the application core.
 
 Debugging
 *********
@@ -283,12 +288,25 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 .. note::
-   On the nRF5340 development kit, the Direct Test Mode sample is a standalone network sample.
-   It does not require any counterpart application sample.
-   However, you must still program the application core to boot up the network core.
-   You can use any sample for this, for example, the :ref:`nrf5340_empty_app_core`.
-   The :ref:`nrf5340_empty_app_core` is built and programmed automatically by default.
-   If you want to program another sample for the application core, unset the :kconfig:option:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` option.
+   On the nRF5340 development kit, this sample requires the :ref:`nrf5340_remote_shell` sample on the application core.
+   The Remote IPC shell sample is built and programmed automatically by default.
+   If you want to program your custom solution for the application core, unset the :kconfig:option:`CONFIG_NCS_SAMPLE_REMOTE_SHELL_CHILD_IMAGE` Kconfig option.
+
+USB CDC ACM transport variant
+=============================
+
+On the nRF5340 development kit, you can build this sample configured to use the USB interface as a communication interface with the tester.
+
+.. code-block:: console
+
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk_nrf5340_cpunet -- -DCONFIG_DTM_USB=y
+
+You can also build this sample with support for the front-end module.
+Use the following command:
+
+.. code-block:: console
+
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540_ek -DCONFIG_DTM_USB=y
 
 .. _dtm_testing:
 
@@ -473,12 +491,20 @@ On Ubuntu, run:
 Dependencies
 ************
 
+This sample uses the following |NCS| libraries:
+
+  * :ref:`uart_ipc`
+
 This sample uses the following nrfx dependencies:
 
   * ``nrfx/drivers/include/nrfx_timer.h``
   * ``nrfx/hal/nrf_nvmc.h``
   * ``nrfx/hal/nrf_radio.h``
   * ``nrfx/helpers/nrfx_gppi.h``
+
+The sample also has the following nrfxlib dependency:
+
+  * :ref:`nrfxlib:mpsl_fem`
 
 In addition, it uses the following Zephyr libraries:
 

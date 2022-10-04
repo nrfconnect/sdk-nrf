@@ -24,7 +24,8 @@ The sample supports the following development kits:
 You can use any one of the development kits listed above.
 
 .. note::
-   On nRF5340 DK, the sample is designed to run on the network core.
+   On nRF5340 DK, the sample is designed to run on the network core and requires the :ref:`nrf5340_remote_shell` running on the application core.
+   This sample uses the :ref:`shell_ipc_readme` library to forward shell data through the physical UART interface of the application core.
 
 The sample also requires one of the following testing devices:
 
@@ -137,28 +138,26 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 .. note::
-   On the |nRF5340DKnoref|, the Radio test sample is a standalone network sample that does not require any counterpart application sample.
-   Program the application core to boot up the network core.
-   Use any sample for this, for example :ref:`nrf5340_empty_app_core`.
-   The :ref:`nrf5340_empty_app_core` is built and programmed automatically by default.
-   If you want to program another sample for the application core, unset the :kconfig:option:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` option.
+   On the nRF5340 development kit, the Radio Test sample requires the :ref:`nrf5340_remote_shell` sample on the application core.
+   The Remote IPC shell sample is built and programmed automatically by default.
+   If you want to program your custom solution for the application core, unset the :kconfig:option:`CONFIG_NCS_SAMPLE_REMOTE_SHELL_CHILD_IMAGE` Kconfig option.
 
-Remote IPC Service Shell variant
+Remote USB CDC ACM Shell variant
 ================================
 
-This sample has a possibility to run the remote IPC Service Shell through nRF5340 DK application core USB or UART peripheral.
+This sample can run the remote IPC Service Shell through the USB on the nRF5340 DK application core.
 For example, when building on the command line, you can do so as follows:
 
 .. code-block:: console
 
-  west build samples/peripheral/radio_test -b nrf5340dk_nrf5340_cpunet -- -DCONF_FILE='prj_ipc_shell.conf'
+  west build samples/peripheral/radio_test -b nrf5340dk_nrf5340_cpunet -- -DCONFIG_RADIO_TEST_USB=y
 
 You can also build this sample with the remote IPC Service Shell and support for the front-end module.
 You can use the following command:
 
 .. code-block:: console
 
-  west build -b nrf5340dk_nrf5340_cpunet -- -DCONF_FILE=prj_ipc_shell.conf -DSHIELD=nrf21540_ek -Dremote_shell_SHIELD=nrf21540_ek
+  west build samples/peripheral/radio_test -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540_ek -DCONFIG_RADIO_TEST_USB=y
 
 .. _radio_test_testing:
 
@@ -208,6 +207,10 @@ Testing with RSSI Viewer
 Dependencies
 ************
 
+This sample uses the following |NCS| library:
+
+  * :ref:`shell_ipc_readme`
+
 This sample has the following nrfx dependencies:
 
   * ``nrfx/drivers/include/nrfx_timer.h``
@@ -215,6 +218,10 @@ This sample has the following nrfx dependencies:
   * ``nrfx/hal/nrf_power.h``
   * ``nrfx/hal/nrf_radio.h``
   * ``nrfx/hal/nrf_rng.h``
+
+The sample also has the following nrfxlib dependency:
+
+  * :ref:`nrfxlib:mpsl_fem`
 
 In addition, it uses the following Zephyr libraries:
 
