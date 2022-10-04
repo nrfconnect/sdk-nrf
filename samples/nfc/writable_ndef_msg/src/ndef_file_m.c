@@ -30,12 +30,12 @@ static const uint8_t m_url[] = /**< Default NDEF message: URL "nordicsemi.com". 
 	{'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.', 'c', 'o', 'm'};
 
 /* Flash partition for NVS */
-#define NVS_FLASH_DEVICE FLASH_AREA_DEVICE(storage)
+#define NVS_FLASH_DEVICE FIXED_PARTITION_DEVICE(storage_partition)
 /* Flash block size in bytes */
 #define NVS_SECTOR_SIZE  (DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size))
 #define NVS_SECTOR_COUNT 2
 /* Start address of the filesystem in flash */
-#define NVS_STORAGE_OFFSET FLASH_AREA_OFFSET(storage)
+#define NVS_STORAGE_OFFSET FIXED_PARTITION_OFFSET(storage_partition)
 
 static struct nvs_fs fs = {
 	.sector_size = NVS_SECTOR_SIZE,
