@@ -6,8 +6,18 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(wrap_test)
+
+# add module test_code
+set(SOURCES src/test_code/test_code.c)
+
+# add module call
+list(APPEND SOURCES src/wrap_test.c)
+
+# add test file
+list(APPEND SOURCES src/call/call.c)
+
+find_package(Zephyr REQUIRED COMPONENTS ncs_unity unittest HINTS $ENV{ZEPHYR_BASE})
 
 # generate runner for the test
 test_runner_generate(src/wrap_test.c)
@@ -15,15 +25,9 @@ test_runner_generate(src/wrap_test.c)
 # create mocks for test_code functions
 cmock_handle(src/test_code/test_code.h test_code)
 
-# add module test_code
-target_sources(app PRIVATE src/test_code/test_code.c)
-target_include_directories(app PRIVATE src)
+target_include_directories(testbinary PRIVATE src)
 
-# add module call
-target_sources(app PRIVATE src/call/call.c)
-target_include_directories(app PRIVATE ./src/call)
+target_include_directories(testbinary PRIVATE ./src/call)
 
-# add test file
-target_sources(app PRIVATE src/wrap_test.c)
-target_include_directories(app PRIVATE .)
-target_include_directories(app PRIVATE src/test_code)
+target_include_directories(testbinary PRIVATE .)
+target_include_directories(testbinary PRIVATE src/test_code)

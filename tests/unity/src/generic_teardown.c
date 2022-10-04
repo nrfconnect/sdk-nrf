@@ -8,7 +8,7 @@
  * @file
  * @brief Additional Unity support code for the native_posix board.
  */
-#include <zephyr/kernel.h>
+//#include <zephyr/kernel.h>
 #ifdef CONFIG_BOARD_NATIVE_POSIX
 #include "posix_board_if.h"
 #endif
@@ -20,8 +20,8 @@ int generic_suiteTearDown(int num_failures)
 	/* Sanitycheck bases the result of native_posix based unit tests on the
 	 * output:
 	 */
-	printk("PROJECT EXECUTION %s\n",
-	       num_failures == 0 ? "SUCCESSFUL" : "FAILED");
+//	printk("PROJECT EXECUTION %s\n",
+//	       num_failures == 0 ? "SUCCESSFUL" : "FAILED");
 
 #ifdef CONFIG_BOARD_NATIVE_POSIX
 	/* The native posix board will loop forever after leaving the runner's
@@ -36,7 +36,6 @@ int generic_suiteTearDown(int num_failures)
 	return ret;
 }
 
-__weak int test_suiteTearDown(int num_failures)
-{
+ __attribute__((__weak__)) int test_suiteTearDown(int num_failures ){
 	return generic_suiteTearDown(num_failures);
 }
