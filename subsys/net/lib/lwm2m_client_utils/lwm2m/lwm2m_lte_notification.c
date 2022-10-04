@@ -191,6 +191,17 @@ void lte_notify_handler(const struct lte_lc_evt *const evt)
 		lwm2m_lte_reg_handler_notify(evt->nw_reg_status);
 		break;
 #endif /* CONFIG_LWM2M_CLIENT_UTILS_NWK_REG_NOTIFICATION */
+
+#if defined(CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS)
+	case LTE_LC_EVT_TAU_PRE_WARNING:
+		if (!lwm2m_rd_client_ctx()) {
+			LOG_DBG("No lwm2m context");
+			return;
+		}
+		LOG_INF("TAU pre-warning notification. Triggering LwM2M RD client update");
+		lwm2m_rd_client_update();
+		break;
+#endif /* CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS */
 	default:
 		break;
 	}
