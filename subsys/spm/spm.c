@@ -34,7 +34,7 @@
 #endif
 #else
 #include <zephyr/storage/flash_map.h>
-#define NON_SECURE_APP_ADDRESS FLASH_AREA_OFFSET(image_0_nonsecure)
+#define NON_SECURE_APP_ADDRESS FIXED_PARTITION_OFFSET(slot0_ns_partition)
 /* This reflects the configuration in DTS. */
 #define NON_SECURE_RAM_OFFSET 0x10000
 #endif /* USE_PARTITION_MANAGER */
