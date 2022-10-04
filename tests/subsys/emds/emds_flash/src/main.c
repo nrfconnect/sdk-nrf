@@ -153,12 +153,12 @@ static int fs_init(void)
 	size_t emds_flash_size = 0;
 	uint16_t cnt = 0;
 
-	rc = flash_area_open(FLASH_AREA_ID(emds_storage), &m_fa);
+	rc = flash_area_open(FIXED_PARTITION_ID(emds_storage), &m_fa);
 	if (rc) {
 		return rc;
 	}
 
-	rc = flash_area_get_sectors(FLASH_AREA_ID(emds_storage), &sector_cnt,
+	rc = flash_area_get_sectors(FIXED_PARTITION_ID(emds_storage), &sector_cnt,
 				    &hw_flash_sector);
 
 	if (rc == -ENODEV) {

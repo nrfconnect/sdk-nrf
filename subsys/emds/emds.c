@@ -86,13 +86,13 @@ static int emds_fs_init(void)
 	size_t emds_storage_size = 0;
 	uint16_t cnt = 0;
 
-	rc = flash_area_open(FLASH_AREA_ID(emds_storage), &fa);
+	rc = flash_area_open(FIXED_PARTITION_ID(emds_storage), &fa);
 	if (rc) {
 		return rc;
 	}
 
-	rc = flash_area_get_sectors(FLASH_AREA_ID(emds_storage), &sector_cnt,
-						  &hw_fs);
+	rc = flash_area_get_sectors(FIXED_PARTITION_ID(emds_storage), &sector_cnt,
+				    &hw_fs);
 	if (rc == -ENODEV) {
 		return rc;
 	} else if (rc != 0 && rc != -ENOMEM) {
