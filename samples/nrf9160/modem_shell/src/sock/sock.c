@@ -85,6 +85,7 @@ K_MUTEX_DEFINE(sock_info_mutex);
 K_SEM_DEFINE(sock_sem, 0, 1);
 
 struct sock_info sockets[MAX_SOCKETS] = { 0 };
+static char *sock_receive_buffer;
 
 static void sock_info_clear(struct sock_info *socket_info)
 {
@@ -956,17 +957,94 @@ int sock_send_data(
 	return 0;
 }
 
+static void sock_handle_poll_events(int socket_id, int poll_revents)
+{
+	struct sock_info *socket_info;
+	int buffer_size;
+
+	socket_info = &(sockets[socket_id]);
+
+	if (poll_revents & POLLIN) {
+		/* Data received. If receive buffer doesn't exist, allocate it. */
+		if (sock_receive_buffer == NULL) {
+			sock_receive_buffer = k_calloc(SOCK_RECEIVE_BUFFER_SIZE + 1, 1);
+			if (sock_receive_buffer == NULL) {
+				mosh_error(
+					"Out of memory while reserving "
+					"receive buffer of size %d bytes",
+					SOCK_RECEIVE_BUFFER_SIZE);
+				/* Returning here for simplicity although we could handle
+				 * other events too but if we cannot allocate receive buffer,
+				 * sock tool just won't work and application has other issues too.
+				 */
+				return;
+			}
+		}
+
+		/* Store timestamp for receiving data */
+		if (socket_info->recv_start_throughput) {
+			socket_info->start_time_ms = k_uptime_get();
+			socket_info->recv_start_throughput = false;
+		}
+
+		buffer_size = recv(
+			socket_info->fd, sock_receive_buffer, SOCK_RECEIVE_BUFFER_SIZE, 0);
+
+		if (buffer_size > 0) {
+			socket_info->recv_end_time_ms = k_uptime_get();
+			socket_info->recv_data_len += buffer_size;
+
+			if (socket_info->recv_data_len >= socket_info->recv_data_len_expected) {
+				print_throughput_summary(
+					socket_info->recv_data_len,
+					socket_info->recv_end_time_ms - socket_info->start_time_ms);
+				/* Do not print when more data received */
+				socket_info->recv_data_len_expected = SOCK_DATA_LEN_NONE;
+			}
+
+			if (socket_info->log_receive_data) {
+				mosh_print(
+					"Received data for socket socket_id=%d, buffer_size=%d:",
+					socket_id, buffer_size);
+
+				if (socket_info->recv_print_format == SOCK_RECV_PRINT_FORMAT_HEX) {
+					sock_print_data_hex(sock_receive_buffer, buffer_size);
+				} else { /* SOCK_RECV_PRINT_FORMAT_STR */
+					mosh_print("\t%s", sock_receive_buffer);
+				}
+			}
+			memset(sock_receive_buffer, '\0', SOCK_RECEIVE_BUFFER_SIZE);
+		}
+	}
+	if (poll_revents & POLLOUT) {
+		sock_send_random_data_length(socket_info);
+	}
+	if (poll_revents & POLLERR) {
+		mosh_print(
+			"Error from socket id=%d (fd=%d), closing",
+			socket_id, socket_info->fd);
+		sock_info_clear(socket_info);
+	}
+	if (poll_revents & POLLHUP) {
+		mosh_print(
+			"Socket id=%d (fd=%d) disconnected so closing.",
+			socket_id, socket_info->fd);
+		sock_info_clear(socket_info);
+	}
+	if (poll_revents & POLLNVAL) {
+		mosh_print("Socket id=%d invalid", socket_id);
+		sock_info_clear(socket_info);
+	}
+}
+
 /**
  * @brief Socket receive handler running an infinite loop polling for events on the sockets.
  */
 static void sock_receive_handler(void)
 {
 	struct pollfd fds[MAX_SOCKETS];
-	char *receive_buffer = NULL;
-	struct sock_info *socket_info;
 	int socket_id;
 	int count;
-	int buffer_size;
 	int ret;
 
 	while (true) {
@@ -989,9 +1067,9 @@ static void sock_receive_handler(void)
 			k_sem_reset(&sock_sem);
 
 			/* No sockets, release the receive buffer */
-			if (receive_buffer != NULL) {
-				k_free(receive_buffer);
-				receive_buffer = NULL;
+			if (sock_receive_buffer != NULL) {
+				k_free(sock_receive_buffer);
+				sock_receive_buffer = NULL;
 			}
 
 			/* Wait for a socket to be created */
@@ -1015,83 +1093,7 @@ static void sock_receive_handler(void)
 				 */
 				continue;
 			}
-			socket_info = &(sockets[socket_id]);
-
-			if (fds[i].revents & POLLIN) {
-				/* Data received. If receive buffer doesn't exist, allocate it. */
-				if (receive_buffer == NULL) {
-					receive_buffer = k_calloc(SOCK_RECEIVE_BUFFER_SIZE + 1, 1);
-					if (receive_buffer == NULL) {
-						mosh_error(
-							"Out of memory while reserving "
-							"receive buffer of size %d bytes",
-							SOCK_RECEIVE_BUFFER_SIZE);
-						break;
-					}
-				}
-
-				/* Store timestamp for receiving data */
-				if (socket_info->recv_start_throughput) {
-					socket_info->start_time_ms = k_uptime_get();
-					socket_info->recv_start_throughput = false;
-				}
-
-				buffer_size = recv(fds[i].fd, receive_buffer,
-						   SOCK_RECEIVE_BUFFER_SIZE, 0);
-				if (buffer_size <= 0) {
-					continue;
-				}
-
-				socket_info->recv_end_time_ms = k_uptime_get();
-				socket_info->recv_data_len += buffer_size;
-
-				if (socket_info->recv_data_len >=
-					socket_info->recv_data_len_expected) {
-
-					print_throughput_summary(
-						socket_info->recv_data_len,
-						socket_info->recv_end_time_ms -
-						socket_info->start_time_ms);
-					/* Do not print when more data received. */
-					socket_info->recv_data_len_expected = SOCK_DATA_LEN_NONE;
-				}
-
-				if (socket_info->log_receive_data) {
-					mosh_print(
-						"Received data for socket "
-						"socket_id=%d, buffer_size=%d:",
-						socket_id,
-						buffer_size);
-
-					if (socket_info->recv_print_format ==
-						SOCK_RECV_PRINT_FORMAT_HEX) {
-
-						sock_print_data_hex(receive_buffer, buffer_size);
-					} else { /* SOCK_RECV_PRINT_FORMAT_STR */
-						mosh_print("\t%s", receive_buffer);
-					}
-				}
-				memset(receive_buffer, '\0', SOCK_RECEIVE_BUFFER_SIZE);
-			}
-			if (fds[i].revents & POLLOUT) {
-				sock_send_random_data_length(socket_info);
-			}
-			if (fds[i].revents & POLLERR) {
-				mosh_print(
-					"Error from socket id=%d (fd=%d), closing",
-					socket_id, fds[i].fd);
-				sock_info_clear(socket_info);
-			}
-			if (fds[i].revents & POLLHUP) {
-				mosh_print(
-					"Socket id=%d (fd=%d) disconnected so closing.",
-					socket_id, fds[i].fd);
-				sock_info_clear(socket_info);
-			}
-			if (fds[i].revents & POLLNVAL) {
-				mosh_print("Socket id=%d invalid", socket_id);
-				sock_info_clear(socket_info);
-			}
+			sock_handle_poll_events(socket_id, fds[i].revents);
 		}
 	}
 	mosh_print("%s exit", __func__);
