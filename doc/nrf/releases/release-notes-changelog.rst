@@ -198,9 +198,11 @@ nRF9160 samples
     * Ability to use buttons to generate location assistance requests.
     * Documentation on :ref:`lwmwm_client_testing_shell`.
 
+* :ref:`nrf_cloud_rest_cell_pos_sample` sample:
+
   * Changed:
 
-   * :ref:`nrf_cloud_rest_cell_pos_sample` sample moved from :file:`samples/nrf9160/nrf_cloud_rest_cell_pos` to :file:`samples/nrf9160/nrf_cloud_rest_cell_location`.
+   * Sample moved from :file:`samples/nrf9160/nrf_cloud_rest_cell_pos` to :file:`samples/nrf9160/nrf_cloud_rest_cell_location`.
 
 Thread samples
 --------------
