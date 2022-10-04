@@ -32,7 +32,6 @@ features:
     Matter commissioning over Bluetooth LE with NFC onboarding: CHIP && BT && CHIP_NFC_COMMISSIONING
     Matter - OTA DFU over Bluetooth LE: CHIP && BT && MCUMGR_SMP_BT
     OTA DFU over Matter: CHIP && CHIP_OTA_REQUESTOR
-    Matter - Amazon Frustration Free Setup support: CHIP && BT && CHIP_ROTATING_DEVICE_ID && CHIP_COMMISSIONABLE_DEVICE_TYPE
     Matter Sleepy End Device: CHIP && CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT && NET_L2_OPENTHREAD && OPENTHREAD_MTD_SED
   homekit:
     HomeKit over Bluetooth LE: HOMEKIT && BT && !CONFIG_HAP_HAVE_THREAD
