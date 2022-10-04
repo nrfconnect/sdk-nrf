@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_ADV_PROV_FAST_PAIR
+	bool "Google Fast Pair"
+	depends on BT_FAST_PAIR
+	help
+	  Adds Google Fast Pair payload to advertising data if device is looking
+	  for a new peer (pairing mode in the advertising state is set).
+	  By default, the advertising data provider uses Fast Pair discoverable
+	  advertising and switches to not discoverable advertising show UI
+	  indication after device receives an Account Key. Alternatively,
+	  dedicated API can be used to explicitly set the Fast Pair advertising
+	  mode.
+
+if BT_ADV_PROV_FAST_PAIR
+
+config BT_ADV_PROV_FAST_PAIR_ADV_BUF_SIZE
+	int "Size of buffer used for advertising data"
+	range 10 25
+	default 19
+	help
+	  Size of the buffer must be big enough to fit Fast Pair advertising
+	  packet.
+
+config BT_ADV_PROV_FAST_PAIR_AUTO_SET_PAIRING_MODE
+	bool "Automatically set Fast Pair pairing mode"
+	default y
+	help
+	  The advertising data provider automatically sets Fast Pair pairing
+	  mode (using bt_fast_pair_set_pairing_mode API) while providing
+	  advertising data. This is done to ensure consistency between Fast
+	  Pair pairing mode and advertised data if generated advertising data
+	  is instantly used in advertising packets.
+
+endif # BT_ADV_PROV_FAST_PAIR

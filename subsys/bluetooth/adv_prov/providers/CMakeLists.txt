@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+zephyr_sources_ifdef(CONFIG_BT_ADV_PROV_FAST_PAIR	fast_pair.c)
 zephyr_sources_ifdef(CONFIG_BT_ADV_PROV_FLAGS		flags.c)
 zephyr_sources_ifdef(CONFIG_BT_ADV_PROV_GAP_APPEARANCE	gap_appearance.c)
 zephyr_sources_ifdef(CONFIG_BT_ADV_PROV_DEVICE_NAME	device_name.c)
