@@ -705,7 +705,8 @@ static void on_device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
 		if (bonded_num) {
 			bt_foreach_bond(BT_ID_DEFAULT, bond_connect, (void *)addr);
 		}
-	} else if (type == BT_GAP_ADV_TYPE_ADV_IND) {
+		return;
+	} else if (type == BT_GAP_ADV_TYPE_ADV_IND || type == BT_GAP_ADV_TYPE_EXT_ADV) {
 		/* Note: May lead to connection creation */
 		ad_parse(p_ad, addr);
 	}
@@ -720,7 +721,7 @@ static void ble_acl_start_scan(void)
 
 	bt_foreach_bond(BT_ID_DEFAULT, bond_check, NULL);
 
-	ret = bt_le_scan_start(BT_LE_SCAN_ACTIVE, on_device_found);
+	ret = bt_le_scan_start(BT_LE_SCAN_PASSIVE, on_device_found);
 	if (ret) {
 		LOG_WRN("Scanning failed to start: %d", ret);
 		return;

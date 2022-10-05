@@ -44,10 +44,12 @@ static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ASCS_ASE_SRC_CO
 /* clang-format on */
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 
+static struct bt_le_ext_adv *adv_ext;
 /* Advertising data for peer connection */
 static const struct bt_data ad_peer[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME_PEER, DEVICE_NAME_PEER_LEN),
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_ASCS_VAL)),
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_PACS_VAL))
 };
 
 static le_audio_receive_cb receive_cb;
@@ -138,28 +140,31 @@ static void advertising_process(struct k_work *work)
 		adv_param.id = BT_ID_DEFAULT;
 		adv_param.options |= BT_LE_ADV_OPT_DIR_ADDR_RPA;
 
-		ret = bt_le_adv_start(&adv_param, NULL, 0, NULL, 0);
+		ret = bt_le_ext_adv_update_param(adv_ext, &adv_param);
 		if (ret) {
-			LOG_ERR("Directed advertising failed to start");
+			LOG_ERR("Failed to update ext_adv to direct advertising. Err = %d", ret);
 			return;
 		}
 
 		bt_addr_le_to_str(&addr, addr_buf, BT_ADDR_LE_STR_LEN);
-		LOG_INF("Direct advertising to %s started", addr_buf);
+		LOG_INF("Set direct advertising to %s", addr_buf);
 	} else
 #endif /* CONFIG_BT_BONDABLE */
 	{
-		adv_param = *BT_LE_ADV_CONN;
-		adv_param.options |= BT_LE_ADV_OPT_ONE_TIME;
-
-		ret = bt_le_adv_start(&adv_param, ad_peer, ARRAY_SIZE(ad_peer), NULL, 0);
+		ret = bt_le_ext_adv_set_data(adv_ext, ad_peer, ARRAY_SIZE(ad_peer), NULL, 0);
 		if (ret) {
-			LOG_ERR("Advertising failed to start (ret %d)", ret);
+			LOG_ERR("Failed to set advertising data. Err: %d", ret);
 			return;
 		}
-
-		LOG_INF("Regular advertising started");
 	}
+
+	ret = bt_le_ext_adv_start(adv_ext, BT_LE_EXT_ADV_START_DEFAULT);
+	if (ret) {
+		LOG_ERR("Failed to start advertising set. Err: %d", ret);
+		return;
+	}
+
+	LOG_INF("Advertising successfully started");
 }
 
 #if CONFIG_BT_BONDABLE
@@ -483,6 +488,12 @@ static int initialize(le_audio_receive_cb recv_cb)
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 		for (size_t i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 			bt_audio_stream_cb_register(&audio_streams[i], &stream_ops);
+		}
+
+		ret = bt_le_ext_adv_create(BT_LE_EXT_ADV_CONN_NAME, NULL, &adv_ext);
+		if (ret) {
+			LOG_ERR("Failed to create advertising set");
+			return ret;
 		}
 
 		k_work_init(&adv_work, advertising_process);
