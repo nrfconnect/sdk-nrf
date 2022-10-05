@@ -17,7 +17,7 @@ const struct {} sensor_manager_def_include_once;
 
 static struct sm_trigger sensor_trigger = {
 	.cfg = {
-		.type = SENSOR_TRIG_THRESHOLD,
+		.type = SENSOR_TRIG_MOTION,
 		.chan = SENSOR_CHAN_ACCEL_XYZ,
 	},
 	.activation = {
