@@ -30,6 +30,7 @@ Make also sure to check the official `Bluetooth mesh glossary`_.
    ug_bt_mesh_architecture.rst
    ug_bt_mesh_configuring.rst
    ug_bt_mesh_model_config_app.rst
+   ug_bt_mesh_fota.rst
    ug_bt_mesh_node_removal.rst
    ug_bt_mesh_vendor_model.rst
    ug_bt_mesh_reserved_ids.rst

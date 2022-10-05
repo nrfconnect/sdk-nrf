@@ -19,13 +19,14 @@ See one of the following guides for detailed information about the corresponding
 To get started with your nRF52 Series DK, follow the steps in the :ref:`ug_nrf52_gs` section.
 If you are not familiar with the |NCS| and the development environment, see the :ref:`introductory documentation <getting_started>`.
 
+.. _ug_nrf52_developing_ble_fota:
 .. fota_upgrades_start
 
-FOTA upgrades
-*************
+FOTA updates
+************
 
 |fota_upgrades_def|
-You can also use FOTA upgrades to replace the application.
+You can also use FOTA updates to replace the application.
 
 .. note::
    For the possibility of introducing an upgradable bootloader, refer to :ref:`ug_bootloader_adding`.
@@ -33,7 +34,7 @@ You can also use FOTA upgrades to replace the application.
 FOTA over Bluetooth Low Energy
 ==============================
 
-To enable support for FOTA upgrades, do the following:
+To enable support for FOTA updates, do the following:
 
 * Use MCUboot as the upgradable bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
   For more information, go to the :doc:`mcuboot:index-ncs` page.
@@ -45,7 +46,7 @@ To enable support for FOTA upgrades, do the following:
 
   After completing these steps, your application advertises the SMP Service with ``UUID 8D53DC1D-1DB7-4CD3-868B-8A527460AA84``.
 
-To perform a FOTA upgrade, complete the following steps:
+To perform a FOTA update, complete the following steps:
 
 1. Create a binary file that contains the new image.
 
@@ -54,20 +55,18 @@ To perform a FOTA upgrade, complete the following steps:
 #. Download the :file:`app_update.bin` image file to your device.
 
    .. note::
-      When performing FOTA upgrade on a Bluetooth mesh device and the device's composition data is going to change after the upgrade, unprovision the device before downloading the new image.
-
       nRF Connect for Desktop does not currently support the FOTA process.
 
-   Use `nRF Connect Device Manager`_, `nRF Connect for Mobile`_, or `nRF Toolbox`_ to upgrade your device with the new firmware.
+   Use `nRF Connect Device Manager`_, `nRF Connect for Mobile`_, or `nRF Toolbox`_ to update your device with the new firmware.
 
    a. Ensure that you can access the :file:`app_update.bin` image file from your phone or tablet.
    #. Connect to the device with the mobile app.
    #. Initiate the DFU process to transfer the image to the device.
 
-FOTA upgrade sample
-===================
+FOTA update sample
+==================
 
-The :ref:`zephyr:smp_svr_sample` demonstrates how to set up your project to support FOTA upgrades.
+The :ref:`zephyr:smp_svr_sample` demonstrates how to set up your project to support FOTA updates.
 
 The sample documentation is from the Zephyr project and is incompatible with the :ref:`ug_multi_image`.
 When working in the |NCS| environment, ignore the part of the sample documentation that describes the building and programming steps.
@@ -80,15 +79,26 @@ In |NCS|, you can build and program the :ref:`zephyr:smp_svr_sample` as any othe
     west flash
 
 Make sure to indicate the :file:`overlay-bt.conf` overlay configuration for the Bluetooth transport like in the command example.
-This configuration was carefully selected to achieve the maximum possible throughput of the FOTA upgrade transport over Bluetooth with the help of the following features:
+This configuration was carefully selected to achieve the maximum possible throughput of the FOTA update transport over Bluetooth with the help of the following features:
 
 * Bluetooth MTU - To increase the packet size of a single Bluetooth packet transmitted over the air (:kconfig:option:`CONFIG_BT_BUF_ACL_RX_SIZE` and others).
 * Bluetooth connection parameters - To adaptively change the connection interval and latency on the detection of the SMP service activity (:kconfig:option:`CONFIG_MCUMGR_SMP_BT_CONN_PARAM_CONTROL`).
 * MCUmgr packet reassembly - To allow exchange of large SMP packets (:kconfig:option:`CONFIG_MCUMGR_SMP_REASSEMBLY_BT`, :kconfig:option:`CONFIG_MCUMGR_BUF_SIZE` and others).
 
-Consider using these features in your project to speed up the FOTA upgrade process.
+Consider using these features in your project to speed up the FOTA update process.
 
 .. fota_upgrades_end
+
+.. _ug_nrf52_developing_fota_in_mesh:
+.. fota_upgrades_bt_mesh_start
+
+FOTA in Bluetooth mesh
+======================
+
+To perform FOTA update when working with the Bluetooth mesh protocol, use point-to-point Device Firmware Update (DFU) over Bluetooth Low Energy as described in `FOTA over Bluetooth Low Energy`_ above.
+See also :ref:`ug_bt_mesh_fota` for more details about FOTA in Bluetooth mesh.
+
+.. fota_upgrades_bt_mesh_end
 
 .. fota_upgrades_matter_start
 

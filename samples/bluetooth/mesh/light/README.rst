@@ -38,21 +38,20 @@ DFU requirements
 The configuration overlay :file:`overlay-dfu.conf` enables DFU support in the application, and applies for the nRF52 series, including:
 
 * nrf52dk_nrf52832
-
 * nrf52840dk_nrf52840
-
 * nrf52833dk_nrf52833
+* nrf21540dk_nrf52840
 
-While this overlay configuration is only applicable for the nRF52 Series in this sample, DFU over SMP can be utilized on other platforms as well.
+While this overlay configuration is only applicable for the nRF52 Series in this sample, DFU over Bluetooth Low Energy can be utilized on other platforms as well.
 
 .. note::
-   Point-to-point DFU for :ref:`zephyr:thingy53_nrf5340` is supported by default.
+   Point-to-point DFU over Bluetooth Low Energy for :ref:`zephyr:thingy53_nrf5340` is supported by default.
    See :ref:`thingy53_app_update` for more information about updating firmware image on :ref:`zephyr:thingy53_nrf5340`.
 
 The DFU feature also requires a smartphone with Nordic Semiconductor's nRF Device Manager mobile app installed in one of the following versions:
 
-  * `nRF Device Manager mobile app for Android`_
-  * `nRF Device Manager mobile app for iOS`_
+* `nRF Device Manager mobile app for Android`_
+* `nRF Device Manager mobile app for iOS`_
 
 Overview
 ********
@@ -133,7 +132,7 @@ This sample is split into the following source files:
 DFU configuration
 =================
 
-To enable the DFU feature, set :makevar:`OVERLAY_CONFIG` to :file:`overlay-dfu.conf` when building the sample.
+To enable the DFU feature for the supported nRF52 Series development kits, set :makevar:`OVERLAY_CONFIG` to :file:`overlay-dfu.conf` when building the sample.
 For example, when building from the command line, use the following command:
 
   .. code-block:: console
@@ -188,8 +187,8 @@ Make sure to complete the configuration on each of the elements on the node to e
 Running DFU
 ===========
 
-After the sample is built with the :file:`overlay-dfu.conf` and programmed to your development kit, support for FOTA upgrades is enabled.
-See FOTA in Bluetooth mesh (link) for instructions on how to perform FOTA upgrade and initiate the DFU process.
+After the sample is built with the :file:`overlay-dfu.conf` and programmed to your development kit, support for FOTA update is enabled.
+See :ref:`FOTA over Bluetooth Low Energy<ug_nrf52_developing_ble_fota>` for instructions on how to perform FOTA update and initiate the DFU process.
 
 Dependencies
 ************
