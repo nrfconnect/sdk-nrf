@@ -12,6 +12,12 @@
 #include <zephyr/bluetooth/l2cap.h>
 #include <zephyr/bluetooth/gatt.h>
 
+/* Those headers are included to make a workaround of Android issue with sending old RPA address
+ * during Key-based Pairing write.
+ */
+#include "host/hci_core.h"
+#include "common/rpa.h"
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
@@ -286,8 +292,17 @@ static int parse_key_based_pairing_write(const struct bt_conn *conn,
 	}
 
 	if (memcmp(parsed_req->provider_address, &conn_info.le.local->a.val,
-	    sizeof(parsed_req->provider_address))) {
-		return -EINVAL;
+		   sizeof(parsed_req->provider_address))) {
+		/* This is a workaround of Android issue with sending old RPA address during
+		 * Key-based Pairing write. Normally, error value should be returned at this point.
+		 */
+		BUILD_ASSERT(sizeof(bt_addr_t) == sizeof(parsed_req->provider_address));
+		if (!bt_rpa_irk_matches(bt_dev.irk[conn_info.id],
+					(const bt_addr_t *)parsed_req->provider_address)) {
+			return -EINVAL;
+		}
+
+		LOG_DBG("Fallback has been used to verify Key-based Pairing write.");
 	}
 
 	switch (parsed_req->msg_type) {
