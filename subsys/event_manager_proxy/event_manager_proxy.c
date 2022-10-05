@@ -295,10 +295,11 @@ static int send_event_to_remote(struct emp_ipc_data *ipc, const struct app_event
 		if (ret >= 0) {
 			break;
 		}
+		k_usleep(1);
 	}
 
 	if (ret < 0) {
-		LOG_ERR("Cannot send event to remote %p", ipc);
+		LOG_ERR("Cannot send event to remote %p, err: %d", ipc, ret);
 		__ASSERT_NO_MSG(false);
 	}
 
