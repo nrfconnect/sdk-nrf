@@ -527,6 +527,14 @@ See the following instructions.
    :end-before: fota_upgrades_end
 
 .. include:: ug_nrf52_developing.rst
+   :start-after: fota_upgrades_bt_mesh_start
+   :end-before: fota_upgrades_bt_mesh_end
+
+.. note::
+   Point-to-point DFU over Bluetooth Low Energy is supported by default, out-of-the-box, for all samples and applications compatible with :ref:`zephyr:thingy53_nrf5340`.
+   See :ref:`thingy53_app_update` for more information about updating firmware image on :ref:`zephyr:thingy53_nrf5340`.
+
+.. include:: ug_nrf52_developing.rst
    :start-after: fota_upgrades_matter_start
    :end-before: fota_upgrades_matter_end
 

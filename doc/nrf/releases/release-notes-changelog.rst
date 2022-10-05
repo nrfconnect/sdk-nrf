@@ -62,7 +62,10 @@ For details, see :ref:`nrfxlib:softdevice_controller_changelog`.
 Bluetooth mesh
 --------------
 
-|no_changes_yet_note|
+* Added:
+
+  * Documentation page about :ref:`ug_bt_mesh_fota`.
+  * Documentation page about :ref:`ug_bt_mesh_node_removal`.
 
 See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh samples.
 
@@ -846,7 +849,6 @@ Documentation
   * :ref:`app_memory`: Configuration options affecting memory footprint for Bluetooth mesh, that can be used to optimize the application.
   * Documentation for the :ref:`lib_bh1749`.
   * The :ref:`ug_nrf52_gs` page.
-  * :ref:`ug_bt_mesh_node_removal` page in the :ref:`ug_bt_mesh` user guide.
 
 * Updated:
 
@@ -855,5 +857,6 @@ Documentation
   * Split the existing Working with the nRF52 Series information into :ref:`ug_nrf52_features` and :ref:`ug_nrf52_developing`.
   * :ref:`ug_tfm` with improved TF-M logging documentation on getting the secure output on nRF5340 DK.
   * :ref:`nrf_bt_scan_readme`, :ref:`ancs_client_readme`, :ref:`hogp_readme` and :ref:`lib_hrs_client_readme` libraries documentation to improve readability.
+  * Pages :ref:`ug_nrf52_developing` and :ref:`ug_nrf5340` with sections describing FOTA in Bluetooth mesh.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
