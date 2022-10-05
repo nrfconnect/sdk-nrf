@@ -17,8 +17,9 @@ extern "C" {
 
 #define FLOAT_TO_SENSOR_VALUE(float_val)							\
 	{											\
-		.val1 = (int32_t)float_val,							\
-		.val2 = (int32_t)((float_val - (int32_t)float_val) * FLOAT_TO_SENSOR_VAL_CONST),\
+		.val1 = (int32_t)(float_val),							\
+		.val2 = (int32_t)(((float_val) - (int32_t)(float_val)) *			\
+						FLOAT_TO_SENSOR_VAL_CONST),			\
 	}
 
 enum act_type {
