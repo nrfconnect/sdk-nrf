@@ -149,6 +149,17 @@ This system generates the Ninja files that the |NCS| uses.
 
       #. Download the GN binary archive and extract it by using the following commands:
 
+         * For 64-bit ARM (M1 and M2) host architecture:
+
+         .. parsed-literal::
+            :class: highlight
+
+            wget -O gn.zip https:\ //chrome-infra-packages.appspot.com/dl/gn/gn/mac-arm64/+/latest
+            unzip gn.zip
+            rm gn.zip
+
+         * For 64-bit AMD (Intel) host architecture:
+
          .. parsed-literal::
             :class: highlight
 
@@ -490,14 +501,21 @@ It also includes additional host tools, such as custom QEMU and OpenOCD builds.
       #. Download and verify `Zephyr SDK bundle
          <https://github.com/zephyrproject-rtos/sdk-ng/releases>`_:
 
+         * For 64-bit ARM (M1 and M2) host architecture:
+
+         .. code-block:: bash
+
+            cd ~
+            wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.14.1/zephyr-sdk-0.14.1_macos-aarch64.tar.gz
+            wget -O - https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.14.1/sha256.sum | shasum --check --ignore-missing
+
+         * For 64-bit AMD (Intel) host architecture:
+
          .. code-block:: bash
 
             cd ~
             wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.14.1/zephyr-sdk-0.14.1_macos-x86_64.tar.gz
             wget -O - https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.14.1/sha256.sum | shasum --check --ignore-missing
-
-         If your host architecture is 64-bit ARM (Apple Silicon, also known as M1), replace
-         ``x86_64`` with ``aarch64`` in order to download the 64-bit ARM macOS SDK.
 
       #. Extract the Zephyr SDK bundle archive:
 
