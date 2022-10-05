@@ -163,7 +163,7 @@ int nrf_cloud_uninit(void)
 
 		err = k_sem_take(&uninit_disconnect, K_SECONDS(30));
 		if (err == -EAGAIN) {
-			LOG_WRN("Did not receive expected disconnect event during cloud unint");
+			LOG_WRN("Did not receive expected disconnect event during cloud uninit");
 			err = -EISCONN;
 		}
 	}
@@ -472,6 +472,13 @@ static int start_connection_poll()
 
 	atomic_set(&disconnect_requested, 0);
 	k_sem_give(&connection_poll_sem);
+
+	/* Set flag to ensure that subsequent connect
+	 * calls return the proper error value since
+	 * the connection poll thread may not yet be
+	 * awake.
+	 */
+	atomic_set(&connection_poll_active, 1);
 
 	return 0;
 }
