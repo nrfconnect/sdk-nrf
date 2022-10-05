@@ -48,8 +48,10 @@ void audio_system_stop(void);
  *
  * @note  This can be used to adjust the timing of completed frame sampled
  *	  in relation to the connection interval in BLE, to reduce latency
+ *
+ * @return 0 on success, -ECANCELED otherwise
  */
-void audio_system_fifo_rx_block_drop(void);
+int audio_system_fifo_rx_block_drop(void);
 
 /**
  * @brief Initialize the audio_system

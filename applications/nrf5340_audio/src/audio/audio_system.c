@@ -118,8 +118,7 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 			memcpy(pcm_raw_data + (i * BLOCK_SIZE_BYTES), tmp_pcm_raw_data[i],
 			       pcm_block_size);
 
-			ret = data_fifo_block_free(&fifo_rx, &tmp_pcm_raw_data[i]);
-			ERR_CHK(ret);
+			data_fifo_block_free(&fifo_rx, &tmp_pcm_raw_data[i]);
 		}
 
 		if (sw_codec_cfg.encoder.enabled) {
@@ -222,10 +221,8 @@ int audio_decode(void const *const encoded_data, size_t encoded_data_size, bool 
 				/* If there are no more blocks in FIFO, break */
 				break;
 			}
-			ret = data_fifo_block_free(&fifo_tx, &old_data);
-			if (ret) {
-				return ret;
-			}
+
+			data_fifo_block_free(&fifo_tx, &old_data);
 		}
 	}
 
@@ -350,7 +347,7 @@ void audio_system_stop(void)
 	data_fifo_empty(&fifo_tx);
 }
 
-void audio_system_fifo_rx_block_drop(void)
+int audio_system_fifo_rx_block_drop(void)
 {
 	int ret;
 	void *temp;
@@ -359,14 +356,13 @@ void audio_system_fifo_rx_block_drop(void)
 	ret = data_fifo_pointer_last_filled_get(&fifo_rx, &temp, &temp_size, K_NO_WAIT);
 	if (ret) {
 		LOG_WRN("Failed to get last filled block");
+		return -ECANCELED;
 	}
 
-	ret = data_fifo_block_free(&fifo_rx, &temp);
-	if (ret) {
-		LOG_WRN("Failed to free block");
-	}
+	data_fifo_block_free(&fifo_rx, &temp);
 
 	LOG_DBG("Block dropped");
+	return 0;
 }
 
 void audio_system_init(void)
