@@ -111,11 +111,8 @@ int data_fifo_pointer_last_filled_get(struct data_fifo *data_fifo, void **data, 
  *
  * @param data_fifo Pointer to the data_fifo structure.
  * @param data Double pointer to the memory area which is to be freed.
- *
- * @retval 0	Memory block is freed.
- * @retval Return values from k_mem_slab_free.
  */
-int data_fifo_block_free(struct data_fifo *data_fifo, void **data);
+void data_fifo_block_free(struct data_fifo *data_fifo, void **data);
 
 /**
  * @brief See how many alloced and locked blocks are in the system.

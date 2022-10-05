@@ -105,14 +105,12 @@ int data_fifo_pointer_last_filled_get(struct data_fifo *data_fifo, void **data, 
 	return 0;
 }
 
-int data_fifo_block_free(struct data_fifo *data_fifo, void **data)
+void data_fifo_block_free(struct data_fifo *data_fifo, void **data)
 {
 	__ASSERT_NO_MSG(data_fifo != NULL);
 	__ASSERT_NO_MSG(data_fifo->initialized);
 
 	k_mem_slab_free(&data_fifo->mem_slab, data);
-
-	return 0;
 }
 
 int data_fifo_num_used_get(struct data_fifo *data_fifo, uint32_t *alloced_num, uint32_t *locked_num)
@@ -157,11 +155,7 @@ int data_fifo_empty(struct data_fifo *data_fifo)
 			return ret;
 		}
 
-		ret = data_fifo_block_free(data_fifo, &old_data);
-		if (ret) {
-			LOG_ERR("Failed to free FIFO block");
-			return ret;
-		}
+		data_fifo_block_free(data_fifo, &old_data);
 	}
 
 	/* Re-init k_mem_slab to reset the number of alloced slabs */

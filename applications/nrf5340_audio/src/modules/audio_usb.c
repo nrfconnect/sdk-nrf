@@ -98,8 +98,7 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 		ret = data_fifo_pointer_last_filled_get(fifo_rx, &temp, &temp_size, K_NO_WAIT);
 		ERR_CHK(ret);
 
-		ret = data_fifo_block_free(fifo_rx, &temp);
-		ERR_CHK(ret);
+		data_fifo_block_free(fifo_rx, &temp);
 
 		ret = data_fifo_pointer_first_vacant_get(fifo_rx, &data_in, K_NO_WAIT);
 	}

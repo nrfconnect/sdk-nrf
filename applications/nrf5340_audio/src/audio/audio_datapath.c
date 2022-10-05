@@ -647,8 +647,7 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts, uint32_t *r
 		ret = data_fifo_pointer_last_filled_get(ctrl_blk.in.fifo, &data, &size, K_NO_WAIT);
 		ERR_CHK(ret);
 
-		ret = data_fifo_block_free(ctrl_blk.in.fifo, &data);
-		ERR_CHK(ret);
+		data_fifo_block_free(ctrl_blk.in.fifo, &data);
 
 		ret = data_fifo_pointer_first_vacant_get(ctrl_blk.in.fifo, (void **)&rx_buf,
 							 K_NO_WAIT);
@@ -731,6 +730,7 @@ void audio_datapath_pres_delay_us_get(uint32_t *delay_us)
 void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
 {
 	static int32_t count;
+	int ret;
 
 	uint32_t curr_frame_ts = audio_sync_timer_curr_time_get();
 	int diff = curr_frame_ts - sdu_ref_us;
@@ -741,7 +741,12 @@ void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
 
 	if (diff < JUST_IN_TIME_US - JUST_IN_TIME_THRESHOLD_US ||
 	    diff > JUST_IN_TIME_US + JUST_IN_TIME_THRESHOLD_US) {
-		audio_system_fifo_rx_block_drop();
+		ret = audio_system_fifo_rx_block_drop();
+		if (ret) {
+			LOG_WRN("Not able to drop FIFO RX block");
+			return;
+		}
+
 		count = 0;
 	}
 }

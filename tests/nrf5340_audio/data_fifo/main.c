@@ -99,8 +99,7 @@ void test_data_fifo_data_put_get_ok(void)
 
 	internal_test_remaining_elements(&data_fifo, 2, 1, __LINE__);
 
-	ret = data_fifo_block_free(&data_fifo, &data_ptr_read);
-	zassert_equal(ret, 0, "block_free did not return 0");
+	data_fifo_block_free(&data_fifo, &data_ptr_read);
 
 	internal_test_remaining_elements(&data_fifo, 1, 1, __LINE__);
 
@@ -112,8 +111,7 @@ void test_data_fifo_data_put_get_ok(void)
 
 	internal_test_remaining_elements(&data_fifo, 1, 0, __LINE__);
 
-	ret = data_fifo_block_free(&data_fifo, &data_ptr_read);
-	zassert_equal(ret, 0, "block_free did not return 0");
+	data_fifo_block_free(&data_fifo, &data_ptr_read);
 
 	internal_test_remaining_elements(&data_fifo, 0, 0, __LINE__);
 }
@@ -193,13 +191,11 @@ void test_data_fifo_data_put_size_zero(void)
 
 void test_main(void)
 {
-	ztest_test_suite(test_suite_data_fifo,
-		ztest_unit_test(test_data_fifo_init_ok),
-		ztest_unit_test(test_data_fifo_data_put_get_ok),
-		ztest_unit_test(test_data_fifo_data_put_too_many),
-		ztest_unit_test(test_data_fifo_data_put_too_much_data),
-		ztest_unit_test(test_data_fifo_data_put_size_zero)
-	);
+	ztest_test_suite(test_suite_data_fifo, ztest_unit_test(test_data_fifo_init_ok),
+			 ztest_unit_test(test_data_fifo_data_put_get_ok),
+			 ztest_unit_test(test_data_fifo_data_put_too_many),
+			 ztest_unit_test(test_data_fifo_data_put_too_much_data),
+			 ztest_unit_test(test_data_fifo_data_put_size_zero));
 
 	ztest_run_test_suite(test_suite_data_fifo);
 }
