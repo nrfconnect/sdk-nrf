@@ -173,6 +173,7 @@ void shell_bt_nus_enable(struct bt_conn *conn)
 		CONFIG_LOG_MAX_LEVEL : CONFIG_SHELL_BT_NUS_INIT_LOG_LEVEL;
 
 	bt_nus->ctrl_blk->conn = conn;
+	bt_nus->ctrl_blk->tx_busy = 0;
 
 	k_sem_reset(&shell_bt_nus_ready);
 
