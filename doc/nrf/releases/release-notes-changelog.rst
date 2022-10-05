@@ -312,6 +312,7 @@ Other samples
 * :ref:`esb_prx_ptx` sample:
 
   * Removed the FEM support section.
+* Added :ref:`hw_id_sample` sample.
 
 Drivers
 =======
@@ -466,6 +467,7 @@ Other libraries
 
 * Added:
   * :ref:`lib_sfloat` library.
+  * :ref:`lib_hw_id` library to retrieve a unique hardware ID.
 
 Common Application Framework (CAF)
 ----------------------------------

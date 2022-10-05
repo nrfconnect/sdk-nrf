@@ -107,6 +107,7 @@ Kconfig*                                  @tejlmand
 /lib/st25r3911b/                          @grochu
 /lib/supl/                                @rlubos @tokangas
 /lib/date_time/                           @trantanen @tokangas
+/lib/hw_id/                               @maxd-nordic
 /lib/wave_gen/                            @MarekPieta
 /lib/hw_unique_key/                       @oyvindronningstad @Vge0rge
 /lib/identity_key/                        @frkv @Vge0rge
@@ -127,6 +128,7 @@ Kconfig*                                  @tejlmand
 /samples/matter/                          @Damian-Nordic @kkasperczyk-no
 /samples/crypto/                          @frkv @Vge0rge
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
+/samples/hw_id/                           @maxd-nordic
 /samples/edge_impulse/                    @pdunaj
 /samples/esb/                             @lemrey
 /samples/app_event_manager/               @pdunaj @MarekPieta
@@ -216,6 +218,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/date_time/                     @trantanen @tokangas
 /tests/lib/edge_impulse/                  @pdunaj @MarekPieta
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
+/tests/lib/hw_id/                         @maxd-nordic
 /tests/lib/location/                      @trantanen @hiltunent @jhirsi @tokangas
 /tests/lib/lte_lc/                        @jtguggedal @tokangas @simensrostad
 /tests/lib/modem_jwt/                     @SeppoTakalo
