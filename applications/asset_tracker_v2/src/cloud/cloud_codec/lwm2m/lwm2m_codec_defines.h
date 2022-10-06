@@ -21,7 +21,8 @@
 /* Connectivity monitoring object RIDs. */
 #define NETWORK_BEARER_ID		0
 #define AVAIL_NETWORK_BEARER_ID		1
-#define RADIO_SIGNAL_STRENGTH		2
+/* Radio Signal Strength */
+#define RSS				2
 #define IP_ADDRESSES			4
 #define APN				7
 #define CELLID				8

@@ -15,6 +15,7 @@ target_sources_ifdef(CONFIG_CLOUD_CODEC_NRF_CLOUD app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/nrf_cloud/nrf_cloud_codec.c)
 
 target_sources_ifdef(CONFIG_CLOUD_CODEC_LWM2M app
+                     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lwm2m/lwm2m_codec_helpers.c
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lwm2m/lwm2m_codec.c)
 
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cloud_codec_ringbuffer.c)
