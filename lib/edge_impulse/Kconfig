@@ -14,6 +14,7 @@ menuconfig EDGE_IMPULSE
 	depends on !FP16
 	imply FPU
 	imply CBPRINTF_FP_SUPPORT
+	imply LEGACY_INCLUDE_PATH
 	help
 	  Enable Edge Impulse library.
 
