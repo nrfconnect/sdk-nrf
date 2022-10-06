@@ -152,6 +152,35 @@ Before testing, ensure that your device is configured with the project key of yo
 
 |test_sample|
 
+Testing with nRF Memfault mobile applications
+---------------------------------------------
+
+You can use the `nRF Memfault for Android`_ or the `nRF Memfault for iOS`_ applications for testing the :ref:`mds_readme`.
+You can also use them for your custom applications using the Memfault Diagnostic Service.
+
+1. |connect_terminal_ANSI|
+#. Reset your development kit.
+#. Observe that the sample starts.
+#. On your mobile phone with access to the Internet, open the nRF Memfault application.
+#. In the mobile application, tap the :guilabel:`Start` button.
+#. Look for your device running the Memfault Diagnostic Service in the :guilabel:`Discovered devices` list.
+#. Select your device from the list.
+#. Tap :guilabel:`Connect` button to connect with your development kit.
+#. Wait for the application to establish connection with your development kit.
+
+   In the mobile application, observe that Memfault chunks are forwarded from your device to the Memfault Cloud.
+#. Return to the terminal and press Tab to confirm that the Memfault shell is working.
+   The shell commands available are displayed.
+
+   To learn about the Memfault shell commands, issue command ``mflt help``.
+#. Use the buttons to trigger Memfault crashes, traces and metrics collection.
+
+   See :ref:`peripheral_mds_user_interface` for details about button functions.
+#. Explore the Memfault user interface to see the errors and metrics sent from your device.
+#. When you have finished collecting diagnostic data, tap :guilabel:`Disconnect` to the close connection with your development kit.
+
+   As the bond information is preserved, you can tap :guilabel:`Connect` again to immediately reconnect to the device.
+
 Testing with Memfault WebBluetooth Client
 -----------------------------------------
 

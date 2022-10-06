@@ -989,3 +989,6 @@
 .. _`GNU Project Debugger`: https://www.sourceware.org/gdb/
 
 .. _`SIGMA`: https://webee.technion.ac.il/~hugo/sigma-pdf.pdf
+
+.. _`nRF Memfault for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.memfault&hl=en&gl=ES
+.. _`nRF Memfault for iOS`: https://apps.apple.com/no/app/nrf-memfault/id1641119282?platform=iphone

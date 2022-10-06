@@ -191,6 +191,12 @@ Bluetooth samples
   * After the device reaches the maximum number of paired devices (:kconfig:option:`CONFIG_BT_MAX_PAIRED`), the device stops looking for new peers.
     Therefore, the Fast Pair payload is no longer included in the advertising data.
 
+* :ref:`peripheral_mds` sample:
+
+  * Changed:
+
+    * Added a documentation section about testing with the `nRF Memfault for Android`_ and the `nRF Memfault for iOS`_ mobile applications to the documentation.
+
 Bluetooth mesh samples
 ----------------------
 
