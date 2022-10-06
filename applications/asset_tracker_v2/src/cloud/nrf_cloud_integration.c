@@ -8,7 +8,7 @@
 #include <net/nrf_cloud.h>
 #include <zephyr/net/mqtt.h>
 #include <stdio.h>
-#include <nrf_modem_at.h>
+#include <hw_id.h>
 
 #include "cJSON.h"
 #include "json_helpers.h"
@@ -311,19 +311,16 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	};
 
 #if !defined(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM)
-	char imei_buf[20 + sizeof("OK\r\n")];
+	char hw_id_buf[HW_ID_LEN];
 
-	/* Retrieve device IMEI from modem. */
-	err = nrf_modem_at_cmd(imei_buf, sizeof(imei_buf), "AT+CGSN");
+	err = hw_id_get(hw_id_buf, ARRAY_SIZE(hw_id_buf));
+
 	if (err) {
-		LOG_ERR("Not able to retrieve device IMEI from modem");
+		LOG_ERR("Failed to retrieve device ID");
 		return err;
 	}
 
-	/* Set null character at the end of the device IMEI. */
-	imei_buf[IMEI_LEN] = 0;
-
-	strncat(client_id_buf, imei_buf, IMEI_LEN);
+	strncat(client_id_buf, hw_id_buf, IMEI_LEN);
 #else
 	snprintf(client_id_buf, sizeof(client_id_buf), "%s", CONFIG_CLOUD_CLIENT_ID);
 #endif
