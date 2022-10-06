@@ -351,6 +351,11 @@ Libraries for networking
 
     * An unused parameter of the :c:func:`nrf_cloud_connect` function.
 
+* :ref:`lib_lwm2m_client_utils` library:
+
+  * Added support for using X509 certificates.
+
+
 Libraries for NFC
 -----------------
 

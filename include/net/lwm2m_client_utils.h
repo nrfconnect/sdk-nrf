@@ -69,10 +69,46 @@ struct modem_mode_change {
 int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode_change *mmode);
 
 /**
- * @brief Check if we already have client credentials stored
+ * @brief Set security object to PSK mode.
  *
- * @return true If we need bootstrap.
- * @return false If we already have client credentials.
+ * Any pointer can be given as a NULL, which means that data related to this field is set to
+ * zero legth in the engine. Effectively, it causes that relative data is not written into
+ * the modem. This can be used if the given data is already provisioned to the modem.
+ *
+ * @param sec_obj_inst Security object ID to modify.
+ * @param psk Pointer to PSK key, either in HEX or binary format.
+ * @param psk_len Length of data in PSK pointer.
+ * @param psk_is_hex True if PSK points to data in HEX format. False if the data is binary.
+ * @param psk_id PSK key ID in string format.
+ * @return Zero if success, negative error code otherwise.
+ */
+int lwm2m_security_set_psk(uint16_t sec_obj_inst, const void *psk, int psk_len, bool psk_is_hex,
+			   const char *psk_id);
+
+/**
+ * @brief Set security object to certificate mode.
+ *
+ * Any pointer can be given as a NULL, which means that data related to this field is set to
+ * zero legth in the engine. Effectively, it causes that relative data is not written into
+ * the modem. This can be used if the given data is already provisioned to the modem.
+ *
+ * @param sec_obj_inst Security object ID to modify.
+ * @param cert Pointer to certificate.
+ * @param cert_len Certificate length.
+ * @param private_key Pointer to private key.
+ * @param key_len Private key length.
+ * @param ca_chain Pointer to CA certificate or server certificate.
+ * @param ca_len CA chain length.
+ * @return Zero if success, negative error code otherwise.
+ */
+int lwm2m_security_set_certificate(uint16_t sec_obj_inst, const void *cert, int cert_len,
+				   const void *private_key, int key_len, const void *ca_chain,
+				   int ca_len);
+/**
+ * @brief Check if the client credentials are already stored.
+ *
+ * @return true If bootstrap is needed.
+ * @return false If client credentials are already available.
  */
 bool lwm2m_security_needs_bootstrap(void);
 

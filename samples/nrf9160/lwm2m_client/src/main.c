@@ -204,15 +204,12 @@ static int lwm2m_setup(void)
 	lwm2m_app_init_device(imei_buf);
 	lwm2m_init_security(&client, endpoint_name, NULL);
 
-	if (IS_ENABLED(CONFIG_LWM2M_DTLS_SUPPORT) && sizeof(CONFIG_APP_LWM2M_PSK) > 1) {
+	if (sizeof(CONFIG_APP_LWM2M_PSK) > 1) {
 		/* Write hard-coded PSK key to engine */
-		char buf[1 + sizeof(CONFIG_APP_LWM2M_PSK) / 2];
-		size_t len = hex2bin(CONFIG_APP_LWM2M_PSK, sizeof(CONFIG_APP_LWM2M_PSK) - 1, buf,
-				     sizeof(buf));
-
 		/* First security instance is the right one, because in bootstrap mode, */
 		/* it is the bootstrap PSK. In normal mode, it is the server key */
-		lwm2m_engine_set_opaque("0/0/5", buf, len);
+		lwm2m_security_set_psk(0, CONFIG_APP_LWM2M_PSK, sizeof(CONFIG_APP_LWM2M_PSK), true,
+				       endpoint_name);
 	}
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
