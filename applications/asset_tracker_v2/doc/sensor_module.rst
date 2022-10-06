@@ -187,8 +187,6 @@ Dependencies
 This module uses the following |NCS| libraries and drivers:
 
 * :ref:`Generic sensor API <sensor_api>`
-* :ref:`adxl362`
-* :ref:`bme680`
 
 API documentation
 *****************
