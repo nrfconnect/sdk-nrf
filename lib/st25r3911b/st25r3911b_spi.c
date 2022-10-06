@@ -28,9 +28,6 @@ static const struct device *spi_dev = DEVICE_DT_GET(DT_BUS(ST25R3911B_NODE));
 
 #define REG_CNT 0x3F
 
-#define CS_GPIO_PORT DT_SPI_DEV_CS_GPIOS_LABEL(ST25R3911B_NODE)
-#define SPI_BUS DT_LABEL(DT_BUS(ST25R3911B_NODE))
-
 /* Timing defined by spec. */
 #define T_NCS_SCLK 1
 
