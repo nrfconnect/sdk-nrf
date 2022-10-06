@@ -82,16 +82,16 @@ The communication channel uses Zephyr's :ref:`zephyr:uart_api` API. The serial d
        ncs,zigbee-uart = &uart0;
    };
 
-By default, Zephyr's logger uses ``UART_0`` and the NCP sample communicates through the UART serialization using ``UART_1``.
-The DTS overlay file configures ``UART_1`` to be connected to the on-board J-Link instead of ``UART_0``.
-As the result, Zephyr's logger ``UART_0`` is available only through GPIO pins (**P1.00** and **P1.01**).
+By default, Zephyr's logger uses ``uart0`` and the NCP sample communicates through the UART serialization using ``uart1``.
+The DTS overlay file configures ``uart1`` to be connected to the on-board J-Link instead of ``uart0``.
+As the result, Zephyr's logger ``uart0`` is available only through GPIO pins (**P1.00** and **P1.01**).
 
-The ``UART_0`` pins are configured by Devicetree overlay files for each supported development kit in the :file:`boards` directory.
+The ``uart0`` pins are configured by Devicetree overlay files for each supported development kit in the :file:`boards` directory.
 
 Communication through USB
 -------------------------
 
-To change the communication channel from the default UART to nRF USB CDC ACM ``CDC_ACM_0``, use the :file:`prj_usb.conf` configuration file and add the ``-DCONF_FILE='prj_usb.conf'`` flag to the build command.
+To change the communication channel from the default UART to nRF USB CDC ACM ``cdc_acm_uart0``, use the :file:`prj_usb.conf` configuration file and add the ``-DCONF_FILE='prj_usb.conf'`` flag to the build command.
 See :ref:`cmake_options` for instructions on how to add this flag to your build.
 For example, when building from the command line, use the following command:
 
@@ -104,7 +104,7 @@ The USB device VID and PID are configured by the sample's Kconfig file.
 .. note::
    USB is used as the default NCP communication channel when using the nRF52840 Dongle.
 
-When you change the communication channel to nRF USB with :file:`prj_usb.conf` and select any of the :file:`<board>_usb.overlay` files, :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` are printed by default using ``UART_1``.
+When you change the communication channel to nRF USB with :file:`prj_usb.conf` and select any of the :file:`<board>_usb.overlay` files, :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` are printed by default using ``uart1``.
 This is configured in the :file:`prj_usb.conf` file with the following settings:
 
 * :kconfig:option:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - to enable binary format.
@@ -131,19 +131,17 @@ Complete the following steps:
 
    a. Create two entries in the DTS overlay file :file:`<board>_usb.overlay` for the selected board, one for each USB CDC ACM instance.
       See :ref:`zephyr:usb_device_cdc_acm` for more information.
-   #. Extend the ``zephyr_udc0`` node in the DTS overlay file to also configure the second USB CDC ACM instance ``"CDC_ACM_1"``:
+   #. Extend the ``zephyr_udc0`` node in the DTS overlay file to also configure the second USB CDC ACM instance ``"cdc_acm_uart1"``:
 
       .. code-block:: devicetree
 
          &zephyr_udc0 {
             cdc_acm_uart0: cdc_acm_uart0 {
                compatible = "zephyr,cdc-acm-uart";
-               label = "CDC_ACM_0";
             };
 
             cdc_acm_uart1: cdc_acm_uart1 {
                compatible = "zephyr,cdc-acm-uart";
-               label = "CDC_ACM_1";
             };
          };
 
