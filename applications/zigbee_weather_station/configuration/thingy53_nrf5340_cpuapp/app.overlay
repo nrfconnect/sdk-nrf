@@ -13,7 +13,6 @@
 &zephyr_udc0 {
 	cdc_acm_uart0: cdc_acm_uart0 {
 		compatible = "zephyr,cdc-acm-uart";
-		label = "CDC_ACM_0";
 	};
 };
 
@@ -22,7 +21,6 @@
 
 	bme688@76 {
 		compatible = "bosch,bme680";
-		label = "BME688";
 		reg = <0x76>;
 		status = "okay";
 	};

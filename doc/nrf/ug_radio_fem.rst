@@ -328,7 +328,6 @@ To use nRF21540 in SPI or mixed mode, complete the following steps:
 		      compatible = "nordic,nrf21540-fem-spi";
 		      status = "okay";
 		      reg = <0>;
-		      label = "FEM_SPI_IF";
 		      spi-max-frequency = <8000000>;
 	      };
       };

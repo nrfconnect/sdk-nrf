@@ -9,9 +9,6 @@ compatible: "nordic,sensor-sim"
 include: base.yaml
 
 properties:
-    label:
-      required: true
-
     base-temperature:
       type: int
       default: 21

@@ -135,13 +135,11 @@
 	pinctrl-names = "default", "sleep";
 	bme680: bme680@76 {
 		compatible = "bosch,bme680";
-		label = "BME680";
 		reg = <0x76>;
 	};
 
 	bh1749: bh1749@38 {
 		compatible = "rohm,bh1749";
-		label = "BH1749";
 		reg = <0x38>;
 		int-gpios = <&gpio0 27 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 	};
@@ -157,7 +155,6 @@
 	pinctrl-names = "default", "sleep";
 	adxl362: adxl362@0 {
 		compatible = "adi,adxl362";
-		label = "ADXL362";
 		spi-max-frequency = <8000000>;
 		reg = <0>;
 		int1-gpios = <&gpio0 9 0>;
@@ -165,7 +162,6 @@
 
 	adxl372: adxl372@1 {
 		compatible = "adi,adxl372";
-		label = "ADXL372";
 		spi-max-frequency = <8000000>;
 		reg = <1>;
 		int1-gpios = <&gpio0 6 0>;

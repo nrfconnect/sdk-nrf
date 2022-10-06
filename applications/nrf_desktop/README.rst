@@ -1165,7 +1165,6 @@ The following code excerpt is taken from :file:`boards/arm/nrf52840gmouse_nrf528
    		reg = <0>;
    		irq-gpios = <&gpio0 21 0>;
    		spi-max-frequency = <2000000>;
-   		label = "PMW3360";
    	};
    };
 
@@ -1260,7 +1259,6 @@ In the case of nRF52840, this is :file:`zephyr/dts/arm/nordic/nrf52840.dtsi`, wh
            reg = <0x40004000 0x1000>;
            interrupts = <4 1>;
            status = "disabled";
-           label = "SPI_1";
    };
 
 To change the priority of the peripheral's interrupt, override the ``interrupts`` property of the peripheral node by including the following code snippet in the :file:`dts.overlay` or directly in the board DTS:

@@ -64,7 +64,6 @@
 		reg = <0>;
 		irq-gpios = <&gpio0 14 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 		spi-max-frequency = <2000000>;
-		label = "PAW3212";
 	};
 };
 

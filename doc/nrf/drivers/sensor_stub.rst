@@ -21,7 +21,6 @@ You can define instances of the sensor stub on devicetree like this:
 
         sensor_stub: sensor_stub {
                 compatible = "nordic,sensor-stub";
-                label = "SENSOR_STUB";
                 generator = "sensor_stub_gen";
                 status = "okay";
         };

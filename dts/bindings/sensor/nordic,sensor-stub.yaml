@@ -9,9 +9,6 @@ compatible: "nordic,sensor-stub"
 include: base.yaml
 
 properties:
-    label:
-      required: true
-
     generator:
       type: string
       required: true

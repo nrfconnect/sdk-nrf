@@ -7,14 +7,12 @@
  / {
 	sensor_stub: sensor_stub {
 		compatible = "nordic,sensor-stub";
-		label = "SENSOR_STUB";
 		generator = "sensor_stub_gen";
 		status = "okay";
 	};
 
 	sensor_sim: sensor_sim {
 		compatible = "nordic,sensor-sim";
-		label = "SENSOR_SIM";
 		acc-signal = "wave";
 	};
 

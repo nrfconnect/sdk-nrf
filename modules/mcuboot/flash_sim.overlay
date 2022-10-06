@@ -25,7 +25,6 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 			erase-value = <0xff>;
-			label = "nordic_ram_flash_flash_controller";
 
 			/* This node label must match that used in the flash
 			 * simulator.
@@ -33,7 +32,6 @@
 			flash_sim0: flash_sim@0 {
 				status = "okay";
 				compatible = "soc-nv-flash";
-				label = "simulated_flash";
 				erase-block-size = <4096>;
 				write-block-size = <4>;
 				reg = <0x00000000 DT_SIZE_K(256)>;

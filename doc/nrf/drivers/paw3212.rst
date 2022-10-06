@@ -63,7 +63,6 @@ The following code snippet shows an example DTS configuration:
             reg = <0>;
             irq-gpios = <&gpio0 14 0>;
             spi-max-frequency = <2000000>;
-            label = "PAW3212";
         };
   };
 

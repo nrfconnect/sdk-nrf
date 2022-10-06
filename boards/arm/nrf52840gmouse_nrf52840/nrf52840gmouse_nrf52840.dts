@@ -72,7 +72,6 @@
 		reg = <0>;
 		irq-gpios = <&gpio0 21 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 		spi-max-frequency = <2000000>;
-		label = "PMW3360";
 	};
 };
 

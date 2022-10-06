@@ -7,7 +7,6 @@
 / {
 	sensor_sim: sensor-sim {
 		compatible = "nordic,sensor-sim";
-		label = "SENSOR_SIM";
 		acc-signal = "wave";
 	};
 };
@@ -23,7 +22,6 @@
 		compatible = "jedec,spi-nor";
 		reg = <0>;
 		spi-max-frequency = <80000000>;
-		label = "MX25R64";
 		jedec-id = [c2 28 17];
 		size = <67108864>;
 	};
