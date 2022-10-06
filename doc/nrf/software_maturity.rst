@@ -46,8 +46,8 @@ See the following table for more details:
      - Customer issues raised for experimental features on tagged |NCS| releases are handled by technical support on DevZone.
      - Not available.
    * - **Bug fixing**
-     - Reported critical bugs will be resolved in both ``main`` and the latest tagged versions.
-     - Bug fixes and improvements are not guaranteed to be applied.
+     - Reported critical bugs and security fixes will be resolved in both ``main`` and the latest tagged versions.
+     - Bug fixes, security fixes, and improvements are not guaranteed to be applied.
      - Not available.
    * - **Implementation completeness**
      - Complete implementation of the agreed features set.
