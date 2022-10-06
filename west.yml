@@ -177,7 +177,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: f6df50cde654d55bc55ce511daf2a077f2bc68a3
+      revision: d3e00fbd2846c09ff29444bd7cf895d3f4cff9b6
     - name: ant
       repo-path: sdk-ant
       revision: d2d96e4c725f635ff7813313c8727fe007d1e4b5
