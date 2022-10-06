@@ -138,6 +138,8 @@ nRF5340 Audio
 
   * An issue with the figure for :ref:`nrf53_audio_app_overview_architecture_i2s` in the :ref:`nrf53_audio_app` documentation.
     The figure now correctly shows the interaction with the Bluetooth modules.
+  * SMP is not advertising in CIS mode.
+  * MCUMGR command can't receive in BIS mode.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

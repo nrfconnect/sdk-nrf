@@ -144,6 +144,10 @@ endif # TRANSPORT_CIS
 
 if TRANSPORT_BIS # Depends on TRANSPORT_BIS
 
+config BT_BUF_ACL_RX_SIZE
+	int
+	default 502 if (AUDIO_DFU > 0)
+
 # HEADSET
 if AUDIO_DEV = 1
 

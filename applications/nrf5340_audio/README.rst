@@ -854,6 +854,27 @@ To enable the desired FOTA functions:
 
 For the full list of parameters and examples, see the :ref:`nrf53_audio_app_building_script_running` section.
 
+FOTA build files
+----------------
+
+The generated FOTA build files use the following naming patterns:
+
+* For multi-image DFU, the file name refers to ``dfu_application`` and includes *<Role>*, *<Application version>*, and *<Revision>* in the file name (``dev_<Role>_build_<Application version>_dfu_application_<Revision>.zip``, for example :file:`dev_headset_build_debug_dfu_application_0.0.0+0.zip`).
+  This file updates two cores with one single file.
+* For single-image DFU, the bin file for the application core refers in the name to ``app_update`` and includes *<Role>*, *<Application version>*, and *<Revision>* in the file name (``dev_<Role>_build_<Application version>_app_update_<Revision>.bin``, for example :file:`dev_headset_build_debug_app_update_0.0.0+0.bin`).
+  The bin file for the network core refers in the name to ``net_core_app_update`` and includes *<FW_VERSION>* instead of *<Revision>* in the file name (``dev_<Role>_build_<Application version>_net_core_app_update_<FW_VERSION>.bin``, for example :file:`dev_headset_build_debug_net_core_app_update_1.bin`).
+  In this scenario, the cores are updated one by one with two separate files in two actions.
+
+The following variables are possible:
+
+* *<Role>*: either ``headset`` or ``gateway``.
+* *<Application version>*: either ``debug`` or ``release``.
+* *<Revision>* corresponds to the value of the :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` Kconfig option.
+* *<FW_VERSION>* corresponds to the value of the :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` Kconfig option.
+
+.. note::
+   |net_core_hex_note|
+
 Entering the DFU mode
 ---------------------
 
@@ -952,7 +973,7 @@ See the following examples of the parameter usage with the command run from the 
 
 * Example 2: The following command builds the application as in *example 1*, but with the DFU internal flash memory layout enabled and using the minimal size of the network core bootloader:
 
-   .. code-block:: console
+  .. code-block:: console
 
      python buildprog.py -c app -b debug -d both -m internal -M
 
@@ -966,16 +987,18 @@ For example, when running the command above, the script creates the :file:`dev_g
 
 Programming with the script
    The development kits are programmed according to the serial numbers set in the JSON file.
-   If you run the script with the ``-p`` parameter, you can program one or both of the cores after building the files.
    Make sure to connect the development kits to your PC using USB and turn them on using the **POWER** switch before you run the command.
+
+   The following parameters are available for programming:
+
+   * Programming (``-p`` parameter) -- If you run the building script with this parameter, you can program one or both of the cores after building the files.
+   * Sequential programming (``-s`` parameter) -- If you are using Windows Subsystem for Linux (WSL) and encounter problems while programming, include this parameter alongside other parameters to program sequentially.
+
    The command for programming can look as follows:
 
    .. code-block:: console
 
       python buildprog.py -c both -b debug -d both -p
-
-   .. note::
-      If you are using Windows Subsystem for Linux (WSL) and encounter problems while programming, include the ``-s`` parameter to program sequentially.
 
    This command builds the application with the ``debug`` application version for both the headset and the gateway and programs the application core.
    Given the ``-c both`` parameter, it also takes the precompiled Bluetooth Low Energy Controller binary from the :file:`applications/nrf5340_audio/bin` directory and programs it to the network core of both the gateway and the headset.
@@ -987,6 +1010,13 @@ Programming with the script
       .. code-block:: console
 
          python buildprog.py -c both -b debug -d both -p --recover-on-fail
+
+   If you want to program firmware that has DFU enabled, you must include the DFU parameters in the command.
+   The command for programming with DFU enabled can look as follows:
+
+   .. code-block:: console
+
+     python buildprog.py -c both -b debug -d both -m internal -M -p
 
 Getting help
    Run ``python buildprog.py -h`` for information about all available script parameters.
@@ -1071,12 +1101,6 @@ Complete the following steps to build the application:
 
       * For the debug version: No build flag needed.
       * For the release version: ``-DCONF_FILE=prj_release.conf``
-
-   #. (Optional) Choose the DFU flash memory layouts:
-
-      * For internal flash memory DFU: ``-DCONFIG_AUDIO_DFU=1``
-      * For external flash memory DFU: ``-DCONFIG_AUDIO_DFU=2``
-      * For minimal sizes of the network core bootloader: ``-DCONFIG_B0N_MINIMAL=y``
 
 #. Build the application using the standard :ref:`build steps <gs_programming>`.
    For example, if you want to build the firmware for the application core as a headset using the ``release`` application version, you can run the following command:
@@ -1245,15 +1269,16 @@ You can test upgrading the firmware on both cores at the same time on a headset 
 
       python buildprog.py -c both -b debug -d headset --pristine -m external
 
-#. Transfer the generated zip file to your Android or iOS device.
-   The file name should start with :file:`dev_headset_build_debug_dfu_application`.
+#. Transfer the generated file to your Android or iOS device, depending on the DFU scenario.
+   See the `FOTA build files`_ section for information about FOTA file name patterns.
    For transfer, you can use cloud services like Google Drive for Android or iCloud for iOS.
 #. Open `nRF Connect Device Manager`_ and look for ``NRF5340_AUDIO_HL_DFU`` in the scanned devices window.
    The headset is left by default.
 #. Tap on :guilabel:`NRF5340_AUDIO_HL_DFU` and then on the downward arrow icon at the bottom of the screen.
 #. In the :guilabel:`Firmware Upgrade` section, tap :guilabel:`SELECT FILE`.
-#. Select the zip file you transferred to the device.
-#. Tap :guilabel:`START` and then :guilabel:`START` again in the notification to start the DFU process.
+#. Select the file you transferred to the device.
+#. Tap :guilabel:`START` and check :guilabel:`Confirm only` in the notification.
+#. Tap :guilabel:`START` again to start the DFU process.
 #. When the DFU has finished, verify that the new application core and network core firmware works properly.
 
 Adapting application for end products
@@ -1424,6 +1449,6 @@ Legal notices for the nRF5340 Audio DK
       All rights are reserved.
       Reproduction in whole or in part is prohibited without the prior written permission of the copyright holder.
 
-.. |net_core_hex_note| replace:: The network core for both gateway and headsets is programmed with the precompiled Bluetooth Low Energy Controller binary file :file:`ble5-ctr-rpmsg_<XYZ>.hex`, where ``<XYZ>`` corresponds to the controller version, for example :file:`ble5-ctr-rpmsg_3216.hex`.
+.. |net_core_hex_note| replace:: The network core for both gateway and headsets is programmed with the precompiled Bluetooth Low Energy Controller binary file :file:`ble5-ctr-rpmsg_<XYZ>.hex`, where *<XYZ>* corresponds to the controller version, for example :file:`ble5-ctr-rpmsg_3216.hex`.
    This file includes the LE Audio Controller Subsystem for nRF53 and is provided in the :file:`applications/nrf5340_audio/bin` directory.
-   If :ref:`DFU <nrf53_audio_app_configuration_configure_fota>` is enabled, the subsystem's binary file will be :file:`pcft_CPUNET.hex`.
+   If :ref:`DFU <nrf53_audio_app_configuration_configure_fota>` is enabled, the subsystem's binary file will include variables from the naming patterns for FOTA build files (:file:`dev_<Role>_build_<Application version>_ble5-ctr_CPUNET.hex`).
