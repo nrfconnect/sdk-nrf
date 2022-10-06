@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(lwm2m_codec)
+project(lwm2m_codec_helpers)
 
 # Turn off warnings of deprecated declarations
 zephyr_compile_options(-Wno-deprecated-declarations)
@@ -16,7 +16,7 @@ zephyr_compile_options(-Wno-deprecated-declarations)
 zephyr_compile_definitions(UNITY_SUPPORT_64)
 
 # Generate runner for the test
-test_runner_generate(src/lwm2m_codec_test.c)
+test_runner_generate(src/lwm2m_codec_helpers_test.c)
 
 set(ASSET_TRACKER_V2_DIR ../..)
 
@@ -30,10 +30,10 @@ cmock_handle(${NRF_DIR}/include/modem/lte_lc.h lte_lc)
 cmock_handle(${NRF_DIR}/include/date_time.h date_time)
 
 # Add Unit Under Test source files
-target_sources(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/cloud/cloud_codec/lwm2m/lwm2m_codec.c)
+target_sources(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/cloud/cloud_codec/lwm2m/lwm2m_codec_helpers.c)
 
 # Add test source file
-target_sources(app PRIVATE src/lwm2m_codec_test.c)
+target_sources(app PRIVATE src/lwm2m_codec_helpers_test.c)
 
 # Add directories
 target_include_directories(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/cloud/cloud_codec/)
@@ -66,4 +66,5 @@ target_compile_options(app PRIVATE
 	-DCONFIG_LWM2M_ENGINE_MESSAGE_HEADER_SIZE=48
 	-DCONFIG_LWM2M_COAP_BLOCK_SIZE=256
 	-DCONFIG_LWM2M_COAP_MAX_MSG_SIZE=256
+	-DCONFIG_CLOUD_CODEC_LWM2M_THINGY91_SENSORS=y
 )
