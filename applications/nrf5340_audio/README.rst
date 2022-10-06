@@ -100,8 +100,7 @@ Broadcast Isochronous Stream (BIS)
   Use multiple nRF5340 Audio development kits to test BIS having multiple receiving headsets.
 
   .. note::
-     * In the BIS mode, you can use any number of nRF5340 Audio development kits as receivers.
-     * In the current version of the nRF5340 Audio application, the BIS mode offers only monophonic sound reproduction.
+     In the BIS mode, you can use any number of nRF5340 Audio development kits as receivers.
 
 The audio quality for both modes does not change, although the processing time for stereo can be longer.
 
@@ -333,7 +332,7 @@ Key features of the nRF5340 Audio DK
 * Normal operating temperature range 10–40°C.
 
   .. note::
-      The battery supplied with this kit can operate with a max temperature of Max +60°C.
+      The battery supplied with this kit can operate with a max temperature of +60°C.
 
 * When using a power adapter to USB, the power supply adapter must meet USB power supply requirements.
 * Embedded battery charge system.
@@ -1110,7 +1109,7 @@ After building the files for the development kit you want to program, complete t
 
    .. code-block:: console
 
-      nrfjprog --program build/zephyr/zephyr.hex --coprocessor CP_APPLICATION --sectorerase -r
+      nrfjprog --program build/zephyr/zephyr.hex --coprocessor CP_APPLICATION --chiperase -r
 
    In this command, :file:`build/zephyr/zephyr.hex` is the HEX binary file for the application core.
    If a custom build folder is specified, the path to this folder must be used instead of :file:`build/`.
