@@ -30,7 +30,6 @@
 	pinctrl-names = "default", "sleep";
 	esp8266: esp8266 {
 		compatible = "espressif,esp-at";
-		label = "esp8266";
 		status = "okay";
 	};
 };

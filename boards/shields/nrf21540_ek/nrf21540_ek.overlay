@@ -23,7 +23,6 @@ fem_spi: &arduino_spi {
 		compatible = "nordic,nrf21540-fem-spi";
 		status = "okay";
 		reg = <0>;
-		label = "FEM_SPI_IF";
 		spi-max-frequency = <8000000>;
 	};
 };

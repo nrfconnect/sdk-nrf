@@ -19,7 +19,6 @@
 &zephyr_udc0 {
 	cdc_acm_uart0: cdc_acm_uart0 {
 		compatible = "zephyr,cdc-acm-uart";
-		label = "CDC_ACM_0";
 	};
 };
 
@@ -32,7 +31,6 @@ i2c1: &i2c1 {
 	pinctrl-names = "default", "sleep";
 	bme680: bme680@76 {
 		compatible = "bosch,bme680";
-		label = "BME680";
 		reg = <0x76>;
 	};
 };

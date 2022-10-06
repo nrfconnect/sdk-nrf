@@ -13,7 +13,6 @@
 		compatible = "nordic,nrf7002-spi";
 		status = "okay";
 		reg = <0>;
-		label = "NRF7002";
 		spi-max-frequency = <DT_FREQ_M(8)>;
 
 		iovdd-ctrl-gpios = <&arduino_header 6 GPIO_ACTIVE_HIGH>;    /* D0 */

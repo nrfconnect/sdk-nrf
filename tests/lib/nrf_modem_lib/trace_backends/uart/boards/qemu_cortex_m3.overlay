@@ -8,7 +8,6 @@
 			clocks = <&sysclk>;
 			interrupts = <6 1>;
 			status = "okay";
-			label = "UART_1";
 		};
 	};
 };

@@ -74,7 +74,6 @@
 		compatible = "zephyr,sdhc-spi-slot";
 		reg = <0>;
 		status = "okay";
-		label = "SDHC0";
 		mmc {
 			compatible = "zephyr,sdmmc-disk";
 			status = "okay";
@@ -84,7 +83,6 @@
 	};
 	cs47l63: cs47l63@1 {
 		reg = <1>;
-		label = "CS47L63";
 	};
 };
 

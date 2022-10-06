@@ -7,7 +7,6 @@
 	pinctrl-1 = <&spi1_sleep_alt>;
 	pinctrl-names = "default", "sleep";
 	st25r3911b@0 {
-		label = "ST25R3911B";
 		compatible = "st,st25r3911b";
 		reg = <0>;
 		spi-max-frequency = <4000000>;

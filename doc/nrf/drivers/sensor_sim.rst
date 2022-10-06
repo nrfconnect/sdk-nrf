@@ -19,7 +19,6 @@ You can define instances of the sensor simulator on Devicetree like this:
 
         sensor-sim {
                 compatible = "nordic,sensor-sim";
-                label = "SENSOR_SIM";
                 acc-signal = "toggle";
         };
 
