@@ -1185,6 +1185,13 @@ NCSDK-13923: Device may crash during Bluetooth bonding
 
   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``4870fcd8316bd3a4b53ca0054f0ce35e1a8c567d``).
 
+.. rst-class:: v2-1-0
+
+NCSDK-16644: :ref:`nrf_machine_learning_app` does not go to sleep and does not wake up on Thingy:53
+  nRF Machine learning application on Thingy:53 does not sleep after a period of inactivity and does not wake up after an activity occurs.
+
+  **Workaround:** Manually cherry-pick and apply two commits with the fix from the ``main`` branch (commit hashes: ``7381bfcb9c23cd6f78e6ef7fd3ff82b700f81b0f``, ``7e8c23a6632632f0cee885abe955e37a6942911d``).
+
 Pelion
 ======
 
@@ -1234,6 +1241,13 @@ NCSDK-15707: Visual glitches when updating an RGB LED's color in :ref:`caf_leds`
 
   **Workaround:** Make sure your application includes the devicetree overlay file in which PWM period is decreased.
   For example, include the following commit to solve the issue for the :ref:`nrf_machine_learning_app` application for Nordic Thingy:53: ``fa2b57cddbaacf393c77def5d0302e1a45138d21``.
+
+.. rst-class:: v2-1-0
+
+NCSDK-16644: :ref:`caf_sensor_manager` macro incorrectly converts float to sensor value
+  :ref:`caf_sensor_manager` macro :c:macro:`FLOAT_TO_SENSOR_VALUE` may convert float to sensor value incorrectly, because of missing brackets around macro argument.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``7e8c23a6632632f0cee885abe955e37a6942911d``).
 
 Subsystems
 **********
