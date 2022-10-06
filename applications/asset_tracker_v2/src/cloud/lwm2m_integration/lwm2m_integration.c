@@ -12,6 +12,7 @@
 #include <lwm2m_rd_client.h>
 #include <nrf_modem_at.h>
 #include <zephyr/net/socket.h>
+#include <hw_id.h>
 
 #include "cloud/cloud_wrapper.h"
 
@@ -334,16 +335,16 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	};
 
 #if !defined(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM)
-	char imei_buf[20 + sizeof("OK\r\n")];
+	char hw_id_buf[HW_ID_LEN];
 
-	/* Retrieve device IMEI from modem. */
-	err = nrf_modem_at_cmd(imei_buf, sizeof(imei_buf), "AT+CGSN");
+	err = hw_id_get(hw_id_buf, ARRAY_SIZE(hw_id_buf));
+
 	if (err) {
-		LOG_ERR("Not able to retrieve device IMEI from modem");
+		LOG_ERR("Failed to retrieve device ID");
 		return err;
 	}
 
-	strncpy(client_id_buf, imei_buf, sizeof(client_id_buf) - 1);
+	strncpy(client_id_buf, hw_id_buf, sizeof(client_id_buf) - 1);
 
 	/* Explicitly null terminate client_id_buf to be sure that we carry a
 	 * null terminated buffer after strncpy().
