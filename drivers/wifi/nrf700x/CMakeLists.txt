@@ -43,6 +43,7 @@ zephyr_library_sources(
 	zephyr/src/zephyr_fmac_main.c
 	zephyr/src/qspi/src/device.c
 	zephyr/src/qspi/src/rpu_hw_if.c
+	zephyr/src/qspi/src/ficr_prog.c
 )
 
 zephyr_library_sources_ifndef(CONFIG_NRF700X_RADIO_TEST

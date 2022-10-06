@@ -242,6 +242,7 @@ Wi-Fi samples
 -------------
 
 * Added :ref:`wifi_radio_test` sample with the radio test support.
+    * Added subcommands for FICR/OTP programming.
 
 * Added :ref:`wifi_scan_sample` sample that demonstrates how to scan for the access points.
 

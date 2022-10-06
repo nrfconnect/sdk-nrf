@@ -18,4 +18,5 @@ target_include_directories(app PRIVATE
 target_sources(app PRIVATE
 	src/nrf_wifi_radio_test_main.c
 	src/nrf_wifi_radio_test_shell.c
+	src/nrf_wifi_radio_ficr_shell.c
 )
