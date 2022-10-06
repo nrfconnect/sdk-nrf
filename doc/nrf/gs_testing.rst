@@ -127,6 +127,7 @@ Debugging an application
 ************************
 
 To debug an application, set up the debug session as described in `Debugging an application`_ in the |nRFVSC| documentation.
+nRF Debug is the default debugger for |nRFVSC|.
 
 If you use a multi-core SoC, for example from the nRF53 Series, and you only wish to debug the application core firmware, a single debug session is sufficient.
 To debug the firmware running on the network core, you need to set up two separate debug sessions: one for the network core and one for the application core.
@@ -150,13 +151,8 @@ When using an ``_ns`` build target, by default you can only debug firmware in th
 
 To debug firmware running in the secure part, you need to build Trusted Firmware-M with debug symbols enabled and load the symbols during the debugging session.
 To build Trusted Firmware-M with debug symbols, set the :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_RELWITHDEBINFO` Kconfig option.
-To load the Trusted Firmware-M debug symbols in the GDB tool, run the following command and answer ``y`` if prompted by the tool:
 
-.. code-block:: console
-
-   (gdb) add-symbol-file build/tfm/bin/tfm_s.elf
-
-For more information about the GDB tool, see `Debug tools`_.
+nRF Debug in the |nRFVSC| automatically loads the Trusted Firmware-M debug symbols.
 
 Debug configuration
 ===================
@@ -216,10 +212,11 @@ One of such modules is for example Zephyr's :ref:`zephyr:thread_analyzer`.
 Debug tools
 ===========
 
-The main recommended tool for debugging in the |NCS| is the `GNU Project Debugger`_ (GDB tool).
+The main recommended tool for debugging in the |NCS| is `nRF Debug <Debugging an application_>`_ of the |nRFVSC|.
+The tool uses `Microsoft's debug adaptor`_ and integrates custom debugging features specific for the |NCS|.
 
-* When working with the |nRFVSC|, use the GDB tool after adding the required Kconfig options to the :file:`prj.conf` file.
-* If you are working from the command line, you can use west with the GDB tool.
+* When working with the |nRFVSC|, use nRF Debug after adding the required Kconfig options to the :file:`prj.conf` file.
+* If you are working from the command line, you can use west with nRF Debug.
   For details, read the :ref:`Debugging with west debug <zephyr:west-debugging>` section on the :ref:`zephyr:west-build-flash-debug` page in the Zephyr documentation.
 
 A useful tool for debugging the communication over Bluetooth and mesh networking protocols, such as :ref:`ug_thread` or :ref:`ug_zigbee`, is the `nRF Sniffer for 802.15.4`_.
