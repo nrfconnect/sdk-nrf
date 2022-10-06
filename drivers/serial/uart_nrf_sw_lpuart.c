@@ -1001,14 +1001,6 @@ static int api_config_get(const struct device *dev, struct uart_config *cfg)
 	return uart_config_get(data->uart, cfg);
 }
 
-#define GPIO(id) DT_NODELABEL(gpio##id)
-
-#define GET_PORT(pin_prop) \
-	COND_CODE_1(DT_NODE_EXISTS(GPIO(1)), \
-		    ((DT_INST_PROP(0, pin_prop) >= 32) ? \
-			DT_LABEL(GPIO(1)) : DT_LABEL(GPIO(0))), \
-		    (DT_LABEL(GPIO(0))))
-
 #define LPUART_PIN_CFG_INITIALIZER(pin_prop) \
 	{ \
 		.pin = DT_INST_PROP(0, pin_prop) \
