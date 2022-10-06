@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 """
-Sign PCFT BT Controller with B0N
+Sign ble5-ctr-rpmsg BT Controller with B0N
 """
 
 import argparse
@@ -15,11 +15,11 @@ import os
 from pathlib import Path
 import re
 
-PCFT_HEX = 'new_fw_info_pcft.hex'
-FINAL_PCFT_HEX = 'pcft_CPUNET.hex'
-FINAL_PCFT_UPDATE_BIN = 'pcft_net_core_update.bin'
-ORIG_PCFT_PATTERN = r'ble5-ctr-rpmsg_shifted_\d{4}.hex'
-ORIG_PCFT_MIN_PATTERN = r'ble5-ctr-rpmsg_shifted_min_\d{4}.hex'
+BLE5_CTR_HEX = 'new_fw_info_ble5-ctr.hex'
+FINAL_BLE5_CTR_HEX = 'ble5-ctr_CPUNET.hex'
+FINAL_BLE5_CTR_UPDATE_BIN = 'ble5-ctr_net_core_update.bin'
+ORIG_BLE5_CTR_PATTERN = r'ble5-ctr-rpmsg_shifted_\d{4}.hex'
+ORIG_BLE5_CTR_MIN_PATTERN = r'ble5-ctr-rpmsg_shifted_min_\d{4}.hex'
 
 
 ZEPHYR_BASE = os.environ['ZEPHYR_BASE']
@@ -42,8 +42,8 @@ def awklike(field_str, filename):
     return ret
 
 
-def sign(orig_pcft_hex, build_dir):
-    """ A function to combine and sign PCFT"""
+def sign(orig_hex, build_dir):
+    """ A function to combine and sign ble5-ctr-"""
 
     if os.name == 'nt':
         folder_slash = '\\'
@@ -130,7 +130,7 @@ def sign(orig_pcft_hex, build_dir):
     net_core_fw_info_address = f'0x{net_core_fw_info_address:08X}'
 
     # Inject FW_INFO from .config
-    os_cmd = f'python fw_info_data.py  --input {orig_pcft_hex} --output-hex {build_dir}/{PCFT_HEX}\
+    os_cmd = f'python fw_info_data.py  --input {orig_hex} --output-hex {build_dir}/{BLE5_CTR_HEX}\
     --offset {net_core_fw_info_address} --magic-value {firmware_info_magic}\
     --fw-version {fw_info_firmware_version} --fw-valid-val {fw_info_valid_val}'
 
@@ -150,7 +150,7 @@ def sign(orig_pcft_hex, build_dir):
     pm_mcuboot_secondary_size = int(awklike('PM_MCUBOOT_SECONDARY_SIZE=', build_dir +
                                             '/pm.config'), 16)
 
-    os_cmd = f'python {ZEPHYR_BASE}/../nrf/scripts/bootloader/hash.py --in {build_dir}/{PCFT_HEX}\
+    os_cmd = f'python {ZEPHYR_BASE}/../nrf/scripts/bootloader/hash.py --in {build_dir}/{BLE5_CTR_HEX}\
     > {build_dir}/app_firmware.sha256'
 
     ret_val = os.system(os_cmd)
@@ -166,8 +166,8 @@ def sign(orig_pcft_hex, build_dir):
         raise Exception('python error: ' + str(ret_val))
 
     os_cmd = f'python {ZEPHYR_BASE}/../nrf/scripts/bootloader/validation_data.py\
-    --input {build_dir}/{PCFT_HEX} --output-hex {build_dir}/signed_by_b0_pcft.hex\
-    --output-bin {build_dir}/signed_by_b0_pcft.bin --offset 0 --signature\
+    --input {build_dir}/{BLE5_CTR_HEX} --output-hex {build_dir}/signed_by_b0_ble5_ctr.hex\
+    --output-bin {build_dir}/signed_by_b0_ble5_ctr.bin --offset 0 --signature\
     {build_dir}/app_firmware.signature --public-key\
     {build_dir}/hci_rpmsg/zephyr/nrf/subsys/bootloader/generated/public.pem\
     --magic-value {validation_magic_value}'
@@ -179,8 +179,8 @@ def sign(orig_pcft_hex, build_dir):
     # Generate net_core_app_update.bin
     os_cmd = f'python {ZEPHYR_BASE}/../bootloader/mcuboot/scripts/imgtool.py sign --key\
     {mcuboot_rsa_key} --header-size {fw_info_offset} --align 4 --version {image_version}\
-    --pad-header --slot-size {pm_mcuboot_secondary_size}  {build_dir}/signed_by_b0_pcft.bin\
-    {build_dir}/{FINAL_PCFT_UPDATE_BIN}'
+    --pad-header --slot-size {pm_mcuboot_secondary_size}  {build_dir}/signed_by_b0_ble5_ctr.bin\
+    {build_dir}/{FINAL_BLE5_CTR_UPDATE_BIN}'
 
     ret_val = os.system(os_cmd)
     if ret_val:
@@ -199,39 +199,39 @@ def sign(orig_pcft_hex, build_dir):
         raise Exception('python error: ' + str(ret_val))
 
     os_cmd = f'python {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/b0n_container.hex\
-    {build_dir}/{PCFT_HEX} {build_dir}/provision.hex'
+    {build_dir}/{BLE5_CTR_HEX} {build_dir}/provision.hex'
 
     ret_val = os.system(os_cmd)
     if ret_val:
         raise Exception('python error: ' + str(ret_val))
 
-    os_cmd = f'python {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/{FINAL_PCFT_HEX}\
+    os_cmd = f'python {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/{FINAL_BLE5_CTR_HEX}\
     --overlap=replace {build_dir}/hci_rpmsg/b0n/zephyr/zephyr.hex  {build_dir}/b0n_container.hex\
-    {build_dir}/provision.hex {build_dir}/{PCFT_HEX} {build_dir}/signed_by_b0_pcft.hex'
+    {build_dir}/provision.hex {build_dir}/{BLE5_CTR_HEX} {build_dir}/signed_by_b0_ble5_ctr.hex'
 
     ret_val = os.system(os_cmd)
     if ret_val:
         raise Exception('python error: ' + str(ret_val))
 
     # Replace built net_core
-    src_path = f'{build_dir}/{FINAL_PCFT_UPDATE_BIN}'
+    src_path = f'{build_dir}/{FINAL_BLE5_CTR_UPDATE_BIN}'
     dst_path = f'{build_dir}/zephyr/net_core_app_update.bin'
     os.remove(dst_path)
     shutil.copy(src_path, dst_path)
 
-    src_path = f'{build_dir}/{FINAL_PCFT_HEX}'
+    src_path = f'{build_dir}/{FINAL_BLE5_CTR_HEX}'
     dst_path = f'{build_dir}/zephyr/net_core_app_signed.hex'
     os.remove(dst_path)
     shutil.copy(src_path, dst_path)
 
-    # cp $build_dir/${FINAL_PCFT_HEX} ${BASEDIR}/../../bin
-    src_path = f'{build_dir}/{FINAL_PCFT_HEX}'
-    dst_path = f'{BIN_DIR}/{final_file_prefix}{FINAL_PCFT_HEX}'
+    # cp $build_dir/${FINAL_BLE5_CTR_HEX} ${BASEDIR}/../../bin
+    src_path = f'{build_dir}/{FINAL_BLE5_CTR_HEX}'
+    dst_path = f'{BIN_DIR}/{final_file_prefix}{FINAL_BLE5_CTR_HEX}'
     shutil.copy(src_path, dst_path)
 
     # Generate merged_domains.hex
     os_cmd = f'python {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/zephyr/merged_domains.hex\
-    {build_dir}/{FINAL_PCFT_HEX} {build_dir}/zephyr/merged.hex'
+    {build_dir}/{FINAL_BLE5_CTR_HEX} {build_dir}/zephyr/merged.hex'
 
     ret_val = os.system(os_cmd)
     # Generate dfu_application.zip
@@ -292,7 +292,7 @@ def find_hex_name(options):
     # Add files only match pattern filename and 4 digits build number
     pattern_found = sorted([
         file for file in in_path.iterdir()\
-        if re.match(ORIG_PCFT_MIN_PATTERN if options.min_b0n else ORIG_PCFT_PATTERN, file.name)\
+        if re.match(ORIG_BLE5_CTR_MIN_PATTERN if options.min_b0n else ORIG_BLE5_CTR_PATTERN, file.name)\
         is not None
     ])
 

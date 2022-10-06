@@ -149,12 +149,12 @@ def __build_module(build_config, options):
         raise Exception("cmake error: " + str(ret_val))
 
     if options.mcuboot != '':
-        pcft_sign_cmd = f"python {BUILDPROG_FOLDER}/pcft_sign.py -I\
+        ble5_ctr_sign_cmd = f"python {BUILDPROG_FOLDER}/ble5-ctr-rpmsg_sign.py -I\
         {TARGET_CORE_APP_FOLDER}/dfu/bin/ -b {dest_folder}\
         {'-m' if options.min_b0n else ''}"
-        ret_val = os.system(pcft_sign_cmd)
+        ret_val = os.system(ble5_ctr_sign_cmd)
         if ret_val:
-            raise Exception("generate pcft+b0n error: " + str(ret_val))
+            raise Exception("generate ble5-ctr-rpmsg + b0n error: " + str(ret_val))
 
 
 def __find_snr():
@@ -200,10 +200,10 @@ def __populate_hex_paths(dev, options):
                 folder_slash ='/'
             indices = [i for i, c in enumerate(temp_dest_folder) if c == folder_slash]
             final_file_prefix = temp_dest_folder[indices[-2]+1:].replace(folder_slash, '_')+'_'
-            dev.hex_path_net = dest_folder / f"{final_file_prefix}pcft_CPUNET.hex"
+            dev.hex_path_net = dest_folder / f"{final_file_prefix}ble5-ctr_CPUNET.hex"
         else:
             for hex_file in reversed(hex_files_found):
-                if "pcft_CPUNET" in hex_file.name:
+                if "ble5-ctr_CPUNET" in hex_file.name:
                     hex_files_found.remove(hex_file)
             if len(hex_files_found) == 0:
                 raise Exception(
