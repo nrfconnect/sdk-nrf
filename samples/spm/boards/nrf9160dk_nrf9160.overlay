@@ -1,3 +1,7 @@
+&systick {
+	status = "okay";
+};
+
 /* Needed to get NRF_PWMn defined. */
 &pwm1 {
 	status = "okay";

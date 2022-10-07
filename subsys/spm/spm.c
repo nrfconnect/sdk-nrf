@@ -228,6 +228,7 @@ static void spm_config_sram(void)
 
 static bool usel_or_split(uint8_t id)
 {
+	__ASSERT_NO_MSG(id < ARRAY_SIZE(NRF_SPU->PERIPHID));
 	const uint32_t perm = NRF_SPU->PERIPHID[id].PERM;
 
 	/* NRF_GPIOTE1_NS needs special handling as its
