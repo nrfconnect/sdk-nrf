@@ -41,7 +41,7 @@ static bool execute_fallback = true;
 
 /***** Work queue and work item definitions *****/
 
-#define LOCATION_CORE_STACK_SIZE 4096
+#define LOCATION_CORE_STACK_SIZE CONFIG_LOCATION_WORKQUEUE_STACK_SIZE
 #define LOCATION_CORE_PRIORITY  5
 K_THREAD_STACK_DEFINE(location_core_stack, LOCATION_CORE_STACK_SIZE);
 
