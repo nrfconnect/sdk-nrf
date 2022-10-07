@@ -64,19 +64,24 @@ Complete the following steps to prepare for the certification tests:
 
 #. Build the certification image.
 
-   The :ref:`ot_cli_sample` sample is used as a base, modified with the :file:`harness/overlay-cert.conf` and :file:`overlay-multiprotocol.conf` overlay files.
+   Use the :ref:`ot_cli_sample` sample as a base, and apply the :file:`overlay-ci.conf` and :file:`overlay-multiprotocol.conf` overlay files.
+   Also set :kconfig:option:`CONFIG_LOG` to ``n`` and :kconfig:option:`CONFIG_ASSERT` to ``n``.
 
    * If building on the command line, use the following command:
 
      .. code-block::
 
         cd ncs/nrf/samples/openthread/cli/
-        west build -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG="harness/overlay-cert.conf;overlay-multiprotocol.conf" -DCONFIG_OPENTHREAD_LIBRARY=y
+        west build -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG="overlay-ci.conf;overlay-multiprotocol.conf" -DCONFIG_OPENTHREAD_LIBRARY=y -DCONFIG_LOG=n -DCONFIG_ASSERT=n
 
    * If building using Visual Studio Code, you must first `create the application <Creating an application_>`_ using the CLI sample, and then `build the application <Building an application_>`_.
-     Select the :file:`harness/overlay-cert.conf` and :file:`overlay-multiprotocol.conf` overlay files in the :guilabel:`Kconfig fragment` drop-down menu and add ``CONFIG_OPENTHREAD_LIBRARY=y`` to the **Additional CMake arguments** text field.
+     Select the :file:`overlay-ci.conf` and :file:`overlay-multiprotocol.conf` overlay files in the :guilabel:`Kconfig fragment` drop-down menu and add the following lines to the **Additional CMake arguments** text field:
 
-     If the :file:`harness/overlay-cert.conf` overlay file is not visible in the drop-down menu, navigate to :file:`ncs/nrf/samples/openthread/cli/harness/` and copy the :file:`overlay-cert.conf` file to :file:`ncs/nrf/samples/openthread/cli/` and try again.
+     .. code-block::
+
+        CONFIG_OPENTHREAD_LIBRARY=y
+        CONFIG_LOG=n
+        CONFIG_ASSERT=n
 
    .. note::
       The configuration option selects the precompiled OpenThread libraries.
@@ -89,7 +94,7 @@ Complete the following steps to prepare for the certification tests:
 
    a. Copy the provided :file:`ncs/modules/lib/openthread/tools/harness-thci/OpenThread.py` file into :file:`C:\\GRL\\Thread1.1\\Thread_Harness\\THCI\\nRF_Connect_SDK.py`.
 
-   b. Copy the provided :file:`ncs/nrf/samples/openthread/cli/harness/nRF_Connect_SDK.jpg` file into :file:`C:\\GRL\\Thread1.1\\Web\\images\\`.
+   b. Copy an image of your choice to :file:`C:\\GRL\\Thread1.1\\Web\\images\\nRF_Connect_SDK.jpg`.
 
    c. Edit :file:`C:\\GRL\\Thread1.1\\Thread_Harness\\THCI\\nRF_Connect_SDK.py` as follows:
 

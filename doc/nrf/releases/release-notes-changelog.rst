@@ -202,7 +202,11 @@ nRF9160 samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* :ref:`ot_cli_sample` sample:
+
+  * Removed:
+
+    * Thread Certification support files in favor of regular sample overlays.
 
 Matter samples
 --------------
