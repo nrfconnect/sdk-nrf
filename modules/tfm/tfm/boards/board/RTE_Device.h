@@ -10,6 +10,8 @@
 #include <autoconf.h>
 
 /* Configuration settings for Driver_USART0. */
+#if defined(CONFIG_TFM_SECURE_UART0) || DOMAIN_NS == 1U
+
 #define   RTE_USART0                    1
 /* Pin Selection (0xFFFFFFFF means Disconnected) */
 #define   RTE_USART0_TXD_PIN            CONFIG_TFM_UART0_TXD_PIN
@@ -17,18 +19,19 @@
 #define   RTE_USART0_RTS_PIN            CONFIG_TFM_UART0_RTS_PIN
 #define   RTE_USART0_CTS_PIN            CONFIG_TFM_UART0_CTS_PIN
 
+#endif
+
 /* Configuration settings for Driver_USART1. */
-#define   RTE_USART1                    CONFIG_TFM_SECURE_UART1
-/* Pin Selection (0xFFFFFFFF means Disconnected) */
 #if defined(CONFIG_TFM_SECURE_UART1)
+
+#define   RTE_USART1                    1
+/* Pin Selection (0xFFFFFFFF means Disconnected) */
 #define   RTE_USART1_TXD_PIN            CONFIG_TFM_UART1_TXD_PIN
 #define   RTE_USART1_RXD_PIN            CONFIG_TFM_UART1_RXD_PIN
-#else
-#define   RTE_USART1_TXD_PIN            0xFFFFFFFF
-#define   RTE_USART1_RXD_PIN            0xFFFFFFFF
-#endif
 #define   RTE_USART1_RTS_PIN            0xFFFFFFFF
 #define   RTE_USART1_CTS_PIN            0xFFFFFFFF
+
+#endif
 
 /* Configuration settings for Driver_FLASH0. */
 #define   RTE_FLASH0                    1

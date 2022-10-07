@@ -10,10 +10,6 @@ menu "Trusted Execution Non-Secure"
 menu "TF-M UART pins"
 	visible if BUILD_WITH_TFM
 
-config TFM_SECURE_UART1
-	bool
-	select NRF_UARTE1_SECURE
-
 config TFM_UART0_TXD_PIN
 	int "UART0 TXD pin"
 	default 29 if BOARD_NRF9160DK_NRF9160_NS
