@@ -101,12 +101,32 @@ Logging
 TF-M employs two UART interfaces for logging: one for the secure part (MCUboot and TF-M), and one for the non-secure application.
 The logs arrive on different COM ports on the host PC.
 
-.. note::
-   * On the nRF5340 DK v1.0.0, you must connect specific wires on the kit to receive secure logs on the host PC.
-     Specifically, wire the pins **P0.25** and **P0.26** of the **P2** connector respectively to **RxD** and **TxD**  of the **P24** connector.
-     See :ref:`logging_cpunet` on the Working with nRF5340 DK page for more information.
-   * On the nRF5340 DK v2.0.0, there is one fewer COM port than on v1.0.0, so the secure and non-secure UART peripheral must be wired to the same pins.
-     Specifically, wire the pins **P0.25** and **P0.26** to **P0.20** and **P0.22**, respectively.
+
+Virtual COM ports on the nRF5340 DK
+===================================
+
+On the nRF5340 DK v1.0.0, you must connect specific wires on the kit to receive secure logs on the host PC.
+Specifically, wire the pins **P0.25** and **P0.26** of the **P2** connector to **RxD** and **TxD** of the **P24** connector respectively.
+See :ref:`logging_cpunet` on the Working with nRF5340 DK page for more information.
+
+On the nRF5340 DK v2.0.0, there are only two virtual COM ports available.
+By default, one of the ports is used by the non-secure UART0 peripheral from the application and the other by the UART1 peripheral from the network core.
+
+There are several options to get UART output from the secure TF-M:
+
+* Disable the output for the network core and change the pins used by TF-M.
+  The network core will usually have an NCS child image.
+  To configure a child image, see Configuration of the child image section described in :ref:`ug_nrf5340_multi_image`.
+  To configure logging in an NCS image, see :ref:`ug_logging`.
+  To change the pins used by TF-M, the RXD (:kconfig:option:`CONFIG_TFM_UART1_RXD_PIN`) and TXD (:kconfig:option:`CONFIG_TFM_UART1_TXD_PIN`) Kconfig options in the application image can be set to **P1.00** (32) and **P1.01** (33).
+
+* The secure and non-secure UART peripherals can be wired to the same pins.
+  Specifically, physically wire together the pins **P0.25** and **P0.26** to **P0.20** and **P0.22**, respectively.
+
+* If the non-secure application, network core and TF-M outputs are all needed simultaneously, additional UART <-> USB hardware is needed.
+  A second nRF DK can be used if available.
+  Pin **P0.25** needs to be wired to the TXD pin, and **P0.26** to the RXD pin of the external hardware.
+  These pins will provide the secure TF-M output, while the two native COM ports of the DK will be used for the non-secure application and the network core output.
 
 Limitations
 ***********
