@@ -36,6 +36,10 @@ config LOCATION_METHODS_LIST_SIZE
 	help
 	  Maximum number of location methods within location_config structure.
 
+config LOCATION_WORKQUEUE_STACK_SIZE
+	int "Stack size for the library work queue"
+	default 4096
+
 if LOCATION_METHOD_GNSS
 
 config LOCATION_METHOD_GNSS_AGPS_EXTERNAL
