@@ -513,5 +513,6 @@ Documentation
   * :ref:`gs_assistant` steps to reflect the fact that the |nRFVSC| is the default recommended IDE.
   * :ref:`ug_matter_gs_adding_cluster` documentation with new code snippets to align it with the source code of refactored Matter template sample.
   * Split the existing Working with the nRF52 Series information into :ref:`ug_nrf52_features` and :ref:`ug_nrf52_developing`.
+  * :ref:`ug_tfm` with improved TF-M logging documentation on getting the secure output on nRF5340 DK.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
