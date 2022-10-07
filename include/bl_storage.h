@@ -51,13 +51,13 @@ uint32_t num_public_keys_read(void);
 int verify_public_keys(void);
 
 /**
- * @brief Function for reading public key data.
+ * @brief Function for reading public key hashes.
  *
  * @param[in]  key_idx  Index of key.
- * @param[out] p_buf    Pointer to area where key data will be stored.
- * @param[in]  buf_size Size of buffer, in bytes, provided in p_buf.
+ * @param[out] p_buf    Pointer to where the hash will be written.
+ * @param[in]  buf_size Size of p_buf in bytes.
  *
- * @return Number of bytes written to p_buf is successful.
+ * @return Number of successfully written bytes.
  * @retval -EINVAL  Key has been invalidated.
  * @retval -ENOMEM  The provided buffer is too small.
  * @retval -EFAULT  key_idx is too large. There is no key with that index.
