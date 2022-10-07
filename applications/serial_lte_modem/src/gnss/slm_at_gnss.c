@@ -19,8 +19,8 @@
 
 LOG_MODULE_REGISTER(slm_gnss, CONFIG_SLM_LOG_LEVEL);
 
-#define SERVICE_INFO_GPS \
-	"{\"state\":{\"reported\":{\"device\": {\"serviceInfo\":{\"ui\":[\"GPS\"]}}}}}"
+#define SERVICE_INFO_GNSS \
+	"{\"state\":{\"reported\":{\"device\": {\"serviceInfo\":{\"ui\":[\"GNSS\"]}}}}}"
 
 #define LOCATION_REPORT_MS 5000
 
@@ -706,8 +706,8 @@ static void on_cloud_evt_ready(void)
 	if (location_signify) {
 		int err;
 		struct nrf_cloud_tx_data msg = {
-			.data.ptr = SERVICE_INFO_GPS,
-			.data.len = strlen(SERVICE_INFO_GPS),
+			.data.ptr = SERVICE_INFO_GNSS,
+			.data.len = strlen(SERVICE_INFO_GNSS),
 			.topic_type = NRF_CLOUD_TOPIC_STATE,
 			.qos = MQTT_QOS_0_AT_MOST_ONCE
 		};

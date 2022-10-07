@@ -198,7 +198,7 @@ Additionally, :c:func:`nrf_cloud_shadow_device_status_update` can be used to gen
 
 Following are the supported UI types on nRF Cloud:
 
-* ``GPS``
+* ``GNSS``
 * ``FLIP``
 * ``TEMP``
 * ``HUMIDITY``

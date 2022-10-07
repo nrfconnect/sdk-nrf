@@ -331,8 +331,9 @@ static void request_location_card_enable(void)
 static void do_location_card_enable(void)
 {
 	int err;
+
 	struct nrf_cloud_svc_info_ui ui = {
-		.gps = 1
+		.gnss = 1
 	};
 	struct nrf_cloud_svc_info svc_inf = {
 		.fota = NULL,

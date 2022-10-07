@@ -133,6 +133,7 @@ nRF9160: Serial LTE modem
 
   * Removed automatic quit of data mode in GNSS, FTP and HTTP services.
   * Added handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
+  * Service info JSON payload now uses ``GNSS`` instead of ``GPS``.
 
 nRF5340 Audio
 -------------
@@ -525,6 +526,7 @@ Libraries for networking
     * Added events :c:enum:`NRF_CLOUD_EVT_RX_DATA_CELL_POS` and :c:enum:`NRF_CLOUD_EVT_RX_DATA_SHADOW`.
     * The library now processes A-GPS and P-GPS data; it is no longer passed to the application.
     * The status field of :c:enum:`NRF_CLOUD_EVT_ERROR` events uses values from the enumeration :c:enumerator:`nrf_cloud_error_status`.
+    * UI service info and sensor type strings now refer to ``GNSS`` instead of ``GPS``.
 
   * Removed:
 

@@ -67,11 +67,7 @@ static int cmd_cloud_rest_shadow_device_status_update(const struct shell *shell,
 {
 	int err;
 	struct nrf_cloud_svc_info_ui ui_info = {
-#if defined(CONFIG_MOSH_LOCATION)
-		.gps = true, /* Show map on nrf cloud */
-#else
-		.gps = false,
-#endif
+		.gnss = IS_ENABLED(CONFIG_MOSH_LOCATION), /* Show map on nrf cloud */
 	};
 	struct nrf_cloud_svc_info service_info = {
 		.ui = &ui_info

@@ -33,8 +33,8 @@ void send_aggregated_data(struct k_work *work)
 
 	static uint8_t gps_data_buffer[NRF_MODEM_GNSS_NMEA_MAX_LEN];
 
-	static struct nrf_cloud_sensor_data gps_cloud_data = {
-		.type = NRF_CLOUD_SENSOR_GPS,
+	static struct nrf_cloud_sensor_data gnss_cloud_data = {
+		.type = NRF_CLOUD_SENSOR_GNSS,
 		.data.ptr = gps_data_buffer,
 	};
 
@@ -75,11 +75,11 @@ void send_aggregated_data(struct k_work *work)
 
 		case GNSS_POSITION:
 			LOG_INF("[%d] Sending GNSS data", aggregator_element_count_get());
-			gps_cloud_data.data.ptr = &aggregator_data.data[4];
-			gps_cloud_data.data.len = aggregator_data.length;
-			gps_cloud_data.tag =
+			gnss_cloud_data.data.ptr = &aggregator_data.data[4];
+			gnss_cloud_data.data.len = aggregator_data.length;
+			gnss_cloud_data.tag =
 			    *((uint32_t *)&aggregator_data.data[0]);
-			sensor_data_send(&gps_cloud_data);
+			sensor_data_send(&gnss_cloud_data);
 			break;
 
 		default:

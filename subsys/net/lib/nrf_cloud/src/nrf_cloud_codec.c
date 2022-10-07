@@ -32,7 +32,7 @@ static gateway_state_handler_t gateway_state_handler;
 #endif
 
 static const char *const sensor_type_str[] = {
-	[NRF_CLOUD_SENSOR_GPS] = NRF_CLOUD_JSON_APPID_VAL_GPS,
+	[NRF_CLOUD_SENSOR_GNSS] = NRF_CLOUD_JSON_APPID_VAL_GNSS,
 	[NRF_CLOUD_SENSOR_FLIP] = NRF_CLOUD_JSON_APPID_VAL_FLIP,
 	[NRF_CLOUD_SENSOR_BUTTON] = NRF_CLOUD_JSON_APPID_VAL_BTN,
 	[NRF_CLOUD_SENSOR_TEMP] = NRF_CLOUD_JSON_APPID_VAL_TEMP,
@@ -888,9 +888,9 @@ static int nrf_cloud_encode_service_info_ui(const struct nrf_cloud_svc_info_ui *
 				cJSON_CreateString(sensor_type_str[NRF_CLOUD_SENSOR_AIR_PRESS]));
 			++item_cnt;
 		}
-		if (ui->gps) {
+		if (ui->gnss) {
 			cJSON_AddItemToArray(array,
-				cJSON_CreateString(sensor_type_str[NRF_CLOUD_SENSOR_GPS]));
+				cJSON_CreateString(sensor_type_str[NRF_CLOUD_SENSOR_GNSS]));
 			++item_cnt;
 		}
 		if (ui->flip) {
