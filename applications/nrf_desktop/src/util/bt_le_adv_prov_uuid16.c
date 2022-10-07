@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/bluetooth/uuid.h>
 #include <bluetooth/adv_prov.h>
 
 
@@ -18,10 +19,10 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 
 	static const uint8_t data[] = {
 #if CONFIG_DESKTOP_HIDS_ENABLE
-		0x12, 0x18,   /* HID Service */
+		BT_UUID_16_ENCODE(BT_UUID_HIDS_VAL),
 #endif
 #if CONFIG_DESKTOP_BAS_ENABLE
-		0x0f, 0x18,   /* Battery Service */
+		BT_UUID_16_ENCODE(BT_UUID_BAS_VAL),
 #endif
 	};
 
