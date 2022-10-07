@@ -526,6 +526,17 @@ struct nrf_cloud_init_param {
 };
 
 /**
+ * @brief Register an event handler to recieve nrf_cloud events.
+ *
+ * May be called before initialization.
+ * Event handlers registerred this way will never be removed.
+ *
+ * @param listener - The listener to register.
+ * @return int 0 if successful, -ENOENT if too many handlers have been registerred.
+ */
+int nrf_cloud_add_event_handler(nrf_cloud_event_handler_t listener);
+
+/**
  * @brief Initialize the module.
  *
  * @note This API must be called prior to using nRF Cloud

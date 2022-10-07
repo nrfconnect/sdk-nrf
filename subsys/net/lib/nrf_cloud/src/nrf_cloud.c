@@ -17,6 +17,7 @@
 #include "nrf_cloud_mem.h"
 
 #include <zephyr/logging/log.h>
+#include <multi_callback.h>
 
 LOG_MODULE_REGISTER(nrf_cloud, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -33,7 +34,8 @@ static K_SEM_DEFINE(uninit_disconnect, 0, 1);
 /* Handler registered by the application with the module to receive
  * asynchronous events.
  */
-static nrf_cloud_event_handler_t app_event_handler;
+MCB_DEFINE(app_event_handler, nrf_cloud_event_handler_t, 10);
+static int init_listener_slot = -1;
 
 /* Maintains the state with respect to the cloud. */
 static volatile enum nfsm_state current_state = STATE_IDLE;
@@ -48,6 +50,19 @@ static int start_connection_poll();
 enum nfsm_state nfsm_get_current_state(void)
 {
 	return current_state;
+}
+
+int nrf_cloud_add_event_handler(nrf_cloud_event_handler_t listener) {
+	int err = MCB_LISTEN(app_event_handler, listener);
+
+	if (err < 0) {
+		if (err == -ENOENT) {
+			LOG_ERR("Too many nRF Cloud event handlers registerred.");
+		}
+		return err;
+	}
+
+	return 0;
 }
 
 void nfsm_set_current_state_and_notify(enum nfsm_state state,
@@ -70,7 +85,7 @@ void nfsm_set_current_state_and_notify(enum nfsm_state state,
 	}
 
 	if ((app_event_handler != NULL) && (evt != NULL)) {
-		app_event_handler(evt);
+		MCB_CALL(app_event_handler, evt);
 	}
 
 	if (discon_evt && atomic_get(&uninit_in_progress)) {
@@ -93,7 +108,7 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 		return -EACCES;
 	}
 
-	if ((param == NULL) || (param->event_handler == NULL)) {
+	if (param == NULL) {
 		return -EINVAL;
 	}
 
@@ -126,7 +141,16 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 		return err;
 	}
 
-	app_event_handler = param->event_handler;
+	if (param->event_handler != NULL) {
+		int res = MCB_LISTEN(app_event_handler, param->event_handler);
+
+		if (res < 0) {
+			err = res;
+			return err;
+		} else {
+			init_listener_slot = res;
+		}
+	}
 
 	nfsm_set_current_state_and_notify(STATE_INITIALIZED, NULL);
 
@@ -169,7 +193,12 @@ int nrf_cloud_uninit(void)
 	}
 
 	LOG_DBG("Cleaning up nRF Cloud resources");
-	app_event_handler = NULL;
+
+	if (init_listener_slot != -1) {
+		MCB_UNLISTEN_SLOT(app_event_handler, init_listener_slot);
+		init_listener_slot = -1;
+	}
+
 	nct_uninit();
 
 	atomic_set(&uninit_in_progress, 0);
@@ -448,8 +477,8 @@ void nct_send_event(const struct nrf_cloud_evt * const evt)
 {
 	__ASSERT_NO_MSG(evt != NULL);
 
-	if (app_event_handler && evt) {
-		app_event_handler(evt);
+	if (evt) {
+		MCB_CALL(app_event_handler, evt);
 	}
 }
 
