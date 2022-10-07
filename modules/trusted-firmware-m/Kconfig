@@ -26,17 +26,45 @@ config TFM_REGRESSION_NS
 	bool
 	select NRF_TIMER0_SECURE
 
-config TFM_SECURE_UART1
-	bool "TF-M configure UART1 as secure peripheral"
+config TFM_SECURE_UART
+	bool "TF-M configure UART instance as secure peripheral"
 	default y if !TFM_LOG_LEVEL_SILENCE
-	depends on !UART_1_NRF_UARTE
-	depends on !"$(dt_nodelabel_enabled,uart1)"
-	depends on SOC_NRF5340_CPUAPP || SOC_NRF9160
 	help
-	  Configure the UART1 peripheral as secure for TF-M logging.
-	  This makes the UART1 peripheral unavailable to the non-secure
-	  application. When this option is selected the device tree node for
-	  UART1 needs to be disabled for the non-secure application.
+	  Configure the UART instance as a secure peripheral for TF-M logging.
+	  This makes the UART instance unavailable to the non-secure unless
+	  TFM_SECURE_UART_SHARE_INSTANCE is enabled.
+	  When this option is selected the device tree node for
+	  the UART instance needs to be disabled for the non-secure application.
+
+if TFM_SECURE_UART
+
+config TFM_SECURE_UART_SHARE_INSTANCE
+	bool
+	prompt "Share TF-M's UART instance with the non-secure application"
+	depends on !TFM_REGRESSION_S # Secure regressen tests require UART output after boot.
+	help
+	  Configure the UART instance in TF-M to be shared between TF-M secure
+	  firmware and the non-secure application.
+	  When enabled, TF-M's logging will be reduced to logging when booting
+	  up, and when handling a fatal error.
+
+choice TFM_SECURE_UART_INSTANCE
+	prompt "TF-M logging UART instance"
+	default TFM_SECURE_UART1
+
+config TFM_SECURE_UART0
+	bool "TF-M logging will use UART0 instance"
+	select NRF_UARTE0_SECURE
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE0 || HAS_HW_NRF_UARTE0
+
+config TFM_SECURE_UART1
+	bool "TF-M logging will use UART1 instance"
+	select NRF_UARTE1_SECURE
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE1 || HAS_HW_NRF_UARTE1
+
+endchoice
+
+endif # TFM_SECURE_UART
 
 choice TFM_PROFILE_TYPE
 	default TFM_PROFILE_TYPE_MINIMAL
