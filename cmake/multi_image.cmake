@@ -357,6 +357,7 @@ function(add_child_image_from_source)
       NCS_TOOLCHAIN_VERSION
       PM_DOMAINS
       ${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION
+      WEST_PYTHON
       )
 
     foreach(kconfig_target ${EXTRA_KCONFIG_TARGETS})
