@@ -207,8 +207,8 @@ enum nrf_cloud_error {
 
 /** @brief Sensor types supported by the nRF Cloud. */
 enum nrf_cloud_sensor {
-	/** The GPS sensor on the device. */
-	NRF_CLOUD_SENSOR_GPS,
+	/** The GNSS sensor on the device. */
+	NRF_CLOUD_SENSOR_GNSS,
 	/** The FLIP movement sensor on the device. */
 	NRF_CLOUD_SENSOR_FLIP,
 	/** The Button press sensor on the device. */
@@ -402,7 +402,7 @@ struct nrf_cloud_svc_info_fota {
 struct nrf_cloud_svc_info_ui {
 	/** Items with UI support on nRF Cloud */
 	uint8_t temperature:1;
-	uint8_t gps:1; /* Location (map) */
+	uint8_t gnss:1; /* Location (map) */
 	uint8_t flip:1; /* Orientation */
 	uint8_t humidity:1;
 	uint8_t air_pressure:1;

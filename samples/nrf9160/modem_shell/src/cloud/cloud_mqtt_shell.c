@@ -136,11 +136,7 @@ static void nrf_cloud_update_shadow(struct k_work *work)
 {
 	int err;
 	struct nrf_cloud_svc_info_ui ui_info = {
-#if defined(CONFIG_MOSH_LOCATION)
-		.gps = true, /* Show map on nrf cloud */
-#else
-		.gps = false,
-#endif
+		.gnss = IS_ENABLED(CONFIG_MOSH_LOCATION), /* Show map on nrf cloud */
 	};
 	struct nrf_cloud_svc_info service_info = {
 		.ui = &ui_info

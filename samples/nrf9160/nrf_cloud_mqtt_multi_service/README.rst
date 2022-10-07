@@ -230,7 +230,8 @@ While any valid JSON string can be sent as a device message, and accepted and st
 The nRF Cloud portal knows how to interpret these schemas.
 These schemas are described in `nRF Cloud application protocols for long-range devices <nRF Cloud JSON protocol schemas_>`_.
 The device messages constructed in the :file:`src/application.c` file all adhere to the general message schema.
-GNSS and temperature data device messages conform to the ``gps`` and ``temp`` ``deviceToCloud`` schemas respectively.
+
+GNSS and temperature data device messages conform to the ``gnss`` and ``temp`` ``deviceToCloud`` schemas respectively.
 
 .. _nrf_cloud_mqtt_multi_service_configuration:
 
