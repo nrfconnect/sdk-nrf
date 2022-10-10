@@ -1,9 +1,10 @@
 #include <autoconf.h>
 
 emds_storage:
-  placement: {before: [end]}
-  size: CONFIG_PM_PARTITION_SIZE_EMDS_STORAGE
+  placement:
+    before: [end]
 #ifdef CONFIG_BUILD_WITH_TFM
-  align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
+    align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
 #endif
+  size: CONFIG_PM_PARTITION_SIZE_EMDS_STORAGE
   inside: [nonsecure_storage]
