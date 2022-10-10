@@ -554,6 +554,8 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param);
  * @retval 0        If successful.
  * @retval -EBUSY   If a FOTA job is in progress.
  * @retval -EISCONN If the expected disconnect event did not occur.
+ * @retval -ETIME   If CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD is enabled and
+ *                  the connection poll thread did not become inactive.
  * @return A negative value indicates an error.
  */
 int nrf_cloud_uninit(void);
