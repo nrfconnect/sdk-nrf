@@ -1270,6 +1270,7 @@ def test():
         'app': {},
         'e': {'placement': {'after': 'app'}, 'share_size': {'one_of': ['x0', 'app']}},  # app always exists
     }
+    fix_syntactic_sugar(td)
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
@@ -1294,6 +1295,7 @@ def test():
         'e': {'placement': {'after': 'app'}, 'share_size': {'one_of': ['x0', 'app']}},  # app always exists
         'f': {'placement': {'before':  'end'}, 'share_size': 'p_ext'}
     }
+    fix_syntactic_sugar(td)
     s_reqs = td.copy()
     s_reqs['p_ext'] = {'region': 'ext', 'size': 250}
     s, sub_partitions = resolve(td, 'app', s_reqs)
@@ -1573,6 +1575,7 @@ def test():
           'mcuboot_scratch': {'placement': {'after': 'app', 'align': {'start': 0x1000}}, 'size': 0x1e000},
           'mcuboot_storage': {'placement': {'after': 'mcuboot_scratch'}, 'size': 0x4000},
           'provision': {'placement': {'before': 'end', 'align': {'start': 0x1000}}, 'size': 0x1000}}
+    fix_syntactic_sugar(td)
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 0x100000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
@@ -1684,6 +1687,7 @@ def test():
         'b': {'placement': {'before': ['c']}, 'size': 20},
         'k': {'span': []},
         'app': {}}
+    fix_syntactic_sugar(td)
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, {}, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
