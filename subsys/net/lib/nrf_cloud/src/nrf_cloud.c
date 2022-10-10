@@ -168,6 +168,24 @@ int nrf_cloud_uninit(void)
 		}
 	}
 
+#if IS_ENABLED(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD)
+	if (atomic_get(&connection_poll_active)) {
+		uint32_t wait_cnt = 50;
+
+		LOG_DBG("Waiting for connection poll thread to become inactive");
+		while (--wait_cnt && atomic_get(&connection_poll_active)) {
+			k_sleep(K_MSEC(200));
+		}
+
+		if (!wait_cnt) {
+			LOG_WRN("Connection poll thread did not become inactive");
+			if (!err) {
+				err = -ETIME;
+			}
+		}
+	}
+#endif
+
 	LOG_DBG("Cleaning up nRF Cloud resources");
 	app_event_handler = NULL;
 	nct_uninit();
