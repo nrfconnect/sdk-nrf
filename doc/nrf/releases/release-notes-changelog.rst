@@ -388,6 +388,11 @@ Libraries for networking
   * Removed:
 
     * An unused parameter of the :c:func:`nrf_cloud_connect` function.
+    * The unused :c:func:`nrf_cloud_shadow_update` function.
+
+  * Added:
+
+    * Unit tests for the :c:func:`nfsm_set_current_state_and_notify`, :c:func:`nrf_cloud_uninit`, and :c:func:`nrf_cloud_connect` functions.
 
 * :ref:`lib_lwm2m_client_utils` library:
 

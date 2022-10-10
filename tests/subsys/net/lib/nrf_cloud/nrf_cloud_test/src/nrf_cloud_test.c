@@ -7,108 +7,32 @@
 #include <net/nrf_cloud.h>
 #include "nrf_cloud_fakes.h"
 
+/* Flag to indicate if the cloud has been connected */
+static atomic_t cloud_connected_t;
+
 /* Simple event handler needed for the init function to
- * have a success initialization in the test below
+ * have a successful initialization in the test below
  */
 void event_handler(const struct nrf_cloud_evt *const evt)
 {
 	switch (evt->type) {
 	case NRF_CLOUD_EVT_READY:
-		printk("Device is connected and ready");
+		printk("Device is connected and ready\n");
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
-		printk("Device is connected");
+		atomic_set(&cloud_connected_t, 1);
+		printk("Device is connected\n");
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
-		printk("Device is disconnected");
+		atomic_set(&cloud_connected_t, 0);
+		printk("Device is disconnected\n");
 		break;
 	case NRF_CLOUD_EVT_ERROR:
-		printk("Cloud error: %d", evt->status);
+		printk("Cloud error: %d\n", evt->status);
 		break;
 	default:
 		break;
 	}
-}
-
-int fake_nct_init__succeeds(const char *const client_id)
-{
-	return 0;
-}
-
-int fake_nct_init__fails(const char *const cliend_id)
-{
-	return -ENODEV;
-}
-
-int fake_nfsm_init__succeeds(void)
-{
-	return 0;
-}
-
-int fake_nrf_cloud_codec_init__succeeds(void)
-{
-	return 0;
-}
-
-int fake_nrf_cloud_fota_fmfu_dev_set__succeeds(const struct dfu_target_fmfu_fdev *const dev_inf)
-{
-	return 0;
-}
-
-int fake_nrf_cloud_fota_fmfu_dev_set__fails(const struct dfu_target_fmfu_fdev *const dev_inf)
-{
-	return -ENODEV;
-}
-
-int fake_nct_disconnect__succeeds(void)
-{
-	struct nrf_cloud_evt evt = {
-		.type = NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED,
-	};
-
-	nfsm_set_current_state_and_notify(STATE_INITIALIZED, &evt);
-	return 0;
-}
-
-int fake_nct_disconnect__not_actually_disconnect(void)
-{
-	return 0;
-}
-
-int fake_nrf_cloud_fota_uninit__succeeds(void)
-{
-	return 0;
-}
-
-int fake_nrf_cloud_fota_uninit__busy(void)
-{
-	return -EBUSY;
-}
-
-int fake_nct_connect__succeeds(void)
-{
-	nfsm_set_current_state_and_notify(STATE_CONNECTED, NULL);
-	return 0;
-}
-
-int fake_nct_connect__invalid(void)
-{
-	return -EINVAL;
-}
-
-int fake_nct_socket_get_data(void)
-{
-	return 1234;
-}
-
-int fake_nct_keepalive_time_left_get(void)
-{
-	return 1000;
-}
-
-int fake_nct_process__succeeds(void)
-{
-	return 0;
 }
 
 /* This function runs before each test */
@@ -136,7 +60,7 @@ static void run_after(void *fixture)
 	nct_disconnect_fake.custom_fake = fake_nct_disconnect__succeeds;
 
 	/* Uninit to reset the internal state to idle */
-	nrf_cloud_uninit();
+	(void)nrf_cloud_uninit();
 }
 
 ZTEST_SUITE(nrf_cloud_test, NULL, NULL, run_before, run_after, NULL);
@@ -164,7 +88,7 @@ ZTEST(nrf_cloud_test, test_init_not_idle)
 	nct_init_fake.custom_fake = fake_nct_init__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
-	nrf_cloud_init(&params);
+	(void)nrf_cloud_init(&params);
 
 	int ret = nrf_cloud_init(&params);
 
@@ -185,6 +109,8 @@ ZTEST(nrf_cloud_test, test_init_null_params)
 	int ret = nrf_cloud_init(NULL);
 
 	zassert_equal(-EINVAL, ret, "return should be -EINVAL with NULL params");
+	zassert_not_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should not be in the initialized state after init failed");
 }
 
 /* Verify that nrf_cloud_init function will throw an
@@ -204,13 +130,15 @@ ZTEST(nrf_cloud_test, test_init_null_handler)
 	int ret = nrf_cloud_init(&params);
 
 	zassert_equal(-EINVAL, ret, "return should be -EINVAL with NULL event handler");
+	zassert_not_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should not be in the initialized state after init failed");
 }
 
-/* Verify that nrf_cloud_init function succeeds given valid internal
- * state, event handler with full modem FOTA update is DISABLED.
- * Other tests will not need FMFU since it is already tested here.
+/* Verify that nrf_cloud_init function succeeds given
+ * valid parameters. FMFU will not be considered here
+ * since the fmfu device info has not been set.
  */
-ZTEST(nrf_cloud_test, test_init_success_no_fota)
+ZTEST(nrf_cloud_test, test_init_success)
 {
 	struct nrf_cloud_init_param params = {
 		.event_handler = event_handler,
@@ -228,32 +156,8 @@ ZTEST(nrf_cloud_test, test_init_success_no_fota)
 	int ret = nrf_cloud_init(&params);
 
 	zassert_ok(ret, "return should be 0 when init success");
-}
-
-/* Verify that nrf_cloud_init function succeeds given valid internal
- * state, event handler with full modem FOTA update is ENABLED.
- * Other tests will not need FMFU since it is already tested here.
- */
-ZTEST(nrf_cloud_test, test_init_success_with_fota)
-{
-	Z_TEST_SKIP_IFNDEF(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE);
-	struct nrf_cloud_init_param params = {
-		.event_handler = event_handler,
-		.client_id = NULL,
-	};
-
-	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
-		"nrf_cloud lib should be in the idle state (uninitialized) at the start of test");
-
-	/* Expect all fakes to run successfully */
-	nct_init_fake.custom_fake = fake_nct_init__succeeds;
-	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
-	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
-	nrf_cloud_fota_fmfu_dev_set_fake.custom_fake = fake_nrf_cloud_fota_fmfu_dev_set__succeeds;
-
-	int ret = nrf_cloud_init(&params);
-
-	zassert_ok(ret, "return should be 0 when init success");
+	zassert_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the initialized state after initialization");
 }
 
 /* Verify that nrf_cloud_init function will fail
@@ -279,11 +183,13 @@ ZTEST(nrf_cloud_test, test_init_cloud_transport_fail)
 	int ret = nrf_cloud_init(&params);
 
 	zassert_not_equal(0, ret, "return should be non-zero when transport routine init failed");
+	zassert_not_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should not be in the initialized state after init failed");
 }
 
 /* Verify that nrf_cloud_init function will fail
  * when full modem FOTA update fails to initialize.
- * Ignored when full modem FOTA update is disabled
+ * Ignored when full modem FOTA update is disabled.
  */
 ZTEST(nrf_cloud_test, test_init_fota_failed)
 {
@@ -314,12 +220,14 @@ ZTEST(nrf_cloud_test, test_init_fota_failed)
 	int ret = nrf_cloud_init(&params);
 
 	zassert_not_equal(0, ret, "return should be non-zero when FOTA init failed");
+	zassert_not_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should not be in the initialized state after init failed");
 }
 
 /* TEST NFSM_SET_CURRENT_STATE_AND_NOTIFY */
 
 /* Verify that nfsm_set_current_state_and notify
- * wil change to the right state that is provided.
+ * will change to the right state that is provided.
  */
 ZTEST(nrf_cloud_test, test_set_current_state)
 {
@@ -352,7 +260,10 @@ ZTEST(nrf_cloud_test, test_uninit_fota_active)
 	nct_init_fake.custom_fake = fake_nct_init__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
-	nrf_cloud_init(&params);
+	(void)nrf_cloud_init(&params);
+
+	zassert_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the initialized state after initialization");
 
 	/* Expect nrf_cloud_fota_uninit fake returns busy */
 	nrf_cloud_fota_uninit_fake.custom_fake = fake_nrf_cloud_fota_uninit__busy;
@@ -361,10 +272,12 @@ ZTEST(nrf_cloud_test, test_uninit_fota_active)
 	int ret = nrf_cloud_uninit();
 
 	zassert_equal(-EBUSY, ret, "return should be -EBUSY when a FOTA job is active");
+	zassert_not_equal(STATE_IDLE, nfsm_get_current_state(),
+		"nrf_cloud lib should not be in idle state when uninit interrupted with active FOTA");
 }
 
 /* Verify that nrf_cloud_uninit function succeeds
- * with unactive FOTA. Ignored when FOTA is disabled.
+ * with inactive FOTA. Ignored when FOTA is disabled.
  * Other tests will not need FOTA since it is tested.
  */
 ZTEST(nrf_cloud_test, test_uninit_success_fota_unactive)
@@ -382,7 +295,10 @@ ZTEST(nrf_cloud_test, test_uninit_success_fota_unactive)
 	nct_init_fake.custom_fake = fake_nct_init__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
-	nrf_cloud_init(&params);
+	(void)nrf_cloud_init(&params);
+
+	zassert_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the initialized state after initialization");
 
 	/* Expect all fakes return success */
 	nrf_cloud_fota_uninit_fake.custom_fake = fake_nrf_cloud_fota_uninit__succeeds;
@@ -391,6 +307,8 @@ ZTEST(nrf_cloud_test, test_uninit_success_fota_unactive)
 	int ret = nrf_cloud_uninit();
 
 	zassert_equal(0, ret, "return should be 0 when uninit success");
+	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the idle state after uninit");
 }
 
 /* Verify that nrf_cloud_uninit function fails
@@ -400,7 +318,7 @@ ZTEST(nrf_cloud_test, test_uninit_success_fota_unactive)
 ZTEST(nrf_cloud_test, test_uninit_no_disconnect)
 {
 	/* This test is ignored when the connection poll thread is active
-	 * since it will triggered the transport disconnect event and give
+	 * since it will trigger the transport disconnect event and give
 	 * the uninit_disconnect semaphore which fails the test eventually
 	 */
 	Z_TEST_SKIP_IFDEF(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD);
@@ -416,24 +334,39 @@ ZTEST(nrf_cloud_test, test_uninit_no_disconnect)
 	nct_init_fake.custom_fake = fake_nct_init__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
-	nrf_cloud_init(&params);
+	(void)nrf_cloud_init(&params);
+
+	zassert_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the initialized state after initialization");
 
 	/* Connect to the cloud */
 	nct_connect_fake.custom_fake = fake_nct_connect__succeeds;
-	nrf_cloud_connect(NULL);
+	(void)nrf_cloud_connect(NULL);
+
+	/* Wait for the connected event */
+	while(!atomic_get(&cloud_connected_t)) {
+		k_sleep(K_MSEC(200));
+	}
+
+	zassert_equal(STATE_CONNECTED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the connected state after successfully connected");
 
 	/* Uninit without actually disconnect */
 	nct_disconnect_fake.custom_fake = fake_nct_disconnect__not_actually_disconnect;
 
 	int ret = nrf_cloud_uninit();
 
+	zassert_not_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should not be in the initialized state when not disconnected");
 	zassert_equal(-EISCONN, ret, "return should be -EISCONN when cloud is not disconnected");
+	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the idle state after uninit");
 }
 
 /* Verify that nrf_cloud_uninit function
- * suceeds when nrf_cloud is disconnected.
+ * succeeds after nrf_cloud is connected.
  */
-ZTEST(nrf_cloud_test, test_uninit_success)
+ZTEST(nrf_cloud_test, test_uninit_success_after_connected)
 {
 	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
 		"nrf_cloud lib should be in the idle state (uninitialized) at the start of test");
@@ -447,18 +380,124 @@ ZTEST(nrf_cloud_test, test_uninit_success)
 	nct_init_fake.custom_fake = fake_nct_init__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
-	nrf_cloud_init(&params);
+	(void)nrf_cloud_init(&params);
 
-	/* Connect to the cloud */
+	zassert_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the initialized state after initialization");
+
+	/* Connect to the cloud successfully */
 	nct_connect_fake.custom_fake = fake_nct_connect__succeeds;
-	nrf_cloud_connect(NULL);
-
-	/* Uninit with disconnect */
 	nct_disconnect_fake.custom_fake = fake_nct_disconnect__succeeds;
+	/* These fakes are for the poll thread */
+	nct_socket_get_fake.custom_fake = fake_nct_socket_get_data;
+	nct_keepalive_time_left_fake.custom_fake = fake_nct_keepalive_time_left_get;
+	nct_process_fake.custom_fake = fake_nct_process__succeeds;
+	(void)nrf_cloud_connect(NULL);
+
+	/* Wait for the connected event */
+	while(!atomic_get(&cloud_connected_t)) {
+		k_sleep(K_MSEC(200));
+	}
+
+	zassert_equal(STATE_CONNECTED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the connected state after successfully connected");
 
 	int ret = nrf_cloud_uninit();
 
+	/* Wait for the disconnected event */
+	while(atomic_get(&cloud_connected_t)) {
+		k_sleep(K_MSEC(200));
+	}
+
 	zassert_ok(ret, "return should be 0 when uninit success");
+	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the idle state after uninit");
+}
+
+/* Verify that nrf_cloud_uninit function succeeds
+ * after initialized without cloud connection.
+ */
+ZTEST(nrf_cloud_test, test_uninit_success_after_init_no_connection)
+{
+	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the idle state (uninitialized) at the start of test");
+
+	struct nrf_cloud_init_param params = {
+		.event_handler = event_handler,
+		.client_id = NULL,
+	};
+
+	/* Init the cloud successfully */
+	nct_init_fake.custom_fake = fake_nct_init__succeeds;
+	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
+	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
+	(void)nrf_cloud_init(&params);
+
+	zassert_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the initialized state after initialization");
+
+	/* Uninit successfully */
+	int ret = nrf_cloud_uninit();
+
+	zassert_ok(ret, "return should be 0 when uninit success");
+	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the idle state after uninit");
+}
+
+/* Verify that nrf_cloud_uninit function will fail when the
+ * poll thread does not become inactive after 10 seconds.
+ * Ignored if CONNECTION_POLL_THREAD is disabled.
+ */
+ZTEST(nrf_cloud_test, test_uninit_poll_thread_inactive_timer_expired)
+{
+	Z_TEST_SKIP_IFNDEF(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD);
+	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the idle state (uninitialized) at the start of test");
+
+	struct nrf_cloud_init_param params = {
+		.event_handler = event_handler,
+		.client_id = NULL,
+	};
+
+	/* Init the cloud successfully */
+	nct_init_fake.custom_fake = fake_nct_init__succeeds;
+	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
+	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
+	(void)nrf_cloud_init(&params);
+
+	zassert_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the initialized state after initialization");
+
+	/* Connect to the cloud successfully */
+	nct_connect_fake.custom_fake = fake_nct_connect__succeeds;
+	nct_disconnect_fake.custom_fake = fake_nct_disconnect__succeeds;
+	nct_socket_get_fake.custom_fake = fake_nct_socket_get_data;
+	nct_keepalive_time_left_fake.custom_fake = fake_nct_keepalive_time_left_timeout;
+	nct_process_fake.custom_fake = fake_nct_process__succeeds;
+	(void)nrf_cloud_connect(NULL);
+
+	/* Wait for the connected event */
+	while(!atomic_get(&cloud_connected_t)) {
+		k_sleep(K_MSEC(200));
+	}
+
+	zassert_equal(STATE_CONNECTED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the connected state after successfully connected");
+
+	int ret = nrf_cloud_uninit();
+
+	/* Wait for the disconnected event */
+	while(atomic_get(&cloud_connected_t)) {
+		k_sleep(K_MSEC(200));
+	}
+
+	zassert_equal(-ETIME, ret,
+		"return should be -ETIME when poll thread active after timer expired");
+	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the idle state after uninit");
+
+	/* Put the poll thread into inactive for other tests to run correctly */
+	/*TODO*/
 }
 
 /* TEST NRF_CLOUD_CONNECT */
@@ -475,7 +514,7 @@ ZTEST(nrf_cloud_test, test_connect_idle)
 }
 
 /* Verify that nrf_cloud_connect function will
- * fail when connect to cloud with invalid key.
+ * fail when connecting to cloud with invalid key.
  * Ignored when CONNECTION_POLL_THREAD enabled.
  */
 ZTEST(nrf_cloud_test, test_connect_invalid_private_key_no_connection_poll)
@@ -493,7 +532,7 @@ ZTEST(nrf_cloud_test, test_connect_invalid_private_key_no_connection_poll)
 	nct_init_fake.custom_fake = fake_nct_init__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
-	nrf_cloud_init(&params);
+	(void)nrf_cloud_init(&params);
 
 	/* Connect to cloud with invalid private key */
 	nct_connect_fake.custom_fake = fake_nct_connect__invalid;
@@ -503,6 +542,8 @@ ZTEST(nrf_cloud_test, test_connect_invalid_private_key_no_connection_poll)
 	/* Verify failed with invalid key provided */
 	zassert_equal(NRF_CLOUD_CONNECT_RES_ERR_PRV_KEY, ret,
 		"return should be RES_ERR_PRV_KEY with invalid private key provided");
+	zassert_not_equal(STATE_CONNECTED, nfsm_get_current_state(),
+		"nrf_cloud lib should not be in the connected state after connecting failed");
 }
 
 /* Verify that nrf_cloud_connect function will
@@ -523,11 +564,21 @@ ZTEST(nrf_cloud_test, test_connect_already_connected_no_connection_poll)
 	nct_init_fake.custom_fake = fake_nct_init__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
-	nrf_cloud_init(&params);
+	(void)nrf_cloud_init(&params);
+	zassert_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the initialized state after successfully init");
 
 	/* Connect to cloud */
 	nct_connect_fake.custom_fake = fake_nct_connect__succeeds;
-	nrf_cloud_connect(NULL);
+	(void)nrf_cloud_connect(NULL);
+
+	/* Wait for the connected event */
+	while(!atomic_get(&cloud_connected_t)) {
+		k_sleep(K_MSEC(200));
+	}
+
+	zassert_equal(STATE_CONNECTED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the connected state after successfully connected");
 
 	int ret = nrf_cloud_connect(NULL);
 
@@ -555,15 +606,24 @@ ZTEST(nrf_cloud_test, test_connect_success_no_connection_poll)
 	nct_init_fake.custom_fake = fake_nct_init__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
-	nrf_cloud_init(&params);
+	(void)nrf_cloud_init(&params);
+	zassert_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the initialized state after successfully init");
 
 	/* Connect to cloud */
 	nct_connect_fake.custom_fake = fake_nct_connect__succeeds;
 
 	int ret = nrf_cloud_connect(NULL);
 
+	/* Wait for the connected event */
+	while(!atomic_get(&cloud_connected_t)) {
+		k_sleep(K_MSEC(200));
+	}
+
 	/* Verify successfully connected */
 	zassert_ok(ret, "return should be 0 when cloud is connected successfully");
+	zassert_equal(STATE_CONNECTED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the connected state after successfully connected");
 }
 
 /* Verify that nrf_cloud_connect function will succeed given
@@ -585,19 +645,28 @@ ZTEST(nrf_cloud_test, test_connect_success_with_connection_poll)
 	nct_init_fake.custom_fake = fake_nct_init__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
-	nrf_cloud_init(&params);
+	(void)nrf_cloud_init(&params);
+	zassert_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the initialized state after successfully init");
 
 	/* Expect all fakes return success */
 	nct_connect_fake.custom_fake = fake_nct_connect__succeeds;
-	nct_disconnect_fake.custom_fake = fake_nct_connect__succeeds;
+	nct_disconnect_fake.custom_fake = fake_nct_disconnect__succeeds;
 	nct_socket_get_fake.custom_fake = fake_nct_socket_get_data;
 	nct_keepalive_time_left_fake.custom_fake = fake_nct_keepalive_time_left_get;
 	nct_process_fake.custom_fake = fake_nct_process__succeeds;
 
 	int ret = nrf_cloud_connect(NULL);
 
+	/* Wait for the connected event */
+	while(!atomic_get(&cloud_connected_t)) {
+		k_sleep(K_MSEC(200));
+	}
+
 	/* Verify successfully connected */
 	zassert_ok(ret, "return should be 0 when cloud is connected successfully");
+	zassert_equal(STATE_CONNECTED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the connected state after successfully connected");
 }
 
 /* Verify that nrf_cloud_connect function will fail when
@@ -619,15 +688,25 @@ ZTEST(nrf_cloud_test, test_connect_connection_poll_already_active)
 	nct_init_fake.custom_fake = fake_nct_init__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
-	nrf_cloud_init(&params);
+	(void)nrf_cloud_init(&params);
+	zassert_equal(STATE_INITIALIZED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the initialized state after successfully init");
 
 	/* Connect the cloud once */
 	nct_connect_fake.custom_fake = fake_nct_connect__succeeds;
-	nct_disconnect_fake.custom_fake = fake_nct_connect__succeeds;
+	nct_disconnect_fake.custom_fake = fake_nct_disconnect__succeeds;
 	nct_socket_get_fake.custom_fake = fake_nct_socket_get_data;
 	nct_keepalive_time_left_fake.custom_fake = fake_nct_keepalive_time_left_get;
 	nct_process_fake.custom_fake = fake_nct_process__succeeds;
-	nrf_cloud_connect(NULL);
+	(void)nrf_cloud_connect(NULL);
+
+	/* Wait for the connected event */
+	while(!atomic_get(&cloud_connected_t)) {
+		k_sleep(K_MSEC(200));
+	}
+
+	zassert_equal(STATE_CONNECTED, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the connected state after successfully connected");
 
 	/* Try connecting again */
 	int ret = nrf_cloud_connect(NULL);
@@ -638,8 +717,6 @@ ZTEST(nrf_cloud_test, test_connect_connection_poll_already_active)
 }
 
 /* TEST NRF_CLOUD_DISCONNECT */
-
-/* TEST NRF_CLOUD_SHADOW_UPDATE */
 
 /* TEST NRF_CLOUD_SHADOW_DEVICE_STATUS_UPDATE */
 

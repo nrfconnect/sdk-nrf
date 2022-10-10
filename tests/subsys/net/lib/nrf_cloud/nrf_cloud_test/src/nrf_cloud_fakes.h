@@ -28,4 +28,94 @@ FAKE_VALUE_FUNC(int, nct_socket_get);
 FAKE_VALUE_FUNC(int, nct_keepalive_time_left);
 FAKE_VALUE_FUNC(int, nct_process);
 
+int fake_nct_init__succeeds(const char *const client_id)
+{
+	return 0;
+}
+
+int fake_nct_init__fails(const char *const cliend_id)
+{
+	return -ENODEV;
+}
+
+int fake_nfsm_init__succeeds(void)
+{
+	return 0;
+}
+
+int fake_nrf_cloud_codec_init__succeeds(void)
+{
+	return 0;
+}
+
+int fake_nrf_cloud_fota_fmfu_dev_set__succeeds(const struct dfu_target_fmfu_fdev *const dev_inf)
+{
+	return 0;
+}
+
+int fake_nrf_cloud_fota_fmfu_dev_set__fails(const struct dfu_target_fmfu_fdev *const dev_inf)
+{
+	return -ENODEV;
+}
+
+int fake_nct_disconnect__succeeds(void)
+{
+	struct nrf_cloud_evt evt = {
+		.type = NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED,
+	};
+
+	nfsm_set_current_state_and_notify(STATE_INITIALIZED, &evt);
+	return 0;
+}
+
+int fake_nct_disconnect__not_actually_disconnect(void)
+{
+	return 0;
+}
+
+int fake_nrf_cloud_fota_uninit__succeeds(void)
+{
+	return 0;
+}
+
+int fake_nrf_cloud_fota_uninit__busy(void)
+{
+	return -EBUSY;
+}
+
+int fake_nct_connect__succeeds(void)
+{
+	struct nrf_cloud_evt evt = {
+		.type = NRF_CLOUD_EVT_TRANSPORT_CONNECTED,
+	};
+
+	nfsm_set_current_state_and_notify(STATE_CONNECTED, &evt);
+	return 0;
+}
+
+int fake_nct_connect__invalid(void)
+{
+	return -EINVAL;
+}
+
+int fake_nct_socket_get_data(void)
+{
+	return 1234;
+}
+
+int fake_nct_keepalive_time_left_get(void)
+{
+	return 1000;
+}
+
+int fake_nct_keepalive_time_left_timeout(void)
+{
+	return -1;
+}
+
+int fake_nct_process__succeeds(void)
+{
+	return 0;
+}
+
 #endif /* NRF_CLOUD_FAKES_H__ */
