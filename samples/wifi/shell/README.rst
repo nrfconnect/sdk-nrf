@@ -34,6 +34,7 @@ Currently, the following configurations are supported:
 
 * 7002 DK + QSPI
 * 7002 EK + SPIM
+* 9160 DK + SPIM
 
 
 To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
@@ -45,6 +46,11 @@ To build for the nRF7002 EK, use the ``nrf7002dk_nrf5340_cpuapp`` build target w
 The following is an example of the CLI command::
 
    west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002_ek
+
+To build for the nRF9160 DK, use the ``nrf9160dk_nrf9160_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002_ek`` and scan-only overlay configuration.
+The following is an example of the CLI command::
+
+   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-scan-only.conf -DSHIELD=nrf7002_ek
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
