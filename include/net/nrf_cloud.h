@@ -570,11 +570,9 @@ int nrf_cloud_uninit(void);
  * If it is received before @ref NRF_CLOUD_EVT_TRANSPORT_CONNECTED,
  * the application may repeat the call to @ref nrf_cloud_connect to try again.
  *
- * @param[in] param Parameters to be used for the connection.
- *
  * @retval Connect result defined by enum nrf_cloud_connect_result.
  */
-int nrf_cloud_connect(const struct nrf_cloud_connect_param *param);
+int nrf_cloud_connect(void);
 
 /**
  * @brief Send sensor data reliably.

@@ -52,7 +52,7 @@ static int cloud_shell_print_usage(const struct shell *shell, size_t argc, char 
 
 static void cloud_reconnect_work_fn(struct k_work *work)
 {
-	int err = nrf_cloud_connect(NULL);
+	int err = nrf_cloud_connect();
 
 	if (err == NRF_CLOUD_CONNECT_RES_SUCCESS) {
 		mosh_print("Connecting to nRF Cloud...");

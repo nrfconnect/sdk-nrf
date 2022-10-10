@@ -614,7 +614,7 @@ static int connect_cloud(void)
 		LOG_INF("Next connection retry in %d seconds",
 			CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS);
 
-		err = nrf_cloud_connect(NULL);
+		err = nrf_cloud_connect();
 		if (err) {
 			LOG_ERR("cloud_connect, error: %d", err);
 		}

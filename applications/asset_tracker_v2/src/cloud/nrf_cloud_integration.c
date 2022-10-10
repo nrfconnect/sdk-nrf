@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #include <zephyr/kernel.h>
 #include <net/nrf_cloud.h>
 #include <zephyr/net/mqtt.h>
@@ -348,7 +354,7 @@ int cloud_wrap_connect(void)
 {
 	int err;
 
-	err = nrf_cloud_connect(NULL);
+	err = nrf_cloud_connect();
 	if (err) {
 		LOG_ERR("nrf_cloud_connect, error: %d", err);
 		return err;

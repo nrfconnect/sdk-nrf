@@ -344,6 +344,10 @@ Libraries for networking
 
     * The stack size of the MQTT connection monitoring thread can now be adjusted by setting the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE` Kconfig option.
 
+  * Removed:
+
+    * An unused parameter of the :c:func:`nrf_cloud_connect` function.
+
 Libraries for NFC
 -----------------
 
