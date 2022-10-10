@@ -42,7 +42,7 @@ static K_MUTEX_DEFINE(state_mutex);
 #if IS_ENABLED(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD)
 static K_SEM_DEFINE(connection_poll_sem, 0, 1);
 static atomic_t connection_poll_active;
-static int start_connection_poll();
+static int start_connection_poll(void);
 #endif
 
 enum nfsm_state nfsm_get_current_state(void)
@@ -459,7 +459,7 @@ int nrf_cloud_process(void)
 }
 
 #if IS_ENABLED(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD)
-static int start_connection_poll()
+static int start_connection_poll(void)
 {
 	if (current_state == STATE_IDLE) {
 		return -EACCES;

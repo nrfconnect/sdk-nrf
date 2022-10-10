@@ -535,7 +535,7 @@ struct nrf_cloud_init_param {
  *
  * @retval 0       If successful.
  * @retval -EACCES Already initialized or @ref nrf_cloud_uninit is in progress.
- *                 Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_init(const struct nrf_cloud_init_param *param);
 
@@ -551,15 +551,18 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param);
  *  function. See @ref nrf_cloud_disconnect for a way to reset the nRF Cloud connection state
  *  without uninitializing the whole library.
  *
- * @retval 0      If successful.
- * @retval -EBUSY If a FOTA job is in progress.
- *                Otherwise, a (negative) error code is returned.
+ * @retval 0        If successful.
+ * @retval -EBUSY   If a FOTA job is in progress.
+ * @retval -EISCONN If the expected disconnect event did not occur.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_uninit(void);
 
 /**
  * @brief Connect to the cloud.
  *
+ * The @ref NRF_CLOUD_EVT_TRANSPORT_CONNECTED event indicates
+ * that the cloud connection has been established.
  * In any stage of connecting to the cloud, an @ref NRF_CLOUD_EVT_ERROR
  * might be received.
  * If it is received before @ref NRF_CLOUD_EVT_TRANSPORT_CONNECTED,
@@ -585,7 +588,7 @@ int nrf_cloud_connect(const struct nrf_cloud_connect_param *param);
  *
  * @retval 0       If successful.
  * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
- *                 Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_sensor_data_send(const struct nrf_cloud_sensor_data *param);
 
@@ -597,7 +600,7 @@ int nrf_cloud_sensor_data_send(const struct nrf_cloud_sensor_data *param);
  *
  * @retval 0       If successful.
  * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
- *                 Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param);
 
@@ -608,7 +611,7 @@ int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param);
  *
  * @retval 0       If successful.
  * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
- *                 Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_shadow_device_status_update(const struct nrf_cloud_device_status * const dev_status);
 
@@ -622,7 +625,7 @@ int nrf_cloud_shadow_device_status_update(const struct nrf_cloud_device_status *
  *
  * @retval 0       If successful.
  * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
- *                 Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param);
 
@@ -636,7 +639,7 @@ int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param);
  *
  * @retval 0       If successful.
  * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
- *                 Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_send(const struct nrf_cloud_tx_data *msg);
 
@@ -645,13 +648,13 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg);
  *
  * This API may be called any time after receiving the
  * @ref NRF_CLOUD_EVT_TRANSPORT_CONNECTED event.
- * If the API succeeds, you can expect the
- * @ref NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED event.
+ * The @ref NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED event indicates
+ * that the disconnect has completed successfully.
  *
  * @retval 0       If successful.
  * @retval -EACCES Cloud connection is not established; wait for
  *                 @ref NRF_CLOUD_EVT_TRANSPORT_CONNECTED.
- *                 Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_disconnect(void);
 
@@ -660,7 +663,7 @@ int nrf_cloud_disconnect(void);
  * functional.
  *
  * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_process(void);
 
@@ -673,7 +676,7 @@ int nrf_cloud_process(void);
  * @param[in] fota_success true if modem update was successful, false otherwise.
  *
  * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_modem_fota_completed(const bool fota_success);
 
@@ -684,7 +687,7 @@ int nrf_cloud_modem_fota_completed(const bool fota_success);
  * @param[in,out] svc_inf_obj cJSON object to which service info will be added.
  *
  * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_service_info_json_encode(const struct nrf_cloud_svc_info * const svc_inf,
 				       cJSON * const svc_inf_obj);
@@ -698,7 +701,7 @@ int nrf_cloud_service_info_json_encode(const struct nrf_cloud_svc_info * const s
  * @param[in,out] mod_inf_obj cJSON object to which modem info will be added.
  *
  * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_modem_info_json_encode(const struct nrf_cloud_modem_info * const mod_inf,
 				     cJSON * const mod_inf_obj);
@@ -710,7 +713,7 @@ int nrf_cloud_modem_info_json_encode(const struct nrf_cloud_modem_info * const m
  * @param[in] id_len     Size of buffer (NRF_CLOUD_CLIENT_ID_MAX_LEN).
  *
  * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_client_id_get(char *id_buf, size_t id_len);
 
@@ -721,7 +724,7 @@ int nrf_cloud_client_id_get(char *id_buf, size_t id_len);
  * @param[in] id_len     Size of buffer (NRF_CLOUD_TENANT_ID_MAX_LEN).
  *
  * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_tenant_id_get(char *id_buf, size_t id_len);
 
@@ -892,7 +895,7 @@ bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type);
  * @param[in,out] gnss_msg_obj cJSON object to which GNSS data will be added.
  *
  * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_gnss_msg_json_encode(const struct nrf_cloud_gnss_data * const gnss,
 				   cJSON * const gnss_msg_obj);
