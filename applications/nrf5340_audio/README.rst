@@ -86,10 +86,14 @@ Connected Isochronous Stream (CIS)
   This is the default configuration of the nRF5340 Audio application.
   In this configuration, you can use the nRF5340 Audio development kit in the role of the gateway, the left headset, or the right headset.
 
+  In the current version of the nRF5340 Audio application, the CIS mode offers both unidirectional and bidirectional communication.
+  You can configure the CIS to bidirectional communication, in which it will support a walkie-talkie demonstration.
+  In the bidirectional communication, the headset device will send audio from the on-board PDM microphone.
+  In the walkie-talkie demonstration, the gateway device will send audio from the on-board PDM microphone instead of using the line-in.
+  See `Enabling the walkie-talkie demo`_ for more information.
+
   .. note::
-     In the current version of the nRF5340 Audio application, the CIS mode offers both unidirectional and bidirectional communication.
-     In the bidirectional mode, the headset device will send audio from the on-board PDM microphone.
-     Note that only one headset device can be connected when testing the bidirectional mode
+     Only one headset device can be connected when testing the bidirectional mode or the walkie-talkie demo.
 
 Broadcast Isochronous Stream (BIS)
   BIS is a unidirectional communication protocol that allows for broadcasting one or more audio streams from a source device to an unlimited number of receivers that are not connected to the source.
@@ -782,8 +786,16 @@ Selecting the CIS bidirectional communication
 The CIS unidirectional mode is the default operating mode for the application.
 You can switch to the bidirectional mode by adding the :kconfig:option:`CONFIG_STREAM_BIDIRECTIONAL` Kconfig option set to ``y``  to the :file:`prj.conf` file (for the debug version) or to the :file:`prj_release.conf` file (for the release version).
 
+.. _nrf53_audio_app_configuration_enable_walkie_talkie:
+
+Enabling the walkie-talkie demo
+-------------------------------
+
+The walkie-talkie demo is a bidirectional stream using the PDM microphone as input on each side.
+You can switch to using the walkie-talkie by adding the :kconfig:option:`CONFIG_WALKIE_TALKIE_DEMO` Kconfig option set to ``y``  to the :file:`prj.conf` file (for the debug version) or to the :file:`prj_release.conf` file (for the release version).
+
 .. note::
-   Only one headset can be connected when using the bidirectional mode.
+   Only one headset can be connected when using the bidirectional mode or the walkie-talkie demo.
 
 .. _nrf53_audio_app_configuration_select_i2s:
 
@@ -1239,6 +1251,17 @@ Testing the BIS mode is identical to `Testing the default CIS mode`_, except for
 * You must :ref:`select the BIS mode manually <nrf53_audio_app_configuration_select_bis>` before building the application.
 * You can play the audio stream with different audio settings on the receivers.
   For example, you can decrease or increase the volume separately for each receiver during playback.
+
+.. _nrf53_audio_app_testing_steps_cis_walkie_talkie:
+
+Testing the walkie-talkie demo
+------------------------------
+
+Testing the walkie-talkie demo is identical to `Testing the default CIS mode`_, except for the following differences:
+
+* You must enable the Kconfig option mentioned in `Enabling the walkie-talkie demo`_ before building the application.
+* Instead of controlling the playback, you can speak through the PDM microphones.
+  The line is open all the time, no need to press any buttons to talk, but the volume control works as in `Testing the default CIS mode`_.
 
 .. _nrf53_audio_app_porting_guide:
 

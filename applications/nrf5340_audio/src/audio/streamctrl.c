@@ -237,6 +237,10 @@ static void button_evt_handler(struct button_evt event)
 
 	switch (event.button_pin) {
 	case BUTTON_PLAY_PAUSE:
+		if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
+			LOG_DBG("Play/pause not supported in walkie-talkie mode");
+			return;
+		}
 		/* Starts/pauses the audio stream */
 		switch (strm_state) {
 		case STATE_PAUSED:
@@ -296,6 +300,10 @@ static void button_evt_handler(struct button_evt event)
 		break;
 
 	case BUTTON_TEST_TONE:
+		if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
+			LOG_DBG("Test tone not supported in walkie-talkie mode");
+			return;
+		}
 		switch (strm_state) {
 		case STATE_STREAMING:
 			if (CONFIG_AUDIO_BIT_DEPTH_BITS != 16) {

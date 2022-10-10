@@ -21,6 +21,7 @@ config AUDIO_DEV
 
 choice NRF5340_AUDIO_TRANSPORT_MODE
 	prompt "Choose BIS or CIS for ISO transport"
+	default TRANSPORT_CIS if WALKIE_TALKIE_DEMO
 	default TRANSPORT_CIS
 
 config TRANSPORT_BIS

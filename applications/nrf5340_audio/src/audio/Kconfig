@@ -88,6 +88,7 @@ config AUDIO_BIT_DEPTH_OCTETS
 
 choice AUDIO_SOURCE_GATEWAY
 	prompt "Audio source for gateway"
+	default AUDIO_SOURCE_I2S if WALKIE_TALKIE_DEMO
 	default AUDIO_SOURCE_USB
 	help
 	  Select audio source for the gateway.
@@ -202,6 +203,14 @@ config STREAM_BIDIRECTIONAL
 	help
 	  Bidirectional stream enables encoder and decoder on both sides,
 	  and one device can both send and receive audio.
+
+config WALKIE_TALKIE_DEMO
+	select STREAM_BIDIRECTIONAL
+	bool "Walkie talkie demo"
+	default n
+	help
+	  The walkie talkie demo will set up a bidirectional stream using PDM
+	  microphones on each side.
 
 endmenu # Stream
 
