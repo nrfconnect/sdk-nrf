@@ -72,6 +72,24 @@ extern "C" {
 	event->data.id = _id;								\
 	APP_EVENT_SUBMIT(event)
 
+
+/** @brief Macro used to define module states.
+ *
+ * @param _name Name of variable of type struct module_state_data that contains state metadata.
+ * @param arg_list Name of states.
+ */
+#define MX(name) #name
+#define MODULE_STATES(_name, ...) enum _name ## states {__VA_ARGS__};				\
+				  static struct module_state_data _name = {			\
+					.list = {FOR_EACH(MX, (,), __VA_ARGS__)}		\
+				}
+
+/* Structure that contains state metadata. */
+struct module_state_data {
+	uint8_t current;
+	char *list[];
+};
+
 /** @brief Structure that contains module metadata. */
 struct module_data {
 	/* Variable used to construct a linked list of module metadata. */
@@ -86,6 +104,12 @@ struct module_data {
 	struct k_msgq *msg_q;
 	/* Flag signifying if the module supports shutdown. */
 	bool supports_shutdown;
+	/* Pointer to structure containing state information. */
+	struct module_state_data *state;
+	/* Pointer to structure containing sub-state information. */
+	struct module_state_data *state_sub;
+	/* Pointer to structure containing sub-sub-state information. */
+	struct module_state_data *state_sub_sub;
 };
 
 /** @brief Purge a module's queue.
@@ -136,6 +160,14 @@ int module_start(struct module_data *module);
  *  @return Number of active modules in the application.
  */
 uint32_t module_active_count_get(void);
+
+void module_state_set(struct module_data *module, uint8_t state);
+
+void module_sub_state_set(struct module_data *module, uint8_t state);
+
+uint8_t module_state_get(struct module_data *module);
+
+uint8_t module_sub_state_get(struct module_data *module);
 
 /**
  *@}

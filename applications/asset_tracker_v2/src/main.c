@@ -57,26 +57,6 @@ struct app_msg_data {
 	} module;
 };
 
-/* Application module super states. */
-static enum state_type {
-	STATE_INIT,
-	STATE_RUNNING,
-	STATE_SHUTDOWN
-} state;
-
-/* Application sub states. The application can be in either active or passive
- * mode.
- *
- * Active mode: Sensor data and GNSS position is acquired at a configured
- *		interval and sent to cloud.
- *
- * Passive mode: Sensor data and GNSS position is acquired when movement is
- *		 detected, or after the configured movement timeout occurs.
- */
-static enum sub_state_type {
-	SUB_STATE_ACTIVE_MODE,
-	SUB_STATE_PASSIVE_MODE,
-} sub_state;
 
 /* Internal copy of the device configuration. */
 static struct cloud_data_cfg app_cfg;
@@ -126,6 +106,10 @@ K_TIMER_DEFINE(movement_timeout_timer, data_sample_timer_handler, NULL);
  */
 K_TIMER_DEFINE(movement_resolution_timer, movement_resolution_timer_handler, NULL);
 
+/* Define modules states. */
+MODULE_STATES(state, INIT, RUNNING, SHUTDOWN);
+MODULE_STATES(state_sub, ACTIVE, PASSIVE);
+
 /* Module data structure to hold information of the application module, which
  * opens up for using convenience functions available for modules.
  */
@@ -133,6 +117,8 @@ static struct module_data self = {
 	.name = "app",
 	.msg_q = &msgq_app,
 	.supports_shutdown = true,
+	.state = &state,
+	.state_sub = &state_sub
 };
 
 #if defined(CONFIG_NRF_MODEM_LIB)
@@ -146,61 +132,6 @@ static void on_modem_lib_init(int ret, void *ctx)
 	modem_lib_init_result = ret;
 }
 #endif /* CONFIG_NRF_MODEM_LIB */
-
-/* Convenience functions used in internal state handling. */
-static char *state2str(enum state_type new_state)
-{
-	switch (new_state) {
-	case STATE_INIT:
-		return "STATE_INIT";
-	case STATE_RUNNING:
-		return "STATE_RUNNING";
-	case STATE_SHUTDOWN:
-		return "STATE_SHUTDOWN";
-	default:
-		return "Unknown";
-	}
-}
-
-static char *sub_state2str(enum sub_state_type new_state)
-{
-	switch (new_state) {
-	case SUB_STATE_ACTIVE_MODE:
-		return "SUB_STATE_ACTIVE_MODE";
-	case SUB_STATE_PASSIVE_MODE:
-		return "SUB_STATE_PASSIVE_MODE";
-	default:
-		return "Unknown";
-	}
-}
-
-static void state_set(enum state_type new_state)
-{
-	if (new_state == state) {
-		LOG_DBG("State: %s", state2str(state));
-		return;
-	}
-
-	LOG_DBG("State transition %s --> %s",
-		state2str(state),
-		state2str(new_state));
-
-	state = new_state;
-}
-
-static void sub_state_set(enum sub_state_type new_state)
-{
-	if (new_state == sub_state) {
-		LOG_DBG("Sub state: %s", sub_state2str(sub_state));
-		return;
-	}
-
-	LOG_DBG("Sub state transition %s --> %s",
-		sub_state2str(sub_state),
-		sub_state2str(new_state));
-
-	sub_state = new_state;
-}
 
 /* Check the return code from nRF modem library initialization to ensure that
  * the modem is rebooted if a modem firmware update is ready to be applied or
@@ -485,9 +416,8 @@ static void on_state_init(struct app_msg_data *msg)
 			passive_mode_timers_start_all();
 		}
 
-		state_set(STATE_RUNNING);
-		sub_state_set(app_cfg.active_mode ? SUB_STATE_ACTIVE_MODE :
-						    SUB_STATE_PASSIVE_MODE);
+		module_state_set(&self, RUNNING);
+		module_sub_state_set(&self, app_cfg.active_mode ? ACTIVE : PASSIVE);
 	}
 }
 
@@ -512,7 +442,7 @@ void on_sub_state_passive(struct app_msg_data *msg)
 
 		if (app_cfg.active_mode) {
 			active_mode_timers_start_all();
-			sub_state_set(SUB_STATE_ACTIVE_MODE);
+			module_sub_state_set(&self, ACTIVE);
 			return;
 		}
 
@@ -565,7 +495,7 @@ static void on_sub_state_active(struct app_msg_data *msg)
 
 		if (!app_cfg.active_mode) {
 			passive_mode_timers_start_all();
-			sub_state_set(SUB_STATE_PASSIVE_MODE);
+			module_sub_state_set(&self, PASSIVE);
 			return;
 		}
 
@@ -582,7 +512,7 @@ static void on_all_events(struct app_msg_data *msg)
 		k_timer_stop(&movement_resolution_timer);
 
 		SEND_SHUTDOWN_ACK(app, APP_EVT_SHUTDOWN_READY, self.id);
-		state_set(STATE_SHUTDOWN);
+		module_state_set(&self, SHUTDOWN);
 	}
 
 	if (IS_EVENT(msg, modem, MODEM_EVT_MODEM_STATIC_DATA_READY)) {
@@ -622,16 +552,16 @@ void main(void)
 	while (true) {
 		module_get_next_msg(&self, &msg);
 
-		switch (state) {
-		case STATE_INIT:
+		switch (module_state_get(&self)) {
+		case INIT:
 			on_state_init(&msg);
 			break;
-		case STATE_RUNNING:
-			switch (sub_state) {
-			case SUB_STATE_ACTIVE_MODE:
+		case RUNNING:
+			switch (module_sub_state_get(&self)) {
+			case ACTIVE:
 				on_sub_state_active(&msg);
 				break;
-			case SUB_STATE_PASSIVE_MODE:
+			case PASSIVE:
 				on_sub_state_passive(&msg);
 				break;
 			default:
@@ -641,7 +571,7 @@ void main(void)
 
 			on_state_running(&msg);
 			break;
-		case STATE_SHUTDOWN:
+		case SHUTDOWN:
 			/* The shutdown state has no transition. */
 			break;
 		default:

@@ -39,7 +39,6 @@ BUILD_ASSERT(CONFIG_AT_MONITOR_HEAP_SIZE >= 1024,
 	    "and other notifications at the same time");
 #endif
 
-
 struct modem_msg_data {
 	union {
 		struct app_module_event app;
@@ -48,18 +47,6 @@ struct modem_msg_data {
 		struct modem_module_event modem;
 	} module;
 };
-
-/* Modem module super states. */
-static enum state_type {
-	/* Initialization state where all libraries that the module depends
-	 * on need to be initialized before you can enter any other state.
-	 */
-	STATE_INIT,
-	STATE_DISCONNECTED,
-	STATE_CONNECTING,
-	STATE_CONNECTED,
-	STATE_SHUTDOWN,
-} state;
 
 /* Enumerator that specifies the data type that is sampled. */
 enum sample_type {
@@ -87,10 +74,14 @@ const k_tid_t module_thread;
 K_MSGQ_DEFINE(msgq_modem, sizeof(struct modem_msg_data),
 	      MODEM_QUEUE_ENTRY_COUNT, MODEM_QUEUE_BYTE_ALIGNMENT);
 
+/* Define modules states. */
+MODULE_STATES(state, INIT, DISCONNECTED, CONNECTING, CONNECTED, SHUTDOWN);
+
 static struct module_data self = {
 	.name = "modem",
 	.msg_q = &msgq_modem,
 	.supports_shutdown = true,
+	.state = &state,
 };
 
 /* Forward declarations. */
@@ -100,39 +91,6 @@ static void send_psm_update(int tau, int active_time);
 static void send_edrx_update(float edrx, float ptw);
 static inline int adjust_rsrp(int input, enum sample_type type);
 static inline int adjust_rsrq(int input);
-
-/* Convenience functions used in internal state handling. */
-static char *state2str(enum state_type state)
-{
-	switch (state) {
-	case STATE_INIT:
-		return "STATE_INIT";
-	case STATE_DISCONNECTED:
-		return "STATE_DISCONNECTED";
-	case STATE_CONNECTING:
-		return "STATE_CONNECTING";
-	case STATE_CONNECTED:
-		return "STATE_CONNECTED";
-	case STATE_SHUTDOWN:
-		return "STATE_SHUTDOWN";
-	default:
-		return "Unknown state";
-	}
-}
-
-static void state_set(enum state_type new_state)
-{
-	if (new_state == state) {
-		LOG_DBG("State: %s", state2str(state));
-		return;
-	}
-
-	LOG_DBG("State transition %s --> %s",
-		state2str(state),
-		state2str(new_state));
-
-	state = new_state;
-}
 
 /* Handlers */
 static bool app_event_handler(const struct app_event_header *aeh)
@@ -947,7 +905,7 @@ static void on_state_init(struct modem_msg_data *msg)
 	if (IS_EVENT(msg, modem, MODEM_EVT_CARRIER_INITIALIZED)) {
 		int err;
 
-		state_set(STATE_DISCONNECTED);
+		module_state_set(&self, DISCONNECTED);
 
 		err = setup();
 		__ASSERT(err == 0, "Failed running setup()");
@@ -965,11 +923,11 @@ static void on_state_init(struct modem_msg_data *msg)
 static void on_state_disconnected(struct modem_msg_data *msg)
 {
 	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_CONNECTED)) {
-		state_set(STATE_CONNECTED);
+		module_state_set(&self, CONNECTED);
 	}
 
 	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_CONNECTING)) {
-		state_set(STATE_CONNECTING);
+		module_state_set(&self, CONNECTING);
 	}
 
 	if ((IS_EVENT(msg, app, APP_EVT_LTE_DISCONNECT)) ||
@@ -999,11 +957,11 @@ static void on_state_connecting(struct modem_msg_data *msg)
 			return;
 		}
 
-		state_set(STATE_DISCONNECTED);
+		module_state_set(&self, DISCONNECTED);
 	}
 
 	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_CONNECTED)) {
-		state_set(STATE_CONNECTED);
+		module_state_set(&self, CONNECTED);
 	}
 }
 
@@ -1011,7 +969,7 @@ static void on_state_connecting(struct modem_msg_data *msg)
 static void on_state_connected(struct modem_msg_data *msg)
 {
 	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_DISCONNECTED)) {
-		state_set(STATE_DISCONNECTED);
+		module_state_set(&self, DISCONNECTED);
 	}
 
 	if (IS_EVENT(msg, modem, MODEM_EVT_CARRIER_EVENT_LTE_LINK_DOWN_REQUEST)) {
@@ -1036,7 +994,7 @@ static void on_state_connected(struct modem_msg_data *msg)
 			return;
 		}
 
-		state_set(STATE_DISCONNECTED);
+		module_state_set(&self, DISCONNECTED);
 	}
 }
 
@@ -1135,7 +1093,7 @@ static void on_all_states(struct modem_msg_data *msg)
 
 	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
 		lte_lc_power_off();
-		state_set(STATE_SHUTDOWN);
+		module_state_set(&self, SHUTDOWN);
 		SEND_SHUTDOWN_ACK(modem, MODEM_EVT_SHUTDOWN_READY, self.id);
 	}
 }
@@ -1154,9 +1112,9 @@ static void module_thread_fn(void)
 	}
 
 	if (IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
-		state_set(STATE_INIT);
+		module_state_set(&self, INIT);
 	} else {
-		state_set(STATE_DISCONNECTED);
+		module_state_set(&self, DISCONNECTED);
 		SEND_EVENT(modem, MODEM_EVT_INITIALIZED);
 
 		err = setup();
@@ -1169,24 +1127,24 @@ static void module_thread_fn(void)
 	while (true) {
 		module_get_next_msg(&self, &msg);
 
-		switch (state) {
-		case STATE_INIT:
+		switch (module_state_get(&self)) {
+		case INIT:
 			on_state_init(&msg);
 			break;
-		case STATE_DISCONNECTED:
+		case DISCONNECTED:
 			on_state_disconnected(&msg);
 			break;
-		case STATE_CONNECTING:
+		case CONNECTING:
 			on_state_connecting(&msg);
 			break;
-		case STATE_CONNECTED:
+		case CONNECTED:
 			on_state_connected(&msg);
 			break;
-		case STATE_SHUTDOWN:
+		case SHUTDOWN:
 			/* The shutdown state has no transition. */
 			break;
 		default:
-			LOG_WRN("Invalid state: %d", state);
+			LOG_WRN("Invalid state: %d", module_state_get(&self));
 			break;
 		}
 

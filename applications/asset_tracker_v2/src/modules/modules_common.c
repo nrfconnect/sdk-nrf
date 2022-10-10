@@ -182,3 +182,59 @@ uint32_t module_active_count_get(void)
 {
 	return atomic_get(&modules_info.active_modules_count);
 }
+
+void module_state_set(struct module_data *module, uint8_t new_state)
+{
+	__ASSERT_NO_MSG(module);
+	__ASSERT_NO_MSG(module->state);
+
+	if (new_state == module->state->current) {
+		LOG_WRN("Module \"%s\" already in state: %s",
+			module->name,
+			module->state->list[new_state]);
+		return;
+	}
+
+	LOG_WRN("Module: \"%s\", State transition %s --> %s",
+		module->name,
+		module->state->list[module->state->current],
+		module->state->list[new_state]);
+
+	module->state->current = new_state;
+}
+
+void module_sub_state_set(struct module_data *module, uint8_t new_state)
+{
+	__ASSERT_NO_MSG(module);
+	__ASSERT_NO_MSG(module->state_sub);
+
+	if (new_state == module->state_sub->current) {
+		LOG_WRN("Module \"%s\" already in state: %s",
+			module->name,
+			module->state_sub->list[new_state]);
+		return;
+	}
+
+	LOG_WRN("Module: \"%s\", Sub state transition %s --> %s",
+		module->name,
+		module->state_sub->list[module->state_sub->current],
+		module->state_sub->list[new_state]);
+
+	module->state_sub->current = new_state;
+}
+
+uint8_t module_state_get(struct module_data *module)
+{
+	__ASSERT_NO_MSG(module);
+	__ASSERT_NO_MSG(module->state);
+
+	return module->state->current;
+}
+
+uint8_t module_sub_state_get(struct module_data *module)
+{
+	__ASSERT_NO_MSG(module);
+	__ASSERT_NO_MSG(module->state_sub);
+
+	return module->state_sub->current;
+}
