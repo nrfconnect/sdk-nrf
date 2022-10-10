@@ -670,7 +670,7 @@ static void bt_conn_get_security_rpc_rsp(const struct nrf_rpc_group *group,
 	res->result = (bt_security_t)ser_decode_uint(ctx);
 }
 
-bt_security_t bt_conn_get_security(struct bt_conn *conn)
+bt_security_t bt_conn_get_security(const struct bt_conn *conn)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	struct bt_conn_get_security_rpc_res result;
@@ -686,7 +686,7 @@ bt_security_t bt_conn_get_security(struct bt_conn *conn)
 	return result.result;
 }
 
-uint8_t bt_conn_enc_key_size(struct bt_conn *conn)
+uint8_t bt_conn_enc_key_size(const struct bt_conn *conn)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	uint8_t result;
@@ -1853,7 +1853,7 @@ int bt_conn_auth_pairing_confirm(struct bt_conn *conn)
 }
 #else /* defined(CONFIG_BT_SMP) */
 
-bt_security_t bt_conn_get_security(struct bt_conn *conn)
+bt_security_t bt_conn_get_security(const struct bt_conn *conn)
 {
 	return BT_SECURITY_L1;
 }
