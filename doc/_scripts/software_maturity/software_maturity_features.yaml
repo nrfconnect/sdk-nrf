@@ -27,6 +27,7 @@ features:
     Thread + nRF21540 (GPIO): NET_L2_OPENTHREAD && (MPSL_FEM_NRF21540_GPIO_SUPPORT || MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT)
   matter:
     Matter over Thread: CHIP && NET_L2_OPENTHREAD
+    Matter over Wi-Fi: CHIP && WIFI_NRF700X
     Matter commissioning over IP: CHIP
     Matter commissioning over Bluetooth LE with QR code onboarding: CHIP && BT
     Matter commissioning over Bluetooth LE with NFC onboarding: CHIP && BT && CHIP_NFC_COMMISSIONING

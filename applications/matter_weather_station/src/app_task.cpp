@@ -11,11 +11,14 @@
 #include "led_widget.h"
 #include <platform/CHIPDeviceLayer.h>
 
+#include <DeviceInfoProviderImpl.h>
+
 #include <app-common/zap-generated/attribute-id.h>
 #include <app-common/zap-generated/attribute-type.h>
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/cluster-id.h>
 #include <app-common/zap-generated/cluster-objects.h>
+#include <app/clusters/ota-requestor/OTATestEventTriggerDelegate.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
 #include <app/util/attribute-storage.h>
@@ -76,8 +79,7 @@ constexpr uint32_t kBatteryCapacityUaH = 1350000;
 /* Average device current consumption in uA */
 constexpr uint32_t kDeviceAverageCurrentConsumptionUa = CONFIG_AVERAGE_CURRENT_CONSUMPTION;
 /* Fully charged battery operation time in seconds */
-constexpr uint32_t kFullBatteryOperationTime =
-	kBatteryCapacityUaH / kDeviceAverageCurrentConsumptionUa * 3600;
+constexpr uint32_t kFullBatteryOperationTime = kBatteryCapacityUaH / kDeviceAverageCurrentConsumptionUa * 3600;
 /* It is recommended to toggle the signalled state with 0.5 s interval. */
 constexpr size_t kIdentifyTimerIntervalMs = 500;
 
@@ -96,15 +98,23 @@ bool sIsThreadEnabled;
 bool sIsBleAdvertisingEnabled;
 bool sHaveBLEConnections;
 
+/* NOTE! This key is for test/certification only and should not be available in production devices!
+ * If CONFIG_CHIP_FACTORY_DATA is enabled, this value is read from the factory data.
+ */
+uint8_t sTestEventTriggerEnableKey[TestEventTriggerDelegate::kEnableKeyLength] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55,
+										   0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb,
+										   0xcc, 0xdd, 0xee, 0xff };
+chip::DeviceLayer::DeviceInfoProviderImpl gExampleDeviceInfoProvider;
+
 LedState sLedState = LedState::kAlive;
 
 /* Add identify for all endpoints */
-Identify sIdentifyTemperature = { chip::EndpointId{ kTemperatureMeasurementEndpointId }, AppTask::OnIdentifyStart, AppTask::OnIdentifyStop,
-			EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_AUDIBLE_BEEP };
-Identify sIdentifyHumidity = { chip::EndpointId{ kHumidityMeasurementEndpointId }, AppTask::OnIdentifyStart, AppTask::OnIdentifyStop,
-			EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_AUDIBLE_BEEP };
-Identify sIdentifyPressure = { chip::EndpointId{ kPressureMeasurementEndpointId }, AppTask::OnIdentifyStart, AppTask::OnIdentifyStop,
-			EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_AUDIBLE_BEEP };
+Identify sIdentifyTemperature = { chip::EndpointId{ kTemperatureMeasurementEndpointId }, AppTask::OnIdentifyStart,
+				  AppTask::OnIdentifyStop, EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_AUDIBLE_BEEP };
+Identify sIdentifyHumidity = { chip::EndpointId{ kHumidityMeasurementEndpointId }, AppTask::OnIdentifyStart,
+			       AppTask::OnIdentifyStop, EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_AUDIBLE_BEEP };
+Identify sIdentifyPressure = { chip::EndpointId{ kPressureMeasurementEndpointId }, AppTask::OnIdentifyStart,
+			       AppTask::OnIdentifyStop, EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_AUDIBLE_BEEP };
 
 const device *sBme688SensorDev = DEVICE_DT_GET_ONE(bosch_bme680);
 } /* namespace */
@@ -135,11 +145,9 @@ CHIP_ERROR AppTask::Init()
 	}
 
 #ifdef CONFIG_OPENTHREAD_MTD_SED
-	err = ConnectivityMgr().SetThreadDeviceType(
-		ConnectivityManager::kThreadDeviceType_SleepyEndDevice);
+	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_SleepyEndDevice);
 #else
-	err = ConnectivityMgr().SetThreadDeviceType(
-		ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
+	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
 #endif
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
@@ -192,6 +200,23 @@ CHIP_ERROR AppTask::Init()
 		return chip::System::MapErrorZephyr(ret);
 	}
 
+/* Get factory data */
+#ifdef CONFIG_CHIP_FACTORY_DATA
+	ReturnErrorOnFailure(mFactoryDataProvider.Init());
+	SetDeviceInstanceInfoProvider(&mFactoryDataProvider);
+	SetDeviceAttestationCredentialsProvider(&mFactoryDataProvider);
+	SetCommissionableDataProvider(&mFactoryDataProvider);
+	/* Read EnableKey from the factory data. */
+	MutableByteSpan enableKey(sTestEventTriggerEnableKey);
+	err = mFactoryDataProvider.GetEnableKey(enableKey);
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("mFactoryDataProvider.GetEnableKey() failed. Could not delegate a test event trigger");
+		memset(sTestEventTriggerEnableKey, 0, sizeof(sTestEventTriggerEnableKey));
+	}
+#else
+	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
+#endif
+
 #ifdef CONFIG_MCUMGR_SMP_BT
 	/* Initialize DFU over SMP */
 	GetDFUOverSMP().Init(RequestSMPAdvertisingStart);
@@ -204,29 +229,27 @@ CHIP_ERROR AppTask::Init()
 
 	/* Initialize timers */
 	k_timer_init(
-		&sFunctionTimer,
-		[](k_timer *) { sAppTask.PostEvent(AppEvent{ AppEvent::FunctionTimer }); },
-		nullptr);
+		&sFunctionTimer, [](k_timer *) { sAppTask.PostEvent(AppEvent{ AppEvent::FunctionTimer }); }, nullptr);
 	k_timer_init(
-		&sMeasurementsTimer,
-		[](k_timer *) { sAppTask.PostEvent(AppEvent{ AppEvent::MeasurementsTimer }); },
+		&sMeasurementsTimer, [](k_timer *) { sAppTask.PostEvent(AppEvent{ AppEvent::MeasurementsTimer }); },
 		nullptr);
-	k_timer_start(&sMeasurementsTimer, K_MSEC(kMeasurementsIntervalMs),
-		      K_MSEC(kMeasurementsIntervalMs));
+	k_timer_start(&sMeasurementsTimer, K_MSEC(kMeasurementsIntervalMs), K_MSEC(kMeasurementsIntervalMs));
 	k_timer_init(
-		&sIdentifyTimer,
-		[](k_timer *) { sAppTask.PostEvent(AppEvent{ AppEvent::IdentifyTimer }); },
-		nullptr);
+		&sIdentifyTimer, [](k_timer *) { sAppTask.PostEvent(AppEvent{ AppEvent::IdentifyTimer }); }, nullptr);
 
 	/* Initialize CHIP server */
-	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
 	static chip::CommonCaseDeviceServerInitParams initParams;
+	static OTATestEventTriggerDelegate testEventTriggerDelegate{ ByteSpan(sTestEventTriggerEnableKey) };
 	(void)initParams.InitializeStaticResourcesBeforeServerInit();
 
+	initParams.testEventTriggerDelegate = &testEventTriggerDelegate;
 	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
+
+	gExampleDeviceInfoProvider.SetStorageDelegate(&Server::GetInstance().GetPersistentStorage());
+	chip::DeviceLayer::SetDeviceInfoProvider(&gExampleDeviceInfoProvider);
+
 	ConfigurationMgr().LogDeviceConfig();
-	PrintOnboardingCodes(
-		chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
+	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 
 	/*
 	 * Add CHIP event handler and start CHIP thread.
@@ -256,9 +279,8 @@ void AppTask::OpenPairingWindow()
 		return;
 	}
 
-	if (chip::Server::GetInstance()
-		    .GetCommissioningWindowManager()
-		    .OpenBasicCommissioningWindow() != CHIP_NO_ERROR) {
+	if (chip::Server::GetInstance().GetCommissioningWindowManager().OpenBasicCommissioningWindow() !=
+	    CHIP_NO_ERROR) {
 		LOG_ERR("OpenBasicCommissioningWindow() failed");
 	}
 }
@@ -375,8 +397,7 @@ void AppTask::MeasurementsTimerHandler()
 
 void AppTask::OnIdentifyStart(Identify *)
 {
-	k_timer_start(&sIdentifyTimer, K_MSEC(kIdentifyTimerIntervalMs),
-		      K_MSEC(kIdentifyTimerIntervalMs));
+	k_timer_start(&sIdentifyTimer, K_MSEC(kIdentifyTimerIntervalMs), K_MSEC(kIdentifyTimerIntervalMs));
 }
 
 void AppTask::OnIdentifyStop(Identify *)
@@ -399,8 +420,7 @@ void AppTask::UpdateTemperatureClusterState()
 		/* Defined by cluster temperature measured value = 100 x temperature in degC with resolution of
 		 * 0.01 degC. val1 is an integer part of the value and val2 is fractional part in one-millionth
 		 * parts. To achieve resolution of 0.01 degC val2 needs to be divided by 10000. */
-		int16_t newValue =
-			static_cast<int16_t>(sTemperature.val1 * 100 + sTemperature.val2 / 10000);
+		int16_t newValue = static_cast<int16_t>(sTemperature.val1 * 100 + sTemperature.val2 / 10000);
 
 		if (newValue > kTemperatureMeasurementAttributeMaxValue ||
 		    newValue < kTemperatureMeasurementAttributeMinValue) {
@@ -427,8 +447,7 @@ void AppTask::UpdatePressureClusterState()
 		/* Defined by cluster pressure measured value = 10 x pressure in kPa with resolution of 0.1 kPa.
 		 * val1 is an integer part of the value and val2 is fractional part in one-millionth parts.
 		 * To achieve resolution of 0.1 kPa val2 needs to be divided by 100000. */
-		int16_t newValue =
-			static_cast<int16_t>(sPressure.val1 * 10 + sPressure.val2 / 100000);
+		int16_t newValue = static_cast<int16_t>(sPressure.val1 * 10 + sPressure.val2 / 100000);
 
 		if (newValue > kPressureMeasurementAttributeMaxValue ||
 		    newValue < kPressureMeasurementAttributeMinValue) {
@@ -436,8 +455,8 @@ void AppTask::UpdatePressureClusterState()
 			newValue = kPressureMeasurementAttributeInvalidValue;
 		}
 
-		status = Clusters::PressureMeasurement::Attributes::MeasuredValue::Set(
-			kPressureMeasurementEndpointId, newValue);
+		status = Clusters::PressureMeasurement::Attributes::MeasuredValue::Set(kPressureMeasurementEndpointId,
+										       newValue);
 		if (status != EMBER_ZCL_STATUS_SUCCESS) {
 			LOG_ERR("Updating pressure measurement %x", status);
 		}
@@ -455,8 +474,7 @@ void AppTask::UpdateRelativeHumidityClusterState()
 		/* Defined by cluster humidity measured value = 100 x humidity in %RH with resolution of 0.01 %.
 		 * val1 is an integer part of the value and val2 is fractional part in one-millionth parts.
 		 * To achieve resolution of 0.01 % val2 needs to be divided by 10000. */
-		uint16_t newValue =
-			static_cast<int16_t>(sHumidity.val1 * 100 + sHumidity.val2 / 10000);
+		uint16_t newValue = static_cast<int16_t>(sHumidity.val1 * 100 + sHumidity.val2 / 10000);
 
 		if (newValue > kHumidityMeasurementAttributeMaxValue ||
 		    newValue < kHumidityMeasurementAttributeMinValue) {
@@ -507,8 +525,7 @@ void AppTask::UpdatePowerSourceClusterState()
 				    (kMaximalOperatingVoltageMv - kMinimalOperatingVoltageMv);
 	}
 
-	batteryTimeRemaining =
-		kFullBatteryOperationTime * batteryPercentage / kMaxBatteryPercentage;
+	batteryTimeRemaining = kFullBatteryOperationTime * batteryPercentage / kMaxBatteryPercentage;
 
 	if (voltage < kCriticalThresholdVoltageMv) {
 		batteryChargeLevel = Clusters::PowerSource::BatChargeLevel::kCritical;
@@ -524,44 +541,37 @@ void AppTask::UpdatePowerSourceClusterState()
 		batteryCharged = Clusters::PowerSource::BatChargeState::kIsNotCharging;
 	}
 
-	status = Clusters::PowerSource::Attributes::BatVoltage::Set(kPowerSourceEndpointId,
-									voltage);
+	status = Clusters::PowerSource::Attributes::BatVoltage::Set(kPowerSourceEndpointId, voltage);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery voltage failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::BatPercentRemaining::Set(
-		kPowerSourceEndpointId, batteryPercentage);
+	status = Clusters::PowerSource::Attributes::BatPercentRemaining::Set(kPowerSourceEndpointId, batteryPercentage);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery percentage failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::BatTimeRemaining::Set(
-		kPowerSourceEndpointId, batteryTimeRemaining);
+	status = Clusters::PowerSource::Attributes::BatTimeRemaining::Set(kPowerSourceEndpointId, batteryTimeRemaining);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery time remaining failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::BatChargeLevel::Set(
-		kPowerSourceEndpointId, batteryChargeLevel);
+	status = Clusters::PowerSource::Attributes::BatChargeLevel::Set(kPowerSourceEndpointId, batteryChargeLevel);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery charge level failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::Status::Set(kPowerSourceEndpointId,
-								batteryStatus);
+	status = Clusters::PowerSource::Attributes::Status::Set(kPowerSourceEndpointId, batteryStatus);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery status failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::BatPresent::Set(kPowerSourceEndpointId,
-									batteryPresent);
+	status = Clusters::PowerSource::Attributes::BatPresent::Set(kPowerSourceEndpointId, batteryPresent);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery present failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::BatChargeState::Set(
-		kPowerSourceEndpointId, batteryCharged);
+	status = Clusters::PowerSource::Attributes::BatChargeState::Set(kPowerSourceEndpointId, batteryCharged);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery charge failed %x", status);
 	}
@@ -637,8 +647,8 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 			if (NFCMgr().IsTagEmulationStarted()) {
 				LOG_INF("NFC Tag emulation is already started");
 			} else {
-				ShareQRCodeOverNFC(chip::RendezvousInformationFlags(
-					chip::RendezvousInformationFlag::kBLE));
+				ShareQRCodeOverNFC(
+					chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 			}
 		} else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
 			NFCMgr().StopTagEmulation();
