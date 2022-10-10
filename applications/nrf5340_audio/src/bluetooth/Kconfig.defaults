@@ -95,6 +95,7 @@ config BT_GAP_PERIPHERAL_PREF_PARAMS
 	default n
 
 config BT_VCS
+	default n if WALKIE_TALKIE_DEMO
 	default y
 
 config BT_PACS_SNK_CONTEXT
@@ -137,6 +138,7 @@ config BT_AUDIO_UNICAST_CLIENT_ASE_SRC_COUNT
 	default 0
 
 config BT_VCS_CLIENT
+	default n if WALKIE_TALKIE_DEMO
 	default y
 
 endif # AUDIO_DEV = 2 (GATEWAY)

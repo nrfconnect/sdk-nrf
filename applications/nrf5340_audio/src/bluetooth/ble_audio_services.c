@@ -162,7 +162,8 @@ int ble_vcs_volume_up(void)
 #elif (CONFIG_BT_VCS)
 	return bt_vcs_unmute_vol_up(vcs);
 #endif /* (CONFIG_BT_VCS_CLIENT) */
-	return -ENXIO;
+	hw_codec_volume_increase();
+	return 0;
 }
 
 int ble_vcs_volume_down(void)
@@ -186,7 +187,8 @@ int ble_vcs_volume_down(void)
 #elif (CONFIG_BT_VCS)
 	return bt_vcs_unmute_vol_down(vcs);
 #endif /* (CONFIG_BT_VCS_CLIENT) */
-	return -ENXIO;
+	hw_codec_volume_decrease();
+	return 0;
 }
 
 int ble_vcs_volume_mute(void)
