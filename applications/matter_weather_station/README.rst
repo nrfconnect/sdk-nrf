@@ -13,7 +13,8 @@ The device works as a Matter accessory device, meaning it can be paired and cont
 You can use this application as a reference for creating your own application.
 
 .. note::
-    The Matter protocol is in an early development stage and must be treated as an :ref:`experimental <software_maturity>` feature.
+   The Thingy:53 Matter weather station application featured in the |NCS| v2.1.1 release participated in Matter Specification Validation Event (SVE) and successfully passed all required test cases to be considered as a device compliant with Matter 1.0.
+   For this reason, the |NCS| v2.1.1 release version of the application includes additional `Certification files for Matter SVE 1.0`_.
 
 Requirements
 ************
@@ -68,6 +69,16 @@ If the Bluetooth LE advertising times out, you can re-enable it manually using *
 Additionally, the controller must get the commissioning information from the Matter accessory device and provision the device into the network.
 For details, see the `Testing`_ section.
 
+Certification files for Matter SVE 1.0
+======================================
+
+The |NCS| v2.1.1 version of the application contains a dedicated :file:`certification` directory with information useful for getting to know the Matter certification process:
+
+* :file:`factory_data` directory - This directory contains a generated example of the factory data that was originally used for the weather station Matter certification.
+* :file:`PICS` directory - This directory contains Protocol Implementation Conformance Statement (PICS) that was originally used for the weather station Matter certification.
+  The PICS is a set of XML files that describe the Matter features supported by a specific device.
+* :file:`overlay-factory_data_build.conf` - This overlay file contains examples of configuration options that can be used to generate a new set of Matter device factory data.
+
 .. _matter_weather_station_app_build_types:
 
 Matter weather station build types
@@ -90,6 +101,11 @@ This application supports the following build types:
 
 * ``debug`` - Debug version of the application. You can use this version to enable additional features for verifying the application behavior, such as logs or command-line shell.
 * ``release`` - Release version of the application. You can use this version to enable only the necessary application functionalities to optimize its performance.
+* ``factory_data`` - Release version of the application that has factory data storage enabled.
+  You can use this version to enable reading factory data necessary for Matter certification from a separate partition in the device non-volatile memory.
+  This way, you can read information such as product information, keys, and certificates.
+  See `Using certification factory data`_ to learn how to put factory data into device's storage.
+  To learn more about factory data read :doc:`matter:nrfconnect_factory_data_configuration` page in the Matter documentation.
 
 .. note::
     `Selecting a build type`_ is optional.
@@ -174,6 +190,42 @@ The ``build_thingy53_nrf5340_cpuapp`` parameter specifies the output directory f
    .. code-block:: console
 
       File not found: ./ncs/nrf/applications/matter_weather_station/configuration/thingy53_nrf5340_cpuapp/prj_shell.conf
+
+Using certification factory data
+================================
+
+This application contains `Certification files for Matter SVE 1.0`_, including the factory data files.
+You can program these files for example to compare your certification test data with the factory data that passed the certification event.
+
+You can use either the pre-prepared factory data that were used for Matter SVE 1.0 or you can generate new factory data.
+
+Programming pre-prepared factory data
+-------------------------------------
+
+Before programming pre-prepared factory data, you must build and program the application with the factory data build type selected (see `Matter weather station build types`_).
+You can program the pre-prepared :file:`certification/factory_data/factory_data.hex` file with the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   nrfjprog --coprocessor CP_APPLICATION --program factory_data.hex --reset
+
+Generating new factory data
+---------------------------
+
+Instead of using the pre-prepared factory data set, you can also generate new one when building for the target board by invoking the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b thingy53_nrf5340_cpuapp -- -DCONF_FILE=prj_factory_data.conf -DOVERLAY_CONFIG="../../certification/overlay-factory_data_build.conf"
+
+After building the target, the generated :file:`factory_data.hex` file will be merged with the application target HEX file, so you can use the regular command to flash it to the device:
+
+.. parsed-literal::
+   :class: highlight
+
+   west flash --erase
 
 Testing
 =======
