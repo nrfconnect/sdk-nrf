@@ -442,19 +442,7 @@ static void cloud_connect(struct k_work *work)
 		return;
 	}
 
-	const enum nrf_cloud_sensor supported_sensors[] = {
-		NRF_CLOUD_SENSOR_GPS, NRF_CLOUD_SENSOR_FLIP
-	};
-
-	const struct nrf_cloud_sensor_list sensor_list = {
-		.size = ARRAY_SIZE(supported_sensors), .ptr = supported_sensors
-	};
-
-	const struct nrf_cloud_connect_param param = {
-		.sensor = &sensor_list,
-	};
-
-	err = nrf_cloud_connect(&param);
+	err = nrf_cloud_connect();
 	if (err) {
 		LOG_ERR("nrf_cloud_connect failed: %d", err);
 		nrf_cloud_error_handler(err);

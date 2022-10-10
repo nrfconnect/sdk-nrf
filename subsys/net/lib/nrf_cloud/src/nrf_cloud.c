@@ -229,7 +229,7 @@ static int connect_to_cloud(void)
 	return nct_connect();
 }
 
-int nrf_cloud_connect(const struct nrf_cloud_connect_param *param)
+int nrf_cloud_connect(void)
 {
 	int err;
 

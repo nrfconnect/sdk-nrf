@@ -947,7 +947,7 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 				}
 				location_signify = (signify > 0);
 			}
-			err = nrf_cloud_connect(NULL);
+			err = nrf_cloud_connect();
 			if (err) {
 				LOG_ERR("Cloud connection failed, error: %d", err);
 			} else {
