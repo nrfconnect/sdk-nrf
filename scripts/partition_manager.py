@@ -429,8 +429,16 @@ def first_partition_has_been_aligned(first, solution):
 
 def _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynamic_partitions, dp):
 
-    # Resolve 'align_next'
     solution_non_empty = [part for part in solution if 'EMPTY_' not in part]
+
+    # Check 'align' and 'align_next'.
+    for part in solution_non_empty:
+        if 'align' in reqs[part]:
+            raise PartitionError(f"'align' config is misplaced (should be part of 'placement').")
+        if 'align_next' in reqs[part]:
+            raise PartitionError(f"'align_next' config is misplaced (should be part of 'placement').")
+
+    # Resolve 'align_next'
     for i in range(len(solution_non_empty) - 1):
         part = solution_non_empty[i]
         next_part = solution_non_empty[i + 1]
@@ -1508,7 +1516,32 @@ def test():
     expect_addr_size(td, 'fifth', 96000, 2000)
     expect_addr_size(td, 'EMPTY_3', 98000, 2000)
 
+    # Test 'align' (negative)
+    # Wrong place
+    td = {'first': {'placement': {'after': 'start'}, 'size': 10000},
+          'second': {'placement': {'after': 'first'}, 'align': {'start': 4000}, 'size': 1000},
+          'app': {'region': 'flash_primary'}}
+    s, sub_partitions = resolve(td, 'app')
+    try:
+        set_addresses_and_align(td, sub_partitions, s, 100000, 'app')
+    except PartitionError:
+        pass
+    else:
+        assert False, "Should have raised an error."
+
     # Test 'align_next' (negative)
+    # Wrong place
+    td = {'first': {'placement': {'after': 'start'}, 'align_next': 4000, 'size': 10000},
+          'second': {'placement': {'after': 'first'}, 'size': 1000},
+          'app': {'region': 'flash_primary'}}
+    s, sub_partitions = resolve(td, 'app')
+    try:
+        set_addresses_and_align(td, sub_partitions, s, 100000, 'app')
+    except PartitionError:
+        pass
+    else:
+        assert False, "Should have raised an error."
+
     # 'align' already exists (end)
     td = {'first': {'placement': {'after': 'start', 'align_next': 4000}, 'size': 10000},
           'second': {'placement': {'after': 'first', 'align': {'end': 2000}}, 'size': 1000},
