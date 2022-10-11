@@ -14,6 +14,9 @@ struct location_method_api {
 	int  (*validate_params)(const struct location_method_config *config);
 	int  (*location_get)(const struct location_method_config *config);
 	int  (*cancel)();
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	void  (*details_get)(struct location_data_details *details);
+#endif
 };
 
 int location_core_init(void);

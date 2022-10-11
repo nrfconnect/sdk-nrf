@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL) || defined(CONFIG_LOCATION_DATA_DETAILS)
 #include <nrf_modem_gnss.h>
 #endif
 #if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
@@ -134,10 +134,26 @@ struct location_datetime {
 	uint16_t ms;
 };
 
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+/** Location details for GNSS. */
+struct location_data_details_gnss {
+	/** Indicates whether these details are valid. */
+	bool valid;
+	/** Number of satellites tracked at the time of event. */
+	uint8_t satellites_tracked;
+	/** PVT data. */
+	struct nrf_modem_gnss_pvt_data_frame pvt_data;
+};
+
+/** Location details. */
+struct location_data_details {
+	/** Location details for GNSS. */
+	struct location_data_details_gnss gnss;
+};
+#endif
+
 /** Location data. */
 struct location_data {
-	/** Used location method. */
-	enum location_method method;
 	/** Geodetic latitude (deg) in WGS-84. */
 	double latitude;
 	/** Geodetic longitude (deg) in WGS-84. */
@@ -146,16 +162,39 @@ struct location_data {
 	float accuracy;
 	/** Date and time (UTC). */
 	struct location_datetime datetime;
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	/** Location details. */
+	struct location_data_details details;
+#endif
 };
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+/** Location error information. */
+struct location_data_error {
+	/** Data details at the time of error. */
+	struct location_data_details details;
+};
+#endif
 
 /** Location event data. */
 struct location_event_data {
 	/** Event ID. */
 	enum location_event_id id;
+	/** Used location method. */
+	enum location_method method;
 
 	union {
 		/** Current location, used with event LOCATION_EVT_LOCATION. */
 		struct location_data location;
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+		/**
+		 * Relevant location data when a timeout or an error occurs.
+		 * Used with event LOCATION_EVT_TIMEOUT and LOCATION_EVT_ERROR.
+		 */
+		struct location_data_error error;
+#endif
 
 #if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 		/**

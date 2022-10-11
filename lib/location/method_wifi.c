@@ -215,7 +215,6 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 				err);
 			err = -ENODATA;
 		} else {
-			location_result.method = LOCATION_METHOD_WIFI;
 			location_result.latitude = result.latitude;
 			location_result.longitude = result.longitude;
 			location_result.accuracy = result.accuracy;
