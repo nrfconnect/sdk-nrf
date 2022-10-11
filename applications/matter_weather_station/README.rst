@@ -69,6 +69,8 @@ If the Bluetooth LE advertising times out, you can re-enable it manually using *
 Additionally, the controller must get the commissioning information from the Matter accessory device and provision the device into the network.
 For details, see the `Testing`_ section.
 
+.. _matter_weather_station_cert_files:
+
 Certification files for Matter SVE 1.0
 ======================================
 

@@ -60,7 +60,7 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
 Matter
 ------
 
-* Added feature-complete production support for Matter over Thread.
+|no_changes_yet_note|
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
@@ -71,7 +71,7 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-* Updated Matter repository to official Matter 1.0 version tag.
+|no_changes_yet_note|
 
 Thread
 ------
@@ -171,8 +171,7 @@ Thread samples
 Matter samples
 --------------
 
-* Added factory data, PICS and configuration overlay files to the :ref:`matter_weather_station_app` that are useful for getting to know the Matter certification process.
-* Updated ZAP configuration of the samples to conform with device types defined in Matter 1.0 specification.
+|no_changes_yet_note|
 
 NFC samples
 -----------
