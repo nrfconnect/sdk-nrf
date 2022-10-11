@@ -47,19 +47,22 @@ static const char location_usage_str[] =
 	"  cancel:   Cancel/stop on going request. No options\n";
 
 static const char location_get_usage_str[] =
-	"Usage: location get [--mode <mode>] [--method <method>] [--interval <secs>]\n"
+	"Usage: location get [--mode <mode>] [--method <method>]\n"
+	"[--timeout <msecs>] [--interval <secs>]\n"
 	"[--gnss_accuracy <acc>] [--gnss_num_fixes <number of fixes>]\n"
-	"[--gnss_timeout <timeout in secs>] [--gnss_visibility]\n"
+	"[--gnss_timeout <timeout in msecs>] [--gnss_visibility]\n"
 	"[--gnss_cloud_nmea] [--gnss_cloud_pvt]\n"
-	"[--cellular_timeout <timeout in secs>] [--cellular_service <service_string>]\n"
-	"[--wifi_timeout <timeout in secs>] [--wifi_service <service_string>]\n"
+	"[--cellular_timeout <timeout in msecs>] [--cellular_service <service_string>]\n"
+	"[--wifi_timeout <timeout in msecs>] [--wifi_service <service_string>]\n"
 	"Options:\n"
-	"  --method,           Location method: 'gnss', 'cellular' or 'wifi'. Multiple\n"
+	"  -m, --method,       Location method: 'gnss', 'cellular' or 'wifi'. Multiple\n"
 	"                      '--method' parameters may be given to indicate list of\n"
 	"                      methods in priority order.\n"
 	"  --mode,             Location request mode: 'fallback' (default) or 'all'.\n"
 	"  --interval,         Position update interval in seconds\n"
 	"                      (default: 0 = single position)\n"
+	"  -t, --timeout,      Timeout for the entire location request in milliseconds.\n"
+	"                      Zero means timeout is disabled.\n"
 	"  --gnss_accuracy,    Used GNSS accuracy: 'low', 'normal' or 'high'\n"
 	"  --gnss_num_fixes,   Number of consecutive fix attempts (if gnss_accuracy\n"
 	"                      set to 'high', default: 3)\n"
@@ -97,6 +100,7 @@ static struct option long_options[] = {
 	{ "method", required_argument, 0, 'm' },
 	{ "mode", required_argument, 0, LOCATION_SHELL_OPT_MODE },
 	{ "interval", required_argument, 0, LOCATION_SHELL_OPT_INTERVAL },
+	{ "timeout", required_argument, 0, 't' },
 	{ "gnss_accuracy", required_argument, 0, LOCATION_SHELL_OPT_GNSS_ACCURACY },
 	{ "gnss_timeout", required_argument, 0, LOCATION_SHELL_OPT_GNSS_TIMEOUT },
 	{ "gnss_num_fixes", required_argument, 0, LOCATION_SHELL_OPT_GNSS_NUM_FIXES },
@@ -303,6 +307,9 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	int interval = 0;
 	bool interval_set = false;
 
+	int timeout = 0;
+	bool timeout_set = false;
+
 	int gnss_timeout = 0;
 	bool gnss_timeout_set = false;
 
@@ -357,7 +364,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 	gnss_location_to_cloud = false;
 
-	while ((opt = getopt_long(argc, argv, "m:", long_options, &long_index)) != -1) {
+	while ((opt = getopt_long(argc, argv, "m:t:", long_options, &long_index)) != -1) {
 		switch (opt) {
 		case LOCATION_SHELL_OPT_GNSS_TIMEOUT:
 			gnss_timeout = atoi(optarg);
@@ -412,6 +419,13 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		case LOCATION_SHELL_OPT_INTERVAL:
 			interval = atoi(optarg);
 			interval_set = true;
+			break;
+		case 't':
+			timeout = atoi(optarg);
+			timeout_set = true;
+			if (timeout == 0) {
+				timeout = SYS_FOREVER_MS;
+			}
 			break;
 
 		case LOCATION_SHELL_OPT_GNSS_ACCURACY:
@@ -491,7 +505,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		struct location_config config = { 0 };
 		struct location_config *real_config = &config;
 
-		if (method_count == 0 && !interval_set) {
+		if (method_count == 0 && !interval_set && !timeout_set) {
 			/* No methods or top level config given. Use default config. */
 			real_config = NULL;
 		}
@@ -526,6 +540,9 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 		if (interval_set) {
 			config.interval = interval;
+		}
+		if (timeout_set) {
+			config.timeout = timeout;
 		}
 		config.mode = req_mode;
 
