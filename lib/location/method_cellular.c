@@ -180,7 +180,6 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 			location_core_event_cb_error();
 		}
 	} else {
-		location_result.method = LOCATION_METHOD_CELLULAR;
 		location_result.latitude = location.latitude;
 		location_result.longitude = location.longitude;
 		location_result.accuracy = location.accuracy;

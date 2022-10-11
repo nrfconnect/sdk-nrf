@@ -10,6 +10,9 @@
 int method_gnss_init(void);
 void method_gnss_fix_work_fn(struct k_work *item);
 int method_gnss_location_get(const struct location_method_config *config);
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+void method_gnss_details_get(struct location_data_details *details);
+#endif
 
 int method_gnss_cancel(void);
 

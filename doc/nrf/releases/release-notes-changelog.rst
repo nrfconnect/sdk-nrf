@@ -477,7 +477,10 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
-  * Added timeout for the entire location request.
+  * Updated:
+    * Added timeout for the entire location request.
+    * Added location data details such as entire PVT data.
+    * Moved location method from the :c:struct:`location_data` structure to :c:struct:`location_event_data`.
 
 * :ref:`lte_lc_readme` library:
 

@@ -37,6 +37,9 @@ config LOCATION_METHODS_LIST_SIZE
 	help
 	  Maximum number of location methods within location_config structure.
 
+config LOCATION_DATA_DETAILS
+	bool "Gather and include detailed data into the location_event_data"
+
 config LOCATION_WORKQUEUE_STACK_SIZE
 	int "Stack size for the library work queue"
 	default 4096
@@ -81,7 +84,7 @@ endif # LOCATION_METHOD_GNSS
 if LOCATION_METHOD_CELLULAR
 
 config LOCATION_METHOD_CELLULAR_EXTERNAL
-	bool "Requesting resolution to neighbor cell information handled by the application outside of Location library."
+	bool "Resolution to neighbor cell information is handled by the application outside of Location library"
 	help
 	  Allow application to request resolution to neighbor cell information and
 	  respond the outcome to the Location library.
