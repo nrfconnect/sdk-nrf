@@ -136,8 +136,7 @@ static void test_encode_gnss_data_object(void)
 		.pvt.spd = 1,
 		.pvt.hdg = 176,
 		.queued = true,
-		.gnss_ts = 1000,
-		.format = CLOUD_CODEC_GNSS_FORMAT_PVT
+		.gnss_ts = 1000
 	};
 
 	ret = json_common_gnss_data_add(dummy.root_obj,
@@ -192,8 +191,7 @@ static void test_encode_gnss_data_array(void)
 		.pvt.spd = 1,
 		.pvt.hdg = 176,
 		.queued = true,
-		.gnss_ts = 1000,
-		.format = CLOUD_CODEC_GNSS_FORMAT_PVT
+		.gnss_ts = 1000
 	};
 
 	ret = json_common_gnss_data_add(dummy.array_obj,
@@ -754,7 +752,7 @@ static void test_encode_configuration_data_object(void)
 		.active_wait_timeout = 120,
 		.movement_resolution = 120,
 		.movement_timeout = 3600,
-		.gnss_timeout = 60,
+		.location_timeout = 60,
 		.accelerometer_activity_threshold = 10,
 		.accelerometer_inactivity_threshold = 5,
 		.accelerometer_inactivity_timeout = 80,
@@ -793,7 +791,7 @@ static void test_decode_configuration_data(void)
 	zassert_equal(false, data.active_mode, "Configuration is wrong");
 	zassert_equal(true, data.no_data.gnss, "Configuration is wrong");
 	zassert_equal(true, data.no_data.neighbor_cell, "Configuration is wrong");
-	zassert_equal(60, data.gnss_timeout, "Configuration is wrong");
+	zassert_equal(60, data.location_timeout, "Configuration is wrong");
 	zassert_equal(120, data.active_wait_timeout, "Configuration is wrong");
 	zassert_equal(120, data.movement_resolution, "Configuration is wrong");
 	zassert_equal(3600, data.movement_timeout, "Configuration is wrong");
@@ -827,7 +825,6 @@ static void test_encode_batch_data_object(void)
 		[0].pvt.hdg = 176,
 		[0].gnss_ts = 1000,
 		[0].queued = true,
-		[0].format = CLOUD_CODEC_GNSS_FORMAT_PVT,
 		/* Second entry */
 		[1].pvt.longi = 10,
 		[1].pvt.lat = 62,
@@ -836,8 +833,7 @@ static void test_encode_batch_data_object(void)
 		[1].pvt.spd = 1,
 		[1].pvt.hdg = 176,
 		[1].gnss_ts = 1000,
-		[1].queued = true,
-		[1].format = CLOUD_CODEC_GNSS_FORMAT_PVT
+		[1].queued = true
 	};
 	struct cloud_data_modem_dynamic modem_dynamic[2] = {
 		[0].band = 3,
@@ -1006,8 +1002,7 @@ static void test_floating_point_encoding_gnss(void)
 		.pvt.spd = 0.4443884789943695,
 		.pvt.hdg = 176.12345298374867,
 		.gnss_ts = 1000,
-		.queued = true,
-		.format = CLOUD_CODEC_GNSS_FORMAT_PVT
+		.queued = true
 	};
 
 	ret = json_common_gnss_data_add(dummy.root_obj,

@@ -16,7 +16,7 @@ The data types that are collected by the application are listed in the following
 +----------------+----------------------------+-----------------------------------------------+--------------------------------+
 | Data type      | Description                | Identifiers                                   | String identifier for NOD list |
 +================+============================+===============================================+================================+
-| Location       | GNSS coordinates           | APP_DATA_GNSS                                 |``gnss``                        |
+| Location       | Position coordinates       | APP_DATA_LOCATION                             |``gnss``, ``ncell``             |
 +----------------+----------------------------+-----------------------------------------------+--------------------------------+
 | Environmental  | Temperature, humidity      | APP_DATA_ENVIRONMENTAL                        | NA                             |
 +----------------+----------------------------+-----------------------------------------------+--------------------------------+
@@ -25,8 +25,6 @@ The data types that are collected by the application are listed in the following
 | Modem          | LTE link data, device data | APP_DATA_MODEM_DYNAMIC, APP_DATA_MODEM_STATIC | NA                             |
 +----------------+----------------------------+-----------------------------------------------+--------------------------------+
 | Battery        | Voltage                    | APP_DATA_BATTERY                              | NA                             |
-+----------------+----------------------------+-----------------------------------------------+--------------------------------+
-| Neighbor cells | Neighbor cell measurements | APP_DATA_NEIGHBOR_CELLS                       |``ncell``                       |
 +----------------+----------------------------+-----------------------------------------------+--------------------------------+
 
 Additionally, the following data types are supported that provide some asynchronous data:
@@ -62,7 +60,7 @@ The real-time configurations supported by the application are listed in the foll
 |          +-------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 |          | Movement timeout        | Number of seconds between each cloud update in passive mode, regardless of movement.                                                 | 3600 seconds   |
 +----------+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| GNSS timeout                       | Timeout for acquiring a GNSS fix during data sampling.                                                                               | 30 seconds     |
+| Location timeout                   | Timeout for location retrieval during data sampling.                                                                                 | 120 seconds    |
 +------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 | Accelerometer activity threshold   | Accelerometer activity threshold in m/s². Minimal absolute value for accelerometer readings to be considered valid movement.         | 10 m/s²        |
 +------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+

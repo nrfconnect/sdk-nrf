@@ -108,10 +108,10 @@ CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD
 CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS
    This configuration sets a timeout in seconds after which the accelerometer reports inactivity.
 
-.. _CONFIG_DATA_GNSS_TIMEOUT_SECONDS:
+.. _CONFIG_DATA_LOCATION_TIMEOUT_SECONDS:
 
-CONFIG_DATA_GNSS_TIMEOUT_SECONDS
-   This configuration sets the GNSS timeout value.
+CONFIG_DATA_LOCATION_TIMEOUT_SECONDS
+   This configuration sets the location timeout value.
 
 .. _CONFIG_DATA_SAMPLE_GNSS_DEFAULT:
 

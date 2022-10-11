@@ -25,8 +25,8 @@ extern enum sub_state_type {
 } sub_state;
 
 extern enum sub_sub_state_type {
-	SUB_SUB_STATE_GNSS_INACTIVE,
-	SUB_SUB_STATE_GNSS_ACTIVE
+	SUB_SUB_STATE_LOCATION_INACTIVE,
+	SUB_SUB_STATE_LOCATION_ACTIVE
 } sub_sub_state;
 
 extern struct led_pattern {

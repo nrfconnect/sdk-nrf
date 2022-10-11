@@ -180,7 +180,7 @@ nRF9160: Asset Tracker v2
     * :ref:`asset_tracker_v2_cloud_module`
     * :ref:`api_cloud_wrapper`
     * :ref:`asset_tracker_v2_data_module`
-    * :ref:`asset_tracker_v2_gnss_module`
+    * GNSS module (removed in NCS 2.2.0)
     * :ref:`asset_tracker_v2_modem_module`
     * :ref:`api_modules_common`
     * :ref:`asset_tracker_v2_sensor_module`

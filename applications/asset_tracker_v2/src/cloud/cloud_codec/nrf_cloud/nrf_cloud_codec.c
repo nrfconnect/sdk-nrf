@@ -388,7 +388,7 @@ static int config_add(cJSON *parent, struct cloud_data_cfg *data, const char *ob
 		goto exit;
 	}
 
-	err = json_add_number(config_obj, CONFIG_GNSS_TIMEOUT, data->gnss_timeout);
+	err = json_add_number(config_obj, CONFIG_LOCATION_TIMEOUT, data->location_timeout);
 	if (err) {
 		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
@@ -480,7 +480,7 @@ exit:
 
 static void config_get(cJSON *parent, struct cloud_data_cfg *data)
 {
-	cJSON *gnss_timeout = cJSON_GetObjectItem(parent, CONFIG_GNSS_TIMEOUT);
+	cJSON *location_timeout = cJSON_GetObjectItem(parent, CONFIG_LOCATION_TIMEOUT);
 	cJSON *active = cJSON_GetObjectItem(parent, CONFIG_DEVICE_MODE);
 	cJSON *active_wait = cJSON_GetObjectItem(parent, CONFIG_ACTIVE_TIMEOUT);
 	cJSON *move_res = cJSON_GetObjectItem(parent, CONFIG_MOVE_RES);
@@ -490,8 +490,8 @@ static void config_get(cJSON *parent, struct cloud_data_cfg *data)
 	cJSON *acc_inact_timeout = cJSON_GetObjectItem(parent, CONFIG_ACC_INACT_TIMEOUT);
 	cJSON *nod_list = cJSON_GetObjectItem(parent, CONFIG_NO_DATA_LIST);
 
-	if (gnss_timeout != NULL) {
-		data->gnss_timeout = gnss_timeout->valueint;
+	if (location_timeout != NULL) {
+		data->location_timeout = location_timeout->valueint;
 	}
 
 	if (active != NULL) {
@@ -559,20 +559,9 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 				break;
 			}
 
-			if (data[i].format == CLOUD_CODEC_GNSS_FORMAT_PVT) {
-				err =  add_pvt_data(array, &data[i]);
-				if (err && err != -ENODATA) {
-					return err;
-				}
-			} else if (data[i].format == CLOUD_CODEC_GNSS_FORMAT_NMEA) {
-				err =  add_data(array, NULL, APP_ID_GNSS, data[i].nmea,
-						&data[i].gnss_ts, data[i].queued, NULL, true);
-				if (err && err != -ENODATA) {
-					return err;
-				}
-			} else {
-				LOG_ERR("Unsupported GNSS format: %d", data[i].format);
-				return -EINVAL;
+			err =  add_pvt_data(array, &data[i]);
+			if (err && err != -ENODATA) {
+				return err;
 			}
 
 			data[i].queued = false;

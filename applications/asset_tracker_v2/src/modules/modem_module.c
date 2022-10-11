@@ -33,12 +33,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_MODEM_MODULE_LOG_LEVEL);
 BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 		"The Modem module does not support this configuration");
 
-#ifdef CONFIG_APP_REQUEST_NEIGHBOR_CELLS_DATA
-BUILD_ASSERT(CONFIG_AT_MONITOR_HEAP_SIZE >= 1024,
-	    "CONFIG_AT_MONITOR_HEAP_SIZE must be >= 1024 to fit neighbor cell measurements "
-	    "and other notifications at the same time");
-#endif
-
 
 struct modem_msg_data {
 	union {
@@ -63,7 +57,6 @@ static enum state_type {
 
 /* Enumerator that specifies the data type that is sampled. */
 enum sample_type {
-	NEIGHBOR_CELL,
 	MODEM_DYNAMIC,
 	MODEM_STATIC,
 	BATTERY_VOLTAGE
@@ -95,11 +88,9 @@ static struct module_data self = {
 
 /* Forward declarations. */
 static void send_cell_update(uint32_t cell_id, uint32_t tac);
-static void send_neighbor_cell_update(struct lte_lc_cells_info *cell_info);
 static void send_psm_update(int tau, int active_time);
 static void send_edrx_update(float edrx, float ptw);
-static inline int adjust_rsrp(int input, enum sample_type type);
-static inline int adjust_rsrq(int input);
+static inline int adjust_rsrp(int input);
 
 /* Convenience functions used in internal state handling. */
 static char *state2str(enum state_type state)
@@ -234,15 +225,6 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 			evt->cell.id, evt->cell.tac);
 		send_cell_update(evt->cell.id, evt->cell.tac);
 		break;
-	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS:
-		if (evt->cells_info.current_cell.id != LTE_LC_CELL_EUTRAN_ID_INVALID) {
-			LOG_DBG("Neighbor cell measurements received");
-			send_neighbor_cell_update((struct lte_lc_cells_info *)&evt->cells_info);
-		} else {
-			LOG_DBG("Neighbor cell measurement was not successful");
-			SEND_EVENT(modem, MODEM_EVT_NEIGHBOR_CELLS_DATA_NOT_READY);
-		}
-		break;
 	case LTE_LC_EVT_LTE_MODE_UPDATE:
 		nw_mode_latest = evt->lte_mode;
 		break;
@@ -320,7 +302,7 @@ static void modem_rsrp_handler(char rsrp_value)
 	 * This temporarily saves the latest value which are sent to
 	 * the Data module upon a modem data request.
 	 */
-	rsrp_value_latest = adjust_rsrp(rsrp_value, MODEM_DYNAMIC);
+	rsrp_value_latest = adjust_rsrp(rsrp_value);
 
 	LOG_DBG("Incoming RSRP status message, RSRP value is %d",
 		rsrp_value_latest);
@@ -505,70 +487,13 @@ static void send_edrx_update(float edrx, float ptw)
 	APP_EVENT_SUBMIT(evt);
 }
 
-static inline int adjust_rsrp(int input, enum sample_type type)
+static inline int adjust_rsrp(int input)
 {
-	switch (type) {
-	case NEIGHBOR_CELL:
-		if (IS_ENABLED(CONFIG_MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRP_TO_DBM)) {
-			return RSRP_IDX_TO_DBM(input);
-		}
-		break;
-	case MODEM_DYNAMIC:
-		if (IS_ENABLED(CONFIG_MODEM_DYNAMIC_DATA_CONVERT_RSRP_TO_DBM)) {
-			return RSRP_IDX_TO_DBM(input);
-		}
-		break;
-	default:
-		LOG_WRN("Unknown sample type");
-		break;
+	if (IS_ENABLED(CONFIG_MODEM_DYNAMIC_DATA_CONVERT_RSRP_TO_DBM)) {
+		return RSRP_IDX_TO_DBM(input);
 	}
 
 	return input;
-}
-
-static inline int adjust_rsrq(int input)
-{
-	if (IS_ENABLED(CONFIG_MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRQ_TO_DB)) {
-		return round(RSRQ_IDX_TO_DB(input));
-	}
-
-	return input;
-}
-
-static void send_neighbor_cell_update(struct lte_lc_cells_info *cell_info)
-{
-	struct modem_module_event *evt = new_modem_module_event();
-
-	__ASSERT(evt, "Not enough heap left to allocate event");
-
-	BUILD_ASSERT(sizeof(evt->data.neighbor_cells.cell_data) ==
-		     sizeof(struct lte_lc_cells_info));
-	BUILD_ASSERT(sizeof(evt->data.neighbor_cells.neighbor_cells) >=
-		     sizeof(struct lte_lc_ncell) * CONFIG_LTE_NEIGHBOR_CELLS_MAX);
-
-	memcpy(&evt->data.neighbor_cells.cell_data, cell_info, sizeof(struct lte_lc_cells_info));
-	memcpy(&evt->data.neighbor_cells.neighbor_cells, cell_info->neighbor_cells,
-	       sizeof(struct lte_lc_ncell) * evt->data.neighbor_cells.cell_data.ncells_count);
-
-	/* Convert RSRP to dBm and RSRQ to dB per "nRF91 AT Commands" v1.7. */
-	evt->data.neighbor_cells.cell_data.current_cell.rsrp =
-			adjust_rsrp(evt->data.neighbor_cells.cell_data.current_cell.rsrp,
-				    NEIGHBOR_CELL);
-	evt->data.neighbor_cells.cell_data.current_cell.rsrq =
-			adjust_rsrq(evt->data.neighbor_cells.cell_data.current_cell.rsrq);
-
-	for (size_t i = 0; i < evt->data.neighbor_cells.cell_data.ncells_count; i++) {
-		evt->data.neighbor_cells.neighbor_cells[i].rsrp =
-			adjust_rsrp(evt->data.neighbor_cells.neighbor_cells[i].rsrp,
-				    NEIGHBOR_CELL);
-		evt->data.neighbor_cells.neighbor_cells[i].rsrq =
-			adjust_rsrq(evt->data.neighbor_cells.neighbor_cells[i].rsrq);
-	}
-
-	evt->type = MODEM_EVT_NEIGHBOR_CELLS_DATA_READY;
-	evt->data.neighbor_cells.timestamp = k_uptime_get();
-
-	APP_EVENT_SUBMIT(evt);
 }
 
 static int static_modem_data_get(void)
@@ -818,28 +743,6 @@ static int battery_data_get(void)
 	modem_module_event->type = MODEM_EVT_BATTERY_DATA_READY;
 
 	APP_EVENT_SUBMIT(modem_module_event);
-
-	return 0;
-}
-
-static int neighbor_cells_measurement_start(void)
-{
-	int err;
-	struct lte_lc_ncellmeas_params ncellmeas_params = {
-		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT,
-	};
-
-	if (IS_ENABLED(CONFIG_MODEM_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT)) {
-		ncellmeas_params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT;
-	} else if (IS_ENABLED(CONFIG_MODEM_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE)) {
-		ncellmeas_params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE;
-	}
-
-	err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
-	if (err) {
-		LOG_ERR("Failed to start neighbor cell measurements, error: %d", err);
-		return err;
-	}
 
 	return 0;
 }
@@ -1120,17 +1023,6 @@ static void on_all_states(struct modem_msg_data *msg)
 			if (err) {
 				SEND_EVENT(modem,
 					MODEM_EVT_BATTERY_DATA_NOT_READY);
-			}
-		}
-
-		if (data_type_is_requested(msg->module.app.data_list,
-					   msg->module.app.count,
-					   APP_DATA_NEIGHBOR_CELLS)) {
-			int err;
-
-			err = neighbor_cells_measurement_start();
-			if (err) {
-				SEND_EVENT(modem, MODEM_EVT_NEIGHBOR_CELLS_DATA_NOT_READY);
 			}
 		}
 	}

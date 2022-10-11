@@ -261,7 +261,7 @@ nRF9160: Asset Tracker v2
   * ``CONFIG_MODEM_NEIGHBOR_SEARCH_TYPE`` Kconfig option.
   * Publishing method for GNSS fixes.
     GNSS fixes are now published in the PVT format instead of NMEA for nRF Cloud builds.
-    To revert to NMEA, set the :ref:`CONFIG_GNSS_MODULE_NMEA <CONFIG_GNSS_MODULE_NMEA>` Kconfig option.
+    To revert to NMEA, set the ``CONFIG_GNSS_MODULE_NMEA`` Kconfig option.
   * Forwarding of :c:enum:`SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED` and :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` events by the sensor module.
   * :ref:`Real-time configurations <real_time_configs>`, which can now configure the upper and lower thresholds for motion detection.
     You can also configure the timeout after which the sensor reports inactivity.

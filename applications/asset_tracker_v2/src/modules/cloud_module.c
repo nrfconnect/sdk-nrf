@@ -30,7 +30,7 @@
 #include "events/data_module_event.h"
 #include "events/util_module_event.h"
 #include "events/modem_module_event.h"
-#include "events/gnss_module_event.h"
+#include "events/location_module_event.h"
 #include "events/debug_module_event.h"
 
 #include <zephyr/logging/log.h>
@@ -59,7 +59,7 @@ struct cloud_msg_data {
 		struct modem_module_event modem;
 		struct cloud_module_event cloud;
 		struct util_module_event util;
-		struct gnss_module_event gnss;
+		struct location_module_event location;
 		struct debug_module_event debug;
 	} module;
 };
@@ -103,19 +103,6 @@ const k_tid_t cloud_module_thread;
 /* Register message IDs that are used with the QoS library. */
 QOS_MESSAGE_TYPES_REGISTER(GENERIC, BATCH, UI, NEIGHBOR_CELLS, AGPS_REQUEST,
 			   PGPS_REQUEST, CONFIG, MEMFAULT);
-
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-/* Local copy of the last A-GPS request from the modem, used to inject correct P-GPS data. */
-static struct nrf_modem_gnss_agps_data_frame agps_request = {
-	.sv_mask_ephe = 0xFFFFFFFF,
-	.sv_mask_alm = 0xFFFFFFFF,
-	.data_flags = NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST |
-		      NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST |
-		      NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST |
-		      NRF_MODEM_GNSS_AGPS_POSITION_REQUEST |
-		      NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST
-};
-#endif
 
 /* Cloud module message queue. */
 #define CLOUD_QUEUE_ENTRY_COUNT		20
@@ -244,10 +231,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		enqueue_msg = true;
 	}
 
-	if (is_gnss_module_event(aeh)) {
-		struct gnss_module_event *evt = cast_gnss_module_event(aeh);
+	if (is_location_module_event(aeh)) {
+		struct location_module_event *evt = cast_location_module_event(aeh);
 
-		msg.module.gnss = *evt;
+		msg.module.location = *evt;
 		enqueue_msg = true;
 	}
 
@@ -509,95 +496,6 @@ static void disconnect_cloud(void)
 
 	k_work_cancel_delayable(&connect_check_work);
 }
-
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-void pgps_handler(struct nrf_cloud_pgps_event *event)
-{
-	int err;
-
-	switch (event->type) {
-	case PGPS_EVT_INIT:
-		LOG_DBG("PGPS_EVT_INIT");
-		break;
-	case PGPS_EVT_UNAVAILABLE:
-		LOG_DBG("PGPS_EVT_UNAVAILABLE");
-		break;
-	case PGPS_EVT_LOADING:
-		LOG_DBG("PGPS_EVT_LOADING");
-		break;
-	case PGPS_EVT_READY:
-		LOG_DBG("PGPS_EVT_READY");
-		break;
-	case PGPS_EVT_AVAILABLE:
-		LOG_DBG("PGPS_EVT_AVAILABLE");
-
-		err = nrf_cloud_pgps_inject(event->prediction, &agps_request);
-		if (err) {
-			LOG_ERR("Unable to send prediction to modem: %d", err);
-		}
-
-		err = nrf_cloud_pgps_preemptive_updates();
-		if (err) {
-			LOG_ERR("Error requesting updates: %d", err);
-		}
-		break;
-	case PGPS_EVT_REQUEST: {
-		LOG_DBG("PGPS_EVT_REQUEST");
-
-		/* Encode and send P-GPS request to cloud. */
-		struct cloud_codec_data output = {0};
-		struct cloud_data_pgps_request request = {
-			.count = event->request->prediction_count,
-			.interval = event->request->prediction_period_min,
-			.day = event->request->gps_day,
-			.time = event->request->gps_time_of_day,
-			.queued = true,
-		};
-
-		err = cloud_codec_encode_pgps_request(&output, &request);
-		switch (err) {
-		case 0:
-			LOG_DBG("P-GPS request encoded successfully");
-
-			if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
-				int err = cloud_wrap_pgps_request_send(NULL,
-								       0,
-								       true,
-								       0);
-				if (err) {
-					LOG_ERR("cloud_wrap_agps_request_send, err: %d", err);
-				}
-
-				return;
-			}
-
-			add_qos_message(output.buf,
-					output.len,
-					PGPS_REQUEST,
-					QOS_FLAG_RELIABILITY_ACK_REQUIRED,
-					true);
-			break;
-		case -ENOTSUP:
-			/* PGPS request encoding is not supported */
-			break;
-		case -ENODATA:
-			LOG_DBG("No P-GPS data to encode, error: %d", err);
-			break;
-		default:
-			LOG_ERR("Error encoding P-GPS request: %d", err);
-			SEND_ERROR(data, DATA_EVT_ERROR, err);
-			return;
-		}
-	}
-		break;
-	default:
-		LOG_WRN("Unknown P-GPS event");
-		break;
-	}
-
-	(void)err;
-}
-#endif
 
 /* Convenience function used to add messages to the QoS library. */
 static void add_qos_message(uint8_t *ptr, size_t len, uint8_t type,
@@ -910,7 +808,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 		add_qos_message(msg->module.data.data.buffer.buf,
 				msg->module.data.data.buffer.len,
 				NEIGHBOR_CELLS,
-				QOS_FLAG_RELIABILITY_ACK_DISABLED,
+				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
 				true);
 	}
 
@@ -1087,26 +985,51 @@ static void on_all_states(struct cloud_msg_data *msg)
 	}
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-	if (IS_EVENT(msg, gnss, GNSS_EVT_AGPS_NEEDED)) {
-		/* Keep a local copy of the incoming request. Used when injecting
-		 * P-GPS data into the modem.
-		 */
-		memcpy(&agps_request, &msg->module.gnss.data.agps_request, sizeof(agps_request));
-	}
-
-	/* To properly initialize the nRF Cloud PGPS library date time must have been obtained. */
-	if (IS_EVENT(msg, data, DATA_EVT_DATE_TIME_OBTAINED)) {
-		struct nrf_cloud_pgps_init_param param = {
-			.event_handler = pgps_handler,
-			/* storage is defined by CONFIG_NRF_CLOUD_PGPS_STORAGE */
-			.storage_base = 0u,
-			.storage_size = 0u
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_PGPS_NEEDED)) {
+		/* Encode and send P-GPS request to cloud. */
+		struct cloud_codec_data output = {0};
+		struct cloud_data_pgps_request request = {
+			.count = msg->module.location.data.pgps_request.prediction_count,
+			.interval = msg->module.location.data.pgps_request.prediction_period_min,
+			.day = msg->module.location.data.pgps_request.gps_day,
+			.time = msg->module.location.data.pgps_request.gps_time_of_day,
+			.queued = true,
 		};
 
-		int err = nrf_cloud_pgps_init(&param);
+		int err = cloud_codec_encode_pgps_request(&output, &request);
 
-		if (err) {
-			LOG_ERR("nrf_cloud_pgps_init: %d", err);
+		switch (err) {
+		case 0:
+			LOG_DBG("P-GPS request encoded successfully");
+
+			if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
+				int err = cloud_wrap_pgps_request_send(NULL,
+								       0,
+								       true,
+								       0);
+				if (err) {
+					LOG_ERR("cloud_wrap_pgps_request_send, err: %d", err);
+				}
+
+				return;
+			}
+
+			add_qos_message(output.buf,
+					output.len,
+					PGPS_REQUEST,
+					QOS_FLAG_RELIABILITY_ACK_REQUIRED,
+					true);
+			break;
+		case -ENOTSUP:
+			LOG_DBG("P-GPS request encoding is not supported, error: %d", err);
+			break;
+		case -ENODATA:
+			LOG_DBG("No P-GPS data to encode, error: %d", err);
+			break;
+		default:
+			LOG_ERR("Error encoding P-GPS request: %d", err);
+			SEND_ERROR(data, DATA_EVT_ERROR, err);
+			return;
 		}
 	}
 #endif
@@ -1176,6 +1099,6 @@ APP_EVENT_SUBSCRIBE(MODULE, data_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, app_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, modem_module_event);
 APP_EVENT_SUBSCRIBE_FIRST(MODULE, cloud_module_event);
-APP_EVENT_SUBSCRIBE(MODULE, gnss_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, location_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, debug_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, util_module_event);

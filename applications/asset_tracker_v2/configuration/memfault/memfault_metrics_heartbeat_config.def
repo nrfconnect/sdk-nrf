@@ -4,4 +4,4 @@
 
 MEMFAULT_METRICS_KEY_DEFINE(GnssTimeToFix, kMemfaultMetricType_Unsigned)
 MEMFAULT_METRICS_KEY_DEFINE(GnssSatellitesTracked, kMemfaultMetricType_Unsigned)
-MEMFAULT_METRICS_KEY_DEFINE(GnssTimeoutSearchTime, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(LocationTimeoutSearchTime, kMemfaultMetricType_Unsigned)

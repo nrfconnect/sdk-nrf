@@ -48,9 +48,6 @@ enum app_module_event_type {
 	/** Request latest configuration from the cloud. */
 	APP_EVT_CONFIG_GET,
 
-	/** The application module needs A-GPS to be processed before it requests GNSS. */
-	APP_EVT_AGPS_NEEDED,
-
 	/** The application module has performed all procedures to prepare for
 	 *  a shutdown of the system.
 	 */
@@ -71,8 +68,7 @@ enum app_module_data_type {
 	APP_DATA_MODEM_STATIC,
 	APP_DATA_MODEM_DYNAMIC,
 	APP_DATA_BATTERY,
-	APP_DATA_GNSS,
-	APP_DATA_NEIGHBOR_CELLS,
+	APP_DATA_LOCATION,
 
 	APP_DATA_COUNT,
 };

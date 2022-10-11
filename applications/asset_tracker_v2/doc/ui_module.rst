@@ -45,7 +45,7 @@ The following table describes the supported LED states:
 +===========================+==============================+============================+
 | LTE connection search     | Yellow, blinking             | LED1 blinking              |
 +---------------------------+------------------------------+----------------------------+
-| GNSS fix search           | Purple, blinking             | LED2 blinking              |
+| Location search           | Purple, blinking             | LED2 blinking              |
 +---------------------------+------------------------------+----------------------------+
 | Cloud association         | White, double pulse blinking | LED3 double pulse blinking |
 +---------------------------+------------------------------+----------------------------+
@@ -88,8 +88,8 @@ The UI module has an internal state machine with the following states:
    * ``SUB_STATE_ACTIVE`` - The application is in the active mode. The module reverts to the active mode LED pattern after cloud publication.
    * ``SUB_STATE_PASSIVE`` - The application is in the passive mode. The module reverts to the passive mode LED pattern after cloud publication.
 
-      * ``SUB_SUB_STATE_GNSS_ACTIVE`` - The application is performing a GNSS search. The module reverts to the GNSS search LED pattern.
-      * ``SUB_SUB_STATE_GNSS_INACTIVE`` - A GNSS search is not being performed.
+      * ``SUB_SUB_STATE_LOCATION_ACTIVE`` - The application is performing a location search. The module reverts to the location search LED pattern.
+      * ``SUB_SUB_STATE_LOCATION_INACTIVE`` - A location search is not being performed.
 
 * ``STATE_LTE_CONNECTING`` - The modem module is performing an LTE connection search. The UI module triggers the LTE connection search LED pattern.
 * ``STATE_CLOUD_CONNECTING`` - The cloud module is connecting to cloud. The UI module triggers the cloud connection LED pattern.
