@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "../app.overlay"
+
 /* Disable uart1 in nonsecure since it is used by the TFM secure app. */
 &uart1 {
 	status = "disabled";
