@@ -16,3 +16,13 @@
   platforms:
     - all
   comment: "Edge Impulse server is currently unstable"
+
+- scenarios:
+    - sample.ant_advanced_burst
+    - sample.ant_broadcast_rx
+    - sample.ant_broadcast_tx
+    - sample.ant_rpc
+    - sample.hrm_tx
+  platforms:
+    - all
+  comment: "Zephyr include paths need to updated in the sdk-ant repository."
