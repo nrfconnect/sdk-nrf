@@ -39,3 +39,4 @@ The following pages provide a brief overview of the Matter structure.
    ug_matter_overview_architecture.rst
    ug_matter_overview_architecture_integration.rst
    ug_matter_overview_network_topologies.rst
+   ug_matter_overview_device_types.rst
