@@ -1,7 +1,7 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.1.99
-###########################
+Changelog for |NCS| v2.1.99-dev2
+################################
 
 .. contents::
    :local:
@@ -113,9 +113,9 @@ nRF9160: Asset Tracker v2
 nRF9160: Serial LTE modem
 -------------------------
 
-* Added
+* Added:
 
-  * Added optional data modem flow control option CONFIG_SLM_DATAMODE_URC.
+  * Added optional data modem flow control option :ref:`CONFIG_SLM_DATAMODE_URC <CONFIG_SLM_DATAMODE_URC>`.
 
 * Updated:
 
@@ -126,7 +126,7 @@ nRF5340 Audio
 
 * Added:
 
-  * Added Kconfig options for different sample rates and BAP presets.
+  * Kconfig options for different sample rates and BAP presets.
 
 * Updated:
 
@@ -200,7 +200,7 @@ nRF9160 samples
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
-  * Changed:
+  * Updated:
 
    * Sample moved from :file:`samples/nrf9160/nrf_cloud_rest_cell_pos` to :file:`samples/nrf9160/nrf_cloud_rest_cell_location`.
 
@@ -241,12 +241,11 @@ Zigbee samples
 Wi-Fi samples
 -------------
 
-* Added :ref:`wifi_radio_test` sample with the radio test support.
-    * Added subcommands for FICR/OTP programming.
+* Added:
 
-* Added :ref:`wifi_scan_sample` sample that demonstrates how to scan for the access points.
-
-* Added :ref:`wifi_station_sample` sample that demonstrates how to connect the Wi-Fi station to a specified access point.
+  * :ref:`wifi_radio_test` sample with the radio test support and :ref:`subcommands for FICR/OTP programming <wifi_ficr_prog>`.
+  * :ref:`wifi_scan_sample` sample that demonstrates how to scan for the access points.
+  * :ref:`wifi_station_sample` sample that demonstrates how to connect the Wi-Fi station to a specified access point.
 
 Other samples
 -------------
@@ -306,10 +305,12 @@ Modem libraries
 
 * :ref:`modem_info_readme` library:
 
-  * Removed :c:func:`modem_info_json_string_encode` and :c:func:`modem_info_json_object_encode` functions.
-  * Removed network_mode field from :c:struct:`network_param`.
-  * Removed ``MODEM_INFO_NETWORK_MODE_MAX_SIZE``.
-  * Removed ``CONFIG_MODEM_INFO_ADD_BOARD``.
+  * Removed:
+
+    * :c:func:`modem_info_json_string_encode` and :c:func:`modem_info_json_object_encode` functions.
+    * network_mode field from :c:struct:`network_param`.
+    * ``MODEM_INFO_NETWORK_MODE_MAX_SIZE``.
+    * ``CONFIG_MODEM_INFO_ADD_BOARD``.
 
 * :ref:`nrf_modem_lib_readme` library:
 
@@ -362,7 +363,7 @@ Other libraries
 Common Application Framework (CAF)
 ----------------------------------
 
-  * :ref:`caf_sensor_manager`
+* :ref:`caf_sensor_manager`:
 
   * Added:
 
@@ -389,7 +390,7 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-* :ref:`west_sbom`
+* :ref:`west_sbom`:
 
   * SPDX License List database updated to version 3.18.
 
