@@ -196,7 +196,10 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 	}
 
 	if (has_changed & button_states & DK_BTN2_MSK) {
-		mosh_print("Button 2 pressed, toggling UART power state");
+		/* printk() used instead of mosh_print() which returns before the printing is
+		 * actually finished and UART gets shut down in the meantime causing a jam.
+		 */
+		printk("\nButton 2 pressed, toggling UART power state\n");
 		uart_toggle_power_state();
 	}
 }
