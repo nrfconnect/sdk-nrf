@@ -88,6 +88,8 @@ int location_request(const struct location_config *config)
 			LOG_DBG("No method configuration given. "
 				"Using default method configuration.");
 			default_config.interval = config->interval;
+			default_config.timeout = config->timeout;
+			default_config.mode = config->mode;
 		} else {
 			LOG_DBG("No configuration given. Using default configuration.");
 		}
@@ -159,6 +161,7 @@ void location_config_defaults_set(
 
 	memset(config, 0, sizeof(struct location_config));
 	config->methods_count = methods_count;
+	config->timeout = 300 * MSEC_PER_SEC; /* 5 minutes */
 	config->mode = LOCATION_REQ_MODE_FALLBACK;
 	for (int i = 0; i < methods_count; i++) {
 		location_config_method_defaults_set(&config->methods[i], method_types[i]);

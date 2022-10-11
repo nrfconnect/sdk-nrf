@@ -701,6 +701,10 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 
 	/* Configure GNSS to continuous tracking mode */
 	err = nrf_modem_gnss_fix_interval_set(1);
+	if (err == -EINVAL) {
+		LOG_WRN("First nrf_modem_gnss API function failed. It could be that "
+			"modem's system or functional mode doesn't allow GNSS usage.");
+	}
 
 #if defined(CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK)
 	err |= nrf_modem_gnss_elevation_threshold_set(CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK);

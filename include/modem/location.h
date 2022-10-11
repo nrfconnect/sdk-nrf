@@ -253,6 +253,11 @@ struct location_config {
 	 * the valid range is 10...65535 seconds.
 	 */
 	uint16_t interval;
+	/**
+	 * @brief Timeout (in milliseconds) for the entire location request.
+	 * SYS_FOREVER_MS means that the timer is disabled.
+	 */
+	int32_t timeout;
 
 	/**
 	 * @brief Location acquisition mode.
