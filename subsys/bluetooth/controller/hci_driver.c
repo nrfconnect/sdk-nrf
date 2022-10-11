@@ -632,7 +632,7 @@ static int configure_memory_usage(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_BROADCASTER)) {
-#if defined(CONFIG_BT_CTLR_ADV_EXT)
+#if defined(CONFIG_BT_CTLR_ADV_DATA_LEN_MAX)
 		cfg.adv_buffer_cfg.max_adv_data = CONFIG_BT_CTLR_ADV_DATA_LEN_MAX;
 #else
 		cfg.adv_buffer_cfg.max_adv_data = SDC_DEFAULT_ADV_BUF_SIZE;
