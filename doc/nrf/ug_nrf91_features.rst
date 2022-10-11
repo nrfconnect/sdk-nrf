@@ -187,7 +187,7 @@ To perform a FOTA upgrade, complete the following steps:
 
       In addition, the following requirements apply:
 
-      * |fota_upgrades_req_mcuboot|
+      * To upgrade the application, you must use :doc:`mcuboot:index-ncs` as the upgradable bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
       * If you want to upgrade the upgradable bootloader, the :ref:`bootloader` must be used (:kconfig:option:`CONFIG_SECURE_BOOT`).
       * If you want to upgrade the modem firmware through modem delta updates, neither MCUboot nor the immutable bootloader are required, because the modem firmware upgrade is handled by the modem itself.
       * If you want to perform a full modem firmware upgrade, an |external_flash_size| is required.
