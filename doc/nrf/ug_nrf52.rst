@@ -211,41 +211,39 @@ FOTA upgrades can be used to replace the application.
 .. note::
    |note|
 
-FOTA over Bluetooth LE
-======================
+FOTA over Bluetooth Low Energy
+==============================
+
+To enable support for FOTA upgrades, do the following:
+
+   * Use MCUboot as the upgradable bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` must be enabled). For more information, go to the :doc:`mcuboot:index-ncs` page.
+   * Enable the mcumgr module that handles the transport protocol over Bluetooth Low Energy as follows:
+
+     a. Enable :kconfig:option:`CONFIG_MCUMGR_CMD_OS_MGMT`, :kconfig:option:`CONFIG_MCUMGR_CMD_IMG_MGMT`, and :kconfig:option:`CONFIG_MCUMGR_SMP_BT`.
+     #. Call ``os_mgmt_register_group()`` and ``img_mgmt_register_group()`` in your application.
+     #. Call ``smp_bt_register()`` in your application to initialize the mcumgr Bluetooth Low Energy transport.
+
+   After completing these steps, your application should advertise the SMP Service with ``UUID 8D53DC1D-1DB7-4CD3-868B-8A527460AA84``.
 
 To perform a FOTA upgrade, complete the following steps:
 
-1. Make sure that your application supports FOTA upgrades.
-      To download and apply FOTA upgrades, the following requirements apply:
+1. Create a binary file that contains the new image.
 
-      * You must enable the mcumgr module, which handles the transport protocol over Bluetooth Low Energy.
-        To enable this module in your application, complete the following steps:
+   |fota_upgrades_building|
+   The :file:`app_update.bin` file is the file that must be downloaded to the device.
 
-        a. Enable :kconfig:option:`CONFIG_MCUMGR_CMD_OS_MGMT`, :kconfig:option:`CONFIG_MCUMGR_CMD_IMG_MGMT`, and :kconfig:option:`CONFIG_MCUMGR_SMP_BT`.
-        #. Call ``os_mgmt_register_group()`` and ``img_mgmt_register_group()`` in your application.
-        #. Call ``smp_bt_register()`` in your application to initialize the mcumgr Bluetooth Low Energy transport.
+#. Download the new image to your device.
 
-        After completing these steps, your application should advertise the SMP Service with UUID 8D53DC1D-1DB7-4CD3-868B-8A527460AA84.
+   .. note::
+      When performing FOTA upgrade on a Bluetooth mesh device and if the device's composition data is going to change after the firmware upgrade, unprovision the device before downloading the new image.
 
-      * |fota_upgrades_req_mcuboot|
+      There is currently no support for the FOTA process in nRF Connect for Desktop.
 
-#. Create a binary file that contains the new image.
-      |fota_upgrades_building|
-      The :file:`app_update.bin` file is the file that must be downloaded to the device.
+   Use `nRF Connect Device Manager`_, `nRF Connect for Mobile`_, or `nRF Toolbox`_ to upgrade your device with the new firmware:
 
-#. Download the new image to a device.
-
-      .. note::
-         When performing FOTA upgrade on a Bluetooth mesh device and if the device's composition data is going to change after the firmware upgrade, unprovision the device before downloading the new image.
-
-      Use `nRF Connect Device Manager`_, `nRF Connect for Mobile`_, or `nRF Toolbox`_ to upgrade your device with the new firmware.
-
-      To do so, make sure that you can access the :file:`app_update.bin` file from your phone or tablet.
-      Then connect to the device with the mobile app and initiate the DFU process to transfer :file:`app_update.bin` to the device.
-
-      .. note::
-         There is currently no support for the FOTA process in nRF Connect for Desktop.
+   a. Ensure you can access the :file:`app_update.bin` file from your phone or tablet.
+   #. Connect to the device with the mobile app.
+   #. Initiate the DFU process to transfer :file:`app_update.bin` to the device.
 
 FOTA upgrade sample
 ===================
@@ -281,7 +279,7 @@ FOTA in Matter
 To perform a FOTA upgrade when working with the Matter protocol, use one of the following methods:
 
 * DFU over Bluetooth LE using either smartphone or PC command line tool.
-  Both options are similar to `FOTA over Bluetooth LE`_.
+  Both options are similar to `FOTA over Bluetooth Low Energy`_.
 
   .. note::
       This protocol is not part of the Matter specification.
