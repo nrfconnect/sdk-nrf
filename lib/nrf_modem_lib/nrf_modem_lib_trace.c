@@ -119,6 +119,40 @@ static void backend_bps_log(struct k_work *item)
 }
 #endif
 
+#if CONFIG_NRF_MODEM_LIB_TRACE_BITRATE_LOG
+#define BPS_LOG_PERIOD_MS CONFIG_NRF_MODEM_LIB_TRACE_BITRATE_LOG_PERIOD_MS
+#define BPS_LOG_PERIOD K_MSEC(BPS_LOG_PERIOD_MS)
+
+static uint32_t trace_bytes_received;
+
+static void update_trace_bytes_received(struct nrf_modem_trace_data *frags, size_t n_frags)
+{
+	for (size_t i = 0; i < n_frags; i++) {
+		trace_bytes_received += frags[i].len;
+	}
+}
+
+static void bps_log(struct k_work *item);
+
+K_WORK_DELAYABLE_DEFINE(bps_log_work, bps_log);
+
+static void bps_log(struct k_work *item)
+{
+	uint32_t data_bits = trace_bytes_received * 8;
+	uint32_t trace_data_bps_avg = data_bits * 1000 / BPS_LOG_PERIOD_MS;
+
+	trace_bytes_received = 0;
+
+	LOG_INF("Trace bitrate (bps): %u", trace_data_bps_avg);
+
+	k_work_schedule(&bps_log_work, BPS_LOG_PERIOD);
+}
+
+#define UPDATE_TRACE_BYTES_RECEIVED(frags, n_frags) update_trace_bytes_received(frags, n_frags)
+#else
+#define UPDATE_TRACE_BYTES_RECEIVED(...)
+#endif
+
 int nrf_modem_lib_trace_processing_done_wait(k_timeout_t timeout)
 {
 	int err;
@@ -176,6 +210,7 @@ trace_reset:
 		switch (err) {
 		case 0:
 			/* Success */
+			UPDATE_TRACE_BYTES_RECEIVED(frags, n_frags);
 			break;
 		case -NRF_ESHUTDOWN:
 			LOG_INF("Modem was turned off, no more traces");
@@ -230,6 +265,10 @@ static int trace_init(void)
 
 #if CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
 	k_work_schedule(&backend_bps_log_work, BACKEND_BPS_LOG_PERIOD);
+#endif
+
+#if CONFIG_NRF_MODEM_LIB_TRACE_BITRATE_LOG
+	k_work_schedule(&bps_log_work, BPS_LOG_PERIOD);
 #endif
 
 	return 0;
