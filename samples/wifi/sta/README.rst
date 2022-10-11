@@ -7,7 +7,7 @@ Wi-Fi: Station
    :local:
    :depth: 2
 
-The Station sample demonstrates how to connect the Wi-Fi station to a specified access point using DHCP.
+The Station sample demonstrates how to connect the Wi-Fi station to a specified access point using Dynamic Host Configuration Protocol (DHCP).
 
 Requirements
 ************
@@ -41,9 +41,9 @@ You must configure the following Wi-Fi credentials in ``prj.conf``:
 * Password
 
 .. note::
-   You can also use menuconfig to enable ``Key management`` option.
+   You can also use ``menuconfig`` to enable ``Key management`` option.
 
-See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run menuconfig.
+See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
 To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
 The following is an example of the CLI command:
