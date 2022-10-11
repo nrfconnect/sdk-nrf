@@ -53,7 +53,7 @@
 #define CONFIG_ACTIVE_TIMEOUT		  "activeWaitTime"
 #define CONFIG_MOVE_TIMEOUT		  "movementTimeout"
 #define CONFIG_MOVE_RES			  "movementResolution"
-#define CONFIG_GNSS_TIMEOUT		  "gnssTimeout"
+#define CONFIG_LOCATION_TIMEOUT		  "locationTimeout"
 #define CONFIG_ACC_ACT_THRESHOLD	  "accThreshAct"
 #define CONFIG_ACC_INACT_THRESHOLD	  "accThreshInact"
 #define CONFIG_ACC_INACT_TIMEOUT	  "accTimeoutInact"

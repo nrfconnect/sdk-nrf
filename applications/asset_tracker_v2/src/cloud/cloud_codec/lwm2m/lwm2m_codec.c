@@ -113,8 +113,8 @@ static int config_update_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_
 	/* There has been a configuration update. Send callback to application with the latest
 	 * state of the configuration.
 	 */
-	err = lwm2m_engine_get_s32(LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, GNSS_TIMEOUT_RID),
-				   &cfg.gnss_timeout);
+	err = lwm2m_engine_get_s32(LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, LOCATION_TIMEOUT_RID),
+				   &cfg.location_timeout);
 	if (err) {
 		LOG_ERR("Failed getting GNSS resource value.");
 	}
@@ -361,8 +361,8 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 		return err;
 	}
 
-	err = lwm2m_engine_set_s32(LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, GNSS_TIMEOUT_RID),
-				   cfg->gnss_timeout);
+	err = lwm2m_engine_set_s32(LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, LOCATION_TIMEOUT_RID),
+				   cfg->location_timeout);
 	if (err) {
 		return err;
 	}
@@ -432,7 +432,7 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 	}
 
 	err = lwm2m_engine_register_post_write_callback(LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0,
-								   GNSS_TIMEOUT_RID),
+								   LOCATION_TIMEOUT_RID),
 							config_update_cb);
 	if (err) {
 		return err;

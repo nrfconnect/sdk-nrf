@@ -21,7 +21,7 @@
 #define CONFIG_ACTIVE_TIMEOUT		  "actwt"
 #define CONFIG_MOVE_TIMEOUT		  "mvt"
 #define CONFIG_MOVE_RES			  "mvres"
-#define CONFIG_GNSS_TIMEOUT		  "gnsst"
+#define CONFIG_LOCATION_TIMEOUT		  "loct"
 #define CONFIG_ACC_ACT_THRESHOLD	  "accath"
 #define CONFIG_ACC_INACT_THRESHOLD	  "accith"
 #define CONFIG_ACC_INACT_TIMEOUT	  "accito"
@@ -57,7 +57,6 @@
 #define DATA_GNSS_SPEED	   "spd"
 #define DATA_GNSS_HEADING   "hdg"
 #define DATA_GNSS_ACCURACY  "acc"
-#define DATA_GNSS_NMEA	   "nmea"
 
 #define DATA_NEIGHBOR_CELLS_MCC		  "mcc"
 #define DATA_NEIGHBOR_CELLS_MNC		  "mnc"

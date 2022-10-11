@@ -375,61 +375,43 @@ int json_common_gnss_data_add(cJSON *parent,
 		goto exit;
 	}
 
-	switch (data->format) {
-	case CLOUD_CODEC_GNSS_FORMAT_PVT:
-		err = json_add_number(gnss_val_obj, DATA_GNSS_LONGITUDE, data->pvt.longi);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-
-		err = json_add_number(gnss_val_obj, DATA_GNSS_LATITUDE, data->pvt.lat);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-
-		err = json_add_number(gnss_val_obj, DATA_GNSS_ACCURACY, data->pvt.acc);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-
-		err = json_add_number(gnss_val_obj, DATA_GNSS_ALTITUDE, data->pvt.alt);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-
-		err = json_add_number(gnss_val_obj, DATA_GNSS_SPEED, data->pvt.spd);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-
-		err = json_add_number(gnss_val_obj, DATA_GNSS_HEADING, data->pvt.hdg);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-
-		json_add_obj(gnss_obj, DATA_VALUE, gnss_val_obj);
-		break;
-	case CLOUD_CODEC_GNSS_FORMAT_NMEA:
-		cJSON_Delete(gnss_val_obj);
-		err = json_add_str(gnss_obj, DATA_VALUE, data->nmea);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		break;
-	case CLOUD_CODEC_GNSS_FORMAT_INVALID:
-		/* Fall through */
-	default:
-		err = -EINVAL;
-		LOG_WRN("GNSS data format not set");
+	err = json_add_number(gnss_val_obj, DATA_GNSS_LONGITUDE, data->pvt.longi);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
 	}
+
+	err = json_add_number(gnss_val_obj, DATA_GNSS_LATITUDE, data->pvt.lat);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(gnss_val_obj, DATA_GNSS_ACCURACY, data->pvt.acc);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(gnss_val_obj, DATA_GNSS_ALTITUDE, data->pvt.alt);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(gnss_val_obj, DATA_GNSS_SPEED, data->pvt.spd);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(gnss_val_obj, DATA_GNSS_HEADING, data->pvt.hdg);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	json_add_obj(gnss_obj, DATA_VALUE, gnss_val_obj);
 
 	err = json_add_number(gnss_obj, DATA_TIMESTAMP, data->gnss_ts);
 	if (err) {
@@ -947,7 +929,7 @@ int json_common_config_add(cJSON *parent, struct cloud_data_cfg *data, const cha
 		goto exit;
 	}
 
-	err = json_add_number(config_obj, CONFIG_GNSS_TIMEOUT, data->gnss_timeout);
+	err = json_add_number(config_obj, CONFIG_LOCATION_TIMEOUT, data->location_timeout);
 	if (err) {
 		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
@@ -1039,7 +1021,7 @@ exit:
 
 void json_common_config_get(cJSON *parent, struct cloud_data_cfg *data)
 {
-	cJSON *gnss_timeout = cJSON_GetObjectItem(parent, CONFIG_GNSS_TIMEOUT);
+	cJSON *location_timeout = cJSON_GetObjectItem(parent, CONFIG_LOCATION_TIMEOUT);
 	cJSON *active = cJSON_GetObjectItem(parent, CONFIG_DEVICE_MODE);
 	cJSON *active_wait = cJSON_GetObjectItem(parent, CONFIG_ACTIVE_TIMEOUT);
 	cJSON *move_res = cJSON_GetObjectItem(parent, CONFIG_MOVE_RES);
@@ -1049,8 +1031,8 @@ void json_common_config_get(cJSON *parent, struct cloud_data_cfg *data)
 	cJSON *acc_inact_time = cJSON_GetObjectItem(parent, CONFIG_ACC_INACT_TIMEOUT);
 	cJSON *nod_list = cJSON_GetObjectItem(parent, CONFIG_NO_DATA_LIST);
 
-	if (gnss_timeout != NULL) {
-		data->gnss_timeout = gnss_timeout->valueint;
+	if (location_timeout != NULL) {
+		data->location_timeout = location_timeout->valueint;
 	}
 
 	if (active != NULL) {

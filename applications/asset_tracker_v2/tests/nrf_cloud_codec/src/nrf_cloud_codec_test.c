@@ -39,7 +39,7 @@ int test_suiteTearDown(int num_failures)
 "{"\
 	"\"config\":{"\
 		"\"activeMode\":false,"\
-		"\"gnssTimeout\":60,"\
+		"\"locationTimeout\":60,"\
 		"\"activeWaitTime\":120,"\
 		"\"movementResolution\":120,"\
 		"\"movementTimeout\":3600,"\
@@ -57,7 +57,7 @@ int test_suiteTearDown(int num_failures)
 
 const static struct cloud_data_cfg config_struct_example = {
 	.active_mode = false,
-	.gnss_timeout = 60,
+	.location_timeout = 60,
 	.active_wait_timeout = 120,
 	.movement_resolution = 120,
 	.movement_timeout = 3600,
@@ -103,15 +103,20 @@ const static struct cloud_data_battery bat_data_example = {
 	"\"appId\":\"GNSS\","\
 	"\"messageType\":\"DATA\","\
 	"\"ts\":1563968747123,"\
-	"\"data\":\"$GPGGA,141856.00,6326.27336,N,01028.08721,E,1,09,0.81,34.7,M,39.8,M,,*64\\n\""\
+	"\"data\":{\"lng\":30.03,\"lat\":40.04,\"acc\":180,\"alt\":245,\"spd\":5,\"hdg\":39}"\
 "}]"
 
 const static struct cloud_data_gnss gnss_data_example = {
-	.format = CLOUD_CODEC_GNSS_FORMAT_NMEA,
 	.queued = true,
 	.gnss_ts = 1563968747123,
-	.nmea = "$GPGGA,"
-		"141856.00,6326.27336,N,01028.08721,E,1,09,0.81,34.7,M,39.8,M,,*64\n",
+	.pvt = {
+		.longi = 30.03,
+		.lat = 40.04,
+		.alt = 245,
+		.acc = 180,
+		.spd = 5,
+		.hdg = 39
+	}
 };
 
 #define MODEM_STATIC_BATCH_EXAMPLE \
@@ -553,7 +558,7 @@ void test_enc_batch_data_gnss(void)
 				&bat_buf,
 				1, 1, 1, 1, 1, 1, 1);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-	TEST_ASSERT_EQUAL(0, strncmp(GNSS_BATCH_EXAMPLE, codec.buf, strlen(GNSS_BATCH_EXAMPLE)));
+	TEST_ASSERT_EQUAL_STRING(GNSS_BATCH_EXAMPLE, codec.buf);
 	TEST_ASSERT_FALSE(gnss_buf.queued);
 }
 

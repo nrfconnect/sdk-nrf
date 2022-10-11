@@ -22,10 +22,8 @@ static char *type2str(enum app_module_data_type type)
 		return "MOD_DYN";
 	case APP_DATA_BATTERY:
 		return "BAT";
-	case APP_DATA_GNSS:
-		return "GNSS";
-	case APP_DATA_NEIGHBOR_CELLS:
-		return "NEIGHBOR_CELLS";
+	case APP_DATA_LOCATION:
+		return "LOCATION";
 	default:
 		return "Unknown type";
 	}
@@ -38,8 +36,6 @@ static char *get_evt_type_str(enum app_module_event_type type)
 		return "APP_EVT_DATA_GET";
 	case APP_EVT_CONFIG_GET:
 		return "APP_EVT_CONFIG_GET";
-	case APP_EVT_AGPS_NEEDED:
-		return "APP_EVT_AGPS_NEEDED";
 	case APP_EVT_DATA_GET_ALL:
 		return "APP_EVT_DATA_GET_ALL";
 	case APP_EVT_START:

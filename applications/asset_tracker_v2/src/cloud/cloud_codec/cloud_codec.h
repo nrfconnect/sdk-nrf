@@ -53,29 +53,13 @@ struct cloud_data_gnss_pvt {
 	float hdg;
 };
 
-enum cloud_data_gnss_format {
-	CLOUD_CODEC_GNSS_FORMAT_INVALID,
-	CLOUD_CODEC_GNSS_FORMAT_PVT,
-	CLOUD_CODEC_GNSS_FORMAT_NMEA
-};
-
 /** @brief Structure containing GNSS data published to cloud. */
 struct cloud_data_gnss {
 	/** GNSS data timestamp. UNIX milliseconds. */
 	int64_t gnss_ts;
 
-	union {
-		/** Structure containing PVT data. */
-		struct cloud_data_gnss_pvt pvt;
-
-		/* Null terminated NMEA string. The maximum number of characters in an
-		 * NMEA string is 83.
-		 */
-		char nmea[83];
-	};
-
-	/** Enum signifying the type of GNSS data that is valid. */
-	enum cloud_data_gnss_format format;
+	/** Structure containing PVT data. */
+	struct cloud_data_gnss_pvt pvt;
 
 	/** Flag signifying that the data entry is to be encoded. */
 	bool queued : 1;
@@ -95,8 +79,8 @@ struct cloud_data_no_data {
 struct cloud_data_cfg {
 	/** Device mode. */
 	bool active_mode;
-	/** GNSS search timeout. */
-	int gnss_timeout;
+	/** Location search timeout. */
+	int location_timeout;
 	/** Time between cloud publications in Active mode. */
 	int active_wait_timeout;
 	/** Time between cloud publications in Passive mode. */

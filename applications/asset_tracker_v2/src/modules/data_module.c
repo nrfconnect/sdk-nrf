@@ -28,7 +28,7 @@
 #include "events/app_module_event.h"
 #include "events/cloud_module_event.h"
 #include "events/data_module_event.h"
-#include "events/gnss_module_event.h"
+#include "events/location_module_event.h"
 #include "events/modem_module_event.h"
 #include "events/sensor_module_event.h"
 #include "events/ui_module_event.h"
@@ -44,7 +44,7 @@ struct data_msg_data {
 	union {
 		struct modem_module_event modem;
 		struct cloud_module_event cloud;
-		struct gnss_module_event gnss;
+		struct location_module_event location;
 		struct ui_module_event ui;
 		struct sensor_module_event sensor;
 		struct data_module_event data;
@@ -93,7 +93,7 @@ static K_SEM_DEFINE(config_load_sem, 0, 1);
 
 /* Default device configuration. */
 static struct cloud_data_cfg current_cfg = {
-	.gnss_timeout		 = CONFIG_DATA_GNSS_TIMEOUT_SECONDS,
+	.location_timeout	 = CONFIG_DATA_LOCATION_TIMEOUT_SECONDS,
 	.active_mode		 = IS_ENABLED(CONFIG_DATA_DEVICE_MODE_ACTIVE),
 	.active_wait_timeout	 = CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS,
 	.movement_resolution	 = CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS,
@@ -204,10 +204,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		enqueue_msg = true;
 	}
 
-	if (is_gnss_module_event(aeh)) {
-		struct gnss_module_event *event = cast_gnss_module_event(aeh);
+	if (is_location_module_event(aeh)) {
+		struct location_module_event *event = cast_location_module_event(aeh);
 
-		msg.module.gnss = *event;
+		msg.module.location = *event;
 		enqueue_msg = true;
 	}
 
@@ -467,7 +467,7 @@ static void config_print_all(void)
 	LOG_DBG("Active wait timeout: %d", current_cfg.active_wait_timeout);
 	LOG_DBG("Movement resolution: %d", current_cfg.movement_resolution);
 	LOG_DBG("Movement timeout: %d", current_cfg.movement_timeout);
-	LOG_DBG("GPS timeout: %d", current_cfg.gnss_timeout);
+	LOG_DBG("Location timeout: %d", current_cfg.location_timeout);
 	LOG_DBG("Accelerometer act threshold: %.2f",
 		 current_cfg.accelerometer_activity_threshold);
 	LOG_DBG("Accelerometer inact threshold: %.2f",
@@ -723,11 +723,11 @@ static int agps_request_encode(struct nrf_modem_gnss_agps_data_frame *incoming_r
 	cloud_agps_request.cell = modem_info.network.cellid_dec;
 	cloud_agps_request.area = modem_info.network.area_code.value;
 	cloud_agps_request.queued = true;
-#if defined(CONFIG_GNSS_MODULE_AGPS_FILTERED)
-	cloud_agps_request.filtered = CONFIG_GNSS_MODULE_AGPS_FILTERED;
+#if defined(CONFIG_LOCATION_MODULE_AGPS_FILTERED)
+	cloud_agps_request.filtered = CONFIG_LOCATION_MODULE_AGPS_FILTERED;
 #endif
-#if defined(CONFIG_GNSS_MODULE_ELEVATION_MASK)
-	cloud_agps_request.mask_angle = CONFIG_GNSS_MODULE_ELEVATION_MASK;
+#if defined(CONFIG_LOCATION_MODULE_ELEVATION_MASK)
+	cloud_agps_request.mask_angle = CONFIG_LOCATION_MODULE_ELEVATION_MASK;
 #endif
 
 	err = cloud_codec_encode_agps_request(&codec, &cloud_agps_request);
@@ -923,16 +923,16 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		config_change = true;
 	}
 
-	if (new_config->gnss_timeout > 0) {
-		if (current_cfg.gnss_timeout != new_config->gnss_timeout) {
-			current_cfg.gnss_timeout = new_config->gnss_timeout;
+	if (new_config->location_timeout > 0) {
+		if (current_cfg.location_timeout != new_config->location_timeout) {
+			current_cfg.location_timeout = new_config->location_timeout;
 
-			LOG_WRN("New GNSS timeout: %d", current_cfg.gnss_timeout);
+			LOG_WRN("New location timeout: %d", current_cfg.location_timeout);
 
 			config_change = true;
 		}
 	} else {
-		LOG_ERR("New GNSS timeout out of range: %d", new_config->gnss_timeout);
+		LOG_ERR("New location timeout out of range: %d", new_config->location_timeout);
 	}
 
 	if (new_config->active_wait_timeout > 0) {
@@ -1029,7 +1029,8 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 }
 
 /**
- * @brief Function that requests A-GPS and P-GPS data upon receiving a request from the GNSS module.
+ * @brief Function that requests A-GPS and P-GPS data upon receiving a request from the
+ *        location module.
  *
  * @param[in] incoming_request Pointer to a structure containing A-GPS data types that has been
  *			       requested by the modem. If incoming_request is NULL, all A-GPS data
@@ -1100,11 +1101,6 @@ static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_
 static void on_cloud_state_disconnected(struct data_msg_data *msg)
 {
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONNECTED)) {
-
-		if (IS_ENABLED(CONFIG_DATA_AGPS_REQUEST_ALL_UPON_CONNECTION)) {
-			agps_request_handle(NULL);
-		}
-
 		state_set(STATE_CLOUD_CONNECTED);
 		return;
 	}
@@ -1148,8 +1144,8 @@ static void on_cloud_state_connected(struct data_msg_data *msg)
 		return;
 	}
 
-	if (IS_EVENT(msg, app, APP_EVT_AGPS_NEEDED)) {
-		agps_request_handle(NULL);
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_AGPS_NEEDED)) {
+		agps_request_handle(&msg->module.location.data.agps_request);
 		return;
 	}
 }
@@ -1168,8 +1164,8 @@ static void on_all_states(struct data_msg_data *msg)
 				msg->module.cloud.data.config.movement_resolution,
 			.movement_timeout =
 				msg->module.cloud.data.config.movement_timeout,
-			.gnss_timeout =
-				msg->module.cloud.data.config.gnss_timeout,
+			.location_timeout =
+				msg->module.cloud.data.config.location_timeout,
 			.accelerometer_activity_threshold =
 				msg->module.cloud.data.config.accelerometer_activity_threshold,
 			.accelerometer_inactivity_threshold =
@@ -1183,11 +1179,6 @@ static void on_all_states(struct data_msg_data *msg)
 		};
 
 		new_config_handle(&new);
-		return;
-	}
-
-	if (IS_EVENT(msg, gnss, GNSS_EVT_AGPS_NEEDED)) {
-		agps_request_handle(&msg->module.gnss.data.agps_request);
 		return;
 	}
 
@@ -1368,73 +1359,53 @@ static void on_all_states(struct data_msg_data *msg)
 		return;
 	}
 
-	if (IS_EVENT(msg, gnss, GNSS_EVT_DATA_READY)) {
-		struct cloud_data_gnss new_gnss_data = {
-			.gnss_ts = msg->module.gnss.data.gnss.timestamp,
-			.queued = true,
-			.format = msg->module.gnss.data.gnss.format
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_GNSS_DATA_READY)) {
+		struct cloud_data_gnss new_location_data = {
+			.gnss_ts = msg->module.location.data.location.timestamp,
+			.queued = true
 		};
 
-		switch (msg->module.gnss.data.gnss.format) {
-		case GNSS_MODULE_DATA_FORMAT_PVT: {
-			/* Add PVT data */
-			new_gnss_data.pvt.acc = msg->module.gnss.data.gnss.pvt.accuracy;
-			new_gnss_data.pvt.alt = msg->module.gnss.data.gnss.pvt.altitude;
-			new_gnss_data.pvt.hdg = msg->module.gnss.data.gnss.pvt.heading;
-			new_gnss_data.pvt.lat = msg->module.gnss.data.gnss.pvt.latitude;
-			new_gnss_data.pvt.longi = msg->module.gnss.data.gnss.pvt.longitude;
-			new_gnss_data.pvt.spd = msg->module.gnss.data.gnss.pvt.speed;
+		new_location_data.pvt.acc = msg->module.location.data.location.pvt.accuracy;
+		new_location_data.pvt.alt = msg->module.location.data.location.pvt.altitude;
+		new_location_data.pvt.hdg = msg->module.location.data.location.pvt.heading;
+		new_location_data.pvt.lat = msg->module.location.data.location.pvt.latitude;
+		new_location_data.pvt.longi = msg->module.location.data.location.pvt.longitude;
+		new_location_data.pvt.spd = msg->module.location.data.location.pvt.speed;
 
-		};
-			break;
-		case GNSS_MODULE_DATA_FORMAT_NMEA: {
-			/* Add NMEA data */
-			BUILD_ASSERT(sizeof(new_gnss_data.nmea) >=
-				     sizeof(msg->module.gnss.data.gnss.nmea));
-
-			strcpy(new_gnss_data.nmea, msg->module.gnss.data.gnss.nmea);
-		};
-			break;
-		case GNSS_MODULE_DATA_FORMAT_INVALID:
-			/* Fall through */
-		default:
-			LOG_WRN("Event does not carry valid GNSS data");
-			return;
-		}
-
-		cloud_codec_populate_gnss_buffer(gnss_buf, &new_gnss_data,
+		cloud_codec_populate_gnss_buffer(gnss_buf, &new_location_data,
 						&head_gnss_buf,
 						ARRAY_SIZE(gnss_buf));
 
-		requested_data_status_set(APP_DATA_GNSS);
+		requested_data_status_set(APP_DATA_LOCATION);
 	}
 
-	if (IS_EVENT(msg, modem, MODEM_EVT_NEIGHBOR_CELLS_DATA_READY)) {
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_DATA_NOT_READY)) {
+		requested_data_status_set(APP_DATA_LOCATION);
+	}
+
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY)) {
 		BUILD_ASSERT(sizeof(neighbor_cells.cell_data) ==
-			     sizeof(msg->module.modem.data.neighbor_cells.cell_data));
+			     sizeof(msg->module.location.data.neighbor_cells.cell_data));
 
 		BUILD_ASSERT(sizeof(neighbor_cells.neighbor_cells) ==
-			     sizeof(msg->module.modem.data.neighbor_cells.neighbor_cells));
+			     sizeof(msg->module.location.data.neighbor_cells.neighbor_cells));
 
-		memcpy(&neighbor_cells.cell_data, &msg->module.modem.data.neighbor_cells.cell_data,
+		memcpy(&neighbor_cells.cell_data,
+		       &msg->module.location.data.neighbor_cells.cell_data,
 		       sizeof(neighbor_cells.cell_data));
 
 		memcpy(&neighbor_cells.neighbor_cells,
-		       &msg->module.modem.data.neighbor_cells.neighbor_cells,
+		       &msg->module.location.data.neighbor_cells.neighbor_cells,
 		       sizeof(neighbor_cells.neighbor_cells));
 
-		neighbor_cells.ts = msg->module.modem.data.neighbor_cells.timestamp;
+		neighbor_cells.ts = msg->module.location.data.neighbor_cells.timestamp;
 		neighbor_cells.queued = true;
 
-		requested_data_status_set(APP_DATA_NEIGHBOR_CELLS);
+		requested_data_status_set(APP_DATA_LOCATION);
 	}
 
-	if (IS_EVENT(msg, modem, MODEM_EVT_NEIGHBOR_CELLS_DATA_NOT_READY)) {
-		requested_data_status_set(APP_DATA_NEIGHBOR_CELLS);
-	}
-
-	if (IS_EVENT(msg, gnss, GNSS_EVT_TIMEOUT)) {
-		requested_data_status_set(APP_DATA_GNSS);
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_TIMEOUT)) {
+		requested_data_status_set(APP_DATA_LOCATION);
 	}
 }
 
@@ -1493,6 +1464,6 @@ APP_EVENT_SUBSCRIBE(MODULE, util_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, data_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
-APP_EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, location_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, ui_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, sensor_module_event);

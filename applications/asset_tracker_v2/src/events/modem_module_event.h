@@ -87,18 +87,6 @@ enum modem_module_event_type {
 	 */
 	MODEM_EVT_MODEM_DYNAMIC_DATA_NOT_READY,
 
-	/** Neighbor cell measurements have been gathered and the data is ready.
-	 *  The event has associated payload of type @ref modem_module_neighbor_cells in
-	 *  the `data.neighbor_cells` member.
-	 */
-	MODEM_EVT_NEIGHBOR_CELLS_DATA_READY,
-
-	/** Neighbor cell data measurements could not be gathered will not be ready for this
-	 *  sampling interval.
-	 *  The event has no associated payload.
-	 */
-	MODEM_EVT_NEIGHBOR_CELLS_DATA_NOT_READY,
-
 	/** Battery voltage has been sampled and is ready.
 	 *  The event has associated payload of type @ref modem_module_battery_data in
 	 *  the `data.bat` member.
@@ -194,7 +182,7 @@ struct modem_module_dynamic_modem_data {
 	uint8_t band;
 	enum lte_lc_lte_mode nw_mode;
 
-	/* Flags to signify if the corresponding data value has been updated and is concidered
+	/* Flags to signify if the corresponding data value has been updated and is considered
 	 * fresh.
 	 */
 	bool area_code_fresh	: 1;
@@ -212,12 +200,6 @@ struct modem_module_battery_data {
 	int64_t timestamp;
 };
 
-struct modem_module_neighbor_cells {
-	struct lte_lc_cells_info cell_data;
-	struct lte_lc_ncell neighbor_cells[17];
-	int64_t timestamp;
-};
-
 /** @brief Modem event. */
 struct modem_module_event {
 	struct app_event_header header;
@@ -229,7 +211,6 @@ struct modem_module_event {
 		struct modem_module_cell cell;
 		struct modem_module_psm psm;
 		struct modem_module_edrx edrx;
-		struct modem_module_neighbor_cells neighbor_cells;
 		/* Module ID, used when acknowledging shutdown requests. */
 		uint32_t id;
 		int err;

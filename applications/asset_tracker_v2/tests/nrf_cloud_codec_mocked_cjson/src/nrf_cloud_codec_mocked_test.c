@@ -478,7 +478,6 @@ void test_enc_batch_data_bat_no_data_obj(void)
 void test_enc_batch_data_gnss_no_data_obj(void)
 {
 	struct cloud_data_gnss gnss_buf = {
-		.format = CLOUD_CODEC_GNSS_FORMAT_NMEA,
 		.queued = true,
 	};
 

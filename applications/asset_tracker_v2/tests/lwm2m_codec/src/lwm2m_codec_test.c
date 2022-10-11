@@ -19,7 +19,7 @@
 #include "lwm2m_codec_defines.h"
 
 /* Default test configuration values. */
-#define GNSS_TIMEOUT 30
+#define LOCATION_TIMEOUT 30
 #define ACTIVE_MODE true
 #define ACTIVE_WAIT_TIMEOUT 120
 #define MOVEMENT_RESOLUTION 120
@@ -88,7 +88,7 @@ static int post_write_callback_stub(const char *pathstr,
 static void cloud_codec_event_handler(const struct cloud_codec_evt *evt)
 {
 	TEST_ASSERT_EQUAL(CLOUD_CODEC_EVT_CONFIG_UPDATE, evt->type);
-	TEST_ASSERT_EQUAL(GNSS_TIMEOUT, evt->config_update.gnss_timeout);
+	TEST_ASSERT_EQUAL(LOCATION_TIMEOUT, evt->config_update.location_timeout);
 	TEST_ASSERT_EQUAL(ACTIVE_MODE, evt->config_update.active_mode);
 	TEST_ASSERT_EQUAL(ACTIVE_WAIT_TIMEOUT, evt->config_update.active_wait_timeout);
 	TEST_ASSERT_EQUAL(MOVEMENT_RESOLUTION, evt->config_update.movement_resolution);
@@ -106,7 +106,7 @@ static void cloud_codec_event_handler(const struct cloud_codec_evt *evt)
 void test_lwm2m_cloud_codec_init(void)
 {
 	struct cloud_data_cfg cfg = {
-		.gnss_timeout = GNSS_TIMEOUT,
+		.location_timeout = LOCATION_TIMEOUT,
 		.active_mode = ACTIVE_MODE,
 		.active_wait_timeout = ACTIVE_WAIT_TIMEOUT,
 		.movement_resolution = MOVEMENT_RESOLUTION,
@@ -250,8 +250,8 @@ void test_lwm2m_cloud_codec_init(void)
 
 	/* Set integers and booleans. */
 	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
-		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, GNSS_TIMEOUT_RID),
-		cfg.gnss_timeout, 0);
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, LOCATION_TIMEOUT_RID),
+		cfg.location_timeout, 0);
 
 	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACTIVE_WAIT_TIMEOUT_RID),
@@ -284,7 +284,7 @@ void test_lwm2m_cloud_codec_init(void)
 	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
 	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
-		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, GNSS_TIMEOUT_RID),
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, LOCATION_TIMEOUT_RID),
 		NULL, 0);
 	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
@@ -459,8 +459,7 @@ void test_lwm2m_cloud_codec_encode_data(void)
 		.pvt.spd = 1,
 		.pvt.hdg = 176,
 		.gnss_ts = 1000,
-		.queued = true,
-		.format = CLOUD_CODEC_GNSS_FORMAT_PVT,
+		.queued = true
 	};
 	struct cloud_data_modem_dynamic modem_dynamic = {
 		.band = 3,
@@ -722,7 +721,7 @@ void test_lwm2m_codec_encode_ui_data(void)
 void test_lwm2m_codec_config_update(void)
 {
 	struct cloud_data_cfg cfg = {
-		.gnss_timeout = GNSS_TIMEOUT,
+		.location_timeout = LOCATION_TIMEOUT,
 		.active_mode = ACTIVE_MODE,
 		.active_wait_timeout = ACTIVE_WAIT_TIMEOUT,
 		.movement_resolution = MOVEMENT_RESOLUTION,
@@ -743,9 +742,9 @@ void test_lwm2m_codec_config_update(void)
 	 * CLOUD_CODEC_EVT_CONFIG_UPDATE event received in the cloud_codec_event_handler.
 	 */
 	__wrap_lwm2m_engine_get_s32_ExpectAndReturn(
-		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, GNSS_TIMEOUT_RID), 0, 0);
+		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, LOCATION_TIMEOUT_RID), 0, 0);
 	__wrap_lwm2m_engine_get_s32_IgnoreArg_value();
-	__wrap_lwm2m_engine_get_s32_ReturnThruPtr_value(&cfg.gnss_timeout);
+	__wrap_lwm2m_engine_get_s32_ReturnThruPtr_value(&cfg.location_timeout);
 
 	__wrap_lwm2m_engine_get_s32_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACTIVE_WAIT_TIMEOUT_RID), 0, 0);
