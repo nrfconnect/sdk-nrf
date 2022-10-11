@@ -15,6 +15,9 @@
 #if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
 #include <net/nrf_cloud_pgps.h>
 #endif
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
+#include <modem/lte_lc.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,6 +57,12 @@ enum location_event_id {
 	/** An error occurred when trying to get the location. */
 	LOCATION_EVT_ERROR,
 	/**
+	 * Application has indicated that getting location has been completed,
+	 * the result is not known, and the Location library does not need to care about it.
+	 * This event can occur only if CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL is set.
+	 */
+	LOCATION_EVT_RESULT_UNKNOWN,
+	/**
 	 * GNSS is requesting A-GPS data. Application should obtain the data and send it to
 	 * location_agps_data_process().
 	 */
@@ -62,7 +71,23 @@ enum location_event_id {
 	 * GNSS is requesting P-GPS data. Application should obtain the data and send it to
 	 * location_pgps_data_process().
 	 */
-	LOCATION_EVT_GNSS_PREDICTION_REQUEST
+	LOCATION_EVT_GNSS_PREDICTION_REQUEST,
+	/**
+	 * Cellular location request with neighbor cell information is available.
+	 * Application should send the cell information to cloud services and
+	 * then call location_cellular_ext_result_set().
+	 */
+	LOCATION_EVT_CELLULAR_EXT_REQUEST
+};
+
+/** Result of the external cellular request. */
+enum location_cellular_ext_result {
+	/* Cellular location result is successful. */
+	LOCATION_CELLULAR_EXT_RESULT_SUCCESS,
+	/* Cellular location result is unknown. */
+	LOCATION_CELLULAR_EXT_RESULT_UNKNOWN,
+	/* Cellular location result is error. */
+	LOCATION_CELLULAR_EXT_RESULT_ERROR
 };
 
 /** Location accuracy. */
@@ -145,6 +170,14 @@ struct location_event_data {
 		 * needs new assistance data, used with event LOCATION_EVT_GNSS_PREDICTION_REQUEST.
 		 */
 		struct gps_pgps_request pgps_request;
+#endif
+#if  defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
+		/**
+		 * Cellular cell information to let the application know it should send these
+		 * to a cloud service to resolve the location.
+		 * Used with event LOCATION_EVT_CELLULAR_EXT_REQUEST.
+		 */
+		struct lte_lc_cells_info cellular_request;
 #endif
 	};
 };
@@ -360,6 +393,7 @@ const char *location_method_str(enum location_method method);
  *
  * @return 0 on success, or negative error code on failure.
  * @retval -EINVAL Given buffer is NULL or buffer length zero.
+ * @retval -ENOTSUP CONFIG_LOCATION_GNSS_AGPS_EXTERNAL is not set.
  */
 int location_agps_data_process(const char *buf, size_t buf_len);
 
@@ -379,9 +413,31 @@ int location_agps_data_process(const char *buf, size_t buf_len);
  *
  * @return 0 on success, or negative error code on failure.
  * @retval -EINVAL Given buffer is NULL or buffer length zero.
+ * @retval -ENOTSUP CONFIG_LOCATION_GNSS_PGPS_EXTERNAL is not set.
  */
 int location_pgps_data_process(const char *buf, size_t buf_len);
 
+/**
+ * @brief Pass cellular location result to the library.
+ *
+ * @details If the Location library is not receiving cellular position directly from services,
+ * it triggers the @ref LOCATION_EVT_CELLULAR_EXT_REQUEST event when neighbor cell information
+ * should be sent to cloud services for location resolution. Then, the application responds
+ * with the result of the location result.
+ *
+ * In addition to successful and error results, the application can indicate an unknown result with
+ * @ref LOCATION_CELLULAR_EXT_RESULT_UNKNOWN. This is useful when the application wants
+ * the Location library to proceed irrespective of the outcome. The Location library will try to
+ * perform a fallback to the next method, if available, just like in a failure case.
+ * If there are no more methods, LOCATION_EVT_RESULT_UNKNOWN event will be sent to the application.
+ *
+ * @param[in] result Result of the external cellular request.
+ * @param[in] location Cellular location data. Will be used only if @p result is
+ *                     LOCATION_CELLULAR_EXT_RESULT_SUCCESS.
+ */
+void location_cellular_ext_result_set(
+	enum location_cellular_ext_result result,
+	struct location_data *location);
 
 /** @} */
 
