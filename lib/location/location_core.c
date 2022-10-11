@@ -36,6 +36,9 @@ static struct location_config current_config;
 /** Index to the current_config.methods for the currently used method. */
 static int current_method_index;
 
+/** Whether to perform fallback for current location request processing. */
+static bool execute_fallback = true;
+
 /***** Work queue and work item definitions *****/
 
 #define LOCATION_CORE_STACK_SIZE 4096
@@ -51,11 +54,23 @@ static void location_core_periodic_work_fn(struct k_work *work);
 /** Work item for periodic location requests. */
 K_WORK_DELAYABLE_DEFINE(location_periodic_work, location_core_periodic_work_fn);
 
+/** Handler for method timeout. */
+static void location_core_method_timeout_work_fn(struct k_work *work);
+
+/** Work item for method timeout handler. */
+K_WORK_DELAYABLE_DEFINE(location_core_method_timeout_work, location_core_method_timeout_work_fn);
+
 /** Handler for timeout. */
 static void location_core_timeout_work_fn(struct k_work *work);
 
-/** Work item for timeout handler. */
-K_WORK_DELAYABLE_DEFINE(location_timeout_work, location_core_timeout_work_fn);
+/** Work item for location request timeout handler. */
+K_WORK_DELAYABLE_DEFINE(location_core_timeout_work, location_core_timeout_work_fn);
+
+/** Location event callback. */
+static void location_core_event_cb_fn(struct k_work *work);
+
+/** Work item for location event callback. */
+K_WORK_DEFINE(location_event_cb_work, location_core_event_cb_fn);
 
 /** Semaphore protecting the use of location requests. */
 K_SEM_DEFINE(location_core_sem, 1, 1);
@@ -265,6 +280,7 @@ void location_core_config_log(const struct location_config *config)
 
 	LOG_DBG("  Methods count: %d", config->methods_count);
 	LOG_DBG("  Interval: %d", config->interval);
+	LOG_DBG("  Timeout: %dms", config->timeout);
 	LOG_DBG("  Mode: %d", config->mode);
 	LOG_DBG("  List of methods:");
 
@@ -322,13 +338,21 @@ static int location_core_location_get_pos(const struct location_config *config)
 
 	location_core_current_config_set(config);
 	/* Location request starts from the first method */
+	execute_fallback = true;
 	current_method_index = 0;
 	requested_method = config->methods[current_method_index].method;
 	LOG_DBG("Requesting location with '%s' method",
 		(char *)location_method_api_get(requested_method)->method_string);
 	location_core_current_event_data_init(requested_method);
+
 	err = location_method_api_get(requested_method)->location_get(
 		&config->methods[current_method_index]);
+
+	if (err == 0 && config->timeout != SYS_FOREVER_MS && config->timeout > 0) {
+		LOG_DBG("Starting request timer with timeout=%d", config->timeout);
+
+		k_work_schedule(&location_core_timeout_work, K_MSEC(config->timeout));
+	}
 
 	return err;
 }
@@ -383,7 +407,7 @@ void location_core_event_cb_pgps_request(const struct gps_pgps_request *request)
 }
 #endif
 
-void location_core_event_cb(const struct location_data *location)
+static void location_core_event_cb_fn(struct k_work *work)
 {
 	char latitude_str[12];
 	char longitude_str[12];
@@ -392,12 +416,12 @@ void location_core_event_cb(const struct location_data *location)
 	enum location_method previous_method;
 	int err;
 
-	k_work_cancel_delayable(&location_timeout_work);
+	k_work_cancel_delayable(&location_core_method_timeout_work);
 
-	if (location != NULL) {
-		/* Location was acquired properly */
-		current_event_data.id = LOCATION_EVT_LOCATION;
-		current_event_data.location = *location;
+	if (current_event_data.id == LOCATION_EVT_LOCATION) {
+		/* Location was acquired properly.
+		 * Caller sets current_event_data.location
+		 */
 
 		LOG_DBG("Location acquired successfully:");
 		LOG_DBG("  method: %s (%d)", (char *)location_method_api_get(
@@ -454,7 +478,7 @@ void location_core_event_cb(const struct location_data *location)
 			 */
 			current_method_index = 0;
 		}
-	} else {
+	} else if (execute_fallback) {
 		/* Get possible next method to be run */
 		previous_method = current_event_data.location.method;
 		current_method_index++;
@@ -483,6 +507,8 @@ void location_core_event_cb(const struct location_data *location)
 
 	event_handler(&current_event_data);
 
+	k_work_cancel_delayable(&location_core_timeout_work);
+
 	if (current_config.interval > 0) {
 		k_work_schedule_for_queue(
 			location_core_work_queue_get(),
@@ -493,6 +519,18 @@ void location_core_event_cb(const struct location_data *location)
 
 		k_sem_give(&location_core_sem);
 	}
+}
+
+void location_core_event_cb(const struct location_data *location)
+{
+	if (location) {
+		current_event_data.id = LOCATION_EVT_LOCATION;
+		current_event_data.location = *location;
+	}
+
+	k_work_submit_to_queue(
+		location_core_work_queue_get(),
+		&location_event_cb_work);
 }
 
 struct k_work_q *location_core_work_queue_get(void)
@@ -506,6 +544,19 @@ static void location_core_periodic_work_fn(struct k_work *work)
 	location_core_location_get_pos(&current_config);
 }
 
+static void location_core_method_timeout_work_fn(struct k_work *work)
+{
+	enum location_method current_method =
+		current_config.methods[current_method_index].method;
+
+	ARG_UNUSED(work);
+
+	LOG_WRN("Method specific timeout expired");
+
+	location_method_api_get(current_method)->cancel();
+	location_core_event_cb_timeout();
+}
+
 static void location_core_timeout_work_fn(struct k_work *work)
 {
 	enum location_method current_method =
@@ -513,10 +564,17 @@ static void location_core_timeout_work_fn(struct k_work *work)
 
 	ARG_UNUSED(work);
 
-	LOG_WRN("Timeout occurred");
+	LOG_WRN("Timeout for entire location request expired");
 
 	location_method_api_get(current_method)->cancel();
-	location_core_event_cb_timeout();
+	/* config->timeout needs to expire without fallbacks */
+
+	current_event_data.id = LOCATION_EVT_TIMEOUT;
+	execute_fallback = false;
+
+	k_work_submit_to_queue(
+		location_core_work_queue_get(),
+		&location_event_cb_work);
 }
 
 void location_core_timer_start(int32_t timeout)
@@ -530,13 +588,13 @@ void location_core_timer_start(int32_t timeout)
 		 * their operation, blocking waiting of semaphores will block the timeout from
 		 * expiring and canceling methods.
 		 */
-		k_work_schedule(&location_timeout_work, K_MSEC(timeout));
+		k_work_schedule(&location_core_method_timeout_work, K_MSEC(timeout));
 	}
 }
 
 void location_core_timer_stop(void)
 {
-	k_work_cancel_delayable(&location_timeout_work);
+	k_work_cancel_delayable(&location_core_method_timeout_work);
 }
 
 int location_core_cancel(void)
@@ -545,8 +603,10 @@ int location_core_cancel(void)
 	enum location_method current_method =
 		current_config.methods[current_method_index].method;
 
-	k_work_cancel_delayable(&location_timeout_work);
+	k_work_cancel_delayable(&location_core_method_timeout_work);
+	k_work_cancel_delayable(&location_core_timeout_work);
 	k_work_cancel_delayable(&location_periodic_work);
+	k_work_cancel(&location_event_cb_work);
 
 	/* Check if location has been requested using one of the methods */
 	if (current_method != 0) {

@@ -332,6 +332,10 @@ Modem libraries
     * An issue where the :c:func:`getsockopt` function causes segmentation fault when the ``optlen`` parameter is provided as ``NULL``.
     * An issue where the :c:func:`recvfrom` function causes segmentation fault when the ``from`` and ``fromlen`` parameters are provided as ``NULL``.
 
+* :ref:`lib_location` library:
+
+  * Added timeout for the entire location request.
+
 Libraries for networking
 ------------------------
 
