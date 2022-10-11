@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(led, CONFIG_LOG_LED_LEVEL);
 #define CORE_APP_STR "CORE_APP"
 #define CORE_NET_STR "CORE_NET"
 
-#define DT_LABEL_AND_COMMA(node_id) DT_LABEL(node_id),
+#define DT_LABEL_AND_COMMA(node_id) DT_PROP(node_id, label),
 #define GPIO_DT_SPEC_GET_AND_COMMA(node_id) GPIO_DT_SPEC_GET(node_id, gpios),
 
 /* The following arrays are populated compile time from the .dts*/
