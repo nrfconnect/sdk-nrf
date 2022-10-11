@@ -64,7 +64,7 @@ void bt_enocean_decommission(struct bt_enocean_device *device)
 	ztest_check_expected_value(device);
 }
 
-int bt_enocean_commission(const bt_addr_le_t *addr, const uint8_t *key,
+int bt_enocean_commission(const bt_addr_le_t *addr, const uint8_t key[16],
 			  uint32_t seq)
 {
 	ztest_check_expected_data(key, 16);
@@ -240,7 +240,7 @@ enum bt_mesh_silvair_enocean_status {
 
 static void expect_status(struct bt_mesh_msg_ctx *ctx,
 			  enum bt_mesh_silvair_enocean_status status,
-			  uint8_t *addr)
+			  const uint8_t *addr)
 {
 	static uint8_t expected_msg[11] = {0xF4, 0x36, 0x01, 0x03};
 	size_t len = 4;
