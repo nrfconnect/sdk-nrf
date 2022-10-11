@@ -76,7 +76,7 @@ Clusters
    * Client -- responsible for performing interactions with other Server Clusters.
 
    The supported Matter application clusters are described in the Application Clusters specification, available to the `Connectivity Standards Alliance`_ members.
-   Sets of clusters on one or more endpoint can form a device type, that is an officially defined collection of requirements that is conformant with the Device Library specification.
+   Sets of clusters on one or more endpoint can form a :ref:`device type <ug_matter_device_types>`, that is an officially defined collection of requirements that is conformant with the Device Library specification.
 
 Attributes
    Attributes are data entities that represent a physical quantity or state.
