@@ -68,10 +68,6 @@ config LOG_POWER_MODULE_LEVEL
 	int "Log level for power module"
 	default 3
 
-config LOG_PMIC_LEVEL
-	int "Log level for PMIC"
-	default 2
-
 config LOG_HW_CODEC_LEVEL
 	int "Log level for HW_CODEC"
 	default 2
