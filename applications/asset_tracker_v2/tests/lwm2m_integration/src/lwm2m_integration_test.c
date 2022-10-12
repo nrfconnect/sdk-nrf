@@ -295,20 +295,28 @@ void test_lwm2m_integration_memfault_data_send(void)
  */
 void test_lwm2m_integration_mode_change_offline(void)
 {
-	enum lte_lc_func_mode mode_current;
+	/* Simulate a condition where the lte_lc_func_mode_get returns LTE_LC_FUNC_MODE_NORMAL.*/
+	enum lte_lc_func_mode mode_current = LTE_LC_FUNC_MODE_NORMAL;
 
-	__wrap_lte_lc_func_mode_get_ExpectAndReturn(&mode_current, 0);
+	__wrap_lte_lc_func_mode_get_ExpectAndReturn(NULL, 0);
+	__wrap_lte_lc_func_mode_get_IgnoreArg_mode();
+	__wrap_lte_lc_func_mode_get_ReturnMemThruPtr_mode(&mode_current, sizeof(mode_current));
 
+	/* Trigger a change to LTE_LC_FUNC_MODE_OFFLINE. */
 	modem_mode_change_cb(LTE_LC_FUNC_MODE_OFFLINE, NULL);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_LTE_DISCONNECT_REQUEST, last_cb_type);
 }
 
 void test_lwm2m_integration_mode_change_online(void)
 {
-	enum lte_lc_func_mode mode_current;
+	/* Simulate a condition where the lte_lc_func_mode_get returns LTE_LC_FUNC_MODE_OFFLINE.*/
+	enum lte_lc_func_mode mode_current = LTE_LC_FUNC_MODE_OFFLINE;
 
-	__wrap_lte_lc_func_mode_get_ExpectAndReturn(&mode_current, 0);
+	__wrap_lte_lc_func_mode_get_ExpectAndReturn(NULL, 0);
+	__wrap_lte_lc_func_mode_get_IgnoreArg_mode();
+	__wrap_lte_lc_func_mode_get_ReturnMemThruPtr_mode(&mode_current, sizeof(mode_current));
 
+	/* Trigger a change to LTE_LC_FUNC_MODE_NORMAL. */
 	modem_mode_change_cb(LTE_LC_FUNC_MODE_NORMAL, NULL);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_LTE_CONNECT_REQUEST, last_cb_type);
 }
@@ -369,12 +377,17 @@ void test_lwm2m_integration_network_error(void)
 void test_lwm2m_integration_fota_result_get(void)
 {
 	/* Expect the FOTA update result to be retrieved for any update in FOTA state. */
-	uint8_t update_result;
+	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, NULL, 0);
+	__wrap_lwm2m_engine_get_u8_IgnoreArg_value();
 
-	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, &update_result, 0);
-	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, &update_result, 0);
-	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, &update_result, 0);
-	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, &update_result, 0);
+	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, NULL, 0);
+	__wrap_lwm2m_engine_get_u8_IgnoreArg_value();
+
+	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, NULL, 0);
+	__wrap_lwm2m_engine_get_u8_IgnoreArg_value();
+
+	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, NULL, 0);
+	__wrap_lwm2m_engine_get_u8_IgnoreArg_value();
 
 	firmware_update_state_cb(STATE_IDLE);
 	firmware_update_state_cb(STATE_DOWNLOADING);
