@@ -133,6 +133,7 @@ nRF5340 Audio
 * Updated:
 
   * LE Audio Controller Subsystem for nRF53 from version 3303 to version 3307.
+  * Removed support for the nRF5340 Audio DK (PCA10121) board version 0.7.1 or older
 
 * Fixed:
 

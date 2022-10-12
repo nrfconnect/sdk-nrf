@@ -292,7 +292,6 @@ The nRF5340 Audio application is designed to be used only with the following har
    The application supports PCA10121 revisions 1.0.0 or above.
    The application is also compatible with the following pre-launch revisions:
 
-   * Revision 0.7.0 (not recommended).
    * Revisions 0.8.0 and above.
 
 You need at least two nRF5340 Audio development kits (one with the gateway firmware and one with headset firmware) to test the application.

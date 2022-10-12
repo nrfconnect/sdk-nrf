@@ -19,7 +19,6 @@
 #include "button_assignments.h"
 #include "nrfx_clock.h"
 #include "ble_core.h"
-#include "pmic.h"
 #include "power_module.h"
 #include "sd_card.h"
 #include "board_version.h"
@@ -192,14 +191,6 @@ void main(void)
 
 	ret = board_version_get(&board_rev);
 	ERR_CHK(ret);
-
-	if (board_rev.mask & BOARD_REVISION_VALID_MSK_MAX14690_PMIC) {
-		ret = pmic_init();
-		ERR_CHK(ret);
-
-		ret = pmic_defaults_set();
-		ERR_CHK(ret);
-	}
 
 	if (board_rev.mask & BOARD_VERSION_VALID_MSK_SD_CARD) {
 		ret = sd_card_init();
