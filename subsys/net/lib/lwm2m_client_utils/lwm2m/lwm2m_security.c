@@ -540,13 +540,6 @@ static int security_created(uint16_t id)
 	register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_CLIENT_PK_ID);
 	register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SERVER_PK_ID);
 	register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SHORT_SERVER_ID);
-
-	/* Empty the PSK key as data length of uninitialized opaque resources is not zero */
-	char path[sizeof("/0/0/10")];
-
-	snprintk(path, sizeof(path), "%d/%d/%d", LWM2M_OBJECT_SECURITY_ID, id,
-		 SECURITY_SECRET_KEY_ID);
-	lwm2m_engine_set_opaque(path, NULL, 0);
 	return 0;
 }
 
