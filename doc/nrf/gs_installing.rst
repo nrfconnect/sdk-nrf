@@ -398,10 +398,9 @@ It also includes additional host tools, such as custom QEMU and OpenOCD builds.
 
    .. group-tab:: Windows
 
-      #. Open a ``cmd.exe`` window by pressing the Windows key typing "cmd.exe".
+      #. Open a command-line window.
 
-      #. Download and verify `Zephyr SDK bundle
-         <https://github.com/zephyrproject-rtos/sdk-ng/releases>`_:
+      #. Download and verify a `Zephyr SDK`_ bundle:
 
          .. code-block:: console
 
@@ -439,10 +438,9 @@ It also includes additional host tools, such as custom QEMU and OpenOCD builds.
 
    .. group-tab:: Linux
 
-      #. Open a ``cmd.exe`` window by pressing the Windows key typing "cmd.exe".
+      #. Open a terminal window.
 
-      #. Download and verify `Zephyr SDK bundle
-         <https://github.com/zephyrproject-rtos/sdk-ng/releases>`_:
+      #. Download and verify a `Zephyr SDK`_ bundle:
 
          .. code-block:: bash
 
@@ -486,7 +484,7 @@ It also includes additional host tools, such as custom QEMU and OpenOCD builds.
             You must rerun the setup script if you relocate the Zephyr SDK bundle directory after
             the initial setup.
 
-      #. Install `udev <https://en.wikipedia.org/wiki/Udev>`_ rules, which
+      #. Install `udev`_ rules, which
          allow you to flash most Zephyr boards as a regular user:
 
          .. code-block:: bash
@@ -496,10 +494,9 @@ It also includes additional host tools, such as custom QEMU and OpenOCD builds.
 
    .. group-tab:: macOS
 
-      #. Open a ``cmd.exe`` window by pressing the Windows key typing "cmd.exe".
+      #. Open a terminal window.
 
-      #. Download and verify `Zephyr SDK bundle
-         <https://github.com/zephyrproject-rtos/sdk-ng/releases>`_:
+      #. Download and verify a `Zephyr SDK`_ bundle:
 
          * For 64-bit ARM (M1 and M2) host architecture:
 
@@ -517,7 +514,7 @@ It also includes additional host tools, such as custom QEMU and OpenOCD builds.
             wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.14.1/zephyr-sdk-0.14.1_macos-x86_64.tar.gz
             wget -O - https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.14.1/sha256.sum | shasum --check --ignore-missing
 
-      #. Extract the Zephyr SDK bundle archive:
+      #. Extract the Zephyr SDK bundle archive, matching the file name of the bundle you downloaded:
 
          .. code-block:: bash
 
