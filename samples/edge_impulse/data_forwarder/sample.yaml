@@ -10,4 +10,5 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
       - nrf9160dk_nrf9160_ns
+    platform_exclude: native_posix qemu_x86 qemu_cortex_m3
     tags: ci_build
