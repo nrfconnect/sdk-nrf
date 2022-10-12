@@ -33,7 +33,7 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
-|no_changes_yet_note|
+* Updated the :ref:`software_maturity` page with a section about API deprecation.
 
 Protocols
 =========
