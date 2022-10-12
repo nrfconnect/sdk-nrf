@@ -535,6 +535,8 @@
 
 .. _`TTFF`: https://en.wikipedia.org/wiki/Time_to_first_fix
 
+.. _`udev`: https://en.wikipedia.org/wiki/Udev
+
 .. ### Source: doc.microsoft.com
 
 .. _`Azure Firmware Over The Air (FOTA)`: https://docs.microsoft.com/en-us/azure/iot-hub/tutorial-firmware-update
