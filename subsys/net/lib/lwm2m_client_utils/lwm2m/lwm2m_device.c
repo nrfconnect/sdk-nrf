@@ -9,7 +9,6 @@
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/net/lwm2m.h>
-#include "pm_config.h"
 #include <net/lwm2m_client_utils.h>
 
 #include <zephyr/logging/log.h>

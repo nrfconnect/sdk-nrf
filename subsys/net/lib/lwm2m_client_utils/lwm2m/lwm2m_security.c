@@ -232,7 +232,7 @@ static bool modem_has_credentials(int sec_tag, int mode)
 		if (ret < 0) {
 			return false;
 		}
-		exist = val1 & val2 & val3;
+		exist = val1 && val2 && val3;
 	} else if (mode == SEC_MODE_PSK) {
 		bool val1, val2;
 
@@ -352,7 +352,7 @@ out:
 
 #if defined(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP)
 
-static bool loading_in_progress = true;
+static bool loading_in_progress;
 
 static bool object_instance_exist(int obj, int inst)
 {
@@ -690,6 +690,8 @@ int lwm2m_security_set_certificate(uint16_t sec_obj_inst, const void *cert, int 
 int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode_change *mmode)
 {
 	have_permanently_stored_keys = false;
+	bootstrap_settings_loaded_inst = -1;
+	loading_in_progress = false;
 
 	/* Restore the default if not a callback function */
 	if (!mmode) {
