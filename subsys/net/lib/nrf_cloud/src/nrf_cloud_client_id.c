@@ -11,6 +11,9 @@
 #if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
 #include <nrf_modem_at.h>
 #endif
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID)
+#include <hw_id.h>
+#endif
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <zephyr/logging/log.h>
@@ -32,6 +35,11 @@ BUILD_ASSERT(sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) > 1,
 #define IMEI_CLIENT_ID_LEN (sizeof(CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX) - 1 + NRF_IMEI_LEN)
 BUILD_ASSERT(IMEI_CLIENT_ID_LEN <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
 	"NRF_CLOUD_CLIENT_ID_PREFIX plus IMEI must not exceed NRF_CLOUD_CLIENT_ID_MAX_LEN");
+#endif
+
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID)
+BUILD_ASSERT((sizeof(HW_ID_LEN) - 1) <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
+	"HW_ID_LEN must not exceed NRF_CLOUD_CLIENT_ID_MAX_LEN");
 #endif
 
 int nrf_cloud_client_id_get(char *id_buf, size_t id_len)
@@ -65,6 +73,8 @@ size_t nrf_cloud_configured_client_id_length_get(void)
 	return NRF_DEVICE_UUID_STR_LEN;
 #elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME)
 	return (sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) - 1);
+#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID)
+	return HW_ID_LEN - 1;
 #else
 	return 0;
 #endif
@@ -104,6 +114,16 @@ int nrf_cloud_configured_client_id_get(char * const buf, const size_t buf_sz)
 	}
 
 	print_ret = snprintk(buf, buf_sz, "%s", dev_id.str);
+
+#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID)
+	char hw_id_buf[HW_ID_LEN];
+
+	err = hw_id_get(hw_id_buf, ARRAY_SIZE(hw_id_buf));
+	if (err) {
+		LOG_ERR("Failed to obtain hardware ID, error: %d", err);
+		return err;
+	}
+	print_ret = snprintk(buf, buf_sz, "%s", hw_id_buf);
 
 #elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME)
 	ARG_UNUSED(err);

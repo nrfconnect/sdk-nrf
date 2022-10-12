@@ -21,6 +21,10 @@ config NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID
 	help
 		Requires modem firmware version 1.3 or later.
 
+config NRF_CLOUD_CLIENT_ID_SRC_HW_ID
+	depends on HW_ID_LIBRARY
+	bool "Hardware ID based value"
+
 config NRF_CLOUD_CLIENT_ID_SRC_RUNTIME
 	bool "Runtime value"
 	depends on NRF_CLOUD_MQTT

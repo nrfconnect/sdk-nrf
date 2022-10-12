@@ -109,6 +109,8 @@ Configuration options for device ID
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` - If you enable this option, the ID is set at compile time using the value specified by :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID`.
 
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` - If you enable this option, the ID is automatically generated using a unique hardware ID (for example, a MAC address). You can choose the required hardware ID using the ``HW_ID_LIBRARY_SOURCE`` Kconfig choice.
+
 * :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` - If you enable this option, the ID is set at run time. If the nRF Cloud library is used directly, set the NULL-terminated ID string in :c:struct:`nrf_cloud_init_param` when calling :c:func:`nrf_cloud_init`.
 
 .. _lib_nrf_cloud_fota:
