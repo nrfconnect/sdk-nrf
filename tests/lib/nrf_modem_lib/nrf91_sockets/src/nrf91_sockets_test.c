@@ -642,7 +642,7 @@ void test_nrf91_socket_offload_accept_addr_null_addrlen_null_error(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_accept_addr_not_null_addrlen_not_null_wrong_family(void)
+void test_nrf91_socket_offload_accept_addr_not_null_addrlen_not_null_enotsup(void)
 {
 	int ret;
 	int fd;
@@ -673,17 +673,17 @@ void test_nrf91_socket_offload_accept_addr_not_null_addrlen_not_null_wrong_famil
 
 	TEST_ASSERT_EQUAL(ret, 0);
 
-	__wrap_nrf_accept_ExpectAndReturn(nrf_fd, NULL, NULL, accept_fd);
-	__wrap_nrf_accept_IgnoreArg_address();
-	__wrap_nrf_accept_IgnoreArg_address_len();
-	__wrap_nrf_close_ExpectAndReturn(accept_fd, 0);
-
 	/* Modifying value to a wrong one to trigger the error case */
-	address.sin_family = WRONG_VALUE;
+	test_state_nrf_accept.nrf_addr.sa_family = WRONG_VALUE;
+	test_state_nrf_accept.ret = accept_fd;
+
+	__wrap_nrf_accept_Stub(nrf_accept_stub);
+	__wrap_nrf_close_ExpectAndReturn(accept_fd, 0);
 
 	ret = accept(fd, (struct sockaddr *)&address, (socklen_t *)&addrlen);
 
 	TEST_ASSERT_EQUAL(ret, -1);
+	TEST_ASSERT_EQUAL(errno, ENOTSUP);
 	TEST_ASSERT_EQUAL(addrlen, addrlen_unchanged);
 
 	__wrap_nrf_close_ExpectAndReturn(nrf_fd, 0);
