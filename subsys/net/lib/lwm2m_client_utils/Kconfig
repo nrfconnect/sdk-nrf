@@ -6,7 +6,7 @@
 
 menuconfig LWM2M_CLIENT_UTILS
 	bool "LWM2M client utilities library"
-	select LWM2M
+	select LWM2M if !ZTEST
 
 if LWM2M_CLIENT_UTILS
 

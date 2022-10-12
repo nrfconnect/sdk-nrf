@@ -78,6 +78,7 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode
  * @param sec_obj_inst Security object ID to modify.
  * @param psk Pointer to PSK key, either in HEX or binary format.
  * @param psk_len Length of data in PSK pointer.
+ *                If PSK is HEX string, should include string terminator.
  * @param psk_is_hex True if PSK points to data in HEX format. False if the data is binary.
  * @param psk_id PSK key ID in string format.
  * @return Zero if success, negative error code otherwise.
