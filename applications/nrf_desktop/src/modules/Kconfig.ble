@@ -6,6 +6,13 @@
 
 menu "BLE"
 
+config BT_GATT_SERVICE_CHANGED
+	default n if DESKTOP_ROLE_HID_DONGLE
+	help
+	  GATT Service Changed support is not needed for nRF Desktop dongles.
+	  The dongles do not change their GATT Services, they work mainly as
+	  GATT Clients and receive HID reports from BLE connected peripherals.
+
 comment "BLE Bond"
 
 config DESKTOP_BLE_BOND_ENABLE
