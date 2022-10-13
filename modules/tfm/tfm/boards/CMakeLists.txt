@@ -41,13 +41,20 @@ target_sources(platform_s
   common/tfm_hal_platform.c
   common/attest_hal.c
   $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_OTP}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_otp.c>
-  $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_PROVISIONING}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_provisioning.c>
   )
 
 target_link_libraries(platform_s
   PRIVATE
   tfm_sprt
  )
+
+if (NOT ${PLATFORM_DEFAULT_PROVISIONING})
+  target_sources(platform_s
+    PRIVATE
+    $<$<BOOL:${TFM_DUMMY_PROVISIONING}>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_provisioning.c>
+    $<$<NOT:$<BOOL:${TFM_DUMMY_PROVISIONING}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/nrf_provisioning.c>
+    )
+endif()
 
 # Disabling UART stdout not supported in NS Image, which is always built even when not needed.
 target_sources(platform_ns
