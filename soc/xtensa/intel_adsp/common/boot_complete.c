@@ -5,6 +5,8 @@
 #include <zephyr/arch/xtensa/cache.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
+#include <errno.h>
+#include <soc.h>
 
 #include <mem_window.h>
 
@@ -27,4 +29,4 @@ int boot_complete(const struct device *d)
 	return 0;
 }
 
-SYS_INIT(boot_complete, ARCH, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
+SYS_INIT(boot_complete, EARLY, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);

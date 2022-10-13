@@ -8,11 +8,14 @@
 #include <zephyr/sys/check.h>
 
 #include <soc.h>
-#include <ace_v1x-regs.h>
+#include <adsp_boot.h>
+#include <adsp_power.h>
 #include <adsp_ipc_regs.h>
 #include <adsp_memory.h>
+#include <adsp_interrupt.h>
 
 #define CORE_POWER_CHECK_NUM 32
+#define ACE_INTC_IRQ DT_IRQN(DT_NODELABEL(ace_intc))
 
 static void ipc_isr(void *arg)
 {
@@ -38,13 +41,13 @@ static void ipc_isr(void *arg)
 
 void soc_mp_init(void)
 {
-	IRQ_CONNECT(MTL_IRQ_TO_ZEPHYR(MTL_INTL_IDCA), 0, ipc_isr, 0, 0);
+	IRQ_CONNECT(ACE_IRQ_TO_ZEPHYR(ACE_INTL_IDCA), 0, ipc_isr, 0, 0);
 
-	irq_enable(MTL_IRQ_TO_ZEPHYR(MTL_INTL_IDCA));
+	irq_enable(ACE_IRQ_TO_ZEPHYR(ACE_INTL_IDCA));
 
 	for (int i = 0; i < CONFIG_MP_NUM_CPUS; i++) {
 		/* DINT has one bit per IPC, unmask only IPC "Ax" on core "x" */
-		MTL_DINT[i].ie[MTL_INTL_IDCA] = BIT(i);
+		ACE_DINT[i].ie[ACE_INTL_IDCA] = BIT(i);
 
 		/* Agent A should signal only BUSY interrupts */
 		IDC[i].agents[0].ipc.ctl = BIT(0); /* IPCTBIE */

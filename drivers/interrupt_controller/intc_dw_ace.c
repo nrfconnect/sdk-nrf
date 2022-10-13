@@ -7,14 +7,16 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/irq_nextlevel.h>
+#include <zephyr/arch/xtensa/irq.h>
 #ifdef CONFIG_DYNAMIC_INTERRUPTS
 #include <zephyr/sw_isr_table.h>
 #endif
-#include <zephyr/drivers/interrupt_controller/dw_ace_v1x.h>
+#include <zephyr/drivers/interrupt_controller/dw_ace.h>
 #include <soc.h>
-#include <ace_v1x-regs.h>
+#include <adsp_interrupt.h>
+#include "intc_dw.h"
 
-/* MTL device interrupts are all packed into a single line on Xtensa's
+/* ACE device interrupts are all packed into a single line on Xtensa's
  * architectural IRQ 4 (see below), run by a Designware interrupt
  * controller with 28 lines instantiated.  They get numbered
  * immediately after the Xtensa interrupt space in the numbering
@@ -34,15 +36,15 @@
  * always has the line active, and we do all masking of external
  * interrupts on the single controller.
  *
- * Finally: note that there is an extra layer of masking on MTL.  The
- * MTL_DINT registers provide separately maskable interrupt delivery
+ * Finally: note that there is an extra layer of masking on ACE.  The
+ * ACE_DINT registers provide separately maskable interrupt delivery
  * for each core, and with some devices for different internal
  * interrupt sources.  Responsibility for these mask bits is left with
  * the driver.
  *
  * Thus, the masking architecture picked here is:
  *
- * + Drivers manage MTL_DINT themselves, as there are device-specific
+ * + Drivers manage ACE_DINT themselves, as there are device-specific
  *   mask indexes that only the driver can interpret.  If
  *   core-asymmetric interrupt routing needs to happen, it happens
  *   here.
@@ -54,6 +56,19 @@
  *   enabled always.
  */
 
+/* ACE also has per-core instantiations of a Synopsys interrupt
+ * controller.  These inputs (with the same indices as ACE_INTL_*
+ * above) are downstream of the DINT layer, and must be independently
+ * masked/enabled.  The core Zephyr intc_dw driver unfortunately
+ * doesn't understand this kind of MP implementation.  Note also that
+ * as instantiated (there are only 28 sources), the high 32 bit
+ * registers don't exist and aren't named here.  Access via e.g.:
+ *
+ *     ACE_INTC[core_id].irq_inten_l |= interrupt_bit;
+ */
+
+#define ACE_INTC ((volatile struct dw_ictl_registers *)DT_REG_ADDR(DT_NODELABEL(ace_intc)))
+
 static inline bool is_dw_irq(uint32_t irq)
 {
 	if (((irq & XTENSA_IRQ_NUM_MASK) == ACE_INTC_IRQ)
@@ -64,40 +79,40 @@ static inline bool is_dw_irq(uint32_t irq)
 	return false;
 }
 
-void dw_ace_v1x_irq_enable(const struct device *dev, uint32_t irq)
+void dw_ace_irq_enable(const struct device *dev, uint32_t irq)
 {
 	ARG_UNUSED(dev);
 
 	if (is_dw_irq(irq)) {
 		for (int i = 0; i < CONFIG_MP_NUM_CPUS; i++) {
-			ACE_INTC[i].inten |= BIT(MTL_IRQ_FROM_ZEPHYR(irq));
-			ACE_INTC[i].intmask &= ~BIT(MTL_IRQ_FROM_ZEPHYR(irq));
+			ACE_INTC[i].irq_inten_l |= BIT(ACE_IRQ_FROM_ZEPHYR(irq));
+			ACE_INTC[i].irq_intmask_l &= ~BIT(ACE_IRQ_FROM_ZEPHYR(irq));
 		}
 	} else if ((irq & ~XTENSA_IRQ_NUM_MASK) == 0U) {
 		z_xtensa_irq_enable(XTENSA_IRQ_NUMBER(irq));
 	}
 }
 
-void dw_ace_v1x_irq_disable(const struct device *dev, uint32_t irq)
+void dw_ace_irq_disable(const struct device *dev, uint32_t irq)
 {
 	ARG_UNUSED(dev);
 
 	if (is_dw_irq(irq)) {
 		for (int i = 0; i < CONFIG_MP_NUM_CPUS; i++) {
-			ACE_INTC[i].inten &= ~BIT(MTL_IRQ_FROM_ZEPHYR(irq));
-			ACE_INTC[i].intmask |= BIT(MTL_IRQ_FROM_ZEPHYR(irq));
+			ACE_INTC[i].irq_inten_l &= ~BIT(ACE_IRQ_FROM_ZEPHYR(irq));
+			ACE_INTC[i].irq_intmask_l |= BIT(ACE_IRQ_FROM_ZEPHYR(irq));
 		}
 	} else if ((irq & ~XTENSA_IRQ_NUM_MASK) == 0U) {
 		z_xtensa_irq_disable(XTENSA_IRQ_NUMBER(irq));
 	}
 }
 
-int dw_ace_v1x_irq_is_enabled(const struct device *dev, unsigned int irq)
+int dw_ace_irq_is_enabled(const struct device *dev, unsigned int irq)
 {
 	ARG_UNUSED(dev);
 
 	if (is_dw_irq(irq)) {
-		return ACE_INTC[0].inten & BIT(MTL_IRQ_FROM_ZEPHYR(irq));
+		return ACE_INTC[0].irq_inten_l & BIT(ACE_IRQ_FROM_ZEPHYR(irq));
 	} else if ((irq & ~XTENSA_IRQ_NUM_MASK) == 0U) {
 		return z_xtensa_irq_is_enabled(XTENSA_IRQ_NUMBER(irq));
 	}
@@ -106,7 +121,7 @@ int dw_ace_v1x_irq_is_enabled(const struct device *dev, unsigned int irq)
 }
 
 #ifdef CONFIG_DYNAMIC_INTERRUPTS
-int dw_ace_v1x_irq_connect_dynamic(const struct device *dev, unsigned int irq,
+int dw_ace_irq_connect_dynamic(const struct device *dev, unsigned int irq,
 				   unsigned int priority,
 				   void (*routine)(const void *parameter),
 				   const void *parameter, uint32_t flags)
@@ -124,7 +139,7 @@ int dw_ace_v1x_irq_connect_dynamic(const struct device *dev, unsigned int irq,
 
 static void dwint_isr(const void *arg)
 {
-	uint32_t fs = ACE_INTC[arch_proc_id()].finalstatus;
+	uint32_t fs = ACE_INTC[arch_proc_id()].irq_finalstatus_l;
 
 	while (fs) {
 		uint32_t bit = find_lsb_set(fs) - 1;
@@ -136,7 +151,7 @@ static void dwint_isr(const void *arg)
 	}
 }
 
-static int dw_ace_v1x_init(const struct device *dev)
+static int dw_ace_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 
@@ -147,14 +162,14 @@ static int dw_ace_v1x_init(const struct device *dev)
 }
 
 static const struct dw_ace_v1_ictl_driver_api dw_ictl_ace_v1x_apis = {
-	.intr_enable = dw_ace_v1x_irq_enable,
-	.intr_disable = dw_ace_v1x_irq_disable,
-	.intr_is_enabled = dw_ace_v1x_irq_is_enabled,
+	.intr_enable = dw_ace_irq_enable,
+	.intr_disable = dw_ace_irq_disable,
+	.intr_is_enabled = dw_ace_irq_is_enabled,
 #ifdef CONFIG_DYNAMIC_INTERRUPTS
-	.intr_connect_dynamic = dw_ace_v1x_irq_connect_dynamic,
+	.intr_connect_dynamic = dw_ace_irq_connect_dynamic,
 #endif
 };
 
-DEVICE_DT_DEFINE(DT_NODELABEL(ace_intc), dw_ace_v1x_init, NULL, NULL, NULL,
+DEVICE_DT_DEFINE(DT_NODELABEL(ace_intc), dw_ace_init, NULL, NULL, NULL,
 		 PRE_KERNEL_1, CONFIG_INTC_INIT_PRIORITY,
 		 &dw_ictl_ace_v1x_apis);

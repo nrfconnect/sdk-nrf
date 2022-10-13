@@ -5,6 +5,7 @@
 
 #include <intel_adsp_ipc.h>
 #include <adsp_ipc_regs.h>
+#include <adsp_interrupt.h>
 
 
 void intel_adsp_ipc_set_message_handler(const struct device *dev,
@@ -156,12 +157,10 @@ bool intel_adsp_ipc_send_message_sync(const struct device *dev,
 #if DT_NODE_EXISTS(INTEL_ADSP_IPC_HOST_DTNODE)
 
 #if defined(CONFIG_SOC_SERIES_INTEL_ACE)
-#include <ace_v1x-regs.h>
-
 static inline void ace_ipc_intc_unmask(void)
 {
 	for (int i = 0; i < CONFIG_MP_NUM_CPUS; i++) {
-		MTL_DINT[i].ie[MTL_INTL_HIPC] = BIT(0);
+		ACE_DINT[i].ie[ACE_INTL_HIPC] = BIT(0);
 	}
 }
 #else

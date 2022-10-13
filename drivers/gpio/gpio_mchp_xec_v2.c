@@ -7,11 +7,13 @@
 #define DT_DRV_COMPAT microchip_xec_gpio_v2
 
 #include <errno.h>
+#include <zephyr/arch/cpu.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/dt-bindings/pinctrl/mchp-xec-pinctrl.h>
 #include <soc.h>
 #include <zephyr/arch/arm/aarch32/cortex_m/cmsis.h>
+#include <zephyr/irq.h>
 
 #include "gpio_utils.h"
 

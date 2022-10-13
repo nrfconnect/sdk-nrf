@@ -3,7 +3,12 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
+
+#include <errno.h>
+
 #include <zephyr/device.h>
+#include <zephyr/kernel.h>
+#include <zephyr/spinlock.h>
 
 #include <adsp-clk.h>
 #include <adsp_shim.h>

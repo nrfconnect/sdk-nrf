@@ -6,8 +6,11 @@
 
 #define DT_DRV_COMPAT intel_cavs_intc
 
+#include <zephyr/arch/cpu.h>
 #include <zephyr/device.h>
+#include <zephyr/irq.h>
 #include <zephyr/irq_nextlevel.h>
+#include <zephyr/sys/arch_interface.h>
 #include "intc_cavs.h"
 
 #if defined(CONFIG_SMP) && (CONFIG_MP_NUM_CPUS > 1)
