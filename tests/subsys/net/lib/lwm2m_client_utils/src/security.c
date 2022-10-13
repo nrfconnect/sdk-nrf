@@ -615,7 +615,7 @@ ZTEST(lwm2m_client_utils_security, test_load_from_flash)
 
 static int test_bs_loading(const char *subtree)
 {
-	bool flag = true;
+	uint8_t flag = 1;
 
 	handler->h_set("0/2/1", sizeof(flag), read_cb, &flag);
 

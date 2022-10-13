@@ -411,7 +411,7 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 		return -ENOENT;
 	}
 
-	len = read_cb(cb_arg, buf, len);
+	len = read_cb(cb_arg, buf, len_rd);
 	if (len <= 0) {
 		LOG_ERR("Failed to read data");
 		return -ENOENT;
