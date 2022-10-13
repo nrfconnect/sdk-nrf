@@ -11,7 +11,7 @@
 
 #include "azure_iot_hub_mqtt.h"
 
-#include "net/mock_socket.h"
+#include "zephyr/net/mock_socket.h"
 #include "mock_mqtt.h"
 
 #define TEST_PORT		8883
@@ -437,7 +437,7 @@ void test_mqtt_helper_subscribe_when_connected(void)
 
 void test_mqtt_helper_subscribe_when_disconnected(void)
 {
-	struct mqtt_subscription_list sub_list_dummy;
+	struct mqtt_subscription_list sub_list_dummy = { 0 };
 
 	mqtt_state = MQTT_STATE_DISCONNECTED;
 
@@ -446,7 +446,7 @@ void test_mqtt_helper_subscribe_when_disconnected(void)
 
 void test_mqtt_helper_subscribe_mqtt_api_error(void)
 {
-	struct mqtt_subscription_list sub_list_dummy;
+	struct mqtt_subscription_list sub_list_dummy = { 0 };
 
 	__wrap_mqtt_subscribe_ExpectAndReturn(&mqtt_client, &sub_list_dummy, -EINVAL);
 
@@ -483,7 +483,7 @@ void test_mqtt_helper_publish_when_connected(void)
 
 void test_mqtt_helper_publish_when_disconnected(void)
 {
-	struct mqtt_publish_param pub_param_dummy;
+	struct mqtt_publish_param pub_param_dummy = { 0 };
 
 	mqtt_state = MQTT_STATE_DISCONNECTED;
 
