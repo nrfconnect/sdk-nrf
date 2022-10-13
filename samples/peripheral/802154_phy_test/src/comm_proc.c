@@ -8,7 +8,6 @@
 #include <stdint.h>
 
 #include <zephyr/shell/shell.h>
-#include <zephyr/shell/shell_uart.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(comm);
@@ -67,6 +66,18 @@ void comm_init(void)
 		return;
 	}
 
-	shell = shell_backend_uart_get_ptr();
+	size_t cnt = 0;
+
+	STRUCT_SECTION_COUNT(shell, &cnt);
+
+	/*
+	 * The assumption is that this sample always uses only  a single shell backend.
+	 * That is why it assumed, that the first available shell backend should be used
+	 * for communication callback messages.
+	 */
+	if (cnt >= 1) {
+		STRUCT_SECTION_GET(shell, 0, &shell);
+	}
+
 	ptt_uart_init(comm_send_cb);
 }
