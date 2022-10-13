@@ -22,7 +22,7 @@ static int show_events(const struct shell *shell, size_t argc,
 
 		shell_fprintf(shell,
 			      SHELL_NORMAL,
-			      "%c %d:\t%s\n",
+			      "%c %zu:\t%s\n",
 			      (atomic_test_bit(_app_event_manager_event_display_bm.flags, ev_id)) ?
 				'E' : 'D',
 			      ev_id,
