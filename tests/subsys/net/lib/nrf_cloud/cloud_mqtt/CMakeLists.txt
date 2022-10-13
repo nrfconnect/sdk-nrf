@@ -23,10 +23,9 @@ target_include_directories(app
 	${ZEPHYR_BASE}/../modules/lib/cjson
 )
 
-# These code files are not necessary (they are included automatically)
 set_source_files_properties(
-	${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_fota_common.c
-	DIRECTORY ${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/
+	${ZEPHYR_BASE}/subsys/net/lib/sockets/getaddrinfo.c
+	DIRECTORY ${ZEPHYR_BASE}/subsys/net/lib/sockets
 	PROPERTIES HEADER_FILE_ONLY ON
 )
 # NRF CLOUD TEST END

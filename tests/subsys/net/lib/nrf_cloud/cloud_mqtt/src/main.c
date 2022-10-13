@@ -4,7 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+<<<<<<< HEAD
 #include <net/nrf_cloud.h>
+=======
+>>>>>>> 4a9a19152 (nrf_cloud: unittest: Add more tests to the lib)
 #include "fakes.h"
 
 /* Flag to indicate if the cloud has been connected */
@@ -72,7 +75,6 @@ ZTEST(nrf_cloud_test, test_connect_idle)
  */
 ZTEST(nrf_cloud_test, test_connect_already_connected)
 {
-	/*Z_TEST_SKIP_IFNDEF(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD);*/
 	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
 		"nrf_cloud lib should be in the state of idle at the beginning of the test");
 
@@ -87,12 +89,13 @@ ZTEST(nrf_cloud_test, test_connect_already_connected)
 		"nrf_cloud lib should be in the state of initialized");
 
 	(void)nrf_cloud_connect();
-	/* Wait for the connected event 
+	
+	/* Wait for the connected event */
 	while (!atomic_get(&cloud_connected_t)) {
 		k_sleep(K_MSEC(200));
 	}
 	zassert_equal(STATE_CONNECTED, nfsm_get_current_state(),
-		"nrf_cloud lib should be in the connected state after successfully connected");*/
+		"nrf_cloud lib should be in the connected state after successfully connected");
 
 	/* Try connecting again */
 	int ret = nrf_cloud_connect();
