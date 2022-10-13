@@ -1,11 +1,65 @@
-.. _ug_matter_device_types:
+.. _ug_matter_overview_data_model:
 
-Matter device types
-###################
+Matter Data Model and device types
+##################################
 
 .. contents::
    :local:
    :depth: 2
+
+.. ug_matter_data_model_desc_start
+
+The Data Model layer describes how to separate data into abstract logical blocks that help maintain the application in a comfortable manner.
+The layer operates regardless of the business logic, and so for example it is identical for each door lock type of device.
+
+.. figure:: images/matter_components_DM.svg
+   :alt: Data Model layer overview
+
+   Data Model layer overview
+
+.. ug_matter_data_model_desc_end
+
+Nodes
+   Each device is composed of one or more nodes, which are complete implementations of a Matter application functionality on a single stack.
+   Nodes are identifiable with a unique network address on a single network.
+   They can communicate directly with other nodes in the network.
+
+Endpoints
+   Each node is composed of one or more endpoints, which contain feature sets of single device functionalities.
+   For example, in a voice-controlled door lock device, one endpoint could include the feature set for operating the bolt, while the other endpoint could include the feature set for handling a temperature sensor.
+
+   .. note::
+      Endpoint 0 is always reserved for Matter's Utility Clusters.
+      This is the only mandatory endpoint for each Matter device.
+
+Clusters
+   Endpoints are composed of one or more clusters, which group attributes, commands and events that together make up each single feature in a set.
+   For example, in an endpoint for operating a door bolt, one cluster could group attributes for moving the bolt to open or closed position, while other could group attributes for controlling alarms in case the door is opened in unauthorized way.
+
+   Clusters can be of the following types:
+
+   * Server -- responsible for holding values for Attributes, Commands, and Events.
+   * Client -- responsible for performing interactions with other Server Clusters.
+
+   The supported Matter application clusters are described in the Application Clusters specification, available to the `Connectivity Standards Alliance`_ members.
+   Sets of clusters on one or more endpoint can form a :ref:`device type <ug_matter_device_types>`, that is an officially defined collection of requirements that is conformant with the Device Library specification.
+
+Attributes
+   Attributes are data entities that represent a physical quantity or state.
+   They are stored in the Matter device's memory, but can also be calculated dynamically on demand.
+
+Commands
+   Commands are actions that can be used to trigger some behavior on other devices.
+   For example, in a door lock device the lock door command can be used to trigger such action on a physical device.
+
+Events
+   Events are a type of attributes that communicate device state changes.
+   They can also be treated as historical data records of something that happened on the device in the past.
+
+.. _ug_matter_device_types:
+
+Matter device types
+*******************
 
 A Matter device type is an officially defined collection of requirements for one or more endpoints.
 Device types are intended to ensure interoperability of different device brands on the market.
