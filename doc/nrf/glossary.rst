@@ -544,7 +544,7 @@ Glossary
    Repository
       The entire set of files and folders of which a project is composed, together with the revision history of each file.
       It is often composed of multiple branches.
-      It is also known as *Git repository* or *Git project*, and is similar to a *Git submodule*.
+      It is also known as *Git repository* or *Git project*, and is similar to a :term:`Submodule <Submodule>` of Git.
 
    Request to Send (RTS)
       In :term:`flow control <Hardware Flow Control (HWFC)>`, the transmitting end is ready and requesting the far end for permission to transfer data.

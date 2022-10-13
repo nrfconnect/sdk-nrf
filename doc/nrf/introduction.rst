@@ -78,7 +78,7 @@ West
 The Zephyr project includes a tool called west.
 The |NCS| uses :ref:`west <zephyr:west>` to manage the combination of multiple Git repositories and versions.
 
-Some of west’s features are similar to those provided by Git Submodules and Google’s Repo tool.
+Some of west’s features are similar to those provided by :term:`submodules <Submodule>` of Git and Google’s Repo tool.
 But west also includes custom features required by the Zephyr project that were not sufficiently supported by the existing tools.
 
 West's workspace contains exactly one :ref:`manifest repository <zephyr:west-basics>`, which is a main Git repository containing a `west manifest file`_.

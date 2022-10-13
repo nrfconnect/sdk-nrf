@@ -90,7 +90,7 @@ This is a JSON file that contains the data model configuration of clusters, comm
 It is not used directly by Matter applications, but it is used to generate the source files for handling given clusters.
 
 The ZAP file can be edited using `ZCL Advanced Platform`_ (ZAP tool), a third-party tool that is a generic templating engine for applications and libraries based on Zigbee Cluster Library.
-This tool is provided with the Matter submodule.
+This tool is provided with the Matter repository in the |NCS|.
 
 To edit clusters using the ZAP tool, complete the following steps:
 

@@ -37,7 +37,7 @@ ZCL Advanced Platform, in short ZAP tool, is a third-party tool that is a generi
 Installation
 ============
 
-The tool is provided with the Matter submodule in the |NCS| and does not require a separate installation, but you must make sure that you have installed ZAP tool prerequisites, as mentioned in the Quick instructions section in the :file:`README.md` file in the official `ZCL Advanced Platform`_ repository.
+The tool is provided with the Matter repository in the |NCS| and does not require a separate installation, but you must make sure that you have installed ZAP tool prerequisites, as mentioned in the Quick instructions section in the :file:`README.md` file in the official `ZCL Advanced Platform`_ repository.
 
 Usage
 =====
