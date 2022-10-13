@@ -14,7 +14,7 @@ test_runner_generate(src/azure_iot_hub_mqtt_test.c)
 
 # Create mock
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/mqtt.h)
-cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/socket.h net)
+cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/socket.h zephyr/net)
 
 # Add Unit Under Test source files
 target_sources(app PRIVATE
