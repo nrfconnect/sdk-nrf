@@ -7,17 +7,18 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(nrf_cloud_test)
+project(nrf_cloud_init_uninit_test)
 set(NRF_SDK_DIR ${ZEPHYR_BASE}/../nrf)
 cmake_path(NORMAL_PATH NRF_SDK_DIR)
 
 # NRF CLOUD TEST START
-FILE(GLOB app_sources src/nrf_cloud_test.c)
+FILE(GLOB app_sources src/main.c)
 target_sources(app PRIVATE ${app_sources})
 
 target_sources(app
 	PRIVATE
 	${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud.c
+	${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_fsm.c
 )
 
 target_include_directories(app

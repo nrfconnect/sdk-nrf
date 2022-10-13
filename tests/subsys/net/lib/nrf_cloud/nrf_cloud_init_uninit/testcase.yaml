@@ -1,0 +1,6 @@
+tests:
+  net.lib.nrf_cloud.nrf_cloud_init_uninit:
+    platform_allow: nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    tags: nrf_cloud_test nrf_cloud_lib

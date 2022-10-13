@@ -392,7 +392,7 @@ Libraries for networking
 
   * Added:
 
-    * Unit tests for the :c:func:`nfsm_set_current_state_and_notify`, :c:func:`nrf_cloud_uninit`, and :c:func:`nrf_cloud_connect` functions.
+    * Unit tests for the :c:func:`nfsm_set_current_state_and_notify`, :c:func:`nrf_cloud_uninit`, :c:func:`nrf_cloud_connect`, and :c:func:`nrf_cloud_disconnect` functions.
 
 * :ref:`lib_lwm2m_client_utils` library:
 

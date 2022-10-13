@@ -4,11 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef NRF_CLOUD_FAKES_H__
-#define NRF_CLOUD_FAKES_H__
-
 #include <nrf_cloud_transport.h>
-#include <nrf_cloud_fsm.h>
 #include <nrf_cloud_codec.h>
 #include <zephyr/fff.h>
 #include <zephyr/ztest.h>
@@ -17,7 +13,6 @@ DEFINE_FFF_GLOBALS;
 
 /* Fake functions declaration */
 FAKE_VALUE_FUNC(int, nct_init, const char *);
-FAKE_VALUE_FUNC(int, nfsm_init);
 FAKE_VALUE_FUNC(int, nrf_cloud_codec_init);
 FAKE_VALUE_FUNC(int, nrf_cloud_fota_fmfu_dev_set, const struct dfu_target_fmfu_fdev *);
 FAKE_VALUE_FUNC(int, nct_disconnect);
@@ -36,11 +31,6 @@ int fake_nct_init__succeeds(const char *const client_id)
 int fake_nct_init__fails(const char *const cliend_id)
 {
 	return -ENODEV;
-}
-
-int fake_nfsm_init__succeeds(void)
-{
-	return 0;
 }
 
 int fake_nrf_cloud_codec_init__succeeds(void)
@@ -73,6 +63,11 @@ int fake_nct_disconnect__not_actually_disconnect(void)
 	return 0;
 }
 
+int fake_nct_disconnect__fails(void)
+{
+	return -ENOTCONN;
+}
+
 int fake_nrf_cloud_fota_uninit__succeeds(void)
 {
 	return 0;
@@ -93,6 +88,19 @@ int fake_nct_connect__succeeds(void)
 	return 0;
 }
 
+int fake_nct_connect_with_mqtt__succeeds(void)
+{
+	struct nrf_cloud_evt evt = {
+		.type = NRF_CLOUD_EVT_TRANSPORT_CONNECTED,
+	};
+
+	nfsm_set_current_state_and_notify(STATE_CONNECTED, &evt);
+	k_sleep(K_MSEC(200));
+
+	nfsm_set_current_state_and_notify(STATE_DC_CONNECTED, &evt);
+	return 0;
+}
+
 int fake_nct_connect__invalid(void)
 {
 	return -EINVAL;
@@ -108,14 +116,12 @@ int fake_nct_keepalive_time_left_get(void)
 	return 1000;
 }
 
-int fake_nct_keepalive_time_left_timeout(void)
+int fake_nct_keepalive_time_left_long_timeout(void)
 {
-	return -1;
+	return 10000;
 }
 
 int fake_nct_process__succeeds(void)
 {
 	return 0;
 }
-
-#endif /* NRF_CLOUD_FAKES_H__ */
