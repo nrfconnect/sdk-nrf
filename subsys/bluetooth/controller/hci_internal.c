@@ -1094,6 +1094,10 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_VS_PERIPHERAL_LATENCY_MODE_SET:
 		return sdc_hci_cmd_vs_peripheral_latency_mode_set((void *)cmd_params);
 #endif
+#if defined(CONFIG_BT_BROADCASTER)
+	case SDC_HCI_OPCODE_CMD_VS_SET_ADV_RANDOMNESS:
+		return sdc_hci_cmd_vs_set_adv_randomness((void *)cmd_params);
+#endif
 #if defined(CONFIG_BT_CTLR_LE_POWER_CONTROL)
 	case SDC_HCI_OPCODE_CMD_VS_WRITE_REMOTE_TX_POWER:
 		return sdc_hci_cmd_vs_write_remote_tx_power((void *)cmd_params);
