@@ -161,13 +161,50 @@ int module_start(struct module_data *module);
  */
 uint32_t module_active_count_get(void);
 
+/** @brief Set module state
+ *
+ *  @param module Pointer to structure that contains module metadata.
+ *  @param state New state
+ */
 void module_state_set(struct module_data *module, uint8_t state);
 
+/** @brief Set module sub state
+ *
+ *  @param module Pointer to structure that contains module metadata.
+ *  @param state New state
+ */
 void module_sub_state_set(struct module_data *module, uint8_t state);
 
+/** @brief Set module sub-sub state
+ *
+ *  @param module Pointer to structure that contains module metadata.
+ *  @param state New state
+ */
+void module_sub_sub_state_set(struct module_data *module, uint8_t state);
+
+/** @brief Get the current module state.
+ *
+ *  @param module Pointer to structure that contains module metadata.
+ *
+ *  @retval Current module state.
+ */
 uint8_t module_state_get(struct module_data *module);
 
+/** @brief Get the current module sub state.
+ *
+ *  @param module Pointer to structure that contains module metadata.
+ *
+ *  @retval Current module sub state.
+ */
 uint8_t module_sub_state_get(struct module_data *module);
+
+/** @brief Get the current module sub-sub state.
+ *
+ *  @param module Pointer to structure that contains module metadata.
+ *
+ *  @retval Current module sub-sub state.
+ */
+uint8_t module_sub_sub_state_get(struct module_data *module);
 
 /**
  *@}
