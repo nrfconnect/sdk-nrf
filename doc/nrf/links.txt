@@ -469,6 +469,8 @@
 
 .. _`Optimizing Power on nRF52 Designs`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/optimizing-power-on-nrf52-designs
 
+.. _`An Introduction to Trusted Firmware-M (TF-M)`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/an-introduction-to-trusted-firmware-m-t-m#mcetoc_1gc9ihpcd0
+
 .. ### Source: www.segger.com
 
 .. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink

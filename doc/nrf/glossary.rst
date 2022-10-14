@@ -119,6 +119,10 @@ Glossary
    Cortex Microcontroller Software Interface Standard (CMSIS)
       A vendor-independent hardware abstraction layer for the Cortex-M processor series that defines generic tool interfaces.
 
+   Cortex-M Security Extensions (CMSE)
+      A group term for different security extensions for the Arm Cortex-M33 processor.
+      In the |NCS|, this term is used in the context of `ARM TrustZone`_ and :ref:`app_boards_spe_nspe` (:term:`Non-Secure Processing Environment (NSPE)` and :term:`Secure Processing Environment (SPE)`).
+
    Data Terminal Ready (DTR)
       A control signal in RS-232 serial communications transmitted from data terminal equipment, such as a computer, to data communication equipment.
 
@@ -410,6 +414,11 @@ Glossary
    Noise Factor (NF)
       The relation of the :term:`Signal-to-Noise Ratio (SNR)` in the device input to the SNR in the device output.
 
+   Non-Secure Processing Environment (NSPE)
+      One of the two processing environments when using Cortex-M Security Extensions.
+      When firmware is separated between NSPE and :term:`Secure Processing Environment (SPE)`, NSPE is used to store the application core firmware.
+      See :ref:`app_boards_spe_nspe` for more information.
+
    Non-volatile Memory (NVM)
       A type of memory that can retrieve stored information even after having been power-cycled.
 
@@ -564,6 +573,11 @@ Glossary
    Secure Access Port Protection (SECUREAPPROTECT)
       A register used to prevent read and write access to all secure CPU registers and secure memory-mapped addresses.
       See :term:`Access Port Protection (APPROTECT)`.
+
+   Secure Processing Environment (SPE)
+      One of the two processing environments when using Cortex-M Security Extensions.
+      When firmware is separated between :term:`Non-Secure Processing Environment (NSPE)` and SPE, SPE is used to store security features.
+      See :ref:`app_boards_spe_nspe` for more information.
 
    Security Manager Protocol (SMP)
       A protocol used for pairing and key distribution.
