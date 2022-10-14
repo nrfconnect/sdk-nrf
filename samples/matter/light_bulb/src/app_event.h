@@ -23,7 +23,7 @@ enum class AppEventType : uint8_t {
 	StartSMPAdvertising
 };
 
-enum class FunctionEvent : uint8_t { NoneSelected = 0, SoftwareUpdate = 0, FactoryReset };
+enum class FunctionEvent : uint8_t { NoneSelected = 0, SoftwareUpdate = 0, FactoryReset, AdvertisingStart };
 
 struct AppEvent {
 	union {

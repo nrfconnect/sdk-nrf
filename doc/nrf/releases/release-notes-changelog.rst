@@ -218,7 +218,9 @@ Thread samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* :ref:`matter_light_bulb_sample`:
+
+  * Introduced support for Matter over Wi-Fi on standalone ``nrf7002dk_nrf5340_cpuapp`` and on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached.
 
 NFC samples
 -----------
