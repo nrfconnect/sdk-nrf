@@ -13,11 +13,19 @@ zephyr_include_directories(
 	osal/bus_if/bus/qspi/inc
 	osal/bus_if/bal/inc
 	osal/fw_if/umac_if/inc
-	osal/fw_if/umac_if/inc/fw
 	osal/fw_load/mips/fw/inc
 	osal/hw_if/hal/inc
-	osal/hw_if/hal/inc/fw
 	zephyr/src/qspi/inc
+)
+
+zephyr_include_directories_ifdef(CONFIG_NRF700X_REV_A
+	osal/hw_if/hal/inc/fw_A
+	osal/fw_if/umac_if/inc/fw_A
+)
+
+zephyr_include_directories_ifndef(CONFIG_NRF700X_REV_A
+	osal/hw_if/hal/inc/fw_B
+	osal/fw_if/umac_if/inc/fw_B
 )
 
 zephyr_library_sources(
