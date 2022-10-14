@@ -5,6 +5,19 @@
 #
 mainmenu "Matter nRF Connect Light Bulb Example Application"
 
+# Sample configuration used for Thread networking
+if NET_L2_OPENTHREAD
+
+choice OPENTHREAD_NORDIC_LIBRARY_CONFIGURATION
+	default OPENTHREAD_NORDIC_LIBRARY_FTD
+endchoice
+
+choice OPENTHREAD_DEVICE_TYPE
+	default OPENTHREAD_FTD
+endchoice
+
+endif # NET_L2_OPENTHREAD
+
 if MPSL_FEM
 
 config OPENTHREAD_DEFAULT_TX_POWER

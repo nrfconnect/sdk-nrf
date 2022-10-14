@@ -57,6 +57,7 @@ private:
 	static void UpdateStatusLED();
 	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
 	static void FunctionHandler(const AppEvent &event);
+	static void StartBLEAdvertisementAndLightActionEventHandler(const AppEvent &event);
 
 #ifdef CONFIG_MCUMGR_SMP_BT
 	static void RequestSMPAdvertisingStart(void);

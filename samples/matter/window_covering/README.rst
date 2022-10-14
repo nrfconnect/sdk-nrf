@@ -84,9 +84,9 @@ Matter window covering build types
 Device Firmware Upgrade support
 ===============================
 
-.. include:: ../light_bulb/README.rst
-    :start-after: matter_light_bulb_sample_build_with_dfu_start
-    :end-before: matter_light_bulb_sample_build_with_dfu_end
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_build_with_dfu_start
+    :end-before: matter_door_lock_sample_build_with_dfu_end
 
 FEM support
 ===========

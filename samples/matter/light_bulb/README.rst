@@ -9,7 +9,8 @@ Matter: Light bulb
    :depth: 2
 
 This light bulb sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a white dimmable light bulb device.
-This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
+This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network or on top of a Wi-Fi network.
+Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol can be supported for a specific light bulb device.
 You can use this sample as a reference for creating your own application.
 
 .. note::
@@ -23,11 +24,20 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-If you want to commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>`.
+If you want to commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>`, you also need a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>`.
 This requires additional hardware depending on the setup you choose.
 
 .. note::
     |matter_gn_required_note|
+
+
+IPv6 network support
+====================
+
+The development kits for this sample offer the following IPv6 network support for Matter:
+
+* Matter over Thread is supported for ``nrf52840dk_nrf52840``, ``nrf5340dk_nrf5340_cpuapp``, and ``nrf21540dk_nrf52840``.
+* Matter over Wi-Fi is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached or for ``nrf7002dk_nrf5340_cpuapp``.
 
 Overview
 ********
@@ -36,7 +46,7 @@ The sample uses buttons to test changing the light bulb and device states, and L
 You can test it in the following ways:
 
 * Standalone, by using a single DK that runs the light bulb application.
-* Remotely over the Thread protocol, which requires more devices.
+* Remotely over the Thread or Wi-Fi, which requires more devices.
 
 The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device (for remote testing in a network).
 You can enable both methods after :ref:`building and running the sample <matter_light_bulb_sample_remote_control>`.
@@ -48,8 +58,8 @@ Remote testing in a network
 
 .. matter_light_bulb_sample_remote_testing_start
 
-By default, the Matter accessory device has Thread disabled.
-You must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread network.
+By default, the Matter accessory device has no IPv6 network configured.
+You must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread or WiFi network.
 The controller must get the commissioning information from the Matter accessory device and provision the device into the network.
 For details, see the `Commissioning the device`_ section.
 
@@ -82,7 +92,7 @@ This sample supports the following build types, depending on the selected board:
 
 * ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
 * ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
-* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used for the nRF52840 DK, nRF5340 DK, and nRF21540 DK.
+* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used for the nRF52840 DK, nRF5340 DK, nRF7002 DK, and nRF21540 DK.
 
 .. note::
     `Selecting a build type`_ is optional.
@@ -93,43 +103,9 @@ This sample supports the following build types, depending on the selected board:
 Device Firmware Upgrade support
 ===============================
 
-.. matter_light_bulb_sample_build_with_dfu_start
-
-.. note::
-   You can enable over-the-air Device Firmware Upgrade only on hardware platforms that have external flash memory.
-   Currently only nRF52840 DK and nRF5340 DK support Device Firmware Upgrade feature.
-
-The sample supports over-the-air (OTA) device firmware upgrade (DFU) using one of the two following protocols:
-
-* Matter OTA update protocol that uses the Matter operational network for querying and downloading a new firmware image.
-* Simple Management Protocol (SMP) over Bluetooth® LE.
-  In this case, the DFU can be done either using a smartphone application or a PC command line tool.
-  Note that this protocol is not part of the Matter specification.
-
-In both cases, :ref:`MCUboot <mcuboot:mcuboot_wrapper>` secure bootloader is used to apply the new firmware image.
-
-The DFU over Matter is enabled by default.
-The following configuration arguments are available during the build process for configuring DFU:
-
-* To configure the sample to support the DFU over Matter and SMP, use the ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` build flag.
-* To configure the sample to disable the DFU and the secure bootloader, use the ``-DCONF_FILE=prj_no_dfu.conf`` build flag.
-
-See :ref:`cmake_options` for instructions on how to add these options to your build.
-
-When building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* replaced with the desired DFU build flag:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b *build_target* -- *dfu_build_flag*
-
-For example:
-
-.. code-block:: console
-
-   west build -b nrf52840dk_nrf52840 -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
-
-.. matter_light_bulb_sample_build_with_dfu_end
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_build_with_dfu_start
+    :end-before: matter_door_lock_sample_build_with_dfu_end
 
 FEM support
 ===========
@@ -155,11 +131,17 @@ LED 2:
     :end-before: matter_door_lock_sample_button1_end
 
 Button 2:
-    Changes the light bulb state to the opposite one.
+    * On nRF52840 DK, nRF5340 DK, and nRF21540 DK: Changes the light bulb state to the opposite one.
+    * On nRF7002 DK:
+
+      * If pressed for less than three seconds, it changes the lock state to the opposite one.
+      * If pressed for more than three seconds, it starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
 
 Button 4:
-    Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
-    This button is used during the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
+    * On nRF52840 DK, nRF5340 DK, and nRF21540 DK: Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
+      This button is used during the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
+
+    * On nRF7002 DK: Not available.
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_jlink_start
@@ -274,7 +256,7 @@ Test connection
 Enabling remote control
 =======================
 
-Remote control allows you to control the Matter light bulb device from a Thread network.
+Remote control allows you to control the Matter light bulb device from IPv6 network.
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_remote_control_start
@@ -287,10 +269,10 @@ Commissioning the device
 
 .. matter_light_bulb_sample_commissioning_start
 
-To commission the device, go to the :ref:`ug_matter_gs_testing` page and complete the steps for the Matter over Thread development environment and the Matter controller you want to use.
+To commission the device, go to the :ref:`ug_matter_gs_testing` page and complete the steps for the Matter over Thread or Matter over Wi-Fi development environment and the Matter controller you want to use.
 After choosing the environment configuration, the guide walks you through the following steps:
 
-* Configure the Thread Border Router.
+* Configure the Thread Border Router (only for Matter over Thread communication).
 * Build and install the Matter controller.
 * Commission the device.
 * Send Matter commands that cover scenarios described in the `Testing`_ section.
@@ -301,7 +283,15 @@ If you are new to Matter, the recommended approach is to use :ref:`CHIP Tool for
 
 Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
 The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (15 minutes by default).
-If the Bluetooth LE advertising times out, press **Button 4** to re-enable it.
+If the Bluetooth LE advertising times out, use one of the following buttons to enable it again:
+
+   * On nRF52840 DK, nRF5340 DK and nRF21540 DK:
+
+     * Press **Button 4**.
+
+   * On nRF7002 DK:
+
+     * Press **Button 2** for at least three seconds.
 
 When you start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
 The data payload includes the device discriminator and setup PIN code.

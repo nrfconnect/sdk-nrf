@@ -229,7 +229,7 @@ void AppTask::StartBLEAdvertisementAndLockActionEventHandler(const AppEvent &eve
 		Instance().StartTimer(kAdvertisingTriggerTimeout);
 		Instance().mFunction = FunctionEvent::AdvertisingStart;
 	} else {
-		if (Instance().mFunction == FunctionEvent::AdvertisingStart) {
+		if (Instance().mFunction == FunctionEvent::AdvertisingStart && Instance().mFunctionTimerActive) {
 			Instance().CancelTimer();
 			Instance().mFunction = FunctionEvent::NoneSelected;
 
@@ -299,6 +299,7 @@ void AppTask::FunctionTimerTimeoutCallback(k_timer *timer)
 		return;
 	}
 
+	Instance().mFunctionTimerActive = false;
 	AppEvent event;
 	event.Type = AppEventType::Timer;
 	event.TimerEvent.Context = k_timer_user_data_get(timer);
@@ -308,7 +309,7 @@ void AppTask::FunctionTimerTimeoutCallback(k_timer *timer)
 
 void AppTask::FunctionTimerEventHandler(const AppEvent &event)
 {
-	if (event.Type != AppEventType::Timer || !Instance().mFunctionTimerActive) {
+	if (event.Type != AppEventType::Timer) {
 		return;
 	}
 
@@ -340,6 +341,7 @@ void AppTask::FunctionTimerEventHandler(const AppEvent &event)
 		   if we have 2 buttons UI*/
 #if NUMBER_OF_BUTTONS == 2
 		StartBLEAdvertisementHandler(event);
+		Instance().mFunction = FunctionEvent::NoneSelected;
 #endif
 	}
 }

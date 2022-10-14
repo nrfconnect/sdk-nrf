@@ -7,7 +7,8 @@ tests:
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
     tags: ci_build
   sample.matter.light_bulb.no_dfu:
     build_only: true
@@ -16,7 +17,8 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf21540dk_nrf52840
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+      - nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840 nrf7002dk_nrf5340_cpuapp
     tags: ci_build
   sample.matter.light_bulb.release:
     build_only: true
@@ -24,7 +26,8 @@ tests:
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
     tags: ci_build
   sample.matter.light_bulb.smp_dfu:
     build_only: true
@@ -33,6 +36,13 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+  sample.matter.light_bulb.no_dfu.nrf7002_ek:
+    build_only: true
+    extra_args: SHIELD=nrf7002_ek CONF_FILE=prj_no_dfu.conf
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: ci_build
   sample.matter.light_bulb.ffs:
     build_only: true
