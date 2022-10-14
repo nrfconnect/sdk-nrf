@@ -123,6 +123,7 @@ static int wifi_nrf_umac_info(struct wifi_nrf_ctx_zep *rpu_ctx_zep)
 
 	umac_info = wifi_nrf_fmac_umac_info(rpu_ctx_zep->rpu_ctx);
 
+#ifndef CONFIG_NRF700X_RADIO_TEST
 	if (umac_info->mac_address0[0] == 0xffffffff &&
 	    umac_info->mac_address0[1] == 0xffffffff) {
 		LOG_ERR("Invalid MAC address0. OTP uninitialized !\n");
@@ -134,6 +135,7 @@ static int wifi_nrf_umac_info(struct wifi_nrf_ctx_zep *rpu_ctx_zep)
 		LOG_ERR("Invalid MAC address1\n");
 		return -1;
 	}
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 	memcpy(&rpu_ctx_zep->mac_addr,
 	       umac_info->mac_address0,
