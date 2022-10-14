@@ -57,19 +57,25 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #define LWM2M_SECURITY_CERTIFICATE 2
 #define LWM2M_SECURITY_NO_SEC 3
 
+/* Client State Machine states */
+static enum client_state {
+	START,		/* Start Connection to a server*/
+	CONNECTING,	/* LwM2M engine is connecting to server */
+	BOOTSTRAP,	/* LwM2M engine is doing a bootstrap */
+	CONNECTED,	/* LwM2M Client connection establisment to server */
+	LTE_OFFLINE,	/* LTE offline and LwM2M engine should be suspended */
+	NETWORK_ERROR	/* Client network error handling. Client stop and modem reset */
+} client_state = START;
+
 static uint8_t endpoint_name[ENDPOINT_NAME_LEN + 1];
 static uint8_t imei_buf[IMEI_LEN + sizeof("\r\nOK\r\n")];
 static struct lwm2m_ctx client = {0};
 static bool reconnect;
-static int reconnection_counter;
-static struct k_sem lwm2m_restart;
+static K_SEM_DEFINE(state_mutex, 0, 1);
+static K_MUTEX_DEFINE(lte_mutex);
+static bool modem_connected_to_network;
 /* Enable session lifetime check for initial boot */
 static bool update_session_lifetime = true;
-static bool lwm2m_client_connected;
-
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_NWK_REG_NOTIFICATION)
-static bool lwm2m_stack_suspended;
-#endif
 
 static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event client_event);
 
@@ -315,86 +321,99 @@ static void rd_client_update_lifetime(int srv_obj_inst)
 	update_session_lifetime = false;
 }
 
+static void state_trigger_and_unlock(enum client_state new_state)
+{
+	if (new_state != client_state) {
+		client_state = new_state;
+		k_sem_give(&state_mutex);
+	}
+	k_mutex_unlock(&lte_mutex);
+}
+
+static void state_set_and_unlock(enum client_state new_state)
+{
+	client_state = new_state;
+	k_mutex_unlock(&lte_mutex);
+}
+
 static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event client_event)
 {
+	k_mutex_lock(&lte_mutex, K_FOREVER);
+
+	if (client_state == LTE_OFFLINE &&
+	    client_event != LWM2M_RD_CLIENT_EVENT_ENGINE_SUSPENDED) {
+		LOG_DBG("Drop network event %d at LTE offline state", client_event);
+		k_mutex_unlock(&lte_mutex);
+		return;
+	}
+
 	switch (client_event) {
 	case LWM2M_RD_CLIENT_EVENT_NONE:
 		/* do nothing */
+		k_mutex_unlock(&lte_mutex);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_FAILURE:
 		LOG_DBG("Bootstrap registration failure!");
-		k_sem_give(&lwm2m_restart);
+		state_trigger_and_unlock(NETWORK_ERROR);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_COMPLETE:
 		LOG_DBG("Bootstrap registration complete");
-		lwm2m_client_connected = false;
 		update_session_lifetime = true;
-		reconnection_counter = 0;
+		state_trigger_and_unlock(BOOTSTRAP);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_TRANSFER_COMPLETE:
 		LOG_DBG("Bootstrap transfer complete");
+		k_mutex_unlock(&lte_mutex);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_FAILURE:
 		LOG_WRN("Registration failure!");
-		lwm2m_client_connected = false;
-		k_sem_give(&lwm2m_restart);
+		state_trigger_and_unlock(NETWORK_ERROR);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_COMPLETE:
-		reconnection_counter = 0;
-		lwm2m_client_connected = true;
 		LOG_DBG("Registration complete");
-		if (update_session_lifetime) {
-			/* Read a current server  lifetime value */
-			rd_client_update_lifetime(client->srv_obj_inst);
-		}
-
-#if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
-		lwm2m_register_server_send_mute_cb();
-#endif
-		/* Get current time and date */
-		date_time_update_async(date_time_event_handler);
+		state_trigger_and_unlock(CONNECTED);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE:
 		LOG_DBG("Registration update failure!");
-		lwm2m_client_connected = false;
-		k_sem_give(&lwm2m_restart);
+		state_trigger_and_unlock(NETWORK_ERROR);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_COMPLETE:
 		LOG_DBG("Registration update complete");
-		lwm2m_client_connected = true;
+		state_trigger_and_unlock(CONNECTED);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE:
 		LOG_DBG("Deregister failure!");
 		reconnect = true;
-		k_sem_give(&lwm2m_restart);
+		state_trigger_and_unlock(NETWORK_ERROR);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_DISCONNECT:
 		LOG_DBG("Disconnected");
-		lwm2m_client_connected = false;
+		state_set_and_unlock(START);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_QUEUE_MODE_RX_OFF:
 		LOG_DBG("Queue mode RX window closed");
+		k_mutex_unlock(&lte_mutex);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_ENGINE_SUSPENDED:
 		LOG_DBG("LwM2M engine suspended");
+		k_mutex_unlock(&lte_mutex);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_NETWORK_ERROR:
 		LOG_ERR("LwM2M engine reported a network error.");
 		reconnect = true;
-		lwm2m_client_connected = false;
-		k_sem_give(&lwm2m_restart);
+		state_trigger_and_unlock(NETWORK_ERROR);
 		break;
 	}
 }
@@ -428,27 +447,56 @@ static void modem_connect(void)
 	} while (ret < 0);
 }
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_NWK_REG_NOTIFICATION)
-static void lwm2m_lte_nwk_reg_update_state_cb(bool connected)
+static bool lte_connected(enum lte_lc_nw_reg_status nw_reg_status)
 {
-	if (connected) {
-		LOG_INF("LTE connected");
-		if (lwm2m_stack_suspended) {
-			if (lwm2m_engine_resume() == 0) {
-				lwm2m_stack_suspended = false;
-			}
-		}
-	} else {
-		LOG_INF("LTE disconnected");
-		if (!lwm2m_stack_suspended && lwm2m_client_connected) {
-			if (lwm2m_engine_pause() == 0) {
-				lwm2m_stack_suspended = true;
-				lwm2m_client_connected = false;
-			}
+	if ((nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+	    (nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+		return true;
+	}
+
+	return false;
+}
+
+static void lwm2m_lte_reg_handler_notify(enum lte_lc_nw_reg_status nw_reg_status)
+{
+	bool lte_registered;
+
+	LOG_DBG("LTE NW status: %d", nw_reg_status);
+	k_mutex_lock(&lte_mutex, K_FOREVER);
+	lte_registered = lte_connected(nw_reg_status);
+	if (lte_registered != modem_connected_to_network) {
+		modem_connected_to_network = lte_registered;
+		if (client_state != START && client_state != BOOTSTRAP) {
+			k_sem_give(&state_mutex);
 		}
 	}
+	k_mutex_unlock(&lte_mutex);
 }
-#endif /* CONFIG_LWM2M_CLIENT_UTILS_NWK_REG_NOTIFICATION */
+
+static void lte_notify_handler(const struct lte_lc_evt *const evt)
+{
+	switch (evt->type) {
+	case LTE_LC_EVT_NW_REG_STATUS:
+		lwm2m_lte_reg_handler_notify(evt->nw_reg_status);
+		break;
+	default:
+		break;
+	}
+}
+
+static void suspend_lwm2m_engine(void)
+{
+	int ret;
+
+	state_trigger_and_unlock(LTE_OFFLINE);
+	ret = lwm2m_engine_pause();
+	if (ret) {
+		LOG_ERR("LwM2M engine pause fail %d", ret);
+		reconnect = true;
+		k_mutex_lock(&lte_mutex, K_FOREVER);
+		state_trigger_and_unlock(NETWORK_ERROR);
+	}
+}
 
 void main(void)
 {
@@ -456,8 +504,6 @@ void main(void)
 	uint32_t bootstrap_flags = 0;
 
 	LOG_INF(APP_BANNER);
-
-	k_sem_init(&lwm2m_restart, 0, 1);
 
 #if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
 	ret = nrf_modem_lib_init(NORMAL_MODE);
@@ -497,9 +543,7 @@ void main(void)
 		return;
 	}
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_NWK_REG_NOTIFICATION)
-	lwm2m_lte_reg_handler_register(lwm2m_lte_nwk_reg_update_state_cb);
-#endif
+	lte_lc_register_handler(lte_notify_handler);
 
 	ret = modem_info_init();
 	if (ret < 0) {
@@ -534,7 +578,6 @@ void main(void)
 	}
 #endif
 
-	reconnection_counter = 0;
 	modem_connect();
 
 #if defined(CONFIG_APP_GNSS)
@@ -570,32 +613,92 @@ void main(void)
 			bootstrap_flags = 0;
 		}
 
-		lwm2m_rd_client_start(&client, endpoint_name, bootstrap_flags, rd_client_event,
-				      NULL);
+		k_mutex_lock(&lte_mutex, K_FOREVER);
 
-		/* Wait for restart event */
-		k_sem_take(&lwm2m_restart, K_FOREVER);
+		switch (client_state) {
+		case START:
+			LOG_INF("Client connect to server");
+			state_set_and_unlock(CONNECTING);
+			lwm2m_rd_client_start(&client, endpoint_name, bootstrap_flags,
+					      rd_client_event, NULL);
+			break;
 
-		/* Stop the LwM2M engine. */
-		lwm2m_rd_client_stop(&client, rd_client_event, false);
-#if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
-		k_work_cancel_delayable(&send_periodical_work);
-		send_count = 0;
-#endif
+		case BOOTSTRAP:
+			state_set_and_unlock(BOOTSTRAP);
+			LOG_INF("LwM2M is boosttrapping");
+			break;
 
-		if (reconnect) {
-			reconnect = false;
-			reconnection_counter++;
-
-			LOG_INF("LwM2M restart requested. The sample will try to"
-				" re-establish network connection.");
-
-			/* Try to reconnect to the network. */
-			ret = lte_lc_offline();
-			if (ret < 0) {
-				LOG_ERR("Failed to put LTE link in offline state (%d)", ret);
+		case CONNECTING:
+			if (!modem_connected_to_network) {
+				/* LTE connection down suspend LwM2M engine */
+				suspend_lwm2m_engine();
+			} else {
+				LOG_INF("LwM2M is connecting to server");
+				k_mutex_unlock(&lte_mutex);
 			}
-			modem_connect();
+			break;
+		case CONNECTED:
+			if (!modem_connected_to_network) {
+				/* LTE connection down suspend LwM2M engine */
+				suspend_lwm2m_engine();
+			} else {
+				k_mutex_unlock(&lte_mutex);
+				LOG_INF("LwM2M is connected to server");
+				if (update_session_lifetime) {
+					/* Read a current server  lifetime value */
+					rd_client_update_lifetime(client.srv_obj_inst);
+				}
+
+#if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
+				lwm2m_register_server_send_mute_cb();
+#endif
+				/* Get current time and date */
+				date_time_update_async(date_time_event_handler);
+			}
+			break;
+
+		case LTE_OFFLINE:
+			if (modem_connected_to_network) {
+				state_trigger_and_unlock(CONNECTING);
+				LOG_INF("Resume LwM2M engine");
+				ret = lwm2m_engine_resume();
+				if (ret) {
+					LOG_ERR("LwM2M engine Resume fail %d", ret);
+				}
+			} else {
+				LOG_INF("LTE Offline");
+				k_mutex_unlock(&lte_mutex);
+			}
+			break;
+
+		case NETWORK_ERROR:
+			/* Stop the LwM2M engine. */
+			state_trigger_and_unlock(START);
+			lwm2m_rd_client_stop(&client, rd_client_event, false);
+
+			/* Set network state to start for blocking LTE */
+			if (reconnect) {
+				reconnect = false;
+
+				LOG_INF("LwM2M restart requested. The sample will try to"
+					" re-establish network connection.");
+
+				/* Try to reconnect to the network. */
+				ret = lte_lc_offline();
+				if (ret < 0) {
+					LOG_ERR("Failed to put LTE link in offline state (%d)",
+						ret);
+				}
+				modem_connect();
+			}
+#if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
+			k_work_cancel_delayable(&send_periodical_work);
+			send_count = 0;
+#endif
+			break;
 		}
+
+		/* Wait for statmachine update event */
+		k_sem_take(&state_mutex, K_FOREVER);
 	}
 }
