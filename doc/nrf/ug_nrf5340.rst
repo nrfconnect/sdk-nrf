@@ -58,16 +58,10 @@ When the MCU boots, it always starts executing from the secure area.
 
 In Zephyr, the firmware of the application core is built using one of the following build targets:
 
-* ``nrf5340dk_nrf5340_cpuapp`` for the secure domain.
-* ``nrf5340dk_nrf5340_cpuapp_ns`` for the non-secure domain.
-  On selecting this build target, the build system includes an additional secure firmware component before building the main firmware on the non-secure domain.
-  The additional component is :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
+* ``nrf5340dk_nrf5340_cpuapp`` for the Secure Processing Environment (SPE) only.
+* ``nrf5340dk_nrf5340_cpuapp_ns`` for adding the Non-Secure Processing Environment (NSPE) alongside SPE.
 
-.. note::
-   In |NCS| releases before v1.6.1, the build target ``nrf5340dk_nrf5340_cpuapp_ns`` was named ``nrf5340dk_nrf5340_cpuappns``.
-
-The |NCS| provides Trusted Firmware-M for running applications from the non-secure area of the memory.
-The Secure Partition Manager (SPM) is deprecated.
+For information about the difference between the two environments, see :ref:`app_boards_spe_nspe`.
 
 Trusted Firmware-M (TF-M)
 -------------------------
