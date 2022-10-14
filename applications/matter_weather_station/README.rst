@@ -12,9 +12,6 @@ Such a device lets you remotely gather different kinds of data using the device 
 The device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
 You can use this application as a reference for creating your own application.
 
-.. note::
-    The Matter protocol is in an early development stage and must be treated as an :ref:`experimental <software_maturity>` feature.
-
 Requirements
 ************
 
@@ -90,6 +87,11 @@ This application supports the following build types:
 
 * ``debug`` - Debug version of the application. You can use this version to enable additional features for verifying the application behavior, such as logs or command-line shell.
 * ``release`` - Release version of the application. You can use this version to enable only the necessary application functionalities to optimize its performance.
+* ``factory_data`` - Release version of the application that has factory data storage enabled.
+  You can use this version to enable reading factory data necessary from a separate partition in the device non-volatile memory.
+  This way, you can read information such as product information, keys, and certificates, useful for example for Matter certification.
+  See `Generating factory data`_ to learn how to put factory data into device's storage.
+  To learn more about factory data, read the :doc:`matter:nrfconnect_factory_data_configuration` page in the Matter documentation.
 
 .. note::
     `Selecting a build type`_ is optional.
@@ -174,6 +176,24 @@ The ``build_thingy53_nrf5340_cpuapp`` parameter specifies the output directory f
    .. code-block:: console
 
       File not found: ./ncs/nrf/applications/matter_weather_station/configuration/thingy53_nrf5340_cpuapp/prj_shell.conf
+
+Generating factory data
+=======================
+
+To enable factory data support, you need to select the ``factory_data`` build type from the available application :ref:`build types <matter_weather_station_app_build_types>`.
+You can generate new factory data set when building for the target board by invoking the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b thingy53_nrf5340_cpuapp -- -DCONF_FILE=prj_factory_data.conf -DOVERLAY_CONFIG="../../overlay-factory_data_build.conf"
+
+After building the target, the generated :file:`factory_data.hex` file will be merged with the application target HEX file, so you can use the regular command to flash it to the device:
+
+.. parsed-literal::
+   :class: highlight
+
+   west flash --erase
 
 Testing
 =======
