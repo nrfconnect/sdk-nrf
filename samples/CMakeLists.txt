@@ -74,6 +74,10 @@ if (CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE OR CONFIG_NCS_SAMPLE_EMPTY_NET_CORE_CHI
     set(CHILD_IMAGE_NAME "rpc_host")
     set(CHILD_IMAGE_PATH "${NRF_DIR}/samples/bluetooth/rpc_host")
 
+  elseif (CONFIG_NCS_SAMPLE_PERIPHERAL_RADIO_TEST_CHILD_IMAGE)
+    set(CHILD_IMAGE_NAME "peripheral_radio_test")
+    set(CHILD_IMAGE_PATH "${NRF_DIR}/samples/peripheral/radio_test")
+
   else()
     # If we get here, something is wrong with the Kconfig resolution
     message(WARNING "CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE is set but "
