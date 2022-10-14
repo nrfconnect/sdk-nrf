@@ -65,7 +65,7 @@ See `Matter samples`_ for the list of changes for the Matter samples.
 Matter fork
 +++++++++++
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``708685f4821df2aa0304f02db2773c429ad25eb8``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``bc6b43882a56ddb3e94d3e64956bd5f3292b4058``.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 

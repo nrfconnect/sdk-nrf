@@ -1,5 +1,5 @@
 {
-  "featureLevel": 80,
+  "featureLevel": 82,
   "creator": "zap",
   "keyValuePairs": [
     {
@@ -235,7 +235,7 @@
           ],
           "attributes": [
             {
-              "name": "name support",
+              "name": "NameSupport",
               "code": 0,
               "mfgCode": null,
               "side": "server",
@@ -855,7 +855,7 @@
           "enabled": 1,
           "attributes": [
             {
-              "name": "device list",
+              "name": "DeviceTypeList",
               "code": 0,
               "mfgCode": null,
               "side": "server",
@@ -871,7 +871,7 @@
               "reportableChange": 0
             },
             {
-              "name": "server list",
+              "name": "ServerList",
               "code": 1,
               "mfgCode": null,
               "side": "server",
@@ -887,7 +887,7 @@
               "reportableChange": 0
             },
             {
-              "name": "client list",
+              "name": "ClientList",
               "code": 2,
               "mfgCode": null,
               "side": "server",
@@ -903,7 +903,7 @@
               "reportableChange": 0
             },
             {
-              "name": "parts list",
+              "name": "PartsList",
               "code": 3,
               "mfgCode": null,
               "side": "server",
@@ -2783,7 +2783,7 @@
               "side": "server",
               "type": "array",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -2799,7 +2799,7 @@
               "side": "server",
               "type": "array",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -2815,7 +2815,7 @@
               "side": "server",
               "type": "array",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -5995,7 +5995,7 @@
           ],
           "attributes": [
             {
-              "name": "name support",
+              "name": "NameSupport",
               "code": 0,
               "mfgCode": null,
               "side": "server",
@@ -7059,7 +7059,7 @@
           "enabled": 1,
           "attributes": [
             {
-              "name": "device list",
+              "name": "DeviceTypeList",
               "code": 0,
               "mfgCode": null,
               "side": "server",
@@ -7075,7 +7075,7 @@
               "reportableChange": 0
             },
             {
-              "name": "server list",
+              "name": "ServerList",
               "code": 1,
               "mfgCode": null,
               "side": "server",
@@ -7091,7 +7091,7 @@
               "reportableChange": 0
             },
             {
-              "name": "client list",
+              "name": "ClientList",
               "code": 2,
               "mfgCode": null,
               "side": "server",
@@ -7107,7 +7107,7 @@
               "reportableChange": 0
             },
             {
-              "name": "parts list",
+              "name": "PartsList",
               "code": 3,
               "mfgCode": null,
               "side": "server",
@@ -7961,7 +7961,7 @@
               "reportableChange": 0
             },
             {
-              "name": "ColorTemperature",
+              "name": "ColorTemperatureMireds",
               "code": 7,
               "mfgCode": null,
               "side": "server",

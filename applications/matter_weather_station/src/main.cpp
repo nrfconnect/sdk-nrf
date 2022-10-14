@@ -16,7 +16,7 @@ LOG_MODULE_REGISTER(app);
 
 int main()
 {
-	CHIP_ERROR err;
+	CHIP_ERROR err = CHIP_NO_ERROR;
 
 #ifdef CONFIG_USB_DEVICE_STACK
 	err = chip::System::MapErrorZephyr(usb_enable(NULL));
