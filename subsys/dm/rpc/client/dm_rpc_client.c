@@ -31,7 +31,7 @@ int dm_request_add(struct dm_request *req)
 {
 	int res;
 	struct nrf_rpc_cbor_ctx ctx;
-	size_t buffer_size_max = 30; /* This value is due to the serialization method. */
+	size_t buffer_size_max = 34; /* This value is due to the serialization method. */
 
 	NRF_RPC_CBOR_ALLOC(&dm_rpc_grp, ctx, buffer_size_max);
 
@@ -41,6 +41,7 @@ int dm_request_add(struct dm_request *req)
 	ser_encode_uint(&ctx, req->access_address);
 	ser_encode_uint(&ctx, req->ranging_mode);
 	ser_encode_uint(&ctx, req->start_delay_us);
+	ser_encode_uint(&ctx, req->extra_window_time_us);
 
 	nrf_rpc_cbor_cmd_no_err(&dm_rpc_grp, DM_REQUEST_ADD_RPC_CMD, &ctx,
 				ser_rsp_decode_i32, &res);

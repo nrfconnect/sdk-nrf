@@ -58,6 +58,7 @@ static void dm_request_add_rpc_handler(const struct nrf_rpc_group *group,
 	req.access_address = ser_decode_uint(ctx);
 	req.ranging_mode = ser_decode_uint(ctx);
 	req.start_delay_us = ser_decode_uint(ctx);
+	req.extra_window_time_us = ser_decode_uint(ctx);
 
 	if (!ser_decoding_done_and_check(group, ctx)) {
 		report_decoding_error(DM_REQUEST_ADD_RPC_CMD, handler_data);

@@ -51,7 +51,6 @@ To adjust the synchronization of the nodes, change the values of the following o
 
 * :kconfig:option:`CONFIG_DM_INITIATOR_DELAY_US` - Extra delay of the start of the initiator role for the distance measurement.
   Reducing this value decreases the power consumption, but leads to less successful rangings.
-* :kconfig:option:`CONFIG_DM_REFLECTOR_DELAY_US` - Extra delay of start of reflector role for the distance measurement.
 * :kconfig:option:`CONFIG_DM_MIN_TIME_BETWEEN_TIMESLOTS_US` - Minimum time between two timeslots.
   This option should account for processing of the ranging data after the timeslot.
 
