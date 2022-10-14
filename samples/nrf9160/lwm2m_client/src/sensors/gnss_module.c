@@ -84,7 +84,14 @@ int initialise_gnss(void)
 	}
 
 	/* This use case flag should always be set. */
-	err = nrf_modem_gnss_use_case_set(NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START);
+	uint8_t use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
+
+	/* Disable GNSS scheduled downloads if A-GPS is used. */
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)) {
+		use_case |= NRF_MODEM_GNSS_USE_CASE_SCHED_DOWNLOAD_DISABLE;
+	}
+
+	err = nrf_modem_gnss_use_case_set(use_case);
 
 	if (err) {
 		LOG_ERR("Failed to set GNSS use case (%d)", err);
