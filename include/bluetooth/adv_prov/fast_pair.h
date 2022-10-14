@@ -10,7 +10,7 @@
 #include <bluetooth/services/fast_pair.h>
 
 /**
- * @defgroup bt_adv_prov_fast_pair Fast Pair advertising data provider API
+ * @defgroup bt_le_adv_prov_fast_pair Fast Pair advertising data provider API
  * @brief Fast Pair advertising data provider API
  *
  * @{
@@ -27,7 +27,7 @@ extern "C" {
  *
  * @param[in] fp_adv_mode	Fast Pair advertising mode.
  */
-void bt_adv_prov_fast_pair_mode_set(enum bt_fast_pair_adv_mode fp_adv_mode);
+void bt_le_adv_prov_fast_pair_mode_set(enum bt_fast_pair_adv_mode fp_adv_mode);
 
 #ifdef __cplusplus
 }

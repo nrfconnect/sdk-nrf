@@ -43,12 +43,12 @@ A device model must be registered with Google to work as a Fast Pair Provider.
 The data is used for procedures defined by the Fast Pair standard.
 
 Registering Fast Pair Provider
-------------------------------
+==============================
 
 See the official `Fast Pair Model Registration`_ documentation for information how to register the device and obtain the Model ID and Anti-Spoofing Public/Private Key pair.
 
 Provisioning registration data onto device
-------------------------------------------
+==========================================
 
 The Fast Pair standard requires provisioning the device with Model ID and Anti-Spoofing Private Key obtained during device model registration.
 In the |NCS|, the provisioning data is generated as a hexadecimal file using the :ref:`bt_fast_pair_provision_script`.
@@ -91,7 +91,13 @@ The Bluetooth privacy is selected by the Fast Pair service, but you must make su
 * The Resolvable Private Address (RPA) address is not rotated during discoverable advertising session.
 
 See the official `Fast Pair Advertising`_ documentation for detailed information about the requirements related to discoverable and not discoverable advertising.
-See :file:`samples/bluetooth/peripheral_fast_pair/src/bt_adv_helper.c` for an example of the implementation.
+
+Fast Pair advertising data provider
+===================================
+
+The Fast Pair :ref:`advertising data provider <bt_le_adv_prov_readme>` (:kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR`) can be used to manage the Fast Pair advertising data.
+See :ref:`peripheral_fast_pair` for an example of using the provider in a sample.
+See :file:`subsys/bluetooth/adv_prov/providers/fast_pair.c` for provider implementation.
 
 .. rst-class:: numbered-step
 

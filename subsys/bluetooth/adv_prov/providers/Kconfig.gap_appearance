@@ -7,7 +7,8 @@
 menuconfig BT_ADV_PROV_GAP_APPEARANCE
 	bool "GAP appearance"
 	help
-	  Adds GAP appearance to advertising data if device is in pairing mode.
+	  Adds Generic Access Profile (GAP) appearance to advertising data if
+	  device is in pairing mode.
 
 if BT_ADV_PROV_GAP_APPEARANCE
 

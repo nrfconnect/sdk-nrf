@@ -79,7 +79,7 @@ static int adv_start_internal(enum bt_fast_pair_adv_mode fp_adv_mode)
 	}
 
 	/* Set advertising mode of Fast Pair advertising data provider. */
-	bt_adv_prov_fast_pair_mode_set(fp_adv_mode);
+	bt_le_adv_prov_fast_pair_mode_set(fp_adv_mode);
 
 	size_t ad_len = bt_le_adv_prov_get_ad_prov_cnt();
 	size_t sd_len = bt_le_adv_prov_get_sd_prov_cnt();
