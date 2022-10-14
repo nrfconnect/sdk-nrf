@@ -16,6 +16,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #include "lwm2m_object.h"
 #include "lwm2m_engine.h"
 #include <net/lwm2m_client_utils.h>
+#include <modem/modem_info.h>
 
 #define SIGNAL_MEAS_INFO_VERSION_MAJOR 1
 #define SIGNAL_MEAS_INFO_VERSION_MINOR 0
@@ -84,6 +85,81 @@ int lwm2m_signal_meas_info_index_to_inst_id(int index)
 	}
 
 	return inst[index].obj_inst_id;
+}
+
+static void update_signal_meas_object(const struct lte_lc_ncell *const cell, uint16_t index)
+{
+	int obj_inst_id;
+	char path[sizeof("10256/65535/0")];
+
+	obj_inst_id = lwm2m_signal_meas_info_index_to_inst_id(index);
+
+	snprintk(path, sizeof(path), "10256/%" PRIu16 "/0", obj_inst_id);
+	lwm2m_engine_set_s32(path, cell->phys_cell_id);
+	/* We don't set the resource 1 as the lte_lc_ncell struct doesn't
+	 * contain MCC and MNC for calculating ECGI
+	 */
+	snprintk(path, sizeof(path), "10256/%" PRIu16 "/2", obj_inst_id);
+	lwm2m_engine_set_s32(path, cell->earfcn);
+	snprintk(path, sizeof(path), "10256/%" PRIu16 "/3", obj_inst_id);
+	lwm2m_engine_set_s32(path, RSRP_IDX_TO_DBM(cell->rsrp));
+	snprintk(path, sizeof(path), "10256/%" PRIu16 "/4", obj_inst_id);
+	lwm2m_engine_set_s32(path, RSRQ_IDX_TO_DB(cell->rsrq));
+	snprintk(path, sizeof(path), "10256/%" PRIu16 "/5", obj_inst_id);
+	lwm2m_engine_set_s32(path, cell->time_diff);
+}
+
+static void reset_signal_meas_object(uint16_t index)
+{
+	int obj_inst_id;
+	char path[sizeof("10256/65535/0")];
+
+	obj_inst_id = lwm2m_signal_meas_info_index_to_inst_id(index);
+
+	snprintk(path, sizeof(path), "10256/%" PRIu16 "/0", obj_inst_id);
+	lwm2m_engine_set_s32(path, 0);
+	snprintk(path, sizeof(path), "10256/%" PRIu16 "/2", obj_inst_id);
+	lwm2m_engine_set_s32(path, 0);
+	snprintk(path, sizeof(path), "10256/%" PRIu16 "/3", obj_inst_id);
+	lwm2m_engine_set_s32(path, 0);
+	snprintk(path, sizeof(path), "10256/%" PRIu16 "/4", obj_inst_id);
+	lwm2m_engine_set_s32(path, 0);
+	snprintk(path, sizeof(path), "10256/%" PRIu16 "/5", obj_inst_id);
+	lwm2m_engine_set_s32(path, 0);
+}
+
+int lwm2m_update_signal_meas_objects(const struct lte_lc_cells_info *const cells)
+{
+	static int neighbours;
+	int i = 0;
+
+	if (cells == NULL) {
+		LOG_ERR("Invalid pointer");
+		return -EINVAL;
+	}
+
+	if (cells->ncells_count == 0) {
+		LOG_DBG("No neighbouring cells found");
+		return -ENODATA;
+	}
+
+	LOG_INF("Updating information for %d neighbouring cells", cells->ncells_count);
+
+	for (i = 0; i < MAX_INSTANCE_COUNT && i < cells->ncells_count; i++) {
+		update_signal_meas_object(&cells->neighbor_cells[i], i);
+	}
+
+	/* If we have less neighbouring cells than last time, reset
+	 * object instances exceeding the current cell count
+	 */
+	if (cells->ncells_count < neighbours) {
+		for (i = cells->ncells_count; i < MAX_INSTANCE_COUNT && i < neighbours; i++) {
+			reset_signal_meas_object(i);
+		}
+	}
+	neighbours = cells->ncells_count;
+
+	return 0;
 }
 
 static struct lwm2m_engine_obj_inst *signal_meas_info_create(uint16_t obj_inst_id)
