@@ -168,9 +168,6 @@ config LWM2M_CELL_CONN_APN_PROFILE_COUNT
 	default 3
 
 endif #LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
-config LWM2M_CLIENT_UTILS_NWK_REG_NOTIFICATION
-	bool "Enable LTE network registration status notifications"
-	select LWM2M_LTE_EVENT_LISTENER
 
 module = LWM2M_CLIENT_UTILS
 module-dep = LOG
