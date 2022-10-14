@@ -51,25 +51,7 @@ config DM_INITIATOR_DELAY_US
 	int "Initiator start delay"
 	default 1000
 	help
-	  "Additional Initiator Start delay time. Used to improve synchronization."
-
-config DM_REFLECTOR_DELAY_US
-	int "Reflector start delay"
-	default 0
-	help
-	  "Additional Reflector Start delay time. Used to improve synchronization."
-
-config DM_INITIATOR_RANGING_WINDOW_US
-	int "Initiator ranging window"
-	default 23000
-	help
-	  "Time for ranging required by initiator role."
-
-config DM_REFLECTOR_RANGING_WINDOW_US
-	int "Reflector ranging window"
-	default 24500
-	help
-	  "Time for ranging required by reflector role."
+	  "Additional Initiator Start delay time. Used to adjust synchronization."
 
 config DM_MIN_TIME_BETWEEN_TIMESLOTS_US
 	int "Minimum time between two timeslots"
