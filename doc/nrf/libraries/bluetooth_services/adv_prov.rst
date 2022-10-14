@@ -90,11 +90,12 @@ These options share a common Kconfig option prefix of ``CONFIG_BT_ADV_PROV_``.
 
 Among others, the following providers are available:
 
-* Advertising Flags (:kconfig:option:`CONFIG_BT_ADV_PROV_FLAGS`),
-* GAP Appearance (:kconfig:option:`CONFIG_BT_ADV_PROV_GAP_APPEARANCE`),
-* Microsoft Swift Pair (:kconfig:option:`CONFIG_BT_ADV_PROV_SWIFT_PAIR`),
-* TX Power (:kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER`).
-* Bluetooth device name (:kconfig:option:`CONFIG_BT_ADV_PROV_DEVICE_NAME`).
+* Advertising Flags (:kconfig:option:`CONFIG_BT_ADV_PROV_FLAGS`)
+* GAP Appearance (:kconfig:option:`CONFIG_BT_ADV_PROV_GAP_APPEARANCE`)
+* Microsoft Swift Pair (:kconfig:option:`CONFIG_BT_ADV_PROV_SWIFT_PAIR`)
+* Google Fast Pair (:kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR`)
+* TX Power (:kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER`)
+* Bluetooth device name (:kconfig:option:`CONFIG_BT_ADV_PROV_DEVICE_NAME`)
 
 For details about each advertising provider, see the Kconfig option description.
 
@@ -105,5 +106,15 @@ API documentation
 | Source files: :file:`subsys/bluetooth/adv_prov/`
 
 .. doxygengroup:: bt_le_adv_prov
+   :project: nrf
+   :members:
+
+Fast Pair provider API
+======================
+
+| Header file: :file:`include/bluetooth/adv_prov/fast_pair.h`
+| Source files: :file:`subsys/bluetooth/adv_prov/providers/fast_pair.c`
+
+.. doxygengroup:: bt_le_adv_prov_fast_pair
    :project: nrf
    :members:

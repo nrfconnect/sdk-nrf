@@ -12,7 +12,7 @@
 static enum bt_fast_pair_adv_mode set_fp_adv_mode = BT_FAST_PAIR_ADV_MODE_COUNT;
 
 
-void bt_adv_prov_fast_pair_mode_set(enum bt_fast_pair_adv_mode fp_adv_mode)
+void bt_le_adv_prov_fast_pair_mode_set(enum bt_fast_pair_adv_mode fp_adv_mode)
 {
 	set_fp_adv_mode = fp_adv_mode;
 }

@@ -281,8 +281,16 @@ Bluetooth libraries and services
 
 * :ref:`bt_le_adv_prov_readme`:
 
-  * Added the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` option to TX power advertising data provider (:kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER`).
-    The option adds a predefined value to the TX power, that is included in the advertising data.
+  * Added:
+
+    * Google Fast Pair advertising data provider (:kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR`).
+    * The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` option to TX power advertising data provider (:kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER`).
+      The option adds a predefined value to the TX power, that is included in the advertising data.
+    * The :kconfig:option:`CONFIG_BT_ADV_PROV_GAP_APPEARANCE_SD` option to GAP appearance data provider (:kconfig:option:`CONFIG_BT_ADV_PROV_GAP_APPEARANCE`).
+      The option can be used to move the GAP appearance value to the scan response data.
+    * The :kconfig:option:`CONFIG_BT_ADV_PROV_DEVICE_NAME_SD` option to Bluetooth device name data provider (:kconfig:option:`CONFIG_BT_ADV_PROV_DEVICE_NAME`).
+      The option can be used to move the Bluetooth device name to the advertising data.
+
   * Changed :c:member:`bt_le_adv_prov_adv_state.bond_cnt` to :c:member:`bt_le_adv_prov_adv_state.pairing_mode`.
     The information about whether the advertising device is looking for a new peer is more meaningful for the Bluetooth LE data providers.
 
@@ -301,6 +309,7 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
 * :ref:`bt_fast_pair_readme` service:
 
   * Disabled automatic security re-establishment request as a peripheral (:kconfig:option:`CONFIG_BT_GATT_AUTO_SEC_REQ`) to allow the Fast Pair Seeker to control the security re-establishment.
+  * Added API to check Account Key presence (:c:func:`bt_fast_pair_has_account_key`).
 
 Bootloader libraries
 --------------------
