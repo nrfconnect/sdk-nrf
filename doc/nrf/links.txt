@@ -796,6 +796,7 @@
 .. _`Fast Pair`: https://developers.google.com/nearby/fast-pair/specifications/introduction
 .. _`Fast Pair roles`: https://developers.google.com/nearby/fast-pair/specifications/configuration#roles
 .. _`Fast Pair Model Registration`: https://developers.google.com/nearby/fast-pair/specifications/service/modelregistration
+.. _`Fast Pair TX power`: https://developers.google.com/nearby/fast-pair/specifications/configuration#transmit_power
 .. _`Fast Pair Advertising`: https://developers.google.com/nearby/fast-pair/specifications/service/provider
 .. _`Fast Pair GATT Characteristics`: https://developers.google.com/nearby/fast-pair/specifications/characteristics
 .. _`Fast Pair Procedure`: https://developers.google.com/nearby/fast-pair/specifications/service/gatt
