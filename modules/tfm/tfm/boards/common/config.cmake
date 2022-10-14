@@ -14,3 +14,4 @@ set(TFM_CRYPTO_TEST_ALG_OFB             OFF         CACHE BOOL      "Test OFB cr
 # Always enable the nonsecure storage partition.
 # It will still be excluded if the partition manager excludes it.
 set(NRF_NS_STORAGE                      ON          CACHE BOOL      "Enable non-secure storage partition")
+set(PLATFORM_DEFAULT_ATTEST_HAL         OFF         CACHE BOOL      "Use default attest hal implementation.")

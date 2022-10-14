@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
 # Copyright (c) 2021, Nordic Semiconductor ASA.
 #
-# SPDX-License-Identifier: BSD-3-Clause
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 #-------------------------------------------------------------------------------
 
@@ -39,9 +39,15 @@ target_include_directories(platform_s
 target_sources(platform_s
   PRIVATE
   common/tfm_hal_platform.c
+  common/attest_hal.c
   $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_OTP}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_otp.c>
   $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_PROVISIONING}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_provisioning.c>
   )
+
+target_link_libraries(platform_s
+  PRIVATE
+  tfm_sprt
+ )
 
 # Disabling UART stdout not supported in NS Image, which is always built even when not needed.
 target_sources(platform_ns
