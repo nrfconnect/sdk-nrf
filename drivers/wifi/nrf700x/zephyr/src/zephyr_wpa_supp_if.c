@@ -342,6 +342,11 @@ void wifi_nrf_wpa_supp_event_proc_assoc_resp(void *if_priv,
 				(frame_len - 24 - sizeof(mgmt->u.assoc_resp));
 		}
 
+		if (assoc_resp->req_ie_len > 0) {
+			event.assoc_info.req_ies = (unsigned char *)assoc_resp->req_ie;
+			event.assoc_info.req_ies_len = assoc_resp->req_ie_len;
+		}
+
 	}
 
 	vif_ctx_zep->supp_callbk_fns.assoc_resp(vif_ctx_zep->supp_drv_if_ctx, &event, status);
