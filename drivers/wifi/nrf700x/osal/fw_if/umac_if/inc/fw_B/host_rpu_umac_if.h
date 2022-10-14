@@ -2885,6 +2885,8 @@ struct nrf_wifi_umac_event_mlme {
 	struct nrf_wifi_frame frame;
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 	unsigned char wme_uapsd_queues;
+	unsigned int req_ie_len;
+	unsigned char req_ie[0];
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_EVENT_CONNECT_STATUS_CODE_VALID (1 << 0)
