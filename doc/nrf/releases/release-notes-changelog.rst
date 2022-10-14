@@ -176,6 +176,12 @@ Bluetooth samples
   * Added terminal commands for selecting the role.
   * Updated the ASCII art used for showing progress to feature the current Nordic Semiconductor logo.
 
+* :ref:`peripheral_fast_pair` sample:
+
+  * Switched to using :ref:`bt_le_adv_prov_readme` to generate Bluetooth advertising and scan response data.
+  * After the device reaches the maximum number of paired devices (:kconfig:option:`CONFIG_BT_MAX_PAIRED`), the device stops looking for new peers.
+    Therefore, the Fast Pair payload is no longer included in the advertising data.
+
 Bluetooth mesh samples
 ----------------------
 

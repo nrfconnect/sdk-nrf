@@ -102,6 +102,9 @@ Button 1:
        * After 10 minutes of active advertising.
        * After a Bluetooth Central successfully pairs.
 
+       After the device reaches the maximum number of paired devices (:kconfig:option:`CONFIG_BT_MAX_PAIRED`), the device stops looking for new peers.
+       Therefore, the Fast Pair payload is no longer included in the advertising data.
+
 Button 2:
    Increases audio volume of the connected Bluetooth Central.
 
@@ -236,10 +239,35 @@ Test not discoverable advertising by completing `Testing`_ and the following add
 Dependencies
 ************
 
+The sample uses subsystems and firmware components available in the |NCS|.
+For details, see the sections below.
+
+Fast Pair GATT Service
+======================
+
 This sample uses the :ref:`bt_fast_pair_readme` and its dependencies and is configured to meet the requirements of the Fast Pair standard.
 See :ref:`ug_bt_fast_pair` for details about integrating Fast Pair in the |NCS|.
 
 The :ref:`bt_fast_pair_provision_script` is used by the build system to automatically generate the hexadecimal file that contains Fast Pair Model ID and Anti Spoofing Private Key.
+
+Bluetooth LE advertising data providers
+=======================================
+
+The :ref:`bt_le_adv_prov_readme` are used to generate Bluetooth advertising and scan response data.
+The sample uses the following providers to generate the advertising packet payload:
+
+* Advertising flags provider (:kconfig:option:`CONFIG_BT_ADV_PROV_FLAGS`)
+* TX power provider (:kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER`)
+* Google Fast Pair provider (:kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR`)
+* Sample-specific provider that appends UUID16 values of GATT Human Interface Device Service (HIDS) and GATT Battery Service (BAS)
+
+The sample uses the following providers to generate the scan response data:
+
+* Bluetooth device name provider (:kconfig:option:`CONFIG_BT_ADV_PROV_DEVICE_NAME`)
+* Generic Access Profile (GAP) appearance provider (:kconfig:option:`CONFIG_BT_ADV_PROV_GAP_APPEARANCE`)
+
+Other
+=====
 
 The sample also uses the following secure firmware component:
 
