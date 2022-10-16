@@ -907,6 +907,26 @@ static int nrf_wifi_radio_test_set_rx(const struct shell *shell,
 	return 0;
 }
 
+#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
+static int nrf_wifi_radio_test_ble_ant_switch_ctrl(const struct shell *shell,
+					     size_t argc,
+					     const char *argv[])
+{
+	unsigned int val;
+
+	if (argc < 2) {
+		shell_fprintf(shell, SHELL_ERROR, "invalid # of args : %d\n", argc);
+		return -ENOEXEC;
+	}
+
+	val  = strtoul(argv[1], NULL, 0);
+
+	ctx->conf_params.ble_ant_switch_ctrl = val;
+
+	return ble_ant_switch(val);
+}
+#endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
+
 
 static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 					size_t argc,
@@ -1038,6 +1058,13 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      SHELL_INFO,
 		      "rx = %d\n",
 		      conf_params->rx);
+
+#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "ble_ant_switch_ctrl = %d\n",
+		      conf_params->ble_ant_switch_ctrl);
+#endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
 
 #ifndef CONFIG_NRF700X_REV_A
 	shell_fprintf(shell,
@@ -1294,6 +1321,15 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_rx,
 		      2,
 		      0),
+#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
+	SHELL_CMD_ARG(ble_ant_switch_ctrl,
+		      NULL,
+		      "0 - Switch set to use the BLE antenna\n"
+		      "1 - Switch set to use the shared Wi-Fi antenna",
+		      nrf_wifi_radio_test_ble_ant_switch_ctrl,
+		      2,
+		      0),
+#endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
 	SHELL_CMD_ARG(show_config,
 		      NULL,
 		      "Display the current configuration values",
