@@ -796,6 +796,15 @@ out:
 	return status;
 }
 
+enum wifi_nrf_status wifi_nrf_fmac_conf_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					       struct rpu_btcoex *params)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+
+	status = umac_cmd_btcoex(fmac_dev_ctx, params);
+
+	return status;
+}
 
 #ifdef CONFIG_NRF700X_RADIO_TEST
 enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
@@ -3103,17 +3112,6 @@ out:
 
 	return status;
 }
-
-enum wifi_nrf_status wifi_nrf_fmac_conf_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					       struct rpu_btcoex *params)
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-
-	status = umac_cmd_btcoex(fmac_dev_ctx, params);
-
-	return status;
-}
-
 
 enum wifi_nrf_status wifi_nrf_fmac_conf_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					       unsigned char he_ltf,
