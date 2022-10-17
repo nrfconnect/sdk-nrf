@@ -66,7 +66,7 @@ static bool is_iso_buffer_full(uint8_t idx)
 
 static int get_stream_index(struct bt_audio_stream *stream, uint8_t *index)
 {
-	for (size_t i = 0U; i < ARRAY_SIZE(streams); i++) {
+	for (int i = 0; i < ARRAY_SIZE(streams); i++) {
 		if (&streams[i] == stream) {
 			*index = i;
 			return 0;
@@ -88,13 +88,13 @@ static void stream_sent_cb(struct bt_audio_stream *stream)
 	if (atomic_get(&iso_tx_pool_alloc[index])) {
 		atomic_dec(&iso_tx_pool_alloc[index]);
 	} else {
-		LOG_WRN("Decreasing atomic variable for stream %u failed", index);
+		LOG_WRN("Decreasing atomic variable for stream %d failed", index);
 	}
 
 	sent_cnt[index]++;
 
 	if ((sent_cnt[index] % 1000U) == 0U) {
-		LOG_DBG("Sent %u total ISO packets on stream %u", sent_cnt[index], index);
+		LOG_DBG("Sent %d total ISO packets on stream %d", sent_cnt[index], index);
 	}
 }
 
@@ -146,7 +146,7 @@ static void initialize(void)
 	static bool initialized;
 
 	if (!initialized) {
-		for (size_t i = 0U; i < ARRAY_SIZE(streams); i++) {
+		for (int i = 0; i < ARRAY_SIZE(streams); i++) {
 			streams_p[i] = &streams[i];
 			streams[i].ops = &stream_ops;
 		}
@@ -211,7 +211,7 @@ int le_audio_send(uint8_t const *const data, size_t size)
 	size_t num_streams = ARRAY_SIZE(streams);
 	size_t data_size = size / num_streams;
 
-	for (size_t i = 0U; i < num_streams; i++) {
+	for (int i = 0; i < num_streams; i++) {
 		if (streams[i].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
 			LOG_DBG("Stream %d not in streaming state", i);
 			continue;
