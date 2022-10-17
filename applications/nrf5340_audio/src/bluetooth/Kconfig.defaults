@@ -98,10 +98,11 @@ config BT_VCS
 	default y
 
 config BT_PACS_SNK_CONTEXT
+	default 0x0007 if STREAM_BIDIRECTIONAL
 	default 0x0005
 
 config BT_PACS_SRC_CONTEXT
-	default 0x0005 if STREAM_BIDIRECTIONAL
+	default 0x0007 if STREAM_BIDIRECTIONAL
 
 endif # AUDIO_DEV = 1 (HEADSET)
 
