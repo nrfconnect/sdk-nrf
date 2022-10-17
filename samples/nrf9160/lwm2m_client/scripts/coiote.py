@@ -288,7 +288,7 @@ if __name__ == "__main__":
         coiote.passwd = getpass()
         coiote.authenticate()
 
-    def get_domain():
+    def domain(args):
         """Get domain"""
         domain = coiote.get_domain()
         if domain is not None:
@@ -337,7 +337,7 @@ if __name__ == "__main__":
     create_pars.add_argument('-m', '--model', action='store', default=None, help='Generic Model Name')
     create_pars.add_argument('-b', '--bootstrap', default=False, action='store_true', help='Use bootstrap')
     get_domain_pars = subparsers.add_parser('domain', help='Get domain')
-    get_domain_pars.set_defaults(func=get_domain)
+    get_domain_pars.set_defaults(func=domain)
     batch_pars = subparsers.add_parser('batch', help='Batch create devices from a file.')
     batch_pars.set_defaults(func=batch_create)
     batch_pars.add_argument('file', type=str, action='store', help='CSV file with IMEI+PSK pairs.')
