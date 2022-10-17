@@ -33,4 +33,4 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 	return 0;
 }
 
-BT_LE_ADV_PROV_AD_PROVIDER_REGISTER(uuid16_all, get_data);
+BT_LE_ADV_PROV_SD_PROVIDER_REGISTER(uuid16_all, get_data);
