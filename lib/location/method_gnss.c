@@ -75,7 +75,9 @@ static char agps_rest_data_buf[AGPS_REQUEST_RECV_BUF_SIZE];
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
+#if !defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
 static struct k_work method_gnss_pgps_request_work;
+#endif
 static struct k_work method_gnss_manage_pgps_work;
 static struct k_work method_gnss_notify_pgps_work;
 static struct nrf_cloud_pgps_prediction *prediction;
@@ -299,7 +301,8 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 #endif /* #elif defined(CONFIG_NRF_CLOUD_REST) */
 #endif /* defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL) */
 
-#if defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_NRF_CLOUD_MQTT)
+#if defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
+	!defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
 static void method_gnss_pgps_request_work_fn(struct k_work *item)
 {
 	const char *jwt_buf;
@@ -845,7 +848,7 @@ int method_gnss_init(void)
 	k_work_init(&method_gnss_pgps_ext_work, method_gnss_pgps_ext_work_fn);
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-#if !defined(CONFIG_NRF_CLOUD_MQTT)
+#if !defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
 	k_work_init(&method_gnss_pgps_request_work, method_gnss_pgps_request_work_fn);
 #endif
 	k_work_init(&method_gnss_manage_pgps_work, method_gnss_manage_pgps);
