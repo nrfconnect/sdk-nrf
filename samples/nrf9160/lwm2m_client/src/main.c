@@ -16,6 +16,7 @@
 #include <net/lwm2m_client_utils_fota.h>
 #include <app_event_manager.h>
 #include <net/lwm2m_client_utils_location.h>
+#include <net/lwm2m_client_utils_location_events.h>
 #include <date_time.h>
 
 #include <zephyr/logging/log.h>
