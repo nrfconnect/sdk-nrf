@@ -143,7 +143,7 @@ int32_t nrf_modem_os_timedwait_stub(uint32_t context, int32_t *timeout, int cmoc
 	return 0;
 }
 
-int nrf_modem_trace_get_stub(struct nrf_modem_trace_data **frags, size_t *n_frags,
+int nrf_modem_trace_get_stub(struct nrf_modem_trace_data **frags, size_t *n_frags, int timeout,
 			     int cmock_num_calls)
 {
 	/* `cmock_num_calls` is reset to 0 at the beginning of each independent test execution. */
