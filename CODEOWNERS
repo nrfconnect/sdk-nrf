@@ -37,7 +37,7 @@
 /applications/serial_lte_modem/           @junqingzou @pirun @rlubos
 /applications/zigbee_weather_station/     @adsz-nordic @tomchy
 # Boards
-/boards/                                  @SebastianBoe @anangl
+/boards/                                  @anangl
 # All cmake related files
 /cmake/                                   @tejlmand
 /CMakeLists.txt                           @tejlmand
@@ -101,7 +101,7 @@ Kconfig*                                  @tejlmand
 /lib/multithreading_lock/                 @rugeGerritsen
 /lib/pdn/                                 @lemrey @rlubos
 /lib/ram_pwrdn/                           @mariuszpos @MarekPorwisz
-/lib/fatal_error/                         @SebastianBoe
+/lib/fatal_error/                         @KAGA164 @nordic-krch
 /lib/sfloat/                              @kapi-no @maje-emb
 /lib/sms/                                 @trantanen @tokangas
 /lib/st25r3911b/                          @grochu
