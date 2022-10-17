@@ -85,6 +85,10 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_LOG_AUDIO_DATAPATH_LEVEL);
 /* How often to print underrun warning */
 #define UNDERRUN_LOG_INTERVAL_BLKS 5000
 
+#define SYNC_LED_SEQ_NR_PERIOD 64 /* Value must be 2^N */
+#define SYNC_LED_SEQ_NR_ON 0
+#define SYNC_LED_SEQ_NR_OFF (SYNC_LED_SEQ_NR_PERIOD / 2)
+
 enum drift_comp_state {
 	DRIFT_STATE_INIT, /* Waiting for data to be received */
 	DRIFT_STATE_CALIB, /* Calibrate and zero out local delay */
@@ -154,6 +158,8 @@ static bool tone_active;
 /* Buffer which can hold max 1 period test tone at 100 Hz */
 static uint16_t test_tone_buf[CONFIG_AUDIO_SAMPLE_RATE_HZ / 100];
 static size_t test_tone_size;
+
+static uint32_t sync_led_last_seq_num;
 
 static void hfclkaudio_set(uint16_t freq_value)
 {
@@ -708,6 +714,29 @@ static void audio_datapath_i2s_stop(void)
 	alt_buffer_free_both();
 }
 
+static bool update_cmpr_val_check_on(uint32_t seq_num)
+{
+	/* Checks if seq_num has wrapped */
+	if (seq_num < sync_led_last_seq_num) {
+		sync_led_last_seq_num = 0;
+		return true;
+	} else if (seq_num >= sync_led_last_seq_num + (SYNC_LED_SEQ_NR_PERIOD / 2)) {
+		sync_led_last_seq_num = (seq_num / SYNC_LED_SEQ_NR_OFF) * SYNC_LED_SEQ_NR_OFF;
+		return true;
+	}
+
+	return false;
+}
+
+static bool sync_led_toggle_check(uint32_t seq_num)
+{
+	if ((seq_num % SYNC_LED_SEQ_NR_PERIOD) >= SYNC_LED_SEQ_NR_OFF) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 int audio_datapath_pres_delay_us_set(uint32_t delay_us)
 {
 	if (delay_us > MAX_PRES_DLY_US || delay_us < MIN_PRES_DLY_US) {
@@ -760,9 +789,30 @@ void audio_datapath_sdu_ref_update(uint32_t sdu_ref_us)
 	}
 }
 
-void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref_us, bool bad_frame,
-			       uint32_t recv_frame_ts_us)
+void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref_us,
+			       uint32_t seq_num, bool bad_frame, uint32_t recv_frame_ts_us)
 {
+	static uint32_t last_sync_led_sdu_ref_us;
+
+	/* Set compare value for blinking sync LED */
+	if (update_cmpr_val_check_on(seq_num)) {
+		uint32_t current_time_stamp = audio_sync_timer_curr_time_get();
+		/**
+		 * To obtain the desired blinking period sdu_ref_us is used, as the value increments
+		 * proportional with seq_num and audio_frame_duration (with a slight deviation).
+		 * Since the headsets receives the packages with a slight difference,
+		 * the new_compare_time subtracts the difference between the time stamp of
+		 * which the package is received and the sdu_ref_us.
+		 */
+		uint32_t new_compare_time =
+			current_time_stamp +
+			(sdu_ref_us - (last_sync_led_sdu_ref_us + (recv_frame_ts_us - sdu_ref_us)));
+
+		audio_sync_timer_sync_led_cmpr_time_set(new_compare_time,
+							sync_led_toggle_check(seq_num));
+		last_sync_led_sdu_ref_us = sdu_ref_us;
+	}
+
 	if (!ctrl_blk.stream_started) {
 		LOG_WRN("Stream not started");
 		return;

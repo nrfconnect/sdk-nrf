@@ -168,6 +168,11 @@ static int led_device_tree_parse(void)
 				return ret;
 			}
 
+		} else if (strstr(led_labels[i], "LED_MONO_BLUE") && CONFIG_AUDIO_DEV == HEADSET) {
+			/* Not initialize LED_MONO_BLUE here on headset devices.
+			 * On headsets this LED is controlled by the audio sync timer.
+			 */
+
 		} else if (strstr(led_labels[i], "LED_MONO")) {
 			ret = config_led_monochrome(led_unit, i);
 			if (ret) {

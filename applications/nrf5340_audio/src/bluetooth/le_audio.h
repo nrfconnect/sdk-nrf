@@ -123,9 +123,10 @@ struct le_audio_evt {
  * @param size		Size of received data
  * @param bad_frame	Indicating if the frame is a bad frame or not
  * @param sdu_ref	ISO timestamp
+ * @param seq_num	ISO packet sequence number of the first fragment in the SDU
  */
 typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool bad_frame,
-				    uint32_t sdu_ref);
+				    uint32_t sdu_ref, uint32_t seq_num);
 
 /**
  * @brief Get configuration for audio stream

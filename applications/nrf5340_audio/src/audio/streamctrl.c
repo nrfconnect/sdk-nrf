@@ -35,6 +35,7 @@ struct ble_iso_data {
 	bool bad_frame;
 	uint32_t sdu_ref;
 	uint32_t recv_frame_ts;
+	uint32_t seq_num;
 } __packed;
 
 DATA_FIFO_DEFINE(ble_fifo_rx, CONFIG_BUF_BLE_RX_PACKET_NUM, WB_UP(sizeof(struct ble_iso_data)));
@@ -106,7 +107,7 @@ static void ble_test_pattern_receive(uint8_t const *const p_data, size_t data_si
 
 /* Callback for handling BLE RX */
 static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, bool bad_frame,
-				     uint32_t sdu_ref)
+				     uint32_t sdu_ref, uint32_t seq_num)
 {
 	/* Capture timestamp of when audio frame is received */
 	uint32_t recv_frame_ts = audio_sync_timer_curr_time_get();
@@ -162,6 +163,7 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 	iso_received->data_size = data_size;
 	iso_received->sdu_ref = sdu_ref;
 	iso_received->recv_frame_ts = recv_frame_ts;
+	iso_received->seq_num = seq_num;
 
 	ret = data_fifo_block_lock(&ble_fifo_rx, (void *)&iso_received,
 				   sizeof(struct ble_iso_data));
@@ -186,8 +188,8 @@ static void audio_datapath_thread(void *dummy1, void *dummy2, void *dummy3)
 		ERR_CHK(ret);
 #else
 		audio_datapath_stream_out(iso_received->data, iso_received->data_size,
-					  iso_received->sdu_ref, iso_received->bad_frame,
-					  iso_received->recv_frame_ts);
+					  iso_received->sdu_ref, iso_received->seq_num,
+					  iso_received->bad_frame, iso_received->recv_frame_ts);
 #endif
 		data_fifo_block_free(&ble_fifo_rx, (void *)&iso_received);
 
@@ -349,9 +351,10 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 
 		audio_system_start();
 		stream_state_set(STATE_STREAMING);
-		ret = led_blink(LED_APP_1_BLUE);
-		ERR_CHK(ret);
-
+		if (CONFIG_AUDIO_DEV == GATEWAY) {
+			ret = led_blink(LED_APP_1_BLUE);
+			ERR_CHK(ret);
+		}
 		break;
 
 	case LE_AUDIO_EVT_NOT_STREAMING:
@@ -364,9 +367,12 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 
 		stream_state_set(STATE_PAUSED);
 		audio_system_stop();
-		ret = led_on(LED_APP_1_BLUE);
-		ERR_CHK(ret);
-
+		if (CONFIG_AUDIO_DEV == GATEWAY) {
+			ret = led_on(LED_APP_1_BLUE);
+			ERR_CHK(ret);
+		} else if (CONFIG_AUDIO_DEV == HEADSET) {
+			audio_sync_timer_sync_led_on();
+		}
 		break;
 
 	case LE_AUDIO_EVT_CONFIG_RECEIVED:

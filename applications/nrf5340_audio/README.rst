@@ -695,6 +695,7 @@ To indicate the tasks performed, the application uses the LED behavior described
 |                          | Blinking blue - Depending on the device and the mode:                                               |
 |                          |                                                                                                     |
 |                          | * Headset: Kits have started streaming audio (BIS and CIS modes).                                   |
+|                          |            LEDs will blink in sync to visualize synchronization of audio between kits.              |
 |                          | * Gateway: Kit has connected to a headset (CIS mode) or has started broadcasting audio (BIS mode).  |
 |                          +-----------------------------------------------------------------------------------------------------+
 |                          | Solid blue - Headset, depending on the mode:                                                        |
@@ -1176,7 +1177,7 @@ Complete the following steps to test the unidirectional CIS mode for one gateway
 #. Search the list of audio devices listed in the sound settings of your operating system for *nRF5340 USB Audio* (gateway) and select it as the output device.
 #. Connect headphones to the **HEADPHONE** audio jack on both headset devices.
 #. Start audio playback on your PC from any source.
-#. Wait for **LED1** to blink blue on both headsets.
+#. Wait for **LED1** to blink blue in sync on both headsets.
    When they do, the audio stream has started on both headsets.
 
    .. note::
