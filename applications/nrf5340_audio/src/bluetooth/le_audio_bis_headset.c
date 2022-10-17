@@ -134,7 +134,7 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 
 	recv_cnt++;
 	if ((recv_cnt % 1000U) == 0U) {
-		LOG_DBG("Received %u total ISO packets", recv_cnt);
+		LOG_DBG("Received %d total ISO packets", recv_cnt);
 	}
 }
 
@@ -227,14 +227,14 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 	}
 	channel = BIT(channel);
 
-	LOG_DBG("Received BASE with %u subgroup(s) from broadcast sink", base->subgroup_count);
+	LOG_DBG("Received BASE with %d subgroup(s) from broadcast sink", base->subgroup_count);
 
 	/* Search each subgroup for the BIS of interest */
-	for (size_t i = 0U; i < base->subgroup_count; i++) {
-		for (size_t j = 0U; j < base->subgroups[i].bis_count; j++) {
+	for (int i = 0; i < base->subgroup_count; i++) {
+		for (int j = 0; j < base->subgroups[i].bis_count; j++) {
 			const uint8_t index = base->subgroups[i].bis_data[j].index;
 
-			LOG_DBG("BIS %u   index = %u", j, index);
+			LOG_DBG("BIS %d   index = %d", j, index);
 
 			/* If this is a BIS of interest then attach to and start a stream */
 			if (index == channel) {
@@ -245,7 +245,7 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 						(struct bt_codec *)&base->subgroups[i].codec;
 					print_codec(streams[i].codec);
 
-					LOG_DBG("Stream %u in subgroup %u from broadcast sink", i,
+					LOG_DBG("Stream %d in subgroup %d from broadcast sink", i,
 						j);
 				}
 			}
@@ -332,7 +332,7 @@ static void initialize(le_audio_receive_cb recv_cb)
 
 		bt_audio_broadcast_sink_register_cb(&broadcast_sink_cbs);
 
-		for (size_t i = 0U; i < ARRAY_SIZE(streams); i++) {
+		for (int i = 0; i < ARRAY_SIZE(streams); i++) {
 			streams_p[i] = &streams[i];
 			streams[i].ops = &stream_ops;
 		}

@@ -98,7 +98,7 @@ static bool is_iso_buffer_full(uint8_t idx)
 
 static int stream_index_get(struct bt_audio_stream *stream, uint8_t *index)
 {
-	for (size_t i = 0U; i < ARRAY_SIZE(audio_streams); i++) {
+	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		if (&audio_streams[i] == stream) {
 			*index = i;
 			return 0;
@@ -112,7 +112,7 @@ static int stream_index_get(struct bt_audio_stream *stream, uint8_t *index)
 
 static int stream_index_from_conn_get(struct bt_conn *conn, uint8_t *index)
 {
-	for (size_t i = 0U; i < ARRAY_SIZE(audio_streams); i++) {
+	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		if (audio_streams[i].conn == conn) {
 			*index = i;
 			return 0;
@@ -126,7 +126,7 @@ static int stream_index_from_conn_get(struct bt_conn *conn, uint8_t *index)
 
 static int headset_conn_index_get(struct bt_conn *conn, uint8_t *index)
 {
-	for (size_t i = 0U; i < ARRAY_SIZE(headset_conn); i++) {
+	for (int i = 0; i < ARRAY_SIZE(headset_conn); i++) {
 		if (headset_conn[i] == conn) {
 			*index = i;
 			return 0;
@@ -140,7 +140,7 @@ static int headset_conn_index_get(struct bt_conn *conn, uint8_t *index)
 
 static uint32_t get_and_incr_seq_num(const struct bt_audio_stream *stream)
 {
-	for (size_t i = 0U; i < ARRAY_SIZE(sinks); i++) {
+	for (int i = 0; i < ARRAY_SIZE(sinks); i++) {
 		if (stream->ep == sinks[i].ep) {
 			return sinks[i].seq_num++;
 		}
@@ -191,7 +191,7 @@ static void available_contexts_cb(struct bt_conn *conn, enum bt_audio_context sn
 
 	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_DBG("conn: %s, snk ctx %u src ctx %u\n", addr, snk_ctx, src_ctx);
+	LOG_DBG("conn: %s, snk ctx %d src ctx %d\n", addr, snk_ctx, src_ctx);
 
 	if (!(BT_AUDIO_CONTEXT_TYPE_MEDIA & snk_ctx)) {
 		if (audio_streams[index].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
@@ -318,7 +318,7 @@ static void stream_started_cb(struct bt_audio_stream *stream)
 	int ret;
 
 	/* Reset sequence number for sinks */
-	for (size_t i = 0U; i < ARRAY_SIZE(sinks); i++) {
+	for (int i = 0; i < ARRAY_SIZE(sinks); i++) {
 		if (stream->ep == sinks[i].ep) {
 			sinks[i].seq_num = 0U;
 			break;
@@ -390,7 +390,7 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 
 	recv_cnt++;
 	if ((recv_cnt % 1000U) == 0U) {
-		LOG_DBG("Received %u total ISO packets", recv_cnt);
+		LOG_DBG("Received %d total ISO packets", recv_cnt);
 	}
 }
 
@@ -466,7 +466,7 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 
 			add_remote_sink(ep, ep_index);
 		} else {
-			LOG_ERR("Invalid param type: %u", params->dir);
+			LOG_ERR("Invalid param type: %d", params->dir);
 		}
 
 		return;
@@ -534,7 +534,7 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 
 			add_remote_source(ep, ep_index);
 		} else {
-			LOG_ERR("Invalid param type: %u", params->dir);
+			LOG_ERR("Invalid param type: %d", params->dir);
 		}
 
 		return;
@@ -564,7 +564,7 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 		}
 
 		if (!group_created) {
-			for (size_t i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+			for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 				group_params[i].stream = &audio_streams[i];
 				group_params[i].qos = &lc3_preset_nrf5340.qos;
 
@@ -593,7 +593,7 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 
 static bool ble_acl_gateway_all_links_connected(void)
 {
-	for (size_t i = 0; i < ARRAY_SIZE(headset_conn); i++) {
+	for (int i = 0; i < ARRAY_SIZE(headset_conn); i++) {
 		if (headset_conn[i] == NULL) {
 			return false;
 		}
@@ -898,7 +898,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 		return -EALREADY;
 	}
 
-	for (size_t i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		audio_streams[i].ops = &stream_ops;
 	}
 
@@ -915,7 +915,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 #if !CONFIG_STREAM_BIDIRECTIONAL
 	struct bt_audio_unicast_group_param group_params[ARRAY_SIZE(audio_streams)];
 
-	for (size_t i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		group_params[i].stream = &audio_streams[i];
 		group_params[i].qos = &lc3_preset_nrf5340.qos;
 		group_params[i].dir = BT_AUDIO_DIR_SINK;

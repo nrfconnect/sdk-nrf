@@ -209,7 +209,7 @@ static struct bt_audio_stream *lc3_cap_config_cb(struct bt_conn *conn, struct bt
 	static size_t configured_source_stream_count;
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 
-	for (size_t i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		struct bt_audio_stream *stream = &audio_streams[i];
 
 		if (!stream->conn) {
@@ -275,7 +275,7 @@ static int lc3_cap_enable_cb(struct bt_audio_stream *stream, struct bt_codec_dat
 {
 	int ret;
 
-	LOG_DBG("Enable: stream %p meta_count %u", (void *)stream, meta_count);
+	LOG_DBG("Enable: stream %p meta_count %d", (void *)stream, meta_count);
 
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
 	ERR_CHK(ret);
@@ -292,7 +292,7 @@ static int lc3_cap_start_cb(struct bt_audio_stream *stream)
 static int lc3_cap_metadata_cb(struct bt_audio_stream *stream, struct bt_codec_data *meta,
 			       size_t meta_count)
 {
-	LOG_DBG("Metadata: stream %p meta_count %u", (void *)stream, meta_count);
+	LOG_DBG("Metadata: stream %p meta_count %d", (void *)stream, meta_count);
 	return 0;
 }
 
@@ -351,7 +351,7 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 
 	recv_cnt++;
 	if ((recv_cnt % 1000U) == 0U) {
-		LOG_DBG("Received %u total ISO packets", recv_cnt);
+		LOG_DBG("Received %d total ISO packets", recv_cnt);
 	}
 }
 
@@ -429,7 +429,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 			channel = AUDIO_CHANNEL_DEFAULT;
 		}
 
-		for (size_t i = 0; i < ARRAY_SIZE(caps); i++) {
+		for (int i = 0; i < ARRAY_SIZE(caps); i++) {
 			ret = bt_audio_capability_register(&caps[i]);
 			if (ret) {
 				LOG_ERR("Capability register failed");
@@ -486,7 +486,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 			return ret;
 		}
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
-		for (size_t i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+		for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 			bt_audio_stream_cb_register(&audio_streams[i], &stream_ops);
 		}
 
