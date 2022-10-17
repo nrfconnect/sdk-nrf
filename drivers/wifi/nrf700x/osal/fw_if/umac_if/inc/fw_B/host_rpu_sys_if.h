@@ -754,10 +754,8 @@ struct nrf_wifi_cmd_pwr {
 } __NRF_WIFI_PKD;
 
 struct rpu_btcoex {
-	signed int coex_cmd_ctrl;
-	signed int bt_mode;
-	signed int bt_ctrl;
-	struct pta_ext_params pta_params;
+	signed int rpu_msg_id;
+	signed int switch_A;
 } __NRF_WIFI_PKD;
 
 struct nrf_wifi_cmd_btcoex {
