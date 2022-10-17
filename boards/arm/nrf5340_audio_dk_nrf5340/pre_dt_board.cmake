@@ -1,5 +1,5 @@
-# Copyright (c) 2021 Linaro Limited
-# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2022 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 # Suppress "unique_unit_address_if_enabled" to handle the following overlaps:
 # - flash-controller@39000 & kmu@39000

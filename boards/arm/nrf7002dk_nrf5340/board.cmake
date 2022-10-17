@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 if(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP_NS)
   set(TFM_PUBLIC_KEY_FORMAT "full")
