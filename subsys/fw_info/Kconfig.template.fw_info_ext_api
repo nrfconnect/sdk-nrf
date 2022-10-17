@@ -11,6 +11,8 @@ choice
 config $(EXT_API)_EXT_API_UNUSED
 	bool "Don't request the $(EXT_API) EXT_API"
 	depends on !$(EXT_API)_EXT_API_ATLEAST_OPTIONAL && !$(EXT_API)_EXT_API_ATLEAST_REQUIRED
+	help
+	  Do not include the client code for this external API (EXT_API).
 
 config $(EXT_API)_EXT_API_OPTIONAL
 	bool "Request to use the $(EXT_API) EXT_API (optional)"

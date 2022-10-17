@@ -111,33 +111,25 @@ Creating EXT_APIs
 
 To create an EXT_API, complete the following steps:
 
-1. Create a unique ID for the EXT_API:
-
-   .. code-block:: c
-
-      #define MY_EXT_API_ID 0xBEEF
-
-#. Create Kconfig entries using :file:`Kconfig.template.fw_info_ext_api`:
+1. Create Kconfig entries using :file:`Kconfig.template.fw_info_ext_api`:
 
    .. code-block:: Kconfig
 
       EXT_API = MY
+      id = 0xBEEF
       flags = 0
       ver = 1
       source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
-#. Declare a new struct type that starts with the :c:struct:`fw_info_ext_api` struct:
+#. Declare a new struct type:
 
    .. code-block:: c
 
       typedef int (*my_ext_api_foo_t)(bool arg1, int *arg2);
 
       struct my_ext_api {
-      	struct fw_info_ext_api header;
-      	struct {
       		/* Actual EXT_API/data goes here. */
       		my_ext_api_foo_t my_foo;
-      	} ext_api;
       };
 
 #. Use the :c:macro:`EXT_API` macro to initialize the EXT_API struct in an arbitrary location.
@@ -146,12 +138,7 @@ To create an EXT_API, complete the following steps:
    .. code-block:: c
 
       #ifdef CONFIG_MY_EXT_API_ENABLED
-      EXT_API(struct my_ext_api, my_ext_api) = {
-      	.header = FW_INFO_EXT_API_INIT(MY_EXT_API_ID,
-      				CONFIG_MY_EXT_API_FLAGS,
-      				CONFIG_MY_EXT_API_VER,
-      				sizeof(struct my_ext_api)),
-      	.ext_api = {
+      EXT_API(MY, struct my_ext_api, my_ext_api) = {
       		/* EXT_API initialization goes here. */
       		.my_foo = my_foo_impl,
       	}
