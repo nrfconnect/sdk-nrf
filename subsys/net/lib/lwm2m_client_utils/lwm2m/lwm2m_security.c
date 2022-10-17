@@ -73,6 +73,7 @@ int lwm2m_modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
 
 static bool have_permanently_stored_keys;
 static int bootstrap_settings_loaded_inst = -1;
+static bool loading_in_progress;
 
 static int write_credential_type(int sec_obj_inst, int sec_tag, int res_id,
 				 enum modem_key_mgmt_cred_type type)
@@ -351,8 +352,6 @@ out:
 }
 
 #if defined(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP)
-
-static bool loading_in_progress;
 
 static bool object_instance_exist(int obj, int inst)
 {
@@ -682,6 +681,8 @@ int lwm2m_security_set_certificate(uint16_t sec_obj_inst, const void *cert, int 
 
 int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode_change *mmode)
 {
+#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
+
 	have_permanently_stored_keys = false;
 	bootstrap_settings_loaded_inst = -1;
 	loading_in_progress = false;
@@ -695,13 +696,10 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode
 		mm.user_data = mmode->user_data;
 	}
 
-#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 	ctx->tls_tag = IS_ENABLED(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP) ?
 			       CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG :
 				     CONFIG_LWM2M_CLIENT_UTILS_SERVER_TLS_TAG;
 	ctx->load_credentials = load_credentials_to_modem;
-
-#endif /* CONFIG_LWM2M_DTLS_SUPPORT */
 
 #if defined(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP)
 	/* If bootstrap is enabled, we should delete the default server instance,
@@ -746,6 +744,7 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode
 	}
 
 #endif /* CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP */
+#endif /* CONFIG_LWM2M_DTLS_SUPPORT */
 
 	return init_default_security_obj(ctx, endpoint);
 }
