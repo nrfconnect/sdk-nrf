@@ -66,10 +66,10 @@ extern "C" {
 /**@brief Scan types.
  */
 enum bt_scan_type {
-	/** Active scanning. */
+	/** Passive scanning. */
 	BT_SCAN_TYPE_SCAN_PASSIVE,
 
-	/** Passive scanning. */
+	/** Active scanning. */
 	BT_SCAN_TYPE_SCAN_ACTIVE
 };
 
