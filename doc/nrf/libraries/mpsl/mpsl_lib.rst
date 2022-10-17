@@ -7,10 +7,10 @@ Multiprotocol Service Layer library control
    :local:
    :depth: 2
 
-The Multiprotocol Service Layer library control methods make it possible to control the initialization and uninitialization of the :ref:`nrfxlib:mpsl` library and all required interrupt handlers.
-Uninitializing MPSL allows the application to have full control over the `RADIO_IRQn`, `RTC0_IRQn`, and `TIMER0_IRQn` interrupts.
+Methods in the Multiprotocol Service Layer (MPSL) library control library allow controlling the initialization and uninitialization of the :ref:`nrfxlib:mpsl` library and all required interrupt handlers.
+When MPSL is uninitialized, the application has full control over the ``RADIO_IRQn``, ``RTC0_IRQn``, and ``TIMER0_IRQn`` interrupts.
 
-:kconfig:option:`CONFIG_MPSL_DYNAMIC_INTERRUPTS` enables use of dynamic interrupts for MPSL and allows interrupt reconfiguration.
+The :kconfig:option:`CONFIG_MPSL_DYNAMIC_INTERRUPTS` Kconfig option enables dynamic interrupts for MPSL, and allows interrupts to be reconfigured.
 
 API documentation
 *****************
