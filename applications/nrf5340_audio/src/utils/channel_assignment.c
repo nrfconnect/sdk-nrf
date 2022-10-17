@@ -10,38 +10,41 @@
 
 #include "uicr.h"
 
-int channel_assignment_get(enum audio_channel *channel)
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(channel_assignment, CONFIG_LOG_CHANNEL_ASSIGNMENT_LEVEL);
+
+static uint8_t channel_value;
+
+void channel_assignment_get(enum audio_channel *channel)
+{
+	*channel = (enum audio_channel)channel_value;
+}
+
+#if CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME
+void channel_assignment_set(enum audio_channel channel)
+{
+	int ret;
+
+	channel_value = channel;
+
+	/* Try to write the channel value to UICR */
+	ret = uicr_channel_set(channel);
+	if (ret) {
+		LOG_DBG("Unable to write channel value to UICR");
+	}
+}
+#endif /* CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME */
+
+void channel_assignment_init(void)
 {
 #if CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME
-	uint8_t channel_value;
-
 	channel_value = uicr_channel_get();
 
 	if (channel_value >= AUDIO_CH_NUM) {
-		return -EIO;
+		/* Invalid value in UICR if UICR is not written */
+		channel_value = AUDIO_CHANNEL_DEFAULT;
 	}
-
-	*channel = (enum audio_channel)channel_value;
 #else
-	*channel = (enum audio_channel)CONFIG_AUDIO_HEADSET_CHANNEL;
+	channel_value = CONFIG_AUDIO_HEADSET_CHANNEL;
 #endif /* CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME */
-
-	return 0;
 }
-
-#if CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME
-/**
- * @brief Assign audio channel.
- *
- * @param[out] channel Channel value
- *
- * @return 0 if successful
- * @return -EROFS if different channel is already written
- * @return -EIO if channel is not assigned.
- */
-int channel_assignment_set(enum audio_channel channel)
-{
-	return uicr_channel_set(channel);
-}
-
-#endif /* CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME */
