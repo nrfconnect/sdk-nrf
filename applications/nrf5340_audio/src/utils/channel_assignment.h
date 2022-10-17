@@ -33,23 +33,21 @@ enum audio_channel {
  * @brief Get assigned audio channel.
  *
  * @param[out] channel Channel value
- *
- * @return 0 if successful
- * @return -EIO if channel is not assigned.
  */
-int channel_assignment_get(enum audio_channel *channel);
+void channel_assignment_get(enum audio_channel *channel);
 
 #if CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME
 /**
  * @brief Assign audio channel.
  *
  * @param[out] channel Channel value
- *
- * @return 0 if successful
- * @return -EROFS if different channel is already written
- * @return -EIO if channel is not assigned.
  */
-int channel_assignment_set(enum audio_channel channel);
+void channel_assignment_set(enum audio_channel channel);
 #endif /* AUDIO_HEADSET_CHANNEL_RUNTIME */
+
+/**
+ * @brief Initialize the channel assignment
+ */
+void channel_assignment_init(void);
 
 #endif /* _CHANNEL_ASSIGNMENT_H_ */

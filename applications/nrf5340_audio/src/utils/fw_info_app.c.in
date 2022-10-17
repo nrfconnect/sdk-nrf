@@ -35,16 +35,7 @@ int fw_info_app_print(void)
 #if (CONFIG_AUDIO_DEV == HEADSET)
 	enum audio_channel channel;
 
-	ret = channel_assignment_get(&channel);
-	if (ret) {
-		channel = AUDIO_CHANNEL_DEFAULT;
-		ret = log_set_tag(CH_L_TAG);
-		if (ret) {
-			return ret;
-		}
-		LOG_INF(COLOR_CYAN "HEADSET <no ch selected> defaulting to " STRINGIFY(
-			AUDIO_CHANNEL_DEFAULT) " " COLOR_RESET);
-	}
+	channel_assignment_get(&channel);
 	if (channel == AUDIO_CH_L) {
 		ret = log_set_tag(CH_L_TAG);
 		if (ret) {

@@ -423,11 +423,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 #endif /* (CONFIG_BT_VCS) */
 
 		receive_cb = recv_cb;
-		ret = channel_assignment_get(&channel);
-		if (ret) {
-			/* Channel is not assigned yet: use default */
-			channel = AUDIO_CHANNEL_DEFAULT;
-		}
+		channel_assignment_get(&channel);
 
 		for (int i = 0; i < ARRAY_SIZE(caps); i++) {
 			ret = bt_audio_capability_register(&caps[i]);

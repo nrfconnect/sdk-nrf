@@ -220,11 +220,8 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 		return;
 	}
 
-	ret = channel_assignment_get(&channel);
-	if (ret) {
-		/* Channel is not assigned yet: use default */
-		channel = AUDIO_CHANNEL_DEFAULT;
-	}
+	channel_assignment_get(&channel);
+
 	channel = BIT(channel);
 
 	LOG_DBG("Received BASE with %d subgroup(s) from broadcast sink", base->subgroup_count);
@@ -308,11 +305,8 @@ static void initialize(le_audio_receive_cb recv_cb)
 	if (!initialized) {
 		receive_cb = recv_cb;
 
-		ret = channel_assignment_get(&channel);
-		if (ret) {
-			/* Channel is not assigned yet: use default */
-			channel = AUDIO_CHANNEL_DEFAULT;
-		}
+		channel_assignment_get(&channel);
+
 		if (channel == AUDIO_CH_L) {
 			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
 							       BT_AUDIO_LOCATION_FRONT_LEFT);

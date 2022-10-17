@@ -42,27 +42,26 @@ LOG_MODULE_REGISTER(dfu, CONFIG_LOG_DFU_ENTRY_LEVEL);
 static struct bt_le_adv_param adv_param;
 static const struct bt_data ad_peer[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-	BT_DATA_BYTES(BT_DATA_UUID128_ALL,
-		      0x84, 0xaa, 0x60, 0x74, 0x52, 0x8a, 0x8b, 0x86,
-		      0xd3, 0x4c, 0xb7, 0x1d, 0x1d, 0xdc, 0x53, 0x8d),
+	BT_DATA_BYTES(BT_DATA_UUID128_ALL, 0x84, 0xaa, 0x60, 0x74, 0x52, 0x8a, 0x8b, 0x86, 0xd3,
+		      0x4c, 0xb7, 0x1d, 0x1d, 0xdc, 0x53, 0x8d),
 };
 
 /* MCUMGR related functions */
 static void mcumgr_register(void)
 {
-	/* Enable MCUMGR */
-	#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
-		os_mgmt_register_group();
-	#endif
-	#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
-		img_mgmt_register_group();
-	#endif
-	#ifdef CONFIG_MCUMGR_CMD_STAT_MGMT
-		stat_mgmt_register_group();
-	#endif
-	#ifdef CONFIG_MCUMGR_SMP_BT
-		smp_bt_register();
-	#endif
+/* Enable MCUMGR */
+#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
+	os_mgmt_register_group();
+#endif
+#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
+	img_mgmt_register_group();
+#endif
+#ifdef CONFIG_MCUMGR_CMD_STAT_MGMT
+	stat_mgmt_register_group();
+#endif
+#ifdef CONFIG_MCUMGR_SMP_BT
+	smp_bt_register();
+#endif
 }
 
 static void smp_adv(void)
@@ -96,7 +95,7 @@ static struct bt_conn_cb dfu_conn_callbacks = {
 
 static void dfu_set_bt_name(void)
 {
-	char name[CONFIG_BT_DEVICE_NAME_MAX] = {0};
+	char name[CONFIG_BT_DEVICE_NAME_MAX] = { 0 };
 
 	strlcpy(name, CONFIG_BT_DEVICE_NAME, CONFIG_BT_DEVICE_NAME_MAX);
 	strlcat(name, "_", CONFIG_BT_DEVICE_NAME_MAX);
@@ -106,11 +105,7 @@ static void dfu_set_bt_name(void)
 	int ret;
 	enum audio_channel channel;
 
-	ret = channel_assignment_get(&channel);
-	if (ret) {
-		/* Channel is not assigned yet: use default */
-		channel = AUDIO_CHANNEL_DEFAULT;
-	}
+	channel_assignment_get(&channel);
 
 	if (channel == AUDIO_CH_L) {
 		strlcat(name, CH_L_TAG, CONFIG_BT_DEVICE_NAME_MAX);
