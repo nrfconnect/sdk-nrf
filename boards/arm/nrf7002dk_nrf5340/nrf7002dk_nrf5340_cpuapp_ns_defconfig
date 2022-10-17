@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 CONFIG_SOC_SERIES_NRF53X=y
 CONFIG_SOC_NRF5340_CPUAPP_QKAA=y
