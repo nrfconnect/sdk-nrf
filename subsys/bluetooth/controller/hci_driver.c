@@ -778,7 +778,7 @@ static int hci_driver_open(void)
 
 	err = MULTITHREADING_LOCK_ACQUIRE();
 	if (!err) {
-		err = sdc_enable(hci_driver_receive_process, sdc_mempool);
+		err = sdc_enable(receive_signal_raise, sdc_mempool);
 		MULTITHREADING_LOCK_RELEASE();
 	}
 	if (err < 0) {
