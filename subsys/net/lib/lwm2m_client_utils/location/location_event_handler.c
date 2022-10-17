@@ -9,6 +9,7 @@
 
 #include <zephyr/net/lwm2m_path.h>
 #include <net/lwm2m_client_utils_location.h>
+#include <net/lwm2m_client_utils_location_events.h>
 #include <net/lwm2m_client_utils.h>
 #include <zephyr/net/lwm2m.h>
 

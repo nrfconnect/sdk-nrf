@@ -5,6 +5,7 @@
  */
 
 #include <net/lwm2m_client_utils_location.h>
+#include <net/lwm2m_client_utils_location_events.h>
 
 #include <stdio.h>
 
