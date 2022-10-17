@@ -153,7 +153,7 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* The UUID16 values of GATT Human Interface Device Service (HIDS) and GATT Battery Service (BAS) are moved from advertising data to scan response data.
 
 Thingy:53 Zigbee weather station
 --------------------------------
