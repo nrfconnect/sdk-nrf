@@ -671,5 +671,6 @@ Documentation
   * :ref:`ug_matter_gs_adding_cluster` documentation with new code snippets to align it with the source code of refactored Matter template sample.
   * Split the existing Working with the nRF52 Series information into :ref:`ug_nrf52_features` and :ref:`ug_nrf52_developing`.
   * :ref:`ug_tfm` with improved TF-M logging documentation on getting the secure output on nRF5340 DK.
+  * :ref:`nrf_bt_scan_readme`, :ref:`ancs_client_readme`, :ref:`hogp_readme` and :ref:`lib_hrs_client_readme` libraries documentation to improve readability.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
