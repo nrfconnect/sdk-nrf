@@ -84,7 +84,7 @@ trace_reset:
 	k_sem_take(&trace_sem, K_FOREVER);
 
 	while (true) {
-		err = nrf_modem_trace_get(&frags, &n_frags);
+		err = nrf_modem_trace_get(&frags, &n_frags, NRF_MODEM_OS_FOREVER);
 		switch (err) {
 		case 0:
 			/* Success */
