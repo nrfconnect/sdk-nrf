@@ -27,7 +27,6 @@
 	MatterOnOffPluginServerInitCallback();                                                                         \
 	MatterLevelControlPluginServerInitCallback();                                                                  \
 	MatterDescriptorPluginServerInitCallback();                                                                    \
-	MatterBindingPluginClientInitCallback();                                                                       \
 	MatterAccessControlPluginServerInitCallback();                                                                 \
 	MatterBasicPluginServerInitCallback();                                                                         \
 	MatterOtaSoftwareUpdateProviderPluginClientInitCallback();                                                     \
