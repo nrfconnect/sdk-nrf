@@ -12,6 +12,8 @@ It also demonstrates how to use Bluetooth® mesh models by using the Generic OnO
 
 Use the light switch sample with the :ref:`bluetooth_mesh_light` sample to demonstrate its function in a Bluetooth mesh network.
 
+This sample also provides the `Low Power node support`_.
+
 Requirements
 ************
 
@@ -33,6 +35,19 @@ For provisioning and configuring of the mesh model instances, the sample require
    |thingy53_sample_note|
 
 .. include:: /includes/tfm.txt
+
+Low Power node requirements
+===========================
+
+The configuration overlay :file:`overlay-lpn.conf` is optimized for the following boards:
+
+* nrf52dk_nrf52832
+
+* nrf52840dk_nrf52840
+
+* nrf52833dk_nrf52833
+
+However, the same configuration can be applied to other platforms that support the Bluetooth mesh Light Switch sample, as long as the device supports at least four buttons.
 
 Overview
 ********
@@ -92,6 +107,63 @@ If the model is configured to publish to a unicast address, the model handler ca
 The response from the target device updates the corresponding LED on the mesh light switch device.
 If the model is configured to publish to a group address, it calls :c:func:`bt_mesh_onoff_cli_set_unack` instead, to avoid getting responses from multiple devices at once.
 
+Low Power node support
+======================
+
+The mesh light switch sample can also be run as a Low Power node (LPN), giving the possibility of lowering the power consumption.
+
+While running the sample with the LPN configuration, the fourth :ref:`bt_mesh_onoff_cli_readme` instance will be omitted.
+Instead, button 4 will be used to temporarily enable Node ID advertisement on the LPN device.
+
+Running continuous proxy advertisement with Network ID consumes considerable power, and is therefore disabled in the configuration.
+Instead, the user can manually enable the Node ID advertisement for a period of 30 seconds by pressing **Button 4** on the device.
+This will give the user a short period of time to connect directly to the LPN, and thus perform necessary configuration of the device.
+
+After the connection to the LPN is terminated, and the Node ID advertisement has stopped, the LPN will return to its previous state.
+
+Friendship establishment will happen automatically after provisioning the LPN light switch, given that a :ref:`bluetooth_mesh_light` sample is running and is provisioned into the same mesh network.
+
+.. note::
+   While running the sample as an LPN, logging over the serial interface will be disabled.
+
+Power consumption measurements
+------------------------------
+
+The following table shows a list of the supported boards for the LPN configuration, the average power consumption running as a standard (non-LPN) node, and the average power consumption running as an LPN node:
+
+.. table::
+   :align: center
+
+   ===================  ========================  ====================
+   Board                Avg. consumption non-LPN  Avg. consumption LPN
+   ===================  ========================  ====================
+   nrf52dk_nrf52832     7.14 mA                    13.69 µA
+   nrf52840dk_nrf52840  6.71 mA                    14.63 µA
+   nrf52833dk_nrf52833  6.10 mA                    14.43 µA
+   ===================  ========================  ====================
+
+The following applies to the LPN measurements presented in this table:
+
+* They are taken after the provisioning and configuration have completed, and after the LPN has established a friendship to a neighboring node.
+
+* The measurement period is approximately ten minutes, and without any light switch events (for example when idle).
+
+* The current consumption is measured using the `Power Profiler Kit II (PPK2)`_.
+
+* The measurements are done on the SoC only (meaning the measurements do not include power consumed by development kit LEDs for example).
+
+.. image:: img/standard_52840ppk.png
+   :align: center
+   :alt: Power consumption for nRF52840 running as standard node
+
+Power consumption for nRF52840 running as standard node (Captured in nRF Connect for Desktop: Power Profiler).
+
+.. image:: img/lpn_52840ppk.png
+   :align: center
+   :alt: Power consumption for nRF52840 running as LPN
+
+Power consumption for nRF52840 running as LPN, showing consumed power over a single LPN polling period. The rightmost spike represents the LPN polling the friend node. (Captured in nRF Connect for Desktop: Power Profiler).
+
 .. _bluetooth_mesh_light_switch_user_interface:
 
 User interface
@@ -110,6 +182,12 @@ LEDs:
    :ref:`zephyr:thingy53_nrf5340` supports only one RGB LED.
    Each RGB LED channel is used as separate LED.
 
+The LPN assignments
+===================
+
+Button 4:
+	When pressed, enables the Node ID advertisement for a short period of time.
+
 Configuration
 *************
 
@@ -124,6 +202,20 @@ The light switch sample is split into the following source files:
 * :file:`model_handler.c` used to handle mesh models.
 * :file:`thingy53.c` used to handle preinitialization of the :ref:`zephyr:thingy53_nrf5340` board.
   Only compiled when the sample is built for :ref:`zephyr:thingy53_nrf5340` board.
+
+LPN configuration
+=================
+
+To make the light switch run as an LPN, set :makevar:`OVERLAY_CONFIG` to :file:`overlay-lpn.conf` when building the sample.
+For example, when building from the command line, use the following command:
+
+  .. code-block:: console
+
+     west build -b <BOARD> -p -- -DOVERLAY_CONFIG="overlay-lpn.conf"
+
+The configuration overlay :file:`overlay-lpn.conf` enables the LPN feature, and alters certain configuration options to further lower the power consumption.
+To review the specific alterations, open and inspect the :file:`overlay-lpn.conf` file.
+For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
 FEM support
 ===========
@@ -163,6 +255,9 @@ Configuring models
 ------------------
 
 See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
+
+.. note::
+   When :ref:`configuring mesh models using the nRF Mesh mobile app<ug_bt_mesh_model_config_app>`, make sure that you are connected directly to the **Mesh Light Switch LPN** when configuring the LPN. When using the mobile app for iOS, make sure that automatic proxy connection is disabled.
 
 Configure the Generic OnOff Client model on each element on the **Mesh Light Switch** node:
 

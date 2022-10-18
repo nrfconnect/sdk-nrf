@@ -178,6 +178,12 @@ Bluetooth samples
 Bluetooth mesh samples
 ----------------------
 
+* :ref:`bluetooth_mesh_light_switch`
+
+  * Added:
+
+    * Support for running the light switch as a Low Power node.
+
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
   * Added:
