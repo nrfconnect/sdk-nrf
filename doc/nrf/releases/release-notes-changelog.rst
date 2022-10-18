@@ -241,6 +241,8 @@ Thread samples
 Matter samples
 --------------
 
+* Updated ZAP configuration of the samples to conform with device types defined in Matter 1.0 specification.
+
 * :ref:`matter_light_bulb_sample`:
 
   * Introduced support for Matter over Wi-Fi on standalone ``nrf7002dk_nrf5340_cpuapp`` and on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached.

@@ -30,9 +30,23 @@
 #include <lib/support/Span.h>
 
 // List specific responses
+typedef void (*IdentifyGeneratedCommandListListAttributeCallback)(
+	void *context, const chip::app::DataModel::DecodableList<chip::CommandId> &data);
+typedef void (*IdentifyAcceptedCommandListListAttributeCallback)(
+	void *context, const chip::app::DataModel::DecodableList<chip::CommandId> &data);
 typedef void (*IdentifyAttributeListListAttributeCallback)(
 	void *context, const chip::app::DataModel::DecodableList<chip::AttributeId> &data);
 typedef void (*ScenesAttributeListListAttributeCallback)(
 	void *context, const chip::app::DataModel::DecodableList<chip::AttributeId> &data);
+typedef void (*OnOffGeneratedCommandListListAttributeCallback)(
+	void *context, const chip::app::DataModel::DecodableList<chip::CommandId> &data);
+typedef void (*OnOffAcceptedCommandListListAttributeCallback)(
+	void *context, const chip::app::DataModel::DecodableList<chip::CommandId> &data);
 typedef void (*OnOffAttributeListListAttributeCallback)(
+	void *context, const chip::app::DataModel::DecodableList<chip::AttributeId> &data);
+typedef void (*LevelControlGeneratedCommandListListAttributeCallback)(
+	void *context, const chip::app::DataModel::DecodableList<chip::CommandId> &data);
+typedef void (*LevelControlAcceptedCommandListListAttributeCallback)(
+	void *context, const chip::app::DataModel::DecodableList<chip::CommandId> &data);
+typedef void (*LevelControlAttributeListListAttributeCallback)(
 	void *context, const chip::app::DataModel::DecodableList<chip::AttributeId> &data);

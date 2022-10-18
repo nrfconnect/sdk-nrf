@@ -28,7 +28,6 @@
 	MatterBasicPluginServerInitCallback();                                                                         \
 	MatterOtaSoftwareUpdateProviderPluginClientInitCallback();                                                     \
 	MatterOtaSoftwareUpdateRequestorPluginServerInitCallback();                                                    \
-	MatterPowerSourcePluginServerInitCallback();                                                                   \
 	MatterGeneralCommissioningPluginServerInitCallback();                                                          \
 	MatterNetworkCommissioningPluginServerInitCallback();                                                          \
 	MatterGeneralDiagnosticsPluginServerInitCallback();                                                            \
@@ -37,6 +36,4 @@
 	MatterAdministratorCommissioningPluginServerInitCallback();                                                    \
 	MatterOperationalCredentialsPluginServerInitCallback();                                                        \
 	MatterGroupKeyManagementPluginServerInitCallback();                                                            \
-	MatterFixedLabelPluginServerInitCallback();                                                                    \
-	MatterUserLabelPluginServerInitCallback();                                                                     \
 	MatterWindowCoveringPluginServerInitCallback();

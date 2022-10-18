@@ -30,5 +30,3 @@
 #include <lib/support/Span.h>
 
 // List specific responses
-typedef void (*BindingAttributeListListAttributeCallback)(
-	void *context, const chip::app::DataModel::DecodableList<chip::AttributeId> &data);
