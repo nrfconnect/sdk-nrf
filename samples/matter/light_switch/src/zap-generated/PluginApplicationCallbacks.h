@@ -27,6 +27,7 @@
 	MatterGroupsPluginServerInitCallback();                                                                        \
 	MatterScenesPluginClientInitCallback();                                                                        \
 	MatterOnOffPluginClientInitCallback();                                                                         \
+	MatterLevelControlPluginClientInitCallback();                                                                  \
 	MatterDescriptorPluginServerInitCallback();                                                                    \
 	MatterBindingPluginServerInitCallback();                                                                       \
 	MatterAccessControlPluginServerInitCallback();                                                                 \
@@ -39,10 +40,6 @@
 	MatterSoftwareDiagnosticsPluginServerInitCallback();                                                           \
 	MatterThreadNetworkDiagnosticsPluginServerInitCallback();                                                      \
 	MatterWiFiNetworkDiagnosticsPluginServerInitCallback();                                                        \
-	MatterSwitchPluginServerInitCallback();                                                                        \
 	MatterAdministratorCommissioningPluginServerInitCallback();                                                    \
 	MatterOperationalCredentialsPluginServerInitCallback();                                                        \
-	MatterGroupKeyManagementPluginServerInitCallback();                                                            \
-	MatterFixedLabelPluginServerInitCallback();                                                                    \
-	MatterUserLabelPluginServerInitCallback();                                                                     \
-	MatterColorControlPluginClientInitCallback();
+	MatterGroupKeyManagementPluginServerInitCallback();

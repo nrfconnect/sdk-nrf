@@ -43,14 +43,17 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
 	case ZCL_DOOR_LOCK_CLUSTER_ID:
 		emberAfDoorLockClusterInitCallback(endpoint);
 		break;
-	case ZCL_FIXED_LABEL_CLUSTER_ID:
-		emberAfFixedLabelClusterInitCallback(endpoint);
-		break;
 	case ZCL_GENERAL_COMMISSIONING_CLUSTER_ID:
 		emberAfGeneralCommissioningClusterInitCallback(endpoint);
 		break;
 	case ZCL_GENERAL_DIAGNOSTICS_CLUSTER_ID:
 		emberAfGeneralDiagnosticsClusterInitCallback(endpoint);
+		break;
+	case ZCL_GROUP_KEY_MANAGEMENT_CLUSTER_ID:
+		emberAfGroupKeyManagementClusterInitCallback(endpoint);
+		break;
+	case ZCL_IDENTIFY_CLUSTER_ID:
+		emberAfIdentifyClusterInitCallback(endpoint);
 		break;
 	case ZCL_NETWORK_COMMISSIONING_CLUSTER_ID:
 		emberAfNetworkCommissioningClusterInitCallback(endpoint);
@@ -69,9 +72,6 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
 		break;
 	case ZCL_THREAD_NETWORK_DIAGNOSTICS_CLUSTER_ID:
 		emberAfThreadNetworkDiagnosticsClusterInitCallback(endpoint);
-		break;
-	case ZCL_USER_LABEL_CLUSTER_ID:
-		emberAfUserLabelClusterInitCallback(endpoint);
 		break;
 	case ZCL_WIFI_NETWORK_DIAGNOSTICS_CLUSTER_ID:
 		emberAfWiFiNetworkDiagnosticsClusterInitCallback(endpoint);
@@ -107,17 +107,22 @@ void __attribute__((weak)) emberAfDoorLockClusterInitCallback(EndpointId endpoin
 	// To prevent warning
 	(void)endpoint;
 }
-void __attribute__((weak)) emberAfFixedLabelClusterInitCallback(EndpointId endpoint)
-{
-	// To prevent warning
-	(void)endpoint;
-}
 void __attribute__((weak)) emberAfGeneralCommissioningClusterInitCallback(EndpointId endpoint)
 {
 	// To prevent warning
 	(void)endpoint;
 }
 void __attribute__((weak)) emberAfGeneralDiagnosticsClusterInitCallback(EndpointId endpoint)
+{
+	// To prevent warning
+	(void)endpoint;
+}
+void __attribute__((weak)) emberAfGroupKeyManagementClusterInitCallback(EndpointId endpoint)
+{
+	// To prevent warning
+	(void)endpoint;
+}
+void __attribute__((weak)) emberAfIdentifyClusterInitCallback(EndpointId endpoint)
 {
 	// To prevent warning
 	(void)endpoint;
@@ -148,11 +153,6 @@ void __attribute__((weak)) emberAfSoftwareDiagnosticsClusterInitCallback(Endpoin
 	(void)endpoint;
 }
 void __attribute__((weak)) emberAfThreadNetworkDiagnosticsClusterInitCallback(EndpointId endpoint)
-{
-	// To prevent warning
-	(void)endpoint;
-}
-void __attribute__((weak)) emberAfUserLabelClusterInitCallback(EndpointId endpoint)
 {
 	// To prevent warning
 	(void)endpoint;
