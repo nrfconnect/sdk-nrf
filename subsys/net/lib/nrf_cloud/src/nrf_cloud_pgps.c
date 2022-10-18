@@ -1515,6 +1515,7 @@ int nrf_cloud_pgps_finish_update(void)
 	return -ENOTSUP;
 }
 
+#if defined(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP)
 static void end_transfer_handler(int transfer_result)
 {
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP)) {
@@ -1526,6 +1527,7 @@ static void end_transfer_handler(int transfer_result)
 		nrf_cloud_pgps_finish_update();
 	}
 }
+#endif /* CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP */
 
 int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 {
