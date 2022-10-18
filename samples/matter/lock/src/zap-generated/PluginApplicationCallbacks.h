@@ -22,6 +22,7 @@
 #include <app-common/zap-generated/callbacks/PluginCallbacks.h>
 
 #define MATTER_PLUGINS_INIT                                                                                            \
+	MatterIdentifyPluginServerInitCallback();                                                                      \
 	MatterDescriptorPluginServerInitCallback();                                                                    \
 	MatterAccessControlPluginServerInitCallback();                                                                 \
 	MatterBasicPluginServerInitCallback();                                                                         \
@@ -35,6 +36,5 @@
 	MatterWiFiNetworkDiagnosticsPluginServerInitCallback();                                                        \
 	MatterAdministratorCommissioningPluginServerInitCallback();                                                    \
 	MatterOperationalCredentialsPluginServerInitCallback();                                                        \
-	MatterFixedLabelPluginServerInitCallback();                                                                    \
-	MatterUserLabelPluginServerInitCallback();                                                                     \
+	MatterGroupKeyManagementPluginServerInitCallback();                                                            \
 	MatterDoorLockPluginServerInitCallback();

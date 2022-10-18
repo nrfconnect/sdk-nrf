@@ -172,6 +172,7 @@ Matter samples
 --------------
 
 * Added factory data, PICS and configuration overlay files to the :ref:`matter_weather_station_app` that are useful for getting to know the Matter certification process.
+* Updated ZAP configuration of the samples to conform with device types defined in Matter 1.0 specification.
 
 NFC samples
 -----------
