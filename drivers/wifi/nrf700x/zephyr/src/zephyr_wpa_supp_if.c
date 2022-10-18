@@ -1016,3 +1016,99 @@ void wifi_nrf_wpa_supp_event_proc_get_if(void *if_priv,
 
 	k_sem_give(&wait_for_event_sem);
 }
+
+void wifi_nrf_wpa_supp_event_mgmt_tx_status(void *if_priv,
+		struct nrf_wifi_umac_event_mlme *mlme_event,
+		unsigned int event_len)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	if (!if_priv) {
+		LOG_ERR("%s: Missing interface context\n", __func__);
+		return;
+	}
+
+	vif_ctx_zep = if_priv;
+
+	if (!mlme_event) {
+		LOG_ERR("%s: Missing MLME event data\n", __func__);
+		return;
+	}
+
+	vif_ctx_zep->supp_callbk_fns.mgmt_tx_status(vif_ctx_zep->supp_drv_if_ctx,
+			mlme_event->frame.frame,
+			mlme_event->frame.frame_len,
+			mlme_event->nrf_wifi_flags & NRF_WIFI_EVENT_MLME_ACK ? true : false);
+}
+
+int wifi_nrf_nl80211_send_mlme(void *if_priv, const u8 *data,
+		size_t data_len, int noack,
+		unsigned int freq, int no_cck,
+		int offchanok,
+		unsigned int wait_time,
+		int cookie)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_umac_mgmt_tx_info *mgmt_tx_info = NULL;
+
+	if (!if_priv) {
+		LOG_ERR("%s: Missing interface context\n", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	mgmt_tx_info = k_calloc(sizeof(*mgmt_tx_info), sizeof(char));
+
+	if (!mgmt_tx_info) {
+		LOG_ERR("%s: Unable to allocate memory\n", __func__);
+		goto out;
+	}
+
+	if (offchanok)
+		mgmt_tx_info->nrf_wifi_flags |= NRF_WIFI_CMD_FRAME_OFFCHANNEL_TX_OK;
+
+	if (noack)
+		mgmt_tx_info->nrf_wifi_flags |= NRF_WIFI_CMD_FRAME_DONT_WAIT_FOR_ACK;
+
+	if (no_cck)
+		mgmt_tx_info->nrf_wifi_flags |= NRF_WIFI_CMD_FRAME_TX_NO_CCK_RATE;
+
+	if (freq)
+		mgmt_tx_info->frequency = freq;
+
+	if (wait_time)
+		mgmt_tx_info->dur = wait_time;
+
+	if (data_len) {
+		memcpy(mgmt_tx_info->frame.frame, data, data_len);
+		mgmt_tx_info->frame.frame_len = data_len;
+	}
+
+	mgmt_tx_info->freq_params.frequency = freq;
+	mgmt_tx_info->freq_params.channel_width = NRF_WIFI_CHAN_WIDTH_20;
+	mgmt_tx_info->freq_params.center_frequency1 = freq;
+	mgmt_tx_info->freq_params.center_frequency2 = 0;
+	mgmt_tx_info->freq_params.channel_type = NRF_WIFI_CHAN_HT20;
+
+	/* Going to RPU */
+	mgmt_tx_info->host_cookie = cookie;
+
+	status = wifi_nrf_fmac_mgmt_tx(rpu_ctx_zep->rpu_ctx,
+			vif_ctx_zep->vif_idx,
+			mgmt_tx_info);
+
+	if (status == WIFI_NRF_STATUS_FAIL) {
+		LOG_ERR("%s: nrf_wifi_fmac_mgmt_tx failed\n", __func__);
+		goto out;
+	}
+
+out:
+	if (mgmt_tx_info)
+		k_free(mgmt_tx_info);
+
+	return status;
+}

@@ -2233,6 +2233,8 @@ out:
 	return status;
 }
 
+#endif /* CONFIG_NRF700X_P2P_MODE */
+#endif /* CONFIG_WPA_SUPP */
 
 enum wifi_nrf_status wifi_nrf_fmac_mgmt_tx(void *dev_ctx,
 					   unsigned char if_idx,
@@ -2286,8 +2288,6 @@ out:
 
 	return status;
 }
-#endif /* CONFIG_NRF700X_P2P_MODE */
-#endif /* CONFIG_WPA_SUPP */
 
 enum wifi_nrf_status wifi_nrf_fmac_mac_addr(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					    unsigned char *addr)
