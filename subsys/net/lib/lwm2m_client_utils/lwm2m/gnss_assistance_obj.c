@@ -15,7 +15,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #include "lwm2m_object.h"
 #include "lwm2m_engine.h"
-#include <net/lwm2m_client_utils.h>
+#include <net/lwm2m_client_utils_location.h>
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
 #include <net/nrf_cloud_agps.h>
 #endif

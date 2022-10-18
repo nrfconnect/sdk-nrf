@@ -15,7 +15,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #include "lwm2m_object.h"
 #include "lwm2m_engine.h"
-#include <net/lwm2m_client_utils.h>
+#include <net/lwm2m_client_utils_location.h>
 
 #define VISIBLE_WIFI_AP_VERSION_MAJOR 1
 #define VISIBLE_WIFI_AP_VERSION_MINOR 0
