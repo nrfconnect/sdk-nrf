@@ -10,6 +10,9 @@ Sample description
 The LwM2M Client demonstrates usage of the :term:`Lightweight Machine to Machine (LwM2M)` protocol to connect a Thingy:91 or an nRF9160 DK to an LwM2M server through LTE.
 This sample uses the :ref:`lib_lwm2m_client_utils` library.
 
+The sample also supports a proprietary mechanism to fetch location assistance data from `nRF Cloud`_ by proxying it through the LwM2M server.
+For this, the sample makes use of the :ref:`lib_lwm2m_location_assistance` library.
+
 Requirements
 ************
 
@@ -106,6 +109,28 @@ The sample implements the following LwM2M objects:
       - 3342
       - No
       - Yes
+   *  - GNSS Assistance
+      - 33625
+      - Yes
+      - Yes
+   *  - Ground Fix
+      - 33626
+      - Yes
+      - Yes
+   *  - Visible Wi-Fi Access Point
+      - 33627
+      - Yes
+      - Yes
+
+User interface
+**************
+
+Button 1:
+   Triggers GNSS-based location service
+
+Button 2:
+   Triggers cell-based location service
+
 
 .. _state_diagram:
 
@@ -480,6 +505,21 @@ If you use an external GNSS antenna, add the following configuration:
 
 * :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
 
+Location assistance options
+---------------------------
+
+Check and configure the following library options that are used by the sample:
+
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT` - Uses Ground Fix Location object (ID 33626).
+  Used with nRF Cloud to estimate the location of the device based on the cell neighborhood and Wi-Fi AP neighborhood.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_GNSS_ASSIST_OBJ_SUPPORT` - Uses GNSS Assistance object (ID 33625).
+  Used with nRF Cloud to request assistance data for the GNSS module.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS` - nRF Cloud provides A-GPS assistance data and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS` - nRF Cloud provides P-GPS predictions and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS` - Disable this option if you provide your own method of sending the assistance requests to the LwM2M server.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER` - Disable this option if you provide your own method of populating the LwM2M objects (ID 10256) containing the cell neighborhood information.
+
+
 Configuration files
 ===================
 
@@ -495,6 +535,7 @@ The following files are available:
 * :file:`overlay-nbiot.conf` - Enables the use of NB-IoT.
 * :file:`overlay-assist-agps.conf` - Enables A-GPS assistance.
 * :file:`overlay-assist-cell.conf` - Enables cell-based location assistance.
+* :file:`overlay-assist-pgps.conf` - Enables P-GPS assistance in the sample.
 
 Moreover, the sample also provides the following files for LwM2M 1.1 features:
 
@@ -627,6 +668,8 @@ Dependencies
 
 This sample application uses the following |NCS| libraries and drivers:
 
+* :ref:`lib_lwm2m_client_utils`
+* :ref:`lib_lwm2m_location_assistance`
 * :ref:`modem_info_readme`
 * :ref:`at_cmd_parser_readme`
 * :ref:`dk_buttons_and_leds_readme`
