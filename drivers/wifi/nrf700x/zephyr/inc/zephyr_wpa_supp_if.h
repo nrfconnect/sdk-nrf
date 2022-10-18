@@ -42,6 +42,10 @@ int wifi_nrf_wpa_set_supp_port(void *if_priv, int authorized, char *bssid);
 int wifi_nrf_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si,
 				 unsigned char *bssid);
 
+int wifi_nrf_nl80211_send_mlme(void *if_priv, const u8 *data, size_t data_len, int noack,
+			       unsigned int freq, int no_cck, int offchanok, unsigned int wait_time,
+			       int cookie);
+
 int wifi_nrf_wpa_supp_set_key(void *if_priv,
 			   const unsigned char *ifname,
 			   enum wpa_alg alg,
@@ -88,5 +92,10 @@ void wifi_nrf_wpa_supp_event_proc_get_sta(void *if_priv,
 void wifi_nrf_wpa_supp_event_proc_get_if(void *if_priv,
 					   struct nrf_wifi_interface_info *info,
 					   unsigned int event_len);
+
+void wifi_nrf_wpa_supp_event_mgmt_tx_status(void *if_priv,
+						struct nrf_wifi_umac_event_mlme *mlme_event,
+						unsigned int event_len);
+
 #endif /* CONFIG_WPA_SUPP */
 #endif /*  __ZEPHYR_WPA_SUPP_IF_H__ */

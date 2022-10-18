@@ -218,6 +218,10 @@ struct wifi_nrf_fmac_callbk_fns {
 	void (*get_interface_callbk_fn)(void *os_vif_ctx,
 				     struct nrf_wifi_interface_info *info,
 				     unsigned int event_len);
+
+	void (*mgmt_tx_status)(void *if_priv,
+					struct nrf_wifi_umac_event_mlme *mlme_event,
+					unsigned int event_len);
 };
 
 
