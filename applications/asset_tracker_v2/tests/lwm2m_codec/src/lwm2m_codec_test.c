@@ -7,10 +7,9 @@
 #include <stdbool.h>
 #include <string.h>
 #include <errno.h>
-#include <zephyr/net/lwm2m.h>
-#include <net/lwm2m_client_utils.h>
 
 #include "lwm2m_client_utils/mock_lwm2m_client_utils.h"
+#include "lwm2m_client_utils/mock_lwm2m_client_utils_location.h"
 #include "lwm2m/mock_lwm2m.h"
 #include "lwm2m/mock_lwm2m_resource_ids.h"
 #include "lte_lc/mock_lte_lc.h"
@@ -367,10 +366,6 @@ void test_lwm2m_cloud_codec_encode_neighbor_cells(void)
 	__wrap_lwm2m_update_signal_meas_objects_ExpectAndReturn(
 		(const struct lte_lc_cells_info *)cells, 0);
 
-	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
-		LWM2M_PATH(LOCATION_ASSIST_OBJECT_ID, 0, ASSIST_TYPE_RID),
-		ASSISTANCE_REQUEST_TYPE_MULTICELL_REQUEST, 0);
-
 	__wrap_lwm2m_engine_set_s8_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, RADIO_SIGNAL_STRENGTH),
 		ncell.cell_data.current_cell.rsrp, 0);
@@ -391,22 +386,9 @@ void test_lwm2m_cloud_codec_encode_neighbor_cells(void)
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, LAC),
 		ncell.cell_data.current_cell.tac, 0);
 
-	const char *const path_list[] = {
-		LWM2M_PATH(ECID_SIGNAL_MEASUREMENT_INFO_OBJECT_ID),
-		LWM2M_PATH(LOCATION_ASSIST_OBJECT_ID, 0, ASSIST_TYPE_RID),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, RADIO_SIGNAL_STRENGTH),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CELLID),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMNC),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMCC),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, LAC)
-	};
-
 	TEST_ASSERT_EQUAL(0, cloud_codec_encode_neighbor_cells(&codec, &ncell));
-	TEST_ASSERT_EQUAL(ARRAY_SIZE(path_list), codec.valid_object_paths);
-
-	for (int i = 0; i < ARRAY_SIZE(path_list); i++) {
-		TEST_ASSERT_EQUAL(0, strcmp(path_list[i], codec.paths[i]));
-	}
+	TEST_ASSERT_EQUAL(codec.valid_object_paths, 0);
+	TEST_ASSERT_FALSE(ncell.queued);
 }
 
 void test_lwm2m_cloud_codec_encode_agps_request(void)
@@ -423,8 +405,9 @@ void test_lwm2m_cloud_codec_encode_agps_request(void)
 		.queued = true,
 	};
 
-	/* Expected generated A-GPS mask when all A-GPS data is requested. */
-	__wrap_location_assist_agps_request_set_Expect(0x000001FFu);
+	__wrap_location_assistance_agps_set_mask_Expect(&agps.request);
+
+	__wrap_location_assist_agps_set_elevation_mask_Expect(-1);
 
 	__wrap_lwm2m_engine_set_u32_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CELLID), agps.cell, 0);
@@ -438,21 +421,31 @@ void test_lwm2m_cloud_codec_encode_agps_request(void)
 	__wrap_lwm2m_engine_set_u16_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, LAC), agps.area, 0);
 
-	const char *const path_list[] = {
-		LWM2M_PATH(LOCATION_ASSIST_OBJECT_ID, 0, ASSIST_TYPE_RID),
-		LWM2M_PATH(LOCATION_ASSIST_OBJECT_ID, 0, AGPS_MASK_RID),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CELLID),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMNC),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMCC),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, LAC)
+	TEST_ASSERT_EQUAL(0, cloud_codec_encode_agps_request(&codec, &agps));
+	TEST_ASSERT_EQUAL(codec.valid_object_paths, 0);
+	TEST_ASSERT_FALSE(agps.queued);
+}
+
+void test_lwm2m_cloud_codec_encode_pgps_request(void)
+{
+	struct cloud_codec_data codec = { 0 };
+	struct cloud_data_pgps_request pgps = {
+		.count = 42,
+		.interval = 240,
+		.day = 15160,
+		.time = 40655,
+		.queued = true
 	};
 
-	TEST_ASSERT_EQUAL(0, cloud_codec_encode_agps_request(&codec, &agps));
-	TEST_ASSERT_EQUAL(ARRAY_SIZE(path_list), codec.valid_object_paths);
+	__wrap_location_assist_pgps_set_prediction_count_ExpectAndReturn(pgps.count, 0);
+	__wrap_location_assist_pgps_set_prediction_interval_ExpectAndReturn(pgps.interval, 0);
+	__wrap_location_assist_pgps_set_start_time_ExpectAndReturn(pgps.time, 0);
+	__wrap_location_assist_pgps_set_start_gps_day_Expect(pgps.day);
+	__wrap_location_assist_pgps_request_set_Expect();
 
-	for (int i = 0; i < ARRAY_SIZE(path_list); i++) {
-		TEST_ASSERT_EQUAL(0, strcmp(path_list[i], codec.paths[i]));
-	}
+	TEST_ASSERT_EQUAL(0, cloud_codec_encode_pgps_request(&codec, &pgps));
+	TEST_ASSERT_EQUAL(codec.valid_object_paths, 0);
+	TEST_ASSERT_FALSE(pgps.queued);
 }
 
 void test_lwm2m_cloud_codec_encode_data(void)
@@ -809,7 +802,6 @@ void test_lwm2m_codec_non_supported_funcs(void)
 {
 	TEST_ASSERT_EQUAL(-ENOTSUP, cloud_codec_decode_config(NULL, 0, NULL));
 	TEST_ASSERT_EQUAL(-ENOTSUP, cloud_codec_encode_config(NULL, NULL));
-	TEST_ASSERT_EQUAL(-ENOTSUP, cloud_codec_encode_pgps_request(NULL, NULL));
 	TEST_ASSERT_EQUAL(-ENOTSUP, cloud_codec_encode_batch_data(
 						NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 						NULL, 0, 0, 0, 0, 0, 0, 0));

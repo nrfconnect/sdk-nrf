@@ -17,6 +17,20 @@ if LWM2M_INTEGRATION
 
 menu "LwM2M integration library"
 
+if NRF_CLOUD_PGPS
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	default y
+
+# Set the nRF Cloud P-GPS download transport to custom.
+# With LwM2M, P-GPS data is transferred over the LwM2M transport and not via the internal HTTP
+# transport of the nRF Cloud P-GPS library.
+choice NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT
+	default NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM
+endchoice
+
+endif # NRF_CLOUD_PGPS
+
 config LWM2M_INTEGRATION_ENDPOINT_PREFIX
 	string "LwM2M endpoint prefix"
 	default "urn:imei:"

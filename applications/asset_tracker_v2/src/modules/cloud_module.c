@@ -301,6 +301,7 @@ static void agps_data_handle(const uint8_t *buf, size_t len)
 
 	LOG_DBG("Process incoming data if P-GPS related");
 
+#if !defined(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM)
 	err = nrf_cloud_pgps_process(buf, len);
 	if (err) {
 		if (err == -EFAULT) {
@@ -309,6 +310,7 @@ static void agps_data_handle(const uint8_t *buf, size_t len)
 		}
 		LOG_ERR("Unable to process P-GPS data, error: %d", err);
 	}
+#endif
 #endif
 
 	(void)err;
@@ -577,6 +579,19 @@ void pgps_handler(struct nrf_cloud_pgps_event *event)
 		switch (err) {
 		case 0:
 			LOG_DBG("P-GPS request encoded successfully");
+
+			if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
+				int err = cloud_wrap_pgps_request_send(NULL,
+								       0,
+								       true,
+								       0);
+				if (err) {
+					LOG_ERR("cloud_wrap_agps_request_send, err: %d", err);
+				}
+
+				return;
+			}
+
 			add_qos_message(output.buf,
 					output.len,
 					PGPS_REQUEST,
@@ -801,23 +816,10 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 	if (IS_EVENT(msg, data, DATA_EVT_AGPS_REQUEST_DATA_SEND)) {
 
 		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
-
-			char *paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
-
-			__ASSERT(ARRAY_SIZE(paths) ==
-				 ARRAY_SIZE(msg->module.data.data.buffer.paths),
-				 "Path object list not the same size");
-
-			for (int i = 0; i < ARRAY_SIZE(paths); i++) {
-				paths[i] = msg->module.data.data.buffer.paths[i];
-			}
-
-			err = cloud_wrap_agps_request_send(
-						   NULL,
-						   msg->module.data.data.buffer.valid_object_paths,
-						   true,
-						   0,
-						   paths);
+			int err = cloud_wrap_agps_request_send(NULL,
+							       0,
+							       true,
+							       0);
 			if (err) {
 				LOG_ERR("cloud_wrap_agps_request_send, err: %d", err);
 			}
@@ -918,23 +920,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 	if (IS_EVENT(msg, data, DATA_EVT_NEIGHBOR_CELLS_DATA_SEND)) {
 
 		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
-
-			char *paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
-
-			__ASSERT(ARRAY_SIZE(paths) ==
-				 ARRAY_SIZE(msg->module.data.data.buffer.paths),
-				 "Path object list not the same size");
-
-			for (int i = 0; i < ARRAY_SIZE(paths); i++) {
-				paths[i] = msg->module.data.data.buffer.paths[i];
-			}
-
-			err = cloud_wrap_neighbor_cells_send(
-						   NULL,
-						   msg->module.data.data.buffer.valid_object_paths,
-						   true,
-						   0,
-						   paths);
+			err = cloud_wrap_neighbor_cells_send(NULL, 0, true, 0);
 			if (err) {
 				LOG_ERR("cloud_wrap_neighbor_cells_send, err: %d", err);
 			}
@@ -950,6 +936,11 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_DATA_SEND_QOS)) {
+
+		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
+			return;
+		}
+
 		bool ack = qos_message_has_flag(&msg->module.cloud.data.message,
 						QOS_FLAG_RELIABILITY_ACK_REQUIRED);
 
@@ -991,8 +982,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 			err = cloud_wrap_neighbor_cells_send(message->buf,
 							     message->len,
 							     ack,
-							     msg->module.cloud.data.message.id,
-							     NULL);
+							     msg->module.cloud.data.message.id);
 			if (err) {
 				LOG_WRN("cloud_wrap_neighbor_cells_send, err: %d", err);
 			}
@@ -1001,8 +991,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 			err = cloud_wrap_agps_request_send(message->buf,
 							   message->len,
 							   ack,
-							   msg->module.cloud.data.message.id,
-							   NULL);
+							   msg->module.cloud.data.message.id);
 			if (err) {
 				LOG_WRN("cloud_wrap_agps_request_send, err: %d", err);
 			}

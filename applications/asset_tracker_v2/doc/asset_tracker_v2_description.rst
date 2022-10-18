@@ -211,6 +211,7 @@ This application uses the following |NCS| libraries and drivers:
 * :ref:`lib_azure_fota`
 * :ref:`lwm2m_interface`
 * :ref:`lib_lwm2m_client_utils`
+* :ref:`lib_lwm2m_location_assistance`
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_fota`
 * :ref:`lib_nrf_cloud_agps`
