@@ -13,11 +13,18 @@ from ecdsa import VerifyingKey
 from hashlib import sha256
 import os
 
+# Size of LCS storage in OTP in bytes
+LCS_STATE_SIZE = 0x8
 
-def generate_provision_hex_file(s0_address, s1_address, hashes, provision_address, output, max_size,
+def generate_provision_hex_file(s0_address, s1_address, implementation_id, hashes, provision_address, output, max_size,
                                 num_counter_slots_version):
     # Add addresses
-    provision_data = struct.pack('III', s0_address, s1_address, len(hashes))
+    provision_data = struct.pack('III', s0_address, s1_address,
+                                 len(hashes))
+
+    if implementation_id:
+        provision_data += implementation_id.encode('ascii')
+
     for mhash in hashes:
         provision_data += struct.pack('I', 0xFFFFFFFF) # Invalidation token
         provision_data += mhash
@@ -47,6 +54,7 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--s0-addr', type=lambda x: int(x, 0), required=True, help='Address of image slot s0')
     parser.add_argument('--s1-addr', type=lambda x: int(x, 0), required=False, help='Address of image slot s1')
+    parser.add_argument('--implementation-id', required=False)
     parser.add_argument('--provision-addr', type=lambda x: int(x, 0),
                         required=True, help='Address at which to place the provisioned data')
     parser.add_argument('--public-key-files', required=False,
@@ -84,12 +92,15 @@ def main():
 
     s0_address = args.s0_addr
     s1_address = args.s1_addr if args.s1_addr is not None else s0_address
-    provision_address = args.provision_addr
+    # The LCS is stored in the OTP before the provisioning date so add it to the
+    # given base address
+    provision_address = args.provision_addr + LCS_STATE_SIZE
 
     hashes = get_hashes(args.public_key_files.split(','),
                         not args.no_verify_hashes) if args.public_key_files else list()
     generate_provision_hex_file(s0_address=s0_address,
                                 s1_address=s1_address,
+                                implementation_id=args.implementation_id,
                                 hashes=hashes,
                                 provision_address=provision_address,
                                 output=args.output,

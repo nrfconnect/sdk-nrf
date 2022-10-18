@@ -6,8 +6,8 @@
 
 #include <zephyr/types.h>
 #include <bl_crypto.h>
+#include <bl_storage.h>
 #include <fw_info.h>
-
 
 __weak int crypto_init_signing(void)
 {
@@ -29,9 +29,6 @@ int bl_crypto_init(void)
 	return crypto_init_hash();
 }
 
-BUILD_ASSERT(CONFIG_SB_PUBLIC_KEY_HASH_LEN <= CONFIG_SB_HASH_LEN,
-		"Invalid value for SB_PUBLIC_KEY_HASH_LEN.");
-
 #ifndef CONFIG_BL_ROT_VERIFY_EXT_API_REQUIRED
 #include <assert.h>
 #include <ocrypto_constant_time.h>
@@ -41,8 +38,6 @@ static int verify_truncated_hash(const uint8_t *data, uint32_t data_len,
 		const uint8_t *expected, uint32_t hash_len, bool external)
 {
 	uint8_t hash[CONFIG_SB_HASH_LEN];
-
-	__ASSERT(hash_len <= CONFIG_SB_HASH_LEN, "truncated hash length too long.");
 
 	int retval = get_hash(hash, data, data_len, external);
 	if (retval != 0) {
@@ -82,7 +77,7 @@ static int root_of_trust_verify(
 	__ASSERT(public_key && public_key_hash && signature && firmware,
 			"A parameter was NULL.");
 	int retval = verify_truncated_hash(public_key, CONFIG_SB_PUBLIC_KEY_LEN,
-			public_key_hash, CONFIG_SB_PUBLIC_KEY_HASH_LEN, external);
+			public_key_hash, SB_PUBLIC_KEY_HASH_LEN, external);
 
 	if (retval != 0) {
 		return retval;

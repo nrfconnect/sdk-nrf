@@ -15,3 +15,9 @@ set(TFM_CRYPTO_TEST_ALG_OFB             OFF         CACHE BOOL      "Test OFB cr
 # It will still be excluded if the partition manager excludes it.
 set(NRF_NS_STORAGE                      ON          CACHE BOOL      "Enable non-secure storage partition")
 set(PLATFORM_DEFAULT_ATTEST_HAL         OFF         CACHE BOOL      "Use default attest hal implementation.")
+
+set(NRF_ALLOW_NON_SECURE_RESET          OFF         CACHE BOOL      "Allow system reset calls from Non-Secure")
+
+set(TFM_DUMMY_PROVISIONING              OFF         CACHE BOOL      "Provision with dummy values. NOT to be used in production")
+set(PLATFORM_DEFAULT_PROVISIONING       OFF         CACHE BOOL      "Use default provisioning implementation")
+set(NRF_PROVISIONING                    OFF         CACHE BOOL      "Use Nordic provisioning implementation")

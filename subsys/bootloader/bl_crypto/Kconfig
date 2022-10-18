@@ -115,13 +115,6 @@ choice SB_CRYPTO_HASH
 
 endchoice
 
-config SB_PUBLIC_KEY_HASH_LEN
-	int "Public key hash size (bytes)"
-	default 16
-	help
-	  The length to which public key hashes in the list of Root of Trust
-	  Public Keys are truncated.
-
 EXT_API = BL_ROT_VERIFY
 id = 0x1001
 flags = 2

@@ -65,6 +65,12 @@ if (CONFIG_SECURE_BOOT)
       SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/nrf5340/netboot
       )
   else()
+    if(CONFIG_SB_IMPLEMENTATION_ID)
+    add_overlay_config(
+      b0
+      ${CMAKE_CURRENT_LIST_DIR}/bootloader/prj_impl_id.conf
+      )
+    endif()
     add_child_image(
       NAME b0
       SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/bootloader
