@@ -19,6 +19,39 @@ extern "C" {
 #define EREADLCS 114 /* LCS field of OTP is in an invalid state */
 #define EINVALIDLCS 115 /* Invalid LCS*/
 
+/** Storage for the life psa cycle state, that consists of 4 states:
+ *  - ASSEMBLY
+ *  - PSA RoT Provisioning
+ *  - SECURE
+ *  - DECOMMISSIONED
+ *  These states are transitioned top down during the life time of a device.
+ *  Therefore when setting a new LCS we just mark the old state as left, this
+ *  way one field less can be used to encode the lcs.
+ *  This works as ASSEMBLY implies the OTP be erased except of needed
+ *  key material
+ */
+struct life_cycle_state_data {
+	uint16_t left_assembly;
+	uint16_t left_provisioning;
+	uint16_t left_secure;
+};
+
+/** The first data structure in the bootloader storage. It has unknown length
+ *  since 'key_data' is repeated. This data structure is immediately followed by
+ *  struct counter_collection.
+ */
+struct bl_storage_data {
+	uint32_t s0_address;
+	uint32_t s1_address;
+	struct life_cycle_state_data lcs;
+	uint32_t num_public_keys; /* Number of entries in 'key_data' list. */
+	uint8_t implementation_id[32];
+	struct {
+		uint32_t valid;
+		uint8_t hash[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
+	} key_data[1];
+};
+
 /** @defgroup bl_storage Bootloader storage (protected data).
  * @{
  */
