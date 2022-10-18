@@ -13,11 +13,16 @@ from ecdsa import VerifyingKey
 from hashlib import sha256
 import os
 
+# Size of LCS storage in OTP in bytes
+LCS_STATE_SIZE = 0x8
+IMPLEMENTATION_ID_SIZE = 0x20
 
 def generate_provision_hex_file(s0_address, s1_address, hashes, provision_address, output, max_size,
                                 num_counter_slots_version):
     # Add addresses
-    provision_data = struct.pack('III', s0_address, s1_address, len(hashes))
+    provision_data = struct.pack('III', s0_address, s1_address,
+                                 len(hashes))
+
     for mhash in hashes:
         provision_data += struct.pack('I', 0xFFFFFFFF) # Invalidation token
         provision_data += mhash
@@ -84,7 +89,9 @@ def main():
 
     s0_address = args.s0_addr
     s1_address = args.s1_addr if args.s1_addr is not None else s0_address
-    provision_address = args.provision_addr
+    # The LCS is stored in the OTP before the rest of the provisioning
+    # data so add it to the given base address
+    provision_address = args.provision_addr + LCS_STATE_SIZE + IMPLEMENTATION_ID_SIZE
 
     hashes = get_hashes(args.public_key_files.split(','),
                         not args.no_verify_hashes) if args.public_key_files else list()

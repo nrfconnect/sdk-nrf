@@ -440,6 +440,10 @@ Other samples
   * Removed the FEM support section.
 * Added :ref:`hw_id_sample` sample.
 
+* Added :ref:`provisioning_image` sample.
+
+  * Running the provisioning image sample will provision the device in a manner compatible with Trusted Firmware-M (TF-M).
+
 * :ref:`radio_test` sample:
 
   * Changed:
@@ -521,7 +525,12 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
 Bootloader libraries
 --------------------
 
-|no_changes_yet_note|
+* :ref:`doc_bl_storage` library:
+
+  * Added:
+
+    * PSA compatible lifecycle state.
+    * PSA compatible implementation ID.
 
 Modem libraries
 ---------------
@@ -797,7 +806,14 @@ zcbor
 Trusted Firmware-M
 ==================
 
-* |no_changes_yet_note|
+* Added:
+
+  * Reading, updating, and attesting the lifecycle state stored in nRF OTP.
+    The storage is managed by the :ref:`doc_bl_storage` library.
+  * Reading and attesting an implementation ID stored in nRF OTP.
+    The storage is managed by the :ref:`doc_bl_storage` library.
+  * Enabling the APPROTECT and the device reset when transitioning to the SECURED lifecycle state.
+
 
 cJSON
 =====

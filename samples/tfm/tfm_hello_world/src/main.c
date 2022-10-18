@@ -147,4 +147,6 @@ void main(void)
 	printk("S0 active? %s\n", s0_active ? "True" : "False");
 #endif /*  PM_S1_ADDRESS */
 #endif /* defined(CONFIG_TFM_PARTITION_PLATFORM) */
+
+	printk("Finished\n");
 }

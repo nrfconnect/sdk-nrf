@@ -10,6 +10,10 @@
 #include <nrf_cc3xx_platform_ctr_drbg.h>
 #endif
 
+#if defined(NRF_PROVISIONING)
+#include "tfm_attest_hal.h"
+#endif /* defined(NRF_PROVISIONING) */
+
 #include "tfm_hal_platform.h"
 #include "tfm_hal_platform_common.h"
 #include "cmsis.h"
@@ -93,6 +97,17 @@ enum tfm_hal_status_t tfm_hal_platform_init(void)
 #if defined(NRF_ALLOW_NON_SECURE_RESET)
 	allow_nonsecure_reset();
 #endif
+
+/* When NRF_PROVISIONING is enabled we can either be in the lifecycle state "provisioning" or
+ * "secured", we don't support any other lifecycle states. This ensures that TF-M will not
+ * continue booting when an unsupported state is present.
+ */
+#if defined(NRF_PROVISIONING)
+	enum tfm_security_lifecycle_t lcs = tfm_attest_hal_get_security_lifecycle();
+	if(lcs != TFM_SLC_PSA_ROT_PROVISIONING && lcs != TFM_SLC_SECURED) {
+		return TFM_HAL_ERROR_BAD_STATE;
+	}
+#endif /* defined(NRF_PROVISIONING) */
 
 	return TFM_HAL_SUCCESS;
 }

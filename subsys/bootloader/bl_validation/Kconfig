@@ -10,6 +10,7 @@ config SECURE_BOOT_VALIDATION
 	bool "Enable Secure Boot validation code"
 	select FW_INFO
 	depends on SECURE_BOOT_CRYPTO
+	depends on SECURE_BOOT_STORAGE
 
 config SB_VALIDATION_INFO_MAGIC
 	hex "Magic word used for validation info structs (32 bits)"
