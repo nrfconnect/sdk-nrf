@@ -14,10 +14,14 @@ from hashlib import sha256
 import os
 
 
+NON_TRANSITIONED_LCS_STATE = 0xFFFF
+
 def generate_provision_hex_file(s0_address, s1_address, hashes, provision_address, output, max_size,
                                 num_counter_slots_version):
     # Add addresses
-    provision_data = struct.pack('III', s0_address, s1_address, len(hashes))
+    provision_data = struct.pack('IIHHHI', s0_address, s1_address,
+                                 NON_TRANSITIONED_LCS_STATE, NON_TRANSITIONED_LCS_STATE, NON_TRANSITIONED_LCS_STATE,
+                                 len(hashes))
     for mhash in hashes:
         provision_data += struct.pack('I', 0xFFFFFFFF) # Invalidation token
         provision_data += mhash

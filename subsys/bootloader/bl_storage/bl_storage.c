@@ -12,6 +12,22 @@
 #include <pm_config.h>
 #include <nrfx_nvmc.h>
 
+/** Storage for the life psa cycle state, that consists of 4 states:
+ *  - ASSEMBLY
+ *  - PSA RoT Provisioning
+ *  - SECURE
+ *  - DECOMMISSIONED
+ *  These states are transitioned top down during the life time of a device.
+ *  Therefore when setting a new LCS we just mark the old state as left, this
+ *  way one field less can be used to encode the lcs.
+ *  This works as ASSEMBLY implies the OTP be erased except of needed
+ *  key material
+ */
+struct life_cycle_state_data {
+	uint16_t left_assembly;
+	uint16_t left_provisioning;
+	uint16_t left_secure;
+};
 
 /** The first data structure in the bootloader storage. It has unknown length
  *  since 'key_data' is repeated. This data structure is immediately followed by
@@ -20,6 +36,7 @@
 struct bl_storage_data {
 	uint32_t s0_address;
 	uint32_t s1_address;
+	struct life_cycle_state_data lcs;
 	uint32_t num_public_keys; /* Number of entries in 'key_data' list. */
 	struct {
 		uint32_t valid;
@@ -331,4 +348,85 @@ int set_monotonic_counter(uint16_t new_counter)
 
 	write_halfword(next_counter_addr, ~new_counter);
 	return 0;
+}
+
+/* OTP is 0xFFFF after erase so setting all bits to 0 so a full erase is needed
+ * to reset
+ */
+#define STATE_LEFT 0x0000
+
+int write_life_cycle_state(lcs_t next_lcs)
+{
+	int err;
+	lcs_t current_lcs = 0;
+
+	if(next_lcs == UNKOWN){
+		return -EINVALIDLCS;
+	}
+
+	err = read_life_cycle_state(&current_lcs);
+	if (err != 0) {
+		return err;
+	}
+
+	if (next_lcs < current_lcs) {
+		/* Is is only possible to transition into a higher state */
+		return -EINVALIDLCS;
+	}
+
+	if (next_lcs == current_lcs) {
+		/* The same LCS is a valid argument, but nothing to do so return success */
+		return 0;
+	}
+
+	/* As the device starts in ASSEMBLY, it is not possible to write it */
+	if (current_lcs == ASSEMBLY && next_lcs == PROVISION) {
+		write_halfword(&(p_bl_storage_data->lcs.left_assembly), STATE_LEFT);
+		return 0;
+	}
+
+	if (current_lcs == PROVISION && next_lcs == SECURE) {
+		write_halfword(&(p_bl_storage_data->lcs.left_provisioning), STATE_LEFT);
+		return 0;
+	}
+
+	if (current_lcs == SECURE && next_lcs == DECOMMISSIONED) {
+		write_halfword(&(p_bl_storage_data->lcs.left_secure), STATE_LEFT);
+		return 0;
+	}
+
+	/* This will be the case if any invalid transition is tried */
+	return -EINVALIDLCS;
+}
+
+#define STATE_NOT_LEFT 0xFFFF
+
+int read_life_cycle_state(lcs_t *lcs)
+{
+	uint16_t left_assembly = read_halfword(&p_bl_storage_data->lcs.left_assembly);
+	uint16_t left_provisioning =read_halfword(&p_bl_storage_data->lcs.left_provisioning);
+	uint16_t left_secure = read_halfword(&p_bl_storage_data->lcs.left_secure);
+
+	if (left_assembly == STATE_NOT_LEFT) {
+		(*lcs) = ASSEMBLY;
+		return 0;
+	}
+
+	if (left_assembly == STATE_LEFT && left_provisioning == STATE_NOT_LEFT) {
+		(*lcs) = PROVISION;
+		return 0;
+	}
+
+	if (left_provisioning == STATE_LEFT && left_secure == STATE_NOT_LEFT) {
+		(*lcs) = SECURE;
+		return 0;
+	}
+
+	if (left_provisioning == STATE_LEFT) {
+		(*lcs) = DECOMMISSIONED;
+		return 0;
+	}
+
+	/* To reach this the OTP must be corrupted or reading failed */
+	return -EREADLCS;
 }

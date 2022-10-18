@@ -16,6 +16,8 @@ extern "C" {
 
 
 #define EHASHFF 113 /* A hash contains too many 0xFs. */
+#define EREADLCS 114 /* LCS field of OTP is in an invalid state */
+#define EINVALIDLCS 115 /* Invalid LCS*/
 
 /** @defgroup bl_storage Bootloader storage (protected data).
  * @{
@@ -105,6 +107,46 @@ uint16_t get_monotonic_counter(void);
  *                  @kconfig{CONFIG_SB_NUM_VER_COUNTER_SLOTS}).
  */
 int set_monotonic_counter(uint16_t new_counter);
+
+/**
+ * @brief The PSA life cycle states a device can be in.
+ *
+ * The can be only transitioned in the order they are defined here.
+ */
+enum lcs {
+	UNKOWN = 0,
+	ASSEMBLY = 1,
+	PROVISION = 2,
+	SECURE = 3,
+	DECOMMISSIONED = 4,
+};
+
+typedef enum lcs lcs_t;
+
+/**
+ * @brief Write a life cycle state to OTP,
+ *
+ * If the given next state is not a not allowed transition the function
+ * will return -EINVALIDLCS
+ *
+ * @param[in] next_lcs Must be the same or the successor state of the current
+ *                     one.
+ *
+ * @retval 0            The LSC was update successfully
+ * @retval -EREADLCS    Error on reading the current state
+ * @retval -EINVALIDLCS Invalid next state
+ */
+int write_life_cycle_state(lcs_t next_lcs);
+
+/**
+ * @brief Read the current life cycle state the device is in from OTP,
+ *
+ * @param[out] lcs Will be set to the current LCS the device is in
+ *
+ * @retval 0            The LSC read was successful
+ * @retval -EREADLCS    Error on reading from OTP or invalid OTP content
+ */
+int read_life_cycle_state(lcs_t *lcs);
 
   /** @} */
 
