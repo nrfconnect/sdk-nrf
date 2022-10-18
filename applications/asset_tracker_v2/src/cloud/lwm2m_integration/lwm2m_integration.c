@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
+#include <net/lwm2m_client_utils_location.h>
 #include <lwm2m_resource_ids.h>
 #include <lwm2m_rd_client.h>
 #include <nrf_modem_at.h>
@@ -23,11 +24,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 #define LWM2M_INTEGRATION_CLIENT_ID_LEN 15
 #else
 #define LWM2M_INTEGRATION_CLIENT_ID_LEN (sizeof(CONFIG_CLOUD_CLIENT_ID) - 1)
-#endif
-
-#if defined(CONFIG_LWM2M_INTEGRATION)
-BUILD_ASSERT(!IS_ENABLED(CONFIG_NRF_CLOUD_PGPS),
-	     "P-GPS is not supported when building for LwM2M");
 #endif
 
 /* Resource ID used to register a reboot callback. */
@@ -539,43 +535,31 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id, char *path_
 	return 0;
 }
 
-int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
+int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	ARG_UNUSED(buf);
 	ARG_UNUSED(len);
 	ARG_UNUSED(id);
 
-	int err;
-
-	err = lwm2m_engine_send(&client, (const char **)path_list, len, ack);
-	if (err) {
-		LOG_ERR("lwm2m_engine_send, error: %d", err);
-		return err;
-	}
-
-	return 0;
+	return location_assistance_ground_fix_request_send(&client, ack);
 }
 
-int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
+int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	ARG_UNUSED(buf);
 	ARG_UNUSED(len);
 	ARG_UNUSED(id);
 
-	int err;
-
-	err = lwm2m_engine_send(&client, (const char **)path_list, len, ack);
-	if (err) {
-		LOG_ERR("lwm2m_engine_send, error: %d", err);
-		return err;
-	}
-
-	return 0;
+	return location_assistance_agps_request_send(&client, ack);
 }
 
 int cloud_wrap_pgps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 {
-	return -ENOTSUP;
+	ARG_UNUSED(buf);
+	ARG_UNUSED(len);
+	ARG_UNUSED(id);
+
+	return location_assistance_pgps_request_send(&client, ack);
 }
 
 int cloud_wrap_memfault_data_send(char *buf, size_t len, bool ack, uint32_t id)

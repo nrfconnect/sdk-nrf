@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #include "cloud/cloud_wrapper.h"
 #include <zephyr/kernel.h>
 #include <net/aws_iot.h>
@@ -478,10 +484,8 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id, char *path_
 	return 0;
 }
 
-int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
+int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id)
 {
-	ARG_UNUSED(path_list);
-
 	int err;
 	struct aws_iot_data msg = {
 		.ptr = buf,
@@ -501,7 +505,7 @@ int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id,
 	return 0;
 }
 
-int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
+int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	int err;
 	struct aws_iot_data msg = {

@@ -22,6 +22,7 @@ cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/socket.h net)
 cmock_handle(${ZEPHYR_BASE}/subsys/net/lib/lwm2m/lwm2m_engine.h lwm2m)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/lwm2m.h lwm2m)
 cmock_handle(${NRF_DIR}/include/net/lwm2m_client_utils.h lwm2m_client_utils)
+cmock_handle(${NRF_DIR}/include/net/lwm2m_client_utils_location.h lwm2m_client_utils)
 cmock_handle(${NRF_DIR}/include/modem/lte_lc.h lte_lc)
 
 # Add Unit Under Test source files
@@ -45,6 +46,8 @@ target_include_directories(app PRIVATE ${ASSET_TRACKER_v2_DIR}/src/cloud/cloud_w
 
 # Options that cannot be passed through Kconfig fragments.
 target_compile_options(app PRIVATE
+	-DCONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS=y
+	-DCONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS=y
 	-DCONFIG_LWM2M_INTEGRATION_ENDPOINT_PREFIX=":urn:id:"
 	-DCONFIG_LWM2M_INTEGRATION=y
 	-DCONFIG_LWM2M=y

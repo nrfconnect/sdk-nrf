@@ -190,31 +190,41 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id, char *path_
 /**
  * @brief Send neighbor cell data to cloud.
  *
+ * @note LwM2M builds: This function does not require passing in a list of objects, unlike other
+ *		       functions in this API. The underlying LwM2M API called when calling this
+ *		       function, keeps its own reference of the objects that needs to be updated.
+ *
  * @param[in] buf Pointer to buffer containing data to be sent.
  * @param[in] len Length of buffer.
  * @param[in] ack Flag signifying if the message should be acknowledged or not.
  * @param[in] id Message ID.
- * @param[in] path_list Pointer to list of LwM2M objects to be sent.
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[]);
+int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id);
 
 /**
  * @brief Send A-GPS request to cloud.
  *
+ * @note LwM2M builds: This function does not require passing in a list of objects, unlike other
+ *		       functions in this API. The underlying LwM2M API called when calling this
+ *		       function, keeps its own reference of the objects that needs to be updated.
+ *
  * @param[in] buf Pointer to buffer containing data to be sent.
  * @param[in] len Length of buffer.
  * @param[in] ack Flag signifying if the message should be acknowledged or not.
  * @param[in] id Message ID.
- * @param[in] path_list Pointer to list of LwM2M objects to be sent.
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[]);
+int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id);
 
 /**
  * @brief Send P-GPS request to cloud.
+ *
+ * @note LwM2M builds: This function does not require passing in a list of objects, unlike other
+ *		       functions in this API. The underlying LwM2M API called when calling this
+ *		       function, keeps its own reference of the objects that needs to be updated.
  *
  * @param[in] buf Pointer to buffer containing data to be sent.
  * @param[in] len Length of buffer.
