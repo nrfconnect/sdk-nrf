@@ -125,6 +125,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		  NULL,
 		  "\"\"",
 		  cmd_supplicant),
+	SHELL_CMD(wnm_bss_query,
+		  NULL,
+		  "\"\"",
+		  cmd_supplicant),
 	SHELL_SUBCMD_SET_END);
 
 /* Persisting with "wpa_cli" naming for compatibility with Wi-Fi
