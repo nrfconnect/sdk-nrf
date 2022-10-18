@@ -110,7 +110,9 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The application now uses the new LwM2M location assistance objects through the :ref:`lib_lwm2m_location_assistance` library.
 
 nRF9160: Serial LTE modem
 -------------------------
@@ -221,6 +223,10 @@ nRF9160 samples
 
     * Ability to use buttons to generate location assistance requests.
     * Documentation on :ref:`lwmwm_client_testing_shell`.
+
+  * Updated:
+
+    * The sample now uses the new LwM2M location assistance objects through the :ref:`lib_lwm2m_location_assistance` library.
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
@@ -415,6 +421,10 @@ Libraries for networking
 * :ref:`lib_fota_download` library:
 
   * Added an error code :c:enumerator:`FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL` to indicate that the source of error is not network related.
+
+* Added:
+
+  * :ref:`lib_lwm2m_location_assistance` library that has support for using A-GPS, P-GPS and ground fix assistance from nRF Cloud using an LwM2M server.
 
 Libraries for NFC
 -----------------

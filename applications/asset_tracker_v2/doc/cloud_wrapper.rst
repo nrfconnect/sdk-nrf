@@ -41,7 +41,14 @@ This takes place in the :file:`asset_tracker_v2/src/cloud/CMakeLists.txt` file.
 LwM2M
 =====
 
-The application integrates LwM2M through :ref:`Zephyr's LwM2M API <lwm2m_interface>`, :ref:`NCS LwM2M client utils API <lib_lwm2m_client_utils>`, and :ref:`NCS LwM2M location assistance API <lib_lwm2m_location_assistance>`.
+The application integrates LwM2M through the following APIs:
+
+* :ref:`LwM2M API <lwm2m_interface>` from Zephyr
+* :ref:`LwM2M client utils API <lib_lwm2m_client_utils>`, and :ref:`LwM2M location assistance API <lib_lwm2m_location_assistance>` from |NCS|
+
+.. note::
+
+   The LwM2M integration does not have support for sending of batched data.
 
 Bootstrapping and credential handling
 -------------------------------------
@@ -91,11 +98,6 @@ The user can set up the server to enable periodic notifications for objects and 
 The application adheres to its :ref:`Real-time configurations <real_time_configs>` when it samples and sends data to cloud, which is the recommended approach to reconfiguring the application.
 The :ref:`Real-time configurations <real_time_configs>` can be manipulated using an application specific ``configuration object`` accessible from cloud.
 In order to use this object, some additional steps are required that are documented in :ref:`object_xml_config`.
-
-Limitations
------------
-
-The LwM2M integration does not have support for sending of batched data.
 
 Data addressing
 ***************

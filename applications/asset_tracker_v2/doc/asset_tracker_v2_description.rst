@@ -209,7 +209,6 @@ This application uses the following |NCS| libraries and drivers:
 * :ref:`lib_aws_fota`
 * :ref:`lib_azure_iot_hub`
 * :ref:`lib_azure_fota`
-* :ref:`lwm2m_interface`
 * :ref:`lib_lwm2m_client_utils`
 * :ref:`lib_lwm2m_location_assistance`
 * :ref:`lib_nrf_cloud`
@@ -226,6 +225,10 @@ This application uses the following |NCS| libraries and drivers:
 It uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_modem`
+
+It uses the following Zephyr library:
+
+* :ref:`lwm2m_interface`
 
 In addition, it uses the following secure firmware component:
 
