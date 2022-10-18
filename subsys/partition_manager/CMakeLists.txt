@@ -77,6 +77,10 @@ if (CONFIG_IPC_SERVICE AND CONFIG_SOC_NRF5340_CPUAPP)
   ncs_add_partition_manager_config(pm.yml.rpmsg_nrf53)
 endif()
 
+if (CONFIG_SECURE_BOOT_STORAGE)
+  ncs_add_partition_manager_config(pm.yml.secure_boot_storage)
+endif()
+
 if (CONFIG_PCD_APP)
   ncs_add_partition_manager_config(pm.yml.pcd)
 endif()

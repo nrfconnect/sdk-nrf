@@ -171,13 +171,13 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 	/* Some key data storage backends require word sized reads, hence
 	 * we need to ensure word alignment for 'key_data'
 	 */
-	__aligned(4) uint8_t key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
+	__aligned(4) uint8_t key_data[SB_PUBLIC_KEY_HASH_LEN];
 
 	for (uint32_t key_data_idx = 0; key_data_idx < num_public_keys_read();
 			key_data_idx++) {
-		int read_retval = public_key_data_read(key_data_idx,
-				key_data, CONFIG_SB_PUBLIC_KEY_HASH_LEN);
-		if (read_retval != CONFIG_SB_PUBLIC_KEY_HASH_LEN) {
+		int read_retval = public_key_data_read(key_data_idx, key_data);
+
+		if (read_retval != SB_PUBLIC_KEY_HASH_LEN) {
 			if (read_retval == -EINVAL) {
 				PRINT("Key %d has been invalidated, try next.\n\r",
 					key_data_idx);
@@ -191,7 +191,7 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 
 		PRINT("Verifying signature against key %d.\n\r", key_data_idx);
 		PRINT("Hash: 0x%02x...%02x\r\n", key_data[0],
-			key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN-1]);
+			key_data[SB_PUBLIC_KEY_HASH_LEN-1]);
 		int retval = rot_verify(fw_val_info->public_key,
 					key_data,
 					fw_val_info->signature,

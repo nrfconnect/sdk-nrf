@@ -115,14 +115,13 @@ void test_validation_neg2(void)
 	uint32_t num_public_keys = num_public_keys_read();
 	bool any_valid = false;
 
-	__aligned(4) uint8_t key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
+	__aligned(4) uint8_t key_data[SB_PUBLIC_KEY_HASH_LEN];
 
 	for (uint32_t key_data_idx = 0; key_data_idx < num_public_keys;
 			key_data_idx++) {
-		int retval = public_key_data_read(key_data_idx,
-				key_data, CONFIG_SB_PUBLIC_KEY_HASH_LEN);
+		int retval = public_key_data_read(key_data_idx, key_data);
 		if (retval != -EINVAL) {
-			zassert_equal(CONFIG_SB_PUBLIC_KEY_HASH_LEN, retval,
+			zassert_equal(SB_PUBLIC_KEY_HASH_LEN, retval,
 				"Unexpected public key error, %d.", retval);
 			invalidate_public_key(key_data_idx);
 			any_valid = true;

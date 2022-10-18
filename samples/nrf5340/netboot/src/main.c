@@ -26,6 +26,11 @@ void main(void)
 		return;
 	}
 
+	/* The flash is locked at flash page granularity */
+	BUILD_ASSERT(
+		(PM_B0N_CONTAINER_SIZE % CONFIG_FPROTECT_BLOCK_SIZE) == 0,
+		"PM_B0N_CONTAINER_SIZE % CONFIG_FPROTECT_BLOCK_SIZE was not 0. Check the B0_SIZE Kconfig.");
+
 	err = fprotect_area(PM_B0N_CONTAINER_ADDRESS, PM_B0N_CONTAINER_SIZE);
 	if (err) {
 		printk("Failed to protect b0n flash, cancel startup\n\r");

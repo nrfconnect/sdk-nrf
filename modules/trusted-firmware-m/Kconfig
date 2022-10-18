@@ -58,6 +58,12 @@ config TFM_EXPERIMENTAL
 	select EXPERIMENTAL
 	default y if !TFM_PROFILE_TYPE_MINIMAL
 
+config TFM_PARTITION_INITIAL_ATTESTATION
+	bool
+	help
+	   We select "implementation ID" because it is a mandatory claim
+	   in the IAT.
+
 if TFM_PARTITION_CRYPTO
 
 config TFM_CRYPTO_ENGINE_BUF_SIZE
@@ -252,6 +258,13 @@ config TFM_STORAGE
 	default y if PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE != 0
 	default y if PM_PARTITION_SIZE_TFM_OTP_NV_COUNTERS != 0
 
+config TFM_NRF_PROVISIONING
+	bool "Provision the device"
+	depends on !TFM_PROFILE_TYPE_MINIMAL
+	help
+	  Provision the TF-M image. When enabled, TF-M must be in the PSA
+	  provisioning lifecycle state in order to boot. See provisioning
+	  guide for more details.
 
 rsource "Kconfig.psa.defconfig"
 

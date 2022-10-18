@@ -12,11 +12,13 @@ It can be used by both the |NSIB| (NSIB) and the application, but the applicatio
 
 The library has the following functions for either reading or writing, or in some cases both reading and writing:
 
-* Image slot addresses
-* A monotonic counter used to enforce anti-rollback protection
-* Hashes of public keys
-* Invalidation tokens used to revoke public keys
-* Additional public key metadata
+* The lifecycle state of the device, used to deny certain operations when in wrong lifecycle state.
+* A 32-byte user-defined implementation ID, used to identify the immutable bootloader.
+* Image slot addresses.
+* A monotonic counter, used to enforce anti-rollback protection.
+* Hashes of public keys.
+* Invalidation tokens, used to revoke public keys.
+* Additional public key metadata.
 
 The library uses either the OTP region of the User information configuration registers (UICR), when present on SoCs like the nRF9160 or nRF5340, or the internal flash memory.
 When the library uses the internal flash memory, the bootloader blocks the write access before booting the next image.
