@@ -15,7 +15,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #include "lwm2m_object.h"
 #include "lwm2m_engine.h"
-#include <net/lwm2m_client_utils.h>
+#include <net/lwm2m_client_utils_location.h>
 #include <modem/modem_info.h>
 
 #define SIGNAL_MEAS_INFO_VERSION_MAJOR 1

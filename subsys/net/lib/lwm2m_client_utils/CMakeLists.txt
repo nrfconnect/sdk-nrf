@@ -25,6 +25,6 @@ zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT
 			     lwm2m/ground_fix_obj.c)
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_GNSS_ASSIST_OBJ_SUPPORT
 			     lwm2m/gnss_assistance_obj.c)
-zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_GNSS_ASSIST_OBJ_SUPPORT
+zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
 			     location/location_assistance.c)
 zephyr_include_directories(lwm2m/include)
