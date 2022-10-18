@@ -38,6 +38,13 @@ Matter network concepts
 
 The Matter network is using the following concepts, listed in alphabetical order:
 
+Binding
+  A feature that allows establishing a relationship between Matter endpoints on a single or two separate Matter nodes.
+  The relationships are described by binding entries stored persistently in the device memory and managed by the Binding Cluster.
+  Bindings are used to assign target or targets of a client cluster on the node, so that the device knows which remote device it should act upon.
+  The behavior induced by establishing a binding is application-defined and is not limited anyhow by the Matter specification, which opens the way for different custom scenarios.
+  For example, you can create a relationship in which a button press on light switch device results in changing the state of one or group of light bulb devices.
+
 Bridge
   A network device used for exposing mesh networking devices that are not compatible with Matter to a Matter network (for example, Zigbee devices).
   Such *bridged devices* can then work with Matter devices in a fabric and communicate on different application layers.
@@ -56,10 +63,12 @@ Edge Router
 Fabric
   This is a logical set of nodes that communicate with each other and can belong to different networks.
   The devices in a fabric share the same :ref:`root of trust <ug_matter_network_topologies_concepts_security>` and configuration state and are identifiable with a unique 64-bit Fabric ID.
-  Using the Multiple Fabrics feature, you can assign nodes to a specific set of fabrics.
 
-Multi-admin
-  A Matter feature that allows to connect Matter devices to multiple applications and ecosystems out of the box.
+Multi-fabric
+  A Matter feature that allows to commission a Matter node to different fabrics (each of which has an administrator of its own) and to communicate with other devices within these fabrics.
+  This feature is crucial for ensuring interoperability of multiple applications and ecosystems out of the box.
+  It can also be referred to as *multi-admin*.
+  See :ref:`ug_matter_overview_multi_fabrics` for more information.
 
 Node
   A single instance of a Matter device, available on an IPv6 network after commissioning with a Node ID and security credentials.

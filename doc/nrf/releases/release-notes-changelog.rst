@@ -58,7 +58,9 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
 Matter
 ------
 
-|no_changes_yet_note|
+* Added:
+
+  * Documentation page about :ref:`ug_matter_overview_multi_fabrics` and entry about binding to :ref:`ug_matter_network_topologies_concepts`.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
