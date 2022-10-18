@@ -26,6 +26,9 @@ void main(void)
 		return;
 	}
 
+	/* Only full aligned flash pages can be looked*/
+	BUILD_ASSERT((PM_B0N_CONTAINER_SIZE % CONFIG_FPROTECT_BLOCK_SIZE) == 0,
+				 "B0N container size not 2kb alined, check B0_SIZE Kconfig");
 	err = fprotect_area(PM_B0N_CONTAINER_ADDRESS, PM_B0N_CONTAINER_SIZE);
 	if (err) {
 		printk("Failed to protect b0n flash, cancel startup\n\r");

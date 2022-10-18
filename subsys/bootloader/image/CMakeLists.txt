@@ -92,6 +92,12 @@ if (CONFIG_SB_DEBUG_NO_VERIFY_HASHES)
   set(no_verify_hashes_arg --no-verify-hashes)
 endif()
 
+if(CONFIG_SB_IMPLEMENTATION_ID_VALUE)
+  set(implementation_id_arg
+	--implementation-id ${CONFIG_SB_IMPLEMENTATION_ID_VALUE}
+  )
+endif()
+
 add_custom_command(
   OUTPUT
   ${PROVISION_HEX}
@@ -100,6 +106,7 @@ add_custom_command(
   ${NRF_BOOTLOADER_SCRIPTS}/provision.py
   ${s0_arg}
   ${s1_arg}
+  ${implementation_id_arg}
   --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
   ${public_keys_file_arg}
   --output ${PROVISION_HEX}

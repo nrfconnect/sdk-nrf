@@ -9,23 +9,8 @@
 #include <errno.h>
 #include <nrf.h>
 #include <assert.h>
-#include <pm_config.h>
 #include <nrfx_nvmc.h>
-
-
-/** The first data structure in the bootloader storage. It has unknown length
- *  since 'key_data' is repeated. This data structure is immediately followed by
- *  struct counter_collection.
- */
-struct bl_storage_data {
-	uint32_t s0_address;
-	uint32_t s1_address;
-	uint32_t num_public_keys; /* Number of entries in 'key_data' list. */
-	struct {
-		uint32_t valid;
-		uint8_t hash[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
-	} key_data[1];
-};
+#include <pm_config.h>
 
 /** A single monotonic counter. It consists of a description value, a 'type',
  *  to know what this counter counts. Further, it has a number of slots
@@ -98,12 +83,12 @@ int verify_public_keys(void)
 {
 	for (uint32_t n = 0; n < num_public_keys_read(); n++) {
 		if (key_is_valid(n)) {
-			const uint16_t *p_key_n = (const uint16_t *)
-					p_bl_storage_data->key_data[n].hash;
-			size_t hash_len_u16 = (CONFIG_SB_PUBLIC_KEY_HASH_LEN/2);
+			for (uint32_t i = 0; i < SB_PUBLIC_KEY_HASH_LEN / 2; i++) {
+				const uint16_t *hash_as_halfwords =
+					(const uint16_t *)p_bl_storage_data->key_data[n].hash;
+				uint16_t halfword = read_halfword(&hash_as_halfwords[i]);
 
-			for (uint32_t i = 0; i < hash_len_u16; i++) {
-				if (read_halfword(&p_key_n[i]) == 0xFFFF) {
+				if (halfword == 0xFFFF) {
 					return -EHASHFF;
 				}
 			}
@@ -112,40 +97,12 @@ int verify_public_keys(void)
 	return 0;
 }
 
-/**
- * Helper procedure for public_key_data_read()
- *
- * Copies @p src into @p dst. Reads from @p src are done 32 bits at a
- * time. Writes to @p dst are done a byte at a time.
- *
- * @param dst destination buffer
- * @param src source buffer
- * @param size number of *bytes* in src to copy into dst
- */
-static void public_key_copy32(uint8_t *dst, const uint32_t *src, size_t size)
-{
-	while (size) {
-		uint32_t val = *src++;
-
-		*dst++ = val & 0xFF;
-		*dst++ = (val >> 8U) & 0xFF;
-		*dst++ = (val >> 16U) & 0xFF;
-		*dst++ = (val >> 24U) & 0xFF;
-
-		size -= 4;
-	}
-}
-
-int public_key_data_read(uint32_t key_idx, uint8_t *p_buf, size_t buf_size)
+int public_key_data_read(uint32_t key_idx, uint8_t *p_buf)
 {
 	const uint8_t *p_key;
 
 	if (!key_is_valid(key_idx)) {
 		return -EINVAL;
-	}
-
-	if (buf_size < CONFIG_SB_PUBLIC_KEY_HASH_LEN) {
-		return -ENOMEM;
 	}
 
 	if (key_idx >= num_public_keys_read()) {
@@ -158,14 +115,12 @@ int public_key_data_read(uint32_t key_idx, uint8_t *p_buf, size_t buf_size)
 	 * with word sized read limitation. Perform both build time and run
 	 * time asserts to catch the issue as soon as possible.
 	 */
-	BUILD_ASSERT(CONFIG_SB_PUBLIC_KEY_HASH_LEN % 4 == 0);
 	BUILD_ASSERT(offsetof(struct bl_storage_data, key_data) % 4 == 0);
 	__ASSERT(((uint32_t)p_key % 4 == 0), "Key address is not word aligned");
 
-	public_key_copy32(p_buf, (const uint32_t *)p_key, CONFIG_SB_PUBLIC_KEY_HASH_LEN);
-	__DSB(); /* Because of nRF9160 Erratum 7 */
+	otp_copy32(p_buf, (volatile uint32_t *restrict)p_key, SB_PUBLIC_KEY_HASH_LEN);
 
-	return CONFIG_SB_PUBLIC_KEY_HASH_LEN;
+	return SB_PUBLIC_KEY_HASH_LEN;
 }
 
 void invalidate_public_key(uint32_t key_idx)
@@ -194,7 +149,7 @@ void invalidate_public_key(uint32_t key_idx)
 static uint16_t read_halfword(const uint16_t *ptr)
 {
 	bool top_half = ((uint32_t)ptr % 4); /* Addr not div by 4 */
-	uint32_t target_addr = (uint32_t)ptr & ~3; /* Floor address */
+	uintptr_t target_addr = (uintptr_t)ptr & ~3; /* Floor address */
 	uint32_t val32 = *(uint32_t *)target_addr;
 	__DSB(); /* Because of nRF9160 Erratum 7 */
 
@@ -330,5 +285,91 @@ int set_monotonic_counter(uint16_t new_counter)
 	}
 
 	write_halfword(next_counter_addr, ~new_counter);
+	return 0;
+}
+
+/* OTP is 0xFFFF after erase so setting all bits to 0 so a full erase is needed
+ * to reset
+ */
+#define STATE_ENTERED 0x0000
+#define STATE_NOT_ENTERED 0xFFFF
+
+int update_life_cycle_state(enum lcs next_lcs)
+{
+	int err;
+	enum lcs current_lcs = 0;
+
+	if (next_lcs == UNKNOWN) {
+		return -EINVALIDLCS;
+	}
+
+	err = read_life_cycle_state(&current_lcs);
+	if (err != 0) {
+		return err;
+	}
+
+	if (next_lcs < current_lcs) {
+		/* Is is only possible to transition into a higher state */
+		return -EINVALIDLCS;
+	}
+
+	if (next_lcs == current_lcs) {
+		/* The same LCS is a valid argument, but nothing to do so return success */
+		return 0;
+	}
+
+	/* As the device starts in ASSEMBLY, it is not possible to write it */
+	if (current_lcs == ASSEMBLY && next_lcs == PROVISION) {
+		write_halfword(&(p_bl_storage_data->lcs.provisioning), STATE_ENTERED);
+		return 0;
+	}
+
+	if (current_lcs == PROVISION && next_lcs == SECURE) {
+		write_halfword(&(p_bl_storage_data->lcs.secure), STATE_ENTERED);
+		return 0;
+	}
+
+	if (current_lcs == SECURE && next_lcs == DECOMMISSIONED) {
+		write_halfword(&(p_bl_storage_data->lcs.decommissioned), STATE_ENTERED);
+		return 0;
+	}
+
+	/* This will be the case if any invalid transition is tried */
+	return -EINVALIDLCS;
+}
+
+int read_life_cycle_state(enum lcs *lcs)
+{
+	if (lcs == NULL) {
+		return -EINVAL;
+	}
+
+	uint16_t provisioning = nrfx_nvmc_otp_halfword_read(
+		(uint32_t) &p_bl_storage_data->lcs.provisioning);
+	uint16_t secure = nrfx_nvmc_otp_halfword_read((uint32_t) &p_bl_storage_data->lcs.secure);
+	uint16_t decommissioned = nrfx_nvmc_otp_halfword_read(
+		(uint32_t) &p_bl_storage_data->lcs.decommissioned);
+
+	if (provisioning == STATE_NOT_ENTERED
+		&& secure == STATE_NOT_ENTERED
+		&& decommissioned == STATE_NOT_ENTERED) {
+		*lcs = ASSEMBLY;
+	} else if (provisioning == STATE_ENTERED
+			   && secure == STATE_NOT_ENTERED
+			   && decommissioned == STATE_NOT_ENTERED) {
+		*lcs = PROVISION;
+	} else if (provisioning == STATE_ENTERED
+			   && secure == STATE_ENTERED
+			   && decommissioned == STATE_NOT_ENTERED) {
+		*lcs = SECURE;
+	} else if (provisioning == STATE_ENTERED
+			   && secure == STATE_ENTERED
+			   && decommissioned == STATE_ENTERED) {
+		*lcs = DECOMMISSIONED;
+	} else {
+		/* To reach this the OTP must be corrupted or reading failed */
+		return -EREADLCS;
+	}
+
 	return 0;
 }
