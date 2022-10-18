@@ -158,11 +158,10 @@ endchoice # NRF_CLOUD_PGPS_STORAGE
 if NRF_CLOUD_PGPS_STORAGE_PARTITION
 
 config NRF_CLOUD_PGPS_PARTITION_SIZE
-	int "Size of flash partition for P-GPS data storage"
-	default 86016
+	hex "Size of flash partition for P-GPS data storage"
+	default 0x15000
 	help
-	  This must be >= NRF_CLOUD_PGPS_NUM_PREDICTIONS times 2048, which is
-	  the nRF9160 flash page size.
+	  This must be at least 2048 bytes times NRF_COUND_PGPS_NUM_PREDICTIONS.
 
 config NRF_CLOUD_PGPS_PARTITION_ALIGN
 	hex "Align P-GPS partition to flash block boundary"
