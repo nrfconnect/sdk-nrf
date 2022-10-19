@@ -14,35 +14,191 @@
 #include "tfm_plat_otp.h"
 #include <nrf_cc3xx_platform.h>
 #include "tfm_strnlen.h"
+#define CONFIG_SB_PUBLIC_KEY_HASH_LEN 16
+#include "bl_storage.h"
+#include <nrfx_nvmc.h>
 
-static enum tfm_security_lifecycle_t map_otp_lcs_to_tfm_slc(enum plat_otp_lcs_t lcs)
-{
+
+static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(lcs_t lcs){
 	switch (lcs) {
-	case PLAT_OTP_LCS_ASSEMBLY_AND_TEST:
+	case ASSEMBLY:
 		return TFM_SLC_ASSEMBLY_AND_TEST;
-	case PLAT_OTP_LCS_PSA_ROT_PROVISIONING:
+	case PROVISION:
 		return TFM_SLC_PSA_ROT_PROVISIONING;
-	case PLAT_OTP_LCS_SECURED:
+	case SECURE:
 		return TFM_SLC_SECURED;
-	case PLAT_OTP_LCS_DECOMMISSIONED:
+	case DECOMMISSIONED:
 		return TFM_SLC_DECOMMISSIONED;
-	case PLAT_OTP_LCS_UNKNOWN:
+	case UNKNOWN:
 	default:
 		return TFM_SLC_UNKNOWN;
 	}
 }
 
+static lcs_t map_tfm_slc_to_bl_storage_lcs(enum tfm_security_lifecycle_t lcs){
+	switch (lcs) {
+	case TFM_SLC_ASSEMBLY_AND_TEST:
+		return ASSEMBLY;
+	case TFM_SLC_PSA_ROT_PROVISIONING:
+		return PROVISION;
+	case TFM_SLC_SECURED:
+		return SECURE;
+	case TFM_SLC_DECOMMISSIONED:
+		return DECOMMISSIONED;
+	case TFM_SLC_UNKNOWN:
+	default:
+		return UNKNOWN;
+	}
+}
+
+/* This is temporary solution until the bl_storage API is available in TF-M
+ * This points to the UICR OTP region
+ */
+/* Taken from nrf/subsys/bootloader/include/dummy_values */
+#define PM_PROVISION_ADDRESS 0xFF8100
+static const struct bl_storage_data *p_bl_storage_data =
+	(struct bl_storage_data *)PM_PROVISION_ADDRESS;
+
+#define STATE_LEFT 0x0000
+#define STATE_NOT_LEFT 0xFFFF
+
+
+/** Function for reading a half-word (2 byte value) from OTP.
+ *
+ * \details The flash in OTP supports only aligned 4 byte read operations.
+ *          This function reads the encompassing 4 byte word, and returns the
+ *          requested half-word.
+ *
+ * \param[in]  ptr  Address to read.
+ *
+ * \return value
+ */
+static uint16_t read_halfword(const uint16_t *ptr)
+{
+	bool top_half = ((uint32_t)ptr % 4); /* Addr not div by 4 */
+	uint32_t target_addr = (uint32_t)ptr & ~3; /* Floor address */
+	uint32_t val32 = *(uint32_t *)target_addr;
+	__DSB(); /* Because of nRF9160 Erratum 7 */
+
+	return (top_half ? (val32 >> 16) : val32) & 0x0000FFFF;
+}
+
+/** Function for writing a half-word (2 byte value) to OTP.
+ *
+ * \details The flash in OTP supports only aligned 4 byte write operations.
+ *          This function writes to the encompassing 4 byte word, masking the
+ *          other half-word with 0xFFFF so it is left untouched.
+ *
+ * \param[in]  ptr  Address to write to.
+ * \param[in]  val  Value to write into @p ptr.
+ */
+static void write_halfword(const uint16_t *ptr, uint16_t val)
+{
+	bool top_half = (uint32_t)ptr % 4; /* Addr not div by 4 */
+	uint32_t target_addr = (uint32_t)ptr & ~3; /* Floor address */
+
+	uint32_t val32 = (uint32_t)val | 0xFFFF0000;
+	uint32_t val32_shifted = ((uint32_t)val << 16) | 0x0000FFFF;
+
+	nrfx_nvmc_word_write(target_addr, top_half ? val32_shifted : val32);
+}
+
+
+/* Can later be replaced by a bl_storage call */
+int read_lcs_from_otp(lcs_t *lcs){
+	uint16_t left_assembly = read_halfword(&p_bl_storage_data->lcs.left_assembly);
+	uint16_t left_provisioning =read_halfword(&p_bl_storage_data->lcs.left_provisioning);
+	uint16_t left_secure = read_halfword(&p_bl_storage_data->lcs.left_secure);
+
+	if (left_assembly == STATE_NOT_LEFT) {
+		(*lcs) = ASSEMBLY;
+		return 0;
+	}
+
+	if (left_assembly == STATE_LEFT && left_provisioning == STATE_NOT_LEFT) {
+		(*lcs) = PROVISION;
+		return 0;
+	}
+
+	if (left_provisioning == STATE_LEFT && left_secure == STATE_NOT_LEFT) {
+		(*lcs) = SECURE;
+		return 0;
+	}
+
+	if (left_provisioning == STATE_LEFT) {
+		(*lcs) = DECOMMISSIONED;
+		return 0;
+	}
+
+	/* To reach this the OTP must be corrupted or reading failed */
+	return -EREADLCS;
+}
+
+int update_lcs_in_otp(lcs_t next_lcs){
+	int err;
+	lcs_t current_lcs = 0;
+
+	if(next_lcs == UNKNOWN){
+		return -EINVALIDLCS;
+	}
+
+	err = read_lcs_from_otp(&current_lcs);
+	if (err != 0) {
+		return err;
+	}
+
+	if (next_lcs < current_lcs) {
+		/* Is is only possible to transition into a higher state */
+		return -EINVALIDLCS;
+	}
+
+	if (next_lcs == current_lcs) {
+		/* The same LCS is a valid argument, but nothing to do so return success */
+		return 0;
+	}
+
+	/* As the device starts in ASSEMBLY, it is not possible to write it */
+	if (current_lcs == ASSEMBLY && next_lcs == PROVISION) {
+		write_halfword(&(p_bl_storage_data->lcs.left_assembly), STATE_LEFT);
+		return 0;
+	}
+
+	if (current_lcs == PROVISION && next_lcs == SECURE) {
+		write_halfword(&(p_bl_storage_data->lcs.left_provisioning), STATE_LEFT);
+		return 0;
+	}
+
+	if (current_lcs == SECURE && next_lcs == DECOMMISSIONED) {
+		write_halfword(&(p_bl_storage_data->lcs.left_secure), STATE_LEFT);
+		return 0;
+	}
+
+	/* This will be the case if any invalid transition is tried */
+	return -EINVALIDLCS;
+}
+
+/* End of  temporary solution */
+
 enum tfm_security_lifecycle_t tfm_attest_hal_get_security_lifecycle(void)
 {
-	enum plat_otp_lcs_t otp_lcs;
-	enum tfm_plat_err_t err;
+	int err;
+	lcs_t otp_lcs;
 
-	err = tfm_plat_otp_read(PLAT_OTP_ID_LCS, sizeof(otp_lcs), (uint8_t *)&otp_lcs);
-	if (err != TFM_PLAT_ERR_SUCCESS) {
+
+	err = read_lcs_from_otp(&otp_lcs);
+	if (err != 0) {
 		return TFM_SLC_UNKNOWN;
 	}
 
-	return map_otp_lcs_to_tfm_slc(otp_lcs);
+	return map_bl_storage_lcs_to_tfm_slc(otp_lcs);
+}
+
+int tfm_attest_update_security_lifecycle_otp(enum tfm_security_lifecycle_t slc){
+	lcs_t next_lcs;
+
+	next_lcs = map_tfm_slc_to_bl_storage_lcs(slc);
+
+	return update_lcs_in_otp(next_lcs);
 }
 
 enum tfm_plat_err_t tfm_attest_hal_get_verification_service(uint32_t *size, uint8_t *buf)
