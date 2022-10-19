@@ -1313,8 +1313,6 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		wifi_nrf_utils_q_free(hpriv->opriv,
 				      hal_dev_ctx->event_q);
 		wifi_nrf_osal_mem_free(hpriv->opriv,
-				       hal_dev_ctx->rx_buf_info);
-		wifi_nrf_osal_mem_free(hpriv->opriv,
 				       hal_dev_ctx);
 		hal_dev_ctx = NULL;
 		goto out;
