@@ -28,6 +28,8 @@
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
 
+#include <net/nrf_cloud_os.h>
+
 #include <dk_buttons_and_leds.h>
 #include "uart/uart_shell.h"
 
@@ -222,6 +224,20 @@ void main(void)
 	__ASSERT(mosh_shell != NULL, "Failed to get shell backend");
 
 	mosh_print_version_info();
+
+#if defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_MQTT)
+	/* Due to iperf3, we cannot let nrf cloud lib to initialize cJSON lib to be
+	 * using kernel heap allocations (i.e. k_ prepending functions).
+	 * Thus, we use standard c alloc/free, i.e. "system heap".
+	 */
+	struct nrf_cloud_os_mem_hooks hooks = {
+		.malloc_fn = malloc,
+		.calloc_fn = calloc,
+		.free_fn = free,
+	};
+
+	nrf_cloud_os_mem_hooks_init(&hooks);
+#endif
 
 	k_work_queue_start(
 		&mosh_common_work_q,
