@@ -275,9 +275,14 @@ int method_wifi_init(void)
 	running = false;
 	current_scan_result_count = 0;
 	latest_scan_result_count = 0;
-	const struct device *wifi_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_location_wifi));
+	const struct device *wifi_dev;
 
 	wifi_iface = NULL;
+#if defined(CONFIG_WIFI_NRF700X)
+	wifi_dev = device_get_binding("wlan0");
+#else
+	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_location_wifi));
+#endif
 	if (!device_is_ready(wifi_dev)) {
 		LOG_ERR("Wi-Fi device %s not ready", wifi_dev->name);
 		return -ENODEV;
