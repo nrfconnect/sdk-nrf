@@ -756,6 +756,8 @@
 .. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nrfcloud.com/Devices/DeviceAssociations/Provisioning#just-in-time-provisioning
 .. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/Devices/DeviceAssociations/Provisioning/
 .. _`nRF Cloud Security`: https://docs.nrfcloud.com/Devices/DeviceSecurity/Security
+.. _`nRF Cloud FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTA
+.. _`nRF Cloud MQTT FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTA/#mqtt-job-execution-notifications
 .. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTATutorial
 .. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
 .. _`Securely Generating Credentials on the nRF9160`: https://docs.nrfcloud.com/Devices/DeviceSecurity/Credentials

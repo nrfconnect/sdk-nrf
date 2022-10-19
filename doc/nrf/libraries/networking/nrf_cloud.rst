@@ -133,12 +133,12 @@ The device passes this information by writing a ``fota_v2`` field containing an 
 :c:func:`nrf_cloud_service_info_json_encode` can be used to generate the proper JSON data to enable FOTA.
 Additionally, :c:func:`nrf_cloud_shadow_device_status_update` can be used to generate the JSON data and perform the shadow update.
 
-Following are the three supported FOTA types:
+Following are the supported FOTA types:
 
-* ``APP``
-* ``MODEM``
-* ``BOOT``
-* ``MDM_FULL``
+* ``"APP"`` - updates the application.
+* ``"BOOT"`` - updates the :ref:`upgradable_bootloader`.
+* ``"MDM_FULL"`` - :ref:`Full modem FOTA <full_dfu>` updates the entire modem firmware image. Full modem updates require |external_flash_size| of available space. For the nRF9160, a full modem firmware image is approximately 2 MB. Consider the power and network costs before deploying full modem FOTA updates.
+* ``"MODEM"`` - :ref:`Delta modem FOTA <nrf_modem_delta_dfu>` applies incremental changes between specific versions of the modem firmware. Delta modem updates are much smaller in size and do not require external memory.
 
 For example, a device that supports all the FOTA types writes the following data into the device shadow:
 
@@ -158,9 +158,14 @@ For example, a device that supports all the FOTA types writes the following data
    }}}}}
 
 You can initiate FOTA updates through `nRF Cloud`_ or by using the `nRF Cloud Device API`_.
-When the device receives the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event, the application must perform any necessary cleanup and perform a reboot to complete the update.
+When the device receives FOTA update information from nRF Cloud, the nRF Cloud library sends the :c:enumerator:`NRF_CLOUD_EVT_FOTA_START` event to the application.
+The FOTA update is in progress until the application receives either the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` or :c:enumerator:`NRF_CLOUD_EVT_FOTA_ERROR` event.
+When receiving the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event, the application must perform any necessary cleanup and reboot the device to complete the update.
 The message payload of the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event contains the :c:enum:`nrf_cloud_fota_type` value.
 If the value equals :c:enumerator:`NRF_CLOUD_FOTA_MODEM_DELTA`, the application can optionally avoid a reboot by reinitializing the modem library and then calling the :c:func:`nrf_cloud_modem_fota_completed` function.
+
+See `nRF Cloud FOTA`_ for details on the FOTA service in nRF Cloud.
+See `nRF Cloud MQTT FOTA`_ for MQTT-specific FOTA details such as topics and payload formats.
 
 Building FOTA images
 ====================
@@ -173,6 +178,10 @@ The UI populates the ``Version`` field from only the |NCS| version field in the 
 
 Alternatively, you can use the :file:`app_update.bin` file to create an update bundle, but you need to enter the ``Name`` and ``Version`` fields manually.
 See `nRF Cloud Getting Started FOTA documentation`_ to learn how to create an update bundle.
+
+Modem firmware is controlled by Nordic Semiconductor.
+A user cannot build or upload modem firmware images.
+Modem FOTA update bundles (full and delta) are automatically uploaded to nRF Cloud and are available to all users.
 
 .. _lib_nrf_cloud_data:
 
