@@ -15,20 +15,20 @@ Overview
 ********
 
 To get a position fix, a :term:`Global Navigation Satellite System (GNSS)` receiver needs information such as the satellite orbital data, exact date and time of the day, and accurate hardware clock frequency data.
-GPS satellites broadcast this information in a pattern, which repeats every 12.5 minutes.
+GPS satellites broadcast this information in a pattern that repeats every 12.5 minutes.
 
 Predicted GPS (P-GPS) is a form of assistance that reduces the :term:`Time to First Fix (TTFF)`, the time needed by a GNSS module to estimate its position.
 It is provided through :term:`nRF Cloud` services.
 In P-GPS, nRF Cloud provides data containing information about the estimated orbits (`Ephemerides <Ephemeris_>`_) of the 32 GPS satellites for up to two weeks.
 Each set of ephemerides predictions is valid for a specific four-hour period within the set of all provided predictions.
-A device using P-GPS downloads the ephemeris predictions from the cloud, it stores them in its flash memory, and later it injects them into the GNSS module when needed.
+A device using P-GPS downloads the ephemeris predictions from the cloud, stores them in its flash memory, and later injects them into the GNSS module when needed.
 
 P-GPS is designed for devices that are frequently disconnected from the cloud but need periodic GNSS fixes as quickly as possible to save power.
 This is possible because a device can download the broadcasted information and predictions of satellite data provided through P-GPS (or also A-GPS) at a faster rate from nRF Cloud than from the data links of the satellites.
 However, P-GPS should not be used for general use cases that already work with :term:`Assisted GPS (A-GPS)` only.
 
 .. note::
-   When using two-week ephemeris prediction sets, the TTFF towards the end of the second week will increase due to the accumulated errors in the predictions and the decrease in the number of satellite ephemerides in the later prediction periods.
+   When using two-week ephemeris prediction sets, the TTFF towards the end of the second week increases due to the accumulated errors in the predictions and the decreases in the number of satellite ephemerides in the later prediction periods.
 
 P-GPS requires a cloud connection approximately once a week, depending on the configuration settings.
 A-GPS assistance data expires after two hours.
@@ -44,21 +44,19 @@ With proper configuration, A-GPS can be used with P-GPS when a cloud connection 
 This is possible as long as the stored P-GPS data is still valid, and the current date and time (accurate to a few seconds) and the most recent location (accurate to a few dozen kilometers) are known.
 
 .. note::
-   To use the nRF Cloud P-GPS service, an nRF Cloud account is needed, and the device needs to be associated with a user's account.
+   To use the nRF Cloud P-GPS service, you need an nRF Cloud account, and the device needs to be associated with the account.
 
 Configuration
 *************
 
-Configure the following option to enable or disable the use of this library:
+Configure the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` Kconfig option to enable or disable the use of this library.
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS`
-
-Configure one of the following to control the network transport for P-GPS requests and responses:
+Configure one of the following options to control the network transport for P-GPS requests and responses:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT`
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE`
 
-Configure one of the following to control the network transport for downloading P-GPS predictions:
+Configure one of the following options to control the network transport for downloading P-GPS predictions:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP`
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM`
@@ -71,12 +69,11 @@ Configure these additional options to refine the behavior of P-GPS:
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE`
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT`
 
-Configure the following option if you need your application to also use A-GPS, for coarse time and position data and to get the fastest TTFF:
+Configure the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS` option if you need your application to also use A-GPS, for time and coarse position data and to get the fastest TTFF.
+Using A-GPS also improves the accuracy because of ionospheric corrections.
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_AGPS`
-
-  .. note::
-     Disable this option if you do not want to use A-GPS (due to data costs, low power requirements, or expected frequent loss of cloud connectivity).
+.. note::
+   Disable this option if you do not want to use A-GPS (due to data costs or expected frequent loss of cloud connectivity).
 
 You must also configure the following options for storing settings, for having accurate clock time, and for having a location to store predictions:
 
@@ -85,21 +82,24 @@ You must also configure the following options for storing settings, for having a
 * :kconfig:option:`CONFIG_SETTINGS_FCB`
 * :kconfig:option:`CONFIG_DATE_TIME`
 
-The P-GPS library requires a storage location in the flash memory where to store the P-GPS prediction data.
+The P-GPS library requires a storage location in the flash memory for storing the P-GPS prediction data.
 There are three ways to define this storage location:
 
 * To use a dedicated partition, enable the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION` option.
 * To use the MCUboot secondary partition as storage, enable the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY` option.
-   Use this option if the flash memory for your application is too full to use a dedicated partition, and the application uses MCUboot for FOTA updates but not for MCUboot itself.
-   Do not use this option if you are using MCUboot as a second-stage upgradable bootloader and also have FOTA updates enabled for MCUboot itself, not just the application (using :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT`).
-   The P-GPS library will otherwise prevent the MCUboot update from fully completing, and the first-stage immutable bootloader will revert MCUboot to its previous image.
+
+  Use this option if the flash memory for your application is too full to use a dedicated partition, and the application uses MCUboot for FOTA updates but not for MCUboot itself.
+
+  Do not use this option if you are using MCUboot as a second-stage upgradable bootloader and also have FOTA updates enabled for MCUboot itself, not just the application (using :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT`).
+  Otherwise, the P-GPS library prevents the full completion of MCUboot update, and the first-stage immutable bootloader reverts MCUboot to its previous image.
 * To use an application-specific storage, enable the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_CUSTOM` option.
-   You must also pass the address and the size of your custom location in the flash memory to the :c:func:`nrf_cloud_pgps_init` function.
 
-   .. note::
-      The address must be aligned to a flash page boundary, and the size must be equal to or greater than 2048 bytes times the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` option.
+  You must also pass the address and the size of your custom location in the flash memory to the :c:func:`nrf_cloud_pgps_init` function.
 
-   Use the third option if you do not use MCUboot and you want complete control over where to store P-GPS data in the flash memory.
+  .. note::
+     The address must be aligned to a flash page boundary, and the size must be equal to or greater than 2048 bytes times the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` option.
+
+  Use the third option if you do not use MCUboot and you want complete control over the storing location of P-GPS data in the flash memory.
 
 See :ref:`configure_application` for information on how to change configuration options.
 
@@ -115,11 +115,11 @@ In these cases, predictions might be unavailable until a connection is establish
    Each prediction requires 2 KB of flash. For prediction periods of 240 minutes (four hours), and with 42 predictions per week, the flash requirement adds up to 84 KB.
 
 The P-GPS subsystem's :c:func:`nrf_cloud_pgps_init` function takes a pointer to a :c:struct:`nrf_cloud_pgps_init_param` structure.
-The structure must specify, if :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_CUSTOM` is enabled, the storage base address and the storage size in the flash memory where the P-GPS subsystem stores predictions.
+If the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_CUSTOM` option is enabled, the structure must specify the storage base address and the storage size in the flash memory where the P-GPS subsystem stores predictions.
 It can optionally pass a pointer to a :c:func:`pgps_event_handler_t` callback function.
 
 .. note::
-   The storage base address must be aligned to a flash memory page boundary.
+   The storage base address must be aligned to the flash memory page boundary.
 
 Time
 ****
@@ -164,20 +164,20 @@ Requesting and processing P-GPS data
 
 The library offers two different ways to control the timing of P-GPS cloud requests:
 
-* Direct:
+* Direct
 
   * If :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT` is enabled:
 
-   * Call the function :c:func:`nrf_cloud_pgps_request_all` to request a full set of predictions.
-   * Alternatively, pass a properly initialized :c:struct:`gps_pgps_request` structure to the :c:func:`nrf_cloud_pgps_request` function.
+    * Call the function :c:func:`nrf_cloud_pgps_request_all` to request a full set of predictions.
+    * Alternatively, pass a properly initialized :c:struct:`gps_pgps_request` structure to the :c:func:`nrf_cloud_pgps_request` function.
 
   * If :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` and :kconfig:option:`CONFIG_NRF_CLOUD_REST` are enabled:
 
-   * Pass a properly initialized :c:struct:`nrf_cloud_rest_pgps_request` structure to the :c:func:`nrf_cloud_rest_pgps_data_get` function.
-   * Pass the response to the :c:func:`nrf_cloud_pgps_process` function.
-   * If either call fails, call the :c:func:`nrf_cloud_pgps_request_reset` function.
+    * Pass a properly initialized :c:struct:`nrf_cloud_rest_pgps_request` structure to the :c:func:`nrf_cloud_rest_pgps_data_get` function.
+    * Pass the response to the :c:func:`nrf_cloud_pgps_process` function.
+    * If either call fails, call the :c:func:`nrf_cloud_pgps_request_reset` function.
 
-* Indirect:
+* Indirect
 
    * Call :c:func:`nrf_cloud_pgps_init`.
    * Call :c:func:`nrf_cloud_pgps_preemptive_updates`.
@@ -217,19 +217,19 @@ Following are the two GNSS events relating to P-GPS that an application receives
 * :c:enumerator:`NRF_MODEM_GNSS_EVT_AGPS_REQ` - Occurs when the GNSS module requires assistance data.
 * :c:enumerator:`NRF_MODEM_GNSS_EVT_FIX` - Occurs once a fix is attained.
 
-When the application receives the :c:enumerator:`NRF_MODEM_GNSS_EVT_AGPS_REQ` event, it must call :c:func:`nrf_cloud_pgps_notify_prediction`.
-This event results in the call back of the application's :c:func:`pgps_event_handler_t` function when a valid P-GPS prediction set is available.
-It will pass the :c:enum:`PGPS_EVT_AVAILABLE` event and a pointer to :c:struct:`nrf_cloud_pgps_prediction` to the handler.
+When the application receives the :c:enumerator:`NRF_MODEM_GNSS_EVT_AGPS_REQ` event, it must call the :c:func:`nrf_cloud_pgps_notify_prediction` function.
+This event results in the callback of the application's :c:func:`pgps_event_handler_t` function when a valid P-GPS prediction set is available.
+It passes the :c:enum:`PGPS_EVT_AVAILABLE` event and a pointer to the :c:struct:`nrf_cloud_pgps_prediction` structure to the handler.
 
-The application must pass this prediction to :c:func:`nrf_cloud_pgps_inject`, along with either the :c:struct:`nrf_modem_gnss_agps_data_frame` read from the GNSS interface after the :c:enumerator:`NRF_MODEM_GNSS_EVT_AGPS_REQ` event or NULL.
+The application must pass this prediction to the :c:func:`nrf_cloud_pgps_inject` function, along with either the :c:struct:`nrf_modem_gnss_agps_data_frame` structure read from the GNSS interface after the :c:enumerator:`NRF_MODEM_GNSS_EVT_AGPS_REQ` event or NULL.
 
-If the use case for the application is such that the device will not move distances greater than a few dozen kilometers before it gets a new GNSS fix, it can pass the latitude and longitude read after the :c:enumerator:`NRF_MODEM_GNSS_EVT_FIX` event to :c:func:`nrf_cloud_pgps_set_location`.
-The P-GPS subsystem will use this stored location for the next GNSS request for position assistance when A-GPS assistance is not enabled or is unavailable.
-If the use case involves possible long-distance travel between fix attempts, such a mechanism can be detrimental to short TTFF, as the saved position might be too inaccurate to be a benefit.
+If the device does not move distances longer than a few dozen kilometers before it gets a new GNSS fix, it can pass the latitude and longitude read after the :c:enumerator:`NRF_MODEM_GNSS_EVT_FIX` event to the :c:func:`nrf_cloud_pgps_set_location` function.
+The P-GPS subsystem uses this stored location for the next GNSS request for position assistance when A-GPS assistance is not enabled or is unavailable.
+If the device moves further between fix attempts, such a mechanism can be detrimental to short TTFF, as the saved position might be too inaccurate to be useful.
 
-The application can also call :c:func:`nrf_cloud_pgps_preemptive_updates` to discard expired predictions and replace them with newer ones, prior to the expiration of the entire set of predictions.
-This can be useful for customer use cases where cloud connections are available infrequently.
-The :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` sets the minimum number of valid predictions remaining before such an update occurs.
+The application can also call the :c:func:`nrf_cloud_pgps_preemptive_updates` function to discard expired predictions and replace them with newer ones, before the expiration of the entire set of predictions.
+This can be useful in use cases where cloud connections are available infrequently.
+The :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` option sets the minimum number of valid predictions remaining before such an update occurs.
 
 For best performance, applications can call the P-GPS functions mentioned in this section from workqueue handlers rather than directly from various callback functions.
 
