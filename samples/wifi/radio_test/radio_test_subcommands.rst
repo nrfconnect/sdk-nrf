@@ -1,46 +1,18 @@
-.. _wifi_radio_test:
+.. _wifi_radio_subcommands:
 
-Wi-Fi: Radio test
-#################
+Radio test subcommands
+######################
 
 .. contents::
    :local:
    :depth: 2
 
-The Wi-Fi Radio test sample demonstrates how to configure the Wi-Fi radio in a specific mode and then test its performance.
-The sample provides a set of predefined commands that allow you to configure the radio in the following modes:
-
-* Modulated carrier TX
-* Modulated carrier RX
-
-Requirements
-************
-
-The sample supports the following development kit:
-
-.. table-from-sample-yaml::
-
-Overview
-********
-
-To run the tests, connect to the development kit through the serial port and send shell commands.
-Zephyr's :ref:`zephyr:shell_api` module is used to handle the commands.
-
-You can start running ``wifi_radio_test`` subcommands to set up and control the radio.
-See :ref:`wifi_radio_test_subcmds` for a list of available subcommands.
-
-In the Modulated carrier RX mode, you can use the ``get_stats`` subcommand to display the statistics.
-See :ref:`wifi_radio_test_stats` for a list of available statistics.
-
-User interface
-**************
-
-``wifi_radio_test`` is the Wi-Fi radio test command and it supports the following subcommands:
+``wifi_radio_test`` is the Wi-Fi radio test command and it supports the following subcommands.
 
 .. _wifi_radio_test_subcmds:
 
 Wi-Fi radio test subcommands
-============================
+****************************
 
 .. list-table:: Wi-Fi radio test subcommands
    :header-rows: 1
@@ -140,7 +112,7 @@ Wi-Fi radio test subcommands
 .. _wifi_radio_test_stats:
 
 Wi-Fi radio test statistics
-===========================
+***************************
 
 .. list-table:: Wi-Fi radio test statistics
    :header-rows: 1
@@ -162,7 +134,7 @@ Wi-Fi radio test statistics
 .. _wifi_radio_test_rf_params:
 
 RF parameters
-=============
+*************
 
 .. list-table:: RF parameters
    :header-rows: 1
@@ -235,138 +207,3 @@ RF parameters
      - Signed
      - 0.25 dBm
      - Voltage related power backoff.
-
-Building and running
-********************
-
-.. |sample path| replace:: :file:`samples/wifi/radio_test`
-
-.. include:: /includes/build_and_run.txt
-
-Currently, the following configurations are supported:
-
-* 7002 DK + QSPI
-* 7002 EK + SPIM
-
-
-To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
-The following is an example of the CLI command:
-
-.. code-block:: console
-
-   west build -b nrf7002dk_nrf5340_cpuapp
-
-To build for the nRF7002 EK and nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002_ek``.
-The following is an example of the CLI command:
-
-.. code-block:: console
-
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002_ek
-
-See also :ref:`cmake_options` for instructions on how to provide CMake options.
-
-
-Testing
-=======
-
-|test_sample|
-
-#. |connect_kit|
-#. |connect_terminal|
-#. Test the sample by running the following commands:
-
-   a. To display the current configuration, use the following command:
-
-      .. code-block:: console
-
-          wifi_radio_test show_config
-
-      The sample shows the following output:
-
-      .. code-block:: console
-
-          ************* Configured Parameters ***********
-          rf_params = 00 00 00 00 00 00 2C 00 00 00 00 00 00 00 00 30 20 30 20 20 20 30 30 30 00 00 00 00 50 EC 00 00 00 00 00 00 00 00 00 00 00 00
-          tx_pkt_tput_mode = 0
-          tx_pkt_sgi = 0
-          tx_pkt_preamble = 0
-          tx_pkt_mcs = -1
-          tx_pkt_rate = -1
-          tx_pkt_gap = 200
-          phy_calib_rxdc = 1
-          phy_calib_txdc = 1
-          phy_calib_txpow = 1
-          phy_calib_rxiq = 1
-          phy_calib_txiq = 1
-          chnl_primary = 1
-          tx_pkt_num = -1
-          tx_pkt_len = 1400
-          tx_power = 0
-          he_ltf = 0
-          he_gi = 0
-          tx = 0
-          rx = 0
-
-   #. To run a continuous Orthogonal frequency-division mulitplexing (OFDM) TX traffic sequence with the following configuration:
-
-      * Channel: 14
-      * Frame duration: 5484 us
-      * Inter-frame gap: 4200 us
-
-      Execute the following sequence of commands:
-
-      .. code-block:: console
-
-          wifi_radio_test rx 0
-          wifi_radio_test tx 0
-          wifi_radio_test tx_pkt_tput_mode 0
-          wifi_radio_test tx_pkt_len 4095
-          wifi_radio_test chnl_primary 14
-          wifi_radio_test tx_pkt_rate 6
-          wifi_radio_test tx_power 0
-          wifi_radio_test tx_pkt_gap 4200
-          wifi_radio_test tx 1
-
-
-   #. To run a continuous Direct-sequence spread spectrum (DSSS) TX traffic sequence with the following configuration:
-
-      * Channel: 1
-      * Frame duration: 8500 us
-      * Inter-frame gap: 8600 us
-
-      Execute the following sequence of commands:
-
-      .. code-block:: console
-
-          wifi_radio_test rx 0
-          wifi_radio_test tx 0
-          wifi_radio_test tx_pkt_tput_mode 0
-          wifi_radio_test tx_pkt_len 1024
-          wifi_radio_test chnl_primary 1
-          wifi_radio_test tx_pkt_rate 1
-          wifi_radio_test tx_power 0
-          wifi_radio_test tx_pkt_gap 8600
-          wifi_radio_test tx 1
-
-.. note::
-
-   * For regulatory certification, it is advisable to run the TX streams in Legacy OFDM or DSSS modes only (``wifi_radio_test tx_pkt_tput_mode 0``).
-   * The frame duration can be calculated using the formula::
-
-         D = ((L * 8) / R ) + P
-
-      where::
-
-         D : Frame duration (us)
-         L : Frame length (bytes)
-         R : Data rate (Mbps)
-         P : PHY overhead duration (us) (Values: 24us - Legacy OFDM, 192us - DSSS)
-
-Dependencies
-************
-
-This sample uses the following Zephyr library:
-
-* :ref:`zephyr:shell_api`:
-
-  * ``include/shell/shell.h``
