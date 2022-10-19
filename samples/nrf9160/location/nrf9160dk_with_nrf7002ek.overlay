@@ -1,0 +1,19 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Use high drive mode on SPI pins that handle communication with nRF7002
+ * so that SCK frequency > 4 MHz can be used. */
+ &spi3_default {
+	group1 {
+		nordic,drive-mode = <NRF_DRIVE_H0H1>;
+	};
+};
+
+/* Disabled because of conflicts on P0.00 and P0.01 - Arduino pins D0 and D1
+ * (iovdd-ctrl-gpios and bucken-gpios in nrf7002_ek, respectively). */
+&uart1 {
+	status = "disabled";
+};
