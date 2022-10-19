@@ -15,10 +15,10 @@
 #include <app-common/zap-generated/attribute-id.h>
 #include <app-common/zap-generated/attribute-type.h>
 #include <app-common/zap-generated/cluster-id.h>
+#include <app/clusters/identify-server/identify-server.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
 #include <app/util/attribute-storage.h>
-
 #include <credentials/DeviceAttestationCredsProvider.h>
 #include <credentials/examples/DeviceAttestationCredsExample.h>
 
@@ -46,7 +46,11 @@ constexpr size_t kAppEventQueueSize = 10;
 K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), kAppEventQueueSize, alignof(AppEvent));
 k_timer sFunctionTimer;
 
+Identify sIdentify = { WindowCovering::Endpoint(), AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
+		       EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_VISIBLE_LED };
+
 LEDWidget sStatusLED;
+LEDWidget sIdentifyLED;
 FactoryResetLEDsWrapper<1> sFactoryResetLEDs{ { FACTORY_RESET_SIGNAL_LED } };
 
 bool sIsNetworkProvisioned = false;
@@ -57,6 +61,8 @@ bool sHaveBLEConnections = false;
 namespace LedConsts
 {
 constexpr uint32_t kBlinkRate_ms{ 500 };
+constexpr uint32_t kIdentifyBlinkRate_ms{ 500 };
+
 namespace StatusLed
 {
 	namespace Unprovisioned
@@ -121,6 +127,8 @@ CHIP_ERROR AppTask::Init()
 	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
 
 	sStatusLED.Init(SYSTEM_STATE_LED);
+	sIdentifyLED.Init(LIFT_STATE_LED);
+	sIdentifyLED.Set(false);
 
 	UpdateStatusLED();
 
@@ -189,6 +197,28 @@ CHIP_ERROR AppTask::StartApp()
 	}
 
 	return CHIP_NO_ERROR;
+}
+
+void AppTask::IdentifyStartHandler(Identify *)
+{
+	AppEvent event;
+	event.Type = AppEventType::IdentifyStart;
+	event.Handler = [](const AppEvent &) {
+		WindowCovering::Instance().GetLiftIndicator().SuppressOutput();
+		sIdentifyLED.Blink(LedConsts::kIdentifyBlinkRate_ms);
+	};
+	PostEvent(event);
+}
+
+void AppTask::IdentifyStopHandler(Identify *)
+{
+	AppEvent event;
+	event.Type = AppEventType::IdentifyStop;
+	event.Handler = [](const AppEvent &) {
+		sIdentifyLED.Set(false);
+		WindowCovering::Instance().GetLiftIndicator().ApplyLevel();
+	};
+	PostEvent(event);
 }
 
 void AppTask::ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged)

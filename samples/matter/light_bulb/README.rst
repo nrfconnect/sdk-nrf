@@ -150,6 +150,9 @@ LED 2:
     * Solid On - The light bulb is on.
     * Off - The light bulb is off.
 
+    Additionally, the LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
+    The command's argument can be used to specify the duration of the effect.
+
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_button1_start
     :end-before: matter_door_lock_sample_button1_end

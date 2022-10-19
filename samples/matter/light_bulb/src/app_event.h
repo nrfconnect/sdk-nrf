@@ -20,6 +20,8 @@ enum class AppEventType : uint8_t {
 	Timer,
 	UpdateLedState,
 	Lighting,
+	IdentifyStart,
+	IdentifyStop,
 	StartSMPAdvertising
 };
 

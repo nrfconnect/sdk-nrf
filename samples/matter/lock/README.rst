@@ -165,6 +165,9 @@ LED 2:
     * Off - The bolt is retracted and the door is unlocked.
     * Rapid Even Flashing (50 ms on/50 ms off during 2 s) - The simulated bolt is in motion from one position to another.
 
+    Additionally, the LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
+    The command's argument can be used to specify the duration of the effect.
+
 .. matter_door_lock_sample_button1_start
 
 Button 1:
