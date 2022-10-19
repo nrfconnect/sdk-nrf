@@ -914,6 +914,16 @@ To program the certificates and connect to nRF Cloud, complete the following ste
 #. Open the entry for your device in the **Devices** view.
 #. Observe that location and device information are shown in the device page.
 
+nRF9160 DK with nRF7002 EK Wi-Fi support
+========================================
+
+To build the MoSh sample with nRF9160 DK and nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002_ek``, ``-DDTC_OVERLAY_FILE=nrf9160dk_with_nrf7002ek.overlay`` and  ``-DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf`` options.
+For example:
+
+``west build -p -b nrf9160dk_nrf9160ns -- -DSHIELD=nrf7002_ek -DDTC_OVERLAY_FILE=nrf9160dk_with_nrf7002ek.overlay -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf``
+
+See :ref:`cmake_options` for more instructions on how to add these options.
+
 ESP8266 Wi-Fi support
 =====================
 
