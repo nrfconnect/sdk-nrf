@@ -182,6 +182,7 @@ static void mosh_print_version_info(void)
 #endif
 }
 
+#if defined(CONFIG_DK_LIBRARY)
 static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
 	if (has_changed & button_states & DK_BTN1_MSK) {
@@ -203,6 +204,7 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 		uart_toggle_power_state();
 	}
 }
+#endif
 
 void main(void)
 {
@@ -292,11 +294,16 @@ void main(void)
 	}
 #endif
 
+#if defined(CONFIG_DK_LIBRARY)
 	err = dk_buttons_init(button_handler);
 	if (err) {
 		printk("Failed to initialize DK buttons library, error: %d\n", err);
 	}
-
+	err = dk_leds_init();
+	if (err) {
+		printk("Cannot initialize LEDs (err: %d)\n", err);
+	}
+#endif
 	/* Application started successfully, mark image as OK to prevent
 	 * revert at next reboot.
 	 */
@@ -304,11 +311,6 @@ void main(void)
 	boot_write_img_confirmed();
 #endif
 	k_poll_signal_init(&mosh_signal);
-
-	err = dk_leds_init();
-	if (err) {
-		printk("Cannot initialize LEDs (err: %d)\n", err);
-	}
 
 #if defined(CONFIG_SHELL_BACKEND_SERIAL)
 	/* Resize terminal width and height of the shell to have proper command editing. */

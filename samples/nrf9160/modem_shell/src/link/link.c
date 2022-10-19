@@ -31,6 +31,7 @@
 
 #include "uart/uart_shell.h"
 #include "mosh_print.h"
+#include "mosh_defines.h"
 
 #if defined(CONFIG_MOSH_SMS)
 #include "sms.h"
@@ -51,7 +52,6 @@ struct pdn_activation_status_info {
 	uint8_t cid;
 };
 
-#define REGISTERED_STATUS_LED          DK_LED3
 
 static bool link_subscribe_for_rsrp;
 
@@ -167,8 +167,9 @@ static void link_registered_work(struct k_work *unused)
 
 	ARG_UNUSED(unused);
 
+#if defined(CONFIG_DK_LIBRARY)
 	dk_set_led_on(REGISTERED_STATUS_LED);
-
+#endif
 	memset(pdn_act_status_arr, 0,
 	       PDN_CONTEXTS_MAX * sizeof(struct pdn_activation_status_info));
 
@@ -367,7 +368,9 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		    evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING) {
 			k_work_submit_to_queue(&mosh_common_work_q, &registered_work);
 		} else {
+#if defined(CONFIG_DK_LIBRARY)
 			dk_set_led_off(REGISTERED_STATUS_LED);
+#endif
 		}
 		break;
 	case LTE_LC_EVT_CELL_UPDATE:

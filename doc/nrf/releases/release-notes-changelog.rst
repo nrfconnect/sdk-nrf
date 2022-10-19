@@ -215,6 +215,12 @@ nRF9160 samples
 
    * Sample moved from :file:`samples/nrf9160/nrf_cloud_rest_cell_pos` to :file:`samples/nrf9160/nrf_cloud_rest_cell_location`.
 
+* :ref:`modem_shell_application` sample:
+
+  * Added:
+
+    * LED 1 (nRF9160 DK)/Purple LED (Thingy:91) is lit for five seconds indicating that a current location has been acquired by using the ``location get`` command.
+
 Thread samples
 --------------
 

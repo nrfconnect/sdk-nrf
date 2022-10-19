@@ -21,4 +21,7 @@ enum mosh_signals {
 	MOSH_SIGNAL_KILL,
 };
 
+#define LOCATION_STATUS_LED            DK_LED1
+#define REGISTERED_STATUS_LED          DK_LED3
+
 #endif /* MOSH_DEFINES_H */
