@@ -22,7 +22,7 @@ Various `nRF Cloud REST API endpoints <nRF Cloud REST API_>`_ are provided for t
 * Sending and receiving device messages.
 * Interacting with location services.
 
-All of these functions operate on a :c:struct:`nrf_cloud_rest_context` structure that you must initialize and provide with your desired parameters.
+All of these functions operate on an :c:struct:`nrf_cloud_rest_context` structure that you must initialize and provide with your desired parameters.
 When each function returns, the context contains the status of the API call.
 
 Authentication
@@ -31,24 +31,24 @@ Authentication
 Each HTTP/REST request must include a valid JSON Web Token (JWT) that serves as a proof of identity.
 Usually, these tokens are generated based on the `device credentials <nRF Cloud Security_>`_, and must be passed to the ``auth`` parameter of the :c:struct:`nrf_cloud_rest_context` structure.
 To generate a token, call the :c:func:`nrf_cloud_jwt_generate` function, or use the :ref:`lib_modem_jwt` library.
-Alternatively, if you have enabled the :kconfig:option:`NRF_CLOUD_REST_AUTOGEN_JWT` option (along with its dependencies), the nRF Cloud REST library generates a JWT automatically if one is not provided.
+Alternatively, if you have enabled the :kconfig:option:`CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT` option (along with its dependencies), the nRF Cloud REST library generates a JWT automatically if one is not provided.
 
 Socket management and reuse
 ===========================
 
 The socket used for each HTTP request is determined by the ``connect_socket`` parameter of the :c:struct:`nrf_cloud_rest_context` structure.
 If a valid socket file descriptor is passed, this socket is used.
-If -1 is passed, a socket will be created automatically.
+If ``-1`` is passed, a socket will be created automatically.
 
 The selected socket can be reused depending on the passed-in value of the ``keep_alive`` property of the :c:struct:`nrf_cloud_rest_context` structure:
 
- * If you set ``keep_alive`` to false, then the selected socket is closed after each request, and the ``connect_socket`` property is reset to ``-1``.
- * If you set ``keep_alive`` to true, the socket remains open and ``connect_socket`` remains unaltered, meaning the socket is reused on the next API call.
+* If you set ``keep_alive`` to false, the selected socket is closed after each request and the ``connect_socket`` property is reset to ``-1``.
+* If you set ``keep_alive`` to true, the socket remains open and ``connect_socket`` remains unaltered, meaning the socket is reused on the next API call.
 
-However, if you set ``keep_alive`` to true, make sure that the socket has not been closed externally (for example, due to inactivity) before sending each request.
+However, if you set ``keep_alive`` to true, make sure that the socket has not been closed externally (for example, due to inactivity) before sending further requests.
 Otherwise, the request will be dropped.
 
-There are two ways a timed out socket can manifest:
+Timeouts in the socket can happen in two ways:
 
 * The socket may be closed immediately on timeout, causing ``-ENOTCONN`` to be returned by the next REST request function call, without reaching nRF Cloud.
 * The socket may be left open, allowing the next REST request to reach nRF Cloud, but the request is ignored and the socket is closed gracefully (FIN,ACK) with null HTTP response.
@@ -81,10 +81,10 @@ If an API call is unsuccessful, the called request function may return a variety
   For instance, ``-ENOTCONN`` if the socket was closed, or was never opened before the request was made.
 * If the remote endpoint closes the connection gracefully without giving a response (a null HTTP response), ``-ESHUTDOWN`` is returned.
 * If the remote endpoint responds with an unexpected HTTP status code (indicating request rejection), ``-EBADMSG`` is returned.
-  Possible causes include, but are not limited to: bad endpoint, invalid request data, invalid JWT.
+  Possible causes include, but are not limited to: bad endpoint, invalid request data, and invalid JWT.
 * If the response body is empty and the request expects response data, ``-ENODATA`` is returned.
 * If a heap allocation fails, ``-ENOMEM`` is returned.
-* Request formatting errors return ``-ETXTBSY``
+* Request formatting errors return ``-ETXTBSY``.
 
 Some functions may have additional return values.
 These are documented on the function itself.
