@@ -323,7 +323,7 @@ int set_monotonic_counter(uint16_t new_counter)
  */
 #define STATE_LEFT 0x0000
 
-int write_life_cycle_state(lcs_t next_lcs)
+int update_life_cycle_state(lcs_t next_lcs)
 {
 	int err;
 	lcs_t current_lcs = 0;

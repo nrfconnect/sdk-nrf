@@ -42,7 +42,7 @@ void test_lcs_single(void)
 	zassert_equal(0, ret, "read lcs failed %d", ret);
 	zassert_equal(lcs, ASSEMBLY,
 				  "got wrong lcs, expected %d got %d", ASSEMBLY, lcs);
-	ret = write_life_cycle_state(PROVISION);
+	ret = update_life_cycle_state(PROVISION);
 	zassert_equal(0, ret, "write lcs failed %d", ret);
 	ret = read_life_cycle_state(&lcs);
 	zassert_equal(0, ret, "read lcs failed with %d", ret);

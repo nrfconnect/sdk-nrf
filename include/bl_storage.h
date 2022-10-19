@@ -157,7 +157,7 @@ enum lcs {
 typedef enum lcs lcs_t;
 
 /**
- * @brief Write a life cycle state to OTP,
+ * @brief Update the life cycle state in OTP,
  *
  * If the given next state is not a not allowed transition the function
  * will return -EINVALIDLCS
@@ -169,7 +169,7 @@ typedef enum lcs lcs_t;
  * @retval -EREADLCS    Error on reading the current state
  * @retval -EINVALIDLCS Invalid next state
  */
-int write_life_cycle_state(lcs_t next_lcs);
+int update_life_cycle_state(lcs_t next_lcs);
 
 /**
  * @brief Read the current life cycle state the device is in from OTP,
