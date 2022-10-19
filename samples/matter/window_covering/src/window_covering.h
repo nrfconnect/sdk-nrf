@@ -31,6 +31,9 @@ public:
 		return sInstance;
 	}
 
+	PWMDevice &GetLiftIndicator() { return mLiftIndicator; }
+	PWMDevice &GetTiltIndicator() { return mTiltIndicator; }
+
 	void StartMove(MoveType aMoveType);
 	void SetSingleStepTarget(OperationalState aDirection);
 	void SetMoveType(MoveType aMoveType) { mCurrentUIMoveType = aMoveType; }

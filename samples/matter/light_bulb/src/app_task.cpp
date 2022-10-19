@@ -20,6 +20,7 @@
 #include <app-common/zap-generated/attribute-type.h>
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/cluster-id.h>
+#include <app/clusters/identify-server/identify-server.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
 #include <credentials/DeviceAttestationCredsProvider.h>
@@ -63,8 +64,11 @@ constexpr uint32_t kAdvertisingTriggerTimeout = 3000;
 K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), kAppEventQueueSize, alignof(AppEvent));
 k_timer sFunctionTimer;
 
+Identify sIdentify = { kLightEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
+		       EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_VISIBLE_LED };
+
 LEDWidget sStatusLED;
-LEDWidget sLightLED;
+LEDWidget sIdentifyLED;
 #if NUMBER_OF_LEDS == 4
 FactoryResetLEDsWrapper<2> sFactoryResetLEDs{ { FACTORY_RESET_SIGNAL_LED, FACTORY_RESET_SIGNAL_LED1 } };
 #endif
@@ -79,6 +83,8 @@ const struct pwm_dt_spec sLightPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
 namespace LedConsts
 {
 constexpr uint32_t kBlinkRate_ms{ 500 };
+constexpr uint32_t kIdentifyBlinkRate_ms{ 500 };
+
 namespace StatusLed
 {
 	namespace Unprovisioned
@@ -149,8 +155,8 @@ CHIP_ERROR AppTask::Init()
 	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
 
 	sStatusLED.Init(SYSTEM_STATE_LED);
-	sLightLED.Init(LIGHTING_STATE_LED);
-	sLightLED.Set(false);
+	sIdentifyLED.Init(LIGHTING_STATE_LED);
+	sIdentifyLED.Set(false);
 
 	UpdateStatusLED();
 
@@ -229,6 +235,28 @@ CHIP_ERROR AppTask::StartApp()
 	}
 
 	return CHIP_NO_ERROR;
+}
+
+void AppTask::IdentifyStartHandler(Identify *)
+{
+	AppEvent event;
+	event.Type = AppEventType::IdentifyStart;
+	event.Handler = [](const AppEvent &) {
+		Instance().mPWMDevice.SuppressOutput();
+		sIdentifyLED.Blink(LedConsts::kIdentifyBlinkRate_ms);
+	};
+	PostEvent(event);
+}
+
+void AppTask::IdentifyStopHandler(Identify *)
+{
+	AppEvent event;
+	event.Type = AppEventType::IdentifyStop;
+	event.Handler = [](const AppEvent &) {
+		sIdentifyLED.Set(false);
+		Instance().mPWMDevice.ApplyLevel();
+	};
+	PostEvent(event);
 }
 
 #if NUMBER_OF_BUTTONS == 2

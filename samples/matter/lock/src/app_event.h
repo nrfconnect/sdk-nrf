@@ -19,6 +19,8 @@ enum class AppEventType : uint8_t {
 	ButtonReleased,
 	Timer,
 	UpdateLedState,
+	IdentifyStart,
+	IdentifyStop,
 	StartSMPAdvertising
 };
 
