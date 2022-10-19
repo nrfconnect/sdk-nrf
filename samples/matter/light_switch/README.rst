@@ -150,8 +150,7 @@ User interface
     :end-before: matter_door_lock_sample_led1_end
 
 LED 2:
-   Identifies the device after sending the ``identify`` command to the endpoint ``0`` from the Matter controller device.
-   The LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received.
+   The LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
    The command's argument can be used to specify the duration of the effect.
 
 All LEDs:

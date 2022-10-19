@@ -21,6 +21,7 @@
 #endif
 
 struct k_timer;
+struct Identify;
 
 class AppTask {
 public:
@@ -35,6 +36,8 @@ public:
 	void UpdateClusterState(BoltLockManager::State state, BoltLockManager::OperationSource source);
 
 	static void PostEvent(const AppEvent &event);
+	static void IdentifyStartHandler(Identify *);
+	static void IdentifyStopHandler(Identify *);
 
 private:
 	CHIP_ERROR Init();

@@ -21,6 +21,7 @@
 #endif
 
 struct k_timer;
+struct Identify;
 
 class AppTask {
 public:
@@ -31,6 +32,9 @@ public:
 	};
 
 	CHIP_ERROR StartApp();
+
+	static void IdentifyStartHandler(Identify *);
+	static void IdentifyStopHandler(Identify *);
 
 private:
 	CHIP_ERROR Init();
