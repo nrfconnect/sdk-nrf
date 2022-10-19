@@ -157,10 +157,10 @@ int nrf_cloud_fota_subscribe(void);
 /**@brief Unsubscribe from FOTA related MQTT topics. */
 int nrf_cloud_fota_unsubscribe(void);
 
-/**@brief Check for pending FOTA updates. */
+/**@brief Make a request to nRF Cloud to send FOTA job details if a FOTA job is queued. */
 int nrf_cloud_fota_update_check(void);
 
-/**@brief Check if a FOTA job is active. */
+/**@brief Check if the device is actively working on a FOTA job. */
 bool nrf_cloud_fota_is_active(void);
 
 /**
