@@ -223,6 +223,12 @@ nRF9160 samples
     * Overlay files for nRF9160 DK with nRF7002 EK to enable Wi-Fi scanning support.
       With this configuration, you can, for example, obtain the current location by using the ``location get`` command.
 
+* :ref:`location_sample`:
+
+  * Added:
+
+    * Overlay files for nRF9160 DK with nRF7002 EK to obtain the current location by using Wi-Fi scanning results.
+
 Thread samples
 --------------
 
