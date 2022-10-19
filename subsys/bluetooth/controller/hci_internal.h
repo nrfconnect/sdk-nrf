@@ -81,5 +81,6 @@ int hci_internal_user_cmd_handler_register(const hci_internal_user_cmd_handler_t
  * @return Zero on success or (negative) error code otherwise.
  */
 int hci_internal_msg_get(uint8_t *msg_out, sdc_hci_msg_type_t *msg_type_out);
+int hci_internal_msg_peek(uint8_t *evt_hdr_out, sdc_hci_msg_type_t *msg_type_out);
 
 #endif

@@ -1192,3 +1192,14 @@ int hci_internal_msg_get(uint8_t *msg_out, sdc_hci_msg_type_t *msg_type_out)
 
 	return sdc_hci_get(msg_out, msg_type_out);
 }
+
+int hci_internal_msg_peek(uint8_t *evt_hdr_out, sdc_hci_msg_type_t *msg_type_out)
+{
+	if (cmd_complete_or_status.occurred) {
+		*evt_hdr_out = cmd_complete_or_status.raw_event[0];
+		*msg_type_out = SDC_HCI_MSG_TYPE_EVT;
+		return 0;
+	}
+	evt_hdr_out = BT_HCI_EVT_UNKNOWN;
+	return sdc_hci_peek(msg_type_out);
+}

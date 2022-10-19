@@ -156,9 +156,16 @@ void sdc_assertion_handler(const char *const file, const uint32_t line)
 #endif /* IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
 
 static struct k_work receive_work;
+static struct k_work_delayable receive_work_delayable;
+
 static inline void receive_signal_raise(void)
 {
 	mpsl_work_submit(&receive_work);
+}
+
+static inline void receive_signal_raise_delayable(void)
+{
+	mpsl_work_schedule(&receive_work_delayable, K_MSEC(10));
 }
 
 static int cmd_handle(struct net_buf *cmd)
@@ -236,17 +243,11 @@ static int hci_driver_send(struct net_buf *buf)
 	return err;
 }
 
-static void data_packet_process(uint8_t *hci_buf)
+void data_packet_process(struct net_buf *data_buf)
 {
-	struct net_buf *data_buf = bt_buf_get_rx(BT_BUF_ACL_IN, K_FOREVER);
-	struct bt_hci_acl_hdr *hdr = (void *)hci_buf;
+	struct bt_hci_acl_hdr *hdr = (void *)data_buf->data;
 	uint16_t hf, handle, len;
 	uint8_t flags, pb, bc;
-
-	if (!data_buf) {
-		BT_ERR("No data buffer available");
-		return;
-	}
 
 	len = sys_le16_to_cpu(hdr->len);
 	hf = sys_le16_to_cpu(hdr->handle);
@@ -257,63 +258,31 @@ static void data_packet_process(uint8_t *hci_buf)
 
 	BT_DBG("Data: handle (0x%02x), PB(%01d), BC(%01d), len(%u)", handle,
 	       pb, bc, len);
-
-	net_buf_add_mem(data_buf, &hci_buf[0], len + sizeof(*hdr));
+	net_buf_add(data_buf, len + sizeof(hdr));
 	bt_recv(data_buf);
 }
 
-static bool event_packet_is_discardable(const uint8_t *hci_buf)
+
+
+static void event_packet_process(struct net_buf *evt_buf)
 {
-	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
-
-	switch (hdr->evt) {
-	case BT_HCI_EVT_LE_META_EVENT: {
-		struct bt_hci_evt_le_meta_event *me = (void *)&hci_buf[2];
-
-		switch (me->subevent) {
-		case BT_HCI_EVT_LE_ADVERTISING_REPORT:
-			return true;
-		default:
-			return false;
-		}
-	}
-	case BT_HCI_EVT_VENDOR:
-	{
-		uint8_t subevent = hci_buf[2];
-
-		switch (subevent) {
-		case SDC_HCI_SUBEVENT_VS_QOS_CONN_EVENT_REPORT:
-			return true;
-		default:
-			return false;
-		}
-	}
-	default:
-		return false;
-	}
-}
-
-static void event_packet_process(uint8_t *hci_buf)
-{
-	bool discardable = event_packet_is_discardable(hci_buf);
-	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
-	struct net_buf *evt_buf;
+	struct bt_hci_evt_hdr *hdr = (void *)evt_buf->data;
 
 	if (hdr->evt == BT_HCI_EVT_LE_META_EVENT) {
-		struct bt_hci_evt_le_meta_event *me = (void *)&hci_buf[2];
+		struct bt_hci_evt_le_meta_event *me = (void *)&evt_buf->data[2];
 
 		BT_DBG("LE Meta Event (0x%02x), len (%u)",
 		       me->subevent, hdr->len);
 	} else if (hdr->evt == BT_HCI_EVT_CMD_COMPLETE) {
-		struct bt_hci_evt_cmd_complete *cc = (void *)&hci_buf[2];
-		struct bt_hci_evt_cc_status *ccs = (void *)&hci_buf[5];
+		struct bt_hci_evt_cmd_complete *cc = (void *)&evt_buf->data[2];
+		struct bt_hci_evt_cc_status *ccs = (void *)&evt_buf->data[5];
 		uint16_t opcode = sys_le16_to_cpu(cc->opcode);
 
 		BT_DBG("Command Complete (0x%04x) status: 0x%02x,"
 		       " ncmd: %u, len %u",
 		       opcode, ccs->status, cc->ncmd, hdr->len);
 	} else if (hdr->evt == BT_HCI_EVT_CMD_STATUS) {
-		struct bt_hci_evt_cmd_status *cs = (void *)&hci_buf[2];
+		struct bt_hci_evt_cmd_status *cs = (void *)&evt_buf->data[2];
 		uint16_t opcode = sys_le16_to_cpu(cs->opcode);
 
 		BT_DBG("Command Status (0x%04x) status: 0x%02x",
@@ -321,43 +290,60 @@ static void event_packet_process(uint8_t *hci_buf)
 	} else {
 		BT_DBG("Event (0x%02x) len %u", hdr->evt, hdr->len);
 	}
-
-	evt_buf = bt_buf_get_evt(hdr->evt, discardable,
-				 discardable ? K_NO_WAIT : K_FOREVER);
-
-	if (!evt_buf) {
-		if (discardable) {
-			BT_DBG("Discarding event");
-			return;
-		}
-
-		BT_ERR("No event buffer available");
-		return;
-	}
-
-	net_buf_add_mem(evt_buf, &hci_buf[0], hdr->len + sizeof(*hdr));
+	net_buf_add(evt_buf, hdr->len + sizeof(*hdr));
 	bt_recv(evt_buf);
 }
 
-static bool fetch_and_process_hci_msg(uint8_t *p_hci_buffer)
+static bool fetch_and_process_hci_msg(void)
+
 {
 	int errcode;
-	sdc_hci_msg_type_t msg_type;
-
+	sdc_hci_msg_type_t msg_type_peeked;
+	uint8_t hdr_peeked;
 	errcode = MULTITHREADING_LOCK_ACQUIRE();
 	if (!errcode) {
-		errcode = hci_internal_msg_get(p_hci_buffer, &msg_type);
+		errcode = hci_internal_msg_peek(&hdr_peeked, &msg_type_peeked);
 		MULTITHREADING_LOCK_RELEASE();
 	}
-
+	if (errcode) {
+		return false;
+	}
+	if (msg_type_peeked == 0)
+	{
+		return false;
+	}
+	struct net_buf *buf;
+	if (msg_type_peeked == SDC_HCI_MSG_TYPE_DATA)
+	{
+		buf = bt_buf_get_rx(BT_BUF_ACL_IN, K_NO_WAIT);
+	} else if (msg_type_peeked == SDC_HCI_MSG_TYPE_EVT)
+	{
+		buf = bt_buf_get_evt(hdr_peeked, false, K_NO_WAIT);
+	} else {
+		__ASSERT(false, "sdc_hci_msg_type_t has changed. This if-else needs a new branch");
+		return false;
+	}
+	if (buf == 0)
+	{
+		/*Wasn't able to allocate a buffer even though there are events pending
+		 Schedule a retry later. And let other threads run in between.
+		 */
+		receive_signal_raise_delayable();
+		return false;
+	}
+	sdc_hci_msg_type_t msg_type;
+	if (!errcode) {
+		errcode = hci_internal_msg_get(buf->data, &msg_type);
+		MULTITHREADING_LOCK_RELEASE();
+	}
 	if (errcode) {
 		return false;
 	}
 
 	if (msg_type == SDC_HCI_MSG_TYPE_EVT) {
-		event_packet_process(p_hci_buffer);
+		event_packet_process(buf);
 	} else if (msg_type == SDC_HCI_MSG_TYPE_DATA) {
-		data_packet_process(p_hci_buffer);
+		data_packet_process(buf);
 	} else {
 		__ASSERT(false, "sdc_hci_msg_type_t has changed. This if-else needs a new branch");
 		return false;
@@ -368,14 +354,7 @@ static bool fetch_and_process_hci_msg(uint8_t *p_hci_buffer)
 
 void hci_driver_receive_process(void)
 {
-#if defined(CONFIG_BT_BUF_EVT_DISCARDABLE_COUNT)
-	static uint8_t hci_buf[MAX(BT_BUF_RX_SIZE,
-				   BT_BUF_EVT_SIZE(CONFIG_BT_BUF_EVT_DISCARDABLE_SIZE))];
-#else
-	static uint8_t hci_buf[BT_BUF_RX_SIZE];
-#endif
-
-	if (fetch_and_process_hci_msg(&hci_buf[0])) {
+	if (fetch_and_process_hci_msg()) {
 		/* Let other threads of same priority run in between. */
 		receive_signal_raise();
 	}
@@ -759,6 +738,7 @@ static int hci_driver_open(void)
 	}
 
 	k_work_init(&receive_work, receive_work_handler);
+	k_work_init_delayable(&receive_work_delayable, receive_work_handler);
 
 	err = MULTITHREADING_LOCK_ACQUIRE();
 	if (!err) {
