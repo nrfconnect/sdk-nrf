@@ -12,6 +12,10 @@ Such a device lets you remotely gather different kinds of data using the device 
 The device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
 You can use this application as a reference for creating your own application.
 
+.. note::
+   The `Matter weather station application from the v2.1.1`_ |NCS| release participated in Matter Specification Validation Event (SVE) and successfully passed all required test cases to be considered as a device compliant with Matter 1.0.
+   You can use the |NCS| v2.1.1 release to see the application configuration and the files that were originally used in Matter 1.0 certification.
+
 Requirements
 ************
 
