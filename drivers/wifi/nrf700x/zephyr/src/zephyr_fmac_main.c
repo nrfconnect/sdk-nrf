@@ -161,7 +161,6 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 
 	if (!rpu_ctx) {
 		LOG_ERR("%s: wifi_nrf_fmac_dev_add failed\n", __func__);
-		k_free(rpu_ctx_zep);
 		rpu_ctx_zep = NULL;
 		goto out;
 	}
