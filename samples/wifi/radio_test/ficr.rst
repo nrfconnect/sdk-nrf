@@ -1,51 +1,16 @@
 .. _wifi_ficr_prog:
 
-Wi-Fi: FICR programming
-#######################
+FICR programming subcommands
+############################
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Wi-Fi Radio Factory Information Configuration Registers (FICR) programming
-sample demonstrates how to program the user region of FICR parameters on the
-development kit using a set of predefined commands.
-
-Requirements
-************
-
-The sample supports the following development kit:
-
-.. table-from-sample-yaml::
-
-Overview
-********
-
-To run the commands, connect to the development kit through the serial port and
-send shell commands. Zephyr's :ref:`zephyr:shell_api` module is used to handle
-the commands.
-
-You can start running ``wifi_radio_ficr_prog`` subcommands to read or write OTP
-registers. See :ref:`wifi_radio_ficr_prog_subcmds` for a list of available
-subcommands.
-
-.. note::
-
-   All the FICR registers are stored in the one-time programmable (OTP) memory.
-   Consequently, the write commands are destructive, and once written, the
-   contents of the OTP registers cannot be re-programmed.
-
-User interface
-**************
-
-``wifi_radio_ficr_prog`` is the Wi-Fi radio ficr_prog command and it supports the following subcommands:
+``wifi_radio_ficr_prog`` is the Wi-Fi radio FICR programming command and it supports the following subcommands.
 
 .. _wifi_radio_ficr_prog_subcmds:
 
 Wi-Fi radio FICR subcommands
-============================
+****************************
 
-.. list-table:: Wi-Fi radio ficr subcommands
+.. list-table:: Wi-Fi radio FICR subcommands
    :widths: 15 15 10 30 70
    :header-rows: 1
 
@@ -152,150 +117,3 @@ Wi-Fi radio FICR subcommands
        | bit 10 : CALIB_TXPOWBACKOFFT
        | bit 11 : CALIB_TXPOWBACKOFFV
        | bit 12-31 : Reserved
-
-
-
-Building and running
-********************
-
-.. |sample path| replace:: :file:`samples/wifi/radio_test`
-
-.. include:: /includes/build_and_run.txt
-
-Currently, the following configurations are supported:
-
-* 7002 DK + QSPI
-* 7002 EK + SPIM
-
-
-To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
-The following is an example of the CLI command:
-
-.. code-block:: console
-
-   west build -b nrf7002dk_nrf5340_cpuapp
-
-To build for the nRF7002 EK and nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002_ek``.
-The following is an example of the CLI command:
-
-.. code-block:: console
-
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002_ek
-
-See also :ref:`cmake_options` for instructions on how to provide CMake options.
-
-
-Testing
-=======
-
-|test_sample|
-
-#. |connect_kit|
-#. |connect_terminal|
-#. Use the following reference command interface to read or write the OTP params:
-
-   .. code-block:: console
-
-      wifi_radio_ficr_prog <subcommand> [Offset] [arg1] [arg2] .. [argN]
-
-#. Test the sample by running the following commands:
-
-   a. To display all the current FICR values, use the following command:
-
-      .. code-block:: console
-
-         wifi_radio_ficr_prog otp_read_params
-
-      The sample shows the following output:
-
-      .. code-block:: console
-
-         OTP Region is open for R/W
-
-         REGION_PROTECT0 = 0x50fa50fa
-         REGION_PROTECT1 = 0x50fa50fa
-         REGION_PROTECT2 = 0x50fa50fa
-         REGION_PROTECT3 = 0x50fa50fa
-
-         MAC0: Reg0 = 0x0036cef0
-         MAC0: Reg1 = 0x00004a00
-         MAC0 Addr  = f0:ce:36:00:00:4a
-
-         MAC1 : Reg0 = 0x0036cef0
-         MAC1 : Reg1 = 0x00004b00
-         MAC1 Addr   = f0:ce:36:00:00:4b
-
-         CALIB_XO = 0x2c
-
-         CALIB_PDADJMCS7 = 0xffffffff
-
-         CALIB_PDADJMCS0 = 0xffffffff
-
-         CALIB_MAXPOW2G4 = 0xffffffff
-
-         CALIB_MAXPOW5G0MCS7 = 0xffffffff
-
-         CALIB_MAXPOW5G0MCS0 = 0xffffffff
-
-         CALIB_RXGAINOFFSET = 0xffffffff
-
-         CALIB_TXPOWBACKOFFT = 0xffffffff
-
-         CALIB_TXPOWBACKOFFV = 0xffffffff
-
-         REGION_DEFAULTS = 0xfffffff1
-
-
-   #. To read the status of OTP region, use the following command:
-
-      .. code-block:: console
-
-         wifi_radio_ficr_prog otp_get_status
-
-      The sample shows the following output:
-
-      .. code-block:: console
-
-         Checking OTP PROTECT Region......
-         OTP Region is open for R/W
-
-         QSPI Keys are not programmed in OTP
-         MAC0 Address is programmed in OTP
-         MAC1 Address is programmed in OTP
-         CALIB_XO is programmed in OTP
-         CALIB_PDADJMCS7 not programmed in OTP
-         CALIB_PDADJMCS0 is not programmed in OTP
-         CALIB_MAXPOW2G4 is not programmed in OTP
-         CALIB_MAXPOW5G0MCS7 is not programmed in OTP
-         CALIB_MAXPOW5G0MCS0 is not programmed in OTP
-         CALIB_RXGAINOFFSET is not programmed in OTP
-         CALIB_TXPOWBACKOFFT is not programmed in OTP
-         CALIB_TXPOWBACKOFFV is not programmed in OTP
-
-   #. To write different locations of the OTP and to program MAC0 address to F0:CE:36:00:00:4A, use the following command:
-
-      .. code-block:: console
-
-         wifi_radio_ficr_prog otp_write_params 0x120 0x0036CEF0 0x4A00
-
-      The sample shows the following output:
-
-      .. code-block:: console
-
-         [00:24:25.200,622] <inf> otp_prog: OTP Region is open for R/W
-         [00:24:25.200,653] <inf> otp_prog:
-         [00:24:25.202,575] <inf> otp_prog: Written MAC address 1
-         [00:24:25.202,575] <inf> otp_prog: mac addr 0 : Reg1 (0x128) = 0x36cef0
-         [00:24:25.202,575] <inf> otp_prog: mac addr 0 : Reg2 (0x12c) = 0x4a00
-         [00:24:25.202,606] <inf> otp_prog: Written REGION_DEFAULTS (0x154) : 0xfffffffb
-         [00:24:25.203,002] <inf> otp_prog: Finished Writing OTP params
-
-
-Dependencies
-************
-
-This sample uses the following Zephyr library:
-
-* :ref:`zephyr:shell_api`:
-
-  * ``include/shell/shell.h``
