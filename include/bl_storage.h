@@ -19,16 +19,16 @@ extern "C" {
 #define EREADLCS 114 /* LCS field of OTP is in an invalid state */
 #define EINVALIDLCS 115 /* Invalid LCS*/
 
-/** Storage for the life psa cycle state, that consists of 4 states:
- *  - ASSEMBLY
- *  - PSA RoT Provisioning
- *  - SECURE
- *  - DECOMMISSIONED
+/** Storage for the PRoT Security Lifecycle state, that consists of 4 states:
+ *  - Device assembly and test
+ *  - PRoT Provisioning
+ *  - Secured
+ *  - Decommissioned
  *  These states are transitioned top down during the life time of a device.
  *  Therefore when setting a new LCS we just mark the old state as left, this
  *  way one field less can be used to encode the lcs.
  *  This works as ASSEMBLY implies the OTP be erased except of needed
- *  key material
+ *  key material.
  */
 struct life_cycle_state_data {
 	uint16_t left_assembly;
@@ -144,10 +144,10 @@ int set_monotonic_counter(uint16_t new_counter);
 /**
  * @brief The PSA life cycle states a device can be in.
  *
- * The can be only transitioned in the order they are defined here.
+ * The LCS can be only transitioned in the order they are defined here.
  */
 enum lcs {
-	UNKOWN = 0,
+	UNKNOWN = 0,
 	ASSEMBLY = 1,
 	PROVISION = 2,
 	SECURE = 3,

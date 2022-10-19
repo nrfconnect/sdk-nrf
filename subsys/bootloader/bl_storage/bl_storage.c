@@ -328,7 +328,7 @@ int update_life_cycle_state(lcs_t next_lcs)
 	int err;
 	lcs_t current_lcs = 0;
 
-	if(next_lcs == UNKOWN){
+	if(next_lcs == UNKNOWN){
 		return -EINVALIDLCS;
 	}
 
