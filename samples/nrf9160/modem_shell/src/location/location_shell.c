@@ -15,10 +15,13 @@
 #include <net/nrf_cloud_rest.h>
 #endif
 #include <modem/location.h>
+#include <dk_buttons_and_leds.h>
+
 
 #include "mosh_print.h"
 #include "location_cmd_utils.h"
 
+#include "mosh_defines.h"
 
 enum location_shell_command {
 	LOCATION_CMD_NONE = 0,
@@ -37,6 +40,11 @@ struct gnss_location_work_data {
 	struct location_data location;
 };
 static struct gnss_location_work_data gnss_location_work_data;
+
+
+#if defined(CONFIG_DK_LIBRARY)
+static struct k_work_delayable location_evt_led_work;
+#endif
 
 /******************************************************************************/
 static const char location_usage_str[] =
@@ -214,6 +222,13 @@ clean_up:
 	}
 }
 
+#if defined(CONFIG_DK_LIBRARY)
+static void location_evt_led_worker(struct k_work *work_item)
+{
+	dk_set_led_off(LOCATION_STATUS_LED);
+}
+#endif
+
 /******************************************************************************/
 
 void location_ctrl_event_handler(const struct location_event_data *event_data)
@@ -252,6 +267,12 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 			gnss_location_work_data.format = gnss_location_to_cloud_format;
 			k_work_submit_to_queue(&mosh_common_work_q, &gnss_location_work_data.work);
 		}
+
+#if defined(CONFIG_DK_LIBRARY)
+		dk_set_led_on(LOCATION_STATUS_LED);
+		k_work_reschedule_for_queue(&mosh_common_work_q, &location_evt_led_work,
+			K_SECONDS(5));
+#endif
 		break;
 
 	case LOCATION_EVT_TIMEOUT:
@@ -291,6 +312,10 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 void location_ctrl_init(void)
 {
 	int ret;
+
+#if defined(CONFIG_DK_LIBRARY)
+	k_work_init_delayable(&location_evt_led_work, location_evt_led_worker);
+#endif
 
 	ret = location_init(location_ctrl_event_handler);
 	if (ret) {
@@ -493,6 +518,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	/* Handle location subcommands */
 	switch (command) {
 	case LOCATION_CMD_CANCEL:
+		gnss_location_to_cloud = false;
+		k_work_cancel(&gnss_location_work_data.work);
 		ret = location_request_cancel();
 		if (ret) {
 			mosh_error("Canceling location request failed, err: %d", ret);
