@@ -678,6 +678,9 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 
 	case SDC_HCI_OPCODE_CMD_LE_SET_ADV_ENABLE:
 		return sdc_hci_cmd_le_set_adv_enable((void *)cmd_params);
+
+	case SDC_HCI_OPCODE_CMD_LE_SET_DATA_RELATED_ADDRESS_CHANGES:
+		return sdc_hci_cmd_le_set_data_related_address_changes((void *)cmd_params);
 #endif
 
 #if defined(CONFIG_BT_OBSERVER)
