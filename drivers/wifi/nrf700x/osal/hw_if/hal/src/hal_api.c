@@ -17,6 +17,7 @@
 #include "hal_interrupt.h"
 #include "pal.h"
 
+#define RPU_PKTRAM_SIZE (RPU_ADDR_PKTRAM_END - RPU_ADDR_PKTRAM_START + 1)
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
 static enum wifi_nrf_status
@@ -49,6 +50,17 @@ wifi_nrf_hal_rpu_pktram_buf_map_init(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 			(hal_dev_ctx->addr_rpu_pktram_base_rx_pool[pool_idx - 1] +
 			 (hal_dev_ctx->hpriv->cfg_params.rx_buf_pool[pool_idx - 1].num_bufs *
 			  hal_dev_ctx->hpriv->cfg_params.rx_buf_pool[pool_idx - 1].buf_sz));
+	}
+
+	if ((hal_dev_ctx->addr_rpu_pktram_base_rx_pool[MAX_NUM_OF_RX_QUEUES - 1] +
+	     (hal_dev_ctx->hpriv->cfg_params.rx_buf_pool[MAX_NUM_OF_RX_QUEUES - 1].num_bufs *
+	      hal_dev_ctx->hpriv->cfg_params.rx_buf_pool[MAX_NUM_OF_RX_QUEUES - 1].buf_sz)) >
+	    (hal_dev_ctx->addr_rpu_pktram_base + RPU_PKTRAM_SIZE)) {
+		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+				      "%s: RPU PKTRAM buffer overflowed\n",
+				      __func__);
+		status = WIFI_NRF_STATUS_FAIL;
+		goto out;
 	}
 
 	status = WIFI_NRF_STATUS_SUCCESS;
