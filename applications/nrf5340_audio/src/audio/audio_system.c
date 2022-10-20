@@ -7,6 +7,7 @@
 #include "audio_system.h"
 
 #include <zephyr/kernel.h>
+#include <zephyr/shell/shell.h>
 
 #include "macros_common.h"
 #include "sw_codec_select.h"
@@ -380,3 +381,36 @@ void audio_system_init(void)
 	ERR_CHK(ret);
 #endif
 }
+
+static int cmd_audio_system_start(const struct shell *shell, size_t argc, const char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	audio_system_start();
+
+	shell_print(shell, "Audio system started");
+
+	return 0;
+}
+
+static int cmd_audio_system_stop(const struct shell *shell, size_t argc, const char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	audio_system_stop();
+
+	shell_print(shell, "Audio system stopped");
+
+	return 0;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(audio_system_cmd,
+			       SHELL_COND_CMD(CONFIG_SHELL, start, NULL, "Start the audio system",
+					      cmd_audio_system_start),
+			       SHELL_COND_CMD(CONFIG_SHELL, stop, NULL, "Stop the audio system",
+					      cmd_audio_system_stop),
+			       SHELL_SUBCMD_SET_END);
+
+SHELL_CMD_REGISTER(audio_system, &audio_system_cmd, "Audio system commands", NULL);
