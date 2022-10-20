@@ -419,9 +419,6 @@ int streamctrl_start(void)
 {
 	int ret;
 
-	ret = audio_datapath_tone_play(440, 500, 0.2);
-	ERR_CHK(ret);
-
 	ret = data_fifo_init(&ble_fifo_rx);
 	ERR_CHK_MSG(ret, "Failed to set up ble_rx FIFO");
 
