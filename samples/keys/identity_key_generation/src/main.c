@@ -11,11 +11,47 @@
 #include <hw_unique_key.h>
 #include <identity_key.h>
 #include <psa/crypto.h>
+#include <bl_storage.h>
 
 LOG_MODULE_REGISTER(identity_key_generation, LOG_LEVEL_DBG);
 
 void main(void)
 {
+	lcs_t lcs = UNKNOWN;
+	int err = 0;
+
+	err = read_life_cycle_state(&lcs);
+	if(err != 0){
+		LOG_INF("Failure: Cannot read PSA lifecycle state. Exiting!");
+		return;
+	}
+
+	if(lcs != ASSEMBLY){
+		LOG_INF("Failure: Lifecycle state is not ASSEMBLY as expected. Exiting!");
+		return;
+	}
+
+	LOG_INF("Successfully verified PSA lifecycle state ASSEMBLY!");
+
+	err = update_life_cycle_state(PROVISION);
+	if(err != 0){
+		LOG_INF("Failure: Cannot set PSA lifecycle state PROVISIONING. Exiting!");
+		return;
+	}
+
+	err = read_life_cycle_state(&lcs);
+	if(err != 0){
+		LOG_INF("Failure: Cannot read PSA lifecycle state. Exiting!");
+		return;
+	}
+
+	if(lcs != PROVISION){
+		LOG_INF("Failure: Lifecycle state is not PROVISION as expected. Exiting!");
+		return;
+	}
+
+	LOG_INF("Successfully switched to PSA lifecycle state PROVISIONING!");
+
 	LOG_INF("Generating random HUK keys (including MKEK)");
 	hw_unique_key_write_random();
 
