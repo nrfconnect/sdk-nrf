@@ -22,7 +22,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BOARD_LOG_LEVEL);
 
 
 static int port_setup(const struct device *port,
-		      const struct pin_state pin_state[],
+		      const struct pin_state *pin_state,
 		      size_t cnt)
 {
 	int err = 0;
@@ -50,7 +50,7 @@ static int port_setup(const struct device *port,
 	return err;
 }
 
-static int ports_setup(const struct port_state port_state[], size_t cnt)
+static int ports_setup(const struct port_state *port_state, size_t cnt)
 {
 	int err = 0;
 
