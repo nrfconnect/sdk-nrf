@@ -10,6 +10,14 @@ menuconfig SECURE_BOOT_CRYPTO
 	select FW_INFO
 	select NRF_OBERON
 
+config SB_PUBLIC_KEY_HASH_LEN
+	int "Public key hash size (bytes)"
+	default 16
+	depends on SECURE_BOOT_CRYPTO || (SECURE_BOOT_STORAGE_START_ADDRESS != 0x0)
+	help
+	  The length to which public key hashes in the list of Root of Trust
+	  Public Keys are truncated.
+
 if (SECURE_BOOT_CRYPTO)
 config SB_ECDSA_SECP256R1
 	bool
@@ -114,13 +122,6 @@ choice SB_CRYPTO_HASH
 		select SB_SHA256
 
 endchoice
-
-config SB_PUBLIC_KEY_HASH_LEN
-	int "Public key hash size (bytes)"
-	default 16
-	help
-	  The length to which public key hashes in the list of Root of Trust
-	  Public Keys are truncated.
 
 EXT_API = BL_ROT_VERIFY
 id = 0x1001

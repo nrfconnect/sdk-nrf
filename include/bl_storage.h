@@ -15,6 +15,12 @@ extern "C" {
 #endif
 
 
+#ifdef CONFIG_IS_SECURE_BOOTLOADER
+#define PROVISION_PARTITION_ADDRESS PM_PROVISION_ADDRESS
+#else
+#define PROVISION_PARTITION_ADDRESS CONFIG_SECURE_BOOT_STORAGE_START_ADDRESS
+#endif
+
 #define EHASHFF 113 /* A hash contains too many 0xFs. */
 #define EREADLCS 114 /* LCS field of OTP is in an invalid state */
 #define EINVALIDLCS 115 /* Invalid LCS*/

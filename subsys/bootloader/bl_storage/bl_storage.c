@@ -9,8 +9,11 @@
 #include <errno.h>
 #include <nrf.h>
 #include <assert.h>
-#include <pm_config.h>
 #include <nrfx_nvmc.h>
+
+#ifdef CONFIG_IS_SECURE_BOOTLOADER
+#include <pm_config.h>
+#endif
 
 /** A single monotonic counter. It consists of a description value, a 'type',
  *  to know what this counter counts. Further, it has a number of slots
@@ -40,7 +43,7 @@ struct counter_collection {
 #define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
 
 static const struct bl_storage_data *p_bl_storage_data =
-	(struct bl_storage_data *)PM_PROVISION_ADDRESS;
+	(struct bl_storage_data *)PROVISION_PARTITION_ADDRESS;
 
 uint32_t s0_address_read(void)
 {
