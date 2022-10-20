@@ -629,14 +629,10 @@ void main(void)
 			break;
 
 		case CONNECTING:
-			if (!modem_connected_to_network) {
-				/* LTE connection down suspend LwM2M engine */
-				suspend_lwm2m_engine();
-			} else {
-				LOG_INF("LwM2M is connecting to server");
-				k_mutex_unlock(&lte_mutex);
-			}
+			LOG_INF("LwM2M is connecting to server");
+			k_mutex_unlock(&lte_mutex);
 			break;
+
 		case CONNECTED:
 			if (!modem_connected_to_network) {
 				/* LTE connection down suspend LwM2M engine */
