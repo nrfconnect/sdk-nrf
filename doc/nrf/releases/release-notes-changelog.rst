@@ -606,6 +606,7 @@ Documentation
   * :ref:`app_memory`: Configuration options affecting memory footprint for Bluetooth mesh, that can be used to optimize the application.
   * Documentation for the :ref:`lib_bh1749`.
   * The :ref:`ug_nrf52_gs` page.
+  * :ref:`ug_bt_mesh_node_removal` page in the :ref:`ug_bt_mesh` user guide.
 
 * Updated:
 
