@@ -48,7 +48,6 @@ struct bl_storage_data {
 	uint32_t s1_address;
 	struct life_cycle_state_data lcs;
 	uint32_t num_public_keys; /* Number of entries in 'key_data' list. */
-	uint8_t implementation_id[32];
 	struct {
 		uint32_t valid;
 		uint8_t hash[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
