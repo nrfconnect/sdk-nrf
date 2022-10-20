@@ -50,9 +50,9 @@ struct life_cycle_state_data {
  *  struct counter_collection.
  */
 struct bl_storage_data {
+	struct life_cycle_state_data lcs;
 	uint32_t s0_address;
 	uint32_t s1_address;
-	struct life_cycle_state_data lcs;
 	uint32_t num_public_keys; /* Number of entries in 'key_data' list. */
 	struct {
 		uint32_t valid;
