@@ -519,7 +519,11 @@ static bool key_value_set(struct items *items, uint16_t usage_id, int16_t value)
 	/* Report equal to zero brings no change. This should never happen. */
 	__ASSERT_NO_MSG(value != 0);
 
-	p_item = bsearch(&usage_id,
+	struct item i = {
+		.usage_id = usage_id,
+	};
+
+	p_item = bsearch(&i,
 			 (uint8_t *)items->item,
 			 ARRAY_SIZE(items->item),
 			 sizeof(items->item[0]),
