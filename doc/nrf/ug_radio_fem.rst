@@ -34,6 +34,7 @@ Using MPSL
 
 The MPSL library provides the following GPIO interface implementations:
 
+* :ref:`ug_radio_fem_nrf21540_spi_gpio` - For the nRF21540 GPIO+SPI implementation that uses a 3-pin interface and an SPI interface with the nRF21540.
 * :ref:`ug_radio_fem_nrf21540_gpio` - For the nRF21540 GPIO implementation that uses a 3-pin interface with the nRF21540.
 * :ref:`ug_radio_fem_skyworks` - For the Simple GPIO implementation that uses a 2-pin interface with the SKY66112-11 device.
 
@@ -68,7 +69,7 @@ The following FEM implementations are supported:
 
 * The nRF21540 GPIO implementation, see :ref:`ug_radio_fem_nrf21540_gpio`.
   To use it, set the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO` Kconfig option to ``y``.
-* The nRF21540 GPIO SPI implementation, see :ref:`ug_radio_fem_nrf21540_spi_gpio`.
+* The nRF21540 GPIO+SPI implementation, see :ref:`ug_radio_fem_nrf21540_spi_gpio`.
   To use it, set the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO_SPI` Kconfig option to ``y``.
 * The nRF21540 2-pin simple GPIO implementation.
   To use it, set the :kconfig:option:`CONFIG_MPSL_FEM_SIMPLE_GPIO` Kconfig option to ``y``.
@@ -97,7 +98,7 @@ You can set a different gain value to use through the :kconfig:option:`CONFIG_MP
 To enable runtime control of the gain, set the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL` to ``y``.
 This option makes the gain of the FEM to be adjusted dynamically during runtime, depending on the power requested by the protocol driver for each transmission.
 For the nRF21540 GPIO implementation, you must enable the **MODE** pin in devicetree.
-For the nRF21540 GPIO SPI implementation, no additional configuration is needed as the gain setting is transmitted over the SPI bus to the nRF21540.
+For the nRF21540 GPIO+SPI implementation, no additional configuration is needed as the gain setting is transmitted over the SPI bus to the nRF21540.
 
 Using FEM power models
 ----------------------
@@ -109,15 +110,22 @@ To perform the split differently (for example, to compensate for external condit
 
 To use FEM power models, set the :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL` Kconfig option to ``y``  and either select one of the built-in models or provide a custom model, as described in the following chapters.
 
-Using nRF21540 GPIO SPI built-in power model
+.. note::
+   In case of nRF21540 GPIO+SPI, the :ref:`ug_radio_fem_nrf21540_gpio_spi_builtin_power_model` is enabled by default.
+
+.. _ug_radio_fem_nrf21540_gpio_spi_builtin_power_model:
+
+Using nRF21540 GPIO+SPI built-in power model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+The nRF21540 GPIO+SPI built-in power model attempts to keep the nRF21540's gain constant and as close to the currently selected value of gain as possible.
+The model compensates varying external conditions, which results in the nRF21540 gain being independent of their changes.
+
 .. note::
-   This is an :ref:`experimental <software_maturity>` feature.
+    Only the factory-precalibrated values of gain represented by the default values of :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA` and :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB` are supported.
+    There are no guarantees on the correctness of the model if applied to compensate external conditions for other values of gain.
 
-To use this model, set :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL` and :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL_NRF21540_USE_BUILTIN` to ``y``.
-
-This feature uses a model to compensate the FEM gain for the following external conditions:
+The nRF21540 built-in power model compensates for the following external conditions:
 
 * Temperature
 * FEM supply voltage
@@ -125,14 +133,64 @@ This feature uses a model to compensate the FEM gain for the following external 
 * FEM input power.
 
 The model assumes that the FEM supply voltage is constant.
-To provide the value of this voltage to the MPSL subsystem, use the :kconfig:option:`CONFIG_MPSL_FEM_POWER_VOLTAGE` option.
+To provide the value of this voltage to the MPSL subsystem, use the ``supply-voltage-mv`` property of nRF21540 devicetree node.
+
+This model is enabled by default, provided that nRF21540 GPIO+SPI is enabled and selected.
+To enable and select nRF21540 GPIO+SPI, see :ref:`ug_radio_fem_nrf21540_spi_gpio`.
+
+Although the built-in model significantly improves the performance of nRF21540 in varying external conditions, in certain scenarios you might want to disable it, for example, to save memory.
+To disable the model and the resulting compensation, set :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL` to ``n``.
+
+The figures below summarize the performance improvement of the nRF21540 when the built-in model is used.
+The data points in the figures are results of nRF21540 gain measurements performed in controlled, laboratory conditions.
+Each of the figures compares the gain achieved by a nRF21540 device in two cases: when the built-in model is used to control the nRF21540 gain settings, and when the model is disabled.
+All the external conditions the model compensates for, like temperature, supply voltage, carrier frequency, and input power, are presented in the figures.
+
+The figures are divided into three groups, each of the group representing performance improvement over frequency and one other external condition for the two factory-precalibrated values of gain.
+
+.. figure:: /images/nrf21540_builtin_model_10db_freq_input_gain.png
+   :align: center
+   :alt: Figure 1a. nRF21540 gain vs input power over frequency sweep for 10dB setting
+
+   Figure 1a. nRF21540 gain vs input power over frequency sweep for 10dB setting
+
+.. figure:: /images/nrf21540_builtin_model_20db_freq_input_gain.png
+   :align: center
+   :alt: Figure 1b. nRF21540 gain vs input power over frequency sweep for 20dB setting
+
+   Figure 1b. nRF21540 gain vs input power over frequency sweep for 20dB setting
+
+.. figure:: /images/nrf21540_builtin_model_10db_freq_temp_gain.png
+   :align: center
+   :alt: Figure 2a. nRF21540 gain vs temperature over frequency sweep for 10dB setting
+
+   Figure 2a. nRF21540 gain vs temperature over frequency sweep for 10dB setting
+
+.. figure:: /images/nrf21540_builtin_model_20db_freq_temp_gain.png
+   :align: center
+   :alt: Figure 2b. nRF21540 gain vs temperature over frequency sweep for 20dB setting
+
+   Figure 2b. nRF21540 gain vs temperature over frequency sweep for 20dB setting
+
+.. figure:: /images/nrf21540_builtin_model_10db_freq_volt_gain.png
+   :align: center
+   :alt: Figure 3a. nRF21540 gain vs supply voltage over frequency sweep for 10dB setting
+
+   Figure 3a. nRF21540 gain vs supply voltage over frequency sweep for 10dB setting
+
+.. figure:: /images/nrf21540_builtin_model_20db_freq_volt_gain.png
+   :align: center
+   :alt: Figure 3b. nRF21540 gain vs supply voltage over frequency sweep for 20dB setting
+
+   Figure 3b. nRF21540 gain vs supply voltage over frequency sweep for 20dB setting
+
 
 Adding custom power models
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If the way MPSL splits the TX power into components does not meet your requirements, or if you wish to implement a custom compensation model, you can provide one as follows:
 
-1. Set :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL` to ``y``
+1. Set :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL` to ``y``.
 #. Provide an implementation of the ``mpsl_fem_power_model_to_use_get()`` function.
    This function should return a pointer to a variable of the type ``mpsl_fem_power_model_t`` which contains pointers to the model's callbacks.
 #. Mandatorily implement the model's ``fetch`` callback (details explained below).
@@ -556,13 +614,15 @@ Alternatively, add the shield in the project's :file:`CMakeLists.txt` file:
 To build with the |nRFVSC|, specify ``-DSHIELD=nrf21540_ek`` in the **Extra Cmake arguments** field.
 See :ref:`cmake_options`.
 
-When building for a board with an additional network core, for example nRF5340, add an additional ``-DSHIELD`` variable with the *childImageName_* parameter between ``-D`` and ``SHIELD`` to build for the network core as well.
+When building for a board with an additional network core, like the nRF5340, add the ``-DSHIELD`` variable with the *childImageName_* parameter between ``-D`` and ``SHIELD`` to build for the network core.
+In this case, the application core is only responsible for forwarding to the network core the pins needed to control the nRF21540 .
+The application core can be set up to forward the needed pins using the ``-DSHIELD=nrf21540_ek_fwd`` setting.
 For example:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540_ek -Dmultiprotocol_rpmsg_SHIELD=nrf21540_ek
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540_ek_fwd -Dmultiprotocol_rpmsg_SHIELD=nrf21540_ek
 
 In this command, the *childImageName_* parameter has the ``multiprotocol_rpmsg_`` value and builds a multiprotocol application with support for 802.15.4 and Bluetooth.
 The *childImageName_* parameter can take the following values:

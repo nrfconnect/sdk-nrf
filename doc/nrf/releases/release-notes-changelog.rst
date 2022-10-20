@@ -35,6 +35,13 @@ Application development
 
 * Updated the :ref:`software_maturity` page with a section about API deprecation.
 
+RF Front-End Modules
+--------------------
+
+* Added:
+
+  * nRF21540 GPIO+SPI built-in power model that keeps the nRF21540's gain constant and as close to the currently configured value of gain as possible.
+
 Protocols
 =========
 
