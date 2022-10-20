@@ -139,6 +139,14 @@ if (CONFIG_BOOTLOADER_MCUBOOT)
     )
 endif()
 
+if (CONFIG_TFM_NRF_PROVISIONING)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DPLATFORM_DEFAULT_PROVISIONING=FALSE
+    -DTFM_DUMMY_PROVISIONING=FALSE
+    )
+endif()
+
 # The ENGINE_BUF_SIZE holds the dynamic allocation buffer for
 # TF-M, which is the equivalent of dynamic allocation in MBEDTLS
 set_property(TARGET zephyr_property_target
