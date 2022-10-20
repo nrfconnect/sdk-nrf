@@ -34,6 +34,9 @@ struct life_cycle_state_data {
 	uint16_t left_assembly;
 	uint16_t left_provisioning;
 	uint16_t left_secure;
+	/* Pad to end the alignment at a 4-byte boundary as the UICR->OTP
+	 * only supports 4-byte reads */
+	uint16_t reserved_for_padding;
 };
 
 /** The first data structure in the bootloader storage. It has unknown length
