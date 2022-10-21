@@ -66,7 +66,6 @@ uint32_t num_public_keys_read(void)
 	uint32_t num_pk = p_bl_storage_data->num_public_keys;
 
 	__DSB(); /* Because of nRF9160 Erratum 7 */
-
 	return num_pk;
 }
 
@@ -351,30 +350,27 @@ int update_life_cycle_state(lcs_t next_lcs)
 
 int read_life_cycle_state(lcs_t *lcs)
 {
-	uint16_t left_assembly = read_halfword(&p_bl_storage_data->lcs.left_assembly);
-	uint16_t left_provisioning =read_halfword(&p_bl_storage_data->lcs.left_provisioning);
-	uint16_t left_secure = read_halfword(&p_bl_storage_data->lcs.left_secure);
-
-	if (left_assembly == STATE_NOT_LEFT) {
-		(*lcs) = ASSEMBLY;
-		return 0;
+	if (lcs == NULL){
+		return -EINVAL;
 	}
 
-	if (left_assembly == STATE_LEFT && left_provisioning == STATE_NOT_LEFT) {
-		(*lcs) = PROVISION;
-		return 0;
+	bool left_assembly = read_halfword(&p_bl_storage_data->lcs.left_assembly) == STATE_NOT_LEFT;
+	bool left_provisioning =
+						read_halfword(&p_bl_storage_data->lcs.left_provisioning) == STATE_NOT_LEFT;
+	bool left_secure = read_halfword(&p_bl_storage_data->lcs.left_secure) == STATE_NOT_LEFT;
+
+	if (left_assembly) {
+		*lcs = ASSEMBLY;
+	} else if (left_assembly && left_provisioning) {
+		*lcs = PROVISION;
+	} else if (left_provisioning && left_secure) {
+		*lcs = SECURE;
+	} else if (left_provisioning) {
+		*lcs = DECOMMISSIONED;
+	} else {
+		/* To reach this the OTP must be corrupted or reading failed */
+		return -EREADLCS;
 	}
 
-	if (left_provisioning == STATE_LEFT && left_secure == STATE_NOT_LEFT) {
-		(*lcs) = SECURE;
-		return 0;
-	}
-
-	if (left_provisioning == STATE_LEFT) {
-		(*lcs) = DECOMMISSIONED;
-		return 0;
-	}
-
-	/* To reach this the OTP must be corrupted or reading failed */
-	return -EREADLCS;
+	return 0;
 }
