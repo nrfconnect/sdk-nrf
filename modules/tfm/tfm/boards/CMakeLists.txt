@@ -49,10 +49,14 @@ target_link_libraries(platform_s
  )
 
 if (NOT ${PLATFORM_DEFAULT_PROVISIONING})
+  if(TFM_DUMMY_PROVISIONING)
+	set(provisioning_source dummy_provisioning.c)
+  else()
+	set(provisioning_source nrf_provisioning.c)
+  endif()
   target_sources(platform_s
     PRIVATE
-    $<$<BOOL:${TFM_DUMMY_PROVISIONING}>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_provisioning.c>
-    $<$<NOT:$<BOOL:${TFM_DUMMY_PROVISIONING}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/nrf_provisioning.c>
+    ${CMAKE_CURRENT_SOURCE_DIR}/common/${provisioning_source}>
     )
 endif()
 
