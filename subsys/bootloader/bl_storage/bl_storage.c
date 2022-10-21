@@ -66,6 +66,7 @@ uint32_t num_public_keys_read(void)
 	uint32_t num_pk = p_bl_storage_data->num_public_keys;
 
 	__DSB(); /* Because of nRF9160 Erratum 7 */
+
 	return num_pk;
 }
 

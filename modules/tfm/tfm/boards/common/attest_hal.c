@@ -14,8 +14,11 @@
 #include "tfm_plat_otp.h"
 #include <nrf_cc3xx_platform.h>
 #include "tfm_strnlen.h"
+
+/* 16 is the only supported length */
 #define CONFIG_SB_PUBLIC_KEY_HASH_LEN 16
 #include "bl_storage.h"
+
 #include <nrfx_nvmc.h>
 
 
@@ -105,36 +108,30 @@ static void write_halfword(const uint16_t *ptr, uint16_t val)
 
 
 /* Can later be replaced by a bl_storage call */
-int read_lcs_from_otp(lcs_t *lcs){
-	uint16_t left_assembly = read_halfword(&p_bl_storage_data->lcs.left_assembly);
-	uint16_t left_provisioning =read_halfword(&p_bl_storage_data->lcs.left_provisioning);
-	uint16_t left_secure = read_halfword(&p_bl_storage_data->lcs.left_secure);
+int read_lcs_from_otp(lcs_t *lcs)
+{
+	uint16_t left_assembly     = read_halfword(&p_bl_storage_data->lcs.left_assembly);
+	uint16_t left_provisioning = read_halfword(&p_bl_storage_data->lcs.left_provisioning);
+	uint16_t left_secure       = read_halfword(&p_bl_storage_data->lcs.left_secure);
 
 	if (left_assembly == STATE_NOT_LEFT) {
-		(*lcs) = ASSEMBLY;
-		return 0;
+		*lcs = ASSEMBLY;
+	} else if (left_assembly == STATE_LEFT && left_provisioning == STATE_NOT_LEFT) {
+		*lcs = PROVISION;
+	} else if (left_provisioning == STATE_LEFT && left_secure == STATE_NOT_LEFT) {
+		*lcs = SECURE;
+	} else if (left_provisioning == STATE_LEFT) {
+		*lcs = DECOMMISSIONED;
+	} else {
+		/* To reach this the OTP must be corrupted or reading failed */
+		return -EREADLCS;
 	}
 
-	if (left_assembly == STATE_LEFT && left_provisioning == STATE_NOT_LEFT) {
-		(*lcs) = PROVISION;
-		return 0;
-	}
-
-	if (left_provisioning == STATE_LEFT && left_secure == STATE_NOT_LEFT) {
-		(*lcs) = SECURE;
-		return 0;
-	}
-
-	if (left_provisioning == STATE_LEFT) {
-		(*lcs) = DECOMMISSIONED;
-		return 0;
-	}
-
-	/* To reach this the OTP must be corrupted or reading failed */
-	return -EREADLCS;
+	return 0;
 }
 
-int update_lcs_in_otp(lcs_t next_lcs){
+int update_lcs_in_otp(lcs_t next_lcs)
+{
 	int err;
 	lcs_t current_lcs = 0;
 

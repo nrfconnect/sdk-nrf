@@ -7,8 +7,8 @@
 #ifndef BL_STORAGE_H_
 #define BL_STORAGE_H_
 
-#include <zephyr/types.h>
 #include <string.h>
+#include <zephyr/types.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,6 +50,7 @@ struct life_cycle_state_data {
  *  struct counter_collection.
  */
 struct bl_storage_data {
+	/* NB: When placed in OTP, reads must be 4 bytes and 4 byte aligned */
 	struct life_cycle_state_data lcs;
 	uint32_t s0_address;
 	uint32_t s1_address;
