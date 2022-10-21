@@ -62,8 +62,9 @@ static lcs_t map_tfm_slc_to_bl_storage_lcs(enum tfm_security_lifecycle_t lcs){
 static const struct bl_storage_data *p_bl_storage_data =
 	(struct bl_storage_data *)PROVISION_PARTITION_ADDRESS;
 
-#define STATE_LEFT 0x0000
-#define STATE_NOT_LEFT 0xFFFF
+#define STATE_ENTERED 0x0000
+#define STATE_NOT_ENTERED 0xFFFF
+#define	EINVAL 22	/* Invalid argument */
 
 
 /** Function for reading a half-word (2 byte value) from OTP.
@@ -79,7 +80,7 @@ static const struct bl_storage_data *p_bl_storage_data =
 static uint16_t read_halfword(const uint16_t *ptr)
 {
 	bool top_half = ((uint32_t)ptr % 4); /* Addr not div by 4 */
-	uint32_t target_addr = (uint32_t)ptr & ~3; /* Floor address */
+	uintptr_t target_addr = (uintptr_t)ptr & ~3; /* Floor address */
 	uint32_t val32 = *(uint32_t *)target_addr;
 	__DSB(); /* Because of nRF9160 Erratum 7 */
 
@@ -110,18 +111,21 @@ static void write_halfword(const uint16_t *ptr, uint16_t val)
 /* Can later be replaced by a bl_storage call */
 int read_lcs_from_otp(lcs_t *lcs)
 {
-	bool left_assembly = read_halfword(&p_bl_storage_data->lcs.left_assembly) == STATE_NOT_LEFT;
-	bool left_provisioning =
-						read_halfword(&p_bl_storage_data->lcs.left_provisioning) == STATE_NOT_LEFT;
-	bool left_secure = read_halfword(&p_bl_storage_data->lcs.left_secure) == STATE_NOT_LEFT;
+	if (lcs == NULL){
+		return -EINVAL;
+	}
 
-	if (left_assembly) {
+	uint16_t provisioning = read_halfword(&p_bl_storage_data->lcs.provisioning);
+	uint16_t secure = read_halfword(&p_bl_storage_data->lcs.secure);
+	uint16_t decommissioned = read_halfword(&p_bl_storage_data->lcs.decommissioned);
+
+	if (provisioning == STATE_NOT_ENTERED) {
 		*lcs = ASSEMBLY;
-	} else if (left_assembly && left_provisioning) {
+	} else if (provisioning == STATE_ENTERED && secure == STATE_NOT_ENTERED) {
 		*lcs = PROVISION;
-	} else if (left_provisioning && left_secure) {
+	} else if (secure == STATE_ENTERED && decommissioned == STATE_NOT_ENTERED) {
 		*lcs = SECURE;
-	} else if (left_provisioning) {
+	}  else if (decommissioned == STATE_ENTERED) {
 		*lcs = DECOMMISSIONED;
 	} else {
 		/* To reach this the OTP must be corrupted or reading failed */
@@ -157,17 +161,17 @@ int update_lcs_in_otp(lcs_t next_lcs)
 
 	/* As the device starts in ASSEMBLY, it is not possible to write it */
 	if (current_lcs == ASSEMBLY && next_lcs == PROVISION) {
-		write_halfword(&(p_bl_storage_data->lcs.left_assembly), STATE_LEFT);
+		write_halfword(&(p_bl_storage_data->lcs.provisioning), STATE_ENTERED);
 		return 0;
 	}
 
 	if (current_lcs == PROVISION && next_lcs == SECURE) {
-		write_halfword(&(p_bl_storage_data->lcs.left_provisioning), STATE_LEFT);
+		write_halfword(&(p_bl_storage_data->lcs.secure), STATE_ENTERED);
 		return 0;
 	}
 
 	if (current_lcs == SECURE && next_lcs == DECOMMISSIONED) {
-		write_halfword(&(p_bl_storage_data->lcs.left_secure), STATE_LEFT);
+		write_halfword(&(p_bl_storage_data->lcs.decommissioned), STATE_ENTERED);
 		return 0;
 	}
 
