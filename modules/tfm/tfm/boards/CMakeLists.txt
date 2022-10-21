@@ -56,7 +56,7 @@ if (NOT ${PLATFORM_DEFAULT_PROVISIONING})
   endif()
   target_sources(platform_s
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/common/${provisioning_source}>
+    ${CMAKE_CURRENT_SOURCE_DIR}/common/${provisioning_source}
     )
 endif()
 
