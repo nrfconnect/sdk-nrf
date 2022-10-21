@@ -447,7 +447,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 MCUboot
 =======
 
-The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``1d4404116a9a6b54d54ea9aa3dd2575286e666cd``, plus some |NCS| specific additions.
+The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``13f63976bca672ee018f9d55f1e31f02f4135b64``, plus some |NCS| specific additions.
 
 The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/modules/mcuboot` folder.
 
@@ -460,21 +460,21 @@ Zephyr
 
 .. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each NCS release.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``71ef669ea4a73495b255f27024bcd5d542bf038c``, plus some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``b96453f653b674629c617bdbc810c3d9f7916ef4``, plus some |NCS| specific additions.
 
 For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into nRF Connect SDK since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline 71ef669ea4 ^45ef0d2
+   git log --oneline b96453f653 ^45ef0d2
 
 For the list of |NCS| specific commits, including commits cherry-picked from upstream, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^71ef669ea4
+   git log --oneline manifest-rev ^b96453f653
 
-The current |NCS| main branch is based on revision ``71ef669ea4`` of Zephyr.
+The current |NCS| main branch is based on revision ``b96453f653`` of Zephyr.
 
 Additions specific to |NCS|
 ---------------------------
