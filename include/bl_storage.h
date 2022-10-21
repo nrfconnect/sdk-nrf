@@ -9,6 +9,7 @@
 
 #include <string.h>
 #include <zephyr/types.h>
+#include <drivers/nrfx_common.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -189,6 +190,29 @@ int update_life_cycle_state(lcs_t next_lcs);
  * @retval -EREADLCS    Error on reading from OTP or invalid OTP content
  */
 int read_life_cycle_state(lcs_t *lcs);
+
+/**
+ * Copies @p src into @p dst. Reads from @p src are done 32 bits at a
+ * time. Writes to @p dst are done a byte at a time.
+ *
+ * This ensures UICR->OTP's word-aligned and word-sized read
+ * requirement is met and also allows the destination buffer to be
+ * free of this requirement.
+ *
+ * @param dst destination buffer
+ * @param src source buffer
+ * @param size number of *bytes* in src to copy into dst
+ */
+NRFX_STATIC_INLINE void otp_copy32(uint8_t * restrict dst, uint32_t volatile * restrict src, size_t size)
+{
+	for (int i = 0; i < size / 4; i++) {
+		uint32_t val = src[i];
+
+		for(int j = 0; j < 4; j++) {
+			dst[i * 4 + j] = (val >> 8 * j) & 0xFF;
+		}
+	}
+}
 
   /** @} */
 
