@@ -270,6 +270,9 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT)
 	lwm2m_init_cellular_connectivity_object();
 #endif
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
+		lwm2m_init_rai();
+	}
 	return 0;
 }
 
@@ -404,6 +407,9 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_QUEUE_MODE_RX_OFF:
 		LOG_DBG("Queue mode RX window closed");
+		if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
+			lwm2m_rai_last();
+		}
 		k_mutex_unlock(&lte_mutex);
 		break;
 

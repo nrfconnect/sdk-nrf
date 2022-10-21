@@ -52,6 +52,11 @@ Disable the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT` Kconf
 
 If you are using the Firmware Update object and require downloading of firmware images from TLS enabled services like HTTPS, configure :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG` to specify the security tag that has root certificate for the target server.
 
+Additional configuration
+========================
+
+The :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_RAI` Kconfig option enables Release Assistance Indication (RAI) for access stratum (AS). When AS RAI is configured, the device may indicate that no further data is expected in the near future and the connection may be released. AS RAI was introduced in the 3GPP Release 14 and needs to be supported by the network.
+
 Defining custom objects
 =======================
 
