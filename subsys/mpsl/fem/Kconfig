@@ -149,10 +149,6 @@ config MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL
 
 endif   # (MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI) && MPSL_FEM
 
-config MPSL_FEM_POWER_VOLTAGE
-	int "Voltage which is used to power the FEM chip in mV"
-	default 3000
-
 config MPSL_FEM_POWER_MODEL
 	bool "Use a model to split the requested TX power into values used to control the internal state of the FEM"
 	default n
