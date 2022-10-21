@@ -132,7 +132,7 @@ You must use the build target ``thingy91_nrf9160_ns`` when building the applicat
 
 .. note::
 
-   LTE/GNSS features can only be used with non-secure target.
+   LTE/GNSS features can only be used with :ref:`Cortex-M Security Extensions enabled <app_boards_spe_nspe_cpuapp_ns>` (``_ns`` build target).
 
 The table below shows the different types of build files that are generated and the different scenarios in which they are used:
 

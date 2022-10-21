@@ -1,7 +1,7 @@
 .. _tfm_secure_peripheral_partition:
 
 TF-M secure peripheral partition
-#######################################
+################################
 
 .. contents::
    :local:
@@ -22,11 +22,11 @@ Overview
 ********
 
 A secure partition is an isolated module that resides in TF-M.
-It exposes a number of functions or secure services to other partitions and/or to the non-secure firmware.
+It exposes a number of functions or secure services to other partitions and/or to the firmware in Non-Secure Processing Environment (NSPE).
 TF-M already contains standard partitions such as crypto, protected storage and firmware update, but you can also create your own partitions.
 
 The sample demonstrates how to configure peripherals as secure peripherals and use them in the secure partition.
-In this way, the peripheral is only accessible from the secure domain, or from the secure partition with isolation level 2 or higher.
+In this way, the peripheral is only accessible from Secure Processing Environment (SPE), or from the secure partition with isolation level 2 or higher.
 
 The secure partition is located in the ``secure_peripheral_partition`` directory.
 It contains the partition sources, build files and build configuration files.
@@ -45,7 +45,7 @@ To configure a peripheral as secure, the peripheral must be enabled and assigned
 Secure peripheral
 =================
 
-To start using a peripheral as a secure peripheral, it must first be enabled for use in the secure domain.
+To start using a peripheral as a secure peripheral, it must first be enabled for use in SPE.
 
 .. code-block:: none
 
@@ -126,7 +126,7 @@ How to clear an interrupt signal depends on the type of interrupt handling.
 
         TF-M interrupt signals only assert the signal but do not schedule the partition to run.
         In cases where the interrupt signal is preempting the non-secure execution, the interrupt signal is not processed until the next time the partition is scheduled to run.
-        The sample demonstrates a workaround for this limitation by triggering an EGU0 interrupt in the non-secure firmware which calls the secure partition to process the interrupt signals.
+        The sample demonstrates a workaround for this limitation by triggering an EGU0 interrupt in the firmware in NSPE which calls the secure partition to process the interrupt signals.
 
 
 Building and Running
@@ -139,14 +139,14 @@ Building and Running
 Testing
 =======
 
-The sample displays the following output in the console from the non-secure firmware:
+The sample displays the following output in the console from the firmware in NSPE:
 
 .. code-block:: console
 
         SPP: send message: Success
         SPP: process signals: Success
 
-The sample displays the following output in the console from the non-secure firmware:
+The sample displays the following output in the console from the firmware in NSPE:
 
 .. code-block:: console
 

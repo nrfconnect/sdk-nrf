@@ -144,12 +144,14 @@ Complete the following steps to start debugging the network core:
 
 If you want to reset the network core while debugging, make sure to first reset the application core and execute the code.
 
+.. _gs_debugging_spe_nspe:
+
 Debugging secure and non-secure firmware
 ========================================
 
-When using an ``_ns`` build target, by default you can only debug firmware in the non-secure part of the application core firmware.
+When using a build target with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` (``_ns``), by default you can only debug firmware in the non-secure environment of the application core firmware.
 
-To debug firmware running in the secure part, you need to build Trusted Firmware-M with debug symbols enabled and load the symbols during the debugging session.
+To debug firmware running in the secure environment, you need to build Trusted Firmware-M with debug symbols enabled and load the symbols during the debugging session.
 To build Trusted Firmware-M with debug symbols, set the :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_RELWITHDEBINFO` Kconfig option.
 
 nRF Debug in the |nRFVSC| automatically loads the Trusted Firmware-M debug symbols.
