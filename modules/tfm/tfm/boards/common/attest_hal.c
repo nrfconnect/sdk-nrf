@@ -60,10 +60,8 @@ static lcs_t map_tfm_slc_to_bl_storage_lcs(enum tfm_security_lifecycle_t lcs){
 /* This is temporary solution until the bl_storage API is available in TF-M
  * This points to the UICR OTP region
  */
-/* Taken from nrf/subsys/bootloader/include/dummy_values */
-#define PM_PROVISION_ADDRESS 0xFF8100
 static const struct bl_storage_data *p_bl_storage_data =
-	(struct bl_storage_data *)PM_PROVISION_ADDRESS;
+	(struct bl_storage_data *)PROVISION_PARTITION_ADDRESS;
 
 #define STATE_LEFT 0x0000
 #define STATE_NOT_LEFT 0xFFFF
