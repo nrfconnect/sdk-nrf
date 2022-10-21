@@ -221,6 +221,13 @@ config LWM2M_CELL_CONN_APN_PROFILE_COUNT
 
 endif #LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
 
+config LWM2M_CLIENT_UTILS_RAI
+	bool "Enable release assistance indication (RAI)"
+	help
+	  This option enables RAI for access stratum (AS) which was introduced in REL14.
+	  When AS RAI is configured, device may indicate that no further data is
+	  expected in the near future and the connection may be released.
+
 module = LWM2M_CLIENT_UTILS
 module-dep = LOG
 module-str = LwM2M client utilities library
