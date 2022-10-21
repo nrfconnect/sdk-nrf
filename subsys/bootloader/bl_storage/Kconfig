@@ -23,3 +23,11 @@ config SECURE_BOOT_STORAGE_START_ADDRESS
 	  with the value used your image.
 	  If SECURE_BOOT is enabled the bl_storage start address will be
 	  automatically calculated and this configuration will be ignored.
+
+config SB_IMPLEMENTATION_ID
+	bool "Uniquely identifies the underlying immutable PSA RoT."
+
+config SB_IMPLEMENTATION_ID_VALUE
+	string "Implementation ID value to program into the provision.hex file"
+	default "Company X, Device Z, NSIB bootloader x.y.z______________________"
+	depends on SB_IMPLEMENTATION_ID

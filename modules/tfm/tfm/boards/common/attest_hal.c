@@ -17,6 +17,9 @@
 
 /* 16 is the only supported length */
 #define CONFIG_SB_PUBLIC_KEY_HASH_LEN 16
+
+/* implementation_id is a mandatory IAT claim */
+#define CONFIG_SB_IMPLEMENTATION_ID 1
 #include "bl_storage.h"
 
 #include <nrfx_nvmc.h>
@@ -174,6 +177,11 @@ int update_lcs_in_otp(lcs_t next_lcs)
 	return -EINVALIDLCS;
 }
 
+static void read_implementation_id_from_otp(uint8_t * buf)
+{
+	otp_copy32(buf, (uint32_t *)&p_bl_storage_data->implementation_id, 64);
+}
+
 /* End of  temporary solution */
 
 enum tfm_security_lifecycle_t tfm_attest_hal_get_security_lifecycle(void)
@@ -255,20 +263,8 @@ enum tfm_plat_err_t tfm_plat_get_boot_seed(uint32_t size, uint8_t *buf)
 
 enum tfm_plat_err_t tfm_plat_get_implementation_id(uint32_t *size, uint8_t *buf)
 {
-	enum tfm_plat_err_t err;
-	size_t otp_size;
-
-	err = tfm_plat_otp_read(PLAT_OTP_ID_IMPLEMENTATION_ID, *size, buf);
-	if (err != TFM_PLAT_ERR_SUCCESS) {
-		return err;
-	}
-
-	err = tfm_plat_otp_get_size(PLAT_OTP_ID_IMPLEMENTATION_ID, &otp_size);
-	if (err != TFM_PLAT_ERR_SUCCESS) {
-		return err;
-	}
-
-	*size = otp_size;
+	*size = 64;
+	read_implementation_id_from_otp(buf);
 
 	return TFM_PLAT_ERR_SUCCESS;
 }

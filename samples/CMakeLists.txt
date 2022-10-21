@@ -65,6 +65,12 @@ if (CONFIG_SECURE_BOOT)
       SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/nrf5340/netboot
       )
   else()
+    if(CONFIG_TFM_PARTITION_INITIAL_ATTESTATION)
+      add_overlay_config(
+        b0
+        ${CMAKE_CURRENT_LIST_DIR}/bootloader/prj_attestation.conf
+        )
+    endif()
     add_child_image(
       NAME b0
       SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/bootloader

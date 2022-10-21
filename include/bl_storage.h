@@ -56,6 +56,9 @@ struct bl_storage_data {
 	uint32_t s0_address;
 	uint32_t s1_address;
 	uint32_t num_public_keys; /* Number of entries in 'key_data' list. */
+#ifdef CONFIG_SB_IMPLEMENTATION_ID
+	uint8_t implementation_id[64];
+#endif
 	struct {
 		uint32_t valid;
 		uint8_t hash[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
