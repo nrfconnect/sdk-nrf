@@ -14,6 +14,12 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 
+#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), supply_voltage_mv)
+#define MPSL_FEM_NRF21540_SUPPLY_VOLTAGE_MV  DT_PROP(DT_NODELABEL(nrf_radio_fem), supply_voltage_mv)
+#else
+#error Cannot use nRF21540 built-in power model with unspecified supply-voltage-mv property
+#endif /* !DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), supply_voltage_mv) */
+
 static int32_t last_temperature = INT32_MIN;
 
 static void model_update_work_handler(struct k_work *work)
@@ -23,7 +29,7 @@ static void model_update_work_handler(struct k_work *work)
 
 	if (last_temperature != current_temperature) {
 		external_conditions.temperature = mpsl_temperature_get() / 4;
-		external_conditions.voltage = CONFIG_MPSL_FEM_POWER_VOLTAGE / 100;
+		external_conditions.voltage = MPSL_FEM_NRF21540_SUPPLY_VOLTAGE_MV / 100;
 		mpsl_fem_nrf21540_power_model_builtin_update(&external_conditions);
 	}
 }
