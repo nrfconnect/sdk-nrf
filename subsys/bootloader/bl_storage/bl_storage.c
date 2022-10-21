@@ -158,7 +158,7 @@ void invalidate_public_key(uint32_t key_idx)
 static uint16_t read_halfword(const uint16_t *ptr)
 {
 	bool top_half = ((uint32_t)ptr % 4); /* Addr not div by 4 */
-	uint32_t target_addr = (uint32_t)ptr & ~3; /* Floor address */
+	uintptr_t target_addr = (uintptr_t)ptr & ~3; /* Floor address */
 	uint32_t val32 = *(uint32_t *)target_addr;
 	__DSB(); /* Because of nRF9160 Erratum 7 */
 
@@ -300,7 +300,8 @@ int set_monotonic_counter(uint16_t new_counter)
 /* OTP is 0xFFFF after erase so setting all bits to 0 so a full erase is needed
  * to reset
  */
-#define STATE_LEFT 0x0000
+#define STATE_ENTERED 0x0000
+#define STATE_NOT_ENTERED 0xFFFF
 
 int update_life_cycle_state(lcs_t next_lcs)
 {
@@ -328,17 +329,17 @@ int update_life_cycle_state(lcs_t next_lcs)
 
 	/* As the device starts in ASSEMBLY, it is not possible to write it */
 	if (current_lcs == ASSEMBLY && next_lcs == PROVISION) {
-		write_halfword(&(p_bl_storage_data->lcs.left_assembly), STATE_LEFT);
+		write_halfword(&(p_bl_storage_data->lcs.provisioning), STATE_ENTERED);
 		return 0;
 	}
 
 	if (current_lcs == PROVISION && next_lcs == SECURE) {
-		write_halfword(&(p_bl_storage_data->lcs.left_provisioning), STATE_LEFT);
+		write_halfword(&(p_bl_storage_data->lcs.secure), STATE_ENTERED);
 		return 0;
 	}
 
 	if (current_lcs == SECURE && next_lcs == DECOMMISSIONED) {
-		write_halfword(&(p_bl_storage_data->lcs.left_secure), STATE_LEFT);
+		write_halfword(&(p_bl_storage_data->lcs.decommissioned), STATE_ENTERED);
 		return 0;
 	}
 
@@ -346,7 +347,6 @@ int update_life_cycle_state(lcs_t next_lcs)
 	return -EINVALIDLCS;
 }
 
-#define STATE_NOT_LEFT 0xFFFF
 
 int read_life_cycle_state(lcs_t *lcs)
 {
@@ -354,18 +354,17 @@ int read_life_cycle_state(lcs_t *lcs)
 		return -EINVAL;
 	}
 
-	bool left_assembly = read_halfword(&p_bl_storage_data->lcs.left_assembly) == STATE_NOT_LEFT;
-	bool left_provisioning =
-						read_halfword(&p_bl_storage_data->lcs.left_provisioning) == STATE_NOT_LEFT;
-	bool left_secure = read_halfword(&p_bl_storage_data->lcs.left_secure) == STATE_NOT_LEFT;
+	uint16_t provisioning = read_halfword(&p_bl_storage_data->lcs.provisioning);
+	uint16_t secure = read_halfword(&p_bl_storage_data->lcs.secure);
+	uint16_t decommissioned = read_halfword(&p_bl_storage_data->lcs.decommissioned);
 
-	if (left_assembly) {
+	if (provisioning == STATE_NOT_ENTERED) {
 		*lcs = ASSEMBLY;
-	} else if (left_assembly && left_provisioning) {
+	} else if (provisioning == STATE_ENTERED && secure == STATE_NOT_ENTERED) {
 		*lcs = PROVISION;
-	} else if (left_provisioning && left_secure) {
+	} else if (secure == STATE_ENTERED && decommissioned == STATE_NOT_ENTERED) {
 		*lcs = SECURE;
-	} else if (left_provisioning) {
+	}  else if (decommissioned == STATE_ENTERED) {
 		*lcs = DECOMMISSIONED;
 	} else {
 		/* To reach this the OTP must be corrupted or reading failed */
