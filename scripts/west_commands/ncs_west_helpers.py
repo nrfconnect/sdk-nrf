@@ -202,6 +202,16 @@ class RepoAnalyzer:
                         format(str(sha), textwrap.indent(c.message, '\t')))
                     rsha = None
 
+                # Temporary workaround for three commits that are known
+                # to specify incorrect SHAs of the commits they revert.
+                if self._dp.name == 'zephyr':
+                    if rsha == '54b057b603cf0e12f4128d33580523bd4cff1226':
+                        rsha = 'f252fac960bf2806bf66815f292b5586c38b9f34'
+                    elif rsha == 'dd18789b095584bca8e297cba79b775cea101c2b':
+                        rsha = 'dabe1c9d30037b63755dd13fefd8d042043bf520'
+                    elif rsha == 'd692aec3d12c73b895fc296966e031e426120e8a':
+                        rsha = '3aed7234e9bcfbc09178e3917073789d5cc7ea94'
+
                 if rsha in downstream_out:
                     log.dbg('** commit {} ("{}") was reverted in {}'.
                             format(rsha, commit_shortlog(downstream_out[rsha]),
