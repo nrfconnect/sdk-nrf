@@ -80,9 +80,6 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-The sample is built as a non-secure firmware image for the ``nrf9160dk_nrf9160_ns`` build target.
-Because of this, it automatically includes the :ref:`secure_partition_manager`.
-
 Testing
 =======
 

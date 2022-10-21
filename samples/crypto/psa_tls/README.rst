@@ -7,11 +7,13 @@ Crypto: PSA TLS
    :local:
    :depth: 2
 
-The PSA TLS sample shows how to perform a TLS handshake and send encrypted messages in both a secure and a non-secure domain with :ref:`Trusted Firmware-M<ug_tfm>`.
+The PSA TLS sample shows how to perform a TLS handshake and send encrypted messages with Cortex-M Security Extensions (CMSE) enabled, in both Non-Secure Processing Environment (NSPE) and Secure Processing Environment (SPE) with :ref:`Trusted Firmware-M<ug_tfm>`.
 
 .. note::
 
    Datagram Transport Layer Security (DTLS) and Pre-shared key (PSK) are currently not supported.
+
+For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
 
 Requirements
 ************
@@ -59,23 +61,23 @@ The sample supports certificates signed with either ECDSA or RSA.
 By default, the sample is configured to use ECDSA certificates.
 Set the ``CONFIG_PSA_TLS_CERTIFICATE_TYPE_RSA`` option to ``y`` to make the sample use RSA certificates.
 
-Certificates when running in a non-secure domain
-------------------------------------------------
+Certificates when running with CMSE
+-----------------------------------
 
-When the sample is compiled for a non-secure domain, it stores its TLS certificates and keys in the TF-M Protected Storage.
+When the sample is compiled for NSPE alongside SPE, that is with CMSE enabled, it stores its TLS certificates and keys in the TF-M Protected Storage.
 During the sample initialization, the certificates and keys are fetched from TF-M Protected Storage and kept in non-secure RAM for use during every subsequent TLS handshake.
 
 .. note::
-   Currently, non-secure applications only support ECDSA certificates.
-   This is automatically enforced in the configuration files for non-secure builds.
+   Currently, applications with CMSE enabled only support ECDSA certificates.
+   This is automatically enforced in the configuration files for build targets with CMSE enabled (``*_ns``).
 
 Supported cipher suites
 =======================
 
 The sample supports most TLS v1.2 cipher suites, except for the following combinations:
 
-* RSA is not supported in non-secure applications.
-* AES256 is not supported in non-secure applications running on the nRF9160.
+* RSA is not supported in applications with CMSE enabled.
+* AES256 is not supported in applications with CMSE enabled that are running on nRF9160.
 
 TAP adapter
 ===========

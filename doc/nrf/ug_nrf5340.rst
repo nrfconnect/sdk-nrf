@@ -53,22 +53,22 @@ Application core
 The application core is a full-featured Arm Cortex-M33 processor including DSP instructions and FPU.
 Use this core for tasks that require high performance and for application-level logic.
 
-The M33 TrustZone divides the application MCU into secure and non-secure domains.
+The M33 TrustZone, one of Cortex-M Security Extensions (CMSE), divides the application MCU into Secure Processing Environment (SPE) and Non-Secure Processing Environment (NSPE).
 When the MCU boots, it always starts executing from the secure area.
 
 In Zephyr, the firmware of the application core is built using one of the following build targets:
 
-* ``nrf5340dk_nrf5340_cpuapp`` for the Secure Processing Environment (SPE) only.
-* ``nrf5340dk_nrf5340_cpuapp_ns`` for adding the Non-Secure Processing Environment (NSPE) alongside SPE.
+* ``nrf5340dk_nrf5340_cpuapp`` for build targets with CMSE disabled.
+* ``nrf5340dk_nrf5340_cpuapp_ns`` for build targets that have CMSE enabled and have the SPE firmware alongside the NSPE firmware.
 
-For information about the difference between the two environments, see :ref:`app_boards_spe_nspe`.
+For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
 
 Trusted Firmware-M (TF-M)
 -------------------------
 
 Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
 It has replaced Secure Partition Manager as the solution used by |NCS| applications and samples.
-This means that when you build your application for the non-secure domain, the :ref:`TF-M <ug_tfm>` is automatically included in the build.
+This means that when you build your application with CMSE enabled, the :ref:`TF-M <ug_tfm>` is automatically included in the build.
 It is a framework for functions and use cases beyond the scope of Secure Partition Manager.
 
 For more information about the TF-M, see :ref:`ug_tfm`.

@@ -17,13 +17,13 @@ Overview
 ********
 
 The Cortex-M33 CPU in the nRF9160 and nRF5340 devices implements `ARM TrustZone`_.
-This allows the CPU to run a "secure" and a "non-secure" app side by side.
+This allows the CPU to run firmware in Secure Processing Environment (SPE) and Non-Secure Processing Environment (NSPE) side by side.
 
-The SPM runs as a secure app.
-It configures the permissions and resources of the non-secure app and then boots it.
-Such configuration is required to run non-secure apps.
+The SPM runs as an SPE firmware.
+It configures the permissions and resources of the NSPE firmware and then boots it.
+Such separation of firmware is required to run NSPE applications.
 
-The SPM also provides the non-secure app with access to features that are normally only available to secure apps.
+The SPM also provides NSPE firmware with access to features that are normally only available to firmware in SPE.
 You can find the feature list on the :ref:`lib_spm_secure_services` page.
 
 .. note::
@@ -107,7 +107,7 @@ The following peripherals are configured as Non-Secure:
 Secure Services
 ***************
 
-The SPM provides by default certain Secure Services to the Non-Secure Firmware.
+The SPM provides by default certain Secure Services to the NSPE firmware.
 See :ref:`lib_secure_services` for more information.
 
 API documentation

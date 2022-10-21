@@ -14,12 +14,12 @@ You can use the CC310 entropy driver (*entropy_cc310*) to generate random data u
 * nRF9160
 
 When used with nRF52840, the CC310 entropy driver gathers entropy by using the CC310 hardware through the :ref:`nrf_cc3xx_platform_readme`.
-When used with nRF5340 or nRF9160, the driver behavior depends on whether it is used in a secure or non-secure application:
+When used with nRF5340 or nRF9160, the driver behavior depends on whether it is used in an application with or without Cortex-M Security Extensions (CMSE):
 
-* In a secure application, or when the :ref:`lib_spm` is not used, the CC310 entropy driver gathers entropy by using the CC310 hardware through the :ref:`nrf_cc3xx_platform_readme`.
-* In a non-secure application, the driver gathers entropy through the :ref:`lib_secure_services` library.
+* In an application without CMSE, or when the :ref:`lib_spm` is not used, the CC310 entropy driver gathers entropy by using the CC310 hardware through the :ref:`nrf_cc3xx_platform_readme`.
+* In an application with CMSE, the driver gathers entropy through the :ref:`lib_secure_services` library.
 
-For more details on secure and non-secure applications, see :ref:`ug_nrf5340` and :ref:`ug_nrf9160`.
+For more details on CMSE, see :ref:`app_boards_spe_nspe`.
 
 API documentation
 *****************

@@ -7,7 +7,7 @@ Secure Services
    :local:
    :depth: 2
 
-Secure Services are functions implemented in the Secure Firmware (:ref:`secure_partition_manager`), but made available to be called from the Non-Secure Firmware.
+Secure Services are functions implemented in the firmware in Secure Processing Environment (SPE), but made available to be called from firmware in Non-Secure Processing Environment (NSPE).
 
 Calling functions in this API requires that the service is enabled in the :ref:`secure_partition_manager`.
 See :kconfig:option:`CONFIG_SPM_SECURE_SERVICES` in the :ref:`secure_partition_manager`'s menuconfig.
