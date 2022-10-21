@@ -273,6 +273,17 @@ static bool event_packet_is_discardable(const uint8_t *hci_buf)
 		switch (me->subevent) {
 		case BT_HCI_EVT_LE_ADVERTISING_REPORT:
 			return true;
+#if defined(CONFIG_BT_EXT_ADV)
+		case BT_HCI_EVT_LE_EXT_ADVERTISING_REPORT:
+		{
+			const struct bt_hci_evt_le_ext_advertising_report *ext_adv =
+				(void *)&hci_buf[3];
+
+			return (ext_adv->num_reports == 1) &&
+				   ((ext_adv->adv_info->evt_type &
+					 BT_HCI_LE_ADV_EVT_TYPE_LEGACY) != 0);
+		}
+#endif
 		default:
 			return false;
 		}
