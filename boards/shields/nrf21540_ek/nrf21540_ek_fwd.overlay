@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* This file matches the contents of nrf21540_ek.overlay and is intended to be applied to nRF5340
+ * application core when nrf21540_ek shield is provided to the network core's image build.
+ *
+ * For instance, consider an application targeted for nRF5340 application core that specifies
+ * a child image targeted for nRF5340 network core, which drives the nRF21540 Front-End Module.
+ * The shield overlays could be provided to the build using the following command:
+ *
+ * west build -p -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540_ek_fwd -D<child_image>_SHIELD=nrf21540_ek
+ */
+&gpio_fwd {
+	nrf21540-gpio-if {
+		gpios = <&arduino_header 11 0>,		/* tx-en-gpios */
+			<&arduino_header 9 0>,		/* rx-en-gpios */
+			<&arduino_header 15 0>,		/* pdn-gpios */
+			<&arduino_header 10 0>,		/* ant-sel-gpios */
+			<&arduino_header 8 0>;		/* mode-gpios */
+	};
+	nrf21540-spi-if {
+		gpios = <&arduino_header 16 0>,		/* cs-gpios */
+			<&gpio1 15 0>,			/* SPIM_SCK */
+			<&gpio1 14 0>,			/* SPIM_MISO */
+			<&gpio1 13 0>;			/* SPIM_MOSI */
+	};
+};
