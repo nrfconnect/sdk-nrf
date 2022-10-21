@@ -21,7 +21,6 @@
 /* implementation_id is a mandatory IAT claim */
 #define CONFIG_SB_IMPLEMENTATION_ID 1
 #include "bl_storage.h"
-
 #include <nrfx_nvmc.h>
 
 
@@ -111,17 +110,18 @@ static void write_halfword(const uint16_t *ptr, uint16_t val)
 /* Can later be replaced by a bl_storage call */
 int read_lcs_from_otp(lcs_t *lcs)
 {
-	uint16_t left_assembly     = read_halfword(&p_bl_storage_data->lcs.left_assembly);
-	uint16_t left_provisioning = read_halfword(&p_bl_storage_data->lcs.left_provisioning);
-	uint16_t left_secure       = read_halfword(&p_bl_storage_data->lcs.left_secure);
+	bool left_assembly = read_halfword(&p_bl_storage_data->lcs.left_assembly) == STATE_NOT_LEFT;
+	bool left_provisioning =
+						read_halfword(&p_bl_storage_data->lcs.left_provisioning) == STATE_NOT_LEFT;
+	bool left_secure = read_halfword(&p_bl_storage_data->lcs.left_secure) == STATE_NOT_LEFT;
 
-	if (left_assembly == STATE_NOT_LEFT) {
+	if (left_assembly) {
 		*lcs = ASSEMBLY;
-	} else if (left_assembly == STATE_LEFT && left_provisioning == STATE_NOT_LEFT) {
+	} else if (left_assembly && left_provisioning) {
 		*lcs = PROVISION;
-	} else if (left_provisioning == STATE_LEFT && left_secure == STATE_NOT_LEFT) {
+	} else if (left_provisioning && left_secure) {
 		*lcs = SECURE;
-	} else if (left_provisioning == STATE_LEFT) {
+	} else if (left_provisioning) {
 		*lcs = DECOMMISSIONED;
 	} else {
 		/* To reach this the OTP must be corrupted or reading failed */
