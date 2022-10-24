@@ -442,6 +442,12 @@ Other samples
     * On the nRF5340 development kit, the :ref:`nrf5340_remote_shell` is now a mandatory sample that must be programmed to the application core.
     * On the nRF5340 development kit, this sample uses the :ref:`shell_ipc_readme` library to forward shell data through the physical application core UART interface.
 
+
+* :ref:`caf_sensor_manager_sample` sample:
+
+  * Removed the sensor sim configuration.
+    The sample now uses the sensor stub driver by default.
+
 Drivers
 =======
 

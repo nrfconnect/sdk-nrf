@@ -16,7 +16,7 @@ target_sources(app PRIVATE src/main.c)
 
 # Add include directory for board specific CAF def files
 zephyr_include_directories(
-  ../configuration/common
+  ../configuration/
   ../configuration/${BOARD})
 
 add_subdirectory(../src/modules "${CMAKE_CURRENT_BINARY_DIR}/modules")

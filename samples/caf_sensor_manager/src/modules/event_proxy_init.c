@@ -50,7 +50,7 @@ int init_event_proxy(char *proxy_event_name)
 	LOG_INF("Event manager proxy started");
 
 	ret = event_manager_proxy_wait_for_remotes(
-		K_MSEC(CONFIG_SAMPLE_SENSOR_MANAGER_REMOTE_CORE_INITIALIZATION_TIMEOUT));
+		K_MSEC(CONFIG_APP_SENSOR_MANAGER_REMOTE_CORE_INITIALIZATION_TIMEOUT));
 	if (ret) {
 		LOG_ERR("Error when waiting for remote: %d", ret);
 		__ASSERT_NO_MSG(false);

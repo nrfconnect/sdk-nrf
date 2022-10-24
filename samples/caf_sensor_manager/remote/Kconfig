@@ -4,8 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+menu "Sensor manager sample (remote core)"
+rsource "../src/modules/Kconfig"
+endmenu
+
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
-
-rsource "../src/modules/Kconfig"

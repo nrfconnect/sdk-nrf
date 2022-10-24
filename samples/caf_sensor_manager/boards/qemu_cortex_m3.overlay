@@ -5,6 +5,13 @@
  */
 
  / {
+
+	sensor_stub: sensor_stub {
+		compatible = "nordic,sensor-stub";
+		generator = "sensor_stub_gen";
+		status = "okay";
+	};
+
 	agg0: agg0 {
 		compatible = "caf,aggregator";
 		sensor_descr = "accel_sim_xyz";

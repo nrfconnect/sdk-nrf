@@ -622,7 +622,7 @@ Other samples
 
 * :ref:`caf_sensor_manager_sample` sample:
 
-  * Added :ref:`configuration<sensor_stub_config>` for the Sensor stub driver.
+  * Added configuration for the Sensor stub driver.
 
 Drivers
 =======
