@@ -71,11 +71,11 @@ To make these commands available, enable the following Kconfig options:
 * :kconfig:option:`CONFIG_BT_MESH_SHELL`
 * :kconfig:option:`CONFIG_BT_MESH_SHELL_SCHEDULER_CLI`
 
-mdl_sched instance get-all
+mesh models sched instance get-all
 	Print all instances of the Scheduler Client model on the device.
 
 
-mdl_sched instance set <elem_idx>
+mesh models sched instance set <elem_idx>
 	Select the Scheduler Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
@@ -83,19 +83,19 @@ mdl_sched instance set <elem_idx>
 	* ``elem_idx`` - Element index where the model instance is found.
 
 
-mdl_sched get
+mesh models sched get
 	Get the current Schedule Register status.
 
 
-mdl_sched action-get <idx>
+mesh models sched action-get <idx>
 	Get the appropriate Scheduler Action status.
 
 	* ``idx`` - Index of the Schedule Register entry to get.
 
 
-mdl_sched action-ctx-set <year> <month> <day> <hour> <minute> <second> <day_of_week> <action> <transition_time> <scene_number>
+mesh models sched action-ctx-set <year> <month> <day> <hour> <minute> <second> <day_of_week> <action> <transition_time> <scene_number>
 	Set the appropriate Scheduler Action.
-	Used in combination with ``mdl_sched action-set`` or ``mdl_sched action-set-unack``.
+	Used in combination with ``mesh models sched action-set`` or ``mesh models sched action-set-unack``.
 
 	* ``year`` - Two last digits of the scheduled year for the action, or 0x64 for any year.
 	* ``month`` - Scheduled month for the action.
@@ -109,13 +109,13 @@ mdl_sched action-ctx-set <year> <month> <day> <hour> <minute> <second> <day_of_w
 	* ``scene_number`` - Scene number to be used for some actions.
 
 
-mdl_sched action-set <idx>
+mesh models sched action-set <idx>
 	Send the current Scheduler Action context and wait for a response.
 
 	* ``idx`` - Index of the Schedule Register entry to set.
 
 
-mdl_sched action-set-unack <idx>
+mesh models sched action-set-unack <idx>
 	Send the current Scheduler Action context without requesting a response.
 
 	* ``idx`` - Index of the Schedule Register entry to set.

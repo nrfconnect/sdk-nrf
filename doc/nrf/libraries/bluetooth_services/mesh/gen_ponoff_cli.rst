@@ -32,11 +32,11 @@ To make these commands available, enable the following Kconfig options:
 * :kconfig:option:`CONFIG_BT_MESH_SHELL`
 * :kconfig:option:`CONFIG_BT_MESH_SHELL_PONOFF_CLI`
 
-mdl_ponoff instance get-all
+mesh models ponoff instance get-all
 	Print all instances of the Generic Power OnOff Client model on the device.
 
 
-mdl_ponoff instance set <elem_idx>
+mesh models ponoff instance set <elem_idx>
 	Select the Generic Power OnOff Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
@@ -44,11 +44,11 @@ mdl_ponoff instance set <elem_idx>
 	* ``elem_idx`` - Element index where the model instance is found.
 
 
-mdl_ponoff get
+mesh models ponoff get
 	Get the OnPowerUp state of the server.
 
 
-mdl_ponoff set <pow_up_state>
+mesh models ponoff set <pow_up_state>
 	Set the OnPowerUp state of the server and wait for a response.
 
 	* ``pow_up_state`` - OnPowerUp state value to set. Allowed values:
@@ -57,7 +57,7 @@ mdl_ponoff set <pow_up_state>
 		* ``2`` - On power-up, restores the previous state value.
 
 
-mdl_ponoff set-unack <pow_up_state>
+mesh models ponoff set-unack <pow_up_state>
 	Set the Generic Power OnOff state value without requesting a response.
 
 	* ``pow_up_state`` - OnPowerUp state value to set. Allowed values:

@@ -32,11 +32,11 @@ To make these commands available, enable the following Kconfig options:
 * :kconfig:option:`CONFIG_BT_MESH_SHELL`
 * :kconfig:option:`CONFIG_BT_MESH_SHELL_TIME_CLI`
 
-mdl_time instance get-all
+mesh models time instance get-all
 	Print all instances of the Time Client model on the device.
 
 
-mdl_time instance set <elem_idx>
+mesh models time instance set <elem_idx>
 	Select the Time Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
@@ -44,11 +44,11 @@ mdl_time instance set <elem_idx>
 	* ``elem_idx`` - Element index where the model instance is found.
 
 
-mdl_time time-get
+mesh models time time-get
 	Get the current Time Status of a Time Server.
 
 
-mdl_time time-set <sec> <subsec> <uncertainty> <tai_utc_delta> <time_zone_offset> <is_authority>
+mesh models time time-set <sec> <subsec> <uncertainty> <tai_utc_delta> <time_zone_offset> <is_authority>
 	Set the Time Status of a Time Server and wait for a response.
 
 	* ``sec`` - The current TAI time in seconds.
@@ -59,33 +59,33 @@ mdl_time time-set <sec> <subsec> <uncertainty> <tai_utc_delta> <time_zone_offset
 	* ``is_authority`` - Reliable TAI source flag.
 
 
-mdl_time zone-get
+mesh models time zone-get
 	Get the Time Zone status of a Time Server.
 
 
-mdl_time zone-set <new_offset> <timestamp>
+mesh models time zone-set <new_offset> <timestamp>
 	Schedule a Time Zone change for the Time Server and wait for a response.
 
 	* ``new_offset`` - New zone offset in 15-minute increments.
 	* ``timestamp`` - TAI update point for Time Zone Offset.
 
 
-mdl_time tai-utc-delta-get
+mesh models time tai-utc-delta-get
 	Get the UTC Delta status of a Time Server.
 
 
-mdl_time tai-utc-delta-set <delta_new> <timestamp>
+mesh models time tai-utc-delta-set <delta_new> <timestamp>
 	Schedule a UTC Delta change for the Timer Server and wait for a response.
 
 	* ``delta_new`` - New TAI-UTC Delta (leap seconds).
 	* ``timestamp`` - TAI update point for TAI-UTC Delta.
 
 
-mdl_time role-get
+mesh models time role-get
 	Get the Time Role state of a Time Server.
 
 
-mdl_time role-set <role>
+mesh models time role-set <role>
 	Set the Time Role state of a Time Server and wait for a response.
 
 	* ``role`` - Time Role to set. Allowed values:

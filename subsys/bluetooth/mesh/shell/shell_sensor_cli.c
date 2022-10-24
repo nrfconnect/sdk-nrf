@@ -520,5 +520,5 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);
 
-SHELL_CMD_ARG_REGISTER(
-	mdl_sensor, &sensor_cmds, "Sensor Cli commands", shell_model_cmds_help, 1, 1);
+SHELL_SUBCMD_ADD((mesh, models), sensor, &sensor_cmds, "Sensor Cli commands", shell_model_cmds_help,
+		 1, 1);

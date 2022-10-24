@@ -253,4 +253,5 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);
 
-SHELL_CMD_ARG_REGISTER(mdl_time, &time_cmds, "Time Cli commands", shell_model_cmds_help, 1, 1);
+SHELL_SUBCMD_ADD((mesh, models), time, &time_cmds, "Time Cli commands", shell_model_cmds_help, 1,
+		 1);
