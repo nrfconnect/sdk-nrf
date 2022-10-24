@@ -40,5 +40,6 @@ rsource "icalendar_parser/Kconfig"
 rsource "ftp_client/Kconfig"
 rsource "coap_utils/Kconfig"
 rsource "lwm2m_client_utils/Kconfig"
+rsource "wifi_credentials/Kconfig"
 
 endmenu
