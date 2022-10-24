@@ -50,11 +50,11 @@ To make these commands available, enable the following Kconfig options:
 * :kconfig:option:`CONFIG_BT_MESH_SHELL`
 * :kconfig:option:`CONFIG_BT_MESH_SHELL_SENSOR_CLI`
 
-mdl_sensor instance get-all
+mesh models sensor instance get-all
    Print all instances of the Sensor Client model on the device.
 
 
-mdl_sensor instance set <elem_idx>
+mesh models sensor instance set <elem_idx>
    Select the Sensor Client model instantiated on the specified element ID.
    This instance will be used in message sending.
    If no model instance is selected, the first model instance found on the device will be used by default.
@@ -62,20 +62,20 @@ mdl_sensor instance set <elem_idx>
    * ``elem_idx`` - Element index where the model instance is found.
 
 
-mdl_sensor desc-get [sensor_id]
+mesh models sensor desc-get [sensor_id]
    Get the sensor descriptor for one or all sensors on the server.
    This will get a maximum number of sensor descriptors specified by :kconfig:option:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SENSORS`.
 
    * ``sensor_id`` - If present, selects the sensor for which to get the descriptor.
 
 
-mdl_sensor cadence-get <sensor_id>
+mesh models sensor cadence-get <sensor_id>
    Get the configured cadence for a sensor on the server.
 
    * ``sensor_id`` - Selects the sensor for which to get the configured cadence.
 
 
-mdl_sensor cadence-set <sensor_id> <fast_period_div> <min_int> <delta_type> <delta_up> <delta_down> <cadence_inside> <range_low> <range_high>
+mesh models sensor cadence-set <sensor_id> <fast_period_div> <min_int> <delta_type> <delta_up> <delta_down> <cadence_inside> <range_low> <range_high>
    Set the cadence for a sensor on the server and wait for a response.
 
    * ``sensor_id`` - Selects the sensor for which to get the configured cadence.
@@ -89,7 +89,7 @@ mdl_sensor cadence-set <sensor_id> <fast_period_div> <min_int> <delta_type> <del
    * ``range_high`` - Upper bound of the cadence range.
 
 
-mdl_sensor cadence-set-unack <sensor_id> <fast_period_div> <min_int> <delta_type> <delta_up> <delta_down> <cadence_inside> <range_low> <range_high>
+mesh models sensor cadence-set-unack <sensor_id> <fast_period_div> <min_int> <delta_type> <delta_up> <delta_down> <cadence_inside> <range_low> <range_high>
    Set the cadence for a sensor on the server without waiting for a response.
 
    * ``sensor_id`` - Selects the sensor for which to get the configured cadence.
@@ -103,21 +103,21 @@ mdl_sensor cadence-set-unack <sensor_id> <fast_period_div> <min_int> <delta_type
    * ``range_high`` - Upper bound of the cadence range.
 
 
-mdl_sensor settings-get <sensor_id>
+mesh models sensor settings-get <sensor_id>
    Get the available settings for a sensor on the server.
    This will get a maximum number of settings specified by :kconfig:option:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SETTINGS`.
 
    * ``sensor_id`` - Selects the sensor for which to get the available settings.
 
 
-mdl_sensor setting-get <sensor_id> <setting_id>
+mesh models sensor setting-get <sensor_id> <setting_id>
    Get the value of a setting for a sensor on the server.
 
    * ``sensor_id`` - Selects the sensor for which to get the setting value.
    * ``setting_id`` - Selects the setting to get.
 
 
-mdl_sensor setting-set <sensor_id> <setting_id> <value>
+mesh models sensor setting-set <sensor_id> <setting_id> <value>
    Set the value of a setting for a sensor on the server and wait for a response.
 
    * ``sensor_id`` - Selects the sensor for which to set the setting value.
@@ -125,7 +125,7 @@ mdl_sensor setting-set <sensor_id> <setting_id> <value>
    * ``value`` - The new value of the setting.
 
 
-mdl_sensor setting-set-unack <sensor_id> <setting_id> <value>
+mesh models sensor setting-set-unack <sensor_id> <setting_id> <value>
    Set the value of a setting for a sensor on the server without waiting for a response.
 
    * ``sensor_id`` - Selects the sensor for which to set the setting value.
@@ -133,21 +133,21 @@ mdl_sensor setting-set-unack <sensor_id> <setting_id> <value>
    * ``value`` - The new value of the setting.
 
 
-mdl_sensor get [sensor_id]
+mesh models sensor get [sensor_id]
    Get the sensor value for one or all of the sensors on the server.
    This will get a maximum number of sensor values specified by :kconfig:option:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SENSORS`.
 
    * ``sensor_id`` - If present, selects the sensor for which to get the sensor value.
 
 
-mdl_sensor series-entry get <sensor_id> <column>
+mesh models sensor series-entry get <sensor_id> <column>
    Get the value of a column for a sensor on the server.
 
    * ``sensor_id`` - Selects the sensor for which to get the entry value.
    * ``column`` - Start value of the column for which to get the entry value.
 
 
-mdl_sensor series-entries-get <sensor_id> [range_start range_end]
+mesh models sensor series-entries-get <sensor_id> [range_start range_end]
    Get the entries for all columns, or a specified range of columns, for a sensor on the server.
    This will get a maximum number of entries specified by :kconfig:option:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_COLUMNS`.
 

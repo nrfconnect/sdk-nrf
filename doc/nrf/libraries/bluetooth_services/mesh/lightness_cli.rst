@@ -32,11 +32,11 @@ To make these commands available, enable the following Kconfig options:
 * :kconfig:option:`CONFIG_BT_MESH_SHELL`
 * :kconfig:option:`CONFIG_BT_MESH_SHELL_LIGHTNESS_CLI`
 
-mdl_lightness instance get-all
+mesh models lightness instance get-all
 	Print all instances of the Light Lightness Client model on the device.
 
 
-mdl_lightness instance set <elem_idx>
+mesh models lightness instance set <elem_idx>
 	Select the Light Lightness Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
@@ -44,11 +44,11 @@ mdl_lightness instance set <elem_idx>
 	* ``elem_idx`` - Element index where the model instance is found.
 
 
-mdl_lightness get
+mesh models lightness get
 	Get the Light Level value of the bound server.
 
 
-mdl_lightness set <lightness_actual>|<lightness_linear> [transition_time_ms [delay_ms]]
+mesh models lightness set <lightness_actual>|<lightness_linear> [transition_time_ms [delay_ms]]
 	Set the Light Level value and wait for a response.
 
 	* ``lightness_actual|lightness_linear`` - The Light Level value to be set. By default, the *Actual* representation of the value is used. If :kconfig:option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR` is enabled, the *Linear* representation of the value is used.
@@ -56,7 +56,7 @@ mdl_lightness set <lightness_actual>|<lightness_linear> [transition_time_ms [del
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_lightness set-unack <lightness_actual>|<lightness_linear> [transition_time_ms [delay_ms]]
+mesh models lightness set-unack <lightness_actual>|<lightness_linear> [transition_time_ms [delay_ms]]
 	Set the Light Level value without requesting a response.
 
 	* ``lightness_actual|lightness_linear`` - The Light Level value to be set. By default, the *Actual* representation of the value is used. If :kconfig:option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR` is enabled, the *Linear* representation of the value is used.
@@ -64,41 +64,41 @@ mdl_lightness set-unack <lightness_actual>|<lightness_linear> [transition_time_m
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_lightness range-get
+mesh models lightness range-get
 	Get the Light Range state value of the bound server.
 
 
-mdl_lightness range-set <min> <max>
+mesh models lightness range-set <min> <max>
 	Set the Light Range state value and wait for a response.
 
 	* ``min`` - Minimum allowed Light Level value.
 	* ``max`` - Maximum allowed Light Level value.
 
 
-mdl_lightness range-set-unack <min> <max>
+mesh models lightness range-set-unack <min> <max>
 	Set the Light Range state value without requesting a response.
 
 	* ``min`` - Minimum allowed Light Level value.
 	* ``max`` - Maximum allowed Light Level value.
 
 
-mdl_lightness default-get
+mesh models lightness default-get
 	Get the Default Light state value of the bound server.
 
 
-mdl_lightness default-set <lvl>
+mesh models lightness default-set <lvl>
 	Set the Default Light state value of the server and wait for a response.
 
 	* ``lvl`` - The Default Light state value to be set.
 
 
-mdl_lightness default-set-unack <lvl>
+mesh models lightness default-set-unack <lvl>
 	Set the Default Light state value of the server without requesting a response.
 
 	* ``lvl`` - The Default Light state value to be set.
 
 
-mdl_lightness last-get
+mesh models lightness last-get
 	Get the last non-zero Light Level value of the bound server.
 
 

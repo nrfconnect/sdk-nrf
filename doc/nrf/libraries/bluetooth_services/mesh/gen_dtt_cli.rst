@@ -31,11 +31,11 @@ To make these commands available, enable the following Kconfig options:
 * :kconfig:option:`CONFIG_BT_MESH_SHELL`
 * :kconfig:option:`CONFIG_BT_MESH_SHELL_DTT_CLI`
 
-mdl_dtt instance get-all
+mesh models dtt instance get-all
 	Print all instances of the Generic Default Transition Time Client model on the device.
 
 
-mdl_dtt instance set <elem_idx>
+mesh models dtt instance set <elem_idx>
 	Select the Generic Default Transition Time Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
@@ -43,17 +43,17 @@ mdl_dtt instance set <elem_idx>
 	* ``elem_idx`` - Element index where the model instance is found.
 
 
-mdl_dtt get
+mesh models dtt get
 	Get the Default Transition Time of the bound server.
 
 
-mdl_dtt set <transition_time_ms>
+mesh models dtt set <transition_time_ms>
 	Set the Default Transition Time of the server and wait for a response.
 
 	* ``transition_time_ms`` - Default transition time in milliseconds.
 
 
-mdl_dtt set-unack <transition_time_ms>
+mesh models dtt set-unack <transition_time_ms>
 	Set the Default Transition Time of the server without requesting a response.
 
 	* ``transition_time_ms`` - Default transition time in milliseconds.

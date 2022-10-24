@@ -36,11 +36,11 @@ To make these commands available, enable the following Kconfig options:
 * :kconfig:option:`CONFIG_BT_MESH_SHELL`
 * :kconfig:option:`CONFIG_BT_MESH_SHELL_LIGHT_CTL_CLI`
 
-mdl_ctl instance get-all
+mesh models ctl instance get-all
 	Print all instances of the Light CTL Client model on the device.
 
 
-mdl_ctl instance set <elem_idx>
+mesh models ctl instance set <elem_idx>
 	Select the Light CTL Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
@@ -48,11 +48,11 @@ mdl_ctl instance set <elem_idx>
 	* ``elem_idx`` - Element index where the model instance is found.
 
 
-mdl_ctl get
+mesh models ctl get
 	Get the current Light CTL state value.
 
 
-mdl_ctl set <light> <temp> <delta> [transition_time_ms [delay_ms]]
+mesh models ctl set <light> <temp> <delta> [transition_time_ms [delay_ms]]
 	Set the Light CTL state value and wait for a response.
 
 	* ``light`` - Light level to set.
@@ -62,7 +62,7 @@ mdl_ctl set <light> <temp> <delta> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_ctl set-unack <light> <temp> <delta> [transition_time_ms [delay_ms]]
+mesh models ctl set-unack <light> <temp> <delta> [transition_time_ms [delay_ms]]
 	Set the Light CTL state value without waiting for a response.
 
 	* ``light`` - Light level value to set.
@@ -72,11 +72,11 @@ mdl_ctl set-unack <light> <temp> <delta> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_ctl temp-get
+mesh models ctl temp-get
 	Get the current Light CTL Temperature state value.
 
 
-mdl_ctl temp-set <light> <temp> <delta> [transition_time_ms [delay_ms]]
+mesh models ctl temp-set <light> <temp> <delta> [transition_time_ms [delay_ms]]
 	Set the Light CTL Temperature state value and wait for a response.
 
 	* ``temp`` - Light temperature value to set.
@@ -85,7 +85,7 @@ mdl_ctl temp-set <light> <temp> <delta> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_ctl temp-set-unack <light> <temp> <delta> [transition_time_ms [delay_ms]]
+mesh models ctl temp-set-unack <light> <temp> <delta> [transition_time_ms [delay_ms]]
 	Set the Light CTL Temperature state value.
 
 	* ``temp`` - Light temperature value to set.
@@ -94,11 +94,11 @@ mdl_ctl temp-set-unack <light> <temp> <delta> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_ctl default-get
+mesh models ctl default-get
 	Get the current Light CTL Default state value.
 
 
-mdl_ctl default-set <light> <temp> <delta>
+mesh models ctl default-set <light> <temp> <delta>
 	Set the Light CTL Default state value and wait for a response.
 
 	* ``light`` - Light level value to set.
@@ -106,7 +106,7 @@ mdl_ctl default-set <light> <temp> <delta>
 	* ``delta`` - Delta UV value to set.
 
 
-mdl_ctl default-set-unack <light> <temp> <delta>
+mesh models ctl default-set-unack <light> <temp> <delta>
 	Set the default CTL value of the server without requesting a response.
 
 	* ``light`` - Light level value to set.
@@ -114,18 +114,18 @@ mdl_ctl default-set-unack <light> <temp> <delta>
 	* ``delta`` - Delta UV value to set.
 
 
-mdl_ctl temp-range-get
+mesh models ctl temp-range-get
 	Get the current Light CTL Temperature Range state value.
 
 
-mdl_ctl temp-range-set <min> <max>
+mesh models ctl temp-range-set <min> <max>
 	Set the Light CTL Temperature Range state value and wait for a response.
 
 	* ``min`` - Minimum allowed light temperature value.
 	* ``max`` - Maximum allowed light temperature value.
 
 
-mdl_ctl temp-range-set-unack <min> <max>
+mesh models ctl temp-range-set-unack <min> <max>
 	Set the Light CTL Temperature Range state value.
 
 	* ``min`` - Minimum allowed light temperature value.

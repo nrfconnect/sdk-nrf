@@ -173,5 +173,5 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sched_cmds, SHELL_CMD_ARG(get, NULL, NULL, cmd_ge
 					 shell_model_cmds_help),
 			       SHELL_SUBCMD_SET_END);
 
-SHELL_CMD_ARG_REGISTER(mdl_sched, &sched_cmds, "Scheduler Cli commands", shell_model_cmds_help,
-		       1, 1);
+SHELL_SUBCMD_ADD((mesh, models), sched, &sched_cmds, "Scheduler Cli commands",
+		 shell_model_cmds_help, 1, 1);

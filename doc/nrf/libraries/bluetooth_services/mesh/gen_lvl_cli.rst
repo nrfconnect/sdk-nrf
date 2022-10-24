@@ -29,11 +29,11 @@ To make these commands available, enable the following Kconfig options:
 * :kconfig:option:`CONFIG_BT_MESH_SHELL`
 * :kconfig:option:`CONFIG_BT_MESH_SHELL_LVL_CLI`
 
-mdl_lvl instance get-all
+mesh models lvl instance get-all
 	Print all instances of the Generic Level Client model on the device.
 
 
-mdl_lvl instance set <elem_idx>
+mesh models lvl instance set <elem_idx>
 	Select the Generic Level Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
@@ -41,11 +41,11 @@ mdl_lvl instance set <elem_idx>
 	* ``elem_idx`` - Element index where the model instance is found.
 
 
-mdl_lvl get
+mesh models lvl get
 	Get the current Generic Level state value.
 
 
-mdl_lvl set <lvl> [transition_time_ms [delay_ms]]
+mesh models lvl set <lvl> [transition_time_ms [delay_ms]]
 	Set the Generic Level state value and wait for a response.
 
 	* ``lvl`` - Level state value to set.
@@ -53,7 +53,7 @@ mdl_lvl set <lvl> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_lvl set-unack <lvl> [transition_time_ms [delay_ms]]
+mesh models lvl set-unack <lvl> [transition_time_ms [delay_ms]]
 	Set the Generic Level state value without requesting a response.
 
 	* ``level`` - Level state value to set.
@@ -61,7 +61,7 @@ mdl_lvl set-unack <lvl> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_lvl delta-set <delta> [transition_time_ms [delay_ms]]
+mesh models lvl delta-set <delta> [transition_time_ms [delay_ms]]
 	Trigger a differential level state change for the server and wait for a response.
 
 	* ``delta`` - Translation from the original value.
@@ -69,7 +69,7 @@ mdl_lvl delta-set <delta> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_lvl delta-set-unack <delta> [transition_time_ms [delay_ms]]
+mesh models lvl delta-set-unack <delta> [transition_time_ms [delay_ms]]
 	Trigger a differential level state change for the server without requesting a response.
 
 	* ``delta`` - Translation from the original value.
@@ -77,7 +77,7 @@ mdl_lvl delta-set-unack <delta> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_lvl move-set <delta> [transition_time_ms [delay_ms]]
+mesh models lvl move-set <delta> [transition_time_ms [delay_ms]]
 	Trigger a continuous level change for the server and wait for a response.
 
 	* ``delta`` - Translation to make for every transition step.
@@ -85,7 +85,7 @@ mdl_lvl move-set <delta> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_lvl move-set-unack <delta> [transition_time_ms [delay_ms]]
+mesh models lvl move-set-unack <delta> [transition_time_ms [delay_ms]]
 	Trigger a continuous level change for the server without requesting a response.
 
 	* ``delta`` - Translation to make for every transition step.

@@ -32,11 +32,11 @@ To make these commands available, enable the following Kconfig options:
 * :kconfig:option:`CONFIG_BT_MESH_SHELL`
 * :kconfig:option:`CONFIG_BT_MESH_SHELL_LOC_CLI`
 
-mdl_loc instance get-all
+mesh models loc instance get-all
 	Print all instances of the Generic Location Client model on the device.
 
 
-mdl_loc instance set <elem_idx>
+mesh models loc instance set <elem_idx>
 	Select the Generic Location Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
@@ -44,11 +44,11 @@ mdl_loc instance set <elem_idx>
 	* ``elem_idx`` - Element index where the model instance is found.
 
 
-mdl_loc global-get
+mesh models loc global-get
 	Get the current global location value of the Generic Location state.
 
 
-mdl_loc global-set <latitude> <longitude> <altitude>
+mesh models loc global-set <latitude> <longitude> <altitude>
 	Set the global location value of the Generic Location state and wait for a response.
 
 	* ``latitude`` - Global WGS84 North coordinate in degrees.
@@ -56,7 +56,7 @@ mdl_loc global-set <latitude> <longitude> <altitude>
 	* ``altitude`` - Global altitude above the WGS84 datum in meters.
 
 
-mdl_loc global-set-unack <latitude> <longitude> <altitude>
+mesh models loc global-set-unack <latitude> <longitude> <altitude>
 	Set the global location value of the Generic Location state without requesting a response.
 
 	* ``latitude`` - Global WGS84 North coordinate in degrees.
@@ -64,11 +64,11 @@ mdl_loc global-set-unack <latitude> <longitude> <altitude>
 	* ``altitude`` - Global altitude above the WGS84 datum in meters.
 
 
-mdl_loc local-get
+mesh models loc local-get
 	Get the current local location value of the Generic Location state.
 
 
-mdl_loc local-set <north> <east> <altitude> <floor> [time_delta [precision_mm [is_mobile]]]
+mesh models loc local-set <north> <east> <altitude> <floor> [time_delta [precision_mm [is_mobile]]]
 	Set the local location value of the Generic Location state and wait for a response.
 
 	* ``north`` - Local north position in decimeters.
@@ -80,7 +80,7 @@ mdl_loc local-set <north> <east> <altitude> <floor> [time_delta [precision_mm [i
 	* ``is_mobile`` - If present, defines whether the device is movable.
 
 
-mdl_loc local-set-unack <north> <east> <altitude> <floor> [time_delta [precision_mm [is_mobile]]]
+mesh models loc local-set-unack <north> <east> <altitude> <floor> [time_delta [precision_mm [is_mobile]]]
 	Set the local location value of the Generic Location state without requesting a response.
 
 	* ``north`` - Local north position in decimeters.
