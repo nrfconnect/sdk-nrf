@@ -561,6 +561,10 @@ Other libraries
   * Changed the library implementation to bypass the flash driver when storing the emergency data.
     This allows calling the :c:func:`emds_store` function from an interrupt context.
 
+* :ref:`mod_dm`:
+  * Added a window length configuration to be used runtime, when a new measurement request is added.
+  * Improved the calculation of MPSL timeslot length by using the :ref:`nrf_dm` library functionality.
+
 Common Application Framework (CAF)
 ----------------------------------
 
