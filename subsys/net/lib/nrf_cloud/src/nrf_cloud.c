@@ -248,7 +248,7 @@ int nrf_cloud_connect(void)
 #else
 	err = connect_to_cloud();
 	if (!err) {
-		atomic_set(&transport_disconnected,0);
+		atomic_set(&transport_disconnected, 0);
 	}
 #endif
 	return connect_error_translate(err);
