@@ -181,7 +181,7 @@ int update_lcs_in_otp(lcs_t next_lcs)
 
 static void read_implementation_id_from_otp(uint8_t * buf)
 {
-	otp_copy32(buf, (uint32_t *)&p_bl_storage_data->implementation_id, 64);
+	otp_copy32(buf, (uint32_t *)&p_bl_storage_data->implementation_id, 32);
 }
 
 /* End of  temporary solution */
@@ -265,7 +265,7 @@ enum tfm_plat_err_t tfm_plat_get_boot_seed(uint32_t size, uint8_t *buf)
 
 enum tfm_plat_err_t tfm_plat_get_implementation_id(uint32_t *size, uint8_t *buf)
 {
-	*size = 64;
+	*size = 32;
 	read_implementation_id_from_otp(buf);
 
 	return TFM_PLAT_ERR_SUCCESS;
