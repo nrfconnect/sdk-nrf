@@ -117,16 +117,27 @@ else()
     )
 endif()
 
-# Add the dynamic partition as an image partition.
-set_property(GLOBAL PROPERTY
+# Check if the dynamic partition image hex has already been defined
+get_property(DYNAMIC_PARTITION_HEX GLOBAL PROPERTY
   ${dynamic_partition}_PM_HEX_FILE
-  ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME}
   )
+if (NOT DYNAMIC_PARTITION_HEX)
+  # Add the dynamic partition as an image partition.
+  set_property(GLOBAL PROPERTY
+    ${dynamic_partition}_PM_HEX_FILE
+    ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME}
+    )
+endif()
 
-set_property(GLOBAL PROPERTY
+get_property(DYNAMIC_PARTITION_TARGET GLOBAL PROPERTY
   ${dynamic_partition}_PM_TARGET
-  ${logical_target_for_zephyr_elf}
   )
+if (NOT DYNAMIC_PARTITION_TARGET)
+  set_property(GLOBAL PROPERTY
+    ${dynamic_partition}_PM_TARGET
+    ${logical_target_for_zephyr_elf}
+    )
+endif()
 
 # Prepare the input_files, header_files, and images lists
 set(generated_path include/generated)
