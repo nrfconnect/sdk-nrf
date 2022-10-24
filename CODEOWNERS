@@ -69,6 +69,7 @@ Kconfig*                                  @tejlmand
 /ext/                                     @carlescufi
 /include/                                 @anangl @rlubos
 /include/net/azure_*                      @jtguggedal @simensrostad @coderbyheart
+/include/net/wifi_credentials.h           @maxd-nordic
 /include/net/nrf_cloud_*                  @plskeggs @jayteemo @glarsennordic
 /include/bluetooth/                       @alwa-nordic @KAGA164
 /include/bluetooth/services/fast_pair.h   @MarekPieta @kapi-no @KAGA164
@@ -195,6 +196,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/lib/lwm2m_client_utils/       @rlubos @VeijoPesonen @SeppoTakalo @jheiskan81
 /subsys/net/lib/nrf_cloud/                @plskeggs @jayteemo @glarsennordic
 /subsys/net/lib/zzhc/                     @junqingzou
+/subsys/net/lib/wifi_credentials/         @maxd-nordic
 /subsys/nfc/                              @grochu @anangl
 /subsys/nrf_rpc/                          @doki-nordic @KAGA164
 /subsys/partition_manager/                @hakonfam
@@ -250,6 +252,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/net/lib/fota_download/      @hakonfam @sigvartmh
 /tests/subsys/net/lib/lwm2m_client_utils/ @SeppoTakalo
 /tests/subsys/net/lib/nrf_cloud/          @tony-le-24
+/tests/subsys/net/lib/wifi_credentials*/  @maxd-nordic
 /tests/subsys/partition_manager/region/   @hakonfam @sigvartmh
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
