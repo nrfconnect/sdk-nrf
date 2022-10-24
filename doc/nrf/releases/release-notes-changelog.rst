@@ -551,6 +551,7 @@ Libraries for networking
   * Added:
 
     * Added a possibility to override used default OS memory alloc/free functions.
+    * More unit tests for the library.
 
   * Updated:
 
