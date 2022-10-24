@@ -511,7 +511,6 @@ _BLOCKED_PROJECTS = set(
      'modules/hal/stm32',
      'modules/hal/telink',
      'modules/hal/ti',
-     'modules/hal/wurthelektronik',
      'modules/hal/xtensa',
      'modules/lib/tflite-micro',
      'modules/tee/tf-a/trusted-firmware-a',

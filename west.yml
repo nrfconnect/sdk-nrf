@@ -75,6 +75,7 @@ manifest:
           - fff
           - hal_nordic
           - hal_st # required for ST sensors (unrealted to STM32 MCUs)
+          - hal_wurthelektronik
           - liblc3
           - libmetal
           - littlefs
