@@ -61,6 +61,14 @@ config TFM_EXPERIMENTAL
 	select EXPERIMENTAL
 	default y if !TFM_PROFILE_TYPE_MINIMAL
 
+config TFM_PARTITION_INITIAL_ATTESTATION
+	bool
+	select SB_IMPLEMENTATION_ID
+	help
+	   The implementation ID is part ot the attestation therefore this extra
+	   select is needed. To be able to also read it out SECURE_BOOT_STORAGE is
+	   needed in addition.
+
 if TFM_PARTITION_CRYPTO
 
 config TFM_CRYPTO_ENGINE_BUF_SIZE
