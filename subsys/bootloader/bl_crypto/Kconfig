@@ -4,12 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig SECURE_BOOT_CRYPTO
-	bool
-	prompt "Secure Boot Crypto"
-	select FW_INFO
-	select NRF_OBERON
-
 config SB_PUBLIC_KEY_HASH_LEN
 	int "Public key hash size (bytes)"
 	default 16
@@ -17,6 +11,12 @@ config SB_PUBLIC_KEY_HASH_LEN
 	help
 	  The length to which public key hashes in the list of Root of Trust
 	  Public Keys are truncated.
+
+menuconfig SECURE_BOOT_CRYPTO
+	bool
+	prompt "Secure Boot Crypto"
+	select FW_INFO
+	select NRF_OBERON
 
 if (SECURE_BOOT_CRYPTO)
 config SB_ECDSA_SECP256R1

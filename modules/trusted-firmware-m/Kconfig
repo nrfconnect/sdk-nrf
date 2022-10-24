@@ -264,7 +264,7 @@ config TFM_STORAGE
 	default y if PM_PARTITION_SIZE_TFM_OTP_NV_COUNTERS != 0
 
 config TFM_NRF_PROVISIONING
-	bool "Enable TF-M provisioning for Nordic devices"
+	bool "Provision the device"
 	help
 	  This configuration will enable provioning of the TF-M
 	  image for Nordic devices. When this is required TF-M

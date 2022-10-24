@@ -21,12 +21,12 @@ void main(void)
 	int err = 0;
 
 	err = read_life_cycle_state(&lcs);
-	if(err != 0){
+	if (err != 0) {
 		LOG_INF("Failure: Cannot read PSA lifecycle state. Exiting!");
 		return;
 	}
 
-	if(lcs != ASSEMBLY){
+	if (lcs != ASSEMBLY) {
 		LOG_INF("Failure: Lifecycle state is not ASSEMBLY as expected. Exiting!");
 		return;
 	}
@@ -34,18 +34,18 @@ void main(void)
 	LOG_INF("Successfully verified PSA lifecycle state ASSEMBLY!");
 
 	err = update_life_cycle_state(PROVISION);
-	if(err != 0){
+	if (err != 0) {
 		LOG_INF("Failure: Cannot set PSA lifecycle state PROVISIONING. Exiting!");
 		return;
 	}
 
 	err = read_life_cycle_state(&lcs);
-	if(err != 0){
+	if (err != 0) {
 		LOG_INF("Failure: Cannot read PSA lifecycle state. Exiting!");
 		return;
 	}
 
-	if(lcs != PROVISION){
+	if (lcs != PROVISION) {
 		LOG_INF("Failure: Lifecycle state is not PROVISION as expected. Exiting!");
 		return;
 	}

@@ -122,8 +122,7 @@ int public_key_data_read(uint32_t key_idx, uint8_t *p_buf, size_t buf_size)
 	BUILD_ASSERT(offsetof(struct bl_storage_data, key_data) % 4 == 0);
 	__ASSERT(((uint32_t)p_key % 4 == 0), "Key address is not word aligned");
 
-	otp_copy32(p_buf, (volatile uint32_t * restrict)p_key, CONFIG_SB_PUBLIC_KEY_HASH_LEN);
-	__DSB(); /* Because of nRF9160 Erratum 7 */
+	otp_copy32(p_buf, (volatile uint32_t *restrict)p_key, CONFIG_SB_PUBLIC_KEY_HASH_LEN);
 
 	return CONFIG_SB_PUBLIC_KEY_HASH_LEN;
 }
@@ -304,7 +303,7 @@ int update_life_cycle_state(enum lcs next_lcs)
 	int err;
 	enum lcs current_lcs = 0;
 
-	if(next_lcs == UNKNOWN){
+	if (next_lcs == UNKNOWN) {
 		return -EINVALIDLCS;
 	}
 
@@ -343,10 +342,9 @@ int update_life_cycle_state(enum lcs next_lcs)
 	return -EINVALIDLCS;
 }
 
-
 int read_life_cycle_state(enum lcs *lcs)
 {
-	if (lcs == NULL){
+	if (lcs == NULL) {
 		return -EINVAL;
 	}
 
@@ -360,7 +358,7 @@ int read_life_cycle_state(enum lcs *lcs)
 		*lcs = PROVISION;
 	} else if (secure == STATE_ENTERED && decommissioned == STATE_NOT_ENTERED) {
 		*lcs = SECURE;
-	}  else if (decommissioned == STATE_ENTERED) {
+	} else if (decommissioned == STATE_ENTERED) {
 		*lcs = DECOMMISSIONED;
 	} else {
 		/* To reach this the OTP must be corrupted or reading failed */

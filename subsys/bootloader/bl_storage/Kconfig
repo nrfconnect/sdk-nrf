@@ -9,7 +9,7 @@ config SECURE_BOOT_STORAGE
 	depends on SECURE_BOOT_CRYPTO || (SECURE_BOOT_STORAGE_START_ADDRESS != 0x0)
 
 config SECURE_BOOT_STORAGE_START_ADDRESS
-	hex "Start addresss of the secure boot storage"
+	hex "Start address of the secure boot storage"
 	default 0x00FF8100 if SOC_NRF5340_CPUAPP
 	default 0x00FF8108 if SOC_NRF9160
 	default 0x0

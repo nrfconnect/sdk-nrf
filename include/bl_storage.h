@@ -42,7 +42,8 @@ struct life_cycle_state_data {
 	uint16_t provisioning;
 	uint16_t secure;
 	/* Pad to end the alignment at a 4-byte boundary as the UICR->OTP
-	 * only supports 4-byte reads */
+	 * only supports 4-byte reads
+	 */
 	uint16_t reserved_for_padding;
 	uint16_t decommissioned;
 };
@@ -205,12 +206,13 @@ int read_life_cycle_state(enum lcs *lcs);
  * @param src source buffer
  * @param size number of *bytes* in src to copy into dst
  */
-NRFX_STATIC_INLINE void otp_copy32(uint8_t * restrict dst, uint32_t volatile * restrict src, size_t size)
+NRFX_STATIC_INLINE void otp_copy32(uint8_t *restrict dst, uint32_t volatile *restrict src,
+				   size_t size)
 {
 	for (int i = 0; i < size / 4; i++) {
 		uint32_t val = src[i];
 
-		for(int j = 0; j < 4; j++) {
+		for (int j = 0; j < 4; j++) {
 			dst[i * 4 + j] = (val >> 8 * j) & 0xFF;
 		}
 	}
