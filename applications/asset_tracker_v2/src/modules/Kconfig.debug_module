@@ -23,7 +23,7 @@ config DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX
 
 config DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT
 	bool "Use external transport when sending memfault data"
-	default y if AWS_IOT
+	default y if AWS_IOT || AZURE_IOT_HUB
 	help
 	  If enabled, the debug module will forward captured Memfault data via events of type
 	  DEBUG_EVT_MEMFAULT_DATA_READY. The data will be forwarded via the configured cloud

@@ -31,6 +31,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 #define PROP_BAG_PGPS_GET_VALUE "get"
 #define PROP_BAG_PGPS_RESPONSE_VALUE "result"
 
+#define PROP_BAG_MEMFAULT_KEY "memfault"
+#define PROP_BAG_MEMFAULT_PROJECT_KEY "projectKey"
+
 #define REQUEST_DEVICE_TWIN_STRING ""
 
 static struct azure_iot_hub_property prop_bag_message[] = {
@@ -125,6 +128,21 @@ static struct azure_iot_hub_property prop_bag_ncellmeas[] = {
 		.value.size = sizeof(PROP_BAG_CONTENT_ENCODING_VALUE) - 1,
 	},
 };
+#if defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT)
+static struct azure_iot_hub_property prop_bag_memfault[] = {
+	{
+		.key.ptr = PROP_BAG_MEMFAULT_KEY,
+		.key.size = sizeof(PROP_BAG_MEMFAULT_KEY) - 1,
+		.value.ptr = NULL,
+	},
+	{
+		.key.ptr = PROP_BAG_MEMFAULT_PROJECT_KEY,
+		.key.size = sizeof(PROP_BAG_MEMFAULT_PROJECT_KEY) - 1,
+		.value.ptr = CONFIG_MEMFAULT_NCS_PROJECT_KEY,
+		.value.size = sizeof(CONFIG_MEMFAULT_NCS_PROJECT_KEY) - 1,
+	},
+};
+#endif /* CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT */
 
 static char client_id_buf[CLIENT_ID_LEN + 1];
 static struct azure_iot_hub_config config = {
@@ -553,6 +571,26 @@ int cloud_wrap_pgps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 
 int cloud_wrap_memfault_data_send(char *buf, size_t len, bool ack, uint32_t id)
 {
-	/* Not supported */
+#if defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT)
+	int err;
+	struct azure_iot_hub_msg msg = {
+		.payload.ptr = buf,
+		.payload.size = len,
+		.message_id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
+		.topic.type = AZURE_IOT_HUB_TOPIC_EVENT,
+		.topic.properties = prop_bag_memfault,
+		.topic.property_count = ARRAY_SIZE(prop_bag_memfault)
+	};
+
+	err = azure_iot_hub_send(&msg);
+	if (err) {
+		LOG_ERR("azure_iot_hub_send, error: %d", err);
+		return err;
+	}
+
+	return 0;
+#else
 	return -ENOTSUP;
+#endif
 }
