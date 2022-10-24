@@ -11,10 +11,6 @@
 #include <assert.h>
 #include <nrfx_nvmc.h>
 
-#ifdef CONFIG_IS_SECURE_BOOTLOADER
-#include <pm_config.h>
-#endif
-
 /** A single monotonic counter. It consists of a description value, a 'type',
  *  to know what this counter counts. Further, it has a number of slots
  *  allocated to it. Each time the counter is updated, a new slot is written.
