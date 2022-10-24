@@ -36,7 +36,7 @@ void test_monotonic_counter(void)
 void test_lcs_single(void)
 {
 	int ret;
-	lcs_t lcs;
+	enum lcs lcs;
 
 	ret = read_life_cycle_state(&lcs);
 	zassert_equal(0, ret, "read lcs failed %d", ret);

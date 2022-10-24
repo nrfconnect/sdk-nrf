@@ -17,7 +17,7 @@ LOG_MODULE_REGISTER(identity_key_generation, LOG_LEVEL_DBG);
 
 void main(void)
 {
-	lcs_t lcs = UNKNOWN;
+	enum lcs lcs = UNKNOWN;
 	int err = 0;
 
 	err = read_life_cycle_state(&lcs);

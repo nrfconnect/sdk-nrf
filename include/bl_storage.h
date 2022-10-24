@@ -167,8 +167,6 @@ enum lcs {
 	DECOMMISSIONED = 4,
 };
 
-typedef enum lcs lcs_t;
-
 /**
  * @brief Update the life cycle state in OTP,
  *
@@ -182,7 +180,7 @@ typedef enum lcs lcs_t;
  * @retval -EREADLCS    Error on reading the current state
  * @retval -EINVALIDLCS Invalid next state
  */
-int update_life_cycle_state(lcs_t next_lcs);
+int update_life_cycle_state(enum lcs next_lcs);
 
 /**
  * @brief Read the current life cycle state the device is in from OTP,
@@ -192,7 +190,7 @@ int update_life_cycle_state(lcs_t next_lcs);
  * @retval 0            The LSC read was successful
  * @retval -EREADLCS    Error on reading from OTP or invalid OTP content
  */
-int read_life_cycle_state(lcs_t *lcs);
+int read_life_cycle_state(enum lcs *lcs);
 
 /**
  * Copies @p src into @p dst. Reads from @p src are done 32 bits at a

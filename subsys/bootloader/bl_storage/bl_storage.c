@@ -303,10 +303,10 @@ int set_monotonic_counter(uint16_t new_counter)
 #define STATE_ENTERED 0x0000
 #define STATE_NOT_ENTERED 0xFFFF
 
-int update_life_cycle_state(lcs_t next_lcs)
+int update_life_cycle_state(enum lcs next_lcs)
 {
 	int err;
-	lcs_t current_lcs = 0;
+	enum lcs current_lcs = 0;
 
 	if(next_lcs == UNKNOWN){
 		return -EINVALIDLCS;
@@ -348,7 +348,7 @@ int update_life_cycle_state(lcs_t next_lcs)
 }
 
 
-int read_life_cycle_state(lcs_t *lcs)
+int read_life_cycle_state(enum lcs *lcs)
 {
 	if (lcs == NULL){
 		return -EINVAL;

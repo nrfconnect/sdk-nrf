@@ -24,7 +24,7 @@
 #include <nrfx_nvmc.h>
 
 
-static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(lcs_t lcs){
+static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(enum lcs lcs){
 	switch (lcs) {
 	case ASSEMBLY:
 		return TFM_SLC_ASSEMBLY_AND_TEST;
@@ -40,7 +40,7 @@ static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(lcs_t lcs){
 	}
 }
 
-static lcs_t map_tfm_slc_to_bl_storage_lcs(enum tfm_security_lifecycle_t lcs){
+static enum lcs map_tfm_slc_to_bl_storage_lcs(enum tfm_security_lifecycle_t lcs){
 	switch (lcs) {
 	case TFM_SLC_ASSEMBLY_AND_TEST:
 		return ASSEMBLY;
@@ -109,7 +109,7 @@ static void write_halfword(const uint16_t *ptr, uint16_t val)
 
 
 /* Can later be replaced by a bl_storage call */
-int read_lcs_from_otp(lcs_t *lcs)
+int read_lcs_from_otp(enum lcs *lcs)
 {
 	if (lcs == NULL){
 		return -EINVAL;
@@ -135,10 +135,10 @@ int read_lcs_from_otp(lcs_t *lcs)
 	return 0;
 }
 
-int update_lcs_in_otp(lcs_t next_lcs)
+int update_lcs_in_otp(enum lcs next_lcs)
 {
 	int err;
-	lcs_t current_lcs = 0;
+	enum lcs current_lcs = 0;
 
 	if(next_lcs == UNKNOWN){
 		return -EINVALIDLCS;
@@ -189,7 +189,7 @@ static void read_implementation_id_from_otp(uint8_t * buf)
 enum tfm_security_lifecycle_t tfm_attest_hal_get_security_lifecycle(void)
 {
 	int err;
-	lcs_t otp_lcs;
+	enum lcs otp_lcs;
 
 
 	err = read_lcs_from_otp(&otp_lcs);
@@ -201,7 +201,7 @@ enum tfm_security_lifecycle_t tfm_attest_hal_get_security_lifecycle(void)
 }
 
 int tfm_attest_update_security_lifecycle_otp(enum tfm_security_lifecycle_t slc){
-	lcs_t next_lcs;
+	enum lcs next_lcs;
 
 	next_lcs = map_tfm_slc_to_bl_storage_lcs(slc);
 
