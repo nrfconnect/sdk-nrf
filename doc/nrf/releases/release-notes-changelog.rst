@@ -567,6 +567,7 @@ Libraries for networking
   * Removed:
 
     * An unused parameter of the :c:func:`nrf_cloud_connect` function.
+    * An unused :c:func:`nrf_cloud_shadow_update` function.
 
 * :ref:`lib_lwm2m_client_utils` library:
 

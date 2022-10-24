@@ -634,18 +634,6 @@ int nrf_cloud_connect(void);
 int nrf_cloud_sensor_data_send(const struct nrf_cloud_sensor_data *param);
 
 /**
- * @brief Update the device shadow with sensor data.
- *
- * @param[in] param Sensor data; the data pointed to by param->data.ptr must be a
- *                  valid JSON string.
- *
- * @retval 0       If successful.
- * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
- * @return A negative value indicates an error.
- */
-int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param);
-
-/**
  * @brief Update the device status in the shadow.
  *
  * @param[in] dev_status Device status to be encoded.

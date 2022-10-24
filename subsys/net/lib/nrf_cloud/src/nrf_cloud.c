@@ -264,38 +264,6 @@ int nrf_cloud_disconnect(void)
 	return nct_disconnect();
 }
 
-int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param)
-{
-	int err;
-	struct nct_cc_data sensor_data = {
-		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
-	};
-
-	if (current_state != STATE_DC_CONNECTED) {
-		return -EACCES;
-	}
-
-	if (param == NULL) {
-		return -EINVAL;
-	}
-
-	if (IS_VALID_USER_TAG(param->tag)) {
-		sensor_data.message_id = param->tag;
-	} else {
-		sensor_data.message_id = NCT_MSG_ID_USE_NEXT_INCREMENT;
-	}
-
-	err = nrf_cloud_encode_shadow_data(param, &sensor_data.data);
-	if (err) {
-		return err;
-	}
-
-	err = nct_cc_send(&sensor_data);
-	nrf_cloud_free((void *)sensor_data.data.ptr);
-
-	return err;
-}
-
 int nrf_cloud_shadow_device_status_update(const struct nrf_cloud_device_status *const dev_status)
 {
 	int err = 0;
