@@ -92,7 +92,7 @@ enum tfm_plat_err_t tfm_plat_get_boot_seed(uint32_t size, uint8_t *buf)
 		return TFM_PLAT_ERR_INVALID_INPUT;
 	}
 
-	nrf_err = nrf_cc3xx_plaform_get_boot_seed(buf);
+	nrf_err = nrf_cc3xx_platform_get_boot_seed(buf);
 	if (nrf_err != NRF_CC3XX_PLATFORM_SUCCESS) {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
