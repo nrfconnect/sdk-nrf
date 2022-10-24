@@ -18,9 +18,7 @@ config SECURE_BOOT_STORAGE_START_ADDRESS
 	  This sets the address of the bl_storage structure.
 	  It should be used only when access to bl_storage is required
 	  and the Nordic Secure Imutable Bootloader (CONFIG_SECURE_BOOT) is not
-	  used. Please check the configurationCONFIG_SB_PUBLIC_KEY_HASH_LEN to
-	  make sure it matches with the value used your image.
-	  If SECURE_BOOT is enabled the bl_storage start address will be
+	  used. If SECURE_BOOT is enabled the bl_storage start address will be
 	  automatically calculated and this configuration will be ignored.
 
 config SB_IMPLEMENTATION_ID

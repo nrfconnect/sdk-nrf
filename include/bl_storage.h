@@ -27,6 +27,9 @@ extern "C" {
 #define EREADLCS 114 /* LCS field of OTP is in an invalid state */
 #define EINVALIDLCS 115 /* Invalid LCS*/
 
+/* We truncate the 32 byte sha256 down to 16 bytes before storing it */
+#define SB_PUBLIC_KEY_HASH_LEN 16
+
 /** Storage for the PRoT Security Lifecycle state, that consists of 4 states:
  *  - Device assembly and test
  *  - PRoT Provisioning
@@ -62,7 +65,7 @@ struct bl_storage_data {
 #endif
 	struct {
 		uint32_t valid;
-		uint8_t hash[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
+		uint8_t hash[SB_PUBLIC_KEY_HASH_LEN];
 	} key_data[1];
 };
 
@@ -104,14 +107,13 @@ int verify_public_keys(void);
  *
  * @param[in]  key_idx  Index of key.
  * @param[out] p_buf    Pointer to area where key data will be stored.
- * @param[in]  buf_size Size of buffer, in bytes, provided in p_buf.
+ * The buffer must be at least SB_PUBLIC_KEY_HASH_LEN bytes large.
  *
- * @return Number of bytes written to p_buf is successful.
+ * @return Number of successfully written bytes to p_buf.
  * @retval -EINVAL  Key has been invalidated.
- * @retval -ENOMEM  The provided buffer is too small.
  * @retval -EFAULT  key_idx is too large. There is no key with that index.
  */
-int public_key_data_read(uint32_t key_idx, uint8_t *p_buf, size_t buf_size);
+int public_key_data_read(uint32_t key_idx, uint8_t *p_buf);
 
 /**
  * @brief Function for invalidating a public key.

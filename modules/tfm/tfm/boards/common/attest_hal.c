@@ -15,9 +15,6 @@
 #include <nrf_cc3xx_platform.h>
 #include "tfm_strnlen.h"
 
-/* 16 is the only supported length */
-#define CONFIG_SB_PUBLIC_KEY_HASH_LEN 16
-
 /* implementation_id is a mandatory IAT claim */
 #define CONFIG_SB_IMPLEMENTATION_ID 1
 #include "bl_storage.h"

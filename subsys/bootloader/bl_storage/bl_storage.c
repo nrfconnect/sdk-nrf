@@ -82,12 +82,11 @@ int verify_public_keys(void)
 {
 	for (uint32_t n = 0; n < num_public_keys_read(); n++) {
 		if (key_is_valid(n)) {
-			const uint16_t *p_key_n = (const uint16_t *)
-					p_bl_storage_data->key_data[n].hash;
-			size_t hash_len_u16 = (CONFIG_SB_PUBLIC_KEY_HASH_LEN/2);
-
-			for (uint32_t i = 0; i < hash_len_u16; i++) {
-				if (read_halfword(&p_key_n[i]) == 0xFFFF) {
+			for (uint32_t i = 0; i < SB_PUBLIC_KEY_HASH_LEN / 2; i++) {
+				const uint16_t *hash_as_halfwords =
+					(const uint16_t *)p_bl_storage_data->key_data[n].hash;
+				uint16_t halfword = read_halfword(&hash_as_halfwords[i]);
+				if (halfword == 0xFFFF) {
 					return -EHASHFF;
 				}
 			}
@@ -96,16 +95,12 @@ int verify_public_keys(void)
 	return 0;
 }
 
-int public_key_data_read(uint32_t key_idx, uint8_t *p_buf, size_t buf_size)
+int public_key_data_read(uint32_t key_idx, uint8_t *p_buf)
 {
 	const uint8_t *p_key;
 
 	if (!key_is_valid(key_idx)) {
 		return -EINVAL;
-	}
-
-	if (buf_size < CONFIG_SB_PUBLIC_KEY_HASH_LEN) {
-		return -ENOMEM;
 	}
 
 	if (key_idx >= num_public_keys_read()) {
@@ -118,13 +113,12 @@ int public_key_data_read(uint32_t key_idx, uint8_t *p_buf, size_t buf_size)
 	 * with word sized read limitation. Perform both build time and run
 	 * time asserts to catch the issue as soon as possible.
 	 */
-	BUILD_ASSERT(CONFIG_SB_PUBLIC_KEY_HASH_LEN % 4 == 0);
 	BUILD_ASSERT(offsetof(struct bl_storage_data, key_data) % 4 == 0);
 	__ASSERT(((uint32_t)p_key % 4 == 0), "Key address is not word aligned");
 
-	otp_copy32(p_buf, (volatile uint32_t *restrict)p_key, CONFIG_SB_PUBLIC_KEY_HASH_LEN);
+	otp_copy32(p_buf, (volatile uint32_t *restrict)p_key, SB_PUBLIC_KEY_HASH_LEN);
 
-	return CONFIG_SB_PUBLIC_KEY_HASH_LEN;
+	return SB_PUBLIC_KEY_HASH_LEN;
 }
 
 void invalidate_public_key(uint32_t key_idx)
