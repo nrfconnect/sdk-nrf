@@ -17,7 +17,7 @@ int tfm_plat_provisioning_is_required(void)
 {
     enum tfm_security_lifecycle_t lcs = tfm_attest_hal_get_security_lifecycle();
 
-    return lcs != TFM_SLC_SECURED;
+    return lcs == TFM_SLC_PSA_ROT_PROVISIONING;
 }
 
 enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
@@ -31,9 +31,6 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
      * the TF-M provisioning to be completed so we don't accept any other
      * lifecycle state here.
      */
-    if(lcs != TFM_SLC_PSA_ROT_PROVISIONING) {
-        return TFM_PLAT_ERR_SYSTEM_ERR;
-    }
 
     /* The Hardware Unique Keys should be already written */
     if(!hw_unique_key_are_any_written()) {
