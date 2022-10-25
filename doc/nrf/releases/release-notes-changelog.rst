@@ -174,6 +174,10 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
+* Added:
+
+  * :ref:`peripheral_cgms` sample.
+
 * :ref:`ble_throughput` sample:
 
   * Added terminal commands for selecting the role.
@@ -303,6 +307,10 @@ Binary libraries
 
 Bluetooth libraries and services
 --------------------------------
+
+* Added:
+
+  * :ref:`cgms_readme` library.
 
 * :ref:`bt_le_adv_prov_readme`:
 
