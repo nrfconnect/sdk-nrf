@@ -8,16 +8,6 @@
 #    - None
 
 - scenarios:
-    - sample.edge_impulse.wrapper
-    - applications.machine_learning.zdebug
-    - applications.machine_learning.zdebug_nus
-    - applications.machine_learning.zdebug_rtt
-    - applications.machine_learning.zrelease
-  platforms:
-    - all
-  comment: "Edge Impulse server is currently unstable"
-
-- scenarios:
     - sample.ant_advanced_burst
     - sample.ant_broadcast_rx
     - sample.ant_broadcast_tx
