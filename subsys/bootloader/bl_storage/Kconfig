@@ -6,20 +6,6 @@
 
 config SECURE_BOOT_STORAGE
 	bool "Functions for accessing the bootloader storage"
-	depends on SECURE_BOOT_CRYPTO || (SECURE_BOOT_STORAGE_START_ADDRESS != 0x0)
-
-config SECURE_BOOT_STORAGE_START_ADDRESS
-	hex "Start address of the secure boot storage"
-	default 0x00FF8100 if SOC_NRF5340_CPUAPP
-	default 0x00FF8108 if SOC_NRF9160
-	default 0x0
-	depends on !SECURE_BOOT_CRYPTO
-	help
-	  This sets the address of the bl_storage structure.
-	  It should be used only when access to bl_storage is required
-	  and the Nordic Secure Imutable Bootloader (CONFIG_SECURE_BOOT) is not
-	  used. If SECURE_BOOT is enabled the bl_storage start address will be
-	  automatically calculated and this configuration will be ignored.
 
 config SB_IMPLEMENTATION_ID
 	bool "Uniquely identifies the underlying immutable PSA RoT."

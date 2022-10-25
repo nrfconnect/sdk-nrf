@@ -10,6 +10,7 @@
 #include <nrf.h>
 #include <assert.h>
 #include <nrfx_nvmc.h>
+#include <pm_config.h>
 
 /** A single monotonic counter. It consists of a description value, a 'type',
  *  to know what this counter counts. Further, it has a number of slots
@@ -39,7 +40,7 @@ struct counter_collection {
 #define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
 
 static const struct bl_storage_data *p_bl_storage_data =
-	(struct bl_storage_data *)PROVISION_PARTITION_ADDRESS;
+	(struct bl_storage_data *)PM_PROVISION_ADDRESS;
 
 uint32_t s0_address_read(void)
 {

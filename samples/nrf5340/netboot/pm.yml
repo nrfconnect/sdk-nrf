@@ -15,8 +15,3 @@ b0n:
 
 b0n_container:
   span: [b0n, provision]
-
-provision:
-  size: 0x200
-  placement:
-    after: b0n

@@ -20,6 +20,7 @@
 #include "bl_storage.h"
 #include <nrfx_nvmc.h>
 
+#include <pm_config.h>
 
 static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(enum lcs lcs){
 	switch (lcs) {
@@ -53,11 +54,9 @@ static enum lcs map_tfm_slc_to_bl_storage_lcs(enum tfm_security_lifecycle_t lcs)
 	}
 }
 
-/* This is temporary solution until the bl_storage API is available in TF-M
- * This points to the UICR OTP region
- */
+/* This is temporary solution until the bl_storage API is available in TF-M */
 static const struct bl_storage_data *p_bl_storage_data =
-	(struct bl_storage_data *)PROVISION_PARTITION_ADDRESS;
+	(struct bl_storage_data *)(&NRF_UICR_S->OTP);
 
 #define STATE_ENTERED 0x0000
 #define STATE_NOT_ENTERED 0xFFFF

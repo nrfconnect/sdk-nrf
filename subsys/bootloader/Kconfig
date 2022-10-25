@@ -160,6 +160,7 @@ endif # SECURE_BOOT
 config PM_PARTITION_SIZE_PROVISION
 	hex
 	default 0x280 if SOC_NRF9160 || SOC_NRF5340_CPUAPP # Stored in OTP region
+	default 0x280 if SOC_NRF5340_CPUNET # Second instance stored in internal flash of NET
 	default FPROTECT_BLOCK_SIZE
 	prompt "Flash space reserved for PROVISION" if !(SOC_NRF9160 || SOC_NRF5340_CPUAPP)
 	help

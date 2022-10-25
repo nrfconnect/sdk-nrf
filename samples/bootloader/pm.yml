@@ -44,13 +44,3 @@ s1_image:
 s1:
   # Partition which contains the whole S1 partition.
   span: [s1_pad, s1_image]
-
-provision:
-  size: CONFIG_PM_PARTITION_SIZE_PROVISION
-#if defined(CONFIG_SOC_NRF9160) || defined(CONFIG_SOC_NRF5340_CPUAPP)
-  region: otp
-#else
-  placement:
-    after: b0
-    align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
-#endif
