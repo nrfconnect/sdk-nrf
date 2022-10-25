@@ -33,12 +33,12 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
      */
 
     /* The Hardware Unique Keys should be already written */
-    if(!hw_unique_key_are_any_written()) {
+    if (!hw_unique_key_are_any_written()) {
         return TFM_PLAT_ERR_SYSTEM_ERR;
     }
 
     /* The Initial Attestation key should be already written */
-    if(!nrf_cc3xx_platform_identity_key_is_stored(NRF_KMU_SLOT_KIDENT)) {
+    if (!nrf_cc3xx_platform_identity_key_is_stored(NRF_KMU_SLOT_KIDENT)) {
         return TFM_PLAT_ERR_SYSTEM_ERR;
     }
 
@@ -51,7 +51,7 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
     bool approt_writable = nrfx_nvmc_word_writable_check((uint32_t)&NRF_UICR->APPROTECT, UICR_APPROTECT_PALL_Protected);
     approt_writable &= nrfx_nvmc_word_writable_check((uint32_t)&NRF_UICR->SECUREAPPROTECT, UICR_SECUREAPPROTECT_PALL_Protected);
 
-    if(approt_writable){
+    if (approt_writable) {
         nrfx_nvmc_word_write((uint32_t)&NRF_UICR->APPROTECT, UICR_APPROTECT_PALL_Protected);
         nrfx_nvmc_word_write((uint32_t)&NRF_UICR->SECUREAPPROTECT, UICR_SECUREAPPROTECT_PALL_Protected);
     } else {
@@ -59,17 +59,17 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
     }
 
     /* Transition to the SECURED lifecycle state */
-    if (tfm_attest_update_security_lifecycle_otp(TFM_SLC_SECURED) != 0){
+    if (tfm_attest_update_security_lifecycle_otp(TFM_SLC_SECURED) != 0) {
         return TFM_PLAT_ERR_SYSTEM_ERR;
     }
 
     lcs = tfm_attest_hal_get_security_lifecycle();
-    if (lcs != TFM_SLC_SECURED){
+    if (lcs != TFM_SLC_SECURED) {
         return TFM_PLAT_ERR_SYSTEM_ERR;
     }
 
     /* Perform a mandatory reset since we switch to an attestable LCS state */
-    NVIC_SystemReset();
+    tfm_hal_system_reset();
 
     /*
      * We should never return from this function, a reset should be triggered
