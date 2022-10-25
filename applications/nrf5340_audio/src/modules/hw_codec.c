@@ -21,7 +21,7 @@
 #include "cs47l63_comm.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(HW_CODEC, CONFIG_LOG_HW_CODEC_LEVEL);
+LOG_MODULE_REGISTER(hw_codec, CONFIG_LOG_HW_CODEC_LEVEL);
 
 #define VOLUME_ADJUST_STEP_DB 3
 #define HW_CODEC_SELECT_DELAY_MS 2
@@ -79,10 +79,10 @@ static int hw_codec_on_board_set(void)
 	return 0;
 }
 
-int hw_codec_volume_set(uint16_t set_val)
+int hw_codec_volume_set(uint8_t set_val)
 {
 	int ret;
-	uint16_t volume_reg_val;
+	uint32_t volume_reg_val;
 
 	volume_reg_val = set_val;
 	if (volume_reg_val == 0) {
@@ -100,59 +100,54 @@ int hw_codec_volume_set(uint16_t set_val)
 	return 0;
 }
 
-int hw_codec_volume_adjust(int8_t adjustment)
+int hw_codec_volume_adjust(int8_t adjustment_db)
 {
 	int ret;
-	static uint8_t prev_volume_reg_val = OUT_VOLUME_DEFAULT;
+	static uint32_t prev_volume_reg_val = OUT_VOLUME_DEFAULT;
 
-	if (adjustment == 0) {
+	LOG_DBG("Adj dB in: %d", adjustment_db);
+
+	if (adjustment_db == 0) {
 		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1,
-					(prev_volume_reg_val | CS47L63_OUT_VU) &
-						~CS47L63_OUT1L_MUTE);
-		if (ret) {
-			return ret;
-		}
-
-		return 0;
+				(prev_volume_reg_val | CS47L63_OUT_VU) & ~CS47L63_OUT1L_MUTE);
+		return ret;
 	}
 
-	/* Get adjustment in dB, 1 bit is 0.5 dB,
-	 * so multiply by 2 to get increments of 1 dB
-	 */
-	adjustment *= 2;
+	uint32_t volume_reg_val;
 
-	int16_t volume_reg_val;
-
-	ret = cs47l63_read_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1,
-			       (uint32_t *)&volume_reg_val);
+	ret = cs47l63_read_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1, &volume_reg_val);
 	if (ret) {
 		return ret;
 	}
 
 	volume_reg_val &= CS47L63_OUT1L_VOL_MASK;
 
-	volume_reg_val += adjustment;
-	if (volume_reg_val < 0) {
+	/* The adjustment is in dB, 1 bit equals 0.5 dB,
+	 * so multiply by 2 to get increments of 1 dB
+	 */
+	int32_t new_volume_reg_val = volume_reg_val + (adjustment_db * 2);
+
+	if (new_volume_reg_val < 0) {
 		LOG_WRN("Volume at MIN (-64dB)");
-		volume_reg_val = 0;
-	} else if (volume_reg_val > MAX_VOLUME_REG_VAL) {
+		new_volume_reg_val = 0;
+
+	} else if (new_volume_reg_val > MAX_VOLUME_REG_VAL) {
 		LOG_WRN("Volume at MAX (0dB)");
-		volume_reg_val = MAX_VOLUME_REG_VAL;
+		new_volume_reg_val = MAX_VOLUME_REG_VAL;
+
 	}
 
 	ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1,
-				(volume_reg_val | CS47L63_OUT_VU) & ~CS47L63_OUT1L_MUTE);
+		((uint32_t)new_volume_reg_val | CS47L63_OUT_VU) & ~CS47L63_OUT1L_MUTE);
+
 	if (ret) {
 		return ret;
 	}
 
-	prev_volume_reg_val = volume_reg_val;
-#if (CONFIG_LOG_HW_CODEC_LEVEL >= LOG_LEVEL_INF)
-	int volume_in_db = (volume_reg_val / 2) - MAX_VOLUME_DB;
+	prev_volume_reg_val = new_volume_reg_val;
 
 	/* This is rounded down to nearest integer */
-	LOG_INF("Volume: %ddB", volume_in_db);
-#endif /* (CONFIG_LOG_HW_CODEC_LEVEL >= LOG_LEVEL_INF) */
+	LOG_INF("Volume: %ddB", (new_volume_reg_val / 2) - MAX_VOLUME_DB);
 
 	return 0;
 }
@@ -184,10 +179,9 @@ int hw_codec_volume_increase(void)
 int hw_codec_volume_mute(void)
 {
 	int ret;
-	uint16_t volume_reg_val;
+	uint32_t volume_reg_val;
 
-	ret = cs47l63_read_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1,
-			       (uint32_t *)&volume_reg_val);
+	ret = cs47l63_read_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1, &volume_reg_val);
 	if (ret) {
 		return ret;
 	}
@@ -206,10 +200,9 @@ int hw_codec_volume_mute(void)
 int hw_codec_volume_unmute(void)
 {
 	int ret;
-	uint16_t volume_reg_val;
+	uint32_t volume_reg_val;
 
-	ret = cs47l63_read_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1,
-			       (uint32_t *)&volume_reg_val);
+	ret = cs47l63_read_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1, &volume_reg_val);
 	if (ret) {
 		return ret;
 	}

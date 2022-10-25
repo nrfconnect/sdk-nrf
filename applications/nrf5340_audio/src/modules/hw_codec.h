@@ -12,14 +12,14 @@
 /**
  * @brief  Set volume on HW_CODEC
  *
- * @details Also unmute the volume on HW_CODEC
+ * @details Also unmutes the volume on HW_CODEC
  *
  * @param  set_val  Set the volume to a specific value.
  *                  This range of the value is between 0 to 128.
  *
  * @return 0 if successful, error otherwise
  */
-int hw_codec_volume_set(uint16_t set_val);
+int hw_codec_volume_set(uint8_t set_val);
 
 /**
  * @brief  Adjust volume on HW_CODEC
