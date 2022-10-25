@@ -4,6 +4,7 @@ sample:
 tests:
   sample.app_event_manager_profiler_tracer:
     build_only: true
+    platform_exclude: native_posix
     integration_platforms:
       - nrf52dk_nrf52832
       - nrf52840dk_nrf52840
