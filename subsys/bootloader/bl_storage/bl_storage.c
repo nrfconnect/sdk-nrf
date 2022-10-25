@@ -352,13 +352,21 @@ int read_life_cycle_state(enum lcs *lcs)
 	uint16_t secure = read_halfword(&p_bl_storage_data->lcs.secure);
 	uint16_t decommissioned = read_halfword(&p_bl_storage_data->lcs.decommissioned);
 
-	if (provisioning == STATE_NOT_ENTERED) {
+	if (provisioning == STATE_NOT_ENTERED
+		&& secure == STATE_NOT_ENTERED
+		&& decommissioned == STATE_NOT_ENTERED) {
 		*lcs = ASSEMBLY;
-	} else if (provisioning == STATE_ENTERED && secure == STATE_NOT_ENTERED) {
+	} else if (provisioning == STATE_ENTERED
+			   && secure == STATE_NOT_ENTERED
+			   && decommissioned == STATE_NOT_ENTERED) {
 		*lcs = PROVISION;
-	} else if (secure == STATE_ENTERED && decommissioned == STATE_NOT_ENTERED) {
+	} else if (provisioning == STATE_ENTERED
+			   && secure == STATE_ENTERED
+			   && decommissioned == STATE_NOT_ENTERED) {
 		*lcs = SECURE;
-	} else if (decommissioned == STATE_ENTERED) {
+	} else if (provisioning == STATE_ENTERED
+			   && secure == STATE_ENTERED
+			   && decommissioned == STATE_ENTERED) {
 		*lcs = DECOMMISSIONED;
 	} else {
 		/* To reach this the OTP must be corrupted or reading failed */

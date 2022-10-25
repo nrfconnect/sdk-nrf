@@ -33,10 +33,9 @@ extern "C" {
  *  - Secured
  *  - Decommissioned
  *  These states are transitioned top down during the life time of a device.
- *  Therefore when setting a new LCS we just mark the old state as left, this
- *  way one field less can be used to encode the lcs.
- *  This works as ASSEMBLY implies the OTP be erased except of needed
- *  key material.
+ *  The Device assembly and test state is implicitly defined by checking if
+ *  the provisioning state wasn't entered yet.
+ *  This works as ASSEMBLY implies the OTP be erased.
  */
 struct life_cycle_state_data {
 	uint16_t provisioning;
