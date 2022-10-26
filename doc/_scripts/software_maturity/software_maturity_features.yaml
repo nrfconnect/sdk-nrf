@@ -4,6 +4,7 @@ top_table:
   Thread: NET_L2_OPENTHREAD
   LTE: LTE_LINK_CONTROL
   HomeKit: HOMEKIT
+  Matter: CHIP
 features:
   zigbee:
     Zigbee (Sleepy) End Device: ZIGBEE_ROLE_END_DEVICE
@@ -26,14 +27,14 @@ features:
     Thread Radio Co-Processor (RCP): OPENTHREAD_COPROCESSOR && OPENTHREAD_COPROCESSOR_RCP
     Thread + nRF21540 (GPIO): NET_L2_OPENTHREAD && (MPSL_FEM_NRF21540_GPIO_SUPPORT || MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT)
   matter:
-    Matter over Thread: CHIP && NET_L2_OPENTHREAD
+    Matter over Thread: CHIP && NET_L2_OPENTHREAD && !WIFI_NRF700X
     Matter over Wi-Fi: CHIP && WIFI_NRF700X
-    Matter commissioning over IP: CHIP
-    Matter commissioning over Bluetooth LE with QR code onboarding: CHIP && BT
-    Matter commissioning over Bluetooth LE with NFC onboarding: CHIP && BT && CHIP_NFC_COMMISSIONING
-    Matter - OTA DFU over Bluetooth LE: CHIP && BT && MCUMGR_SMP_BT
-    OTA DFU over Matter: CHIP && CHIP_OTA_REQUESTOR
-    Matter Sleepy End Device: CHIP && CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT && NET_L2_OPENTHREAD && OPENTHREAD_MTD_SED
+    Matter commissioning over IP: CHIP && !WIFI_NRF700X
+    Matter commissioning over Bluetooth LE with QR code onboarding: CHIP && BT && !WIFI_NRF700X
+    Matter commissioning over Bluetooth LE with NFC onboarding: CHIP && BT && CHIP_NFC_COMMISSIONING && !WIFI_NRF700X
+    Matter - OTA DFU over Bluetooth LE: CHIP && BT && MCUMGR_SMP_BT && !WIFI_NRF700X
+    OTA DFU over Matter: CHIP && CHIP_OTA_REQUESTOR && !WIFI_NRF700X
+    Matter Sleepy End Device: CHIP && CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT && NET_L2_OPENTHREAD && OPENTHREAD_MTD_SED && !WIFI_NRF700X
   homekit:
     HomeKit over Bluetooth LE: HOMEKIT && BT && !CONFIG_HAP_HAVE_THREAD
     HomeKit over Thread FTD: HOMEKIT && BT && OPENTHREAD_FTD
