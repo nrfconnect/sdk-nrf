@@ -26,8 +26,9 @@ BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT <= 2,
 
 static struct bt_audio_broadcast_sink *broadcast_sink;
 
-static struct bt_audio_stream streams[CONFIG_LC3_DEC_CHAN_MAX];
-static struct bt_audio_stream *streams_p[ARRAY_SIZE(streams)];
+/* Headset supports only a single stream of audio */
+static struct bt_audio_stream audio_stream;
+static struct bt_audio_stream *audio_stream_p = &audio_stream;
 
 /* We need to set a location as a pre-compile, this changed in initialize */
 static struct bt_codec codec =
@@ -231,16 +232,16 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 		for (int j = 0; j < base->subgroups[i].bis_count; j++) {
 			const uint8_t index = base->subgroups[i].bis_data[j].index;
 
-			LOG_DBG("BIS %d   index = %d", j, index);
+			LOG_INF("BIS %d   index = %d", j, index);
 
 			/* If this is a BIS of interest then attach to and start a stream */
 			if (index == channel) {
 				if (bitrate_check((struct bt_codec *)&base->subgroups[i].codec)) {
 					base_bis_index_bitfield |= BIT(index);
 
-					streams[i].codec =
+					audio_stream.codec =
 						(struct bt_codec *)&base->subgroups[i].codec;
-					print_codec(streams[i].codec);
+					print_codec(audio_stream.codec);
 
 					LOG_DBG("Stream %d in subgroup %d from broadcast sink", i,
 						j);
@@ -256,7 +257,7 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 
 		LOG_DBG("Waiting for syncable");
 	} else {
-		LOG_WRN("Found no suitable streams");
+		LOG_WRN("Found no suitable stream");
 	}
 }
 
@@ -264,7 +265,7 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 {
 	int ret;
 
-	if (streams[0].ep->status.state == BT_AUDIO_EP_STATE_STREAMING || !playing_state) {
+	if (audio_stream.ep->status.state == BT_AUDIO_EP_STATE_STREAMING || !playing_state) {
 		return;
 	}
 
@@ -275,7 +276,8 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 
 	LOG_INF("Syncing to broadcast");
 
-	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, streams_p, NULL);
+	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, &audio_stream_p,
+					   NULL);
 	if (ret) {
 		LOG_WRN("Unable to sync to broadcast source, ret: %d", ret);
 		return;
@@ -326,10 +328,7 @@ static void initialize(le_audio_receive_cb recv_cb)
 
 		bt_audio_broadcast_sink_register_cb(&broadcast_sink_cbs);
 
-		for (int i = 0; i < ARRAY_SIZE(streams); i++) {
-			streams_p[i] = &streams[i];
-			streams[i].ops = &stream_ops;
-		}
+		audio_stream.ops = &stream_ops;
 
 		initialized = true;
 	}
@@ -368,10 +367,10 @@ static int bis_headset_cleanup(bool from_sync_lost_cb)
 
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 {
-	int frames_per_sec = 1000000 / bt_codec_cfg_get_frame_duration_us(streams[0].codec);
-	int bits_per_frame = bt_codec_cfg_get_octets_per_frame(streams[0].codec) * 8;
+	int frames_per_sec = 1000000 / bt_codec_cfg_get_frame_duration_us(audio_stream.codec);
+	int bits_per_frame = bt_codec_cfg_get_octets_per_frame(audio_stream.codec) * 8;
 
-	*sampling_rate = bt_codec_cfg_get_freq(streams[0].codec);
+	*sampling_rate = bt_codec_cfg_get_freq(audio_stream.codec);
 	*bitrate = frames_per_sec * bits_per_frame;
 
 	return 0;
@@ -379,7 +378,7 @@ int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 
 int le_audio_volume_up(void)
 {
-	if (streams[0].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+	if (audio_stream.ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
 		return -ECANCELED;
 	}
 
@@ -388,7 +387,7 @@ int le_audio_volume_up(void)
 
 int le_audio_volume_down(void)
 {
-	if (streams[0].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+	if (audio_stream.ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
 		return -ECANCELED;
 	}
 
@@ -397,7 +396,7 @@ int le_audio_volume_down(void)
 
 int le_audio_volume_mute(void)
 {
-	if (streams[0].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+	if (audio_stream.ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
 		return -ECANCELED;
 	}
 
