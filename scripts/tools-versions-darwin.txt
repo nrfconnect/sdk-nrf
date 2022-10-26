@@ -5,6 +5,6 @@ ninja=1.10.2
 gperf=3.1
 dtc=1.6.1
 west=0.13.1
-nanopb=0.4.4
+nanopb=0.4.6
 zephyr-sdk=0.15.1
 doxygen=1.9.2
