@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig AT_CUSTOM_CMD
+	bool "Custom AT commands"
+
+if AT_CUSTOM_CMD
+
+module=AT_CUSTOM_CMD
+module-dep=LOG
+module-str= AT custom command library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # AT_CUSTOM_CMD
