@@ -112,11 +112,11 @@ manifest:
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: sdk-mbedtls
-      revision: d540e87d63c1bf51856a88657c58abc021c7ad8f
+      revision: 89419b374d17d30b7637cfb91f699c2d8432127a
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 688cdced97ff20d507def2d17d42d20654968758
+      revision: 6dd4001e584dc3a590c2d3704d9ae0b5f6edb417
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
