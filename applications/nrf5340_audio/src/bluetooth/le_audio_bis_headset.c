@@ -232,7 +232,7 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 		for (int j = 0; j < base->subgroups[i].bis_count; j++) {
 			const uint8_t index = base->subgroups[i].bis_data[j].index;
 
-			LOG_INF("BIS %d   index = %d", j, index);
+			LOG_DBG("BIS %d   index = %d", j, index);
 
 			/* If this is a BIS of interest then attach to and start a stream */
 			if (index == channel) {
