@@ -298,7 +298,9 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`esb_prx_ptx` sample:
+
+  * Removed the FEM support section.
 
 Drivers
 =======
