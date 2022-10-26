@@ -216,7 +216,7 @@ trace_reset:
 			LOG_INF("Modem was turned off, no more traces");
 			goto out;
 		case -NRF_ENODATA:
-			LOG_INF("Modem has faulted, coredump output sent trace");
+			LOG_INF("No more trace data");
 			goto out;
 		case -NRF_EINPROGRESS:
 			__ASSERT(0, "Error in transport backend");
