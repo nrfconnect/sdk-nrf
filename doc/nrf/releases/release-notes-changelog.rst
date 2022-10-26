@@ -492,6 +492,12 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
   * SPDX License List database updated to version 3.18.
 
+* :ref:`partition_manager`:
+
+  * Added:
+
+    * :kconfig:option:`CONFIG_PM_PARTITION_ALIGN_SETTINGS_STORAGE` Kconfig option to specify the alignment of the settings storage partition.
+
 MCUboot
 =======
 
