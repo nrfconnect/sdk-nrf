@@ -4,6 +4,7 @@
 #
 
 # Support for Matter (formerly Connected Home over IP) protocol in NCS is experimental for Wi-Fi technology
-config CHIP
+config CHIP_OVER_WIFI
 	bool
-	select EXPERIMENTAL if WIFI_NRF700X
+	default y if CHIP && WIFI_NRF700X
+	select EXPERIMENTAL
