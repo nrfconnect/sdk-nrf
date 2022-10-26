@@ -9,10 +9,7 @@ import os
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject, Gdk, GLib
-
-gi.require_version('Vte', '2.91')
-from gi.repository import Vte
+from gi.repository import Gtk, GLib
 
 from dbus import DBusException
 from TerminalNotebook import TerminalNotebook
@@ -32,7 +29,6 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
         self.window.set_title('Bluetooth Console')
         self.window.set_default_size(730,410)
         self.window.set_resizable(True)
-        #self.window.set_position(Gtk.WIN_POS_CENTER)
 
         if getattr(sys, 'frozen', False):
             # frozen (released)
@@ -65,15 +61,15 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
         menubar = Gtk.MenuBar()
 
         filemenu = Gtk.Menu()
-        filem = Gtk.MenuItem("File")
+        filem = Gtk.MenuItem(label="File")
         filem.set_submenu(filemenu)
 
-        exit = Gtk.MenuItem("Exit")
+        exit = Gtk.MenuItem(label="Exit")
         exit.connect("activate", Gtk.main_quit)
         filemenu.append(exit)
 
         self.connect_menu = Gtk.Menu()
-        connect_item = Gtk.MenuItem("Select device")
+        connect_item = Gtk.MenuItem(label="Select device")
         connect_item.set_submenu(self.connect_menu)
 
         menubar.append(filem)
@@ -137,7 +133,7 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
                 self.connect_menu.remove(dev)
 
             for dev in connected_devs:
-                dev_menu_item = Gtk.CheckMenuItem(self.get_device_name(dev) + ' (' + dev + ')')
+                dev_menu_item = Gtk.CheckMenuItem(label=self.get_device_name(dev) + ' (' + dev + ')')
                 if dev in opened_devices:
                     dev_menu_item.set_active(True)
                     self.connect_to_device(dev)
@@ -150,7 +146,7 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
         # When there are no connected NUS devices, show info in menu
         items = [item for item in self.connect_menu]
         if not items:
-            no_bonded_menu_item = Gtk.CheckMenuItem('No compatible devices connected')
+            no_bonded_menu_item = Gtk.CheckMenuItem(label='No compatible devices connected')
             self.connect_menu.append(no_bonded_menu_item)
             self.connect_menu.show_all()
 

@@ -3,7 +3,6 @@
 
 import dbus
 import dbus.service
-import sys
 import subprocess
 
 from xml.etree import ElementTree
@@ -36,22 +35,30 @@ class BluetoothDevice(object):
 
 class BluetoothConnection(object):
 
-    def __init__(self, read_handler, message):
+    def __init__(self, read_handler, display_message_method):
         DBusGMainLoop(set_as_default=True)
-        self.display_message = message
+        self.display_message_method = display_message_method
         self.bus = dbus.SystemBus()
         self.object_path_list = []
         self.device_list = []
         self.update_devices()
         self.bus.add_signal_receiver(read_handler, path_keyword = 'char_path')
-        (self.bluez_maj, self.bluez_min) = self.get_bluez_version()
+        self.get_bluez_version()
 
     def get_bluez_version(self):
-	bashCommand = 'bluetoothd -v'
-        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        output, error = process.communicate()
-	output = output.split('.')
-	return (int(output[0],10), int(output[1],10))
+        try:
+            bashCommand = 'bluetoothd -v'
+            process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+            output, _ = process.communicate()
+            output = output.split('.')
+            self.bluez_maj, self.bluez_min = int(output[0],10), int(output[1],10)
+        except FileNotFoundError:
+            # Bluez 5.0 uses a different command instead of bluetoothd
+            bashCommand = 'bluetoothctl -v'
+            process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+            output, _ = process.communicate()
+            version = output.split()[1].decode().split('.')
+            self.bluez_maj, self.bluez_min = int(version[0],10), int(version[1],10)
 
     def get_device_name(self, device):
         for dev in self.device_list:
@@ -145,9 +152,9 @@ class BluetoothConnection(object):
                         self.list_objects(service, new_path)
             except dbus.DBusException as e:
                 if "Not connected" in e.args:
-                    self.display_message("Not connected to " + device)
+                    self.display_message_method("Not connected to " + service)
                 elif "Did not receive a reply" in e.args:
-                    self.display_message("Timeout exceeded " + device)
+                    self.display_message_method("Timeout exceeded " + service)
                 elif "The name" in e.args[0]:
                     pass
                 else:
@@ -156,33 +163,31 @@ class BluetoothConnection(object):
     def write_bluetooth(self, device, text):
         message = bytearray()
         if '\r' in text:
-            message.extend(text + '\r\n')
-        else:
-            message.extend(text)
+            text += '\r\n'
+        message.extend(text.encode())
         for dev in self.device_list:
             if device in dev.path:
                 try:
-                    if (self.bluez_maj > 5 or (self.bluez_maj == 5
-			and self.bluez_min > 39)):
-			dev.rx_interface.WriteValue(message, {})
+                    if (self.bluez_maj > 5 or (self.bluez_maj == 5 and self.bluez_min > 39)):
+                        dev.rx_interface.WriteValue(message, {})
                     else:
                         dev.rx_interface.WriteValue(message)
                 except dbus.DBusException as e:
                     if "Not connected" in e.args:
-                        self.display_message("Not connected with " + device)
+                        self.display_message_method("Not connected with " + device)
                     elif "Did not receive a reply" in e.args[0]:
-                        self.display_message("Timeout exceeded :" + device)
+                        self.display_message_method("Timeout exceeded :" + device)
                     else:
-                        print e.args
+                        print(e.args)
 
     def enable_notification(self, device):
         try:
             device.tx_interface.StartNotify()
         except dbus.DBusException as e:
             if "Not connected" in e.args:
-                self.display_message("Not connected with " + device)
+                self.display_message_method("Not connected with " + device)
             elif "Did not receive a reply" in e.args:
-                self.display_message("Timeout exceeded :" + device)
+                self.display_message_method("Timeout exceeded :" + device)
             elif "Already notifying" in e.args:
                 pass
             else:
@@ -194,8 +199,8 @@ class BluetoothConnection(object):
             device.tx_interface.StopNotify()
         except dbus.DBusException as e:
             if "Not connected" in e.args:
-                self.display_message("Not connected with " + device)
+                self.display_message_method("Not connected with " + device)
             elif "Did not receive a reply" in e.args:
-                self.display_message("Timeout exceeded " + device)
+                self.display_message_method("Timeout exceeded " + device)
             else:
                 raise

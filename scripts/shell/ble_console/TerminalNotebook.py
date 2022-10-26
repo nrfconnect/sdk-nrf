@@ -1,14 +1,11 @@
 # Copyright (c) 2019 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import os
-import sys
-import warnings
 import re
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject, Gdk, GLib
+from gi.repository import Gtk, Gdk
 
 gi.require_version('Vte', '2.91')
 from gi.repository import Vte
@@ -19,16 +16,7 @@ MARKUP_REMOVE = re.compile(r'<[^>]+>')
 
 class TerminalNotebook(object):
 
-    def __init__(self, write_device, widget, unconnect, message):
-
-        # Save images used in terminals
-
-        if getattr(sys, 'frozen', False):
-            # frozen (released)
-            dir_name = os.path.dirname(sys.executable)
-        else:
-            # unfrozen
-            dir_name = os.path.dirname(os.path.realpath(__file__))
+    def __init__(self, write_device, widget, unconnect, display_message_method):
 
         self.device_terminal_dict = {}
         self.device_string_dict   = {}
@@ -37,7 +25,7 @@ class TerminalNotebook(object):
         # Methods to communicate with sending protocol and gui
         self.send_data_to_device = write_device
         self.unconnect_menu = unconnect
-        self.display_message = message
+        self.display_message_method = display_message_method
 
         # Create a new notebook, place the position of the tabs
         self.notebook = Gtk.Notebook()
@@ -65,7 +53,7 @@ class TerminalNotebook(object):
                 self.device_string_dict[device] += text
 
     def receive_data_from_device(self, device, string):
-        self.device_terminal_dict[device].feed(string)
+        self.device_terminal_dict[device].feed(string.encode())
 
     def get_data_from_terminal(self):
         return self.device_string_dict
@@ -93,7 +81,7 @@ class TerminalNotebook(object):
 
                 if state == False :
                     terminal.set_color_background(COLOR_TERMINAL_INACTIVE)
-                    self.display_message("Lost connection with " + device)
+                    self.display_message_method("Lost connection with " + device)
                     # Strikethrough name of inactive device
                     self.labels[device].set_markup('<s>' + label_text + '</s>')
                 else:
@@ -108,13 +96,13 @@ class TerminalNotebook(object):
         return opened_terminals
 
     def remove_terminal(self, device):
-        self.device_terminal_dict[device].feed('\033[2J')
+        termination_string = '\033[2J'
+        self.device_terminal_dict[device].feed(termination_string.encode())
         if self.notebook.get_n_pages() != 1:
-	        self.notebook.remove_page(self.notebook.page_num(self.device_terminal_dict[device]))
-	        self.notebook.queue_draw_area(0,0,-1,-1)
+            self.notebook.remove_page(self.notebook.page_num(self.device_terminal_dict[device]))
+            self.notebook.queue_draw_area(0,0,-1,-1)
         else:
             self.device_terminal_dict[device].set_color_background(COLOR_TERMINAL_INACTIVE)
-        del self.device_sending_dict[device]
         del self.device_terminal_dict[device]
         del self.device_string_dict[device]
         self.notebook.set_show_tabs(len(self.device_terminal_dict) != 0)
@@ -135,7 +123,6 @@ class TerminalNotebook(object):
         terminal.show()
 
         self.device_terminal_dict[device] = terminal
-        self.device_sending_dict[device] = 0
         self.device_string_dict[device] = ''
 
         self.labels[device] = Gtk.Label(name + ' (' + device + ')')
