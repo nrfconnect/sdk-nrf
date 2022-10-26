@@ -20,6 +20,9 @@ config BT_ADV_PROV_DEVICE_NAME
 config BT_ADV_PROV_SWIFT_PAIR
 	default y
 
+config BT_ADV_PROV_FAST_PAIR
+	default y if BT_FAST_PAIR
+
 config BT_ADV_PROV_TX_POWER
 	default y
 

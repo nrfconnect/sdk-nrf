@@ -7,7 +7,6 @@
 #include <nrfx_ipc.h>
 #include <nrf_modem.h>
 #include <nrf_modem_at.h>
-#include <nrf_modem_platform.h>
 #include <zephyr/init.h>
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
@@ -24,6 +23,10 @@
 
 LOG_MODULE_DECLARE(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
+/* Interrupt used for communication with the network layer. */
+#define NRF_MODEM_IPC_IRQ DT_IRQ_BY_IDX(DT_NODELABEL(ipc), 0, irq)
+BUILD_ASSERT(IPC_IRQn == NRF_MODEM_IPC_IRQ, "NRF_MODEM_IPC_IRQ mismatch");
+
 struct shutdown_thread {
 	sys_snode_t node;
 	struct k_sem sem;
@@ -37,7 +40,7 @@ static int init_ret;
 static enum nrf_modem_mode init_mode;
 
 static const struct nrf_modem_init_params init_params = {
-	.ipc_irq_prio = NRF_MODEM_NETWORK_IRQ_PRIORITY,
+	.ipc_irq_prio = CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO,
 	.shmem.ctrl = {
 		.base = PM_NRF_MODEM_LIB_CTRL_ADDRESS,
 		.size = CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE,
@@ -115,7 +118,7 @@ static int _nrf_modem_lib_init(const struct device *unused)
 	/* Setup the network IRQ used by the Modem library.
 	 * Note: No call to irq_enable() here, that is done through nrf_modem_init().
 	 */
-	IRQ_CONNECT(NRF_MODEM_NETWORK_IRQ, NRF_MODEM_NETWORK_IRQ_PRIORITY,
+	IRQ_CONNECT(NRF_MODEM_IPC_IRQ, CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO,
 		    nrfx_isr, nrfx_ipc_irq_handler, 0);
 
 	init_ret = nrf_modem_init(&init_params, NORMAL_MODE);

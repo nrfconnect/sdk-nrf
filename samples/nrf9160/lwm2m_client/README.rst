@@ -18,4 +18,3 @@ See the subpages for detailed documentation on the sample and its features.
 
    sample_description.rst
    provisioning.rst
-   location_assistance.rst

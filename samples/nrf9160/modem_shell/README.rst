@@ -970,7 +970,11 @@ After programming the development kit, test it in the Linux environment by perfo
       PPP: started
       mosh:~$
 
-#. Enter command``ppp uartconf`` that results in the following UART configuration:
+   Higher baudrates than the default 115200 result in better performance with the usual use cases for PPP/dial up.
+   Set the nRF9160 DK side UART for PPP with a MoSh command, for example ``ppp uartconf -b 921600``.
+   You also need to set the corresponding UART accordingly from PC side (in this example, within the ``pppd`` command).
+
+#. Enter command ``ppp uartconf`` that results in the following UART configuration:
 
    .. code-block:: console
 

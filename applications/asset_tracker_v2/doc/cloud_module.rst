@@ -85,9 +85,7 @@ When the cloud module is configured to communicate with `AWS IoT Core`_, `Azure 
 This enables the cloud service to fetch A-GPS and P-GPS data directly from `nRF Cloud`_ using REST calls and relay this data to the nRF9160 SiP using the pre-established cloud connection.
 By reusing the pre-established connection, the application saves overhead related to maintaining multiple connections at the same time.
 When configuring the application to communicate with nRF Cloud, A-GPS and P-GPS data are received directly from the service, and not by proxy.
-
-.. note::
-   AVSystem's `Coiote Device Management`_ supports automatic relaying of A-GPS data from `nRF Cloud`_ to the nRF9160 SiP with minimal steps. Adding support for P-GPS is currently under development.
+For more information, see `nRF Cloud Location Services`_.
 
 FOTA
 ====

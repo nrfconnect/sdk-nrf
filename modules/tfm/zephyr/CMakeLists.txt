@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if (NOT CONFIG_TFM_BUILD_NS)
+if (NOT CONFIG_TFM_BUILD_NS AND CONFIG_TFM_PARTITION_PLATFORM AND CONFIG_SOC_FAMILY_NRF)
   zephyr_library_named(tfm_api_nrf)
 
   # The non-secure API files are located in a folder associated with the TF-M
@@ -13,7 +13,7 @@ if (NOT CONFIG_TFM_BUILD_NS)
   # For convenience we instead refer directly to the source files here.
   set(src_dir ${CMAKE_CURRENT_LIST_DIR}/../tfm/boards/src)
 
-  zephyr_library_sources_ifdef(CONFIG_TFM_PARTITION_PLATFORM
+  zephyr_library_sources(
     ${src_dir}/tfm_ioctl_ns_api.c
     )
 endif()

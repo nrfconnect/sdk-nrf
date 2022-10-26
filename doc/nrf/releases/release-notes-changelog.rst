@@ -110,7 +110,9 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The application now uses the new LwM2M location assistance objects through the :ref:`lib_lwm2m_location_assistance` library.
 
 nRF9160: Serial LTE modem
 -------------------------
@@ -153,7 +155,7 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* The UUID16 values of GATT Human Interface Device Service (HIDS) and GATT Battery Service (BAS) are moved from advertising data to scan response data.
 
 Thingy:53 Zigbee weather station
 --------------------------------
@@ -192,6 +194,12 @@ Bluetooth samples
 Bluetooth mesh samples
 ----------------------
 
+* :ref:`bluetooth_mesh_light_switch`
+
+  * Added:
+
+    * Support for running the light switch as a Low Power node.
+
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
   * Added:
@@ -215,6 +223,10 @@ nRF9160 samples
 
     * Ability to use buttons to generate location assistance requests.
     * Documentation on :ref:`lwmwm_client_testing_shell`.
+
+  * Updated:
+
+    * The sample now uses the new LwM2M location assistance objects through the :ref:`lib_lwm2m_location_assistance` library.
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
@@ -363,8 +375,15 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme` library:
 
+  * Added:
+
+    * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE` Kconfig option to override the IPC IRQ priority from the devicetree.
+    * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO` Kconfig option to configure the IPC IRQ priority when the Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE` is enabled.
+
   * Updated:
 
+    * The IPC IRQ priority is now set using the devicetree.
+    * The EGU peripheral is no longer used to generate software interrupts to process network data.
     * The :c:func:`getaddrinfo` function to return ``EAFNOSUPPORT`` instead of ``EPROTONOSUPPORT`` when socket family is not supported.
     * The :c:func:`bind` function to return ``EAFNOSUPPORT`` instead of ``ENOTSUP`` when socket family is not supported.
     * The :c:func:`sendto` function to return ``EAFNOSUPPORT`` instead of ``ENOTSUP`` when socket family is not supported.
@@ -409,6 +428,10 @@ Libraries for networking
 * :ref:`lib_fota_download` library:
 
   * Added an error code :c:enumerator:`FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL` to indicate that the source of error is not network related.
+
+* Added:
+
+  * :ref:`lib_lwm2m_location_assistance` library that has support for using A-GPS, P-GPS and ground fix assistance from nRF Cloud using an LwM2M server.
 
 Libraries for NFC
 -----------------

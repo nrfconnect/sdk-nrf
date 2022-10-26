@@ -79,6 +79,7 @@ config BT_MAX_CONN
 	default 1
 
 config BT_ISO_MAX_CHAN
+	default 2 if STREAM_BIDIRECTIONAL
 	default 1
 
 config BT_ASCS_ASE_SNK_COUNT

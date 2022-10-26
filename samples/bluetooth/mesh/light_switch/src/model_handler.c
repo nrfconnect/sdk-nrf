@@ -12,6 +12,7 @@
  * behavior related to the models.
  */
 #include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/mesh/proxy.h>
 #include <bluetooth/mesh/models.h>
 #include <dk_buttons_and_leds.h>
 #include "model_handler.h"
@@ -40,7 +41,7 @@ static struct button buttons[] = {
 #if DT_NODE_EXISTS(DT_ALIAS(sw2))
 	{ .client = BT_MESH_ONOFF_CLI_INIT(&status_handler) },
 #endif
-#if DT_NODE_EXISTS(DT_ALIAS(sw3))
+#if DT_NODE_EXISTS(DT_ALIAS(sw3)) && !defined(CONFIG_BT_MESH_LOW_POWER)
 	{ .client = BT_MESH_ONOFF_CLI_INIT(&status_handler) },
 #endif
 };
@@ -66,6 +67,11 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 		return;
 	}
 
+	if (IS_ENABLED(CONFIG_BT_MESH_LOW_POWER) && (pressed & changed & BIT(3))) {
+		bt_mesh_proxy_identity_enable();
+		return;
+	}
+
 	for (int i = 0; i < ARRAY_SIZE(buttons); ++i) {
 		if (!(pressed & changed & BIT(i))) {
 			continue;
@@ -78,11 +84,13 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 
 		/* As we can't know how many nodes are in a group, it doesn't
 		 * make sense to send acknowledged messages to group addresses -
-		 * we won't be able to make use of the responses anyway.
+		 * we won't be able to make use of the responses anyway. This also
+		 * applies in LPN mode, since we can't expect to receive a response
+		 * in appropriate time.
 		 */
-		if (bt_mesh_model_pub_is_unicast(buttons[i].client.model)) {
-			err = bt_mesh_onoff_cli_set(&buttons[i].client, NULL,
-						    &set, NULL);
+		if (bt_mesh_model_pub_is_unicast(buttons[i].client.model) &&
+		    !IS_ENABLED(CONFIG_BT_MESH_LOW_POWER)) {
+			err = bt_mesh_onoff_cli_set(&buttons[i].client, NULL, &set, NULL);
 		} else {
 			err = bt_mesh_onoff_cli_set_unack(&buttons[i].client,
 							  NULL, &set);
@@ -177,12 +185,13 @@ static struct bt_mesh_elem elements[] = {
 			     BT_MESH_MODEL_ONOFF_CLI(&buttons[2].client)),
 		     BT_MESH_MODEL_NONE),
 #endif
-#if DT_NODE_EXISTS(DT_ALIAS(sw3))
+#if DT_NODE_EXISTS(DT_ALIAS(sw3)) && !defined(CONFIG_BT_MESH_LOW_POWER)
 	BT_MESH_ELEM(4,
 		     BT_MESH_MODEL_LIST(
 			     BT_MESH_MODEL_ONOFF_CLI(&buttons[3].client)),
 		     BT_MESH_MODEL_NONE),
 #endif
+
 };
 
 static const struct bt_mesh_comp comp = {

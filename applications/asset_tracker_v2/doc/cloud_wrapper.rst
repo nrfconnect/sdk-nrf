@@ -41,7 +41,14 @@ This takes place in the :file:`asset_tracker_v2/src/cloud/CMakeLists.txt` file.
 LwM2M
 =====
 
-The following sections explain typical concepts in LwM2M and its implementation in the application.
+The application integrates LwM2M through the following APIs:
+
+* :ref:`LwM2M API <lwm2m_interface>` from Zephyr
+* :ref:`LwM2M client utils API <lib_lwm2m_client_utils>`, and :ref:`LwM2M location assistance API <lib_lwm2m_location_assistance>` from |NCS|
+
+.. note::
+
+   The LwM2M integration does not have support for sending of batched data.
 
 Bootstrapping and credential handling
 -------------------------------------
@@ -254,9 +261,11 @@ For more information on objects used in LwM2M, refer to the `OMA LwM2M Object an
 +------------------------------------------------------------------+----------------------+
 | ECID-Signal Measurement Information (Neighbor cell measurements) | 10256                |
 +------------------------------------------------------------------+----------------------+
-| Location Assistance (proprietary, A-GPS / P-GPS)                 | 50001                |
+| Ground Fix (Cellular and Wi-Fi location)                         | 33626                |
 +------------------------------------------------------------------+----------------------+
-| Configuration (proprietary)                                      | 50009                |
+| GNSS Assistance (A-GPS / P-GPS)                                  | 33625                |
++------------------------------------------------------------------+----------------------+
+| Configuration (see :ref:`object_xml_config`)                     | 50009                |
 +------------------------------------------------------------------+----------------------+
 
 .. _object_xml_config:
@@ -284,14 +293,6 @@ If you are using `Coiote Device Management`_, complete the following steps to ad
 After completing the previous steps, the configuration object is detected in the console and you can set the different resources in the object.
 These resources configure the real-time behavior of the application and maps directly to the configurations listed in :ref:`Real-time configurations <real_time_configs>`.
 
-LwM2M integration
-=================
-
-Currently, the LwM2M integration does not have support for the following scenarios:
-
-* Sending of batched data.
-* Downloading of P-GPS data. This is under development and will be made available through `Coiote Device Management`_.
-
 Dependencies
 ************
 
@@ -301,6 +302,7 @@ This module uses the following |NCS| libraries and drivers:
 * :ref:`lib_aws_iot`
 * :ref:`lib_azure_iot_hub`
 * :ref:`lib_lwm2m_client_utils`
+* :ref:`lib_lwm2m_location_assistance`
 * :ref:`lwm2m_interface`
 
 API documentation
