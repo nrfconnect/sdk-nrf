@@ -32,6 +32,8 @@ if(NOT NO_BOILERPLATE)
     find_package(NcsToolchain ${NCS_TOOLCHAIN_MINIMUM_REQUIRED} ${EXACT} QUIET)
     if(${NcsToolchain_FOUND})
       message("-- Using NCS Toolchain ${NcsToolchain_VERSION} for building. (${NcsToolchain_DIR})")
+
+      set(CUSTOM_COMMAND_ENV       ${CMAKE_COMMAND} -E env PATH=${NCS_TOOLCHAIN_BIN_PATH})
       set(GIT_EXECUTABLE           ${NCS_TOOLCHAIN_GIT}     CACHE FILEPATH "NCS Toolchain Git")
 
       set(DTC                      ${NCS_TOOLCHAIN_DTC}     CACHE FILEPATH "NCS Toolchain DTC")
@@ -40,6 +42,11 @@ if(NOT NO_BOILERPLATE)
       set(Python3_EXECUTABLE       ${NCS_TOOLCHAIN_PYTHON}  CACHE FILEPATH "NCS Toolchain Python")
       set(PYTHON_EXECUTABLE        ${NCS_TOOLCHAIN_PYTHON}  CACHE FILEPATH "NCS Toolchain Python")
       set(PYTHON_PREFER            ${NCS_TOOLCHAIN_PYTHON}  CACHE FILEPATH "NCS Toolchain Python")
+
+      if(DEFINED NCS_TOOLCHAIN_PROTOC)
+        set(PROTOC                     ${CUSTOM_COMMAND_ENV} ${NCS_TOOLCHAIN_PROTOC} CACHE FILEPATH "NCS Toolchain protoc")
+        set(PROTOBUF_PROTOC_EXECUTABLE ${PROTOC}                                     CACHE FILEPATH "NCS Toolchain protoc")
+      endif()
 
       set(ZEPHYR_TOOLCHAIN_VARIANT ${NCS_TOOLCHAIN_VARIANT}        CACHE STRING "NCS Toolchain Variant")
       if(${ZEPHYR_TOOLCHAIN_VARIANT} AND ${ZEPHYR_TOOLCHAIN_VARIANT} STREQUAL zephyr)

@@ -49,6 +49,11 @@ RF Front-End Modules
 
   * nRF21540 GPIO+SPI built-in power model that keeps the nRF21540's gain constant and as close to the currently configured value of gain as possible.
 
+Build system
+------------
+
+* Fixed an issue with the |NCS| Toolchain where protoc and nanopb would not be correctly detected by the build system, resulting in builds trying to find locally installed versions instead of the version shipped with the |NCS| Toolchain.
+
 Protocols
 =========
 
