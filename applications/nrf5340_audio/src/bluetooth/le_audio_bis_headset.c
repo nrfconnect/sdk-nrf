@@ -215,12 +215,6 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 		return;
 	}
 
-	/* Test to ensure there are enough streams for each subgroup */
-	if (base->subgroup_count > CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT) {
-		LOG_WRN("Too many channels in subgroup");
-		return;
-	}
-
 	channel_assignment_get(&channel);
 
 	channel = BIT(channel);
