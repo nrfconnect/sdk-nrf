@@ -18,20 +18,8 @@ config NRF_MODEM_LIB_SYS_INIT
 	  Please note that initialization is synchronous and can take up to one
 	  minute in case the modem firmware is updated.
 
-config NRF_MODEM_LIB_LOG_FW_VERSION_UUID
-	depends on LOG
-	bool "Log FW version and UUID during initialization"
-
-config NRF_MODEM_LIB_TRACE_ENABLED
-	bool "Enable proprietary traces (DEPRECATED)"
-	help
-	  Deprecated, use NRF_MODEM_LIB_TRACE instead.
-	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
-	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
-	  Trace data is output on the chosen trace backend.
-
-config NRF_MODEM_LIB_TRACE
-	bool "Enable proprietary traces" if !NRF_MODEM_LIB_TRACE_ENABLED
+menuconfig NRF_MODEM_LIB_TRACE
+	bool "Tracing" if !NRF_MODEM_LIB_TRACE_ENABLED
 	default y if NRF_MODEM_LIB_TRACE_ENABLED
 	help
 	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
@@ -39,6 +27,9 @@ config NRF_MODEM_LIB_TRACE
 	  Trace data is output on the chosen trace backend.
 
 if NRF_MODEM_LIB_TRACE
+
+# Add trace backends
+rsource "trace_backends/Kconfig"
 
 config NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
 	bool "Override trace level"
@@ -112,20 +103,42 @@ config NRF_MODEM_LIB_TRACE_BITRATE_LOG_PERIOD_MS
 
 endif # NRF_MODEM_LIB_TRACE_BITRATE_LOG
 
-# Add trace backends
-rsource "trace_backends/Kconfig"
-
 endif # NRF_MODEM_LIB_TRACE
 
-config NRF_MODEM_LIB_SENDMSG_BUF_SIZE
-	int "Size of the sendmsg intermediate buffer"
-	default 128
+menu "Interrupt priorities"
+
+DT_IPC := $(dt_nodelabel_path,ipc)
+
+config NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE
+	bool "Override IPC IRQ priority"
 	help
-	  Size of an intermediate buffer used by `sendmsg` to repack data and
-	  therefore limit the number of `sendto` calls. The buffer is created
-	  in a static memory, so it does not impact stack/heap usage. In case
-	  the repacked message would not fit into the buffer, `sendmsg` sends
-	  each message part separately.
+	  Override the IPC IRQ priority set in device tree
+
+config NRF_MODEM_LIB_IPC_IRQ_PRIO
+	int "IPC IRQ priority" if NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE
+	default $(dt_node_array_prop_int,$(DT_IPC),interrupts,1) if !NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE
+endmenu
+
+choice NRF_MODEM_LIB_ON_FAULT
+	prompt "Action on modem fault"
+	default NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
+
+config NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
+	bool "Do nothing"
+	help
+	  Let the fault handler log the fault and return.
+
+config NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
+	bool "Reset modem"
+	help
+	  Let the fault handler reset the modem.
+
+config NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
+	bool "Application defined"
+	help
+	  Let the application define the fault handler function.
+
+endchoice # NRF_MODEM_LIB_ON_FAULT
 
 comment "Heap and buffers"
 
@@ -175,26 +188,15 @@ config NRF_MODEM_LIB_SHMEM_TRACE_SIZE
 	help
 	  Size of the shared memory region used to receive modem traces.
 
-choice NRF_MODEM_LIB_ON_FAULT
-	prompt "Action on modem fault"
-	default NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
-
-config NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
-	bool "Do nothing"
+config NRF_MODEM_LIB_SENDMSG_BUF_SIZE
+	int "Size of the sendmsg intermediate buffer"
+	default 128
 	help
-	  Let the fault handler log the fault and return.
-
-config NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
-	bool "Reset modem"
-	help
-	  Let the fault handler reset the modem.
-
-config NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
-	bool "Application defined"
-	help
-	  Let the application define the fault handler function.
-
-endchoice # NRF_MODEM_LIB_ON_FAULT
+	  Size of an intermediate buffer used by `sendmsg` to repack data and
+	  therefore limit the number of `sendto` calls. The buffer is created
+	  in a static memory, so it does not impact stack/heap usage. In case
+	  the repacked message would not fit into the buffer, `sendmsg` sends
+	  each message part separately.
 
 menuconfig NRF_MODEM_LIB_MEM_DIAG
 	bool "Memory diagnostic"
@@ -224,20 +226,22 @@ config NRF_MODEM_LIB_MEM_DIAG_DUMP_PERIOD_MS
 
 endif
 
-menu "Interrupt priorities"
+comment "Logging"
 
-DT_IPC := $(dt_nodelabel_path,ipc)
-
-config NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE
-	bool "Override IPC IRQ priority"
-	help
-	  Override the IPC IRQ priority set in device tree
-
-config NRF_MODEM_LIB_IPC_IRQ_PRIO
-	int "IPC IRQ priority" if NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE
-	default $(dt_node_array_prop_int,$(DT_IPC),interrupts,1) if !NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE
-endmenu
+config NRF_MODEM_LIB_LOG_FW_VERSION_UUID
+	depends on LOG
+	bool "Log FW version and UUID during initialization"
 
 module = NRF_MODEM_LIB
 module-str = Modem library
 source "subsys/logging/Kconfig.template.log_config"
+
+comment "Deprecated"
+
+config NRF_MODEM_LIB_TRACE_ENABLED
+	bool "Enable proprietary traces (DEPRECATED)"
+	help
+	  Deprecated, use NRF_MODEM_LIB_TRACE instead.
+	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
+	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
+	  Trace data is output on the chosen trace backend.
