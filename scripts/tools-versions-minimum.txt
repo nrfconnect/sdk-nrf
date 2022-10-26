@@ -8,4 +8,4 @@ west=0.12.0
 gn=1851
 doxygen=1.8.18
 ruby=2.7.0
-zephyr-sdk=0.14.1
+zephyr-sdk=0.15.1
