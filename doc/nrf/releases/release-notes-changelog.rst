@@ -536,6 +536,10 @@ Modem libraries
     * All the functions to return ``-EACCES`` instead of ``-EPERM`` when the access to the credential is not allowed.
     * All the functions to return ``-EPERM`` instead of ``-EACCES`` when the operation is not permitted because the LTE link is active.
 
+* :ref:`at_custom_cmd_readme` library:
+
+  * Added the :ref:`at_custom_cmd_readme` library to add custom AT commands with application callbacks.
+
 Libraries for networking
 ------------------------
 
