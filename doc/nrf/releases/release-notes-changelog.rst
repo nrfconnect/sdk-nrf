@@ -642,6 +642,11 @@ Modem libraries
 
   * Added the :ref:`at_custom_cmd_readme` library to add custom AT commands with application callbacks.
 
+* :ref:`lib_gcf_sms_readme` library:
+
+  * Renamed the AT SMS Cert library to :ref:`lib_gcf_sms_readme`.
+    The :ref:`lib_gcf_sms_readme` library now uses the :ref:`at_custom_cmd_readme` library to register filtered AT commands.
+
 Libraries for networking
 ------------------------
 
