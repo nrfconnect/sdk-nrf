@@ -1,4 +1,4 @@
-.. ### This page lists links used in NCS docs.
+.. ### This page lists links used in nRF Connect SDK docs.
        Links are grouped by source URL if three or more have the same source URL.
        Otherwise, they are placed in "Source: other".
        Links not separated by blank line are related to one another.
@@ -162,6 +162,7 @@
 .. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
 
 .. _`known issues page on the main branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html
+.. _`known issues for nRF Connect SDK v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-1-2
 .. _`known issues for nRF Connect SDK v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-1-1
 .. _`known issues for nRF Connect SDK v2.1.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-1-0
 .. _`known issues for nRF Connect SDK v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-0-2
@@ -231,6 +232,7 @@
 .. _`TF-M documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/index.html
 .. _`TF-M secure partition integration guide`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/docs/integration_guide/services/tfm_secure_partition_addition.html
 
+.. _`Repositories and revisions for v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.2/nrf/introduction.html#repositories-and-revisions
 .. _`Repositories and revisions for v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.1/nrf/introduction.html#repositories-and-revisions
 .. _`Repositories and revisions for v2.1.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.0/nrf/introduction.html#repositories-and-revisions
 .. _`Repositories and revisions for v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.2/nrf/introduction.html#repositories-and-revisions
@@ -240,6 +242,7 @@
 .. _`Repositories and revisions for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrf/introduction.html#repositories-and-revisions
 .. _`Repositories and revisions`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrf/introduction.html#repositories-and-revisions
 
+.. _`Modem library changelog for v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.2/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.1.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.2/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
@@ -249,6 +252,7 @@
 .. _`Modem library changelog for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v1.9.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 
+.. _`LwM2M carrier library changelog for v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.2/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.1/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.1.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.2/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
