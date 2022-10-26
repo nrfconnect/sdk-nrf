@@ -17,8 +17,6 @@
 #include "hal_interrupt.h"
 #include "pal.h"
 
-#define RPU_PKTRAM_SIZE (RPU_ADDR_PKTRAM_END - RPU_ADDR_PKTRAM_START + 1)
-
 #ifndef CONFIG_NRF700X_RADIO_TEST
 static enum wifi_nrf_status
 wifi_nrf_hal_rpu_pktram_buf_map_init(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)

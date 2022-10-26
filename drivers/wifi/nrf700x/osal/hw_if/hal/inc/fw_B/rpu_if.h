@@ -179,6 +179,7 @@
 #define NRF_WIFI_RPU_RF_CLK_TYPE_MAX 2
 #endif /* RPU_RF_C0_SUPPORT */
 
+#define RPU_PKTRAM_SIZE (RPU_ADDR_PKTRAM_END - RPU_ADDR_PKTRAM_START + 1)
 /**
  * struct nrf_wifi_rpu_pwr_data - Data that host may want to read from the Power IP.
  * @lfc_err: Estimated Lo Frequency Clock error in ppm.

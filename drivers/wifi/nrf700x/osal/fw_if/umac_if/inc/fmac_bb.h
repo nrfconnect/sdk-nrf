@@ -19,8 +19,6 @@
 #define VIRT_TO_PHYS(addr) (HOST_PKTRAM_BB_START + (addr - fmac_ctx->base_addr_host_pktram_bb))
 #endif
 
-#define TX_MAX_DATA_SIZE (1600)
-
 void bb_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 
 #endif /* __FMAC_BB_H__ */
