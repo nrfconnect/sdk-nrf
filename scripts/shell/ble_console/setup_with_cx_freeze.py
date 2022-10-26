@@ -5,7 +5,7 @@ from cx_Freeze import setup, Executable
 
 setup(name="Bluetooth NUS Shell for nRF Connect SDK",
       description="BLE Console is a host-side application providing access to Shell over Bluetooth Low Energy in Nordic devices.",
-      version="1.2",
+      version="1.3",
       options={"build_exe": {"build_exe": "build",
                              "packages": ["gi"],
                              "include_files":
