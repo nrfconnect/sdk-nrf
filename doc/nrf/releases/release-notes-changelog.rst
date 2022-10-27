@@ -166,6 +166,7 @@ nRF5340 Audio
   * Added Kconfig options for different sample rates and BAP presets.
   * Added bidirectional mode for the CIS mode.
   * Added a walkie talkie demo for bidirectional CIS.
+  * Added minimal Media Control Service (MCS) functionality to the Play/Pause button.
 
 * Updated:
 

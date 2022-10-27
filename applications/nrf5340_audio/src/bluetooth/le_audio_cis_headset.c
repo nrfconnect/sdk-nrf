@@ -203,9 +203,15 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_audio_ep *ep, enu
 			 struct bt_codec_qos_pref *const pref)
 {
 	int ret;
+
 #if CONFIG_STREAM_BIDIRECTIONAL
 	static size_t configured_source_stream_count;
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
+
+	ret = ble_mcs_discover(default_conn);
+	if (ret) {
+		LOG_ERR("Failed to start discovery of MCS: %d", ret);
+	}
 
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		struct bt_audio_stream *audio_stream = &audio_streams[i];
@@ -423,6 +429,12 @@ static int initialize(le_audio_receive_cb recv_cb)
 		}
 #endif /* (CONFIG_BT_VCS) */
 
+		ret = ble_mcs_client_init();
+		if (ret) {
+			LOG_ERR("MCS client init failed");
+			return ret;
+		}
+
 		receive_cb = recv_cb;
 		channel_assignment_get(&channel);
 
@@ -548,33 +560,9 @@ int le_audio_volume_mute(void)
 	return 0;
 }
 
-int le_audio_play(void)
+int le_audio_play_pause(void)
 {
-	int ret;
-
-	ret = bt_pacs_set_available_contexts(
-		BT_AUDIO_DIR_SINK, BT_AUDIO_CONTEXT_TYPE_MEDIA | BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
-
-	if (ret) {
-		LOG_ERR("Available context set failed");
-		return ret;
-	}
-
-	return 0;
-}
-
-int le_audio_pause(void)
-{
-	int ret;
-
-	ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK, BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
-
-	if (ret) {
-		LOG_ERR("Available context set failed");
-		return ret;
-	}
-
-	return 0;
+	return ble_mcs_play_pause(default_conn);
 }
 
 int le_audio_send(uint8_t const *const data, size_t size)
