@@ -51,6 +51,17 @@ int nrf_modem_lib_trace_processing_done_wait(k_timeout_t timeout);
  */
 int nrf_modem_lib_trace_level_set(enum nrf_modem_lib_trace_level trace_level);
 
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE) || defined(__DOXYGEN__)
+/** @brief Get the last measured rolling average bitrate of the trace backend.
+ *
+ * This function returns the last measured rolling average bitrate of the trace backend
+ * calculated over the last @kconfig(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_PERIOD_MS) period.
+ *
+ * @return Rolling average bitrate of the trace backend
+ */
+uint32_t nrf_modem_lib_trace_backend_bitrate_get(void);
+#endif /* defined(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE) || defined(__DOXYGEN__) */
+
 /** @} */
 
 #ifdef __cplusplus

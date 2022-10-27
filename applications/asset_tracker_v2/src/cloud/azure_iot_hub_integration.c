@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #include <zephyr/kernel.h>
 #include <net/azure_iot_hub.h>
 #include <nrf_modem_at.h>
@@ -481,10 +487,8 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id, char *path_
 	return 0;
 }
 
-int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
+int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id)
 {
-	ARG_UNUSED(path_list);
-
 	int err;
 	struct azure_iot_hub_msg msg = {
 		.payload.ptr = buf,
@@ -505,10 +509,8 @@ int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id,
 	return 0;
 }
 
-int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
+int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 {
-	ARG_UNUSED(path_list);
-
 	int err;
 	struct azure_iot_hub_msg msg = {
 		.payload.ptr = buf,

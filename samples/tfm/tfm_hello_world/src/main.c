@@ -10,7 +10,9 @@
 #include <stdio.h>
 #include <tfm_ns_interface.h>
 #include "psa/crypto.h"
+#ifdef CONFIG_TFM_PARTITION_PLATFORM
 #include <tfm_ioctl_api.h>
+#endif
 #include <pm_config.h>
 #include <hal/nrf_gpio.h>
 
@@ -19,6 +21,7 @@
 #define PIN_XL1 0
 #define PIN_XL2 1
 
+#if defined(CONFIG_TFM_PARTITION_PLATFORM)
 /* Check if MCU selection is required */
 #if NRF_GPIO_HAS_SEL
 static void gpio_pin_control_select(uint32_t pin_number, nrf_gpio_pin_sel_t mcu)
@@ -49,6 +52,7 @@ static uint32_t secure_read_word(intptr_t ptr)
 
 	return val;
 }
+#endif /* defined(CONFIG_TFM_PARTITION_PLATFORM) */
 
 static void print_hex_number(uint8_t *num, size_t len)
 {
@@ -69,20 +73,20 @@ void main(void)
 
 	printk("%s\n", hello_string);
 
-	if (IS_ENABLED(CONFIG_TFM_PARTITION_PLATFORM)) {
-		uint32_t part;
+#if defined(CONFIG_TFM_PARTITION_PLATFORM)
+	uint32_t part;
 
-		printk("Reading some secure memory that NS is allowed to read\n");
+	printk("Reading some secure memory that NS is allowed to read\n");
 
-		NRF_TIMER1_NS->TASKS_START = 1;
-		part = secure_read_word((intptr_t)&NRF_FICR_S->INFO.PART);
-		NRF_TIMER1_NS->TASKS_CAPTURE[0] = 1;
-		printk("Approximate IPC overhead us: %d\n", NRF_TIMER1_NS->CC[0]);
+	NRF_TIMER1_NS->TASKS_START = 1;
+	part = secure_read_word((intptr_t)&NRF_FICR_S->INFO.PART);
+	NRF_TIMER1_NS->TASKS_CAPTURE[0] = 1;
+	printk("Approximate IPC overhead us: %d\n", NRF_TIMER1_NS->CC[0]);
 
-		printk("FICR->INFO.PART: 0x%08x\n", part);
-		printk("FICR->INFO.VARIANT: 0x%08x\n",
-			secure_read_word((intptr_t)&NRF_FICR_S->INFO.VARIANT));
-	}
+	printk("FICR->INFO.PART: 0x%08x\n", part);
+	printk("FICR->INFO.VARIANT: 0x%08x\n",
+		secure_read_word((intptr_t)&NRF_FICR_S->INFO.VARIANT));
+#endif /* defined(CONFIG_TFM_PARTITION_PLATFORM) */
 
 	if (IS_ENABLED(CONFIG_TFM_CRYPTO_RNG_MODULE_ENABLED)) {
 		psa_status_t status;
@@ -118,29 +122,29 @@ void main(void)
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_TFM_PARTITION_PLATFORM)) {
+#if defined(CONFIG_TFM_PARTITION_PLATFORM)
 #if NRF_GPIO_HAS_SEL
-		/* Configure properly the XL1 and XL2 pins so that the low-frequency crystal
-		 * oscillator (LFXO) can be used.
-		 * This configuration has already been done by TF-M so this is redundant.
-		 */
-		gpio_pin_control_select(PIN_XL1, NRF_GPIO_PIN_SEL_PERIPHERAL);
-		gpio_pin_control_select(PIN_XL2, NRF_GPIO_PIN_SEL_PERIPHERAL);
-		printk("MCU selection configured\n");
+	/* Configure properly the XL1 and XL2 pins so that the low-frequency crystal
+	 * oscillator (LFXO) can be used.
+	 * This configuration has already been done by TF-M so this is redundant.
+	 */
+	gpio_pin_control_select(PIN_XL1, NRF_GPIO_PIN_SEL_PERIPHERAL);
+	gpio_pin_control_select(PIN_XL2, NRF_GPIO_PIN_SEL_PERIPHERAL);
+	printk("MCU selection configured\n");
 #else
-		printk("MCU selection skipped\n");
-#endif /* NRF_GPIO_HAS_SEL */
+	printk("MCU selection skipped\n");
+#endif /* defined(GPIO_PIN_CNF_MCUSEL_Msk) */
 
 #ifdef PM_S1_ADDRESS
-		bool s0_active = false;
-		int ret;
+	bool s0_active = false;
+	int ret;
 
-		ret = tfm_platform_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, &s0_active);
-		if (ret != 0) {
-			printk("Unexpected failure from spm_s0_active: %d\n", ret);
-		}
-
-		printk("S0 active? %s\n", s0_active ? "True" : "False");
-#endif /*  PM_S1_ADDRESS */
+	ret = tfm_platform_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, &s0_active);
+	if (ret != 0) {
+		printk("Unexpected failure from spm_s0_active: %d\n", ret);
 	}
+
+	printk("S0 active? %s\n", s0_active ? "True" : "False");
+#endif /*  PM_S1_ADDRESS */
+#endif /* defined(CONFIG_TFM_PARTITION_PLATFORM) */
 }

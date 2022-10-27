@@ -410,7 +410,7 @@ nRF9160 samples
   * Added:
 
     * Minimal Portfolio object support that is required for LwM2M conformance testing.
-    * Support for using :ref:`location_assistance` with Coiote LwM2M server.
+    * Support for using location assistance with Coiote LwM2M server.
     * Guidelines on :ref:`setting up the sample for production <lwm2m_client_provisioning>` using AVSystem’s Coiote Device Management server.
 
   * Updated:

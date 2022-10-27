@@ -568,27 +568,8 @@ int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 
 	err = lwm2m_update_signal_meas_objects((const struct lte_lc_cells_info *)cells);
 	if (err == -ENODATA) {
-		LOG_DBG("No neighboring cells available, using single cell location request");
-
-		/* No neighboring cells found, set single cell request. */
-		err = lwm2m_engine_set_s32(LWM2M_PATH(LOCATION_ASSIST_OBJECT_ID, 0,
-						      ASSIST_TYPE_RID),
-					   ASSISTANCE_REQUEST_TYPE_SINGLECELL_REQUEST);
-		if (err) {
-			return err;
-		}
-
-	} else if (err == 0) {
-
-		/* Neighboring cells found, set multicell request. */
-		err = lwm2m_engine_set_s32(LWM2M_PATH(LOCATION_ASSIST_OBJECT_ID, 0,
-							ASSIST_TYPE_RID),
-					   ASSISTANCE_REQUEST_TYPE_MULTICELL_REQUEST);
-		if (err) {
-			return err;
-		}
-
-	} else {
+		LOG_DBG("No neighboring cells available");
+	} else if (err) {
 		LOG_ERR("lwm2m_update_signal_meas_objects, error: %d", err);
 		return err;
 	}
@@ -628,22 +609,6 @@ int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 		return err;
 	}
 
-	static const char * const path_list[] = {
-		LWM2M_PATH(ECID_SIGNAL_MEASUREMENT_INFO_OBJECT_ID),
-		LWM2M_PATH(LOCATION_ASSIST_OBJECT_ID, 0, ASSIST_TYPE_RID),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, RADIO_SIGNAL_STRENGTH),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CELLID),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMNC),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMCC),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, LAC)
-	};
-
-	err = object_path_list_add(output, path_list, ARRAY_SIZE(path_list));
-	if (err) {
-		LOG_ERR("Failed populating object path list, error: %d", err);
-		return err;
-	}
-
 	neighbor_cells->queued = false;
 	return 0;
 }
@@ -651,44 +616,14 @@ int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 				    struct cloud_data_agps_request *agps_request)
 {
+	ARG_UNUSED(output);
+
 	int err;
-	uint32_t mask = 0;
 
-	if (agps_request->request.data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
-		mask |= LOCATION_ASSIST_NEEDS_UTC;
-	}
+	location_assistance_agps_set_mask(&agps_request->request);
 
-	if (agps_request->request.sv_mask_ephe) {
-		mask |= LOCATION_ASSIST_NEEDS_EPHEMERIES;
-	}
-
-	if (agps_request->request.sv_mask_alm) {
-		mask |= LOCATION_ASSIST_NEEDS_ALMANAC;
-	}
-
-	if (agps_request->request.data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
-		mask |= LOCATION_ASSIST_NEEDS_KLOBUCHAR;
-	}
-
-	if (agps_request->request.data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) {
-		mask |= LOCATION_ASSIST_NEEDS_NEQUICK;
-	}
-
-	if (agps_request->request.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
-		mask |= LOCATION_ASSIST_NEEDS_TOW;
-		mask |= LOCATION_ASSIST_NEEDS_CLOCK;
-	}
-
-	if (agps_request->request.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
-		mask |= LOCATION_ASSIST_NEEDS_LOCATION;
-	}
-
-	if (agps_request->request.data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
-		mask |= LOCATION_ASSIST_NEEDS_INTEGRITY;
-	}
-
-	/* Sets A-GPS mask and type of request. */
-	location_assist_agps_request_set(mask);
+	/* Disable filtered A-GPS. */
+	location_assist_agps_set_elevation_mask(-1);
 
 	err = lwm2m_engine_set_u32(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
 					      CELLID),
@@ -718,28 +653,40 @@ int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 		return err;
 	}
 
-	static const char * const path_list[] = {
-		LWM2M_PATH(LOCATION_ASSIST_OBJECT_ID, 0, ASSIST_TYPE_RID),
-		LWM2M_PATH(LOCATION_ASSIST_OBJECT_ID, 0, AGPS_MASK_RID),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CELLID),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMNC),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMCC),
-		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, LAC)
-	};
-
-	err = object_path_list_add(output, path_list, ARRAY_SIZE(path_list));
-	if (err) {
-		LOG_ERR("Failed populating object path list, error: %d", err);
-		return err;
-	}
-
+	agps_request->queued = false;
 	return 0;
 }
 
 int cloud_codec_encode_pgps_request(struct cloud_codec_data *output,
 				    struct cloud_data_pgps_request *pgps_request)
 {
-	return -ENOTSUP;
+	ARG_UNUSED(output);
+
+	int err;
+
+	err = location_assist_pgps_set_prediction_count(pgps_request->count);
+	if (err) {
+		LOG_ERR("location_assist_pgps_set_prediction_count, error: %d", err);
+		return err;
+	}
+
+	err = location_assist_pgps_set_prediction_interval(pgps_request->interval);
+	if (err) {
+		LOG_ERR("location_assist_pgps_set_prediction_interval, error: %d", err);
+		return err;
+	}
+
+	err = location_assist_pgps_set_start_time(pgps_request->time);
+	if (err) {
+		LOG_ERR("location_assist_pgps_set_start_time, error: %d", err);
+		return err;
+	}
+
+	location_assist_pgps_set_start_gps_day(pgps_request->day);
+	location_assist_pgps_request_set();
+
+	pgps_request->queued = false;
+	return 0;
 }
 
 int cloud_codec_decode_config(char *input, size_t input_len,

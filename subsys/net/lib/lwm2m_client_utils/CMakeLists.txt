@@ -16,10 +16,15 @@ zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPP
 			     lwm2m/ecid_signal_meas_info.c)
 zephyr_library_sources_ifdef(CONFIG_LWM2M_LTE_EVENT_LISTENER
 			     lwm2m/lwm2m_lte_notification.c)
-zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
-			     lwm2m/location_assistance_obj.c)
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS
 			     location/location_events.c
 			     location/location_event_handler.c)
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
 			     lwm2m/lwm2m_cellconn_obj.c)
+zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT
+			     lwm2m/ground_fix_obj.c)
+zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_GNSS_ASSIST_OBJ_SUPPORT
+			     lwm2m/gnss_assistance_obj.c)
+zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
+			     location/location_assistance.c)
+zephyr_include_directories(lwm2m/include)

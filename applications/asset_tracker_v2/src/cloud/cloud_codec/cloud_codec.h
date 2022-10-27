@@ -293,6 +293,10 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 /**
  * @brief Encode cloud codec neighbor cells data.
  *
+ * @note LwM2M builds: This function does not output a list of objects, unlike other
+ *		       functions in this API. The object references that are required to update
+ *		       neighbor cell measurements are kept internal in the LwM2M utils library.
+ *
  * @param[out] output string buffer for encoding result
  * @param[in] neighbor_cells pointer to neighbor cells data
  *
@@ -300,7 +304,7 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
  * @retval -ENODATA if data object is not marked valid
  * @retval -ENOMEM if codec couldn't allocate memory
  * @retval -EINVAL if the data is invalid
- * @retval -ENOTSUP if compiled without support for neighbor cell encoding
+ * @retval -ENOTSUP if the function is not supported by the encoding backend
  */
 int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 				      struct cloud_data_neighbor_cells *neighbor_cells);
@@ -308,13 +312,17 @@ int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 /**
  * @brief Encode cloud codec A-GPS request.
  *
+ * @note LwM2M builds: This function does not output a list of objects, unlike other
+ *		       functions in this API. The object references that are required to update
+ *		       A-GPS are kept internal in the LwM2M utils library.
+ *
  * @param[out] output string buffer for encoding result
  * @param[in] agps_request pointer to A-GPS request data
  *
  * @retval 0 on success
  * @retval -ENODATA if data object is not marked valid
  * @retval -ENOMEM if codec couldn't allocate memory
- * @retval -ENOTSUP if nrf cloud codec is used
+ * @retval -ENOTSUP if the function is not supported by the encoding backend
  */
 int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 				    struct cloud_data_agps_request *agps_request);
@@ -322,13 +330,17 @@ int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 /**
  * @brief Encode cloud codec P-GPS request.
  *
+ * @note LwM2M builds: This function does not output a list of objects, unlike other
+ *		       functions in this API. The object references that are required to update
+ *		       P-GPS are kept internal in the LwM2M utils library.
+ *
  * @param[out] output string buffer for encoding result
  * @param[in] pgps_request pointer to P-GPS request data
  *
  * @retval 0 on success
  * @retval -ENODATA if data object is not marked valid
  * @retval -ENOMEM if codec couldn't allocate memory
- * @retval -ENOTSUP if nRF or LwM2M cloud codec is used
+ * @retval -ENOTSUP if the function is not supported by the encoding backend
  */
 int cloud_codec_encode_pgps_request(struct cloud_codec_data *output,
 				    struct cloud_data_pgps_request *pgps_request);
@@ -344,7 +356,7 @@ int cloud_codec_encode_pgps_request(struct cloud_codec_data *output,
  * @retval -ENODATA if string doesn't contain required JSON objects
  * @retval -ENOMEM if codec couldn't allocate memory
  * @retval -ECANCELED if data was already processed
- * @retval -ENOTSUP if LwM2M cloud codec is used
+ * @retval -ENOTSUP if the function is not supported by the encoding backend
  */
 int cloud_codec_decode_config(char *input, size_t input_len,
 			      struct cloud_data_cfg *cfg);
@@ -357,7 +369,7 @@ int cloud_codec_decode_config(char *input, size_t input_len,
  *
  * @retval 0 on success
  * @retval -ENOMEM if codec couldn't allocate memory
- * @retval -ENOTSUP if LwM2M cloud codec is used
+ * @retval -ENOTSUP if the function is not supported by the encoding backend
  */
 int cloud_codec_encode_config(struct cloud_codec_data *output,
 			      struct cloud_data_cfg *cfg);
@@ -378,7 +390,7 @@ int cloud_codec_encode_config(struct cloud_codec_data *output,
  * @retval -ENODATA if none of the data elements are marked valid
  * @retval -EINVAL if the data is invalid
  * @retval -ENOMEM if codec couldn't allocate memory
- * @retval -ENOTSUP if nRF cloud codec is used
+ * @retval -ENOTSUP if the function is not supported by the encoding backend
  */
 int cloud_codec_encode_data(struct cloud_codec_data *output,
 			    struct cloud_data_gnss *gnss_buf,
@@ -440,7 +452,7 @@ int cloud_codec_encode_impact_data(struct cloud_codec_data *output,
  * @retval -ENODATA if none of the data elements are marked valid
  * @retval -EINVAL if the data is invalid
  * @retval -ENOMEM if codec couldn't allocate memory
- * @retval -ENOTSUP if LwM2M cloud codec is used
+ * @retval -ENOTSUP if the function is not supported by the encoding backend
  */
 int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  struct cloud_data_gnss *gnss_buf,

@@ -46,16 +46,11 @@ Enable the following parameters to use this library:
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT`
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT`
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT`
-* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT`
 
 Support for the objects is enabled by default, but they can be set individually.
 Disable the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT` Kconfig option only if you are implementing a ``Reboot`` resource on your application because of a mandatory requirement.
 
 If you are using the Firmware Update object and require downloading of firmware images from TLS enabled services like HTTPS, configure :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG` to specify the security tag that has root certificate for the target server.
-
-Location Assistance object (:kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT`) is a proprietary LwM2M object used to deliver information required by various location services through LwM2M.
-It is still under development and considered :ref:`experimental <software_maturity>`.
-See the :ref:`location_assistance` section in the LwM2M client sample documentation for more information.
 
 Defining custom objects
 =======================

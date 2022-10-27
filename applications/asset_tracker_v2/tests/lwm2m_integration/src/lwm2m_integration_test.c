@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "lwm2m_client_utils/mock_lwm2m_client_utils.h"
+#include "lwm2m_client_utils/mock_lwm2m_client_utils_location.h"
 #include "lwm2m/mock_lwm2m.h"
 #include "lte_lc/mock_lte_lc.h"
 #include "cloud_wrapper.h"
@@ -231,34 +232,16 @@ void test_lwm2m_integration_ui_send(void)
 
 void test_lwm2m_integration_neighbor_cells_send(void)
 {
-	/* Populate path with random resource path references. */
-	char *paths[PATH_LEN] = {
-		"4/0/6",
-		"4/0/7",
-		"4/0/7",
-		"4/0/7",
-		"4/0/7",
-	};
+	__wrap_location_assistance_ground_fix_request_send_ExpectAndReturn(&client, true, 0);
 
-	__wrap_lwm2m_engine_send_ExpectAndReturn(&client, (const char **)paths, PATH_LEN, true, 0);
-
-	TEST_ASSERT_EQUAL(0, cloud_wrap_neighbor_cells_send(NULL, PATH_LEN, true, 0, paths));
+	TEST_ASSERT_EQUAL(0, cloud_wrap_neighbor_cells_send(NULL, 0, true, 0));
 }
 
 void test_lwm2m_integration_agps_request_send(void)
 {
-	/* Populate path with random resource path references. */
-	char *paths[PATH_LEN] = {
-		"4/0/6",
-		"4/0/7",
-		"4/0/7",
-		"4/0/7",
-		"4/0/7",
-	};
+	__wrap_location_assistance_agps_request_send_ExpectAndReturn(&client, true, 0);
 
-	__wrap_lwm2m_engine_send_ExpectAndReturn(&client, (const char **)paths, PATH_LEN, true, 0);
-
-	TEST_ASSERT_EQUAL(0, cloud_wrap_agps_request_send(NULL, PATH_LEN, true, 0, paths));
+	TEST_ASSERT_EQUAL(0, cloud_wrap_agps_request_send(NULL, 0, true, 0));
 }
 
 /* Tests for APIs that are not supported by the lwm2m integration layer (uut), lwm2m_integration.c.
@@ -282,7 +265,9 @@ void test_lwm2m_integration_batch_send(void)
 
 void test_lwm2m_integration_pgps_request_send(void)
 {
-	TEST_ASSERT_EQUAL(-ENOTSUP, cloud_wrap_pgps_request_send(NULL, 0, true, 0));
+	__wrap_location_assistance_pgps_request_send_ExpectAndReturn(&client, true, 0);
+
+	TEST_ASSERT_EQUAL(0, cloud_wrap_pgps_request_send(NULL, 0, true, 0));
 }
 
 void test_lwm2m_integration_memfault_data_send(void)
