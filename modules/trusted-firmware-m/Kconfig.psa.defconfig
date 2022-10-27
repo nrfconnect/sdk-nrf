@@ -11,16 +11,7 @@ config PSA_WANT_KEY_TYPE_HMAC
 config PSA_WANT_KEY_TYPE_AES
 	bool
 	default y
-config PSA_WANT_KEY_TYPE_ARIA
-	bool
-	default y
-config PSA_WANT_KEY_TYPE_CAMELLIA
-	bool
-	default y
 config PSA_WANT_KEY_TYPE_CHACHA20
-	bool
-	default y
-config PSA_WANT_KEY_TYPE_DES
 	bool
 	default y
 config PSA_WANT_KEY_TYPE_ECC_KEY_PAIR
