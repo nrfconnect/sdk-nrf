@@ -144,6 +144,11 @@ nRF9160 samples
 
 |no_changes_yet_note|
 
+Peripheral samples
+------------------
+
+* Added support for nrf7002 board for :ref:`radio_test`.
+
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
