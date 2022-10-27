@@ -440,11 +440,6 @@ static void init(void)
 	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_GRACE_PERIOD)) {
 		k_work_init_delayable(&grace_period_end, grace_period_fn);
 	}
-
-	/* We should not start advertising before ble_bond is ready.
-	 * Stay in disabled state. */
-
-	module_set_state(MODULE_STATE_READY);
 }
 
 static void start(void)
@@ -453,6 +448,8 @@ static void start(void)
 
 	if (err) {
 		module_set_state(MODULE_STATE_ERROR);
+	} else {
+		module_set_state(MODULE_STATE_READY);
 	}
 
 	return;
@@ -503,7 +500,7 @@ static void disconnect_peer(struct bt_conn *conn)
 	}
 }
 
-static void ble_initialized(void)
+static void ble_ready(void)
 {
 	static bool started;
 
@@ -528,23 +525,52 @@ static void ble_initialized(void)
 	started = true;
 }
 
+static inline void get_req_modules(struct module_flags *mf)
+{
+	BUILD_ASSERT(!(IS_ENABLED(CONFIG_BT_SETTINGS) && !IS_ENABLED(CONFIG_CAF_SETTINGS_LOADER)),
+		     "Bluetooth settings enabled, but settings loader module is disabled");
+
+	module_flags_set_bit(mf, MODULE_IDX(ble_state));
+
+	if (IS_ENABLED(CONFIG_CAF_SETTINGS_LOADER)) {
+		module_flags_set_bit(mf, MODULE_IDX(settings_loader));
+	}
+
+	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED)) {
+		module_flags_set_bit(mf, MODULE_IDX(ble_bond));
+	}
+}
+
 static bool handle_module_state_event(const struct module_state_event *event)
 {
-	if (check_state(event, MODULE_ID(ble_state), MODULE_STATE_READY)) {
-		static bool initialized;
+	static struct module_flags req_modules_bm;
+	static bool initialized;
 
+	if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 		__ASSERT_NO_MSG(!initialized);
+
+		get_req_modules(&req_modules_bm);
+		__ASSERT_NO_MSG(!module_flags_check_zero(&req_modules_bm));
 
 		init();
 		initialized = true;
 
-		if (!IS_ENABLED(CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED)) {
-			ble_initialized();
+		return false;
+	}
+
+	if (module_flags_check_zero(&req_modules_bm)) {
+		/* Already initialized. */
+		return false;
+	}
+
+	if (event->state == MODULE_STATE_READY) {
+		__ASSERT_NO_MSG(initialized);
+
+		module_flags_clear_bit(&req_modules_bm, module_idx_get(event->module_id));
+
+		if (module_flags_check_zero(&req_modules_bm)) {
+			ble_ready();
 		}
-	} else if (IS_ENABLED(CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED) &&
-		   check_state(event, MODULE_ID(ble_bond), MODULE_STATE_READY)) {
-		/* Settings need to be loaded before advertising start */
-		ble_initialized();
 	}
 
 	return false;
