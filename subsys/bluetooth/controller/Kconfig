@@ -286,5 +286,12 @@ config BT_CTLR_SDC_CX_ADV_CLOSE_ADV_EVT_ON_DENIAL
 endchoice
 endif # MPSL_CX && BT_BROADCASTER
 
+config BT_CTLR_LE_POWER_CONTROL
+	bool "LE Power Control [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Enable support for LE Power Control feature that defined in the Bluetooth
+	  Core specification, Version 5.3 | Vol 6, Part B, Section 4.6.31.
+
 endmenu
 endif  # BT_LL_SOFTDEVICE
