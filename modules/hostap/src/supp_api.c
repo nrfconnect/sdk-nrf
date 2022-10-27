@@ -379,8 +379,16 @@ int zephyr_supp_status(const struct device *dev,
 			os_memcpy(status->ssid, _ssid, ssid_len);
 			status->ssid_len = ssid_len;
 			status->iface_mode = ssid->mode;
-			/* TODO: Derive this based on association IEs */
-			status->link_mode = WIFI_6;
+			if (wpa_s->connection_set == 1) {
+				status->link_mode = wpa_s->connection_he ? WIFI_6 :
+								wpa_s->connection_vht ? WIFI_5 :
+								wpa_s->connection_ht ? WIFI_4 :
+								wpa_s->connection_g ? WIFI_3 :
+								wpa_s->connection_a ? WIFI_2 :
+								wpa_s->connection_b ? WIFI_1 : WIFI_0;
+			} else {
+				status->link_mode = WIFI_LINK_MODE_UNKNOWN;
+			}
 		}
 		ret = wpa_drv_signal_poll(wpa_s, si);
 		if (!ret) {
