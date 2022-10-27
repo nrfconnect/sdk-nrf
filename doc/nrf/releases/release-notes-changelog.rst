@@ -234,6 +234,9 @@ nRF9160 samples
   * Updated:
 
     * The sample now uses the new LwM2M location assistance objects through the :ref:`lib_lwm2m_location_assistance` library.
+    * Removed all read callbacks from sensor code because of an issue of read callbacks not working properly when used with LwM2M observations.
+      This is due to the fact that the engine does not know when data is changed.
+    * Sensor samples are now enabled by default for Thingy:91 and disabled by default on nRF9160 DK.
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 

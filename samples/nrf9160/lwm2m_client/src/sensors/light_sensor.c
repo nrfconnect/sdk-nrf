@@ -30,37 +30,17 @@ LOG_MODULE_REGISTER(light_sensor, CONFIG_APP_LOG_LEVEL);
 	MIN((raw_value * 255U / CONFIG_LIGHT_SENSOR_COLOUR_MEASUREMENT_MAX_VALUE), UINT8_MAX)
 
 #define NUM_CHANNELS 4U
-
 #define RGBIR_STR_LENGTH 11U /* Format: '0xRRGGBBIR\0'. */
-
-#define SENSOR_FETCH_DELAY_MS 200U /* Time before a new fetch can be tried. */
 #define SENSE_LED_ON_TIME_MS 300U /* Time the sense LED stays on during colour read. */
 
 #if !defined(LIGHT_SENSOR_SIMULATED)
 static const struct device *light_sensor_dev = DEVICE_DT_GET(DT_NODELABEL(bh1749));
 static int64_t fetch_timestamp;
 
-/* sensor_sample_fetch_chan fails if called multiple times in a row with no delay. */
-static bool fetch_ready(void)
-{
-	return k_uptime_get() > fetch_timestamp + SENSOR_FETCH_DELAY_MS;
-}
 
 static int sensor_read(struct sensor_value measurements[])
 {
 	int ret;
-
-	if (fetch_ready()) {
-		ret = sensor_sample_fetch_chan(light_sensor_dev, SENSOR_CHAN_ALL);
-		if (ret) {
-			LOG_ERR("Fetch sample failed (%d)", ret);
-			return ret;
-		}
-		fetch_timestamp = k_uptime_get();
-	} else {
-		LOG_DBG("Sensor fetch not ready");
-		return -EBUSY;
-	}
 
 	ret = sensor_channel_get(light_sensor_dev, SENSOR_CHAN_IR, &measurements[0]);
 	if (ret) {

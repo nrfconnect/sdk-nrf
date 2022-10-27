@@ -59,7 +59,7 @@ extern "C" {
 #endif
 
 /* Set timestamp resource */
-void lwm2m_set_timestamp(int ipso_obj_id, unsigned int obj_inst_id);
+void set_ipso_obj_timestamp(int ipso_obj_id, unsigned int obj_inst_id);
 
 /* Check whether notification read callback or regular read callback */
 bool is_regular_read_cb(int64_t read_timestamp);
