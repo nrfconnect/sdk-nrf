@@ -129,7 +129,7 @@ extern "C" {
 #define NRF_CLOUD_DEVICE_JSON_KEY_DEV_INF	"deviceInfo"
 
 /**@brief Initialize the codec used encoding the data to the cloud. */
-int nrf_cloud_codec_init(void);
+int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks);
 
 /**@brief Encode the sensor data based on the indicated type. */
 int nrf_cloud_encode_sensor_data(const struct nrf_cloud_sensor_data *input,
