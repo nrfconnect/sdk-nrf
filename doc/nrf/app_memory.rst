@@ -105,6 +105,7 @@ Changing the values of the following options will only affect the RAM footprint:
 * Advertiser configuration:
 
   * :kconfig:option:`BT_MESH_ADV_BUF_COUNT`
+  * :kconfig:option:`BT_MESH_RELAY_BUF_COUNT`
 
 * Extended advertising configuration:
 
