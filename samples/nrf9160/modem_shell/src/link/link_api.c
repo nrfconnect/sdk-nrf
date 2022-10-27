@@ -430,16 +430,14 @@ parse:
 	}
 	dns_addr_str[param_str_len] = '\0';
 
-	if (dns_addr_str != NULL) {
-		family = net_utils_sa_family_from_ip_string(dns_addr_str);
+	family = net_utils_sa_family_from_ip_string(dns_addr_str);
 
-		if (family == AF_INET) {
-			addr = &(populated_info->dns_addr4_primary);
-			(void)inet_pton(AF_INET, dns_addr_str, addr);
-		} else if (family == AF_INET6) {
-			addr6 = &(populated_info->dns_addr6_primary);
-			(void)inet_pton(AF_INET6, dns_addr_str, addr6);
-		}
+	if (family == AF_INET) {
+		addr = &(populated_info->dns_addr4_primary);
+		(void)inet_pton(AF_INET, dns_addr_str, addr);
+	} else if (family == AF_INET6) {
+		addr6 = &(populated_info->dns_addr6_primary);
+		(void)inet_pton(AF_INET6, dns_addr_str, addr6);
 	}
 
 	/* Read secondary DNS address */
@@ -455,16 +453,14 @@ parse:
 	}
 	dns_addr_str[param_str_len] = '\0';
 
-	if (dns_addr_str != NULL) {
-		family = net_utils_sa_family_from_ip_string(dns_addr_str);
+	family = net_utils_sa_family_from_ip_string(dns_addr_str);
 
-		if (family == AF_INET) {
-			addr = &(populated_info->dns_addr4_secondary);
-			(void)inet_pton(AF_INET, dns_addr_str, addr);
-		} else if (family == AF_INET6) {
-			addr6 = &(populated_info->dns_addr6_secondary);
-			(void)inet_pton(AF_INET6, dns_addr_str, addr6);
-		}
+	if (family == AF_INET) {
+		addr = &(populated_info->dns_addr4_secondary);
+		(void)inet_pton(AF_INET, dns_addr_str, addr);
+	} else if (family == AF_INET6) {
+		addr6 = &(populated_info->dns_addr6_secondary);
+		(void)inet_pton(AF_INET6, dns_addr_str, addr6);
 	}
 
 	/* Read link MTU if exists:
