@@ -30,7 +30,6 @@ Configuration
 *************
 
 To enable the library, set the :kconfig:option:`CONFIG_ADP536X` Kconfig option to ``y`` in the project configuration file :file:`prj.conf`.
-You can use the I2C bus by setting the :kconfig:option:`CONFIG_ADP536X_BUS_NAME` Kconfig option.
 
 Initialize the library using the :c:func:`adp536x_init` function and use the API to configure and read from the ADP5360 PMIC.
 
