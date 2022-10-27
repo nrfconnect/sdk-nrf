@@ -80,7 +80,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 							 DIGITAL_INPUT_STATE_RID),
 					      event->state);
 			if (IS_ENABLED(CONFIG_LWM2M_IPSO_ONOFF_SWITCH_VERSION_1_1)) {
-				lwm2m_set_timestamp(IPSO_OBJECT_ONOFF_SWITCH_ID,
+				set_ipso_obj_timestamp(IPSO_OBJECT_ONOFF_SWITCH_ID,
 						    SWICTH1_OBJ_INST_ID);
 			}
 			break;
@@ -91,7 +91,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 							 DIGITAL_INPUT_STATE_RID),
 					      event->state);
 			if (IS_ENABLED(CONFIG_LWM2M_IPSO_ONOFF_SWITCH_VERSION_1_1)) {
-				lwm2m_set_timestamp(IPSO_OBJECT_ONOFF_SWITCH_ID,
+				set_ipso_obj_timestamp(IPSO_OBJECT_ONOFF_SWITCH_ID,
 						    SWITCH2_OBJ_INST_ID);
 			}
 			break;
