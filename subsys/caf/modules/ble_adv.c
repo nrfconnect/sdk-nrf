@@ -38,13 +38,6 @@ enum state {
 	STATE_GRACE_PERIOD
 };
 
-struct bond_find_data {
-	bt_addr_le_t peer_address;
-	uint8_t peer_id;
-	uint8_t peer_count;
-};
-
-
 static enum state state;
 static size_t req_grace_period_s;
 
@@ -131,27 +124,61 @@ static void conn_find_cb(struct bt_conn *conn, void *data)
 	(*temp_conn) = conn;
 }
 
-static void bond_find(const struct bt_bond_info *info, void *user_data)
+static inline struct bt_conn *conn_get(void)
 {
-	struct bond_find_data *bond_find_data = user_data;
+	struct bt_conn *conn = NULL;
 
-	if (bond_find_data->peer_id == bond_find_data->peer_count) {
-		bt_addr_le_copy(&bond_find_data->peer_address, &info->addr);
-	}
+	bt_conn_foreach(BT_CONN_TYPE_LE, conn_find_cb, &conn);
 
-	__ASSERT_NO_MSG(bond_find_data->peer_count < UCHAR_MAX);
-	bond_find_data->peer_count++;
+	return conn;
 }
 
-static int ble_adv_start_directed(const bt_addr_le_t *addr, bool fast_adv)
+static void bond_addr_get_cb(const struct bt_bond_info *info, void *user_data)
 {
+	bt_addr_le_t *addr = user_data;
+
+	/* Return address of the first found bond. */
+	if (!bt_addr_le_cmp(addr, BT_ADDR_LE_ANY)) {
+		bt_addr_le_copy(addr, &info->addr);
+	}
+}
+
+static inline void bond_addr_get(uint8_t local_id, bt_addr_le_t *addr)
+{
+	bt_addr_le_copy(addr, BT_ADDR_LE_ANY);
+	bt_foreach_bond(local_id, bond_addr_get_cb, addr);
+}
+
+static void bond_cnt_cb(const struct bt_bond_info *info, void *user_data)
+{
+	size_t *cnt = user_data;
+
+	(*cnt)++;
+}
+
+static inline size_t bond_cnt(uint8_t local_id)
+{
+	size_t cnt = 0;
+
+	bt_foreach_bond(local_id, bond_cnt_cb, &cnt);
+
+	return cnt;
+}
+
+static int ble_adv_start_directed(bool fast_adv)
+{
+	bt_addr_le_t addr;
+
+	bond_addr_get(cur_identity, &addr);
+	__ASSERT_NO_MSG(bt_addr_le_cmp(&addr, BT_ADDR_LE_ANY));
+
 	struct bt_le_adv_param adv_param;
 
 	if (fast_adv) {
 		LOG_INF("Use fast advertising");
-		adv_param = *BT_LE_ADV_CONN_DIR(addr);
+		adv_param = *BT_LE_ADV_CONN_DIR(&addr);
 	} else {
-		adv_param = *BT_LE_ADV_CONN_DIR_LOW_DUTY(addr);
+		adv_param = *BT_LE_ADV_CONN_DIR_LOW_DUTY(&addr);
 	}
 
 	adv_param.id = cur_identity;
@@ -163,7 +190,7 @@ static int ble_adv_start_directed(const bt_addr_le_t *addr, bool fast_adv)
 	}
 
 	char addr_str[BT_ADDR_LE_STR_LEN];
-	bt_addr_le_to_str(addr, addr_str, sizeof(addr_str));
+	bt_addr_le_to_str(&addr, addr_str, sizeof(addr_str));
 
 	LOG_INF("Direct advertising to %s", addr_str);
 
@@ -172,14 +199,6 @@ static int ble_adv_start_directed(const bt_addr_le_t *addr, bool fast_adv)
 
 static int update_undirected_advertising(struct bt_le_adv_param *adv_param, bool in_grace_period)
 {
-	struct bond_find_data bond_find_data = {
-		.peer_id = 0,
-		.peer_count = 0,
-	};
-
-	bt_addr_le_copy(&bond_find_data.peer_address, BT_ADDR_LE_ANY);
-	bt_foreach_bond(cur_identity, bond_find, &bond_find_data);
-
 	size_t ad_len = bt_le_adv_prov_get_ad_prov_cnt();
 	size_t sd_len = bt_le_adv_prov_get_sd_prov_cnt();
 	struct bt_data ad[ad_len];
@@ -188,12 +207,7 @@ static int update_undirected_advertising(struct bt_le_adv_param *adv_param, bool
 	struct bt_le_adv_prov_adv_state state;
 	struct bt_le_adv_prov_feedback fb;
 
-	if (bt_addr_le_cmp(&bond_find_data.peer_address, BT_ADDR_LE_ANY)) {
-		state.pairing_mode = false;
-	} else {
-		state.pairing_mode = true;
-	}
-
+	state.pairing_mode = (bond_cnt(cur_identity) == 0);
 	state.in_grace_period = in_grace_period;
 	req_grace_period_s = 0;
 
@@ -226,8 +240,45 @@ static int update_undirected_advertising(struct bt_le_adv_param *adv_param, bool
 	}
 }
 
-static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
-				    bool fast_adv)
+static void setup_accept_list_cb(const struct bt_bond_info *info, void *user_data)
+{
+	int *bond_cnt = user_data;
+
+	if ((*bond_cnt) < 0) {
+		return;
+	}
+
+	int err = bt_le_filter_accept_list_add(&info->addr);
+
+	if (err) {
+		LOG_ERR("Cannot add peer to filter accept list (err: %d)", err);
+		(*bond_cnt) = -EIO;
+	} else {
+		(*bond_cnt)++;
+	}
+}
+
+static int setup_accept_list(uint8_t local_id)
+{
+	if (!IS_ENABLED(CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST)) {
+		return 0;
+	}
+
+	int err = bt_le_filter_accept_list_clear();
+
+	if (err) {
+		LOG_ERR("Cannot clear filter accept list (err: %d)", err);
+		return err;
+	}
+
+	int bond_cnt = 0;
+
+	bt_foreach_bond(local_id, setup_accept_list_cb, &bond_cnt);
+
+	return bond_cnt;
+}
+
+static int ble_adv_start_undirected(bool fast_adv)
 {
 	struct bt_le_adv_param adv_param = {
 		.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME,
@@ -244,27 +295,16 @@ static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
 		adv_param.interval_max = CONFIG_CAF_BLE_ADV_SLOW_INT_MAX;
 	}
 
-	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST)) {
-		int err = bt_le_filter_accept_list_clear();
-
-		if (err) {
-			LOG_ERR("Cannot clear filter accept list (err: %d)", err);
-			return err;
-		}
-
-		if (bt_addr_le_cmp(bond_addr, BT_ADDR_LE_ANY)) {
-			adv_param.options |= BT_LE_ADV_OPT_FILTER_SCAN_REQ;
-			adv_param.options |= BT_LE_ADV_OPT_FILTER_CONN;
-			err = bt_le_filter_accept_list_add(bond_addr);
-		}
-
-		if (err) {
-			LOG_ERR("Cannot add peer to filter accept list (err: %d)", err);
-			return err;
-		}
-	}
-
 	adv_param.id = cur_identity;
+
+	int allowed_cnt = setup_accept_list(cur_identity);
+
+	if (allowed_cnt < 0) {
+		return allowed_cnt;
+	} else if (allowed_cnt > 0) {
+		adv_param.options |= BT_LE_ADV_OPT_FILTER_SCAN_REQ;
+		adv_param.options |= BT_LE_ADV_OPT_FILTER_CONN;
+	}
 
 	return update_undirected_advertising(&adv_param, false);
 }
@@ -273,40 +313,30 @@ static int ble_adv_start(bool can_fast_adv)
 {
 	bool fast_adv = IS_ENABLED(CONFIG_CAF_BLE_ADV_FAST_ADV) && can_fast_adv;
 
-	struct bond_find_data bond_find_data = {
-		.peer_id = 0,
-		.peer_count = 0,
-	};
-	bt_addr_le_copy(&bond_find_data.peer_address, BT_ADDR_LE_ANY);
-	bt_foreach_bond(cur_identity, bond_find, &bond_find_data);
-
 	int err = ble_adv_stop();
 	if (err) {
 		LOG_ERR("Cannot stop advertising (err %d)", err);
 		goto error;
 	}
 
-	struct bt_conn *conn = NULL;
-
-	bt_conn_foreach(BT_CONN_TYPE_LE, conn_find_cb, &conn);
-	if (conn) {
+	if (conn_get()) {
 		LOG_INF("Already connected, do not advertise");
 		return 0;
 	}
 
 	bool direct = false;
 
-	if (bond_find_data.peer_id < bond_find_data.peer_count) {
-		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_DIRECT_ADV)) {
-			/* Direct advertising only to peer without RPA. */
-			direct = (peer_is_rpa[cur_identity] != PEER_RPA_YES);
-		}
+	/* Use direct advertising only if the local identity in use has exactly one bond. */
+	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_DIRECT_ADV) &&
+	    bond_cnt(cur_identity) == 1) {
+		/* Direct advertising only to peer without RPA. */
+		direct = (peer_is_rpa[cur_identity] != PEER_RPA_YES);
 	}
 
 	if (direct) {
-		err = ble_adv_start_directed(&bond_find_data.peer_address, fast_adv);
+		err = ble_adv_start_directed(fast_adv);
 	} else {
-		err = ble_adv_start_undirected(&bond_find_data.peer_address, fast_adv);
+		err = ble_adv_start_undirected(fast_adv);
 	}
 
 	if (err) {
@@ -623,9 +653,7 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 			module_set_state(MODULE_STATE_ERROR);
 		}
 
-		struct bt_conn *conn = NULL;
-
-		bt_conn_foreach(BT_CONN_TYPE_LE, conn_find_cb, &conn);
+		struct bt_conn *conn = conn_get();
 
 		if (conn) {
 			disconnect_peer(conn);
