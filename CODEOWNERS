@@ -159,6 +159,11 @@ Kconfig*                                  @tejlmand
 /samples/CMakeLists.txt                   @tejlmand
 /samples/nrf5340/netboot/                 @hakonfam
 /samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
+/samples/wifi/provisioning                @wentong-li @bama-nordic
+/samples/wifi/radio_test                  @bama-nordic @sachinthegreen
+/samples/wifi/scan                        @D-Triveni @bama-nordic
+/samples/wifi/shell                       @krish2718 @sachinthegreen @sr1dh48r @rlubos
+/samples/wifi/sta                         @D-Triveni @bama-nordic
 /scripts/                                 @mbolivar-nordic @tejlmand @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @pdunaj
 /scripts/tools-versions-*.txt             @tejlmand @grho @shantha-14 @ihansse
