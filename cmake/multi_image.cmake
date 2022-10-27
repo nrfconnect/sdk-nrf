@@ -59,9 +59,12 @@ else()
       list(APPEND application_vars ${var_name})
     endif()
 
-    # All CONFIG_.* variables are given helptext by the build system. Therefore
-    # we need this special handling for passing the value to the variant image.
-    if("${var_name}" MATCHES "^CONFIG_.*")
+    # All CONFIG_.* and CLI_CONFIG_* variables are given helptext by the build
+    # system. Therefore we need this special handling for passing the value to
+    # the variant image.
+    if("${var_name}" MATCHES "^CONFIG_.*" OR
+       "${var_name}" MATCHES "^CLI_CONFIG_.*"
+    )
       list(APPEND application_vars ${var_name})
     endif()
 
