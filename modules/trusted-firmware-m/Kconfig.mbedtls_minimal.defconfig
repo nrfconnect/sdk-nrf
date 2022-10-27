@@ -87,19 +87,7 @@ config PSA_WANT_KEY_TYPE_AES
 	bool
 	default n
 
-config PSA_WANT_KEY_TYPE_ARIA
-	bool
-	default n
-
-config PSA_WANT_KEY_TYPE_CAMELLIA
-	bool
-	default n
-
 config PSA_WANT_KEY_TYPE_CHACHA20
-	bool
-	default n
-
-config PSA_WANT_KEY_TYPE_DES
 	bool
 	default n
 
