@@ -169,7 +169,7 @@ int icmp_ping_shell_th(const struct shell *shell, size_t argc, char **argv,
 	}
 
 	/* Check that all mandatory args were given: */
-	if (ping_args.target_name == NULL) {
+	if (strlen(ping_args.target_name) == 0) {
 		ping_error(&ping_args, "-d destination, MUST be given. See usage:");
 		goto show_usage;
 	}
