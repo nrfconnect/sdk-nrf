@@ -103,9 +103,13 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 		return err;
 	}
 	/* Initialize the encoder, decoder unit. */
-	err = nrf_cloud_codec_init();
-	if (err) {
-		return err;
+	if (param->hooks) {
+		nrf_cloud_os_mem_hooks_init(param->hooks);
+	} else {
+		err = nrf_cloud_codec_init(NULL);
+		if (err) {
+			return err;
+		}
 	}
 
 	/* Set the flash device before initializing the transport/FOTA. */

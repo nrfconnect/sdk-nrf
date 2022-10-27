@@ -427,6 +427,10 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud` library:
 
+  * Added:
+
+    * Added a possibility to override used default OS memory alloc/free functions.
+
   * Updated:
 
     * The stack size of the MQTT connection monitoring thread can now be adjusted by setting the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE` Kconfig option.

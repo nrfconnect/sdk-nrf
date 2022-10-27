@@ -72,10 +72,20 @@ static const char *const sensor_type_str[] = {
 #define JSON_KEY_CLOUD_TO_DEVICE "c2g"
 #endif
 
-int nrf_cloud_codec_init(void)
+int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks)
 {
 	if (!initialized) {
-		cJSON_Init();
+		if (hooks == NULL) {
+			/* Use OS defaults */
+			cJSON_Init();
+		} else {
+			cJSON_Hooks cjson_hooks = {
+				.free_fn = hooks->free_fn,
+				.malloc_fn = hooks->malloc_fn,
+			};
+
+			cJSON_InitHooks(&cjson_hooks);
+		}
 		initialized = true;
 	}
 	return 0;
@@ -104,7 +114,7 @@ cJSON *json_create_req_obj(const char *const app_id, const char *const msg_type)
 	__ASSERT_NO_MSG(app_id != NULL);
 	__ASSERT_NO_MSG(msg_type != NULL);
 
-	nrf_cloud_codec_init();
+	nrf_cloud_codec_init(NULL);
 
 	cJSON *req_obj = cJSON_CreateObject();
 
@@ -733,7 +743,7 @@ int json_send_to_cloud(cJSON *const request)
 		LOG_DBG("Request sent to cloud");
 	}
 
-	k_free(msg_string);
+	nrf_cloud_free(msg_string);
 
 	return err;
 }
