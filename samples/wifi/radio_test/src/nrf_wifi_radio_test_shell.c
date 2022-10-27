@@ -145,43 +145,37 @@ static bool check_valid_data_rate(const struct shell *shell,
 static bool check_valid_channel(unsigned char chan_num)
 {
 	if (((chan_num >= 1) && (chan_num <= 14)) ||
+	    (chan_num == 32) ||
 	    (chan_num == 36) ||
-	    (chan_num == 38) ||
 	    (chan_num == 40) ||
 	    (chan_num == 44) ||
-	    (chan_num == 46) ||
 	    (chan_num == 48) ||
 	    (chan_num == 52) ||
-	    (chan_num == 54) ||
 	    (chan_num == 56) ||
 	    (chan_num == 60) ||
-	    (chan_num == 62) ||
 	    (chan_num == 64) ||
+	    (chan_num == 68) ||
+	    (chan_num == 96) ||
 	    (chan_num == 100) ||
-	    (chan_num == 102) ||
 	    (chan_num == 104) ||
 	    (chan_num == 108) ||
-	    (chan_num == 110) ||
 	    (chan_num == 112) ||
 	    (chan_num == 116) ||
-	    (chan_num == 118) ||
 	    (chan_num == 120) ||
 	    (chan_num == 124) ||
-	    (chan_num == 126) ||
 	    (chan_num == 128) ||
 	    (chan_num == 132) ||
-	    (chan_num == 134) ||
 	    (chan_num == 136) ||
 	    (chan_num == 140) ||
-	    (chan_num == 142) ||
 	    (chan_num == 144) ||
 	    (chan_num == 149) ||
-	    (chan_num == 151) ||
 	    (chan_num == 153) ||
 	    (chan_num == 157) ||
-	    (chan_num == 159) ||
 	    (chan_num == 161) ||
-	    (chan_num == 165)) {
+	    (chan_num == 165) ||
+	    (chan_num == 169) ||
+	    (chan_num == 173) ||
+	    (chan_num == 177)) {
 		return true;
 	}
 
