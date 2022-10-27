@@ -20,7 +20,7 @@ const struct {} settings_loader_def_include_once;
 static void get_req_modules(struct module_flags *mf)
 {
 	module_flags_set_bit(mf, MODULE_IDX(main));
-#ifdef CONFIG_CAF_BLE_ADV
-	module_flags_set_bit(mf, MODULE_IDX(ble_adv));
+#ifdef CONFIG_CAF_BLE_STATE
+	module_flags_set_bit(mf, MODULE_IDX(ble_state));
 #endif
 }

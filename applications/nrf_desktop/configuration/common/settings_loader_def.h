@@ -26,8 +26,8 @@ static inline void get_req_modules(struct module_flags *mf)
 #if CONFIG_DESKTOP_BAS_ENABLE
 	module_flags_set_bit(mf, MODULE_IDX(bas));
 #endif
-#if CONFIG_CAF_BLE_ADV
-	module_flags_set_bit(mf, MODULE_IDX(ble_adv));
+#ifdef CONFIG_CAF_BLE_STATE
+	module_flags_set_bit(mf, MODULE_IDX(ble_state));
 #endif
 #if CONFIG_DESKTOP_MOTION_SENSOR_ENABLE
 	module_flags_set_bit(mf, MODULE_IDX(motion));
