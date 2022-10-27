@@ -86,11 +86,11 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				   unsigned char def_vif_idx,
 				   unsigned char *rf_params,
 				   bool rf_params_valid,
+				   struct nrf_wifi_data_config_params config,
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 				   int sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-				   struct nrf_wifi_data_config_params config,
 				   unsigned int phy_calib)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
@@ -141,6 +141,9 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	umac_cmd_data->sys_params.sleep_enable = sleep_type;
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
+	wifi_nrf_osal_log_info(fmac_dev_ctx->fpriv->opriv, "RPU LPM type: %s\n",
+		umac_cmd_data->sys_params.sleep_enable == 2 ? "HW" :
+		umac_cmd_data->sys_params.sleep_enable == 1 ? "SW" : "DISABLED");
 #ifndef CONFIG_NRF700X_RADIO_TEST
 	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 			      umac_cmd_data->rx_buf_pools,
