@@ -249,10 +249,6 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_APP_LIGHT_SENSOR)
 	lwm2m_init_light_sensor();
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT) && \
-	defined(CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER)
-	lwm2m_ncell_handler_register();
-#endif
 #if defined(CONFIG_LWM2M_PORTFOLIO_OBJ_SUPPORT)
 	lwm2m_init_portfolio_object();
 #endif
@@ -265,6 +261,10 @@ static int lwm2m_setup(void)
 #endif
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
 		lwm2m_init_rai();
+	}
+	if (IS_ENABLED(CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS) ||
+	    IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER)) {
+		lwm2m_ncell_handler_register();
 	}
 	return 0;
 }
