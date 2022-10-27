@@ -24,7 +24,7 @@ The sample supports the following development kits:
 You can use any one of the development kits listed above.
 
 .. note::
-   On nRF5340 DK, the sample is designed to run on the network core and requires the :ref:`nrf5340_remote_shell` running on the application core.
+   On nRF5340 DK and nRF7002 DK, the sample is designed to run on the network core and requires the :ref:`nrf5340_remote_shell` running on the application core.
    This sample uses the :ref:`shell_ipc_readme` library to forward shell data through the physical UART interface of the application core.
 
 The sample also requires one of the following testing devices:
@@ -168,7 +168,7 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 .. note::
-   On the nRF5340 development kit, the Radio Test sample requires the :ref:`nrf5340_remote_shell` sample on the application core.
+   On the nRF5340 or nRF7002 development kit, the Radio Test sample requires the :ref:`nrf5340_remote_shell` sample on the application core.
    The Remote IPC shell sample is built and programmed automatically by default.
    If you want to program your custom solution for the application core, unset the :kconfig:option:`CONFIG_NCS_SAMPLE_REMOTE_SHELL_CHILD_IMAGE` Kconfig option.
 
@@ -189,6 +189,9 @@ You can use the following command:
 
   west build samples/peripheral/radio_test -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540_ek -DCONFIG_RADIO_TEST_USB=y
 
+.. note::
+    You can also build the sample with the remote IPC Service Shell for the |nRF7002DKnoref| using the ``nrf7002dk_nrf5340_cpunet`` build target in the commands.
+
 .. _radio_test_testing:
 
 Testing
@@ -197,7 +200,7 @@ Testing
 After programming the sample to your development kit, complete the following steps to test it in one of the following two ways:
 
 .. note::
-   For the |nRF5340DKnoref|, see :ref:`logging_cpunet` for information about the COM terminals on which the logging output is available.
+   For the |nRF5340DKnoref| or |nRF7002DKnoref|, see :ref:`logging_cpunet` for information about the COM terminals on which the logging output is available.
 
 .. _radio_test_testing_board:
 
