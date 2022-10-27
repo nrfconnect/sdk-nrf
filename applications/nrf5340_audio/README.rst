@@ -1224,13 +1224,13 @@ Complete the following steps to test the unidirectional CIS mode for one gateway
    The playback volume increases for both headsets.
 #. Press the **VOL-** button on the gateway.
    The playback volume decreases for both headsets.
-#. Press the **PLAY/PAUSE** button on one of the headsets.
-   The playback stops for the given headset and continues on the other one.
+#. Press the **PLAY/PAUSE** button on any one of the devices.
+   The playback stops for both headsets and the streaming state for all devices is set to paused.
 #. Press the **RESET** button on the gateway.
    The gateway resets and the playback on the unpaused headset stops.
    After some time, the gateway establishes the connection with both headsets and resumes the playback on the unpaused headset.
-#. Press the **PLAY/PAUSE** button on one of the paused headsets.
-   The playback resumes in sync with the other headset.
+#. Press the **PLAY/PAUSE** button on any one of the devices.
+   The playback resumes in both headsets.
 #. Press the **BTN 4** button on the gateway multiple times.
    For each button press, the audio stream playback is stopped and the gateway sends a test tone to both headsets.
    These tones can be used as audio cues to check the synchronization of the headsets.
@@ -1251,6 +1251,8 @@ Testing the BIS mode is identical to `Testing the default CIS mode`_, except for
 * You must :ref:`select the BIS mode manually <nrf53_audio_app_configuration_select_bis>` before building the application.
 * You can play the audio stream with different audio settings on the receivers.
   For example, you can decrease or increase the volume separately for each receiver during playback.
+* When pressing the **PLAY/PAUSE** button on a headset, the streaming state only changes for that given headset.
+* Pressing the **PLAY/PAUSE** button on the gateway will respectively start or stop the stream for all headsets listening in.
 
 .. _nrf53_audio_app_testing_steps_cis_walkie_talkie:
 
