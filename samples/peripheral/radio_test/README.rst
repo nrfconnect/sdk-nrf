@@ -214,7 +214,6 @@ This sample uses the following |NCS| library:
 This sample has the following nrfx dependencies:
 
   * ``nrfx/drivers/include/nrfx_timer.h``
-  * ``nrfx/hal/nrf_nvmc.h``
   * ``nrfx/hal/nrf_power.h``
   * ``nrfx/hal/nrf_radio.h``
 
