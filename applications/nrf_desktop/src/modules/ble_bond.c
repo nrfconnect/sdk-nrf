@@ -123,7 +123,7 @@ static bool erase_adv_was_extended;
 
 
 #if CONFIG_BT_PERIPHERAL
-#define BT_STACK_ID_LUT_SIZE CONFIG_BT_MAX_PAIRED
+#define BT_STACK_ID_LUT_SIZE (CONFIG_BT_ID_MAX - 1)
 #elif CONFIG_BT_CENTRAL
 #define BT_STACK_ID_LUT_SIZE 0
 #else
@@ -133,7 +133,7 @@ static bool erase_adv_was_extended;
 static uint8_t bt_stack_id_lut[BT_STACK_ID_LUT_SIZE];
 static bool bt_stack_id_lut_valid;
 
-#define TEMP_PEER_ID (CONFIG_BT_MAX_PAIRED - 1)
+#define TEMP_PEER_ID (BT_STACK_ID_LUT_SIZE - 1)
 #if CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE
 #define DONGLE_PEER_ID (TEMP_PEER_ID - 1)
 #else
@@ -349,7 +349,7 @@ static void cancel_operation(void)
 static uint8_t next_peer_id(uint8_t id)
 {
 	id++;
-	BUILD_ASSERT(TEMP_PEER_ID == (CONFIG_BT_MAX_PAIRED - 1));
+	BUILD_ASSERT(TEMP_PEER_ID == (BT_STACK_ID_LUT_SIZE - 1));
 	BUILD_ASSERT(DONGLE_PEER_ID <= TEMP_PEER_ID);
 	if (id >= DONGLE_PEER_ID) {
 		__ASSERT_NO_MSG(id == DONGLE_PEER_ID);

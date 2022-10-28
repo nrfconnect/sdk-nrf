@@ -75,7 +75,12 @@ enum led_id_nrf_desktop {
 #endif
 
 #if defined(CONFIG_BT_PERIPHERAL)
-#define LED_PEER_COUNT (CONFIG_BT_MAX_PAIRED - 1)
+/* By default, peripheral uses a separate Bluetooth local identity per every Bluetooth peer.
+ * The default local identity cannot be used, because application cannot reset it.
+ * One Bluetooth local identity is reserved for the erase advertising.
+ */
+BUILD_ASSERT(CONFIG_BT_ID_MAX >= 3);
+#define LED_PEER_COUNT (CONFIG_BT_ID_MAX - 2)
 #else
 #define LED_PEER_COUNT 1
 #endif
