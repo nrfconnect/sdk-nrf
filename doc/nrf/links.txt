@@ -805,6 +805,8 @@
 .. _`Fast Pair Procedure`: https://developers.google.com/nearby/fast-pair/specifications/service/gatt
 .. _`Verifying Fast Pair`: https://developers.google.com/nearby/fast-pair/help#verifying_fast_pair
 
+.. _`Protocol Buffers`: https://developers.google.com/protocol-buffers
+
 .. _`Google Chrome browser`: https://www.google.com/chrome
 
 .. ### Source: ubuntu.com
@@ -994,3 +996,6 @@
 
 .. _`nRF Memfault for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.memfault&hl=en&gl=ES
 .. _`nRF Memfault for iOS`: https://apps.apple.com/no/app/nrf-memfault/id1641119282?platform=iphone
+
+.. _`nRF Wi-Fi Provisioner mobile app for iOS`: https://apps.apple.com/us/app/nrf-wi-fi-provisioner/id1638948698
+.. _`nRF Wi-Fi Provisioner mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.wifi.provisioning
