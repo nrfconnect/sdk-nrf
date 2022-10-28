@@ -53,6 +53,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/utils/fw_info_app.c.in"
 target_sources(app PRIVATE
     src/main.c
     ${CMAKE_BINARY_DIR}/fw_info_app.c
+    ${ZEPHYR_NRF_MODULE_DIR}/boards/arm/nrf5340_audio_dk_nrf5340/board_version.c
     )
 
 # Include application events and configuration headers
