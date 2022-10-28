@@ -34,24 +34,29 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_STATE_LOG_LEVEL);
 
 
 struct bond_find_data {
-	bt_addr_le_t peer_address;
-	uint8_t peer_id;
-	uint8_t peer_count;
+	const bt_addr_le_t *peer_address;
+	bool peer_bonded;
+	uint8_t bond_cnt;
 };
 
 static struct bt_conn *active_conn[CONFIG_BT_MAX_CONN];
 
 
-static void bond_find(const struct bt_bond_info *info, void *user_data)
+static void bond_check_cb(const struct bt_bond_info *info, void *user_data)
 {
-	struct bond_find_data *bond_find_data = user_data;
+	struct bond_find_data *data = user_data;
 
-	if (bond_find_data->peer_id == bond_find_data->peer_count) {
-		bt_addr_le_copy(&bond_find_data->peer_address, &info->addr);
+	data->bond_cnt++;
+	if (!bt_addr_le_cmp(&info->addr, data->peer_address)) {
+		data->peer_bonded = true;
 	}
 
-	__ASSERT_NO_MSG(bond_find_data->peer_count < UCHAR_MAX);
-	bond_find_data->peer_count++;
+	if (IS_ENABLED(CONFIG_LOG)) {
+		char addr_str[BT_ADDR_LE_STR_LEN];
+
+		bt_addr_le_to_str(&info->addr, addr_str, sizeof(addr_str));
+		LOG_INF("Already bonded to %s", addr_str);
+	}
 }
 
 static void disconnect_peer(struct bt_conn *conn)
@@ -133,10 +138,6 @@ static void connected(struct bt_conn *conn, uint8_t error)
 	/* Make sure that connection will remain valid. */
 	bt_conn_ref(conn);
 
-	char addr_str[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr_str, sizeof(addr_str));
-
 	if (error) {
 		struct ble_peer_event *event = new_ble_peer_event();
 
@@ -144,7 +145,13 @@ static void connected(struct bt_conn *conn, uint8_t error)
 		event->state = PEER_STATE_CONN_FAILED;
 		APP_EVENT_SUBMIT(event);
 
-		LOG_WRN("Failed to connect to %s (%u)", addr_str, error);
+		if (IS_ENABLED(CONFIG_LOG)) {
+			char addr_str[BT_ADDR_LE_STR_LEN];
+
+			bt_addr_le_to_str(bt_conn_get_dst(conn), addr_str, sizeof(addr_str));
+			LOG_WRN("Failed to connect to %s (%u)", addr_str, error);
+		}
+
 		return;
 	}
 
@@ -155,7 +162,12 @@ static void connected(struct bt_conn *conn, uint8_t error)
 		set_tx_power(conn);
 	}
 
-	LOG_INF("Connected to %s", addr_str);
+	if (IS_ENABLED(CONFIG_LOG)) {
+		char addr_str[BT_ADDR_LE_STR_LEN];
+
+		bt_addr_le_to_str(bt_conn_get_dst(conn), addr_str, sizeof(addr_str));
+		LOG_INF("Connected to %s", addr_str);
+	}
 
 	size_t i;
 
@@ -189,19 +201,18 @@ static void connected(struct bt_conn *conn, uint8_t error)
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
 	    (info.role == BT_CONN_ROLE_PERIPHERAL)) {
 		struct bond_find_data bond_find_data = {
-			.peer_id = 0,
-			.peer_count = 0,
+			.peer_address = bt_conn_get_dst(conn),
+			.peer_bonded = false,
+			.bond_cnt = 0
 		};
-		bt_foreach_bond(info.id, bond_find, &bond_find_data);
 
-		LOG_INF("Identity %u has %u bonds", info.id,
-			bond_find_data.peer_count);
-		if ((bond_find_data.peer_count > 0) &&
-		    bt_addr_le_cmp(bt_conn_get_dst(conn),
-				   &bond_find_data.peer_address)) {
-			bt_addr_le_to_str(&bond_find_data.peer_address, addr_str,
-					sizeof(addr_str));
-			LOG_INF("Already bonded to %s", addr_str);
+		bt_foreach_bond(info.id, bond_check_cb, &bond_find_data);
+
+		LOG_INF("Identity %" PRIu8 " has %" PRIu8 " bonds",
+			info.id, bond_find_data.bond_cnt);
+
+		if (!bond_find_data.peer_bonded &&
+		    (bond_find_data.bond_cnt >= CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS)) {
 			goto disconnect;
 		}
 	}
@@ -228,11 +239,12 @@ disconnect:
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	char addr[BT_ADDR_LE_STR_LEN];
+	if (IS_ENABLED(CONFIG_LOG)) {
+		char addr_str[BT_ADDR_LE_STR_LEN];
 
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	LOG_INF("Disconnected from %s (reason %u)", addr, reason);
+		bt_addr_le_to_str(bt_conn_get_dst(conn), addr_str, sizeof(addr_str));
+		LOG_INF("Disconnected from %s (reason %u)", addr_str, reason);
+	}
 
 	size_t i;
 
@@ -272,15 +284,21 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	}
 
 	int err;
-	char addr[BT_ADDR_LE_STR_LEN];
 
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+	if (IS_ENABLED(CONFIG_LOG)) {
+		char addr_str[BT_ADDR_LE_STR_LEN];
 
-	if (!bt_err && (level >= BT_SECURITY_L2)) {
-		LOG_INF("Security with %s level %u", addr, level);
-	} else {
-		LOG_WRN("Security with %s failed, level %u err %d",
-			addr, level, bt_err);
+		bt_addr_le_to_str(bt_conn_get_dst(conn), addr_str, sizeof(addr_str));
+
+		if (!bt_err && (level >= BT_SECURITY_L2)) {
+			LOG_INF("Security with %s level %u", addr_str, level);
+		} else {
+			LOG_WRN("Security with %s failed, level %u err %d",
+				addr_str, level, bt_err);
+		}
+	}
+
+	if (bt_err || (level < BT_SECURITY_L2)) {
 		if (IS_ENABLED(CONFIG_CAF_BLE_STATE_SECURITY_REQ)) {
 			disconnect_peer(conn);
 		}
