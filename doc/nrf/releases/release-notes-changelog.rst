@@ -301,6 +301,7 @@ Wi-Fi samples
   * :ref:`wifi_radio_test` sample with the radio test support and :ref:`subcommands for FICR/OTP programming <wifi_ficr_prog>`.
   * :ref:`wifi_scan_sample` sample that demonstrates how to scan for the access points.
   * :ref:`wifi_station_sample` sample that demonstrates how to connect the Wi-Fi station to a specified access point.
+  * :ref:`wifi_provisioning` sample that demonstrates how to provision a device with Nordic Semiconductor's Wi-Fi chipsets over Bluetooth® Low Energy.
 
 Other samples
 -------------
