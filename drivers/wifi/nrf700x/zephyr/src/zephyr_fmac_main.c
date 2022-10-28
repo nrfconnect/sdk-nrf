@@ -284,6 +284,15 @@ enum wifi_nrf_status wifi_nrf_fmac_def_vif_state_chg(struct wifi_nrf_vif_ctx_zep
 		LOG_ERR("%s: wifi_nrf_fmac_chg_vif_state failed\n", __func__);
 		goto out;
 	}
+
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
+	status = wifi_nrf_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
+					vif_ctx_zep->vif_idx, NRF_WIFI_PS_ENABLED);
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		LOG_ERR("%s: wifi_nrf_fmac_set_power_save failed\n", __func__);
+		goto out;
+	}
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 out:
 	return status;
 }
