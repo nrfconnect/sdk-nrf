@@ -44,3 +44,10 @@ tests:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf9160dk_nrf9160_ns
     tags: ci_build
+  sample.nrf7002.shell.otbr:
+    build_only: true
+    extra_args: OVERLAY_CONFIG=overlay-openthread.conf
+    integration_platforms:
+      - nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf7002dk_nrf5340_cpuapp
+    tags: ci_build

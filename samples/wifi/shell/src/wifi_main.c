@@ -10,6 +10,8 @@
 
 #include <zephyr/sys/printk.h>
 #include <nrfx_clock.h>
+#include <zephyr/device.h>
+#include <zephyr/net/net_config.h>
 
 void main(void)
 {
@@ -19,4 +21,14 @@ void main(void)
 			       NRF_CLOCK_HFCLK_DIV_1);
 #endif
 	printk("Starting %s with CPU frequency: %d MHz\n", CONFIG_BOARD, SystemCoreClock/MHZ(1));
+
+	/* Without this, DHCPv4 starts on first interface and if that is not Wi-Fi or
+	 * only supports IPv6, then its an issue. (E.g., OpenThread)
+	 *
+	 * So, we start DHCPv4 on Wi-Fi interface always, independent of the ordering.
+	 */
+	/* TODO: Replace device name with DTS settings later */
+	const struct device *dev = device_get_binding("wlan0");
+
+	net_config_init_app(dev, "Initializing network");
 }
