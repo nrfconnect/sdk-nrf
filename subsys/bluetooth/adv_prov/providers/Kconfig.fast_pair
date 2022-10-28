@@ -8,13 +8,13 @@ menuconfig BT_ADV_PROV_FAST_PAIR
 	bool "Google Fast Pair"
 	depends on BT_FAST_PAIR
 	help
-	  Adds Google Fast Pair payload to advertising data if device is looking
-	  for a new peer (pairing mode in the advertising state is set).
-	  By default, the advertising data provider uses Fast Pair discoverable
-	  advertising and switches to not discoverable advertising show UI
-	  indication after device receives an Account Key. Alternatively,
-	  dedicated API can be used to explicitly set the Fast Pair advertising
-	  mode.
+	  Adds Google Fast Pair payload to advertising data.
+
+	  If device is in pairing mode, provider uses Fast Pair discoverable
+	  advertising. Otherwise, Fast Pair not discoverable advertising is used.
+
+	  Application can control the generated payload using provider's Kconfig
+	  options or dedicated API.
 
 if BT_ADV_PROV_FAST_PAIR
 
@@ -25,6 +25,13 @@ config BT_ADV_PROV_FAST_PAIR_ADV_BUF_SIZE
 	help
 	  Size of the buffer must be big enough to fit Fast Pair advertising
 	  packet.
+
+config BT_ADV_PROV_FAST_PAIR_SHOW_UI_PAIRING
+	bool "Show UI indication in Fast Pair not discoverable advertising"
+	default y
+	help
+	  The UI indication should be displayed if device is ready for pairing.
+	  The provider also exposes API to show/hide UI indication in runtime.
 
 config BT_ADV_PROV_FAST_PAIR_AUTO_SET_PAIRING_MODE
 	bool "Automatically set Fast Pair pairing mode"
