@@ -8,6 +8,7 @@ menuconfig CAF_BLE_ADV
 	bool "Enable Bluetooth LE advertising"
 	depends on BT_PERIPHERAL
 	depends on CAF_BLE_COMMON_EVENTS
+	depends on CAF_BLE_STATE
 	select BT_ADV_PROV
 
 if CAF_BLE_ADV
