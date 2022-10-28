@@ -43,10 +43,6 @@ static uint8_t latency_state;
 
 static void security_timeout_fn(struct k_work *w)
 {
-	/* Assert one local identity holds exactly one bond.
-	 * One local identity is unused.
-	 */
-	BUILD_ASSERT(CONFIG_BT_MAX_PAIRED == (CONFIG_BT_ID_MAX - 1));
 	BUILD_ASSERT(CONFIG_BT_MAX_CONN == 1);
 	BUILD_ASSERT(CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S > 0);
 	__ASSERT_NO_MSG(active_conn);
