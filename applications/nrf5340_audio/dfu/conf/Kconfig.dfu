@@ -111,10 +111,6 @@ config MCUBOOT_IMAGE_VERSION
 	string
 	default "0.0.0+0"
 
-config LOG_DFU_ENTRY_LEVEL
-	int "Log level for DFU entry module"
-	default 3
-
 config BT_DEVICE_NAME_DYNAMIC
 	bool
 	default y

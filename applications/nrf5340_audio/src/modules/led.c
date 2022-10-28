@@ -17,7 +17,7 @@
 #include "macros_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(led, CONFIG_LOG_LED_LEVEL);
+LOG_MODULE_REGISTER(led, CONFIG_MODULE_LED_LOG_LEVEL);
 
 #define BLINK_FREQ_MS 1000
 /* Maximum number of LED_UNITS. 1 RGB LED = 1 UNIT of 3 LEDS */

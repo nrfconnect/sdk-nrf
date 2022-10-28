@@ -11,7 +11,7 @@
 #include "uicr.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(channel_assignment, CONFIG_LOG_CHANNEL_ASSIGNMENT_LEVEL);
+LOG_MODULE_REGISTER(channel_assignment, CONFIG_CHAN_ASSIGNMENT_LOG_LEVEL);
 
 static uint8_t channel_value;
 

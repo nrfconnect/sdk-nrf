@@ -11,7 +11,7 @@
 #include <string.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(contin_array, LOG_LEVEL_WRN);
+LOG_MODULE_REGISTER(contin_array, CONFIG_CONTIN_ARRAY_LOG_LEVEL);
 
 int contin_array_create(void *const pcm_cont, uint32_t pcm_cont_size, void const *const pcm_finite,
 			uint32_t pcm_finite_size, uint32_t *const finite_pos)

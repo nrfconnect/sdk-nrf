@@ -22,7 +22,7 @@
 #include "board.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(pwr_module, CONFIG_LOG_POWER_MODULE_LEVEL);
+LOG_MODULE_REGISTER(pwr_module, CONFIG_MODULE_POWER_LOG_LEVEL);
 
 #define BASE_10 10
 

@@ -21,7 +21,7 @@
 #include "cs47l63_comm.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(hw_codec, CONFIG_LOG_HW_CODEC_LEVEL);
+LOG_MODULE_REGISTER(hw_codec, CONFIG_MODULE_HW_CODEC_LOG_LEVEL);
 
 #define VOLUME_ADJUST_STEP_DB 3
 #define HW_CODEC_SELECT_DELAY_MS 2

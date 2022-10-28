@@ -16,7 +16,7 @@
 #include "ble_hci_vsc.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(ble, CONFIG_LOG_BLE_LEVEL);
+LOG_MODULE_REGISTER(ble, CONFIG_BLE_LOG_LEVEL);
 
 #define NET_CORE_RESPONSE_TIMEOUT_MS 500
 

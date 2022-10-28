@@ -11,7 +11,7 @@
 #include "macros_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(data_fifo, CONFIG_LOG_DEFAULT_LEVEL);
+LOG_MODULE_REGISTER(data_fifo, CONFIG_DATA_FIFO_LOG_LEVEL);
 
 static struct k_spinlock lock;
 

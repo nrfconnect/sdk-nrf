@@ -17,7 +17,7 @@
 #include "macros_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(ina231);
+LOG_MODULE_REGISTER(ina231, CONFIG_INA231_LOG_LEVEL);
 
 #define RESET_TIME_MS 1
 #define INA231_DEFAULT_CFG_REG_VAL (0x4127)

@@ -16,7 +16,7 @@
 #include "macros_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(board_version, CONFIG_LOG_BOARD_VERSION_LEVEL);
+LOG_MODULE_REGISTER(board_version, CONFIG_BOARD_VERSION_LOG_LEVEL);
 
 #define ADC_1ST_CHANNEL_ID 0
 #define ADC_RESOLUTION_BITS 12

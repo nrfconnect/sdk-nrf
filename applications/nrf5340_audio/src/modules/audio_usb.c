@@ -14,7 +14,7 @@
 #include "data_fifo.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(audio_usb, CONFIG_LOG_AUDIO_USB_LEVEL);
+LOG_MODULE_REGISTER(audio_usb, CONFIG_MODULE_AUDIO_USB_LOG_LEVEL);
 
 #define USB_FRAME_SIZE_STEREO                                                                      \
 	(((CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS) / 1000) * 2)

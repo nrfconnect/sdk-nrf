@@ -25,4 +25,18 @@ config CS47L63_STACK_SIZE
 	default 700
 
 endmenu # Stack sizes
+
+#----------------------------------------------------------------------------#
+menu "Log levels"
+
+module = CS47L63
+module-str = cs47l63
+source "subsys/logging/Kconfig.template.log_config"
+
+module = INA231
+module-str = ina231
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log levels
+
 endmenu # Drivers
