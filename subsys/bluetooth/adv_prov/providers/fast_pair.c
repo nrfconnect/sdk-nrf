@@ -9,12 +9,18 @@
 
 #define ADV_DATA_BUF_SIZE	CONFIG_BT_ADV_PROV_FAST_PAIR_ADV_BUF_SIZE
 
-static enum bt_fast_pair_adv_mode set_fp_adv_mode = BT_FAST_PAIR_ADV_MODE_COUNT;
+static bool enabled = true;
+static bool show_ui_pairing = IS_ENABLED(CONFIG_BT_ADV_PROV_FAST_PAIR_SHOW_UI_PAIRING);
 
 
-void bt_le_adv_prov_fast_pair_mode_set(enum bt_fast_pair_adv_mode fp_adv_mode)
+void bt_le_adv_prov_fast_pair_enable(bool enable)
 {
-	set_fp_adv_mode = fp_adv_mode;
+	enabled = enable;
+}
+
+void bt_le_adv_prov_fast_pair_show_ui_pairing(bool enable)
+{
+	show_ui_pairing = enable;
 }
 
 static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *state,
@@ -23,17 +29,17 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 	static uint8_t buf[ADV_DATA_BUF_SIZE];
 	enum bt_fast_pair_adv_mode adv_mode;
 
-	if (!state->pairing_mode) {
+	if (!enabled) {
 		return -ENOENT;
 	}
 
-	if (set_fp_adv_mode != BT_FAST_PAIR_ADV_MODE_COUNT) {
-		adv_mode = set_fp_adv_mode;
+	if (state->pairing_mode) {
+		adv_mode = BT_FAST_PAIR_ADV_MODE_DISCOVERABLE;
 	} else {
-		if (bt_fast_pair_has_account_key()) {
+		if (show_ui_pairing) {
 			adv_mode = BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND;
 		} else {
-			adv_mode = BT_FAST_PAIR_ADV_MODE_DISCOVERABLE;
+			adv_mode = BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_HIDE_UI_IND;
 		}
 	}
 
