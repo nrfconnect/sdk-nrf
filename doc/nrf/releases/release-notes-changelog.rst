@@ -207,6 +207,12 @@ Bluetooth mesh samples
 
     * Support for running the light switch as a Low Power node.
 
+* :ref:`bluetooth_mesh_light` sample:
+
+  * Added:
+
+    * Point-to-point Device Firmware Update (DFU) support over the Simple Management Protocol (SMP) for supported nRF52 Series development kits.
+
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
   * Added:

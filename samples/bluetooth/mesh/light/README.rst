@@ -13,6 +13,8 @@ The Bluetooth® mesh light sample demonstrates how to set up a mesh server model
    This sample is self-contained, and can be tested on its own.
    However, it is required when testing the :ref:`bluetooth_mesh_light_switch` sample.
 
+This sample also provides support for point-to-point Device Firmware Update (DFU) over the Simple Management Protocol (SMP).
+
 Requirements
 ************
 
@@ -29,6 +31,28 @@ The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobil
    |thingy53_sample_note|
 
 .. include:: /includes/tfm.txt
+
+DFU requirements
+================
+
+The configuration overlay :file:`overlay-dfu.conf` enables DFU support in the application, and applies for the nRF52 series, including:
+
+* nrf52dk_nrf52832
+
+* nrf52840dk_nrf52840
+
+* nrf52833dk_nrf52833
+
+While this overlay configuration is only applicable for the nRF52 Series in this sample, DFU over SMP can be utilized on other platforms as well.
+
+.. note::
+   Point-to-point DFU for :ref:`zephyr:thingy53_nrf5340` is supported by default.
+   See :ref:`thingy53_app_update` for more information about updating firmware image on :ref:`zephyr:thingy53_nrf5340`.
+
+The DFU feature also requires a smartphone with Nordic Semiconductor's nRF Device Manager mobile app installed in one of the following versions:
+
+  * `nRF Device Manager mobile app for Android`_
+  * `nRF Device Manager mobile app for iOS`_
 
 Overview
 ********
@@ -104,6 +128,20 @@ This sample is split into the following source files:
 * :file:`thingy53.c` used to handle preinitialization of the :ref:`zephyr:thingy53_nrf5340` board.
   Only compiled when the sample is built for :ref:`zephyr:thingy53_nrf5340` board.
 
+DFU configuration
+=================
+
+To enable the DFU feature, set :makevar:`OVERLAY_CONFIG` to :file:`overlay-dfu.conf` when building the sample.
+For example, when building from the command line, use the following command:
+
+  .. code-block:: console
+
+     west build -b <BOARD> -p -- -DOVERLAY_CONFIG="overlay-dfu.conf"
+
+The configuration overlay :file:`overlay-dfu.conf` enables the DFU feature.
+To review the required configuration alterations, open and inspect the :file:`overlay-dfu.conf` file.
+For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+
 FEM support
 ===========
 
@@ -144,6 +182,12 @@ Configure the Generic OnOff Server model on each element on the **Mesh Light** n
 * In the model view, tap :guilabel:`ON` (one of the Generic On Off Controls) to light up the first LED on the development kit.
 
 Make sure to complete the configuration on each of the elements on the node to enable controlling each of the remaining three LEDs.
+
+Running DFU
+===========
+
+After the sample is built with the :file:`overlay-dfu.conf` and programmed to your development kit, support for FOTA upgrades is enabled.
+See FOTA in Bluetooth mesh (link) for instructions on how to perform FOTA upgrade and initiate the DFU process.
 
 Dependencies
 ************
