@@ -85,7 +85,7 @@ config PSA_WANT_ALG_CTR
 	default y
 config PSA_WANT_ALG_OFB
 	bool
-	default y
+	default n
 
 # PSA_WANT_ALG_XTS - Currently not supported
 
