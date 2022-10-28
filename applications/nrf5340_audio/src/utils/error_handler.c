@@ -14,7 +14,7 @@
 
 /* Print everything from the error handler */
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(error_handler, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(error_handler, CONFIG_ERROR_HANDLER_LOG_LEVEL);
 
 static void led_error_indication(void)
 {

@@ -9,7 +9,7 @@
 #include <zephyr/kernel.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(pcm_mix, LOG_LEVEL_WRN);
+LOG_MODULE_REGISTER(pcm_mix, CONFIG_PCM_MIX_LOG_LEVEL);
 
 /* Clip signal if amplitude is outside legal range */
 static void hard_limiter(int32_t *const pcm)

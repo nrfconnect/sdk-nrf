@@ -16,7 +16,7 @@
 #include "audio_datapath.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bis_gateway, CONFIG_LOG_BLE_LEVEL);
+LOG_MODULE_REGISTER(bis_gateway, CONFIG_BLE_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 2,
 	     "A maximum of two streams are currently supported");

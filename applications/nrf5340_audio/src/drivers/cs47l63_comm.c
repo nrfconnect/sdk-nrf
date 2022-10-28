@@ -19,7 +19,7 @@
 #include "cs47l63.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(CS47L63, CONFIG_LOG_CS47L63_LEVEL);
+LOG_MODULE_REGISTER(CS47L63, CONFIG_CS47L63_LOG_LEVEL);
 
 #define CS47L63_DEVID_VAL 0x47A63
 #define PAD_LEN 4 /* Four bytes padding after address */

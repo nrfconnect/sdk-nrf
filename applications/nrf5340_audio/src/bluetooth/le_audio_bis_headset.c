@@ -19,7 +19,7 @@
 #include "channel_assignment.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bis_headset, CONFIG_LOG_BLE_LEVEL);
+LOG_MODULE_REGISTER(bis_headset, CONFIG_BLE_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT <= 2,
 	     "A maximum of two broadcast streams are currently supported");

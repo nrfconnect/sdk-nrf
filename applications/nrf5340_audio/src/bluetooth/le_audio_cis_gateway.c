@@ -17,7 +17,7 @@
 #include "channel_assignment.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(cis_gateway, CONFIG_LOG_BLE_LEVEL);
+LOG_MODULE_REGISTER(cis_gateway, CONFIG_BLE_LOG_LEVEL);
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 /* For being able to dynamically define iso_tx_pools */

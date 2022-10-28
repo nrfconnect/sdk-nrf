@@ -26,7 +26,7 @@
 #include "streamctrl.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(audio_datapath, CONFIG_LOG_AUDIO_DATAPATH_LEVEL);
+LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 
 /*
  * Terminology

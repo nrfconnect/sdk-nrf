@@ -10,7 +10,7 @@
 #include <zephyr/bluetooth/hci.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(ble, CONFIG_LOG_BLE_LEVEL);
+LOG_MODULE_DECLARE(ble, CONFIG_BLE_LOG_LEVEL);
 
 enum ble_hci_vs_max_tx_power {
 	BLE_HCI_VSC_MAX_TX_PWR_0dBm = 0,

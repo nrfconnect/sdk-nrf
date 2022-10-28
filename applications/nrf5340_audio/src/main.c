@@ -31,7 +31,7 @@
 #endif
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(main, CONFIG_LOG_MAIN_LEVEL);
+LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
 
 #if defined(CONFIG_INIT_STACKS)
 /* Used for printing stack usage */
