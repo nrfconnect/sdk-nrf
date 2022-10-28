@@ -9,9 +9,9 @@
 #include <string.h>
 #include <hal/nrf_nvmc.h>
 #include <hal/nrf_power.h>
-#include <hal/nrf_rng.h>
 #include <nrfx_timer.h>
 #include <zephyr/kernel.h>
+#include <zephyr/random/rand32.h>
 
 #include <hal/nrf_egu.h>
 #include <helpers/nrfx_gppi.h>
@@ -143,16 +143,6 @@ static int fem_configure(bool rx, nrf_radio_mode_t mode,
 	return err;
 }
 #endif /* CONFIG_FEM */
-
-static uint8_t rnd8(void)
-{
-	nrf_rng_event_clear(NRF_RNG, NRF_RNG_EVENT_VALRDY);
-
-	while (!nrf_rng_event_check(NRF_RNG, NRF_RNG_EVENT_VALRDY)) {
-		/* Do nothing. */
-	}
-	return nrf_rng_random_value_get(NRF_RNG);
-}
 
 static void radio_start(bool rx, bool force_egu)
 {
@@ -329,18 +319,21 @@ static void generate_modulated_rf_packet(uint8_t mode,
 	tx_packet[0] = sizeof(tx_packet) - 1;
 #endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
-	/* Fill payload with random data. */
-	for (uint8_t i = 0; i < sizeof(tx_packet) - 1; i++) {
-		if (pattern == TRANSMIT_PATTERN_RANDOM) {
-			tx_packet[i + 1] = rnd8();
-		} else if (pattern == TRANSMIT_PATTERN_11001100) {
-			tx_packet[i + 1] = 0xCC;
-		} else if (pattern == TRANSMIT_PATTERN_11110000) {
-			tx_packet[i + 1] = 0xF0;
-		} else {
-			/* Do nothing. */
-		}
+	switch (pattern) {
+	case TRANSMIT_PATTERN_RANDOM:
+		sys_rand_get(tx_packet + 1, sizeof(tx_packet) - 1);
+		break;
+	case TRANSMIT_PATTERN_11001100:
+		memset(tx_packet + 1, 0xCC, sizeof(tx_packet) - 1);
+		break;
+	case TRANSMIT_PATTERN_11110000:
+		memset(tx_packet + 1, 0xF0, sizeof(tx_packet) - 1);
+		break;
+	default:
+		/* Do nothing. */
+		break;
 	}
+
 	nrf_radio_packetptr_set(NRF_RADIO, tx_packet);
 }
 
@@ -738,8 +731,6 @@ void radio_handler(const void *context)
 int radio_test_init(struct radio_test_config *config)
 {
 	nrfx_err_t nrfx_err;
-
-	nrf_rng_task_trigger(NRF_RNG, NRF_RNG_TASK_START);
 
 	timer_init(config);
 	IRQ_CONNECT(TIMER0_IRQn, IRQ_PRIO_LOWEST,

@@ -217,7 +217,6 @@ This sample has the following nrfx dependencies:
   * ``nrfx/hal/nrf_nvmc.h``
   * ``nrfx/hal/nrf_power.h``
   * ``nrfx/hal/nrf_radio.h``
-  * ``nrfx/hal/nrf_rng.h``
 
 The sample also has the following nrfxlib dependency:
 
