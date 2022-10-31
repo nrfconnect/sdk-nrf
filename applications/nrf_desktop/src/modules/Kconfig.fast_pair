@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_FAST_PAIR
+	bool "Fast Pair module"
+	depends on BT_ADV_PROV_FAST_PAIR
+	depends on CAF_BLE_COMMON_EVENTS
+	default y if (CAF_BLE_STATE_MAX_LOCAL_ID_BONDS > 1)
+	help
+	  Enable a small application module that control Fast Pair show/hide UI
+	  indication during Fast Pair not discoverable advertising.
+
+if DESKTOP_FAST_PAIR
+
+config DESKTOP_FAST_PAIR_MAX_LOCAL_ID_BONDS
+	int
+	default CAF_BLE_STATE_MAX_LOCAL_ID_BONDS
+
+module = DESKTOP_FAST_PAIR
+module-str = nRF Desktop Fast Pair
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_FAST_PAIR
