@@ -138,7 +138,11 @@ int lwm2m_init_connmon(void)
 		return ret;
 	}
 
-	modem_info_params_init(&modem_param);
+	ret = modem_info_params_init(&modem_param);
+	if (ret) {
+		LOG_ERR("Modem parameters could not be initialized: %d", ret);
+		return ret;
+	}
 	return 0;
 }
 
