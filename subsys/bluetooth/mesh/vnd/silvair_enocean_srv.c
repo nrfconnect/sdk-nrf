@@ -14,22 +14,20 @@
 #define BT_MESH_SILVAIR_ENOCEAN_PROXY_SUB_OP_DELETE 0x02
 #define BT_MESH_SILVAIR_ENOCEAN_PROXY_SUB_OP_STATUS 0x03
 
-#define PHASE_B_DELAY 150UL
-#define ENOCEAN_TIMEOUT_COMP (CONFIG_BT_MESH_SILVAIR_ENOCEAN_WAIT_TIME + \
-		PHASE_B_DELAY)
-#define MAX_TICKS ((CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA_TIMEOUT - ENOCEAN_TIMEOUT_COMP) / \
-		  CONFIG_BT_MESH_SILVAIR_ENOCEAN_TICK_TIME)
+/** Definitions from specification: */
+#define PHASE_B_DELAY_MS 150UL
+#define DELTA_TIMEOUT_MS 6000UL
+#define WAIT_TIME_MS 400UL
+#define LEVEL_DELTA 2520
+#define LEVEL_TRANSITION_TIME_MS 200UL
+
+#define MAX_TICKS ((DELTA_TIMEOUT_MS - PHASE_B_DELAY_MS - WAIT_TIME_MS) / 100)
+#define DELAY(tick_count) (150 - (50 * tick_count))
 
 enum bt_mesh_silvair_enocean_status {
 	BT_MESH_SILVAIR_ENOCEAN_STATUS_SET = 0x00,
 	BT_MESH_SILVAIR_ENOCEAN_STATUS_NOT_SET = 0x01,
 	BT_MESH_SILVAIR_ENOCEAN_STATUS_UNSPECIFIED_ERROR = 0x02,
-};
-
-enum phase {
-	PHASE_B,
-	PHASE_C,
-	PHASE_D,
 };
 
 static bool initialized;
@@ -48,66 +46,100 @@ static struct bt_mesh_silvair_enocean_srv *model_resolve(const bt_addr_le_t *add
 	return NULL;
 }
 
-static uint32_t delay_get(struct bt_mesh_model_pub *pub, uint32_t pub_num)
+static void send_delta(struct bt_mesh_silvair_enocean_button *button, uint32_t delay,
+		       bool new_transaction)
 {
-	return (BT_MESH_PUB_MSG_TOTAL(pub) - pub_num) * 50;
+	struct bt_mesh_model_transition transition = {
+		.time = LEVEL_TRANSITION_TIME_MS,
+		.delay = delay
+	};
+	struct bt_mesh_lvl_delta_set msg = {
+		.transition = &transition,
+		.new_transaction = new_transaction,
+		.delta = button->delta
+	};
+	struct bt_mesh_msg_ctx ctx = {
+		.addr = button->lvl.pub.addr,
+		.send_ttl = button->lvl.pub.ttl,
+		.app_idx = button->lvl.pub.key
+	};
+
+	bt_mesh_lvl_cli_delta_set_unack(&button->lvl, &ctx, &msg);
 }
 
-static void send_onoff(struct bt_mesh_silvair_enocean_button *button,
-		       bool on_off)
+static void phase_b_tick(struct bt_mesh_silvair_enocean_button *button)
+{
+	send_delta(button, DELAY(button->tick_count), button->tick_count == 0);
+	if (button->tick_count++ < 3) {
+		k_work_reschedule(&button->timer, K_MSEC(50));
+	} else if (button->release_pending) {
+		/** Send only 4 messages in Phase D, because the last message sent in the
+		 *  Phase B tick handler will be counted as the first of the five in phase D
+		 *  (see log sample in spec).
+		 */
+		button->tick_count = 1;
+		button->state = BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_D;
+		k_work_reschedule(&button->timer, K_MSEC(50));
+	} else {
+		button->state = BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_C;
+		button->tick_count = 0;
+		k_work_reschedule(&button->timer, K_MSEC(100));
+	}
+}
+
+static void phase_c_tick(struct bt_mesh_silvair_enocean_button *button)
+{
+	if (++button->tick_count > MAX_TICKS && !button->release_pending) {
+		return;
+	}
+	button->delta += LEVEL_DELTA * (button->target ? 1 : -1);
+	send_delta(button, 0, false);
+	if (button->release_pending) {
+		/** Send only 4 messages in Phase D, because the last message sent in the
+		 *  Phase C tick handler will be counted as the first of the five in phase D
+		 *  (see log sample in spec).
+		 */
+		button->tick_count = 1;
+		button->state = BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_D;
+		k_work_reschedule(&button->timer, K_MSEC(50));
+	} else if (button->tick_count < MAX_TICKS) {
+		k_work_reschedule(&button->timer, K_MSEC(100));
+	}
+}
+
+static void phase_d_tick(struct bt_mesh_silvair_enocean_button *button)
+{
+	send_delta(button, 0, false);
+	if (button->tick_count++ < 4) {
+		k_work_reschedule(&button->timer, K_MSEC(50));
+	} else {
+		button->state = BT_MESH_SILVAIR_ENOCEAN_STATE_IDLE;
+	}
+}
+
+static void onoff_tick(struct bt_mesh_silvair_enocean_button *button)
 {
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_onoff_set msg = {
-		.on_off = on_off,
+		.on_off = button->target,
 		.transition = &transition,
+		.reuse_transaction = button->tick_count > 0
 	};
-
-	button->onoff.pub.retransmit = BT_MESH_PUB_TRANSMIT(3, 50);
+	struct bt_mesh_msg_ctx ctx = {
+		.addr = button->onoff.pub.addr,
+		.send_ttl = button->onoff.pub.ttl,
+		.app_idx = button->onoff.pub.key,
+	};
 
 	bt_mesh_dtt_srv_transition_get(button->onoff.model, &transition);
-	transition.delay = delay_get(&button->onoff.pub, 1);
+	transition.delay = DELAY(button->tick_count++);
 
-	bt_mesh_onoff_cli_set_unack(&button->onoff, NULL, &msg);
-}
-
-static void send_delta(struct bt_mesh_silvair_enocean_button *button, enum phase phase)
-{
-	struct bt_mesh_model_transition transition;
-	int32_t delta = CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA *
-		(1 + button->tick_count);
-
-	if (!button->target) {
-		delta *= -1;
-	}
-
-	struct bt_mesh_lvl_delta_set msg = {
-		.delta = delta,
-		.new_transaction = button->tick_count == 0,
-		.transition = &transition,
-	};
-
-	if (CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA_TRANSITION_TIME == -1) {
-		bt_mesh_dtt_srv_transition_get(button->lvl.model, &transition);
+	bt_mesh_onoff_cli_set_unack(&button->onoff, &ctx, &msg);
+	if (button->tick_count < 4) {
+		k_work_reschedule(&button->timer, K_MSEC(50));
 	} else {
-		transition.time = CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA_TRANSITION_TIME;
+		button->state = BT_MESH_SILVAIR_ENOCEAN_STATE_IDLE;
 	}
-
-	transition.delay = 0;
-
-	switch (phase) {
-	case PHASE_B:
-		button->lvl.pub.retransmit = BT_MESH_PUB_TRANSMIT(3, 50);
-		transition.delay = delay_get(&button->lvl.pub, 1);
-		break;
-	case PHASE_C:
-		button->lvl.pub.retransmit = 0;
-		break;
-	case PHASE_D:
-		button->lvl.pub.retransmit = BT_MESH_PUB_TRANSMIT(4, 50);
-		break;
-	}
-
-	bt_mesh_lvl_cli_delta_set_unack(&button->lvl, NULL, &msg);
 }
 
 static void state_machine_button_process(
@@ -116,25 +148,22 @@ static void state_machine_button_process(
 {
 	switch (action) {
 	case BT_ENOCEAN_BUTTON_PRESS:
-		button->state = BT_MESH_SILVAIR_ENOCEAN_STATE_WAIT;
-		button->target = on_off;
-		k_work_reschedule(&button->timer,
-			K_MSEC(CONFIG_BT_MESH_SILVAIR_ENOCEAN_WAIT_TIME));
+		if (button->state == BT_MESH_SILVAIR_ENOCEAN_STATE_IDLE) {
+			button->release_pending = false;
+			button->state = BT_MESH_SILVAIR_ENOCEAN_STATE_WAIT;
+			button->target = on_off;
+			k_work_reschedule(&button->timer, K_MSEC(WAIT_TIME_MS));
+		}
 		break;
 	case BT_ENOCEAN_BUTTON_RELEASE:
-		if (button->state != BT_MESH_SILVAIR_ENOCEAN_STATE_DELTA ||
-		    button->target != on_off) {
-			send_onoff(button, on_off);
-		} else if (button->state == BT_MESH_SILVAIR_ENOCEAN_STATE_DELTA) {
-			send_delta(button, PHASE_D);
+		button->release_pending = true;
+		if (button->state == BT_MESH_SILVAIR_ENOCEAN_STATE_WAIT ||
+		    (button->state == BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_C &&
+		     button->tick_count >= MAX_TICKS)) {
+			button->state = BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_A;
+			button->tick_count = 0;
+			onoff_tick(button);
 		}
-
-		/* If cancel fails, the handler will do nothing because the
-		 * state is IDLE
-		 */
-		k_work_cancel_delayable(&button->timer);
-		button->state = BT_MESH_SILVAIR_ENOCEAN_STATE_IDLE;
-		break;
 	}
 }
 
@@ -177,26 +206,26 @@ static void timeout(struct k_work *work)
 	struct bt_mesh_silvair_enocean_button *button =
 		CONTAINER_OF(work, struct bt_mesh_silvair_enocean_button,
 			     timer.work);
-	k_timeout_t tick_timeout =
-		K_MSEC(CONFIG_BT_MESH_SILVAIR_ENOCEAN_TICK_TIME);
 
 	switch (button->state) {
 	case BT_MESH_SILVAIR_ENOCEAN_STATE_IDLE:
 		break;
 	case BT_MESH_SILVAIR_ENOCEAN_STATE_WAIT:
-		button->state = BT_MESH_SILVAIR_ENOCEAN_STATE_DELTA;
+		button->state = BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_B;
+		button->delta = LEVEL_DELTA * (button->target ? 1 : -1);
 		button->tick_count = 0;
-		send_delta(button, PHASE_B);
+		/** Fall through */
+	case BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_B:
+		phase_b_tick(button);
 		break;
-	case BT_MESH_SILVAIR_ENOCEAN_STATE_DELTA:
-		send_delta(button, PHASE_C);
-
-		if (button->tick_count++ < MAX_TICKS) {
-			k_work_reschedule(&button->timer, tick_timeout);
-		} else {
-			button->state = BT_MESH_SILVAIR_ENOCEAN_STATE_IDLE;
-		}
-
+	case BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_C:
+		phase_c_tick(button);
+		break;
+	case BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_D:
+		phase_d_tick(button);
+		break;
+	case BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_A:
+		onoff_tick(button);
 		break;
 	}
 }
@@ -407,56 +436,6 @@ const struct bt_mesh_model_op _bt_mesh_silvair_enocean_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static void delay_update(struct bt_mesh_model *model, uint32_t offset)
-{
-	uint32_t delay;
-
-	delay = delay_get(model->pub, BT_MESH_PUB_MSG_NUM(model->pub));
-	model->pub->msg->data[offset] = model_delay_encode(delay);
-}
-
-static int onoff_update_handler(struct bt_mesh_model *model)
-{
-	struct bt_mesh_onoff_cli *cli = model->user_data;
-
-	if (cli->pub_buf.len != 6 ||
-	    !bt_mesh_model_pub_is_retransmission(model)) {
-		return -EINVAL;
-	}
-
-	delay_update(model, 5);
-
-	return 0;
-}
-
-static int lvl_update_handler(struct bt_mesh_model *model)
-{
-	struct bt_mesh_lvl_cli *cli = model->user_data;
-	struct bt_mesh_silvair_enocean_button *button =
-		CONTAINER_OF(cli, struct bt_mesh_silvair_enocean_button, lvl);
-
-	if (cli->pub_buf.len != 9 ||
-	    !bt_mesh_model_pub_is_retransmission(model)) {
-		return -EINVAL;
-	}
-
-	/* In Phase C, retransmissions are disabled and the update callback won't be called. */
-	if (button->state != BT_MESH_SILVAIR_ENOCEAN_STATE_DELTA) {
-		return 0;
-	}
-
-	delay_update(model, 8);
-
-	/** Check if this is the last publication in Phase B. */
-	if (BT_MESH_PUB_MSG_TOTAL(model->pub) == BT_MESH_PUB_MSG_NUM(model->pub)) {
-		button->tick_count++;
-		k_work_reschedule(&button->timer,
-				  K_MSEC(CONFIG_BT_MESH_SILVAIR_ENOCEAN_TICK_TIME));
-	}
-
-	return 0;
-}
-
 static int bt_mesh_silvair_enocean_srv_init(struct bt_mesh_model *model)
 {
 	if (!initialized) {
@@ -476,13 +455,6 @@ static int bt_mesh_silvair_enocean_srv_init(struct bt_mesh_model *model)
 
 	for (int i = 0; i < BT_MESH_SILVAIR_ENOCEAN_PROXY_BUTTONS; i++) {
 		k_work_init_delayable(&srv->buttons[i].timer, timeout);
-	}
-
-	for (int i = 0; i < BT_MESH_SILVAIR_ENOCEAN_PROXY_BUTTONS; i++) {
-		srv->buttons[i].onoff.pub.retr_update = true;
-		srv->buttons[i].onoff.pub.update = onoff_update_handler;
-		srv->buttons[i].lvl.pub.retr_update = true;
-		srv->buttons[i].lvl.pub.update = lvl_update_handler;
 	}
 
 	return 0;

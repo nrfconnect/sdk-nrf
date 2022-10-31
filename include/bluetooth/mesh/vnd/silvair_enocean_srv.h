@@ -45,8 +45,14 @@ enum bt_mesh_silvair_enocean_state {
 	BT_MESH_SILVAIR_ENOCEAN_STATE_IDLE,
 	/** Waiting state */
 	BT_MESH_SILVAIR_ENOCEAN_STATE_WAIT,
-	/** Delta sending state */
-	BT_MESH_SILVAIR_ENOCEAN_STATE_DELTA,
+	/** Phase A state */
+	BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_A,
+	/** Phase B state */
+	BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_B,
+	/** Phase C state */
+	BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_C,
+	/** Phase D state */
+	BT_MESH_SILVAIR_ENOCEAN_STATE_PHASE_D
 };
 
 /** Silvair Enocean Proxy Server instance. */
@@ -63,6 +69,10 @@ struct bt_mesh_silvair_enocean_srv {
 		bool target;
 		/** Tick counter */
 		int tick_count;
+		/** Flag for moving to phase D */
+		bool release_pending;
+		/** Current delta */
+		int32_t delta;
 		/** Timer used for state machine timeouts */
 		struct k_work_delayable timer;
 	} buttons[BT_MESH_SILVAIR_ENOCEAN_PROXY_BUTTONS];
