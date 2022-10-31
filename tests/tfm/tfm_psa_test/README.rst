@@ -32,7 +32,7 @@ You can indicate the desired test suite at build time via a config flag:
    .. code-block:: bash
 
      $ west build samples/tfm_integration/tfm_psa_test/ \
-       -p -b mps2_an521_ns -t run -- \
+       -p -b nrf5340dk_nrf5340_cpuapp_ns -t run -- \
        -DCONFIG_TFM_PSA_TEST_STORAGE=y
 
 Note that not all test suites are valid on all boards.
@@ -41,16 +41,6 @@ On Target
 =========
 
 Refer to :ref:`tfm_ipc` for detailed instructions.
-
-On QEMU:
-========
-
-Refer to :ref:`tfm_ipc` for detailed instructions.
-Following is an example based on ``west build``
-
-   .. code-block:: bash
-
-      $ west build samples/tfm_integration/tfm_psa_test/ -p -b mps2_an521_ns -t run -- -DCONFIG_TFM_PSA_TEST_STORAGE=y
 
 Sample Output
 =============

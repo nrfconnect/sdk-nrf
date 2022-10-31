@@ -13,9 +13,6 @@ while the Secure tests will be included in the TF-M build itself.
 
 The TF-M regression tests are implemented in the tf-m-tests repo: https://git.trustedfirmware.org/TF-M/tf-m-tests.git/
 
-This sample is available for platforms that are supported in the trusted-firmware-m repo: https://git.trustedfirmware.org/TF-M/trusted-firmware-m.git/
-See sample.yaml for a list of supported platforms.
-
 Building and Running
 ********************
 
@@ -25,16 +22,6 @@ On Target
 =========
 
 Refer to :ref:`tfm_ipc` for detailed instructions.
-
-On QEMU:
-========
-
-Refer to :ref:`tfm_ipc` for detailed instructions.
-Following is an example based on ``west build``
-
-   .. code-block:: bash
-
-      $ west build samples/tfm_integration/tfm_regression_test/ -p -b mps2_an521_ns -t run
 
 Sample Output
 =============
