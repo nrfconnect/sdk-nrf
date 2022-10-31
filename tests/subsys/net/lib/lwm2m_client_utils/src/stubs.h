@@ -12,6 +12,7 @@
 
 #include <net/lwm2m_client_utils.h>
 #include <modem/modem_key_mgmt.h>
+#include <modem/modem_info.h>
 #include <modem/lte_lc.h>
 #include <zephyr/settings/settings.h>
 
@@ -48,29 +49,48 @@ DECLARE_FAKE_VALUE_FUNC(int, settings_subsys_init);
 DECLARE_FAKE_VALUE_FUNC(int, settings_save_one, const char *, const void *, size_t);
 DECLARE_FAKE_VALUE_FUNC(int, settings_delete, const char *);
 DECLARE_FAKE_VOID_FUNC(engine_trigger_update, bool);
+DECLARE_FAKE_VALUE_FUNC(int, modem_info_init);
+DECLARE_FAKE_VALUE_FUNC(int, modem_info_params_init, struct modem_param_info *);
+DECLARE_FAKE_VALUE_FUNC(int, modem_info_params_get, struct modem_param_info *);
+DECLARE_FAKE_VALUE_FUNC(int, lte_lc_lte_mode_get, enum lte_lc_lte_mode *);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_create_res_inst, const char *);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_res_buf, const char *, void *, uint16_t,
+			     uint16_t, uint8_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_u32, const char *, uint32_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_s8, const char *, int8_t);
+DECLARE_FAKE_VALUE_FUNC(int, modem_info_rsrp_register, rsrp_cb_t);
 
 /* List of fakes used by this unit tester */
 #define DO_FOREACH_FAKE(FUNC) do { \
+	FUNC(lwm2m_engine_set_u32)                      \
 	FUNC(lwm2m_engine_set_u16)                      \
 	FUNC(lwm2m_engine_set_u8)                       \
 	FUNC(lwm2m_engine_set_res_data_len)             \
 	FUNC(lwm2m_engine_get_res_buf)                  \
 	FUNC(lwm2m_engine_get_u8)                       \
 	FUNC(lwm2m_engine_get_bool)                     \
+	FUNC(lwm2m_engine_set_s8)                       \
 	FUNC(lwm2m_engine_set_opaque)                   \
 	FUNC(lwm2m_engine_delete_obj_inst)              \
 	FUNC(lwm2m_engine_register_delete_callback)     \
 	FUNC(lwm2m_engine_register_create_callback)     \
 	FUNC(lwm2m_engine_register_post_write_callback) \
 	FUNC(lwm2m_engine_create_obj_inst)              \
+	FUNC(lwm2m_engine_create_res_inst)              \
+	FUNC(lwm2m_engine_set_res_buf)                  \
 	FUNC(lwm2m_path_to_string)                      \
 	FUNC(lwm2m_engine_get_obj_inst)                 \
 	FUNC(lwm2m_string_to_path)                      \
 	FUNC(modem_key_mgmt_exists)                     \
 	FUNC(modem_key_mgmt_write)                      \
+	FUNC(modem_info_init)                           \
+	FUNC(modem_info_params_init)                    \
+	FUNC(modem_info_params_get)                     \
+	FUNC(modem_info_rsrp_register)                  \
 	FUNC(lte_lc_func_mode_set)                      \
 	FUNC(lte_lc_connect)                            \
 	FUNC(lte_lc_func_mode_get)                      \
+	FUNC(lte_lc_lte_mode_get)                       \
 	FUNC(settings_load_subtree)                     \
 	FUNC(settings_register)                         \
 	FUNC(settings_subsys_init)                      \

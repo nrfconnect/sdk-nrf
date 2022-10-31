@@ -130,13 +130,6 @@ config APP_DEVICE_TYPE
 	default	"OMA-LWM2M Client"
 endmenu
 
-config APP_HOLD_TIME_RSRP
-	int "Minimum time [s] between RSRP notification messages"
-	default 60
-	help
-	  The minimum time in seconds that notifications can be sent to observers of the
-	  Connectivity Monitoring data.
-
 config APP_CUSTOM_VERSION
 	string "Application version. Leave empty to use NCS version"
 
