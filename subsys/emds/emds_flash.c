@@ -11,6 +11,8 @@
 #include <zephyr/sys/crc.h>
 #include <zephyr/logging/log.h>
 #include "emds_flash.h"
+#include <nrfx_nvmc.h>
+#include <nrf_erratas.h>
 
 LOG_MODULE_REGISTER(emds_flash, CONFIG_EMDS_LOG_LEVEL);
 
@@ -36,6 +38,124 @@ enum ate_type {
 BUILD_ASSERT(offsetof(struct emds_ate, crc8) == sizeof(struct emds_ate) - sizeof(uint8_t),
 	     "crc8 must be the last member");
 
+#define SOC_NV_FLASH_NODE DT_INST(0, soc_nv_flash)
+
+#if NRF52_ERRATA_242_PRESENT
+#include <hal/nrf_power.h>
+/* Disable POFWARN by writing POFCON before a write or erase operation.
+ * Do not attempt to write or erase if EVENTS_POFWARN is already asserted.
+ */
+static bool pofcon_enabled;
+
+static int suspend_pofwarn(void)
+{
+	if (!nrf52_errata_242()) {
+		return 0;
+	}
+
+	bool enabled;
+	nrf_power_pof_thr_t pof_thr;
+
+	pof_thr = nrf_power_pofcon_get(NRF_POWER, &enabled);
+
+	if (enabled) {
+		nrf_power_pofcon_set(NRF_POWER, false, pof_thr);
+
+		/* This check need to be reworked once POFWARN event will be
+		 * served by zephyr.
+		 */
+		if (nrf_power_event_check(NRF_POWER, NRF_POWER_EVENT_POFWARN)) {
+			nrf_power_pofcon_set(NRF_POWER, true, pof_thr);
+			return -ECANCELED;
+		}
+	}
+
+	return 0;
+}
+
+static void restore_pofwarn(void)
+{
+	nrf_power_pof_thr_t pof_thr;
+
+	if (pofcon_enabled) {
+		pof_thr = nrf_power_pofcon_get(NRF_POWER, NULL);
+
+		nrf_power_pofcon_set(NRF_POWER, true, pof_thr);
+		pofcon_enabled = false;
+	}
+}
+
+#define SUSPEND_POFWARN() suspend_pofwarn()
+#define RESUME_POFWARN()  restore_pofwarn()
+#else
+#define SUSPEND_POFWARN() 0
+#define RESUME_POFWARN()
+#endif /* NRF52_ERRATA_242_PRESENT */
+
+static inline bool is_aligned_32(uint32_t data)
+{
+	return (data & 0x3) ? false : true;
+}
+
+static inline bool is_within_bounds(off_t addr, size_t len, off_t boundary_start,
+				    size_t boundary_size)
+{
+	return (addr >= boundary_start &&
+			(addr < (boundary_start + boundary_size)) &&
+			(len <= (boundary_start + boundary_size - addr)));
+}
+
+static inline bool is_regular_addr_valid(off_t addr, size_t len)
+{
+	return is_within_bounds(addr, len, 0, nrfx_nvmc_flash_size_get());
+}
+
+static void nvmc_wait_ready(void)
+{
+	while (!nrfx_nvmc_write_done_check()) {
+	}
+}
+
+static int flash_direct_write(const struct device *dev, off_t offset, const void *data, size_t len)
+{
+	uint32_t flash_addr = offset;
+	uint32_t data_addr = (uint32_t)data;
+
+	ARG_UNUSED(dev);
+
+	if (!is_regular_addr_valid(flash_addr, len)) {
+		return -EINVAL;
+	}
+
+	if (!is_aligned_32(flash_addr)) {
+		return -EINVAL;
+	}
+
+	if (len % sizeof(uint32_t)) {
+		return -EINVAL;
+	}
+
+	flash_addr += DT_REG_ADDR(SOC_NV_FLASH_NODE);
+
+	if (SUSPEND_POFWARN()) {
+		return -ECANCELED;
+	}
+
+	while (len >= sizeof(uint32_t)) {
+		nrfx_nvmc_word_write(flash_addr, UNALIGNED_GET((uint32_t *)data_addr));
+
+		flash_addr += sizeof(uint32_t);
+		data_addr += sizeof(uint32_t);
+		len -= sizeof(uint32_t);
+	}
+
+	RESUME_POFWARN();
+
+	nvmc_wait_ready();
+
+	return 0;
+}
+
 static size_t align_size(struct emds_fs *fs, size_t len)
 {
 	uint8_t write_block_size = fs->flash_params->write_block_size;
@@ -52,7 +172,7 @@ static int ate_wrt(struct emds_fs *fs, const struct emds_ate *entry)
 		return -EINVAL;
 	}
 
-	int rc = flash_write(fs->flash_dev, fs->ate_wra, entry, sizeof(struct emds_ate));
+	int rc = flash_direct_write(fs->flash_dev, fs->ate_wra, entry, sizeof(struct emds_ate));
 
 	if (rc) {
 		return rc;
@@ -82,7 +202,7 @@ static int data_wrt(struct emds_fs *fs, const void *data, size_t len)
 	blen = temp_len & ~(fs->flash_params->write_block_size - 1U);
 	/* Writes multiples of 4 bytes to flash */
 	if (blen > 0) {
-		rc = flash_write(fs->flash_dev, offset, data8, blen);
+		rc = flash_direct_write(fs->flash_dev, offset, data8, blen);
 		if (rc) {
 			return rc;
 		}
@@ -96,7 +216,8 @@ static int data_wrt(struct emds_fs *fs, const void *data, size_t len)
 		(void)memcpy(buf, data8, temp_len);
 		(void)memset(buf + temp_len, fs->flash_params->erase_value,
 			     fs->flash_params->write_block_size - temp_len);
-		rc = flash_write(fs->flash_dev, offset, buf, fs->flash_params->write_block_size);
+		rc = flash_direct_write(fs->flash_dev, offset, buf,
+					fs->flash_params->write_block_size);
 		if (rc) {
 			return rc;
 		}
@@ -344,15 +465,12 @@ ssize_t emds_flash_write(struct emds_fs *fs, uint16_t id, const void *data, size
 		return 0;
 	}
 
-	k_mutex_lock(&fs->emds_lock, K_FOREVER);
-
 	int rc = entry_wrt(fs, id, data, len);
 
 	if (rc) {
 		return rc;
 	}
 
-	k_mutex_unlock(&fs->emds_lock);
 	return len;
 }
 

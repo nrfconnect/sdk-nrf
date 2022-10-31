@@ -14,67 +14,12 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(emds, CONFIG_EMDS_LOG_LEVEL);
 
-K_SEM_DEFINE(emds_sem, 0, 1);
 static bool emds_ready;
 static bool emds_initialized;
-static uint32_t store_key;
 
 static sys_slist_t emds_dynamic_entries;
 static struct emds_fs emds_flash;
 static emds_store_cb_t app_store_cb;
-
-static void emds_handler(void)
-{
-	while (true) {
-		k_sem_reset(&emds_sem);
-		k_sem_take(&emds_sem, K_FOREVER);
-
-		k_sched_lock();
-
-		LOG_DBG("Emergency Data Storeage released");
-
-		STRUCT_SECTION_FOREACH(emds_entry, ch) {
-			ssize_t len = emds_flash_write(&emds_flash,
-						       ch->id, ch->data, ch->len);
-			if (len < 0) {
-				LOG_ERR("Write static entry: (%d) error (%d)",
-					ch->id, len);
-			} else if (len != ch->len) {
-				LOG_ERR("Write static entry: (%d) failed (%d:%d)",
-					ch->id, ch->len, len);
-			}
-		}
-
-		struct emds_dynamic_entry *ch;
-
-		SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
-			ssize_t len = emds_flash_write(&emds_flash,
-						       ch->entry.id, ch->entry.data, ch->entry.len);
-			if (len < 0) {
-				LOG_ERR("Write dynamic entry: (%d) error (%d).",
-					ch->entry.id, len);
-			}
-			if (len != ch->entry.len) {
-				LOG_ERR("Write dynamic entry: (%d) failed (%d:%d).",
-					ch->entry.id, ch->entry.len, len);
-			}
-		}
-
-		emds_ready = false;
-
-		k_sched_unlock();
-
-		/* Unlock all interrupts */
-		irq_unlock(store_key);
-
-		if (app_store_cb) {
-			app_store_cb();
-		}
-	}
-}
-
-K_THREAD_DEFINE(emds_tid, CONFIG_EMDS_THREAD_STACK_SIZE, emds_handler, NULL,
-		NULL, NULL, K_PRIO_COOP(CONFIG_EMDS_THREAD_PRIORITY), 0, 0);
 
 static int emds_fs_init(void)
 {
@@ -194,6 +139,8 @@ int emds_entry_add(struct emds_dynamic_entry *entry)
 
 int emds_store(void)
 {
+	uint32_t store_key;
+
 	if (!emds_ready) {
 		return -ECANCELED;
 	}
@@ -202,7 +149,43 @@ int emds_store(void)
 	store_key = irq_lock();
 
 	/* Start the emergency data storage process. */
-	k_sem_give(&emds_sem);
+	LOG_DBG("Emergency Data Storeage released");
+
+	STRUCT_SECTION_FOREACH(emds_entry, ch) {
+		ssize_t len = emds_flash_write(&emds_flash,
+					       ch->id, ch->data, ch->len);
+		if (len < 0) {
+			LOG_ERR("Write static entry: (%d) error (%d)",
+				ch->id, len);
+		} else if (len != ch->len) {
+			LOG_ERR("Write static entry: (%d) failed (%d:%d)",
+				ch->id, ch->len, len);
+		}
+	}
+
+	struct emds_dynamic_entry *ch;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
+		ssize_t len = emds_flash_write(&emds_flash,
+					       ch->entry.id, ch->entry.data, ch->entry.len);
+		if (len < 0) {
+			LOG_ERR("Write dynamic entry: (%d) error (%d).",
+				ch->entry.id, len);
+		}
+		if (len != ch->entry.len) {
+			LOG_ERR("Write dynamic entry: (%d) failed (%d:%d).",
+				ch->entry.id, ch->entry.len, len);
+		}
+	}
+
+	emds_ready = false;
+
+	/* Unlock all interrupts */
+	irq_unlock(store_key);
+
+	if (app_store_cb) {
+		app_store_cb();
+	}
 
 	return 0;
 }
