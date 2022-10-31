@@ -71,9 +71,12 @@ struct emds_dynamic_entry {
  * @brief Callback for application commands when storing has been executed.
  *
  * This can be used to perform other actions or execute busy-waiting until the
- * power supply is discharged. It will run in the thread of emds. Scheduler and
- * interrupts are unlocked before triggering this callback. Therefore, this
+ * power supply is discharged. It will be run by @ref emds_store,
+ * and called from the same context the @ref emds_store is called from.
+ * Interrupts are unlocked before triggering this callback. Therefore, this
  * callback may not be reached before available backup power runs out.
+ * If the application needs interrupts to be locked during this callback,
+ * application can do so by calling irq_lock before calling @ref emds_store.
  */
 typedef void (*emds_store_cb_t)(void);
 
@@ -112,9 +115,20 @@ int emds_entry_add(struct emds_dynamic_entry *entry);
  *
  * Triggers the process of storing all data registered to be stored. All data
  * registered either through @ref emds_entry_add function or the
- * @ref EMDS_STATIC_ENTRY_DEFINE macro is stored. Once the data storage is
- * completed, the data should not be changed, and the device should be halted.
+ * @ref EMDS_STATIC_ENTRY_DEFINE macro is stored. It locks all interrupts until
+ * the write is finished. Once the data storage is completed, the data should
+ * not be changed, and the device should be halted. The device must not be
+ * allowed to reboot when operating on a backup supply, since reboot will
+ * trigger data load from the EMDS storage and clear the storage area. The reboot
+ * should only be allowed when the main power supply is available.
+ *
  * This is a time-critical operation and will be processed as fast as possible.
+ * To achieve better time predictability, this function must be called from an
+ * interrupt context with the highest priority.
+ *
+ * When writing to flash, it bypasses the flash driver. Therefore, when running
+ * with MPSL, make sure to uninitialize the MPSL before this function is called.
+ * Otherwise, an assertion may be triggered by the exit of the function.
  *
  * @retval 0 Success
  * @retval -ERRNO errno code if error
