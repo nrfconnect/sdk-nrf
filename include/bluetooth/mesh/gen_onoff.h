@@ -31,6 +31,8 @@ extern "C" {
 struct bt_mesh_onoff_set {
 	/** State to set. */
 	bool on_off;
+	/** Whether this should reuse the previous transaction identifier. */
+	bool reuse_transaction;
 	/**
 	 * Transition time parameters for the state change, or NULL.
 	 *
