@@ -50,13 +50,20 @@ endif # LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT
 config LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
 	bool "Connection Monitor object support"
 	default y
-	select LWM2M_CONN_MON_OBJ_SUPPORT
+	select LWM2M_CONN_MON_OBJ_SUPPORT if !ZTEST
 
 if LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
 
 config LWM2M_CONN_MON_BEARER_MAX
 	int "Max number of bearers"
 	default 2
+
+config LWM2M_CONN_HOLD_TIME_RSRP
+	int "Minimum time [s] between RSRP notification messages"
+	default 60
+	help
+	  The minimum time in seconds that notifications can be sent to observers of the
+	  Connectivity Monitoring data.
 
 endif # LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
 

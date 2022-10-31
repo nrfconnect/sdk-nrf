@@ -10,6 +10,7 @@
 #include <net/lwm2m_client_utils.h>
 #include <modem/modem_key_mgmt.h>
 #include <modem/lte_lc.h>
+#include <modem/modem_info.h>
 #include <zephyr/settings/settings.h>
 #include "stubs.h"
 
@@ -47,9 +48,19 @@ DEFINE_FAKE_VALUE_FUNC(int, modem_key_mgmt_write, nrf_sec_tag_t, enum modem_key_
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_func_mode_set, enum lte_lc_func_mode);
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_connect);
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_func_mode_get, enum lte_lc_func_mode *);
+DEFINE_FAKE_VALUE_FUNC(int, lte_lc_lte_mode_get, enum lte_lc_lte_mode *);
 DEFINE_FAKE_VALUE_FUNC(int, settings_load_subtree, const char *);
 DEFINE_FAKE_VALUE_FUNC(int, settings_register, struct settings_handler *);
 DEFINE_FAKE_VALUE_FUNC(int, settings_subsys_init);
 DEFINE_FAKE_VALUE_FUNC(int, settings_save_one, const char *, const void *, size_t);
 DEFINE_FAKE_VALUE_FUNC(int, settings_delete, const char *);
+DEFINE_FAKE_VALUE_FUNC(int, modem_info_init);
+DEFINE_FAKE_VALUE_FUNC(int, modem_info_params_init, struct modem_param_info *);
+DEFINE_FAKE_VALUE_FUNC(int, modem_info_params_get, struct modem_param_info *);
+DEFINE_FAKE_VALUE_FUNC(int, modem_info_rsrp_register, rsrp_cb_t);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_create_res_inst, const char *);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_res_buf, const char *, void *, uint16_t,
+			     uint16_t, uint8_t);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_u32, const char *, uint32_t);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_s8, const char *, int8_t);
 DEFINE_FAKE_VOID_FUNC(engine_trigger_update, bool);
