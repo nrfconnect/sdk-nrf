@@ -1,23 +1,17 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA.
+ * Copyright (c) 2022 Nordic Semiconductor ASA.
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/kernel.h>
+#ifdef CONFIG_TFM_PSA_TEST_NONE
+#error "No PSA test suite set. See "Building and Running" in README."
+#endif
 
 /* Run the PSA test suite */
 void psa_test(void);
 
-__attribute__((noreturn))
 void main(void)
 {
-#ifdef CONFIG_TFM_PSA_TEST_NONE
-	#error "No PSA test suite set. Use Kconfig to enable a test suite.\n"
-#else
 	psa_test();
-#endif
-
-	for (;;) {
-	}
 }
