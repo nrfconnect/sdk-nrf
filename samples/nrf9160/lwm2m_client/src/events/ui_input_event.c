@@ -6,8 +6,6 @@
 
 #include "ui_input_event.h"
 
-#include <stdio.h>
-
 static const char *ui_input_type_to_string(enum ui_input_type type)
 {
 	switch (type) {

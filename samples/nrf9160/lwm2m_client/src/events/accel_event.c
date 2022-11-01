@@ -6,8 +6,6 @@
 
 #include "accel_event.h"
 
-#include <stdio.h>
-
 static const char *accel_orienation_state_to_string(enum accel_orientation_state state)
 {
 	switch (state) {

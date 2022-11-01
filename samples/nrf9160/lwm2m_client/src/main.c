@@ -25,13 +25,6 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
 #include <nrf_modem_at.h>
-#include <modem/pdn.h>
-
-#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
-#if defined(CONFIG_MODEM_KEY_MGMT)
-#include <modem/modem_key_mgmt.h>
-#endif
-#endif
 
 #include "lwm2m_client_app.h"
 #include "lwm2m_app_utils.h"
@@ -528,14 +521,6 @@ void main(void)
 	}
 	/* Modem FW update needs to be verified before modem is used. */
 	lwm2m_verify_modem_fw_update();
-#endif
-
-#if defined(CONFIG_PDN)
-	ret = pdn_init();
-	if (ret < 0) {
-		LOG_ERR("Unable to init pdn (%d)", ret);
-		return;
-	}
 #endif
 
 	ret = app_event_manager_init();
