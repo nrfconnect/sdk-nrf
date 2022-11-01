@@ -810,6 +810,10 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
     * Updated the :file:`ncs/nrf/subsys/partition_manager/pm.yml.pgps` file to place P-GPS partition in external flash when so configured.
 
+  * Fixed:
+
+    * Fixed an issue with the driver and devicetree symbol for the external flash memory where the driver was sometimes NULL, even if the DT node was chosen.
+
 MCUboot
 =======
 
