@@ -12,6 +12,7 @@
 #include <zephyr/kernel.h>
 #include <string.h>
 #include <nrf_modem.h>
+#include <nrf_modem_at.h>
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
 #include <modem/nrf_modem_lib.h>
@@ -186,10 +187,49 @@ int lwm2m_os_storage_read(uint16_t id, void *data, size_t len)
 	return nvs_read(&fs, id, data, len);
 }
 
+static void mode_switch_on_inband_fota(void)
+{
+	enum lte_lc_system_mode mode = LTE_LC_SYSTEM_MODE_NONE;
+	enum lte_lc_system_mode_preference preference = LTE_LC_SYSTEM_MODE_PREFER_AUTO;
+	enum lte_lc_lte_mode bearer = LTE_LC_LTE_MODE_NONE;
+	uint32_t operator_id = 0;
+
+	if (nrf_modem_at_scanf("AT%XOPERID", "%%XOPERID: %u", &operator_id) < 1) {
+		return;
+	}
+
+	if (operator_id != 1) {
+		/* Only for specific operator. */
+		return;
+	}
+
+	lte_lc_lte_mode_get(&bearer);
+	if (bearer != LTE_LC_LTE_MODE_NBIOT) {
+		/* No switching needed. */
+		return;
+	}
+
+	lte_lc_system_mode_get(&mode, &preference);
+	if (mode != LTE_LC_SYSTEM_MODE_LTEM_NBIOT && mode != LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS) {
+		/* No switching possible. */
+		return;
+	}
+
+	lte_lc_offline();
+
+	lwm2m_os_lte_mode_request(LWM2M_OS_LTE_MODE_CAT_M1);
+
+	lte_lc_normal();
+}
+
 int lwm2m_os_storage_write(uint16_t id, const void *data, size_t len)
 {
 	__ASSERT((id >= LWM2M_OS_STORAGE_BASE) && (id <= LWM2M_OS_STORAGE_END),
 		 "Storage ID out of range");
+
+	if (id == LWM2M_OS_STORAGE_END - 8 && len == 4 && *(int *)data == 2) {
+		mode_switch_on_inband_fota();
+	}
 
 	return nvs_write(&fs, id, data, len);
 }
