@@ -97,5 +97,8 @@ void wifi_nrf_wpa_supp_event_mgmt_tx_status(void *if_priv,
 						struct nrf_wifi_umac_event_mlme *mlme_event,
 						unsigned int event_len);
 
+void wifi_nrf_wpa_supp_event_proc_unprot_mgmt(void *if_priv,
+						struct nrf_wifi_umac_event_mlme *unprot_mgmt,
+						unsigned int event_len);
 #endif /* CONFIG_WPA_SUPP */
 #endif /*  __ZEPHYR_WPA_SUPP_IF_H__ */

@@ -432,6 +432,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	callbk_fns.get_station_callbk_fn = wifi_nrf_wpa_supp_event_proc_get_sta;
 	callbk_fns.get_interface_callbk_fn = wifi_nrf_wpa_supp_event_proc_get_if;
 	callbk_fns.mgmt_tx_status = wifi_nrf_wpa_supp_event_mgmt_tx_status;
+	callbk_fns.unprot_mlme_mgmt_rx_callbk_fn = wifi_nrf_wpa_supp_event_proc_unprot_mgmt;
 #endif /* CONFIG_WPA_SUPP */
 
 	rpu_drv_priv_zep.fmac_priv = wifi_nrf_fmac_init(&data_config,
