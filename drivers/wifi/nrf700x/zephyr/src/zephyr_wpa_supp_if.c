@@ -1041,6 +1041,46 @@ void wifi_nrf_wpa_supp_event_mgmt_tx_status(void *if_priv,
 			mlme_event->nrf_wifi_flags & NRF_WIFI_EVENT_MLME_ACK ? true : false);
 }
 
+void wifi_nrf_wpa_supp_event_proc_unprot_mgmt(void *if_priv,
+		struct nrf_wifi_umac_event_mlme *unprot_mgmt,
+		unsigned int event_len)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	union wpa_event_data event;
+	const struct ieee80211_mgmt *mgmt = NULL;
+	const unsigned char *frame = NULL;
+	unsigned int frame_len = 0;
+	int cmd_evnt = 0;
+
+	vif_ctx_zep = if_priv;
+
+	frame = unprot_mgmt->frame.frame;
+	frame_len = unprot_mgmt->frame.frame_len;
+
+	mgmt = (const struct ieee80211_mgmt *)frame;
+	cmd_evnt = ((struct nrf_wifi_umac_hdr *)unprot_mgmt)->cmd_evnt;
+
+	if (frame_len < 24 + sizeof(mgmt->u.deauth)) {
+		LOG_ERR("%s: Unprotected mgmt frame too short\n", __func__);
+		return;
+	}
+
+	memset(&event, 0, sizeof(event));
+
+	event.unprot_deauth.sa = &mgmt->sa[0];
+	event.unprot_deauth.da = &mgmt->da[0];
+
+	if (cmd_evnt == NRF_WIFI_UMAC_EVENT_UNPROT_DEAUTHENTICATE) {
+		event.unprot_deauth.reason_code = le_to_host16(mgmt->u.deauth.reason_code);
+		return vif_ctx_zep->supp_callbk_fns.unprot_deauth(vif_ctx_zep->supp_drv_if_ctx,
+								  &event);
+	} else if (cmd_evnt == NRF_WIFI_UMAC_EVENT_UNPROT_DISASSOCIATE) {
+		event.unprot_disassoc.reason_code = le_to_host16(mgmt->u.deauth.reason_code);
+		return vif_ctx_zep->supp_callbk_fns.unprot_disassoc(vif_ctx_zep->supp_drv_if_ctx,
+								    &event);
+	}
+}
+
 int wifi_nrf_nl80211_send_mlme(void *if_priv, const u8 *data,
 		size_t data_len, int noack,
 		unsigned int freq, int no_cck,
