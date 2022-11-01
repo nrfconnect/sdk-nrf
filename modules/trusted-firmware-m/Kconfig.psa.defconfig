@@ -49,7 +49,7 @@ config PSA_WANT_ALG_HMAC
 	default y
 config PSA_WANT_ALG_SHA_1
 	bool
-	default y
+	default n
 config PSA_WANT_ALG_SHA_224
 	bool
 	default y
