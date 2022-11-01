@@ -226,7 +226,7 @@ if (DEFINED ext_flash_dev)
     SIZE ${num_bytes}
     BASE ${CONFIG_PM_EXTERNAL_FLASH_BASE}
     PLACEMENT start_to_end
-    DEVICE ${ext_flash_dev}
+    DEVICE "DT_CHOSEN(nordic_pm_ext_flash)"
     DEFAULT_DRIVER_KCONFIG ${external_flash_driver_kconfig}
     )
 endif()
