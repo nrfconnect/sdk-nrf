@@ -137,6 +137,7 @@
   - "subsys/partition_manager/**/*"
   - "tests/modules/tfm"
   - "tests/subsys/spm/secure_services/**/*"
+  - "tests/tfm/**/*"
 
 "CI-ble-test":
   - any:
