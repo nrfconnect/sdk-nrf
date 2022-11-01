@@ -6,8 +6,6 @@
 
 #include "sensor_event.h"
 
-#include <stdio.h>
-
 static const char *sensor_type_to_string(enum sensor_type type)
 {
 	switch (type) {
