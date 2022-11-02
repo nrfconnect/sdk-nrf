@@ -784,6 +784,8 @@
 .. _`Connectivity Standards Alliance members`: https://csa-iot.org/members/
 .. _`Join CSA`:
 .. _`CSA's Become Member page`: https://csa-iot.org/become-member/
+.. _`Matter Attestation of Security template`: https://groups.csa-iot.org/wg/members-all/document/27432
+.. _`Connectivity Standards Alliance Certification Web Tool`: https://zigbeecertifiedproducts.knack.com/zigbee-certified#home/
 
 .. ### Source: Chocolatey
 
