@@ -1472,6 +1472,13 @@ Reconnection issues after bonding
   The peripheral samples (:ref:`peripheral_uart`, :ref:`peripheral_lbs`, :ref:`peripheral_hids_mouse`) have reconnection issues after performing bonding (LE Secure Connection pairing enable) with nRF Connect for Desktop.
   These issues result in disconnection.
 
+.. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+NCSDK-17883: Cannot build peripheral UART sample with security (:kconfig:option:`CONFIG_BT_NUS_SECURITY_ENABLED`) disabled
+  The :ref:`peripheral_uart` sample fails to build when the :kconfig:option:`BT_NUS_SECURITY_ENABLED` Kconfig option is disabled.
+
+  **Workaround:** In :file:`main.c` file, search for the ``#else`` entry of the ``#if defined(CONFIG_BT_NUS_SECURITY_ENABLED)`` item and add an empty declaration of the ``conn_auth_info_callbacks`` structure, just after the similar empty definition of ``conn_auth_callbacks``.
+
 Bluetooth mesh
 ==============
 

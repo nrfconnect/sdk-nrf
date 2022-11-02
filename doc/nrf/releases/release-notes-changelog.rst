@@ -216,6 +216,12 @@ Bluetooth samples
     * On the nRF5340 development kit, the application core UART interface is used for communication with testers instead of the network core UART interface.
     * On the nRF5340 development kit, added support for the USB CDC ACM interface.
 
+* :ref:`peripheral_uart` sample:
+
+  * Changed:
+
+    * Fixed code build with the :kconfig:option:`CONFIG_BT_NUS_SECURITY_ENABLED` Kconfig option disabled.
+
 Bluetooth mesh samples
 ----------------------
 

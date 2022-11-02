@@ -447,6 +447,7 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 };
 #else
 static struct bt_conn_auth_cb conn_auth_callbacks;
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks;
 #endif
 
 static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
