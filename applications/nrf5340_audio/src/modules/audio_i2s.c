@@ -14,9 +14,6 @@
 
 #include "audio_sync_timer.h"
 
-#include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(audio_i2s, CONFIG_LOG_I2S_LEVEL);
-
 #define I2S_NL DT_NODELABEL(i2s0)
 
 #define HFCLKAUDIO_12_288_MHZ 0x9BAE
