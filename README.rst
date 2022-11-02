@@ -5,17 +5,10 @@ nRF Connect SDK: sdk-nrf
    :local:
    :depth: 2
 
-This repository contains the Nordic-specific source code additions to open
-source projects (Zephyr RTOS and MCUboot).
-It must be combined with nrfxlib and the repositories that use the same
-naming convention to build the provided samples and to use the additional
-subsystems and libraries.
-
-The following repositories must be combined with sdk-nrf:
-
-* sdk-zephyr
-* sdk-mcuboot
-* nrfxlib
+This repository contains the core of nRF Connect SDK, including subsystems,
+libraries, samples and applications.
+It is also the SDK's west manifest repository, containing the nRF Connect SDK
+manifest (west.yml).
 
 Documentation
 *************
