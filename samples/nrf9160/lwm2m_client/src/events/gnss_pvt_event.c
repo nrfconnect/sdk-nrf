@@ -6,8 +6,6 @@
 
 #include "gnss_pvt_event.h"
 
-#include <stdio.h>
-
 static void log_gnss_event(const struct app_event_header *aeh)
 {
 	struct gnss_pvt_event *event = cast_gnss_pvt_event(aeh);
