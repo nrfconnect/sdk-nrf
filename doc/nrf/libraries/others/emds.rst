@@ -48,7 +48,7 @@ When changing the :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US` opti
 
 The application must call the :c:func:`emds_store` function to store all entries.
 This can only be done once, before the :c:func:`emds_prepare` function must be called again.
-When invoked, the :c:func:`emds_store` function triggers the emergency data store process in a separate thread, and then stores all the registered entries.
+When invoked, the :c:func:`emds_store` function stores all the registered entries.
 Invocation of this call should be performed when the application detects loss of power, or when a reboot is triggered.
 
 .. note::
@@ -82,7 +82,6 @@ The above described process is summarized in a message sequence diagram.
     ...;
     Application->Application  [ label = "Interrupt calling emds_store()" ];
     Application=>EMDS         [ label = "emds_store()" ];
-    EMDS box EMDS [ label = "Thread storing data executing" ];
     Application<<=EMDS        [ label = "emds_store_cb_t callback" ];
     Application->Application [ label = "Reboot/halt" ];
 

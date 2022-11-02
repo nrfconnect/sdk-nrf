@@ -17,6 +17,10 @@
 #ifdef CONFIG_EMDS
 #include <emds/emds.h>
 
+#if defined(CONFIG_BT_CTLR)
+#include <mpsl/mpsl_lib.h>
+#endif
+
 #define EMDS_DEV_IRQ 24
 #define EMDS_DEV_PRIO 0
 #define EMDS_ISR_ARG 0
@@ -44,10 +48,9 @@ static void isr_emds_cb(void *arg)
 {
 	ARG_UNUSED(arg);
 
-	/* Stop bt and mpsl to reduce power usage and increase storage speed. */
-	(void) bt_disable();
 #if defined(CONFIG_BT_CTLR)
-	mpsl_uninit();
+	/* Stop mpsl to reduce power usage. */
+	mpsl_lib_uninit();
 #endif
 
 	emds_store();

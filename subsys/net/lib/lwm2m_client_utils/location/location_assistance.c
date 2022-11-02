@@ -14,7 +14,6 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #include <zephyr/net/lwm2m_path.h>
 #include <net/lwm2m_client_utils_location.h>
-#include <net/lwm2m_client_utils.h>
 #include <zephyr/net/lwm2m.h>
 
 #include "gnss_assistance_obj.h"
@@ -80,7 +79,7 @@ int location_assistance_agps_request_send(struct lwm2m_ctx *ctx, bool confirmabl
 
 	gnss_assistance_prepare_download();
 
-	if (location_assist_agps_get_elevation_mask >= 0) {
+	if (location_assist_agps_get_elevation_mask() >= 0) {
 		path_count++;
 	}
 

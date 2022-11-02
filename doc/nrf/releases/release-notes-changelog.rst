@@ -221,6 +221,11 @@ Bluetooth mesh samples
 
     * Ability to use buttons to send get and set messages for a sensor setting, as well as a get message for a sensor descriptor.
 
+* :ref:`bluetooth_mesh_light_lc`
+
+  * Removed the :c:func:`bt_disable` function call from the interrupt context before calling the :c:func:`emds_store` function.
+  * Replaced the :c:func:`mpsl_uninit` function with :c:func:`mpsl_lib_uninit`.
+
 nRF9160 samples
 ---------------
 
@@ -468,6 +473,13 @@ Other libraries
 * Added:
   * :ref:`lib_sfloat` library.
   * :ref:`lib_hw_id` library to retrieve a unique hardware ID.
+
+* :ref:`emds_readme`:
+
+  * Removed the internal thread for storing the emergency data.
+    The emergency data is now stored by the :c:func:`emds_store` function.
+  * Changed the library implementation to bypass the flash driver when storing the emergency data.
+    This allows calling the :c:func:`emds_store` function from an interrupt context.
 
 Common Application Framework (CAF)
 ----------------------------------
