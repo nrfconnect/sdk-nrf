@@ -221,6 +221,11 @@ Bluetooth mesh samples
 
     * Ability to use buttons to send get and set messages for a sensor setting, as well as a get message for a sensor descriptor.
 
+* :ref:`bluetooth_mesh_light_lc`
+
+  * Removed the :c:func:`bt_disable` function call from the interrupt context before calling the :c:func:`emds_store` function.
+  * Replaced the :c:func:`mpsl_uninit` function with :c:func:`mpsl_lib_uninit`.
+
 nRF9160 samples
 ---------------
 
