@@ -30,6 +30,8 @@ class NcsInclude(SphinxDirective):
         'end-line': int,
         'start-after': directives.unchanged_required,
         'end-before': directives.unchanged_required,
+        'start-at': directives.unchanged_required,
+        'end-at': directives.unchanged_required,
     }
 
     def run(self):
@@ -96,22 +98,30 @@ class NcsInclude(SphinxDirective):
                               (self.name, ErrorString(error)))
         # start-after/end-before: no restrictions on newlines in match-text,
         # and no restrictions on matching inside lines vs. line boundaries
-        after_text = self.options.get('start-after', None)
+        start_at_text = self.options.get('start-at', None)
+        after_text = self.options.get('start-after', start_at_text)
         if after_text:
             # skip content in rawtext before *and incl.* a matching text
             after_index = rawtext.find(after_text)
             if after_index < 0:
                 raise self.severe('Problem with "start-after" option of "%s" '
                                   'directive:\nText not found.' % self.name)
-            rawtext = rawtext[after_index + len(after_text):]
-        before_text = self.options.get('end-before', None)
+            if start_at_text:
+                rawtext = rawtext[after_index:]
+            else:
+                rawtext = rawtext[after_index + len(after_text):]
+        end_at_text = self.options.get('end-at', None)
+        before_text = self.options.get('end-before', end_at_text)
         if before_text:
             # skip content in rawtext after *and incl.* a matching text
             before_index = rawtext.find(before_text)
             if before_index < 0:
                 raise self.severe('Problem with "end-before" option of "%s" '
                                   'directive:\nText not found.' % self.name)
-            rawtext = rawtext[:before_index]
+            if end_at_text:
+                rawtext = rawtext[:before_index + len(end_at_text)]
+            else:
+                rawtext = rawtext[:before_index]
 
         include_lines = statemachine.string2lines(rawtext, tab_width,
                                                   convert_whitespace=True)
