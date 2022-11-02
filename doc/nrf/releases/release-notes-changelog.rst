@@ -448,6 +448,18 @@ Modem libraries
 
   * Added timeout for the entire location request.
 
+* :ref:`modem_key_mgmt` library:
+
+  * Added:
+
+    * The ``-EALREADY`` return value for the :c:func:`modem_key_mgmt_write` function when the credential already exists and cannot be overwritten.
+    * The ``-ECANCELED`` return value for the :c:func:`modem_key_mgmt_write` and :c:func:`modem_key_mgmt_delete` functions when the voltage is low.
+
+  * Updated:
+
+    * All the functions to return ``-EACCES`` instead of ``-EPERM`` when the access to the credential is not allowed.
+    * All the functions to return ``-EPERM`` instead of ``-EACCES`` when the operation is not permitted because the LTE link is active.
+
 Libraries for networking
 ------------------------
 
