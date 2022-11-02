@@ -12,8 +12,6 @@
 
 #include "ina231.h"
 
-#define RAIL_NAME_MAX_SIZE 20
-
 typedef void (*nrf_power_module_handler_t)(uint8_t rail);
 
 /*

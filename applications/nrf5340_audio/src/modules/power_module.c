@@ -82,6 +82,8 @@ static uint8_t configured_avg = INA231_CONFIG_AVG_1024;
 /* Calculate the total time for measurements and add 10% due to thread being lowest priority */
 static uint8_t measurement_timeout_seconds;
 
+#define RAIL_NAME_MAX_SIZE 20
+
 struct ina231_conf {
 	uint8_t address;
 	struct ina231_config_reg config;
