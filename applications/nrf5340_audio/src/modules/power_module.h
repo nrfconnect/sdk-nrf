@@ -64,38 +64,6 @@ int power_module_measurement_start(enum ina_name name, nrf_power_module_handler_
  */
 int power_module_measurement_stop(enum ina_name name);
 
-/**@brief   Getter for average value of the INAs
- *
- * @return  value of average setting
- */
-uint8_t power_module_avg_get(void);
-
-/**@brief   Setter for average value of the INAs
- *
- * @param   avg     value of average setting
- *
- * @note A given INA must be restarted for the new value to take effect.
- *
- * @return  0 if successful
- */
-int power_module_avg_set(uint8_t avg);
-
-/**@brief   Getter for conversion time value of the INAs
- *
- * @return  value of conversion time setting
- */
-uint8_t power_module_conv_time_get(void);
-
-/**@brief   Setter for conversion time value of the INAs
- *
- * @param   conv_time     value of conversion time setting
- *
- * @note A given INA must be restarted for the new value to take effect.
- *
- * @return  0 if successful
- */
-int power_module_conv_time_set(uint8_t conv_time);
-
 /**@brief   Initialize power module
  *
  * @return  0 if successful
