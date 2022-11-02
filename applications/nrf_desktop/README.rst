@@ -1709,6 +1709,9 @@ The B0 bootloader requires the following options enabled:
 * :kconfig:option:`CONFIG_SB_SIGNING_KEY_FILE` - Required for providing the signature used for image signing and verification.
 * :kconfig:option:`CONFIG_FW_INFO` - Required for the application versioning information.
 * :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` - Enable this option to set the version of the application after you enabled :kconfig:option:`CONFIG_FW_INFO`.
+  The nRF Desktop application with the B0 bootloader configuration builds two application images: one for the S0 slot and the other for the S1 slot.
+  To generate the DFU package, you need to update this configuration only in the main application image as the ``s1_image`` child image mirrors it.
+  You can do that by rebuilding the application from scratch or by changing the configuration of the main image through menuconfig.
 * :kconfig:option:`CONFIG_BUILD_S1_VARIANT` - Required for the build system to be able to construct the application binaries for both application's slots in flash memory.
 
 Configuring the MCUboot bootloader
