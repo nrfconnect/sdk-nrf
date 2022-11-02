@@ -46,7 +46,7 @@ config LOG_BOARD_VERSION_LEVEL
 
 config LOG_CS47L63_LEVEL
 	int "Log level for CS47L63"
-	default 2
+	default 3
 
 config LOG_CHANNEL_ASSIGNMENT_LEVEL
 	int "Log level for channel assignment"

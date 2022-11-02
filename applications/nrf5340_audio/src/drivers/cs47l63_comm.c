@@ -250,7 +250,7 @@ static uint32_t cs47l63_comm_timer_set(uint32_t duration_ms, bsp_callback_t cb, 
 
 static uint32_t cs47l63_comm_set_supply(uint32_t supply_id, uint8_t supply_state)
 {
-	LOG_INF("Tried to set supply, not supported");
+	LOG_DBG("Tried to set supply, not supported");
 	/* OK is returned in order to make reset function work */
 	return BSP_STATUS_OK;
 }
