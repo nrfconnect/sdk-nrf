@@ -83,6 +83,29 @@ static uint8_t configured_avg = INA231_CONFIG_AVG_1024;
 /* Calculate the total time for measurements and add 10% due to thread being lowest priority */
 static uint8_t measurement_timeout_seconds;
 
+typedef void (*nrf_power_module_handler_t)(uint8_t rail);
+
+/*
+ * Different rails to be measured by the INA231
+ * VBAT		= Battery
+ * VDD1_CODEC	= 1.2V rail for CS47L63
+ * VDD2_CODEC	= 1.8V rail for CS47L63
+ * VDD2_NRF	= NRF5340
+ */
+enum ina_name {
+	VBAT,
+	VDD1_CODEC,
+	VDD2_CODEC,
+	VDD2_NRF,
+};
+
+struct power_module_data {
+	float current;
+	float power;
+	float bus_voltage;
+	float shunt_voltage;
+};
+
 #define RAIL_NAME_MAX_SIZE 20
 
 struct ina231_conf {
@@ -127,6 +150,9 @@ static struct k_thread power_module_data;
 K_THREAD_STACK_DEFINE(power_module_stack, CONFIG_POWER_MODULE_STACK_SIZE);
 
 K_SEM_DEFINE(sem_pwr_module, 0, 1);
+
+static void power_module_data_get(enum ina_name name, struct power_module_data *data);
+static int power_module_measurement_start(enum ina_name name, nrf_power_module_handler_t data_handler);
 
 /**@brief  Print measurements for given rail
  */
@@ -261,29 +287,6 @@ static int gpio_interrupt_init(void)
 	return 0;
 }
 
-/**@brief   Restart active ina231s with latest configuration, called after change in config
- */
-static int power_module_update_measurement_config(void)
-{
-	int ret;
-	uint8_t prev_active_mask = ina231_active_mask;
-
-	/* Reset active mask in case some ina231 doesn't
-	 * start up after config change
-	 */
-	ina231_active_mask = 0;
-
-	for (uint8_t i = 0; i < INA231_COUNT; i++) {
-		if (prev_active_mask & (1 << i)) {
-			ret = power_module_measurement_start(i, NULL);
-			if (ret) {
-				return ret;
-			}
-		}
-	}
-	return 0;
-}
-
 /**@brief   Thread to get data from INA231s
  */
 static void power_module_thread(void *dummy1, void *dummy2, void *dummy3)
@@ -333,7 +336,7 @@ static void power_module_thread(void *dummy1, void *dummy2, void *dummy3)
 	}
 }
 
-void power_module_data_get(enum ina_name name, struct power_module_data *data)
+static void power_module_data_get(enum ina_name name, struct power_module_data *data)
 {
 	memcpy(data, &ina231[name].meas_data, sizeof(struct power_module_data));
 	ina231_data_ready_mask &= ~(1U << name);
@@ -347,7 +350,7 @@ void power_module_data_get(enum ina_name name, struct power_module_data *data)
 	}
 }
 
-int power_module_measurement_start(enum ina_name name, nrf_power_module_handler_t data_handler)
+static int power_module_measurement_start(enum ina_name name, nrf_power_module_handler_t data_handler)
 {
 	int ret;
 
@@ -408,7 +411,7 @@ int power_module_measurement_start(enum ina_name name, nrf_power_module_handler_
 	return 0;
 }
 
-int power_module_measurement_stop(enum ina_name name)
+static int power_module_measurement_stop(enum ina_name name)
 {
 	int ret;
 
