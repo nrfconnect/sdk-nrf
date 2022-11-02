@@ -65,20 +65,31 @@ static int translate_error(int err)
 
 	/* In case of CME error translate to an errno value */
 	switch (nrf_modem_at_err(err)) {
-	case 513:
+	case 513: /* not found */
+		LOG_WRN("Key not found");
 		return -ENOENT;
-	case 514:
-		return -EPERM;
-	case 515:
-		return -ENOMEM;
-	case 518:
+	case 514: /* no access */
+		LOG_WRN("Key access refused");
 		return -EACCES;
+	case 515: /* memory full */
+		LOG_WRN("Key storage memory full");
+		return -ENOMEM;
+	case 518: /* not allowed in active state */
+		LOG_WRN("Not allowed when LTE connection is active");
+		return -EPERM;
+	case 519: /* already exists */
+		LOG_WRN("Key already exists");
+		return -EALREADY;
+	case 528: /* not allowed in power off warning */
+		LOG_WRN("Not allowed when power off warning is active");
+		return -ECANCELED;
 	default:
 		/* Catch unexpected CME errors.
 		 * Return a magic value to make sure this
 		 * situation is clearly distinguishable.
 		 */
-		__ASSERT(false, "Untranslated CME error %d!", nrf_modem_at_err(err));
+		LOG_ERR("Untranslated CME error %d", nrf_modem_at_err(err));
+		__ASSERT(false, "Untranslated CME error %d", nrf_modem_at_err(err));
 		return 0xBAADBAAD;
 	}
 }

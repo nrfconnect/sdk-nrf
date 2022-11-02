@@ -48,15 +48,36 @@ enum modem_key_mgmt_cred_type {
  *
  * @retval 0		On success.
  * @retval -EINVAL	Invalid parameters.
- * @retval -ENOBUFS	Internal buffer is too small.
  * @retval -ENOMEM	Not enough memory to store the credential.
- * @retval -EACCES	Th operation failed because the LTE link is active.
- * @retval -ENOENT	The security tag could not be written.
- * @retval -EPERM	Insufficient permissions.
+ * @retval -ENOENT	The security tag @p sec_tag is invalid.
+ * @retval -EACCES	Access to credential not allowed.
+ * @retval -EALREADY	Credential already exists (and can't be overwritten).
+ * @retval -EPERM	Not permitted when the LTE link is active.
+ * @retval -ECANCELED	Canceled because voltage is low (power off warning).
  */
 int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
 			 enum modem_key_mgmt_cred_type cred_type,
 			 const void *buf, size_t len);
+
+/**
+ * @brief Delete a credential from persistent storage.
+ *
+ * @note If used when the LTE link is active, the function will return
+ *	 an error and the key will not be written.
+ *
+ * @param[in] sec_tag		The security tag of the credential.
+ * @param[in] cred_type		The credential type.
+ *
+ * @retval 0		On success.
+ * @retval -ENOBUFS	Internal buffer is too small.
+ * @retval -ENOENT	No credential associated with the given
+ *			@p sec_tag and @p cred_type.
+ * @retval -EACCES	Access to credential not allowed.
+ * @retval -EPERM	Not permitted when the LTE link is active.
+ * @retval -ECANCELED	Canceled because voltage is low (power off warning).
+ */
+int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
+			  enum modem_key_mgmt_cred_type cred_type);
 
 /**
  * @brief Read a credential from persistent storage.
@@ -69,10 +90,10 @@ int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
  *
  * @retval 0		On success.
  * @retval -ENOBUFS	Internal buffer is too small.
- * @retval -ENOMEM	If provided buffer is too small for result data.
+ * @retval -ENOMEM	Credential does not fit in @p buf.
  * @retval -ENOENT	No credential associated with the given
  *			@p sec_tag and @p cred_type.
- * @retval -EPERM	Insufficient permissions.
+ * @retval -EACCES	Access to credential not allowed.
  */
 int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
 			enum modem_key_mgmt_cred_type cred_type,
@@ -91,30 +112,11 @@ int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
  * @retval -ENOBUFS	Internal buffer is too small.
  * @retval -ENOENT	No credential associated with the given
  *			@p sec_tag and @p cred_type.
- * @retval -EPERM	Insufficient permissions.
+ * @retval -EACCES	Access to credential not allowed.
  */
 int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
 		       enum modem_key_mgmt_cred_type cred_type,
 		       const void *buf, size_t len);
-
-/**
- * @brief Delete a credential from persistent storage.
- *
- * @note If used when the LTE link is active, the function will return
- *	 an error and the key will not be written.
- *
- * @param[in] sec_tag		The security tag of the credential.
- * @param[in] cred_type		The credential type.
- *
- * @retval 0		On success.
- * @retval -ENOBUFS	Internal buffer is too small.
- * @retval -EACCES	The operation failed because the LTE link is active.
- * @retval -ENOENT	No credential associated with the given
- *			@p sec_tag and @p cred_type.
- * @retval -EPERM	Insufficient permissions.
- */
-int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
-			  enum modem_key_mgmt_cred_type cred_type);
 
 /**
  * @brief Check if a credential exists in persistent storage.
@@ -126,7 +128,7 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
  *
  * @retval 0		On success.
  * @retval -ENOBUFS	Internal buffer is too small.
- * @retval -EPERM	Insufficient permissions.
+ * @retval -EACCES	Access to credential not allowed.
  */
 int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgmt_cred_type cred_type,
