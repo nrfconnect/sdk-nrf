@@ -58,6 +58,14 @@ partition=SETTINGS_STORAGE
 partition-size=0x2000
 rsource "Kconfig.template.partition_config"
 rsource "Kconfig.template.partition_region"
+
+config PM_PARTITION_ALIGN_SETTINGS_STORAGE
+	hex "Settings storage partition alignment"
+	default NRF_SPU_FLASH_REGION_SIZE if BUILD_WITH_TFM
+	default FPROTECT_BLOCK_SIZE
+	help
+	  Alignment of the settings storage partition.
+
 endif
 
 if NVS && !SETTINGS_NVS

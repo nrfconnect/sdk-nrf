@@ -34,7 +34,7 @@ static int buzzer_state_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_i
 	}
 
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_APP_BUZZER_VERSION_1_1)) {
-		lwm2m_set_timestamp(IPSO_OBJECT_BUZZER_ID, obj_inst_id);
+		set_ipso_obj_timestamp(IPSO_OBJECT_BUZZER_ID, obj_inst_id);
 	}
 
 	LOG_DBG("Buzzer on/off: %d", state);

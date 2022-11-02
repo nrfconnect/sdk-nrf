@@ -52,7 +52,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: c5340c156e0ce042b21ae716906b2746a7835343
+      revision: 7c71945d42f690bbee663d9380ee604c94c42d6b
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -103,7 +103,7 @@ manifest:
     # changes.
     - name: sdk-hostap
       path: modules/lib/hostap
-      revision: 2e7d29c4868ada9cc4c7bc2c434b3b0c1af08527
+      revision: f665cad9361eab62d3eea077b04e68613c7e93a6
     - name: mcuboot
       repo-path: sdk-mcuboot
       revision: 14e45ce9478b8b95a3d41aac6ba92a12569784c4
@@ -119,7 +119,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 39332d33690e3f5903bcf72874b1882907b52038
+      revision: 39288b5df80e5915c1eee1d9b753a931824b3836
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -154,7 +154,7 @@ manifest:
         - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 43bc8b42eb2c1a8612b6387a42f4cd3505b4bb22
+      revision: f62cb0761f881b12604bae726e9b2afdd60ec3fc
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -178,7 +178,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 488ee63b4c170cb5d1789258a69f27aba19c3720
+      revision: 2592e3433a178e8441eaafbb6efdf6396067f2a4
     - name: ant
       repo-path: sdk-ant
       revision: 36b2ac9fd02988319e9dcebc578d8f9a9f5ff892

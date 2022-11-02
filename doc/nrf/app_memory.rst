@@ -105,6 +105,7 @@ Changing the values of the following options will only affect the RAM footprint:
 * Advertiser configuration:
 
   * :kconfig:option:`BT_MESH_ADV_BUF_COUNT`
+  * :kconfig:option:`BT_MESH_RELAY_BUF_COUNT`
 
 * Extended advertising configuration:
 
@@ -126,7 +127,7 @@ Changing the values of the following options will only affect the RAM footprint:
   * :kconfig:option:`BT_MESH_FRIEND_LPN_COUNT`
   * :kconfig:option:`BT_MESH_FRIEND_SEG_RX`
 
-* If Low Power Node (LPN) feature is enabled, the following configuration option is relevant:
+* If Low Power node (LPN) feature is enabled, the following configuration option is relevant:
 
   * :kconfig:option:`BT_MESH_LPN_GROUPS`
 

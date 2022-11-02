@@ -469,6 +469,8 @@
 
 .. _`Optimizing Power on nRF52 Designs`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/optimizing-power-on-nrf52-designs
 
+.. _`An Introduction to Trusted Firmware-M (TF-M)`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/an-introduction-to-trusted-firmware-m-t-m#mcetoc_1gc9ihpcd0
+
 .. ### Source: www.segger.com
 
 .. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
@@ -756,6 +758,8 @@
 .. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nrfcloud.com/Devices/DeviceAssociations/Provisioning#just-in-time-provisioning
 .. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/Devices/DeviceAssociations/Provisioning/
 .. _`nRF Cloud Security`: https://docs.nrfcloud.com/Devices/DeviceSecurity/Security
+.. _`nRF Cloud FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTA
+.. _`nRF Cloud MQTT FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTA/#mqtt-job-execution-notifications
 .. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTATutorial
 .. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
 .. _`Securely Generating Credentials on the nRF9160`: https://docs.nrfcloud.com/Devices/DeviceSecurity/Credentials
@@ -802,6 +806,8 @@
 .. _`Fast Pair GATT Characteristics`: https://developers.google.com/nearby/fast-pair/specifications/characteristics
 .. _`Fast Pair Procedure`: https://developers.google.com/nearby/fast-pair/specifications/service/gatt
 .. _`Verifying Fast Pair`: https://developers.google.com/nearby/fast-pair/help#verifying_fast_pair
+
+.. _`Protocol Buffers`: https://developers.google.com/protocol-buffers
 
 .. _`Google Chrome browser`: https://www.google.com/chrome
 
@@ -989,3 +995,9 @@
 .. _`GNU Project Debugger`: https://www.sourceware.org/gdb/
 
 .. _`SIGMA`: https://webee.technion.ac.il/~hugo/sigma-pdf.pdf
+
+.. _`nRF Memfault for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.memfault&hl=en&gl=ES
+.. _`nRF Memfault for iOS`: https://apps.apple.com/no/app/nrf-memfault/id1641119282?platform=iphone
+
+.. _`nRF Wi-Fi Provisioner mobile app for iOS`: https://apps.apple.com/us/app/nrf-wi-fi-provisioner/id1638948698
+.. _`nRF Wi-Fi Provisioner mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.wifi.provisioning

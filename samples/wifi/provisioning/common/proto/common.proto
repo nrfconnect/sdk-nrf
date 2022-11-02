@@ -1,0 +1,73 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+syntax = "proto2";
+
+option java_multiple_files = true;
+option java_package = "no.nordicsemi.android.wifi.provisioning";
+
+enum OpCode {
+  RESERVED      = 0;
+  GET_STATUS    = 1;
+  START_SCAN    = 2;
+  STOP_SCAN     = 3;
+  SET_CONFIG    = 4;
+  FORGET_CONFIG = 5;
+}
+
+enum Status {
+  SUCCESS                 = 0;
+  INVALID_ARGUMENT        = 1;
+  INVALID_PROTO           = 2;
+  INTERNAL_ERROR          = 3;
+}
+
+enum ConnectionState {
+  DISCONNECTED            = 0;
+  AUTHENTICATION          = 1;
+  ASSOCIATION             = 2;
+  OBTAINING_IP            = 3;
+  CONNECTED               = 4;
+  CONNECTION_FAILED       = 5;
+}
+
+enum ConnectionFailureReason {
+  AUTH_ERROR              = 0;
+  NETWORK_NOT_FOUND       = 1;
+  TIMEOUT                 = 2;
+  FAIL_IP                 = 3;
+  FAIL_CONN               = 4;
+}
+
+enum Band {
+  BAND_ANY    = 0;
+  BAND_2_4_GH = 1;
+  BAND_5_GH   = 2;
+}
+
+enum AuthMode {
+  OPEN                    = 0;
+  WEP                     = 1;
+  WPA_PSK                 = 2;
+  WPA2_PSK                = 3;
+  WPA_WPA2_PSK            = 4;
+  WPA2_ENTERPRISE         = 5;
+  WPA3_PSK                = 6;
+}
+
+message ScanParams {
+  optional Band band              = 1 [default = BAND_ANY];
+  optional bool passive           = 2 [default = false];
+  optional uint32 period_ms       = 3 [default = 0];
+  optional uint32 group_channels  = 4;
+}
+
+message WifiInfo {
+  required bytes ssid     = 1;
+  required bytes bssid    = 2;
+  optional Band band      = 3;
+  required uint32 channel = 4;
+  optional AuthMode auth  = 5;
+}

@@ -36,7 +36,7 @@ LOG_MODULE_REGISTER(app_ipso_colour_sensor, CONFIG_LWM2M_LOG_LEVEL);
 
 #define UNIT_STR_MAX_SIZE 8
 #define COLOUR_STR_MAX_SIZE 16
-#define APP_TYPE_STR_MAX_SIZE 16
+#define APP_TYPE_STR_MAX_SIZE 25
 
 #define SENSOR_NAME "Colour"
 
@@ -93,12 +93,12 @@ static struct lwm2m_engine_obj_inst *colour_sensor_create(uint16_t obj_inst_id)
 	init_res_instance(res_inst[index], ARRAY_SIZE(res_inst[index]));
 
 	/* initialize instance resource data */
-	INIT_OBJ_RES(COLOUR_RID, res[index], i, res_inst[index], j, 1, false, true, &colour[index],
-		     sizeof(*colour), NULL, NULL, NULL, NULL, NULL);
-	INIT_OBJ_RES_DATA(SENSOR_UNITS_RID, res[index], i, res_inst[index], j, units[index],
-			  UNIT_STR_MAX_SIZE);
-	INIT_OBJ_RES_DATA(APPLICATION_TYPE_RID, res[index], i, res_inst[index], j, app_type[index],
-			  APP_TYPE_STR_MAX_SIZE);
+	INIT_OBJ_RES_DATA_LEN(COLOUR_RID, res[index], i, res_inst[index], j, colour[index],
+			      COLOUR_STR_MAX_SIZE, 0);
+	INIT_OBJ_RES_DATA_LEN(SENSOR_UNITS_RID, res[index], i, res_inst[index], j, units[index],
+			      UNIT_STR_MAX_SIZE, 0);
+	INIT_OBJ_RES_DATA_LEN(APPLICATION_TYPE_RID, res[index], i, res_inst[index], j,
+			      app_type[index], APP_TYPE_STR_MAX_SIZE, 0);
 #ifdef CONFIG_LWM2M_IPSO_APP_COLOUR_SENSOR_VERSION_1_1
 	INIT_OBJ_RES_OPTDATA(TIMESTAMP_RID, res[index], i, res_inst[index], j);
 	INIT_OBJ_RES_OPTDATA(FRACTIONAL_TIMESTAMP_RID, res[index], i, res_inst[index], j);

@@ -29,11 +29,11 @@ To make these commands available, enable the following Kconfig options:
 * :kconfig:option:`CONFIG_BT_MESH_SHELL`
 * :kconfig:option:`CONFIG_BT_MESH_SHELL_BATTERY_CLI`
 
-mdl_battery instance get-all
+mesh models battery instance get-all
 	Print all instances of the Generic Battery Client model on the device.
 
 
-mdl_battery instance set <elem_idx>
+mesh models battery instance set <elem_idx>
 	Select the Generic Battery Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
@@ -41,7 +41,7 @@ mdl_battery instance set <elem_idx>
 	* ``elem_idx`` - Element index where the model instance is found.
 
 
-mdl_battery get
+mesh models battery get
 	Get the battery status of the bound server.
 
 

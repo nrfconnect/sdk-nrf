@@ -44,11 +44,6 @@ Configuration
 
 |config|
 
-FEM support
-===========
-
-.. include:: /includes/sample_fem_support.txt
-
 User interface
 ***************
 

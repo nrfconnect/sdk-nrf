@@ -10,7 +10,7 @@ Matter network overview
 Matter network can be composed of Ethernet, Wi-Fi, and Thread devices.
 Networks are joined together, which means that devices that belong to different network can talk to each other within the local Matter fabric (infrastructure).
 All communication is achieved over IPv6, although the Matter network is capable of running in the absence of IPv6 infrastructure connected to the Internet.
-Bluetooth LE can be used for commissioning of a Matter device to the Matter network.
+Bluetooth® LE can be used for commissioning of a Matter device to the Matter network.
 
 .. _ug_matter_network_topologies_structure:
 
@@ -169,55 +169,3 @@ Message confidentiality
 =======================
 
 After exchanging the keys and establishing secure channel, the commonly available AES modes of operation are used to provide shared key cryptographic operations.
-
-.. _ug_matter_network_topologies_commissioning:
-
-Matter network commissioning
-****************************
-
-The commissioning in Matter is a process of joining a device to a fabric (operational network).
-The process takes place between a commissioner device and a commissionee device.
-
-To start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
-The data payload, which includes the device discriminator and setup passcode, is encoded within a QR code, printed to the UART console, and can be shared using an NFC tag.
-
-The commissioning procedure consists of the following stages:
-
-1. Device discovery -- The commissioner discovers devices that can be commissioned onto the network.
-   If the node is being added to its first Matter fabric, the device discovery uses Bluetooth LE.
-#. Security setup with PASE -- The commissioner runs the Passcode-Authenticated Session Establishment (PASE) protocol, which is exclusive to the commissioning process.
-   This protocol is used to establish the first session between devices that take part in commissioning.
-   The session is established with a passcode provided out-of-band and that is used to derive encryption keys.
-   This passcode is known only to the commissioner and the commissionee.
-#. Establishing fail-safe -- The commissioner requests the commissionee to back up its original configuration.
-#. Preliminary node configuration -- The commissioner configures the commissionee with regulatory information and the current UTC time.
-#. Device Attestation Certificate verification -- The commissioner checks whether the commissionee is a certified Matter device.
-   If this verification fails, the commissioner can either terminate or continue the commissioning procedure.
-   The verification can fail if the device is not able to prove the validity and ownership of mandatory :ref:`ug_matter_device_attestation` elements.
-#. Installing operational credentials -- The commissioner installs Node Operational Certificate (NOC) and Operational ID on the commissionee.
-   The commissionee becomes the new node of the Matter fabric.
-   The node is identified by a tuple consisting of the Root PK, Fabric ID, and Node ID.
-   (While the fabric is identified by a tuple consisting of the Root PK and the Fabric ID.)
-#. Network commissioning -- The commissioner provisions the commissionee node with the operational network credentials, either Wi-Fi or Thread, and requests the commissionee to connect to the network.
-#. Operational discovery -- The commissioner discovers the commissionee node on the operational network using DNS-SD.
-   This way, the commissioner learns the IP address of the node.
-#. Security setup with CASE -- The commissioner and the node use the Certificate-Authenticated Session Establishment (CASE) protocol to establish secure communication.
-   The CASE protocol is in charge of exchanging NOCs to set up a session secured with a new pair of keys.
-   The CASE connection is reset each time a device breaks the connection.
-#. Disarming fail-safe -- The commissioner requests the commissionee node to remove the stored configuration backup.
-#. Message exchange -- The commissioner and the commissionee exchange an AES-encrypted message on the operational network.
-
-These stages can take place in one of the following connection scenarios between the commissioner and the commissionee:
-
-* Concurrent connection commissioning flow -- where it is possible to have two network connections simultaneously: one on the operational network and one on the commissioning channel.
-* Non-concurrent connection commissioning flow -- where the connection to the operational network immediately breaks the connection on the commissioning channel.
-
-This is because the commissioning process can take place over a different network interface (for example Bluetooth LE) than the interface used for connection with the operational network (for example Thread or Wi-Fi).
-
-At the end of the commissioning procedure, the device that has successfully joined the Matter fabric will have the following information configured:
-
-* New instance name, constructed using the fabric ID and the node ID (assigned by the commissioner)
-* New Node Operational Certificate for the Matter fabric it has joined
-* New Private Key for operation certificate
-* New Access Control List
-* Information about operational network

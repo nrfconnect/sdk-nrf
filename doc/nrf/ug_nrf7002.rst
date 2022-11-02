@@ -169,34 +169,36 @@ The nRF5340 network core does not support the Armv8-M Security Extension.
 nRF5340 IDAU can configure bus accesses by the nRF5340 network core to have the secure attribute set.
 This allows to build and run secure-only applications on the nRF5340 SoC.
 
-Building secure/non-secure |NCS| applications with Arm TrustZone
-=================================================================
+Building |NCS| applications with Arm TrustZone
+==============================================
 
-Applications on the nRF5340 can contain both a secure and a non-secure firmware image for the application core.
-You can build the secure image using either |NCS| or `Trusted Firmware M`_ (TF-M).
-You must always build the non-secure firmware images using |NCS|.
+Applications on nRF5340 can use Cortex-M Security Extensions (CMSE) and separate firmware for the application core between Secure Processing Environment (SPE) and Non-Secure Processing Environment (NSPE).
+You can build SPE using either |NCS| or `Trusted Firmware M`_ (TF-M).
+You must always build NSPE using |NCS|.
+
+For information about Cortex-M Security Extensions (CMSE) and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
 
 .. note::
-   By default, the secure image for the nRF5340 application core is built using TF-M.
+   By default, SPE for the nRF5340 application core is built using TF-M.
 
 Building the firmware with TF-M
 -------------------------------
 
-To build the secure firmware image using TF-M and the non-secure firmware image using |NCS|, complete the following steps:
+If you want to use |NCS| to build the firmware image separated in SPE with TF-M and NSPE, complete the following steps:
 
-1. Build the non-secure |NCS| application for the application core using the ``nrf7002dk_nrf5340_cpuapp_ns`` build target.
+1. Build the |NCS| application for the application core using the ``nrf7002dk_nrf5340_cpuapp_ns`` build target.
 
-   To invoke the building of TF-M, the |NCS| build system requires the Kconfig option :kconfig:option:`CONFIG_BUILD_WITH_TFM` to be enabled, which is set by default when building |NCS| as a non-secure application.
+   To invoke the building of TF-M, the |NCS| build system requires the Kconfig option :kconfig:option:`CONFIG_BUILD_WITH_TFM` to be enabled, which is set by default when building |NCS| as an application that supports both NSPE and SPE.
 
    The |NCS| build system performs the following steps automatically:
 
-      a. Build the non-secure firmware image as a regular |NCS| application.
-      #. Build a TF-M (secure) firmware image.
+      a. Build the NSPE firmware image as a regular |NCS| application.
+      #. Build an SPE firmware image (with TF-M).
       #. Merge the output image binaries.
       #. Optionally, build a bootloader image (MCUboot).
 
    .. note::
-      Depending on the TF-M configuration, an application DTS overlay can be required to adjust the non-secure image flash memory partition and SRAM starting address and sizes.
+      Depending on the TF-M configuration, an application DTS overlay can be required to adjust the NSPE image flash memory partition and SRAM starting address and sizes.
 
 #. Build the application firmware for the network core using the ``nrf7002dk_nrf5340_cpunet`` build target.
 
@@ -204,21 +206,20 @@ To build the secure firmware image using TF-M and the non-secure firmware image 
 Building the secure firmware using |NCS|
 ----------------------------------------
 
-To build the secure and the non-secure firmware images using |NCS|, complete the following steps:
+If you want to use |NCS| to build the firmware images with CMSE enabled, but without TF-M, complete the following steps:
 
-1. Build the secure |NCS| application for the application core using the ``nrf7002dk_nrf5340_cpuapp`` build target.
+1. Build the |NCS| application binary for SPE for the application core using the ``nrf7002dk_nrf5340_cpuapp`` build target.
 
    Also set :kconfig:option:`CONFIG_TRUSTED_EXECUTION_SECURE` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n`` in the application project configuration file.
-#. Build the non-secure |NCS| application for the application core using the ``nrf7002dk_nrf5340_cpuapp_ns`` build target.
+#. Build the |NCS| application binary for NSPE for the application core using the ``nrf7002dk_nrf5340_cpuapp_ns`` build target.
 #. Merge the two binaries.
 #. Build the application firmware for the network core using the ``nrf7002dk_nrf5340_cpunet`` build target.
 
+When building application with SPE and NSPE for the nRF5340 application core, the SPE image must set the IDAU (SPU) configuration to allow non-secure access to all CPU resources used by the application firmware in NSPE.
+SPU configuration must be applied before jumping to the application in NSPE.
 
-When building a secure and non-secure application for the nRF5340 application core, the secure application must set the IDAU (SPU) configuration to allow non-secure access to all CPU resources used by the non-secure application firmware.
-SPU configuration must be applied before jumping to the non-secure application.
-
-Building a secure-only application
-==================================
+Building application without CMSE
+=================================
 
 Build the |NCS| application as described in :ref:`gs_programming`, using the ``nrf7002dk_nrf5340_cpuapp`` build target for the firmware running on the nRF5340 application core and the ``nrf7002dk_nrf5340_cpunet`` build target for the firmware running on the nRF5340 network core.
 

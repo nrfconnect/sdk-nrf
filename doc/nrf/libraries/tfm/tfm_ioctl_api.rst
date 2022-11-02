@@ -9,9 +9,10 @@ TF-M input/output control (IOCTL)
 
 The TF-M IOTCL library provides an API for platform-specific TF-M services.
 These services are added by the ``platform`` partition.
-The APIs are available for non-secure applications.
+The APIs are available for applications that implement Non-Secure Processing Environment (NSPE) alongside Secure Processing Environment (SPE).
 
 For more information on implementing TF-M in your application, see :ref:`ug_tfm`.
+For more information about NSPE and SPE, see :ref:`app_boards_spe_nspe`.
 
 Functionality
 *************

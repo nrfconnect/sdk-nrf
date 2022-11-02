@@ -282,7 +282,19 @@ void test_mqtt_helper_connect_when_disconnected(void)
 	};
 
 	__wrap_mqtt_client_init_Expect(&mqtt_client);
-	__wrap_getaddrinfo_ExpectAnyArgsAndReturn(0);
+
+	/* Make getddrinfo return a pointer that points to NULL. Otherwise the unit under test
+	 * would be dereferencing uninitialized memory location. The behavior of the unit
+	 * under test for when non-NULL values are returned is out of scope of this test.
+	 */
+	struct zsock_addrinfo *test_res = NULL;
+
+	__wrap_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
+	__wrap_getaddrinfo_IgnoreArg_host();
+	__wrap_getaddrinfo_IgnoreArg_hints();
+	__wrap_getaddrinfo_IgnoreArg_res();
+	__wrap_getaddrinfo_ReturnThruPtr_res(&test_res);
+
 	__wrap_freeaddrinfo_ExpectAnyArgs();
 	__wrap_mqtt_connect_ExpectAndReturn(&mqtt_client, 0);
 

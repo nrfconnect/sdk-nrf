@@ -154,6 +154,7 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 
 	if (data_size > ARRAY_SIZE(iso_received->data)) {
 		ERR_CHK_MSG(-ENOMEM, "Data size too large for buffer");
+		return;
 	}
 
 	memcpy(iso_received->data, p_data, data_size);

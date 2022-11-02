@@ -88,7 +88,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 			if (event->state) {
 				if (IS_ENABLED(CONFIG_LWM2M_IPSO_PUSH_BUTTON_VERSION_1_1)) {
-					lwm2m_set_timestamp(IPSO_OBJECT_PUSH_BUTTON_ID,
+					set_ipso_obj_timestamp(IPSO_OBJECT_PUSH_BUTTON_ID,
 							    BUTTON1_OBJ_INST_ID);
 				}
 			}
@@ -102,7 +102,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 			if (event->state) {
 				if (IS_ENABLED(CONFIG_LWM2M_IPSO_PUSH_BUTTON_VERSION_1_1)) {
-					lwm2m_set_timestamp(IPSO_OBJECT_PUSH_BUTTON_ID,
+					set_ipso_obj_timestamp(IPSO_OBJECT_PUSH_BUTTON_ID,
 							    BUTTON2_OBJ_INST_ID);
 				}
 			}

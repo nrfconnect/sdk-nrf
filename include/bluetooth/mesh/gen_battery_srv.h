@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in
+ * doc/nrf/libraries/bluetooth_services/mesh/gen_battery_srv.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/bluetooth_services/mesh/gen_battery_srv.html.
+ */
+
 /**
  * @file
  * @defgroup bt_mesh_battery_srv Generic Battery Server model

@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in
+ * doc/nrf/libraries/bluetooth_services/mesh/light_ctrl_reg_spec.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/bluetooth_services/mesh/light_ctrl_reg_spec.html.
+ */
+
 /** @file
  *  @defgroup bt_mesh_light_ctrl_reg_spec Specification-defined illuminance regulator
  *  @ingroup bt_mesh_light_ctrl

@@ -89,8 +89,8 @@ config MPSL_CX_BT_1WIRE
 
 endchoice # MPSL_CX_CHOICE
 
-endif	# MPSL_CX
-
 module=MPSL_CX
 module-str=MPSL_CX
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif	# MPSL_CX

@@ -10,16 +10,7 @@
 
 #include "lwm2m_app_utils.h"
 
-#define NOTIFICATION_REQUEST_DELAY_MS 1500
-
-bool is_regular_read_cb(int64_t read_timestamp)
-{
-	int64_t dt = k_uptime_get() - read_timestamp;
-
-	return dt > NOTIFICATION_REQUEST_DELAY_MS;
-}
-
-void lwm2m_set_timestamp(int ipso_obj_id, unsigned int obj_inst_id)
+void set_ipso_obj_timestamp(int ipso_obj_id, unsigned int obj_inst_id)
 {
 	int32_t timestamp;
 	char path[MAX_LWM2M_PATH_LEN];

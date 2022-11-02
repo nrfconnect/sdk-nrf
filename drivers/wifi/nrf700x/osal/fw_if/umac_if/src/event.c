@@ -343,8 +343,8 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 					      umac_hdr->cmd_evnt);
 		break;
 	case NRF_WIFI_UMAC_EVENT_FRAME_TX_STATUS:
-		if (callbk_fns->tx_status_callbk_fn)
-			callbk_fns->tx_status_callbk_fn(vif_ctx->os_vif_ctx,
+		if (callbk_fns->mgmt_tx_status)
+			callbk_fns->mgmt_tx_status(vif_ctx->os_vif_ctx,
 							event_data,
 							event_len);
 		else

@@ -18,6 +18,7 @@
 #if defined(CONFIG_NRF_MODEM)
 #include <nrf_modem_gnss.h>
 #endif
+#include <net/nrf_cloud_os.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -523,6 +524,10 @@ struct nrf_cloud_init_param {
 	 * Only used if CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE is enabled.
 	 */
 	struct dfu_target_fmfu_fdev *fmfu_dev_inf;
+	/** Optional hooks to override memory management functions.
+	 *  If set, @ref nrf_cloud_os_mem_hooks_init will be called by @ref nrf_cloud_init.
+	 */
+	struct nrf_cloud_os_mem_hooks *hooks;
 };
 
 /**

@@ -446,21 +446,6 @@ CONFIG_SENSOR_MODULE - Configuration for periodic sensor reading
 CONFIG_SENSOR_MODULE_TEMP - Configuration to enable Temperature sensor
    This configuration option enables the Temperature sensor in the Sensor Module.
 
-.. _CONFIG_SENSOR_MODULE_TEMP_PERIOD:
-
-CONFIG_SENSOR_MODULE_TEMP_PERIOD - Configuration for interval between sensor readings
-   This configuration option sets the time interval (in seconds) between sensor readings from the Temperature sensor.
-
-.. _CONFIG_SENSOR_MODULE_TEMP_DELTA_INT:
-
-CONFIG_SENSOR_MODULE_TEMP_DELTA_INT - Configuration for setting required change
-   This configuration option sets the required change (integer part) in sensor value before the corresponding resource value is updated.
-
-.. _CONFIG_SENSOR_MODULE_TEMP_DELTA_DEC:
-
-CONFIG_SENSOR_MODULE_TEMP_DELTA_DEC - Configuration for setting required change
-   This configuration option sets the required change (decimal part) in sensor value before the corresponding resource value is updated.
-
 .. note::
 
    You can use the configuration options for different sensor types by modifying the configuration options accordingly.

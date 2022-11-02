@@ -11,7 +11,7 @@ The bootloader storage library is used by the :ref:`bootloader` to read from and
 The library can also be included into the application to allow reading the provisioned data.
 
 The provisioned data is stored in the one-time programmable (OTP) region of UICR, if available (for example, on nRF9160 and the nRF5340 application core).
-In this case, it can only be read from applications that are in the secure domain.
+In this case, it can only be read from applications that have :ref:`Cortex-M Security Extensions <app_boards_spe_nspe>` and use Secure Processing Environment (SPE).
 If OTP is not available, the data is stored in a regular flash page, and the bootloader blocks write access to it before booting the next image.
 In this case, some functions do not work when they are called from the application.
 

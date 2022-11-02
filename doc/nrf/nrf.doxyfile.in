@@ -1992,7 +1992,19 @@ PREDEFINED             = "CONFIG_SYS_CLOCK_EXISTS=y" \
                          "CONFIG_ZIGBEE_DEBUG_FUNCTIONS=y" \
                          "CONFIG_ZBOSS_ERROR_PRINT_TO_LOG=y" \
                          "CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG=y" \
-                         "MODULE="
+                         "CONFIG_BT_MESH_LIGHT_CTRL_SRV=y" \
+                         "MODULE=" \
+                         "RADIO_MODE_MODE_Nrf_250Kbit=y" \
+                         "CONFIG_SOC_SERIES_NRF52X=y" \
+                         "CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL=y" \
+                         "CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL=y" \
+                         "CONFIG_NRF_MODEM_LIB_MEM_DIAG=y" \
+                         "CONFIG_NRF_CLOUD_MQTT=y" \
+                         "CONFIG_MODEM_INFO=y" \
+                         "CONFIG_NRF_MODEM=y" \
+                         "CONFIG_ZIGBEE_ROLE_END_DEVICE=y" \
+                         "CONFIG_ZIGBEE_FACTORY_RESET=y" \
+                         "CONFIG_NRF_CLOUD_GATEWAY=y"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

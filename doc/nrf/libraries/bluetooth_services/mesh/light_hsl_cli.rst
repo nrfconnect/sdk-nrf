@@ -31,11 +31,11 @@ To make these commands available, enable the following Kconfig options:
 * :kconfig:option:`CONFIG_BT_MESH_SHELL`
 * :kconfig:option:`CONFIG_BT_MESH_SHELL_LIGHT_HSL_CLI`
 
-mdl_hsl instance get-all
+mesh models hsl instance get-all
 	Print all instances of the Light HSL Client model on the device.
 
 
-mdl_hsl instance set <elem_idx>
+mesh models hsl instance set <elem_idx>
 	Select the Light HSL Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
@@ -43,11 +43,11 @@ mdl_hsl instance set <elem_idx>
 	* ``elem_idx`` - Element index where the model instance is found.
 
 
-mdl_hsl get
+mesh models hsl get
 	Get the Light HSL state value of the bound server.
 
 
-mdl_hsl set <light> <hue> <saturation> [transition_time_ms [delay_ms]]
+mesh models hsl set <light> <hue> <saturation> [transition_time_ms [delay_ms]]
 	Set the Light HSL state value and wait for a response.
 
 	* ``light`` - Lightness level to set.
@@ -57,7 +57,7 @@ mdl_hsl set <light> <hue> <saturation> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_hsl set-unack <light> <hue> <saturation> [transition_time_ms [delay_ms]]
+mesh models hsl set-unack <light> <hue> <saturation> [transition_time_ms [delay_ms]]
 	Set the Light HSL state value without requesting for a response.
 
 	* ``light`` - Lightness level to set.
@@ -67,15 +67,15 @@ mdl_hsl set-unack <light> <hue> <saturation> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_hsl target-get
+mesh models hsl target-get
 	Get the Light HSL target state value of the bound server.
 
 
-mdl_hsl default-get
+mesh models hsl default-get
 	Get the default HSL value of the bound server.
 
 
-mdl_hsl default-set <light> <hue> <saturation>
+mesh models hsl default-set <light> <hue> <saturation>
 	Set the default HSL value of the server and wait for a response.
 
 	* ``light`` - Default lightness level to set.
@@ -83,7 +83,7 @@ mdl_hsl default-set <light> <hue> <saturation>
 	* ``saturation`` - Default saturation level to set.
 
 
-mdl_hsl default-set-unack <light> <hue> <saturation>
+mesh models hsl default-set-unack <light> <hue> <saturation>
 	Set the Default Light state value of the server without requesting a response.
 
 	* ``light`` - Default lightness level to set.
@@ -91,11 +91,11 @@ mdl_hsl default-set-unack <light> <hue> <saturation>
 	* ``saturation`` - Default saturation level to set.
 
 
-mdl_hsl range-get
+mesh models hsl range-get
 	Get the Light HSL Range state value of the bound server.
 
 
-mdl_hsl range-set <hue_min> <hue_max> <sat_min> <sat_max>
+mesh models hsl range-set <hue_min> <hue_max> <sat_min> <sat_max>
 	Set the Light HSL Range state value and wait for a response.
 
 	* ``hue_min`` - Minimum allowed hue value.
@@ -104,7 +104,7 @@ mdl_hsl range-set <hue_min> <hue_max> <sat_min> <sat_max>
 	* ``sat_max`` - Maximum allowed saturation value.
 
 
-mdl_hsl range-set-unack <hue_min> <hue_max> <sat_min> <sat_max>
+mesh models hsl range-set-unack <hue_min> <hue_max> <sat_min> <sat_max>
 	Set the Light HSL Range state value without requesting a response.
 
 	* ``hue_min`` - Minimum allowed hue value.
@@ -113,11 +113,11 @@ mdl_hsl range-set-unack <hue_min> <hue_max> <sat_min> <sat_max>
 	* ``sat_max`` - Maximum allowed saturation value.
 
 
-mdl_hsl hue-get
+mesh models hsl hue-get
 	Get the Light Hue state value of the bound server.
 
 
-mdl_hsl hue-set <lvl> [transition_time_ms [delay_ms]]
+mesh models hsl hue-set <lvl> [transition_time_ms [delay_ms]]
 	Set the Light Hue state value and wait for a response.
 
 	* ``lvl`` - Hue level to set.
@@ -125,7 +125,7 @@ mdl_hsl hue-set <lvl> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_hsl hue-set-unack <lvl> [transition_time_ms [delay_ms]]
+mesh models hsl hue-set-unack <lvl> [transition_time_ms [delay_ms]]
 	Set the Light Hue state value without requesting a response.
 
 	* ``lvl`` - Hue level to set.
@@ -133,11 +133,11 @@ mdl_hsl hue-set-unack <lvl> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_hsl saturation-get
+mesh models hsl saturation-get
 	Get the Light Saturation state value of the bound server.
 
 
-mdl_hsl saturation-set <lvl> [transition_time_ms [delay_ms]]
+mesh models hsl saturation-set <lvl> [transition_time_ms [delay_ms]]
 	Set the Light Saturation state value and wait for a response.
 
 	* ``lvl`` - Saturation level to set.
@@ -145,7 +145,7 @@ mdl_hsl saturation-set <lvl> [transition_time_ms [delay_ms]]
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
 
-mdl_hsl saturation-set-unack <lvl> [transition_time_ms [delay_ms]]
+mesh models hsl saturation-set-unack <lvl> [transition_time_ms [delay_ms]]
 	Set the Light Saturation state value without requesting a response.
 
 	* ``lvl`` - Saturation level to set.

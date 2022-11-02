@@ -174,15 +174,14 @@ Complete the following steps to provision the certificate:
 Build targets
 *************
 
-In Zephyr, :ref:`zephyr:nrf9160dk_nrf9160` is divided into two different build targets:
-
-* ``nrf9160dk_nrf9160`` for firmware in the secure domain
-* ``nrf9160dk_nrf9160_ns`` for firmware in the non-secure domain
-
-.. note::
-   In |NCS| releases before v1.6.1, the build target ``nrf9160dk_nrf9160_ns`` was named ``nrf9160dk_nrf9160ns``.
-
 Make sure to select a suitable build target when building your application.
+
+In Zephyr, the firmware for the application core of :ref:`zephyr:nrf9160dk_nrf9160` is divided into two different build targets:
+
+* ``nrf9160dk_nrf9160`` for build targets that have Cortex-M Security Extensions (CMSE) disabled.
+* ``nrf9160dk_nrf9160_ns`` for build targets that have CMSE enabled and have the Secure Processing Environment (SPE) firmware alongside the Non-Secure Processing Environment (NSPE) firmware.
+
+For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
 
 .. _build_pgm_nrf9160:
 

@@ -61,6 +61,7 @@ Matter
 * Added:
 
   * Documentation page about :ref:`ug_matter_overview_multi_fabrics` and entry about binding to :ref:`ug_matter_network_topologies_concepts`.
+  * Documentation page about :ref:`ug_matter_overview_commissioning`, which is based on an earlier subsection of :ref:`ug_matter_overview_network_topologies`.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
@@ -191,6 +192,12 @@ Bluetooth samples
   * After the device reaches the maximum number of paired devices (:kconfig:option:`CONFIG_BT_MAX_PAIRED`), the device stops looking for new peers.
     Therefore, the Fast Pair payload is no longer included in the advertising data.
 
+* :ref:`peripheral_mds` sample:
+
+  * Changed:
+
+    * Added a documentation section about testing with the `nRF Memfault for Android`_ and the `nRF Memfault for iOS`_ mobile applications to the documentation.
+
 Bluetooth mesh samples
 ----------------------
 
@@ -227,6 +234,9 @@ nRF9160 samples
   * Updated:
 
     * The sample now uses the new LwM2M location assistance objects through the :ref:`lib_lwm2m_location_assistance` library.
+    * Removed all read callbacks from sensor code because of an issue of read callbacks not working properly when used with LwM2M observations.
+      This is due to the fact that the engine does not know when data is changed.
+    * Sensor samples are now enabled by default for Thingy:91 and disabled by default on nRF9160 DK.
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
@@ -294,11 +304,15 @@ Wi-Fi samples
   * :ref:`wifi_radio_test` sample with the radio test support and :ref:`subcommands for FICR/OTP programming <wifi_ficr_prog>`.
   * :ref:`wifi_scan_sample` sample that demonstrates how to scan for the access points.
   * :ref:`wifi_station_sample` sample that demonstrates how to connect the Wi-Fi station to a specified access point.
+  * :ref:`wifi_provisioning` sample that demonstrates how to provision a device with Nordic Semiconductor's Wi-Fi chipsets over Bluetooth® Low Energy.
 
 Other samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`esb_prx_ptx` sample:
+
+  * Removed the FEM support section.
+* Added :ref:`hw_id_sample` sample.
 
 Drivers
 =======
@@ -340,6 +354,9 @@ Bluetooth libraries and services
     The information about whether the advertising device is looking for a new peer is more meaningful for the Bluetooth LE data providers.
 
 * :ref:`bt_mesh` library:
+
+  * Bluetooth mesh client models updated to reflect the changed mesh shell module structure.
+    All Bluetooth mesh model commands are now located under **mesh models** in the shell menu.
 
   * :ref:`bt_mesh_dk_prov` module: Changed the UUID generation to prevent trailing zeros in the UUID.
 
@@ -416,6 +433,10 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud` library:
 
+  * Added:
+
+    * Added a possibility to override used default OS memory alloc/free functions.
+
   * Updated:
 
     * The stack size of the MQTT connection monitoring thread can now be adjusted by setting the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE` Kconfig option.
@@ -446,6 +467,7 @@ Other libraries
 
 * Added:
   * :ref:`lib_sfloat` library.
+  * :ref:`lib_hw_id` library to retrieve a unique hardware ID.
 
 Common Application Framework (CAF)
 ----------------------------------
@@ -480,6 +502,12 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 * :ref:`west_sbom`:
 
   * SPDX License List database updated to version 3.18.
+
+* :ref:`partition_manager`:
+
+  * Added:
+
+    * :kconfig:option:`CONFIG_PM_PARTITION_ALIGN_SETTINGS_STORAGE` Kconfig option to specify the alignment of the settings storage partition.
 
 MCUboot
 =======

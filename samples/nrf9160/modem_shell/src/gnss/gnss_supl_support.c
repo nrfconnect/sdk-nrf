@@ -154,7 +154,11 @@ ssize_t supl_read(void *buf, size_t nbytes, void *user_data)
 	ssize_t rc = recv(supl_fd, buf, nbytes, 0);
 
 	if (rc < 0 && (errno == EAGAIN)) {
-		return 0;
+		/* Return 0 to indicate a timeout. */
+		rc = 0;
+	} else if (rc == 0) {
+		/* Peer closed the socket, return an error. */
+		rc = -1;
 	}
 
 	return rc;

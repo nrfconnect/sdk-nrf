@@ -34,6 +34,7 @@ TF-M enables hardware supported separation of a Secure Processing Environment (S
 Enable TF-M in a project by enabling the :kconfig:option:`CONFIG_BUILD_WITH_TFM` option.
 
 For more information about the TF-M, see the `TF-M documentation`_ and :ref:`ug_tfm`.
+For more information about SPE and NSPE in the |NCS|, see :ref:`app_boards_spe_nspe`.
 
 Hardware unique key
 *******************

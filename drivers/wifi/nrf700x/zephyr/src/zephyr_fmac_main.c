@@ -284,6 +284,15 @@ enum wifi_nrf_status wifi_nrf_fmac_def_vif_state_chg(struct wifi_nrf_vif_ctx_zep
 		LOG_ERR("%s: wifi_nrf_fmac_chg_vif_state failed\n", __func__);
 		goto out;
 	}
+
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
+	status = wifi_nrf_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
+					vif_ctx_zep->vif_idx, NRF_WIFI_PS_ENABLED);
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		LOG_ERR("%s: wifi_nrf_fmac_set_power_save failed\n", __func__);
+		goto out;
+	}
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 out:
 	return status;
 }
@@ -422,6 +431,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	callbk_fns.disassoc_callbk_fn = wifi_nrf_wpa_supp_event_proc_disassoc;
 	callbk_fns.get_station_callbk_fn = wifi_nrf_wpa_supp_event_proc_get_sta;
 	callbk_fns.get_interface_callbk_fn = wifi_nrf_wpa_supp_event_proc_get_if;
+	callbk_fns.mgmt_tx_status = wifi_nrf_wpa_supp_event_mgmt_tx_status;
 #endif /* CONFIG_WPA_SUPP */
 
 	rpu_drv_priv_zep.fmac_priv = wifi_nrf_fmac_init(&data_config,
@@ -509,6 +519,7 @@ static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 	.set_supp_port = wifi_nrf_wpa_set_supp_port,
 	.set_key = wifi_nrf_wpa_supp_set_key,
 	.signal_poll = wifi_nrf_wpa_supp_signal_poll,
+	.send_mlme = wifi_nrf_nl80211_send_mlme,
 };
 #endif /* CONFIG_WPA_SUPP */
 #endif /* !CONFIG_NRF700X_RADIO_TEST */

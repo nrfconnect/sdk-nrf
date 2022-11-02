@@ -211,8 +211,6 @@ config MPSL_FEM_BUILTIN_POWER_MODEL_UPDATE_PERIOD
 
 endif   # MPSL_FEM_POWER_MODEL
 
-endif	# MPSL_FEM || MPSL_FEM_PIN_FORWARDER
-
 config MPSL_FEM_DEVICE_CONFIG_254
 	bool "Apply device configuration 254"
 	default MPSL_FEM
@@ -226,3 +224,5 @@ config MPSL_FEM_DEVICE_CONFIG_254
 module=MPSL_FEM
 module-str=MPSL_FEM
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif	# MPSL_FEM || MPSL_FEM_PIN_FORWARDER

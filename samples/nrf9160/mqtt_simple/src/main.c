@@ -12,6 +12,7 @@
 #include <zephyr/net/mqtt.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/shell/shell.h>
+#include <hw_id.h>
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <nrf_modem_at.h>
 #endif /* CONFIG_NRF_MODEM_LIB */
@@ -367,14 +368,8 @@ static int broker_init(void)
 	return err;
 }
 
-#if defined(CONFIG_NRF_MODEM_LIB)
-#define IMEI_LEN 15
-#define CGSN_RESPONSE_LENGTH (IMEI_LEN + 6 + 1) /* Add 6 for \r\nOK\r\n and 1 for \0 */
-#define CLIENT_ID_LEN sizeof("nrf-") + IMEI_LEN
-#else
 #define RANDOM_LEN 10
 #define CLIENT_ID_LEN sizeof(CONFIG_BOARD) + 1 + RANDOM_LEN
-#endif /* defined(CONFIG_NRF_MODEM_LIB) */
 
 /* Function to get the client id */
 static const uint8_t* client_id_get(void)
@@ -388,23 +383,20 @@ static const uint8_t* client_id_get(void)
 		goto exit;
 	}
 
-#if defined(CONFIG_NRF_MODEM_LIB)
-	char imei_buf[CGSN_RESPONSE_LENGTH + 1];
-	int err;
+	char hw_id_buf[HW_ID_LEN] = {0};
 
-	err = nrf_modem_at_cmd(imei_buf, sizeof(imei_buf), "AT+CGSN");
-	if (err) {
-		LOG_ERR("Failed to obtain IMEI, error: %d", err);
+	int err = hw_id_get(hw_id_buf, ARRAY_SIZE(hw_id_buf));
+
+	if (!err) {
+		snprintf(client_id, sizeof(client_id), "nrf-%s",
+			 hw_id_buf);
 		goto exit;
 	}
 
-	imei_buf[IMEI_LEN] = '\0';
+	LOG_ERR("failed to retrieve HW ID, err: %d", err);
 
-	snprintf(client_id, sizeof(client_id), "nrf-%.*s", IMEI_LEN, imei_buf);
-#else
 	uint32_t id = sys_rand32_get();
 	snprintf(client_id, sizeof(client_id), "%s-%010u", CONFIG_BOARD, id);
-#endif /* !defined(NRF_CLOUD_CLIENT_ID) */
 
 exit:
 	LOG_DBG("client_id = %s", (char *)client_id);

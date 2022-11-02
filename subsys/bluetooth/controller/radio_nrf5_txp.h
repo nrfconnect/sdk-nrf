@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#if defined(CONFIG_BT_CTLR_TX_PWR_0)
+#if defined(CONFIG_BT_CTLR_TX_PWR_0) && CONFIG_BT_CTLR_TX_PWR_ANTENNA == 0
 #define RADIO_TXP_DEFAULT  0
 #elif defined(CONFIG_BT_CTLR_TX_PWR_PLUS_8)
 #define RADIO_TXP_DEFAULT  8
@@ -35,5 +35,5 @@
 #elif defined(CONFIG_BT_CTLR_TX_PWR_MINUS_40)
 #define RADIO_TXP_DEFAULT -40
 #else
-#error Unknown output power
+#define RADIO_TXP_DEFAULT CONFIG_BT_CTLR_TX_PWR_ANTENNA
 #endif

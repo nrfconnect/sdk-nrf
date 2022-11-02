@@ -12,31 +12,31 @@ extern "C" {
 #endif
 
 #include <zephyr/kernel.h>
+#include <net/nrf_cloud_os.h>
 
-/**@brief Method to allocate zero-initialized memory of size COUNT*SIZE, for
+/**@brief Allocate zero-initialized memory of size count*size for
  * internal use in the module.
  *
- * @param[in] COUNT Count of memory blocks requested.
- * @param[in] SIZE Size of memory block.
+ * @param[in] count Count of memory blocks requested.
+ * @param[in] size Size of memory block.
  *
  * @retval A valid pointer on SUCCESS, else, NULL.
  */
-#define nrf_cloud_calloc(COUNT, SIZE) k_calloc(COUNT, SIZE)
+void *nrf_cloud_calloc(size_t count, size_t size);
 
-/**@brief Method to allocate memory for internal use in the module.
+/**@brief Allocate memory for internal use in the module.
  *
- * @param[in] SIZE Size of memory requested.
+ * @param[in] size Size of memory requested.
  *
  * @retval A valid pointer on SUCCESS, else, NULL.
  */
-#define nrf_cloud_malloc(SIZE) k_malloc(SIZE)
+void *nrf_cloud_malloc(size_t size);
 
-/**@brief Method to free any allocated memory for internal use in the module.
+/**@brief Free any allocated memory for internal use in the module.
  *
- * @param[in] MEMORY Memory to be freed.
+ * @param[in] memory Memory to be freed.
  */
-#define nrf_cloud_free(MEMORY) k_free(MEMORY)
-
+void nrf_cloud_free(void *memory);
 
 #ifdef __cplusplus
 }
