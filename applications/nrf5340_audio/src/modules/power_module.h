@@ -7,10 +7,7 @@
 #ifndef _POWER_MODULE_H_
 #define _POWER_MODULE_H_
 
-#include <zephyr/kernel.h>
-#include <stdlib.h>
-
-#include "ina231.h"
+#include <stdint.h>
 
 typedef void (*nrf_power_module_handler_t)(uint8_t rail);
 
