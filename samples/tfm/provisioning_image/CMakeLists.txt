@@ -14,3 +14,5 @@ project(provisioning_image)
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
 # NORDIC SDK APP END
+
+target_include_directories(app PRIVATE src)

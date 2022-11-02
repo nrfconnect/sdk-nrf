@@ -13,7 +13,15 @@
 #include <psa/crypto.h>
 #include <bl_storage.h>
 
+#include <config_implementation_id.h>
+
 LOG_MODULE_REGISTER(provisioning_image, LOG_LEVEL_DBG);
+
+void provision_implementation_id(void)
+{
+	uint32_t num_words_to_write = 32 / 4;
+	nrfx_nvmc_words_write((uint32_t)&BL_STORAGE->implementation_id, &implementation_id_in_flash, num_words_to_write);
+}
 
 void main(void)
 {
@@ -73,6 +81,8 @@ void main(void)
 		LOG_INF("Failure: Identity key is not written! Exiting!");
 		return;
 	}
+
+	provision_implementation_id();
 
 	LOG_INF("Success!");
 }
