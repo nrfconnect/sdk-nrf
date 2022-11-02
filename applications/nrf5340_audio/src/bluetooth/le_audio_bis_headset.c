@@ -19,16 +19,18 @@
 #include "channel_assignment.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bis_headset, CONFIG_LOG_BLE_LEVEL);
+LOG_MODULE_REGISTER(bis_headset, 4);
 
 BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT <= 2,
 	     "A maximum of two broadcast streams are currently supported");
 
 static struct bt_audio_broadcast_sink *broadcast_sink;
 
-/* Headset supports only a single stream of audio */
-static struct bt_audio_stream audio_stream;
-static struct bt_audio_stream *audio_stream_p = &audio_stream;
+static struct bt_audio_stream audio_streams[CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT];
+static struct bt_audio_stream *audio_streams_p[ARRAY_SIZE(audio_streams)];
+static struct bt_audio_stream *active_audio_stream_p;
+static unsigned int sync_stream_cnt = 0;
+static unsigned int active_stream_index = CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT;
 
 /* We need to set a location as a pre-compile, this changed in initialize */
 static struct bt_codec codec =
@@ -103,7 +105,7 @@ static void stream_started_cb(struct bt_audio_stream *stream)
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
 	ERR_CHK(ret);
 
-	LOG_INF("Stream started");
+	LOG_INF("Stream %d started", active_stream_index);
 }
 
 static void stream_stopped_cb(struct bt_audio_stream *stream)
@@ -208,19 +210,17 @@ static void pa_sync_lost_cb(struct bt_audio_broadcast_sink *sink)
 static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_audio_base *base)
 {
 	int ret;
+	/* First CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT channels */
 	uint32_t base_bis_index_bitfield = 0U;
-	enum audio_channel channel;
-	uint8_t channel_bit;
+	bool finished_search = false;
 
 	if (init_routine_completed) {
 		return;
 	}
 
-	channel_assignment_get(&channel);
-
-	channel_bit = BIT(channel);
-
 	LOG_DBG("Received BASE with %d subgroup(s) from broadcast sink", base->subgroup_count);
+
+	sync_stream_cnt = 0;
 
 	/* Search each subgroup for the BIS of interest */
 	for (int i = 0; i < base->subgroup_count; i++) {
@@ -229,38 +229,59 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 
 			LOG_DBG("BIS %d   index = %d", j, index);
 
-			/* If this is a BIS of interest then attach to and start a stream */
-			if (index == channel_bit) {
-				if (bitrate_check((struct bt_codec *)&base->subgroups[i].codec)) {
-					base_bis_index_bitfield |= BIT(index);
+			if (bitrate_check((struct bt_codec *)&base->subgroups[i].codec)) {
+				base_bis_index_bitfield |= index;
 
-					audio_stream.codec =
-						(struct bt_codec *)&base->subgroups[i].codec;
-					print_codec(audio_stream.codec);
+				audio_streams[sync_stream_cnt].codec =
+					(struct bt_codec *)&base->subgroups[i].codec;
+				print_codec(audio_streams[sync_stream_cnt].codec);
 
-					LOG_DBG("Channel %s in subgroup %d from broadcast sink",
-						((channel == AUDIO_CH_L) ? CH_L_TAG : CH_R_TAG), i);
+				LOG_DBG("Stream %d in subgroup %d from broadcast sink",
+					sync_stream_cnt, i);
+
+				if ((sync_stream_cnt + 1) >=
+				    CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT) {
+					finished_search = true;
+					break;
+				} else {
+					sync_stream_cnt += 1;
 				}
 			}
 		}
+		if (finished_search == true)
+			break;
 	}
+
+	LOG_DBG("Bit field %x", base_bis_index_bitfield);
 
 	if (base_bis_index_bitfield) {
 		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_CONFIG_RECEIVED);
 		ERR_CHK(ret);
+
 		bis_index_bitfield = base_bis_index_bitfield & bis_index_mask;
 
 		LOG_DBG("Waiting for syncable");
 	} else {
 		LOG_WRN("Found no suitable stream");
 	}
+
+	channel_assignment_get((enum audio_channel *)&active_stream_index);
+	LOG_DBG("Active stream %d", active_stream_index);
+	active_audio_stream_p = &audio_streams[active_stream_index];
+	//	ret = le_audio_set_active_stream(active_stream_index);
+	//	ERR_CHK(ret);
+
+	LOG_DBG("Channel %s active from bit mask %d",
+		((active_stream_index == AUDIO_CH_L) ? CH_L_TAG : CH_R_TAG), bis_index_bitfield);
 }
 
 static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 {
 	int ret;
 
-	if (audio_stream.ep->status.state == BT_AUDIO_EP_STATE_STREAMING || !playing_state) {
+	if (active_audio_stream_p->ep->status.state == BT_AUDIO_EP_STATE_STREAMING ||
+	    !playing_state) {
+		LOG_DBG("EP streaming or in playing_state");
 		return;
 	}
 
@@ -269,9 +290,11 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 		return;
 	}
 
-	LOG_INF("Syncing to broadcast");
+	LOG_INF("Syncing to broadcast stream %d", active_stream_index);
+	LOG_INF("****** Sink %p    Bit field: %d   Audio stream: %p", broadcast_sink,
+		bis_index_bitfield, audio_streams_p);
 
-	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, &audio_stream_p,
+	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, audio_streams_p,
 					   NULL);
 	if (ret) {
 		LOG_WRN("Unable to sync to broadcast source, ret: %d", ret);
@@ -323,7 +346,10 @@ static void initialize(le_audio_receive_cb recv_cb)
 
 		bt_audio_broadcast_sink_register_cb(&broadcast_sink_cbs);
 
-		audio_stream.ops = &stream_ops;
+		for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+			audio_streams_p[i] = &audio_streams[i];
+			audio_streams[i].ops = &stream_ops;
+		}
 
 		initialized = true;
 	}
@@ -362,18 +388,41 @@ static int bis_headset_cleanup(bool from_sync_lost_cb)
 
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 {
-	int frames_per_sec = 1000000 / bt_codec_cfg_get_frame_duration_us(audio_stream.codec);
-	int bits_per_frame = bt_codec_cfg_get_octets_per_frame(audio_stream.codec) * 8;
+	int frames_per_sec =
+		1000000 / bt_codec_cfg_get_frame_duration_us(active_audio_stream_p->codec);
+	int bits_per_frame = bt_codec_cfg_get_octets_per_frame(active_audio_stream_p->codec) * 8;
 
-	*sampling_rate = bt_codec_cfg_get_freq(audio_stream.codec);
+	*sampling_rate = bt_codec_cfg_get_freq(active_audio_stream_p->codec);
 	*bitrate = frames_per_sec * bits_per_frame;
 
 	return 0;
 }
 
+int le_audio_set_active_stream(unsigned int new_active_stream_index)
+{
+	/* Wrap index */
+	if ((new_active_stream_index + 1) >= CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT) {
+		active_stream_index = 0;
+	} else {
+		active_stream_index = new_active_stream_index;
+	}
+
+	LOG_DBG("New: %d    Active: %d", new_active_stream_index, active_stream_index);
+
+	active_audio_stream_p = &audio_streams[active_stream_index];
+
+	return 0;
+}
+
+int le_audio_get_active_stream(unsigned int *new_active_stream_index)
+{
+	*new_active_stream_index = active_stream_index;
+	return 0;
+}
+
 int le_audio_volume_up(void)
 {
-	if (audio_stream.ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+	if (active_audio_stream_p->ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
 		return -ECANCELED;
 	}
 
@@ -382,7 +431,7 @@ int le_audio_volume_up(void)
 
 int le_audio_volume_down(void)
 {
-	if (audio_stream.ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+	if (active_audio_stream_p->ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
 		return -ECANCELED;
 	}
 
@@ -391,7 +440,7 @@ int le_audio_volume_down(void)
 
 int le_audio_volume_mute(void)
 {
-	if (audio_stream.ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+	if (active_audio_stream_p->ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
 		return -ECANCELED;
 	}
 

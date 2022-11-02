@@ -26,4 +26,6 @@ enum button_pin_names {
 	BUTTON_MUTE = DT_GPIO_PIN(DT_ALIAS(sw4), gpios),
 };
 
+#define BUTTON_4 BUTTON_TEST_TONE
+
 #endif /* _BUTTON_ASSIGNMENTS_H_ */

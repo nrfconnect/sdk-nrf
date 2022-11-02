@@ -128,6 +128,26 @@ typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool
 				    uint32_t sdu_ref);
 
 /**
+ * @brief Set the active audio stream
+ *
+ * @param new_active_stream_index	Active audio stream index
+ * 
+ * @return	0 for success,
+ *		error otherwise
+ */
+int le_audio_set_active_stream(unsigned int new_active_stream_index);
+
+/**
+ * @brief Get the active audio stream
+ *
+ * @param new_active_stream_index	Pointer to the active audio stream
+ * 
+ * @return	0 for success,
+ *		error otherwise
+ */
+int le_audio_get_active_stream(unsigned int *new_active_stream_index);
+
+/**
  * @brief Get configuration for audio stream
  *
  * @param bitrate	Pointer to bitrate used
