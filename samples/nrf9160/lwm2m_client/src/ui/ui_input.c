@@ -39,6 +39,10 @@ static void dk_input_device_event_handler(uint32_t device_states, uint32_t has_c
 			}
 		}
 
+		if (dev_num == 0) {
+			return;
+		}
+
 		/* Device number has been stored, remove from bitmask. */
 		has_changed &= ~(1UL << (dev_num - 1));
 
