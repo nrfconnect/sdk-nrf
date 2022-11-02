@@ -58,11 +58,11 @@ config LOG_I2S_LEVEL
 
 config LOG_LED_LEVEL
 	int "Log level for LED"
-	default 2
+	default 3
 
 config LOG_AUDIO_USB_LEVEL
 	int "Log level for USB audio"
-	default 2
+	default 3
 
 config LOG_POWER_MODULE_LEVEL
 	int "Log level for power module"
@@ -74,7 +74,7 @@ config LOG_HW_CODEC_LEVEL
 
 config LOG_BUTTON_HANDLER_LEVEL
 	int "Log level for button_handler.c"
-	default 2
+	default 3
 
 config LOG_SD_CARD_LEVEL
 	int "Log level for SD card"
