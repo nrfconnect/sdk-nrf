@@ -191,7 +191,7 @@ It also implements `Platform Security Architecture (PSA)`_ API, which provides s
 The API coordinates the communication with the components in NSPE.
 
 More information about SPE and NSPE
-===================================
+-----------------------------------
 
 Read the following pages for a better understanding of security by separation in the |NCS|:
 
