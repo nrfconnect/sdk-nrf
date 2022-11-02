@@ -70,7 +70,7 @@ config LOG_POWER_MODULE_LEVEL
 
 config LOG_HW_CODEC_LEVEL
 	int "Log level for HW_CODEC"
-	default 2
+	default 3
 
 config LOG_BUTTON_HANDLER_LEVEL
 	int "Log level for button_handler.c"

@@ -147,7 +147,7 @@ int hw_codec_volume_adjust(int8_t adjustment_db)
 	prev_volume_reg_val = new_volume_reg_val;
 
 	/* This is rounded down to nearest integer */
-	LOG_INF("Volume: %ddB", (new_volume_reg_val / 2) - MAX_VOLUME_DB);
+	LOG_DBG("Volume: %ddB", (new_volume_reg_val / 2) - MAX_VOLUME_DB);
 
 	return 0;
 }
