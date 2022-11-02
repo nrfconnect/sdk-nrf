@@ -33,10 +33,6 @@ module = CS47L63
 module-str = cs47l63
 source "subsys/logging/Kconfig.template.log_config"
 
-module = INA231
-module-str = ina231
-source "subsys/logging/Kconfig.template.log_config"
-
 endmenu # Log levels
 
 endmenu # Drivers
