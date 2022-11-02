@@ -52,10 +52,6 @@ endmenu # I2S
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
-config LOG_I2S_LEVEL
-	int "Log level for audio_i2s"
-	default 2
-
 config LOG_LED_LEVEL
 	int "Log level for LED"
 	default 3
