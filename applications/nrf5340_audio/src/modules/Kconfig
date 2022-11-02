@@ -15,17 +15,21 @@ config BUTTON_DEBOUNCE_MS
 #----------------------------------------------------------------------------#
 menu "Power measurement"
 
-config POWER_MODULE_MIN_MEAS_TIME_MS
+config POWER_MEAS_INTERVAL_MS
 	int "Power measurement interval in milliseconds"
-	default 200
-
-config POWER_MODULE_MEAS_START_ON_BOOT
-	bool "Start power measurements for all rails on boot"
-	default n
+	default 8500
 	help
-		This option will automatically start and periodically print
-		the voltage, current consumption, and power usage for the
-		following rails: VBAT, VDD1_CODEC, VDD2_CODEC, and VDD2_NRF
+	  Power measurement runs continuously, this option just establishes the
+	  results polling period. Note that this value needs to be >= the configured
+	  sampling interval on the current sensor. When below, repeated measurements
+	  will be observed.
+
+config POWER_MEAS_START_ON_BOOT
+	bool "Start power measurements for all rails on boot"
+	help
+	  This option will automatically start and periodically print
+	  the voltage, current consumption, and power usage for the
+	  following rails: VBAT, VDD1_CODEC, VDD2_CODEC, and VDD2_NRF
 
 endmenu # Power measurement
 
@@ -85,19 +89,19 @@ endmenu # Log levels
 #----------------------------------------------------------------------------#
 menu "Thread priorities"
 
-config POWER_MODULE_THREAD_PRIO
+config POWER_MEAS_THREAD_PRIO
 	int "Priority for power measurement thread"
 	default 6
 	help
-		This is a preemptible thread
+	  This is a preemptible thread
 
 endmenu # Thread priorities
 
 #----------------------------------------------------------------------------#
 menu "Stack sizes"
 
-config POWER_MODULE_STACK_SIZE
-	int "Stack size for power module"
+config POWER_MEAS_STACK_SIZE
+	int "Stack size for power measurement thread"
 	default 1152
 
 endmenu # Stack sizes

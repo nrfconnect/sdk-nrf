@@ -5,6 +5,8 @@
  */
 #include "nrf5340_audio_dk_nrf5340_cpuapp_common-pinctrl.dtsi"
 
+#include <zephyr/dt-bindings/sensor/ina230.h>
+
 / {
 	chosen {
 		zephyr,console = &uart0;
@@ -64,6 +66,50 @@
 	pinctrl-0 = <&i2c1_default>;
 	pinctrl-1 = <&i2c1_sleep>;
 	pinctrl-names = "default", "sleep";
+
+	vbat_sensor: ina231@44 {
+		compatible = "ti,ina230";
+		reg = <0x44>;
+		config = <INA230_CONFIG(INA230_OPER_MODE_SHUNT_BUS_VOLTAGE_CONT,
+					INA230_CONV_TIME_4156,
+					INA230_CONV_TIME_4156,
+					INA230_AVG_MODE_1024)>;
+		current-lsb-microamps = <1>;
+		rshunt-milliohms = <510>;
+	};
+
+	vdd1_codec_sensor: ina231@45 {
+		compatible = "ti,ina230";
+		reg = <0x45>;
+		config = <INA230_CONFIG(INA230_OPER_MODE_SHUNT_BUS_VOLTAGE_CONT,
+					INA230_CONV_TIME_4156,
+					INA230_CONV_TIME_4156,
+					INA230_AVG_MODE_1024)>;
+		current-lsb-microamps = <1>;
+		rshunt-milliohms = <2200>;
+	};
+
+	vdd2_codec_sensor: ina231@41 {
+		compatible = "ti,ina230";
+		reg = <0x41>;
+		config = <INA230_CONFIG(INA230_OPER_MODE_SHUNT_BUS_VOLTAGE_CONT,
+					INA230_CONV_TIME_4156,
+					INA230_CONV_TIME_4156,
+					INA230_AVG_MODE_1024)>;
+		current-lsb-microamps = <1>;
+		rshunt-milliohms = <2200>;
+	};
+
+	vdd2_nrf_sensor: ina231@40 {
+		compatible = "ti,ina230";
+		reg = <0x40>;
+		config = <INA230_CONFIG(INA230_OPER_MODE_SHUNT_BUS_VOLTAGE_CONT,
+					INA230_CONV_TIME_4156,
+					INA230_CONV_TIME_4156,
+					INA230_AVG_MODE_1024)>;
+		current-lsb-microamps = <1>;
+		rshunt-milliohms = <1000>;
+	};
 };
 
 &spi4 {
