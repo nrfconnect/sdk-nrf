@@ -97,7 +97,7 @@ static int audio_sync_timer_init(const struct device *unused)
 		return ret;
 	}
 
-	LOG_INF("Audio sync timer initialized");
+	LOG_DBG("Audio sync timer initialized");
 
 	return 0;
 }
