@@ -41,6 +41,22 @@ Matter certification requires testing performed at Authorized Test Laboratory (A
 
 To read more about Matter and dependent certification, get familiar with CSA's Certification Policy and Procedures document.
 
+.. _ug_matter_device_certification_reqs_security:
+
+Matter Attestation of Security
+==============================
+
+For a Matter end product to be certified, CSA's policies require an Attestation of Security that provides detailed information about the security level of the end product.
+The attestation document lists robustness security requirements based on the Matter specification.
+The product developer must indicate the level of compliance and briefly justify the choice.
+
+The attestation must be filled by the person responsible for end product certification who meets the following requirements:
+
+* The person's organization is a `member of the Matter community <Join CSA_>`_.
+* The person has an account on the `Connectivity Standards Alliance Certification Web Tool`_.
+
+Once both these requirements are met, the responsible person can download the `Matter Attestation of Security template`_, fill it in, and submit it in the certification web tool when applying for the certification.
+
 Matter certification inheritance
 ********************************
 
