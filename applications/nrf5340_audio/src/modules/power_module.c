@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "power_module.h"
-
 #include <ctype.h>
 #include <errno.h>
 #include <stdint.h>
@@ -442,9 +440,11 @@ static int power_module_measurement_stop(enum ina_name name)
 	return 0;
 }
 
-int power_module_init(void)
+static int power_module_init(const struct device *dev)
 {
 	int ret;
+
+	ARG_UNUSED(dev);
 
 	for (uint8_t i = 0; i < INA231_COUNT; i++) {
 		ina231_twi_cfg.addr = ina231[i].address;
@@ -512,6 +512,8 @@ int power_module_init(void)
 
 	return 0;
 }
+
+SYS_INIT(power_module_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
 static int cmd_print_all_rails(const struct shell *shell, size_t argc, char **argv)
 {
