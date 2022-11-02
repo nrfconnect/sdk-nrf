@@ -235,7 +235,7 @@ config LOG_AUDIO_DATAPATH_LEVEL
 
 config LOG_AUDIO_SYNC_TIMER_LEVEL
 	int "Log level for audio_sync_timer"
-	default 2
+	default 3
 
 endmenu # Log levels
 
