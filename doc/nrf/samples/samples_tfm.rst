@@ -9,3 +9,4 @@ Trusted Firmware M samples
    :glob:
 
    ../../../samples/tfm/*/README
+   ../../tests/tfm/*/README
