@@ -44,9 +44,12 @@ static void isr_emds_cb(void *arg)
 {
 	ARG_UNUSED(arg);
 
-	/* Stop bt and mpsl to reduce power usage and increase storage speed. */
-	(void) bt_disable();
 #if defined(CONFIG_BT_CTLR)
+	/* Stop mpsl to reduce power usage. */
+	irq_disable(TIMER0_IRQn);
+	irq_disable(RTC0_IRQn);
+	irq_disable(RADIO_IRQn);
+
 	mpsl_uninit();
 #endif
 
