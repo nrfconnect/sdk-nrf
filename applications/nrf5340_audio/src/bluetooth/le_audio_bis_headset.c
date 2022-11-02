@@ -230,7 +230,7 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 			LOG_DBG("BIS %d   index = %d", j, index);
 
 			if (bitrate_check((struct bt_codec *)&base->subgroups[i].codec)) {
-				base_bis_index_bitfield |= index;
+				base_bis_index_bitfield |= BIT(index);
 
 				audio_streams[sync_stream_cnt].codec =
 					(struct bt_codec *)&base->subgroups[i].codec;
