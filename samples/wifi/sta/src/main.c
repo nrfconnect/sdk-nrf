@@ -71,10 +71,9 @@ static int cmd_wifi_status(void)
 		       wifi_link_mode_txt(status.link_mode));
 		printk("SSID: %-32s\n", status.ssid);
 		printk("BSSID: %s\n",
-		       status.bssid ? net_sprint_ll_addr_buf(status.bssid,
-				WIFI_MAC_ADDR_LEN, mac_string_buf,
-				sizeof(mac_string_buf)) :
-				"");
+		       net_sprint_ll_addr_buf(
+				status.bssid, WIFI_MAC_ADDR_LEN,
+				mac_string_buf, sizeof(mac_string_buf)));
 		printk("Band: %s\n", wifi_band_txt(status.band));
 		printk("Channel: %d\n", status.channel);
 		printk("Security: %s\n", wifi_security_txt(status.security));
