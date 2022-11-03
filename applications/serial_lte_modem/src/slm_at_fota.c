@@ -11,7 +11,7 @@
 #include <nrf_modem_delta_dfu.h>
 #include <zephyr/dfu/mcuboot.h>
 #include <zephyr/net/tls_credentials.h>
-#include <zephyr/net/http_parser_url.h>
+#include <zephyr/net/http/parser_url.h>
 #include <net/fota_download.h>
 #include "slm_util.h"
 #include "slm_at_host.h"

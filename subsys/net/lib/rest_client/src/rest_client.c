@@ -19,8 +19,8 @@
 #include <zephyr/net/socket.h>
 #endif
 #include <zephyr/net/tls_credentials.h>
-#include <zephyr/net/http_client.h>
-#include <zephyr/net/http_parser.h>
+#include <zephyr/net/http/client.h>
+#include <zephyr/net/http/parser.h>
 
 #include <zephyr/logging/log.h>
 

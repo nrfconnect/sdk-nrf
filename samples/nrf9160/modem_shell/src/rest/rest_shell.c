@@ -11,7 +11,7 @@
 #include <zephyr/shell/shell.h>
 #include <getopt.h>
 
-#include <zephyr/net/http_parser.h>
+#include <zephyr/net/http/parser.h>
 #include <net/rest_client.h>
 
 #include "rest_shell.h"
