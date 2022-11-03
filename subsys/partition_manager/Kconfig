@@ -139,6 +139,7 @@ config PM_SINGLE_IMAGE
 	  Secure Execution environment is generated.
 
 DT_CHOSEN_EXT_FLASH:= nordic,pm-ext-flash
+DT_CHOSEN_EXT_FLASH_PATH := $(dt_chosen_path,$(DT_CHOSEN_EXT_FLASH))
 
 config PM_EXTERNAL_FLASH_HAS_DRIVER
 	bool
@@ -155,12 +156,31 @@ config PM_EXTERNAL_FLASH_BASE
 	hex "External flash base address"
 	default 0
 
+config PM_EXTERNAL_FLASH_ENABLED
+	bool
+	default $(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH))
+	help
+	  Internal PM_EXTERNAL_FLASH kconfig for exporting devicetree to sysbuild.
+
+config PM_EXTERNAL_FLASH_PATH
+	string
+	default "$(DT_CHOSEN_EXT_FLASH_PATH)"
+	help
+	  Internal PM_EXTERNAL_FLASH kconfig for exporting devicetree to sysbuild.
+
+config PM_EXTERNAL_FLASH_SIZE_BITS
+	int
+	default $(dt_node_int_prop_int,$(DT_CHOSEN_EXT_FLASH_PATH),size) if PM_EXTERNAL_FLASH_ENABLED
+	default 0
+	help
+	  Internal PM_EXTERNAL_FLASH kconfig for exporting devicetree to sysbuild.
+
 config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	bool "Place MCUboot secondary in external flash"
 	depends on BOOTLOADER_MCUBOOT || MCUBOOT
 	# Only depend on the chosen for the parent image. The value of this
 	# option is propagated to the MCUboot child image automatically.
-	depends on $(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH)) || MCUBOOT
+	depends on PM_EXTERNAL_FLASH_ENABLED || MCUBOOT
 	default y if BOOTLOADER_MCUBOOT
 	imply ADD_MCUBOOT_MEDIATE_SIM_FLASH_DTS
 	help

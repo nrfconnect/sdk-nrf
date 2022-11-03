@@ -57,7 +57,7 @@ elseif (EXISTS ${board_dir_pm_static_common})
   set(static_configuration_file ${board_dir_pm_static_common})
 endif()
 
-if (EXISTS ${static_configuration_file})
+if (EXISTS "${static_configuration_file}" AND NOT SYSBUILD)
   message(STATUS "Found partition manager static configuration: "
                  "${static_configuration_file}"
   )
@@ -107,7 +107,9 @@ if (NOT (
   (NOT IMAGE_NAME AND PM_IMAGES) OR
   (NOT IMAGE_NAME AND PM_DOMAINS) OR
   (PM_SUBSYS_PREPROCESSED AND CONFIG_PM_SINGLE_IMAGE)
-  ))
+  )
+  OR SYSBUILD
+  )
   return()
 endif()
 
