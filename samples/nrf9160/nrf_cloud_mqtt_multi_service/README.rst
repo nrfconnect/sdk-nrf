@@ -165,6 +165,17 @@ Location tracking
 All matters concerning location tracking are handled in the :file:`src/location_tracking.c` file.
 This involves setting up a periodic location request, and then passing the results to a callback configured by the :file:`src/application.c` file.
 
+This sample supports placing P-GPS data in external flash for the nRF9160 development kit version 1.0.1 and later.
+Currently, you cannot combine this with full modem FOTA.
+To enable this, add the following parameter to your build command:
+
+``-DOVERLAY_CONFIG=overlay_pgps_ext_flash.conf``
+
+Also, specify your development kit version by appending it to the board name.
+For example, if your development kit version is 1.0.1, use the following board name in your build command:
+
+``nrf9160dk_nrf9160_ns@1_0_1``
+
 .. note::
   For location readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_.
   This is performed by the :file:`src/connection.c` file.
