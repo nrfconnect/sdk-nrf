@@ -2,6 +2,12 @@ add_subdirectory(${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/bootutil/zephyr
                  ${CMAKE_CURRENT_BINARY_DIR}/boot/bootutil/zephyr
 )
 
+if(SYSBUILD)
+  # Code below is partition manager w/ child image support, thus return when
+  # sysbuild is used.
+  return()
+endif()
+
 if (CONFIG_MCUBOOT)
   if (CONFIG_NRF53_MULTI_IMAGE_UPDATE)
     set_shared(IMAGE ${IMAGE_NAME} PROPERTY NRF53_MULTI_IMAGE_UPDATE
