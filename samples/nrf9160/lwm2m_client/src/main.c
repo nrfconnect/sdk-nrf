@@ -377,7 +377,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		state_trigger_and_unlock(CONNECTED);
 		break;
 
-	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE:
+	case LWM2M_RD_CLIENT_EVENT_REG_TIMEOUT:
 		LOG_DBG("Registration update failure!");
 		state_trigger_and_unlock(NETWORK_ERROR);
 		break;
