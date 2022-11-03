@@ -27,10 +27,6 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define GNSS_ASSIST_VERSION_MAJOR 1
 #define GNSS_ASSIST_VERSION_MINOR 0
 
-/* Assistance types */
-#define ASSISTANCE_REQUEST_TYPE_AGPS			0
-#define ASSISTANCE_REQUEST_TYPE_PGPS			1
-
 /* Location Assistance resource IDs */
 #define GNSS_ASSIST_ASSIST_TYPE				0
 #define GNSS_ASSIST_AGPS_MASK				1
@@ -62,6 +58,10 @@ static int32_t result;
 static int32_t satellite_elevation_mask;
 
 static uint32_t bytes_downloaded;
+
+bool request_ongoing;
+
+static gnss_assistance_get_result_code_cb_t result_code_cb;
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
 char *assist_buf;
@@ -167,24 +167,50 @@ static int gnss_assist_write_cb(uint16_t obj_inst_id, uint16_t res_id,
 	}
 #endif
 
-	if (err) {
-		LOG_ERR("Error writing %s assistance data (%d)",
-			(assist_type == ASSISTANCE_REQUEST_TYPE_AGPS) ? "A-GPS" : "P-GPS", err);
-		return err;
-	}
-
 	if (last_block) {
 		bytes_downloaded = 0;
+		request_ongoing = false;
 	} else {
 		bytes_downloaded += data_len;
 	}
 
-	return 0;
+	if (err) {
+		LOG_ERR("Error writing %s assistance data (%d)",
+			(assist_type == ASSISTANCE_REQUEST_TYPE_AGPS) ? "A-GPS" : "P-GPS", err);
+	}
+
+	return err;
 }
 
 void gnss_assistance_prepare_download(void)
 {
 	bytes_downloaded = 0;
+	request_ongoing = true;
+}
+
+bool location_assist_gnss_is_busy(void)
+{
+	return request_ongoing;
+}
+
+void gnss_assistance_set_result_code_cb(gnss_assistance_get_result_code_cb_t cb)
+{
+	result_code_cb = cb;
+}
+
+static int gnss_assistance_result_code_cb(uint16_t obj_inst_id, uint16_t res_id,
+					  uint16_t res_inst_id, uint8_t *data,
+					  uint16_t data_len, bool last_block,
+					  size_t total_size)
+{
+	if (result_code_cb) {
+		result_code_cb(result);
+	}
+
+	if (result != LOCATION_ASSIST_RESULT_CODE_OK) {
+		LOG_ERR("Result code %d", result);
+	}
+	return 0;
 }
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
@@ -210,7 +236,6 @@ void location_assist_agps_request_set(uint32_t request_mask)
 	LOG_INF("Requesting A-GPS data, mask 0x%08x", request_mask);
 	/* Store mask to object resource */
 	agps_mask = request_mask;
-	assist_type = ASSISTANCE_REQUEST_TYPE_AGPS;
 }
 
 void location_assist_agps_set_elevation_mask(int32_t elevation_mask)
@@ -261,16 +286,27 @@ int location_assist_pgps_set_start_time(int32_t start_time)
 	return 0;
 }
 
-void location_assist_pgps_request_set(void)
-{
-	assist_type = ASSISTANCE_REQUEST_TYPE_PGPS;
-}
-
 int location_assist_pgps_get_start_gps_day(void)
 {
 	return pgps_start_gps_day;
 }
 #endif
+
+int location_assist_gnss_type_set(int assistance_type)
+{
+	if (assistance_type != ASSISTANCE_REQUEST_TYPE_AGPS &&
+	    assistance_type != ASSISTANCE_REQUEST_TYPE_PGPS) {
+		return -EINVAL;
+	}
+
+	assist_type = assistance_type;
+	return 0;
+}
+
+int location_assist_gnss_type_get(void)
+{
+	return assist_type;
+}
 
 int32_t location_assist_gnss_get_result_code(void)
 {
@@ -307,8 +343,8 @@ static struct lwm2m_engine_obj_inst *gnss_assist_create(uint16_t obj_inst_id)
 			  &pgps_start_gps_time_of_day, sizeof(pgps_start_gps_time_of_day));
 	INIT_OBJ_RES_OPT(GNSS_ASSIST_ASSIST_DATA, res, i, res_inst, j, 1, false, true, NULL,
 			 get_assist_buf, NULL, gnss_assist_write_cb, NULL);
-	INIT_OBJ_RES_DATA(GNSS_ASSIST_RESULT_CODE, res, i, res_inst, j,
-			  &result, sizeof(result));
+	INIT_OBJ_RES(GNSS_ASSIST_RESULT_CODE, res, i, res_inst, j, 1, false, true, &result,
+		     sizeof(result), NULL, NULL, NULL, gnss_assistance_result_code_cb, NULL);
 	INIT_OBJ_RES_DATA(GNSS_ASSIST_ELEVATION_MASK, res, i, res_inst, j,
 			  &satellite_elevation_mask, sizeof(satellite_elevation_mask));
 

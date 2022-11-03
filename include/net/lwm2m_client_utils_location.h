@@ -29,12 +29,18 @@
 #define LOCATION_ASSIST_NEEDS_LOCATION			BIT(7)
 #define LOCATION_ASSIST_NEEDS_INTEGRITY			BIT(8)
 
+#define LOCATION_ASSIST_RESULT_CODE_OK			0
+#define LOCATION_ASSIST_RESULT_CODE_PERMANENT_ERR	-1
+#define LOCATION_ASSIST_RESULT_CODE_TEMP_ERR		1
+
 /**
  * @brief Set the A-GPS request mask
  *
  * @param agps_req The A-GPS request coming from the GNSS module.
+ * @return Returns a negative error code (errno.h) indicating
+ *         reason of failure or 0 for success.
  */
-void location_assistance_agps_set_mask(const struct nrf_modem_gnss_agps_data_frame *agps_req);
+int location_assistance_agps_set_mask(const struct nrf_modem_gnss_agps_data_frame *agps_req);
 
 /**
  * @brief Send the A-GPS assistance request to LwM2M server
@@ -65,6 +71,16 @@ int location_assistance_ground_fix_request_send(struct lwm2m_ctx *ctx, bool conf
  *         reason of failure or 0 for success.
  */
 int location_assistance_pgps_request_send(struct lwm2m_ctx *ctx, bool confirmable);
+
+/**
+ * @brief Initialize the location assistance library resend handler.
+ *        Handler will handle the result code from server and schedule resending in
+ *        case of temporary error in server using an exponential backoff.
+ *
+ * @return Returns a negative error code (errno.h) indicating
+ *         reason of failure or 0 for success.
+ */
+int location_assistance_init_resend_handler(void);
 
 /**
  * @brief Initialize the location assistance event handler
@@ -140,11 +156,6 @@ int32_t location_assist_pgps_get_start_gps_day(void);
  *         reason of failure or 0 for success.
  */
 int location_assist_pgps_set_start_time(int32_t start_time);
-
-/**
- * @brief Set the GNSS request to P-GPS request.
- */
-void location_assist_pgps_request_set(void);
 
 /**
  * @brief Get the result code of the location request.
