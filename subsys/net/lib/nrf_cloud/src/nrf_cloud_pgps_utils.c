@@ -428,7 +428,7 @@ int npgps_pointer_to_block(uint8_t *p)
 {
 	int ret = (uint32_t)(p - block_pool_base) / BLOCK_SIZE;
 
-	LOG_DBG("ptr:%p to block idx:%d", p, ret);
+	LOG_DBG("ptr:%p to block idx:%d", (void *)p, ret);
 	if ((ret < 0) || (ret >= num_blocks)) {
 		return NO_BLOCK;
 	}
