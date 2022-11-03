@@ -287,6 +287,12 @@ static void handle_nrf_modem_lib_init_ret(void)
 		fota_status = FOTA_STATUS_ERROR;
 		fota_info = ret;
 		break;
+	case MODEM_DFU_RESULT_VOLTAGE_LOW:
+		LOG_ERR("MODEM UPDATE CANCELLED %d.", ret);
+		LOG_ERR("Please reboot once you have sufficient power for the DFU");
+		fota_status = FOTA_STATUS_ERROR;
+		fota_info = ret;
+		break;
 	default:
 		/* All non-zero return codes other than DFU result codes are
 		 * considered irrecoverable and a reboot is needed.

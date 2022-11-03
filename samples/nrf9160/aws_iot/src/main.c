@@ -433,6 +433,10 @@ static void nrf_modem_lib_dfu_handler(void)
 		LOG_INF("Modem update malfunction, error: %d, reboot", err);
 		sys_reboot(SYS_REBOOT_COLD);
 		break;
+	case MODEM_DFU_RESULT_VOLTAGE_LOW:
+		LOG_INF("Modem update cancelled due to low power, error: %d", err);
+		LOG_INF("Please reboot once you have sufficient power for the DFU");
+		break;
 	default:
 		break;
 	}

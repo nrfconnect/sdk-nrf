@@ -201,6 +201,10 @@ static enum nrf_cloud_fota_validate_status modem_delta_fota_validate_get(void)
 	case MODEM_DFU_RESULT_HARDWARE_ERROR:
 		LOG_ERR("Modem FOTA error: %d", modem_lib_init_result);
 		return NRF_CLOUD_FOTA_VALIDATE_FAIL;
+	case MODEM_DFU_RESULT_VOLTAGE_LOW:
+		LOG_ERR("Modem FOTA cancelled: %d", modem_lib_init_result);
+		LOG_ERR("Please reboot once you have sufficient power for the DFU");
+		return NRF_CLOUD_FOTA_VALIDATE_FAIL;
 	default:
 		LOG_INF("Modem FOTA result unknown: %d", modem_lib_init_result);
 		break;

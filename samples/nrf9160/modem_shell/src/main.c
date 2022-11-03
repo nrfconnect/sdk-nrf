@@ -287,6 +287,10 @@ void main(void)
 		printk("Fatal error.\n");
 		sys_reboot(SYS_REBOOT_WARM);
 		return;
+	case MODEM_DFU_RESULT_VOLTAGE_LOW:
+		printk("Modem firmware update cancelled due to low power.\n");
+		printk("Please reboot once you have sufficient power for the DFU\n");
+		break;
 	default:
 		/* Modem library initialization failed. */
 		printk("Could not initialize modemlib.\n");
