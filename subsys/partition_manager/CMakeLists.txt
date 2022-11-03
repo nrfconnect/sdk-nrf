@@ -12,6 +12,13 @@ if (CONFIG_PARTITION_MANAGER_ENABLED)
   zephyr_sources(flash_map_partition_manager.c)
 endif()
 
+# Hacked location, but currently we need it and child image is not used.
+
+if(SYSBUILD)
+  set_shared(IMAGE ${IMAGE_NAME} PROPERTY ZEPHYR_BINARY_DIR ${ZEPHYR_BINARY_DIR})
+endif()
+
+
 function(preprocess_pm_yml in_file out_file)
   execute_process(
     COMMAND ${CMAKE_C_COMPILER}
@@ -29,7 +36,7 @@ function(preprocess_pm_yml in_file out_file)
     message(FATAL_ERROR "command failed with return code: ${ret}")
   endif()
 
-  if (DEFINED IMAGE_NAME)
+  if (DEFINED IMAGE_NAME OR SYSBUILD)
     # Share location of original source file so that the parent image can add it
     # to the CMAKE_CONFIGURE_DEPENDS list.
     set_shared(IMAGE ${IMAGE_NAME} APPEND PROPERTY PM_YML_DEP_FILES ${in_file})
@@ -122,9 +129,13 @@ endif()
 
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.
-set(using_partition_manager
-  $<OR:$<BOOL:${IMAGE_NAME}>,$<TARGET_EXISTS:partition_manager>>
+if (SYSBUILD)
+  set(using_partition_manager 1)
+else()
+  set(using_partition_manager
+    $<OR:$<BOOL:${IMAGE_NAME}>,$<TARGET_EXISTS:partition_manager>>
   )
+endif()
 zephyr_compile_definitions(
   USE_PARTITION_MANAGER=${using_partition_manager}
   )
@@ -135,7 +146,7 @@ set_property(GLOBAL APPEND PROPERTY
   -DUSE_PARTITION_MANAGER=${using_partition_manager}
   )
 
-if((EXISTS ${CMAKE_SOURCE_DIR}/pm.yml) AND IMAGE_NAME)
+if((EXISTS ${CMAKE_SOURCE_DIR}/pm.yml) AND (IMAGE_NAME OR (SYSBUILD AND NOT SYSBUILD_MAIN_APP)))
   # Only preprocess pm.yml when being built as sub image.
 
   preprocess_pm_yml(

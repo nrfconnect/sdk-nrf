@@ -297,10 +297,23 @@ function(set_shared)
   set(multi_args  "PROPERTY")
   cmake_parse_arguments(SHARE "${flags}" "${single_args}" "${multi_args}" ${ARGN})
 
+  if(SYSBUILD)
+    # Sysbuild can read the cache directly, no reason for an extra share file.
+    list(POP_FRONT SHARE_PROPERTY listname)
+    if(SHARE_APPEND)
+      list(APPEND ${listname} ${SHARE_PROPERTY})
+      list(REMOVE_DUPLICATES ${listname})
+      set(SHARE_PROPERTY ${${listname}})
+    endif()
+    set(${listname} "${SHARE_PROPERTY}" CACHE INTERNAL "shared var")
+    return()
+  endif()
+
   check_arguments_required("set_shared" SHARE IMAGE FILE)
 
   check_arguments_exclusive("set_shared" SHARE FILE IMAGE PROPERTY APPEND)
   check_arguments_exclusive("set_shared" SHARE IMAGE FILE)
+
 
   set(prop_target ${IMAGE_NAME}_shared_property_target)
   if(NOT TARGET ${prop_target})
