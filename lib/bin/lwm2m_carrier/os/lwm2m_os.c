@@ -389,6 +389,10 @@ int lwm2m_os_nrf_modem_init(void)
 		LOG_ERR("Modem firmware update failed.");
 		LOG_ERR("Fatal error.");
 		break;
+	case MODEM_DFU_RESULT_VOLTAGE_LOW:
+		LOG_ERR("Modem firmware update cancelled.");
+		LOG_ERR("Please reboot once you have sufficient power for the DFU.");
+		break;
 	default:
 		LOG_ERR("Could not initialize modem library.");
 		LOG_ERR("Fatal error.");

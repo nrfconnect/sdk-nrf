@@ -212,6 +212,10 @@ static void handle_nrf_modem_lib_init_ret(void)
 	case MODEM_DFU_RESULT_INTERNAL_ERROR:
 		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failure", ret);
 		break;
+	case MODEM_DFU_RESULT_VOLTAGE_LOW:
+		LOG_ERR("MODEM UPDATE CANCELLED %d.", ret);
+		LOG_ERR("Please reboot once you have sufficient power for the DFU");
+		break;
 	default:
 		/* All non-zero return codes other than DFU result codes are
 		 * considered irrecoverable and a reboot is needed.

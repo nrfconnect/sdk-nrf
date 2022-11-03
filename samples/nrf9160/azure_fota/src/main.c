@@ -219,6 +219,10 @@ void main(void)
 		LOG_INF("Modem firmware update failed");
 		LOG_INF("Fatal error.");
 		break;
+	case MODEM_DFU_RESULT_VOLTAGE_LOW:
+		LOG_INF("Modem firmware update failed");
+		LOG_INF("Please reboot once you have sufficient power for the DFU.");
+		break;
 	case -1:
 		LOG_INF("Could not initialize modem library");
 		LOG_INF("Fatal error.");

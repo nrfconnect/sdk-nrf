@@ -121,6 +121,10 @@ void main(void)
 		printk("Modem firmware update failed\n");
 		printk("Fatal error.\n");
 		break;
+	case MODEM_DFU_RESULT_VOLTAGE_LOW:
+		printk("Modem firmware update failed\n");
+		printk("Please reboot once you have sufficient power for the DFU.\n");
+		break;
 	case -1:
 		printk("Could not initialize momdem library.\n");
 		printk("Fatal error.\n");
