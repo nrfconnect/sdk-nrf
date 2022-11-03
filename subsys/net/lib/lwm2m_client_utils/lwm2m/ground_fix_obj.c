@@ -16,6 +16,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #include "lwm2m_object.h"
 #include "lwm2m_engine.h"
 #include <net/lwm2m_client_utils_location.h>
+#include "ground_fix_obj.h"
 
 #define GROUND_FIX_VERSION_MAJOR 1
 #define GROUND_FIX_VERSION_MINOR 0
@@ -36,6 +37,8 @@ static double latitude;
 static double longitude;
 static double accuracy;
 
+static ground_fix_get_result_code_cb_t result_code_cb;
+
 /*
  * Calculate resource instances as follows:
  * start with GROUND_FIX_MAX_ID
@@ -55,6 +58,26 @@ static struct lwm2m_engine_obj_inst inst;
 static struct lwm2m_engine_res res[GROUND_FIX_MAX_ID];
 static struct lwm2m_engine_res_inst res_inst[RESOURCE_INSTANCE_COUNT];
 
+void ground_fix_set_result_code_cb(ground_fix_get_result_code_cb_t cb)
+{
+	result_code_cb = cb;
+}
+
+static int ground_fix_result_code_cb(uint16_t obj_inst_id, uint16_t res_id,
+				     uint16_t res_inst_id, uint8_t *data,
+				     uint16_t data_len, bool last_block,
+				     size_t total_size)
+{
+	if (result_code_cb) {
+		result_code_cb(result);
+	}
+
+	if (result != LOCATION_ASSIST_RESULT_CODE_OK) {
+		LOG_ERR("Result code %d", result);
+	}
+	return 0;
+}
+
 static struct lwm2m_engine_obj_inst *ground_fix_create(uint16_t obj_inst_id)
 {
 	int i = 0, j = 0;
@@ -64,8 +87,8 @@ static struct lwm2m_engine_obj_inst *ground_fix_create(uint16_t obj_inst_id)
 	/* initialize instance resource data */
 	INIT_OBJ_RES_DATA(GROUND_FIX_SEND_LOCATION_BACK, res, i, res_inst, j,
 			  &send_location_back, sizeof(send_location_back));
-	INIT_OBJ_RES_DATA(GROUND_FIX_RESULT_CODE, res, i, res_inst, j,
-			  &result, sizeof(result));
+	INIT_OBJ_RES(GROUND_FIX_RESULT_CODE, res, i, res_inst, j, 1, false, true, &result,
+		     sizeof(result), NULL, NULL, NULL, ground_fix_result_code_cb, NULL);
 	INIT_OBJ_RES_DATA(GROUND_FIX_LATITUDE, res, i, res_inst, j,
 			  &latitude, sizeof(latitude));
 	INIT_OBJ_RES_DATA(GROUND_FIX_LONGITUDE, res, i, res_inst, j,

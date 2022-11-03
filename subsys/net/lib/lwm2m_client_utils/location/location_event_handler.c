@@ -23,6 +23,8 @@ static struct lwm2m_ctx *client_ctx;
 
 #define AGPS_LOCATION_PATHS 7
 
+#define REQUEST_WAIT_INTERVAL K_SECONDS(5)
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_location_event_handler, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
@@ -30,8 +32,13 @@ LOG_MODULE_REGISTER(lwm2m_location_event_handler, CONFIG_LWM2M_CLIENT_UTILS_LOG_
 static bool handle_agps_request(const struct gnss_agps_request_event *event)
 {
 	LOG_DBG("AGPS request");
-	location_assistance_agps_set_mask(&event->agps_req);
-	location_assistance_agps_request_send(client_ctx, true);
+
+	while (location_assistance_agps_set_mask(&event->agps_req) == -EAGAIN) {
+		k_sleep(REQUEST_WAIT_INTERVAL);
+	}
+	while (location_assistance_agps_request_send(client_ctx, true) == -EAGAIN) {
+		k_sleep(REQUEST_WAIT_INTERVAL);
+	}
 
 	return true;
 }
@@ -50,7 +57,9 @@ static bool handle_cell_location_event(bool send_back)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 static bool handle_pgps_data_request_event(void)
 {
-	location_assistance_pgps_request_send(client_ctx, true);
+	while (location_assistance_pgps_request_send(client_ctx, true) == -EAGAIN) {
+		k_sleep(REQUEST_WAIT_INTERVAL);
+	}
 	return true;
 }
 #endif
