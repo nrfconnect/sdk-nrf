@@ -152,14 +152,14 @@ int nrf_cloud_encode_shadow_data(const struct nrf_cloud_sensor_data *sensor,
 int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *payload,
 				     enum nfsm_state *requested_state);
 
-/**@brief Decodes data endpoint information. */
+/**@brief Decode data endpoint information. */
 int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 				   struct nrf_cloud_data *tx_endpoint,
 				   struct nrf_cloud_data *rx_endpoint,
 				   struct nrf_cloud_data *bulk_endpoint,
 				   struct nrf_cloud_data *m_endpoint);
 
-/** @brief Encodes state information. */
+/** @brief Encode state information. */
 int nrf_cloud_encode_state(uint32_t reported_state, const bool update_desired_topic,
 			   struct nrf_cloud_data *output);
 
@@ -179,10 +179,10 @@ int nrf_cloud_device_status_encode(const struct nrf_cloud_device_status * const 
 /** @brief Free memory allocated by @ref nrf_cloud_device_status_encode. */
 void nrf_cloud_device_status_free(struct nrf_cloud_data *status);
 
-/** @brief Frees memory allocated by @ref nrf_cloud_rest_fota_execution_parse */
+/** @brief Free memory allocated by @ref nrf_cloud_rest_fota_execution_parse */
 void nrf_cloud_fota_job_free(struct nrf_cloud_fota_job_info *const job);
 
-/** @brief Parses the response from a FOTA execution request REST call.
+/** @brief Parse the response from a FOTA execution request REST call.
  * If successful, memory will be allocated for the data in @ref nrf_cloud_fota_job_info.
  * The user is responsible for freeing the memory by calling @ref nrf_cloud_fota_job_free.
  */
@@ -190,85 +190,85 @@ int nrf_cloud_rest_fota_execution_parse(const char *const response,
 					struct nrf_cloud_fota_job_info *const job);
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-/** @brief Parses the PGPS response (REST and MQTT) from nRF Cloud */
+/** @brief Parse the PGPS response (REST and MQTT) from nRF Cloud */
 int nrf_cloud_parse_pgps_response(const char *const response,
 				  struct nrf_cloud_pgps_result *const result);
 #endif
 
-/** @brief Adds common [network] modem info to the provided cJSON object */
+/** @brief Add common [network] modem info to the provided cJSON object */
 int nrf_cloud_json_add_modem_info(cJSON * const data_obj);
 
-/** @brief Builds a cellular positioning request string using the provided cell info.
+/** @brief Build a cellular positioning request string using the provided cell info.
  * If successful, memory will be allocated for the output string and the user is
  * responsible for freeing it using @ref cJSON_free.
  */
 int nrf_cloud_format_cell_pos_req(struct lte_lc_cells_info const *const inf,
 				  size_t inf_cnt, char **string_out);
 
-/** @brief Builds a cellular positioning request in the provided cJSON object
+/** @brief Build a cellular positioning request in the provided cJSON object
  * using the provided cell info
  */
 int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf,
 				       size_t inf_cnt, cJSON * const req_obj_out);
 
-/** @brief Builds a [single-cell] cellular positioning request in the provided cJSON object.
- * Function obtains the necessary network info from the modem.
+/** @brief Obtain the necessary network info from the modem and build a
+ * [single-cell] cellular positioning request in the provided cJSON object.
  */
 int nrf_cloud_format_single_cell_pos_req_json(cJSON * const req_obj_out);
 
-/** @brief Parses the cellular positioning response (REST and MQTT) from nRF Cloud. */
+/** @brief Parse the cellular positioning response (REST and MQTT) from nRF Cloud. */
 int nrf_cloud_parse_cell_pos_response(const char *const buf,
 				      struct nrf_cloud_cell_pos_result *result);
 
-/** @brief Checks whether the provided MQTT payload is an nRF Cloud disconnection request */
+/** @brief Check whether the provided MQTT payload is an nRF Cloud disconnection request */
 bool nrf_cloud_detect_disconnection_request(const char *const buf);
 
-/** @brief Obtains a pointer to the string at the specified index in the cJSON array.
+/** @brief Obtain a pointer to the string at the specified index in the cJSON array.
  * No memory is allocated, pointer is valid as long as the cJSON array is valid.
  */
 int get_string_from_array(const cJSON * const array, const int index,
 			  char **string_out);
 
-/** @brief Obtains a pointer to the string of the specified key in the cJSON object.
+/** @brief Obtain a pointer to the string of the specified key in the cJSON object.
  * No memory is allocated, pointer is valid as long as the cJSON object is valid.
  */
 int get_string_from_obj(const cJSON * const obj, const char *const key,
 			char **string_out);
 
-/** @brief Sends the cJSON object to nRF Cloud on the d2c topic */
+/** @brief Send the cJSON object to nRF Cloud on the d2c topic */
 int json_send_to_cloud(cJSON * const request);
 
-/** @brief Creates a cJSON object containing the specified appId and messageType.
+/** @brief Create a cJSON object containing the specified appId and messageType.
  * If successful, user is responsible for calling @ref cJSON_Delete to free
  * the cJSON object's memory.
  */
 cJSON *json_create_req_obj(const char *const app_id, const char *const msg_type);
 
-/** @brief Parses received REST data for an nRF Cloud error code */
+/** @brief Parse received REST data for an nRF Cloud error code */
 int nrf_cloud_parse_rest_error(const char *const buf, enum nrf_cloud_error *const err);
 
-/** @brief Encodes PVT data to be sent to nRF Cloud */
+/** @brief Encode PVT data to be sent to nRF Cloud */
 int nrf_cloud_pvt_data_encode(const struct nrf_cloud_gnss_pvt * const pvt,
 			      cJSON * const pvt_data_obj);
 
 #if defined(CONFIG_NRF_MODEM)
-/** @brief Encodes a modem PVT data frame to be sent to nRF Cloud */
+/** @brief Encode a modem PVT data frame to be sent to nRF Cloud */
 int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	* const mdm_pvt,
 				    cJSON * const pvt_data_obj);
 #endif
 
-/** @brief Replaces legacy c2d topic with wilcard topic string. Returns true
- *  if the topic was modified; otherwise false.
+/** @brief Replace legacy c2d topic with wilcard topic string.
+ * Return true, if the topic was modified; otherwise false.
  */
 bool nrf_cloud_set_wildcard_c2d_topic(char *const topic, size_t topic_len);
 
-/** @brief Decodes dc receive topic string into defined types */
+/** @brief Decode a dc receive topic string into an enum value */
 enum nrf_cloud_rcv_topic nrf_cloud_decode_dc_rx_topic(const char * const topic);
 
 #ifdef CONFIG_NRF_CLOUD_GATEWAY
 typedef int (*gateway_state_handler_t)(void *root_obj);
 
-/** @brief Registers a callback, which is called whenever the shadow changes.
+/** @brief Register a callback, which is called whenever the shadow changes.
  *  The callback is passed a pointer to the shadow JSON document.  The callback
  *  should return 0 to allow further processing of shadow changes in
  *  nrf_cloud_codec.c.  It should return a negative error code only when the
