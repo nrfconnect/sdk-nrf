@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/tls_credentials.h>
-#include <zephyr/net/http_client.h>
+#include <zephyr/net/http/client.h>
 #include <nrf_socket.h>
 #include "slm_at_host.h"
 #include "slm_at_httpc.h"

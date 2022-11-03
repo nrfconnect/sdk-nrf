@@ -11,7 +11,7 @@
 #include <zephyr/dfu/mcuboot.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/tls_credentials.h>
-#include <zephyr/net/http_parser_url.h>
+#include <zephyr/net/http/parser_url.h>
 #include <net/download_client.h>
 #include <nrf_socket.h>
 #include "slm_at_host.h"
