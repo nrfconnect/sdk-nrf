@@ -160,7 +160,7 @@ General documentation |gl|
 * Ensure that all documented items belong to a correct group (see the section below).
 * Use capitalization sparingly.
   When in doubt, use lowercase.
-* Break the line after 80 characters (following the dev guidelines)
+* Break the line after 100 characters.
 * Use ``@note`` only in the details section, and only when really needed for emphasis.
 * Use ``@warning`` only if an operating procedure or practice, which, if not correctly followed, could result in personal injury or loss of life.
 
