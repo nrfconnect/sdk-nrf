@@ -39,10 +39,15 @@ config MCUBOOT_IMAGE_VERSION
 	default "0.0.0+0"
 	help
 	  Value to be passed as 'version' argument to 'imgtool.py' when
-	  creating signed image. Note that no semantics are connected to
-	  this variable. It does not provide downgrade prevention, and is only
-	  valuable for debugging purposes. Format: maj.min.rev+build with
-	  latter parts optional.
+	  creating a signed image.
+	  Format: maj.min.rev+build, 'min', 'rev' and 'build' parts are optional
+	  This is used to enforce downgrade protection when Software based
+	  downgrade prevention (MCUBOOT_DOWNGRADE_PREVENTION) is enabled
+
+	  Note that the optional 'build' number specified after the + character
+	  is ignored when evaluating the version. An existing application image
+	  with version 0.1.2+3 can be overwritten by an uploaded image with
+	  0.1.2+2, but not by one with 0.1.1+2.
 
 # HACK: NCS temphack to keep our imgtool integration working now that
 # there is no CONFIG_DT_* CMake namespace anymore. Use Zephyr
