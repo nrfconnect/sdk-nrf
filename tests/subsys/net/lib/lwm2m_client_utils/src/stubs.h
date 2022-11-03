@@ -43,6 +43,7 @@ DECLARE_FAKE_VALUE_FUNC(int, modem_key_mgmt_write, nrf_sec_tag_t, enum modem_key
 			const void *, size_t);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_func_mode_set, enum lte_lc_func_mode);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_connect);
+DECLARE_FAKE_VALUE_FUNC(int, lte_lc_offline);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_func_mode_get, enum lte_lc_func_mode *);
 DECLARE_FAKE_VALUE_FUNC(int, settings_load_subtree, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, settings_register, struct settings_handler *);
@@ -93,6 +94,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
 	FUNC(modem_info_rsrp_register)                  \
 	FUNC(lte_lc_func_mode_set)                      \
 	FUNC(lte_lc_connect)                            \
+	FUNC(lte_lc_offline)                            \
 	FUNC(lte_lc_func_mode_get)                      \
 	FUNC(lte_lc_lte_mode_get)                       \
 	FUNC(settings_load_subtree)                     \

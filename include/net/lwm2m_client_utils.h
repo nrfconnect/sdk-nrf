@@ -120,6 +120,19 @@ bool lwm2m_security_needs_bootstrap(void);
  * @brief Initialize Device object
  */
 int lwm2m_init_device(void);
+
+/**
+ * @brief Reboot handler for a device object
+ *
+ * All arguments are ignored.
+ *
+ * @param obj_inst_id Device object instance.
+ * @param args Argument pointer's
+ * @param args_len Length of argument's
+ *
+ * @return Zero if success, negative error code otherwise.
+ */
+int lwm2m_device_reboot_cb(uint16_t obj_inst_id, uint8_t *args, uint16_t args_len);
 #endif
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT)
