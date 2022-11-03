@@ -12,6 +12,7 @@
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
 #include <zephyr/settings/settings.h>
+#include <zephyr/sys/reboot.h>
 #include "stubs.h"
 
 /*
@@ -63,4 +64,6 @@ DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_res_buf, const char *, void *, uint
 			     uint16_t, uint8_t);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_u32, const char *, uint32_t);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_s8, const char *, int8_t);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
+		       lwm2m_engine_execute_cb_t);
 DEFINE_FAKE_VOID_FUNC(engine_trigger_update, bool);
