@@ -4,6 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+if(SYSBUILD)
+  # Sysbuild and child-image are mutual exclusive, so if sysbuild is used disable child-image
+  function(add_child_image)
+    set(CONFIG_USE_PARTITION_MANAGER n CACHE INTERNAL "")
+    # ignore, sysbuild is in use.
+  endfunction()
+  return()
+endif()
+
 if(IMAGE_NAME)
   set_shared(IMAGE ${IMAGE_NAME} PROPERTY KERNEL_HEX_NAME ${KERNEL_HEX_NAME})
   set_shared(IMAGE ${IMAGE_NAME} PROPERTY ZEPHYR_BINARY_DIR ${ZEPHYR_BINARY_DIR})
