@@ -39,12 +39,9 @@ struct counter_collection {
 #define TYPE_COUNTERS 1 /* Type referring to counter collection. */
 #define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
 
-static const struct bl_storage_data *p_bl_storage_data =
-	(struct bl_storage_data *)PM_PROVISION_ADDRESS;
-
 uint32_t s0_address_read(void)
 {
-	uint32_t addr = p_bl_storage_data->s0_address;
+	uint32_t addr = BL_STORAGE->s0_address;
 
 	__DSB(); /* Because of nRF9160 Erratum 7 */
 	return addr;
@@ -52,7 +49,7 @@ uint32_t s0_address_read(void)
 
 uint32_t s1_address_read(void)
 {
-	uint32_t addr = p_bl_storage_data->s1_address;
+	uint32_t addr = BL_STORAGE->s1_address;
 
 	__DSB(); /* Because of nRF9160 Erratum 7 */
 	return addr;
@@ -60,7 +57,7 @@ uint32_t s1_address_read(void)
 
 uint32_t num_public_keys_read(void)
 {
-	uint32_t num_pk = p_bl_storage_data->num_public_keys;
+	uint32_t num_pk = BL_STORAGE->num_public_keys;
 
 	__DSB(); /* Because of nRF9160 Erratum 7 */
 	return num_pk;
@@ -71,13 +68,11 @@ uint32_t num_public_keys_read(void)
 
 static bool key_is_valid(uint32_t key_idx)
 {
-	bool ret = (p_bl_storage_data->key_data[key_idx].valid != INVALID_VAL);
+	bool ret = (BL_STORAGE->key_data[key_idx].valid != INVALID_VAL);
 
 	__DSB(); /* Because of nRF9160 Erratum 7 */
 	return ret;
 }
-
-static uint16_t read_halfword(const uint16_t *ptr);
 
 int verify_public_keys(void)
 {
@@ -85,9 +80,8 @@ int verify_public_keys(void)
 		if (key_is_valid(n)) {
 			for (uint32_t i = 0; i < SB_PUBLIC_KEY_HASH_LEN / 2; i++) {
 				const uint16_t *hash_as_halfwords =
-					(const uint16_t *)p_bl_storage_data->key_data[n].hash;
-				uint16_t halfword = read_halfword(&hash_as_halfwords[i]);
-
+					(const uint16_t *)BL_STORAGE->key_data[n].hash;
+				uint16_t halfword = nrfx_nvmc_otp_halfword_read((uint32_t)&hash_as_halfwords[i]);
 				if (halfword == 0xFFFF) {
 					return -EHASHFF;
 				}
@@ -109,7 +103,7 @@ int public_key_data_read(uint32_t key_idx, uint8_t *p_buf)
 		return -EFAULT;
 	}
 
-	p_key = p_bl_storage_data->key_data[key_idx].hash;
+	p_key = BL_STORAGE->key_data[key_idx].hash;
 
 	/* Ensure word alignment, since the data is stored in memory region
 	 * with word sized read limitation. Perform both build time and run
@@ -126,7 +120,7 @@ int public_key_data_read(uint32_t key_idx, uint8_t *p_buf)
 void invalidate_public_key(uint32_t key_idx)
 {
 	const uint32_t *invalidation_token =
-			&p_bl_storage_data->key_data[key_idx].valid;
+			&BL_STORAGE->key_data[key_idx].valid;
 
 	if (*invalidation_token != INVALID_VAL) {
 		/* Write if not already written. */
@@ -136,54 +130,12 @@ void invalidate_public_key(uint32_t key_idx)
 }
 
 
-/** Function for reading a half-word (2 byte value) from OTP.
- *
- * @details The flash in OTP supports only aligned 4 byte read operations.
- *          This function reads the encompassing 4 byte word, and returns the
- *          requested half-word.
- *
- * @param[in]  ptr  Address to read.
- *
- * @return value
- */
-static uint16_t read_halfword(const uint16_t *ptr)
-{
-	bool top_half = ((uint32_t)ptr % 4); /* Addr not div by 4 */
-	uintptr_t target_addr = (uintptr_t)ptr & ~3; /* Floor address */
-	uint32_t val32 = *(uint32_t *)target_addr;
-	__DSB(); /* Because of nRF9160 Erratum 7 */
-
-	return (top_half ? (val32 >> 16) : val32) & 0x0000FFFF;
-}
-
-
-/** Function for writing a half-word (2 byte value) to OTP.
- *
- * @details The flash in OTP supports only aligned 4 byte write operations.
- *          This function writes to the encompassing 4 byte word, masking the
- *          other half-word with 0xFFFF so it is left untouched.
- *
- * @param[in]  ptr  Address to write to.
- * @param[in]  val  Value to write into @p ptr.
- */
-static void write_halfword(const uint16_t *ptr, uint16_t val)
-{
-	bool top_half = (uint32_t)ptr % 4; /* Addr not div by 4 */
-	uint32_t target_addr = (uint32_t)ptr & ~3; /* Floor address */
-
-	uint32_t val32 = (uint32_t)val | 0xFFFF0000;
-	uint32_t val32_shifted = ((uint32_t)val << 16) | 0x0000FFFF;
-
-	nrfx_nvmc_word_write(target_addr, top_half ? val32_shifted : val32);
-}
-
-
 /** Get the counter_collection data structure in the provision data. */
 static const struct counter_collection *get_counter_collection(void)
 {
 	struct counter_collection *collection = (struct counter_collection *)
-		&p_bl_storage_data->key_data[num_public_keys_read()];
-	return read_halfword(&collection->type) == TYPE_COUNTERS
+		&BL_STORAGE->key_data[num_public_keys_read()];
+	return nrfx_nvmc_otp_halfword_read((uint32_t)&collection->type) == TYPE_COUNTERS
 		? collection : NULL;
 }
 
@@ -202,10 +154,10 @@ static const struct monotonic_counter *get_counter_struct(uint16_t description)
 
 	const struct monotonic_counter *current = counters->counters;
 
-	for (size_t i = 0; i < read_halfword(&counters->num_counters); i++) {
-		uint16_t num_slots = read_halfword(&current->num_counter_slots);
+	for (size_t i = 0; i < nrfx_nvmc_otp_halfword_read((uint32_t)&counters->num_counters); i++) {
+		uint16_t num_slots = nrfx_nvmc_otp_halfword_read((uint32_t)&current->num_counter_slots);
 
-		if (read_halfword(&current->description) == description) {
+		if (nrfx_nvmc_otp_halfword_read((uint32_t)&current->description) == description) {
 			return current;
 		}
 
@@ -223,7 +175,7 @@ uint16_t num_monotonic_counter_slots(void)
 	uint16_t num_slots = 0;
 
 	if (counter != NULL) {
-		num_slots = read_halfword(&counter->num_counter_slots);
+		num_slots = nrfx_nvmc_otp_halfword_read((uint32_t)&counter->num_counter_slots);
 	}
 	return num_slots != 0xFFFF ? num_slots : 0;
 }
@@ -245,7 +197,7 @@ static uint16_t get_counter(const uint16_t **free_slot)
 	uint16_t num_slots = num_monotonic_counter_slots();
 
 	for (uint32_t i = 0; i < num_slots; i++) {
-		uint16_t counter = ~read_halfword(&slots[i]);
+		uint16_t counter = ~nrfx_nvmc_otp_halfword_read((uint32_t)&slots[i]);
 
 		if (counter == 0) {
 			addr = &slots[i];
@@ -284,92 +236,6 @@ int set_monotonic_counter(uint16_t new_counter)
 		return -ENOMEM;
 	}
 
-	write_halfword(next_counter_addr, ~new_counter);
-	return 0;
-}
-
-/* OTP is 0xFFFF after erase so setting all bits to 0 so a full erase is needed
- * to reset
- */
-#define STATE_ENTERED 0x0000
-#define STATE_NOT_ENTERED 0xFFFF
-
-int update_life_cycle_state(enum lcs next_lcs)
-{
-	int err;
-	enum lcs current_lcs = 0;
-
-	if (next_lcs == UNKNOWN) {
-		return -EINVALIDLCS;
-	}
-
-	err = read_life_cycle_state(&current_lcs);
-	if (err != 0) {
-		return err;
-	}
-
-	if (next_lcs < current_lcs) {
-		/* Is is only possible to transition into a higher state */
-		return -EINVALIDLCS;
-	}
-
-	if (next_lcs == current_lcs) {
-		/* The same LCS is a valid argument, but nothing to do so return success */
-		return 0;
-	}
-
-	/* As the device starts in ASSEMBLY, it is not possible to write it */
-	if (current_lcs == ASSEMBLY && next_lcs == PROVISION) {
-		write_halfword(&(p_bl_storage_data->lcs.provisioning), STATE_ENTERED);
-		return 0;
-	}
-
-	if (current_lcs == PROVISION && next_lcs == SECURE) {
-		write_halfword(&(p_bl_storage_data->lcs.secure), STATE_ENTERED);
-		return 0;
-	}
-
-	if (current_lcs == SECURE && next_lcs == DECOMMISSIONED) {
-		write_halfword(&(p_bl_storage_data->lcs.decommissioned), STATE_ENTERED);
-		return 0;
-	}
-
-	/* This will be the case if any invalid transition is tried */
-	return -EINVALIDLCS;
-}
-
-int read_life_cycle_state(enum lcs *lcs)
-{
-	if (lcs == NULL) {
-		return -EINVAL;
-	}
-
-	uint16_t provisioning = nrfx_nvmc_otp_halfword_read(
-		(uint32_t) &p_bl_storage_data->lcs.provisioning);
-	uint16_t secure = nrfx_nvmc_otp_halfword_read((uint32_t) &p_bl_storage_data->lcs.secure);
-	uint16_t decommissioned = nrfx_nvmc_otp_halfword_read(
-		(uint32_t) &p_bl_storage_data->lcs.decommissioned);
-
-	if (provisioning == STATE_NOT_ENTERED
-		&& secure == STATE_NOT_ENTERED
-		&& decommissioned == STATE_NOT_ENTERED) {
-		*lcs = ASSEMBLY;
-	} else if (provisioning == STATE_ENTERED
-			   && secure == STATE_NOT_ENTERED
-			   && decommissioned == STATE_NOT_ENTERED) {
-		*lcs = PROVISION;
-	} else if (provisioning == STATE_ENTERED
-			   && secure == STATE_ENTERED
-			   && decommissioned == STATE_NOT_ENTERED) {
-		*lcs = SECURE;
-	} else if (provisioning == STATE_ENTERED
-			   && secure == STATE_ENTERED
-			   && decommissioned == STATE_ENTERED) {
-		*lcs = DECOMMISSIONED;
-	} else {
-		/* To reach this the OTP must be corrupted or reading failed */
-		return -EREADLCS;
-	}
-
+	nrfx_nvmc_halfword_write((uint32_t)next_counter_addr, ~new_counter);
 	return 0;
 }

@@ -18,10 +18,12 @@
 
 /* implementation_id is a mandatory IAT claim */
 #define CONFIG_SB_IMPLEMENTATION_ID 1
-#include "bl_storage.h"
-#include <nrfx_nvmc.h>
 
-#include <pm_config.h>
+#define PM_PROVISION_ADDRESS (&NRF_UICR_S->OTP)
+
+#include <bl_storage.h>
+
+#include <nrfx_nvmc.h>
 
 static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(enum lcs lcs){
 	switch (lcs) {
@@ -56,117 +58,25 @@ static enum lcs map_tfm_slc_to_bl_storage_lcs(enum tfm_security_lifecycle_t lcs)
 }
 
 /* This is temporary solution until the bl_storage API is available in TF-M */
-static const struct bl_storage_data *p_bl_storage_data =
-	(struct bl_storage_data *)(&NRF_UICR_S->OTP);
 
 #define STATE_ENTERED 0x0000
 #define STATE_NOT_ENTERED 0xFFFF
 #define	EINVAL 22	/* Invalid argument */
 
-
-/** Function for writing a half-word (2 byte value) to OTP.
- *
- * \details The flash in OTP supports only aligned 4 byte write operations.
- *          This function writes to the encompassing 4 byte word, masking the
- *          other half-word with 0xFFFF so it is left untouched.
- *
- * \param[in]  ptr  Address to write to.
- * \param[in]  val  Value to write into @p ptr.
- */
-static void write_halfword(const uint16_t *ptr, uint16_t val)
-{
-	bool top_half = (uint32_t)ptr % 4; /* Addr not div by 4 */
-	uint32_t target_addr = (uint32_t)ptr & ~3; /* Floor address */
-
-	uint32_t val32 = (uint32_t)val | 0xFFFF0000;
-	uint32_t val32_shifted = ((uint32_t)val << 16) | 0x0000FFFF;
-
-	nrfx_nvmc_word_write(target_addr, top_half ? val32_shifted : val32);
-}
-
-
 /* Can later be replaced by a bl_storage call */
 int read_lcs_from_otp(enum lcs *lcs)
 {
-	if (lcs == NULL){
-		return -EINVAL;
-	}
-
-	uint16_t provisioning = nrfx_nvmc_otp_halfword_read((uint32_t) &p_bl_storage_data->lcs.provisioning);
-	uint16_t secure = nrfx_nvmc_otp_halfword_read((uint32_t) &p_bl_storage_data->lcs.secure);
-	uint16_t decommissioned = nrfx_nvmc_otp_halfword_read((uint32_t) &p_bl_storage_data->lcs.decommissioned);
-
-	if (provisioning == STATE_NOT_ENTERED
-		&& secure == STATE_NOT_ENTERED
-		&& decommissioned == STATE_NOT_ENTERED) {
-		*lcs = ASSEMBLY;
-	} else if (provisioning == STATE_ENTERED
-			   && secure == STATE_NOT_ENTERED
-			   && decommissioned == STATE_NOT_ENTERED) {
-		*lcs = PROVISION;
-	} else if (provisioning == STATE_ENTERED
-			   && secure == STATE_ENTERED
-			   && decommissioned == STATE_NOT_ENTERED) {
-		*lcs = SECURE;
-	} else if (provisioning == STATE_ENTERED
-			   && secure == STATE_ENTERED
-			   && decommissioned == STATE_ENTERED) {
-		*lcs = DECOMMISSIONED;
-	} else {
-		/* To reach this the OTP must be corrupted or reading failed */
-		return -EREADLCS;
-	}
-
-	return 0;
+	return read_life_cycle_state(lcs);
 }
 
 int update_lcs_in_otp(enum lcs next_lcs)
 {
-	int err;
-	enum lcs current_lcs = 0;
-
-	if(next_lcs == UNKNOWN){
-		return -EINVALIDLCS;
-	}
-
-	err = read_lcs_from_otp(&current_lcs);
-	if (err != 0) {
-		return err;
-	}
-
-	if (next_lcs < current_lcs) {
-		/* Is is only possible to transition into a higher state */
-		return -EINVALIDLCS;
-	}
-
-	if (next_lcs == current_lcs) {
-		/* The same LCS is a valid argument, but nothing to do so return success */
-		return 0;
-	}
-
-	/* As the device starts in ASSEMBLY, it is not possible to write it */
-	if (current_lcs == ASSEMBLY && next_lcs == PROVISION) {
-		write_halfword(&(p_bl_storage_data->lcs.provisioning), STATE_ENTERED);
-		return 0;
-	}
-
-	if (current_lcs == PROVISION && next_lcs == SECURE) {
-		write_halfword(&(p_bl_storage_data->lcs.secure), STATE_ENTERED);
-		return 0;
-	}
-
-	if (current_lcs == SECURE && next_lcs == DECOMMISSIONED) {
-		write_halfword(&(p_bl_storage_data->lcs.decommissioned), STATE_ENTERED);
-		return 0;
-	}
-
-	/* This will be the case if any invalid transition is tried */
-	return -EINVALIDLCS;
+	return update_life_cycle_state(next_lcs);
 }
 
 static void read_implementation_id_from_otp(uint8_t * buf)
 {
-	otp_copy32(buf, (uint32_t *)&p_bl_storage_data->implementation_id, 32);
+	otp_copy32(buf, (uint32_t *)&BL_STORAGE->implementation_id, 32);
 }
 
 /* End of  temporary solution */

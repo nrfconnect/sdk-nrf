@@ -46,6 +46,7 @@ void main(void)
 	}
 
 	if (lcs != PROVISION) {
+		LOG_INF("Lifecycle state was %d", lcs);
 		LOG_INF("Failure: Lifecycle state is not PROVISION as expected. Exiting!");
 		return;
 	}
