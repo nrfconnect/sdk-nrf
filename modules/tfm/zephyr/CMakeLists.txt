@@ -47,7 +47,8 @@ endif()
 if (CONFIG_BOOTLOADER_MCUBOOT AND NOT CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
   # Configure the secondary partition to be non-secure
   set_property(TARGET zephyr_property_target
-    APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_NS_SECONDARY=ON
+    APPEND PROPERTY TFM_CMAKE_OPTIONS
+	-DNRF_NS_SECONDARY=$<TARGET_PROPERTY:partition_manager,PM_mcuboot_secondary_IS_ENABLED>
   )
 endif()
 
