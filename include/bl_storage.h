@@ -10,6 +10,10 @@
 #include <string.h>
 #include <zephyr/types.h>
 #include <drivers/nrfx_common.h>
+#include <nrfx_nvmc.h>
+#include <errno.h>
+
+#include <pm_config.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,6 +64,8 @@ struct bl_storage_data {
 		uint8_t hash[SB_PUBLIC_KEY_HASH_LEN];
 	} key_data[1];
 };
+
+#define BL_STORAGE ((struct bl_storage_data *)(PM_PROVISION_ADDRESS))
 
 /** @defgroup bl_storage Bootloader storage (protected data).
  * @{
@@ -163,31 +169,6 @@ enum lcs {
 };
 
 /**
- * @brief Update the life cycle state in OTP,
- *
- * If the given next state is not a not allowed transition the function
- * will return -EINVALIDLCS
- *
- * @param[in] next_lcs Must be the same or the successor state of the current
- *                     one.
- *
- * @retval 0            The LSC was update successfully
- * @retval -EREADLCS    Error on reading the current state
- * @retval -EINVALIDLCS Invalid next state
- */
-int update_life_cycle_state(enum lcs next_lcs);
-
-/**
- * @brief Read the current life cycle state the device is in from OTP,
- *
- * @param[out] lcs Will be set to the current LCS the device is in
- *
- * @retval 0            The LSC read was successful
- * @retval -EREADLCS    Error on reading from OTP or invalid OTP content
- */
-int read_life_cycle_state(enum lcs *lcs);
-
-/**
  * Copies @p src into @p dst. Reads from @p src are done 32 bits at a
  * time. Writes to @p dst are done a byte at a time.
  *
@@ -209,6 +190,117 @@ NRFX_STATIC_INLINE void otp_copy32(uint8_t * restrict dst, uint32_t volatile * r
 			dst[i * 4 + j] = (val >> 8 * j) & 0xFF;
 		}
 	}
+}
+
+/* OTP is 0xFFFF after erase so setting all bits to 0 so a full erase is needed
+ * to reset
+ */
+#define STATE_ENTERED 0x0000
+#define STATE_NOT_ENTERED 0xFFFF
+
+/* The below bl_storage functions are static inline in the header file
+   so that TF-M (that does not include bl_storage.c) can also have
+   access to them.
+   This is a temporary solution until TF-M has access to NSIB functions.
+*/
+
+/**
+ * @brief Read the current life cycle state the device is in from OTP,
+ *
+ * @param[out] lcs Will be set to the current LCS the device is in
+ *
+ * @retval 0            The LSC read was successful
+ * @retval -EREADLCS    Error on reading from OTP or invalid OTP content
+ */
+NRFX_STATIC_INLINE int read_life_cycle_state(enum lcs *lcs)
+{
+	if (lcs == NULL) {
+		return -EINVAL;
+	}
+
+	uint16_t provisioning = nrfx_nvmc_otp_halfword_read((uint32_t) &BL_STORAGE->lcs.provisioning);
+	uint16_t secure = nrfx_nvmc_otp_halfword_read((uint32_t) &BL_STORAGE->lcs.secure);
+	uint16_t decommissioned = nrfx_nvmc_otp_halfword_read((uint32_t) &BL_STORAGE->lcs.decommissioned);
+
+	if (provisioning == STATE_NOT_ENTERED
+		&& secure == STATE_NOT_ENTERED
+		&& decommissioned == STATE_NOT_ENTERED) {
+		*lcs = ASSEMBLY;
+	} else if (provisioning == STATE_ENTERED
+			   && secure == STATE_NOT_ENTERED
+			   && decommissioned == STATE_NOT_ENTERED) {
+		*lcs = PROVISION;
+	} else if (provisioning == STATE_ENTERED
+			   && secure == STATE_ENTERED
+			   && decommissioned == STATE_NOT_ENTERED) {
+		*lcs = SECURE;
+	} else if (provisioning == STATE_ENTERED
+			   && secure == STATE_ENTERED
+			   && decommissioned == STATE_ENTERED) {
+		*lcs = DECOMMISSIONED;
+	} else {
+		/* To reach this the OTP must be corrupted or reading failed */
+		return -EREADLCS;
+	}
+
+	return 0;
+}
+
+/**
+ * @brief Update the life cycle state in OTP,
+ *
+ * If the given next state is not a not allowed transition the function
+ * will return -EINVALIDLCS
+ *
+ * @param[in] next_lcs Must be the same or the successor state of the current
+ *                     one.
+ *
+ * @retval 0            The LSC was update successfully
+ * @retval -EREADLCS    Error on reading the current state
+ * @retval -EINVALIDLCS Invalid next state
+ */
+NRFX_STATIC_INLINE int update_life_cycle_state(enum lcs next_lcs)
+{
+	int err;
+	enum lcs current_lcs = 0;
+
+	if (next_lcs == UNKNOWN) {
+		return -EINVALIDLCS;
+	}
+
+	err = read_life_cycle_state(&current_lcs);
+	if (err != 0) {
+		return err;
+	}
+
+	if (next_lcs < current_lcs) {
+		/* Is is only possible to transition into a higher state */
+		return -EINVALIDLCS;
+	}
+
+	if (next_lcs == current_lcs) {
+		/* The same LCS is a valid argument, but nothing to do so return success */
+		return 0;
+	}
+
+	/* As the device starts in ASSEMBLY, it is not possible to write it */
+	if (current_lcs == ASSEMBLY && next_lcs == PROVISION) {
+		nrfx_nvmc_halfword_write((uint32_t)&BL_STORAGE->lcs.provisioning, STATE_ENTERED);
+		return 0;
+	}
+
+	if (current_lcs == PROVISION && next_lcs == SECURE) {
+		nrfx_nvmc_halfword_write((uint32_t)&BL_STORAGE->lcs.secure, STATE_ENTERED);
+		return 0;
+	}
+
+	if (current_lcs == SECURE && next_lcs == DECOMMISSIONED) {
+		nrfx_nvmc_halfword_write((uint32_t)&BL_STORAGE->lcs.decommissioned, STATE_ENTERED);
+		return 0;
+	}
+
+	/* This will be the case if any invalid transition is tried */
+	return -EINVALIDLCS;
 }
 
   /** @} */
