@@ -12,6 +12,7 @@
 #include <string.h>
 #include <nrfx_nvmc.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/kernel.h>
 
 
 /* These symbols are defined in linker scripts. */
