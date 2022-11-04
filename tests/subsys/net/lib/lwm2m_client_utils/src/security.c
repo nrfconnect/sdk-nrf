@@ -73,7 +73,7 @@ static int modem_key_mgmt_exists_custom_fake(nrf_sec_tag_t sec_tag,
 	return 0;
 }
 
-static int lwm2m_engine_set_opaque_custom_fake_PSK(const char *path, char *data, uint16_t len)
+static int lwm2m_engine_set_opaque_custom_fake_PSK(const char *path, const char *data, uint16_t len)
 {
 	if (strcmp(path, "0/0/0") == 0) {
 		/* URI */
@@ -96,7 +96,8 @@ static int lwm2m_engine_set_opaque_custom_fake_PSK(const char *path, char *data,
 	return 0;
 }
 
-static int lwm2m_engine_set_opaque_custom_fake_CERT(const char *path, char *data, uint16_t len)
+static int lwm2m_engine_set_opaque_custom_fake_CERT(const char *path, const char *data,
+						    uint16_t len)
 {
 	if (strcmp(path, "0/0/0") == 0) {
 		/* URI */
