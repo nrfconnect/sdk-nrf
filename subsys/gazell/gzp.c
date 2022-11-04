@@ -9,6 +9,7 @@
 #include <gzp.h>
 #include <zephyr/crypto/crypto.h>
 #include <zephyr/drivers/entropy.h>
+#include <zephyr/kernel.h>
 #include "gzp_internal.h"
 
 /*

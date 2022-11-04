@@ -7,6 +7,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/device.h>
+#include <zephyr/kernel.h>
 
 #define RESET_NODE DT_NODELABEL(nrf52840_reset)
 
