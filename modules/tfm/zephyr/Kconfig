@@ -12,3 +12,7 @@ config TFM_BOARD
 	help
 	  Redefinition of TFM_BOARD to use out-of-tree boards. These depend on
 	  ${TFM_BOARD_BASE_DIR} being set to the TFM board dir inside sdk-nrf.
+
+config TFM_PARTITION_INITIAL_ATTESTATION
+	select SECURE_BOOT
+	select BOOTLOADER_MCUBOOT

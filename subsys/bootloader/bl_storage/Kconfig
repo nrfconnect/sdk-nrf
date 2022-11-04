@@ -9,3 +9,4 @@ config SECURE_BOOT_STORAGE
 
 config SB_IMPLEMENTATION_ID
 	bool "Uniquely identifies the underlying immutable PSA RoT."
+	select SECURE_BOOT_STORAGE
