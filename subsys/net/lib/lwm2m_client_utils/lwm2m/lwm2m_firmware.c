@@ -14,7 +14,6 @@
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/net/lwm2m.h>
 #include <modem/nrf_modem_lib.h>
-#include <zephyr/sys/reboot.h>
 #include <net/fota_download.h>
 #include <net/lwm2m_client_utils.h>
 #include <net/lwm2m_client_utils_fota.h>
@@ -32,15 +31,15 @@
 LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 #define BYTE_PROGRESS_STEP (1024 * 10)
-#define REBOOT_DELAY K_SECONDS(1)
 
 static lwm2m_firmware_get_update_state_cb_t update_state_cb;
 static uint8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
 
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
+static void apply_fmfu_from_ext_flash(struct k_work *work);
 static uint8_t fmfu_buf[1024];
 static const struct device *flash_dev = DEVICE_DT_GET_ONE(jedec_spi_nor);
-static struct k_work full_modem_update_work;
+static K_WORK_DEFINE(full_modem_update_work, apply_fmfu_from_ext_flash);
 #endif
 
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
@@ -54,8 +53,8 @@ static int fota_sec_tag;
 static uint8_t percent_downloaded;
 static uint32_t bytes_downloaded;
 
-static struct k_work_delayable reboot_work;
-static struct k_work download_work;
+static void start_fota_download(struct k_work *work);
+static K_WORK_DEFINE(download_work, start_fota_download);
 
 void client_acknowledge(void);
 
@@ -68,6 +67,14 @@ static int modem_lib_init_result = -1;
 static void on_modem_lib_init(int ret, void *ctx)
 {
 	modem_lib_init_result = ret;
+}
+
+static void reboot_work_handler(void)
+{
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_REBOOT) &&                                   \
+	defined(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT)
+	lwm2m_device_reboot_cb(0, NULL, 0);
+#endif
 }
 
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
@@ -96,7 +103,7 @@ static void apply_fmfu_from_ext_flash(struct k_work *work)
 	}
 	LOG_INF("Modem firmware update completed\n");
 
-	k_work_schedule(&reboot_work, REBOOT_DELAY);
+	reboot_work_handler();
 }
 
 static int configure_full_modem_update(void)
@@ -125,15 +132,6 @@ static int configure_full_modem_update(void)
 	return ret;
 }
 #endif
-
-static void reboot_work_handler(struct k_work *work)
-{
-	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_REBOOT)) {
-		LOG_INF("Rebooting device");
-		LOG_PANIC();
-		sys_reboot(SYS_REBOOT_COLD);
-	}
-}
 
 static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args,
 			    uint16_t args_len)
@@ -168,7 +166,7 @@ static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args,
 	} else
 #endif
 	{
-		k_work_schedule(&reboot_work, REBOOT_DELAY);
+		reboot_work_handler();
 	}
 
 	return 0;
@@ -536,11 +534,6 @@ void lwm2m_firmware_set_update_state_cb(lwm2m_firmware_get_update_state_cb_t cb)
 
 int lwm2m_init_firmware(void)
 {
-	k_work_init_delayable(&reboot_work, reboot_work_handler);
-	k_work_init(&download_work, start_fota_download);
-#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
-	k_work_init(&full_modem_update_work, apply_fmfu_from_ext_flash);
-#endif
 	lwm2m_firmware_set_update_cb(firmware_update_cb);
 	/* setup data buffer for block-wise transfer */
 	lwm2m_engine_register_pre_write_callback("5/0/0", firmware_get_buf);
@@ -597,7 +590,7 @@ void lwm2m_verify_modem_fw_update(void)
 		return;
 	}
 
-	k_work_schedule(&reboot_work, K_NO_WAIT);
+	reboot_work_handler();
 }
 
 int lwm2m_init_image(void)
