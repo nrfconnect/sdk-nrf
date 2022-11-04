@@ -345,6 +345,11 @@ nRF9160 samples
     * Added handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
     * Removed A-GPS and P-GPS processing; it is now handled by the :ref:`lib_nrf_cloud` library.
 
+  * Added:
+
+    * Board overlay file for nRF9160 DK with external flash.
+    * Overlay file to enable P-GPS data storage in external flash.
+
 Thread samples
 --------------
 
@@ -599,6 +604,18 @@ Libraries for networking
   * The nRF Cloud cellular positioning library is now renamed to :ref:`lib_nrf_cloud_location`.
     In addition to cellular, the library now supports device location from nRF Cloud using Wi-Fi network information.
 
+* :ref:`lib_nrf_cloud_pgps` library:
+
+  * Added:
+
+    * Added access to P-GPS predictions in external flash.
+
+  * Fixed:
+
+    * An issue where 0 predictions would be requested from the cloud.
+    * An issue where subsequent updates were locked out after the first one completes.
+      This happened when custom download transport was not used.
+
 Libraries for NFC
 -----------------
 
@@ -672,6 +689,11 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
   * Added:
 
     * :kconfig:option:`CONFIG_PM_PARTITION_ALIGN_SETTINGS_STORAGE` Kconfig option to specify the alignment of the settings storage partition.
+    * P-GPS partition section to the :file:`ncs/nrf/subsys/partition_manager/Kconfig` file.
+
+  * Updated:
+
+    * Updated the :file:`ncs/nrf/subsys/partition_manager/pm.yml.pgps` file to place P-GPS partition in external flash when so configured.
 
 MCUboot
 =======
