@@ -292,5 +292,13 @@ config BT_CTLR_LE_POWER_CONTROL
 	  Enable support for LE Power Control feature that defined in the Bluetooth
 	  Core specification, Version 5.3 | Vol 6, Part B, Section 4.6.31.
 
+config BT_UNINIT_MPSL_ON_DISABLE
+	bool "Uninitializes MPSL on BT disable"
+	depends on MPSL_DYNAMIC_INTERRUPTS
+	help
+	  This option unitializes MPSL on BT disable. HCI driver close calls
+	  mpsl_lib_uninit, which releases all peripherals and allows the user to
+	  override any interrupt handlers used by MPSL.
+
 endmenu
 endif  # BT_LL_SOFTDEVICE
