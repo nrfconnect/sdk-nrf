@@ -54,6 +54,8 @@ Bluetooth LE
 * Added:
 
   * Support for :c:func:`hci_driver_close`, so :c:func:`bt_disable` can now be used to disable the SoftDevice Controller.
+  * The Kconfig option :kconfig:option:`CONFIG_BT_UNINIT_MPSL_ON_DISABLE` that, when enabled, uninitializes the MPSL when :c:func:`bt_disable` is used.
+    This releases all peripherals used by the MPSL.
 
 For details, see :ref:`nrfxlib:softdevice_controller_changelog`.
 

@@ -24,6 +24,7 @@
 #include <sdc_hci.h>
 #include <sdc_hci_vs.h>
 #include <mpsl/mpsl_work.h>
+#include <mpsl/mpsl_lib.h>
 
 #include "multithreading_lock.h"
 #include "hci_internal.h"
@@ -778,13 +779,27 @@ static int hci_driver_open(void)
 	}
 
 	err = MULTITHREADING_LOCK_ACQUIRE();
-	if (!err) {
-		err = sdc_enable(receive_signal_raise, sdc_mempool);
-		MULTITHREADING_LOCK_RELEASE();
-	}
-	if (err < 0) {
+	if (err) {
 		return err;
 	}
+
+	if (IS_ENABLED(CONFIG_BT_UNINIT_MPSL_ON_DISABLE)) {
+		if (!mpsl_is_initialized()) {
+			err = mpsl_lib_init();
+			if (err) {
+				MULTITHREADING_LOCK_RELEASE();
+				return err;
+			}
+		}
+	}
+
+	err = sdc_enable(receive_signal_raise, sdc_mempool);
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return err;
+	}
+
+	MULTITHREADING_LOCK_RELEASE();
 
 	return 0;
 }
@@ -806,6 +821,14 @@ static int hci_driver_close(void)
 	if (err) {
 		MULTITHREADING_LOCK_RELEASE();
 		return err;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_UNINIT_MPSL_ON_DISABLE)) {
+		err = mpsl_lib_uninit();
+		if (err) {
+			MULTITHREADING_LOCK_RELEASE();
+			return err;
+		}
 	}
 
 	MULTITHREADING_LOCK_RELEASE();
