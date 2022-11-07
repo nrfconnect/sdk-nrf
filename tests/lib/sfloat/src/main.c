@@ -7,7 +7,9 @@
 #include <zephyr/ztest.h>
 #include <sfloat.h>
 
-static void test_sfloat_from_float(void)
+ZTEST_SUITE(sfloat_suite, NULL, NULL, NULL, NULL, NULL);
+
+ZTEST(sfloat_suite, test_sfloat_from_float)
 {
 	struct sfloat res;
 	struct {
@@ -97,13 +99,4 @@ static void test_sfloat_from_float(void)
 			"comparison failed for the sample[%d] equal to %f: 0x%04X != 0x%04X",
 			i, in_float, res.val, out_sfloat.val);
 	}
-}
-
-void test_main(void)
-{
-	ztest_test_suite(sfloat_suite,
-		ztest_unit_test(test_sfloat_from_float)
-	);
-
-	ztest_run_test_suite(sfloat_suite);
 }
