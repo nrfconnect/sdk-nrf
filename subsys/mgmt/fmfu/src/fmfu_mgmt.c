@@ -6,6 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <smp/smp.h>
 #include <mgmt/mgmt.h>
 #include <nrfx_ipc.h>
 #include <nrf_modem_full_dfu.h>
