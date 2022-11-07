@@ -46,3 +46,16 @@
 		};
 	};
 };
+
+ /* Enable pin forwarding to network core. The selected pins will be used by
+  * Distance Measurement module for debug purposes.
+  *
+  * Note: Pay attention to assign the same GPIO pins as those provide in network core DTS overlay.
+  */
+&gpio_fwd {
+	compatible = "nordic,nrf-gpio-forwarder";
+	dm-gpio-if {
+		gpios = <&gpio0 26 0>,
+			<&gpio0 27 0>;
+		};
+};

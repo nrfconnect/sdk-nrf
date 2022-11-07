@@ -45,4 +45,22 @@
 			status = "okay";
 		};
 	};
+
+
+	/* The selected pins will be used by Distance Measurement module for debug purposes.
+	 *
+	 * Note: Pay attention to select the same GPIO pins
+	 * in the application core DTS overlay's gpio_fwd node.
+	 */
+	dm_gpio {
+		compatible = "gpio-leds";
+		dm_ranging: dm-ranging {
+			gpios = <&gpio0 27 GPIO_ACTIVE_LOW>;
+			label = "DM Ranging Pin";
+		};
+		dm_add_request: dm-add-request {
+			gpios = <&gpio0 26 GPIO_ACTIVE_LOW>;
+			label = "DM Add request Pin";
+		};
+	};
 };
