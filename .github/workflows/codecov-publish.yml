@@ -4,11 +4,7 @@ on:
   workflow_run:
     workflows: ["Native Posix tests"]
     types:
-    - completed
-
-permissions:
-  contents: write
-  pull-requests: write
+      - completed
 
 jobs:
   publish_code_coverage:
