@@ -8,7 +8,7 @@
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/audio/audio.h>
-#include <zephyr/bluetooth/audio/capabilities.h>
+#include <zephyr/bluetooth/audio/pacs.h>
 
 /* TODO: Remove when a get_info function is implemented in host */
 #include <../subsys/bluetooth/audio/endpoint.h>
@@ -291,7 +291,7 @@ static struct bt_audio_broadcast_sink_cb broadcast_sink_cbs = { .scan_recv = sca
 								.base_recv = base_recv_cb,
 								.syncable = syncable_cb };
 
-static struct bt_audio_capability capabilities = {
+static struct bt_pacs_cap capabilities = {
 	.codec = &codec,
 };
 
@@ -307,17 +307,17 @@ static void initialize(le_audio_receive_cb recv_cb)
 		channel_assignment_get(&channel);
 
 		if (channel == AUDIO_CH_L) {
-			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
-							       BT_AUDIO_LOCATION_FRONT_LEFT);
+			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
+						   BT_AUDIO_LOCATION_FRONT_LEFT);
 		} else {
-			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
-							       BT_AUDIO_LOCATION_FRONT_RIGHT);
+			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
+						   BT_AUDIO_LOCATION_FRONT_RIGHT);
 		}
 		if (ret) {
 			LOG_ERR("Location set failed");
 		}
 
-		ret = bt_audio_capability_register(BT_AUDIO_DIR_SINK, &capabilities);
+		ret = bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &capabilities);
 		if (ret) {
 			LOG_ERR("Capability register failed (ret %d)", ret);
 			ERR_CHK(ret);

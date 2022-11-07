@@ -10,7 +10,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/audio.h>
-#include <zephyr/bluetooth/audio/capabilities.h>
+#include <zephyr/bluetooth/audio/pacs.h>
 #include <../subsys/bluetooth/audio/endpoint.h>
 
 #include "macros_common.h"
@@ -67,7 +67,7 @@ static enum bt_audio_dir caps_dirs[] = {
 #endif
 };
 
-static struct bt_audio_capability caps[] = {
+static struct bt_pacs_cap caps[] = {
 	{
 		.pref = BT_AUDIO_CAPABILITY_PREF(BT_AUDIO_CAPABILITY_UNFRAMED_SUPPORTED,
 						 BT_GAP_LE_PHY_2M, BLE_ISO_RETRANSMITS,
@@ -206,7 +206,7 @@ static void advertising_start(void)
 
 static struct bt_audio_stream *lc3_cap_config_cb(struct bt_conn *conn, struct bt_audio_ep *ep,
 						 enum bt_audio_dir dir,
-						 struct bt_audio_capability *cap,
+						 struct bt_pacs_cap *cap,
 						 struct bt_codec *codec)
 {
 	int ret;
@@ -257,7 +257,7 @@ static struct bt_audio_stream *lc3_cap_config_cb(struct bt_conn *conn, struct bt
 	return NULL;
 }
 
-static int lc3_cap_reconfig_cb(struct bt_audio_stream *stream, struct bt_audio_capability *cap,
+static int lc3_cap_reconfig_cb(struct bt_audio_stream *stream, struct bt_pacs_cap *cap,
 			       struct bt_codec *codec)
 {
 	LOG_DBG("ASE Codec Reconfig: stream %p cap %p", (void *)stream, (void *)cap);
@@ -431,30 +431,30 @@ static int initialize(le_audio_receive_cb recv_cb)
 		channel_assignment_get(&channel);
 
 		for (int i = 0; i < ARRAY_SIZE(caps); i++) {
-			ret = bt_audio_capability_register(caps_dirs[i], &caps[i]);
+			ret = bt_pacs_cap_register(caps_dirs[i], &caps[i]);
 			if (ret) {
 				LOG_ERR("Capability register failed");
 				return ret;
 			}
 		}
 		if (channel == AUDIO_CH_L) {
-			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
-							       BT_AUDIO_LOCATION_FRONT_LEFT);
+			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
+						   BT_AUDIO_LOCATION_FRONT_LEFT);
 			if (ret) {
 				LOG_ERR("Location set failed");
 				return ret;
 			}
 
 		} else {
-			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
-							       BT_AUDIO_LOCATION_FRONT_RIGHT);
+			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
+						   BT_AUDIO_LOCATION_FRONT_RIGHT);
 			if (ret) {
 				LOG_ERR("Location set failed");
 				return ret;
 			}
 		}
 #if CONFIG_STREAM_BIDIRECTIONAL
-		ret = bt_audio_capability_set_available_contexts(
+		ret = bt_pacs_set_available_contexts(
 			BT_AUDIO_DIR_SINK, BT_AUDIO_CONTEXT_TYPE_MEDIA |
 						   BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL |
 						   BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
@@ -463,7 +463,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 			return ret;
 		}
 
-		ret = bt_audio_capability_set_available_contexts(
+		ret = bt_pacs_set_available_contexts(
 			BT_AUDIO_DIR_SOURCE, BT_AUDIO_CONTEXT_TYPE_MEDIA |
 						     BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL |
 						     BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
@@ -472,14 +472,14 @@ static int initialize(le_audio_receive_cb recv_cb)
 			return ret;
 		}
 
-		ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SOURCE,
-						       BT_AUDIO_LOCATION_FRONT_LEFT);
+		ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE,
+					   BT_AUDIO_LOCATION_FRONT_LEFT);
 		if (ret) {
 			LOG_ERR("Location set failed");
 			return ret;
 		}
 #else
-		ret = bt_audio_capability_set_available_contexts(
+		ret = bt_pacs_set_available_contexts(
 			BT_AUDIO_DIR_SINK,
 			BT_AUDIO_CONTEXT_TYPE_MEDIA | BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
 		if (ret) {
@@ -558,7 +558,7 @@ int le_audio_play(void)
 {
 	int ret;
 
-	ret = bt_audio_capability_set_available_contexts(
+	ret = bt_pacs_set_available_contexts(
 		BT_AUDIO_DIR_SINK, BT_AUDIO_CONTEXT_TYPE_MEDIA | BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
 
 	if (ret) {
@@ -573,8 +573,8 @@ int le_audio_pause(void)
 {
 	int ret;
 
-	ret = bt_audio_capability_set_available_contexts(BT_AUDIO_DIR_SINK,
-							 BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
+	ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK,
+					     BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
 
 	if (ret) {
 		LOG_ERR("Available context set failed");
