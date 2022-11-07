@@ -126,6 +126,8 @@ For more information about using configuration overlay files, see :ref:`zephyr:i
 The following configuration files are available:
 
 * :file:`overlay-mtd.conf` - Enables the Minimal Thread Device variant.
+* :file:`overlay-logging.conf` - Enables logging using RTT.
+  For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
 * :file:`overlay-multiprotocol_ble.conf` - Enables the Multiprotocol Bluetooth LE extension.
 
 FEM support

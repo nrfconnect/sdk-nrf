@@ -152,7 +152,13 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Changed:
+
+  * Overlay structure changed:
+    * ``overlay-rtt.conf`` removed from all samples.
+    * ``overlay-log.conf`` now uses RTT backend by default.
+    * Logs removed from default configuration (moved to ``overlay-logging.conf``)
+    * Asserts removed from default configuration (moved to ``overlay-debug.conf``)
 
 Matter samples
 --------------
