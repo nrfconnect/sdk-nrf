@@ -60,9 +60,15 @@ static struct bt_codec lc3_codec = BT_CODEC_LC3(
 	CHANNEL_COUNT_1, LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
 	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, BT_AUDIO_CONTEXT_TYPE_MEDIA);
 
+static enum bt_audio_dir caps_dirs[] = {
+	BT_AUDIO_DIR_SINK,
+#if CONFIG_STREAM_BIDIRECTIONAL
+	BT_AUDIO_DIR_SOURCE,
+#endif
+};
+
 static struct bt_audio_capability caps[] = {
 	{
-		.dir = BT_AUDIO_DIR_SINK,
 		.pref = BT_AUDIO_CAPABILITY_PREF(BT_AUDIO_CAPABILITY_UNFRAMED_SUPPORTED,
 						 BT_GAP_LE_PHY_2M, BLE_ISO_RETRANSMITS,
 						 BLE_ISO_LATENCY_MS, MIN_PRES_DLY_US,
@@ -72,7 +78,6 @@ static struct bt_audio_capability caps[] = {
 	},
 #if CONFIG_STREAM_BIDIRECTIONAL
 	{
-		.dir = BT_AUDIO_DIR_SOURCE,
 		.pref = BT_AUDIO_CAPABILITY_PREF(BT_AUDIO_CAPABILITY_UNFRAMED_SUPPORTED,
 						 BT_GAP_LE_PHY_2M, BLE_ISO_RETRANSMITS,
 						 BLE_ISO_LATENCY_MS, MIN_PRES_DLY_US,
@@ -426,7 +431,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 		channel_assignment_get(&channel);
 
 		for (int i = 0; i < ARRAY_SIZE(caps); i++) {
-			ret = bt_audio_capability_register(&caps[i]);
+			ret = bt_audio_capability_register(caps_dirs[i], &caps[i]);
 			if (ret) {
 				LOG_ERR("Capability register failed");
 				return ret;
