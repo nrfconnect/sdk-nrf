@@ -14,7 +14,11 @@ jobs:
 
       - name: Install extra python dependencies
         run: |
-          pip3 install west
+          pip3 install -U pip
+          pip3 install -U setuptools
+          export PATH="$HOME/.local/bin:$PATH"
+          pip3 install -U wheel
+          pip3 install -U west
           pip3 install -r ncs/nrf/scripts/requirements-extra.txt
 
       - name: Set up the workspace
