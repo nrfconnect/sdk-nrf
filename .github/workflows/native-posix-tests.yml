@@ -30,7 +30,7 @@ jobs:
       - name: Run native_posix tests with twister
         uses: docker://nordicplayground/nrfconnect-sdk:main
         with:
-          args: bash -c "apt install -y lcov gcc-multilib && cd ncs/nrf && source ../zephyr/zephyr-env.sh && ../zephyr/scripts/twister -i -C -T ./ -p native_posix"
+          args: bash -c "apt install -y lcov gcc-multilib && cd ncs/nrf && source ../zephyr/zephyr-env.sh && ../zephyr/scripts/twister -i -C -T ./applications/asset_tracker_v2/tests/ -p native_posix"
 
       - name: Replace docker paths in coverage file
         run: |
