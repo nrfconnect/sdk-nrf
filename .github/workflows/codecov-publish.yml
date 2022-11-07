@@ -10,9 +10,7 @@ jobs:
   publish_code_coverage:
     runs-on: ubuntu-latest
     name: Post a comment with code coverage in PR
-    if: |
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success'
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout the code
