@@ -18,6 +18,8 @@ For detailed information about supported functionalities, see the official `Fast
    The implementation does not pass end-to-end integration tests in the Fast Pair Validator.
    The procedure triggered in Android settings is successful (tested with Android 10).
 
+.. _ug_integrating_fast_pair:
+
 Integrating Fast Pair
 *********************
 

@@ -490,6 +490,8 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Added:
+
+  * Documentation template for the :ref:`Ecosystem integration <Ecosystem_integration>` user guides.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
