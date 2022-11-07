@@ -1,8 +1,7 @@
 name: Native Posix tests
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  pull_request_target:
     branches:
       - main
       - 'v*-branch'
