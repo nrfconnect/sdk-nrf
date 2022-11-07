@@ -2,7 +2,6 @@ name: Native Posix tests
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
     branches:
       - main
       - 'v*-branch'
@@ -10,12 +9,6 @@ on:
     branches:
       - main
       - 'v*-branch'
-    tags:
-      - v*
-
-permissions:
-  contents: write
-  pull-requests: write
 
 jobs:
   native_posix_test:
@@ -43,11 +36,8 @@ jobs:
         run: |
           sudo sed -i 's/\/github\/workspace\//\/home\/runner\/work\/sdk-nrf\/sdk-nrf\//g' ncs/nrf/twister-out/coverage.info
 
-      - name: Report code coverage
-        uses: zgosalvez/github-actions-report-lcov@v1.5.0
+      - name: Upload coverage info
+        uses: actions/upload-artifact@master
         with:
-          coverage-files: ncs/nrf/twister-out/coverage.info
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          minimum-coverage: 10
-          working-directory: ncs/nrf
-          artifact-name: code-coverage-report
+          name: coverage info file
+          path: ncs/nrf/twister-out/coverage.info

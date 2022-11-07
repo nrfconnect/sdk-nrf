@@ -1,0 +1,42 @@
+name: Publish code coverage as comment in PR
+
+on:
+  workflow_run:
+    workflows: ["Native Posix tests"]
+    types:
+    - completed
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  publish_code_coverage:
+    runs-on: ubuntu-latest
+    name: Post a comment with code coverage in PR
+    if: |
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        with:
+          path: ncs/nrf
+          fetch-depth: 0
+
+      - name: Download coverage info from native posix tests workflow
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: native-posix-tests.yml
+          run_id: ${{ github.event.workflow_run.id }}
+          path: ncs/nrf/twister-out
+
+      - name: Report code coverage
+        uses: zgosalvez/github-actions-report-lcov@v1.5.0
+        with:
+          coverage-files: ncs/nrf/twister-out/coverage.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          minimum-coverage: 10
+          working-directory: ncs/nrf
+          artifact-name: code-coverage-report
