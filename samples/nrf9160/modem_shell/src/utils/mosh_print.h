@@ -7,6 +7,8 @@
 #ifndef MOSH_PRINT_H
 #define MOSH_PRINT_H
 
+#include <stdarg.h>
+
 enum mosh_print_level {
 	MOSH_PRINT_LEVEL_PRINT,
 	MOSH_PRINT_LEVEL_WARN,
