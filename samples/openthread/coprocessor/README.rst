@@ -95,8 +95,8 @@ For more information about using configuration overlay files, see :ref:`zephyr:i
 
 The following configuration files are available:
 
-* :file:`overlay-logging.conf` - Enables the logging extension.
-  This file configures different log levels for the sample, the Zephyr system, and OpenThread.
+* :file:`overlay-logging.conf` - Enables logging using RTT.
+  For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
 * :file:`overlay-usb.conf` - Enables emulating a serial port over USB for Spinel communication with the host. Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
 
 FEM support

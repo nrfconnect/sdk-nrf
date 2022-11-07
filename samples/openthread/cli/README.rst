@@ -85,9 +85,8 @@ The following configuration files are available:
 
 * :file:`overlay-usb.conf` - Enables USB transport support.
   Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
-* :file:`overlay-logging.conf` - Sets more detailed logging.
-* :file:`overlay-rtt.conf` - Redirects logs to RTT.
-  For more information about RTT please refer to :ref:`RTT logging <ug_logging>`.
+* :file:`overlay-logging.conf` - Enables logging using RTT.
+  For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
 * :file:`overlay-debug.conf` - Enables debugging the Thread sample with GDB thread awareness.
 * :file:`overlay-ci.conf` - Disables boot banner and shell prompt.
 * :file:`overlay-multiprotocol.conf` - Enables Bluetooth LE support in this sample.
