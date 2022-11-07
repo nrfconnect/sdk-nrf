@@ -14,6 +14,7 @@
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_ENOCEAN_DEBUG)
 #define LOG_MODULE_NAME bt_enocean
 #include "common/log.h"
+#include "common/bt_str.h"
 
 #define SIGNATURE_LEN 4
 #define SETTINGS_TAG_SIZE 17
