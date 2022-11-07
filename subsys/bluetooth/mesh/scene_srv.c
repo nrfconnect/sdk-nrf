@@ -16,6 +16,7 @@
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
 #define LOG_MODULE_NAME bt_mesh_scene_srv
 #include "common/log.h"
+#include "common/bt_str.h"
 
 #define SCENE_PAGE_SIZE SETTINGS_MAX_VAL_LEN
 /* Account for company ID in data: */
