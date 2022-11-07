@@ -62,7 +62,23 @@ You can use this functionality to determine the synchronization accuracy.
 A logic analyzer or oscilloscope are helpful for this purpose.
 
 Enabling the :kconfig:option:`CONFIG_DM_GPIO_DEBUG` option changes the state of the pins when a new measurement request is added and the timeslot is assigned.
-To assign the pin numbers, use the options :kconfig:option:`CONFIG_DM_RANGING_PIN` and :kconfig:option:`CONFIG_DM_ADD_REQUEST_PIN`.
+To assign the pin numbers, create the appropriate nodes in the device tree as follows:
+
+.. code-block:: dts
+
+    / {
+       dm_gpio {
+          compatible = "gpio-leds";
+          dm_ranging: dm-ranging {
+             gpios = <&gpio0 27 GPIO_ACTIVE_LOW>;
+             label = "DM Ranging Pin";
+          };
+          dm_add_request: dm-add-request {
+             gpios = <&gpio0 26 GPIO_ACTIVE_LOW>;
+             label = "DM Add request Pin";
+          };
+       };
+    };
 
 Configuring timeslot queue
 --------------------------

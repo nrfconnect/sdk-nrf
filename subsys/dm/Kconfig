@@ -97,22 +97,6 @@ config DM_TIMESLOT_QUEUE_COUNT_SAME_PEER
 	help
 	  The maximum number of timeslots that can be scheduled for a single peer.
 
-if DM_GPIO_DEBUG
-
-config DM_RANGING_PIN
-	int "Ranging pin number"
-	default 27
-	help
-	  Pin number of the ranging process occurrence.
-
-config DM_ADD_REQUEST_PIN
-	int "Add request pin number"
-	default 26
-	help
-	  This pin is set when a distance measurement request is added.
-
-endif #DM_GPIO_DEBUG
-
 endmenu
 
 module = DM_MODULE
