@@ -1,20 +1,6 @@
 name: Native Posix tests
-
 on:
-  pull_request_target:
-    branches:
-      - main
-      - 'v*-branch'
-  push:
-    branches:
-      - main
-      - 'v*-branch'
-    tags:
-      - v*
-
-permissions:
-  contents: write
-  pull-requests: write
+  - pull_request_target
 
 jobs:
   native_posix_test:
