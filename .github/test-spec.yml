@@ -264,7 +264,7 @@
   - "subsys/dfu/*"
   - "subsys/ieee802154/**/*"
   - "subsys/mpsl/**/*"
-  - "subsys/net/**/*"
+  - "subsys/net/openthread/*"
   - "subsys/nfc/**/*"
   - "subsys/nrf_rpc/**/*"
   - "subsys/partition_manager/**/*"
