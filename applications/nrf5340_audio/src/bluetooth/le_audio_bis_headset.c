@@ -292,7 +292,6 @@ static struct bt_audio_broadcast_sink_cb broadcast_sink_cbs = { .scan_recv = sca
 								.syncable = syncable_cb };
 
 static struct bt_audio_capability capabilities = {
-	.dir = BT_AUDIO_DIR_SINK,
 	.codec = &codec,
 };
 
@@ -318,7 +317,7 @@ static void initialize(le_audio_receive_cb recv_cb)
 			LOG_ERR("Location set failed");
 		}
 
-		ret = bt_audio_capability_register(&capabilities);
+		ret = bt_audio_capability_register(BT_AUDIO_DIR_SINK, &capabilities);
 		if (ret) {
 			LOG_ERR("Capability register failed (ret %d)", ret);
 			ERR_CHK(ret);
