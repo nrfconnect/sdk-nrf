@@ -114,4 +114,3 @@ ZTEST(lwm2m_client_utils_fota_settings, test_update_counter_fail)
 	rc = fota_update_counter_update(COUNTER_CURRENT, 1);
 	zassert_equal(rc, -ENOENT, "wrong return value");
 }
-
