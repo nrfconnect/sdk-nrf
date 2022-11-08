@@ -309,6 +309,12 @@ nRF9160 samples
 
    * Sample moved from :file:`samples/nrf9160/nrf_cloud_rest_cell_pos` to :file:`samples/nrf9160/nrf_cloud_rest_cell_location`.
 
+* :ref:`nrf_cloud_mqtt_multi_service` sample:
+
+  * Added:
+
+    * Support for the :ref:`lib_location` library Wi-Fi location method with the nRF7002 EK.
+
 * :ref:`modem_shell_application` sample:
 
   * Added:

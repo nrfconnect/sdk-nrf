@@ -112,14 +112,22 @@ config LOCATION_TRACKING_GNSS
 	default y
 	depends on LOCATION_METHOD_GNSS
 	help
-	  Disable both this and LOCATION_TRACKING_CELLULAR to completely disable location tracking.
+	  Disable all location tracking methods to completely disable location tracking.
 
 config LOCATION_TRACKING_CELLULAR
 	bool "Use cellular method for location tracking"
 	default y
 	depends on LOCATION_METHOD_CELLULAR
 	help
-	  Disable both this and LOCATION_TRACKING_GNSS to completely disable location tracking.
+	  Disable all location tracking methods to completely disable location tracking.
+
+config LOCATION_TRACKING_WIFI
+	bool "Use Wi-Fi method for location tracking"
+	default n
+	depends on LOCATION_METHOD_WIFI
+	help
+	  Requires the use of an nRF7002 companion chip.
+	  Disable all location tracking methods to completely disable location tracking.
 
 config TEMP_DATA_USE_SENSOR
 	bool "Use genuine temperature data"
