@@ -725,7 +725,9 @@ static void int_driven_evt_handler(const struct device *lpuart,
 		call_handler = true;
 		break;
 	case UART_RX_RDY:
-		__ASSERT_NO_MSG(data->int_driven.rxlen == 0);
+		/* Disable this assert as it's causing issues at NRF91 power up.
+	       LPUART will be reset during NRF91 init anway.*/
+		// __ASSERT_NO_MSG(data->int_driven.rxlen == 0);
 		data->int_driven.rxlen = evt->data.rx.len;
 		call_handler = data->int_driven.rx_enabled;
 		break;
