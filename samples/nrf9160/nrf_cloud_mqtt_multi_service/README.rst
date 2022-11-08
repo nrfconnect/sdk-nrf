@@ -32,7 +32,7 @@ This sample implements or demonstrates the following features:
 * Error-tolerant use of the `nRF Cloud MQTT API`_ using the :ref:`nrf_modem <nrfxlib:nrf_modem>` and :ref:`nrf_cloud <lib_nrf_cloud>` libraries.
 * Support for `Firmware-Over-The-Air (FOTA) update service <nRF Cloud Getting Started FOTA documentation_>`_ using the `nRF Cloud`_ portal.
 * Support for `modem AT commands <AT Commands Reference Guide_>`_ over UART using the :ref:`lib_at_host` library.
-* Periodic cellular and GNSS location tracking using the :ref:`lib_location` library.
+* Periodic cellular, Wi-Fi, and GNSS location tracking using the :ref:`lib_location` library.
 * Periodic temperature sensor sampling on your `Nordic Thingy:91`_, or fake temperature  measurements on your `Nordic nRF9160 DK`_.
 * Transmission of sensor and GNSS location samples to the nRF Cloud portal as `nRF Cloud device messages <nRF Cloud Device Messages_>`_.
 * Construction of valid `nRF Cloud device messages <nRF Cloud Device Messages_>`_ using `cJSON`_.
@@ -165,6 +165,21 @@ Location tracking
 All matters concerning location tracking are handled in the :file:`src/location_tracking.c` file.
 This involves setting up a periodic location request, and then passing the results to a callback configured by the :file:`src/application.c` file.
 
+For location readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_.
+This is performed by the :file:`src/connection.c` file.
+
+Each enabled location method is tried in the following order until one succeeds: GNSS, Wi-Fi, then cellular.
+
+The GNSS and cellular location tracking methods are enabled by default and will work on both Thingy:91 and nRF9160 DK targets.
+
+.. _nrf_cloud_mqtt_multi_service_wifi_location_tracking:
+
+The Wi-Fi location tracking method is not enabled by default and requires the nRF7002 wifi companion chip.
+
+When enabled, this location method scans the MAC addresses of nearby access points and submits them to nRF Cloud to obtain a location estimate.
+
+See :ref:`nrf_cloud_mqtt_multi_service_building_wifi` for details on how to enable Wi-Fi location tracking.
+
 This sample supports placing P-GPS data in external flash for the nRF9160 development kit version 1.0.1 and later.
 Currently, you cannot combine this with full modem FOTA.
 To enable this, add the following parameter to your build command:
@@ -175,10 +190,6 @@ Also, specify your development kit version by appending it to the board name.
 For example, if your development kit version is 1.0.1, use the following board name in your build command:
 
 ``nrf9160dk_nrf9160_ns@1_0_1``
-
-.. note::
-  For location readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_.
-  This is performed by the :file:`src/connection.c` file.
 
 .. _nrf_cloud_mqtt_multi_service_led_status_indication:
 
@@ -429,15 +440,23 @@ CONFIG_LOCATION_TRACKING_SAMPLE_INTERVAL_SECONDS - Location sampling interval (s
 
 CONFIG_LOCATION_TRACKING_GNSS - GNSS location tracking
    Enables GNSS location tracking.
-   Disable both this and :ref:`CONFIG_LOCATION_TRACKING_CELLULAR <CONFIG_LOCATION_TRACKING_CELLULAR>` to completely disable location tracking.
+   Disable all location tracking methods to completely disable location tracking.
    Defaults to enabled.
 
 .. _CONFIG_LOCATION_TRACKING_CELLULAR:
 
 CONFIG_LOCATION_TRACKING_CELLULAR - Cellular location tracking
    Enables cellular location tracking.
-   Disable both this and :ref:`CONFIG_LOCATION_TRACKING_GNSS <CONFIG_LOCATION_TRACKING_GNSS>` to completely disable location tracking.
+   Disable all location tracking methods to completely disable location tracking.
    Defaults to enabled.
+
+.. _CONFIG_LOCATION_TRACKING_WIFI:
+
+CONFIG_LOCATION_TRACKING_WIFI - Wi-Fi location tracking
+   Enables Wi-Fi location tracking.
+   Disable all location tracking methods to completely disable location tracking.
+   Requires the use of an nRF7002 companion chip.
+   Defaults to disabled.
 
 .. _CONFIG_TEMP_DATA_USE_SENSOR:
 
@@ -507,6 +526,26 @@ Building and running
 .. |sample path| replace:: :file:`samples/nrf9160/nrf_cloud_mqtt_multi_service`
 
 .. include:: /includes/build_and_run_ns.txt
+
+.. _nrf_cloud_mqtt_multi_service_building_wifi:
+
+Building with nRF7002 EK Wi-Fi scanning support (for nRF9160 DK)
+================================================================
+
+To build the sample with nRF7002 EK Wi-Fi scanning support, use the ``-DSHIELD=nrf7002_ek``, ``-DDTC_OVERLAY_FILE=nrf9160dk_with_nrf7002ek.overlay`` and  ``-DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf`` options.
+
+This enables the Wi-Fi location tracking method automatically.
+
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002_ek -DDTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay" -DOVERLAY_CONFIG="overlay-nrf7002ek-wifi-scan-only.conf"
+
+This is only supported on the `Nordic nRF9160 DK`_ with an attached nRF7002 EK.
+
+See also :ref:`the paragraphs on the Wi-Fi location tracking method <nrf_cloud_mqtt_multi_service_wifi_location_tracking>`.
+
 
 .. _nrf_cloud_mqtt_multi_service_dependencies:
 

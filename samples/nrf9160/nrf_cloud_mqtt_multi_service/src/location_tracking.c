@@ -3,12 +3,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+
 #include <zephyr/kernel.h>
-#include <modem/location.h>
 #include <zephyr/logging/log.h>
-#include <date_time.h>
-#include <nrf_modem_at.h>
+#include <zephyr/sys/util.h>
+#include <modem/location.h>
 #include <modem/nrf_modem_lib.h>
+#include <nrf_modem_at.h>
+#include <date_time.h>
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
 
@@ -71,39 +73,29 @@ int start_location_tracking(location_update_cb_t handler_cb, int interval)
 	struct location_config config;
 
 	/* Select methods based on configuration and load default settings */
-	if (IS_ENABLED(CONFIG_LOCATION_TRACKING_GNSS) &&
-	    IS_ENABLED(CONFIG_LOCATION_TRACKING_CELLULAR)) {
-		/* First try GNSS, fallback to cellular. */
-		enum location_method methods[] = {LOCATION_METHOD_GNSS, LOCATION_METHOD_CELLULAR};
+	/* Methods will be attempted in the order they are listed here */
+	enum location_method methods[] = {
+		IF_ENABLED(CONFIG_LOCATION_TRACKING_GNSS,	(LOCATION_METHOD_GNSS,))
+		IF_ENABLED(CONFIG_LOCATION_TRACKING_WIFI,	(LOCATION_METHOD_WIFI,))
+		IF_ENABLED(CONFIG_LOCATION_TRACKING_CELLULAR,	(LOCATION_METHOD_CELLULAR,))
+	};
 
-		/* Load default settings accordingly */
-		location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
-
-		LOG_DBG("Selected GNSS, Cellular positioning methods");
-	} else if (IS_ENABLED(CONFIG_LOCATION_TRACKING_GNSS)) {
-		/* Only try GNSS. */
-		enum location_method methods[] = {LOCATION_METHOD_GNSS};
-
-		/* Load default settings accordingly */
-		location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
-
-		LOG_DBG("Selected GNSS positioning method");
-	} else if (IS_ENABLED(CONFIG_LOCATION_TRACKING_CELLULAR)) {
-		/* Only try cellular. */
-		enum location_method methods[] = {LOCATION_METHOD_CELLULAR};
-
-		/* Load default settings accordingly */
-		location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
-
-		LOG_DBG("Selected Cellular positioning method");
-	} else {
-		/* No location methods are enabled. Just return without initiating any tracking. */
+	if (IS_ENABLED(CONFIG_LOCATION_TRACKING_GNSS)) {
+		LOG_DBG("Selected the GNSS location tracking method.");
+	}
+	if (IS_ENABLED(CONFIG_LOCATION_TRACKING_WIFI)) {
+		LOG_DBG("Selected the Wi-Fi location tracking method.");
+	}
+	if (IS_ENABLED(CONFIG_LOCATION_TRACKING_CELLULAR)) {
+		LOG_DBG("Selected the Cellular location tracking method.");
+	}
+	if (ARRAY_SIZE(methods) == 0) {
 		LOG_DBG("No positioning methods selected");
 		return 0;
 	}
 
-	/* Load default settings given the selected methods. */
-
+	/* Load default settings accordingly */
+	location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
 
 	/* Set the location report interval. */
 	config.interval = interval;
@@ -112,7 +104,10 @@ int start_location_tracking(location_update_cb_t handler_cb, int interval)
 	 * (note: the GNSS location method is enabled by default in this sample)
 	 */
 	if (IS_ENABLED(CONFIG_LOCATION_TRACKING_GNSS)) {
-		/* Set the GNSS timeout and desired accuracy. */
+		/* Set the GNSS timeout and desired accuracy.
+		 * The order of config.methods matches the order of methods, so GNSS will always be
+		 * the first element of the array if enabled.
+		 */
 		config.methods[0].gnss.timeout = CONFIG_GNSS_FIX_TIMEOUT_SECONDS * MSEC_PER_SEC;
 		config.methods[0].gnss.accuracy = LOCATION_ACCURACY_NORMAL;
 	}
