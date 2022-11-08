@@ -200,6 +200,9 @@ int cpu_load_init(void)
 
 	if (IS_ENABLED(CONFIG_CPU_LOAD_LOG_PERIODIC)) {
 		ret = cpu_load_log_init();
+		if (ret >= 0) {
+			ret = 0;
+		}
 	}
 
 	ready = true;
