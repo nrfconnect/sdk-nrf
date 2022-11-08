@@ -46,17 +46,17 @@ void peer_ranging_mode_set(enum dm_ranging_mode mode);
  */
 enum dm_ranging_mode peer_ranging_mode_get(void);
 
-/** @brief Prepare an access address.
+/** @brief Prepare and get a random seed.
  *
- *  @retval 0 if the operation was successful, otherwise a (negative) error code.
+ *  @retval Random seed value.
  */
-int peer_access_address_prepare(void);
+uint32_t peer_rng_seed_prepare(void);
 
-/** @brief Get the current access address.
+/** @brief Get the current random seed.
  *
- *  @retval Access address value.
+ *  @retval Random seed value.
  */
-uint32_t peer_access_address_get(void);
+uint32_t peer_rng_seed_get(void);
 
 /** @brief Initialize the peer management module.
  *

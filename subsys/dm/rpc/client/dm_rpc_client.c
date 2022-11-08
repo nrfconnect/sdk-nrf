@@ -38,7 +38,7 @@ int dm_request_add(struct dm_request *req)
 	/* Encode the request structure */
 	ser_encode_uint(&ctx, req->role);
 	ser_encode_buffer(&ctx, &req->bt_addr, sizeof(bt_addr_le_t));
-	ser_encode_uint(&ctx, req->access_address);
+	ser_encode_uint(&ctx, req->rng_seed);
 	ser_encode_uint(&ctx, req->ranging_mode);
 	ser_encode_uint(&ctx, req->start_delay_us);
 	ser_encode_uint(&ctx, req->extra_window_time_us);

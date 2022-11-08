@@ -128,8 +128,10 @@ struct dm_request {
 	/** Bluetooth LE device address. */
 	bt_addr_le_t bt_addr;
 
-	/** Access address used for packet exchanges. */
-	uint32_t access_address;
+	/** Seed used in pseudo random number generation.
+	 *  Needs to be the same for an initiator and a reflector that will range with each other.
+	 */
+	uint32_t rng_seed;
 
 	/** Ranging mode to use in the procedure. */
 	enum dm_ranging_mode ranging_mode;

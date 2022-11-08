@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/kernel.h>
-#include <zephyr/bluetooth/conn.h>
+#include <zephyr/random/rand32.h>
 
 #include "peer.h"
 #include "pwm_led.h"
@@ -35,7 +35,7 @@ struct peer_entry {
 };
 
 static struct peer_entry *closest_peer;
-static uint32_t access_address;
+static uint32_t rng_seed;
 static enum dm_ranging_mode ranging_mode = DEFAULT_RANGING_MODE;
 
 K_MSGQ_DEFINE(result_msgq, sizeof(struct dm_result), 16, 4);
@@ -226,28 +226,15 @@ enum dm_ranging_mode peer_ranging_mode_get(void)
 	return ranging_mode;
 }
 
-int peer_access_address_prepare(void)
+uint32_t peer_rng_seed_prepare(void)
 {
-	bt_addr_le_t addr = {0};
-	size_t count = 1;
-
-	bt_id_get(&addr, &count);
-
-	access_address = addr.a.val[0];
-	access_address |= addr.a.val[1] << 8;
-	access_address |= addr.a.val[2] << 16;
-	access_address |= addr.a.val[3] << 24;
-
-	if (access_address == 0) {
-		return -EFAULT;
-	}
-
-	return 0;
+	rng_seed = sys_rand32_get();
+	return rng_seed;
 }
 
-uint32_t peer_access_address_get(void)
+uint32_t peer_rng_seed_get(void)
 {
-	return access_address;
+	return rng_seed;
 }
 
 bool peer_supported_test(const bt_addr_le_t *peer)

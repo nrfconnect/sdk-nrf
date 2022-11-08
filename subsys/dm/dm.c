@@ -127,7 +127,7 @@ static mpsl_timeslot_signal_return_param_t signal_callback_return_param;
 static void dm_config_get(struct dm_request *dm_req, nrf_dm_config_t *dm_config)
 {
 	*dm_config = NRF_DM_DEFAULT_CONFIG;
-	dm_config->access_address = dm_req->access_address;
+	dm_config->access_address = dm_req->rng_seed;
 
 	if (dm_req->role == DM_ROLE_INITIATOR) {
 		dm_config->role = NRF_DM_ROLE_INITIATOR;
