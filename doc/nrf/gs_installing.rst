@@ -8,17 +8,16 @@ Installing manually
    :depth: 2
 
 The recommended way to get started with the |NCS| is to use nRF Connect for Desktop.
-See the :ref:`gs_assistant` page for information about how to install automatically.
+For instructions on automatic installation, see the :ref:`gs_assistant` page.
 
 .. note::
    If you use nRF Connect for Desktop to install the |NCS|, you can skip this section of the documentation.
-   If you prefer to install the toolchain manually, see the following documentation for instructions.
+   However, if you prefer to install the toolchain manually, follow the instructions in this documentation.
 
-To manually install the |NCS|, you must install all required tools and clone the |NCS| repositories.
-See the following sections for detailed instructions.
+To manually install the |NCS|, you must first install all the required tools and clone the |NCS| repositories.
 
-If you already have your system set up to work with Zephyr OS based on Zephyr's :ref:`zephyr:getting_started`, you already have some of the requirements for the |NCS| installed.
-The only requirement not covered by the installation steps in Zephyr is the :ref:`GN tool <gs_installing_gn>`.
+If you already have your system set up to work with Zephyr OS, based on Zephyr's :ref:`zephyr:getting_started`, it means you have most of the requirements for the |NCS| installed.
+The only requirement that is not covered by the installation steps in Zephyr is the :ref:`GN tool <gs_installing_gn>`.
 This tool is needed only for :ref:`ug_matter` applications.
 
 Before you start setting up the toolchain, install available updates for your operating system.
@@ -41,7 +40,7 @@ The installation process is different depending on your operating system.
 
    .. group-tab:: Windows
 
-      The recommended way for installing the required tools on Windows is to use `Chocolatey`_, a package manager for Windows.
+      The recommended way of installing the required tools on Windows is to use `Chocolatey`_, a package manager for Windows.
       Chocolatey installs the tools so that you can use them from a Windows command-line window.
 
       To install the required tools, complete the following steps:
@@ -53,6 +52,12 @@ The installation process is different depending on your operating system.
          :end-before: #. Close the window and open a new
 
       Ensure that these dependencies are installed with their versions as specified in the :ref:`Required tools table <req_tools_table>`.
+      To check the list of installed packages and their versions, run the following command:
+
+       .. parsed-literal::
+          :class: highlight
+
+           choco list -lo
 
    .. group-tab:: Linux
 
@@ -79,13 +84,19 @@ The installation process is different depending on your operating system.
          :end-before: group-tab:: Windows
 
       Ensure that these dependencies are installed with their versions as specified in the :ref:`Required tools table <req_tools_table>`.
-      Also see :ref:`zephyr:mac-setup-alts` in the Zephyr documentation for additional information.
+      To check the installed versions, run the following command:
 
+       .. parsed-literal::
+          :class: highlight
+
+           brew list --versions
+
+      Also see :ref:`zephyr:mac-setup-alts` in the Zephyr documentation for additional information.
 ..
 
 .. _gs_installing_gn:
 
-In addition to these required tools, install the `GN`_ meta-build system if you are interested in building `Matter`_ applications.
+If you want to build `Matter`_ applications, additionally install the `GN`_ meta-build system.
 This system generates the Ninja files that the |NCS| uses.
 
 .. tabs::
@@ -96,8 +107,8 @@ This system generates the Ninja files that the |NCS| uses.
 
       1. Download the latest version of the GN binary archive for Windows from the `GN website`_.
       2. Extract the :file:`zip` archive.
-      3. Check that the GN tool is added to your :envvar:`PATH` environment variable.
-         See :ref:`zephyr:env_vars` for instructions if needed.
+      3. Ensure that the GN tool is added to your :envvar:`PATH` environment variable.
+         For the exact instructions, see :ref:`zephyr:env_vars`.
 
    .. group-tab:: Linux
 
@@ -196,7 +207,7 @@ Install west
 
 To manage the combination of repositories and versions, the |NCS| uses :ref:`Zephyr's west <zephyr:west>`.
 
-To install west, reopen the command prompt window to ensure that Python is initialized and complete the following step:
+To install west, reopen the command prompt window as an administrator to ensure that Python is initialized, and complete the following step:
 
 .. tabs::
 
@@ -208,6 +219,9 @@ To install west, reopen the command prompt window to ensure that Python is initi
          :class: highlight
 
          pip3 install west
+
+      .. note::
+         Ensure the west location is added to the path in environmental variables.
 
    .. group-tab:: Linux
 
@@ -256,6 +270,7 @@ To clone the repositories, complete the following steps:
 
 1. Create a folder named :file:`ncs`.
    This folder will hold all |NCS| repositories.
+
 #. Determine the identifier of the revision of the |NCS| you want to work with.
    The recommended way is to work with a specific release.
 
@@ -279,10 +294,6 @@ To clone the repositories, complete the following steps:
 
       west init -m https\://github.com/nrfconnect/sdk-nrf --mr |release|
 
-   To check out the latest state of development, enter the following command::
-
-     west init -m https://github.com/nrfconnect/sdk-nrf --mr main
-
    .. west-error-start
 
    .. note::
@@ -293,7 +304,11 @@ To clone the repositories, complete the following steps:
       .. west-error-end
 
       Initializing west with a specific revision of the manifest file does not lock your repositories to this version.
-      Checking out a different branch or tag in the `sdk-nrf`_ repository and running ``west update``  changes the version of the |NCS| that you work with.
+      Checking out a different branch or tag in the `sdk-nrf`_ repository and running ``west update`` changes the version of the |NCS| that you work with.
+
+   To check out the latest state of development, enter the following command::
+
+     west init -m https://github.com/nrfconnect/sdk-nrf --mr main
 
    This will clone the manifest repository `sdk-nrf`_ into :file:`nrf`.
 
@@ -386,8 +401,6 @@ It also includes additional host tools, such as custom QEMU and OpenOCD builds.
    When updating Zephyr SDK, :ref:`verify the Zephyr SDK variables <zephyr:toolchain_zephyr_sdk_update>`.
    Make sure that the ``zephyr`` toolchain is selected, not ``gnuarmemb``.
 
-.. Comment: The content below (for version 0.14.2) needs to be confirmed for the next nRF Connect SDK release.
-
 .. tabs::
 
    .. group-tab:: Windows
@@ -407,7 +420,6 @@ It also includes additional host tools, such as custom QEMU and OpenOCD builds.
          :end-before: .. group-tab:: macOS
 
    .. group-tab:: macOS
-
 
       .. ncs-include:: develop/getting_started/index.rst
          :docset: zephyr
@@ -433,8 +445,6 @@ You can install the |nRFVSC| to open and compile projects in the |NCS|.
    If you are building the application or sample using SEGGER Embedded Studio IDE or on the command line and want to migrate to |VSC|, use the `Add an existing application <Migrating IDE_>`_ option in the |nRFVSC| to migrate your application.
 
 .. vsc_mig_note_end
-
-For instructions specifically for installing, see `Installing using Visual Studio Code`_.
 
 .. _build_environment_cli:
 
