@@ -42,6 +42,10 @@ DEFINE_FAKE_VALUE_FUNC(int, lwm2m_path_to_string, char *, size_t, struct lwm2m_o
 DEFINE_FAKE_VALUE_FUNC(struct lwm2m_engine_obj_inst *, lwm2m_engine_get_obj_inst,
 		       const struct lwm2m_obj_path *);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_string_to_path, const char *, struct lwm2m_obj_path *, char);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_update_signal_meas_objects,
+		       const struct lte_lc_cells_info *const);
+DEFINE_FAKE_VALUE_FUNC(struct lwm2m_ctx *, lwm2m_rd_client_ctx);
+DEFINE_FAKE_VOID_FUNC(lwm2m_rd_client_update);
 DEFINE_FAKE_VALUE_FUNC(int, modem_key_mgmt_exists, nrf_sec_tag_t, enum modem_key_mgmt_cred_type,
 		       bool *);
 DEFINE_FAKE_VALUE_FUNC(int, modem_key_mgmt_write, nrf_sec_tag_t, enum modem_key_mgmt_cred_type,
@@ -51,6 +55,8 @@ DEFINE_FAKE_VALUE_FUNC(int, lte_lc_connect);
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_offline);
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_func_mode_get, enum lte_lc_func_mode *);
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_lte_mode_get, enum lte_lc_lte_mode *);
+DEFINE_FAKE_VALUE_FUNC(int, lte_lc_neighbor_cell_measurement, enum lte_lc_neighbor_search_type);
+DEFINE_FAKE_VOID_FUNC(lte_lc_register_handler, lte_lc_evt_handler_t);
 DEFINE_FAKE_VALUE_FUNC(int, settings_load_subtree, const char *);
 DEFINE_FAKE_VALUE_FUNC(int, settings_register, struct settings_handler *);
 DEFINE_FAKE_VALUE_FUNC(int, settings_subsys_init);
