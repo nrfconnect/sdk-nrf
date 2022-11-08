@@ -87,7 +87,7 @@ static bool bitrate_check(const struct bt_codec *codec)
 
 static bool adv_data_parse(struct bt_data *data, void *user_data)
 {
-	if (data->type == BT_DATA_NAME_COMPLETE && data->data_len == DEVICE_NAME_PEER_LEN) {
+	if (data->type == BT_DATA_BROADCAST_NAME && data->data_len) {
 		memcpy((char *)user_data, data->data, data->data_len);
 		return false;
 	}
@@ -149,7 +149,7 @@ static bool scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf
 
 	bt_data_parse(ad, adv_data_parse, (void *)name);
 
-	if (strcmp(name, DEVICE_NAME_PEER) == 0) {
+	if (strcmp(name, CONFIG_BT_DEVICE_NAME) == 0) {
 		LOG_INF("Broadcast source %s found", name);
 		return true;
 	}
@@ -307,8 +307,7 @@ static void initialize(le_audio_receive_cb recv_cb)
 		channel_assignment_get(&channel);
 
 		if (channel == AUDIO_CH_L) {
-			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
-						   BT_AUDIO_LOCATION_FRONT_LEFT);
+			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_LEFT);
 		} else {
 			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
 						   BT_AUDIO_LOCATION_FRONT_RIGHT);
