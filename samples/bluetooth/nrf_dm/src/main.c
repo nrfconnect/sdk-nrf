@@ -35,7 +35,7 @@
 struct adv_mfg_data {
 	uint16_t company_code;	    /* Company Identifier Code. */
 	uint32_t support_dm_code;   /* To identify the device that supports distance measurement. */
-	uint32_t access_address;    /* The access address used to measure the distance. */
+	uint32_t rng_seed;          /* Random seed used for generating hopping patterns. */
 } __packed;
 
 static struct adv_mfg_data mfg_data;
@@ -84,6 +84,7 @@ static struct bt_scan_init_param scan_init = {
 static struct bt_le_ext_adv *adv;
 static void adv_work_handle(struct k_work *item);
 static K_WORK_DEFINE(adv_work, adv_work_handle);
+static void adv_update_data(void);
 
 static struct bt_scan_manufacturer_data scan_mfg_data = {
 	.data = (unsigned char *)&mfg_data,
@@ -103,7 +104,7 @@ static bool data_cb(struct bt_data *data, void *user_data)
 			bt_addr_le_copy(&req.bt_addr, user_data);
 			req.role = DM_ROLE_INITIATOR;
 			req.ranging_mode = peer_ranging_mode_get();
-			req.access_address = sys_le32_to_cpu(recv_mfg_data->access_address);
+			req.rng_seed = sys_le32_to_cpu(recv_mfg_data->rng_seed);
 			req.start_delay_us = 0;
 			req.extra_window_time_us = 0;
 
@@ -137,17 +138,32 @@ static void adv_scanned_cb(struct bt_le_ext_adv *adv,
 		bt_addr_le_copy(&req.bt_addr, info->addr);
 		req.role = DM_ROLE_REFLECTOR;
 		req.ranging_mode = peer_ranging_mode_get();
-		req.access_address = peer_access_address_get();
+		req.rng_seed = peer_rng_seed_get();
 		req.start_delay_us = 0;
 		req.extra_window_time_us = 0;
 
 		dm_request_add(&req);
+		adv_update_data();
 	}
 }
 
 const static struct bt_le_ext_adv_cb adv_cb = {
 	.scanned = adv_scanned_cb,
 };
+
+static void adv_update_data(void)
+{
+	int err;
+
+	if (!adv) {
+		return;
+	}
+	mfg_data.rng_seed = peer_rng_seed_prepare();
+	err = bt_le_ext_adv_set_data(adv, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+	if (err) {
+		printk("Failed setting adv data (err %d)\n", err);
+	}
+}
 
 static int adv_start(void)
 {
@@ -252,14 +268,9 @@ static int bt_sync_init(void)
 
 	printk("DM Bluetooth LE Synchronization initialization\n");
 
-	err = peer_access_address_prepare();
-	if (err) {
-		printk("Failed to prepare access address (err %d)\n", err);
-	}
-
 	mfg_data.company_code = sys_cpu_to_le16(COMPANY_CODE);
 	mfg_data.support_dm_code = sys_cpu_to_le32(SUPPORT_DM_CODE);
-	mfg_data.access_address = sys_cpu_to_le32(peer_access_address_get());
+	mfg_data.rng_seed = sys_cpu_to_le32(peer_rng_seed_prepare());
 
 	err = adv_start();
 	if (err) {

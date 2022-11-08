@@ -103,7 +103,7 @@ int timeslot_queue_append(struct dm_request *req, uint32_t start_ref_tick,
 	item->timeslot_req.start_time = start_time;
 	item->timeslot_req.timeslot_length_us = timeslot_len_us;
 	item->timeslot_req.window_length_us = window_len_us;
-	req->access_address++;
+	req->rng_seed++;
 
 	memcpy(&item->timeslot_req.dm_req, req, sizeof(item->timeslot_req.dm_req));
 

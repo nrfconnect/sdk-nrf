@@ -55,7 +55,7 @@ static void dm_request_add_rpc_handler(const struct nrf_rpc_group *group,
 	/* Decode the request structure */
 	req.role = ser_decode_uint(ctx);
 	ser_decode_buffer(ctx, &req.bt_addr, sizeof(bt_addr_le_t));
-	req.access_address = ser_decode_uint(ctx);
+	req.rng_seed = ser_decode_uint(ctx);
 	req.ranging_mode = ser_decode_uint(ctx);
 	req.start_delay_us = ser_decode_uint(ctx);
 	req.extra_window_time_us = ser_decode_uint(ctx);
