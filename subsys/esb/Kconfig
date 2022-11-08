@@ -63,20 +63,38 @@ choice ESB_SYS_TIMER
 
 config ESB_SYS_TIMER0
 	bool "TIMER0"
+	depends on HAS_HW_NRF_TIMER0
+	select NRFX_TIMER0
 
 config ESB_SYS_TIMER1
 	bool "TIMER1"
+	depends on HAS_HW_NRF_TIMER1
+	select NRFX_TIMER1
 
 config ESB_SYS_TIMER2
 	bool "TIMER2"
+	depends on HAS_HW_NRF_TIMER2
+	select NRFX_TIMER2
 
 config ESB_SYS_TIMER3
 	bool "TIMER3"
+	depends on HAS_HW_NRF_TIMER3
+	select NRFX_TIMER3
 
 config ESB_SYS_TIMER4
 	bool "TIMER4"
+	depends on HAS_HW_NRF_TIMER4
+	select NRFX_TIMER4
 
 endchoice
+
+config ESB_SYS_TIMER_INSTANCE
+	int
+	default 0 if ESB_SYS_TIMER0
+	default 1 if ESB_SYS_TIMER1
+	default 2 if ESB_SYS_TIMER2
+	default 3 if ESB_SYS_TIMER3
+	default 4 if ESB_SYS_TIMER4
 
 endmenu
 
