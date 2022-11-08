@@ -226,6 +226,7 @@ void main(void)
 	mosh_print_version_info();
 
 #if defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_MQTT)
+#if defined(CONFIG_MOSH_IPERF3)
 	/* Due to iperf3, we cannot let nrf cloud lib to initialize cJSON lib to be
 	 * using kernel heap allocations (i.e. k_ prepending functions).
 	 * Thus, we use standard c alloc/free, i.e. "system heap".
@@ -235,6 +236,14 @@ void main(void)
 		.calloc_fn = calloc,
 		.free_fn = free,
 	};
+#else
+	/* else: we default to Kernel heap */
+	struct nrf_cloud_os_mem_hooks hooks = {
+		.malloc_fn = k_malloc,
+		.calloc_fn = k_calloc,
+		.free_fn = k_free,
+	};
+#endif
 
 	nrf_cloud_os_mem_hooks_init(&hooks);
 #endif
