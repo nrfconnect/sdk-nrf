@@ -279,6 +279,7 @@ nRF9160 samples
     * LED 1 (nRF9160 DK)/Purple LED (Thingy:91) is lit for five seconds indicating that a current location has been acquired by using the ``location get`` command.
     * Overlay files for nRF9160 DK with nRF7002 EK to enable Wi-Fi scanning support.
       With this configuration, you can, for example, obtain the current location by using the ``location get`` command.
+    * Support for new GCI (Global Cell ID) search types for ``link ncellmeas`` command, which are supported by the modem firmware versions >= 1.3.4.
 
 * :ref:`location_sample`:
 

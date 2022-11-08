@@ -82,15 +82,17 @@ static int32_t modem_rsrp = LINK_RSRP_VALUE_NOT_KNOWN;
 struct ncellmeas_data {
 	struct k_work_delayable work;
 
+	struct lte_lc_ncellmeas_params params;
+
 	enum link_ncellmeas_modes mode;
-	enum lte_lc_neighbor_search_type search_type;
 	int periodic_interval;
 };
 static struct ncellmeas_data ncellmeas_work_data;
-
-static enum link_ncellmeas_modes ncellmeas_mode = LINK_NCELLMEAS_MODE_NONE;
-static enum lte_lc_neighbor_search_type ncellmeas_search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
-static int ncellmeas_periodic_interval;
+static struct ncellmeas_data ncellmeas_param_data = {
+	.mode = LINK_NCELLMEAS_MODE_NONE,
+	.params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT,
+	.periodic_interval = 0,
+};
 
 static void link_ncellmeas_worker(struct k_work *work_item)
 {
@@ -99,7 +101,7 @@ static void link_ncellmeas_worker(struct k_work *work_item)
 	if (data->mode == LINK_NCELLMEAS_MODE_CONTINUOUS) {
 		link_ncellmeas_start(true,
 				     data->mode,
-				     data->search_type,
+				     data->params,
 				     data->periodic_interval);
 	}
 }
@@ -112,7 +114,7 @@ static void link_api_activate_mosh_contexts(
 	int i, esm, ret;
 
 	/* Check that all context created by mosh link connect are active and if not,
-	 * then activate:
+	 * then activate.
 	 */
 	for (i = 0; i < size; i++) {
 		if (pdn_act_status_arr[i].activated == false &&
@@ -145,7 +147,7 @@ static void link_api_get_pdn_activation_status(
 		goto exit;
 	}
 
-	/* For each contexts, fill the activation status into given array: */
+	/* For each contexts, fill the activation status into given array */
 	for (int i = 0; i < size; i++) {
 		/* Search for a string +CGACT: <cid>,<state> */
 		snprintf(buf, sizeof(buf), "+CGACT: %d,1", i);
@@ -245,7 +247,6 @@ void link_init(void)
 	modem_info_rsrp_register(link_rsrp_signal_handler);
 
 	k_work_init_delayable(&ncellmeas_work_data.work, link_ncellmeas_worker);
-	ncellmeas_periodic_interval = 0;
 
 	link_sett_init();
 
@@ -282,13 +283,12 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		int i;
 		struct lte_lc_cells_info cells = evt->cells_info;
 		struct lte_lc_cell cur_cell = cells.current_cell;
+		char tmp_ta_str[12];
 
 		mosh_print("Neighbor cell measurement results:");
 
 		/* Current cell: */
 		if (cur_cell.id != LTE_LC_CELL_EUTRAN_ID_INVALID) {
-			char tmp_ta_str[12];
-
 			if (cur_cell.timing_advance == LTE_LC_CELL_TIMING_ADVANCE_INVALID) {
 				sprintf(tmp_ta_str, "\"not valid\"");
 			} else {
@@ -315,7 +315,7 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		}
 
 		for (i = 0; i < cells.ncells_count; i++) {
-			/* Neighbor cells: */
+			/* Actual neighbor cells of a current cell */
 			mosh_print("  Neighbor cell %d", i + 1);
 			mosh_print(
 				"    phy ID %d, RSRP %d : %ddBm, RSRQ %d, earfcn %d, timediff %d",
@@ -327,15 +327,43 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 				cells.neighbor_cells[i].time_diff);
 		}
 
-		ncellmeas_work_data.mode = ncellmeas_mode;
-		ncellmeas_work_data.search_type = ncellmeas_search_type;
-		ncellmeas_work_data.periodic_interval = ncellmeas_periodic_interval;
-		if (ncellmeas_mode == LINK_NCELLMEAS_MODE_CONTINUOUS &&
-		    ncellmeas_periodic_interval) {
+		/* Surrounding cells from GCI search types */
+		for (i = 0; i < cells.gci_cells_count; i++) {
+			/* GCI neighbor cells */
+			if (cells.gci_cells[i].timing_advance ==
+				LTE_LC_CELL_TIMING_ADVANCE_INVALID) {
+				sprintf(tmp_ta_str, "\"not valid\"");
+			} else {
+				sprintf(tmp_ta_str, "%d", cells.gci_cells[i].timing_advance);
+			}
+			mosh_print("  Surrounding cell %d from GCI search", i + 1);
+			mosh_print(
+				"    ID %d, phy ID %d, MCC %d MNC %d, RSRP %d : %ddBm, RSRQ %d, TAC %d, earfcn %d, meas time %lld\n"
+				"    TA %s, TA meas time %lld",
+				cells.gci_cells[i].id, cells.gci_cells[i].phys_cell_id,
+				cells.gci_cells[i].mcc, cells.gci_cells[i].mnc,
+				cells.gci_cells[i].rsrp,
+				RSRP_IDX_TO_DBM(cells.gci_cells[i].rsrp),
+				cells.gci_cells[i].rsrq, cells.gci_cells[i].tac,
+				cells.gci_cells[i].earfcn, cells.gci_cells[i].measurement_time,
+				tmp_ta_str,
+				cells.gci_cells[i].timing_advance_meas_time);
+		}
+
+		if (ncellmeas_param_data.mode == LINK_NCELLMEAS_MODE_CONTINUOUS &&
+		    ncellmeas_param_data.periodic_interval) {
 			/* Interval was given for continuous mode */
+			ncellmeas_work_data.mode = ncellmeas_param_data.mode;
+			ncellmeas_work_data.params.search_type =
+				ncellmeas_param_data.params.search_type;
+			ncellmeas_work_data.params.gci_count =
+				ncellmeas_param_data.params.gci_count;
+			ncellmeas_work_data.periodic_interval =
+				ncellmeas_param_data.periodic_interval;
+
 			k_work_schedule_for_queue(&mosh_common_work_q,
 					&ncellmeas_work_data.work,
-					K_SECONDS(ncellmeas_periodic_interval));
+					K_SECONDS(ncellmeas_param_data.periodic_interval));
 		}
 	} break;
 	case LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING:
@@ -378,10 +406,14 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		cell_change_work_data.tac = evt->cell.tac;
 		k_work_submit_to_queue(&mosh_common_work_q, &cell_change_work_data.work);
 
-		if (ncellmeas_mode == LINK_NCELLMEAS_MODE_CONTINUOUS) {
-			ncellmeas_work_data.mode = ncellmeas_mode;
-			ncellmeas_work_data.search_type = ncellmeas_search_type;
-			ncellmeas_work_data.periodic_interval = ncellmeas_periodic_interval;
+		if (ncellmeas_param_data.mode == LINK_NCELLMEAS_MODE_CONTINUOUS) {
+			ncellmeas_work_data.mode = ncellmeas_param_data.mode;
+			ncellmeas_work_data.params.search_type =
+				ncellmeas_param_data.params.search_type;
+			ncellmeas_work_data.params.gci_count =
+				ncellmeas_param_data.params.gci_count;
+			ncellmeas_work_data.periodic_interval =
+				ncellmeas_param_data.periodic_interval;
 
 			/* Send immediately after a cell update */
 			k_work_schedule_for_queue(&mosh_common_work_q, &ncellmeas_work_data.work,
@@ -513,7 +545,7 @@ void link_rsrp_subscribe(bool subscribe)
 {
 	link_subscribe_for_rsrp = subscribe;
 	if (link_subscribe_for_rsrp) {
-		/* print current value right away: */
+		/* print current value right away */
 		mosh_print("RSRP subscribed");
 		if (modem_rsrp != LINK_RSRP_VALUE_NOT_KNOWN) {
 			mosh_print("RSRP: %d", modem_rsrp);
@@ -524,21 +556,22 @@ void link_rsrp_subscribe(bool subscribe)
 }
 
 void link_ncellmeas_start(bool start, enum link_ncellmeas_modes mode,
-			  enum lte_lc_neighbor_search_type search_type,
+			  struct lte_lc_ncellmeas_params ncellmeas_params,
 			  int periodic_interval)
 {
 	int ret;
 
-	ncellmeas_mode = mode;
-	ncellmeas_periodic_interval = periodic_interval;
-	ncellmeas_search_type = search_type;
+	ncellmeas_param_data.mode = mode;
+	ncellmeas_param_data.periodic_interval = periodic_interval;
+	ncellmeas_param_data.params = ncellmeas_params;
 
 	k_work_cancel_delayable(&ncellmeas_work_data.work);
 
 	if (start) {
-		ret = lte_lc_neighbor_cell_measurement(search_type);
+		ret = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
 		if (ret) {
-			mosh_error("lte_lc_neighbor_cell_measurement() returned err %d", ret);
+			mosh_error("lte_lc_neighbor_cell_measurement() returned err %d",
+				ret);
 			mosh_error("Cannot start neigbor measurements");
 		}
 	} else {
@@ -622,17 +655,17 @@ int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 		/* Enable/disable Rel14 features before going to normal mode */
 		link_enable_disable_rel14_features(rel14_used);
 
-		/* (Re)register for rsrp notifications: */
+		/* (Re)register for rsrp notifications */
 		modem_info_rsrp_register(link_rsrp_signal_handler);
 
-		/* Run custom at cmds from settings (link nmodeat -mosh command): */
+		/* Run custom at cmds from settings (link nmodeat -mosh command) */
 		link_normal_mode_at_cmds_run();
 
-		/* Set default context from settings (link defcont/defcontauth -mosh commands): */
+		/* Set default context from settings (link defcont/defcontauth -mosh commands) */
 		link_default_pdp_context_set();
 		link_default_pdp_context_auth_set();
 
-		/* Set saved system mode (if set) from settings (by link sysmode -mosh command): */
+		/* Set saved system mode (if set) from settings (by link sysmode -mosh command) */
 		sysmode = link_sett_sysmode_get();
 		lte_pref = link_sett_sysmode_lte_preference_get();
 		if (sysmode != LTE_LC_SYSTEM_MODE_NONE) {
