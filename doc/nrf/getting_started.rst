@@ -3,19 +3,20 @@
 Getting started
 ###############
 
-To quickly get started with the |NCS|, use :ref:`nRF Connect for Desktop <gs_assistant>` to set up your development environment.
-Alternatively, you can enroll in the `nRF Connect SDK Fundamentals course`_ in the `Nordic Developer Academy`_.
-You can also check the :ref:`gs_installing` documentation for instructions on setting up your environment manually.
+To start working with the |NCS|, set up your development environment in one of the following ways:
 
-We recommend using |VSC| with the |nRFVSC| to build applications.
-See the `nRF Connect for Visual Studio Code`_ documentation page for more information about the extension.
+* For automatic installation (recommended), use :ref:`nRF Connect for Desktop <gs_assistant>`
+* For manual installation, refer to :ref:`gs_installing`
+
+If you want to go through a dedicated training to familiarize yourself with the basic functionalities of the |NCS|, enroll in the `nRF Connect SDK Fundamentals course`_ in the `Nordic Developer Academy`_.
+
+For building applications, we recommend using |VSC| with the |nRFVSC|.
+For more information about the extension, see the `nRF Connect for Visual Studio Code`_ documentation page.
 
 .. note::
    Some samples in the |NCS| are currently not designed to work out-of-tree. You may need to manually configure your sample to work correctly in the |nRFVSC|.
 
-Once you are set up, check out the :ref:`samples`.
-If this is the first time you are working with embedded devices, it is probably a good idea to program an unchanged sample to your development kit first and test if it works as expected.
-After that, pick a sample that is related to the application you want to create and start developing!
+   If you are working with embedded devices, it is a good practice to first test your setup by programming an unchanged :ref:`sample<samples>` to your development kit.
 
 .. toctree::
    :maxdepth: 2
