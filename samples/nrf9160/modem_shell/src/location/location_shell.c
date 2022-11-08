@@ -17,7 +17,6 @@
 #include <modem/location.h>
 #include <dk_buttons_and_leds.h>
 
-
 #include "mosh_print.h"
 #include "location_cmd_utils.h"
 
