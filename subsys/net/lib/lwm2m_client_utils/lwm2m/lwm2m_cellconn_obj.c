@@ -8,18 +8,19 @@
 #include <stdlib.h>
 #include <math.h>
 #include <zephyr/kernel.h>
+#include <zephyr/device.h>
 #include <zephyr/net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
 #include <modem/lte_lc.h>
 #include <net/lwm2m_client_utils.h>
 
-#include "lwm2m_app_utils.h"
 #include "lwm2m_object.h"
 #include "lwm2m_engine.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_cellconn, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
+#define LWM2M_RES_DATA_FLAG_RW 0
 #define CELLCONN_VERSION_MAJOR 1
 #if defined(CONFIG_LWM2M_CELL_CONN_OBJ_VERSION_1_1)
 #define CELLCONN_VERSION_MINOR 1

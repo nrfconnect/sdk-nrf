@@ -37,10 +37,12 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_path_to_string, char *, size_t, struct lwm2m_
 DECLARE_FAKE_VALUE_FUNC(struct lwm2m_engine_obj_inst *, lwm2m_engine_get_obj_inst,
 			const struct lwm2m_obj_path *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_string_to_path, const char *, struct lwm2m_obj_path *, char);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_notify_observer, uint16_t, uint16_t, uint16_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_update_signal_meas_objects,
 			const struct lte_lc_cells_info *const);
 DECLARE_FAKE_VALUE_FUNC(struct lwm2m_ctx *, lwm2m_rd_client_ctx);
 DECLARE_FAKE_VOID_FUNC(lwm2m_rd_client_update);
+DECLARE_FAKE_VOID_FUNC(lwm2m_register_obj, struct lwm2m_engine_obj *);
 DECLARE_FAKE_VALUE_FUNC(int, modem_key_mgmt_exists, nrf_sec_tag_t, enum modem_key_mgmt_cred_type,
 			bool *);
 DECLARE_FAKE_VALUE_FUNC(int, modem_key_mgmt_write, nrf_sec_tag_t, enum modem_key_mgmt_cred_type,
@@ -49,6 +51,13 @@ DECLARE_FAKE_VALUE_FUNC(int, lte_lc_func_mode_set, enum lte_lc_func_mode);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_connect);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_offline);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_func_mode_get, enum lte_lc_func_mode *);
+DECLARE_FAKE_VALUE_FUNC(int, lte_lc_ptw_set, enum lte_lc_lte_mode, const char *);
+DECLARE_FAKE_VALUE_FUNC(int, lte_lc_psm_param_set, const char *, const char *);
+DECLARE_FAKE_VALUE_FUNC(int, lte_lc_psm_req, bool);
+DECLARE_FAKE_VALUE_FUNC(int, lte_lc_rai_param_set, const char *);
+DECLARE_FAKE_VALUE_FUNC(int, lte_lc_rai_req, bool);
+DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_param_set, enum lte_lc_lte_mode, const char *);
+DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_req, bool);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_neighbor_cell_measurement, enum lte_lc_neighbor_search_type);
 DECLARE_FAKE_VOID_FUNC(lte_lc_register_handler, lte_lc_evt_handler_t);
 DECLARE_FAKE_VALUE_FUNC(int, settings_load_subtree, const char *);
@@ -93,6 +102,8 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
 	FUNC(lwm2m_path_to_string)                      \
 	FUNC(lwm2m_engine_get_obj_inst)                 \
 	FUNC(lwm2m_string_to_path)                      \
+	FUNC(lwm2m_notify_observer)                     \
+	FUNC(lwm2m_register_obj)                        \
 	FUNC(lwm2m_update_signal_meas_objects)          \
 	FUNC(lwm2m_rd_client_ctx)                       \
 	FUNC(lwm2m_rd_client_update)                    \
@@ -107,6 +118,13 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
 	FUNC(lte_lc_offline)                            \
 	FUNC(lte_lc_func_mode_get)                      \
 	FUNC(lte_lc_lte_mode_get)                       \
+	FUNC(lte_lc_ptw_set)                            \
+	FUNC(lte_lc_psm_param_set)                      \
+	FUNC(lte_lc_psm_req)                            \
+	FUNC(lte_lc_rai_param_set)                      \
+	FUNC(lte_lc_rai_req)                            \
+	FUNC(lte_lc_edrx_param_set)                     \
+	FUNC(lte_lc_edrx_req)                           \
 	FUNC(lte_lc_neighbor_cell_measurement)          \
 	FUNC(lte_lc_register_handler)                   \
 	FUNC(settings_load_subtree)                     \
