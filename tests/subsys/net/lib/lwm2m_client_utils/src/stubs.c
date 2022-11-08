@@ -62,6 +62,7 @@ DEFINE_FAKE_VALUE_FUNC(int, settings_register, struct settings_handler *);
 DEFINE_FAKE_VALUE_FUNC(int, settings_subsys_init);
 DEFINE_FAKE_VALUE_FUNC(int, settings_save_one, const char *, const void *, size_t);
 DEFINE_FAKE_VALUE_FUNC(int, settings_delete, const char *);
+DEFINE_FAKE_VALUE_FUNC(int, settings_name_next, const char *, const char **);
 DEFINE_FAKE_VALUE_FUNC(int, modem_info_init);
 DEFINE_FAKE_VALUE_FUNC(int, modem_info_params_init, struct modem_param_info *);
 DEFINE_FAKE_VALUE_FUNC(int, modem_info_params_get, struct modem_param_info *);

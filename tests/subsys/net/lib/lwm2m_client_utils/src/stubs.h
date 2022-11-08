@@ -56,6 +56,7 @@ DECLARE_FAKE_VALUE_FUNC(int, settings_register, struct settings_handler *);
 DECLARE_FAKE_VALUE_FUNC(int, settings_subsys_init);
 DECLARE_FAKE_VALUE_FUNC(int, settings_save_one, const char *, const void *, size_t);
 DECLARE_FAKE_VALUE_FUNC(int, settings_delete, const char *);
+DECLARE_FAKE_VALUE_FUNC(int, settings_name_next, const char *, const char **);
 DECLARE_FAKE_VOID_FUNC(engine_trigger_update, bool);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_init);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_params_init, struct modem_param_info *);
@@ -113,6 +114,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
 	FUNC(settings_subsys_init)                      \
 	FUNC(settings_save_one)                         \
 	FUNC(settings_delete)                           \
+	FUNC(settings_name_next)                        \
 	FUNC(engine_trigger_update)                     \
 	} while (0)
 
