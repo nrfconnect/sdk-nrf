@@ -13,6 +13,8 @@
 #include "common/proto/result.pb.h"
 #include "common/proto/version.pb.h"
 
+#include <net/wifi_credentials.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -65,6 +67,27 @@ int wifi_prov_send_result(struct net_buf_simple *result);
  * @return 0 if transport layer initialized successfully, negative error code otherwise.
  */
 int wifi_prov_transport_layer_init(void);
+
+/**
+ * @brief Fetch the first stored settings entry.
+ *
+ * @param creds pointer to credentials struct
+ */
+void wifi_credentials_get_first(struct wifi_credentials_personal *creds);
+
+/**
+ * @brief Check if there exists valid configuration (i.e., the device is provisioned).
+ *
+ * @return true if valid configuration found, false otherwise.
+ */
+bool wifi_has_config(void);
+
+/**
+ * @brief Remove the configuration.
+ *
+ * @return 0 if configuration removed successfully, negative error code otherwise.
+ */
+int wifi_remove_config(void);
 
 #ifdef __cplusplus
 }
