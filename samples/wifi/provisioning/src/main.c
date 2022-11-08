@@ -15,17 +15,12 @@
 void main(void)
 {
 	int rc;
-	struct wifi_config config;
 	struct net_if *iface = net_if_get_default();
 	struct wifi_connect_req_params cnx_params = { 0 };
+	struct wifi_credentials_personal creds = { 0 };
+
 	/* Sleep 1 seconds to allow initialization of wifi driver. */
 	k_sleep(K_SECONDS(1));
-
-	rc = wifi_config_init();
-	if (rc != 0) {
-		printk("Initializing config module failed, err = %d.\n", rc);
-		return;
-	}
 
 	rc = wifi_prov_init();
 	if (rc == 0) {
@@ -35,35 +30,38 @@ void main(void)
 		return;
 	}
 
-	if (wifi_has_config()) {
-		rc = wifi_get_config(&config);
-		if (rc == 0) {
-			printk("Configuration found. Try to apply.\n");
+	wifi_credentials_get_first(&creds);
 
-			cnx_params.ssid = config.ssid;
-			cnx_params.ssid_length = config.ssid_len;
-			cnx_params.security = config.auth_type;
-
-			cnx_params.psk = NULL;
-			cnx_params.psk_length = 0;
-			cnx_params.sae_password = NULL;
-			cnx_params.sae_password_length = 0;
-
-			if (config.auth_type != WIFI_SECURITY_TYPE_NONE) {
-				cnx_params.psk = config.password;
-				cnx_params.psk_length = config.password_len;
-			}
-
-			cnx_params.channel = config.channel;
-			cnx_params.band = config.band;
-			cnx_params.mfp = WIFI_MFP_OPTIONAL;
-			rc = net_mgmt(NET_REQUEST_WIFI_CONNECT, iface,
-				&cnx_params, sizeof(struct wifi_connect_req_params));
-			if (rc < 0) {
-				printk("Cannot apply saved Wi-Fi configuration, err = %d.\n", rc);
-			} else {
-				printk("Configuration applied.\n");
-			}
+	if (creds.header.ssid_len != 0) {
+		cnx_params.ssid = creds.header.ssid;
+		cnx_params.ssid_length = creds.header.ssid_len;
+		cnx_params.security = creds.header.type;
+		cnx_params.psk = NULL;
+		cnx_params.psk_length = 0;
+		cnx_params.sae_password = NULL;
+		cnx_params.sae_password_length = 0;
+		if (cnx_params.security == WIFI_SECURITY_TYPE_PSK ||
+		cnx_params.security == WIFI_SECURITY_TYPE_PSK_SHA256) {
+			cnx_params.psk = creds.password;
+			cnx_params.psk_length = creds.password_len;
 		}
+		if (cnx_params.security == WIFI_SECURITY_TYPE_SAE) {
+			cnx_params.sae_password = creds.password;
+			cnx_params.sae_password_length = creds.password_len;
+		}
+
+		cnx_params.channel = WIFI_CHANNEL_ANY;
+		cnx_params.band = 255;
+		cnx_params.mfp = WIFI_MFP_OPTIONAL;
+
+		rc = net_mgmt(NET_REQUEST_WIFI_CONNECT, iface,
+			&cnx_params, sizeof(struct wifi_connect_req_params));
+		if (rc < 0) {
+			printk("Cannot connect to saved network, err = %d.\n", rc);
+		} else {
+			printk("Configuration applied.\n");
+		}
+	} else {
+		printk("Device is unprovisioned.\n");
 	}
 }
