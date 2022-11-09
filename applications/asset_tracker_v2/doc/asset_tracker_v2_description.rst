@@ -69,16 +69,8 @@ To set up a cloud service to work with the application firmware, complete the st
 * AVSystem's LwM2M Coiote Device Management - :ref:`server_setup_lwm2m`.
   No additional configuration is needed if the server is set up according to the linked documentation.
 
-nRF Asset Tracker project
-=========================
-
-The application firmware is a part of the `nRF Asset Tracker project`_, which is an open source end-to-end example that includes cloud backend and frontend code for the following cloud providers:
-
-* AWS IoT Core - `Getting started guide for nRF Asset Tracker for AWS`_.
-* Azure IoT Hub - `Getting started guide for nRF Asset Tracker for Azure`_.
-
-The `nRF Asset Tracker project`_ contains separate documentation that goes through setup of the firmware and cloud-side setup.
-If you want to use the nRF Asset Tracker, follow the `nRF Asset Tracker project`_ documentation instead of the Asset Tracker v2 documentation.
+You can also use the nRF Asset Tracker project that provides an example cloud implementation for multiple cloud providers.
+See the :ref:`nRF_asset_tracker` section for more details.
 
 .. _atv2_lwm2m_carrier_support:
 
@@ -233,3 +225,16 @@ It uses the following Zephyr library:
 In addition, it uses the following secure firmware component:
 
 * :ref:`Trusted Firmware-M <ug_tfm>`
+
+.. _nRF_asset_tracker:
+
+nRF Asset Tracker project
+*************************
+
+The application firmware is a part of the `nRF Asset Tracker project`_, which is an open source end-to-end example that includes cloud backend and frontend code for the following cloud providers:
+
+* AWS IoT Core - `Getting started guide for nRF Asset Tracker for AWS`_.
+* Azure IoT Hub - `Getting started guide for nRF Asset Tracker for Azure`_.
+
+The `nRF Asset Tracker project`_ contains separate documentation that goes through setup of the firmware and cloud-side setup.
+If you want to use the nRF Asset Tracker, follow the `nRF Asset Tracker project`_ documentation instead of the Asset Tracker v2 documentation.
