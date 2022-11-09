@@ -1,5 +1,17 @@
 # This is the Jenkins ci variant of the .github/labler.yaml
 
+"CI-run-twister":
+ - any:
+    - "!.github/**/*"
+    - "!.vscode/**/*"
+    - "!doc/**/*"
+    - "!test-manifests/**/*"
+    - "!CODEOWNERS"
+    - "!LICENSE"
+    - "!**/*.rst"
+    - "!VERSION"
+    - "!ncs_version.h.in"
+
 "CI-tool-test-linux":
   - "scripts/requirements*.txt"
   - "scripts/tools-versions-linux.txt"
