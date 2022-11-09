@@ -279,8 +279,8 @@ enum dtm_vs_subcmd {
 	/* Set front-end module (FEM) gain value. */
 	FEM_GAIN_SET = 4,
 
-	/* Set front-end module (FEM) active delay set. */
-	FEM_ACTIVE_DELAY_SET = 5,
+	/* Set radio ramp-up time. */
+	FEM_RAMP_UP_SET = 5,
 
 	/* Restore front-end module (FEM) default parameters (antenna, gain, delay). */
 	FEM_DEFAULT_PARAMS_SET = 6

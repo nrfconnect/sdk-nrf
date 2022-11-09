@@ -9,6 +9,12 @@
 
 #include <stdint.h>
 
+#define LED_APP_RGB 0
+#define LED_NET_RGB 1
+#define LED_APP_1_BLUE 2
+#define LED_APP_2_GREEN 3
+#define LED_APP_3_GREEN 4
+
 #define RED 0
 #define GREEN 1
 #define BLUE 2
@@ -42,8 +48,8 @@ enum led_color {
  * @note		If the given LED unit is an RGB LED, color must be
  *			provided as a single vararg. See led_color.
  *			For monochrome LEDs, the vararg will be ignored.
+ *			Using a LED unit assigned to another core will do nothing and return 0.
  * @return		0 on success
- *			-ENXIO if the given led unit is assigned to another core
  *			-EPERM if the module has not been initialised
  *			-EINVAL if the color argument is illegal
  *			Other errors from underlying drivers.
@@ -59,8 +65,8 @@ int led_blink(uint8_t led_unit, ...);
  * @note		If the given LED unit is an RGB LED, color must be
  *			provided as a single vararg. See led_color.
  *			For monochrome LEDs, the vararg will be ignored.
+*			Using a LED unit assigned to another core will do nothing and return 0.
  * @return		0 on success
- *			-ENXIO if the given led unit is assigned to another core
  *			-EPERM if the module has not been initialised
  *			-EINVAL if the color argument is illegal
  *			Other errors from underlying drivers.
@@ -71,10 +77,10 @@ int led_on(uint8_t led_unit, ...);
  * @brief Set the state of a given LED unit to off.
  *
  * @note A led unit is defined as an RGB LED or a monochrome LED.
+ *		Using a LED unit assigned to another core will do nothing and return 0.
  *
  * @param led_unit	Selected LED unit. Defines are located in board.h
  * @return		0 on success
- *			-ENXIO if the given led unit is assigned to another core
  *			-EPERM if the module has not been initialised
  *			-EINVAL if the color argument is illegal
  *			Other errors from underlying drivers.
@@ -89,8 +95,7 @@ int led_off(uint8_t led_unit);
  * @return	0 on success
  *		-EPERM if already initialsed
  *		-ENXIO if a LED is missing unit number in dts
- *		-ENODEV if a LED is missing core specifier or
- *		color identifier
+ *		-ENODEV if a LED is missing color identifier
  */
 int led_init(void);
 

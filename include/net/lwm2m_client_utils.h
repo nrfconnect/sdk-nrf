@@ -199,6 +199,23 @@ int lwm2m_update_connmon(void);
 int lwm2m_init_cellular_connectivity_object(void);
 #endif
 
+/**
+ * @brief Initialize release assistance indication (RAI) module.
+ */
+int lwm2m_init_rai(void);
+
+/**
+ * @brief Set socket option SO_RAI_NO_DATA to bypass
+ * RRC Inactivity period and immediately switch to Idle mode.
+ */
+int lwm2m_rai_no_data(void);
+
+/**
+ * @brief Set socket option SO_RAI_LAST and send dummy packet to bypass
+ * RRC Inactivity period and immediately switch to Idle mode.
+ */
+int lwm2m_rai_last(void);
+
 #ifdef __cplusplus
 }
 #endif

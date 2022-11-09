@@ -23,6 +23,14 @@ config BT_ADV_PROV_SWIFT_PAIR
 config BT_ADV_PROV_FAST_PAIR
 	default y if BT_FAST_PAIR
 
+config BT_ADV_PROV_FAST_PAIR_SHOW_UI_PAIRING
+	depends on BT_ADV_PROV_FAST_PAIR
+	default n
+	help
+	  nRF Desktop peripheral supports one bond per local identity. Disable
+	  the UI indication during Fast Pair not discoverable advertising to
+	  prevent bonding failures.
+
 config BT_ADV_PROV_TX_POWER
 	default y
 

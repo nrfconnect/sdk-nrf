@@ -117,7 +117,7 @@ static void modem_signal_update(struct k_work *work)
 
 	if ((timestamp_prev != 0) &&
 	    (k_uptime_get_32() - timestamp_prev <
-	     CONFIG_APP_HOLD_TIME_RSRP * MSEC_PER_SEC)) {
+	     CONFIG_LWM2M_CONN_HOLD_TIME_RSRP * MSEC_PER_SEC)) {
 		return;
 	}
 
@@ -138,7 +138,11 @@ int lwm2m_init_connmon(void)
 		return ret;
 	}
 
-	modem_info_params_init(&modem_param);
+	ret = modem_info_params_init(&modem_param);
+	if (ret) {
+		LOG_ERR("Modem parameters could not be initialized: %d", ret);
+		return ret;
+	}
 	return 0;
 }
 

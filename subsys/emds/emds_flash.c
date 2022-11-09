@@ -137,6 +137,8 @@ static int flash_direct_write(const struct device *dev, off_t offset, const void
 
 	flash_addr += DT_REG_ADDR(SOC_NV_FLASH_NODE);
 
+	nvmc_wait_ready();
+
 	if (SUSPEND_POFWARN()) {
 		return -ECANCELED;
 	}

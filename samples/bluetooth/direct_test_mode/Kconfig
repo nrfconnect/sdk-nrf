@@ -4,9 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "Kconfig.zephyr"
-
-menu "Nordic DTM sample"
+mainmenu "Nordic DTM sample"
 
 config DTM_RADIO_IRQ_PRIORITY
 	int "Radio interrupt priority"
@@ -36,6 +34,13 @@ config ANOMALY_172_TIMER_IRQ_PRIORITY
 	  Sets anomaly 172 timer interrupt priority.
 	  Levels are from 0 (highest priority) to 6 (lowest priority)
 
-rsource "src/fem/Kconfig"
+config DTM_USB
+	bool "DTM over USB CDC ACM class"
+	depends on SOC_NRF5340_CPUNET
+	select EXPERIMENTAL
+	help
+	  Use USB instead of UART as the DTM interface. For nRF5340 the USB from application core
+	  is used as communication interface.
 
-endmenu
+rsource "src/fem/Kconfig"
+source "Kconfig.zephyr"

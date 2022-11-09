@@ -8,7 +8,11 @@ Software maturity levels
    :depth: 2
 
 The |NCS| supports its various features and components at different levels of software maturity.
-The tables at the end of this page summarize the maturity level for each feature and component supported in the |NCS|.
+The tables on this page summarize the maturity level for each feature and component supported in the |NCS|.
+
+Software maturity categories
+****************************
+
 The following categories are used in the tables to classify the software maturity of each feature and component:
 
 Supported
@@ -72,6 +76,14 @@ See the following table for more details:
      - Fully verified according to the existing test plans.
      - Incomplete verification
      - Not applicable.
+
+API deprecation
+***************
+
+The **Deprecated** status is assigned to API that has gone through all maturity levels, but is being phased out.
+The deprecated API will be removed in one of future releases, no earlier than two releases after the deprecation is announced and only when the code has transitioned to not using the deprecated API.
+The experimental API can be removed without deprecation notification.
+Following :ref:`Zephyr's guidelines for API lifecycle <zephyr:api_lifecycle>`, the API documentation informs about the deprecation and attempts to use a deprecated API at build time will log a warning to the console.
 
 .. _software_maturity_application:
 

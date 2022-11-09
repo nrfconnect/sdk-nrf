@@ -24,10 +24,6 @@ LOG_MODULE_REGISTER(led, CONFIG_LOG_LED_LEVEL);
 #define LED_UNIT_MAX 10
 #define NUM_COLORS_RGB 3
 #define BASE_10 10
-
-#define CORE_APP_STR "CORE_APP"
-#define CORE_NET_STR "CORE_NET"
-
 #define DT_LABEL_AND_COMMA(node_id) DT_PROP(node_id, label),
 #define GPIO_DT_SPEC_GET_AND_COMMA(node_id) GPIO_DT_SPEC_GET(node_id, gpios),
 
@@ -36,11 +32,6 @@ static const char *const led_labels[] = { DT_FOREACH_CHILD(DT_PATH(leds), DT_LAB
 
 static const struct gpio_dt_spec leds[] = { DT_FOREACH_CHILD(DT_PATH(leds),
 							     GPIO_DT_SPEC_GET_AND_COMMA) };
-
-enum led_core_assigned {
-	LED_CORE_APP,
-	LED_CORE_NET,
-};
 
 enum led_type {
 	LED_MONOCHROME,
@@ -54,7 +45,6 @@ struct user_config {
 
 struct led_unit_cfg {
 	uint8_t led_no;
-	enum led_core_assigned core;
 	enum led_type unit_type;
 	union {
 		const struct gpio_dt_spec *mono;
@@ -101,16 +91,6 @@ static int config_led_monochrome(uint8_t led_unit, uint8_t led)
 }
 
 /**
- * @brief Gives a LED pin from APP to NET core.
- */
-static int transfer_pin_to_net(uint8_t led)
-{
-	nrf_gpio_pin_control_select(leds[led].pin, NRF_GPIO_PIN_SEL_NETWORK);
-	LOG_DBG("Pin %d transferred on device %s", leds[led].pin, leds[led].port->name);
-	return 0;
-}
-
-/**
  * @brief Parses the device tree for LED settings.
  */
 static int led_device_tree_parse(void)
@@ -124,30 +104,6 @@ static int led_device_tree_parse(void)
 		if (led_labels[i] == end_ptr) {
 			LOG_ERR("No match for led unit. The dts is likely not properly formatted");
 			return -ENXIO;
-		}
-
-		if (strstr(led_labels[i], CORE_APP_STR)) {
-			led_units[led_unit].core = LED_CORE_APP;
-			if (!IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)) {
-				LOG_DBG("NET core: LED belongs to APP core. Skipping");
-				continue;
-			}
-
-		} else if (strstr(led_labels[i], CORE_NET_STR)) {
-			led_units[led_unit].core = LED_CORE_NET;
-			if (IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)) {
-				ret = transfer_pin_to_net(i);
-				if (ret) {
-					return ret;
-				}
-			}
-			if (!IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUNET)) {
-				LOG_DBG("APP core: LED belongs to NET core. Skipping");
-				continue;
-			}
-		} else {
-			LOG_ERR("LED %d unit %d with no core identifier in the label", i, led_unit);
-			return -ENODEV;
 		}
 
 		if (strstr(led_labels[i], "LED_RGB_RED")) {
@@ -187,24 +143,6 @@ static int led_device_tree_parse(void)
 static int led_set_int(uint8_t led_unit, enum led_color color)
 {
 	int ret;
-
-	if (!IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP) &&
-	    !IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUNET)) {
-		LOG_ERR("No core is selected");
-		return -ENXIO;
-	}
-
-	if (IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP) &&
-	    led_units[led_unit].core != LED_CORE_APP) {
-		LOG_ERR("LED unit %d assigned to the other core", led_unit);
-		return -ENXIO;
-	}
-
-	if (IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUNET) &&
-	    led_units[led_unit].core != LED_CORE_NET) {
-		LOG_ERR("LED unit %d assigned to the other core", led_unit);
-		return -ENXIO;
-	}
 
 	if (led_units[led_unit].unit_type == LED_MONOCHROME) {
 		if (color) {

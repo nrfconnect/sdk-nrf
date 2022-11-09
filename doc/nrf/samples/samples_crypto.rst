@@ -9,4 +9,4 @@ Cryptography samples
    :glob:
 
    ../../../samples/crypto/*/README
-   ../../tests/*/README
+   ../../tests/crypto/README

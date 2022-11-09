@@ -675,7 +675,7 @@ static void qos_event_handler(const struct qos_evt *evt)
 		LOG_DBG("QOS_EVT_MESSAGE_REMOVED_FROM_LIST");
 
 		if (evt->message.heap_allocated) {
-			LOG_DBG("Freeing pointer: %p", evt->message.data.buf);
+			LOG_DBG("Freeing pointer: %p", (void *)evt->message.data.buf);
 			k_free(evt->message.data.buf);
 		}
 		break;

@@ -57,10 +57,4 @@ static const struct board_version BOARD_VERSION_ARR[] = {
 	 BOARD_PCA10121_0_9_0_MSK | BOARD_PCA10121_0_10_0_MSK | BOARD_PCA10121_1_0_0_MSK |         \
 	 BOARD_PCA10121_1_1_0_MSK)
 
-#define LED_APP_RGB 0
-#define LED_NET_RGB 1
-#define LED_APP_1_BLUE 2
-#define LED_APP_2_GREEN 3
-#define LED_APP_3_GREEN 4
-
 #endif

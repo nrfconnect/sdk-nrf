@@ -569,6 +569,22 @@ static int configure_supported_features(void)
 	}
 #endif
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_LE_POWER_CONTROL)) {
+		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			err = sdc_support_le_power_control_central();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+
+		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			err = sdc_support_le_power_control_peripheral();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+	}
+
 	return 0;
 }
 

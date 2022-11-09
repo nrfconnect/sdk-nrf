@@ -33,7 +33,7 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
-|no_changes_yet_note|
+* Updated the :ref:`software_maturity` page with a section about API deprecation.
 
 Protocols
 =========
@@ -62,6 +62,8 @@ Matter
 
   * Documentation page about :ref:`ug_matter_overview_multi_fabrics` and entry about binding to :ref:`ug_matter_network_topologies_concepts`.
   * Documentation page about :ref:`ug_matter_overview_commissioning`, which is based on an earlier subsection of :ref:`ug_matter_overview_network_topologies`.
+  * Documentation page about :ref:`ug_matter_overview_security`, which is based on an earlier subsection of :ref:`ug_matter_overview_network_topologies`.
+  * Documentation section about :ref:`ug_matter_device_certification_reqs_security` on the page about :ref:`ug_matter_device_certification`.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
@@ -198,6 +200,15 @@ Bluetooth samples
 
     * Added a documentation section about testing with the `nRF Memfault for Android`_ and the `nRF Memfault for iOS`_ mobile applications to the documentation.
 
+* :ref:`direct_test_mode` sample:
+
+  * Changed:
+
+    * Front-end module support is now provided by the :ref:`nrfxlib:mpsl_fem` API instead of the custom driver that was part of this sample.
+    * On the nRF5340 development kit, the :ref:`nrf5340_remote_shell` is now a mandatory sample that must be programmed to the application core.
+    * On the nRF5340 development kit, the application core UART interface is used for communication with testers instead of the network core UART interface.
+    * On the nRF5340 development kit, added support for the USB CDC ACM interface.
+
 Bluetooth mesh samples
 ----------------------
 
@@ -206,6 +217,12 @@ Bluetooth mesh samples
   * Added:
 
     * Support for running the light switch as a Low Power node.
+
+* :ref:`bluetooth_mesh_light` sample:
+
+  * Added:
+
+    * Point-to-point Device Firmware Update (DFU) support over the Simple Management Protocol (SMP) for supported nRF52 Series development kits.
 
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
@@ -319,12 +336,20 @@ Other samples
   * Removed the FEM support section.
 * Added :ref:`hw_id_sample` sample.
 
+* :ref:`radio_test` sample:
+
+  * Changed:
+
+    * Front-end module support is now provided by the :ref:`nrfxlib:mpsl_fem` API instead of the custom driver that was part of this sample.
+    * On the nRF5340 development kit, the :ref:`nrf5340_remote_shell` is now a mandatory sample that must be programmed to the application core.
+    * On the nRF5340 development kit, this sample uses the :ref:`shell_ipc_readme` library to forward shell data through the physical application core UART interface.
+
 Drivers
 =======
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-* |no_changes_yet_note|
+* Added :ref:`uart_ipc`
 
 Libraries
 =========
@@ -581,6 +606,7 @@ Documentation
   * :ref:`app_memory`: Configuration options affecting memory footprint for Bluetooth mesh, that can be used to optimize the application.
   * Documentation for the :ref:`lib_bh1749`.
   * The :ref:`ug_nrf52_gs` page.
+  * :ref:`ug_bt_mesh_node_removal` page in the :ref:`ug_bt_mesh` user guide.
 
 * Updated:
 

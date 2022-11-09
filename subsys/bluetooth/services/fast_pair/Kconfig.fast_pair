@@ -14,13 +14,12 @@ menuconfig BT_FAST_PAIR
 if BT_FAST_PAIR
 
 config BT_FAST_PAIR_EXT_PN
-	bool
+	bool "Fast Pair Personalized Name extension"
+	default y
+	select BT_FAST_PAIR_GATT_SERVICE_ADDITIONAL_DATA
 	select BT_FAST_PAIR_STORAGE_EXT_PN
 	help
 	  Enable Fast Pair Personalized Name extension.
-
-	  The feature is not fully supported. Fast Pair Service's Additional
-	  Data characteristic is not implemented.
 
 rsource "fp_crypto/Kconfig.fp_crypto"
 rsource "fp_storage/Kconfig.fp_storage"
@@ -95,6 +94,11 @@ config BT_CTLR_DATA_LENGTH_MAX
 	default 87 if BT_CTLR
 	help
 	  If Fast Pair is enabled, use MTU value of 83 (recommended by the specification).
+
+config BT_FAST_PAIR_GATT_SERVICE_ADDITIONAL_DATA
+	bool
+	help
+	  Add Fast Pair Service's Additional Data GATT characteristic.
 
 endif # BT_FAST_PAIR_GATT_SERVICE
 

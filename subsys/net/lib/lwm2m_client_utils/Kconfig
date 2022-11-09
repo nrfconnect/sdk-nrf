@@ -50,13 +50,20 @@ endif # LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT
 config LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
 	bool "Connection Monitor object support"
 	default y
-	select LWM2M_CONN_MON_OBJ_SUPPORT
+	select LWM2M_CONN_MON_OBJ_SUPPORT if !ZTEST
 
 if LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
 
 config LWM2M_CONN_MON_BEARER_MAX
 	int "Max number of bearers"
 	default 2
+
+config LWM2M_CONN_HOLD_TIME_RSRP
+	int "Minimum time [s] between RSRP notification messages"
+	default 60
+	help
+	  The minimum time in seconds that notifications can be sent to observers of the
+	  Connectivity Monitoring data.
 
 endif # LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
 
@@ -101,11 +108,6 @@ config LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG
 	  -1 disables the usage of security tag.
 
 endif # LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
-
-config LWM2M_LTE_EVENT_LISTENER
-	bool
-	help
-	  Enable this flag for select lte event listener module to build.
 
 config LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT
 	bool "Support ground fix object"
@@ -202,7 +204,6 @@ config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_INSTANCE_COUNT
 config LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER
 	bool "Use a listener to populate signal measurement objects"
 	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
-	select LWM2M_LTE_EVENT_LISTENER
 
 endif # LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
 
@@ -220,6 +221,13 @@ config LWM2M_CELL_CONN_APN_PROFILE_COUNT
 	default 3
 
 endif #LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_RAI
+	bool "Enable release assistance indication (RAI)"
+	help
+	  This option enables RAI for access stratum (AS) which was introduced in REL14.
+	  When AS RAI is configured, device may indicate that no further data is
+	  expected in the near future and the connection may be released.
 
 module = LWM2M_CLIENT_UTILS
 module-dep = LOG

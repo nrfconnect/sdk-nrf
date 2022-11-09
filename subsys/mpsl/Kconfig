@@ -35,9 +35,9 @@ config MPSL_BUILD_TYPE_LIB
 
 endchoice
 
-rsource "fem/Kconfig"
-
 endif
+
+rsource "fem/Kconfig"
 
 if !MPSL_FEM_ONLY
 

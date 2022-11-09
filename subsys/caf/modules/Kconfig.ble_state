@@ -22,6 +22,21 @@ config CAF_BLE_STATE_SECURITY_REQ
 	help
 	  Automatically request connection encryption right after the connection is established.
 
+config CAF_BLE_STATE_MAX_LOCAL_ID_BONDS
+	int "Number of allowed bonds per Bluetooth local identity"
+	depends on BT_PERIPHERAL
+	range 1 BT_MAX_PAIRED
+	default 1
+	help
+	  The available Bluetooth bonds are shared among Bluetooth local
+	  identities. Limiting number of bonds allowed per local identity
+	  prevents from situation where one local identity uses too many bonds.
+	  In that case, other local identities may be unable to bond.
+
+config CAF_BLE_STATE_MAX_LOCAL_ID_BONDS
+	depends on !BT_PERIPHERAL
+	default 0
+
 config CAF_BLE_STATE_PM
 	bool "Enable bluetooth LE power manager integration"
 	depends on CAF_BLE_STATE

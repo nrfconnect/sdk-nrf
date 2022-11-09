@@ -25,13 +25,6 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
 #include <nrf_modem_at.h>
-#include <modem/pdn.h>
-
-#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
-#if defined(CONFIG_MODEM_KEY_MGMT)
-#include <modem/modem_key_mgmt.h>
-#endif
-#endif
 
 #include "lwm2m_client_app.h"
 #include "lwm2m_app_utils.h"
@@ -256,10 +249,6 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_APP_LIGHT_SENSOR)
 	lwm2m_init_light_sensor();
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT) && \
-	defined(CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER)
-	lwm2m_ncell_handler_register();
-#endif
 #if defined(CONFIG_LWM2M_PORTFOLIO_OBJ_SUPPORT)
 	lwm2m_init_portfolio_object();
 #endif
@@ -270,6 +259,13 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT)
 	lwm2m_init_cellular_connectivity_object();
 #endif
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
+		lwm2m_init_rai();
+	}
+	if (IS_ENABLED(CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS) ||
+	    IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER)) {
+		lwm2m_ncell_handler_register();
+	}
 	return 0;
 }
 
@@ -404,6 +400,9 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_QUEUE_MODE_RX_OFF:
 		LOG_DBG("Queue mode RX window closed");
+		if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
+			lwm2m_rai_last();
+		}
 		k_mutex_unlock(&lte_mutex);
 		break;
 
@@ -522,14 +521,6 @@ void main(void)
 	}
 	/* Modem FW update needs to be verified before modem is used. */
 	lwm2m_verify_modem_fw_update();
-#endif
-
-#if defined(CONFIG_PDN)
-	ret = pdn_init();
-	if (ret < 0) {
-		LOG_ERR("Unable to init pdn (%d)", ret);
-		return;
-	}
 #endif
 
 	ret = app_event_manager_init();

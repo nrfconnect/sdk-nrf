@@ -21,7 +21,6 @@ struct accel_event {
 	struct app_event_header header;
 
 	struct accelerometer_sensor_data data;
-	enum accel_orientation_state orientation;
 };
 
 APP_EVENT_TYPE_DECLARE(accel_event);

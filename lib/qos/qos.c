@@ -279,7 +279,7 @@ void qos_message_print(const struct qos_data *message)
 	LOG_DBG("Notified count: %d", message->notified_count);
 	LOG_DBG("Message heap_allocated: %d", message->heap_allocated);
 	LOG_DBG("Message ID: %d", message->id);
-	LOG_DBG("Message Buffer pointer: %p", message->data.buf);
+	LOG_DBG("Message Buffer pointer: %p", (void *)message->data.buf);
 	LOG_DBG("Message Buffer length: %d", message->data.len);
 	LOG_DBG("Message Flags: %x", message->flags);
 	LOG_DBG("Message type: %d", message->type);

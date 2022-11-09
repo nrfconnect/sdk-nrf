@@ -20,14 +20,25 @@
 extern "C" {
 #endif
 
-/** Set Fast Pair advertising mode.
+/** Enable/disable Fast Pair advertising provider.
  *
- * User shall make sure that advertising mode is not modified while Fast Pair advertising data
- * provider is providing advertising data.
+ * User shall make sure that this function is not called while Fast Pair advertising data provider
+ * is providing advertising data.
  *
- * @param[in] fp_adv_mode	Fast Pair advertising mode.
+ * @param[in] enable		Enable/disable Fast Pair provider.
  */
-void bt_le_adv_prov_fast_pair_mode_set(enum bt_fast_pair_adv_mode fp_adv_mode);
+void bt_le_adv_prov_fast_pair_enable(bool enable);
+
+/** Show/hide UI indication in Fast Pair not discoverable advertising.
+ *
+ * This configuration does not affect Fast Pair discoverable advertising.
+ *
+ * User shall make sure that this function is not called while Fast Pair advertising data provider
+ * is providing advertising data.
+ *
+ * @param[in] enable		Show/hide the UI indication.
+ */
+void bt_le_adv_prov_fast_pair_show_ui_pairing(bool enable);
 
 #ifdef __cplusplus
 }

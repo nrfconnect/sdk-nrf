@@ -42,6 +42,7 @@ void lwm2m_ncell_schedule_measurement(void)
 	measurement_scheduled = false;
 	k_sem_give(&rrc_idle);
 }
+#endif /* CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER */
 
 int lwm2m_ncell_handler_register(void)
 {
@@ -49,7 +50,6 @@ int lwm2m_ncell_handler_register(void)
 	lte_lc_register_handler(lte_notify_handler);
 	return 0;
 }
-#endif /* CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER */
 
 void lte_notify_handler(const struct lte_lc_evt *const evt)
 {

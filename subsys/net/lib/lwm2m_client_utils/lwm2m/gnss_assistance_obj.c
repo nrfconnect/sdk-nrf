@@ -112,7 +112,7 @@ static int gnss_assist_write_agps(uint8_t *data, uint16_t data_len, bool last_bl
 	memcpy(&assist_buf[bytes_downloaded], &data[0], data_len);
 
 	if (last_block) {
-		err = nrf_cloud_agps_process(assist_buf, bytes_downloaded);
+		err = nrf_cloud_agps_process(assist_buf, bytes_downloaded + data_len);
 		if (err) {
 			LOG_WRN("Unable to process A-GPS data, error: %d", err);
 		} else {

@@ -170,23 +170,13 @@ Direct support
 ==============
 
 If your application cannot use MPSL or if the FEM driver in MPSL does not support all features you need, you can implement your own driver for the nRF21540.
-The following samples have direct FEM support:
+The other solution is to use only the :ref:`nrfxlib:mpsl_fem` API from the MPSL.
+Enable the following Kconfig options:
 
-* :ref:`direct_test_mode`
-* :ref:`radio_test`
+* :kconfig:option:`CONFIG_MPSL`
+* :kconfig:option:`CONFIG_MPSL_FEM_ONLY`
 
-The implementations supported by the samples are the following:
-
-* :ref:`ug_radio_fem_nrf21540_spi_gpio` - For the nRF21540 SPI/GPIO implementation that uses nRF21540.
-* :ref:`ug_radio_fem_skyworks` - For the Simple GPIO implementation that uses the Skyworks devices.
-
-.. note::
-   The nRF5340 DK network core peripherals, like UART and SPI, share an ID and a base address.
-   To configure the nRF21540 front-end module gain, write the gain value over the SPI.
-   In samples, UART is used as a control interface or shell transport.
-   To send the gain value, UART is temporary disabled and restarted after the SPI transfer.
-
-See the :ref:`direct_test_mode` samples for an example implementation.
+See the :ref:`direct_test_mode` sample for an example use case.
 
 Hardware description
 ********************

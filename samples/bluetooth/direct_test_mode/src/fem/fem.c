@@ -4,7 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+
 #include <errno.h>
+
+#include <hal/nrf_radio.h>
+#include <hal/nrf_timer.h>
+#include <helpers/nrfx_gppi.h>
+
+#include <zephyr/sys/printk.h>
+
+#include <mpsl_fem_protocol_api.h>
 
 #include "fem.h"
 #include "fem_interface.h"
@@ -12,47 +21,40 @@
 
 static const struct fem_interface_api *fem_api;
 
+static mpsl_fem_event_t fem_activate_event = {
+	.type = MPSL_FEM_EVENT_TYPE_TIMER,
+};
+
+static mpsl_fem_event_t fem_deactivate_evt = {
+	.type = MPSL_FEM_EVENT_TYPE_GENERIC,
+};
+
 int fem_power_up(void)
 {
-	return fem_api->power_up();
+	/* Handle front-end module specific power up operation. */
+	if (fem_api->power_up) {
+		return fem_api->power_up();
+	}
+
+	return 0;
 }
 
 int fem_power_down(void)
 {
-	return fem_api->power_down();
-}
+	int32_t err;
 
-int fem_tx_configure(uint32_t activate_event, uint32_t deactivate_event,
-		     uint32_t activation_delay)
-{
-	return fem_api->tx_configure(activate_event, deactivate_event, activation_delay);
-}
+	err = mpsl_fem_disable();
+	if (err) {
+		printk("Failed to disable front-end module\n");
+		return -EPERM;
+	}
 
-int fem_rx_configure(uint32_t activate_event, uint32_t deactivate_event,
-		     uint32_t activation_delay)
-{
-	return fem_api->rx_configure(activate_event, deactivate_event, activation_delay);
-}
+	/* Fallback to front-end module specific power down operation. */
+	if (fem_api->power_down) {
+		return fem_api->power_down();
+	}
 
-void fem_txrx_configuration_clear(void)
-{
-	return fem_api->txrx_configuration_clear();
-}
-
-int fem_txrx_stop(void)
-{
-	return fem_api->txrx_stop();
-}
-
-int fem_tx_gain_set(uint32_t gain)
-{
-	return fem_api->tx_gain_set(gain);
-}
-
-uint32_t fem_default_active_delay_calculate(bool rx,
-					    nrf_radio_mode_t mode)
-{
-	return fem_api->default_active_delay_calculate(rx, mode);
+	return 0;
 }
 
 int fem_antenna_select(enum fem_antenna ant)
@@ -154,4 +156,137 @@ uint32_t fem_radio_rx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode)
 	}
 
 	return ramp_up;
+}
+
+uint32_t fem_default_ramp_up_time_get(bool rx, nrf_radio_mode_t mode)
+{
+	bool fast_ramp_up = nrf_radio_modecnf0_ru_get(NRF_RADIO);
+
+	return rx ? fem_radio_rx_ramp_up_delay_get(fast_ramp_up, mode) :
+		    fem_radio_tx_ramp_up_delay_get(fast_ramp_up, mode);
+}
+
+int fem_tx_configure(uint32_t ramp_up_time)
+{
+	int32_t err;
+
+	fem_activate_event.event.timer.counter_period.end = ramp_up_time;
+
+	err = mpsl_fem_pa_configuration_set(&fem_activate_event, &fem_deactivate_evt);
+	if (err) {
+		printk("PA configuration set failed (err %d)\n", err);
+		return -EFAULT;
+	}
+
+	return 0;
+}
+
+int fem_rx_configure(uint32_t ramp_up_time)
+{
+	int32_t err;
+
+	fem_activate_event.event.timer.counter_period.end = ramp_up_time;
+
+	err = mpsl_fem_lna_configuration_set(&fem_activate_event, &fem_deactivate_evt);
+	if (err) {
+		printk("LNA configuration set failed (err %d)\n", err);
+		return -EFAULT;
+	}
+
+	return 0;
+}
+
+int fem_tx_gain_set(uint32_t gain)
+{
+	int32_t err;
+	mpsl_fem_gain_t fem_gain = { 0 };
+
+	/* Fallback to FEM specific function. It can be used for checking the valid output power
+	 * range.
+	 */
+	if (fem_api->tx_gain_validate) {
+		err = fem_api->tx_gain_validate(gain);
+		if (err) {
+			return err;
+		}
+	}
+
+	if (!fem_api->tx_default_gain_get) {
+		/* Should not happen. */
+		__ASSERT(false, "Missing FEM specific function for getting default Tx gain");
+		return -EFAULT;
+	}
+
+	/* We need to pass valid gain db value for given front-end module to have possibility to set
+	 * gain value directly in arbitrary value defined in your front-end module
+	 * product specification. In this case the default Tx gain value will be used.
+	 */
+	fem_gain.gain_db = fem_api->tx_default_gain_get();
+	fem_gain.private_setting = gain;
+
+	err = mpsl_fem_pa_gain_set(&fem_gain);
+	if (err) {
+		printk("Failed to set front-end module gain (err %d)\n", err);
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+int fem_txrx_configuration_clear(void)
+{
+	int32_t err;
+
+	err = mpsl_fem_pa_configuration_clear();
+	if (err) {
+		printk("Failed to clear PA configuration\n");
+		return -EPERM;
+	}
+	err = mpsl_fem_lna_configuration_clear();
+	if (err) {
+		printk("Failed to clear LNA configuration\n");
+		return -EPERM;
+	}
+
+	return 0;
+}
+
+void fem_txrx_stop(void)
+{
+	mpsl_fem_deactivate_now(MPSL_FEM_ALL);
+}
+
+int fem_init(NRF_TIMER_Type *timer_instance, uint8_t compare_channel_mask)
+{
+	if (!timer_instance || (compare_channel_mask == 0)) {
+		return -EINVAL;
+	}
+
+	fem_activate_event.event.timer.p_timer_instance = timer_instance;
+	fem_activate_event.event.timer.compare_channel_mask = compare_channel_mask;
+
+#if defined(DPPI_PRESENT)
+	nrfx_err_t err;
+	uint8_t fem_generic_dppi;
+
+	err = nrfx_gppi_channel_alloc(&fem_generic_dppi);
+	if (err != NRFX_SUCCESS) {
+		printk("gppi_channel_alloc failed with: %d\n", err);
+		return -ENODEV;
+	}
+
+	fem_deactivate_evt.event.generic.event = fem_generic_dppi;
+
+	nrfx_gppi_event_endpoint_setup(fem_generic_dppi,
+			nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_DISABLED));
+	nrfx_gppi_channels_enable(BIT(fem_generic_dppi));
+#elif defined(PPI_PRESENT)
+	fem_deactivate_evt.event.generic.event =
+				nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+#else
+	__ASSERT_NO_MSG(false);
+	return -ENOTSUP;
+#endif
+
+	return 0;
 }
