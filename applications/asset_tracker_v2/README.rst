@@ -14,7 +14,7 @@ See the subpages for detailed documentation on the application and its internal 
 .. _asset_tracker_v2_subpages:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Subpages:
 
    doc/asset_tracker_v2_description
