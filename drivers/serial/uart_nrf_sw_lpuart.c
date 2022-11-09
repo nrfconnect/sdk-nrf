@@ -697,6 +697,9 @@ static int api_rx_disable(const struct device *dev)
 
 static uint32_t int_driven_rd_available(struct lpuart_data *data)
 {
+	if (data->int_driven.rxlen < data->int_driven.rxrd) {
+		               return 0;
+    }
 	return data->int_driven.rxlen - data->int_driven.rxrd;
 }
 
@@ -728,6 +731,10 @@ static void int_driven_evt_handler(const struct device *lpuart,
 		/* Disable this assert as it's causing issues at NRF91 power up.
 	       LPUART will be reset during NRF91 init anway.*/
 		// __ASSERT_NO_MSG(data->int_driven.rxlen == 0);
+		if (data->int_driven.rxlen != 0) {
+				// Ignore count of bytes received before we were ready.
+                data->int_driven.rxrd = 0;
+        }
 		data->int_driven.rxlen = evt->data.rx.len;
 		call_handler = data->int_driven.rx_enabled;
 		break;
