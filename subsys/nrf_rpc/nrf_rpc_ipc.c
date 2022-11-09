@@ -9,7 +9,6 @@
 #include <nrf_rpc_errno.h>
 #include <nrf_rpc/nrf_rpc_ipc.h>
 
-#include <openamp/rpmsg.h>
 #include <zephyr/ipc/ipc_service.h>
 
 #include <zephyr/logging/log.h>
@@ -42,17 +41,6 @@ static int translate_error(int ll_err)
 		return -NRF_EALREADY;
 	case -EBADMSG:
 		return -NRF_EBADMSG;
-
-	case RPMSG_ERR_BUFF_SIZE:
-	case RPMSG_ERR_NO_MEM:
-	case RPMSG_ERR_NO_BUFF:
-		return -NRF_ENOMEM;
-	case RPMSG_ERR_PARAM:
-		return -NRF_EINVAL;
-	case RPMSG_ERR_DEV_STATE:
-	case RPMSG_ERR_INIT:
-	case RPMSG_ERR_ADDR:
-		return -NRF_EIO;
 
 	default:
 		if (ll_err < 0) {
