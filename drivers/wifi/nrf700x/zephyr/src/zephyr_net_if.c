@@ -107,3 +107,62 @@ void wifi_nrf_if_init(struct net_if *iface)
 	net_if_set_link_addr(iface, (unsigned char *)&rpu_ctx_zep->mac_addr,
 			     sizeof(rpu_ctx_zep->mac_addr), NET_LINK_ETHERNET);
 }
+
+#ifdef CONFIG_NET_STATISTICS_WIFI
+int wifi_nrf_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct rpu_op_stats stats;
+	int ret = -1;
+
+	if (!dev) {
+		LOG_ERR("%s Device not found\n", __func__);
+		goto out;
+	}
+
+	if (!zstats) {
+		LOG_ERR("%s Stats buffer not allocated\n", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = dev->data;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		goto out;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
+		goto out;
+	}
+
+	memset(&stats, 0, sizeof(struct rpu_op_stats));
+	status = wifi_nrf_fmac_stats_get(rpu_ctx_zep->rpu_ctx, &stats);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		LOG_ERR("%s: wifi_nrf_fmac_stats_get failed\n", __func__);
+		goto out;
+	}
+
+	zstats->pkts.tx = stats.host.total_tx_pkts;
+	zstats->pkts.rx = stats.host.total_rx_pkts;
+	zstats->bytes.received = stats.fw.umac.interface_data_stats.rx_bytes;
+	zstats->bytes.sent = stats.fw.umac.interface_data_stats.tx_bytes;
+	zstats->sta_mgmt.beacons_rx = stats.fw.umac.interface_data_stats.rx_beacon_success_count;
+	zstats->sta_mgmt.beacons_miss = stats.fw.umac.interface_data_stats.rx_beacon_miss_count;
+	zstats->broadcast.rx = stats.fw.umac.interface_data_stats.rx_broadcast_pkt_count;
+	zstats->broadcast.tx = stats.fw.umac.interface_data_stats.tx_broadcast_pkt_count;
+	zstats->multicast.rx = stats.fw.umac.interface_data_stats.rx_multicast_pkt_count;
+	zstats->multicast.tx = stats.fw.umac.interface_data_stats.tx_multicast_pkt_count;
+
+	ret = 0;
+
+out:
+	return ret;
+}
+#endif /* CONFIG_NET_STATISTICS_WIFI */

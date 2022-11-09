@@ -172,7 +172,7 @@ enum rpu_tput_mode {
  * @NRF_WIFI_CMD_MODE: command to specify mode of operation
  * @NRF_WIFI_CMD_GET_STATS: command to get statistics
  * @NRF_WIFI_CMD_CLEAR_STATS: command to clear statistics
- * @NRF_WIFI_CMD_RX: command to ENABLE/DISABLE receiving packets in production mode
+ * @NRF_WIFI_CMD_RX: command to ENABLE/DISABLE receiving packets in radio test mode
  * @NRF_WIFI_CMD_DEINIT: RPU De-initialization
  * @NRF_WIFI_CMD_HE_GI_LTF_CONFIG: Configure HE_GI & HE_LTF.
  *
@@ -371,10 +371,24 @@ struct umac_cmd_evnt_dbg_params {
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
 
+struct nrf_wifi_interface_stats {
+	unsigned int tx_unicast_pkt_count;
+	unsigned int tx_multicast_pkt_count;
+	unsigned int tx_broadcast_pkt_count;
+	unsigned int tx_bytes;
+	unsigned int rx_unicast_pkt_count;
+	unsigned int rx_multicast_pkt_count;
+	unsigned int rx_broadcast_pkt_count;
+	unsigned int rx_beacon_success_count;
+	unsigned int rx_beacon_miss_count;
+	unsigned int rx_bytes;
+} __NRF_WIFI_PKD;
+
 struct rpu_umac_stats {
 	struct umac_tx_dbg_params tx_dbg_params;
 	struct umac_rx_dbg_params rx_dbg_params;
 	struct umac_cmd_evnt_dbg_params cmd_evnt_dbg_params;
+	struct nrf_wifi_interface_stats interface_data_stats;
 } __NRF_WIFI_PKD;
 
 struct rpu_lmac_stats {
@@ -495,12 +509,15 @@ enum max_rx_ampdu_size {
 /**
  * struct nrf_wifi_data_config_params - Data config parameters
  * @rate_protection_type:0->NONE, 1->RTS/CTS, 2->CTS2SELF
- * @aggregation: Enable or disable aggregation
- * @wmm: WMM is enabled(NRF_WIFI_FEATURE_ENABLE) or disabled(NRF_WIFI_FEATURE_DISABLE)
+ * @aggregation: Agreegation is enabled(NRF_WIFI_FEATURE_ENABLE) or disabled
+ *		(NRF_WIFI_FEATURE_DISABLE)
+ * @wmm: WMM is enabled(NRF_WIFI_FEATURE_ENABLE) or disabled
+ *		(NRF_WIFI_FEATURE_DISABLE)
  * @max_num_tx_agg_sessions: Max number of aggregated TX sessions
  * @max_num_rx_agg_sessions: Max number of aggregated RX sessions
  * @reorder_buf_size: Reorder buffer size (1 to 64)
- * @max_rxampdu_size: Max RX AMPDU size (8/16/32/64 KB), see enum max_rx_ampdu_size
+ * @max_rxampdu_size: Max RX AMPDU size (8/16/32/64 KB), see
+ *					enum max_rx_ampdu_size
  *
  * Data configuration parameters provided in command NRF_WIFI_CMD_INIT
  */
@@ -666,6 +683,8 @@ struct rpu_conf_params {
 	unsigned int rts_threshold;
 	unsigned int uapsd_queue;
 	unsigned int tx_pkt_gap_us;
+	unsigned char wlan_ant_switch_ctrl;
+	unsigned char ble_ant_switch_ctrl;
 } __NRF_WIFI_PKD;
 
 /**
@@ -687,7 +706,7 @@ struct nrf_wifi_cmd_mode_params {
 /**
  * struct nrf_wifi_cmd_rx - command rx
  * @sys_head: UMAC header, See &struct nrf_wifi_sys_head
- * @conf: rx configuration parameters see &struct rpu_conf_rx_prod_mode_params
+ * @conf: rx configuration parameters see &struct rpu_conf_rx_radio_test_params
  * @:rx_enable: 1-Enable Rx to receive packets contineously on specified channel
  *	0-Disable Rx stop receiving packets and clear statistics
  *
@@ -792,6 +811,7 @@ struct nrf_wifi_event_pwr_data {
 	signed int data_type;
 	struct nrf_wifi_rpu_pwr_data data;
 } __NRF_WIFI_PKD;
+
 
 /**
  * struct rpu_fw_stats - FW statistics

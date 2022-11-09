@@ -339,11 +339,24 @@ struct umac_cmd_evnt_dbg_params {
 } __NRF_WIFI_PKD;
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
+struct nrf_wifi_interface_stats {
+	unsigned int tx_unicast_pkt_count;
+	unsigned int tx_multicast_pkt_count;
+	unsigned int tx_broadcast_pkt_count;
+	unsigned int tx_bytes;
+	unsigned int rx_unicast_pkt_count;
+	unsigned int rx_multicast_pkt_count;
+	unsigned int rx_broadcast_pkt_count;
+	unsigned int rx_beacon_success_count;
+	unsigned int rx_beacon_miss_count;
+	unsigned int rx_bytes;
+} __NRF_WIFI_PKD;
 
 struct rpu_umac_stats {
 	struct umac_tx_dbg_params tx_dbg_params;
 	struct umac_rx_dbg_params rx_dbg_params;
 	struct umac_cmd_evnt_dbg_params cmd_evnt_dbg_params;
+	struct nrf_wifi_interface_stats interface_data_stats;
 } __NRF_WIFI_PKD;
 
 struct rpu_lmac_stats {
@@ -462,13 +475,15 @@ struct nrf_wifi_bgscan_params {
 /**
  * struct nrf_wifi_data_config_params - Data config parameters
  * @rate_protection_type:0->NONE, 1->RTS/CTS, 2->CTS2SELF
- * @aggregation: Agreegation is enabled(NRF_WIFI_FEATURE_ENABLE) or
- *               disabled(NRF_WIFI_FEATURE_DISABLE)
- * @wmm: WMM is enabled(NRF_WIFI_FEATURE_ENABLE) or disabled(NRF_WIFI_FEATURE_DISABLE)
+ * @aggregation: Agreegation is enabled(NRF_WIFI_FEATURE_ENABLE) or disabled
+ * (NRF_WIFI_FEATURE_DISABLE)
+ * @wmm: WMM is enabled(NRF_WIFI_FEATURE_ENABLE) or disabled
+ * (NRF_WIFI_FEATURE_DISABLE)
  * @max_num_tx_agg_sessions: Max number of aggregated TX sessions
  * @max_num_rx_agg_sessions: Max number of aggregated RX sessions
  * @reorder_buf_size: Reorder buffer size (1 to 64)
- * @max_rxampdu_size: Max RX AMPDU size (8/16/32/64 KB), see enum max_rx_ampdu_size
+ * @max_rxampdu_size: Max RX AMPDU size (8/16/32/64 KB), see enum
+ *  max_rx_ampdu_size
  *
  * Data configuration parameters provided in command NRF_WIFI_CMD_INIT
  */
