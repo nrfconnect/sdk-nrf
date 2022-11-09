@@ -255,6 +255,7 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE) && \
 	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS)
 	location_event_handler_init(&client);
+	location_assistance_init_resend_handler();
 #endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT)
 	lwm2m_init_cellular_connectivity_object();
