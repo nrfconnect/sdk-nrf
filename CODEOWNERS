@@ -116,7 +116,7 @@ Kconfig*                                  @tejlmand
 /lib/modem_attest_token/                  @jayteemo
 /lib/qos/                                 @simensrostad
 /modules/                                 @tejlmand
-/modules/mcuboot/                         @nvlsianpu
+/modules/mcuboot/                         @de-nordic @nordicjm
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
 /samples/                                 @nrfconnect/ncs-test-leads
 /samples/sensor/bh1749/                   @wlgrd
