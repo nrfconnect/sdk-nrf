@@ -94,7 +94,7 @@ A device can successfully connect to `nRF Cloud`_ using MQTT if the following re
   It programs  the specified CA certificate into the device.
   The private key never leaves the device, which makes this a more secure option.
 
-  See `Securely Generating Credentials on the nRF9160`_  and `nRF Cloud Provisioning`_ for more details.
+  See `Securely generating credentials on the nRF9160`_  and `nRF Cloud Provisioning`_ for more details.
 
 
 |NCS| library support
