@@ -13,6 +13,7 @@
 
 	reserved-memory {
 		/delete-node/ memory@20070000;
+		/delete-node/ memory@20078000;
 
 		sram_ipc0: memory@20070000 {
 			reg = <0x20070000 0x8000>;

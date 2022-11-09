@@ -7,6 +7,18 @@
  / {
 
 	reserved-memory {
+		/delete-node/ memory@20070000;
+		/delete-node/ memory@20078000;
+
+		sram0_shared_to_net: sram0_shared: memory@20070000 {
+			/* SRAM allocated to shared memory */
+			reg = <0x20070000 0x7800>;
+		};
+		sram0_shared_to_app: memory@20077800 {
+			/* SRAM allocated to shared memory */
+			reg = <0x20077800 0x7800>;
+                };
+
 		sram0_aggregator_area0: memory@2007f000 {
 			reg = <0x2007f000 0x1000>;
 		};
