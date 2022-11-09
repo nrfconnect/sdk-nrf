@@ -521,6 +521,8 @@ class NcsUpmerger(NcsWestCommand):
         n_sha = self.checked_sha(project, 'refs/heads/manifest-rev')
         z_sha = self.checked_sha(z_project, z_rev)
 
+        log.inf(f'Starting upmerge for upstream sha: {z_sha} and downstream sha: {n_sha}')
+
         if not project.is_cloned() or n_sha is None or z_sha is None:
             if not project.is_cloned():
                 log.wrn('project is not cloned; please run "west update"')
@@ -549,7 +551,8 @@ class NcsUpmerger(NcsWestCommand):
                     log.inf(f'    {i}. {uc.oid} {commit_shortlog(uc)}')
             project.git('revert --no-edit ' + str(dc.oid))
         log.inf(f'Merging: {z_rev} to project: {project.name}')
-        project.git('merge --no-edit ' + str(self.zephyr_rev))
+        msg = f"[nrf mergeup] Merge upstream automatically up to commit {z_sha}\nAuto-upmerge by ncs-upmerger"
+        project.git('merge --no-edit --no-ff --signoff -m "' + msg + '" ' + str(self.zephyr_rev))
 
 
 def _name_and_path(project):
