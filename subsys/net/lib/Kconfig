@@ -41,5 +41,6 @@ rsource "ftp_client/Kconfig"
 rsource "coap_utils/Kconfig"
 rsource "lwm2m_client_utils/Kconfig"
 rsource "wifi_credentials/Kconfig"
+rsource "wifi_mgmt_ext/Kconfig"
 
 endmenu
