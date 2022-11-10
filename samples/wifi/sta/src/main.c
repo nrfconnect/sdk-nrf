@@ -31,14 +31,21 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 				NET_EVENT_WIFI_DISCONNECT_RESULT)
 
 #define MAX_SSID_LEN        32
+#define DHCP_TIMEOUT        70
+#define CONNECTION_TIMEOUT  100
+#define STATUS_POLLING_MS   300
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
 static struct net_mgmt_event_callback net_shell_mgmt_cb;
+
+K_SEM_DEFINE(sem_dhcp, 0, 1);
 
 static struct {
 	const struct shell *sh;
 	union {
 		struct {
+			uint8_t connected	: 1;
+			uint8_t connect_result	: 1;
 			uint8_t disconnecting	: 1;
 			uint8_t _unused		: 6;
 		};
@@ -58,7 +65,6 @@ static int cmd_wifi_status(void)
 		return -ENOEXEC;
 	}
 
-	printk("Status: successful\n");
 	printk("==================\n");
 	printk("State: %s\n", wifi_state_txt(status.state));
 
@@ -80,8 +86,6 @@ static int cmd_wifi_status(void)
 		printk("MFP: %s\n", wifi_mfp_txt(status.mfp));
 		printk("RSSI: %d\n", status.rssi);
 	}
-
-
 	return 0;
 }
 
@@ -94,9 +98,10 @@ static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 		LOG_ERR("Connection request failed (%d)", status->status);
 	} else {
 		LOG_INF("Connected");
+		context.connected = true;
 	}
 
-	cmd_wifi_status();
+	context.connect_result = true;
 }
 
 static void handle_wifi_disconnect_result(struct net_mgmt_event_callback *cb)
@@ -141,6 +146,7 @@ static void print_dhcp_ip(struct net_mgmt_event_callback *cb)
 	net_addr_ntop(AF_INET, addr, dhcp_info, sizeof(dhcp_info));
 
 	LOG_INF("IP address: %s", dhcp_info);
+	k_sem_give(&sem_dhcp);
 }
 
 static void net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
@@ -190,6 +196,8 @@ static int wifi_connect(void)
 	struct net_if *iface = net_if_get_default();
 	static struct wifi_connect_req_params cnx_params;
 
+	context.connected = false;
+	context.connect_result = false;
 	__wifi_args_to_params(&cnx_params);
 
 	if (net_mgmt(NET_REQUEST_WIFI_CONNECT, iface,
@@ -231,6 +239,7 @@ static int wifi_disconnect(void)
 
 void main(void)
 {
+	int i;
 	context.all = 0U;
 
 	net_mgmt_init_event_callback(&wifi_shell_mgmt_cb,
@@ -255,6 +264,22 @@ void main(void)
 	k_sleep(K_SECONDS(1));
 
 	wifi_connect();
-	k_sleep(K_SECONDS(30));
-	wifi_disconnect();
+
+	for (i = 0; i < CONNECTION_TIMEOUT; i++) {
+		k_sleep(K_MSEC(STATUS_POLLING_MS));
+		cmd_wifi_status();
+		if (context.connect_result) {
+			break;
+		}
+	}
+
+	if (context.connected) {
+		if (k_sem_take(&sem_dhcp, K_SECONDS(DHCP_TIMEOUT)) == -EAGAIN) {
+			LOG_ERR("DHCP handshake timed out");
+		}
+		k_sleep(K_SECONDS(CONFIG_CONNECTION_IDLE_TIMEOUT));
+		wifi_disconnect();
+	} else if (!context.connect_result) {
+		LOG_ERR("Connection Timed Out");
+	}
 }
