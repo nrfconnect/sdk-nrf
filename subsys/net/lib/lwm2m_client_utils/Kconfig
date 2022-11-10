@@ -187,7 +187,10 @@ config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_BUF_SIZE
 config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_ELEVATION_MASK
 	int "Minimum elevation angle for visible satellites."
 	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS
-	default 5
+	default -1
+	help
+	  Minimum elevation angle for visible satellites. The range is 0...90.
+	  Set -1 to disabled. Disabled by default.
 
 config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
 	bool "Signal measurement information object support (ID 10256)"
