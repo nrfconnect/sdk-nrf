@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config WIFI_MGMT_EXT
+	bool "Extended commands for Wi-Fi management"
+	depends on WPA_SUPP
+	depends on WIFI_CREDENTIALS
+	help
+	  Extends Wi-Fi L2 stack by commands to handle
+	  automatic connection management.
+
+if WIFI_MGMT_EXT
+
+module = WIFI_MGMT_EXT
+module-str = wifi_mgmt_ext
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
