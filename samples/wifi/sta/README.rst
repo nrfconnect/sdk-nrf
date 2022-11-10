@@ -65,25 +65,69 @@ Testing
    .. code-block:: console
 
       <inf> sta: Connection requested
+
+      <inf> sta: ==================
+      <inf> sta: State: SCANNING
+      <inf> sta: ==================
+      <inf> sta: State: SCANNING
+      <inf> sta: ==================
+      <inf> sta: State: SCANNING
+      <inf> sta: ==================
+      <inf> sta: State: ASSOCIATING
+      <inf> sta: ==================
+      <inf> sta: State: ASSOCIATED
+        <inf> sta: Interface Mode: STATION
+        <inf> sta: Link Mode: WIFI 6 (802.11ax/HE)
+        <inf> sta: SSID: ABCDEFGH
+        <inf> sta: BSSID: F0:1D:2D:72:EB:EF
+        <inf> sta: Band: 5GHz
+        <inf> sta: Channel: 108
+        <inf> sta: Security: WPA2-PSK
+        <inf> sta: MFP: Optional
+        <inf> sta: RSSI: -47
+      <inf> sta: ==================
+      <inf> sta: State: 4WAY_HANDSHAKE
+        <inf> sta: Interface Mode: STATION
+        <inf> sta: Link Mode: WIFI 6 (802.11ax/HE)
+        <inf> sta: SSID: ABCDEFGH
+        <inf> sta: BSSID: F0:1D:2D:72:EB:EF
+        <inf> sta: Band: 5GHz
+        <inf> sta: Channel: 108
+        <inf> sta: Security: WPA2-PSK
+        <inf> sta: MFP: Optional
+        <inf> sta: RSSI: -47
+      <inf> sta: ==================
+      <inf> sta: State: COMPLETED
+        <inf> sta: Interface Mode: STATION
+        <inf> sta: Link Mode: WIFI 6 (802.11ax/HE)
+        <inf> sta: SSID: ABCDEFGH
+        <inf> sta: BSSID: F0:1D:2D:72:EB:EF
+        <inf> sta: Band: 5GHz
+        <inf> sta: Channel: 108
+        <inf> sta: Security: WPA2-PSK
+        <inf> sta: MFP: Optional
+        <inf> sta: RSSI: -47
+
       <inf> sta: Connected
-      Status: successful
-      ==================
-        State: COMPLETED
-        Interface Mode: STATION
-        Link Mode: WIFI 6 (802.11ax/HE)
-        SSID: NORDIC-GUEST
-        BSSID: F0:1D:2D:72:EB:EF
-        Band: 5GHz
-        Channel: 116
-        Security: WPA2-PSK
-        MFP: Optional
-        RSSI: -55
-      <inf> sta: IP address: 192.168.48.41
+
+      <inf> sta: ==================
+      <inf> sta: State: COMPLETED
+        <inf> sta: Interface Mode: STATION
+        <inf> sta: Link Mode: WIFI 6 (802.11ax/HE)
+        <inf> sta: SSID: ABCDEFGH
+        <inf> sta: BSSID: F0:1D:2D:72:EB:EF
+        <inf> sta: Band: 5GHz
+        <inf> sta: Channel: 108
+        <inf> sta: Security: WPA2-PSK
+        <inf> sta: MFP: Optional
+        <inf> sta: RSSI: -47
+
+      <inf> sta: IP address: 192.168.50.237
+
       <inf> sta: Disconnect requested
       <inf> sta: Disconnection request done (0)
-      Status: successful
-      ==================
-        State: DISCONNECTED
+      <inf> sta: ==================
+      <inf> sta: State: DISCONNECTED
 
 Dependencies
 ************

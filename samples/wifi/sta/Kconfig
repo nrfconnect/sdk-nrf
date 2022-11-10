@@ -8,6 +8,10 @@ source "Kconfig.zephyr"
 
 menu "Nordic Sta sample"
 
+config CONNECTION_IDLE_TIMEOUT
+	int "Time to be waited for a station to connect"
+	default 30
+
 config STA_SAMPLE_SSID
 	string "SSID"
 	help
