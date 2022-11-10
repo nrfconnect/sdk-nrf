@@ -192,9 +192,13 @@ static void get_cell_info(void)
 		k_sem_give(&cell_info_ready_sem);
 
 	} else {
+		struct lte_lc_ncellmeas_params ncellmeas_params = {
+			.search_type = search_type,
+		};
+
 		LOG_INF("Requesting neighbor cell measurement...");
 		cell_info.neighbor_cells = neighbor_cells;
-		err = lte_lc_neighbor_cell_measurement(search_type);
+		err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
 		if (err) {
 			LOG_ERR("Failed to start neighbor cell measurement, error: %d", err);
 		}

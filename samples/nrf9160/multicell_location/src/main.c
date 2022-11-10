@@ -181,7 +181,7 @@ static void start_cell_measurements(void)
 		return;
 	}
 
-	err = lte_lc_neighbor_cell_measurement(LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT);
+	err = lte_lc_neighbor_cell_measurement(NULL);
 	if (err) {
 		LOG_ERR("Failed to initiate neighbor cell measurements, error: %d",
 			err);

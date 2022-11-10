@@ -57,7 +57,7 @@ void method_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 			cell_data.ncells_count = evt->cells_info.ncells_count;
 		} else {
 			cell_data.ncells_count = 0;
-			LOG_INF("No neighbor cell information from modem.");
+			LOG_DBG("No neighbor cell information from modem.");
 		}
 		k_sem_give(&cellmeas_data_ready);
 	} break;
@@ -73,7 +73,8 @@ static int method_cellular_ncellmeas_start(void)
 
 	LOG_DBG("Triggering cell measurements");
 
-	err = lte_lc_neighbor_cell_measurement(LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT);
+	/* Starting measurements with lte_lc default parameters */
+	err = lte_lc_neighbor_cell_measurement(NULL);
 	if (err) {
 		LOG_WRN("Failed to initiate neighbor cell measurements: %d, "
 			"next: fallback to get modem parameters",

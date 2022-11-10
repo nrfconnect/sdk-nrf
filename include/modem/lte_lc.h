@@ -261,6 +261,31 @@ struct lte_lc_edrx_cfg {
 #define LTE_LC_CELL_EUTRAN_ID_INVALID		UINT32_MAX
 #define LTE_LC_CELL_EUTRAN_ID_MAX		268435455
 
+/** @brief Structure containing neighbor cell information. */
+struct lte_lc_ncell {
+	/** EARFCN of the neighbor cell, per 3GPP TS 36.101. */
+	uint32_t earfcn;
+
+	/** Difference in milliseconds of current cell and neighbor cell
+	 *  measurement, in the range -99999 ms < time_diff < 99999 ms.
+	 */
+	int time_diff;
+
+	/** Physical cell ID. */
+	uint16_t phys_cell_id;
+
+	/** RSRP of the neighbor cell. Format is the same as for RSRP member
+	 *  of struct @ref lte_lc_cell.
+	 */
+	int16_t rsrp;
+
+	/** RSRQ of the neighbor cell. Format is the same as for RSRQ member
+	 *  of struct @ref lte_lc_cell.
+	 */
+	int16_t rsrq;
+};
+
+/** @brief Structure containing cell information. */
 struct lte_lc_cell {
 	/** Mobile Country Code. */
 	int mcc;
@@ -274,7 +299,7 @@ struct lte_lc_cell {
 	/** Tracking area code. */
 	uint32_t tac;
 
-	/** EARFCN of the neighbour cell, per 3GPP TS 36.101. */
+	/** EARFCN of the cell, per 3GPP TS 36.101. */
 	uint32_t earfcn;
 
 	/** Timing advance decimal value.
@@ -298,7 +323,7 @@ struct lte_lc_cell {
 	 */
 	uint64_t timing_advance_meas_time;
 
-	/** Measurement time of serving cell in milliseconds.
+	/** Measurement time of current cell in milliseconds.
 	 *  Range 0 - 18 446 744 073 709 551 614 ms.
 	 */
 	uint64_t measurement_time;
@@ -347,40 +372,32 @@ struct lte_lc_cell {
 	int16_t rsrq;
 };
 
-struct lte_lc_ncell {
-	/** EARFCN of the neighbour cell, per 3GPP TS 36.101. */
-	uint32_t earfcn;
 
-	/** Difference in milliseconds of serving cell and neighbor cell
-	 *  measurement, in the range -99999 ms < time_diff < 99999 ms.
-	 */
-	int time_diff;
-
-	/** Physical cell ID. */
-	uint16_t phys_cell_id;
-
-	/** RSRP of the neighbor cell. Format is the same as for RSRP member
-	 *  of struct lte_lc_cell.
-	 */
-	int16_t rsrp;
-
-	/** RSRQ of the neighbor cell. Format is the same as for RSRQ member
-	 *  of struct lte_lc_cell.
-	 */
-	int16_t rsrq;
-};
-
-/** @brief Structure containing results of neighbor cell measurements.
- *	   The current cell information is valid if the current cell ID is not
- *	   set to LTE_LC_CELL_EUTRAN_ID_INVALID.
- *	   The ncells_count member indicates whether or not the structure contains
- *	   valid neighbor cell information. If it is zero, no cells were found, and
- *	   the information in the rest of structure members do not contain valid data.
- */
+/** @brief Structure containing results of neighbor cell measurements. */
 struct lte_lc_cells_info {
+	/** The current cell information is valid if the current cell ID is not
+	 *  set to LTE_LC_CELL_EUTRAN_ID_INVALID.
+	 */
 	struct lte_lc_cell current_cell;
+
+	/** The ncells_count member indicates whether or not the neighbor_cells structure
+	 *  contains valid neighbor cell information. If it is zero, no neighbor cells were found
+	 *  for the current cell.
+	 */
 	uint8_t ncells_count;
+
+	/** Neighbor cells for the current cell. */
 	struct lte_lc_ncell *neighbor_cells;
+
+	/** The gci_cells_count member indicates whether or not the gci_cells structure contains
+	 *  valid surrounding cell information from
+	 *  GCI search types (@ref lte_lc_neighbor_search_type). If it is zero, no cells were
+	 *  found, and the information in the rest of structure members do not contain valid data.
+	 */
+	uint8_t gci_cells_count;
+
+	/** Surrounding cells found by the GCI search types. */
+	struct lte_lc_cell *gci_cells;
 };
 
 enum lte_lc_modem_sleep_type {
@@ -617,13 +634,24 @@ struct lte_lc_conn_eval_params {
 
 /** @brief Specifies which type of search the modem should perform when a neighbor
  *	   cell measurement is started.
+ *
+ *         When using search types up to LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE,
+ *         result contains parameters from current/serving cell
+ *         and optionally up to CONFIG_LTE_NEIGHBOR_CELLS_MAX neighbor cells.
+ *
+ *         GCI (Global Cell ID) search types are supported with modem firmware versions >= 1.3.4.
+ *         Result notification for GCI search types include Cell ID, PLMN and
+ *         TAC for up to gci_count (@ref lte_lc_ncellmeas_params) surrounding cells and
+ *         optionally, similarly to search types up to
+ *         LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE, a list of neighbor cell measurement
+ *         results related to the current_cell (@ref lte_lc_cells_info).
  */
 enum lte_lc_neighbor_search_type {
 	/** The modem searches the network it is registered to (RPLMN) based on
 	 *  previous cell history.
 	 *  For modem firmware versions < 1.3.1, this is the only valid option.
 	 */
-	LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT = 0,
+	LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT = 1,
 
 	/** The modem starts with the same search method as the default type.
 	 *  If needed, it continues to search by measuring the radio conditions
@@ -632,17 +660,49 @@ enum lte_lc_neighbor_search_type {
 	 *  ITU-T region. If RPLMN is not found based on previous cell history, the
 	 *  modem accepts any found PLMN.
 	 */
-	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT = 1,
+	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT = 2,
 
 	/** The modem follows the same procedure as for LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT,
 	 *  but will continue to perform a complete search instead of a light search,
 	 *  and the search is performed for all supported bands.
 	 */
-	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE = 2,
+	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE = 3,
+
+	/** GCI search, option 1. Modem searches EARFCNs based on previous cell history. */
+	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT = 4,
+
+	/** GCI search, option 2. Modem starts with the same search method as in
+	 *  LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT. If less than gci_count cells were found,
+	 *  the modem performs a light search on bands that are valid for the area of
+	 *  the current ITU-T region.
+	 */
+	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT = 5,
+
+	/** GCI search, option 3. Modem starts with the same search method as in
+	 *  LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT. If less than gci_count cells were found,
+	 *  the modem performs a complete search on all supported bands.
+	 */
+	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE = 6,
 };
 
-/** Configuration for periodic search of type LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE.
+/** @brief Neighbor cell measurement initiation parameters.
+ *
+ *  @note For modem firmware versions < v1.3.1, LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT
+ *	  is the only accepted search_type. Other types result in an error.
+ *	  For modem firmware versions >= v1.3.4, also GCI search types and gci_count
+ *        are accepted.
  */
+struct lte_lc_ncellmeas_params {
+	/** Search type, @ref lte_lc_neighbor_search_type. */
+	enum lte_lc_neighbor_search_type search_type;
+
+	/** Maximum number of cells to be searched. Integer, range: 2-15.
+	 *  Mandatory with the GCI search types, ignored with other search types.
+	 */
+	uint8_t gci_count;
+};
+
+/** Configuration for periodic search of type LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE. */
 struct lte_lc_periodic_search_range_cfg {
 	/** Sleep time in seconds between searches in the beginning of the range.
 	 *  Allowed values: 0 - 65535 seconds.
@@ -1096,23 +1156,28 @@ int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
 int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
 
 /** @brief Initiate a neighbor cell measurement.
- *	   The result of the measurement is reported back as an event of the type
- *	   LTE_LC_EVT_NEIGHBOR_CELL_MEAS, meaning that an event handler must be
- *	   registered to receive the information.
- *	   Depending on the network conditions and LTE connection state, it may
- *	   take a while before the measurement result is ready and reported back.
- *	   After the event is received, the neighbor cell measurements
- *	   are automatically stopped.
+ *         The result of the measurement is reported back as an event of the type
+ *         LTE_LC_EVT_NEIGHBOR_CELL_MEAS, meaning that an event handler must be
+ *         registered to receive the information.
+ *	   Depending on the network conditions, LTE connection state and requested
+ *         search type, it may take a while before the measurement result is
+ *         ready and reported back.
+ *         After the event is received, the neighbor cell measurements are automatically stopped.
  *
  * @note For modem firmware versions < v1.3.1, LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT
- *	 is the only accepted type. Other types will result in an error being returned.
+ *       is the only accepted type. Other types will result in an error being returned.
+ *       For modem firmware versions >= v1.3.4, also GCI search types and gci_count
+ *       are accepted.
  *
- * @param type Search type, see @c enum lte_lc_neighbor_search_type for more information.
+ * @param params Pointer to search type parameters or NULL to initiate a measurement
+ *               with the default parameters.
+ *               See @c struct lte_lc_ncellmeas_params for more information.
  *
  * @retval 0 if neighbor cell measurement was successfully initiated.
  * @retval -EFAULT if AT command failed.
+ * @retval -EINPROGRESS if a neighbor cell measurement is already in progress.
  */
-int lte_lc_neighbor_cell_measurement(enum lte_lc_neighbor_search_type type);
+int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params);
 
 /** @brief Cancel an ongoing neighbor cell measurement.
  *

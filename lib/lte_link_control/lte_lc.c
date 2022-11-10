@@ -64,6 +64,10 @@ static const char rai_disable[] = "AT%%XRAI=0";
 /* Default RAI setting */
 static char rai_param[2] = CONFIG_LTE_RAI_REQ_VALUE;
 
+/* Requested NCELLMEAS params */
+static struct lte_lc_ncellmeas_params ncellmeas_params;
+static bool ncellmeas_ongoing;
+
 static const enum lte_lc_system_mode sys_mode_preferred = SYS_MODE_PREFERRED;
 
 /* System mode to use when connecting to LTE network, which can be changed in
@@ -334,6 +338,53 @@ static void at_handler_xt3412(const char *response)
 	event_handler_list_dispatch(&evt);
 }
 
+static void at_handler_ncellmeas_gci(const char *response)
+{
+	int err;
+	struct lte_lc_evt evt = {0};
+	const char *resp = response;
+
+	__ASSERT_NO_MSG(response != NULL);
+
+	int max_cell_count = ncellmeas_params.gci_count;
+	struct lte_lc_cell *cells = NULL;
+
+	LOG_DBG("%%NCELLMEAS GCI notification parsing starts");
+
+	if (max_cell_count != 0) {
+		cells = k_calloc(max_cell_count, sizeof(struct lte_lc_cell));
+		if (cells == NULL) {
+			LOG_ERR("Failed to allocate memory for the GCI cells");
+			return;
+		}
+	}
+
+	evt.cells_info.gci_cells = cells;
+	err = parse_ncellmeas_gci(&ncellmeas_params, resp, &evt.cells_info);
+
+	switch (err) {
+	case -E2BIG:
+		LOG_WRN("Not all neighbor cells could be parsed");
+		LOG_WRN("More cells than the configured max count of %d were found",
+			CONFIG_LTE_NEIGHBOR_CELLS_MAX);
+		/* Fall through */
+	case 0: /* Fall through */
+	case 1:
+		LOG_DBG("Neighbor cell count: %d, GCI cells count: %d",
+			evt.cells_info.ncells_count,
+			evt.cells_info.gci_cells_count);
+		evt.type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+		event_handler_list_dispatch(&evt);
+		break;
+	default:
+		LOG_ERR("Parsing of neighbor cells failed, err: %d", err);
+		break;
+	}
+
+	k_free(cells);
+	k_free(evt.cells_info.neighbor_cells);
+}
+
 static void at_handler_ncellmeas(const char *response)
 {
 	int err;
@@ -341,24 +392,30 @@ static void at_handler_ncellmeas(const char *response)
 
 	__ASSERT_NO_MSG(response != NULL);
 
+	if (event_handler_list_is_empty() || !ncellmeas_ongoing) {
+		/* No need to parse the response if there is no handler
+		 * to receive the parsed data or
+		 * if a measurement is not going/started by using
+		 * lte_lc_neighbor_cell_measurement().
+		 */
+		goto exit;
+	}
+
+	if (ncellmeas_params.search_type > LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE) {
+		at_handler_ncellmeas_gci(response);
+		goto exit;
+	}
+
 	int ncell_count = neighborcell_count_get(response);
 	struct lte_lc_ncell *neighbor_cells = NULL;
 
-	LOG_DBG("%%NCELLMEAS notification");
-	LOG_DBG("Neighbor cell count: %d", ncell_count);
-
-	if (event_handler_list_is_empty()) {
-		/* No need to parse the response if there is no handler
-		 * to receive the parsed data.
-		 */
-		return;
-	}
+	LOG_DBG("%%NCELLMEAS notification: neighbor cell count: %d", ncell_count);
 
 	if (ncell_count != 0) {
 		neighbor_cells = k_calloc(ncell_count, sizeof(struct lte_lc_ncell));
 		if (neighbor_cells == NULL) {
 			LOG_ERR("Failed to allocate memory for neighbor cells");
-			return;
+			goto exit;
 		}
 	}
 
@@ -385,6 +442,8 @@ static void at_handler_ncellmeas(const char *response)
 	if (neighbor_cells) {
 		k_free(neighbor_cells);
 	}
+exit:
+	ncellmeas_ongoing = false;
 }
 
 static void at_handler_xmodemsleep(const char *response)
@@ -1384,31 +1443,71 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode)
 	return 0;
 }
 
-int lte_lc_neighbor_cell_measurement(enum lte_lc_neighbor_search_type type)
+int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params)
 {
 	int err;
+	/* lte_lc defaults for the used params */
+	struct lte_lc_ncellmeas_params used_params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT,
+		.gci_count = 0,
+	};
+
+	__ASSERT(!IN_RANGE(
+			(int)params,
+			LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT,
+			LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE),
+		 "Invalid argument, API does not accept enum values directly anymore");
+
+	if (ncellmeas_ongoing) {
+		return -EINPROGRESS;
+	}
+
+	if (params != NULL) {
+		used_params = *params;
+	}
 
 	/* Starting from modem firmware v1.3.1, there is an optional parameter to specify
 	 * the type of search.
 	 * If the type is LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT, we therefore use the AT
 	 * command without parameters to avoid error messages for older firmware version.
+	 * Starting from modem firmware v1.3.4, additional CGI search types and
+	 * GCI count are supported.
 	 */
-
-	if (type == LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT) {
+	if (used_params.search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT) {
 		err = nrf_modem_at_printf("AT%%NCELLMEAS=1");
-	} else if (type == LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE) {
+	} else if (used_params.search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE) {
 		err = nrf_modem_at_printf("AT%%NCELLMEAS=2");
+	} else if (used_params.search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT) {
+		err = nrf_modem_at_printf("AT%%NCELLMEAS=3,%d", used_params.gci_count);
+	} else if (used_params.search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT) {
+		err = nrf_modem_at_printf("AT%%NCELLMEAS=4,%d", used_params.gci_count);
+	} else if (used_params.search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE) {
+		err = nrf_modem_at_printf("AT%%NCELLMEAS=5,%d", used_params.gci_count);
 	} else {
 		/* Defaulting to use LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT */
 		err = nrf_modem_at_printf("AT%%NCELLMEAS");
 	}
 
-	return err ? -EFAULT : 0;
+	if (err) {
+		err = -EFAULT;
+	} else {
+		ncellmeas_params = used_params;
+		ncellmeas_ongoing = true;
+	}
+
+	return err;
 }
 
 int lte_lc_neighbor_cell_measurement_cancel(void)
 {
-	return nrf_modem_at_printf(AT_NCELLMEAS_STOP) ? -EFAULT : 0;
+	int err = nrf_modem_at_printf(AT_NCELLMEAS_STOP);
+
+	if (err) {
+		err = -EFAULT;
+	}
+	ncellmeas_ongoing = false;
+
+	return err;
 }
 
 int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params)

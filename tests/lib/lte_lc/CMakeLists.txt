@@ -26,4 +26,5 @@ target_include_directories(app
 target_compile_options(app
   PRIVATE
   -DCONFIG_LTE_LINK_CONTROL_LOG_LEVEL=0
+  -DCONFIG_LTE_NEIGHBOR_CELLS_MAX=10
 )
