@@ -44,7 +44,7 @@ config WIFI_CREDENTIALS_SAE_PASSWORD_LENGTH
 	default 128
 	help
 	  There is no official limit on SAE password length,
-	  but e.g. Linux 6.0 has a hardcoded limit of 128 bytes.
+	  but for example Linux 6.0 has a hardcoded limit of 128 bytes.
 
 endif # WIFI_CREDENTIALS
 
@@ -58,3 +58,35 @@ config WIFI_CREDENTIALS_BACKEND_PSA_UID_OFFSET
 	  WIFI_CREDENTIALS_BACKEND_PSA_UID_OFFSET uid.
 
 endif # WIFI_CREDENTIALS_BACKEND_PSA
+
+config WIFI_CREDENTIALS_STATIC
+	bool "Static Wi-Fi network configuration"
+
+if WIFI_CREDENTIALS_STATIC
+
+config WIFI_CREDENTIALS_STATIC_SSID
+	string "SSID of statically configured WiFi network"
+
+config WIFI_CREDENTIALS_STATIC_PASSWORD
+	string "Password of statically configured Wi-Fi network"
+	default ""
+
+choice WIFI_CREDENTIALS_STATIC_TYPE
+	prompt "Static Wi-Fi network security type"
+	default WIFI_CREDENTIALS_STATIC_TYPE_PSK
+
+config WIFI_CREDENTIALS_STATIC_TYPE_OPEN
+	bool "OPEN"
+
+config WIFI_CREDENTIALS_STATIC_TYPE_PSK
+	bool "WPA2-PSK"
+
+config WIFI_CREDENTIALS_STATIC_TYPE_PSK_SHA256
+	bool "WPA2-PSK-SHA256"
+
+config WIFI_CREDENTIALS_STATIC_TYPE_SAE
+	bool "SAE"
+
+endchoice
+
+endif

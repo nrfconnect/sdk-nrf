@@ -165,6 +165,8 @@ Wi-Fi
 
   * New sample :ref:`wifi_sr_coex_sample` demonstrating Wi-Fi Bluetooth LE coexistence.
   * :ref:`ug_wifi` document.
+  * :ref:`lib_wifi_credentials` library to store credentials.
+  * :ref:`wifi_mgmt_ext` library to provide an autoconnect command based on Wi-Fi credentials.
 
 * Removed:
 
