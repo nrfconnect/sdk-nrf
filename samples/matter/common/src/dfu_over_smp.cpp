@@ -41,10 +41,10 @@ void DFUOverSMP::Init(DFUOverSMPRestartAdvertisingHandler startAdvertisingCb)
 	mgmt_register_evt_cb([](uint8_t opcode, uint16_t group, uint8_t id, void *arg) {
 		switch (opcode) {
 		case MGMT_EVT_OP_CMD_RECV:
-			GetFlashHandler().DoAction(FlashHandler::Action::WAKE_UP);
+			GetFlashHandler().DoAction(ExternalFlashManager::Action::WAKE_UP);
 			break;
 		case MGMT_EVT_OP_CMD_DONE:
-			GetFlashHandler().DoAction(FlashHandler::Action::SLEEP);
+			GetFlashHandler().DoAction(ExternalFlashManager::Action::SLEEP);
 			break;
 		default:
 			break;
