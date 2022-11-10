@@ -242,6 +242,12 @@ Bluetooth samples
 
     * Fixed code build with the :kconfig:option:`CONFIG_BT_NUS_SECURITY_ENABLED` Kconfig option disabled.
 
+* :ref: `ble_nrf_dm` sample:
+
+  * Changed:
+
+    * A new seed value is generated after each synchronization to provide different hopping sequences.
+
 Bluetooth mesh samples
 ----------------------
 
@@ -605,6 +611,7 @@ Other libraries
 * :ref:`mod_dm`:
   * Added a window length configuration to be used runtime, when a new measurement request is added.
   * Improved the calculation of MPSL timeslot length by using the :ref:`nrf_dm` library functionality.
+  * Renamed the ``access_address`` field to ``rng_seed`` in the :c:struct:`dm_request` structure.
 
 Common Application Framework (CAF)
 ----------------------------------
