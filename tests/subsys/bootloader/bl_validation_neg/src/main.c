@@ -10,6 +10,7 @@
 #include <nrfx_nvmc.h>
 #include <zephyr/linker/linker-defs.h>
 #include <zephyr/sys/reboot.h>
+#include <zephyr/sys/util.h>
 #include <bl_storage.h>
 #include <fw_info.h>
 
@@ -26,7 +27,7 @@ uint32_t val_info_buf[VAL_INFO_MAX_SIZE];
 
 void test_validation_neg1(void)
 {
-	uint32_t copy_len = (uint32_t)_flash_used;
+	uint32_t copy_len = ROUND_UP((uint32_t)_flash_used, 4);
 
 	/* Round up to at least the next SPU region. */
 	uint32_t new_addr = ROUND_UP(PM_ADDRESS + (PM_SIZE / 2), 0x8000);
@@ -68,11 +69,11 @@ void test_validation_neg1(void)
 			zassert_equal(NRFX_SUCCESS, ret, "Erase failed.\r\n");
 		}
 		nrfx_nvmc_words_write(new_addr, (const uint32_t *)PM_ADDRESS,
-			(copy_len + 3) / 4);
+			copy_len / 4);
 
 		/* Write to S1 */
 		nrfx_nvmc_words_write(PM_S1_ADDRESS, &s1_info,
-			(sizeof(s1_info) + 3) / 4);
+			ROUND_UP(sizeof(s1_info), 4) / 4);
 
 		zassert_mem_equal(&s1_info, (void *)PM_S1_ADDRESS,
 			sizeof(s1_info), "Failed to copy S1 info.\r\n");
@@ -97,7 +98,7 @@ void test_validation_neg1(void)
 			"Could not find validation info.\r\n");
 
 		val_info->address = s1_info.address;
-		nrfx_nvmc_words_write(s1_info.address + s1_info.size, val_info,
+		nrfx_nvmc_words_write(s1_info.address + ROUND_UP(s1_info.size, 4), val_info,
 			VAL_INFO_MAX_SIZE);
 
 		/* Reboot */
