@@ -9,11 +9,12 @@ LwM2M client utils
 
 The LwM2M client utils library enables an nRF9160-based device to connect to an LwM2M server such as `Leshan Demo Server`_ using the Lightweight Machine to Machine (`LwM2M`_) protocol over LTE.
 Once the device is connected, the library supports the querying the device to retrieve location data or information about the modem.
+This library builds on top of Zephyr's :ref:`lwm2m_interface` client.
 
 Overview
 ********
 
-The library provides a basic combination of LwM2M objects, which forms a common communication framework for applications that communicate with an LwM2M server.
+The purpose of the library is to provide a basic combination of LwM2M objects, which forms a common communication framework for applications that communicate with an LwM2M server.
 Following are the fixed set of readily initialized objects that are available to the users:
 
 * Firmware Update object

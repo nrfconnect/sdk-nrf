@@ -7,8 +7,9 @@ Sample description
    :local:
    :depth: 2
 
-The LwM2M Client demonstrates usage of the :term:`Lightweight Machine to Machine (LwM2M)` protocol to connect a Thingy:91 or an nRF9160 DK to an LwM2M server through LTE.
-This sample uses the :ref:`lib_lwm2m_client_utils` library.
+The LwM2M Client sample demonstrates the usage of the :term:`Lightweight Machine to Machine (LwM2M)` protocol to connect a Thingy:91 or an nRF9160 DK to an LwM2M server through LTE.
+To achieve this, the sample uses the Zephyr's :ref:`lwm2m_interface` client and |NCS| :ref:`lib_lwm2m_client_utils` library.
+The former provides a device vendor agnostic client implementation, whereas the latter includes all the Nordic specific bits and pieces.
 
 The sample also supports a proprietary mechanism to fetch location assistance data from `nRF Cloud`_ by proxying it through the LwM2M server.
 For this, the sample makes use of the :ref:`lib_lwm2m_location_assistance` library.
@@ -524,9 +525,11 @@ The following files are available:
 
 Moreover, the sample also provides the following files for LwM2M 1.1 features:
 
-* :file:`overlay-lwm2m-1.1.conf`
-* :file:`overlay-lwm2m-1.1-core-interop.conf`
-* :file:`overlay-lwm2m-1.1-object-interop.conf`
+* :file:`overlay-lwm2m-1.1.conf` - Enables v1.1 and running of Interoperability Test Cases [0-499].
+* :file:`overlay-lwm2m-1.1-core-interop.conf` - Enables v.1.1 and running of Core Specific Objects Test cases [500-999].
+* :file:`overlay-lwm2m-1.1-object-interop.conf` -  Enables v.1.1 and running of Additional Objects Test cases [1000-1999].
+
+For further information about the test cases, see `Enabler Test Specification (Interoperability) for Lightweight M2M`_.
 
 You can configure the sample either by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
 
@@ -612,19 +615,19 @@ To test the sample using LwM2M shell, complete the following steps:
 
       .. code-block:: console
 
-         & uart:~$ lwm2m update
+         uart:~$ lwm2m update
 
    #. Pause the client:
 
       .. code-block:: console
 
-         & uart:~$ lwm2m pause
+         uart:~$ lwm2m pause
 
    #. Resume the client:
 
       .. code-block:: console
 
-         & uart:~$ lwm2m resume
+         uart:~$ lwm2m resume
 
 Firmware Over-the-Air (FOTA)
 ============================
@@ -672,6 +675,7 @@ It uses the following `sdk-nrfxlib`_ library:
 It uses the following Zephyr libraries:
 
 * :ref:`gpio_api`
+* :ref:`lwm2m_interface`
 * :ref:`pwm_api`
 * :ref:`sensor_api`
 
