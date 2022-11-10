@@ -477,6 +477,13 @@ Modem libraries
 
   * Added timeout for the entire location request.
 
+* :ref:`lte_lc_readme` library:
+
+  * Added support for GCI (Global Cell ID) neighbor cell measurement search types, which are supported by the modem firmware versions >= 1.3.4.
+
+    Parameter type in :c:func:`lte_lc_neighbor_cell_measurement` changed to :c:struct:`lte_lc_ncellmeas_params`.
+    It includes both search type and GCI count that have an impact only with GCI search types.
+
 * :ref:`modem_key_mgmt` library:
 
   * Added:

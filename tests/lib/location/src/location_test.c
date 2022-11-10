@@ -525,6 +525,12 @@ void test_location_request_default(void)
 	rest_req_ctx.port = CONFIG_MULTICELL_LOCATION_HERE_HTTPS_PORT;
 	rest_req_ctx.host = CONFIG_MULTICELL_LOCATION_HERE_HOSTNAME;
 
+	/* Wait a bit so that NCELLMEAS is sent from location lib before we send a response.
+	 * Otherwise, lte_lc would ignore NCELLMEAS notification because no NCELLMEAS on going
+	 * from lte_lc point of view.
+	 */
+	k_sleep(K_MSEC(1000));
+
 	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
 	at_monitor_dispatch(ncellmeas_resp);
 }
@@ -567,6 +573,9 @@ void test_location_request_mode_all_cellular_gnss(void)
 	rest_req_ctx.sec_tag = CONFIG_MULTICELL_LOCATION_HERE_TLS_SEC_TAG;
 	rest_req_ctx.port = CONFIG_MULTICELL_LOCATION_HERE_HTTPS_PORT;
 	rest_req_ctx.host = CONFIG_MULTICELL_LOCATION_HERE_HOSTNAME;
+
+	/* Wait a bit so that NCELLMEAS is sent before we send response */
+	k_sleep(K_MSEC(1000));
 
 	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
 	at_monitor_dispatch(ncellmeas_resp);

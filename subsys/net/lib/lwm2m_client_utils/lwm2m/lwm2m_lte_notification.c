@@ -38,7 +38,7 @@ void lwm2m_ncell_schedule_measurement(void)
 		return;
 	}
 
-	lte_lc_neighbor_cell_measurement(LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT);
+	lte_lc_neighbor_cell_measurement(NULL);
 	measurement_scheduled = false;
 	k_sem_give(&rrc_idle);
 }
@@ -70,8 +70,7 @@ void lte_notify_handler(const struct lte_lc_evt *const evt)
 			k_sem_reset(&rrc_idle);
 		} else if (evt->rrc_mode == LTE_LC_RRC_MODE_IDLE) {
 			if (measurement_scheduled) {
-				lte_lc_neighbor_cell_measurement(
-					LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT);
+				lte_lc_neighbor_cell_measurement(NULL);
 				measurement_scheduled = false;
 			}
 			k_sem_give(&rrc_idle);
