@@ -405,7 +405,7 @@ void test_lwm2m_cloud_codec_encode_agps_request(void)
 		.queued = true,
 	};
 
-	__wrap_location_assistance_agps_set_mask_Expect(&agps.request);
+	__wrap_location_assistance_agps_set_mask_ExpectAndReturn(&agps.request, 0);
 
 	__wrap_location_assist_agps_set_elevation_mask_Expect(-1);
 
@@ -441,7 +441,6 @@ void test_lwm2m_cloud_codec_encode_pgps_request(void)
 	__wrap_location_assist_pgps_set_prediction_interval_ExpectAndReturn(pgps.interval, 0);
 	__wrap_location_assist_pgps_set_start_time_ExpectAndReturn(pgps.time, 0);
 	__wrap_location_assist_pgps_set_start_gps_day_Expect(pgps.day);
-	__wrap_location_assist_pgps_request_set_Expect();
 
 	TEST_ASSERT_EQUAL(0, cloud_codec_encode_pgps_request(&codec, &pgps));
 	TEST_ASSERT_EQUAL(codec.valid_object_paths, 0);
