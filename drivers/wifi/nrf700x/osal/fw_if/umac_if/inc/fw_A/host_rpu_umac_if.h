@@ -2378,6 +2378,30 @@ struct nrf_wifi_umac_cmd_set_power_save {
 	struct nrf_wifi_umac_set_power_save_info info;
 } __NRF_WIFI_PKD;
 
+#define UAPSD_Q_MIN 0
+#define UAPSD_Q_MAX 15
+/**
+ * struct nrf_wifi_umac_uapsd_info - uaspd queues info
+ * @uapsd_queue: UAPSD-Q value
+ * This structure represents the information about UAPSD-Q.
+ */
+
+struct nrf_wifi_umac_uapsd_info {
+	unsigned int uapsd_queue;
+} __NRF_WIFI_PKD;
+
+/**
+ * struct nrf_wifi_umac_cmd_config_uapsd - Config UAPSD-Q..
+ * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
+ * @info: Refer &struct nrf_wifi_umac_uapsd_info
+ * This structure represents the command to configure UAPSD-Q value.
+ */
+
+struct nrf_wifi_umac_cmd_config_uapsd {
+	struct nrf_wifi_umac_hdr umac_hdr;
+	struct nrf_wifi_umac_uapsd_info info;
+} __NRF_WIFI_PKD;
+
 /**
  * struct nrf_wifi_umac_qos_map_info - qos map info.
  * @qos_map_info_len: length of qos_map info field.

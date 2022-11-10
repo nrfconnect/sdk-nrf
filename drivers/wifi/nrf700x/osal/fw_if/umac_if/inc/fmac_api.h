@@ -810,6 +810,23 @@ enum wifi_nrf_status wifi_nrf_fmac_set_power_save(void *fmac_dev_ctx,
 						  bool state);
 
 /**
+ * nrf_wifi_fmac_set_uapsd_queue() - Configure WLAN uapsd queue.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: Index of the interface on which power management is to be set.
+ * @uapsd_queue: Uapsd_queue to be used.
+ *
+ * This function is used to send a command (%NRF_WIFI_UMAC_CMD_CONFIG_UAPSD)
+ * to RPU to set uapsd queue value.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Fail : %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_set_uapsd_queue(void *fmac_dev_ctx,
+						   unsigned char if_idx,
+						   unsigned int uapsd_queue);
+
+/**
  * wifi_nrf_fmac_set_qos_map() - Configure qos_map of for data
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the qos map be set.
@@ -825,7 +842,6 @@ enum wifi_nrf_status wifi_nrf_fmac_set_power_save(void *fmac_dev_ctx,
 enum wifi_nrf_status wifi_nrf_fmac_set_qos_map(void *fmac_dev_ctx,
 					       unsigned char if_idx,
 					       struct nrf_wifi_umac_qos_map_info *qos_info);
-
 
 /**
  * wifi_nrf_fmac_set_wowlan() - Configure WOWLAN.
