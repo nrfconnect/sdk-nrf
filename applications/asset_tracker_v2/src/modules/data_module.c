@@ -1030,7 +1030,6 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 
 /**
  * @brief Function that requests A-GPS and P-GPS data upon receiving a request from the GNSS module.
- *	  If both A-GPS and P-GPS is enabled. A-GPS will take precedence.
  *
  * @param[in] incoming_request Pointer to a structure containing A-GPS data types that has been
  *			       requested by the modem. If incoming_request is NULL, all A-GPS data

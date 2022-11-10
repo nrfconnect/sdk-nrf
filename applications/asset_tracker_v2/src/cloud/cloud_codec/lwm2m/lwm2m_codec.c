@@ -620,7 +620,11 @@ int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 
 	int err;
 
-	location_assistance_agps_set_mask(&agps_request->request);
+	err = location_assistance_agps_set_mask(&agps_request->request);
+	if (err) {
+		LOG_ERR("location_assistance_agps_set_mask, error: %d", err);
+		return err;
+	}
 
 	/* Disable filtered A-GPS. */
 	location_assist_agps_set_elevation_mask(-1);
@@ -683,7 +687,6 @@ int cloud_codec_encode_pgps_request(struct cloud_codec_data *output,
 	}
 
 	location_assist_pgps_set_start_gps_day(pgps_request->day);
-	location_assist_pgps_request_set();
 
 	pgps_request->queued = false;
 	return 0;
