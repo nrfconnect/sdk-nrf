@@ -2952,6 +2952,48 @@ out:
 }
 
 
+enum wifi_nrf_status wifi_nrf_fmac_set_uapsd_queue(void *dev_ctx,
+						   unsigned char if_idx,
+						   unsigned int uapsd_queue)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_umac_cmd_config_uapsd  *set_uapsdq_cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	fmac_dev_ctx = dev_ctx;
+
+	if (!dev_ctx) {
+		goto out;
+	}
+
+	set_uapsdq_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+						  sizeof(*set_uapsdq_cmd));
+	if (!set_uapsdq_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+
+	set_uapsdq_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_CONFIG_UAPSD;
+	set_uapsdq_cmd->umac_hdr.ids.wdev_id = if_idx;
+	set_uapsdq_cmd->umac_hdr.ids.valid_fields |=
+		NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+	set_uapsdq_cmd->info.uapsd_queue = uapsd_queue;
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      set_uapsdq_cmd,
+			      sizeof(*set_uapsdq_cmd));
+out:
+	if (set_uapsdq_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       set_uapsdq_cmd);
+	}
+
+	return status;
+}
+
+
 enum wifi_nrf_status wifi_nrf_fmac_set_wowlan(void *dev_ctx,
 					      unsigned int var)
 {
@@ -3006,6 +3048,115 @@ enum wifi_nrf_status wifi_nrf_fmac_conf_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fma
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 
 	status = umac_cmd_he_ltf_gi(fmac_dev_ctx, he_ltf, he_gi, enabled);
+
+	return status;
+}
+
+
+enum wifi_nrf_status wifi_nrf_fmac_set_wiphy_params(void *dev_ctx,
+						    unsigned char if_idx,
+						    struct nrf_wifi_umac_set_wiphy_info *wiphy_info)
+{
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct nrf_wifi_umac_cmd_set_wiphy *set_wiphy_cmd = NULL;
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	int freq_params_valid = 0;
+
+	if (!dev_ctx) {
+		goto out;
+	}
+
+	fmac_dev_ctx = dev_ctx;
+
+	if (!wiphy_info) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: wiphy_info: Invalid memory\n",
+				       __func__);
+		goto out;
+	}
+
+	set_wiphy_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+						 sizeof(*set_wiphy_cmd));
+
+	if (!set_wiphy_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+
+	set_wiphy_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_SET_WIPHY;
+	set_wiphy_cmd->umac_hdr.ids.wdev_id = if_idx;
+	set_wiphy_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+
+	if (wiphy_info->freq_params.frequency) {
+		freq_params_valid = 1;
+		wiphy_info->freq_params.valid_fields |=
+			NRF_WIFI_SET_FREQ_PARAMS_FREQ_VALID;
+	}
+
+	if (wiphy_info->freq_params.channel_width) {
+		freq_params_valid = 1;
+		wiphy_info->freq_params.valid_fields |=
+			NRF_WIFI_SET_FREQ_PARAMS_CHANNEL_WIDTH_VALID;
+	}
+
+	if (wiphy_info->freq_params.center_frequency1) {
+		freq_params_valid = 1;
+		wiphy_info->freq_params.valid_fields |=
+			NRF_WIFI_SET_FREQ_PARAMS_CENTER_FREQ1_VALID;
+	}
+
+	if (wiphy_info->freq_params.center_frequency2) {
+		freq_params_valid = 1;
+		wiphy_info->freq_params.valid_fields |=
+			NRF_WIFI_SET_FREQ_PARAMS_CENTER_FREQ2_VALID;
+	}
+
+	if (wiphy_info->freq_params.channel_type) {
+		freq_params_valid = 1;
+		wiphy_info->freq_params.valid_fields |=
+			NRF_WIFI_SET_FREQ_PARAMS_CHANNEL_TYPE_VALID;
+	}
+
+	if (freq_params_valid) {
+		set_wiphy_cmd->valid_fields |=
+			NRF_WIFI_CMD_SET_WIPHY_FREQ_PARAMS_VALID;
+	}
+
+	if (wiphy_info->rts_threshold) {
+		set_wiphy_cmd->valid_fields |=
+			NRF_WIFI_CMD_SET_WIPHY_RTS_THRESHOLD_VALID;
+	}
+
+	if (wiphy_info->frag_threshold) {
+		set_wiphy_cmd->valid_fields |=
+			NRF_WIFI_CMD_SET_WIPHY_FRAG_THRESHOLD_VALID;
+	}
+
+	if (wiphy_info->retry_long) {
+		set_wiphy_cmd->valid_fields |=
+			NRF_WIFI_CMD_SET_WIPHY_RETRY_LONG_VALID;
+	}
+
+	if (wiphy_info->retry_short) {
+		set_wiphy_cmd->valid_fields |=
+			NRF_WIFI_CMD_SET_WIPHY_RETRY_SHORT_VALID;
+	}
+
+	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+			      &set_wiphy_cmd->info,
+			      wiphy_info,
+			      sizeof(set_wiphy_cmd->info));
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      set_wiphy_cmd,
+			      sizeof(*set_wiphy_cmd));
+out:
+	if (set_wiphy_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       set_wiphy_cmd);
+	}
 
 	return status;
 }

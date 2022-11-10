@@ -628,6 +628,7 @@ struct rpu_conf_params {
 	unsigned char set_he_ltf_gi;
 	unsigned char power_save;
 	unsigned int rts_threshold;
+	unsigned int uapsd_queue;
 	unsigned int tx_pkt_gap_us;
 } __NRF_WIFI_PKD;
 
