@@ -914,5 +914,6 @@ Documentation
   * :ref:`ug_tfm` with improved TF-M logging documentation on getting the secure output on nRF5340 DK.
   * :ref:`nrf_bt_scan_readme`, :ref:`ancs_client_readme`, :ref:`hogp_readme` and :ref:`lib_hrs_client_readme` libraries documentation to improve readability.
   * Pages :ref:`ug_nrf52_developing` and :ref:`ug_nrf5340` with sections describing FOTA in Bluetooth mesh.
+  * Page :ref:`ug_thread_tools` with new nRF Util installation information when configuring radio co-processor.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.

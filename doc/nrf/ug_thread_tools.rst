@@ -101,24 +101,7 @@ To program the nRF device with the RCP application, complete the following steps
 
       .. tab:: nRF52840 Dongle (USB transport)
 
-         a. Install nRF Util:
-
-            .. code-block:: console
-
-               python3 -m pip install -U nrfutil
-
-            .. note::
-
-               If you are using a Raspberry Pi, the nRF Util version distributed officially through PyPI is not supported.
-               To install a compatible version on Raspbian OS, execute the following commands:
-
-               .. code-block:: console
-
-                  sudo apt-get -y install libusb-1.0-0-dev sed
-                  pip3 install click crcmod ecdsa intelhex libusb1 piccata protobuf pyserial pyyaml tqdm pc_ble_driver_py
-                  pip3 install -U --no-dependencies nrfutil==6.0.1
-                  export PATH="$HOME/.local/bin:$PATH"
-
+         a. Install nRF Util as described in `Installing nRF Util for nRF5 SDK`_.
          #. Generate the RCP firmware package:
 
             .. code-block:: console

@@ -444,7 +444,8 @@
 
 .. _`nAN34`: https://infocenter.nordicsemi.com/pdf/nan_34.pdf
 
-.. _`nRF Util`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fug_nrfutil%2FUG%2Fnrfutil%2Fnrfutil_intro.html
+.. _`nRF Util`: https://infocenter.nordicsemi.com/topic/ug_nrfutils/UG/nrfutils/nrfutil_intro.html
+.. _`Installing nRF Util for nRF5 SDK`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_installing.html
 .. _`DFU over Zigbee`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_dfu_zigbee.html
 .. _`Generating DFU packages`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_pkg.html
 .. _`DFU over a serial USB connection`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_dfu_serial_usb.html
