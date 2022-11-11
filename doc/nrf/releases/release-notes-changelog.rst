@@ -640,6 +640,14 @@ sdk-nrfxlib
 
 See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
 
+DFU libraries
+-------------
+* :ref:`lib_dfu_target`:
+  * Updated:
+
+    * Added new types :c:enum:`DFU_TARGET_IMAGE_TYPE_ANY_MODEM` and :c:enum:`DFU_TARGET_IMAGE_TYPE_ANY_APPLICATION`.
+      This makes any supported modem update type acceptable when downloading.
+
 Scripts
 =======
 

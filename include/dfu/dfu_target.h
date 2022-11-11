@@ -20,11 +20,28 @@
 extern "C" {
 #endif
 
+/** @brief DFU image type.
+ *
+ * Bitmasks of different image types.
+ */
 enum dfu_target_image_type {
-	DFU_TARGET_IMAGE_TYPE_ANY = 0,
+	/** Not a DFU image */
+	DFU_TARGET_IMAGE_TYPE_NONE = 0,
+	/** Application image in MCUBoot format */
 	DFU_TARGET_IMAGE_TYPE_MCUBOOT = 1,
-	DFU_TARGET_IMAGE_TYPE_MODEM_DELTA,
-	DFU_TARGET_IMAGE_TYPE_FULL_MODEM
+	/** Modem delta-update image */
+	DFU_TARGET_IMAGE_TYPE_MODEM_DELTA = 2,
+	/** Full update image for modem */
+	DFU_TARGET_IMAGE_TYPE_FULL_MODEM = 4,
+	/** Any application image type */
+	DFU_TARGET_IMAGE_TYPE_ANY_APPLICATION = DFU_TARGET_IMAGE_TYPE_MCUBOOT,
+	/** Any modem image */
+	DFU_TARGET_IMAGE_TYPE_ANY_MODEM =
+		(DFU_TARGET_IMAGE_TYPE_MODEM_DELTA | DFU_TARGET_IMAGE_TYPE_FULL_MODEM),
+	/** Any DFU image type */
+	DFU_TARGET_IMAGE_TYPE_ANY =
+		(DFU_TARGET_IMAGE_TYPE_MCUBOOT | DFU_TARGET_IMAGE_TYPE_MODEM_DELTA |
+		 DFU_TARGET_IMAGE_TYPE_FULL_MODEM),
 };
 
 enum dfu_target_evt_id {
@@ -53,10 +70,10 @@ struct dfu_target {
  *		  image.
  * @param[in] len The length of the provided buffer.
  *
- * @return Positive identifier for a supported image type or a negative error
- *	   code indicating reason of failure.
+ * @return Identifier for a supported image type or DFU_TARGET_IMAGE_TYPE_NONE if
+ *         image type is not regognized.
  **/
-int dfu_target_img_type(const void *const buf, size_t len);
+enum dfu_target_image_type dfu_target_img_type(const void *const buf, size_t len);
 
 /**
  * @brief Initialize the resources needed for the specific image type DFU

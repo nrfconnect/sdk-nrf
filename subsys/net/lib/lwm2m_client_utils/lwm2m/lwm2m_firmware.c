@@ -232,7 +232,7 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 		client_acknowledge();
 
 		image_type = dfu_target_img_type(data, data_len);
-		if (image_type == -ENOTSUP) {
+		if (image_type == DFU_TARGET_IMAGE_TYPE_NONE) {
 			ret = -ENOMSG; /* Translates to unsupported image type */
 			goto cleanup;
 		}
