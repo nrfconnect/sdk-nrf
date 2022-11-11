@@ -458,7 +458,7 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 	advertising_start();
 }
 
-BT_CONN_CB_DEFINE(conn_callbacks) = {
+static struct bt_conn_cb conn_callbacks = {
 	.connected = connected_cb,
 	.disconnected = disconnected_cb,
 };
@@ -473,6 +473,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 
 	if (!initialized) {
 		bt_audio_unicast_server_register_cb(&unicast_server_cb);
+		bt_conn_cb_register(&conn_callbacks);
 #if (CONFIG_BT_VCS)
 		ret = ble_vcs_server_init();
 		if (ret) {

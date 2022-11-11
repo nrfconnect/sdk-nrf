@@ -45,6 +45,15 @@ config USB_DEVICE_MANUFACTURER
 	string
 	default "Nordic Semiconductor AS"
 
+## Avoid redundant warnings for endpoint setting in USB stack
+config USB_DRIVER_LOG_LEVEL
+	int
+	default 1
+
+config USB_DEVICE_LOG_LEVEL
+	int
+	default 1
+
 endif # AUDIO_SOURCE_USB
 
 endif # AUDIO_DEV = 2 (GATEWAY)

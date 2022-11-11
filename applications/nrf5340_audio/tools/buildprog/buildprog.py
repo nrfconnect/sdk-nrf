@@ -35,7 +35,6 @@ NRF5340_AUDIO_FOLDER = (BUILDPROG_FOLDER / "../..").resolve()
 USER_CONFIG = BUILDPROG_FOLDER / "nrf5340_audio_dk_devices.json"
 
 TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME = "nrf5340_audio_dk_nrf5340_cpuapp"
-TARGET_BOARD_NRF5340_AUDIO_DK_NET_NAME = "nrf5340_audio_dk_nrf5340_cpunet"
 
 TARGET_CORE_APP_FOLDER = NRF5340_AUDIO_FOLDER
 TARGET_CORE_NET_FOLDER = NRF5340_AUDIO_FOLDER / "bin"
@@ -44,8 +43,6 @@ TARGET_DEV_GATEWAY_FOLDER = NRF5340_AUDIO_FOLDER / "build/dev_gateway"
 
 TARGET_RELEASE_FOLDER = "build_release"
 TARGET_DEBUG_FOLDER = "build_debug"
-
-PRISTINE_FLAG = " --pristine"
 
 
 def __print_add_color(status):
@@ -148,14 +145,6 @@ def __build_module(build_config, options):
     if ret_val:
         raise Exception("cmake error: " + str(ret_val))
 
-    if options.mcuboot != '':
-        ble5_ctr_sign_cmd = f"python {BUILDPROG_FOLDER}/ble5-ctr-rpmsg_sign.py -I\
-        {TARGET_CORE_APP_FOLDER}/dfu/bin/ -b {dest_folder}\
-        {'-m' if options.min_b0n else ''}"
-        ret_val = os.system(ble5_ctr_sign_cmd)
-        if ret_val:
-            raise Exception("generate ble5-ctr-rpmsg + b0n error: " + str(ret_val))
-
 
 def __find_snr():
     """Rebooting or programming requires connected programmer/debugger"""
@@ -178,33 +167,24 @@ def __populate_hex_paths(dev, options):
         Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options
     )
 
+    dest_folder = temp_dest_folder
     if dev.core_app_programmed == SelectFlags.TBD:
-        dest_folder = temp_dest_folder
         if options.mcuboot != '':
             dev.hex_path_app = dest_folder / "zephyr/merged.hex"
         else:
             dev.hex_path_app = dest_folder / "zephyr/zephyr.hex"
 
     if dev.core_net_programmed == SelectFlags.TBD:
-        dest_folder = TARGET_CORE_NET_FOLDER
 
         hex_files_found = [
-            file for file in dest_folder.iterdir() if file.suffix == ".hex"
+            file for file in TARGET_CORE_NET_FOLDER.iterdir() if file.suffix == ".hex"
         ]
 
         if options.mcuboot != '':
-            temp_dest_folder = str(temp_dest_folder)
-            if os.name == 'nt':
-                folder_slash ='\\'
-            else:
-                folder_slash ='/'
-            indices = [i for i, c in enumerate(temp_dest_folder) if c == folder_slash]
-            final_file_prefix = temp_dest_folder[indices[-2]+1:].replace(folder_slash, '_')+'_'
-            dev.hex_path_net = dest_folder / f"{final_file_prefix}ble5-ctr_CPUNET.hex"
+            dev.hex_path_net = dest_folder / "zephyr/net_core_app_signed.hex"
         else:
-            for hex_file in reversed(hex_files_found):
-                if "ble5-ctr_CPUNET" in hex_file.name:
-                    hex_files_found.remove(hex_file)
+            dest_folder = TARGET_CORE_NET_FOLDER
+
             if len(hex_files_found) == 0:
                 raise Exception(
                     f"Found no net core hex file in folder: {dest_folder}")
@@ -362,7 +342,7 @@ def __main():
     # Reboot step start
 
     if options.only_reboot == SelectFlags.TBD:
-        program_threads_run(device_list, sequential=options.sequential_prog)
+        program_threads_run(device_list, options.mcuboot, sequential=options.sequential_prog)
         __finish(device_list)
 
     # Reboot step finished
@@ -403,7 +383,7 @@ def __main():
         for dev in device_list:
             if dev.snr_connected:
                 __populate_hex_paths(dev, options)
-        program_threads_run(device_list, sequential=options.sequential_prog)
+        program_threads_run(device_list, options.mcuboot, sequential=options.sequential_prog)
 
     # Program step finished
 

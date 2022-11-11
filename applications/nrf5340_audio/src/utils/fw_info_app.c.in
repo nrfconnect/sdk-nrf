@@ -22,14 +22,14 @@ static const char NRF5340_CORE[] = "nRF5340 Audio nRF5340 Audio DK cpuapp";
 
 int fw_info_app_print(void)
 {
-	int ret;
-
 	LOG_INF(COLOR_GREEN "\r\n\t %s \
 			    \r\n\t NCS base version: %s \
 			    \r\n\t Cmake run : %s" COLOR_RESET,
 		NRF5340_CORE, NCS_VERSION_STRING, COMPILE_DATE);
 
 #if (CONFIG_DEBUG)
+	int ret;
+
 	LOG_INF("------- DEBUG BUILD -------");
 
 #if (CONFIG_AUDIO_DEV == HEADSET)

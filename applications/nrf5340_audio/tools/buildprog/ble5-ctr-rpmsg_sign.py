@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #
 # Copyright (c) 2022 Nordic Semiconductor ASA
 #
@@ -20,7 +19,7 @@ FINAL_BLE5_CTR_HEX = 'ble5-ctr_CPUNET.hex'
 FINAL_BLE5_CTR_UPDATE_BIN = 'ble5-ctr_net_core_update.bin'
 ORIG_BLE5_CTR_PATTERN = r'ble5-ctr-rpmsg_shifted_\d{4}.hex'
 ORIG_BLE5_CTR_MIN_PATTERN = r'ble5-ctr-rpmsg_shifted_min_\d{4}.hex'
-
+NET_CORE_APP_NAME = 'empty_net'
 
 ZEPHYR_BASE = os.environ['ZEPHYR_BASE']
 MANUALLY_SIGN_DIR = Path(__file__).resolve().parent
@@ -50,11 +49,6 @@ def sign(orig_hex, build_dir):
     else:
         folder_slash = '/'
 
-    # Make sure we input build_dir as absolute path
-    indices = [i for i, c in enumerate(build_dir) if c == folder_slash]
-    final_file_prefix = build_dir[indices[-2] +
-                                  1:].replace(folder_slash, '_')+'_'
-
     # RETEIVE setting value from .config
     # "${ZEPHYR_BASE}/../bootloader/mcuboot/root-rsa-2048.pem"
 
@@ -76,25 +70,25 @@ def sign(orig_hex, build_dir):
                             build_dir + '/zephyr/.config')
     # VALIDATION_MAGIC_VALUE="0x281ee6de,0x86518483,79106"
     fw_info_magic_common = awklike('CONFIG_FW_INFO_MAGIC_COMMON=', build_dir +
-                                   '/hci_rpmsg/zephyr/.config')
+                                   f'/{NET_CORE_APP_NAME}/zephyr/.config')
     fw_info_magic_firmware_info = awklike('CONFIG_FW_INFO_MAGIC_FIRMWARE_INFO=', build_dir +
-                                          '/hci_rpmsg/zephyr/.config')
+                                          f'/{NET_CORE_APP_NAME}/zephyr/.config')
     sb_validation_info_magic = awklike('CONFIG_SB_VALIDATION_INFO_MAGIC=', build_dir +
-                                       '/hci_rpmsg/zephyr/.config')
+                                       f'/{NET_CORE_APP_NAME}/zephyr/.config')
     fw_info_firmware_version = awklike('CONFIG_FW_INFO_FIRMWARE_VERSION=', build_dir +
-                                       '/hci_rpmsg/zephyr/.config')
+                                       f'/{NET_CORE_APP_NAME}/zephyr/.config')
     fw_info_valid_val = awklike('CONFIG_FW_INFO_VALID_VAL=', build_dir +
-                                '/hci_rpmsg/zephyr/.config')
+                                f'/{NET_CORE_APP_NAME}/zephyr/.config')
     temp_ver = int(awklike('CONFIG_SB_VALIDATION_INFO_VERSION=', build_dir +
-                           '/hci_rpmsg/zephyr/.config'))
+                           f'/{NET_CORE_APP_NAME}/zephyr/.config'))
     temp_hwid = int(awklike('CONFIG_FW_INFO_HARDWARE_ID=', build_dir +
-                            '/hci_rpmsg/zephyr/.config'))
+                            f'/{NET_CORE_APP_NAME}/zephyr/.config'))
     temp_valid_crypto_id = int(awklike('CONFIG_SB_VALIDATION_INFO_CRYPTO_ID=', build_dir +
-                                       '/hci_rpmsg/zephyr/.config'))
+                                       f'/{NET_CORE_APP_NAME}/zephyr/.config'))
     temp_crypto_id = int(awklike('CONFIG_FW_INFO_CRYPTO_ID=', build_dir +
-                                 '/hci_rpmsg/zephyr/.config'))
+                                 f'/{NET_CORE_APP_NAME}/zephyr/.config'))
     temp_compat_id = int(awklike('CONFIG_FW_INFO_MAGIC_COMPATIBILITY_ID=', build_dir +
-                                 '/hci_rpmsg/zephyr/.config'))
+                                 f'/{NET_CORE_APP_NAME}/zephyr/.config'))
     magic_compatibility_validation_info = temp_ver + (temp_hwid << 8) + (temp_valid_crypto_id << 16)\
         + (temp_compat_id << 24)
     magic_compatibility_info = temp_ver + (temp_hwid << 8) + (temp_crypto_id << 16)\
@@ -108,18 +102,18 @@ def sign(orig_hex, build_dir):
 
     # 0x01008800
     pm_net_app_address = int(awklike('PM_APP_ADDRESS=', build_dir +
-                                     '/hci_rpmsg/pm_CPUNET.config'), 16)
+                                     f'/{NET_CORE_APP_NAME}/pm_CPUNET.config'), 16)
     # 0xc200/0x10200
     #PM_APP_APP_ADDRESS = int(awklike('PM_APP_ADDRESS=', build_dir + '/pm.config'), 16)
     pm_app_app_address = awklike('PM_APP_ADDRESS=', build_dir + '/pm.config')
     # CONFIG_FW_INFO_OFFSET 0x200
     fw_info_offset = int(awklike('CONFIG_FW_INFO_OFFSET=', build_dir +
-                                 '/hci_rpmsg/b0n/zephyr/.config'), 16)
+                                 f'/{NET_CORE_APP_NAME}/b0n/zephyr/.config'), 16)
     # nRF5340_CPUAPP_QKAA
     soc_name = awklike('CONFIG_SOC=', build_dir + '/zephyr/.config')
     # nRF5340_CPUNET_QKAA
     net_soc_name = awklike('CONFIG_SOC=', build_dir +
-                           '/hci_rpmsg/zephyr/.config')
+                           f'/{NET_CORE_APP_NAME}/zephyr/.config')
     # CONFIG_DOMAIN_CPUNET_BOARD net_core_app_update.binboard
     net_core_app_binboard = awklike(
         'CONFIG_DOMAIN_CPUNET_BOARD=', build_dir + '/zephyr/.config')
@@ -130,7 +124,7 @@ def sign(orig_hex, build_dir):
     net_core_fw_info_address = f'0x{net_core_fw_info_address:08X}'
 
     # Inject FW_INFO from .config
-    os_cmd = f'python fw_info_data.py  --input {orig_hex} --output-hex {build_dir}/{BLE5_CTR_HEX}\
+    os_cmd = f'{sys.executable} {MANUALLY_SIGN_DIR}/fw_info_data.py  --input {orig_hex} --output-hex {build_dir}/{BLE5_CTR_HEX}\
     --offset {net_core_fw_info_address} --magic-value {firmware_info_magic}\
     --fw-version {fw_info_firmware_version} --fw-valid-val {fw_info_valid_val}'
 
@@ -140,36 +134,36 @@ def sign(orig_hex, build_dir):
 
     # 240
     num_ver_counter_slots = int(awklike('CONFIG_SB_NUM_VER_COUNTER_SLOTS=', build_dir +
-                                        '/hci_rpmsg/zephyr/.config'), 16)
+                                        f'/{NET_CORE_APP_NAME}/zephyr/.config'), 10)
     pm_partition_size_provision = int(awklike('CONFIG_PM_PARTITION_SIZE_PROVISION=', build_dir +
-                                              '/hci_rpmsg/zephyr/.config'), 16)
+                                              f'/{NET_CORE_APP_NAME}/zephyr/.config'), 16)
     cpunet_pm_app_address = hex(int(awklike('PM_APP_ADDRESS=', build_dir +
-                                            '/hci_rpmsg/pm_CPUNET.config'), 16))
+                                            f'/{NET_CORE_APP_NAME}/pm_CPUNET.config'), 16))
     pm_provision_address = int(awklike('PM_PROVISION_ADDRESS=', build_dir +
-                                       '/hci_rpmsg/pm_CPUNET.config'), 16)
+                                       f'/{NET_CORE_APP_NAME}/pm_CPUNET.config'), 16)
     pm_mcuboot_secondary_size = int(awklike('PM_MCUBOOT_SECONDARY_SIZE=', build_dir +
                                             '/pm.config'), 16)
 
-    os_cmd = f'python {ZEPHYR_BASE}/../nrf/scripts/bootloader/hash.py --in {build_dir}/{BLE5_CTR_HEX}\
+    os_cmd = f'{sys.executable} {ZEPHYR_BASE}/../nrf/scripts/bootloader/hash.py --in {build_dir}/{BLE5_CTR_HEX}\
     > {build_dir}/app_firmware.sha256'
 
     ret_val = os.system(os_cmd)
     if ret_val:
         raise Exception('python error: ' + str(ret_val))
 
-    os_cmd = f'python {ZEPHYR_BASE}/../nrf/scripts/bootloader/do_sign.py --private-key\
-    {build_dir}/hci_rpmsg/zephyr/GENERATED_NON_SECURE_SIGN_KEY_PRIVATE.pem --in\
+    os_cmd = f'{sys.executable} {ZEPHYR_BASE}/../nrf/scripts/bootloader/do_sign.py --private-key\
+    {build_dir}/{NET_CORE_APP_NAME}/zephyr/GENERATED_NON_SECURE_SIGN_KEY_PRIVATE.pem --in\
     {build_dir}/app_firmware.sha256 > {build_dir}/app_firmware.signature'
 
     ret_val = os.system(os_cmd)
     if ret_val:
         raise Exception('python error: ' + str(ret_val))
 
-    os_cmd = f'python {ZEPHYR_BASE}/../nrf/scripts/bootloader/validation_data.py\
+    public_keys = f' {build_dir}/{NET_CORE_APP_NAME}/zephyr/nrf/subsys/bootloader/generated/public.pem'
+    os_cmd = f'{sys.executable} {ZEPHYR_BASE}/../nrf/scripts/bootloader/validation_data.py\
     --input {build_dir}/{BLE5_CTR_HEX} --output-hex {build_dir}/signed_by_b0_ble5_ctr.hex\
     --output-bin {build_dir}/signed_by_b0_ble5_ctr.bin --offset 0 --signature\
-    {build_dir}/app_firmware.signature --public-key\
-    {build_dir}/hci_rpmsg/zephyr/nrf/subsys/bootloader/generated/public.pem\
+    {build_dir}/app_firmware.signature --public-key {public_keys}\
     --magic-value {validation_magic_value}'
 
     ret_val = os.system(os_cmd)
@@ -177,7 +171,7 @@ def sign(orig_hex, build_dir):
         raise Exception('python error: ' + str(ret_val))
 
     # Generate net_core_app_update.bin
-    os_cmd = f'python {ZEPHYR_BASE}/../bootloader/mcuboot/scripts/imgtool.py sign --key\
+    os_cmd = f'{sys.executable} {ZEPHYR_BASE}/../bootloader/mcuboot/scripts/imgtool.py sign --key\
     {mcuboot_rsa_key} --header-size {fw_info_offset} --align 4 --version {image_version}\
     --pad-header --slot-size {pm_mcuboot_secondary_size}  {build_dir}/signed_by_b0_ble5_ctr.bin\
     {build_dir}/{FINAL_BLE5_CTR_UPDATE_BIN}'
@@ -186,11 +180,17 @@ def sign(orig_hex, build_dir):
     if ret_val:
         raise Exception('python error: ' + str(ret_val))
 
-    os_cmd = f'python {ZEPHYR_BASE}/../nrf/scripts/bootloader/provision.py\
+    # Check if debug key exists
+    debug_public_key_0 = Path(f'{build_dir}/{NET_CORE_APP_NAME}/zephyr/GENERATED_NON_SECURE_PUBLIC_0.pem').resolve()
+    debug_public_key_1 = Path(f'{build_dir}/{NET_CORE_APP_NAME}/zephyr/GENERATED_NON_SECURE_PUBLIC_1.pem').resolve()
+    if debug_public_key_0.exists():
+        public_keys += f',{str(debug_public_key_0)}'
+    if debug_public_key_1.exists():
+        public_keys += f',{str(debug_public_key_1)}'
+
+    os_cmd = f'{sys.executable} {ZEPHYR_BASE}/../nrf/scripts/bootloader/provision.py\
     --s0-addr {cpunet_pm_app_address} --provision-addr {pm_provision_address}\
-    --public-key-files {build_dir}/hci_rpmsg/zephyr/nrf/subsys/bootloader/generated/public.pem,\
-{build_dir}/hci_rpmsg/zephyr/GENERATED_NON_SECURE_PUBLIC_0.pem,\
-{build_dir}/hci_rpmsg/zephyr/GENERATED_NON_SECURE_PUBLIC_1.pem\
+    --public-key-files {public_keys}\
     --output {build_dir}/provision.hex --num-counter-slots-version {num_ver_counter_slots}\
     --max-size {pm_partition_size_provision}'
 
@@ -198,15 +198,15 @@ def sign(orig_hex, build_dir):
     if ret_val:
         raise Exception('python error: ' + str(ret_val))
 
-    os_cmd = f'python {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/b0n_container.hex\
+    os_cmd = f'{sys.executable} {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/b0n_container.hex\
     {build_dir}/{BLE5_CTR_HEX} {build_dir}/provision.hex'
 
     ret_val = os.system(os_cmd)
     if ret_val:
         raise Exception('python error: ' + str(ret_val))
 
-    os_cmd = f'python {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/{FINAL_BLE5_CTR_HEX}\
-    --overlap=replace {build_dir}/hci_rpmsg/b0n/zephyr/zephyr.hex  {build_dir}/b0n_container.hex\
+    os_cmd = f'{sys.executable} {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/{FINAL_BLE5_CTR_HEX}\
+    --overlap=replace {build_dir}/{NET_CORE_APP_NAME}/b0n/zephyr/zephyr.hex  {build_dir}/b0n_container.hex\
     {build_dir}/provision.hex {build_dir}/{BLE5_CTR_HEX} {build_dir}/signed_by_b0_ble5_ctr.hex'
 
     ret_val = os.system(os_cmd)
@@ -216,21 +216,14 @@ def sign(orig_hex, build_dir):
     # Replace built net_core
     src_path = f'{build_dir}/{FINAL_BLE5_CTR_UPDATE_BIN}'
     dst_path = f'{build_dir}/zephyr/net_core_app_update.bin'
-    os.remove(dst_path)
     shutil.copy(src_path, dst_path)
 
     src_path = f'{build_dir}/{FINAL_BLE5_CTR_HEX}'
     dst_path = f'{build_dir}/zephyr/net_core_app_signed.hex'
-    os.remove(dst_path)
-    shutil.copy(src_path, dst_path)
-
-    # cp $build_dir/${FINAL_BLE5_CTR_HEX} ${BASEDIR}/../../bin
-    src_path = f'{build_dir}/{FINAL_BLE5_CTR_HEX}'
-    dst_path = f'{BIN_DIR}/{final_file_prefix}{FINAL_BLE5_CTR_HEX}'
     shutil.copy(src_path, dst_path)
 
     # Generate merged_domains.hex
-    os_cmd = f'python {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/zephyr/merged_domains.hex\
+    os_cmd = f'{sys.executable} {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/zephyr/merged_domains.hex\
     {build_dir}/{FINAL_BLE5_CTR_HEX} {build_dir}/zephyr/merged.hex'
 
     ret_val = os.system(os_cmd)
@@ -251,7 +244,7 @@ def sign(orig_hex, build_dir):
     # "${net_core_binary_name}soc=${net_core_soc}"
     # )
     os.remove(f'{build_dir}/zephyr/dfu_application.zip')
-    os_cmd = f'python {ZEPHYR_BASE}/../nrf/scripts/bootloader/generate_zip.py --bin-files\
+    os_cmd = f'{sys.executable} {ZEPHYR_BASE}/../nrf/scripts/bootloader/generate_zip.py --bin-files\
     {build_dir}/zephyr/app_update.bin {build_dir}/zephyr/net_core_app_update.bin\
     --output {build_dir}/zephyr/dfu_application.zip --name nrf5340_audio\
     --meta-info-file {build_dir}/zephyr/zephyr.meta\
@@ -270,19 +263,6 @@ def sign(orig_hex, build_dir):
     type=application board={config_board} soc={soc_name}'
 
     ret_val = os.system(os_cmd)
-
-    # For DFU stress test copy product to bin folder
-    # Copy dfu_applications.zip
-    shutil.copy(f'{build_dir}/zephyr/dfu_application.zip',
-                f'{BIN_DIR}/{final_file_prefix}dfu_application_{image_version}.zip')
-
-    # Copy app bin
-    shutil.copy(f'{build_dir}/zephyr/app_update.bin',
-                f'{BIN_DIR}/{final_file_prefix}app_update_{image_version}.bin')
-
-    # Copy net bin
-    shutil.copy(f'{build_dir}/zephyr/net_core_app_update.bin'.format(),
-                f'{BIN_DIR}/{final_file_prefix}net_core_app_update_{fw_info_firmware_version}.bin')
 
 
 def find_hex_name(options):
