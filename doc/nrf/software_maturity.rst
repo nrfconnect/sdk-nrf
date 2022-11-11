@@ -157,6 +157,9 @@ The following table indicates the software maturity levels of the support for th
 
           Receiving unidirectional or transceiving bidirectional audio using CIG and CIS.
 
+          To emulate play and pause, the available context type for media is added or removed. This enables and disables streaming, respectively.
+
+          Coordinated Set Identification Service (CSIS) is implemented on the server side.
         - The following limitations apply:
 
           * BAP unicast, one CIG, one of the two CIS streams (selectable).

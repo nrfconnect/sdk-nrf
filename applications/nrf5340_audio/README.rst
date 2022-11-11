@@ -1378,6 +1378,11 @@ See :ref:`ug_fw_update` and :ref:`west-sign` for more information.
 
 To create your own app that supports DFU, you can use the `nRF Connect Device Manager`_ libraries for Android and iOS.
 
+Changing default values
+=======================
+
+Given the requirements for the Coordinated Set Identification Service (CSIS), make sure to change the Set Identity Resolving Key (SIRK) value when adapting the application.
+
 Dependencies
 ************
 
