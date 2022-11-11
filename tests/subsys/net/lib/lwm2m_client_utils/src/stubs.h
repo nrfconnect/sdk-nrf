@@ -58,7 +58,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lte_lc_rai_param_set, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_rai_req, bool);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_param_set, enum lte_lc_lte_mode, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_req, bool);
-DECLARE_FAKE_VALUE_FUNC(int, lte_lc_neighbor_cell_measurement, enum lte_lc_neighbor_search_type);
+DECLARE_FAKE_VALUE_FUNC(int, lte_lc_neighbor_cell_measurement, struct lte_lc_ncellmeas_params *);
 DECLARE_FAKE_VOID_FUNC(lte_lc_register_handler, lte_lc_evt_handler_t);
 DECLARE_FAKE_VALUE_FUNC(int, settings_load_subtree, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, settings_register, struct settings_handler *);
