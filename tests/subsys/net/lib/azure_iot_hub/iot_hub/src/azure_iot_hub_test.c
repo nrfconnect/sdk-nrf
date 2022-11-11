@@ -309,27 +309,21 @@ void test_azure_iot_hub_connect_kconfig_values(void)
 
 void test_azure_iot_hub_connect_when_not_initialized(void)
 {
-	struct azure_iot_hub_config config_dummy;
-
-	TEST_ASSERT_EQUAL(-ENOENT, azure_iot_hub_connect(&config_dummy));
+	TEST_ASSERT_EQUAL(-ENOENT, azure_iot_hub_connect(NULL));
 }
 
 void test_azure_iot_hub_connect_already_connected(void)
 {
-	struct azure_iot_hub_config config_dummy;
-
 	iot_hub_state = STATE_CONNECTED;
 
-	TEST_ASSERT_EQUAL(-EALREADY, azure_iot_hub_connect(&config_dummy));
+	TEST_ASSERT_EQUAL(-EALREADY, azure_iot_hub_connect(NULL));
 }
 
 void test_azure_iot_hub_connect_not_disconnected(void)
 {
-	struct azure_iot_hub_config config_dummy;
-
 	iot_hub_state = STATE_UNINIT;
 
-	TEST_ASSERT_EQUAL(-ENOENT, azure_iot_hub_connect(&config_dummy));
+	TEST_ASSERT_EQUAL(-ENOENT, azure_iot_hub_connect(NULL));
 	TEST_ASSERT_EQUAL(STATE_UNINIT, iot_hub_state);
 }
 
@@ -568,9 +562,19 @@ void test_azure_iot_hub_send_invalid_topic_type(void)
 
 void test_azure_iot_hub_send_not_connected(void)
 {
-	struct azure_iot_hub_msg msg_dummy;
+	struct azure_iot_hub_msg msg = {
+		.topic.type = AZURE_IOT_HUB_TOPIC_TWIN_REPORTED,
+		.payload = {
+			.ptr = TEST_UPDATE_REPORTED_MSG,
+			.size = TEST_UPDATE_REPORTED_MSG_LEN,
+		},
+		.request_id = {
+			.ptr = TEST_REQUEST_ID,
+			.size = TEST_REQUEST_ID_LEN,
+		},
+	};
 
-	TEST_ASSERT_EQUAL(-ENOTCONN, azure_iot_hub_send(&msg_dummy));
+	TEST_ASSERT_EQUAL(-ENOTCONN, azure_iot_hub_send(&msg));
 }
 
 void test_azure_iot_hub_send_invalid_msg(void)
