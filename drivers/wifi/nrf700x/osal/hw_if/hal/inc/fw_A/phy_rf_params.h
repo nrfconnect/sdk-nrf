@@ -116,7 +116,7 @@ struct nrf_wifi_rf_test_capture_params
 	 * It supports 64dB range.The increment happens lineraly 2dB/step
 	 */
 	unsigned char bb_gain;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 
 /* Struct to hold the events from RF test SW. */
@@ -133,7 +133,7 @@ struct nrf_wifi_rf_test_capture_meas
 
 	/* RMS of Q samples */
 	unsigned int rms_Q;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 
 /* Holds the transmit related info */
@@ -156,14 +156,14 @@ struct nrf_wifi_rf_test_tx_params
 	/* Desired TX power*/
 	unsigned char tx_pow;
 	unsigned char enabled;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 struct nrf_wifi_rf_test_dpd_params
 {
 	unsigned short test;
 	unsigned char enabled;
 	unsigned char reserved;
-} __IMG_PKD;
+} __NRF_WIFI_PKD;
 
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 

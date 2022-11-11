@@ -565,7 +565,7 @@ static enum wifi_nrf_status umac_event_rf_test_process(struct wifi_nrf_fmac_dev_
 						       void *event)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct img_event_rftest *rf_test_event = NULL;
+	struct nrf_wifi_event_rftest *rf_test_event = NULL;
 
 	if (!event) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
@@ -574,7 +574,7 @@ static enum wifi_nrf_status umac_event_rf_test_process(struct wifi_nrf_fmac_dev_
 		goto out;
 	}
 
-	rf_test_event = ((struct img_event_rftest *)event);
+	rf_test_event = ((struct nrf_wifi_event_rftest *)event);
 
 	if (rf_test_event->rf_test_info.rfevent[0] != fmac_dev_ctx->rf_test_type) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
@@ -689,7 +689,7 @@ static enum wifi_nrf_status umac_process_sys_events(struct wifi_nrf_fmac_dev_ctx
 		status = WIFI_NRF_STATUS_SUCCESS;
 		break;
 #ifdef CONFIG_NRF700X_RADIO_TEST
-	case IMG_EVENT_RF_TEST:
+	case NRF_WIFI_EVENT_RF_TEST:
 		status = umac_event_rf_test_process(fmac_dev_ctx,
 						    sys_head);
 		break;
