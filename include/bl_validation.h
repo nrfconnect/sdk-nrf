@@ -80,10 +80,12 @@ int set_monotonic_version(uint16_t version, uint16_t slot);
 /** Read version and slot from monotonic counter.
  *
  * @param[out]  slot_out  Slot where firmware is located. Can be NULL.
+ * @param[out]  version   Firmware version
  *
- * @return Firmware version
+ * @retval 0       Success
+ * @retval -EINVAL Error during reading the version or *version is NULL.
  */
-uint16_t get_monotonic_version(uint16_t *slot_out);
+int get_monotonic_version(uint16_t *slot_out, uint16_t *version);
 
   /** @} */
 

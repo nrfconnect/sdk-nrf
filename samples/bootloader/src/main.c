@@ -50,6 +50,7 @@ SYS_INIT(load_huk, PRE_KERNEL_2, 0);
 
 static void validate_and_boot(const struct fw_info *fw_info, uint16_t slot)
 {
+	uint16_t version;
 	printk("Attempting to boot slot %d.\r\n", slot);
 
 	if (fw_info == NULL) {
@@ -69,7 +70,12 @@ static void validate_and_boot(const struct fw_info *fw_info, uint16_t slot)
 
 	printk("Firmware version %d\r\n", fw_info->version);
 
-	if (fw_info->version > get_monotonic_version(NULL)) {
+	if (get_monotonic_version(NULL, &version) != 0) {
+		printk("Failed to read the monotonic counter!\n\r");
+		return;
+	}
+
+	if (fw_info->version > version) {
 		set_monotonic_version(fw_info->version, slot);
 	}
 
