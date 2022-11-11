@@ -17,7 +17,6 @@ The library has the following functions for either reading or writing, or in som
 * The lifecycle state of the device, used to deny certain operations when in wrong lifecycle state.
 * A 32-byte user-defined implementation ID, used to identify the immutable bootloader.
 * Image slot addresses.
-* A monotonic counter, used to enforce anti-rollback protection.
 * Hashes of public keys.
 * Invalidation tokens, used to revoke public keys.
 * Additional public key metadata.
@@ -26,6 +25,7 @@ The library uses either the OTP region of the User information configuration reg
 When the library uses the internal flash memory, the bootloader blocks the write access before booting the next image.
 
 See :ref:`bootloader_provisioning` for more information about the provisioned data and how the bootloader uses it.
+See :ref:`doc_bl_monotonic_counters` for more information about storing application versions using monotonic counters.
 
 See :file:`tests/subsys/bootloader/bl_storage/` for tests of the library.
 

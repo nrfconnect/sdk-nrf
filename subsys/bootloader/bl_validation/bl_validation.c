@@ -9,6 +9,7 @@
 #include <fw_info.h>
 #include <zephyr/kernel.h>
 #include <bl_storage.h>
+#include <bl_monotonic_counters.h>
 
 
 int set_monotonic_version(uint16_t version, uint16_t slot)
