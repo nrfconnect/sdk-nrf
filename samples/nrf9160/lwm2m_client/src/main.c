@@ -433,7 +433,8 @@ static void modem_connect(void)
 #endif
 
 	do {
-		LOG_INF("Connecting to LTE network.");
+
+		LOG_INF("Connecting to network.");
 		LOG_INF("This may take several minutes.");
 
 		ret = lte_lc_connect();
@@ -443,7 +444,16 @@ static void modem_connect(void)
 			lte_lc_offline();
 			k_sleep(K_SECONDS(60));
 		} else {
-			LOG_INF("Connected to LTE network");
+			enum lte_lc_lte_mode mode;
+
+			lte_lc_lte_mode_get(&mode);
+			if (mode == LTE_LC_LTE_MODE_NBIOT) {
+				LOG_INF("Connected to NB-IoT network");
+			} else if (mode == LTE_LC_LTE_MODE_LTEM) {
+				LOG_INF("Connected to LTE network");
+			} else  {
+				LOG_INF("Connected to unknown network");
+			}
 		}
 	} while (ret < 0);
 }
