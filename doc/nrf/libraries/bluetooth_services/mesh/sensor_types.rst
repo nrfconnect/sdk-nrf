@@ -17,6 +17,8 @@ Sensor types can be forced into the build by the :c:macro:`BT_MESH_SENSOR_TYPE_F
 
 Sensor types may only be declared in the ``bt_mesh_sensor_types`` static linker section.
 
+See :ref:`bt_mesh_sensor_types` for information on how to use these sensor types when initializing and using sensors.
+
 .. doxygengroup:: bt_mesh_sensor_types
    :project: nrf
    :content-only:

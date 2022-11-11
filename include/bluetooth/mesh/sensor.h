@@ -186,7 +186,7 @@ struct bt_mesh_sensor_format {
 			    struct net_buf_simple *buf,
 			    struct sensor_value *val);
 
-	/** User data pointer. */
+	/** User data pointer. Used internally by the sensor types. */
 	void *user_data;
 	/** Size of the encoded data in bytes. */
 	size_t size;
