@@ -117,12 +117,11 @@ static int download_client_callback(const struct download_client_evt *event)
 			img_type = dfu_target_img_type(event->fragment.buf,
 							event->fragment.len);
 
-			if (img_type < 0) {
+			if (img_type == DFU_TARGET_IMAGE_TYPE_NONE) {
 				LOG_ERR("Unknown image type");
 				err_cause = FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE;
 				err = -EFAULT;
-			} else if ((img_type_expected != DFU_TARGET_IMAGE_TYPE_ANY) &&
-			    (img_type_expected != img_type)) {
+			} else if ((img_type & img_type_expected) != img_type) {
 				LOG_ERR("FOTA image type %d does not match expected type %d",
 					img_type, img_type_expected);
 				err_cause = FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH;

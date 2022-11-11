@@ -40,9 +40,9 @@ int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_call
 	return 0;
 }
 
-int dfu_target_img_type(const void *const buf, size_t len)
+enum dfu_target_image_type dfu_target_img_type(const void *const buf, size_t len)
 {
-	return 0;
+	return DFU_TARGET_IMAGE_TYPE_MCUBOOT;
 }
 
 int dfu_target_offset_get(size_t *offset)

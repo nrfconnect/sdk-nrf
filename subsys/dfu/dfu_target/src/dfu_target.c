@@ -37,10 +37,10 @@ LOG_MODULE_REGISTER(dfu_target, CONFIG_DFU_TARGET_LOG_LEVEL);
 static const struct dfu_target *current_target;
 static int current_img_num = -1;
 
-int dfu_target_img_type(const void *const buf, size_t len)
+enum dfu_target_image_type dfu_target_img_type(const void *const buf, size_t len)
 {
 	if (len < MIN_SIZE_IDENTIFY_BUF) {
-		return -EAGAIN;
+		return DFU_TARGET_IMAGE_TYPE_NONE;
 	}
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
 	if (dfu_target_mcuboot_identify(buf)) {
@@ -58,7 +58,7 @@ int dfu_target_img_type(const void *const buf, size_t len)
 	}
 #endif
 	LOG_ERR("No supported image type found");
-	return -ENOTSUP;
+	return DFU_TARGET_IMAGE_TYPE_NONE;
 }
 
 int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_callback_t cb)
