@@ -1,0 +1,17 @@
+name: Remove CI requested label
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  remove_label:
+    runs-on: ubuntu-latest
+    name: Remove label
+    steps:
+      - name: removelabel
+        uses: buildsville/add-remove-label@v2.0.0
+        with:
+          token: '${{ secrets.GITHUB_TOKEN }}'
+          labels: CI-Requested
+          type: remove
