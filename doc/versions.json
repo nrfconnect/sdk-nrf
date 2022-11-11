@@ -37,7 +37,7 @@
     "latest": {
       "ncs": "2.1.99",
       "nrfxlib": "2.1.99",
-      "zephyr": "3.2.0-rc3",
+      "zephyr": "3.2.99",
       "mcuboot": "1.9.99",
       "nrfx": "2.9",
       "tfm": "1.6.0",
