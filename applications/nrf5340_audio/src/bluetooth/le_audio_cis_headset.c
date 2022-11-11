@@ -11,6 +11,8 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/audio/pacs.h>
+#include <zephyr/bluetooth/audio/csis.h>
+#include <zephyr/bluetooth/audio/cap.h>
 #include <../subsys/bluetooth/audio/endpoint.h>
 
 #include "macros_common.h"
@@ -44,12 +46,48 @@ static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ASCS_ASE_SRC_CO
 /* clang-format on */
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 
+enum csis_set_rank { CSIS_HL_RANK = 1, CSIS_HR_RANK = 2, CSIS_SET_SIZE = 2 };
+
+static struct bt_csis *csis;
 static struct bt_le_ext_adv *adv_ext;
 /* Advertising data for peer connection */
+static uint8_t csis_rsi[BT_CSIS_RSI_SIZE];
+
 static const struct bt_data ad_peer[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_ASCS_VAL)),
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_PACS_VAL))
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_PACS_VAL)),
+	BT_CSIS_DATA_RSI(csis_rsi)
+};
+
+/* Callback for locking state change from server side */
+static void csis_lock_changed_cb(struct bt_conn *conn, struct bt_csis *csis, bool locked)
+{
+	LOG_DBG("Client %p %s the lock", (void *)conn, locked ? "locked" : "released");
+}
+
+/* Callback for SIRK read request from peer side */
+static uint8_t sirk_read_req_cb(struct bt_conn *conn, struct bt_csis *csis)
+{
+	/* Accept the request to read the SIRK, but return encrypted SIRK instead of plaintext */
+	return BT_CSIS_READ_SIRK_REQ_RSP_ACCEPT_ENC;
+}
+
+static struct bt_csis_cb csis_callbacks = {
+	.lock_changed = csis_lock_changed_cb,
+	.sirk_read_req = sirk_read_req_cb,
+};
+struct bt_csis_register_param csis_param = {
+	.set_size = CSIS_SET_SIZE,
+	.lockable = true,
+#if !CONFIG_BT_CSIS_TEST_SAMPLE_DATA
+	/* CSIS SIRK for demo is used, must be changed before production */
+	.set_sirk = { 'N', 'R', 'F', '5', '3', '4', '0', '_', 'T', 'W', 'S', '_', 'D', 'E', 'M',
+		      'O' },
+#else
+#warning "CSIS test sample data is used, must be changed before production"
+#endif
+	.cb = &csis_callbacks,
 };
 
 static le_audio_receive_cb receive_cb;
@@ -139,6 +177,13 @@ static void advertising_process(struct k_work *work)
 		adv_param.id = BT_ID_DEFAULT;
 		adv_param.options |= BT_LE_ADV_OPT_DIR_ADDR_RPA;
 
+		/* Clear ADV data set before update to direct advertising */
+		ret = bt_le_ext_adv_set_data(adv_ext, NULL, 0, NULL, 0);
+		if (ret) {
+			LOG_ERR("Failed to clear advertising data. Err: %d", ret);
+			return;
+		}
+
 		ret = bt_le_ext_adv_update_param(adv_ext, &adv_param);
 		if (ret) {
 			LOG_ERR("Failed to update ext_adv to direct advertising. Err = %d", ret);
@@ -150,6 +195,12 @@ static void advertising_process(struct k_work *work)
 	} else
 #endif /* CONFIG_BT_BONDABLE */
 	{
+		ret = bt_csis_generate_rsi(csis, csis_rsi);
+		if (ret) {
+			LOG_ERR("Failed to generate RSI (ret %d)", ret);
+			return;
+		}
+
 		ret = bt_le_ext_adv_set_data(adv_ext, ad_peer, ARRAY_SIZE(ad_peer), NULL, 0);
 		if (ret) {
 			LOG_ERR("Failed to set advertising data. Err: %d", ret);
@@ -272,6 +323,7 @@ static int lc3_qos_cb(struct bt_audio_stream *stream, const struct bt_codec_qos 
 	int ret;
 
 	LOG_DBG("QoS: stream %p qos %p", (void *)stream, (void *)qos);
+	LOG_INF("Presentation delay %d ms is set by initiator", qos->pd);
 	ret = audio_datapath_pres_delay_us_set(qos->pd);
 
 	return ret;
@@ -446,6 +498,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 			}
 		}
 		if (channel == AUDIO_CH_L) {
+			csis_param.rank = CSIS_HL_RANK;
 			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_LEFT);
 			if (ret) {
 				LOG_ERR("Location set failed");
@@ -453,6 +506,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 			}
 
 		} else {
+			csis_param.rank = CSIS_HR_RANK;
 			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
 						   BT_AUDIO_LOCATION_FRONT_RIGHT);
 			if (ret) {
@@ -495,6 +549,12 @@ static int initialize(le_audio_receive_cb recv_cb)
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 		for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 			bt_audio_stream_cb_register(&audio_streams[i], &stream_ops);
+		}
+
+		ret = bt_cap_acceptor_register(&csis_param, &csis);
+		if (ret) {
+			LOG_ERR("Failed to register CAP acceptor");
+			return ret;
 		}
 
 		ret = bt_le_ext_adv_create(BT_LE_EXT_ADV_CONN_NAME, NULL, &adv_ext);

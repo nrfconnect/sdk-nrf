@@ -111,6 +111,18 @@ config BT_PACS_SNK_CONTEXT
 config BT_PACS_SRC_CONTEXT
 	default 0x0007 if STREAM_BIDIRECTIONAL
 
+config BT_CSIS
+	bool
+	default y
+
+config BT_CAP_ACCEPTOR
+	bool
+	default y
+
+config BT_CAP_ACCEPTOR_SET_MEMBER
+	bool
+	default y
+
 endif # AUDIO_DEV = 1 (HEADSET)
 
 # GATEWAY
