@@ -872,18 +872,13 @@ FOTA build files
 
 The generated FOTA build files use the following naming patterns:
 
-* For multi-image DFU, the file name refers to ``dfu_application`` and includes *<Role>*, *<Application version>*, and *<Revision>* in the file name (``dev_<Role>_build_<Application version>_dfu_application_<Revision>.zip``, for example :file:`dev_headset_build_debug_dfu_application_0.0.0+0.zip`).
+* For multi-image DFU, the file is called ``dfu_application.zip``.
   This file updates two cores with one single file.
-* For single-image DFU, the bin file for the application core refers in the name to ``app_update`` and includes *<Role>*, *<Application version>*, and *<Revision>* in the file name (``dev_<Role>_build_<Application version>_app_update_<Revision>.bin``, for example :file:`dev_headset_build_debug_app_update_0.0.0+0.bin`).
-  The bin file for the network core refers in the name to ``net_core_app_update`` and includes *<FW_VERSION>* instead of *<Revision>* in the file name (``dev_<Role>_build_<Application version>_net_core_app_update_<FW_VERSION>.bin``, for example :file:`dev_headset_build_debug_net_core_app_update_1.bin`).
+* For single-image DFU, the bin file for the application core is called ``app_update.bin``.
+  The bin file for the network core is called ``net_core_app_update.bin``.
   In this scenario, the cores are updated one by one with two separate files in two actions.
 
-The following variables are possible:
-
-* *<Role>*: either ``headset`` or ``gateway``.
-* *<Application version>*: either ``debug`` or ``release``.
-* *<Revision>* corresponds to the value of the :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` Kconfig option.
-* *<FW_VERSION>* corresponds to the value of the :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` Kconfig option.
+See :ref:`app_build_output_files` for more information about the image files.
 
 .. note::
    |net_core_hex_note|
@@ -1485,4 +1480,4 @@ Legal notices for the nRF5340 Audio DK
 
 .. |net_core_hex_note| replace:: The network core for both gateway and headsets is programmed with the precompiled Bluetooth Low Energy Controller binary file :file:`ble5-ctr-rpmsg_<XYZ>.hex`, where *<XYZ>* corresponds to the controller version, for example :file:`ble5-ctr-rpmsg_3216.hex`.
    This file includes the LE Audio Controller Subsystem for nRF53 and is provided in the :file:`applications/nrf5340_audio/bin` directory.
-   If :ref:`DFU <nrf53_audio_app_configuration_configure_fota>` is enabled, the subsystem's binary file will include variables from the naming patterns for FOTA build files (:file:`dev_<Role>_build_<Application version>_ble5-ctr_CPUNET.hex`).
+   If :ref:`DFU is enabled <nrf53_audio_app_configuration_configure_fota>`, the subsystem's binary file will be generated in the :file:`build/zephyr/` directory and will be called :file:`net_core_app_signed.hex`.

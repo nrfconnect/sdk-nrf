@@ -36,7 +36,7 @@ def __populate_UICR(dev):
         return True
 
 
-def _program_cores(dev: DeviceConf) -> int:
+def _program_cores(dev: DeviceConf, mcuboot_type) -> int:
     if dev.core_net_programmed == SelectFlags.TBD:
         print(f"Programming net core on: {dev}")
         cmd = f"nrfjprog --program {dev.hex_path_net}  -f NRF53  -q --snr {dev.nrf5340_audio_dk_snr} --sectorerase --coprocessor CP_NETWORK"
@@ -65,8 +65,12 @@ def _program_cores(dev: DeviceConf) -> int:
             return 1
 
     if dev.core_net_programmed != SelectFlags.NOT or dev.core_app_programmed != SelectFlags.NOT:
-        print(f"Resetting {dev}")
-        cmd = f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
+        if mcuboot_type =='external':
+            print(f"Hard resetting {dev}")
+            cmd = f"nrfjprog -p --snr {dev.nrf5340_audio_dk_snr}"
+        else:
+            print(f"Resetting {dev}")
+            cmd = f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
         ret_val = system(cmd)
         if ret_val != 0:
             return ret_val
@@ -88,7 +92,7 @@ def _recover(dev: DeviceConf):
         dev.core_app_programmed = SelectFlags.FAIL
 
 
-def __program_thread(dev: DeviceConf):
+def __program_thread(dev: DeviceConf, mcuboot_type):
     if dev.only_reboot == SelectFlags.TBD:
         print(f"Resetting {dev}")
         cmd = f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
@@ -96,13 +100,13 @@ def __program_thread(dev: DeviceConf):
         dev.only_reboot = SelectFlags.FAIL if ret_val else SelectFlags.DONE
         return
 
-    return_code = _program_cores(dev)
+    return_code = _program_cores(dev, mcuboot_type)
     if return_code != 0 and dev.recover_on_fail:
         _recover(dev)
-        _program_cores(dev)
+        _program_cores(dev, mcuboot_type)
 
 
-def program_threads_run(devices_list: List[DeviceConf], sequential: bool = False):
+def program_threads_run(devices_list: List[DeviceConf], mcuboot_type, sequential: bool = False):
     """Program devices in parallel"""
     threads = []
     # First program net cores if applicable
@@ -112,7 +116,7 @@ def program_threads_run(devices_list: List[DeviceConf], sequential: bool = False
             dev.core_app_programmed = SelectFlags.NOT
             dev.core_net_programmed = SelectFlags.NOT
             continue
-        thread = Thread(target=__program_thread, args=(dev,))
+        thread = Thread(target=__program_thread, args=(dev, mcuboot_type))
         threads.append(thread)
         thread.start()
         if sequential:

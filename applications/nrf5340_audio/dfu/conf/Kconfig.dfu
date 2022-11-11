@@ -19,15 +19,6 @@ config B0N_MINIMAL
 	help
 	  Let CMakelist choose corresponding overlay file
 
-if AUDIO_DFU = 0
-
-# Avoid multi-build system build network core firmware
-config NCS_INCLUDE_RPMSG_CHILD_IMAGE
-	bool
-	default n
-
-endif
-
 if AUDIO_DFU = 1 || AUDIO_DFU = 2
 
 config AUDIO_DFU_ENABLE
@@ -41,9 +32,11 @@ config BOOTLOADER_MCUBOOT
 	bool
 	default y
 
-config NCS_INCLUDE_RPMSG_CHILD_IMAGE
-	bool
+config EMPTY_NET_CORE_CHILD_IMAGE
+	bool "Dummy Net core application"
 	default y
+	help
+		Dummy Net core child image for generating bootloader
 
 config SYSTEM_WORKQUEUE_STACK_SIZE
 	int
@@ -59,6 +52,10 @@ config MCUMGR
 	default y
 
 config MCUMGR_CMD_OS_MGMT
+	bool
+	default y
+
+config OS_MGMT_TASKSTAT
 	bool
 	default y
 

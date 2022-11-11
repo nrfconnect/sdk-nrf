@@ -180,8 +180,7 @@ static bool scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf
 	char name[DEVICE_NAME_PEER_LEN];
 
 	bt_data_parse(ad, adv_data_parse, (void *)name);
-
-	if (strcmp(name, CONFIG_BT_DEVICE_NAME) == 0) {
+	if (strncmp(name, CONFIG_BT_DEVICE_NAME, DEVICE_NAME_PEER_LEN) == 0) {
 		LOG_INF("Broadcast source %s found", name);
 		return true;
 	}

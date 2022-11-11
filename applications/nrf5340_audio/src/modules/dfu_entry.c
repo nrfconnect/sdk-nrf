@@ -85,7 +85,7 @@ static void dfu_connected_cb(struct bt_conn *conn, uint8_t err)
 
 static void dfu_disconnected_cb(struct bt_conn *conn, uint8_t reason)
 {
-	LOG_INF("SMP disconnected %d\n", reason);
+	LOG_INF("SMP disconnected 0x%02x\n", reason);
 }
 
 static struct bt_conn_cb dfu_conn_callbacks = {
@@ -102,7 +102,6 @@ static void dfu_set_bt_name(void)
 #if (CONFIG_AUDIO_DEV == GATEWAY)
 	strlcat(name, GW_TAG, CONFIG_BT_DEVICE_NAME_MAX);
 #else
-	int ret;
 	enum audio_channel channel;
 
 	channel_assignment_get(&channel);
