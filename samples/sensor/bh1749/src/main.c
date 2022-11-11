@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019 Nordic Semiconductor ASA.
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 
@@ -87,7 +87,11 @@ static void process(const struct device *dev)
 		if (IS_ENABLED(CONFIG_BH1749_TRIGGER)) {
 			/* Waiting for a trigger event */
 			k_sem_take(&sem, K_FOREVER);
+		} else {
+			/* Waiting some time for first fetch if trigger disabled*/
+			k_sleep(K_MSEC(1000));
 		}
+
 		ret = sensor_sample_fetch_chan(dev, SENSOR_CHAN_ALL);
 		/* The sensor does only support fetching SENSOR_CHAN_ALL */
 		if (ret) {
