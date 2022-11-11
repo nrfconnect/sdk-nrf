@@ -42,7 +42,7 @@ void smp_service_adv_init(void)
 {
 	int err;
 
-	err = bt_le_ext_adv_create(BT_LE_EXT_ADV_CONN_NAME, &adv_callbacks, &adv);
+	err = bt_le_ext_adv_create(BT_LE_ADV_CONN_NAME, &adv_callbacks, &adv);
 	if (err) {
 		printk("Creating SMP service adv instance failed (err %d)\n", err);
 	}
