@@ -133,6 +133,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 
       DEPENDS
       ${SIGN_ARG_DEPENDS}
+      USES_TERMINAL
         )
 
     add_custom_command(
@@ -159,6 +160,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       ${update_bin}
       DEPENDS
       ${SIGN_ARG_DEPENDS}
+      USES_TERMINAL
         )
 
     add_custom_command(
@@ -182,6 +184,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       DEPENDS
       ${SIGN_ARG_DEPENDS}
       ${update_bin}
+      USES_TERMINAL
       )
   endfunction()
 
