@@ -16,7 +16,16 @@ extern "C" {
 #endif
 
 #define TYPE_COUNTERS 1 /* Type referring to counter collection. */
-#define BL_MONOTONIC_COUNTERS_DESC_NSIB 0x1      /* Counter used by NSIB to check the firmware version */
+
+/* Counter used by NSIB to check the firmware version */
+#define BL_MONOTONIC_COUNTERS_DESC_NSIB 0x1
+
+/* MCUBOOT needs one counter for each image it loads,
+ * we define three counters so we allow at most three images */
+#define BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0 0x2
+#define BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID1 0x3
+#define BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID2 0x4
+
 
 /**
  * @brief Get the number of monotonic counter slots.

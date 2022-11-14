@@ -1,16 +1,21 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2018 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bl_storage.h>
 #include <bl_monotonic_counters.h>
 #include <string.h>
 #include <errno.h>
 #include <nrf.h>
 #include <assert.h>
 #include <nrfx_nvmc.h>
+
+#ifdef CONFIG_SECURE_BOOT_STORAGE
+#include <bl_storage.h>
+#else
+#include <pm_config.h>
+#endif
 
 /** This library implements monotonic counters where each time the counter
  *  is increased, a new slot is written.
@@ -35,12 +40,16 @@ struct counter_collection {
 	struct monotonic_counter counters[1];
 };
 
-
 /** Get the counter_collection data structure in the provision data. */
 static const struct counter_collection *get_counter_collection(void)
 {
+#if defined(CONFIG_SECURE_BOOT_STORAGE)
 	const struct counter_collection *collection = (struct counter_collection *)
 		&BL_STORAGE->key_data[num_public_keys_read()];
+#else
+	const struct counter_collection *collection = (struct counter_collection *)PM_PROVISION_ADDRESS;
+#endif
+
 	return nrfx_nvmc_otp_halfword_read((uint32_t)&collection->type) == TYPE_COUNTERS
 		? collection : NULL;
 }
