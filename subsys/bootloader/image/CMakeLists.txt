@@ -45,9 +45,10 @@ else()
   assert(CONFIG_FW_INFO "CONFIG_FW_INFO must be set")
 endif()
 
-if (DEFINED CONFIG_SB_MONOTONIC_COUNTER)
-  set(monotonic_counter_arg
-    --num-counter-slots-version ${CONFIG_SB_NUM_VER_COUNTER_SLOTS})
-endif()
-
+if(NOT CONFIG_BOOTLOADER_MCUBOOT)
+# When MCUBOOT is enabled we need to execute the provision_hex.cmake file
+# after the MCUBOOT child image is built since depending on it's
+# configuration we might need to provision data for MCUBOOT as well
+# (montonic counters).
 include(../cmake/provision_hex.cmake)
+endif()
