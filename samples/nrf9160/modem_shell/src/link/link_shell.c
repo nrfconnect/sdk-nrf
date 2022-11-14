@@ -1220,6 +1220,7 @@ static int link_shell_ncellmeas(const struct shell *shell, size_t argc, char **a
 	enum lte_lc_neighbor_search_type ncellmeas_search_type =
 		LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
 	int periodic_time = 0;
+	bool periodic_time_given = false;
 	int gci_count;
 
 	int long_index = 0;
@@ -1252,26 +1253,29 @@ static int link_shell_ncellmeas(const struct shell *shell, size_t argc, char **a
 			}
 			ncellmeas_params.gci_count = gci_count;
 			break;
-		case LINK_SHELL_OPT_NCELLMEAS_CONTINUOUS_INTERVAL_TIME:
-			periodic_time = atoi(optarg);
-			if (periodic_time <= 0) {
+		case LINK_SHELL_OPT_NCELLMEAS_CONTINUOUS_INTERVAL_TIME: {
+			char *end_ptr;
+
+			periodic_time = strtol(optarg, &end_ptr, 10);
+			if (end_ptr == optarg || periodic_time < 0) {
 				mosh_error("Not a valid number for --interval (seconds).");
 				return -EINVAL;
 			}
+			periodic_time_given = true;
 			break;
+		}
 		default:
 			break;
 		}
 	}
 
 	if (common_option == LINK_COMMON_STOP) {
-		link_ncellmeas_start(
-			false, LINK_NCELLMEAS_MODE_NONE, ncellmeas_params, 0);
-
+		link_ncellmeas_start(false, LINK_NCELLMEAS_MODE_NONE, ncellmeas_params, 0, false);
 	} else if (ncellmeasmode != LINK_NCELLMEAS_MODE_NONE) {
 		mosh_print("Neighbor cell measurements and reporting starting");
 		ncellmeas_params.search_type = ncellmeas_search_type;
-		link_ncellmeas_start(true, ncellmeasmode, ncellmeas_params, periodic_time);
+		link_ncellmeas_start(
+			true, ncellmeasmode, ncellmeas_params, periodic_time, periodic_time_given);
 	} else {
 		link_shell_print_usage(LINK_CMD_NCELLMEAS);
 	}
