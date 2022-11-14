@@ -15,7 +15,7 @@
 
 void test_syscall(void)
 {
-	__wrap_syscall_Expect();
+	__cmock_syscall_Expect();
 
 	call_syscall();
 }
@@ -29,7 +29,7 @@ void test_static_inline_fn(void)
 {
 	const int EXPECT_STATIC_INLINE = 1;
 
-	__wrap_static_inline_fn_ExpectAndReturn(EXPECT_STATIC_INLINE);
+	__cmock_static_inline_fn_ExpectAndReturn(EXPECT_STATIC_INLINE);
 
 	TEST_ASSERT_EQUAL(EXPECT_STATIC_INLINE, call_static_inline_fn());
 }
@@ -38,7 +38,7 @@ void test_inline_static_fn(void)
 {
 	const int EXPECT_INLINE_STATIC = 2;
 
-	__wrap_inline_static_fn_ExpectAndReturn(EXPECT_INLINE_STATIC);
+	__cmock_inline_static_fn_ExpectAndReturn(EXPECT_INLINE_STATIC);
 
 	TEST_ASSERT_EQUAL(EXPECT_INLINE_STATIC, call_inline_static_fn());
 }
@@ -47,7 +47,7 @@ void test_always_inline_fn(void)
 {
 	const int EXPECT_ALWAYS_INLINE = 3;
 
-	__wrap_always_inline_fn_ExpectAndReturn(EXPECT_ALWAYS_INLINE);
+	__cmock_always_inline_fn_ExpectAndReturn(EXPECT_ALWAYS_INLINE);
 
 	TEST_ASSERT_EQUAL(EXPECT_ALWAYS_INLINE, call_always_inline_fn());
 }
@@ -56,7 +56,7 @@ void test_after_macro(void)
 {
 	const int EXPECT_AFTER_MACRO = 4;
 
-	__wrap_after_macro_ExpectAndReturn(EXPECT_AFTER_MACRO);
+	__cmock_after_macro_ExpectAndReturn(EXPECT_AFTER_MACRO);
 
 	TEST_ASSERT_EQUAL(EXPECT_AFTER_MACRO, call_after_macro());
 }
@@ -65,7 +65,7 @@ void test_extra_whitespace(void)
 {
 	const int EXPECT_EXTRA_WHITESPACE = 5;
 
-	__wrap_extra_whitespace_ExpectAndReturn(EXPECT_EXTRA_WHITESPACE);
+	__cmock_extra_whitespace_ExpectAndReturn(EXPECT_EXTRA_WHITESPACE);
 
 	TEST_ASSERT_EQUAL(EXPECT_EXTRA_WHITESPACE, call_extra_whitespace());
 }
@@ -74,7 +74,7 @@ void test_multiline_def(void)
 {
 	const int EXPECT_MULTILINE_DEF = 6;
 
-	__wrap_multiline_def_ExpectAndReturn(1, 2, EXPECT_MULTILINE_DEF);
+	__cmock_multiline_def_ExpectAndReturn(1, 2, EXPECT_MULTILINE_DEF);
 
 	TEST_ASSERT_EQUAL(EXPECT_MULTILINE_DEF, call_multiline_def(1, 2));
 }

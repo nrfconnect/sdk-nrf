@@ -119,216 +119,216 @@ void test_lwm2m_cloud_codec_init(void)
 	};
 
 	/* Create object instances. */
-	__wrap_lwm2m_engine_create_obj_inst_ExpectAndReturn(
+	__cmock_lwm2m_engine_create_obj_inst_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0), 0);
 
-	__wrap_lwm2m_engine_create_obj_inst_ExpectAndReturn(
+	__cmock_lwm2m_engine_create_obj_inst_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0), 0);
 
-	__wrap_lwm2m_engine_create_obj_inst_ExpectAndReturn(
+	__cmock_lwm2m_engine_create_obj_inst_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0), 0);
 
-	__wrap_lwm2m_engine_create_obj_inst_ExpectAndReturn(
+	__cmock_lwm2m_engine_create_obj_inst_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID), 0);
 
-	__wrap_lwm2m_engine_create_obj_inst_ExpectAndReturn(
+	__cmock_lwm2m_engine_create_obj_inst_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON2_OBJ_INST_ID), 0);
 
 	/* Crate resource instances. */
-	__wrap_lwm2m_engine_create_res_inst_ExpectAndReturn(
+	__cmock_lwm2m_engine_create_res_inst_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, AVAIL_NETWORK_BEARER_ID, 0),
 		0);
 
-	__wrap_lwm2m_engine_create_res_inst_ExpectAndReturn(
+	__cmock_lwm2m_engine_create_res_inst_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, AVAIL_NETWORK_BEARER_ID, 1),
 		0);
 
-	__wrap_lwm2m_engine_create_res_inst_ExpectAndReturn(
+	__cmock_lwm2m_engine_create_res_inst_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, IP_ADDRESSES, 0), 0);
 
-	__wrap_lwm2m_engine_create_res_inst_ExpectAndReturn(
+	__cmock_lwm2m_engine_create_res_inst_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, APN, 0), 0);
 
-	__wrap_lwm2m_engine_create_res_inst_ExpectAndReturn(
+	__cmock_lwm2m_engine_create_res_inst_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_VOLTAGE_RID, 0), 0);
 
 	/* Set resource buffers. */
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, CURRENT_TIME_RID),
 		&current_time, sizeof(current_time), sizeof(current_time),
 		LWM2M_RES_DATA_FLAG_RW, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_VOLTAGE_RID),
 		&battery_voltage, sizeof(battery_voltage), sizeof(battery_voltage),
 		LWM2M_RES_DATA_FLAG_RW, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, TIMESTAMP_RID),
 		&pressure_ts, sizeof(pressure_ts), sizeof(pressure_ts),
 		LWM2M_RES_DATA_FLAG_RW, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, TIMESTAMP_RID),
 		&temperature_ts, sizeof(temperature_ts), sizeof(temperature_ts),
 		LWM2M_RES_DATA_FLAG_RW, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, TIMESTAMP_RID),
 		&humidity_ts, sizeof(humidity_ts), sizeof(humidity_ts),
 		LWM2M_RES_DATA_FLAG_RW, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, SENSOR_UNITS_RID), BME680_TEMP_UNIT,
 		sizeof(BME680_TEMP_UNIT), sizeof(BME680_TEMP_UNIT), LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, SENSOR_UNITS_RID), BME680_HUMID_UNIT,
 		sizeof(BME680_HUMID_UNIT), sizeof(BME680_HUMID_UNIT), LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, SENSOR_UNITS_RID), BME680_PRESSURE_UNIT,
 		sizeof(BME680_PRESSURE_UNIT), sizeof(BME680_PRESSURE_UNIT), LWM2M_RES_DATA_FLAG_RO,
 		0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, APPLICATION_TYPE_RID),
 		BUTTON1_APP_NAME, sizeof(BUTTON1_APP_NAME), sizeof(BUTTON1_APP_NAME),
 		LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, TIMESTAMP_RID),
 		&button_ts, sizeof(button_ts), sizeof(button_ts),
 		LWM2M_RES_DATA_FLAG_RW, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON2_OBJ_INST_ID, APPLICATION_TYPE_RID),
 		BUTTON2_APP_NAME, sizeof(BUTTON2_APP_NAME), sizeof(BUTTON2_APP_NAME),
 		LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON2_OBJ_INST_ID, TIMESTAMP_RID),
 		&button_ts, sizeof(button_ts), sizeof(button_ts),
 		LWM2M_RES_DATA_FLAG_RW, 0);
 
 	/* Set floats. */
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, MIN_RANGE_VALUE_RID),
 		&temp_min_range_val, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, MAX_RANGE_VALUE_RID),
 		&temp_max_range_val, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, MIN_RANGE_VALUE_RID),
 		&humid_min_range_val, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, MAX_RANGE_VALUE_RID),
 		&humid_max_range_val, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, MIN_RANGE_VALUE_RID),
 		&pressure_min_range_val, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, MAX_RANGE_VALUE_RID),
 		&pressure_max_range_val, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_ACT_THRESHOLD_RID),
 		&cfg.accelerometer_activity_threshold, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_INACT_THRESHOLD_RID),
 		&cfg.accelerometer_inactivity_threshold, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_INACT_TIMEOUT_RID),
 		&cfg.accelerometer_inactivity_timeout, 0);
 
 	/* Set integers and booleans. */
-	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_s32_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, LOCATION_TIMEOUT_RID),
 		cfg.location_timeout, 0);
 
-	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_s32_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACTIVE_WAIT_TIMEOUT_RID),
 		cfg.active_wait_timeout, 0);
 
-	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_s32_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, MOVEMENT_RESOLUTION_RID),
 		cfg.movement_resolution, 0);
 
-	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_s32_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, MOVEMENT_TIMEOUT_RID),
 		cfg.movement_timeout, 0);
 
-	__wrap_lwm2m_engine_set_bool_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_bool_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, PASSIVE_MODE_RID),
 		!cfg.active_mode, 0);
 
-	__wrap_lwm2m_engine_set_bool_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_bool_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, GNSS_ENABLE_RID),
 		!cfg.no_data.gnss, 0);
 
-	__wrap_lwm2m_engine_set_bool_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_bool_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, NEIGHBOR_CELL_ENABLE_RID),
 		!cfg.no_data.neighbor_cell, 0);
 
 	/* Register callbacks from changes in device configurations. */
-	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
+	__cmock_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, PASSIVE_MODE_RID),
 		NULL, 0);
-	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
+	__cmock_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
-	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
+	__cmock_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, LOCATION_TIMEOUT_RID),
 		NULL, 0);
-	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
+	__cmock_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
-	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
+	__cmock_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACTIVE_WAIT_TIMEOUT_RID),
 		NULL, 0);
-	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
+	__cmock_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
-	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
+	__cmock_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, MOVEMENT_RESOLUTION_RID),
 		NULL, 0);
-	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
+	__cmock_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
-	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
+	__cmock_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, MOVEMENT_TIMEOUT_RID),
 		NULL, 0);
-	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
+	__cmock_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
-	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
+	__cmock_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_ACT_THRESHOLD_RID),
 		NULL, 0);
-	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
+	__cmock_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
-	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
+	__cmock_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_INACT_THRESHOLD_RID),
 		NULL, 0);
-	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
+	__cmock_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
-	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
+	__cmock_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_INACT_TIMEOUT_RID),
 		NULL, 0);
-	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
+	__cmock_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
-	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
+	__cmock_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, GNSS_ENABLE_RID),
 		NULL, 0);
-	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
+	__cmock_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
-	__wrap_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
+	__cmock_lwm2m_engine_register_post_write_callback_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, NEIGHBOR_CELL_ENABLE_RID),
 		NULL, 0);
-	__wrap_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
+	__cmock_lwm2m_engine_register_post_write_callback_IgnoreArg_cb();
 
-	__wrap_lwm2m_engine_register_post_write_callback_AddCallback(&post_write_callback_stub);
+	__cmock_lwm2m_engine_register_post_write_callback_AddCallback(&post_write_callback_stub);
 
 	TEST_ASSERT_NOT_NULL(post_write_callback_stub);
 	TEST_ASSERT_EQUAL(0, cloud_codec_init(&cfg, cloud_codec_event_handler));
@@ -363,26 +363,26 @@ void test_lwm2m_cloud_codec_encode_neighbor_cells(void)
 	cells->neighbor_cells = ncell.neighbor_cells;
 	cells->ncells_count = ncell.cell_data.ncells_count;
 
-	__wrap_lwm2m_update_signal_meas_objects_ExpectAndReturn(
+	__cmock_lwm2m_update_signal_meas_objects_ExpectAndReturn(
 		(const struct lte_lc_cells_info *)cells, 0);
 
-	__wrap_lwm2m_engine_set_s8_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_s8_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, RADIO_SIGNAL_STRENGTH),
 		ncell.cell_data.current_cell.rsrp, 0);
 
-	__wrap_lwm2m_engine_set_u32_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_u32_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CELLID),
 		ncell.cell_data.current_cell.id, 0);
 
-	__wrap_lwm2m_engine_set_u16_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_u16_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMNC),
 		ncell.cell_data.current_cell.mnc, 0);
 
-	__wrap_lwm2m_engine_set_u16_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_u16_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMCC),
 		ncell.cell_data.current_cell.mcc, 0);
 
-	__wrap_lwm2m_engine_set_u16_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_u16_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, LAC),
 		ncell.cell_data.current_cell.tac, 0);
 
@@ -405,20 +405,20 @@ void test_lwm2m_cloud_codec_encode_agps_request(void)
 		.queued = true,
 	};
 
-	__wrap_location_assistance_agps_set_mask_ExpectAndReturn(&agps.request, 0);
+	__cmock_location_assistance_agps_set_mask_ExpectAndReturn(&agps.request, 0);
 
-	__wrap_location_assist_agps_set_elevation_mask_Expect(-1);
+	__cmock_location_assist_agps_set_elevation_mask_Expect(-1);
 
-	__wrap_lwm2m_engine_set_u32_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_u32_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CELLID), agps.cell, 0);
 
-	__wrap_lwm2m_engine_set_u16_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_u16_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMNC), agps.mnc, 0);
 
-	__wrap_lwm2m_engine_set_u16_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_u16_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMCC), agps.mcc, 0);
 
-	__wrap_lwm2m_engine_set_u16_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_u16_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, LAC), agps.area, 0);
 
 	TEST_ASSERT_EQUAL(0, cloud_codec_encode_agps_request(&codec, &agps));
@@ -437,10 +437,10 @@ void test_lwm2m_cloud_codec_encode_pgps_request(void)
 		.queued = true
 	};
 
-	__wrap_location_assist_pgps_set_prediction_count_ExpectAndReturn(pgps.count, 0);
-	__wrap_location_assist_pgps_set_prediction_interval_ExpectAndReturn(pgps.interval, 0);
-	__wrap_location_assist_pgps_set_start_time_ExpectAndReturn(pgps.time, 0);
-	__wrap_location_assist_pgps_set_start_gps_day_Expect(pgps.day);
+	__cmock_location_assist_pgps_set_prediction_count_ExpectAndReturn(pgps.count, 0);
+	__cmock_location_assist_pgps_set_prediction_interval_ExpectAndReturn(pgps.interval, 0);
+	__cmock_location_assist_pgps_set_start_time_ExpectAndReturn(pgps.time, 0);
+	__cmock_location_assist_pgps_set_start_gps_day_Expect(pgps.day);
 
 	TEST_ASSERT_EQUAL(0, cloud_codec_encode_pgps_request(&codec, &pgps));
 	TEST_ASSERT_EQUAL(codec.valid_object_paths, 0);
@@ -507,122 +507,122 @@ void test_lwm2m_cloud_codec_encode_data(void)
 	acc = (double)gnss.pvt.acc;
 	spd = (double)gnss.pvt.spd;
 
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAndReturn(&gnss.gnss_ts, 0);
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAndReturn(&sensor.env_ts, 0);
-	__wrap_date_time_now_ExpectAndReturn(&current_time, 0);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAndReturn(&gnss.gnss_ts, 0);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAndReturn(&sensor.env_ts, 0);
+	__cmock_date_time_now_ExpectAndReturn(&current_time, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, AVAIL_NETWORK_BEARER_ID, 0),
 		&bearers[0], sizeof(bearers[0]), sizeof(bearers[0]), LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, AVAIL_NETWORK_BEARER_ID, 1),
 		&bearers[1], sizeof(bearers[1]), sizeof(bearers[1]), LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, IP_ADDRESSES, 0),
 		modem_dynamic.ip, sizeof(modem_dynamic.ip), sizeof(modem_dynamic.ip),
 		LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, APN, 0), modem_dynamic.apn,
 		sizeof(modem_dynamic.apn), sizeof(modem_dynamic.apn), LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, MODEL_NUMBER_RID), CONFIG_BOARD,
 		sizeof(CONFIG_BOARD), sizeof(CONFIG_BOARD), LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, HARDWARE_VERSION_RID), CONFIG_SOC,
 		sizeof(CONFIG_SOC), sizeof(CONFIG_SOC), LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, MANUFACTURER_RID),
 		CONFIG_CLOUD_CODEC_MANUFACTURER, sizeof(CONFIG_CLOUD_CODEC_MANUFACTURER),
 		sizeof(CONFIG_CLOUD_CODEC_MANUFACTURER), LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, FIRMWARE_VERSION_RID), modem_static.appv,
 		sizeof(modem_static.appv), sizeof(modem_static.appv), LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, SOFTWARE_VERSION_RID), modem_static.fw,
 		sizeof(modem_static.fw), sizeof(modem_static.fw), LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_res_buf_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_res_buf_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, DEVICE_SERIAL_NUMBER_ID), modem_static.imei,
 		sizeof(modem_static.imei), sizeof(modem_static.imei), LWM2M_RES_DATA_FLAG_RO, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LATITUDE_RID), &gnss.pvt.lat, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LONGITUDE_RID), &gnss.pvt.longi, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, ALTITUDE_RID), &alt, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, RADIUS_RID), &acc, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, SPEED_RID), &spd, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, SENSOR_VALUE_RID),
 		&sensor.temperature, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, SENSOR_VALUE_RID),
 		&sensor.humidity, 0);
 
-	__wrap_lwm2m_engine_set_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_float_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, SENSOR_VALUE_RID),
 		&sensor.pressure, 0);
 
-	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0,
+	__cmock_lwm2m_engine_set_s32_ExpectAndReturn(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0,
 							       LOCATION_TIMESTAMP_RID),
 						    (int32_t)(gnss.gnss_ts / MSEC_PER_SEC), 0);
 
-	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
+	__cmock_lwm2m_engine_set_s32_ExpectAndReturn(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
 							       CURRENT_TIME_RID),
 						    (int32_t)(current_time / MSEC_PER_SEC), 0);
 
-	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_s32_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_VOLTAGE_RID),
 		battery.bat, 0);
 
-	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_s32_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, TIMESTAMP_RID),
 		(int32_t)(sensor.env_ts / MSEC_PER_SEC), 0);
 
-	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_s32_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, TIMESTAMP_RID),
 		(int32_t)(sensor.env_ts / MSEC_PER_SEC), 0);
 
-	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_s32_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, TIMESTAMP_RID),
 		(int32_t)(sensor.env_ts / MSEC_PER_SEC), 0);
 
-	__wrap_lwm2m_engine_set_u32_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_u32_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CELLID),
 		modem_dynamic.cell, 0);
 
-	__wrap_lwm2m_engine_set_u8_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_u8_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, NETWORK_BEARER_ID),
 		NB_IOT_BEARER, 0);
 
-	__wrap_lwm2m_engine_set_s8_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_s8_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, RADIO_SIGNAL_STRENGTH),
 		modem_dynamic.rsrp, 0);
 
-	__wrap_lwm2m_engine_set_u16_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_u16_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMNC), modem_dynamic.mnc, 0);
 
-	__wrap_lwm2m_engine_set_u16_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_u16_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMCC), modem_dynamic.mcc, 0);
 
-	__wrap_lwm2m_engine_set_u16_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_u16_ExpectAndReturn(
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, LAC), modem_dynamic.area, 0);
 
 	const char *const path_list[] = {
@@ -666,15 +666,15 @@ void test_lwm2m_codec_encode_ui_data(void)
 		.queued = true
 	};
 
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAndReturn(&user_interface.btn_ts, 0);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAndReturn(&user_interface.btn_ts, 0);
 
-	__wrap_lwm2m_engine_set_bool_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_bool_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, 0, DIGITAL_INPUT_STATE_RID), true, 0);
 
-	__wrap_lwm2m_engine_set_bool_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_bool_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, 0, DIGITAL_INPUT_STATE_RID), false, 0);
 
-	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_s32_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, 0, TIMESTAMP_RID),
 		(int32_t)(user_interface.btn_ts / MSEC_PER_SEC), 0);
 
@@ -697,16 +697,16 @@ void test_lwm2m_codec_encode_ui_data(void)
 	user_interface.btn_ts = 1000;
 	user_interface.queued = true;
 
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAndReturn(&user_interface.btn_ts, 0);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAndReturn(&user_interface.btn_ts, 0);
 
 	/* Button 2 corresponds to object instance 1. */
-	__wrap_lwm2m_engine_set_bool_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_bool_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, 1, DIGITAL_INPUT_STATE_RID), true, 0);
 
-	__wrap_lwm2m_engine_set_bool_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_bool_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, 1, DIGITAL_INPUT_STATE_RID), false, 0);
 
-	__wrap_lwm2m_engine_set_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_set_s32_ExpectAndReturn(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, 1, TIMESTAMP_RID),
 		(int32_t)(user_interface.btn_ts / MSEC_PER_SEC), 0);
 
@@ -741,55 +741,55 @@ void test_lwm2m_codec_config_update(void)
 	 * parameter values (resources). The configuration values will be included in the
 	 * CLOUD_CODEC_EVT_CONFIG_UPDATE event received in the cloud_codec_event_handler.
 	 */
-	__wrap_lwm2m_engine_get_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_get_s32_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, LOCATION_TIMEOUT_RID), 0, 0);
-	__wrap_lwm2m_engine_get_s32_IgnoreArg_value();
-	__wrap_lwm2m_engine_get_s32_ReturnThruPtr_value(&cfg.location_timeout);
+	__cmock_lwm2m_engine_get_s32_IgnoreArg_value();
+	__cmock_lwm2m_engine_get_s32_ReturnThruPtr_value(&cfg.location_timeout);
 
-	__wrap_lwm2m_engine_get_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_get_s32_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACTIVE_WAIT_TIMEOUT_RID), 0, 0);
-	__wrap_lwm2m_engine_get_s32_IgnoreArg_value();
-	__wrap_lwm2m_engine_get_s32_ReturnThruPtr_value(&cfg.active_wait_timeout);
+	__cmock_lwm2m_engine_get_s32_IgnoreArg_value();
+	__cmock_lwm2m_engine_get_s32_ReturnThruPtr_value(&cfg.active_wait_timeout);
 
-	__wrap_lwm2m_engine_get_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_get_s32_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, MOVEMENT_RESOLUTION_RID), 0, 0);
-	__wrap_lwm2m_engine_get_s32_IgnoreArg_value();
-	__wrap_lwm2m_engine_get_s32_ReturnThruPtr_value(&cfg.movement_resolution);
+	__cmock_lwm2m_engine_get_s32_IgnoreArg_value();
+	__cmock_lwm2m_engine_get_s32_ReturnThruPtr_value(&cfg.movement_resolution);
 
-	__wrap_lwm2m_engine_get_s32_ExpectAndReturn(
+	__cmock_lwm2m_engine_get_s32_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, MOVEMENT_TIMEOUT_RID), 0, 0);
-	__wrap_lwm2m_engine_get_s32_IgnoreArg_value();
-	__wrap_lwm2m_engine_get_s32_ReturnThruPtr_value(&cfg.movement_timeout);
+	__cmock_lwm2m_engine_get_s32_IgnoreArg_value();
+	__cmock_lwm2m_engine_get_s32_ReturnThruPtr_value(&cfg.movement_timeout);
 
-	__wrap_lwm2m_engine_get_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_get_float_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_ACT_THRESHOLD_RID), 0, 0);
-	__wrap_lwm2m_engine_get_float_IgnoreArg_buf();
-	__wrap_lwm2m_engine_get_float_ReturnThruPtr_buf(&cfg.accelerometer_activity_threshold);
+	__cmock_lwm2m_engine_get_float_IgnoreArg_buf();
+	__cmock_lwm2m_engine_get_float_ReturnThruPtr_buf(&cfg.accelerometer_activity_threshold);
 
-	__wrap_lwm2m_engine_get_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_get_float_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_INACT_THRESHOLD_RID), 0, 0);
-	__wrap_lwm2m_engine_get_float_IgnoreArg_buf();
-	__wrap_lwm2m_engine_get_float_ReturnThruPtr_buf(&cfg.accelerometer_inactivity_threshold);
+	__cmock_lwm2m_engine_get_float_IgnoreArg_buf();
+	__cmock_lwm2m_engine_get_float_ReturnThruPtr_buf(&cfg.accelerometer_inactivity_threshold);
 
-	__wrap_lwm2m_engine_get_float_ExpectAndReturn(
+	__cmock_lwm2m_engine_get_float_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, ACCELEROMETER_INACT_TIMEOUT_RID), 0, 0);
-	__wrap_lwm2m_engine_get_float_IgnoreArg_buf();
-	__wrap_lwm2m_engine_get_float_ReturnThruPtr_buf(&cfg.accelerometer_inactivity_timeout);
+	__cmock_lwm2m_engine_get_float_IgnoreArg_buf();
+	__cmock_lwm2m_engine_get_float_ReturnThruPtr_buf(&cfg.accelerometer_inactivity_timeout);
 
-	__wrap_lwm2m_engine_get_bool_ExpectAndReturn(
+	__cmock_lwm2m_engine_get_bool_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, PASSIVE_MODE_RID), 0, 0);
-	__wrap_lwm2m_engine_get_bool_IgnoreArg_value();
-	__wrap_lwm2m_engine_get_bool_ReturnThruPtr_value(&passive_mode_temp);
+	__cmock_lwm2m_engine_get_bool_IgnoreArg_value();
+	__cmock_lwm2m_engine_get_bool_ReturnThruPtr_value(&passive_mode_temp);
 
-	__wrap_lwm2m_engine_get_bool_ExpectAndReturn(
+	__cmock_lwm2m_engine_get_bool_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, GNSS_ENABLE_RID), 0, 0);
-	__wrap_lwm2m_engine_get_bool_IgnoreArg_value();
-	__wrap_lwm2m_engine_get_bool_ReturnThruPtr_value(&gnss_enable_temp);
+	__cmock_lwm2m_engine_get_bool_IgnoreArg_value();
+	__cmock_lwm2m_engine_get_bool_ReturnThruPtr_value(&gnss_enable_temp);
 
-	__wrap_lwm2m_engine_get_bool_ExpectAndReturn(
+	__cmock_lwm2m_engine_get_bool_ExpectAndReturn(
 		LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, NEIGHBOR_CELL_ENABLE_RID), 0, 0);
-	__wrap_lwm2m_engine_get_bool_IgnoreArg_value();
-	__wrap_lwm2m_engine_get_bool_ReturnThruPtr_value(&ncell_enable_temp);
+	__cmock_lwm2m_engine_get_bool_IgnoreArg_value();
+	__cmock_lwm2m_engine_get_bool_ReturnThruPtr_value(&ncell_enable_temp);
 
 	/* Trigger a configuration update. */
 	post_write_cb(0, 0, 0, NULL, 0, false, 0);

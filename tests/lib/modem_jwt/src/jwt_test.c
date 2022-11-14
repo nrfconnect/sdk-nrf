@@ -66,7 +66,7 @@ void test_modem_jwt_generate(void)
 
 	jwt.jwt_buf = NULL;
 
-	__wrap_nrf_modem_at_cmd_Stub(cmd_cb);
+	__cmock_nrf_modem_at_cmd_Stub(cmd_cb);
 
 	/* First call should fail, pass through the error code */
 	rc = modem_jwt_generate(&jwt);

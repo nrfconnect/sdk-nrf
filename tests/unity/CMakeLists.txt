@@ -86,7 +86,7 @@ function(cmock_linker_trick func_name_path)
     set(linker_str "-Wl")
   endif()
   foreach(src ${contents})
-    set(linker_str "${linker_str},--wrap=${src}")
+    set(linker_str "${linker_str},--defsym,${src}=__cmock_${src}")
   endforeach()
   zephyr_link_libraries(${linker_str})
 endfunction()
@@ -120,7 +120,7 @@ endfunction()
 # Function takes original header and prepares two version
 # - version with system calls removed and static inline functions
 #   converted to standard function declarations
-# - version with addtional __wrap_ prefix for all functions that
+# - version with addtional __cmock_ prefix for all functions that
 #   is used to generate cmock
 function(cmock_headers_prepare in_header out_header wrap_header)
   execute_process(
