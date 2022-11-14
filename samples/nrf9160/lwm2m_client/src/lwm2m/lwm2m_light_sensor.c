@@ -33,7 +33,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 #define COLOUR_SENSOR_APP_NAME "Colour sensor"
 #define LIGHT_UNIT "RGB-IR"
 
-static int32_t timestamp[2];
+static time_t timestamp[2];
 
 int lwm2m_init_light_sensor(void)
 {

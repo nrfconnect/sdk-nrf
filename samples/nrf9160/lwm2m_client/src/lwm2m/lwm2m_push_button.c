@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 #define BUTTON2_OBJ_INST_ID 1
 #define BUTTON2_APP_NAME "Push button 2"
 
-static int32_t lwm2m_timestamp[2];
+static time_t lwm2m_timestamp[2];
 
 int lwm2m_init_push_button(void)
 {
