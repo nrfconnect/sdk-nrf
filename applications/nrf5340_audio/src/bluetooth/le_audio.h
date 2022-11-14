@@ -117,6 +117,16 @@ struct le_audio_evt {
 };
 
 /**
+ * @brief Callback for user defined button function 
+ *
+ * @return	0 for success,
+ *      -ECANCELED function pointer is NULL,
+ *		error otherwise
+*/
+/* Pointer to fuction pointer for user defined button function */
+typedef int (*le_audio_button_pressed_cb)(void);
+
+/**
  * @brief Callback for receiving Bluetooth LE Audio data
  *
  * @param data		Pointer to received data
@@ -128,11 +138,31 @@ typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool
 				    uint32_t sdu_ref);
 
 /**
+ * @brief Call back to switch the audio stream synchronised too
+ *
+ * @return	0 for success,
+ *      -ECANCELED stream index out of range,
+ *		error otherwise
+ */
+int le_audio_switch_sync_stream_cb(void);
+
+/**
+ * @brief Call the user defined function for a button press
+ *
+ * @param user_defined	Callback for the button press
+ * 
+ * @return	0 for success,
+ *		error otherwise
+ */
+int le_audio_user_defined_button_press(le_audio_button_pressed_cb user_defined);
+
+/**
  * @brief Set the active audio stream
  *
  * @param new_active_stream_index	Active audio stream index
  * 
  * @return	0 for success,
+ *      -ECANCELED stream index out of range,
  *		error otherwise
  */
 int le_audio_set_active_stream(unsigned int new_active_stream_index);
@@ -146,6 +176,13 @@ int le_audio_set_active_stream(unsigned int new_active_stream_index);
  *		error otherwise
  */
 int le_audio_get_active_stream(unsigned int *new_active_stream_index);
+
+/**
+ * @brief Query the number of syncable audio streams
+ *
+  * @return	Number od audio streams
+ */
+unsigned int le_audio_get_number_streams(void);
 
 /**
  * @brief Get configuration for audio stream

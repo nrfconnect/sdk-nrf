@@ -39,7 +39,6 @@ struct ble_iso_data {
 
 DATA_FIFO_DEFINE(ble_fifo_rx, CONFIG_BUF_BLE_RX_PACKET_NUM, WB_UP(sizeof(struct ble_iso_data)));
 
-#
 static struct k_thread audio_datapath_thread_data;
 static k_tid_t audio_datapath_thread_id;
 K_THREAD_STACK_DEFINE(audio_datapath_thread_stack, CONFIG_AUDIO_DATAPATH_STACK_SIZE);
@@ -221,41 +220,13 @@ void streamctrl_encoded_data_send(void const *const data, size_t len)
 	}
 }
 
-/* Pointer to fuction to execute when button 4 is pressed */
-typedef int (*button4_pressed_fp)(void);
 
 #if (CONFIG_AUDIO_TEST_STREAM_SWITCHING)
-static int switch_stream_button_press(void)
-{
-	int ret = 0;
-	unsigned int active_stream_index;
-
-	if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
-		LOG_DBG("Switching streams not supported in walkie-talkie mode");
-		return false;
-	}
-
-	/* NOTE: Assume in same subgroup and thus same audio decoder settings */
-	ret = le_audio_get_active_stream(&active_stream_index);
-	ERR_CHK_MSG(ret, "Failed to find an active audio stream");
-
-	LOG_DBG("Active stream %d", active_stream_index);
-
-	active_stream_index += 1;
-	ret = le_audio_set_active_stream(active_stream_index);
-	ERR_CHK_MSG(ret, "Failed to switch active stream");
-
-	LOG_DBG("Switched to stream %d", active_stream_index);
-
-	return ret;
-}
-
-static button4_pressed_fp button4_press = switch_stream_button_press;
-
+static le_audio_button_pressed_cb user_defined_button4_press = le_audio_switch_sync_stream_cb;
 #else
 #define TEST_TONE_BASE_FREQ_HZ 1000
 
-static int test_tone_buuton_press(void)
+static int test_tone_button_press_cb(void)
 {
 	int ret = 0;
 	static uint32_t test_tone_hz;
@@ -292,7 +263,7 @@ static int test_tone_buuton_press(void)
 	return ret;
 }
 
-static button4_pressed_fp button4_press = test_tone_buuton_press;
+static le_audio_button_pressed_cb user_defined_button4_press = test_tone_button_press_cb;
 #endif /* (CONFIG_AUDIO_TEST_STREAM_SWITCHING) */
 
 /* Handle button activity events */
@@ -373,10 +344,15 @@ static void button_evt_handler(struct button_evt event)
 		break;
 
 	case BUTTON_4:
-		if (button4_press != NULL) {
-			ret = button4_press();
+		if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
+			LOG_DBG("Button functions not supported in walkie-talkie mode");
+			break;
+		}
+
+		if (user_defined_button4_press != NULL) {
+			ret = le_audio_user_defined_button_press(user_defined_button4_press);
 			if (ret) {
-				LOG_WRN("Failed to mute volume");
+				LOG_WRN("Failed user defined button press");
 				break;
 			}
 		}
@@ -427,8 +403,8 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 	case LE_AUDIO_EVT_CONFIG_RECEIVED:
 		LOG_DBG("Config received");
 
-		int bitrate;
-		int sampling_rate;
+		uint32_t bitrate;
+		uint32_t sampling_rate;
 
 		ret = le_audio_config_get(&bitrate, &sampling_rate);
 		if (ret) {
@@ -436,8 +412,8 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 			break;
 		}
 
-		LOG_DBG("Sampling rate: %d", sampling_rate);
-		LOG_DBG("Bitrate: %d", bitrate);
+		LOG_DBG("Sampling rate: %u", sampling_rate);
+		LOG_DBG("Bitrate: %u", bitrate);
 		break;
 
 	default:

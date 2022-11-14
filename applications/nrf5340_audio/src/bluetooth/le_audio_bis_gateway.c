@@ -155,6 +155,24 @@ static void initialize(void)
 	}
 }
 
+int le_audio_switch_sync_stream_cb(void)
+{
+	return 0;
+}
+
+int le_audio_user_defined_button_press(le_audio_button_pressed_cb user_defined)
+{
+	int ret;
+
+	if (user_defined == NULL) {
+		return -ECANCELED;
+	}
+
+	ret = user_defined();
+
+	return ret;
+}
+
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 {
 	LOG_WRN("Not possible to get config on broadcast source");
@@ -167,6 +185,11 @@ int le_audio_set_active_stream(unsigned int new_active_stream_index)
 }
 
 int le_audio_get_active_stream(unsigned int *new_active_stream_index)
+{
+	return 0;
+}
+
+unsigned int le_audio_get_number_streams(void)
 {
 	return 0;
 }
