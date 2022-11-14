@@ -416,8 +416,13 @@ static uint8_t get_edrx_kconfig(enum lte_lc_lte_mode lte_mode)
 {
 	char str[9] = "";
 
-	sprintf(str, CONFIG_LTE_PTW_VALUE_LTE_M);
-	sprintf(str + strlen(str), CONFIG_LTE_EDRX_REQ_VALUE_LTE_M);
+	if (lte_mode == LTE_LC_LTE_MODE_LTEM) {
+		sprintf(str, CONFIG_LTE_PTW_VALUE_LTE_M);
+		sprintf(str + strlen(str), CONFIG_LTE_EDRX_REQ_VALUE_LTE_M);
+	} else {
+		sprintf(str, CONFIG_LTE_PTW_VALUE_NBIOT);
+		sprintf(str + strlen(str), CONFIG_LTE_EDRX_REQ_VALUE_NBIOT);
+	}
 	LOG_DBG("EDRX string: %s", str);
 
 	return strtol(str, NULL, 2);
@@ -659,6 +664,7 @@ int lwm2m_init_cellular_connectivity_object(void)
 	lwm2m_engine_set_res_buf("10/0/8", &edrx_wbs1, sizeof(edrx_wbs1), sizeof(edrx_wbs1),
 				 LWM2M_RES_DATA_FLAG_RW);
 	lwm2m_engine_register_post_write_callback("10/0/8", edrx_update_cb);
+	edrx_nbs1 = get_edrx_kconfig(LTE_LC_LTE_MODE_NBIOT);
 	lwm2m_engine_set_res_buf("10/0/9", &edrx_nbs1, sizeof(edrx_nbs1), sizeof(edrx_nbs1),
 				 LWM2M_RES_DATA_FLAG_RW);
 	lwm2m_engine_register_post_write_callback("10/0/9", edrx_update_cb);
