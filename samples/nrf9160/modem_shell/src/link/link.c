@@ -85,13 +85,16 @@ struct ncellmeas_data {
 	struct lte_lc_ncellmeas_params params;
 
 	enum link_ncellmeas_modes mode;
+
 	int periodic_interval;
+	bool periodic_interval_given;
 };
 static struct ncellmeas_data ncellmeas_work_data;
 static struct ncellmeas_data ncellmeas_param_data = {
 	.mode = LINK_NCELLMEAS_MODE_NONE,
 	.params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT,
 	.periodic_interval = 0,
+	.periodic_interval_given = false,
 };
 
 static void link_ncellmeas_worker(struct k_work *work_item)
@@ -102,7 +105,8 @@ static void link_ncellmeas_worker(struct k_work *work_item)
 		link_ncellmeas_start(true,
 				     data->mode,
 				     data->params,
-				     data->periodic_interval);
+				     data->periodic_interval,
+				     data->periodic_interval_given);
 	}
 }
 
@@ -351,7 +355,7 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		}
 
 		if (ncellmeas_param_data.mode == LINK_NCELLMEAS_MODE_CONTINUOUS &&
-		    ncellmeas_param_data.periodic_interval) {
+		    ncellmeas_param_data.periodic_interval_given) {
 			/* Interval was given for continuous mode */
 			ncellmeas_work_data.mode = ncellmeas_param_data.mode;
 			ncellmeas_work_data.params.search_type =
@@ -360,6 +364,8 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 				ncellmeas_param_data.params.gci_count;
 			ncellmeas_work_data.periodic_interval =
 				ncellmeas_param_data.periodic_interval;
+			ncellmeas_work_data.periodic_interval_given =
+				ncellmeas_param_data.periodic_interval_given;
 
 			k_work_schedule_for_queue(&mosh_common_work_q,
 					&ncellmeas_work_data.work,
@@ -414,6 +420,8 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 				ncellmeas_param_data.params.gci_count;
 			ncellmeas_work_data.periodic_interval =
 				ncellmeas_param_data.periodic_interval;
+			ncellmeas_work_data.periodic_interval_given =
+				ncellmeas_param_data.periodic_interval_given;
 
 			/* Send immediately after a cell update */
 			k_work_schedule_for_queue(&mosh_common_work_q, &ncellmeas_work_data.work,
@@ -557,12 +565,14 @@ void link_rsrp_subscribe(bool subscribe)
 
 void link_ncellmeas_start(bool start, enum link_ncellmeas_modes mode,
 			  struct lte_lc_ncellmeas_params ncellmeas_params,
-			  int periodic_interval)
+			  int periodic_interval,
+			  bool periodic_interval_given)
 {
 	int ret;
 
 	ncellmeas_param_data.mode = mode;
 	ncellmeas_param_data.periodic_interval = periodic_interval;
+	ncellmeas_param_data.periodic_interval_given = periodic_interval_given;
 	ncellmeas_param_data.params = ncellmeas_params;
 
 	k_work_cancel_delayable(&ncellmeas_work_data.work);
