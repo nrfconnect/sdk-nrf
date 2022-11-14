@@ -38,7 +38,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 #define MIN_RANGE_VALUE (-ACCEL_RANGE_G * SENSOR_G / 1000000.0)
 #define MAX_RANGE_VALUE (ACCEL_RANGE_G * SENSOR_G / 1000000.0)
 
-static int32_t timestamp;
+static time_t timestamp;
 
 int lwm2m_init_accel(void)
 {

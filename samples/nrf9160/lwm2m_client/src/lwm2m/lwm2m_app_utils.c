@@ -15,18 +15,12 @@ LOG_MODULE_REGISTER(app_lwm2m_utils, CONFIG_APP_LOG_LEVEL);
 
 void set_ipso_obj_timestamp(int ipso_obj_id, unsigned int obj_inst_id)
 {
-	int32_t timestamp;
+	int ret;
 	char path[MAX_LWM2M_PATH_LEN];
-
-	int ret = lwm2m_engine_get_s32(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
-					CURRENT_TIME_RID), &timestamp);
-	if (ret) {
-		LOG_ERR("Unable to retrieve timestamp");
-	}
 
 	snprintk(path, MAX_LWM2M_PATH_LEN, "%d/%u/%d", ipso_obj_id, obj_inst_id, TIMESTAMP_RID);
 
-	ret = lwm2m_engine_set_s32(path, timestamp);
+	ret = lwm2m_engine_set_time(path, time(NULL));
 	if (ret) {
 		LOG_ERR("Unable to set timestamp");
 	}

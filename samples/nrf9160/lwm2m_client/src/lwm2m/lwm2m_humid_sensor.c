@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
 #define HUMID_UNIT "%"
 
-static int32_t timestamp;
+static time_t timestamp;
 
 int lwm2m_init_humid_sensor(void)
 {
