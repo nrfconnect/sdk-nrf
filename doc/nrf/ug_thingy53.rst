@@ -205,9 +205,9 @@ Partition manager configuration
 ===============================
 
 The samples compatible with the Nordic Thingy:53 use :ref:`partition_manager` to define memory partitions.
-To ensure that partition layout does not change between builds, the sample must use a static partition layout that is consistent between all compatible samples in the |NCS|.
-See :file:`pm_static_thingy53_nrf5340_cpuapp.yml` in a compatible sample for the configuration used.
 The memory layout must stay consistent, so that MCUboot can perform proper image updates and clean up the settings storage partition.
+To ensure that partition layout does not change between builds, the sample must use a static partition layout that is consistent between all compatible samples in the |NCS|.
+The memory partitions are defined in the :file:`pm_static_thingy53_nrf5340_cpuapp.yml` and :file:`pm_static_thingy53_nrf5340_cpuapp_ns.yml` files in the :file:`zephyr/boards/arm/thingy53_nrf5340` directory.
 
 The PCD SRAM partition is locked by the MCUboot bootloader to prevent the application from modifying the network core firmware.
 Trying to access data on this partition results in an ARM fault.
