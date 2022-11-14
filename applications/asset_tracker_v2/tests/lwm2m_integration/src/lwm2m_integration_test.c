@@ -71,25 +71,25 @@ void setUp(void)
 	mock_lwm2m_Init();
 	mock_lte_lc_Init();
 
-	__wrap_lwm2m_init_image_ExpectAndReturn(0);
-	__wrap_lwm2m_init_firmware_ExpectAndReturn(0);
-	__wrap_lwm2m_init_security_ExpectAndReturn(&client,
+	__cmock_lwm2m_init_image_ExpectAndReturn(0);
+	__cmock_lwm2m_init_firmware_ExpectAndReturn(0);
+	__cmock_lwm2m_init_security_ExpectAndReturn(&client,
 						   endpoint_name,
 						   NULL,
 						   0);
-	__wrap_lwm2m_init_security_IgnoreArg_mmode();
+	__cmock_lwm2m_init_security_IgnoreArg_mmode();
 
-	__wrap_lwm2m_init_security_AddCallback(&init_security_callback_stub);
+	__cmock_lwm2m_init_security_AddCallback(&init_security_callback_stub);
 
-	__wrap_lwm2m_firmware_set_update_state_cb_ExpectAnyArgs();
-	__wrap_lwm2m_firmware_set_update_cb_ExpectAnyArgs();
+	__cmock_lwm2m_firmware_set_update_state_cb_ExpectAnyArgs();
+	__cmock_lwm2m_firmware_set_update_cb_ExpectAnyArgs();
 
-	__wrap_lwm2m_engine_register_exec_callback_ExpectAndReturn(REBOOT_PATH, NULL, 0);
-	__wrap_lwm2m_engine_register_exec_callback_IgnoreArg_cb();
+	__cmock_lwm2m_engine_register_exec_callback_ExpectAndReturn(REBOOT_PATH, NULL, 0);
+	__cmock_lwm2m_engine_register_exec_callback_IgnoreArg_cb();
 
-	__wrap_lwm2m_engine_register_exec_callback_AddCallback(&register_exec_callback_stub);
-	__wrap_lwm2m_firmware_set_update_state_cb_AddCallback(&set_update_state_callback_stub);
-	__wrap_lwm2m_firmware_set_update_cb_AddCallback(&set_update_callback_stub);
+	__cmock_lwm2m_engine_register_exec_callback_AddCallback(&register_exec_callback_stub);
+	__cmock_lwm2m_firmware_set_update_state_cb_AddCallback(&set_update_state_callback_stub);
+	__cmock_lwm2m_firmware_set_update_cb_AddCallback(&set_update_callback_stub);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_init(cloud_wrap_event_handler));
 }
@@ -161,7 +161,7 @@ void test_lwm2m_integration_connect(void)
 	uint32_t current_lifetime_expected = 0;
 	uint32_t new_lifetime_expected = CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME;
 
-	__wrap_lwm2m_rd_client_start_AddCallback(&rd_client_set_callback_stub);
+	__cmock_lwm2m_rd_client_start_AddCallback(&rd_client_set_callback_stub);
 
 	/* After the uut has been put into state CONNECTED, the lwm2m lifetime resource is
 	 * updated. This is done by getting the resource that contains the lifetime and setting it
@@ -169,17 +169,17 @@ void test_lwm2m_integration_connect(void)
 	 * bootstrapping because the boostrap server will override the default value set by the
 	 * application.
 	 */
-	__wrap_lwm2m_engine_get_u32_ExpectAndReturn(LIFETIME_PATH, &current_lifetime_expected, 0);
-	__wrap_lwm2m_engine_set_u32_ExpectAndReturn(LIFETIME_PATH, new_lifetime_expected, 0);
+	__cmock_lwm2m_engine_get_u32_ExpectAndReturn(LIFETIME_PATH, &current_lifetime_expected, 0);
+	__cmock_lwm2m_engine_set_u32_ExpectAndReturn(LIFETIME_PATH, new_lifetime_expected, 0);
 
-	__wrap_lwm2m_security_needs_bootstrap_ExpectAndReturn(0);
-	__wrap_lwm2m_rd_client_start_ExpectAndReturn(&client,
+	__cmock_lwm2m_security_needs_bootstrap_ExpectAndReturn(0);
+	__cmock_lwm2m_rd_client_start_ExpectAndReturn(&client,
 						     endpoint_name,
 						     0,
 						     NULL,
 						     NULL,
 						     0);
-	__wrap_lwm2m_rd_client_start_IgnoreArg_event_cb();
+	__cmock_lwm2m_rd_client_start_IgnoreArg_event_cb();
 
 	TEST_ASSERT_EQUAL(cloud_wrap_connect(), 0);
 
@@ -192,8 +192,8 @@ void test_lwm2m_integration_disconnect(void)
 {
 	test_lwm2m_integration_connect();
 
-	__wrap_lwm2m_rd_client_stop_ExpectAndReturn(&client, NULL, false, 0);
-	__wrap_lwm2m_rd_client_stop_IgnoreArg_event_cb();
+	__cmock_lwm2m_rd_client_stop_ExpectAndReturn(&client, NULL, false, 0);
+	__cmock_lwm2m_rd_client_stop_IgnoreArg_event_cb();
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_disconnect());
 }
@@ -209,7 +209,7 @@ void test_lwm2m_integration_data_send(void)
 		"4/0/7",
 	};
 
-	__wrap_lwm2m_engine_send_ExpectAndReturn(&client, (const char **)paths, PATH_LEN, true, 0);
+	__cmock_lwm2m_engine_send_ExpectAndReturn(&client, (const char **)paths, PATH_LEN, true, 0);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_data_send(NULL, PATH_LEN, true, 0, paths));
 }
@@ -225,21 +225,21 @@ void test_lwm2m_integration_ui_send(void)
 		"4/0/7",
 	};
 
-	__wrap_lwm2m_engine_send_ExpectAndReturn(&client, (const char **)paths, PATH_LEN, true, 0);
+	__cmock_lwm2m_engine_send_ExpectAndReturn(&client, (const char **)paths, PATH_LEN, true, 0);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_ui_send(NULL, PATH_LEN, true, 0, paths));
 }
 
 void test_lwm2m_integration_neighbor_cells_send(void)
 {
-	__wrap_location_assistance_ground_fix_request_send_ExpectAndReturn(&client, true, 0);
+	__cmock_location_assistance_ground_fix_request_send_ExpectAndReturn(&client, true, 0);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_neighbor_cells_send(NULL, 0, true, 0));
 }
 
 void test_lwm2m_integration_agps_request_send(void)
 {
-	__wrap_location_assistance_agps_request_send_ExpectAndReturn(&client, true, 0);
+	__cmock_location_assistance_agps_request_send_ExpectAndReturn(&client, true, 0);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_agps_request_send(NULL, 0, true, 0));
 }
@@ -265,7 +265,7 @@ void test_lwm2m_integration_batch_send(void)
 
 void test_lwm2m_integration_pgps_request_send(void)
 {
-	__wrap_location_assistance_pgps_request_send_ExpectAndReturn(&client, true, 0);
+	__cmock_location_assistance_pgps_request_send_ExpectAndReturn(&client, true, 0);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_pgps_request_send(NULL, 0, true, 0));
 }
@@ -283,9 +283,9 @@ void test_lwm2m_integration_mode_change_offline(void)
 	/* Simulate a condition where the lte_lc_func_mode_get returns LTE_LC_FUNC_MODE_NORMAL.*/
 	enum lte_lc_func_mode mode_current = LTE_LC_FUNC_MODE_NORMAL;
 
-	__wrap_lte_lc_func_mode_get_ExpectAndReturn(NULL, 0);
-	__wrap_lte_lc_func_mode_get_IgnoreArg_mode();
-	__wrap_lte_lc_func_mode_get_ReturnMemThruPtr_mode(&mode_current, sizeof(mode_current));
+	__cmock_lte_lc_func_mode_get_ExpectAndReturn(NULL, 0);
+	__cmock_lte_lc_func_mode_get_IgnoreArg_mode();
+	__cmock_lte_lc_func_mode_get_ReturnMemThruPtr_mode(&mode_current, sizeof(mode_current));
 
 	/* Trigger a change to LTE_LC_FUNC_MODE_OFFLINE. */
 	modem_mode_change_cb(LTE_LC_FUNC_MODE_OFFLINE, NULL);
@@ -297,9 +297,9 @@ void test_lwm2m_integration_mode_change_online(void)
 	/* Simulate a condition where the lte_lc_func_mode_get returns LTE_LC_FUNC_MODE_OFFLINE.*/
 	enum lte_lc_func_mode mode_current = LTE_LC_FUNC_MODE_OFFLINE;
 
-	__wrap_lte_lc_func_mode_get_ExpectAndReturn(NULL, 0);
-	__wrap_lte_lc_func_mode_get_IgnoreArg_mode();
-	__wrap_lte_lc_func_mode_get_ReturnMemThruPtr_mode(&mode_current, sizeof(mode_current));
+	__cmock_lte_lc_func_mode_get_ExpectAndReturn(NULL, 0);
+	__cmock_lte_lc_func_mode_get_IgnoreArg_mode();
+	__cmock_lte_lc_func_mode_get_ReturnMemThruPtr_mode(&mode_current, sizeof(mode_current));
 
 	/* Trigger a change to LTE_LC_FUNC_MODE_NORMAL. */
 	modem_mode_change_cb(LTE_LC_FUNC_MODE_NORMAL, NULL);
@@ -316,7 +316,7 @@ void test_lwm2m_integration_bootstrap_registration_failure(void)
 {
 	test_lwm2m_integration_connect();
 
-	__wrap_lwm2m_rd_client_stop_ExpectAnyArgsAndReturn(0);
+	__cmock_lwm2m_rd_client_stop_ExpectAnyArgsAndReturn(0);
 
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_FAILURE);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_DISCONNECTED, last_cb_type);
@@ -326,7 +326,7 @@ void test_lwm2m_integration_registration_failure(void)
 {
 	test_lwm2m_integration_connect();
 
-	__wrap_lwm2m_rd_client_stop_ExpectAnyArgsAndReturn(0);
+	__cmock_lwm2m_rd_client_stop_ExpectAnyArgsAndReturn(0);
 
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REGISTRATION_FAILURE);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_DISCONNECTED, last_cb_type);
@@ -362,17 +362,17 @@ void test_lwm2m_integration_network_error(void)
 void test_lwm2m_integration_fota_result_get(void)
 {
 	/* Expect the FOTA update result to be retrieved for any update in FOTA state. */
-	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, NULL, 0);
-	__wrap_lwm2m_engine_get_u8_IgnoreArg_value();
+	__cmock_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, NULL, 0);
+	__cmock_lwm2m_engine_get_u8_IgnoreArg_value();
 
-	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, NULL, 0);
-	__wrap_lwm2m_engine_get_u8_IgnoreArg_value();
+	__cmock_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, NULL, 0);
+	__cmock_lwm2m_engine_get_u8_IgnoreArg_value();
 
-	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, NULL, 0);
-	__wrap_lwm2m_engine_get_u8_IgnoreArg_value();
+	__cmock_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, NULL, 0);
+	__cmock_lwm2m_engine_get_u8_IgnoreArg_value();
 
-	__wrap_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, NULL, 0);
-	__wrap_lwm2m_engine_get_u8_IgnoreArg_value();
+	__cmock_lwm2m_engine_get_u8_ExpectAndReturn(FIRMWARE_UPDATE_RESULT_PATH, NULL, 0);
+	__cmock_lwm2m_engine_get_u8_IgnoreArg_value();
 
 	firmware_update_state_cb(STATE_IDLE);
 	firmware_update_state_cb(STATE_DOWNLOADING);
@@ -382,7 +382,7 @@ void test_lwm2m_integration_fota_result_get(void)
 
 void test_lwm2m_integration_fota_result_get_error(void)
 {
-	__wrap_lwm2m_engine_get_u8_ExpectAnyArgsAndReturn(-1);
+	__cmock_lwm2m_engine_get_u8_ExpectAnyArgsAndReturn(-1);
 
 	firmware_update_state_cb(STATE_DOWNLOADING);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_ERROR, last_cb_type);
@@ -390,7 +390,7 @@ void test_lwm2m_integration_fota_result_get_error(void)
 
 void test_lwm2m_integration_fota_error(void)
 {
-	__wrap_lwm2m_engine_get_u8_IgnoreAndReturn(0);
+	__cmock_lwm2m_engine_get_u8_IgnoreAndReturn(0);
 
 	/* Expect an error event to be returned if FOTA state reverts to STATE_IDLE. */
 	firmware_update_state_cb(STATE_IDLE);
@@ -399,7 +399,7 @@ void test_lwm2m_integration_fota_error(void)
 
 void test_lwm2m_integration_fota_downloading(void)
 {
-	__wrap_lwm2m_engine_get_u8_IgnoreAndReturn(0);
+	__cmock_lwm2m_engine_get_u8_IgnoreAndReturn(0);
 
 	firmware_update_state_cb(STATE_DOWNLOADING);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_FOTA_START, last_cb_type);
@@ -407,7 +407,7 @@ void test_lwm2m_integration_fota_downloading(void)
 
 void test_lwm2m_integration_fota_downloaded(void)
 {
-	__wrap_lwm2m_engine_get_u8_IgnoreAndReturn(0);
+	__cmock_lwm2m_engine_get_u8_IgnoreAndReturn(0);
 
 	/* Expect no event to be called by setting last_cb_type to UINT8_MAX and verifying that
 	 * the value has not changed after the state change.
@@ -420,7 +420,7 @@ void test_lwm2m_integration_fota_downloaded(void)
 
 void test_lwm2m_integration_fota_updating(void)
 {
-	__wrap_lwm2m_engine_get_u8_IgnoreAndReturn(0);
+	__cmock_lwm2m_engine_get_u8_IgnoreAndReturn(0);
 
 	/* Expect no event to be called by setting last_cb_type to UINT8_MAX and verifying that
 	 * the value has not changed after the state change.
@@ -433,7 +433,7 @@ void test_lwm2m_integration_fota_updating(void)
 
 void test_lwm2m_integration_fota_unexpected_event(void)
 {
-	__wrap_lwm2m_engine_get_u8_IgnoreAndReturn(0);
+	__cmock_lwm2m_engine_get_u8_IgnoreAndReturn(0);
 
 	/* Trigger an event update with an unknown event type. */
 	firmware_update_state_cb(UINT8_MAX);
@@ -442,7 +442,7 @@ void test_lwm2m_integration_fota_unexpected_event(void)
 
 void test_lwm2m_integration_fota_done(void)
 {
-	__wrap_lwm2m_firmware_apply_update_ExpectAndReturn(0, 0);
+	__cmock_lwm2m_firmware_apply_update_ExpectAndReturn(0, 0);
 
 	firmware_update_cb(0, NULL, 0);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_FOTA_DONE, last_cb_type);
@@ -450,7 +450,7 @@ void test_lwm2m_integration_fota_done(void)
 
 void test_lwm2m_integration_fota_done_error(void)
 {
-	__wrap_lwm2m_firmware_apply_update_ExpectAndReturn(0, -1);
+	__cmock_lwm2m_firmware_apply_update_ExpectAndReturn(0, -1);
 
 	firmware_update_cb(0, NULL, 0);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_FOTA_ERROR, last_cb_type);

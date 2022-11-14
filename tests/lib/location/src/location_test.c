@@ -179,7 +179,8 @@ void test_location_init_fail_gnss_event_handler_set(void)
 {
 	int ret;
 
-	__wrap_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, -EPERM);
+	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler,
+		-EPERM);
 
 	ret = location_init(location_event_handler);
 	TEST_ASSERT_EQUAL(-EPERM, ret);
@@ -214,15 +215,15 @@ void test_location_init(void)
 {
 	int ret;
 
-	__wrap_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
 	// TODO: Change Ignores to Expects
-	__wrap_modem_key_mgmt_exists_IgnoreAndReturn(0);
+	__cmock_modem_key_mgmt_exists_IgnoreAndReturn(0);
 
 	/* TODO: This would be correct but printf syntax is what we receive into the mock
 	 *       so we cannot check that XMODEMSLEEP parameters are correct.
-	 * __wrap_nrf_modem_at_printf_ExpectAndReturn("AT%XMODEMSLEEP=1,0,10240", 0);
+	 * __cmock_nrf_modem_at_printf_ExpectAndReturn("AT%XMODEMSLEEP=1,0,10240", 0);
 	 */
-	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT%%XMODEMSLEEP=1,%d,%d", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%XMODEMSLEEP=1,%d,%d", 0);
 
 	ret = location_init(location_event_handler);
 	TEST_ASSERT_EQUAL(0, ret);
@@ -286,31 +287,31 @@ void test_location_gnss(void)
 
 	location_callback_called_expected = true;
 
-	__wrap_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
 
-	__wrap_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
-	__wrap_nrf_modem_gnss_use_case_set_ExpectAndReturn(
+	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
+	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
-	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
+	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
 	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__wrap_nrf_modem_at_scanf_ExpectAndReturn(
+	__cmock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
 
-	__wrap_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__wrap_nrf_modem_at_cmd_IgnoreArg_buf();
-	__wrap_nrf_modem_at_cmd_IgnoreArg_len();
-	__wrap_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 	at_monitor_dispatch("+CSCON: 0");
 
-	__wrap_nrf_modem_gnss_read_ExpectAndReturn(
+	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
 		NULL, sizeof(test_pvt_data), NRF_MODEM_GNSS_DATA_PVT, 0);
-	__wrap_nrf_modem_gnss_read_IgnoreArg_buf();
-	__wrap_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
-	__wrap_nrf_modem_gnss_stop_ExpectAndReturn(0);
+	__cmock_nrf_modem_gnss_read_IgnoreArg_buf();
+	__cmock_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
+	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
 }
 
@@ -329,13 +330,14 @@ void cellular_rest_req_resp_handle(void)
 	rest_resp_ctx.response_len = strlen(http_resp + strlen(http_resp_header_ok));
 	rest_resp_ctx.response = http_resp + strlen(http_resp_header_ok);
 
-	__wrap_rest_client_request_defaults_set_ExpectAnyArgs();
+	__cmock_rest_client_request_defaults_set_ExpectAnyArgs();
 	// TODO: We should verify rest_req_ctx
-	//__wrap_rest_client_request_ExpectWithArrayAndReturn(&rest_req_ctx, 1, NULL, 0, 0);
-	__wrap_rest_client_request_ExpectAndReturn(&rest_req_ctx, NULL, 0);
-	__wrap_rest_client_request_IgnoreArg_req_ctx();
-	__wrap_rest_client_request_IgnoreArg_resp_ctx();
-	__wrap_rest_client_request_ReturnMemThruPtr_resp_ctx(&rest_resp_ctx, sizeof(rest_resp_ctx));
+	//__cmock_rest_client_request_ExpectWithArrayAndReturn(&rest_req_ctx, 1, NULL, 0, 0);
+	__cmock_rest_client_request_ExpectAndReturn(&rest_req_ctx, NULL, 0);
+	__cmock_rest_client_request_IgnoreArg_req_ctx();
+	__cmock_rest_client_request_IgnoreArg_resp_ctx();
+	__cmock_rest_client_request_ReturnMemThruPtr_resp_ctx(&rest_resp_ctx,
+		sizeof(rest_resp_ctx));
 }
 
 /* Test successful cellular location request utilizing HERE service.
@@ -357,7 +359,7 @@ void test_location_cellular(void)
 
 	location_callback_called_expected = true;
 
-	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
 
 	cellular_rest_req_resp_handle();
 
@@ -389,13 +391,13 @@ void test_location_cellular_cancel_during_ncellmeas(void)
 	location_config_defaults_set(&config, 1, methods);
 	location_callback_called_expected = false;
 
-	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
 	k_sleep(K_MSEC(1));
 
-	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEASSTOP", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEASSTOP", 0);
 
 	err = location_request_cancel();
 	TEST_ASSERT_EQUAL(0, err);
@@ -486,36 +488,36 @@ void test_location_request_default(void)
 
 	test_pvt_data.flags = NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID;
 
-	__wrap_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
 
-	__wrap_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
-	__wrap_nrf_modem_gnss_use_case_set_ExpectAndReturn(
+	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
+	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
-	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
+	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
 	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__wrap_nrf_modem_at_scanf_ExpectAndReturn(
+	__cmock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
 
 	err = location_request(NULL);
 	TEST_ASSERT_EQUAL(0, err);
 
-	__wrap_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__wrap_nrf_modem_at_cmd_IgnoreArg_buf();
-	__wrap_nrf_modem_at_cmd_IgnoreArg_len();
-	__wrap_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 	at_monitor_dispatch("+CSCON: 0");
 
-	__wrap_nrf_modem_gnss_read_ExpectAndReturn(
+	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
 		NULL, sizeof(test_pvt_data), NRF_MODEM_GNSS_DATA_PVT, -EINVAL);
-	__wrap_nrf_modem_gnss_read_IgnoreArg_buf();
-	__wrap_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
+	__cmock_nrf_modem_gnss_read_IgnoreArg_buf();
+	__cmock_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
 	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
 
 	/***** Fallback to cellular *****/
 
-	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
 
 	cellular_rest_req_resp_handle();
 
@@ -561,7 +563,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 
 	/***** First cellular positioning *****/
 
-	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -615,30 +617,30 @@ void test_location_request_mode_all_cellular_gnss(void)
 	test_pvt_data.datetime.ms = 789;
 	test_pvt_data.flags = NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID;
 
-	__wrap_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
 
-	__wrap_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
-	__wrap_nrf_modem_gnss_use_case_set_ExpectAndReturn(
+	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
+	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
-	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
+	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
 	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__wrap_nrf_modem_at_scanf_ExpectAndReturn(
+	__cmock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
 
-	__wrap_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__wrap_nrf_modem_at_cmd_IgnoreArg_buf();
-	__wrap_nrf_modem_at_cmd_IgnoreArg_len();
-	__wrap_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 	at_monitor_dispatch("+CSCON: 0");
 	k_sleep(K_MSEC(1));
 
-	__wrap_nrf_modem_gnss_read_ExpectAndReturn(
+	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
 		NULL, sizeof(test_pvt_data), NRF_MODEM_GNSS_DATA_PVT, 0);
-	__wrap_nrf_modem_gnss_read_IgnoreArg_buf();
-	__wrap_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
-	__wrap_nrf_modem_gnss_stop_ExpectAndReturn(0);
+	__cmock_nrf_modem_gnss_read_IgnoreArg_buf();
+	__cmock_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
+	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
 }
 
@@ -665,7 +667,7 @@ void test_location_request_timeout_cellular_gnss_mode_all(void)
 
 	/***** First cellular positioning *****/
 
-	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -673,8 +675,8 @@ void test_location_request_timeout_cellular_gnss_mode_all(void)
 	/* Wait for location_event_handler call for 3 seconds.
 	 * If it doesn't happen, next assert will fail the test.
 	 */
-	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEASSTOP", 0);
-	__wrap_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEASSTOP", 0);
+	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
 	k_sem_take(&event_handler_called_sem, K_SECONDS(3));
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
 	location_callback_called_occurred = false;
@@ -683,24 +685,24 @@ void test_location_request_timeout_cellular_gnss_mode_all(void)
 	/***** Then GNSS positioning *****/
 	test_location_event_data.id = LOCATION_EVT_TIMEOUT;
 
-	__wrap_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
-	__wrap_nrf_modem_gnss_use_case_set_ExpectAndReturn(
+	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
+	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
-	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
+	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
 	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__wrap_nrf_modem_at_scanf_ExpectAndReturn(
+	__cmock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
 
-	__wrap_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__wrap_nrf_modem_at_cmd_IgnoreArg_buf();
-	__wrap_nrf_modem_at_cmd_IgnoreArg_len();
-	__wrap_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 
 	at_monitor_dispatch("+CSCON: 0");
 
-	__wrap_nrf_modem_gnss_stop_ExpectAndReturn(0);
+	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 }
 
 /********* TESTS PERIODIC POSITIONING REQUESTS ***********************/
@@ -747,30 +749,30 @@ void test_location_gnss_periodic(void)
 
 	location_callback_called_expected = true;
 
-	__wrap_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
-	__wrap_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
-	__wrap_nrf_modem_gnss_use_case_set_ExpectAndReturn(
+	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
+	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
-	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
+	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
 	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__wrap_nrf_modem_at_scanf_ExpectAndReturn(
+	__cmock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
 
-	__wrap_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__wrap_nrf_modem_at_cmd_IgnoreArg_buf();
-	__wrap_nrf_modem_at_cmd_IgnoreArg_len();
-	__wrap_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 	at_monitor_dispatch("+CSCON: 0");
 
-	__wrap_nrf_modem_gnss_read_ExpectAndReturn(
+	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
 		NULL, sizeof(test_pvt_data), NRF_MODEM_GNSS_DATA_PVT, 0);
-	__wrap_nrf_modem_gnss_read_IgnoreArg_buf();
-	__wrap_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
-	__wrap_nrf_modem_gnss_stop_ExpectAndReturn(0);
+	__cmock_nrf_modem_gnss_read_IgnoreArg_buf();
+	__cmock_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
+	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
 	k_sleep(K_MSEC(1));
 
@@ -781,30 +783,30 @@ void test_location_gnss_periodic(void)
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
 	k_sem_reset(&event_handler_called_sem);
 
-	__wrap_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
-	__wrap_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
-	__wrap_nrf_modem_gnss_use_case_set_ExpectAndReturn(
+	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
+	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
-	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
+	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
 	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__wrap_nrf_modem_at_scanf_ExpectAndReturn(
+	__cmock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
 
-	__wrap_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__wrap_nrf_modem_at_cmd_IgnoreArg_buf();
-	__wrap_nrf_modem_at_cmd_IgnoreArg_len();
-	__wrap_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 
 	k_sleep(K_MSEC(11000));
 	at_monitor_dispatch("+CSCON: 0");
 
-	__wrap_nrf_modem_gnss_read_ExpectAndReturn(
+	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
 		NULL, sizeof(test_pvt_data), NRF_MODEM_GNSS_DATA_PVT, 0);
-	__wrap_nrf_modem_gnss_read_IgnoreArg_buf();
-	__wrap_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
-	__wrap_nrf_modem_gnss_stop_ExpectAndReturn(0);
+	__cmock_nrf_modem_gnss_read_IgnoreArg_buf();
+	__cmock_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
+	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
 
 	/* Wait for location_event_handler call for 3 seconds.
@@ -817,7 +819,7 @@ void test_location_gnss_periodic(void)
 
 	/* Stop periodic by cancelling location request */
 	location_callback_called_expected = false;
-	__wrap_nrf_modem_gnss_stop_ExpectAndReturn(0);
+	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 	err = location_request_cancel();
 	TEST_ASSERT_EQUAL(0, err);
 	k_sleep(K_MSEC(1));
@@ -843,7 +845,7 @@ void test_location_cellular_periodic(void)
 
 	location_callback_called_expected = true;
 
-	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
 
 	cellular_rest_req_resp_handle();
 
@@ -883,7 +885,7 @@ void test_location_cellular_periodic(void)
 	rest_req_ctx.port = CONFIG_MULTICELL_LOCATION_HERE_HTTPS_PORT;
 	rest_req_ctx.host = CONFIG_MULTICELL_LOCATION_HERE_HOSTNAME;
 
-	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
 	/* Wait a bit more than the interval so that NCELLMEAS is sent before we send response
 	 * Note that we could first send results and then location library would send NCELLMEAS and
 	 * the test wouldn't see a failure so these things would need to be checked from the logs.
@@ -911,7 +913,7 @@ void test_location_cellular_periodic(void)
 /* This is needed because AT Monitor library is initialized in SYS_INIT. */
 static int location_test_sys_init(const struct device *unused)
 {
-	__wrap_nrf_modem_at_notif_handler_set_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_modem_at_notif_handler_set_ExpectAnyArgsAndReturn(0);
 
 	return 0;
 }

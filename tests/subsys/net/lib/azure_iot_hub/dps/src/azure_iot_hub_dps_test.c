@@ -72,10 +72,10 @@ void setUp(void)
 {
 	mock_azure_iot_hub_mqtt_Init();
 	mock_settings_Init();
-	__wrap_settings_subsys_init_IgnoreAndReturn(0);
-	__wrap_settings_load_subtree_IgnoreAndReturn(0);
-	__wrap_settings_save_one_IgnoreAndReturn(0);
-	__wrap_settings_delete_IgnoreAndReturn(0);
+	__cmock_settings_subsys_init_IgnoreAndReturn(0);
+	__cmock_settings_load_subtree_IgnoreAndReturn(0);
+	__cmock_settings_save_one_IgnoreAndReturn(0);
+	__cmock_settings_delete_IgnoreAndReturn(0);
 	az_precondition_failed_set_callback(az_precondition_failed_cb);
 
 	dps_state = DPS_STATE_UNINIT;
@@ -85,7 +85,7 @@ void tearDown(void)
 {
 	mock_azure_iot_hub_mqtt_Verify();
 	mock_settings_Verify();
-	__wrap_mqtt_helper_disconnect_IgnoreAndReturn(0);
+	__cmock_mqtt_helper_disconnect_IgnoreAndReturn(0);
 	azure_iot_hub_dps_reset();
 }
 
@@ -252,7 +252,7 @@ void test_azure_iot_hub_dps_device_id_delete(void)
 
 void test_azure_iot_hub_dps_reset_connected(void)
 {
-	__wrap_mqtt_helper_disconnect_ExpectAndReturn(0);
+	__cmock_mqtt_helper_disconnect_ExpectAndReturn(0);
 
 	dps_reg_ctx.assigned_hub = az_span_create_from_str(TEST_IOT_HUB_HOSTNAME);
 	dps_reg_ctx.assigned_device_id = az_span_create_from_str(TEST_EXPECTED_DEVICE_ID);
@@ -297,8 +297,8 @@ void test_azure_iot_hub_dps_start(void)
 		.id_scope.size = TEST_ID_SCOPE_LEN,
 	};
 
-	__wrap_mqtt_helper_init_ExpectAnyArgsAndReturn(0);
-	__wrap_mqtt_helper_connect_Stub(mqtt_helper_connect_stub);
+	__cmock_mqtt_helper_init_ExpectAnyArgsAndReturn(0);
+	__cmock_mqtt_helper_connect_Stub(mqtt_helper_connect_stub);
 
 	err = azure_iot_hub_dps_init(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -322,8 +322,8 @@ void test_azure_iot_hub_dps_start_kconfig_defaults(void)
 		.handler = dps_handler,
 	};
 
-	__wrap_mqtt_helper_init_ExpectAnyArgsAndReturn(0);
-	__wrap_mqtt_helper_connect_Stub(mqtt_helper_connect_stub_defaults);
+	__cmock_mqtt_helper_init_ExpectAnyArgsAndReturn(0);
+	__cmock_mqtt_helper_connect_Stub(mqtt_helper_connect_stub_defaults);
 
 	err = azure_iot_hub_dps_init(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -342,7 +342,7 @@ void test_azure_iot_hub_dps_start_kconfig_defaults(void)
 
 void test_on_reg_completed_no_msg(void)
 {
-	__wrap_mqtt_helper_disconnect_ExpectAndReturn(0);
+	__cmock_mqtt_helper_disconnect_ExpectAndReturn(0);
 
 	dps_state = DPS_STATE_CONNECTED;
 	dps_reg_ctx.cb = dps_handler;
@@ -375,7 +375,7 @@ void test_on_publish_assigned(void)
 
 	dps_reg_ctx.cb = dps_handler;
 
-	__wrap_mqtt_helper_disconnect_ExpectAndReturn(0);
+	__cmock_mqtt_helper_disconnect_ExpectAndReturn(0);
 	on_publish(topic, payload);
 	TEST_ASSERT_EQUAL(0, k_sem_take(&reg_status_assigned_sem, K_SECONDS(1)));
 }
@@ -396,7 +396,7 @@ void test_on_publish_request_error(void)
 
 	dps_reg_ctx.cb = dps_handler;
 
-	__wrap_mqtt_helper_disconnect_ExpectAndReturn(0);
+	__cmock_mqtt_helper_disconnect_ExpectAndReturn(0);
 	on_publish(topic, payload);
 	TEST_ASSERT_EQUAL(0, k_sem_take(&reg_failed_sem, K_SECONDS(1)));
 }
@@ -419,9 +419,9 @@ void test_on_publish_assigning(void)
 		.size = sizeof(payload_reg_update) - 1,
 	};
 
-	__wrap_mqtt_helper_init_ExpectAnyArgsAndReturn(0);
-	__wrap_mqtt_helper_connect_Stub(mqtt_helper_connect_stub_defaults);
-	__wrap_mqtt_helper_publish_ExpectAnyArgsAndReturn(0);
+	__cmock_mqtt_helper_init_ExpectAnyArgsAndReturn(0);
+	__cmock_mqtt_helper_connect_Stub(mqtt_helper_connect_stub_defaults);
+	__cmock_mqtt_helper_publish_ExpectAnyArgsAndReturn(0);
 
 	err = azure_iot_hub_dps_init(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -456,7 +456,7 @@ void test_on_publish_invalid_topic(void)
 
 	dps_reg_ctx.cb = dps_handler;
 
-	__wrap_mqtt_helper_disconnect_ExpectAndReturn(0);
+	__cmock_mqtt_helper_disconnect_ExpectAndReturn(0);
 	on_publish(topic, payload);
 	TEST_ASSERT_EQUAL(0, k_sem_take(&reg_failed_sem, K_SECONDS(2)));
 }
@@ -476,7 +476,7 @@ void test_on_publish_invalid_payload(void)
 
 	dps_reg_ctx.cb = dps_handler;
 
-	__wrap_mqtt_helper_disconnect_ExpectAndReturn(0);
+	__cmock_mqtt_helper_disconnect_ExpectAndReturn(0);
 	on_publish(topic, payload);
 	TEST_ASSERT_EQUAL(0, k_sem_take(&reg_failed_sem, K_SECONDS(2)));
 }

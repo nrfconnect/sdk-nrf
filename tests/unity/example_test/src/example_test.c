@@ -29,8 +29,8 @@ void test_uut_init(void)
 {
 	int err;
 
-	__wrap_foo_init_ExpectAndReturn(NULL, 0);
-	__wrap_foo_execute_ExpectAndReturn(0);
+	__cmock_foo_init_ExpectAndReturn(NULL, 0);
+	__cmock_foo_execute_ExpectAndReturn(0);
 
 	err = uut_init(NULL);
 	TEST_ASSERT_EQUAL(0, err);

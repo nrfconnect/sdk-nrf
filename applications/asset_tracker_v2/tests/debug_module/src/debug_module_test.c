@@ -106,15 +106,15 @@ static int module_start_stub(struct module_data *module, int num_calls)
 
 void setup_debug_module_in_init_state(void)
 {
-	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
-	__wrap_app_event_manager_free_ExpectAnyArgs();
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
+	__cmock_app_event_manager_free_ExpectAnyArgs();
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	app_module_event->type = APP_EVT_START;
 
-	__wrap_watchdog_register_handler_ExpectAnyArgs();
-	__wrap_watchdog_register_handler_AddCallback(&latch_watchdog_callback);
-	__wrap_module_start_Stub(&module_start_stub);
+	__cmock_watchdog_register_handler_ExpectAnyArgs();
+	__cmock_watchdog_register_handler_AddCallback(&latch_watchdog_callback);
+	__cmock_module_start_Stub(&module_start_stub);
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
 		(struct app_event_header *)app_module_event));
@@ -126,18 +126,18 @@ void test_memfault_trigger_metric_sampling_on_gnss_fix(void)
 {
 	setup_debug_module_in_init_state();
 
-	__wrap_memfault_metrics_heartbeat_set_unsigned_ExpectAndReturn(
+	__cmock_memfault_metrics_heartbeat_set_unsigned_ExpectAndReturn(
 						MEMFAULT_METRICS_KEY(GnssTimeToFix),
 						60000,
 						0);
-	__wrap_memfault_metrics_heartbeat_set_unsigned_ExpectAndReturn(
+	__cmock_memfault_metrics_heartbeat_set_unsigned_ExpectAndReturn(
 						MEMFAULT_METRICS_KEY(GnssSatellitesTracked),
 						4,
 						0);
-	__wrap_memfault_metrics_heartbeat_debug_trigger_Expect();
+	__cmock_memfault_metrics_heartbeat_debug_trigger_Expect();
 
-	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&location_module_event_memory);
-	__wrap_app_event_manager_free_ExpectAnyArgs();
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&location_module_event_memory);
+	__cmock_app_event_manager_free_ExpectAnyArgs();
 	struct location_module_event *location_module_event = new_location_module_event();
 
 	location_module_event->type = LOCATION_MODULE_EVT_GNSS_DATA_READY;
@@ -156,18 +156,18 @@ void test_memfault_trigger_metric_sampling_on_location_timeout(void)
 	setup_debug_module_in_init_state();
 
 	/* Update this function to expect the search time and number of satellites. */
-	__wrap_memfault_metrics_heartbeat_set_unsigned_ExpectAndReturn(
+	__cmock_memfault_metrics_heartbeat_set_unsigned_ExpectAndReturn(
 						MEMFAULT_METRICS_KEY(LocationTimeoutSearchTime),
 						30000,
 						0);
-	__wrap_memfault_metrics_heartbeat_set_unsigned_ExpectAndReturn(
+	__cmock_memfault_metrics_heartbeat_set_unsigned_ExpectAndReturn(
 						MEMFAULT_METRICS_KEY(GnssSatellitesTracked),
 						2,
 						0);
-	__wrap_memfault_metrics_heartbeat_debug_trigger_Ignore();
+	__cmock_memfault_metrics_heartbeat_debug_trigger_Ignore();
 
-	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&location_module_event_memory);
-	__wrap_app_event_manager_free_ExpectAnyArgs();
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&location_module_event_memory);
+	__cmock_app_event_manager_free_ExpectAnyArgs();
 	struct location_module_event *location_module_event = new_location_module_event();
 
 	location_module_event->type = LOCATION_MODULE_EVT_TIMEOUT;
@@ -187,22 +187,22 @@ void test_memfault_trigger_data_send(void)
 	resetTest();
 	setup_debug_module_in_init_state();
 
-	__wrap__event_submit_ExpectAnyArgs();
+	__cmock__event_submit_ExpectAnyArgs();
 
-	__wrap_memfault_packetizer_data_available_ExpectAndReturn(1);
-	__wrap_memfault_packetizer_get_chunk_ExpectAnyArgsAndReturn(1);
-	__wrap_memfault_packetizer_get_chunk_ExpectAnyArgsAndReturn(0);
+	__cmock_memfault_packetizer_data_available_ExpectAndReturn(1);
+	__cmock_memfault_packetizer_get_chunk_ExpectAnyArgsAndReturn(1);
+	__cmock_memfault_packetizer_get_chunk_ExpectAnyArgsAndReturn(0);
 
 	/* Expect the debug module to generate an event with accompanied Memfault metric data. */
-	__wrap__event_submit_Stub(&validate_debug_data_ready_evt);
+	__cmock__event_submit_Stub(&validate_debug_data_ready_evt);
 
-	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
-	__wrap_app_event_manager_free_ExpectAnyArgs();
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
+	__cmock_app_event_manager_free_ExpectAnyArgs();
 	struct data_module_event *data_module_event = new_data_module_event();
 
 	data_module_event->type = DATA_EVT_DATA_SEND;
 
-	__wrap_app_event_manager_alloc_IgnoreAndReturn(&debug_module_event_memory);
+	__cmock_app_event_manager_alloc_IgnoreAndReturn(&debug_module_event_memory);
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
 		(struct app_event_header *)data_module_event));
 	app_event_manager_free(data_module_event);
@@ -223,8 +223,8 @@ void test_memfault_unhandled_event(void)
 
 	/* Expect no memfault APIs to be called on LOCATION_MODULE_EVT_ACTIVE */
 
-	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&location_module_event_memory);
-	__wrap_app_event_manager_free_ExpectAnyArgs();
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&location_module_event_memory);
+	__cmock_app_event_manager_free_ExpectAnyArgs();
 	struct location_module_event *location_module_event = new_location_module_event();
 
 	location_module_event->type = LOCATION_MODULE_EVT_ACTIVE;
@@ -257,11 +257,11 @@ void test_memfault_software_watchdog_trigger_on_callback(void)
 	resetTest();
 	setup_debug_module_in_init_state();
 
-	__wrap_memfault_software_watchdog_enable_ExpectAndReturn(0);
+	__cmock_memfault_software_watchdog_enable_ExpectAndReturn(0);
 
 	/* Expect a software watchdog timer 5 seconds lower than the passed in value to be used. */
-	__wrap_memfault_software_watchdog_update_timeout_ExpectAndReturn(55000, 0);
-	__wrap_memfault_software_watchdog_feed_ExpectAndReturn(0);
+	__cmock_memfault_software_watchdog_update_timeout_ExpectAndReturn(55000, 0);
+	__cmock_memfault_software_watchdog_feed_ExpectAndReturn(0);
 
 	struct watchdog_evt evt = {
 		.type = WATCHDOG_EVT_START

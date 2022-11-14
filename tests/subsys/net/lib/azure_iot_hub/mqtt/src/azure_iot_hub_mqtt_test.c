@@ -64,7 +64,7 @@ static K_SEM_DEFINE(error_msg_size_sem, 0, 1);
 void setUp(void)
 {
 	mock_mqtt_Init();
-	__wrap_mqtt_keepalive_time_left_IgnoreAndReturn(0);
+	__cmock_mqtt_keepalive_time_left_IgnoreAndReturn(0);
 
 	/* Suspend the polling thread to have full control over polling. */
 	k_thread_suspend(azure_iot_hub_mqtt_thread);
@@ -281,7 +281,7 @@ void test_mqtt_helper_connect_when_disconnected(void)
 		},
 	};
 
-	__wrap_mqtt_client_init_Expect(&mqtt_client);
+	__cmock_mqtt_client_init_Expect(&mqtt_client);
 
 	/* Make getddrinfo return a pointer that points to NULL. Otherwise the unit under test
 	 * would be dereferencing uninitialized memory location. The behavior of the unit
@@ -289,14 +289,14 @@ void test_mqtt_helper_connect_when_disconnected(void)
 	 */
 	struct zsock_addrinfo *test_res = NULL;
 
-	__wrap_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
-	__wrap_getaddrinfo_IgnoreArg_host();
-	__wrap_getaddrinfo_IgnoreArg_hints();
-	__wrap_getaddrinfo_IgnoreArg_res();
-	__wrap_getaddrinfo_ReturnThruPtr_res(&test_res);
+	__cmock_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
+	__cmock_getaddrinfo_IgnoreArg_host();
+	__cmock_getaddrinfo_IgnoreArg_hints();
+	__cmock_getaddrinfo_IgnoreArg_res();
+	__cmock_getaddrinfo_ReturnThruPtr_res(&test_res);
 
-	__wrap_freeaddrinfo_ExpectAnyArgs();
-	__wrap_mqtt_connect_ExpectAndReturn(&mqtt_client, 0);
+	__cmock_freeaddrinfo_ExpectAnyArgs();
+	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, 0);
 
 	mqtt_state = MQTT_STATE_DISCONNECTED;
 
@@ -308,10 +308,10 @@ void test_mqtt_helper_connect_when_disconnected_mqtt_api_error(void)
 {
 	struct mqtt_helper_conn_params conn_params_dummy;
 
-	__wrap_mqtt_client_init_Expect(&mqtt_client);
-	__wrap_getaddrinfo_ExpectAnyArgsAndReturn(0);
-	__wrap_freeaddrinfo_ExpectAnyArgs();
-	__wrap_mqtt_connect_ExpectAndReturn(&mqtt_client, -2);
+	__cmock_mqtt_client_init_Expect(&mqtt_client);
+	__cmock_getaddrinfo_ExpectAnyArgsAndReturn(0);
+	__cmock_freeaddrinfo_ExpectAnyArgs();
+	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -2);
 
 	mqtt_state = MQTT_STATE_DISCONNECTED;
 
@@ -372,8 +372,8 @@ void test_on_suback(void)
 
 void test_on_publish(void)
 {
-	__wrap_mqtt_readall_publish_payload_Stub(mqtt_readall_publish_payload_stub);
-	__wrap_mqtt_publish_qos1_ack_ExpectAnyArgsAndReturn(0);
+	__cmock_mqtt_readall_publish_payload_Stub(mqtt_readall_publish_payload_stub);
+	__cmock_mqtt_publish_qos1_ack_ExpectAnyArgsAndReturn(0);
 
 	send_mqtt_event(MQTT_EVT_PUBLISH, TEST_MESSAGE_ID);
 
@@ -397,7 +397,7 @@ void test_on_publish_too_large_incoming_msg(void)
 
 void test_mqtt_helper_disconnect_when_connected(void)
 {
-	__wrap_mqtt_disconnect_ExpectAndReturn(&mqtt_client, 0);
+	__cmock_mqtt_disconnect_ExpectAndReturn(&mqtt_client, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
@@ -407,7 +407,7 @@ void test_mqtt_helper_disconnect_when_connected(void)
 
 void test_mqtt_helper_disconnect_when_connected_mqtt_api_error(void)
 {
-	__wrap_mqtt_disconnect_ExpectAndReturn(&mqtt_client, -1);
+	__cmock_mqtt_disconnect_ExpectAndReturn(&mqtt_client, -1);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
@@ -440,7 +440,7 @@ void test_mqtt_helper_subscribe_when_connected(void)
 		.message_id = TEST_MESSAGE_ID,
 	};
 
-	__wrap_mqtt_subscribe_ExpectAndReturn(&mqtt_client, &sub_list, 0);
+	__cmock_mqtt_subscribe_ExpectAndReturn(&mqtt_client, &sub_list, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
@@ -460,7 +460,7 @@ void test_mqtt_helper_subscribe_mqtt_api_error(void)
 {
 	struct mqtt_subscription_list sub_list_dummy = { 0 };
 
-	__wrap_mqtt_subscribe_ExpectAndReturn(&mqtt_client, &sub_list_dummy, -EINVAL);
+	__cmock_mqtt_subscribe_ExpectAndReturn(&mqtt_client, &sub_list_dummy, -EINVAL);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
@@ -486,7 +486,7 @@ void test_mqtt_helper_publish_when_connected(void)
 		.message_id = TEST_MESSAGE_ID,
 	};
 
-	__wrap_mqtt_publish_ExpectAndReturn(&mqtt_client, &pub_param, 0);
+	__cmock_mqtt_publish_ExpectAndReturn(&mqtt_client, &pub_param, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
@@ -534,9 +534,9 @@ void test_mqtt_helper_poll_loop_disconnecting(void)
 void test_mqtt_helper_poll_loop_timeout(void)
 {
 	/* Let poll() return 0 first and then -1 on subsequent call to end the test. */
-	__wrap_poll_ExpectAnyArgsAndReturn(0);
-	__wrap_poll_ExpectAnyArgsAndReturn(-1);
-	__wrap_mqtt_live_ExpectAndReturn(&mqtt_client, 0);
+	__cmock_poll_ExpectAnyArgsAndReturn(0);
+	__cmock_poll_ExpectAnyArgsAndReturn(-1);
+	__cmock_mqtt_live_ExpectAndReturn(&mqtt_client, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
@@ -551,8 +551,8 @@ void test_mqtt_helper_poll_loop_timeout(void)
  */
 void test_mqtt_helper_poll_loop_pollin(void)
 {
-	__wrap_poll_Stub(poll_stub_pollin);
-	__wrap_mqtt_input_ExpectAndReturn(&mqtt_client, 0);
+	__cmock_poll_Stub(poll_stub_pollin);
+	__cmock_mqtt_input_ExpectAndReturn(&mqtt_client, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
@@ -566,7 +566,7 @@ void test_mqtt_helper_poll_loop_pollin(void)
  */
 void test_mqtt_helper_poll_loop_pollnval(void)
 {
-	__wrap_poll_Stub(poll_stub_pollnval);
+	__cmock_poll_Stub(poll_stub_pollnval);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
@@ -580,7 +580,7 @@ void test_mqtt_helper_poll_loop_pollnval(void)
  */
 void test_mqtt_helper_poll_loop_pollhup(void)
 {
-	__wrap_poll_Stub(poll_stub_pollhup);
+	__cmock_poll_Stub(poll_stub_pollhup);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
@@ -594,7 +594,7 @@ void test_mqtt_helper_poll_loop_pollhup(void)
  */
 void test_mqtt_helper_poll_loop_pollerr(void)
 {
-	__wrap_poll_Stub(poll_stub_pollerr);
+	__cmock_poll_Stub(poll_stub_pollerr);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 

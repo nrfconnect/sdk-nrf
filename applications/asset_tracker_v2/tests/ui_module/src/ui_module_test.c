@@ -39,8 +39,8 @@ static struct location_module_event location_module_event_memory;
 
 /* Macro used to submit module events of a specific type to the UI module. */
 #define TEST_SEND_EVENT(_mod, _type, _event)							\
-	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&_mod##_module_event_memory);	\
-	__wrap_app_event_manager_free_ExpectAnyArgs();						\
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&_mod##_module_event_memory);	\
+	__cmock_app_event_manager_free_ExpectAnyArgs();						\
 	_event = new_##_mod##_module_event();							\
 	_event->type = _type;									\
 	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER(						\
@@ -200,7 +200,7 @@ void setup_ui_module_in_init_state(void)
 {
 	state_verify(STATE_INIT, SUB_STATE_ACTIVE, SUB_SUB_STATE_LOCATION_INACTIVE);
 
-	__wrap_module_start_Stub(&module_start_stub);
+	__cmock_module_start_Stub(&module_start_stub);
 
 	struct app_module_event *app_module_event;
 
@@ -302,14 +302,14 @@ void test_state_shutdown_fota(void)
 	setup_ui_module_in_init_state();
 
 	/* Verify state transition to STATE_SHUTDOWN. */
-	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&util_module_event_memory);
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&util_module_event_memory);
 
 	/* When a shutdown request is notified by the utility module it is expected that
 	 * the UI module acknowledges the shutdown request.
 	 */
-	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&ui_module_event_memory);
-	__wrap_app_event_manager_free_ExpectAnyArgs();
-	__wrap__event_submit_Stub(&validate_ui_evt);
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&ui_module_event_memory);
+	__cmock_app_event_manager_free_ExpectAnyArgs();
+	__cmock__event_submit_Stub(&validate_ui_evt);
 
 	struct util_module_event *util_module_event = new_util_module_event();
 
@@ -332,14 +332,14 @@ void test_state_shutdown_error(void)
 	setup_ui_module_in_init_state();
 
 	/* Verify state transition to STATE_SHUTDOWN. */
-	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&util_module_event_memory);
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&util_module_event_memory);
 
 	/* When a shutdown request is notified by the utility module it is expected that
 	 * the UI module acknowledges the shutdown request.
 	 */
-	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&ui_module_event_memory);
-	__wrap_app_event_manager_free_ExpectAnyArgs();
-	__wrap__event_submit_Stub(&validate_ui_evt);
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&ui_module_event_memory);
+	__cmock_app_event_manager_free_ExpectAnyArgs();
+	__cmock__event_submit_Stub(&validate_ui_evt);
 
 	struct util_module_event *util_module_event = new_util_module_event();
 
@@ -387,10 +387,10 @@ void test_mode_transition(void)
 
 	verify_publication(true);
 
-	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
-	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
-	__wrap_app_event_manager_free_ExpectAnyArgs();
-	__wrap_app_event_manager_free_ExpectAnyArgs();
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
+	__cmock_app_event_manager_free_ExpectAnyArgs();
+	__cmock_app_event_manager_free_ExpectAnyArgs();
 
 	/* Set module in SUB_STATE_PASSIVE */
 	data_module_event = new_data_module_event();

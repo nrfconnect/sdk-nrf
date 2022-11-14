@@ -133,10 +133,10 @@ void test_trace_backend_init_uart(void)
 {
 	int ret;
 
-	__wrap_pinctrl_lookup_state_ExpectAnyArgsAndReturn(0);
-	__wrap_pinctrl_configure_pins_ExpectAnyArgsAndReturn(0);
-	__wrap_nrfx_uarte_init_ExpectAnyArgsAndReturn(NRFX_SUCCESS);
-	__wrap_nrfx_uarte_init_AddCallback(&nrfx_uarte_init_callback);
+	__cmock_pinctrl_lookup_state_ExpectAnyArgsAndReturn(0);
+	__cmock_pinctrl_configure_pins_ExpectAnyArgsAndReturn(0);
+	__cmock_nrfx_uarte_init_ExpectAnyArgsAndReturn(NRFX_SUCCESS);
+	__cmock_nrfx_uarte_init_AddCallback(&nrfx_uarte_init_callback);
 
 	ret = trace_backend_init(empty_callback);
 
@@ -149,9 +149,9 @@ void test_trace_backend_init_uart_ebusy(void)
 	int ret;
 
 	/* Simulate uart init failure. */
-	__wrap_pinctrl_lookup_state_ExpectAnyArgsAndReturn(0);
-	__wrap_pinctrl_configure_pins_ExpectAnyArgsAndReturn(0);
-	__wrap_nrfx_uarte_init_ExpectAnyArgsAndReturn(NRFX_ERROR_BUSY);
+	__cmock_pinctrl_lookup_state_ExpectAnyArgsAndReturn(0);
+	__cmock_pinctrl_configure_pins_ExpectAnyArgsAndReturn(0);
+	__cmock_nrfx_uarte_init_ExpectAnyArgsAndReturn(NRFX_ERROR_BUSY);
 
 	ret = trace_backend_init(empty_callback);
 
@@ -165,9 +165,9 @@ void test_trace_backend_deinit_uart(void)
 
 	test_trace_backend_init_uart();
 
-	__wrap_nrfx_uarte_uninit_Expect(p_uarte_inst_in_use);
-	__wrap_pinctrl_lookup_state_ExpectAnyArgsAndReturn(0);
-	__wrap_pinctrl_configure_pins_ExpectAnyArgsAndReturn(0);
+	__cmock_nrfx_uarte_uninit_Expect(p_uarte_inst_in_use);
+	__cmock_pinctrl_lookup_state_ExpectAnyArgsAndReturn(0);
+	__cmock_pinctrl_configure_pins_ExpectAnyArgsAndReturn(0);
 
 	ret = trace_backend_deinit();
 
@@ -188,7 +188,7 @@ void test_trace_backend_write_uart(void)
 
 	test_trace_backend_init_uart();
 
-	__wrap_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use, sample_trace_data,
+	__cmock_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use, sample_trace_data,
 					     max_uart_frag_size, NRFX_SUCCESS);
 
 	/* Simulate reception of a modem trace and let trace_test_thread run. */
@@ -198,7 +198,7 @@ void test_trace_backend_write_uart(void)
 	/* Simulate uart callback. Done sending 1st part of modem trace. */
 	uart_tx_done_simulate(sample_trace_data, max_uart_frag_size);
 
-	__wrap_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use,
+	__cmock_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use,
 					     &sample_trace_data[max_uart_frag_size],
 					     sizeof(sample_trace_data) - max_uart_frag_size,
 					     NRFX_SUCCESS);
@@ -231,7 +231,7 @@ void test_trace_backend_write_uart_nrfx_uarte_evt_tx_done(void)
 
 	test_trace_backend_init_uart();
 
-	__wrap_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use, sample_trace_data,
+	__cmock_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use, sample_trace_data,
 					     max_uart_frag_size, NRFX_SUCCESS);
 
 	/* Simulate reception of a modem trace and let trace_test_thread run. */
@@ -269,7 +269,7 @@ void test_trace_backend_write_uart_nrfx_error_no_mem(void)
 	/* Make the nrfx_uarte_tx return error. This should make the modem trace module
 	 * abort sending the second part of the trace buffer.
 	 */
-	__wrap_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use, sample_trace_data,
+	__cmock_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use, sample_trace_data,
 					     max_uart_frag_size, NRFX_ERROR_NO_MEM);
 
 	/* Simulate reception of a modem trace and let trace_test_thread run. */
@@ -289,7 +289,7 @@ void test_trace_backend_write_uart_nrfx_uarte_evt_error(void)
 
 	test_trace_backend_init_uart();
 
-	__wrap_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use, sample_trace_data,
+	__cmock_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use, sample_trace_data,
 					     sizeof(sample_trace_data), NRFX_SUCCESS);
 
 	/* Simulate reception of a modem trace and let trace_test_thread run. */

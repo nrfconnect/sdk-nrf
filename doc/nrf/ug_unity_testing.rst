@@ -25,8 +25,8 @@ To run the unit test, enable the Unity module (:kconfig:option:`CONFIG_UNITY`) a
 The module under test and all dependencies are enabled and compiled into the binary, even the mocked modules.
 
 The linker replaces all calls to the mocked API with a mock implementation using the wrapping feature.
-For example, :code:`-Wl,--wrap=foo` replaces every call to :code:`foo()` with a call to :code:`__wrap_foo()`.
-Because of that, all mock functions are prefixed with :code:`__wrap` (for example, :code:`__wrap_foo_Expect()` instead of :code:`foo_Expect()`).
+For example, :code:`-Wl,--wrap=foo` replaces every call to :code:`foo()` with a call to :code:`__cmock_foo()`.
+Because of that, all mock functions are prefixed with :code:`__cmock` (for example, :code:`__cmock_foo_Expect()` instead of :code:`foo_Expect()`).
 
 To specify the APIs that should be mocked in a given test, edit :file:`CMakeLists.txt` to call :code:`cmock_handle` with the header file and, optionally, the relative path to the header as arguments.
 The relative path is needed if a file is included as, for example, :code:`#include <zephyr/bluetooth/gatt.h>`.

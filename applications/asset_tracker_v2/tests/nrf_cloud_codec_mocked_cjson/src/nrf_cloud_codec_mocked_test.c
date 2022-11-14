@@ -25,7 +25,7 @@ void setUp(void)
 	mock_date_time_Init();
 	mock_json_helpers_Init();
 
-	__wrap_cJSON_Init_Ignore();
+	__cmock_cJSON_Init_Ignore();
 	ret = cloud_codec_init(NULL, NULL);
 	TEST_ASSERT_EQUAL(0, ret);
 
@@ -68,7 +68,7 @@ void test_enc_ui_fail0(void)
 	};
 
 	/* cloud_codec_encode_ui_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn(NULL);
+	__cmock_cJSON_CreateObject_ExpectAndReturn(NULL);
 
 	ret = cloud_codec_encode_ui_data(&codec, &data);
 	TEST_ASSERT_EQUAL(-ENOMEM, ret);
@@ -82,9 +82,9 @@ void test_enc_ui_fail1(void)
 	};
 
 	/* cloud_codec_encode_ui_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*A*/
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(-ENOMEM);
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(-ENOMEM);
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	ret = cloud_codec_encode_ui_data(&codec, &data);
 	TEST_ASSERT_EQUAL(-ENOMEM, ret);
@@ -98,12 +98,12 @@ void test_enc_ui_fail2(void)
 	};
 
 	/* cloud_codec_encode_ui_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*A*/
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
 	/* add_meta_data */
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(-ENOMEM);
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(-ENOMEM);
 	/* cloud_codec_encode_ui_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	ret = cloud_codec_encode_ui_data(&codec, &data);
 	TEST_ASSERT_EQUAL(-ENOMEM, ret);
@@ -117,13 +117,13 @@ void test_enc_ui_fail3(void)
 	};
 
 	/* cloud_codec_encode_ui_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*A*/
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
 	/* add_meta_data */
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(-ENOMEM);
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(-ENOMEM);
 	/* cloud_codec_encode_ui_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	ret = cloud_codec_encode_ui_data(&codec, &data);
 	TEST_ASSERT_EQUAL(-ENOMEM, ret);
@@ -137,14 +137,14 @@ void test_enc_ui_fail4(void)
 	};
 
 	/* cloud_codec_encode_ui_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*A*/
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
 	/* add_meta_data */
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(-ENODATA);
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(-ENODATA);
 	/* cloud_codec_encode_ui_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	ret = cloud_codec_encode_ui_data(&codec, &data);
 	TEST_ASSERT_EQUAL(-ENODATA, ret);
@@ -158,15 +158,15 @@ void test_enc_ui_fail5(void)
 	};
 
 	/* cloud_codec_encode_ui_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*A*/
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
 	/* add_meta_data */
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
-	__wrap_json_add_number_ExpectAnyArgsAndReturn(-ENOMEM);
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_json_add_number_ExpectAnyArgsAndReturn(-ENOMEM);
 	/* cloud_codec_encode_ui_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	ret = cloud_codec_encode_ui_data(&codec, &data);
 	TEST_ASSERT_EQUAL(-ENOMEM, ret);
@@ -181,16 +181,16 @@ void test_enc_ui_fail6(void)
 	};
 
 	/* cloud_codec_encode_ui_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*A*/
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
 	/* add_meta_data */
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
-	__wrap_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
-	__wrap_json_add_number_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_json_add_str_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_json_add_number_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
 	/* cloud_codec_encode_ui_data */
-	__wrap_cJSON_PrintUnformatted_ExpectAnyArgsAndReturn(NULL);
-	__wrap_cJSON_Delete_ExpectAnyArgs();
+	__cmock_cJSON_PrintUnformatted_ExpectAnyArgsAndReturn(NULL);
+	__cmock_cJSON_Delete_ExpectAnyArgs();
 
 	ret = cloud_codec_encode_ui_data(&codec, &data);				/*~A*/
 	TEST_ASSERT_EQUAL(-ENOMEM, ret);
@@ -201,11 +201,11 @@ void test_enc_batch_data_sensor_timefail(void)
 	struct cloud_data_sensors sensor_buf = { .queued = true	};
 
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
 	/* add_batch_data */
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(-EINVAL);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(-EINVAL);
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	ret = cloud_codec_encode_batch_data(&codec,
 					    NULL,
@@ -230,28 +230,28 @@ void test_enc_batch_data_sensor_big_values(void)
 	};
 
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
 	/* add_batch_data */
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*B*/
-	__wrap_json_add_obj_array_ExpectAnyArgs();					/*~B*/
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*B*/
+	__cmock_json_add_obj_array_ExpectAnyArgs();					/*~B*/
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*C*/
-	__wrap_json_add_obj_array_ExpectAnyArgs();					/*~C*/
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*C*/
+	__cmock_json_add_obj_array_ExpectAnyArgs();					/*~C*/
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*D*/
-	__wrap_json_add_obj_array_ExpectAnyArgs();					/*~D*/
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*D*/
+	__cmock_json_add_obj_array_ExpectAnyArgs();					/*~D*/
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*E*/
-	__wrap_json_add_obj_array_ExpectAnyArgs();					/*~E*/
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*E*/
+	__cmock_json_add_obj_array_ExpectAnyArgs();					/*~E*/
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	/* some functions we don't care about here */
-	__wrap_cJSON_GetArraySize_IgnoreAndReturn(0);
-	__wrap_json_add_str_IgnoreAndReturn(EXIT_SUCCESS);
-	__wrap_json_add_number_IgnoreAndReturn(EXIT_SUCCESS);
+	__cmock_cJSON_GetArraySize_IgnoreAndReturn(0);
+	__cmock_json_add_str_IgnoreAndReturn(EXIT_SUCCESS);
+	__cmock_json_add_number_IgnoreAndReturn(EXIT_SUCCESS);
 
 	ret = cloud_codec_encode_batch_data(&codec,
 					    NULL,
@@ -276,18 +276,18 @@ void test_enc_batch_data_sensor_add_air_quality_fail(void)
 	};
 
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
 	/* add_batch_data */
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn(NULL);
+	__cmock_cJSON_CreateObject_ExpectAndReturn(NULL);
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	/* some functions we don't care about here */
-	__wrap_cJSON_GetArraySize_IgnoreAndReturn(0);
-	__wrap_json_add_str_IgnoreAndReturn(EXIT_SUCCESS);
-	__wrap_json_add_number_IgnoreAndReturn(EXIT_SUCCESS);
+	__cmock_cJSON_GetArraySize_IgnoreAndReturn(0);
+	__cmock_json_add_str_IgnoreAndReturn(EXIT_SUCCESS);
+	__cmock_json_add_number_IgnoreAndReturn(EXIT_SUCCESS);
 
 	ret = cloud_codec_encode_batch_data(&codec,
 					    NULL,
@@ -312,21 +312,21 @@ void test_enc_batch_data_sensor_add_humidity_fail(void)
 	};
 
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
 	/* add_batch_data */
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*B*/
-	__wrap_json_add_obj_array_ExpectAnyArgs();					/*~B*/
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*B*/
+	__cmock_json_add_obj_array_ExpectAnyArgs();					/*~B*/
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn(NULL);
+	__cmock_cJSON_CreateObject_ExpectAndReturn(NULL);
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	/* some functions we don't care about here */
-	__wrap_cJSON_GetArraySize_IgnoreAndReturn(0);
-	__wrap_json_add_str_IgnoreAndReturn(EXIT_SUCCESS);
-	__wrap_json_add_number_IgnoreAndReturn(EXIT_SUCCESS);
+	__cmock_cJSON_GetArraySize_IgnoreAndReturn(0);
+	__cmock_json_add_str_IgnoreAndReturn(EXIT_SUCCESS);
+	__cmock_json_add_number_IgnoreAndReturn(EXIT_SUCCESS);
 
 	ret = cloud_codec_encode_batch_data(&codec,
 					    NULL,
@@ -351,24 +351,24 @@ void test_enc_batch_data_sensor_add_temperature_fail(void)
 	};
 
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
 	/* add_batch_data */
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*B*/
-	__wrap_json_add_obj_array_ExpectAnyArgs();					/*~B*/
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*B*/
+	__cmock_json_add_obj_array_ExpectAnyArgs();					/*~B*/
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*C*/
-	__wrap_json_add_obj_array_ExpectAnyArgs();					/*~C*/
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*C*/
+	__cmock_json_add_obj_array_ExpectAnyArgs();					/*~C*/
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn(NULL);
+	__cmock_cJSON_CreateObject_ExpectAndReturn(NULL);
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	/* some functions we don't care about here */
-	__wrap_cJSON_GetArraySize_IgnoreAndReturn(0);
-	__wrap_json_add_str_IgnoreAndReturn(EXIT_SUCCESS);
-	__wrap_json_add_number_IgnoreAndReturn(EXIT_SUCCESS);
+	__cmock_cJSON_GetArraySize_IgnoreAndReturn(0);
+	__cmock_json_add_str_IgnoreAndReturn(EXIT_SUCCESS);
+	__cmock_json_add_number_IgnoreAndReturn(EXIT_SUCCESS);
 
 	ret = cloud_codec_encode_batch_data(&codec,
 					    NULL,
@@ -393,27 +393,27 @@ void test_enc_batch_data_sensor_add_pressure_fail(void)
 	};
 
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
 	/* add_batch_data */
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*B*/
-	__wrap_json_add_obj_array_ExpectAnyArgs();					/*~B*/
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*B*/
+	__cmock_json_add_obj_array_ExpectAnyArgs();					/*~B*/
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*C*/
-	__wrap_json_add_obj_array_ExpectAnyArgs();					/*~C*/
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*C*/
+	__cmock_json_add_obj_array_ExpectAnyArgs();					/*~C*/
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*D*/
-	__wrap_json_add_obj_array_ExpectAnyArgs();					/*~D*/
+	__cmock_cJSON_CreateObject_ExpectAndReturn((void *)1);				/*D*/
+	__cmock_json_add_obj_array_ExpectAnyArgs();					/*~D*/
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn(NULL);
+	__cmock_cJSON_CreateObject_ExpectAndReturn(NULL);
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	/* some functions we don't care about here */
-	__wrap_cJSON_GetArraySize_IgnoreAndReturn(0);
-	__wrap_json_add_str_IgnoreAndReturn(EXIT_SUCCESS);
-	__wrap_json_add_number_IgnoreAndReturn(EXIT_SUCCESS);
+	__cmock_cJSON_GetArraySize_IgnoreAndReturn(0);
+	__cmock_json_add_str_IgnoreAndReturn(EXIT_SUCCESS);
+	__cmock_json_add_number_IgnoreAndReturn(EXIT_SUCCESS);
 
 	ret = cloud_codec_encode_batch_data(&codec,
 					    NULL,
@@ -434,7 +434,7 @@ void test_enc_batch_data_gnss_no_array(void)
 	};
 
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_CreateArray_ExpectAndReturn(NULL);
+	__cmock_cJSON_CreateArray_ExpectAndReturn(NULL);
 	ret = cloud_codec_encode_batch_data(&codec,
 					    &gnss_buf,
 					    NULL,
@@ -456,12 +456,12 @@ void test_enc_batch_data_bat_no_data_obj(void)
 	};
 
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
 	/* add_batch_data */
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn(NULL);
+	__cmock_cJSON_CreateObject_ExpectAndReturn(NULL);
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	ret = cloud_codec_encode_batch_data(&codec,
 					    NULL,
@@ -482,12 +482,12 @@ void test_enc_batch_data_gnss_no_data_obj(void)
 	};
 
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
 	/* add_batch_data */
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn(NULL);
+	__cmock_cJSON_CreateObject_ExpectAndReturn(NULL);
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	ret = cloud_codec_encode_batch_data(&codec,
 					    &gnss_buf,
@@ -508,12 +508,12 @@ void test_enc_batch_data_ui_no_data_obj(void)
 	};
 
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
 	/* add_batch_data */
 	/* add_data */
-	__wrap_cJSON_CreateObject_ExpectAndReturn(NULL);
+	__cmock_cJSON_CreateObject_ExpectAndReturn(NULL);
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	ret = cloud_codec_encode_batch_data(&codec,
 					    NULL,
@@ -535,13 +535,13 @@ void test_enc_batch_data_modem_dyn_no_data_obj(void)
 	};
 
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
+	__cmock_cJSON_CreateArray_ExpectAndReturn((void *)1);				/*A*/
 	/* add_batch_data */
 	/* modem_dynamic_data_add */
-	__wrap_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
-	__wrap_cJSON_CreateObject_ExpectAndReturn(NULL);
+	__cmock_date_time_uptime_to_unix_time_ms_ExpectAnyArgsAndReturn(EXIT_SUCCESS);
+	__cmock_cJSON_CreateObject_ExpectAndReturn(NULL);
 	/* cloud_codec_encode_batch_data */
-	__wrap_cJSON_Delete_ExpectAnyArgs();						/*~A*/
+	__cmock_cJSON_Delete_ExpectAnyArgs();						/*~A*/
 
 	ret = cloud_codec_encode_batch_data(&codec,
 					    NULL,
@@ -561,12 +561,12 @@ void test_enc_config_nomem1(void)
 	struct cloud_data_cfg data = {0};
 
 	/* cloud_codec_encode_config */
-	__wrap_cJSON_CreateObject_ExpectAndReturn(NULL);
-	__wrap_cJSON_CreateObject_ExpectAndReturn(NULL);
-	__wrap_cJSON_CreateObject_ExpectAndReturn(NULL);
-	__wrap_cJSON_Delete_ExpectAnyArgs();
-	__wrap_cJSON_Delete_ExpectAnyArgs();
-	__wrap_cJSON_Delete_ExpectAnyArgs();
+	__cmock_cJSON_CreateObject_ExpectAndReturn(NULL);
+	__cmock_cJSON_CreateObject_ExpectAndReturn(NULL);
+	__cmock_cJSON_CreateObject_ExpectAndReturn(NULL);
+	__cmock_cJSON_Delete_ExpectAnyArgs();
+	__cmock_cJSON_Delete_ExpectAnyArgs();
+	__cmock_cJSON_Delete_ExpectAnyArgs();
 
 	ret = cloud_codec_encode_config(&codec, &data);
 	TEST_ASSERT_EQUAL(-ENOMEM, ret);
