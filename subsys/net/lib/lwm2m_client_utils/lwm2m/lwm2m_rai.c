@@ -104,6 +104,10 @@ int lwm2m_rai_no_data(void)
 
 	if (rrc_connected) {
 		ctx = lwm2m_rd_client_ctx();
+		if (!ctx) {
+			LOG_ERR("No context");
+			return -EPERM;
+		}
 
 		if (ctx->sock_fd >= 0) {
 			LOG_DBG("Set socket option SO_RAI_NO_DATA");
@@ -128,9 +132,13 @@ int lwm2m_rai_last(void)
 
 	if (rrc_connected) {
 		ctx = lwm2m_rd_client_ctx();
+		if (!ctx) {
+			LOG_ERR("No context");
+			return -EPERM;
+		}
 
 		if (ctx->sock_fd >= 0) {
-			LOG_INF("Set socket option SO_RAI_LAST");
+			LOG_DBG("Set socket option SO_RAI_LAST");
 			ret = setsockopt(ctx->sock_fd, SOL_SOCKET, SO_RAI_LAST, NULL, 0);
 
 			if (ret < 0) {
