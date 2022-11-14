@@ -5,7 +5,7 @@
  */
 
 /**
- * @brief pack definations.
+ * @brief phy init config parameters. These are passed to phy at init.
  */
 
 #ifndef __PACK_DEF__
