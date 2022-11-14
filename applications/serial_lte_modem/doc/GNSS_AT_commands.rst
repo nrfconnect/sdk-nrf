@@ -38,7 +38,7 @@ It accepts the following integer values:
 * ``0`` - Single-fix navigation mode.
 * ``1`` - Continuous navigation mode.
   The fix interval is set to 1 second
-* Ranging from ``10`` to ``1800`` - Periodic navigation mode.
+* Ranging from ``10`` to ``65535`` - Periodic navigation mode.
   The fix interval is set to the specified value.
 
 In periodic navigation mode, the ``<timeout>`` parameter controls the maximum time in seconds that the GNSS receiver is allowed to run while trying to produce a valid PVT estimate.

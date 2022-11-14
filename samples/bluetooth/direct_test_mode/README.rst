@@ -18,12 +18,12 @@ The sample supports the following development kit:
 
 Additionally, the sample requires one of the following testing devices:
 
-  * Dedicated test equipment, like an Anritsu MT8852 tester.
-    See :ref:`direct_test_mode_testing_anritsu`.
-  * Another development kit with the same sample.
-    See :ref:`direct_test_mode_testing_board`.
-  * Another development kit connected to a PC with the Direct Test Mode sample available in the `nRF Connect for Desktop`_.
-    See :ref:`direct_test_mode_testing_app`.
+* Dedicated test equipment, like an Anritsu MT8852 tester.
+  See :ref:`direct_test_mode_testing_anritsu`.
+* Another development kit with the same sample.
+  See :ref:`direct_test_mode_testing_board`.
+* A computer with the Direct Test Mode app available in the `nRF Connect for Desktop`_.
+  See :ref:`direct_test_mode_testing_app`.
 
 Overview
 ********
@@ -359,7 +359,7 @@ Testing with nRF Connect for Desktop
 #. Start the ``TRANSMITTER_TEST`` by sending the ``0x80 0x96`` DTM command to the connected development kit.
    This command triggers TX activity on 2402 MHz frequency (1st channel) with ``10101010`` packet pattern and 37-byte packet length.
 #. Observe that you received the ``TEST_STATUS_EVENT`` packet in response with the SUCCESS status field: ``0x00 0x00``.
-#. Start the Direct Test Mode application in nRF Connect for Desktop and select the development kits to communicate with.
+#. Start the Direct Test Mode app in nRF Connect for Desktop and select the development kit to communicate with.
 #. Set the Receiver mode and 37th channel in the test configuration menu.
 #. Start the test.
 #. On the application chart, observe that the number of RX packets is increasing for the 2402 MHz channel.
@@ -491,11 +491,11 @@ On Ubuntu, run:
 Dependencies
 ************
 
-This sample uses the following |NCS| libraries:
+This sample uses the following |NCS| driver:
 
   * :ref:`uart_ipc`
 
-This sample uses the following nrfx dependencies:
+This sample has the following nrfx dependencies:
 
   * ``nrfx/drivers/include/nrfx_timer.h``
   * ``nrfx/hal/nrf_nvmc.h``
@@ -506,7 +506,7 @@ The sample also has the following nrfxlib dependency:
 
   * :ref:`nrfxlib:mpsl_fem`
 
-In addition, it uses the following Zephyr libraries:
+In addition, it has the following Zephyr dependencies:
 
 * :ref:`zephyr:device_model_api`:
 

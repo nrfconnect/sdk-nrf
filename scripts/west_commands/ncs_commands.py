@@ -1,6 +1,6 @@
 # Copyright (c) 2019 Nordic Semiconductor ASA
 #
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 '''The "ncs-xyz" extension commands.'''
 
@@ -480,6 +480,77 @@ class NcsCompare(NcsWestCommand):
             log.inf(commits)
             log.msg(status, color=log.WRN_COLOR)
             likely_merged(np, zp, nsha, zsha)
+
+class NcsUpmerger(NcsWestCommand):
+    def __init__(self):
+        super().__init__(
+            'ncs-upmerger',
+            'tries to perform upmerge for a project',
+            dedent('''
+            Compares upstream and downstream project(s) with repo analyzer.
+            If similar commits are found then tool will first revert these
+            commits and after that performs merge of upstream.'''))
+
+    def do_add_parser(self, parser_adder):
+        parser = parser_adder.add_parser(
+            self.name, help=self.help,
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            description=self.description)
+        add_projects_arg(parser)
+        add_zephyr_rev_arg(parser)
+        return parser
+
+    def do_run(self, args, unknown_args):
+        self.setup_upstream_downstream(args)
+        for name, project in self.ncs_pmap.items():
+            if name in self.z_pmap and name != 'manifest':
+                z_project = self.z_pmap[name]
+            elif name == 'zephyr':
+                z_project = self.z_pmap['manifest']
+            else:
+                log.dbg(f'skipping downstream project {name}',
+                        level=log.VERBOSE_VERY)
+                continue
+            self.upmerge(name, project, z_project)
+
+    def upmerge(self, name, project, z_project):
+        if name == 'zephyr':
+            z_rev = self.zephyr_rev
+        else:
+            z_rev = z_project.revision
+        n_sha = self.checked_sha(project, 'refs/heads/manifest-rev')
+        z_sha = self.checked_sha(z_project, z_rev)
+
+        if not project.is_cloned() or n_sha is None or z_sha is None:
+            if not project.is_cloned():
+                log.wrn('project is not cloned; please run "west update"')
+            elif n_sha is None:
+                log.wrn(f"can't compare; please run \"west update {name}\" "
+                        f'(need revision {project.revision})')
+            elif z_sha is None:
+                log.wrn(f"can't compare; please fetch upstream URL {z_project.url} "
+                        f'(need revision {z_rev})')
+            return
+
+        try:
+            analyzer = nwh.RepoAnalyzer(project, z_project, n_sha, z_sha)
+        except nwh.InvalidRepositoryError as ire:
+            log.die(f"{project.name_and_path}: {str(ire)}")
+
+        for dc, ucs in reversed(analyzer.likely_merged.items()):
+            if len(ucs) == 1:
+                log.inf(f'- Rerverting: {dc.oid} {commit_shortlog(dc)}')
+                log.inf(f'  Similar upstream shortlog:\n'
+                        f'  {ucs[0].oid} {commit_shortlog(ucs[0])}')
+            else:
+                log.inf(f'- Reverting: {dc.oid} {commit_shortlog(dc)}\n'
+                        '  Similar upstream shortlogs:')
+                for i, uc in enumerate(ucs, start=1):
+                    log.inf(f'    {i}. {uc.oid} {commit_shortlog(uc)}')
+            project.git('revert --no-edit ' + str(dc.oid))
+        log.inf(f'Merging: {z_rev} to project: {project.name}')
+        project.git('merge --no-edit ' + str(self.zephyr_rev))
+
 
 def _name_and_path(project):
     # This is just a compatibility shim to keep things going until we

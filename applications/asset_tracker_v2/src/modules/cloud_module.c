@@ -270,50 +270,63 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	return consume;
 }
 
-static void agps_data_handle(const uint8_t *buf, size_t len)
+static void config_data_handle(uint8_t *buf, const size_t len)
 {
 	int err;
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-	err = nrf_cloud_agps_process(buf, len);
-	if (err) {
-		if (err == -EFAULT) {
-			/* An A-GPS error code from nRF Cloud was received */
-			return;
-		}
-		LOG_WRN("Unable to process A-GPS data, error: %d", err);
+	/* Use the config copy when populating the config variable
+	 * before it is sent to the Data module. This way we avoid
+	 * sending uninitialized variables to the Data module.
+	 */
+	err = cloud_codec_decode_config(buf, len, &copy_cfg);
+	if (err == 0) {
+		LOG_DBG("Device configuration encoded");
+		send_config_received();
+	} else if (err == -ENODATA) {
+		LOG_WRN("Device configuration empty!");
+		SEND_EVENT(cloud, CLOUD_EVT_CONFIG_EMPTY);
+	} else if (err == -ECANCELED) {
+		/* The incoming message has already been handled, ignored. */
+	} else if (err == -ENOENT) {
+		/* Encoding of incoming message is not supported. */
 	} else {
-		LOG_DBG("A-GPS data processed");
+		LOG_ERR("Decoding of device configuration, error: %d", err);
+		SEND_ERROR(cloud, CLOUD_EVT_ERROR, err);
 	}
-#endif
+}
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
+static void agps_data_handle(const uint8_t *buf, const size_t len)
+{
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-	if (!err) {
-		err = nrf_cloud_pgps_notify_prediction();
-		if (err) {
-			LOG_ERR("Error requesting prediction notification: %d", err);
-		} else {
-			return;
-		}
-	}
-#endif
+	int err = nrf_cloud_agps_process(buf, len);
 
-	LOG_DBG("Process incoming data if P-GPS related");
-
-#if !defined(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM)
-	err = nrf_cloud_pgps_process(buf, len);
 	if (err) {
-		if (err == -EFAULT) {
-			/* A P-GPS error code from nRF Cloud was received */
-			return;
-		}
-		LOG_ERR("Unable to process P-GPS data, error: %d", err);
+		LOG_ERR("Unable to process A-GPS data, error: %d", err);
+		return;
 	}
-#endif
-#endif
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	err = nrf_cloud_pgps_notify_prediction();
+	if (err) {
+		LOG_ERR("Error requesting prediction notification: %d", err);
+		return;
+	}
+#endif /* CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_AGPS */
+}
 
-	(void)err;
+static void pgps_data_handle(const uint8_t *buf, const size_t len)
+{
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+#if !defined(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM)
+	int err = nrf_cloud_pgps_process(buf, len);
+
+	if (err) {
+		LOG_ERR("Unable to process P-GPS data, error: %d", err);
+		return;
+	}
+
+#endif /* CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM */
+#endif /* CONFIG_NRF_CLOUD_PGPS */
 }
 
 static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
@@ -336,45 +349,14 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 	}
 	case CLOUD_WRAP_EVT_DATA_RECEIVED:
 		LOG_DBG("CLOUD_WRAP_EVT_DATA_RECEIVED");
-
-		int err;
-
-		/* Use the config copy when populating the config variable
-		 * before it is sent to the Data module. This way we avoid
-		 * sending uninitialized variables to the Data module.
-		 */
-		err = cloud_codec_decode_config(evt->data.buf, evt->data.len,
-						&copy_cfg);
-		if (err == 0) {
-			LOG_DBG("Device configuration encoded");
-			send_config_received();
-			break;
-		} else if (err == -ENODATA) {
-			LOG_WRN("Device configuration empty!");
-			SEND_EVENT(cloud, CLOUD_EVT_CONFIG_EMPTY);
-			break;
-		} else if (err == -ECANCELED) {
-			/* The incoming message has already been handled, ignored. */
-			break;
-		} else if (err == -ENOENT) {
-			/* Encoding of incoming message is not supported. Proceed to check if the
-			 * message is AGPS/PGPS related data.
-			 */
-		} else {
-			LOG_ERR("Decoding of device configuration, error: %d", err);
-			SEND_ERROR(cloud, CLOUD_EVT_ERROR, err);
-			break;
-		}
-
-		/* If incoming message is A-GPS/P-GPS related, handle it. nRF Cloud publishes A-GPS
-		 * data on a generic c2d topic meaning that the integration layer cannot filter
-		 * based on topic. This means that agps_data_handle() must be called on both
-		 * CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED and CLOUD_WRAP_EVT_DATA_RECEIVED events.
-		 */
-		agps_data_handle(evt->data.buf, evt->data.len);
+		config_data_handle(evt->data.buf, evt->data.len);
 		break;
 	case CLOUD_WRAP_EVT_PGPS_DATA_RECEIVED:
 		LOG_DBG("CLOUD_WRAP_EVT_PGPS_DATA_RECEIVED");
+		pgps_data_handle(evt->data.buf, evt->data.len);
+		break;
+	case CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED:
+		LOG_DBG("CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED");
 		agps_data_handle(evt->data.buf, evt->data.len);
 		break;
 	case CLOUD_WRAP_EVT_USER_ASSOCIATION_REQUEST: {
@@ -388,8 +370,8 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 		connect_retries = 0;
 
 		SEND_EVENT(cloud, CLOUD_EVT_USER_ASSOCIATION_REQUEST);
-	};
 		break;
+	}
 	case CLOUD_WRAP_EVT_USER_ASSOCIATED: {
 		LOG_DBG("CLOUD_WRAP_EVT_USER_ASSOCIATED");
 
@@ -401,29 +383,25 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 		}
 
 		SEND_EVENT(cloud, CLOUD_EVT_USER_ASSOCIATED);
-	};
 		break;
+	}
 	case CLOUD_WRAP_EVT_REBOOT_REQUEST: {
 		SEND_EVENT(cloud, CLOUD_EVT_REBOOT_REQUEST);
-	};
 		break;
+	}
 	case CLOUD_WRAP_EVT_LTE_DISCONNECT_REQUEST: {
 		SEND_EVENT(cloud, CLOUD_EVT_LTE_DISCONNECT);
-	};
 		break;
+	}
 	case CLOUD_WRAP_EVT_LTE_CONNECT_REQUEST: {
 		SEND_EVENT(cloud, CLOUD_EVT_LTE_CONNECT);
-	};
 		break;
+	}
 	case CLOUD_WRAP_EVT_FOTA_DONE: {
 		LOG_DBG("CLOUD_WRAP_EVT_FOTA_DONE");
 		SEND_EVENT(cloud, CLOUD_EVT_FOTA_DONE);
 		break;
 	}
-	case CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED:
-		LOG_DBG("CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED");
-		agps_data_handle(evt->data.buf, evt->data.len);
-		break;
 	case CLOUD_WRAP_EVT_FOTA_START: {
 		LOG_DBG("CLOUD_WRAP_EVT_FOTA_START");
 		SEND_EVENT(cloud, CLOUD_EVT_FOTA_START);
@@ -443,7 +421,8 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 	case CLOUD_WRAP_EVT_DATA_ACK: {
 		LOG_DBG("CLOUD_WRAP_EVT_DATA_ACK: %d", evt->message_id);
 
-		err = qos_message_remove(evt->message_id);
+		int err = qos_message_remove(evt->message_id);
+
 		if (err == -ENODATA) {
 			LOG_DBG("Message Acknowledgment not in pending QoS list, ID: %d",
 				evt->message_id);

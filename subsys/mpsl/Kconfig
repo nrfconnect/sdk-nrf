@@ -4,38 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "Multiprocol Service Layer (MPSL)"
-
-config MPSL
-	bool "Multiprotocol Service Layer (MPSL)"
-	select ZERO_LATENCY_IRQS
-	select IEEE802154_NRF5_EXT_IRQ_MGMT if IEEE802154_NRF5
-	select NRF_802154_MULTIPROTOCOL_SUPPORT if NRF_802154_RADIO_DRIVER
-	select MULTITHREADING_LOCK
-	depends on (SOC_SERIES_NRF52X || SOC_NRF5340_CPUNET)
-	help
-	  The Multiprotocol Service Layer (MPSL) is a library of common services
-	  for single and multiprotocol implementations.
-
 config MPSL_FEM_ONLY
 	bool "Support only radio front-end module (FEM)"
 	depends on MPSL_FEM
 	help
 	  Support only radio front-end module (FEM) feature. The MPSL library is linked
 	  into a build without the initialization. Using other MPSL features is not possible.
-
-if MPSL
-
-choice MPSL_BUILD_TYPE
-	prompt "MPSL build type"
-	default MPSL_BUILD_TYPE_LIB
-
-config MPSL_BUILD_TYPE_LIB
-	bool "Library"
-
-endchoice
-
-endif
 
 rsource "fem/Kconfig"
 
@@ -45,5 +19,3 @@ rsource "cx/Kconfig"
 rsource "init/Kconfig"
 
 endif # !MPSL_FEM_ONLY
-
-endmenu

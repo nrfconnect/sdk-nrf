@@ -129,10 +129,10 @@ config SB_MONOTONIC_COUNTER
 	help
 	  The counter stores the current firmware version in a way that ensures that the value
 	  can only increase. This is used to prevent malicious rollback of the firmware.
-	  An array of slots is used for one counter. One slot is used per
+	  An array of slots is used for the counter. One slot is used per
 	  counter update, and each new slot must have a larger value than the
-	  previous. Application versions are checked against the current largest
-	  counter before being booted.
+	  previous. Application versions are checked against the largest
+	  counter value before being booted.
 
 config SB_NUM_VER_COUNTER_SLOTS
 	int "Number of monotonic counter slots used for the firmware version"

@@ -160,18 +160,6 @@ static int send_service_info(void)
 	return 0;
 }
 
-/* Function used to filter out responses to cellular position requests. */
-static int cell_pos_response_filter(char *response, size_t len)
-{
-	ARG_UNUSED(len);
-
-	if (strstr(response, CELL_POS_FILTER_STRING) != NULL) {
-		return -EINVAL;
-	}
-
-	return 0;
-}
-
 static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 {
 	struct cloud_wrap_event cloud_wrap_evt = { 0 };
@@ -204,7 +192,7 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		notify = true;
 		break;
 	case NRF_CLOUD_EVT_ERROR:
-		LOG_ERR("NRF_CLOUD_EVT_ERROR");
+		LOG_ERR("NRF_CLOUD_EVT_ERROR: %d", evt->status);
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
 		notify = true;
 		break;
@@ -234,23 +222,19 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_FOTA_ERROR;
 		notify = true;
 		break;
-	case NRF_CLOUD_EVT_RX_DATA:
-		LOG_DBG("NRF_CLOUD_EVT_RX_DATA");
-
-		/* Filter out responses to cellular position requests. The application does not care
-		 * about getting its location back after neighbor cell measurements have been
-		 * sent to cloud.
-		 */
-		err = cell_pos_response_filter((char *)evt->data.ptr, evt->data.len);
-		if (err) {
-			LOG_DBG("Cellular position response received, aborting");
-			return;
-		}
-
+	case NRF_CLOUD_EVT_RX_DATA_GENERAL:
+		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_GENERAL");
+		break;
+	case NRF_CLOUD_EVT_RX_DATA_SHADOW:
+		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_SHADOW");
+		/* Configuration data is contained in the shadow events */
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_DATA_RECEIVED;
 		cloud_wrap_evt.data.buf = (char *)evt->data.ptr;
 		cloud_wrap_evt.data.len = evt->data.len;
 		notify = true;
+		break;
+	case NRF_CLOUD_EVT_RX_DATA_CELL_POS:
+		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_CELL_POS");
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		LOG_WRN("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");

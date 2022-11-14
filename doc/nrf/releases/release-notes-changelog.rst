@@ -116,6 +116,11 @@ nRF9160: Asset Tracker v2
 * Updated:
 
   * The application now uses the new LwM2M location assistance objects through the :ref:`lib_lwm2m_location_assistance` library.
+  * Added handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
+
+* Removed:
+
+    * A-GPS and P-GPS processing; it is now handled by the :ref:`lib_nrf_cloud` library.
 
 nRF9160: Serial LTE modem
 -------------------------
@@ -127,6 +132,7 @@ nRF9160: Serial LTE modem
 * Updated:
 
   * Removed automatic quit of data mode in GNSS, FTP and HTTP services.
+  * Added handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
 
 nRF5340 Audio
 -------------
@@ -273,12 +279,34 @@ nRF9160 samples
     * LED 1 (nRF9160 DK)/Purple LED (Thingy:91) is lit for five seconds indicating that a current location has been acquired by using the ``location get`` command.
     * Overlay files for nRF9160 DK with nRF7002 EK to enable Wi-Fi scanning support.
       With this configuration, you can, for example, obtain the current location by using the ``location get`` command.
+    * Support for new GCI (Global Cell ID) search types for ``link ncellmeas`` command, which are supported by the modem firmware versions >= 1.3.4.
 
 * :ref:`location_sample`:
 
   * Added:
 
     * Overlay files for nRF9160 DK with nRF7002 EK to obtain the current location by using Wi-Fi scanning results.
+
+* :ref:`lte_sensor_gateway` sample:
+
+  * Updated:
+
+    * Added handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
+    * Removed A-GPS and P-GPS processing; it is now handled by the :ref:`lib_nrf_cloud` library.
+
+* :ref:`modem_shell_application` sample:
+
+  * Updated:
+
+    * Added handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
+    * Removed A-GPS and P-GPS processing; it is now handled by the :ref:`lib_nrf_cloud` library.
+
+* :ref:`nrf_cloud_mqtt_multi_service` sample:
+
+  * Changed:
+
+    * Added handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
+    * Removed A-GPS and P-GPS processing; it is now handled by the :ref:`lib_nrf_cloud` library.
 
 Thread samples
 --------------
@@ -306,7 +334,9 @@ NFC samples
 nRF5340 samples
 ---------------
 
-|no_changes_yet_note|
+* :ref:`multiprotocol-rpmsg-sample`:
+
+  * Decreased the maximum supported number of concurrent Bluetooth LE connections to 4.
 
 Gazell samples
 --------------
@@ -448,6 +478,25 @@ Modem libraries
 
   * Added timeout for the entire location request.
 
+* :ref:`lte_lc_readme` library:
+
+  * Added support for GCI (Global Cell ID) neighbor cell measurement search types, which are supported by the modem firmware versions >= 1.3.4.
+
+    Parameter type in :c:func:`lte_lc_neighbor_cell_measurement` changed to :c:struct:`lte_lc_ncellmeas_params`.
+    It includes both search type and GCI count that have an impact only with GCI search types.
+
+* :ref:`modem_key_mgmt` library:
+
+  * Added:
+
+    * The ``-EALREADY`` return value for the :c:func:`modem_key_mgmt_write` function when the credential already exists and cannot be overwritten.
+    * The ``-ECANCELED`` return value for the :c:func:`modem_key_mgmt_write` and :c:func:`modem_key_mgmt_delete` functions when the voltage is low.
+
+  * Updated:
+
+    * All the functions to return ``-EACCES`` instead of ``-EPERM`` when the access to the credential is not allowed.
+    * All the functions to return ``-EPERM`` instead of ``-EACCES`` when the operation is not permitted because the LTE link is active.
+
 Libraries for networking
 ------------------------
 
@@ -470,6 +519,12 @@ Libraries for networking
   * Updated:
 
     * The stack size of the MQTT connection monitoring thread can now be adjusted by setting the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE` Kconfig option.
+    * The library now subscribes to a wildcard cloud-to-device (/c2d) topic.
+      This enables the device to receive nRF Cloud Location Services data on separate topics.
+    * Replaced event :c:enum:`NRF_CLOUD_EVT_RX_DATA` with :c:enum:`NRF_CLOUD_EVT_RX_DATA_GENERAL`.
+    * Added events :c:enum:`NRF_CLOUD_EVT_RX_DATA_CELL_POS` and :c:enum:`NRF_CLOUD_EVT_RX_DATA_SHADOW`.
+    * The library now processes A-GPS and P-GPS data; it is no longer passed to the application.
+    * The status field of :c:enum:`NRF_CLOUD_EVT_ERROR` events uses values from the enumeration :c:enumerator:`nrf_cloud_error_status`.
 
   * Removed:
 

@@ -141,7 +141,18 @@ void error_handler(enum error_type err_type, int err)
 
 void nrf_cloud_error_handler(int err)
 {
-	error_handler(ERROR_NRF_CLOUD, err);
+	switch (err) {
+	case NRF_CLOUD_ERR_STATUS_MQTT_CONN_FAIL:
+	case NRF_CLOUD_ERR_STATUS_MQTT_CONN_BAD_PROT_VER:
+	case NRF_CLOUD_ERR_STATUS_MQTT_CONN_ID_REJECTED:
+	case NRF_CLOUD_ERR_STATUS_MQTT_CONN_SERVER_UNAVAIL:
+	case NRF_CLOUD_ERR_STATUS_MQTT_CONN_BAD_USR_PWD:
+	case NRF_CLOUD_ERR_STATUS_MQTT_CONN_NOT_AUTH:
+	case NRF_CLOUD_ERR_STATUS_MQTT_SUB_FAIL:
+		error_handler(ERROR_NRF_CLOUD, err);
+	default:
+		return;
+	}
 }
 
 /**@brief Modem fault handler. */
@@ -345,8 +356,6 @@ static void on_cloud_evt_user_associated(void)
 /**@brief Callback for nRF Cloud events. */
 static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 {
-	int err;
-
 	switch (evt->type) {
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
 		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
@@ -377,22 +386,14 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 		atomic_set(&send_data_enable, 1);
 		k_work_schedule(&aggregated_work, K_MSEC(100));
 		break;
-	case NRF_CLOUD_EVT_RX_DATA:
-		LOG_DBG("NRF_CLOUD_EVT_RX_DATA");
-		/* nRF Cloud publishes A-GPS data on a generic c2d topic meaning that the
-		 * integration layer cannot filter based on topic. We therefore try to process the
-		 * data as A-GPS data and allow the message to have the wrong format.
-		 */
-		err = nrf_cloud_agps_process(evt->data.ptr, evt->data.len);
-		if (!err){
-			LOG_INF("AGPS data processed");
-			break;
-		}
-		if (err && err != -ENOMSG) {
-			LOG_ERR("Processing AGPS data failed");
-			break;
-		}
-
+	case NRF_CLOUD_EVT_RX_DATA_GENERAL:
+		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_GENERAL");
+		break;
+	case NRF_CLOUD_EVT_RX_DATA_SHADOW:
+		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_SHADOW");
+		break;
+	case NRF_CLOUD_EVT_RX_DATA_CELL_POS:
+		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_CELL_POS");
 		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		LOG_DBG("NRF_CLOUD_EVT_SENSOR_DATA_ACK");

@@ -825,15 +825,17 @@ static int battery_data_get(void)
 static int neighbor_cells_measurement_start(void)
 {
 	int err;
-	enum lte_lc_neighbor_search_type type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
+	struct lte_lc_ncellmeas_params ncellmeas_params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT,
+	};
 
 	if (IS_ENABLED(CONFIG_MODEM_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT)) {
-		type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT;
+		ncellmeas_params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT;
 	} else if (IS_ENABLED(CONFIG_MODEM_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE)) {
-		type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE;
+		ncellmeas_params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE;
 	}
 
-	err = lte_lc_neighbor_cell_measurement(type);
+	err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
 	if (err) {
 		LOG_ERR("Failed to start neighbor cell measurements, error: %d", err);
 		return err;

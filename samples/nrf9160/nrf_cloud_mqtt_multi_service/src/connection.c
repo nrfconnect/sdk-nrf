@@ -271,15 +271,12 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 	case NRF_CLOUD_EVT_ERROR:
 		LOG_DBG("NRF_CLOUD_EVT_ERROR: %d", nrf_cloud_evt->status);
 		break;
-	case NRF_CLOUD_EVT_RX_DATA:
-		LOG_DBG("NRF_CLOUD_EVT_RX_DATA");
+	case NRF_CLOUD_EVT_RX_DATA_GENERAL:
+		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_GENERAL");
 		LOG_DBG("%d bytes received from cloud", nrf_cloud_evt->data.len);
-
-		/* The Location library sends assistance data requests on our behalf, but cannot
-		 * intercept the responses. We must, therefore, check all received MQTT payloads for
-		 * assistance data ourselves.
-		 */
-		location_assistance_data_handler(nrf_cloud_evt->data.ptr, nrf_cloud_evt->data.len);
+		break;
+	case NRF_CLOUD_EVT_RX_DATA_SHADOW:
+		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_SHADOW");
 		break;
 	case NRF_CLOUD_EVT_FOTA_START:
 		LOG_DBG("NRF_CLOUD_EVT_FOTA_START");
