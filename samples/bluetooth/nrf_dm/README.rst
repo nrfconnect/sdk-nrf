@@ -78,6 +78,36 @@ The addresses of these devices are stored in a list.
 When a device does not respond within a certain period of time, it is removed from the list.
 Also the last measurement results with the peers are stored in this list.
 
+Power consumption
+*****************
+
+Power consumption and the number of measurements performed in a given time depend on the following factors:
+
+* Advertiser settings.
+* Scanner settings.
+* Extended size of measurement window by ``extra_window_time_us`` in the :c:struct:`dm_request` structure.
+
+The shorter the advertising interval, the higher the frequency at which the broadcaster sends out advertising packages.
+This leads to a higher probability of synchronization and to a higher number of measurements taken at a given time.
+It also decreases the latency for the first measurement when the device is turned on or comes in reach.
+However, the higher number of packets transmitted also results in higher power consumption.
+
+The scan interval and scan window parameters determine how often and how long the scanning device will listen for packets.
+Like the short advertising interval, these values also have an impact on power consumption and the ranging frequency of devices.
+
+After the first measurement, the :kconfig:option:`CONFIG_DM_MIN_TIME_BETWEEN_TIMESLOTS_US` and the :kconfig:option:`CONFIG_DM_TIMESLOT_QUEUE_COUNT_SAME_PEER` Kconfig options define how often the same device is measured again.
+The Kconfig options :kconfig:option:`CONFIG_DM_TIMESLOT_QUEUE_COUNT_SAME_PEER` and :kconfig:option:`CONFIG_DM_TIMESLOT_QUEUE_LENGTH` define how many measurements are scheduled.
+The more measurements are scheduled, the more of them take place, which increases power consumption but gives more frequent rangings.
+If the :kconfig:option:`CONFIG_DM_TIMESLOT_RESCHEDULE` Kconfig option is disabled, the next timeslot for measurement execution will be allocated after the measurement request is added using the :c:func:`dm_request_add` function.
+
+Extending the measurement window increases the probability of measurement success for coarse synchronization.
+However, it affects the turn-on time of the radio and thus, power consumption.
+
+At the application runtime, the additional delay of measurement execution is configured using the ``start_delay_us`` parameter of the :c:struct:`dm_request` structure.
+This option helps in adjusting the synchronization.
+The :kconfig:option:`CONFIG_DM_INITIATOR_DELAY_US` Kconfig option defines the initiator delay.
+Increasing the values of these parameters increases the latency and power consumption.
+
 User interface
 **************
 
