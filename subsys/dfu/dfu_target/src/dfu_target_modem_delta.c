@@ -33,7 +33,7 @@ static int delete_banked_modem_delta_fw(void)
 
 	LOG_INF("Deleting firmware image, this can take several minutes");
 	err = nrf_modem_delta_dfu_erase();
-	if (err != 0) {
+	if (err != 0 && err != NRF_MODEM_DELTA_DFU_ERASE_PENDING) {
 		LOG_ERR("Failed to delete backup, error %d", err);
 		return -EFAULT;
 	}
@@ -103,12 +103,13 @@ int dfu_target_modem_delta_init(size_t file_size, int img_num, dfu_target_callba
 
 	/* Check offset and erase firmware if necessary */
 	err = nrf_modem_delta_dfu_offset(&offset);
-	if (err != 0) {
+	if (err != 0 && err != NRF_MODEM_DELTA_DFU_ERASE_PENDING) {
 		LOG_ERR("Failed to retrieve offset in scratch area, error %d", err);
 		return -EFAULT;
 	}
 
-	if (offset == NRF_MODEM_DELTA_DFU_OFFSET_DIRTY) {
+	if (offset == NRF_MODEM_DELTA_DFU_OFFSET_DIRTY ||
+	    err == NRF_MODEM_DELTA_DFU_ERASE_PENDING) {
 		err = delete_banked_modem_delta_fw();
 		return err;
 	}
@@ -195,4 +196,9 @@ int dfu_target_modem_delta_schedule_update(int img_num)
 	LOG_INF("Scheduling modem firmware upgrade at next boot");
 
 	return err;
+}
+
+int dfu_target_modem_delta_reset(void)
+{
+	return nrf_modem_delta_dfu_erase();
 }

@@ -230,3 +230,9 @@ int dfu_target_mcuboot_schedule_update(int img_num)
 
 	return err;
 }
+
+int dfu_target_mcuboot_reset(void)
+{
+	stream_buf_bytes = 0;
+	return dfu_target_stream_reset();
+}

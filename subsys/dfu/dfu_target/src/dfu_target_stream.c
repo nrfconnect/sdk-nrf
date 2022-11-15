@@ -216,3 +216,19 @@ int dfu_target_stream_done(bool successful)
 
 	return err;
 }
+
+int dfu_target_stream_reset(void)
+{
+	int ret;
+
+	stream.buf_bytes = 0;
+	stream.bytes_written = 0;
+
+	/* Erase just the first page. Stream write will take care of erasing remaining pages
+	 * on a next buffered_write round
+	 */
+	ret = stream_flash_erase_page(&stream, stream.offset);
+
+	current_id = NULL;
+	return ret;
+}

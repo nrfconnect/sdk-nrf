@@ -16,6 +16,30 @@ The DFU target library collects sequentially the image data received from a tran
 It then saves the data using buffered writes, resulting in fewer write operations and faster response times seen by the application.
 The library also takes away, from the application, the responsibility of calculating the data-chunk write offset.
 
+Common application flow
+=======================
+
+Each of the supported upgrade types follow the common DFU flow.
+
+1. Initialize the specific DFU target by calling the :c:func:`dfu_target_init` function.
+
+   Internally, it uses the image type and image number to decide which target to initialize.
+#. Ask the offset of already downloaded blocks by calling the :c:func:`dfu_target_offset_get` function.
+
+   This step is optional, but it allows the application to skip the blocks that are already downloaded.
+   All targets do not necessarily support it.
+#. Write a block of DFU image into the target by calling the :c:func:`dfu_target_write` function.
+
+   Repeat until all blocks have been downloaded.
+#. When all downloads have completed, call the :c:func:`dfu_target_done` function to tell the DFU library that the process has completed.
+#. When the application is ready to install the image, call the :c:func:`dfu_target_schedule_update` function to mark it as ready for update.
+
+   Some targets perform the installation automatically on next boot.
+
+To cancel an ongoing operation, call the :c:func:`dfu_target_reset` function.
+This clears up any images that have already been downloaded or even marked to be updated.
+This is different than aborting a download by calling the :c:func:`dfu_target_done` function, in which case the same download can be resumed later by initializing the same target.
+
 Supported upgrade types
 =======================
 
@@ -47,7 +71,6 @@ When the image data transfer is completed, the application using the DFU target 
 2. Call the :c:func:`dfu_target_schedule_update` function to mark the firmware as *ready to be booted*.
    On the next reboot, the device will run with the new firmware.
 
-When the application has to collect another MCUboot image, it must either reset the DFU target using :c:func:`dfu_target_reset` or schedule the upgrade for the current image.
 After that, the application can call the :c:func:`dfu_target_init` function for another image pair index.
 
 .. note::
@@ -60,8 +83,10 @@ This type of firmware upgrade is used for delta upgrades to the modem firmware (
 The modem stores the data in the memory location reserved for firmware patches.
 If there is already a firmware patch stored in the modem, the library requests the modem to delete the old firmware patch to make space for the new patch.
 
-When the transfer is completed, The application must call the :c:func:`dfu_target_done` function to request the modem to apply the patch.
-On the next reboot, the modem will try to apply the patch.
+When the transfer has completed, the application must call the :c:func:`dfu_target_done` function to release modem resources and then call :c:func:`dfu_target_schedule_update` to request the modem to apply the patch.
+On the next reboot, the modem tries to apply the patch.
+
+If an existing image needs to be removed, even if it is marked to be updated, the application may call the :c:func:`dfu_target_reset` function, which erases the DFU area and prepares it for next download.
 
 .. _lib_dfu_target_full_modem_update:
 
@@ -75,7 +100,8 @@ This type of firmware upgrade supports updating the modem firmware using the ser
 The serialized firmware file uses the :file:`.cbor` extension.
 
 This DFU target downloads the serialized modem firmware to an external flash memory.
-Once the modem firmware has been downloaded, the library uses :ref:`lib_fmfu_fdev` to write the firmware to the modem.
+Once the modem firmware has been downloaded, the application should use :ref:`lib_fmfu_fdev` to write the firmware to the modem.
+The DFU target library does not perform the upgrade and calling the :c:func:`dfu_target_schedule_update` function has no effect.
 
 Configuration
 *************

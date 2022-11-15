@@ -48,8 +48,7 @@ int dfu_target_full_modem_cfg(const struct dfu_target_full_modem_params *params)
 	return 0;
 }
 
-int dfu_target_full_modem_init(size_t file_size, int img_num,
-			       dfu_target_callback_t callback)
+int dfu_target_full_modem_init(size_t file_size, int img_num, dfu_target_callback_t callback)
 {
 	if (!configured) {
 		return -EPERM;
@@ -60,17 +59,27 @@ int dfu_target_full_modem_init(size_t file_size, int img_num,
 
 int dfu_target_full_modem_offset_get(size_t *out)
 {
+	if (!configured) {
+		return -EPERM;
+	}
+
 	return dfu_target_stream_offset_get(out);
 }
 
 int dfu_target_full_modem_write(const void *const buf, size_t len)
 {
+	if (!configured) {
+		return -EPERM;
+	}
+
 	return dfu_target_stream_write(buf, len);
 }
 
 int dfu_target_full_modem_done(bool successful)
 {
-	configured = false;
+	if (!configured) {
+		return -EPERM;
+	}
 
 	if (successful) {
 		LOG_INF("Modem firmware downloaded to flash device");
@@ -83,5 +92,17 @@ int dfu_target_full_modem_schedule_update(int img_num)
 {
 	ARG_UNUSED(img_num);
 
+	if (!configured) {
+		return -EPERM;
+	}
+
 	return 0;
+}
+
+int dfu_target_full_modem_reset(void)
+{
+	if (!configured) {
+		return -EPERM;
+	}
+	return dfu_target_stream_reset();
 }

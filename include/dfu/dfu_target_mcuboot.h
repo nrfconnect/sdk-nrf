@@ -88,6 +88,16 @@ int dfu_target_mcuboot_done(bool successful);
  **/
 int dfu_target_mcuboot_schedule_update(int img_num);
 
+/**
+ * @brief Release resources and erase the download area.
+ *
+ * Cancels any ongoing updates.
+ *
+ * @return 0 on success, negative errno otherwise.
+ */
+int dfu_target_mcuboot_reset(void);
+
+
 #ifdef __cplusplus
 }
 #endif
