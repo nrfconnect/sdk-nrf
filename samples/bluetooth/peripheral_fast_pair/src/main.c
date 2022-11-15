@@ -25,6 +25,7 @@ LOG_MODULE_REGISTER(fp_sample, LOG_LEVEL_INF);
 
 #define FP_ADV_MODE_BUTTON_MASK					DK_BTN1_MSK
 #define VOLUME_UP_BUTTON_MASK					DK_BTN2_MSK
+#define BOND_REMOVE_BUTTON_MASK					DK_BTN3_MSK
 #define VOLUME_DOWN_BUTTON_MASK					DK_BTN4_MSK
 
 #define RUN_LED_BLINK_INTERVAL_MS				1000
@@ -39,6 +40,19 @@ static struct bt_conn *peer;
 static struct k_work bt_adv_restart;
 static struct k_work_delayable fp_adv_mode_status_led_handle;
 static struct k_work_delayable fp_discoverable_adv_timeout;
+
+
+static void advertising_stop(void)
+{
+	int ret = k_work_cancel_delayable(&fp_discoverable_adv_timeout);
+
+	__ASSERT_NO_MSG((ret & ~(K_WORK_CANCELING)) == 0);
+
+	ret = bt_adv_helper_adv_stop();
+	if (ret) {
+		LOG_ERR("Failed to stop advertising (err %d)", ret);
+	}
+}
 
 static void advertising_start(void)
 {
@@ -279,6 +293,27 @@ static void fp_adv_mode_btn_handle(uint32_t button_state, uint32_t has_changed)
 	}
 }
 
+static void bond_remove_btn_handle(uint32_t button_state, uint32_t has_changed)
+{
+	uint32_t button_pressed = button_state & has_changed;
+
+	if (button_pressed & BOND_REMOVE_BUTTON_MASK) {
+		advertising_stop();
+
+		int err = bt_unpair(BT_ID_DEFAULT, NULL);
+
+		if (err) {
+			LOG_ERR("Cannot remove bonds (err %d)", err);
+		} else {
+			LOG_INF("Bonds removed");
+		}
+
+		if (!peer) {
+			advertising_start();
+		}
+	}
+}
+
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
 	__ASSERT_NO_MSG(!k_is_in_isr());
@@ -286,6 +321,7 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 
 	fp_adv_mode_btn_handle(button_state, has_changed);
 	volume_control_btn_handle(button_state, has_changed);
+	bond_remove_btn_handle(button_state, has_changed);
 }
 
 void main(void)
