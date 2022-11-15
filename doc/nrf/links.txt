@@ -775,6 +775,10 @@
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
 .. _`nRF Cloud RegisterPublicKeys Endpoint`: https://api.nrfcloud.com/v1/#operation/RegisterPublicKeys
 
+.. _`device_credentials_installer.py`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/device_credentials_installer.py
+.. _`nrf_cloud_provision.py`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#nrf-cloud-device-provisioning
+.. _`nRF Cloud Utilities documentation`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md
+
 .. ### Source: zigbeealliance.org & csa-iot.org
 
 .. _`Zigbee Alliance`:

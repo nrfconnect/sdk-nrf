@@ -87,12 +87,17 @@ A device can successfully connect to `nRF Cloud`_ using MQTT if the following re
 
 * Preconnect provisioning
 
-  Run the  :file:`device_credentials_installer.py` Python script.
-  You need to specify a number of parameters including the device ID.
+  1. Run the `device_credentials_installer.py`_ Python script to create and install credentials on the device:
 
-  The script instructs the device to securely generate and store a private key, which never leaves the device.
-  It programs  the specified CA certificate into the device.
-  The private key never leaves the device, which makes this a more secure option.
+     * You need to specify a number of parameters including the device ID.
+     * The script instructs the device to securely generate and store a private key.
+     * The private key never leaves the device, which makes this a more secure option.
+     * It creates a device certificate and signs it with the specified CA.
+     * It writes the device certificate and AWS CA certificate to the device.
+
+  #. Run the `nrf_cloud_provision.py`_ script to provision and associate the device with your nRF Cloud account.
+
+  For more details about the scripts, refer to the `nRF Cloud Utilities documentation`_.
 
   See `Securely generating credentials on the nRF9160`_  and `nRF Cloud Provisioning`_ for more details.
 
