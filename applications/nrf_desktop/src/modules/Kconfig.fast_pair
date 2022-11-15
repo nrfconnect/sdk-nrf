@@ -15,6 +15,14 @@ menuconfig DESKTOP_FAST_PAIR
 
 if DESKTOP_FAST_PAIR
 
+config DESKTOP_FAST_PAIR_LIMIT_NORMAL_PAIRING
+	bool "Allow normal Bluetooth pairing only in pairing mode"
+	default y
+	help
+	  Register Bluetooth authentication callbacks and reject normal
+	  Bluetooth pairing when outside of pairing mode (if the used Bluetooth
+	  local identity already has a bonded peer).
+
 config DESKTOP_FAST_PAIR_MAX_LOCAL_ID_BONDS
 	int
 	default CAF_BLE_STATE_MAX_LOCAL_ID_BONDS
