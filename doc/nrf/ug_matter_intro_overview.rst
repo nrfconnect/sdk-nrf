@@ -42,5 +42,6 @@ The following pages provide a brief overview of the Matter structure.
    ug_matter_overview_security.rst
    ug_matter_overview_commissioning.rst
    ug_matter_overview_multi_fabrics.rst
+   ug_matter_overview_dfu.rst
    ug_matter_overview_dev_model.rst
    ug_matter_overview_architecture_integration.rst

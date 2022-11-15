@@ -67,6 +67,7 @@ Matter
 
 * Added:
 
+  * Documentation page about :ref:`ug_matter_overview_dfu`.
   * Documentation page about :ref:`ug_matter_overview_multi_fabrics` and entry about binding to :ref:`ug_matter_network_topologies_concepts`.
   * Documentation page about :ref:`ug_matter_overview_commissioning`, which is based on an earlier subsection of :ref:`ug_matter_overview_network_topologies`.
   * Documentation page about :ref:`ug_matter_overview_security`, which is based on an earlier subsection of :ref:`ug_matter_overview_network_topologies`.
