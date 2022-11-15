@@ -19,7 +19,7 @@ config BT_BAP_BROADCAST_SOURCE
 	default y
 
 config BT_ISO_TX_BUF_COUNT
-	default 2
+	default 10
 
 config BT_BAP_BROADCAST_SRC_STREAM_COUNT
 	default 2

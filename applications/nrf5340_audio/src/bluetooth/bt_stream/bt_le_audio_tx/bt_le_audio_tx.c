@@ -29,7 +29,7 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
 #define SRC_STREAM_COUNT 0
 #endif
 
-#define HCI_ISO_BUF_ALLOC_PER_CHAN 2
+#define HCI_ISO_BUF_ALLOC_PER_CHAN 5
 
 /* For being able to dynamically define iso_tx_pools */
 #define NET_BUF_POOL_ITERATE(i, _)                                                                 \
