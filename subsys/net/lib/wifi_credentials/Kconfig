@@ -46,6 +46,11 @@ config WIFI_CREDENTIALS_SAE_PASSWORD_LENGTH
 	  There is no official limit on SAE password length,
 	  but for example Linux 6.0 has a hardcoded limit of 128 bytes.
 
+config WIFI_CREDENTIALS_SHELL
+	bool "Shell commands to manage Wi-Fi credentials"
+	default y
+	depends on SHELL
+
 endif # WIFI_CREDENTIALS
 
 if WIFI_CREDENTIALS_BACKEND_PSA

@@ -501,6 +501,10 @@ Wi-Fi samples
 
   * nRF7002 revision A support.
 
+* Changed:
+
+* The :ref:`wifi_shell_sample` sample now uses the :ref:`lib_wifi_credentials` and :ref:`wifi_mgmt_ext` libraries.
+
 Other samples
 -------------
 
