@@ -1,0 +1,33 @@
+/ {
+	chosen {
+		zephyr,shell-uart = &uart0;
+		zephyr,bt-uart = &uart2;
+	};
+};
+
+&ipc0 {
+	status = "disabled";
+};
+
+&mbox {
+	status = "disabled";
+};
+
+&uart2 {
+	current-speed = <1000000>;
+	pinctrl-0 = < &uart2_default >;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+&pinctrl {
+	uart2_default: uart2_default {
+		group1 {
+			psels = < 0x20 >, < 0x20021 >;
+		};
+		group2 {
+			psels = < 0x1002D >, < 0x3002C >;
+			bias-pull-up;
+		};
+	};
+};

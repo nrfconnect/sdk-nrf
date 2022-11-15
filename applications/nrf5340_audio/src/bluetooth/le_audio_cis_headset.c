@@ -32,7 +32,7 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 #define BLE_ISO_RETRANSMITS 2
 
 #if (CONFIG_BT_AUDIO_TX)
-#define HCI_ISO_BUF_ALLOC_PER_CHAN 2
+#define HCI_ISO_BUF_ALLOC_PER_CHAN 4
 /* For being able to dynamically define iso_tx_pools */
 #define NET_BUF_POOL_ITERATE(i, _)                                                                 \
 	NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool_##i, HCI_ISO_BUF_ALLOC_PER_CHAN,                     \
@@ -349,6 +349,8 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 static void stream_start_cb(struct bt_bap_stream *stream)
 {
 	LOG_INF("Stream %p started", stream);
+
+	sources[0].seq_num = 0U;
 
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, stream->conn);
 }

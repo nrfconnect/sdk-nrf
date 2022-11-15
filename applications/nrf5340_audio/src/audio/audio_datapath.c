@@ -299,6 +299,7 @@ static void pres_comp_state_set(enum pres_comp_state new_state)
 	ERR_CHK(ret);
 }
 
+#if FEATURE_PRES_COMP
 /**
  * @brief Move audio blocks back and forth in FIFO to get audio in sync
  *
@@ -425,6 +426,7 @@ static void audio_datapath_presentation_compensation(uint32_t recv_frame_ts_us, 
 		}
 	}
 }
+#endif
 
 static void tone_stop_worker(struct k_work *work)
 {
@@ -742,6 +744,7 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
 
 	if (diff < JUST_IN_TIME_US - JUST_IN_TIME_THRESHOLD_US ||
 	    diff > JUST_IN_TIME_US + JUST_IN_TIME_THRESHOLD_US) {
+		LOG_WRN("Drop FIFO RX block");
 		ret = audio_system_fifo_rx_block_drop();
 		if (ret) {
 			LOG_WRN("Not able to drop FIFO RX block");
@@ -800,6 +803,7 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 		LOG_ERR("buf is NULL");
 	}
 
+#if FEATURE_PRES_COMP
 	if (sdu_ref_us == ctrl_blk.previous_sdu_ref_us) {
 		LOG_WRN("Duplicate sdu_ref_us (%d) - Dropping audio frame", sdu_ref_us);
 		return;
@@ -844,6 +848,7 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 		audio_datapath_presentation_compensation(recv_frame_ts_us, sdu_ref_us,
 							 sdu_ref_not_consecutive);
 	}
+#endif
 
 	/*** Decode ***/
 

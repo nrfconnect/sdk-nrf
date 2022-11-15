@@ -31,7 +31,7 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 #define STANDARD_QUALITY_24KHZ 24000
 #define HIGH_QUALITY_48KHZ     48000
 
-#define HCI_ISO_BUF_ALLOC_PER_CHAN 2
+#define HCI_ISO_BUF_ALLOC_PER_CHAN 4
 /* For being able to dynamically define iso_tx_pools */
 #define NET_BUF_POOL_ITERATE(i, _)                                                                 \
 	NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool_##i, HCI_ISO_BUF_ALLOC_PER_CHAN,                     \

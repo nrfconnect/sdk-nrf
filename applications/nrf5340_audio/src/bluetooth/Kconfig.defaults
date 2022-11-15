@@ -51,7 +51,7 @@ config BT_L2CAP_TX_BUF_COUNT
 
 config BT_BUF_ACL_RX_SIZE
 	default 502 if (AUDIO_DFU > 0)
-	default 259
+	default 255
 
 config SETTINGS
 	default y
@@ -76,6 +76,9 @@ if AUDIO_DEV = 1
 
 config BT_BAP_UNICAST_SERVER
 	default y
+
+config BT_ISO_TX_BUF_COUNT
+	default 2
 
 config BT_MAX_CONN
 	default 1
@@ -205,6 +208,7 @@ if TRANSPORT_BIS # Depends on TRANSPORT_BIS
 
 config BT_BUF_ACL_RX_SIZE
 	default 502 if (AUDIO_DFU > 0)
+	default 255
 
 # HEADSET
 if AUDIO_DEV = 1

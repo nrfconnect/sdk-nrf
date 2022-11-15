@@ -76,8 +76,6 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	int ret;
 	char addr[BT_ADDR_LE_STR_LEN] = {0};
 	uint8_t num_conn = 0;
-	uint16_t conn_handle;
-	enum ble_hci_vs_tx_power conn_tx_pwr;
 	struct bt_mgmt_msg msg;
 
 	if (err) {
@@ -109,7 +107,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Connected: %s", addr);
 
-	if (IS_ENABLED(CONFIG_BT_CENTRAL) && (num_conn < MAX_CONN_NUM)) {
+	if (IS_ENABLED(CONFIG_BT_CENTRAL) /* && (num_conn < MAX_CONN_NUM) */) {
 		/* Room for more connections, start scanning again */
 		ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL);
 		if (ret) {
@@ -117,10 +115,15 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 		}
 	}
 
+#if defined(FEATURE_FEM)
+	uint16_t conn_handle;
+
 	ret = bt_hci_get_conn_handle(conn, &conn_handle);
 	if (ret) {
 		LOG_ERR("Unable to get conn handle");
 	} else {
+		enum ble_hci_vs_tx_power conn_tx_pwr;
+
 		if (IS_ENABLED(CONFIG_NRF_21540_ACTIVE)) {
 			conn_tx_pwr = CONFIG_NRF_21540_MAIN_DBM;
 		} else {
@@ -135,6 +138,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 				(void *)conn);
 		}
 	}
+#endif
 
 	msg.event = BT_MGMT_CONNECTED;
 	msg.conn = conn;

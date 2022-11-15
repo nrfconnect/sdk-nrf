@@ -24,7 +24,10 @@ LOG_MODULE_REGISTER(audio_sync_timer, CONFIG_AUDIO_SYNC_TIMER_LOG_LEVEL);
 const nrfx_timer_t audio_sync_timer_instance =
 	NRFX_TIMER_INSTANCE(AUDIO_SYNC_TIMER_INSTANCE_NUMBER);
 
+#if FEATURE_TIMER_SYNC
 static uint8_t dppi_channel_timer_clear;
+#endif
+
 static uint8_t dppi_channel_i2s_frame_start;
 
 static nrfx_timer_config_t cfg = {.frequency = NRFX_MHZ_TO_HZ(1UL),
@@ -80,6 +83,7 @@ static int audio_sync_timer_init(void)
 		return ret;
 	}
 
+#if FEATURE_TIMER_SYNC
 	/* Initialize functionality for synchronization between APP and NET core */
 	ret = nrfx_dppi_channel_alloc(&dppi_channel_timer_clear);
 	if (ret - NRFX_ERROR_BASE_NUM) {
@@ -95,6 +99,7 @@ static int audio_sync_timer_init(void)
 		LOG_ERR("nrfx DPPI channel enable error (timer clear) - Return value: %d", ret);
 		return ret;
 	}
+#endif
 
 	LOG_DBG("Audio sync timer initialized");
 

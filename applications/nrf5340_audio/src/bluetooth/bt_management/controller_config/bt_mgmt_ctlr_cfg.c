@@ -26,6 +26,7 @@ static int wdt_ch_id;
 
 K_TIMER_DEFINE(ctlr_poll_timer, ctlr_version_poll_timer_handler, NULL);
 
+#if defined(FEATURE_LL_ACS)
 static int bt_ll_acs_nrf53_cfg(void)
 {
 #if (CONFIG_BT_LL_ACS_NRF53)
@@ -119,6 +120,7 @@ static int bt_ll_acs_nrf53_cfg(void)
 	return -ENODEV;
 #endif /* CONFIG_BT_LL_ACS_NRF53*/
 }
+#endif
 
 static void work_ctlr_poll(struct k_work *work)
 {
@@ -128,9 +130,11 @@ static void work_ctlr_poll(struct k_work *work)
 	ret = bt_mgmt_ctlr_cfg_version_get(&ctlr_version);
 	ERR_CHK_MSG(ret, "Failed to contact net core");
 
+#if defined(FEATURE_VERSION_CHECK)
 	if (!ctlr_version) {
 		ERR_CHK_MSG(-EIO, "Controller version is not set");
 	}
+#endif
 
 	ret = task_wdt_feed(wdt_ch_id);
 	ERR_CHK_MSG(ret, "Failed to feed watchdog");
@@ -175,6 +179,7 @@ int bt_mgmt_ctlr_cfg_init(bool watchdog_enable)
 		return ret;
 	}
 
+#if defined(FEATURE_LL_ACS)
 	if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
 		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_INF("Controller: LL_ACS_NRF53. Version: %d", ctlr_version);
@@ -186,6 +191,7 @@ int bt_mgmt_ctlr_cfg_init(bool watchdog_enable)
 		LOG_ERR("Unsupported controller");
 		return -EPERM;
 	}
+#endif
 
 	if (watchdog_enable) {
 		ret = task_wdt_init(NULL);
