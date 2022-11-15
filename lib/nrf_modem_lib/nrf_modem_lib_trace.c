@@ -256,7 +256,7 @@ static int trace_init(void)
 		return err;
 	}
 
-	LOG_INF("Trace tread ready");
+	LOG_INF("Trace thread ready");
 	k_sem_give(&trace_sem);
 
 #if CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
