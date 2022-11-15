@@ -42,6 +42,7 @@ struct dfu_target {
 	int (*write)(const void *const buf, size_t len);
 	int (*done)(bool successful);
 	int (*schedule_update)(int img_num);
+	int (*reset)();
 };
 
 /**
@@ -104,7 +105,7 @@ int dfu_target_offset_get(size_t *offset);
 int dfu_target_write(const void *const buf, size_t len);
 
 /**
- * @brief Deinitialize the resources that were needed for the current DFU
+ * @brief Release the resources that were needed for the current DFU
  *	  target.
  *
  * @param[in] successful Indicate whether the process completed successfully or
@@ -116,7 +117,7 @@ int dfu_target_write(const void *const buf, size_t len);
 int dfu_target_done(bool successful);
 
 /**
- * @brief Deinitialize the resources that were needed for the current DFU
+ * @brief Release the resources that were needed for the current DFU
  *	  target if any and resets the current DFU target.
  *
  * @return 0 for an successful deinitialization and reset or a negative error

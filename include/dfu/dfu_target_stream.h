@@ -90,7 +90,7 @@ int dfu_target_stream_offset_get(size_t *offset);
 int dfu_target_stream_write(const uint8_t *buf, size_t len);
 
 /**
- * @brief De-initialize resources and finalize stream flash write if successful.
+ * @brief Release resources and finalize stream flash write if successful.
 
  * @param[in] successful Indicate whether the firmware was successfully
  * received.
@@ -98,6 +98,15 @@ int dfu_target_stream_write(const uint8_t *buf, size_t len);
  * @return Non-negative value on success, negative errno otherwise.
  */
 int dfu_target_stream_done(bool successful);
+
+/**
+ * @brief Release resources and erase the download area.
+ *
+ * Cancels any ongoing updates.
+ *
+ * @return 0 on success, negative errno otherwise.
+ */
+int dfu_target_stream_reset(void);
 
 #endif /* DFU_TARGET_STREAM_H__ */
 

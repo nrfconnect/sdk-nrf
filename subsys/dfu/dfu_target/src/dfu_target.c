@@ -15,6 +15,7 @@ static const struct dfu_target dfu_target_ ## name  = { \
 	.write = dfu_target_ ## name ## _write, \
 	.done = dfu_target_ ## name ## _done, \
 	.schedule_update = dfu_target_ ## name ## _schedule_update, \
+	.reset = dfu_target_ ## name ## _reset, \
 }
 
 #ifdef CONFIG_DFU_TARGET_MODEM_DELTA
@@ -141,15 +142,18 @@ int dfu_target_done(bool successful)
 
 int dfu_target_reset(void)
 {
-	if (current_target != NULL) {
-		int err = current_target->done(false);
+	int err;
 
-		if (err != 0) {
-			LOG_ERR("Unable to clean up dfu_target");
-			return err;
-		}
+	if (current_target == NULL) {
+		return -EACCES;
 	}
-	current_target = NULL;
+
+	err = current_target->reset();
+	if (err != 0) {
+		LOG_ERR("Unable to clean up dfu_target");
+		return err;
+	}
+
 	return 0;
 }
 
@@ -162,7 +166,6 @@ int dfu_target_schedule_update(int img_num)
 	}
 
 	err = current_target->schedule_update(img_num);
-	current_target = NULL;
 
 	return err;
 }

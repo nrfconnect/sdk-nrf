@@ -81,6 +81,15 @@ int dfu_target_modem_delta_done(bool successful);
  **/
 int dfu_target_modem_delta_schedule_update(int img_num);
 
+/**
+ * @brief Release resources and erase the download area.
+ *
+ * Cancels any ongoing updates.
+ *
+ * @return 0 on success, negative errno otherwise.
+ */
+int dfu_target_modem_delta_reset(void);
+
 #endif /* DFU_TARGET_MODEM_H__ */
 
 /**@} */

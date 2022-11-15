@@ -99,7 +99,7 @@ int dfu_target_full_modem_offset_get(size_t *offset);
 int dfu_target_full_modem_write(const void *const buf, size_t len);
 
 /**
- * @brief De-initialize resources and finalize firmware upgrade if successful.
+ * @brief Release resources and finalize firmware upgrade if successful.
 
  * @param[in] successful Indicate whether the firmware was successfully
  *            received.
@@ -118,6 +118,15 @@ int dfu_target_full_modem_done(bool successful);
  * @return 0, it is always successful.
  **/
 int dfu_target_full_modem_schedule_update(int img_num);
+
+/**
+ * @brief Release resources and erase the download area.
+ *
+ * Cancel any ongoing updates.
+ *
+ * @return 0 on success, negative errno otherwise.
+ */
+int dfu_target_full_modem_reset(void);
 
 #endif /* DFU_TARGET_FULL_MODEM_H__ */
 
