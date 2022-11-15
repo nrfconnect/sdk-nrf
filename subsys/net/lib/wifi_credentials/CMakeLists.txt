@@ -21,6 +21,10 @@ zephyr_library_sources_ifdef(
 	CONFIG_WIFI_CREDENTIALS_BACKEND_PSA
 	wifi_credentials_backend_psa.c)
 
+zephyr_library_sources_ifdef(
+	CONFIG_WIFI_CREDENTIALS_SHELL
+	wifi_credentials_shell.c)
+
 if(WIFI_CREDENTIALS_STATIC_SSID)
 	message(WARNING
 		"Static Wi-Fi configuration is used, please remove before deployment!"

@@ -12,6 +12,12 @@ config WIFI_MGMT_EXT
 	  Extends Wi-Fi L2 stack by commands to handle
 	  automatic connection management.
 
+config WIFI_CREDENTIALS_SHELL_AUTOCONNECT
+	bool "Shell commands to manage Wi-Fi credentials"
+	default y
+	depends on WIFI_CREDENTIALS_SHELL
+	depends on WIFI_MGMT_EXT
+
 if WIFI_MGMT_EXT
 
 module = WIFI_MGMT_EXT

@@ -110,6 +110,28 @@ Supported CLI commands
        |
        | teardown_all - Teardown all TWT flows
 
+``wifi_cred`` is an extension to the Wi-Fi command line.
+It adds the following commands to interact with the :ref:`lib_wifi_credentials` library:
+
+.. list-table:: Wi-Fi credentials shell subcommands
+   :header-rows: 1
+
+   * - Subcommands
+     - Description
+   * - add
+     - | Add a network to the credentials storage with following parameters:
+       | <SSID>
+       | <Passphrase> (optional: valid only for secured SSIDs)
+       | <BSSID> (optional)
+       | <Band> (optional: 2.4GHz, 5GHz)
+       | favorite (optional, makes the network higher priority in automatic connection)
+   * - delete <SSID>
+     - Removes network from credentials storage.
+   * - list
+     - Lists networks in credential storage.
+   * - auto_connect
+     - Automatically connects to any stored network.
+
 Testing
 =======
 
