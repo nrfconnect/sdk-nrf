@@ -6,8 +6,6 @@
 
 zephyr_library()
 
-zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT fota/settings.c)
-
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT lwm2m/lwm2m_firmware.c)
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT lwm2m/lwm2m_connmon.c)
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT lwm2m/lwm2m_device.c)
