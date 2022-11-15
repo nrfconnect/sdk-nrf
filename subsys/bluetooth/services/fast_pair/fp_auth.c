@@ -77,8 +77,8 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.disconnected = disconnected,
 };
 
-enum bt_security_err auth_pairing_accept(struct bt_conn *conn,
-					 const struct bt_conn_pairing_feat *const feat)
+static enum bt_security_err auth_pairing_accept(struct bt_conn *conn,
+						const struct bt_conn_pairing_feat *const feat)
 {
 	if (!is_conn_handled(conn)) {
 		LOG_ERR("Invalid conn (pairing accept): %p", (void *)conn);
@@ -175,7 +175,7 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 	update_conn_handling(conn, false);
 }
 
-static struct bt_conn_auth_cb conn_auth_callbacks = {
+static const struct bt_conn_auth_cb conn_auth_callbacks = {
 	.pairing_accept = auth_pairing_accept,
 	.passkey_display = auth_passkey_display,
 	.passkey_confirm = auth_passkey_confirm,
