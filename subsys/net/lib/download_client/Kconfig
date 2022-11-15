@@ -94,7 +94,7 @@ comment "Thread and stack buffers"
 config DOWNLOAD_CLIENT_STACK_SIZE
 	int "Thread stack size"
 	range 768 4096
-	default 1024
+	default 1280
 
 config DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE
 	int "Maximum hostname length (stack)"
