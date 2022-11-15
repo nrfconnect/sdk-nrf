@@ -322,8 +322,8 @@ The following example shows how to create a new object type that follows the IPS
 API documentation
 *****************
 
-| Header files: :file:`include/net/lwm2m_client_utils.h`, :file:`include/net/lwm2m_client_utils_fota.h`
-| Source files: :file:`subsys/net/lib/lwm2m_client_utils/fota`, :file:`subsys/net/lib/lwm2m_client_utils/lwm2m`
+| Header files: :file:`include/net/lwm2m_client_utils.h`
+| Source files: :file:`subsys/net/lib/lwm2m_client_utils/lwm2m`
 
 .. doxygengroup:: lwm2m_client_utils
    :project: nrf
