@@ -52,13 +52,36 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected        = connected,
 };
 
+static void bond_cnt_cb(const struct bt_bond_info *info, void *user_data)
+{
+	size_t *cnt = user_data;
+
+	(*cnt)++;
+}
+
+static size_t bond_cnt(void)
+{
+	size_t cnt = 0;
+
+	bt_foreach_bond(BT_ID_DEFAULT, bond_cnt_cb, &cnt);
+
+	return cnt;
+}
+
+static bool can_pair(void)
+{
+	return (bond_cnt() < CONFIG_BT_MAX_PAIRED);
+}
+
 static bool pairing_mode(enum bt_fast_pair_adv_mode fp_adv_mode)
 {
-	return (fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE);
+	return ((fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) && can_pair());
 }
 
 static void configure_fp_adv_prov(enum bt_fast_pair_adv_mode fp_adv_mode)
 {
+	bt_le_adv_prov_fast_pair_enable(can_pair());
+
 	switch (fp_adv_mode) {
 	case BT_FAST_PAIR_ADV_MODE_DISCOVERABLE:
 		break;
@@ -68,6 +91,7 @@ static void configure_fp_adv_prov(enum bt_fast_pair_adv_mode fp_adv_mode)
 		break;
 
 	case BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_HIDE_UI_IND:
+		bt_le_adv_prov_fast_pair_enable(true);
 		bt_le_adv_prov_fast_pair_show_ui_pairing(false);
 		break;
 
