@@ -11,4 +11,5 @@ project(nrf_wifi_shell)
 
 target_sources(app PRIVATE
 	src/wifi_main.c
+	src/wifi_cred_shell.c
 )
