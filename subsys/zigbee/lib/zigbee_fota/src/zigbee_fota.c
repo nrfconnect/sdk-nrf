@@ -19,7 +19,7 @@ LOG_MODULE_REGISTER(zigbee_fota, CONFIG_ZIGBEE_FOTA_LOG_LEVEL);
 #define MANDATORY_HEADER_LEN   sizeof(zb_zcl_ota_upgrade_file_header_t)
 #define OPTIONAL_HEADER_LEN    sizeof(zb_zcl_ota_upgrade_file_header_optional_t)
 #define TOTAL_HEADER_LEN       (MANDATORY_HEADER_LEN + OPTIONAL_HEADER_LEN)
-#define SUBELEMENT_HEADER_SIZE 6
+#define SUBELEMENT_HEADER_SIZE sizeof(zb_zcl_ota_upgrade_sub_element_hdr_t)
 
 struct zb_ota_dfu_context {
 	uint32_t        ota_header_size;
@@ -240,8 +240,8 @@ static zb_uint8_t ota_process_subelement_header(zb_uint8_t *data, uint32_t len,
 	ota_ctx.ota_subelement_fill_level += *bytes_copied;
 
 	if (ota_ctx.ota_subelement_fill_level == SUBELEMENT_HEADER_SIZE) {
-		zb_zcl_ota_upgrade_sub_element_t *hdr =
-			(zb_zcl_ota_upgrade_sub_element_t *)header_buf;
+		zb_zcl_ota_upgrade_sub_element_hdr_t *hdr =
+			(zb_zcl_ota_upgrade_sub_element_hdr_t *)header_buf;
 		int err = 0;
 
 		LOG_INF("Subelement header received.");
