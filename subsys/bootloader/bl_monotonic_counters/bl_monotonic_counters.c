@@ -17,6 +17,17 @@
 #include <pm_config.h>
 #endif
 
+#ifdef CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
+BUILD_ASSERT(CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS % 2 == 0,
+			 "CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS was not an even number");
+#endif
+
+#ifdef CONFIG_SB_NUM_VER_COUNTER_SLOTS
+BUILD_ASSERT(CONFIG_SB_NUM_VER_COUNTER_SLOTS % 2 == 0,
+			 "CONFIG_SB_NUM_VER_COUNTER_SLOTS was not an even number");
+#endif
+
+
 /** This library implements monotonic counters where each time the counter
  *  is increased, a new slot is written.
  *  This way, the counter can be updated without erase. This is, among other things,

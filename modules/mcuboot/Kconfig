@@ -63,17 +63,20 @@ config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 	int "Number of available hardware counter slots"
 	depends on MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	default 240
-	range 1 300
+	range 2 300
 	help
 	  When MCUBOOT_HW_DOWNGRADE_PREVENTION is enabled MCUBOOT will use
-	  one hardware counter for each updateable image (UPDATEABLE_IMAGE_NUMBER).
-	  This configuration specifies how many counter slots will be occupied
-	  for the MCUBOOT counters. The hardware counters are stored in OTP storage.
-	  Rationale for the default number (240): Assume one update a month for
-	  10 years, then double that value just in case. This default fits
-	  comfortably within the "OTP" region of UICR. Note that the firmware
-	  version is not directly linked to the hardware counters and thus reducing
-	  this number does not limit the number of firmware upgrades supported.
+	  one hardware counter for each updateable image
+	  (UPDATEABLE_IMAGE_NUMBER).  This configuration specifies how
+	  many counter slots will be occupied for the MCUBOOT
+	  counters. The hardware counters are stored in OTP storage.
+	  Rationale for the default number (240): Assume one update a
+	  month for 10 years, then double that value just in case. This
+	  default fits comfortably within the "OTP" region of UICR. Note
+	  that the firmware version is not directly linked to the hardware
+	  counters and thus reducing this number does not limit the number
+	  of firmware upgrades supported. Must be an even number for
+	  alignment reasons.
 
 config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE
 	int "Security counter value"

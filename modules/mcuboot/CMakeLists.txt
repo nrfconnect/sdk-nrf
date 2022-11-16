@@ -631,10 +631,7 @@ if (CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
   add_dependencies(dfu_multi_image_pkg ${dfu_multi_image_targets})
 endif()
 
-# Make visible to the parent image if/how many hardware counters are required by MCUBOOT.
-if(CONFIG_MCUBOOT AND CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION)
-  set_shared(IMAGE ${IMAGE_NAME} PROPERTY MCUBOOT_HW_COUNTERS_NUM "${CONFIG_UPDATEABLE_IMAGE_NUMBER}")
-elseif(CONFIG_BOOTLOADER_MCUBOOT)
+if(CONFIG_BOOTLOADER_MCUBOOT)
   include(${ZEPHYR_BASE}/../nrf/subsys/bootloader/cmake/provision_hex.cmake)
 endif()
 

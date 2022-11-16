@@ -4,10 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-# This CMakeLists.txt is executed only by the parent application
-# and generates the provision.hex file.
+# This CMake code adds commands for generating a provision.hex file to
+# the build. It can only be executed by the parent image.
+#
+# The provision.hex file contains provisioned data for the bootloader.
 
-# Build and include hex file containing provisioned data for the bootloader.
 set(PROVISION_HEX_NAME     provision.hex)
 set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})
 
@@ -17,8 +18,7 @@ if(CONFIG_SECURE_BOOT)
         --num-counter-slots-version ${CONFIG_SB_NUM_VER_COUNTER_SLOTS})
     endif()
 
-
-# Skip signing if MCUBoot is to be booted and its not built from source
+	# Skip signing if MCUBoot is to be booted and it is not built from source
     if ((CONFIG_SB_VALIDATE_FW_SIGNATURE OR CONFIG_SB_VALIDATE_FW_HASH) AND
         NOT (CONFIG_BOOTLOADER_MCUBOOT AND NOT CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE))
 
@@ -56,72 +56,39 @@ if(CONFIG_SECURE_BOOT)
 endif()
 
 if(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
-  get_shared(mcuboot_hw_counters_num IMAGE mcuboot PROPERTY MCUBOOT_HW_COUNTERS_NUM)
-
-  # When Nordic Secure Immutable Bootloader is enabled MCUBOOT itself can be updated.
-  # Thus one of the updateable images for MCUBOOT will be  MUCBOOT itself.
-  # We don't want to use a hardware security counter for the MCUBOOT image inside
-  # MCUBOOT becuase the NSIB will use a hardware security counter for MCUBOOT anyway.
-  if (CONFIG_SECURE_BOOT)
-    math(EXPR mcuboot_hw_counters_num "${mcuboot_hw_counters_num} - 1")
-  endif()
-  set(mcuboot_counters_num --mcuboot-counters-num ${mcuboot_hw_counters_num})
   set(mcuboot_counters_slots --mcuboot-counters-slots ${CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS})
-else()
-  set(mcuboot_counters_num --mcuboot-counters-num "0")
-  set(mcuboot_counters_slots --mcuboot-counters-slots "0")
-endif()
 
-if(CONFIG_SECURE_BOOT)
-add_custom_command(
-  OUTPUT
-  ${PROVISION_HEX}
-  COMMAND
-  ${PYTHON_EXECUTABLE}
-  ${NRF_DIR}/scripts/bootloader/provision.py
-  ${s0_arg}
-  ${s1_arg}
-  --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
-  ${public_keys_file_arg}
-  --output ${PROVISION_HEX}
-  ${monotonic_counter_arg}
-  --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
-  ${no_verify_hashes_arg}
-  ${mcuboot_counters_num}
-  ${mcuboot_counters_slots}
-  DEPENDS
-  ${PROVISION_KEY_DEPENDS}
-  WORKING_DIRECTORY
-  ${PROJECT_BINARY_DIR}
-  COMMENT
-  "Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
-  USES_TERMINAL
-  )
-elseif(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
-add_custom_command(
-  OUTPUT
-  ${PROVISION_HEX}
-  COMMAND
-  ${PYTHON_EXECUTABLE}
-  ${NRF_DIR}/scripts/bootloader/provision.py
-  --mcuboot-only
-  --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
-  --output ${PROVISION_HEX}
-  --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
-  ${mcuboot_counters_num}
-  ${mcuboot_counters_slots}
-  DEPENDS
-  ${PROVISION_KEY_DEPENDS}
-  WORKING_DIRECTORY
-  ${PROJECT_BINARY_DIR}
-  COMMENT
-  "Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
-  USES_TERMINAL
-  )
+  if (NOT CONFIG_SECURE_BOOT)
+	set(mcuboot_only --mcuboot-only)
+  endif()
 endif()
-
 
 if(CONFIG_SECURE_BOOT OR CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+  add_custom_command(
+	OUTPUT
+	${PROVISION_HEX}
+	COMMAND
+	${PYTHON_EXECUTABLE}
+	${NRF_DIR}/scripts/bootloader/provision.py
+	${s0_arg}
+	${s1_arg}
+	${mcuboot_only}
+	--provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
+	${public_keys_file_arg}
+	--output ${PROVISION_HEX}
+	${monotonic_counter_arg}
+	--max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
+	${no_verify_hashes_arg}
+	${mcuboot_counters_slots}
+	DEPENDS
+	${PROVISION_KEY_DEPENDS}
+	WORKING_DIRECTORY
+	${PROJECT_BINARY_DIR}
+	COMMENT
+	"Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
+	USES_TERMINAL
+  )
+
   add_custom_target(
     provision_target
     DEPENDS
