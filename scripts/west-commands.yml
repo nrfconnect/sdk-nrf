@@ -11,6 +11,9 @@ west-commands:
       - name: ncs-upmerger
         class: NcsUpmerger
         help: perform upmerge for project (e.g. Zephyr)
+      - name: ncs-change
+        class: NcsChange
+        help: change project details in the manifest
   - file: scripts/west_commands/sbom/ncs_sbom_command.py
     commands:
       - name: ncs-sbom
