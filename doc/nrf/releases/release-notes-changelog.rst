@@ -153,6 +153,12 @@ Bluetooth samples
 
     * Fixed a possible out-of-bounds memory access issue in the :c:func:`hid_kbd_state_key_set` and :c:func:`hid_kbd_state_key_clear` functions.
 
+* :ref: `ble_nrf_dm` sample:
+
+  * Changed:
+
+    * Added energy consumption information to documentation.
+
 Bluetooth mesh samples
 ----------------------
 
