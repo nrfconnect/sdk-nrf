@@ -20,6 +20,13 @@ config DESKTOP_BT_PERIPHERAL
 	select DESKTOP_BT
 	select BT_PERIPHERAL
 
+config DESKTOP_BT_CENTRAL
+	bool "Bluetooth LE Central"
+	default y
+	depends on DESKTOP_ROLE_HID_DONGLE
+	select DESKTOP_BT
+	select BT_CENTRAL
+
 if DESKTOP_BT
 
 config BT_SETTINGS_CCC_STORE_ON_WRITE
@@ -64,6 +71,13 @@ config BT_PERIPHERAL_PREF_TIMEOUT
 
 config BT_CONN_PARAM_UPDATE_TIMEOUT
 	default 1000
+
+endif
+
+if DESKTOP_BT_CENTRAL
+
+config BT_GATT_CLIENT
+	default y
 
 endif
 
