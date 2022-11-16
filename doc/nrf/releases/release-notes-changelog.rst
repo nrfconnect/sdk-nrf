@@ -452,12 +452,17 @@ Bluetooth libraries and services
 
 * :ref:`bt_mesh` library:
 
-  * Bluetooth mesh client models updated to reflect the changed mesh shell module structure.
-    All Bluetooth mesh model commands are now located under **mesh models** in the shell menu.
+  * Added:
 
-  * :ref:`bt_mesh_dk_prov` module: Changed the UUID generation to prevent trailing zeros in the UUID.
+    * Vendor :ref:`bt_mesh_dm_readme` supporting distance measurement between Bluetooth mesh devices.
 
-    Migration note: To retain the legacy generation of UUID, enable the option :kconfig:option:`CONFIG_BT_MESH_DK_LEGACY_UUID_GEN`.
+  * Updated:
+
+    * Bluetooth mesh client models updated to reflect the changed mesh shell module structure.
+      All Bluetooth mesh model commands are now located under **mesh models** in the shell menu.
+    * :ref:`bt_mesh_dk_prov` module: Changed the UUID generation to prevent trailing zeros in the UUID.
+
+      Migration note: To retain the legacy generation of UUID, enable the option :kconfig:option:`CONFIG_BT_MESH_DK_LEGACY_UUID_GEN`.
 
 See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh samples.
 

@@ -31,4 +31,57 @@ config BT_MESH_SILVAIR_ENOCEAN_AUTO_COMMISSION
 
 endif
 
+config BT_MESH_DM_CLI
+	bool "Distance Measurement Client"
+	select BT_MESH_VENDOR_MODELS
+	select EXPERIMENTAL
+	depends on DM_MODULE
+	help
+	  Enable Distance Measurement Client model.
+
+config BT_MESH_DM_SRV
+	bool "Distance Measurement Server"
+	select BT_MESH_VENDOR_MODELS
+	select EXPERIMENTAL
+	depends on DM_MODULE
+	depends on NEWLIB_LIBC
+	help
+	  Enable Distance Measurement Server model.
+
+if BT_MESH_DM_SRV
+
+config BT_MESH_DM_SRV_DEFAULT_TTL
+	int "Default distance measurement Time to Live"
+	default 0
+	help
+	  Default Time to Live for distance measurement attempt.
+	  The value of '1' is an invalid value and shall not be used.
+
+config BT_MESH_DM_SRV_DEFAULT_TIMEOUT
+	int "Default distance measurement timeout"
+	default 20
+	range 10 100
+	help
+	  Default timeout for distance measurement attempt, in 100 milliseconds steps.
+
+config BT_MESH_DM_SRV_REFLECTOR_DELAY
+	int "Reflector start delay"
+	default 0
+	help
+	  Distance measurement reflector role start delay in milliseconds.
+
+config BT_MESH_DM_SRV_INITIATOR_RANGING_WINDOW_US
+	int "Ranging window for the initiator in micro seconds"
+	default 50000
+	help
+	  Ranging window for the initiator in micro seconds.
+
+config BT_MESH_DM_SRV_REFLECTOR_RANGING_WINDOW_US
+	int "Ranging window for the reflector in micro seconds"
+	default 70000
+	help
+	  Ranging window for the reflector in micro seconds.
+
+endif
+
 endmenu
