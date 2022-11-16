@@ -1,0 +1,56 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SUPPORT_NETCORE
+	bool
+	default y if $(BOARD) = "nrf5340dk_nrf5340_cpuapp"
+
+if SUPPORT_NETCORE
+
+config SUPPORT_NETCORE_HCI_RPMSG
+	bool
+	default y
+
+choice NETCORE
+	prompt "Netcore image"
+	default NETCORE_NONE
+	depends on SUPPORT_NETCORE
+
+config NETCORE_NONE
+	bool "None"
+	help
+	  Do not include a netcore image in the build
+
+config NETCORE_HCI_RPMSG
+	bool "hci_rpmsg"
+	depends on SUPPORT_NETCORE_HCI_RPMSG
+	help
+	  Include hci_rpmsg as the netcore image to use
+
+endchoice
+
+config NETCORE_HCI_RPMSG_NAME
+	string
+	default "hci_rpmsg"
+	depends on NETCORE_HCI_RPMSG
+	help
+	  Image name of radio hci rpmsg.
+
+config NETCORE_HCI_RPMSG_BOARD
+	string
+	default "nrf5340dk_nrf5340_cpunet" if $(BOARD) = "nrf5340dk_nrf5340_cpuapp"
+	depends on NETCORE_HCI_RPMSG
+	help
+	  Remote board when building this sample.
+	  If not set, the board given to sysbuild is used.
+
+config NETCORE_HCI_RPMSG_DOMAIN
+	string
+	default "CPUNET" if NETCORE_HCI_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet"
+
+config NETCORE_HCI_RPMSG_DOMAIN_APP
+	bool
+	default y if NETCORE_HCI_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet"
+
+endif
