@@ -23,12 +23,9 @@ extern struct k_sem wpa_supplicant_ready_sem;
 extern struct k_mutex wpa_supplicant_mutex;
 extern struct wpa_global *global;
 
-
 LOG_MODULE_REGISTER(wifi_mgmt_ext, CONFIG_WIFI_MGMT_EXT_LOG_LEVEL);
 
-/* helper functions {*/
-
-static inline struct wpa_supplicant *get_wpa_s_handle(const struct device *dev)
+static struct wpa_supplicant *get_wpa_s_handle(const struct device *dev)
 {
 	struct wpa_supplicant *wpa_s = NULL;
 	int ret = k_sem_take(&wpa_supplicant_ready_sem, K_SECONDS(2));
@@ -41,22 +38,23 @@ static inline struct wpa_supplicant *get_wpa_s_handle(const struct device *dev)
 	k_sem_give(&wpa_supplicant_ready_sem);
 
 	wpa_s = wpa_supplicant_get_iface(global, dev->name);
+
 	if (!wpa_s) {
-		LOG_ERR("%s: Unable to get wpa_s handle for %s\n", __func__, dev->name);
+		LOG_ERR("%s: Unable to get wpa_s handle for %s", __func__, dev->name);
 		return NULL;
 	}
 
 	return wpa_s;
 }
 
-static inline void band_to_freq(struct wifi_credentials_personal *creds, struct wpa_ssid *ssid)
+static void band_to_freq(const struct wifi_credentials_personal *creds, struct wpa_ssid *ssid)
 {
 	/** 2.4 GHz channels: 1-14 */
 	const int channels_2_4ghz[] = {
 		2412, 2417, 2422, 2427,
 		2432, 2437, 2442, 2447,
 		2452, 2457, 2462, 2467,
-		2472, 2484
+		2472, 2484, 0
 	};
 
 	/** 5 GHz channels:
@@ -75,13 +73,14 @@ static inline void band_to_freq(struct wifi_credentials_personal *creds, struct 
 		5560, 5580, 5600, 5620,
 		5640, 5660, 5680, 5700,
 		5745, 5765, 5785, 5805,
-		5825
+		5825, 0
 	};
 
 	if (!(creds->header.flags & (WIFI_CREDENTIALS_FLAG_2_4GHz | WIFI_CREDENTIALS_FLAG_5GHz))) {
 		/* there are no flags indicating band - skip */
 		return;
 	}
+
 	if ((creds->header.flags & (WIFI_CREDENTIALS_FLAG_2_4GHz | WIFI_CREDENTIALS_FLAG_5GHz)) ==
 	    (WIFI_CREDENTIALS_FLAG_2_4GHz | WIFI_CREDENTIALS_FLAG_5GHz)) {
 		/* both bands are indicated - skip */
@@ -89,25 +88,27 @@ static inline void band_to_freq(struct wifi_credentials_personal *creds, struct 
 	}
 
 	if (creds->header.flags & WIFI_CREDENTIALS_FLAG_2_4GHz) {
-		ssid->freq_list = os_zalloc((ARRAY_SIZE(channels_2_4ghz) + 1) * sizeof(int));
+		ssid->freq_list = k_malloc(sizeof(channels_2_4ghz));
+
 		if (!ssid->freq_list) {
-			LOG_ERR("unable to allocate buffer for freq_list");
+			LOG_ERR("Unable to allocate buffer for freq_list");
 			return;
 		}
-		memcpy(ssid->freq_list, channels_2_4ghz, ARRAY_SIZE(channels_2_4ghz) * sizeof(int));
+
+		memcpy(ssid->freq_list, channels_2_4ghz, sizeof(channels_2_4ghz));
 	}
 
 	if (creds->header.flags & WIFI_CREDENTIALS_FLAG_5GHz) {
-		ssid->freq_list = os_zalloc((ARRAY_SIZE(channels_5ghz) + 1) * sizeof(int));
+		ssid->freq_list = k_malloc(sizeof(channels_5ghz));
 		if (!ssid->freq_list) {
-			LOG_ERR("unable to allocate buffer for freq_list");
+			LOG_ERR("Unable to allocate buffer for freq_list");
 			return;
 		}
-		memcpy(ssid->freq_list, channels_5ghz, ARRAY_SIZE(channels_5ghz) * sizeof(int));
+		memcpy(ssid->freq_list, channels_5ghz, sizeof(channels_5ghz));
 	}
 }
 
-static inline int copy_psk(enum wifi_security_type security,
+static int copy_psk(enum wifi_security_type security,
 			   const uint8_t *password,
 			   size_t password_len,
 			   struct wpa_ssid *ssid)
@@ -125,27 +126,29 @@ static inline int copy_psk(enum wifi_security_type security,
 		ssid->sae_password = dup_binstr(password, password_len);
 
 		if (ssid->sae_password == NULL) {
-			LOG_ERR("%s:Failed to copy sae_password\n", __func__);
+			LOG_ERR("%s:Failed to copy sae_password", __func__);
 			return -ENOMEM;
 		}
 		break;
 	case WIFI_SECURITY_TYPE_PSK:
+		/* fall through */
 	case WIFI_SECURITY_TYPE_PSK_SHA256:
 		if (security == WIFI_SECURITY_TYPE_PSK) {
 			ssid->key_mgmt = WPA_KEY_MGMT_PSK;
 		} else {
 			ssid->key_mgmt = WPA_KEY_MGMT_PSK_SHA256;
 		}
+
 		str_clear_free(ssid->passphrase);
 		ssid->passphrase = dup_binstr(password, password_len);
 
 		if (ssid->passphrase == NULL) {
-			LOG_ERR("%s:Failed to copy passphrase\n", __func__);
+			LOG_ERR("%s:Failed to copy passphrase", __func__);
 			return -ENOMEM;
 		}
 		break;
 	default:
-		LOG_ERR("%s:Security type %d is not supported\n", __func__, security);
+		LOG_ERR("%s:Security type %d is not supported", __func__, security);
 		return -EINVAL;
 	}
 	wpa_config_update_psk(ssid);
@@ -167,15 +170,16 @@ static void add_stored_network(void *cb_arg, const char *ssid, size_t ssid_len)
 	network->ssid = os_zalloc(sizeof(u8) * WIFI_SSID_MAX_LEN);
 
 	if (network->ssid == NULL) {
-		goto exit;
+		goto failure;
 	}
 
 	/* load stored data */
 	ret = wifi_credentials_get_by_ssid_personal_struct(ssid, ssid_len, &creds);
+
 	if (ret) {
 		LOG_ERR("Loading WiFi credentials failed for SSID [%.*s], len: %d, err: %d",
 			ssid_len, ssid,  ssid_len, ret);
-		goto exit;
+		goto failure;
 	}
 
 	memcpy(network->ssid, creds.header.ssid, creds.header.ssid_len);
@@ -193,21 +197,20 @@ static void add_stored_network(void *cb_arg, const char *ssid, size_t ssid_len)
 		memcpy(network->bssid, creds.header.bssid, WIFI_MAC_ADDR_LEN);
 		network->bssid_set = 1;
 	}
+
 	/* apply band restriction */
 	band_to_freq(&creds, network);
 
 	ret = copy_psk(creds.header.type, creds.password, creds.password_len, network);
 	if (ret) {
-		goto exit;
+		goto failure;
 	}
 
 	wpa_supplicant_enable_network(wpa_s, network);
 	return;
-exit:
+failure:
 	wpa_supplicant_remove_network(wpa_s, network->id);
 }
-
-/* } */
 
 static int wifi_ext_command(uint32_t mgmt_request, struct net_if *iface,
 			    void *data, size_t len)
