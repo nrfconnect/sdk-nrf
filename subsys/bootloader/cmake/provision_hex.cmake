@@ -8,8 +8,6 @@
 # and generates the provision.hex file.
 
 # Build and include hex file containing provisioned data for the bootloader.
-set(NRF_SCRIPTS            ${NRF_DIR}/scripts)
-set(NRF_BOOTLOADER_SCRIPTS ${NRF_SCRIPTS}/bootloader)
 set(PROVISION_HEX_NAME     provision.hex)
 set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})
 
@@ -80,7 +78,7 @@ add_custom_command(
   ${PROVISION_HEX}
   COMMAND
   ${PYTHON_EXECUTABLE}
-  ${NRF_BOOTLOADER_SCRIPTS}/provision.py
+  ${NRF_DIR}/scripts/bootloader/provision.py
   ${s0_arg}
   ${s1_arg}
   --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
@@ -105,7 +103,7 @@ add_custom_command(
   ${PROVISION_HEX}
   COMMAND
   ${PYTHON_EXECUTABLE}
-  ${NRF_BOOTLOADER_SCRIPTS}/provision.py
+  ${NRF_DIR}/scripts/bootloader/provision.py
   --mcuboot-only
   --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
   --output ${PROVISION_HEX}
