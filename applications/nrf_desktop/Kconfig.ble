@@ -32,6 +32,18 @@ endif
 
 if DESKTOP_BT_PERIPHERAL
 
+config BT_ID_UNPAIR_MATCHING_BONDS
+	default y
+	help
+	  Delete bond with the same peer on another Bluetooth local identity
+	  when bonding to prevent bonding failures. That improves user
+	  experience during the erase advertising procedure.
+
+	  By default, overwriting bond requires authenticated pairing.
+
+	  Enabling this option is needed to pass the Fast Pair Validator's
+	  end-to-end integration tests.
+
 config BT_DATA_LEN_UPDATE
 	default n
 
