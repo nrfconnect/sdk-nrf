@@ -39,6 +39,7 @@ extensions = [
     "ncs_cache",
     "zephyr.external_content",
     "zephyr.doxyrunner",
+    "zephyr.link-roles",
     "sphinx_tabs.tabs",
     "software_maturity_table",
     "sphinx_togglebutton",
@@ -150,6 +151,11 @@ html_redirect_pages = [
 # -- Options for zephyr.warnings_filter ----------------------------------------
 
 warnings_filter_config = str(NRF_BASE / "doc" / "nrf" / "known-warnings.txt")
+
+# Options for zephyr.link-roles ------------------------------------------------
+
+link_roles_manifest_project = "nrf"
+link_roles_manifest_baseurl = "https://github.com/nrfconnect/sdk-nrf"
 
 # Options for external_content -------------------------------------------------
 
