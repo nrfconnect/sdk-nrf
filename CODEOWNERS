@@ -43,6 +43,9 @@
 /CMakeLists.txt                           @tejlmand
 # All Kconfig related files
 Kconfig*                                  @tejlmand
+# Sysbuild related files
+/sysbuild/                                @tejlmand @nordicjm
+/cmake/sysbuild/                          @tejlmand @nordicjm
 # All doc related files
 /doc/_extensions/                         @gmarull
 /doc/_scripts/                            @carlescufi
