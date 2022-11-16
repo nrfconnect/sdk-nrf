@@ -13,6 +13,12 @@ menuconfig DESKTOP_BLE_ENABLE_PASSKEY
 
 if DESKTOP_BLE_ENABLE_PASSKEY
 
+config BT_SMP_ENFORCE_MITM
+	default n
+	help
+	  Disable to allow bonding with the nRF Desktop dongle that has no
+	  MITM capabilities.
+
 module = DESKTOP_BLE_PASSKEY
 module-str = BLE passkey
 source "subsys/logging/Kconfig.template.log_config"
