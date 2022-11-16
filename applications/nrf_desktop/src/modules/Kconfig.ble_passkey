@@ -7,9 +7,14 @@
 menuconfig DESKTOP_BLE_ENABLE_PASSKEY
 	bool "Bluetooth LE passkey module"
 	depends on !DESKTOP_PASSKEY_NONE
+	depends on !BT_FAST_PAIR
 	depends on BT_PERIPHERAL
 	help
 	  Enable passkey based pairing for increased security.
+
+	  The feature should not be used together with Fast Pair,
+	  because Fast Pair currently does not support devices that
+	  use screen or keyboard for Bluetooth authentication.
 
 if DESKTOP_BLE_ENABLE_PASSKEY
 
