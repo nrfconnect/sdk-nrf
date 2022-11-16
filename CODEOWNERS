@@ -151,7 +151,7 @@ Kconfig*                                  @tejlmand
 /samples/spm/                             @lemrey @hakonfam @SebastianBoe
 /samples/openthread/                      @rlubos @edmont @canisLupus1313 @mariuszpos
 /samples/nrf_profiler/                    @pdunaj
-/samples/peripheral/radio_test/           @kapi-no
+/samples/peripheral/radio_test/           @KAGA164 @maje-emb
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/peripheral/802154_phy_test/      @czeslawmakarski
 /samples/tfm/                             @SebastianBoe @joerchan
