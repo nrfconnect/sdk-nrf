@@ -24,6 +24,49 @@ Persistent storage
 
 None.
 
+Shell commands
+**************
+
+The Bluetooth® mesh shell subsystem provides a set of commands to interact with the Distance Measurement Client model instantiated on a device.
+
+To make these commands available, enable the following Kconfig options:
+
+* :kconfig:option:`CONFIG_BT_MESH_SHELL`
+* :kconfig:option:`CONFIG_BT_MESH_SHELL_DM_CLI`
+
+mesh models dm instance get-all
+   Print all instances of the Distance Measurement Client model on the device.
+
+mesh models dm instance set <elem_idx>
+   Select the Distance Measurement Client model instantiated on the specified element ID.
+   This instance will be used in message sending.
+   If no model instance is selected, the first model instance found on the device will be used by default.
+
+   * ``elem_idx`` - Element index where the model instance is found.
+
+mesh models dm cfg [<ttl> <timeout> <delay>]
+   If no parameters are provided, get the current configuration state parameters of the server and wait for a response.
+   If parameters are provided, set the configuration state parameters of the server and wait for a response.
+
+   * ``ttl`` - Default time to live for sync messages on the target server.
+   * ``timeout`` - Default timeout for distance measurement procedure on the target server in 100 ms per step.
+   * ``delay`` - Default reflector start delay for the server.
+
+mesh models dm start <mode> <addr> [<reuse-transaction> [<ttl> <timeout> <delay>]]
+   Start a distance measurement procedure.
+
+   * ``mode`` - Mode used for ranging.
+   * ``addr`` - Unicast address of the node to measure distance with.
+   * ``reuse-transaction`` - Flag indicating if the previous transaction should be used.
+   * ``ttl`` - Time to live for the sync message.
+   * ``timeout`` - Timeout for distance measurement procedure in 100 ms per step.
+   * ``delay`` - Reflector start delay.
+
+mesh models dm result-get <entry_cnt>
+   Get the last distance measurement results from the server. The returned results will start with the most recent measurement.
+
+   * ``entry_cnt`` - Number of entries the user wish to receive.
+
 API documentation
 *****************
 
