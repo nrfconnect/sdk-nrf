@@ -30,3 +30,4 @@ For more information about these and other models, see also `Bluetooth mesh mode
    scene.rst
    scheduler.rst
    vnd/silvair_enocean_srv.rst
+   vnd/dm.rst
