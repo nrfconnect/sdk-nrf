@@ -25,6 +25,12 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define CELL_LOCATION_PATHS 6
 #endif
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_BUF_SIZE)
+#define AGPS_BUF_SIZE CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_BUF_SIZE
+#else
+#define AGPS_BUF_SIZE 4096
+#endif
+
 #define PGPS_LOCATION_PATHS_DEFAULT 4
 #define PGPS_LOCATION_PATHS_MAX 5
 
@@ -41,33 +47,24 @@ static bool permanent_error;
 static bool temp_error;
 static int retry_seconds;
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
 static int do_agps_request_send(struct lwm2m_ctx *ctx, bool confirmable);
-#endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 static int do_pgps_request_send(struct lwm2m_ctx *ctx, bool confirmable);
-#endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
 static int do_ground_fix_request_send(struct lwm2m_ctx *ctx, bool confirmable);
-#endif
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS) || \
-defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 static struct k_work_delayable location_assist_gnss_work;
-void location_assist_gnss_work_handler(struct k_work *work)
+static void location_assist_gnss_work_handler(struct k_work *work)
 {
 	int assist_type = location_assist_gnss_type_get();
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-	if (assist_type == ASSISTANCE_REQUEST_TYPE_AGPS) {
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS) &&
+	    assist_type == ASSISTANCE_REQUEST_TYPE_AGPS) {
 		do_agps_request_send(req_client_ctx, req_confirmable);
 	}
-#endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-	if (assist_type == ASSISTANCE_REQUEST_TYPE_PGPS) {
+
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS) &&
+	    assist_type == ASSISTANCE_REQUEST_TYPE_PGPS) {
 		do_pgps_request_send(req_client_ctx, req_confirmable);
 	}
-#endif
 }
 
 static void location_assist_gnss_result_cb(int32_t data)
@@ -94,11 +91,9 @@ static void location_assist_gnss_result_cb(int32_t data)
 		LOG_ERR("Unknown error %d", data);
 	}
 }
-#endif
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
 static struct k_work_delayable location_assist_ground_fix_work;
-void location_assist_ground_fix_work_handler(struct k_work *work)
+static void location_assist_ground_fix_work_handler(struct k_work *work)
 {
 	do_ground_fix_request_send(req_client_ctx, req_confirmable);
 }
@@ -127,7 +122,6 @@ static void location_assist_ground_fix_result_cb(int32_t data)
 		LOG_ERR("Unknown error %d", data);
 	}
 }
-#endif
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
 int location_assistance_agps_set_mask(const struct nrf_modem_gnss_agps_data_frame *agps_req)
@@ -181,13 +175,13 @@ int location_assistance_agps_set_mask(const struct nrf_modem_gnss_agps_data_fram
 
 	return 0;
 }
+#endif
 
 static int do_agps_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 {
 	int path_count = AGPS_LOCATION_PATHS_DEFAULT;
 	/* Allocate buffer for a-gps request */
-	int ret = location_assist_agps_alloc_buf(
-			CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_BUF_SIZE);
+	int ret = location_assist_agps_alloc_buf(AGPS_BUF_SIZE);
 
 	if (ret != 0) {
 		LOG_ERR("Unable to send request (%d)", ret);
@@ -217,6 +211,7 @@ static int do_agps_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 	return lwm2m_engine_send(ctx, send_path, path_count, confirmable);
 }
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
 int location_assistance_agps_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 {
 	if (permanent_error) {
@@ -237,7 +232,6 @@ int location_assistance_agps_request_send(struct lwm2m_ctx *ctx, bool confirmabl
 }
 #endif
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
 static int do_ground_fix_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 {
 	char const *send_path[CELL_LOCATION_PATHS] = {
@@ -256,6 +250,7 @@ static int do_ground_fix_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 	return lwm2m_engine_send(ctx, send_path, CELL_LOCATION_PATHS, confirmable);
 }
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
 int location_assistance_ground_fix_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 {
 	if (permanent_error) {
@@ -270,7 +265,6 @@ int location_assistance_ground_fix_request_send(struct lwm2m_ctx *ctx, bool conf
 }
 #endif
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 static int do_pgps_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 {
 	int path_count = PGPS_LOCATION_PATHS_DEFAULT;
@@ -295,6 +289,7 @@ static int do_pgps_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 	return lwm2m_engine_send(ctx, send_path, path_count, confirmable);
 }
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 int location_assistance_pgps_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 {
 	if (permanent_error) {
