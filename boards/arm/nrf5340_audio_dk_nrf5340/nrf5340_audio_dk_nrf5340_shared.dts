@@ -64,53 +64,13 @@
 	};
 
 	nrf5340_audio_dk {
-		compatible = "gpio-keys";
-		hw_codec_gpio_in: hw_codec_gpio_in {
-			gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
-			label = "GPIO from HW codec";
-		};
-
-		hw_codec_irq_in: hw_codec_irq_in {
-			gpios = <&gpio0 19 GPIO_ACTIVE_LOW>;
-			label = "Interrupt from HW codec";
-		};
-
-		hw_codec_reset_out: hw_codec_reset_out {
-			gpios = <&gpio0 18 GPIO_ACTIVE_LOW>;
-			label = "Reset HW codec";
-		};
-
-		hw_codec_sel_out: hw_codec_sel_out {
-			gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
-			label = "HW codec selector. Low selects OB HW codec, high \
-				 selects external HW codec";
-		};
-
-		spi_sel_in: spi_sel_in {
-			gpios = <&gpio0 22 GPIO_ACTIVE_LOW>;
-			label = "SPI select in. High = nRF SPI to HW codec. \
-				 Low = FTDI to HW codec";
-		};
-
-		pmic_iset_out: pmic_iset_out {
-			gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
-			label = "PMIC ISET";
-		};
-
-		board_id_en_out: board_id_en_out {
-			gpios = <&gpio0 24 GPIO_ACTIVE_HIGH>;
-			label = "Board revision readback enable";
-		};
-
-		board_id_in: board_id_in {
-			gpios = <&gpio0 27 GPIO_ACTIVE_HIGH>;
-			label = "Board revision analog readback";
-		};
-
-		curr_mon_alert_in: curr_mon_alert_in {
-			gpios = <&gpio1 15 GPIO_ACTIVE_LOW>;
-			label = "Curr mon alert in from INA231";
-		};
+		compatible = "nrf5340_audio_dk";
+		hw_codec_sel_out = <&gpio0 21 GPIO_ACTIVE_LOW>;
+		spi_sel_in = <&gpio0 22 GPIO_ACTIVE_LOW>;
+		pmic_iset_out = <&gpio0 23 GPIO_ACTIVE_HIGH>;
+		board_id_en_out =  <&gpio0 24 GPIO_ACTIVE_HIGH>;
+		board_id_in = <&gpio0 27 GPIO_ACTIVE_HIGH>;
+		curr_mon_alert_in =  <&gpio1 15 GPIO_ACTIVE_LOW>;
 	};
 
 	aliases {
@@ -129,6 +89,7 @@
 		sw3 = &button4;
 		sw4 = &button5;
 		mcuboot-led0 = &led1_blue;
+		watchdog0 = &wdt0;
 		mcuboot-button0 = &button3;
 	};
 };

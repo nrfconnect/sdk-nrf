@@ -6,22 +6,7 @@
 if BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP || BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP_NS
 
 config BOARD
-	default "nrf5340_audio_nrf5340_cpuapp"
-
-# By default, if we build for a Non-Secure version of the board,
-# enable building with TF-M as the Secure Execution Environment.
-config BUILD_WITH_TFM
-	default y if BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP_NS
-
-if BUILD_WITH_TFM
-
-# By default, if we build with TF-M, instruct build system to
-# flash the combined TF-M (Secure) & Zephyr (Non Secure) image
-config TFM_FLASH_MERGED_BINARY
-	bool
-	default y
-
-endif # BUILD_WITH_TFM
+	default "nrf5340_audio_dk_nrf5340_cpuapp" if BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP || BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP_NS
 
 # Code Partition:
 #
@@ -71,10 +56,10 @@ config FLASH_LOAD_SIZE
 
 endif # BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP_NS
 
-endif
+endif # BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP || BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP_NS
 
 config BOARD
-	default "nrf5340_audio_nrf5340_cpunet" if BOARD_NRF5340_AUDIO_DK_NRF5340_CPUNET
+	default "nrf5340_audio_dk_nrf5340_cpunet" if BOARD_NRF5340_AUDIO_DK_NRF5340_CPUNET
 
 config IPM_NRFX
 	default IPM
@@ -91,19 +76,21 @@ endchoice
 config HEAP_MEM_POOL_SIZE
 	default 4096 if BT_RPMSG
 
-config BT_HCI_VS
-	default y if BT
-
 endif # BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP || BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP_NS
 
 if BOARD_NRF5340_AUDIO_DK_NRF5340_CPUNET
 
-# BT_CTLR depends on BT. When BT is enabled we should default to also
-# enabling the controller.
 config BT_CTLR
 	default y if BT
 
-config BT_ECC
-	default y if BT
-
 endif # BOARD_NRF5340_AUDIO_DK_NRF5340_CPUNET
+
+config UART_NRF_DK_SERIAL_WORKAROUND
+	default y if ZTEST
+
+# When the nRF DK serial workaround is enabled, increase the stack size in
+# tests built with no optimizations, as the standard size may be insufficient
+# then. Use 512 to align with the FPU_SHARING case, where the default value
+# is also modified.
+config TEST_EXTRA_STACK_SIZE
+	default 512 if UART_NRF_DK_SERIAL_WORKAROUND && NO_OPTIMIZATIONS

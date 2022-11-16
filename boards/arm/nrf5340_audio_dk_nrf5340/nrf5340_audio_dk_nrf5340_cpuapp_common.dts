@@ -13,6 +13,7 @@
 		zephyr,bt-mon-uart = &uart0;
 		zephyr,bt-c2h-uart = &uart0;
 		zephyr,bt-hci-rpmsg-ipc = &ipc0;
+		watchdog0 = &wdt0;
 	};
 
 	gpio_fwd: nrf-gpio-forwarder {
@@ -47,7 +48,8 @@
 	compatible = "nordic,nrf-i2s";
 	status = "okay";
 	pinctrl-0 = <&i2s0_default>;
-	pinctrl-names = "default";
+	pinctrl-1 = <&i2s0_sleep>;
+	pinctrl-names = "default", "sleep";
 };
 
 &uart0 {
@@ -127,10 +129,6 @@
 		slot1_ns_partition: partition@c0000 {
 			label = "image-1-nonsecure";
 		};
-		scratch_partition: partition@f0000 {
-			label = "image-scratch";
-			reg = <0x000f0000 0xa000>;
-		};
 		storage_partition: partition@fa000 {
 			label = "storage";
 			reg = <0x000fa000 0x00006000>;
@@ -138,6 +136,10 @@
 	};
 };
 
+zephyr_udc0: &usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+};
 / {
 	reserved-memory {
 		#address-cells = <1>;
@@ -155,6 +157,22 @@
 		sram0_ns: image_ns@20040000 {
 			/* Non-Secure image memory */
 		};
+	};
+};
+
+zephyr_udc0: &usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+
+	hs_0: hs_0 {
+		compatible = "usb-audio-hs";
+		mic-feature-mute;
+		mic-channel-l;
+		mic-channel-r;
+
+		hp-feature-mute;
+		hp-channel-l;
+		hp-channel-r;
 	};
 };
 

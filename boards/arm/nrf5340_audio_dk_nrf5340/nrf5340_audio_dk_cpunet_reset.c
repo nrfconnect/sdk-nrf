@@ -11,19 +11,15 @@
 #include <soc.h>
 #include <zephyr/drivers/gpio.h>
 
-#include "nrfx_gpiote.h"
+#include <nrfx_gpiote.h>
 
 LOG_MODULE_REGISTER(nrf5340_audio_dk_nrf5340_cpuapp, CONFIG_LOG_DEFAULT_LEVEL);
-
-#if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 
 #if defined(CONFIG_BT_CTLR_DEBUG_PINS_CPUAPP)
 #include <../subsys/bluetooth/controller/ll_sw/nordic/hal/nrf5/debug.h>
 #else
 #define DEBUG_SETUP()
 #endif
-
-#define SHARED_SPI DT_NODELABEL(spi4) /* SD card and HW codec share the SPI4 */
 
 static int core_config(void)
 {
@@ -45,10 +41,10 @@ static int core_config(void)
 
 	if (!device_is_ready(pmic_iset.port)) {
 		LOG_ERR("GPIO is not ready!");
-		return -ENXIO;
+		return -ENODEV;
 	}
 
-	ret = gpio_pin_configure_dt(&pmic_iset, GPIO_OUTPUT_LOW);
+	ret = gpio_pin_configure_dt(&pmic_iset, GPIO_OUTPUT_INACTIVE);
 	if (ret) {
 		return ret;
 	}
@@ -59,24 +55,25 @@ static int core_config(void)
 
 	if (!device_is_ready(hw_codec_sel.port)) {
 		LOG_ERR("GPIO is not ready!");
-		return -ENXIO;
+		return -ENODEV;
 	}
 
-	ret = gpio_pin_configure_dt(&hw_codec_sel, GPIO_OUTPUT_LOW);
+	/* Select on-board HW codec by default */
+	ret = gpio_pin_configure_dt(&hw_codec_sel, GPIO_OUTPUT_ACTIVE);
 	if (ret) {
 		return ret;
 	}
 
-	/* Pull the CS47L63 reset line to high (this pin is active low) */
+	/* Deassert CS47L63 HW codec reset line */
 	static const struct gpio_dt_spec hw_codec_reset =
 		GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_reset_out), gpios);
 
 	if (!device_is_ready(hw_codec_reset.port)) {
 		LOG_ERR("GPIO is not ready!");
-		return -ENXIO;
+		return -ENODEV;
 	}
 
-	ret = gpio_pin_configure_dt(&hw_codec_reset, GPIO_OUTPUT_HIGH);
+	ret = gpio_pin_configure_dt(&hw_codec_reset, GPIO_OUTPUT_INACTIVE);
 	if (ret) {
 		return ret;
 	}
@@ -87,10 +84,10 @@ static int core_config(void)
 
 	if (!device_is_ready(board_id_en.port)) {
 		LOG_ERR("GPIO is not ready!");
-		return -ENXIO;
+		return -ENODEV;
 	}
 
-	ret = gpio_pin_configure_dt(&board_id_en, GPIO_OUTPUT_LOW);
+	ret = gpio_pin_configure_dt(&board_id_en, GPIO_OUTPUT_INACTIVE);
 	if (ret) {
 		return ret;
 	}
@@ -100,15 +97,18 @@ static int core_config(void)
 
 static void remoteproc_mgr_config(void)
 {
+#if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE) || defined(CONFIG_BUILD_WITH_TFM)
 	/* Route Bluetooth Controller Debug Pins */
 	DEBUG_SETUP();
+#endif /* !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE) || defined(CONFIG_BUILD_WITH_TFM) */
 
+#if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 	/* Retain nRF5340 Network MCU in Secure domain (bus
 	 * accesses by Network MCU will have Secure attribute set).
 	 */
 	NRF_SPU->EXTDOMAIN[0].PERM = 1 << 4;
+#endif /* !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE) */
 }
-#endif /* !CONFIG_TRUSTED_EXECUTION_NONSECURE */
 
 static int remoteproc_mgr_boot(const struct device *dev)
 {
@@ -121,10 +121,8 @@ static int remoteproc_mgr_boot(const struct device *dev)
 		return ret;
 	}
 
-#if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 	/* Secure domain may configure permissions for the Network MCU. */
 	remoteproc_mgr_config();
-#endif /* !CONFIG_TRUSTED_EXECUTION_NONSECURE */
 
 #if !defined(CONFIG_TRUSTED_EXECUTION_SECURE)
 	/*

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 #ifndef __BOARD_H__
@@ -9,7 +9,8 @@
 
 #include <zephyr/kernel.h>
 
-/* Voltage divider PCA10121 board versions.
+/*
+ * Voltage divider for PCA10121 board versions.
  * The defines give what value the ADC will read back.
  * This is determined by the on-board voltage divider.
  */
@@ -47,12 +48,12 @@ static const struct board_version BOARD_VERSION_ARR[] = {
 	{ "1.1.0", BOARD_PCA10121_1_1_0_MSK, 1982 },
 };
 
-#define BOARD_VERSION_VALID_MSK                                                                    \
+#define BOARD_VERSION_VALID_MSK	\
 	(BOARD_PCA10121_0_8_0_MSK | BOARD_PCA10121_0_8_1_MSK | BOARD_PCA10121_0_8_2_MSK |          \
 	 BOARD_PCA10121_0_9_0_MSK | BOARD_PCA10121_0_10_0_MSK | BOARD_PCA10121_1_0_0_MSK |         \
 	 BOARD_PCA10121_1_1_0_MSK)
 
-#define BOARD_VERSION_VALID_MSK_SD_CARD                                                            \
+#define BOARD_VERSION_VALID_MSK_SD_CARD	\
 	(BOARD_PCA10121_0_8_0_MSK | BOARD_PCA10121_0_8_1_MSK | BOARD_PCA10121_0_8_2_MSK |          \
 	 BOARD_PCA10121_0_9_0_MSK | BOARD_PCA10121_0_10_0_MSK | BOARD_PCA10121_1_0_0_MSK |         \
 	 BOARD_PCA10121_1_1_0_MSK)
