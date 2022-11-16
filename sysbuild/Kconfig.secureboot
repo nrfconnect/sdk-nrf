@@ -1,0 +1,53 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SECURE_BOOT
+	bool "Use Secure Bootloader"
+	help
+	  Set this option to enable the first stage bootloader which
+	  verifies the signature of the app.
+
+if SECURE_BOOT
+
+choice SECURE_BOOT_CORE
+	bool "Secure boot SoC core"
+	default SECURE_BOOT_NETCORE
+	help
+	  SoC core where the first stage bootloader resides.
+
+config SECURE_BOOT_APPCORE
+	bool "Appcore"
+	help
+	  Locate first stage bootloader on application core.
+
+config SECURE_BOOT_NETCORE
+	bool "Netcore"
+	depends on SUPPORT_NETCORE
+	help
+	  Locate first stage bootloader on network core.
+
+endchoice
+
+config SECURE_BOOT_IMAGE_NAME
+	string
+	default "b0n" if SECURE_BOOT_NETCORE
+	default "b0"
+	help
+	  Internal build system name of secure bootloader image.
+
+config SECURE_BOOT_BOARD
+	string
+	default "nrf5340dk_nrf5340_cpunet" if SECURE_BOOT_NETCORE && $(BOARD) = "nrf5340dk_nrf5340_cpuapp"
+	help
+	  Remote board when building this sample.
+	  If not set, the board given to sysbuild is used.
+
+config SECURE_BOOT_DOMAIN
+	string
+	default "CPUNET" if SECURE_BOOT_NETCORE
+	default "APP"
+	help
+	  Internal build system domain name used for first stage bootloader.
+
+endif

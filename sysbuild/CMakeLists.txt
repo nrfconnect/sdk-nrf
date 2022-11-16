@@ -5,3 +5,4 @@
 #
 
 include(${CMAKE_CURRENT_LIST_DIR}/netcore.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/secureboot.cmake)
