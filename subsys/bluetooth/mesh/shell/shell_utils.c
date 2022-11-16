@@ -21,22 +21,6 @@ struct shell_model_instance {
 	uint8_t elem_idx;
 };
 
-static void model_instances_get(uint16_t id, struct shell_model_instance *arr, uint8_t len)
-{
-	const struct bt_mesh_comp *comp = bt_mesh_comp_get();
-	struct bt_mesh_elem *elem;
-	struct bt_mesh_model *mod;
-
-	for (int i = 0; i < len; i++) {
-		elem = bt_mesh_elem_find(comp->elem[i].addr);
-		mod = bt_mesh_model_find(elem, id);
-		if (mod) {
-			arr[i].addr = comp->elem[i].addr;
-			arr[i].elem_idx = mod->elem_idx;
-		}
-	}
-}
-
 struct sensor_value shell_model_strtosensorval(const char *str, int *err)
 {
 	int temp_err = 0;
@@ -158,12 +142,17 @@ double shell_model_strtodbl(const char *str, int *err)
 	return (trimmed_buf[0] == '-') ? ((double)intgr - frac_dbl) : ((double)intgr + frac_dbl);
 }
 
-bool shell_model_first_get(uint16_t id, struct bt_mesh_model **mod)
+static bool model_first_get(uint16_t id, struct bt_mesh_model **mod, uint16_t *cid)
 {
 	const struct bt_mesh_comp *comp = bt_mesh_comp_get();
 
 	for (int i = 0; i < comp->elem_count; i++) {
-		*mod = bt_mesh_model_find(&comp->elem[i], id);
+		if (cid) {
+			*mod = bt_mesh_model_find_vnd(&comp->elem[i], *cid, id);
+		} else {
+			*mod = bt_mesh_model_find(&comp->elem[i], id);
+		}
+
 		if (*mod) {
 			return true;
 		}
@@ -172,8 +161,18 @@ bool shell_model_first_get(uint16_t id, struct bt_mesh_model **mod)
 	return false;
 }
 
-int shell_model_instance_set(const struct shell *shell, struct bt_mesh_model **mod, uint16_t mod_id,
-			     uint8_t elem_idx)
+bool shell_model_first_get(uint16_t id, struct bt_mesh_model **mod)
+{
+	return model_first_get(id, mod, NULL);
+}
+
+bool shell_vnd_model_first_get(uint16_t cid, uint16_t id, struct bt_mesh_model **mod)
+{
+	return model_first_get(id, mod, &cid);
+}
+
+static int instance_set(const struct shell *shell, struct bt_mesh_model **mod, uint16_t mod_id,
+			uint16_t *cid, uint8_t elem_idx)
 {
 	struct bt_mesh_model *mod_temp;
 	const struct bt_mesh_comp *comp = bt_mesh_comp_get();
@@ -183,7 +182,11 @@ int shell_model_instance_set(const struct shell *shell, struct bt_mesh_model **m
 		return -EINVAL;
 	}
 
-	mod_temp = bt_mesh_model_find(&comp->elem[elem_idx], mod_id);
+	if (cid) {
+		mod_temp = bt_mesh_model_find_vnd(&comp->elem[elem_idx], *cid, mod_id);
+	} else {
+		mod_temp = bt_mesh_model_find(&comp->elem[elem_idx], mod_id);
+	}
 
 	if (mod_temp) {
 		*mod = mod_temp;
@@ -195,23 +198,68 @@ int shell_model_instance_set(const struct shell *shell, struct bt_mesh_model **m
 	return 0;
 }
 
-int shell_model_instances_get_all(const struct shell *shell, uint16_t mod_id)
+int shell_model_instance_set(const struct shell *shell, struct bt_mesh_model **mod, uint16_t mod_id,
+			     uint8_t elem_idx)
+{
+	return instance_set(shell, mod, mod_id, NULL, elem_idx);
+}
+
+int shell_vnd_model_instance_set(const struct shell *shell, struct bt_mesh_model **mod,
+				 uint16_t mod_id, uint16_t cid, uint8_t elem_idx)
+{
+	return instance_set(shell, mod, mod_id, &cid, elem_idx);
+}
+
+static void model_instances_get(uint16_t id, uint16_t *cid, struct shell_model_instance *arr,
+				uint8_t len)
+{
+	const struct bt_mesh_comp *comp = bt_mesh_comp_get();
+	struct bt_mesh_elem *elem;
+	struct bt_mesh_model *mod;
+
+	for (int i = 0; i < len; i++) {
+		elem = bt_mesh_elem_find(comp->elem[i].addr);
+
+		if (cid) {
+			mod = bt_mesh_model_find_vnd(elem, *cid, id);
+		} else {
+			mod = bt_mesh_model_find(elem, id);
+		}
+
+		if (mod) {
+			arr[i].addr = comp->elem[i].addr;
+			arr[i].elem_idx = mod->elem_idx;
+		}
+	}
+}
+
+static int instances_get_all(const struct shell *shell, uint16_t mod_id, uint16_t *cid)
 {
 	uint8_t elem_cnt = bt_mesh_elem_count();
 	struct shell_model_instance mod_arr[elem_cnt];
 
 	memset(mod_arr, 0, sizeof(mod_arr));
-	model_instances_get(mod_id, mod_arr, ARRAY_SIZE(mod_arr));
+	model_instances_get(mod_id, cid, mod_arr, ARRAY_SIZE(mod_arr));
 
 	for (int i = 0; i < ARRAY_SIZE(mod_arr); i++) {
 		if (mod_arr[i].addr) {
 			shell_print(shell,
-				    "Client model instance found at addr 0x%.4X. Element index: %d",
+				    "Model instance found at addr 0x%.4X. Element index: %d",
 				    mod_arr[i].addr, mod_arr[i].elem_idx);
 		}
 	}
 
 	return 0;
+}
+
+int shell_model_instances_get_all(const struct shell *shell, uint16_t mod_id)
+{
+	return instances_get_all(shell, mod_id, NULL);
+}
+
+int shell_vnd_model_instances_get_all(const struct shell *shell, uint16_t mod_id, uint16_t cid)
+{
+	return instances_get_all(shell, mod_id, &cid);
 }
 
 int shell_model_cmds_help(const struct shell *shell, size_t argc, char **argv)
