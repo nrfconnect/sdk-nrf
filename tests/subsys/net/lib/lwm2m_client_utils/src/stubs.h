@@ -25,6 +25,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_get_res_buf, const char *, void **, ui
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_get_u8, const char *, uint8_t *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_get_bool, const char *, bool *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_opaque, const char *, const char *, uint16_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_string, const char *, const char *)
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_delete_obj_inst, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_delete_callback, uint16_t,
 			lwm2m_engine_user_cb_t);
@@ -91,6 +92,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
 	FUNC(lwm2m_engine_get_bool)                     \
 	FUNC(lwm2m_engine_set_s8)                       \
 	FUNC(lwm2m_engine_set_opaque)                   \
+	FUNC(lwm2m_engine_set_string)                   \
 	FUNC(lwm2m_engine_delete_obj_inst)              \
 	FUNC(lwm2m_engine_register_delete_callback)     \
 	FUNC(lwm2m_engine_register_create_callback)     \
