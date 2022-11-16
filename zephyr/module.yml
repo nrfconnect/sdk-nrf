@@ -1,6 +1,8 @@
 build:
   cmake: .
   kconfig: Kconfig.nrf
+  sysbuild-cmake: sysbuild
+  sysbuild-kconfig: sysbuild/Kconfig.sysbuild
   settings:
     board_root: .
     dts_root: .
