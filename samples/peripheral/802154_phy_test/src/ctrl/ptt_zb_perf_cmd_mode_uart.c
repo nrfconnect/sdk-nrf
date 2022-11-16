@@ -2096,9 +2096,10 @@ static void cmd_uart_l_tx_process_ack(ptt_evt_id_t evt_id)
 	struct ptt_evt_data_s *data = ptt_event_get_data(evt_id);
 
 	assert(data != NULL);
+	assert(data->arr != NULL);
 
 	/* if ACK is not NULL */
-	if ((data->arr != NULL) && (data->len != 0)) {
+	if (data->len != 0) {
 		struct ptt_evt_ctx_data_s *ctx_data = ptt_event_get_ctx_data(uart_cmd_evt);
 
 		assert(ctx_data != NULL);
