@@ -216,9 +216,6 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	lwm2m_init_firmware();
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT)
-	lwm2m_init_connmon();
-#endif
 #if defined(CONFIG_LWM2M_APP_LIGHT_CONTROL)
 	lwm2m_init_light_control();
 #endif
@@ -262,10 +259,6 @@ static int lwm2m_setup(void)
 #endif
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
 		lwm2m_init_rai();
-	}
-	if (IS_ENABLED(CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS) ||
-	    IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER)) {
-		lwm2m_ncell_handler_register();
 	}
 	return 0;
 }
@@ -586,13 +579,6 @@ void main(void)
 
 #if defined(CONFIG_APP_GNSS)
 	initialise_gnss();
-#endif
-
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT)
-	ret = lwm2m_update_connmon();
-	if (ret < 0) {
-		LOG_ERR("Registering rsrp handler failed (%d)", ret);
-	}
 #endif
 
 #ifdef CONFIG_SENSOR_MODULE
