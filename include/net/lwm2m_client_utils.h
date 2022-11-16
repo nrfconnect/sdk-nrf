@@ -24,6 +24,7 @@
 #define LWM2M_CLIENT_UTILS_H__
 
 #include <zephyr/kernel.h>
+#include <zephyr/device.h>
 #include <zephyr/net/lwm2m.h>
 #include <modem/lte_lc.h>
 
@@ -197,14 +198,11 @@ void lwm2m_verify_modem_fw_update(void);
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT)
 /**
- * @brief Initialize Connectivity Monitoring object
+ * @brief Initialize Connectivity Monitoring object. Called in SYS_INIT.
+ *
+ * @return Zero if success, negative error code otherwise.
  */
-int lwm2m_init_connmon(void);
-
-/**
- * @brief Update Connectivity Monitoring object
- */
-int lwm2m_update_connmon(void);
+int lwm2m_init_connmon(const struct device *dev);
 #endif
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT)

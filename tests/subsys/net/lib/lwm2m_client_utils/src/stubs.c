@@ -30,6 +30,7 @@ DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_get_res_buf, const char *, void **, uin
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_get_u8, const char *, uint8_t *);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_get_bool, const char *, bool *);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_opaque, const char *, const char *, uint16_t);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_string, const char*, const char*);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_delete_obj_inst, const char *);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_delete_callback, uint16_t,
 		       lwm2m_engine_user_cb_t);
