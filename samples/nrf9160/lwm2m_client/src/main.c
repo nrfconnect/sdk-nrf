@@ -255,6 +255,7 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE) && \
 	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS)
 	location_event_handler_init(&client);
+	location_assistance_init_resend_handler();
 #endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT)
 	lwm2m_init_cellular_connectivity_object();
@@ -377,7 +378,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		state_trigger_and_unlock(CONNECTED);
 		break;
 
-	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE:
+	case LWM2M_RD_CLIENT_EVENT_REG_TIMEOUT:
 		LOG_DBG("Registration update failure!");
 		state_trigger_and_unlock(NETWORK_ERROR);
 		break;
@@ -433,7 +434,8 @@ static void modem_connect(void)
 #endif
 
 	do {
-		LOG_INF("Connecting to LTE network.");
+
+		LOG_INF("Connecting to network.");
 		LOG_INF("This may take several minutes.");
 
 		ret = lte_lc_connect();
@@ -443,7 +445,16 @@ static void modem_connect(void)
 			lte_lc_offline();
 			k_sleep(K_SECONDS(60));
 		} else {
-			LOG_INF("Connected to LTE network");
+			enum lte_lc_lte_mode mode;
+
+			lte_lc_lte_mode_get(&mode);
+			if (mode == LTE_LC_LTE_MODE_NBIOT) {
+				LOG_INF("Connected to NB-IoT network");
+			} else if (mode == LTE_LC_LTE_MODE_LTEM) {
+				LOG_INF("Connected to LTE network");
+			} else  {
+				LOG_INF("Connected to unknown network");
+			}
 		}
 	} while (ret < 0);
 }

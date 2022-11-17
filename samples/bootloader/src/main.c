@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/types.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <pm_config.h>
 #include <fw_info.h>

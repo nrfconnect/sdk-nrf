@@ -8,7 +8,7 @@
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/audio/audio.h>
-#include <zephyr/bluetooth/audio/capabilities.h>
+#include <zephyr/bluetooth/audio/pacs.h>
 
 /* TODO: Remove when a get_info function is implemented in host */
 #include <../subsys/bluetooth/audio/endpoint.h>
@@ -19,7 +19,7 @@
 #include "channel_assignment.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bis_headset, 4);
+LOG_MODULE_REGISTER(bis_headset, CONFIG_BLE_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT <= 2,
 	     "A maximum of two broadcast streams are currently supported");
@@ -89,7 +89,7 @@ static bool bitrate_check(const struct bt_codec *codec)
 
 static bool adv_data_parse(struct bt_data *data, void *user_data)
 {
-	if (data->type == BT_DATA_NAME_COMPLETE && data->data_len == DEVICE_NAME_PEER_LEN) {
+	if (data->type == BT_DATA_BROADCAST_NAME && data->data_len) {
 		memcpy((char *)user_data, data->data, data->data_len);
 		return false;
 	}
@@ -151,7 +151,7 @@ static bool scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf
 
 	bt_data_parse(ad, adv_data_parse, (void *)name);
 
-	if (strcmp(name, DEVICE_NAME_PEER) == 0) {
+	if (strcmp(name, CONFIG_BT_DEVICE_NAME) == 0) {
 		LOG_INF("Broadcast source %s found", name);
 		return true;
 	}
@@ -299,8 +299,7 @@ static struct bt_audio_broadcast_sink_cb broadcast_sink_cbs = { .scan_recv = sca
 								.base_recv = base_recv_cb,
 								.syncable = syncable_cb };
 
-static struct bt_audio_capability capabilities = {
-	.dir = BT_AUDIO_DIR_SINK,
+static struct bt_pacs_cap capabilities = {
 	.codec = &codec,
 };
 
@@ -316,17 +315,16 @@ static void initialize(le_audio_receive_cb recv_cb)
 		channel_assignment_get(&channel);
 
 		if (channel == AUDIO_CH_L) {
-			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
-							       BT_AUDIO_LOCATION_FRONT_LEFT);
+			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_LEFT);
 		} else {
-			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
-							       BT_AUDIO_LOCATION_FRONT_RIGHT);
+			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
+						   BT_AUDIO_LOCATION_FRONT_RIGHT);
 		}
 		if (ret) {
 			LOG_ERR("Location set failed");
 		}
 
-		ret = bt_audio_capability_register(&capabilities);
+		ret = bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &capabilities);
 		if (ret) {
 			LOG_ERR("Capability register failed (ret %d)", ret);
 			ERR_CHK(ret);

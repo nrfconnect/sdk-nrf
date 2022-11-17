@@ -12,6 +12,7 @@
 #include "mesh/access.h"
 #include "shell_utils.h"
 #include "common/log.h"
+#include "common/bt_str.h"
 
 static struct bt_mesh_model *mod;
 

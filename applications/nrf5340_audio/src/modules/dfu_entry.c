@@ -32,7 +32,7 @@
 #endif
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(dfu, CONFIG_LOG_DFU_ENTRY_LEVEL);
+LOG_MODULE_REGISTER(dfu, CONFIG_MODULE_DFU_ENTRY_LOG_LEVEL);
 
 /* These defined name only used by DFU */
 #define DEVICE_NAME_DFU CONFIG_BT_DFU_DEVICE_NAME

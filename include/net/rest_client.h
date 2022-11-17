@@ -18,8 +18,8 @@
 #define REST_CLIENT_H__
 
 #include <zephyr/kernel.h>
-#include <zephyr/net/http_client.h>
-#include <zephyr/net/http_parser.h>
+#include <zephyr/net/http/client.h>
+#include <zephyr/net/http/parser.h>
 
 /** @brief TLS is not used. */
 #define REST_CLIENT_SEC_TAG_NO_SEC -1

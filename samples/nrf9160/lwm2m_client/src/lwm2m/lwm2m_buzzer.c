@@ -19,7 +19,7 @@ LOG_MODULE_REGISTER(app_lwm2m_buzzer, CONFIG_APP_LOG_LEVEL);
 
 #define BUZZER_APP_TYPE "Buzzer"
 
-static int32_t lwm2m_timestamp;
+static time_t lwm2m_timestamp;
 
 static int buzzer_state_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 			   uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)

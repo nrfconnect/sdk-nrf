@@ -41,6 +41,9 @@ void method_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 {
 	switch (evt->type) {
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS: {
+		if (!running) {
+			return;
+		}
 		LOG_DBG("Cell measurements results received");
 
 		/* Copy current cell information. */
@@ -200,9 +203,11 @@ int method_cellular_location_get(const struct location_method_config *config)
 int method_cellular_cancel(void)
 {
 	if (running) {
+		running = false;
+
+		/* Cancel/stopping might trigger a NCELLMEAS notification */
 		(void)lte_lc_neighbor_cell_measurement_cancel();
 		(void)k_work_cancel(&method_cellular_positioning_work.work_item);
-		running = false;
 		k_sem_reset(&cellmeas_data_ready);
 	} else {
 		return -EPERM;

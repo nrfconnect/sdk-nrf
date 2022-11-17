@@ -7,42 +7,57 @@ Apple Notification Center Service (ANCS) Client
    :local:
    :depth: 2
 
+The ANCS Client module is used for implementation of the Apple Notification Center Service (ANCS) client.
+
 .. note::
 
-   Disclaimer: Nordic Semiconductor ASA can change this client implementation of the Apple Notification Center Service at any time.
+   Disclaimer: Nordic Semiconductor ASA can change the client implementation of the Apple Notification Center Service at any time.
    Apple can change the server implementations such as the ones found in iOS at any time, which may cause this client implementation to stop working.
 
-The ANCS Client module implements the Apple Notification Center Service (ANCS) client.
-This client can be used as a Notification Consumer (NC) that receives data notifications from a Notification Provider (NP).
+Overview
+********
+
+The ANCS client can be used as a Notification Consumer (NC) that receives data notifications from a Notification Provider (NP).
 The NP is typically an iOS device that is acting as a server.
 For detailed information about the Apple Notification Center Service, see `Apple Developer Documentation <Apple Notification Center Service Specification_>`_.
 
-The term "notification" is used in two different meanings:
-
-* An iOS notification is the data received from the Notification Provider.
-
-* A GATT notification is a way to transfer data with Bluetooth® Low Energy.
-
 In this module, iOS notifications are received through the GATT notifications.
-The full term (iOS notification or GATT notification) is used where required to avoid confusion.
 
-The ANCS Client is used in the :ref:`peripheral_ancs_client` sample.
+.. note::
 
-Usage
-*****
+   The term *notification* is used in two different meanings:
 
-Upon initializing the module, you must add the different iOS notification attributes you would like to receive for iOS notifications (see :c:func:`bt_ancs_register_attr`).
+   * An iOS notification is the data received from the Notification Provider.
+   * A GATT notification is a way to transfer data with Bluetooth® Low Energy.
+
+   *iOS notification* and *GATT notification* are used where required to avoid confusion.
+
+Configuration
+*************
+
+Upon initializing the module, add different iOS notification attributes you want to receive for iOS notifications (see :c:func:`bt_ancs_register_attr`).
 
 Once a connection is established with a central device, the module needs a service discovery to discover the ANCS server handles.
 If this succeeds, the handles for the ANCS server must be assigned to an ANCS client instance using the :c:func:`bt_ancs_handles_assign` function.
 
 The application can now subscribe to iOS notifications with :c:func:`bt_ancs_subscribe_notification_source`.
+
+Usage
+*****
+
 The notifications arrive through the callback function of the notification source subscription.
-Use :c:func:`bt_ancs_request_attrs` to request attributes for the notifications.
-The attributes arrive through the callback function of the data source subscription with a Command ID :c:enumerator:`BT_ANCS_COMMAND_ID_GET_NOTIF_ATTRIBUTES`.
-Use :c:func:`bt_ancs_request_app_attr` to request attributes of the app that issued the notifications.
-The app attributes arrive through the callback function of the data source subscription with a Command ID :c:enumerator:`BT_ANCS_COMMAND_ID_GET_APP_ATTRIBUTES`.
-Use :c:func:`bt_ancs_notification_action` to make the Notification Provider perform an action based on the provided notification.
+
+Use the following functions to perform activities related to notifications:
+
+* :c:func:`bt_ancs_request_attrs` - Request attributes for the notifications.
+
+  The attributes arrive through the callback function of the data source subscription with the :c:enumerator:`BT_ANCS_COMMAND_ID_GET_NOTIF_ATTRIBUTES` Command ID.
+
+* :c:func:`bt_ancs_request_app_attr` - Request attributes of the app that issued the notifications.
+
+  The app attributes arrive through the callback function of the data source subscription with the :c:enumerator:`BT_ANCS_COMMAND_ID_GET_APP_ATTRIBUTES` Command ID.
+
+* :c:func:`bt_ancs_notification_action` - Make the Notification Provider perform an action based on the provided notification.
 
 .. msc::
     hscale = "2.0";
@@ -65,11 +80,26 @@ Use :c:func:`bt_ancs_notification_action` to make the Notification Provider perf
     Application<<=ANCS_Client  [label = "data_source callback(attr_response)"];
     |||;
 
+Samples using the library
+*************************
+The following |NCS| sample uses this library:
+
+* :ref:`peripheral_ancs_client`
+
+Dependencies
+************
+
+There are no dependencies for using this library.
+
 API documentation
 *****************
 
 | Header file: :file:`include/bluetooth/services/ancs_client.h`
-| Source files: :file:`subsys/bluetooth/services/ancs_client.c` and :file:`subsys/bluetooth/services/ancs_attr_parser.c` and :file:`subsys/bluetooth/services/ancs_app_attr_get.c`
+| Source files:
+
+  * :file:`subsys/bluetooth/services/ancs_client.c`
+  * :file:`subsys/bluetooth/services/ancs_attr_parser.c`
+  * :file:`subsys/bluetooth/services/ancs_app_attr_get.c`
 
 .. doxygengroup:: bt_ancs_client
    :project: nrf

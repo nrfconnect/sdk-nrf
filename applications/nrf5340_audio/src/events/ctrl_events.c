@@ -13,7 +13,7 @@
 #include "macros_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(ctrl_events, CONFIG_LOG_CTRL_EVENTS_LEVEL);
+LOG_MODULE_REGISTER(ctrl_events, CONFIG_CTRL_EVENTS_LOG_LEVEL);
 
 #define CTRL_EVENTS_MSGQ_MAX_ELEMENTS 5
 #define CTRL_EVENTS_MSGQ_ALIGNMENT_WORDS 4

@@ -206,8 +206,7 @@ static int modem_static_data_add(struct cloud_data_modem_static *data, cJSON **v
 	cJSON *modem_val_obj = cJSON_CreateObject();
 
 	if (modem_val_obj == NULL) {
-		err = -ENOMEM;
-		goto exit;
+		return -ENOMEM;
 	}
 
 	err = json_add_str(modem_val_obj, MODEM_IMEI, data->imei);
@@ -271,8 +270,7 @@ static int modem_dynamic_data_add(struct cloud_data_modem_dynamic *data, cJSON *
 	cJSON *modem_val_obj = cJSON_CreateObject();
 
 	if (modem_val_obj == NULL) {
-		err = -ENOMEM;
-		goto exit;
+		return -ENOMEM;
 	}
 
 	if (data->band_fresh) {
@@ -878,7 +876,7 @@ int cloud_codec_encode_pgps_request(struct cloud_codec_data *output,
 	return -ENOTSUP;
 }
 
-int cloud_codec_decode_config(char *input, size_t input_len,
+int cloud_codec_decode_config(const char *input, size_t input_len,
 			      struct cloud_data_cfg *cfg)
 {
 	int err = 0;

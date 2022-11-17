@@ -6,6 +6,7 @@
 
 #include <date_time.h>
 #include <zephyr/device.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/timeutil.h>
 #include <zephyr/logging/log.h>
 

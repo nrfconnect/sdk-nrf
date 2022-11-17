@@ -54,7 +54,7 @@ See :ref:`nrf9160_ug_updating_cloud_certificate` and the :ref:`modem_key_mgmt` l
 The certificates are generated using the device ID and PIN or HWID.
 The device ID is also the MQTT client ID.
 There are multiple configuration options for the device or client ID.
-See :ref:`config_device_id` for more information.
+See :ref:`configuration_device_id` for more information.
 
 As the next step, the API subscribes to an MQTT topic to start receiving user association requests from the cloud.
 
@@ -98,7 +98,7 @@ When the device is successfully associated with a user on the cloud, subsequent 
 
 After receiving :c:enumerator:`NRF_CLOUD_EVT_READY`, the application can start sending sensor data to the cloud.
 
-.. _config_device_id:
+.. _configuration_device_id:
 
 Configuration options for device ID
 ===================================
@@ -198,7 +198,7 @@ Additionally, :c:func:`nrf_cloud_shadow_device_status_update` can be used to gen
 
 Following are the supported UI types on nRF Cloud:
 
-* ``GPS``
+* ``GNSS``
 * ``FLIP``
 * ``TEMP``
 * ``HUMIDITY``

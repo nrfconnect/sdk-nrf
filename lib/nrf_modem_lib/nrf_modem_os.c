@@ -343,12 +343,12 @@ void nrf_modem_os_log(int level, const char *fmt, ...)
 	va_list ap;
 	va_start(ap, fmt);
 
-	if (IS_ENABLED(CONFIG_LOG_MODE_MINIMAL)) {
+#if CONFIG_LOG_MODE_MINIMAL
 		/* Fallback to minimal implementation. */
 		printk("%c: ", z_log_minimal_level_to_char(level));
 		z_log_minimal_vprintk(fmt, ap);
 		printk("\n");
-	} else {
+#else
 		void *source;
 
 		if (IS_ENABLED(CONFIG_LOG_RUNTIME_FILTERING)) {
@@ -359,7 +359,7 @@ void nrf_modem_os_log(int level, const char *fmt, ...)
 
 		z_log_msg_runtime_vcreate(CONFIG_LOG_DOMAIN_ID, source, level,
 					  NULL, 0, 0, fmt, ap);
-	}
+#endif /* CONFIG_LOG_MODE_MINIMAL */
 
 	va_end(ap);
 #endif /* CONFIG_LOG */
@@ -370,11 +370,11 @@ void nrf_modem_os_logdump(int level, const char *str, const void *data, size_t l
 #if defined(CONFIG_LOG)
 	level = log_level_translate(level);
 
-	if (IS_ENABLED(CONFIG_LOG_MODE_MINIMAL)) {
+#if CONFIG_LOG_MODE_MINIMAL
 		/* Fallback to minimal implementation. */
 		printk("%c: %s\n", z_log_minimal_level_to_char(level), str);
 		z_log_minimal_hexdump_print(level, data, len);
-	} else {
+#else
 		void *source;
 
 		if (IS_ENABLED(CONFIG_LOG_RUNTIME_FILTERING)) {
@@ -385,7 +385,8 @@ void nrf_modem_os_logdump(int level, const char *str, const void *data, size_t l
 
 		z_log_msg_runtime_vcreate(CONFIG_LOG_DOMAIN_ID, source, level,
 					  data, len, 0, str, (va_list) { 0 });
-	}
+#endif /* CONFIG_LOG_MODE_MINIMAL */
+
 #endif /* CONFIG_LOG */
 }
 

@@ -105,6 +105,7 @@ static bool data_cb(struct bt_data *data, void *user_data)
 			req.ranging_mode = peer_ranging_mode_get();
 			req.access_address = sys_le32_to_cpu(recv_mfg_data->access_address);
 			req.start_delay_us = 0;
+			req.extra_window_time_us = 0;
 
 			dm_request_add(&req);
 		}
@@ -138,6 +139,7 @@ static void adv_scanned_cb(struct bt_le_ext_adv *adv,
 		req.ranging_mode = peer_ranging_mode_get();
 		req.access_address = peer_access_address_get();
 		req.start_delay_us = 0;
+		req.extra_window_time_us = 0;
 
 		dm_request_add(&req);
 	}

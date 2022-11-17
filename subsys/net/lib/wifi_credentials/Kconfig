@@ -1,0 +1,60 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig WIFI_CREDENTIALS
+	bool "WIFI credentials management"
+	help
+	  Enable WiFi credentials management subsystem.
+
+if WIFI_CREDENTIALS
+
+module = WIFI_CREDENTIALS
+module-str = wifi_credentials
+source "subsys/logging/Kconfig.template.log_config"
+
+choice WIFI_CREDENTIALS_BACKEND
+	prompt "WiFi credentials backend"
+	default WIFI_CREDENTIALS_BACKEND_SETTINGS
+	help
+	  Selects whether to use PSA Protected Storage or the Zephyr settings subsystem
+	  for credentials storage.
+
+config WIFI_CREDENTIALS_BACKEND_SETTINGS
+	bool "Zephyr Settings"
+	depends on SETTINGS
+	depends on !SETTINGS_NONE
+
+config WIFI_CREDENTIALS_BACKEND_PSA
+	bool "PSA Protected Storage"
+	depends on BUILD_WITH_TFM && !TFM_PROFILE_TYPE_MINIMAL
+
+endchoice
+
+config WIFI_CREDENTIALS_MAX_ENTRIES
+	int "Number of supported WiFi credentials"
+	default 2
+	help
+	  This detemines how many different WiFi networks can be configured at a time.
+
+config WIFI_CREDENTIALS_SAE_PASSWORD_LENGTH
+	int "Max. length of SAE password"
+	default 128
+	help
+	  There is no official limit on SAE password length,
+	  but e.g. Linux 6.0 has a hardcoded limit of 128 bytes.
+
+endif # WIFI_CREDENTIALS
+
+if WIFI_CREDENTIALS_BACKEND_PSA
+
+config WIFI_CREDENTIALS_BACKEND_PSA_UID_OFFSET
+	int "Protected Storage UID offset"
+	default 3586949806
+	help
+	  This library will use WIFI_CREDENTIALS_MAX_ENTRIES entries starting with the
+	  WIFI_CREDENTIALS_BACKEND_PSA_UID_OFFSET uid.
+
+endif # WIFI_CREDENTIALS_BACKEND_PSA

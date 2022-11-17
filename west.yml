@@ -52,7 +52,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 78a9e8effce0366562b9bb1f4e08096fa4cb13b9
+      revision: 8a249246bc2add52db9d1b9ee5db111e0ccda4c3
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -107,7 +107,7 @@ manifest:
       revision: 5ee5972d527ede375f982fcedaeea26f2fb03f10
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 14e45ce9478b8b95a3d41aac6ba92a12569784c4
+      revision: a343542d83ee5b4085d669732b37177b66379ad2
       path: bootloader/mcuboot
     - name: mbedtls-nrf
       path: mbedtls
@@ -120,7 +120,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 39288b5df80e5915c1eee1d9b753a931824b3836
+      revision: cbf2b7209c8ed6ccb14b40cc463c6f84f9ef40ec
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -128,7 +128,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 63d38039b04789b5fcc633508629e75308f78dc5
+      revision: 470d1f92c078af1ad906c955e94d0064f53fb5f6
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -150,12 +150,12 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: c86b46ea4f75feefa553c4a52d3275f002187ba6
+      revision: feb0b267c8c8106cb6b7f6cd2933717fcd0c682b
       groups:
         - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 6758f78b0b52205fda3c890a934c96e1706c4f88
+      revision: 99d35d6777cb2aa552b0cad152ca7e60c42d3bc5
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -170,7 +170,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.33.2
+      revision: 0.34.1
       remote: memfault
     - name: cirrus
       repo-path: sdk-mcu-drivers

@@ -60,6 +60,10 @@ LOG_MODULE_REGISTER(nrf_dm, CONFIG_DM_MODULE_LOG_LEVEL);
 #define DM_THREAD_PRIORITY           K_HIGHEST_APPLICATION_THREAD_PRIO
 #define TIMESLOT_TIMEOUT_STEP_MS     120000
 
+#define DM_TIMESLOT_OVERHEAD_US      400
+#define DM_REFLECTOR_OVERHEAD_US     2000
+#define DM_RANGING_EXTRA_TIMEOUT_US  200
+
 static K_MUTEX_DEFINE(ranging_mtx);
 static K_TIMER_DEFINE(timer, NULL, NULL);
 
@@ -90,7 +94,7 @@ K_MSGQ_DEFINE(mpsl_api_msgq, sizeof(enum mpsl_timeslot_call), 8, 4);
 K_MSGQ_DEFINE(dm_api_msgq, sizeof(enum dm_call), 8, 4);
 
 struct {
-	bool ranging_status;
+	nrf_dm_status_t nrf_dm_status;
 	struct dm_cb *cb;
 } static dm_context;
 
@@ -115,36 +119,44 @@ static mpsl_timeslot_request_t timeslot_request_normal = {
 	.request_type = MPSL_TIMESLOT_REQ_TYPE_NORMAL,
 	.params.normal.hfclk = MPSL_TIMESLOT_HFCLK_CFG_XTAL_GUARANTEED,
 	.params.normal.priority = MPSL_TIMESLOT_PRIORITY_HIGH,
-	.params.normal.length_us = TIMESLOT_LENGTH_US,
 };
 
 struct dm_result result;
 static mpsl_timeslot_signal_return_param_t signal_callback_return_param;
 
-static int dm_configure(void)
+static void dm_config_get(struct dm_request *dm_req, nrf_dm_config_t *dm_config)
 {
-	static nrf_dm_config_t dm_config;
+	*dm_config = NRF_DM_DEFAULT_CONFIG;
+	dm_config->access_address = dm_req->access_address;
 
-	dm_config = NRF_DM_DEFAULT_CONFIG;
-	dm_config.access_address = timeslot_ctx.curr_req.dm_req.access_address;
-
-	if (timeslot_ctx.curr_req.dm_req.role == DM_ROLE_INITIATOR) {
-		dm_config.role = NRF_DM_ROLE_INITIATOR;
-	} else if (timeslot_ctx.curr_req.dm_req.role == DM_ROLE_REFLECTOR) {
-		dm_config.role = NRF_DM_ROLE_REFLECTOR;
+	if (dm_req->role == DM_ROLE_INITIATOR) {
+		dm_config->role = NRF_DM_ROLE_INITIATOR;
 	} else {
-		return NRF_DM_STATUS_CONF_INVALID;
+		dm_config->role = NRF_DM_ROLE_REFLECTOR;
 	}
 
-	if (timeslot_ctx.curr_req.dm_req.ranging_mode == DM_RANGING_MODE_RTT) {
-		dm_config.ranging_mode = NRF_DM_RANGING_MODE_RTT;
-	} else if (timeslot_ctx.curr_req.dm_req.ranging_mode == DM_RANGING_MODE_MCPD) {
-		dm_config.ranging_mode = NRF_DM_RANGING_MODE_MCPD;
+	if (dm_req->ranging_mode == DM_RANGING_MODE_RTT) {
+		dm_config->ranging_mode = NRF_DM_RANGING_MODE_RTT;
 	} else {
-		return NRF_DM_STATUS_CONF_INVALID;
+		dm_config->ranging_mode = NRF_DM_RANGING_MODE_MCPD;
+	}
+}
+
+static uint32_t dm_proc_execute_duration_us(struct dm_request *dm_req)
+{
+	uint32_t time_us;
+	nrf_dm_config_t config;
+
+	dm_config_get(dm_req, &config);
+
+	time_us = nrf_dm_get_duration_us(&config) + NRF_DM_PROC_EXECUTE_DURATION_OVERHEAD_US +
+	       DM_RANGING_EXTRA_TIMEOUT_US + dm_req->extra_window_time_us;
+
+	if (dm_req->role == DM_ROLE_REFLECTOR) {
+		time_us += DM_REFLECTOR_OVERHEAD_US;
 	}
 
-	return nrf_dm_configure(&dm_config);
+	return time_us;
 }
 
 static mpsl_timeslot_signal_return_param_t *mpsl_timeslot_callback(
@@ -153,6 +165,7 @@ static mpsl_timeslot_signal_return_param_t *mpsl_timeslot_callback(
 	ARG_UNUSED(session_id);
 	mpsl_timeslot_signal_return_param_t *p_ret_val = NULL;
 	nrf_dm_status_t nrf_dm_status;
+	static nrf_dm_config_t dm_config;
 	enum dm_call dm_api_call;
 
 	switch (signal_type) {
@@ -167,15 +180,14 @@ static mpsl_timeslot_signal_return_param_t *mpsl_timeslot_callback(
 			return p_ret_val;
 		}
 
-		nrf_dm_status = dm_configure();
+		dm_config_get(&timeslot_ctx.curr_req.dm_req, &dm_config);
+		nrf_dm_status = nrf_dm_configure(&dm_config);
 
 		if (nrf_dm_status == NRF_DM_STATUS_SUCCESS) {
-			uint32_t timeout = timeslot_ctx.curr_req.dm_req.role == DM_ROLE_INITIATOR ?
-					 INITIATOR_RANGING_WINDOW_US : REFLECTOR_RANGING_WINDOW_US;
-			nrf_dm_status = nrf_dm_proc_execute(timeout);
+			nrf_dm_status = nrf_dm_proc_execute(timeslot_ctx.curr_req.window_length_us);
 		}
 
-		dm_context.ranging_status = (nrf_dm_status == NRF_DM_STATUS_SUCCESS);
+		dm_context.nrf_dm_status = nrf_dm_status;
 
 		dm_io_clear(DM_IO_RANGING);
 
@@ -253,7 +265,7 @@ static void process_data(const nrf_dm_report_t *data)
 		result.status = false;
 		return;
 	}
-	result.status = dm_context.ranging_status;
+	result.status = (dm_context.nrf_dm_status == NRF_DM_STATUS_SUCCESS);
 	bt_addr_le_copy(&result.bt_addr, &timeslot_ctx.curr_req.dm_req.bt_addr);
 
 	result.quality = DM_QUALITY_NONE;
@@ -298,6 +310,7 @@ static int timeslot_request(uint32_t distance_from_last)
 	enum mpsl_timeslot_call mpsl_api_call;
 
 	timeslot_request_normal.params.normal.distance_us = distance_from_last;
+	timeslot_request_normal.params.normal.length_us = timeslot_ctx.curr_req.timeslot_length_us;
 	mpsl_api_call = MAKE_REQUEST_NORMAL;
 
 	err = k_msgq_put(&mpsl_api_msgq, &mpsl_api_call, K_FOREVER);
@@ -355,12 +368,18 @@ out:
 
 static void dm_reschedule(void)
 {
+	uint32_t timeslot_len_us;
+	uint32_t window_len_us;
+
 	if (IS_ENABLED(CONFIG_DM_TIMESLOT_RESCHEDULE)) {
 		int err;
 
-		if (dm_context.ranging_status) {
+		if (dm_context.nrf_dm_status == NRF_DM_STATUS_SUCCESS) {
+			window_len_us = timeslot_ctx.curr_req.window_length_us;
+			timeslot_len_us = timeslot_ctx.curr_req.timeslot_length_us;
+
 			err = timeslot_queue_append(&timeslot_ctx.curr_req.dm_req,
-						timeslot_ctx.last_start);
+					   timeslot_ctx.last_start, window_len_us, timeslot_len_us);
 			if (err) {
 				LOG_DBG("Timeslot allocator failed (err %d)", err);
 			}
@@ -414,8 +433,11 @@ static void dm_thread(void)
 				break;
 			case TIMESLOT_NORMAL_END:
 				dm_reschedule();
-				if (dm_context.ranging_status) {
+				if (dm_context.nrf_dm_status == NRF_DM_STATUS_SUCCESS) {
 					calculation();
+				} else {
+					LOG_DBG("Ranging failed (nrf_dm status: %d)",
+									  dm_context.nrf_dm_status);
 				}
 
 				atomic_set(&timeslot_ctx.state, TIMESLOT_STATE_IDLE);
@@ -435,15 +457,17 @@ static void dm_thread(void)
 int dm_request_add(struct dm_request *req)
 {
 	int err;
+	uint32_t timeslot_len_us;
+	uint32_t window_len_us;
 
 	if (req->role == DM_ROLE_INITIATOR) {
-		req->start_delay_us += INITIATOR_DELAY_US;
-	} else {
-		req->start_delay_us += REFLECTOR_DELAY_US;
+		req->start_delay_us += CONFIG_DM_INITIATOR_DELAY_US;
 	}
 
 	dm_io_set(DM_IO_ADD_REQUEST);
-	err = timeslot_queue_append(req, time_now());
+	window_len_us = dm_proc_execute_duration_us(req);
+	timeslot_len_us = window_len_us + DM_TIMESLOT_OVERHEAD_US;
+	err = timeslot_queue_append(req, time_now(), window_len_us, timeslot_len_us);
 	if (err) {
 		LOG_DBG("Timeslot allocation failed (err %d)", err);
 	}

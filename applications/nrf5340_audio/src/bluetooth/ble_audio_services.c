@@ -15,7 +15,7 @@
 #include "hw_codec.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(ble_audio_services, CONFIG_LOG_AUDIO_SERVICES_LEVEL);
+LOG_MODULE_REGISTER(ble_audio_services, CONFIG_AUDIO_SERVICES_LOG_LEVEL);
 
 #define VOLUME_DEFAULT 195
 #define VOLUME_STEP 16

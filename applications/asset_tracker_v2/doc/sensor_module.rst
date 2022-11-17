@@ -184,7 +184,7 @@ The :file:`asset_tracker_v2/src/events/sensor_module_event.h` header file contai
 Dependencies
 ************
 
-This module uses the following |NCS| libraries and drivers:
+This module uses the following Zephyr API:
 
 * :ref:`Generic sensor API <sensor_api>`
 

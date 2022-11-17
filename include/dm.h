@@ -136,6 +136,9 @@ struct dm_request {
 
 	/** Start delay. */
 	uint32_t start_delay_us;
+
+	/** Extra time to extend the ranging window. */
+	uint32_t extra_window_time_us;
 };
 
 /** @brief Initialize the DM.

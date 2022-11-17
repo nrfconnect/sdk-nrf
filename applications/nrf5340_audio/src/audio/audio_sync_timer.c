@@ -14,7 +14,7 @@
 #include <nrfx_ipc.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(audio_sync_timer, CONFIG_LOG_AUDIO_SYNC_TIMER_LEVEL);
+LOG_MODULE_REGISTER(audio_sync_timer, CONFIG_AUDIO_SYNC_TIMER_LOG_LEVEL);
 
 #define AUDIO_SYNC_TIMER_INSTANCE 1
 
@@ -97,7 +97,7 @@ static int audio_sync_timer_init(const struct device *unused)
 		return ret;
 	}
 
-	LOG_INF("Audio sync timer initialized");
+	LOG_DBG("Audio sync timer initialized");
 
 	return 0;
 }

@@ -5,15 +5,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig ADP536X
+config ADP536X
 	bool "ADP536x"
 	help
-	  Enable ADP536x.
-
-if ADP536X
-
-config ADP536X_BUS_NAME
-	string "I2C bus name"
-	default "I2C_2"
-
-endif # ADP536X
+	  Enable ADP536x

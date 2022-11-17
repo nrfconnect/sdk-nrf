@@ -45,9 +45,9 @@ rsource "dfu/conf/Kconfig.dfu"
 #----------------------------------------------------------------------------#
 menu "Logging"
 
-config LOG_MAIN_LEVEL
-	int "Log level for main file"
-	default 3
+module = MAIN
+module-str = main
+source "subsys/logging/Kconfig.template.log_config"
 
 config PRINT_STACK_USAGE_MS
 	depends on THREAD_ANALYZER && INIT_STACKS

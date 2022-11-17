@@ -29,6 +29,7 @@
 #define BT_DBG_ENABLED 0
 #define LOG_MODULE_NAME hci_rpmsg
 #include "common/log.h"
+#include "common/assert.h"
 
 static struct ipc_ept hci_ept;
 

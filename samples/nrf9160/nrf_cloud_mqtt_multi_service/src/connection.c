@@ -422,8 +422,9 @@ static void update_shadow(void)
 		.modem = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_DELTA),
 		.modem_full = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_FULL)
 	};
+
 	struct nrf_cloud_svc_info_ui ui_info = {
-		.gps = location_tracking_enabled(),
+		.gnss = location_tracking_enabled(),
 		.temperature = IS_ENABLED(CONFIG_TEMP_TRACKING),
 	};
 	struct nrf_cloud_svc_info service_info = {

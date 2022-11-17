@@ -52,33 +52,33 @@ endmenu # I2S
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
-config LOG_I2S_LEVEL
-	int "Log level for audio_i2s"
-	default 2
+module = MODULE_AUDIO_USB
+module-str = module-audio-usb
+source "subsys/logging/Kconfig.template.log_config"
 
-config LOG_LED_LEVEL
-	int "Log level for LED"
-	default 2
+module = MODULE_BUTTON_HANDLER
+module-str = module-button-handler
+source "subsys/logging/Kconfig.template.log_config"
 
-config LOG_AUDIO_USB_LEVEL
-	int "Log level for USB audio"
-	default 2
+module = MODULE_DFU_ENTRY
+module-str = module-dfu-entry
+source "subsys/logging/Kconfig.template.log_config"
 
-config LOG_POWER_MODULE_LEVEL
-	int "Log level for power module"
-	default 3
+module = MODULE_HW_CODEC
+module-str = module-hw-codec
+source "subsys/logging/Kconfig.template.log_config"
 
-config LOG_HW_CODEC_LEVEL
-	int "Log level for HW_CODEC"
-	default 2
+module = MODULE_LED
+module-str = module-led
+source "subsys/logging/Kconfig.template.log_config"
 
-config LOG_BUTTON_HANDLER_LEVEL
-	int "Log level for button_handler.c"
-	default 2
+module = MODULE_POWER
+module-str = module-power
+source "subsys/logging/Kconfig.template.log_config"
 
-config LOG_SD_CARD_LEVEL
-	int "Log level for SD card"
-	default 3
+module = MODULE_SD_CARD
+module-str = module-sd-card
+source "subsys/logging/Kconfig.template.log_config"
 
 endmenu # Log levels
 

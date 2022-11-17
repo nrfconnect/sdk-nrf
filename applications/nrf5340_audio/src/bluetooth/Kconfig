@@ -243,13 +243,13 @@ endchoice
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
-config LOG_BLE_LEVEL
-	int "Log level for Bluetooth related files"
-	default 3
+module = BLE
+module-str = ble
+source "subsys/logging/Kconfig.template.log_config"
 
-config LOG_AUDIO_SERVICES_LEVEL
-	int "Log level for LE Audio services"
-	default 3
+module = AUDIO_SERVICES
+module-str = audio-services
+source "subsys/logging/Kconfig.template.log_config"
 
 endmenu # Log levels
 endmenu # Bluetooth

@@ -40,17 +40,37 @@ endmenu # FIFO
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
-config LOG_BOARD_VERSION_LEVEL
-	int "Log level for the board/HW version"
-	default 3
+module = BOARD_VERSION
+module-str = board-version
+source "subsys/logging/Kconfig.template.log_config"
 
-config LOG_CS47L63_LEVEL
-	int "Log level for CS47L63"
-	default 2
+module = CHAN_ASSIGNMENT
+module-str = chan-assignment
+source "subsys/logging/Kconfig.template.log_config"
 
-config LOG_CHANNEL_ASSIGNMENT_LEVEL
-	int "Log level for channel assignment"
-	default 3
+module = CONTIN_ARRAY
+module-str = contin-array
+source "subsys/logging/Kconfig.template.log_config"
+
+module = DATA_FIFO
+module-str = data-fifo
+source "subsys/logging/Kconfig.template.log_config"
+
+module = ERROR_HANDLER
+module-str = error-handler
+source "subsys/logging/Kconfig.template.log_config"
+
+module = FW_INFO
+module-str = fw-info
+source "subsys/logging/Kconfig.template.log_config"
+
+module = PCM_MIX
+module-str = pcm-mix
+source "subsys/logging/Kconfig.template.log_config"
+
+module = PSCM
+module-str = pscm
+source "subsys/logging/Kconfig.template.log_config"
 
 endmenu # Log levels
 endmenu # Utils

@@ -12,6 +12,7 @@
 #ifndef __QSPI_IF_H__
 #define __QSPI_IF_H__
 
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #ifdef CONFIG_NRFX_QSPI
 #include <nrfx_qspi.h>

@@ -29,7 +29,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 #define GENERIC_SENSOR_TYPE "Gas resistance sensor"
 #define GAS_RES_UNIT "Ω"
 
-static int32_t timestamp;
+static time_t timestamp;
 
 int lwm2m_init_gas_res_sensor(void)
 {

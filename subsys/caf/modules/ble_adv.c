@@ -29,19 +29,23 @@ enum state {
 	STATE_DISABLED_OFF,
 	STATE_OFF,
 	STATE_IDLE,
-	STATE_ACTIVE_FAST,
-	STATE_ACTIVE_SLOW,
-	STATE_ACTIVE_FAST_DIRECT,
-	STATE_ACTIVE_SLOW_DIRECT,
-	STATE_DELAYED_ACTIVE_FAST,
-	STATE_DELAYED_ACTIVE_SLOW,
-	STATE_GRACE_PERIOD
+	STATE_ACTIVE,
+	STATE_DELAYED_ACTIVE,
+	STATE_GRACE_PERIOD,
+	STATE_ERROR,
 };
 
 static enum state state;
-static size_t req_grace_period_s;
+static size_t grace_period_s;
+static bool direct_adv;
+static bool fast_adv;
 
-static struct k_work_delayable adv_update;
+static size_t req_grace_period_s;
+static bool req_wakeup;
+static bool req_fast_adv = true;
+
+static struct k_work adv_delayed_start;
+static struct k_work_delayable fast_adv_end;
 static struct k_work_delayable grace_period_end;
 static uint8_t cur_identity = BT_ID_DEFAULT; /* We expect zero */
 
@@ -53,6 +57,8 @@ enum peer_rpa {
 
 static enum peer_rpa peer_is_rpa[CONFIG_BT_ID_MAX];
 
+
+static void update_state(enum state new_state);
 
 static int settings_set(const char *key, size_t len_rd, settings_read_cb read_cb, void *cb_arg)
 {
@@ -84,33 +90,21 @@ static int settings_set(const char *key, size_t len_rd, settings_read_cb read_cb
 SETTINGS_STATIC_HANDLER_DEFINE(ble_adv, MODULE_NAME, NULL, settings_set, NULL, NULL);
 #endif
 
-static void broadcast_adv_state(bool active)
+static void broadcast_adv_state(bool new_active)
 {
+	static bool active;
+
+	if (active == new_active) {
+		return;
+	}
+
+	active = new_active;
+
 	struct ble_peer_search_event *event = new_ble_peer_search_event();
 	event->active = active;
 	APP_EVENT_SUBMIT(event);
 
 	LOG_INF("Advertising %s", (active)?("started"):("stopped"));
-}
-
-static int ble_adv_stop(void)
-{
-	int err = bt_le_adv_stop();
-	if (err) {
-		LOG_ERR("Cannot stop advertising (err %d)", err);
-	} else {
-		k_work_cancel_delayable(&adv_update);
-
-		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_GRACE_PERIOD)) {
-			k_work_cancel_delayable(&grace_period_end);
-		}
-
-		state = STATE_IDLE;
-
-		broadcast_adv_state(false);
-	}
-
-	return err;
 }
 
 static void conn_find_cb(struct bt_conn *conn, void *data)
@@ -124,7 +118,7 @@ static void conn_find_cb(struct bt_conn *conn, void *data)
 	(*temp_conn) = conn;
 }
 
-static inline struct bt_conn *conn_get(void)
+static struct bt_conn *conn_get(void)
 {
 	struct bt_conn *conn = NULL;
 
@@ -143,7 +137,7 @@ static void bond_addr_get_cb(const struct bt_bond_info *info, void *user_data)
 	}
 }
 
-static inline void bond_addr_get(uint8_t local_id, bt_addr_le_t *addr)
+static void bond_addr_get(uint8_t local_id, bt_addr_le_t *addr)
 {
 	bt_addr_le_copy(addr, BT_ADDR_LE_ANY);
 	bt_foreach_bond(local_id, bond_addr_get_cb, addr);
@@ -156,7 +150,7 @@ static void bond_cnt_cb(const struct bt_bond_info *info, void *user_data)
 	(*cnt)++;
 }
 
-static inline size_t bond_cnt(uint8_t local_id)
+static size_t bond_cnt(uint8_t local_id)
 {
 	size_t cnt = 0;
 
@@ -165,7 +159,16 @@ static inline size_t bond_cnt(uint8_t local_id)
 	return cnt;
 }
 
-static int ble_adv_start_directed(bool fast_adv)
+static bool can_direct_adv(uint8_t local_id)
+{
+	if (!IS_ENABLED(CONFIG_CAF_BLE_ADV_DIRECT_ADV)) {
+		return false;
+	}
+
+	return ((bond_cnt(local_id) == 1) && (peer_is_rpa[local_id] != PEER_RPA_YES));
+}
+
+static int ble_adv_start_directed(void)
 {
 	bt_addr_le_t addr;
 
@@ -173,6 +176,8 @@ static int ble_adv_start_directed(bool fast_adv)
 	__ASSERT_NO_MSG(bt_addr_le_cmp(&addr, BT_ADDR_LE_ANY));
 
 	struct bt_le_adv_param adv_param;
+
+	__ASSERT_NO_MSG(can_direct_adv(cur_identity));
 
 	if (fast_adv) {
 		LOG_INF("Use fast advertising");
@@ -194,24 +199,26 @@ static int ble_adv_start_directed(bool fast_adv)
 
 	LOG_INF("Direct advertising to %s", addr_str);
 
+	req_grace_period_s = 0;
+
 	return 0;
 }
 
-static int update_undirected_advertising(struct bt_le_adv_param *adv_param, bool in_grace_period)
+static int update_undirected_advertising(struct bt_le_adv_param *adv_param)
 {
 	size_t ad_len = bt_le_adv_prov_get_ad_prov_cnt();
 	size_t sd_len = bt_le_adv_prov_get_sd_prov_cnt();
 	struct bt_data ad[ad_len];
 	struct bt_data sd[sd_len];
 
-	struct bt_le_adv_prov_adv_state state;
+	struct bt_le_adv_prov_adv_state adv_state;
 	struct bt_le_adv_prov_feedback fb;
 
-	state.pairing_mode = (bond_cnt(cur_identity) == 0);
-	state.in_grace_period = in_grace_period;
+	adv_state.pairing_mode = (bond_cnt(cur_identity) == 0);
+	adv_state.in_grace_period = (state == STATE_GRACE_PERIOD);
 	req_grace_period_s = 0;
 
-	int err = bt_le_adv_prov_get_ad(ad, &ad_len, &state, &fb);
+	int err = bt_le_adv_prov_get_ad(ad, &ad_len, &adv_state, &fb);
 
 	if (err) {
 		LOG_ERR("Cannot get advertising data (err: %d)", err);
@@ -220,7 +227,7 @@ static int update_undirected_advertising(struct bt_le_adv_param *adv_param, bool
 
 	req_grace_period_s = MAX(req_grace_period_s, fb.grace_period_s);
 
-	err = bt_le_adv_prov_get_sd(sd, &sd_len, &state, &fb);
+	err = bt_le_adv_prov_get_sd(sd, &sd_len, &adv_state, &fb);
 	if (err) {
 		LOG_ERR("Cannot get scan response data (err: %d)", err);
 		return err;
@@ -278,13 +285,15 @@ static int setup_accept_list(uint8_t local_id)
 	return bond_cnt;
 }
 
-static int ble_adv_start_undirected(bool fast_adv)
+static int ble_adv_start_undirected(void)
 {
 	struct bt_le_adv_param adv_param = {
 		.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME,
 	};
 
-	LOG_INF("Use %s advertising", (fast_adv)?("fast"):("slow"));
+	__ASSERT_NO_MSG((state == STATE_ACTIVE) || (state == STATE_GRACE_PERIOD));
+
+	LOG_INF("Use %s advertising", (fast_adv) ? ("fast") : ("slow"));
 	if (fast_adv) {
 		BUILD_ASSERT(CONFIG_CAF_BLE_ADV_FAST_INT_MIN <= CONFIG_CAF_BLE_ADV_FAST_INT_MAX);
 		adv_param.interval_min = CONFIG_CAF_BLE_ADV_FAST_INT_MIN;
@@ -306,126 +315,285 @@ static int ble_adv_start_undirected(bool fast_adv)
 		adv_param.options |= BT_LE_ADV_OPT_FILTER_CONN;
 	}
 
-	return update_undirected_advertising(&adv_param, false);
+	return update_undirected_advertising(&adv_param);
 }
 
-static int ble_adv_start(bool can_fast_adv)
+static void ble_adv_start(void)
 {
-	bool fast_adv = IS_ENABLED(CONFIG_CAF_BLE_ADV_FAST_ADV) && can_fast_adv;
+	__ASSERT_NO_MSG((state == STATE_ACTIVE) || (state == STATE_GRACE_PERIOD));
 
-	int err = ble_adv_stop();
+	int err = bt_le_adv_stop();
+
 	if (err) {
 		LOG_ERR("Cannot stop advertising (err %d)", err);
-		goto error;
+		goto finish;
 	}
 
 	if (conn_get()) {
 		LOG_INF("Already connected, do not advertise");
-		return 0;
+		return;
 	}
 
-	bool direct = false;
-
-	/* Use direct advertising only if the local identity in use has exactly one bond. */
-	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_DIRECT_ADV) &&
-	    bond_cnt(cur_identity) == 1) {
-		/* Direct advertising only to peer without RPA. */
-		direct = (peer_is_rpa[cur_identity] != PEER_RPA_YES);
-	}
-
-	if (direct) {
-		err = ble_adv_start_directed(fast_adv);
+	if (direct_adv) {
+		err = ble_adv_start_directed();
 	} else {
-		err = ble_adv_start_undirected(fast_adv);
+		err = ble_adv_start_undirected();
 	}
 
 	if (err) {
 		LOG_ERR("Advertising failed to start (err %d)", err);
-		goto error;
+		goto finish;
 	}
 
-	if (direct) {
-		if (fast_adv) {
-			state = STATE_ACTIVE_FAST_DIRECT;
-		} else {
-			state = STATE_ACTIVE_SLOW_DIRECT;
-		}
+finish:
+	if (err) {
+		update_state(STATE_ERROR);
 	} else {
-		if (fast_adv) {
-			k_work_reschedule(&adv_update,
-					  K_SECONDS(CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT));
-			state = STATE_ACTIVE_FAST;
-		} else {
-			state = STATE_ACTIVE_SLOW;
-		}
+		broadcast_adv_state(true);
 	}
-
-	broadcast_adv_state(true);
-error:
-	return err;
 }
 
-static void grace_period_fn(struct k_work *work)
+static void ble_adv_start_schedule(void)
 {
-	int err = ble_adv_stop();
+	__ASSERT_NO_MSG((state == STATE_ACTIVE) || (state == STATE_GRACE_PERIOD) ||
+			(state == STATE_DELAYED_ACTIVE));
+
+	(void)k_work_submit(&adv_delayed_start);
+}
+
+static void ble_adv_data_update(void)
+{
+	if ((state != STATE_ACTIVE) && (state != STATE_GRACE_PERIOD)) {
+		return;
+	}
+
+	if (direct_adv) {
+		return;
+	}
+
+	int err = update_undirected_advertising(NULL);
+
+	if (err == -EAGAIN) {
+		LOG_INF("No active advertising");
+	} else if (err) {
+		update_state(STATE_ERROR);
+	}
+}
+
+static void ble_adv_stop(void)
+{
+	__ASSERT_NO_MSG((state == STATE_OFF) || (state == STATE_IDLE) || (state == STATE_ERROR));
+
+	int err = bt_le_adv_stop();
 
 	if (err) {
-		module_set_state(MODULE_STATE_ERROR);
+		LOG_ERR("Cannot stop advertising (err %d)", err);
+		update_state(STATE_ERROR);
 	} else {
-		state = STATE_OFF;
+		broadcast_adv_state(false);
+		req_grace_period_s = 0;
+	}
+}
+
+static bool is_module_state_disabled(enum state state)
+{
+	return ((state == STATE_DISABLED) || (state == STATE_DISABLED_OFF));
+}
+
+static bool is_module_state_off(enum state state)
+{
+	return ((state == STATE_DISABLED_OFF) || (state == STATE_OFF));
+}
+
+static void broadcast_module_state(enum state prev_state, enum state new_state)
+{
+	if (new_state == STATE_ERROR) {
+		module_set_state(MODULE_STATE_ERROR);
+		return;
+	}
+
+	bool submit_ready = false;
+	bool submit_off = false;
+
+	if (is_module_state_off(prev_state) && !is_module_state_off(new_state)) {
+		submit_ready = true;
+	}
+
+	if (!is_module_state_off(prev_state) && is_module_state_off(new_state)) {
+		submit_off = true;
+	}
+
+	if (is_module_state_disabled(prev_state) && !is_module_state_disabled(new_state)) {
+		submit_ready = true;
+	}
+
+	__ASSERT_NO_MSG(!submit_ready || !submit_off);
+
+	if (submit_ready) {
+		module_set_state(MODULE_STATE_READY);
+	}
+
+	if (submit_off) {
 		module_set_state(MODULE_STATE_OFF);
 	}
+
+	if (req_wakeup) {
+		APP_EVENT_SUBMIT(new_wake_up_event());
+		req_wakeup = false;
+	}
 }
 
-static int enter_grace_period(void)
+static const char *state2str(enum state s)
 {
-	size_t used_grace_period = req_grace_period_s;
-	int err = update_undirected_advertising(NULL, true);
+	switch (s) {
+	case STATE_DISABLED:
+		return "DISABLED";
 
-	if (!err) {
-		LOG_INF("Entered grace period");
+	case STATE_DISABLED_OFF:
+		return "DISABLED_OFF";
 
-		k_work_cancel_delayable(&adv_update);
-		k_work_reschedule(&grace_period_end, K_SECONDS(used_grace_period));
+	case STATE_OFF:
+		return "OFF";
 
-		state = STATE_GRACE_PERIOD;
-	} else if (err == -EAGAIN) {
-		LOG_INF("No active advertising");
-		err = ble_adv_stop();
-		if (!err) {
-			state = STATE_OFF;
-			module_set_state(MODULE_STATE_OFF);
-		}
+	case STATE_IDLE:
+		return "IDLE";
+
+	case STATE_ACTIVE:
+		return "ACTIVE";
+
+	case STATE_DELAYED_ACTIVE:
+		return "DELAYED_ACTIVE";
+
+	case STATE_GRACE_PERIOD:
+		return "GRACE_PERIOD";
+
+	case STATE_ERROR:
+		return "ERROR";
+
+	default:
+		/* Should not happen. */
+		__ASSERT_NO_MSG(false);
+		return NULL;
+	}
+}
+
+static void update_state_internal(enum state new_state)
+{
+	if (new_state == STATE_ACTIVE) {
+		fast_adv = (req_fast_adv && IS_ENABLED(CONFIG_CAF_BLE_ADV_FAST_ADV));
+		direct_adv = can_direct_adv(cur_identity);
 	} else {
-		LOG_ERR("Cannot modify advertising data (err %d)", err);
+		fast_adv = false;
+		direct_adv = false;
 	}
 
-	return err;
+	grace_period_s = req_grace_period_s;
+
+	state = new_state;
+
+	LOG_DBG("State: %s fast_adv: %d direct_adv: %d grace_period: %zu[s]",
+		state2str(state), fast_adv, direct_adv, grace_period_s);
 }
 
-static void ble_adv_update_fn(struct k_work *work)
+static void update_grace_period_work(void)
 {
-	bool can_fast_adv = false;
+	if (!IS_ENABLED(CONFIG_CAF_BLE_ADV_GRACE_PERIOD)) {
+		return;
+	}
+
+	if (state == STATE_GRACE_PERIOD) {
+		__ASSERT_NO_MSG(grace_period_s > 0);
+		(void)k_work_reschedule(&grace_period_end, K_SECONDS(grace_period_s));
+	} else {
+		(void)k_work_cancel_delayable(&grace_period_end);
+	}
+}
+
+static void update_fast_adv_work(void)
+{
+	if ((state == STATE_ACTIVE) && fast_adv && !direct_adv) {
+		(void)k_work_reschedule(&fast_adv_end,
+					K_SECONDS(CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT));
+	} else {
+		(void)k_work_cancel_delayable(&fast_adv_end);
+	}
+}
+
+static void notify_ble_stack(void)
+{
+	(void)k_work_cancel(&adv_delayed_start);
 
 	switch (state) {
-	case STATE_DELAYED_ACTIVE_FAST:
-		can_fast_adv = true;
+	case STATE_DISABLED:
+	case STATE_DISABLED_OFF:
 		break;
 
-	case STATE_ACTIVE_FAST:
-	case STATE_DELAYED_ACTIVE_SLOW:
+	case STATE_OFF:
+	case STATE_IDLE:
+	case STATE_ERROR:
+		ble_adv_stop();
+		break;
+
+	case STATE_DELAYED_ACTIVE:
+		ble_adv_start_schedule();
+		break;
+
+	case STATE_ACTIVE:
+	case STATE_GRACE_PERIOD:
+		ble_adv_start();
 		break;
 
 	default:
 		/* Should not happen. */
 		__ASSERT_NO_MSG(false);
 	}
+}
 
-	int err = ble_adv_start(can_fast_adv);
-
-	if (err) {
-		module_set_state(MODULE_STATE_ERROR);
+static void update_state(enum state new_state)
+{
+	if (state == STATE_ERROR) {
+		return;
 	}
+
+	enum state prev_state = state;
+
+	update_state_internal(new_state);
+	broadcast_module_state(prev_state, state);
+
+	notify_ble_stack();
+	update_grace_period_work();
+	update_fast_adv_work();
+}
+
+static void adv_delayed_start_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	if (state == STATE_DELAYED_ACTIVE) {
+		update_state(STATE_ACTIVE);
+	} else {
+		ble_adv_start();
+	}
+}
+
+static void grace_period_end_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	update_state(STATE_OFF);
+}
+
+static void fast_adv_end_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	__ASSERT_NO_MSG(req_fast_adv && fast_adv);
+	__ASSERT_NO_MSG(state == STATE_ACTIVE);
+
+	req_fast_adv = false;
+	update_state(STATE_ACTIVE);
+
+	__ASSERT_NO_MSG(!fast_adv);
 }
 
 static void init(void)
@@ -435,24 +603,15 @@ static void init(void)
 		ARG_UNUSED(settings_set);
 	}
 
-	k_work_init_delayable(&adv_update, ble_adv_update_fn);
+	k_work_init(&adv_delayed_start, adv_delayed_start_fn);
+
+	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_FAST_ADV)) {
+		k_work_init_delayable(&fast_adv_end, fast_adv_end_fn);
+	}
 
 	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_GRACE_PERIOD)) {
-		k_work_init_delayable(&grace_period_end, grace_period_fn);
+		k_work_init_delayable(&grace_period_end, grace_period_end_fn);
 	}
-}
-
-static void start(void)
-{
-	int err = ble_adv_start(true);
-
-	if (err) {
-		module_set_state(MODULE_STATE_ERROR);
-	} else {
-		module_set_state(MODULE_STATE_READY);
-	}
-
-	return;
 }
 
 static void update_peer_is_rpa(enum peer_rpa new_peer_rpa)
@@ -496,36 +655,29 @@ static void disconnect_peer(struct bt_conn *conn)
 		LOG_INF("Peer already disconnected");
 	} else {
 		LOG_ERR("Failed to disconnect peer (err=%d)", err);
-		module_set_state(MODULE_STATE_ERROR);
+		update_state(STATE_ERROR);
 	}
 }
 
 static void ble_ready(void)
 {
-	static bool started;
-
-	if (started) {
-		return;
-	}
-
 	switch (state) {
 	case STATE_DISABLED:
-		state = STATE_OFF;
-		start();
+		update_state(STATE_ACTIVE);
 		break;
+
 	case STATE_DISABLED_OFF:
-		state = STATE_OFF;
+		update_state(STATE_OFF);
 		break;
+
 	default:
 		/* Should not happen. */
 		__ASSERT_NO_MSG(false);
 		break;
 	}
-
-	started = true;
 }
 
-static inline void get_req_modules(struct module_flags *mf)
+static void get_req_modules(struct module_flags *mf)
 {
 	BUILD_ASSERT(!(IS_ENABLED(CONFIG_BT_SETTINGS) && !IS_ENABLED(CONFIG_CAF_SETTINGS_LOADER)),
 		     "Bluetooth settings enabled, but settings loader module is disabled");
@@ -578,24 +730,15 @@ static bool handle_module_state_event(const struct module_state_event *event)
 
 static bool handle_ble_peer_event(const struct ble_peer_event *event)
 {
-	int err = 0;
-	bool can_fast_adv = false;
-
 	switch (event->state) {
 	case PEER_STATE_CONNECTED:
-	{
-		bool wu = false;
+		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_GRACE_PERIOD) && (state == STATE_GRACE_PERIOD)) {
+			req_wakeup = true;
+		}
 
-		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_GRACE_PERIOD) &&
-		    (state == STATE_GRACE_PERIOD)) {
-			wu = true;
-		}
-		err = ble_adv_stop();
-		if (wu) {
-			APP_EVENT_SUBMIT(new_wake_up_event());
-		}
+		update_state(STATE_IDLE);
 		break;
-	}
+
 	case PEER_STATE_SECURED:
 		if (peer_is_rpa[cur_identity] == PEER_RPA_ERASED) {
 			if (bt_addr_le_is_rpa(bt_conn_get_dst(event->id))) {
@@ -607,16 +750,21 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 		break;
 
 	case PEER_STATE_DISCONNECTED:
-		can_fast_adv = true;
-		/* Fall-through */
+		req_fast_adv = true;
+		update_state(STATE_DELAYED_ACTIVE);
+		break;
 
 	case PEER_STATE_CONN_FAILED:
-		if (state != STATE_OFF) {
-			state = can_fast_adv ?
-				STATE_DELAYED_ACTIVE_FAST :
-				STATE_DELAYED_ACTIVE_SLOW;
+		if ((state == STATE_ACTIVE) || (state == STATE_GRACE_PERIOD) ||
+		    (state == STATE_DELAYED_ACTIVE)) {
+			/* During direct advertising, connection failed is reported on advertising
+			 * timeout. Switch to slow direct advertising in that case.
+			 */
+			if (direct_adv) {
+				fast_adv_end_fn(NULL);
+			}
 
-			k_work_reschedule(&adv_update, K_NO_WAIT);
+			ble_adv_start_schedule();
 		}
 		break;
 
@@ -625,37 +773,13 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 		break;
 	}
 
-	if (err) {
-		module_set_state(MODULE_STATE_ERROR);
-	}
-
 	return false;
 }
 
 static bool handle_ble_adv_data_update_event(const struct ble_adv_data_update_event *event)
 {
 	ARG_UNUSED(event);
-
-	int err = 0;
-	bool in_grace_period = false;
-
-	switch (state) {
-	case STATE_GRACE_PERIOD:
-		in_grace_period = true;
-		/* Fall-through */
-
-	case STATE_ACTIVE_FAST:
-	case STATE_ACTIVE_SLOW:
-		err = update_undirected_advertising(NULL, in_grace_period);
-		if (err) {
-			LOG_ERR("Cannot modify advertising data (err %d)", err);
-		}
-		break;
-
-	default:
-		/* Advertising data will be updated on undirected advertising start. */
-		break;
-	}
+	ble_adv_data_update();
 
 	return false;
 }
@@ -666,36 +790,39 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 	case PEER_OPERATION_SELECTED:
 	case PEER_OPERATION_ERASE_ADV:
 	case PEER_OPERATION_ERASE_ADV_CANCEL:
-		if ((state == STATE_OFF) || (state == STATE_GRACE_PERIOD) ||
-		    (state == STATE_DISABLED) || (state == STATE_DISABLED_OFF)) {
-			cur_identity = event->bt_stack_id;
-			__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
+		cur_identity = event->bt_stack_id;
+		__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
+
+		if ((state == STATE_OFF) || (state == STATE_DISABLED) ||
+		    (state == STATE_DISABLED_OFF) || (state == STATE_ERROR)) {
 			break;
 		}
 
-		int err = ble_adv_stop();
+		if (state == STATE_GRACE_PERIOD) {
+			req_wakeup = true;
+		}
+		req_fast_adv = true;
+
+		/* Advertising must be stopped while getting the connection object. */
+		int err = bt_le_adv_stop();
 
 		if (err) {
-			module_set_state(MODULE_STATE_ERROR);
+			LOG_ERR("Cannot stop advertising (err %d)", err);
+			update_state(STATE_ERROR);
+			break;
 		}
 
 		struct bt_conn *conn = conn_get();
 
 		if (conn) {
+			/* State update will be done after complete disconnection. */
 			disconnect_peer(conn);
+		} else {
+			update_state(STATE_ACTIVE);
 		}
-
-		cur_identity = event->bt_stack_id;
-		__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
 
 		if (event->op == PEER_OPERATION_ERASE_ADV) {
 			update_peer_is_rpa(PEER_RPA_ERASED);
-		}
-		if (!conn) {
-			err = ble_adv_start(true);
-			if (err) {
-				module_set_state(MODULE_STATE_ERROR);
-			}
 		}
 		break;
 
@@ -721,47 +848,28 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 
 static bool handle_power_down_event(const struct power_down_event *event)
 {
-	int err = 0;
-
 	switch (state) {
-	case STATE_ACTIVE_FAST:
-	case STATE_ACTIVE_SLOW:
-		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_GRACE_PERIOD) &&
-		    (req_grace_period_s > 0)) {
-			err = enter_grace_period();
-		} else {
-			err = ble_adv_stop();
-			if (!err) {
-				state = STATE_OFF;
-				module_set_state(MODULE_STATE_OFF);
-			}
+	case STATE_ACTIVE:
+		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_GRACE_PERIOD) && (req_grace_period_s > 0)) {
+			update_state(STATE_GRACE_PERIOD);
+			break;
 		}
-		break;
+		/* Fall-through. */
 
-	case STATE_DELAYED_ACTIVE_FAST:
-	case STATE_DELAYED_ACTIVE_SLOW:
-	case STATE_ACTIVE_FAST_DIRECT:
-	case STATE_ACTIVE_SLOW_DIRECT:
-		err = ble_adv_stop();
-		if (!err) {
-			state = STATE_OFF;
-			module_set_state(MODULE_STATE_OFF);
-		}
-		break;
-
+	case STATE_DELAYED_ACTIVE:
 	case STATE_IDLE:
-		state = STATE_OFF;
-		module_set_state(MODULE_STATE_OFF);
+		update_state(STATE_OFF);
+		break;
+
+	case STATE_DISABLED:
+		update_state(STATE_DISABLED_OFF);
 		break;
 
 	case STATE_OFF:
 	case STATE_GRACE_PERIOD:
 	case STATE_DISABLED_OFF:
+	case STATE_ERROR:
 		/* No action */
-		break;
-
-	case STATE_DISABLED:
-		state = STATE_DISABLED_OFF;
 		break;
 
 	default:
@@ -770,48 +878,28 @@ static bool handle_power_down_event(const struct power_down_event *event)
 		break;
 	}
 
-	if (err) {
-		module_set_state(MODULE_STATE_ERROR);
-	}
-
-	return (state != STATE_OFF) &&
-	       (state != STATE_DISABLED);
+	return !is_module_state_off(state);
 }
 
 static bool handle_wake_up_event(const struct wake_up_event *event)
 {
-	bool was_off = false;
-	int err;
-
 	switch (state) {
 	case STATE_OFF:
-		was_off = true;
-		state = STATE_IDLE;
-		/* Fall-through */
-
 	case STATE_GRACE_PERIOD:
-		err = ble_adv_start(true);
-
-		if (err) {
-			module_set_state(MODULE_STATE_ERROR);
-		} else if (was_off) {
-			module_set_state(MODULE_STATE_READY);
-		}
-		break;
-
-	case STATE_IDLE:
-	case STATE_ACTIVE_FAST:
-	case STATE_ACTIVE_SLOW:
-	case STATE_ACTIVE_FAST_DIRECT:
-	case STATE_ACTIVE_SLOW_DIRECT:
-	case STATE_DELAYED_ACTIVE_FAST:
-	case STATE_DELAYED_ACTIVE_SLOW:
-	case STATE_DISABLED:
-		/* No action */
+		req_fast_adv = true;
+		update_state(STATE_ACTIVE);
 		break;
 
 	case STATE_DISABLED_OFF:
-		state = STATE_DISABLED;
+		update_state(STATE_DISABLED);
+		break;
+
+	case STATE_IDLE:
+	case STATE_ACTIVE:
+	case STATE_DELAYED_ACTIVE:
+	case STATE_DISABLED:
+	case STATE_ERROR:
+		/* No action */
 		break;
 
 	default:

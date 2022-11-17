@@ -19,7 +19,7 @@
 #include "cs47l63.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(CS47L63, CONFIG_LOG_CS47L63_LEVEL);
+LOG_MODULE_REGISTER(CS47L63, CONFIG_CS47L63_LOG_LEVEL);
 
 #define CS47L63_DEVID_VAL 0x47A63
 #define PAD_LEN 4 /* Four bytes padding after address */
@@ -250,7 +250,7 @@ static uint32_t cs47l63_comm_timer_set(uint32_t duration_ms, bsp_callback_t cb, 
 
 static uint32_t cs47l63_comm_set_supply(uint32_t supply_id, uint8_t supply_state)
 {
-	LOG_INF("Tried to set supply, not supported");
+	LOG_DBG("Tried to set supply, not supported");
 	/* OK is returned in order to make reset function work */
 	return BSP_STATUS_OK;
 }

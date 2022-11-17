@@ -133,6 +133,7 @@ nRF9160: Serial LTE modem
 
   * Removed automatic quit of data mode in GNSS, FTP and HTTP services.
   * Added handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
+  * Service info JSON payload now uses ``GNSS`` instead of ``GPS``.
 
 nRF5340 Audio
 -------------
@@ -525,6 +526,7 @@ Libraries for networking
     * Added events :c:enum:`NRF_CLOUD_EVT_RX_DATA_CELL_POS` and :c:enum:`NRF_CLOUD_EVT_RX_DATA_SHADOW`.
     * The library now processes A-GPS and P-GPS data; it is no longer passed to the application.
     * The status field of :c:enum:`NRF_CLOUD_EVT_ERROR` events uses values from the enumeration :c:enumerator:`nrf_cloud_error_status`.
+    * UI service info and sensor type strings now refer to ``GNSS`` instead of ``GPS``.
 
   * Removed:
 
@@ -560,6 +562,10 @@ Other libraries
     The emergency data is now stored by the :c:func:`emds_store` function.
   * Changed the library implementation to bypass the flash driver when storing the emergency data.
     This allows calling the :c:func:`emds_store` function from an interrupt context.
+
+* :ref:`mod_dm`:
+  * Added a window length configuration to be used runtime, when a new measurement request is added.
+  * Improved the calculation of MPSL timeslot length by using the :ref:`nrf_dm` library functionality.
 
 Common Application Framework (CAF)
 ----------------------------------
@@ -604,7 +610,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 MCUboot
 =======
 
-The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``13f63976bca672ee018f9d55f1e31f02f4135b64``, plus some |NCS| specific additions.
+The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``cfec947e0f8be686d02c73104a3b1ad0b5dcf1e6``, plus some |NCS| specific additions.
 
 The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/modules/mcuboot` folder.
 
@@ -617,21 +623,21 @@ Zephyr
 
 .. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each NCS release.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``b96453f653b674629c617bdbc810c3d9f7916ef4``, plus some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``cd16a8388f71a6cce0cea871f75f6d4ac8f56da9``, plus some |NCS| specific additions.
 
 For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into nRF Connect SDK since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline b96453f653 ^45ef0d2
+   git log --oneline cd16a8388f ^45ef0d2
 
 For the list of |NCS| specific commits, including commits cherry-picked from upstream, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^b96453f653
+   git log --oneline manifest-rev ^cd16a8388f
 
-The current |NCS| main branch is based on revision ``b96453f653`` of Zephyr.
+The current |NCS| main branch is based on revision ``cd16a8388f`` of Zephyr.
 
 Additions specific to |NCS|
 ---------------------------
@@ -669,5 +675,6 @@ Documentation
   * :ref:`ug_matter_gs_adding_cluster` documentation with new code snippets to align it with the source code of refactored Matter template sample.
   * Split the existing Working with the nRF52 Series information into :ref:`ug_nrf52_features` and :ref:`ug_nrf52_developing`.
   * :ref:`ug_tfm` with improved TF-M logging documentation on getting the secure output on nRF5340 DK.
+  * :ref:`nrf_bt_scan_readme`, :ref:`ancs_client_readme`, :ref:`hogp_readme` and :ref:`lib_hrs_client_readme` libraries documentation to improve readability.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.

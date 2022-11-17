@@ -21,7 +21,7 @@
 #include "cs47l63_comm.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(hw_codec, CONFIG_LOG_HW_CODEC_LEVEL);
+LOG_MODULE_REGISTER(hw_codec, CONFIG_MODULE_HW_CODEC_LOG_LEVEL);
 
 #define VOLUME_ADJUST_STEP_DB 3
 #define HW_CODEC_SELECT_DELAY_MS 2
@@ -147,7 +147,7 @@ int hw_codec_volume_adjust(int8_t adjustment_db)
 	prev_volume_reg_val = new_volume_reg_val;
 
 	/* This is rounded down to nearest integer */
-	LOG_INF("Volume: %ddB", (new_volume_reg_val / 2) - MAX_VOLUME_DB);
+	LOG_DBG("Volume: %" PRId32 " dB", (new_volume_reg_val / 2) - MAX_VOLUME_DB);
 
 	return 0;
 }

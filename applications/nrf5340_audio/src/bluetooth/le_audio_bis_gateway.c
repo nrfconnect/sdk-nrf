@@ -16,7 +16,7 @@
 #include "audio_datapath.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bis_gateway, CONFIG_LOG_BLE_LEVEL);
+LOG_MODULE_REGISTER(bis_gateway, CONFIG_BLE_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 2,
 	     "A maximum of two streams are currently supported");
@@ -45,6 +45,8 @@ static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_NRF
 static atomic_t iso_tx_pool_alloc[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
 static bool delete_broadcast_src;
 static uint32_t seq_num[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
+
+static struct bt_le_ext_adv *adv;
 
 static bool is_iso_buffer_full(uint8_t idx)
 {
@@ -141,18 +143,109 @@ static struct bt_audio_stream_ops stream_ops = { .sent = stream_sent_cb,
 						 .started = stream_started_cb,
 						 .stopped = stream_stopped_cb };
 
-static void initialize(void)
+static int adv_create(void)
 {
+	int ret;
+
+	/* Broadcast Audio Streaming Endpoint advertising data */
+	NET_BUF_SIMPLE_DEFINE(ad_buf, BT_UUID_SIZE_16 + BT_AUDIO_BROADCAST_ID_SIZE);
+	NET_BUF_SIMPLE_DEFINE(base_buf, 128);
+	struct bt_data ext_ad[2];
+	struct bt_data per_ad;
+	uint32_t broadcast_id;
+	char name[] = CONFIG_BT_DEVICE_NAME;
+
+	/* Create a non-connectable non-scannable advertising set */
+	ret = bt_le_ext_adv_create(BT_LE_EXT_ADV_NCONN_NAME, NULL, &adv);
+	if (ret) {
+		LOG_ERR("Unable to create extended advertising set: %d", ret);
+		return ret;
+	}
+
+	/* Set periodic advertising parameters */
+	ret = bt_le_per_adv_set_param(adv, BT_LE_PER_ADV_DEFAULT);
+	if (ret) {
+		LOG_ERR("Failed to set periodic advertising parameters (ret %d)", ret);
+		return ret;
+	}
+	ret = bt_audio_broadcast_source_get_id(broadcast_source, &broadcast_id);
+	if (ret) {
+		LOG_ERR("Unable to get broadcast ID: %d", ret);
+		return ret;
+	}
+
+	/* Setup extended advertising data */
+	net_buf_simple_add_le16(&ad_buf, BT_UUID_BROADCAST_AUDIO_VAL);
+	net_buf_simple_add_le24(&ad_buf, broadcast_id);
+
+	ext_ad[0].type = BT_DATA_BROADCAST_NAME;
+	ext_ad[0].data = name;
+	ext_ad[0].data_len = strlen(name);
+
+	ext_ad[1].type = BT_DATA_SVC_DATA16;
+	ext_ad[1].data_len = ad_buf.len;
+	ext_ad[1].data = ad_buf.data;
+
+	ret = bt_le_ext_adv_set_data(adv, ext_ad, ARRAY_SIZE(ext_ad), NULL, 0);
+	if (ret) {
+		LOG_ERR("Failed to set extended advertising data: %d", ret);
+		return ret;
+	}
+
+	/* Setup periodic advertising data */
+	ret = bt_audio_broadcast_source_get_base(broadcast_source, &base_buf);
+	if (ret) {
+		LOG_ERR("Failed to get encoded BASE: %d", ret);
+		return ret;
+	}
+
+	per_ad.type = BT_DATA_SVC_DATA16;
+	per_ad.data_len = base_buf.len;
+	per_ad.data = base_buf.data;
+
+	ret = bt_le_per_adv_set_data(adv, &per_ad, 1);
+	if (ret) {
+		LOG_ERR("Failed to set periodic advertising data: %d", ret);
+		return ret;
+	}
+
+	return 0;
+}
+
+static int initialize(void)
+{
+	int ret;
 	static bool initialized;
 
-	if (!initialized) {
-		for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
-			audio_streams_p[i] = &audio_streams[i];
-			audio_streams[i].ops = &stream_ops;
-		}
-
-		initialized = true;
+	if (initialized) {
+		LOG_WRN("Already initialized");
+		return -EALREADY;
 	}
+
+	for (int i = 0; i < ARRAY_SIZE(streams); i++) {
+		audio_streams_p[i] = &audio_streams[i];
+		audio_streams[i].ops = &stream_ops;
+	}
+
+	LOG_DBG("Creating broadcast source");
+
+	ret = bt_audio_broadcast_source_create(streams_p, ARRAY_SIZE(streams_p), &lc3_preset.codec,
+					       &lc3_preset.qos, &broadcast_source);
+	if (ret) {
+		LOG_ERR("Failed to create broadcast source, ret: %d", ret);
+		return ret;
+	}
+
+	/* Create advertising set */
+	ret = adv_create();
+
+	if (ret) {
+		LOG_ERR("Failed to create advertising set");
+		return ret;
+	}
+
+	initialized = true;
+	return 0;
 }
 
 int le_audio_switch_sync_stream_cb(void)
@@ -216,7 +309,7 @@ int le_audio_play(void)
 {
 	int ret;
 
-	ret = bt_audio_broadcast_source_start(broadcast_source);
+	ret = bt_audio_broadcast_source_start(broadcast_source, adv);
 	if (ret) {
 		LOG_WRN("Failed to start broadcast, ret: %d", ret);
 	}
@@ -302,20 +395,29 @@ int le_audio_enable(le_audio_receive_cb recv_cb)
 {
 	int ret;
 
-	initialize();
-
-	LOG_DBG("Creating broadcast source");
-
-	ret = bt_audio_broadcast_source_create(audio_streams_p, ARRAY_SIZE(audio_streams_p),
-					       &lc3_preset.codec, &lc3_preset.qos,
-					       &broadcast_source);
+	ret = initialize();
 	if (ret) {
+		LOG_ERR("Failed to initialize");
+		return ret;
+	}
+
+	/* Start extended advertising */
+	ret = bt_le_ext_adv_start(adv, BT_LE_EXT_ADV_START_DEFAULT);
+	if (ret) {
+		LOG_ERR("Failed to start extended advertising: %d", ret);
+		return ret;
+	}
+
+	/* Enable Periodic Advertising */
+	ret = bt_le_per_adv_start(adv);
+	if (ret) {
+		LOG_ERR("Failed to enable periodic advertising: %d", ret);
 		return ret;
 	}
 
 	LOG_DBG("Starting broadcast source");
 
-	ret = bt_audio_broadcast_source_start(broadcast_source);
+	ret = bt_audio_broadcast_source_start(broadcast_source, adv);
 	if (ret) {
 		return ret;
 	}

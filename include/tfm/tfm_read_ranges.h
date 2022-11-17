@@ -32,6 +32,11 @@
 #define FICR_RESTRICTED_ADDR    (FICR_BASE + 0x130)
 #define FICR_RESTRICTED_SIZE    0x8
 
+#if defined(FICR_SIPINFO_PARTNO_PARTNO_Pos)
+#define FICR_SIPINFO_ADDR       (FICR_BASE + offsetof(NRF_FICR_Type, SIPINFO))
+#define FICR_SIPINFO_SIZE       (sizeof(FICR_SIPINFO_Type))
+#endif
+
 static const struct tfm_read_service_range ranges[] = {
 #ifdef PM_MCUBOOT_ADDRESS
 	/* Allow reads of mcuboot metadata */
@@ -44,6 +49,9 @@ static const struct tfm_read_service_range ranges[] = {
 	{ .start = FICR_RESTRICTED_ADDR, .size = FICR_RESTRICTED_SIZE },
 #if defined(FICR_XOSC32MTRIM_SLOPE_Msk)
 	{ .start = FICR_XOSC32MTRIM_ADDR, .size = FICR_XOSC32MTRIM_SIZE },
+#endif
+#if defined(FICR_SIPINFO_PARTNO_PARTNO_Pos)
+	{ .start = FICR_SIPINFO_ADDR, .size = FICR_SIPINFO_SIZE },
 #endif
 };
 

@@ -15,7 +15,7 @@
 #include "macros_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(fw_info);
+LOG_MODULE_REGISTER(fw_info, CONFIG_FW_INFO_LOG_LEVEL);
 
 static const char COMPILE_DATE[] = "@NRF5340_AUDIO_CORE_APP_COMP_DATE@";
 static const char NRF5340_CORE[] = "nRF5340 Audio nRF5340 Audio DK cpuapp";

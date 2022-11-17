@@ -16,7 +16,7 @@
 #include <zephyr/devicetree.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(sd_card, CONFIG_LOG_SD_CARD_LEVEL);
+LOG_MODULE_REGISTER(sd_card, CONFIG_MODULE_SD_CARD_LOG_LEVEL);
 
 #define SD_ROOT_PATH "/SD:/"
 #define PATH_MAX_LEN 260 /* Maximum length for path support by Windows file system*/

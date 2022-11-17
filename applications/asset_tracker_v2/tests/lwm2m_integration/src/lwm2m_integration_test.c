@@ -334,13 +334,13 @@ void test_lwm2m_integration_registration_failure(void)
 
 void test_lwm2m_integration_registration_update_failure(void)
 {
-	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE);
+	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REG_TIMEOUT);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_CONNECTING, last_cb_type);
 }
 
 void test_lwm2m_integration_registration_update_success(void)
 {
-	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE);
+	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REG_TIMEOUT);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_CONNECTING, last_cb_type);
 
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REG_UPDATE_COMPLETE);

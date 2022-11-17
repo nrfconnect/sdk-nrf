@@ -19,7 +19,7 @@
 #include "ctrl_events.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(button_handler, CONFIG_LOG_BUTTON_HANDLER_LEVEL);
+LOG_MODULE_REGISTER(button_handler, CONFIG_MODULE_BUTTON_HANDLER_LOG_LEVEL);
 
 /* How many buttons does the module support. Increase at memory cost */
 #define BUTTONS_MAX 5
