@@ -21,7 +21,7 @@
 #include "events/data_module_event.h"
 #include "events/sensor_module_event.h"
 #include "events/util_module_event.h"
-#include "events/gnss_module_event.h"
+#include "events/location_module_event.h"
 #include "events/modem_module_event.h"
 #include "events/ui_module_event.h"
 
@@ -34,7 +34,7 @@ struct util_msg_data {
 		struct sensor_module_event sensor;
 		struct data_module_event data;
 		struct app_module_event app;
-		struct gnss_module_event gnss;
+		struct location_module_event location;
 		struct modem_module_event modem;
 	} module;
 };
@@ -106,10 +106,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		message_handler(&util_msg);
 	}
 
-	if (is_gnss_module_event(aeh)) {
-		struct gnss_module_event *event = cast_gnss_module_event(aeh);
+	if (is_location_module_event(aeh)) {
+		struct location_module_event *event = cast_location_module_event(aeh);
 		struct util_msg_data util_msg = {
-			.module.gnss = *event
+			.module.location = *event
 		};
 
 		message_handler(&util_msg);
@@ -248,7 +248,7 @@ static void on_state_init(struct util_msg_data *msg)
 	if ((IS_EVENT(msg, cloud, CLOUD_EVT_ERROR))	||
 	    (IS_EVENT(msg, modem, MODEM_EVT_ERROR))	||
 	    (IS_EVENT(msg, sensor, SENSOR_EVT_ERROR))	||
-	    (IS_EVENT(msg, gnss, GNSS_EVT_ERROR_CODE))	||
+	    (IS_EVENT(msg, location, LOCATION_MODULE_EVT_ERROR_CODE)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_ERROR))	||
 	    (IS_EVENT(msg, app, APP_EVT_ERROR))		||
 	    (IS_EVENT(msg, ui, UI_EVT_ERROR))		||
@@ -277,8 +277,8 @@ static void on_state_reboot_pending(struct util_msg_data *msg)
 		return;
 	}
 
-	if (IS_EVENT(msg, gnss, GNSS_EVT_SHUTDOWN_READY)) {
-		reboot_ack_check(msg->module.gnss.data.id);
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_SHUTDOWN_READY)) {
+		reboot_ack_check(msg->module.location.data.id);
 		return;
 	}
 
@@ -334,7 +334,7 @@ APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
-APP_EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, location_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, ui_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, sensor_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);

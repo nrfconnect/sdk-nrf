@@ -75,7 +75,9 @@ static char agps_rest_data_buf[AGPS_REQUEST_RECV_BUF_SIZE];
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
+#if !defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
 static struct k_work method_gnss_pgps_request_work;
+#endif
 static struct k_work method_gnss_manage_pgps_work;
 static struct k_work method_gnss_notify_pgps_work;
 static struct nrf_cloud_pgps_prediction *prediction;
@@ -108,6 +110,10 @@ static void method_gnss_pgps_ext_work_fn(struct k_work *item);
 #endif
 
 static int fixes_remaining;
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+static struct location_data_details_gnss location_data_details_gnss;
+#endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static void method_gnss_manage_pgps(struct k_work *work)
@@ -295,7 +301,8 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 #endif /* #elif defined(CONFIG_NRF_CLOUD_REST) */
 #endif /* defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL) */
 
-#if defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_NRF_CLOUD_MQTT)
+#if defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
+	!defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
 static void method_gnss_pgps_request_work_fn(struct k_work *item)
 {
 	const char *jwt_buf;
@@ -627,6 +634,7 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 {
 	struct nrf_modem_gnss_pvt_data_frame pvt_data;
 	static struct location_data location_result = { 0 };
+	uint8_t satellites_tracked;
 
 	if (!running) {
 		/* Cancel has already been called, so ignore the notification. */
@@ -639,7 +647,15 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 		return;
 	}
 
+	satellites_tracked = method_gnss_tracked_satellites(&pvt_data);
+
 	method_gnss_print_pvt(&pvt_data);
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	location_data_details_gnss.valid = true;
+	location_data_details_gnss.pvt_data = pvt_data;
+	location_data_details_gnss.satellites_tracked = satellites_tracked;
+#endif
 
 	/* Store fix data only if we get a valid fix. Thus, the last valid data is always kept
 	 * in memory and it is not overwritten in case we get an invalid fix.
@@ -647,7 +663,6 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 	if (pvt_data.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
 		fixes_remaining--;
 
-		location_result.method = LOCATION_METHOD_GNSS;
 		location_result.latitude = pvt_data.latitude;
 		location_result.longitude = pvt_data.longitude;
 		location_result.accuracy = pvt_data.accuracy;
@@ -668,7 +683,7 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 	} else if (gnss_config.visibility_detection) {
 		if (pvt_data.execution_time >= VISIBILITY_DETECTION_EXEC_TIME &&
 		    pvt_data.execution_time < (VISIBILITY_DETECTION_EXEC_TIME + MSEC_PER_SEC) &&
-		    method_gnss_tracked_satellites(&pvt_data) < VISIBILITY_DETECTION_SAT_LIMIT) {
+		    satellites_tracked < VISIBILITY_DETECTION_SAT_LIMIT) {
 			LOG_DBG("GNSS visibility obstructed, canceling");
 			method_gnss_cancel();
 			location_core_event_cb_error();
@@ -753,7 +768,9 @@ int method_gnss_location_get(const struct location_method_config *config)
 	int err;
 
 	gnss_config = config->gnss;
-
+#if (CONFIG_LOCATION_DATA_DETAILS)
+	memset(&location_data_details_gnss, 0, sizeof(location_data_details_gnss));
+#endif
 	/* GNSS event handler is already set once in method_gnss_init(). If no other thread is
 	 * using GNSS, setting it again is not needed.
 	 */
@@ -800,6 +817,13 @@ int method_gnss_location_get(const struct location_method_config *config)
 	return 0;
 }
 
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+void method_gnss_details_get(struct location_data_details *details)
+{
+	details->gnss = location_data_details_gnss;
+}
+#endif
+
 int method_gnss_init(void)
 {
 	int err;
@@ -824,7 +848,7 @@ int method_gnss_init(void)
 	k_work_init(&method_gnss_pgps_ext_work, method_gnss_pgps_ext_work_fn);
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-#if !defined(CONFIG_NRF_CLOUD_MQTT)
+#if !defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
 	k_work_init(&method_gnss_pgps_request_work, method_gnss_pgps_request_work_fn);
 #endif
 	k_work_init(&method_gnss_manage_pgps_work, method_gnss_manage_pgps);

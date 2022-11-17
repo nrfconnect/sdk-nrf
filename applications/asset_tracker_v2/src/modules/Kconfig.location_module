@@ -1,0 +1,46 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig LOCATION_MODULE
+	bool "Location module"
+	select LOCATION
+	default y
+
+if LOCATION_MODULE
+
+config LOCATION_MODULE_NEIGHBOR_CELLS_DATA_CONVERT_RSRP_TO_DBM
+	bool "Convert RSRP values to dBm for neighbor cell measurements"
+	default y if AWS_IOT || AZURE_IOT_HUB
+	help
+	  If this option is enabled, RSRP values are converted to dBm before being
+	  sent out by the module with the LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY event.
+	  Don't convert RSRP to dBm when building for nRF Cloud, this is handled during encoding
+	  using the nRF Cloud cellular positioning library.
+
+config LOCATION_MODULE_NEIGHBOR_CELLS_DATA_CONVERT_RSRQ_TO_DB
+	bool "Convert RSRQ values to dB for neighbor cell measurements"
+	default y if AWS_IOT || AZURE_IOT_HUB
+	help
+	  If this option is enabled, RSRQ values are converted to dB before being
+	  sent out by the module with the LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY event.
+	  Don't convert RSRQ to dB when building for nRF Cloud, this is handled during encoding
+	  using the nRF Cloud cellular positioning library.
+
+config LOCATION_MODULE_AGPS_FILTERED
+	bool "Request only visible satellite ephemerides"
+	default NRF_CLOUD_AGPS_FILTERED
+	depends on NRF_CLOUD_AGPS_FILTERED
+
+config LOCATION_MODULE_ELEVATION_MASK
+	int "Minimum elevation angle for visible satellites"
+	default NRF_CLOUD_AGPS_ELEVATION_MASK
+	depends on NRF_CLOUD_AGPS_FILTERED
+
+module = LOCATION_MODULE
+module-str = Location module
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # LOCATION_MODULE

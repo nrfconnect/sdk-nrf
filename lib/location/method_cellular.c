@@ -106,11 +106,7 @@ static int method_cellular_ncellmeas_start(void)
 
 static void method_cellular_positioning_work_fn(struct k_work *work)
 {
-	struct multicell_location_params params = { 0 };
-	struct multicell_location location;
-	struct location_data location_result = { 0 };
 	int64_t ncellmeas_start_time;
-	int64_t ncellmeas_time;
 	int ret;
 	struct method_cellular_positioning_work_args *work_data =
 		CONTAINER_OF(work, struct method_cellular_positioning_work_args, work_item);
@@ -136,6 +132,14 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 
 	/* Stop the timer and let rest_client timer handle the request */
 	location_core_timer_stop();
+
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
+	location_core_event_cb_cellular_request(&cell_data);
+#else
+	struct multicell_location_params params = { 0 };
+	struct multicell_location location;
+	struct location_data location_result = { 0 };
+	int64_t ncellmeas_time;
 
 	if (cell_data.current_cell.id == LTE_LC_CELL_EUTRAN_ID_INVALID) {
 		LOG_WRN("Current cell ID not valid");
@@ -176,7 +180,6 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 			location_core_event_cb_error();
 		}
 	} else {
-		location_result.method = LOCATION_METHOD_CELLULAR;
 		location_result.latitude = location.latitude;
 		location_result.longitude = location.longitude;
 		location_result.accuracy = location.accuracy;
@@ -185,6 +188,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 			location_core_event_cb(&location_result);
 		}
 	}
+#endif /* defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL) */
 }
 
 int method_cellular_location_get(const struct location_method_config *config)
@@ -218,15 +222,15 @@ int method_cellular_cancel(void)
 
 int method_cellular_init(void)
 {
-	int ret;
-
 	running = false;
 
 	k_work_init(&method_cellular_positioning_work.work_item,
 		    method_cellular_positioning_work_fn);
 	lte_lc_register_handler(method_cellular_lte_ind_handler);
 
-	ret = multicell_location_provision_certificate(false);
+#if !defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
+	int ret = multicell_location_provision_certificate(false);
+
 	if (ret) {
 		LOG_ERR("Certificate provisioning failed, ret %d", ret);
 		if (ret == -EACCES) {
@@ -235,6 +239,6 @@ int method_cellular_init(void)
 		}
 		return ret;
 	}
-
+#endif
 	return 0;
 }

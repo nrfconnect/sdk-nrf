@@ -18,7 +18,7 @@
 #include "events/ui_module_event.h"
 #include "events/sensor_module_event.h"
 #include "events/util_module_event.h"
-#include "events/gnss_module_event.h"
+#include "events/location_module_event.h"
 #include "events/modem_module_event.h"
 #include "events/cloud_module_event.h"
 #include "events/led_state_event.h"
@@ -38,7 +38,7 @@ struct ui_msg_data {
 		struct app_module_event app;
 		struct modem_module_event modem;
 		struct data_module_event data;
-		struct gnss_module_event gnss;
+		struct location_module_event location;
 		struct util_module_event util;
 		struct cloud_module_event cloud;
 	} module;
@@ -63,8 +63,8 @@ STATIC enum sub_state_type {
 
 /* UI module sub-sub states. */
 STATIC enum sub_sub_state_type {
-	SUB_SUB_STATE_GNSS_INACTIVE,
-	SUB_SUB_STATE_GNSS_ACTIVE
+	SUB_SUB_STATE_LOCATION_INACTIVE,
+	SUB_SUB_STATE_LOCATION_ACTIVE
 } sub_sub_state;
 
 /* Forward declarations */
@@ -146,10 +146,10 @@ static char *sub_state2str(enum sub_state_type new_state)
 static char *sub_sub_state2str(enum sub_sub_state_type new_state)
 {
 	switch (new_state) {
-	case SUB_SUB_STATE_GNSS_INACTIVE:
-		return "SUB_SUB_STATE_GNSS_INACTIVE";
-	case SUB_SUB_STATE_GNSS_ACTIVE:
-		return "SUB_SUB_STATE_GNSS_ACTIVE";
+	case SUB_SUB_STATE_LOCATION_INACTIVE:
+		return "SUB_SUB_STATE_LOCATION_INACTIVE";
+	case SUB_SUB_STATE_LOCATION_ACTIVE:
+		return "SUB_SUB_STATE_LOCATION_ACTIVE";
 	default:
 		return "Unknown";
 	}
@@ -227,10 +227,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		message_handler(&ui_msg);
 	}
 
-	if (is_gnss_module_event(aeh)) {
-		struct gnss_module_event *event = cast_gnss_module_event(aeh);
+	if (is_location_module_event(aeh)) {
+		struct location_module_event *event = cast_location_module_event(aeh);
 		struct ui_msg_data ui_msg = {
-			.module.gnss = *event
+			.module.location = *event
 		};
 
 		message_handler(&ui_msg);
@@ -383,20 +383,20 @@ static void transition_list_append(enum led_state led_state, int16_t duration_se
 	sys_slist_append(&pattern_transition_list, &led_pattern_list[led_state].header);
 }
 
-/* Message handler for SUB_SUB_STATE_GNSS_ACTIVE in SUB_STATE_ACTIVE. */
-static void on_active_gnss_active(struct ui_msg_data *msg)
+/* Message handler for SUB_SUB_STATE_LOCATION_ACTIVE in SUB_STATE_ACTIVE. */
+static void on_active_location_active(struct ui_msg_data *msg)
 {
 	if (is_cloud_related_event(msg)) {
 		transition_list_clear();
 		transition_list_append(LED_STATE_CLOUD_PUBLISHING, 5);
 		transition_list_append(LED_STATE_ACTIVE_MODE, 5);
-		transition_list_append(LED_STATE_GNSS_SEARCHING, HOLD_FOREVER);
+		transition_list_append(LED_STATE_LOCATION_SEARCHING, HOLD_FOREVER);
 		k_work_reschedule(&led_pattern_update_work, K_NO_WAIT);
 	}
 }
 
-/* Message handler for SUB_SUB_STATE_GNSS_INACTIVE in SUB_STATE_ACTIVE. */
-static void on_active_gnss_inactive(struct ui_msg_data *msg)
+/* Message handler for SUB_SUB_STATE_LOCATION_INACTIVE in SUB_STATE_ACTIVE. */
+static void on_active_location_inactive(struct ui_msg_data *msg)
 {
 	if (is_cloud_related_event(msg)) {
 		transition_list_clear();
@@ -407,20 +407,20 @@ static void on_active_gnss_inactive(struct ui_msg_data *msg)
 	}
 }
 
-/* Message handler for SUB_SUB_STATE_GNSS_ACTIVE in SUB_STATE_PASSIVE. */
-static void on_passive_gnss_active(struct ui_msg_data *msg)
+/* Message handler for SUB_SUB_STATE_LOCATION_ACTIVE in SUB_STATE_PASSIVE. */
+static void on_passive_location_active(struct ui_msg_data *msg)
 {
 	if (is_cloud_related_event(msg)) {
 		transition_list_clear();
 		transition_list_append(LED_STATE_CLOUD_PUBLISHING, 5);
 		transition_list_append(LED_STATE_PASSIVE_MODE, 5);
-		transition_list_append(LED_STATE_GNSS_SEARCHING, HOLD_FOREVER);
+		transition_list_append(LED_STATE_LOCATION_SEARCHING, HOLD_FOREVER);
 		k_work_reschedule(&led_pattern_update_work, K_NO_WAIT);
 	}
 }
 
-/* Message handler for SUB_SUB_STATE_GNSS_INACTIVE in SUB_STATE_PASSIVE. */
-static void on_passive_gnss_inactive(struct ui_msg_data *msg)
+/* Message handler for SUB_SUB_STATE_LOCATION_INACTIVE in SUB_STATE_PASSIVE. */
+static void on_passive_location_inactive(struct ui_msg_data *msg)
 {
 	if (is_cloud_related_event(msg)) {
 		transition_list_clear();
@@ -444,24 +444,25 @@ static void on_state_init(struct ui_msg_data *msg)
 
 		state_set(STATE_RUNNING);
 		sub_state_set(SUB_STATE_ACTIVE);
-		sub_sub_state_set(SUB_SUB_STATE_GNSS_INACTIVE);
+		sub_sub_state_set(SUB_SUB_STATE_LOCATION_INACTIVE);
 	}
 }
 
 /* Message handler for STATE_RUNNING. */
 static void on_state_running(struct ui_msg_data *msg)
 {
-	if (IS_EVENT(msg, gnss, GNSS_EVT_ACTIVE)) {
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_ACTIVE)) {
 		transition_list_clear();
-		transition_list_append(LED_STATE_GNSS_SEARCHING, HOLD_FOREVER);
+		transition_list_append(LED_STATE_LOCATION_SEARCHING, HOLD_FOREVER);
 		k_work_reschedule(&led_pattern_update_work, K_NO_WAIT);
 	}
 
-	if (IS_EVENT(msg, gnss, GNSS_EVT_INACTIVE)) {
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_INACTIVE)) {
 		transition_list_clear();
 		transition_list_append(LED_STATE_TURN_OFF, HOLD_FOREVER);
 		k_work_reschedule(&led_pattern_update_work, K_NO_WAIT);
 	}
+
 }
 
 /* Message handler for STATE_LTE_CONNECTING. */
@@ -562,12 +563,12 @@ static void on_all_states(struct ui_msg_data *msg)
 			      SUB_STATE_PASSIVE);
 	}
 
-	if (IS_EVENT(msg, gnss, GNSS_EVT_ACTIVE)) {
-		sub_sub_state_set(SUB_SUB_STATE_GNSS_ACTIVE);
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_ACTIVE)) {
+		sub_sub_state_set(SUB_SUB_STATE_LOCATION_ACTIVE);
 	}
 
-	if (IS_EVENT(msg, gnss, GNSS_EVT_INACTIVE)) {
-		sub_sub_state_set(SUB_SUB_STATE_GNSS_INACTIVE);
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_INACTIVE)) {
+		sub_sub_state_set(SUB_SUB_STATE_LOCATION_INACTIVE);
 	}
 
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_FOTA_START)) {
@@ -595,11 +596,11 @@ static void message_handler(struct ui_msg_data *msg)
 		switch (sub_state) {
 		case SUB_STATE_ACTIVE:
 			switch (sub_sub_state) {
-			case SUB_SUB_STATE_GNSS_ACTIVE:
-				on_active_gnss_active(msg);
+			case SUB_SUB_STATE_LOCATION_ACTIVE:
+				on_active_location_active(msg);
 				break;
-			case SUB_SUB_STATE_GNSS_INACTIVE:
-				on_active_gnss_inactive(msg);
+			case SUB_SUB_STATE_LOCATION_INACTIVE:
+				on_active_location_inactive(msg);
 				break;
 			default:
 				LOG_WRN("Unknown ui module sub-sub state.");
@@ -608,11 +609,11 @@ static void message_handler(struct ui_msg_data *msg)
 			break;
 		case SUB_STATE_PASSIVE:
 			switch (sub_sub_state) {
-			case SUB_SUB_STATE_GNSS_ACTIVE:
-				on_passive_gnss_active(msg);
+			case SUB_SUB_STATE_LOCATION_ACTIVE:
+				on_passive_location_active(msg);
 				break;
-			case SUB_SUB_STATE_GNSS_INACTIVE:
-				on_passive_gnss_inactive(msg);
+			case SUB_SUB_STATE_LOCATION_INACTIVE:
+				on_passive_location_inactive(msg);
 				break;
 			default:
 				LOG_WRN("Unknown ui module sub-sub state.");
@@ -651,7 +652,7 @@ static void message_handler(struct ui_msg_data *msg)
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);
-APP_EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, location_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, util_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);

@@ -69,11 +69,11 @@ config MPSL_FEM_NRF21540_GPIO
 
 config MPSL_FEM_NRF21540_GPIO_SPI
 	depends on MPSL_FEM_NRF21540_GPIO_SPI_SUPPORT
-	select EXPERIMENTAL
 	select NRFX_GPIOTE
 	select NRFX_PPI if SOC_SERIES_NRF52X
 	select NRFX_DPPI if SOC_SERIES_NRF53X
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
+	imply MPSL_FEM_POWER_MODEL if MPSL_FEM   # Don't force the model, but make it a default
 	bool "nRF21540 front-end module in GPIO + SPI mode"
 	help
 	  FEM device is nRF21540 and it uses both GPIO and SPI.
@@ -149,12 +149,11 @@ config MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL
 
 endif   # (MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI) && MPSL_FEM
 
-config MPSL_FEM_POWER_VOLTAGE
-	int "Voltage which is used to power the FEM chip in mV"
-	default 3000
+endif	# MPSL_FEM || MPSL_FEM_PIN_FORWARDER
 
 config MPSL_FEM_POWER_MODEL
 	bool "Use a model to split the requested TX power into values used to control the internal state of the FEM"
+	depends on MPSL_FEM
 	default n
 	help
 	  Use a model to split the requested TX power into values used to control
@@ -171,7 +170,7 @@ if MPSL_FEM_POWER_MODEL
 
 choice MPSL_FEM_POWER_MODEL_CHOICE
 	prompt "Model used to split the requested TX power into values used to control the internal state of the FEM"
-	optional
+	default MPSL_FEM_POWER_MODEL_NRF21540_USE_BUILTIN if MPSL_FEM_NRF21540_GPIO_SPI
 	help
 	  The model which is used to split the requested TX power into values used to control
 	  the internal state of the FEM. This model can be used for compensating for external
@@ -182,7 +181,6 @@ choice MPSL_FEM_POWER_MODEL_CHOICE
 
 config MPSL_FEM_POWER_MODEL_NRF21540_USE_BUILTIN
 	depends on MPSL_FEM_NRF21540_GPIO_SPI
-	select EXPERIMENTAL
 	bool "Use built-in MPSL model for gain control and compensation of the nRF21540 FEM"
 	help
 	  If this option is enabled a model which is contained in the MPSL is used for calculating
@@ -224,5 +222,3 @@ config MPSL_FEM_DEVICE_CONFIG_254
 module=MPSL_FEM
 module-str=MPSL_FEM
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
-
-endif	# MPSL_FEM || MPSL_FEM_PIN_FORWARDER

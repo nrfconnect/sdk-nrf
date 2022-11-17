@@ -7,14 +7,14 @@
 #define _LOCATION_TRACKING_H_
 
 /* Definition found in location.h */
-struct location_data;
+struct location_event_data;
 
 /**
  * @brief Callback to receive tracked locations.
  *
  * @param[in] location_data The tracked location data.
  */
-typedef void (*location_update_cb_t)(const struct location_data * const location_data);
+typedef void (*location_update_cb_t)(const struct location_event_data * const location_data);
 
 /**
  * @brief Start tracking our location at the given interval in seconds.

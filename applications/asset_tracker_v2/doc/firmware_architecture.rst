@@ -26,7 +26,7 @@ The application comprises of the following modules:
 * :ref:`asset_tracker_v2_data_module`
 * :ref:`asset_tracker_v2_cloud_module`
 * :ref:`asset_tracker_v2_sensor_module`
-* :ref:`asset_tracker_v2_gnss_module`
+* :ref:`asset_tracker_v2_location_module`
 * :ref:`asset_tracker_v2_ui_module`
 * :ref:`asset_tracker_v2_util_module`
 * :ref:`asset_tracker_v2_debug_module`

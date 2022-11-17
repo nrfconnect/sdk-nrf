@@ -35,6 +35,13 @@ Application development
 
 * Updated the :ref:`software_maturity` page with a section about API deprecation.
 
+RF Front-End Modules
+--------------------
+
+* Added:
+
+  * nRF21540 GPIO+SPI built-in power model that keeps the nRF21540's gain constant and as close to the currently configured value of gain as possible.
+
 Protocols
 =========
 
@@ -117,6 +124,19 @@ nRF9160: Asset Tracker v2
 
   * The application now uses the new LwM2M location assistance objects through the :ref:`lib_lwm2m_location_assistance` library.
   * Added handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
+  * The application now uses the :ref:`lib_location` library for retrieving location information.
+    This is a major change in the application code but a minor change from the user perspective.
+
+    * Added :ref:`asset_tracker_v2_location_module` and removed GNSS module.
+      GNSS is used through the :ref:`lib_location` library.
+    * Neighbor cell handling moved from :ref:`asset_tracker_v2_modem_module` to :ref:`asset_tracker_v2_location_module` to be used through Location library
+    * The :ref:`asset_tracker_v2_location_module` triggers a ``location_request()`` with GNSS being the first priority method and cellular the second priority if they are enabled in the application configuration
+    * NMEA support removed.
+      This was there only because originally, nRF Cloud did not support PVT but that has changed.
+    * A-GPS/P-GPS are not requested based on triggers in the application but only based on :ref:`lib_location` library events ``LOCATION_EVT_GNSS_ASSISTANCE_REQUEST`` and ``LOCATION_EVT_GNSS_PREDICTION_REQUEST``.
+    * Currently, you cannot configure or define the LTE LC neighbor cell search type with the :ref:`lib_location` library.
+      The default search type is always used.
+    * The Kconfig option :kconfig:option:`CONFIG_GNSS_MODULE_PGPS_STORE_LOCATION` (calling :c:func:`nrf_cloud_pgps_set_location()`) is not supported in the Location library.
 
 * Removed:
 
@@ -215,6 +235,12 @@ Bluetooth samples
     * On the nRF5340 development kit, the :ref:`nrf5340_remote_shell` is now a mandatory sample that must be programmed to the application core.
     * On the nRF5340 development kit, the application core UART interface is used for communication with testers instead of the network core UART interface.
     * On the nRF5340 development kit, added support for the USB CDC ACM interface.
+
+* :ref:`peripheral_uart` sample:
+
+  * Changed:
+
+    * Fixed code build with the :kconfig:option:`CONFIG_BT_NUS_SECURITY_ENABLED` Kconfig option disabled.
 
 Bluetooth mesh samples
 ----------------------
@@ -477,7 +503,10 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
-  * Added timeout for the entire location request.
+  * Updated:
+    * Added timeout for the entire location request.
+    * Added location data details such as entire PVT data.
+    * Moved location method from the :c:struct:`location_data` structure to :c:struct:`location_event_data`.
 
 * :ref:`lte_lc_readme` library:
 

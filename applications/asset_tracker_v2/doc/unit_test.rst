@@ -12,7 +12,7 @@ Following are the modules that have unit tests:
 
 * :ref:`asset_tracker_v2_debug_module` - :file:`asset_tracker_v2/src/modules/debug_module.c`
 * :ref:`asset_tracker_v2_ui_module` - :file:`asset_tracker_v2/src/modules/ui_module.c`
-* :ref:`asset_tracker_v2_gnss_module` - :file:`asset_tracker_v2/src/modules/gnss_module.c`
+* :ref:`asset_tracker_v2_location_module` - :file:`asset_tracker_v2/src/modules/location_module.c`
 * JSON common library - :file:`asset_tracker_v2/src/cloud/cloud_codec/json_common.c`
 * LwM2M codec backend - :file:`asset_tracker_v2/src/cloud/cloud_codec/lwm2m/lwm2m_codec.c`
 * LwM2M integration layer - :file:`asset_tracker_v2/src/cloud/lwm2m_integration/lwm2m_integration.c`
@@ -70,7 +70,7 @@ Enter the following command to execute the unit tests on nRF9160 DK:
 In this console snippet, ``serial port`` must be the port where you receive logs from the DK, normally the first port listed by ``nrfjprog --com``, for example ``/dev/ttyACM0``.
 
 The :file:`testcase.yaml` file for that unit test must have the entry ``platform_allow: nrf9160dk_nrf9160_ns``.
-See :file:`nrf/applications/asset_tracker_v2/tests/gnss_module/testcase.yaml` for an example.
+See :file:`nrf/applications/asset_tracker_v2/tests/location_module/testcase.yaml` for an example.
 
 Twister can also be used to see code coverage reports.
 For more information about Twister, see the :ref:`zephyr:twister_script` documentation.

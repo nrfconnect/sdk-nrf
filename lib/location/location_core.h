@@ -14,6 +14,9 @@ struct location_method_api {
 	int  (*validate_params)(const struct location_method_config *config);
 	int  (*location_get)(const struct location_method_config *config);
 	int  (*cancel)();
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	void  (*details_get)(struct location_data_details *details);
+#endif
 };
 
 int location_core_init(void);
@@ -30,6 +33,12 @@ void location_core_event_cb_agps_request(const struct nrf_modem_gnss_agps_data_f
 #endif
 #if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
 void location_core_event_cb_pgps_request(const struct gps_pgps_request *request);
+#endif
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
+void location_core_event_cb_cellular_request(struct lte_lc_cells_info *request);
+void location_core_cellular_ext_result_set(
+	enum location_cellular_ext_result result,
+	struct location_data *location);
 #endif
 
 void location_core_config_log(const struct location_config *config);

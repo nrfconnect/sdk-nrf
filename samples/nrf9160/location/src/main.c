@@ -42,7 +42,7 @@ static void location_event_handler(const struct location_event_data *event_data)
 	switch (event_data->id) {
 	case LOCATION_EVT_LOCATION:
 		printk("Got location:\n");
-		printk("  method: %s\n", location_method_str(event_data->location.method));
+		printk("  method: %s\n", location_method_str(event_data->method));
 		printk("  latitude: %.06f\n", event_data->location.latitude);
 		printk("  longitude: %.06f\n", event_data->location.longitude);
 		printk("  accuracy: %.01f m\n", event_data->location.accuracy);

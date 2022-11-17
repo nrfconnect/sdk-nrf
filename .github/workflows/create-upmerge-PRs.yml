@@ -1,0 +1,66 @@
+name: Zephyr upmerge
+
+#on:
+#  schedule:
+#    - cron: "0 0 * * *"
+on: workflow_dispatch
+
+env:
+  GH_TOKEN: ${{ secrets.NCS_GITHUB_UPMERGE_TOKEN }}
+  ZEPHYR_UPSTREAM: https://github.com/zephyrproject-rtos/zephyr
+
+jobs:
+  auto-upmerge-create-PRs:
+    if: github.repository == 'nrfconnect/sdk-nrf'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
+        with:
+          path: ncs/nrf
+          fetch-depth: 0
+
+      - name: Install base dependencies
+        working-directory: ncs
+        run: |
+          pip3 install -r nrf/scripts/requirements-base.txt
+          pip3 install -r nrf/scripts/requirements-extra.txt
+
+      - name: West init and update
+        working-directory: ncs
+        run: |
+          west init -l nrf
+          west update zephyr
+          git config --global user.email "noreply@nordicsemi.no"
+          git config --global user.name "NordicBuilder"
+          echo "SDK_ZEPHYR=$(west list zephyr -f {url} | awk -F// '{print $NF}')" >> $GITHUB_ENV
+
+      - name: Try closing existing auto-upmerge PRs
+        run: |
+           SDK_ZEPHYR_PR=$(gh pr list --repo $SDK_ZEPHYR --label "auto-upmerge" --json number --jq .[0].number)
+           gh pr close $SDK_ZEPHYR_PR --repo $SDK_ZEPHYR | true
+           SDK_NRF_PR=$(gh pr list --repo $GITHUB_SERVER_URL/$GITHUB_REPOSITORY --label "auto-upmerge" --json number --jq .[0].number)
+           gh pr close $SDK_NRF_PR --repo $GITHUB_SERVER_URL/$GITHUB_REPOSITORY | true
+
+      - name: Run ncs-upmerge and create sdk-zephyr upmerge PR
+        working-directory: ncs/zephyr
+        run: |
+          git remote add -f upstream $ZEPHYR_UPSTREAM && git remote add -f origin https://nordicbuilder:${{secrets.NCS_GITHUB_UPMERGE_TOKEN}}@$SDK_ZEPHYR
+          git checkout -b upmerge_local
+          west ncs-upmerger zephyr
+          git push origin upmerge_local:auto-upmerge/$GITHUB_RUN_ID -u
+          UPSTREAMHASH=$(git rev-parse --short upstream/main)
+          ZEPHYR_PR_URL=$(gh pr create --base main --title "[nrf mergeup] Merge upstream automatically up to commit $UPSTREAMHASH" --body "Automatic upmerge action" --repo $SDK_ZEPHYR --label "auto-upmerge")
+          echo "ZEPHYR_PR_URL=$ZEPHYR_PR_URL" >> $GITHUB_ENV
+          echo "Created PR: $ZEPHYR_PR_URL"
+
+      - name: create sdk-nrf PR with updated west.yml
+        working-directory: ncs/nrf
+        run: |
+          NEW_REV=$(echo "pull/$(basename $ZEPHYR_PR_URL)/head" | sed 's/\//\\\//g')
+          OLD_REV=$(west list zephyr -f {revision})
+          git checkout -b upmerge_local
+          sed -i "s/revision: $OLD_REV/revision: $NEW_REV/" west.yml
+          git commit -a -m "manifest: Update sdk-zephyr revision (automatic Zephyr upmerge)" -m "Automatically created by Github Action" --signoff
+          git push origin upmerge_local:auto-upmerge/$GITHUB_RUN_ID -u
+          gh pr create --base main --title "manifest: Update sdk-zephyr revision (automatic upmerge)" --body "Automatic upmerge action" --label "CI-all-test" --label "auto-upmerge"

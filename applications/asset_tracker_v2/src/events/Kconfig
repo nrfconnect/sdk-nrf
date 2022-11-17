@@ -34,8 +34,8 @@ config UTIL_EVENTS_LOG
 	bool "Enable logging for utility module events"
 	default y
 
-config GNSS_EVENTS_LOG
-	bool "Enable logging for GNSS module events"
+config LOCATION_EVENTS_LOG
+	bool "Enable logging for location module events"
 	default y
 
 config DATA_EVENTS_LOG

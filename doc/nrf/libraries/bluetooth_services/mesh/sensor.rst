@@ -21,7 +21,7 @@ Sensors are accessed through the Sensor models, which are documented separately:
 .. _bt_mesh_sensor_basic_example:
 
 Basic example
-=============
+*************
 
 A sensor reporting the device operating temperature could combine the Bluetooth mesh :c:var:`Present Device Operating Temperature <bt_mesh_sensor_present_dev_op_temp>` sensor type with the on-chip ``TEMP_NRF5`` temperature sensor driver:
 
@@ -53,7 +53,7 @@ See :ref:`bt_mesh_sensor_srv_readme` for details.
 .. _bt_mesh_sensor_types:
 
 Sensor types
-============
+************
 
 Sensor types are the specification defined data types for the various Bluetooth mesh sensor parameters.
 Each sensor type is assigned its own Device Property ID, as specified in the Bluetooth mesh device properties specification.
@@ -71,7 +71,7 @@ Some concepts in the Bluetooth mesh specification are changed slightly to fit be
 .. _bt_mesh_sensor_types_channels:
 
 Sensor channels
-***************
+===============
 
 Each sensor type may consist of one or more channels.
 The list of sensor channels in each sensor type is immutable, and all channels must always have a valid value when the sensor data is passed around.
@@ -104,7 +104,7 @@ See the documentation or specification for the individual sensor channels for mo
 .. _bt_mesh_sensor_types_series:
 
 Sensor series types
-*******************
+===================
 
 The sensor series functionality may be used for all sensor types.
 However, some sensor types are made specifically for being used in a sensor series.
@@ -119,7 +119,7 @@ A sensor of this type may be queried for specific measurement periods measured i
 .. _bt_mesh_sensor_types_settings:
 
 Sensor setting types
-********************
+====================
 
 Some sensor types are made specifically to act as sensor settings.
 These values are encoded the same way as other sensor types, but typically represent a configurable sensor setting or some specification value assigned to the sensor from the manufacturer.
@@ -130,14 +130,14 @@ Typically, settings should only be meta data related to the sensor data type, bu
 .. _bt_mesh_sensor_types_list:
 
 Available sensor types
-**********************
+======================
 
 All available sensor types are collected in the :ref:`bt_mesh_sensor_types_readme` module.
 
 .. _bt_mesh_sensor_publishing:
 
 Sample data reporting
-=====================
+*********************
 
 Sensors may report their values to the mesh in three ways:
 
@@ -163,7 +163,7 @@ All three methods of reporting may be combined.
 .. _bt_mesh_sensor_publishing_cadence:
 
 Cadence
-*******
+=======
 
 Each sensor may use the cadence state to control the rate at which their data is published.
 The sensor's publication interval is defined as a divisor of the holding sensor Server's publication interval that is always a power of two.
@@ -183,7 +183,7 @@ The sensor's cadence is automatically recalculated for every sample, based on it
 .. _bt_mesh_sensor_publishing_delta:
 
 Delta threshold
-***************
+===============
 
 All single channel sensors have a delta threshold state to aid the publication rate.
 The delta threshold state determines the smallest change in sensor value that should trigger a publication.
@@ -202,7 +202,7 @@ The sensor has separate delta thresholds for positive and negative changes.
 .. _bt_mesh_sensor_descriptors:
 
 Descriptors
-===========
+***********
 
 Descriptors are optional meta information structures for every sensor.
 A sensor's Descriptor contains parameters that may aid other mesh nodes in interpreting the data:
@@ -213,14 +213,33 @@ A sensor's Descriptor contains parameters that may aid other mesh nodes in inter
 * Update interval
 
 The sensor descriptor is constant throughout the sensor's lifetime.
-If the sensor has a descriptor, a pointer to it should be passed to :c:member:`bt_mesh_sensor.descriptor` on init.
+If the sensor has a descriptor, a pointer to it should be passed to :c:member:`bt_mesh_sensor.descriptor` on init, as for example done in the code below:
+
+.. code-block:: c
+
+   static const struct bt_mesh_sensor_descriptor temp_sensor_descriptor = {
+       .tolerance = {
+           .negative = { .val1 = 0, .val2 = 750000 },
+           .positive = { .val1 = 3, .val2 = 500000 },
+       },
+       .sampling_type = BT_MESH_SENSOR_SAMPLING_ARITHMETIC_MEAN,
+       .period = 300,
+       .update_interval = 50
+   };
+
+   struct bt_mesh_sensor temp_sensor = {
+       .type = &bt_mesh_sensor_present_dev_op_temp,
+       .get = temp_get,
+       .descriptor = &temp_sensor_descriptor
+   };
+
 
 See :c:struct:`bt_mesh_sensor_descriptor` for details.
 
 .. _bt_mesh_sensor_usage:
 
 Usage
-=====
+*****
 
 Sensors instances are generally static structures that are initialized at startup.
 Only the :c:member:`bt_mesh_sensor.type` member is mandatory, the rest are optional.
@@ -228,7 +247,7 @@ Apart from the Cadence and Descriptor states, all states are accessed through ge
 The absence of a getter for a state marks it as not supported by the sensor.
 
 Sensor data
-***********
+===========
 
 Sensor data is accessed through the :c:member:`bt_mesh_sensor.get` callback, which is expected to fill the ``rsp`` parameter with the most recent sensor data and return a status code.
 Each sensor channel will be encoded internally according to the sensor type.
@@ -252,7 +271,7 @@ If the Sensor Server is configured to do periodic publishing, the ``get`` callba
 Publication may also be forced by calling :c:func:`bt_mesh_sensor_srv_sample`, which will trigger the ``get`` callback and publish only if the sensor value has changed.
 
 Sensor series
-*************
+=============
 
 Sensor series data can be provided for all sensor types.
 To enable the sensor's series data feature, :c:member:`bt_mesh_sensor_series.column_count` must be specified and the sensor series :c:member:`bt_mesh_sensor_series.get` callback must be implemented.
@@ -324,7 +343,7 @@ Example: Single-channel sensor (motion sensed) as a sensor series:
    }
 
 Sensor settings
-***************
+===============
 
 The list of settings a sensor supports should be set on init.
 The list should be constant throughout the sensor's lifetime, and may be declared ``const``.
@@ -333,11 +352,55 @@ Each entry in the list has a type and two access callbacks, and the list should 
 The :c:member:`bt_mesh_sensor_setting.get` callback is mandatory, while the :c:member:`bt_mesh_sensor_setting.set` is optional, allowing for read-only entries.
 The value of the settings may change at runtime, even outside the ``set`` callback.
 New values may be rejected by returning a negative error code from the ``set`` callback.
+The following code is an example of adding a setting to a sensor:
+
+.. code-block:: c
+
+   static void motion_threshold_get(struct bt_mesh_sensor_srv *srv,
+                                    struct bt_mesh_sensor *sensor,
+                                    const struct bt_mesh_sensor_setting *setting,
+                                    struct bt_mesh_msg_ctx *ctx,
+                                    struct sensor_value *rsp)
+   {
+        /** Get the current threshold in an application defined way and
+         *  store it in rsp.
+         */
+        get_threshold(rsp);
+   }
+
+   static int motion_threshold_set(struct bt_mesh_sensor_srv *srv,
+                                   struct bt_mesh_sensor *sensor,
+                                   const struct bt_mesh_sensor_setting *setting,
+                                   struct bt_mesh_msg_ctx *ctx,
+                                   const struct sensor_value *value)
+   {
+        /** Store incoming threshold in application-defined way.
+         *  Return error code to reject set.
+         */
+        return set_threshold(value);
+   }
+
+   static const struct bt_mesh_sensor_setting settings[] = {
+       {
+           .type = &bt_mesh_sensor_motion_threshold,
+           .get = motion_threshold_get,
+           .set = motion_threshold_set,
+       }
+   };
+
+   static struct bt_mesh_sensor motion_sensor = {
+       .type = &bt_mesh_sensor_motion_sensed,
+       .get = get_motion,
+       .settings = {
+           .list = settings,
+           .count = ARRAY_SIZE(settings)
+        }
+   };
 
 .. _bt_mesh_sensor_api:
 
 API documentation
-=================
+*****************
 
 | Header file: :file:`include/bluetooth/mesh/sensor.h`
 | Source file: :file:`subsys/bluetooth/mesh/sensor.c`

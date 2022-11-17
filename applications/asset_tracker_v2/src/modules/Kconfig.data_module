@@ -11,10 +11,6 @@ menuconfig DATA_MODULE
 
 if DATA_MODULE
 
-config DATA_AGPS_REQUEST_ALL_UPON_CONNECTION
-	bool "Request all A-GPS data upon a connection"
-	depends on NRF_CLOUD_AGPS || NRF_CLOUD_PGPS
-
 config DATA_SEND_ALL_DEVICE_CONFIGURATIONS
 	bool "Encode and send all device configurations regardless if they have changed or not"
 	help
@@ -69,7 +65,7 @@ config DATA_BATTERY_BUFFER_COUNT
 	default 3
 
 config DATA_GNSS_BUFFER_STORE
-	bool "Store GNSS data received from the GNSS module"
+	bool "Store GNSS data received from the location module"
 	default y
 
 config DATA_SENSOR_BUFFER_STORE
@@ -146,11 +142,15 @@ config DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS
 	help
 	  Minimum time for lack of movement to be considered stillness in passive mode.
 
-config DATA_GNSS_TIMEOUT_SECONDS
-	int "Default GNSS timeout"
-	default 30
+config DATA_LOCATION_TIMEOUT_SECONDS
+	int "Default location timeout"
+	default 300
 	help
-	  Timeout for acquiring a GNSS fix during sampling of data.
+	  Timeout for completing a location request. This value should be large enough
+	  so that the location retrieval can find the location in various conditions.
+	  This can be considered more of a safeguard rather than the deadline
+	  when the operation must be completed. Hence this value can be larger than the
+	  sampling interval.
 
 config DATA_SAMPLE_GNSS_DEFAULT
 	bool "Include GNSS in sample requests"

@@ -17,7 +17,8 @@ config LOCATION_METHOD_GNSS
 
 config LOCATION_METHOD_CELLULAR
 	bool "Allow cellular positioning to be used for obtaining the location"
-	select MULTICELL_LOCATION
+	select MULTICELL_LOCATION if !LOCATION_METHOD_CELLULAR_EXTERNAL
+	depends on LTE_LINK_CONTROL
 	default y
 
 config LOCATION_METHOD_WIFI
@@ -35,6 +36,9 @@ config LOCATION_METHODS_LIST_SIZE
 	default 3
 	help
 	  Maximum number of location methods within location_config structure.
+
+config LOCATION_DATA_DETAILS
+	bool "Gather and include detailed data into the location_event_data"
 
 config LOCATION_WORKQUEUE_STACK_SIZE
 	int "Stack size for the library work queue"
@@ -76,6 +80,16 @@ config LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_SAT_LIMIT
 	  GNSS acquires satellites more slowly.
 
 endif # LOCATION_METHOD_GNSS
+
+if LOCATION_METHOD_CELLULAR
+
+config LOCATION_METHOD_CELLULAR_EXTERNAL
+	bool "Resolution to neighbor cell information is handled by the application outside of Location library"
+	help
+	  Allow application to request resolution to neighbor cell information and
+	  respond the outcome to the Location library.
+
+endif # LOCATION_METHOD_CELLULAR
 
 if LOCATION_METHOD_WIFI
 

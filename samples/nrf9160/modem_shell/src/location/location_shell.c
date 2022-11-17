@@ -35,8 +35,8 @@ struct gnss_location_work_data {
 
 	enum nrf_cloud_gnss_type format;
 
-	/* Data from LOCATION_EVT_LOCATION: */
-	struct location_data location;
+	/* Data from location event */
+	struct location_event_data loc_evt_data;
 };
 static struct gnss_location_work_data gnss_location_work_data;
 
@@ -167,10 +167,10 @@ static void location_to_cloud_worker(struct k_work *work_item)
 	char *body = NULL;
 
 	/* If the position update was acquired by using GNSS, send it to nRF Cloud. */
-	if (data->location.method == LOCATION_METHOD_GNSS) {
+	if (data->loc_evt_data.method == LOCATION_METHOD_GNSS) {
 		/* Encode json payload in requested format, either NMEA or in PVT*/
 		ret = location_cmd_utils_gnss_loc_to_cloud_payload_json_encode(
-			data->format, &data->location, &body);
+			data->format, &data->loc_evt_data.location, &body);
 		if (ret) {
 			mosh_error("Failed to generate nrf cloud NMEA or PVT, err: %d", ret);
 			goto clean_up;
@@ -237,8 +237,8 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 		mosh_print("Location:");
 		mosh_print(
 			"  used method: %s (%d)",
-			location_method_str(event_data->location.method),
-			event_data->location.method);
+			location_method_str(event_data->method),
+			event_data->method);
 		mosh_print("  latitude: %.06f", event_data->location.latitude);
 		mosh_print("  longitude: %.06f", event_data->location.longitude);
 		mosh_print("  accuracy: %.01f m", event_data->location.accuracy);
@@ -262,7 +262,7 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 		if (gnss_location_to_cloud) {
 			k_work_init(&gnss_location_work_data.work, location_to_cloud_worker);
 
-			gnss_location_work_data.location = event_data->location;
+			gnss_location_work_data.loc_evt_data = *event_data;
 			gnss_location_work_data.format = gnss_location_to_cloud_format;
 			k_work_submit_to_queue(&mosh_common_work_q, &gnss_location_work_data.work);
 		}

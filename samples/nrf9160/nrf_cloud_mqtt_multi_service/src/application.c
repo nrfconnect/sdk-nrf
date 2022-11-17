@@ -109,7 +109,7 @@ cleanup:
  * @param loc_gnss - GNSS location data.
  * @return int - 0 on success, negative error code otherwise.
  */
-static int send_gnss(const struct location_data * const loc_gnss)
+static int send_gnss(const struct location_event_data * const loc_gnss)
 {
 	if (!loc_gnss || (loc_gnss->method != LOCATION_METHOD_GNSS)) {
 		return -EINVAL;
@@ -120,9 +120,9 @@ static int send_gnss(const struct location_data * const loc_gnss)
 		.type = NRF_CLOUD_GNSS_TYPE_PVT,
 		.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
 		.pvt = {
-			.lon		= loc_gnss->longitude,
-			.lat		= loc_gnss->latitude,
-			.accuracy	= loc_gnss->accuracy,
+			.lon		= loc_gnss->location.longitude,
+			.lat		= loc_gnss->location.latitude,
+			.accuracy	= loc_gnss->location.accuracy,
 			.has_alt	= 0,
 			.has_speed	= 0,
 			.has_heading	= 0
@@ -161,14 +161,13 @@ static int send_gnss(const struct location_data * const loc_gnss)
  * @param location_data - The received location update.
  *
  */
-static void on_location_update(const struct location_data * const location_data)
+static void on_location_update(const struct location_event_data * const location_data)
 {
 	LOG_INF("Location Updated: %.06f N %.06f W, accuracy: %.01f m, Method: %s",
-		location_data->latitude, location_data->longitude, location_data->accuracy,
-		location_data->method == LOCATION_METHOD_CELLULAR	? "Cellular" :
-		location_data->method == LOCATION_METHOD_GNSS		? "GNSS"     :
-		location_data->method == LOCATION_METHOD_WIFI		? "WIFI"     :
-									  "Invalid");
+		location_data->location.latitude,
+		location_data->location.longitude,
+		location_data->location.accuracy,
+		location_method_str(location_data->method));
 
 	/* If the position update was derived using GNSS, send it onward to nRF Cloud. */
 	if (location_data->method == LOCATION_METHOD_GNSS) {

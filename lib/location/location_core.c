@@ -33,6 +33,9 @@ static struct location_event_data current_event_data;
 /** Configuration given for currently ongoing location request. */
 static struct location_config current_config;
 
+/** Location method of the currently used method. */
+static int current_method;
+
 /** Index to the current_config.methods for the currently used method. */
 static int current_method_index;
 
@@ -85,6 +88,9 @@ static const struct location_method_api method_gnss_api = {
 	.init             = method_gnss_init,
 	.location_get     = method_gnss_location_get,
 	.cancel           = method_gnss_cancel,
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	.details_get      = method_gnss_details_get,
+#endif
 };
 #endif
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
@@ -95,6 +101,9 @@ static const struct location_method_api method_cellular_api = {
 	.init             = method_cellular_init,
 	.location_get     = method_cellular_location_get,
 	.cancel           = method_cellular_cancel,
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	.details_get      = NULL,
+#endif
 };
 #endif
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
@@ -105,6 +114,9 @@ static const struct location_method_api method_wifi_api = {
 	.init             = method_wifi_init,
 	.location_get     = method_wifi_location_get,
 	.cancel           = method_wifi_cancel,
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	.details_get      = NULL,
+#endif
 };
 #endif
 
@@ -126,7 +138,7 @@ static void location_core_current_event_data_init(enum location_method method)
 {
 	memset(&current_event_data, 0, sizeof(current_event_data));
 
-	current_event_data.location.method = method;
+	current_method = method;
 }
 
 static void location_core_current_config_clear(void)
@@ -390,7 +402,13 @@ void location_core_event_cb_agps_request(const struct nrf_modem_gnss_agps_data_f
 {
 	struct location_event_data agps_request_event_data;
 
+	LOG_DBG("Request A-GPS data from application: ephe 0x%08x, alm 0x%08x, data_flags 0x%02x",
+		request->sv_mask_ephe,
+		request->sv_mask_alm,
+		request->data_flags);
+
 	agps_request_event_data.id = LOCATION_EVT_GNSS_ASSISTANCE_REQUEST;
+	agps_request_event_data.method = LOCATION_METHOD_GNSS;
 	agps_request_event_data.agps_request = *request;
 	event_handler(&agps_request_event_data);
 }
@@ -401,11 +419,83 @@ void location_core_event_cb_pgps_request(const struct gps_pgps_request *request)
 {
 	struct location_event_data pgps_request_event_data;
 
+	LOG_DBG("Request P-GPS data from application: "
+		"prediction_count %d, prediction_period_min %d, gps_day %d, time_of_day %d",
+		request->prediction_count,
+		request->prediction_period_min,
+		request->gps_day,
+		request->gps_time_of_day);
+
 	pgps_request_event_data.id = LOCATION_EVT_GNSS_PREDICTION_REQUEST;
+	pgps_request_event_data.method = LOCATION_METHOD_GNSS;
 	pgps_request_event_data.pgps_request = *request;
 	event_handler(&pgps_request_event_data);
 }
 #endif
+
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
+void location_core_event_cb_cellular_request(struct lte_lc_cells_info *request)
+{
+	struct location_event_data cell_request_event_data;
+
+	cell_request_event_data.id = LOCATION_EVT_CELLULAR_EXT_REQUEST;
+	cell_request_event_data.method = LOCATION_METHOD_CELLULAR;
+	cell_request_event_data.cellular_request = *request;
+	event_handler(&cell_request_event_data);
+}
+
+void location_core_cellular_ext_result_set(
+	enum location_cellular_ext_result result,
+	struct location_data *location)
+{
+	if (k_sem_count_get(&location_core_sem) > 0) {
+		LOG_WRN("Location cellular result set called "
+			"but no location request pending");
+		return;
+	}
+
+	LOG_DBG("Location cellular result set with result=%s",
+		result == LOCATION_CELLULAR_EXT_RESULT_SUCCESS ? "success" :
+		result == LOCATION_CELLULAR_EXT_RESULT_UNKNOWN ? "unknown" : "error");
+
+	current_event_data.method = LOCATION_METHOD_CELLULAR;
+	switch (result) {
+	case LOCATION_CELLULAR_EXT_RESULT_SUCCESS:
+		current_event_data.id = LOCATION_EVT_LOCATION;
+		current_event_data.location = *location;
+		break;
+	case LOCATION_CELLULAR_EXT_RESULT_UNKNOWN:
+		current_event_data.id = LOCATION_EVT_RESULT_UNKNOWN;
+		break;
+	case LOCATION_CELLULAR_EXT_RESULT_ERROR:
+	default:
+		current_event_data.id = LOCATION_EVT_ERROR;
+		break;
+	}
+
+	k_work_submit_to_queue(
+		location_core_work_queue_get(),
+		&location_event_cb_work);
+}
+#endif
+
+static void location_core_event_details_get(struct location_event_data *event)
+{
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	if (location_method_api_get(current_method)->details_get != NULL) {
+
+		struct location_data_details *details;
+
+		if (event->id == LOCATION_EVT_LOCATION) {
+			details = &event->location.details;
+		} else {
+			details = &event->error.details;
+		}
+
+		location_method_api_get(current_method)->details_get(details);
+	}
+#endif
+}
 
 static void location_core_event_cb_fn(struct k_work *work)
 {
@@ -413,10 +503,13 @@ static void location_core_event_cb_fn(struct k_work *work)
 	char longitude_str[12];
 	char accuracy_str[12];
 	enum location_method requested_method;
-	enum location_method previous_method;
 	int err;
 
 	k_work_cancel_delayable(&location_core_method_timeout_work);
+	current_event_data.method = current_method;
+
+	/* Update the event structure with the details of the current method */
+	location_core_event_details_get(&current_event_data);
 
 	if (current_event_data.id == LOCATION_EVT_LOCATION) {
 		/* Location was acquired properly.
@@ -425,8 +518,8 @@ static void location_core_event_cb_fn(struct k_work *work)
 
 		LOG_DBG("Location acquired successfully:");
 		LOG_DBG("  method: %s (%d)", (char *)location_method_api_get(
-			current_event_data.location.method)->method_string,
-			current_event_data.location.method);
+			current_method)->method_string,
+			current_method);
 		/* Logging v1 doesn't support double and float logging. Logging v2 would support
 		 * but that's up to application to configure.
 		 */
@@ -451,7 +544,6 @@ static void location_core_event_cb_fn(struct k_work *work)
 			latitude_str, longitude_str);
 		if (current_config.mode == LOCATION_REQ_MODE_ALL) {
 			/* Get possible next method */
-			previous_method = current_event_data.location.method;
 			current_method_index++;
 			if (current_method_index < current_config.methods_count) {
 				requested_method =
@@ -459,7 +551,7 @@ static void location_core_event_cb_fn(struct k_work *work)
 				LOG_INF("LOCATION_REQ_MODE_ALL: acquired location using '%s', "
 					"trying with '%s' next",
 					(char *)location_method_api_get(
-						previous_method)->method_string,
+						current_method)->method_string,
 					(char *)location_method_api_get(
 						requested_method)->method_string);
 
@@ -480,14 +572,14 @@ static void location_core_event_cb_fn(struct k_work *work)
 		}
 	} else if (execute_fallback) {
 		/* Get possible next method to be run */
-		previous_method = current_event_data.location.method;
 		current_method_index++;
 		if (current_method_index < current_config.methods_count) {
 			requested_method = current_config.methods[current_method_index].method;
 
-			LOG_WRN("Failed to acquire location using '%s', "
-				"trying with '%s' next",
-				(char *)location_method_api_get(previous_method)->method_string,
+			LOG_WRN("Location retrieval %s using '%s', trying with '%s' next",
+				current_event_data.id != LOCATION_EVT_RESULT_UNKNOWN ?
+					"failed" : "completed",
+				(char *)location_method_api_get(current_method)->method_string,
 				(char *)location_method_api_get(requested_method)->method_string);
 
 			if (current_config.mode == LOCATION_REQ_MODE_ALL) {
@@ -502,7 +594,11 @@ static void location_core_event_cb_fn(struct k_work *work)
 				&current_config.methods[current_method_index]);
 			return;
 		}
-		LOG_ERR("Location acquisition failed and fallbacks are also done");
+		if (current_event_data.id != LOCATION_EVT_RESULT_UNKNOWN) {
+			LOG_ERR("Location acquisition failed and fallbacks are also done");
+		} else {
+			LOG_DBG("Location acquisition completed and fallbacks are also done");
+		}
 	}
 
 	event_handler(&current_event_data);

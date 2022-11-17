@@ -12,6 +12,7 @@
 		ant-sel-gpios = <&arduino_header 10 GPIO_ACTIVE_HIGH>; /* D4 */
 		mode-gpios = <&arduino_header 8 GPIO_ACTIVE_HIGH>;     /* D2 */
 		spi-if = <&nrf_radio_fem_spi>;
+		supply-voltage-mv = <3000>;
 	};
 };
 

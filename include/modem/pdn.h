@@ -24,10 +24,10 @@ extern "C" {
 
 /** @brief PDN family */
 enum pdn_fam {
-	PDN_FAM_IPV4   = 0,
-	PDN_FAM_IPV6   = 1,
-	PDN_FAM_IPV4V6 = 2,
-	PDN_FAM_NONIP  = 3,
+	PDN_FAM_IPV4   = 0, /**< IPv4 family */
+	PDN_FAM_IPV6   = 1, /**< IPv6 family */
+	PDN_FAM_IPV4V6 = 2, /**< IPv4 and IPv6 family */
+	PDN_FAM_NONIP  = 3, /**< Non-IP family */
 };
 
 /** @brief Additional PDP Context configuration options */
@@ -55,18 +55,18 @@ struct pdn_pdp_opt {
 
 /** @brief PDN library event */
 enum pdn_event {
-	PDN_EVENT_CNEC_ESM,	/** +CNEC ESM error code */
-	PDN_EVENT_ACTIVATED,	/** PDN connection activated */
-	PDN_EVENT_DEACTIVATED,	/** PDN connection deactivated */
-	PDN_EVENT_IPV6_UP,	/** PDN has IPv6 connectivity */
-	PDN_EVENT_IPV6_DOWN,	/** PDN has lost IPv6 connectivity */
+	PDN_EVENT_CNEC_ESM,	/**< +CNEC ESM error code */
+	PDN_EVENT_ACTIVATED,	/**< PDN connection activated */
+	PDN_EVENT_DEACTIVATED,	/**< PDN connection deactivated */
+	PDN_EVENT_IPV6_UP,	/**< PDN has IPv6 connectivity */
+	PDN_EVENT_IPV6_DOWN,	/**< PDN has lost IPv6 connectivity */
 };
 
 /** @brief PDN authentication method */
 enum pdn_auth {
-	PDN_AUTH_NONE = 0,	/** No authentication */
-	PDN_AUTH_PAP  = 1,	/** Password authentication protocol */
-	PDN_AUTH_CHAP = 2,	/** Challenge handshake authentication protocol */
+	PDN_AUTH_NONE = 0,	/**< No authentication */
+	PDN_AUTH_PAP  = 1,	/**< Password authentication protocol */
+	PDN_AUTH_CHAP = 2,	/**< Challenge handshake authentication protocol */
 };
 
 /**
