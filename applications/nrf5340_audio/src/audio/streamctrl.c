@@ -220,7 +220,6 @@ void streamctrl_encoded_data_send(void const *const data, size_t len)
 	}
 }
 
-
 #if (CONFIG_AUDIO_TEST_TONE)
 #define TEST_TONE_BASE_FREQ_HZ 1000
 
@@ -344,7 +343,7 @@ static void button_evt_handler(struct button_evt event)
 		ret = test_tone_button_press();
 #else
 		ret = le_audio_user_defined_button_press();
-#endif	/*CONFIG_AUDIO_TEST_TONE*/
+#endif /*CONFIG_AUDIO_TEST_TONE*/
 
 		if (ret) {
 			LOG_WRN("Failed button 4 press");

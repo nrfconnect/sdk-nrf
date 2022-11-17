@@ -154,6 +154,12 @@ config SW_CODEC_LC3
 # Leave room for other codecs
 endchoice
 
+config AUDIO_TEST_TONE
+	bool "Tone testing"
+	default n
+	help
+		  Use button 4 to set the test tone
+
 config SW_CODEC_PLC_DISABLED
 	bool "Skip PLC on a bad frame and fill the output buffer(s) with zeros instead"
 	default n
@@ -211,14 +217,6 @@ config WALKIE_TALKIE_DEMO
 	help
 	  The walkie talkie demo will set up a bidirectional stream using PDM
 	  microphones on each side.
-
-config AUDIO_TEST_TONE
-	depends on TRANSPORT_CIS
-	bool "Tone testing"
-	default n
-	help
-	  Use button 4 to set the test tone
-
 
 endmenu # Stream
 

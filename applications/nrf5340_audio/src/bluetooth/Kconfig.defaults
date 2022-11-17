@@ -179,6 +179,9 @@ config BT_SMP
 config BT_PAC_SNK
 	default y
 
+config AUDIO_TEST_TONE
+	default n
+
 endif # AUDIO_DEV = 1 (HEADSET)
 
 # GATEWAY

@@ -26,7 +26,7 @@ BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT <= 2,
 
 struct audio_codec_info {
 	/* Codec ID */
-	uint8_t  id;
+	uint8_t id;
 	/* Codec Company ID */
 	uint16_t cid;
 	/* Codec Company Vendor ID */
@@ -105,7 +105,8 @@ static void get_codec_info(const struct bt_codec *codec, struct audio_codec_info
 		codec_info->frame_duration_us = bt_codec_cfg_get_frame_duration_us(codec);
 		bt_codec_cfg_get_chan_allocation_val(codec, &codec_info->chan_allocation);
 		codec_info->octets_per_sdu = bt_codec_cfg_get_octets_per_frame(codec);
-		codec_info->bitrate = codec_info->octets_per_sdu * 8 * (1000000 / codec_info->frame_duration_us);
+		codec_info->bitrate =
+			codec_info->octets_per_sdu * 8 * (1000000 / codec_info->frame_duration_us);
 		codec_info->blocks_per_sdu = bt_codec_cfg_get_frame_blocks_per_sdu(codec, true);
 	} else {
 		LOG_WRN("Codec is not LC3, codec_id: 0x%2hhx", codec->id);
@@ -269,9 +270,11 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 			if (bitrate_check((struct bt_codec *)&base->subgroups[i].codec)) {
 				base_bis_index_bitfield |= BIT(index);
 
-				audio_streams[sync_stream_cnt].codec = (struct bt_codec *)&base->subgroups[i].codec;
-				get_codec_info(audio_streams[sync_stream_cnt].codec, &audio_codec_info[sync_stream_cnt]);
-				print_codec( &audio_codec_info[sync_stream_cnt]);
+				audio_streams[sync_stream_cnt].codec =
+					(struct bt_codec *)&base->subgroups[i].codec;
+				get_codec_info(audio_streams[sync_stream_cnt].codec,
+					       &audio_codec_info[sync_stream_cnt]);
+				print_codec(&audio_codec_info[sync_stream_cnt]);
 
 				LOG_DBG("Stream %u in subgroup %d from broadcast sink",
 					sync_stream_cnt, i);
@@ -299,7 +302,8 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 		ERR_CHK(ret);
 
 		LOG_DBG("Channel %s active from bit mask %u",
-			((active_stream_index == AUDIO_CH_L) ? CH_L_TAG : CH_R_TAG), bis_index_bitfield);
+			((active_stream_index == AUDIO_CH_L) ? CH_L_TAG : CH_R_TAG),
+			bis_index_bitfield);
 		LOG_DBG("Waiting for syncable");
 	} else {
 		LOG_WRN("Found no suitable stream");
@@ -324,7 +328,8 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 	LOG_INF("Syncing to broadcast stream %u", active_stream_index);
 	bis_index_bitfield = BIT(active_stream_index + 1);
 
-	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, audio_streams_p, NULL);
+	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, audio_streams_p,
+					   NULL);
 	if (ret) {
 		LOG_WRN("Unable to sync to broadcast source, ret: %d", ret);
 		return;
@@ -445,7 +450,7 @@ int le_audio_user_defined_button_press(void)
 	if (ret) {
 		LOG_WRN("Failed to start playing");
 	}
-	
+
 	LOG_DBG("Changed to stream %u", stream_index);
 
 	return ret;

@@ -229,8 +229,9 @@ static int initialize(void)
 
 	LOG_DBG("Creating broadcast source");
 
-	ret = bt_audio_broadcast_source_create(audio_streams_p, ARRAY_SIZE(audio_streams_p), &lc3_preset.codec,
-					       &lc3_preset.qos, &broadcast_source);
+	ret = bt_audio_broadcast_source_create(audio_streams_p, ARRAY_SIZE(audio_streams_p),
+					       &lc3_preset.codec, &lc3_preset.qos,
+					       &broadcast_source);
 	if (ret) {
 		LOG_ERR("Failed to create broadcast source, ret: %d", ret);
 		return ret;
