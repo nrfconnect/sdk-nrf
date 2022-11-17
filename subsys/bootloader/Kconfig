@@ -169,7 +169,7 @@ config PM_PARTITION_SIZE_PROVISION
 	default 0x280 if SOC_NRF9160 || SOC_NRF5340_CPUAPP # Stored in OTP region
 	default 0x280 if SOC_NRF5340_CPUNET # Second instance stored in internal flash of NET
 	default FPROTECT_BLOCK_SIZE
-	prompt "Flash space reserved for PROVISION" if !(SOC_NRF9160 || SOC_NRF5340_CPUAPP)
+	prompt "Flash space reserved for PROVISION"
 	help
 	  Flash space set aside for the PROVISION partition.
 
