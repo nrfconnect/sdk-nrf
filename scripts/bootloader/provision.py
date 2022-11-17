@@ -16,6 +16,7 @@ import os
 # Size of LCS storage and implementation ID in OTP in bytes
 LCS_STATE_SIZE = 0x8
 IMPLEMENTATION_ID_SIZE = 0x20
+NUM_BYTES_PROVISIONED_ELSEWHERE = LCS_STATE_SIZE + IMPLEMENTATION_ID_SIZE
 
 def generate_provision_intel_hex_file(provision_data, prov_offset, output_file):
     ih = IntelHex()
@@ -126,9 +127,11 @@ def main():
     s0_address = args.s0_addr
     s1_address = args.s1_addr if args.s1_addr is not None else s0_address
 
-    # The LCS is stored in the OTP before the rest of the provisioning
-    # data so add it to the given base address
-    provision_address = args.provision_addr + LCS_STATE_SIZE + IMPLEMENTATION_ID_SIZE
+    # The LCS and implementation ID is stored in the OTP before the
+    # rest of the provisioning data so add it to the given base
+    # address
+    provision_address = args.provision_addr + NUM_BYTES_PROVISIONED_ELSEWHERE
+    max_size          = args.max_size       - NUM_BYTES_PROVISIONED_ELSEWHERE
 
     hashes = []
     if args.public_key_files:
@@ -143,7 +146,7 @@ def main():
                                 hashes=hashes,
                                 provision_address=provision_address,
                                 output=args.output,
-                                max_size=args.max_size,
+                                max_size=max_size,
                                 num_counter_slots_version=args.num_counter_slots_version,
                                 mcuboot_counters_slots=args.mcuboot_counters_slots)
 
