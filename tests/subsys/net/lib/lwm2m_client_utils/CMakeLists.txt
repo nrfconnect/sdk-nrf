@@ -32,6 +32,8 @@ set(options
   -DCONFIG_DOWNLOAD_CLIENT_STACK_SIZE=4096
   -DCONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT
   -DCONFIG_LWM2M_FIRMWARE_UPDATE_PULL_SUPPORT
+  -DCONFIG_DFU_TARGET_MCUBOOT
+  -DCONFIG_LWM2M_CLIENT_UTILS_MCUBOOT_FLASH_BUF_SIZE=512
   -DCONFIG_LTE_PTW_VALUE_NBIOT="0000"
   -DCONFIG_LTE_EDRX_REQ_VALUE_NBIOT="0010"
 )
@@ -48,6 +50,7 @@ target_compile_options(..__nrf__subsys__net__lib__lwm2m_client_utils
 set(includes
 "$ENV{ZEPHYR_BASE}/subsys/net/lib/lwm2m/"
 "$ENV{ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/"
+"src/"
 )
 
 target_include_directories(..__nrf__subsys__net__lib__lwm2m_client_utils
