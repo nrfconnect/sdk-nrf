@@ -1167,3 +1167,194 @@ out:
 
 	return status;
 }
+
+enum wifi_nrf_status wifi_nrf_parse_sband(
+	struct nrf_wifi_event_supported_band *event,
+	struct wpa_supp_event_supported_band *band
+	)
+{
+	int count;
+
+	memset(band, 0, sizeof(*band));
+
+	band->wpa_supp_n_channels = event->nrf_wifi_n_channels;
+	band->wpa_supp_n_bitrates = event->nrf_wifi_n_bitrates;
+
+	for (count = 0; count < band->wpa_supp_n_channels; count++) {
+		struct wpa_supp_event_channel *chan = &band->channels[count];
+
+		if (count >= WPA_SUPP_SBAND_MAX_CHANNELS) {
+			LOG_ERR("%s: Failed to add channel\n", __func__);
+			break;
+		}
+
+		chan->wpa_supp_flags = event->channels[count].nrf_wifi_flags;
+		chan->wpa_supp_max_power = event->channels[count].nrf_wifi_max_power;
+		chan->wpa_supp_time = event->channels[count].nrf_wifi_time;
+		chan->dfs_cac_msec = event->channels[count].dfs_cac_msec;
+		chan->ch_valid = event->channels[count].ch_valid;
+		chan->center_frequency = event->channels[count].center_frequency;
+		chan->dfs_state = event->channels[count].dfs_state;
+	}
+
+	for (count = 0; count < band->wpa_supp_n_bitrates; count++) {
+		struct wpa_supp_event_rate *rate = &band->bitrates[count];
+
+		if (count >= WPA_SUPP_SBAND_MAX_RATES) {
+			LOG_ERR("%s: Failed to add bitrate\n", __func__);
+			break;
+		}
+
+		rate->wpa_supp_flags = event->bitrates[count].nrf_wifi_flags;
+		rate->wpa_supp_bitrate = event->bitrates[count].nrf_wifi_bitrate;
+	}
+
+	band->ht_cap.wpa_supp_ht_supported = event->ht_cap.nrf_wifi_ht_supported;
+	band->ht_cap.wpa_supp_cap = event->ht_cap.nrf_wifi_cap;
+	band->ht_cap.mcs.wpa_supp_rx_highest = event->ht_cap.mcs.nrf_wifi_rx_highest;
+
+	for (count = 0; count < WPA_SUPP_HT_MCS_MASK_LEN; count++) {
+		band->ht_cap.mcs.wpa_supp_rx_mask[count] =
+			event->ht_cap.mcs.nrf_wifi_rx_mask[count];
+	}
+
+	band->ht_cap.mcs.wpa_supp_tx_params = event->ht_cap.mcs.nrf_wifi_tx_params;
+
+	for (count = 0; count < NRF_WIFI_HT_MCS_RES_LEN; count++) {
+
+		if (count >= WPA_SUPP_HT_MCS_RES_LEN) {
+			LOG_ERR("%s: Failed to add reserved bytes\n", __func__);
+			break;
+		}
+
+		band->ht_cap.mcs.wpa_supp_reserved[count] =
+			event->ht_cap.mcs.nrf_wifi_reserved[count];
+	}
+
+	band->ht_cap.wpa_supp_ampdu_factor = event->ht_cap.nrf_wifi_ampdu_factor;
+	band->ht_cap.wpa_supp_ampdu_density = event->ht_cap.nrf_wifi_ampdu_density;
+
+	band->vht_cap.wpa_supp_vht_supported = event->vht_cap.nrf_wifi_vht_supported;
+	band->vht_cap.wpa_supp_cap = event->vht_cap.nrf_wifi_cap;
+
+	band->vht_cap.vht_mcs.rx_mcs_map = event->vht_cap.vht_mcs.rx_mcs_map;
+	band->vht_cap.vht_mcs.rx_highest = event->vht_cap.vht_mcs.rx_highest;
+	band->vht_cap.vht_mcs.tx_mcs_map = event->vht_cap.vht_mcs.tx_mcs_map;
+	band->vht_cap.vht_mcs.tx_highest = event->vht_cap.vht_mcs.tx_highest;
+
+	band->band = event->band;
+
+	return WLAN_STATUS_SUCCESS;
+}
+
+void wifi_nrf_wpa_supp_event_get_wiphy(void *if_priv,
+		struct nrf_wifi_event_get_wiphy *wiphy_info,
+		unsigned int event_len)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wpa_supp_event_supported_band band;
+
+	if (!if_priv || !wiphy_info || !event_len) {
+		LOG_ERR("%s: Invalid parameters\n", __func__);
+		return;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	memset(&band, 0, sizeof(band));
+
+	for (int i = 0; i < NRF_WIFI_EVENT_GET_WIPHY_NUM_BANDS; i++) {
+		if (wifi_nrf_parse_sband(&wiphy_info->sband[i], &band) != WLAN_STATUS_SUCCESS) {
+			break;
+		}
+		vif_ctx_zep->supp_callbk_fns.get_wiphy_res(vif_ctx_zep->supp_drv_if_ctx,
+							   &band);
+	}
+
+	vif_ctx_zep->supp_callbk_fns.get_wiphy_res(vif_ctx_zep->supp_drv_if_ctx, NULL);
+}
+
+int wifi_nrf_supp_get_wiphy(void *if_priv)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+
+	if (!if_priv) {
+		LOG_ERR("%s: Missing interface context\n", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	status = wifi_nrf_fmac_get_wiphy(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_get_wiphy failed\n", __func__);
+		goto out;
+	}
+out:
+	return status;
+}
+
+int wifi_nrf_supp_register_frame(void *if_priv,
+			u16 type, const u8 *match, size_t match_len,
+			bool multicast)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_umac_mgmt_frame_info frame_info;
+
+	if (!if_priv || !match || !match_len) {
+		LOG_ERR("%s: Invalid parameters\n", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	memset(&frame_info, 0, sizeof(frame_info));
+
+	frame_info.frame_type = type;
+	frame_info.frame_match.frame_match_len = match_len;
+	os_memcpy(frame_info.frame_match.frame_match, match, match_len);
+
+	status = wifi_nrf_fmac_register_frame(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
+			&frame_info);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		LOG_ERR("%s: wifi_nrf_fmac_register_frame failed\n", __func__);
+		goto out;
+	}
+out:
+	return status;
+}
+
+void wifi_nrf_wpa_supp_event_mgmt_rx_callbk_fn(void *if_priv,
+					       struct nrf_wifi_umac_event_mlme *mlme_event,
+					       unsigned int event_len)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	if (!if_priv) {
+		LOG_ERR("%s: Missing interface context\n", __func__);
+		return;
+	}
+
+	vif_ctx_zep = if_priv;
+
+	if (!mlme_event || !event_len) {
+		LOG_ERR("%s: Missing MLME event data\n", __func__);
+		return;
+	}
+
+	vif_ctx_zep->supp_callbk_fns.mgmt_rx(vif_ctx_zep->supp_drv_if_ctx,
+			mlme_event->frame.frame,
+			mlme_event->frame.frame_len,
+			mlme_event->frequency,
+			mlme_event->rx_signal_dbm);
+}

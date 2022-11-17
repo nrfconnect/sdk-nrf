@@ -398,6 +398,17 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 					      __func__,
 					      umac_hdr->cmd_evnt);
 		break;
+	case NRF_WIFI_UMAC_EVENT_NEW_WIPHY:
+		if (callbk_fns->event_get_wiphy)
+			callbk_fns->event_get_wiphy(vif_ctx->os_vif_ctx,
+						    event_data,
+						    event_len);
+		else
+			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+					      "%s: No callback registered for event %d\n",
+					      __func__,
+					      umac_hdr->cmd_evnt);
+		break;
 	case NRF_WIFI_UMAC_EVENT_CMD_STATUS:
 	case NRF_WIFI_UMAC_EVENT_BEACON_HINT:
 	case NRF_WIFI_UMAC_EVENT_CONNECT:

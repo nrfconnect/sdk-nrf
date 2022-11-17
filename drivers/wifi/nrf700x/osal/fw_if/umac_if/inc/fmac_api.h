@@ -859,6 +859,34 @@ enum wifi_nrf_status wifi_nrf_fmac_set_wowlan(void *fmac_dev_ctx,
 					      unsigned int var);
 
 /**
+ * wifi_nrf_fmac_get_wiphy() - Get PHY configuration.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: Index of the interface on which the CMD needs to be sent.
+ *
+ * This function is used to get PHY configuration from RPU.
+ *
+ * Returns: Status
+ *		Pass: %WIFI_NRF_STATUS_SUCCESS
+ *		Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_get_wiphy(void *fmac_dev_ctx, unsigned char if_idx);
+
+/**
+ * wifi_nrf_fmac_register_frame() - Register to get MGMT frames.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: Index of the interface on which the CMD needs to be sent.
+ * @frame_info: Information regarding the management frame.
+ *
+ * Register with RPU to receive MGMT frames.
+ *
+ * Returns: Status
+ *		Pass: %WIFI_NRF_STATUS_SUCCESS
+ *		Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_register_frame(void *dev_ctx, unsigned char if_idx,
+						  struct nrf_wifi_umac_mgmt_frame_info *frame_info);
+
+/**
  * wifi_nrf_fmac_set_wiphy_params() - set wiphy parameters
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @wiphy_info: wiphy parameters
