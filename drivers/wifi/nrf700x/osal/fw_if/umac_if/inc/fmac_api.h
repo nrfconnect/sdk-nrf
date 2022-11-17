@@ -874,6 +874,40 @@ enum wifi_nrf_status wifi_nrf_fmac_set_wowlan(void *fmac_dev_ctx,
 enum wifi_nrf_status wifi_nrf_fmac_set_wiphy_params(void *fmac_dev_ctx,
 						 unsigned char if_idx,
 						 struct nrf_wifi_umac_set_wiphy_info *wiphy_info);
+
+/**
+ * wifi_nrf_fmac_twt_setup() - TWT setup command
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: Index of the interface on which the TWT parameters be set.
+ * @twt_info: TWT parameters
+ *
+ * This function is used to send a command
+ * to RPU to configure parameters relted to TWT setup.
+ *
+ * Returns: Status
+ *              Pass: %WIFI_NRF_STATUS_SUCCESS
+ *              Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_twt_setup(void *fmac_dev_ctx,
+					     unsigned char if_idx,
+					     struct nrf_wifi_umac_config_twt_info *twt_info);
+
+/**
+ * wifi_nrf_fmac_twt_teardown() - TWT teardown command
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: Index of the interface on which the TWT parameters be set.
+ * @twt_info: TWT parameters
+ *
+ * This function is used to send a command
+ * to RPU to tear down an existing TWT session.
+ *
+ * Returns: Status
+ *              Pass: %WIFI_NRF_STATUS_SUCCESS
+ *              Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_twt_teardown(void *fmac_dev_ctx,
+						unsigned char if_idx,
+						struct nrf_wifi_umac_config_twt_info *twt_info);
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 

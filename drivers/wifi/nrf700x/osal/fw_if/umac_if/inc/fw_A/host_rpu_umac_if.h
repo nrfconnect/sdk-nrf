@@ -149,10 +149,8 @@
 #define NRF_WIFI_UMAC_CMD_GET_REG 44
 #define NRF_WIFI_UMAC_CMD_SET_REG 45
 #define NRF_WIFI_UMAC_CMD_REQ_SET_REG 46
-#ifdef TWT_SUPPORT
 #define NRF_WIFI_UMAC_CMD_CONFIG_TWT 47
 #define NRF_WIFI_UMAC_CMD_TEARDOWN_TWT 48
-#endif
 #define NRF_WIFI_UMAC_CMD_CONFIG_UAPSD 49
 #define NRF_WIFI_UMAC_CMD_ABORT_SCAN 50
 
@@ -244,10 +242,8 @@
 #define NRF_WIFI_UMAC_EVENT_WIPHY_REG_CHANGE 290
 #define NRF_WIFI_UMAC_EVENT_SCAN_DISPLAY_RESULT 291
 #define NRF_WIFI_UMAC_EVENT_CMD_STATUS 292
-#ifdef TWT_SUPPORT
 #define NRF_WIFI_UMAC_EVENT_CONFIG_TWT 293
 #define NRF_WIFI_UMAC_EVENT_TEARDOWN_TWT 294
-#endif
 
 /**
  * enum nrf_wifi_band - Frequency band.
@@ -2506,7 +2502,6 @@ struct nrf_wifi_umac_cmd_get_channel {
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
-#ifdef TWT_SUPPORT
 #define NRF_WIFI_TWT_NEGOTIATION_TYPE_INDIVIDUAL 0
 #define NRF_WIFI_TWT_NEGOTIATION_TYPE_BROADCAST 2
 
@@ -2580,14 +2575,19 @@ struct nrf_wifi_umac_cmd_config_twt {
 	struct nrf_wifi_umac_config_twt_info info;
 } __NRF_WIFI_PKD;
 
+#define INVALID_TIME 1
+#define TRIGGER_NOT_RECEIVED 2
+
 /**
  * struct nrf_wifi_umac_teardown_twt_info - delete TWT params info.
  * @twt_flow_id: TWT flow Id.
+ * @reason_code: reason for teardown.
  * This structure represents the command provides TWT delete information.
  */
 
 struct nrf_wifi_umac_teardown_twt_info {
 	unsigned char twt_flow_id;
+	unsigned char reason_code;
 } __NRF_WIFI_PKD;
 
 /**
@@ -2601,7 +2601,29 @@ struct nrf_wifi_umac_cmd_teardown_twt {
 	struct nrf_wifi_umac_hdr umac_hdr;
 	struct nrf_wifi_umac_teardown_twt_info info;
 } __NRF_WIFI_PKD;
-#endif
+
+#define TWT_BLOCK_TX 0
+#define TWT_UNBLOCK_TX 1
+/**
+ * struct twt_sleep_info- TWT sleep information
+ * @type: value for blocking/unblocking TX
+ * @info: refer to struct twt_sleep_info
+ */
+struct twt_sleep_info {
+	unsigned int type;
+} __NRF_WIFI_PKD;
+
+/**
+ * struct nrf_wifi_umac_event_twt_sleep- TWT sleep information
+ * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
+ * @info: refer to struct twt_sleep_info
+ */
+
+struct nrf_wifi_umac_event_twt_sleep {
+	struct nrf_wifi_umac_hdr umac_hdr;
+	struct twt_sleep_info info;
+} __NRF_WIFI_PKD;
+
 /**
  * struct nrf_wifi_umac_event_trigger_scan - Scan complete event
  * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.

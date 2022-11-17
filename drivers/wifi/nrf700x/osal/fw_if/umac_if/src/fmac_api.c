@@ -3160,4 +3160,98 @@ out:
 
 	return status;
 }
+
+
+enum wifi_nrf_status wifi_nrf_fmac_twt_setup(void *dev_ctx,
+					     unsigned char if_idx,
+					     struct nrf_wifi_umac_config_twt_info *twt_params)
+{
+
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_umac_cmd_config_twt *twt_setup_cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	if (!dev_ctx || !twt_params) {
+		goto out;
+	}
+
+	fmac_dev_ctx = dev_ctx;
+
+	twt_setup_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+						 sizeof(*twt_setup_cmd));
+
+	if (!twt_setup_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+
+	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+			      &twt_setup_cmd->info,
+			      twt_params,
+			      sizeof(twt_setup_cmd->info));
+
+	twt_setup_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_CONFIG_TWT;
+	twt_setup_cmd->umac_hdr.ids.wdev_id = if_idx;
+	twt_setup_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      twt_setup_cmd,
+			      sizeof(*twt_setup_cmd));
+out:
+	if (twt_setup_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       twt_setup_cmd);
+	}
+
+	return status;
+}
+
+
+enum wifi_nrf_status wifi_nrf_fmac_twt_teardown(void *dev_ctx,
+						unsigned char if_idx,
+						struct nrf_wifi_umac_config_twt_info *twt_params)
+{
+
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_umac_cmd_teardown_twt *twt_teardown_cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	if (!dev_ctx || !twt_params) {
+		goto out;
+	}
+
+	fmac_dev_ctx = dev_ctx;
+
+	twt_teardown_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+						    sizeof(*twt_teardown_cmd));
+
+	if (!twt_teardown_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+
+	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+			      &twt_teardown_cmd->info,
+			      twt_params,
+			      sizeof(twt_teardown_cmd->info));
+
+	twt_teardown_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_TEARDOWN_TWT;
+	twt_teardown_cmd->umac_hdr.ids.wdev_id = if_idx;
+	twt_teardown_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      twt_teardown_cmd,
+			      sizeof(*twt_teardown_cmd));
+out:
+	if (twt_teardown_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       twt_teardown_cmd);
+	}
+
+	return status;
+}
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
