@@ -166,12 +166,15 @@ endif # SECURE_BOOT
 
 config PM_PARTITION_SIZE_PROVISION
 	hex
-	default 0x280 if SOC_NRF9160 || SOC_NRF5340_CPUAPP # Stored in OTP region
-	default 0x280 if SOC_NRF5340_CPUNET # Second instance stored in internal flash of NET
+	# Stored in OTP region. 91 and 53 has 0x2F8 and 0x300 bytes of OTP
+	# respectively. We use nearly all of it for provisioning to be
+	# able to do as many firmware version updates as possible. But
+	# leave a few bytes in case there are other users.
+	default 0x2F0 if SOC_NRF9160 || SOC_NRF5340_CPUAPP
+	# Second instance stored in internal flash of NET
+	default 0x280 if SOC_NRF5340_CPUNET
 	default FPROTECT_BLOCK_SIZE
 	prompt "Flash space reserved for PROVISION"
-	help
-	  Flash space set aside for the PROVISION partition.
 
 config B0_MIN_PARTITION_SIZE
 	bool "Use minimimum partition size"
