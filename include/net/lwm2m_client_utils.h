@@ -227,6 +227,24 @@ int lwm2m_rai_no_data(void);
  */
 int lwm2m_rai_last(void);
 
+/* Advanced firmare object support */
+uint8_t lwm2m_adv_firmware_get_update_state(uint16_t obj_inst_id);
+void lwm2m_adv_firmware_set_update_state(uint16_t obj_inst_id, uint8_t state);
+uint8_t lwm2m_adv_firmware_get_update_result(uint16_t obj_inst_id);
+void lwm2m_adv_firmware_set_update_result(uint16_t obj_inst_id, uint8_t result);
+void lwm2m_adv_firmware_set_write_cb(uint16_t obj_inst_id, lwm2m_engine_set_data_cb_t cb);
+lwm2m_engine_set_data_cb_t lwm2m_adv_firmware_get_write_cb(uint16_t obj_inst_id);
+void lwm2m_adv_firmware_set_update_cb(uint16_t obj_inst_id, lwm2m_engine_execute_cb_t cb);
+lwm2m_engine_execute_cb_t lwm2m_adv_firmware_get_update_cb(uint16_t obj_inst_id);
+int lwm2m_adv_firmware_create_inst(const char *component,
+				   lwm2m_engine_set_data_cb_t write_callback,
+				   lwm2m_engine_execute_cb_t update_callback);
+
+#define LWM2M_OBJECT_ADV_FIRMWARE_ID 33629
+#define LWM2M_ADV_FOTA_CANCELLED 10
+#define LWM2M_ADV_FOTA_DEFERRED 11
+#define LWM2M_ADV_FOTA_CURRENT_VERSION_ID 15
+
 #ifdef __cplusplus
 }
 #endif
