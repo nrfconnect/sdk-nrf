@@ -221,20 +221,13 @@ void streamctrl_encoded_data_send(void const *const data, size_t len)
 }
 
 
-#if (CONFIG_AUDIO_TEST_STREAM_SWITCHING)
-static le_audio_button_pressed_cb user_defined_button4_press = le_audio_switch_sync_stream_cb;
-#else
+#if (CONFIG_AUDIO_TEST_TONE)
 #define TEST_TONE_BASE_FREQ_HZ 1000
 
-static int test_tone_button_press_cb(void)
+static int test_tone_button_press(void)
 {
 	int ret = 0;
 	static uint32_t test_tone_hz;
-
-	if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
-		LOG_DBG("Test tone not supported in walkie-talkie mode");
-		return false;
-	}
 
 	if (CONFIG_AUDIO_BIT_DEPTH_BITS != 16) {
 		LOG_WRN("Tone gen only supports 16 bits");
@@ -262,9 +255,7 @@ static int test_tone_button_press_cb(void)
 
 	return ret;
 }
-
-static le_audio_button_pressed_cb user_defined_button4_press = test_tone_button_press_cb;
-#endif /* (CONFIG_AUDIO_TEST_STREAM_SWITCHING) */
+#endif /* (CONFIG_AUDIO_TEST_TONE) */
 
 /* Handle button activity events */
 static void button_evt_handler(struct button_evt event)
@@ -349,12 +340,15 @@ static void button_evt_handler(struct button_evt event)
 			break;
 		}
 
-		if (user_defined_button4_press != NULL) {
-			ret = le_audio_user_defined_button_press(user_defined_button4_press);
-			if (ret) {
-				LOG_WRN("Failed user defined button press");
-				break;
-			}
+#if (CONFIG_AUDIO_TEST_TONE)
+		ret = test_tone_button_press();
+#else
+		ret = le_audio_user_defined_button_press();
+#endif	/*CONFIG_AUDIO_TEST_TONE*/
+
+		if (ret) {
+			LOG_WRN("Failed button 4 press");
+			break;
 		}
 		break;
 

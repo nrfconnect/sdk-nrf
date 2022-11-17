@@ -19,7 +19,7 @@
 LOG_MODULE_REGISTER(bis_gateway, CONFIG_BLE_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 2,
-	     "A maximum of two streams are currently supported");
+	     "A maximum of two audio streams are currently supported");
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 
@@ -222,14 +222,14 @@ static int initialize(void)
 		return -EALREADY;
 	}
 
-	for (int i = 0; i < ARRAY_SIZE(streams); i++) {
-		streams_p[i] = &streams[i];
-		streams[i].ops = &stream_ops;
+	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+		audio_streams_p[i] = &audio_streams[i];
+		audio_streams[i].ops = &stream_ops;
 	}
 
 	LOG_DBG("Creating broadcast source");
 
-	ret = bt_audio_broadcast_source_create(streams_p, ARRAY_SIZE(streams_p), &lc3_preset.codec,
+	ret = bt_audio_broadcast_source_create(audio_streams_p, ARRAY_SIZE(audio_streams_p), &lc3_preset.codec,
 					       &lc3_preset.qos, &broadcast_source);
 	if (ret) {
 		LOG_ERR("Failed to create broadcast source, ret: %d", ret);
@@ -248,25 +248,15 @@ static int initialize(void)
 	return 0;
 }
 
+int le_audio_user_defined_button_press(void)
+{
+	return 0;
+}
+
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 {
 	LOG_WRN("Not possible to get config on broadcast source");
 	return -ENXIO;
-}
-
-int le_audio_set_active_stream(unsigned int new_active_stream_index)
-{
-	return 0;
-}
-
-int le_audio_get_active_stream(unsigned int *new_active_stream_index)
-{
-	return 0;
-}
-
-unsigned int le_audio_get_number_streams(void)
-{
-	return 0;
 }
 
 int le_audio_volume_up(void)
