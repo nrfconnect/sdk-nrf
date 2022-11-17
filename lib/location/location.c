@@ -132,6 +132,7 @@ static void location_config_method_defaults_set(
 		method->gnss.accuracy = LOCATION_ACCURACY_NORMAL;
 		method->gnss.num_consecutive_fixes = 3;
 		method->gnss.visibility_detection = false;
+		method->gnss.priority_mode = false;
 	} else if (method_type == LOCATION_METHOD_CELLULAR) {
 		method->cellular.timeout = 30 * MSEC_PER_SEC;
 		method->cellular.service = LOCATION_SERVICE_ANY;

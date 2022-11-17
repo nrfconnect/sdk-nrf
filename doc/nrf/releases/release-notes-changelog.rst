@@ -543,6 +543,7 @@ Modem libraries
 
   * Added:
     * MQTT support for nRF Cloud Wi-Fi positioning.
+    * Improved LTE - GNSS interworking and added possibility to trigger GNSS priority mode if GNSS does not get long enough time windows due to LTE idle mode operations.
 
 * :ref:`lte_lc_readme` library:
 

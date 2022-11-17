@@ -58,7 +58,7 @@ static const char location_get_usage_str[] =
 	"[--timeout <msecs>] [--interval <secs>]\n"
 	"[--gnss_accuracy <acc>] [--gnss_num_fixes <number of fixes>]\n"
 	"[--gnss_timeout <timeout in msecs>] [--gnss_visibility]\n"
-	"[--gnss_cloud_nmea] [--gnss_cloud_pvt]\n"
+	"[--gnss_priority] [--gnss_cloud_nmea] [--gnss_cloud_pvt]\n"
 	"[--cellular_timeout <timeout in msecs>] [--cellular_service <service_string>]\n"
 	"[--wifi_timeout <timeout in msecs>] [--wifi_service <service_string>]\n"
 	"Options:\n"
@@ -75,6 +75,7 @@ static const char location_get_usage_str[] =
 	"                      set to 'high', default: 3)\n"
 	"  --gnss_timeout,     GNSS timeout in milliseconds. Zero means timeout is disabled.\n"
 	"  --gnss_visibility,  Enables GNSS obstructed visibility detection\n"
+	"  --gnss_priority,    Enables GNSS priority mode\n"
 	"  --gnss_cloud_nmea,  Send acquired GNSS location to nRF Cloud formatted as NMEA\n"
 	"  --gnss_cloud_pvt,   Send acquired GNSS location to nRF Cloud formatted as PVT\n"
 	"  --cellular_timeout, Cellular timeout in milliseconds. Zero means timeout is disabled.\n"
@@ -94,6 +95,7 @@ enum {
 	LOCATION_SHELL_OPT_GNSS_TIMEOUT,
 	LOCATION_SHELL_OPT_GNSS_NUM_FIXES,
 	LOCATION_SHELL_OPT_GNSS_VISIBILITY,
+	LOCATION_SHELL_OPT_GNSS_PRIORITY_MODE,
 	LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_NMEA,
 	LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT,
 	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT,
@@ -112,6 +114,7 @@ static struct option long_options[] = {
 	{ "gnss_timeout", required_argument, 0, LOCATION_SHELL_OPT_GNSS_TIMEOUT },
 	{ "gnss_num_fixes", required_argument, 0, LOCATION_SHELL_OPT_GNSS_NUM_FIXES },
 	{ "gnss_visibility", no_argument, 0, LOCATION_SHELL_OPT_GNSS_VISIBILITY },
+	{ "gnss_priority", no_argument, 0, LOCATION_SHELL_OPT_GNSS_PRIORITY_MODE },
 	{ "gnss_cloud_nmea", no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_NMEA },
 	{ "gnss_cloud_pvt", no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT },
 	{ "cellular_timeout", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
@@ -345,6 +348,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 	bool gnss_visibility = false;
 
+	bool gnss_priority_mode = false;
+
 	int cellular_timeout = 0;
 	bool cellular_timeout_set = false;
 	enum location_service cellular_service = LOCATION_SERVICE_ANY;
@@ -470,6 +475,10 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			gnss_visibility = true;
 			break;
 
+		case LOCATION_SHELL_OPT_GNSS_PRIORITY_MODE:
+			gnss_priority_mode = true;
+			break;
+
 		case LOCATION_SHELL_OPT_MODE:
 			if (strcmp(optarg, "fallback") == 0) {
 				req_mode = LOCATION_REQ_MODE_FALLBACK;
@@ -551,6 +560,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 						gnss_num_fixes;
 				}
 				config.methods[i].gnss.visibility_detection = gnss_visibility;
+				config.methods[i].gnss.priority_mode = gnss_priority_mode;
 			} else if (config.methods[i].method == LOCATION_METHOD_CELLULAR) {
 				config.methods[i].cellular.service = cellular_service;
 				if (cellular_timeout_set) {

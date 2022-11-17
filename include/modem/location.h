@@ -267,6 +267,24 @@ struct location_gnss_config {
 	 * @note Only supported with modem firmware v1.3.2 or later.
 	 */
 	bool visibility_detection;
+
+	/**
+	 * @brief Enable GNSS priority mode if GNSS does not get enough runtime due to LTE idle mode
+	 * operations.
+	 *
+	 * @details If set to true, the library triggers GNSS priority mode if five consecutive PVT
+	 * messages indicate that GNSS is blocked by LTE idle mode operations. This is especially
+	 * helpful if A-GPS or P-GPS is not enabled or downloading assistance data fails and GNSS
+	 * module has to decode navigation data from the satellite broadcast. Priority mode is
+	 * disabled automatically after the first fix or after 40 seconds.
+	 *
+	 * If the device attempts to send data during the priority mode, it will be buffered and
+	 * sent after the priority time window ends. In case of mobile terminated data reception
+	 * during the priority mode the network will typically buffer the data and sent them to the
+	 * device once the priority time window ends. However, it is possible that the network drops
+	 * the data, or some protocol timer expires causing data transfer to fail.
+	 */
+	bool priority_mode;
 };
 
 /** LTE cellular positioning configuration. */
