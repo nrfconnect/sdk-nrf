@@ -75,7 +75,7 @@ config LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT
 config LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
 	bool "Firmware Update object support"
 	default y
-	select LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT if !ZTEST
+	select LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT if (!LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT && !ZTEST)
 	select DFU_TARGET
 	select BOOTLOADER_MCUBOOT if !ZTEST
 	select IMG_MANAGER
@@ -108,6 +108,15 @@ config LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG
 	  -1 disables the usage of security tag.
 
 endif # LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT
+	bool "Advanced Firmware Update object support (EXPERIMENTAL)"
+	default n
+	select EXPERIMENTAL
+	help
+	  This is a non standard Advanced Firmware Update object which is still
+	  under development. Server support might be lacking and the implementation
+	  might not match latest specification from OMA working group.
 
 config LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT
 	bool "Support ground fix object"
