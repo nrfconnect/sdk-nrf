@@ -87,7 +87,7 @@ static struct gps_pgps_request pgps_request;
 static bool running;
 static struct location_gnss_config gnss_config;
 static K_SEM_DEFINE(entered_psm_mode, 0, 1);
-static K_SEM_DEFINE(entered_rrc_idle, 0, 1);
+static K_SEM_DEFINE(entered_rrc_idle, 1, 1);
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 static struct nrf_modem_gnss_agps_data_frame agps_request;
@@ -109,6 +109,10 @@ static struct k_work method_gnss_pgps_ext_work;
 static void method_gnss_pgps_ext_work_fn(struct k_work *item);
 #endif
 
+/* Count of consecutive NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME flags in PVT data. Used for
+ * triggering GNSS priority mode if enabled.
+ */
+static int insuf_timewin_count;
 static int fixes_remaining;
 
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
@@ -610,9 +614,11 @@ static uint8_t method_gnss_tracked_satellites(const struct nrf_modem_gnss_pvt_da
 
 static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
-	LOG_DBG("Tracked satellites: %d, fix valid: %s",
+	LOG_DBG("Tracked satellites: %d, fix valid: %s, insuf. time window: %s",
 		method_gnss_tracked_satellites(pvt_data),
-		pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID ? "true" : "false");
+		pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID ? "true" : "false",
+		pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME ?
+		"true" : "false");
 
 	/* Print details for each satellite */
 	for (uint32_t i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; i++) {
@@ -689,6 +695,35 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 			location_core_event_cb_error();
 		}
 	}
+
+	/* Trigger GNSS priority mode if GNSS indicates that it is not getting long enough time
+	 * windows for 5 consecutive epochs.
+	 */
+	if ((pvt_data.flags & NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME) &&
+	    (insuf_timewin_count >= 0)) {
+		insuf_timewin_count++;
+
+		if (insuf_timewin_count == 5) {
+			LOG_DBG("GNSS is not getting long enough time windows. "
+				"Triggering GNSS priority mode.");
+			int err = nrf_modem_gnss_prio_mode_enable();
+
+			if (err) {
+				LOG_ERR("Unable to trigger GNSS priority mode.");
+			}
+
+			/* Special value -1 indicates that priority has been already requested.
+			 * Allow triggering priority mode only once in order to not block LTE
+			 * operation excessively.
+			 */
+			insuf_timewin_count = -1;
+		}
+	} else if (insuf_timewin_count > 0) {
+		/* GNSS must indicate that it is not getting long enough time windows for 5
+		 * consecutive epochs to trigger priority mode.
+		 */
+		insuf_timewin_count = 0;
+	}
 }
 
 #if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
@@ -744,6 +779,14 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 	}
 
 	err |= nrf_modem_gnss_use_case_set(use_case);
+
+	if (gnss_config.priority_mode) {
+		/* Initialize counter to a valid value to enable the priority mode */
+		insuf_timewin_count = 0;
+	} else {
+		/* Disable priority mode by initializing the counter to an invalid value */
+		insuf_timewin_count = -1;
+	}
 
 	if (err) {
 		LOG_ERR("Failed to configure GNSS");
