@@ -3122,10 +3122,11 @@ struct nrf_wifi_interface_info {
 
 struct nrf_wifi_event_mcs_info {
 #define NRF_WIFI_HT_MCS_MASK_LEN 10
+#define NRF_WIFI_HT_MCS_RES_LEN 3
 	unsigned short nrf_wifi_rx_highest;
 	unsigned char nrf_wifi_rx_mask[NRF_WIFI_HT_MCS_MASK_LEN];
 	unsigned char nrf_wifi_tx_params;
-	unsigned char nrf_wifi_reserved[3];
+	unsigned char nrf_wifi_reserved[NRF_WIFI_HT_MCS_RES_LEN];
 } __NRF_WIFI_PKD;
 
 struct nrf_wifi_event_sta_ht_cap {

@@ -3028,6 +3028,81 @@ out:
 	return status;
 }
 
+enum wifi_nrf_status wifi_nrf_fmac_get_wiphy(void *dev_ctx, unsigned char if_idx)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_cmd_get_wiphy *get_wiphy = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	fmac_dev_ctx = dev_ctx;
+
+	if (!dev_ctx || (if_idx >= MAX_NUM_VIFS)) {
+		goto out;
+	}
+
+	get_wiphy = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+					      sizeof(*get_wiphy));
+
+	if (!get_wiphy) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+
+	get_wiphy->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_GET_WIPHY;
+	get_wiphy->umac_hdr.ids.wdev_id = if_idx;
+	get_wiphy->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      get_wiphy,
+			      sizeof(*get_wiphy));
+out:
+	if (get_wiphy) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       get_wiphy);
+	}
+
+	return status;
+}
+
+enum wifi_nrf_status wifi_nrf_fmac_register_frame(void *dev_ctx, unsigned char if_idx,
+						  struct nrf_wifi_umac_mgmt_frame_info *frame_info)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_umac_cmd_mgmt_frame_reg *frame_reg_cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	fmac_dev_ctx = dev_ctx;
+
+	if (!dev_ctx || (if_idx >= MAX_NUM_VIFS) || !frame_info) {
+		goto out;
+	}
+
+	frame_reg_cmd =
+		wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv, sizeof(*frame_reg_cmd));
+
+	if (!frame_reg_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv, "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+
+	frame_reg_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_REGISTER_FRAME;
+	frame_reg_cmd->umac_hdr.ids.wdev_id = if_idx;
+	frame_reg_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+
+	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+		&frame_reg_cmd->info, frame_info, sizeof(frame_reg_cmd->info));
+
+	status = umac_cmd_cfg(fmac_dev_ctx, frame_reg_cmd, sizeof(*frame_reg_cmd));
+out:
+	if (frame_reg_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv, frame_reg_cmd);
+	}
+
+	return status;
+}
 
 enum wifi_nrf_status wifi_nrf_fmac_conf_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					       struct rpu_btcoex *params)

@@ -46,6 +46,12 @@ int wifi_nrf_nl80211_send_mlme(void *if_priv, const u8 *data, size_t data_len, i
 			       unsigned int freq, int no_cck, int offchanok, unsigned int wait_time,
 			       int cookie);
 
+int wifi_nrf_supp_get_wiphy(void *if_priv);
+
+int wifi_nrf_supp_register_frame(void *if_priv,
+			u16 type, const u8 *match, size_t match_len,
+			bool multicast);
+
 int wifi_nrf_wpa_supp_set_key(void *if_priv,
 			   const unsigned char *ifname,
 			   enum wpa_alg alg,
@@ -97,8 +103,18 @@ void wifi_nrf_wpa_supp_event_mgmt_tx_status(void *if_priv,
 						struct nrf_wifi_umac_event_mlme *mlme_event,
 						unsigned int event_len);
 
+
 void wifi_nrf_wpa_supp_event_proc_unprot_mgmt(void *if_priv,
 						struct nrf_wifi_umac_event_mlme *unprot_mgmt,
 						unsigned int event_len);
+
+void wifi_nrf_wpa_supp_event_get_wiphy(void *if_priv,
+						struct nrf_wifi_event_get_wiphy *get_wiphy,
+						unsigned int event_len);
+
+void wifi_nrf_wpa_supp_event_mgmt_rx_callbk_fn(void *if_priv,
+						struct nrf_wifi_umac_event_mlme *mgmt_rx_event,
+						unsigned int event_len);
+
 #endif /* CONFIG_WPA_SUPP */
 #endif /*  __ZEPHYR_WPA_SUPP_IF_H__ */

@@ -230,6 +230,10 @@ struct wifi_nrf_fmac_callbk_fns {
 	void (*twt_teardown_callbk_fn)(void *if_priv,
 		struct nrf_wifi_umac_cmd_teardown_twt *twt_teardown_event_info,
 		unsigned int event_len);
+
+	void (*event_get_wiphy)(void *if_priv,
+		struct nrf_wifi_event_get_wiphy *get_wiphy,
+		unsigned int event_len);
 };
 
 
