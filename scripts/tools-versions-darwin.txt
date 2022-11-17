@@ -1,5 +1,5 @@
 python=3.9.6
-git=2.32.0_1
+git=2.37.3
 cmake=3.20.5
 ninja=1.10.2
 gperf=3.1
