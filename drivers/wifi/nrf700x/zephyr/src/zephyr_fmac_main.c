@@ -24,6 +24,8 @@
 #endif /* CONFIG_WPA_SUPP */
 #ifndef CONFIG_NRF700X_RADIO_TEST
 #include <zephyr_disp_scan.h>
+#include <zephyr_twt.h>
+#include <zephyr_ps.h>
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
@@ -437,6 +439,8 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	callbk_fns.scan_start_callbk_fn = wifi_nrf_event_proc_scan_start_zep;
 	callbk_fns.scan_done_callbk_fn = wifi_nrf_event_proc_scan_done_zep;
 	callbk_fns.disp_scan_res_callbk_fn = wifi_nrf_event_proc_disp_scan_res_zep;
+	callbk_fns.twt_config_callbk_fn = wifi_nrf_event_proc_twt_setup_zep;
+	callbk_fns.twt_teardown_callbk_fn = wifi_nrf_event_proc_twt_teardown_zep;
 #ifdef CONFIG_WPA_SUPP
 	callbk_fns.scan_res_callbk_fn = wifi_nrf_wpa_supp_event_proc_scan_res;
 	callbk_fns.auth_resp_callbk_fn = wifi_nrf_wpa_supp_event_proc_auth_resp;
@@ -522,6 +526,8 @@ static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 #ifdef CONFIG_NET_STATISTICS_WIFI
 	.get_stats = wifi_nrf_stats_get,
 #endif /* CONFIG_NET_STATISTICS_WIFI */
+	.set_power_save = wifi_nrf_set_power_save,
+	.set_twt = wifi_nrf_set_twt,
 };
 
 #ifdef CONFIG_WPA_SUPP
