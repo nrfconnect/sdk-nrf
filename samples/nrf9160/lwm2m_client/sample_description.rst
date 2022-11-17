@@ -523,6 +523,7 @@ The following files are available:
 * :file:`overlay-assist-cell.conf` - Enables cell-based location assistance.
 * :file:`overlay-assist-pgps.conf` - Enables P-GPS assistance in the sample.
 * :file:`overlay-lowpower.conf` - Disables certain features to bring the power consumption down.
+* :file:`overlay-adv-firmware.conf` - Enables experimental Advanced Firmware Update object.
 
 Moreover, the sample also provides the following files for LwM2M 1.1 features:
 
