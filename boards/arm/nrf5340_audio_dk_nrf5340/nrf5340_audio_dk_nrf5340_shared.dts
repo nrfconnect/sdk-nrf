@@ -63,14 +63,17 @@
 		};
 	};
 
-	nrf5340_audio_dk {
+	nrf5340_audio_dk: nrf5340-audio-dk {
 		compatible = "nrf5340_audio_dk";
-		hw_codec_sel_out = <&gpio0 21 GPIO_ACTIVE_LOW>;
-		spi_sel_in = <&gpio0 22 GPIO_ACTIVE_LOW>;
-		pmic_iset_out = <&gpio0 23 GPIO_ACTIVE_HIGH>;
-		board_id_en_out =  <&gpio0 24 GPIO_ACTIVE_HIGH>;
-		board_id_in = <&gpio0 27 GPIO_ACTIVE_HIGH>;
-		curr_mon_alert_in =  <&gpio1 15 GPIO_ACTIVE_LOW>;
+		hw-codec-in-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
+		hw-codec-irq-in-gpios = <&gpio0 19 GPIO_ACTIVE_LOW>;
+		hw-codec-reset-out-gpios = <&gpio0 18 GPIO_ACTIVE_LOW>;
+		hw-codec-sel-out-gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
+		spi-sel-in-gpios = <&gpio0 22 GPIO_ACTIVE_LOW>;
+		pmic-iset-out-gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
+		board-id-en-out-gpios =  <&gpio0 24 GPIO_ACTIVE_HIGH>;
+		board-id-in-gpios = <&gpio0 27 GPIO_ACTIVE_HIGH>;
+		curr-mon-alert-in-gpios =  <&gpio1 15 GPIO_ACTIVE_LOW>;
 	};
 
 	aliases {

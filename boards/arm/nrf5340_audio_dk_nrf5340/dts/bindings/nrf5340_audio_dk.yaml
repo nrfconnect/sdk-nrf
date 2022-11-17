@@ -9,32 +9,47 @@ compatible: "nrf5340_audio_dk"
 include: base.yaml
 
 properties:
-    hw_codec_sel_out:
+    hw-codec-in-gpios:
+      type: phandle-array
+      required: true
+      description: GPIO from HW codec
+
+    hw-codec-irq-in-gpios:
+      type: phandle-array
+      required: true
+      description: Interrupt from HW codec
+
+    hw-codec-reset-out-gpios:
+        type: phandle-array
+        required: true
+        description: Reset HW codec
+
+    hw-codec-sel-out-gpios:
       type: phandle-array
       required: true
       description: HW codec selector
 
-    spi_sel_in:
+    spi-sel-in-gpios:
       type: phandle-array
       required: true
       description: SPI select detect
 
-    pmic_iset_out:
+    pmic-iset-out-gpios:
       type: phandle-array
       required: true
       description: PMIC ISET
 
-    board_id_en_out:
+    board-id-en-out-gpios:
       type: phandle-array
       required: true
       description: Board rev enable
 
-    board_id_in:
+    board-id-in-gpios:
       type: phandle-array
       required: true
       description: Board rev readback
 
-    curr_mon_alert_in:
+    curr-mon-alert-in-gpios:
       type: phandle-array
       required: true
       description: Board rev readback

@@ -29,7 +29,7 @@ LOG_MODULE_REGISTER(hw_codec, CONFIG_MODULE_HW_CODEC_LOG_LEVEL);
 
 static cs47l63_t cs47l63_driver;
 static const struct gpio_dt_spec hw_codec_sel =
-	GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_sel_out), gpios);
+	GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), hw_codec_sel_out_gpios);
 
 /**@brief Write to multiple registers in CS47L63
  */

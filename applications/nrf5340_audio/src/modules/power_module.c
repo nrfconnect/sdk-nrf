@@ -66,7 +66,7 @@ LOG_MODULE_REGISTER(pwr_module, CONFIG_MODULE_POWER_LOG_LEVEL);
 #define INA231_COUNT ((uint8_t)ARRAY_SIZE(ina231))
 
 static const struct gpio_dt_spec curr_mon_alert =
-	GPIO_DT_SPEC_GET(DT_NODELABEL(curr_mon_alert_in), gpios);
+	GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), curr_mon_alert_in_gpios);
 
 static struct gpio_callback gpio_cb;
 

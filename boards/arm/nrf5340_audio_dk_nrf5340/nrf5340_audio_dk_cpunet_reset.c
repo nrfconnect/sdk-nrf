@@ -37,7 +37,7 @@ static int core_config(void)
 	 * See nPM1100 datasheet for more information
 	 */
 	static const struct gpio_dt_spec pmic_iset =
-		GPIO_DT_SPEC_GET(DT_NODELABEL(pmic_iset_out), gpios);
+		GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), pmic_iset_out_gpios);
 
 	if (!device_is_ready(pmic_iset.port)) {
 		LOG_ERR("GPIO is not ready!");
@@ -51,7 +51,7 @@ static int core_config(void)
 
 	/* Set on-board DSP/HW codec as default */
 	static const struct gpio_dt_spec hw_codec_sel =
-		GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_sel_out), gpios);
+		GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), hw_codec_sel_out_gpios);
 
 	if (!device_is_ready(hw_codec_sel.port)) {
 		LOG_ERR("GPIO is not ready!");
@@ -66,7 +66,7 @@ static int core_config(void)
 
 	/* Deassert CS47L63 HW codec reset line */
 	static const struct gpio_dt_spec hw_codec_reset =
-		GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_reset_out), gpios);
+		GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), hw_codec_reset_out_gpios);
 
 	if (!device_is_ready(hw_codec_reset.port)) {
 		LOG_ERR("GPIO is not ready!");
@@ -80,7 +80,7 @@ static int core_config(void)
 
 	/* Disable board revision readback as default */
 	static const struct gpio_dt_spec board_id_en =
-		GPIO_DT_SPEC_GET(DT_NODELABEL(board_id_en_out), gpios);
+		GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), board_id_en_out_gpios);
 
 	if (!device_is_ready(board_id_en.port)) {
 		LOG_ERR("GPIO is not ready!");

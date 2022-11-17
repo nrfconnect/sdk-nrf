@@ -26,12 +26,12 @@ LOG_MODULE_REGISTER(CS47L63, CONFIG_CS47L63_LOG_LEVEL);
 /* Delay the processing thread to allow interrupts to settle after boot */
 #define CS47L63_PROCESS_THREAD_DELAY_MS 10
 
-static const struct gpio_dt_spec hw_codec_gpio =
-	GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_gpio_in), gpios);
-static const struct gpio_dt_spec hw_codec_irq =
-	GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_irq_in), gpios);
-static const struct gpio_dt_spec hw_codec_reset =
-	GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_reset_out), gpios);
+const struct gpio_dt_spec hw_codec_gpio =
+	GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), hw_codec_in_gpios);
+const struct gpio_dt_spec hw_codec_irq =
+	GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), hw_codec_irq_in_gpios);
+const struct gpio_dt_spec hw_codec_reset =
+	GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), hw_codec_reset_out_gpios);
 
 const static struct device *cirrus_dev = DEVICE_DT_GET(DT_BUS(DT_NODELABEL(cs47l63)));
 const static struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
@@ -323,8 +323,8 @@ static void cs47l63_comm_thread(void *cs47l63_driver, void *dummy2, void *dummy3
 	}
 }
 
-static cs47l63_bsp_config_t bsp_config = { .bsp_reset_gpio_id = hw_codec_reset.pin,
-					   .bsp_int_gpio_id = hw_codec_irq.pin,
+static cs47l63_bsp_config_t bsp_config = { .bsp_reset_gpio_id = 18,
+					   .bsp_int_gpio_id = 19,
 					   .cp_config.bus_type = CS47L63_BUS_TYPE_SPI,
 					   .cp_config.spi_pad_len = 4,
 					   .notification_cb = &notification_callback,

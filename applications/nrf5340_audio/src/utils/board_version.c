@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(board_version, CONFIG_BOARD_VERSION_LOG_LEVEL);
 static int16_t sample_buffer;
 static const struct device *adc_dev;
 static const struct gpio_dt_spec board_id_en =
-	GPIO_DT_SPEC_GET(DT_NODELABEL(board_id_en_out), gpios);
+	GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), board_id_en_out_gpios);
 
 static const struct adc_channel_cfg m_channel_cfg = {
 	.gain = ADC_GAIN_1_4,

@@ -79,7 +79,7 @@
 		compatible = "zephyr,sdhc-spi-slot";
 		reg = <0>;
 		status = "okay";
-		mmc {
+		sdmmc {
 			compatible = "zephyr,sdmmc-disk";
 			status = "okay";
 		};
