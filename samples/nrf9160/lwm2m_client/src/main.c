@@ -13,7 +13,6 @@
 #include <zephyr/settings/settings.h>
 
 #include <net/lwm2m_client_utils.h>
-#include <net/lwm2m_client_utils_fota.h>
 #include <app_event_manager.h>
 #include <net/lwm2m_client_utils_location.h>
 #include <net/lwm2m_client_utils_location_events.h>
@@ -519,10 +518,6 @@ void main(void)
 #endif
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	ret = fota_settings_init();
-	if (ret < 0 && ret != -EALREADY) {
-		LOG_WRN("Unable to init settings (%d)", ret);
-	}
 	/* Modem FW update needs to be verified before modem is used. */
 	lwm2m_verify_modem_fw_update();
 #endif
