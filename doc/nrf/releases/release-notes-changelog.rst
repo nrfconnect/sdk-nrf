@@ -649,6 +649,8 @@ DFU libraries
 
     * Added new types :c:enum:`DFU_TARGET_IMAGE_TYPE_ANY_MODEM` and :c:enum:`DFU_TARGET_IMAGE_TYPE_ANY_APPLICATION`.
       This makes any supported modem update type acceptable when downloading.
+    * Calling the :c:func:`dfu_target_reset()` function clears all images that have already been downloaded into a target area.
+      This allows cancelling any update packages even if they are already marked to be updated.
 
 Scripts
 =======
