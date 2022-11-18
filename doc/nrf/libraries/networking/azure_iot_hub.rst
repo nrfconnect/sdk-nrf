@@ -18,7 +18,7 @@ The library also has integrated support for a proprietary FOTA solution.
 For more information on Azure FOTA, see the documentation on :ref:`lib_azure_fota` library and :ref:`azure_fota_sample` sample.
 
 The library uses `Azure SDK for Embedded C`_ for message processing and other operations.
-For more information on how Azure SDK for Embedded C is integrated in this library, see `Azure SDK for Embedded C IoT client libraries`_.
+For more information on how Azure SDK for Embedded C is integrated in this library, see :module_file:`Azure SDK for Embedded C IoT client libraries<azure-sdk-for-c: sdk/docs/iot/README.md>`.
 
 .. important::
    If the server sends a device-bound message when the device is unavailable for a period of time, for instance while in LTE Power Saving Mode, the server will most likely terminate the TCP connection.
