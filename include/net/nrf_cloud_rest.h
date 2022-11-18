@@ -153,19 +153,19 @@ struct nrf_cloud_rest_agps_result {
 	size_t agps_sz;
 };
 
-/** @defgroup nrf_cloud_rest_pgps_omit Omit item from P-GPS request.
- * @{
- */
+/** Omit the prediction count from P-GPS request */
 #define NRF_CLOUD_REST_PGPS_REQ_NO_COUNT	0
+/** Omit the prediction validity period from P-GPS request */
 #define NRF_CLOUD_REST_PGPS_REQ_NO_INTERVAL	0
+/** Omit the GPS day from P-GPS request */
 #define NRF_CLOUD_REST_PGPS_REQ_NO_GPS_DAY	0
+/** Omit the GPS time of day from P-GPS request */
 #define NRF_CLOUD_REST_PGPS_REQ_NO_GPS_TOD	(-1)
-/** @} */
 
 /** @brief Data required for nRF Cloud Predicted GPS (P-GPS) request */
 struct nrf_cloud_rest_pgps_request {
 	/** Data to be included in the P-GPS request. To omit an item
-	 * use the appropriate define in @ref nrf_cloud_rest_pgps_omit
+	 * use the appropriate `NRF_CLOUD_REST_PGPS_REQ_NO_` define.
 	 */
 	const struct gps_pgps_request *pgps_req;
 };

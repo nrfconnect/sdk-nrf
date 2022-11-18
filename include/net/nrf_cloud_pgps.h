@@ -150,7 +150,7 @@ struct nrf_cloud_pgps_event {
  */
 typedef void (*pgps_event_handler_t)(struct nrf_cloud_pgps_event *event);
 
-/**@brief Initialization parameters for the module. */
+/** @brief Initialization parameters for the module. */
 struct nrf_cloud_pgps_init_param {
 	/** Event handler that is registered with the module. */
 	pgps_event_handler_t event_handler;
@@ -160,7 +160,7 @@ struct nrf_cloud_pgps_init_param {
 	uint32_t storage_size;
 };
 
-/**@brief Update storage of the most recent known location, in modem-specific
+/** @brief Update storage of the most recent known location, in modem-specific
  * normalized format (int32_t).
  * Current time is also stored.
  * Normalization:
@@ -172,7 +172,7 @@ struct nrf_cloud_pgps_init_param {
  */
 void nrf_cloud_pgps_set_location_normalized(int32_t latitude, int32_t longitude);
 
-/**@brief Update the storage of the most recent known location in degrees.
+/** @brief Update the storage of the most recent known location in degrees.
  * This will be injected along with the current time and relevant predicted
  * ephemerides to the GPS unit in order to get the fastest possible fix, when
  * the P-GPS subsystem is built with A-GPS disabled, or when A-GPS data is
@@ -190,7 +190,7 @@ void nrf_cloud_pgps_set_location(double latitude, double longitude);
  */
 void nrf_cloud_pgps_clear_location(void);
 
-/**@brief Update the storage of the leap second offset between GPS time
+/** @brief Update the storage of the leap second offset between GPS time
  * and UTC. This called automatically by the A-GPS subsystem (if enabled)
  * when it receives a UTC assistance element, setting leap_seconds to  the delta_tls field.
  *
@@ -198,7 +198,7 @@ void nrf_cloud_pgps_clear_location(void);
  */
 void nrf_cloud_pgps_set_leap_seconds(int leap_seconds);
 
-/**@brief Schedule a callback when prediction for current time is
+/** @brief Schedule a callback when prediction for current time is
  * available.  Callback could be immediate, if data already stored in
  * Flash, or later, after loading from the cloud.
  *
@@ -207,7 +207,7 @@ void nrf_cloud_pgps_set_leap_seconds(int leap_seconds);
  */
 int nrf_cloud_pgps_notify_prediction(void);
 
-/**@brief Tries to find an appropriate GPS prediction for the current time.
+/** @brief Tries to find an appropriate GPS prediction for the current time.
  *
  * @param prediction Pointer to a pointer to a prediction; the pointer at
  * this pointer will be modified to point to the prediction if the return value
@@ -219,7 +219,7 @@ int nrf_cloud_pgps_notify_prediction(void);
  */
 int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction);
 
-/**@brief Requests specified P-GPS data from nRF Cloud via MQTT.
+/** @brief Requests specified P-GPS data from nRF Cloud via MQTT.
  * Not used for other transports.
  *
  * @param request Pointer to structure specifying what P-GPS data is desired.
@@ -234,14 +234,14 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
  */
 int nrf_cloud_pgps_request(const struct gps_pgps_request *request);
 
-/**@brief Requests all available P-GPS data from nRF Cloud via MQTT.
+/** @brief Requests all available P-GPS data from nRF Cloud via MQTT.
  * Not used for other transports.
  *
  * @return 0 if successful, otherwise a (negative) error code.
  */
 int nrf_cloud_pgps_request_all(void);
 
-/**@brief Use this function when you use a custom transport mechanism for downloading prediction
+/** @brief Use this function when you use a custom transport mechanism for downloading prediction
  * data. When your pgps_event_handler_t receives a PGPS_EVT_REQUEST event, send
  * the P-GPS request to the cloud over your transport, then call this function.
  * This function resets the internal state of the library and prepares the flash storage to receive
@@ -258,7 +258,7 @@ int nrf_cloud_pgps_request_all(void);
  */
 int nrf_cloud_pgps_begin_update(void);
 
-/**@brief Call this function when your transport receives a block of prediction
+/** @brief Call this function when your transport receives a block of prediction
  * data. Prediction data must be received in file order.
  *
  * The library calls this automatically for HTTP(S) transports.
@@ -274,7 +274,7 @@ int nrf_cloud_pgps_begin_update(void);
  */
 int nrf_cloud_pgps_process_update(uint8_t *buf, size_t len);
 
-/**@brief Call this function regardless of whether the download succeeded or failed.
+/** @brief Call this function regardless of whether the download succeeded or failed.
  *
  * Not needed for custom download transports.
  *
@@ -283,7 +283,7 @@ int nrf_cloud_pgps_process_update(uint8_t *buf, size_t len);
  */
 int nrf_cloud_pgps_finish_update(void);
 
-/**@brief If previous request for P-GPS data failed, re-enable future retries.
+/** @brief If previous request for P-GPS data failed, re-enable future retries.
  * This is should be called by the application after it attempts to
  * handle PGPS_EVT_REQUEST, but is unable to complete it successfully. For
  * example, it should be called if the cloud connection being used to transmit
@@ -293,7 +293,7 @@ int nrf_cloud_pgps_finish_update(void);
  */
 void nrf_cloud_pgps_request_reset(void);
 
-/**@brief Processes binary P-GPS data received from nRF Cloud over MQTT or REST.
+/** @brief Processes binary P-GPS data received from nRF Cloud over MQTT or REST.
  *
  * @param buf Pointer to data received from nRF Cloud.
  * @param buf_len Buffer size of data to be processed.
@@ -304,7 +304,7 @@ void nrf_cloud_pgps_request_reset(void);
  */
 int nrf_cloud_pgps_process(const char *buf, size_t buf_len);
 
-/**@brief Injects binary P-GPS data to the modem. If request is NULL,
+/** @brief Injects binary P-GPS data to the modem. If request is NULL,
  * it is assumed that only ephemerides assistance should be injected.
  *
  * @param p Pointer to a prediction.
@@ -315,20 +315,20 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len);
 int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 			  const struct nrf_modem_gnss_agps_data_frame *request);
 
-/**@brief Find out if P-GPS update is in progress
+/** @brief Find out if P-GPS update is in progress
  *
  * @return True if request sent but loading not yet completed.
  */
 bool nrf_cloud_pgps_loading(void);
 
-/**@brief Download more predictions if less than CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD
+/** @brief Download more predictions if less than CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD
  * predictions remain which are still valid.
  *
  * @return 0 if successful, otherwise a (negative) error code.
  */
 int nrf_cloud_pgps_preemptive_updates(void);
 
-/**@brief Initialize P-GPS subsystem. Validates what is stored, then
+/** @brief Initialize P-GPS subsystem. Validates what is stored, then
  * requests any missing predictions, or full set if expired or missing.
  * When successful, it is ready to provide valid ephemeris predictions.
  *

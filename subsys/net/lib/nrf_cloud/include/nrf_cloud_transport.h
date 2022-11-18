@@ -62,31 +62,31 @@ struct nct_evt {
 
 int nct_socket_get(void);
 
-/**@brief Initialization routine for the transport. */
+/** @brief Initialization routine for the transport. */
 int nct_init(const char * const client_id);
 
-/**@brief Unintialize the transport; reset state and free allocated memory */
+/** @brief Unintialize the transport; reset state and free allocated memory */
 void nct_uninit(void);
 
-/**@brief Establishes the transport connection. */
+/** @brief Establishes the transport connection. */
 int nct_connect(void);
 
-/**@brief Establishes the logical control channel on the transport connection.
+/** @brief Establishes the logical control channel on the transport connection.
  */
 int nct_cc_connect(void);
 
-/**@brief Establishes the logical data channel on the transport connection. */
+/** @brief Establishes the logical data channel on the transport connection. */
 int nct_dc_connect(void);
 
-/**@brief Sends data on the control channel. */
+/** @brief Sends data on the control channel. */
 int nct_cc_send(const struct nct_cc_data *cc);
 
-/**@brief Sends data on the data channel. Reliable, should expect a @ref
+/** @brief Sends data on the data channel. Reliable, should expect a @ref
  * NCT_EVT_DC_TX_DATA_ACK event.
  */
 int nct_dc_send(const struct nct_dc_data *dc);
 
-/**@brief Stream data on the data channel. Unreliable, no @ref
+/** @brief Stream data on the data channel. Unreliable, no @ref
  * NCT_EVT_DC_TX_DATA_ACK event is generated.
  */
 int nct_dc_stream(const struct nct_dc_data *dc);
@@ -101,13 +101,13 @@ int nct_dc_stream(const struct nct_dc_data *dc);
  */
 int nct_dc_bulk_send(const struct nct_dc_data *dc_data, enum mqtt_qos qos);
 
-/**@brief Disconnects the logical control channel. */
+/** @brief Disconnects the logical control channel. */
 int nct_cc_disconnect(void);
 
-/**@brief Disconnects the logical data channel. */
+/** @brief Disconnects the logical data channel. */
 int nct_dc_disconnect(void);
 
-/**@brief Disconnects the transport. */
+/** @brief Disconnects the transport. */
 int nct_disconnect(void);
 
 /**
@@ -128,7 +128,7 @@ void nct_dc_endpoint_get(struct nrf_cloud_data *tx_endpoint,
 			 struct nrf_cloud_data *bulk_endpoint,
 			 struct nrf_cloud_data *m_endpoint);
 
-/**@brief Needed for keep alive. */
+/** @brief Needed for keep alive. */
 int nct_process(void);
 
 /**
@@ -141,31 +141,31 @@ int nct_process(void);
  */
 int nct_keepalive_time_left(void);
 
-/**@brief Input from the cloud module. */
+/** @brief Input from the cloud module. */
 int nct_input(const struct nct_evt *evt);
 
-/**@brief Retrieve the device id. */
+/** @brief Retrieve the device id. */
 int nct_client_id_get(char *id, size_t id_len);
 
-/**@brief Send cloud event to the application. */
+/** @brief Send cloud event to the application. */
 void nct_send_event(const struct nrf_cloud_evt * const evt);
 
-/**@brief Troubleshooting function to overrule the persistent session setting. */
+/** @brief Troubleshooting function to overrule the persistent session setting. */
 int nct_save_session_state(const int session_valid);
 
-/**@brief Troubleshooting function to determine if persistent sessions are on. */
+/** @brief Troubleshooting function to determine if persistent sessions are on. */
 int nct_get_session_state(void);
 
-/**@brief Set the topic prefix for the rx and tx topics. String passed
+/** @brief Set the topic prefix for the rx and tx topics. String passed
  * must be in the form "<stage>/<tenantId>/". The topic strings
  * will be constructed.
  */
 void nct_set_topic_prefix(const char *topic_prefix);
 
-/**@brief Troubleshooting function to retrieve the current nrfcloud stage. */
+/** @brief Troubleshooting function to retrieve the current nrfcloud stage. */
 int nct_stage_get(char *cur_stage, const int cur_stage_len);
 
-/**@brief Troubleshooting function to query the current nrfcloud tenant ID. */
+/** @brief Troubleshooting function to query the current nrfcloud tenant ID. */
 int nct_tenant_id_get(char *cur_tenant, const int cur_tenant_len);
 
 #ifdef __cplusplus
