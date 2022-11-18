@@ -144,22 +144,22 @@ enum nrf_cloud_rcv_topic {
 	NRF_CLOUD_RCV_TOPIC_UNKNOWN
 };
 
-/**@brief Initialize the codec used encoding the data to the cloud. */
+/** @brief Initialize the codec used encoding the data to the cloud. */
 int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks);
 
-/**@brief Encode the sensor data based on the indicated type. */
+/** @brief Encode the sensor data based on the indicated type. */
 int nrf_cloud_encode_sensor_data(const struct nrf_cloud_sensor_data *input,
 				 struct nrf_cloud_data *output);
 
-/**@brief Encode the sensor data to be sent to the device shadow. */
+/** @brief Encode the sensor data to be sent to the device shadow. */
 int nrf_cloud_encode_shadow_data(const struct nrf_cloud_sensor_data *sensor,
 				 struct nrf_cloud_data *output);
 
-/**@brief Encode the user association data based on the indicated type. */
+/** @brief Encode the user association data based on the indicated type. */
 int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *payload,
 				     enum nfsm_state *requested_state);
 
-/**@brief Decode data endpoint information. */
+/** @brief Decode data endpoint information. */
 int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 				   struct nrf_cloud_data *tx_endpoint,
 				   struct nrf_cloud_data *rx_endpoint,

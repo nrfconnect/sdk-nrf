@@ -28,32 +28,44 @@ extern "C" {
  * @{
  */
 
-/** @defgroup nrf_cloud_mqtt_msg_ids MQTT message IDs for nRF Cloud.
- * @{
- */
+/** MQTT message ID: not specified, use next incremented value */
 #define NCT_MSG_ID_USE_NEXT_INCREMENT     0
+/** MQTT message ID: subscribe to control channel topics */
 #define NCT_MSG_ID_CC_SUB               100
+/** MQTT message ID: subscribe to data channel topics */
 #define NCT_MSG_ID_DC_SUB               101
-#define NCT_MSG_ID_CG_SUB               102
+/** MQTT message ID: subscribe to FOTA topics */
 #define NCT_MSG_ID_FOTA_SUB             103
+/** MQTT message ID: unsubscribe from control channel topics */
 #define NCT_MSG_ID_CC_UNSUB             150
+/** MQTT message ID: unsubscribe from data channel topics */
 #define NCT_MSG_ID_DC_UNSUB             151
-#define NCT_MSG_ID_CG_UNSUB             152
+/** MQTT message ID: unsubscribe from FOTA topics */
 #define NCT_MSG_ID_FOTA_UNSUB           153
+/** MQTT message ID: request device state (shadow) */
 #define NCT_MSG_ID_STATE_REQUEST        200
+/** MQTT message ID: request FOTA job */
 #define NCT_MSG_ID_FOTA_REQUEST         201
+/** MQTT message ID: request BLE FOTA job */
 #define NCT_MSG_ID_FOTA_BLE_REQUEST     202
+/** MQTT message ID: update device state (shadow) */
 #define NCT_MSG_ID_STATE_REPORT         300
+/** MQTT message ID: set pairing/associated state */
 #define NCT_MSG_ID_PAIR_STATUS_REPORT   301
+/** MQTT message ID: update FOTA job status */
 #define NCT_MSG_ID_FOTA_REPORT          302
+/** MQTT message ID: update BLE FOTA job status */
 #define NCT_MSG_ID_FOTA_BLE_REPORT      303
+/** MQTT message ID: Start of incrementing range */
 #define NCT_MSG_ID_INCREMENT_BEGIN     1000
+/** MQTT message ID: End of incrementing range */
 #define NCT_MSG_ID_INCREMENT_END       9999
+/** MQTT message ID: Start of user specified (custom) range */
 #define NCT_MSG_ID_USER_TAG_BEGIN      (NCT_MSG_ID_INCREMENT_END + 1)
+/** MQTT message ID: End of user specified (custom) range */
 #define NCT_MSG_ID_USER_TAG_END        0xFFFF /* MQTT message IDs are uint16_t */
-/** @} */
 
-/** Determines if an MQTT message ID is a user specified tag to be used for ACK matching */
+/** Determine if an MQTT message ID is a user specified tag to be used for ACK matching */
 #define IS_VALID_USER_TAG(tag) ((tag >= NCT_MSG_ID_USER_TAG_BEGIN) && \
 				(tag <= NCT_MSG_ID_USER_TAG_END))
 /** nRF Cloud's string identifier for persistent settings */
@@ -124,7 +136,7 @@ enum nrf_cloud_evt_type {
 	NRF_CLOUD_EVT_ERROR = 0xFF
 };
 
-/**@ nRF Cloud error status, used to describe NRF_CLOUD_EVT_ERROR */
+/** @brief nRF Cloud error status, used to describe NRF_CLOUD_EVT_ERROR */
 enum nrf_cloud_error_status {
 	/** No error */
 	NRF_CLOUD_ERR_STATUS_NONE = 0,
@@ -149,23 +161,31 @@ enum nrf_cloud_error_status {
 	NRF_CLOUD_ERR_STATUS_PGPS_PROC,
 };
 
-/**@ nRF Cloud disconnect status. */
+/** @brief nRF Cloud disconnect status. */
 enum nrf_cloud_disconnect_status {
+	/** Disconnect was requested by user/application */
 	NRF_CLOUD_DISCONNECT_USER_REQUEST,
+	/** Disconnect was caused by the cloud */
 	NRF_CLOUD_DISCONNECT_CLOSED_BY_REMOTE,
+	/** Socket received POLLNVAL event */
 	NRF_CLOUD_DISCONNECT_INVALID_REQUEST,
+	/** Socket poll returned an error value or POLLERR event */
 	NRF_CLOUD_DISCONNECT_MISC,
-	NRF_CLOUD_DISCONNECT_COUNT
 };
 
-/**@ nRF Cloud connect result. */
+/** @brief nRF Cloud connect result. */
 enum nrf_cloud_connect_result {
+	/** The connection was successful */
 	NRF_CLOUD_CONNECT_RES_SUCCESS = 0,
+	/** The library is not initialized; @ref nrf_cloud_init */
 	NRF_CLOUD_CONNECT_RES_ERR_NOT_INITD = -1,
-	NRF_CLOUD_CONNECT_RES_ERR_INVALID_PARAM = -2,
+	/** A network error ocurred */
 	NRF_CLOUD_CONNECT_RES_ERR_NETWORK = -3,
+	/** A connection error occurred relating to the nRF Cloud backend */
 	NRF_CLOUD_CONNECT_RES_ERR_BACKEND = -4,
+	/** The connection failed due to an indeterminate reason */
 	NRF_CLOUD_CONNECT_RES_ERR_MISC = -5,
+	/** Insufficient memory is available */
 	NRF_CLOUD_CONNECT_RES_ERR_NO_MEM = -6,
 	/** Invalid private key */
 	NRF_CLOUD_CONNECT_RES_ERR_PRV_KEY = -7,
@@ -175,17 +195,18 @@ enum nrf_cloud_connect_result {
 	NRF_CLOUD_CONNECT_RES_ERR_CERT_MISC = -9,
 	/** Timeout, SIM card may be out of data */
 	NRF_CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA = -10,
+	/** The connection exists */
 	NRF_CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED = -11,
 };
 
-/**@ nRF Cloud error codes.
+/** @brief nRF Cloud error codes.
  * See the <a href="https://api.nrfcloud.com/v1#section/Error-Codes">Error Codes</a>
  * section of nRF Cloud API documentation for more information.
  */
 enum nrf_cloud_error {
 	NRF_CLOUD_ERROR_UNKNOWN			= -1,
 	NRF_CLOUD_ERROR_NONE			= 0,
-	/** nRF Cloud API error codes */
+	/* nRF Cloud API defined error codes below */
 	NRF_CLOUD_ERROR_BAD_REQUEST		= 40000,
 	NRF_CLOUD_ERROR_INVALID_CERT		= 40001,
 	NRF_CLOUD_ERROR_DISSOCIATE		= 40002,
@@ -198,7 +219,7 @@ enum nrf_cloud_error {
 	NRF_CLOUD_ERROR_NO_DEV_NOT_PROV		= 40412,
 	NRF_CLOUD_ERROR_NO_DEV_DISSOCIATE	= 40413,
 	NRF_CLOUD_ERROR_NO_DEV_DELETE		= 40414,
-	/** Item was not found. No error occured, the requested item simply does not exist */
+	/* Item was not found. No error occurred, the requested item simply does not exist */
 	NRF_CLOUD_ERROR_NOT_FOUND_NO_ERROR	= 40499,
 	NRF_CLOUD_ERROR_BAD_RANGE		= 41600,
 	NRF_CLOUD_ERROR_VALIDATION		= 42200,
@@ -242,7 +263,7 @@ enum nrf_cloud_topic_type {
 	NRF_CLOUD_TOPIC_BULK
 };
 
-/**@brief FOTA status reported to nRF Cloud. */
+/** @brief FOTA status reported to nRF Cloud. */
 enum nrf_cloud_fota_status {
 	NRF_CLOUD_FOTA_QUEUED = 0,
 	NRF_CLOUD_FOTA_IN_PROGRESS = 1,
@@ -254,7 +275,7 @@ enum nrf_cloud_fota_status {
 	NRF_CLOUD_FOTA_DOWNLOADING = 7,
 };
 
-/**@brief FOTA update type. */
+/** @brief FOTA update type. */
 enum nrf_cloud_fota_type {
 	NRF_CLOUD_FOTA_TYPE__FIRST = 0,
 
@@ -279,7 +300,7 @@ enum nrf_cloud_fota_type {
 /** Size of nRF Cloud FOTA job ID; version 4 UUID: 32 bytes, 4 hyphens, NULL */
 #define NRF_CLOUD_FOTA_JOB_ID_SIZE (32 + 4 + 1)
 
-/**@brief Common FOTA job info */
+/** @brief Common FOTA job info */
 struct nrf_cloud_fota_job_info {
 	enum nrf_cloud_fota_type type;
 	/** Null-terminated FOTA job identifier */
@@ -289,21 +310,31 @@ struct nrf_cloud_fota_job_info {
 	int file_size;
 };
 
-/** Validity of an in-progress/installed FOTA update */
+/** @brief Validity of an in-progress/installed FOTA update */
 enum nrf_cloud_fota_validate_status {
+	/** No FOTA update in progress */
 	NRF_CLOUD_FOTA_VALIDATE_NONE = 0,
+	/** The FOTA update has not yet been validated */
 	NRF_CLOUD_FOTA_VALIDATE_PENDING,
+	/** Validation succeeded */
 	NRF_CLOUD_FOTA_VALIDATE_PASS,
+	/** Validation failed */
 	NRF_CLOUD_FOTA_VALIDATE_FAIL,
+	/** Validation result could not be determined */
 	NRF_CLOUD_FOTA_VALIDATE_UNKNOWN,
+	/** The validation process is finished */
 	NRF_CLOUD_FOTA_VALIDATE_DONE
 };
 
-/** Status flags for tracking the update process of the b1 bootloader (MCUBOOT) */
+/** @brief Status flags for tracking the update process of the b1 bootloader (MCUBOOT) */
 enum nrf_cloud_fota_bootloader_status_flags {
+	/** Initial state */
 	NRF_CLOUD_FOTA_BL_STATUS_CLEAR		= 0,
+	/** Indicates if the NRF_CLOUD_FOTA_BL_STATUS_S0_WAS_ACTIVE flag has been updated */
 	NRF_CLOUD_FOTA_BL_STATUS_S0_FLAG_SET	= (1 << 0),
+	/** Indicates if slot 0 was active prior to the update */
 	NRF_CLOUD_FOTA_BL_STATUS_S0_WAS_ACTIVE	= (1 << 1),
+	/** Indicates if the planned reboot has occurred during the update install process */
 	NRF_CLOUD_FOTA_BL_STATUS_REBOOTED	= (1 << 2),
 };
 
@@ -315,7 +346,7 @@ struct nrf_cloud_settings_fota_job {
 	enum nrf_cloud_fota_bootloader_status_flags bl_flags;
 };
 
-/**@brief Generic encapsulation for any data that is sent to the cloud. */
+/** @brief Generic encapsulation for any data that is sent to the cloud. */
 struct nrf_cloud_data {
 	/** Length of the data. */
 	uint32_t len;
@@ -323,7 +354,7 @@ struct nrf_cloud_data {
 	const void *ptr;
 };
 
-/**@brief MQTT topic. */
+/** @brief MQTT topic. */
 struct nrf_cloud_topic {
 	/** Length of the topic. */
 	uint32_t len;
@@ -331,21 +362,7 @@ struct nrf_cloud_topic {
 	const void *ptr;
 };
 
-/**@brief Sensors that are supported by the device. */
-struct nrf_cloud_sensor_list {
-	/** Size of the list. */
-	uint8_t size;
-	/** Supported sensor types. */
-	const enum nrf_cloud_sensor *ptr;
-};
-
-/**@brief Connection parameters. */
-struct nrf_cloud_connect_param {
-	/** Supported sensor types. May be NULL. */
-	const struct nrf_cloud_sensor_list *sensor;
-};
-
-/**@brief Sensor data transmission parameters. */
+/** @brief Sensor data transmission parameters. */
 struct nrf_cloud_sensor_data {
 	/** The sensor that is the source of the data. */
 	enum nrf_cloud_sensor type;
@@ -359,7 +376,7 @@ struct nrf_cloud_sensor_data {
 	uint16_t tag;
 };
 
-/**@brief Asynchronous events received from the module. */
+/** @brief Asynchronous events received from the module. */
 struct nrf_cloud_evt {
 	/** The event that occurred. */
 	enum nrf_cloud_evt_type type;
@@ -371,7 +388,7 @@ struct nrf_cloud_evt {
 	struct nrf_cloud_topic topic;
 };
 
-/**@brief Structure used to send pre-encoded data to nRF Cloud. */
+/** @brief Structure used to send pre-encoded data to nRF Cloud. */
 struct nrf_cloud_tx_data {
 	/** Data that is to be published. */
 	struct nrf_cloud_data data;
@@ -383,7 +400,7 @@ struct nrf_cloud_tx_data {
 	uint32_t id;
 };
 
-/**@brief Controls which values are added to the FOTA array in the "serviceInfo" shadow section */
+/** @brief Controls which values are added to the FOTA array in the "serviceInfo" shadow section */
 struct nrf_cloud_svc_info_fota {
 	/** Flag to indicate if bootloader updates are supported */
 	uint8_t bootloader:1;
@@ -398,25 +415,35 @@ struct nrf_cloud_svc_info_fota {
 	uint8_t _rsvd:4;
 };
 
-/**@brief Controls which values are added to the UI array in the "serviceInfo" shadow section */
+/** @brief Controls which values are added to the UI array in the "serviceInfo" shadow section */
 struct nrf_cloud_svc_info_ui {
-	/** Items with UI support on nRF Cloud */
+	/* Items with UI support on nRF Cloud */
+	/** Temperature */
 	uint8_t temperature:1;
-	uint8_t gnss:1; /* Location (map) */
-	uint8_t flip:1; /* Orientation */
+	/** Location (map) */
+	uint8_t gnss:1;
+	/** Orientation */
+	uint8_t flip:1;
+	/** Humidity */
 	uint8_t humidity:1;
+	/** Air pressure */
 	uint8_t air_pressure:1;
+	/** RSRP */
 	uint8_t rsrp:1;
 
-	/** Items without UI support on nRF Cloud */
+	/* Items without UI support on nRF Cloud */
+	/** Air Quality */
 	uint8_t air_quality:1;
+	/** Light sensor */
 	uint8_t light_sensor:1;
+	/** Button */
 	uint8_t button:1;
 
+	/** Unused bits */
 	uint8_t _rsvd:7;
 };
 
-/**@brief How the info sections are handled when encoding shadow data */
+/** @brief How the info sections are handled when encoding shadow data */
 enum nrf_cloud_shadow_info {
 	/** Data will not be modified */
 	NRF_CLOUD_INFO_NO_CHANGE = 0,
@@ -426,7 +453,7 @@ enum nrf_cloud_shadow_info {
 	NRF_CLOUD_INFO_CLEAR = 2,
 };
 
-/**@brief Modem info data and which sections should be encoded */
+/** @brief Modem info data and which sections should be encoded */
 struct nrf_cloud_modem_info {
 	enum nrf_cloud_shadow_info device;
 	enum nrf_cloud_shadow_info network;
@@ -441,7 +468,7 @@ struct nrf_cloud_modem_info {
 
 };
 
-/**@brief Structure to specify which components are added to the encoded service info object */
+/** @brief Structure to specify which components are added to the encoded service info object */
 struct nrf_cloud_svc_info {
 	/** Specify FOTA components to enable, set to NULL to remove the FOTA entry */
 	struct nrf_cloud_svc_info_fota *fota;
@@ -449,7 +476,7 @@ struct nrf_cloud_svc_info {
 	struct nrf_cloud_svc_info_ui *ui;
 };
 
-/**@brief Structure to specify which components are added to the encoded device status object */
+/** @brief Structure to specify which components are added to the encoded device status object */
 struct nrf_cloud_device_status {
 	/** Specify which modem info components to include, set to NULL to skip */
 	struct nrf_cloud_modem_info *modem;
@@ -487,9 +514,11 @@ struct nrf_cloud_gnss_pvt {
 	/** Heading of user movement in degrees; optional. */
 	float heading;
 
-	/** Flags to indicate if the optional parameters are set */
+	/** Altitude value is set */
 	uint8_t has_alt:1;
+	/** Speed value is set */
 	uint8_t has_speed:1;
+	/** Heading value is set */
 	uint8_t has_heading:1;
 
 	/** Reserved for future use */
@@ -531,7 +560,7 @@ struct nrf_cloud_gnss_data {
 };
 
 #ifdef CONFIG_NRF_CLOUD_GATEWAY
-/**@brief Structure to hold message received from nRF Cloud. */
+/** @brief Structure to hold message received from nRF Cloud. */
 struct nrf_cloud_gw_data {
 	struct nrf_cloud_data data;
 	uint16_t id;
@@ -546,7 +575,7 @@ struct nrf_cloud_gw_data {
  */
 typedef void (*nrf_cloud_event_handler_t)(const struct nrf_cloud_evt *evt);
 
-/**@brief Initialization parameters for the module. */
+/** @brief Initialization parameters for the module. */
 struct nrf_cloud_init_param {
 	/** Event handler that is registered with the module. */
 	nrf_cloud_event_handler_t event_handler;

@@ -78,7 +78,7 @@ struct nrf_cloud_location_result {
  */
 typedef void (*nrf_cloud_location_response_t)(const struct nrf_cloud_location_result *const pos);
 
-/**@brief Perform an nRF Cloud location request over MQTT.
+/** @brief Perform an nRF Cloud location request over MQTT.
  *
  * @param cells_inf Cell info. The required network parameters are
  *                  cell identifier, mcc, mnc and tac. The required neighboring
@@ -109,7 +109,7 @@ int nrf_cloud_location_request(const struct lte_lc_cells_info *const cells_inf,
 			       const bool request_loc, nrf_cloud_location_response_t cb);
 #endif /* CONFIG_NRF_CLOUD_MQTT */
 
-/**@brief Get the reference to a cJSON object containing a location request.
+/** @brief Get the reference to a cJSON object containing a location request.
  *
  * @param cells_inf Cell info; can be NULL if Wi-Fi info is provided.
  * @param wifi_inf Wi-Fi info; can be NULL if cell info is provided.
@@ -126,7 +126,7 @@ int nrf_cloud_location_request_json_get(const struct lte_lc_cells_info *const ce
 					const struct wifi_scan_info *const wifi_inf,
 					const bool request_loc, cJSON **req_obj_out);
 
-/**@brief Process location data received from nRF Cloud over MQTT or REST.
+/** @brief Process location data received from nRF Cloud over MQTT or REST.
  *
  * @param buf Data received from nRF Cloud.
  * @param result Parsed results.
@@ -139,7 +139,7 @@ int nrf_cloud_location_request_json_get(const struct lte_lc_cells_info *const ce
  */
 int nrf_cloud_location_process(const char *buf, struct nrf_cloud_location_result *result);
 
-/**@brief Get the cellular network information from the modem that is required
+/** @brief Get the cellular network information from the modem that is required
  *        for a single-cell location request.
  *
  * @param cell_inf Cellular information obtained from the modem.
