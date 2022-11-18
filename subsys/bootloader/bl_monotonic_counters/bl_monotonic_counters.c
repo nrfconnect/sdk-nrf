@@ -11,11 +11,7 @@
 #include <assert.h>
 #include <nrfx_nvmc.h>
 
-#ifdef CONFIG_SECURE_BOOT_STORAGE
-#include <bl_storage.h>
-#else
 #include <pm_config.h>
-#endif
 
 #ifdef CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 BUILD_ASSERT(CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS % 2 == 0,
@@ -54,12 +50,7 @@ struct counter_collection {
 /** Get the counter_collection data structure in the provision data. */
 static const struct counter_collection *get_counter_collection(void)
 {
-#if defined(CONFIG_SECURE_BOOT_STORAGE)
-	const struct counter_collection *collection = (struct counter_collection *)
-		&BL_STORAGE->key_data[num_public_keys_read()];
-#else
-	const struct counter_collection *collection = (struct counter_collection *)PM_PROVISION_ADDRESS;
-#endif
+	const struct counter_collection *collection = (struct counter_collection *)PM_PROVISION_COUNTERS_ADDRESS;
 
 	return nrfx_nvmc_otp_halfword_read((uint32_t)&collection->type) == TYPE_COUNTERS
 		? collection : NULL;

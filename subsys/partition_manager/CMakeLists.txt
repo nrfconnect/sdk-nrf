@@ -77,8 +77,9 @@ if (CONFIG_IPC_SERVICE AND CONFIG_SOC_NRF5340_CPUAPP)
   ncs_add_partition_manager_config(pm.yml.rpmsg_nrf53)
 endif()
 
-if (CONFIG_SECURE_BOOT_STORAGE)
-  ncs_add_partition_manager_config(pm.yml.secure_boot_storage)
+# NB: How to check if SECURE_BOOT_STORAGE is enabled in B0?
+if (CONFIG_SECURE_BOOT OR CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+  ncs_add_partition_manager_config(pm.yml.provision)
 endif()
 
 if (CONFIG_PCD_APP)

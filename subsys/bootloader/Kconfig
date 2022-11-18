@@ -164,17 +164,33 @@ config SB_NUM_VER_COUNTER_SLOTS
 
 endif # SECURE_BOOT
 
-config PM_PARTITION_SIZE_PROVISION
-	hex
-	# Stored in OTP region. 91 and 53 has 0x2F8 and 0x300 bytes of OTP
-	# respectively. We use nearly all of it for provisioning to be
-	# able to do as many firmware version updates as possible. But
-	# leave a few bytes in case there are other users.
-	default 0x2F0 if SOC_NRF9160 || SOC_NRF5340_CPUAPP
-	# Second instance stored in internal flash of NET
-	default 0x280 if SOC_NRF5340_CPUNET
-	default FPROTECT_BLOCK_SIZE
-	prompt "Flash space reserved for PROVISION"
+config COUNTERS_ARE_PROVISIONED
+	bool
+	default y if SB_MONOTONIC_COUNTER || MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
+
+# config PM_PARTITION_SIZE_PROVISION
+# 	hex
+# 	# Stored in OTP region. 91 and 53 has 0x2F8 and 0x300 bytes of OTP
+# 	# respectively. We use nearly all of it for provisioning to be
+# 	# able to do as many firmware version updates as possible. But
+# 	# leave a few bytes in case there are other users.
+# 	default 0x2F0 if SOC_NRF9160 || SOC_NRF5340_CPUAPP
+# 	# Second instance stored in internal flash of NET
+# 	default 0x280 if SOC_NRF5340_CPUNET
+# 	default FPROTECT_BLOCK_SIZE
+# 	prompt "Flash space reserved for PROVISION"
+
+config PM_PARTITION_SIZE_PROVISION_COUNTERS
+	int
+	default 624
+	depends on COUNTERS_ARE_PROVISIONED
+	prompt "Flash space reserved for provisioned counters"
+
+config PM_PARTITION_SIZE_PROVISION_BL_STORAGE
+	int
+	default 128
+	depends on SECURE_BOOT
+	prompt "Flash space reserved for provisioned bl_storage"
 
 config B0_MIN_PARTITION_SIZE
 	bool "Use minimimum partition size"
@@ -252,5 +268,6 @@ config NRF53_ENFORCE_IMAGE_VERSION_EQUALITY
 rsource "bl_crypto/Kconfig"
 rsource "bl_validation/Kconfig"
 rsource "bl_storage/Kconfig"
+rsource "bl_monotonic_counters/Kconfig"
 
 endmenu

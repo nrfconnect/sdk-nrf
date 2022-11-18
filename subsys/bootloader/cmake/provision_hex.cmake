@@ -63,6 +63,18 @@ if(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
   endif()
 endif()
 
+if(CONFIG_SECURE_BOOT)
+  set(pm_provision_bl_storage_address
+	--pm-provision-bl-storage-address
+	$<TARGET_PROPERTY:partition_manager,PM_PROVISION_BL_STORAGE_ADDRESS>
+  )
+
+  set(pm_provision_bl_storage_size
+	--pm-provision-bl-storage-size
+	$<TARGET_PROPERTY:partition_manager,PM_PROVISION_BL_STORAGE_SIZE>
+  )
+endif()
+
 if(CONFIG_SECURE_BOOT OR CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
   add_custom_command(
 	OUTPUT
@@ -73,11 +85,13 @@ if(CONFIG_SECURE_BOOT OR CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
 	${s0_arg}
 	${s1_arg}
 	${mcuboot_only}
-	--provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
+	--pm-provision-counters-address $<TARGET_PROPERTY:partition_manager,PM_PROVISION_COUNTERS_ADDRESS>
+	--pm-provision-counters-size    $<TARGET_PROPERTY:partition_manager,PM_PROVISION_COUNTERS_SIZE>
+	${pm_provision_bl_storage_address}
+	${pm_provision_bl_storage_size}
 	${public_keys_file_arg}
 	--output ${PROVISION_HEX}
 	${monotonic_counter_arg}
-	--max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
 	${no_verify_hashes_arg}
 	${mcuboot_counters_slots}
 	DEPENDS
