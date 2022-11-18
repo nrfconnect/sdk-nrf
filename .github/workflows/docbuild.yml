@@ -33,7 +33,7 @@ jobs:
       - name: Install packages
         run: |
           sudo apt update
-          sudo apt-get install -y ninja-build mscgen plantuml libclang1-9 libclang-cpp9
+          sudo apt-get install -y ninja-build mscgen plantuml
           DOXYGEN_VERSION=$(cat ./ncs/nrf/scripts/tools-versions-linux.txt |grep 'doxygen' | sed 's/^.*=//')
           wget --no-verbose https://downloads.sourceforge.net/project/doxygen/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
           tar xf doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
