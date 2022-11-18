@@ -7,7 +7,6 @@
 #include <zephyr/fff.h>
 
 #include <zephyr/kernel.h>
-#include <version.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/net/lwm2m.h>

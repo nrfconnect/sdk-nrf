@@ -15,7 +15,6 @@
 #include <modem/modem_info.h>
 
 #include "stubs.h"
-#include "lwm2m_object.h"
 
 /* LTE-FDD bearer & NB-IoT bearer */
 #define LTE_FDD_BEARER 6U
