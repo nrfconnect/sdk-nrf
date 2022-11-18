@@ -36,7 +36,7 @@ BUILD_ASSERT(CONFIG_SB_NUM_VER_COUNTER_SLOTS % 2 == 0,
  */
 struct monotonic_counter {
 	uint16_t description; /* Counter description. What the counter is used for. See BL_MONOTONIC_COUNTERS_DESC_*. */
-	uint16_t num_counter_slots; /* Number of entries in 'counter_slots' list. */
+	uint16_t num_counter_slots; /* Number of entries in 'counter_slots' list. Must be an even number. */
 	uint16_t counter_slots[1];
 };
 
@@ -47,7 +47,7 @@ struct monotonic_counter {
  */
 struct counter_collection {
 	uint16_t type; /* Must be "monotonic counter". */
-	uint16_t num_counters; /* Number of entries in 'counters' list. */
+	uint16_t num_counters; /* Number of entries in 'counters' list. Could be 1 or 2. */
 	struct monotonic_counter counters[1];
 };
 
