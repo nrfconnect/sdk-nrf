@@ -539,10 +539,10 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 
 #if CONFIG_STREAM_BIDIRECTIONAL
 static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, struct bt_audio_ep *ep,
-			       struct bt_audio_sink_discover_params *params)
+			       struct bt_audio_discover_params *params)
 {
 	int ret = 0;
-	uint8_t ep_index = 0;
+
 	uint8_t channel_index = 0;
 	uint8_t stream_index = 0;
 	static bool group_created;
