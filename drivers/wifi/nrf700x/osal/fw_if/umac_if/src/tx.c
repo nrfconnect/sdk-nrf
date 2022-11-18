@@ -749,10 +749,6 @@ enum wifi_nrf_status tx_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			    peer_id);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: tx_enqueue failed\n",
-				      __func__);
-
 		goto out;
 	}
 
