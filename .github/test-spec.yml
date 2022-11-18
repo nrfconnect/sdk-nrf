@@ -43,6 +43,7 @@
   - "applications/nrf5340_audio/**/*"
   - "boards/arm/nrf5340_audio_dk_nrf5340/**/*"
   - "tests/nrf5340_audio/**/*"
+  - "tests/lib/contin_array/**/*"
 
 "CI-iot-samples-test":
   - "include/modem/at_monitor.h"

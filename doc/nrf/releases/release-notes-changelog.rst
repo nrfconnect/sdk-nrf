@@ -340,6 +340,11 @@ Libraries for NFC
 Other libraries
 ---------------
 
+* :ref:`lib_contin_array` library:
+
+  * Separated the library from the :ref:`nrf53_audio_app` and moved it to :file:`lib/contin_array`.
+    Updated code and documentation accordingly.
+
 * :ref:`lib_location` library:
 
   * Updated:
