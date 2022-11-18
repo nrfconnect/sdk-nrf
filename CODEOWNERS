@@ -149,7 +149,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf9160/modem_shell/             @trantanen @hiltunent @jhirsi @tokangas
 /samples/nrf9160/nrf_cloud_*              @plskeggs @jayteemo @glarsennordic
 /samples/spm/                             @lemrey @hakonfam @SebastianBoe
-/samples/openthread/                      @lmaciejonczyk @rlubos @edmont @canisLupus1313
+/samples/openthread/                      @rlubos @edmont @canisLupus1313 @mariuszpos
 /samples/nrf_profiler/                    @pdunaj
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/lpuart/               @nordic-krch
