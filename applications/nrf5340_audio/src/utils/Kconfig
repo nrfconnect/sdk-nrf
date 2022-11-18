@@ -48,10 +48,6 @@ module = CHAN_ASSIGNMENT
 module-str = chan-assignment
 source "subsys/logging/Kconfig.template.log_config"
 
-module = CONTIN_ARRAY
-module-str = contin-array
-source "subsys/logging/Kconfig.template.log_config"
-
 module = DATA_FIFO
 module-str = data-fifo
 source "subsys/logging/Kconfig.template.log_config"
