@@ -22,5 +22,18 @@ tests:
     extra_args: CONFIG_TFM_IPC=y CONFIG_TFM_ISOLATION_LEVEL=1
     timeout: 200
 
-  tfm.regression_ipc_lvl2:
+  tfm.regression_ipc_lvl2.mbedtls_builtin:
+    extra_args: CONFIG_PSA_CRYPTO_DRIVER_CC3XX=n CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
+    timeout: 200
+
+  tfm.regression_ipc_lvl2.cc3xx:
+    extra_args: CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
+    timeout: 200
+
+  tfm.regression_ipc_lvl2.oberon:
+    extra_args: CONFIG_PSA_CRYPTO_DRIVER_CC3XX=n CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
+    timeout: 200
+
+  tfm.regression_ipc_lvl2.cc3xx_oberon:
+    extra_args: CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
     timeout: 200
