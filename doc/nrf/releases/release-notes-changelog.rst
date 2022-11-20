@@ -103,7 +103,9 @@ See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 ESB
 ---
 
-|no_changes_yet_note|
+* Added:
+
+  * The :kconfig:option:`CONFIG_ESB_DYNAMIC_INTERRUPTS` Kconfig option to enable direct dynamic interrupts.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------

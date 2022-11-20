@@ -80,4 +80,12 @@ endchoice
 
 endmenu
 
+config ESB_DYNAMIC_INTERRUPTS
+	bool "Use direct dynamic interrupts"
+	depends on DYNAMIC_INTERRUPTS && DYNAMIC_DIRECT_INTERRUPTS
+	help
+	  This option configures ESB IRQ handlers using direct dynamic
+	  interrupts. This allows reconfiguring ESB_SYS_TIMER_IRQn, ESB_EVT_IRQ,
+	  and RADIO_IRQn handlers during runtime when ESB is uninitialized.
+
 endif # NRF_ENHANCED_SHOCKBURST

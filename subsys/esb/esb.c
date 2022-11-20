@@ -994,6 +994,30 @@ static void esb_evt_irq_handler(void)
 	}
 }
 
+#if IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS)
+
+void RADIO_IRQHandler(const void *args)
+{
+	ARG_UNUSED(args);
+	radio_irq_handler();
+	ISR_DIRECT_PM();
+}
+
+void ESB_EVT_IRQHandler(const void *args)
+{
+	ARG_UNUSED(args);
+	esb_evt_irq_handler();
+	ISR_DIRECT_PM();
+}
+
+void ESB_SYS_TIMER_IRQHandler(const void *args)
+{
+	ARG_UNUSED(args);
+	ISR_DIRECT_PM();
+}
+
+#else /* !IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS) */
+
 ISR_DIRECT_DECLARE(RADIO_IRQHandler)
 {
 	radio_irq_handler();
@@ -1018,6 +1042,15 @@ ISR_DIRECT_DECLARE(ESB_SYS_TIMER_IRQHandler)
 	ISR_DIRECT_PM();
 
 	return 1;
+}
+
+#endif /* IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS) */
+
+static void esb_irq_disable(void)
+{
+	irq_disable(RADIO_IRQn);
+	irq_disable(ESB_EVT_IRQ);
+	irq_disable(ESB_SYS_TIMER_IRQn);
 }
 
 int esb_init(const struct esb_config *config)
@@ -1051,12 +1084,35 @@ int esb_init(const struct esb_config *config)
 	sys_timer_init();
 	ppi_init();
 
+	#if IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS)
+
+	/* Ensure IRQs are disabled before attaching. */
+	esb_irq_disable();
+
+	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(RADIO_IRQn, CONFIG_ESB_RADIO_IRQ_PRIORITY,
+					0, reschedule);
+	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(ESB_EVT_IRQ, CONFIG_ESB_EVENT_IRQ_PRIORITY,
+					0, reschedule);
+	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(ESB_SYS_TIMER_IRQn, CONFIG_ESB_EVENT_IRQ_PRIORITY,
+					0, reschedule);
+
+	irq_connect_dynamic(RADIO_IRQn, CONFIG_ESB_RADIO_IRQ_PRIORITY,
+			   RADIO_IRQHandler, NULL, 0);
+	irq_connect_dynamic(ESB_EVT_IRQ, CONFIG_ESB_EVENT_IRQ_PRIORITY,
+			   ESB_EVT_IRQHandler,  NULL, 0);
+	irq_connect_dynamic(ESB_SYS_TIMER_IRQn, CONFIG_ESB_EVENT_IRQ_PRIORITY,
+			   ESB_SYS_TIMER_IRQHandler, NULL, 0);
+
+	#else /* !IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS) */
+
 	IRQ_DIRECT_CONNECT(RADIO_IRQn, CONFIG_ESB_RADIO_IRQ_PRIORITY,
 			   RADIO_IRQHandler, 0);
 	IRQ_DIRECT_CONNECT(ESB_EVT_IRQ, CONFIG_ESB_EVENT_IRQ_PRIORITY,
 			   ESB_EVT_IRQHandler, 0);
 	IRQ_DIRECT_CONNECT(ESB_SYS_TIMER_IRQn, CONFIG_ESB_EVENT_IRQ_PRIORITY,
 			   ESB_SYS_TIMER_IRQHandler, 0);
+
+	#endif /* IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS) */
 
 	irq_enable(RADIO_IRQn);
 	irq_enable(ESB_EVT_IRQ);
@@ -1104,9 +1160,7 @@ void esb_disable(void)
 	memset(pids, 0, sizeof(pids));
 
 	/*  Disable the interrupts used by ESB */
-	irq_disable(RADIO_IRQn);
-	irq_disable(ESB_SYS_TIMER_IRQn);
-	irq_disable(ESB_EVT_IRQ);
+	esb_irq_disable();
 
 	NRF_RADIO->SHORTS =
 	    RADIO_SHORTS_READY_START_Enabled << RADIO_SHORTS_READY_START_Pos |
