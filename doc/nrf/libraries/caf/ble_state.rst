@@ -18,7 +18,7 @@ The |ble_state| does not handle Bluetooth advertising or scanning.
 If you want to use these functionalities to connect over Bluetooth LE, use :ref:`CAF's Bluetooth LE advertising module <caf_ble_adv>` or Zephyr's :ref:`Bluetooth API <zephyr:bluetooth_api>` directly.
 
 .. note::
-   CAF assumes that Bluetooth Peripheral device supports only one simultaneous connection and can have up to one bond per Bluetooth local identity.
+   CAF assumes that Bluetooth Peripheral device supports only one simultaneous connection.
 
 Configuration
 *************
@@ -38,6 +38,8 @@ The following Kconfig options are also available for this module:
 * :kconfig:option:`CONFIG_CAF_BLE_STATE_SECURITY_REQ` - This option enables setting the security level 2 for a Bluetooth LE connection automatically, right after the connection is established.
   The security level 2 or higher enables connection encryption.
   The device disconnects if establishing the connection security level 2 fails.
+* :kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` - This option allows to specify the maximum number of allowed bonds per Bluetooth local identity for a Bluetooth Peripheral (:kconfig:option:`CONFIG_BT_PERIPHERAL`).
+  If a local identity is already bonded with the maximum number of allowed bonds, new peers are disconnected right after Bluetooth connection is established.
 
 Implementation details
 **********************

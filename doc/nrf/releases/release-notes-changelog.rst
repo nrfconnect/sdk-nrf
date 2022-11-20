@@ -658,6 +658,11 @@ Other libraries
 Common Application Framework (CAF)
 ----------------------------------
 
+* :ref:`caf_ble_state`:
+
+  * Added :kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS`.
+    The option allows to specify the maximum number of allowed bonds per Bluetooth local identity for a Bluetooth Peripheral.
+
 * :ref:`caf_sensor_manager`:
 
   * Added:
