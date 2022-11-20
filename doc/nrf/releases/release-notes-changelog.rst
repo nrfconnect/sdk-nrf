@@ -195,6 +195,8 @@ nRF Desktop
 
 * The :ref:`CONFIG_DESKTOP_BLE_SCANNING_ENABLE <config_desktop_app_options>` Kconfig option was renamed to :ref:`CONFIG_DESKTOP_BLE_SCAN_ENABLE <config_desktop_app_options>`.
 * The UUID16 values of GATT Human Interface Device Service (HIDS) and GATT Battery Service (BAS) are moved from advertising data to scan response data.
+* Added :ref:`CONFIG_DESKTOP_LED_STATE_DEF_PATH <config_desktop_app_options>`.
+  The option can be used to specify file defining the used LED effects.
 * Added :ref:`nrf_desktop_fast_pair_app`.
   The module is used in configurations that integrate Google `Fast Pair`_.
 
