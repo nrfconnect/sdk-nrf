@@ -190,6 +190,8 @@ nRF Desktop
 -----------
 
 * The UUID16 values of GATT Human Interface Device Service (HIDS) and GATT Battery Service (BAS) are moved from advertising data to scan response data.
+* Added :ref:`nrf_desktop_fast_pair_app`.
+  The module is used in configurations that integrate Google `Fast Pair`_.
 
 Thingy:53 Zigbee weather station
 --------------------------------
