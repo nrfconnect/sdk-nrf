@@ -16,6 +16,8 @@ LOG_MODULE_REGISTER(dfu_target_full_modem, CONFIG_DFU_TARGET_LOG_LEVEL);
 #define FULL_MODEM_HEADER_MAGIC 0x84d2
 
 static bool configured;
+static struct dfu_target_full_modem_params dfu_params;
+static struct dfu_target_fmfu_fdev flash_dev;
 
 bool dfu_target_full_modem_identify(const void *const buf)
 {
@@ -24,24 +26,19 @@ bool dfu_target_full_modem_identify(const void *const buf)
 
 int dfu_target_full_modem_cfg(const struct dfu_target_full_modem_params *params)
 {
-	int err;
-
 	if (configured) {
 		return -EALREADY;
 	}
 
-	err = dfu_target_stream_init(
-		&(struct dfu_target_stream_init){ .id = "DFU_FULL_MODEM",
-						  .buf = params->buf,
-						  .len = params->len,
-						  .fdev = params->dev->dev,
-						  .offset = params->dev->offset,
-						  .size = params->dev->size,
-						  .cb = NULL });
-	if (err < 0) {
-		LOG_ERR("dfu_target_stream_init failed %d", err);
-		return err;
+	if (params->buf == NULL || params->dev->dev == NULL) {
+		return -EINVAL;
 	}
+
+	/* Clone parametrs */
+	dfu_params.buf = params->buf;
+	dfu_params.len = params->len;
+	flash_dev = *params->dev;
+	dfu_params.dev = &flash_dev;
 
 	configured = true;
 
@@ -50,11 +47,26 @@ int dfu_target_full_modem_cfg(const struct dfu_target_full_modem_params *params)
 
 int dfu_target_full_modem_init(size_t file_size, int img_num, dfu_target_callback_t callback)
 {
+	int err;
+
 	if (!configured) {
 		return -EPERM;
 	}
 
-	return 0;
+	/* Init stream by parameters */
+	err = dfu_target_stream_init(
+		&(struct dfu_target_stream_init){ .id = "DFU_FULL_MODEM",
+						  .buf = dfu_params.buf,
+						  .len = dfu_params.len,
+						  .fdev = dfu_params.dev->dev,
+						  .offset = dfu_params.dev->offset,
+						  .size = dfu_params.dev->size,
+						  .cb = NULL });
+	if (err < 0) {
+		LOG_ERR("dfu_target_stream_init failed %d", err);
+	}
+
+	return err;
 }
 
 int dfu_target_full_modem_offset_get(size_t *out)
