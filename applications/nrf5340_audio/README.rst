@@ -669,7 +669,7 @@ The application uses the following buttons on the supported development kit:
 | **BTN 4**     | Depending on the moment it is pressed:                                                 |
 |               |                                                                                        |
 |               | * Long-pressed during startup: Turns on the DFU mode, if                               |
-|               |   the device is :ref:`configured <nrf53_audio_app_configuration_configure_fota>`.      |
+|               |   the device is :ref:`configured for it<nrf53_audio_app_configuration_configure_fota>`.|
 |               | * Pressed on the gateway during playback: Sends a test tone generated on the device.   |
 |               |   Use this tone to check the synchronization of headsets.                              |
 |               | * Pressed on the gateway during playback multiple times: Changes the tone frequency.   |
@@ -1237,7 +1237,7 @@ Complete the following steps to test the unidirectional CIS mode for one gateway
 
 After the kits have paired for the first time, they are now bonded.
 This means the Long-Term Key(LTK) is stored on each side, and that the kits will only connect to each other unless the bonding information is cleared.
-To clear the bonding information, press and hold **BTN5** during boot.
+To clear the bonding information, press and hold **BTN 5** during boot.
 
 When you finish testing, power off the nRF5340 Audio development kits by switching the power switch from On to Off.
 
@@ -1294,6 +1294,7 @@ You can test upgrading the firmware on both cores at the same time on a headset 
 #. Transfer the generated file to your Android or iOS device, depending on the DFU scenario.
    See the `FOTA build files`_ section for information about FOTA file name patterns.
    For transfer, you can use cloud services like Google Drive for Android or iCloud for iOS.
+#. Enter the DFU mode by pressing and holding down **RESET** and **BTN 4** at the same time, and then releasing **RESET** while continuing to hold down **BTN 4** for a couple more seconds.
 #. Open `nRF Connect Device Manager`_ and look for ``NRF5340_AUDIO_HL_DFU`` in the scanned devices window.
    The headset is left by default.
 #. Tap on :guilabel:`NRF5340_AUDIO_HL_DFU` and then on the downward arrow icon at the bottom of the screen.
