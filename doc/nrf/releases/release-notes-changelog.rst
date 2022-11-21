@@ -86,7 +86,9 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
-|no_changes_yet_note|
+* Added:
+
+  * Enabled experimental TCP support as required by Thread 1.3 Specification.
 
 See `Thread samples`_ for the list of changes for the Thread samples.
 

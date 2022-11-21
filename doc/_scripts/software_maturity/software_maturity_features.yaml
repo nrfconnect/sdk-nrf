@@ -26,6 +26,7 @@ features:
     Thread MTD + Bluetooth LE multiprotocol: OPENTHREAD_MTD && BT
     Thread Radio Co-Processor (RCP): OPENTHREAD_COPROCESSOR && OPENTHREAD_COPROCESSOR_RCP
     Thread + nRF21540 (GPIO): NET_L2_OPENTHREAD && (MPSL_FEM_NRF21540_GPIO_SUPPORT || MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT)
+    Thread TCP: OPENTHREAD_TCP_ENABLE
   matter:
     Matter over Thread: CHIP && NET_L2_OPENTHREAD
     Matter over Wi-Fi: CHIP_OVER_WIFI
