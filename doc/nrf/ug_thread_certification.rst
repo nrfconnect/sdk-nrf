@@ -74,7 +74,7 @@ Complete the following steps to prepare for the certification tests:
         cd ncs/nrf/samples/openthread/cli/
         west build -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG="overlay-ci.conf;overlay-multiprotocol.conf" -DCONFIG_OPENTHREAD_LIBRARY=y -DCONFIG_LOG=n -DCONFIG_ASSERT=n
 
-   * If building using Visual Studio Code, you must first `create the application <Creating an application_>`_ using the CLI sample, and then `build the application <Building an application_>`_.
+   * If building using Visual Studio Code, you must first `create and build the application <How to build an application_>`_ using the CLI sample.
      Select the :file:`overlay-ci.conf` and :file:`overlay-multiprotocol.conf` overlay files in the :guilabel:`Kconfig fragment` drop-down menu and add the following lines to the **Additional CMake arguments** text field:
 
      .. code-block::

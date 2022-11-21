@@ -430,7 +430,7 @@ You can install the |nRFVSC| to open and compile projects in the |NCS|.
 
 .. note::
 
-   If you are building the application or sample using SEGGER Embedded Studio IDE or on the command line and want to migrate to |VSC|, follow the instructions in the `migrating from other IDEs to VS Code <Migrating IDE_>`_ documentation.
+   If you are building the application or sample using SEGGER Embedded Studio IDE or on the command line and want to migrate to |VSC|, use the `Add an existing application <Migrating IDE_>`_ option in the |nRFVSC| to migrate your application.
 
 .. vsc_mig_note_end
 

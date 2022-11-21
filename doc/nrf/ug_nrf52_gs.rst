@@ -55,7 +55,7 @@ Installing the required software
 On your computer, install `nRF Connect for Desktop`_.
 After installing and starting the application, install the Programmer app.
 
-You must also install a terminal emulator, such as :ref:`PuTTY <putty>` or the `nRF Terminal <nRF Terminal documentation_>`_ extension which is part of the |nRFVSC|.
+You must also install a terminal emulator, such as :ref:`PuTTY <putty>` or the nRF Terminal, which is part of the `nRF Connect for Visual Studio Code`_ extension.
 The steps detailed in :ref:`nrf52_gs_connecting` use PuTTY, but any terminal emulator will work.
 
 On your mobile device, install the `nRF Connect for Mobile`_ mobile application from the corresponding application store.

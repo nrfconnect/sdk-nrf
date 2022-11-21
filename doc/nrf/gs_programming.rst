@@ -23,7 +23,7 @@ Building with |VSC|
 
 |vsc_extension_instructions|
 
-For instructions specifically for building, see `Building an application`_.
+For instructions specifically for building, see `How to build an application`_.
 If you want to build and program with custom options, read about the advanced `Custom launch and debug configurations`_ and `Application-specific flash options`_.
 
 .. include:: gs_installing.rst

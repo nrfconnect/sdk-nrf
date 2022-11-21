@@ -137,19 +137,17 @@
 .. _`Getting started guide for nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.1.x/docs/azure/GettingStarted/Index.html
 
 .. _`nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect
-.. _`nRF Kconfig`: https://nrfconnect.github.io/vscode-nrf-connect/kconfig/nrfkconfig.html
-.. _`Installing using Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect/connect/install.html
-.. _`Installing on Linux`: https://nrfconnect.github.io/vscode-nrf-connect/connect/install.html#installing-on-linux
-.. _`Creating an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/create_app.html
-.. _`Building an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/build_app.html
-.. _`Building nRF Connect SDK application quick guide`: https://nrfconnect.github.io/vscode-nrf-connect/connect/build_app_ncs.html
-.. _`Testing an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/test_app.html
-.. _`Debugging an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/debug_app.html
-.. _`West integration`: https://nrfconnect.github.io/vscode-nrf-connect/connect/west.html
-.. _`Custom launch and debug configurations`: https://nrfconnect.github.io/vscode-nrf-connect/connect/advanced_features.html#custom-launch-and-debug-configurations
-.. _`Application-specific flash options`: https://nrfconnect.github.io/vscode-nrf-connect/connect/advanced_features.html#application-specific-flash-options
-.. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/install.html
-.. _`Migrating IDE` : https://nrfconnect.github.io/vscode-nrf-connect/connect/migrating_ide.html
+.. _`Configuring with nRF Kconfig`: https://nrfconnect.github.io/vscode-nrf-connect/guides/ncs_configure_app.html
+.. _`Installing using Visual Studio Code`:
+.. _`Installing on Linux`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/install.html
+.. _`How to build an application`:
+.. _`Migrating IDE`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/build_app_ncs.html
+.. _`How to debug an application`:
+.. _`How to connect to the terminal`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/quick_debug.html
+.. _`Debugging applications for a multi-core System on Chip`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_concepts.html
+.. _`west module management`: https://nrfconnect.github.io/vscode-nrf-connect/guides/west_module_management.html
+.. _`Custom launch and debug configurations`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_advanced.html
+.. _`Application-specific flash options`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_customize_config.html
 
 .. ### Source: developer.nordicsemi.com
 

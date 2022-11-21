@@ -172,7 +172,7 @@ These tools present all available options and allow you to select the ones that 
 
 The nRF Kconfig GUI in the |nRFVSC| organizes the Kconfig options in a hierarchical list and lets you select the desired options.
 To save the changes made using the nRF Kconfig GUI, click the :guilabel:`Save` button.
-Read the `nRF Kconfig`_ documentation for more information.
+Read the `Configuring with nRF Kconfig`_ page in the |nRFVSC| documentation for more information.
 
 See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run menuconfig or guiconfig.
 
@@ -194,9 +194,9 @@ See :ref:`zephyr:setting_configuration_values` in the Zephyr documentation for i
    This may result in a bloated configuration compared to changing the setting directly in :file:`prj.conf`.
    See the section Stuck symbols in menuconfig and guiconfig on the :ref:`kconfig_tips_and_tricks` in the Zephyr documentation for more information.
 
-If you work with |VSC|, you can use one of the following options:
+If you work with |nRFVSC|, you can use one of the following options:
 
-* Select an extra Kconfig fragment file when `Building an application`_.
+* Select an extra Kconfig fragment file when you `build an application <How to build an application_>`_.
 * Edit the Kconfig options using the nRF Kconfig GUI and save changes permanently to an existing or new :file:`prj.conf` file.
   See the extension's documentation for more information.
 
@@ -213,7 +213,7 @@ You can provide additional options for building your application to the CMake pr
 These options are specified when CMake is run, thus not during the actual build, but when configuring the build.
 
 If you work with the |nRFVSC|, you can specify project-specific CMake options when you add the build configuration for a new |NCS| project.
-See `Building an application`_ in the |nRFVSC| documentation.
+See `How to build an application`_ in the |nRFVSC| documentation.
 
 If you work on the command line, pass the additional options to the ``west build`` command.
 The options must be added after a ``--`` at the end of the command.
@@ -252,7 +252,7 @@ Selecting a build type in |VSC|
 
 To select the build type in the |nRFVSC|:
 
-1. When `Building an application`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
+1. When `building an application <How to build an application_>`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
 #. In the **Add Build Configuration** screen, select the desired :file:`.conf` file from the :guilabel:`Configuration` drop-down menu.
 #. Fill in other configuration options, if applicable, and click :guilabel:`Build Configuration`.
 

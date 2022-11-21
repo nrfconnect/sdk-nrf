@@ -20,8 +20,8 @@ How to connect with |nRFVSC|
 ****************************
 
 The |nRFVSC| is a complete IDE for developing applications for nRF91, nRF53 and nRF52 Series devices.
-The extension pack includes nRF Terminal, which is an integrated serial port and RTT terminal to connect to your board.
-For detailed instructions, see the `nRF Terminal documentation`_ on the `nRF Connect for Visual Studio Code`_ documentation site.
+The extension pack includes an integrated serial port and RTT terminal, which you can use to connect to your board.
+For detailed instructions, see the `How to connect to the terminal`_ section on the `nRF Connect for Visual Studio Code`_ documentation site.
 
 .. note::
 
@@ -126,7 +126,7 @@ To connect to the nRF9160-based kit with LTE Link Monitor, perform the following
 Debugging an application
 ************************
 
-To debug an application, set up the debug session as described in `Debugging an application`_ in the |nRFVSC| documentation.
+To debug an application, set up the debug session as described in the `How to debug an application`_ section in the |nRFVSC| documentation.
 nRF Debug is the default debugger for |nRFVSC|.
 
 If you use a multi-core SoC, for example from the nRF53 Series, and you only wish to debug the application core firmware, a single debug session is sufficient.
@@ -135,7 +135,7 @@ When debugging the network core, the application core debug session runs in the 
 
 Complete the following steps to start debugging the network core:
 
-1. Set up sessions for the application core and network core as mentioned in `Debugging an application`_.
+1. Set up sessions for the application core and network core as mentioned in the `Debugging applications for a multi-core System on Chip`_ section in the |nRFVSC| documentation.
 #. Select the appropriate CPU for debugging in each session, corresponding to the application core and the network core of your SoC, respectively.
 #. Once both sessions are established, execute the code on the application core.
 
@@ -159,7 +159,7 @@ nRF Debug in the |nRFVSC| automatically loads the Trusted Firmware-M debug symbo
 Debug configuration
 ===================
 
-When you are following the `Debugging an application`_ process in the |nRFVSC| and select the :guilabel:`Enable debug options` checkbox in the **Add Build Configuration** page, the following Kconfig options are set to ``y`` when you add the configuration:
+When you are following the `How to debug an application`_ process in the |nRFVSC| and select the :guilabel:`Enable debug options` checkbox in the **Add Build Configuration** page, the following Kconfig options are set to ``y`` when you add the configuration:
 
 * :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` - This option limits the optimizations made by the compiler to only those that do not impact debugging.
 * :kconfig:option:`CONFIG_DEBUG_THREAD_INFO` - This option adds additional information to the thread object, so that the debugger can discover the threads.
@@ -214,7 +214,7 @@ One of such modules is for example Zephyr's :ref:`zephyr:thread_analyzer`.
 Debug tools
 ===========
 
-The main recommended tool for debugging in the |NCS| is `nRF Debug <Debugging an application_>`_ of the |nRFVSC|.
+The main recommended tool for debugging in the |NCS| is `nRF Debug <Debugging applications for a multi-core System on Chip_>`_ of the |nRFVSC|.
 The tool uses `Microsoft's debug adaptor`_ and integrates custom debugging features specific for the |NCS|.
 
 * When working with the |nRFVSC|, use nRF Debug after adding the required Kconfig options to the :file:`prj.conf` file.
