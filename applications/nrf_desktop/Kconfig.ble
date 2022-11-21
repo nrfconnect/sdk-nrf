@@ -7,35 +7,19 @@
 menu "Bluetooth LE configuration"
 
 config DESKTOP_BT
-	bool
+	bool "Support for Bluetooth connectivity"
+	default y
 	select BT
 	select BT_SETTINGS
 	select BT_SIGNING
 	select BT_SMP
 
-config DESKTOP_BT_PERIPHERAL
-	bool "Bluetooth LE Peripheral"
-	default y
-	depends on DESKTOP_ROLE_HID_PERIPHERAL
-	select DESKTOP_BT
-	select BT_PERIPHERAL
-
-config DESKTOP_BT_CENTRAL
-	bool "Bluetooth LE Central"
-	default y
-	depends on DESKTOP_ROLE_HID_DONGLE
-	select DESKTOP_BT
-	select BT_CENTRAL
-
 if DESKTOP_BT
 
-config BT_SETTINGS_CCC_STORE_ON_WRITE
-	default y
-
-config BT_SETTINGS_CCC_LAZY_LOADING
-	default n
-
-endif
+config DESKTOP_BT_PERIPHERAL
+	bool
+	default y if DESKTOP_ROLE_HID_PERIPHERAL
+	select BT_PERIPHERAL
 
 if DESKTOP_BT_PERIPHERAL
 
@@ -74,10 +58,23 @@ config BT_CONN_PARAM_UPDATE_TIMEOUT
 
 endif
 
+config DESKTOP_BT_CENTRAL
+	bool
+	default y if DESKTOP_ROLE_HID_DONGLE
+	select BT_CENTRAL
+
 if DESKTOP_BT_CENTRAL
 
 config BT_GATT_CLIENT
 	default y
+
+endif
+
+config BT_SETTINGS_CCC_STORE_ON_WRITE
+	default y
+
+config BT_SETTINGS_CCC_LAZY_LOADING
+	default n
 
 endif
 
