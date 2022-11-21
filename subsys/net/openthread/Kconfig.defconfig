@@ -195,4 +195,7 @@ endif
 
 endif
 
+config OPENTHREAD_TCP_ENABLE
+	select EXPERIMENTAL
+
 endif

@@ -29,6 +29,7 @@ The OpenThread implementation of the Thread protocol supports all features defin
 * Features introduced with Thread 1.3.0:
 
   * Service Registration Protocol (SRP) client
+  * Transport Control Protocol (TCP)
 
 In |NCS|, you can choose which version of the Thread protocol to use in your application.
 By default, |NCS| supports Thread 1.3, which includes support for Thread 1.2.
@@ -131,7 +132,13 @@ DNS-based Service Discovery
 Thread 1.3 Specification introduces DNS-SD Service Registration Protocol, which lets devices advertise the fact that they provide services while avoiding the use of multicast in the discovery.
 |NCS| provides the required SRP client functionality.
 
+Transport Control Protocol
+==========================
+
+While |NCS| has had TCP support through Zephyr (:ref:`IP stack supported features <zephyr:ip_stack_overview>`), the Thread 1.3 Specification defines a set of parameters and features that make TCP more efficient for the limited IEEE 802.15.4 networks.
+An alternative TCP stack implementation incorporated from the OpenThread project can be enabled by users working on Thread-based TCP applications.
+
 Limitations for Thread 1.3 support
 ==================================
 
-Transport Control Protocol (TCP) as defined by the Thread 1.3 Specification is not currently supported by |NCS|.
+Transport Control Protocol (TCP) as defined by the Thread 1.3 Specification is only supported in experimental mode by |NCS|.

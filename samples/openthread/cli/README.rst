@@ -91,6 +91,7 @@ The following configuration files are available:
 * :file:`overlay-debug.conf` - Enables debugging the Thread sample with GDB thread awareness.
 * :file:`overlay-ci.conf` - Disables boot banner and shell prompt.
 * :file:`overlay-multiprotocol.conf` - Enables Bluetooth LE support in this sample.
+* :file:`overlay-tcp.conf` - Enables experimental TCP support in this sample.
 
 FEM support
 ===========

@@ -6,7 +6,7 @@ tests:
     build_only: true
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf21540dk_nrf52840
     tags: ci_build
-    extra_args: OVERLAY_CONFIG=overlay-ci.conf;overlay-multiprotocol.conf
+    extra_args: OVERLAY_CONFIG=overlay-ci.conf;overlay-multiprotocol.conf;overlay-tcp.conf
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
@@ -34,7 +34,7 @@ tests:
     build_only: true
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf52840dongle_nrf52840 nrf21540dk_nrf52840
     tags: ci_build
-    extra_args: OVERLAY_CONFIG=overlay-usb.conf;overlay-ci.conf;overlay-multiprotocol.conf
+    extra_args: OVERLAY_CONFIG=overlay-usb.conf;overlay-ci.conf;overlay-multiprotocol.conf;overlay-tcp.conf
                 DTC_OVERLAY_FILE=usb.overlay
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
@@ -44,7 +44,7 @@ tests:
       - nrf21540dk_nrf52840
   # Build integration regression protection.
   sample.nrf_security.openthread.integration:
-      build_only: True
+      build_only: true
       extra_args: CONFIG_NRF_SECURITY=y
       platform_allow: nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840
       integration_platforms:
