@@ -402,23 +402,16 @@ int le_audio_volume_mute(void)
 	return hw_codec_volume_mute();
 }
 
-int le_audio_play_pause(void)
+int le_audio_play(void)
 {
-	int ret;
-
-	if (playing_state) {
-		playing_state = false;
-
-		ret = bt_audio_broadcast_sink_stop(broadcast_sink);
-		if (ret) {
-			LOG_ERR("Failed to stop broadcast sink: %d", ret);
-			return ret;
-		}
-	} else {
-		playing_state = true;
-	}
-
+	playing_state = true;
 	return 0;
+}
+
+int le_audio_pause(void)
+{
+	playing_state = false;
+	return bt_audio_broadcast_sink_stop(broadcast_sink);
 }
 
 int le_audio_send(uint8_t const *const data, size_t size)

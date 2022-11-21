@@ -272,28 +272,25 @@ int le_audio_volume_mute(void)
 	return -ENXIO;
 }
 
-int le_audio_play_pause(void)
+int le_audio_play(void)
 {
 	int ret;
 
-	/* All streams in a broadcast source is in the same state,
-	 * so we can just check the first stream
-	 */
-	if (streams[0].ep == NULL) {
-		LOG_ERR("stream->ep is NULL");
-		return -ECANCELED;
+	ret = bt_audio_broadcast_source_start(broadcast_source, adv);
+	if (ret) {
+		LOG_WRN("Failed to start broadcast, ret: %d", ret);
 	}
 
-	if (streams[0].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
-		ret = bt_audio_broadcast_source_stop(broadcast_source);
-		if (ret) {
-			LOG_WRN("Failed to stop broadcast, ret: %d", ret);
-		}
-	} else {
-		ret = bt_audio_broadcast_source_start(broadcast_source, adv);
-		if (ret) {
-			LOG_WRN("Failed to start broadcast, ret: %d", ret);
-		}
+	return ret;
+}
+
+int le_audio_pause(void)
+{
+	int ret;
+
+	ret = bt_audio_broadcast_source_stop(broadcast_source);
+	if (ret) {
+		LOG_WRN("Failed to stop broadcast, ret: %d", ret);
 	}
 
 	return ret;
