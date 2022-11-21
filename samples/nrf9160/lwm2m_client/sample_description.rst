@@ -602,7 +602,7 @@ Testing
 Testing with the LwM2M shell
 ----------------------------
 
-To test the sample using LwM2M shell, complete the following steps:
+To test the sample using :ref:`lwm2m_shell`, complete the following steps:
 
 .. note::
 
