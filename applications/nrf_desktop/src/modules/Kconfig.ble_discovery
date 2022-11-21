@@ -7,6 +7,7 @@
 menuconfig DESKTOP_BLE_DISCOVERY_ENABLE
 	bool "Bluetooth LE discovery module"
 	depends on DESKTOP_BLE_SCAN_ENABLE
+	select BT_GATT_DM
 	help
 	  Enable device to read device description (custom GATT Service),
 	  Device Information Service and discover HIDS.
