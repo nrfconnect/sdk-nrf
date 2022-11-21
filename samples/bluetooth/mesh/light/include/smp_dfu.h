@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 
-void smp_dfu_init(void);
+int smp_dfu_init(void);
 
 #ifdef __cplusplus
 }
