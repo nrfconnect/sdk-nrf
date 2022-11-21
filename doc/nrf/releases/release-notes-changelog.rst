@@ -126,6 +126,7 @@ nRF9160: Asset Tracker v2
 
   * The application now uses the new LwM2M location assistance objects through the :ref:`lib_lwm2m_location_assistance` library.
   * Added handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
+  * The application now uses passive mode as the default mode for Thingy:91 builds.
   * The application now uses the :ref:`lib_location` library for retrieving location information.
     This is a major change in the application code but a minor change from the user perspective.
 

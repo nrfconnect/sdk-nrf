@@ -62,9 +62,9 @@ The real-time configurations supported by the application are listed in the foll
 +----------+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 | Location timeout                   | Timeout for location retrieval during data sampling.                                                                                 | 120 seconds    |
 +------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| Accelerometer activity threshold   | Accelerometer activity threshold in m/s². Minimal absolute value for accelerometer readings to be considered valid movement.         | 10 m/s²        |
+| Accelerometer activity threshold   | Accelerometer activity threshold in m/s². Minimal absolute value for accelerometer readings to be considered valid movement.         | 4 m/s²         |
 +------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| Accelerometer inactivity threshold | Accelerometer inactivity threshold in m/s². Maximal absolute value for accelerometer readings to be considered stillness.            | 5 m/s²         |
+| Accelerometer inactivity threshold | Accelerometer inactivity threshold in m/s². Maximal absolute value for accelerometer readings to be considered stillness.            | 4 m/s²         |
 +------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 | Accelerometer inactivity timeout   | Accelerometer inactivity timeout in seconds. Minimum time for lack of movement to be considered stillness.                           | 1 second       |
 +------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+

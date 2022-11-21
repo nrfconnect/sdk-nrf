@@ -72,11 +72,13 @@ Options that alter the default values of the application's real-time configurati
 
 CONFIG_DATA_DEVICE_MODE_ACTIVE
    This configuration sets the device in active mode.
+   Default mode for the nRF9160 DK.
 
 .. _CONFIG_DATA_DEVICE_MODE_PASSIVE:
 
 CONFIG_DATA_DEVICE_MODE_PASSIVE
    This configuration sets the device in passive mode.
+   Default mode for the Thingy:91.
 
 .. _CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS:
 
