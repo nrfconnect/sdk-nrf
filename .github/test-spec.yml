@@ -131,8 +131,6 @@
   - "subsys/net/lib/download_client/**/*"
   - "tests/subsys/bootloader/**/*"
   - "tests/subsys/dfu/**/*"
-  - "tests/subsys/fw_info/**/*"
-  - "tests/subsys/net/**/*"
 
 "CI-all-test":
   - "**/*partition_manager*/**/*"
