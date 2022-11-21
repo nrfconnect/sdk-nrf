@@ -86,6 +86,7 @@ config DATA_UI_BUFFER_STORE
 
 choice DATA_DEVICE_MODE
 	prompt "Device mode"
+	default DATA_DEVICE_MODE_PASSIVE if BOARD_THINGY91_NRF9160_NS
 	default DATA_DEVICE_MODE_ACTIVE
 	help
 	  The device can be in either active or passive mode.
@@ -126,13 +127,13 @@ config DATA_MOVEMENT_TIMEOUT_SECONDS
 
 config DATA_ACCELEROMETER_ACT_THRESHOLD
 	int "Default accelerometer activity threshold in m/s²"
-	default 10
+	default 4
 	help
 	  Minimum absolute value in m/s² that is considered movement in passive mode.
 
 config DATA_ACCELEROMETER_INACT_THRESHOLD
 	int "Default accelerometer inactivity threshold in m/s²"
-	default 5
+	default 4
 	help
 	  Maximum absolute value in m/s² that is considered stillness in passive mode.
 

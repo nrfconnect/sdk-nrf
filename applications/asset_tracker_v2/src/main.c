@@ -27,10 +27,8 @@
 #include "events/cloud_module_event.h"
 #include "events/data_module_event.h"
 #include "events/sensor_module_event.h"
-#include "events/ui_module_event.h"
 #include "events/util_module_event.h"
 #include "events/modem_module_event.h"
-#include "events/led_state_event.h"
 
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
@@ -44,7 +42,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APPLICATION_MODULE_LOG_LEVEL);
 struct app_msg_data {
 	union {
 		struct cloud_module_event cloud;
-		struct ui_module_event ui;
 		struct sensor_module_event sensor;
 		struct data_module_event data;
 		struct util_module_event util;
@@ -83,13 +80,16 @@ static struct cloud_data_cfg app_cfg;
  */
 static bool modem_static_sampled;
 
+/* Variable that is set high whenever a sample request is ongoing. */
+static bool sample_request_ongoing;
+
+/* Variable that is set high whenever the device is considered active (under movement). */
+static bool activity;
+
 /* Timer callback used to signal when timeout has occurred both in active
  * and passive mode.
  */
 static void data_sample_timer_handler(struct k_timer *timer);
-
-/* Timer callback used to reset the activity trigger flag */
-static void movement_resolution_timer_handler(struct k_timer *timer);
 
 /* Application module message queue. */
 #define APP_QUEUE_ENTRY_COUNT		10
@@ -97,10 +97,6 @@ static void movement_resolution_timer_handler(struct k_timer *timer);
 
 /* Data fetching timeouts */
 #define DATA_FETCH_TIMEOUT_DEFAULT 2
-
-/* Flag to prevent multiple activity events within one movement resolution cycle */
-static bool activity_triggered = true;
-static bool inactivity_triggered = true;
 
 K_MSGQ_DEFINE(msgq_app, sizeof(struct app_msg_data), APP_QUEUE_ENTRY_COUNT,
 	      APP_QUEUE_BYTE_ALIGNMENT);
@@ -116,7 +112,7 @@ K_TIMER_DEFINE(movement_timeout_timer, data_sample_timer_handler, NULL);
  * lower power consumption by limiting how often GNSS search is performed and
  * data is sent on air.
  */
-K_TIMER_DEFINE(movement_resolution_timer, movement_resolution_timer_handler, NULL);
+K_TIMER_DEFINE(movement_resolution_timer, NULL, NULL);
 
 /* Module data structure to hold information of the application module, which
  * opens up for using convenience functions available for modules.
@@ -289,13 +285,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		enqueue_msg = true;
 	}
 
-	if (is_ui_module_event(aeh)) {
-		struct ui_module_event *evt = cast_ui_module_event(aeh);
-
-		msg.module.ui = *evt;
-		enqueue_msg = true;
-	}
-
 	if (enqueue_msg) {
 		int err = module_enqueue_msg(&self, &msg);
 
@@ -311,14 +300,15 @@ static bool app_event_handler(const struct app_event_header *aeh)
 static void data_sample_timer_handler(struct k_timer *timer)
 {
 	ARG_UNUSED(timer);
-	SEND_EVENT(app, APP_EVT_DATA_GET_ALL);
-}
 
-static void movement_resolution_timer_handler(struct k_timer *timer)
-{
-	ARG_UNUSED(timer);
-	activity_triggered = false;
-	inactivity_triggered = false;
+	/* Cancel if a previous sample request has not completed or the device is not under
+	 * activity in passive mode.
+	 */
+	if (sample_request_ongoing || ((sub_state == SUB_STATE_PASSIVE_MODE) && !activity)) {
+		return;
+	}
+
+	SEND_EVENT(app, APP_EVT_DATA_GET_ALL);
 }
 
 /* Static module functions. */
@@ -330,6 +320,10 @@ static void passive_mode_timers_start_all(void)
 	LOG_DBG("%d seconds until movement can trigger a new data sample/publication",
 		app_cfg.movement_resolution);
 
+	k_timer_start(&data_sample_timer,
+		      K_SECONDS(app_cfg.movement_resolution),
+		      K_SECONDS(app_cfg.movement_resolution));
+
 	k_timer_start(&movement_resolution_timer,
 		      K_SECONDS(app_cfg.movement_resolution),
 		      K_SECONDS(0));
@@ -337,8 +331,6 @@ static void passive_mode_timers_start_all(void)
 	k_timer_start(&movement_timeout_timer,
 		      K_SECONDS(app_cfg.movement_timeout),
 		      K_SECONDS(app_cfg.movement_timeout));
-
-	k_timer_stop(&data_sample_timer);
 }
 
 static void active_mode_timers_start_all(void)
@@ -352,6 +344,29 @@ static void active_mode_timers_start_all(void)
 
 	k_timer_stop(&movement_resolution_timer);
 	k_timer_stop(&movement_timeout_timer);
+}
+
+static void activity_event_handle(enum sensor_module_event_type sensor_event)
+{
+	__ASSERT(((sensor_event == SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED) ||
+		  (sensor_event == SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED)),
+		  "Unknown event");
+
+	activity = (sensor_event == SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED) ? true : false;
+
+	if (sample_request_ongoing) {
+		LOG_DBG("Sample request ongoing, abort request.");
+		return;
+	}
+
+	if ((sensor_event == SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED) &&
+	    (k_timer_remaining_get(&movement_resolution_timer) != 0)) {
+		LOG_DBG("Movement resolution timer has not expired, abort request.");
+		return;
+	}
+
+	SEND_EVENT(app, APP_EVT_DATA_GET_ALL);
+	passive_mode_timers_start_all();
 }
 
 static void data_get(void)
@@ -448,40 +463,9 @@ void on_sub_state_passive(struct app_msg_data *msg)
 		passive_mode_timers_start_all();
 	}
 
-	if ((IS_EVENT(msg, ui, UI_EVT_BUTTON_DATA_READY)) ||
-	    (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED)) ||
-	    (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_IMPACT_DETECTED))) {
-		if (IS_EVENT(msg, ui, UI_EVT_BUTTON_DATA_READY) &&
-		    msg->module.ui.data.ui.button_number != 2) {
-			return;
-		}
-
-		if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED)) {
-			if (activity_triggered) {
-				return;
-			}
-			activity_triggered = true;
-		}
-
-		/* Trigger a sample request if button 2 has been pushed on the DK or activity has
-		 * been detected. The data request can only be triggered if the movement
-		 * resolution timer has timed out.
-		 */
-
-		if (k_timer_remaining_get(&movement_resolution_timer) == 0) {
-			data_sample_timer_handler(NULL);
-			passive_mode_timers_start_all();
-		}
-	}
-	if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED)
-	    && k_timer_remaining_get(&movement_resolution_timer) != 0) {
-		/* Trigger a sample request if there has been inactivity after
-		 * activity was triggered.
-		 */
-		if (!inactivity_triggered) {
-			data_sample_timer_handler(NULL);
-			inactivity_triggered = true;
-		}
+	if ((IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED)) ||
+	    (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED))) {
+		activity_event_handle(msg->module.sensor.type);
 	}
 }
 
@@ -516,6 +500,18 @@ static void on_all_events(struct app_msg_data *msg)
 
 	if (IS_EVENT(msg, modem, MODEM_EVT_MODEM_STATIC_DATA_READY)) {
 		modem_static_sampled = true;
+	}
+
+	if (IS_EVENT(msg, app, APP_EVT_DATA_GET)) {
+		sample_request_ongoing = true;
+	}
+
+	if (IS_EVENT(msg, data, DATA_EVT_DATA_READY)) {
+		sample_request_ongoing = false;
+	}
+
+	if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_IMPACT_DETECTED)) {
+		SEND_EVENT(app, APP_EVT_DATA_GET_ALL);
 	}
 }
 
@@ -587,6 +583,5 @@ APP_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, app_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, data_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, util_module_event);
-APP_EVENT_SUBSCRIBE_FINAL(MODULE, ui_module_event);
 APP_EVENT_SUBSCRIBE_FINAL(MODULE, sensor_module_event);
 APP_EVENT_SUBSCRIBE_FINAL(MODULE, modem_module_event);

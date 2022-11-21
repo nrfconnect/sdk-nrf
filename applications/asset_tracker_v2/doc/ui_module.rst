@@ -28,8 +28,6 @@ The buttons used by the module and their functionality are listed in the followi
 | 1      | Send a message to the cloud service | Send message to the cloud service.                                                                               |
 +--------+-------------------------------------+------------------------------------------------------------------------------------------------------------------+
 | 2      |                                     | Send message to the cloud service.                                                                               |
-|        |                                     +------------------------------------------------------------------------------------------------------------------+
-|        |                                     | Fake movement. For testing purposes, the nRF9160 DK does not have an external accelerometer to trigger movement. |
 +--------+-------------------------------------+------------------------------------------------------------------------------------------------------------------+
 
 .. _led_indication:
