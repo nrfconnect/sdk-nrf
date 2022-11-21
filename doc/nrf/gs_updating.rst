@@ -25,7 +25,7 @@ Updating in |VSC|
 =================
 
 The |nRFVSC| lets you update the associated |NCS| repositories within the :guilabel:`Source Control View`.
-For detailed instructions, see the `West integration`_ section of the extension's documentation.
+For detailed instructions, see the `west module management`_ page in the extension's documentation.
 
 Updating in Toolchain Manager
 =============================

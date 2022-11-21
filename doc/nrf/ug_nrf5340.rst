@@ -396,9 +396,9 @@ You can build and program separate images or combined images using the |nRFVSC|.
 Separate images
 ---------------
 
-To build and program the application core, follow the instructions in `Building an application`_ and use ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as the build target.
+To build and program the application core, follow the instructions in `How to build an application`_ and use ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as the build target.
 
-To build and program the network core, follow the instructions in `Building an application`_ and use ``nrf5340dk_nrf5340_cpunet`` as the build target.
+To build and program the network core, follow the instructions in `How to build an application`_ and use ``nrf5340dk_nrf5340_cpunet`` as the build target.
 
 .. _ug_nrf5340_VSC_multi_image:
 

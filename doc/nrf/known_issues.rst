@@ -2629,7 +2629,7 @@ SEGGER Embedded Studio Nordic Edition
 .. note::
     SEGGER Embedded Studio Nordic Edition support has been deprecated with the |NCS| v2.0.0 release.
     |VSC| is now the default IDE for the |NCS|.
-    See the `migrating from other IDEs to VS Code <Migrating IDE_>`_ page in the |VSC| documentation for information about how to migrate.
+    Use the `Add an existing application <Migrating IDE_>`_ option in the |nRFVSC| to migrate your application.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
