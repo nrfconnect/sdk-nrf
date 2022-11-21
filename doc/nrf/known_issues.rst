@@ -2452,7 +2452,7 @@ NCSDK-15909: TF-M may fail to build due to flash overflow with Zephyr SDK 0.14.2
   * Increase the TF-M partition :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM`.
   * Use Zephyr SDK version 0.14.1.
 
-.. rst-class:: v2-0-2 v2-0-1 v2-0-0
+.. rst-class:: v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
 NCSDK-16916: TF-M non-secure storage size may be incorrect when having multiple storage partitions
   TF-M non-secure storage partition ``nonsecure_storage`` size is incorrectly calculated when it has multiple storage partitions inside.
