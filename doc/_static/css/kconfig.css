@@ -10,7 +10,7 @@ dl.kconfig {
 	visibility: hidden;
 }
 
-div#__kconfig-search input {
+div#__kconfig-search .input-container {
     border: 2.5px solid rgb(0 0 0 / 60%);
     box-shadow: rgb(149 157 165 / 90%) 0px 8px 24px !important;
 }
