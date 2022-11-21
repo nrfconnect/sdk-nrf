@@ -107,11 +107,13 @@
 .. _`DCL Quick Start Guide`: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/quickStartGuide.adoc
 
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
+.. _`device_credentials_installer.py`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/device_credentials_installer.py
+.. _`nrf_cloud_provision.py`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#nrf-cloud-device-provisioning
+.. _`nRF Cloud Utilities documentation`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md
 
 .. _`TF-M sample incompatibility issue`: https://github.com/zephyrproject-rtos/zephyr/issues/34658
 
 .. _`zcbor`: https://github.com/NordicSemiconductor/zcbor
-
 .. _`zcbor documentation`: https://github.com/NordicSemiconductor/zcbor#readme
 
 .. _`nordic-hid.quirk`: https://github.com/fwupd/fwupd/tree/main/plugins/nordic-hid/nordic-hid.quirk
@@ -127,10 +129,17 @@
 
 .. _`Microsoft's debug adaptor`: https://github.com/microsoft/MIEngine/
 
+.. _`Azure SDK for Embedded C IoT client libraries`: https://github.com/nrfconnect/azure-sdk-for-c/blob/main/sdk/docs/iot/README.md
+
+.. _`Memfault WebBluetooth Client source code`: https://github.com/memfault/web-ble-example/blob/main/mds.js
+
+.. _`cJSON`: https://github.com/nrfconnect/sdk-cjson
+
+.. _`pc-ble-driver-py`: https://github.com/NordicSemiconductor/pc-ble-driver-py
+
 .. ### Source: github.io
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
-
 
 .. _`nRF Asset Tracker project`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.1.x/docs/project/Index.html
 .. _`Getting started guide for nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.1.x/docs/aws/GettingStarted/Index.html
@@ -150,6 +159,12 @@
 .. _`Application-specific flash options`: https://nrfconnect.github.io/vscode-nrf-connect/connect/advanced_features.html#application-specific-flash-options
 .. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/install.html
 .. _`Migrating IDE` : https://nrfconnect.github.io/vscode-nrf-connect/connect/migrating_ide.html
+
+.. _`Azure SDK for Embedded C`: https://azure.github.io/azure-sdk-for-c/
+
+.. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
+
+.. _`PSA Cryptography API 1.1`: https://armmbed.github.io/mbed-crypto/html/
 
 .. ### Source: developer.nordicsemi.com
 
@@ -270,34 +285,6 @@
 
 .. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
 
-.. _`nRF Command Line Tools`:
-.. _`nRF5x Command Line Tools`:
-.. _`nRF5x Command Line Tools Linux 32`:
-.. _`nRF5x Command Line Tools Linux 64`:
-.. _`nRF5x Command Line Tools Windows 32`:
-.. _`nRF5x Command Line Tools Windows 64`:
-.. _`nRF5x Command Line Tools OSX`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools
-
-.. _`nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop
-.. _`Download nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop/Download#infotabs
-
-.. _`nRF Connect for Mobile`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-mobile
-
-.. _`nRF Programmer`:
-.. _`nRF Programmer mobile app`: https://www.nordicsemi.com/Products/Development-tools/nrf-programmer
-
-.. _`nRF Connect Device Manager`: https://www.nordicsemi.com/Products/Development-tools/nrf-connect-device-manager
-.. _`nRF Device Manager mobile app for iOS`: https://apps.apple.com/us/app/nrf-connect-device-manager/id1519423539
-.. _`nRF Device Manager mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfconnectdevicemanager
-
-.. _`nRF Mesh mobile app`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Mesh
-.. _`nRF Mesh mobile app for iOS`: https://apps.apple.com/us/app/nrf-mesh/id1380726771
-.. _`nRF Mesh mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfmeshprovisioner
-
-.. _`nRF Toolbox`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Toolbox
-
-.. _`nRF Edge Impulse mobile app`: https://cm.nordicsemi.com/Products/Development-tools/nrf-edge-impulse
-
 .. _`Nordic nRF9160 DK`:
 .. _`nRF9160 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nrf9160-dk/
 .. _`nRF9160 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download#infotabs
@@ -329,15 +316,44 @@
 
 .. _`nRF Desktop reference design page`: https://www.nordicsemi.com/Products/Reference-designs/nRF-Desktop
 
+.. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
+
 .. _`iBasis network coverage spreadsheet`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/3rd-party/iBasis-simplified-coverage-map-for-web.pdf?la=en&hash=CA7DBF400243D8A7A7BDA94873B50E73C26B4FAC
+
+.. _`Contact Us`: https://www.nordicsemi.com/About-us/Contact-Us
+.. _`Nordic Semiconductor Wi-Fi products`: https://www.nordicsemi.com/Products/WiFi
+
+.. #### Source: www.nordicsemi.com/Events/
 
 .. _`nRF Connect SDK v2.1.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v210?utm_campaign=2022%20Webinars&utm_source=Documentation&utm_medium=Link%20to%20webinar%20%7C%20from%20documentation&utm_content=Link%20to%20webinar%20%7C%20from%20documentation
 .. _`nRF Connect SDK v2.0.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v2?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0&utm_content=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0
 .. _`nRF Connect SDK v1.9.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v19?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=In-line%20text%20%7C%20nRF%20Connect%20SDK%20v1.9%20%7C%20Link%20to%20webinar
 
+.. #### Source: www.nordicsemi.com/*/Development-Tools
 
-.. _`Contact Us`: https://www.nordicsemi.com/About-us/Contact-Us
-.. _`Nordic Semiconductor Wi-Fi products`: https://www.nordicsemi.com/Products/WiFi
+.. _`nRF Command Line Tools`:
+.. _`nRF5x Command Line Tools`:
+.. _`nRF5x Command Line Tools Linux 32`:
+.. _`nRF5x Command Line Tools Linux 64`:
+.. _`nRF5x Command Line Tools Windows 32`:
+.. _`nRF5x Command Line Tools Windows 64`:
+.. _`nRF5x Command Line Tools OSX`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools
+
+.. _`nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop
+.. _`Download nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop/Download#infotabs
+
+.. _`nRF Connect for Mobile`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-mobile
+
+.. _`nRF Programmer`:
+.. _`nRF Programmer mobile app`: https://www.nordicsemi.com/Products/Development-tools/nrf-programmer
+
+.. _`nRF Connect Device Manager`: https://www.nordicsemi.com/Products/Development-tools/nrf-connect-device-manager
+
+.. _`nRF Mesh mobile app`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Mesh
+
+.. _`nRF Toolbox`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Toolbox
+
+.. _`nRF Edge Impulse mobile app`: https://cm.nordicsemi.com/Products/Development-tools/nrf-edge-impulse
 
 .. ### Source: infocenter.nordicsemi.com
 
@@ -479,6 +495,22 @@
 
 .. _`An Introduction to Trusted Firmware-M (TF-M)`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/an-introduction-to-trusted-firmware-m-t-m#mcetoc_1gc9ihpcd0
 
+
+.. ### Source: App stores (play.google.com & apps.apple.com)
+
+.. _`nRF Device Manager mobile app for iOS`: https://apps.apple.com/us/app/nrf-connect-device-manager/id1519423539
+.. _`nRF Device Manager mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfconnectdevicemanager
+
+.. _`nRF Mesh mobile app for iOS`: https://apps.apple.com/us/app/nrf-mesh/id1380726771
+.. _`nRF Mesh mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfmeshprovisioner
+
+.. _`nRF Memfault for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.memfault&hl=en&gl=ES
+.. _`nRF Memfault for iOS`: https://apps.apple.com/no/app/nrf-memfault/id1641119282?platform=iphone
+
+.. _`nRF Wi-Fi Provisioner mobile app for iOS`: https://apps.apple.com/us/app/nrf-wi-fi-provisioner/id1638948698
+.. _`nRF Wi-Fi Provisioner mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.wifi.provisioning
+
+
 .. ### Source: www.segger.com
 
 .. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
@@ -523,6 +555,8 @@
 .. _`LwM2M V1.1`: https://www.openmobilealliance.org/release/LightweightM2M/Lightweight_Machine_to_Machine-v1_1-OMASpecworks.pdf
 .. _`Enabler Test Specification (Interoperability) for Lightweight M2M`: https://www.openmobilealliance.org/release/LightweightM2M/ETS/OMA-ETS-LightweightM2M-V1_1-20190912-D.pdf
 
+.. _`OMA LwM2M Object and Resource Registry`: https://technical.openmobilealliance.org/OMNA/LwM2M/LwM2MRegistry.html
+
 .. ### Source: wikipedia
 
 .. _`GNSS`: https://en.wikipedia.org/wiki/Satellite_navigation
@@ -559,7 +593,10 @@
 
 .. _`udev`: https://en.wikipedia.org/wiki/Udev
 
-.. ### Source: doc.microsoft.com
+.. ### Source: *.microsoft.com
+
+.. _`Windows 11`: https://www.microsoft.com/software-download/windows11
+.. _`Windows 10`: https://www.microsoft.com/en-us/software-download/windows10
 
 .. _`Azure Firmware Over The Air (FOTA)`: https://docs.microsoft.com/en-us/azure/iot-hub/tutorial-firmware-update
 .. _`Azure IoT Hub`: https://docs.microsoft.com/en-us/azure/iot-hub/
@@ -577,19 +614,12 @@
 .. _`Add certificates to the DPS instance`: https://docs.microsoft.com/en-us/azure/iot-dps/how-to-verify-certificates
 .. _`Registering the device with Azure IoT Hub`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal#register-a-new-device-in-the-iot-hub
 .. _`Azure IoT TLS: Critical changes`: https://techcommunity.microsoft.com/t5/internet-of-things-blog/azure-iot-tls-critical-changes-are-almost-here-and-why-you/ba-p/2393169
-.. _`Azure SDK for Embedded C`: https://azure.github.io/azure-sdk-for-c/
-.. _`Azure SDK for Embedded C IoT client libraries`: https://github.com/nrfconnect/azure-sdk-for-c/blob/main/sdk/docs/iot/README.md
-
 
 .. _`Windows Hardware Lab Kit`: https://docs.microsoft.com/en-us/windows-hardware/test/hlk/
 
 .. _`Swift Pair`: https://docs.microsoft.com/en-us/windows-hardware/design/device-experiences/bluetooth-swift-pair
 
 .. _`Windows path length limitations`: https://docs.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation
-
-.. _`Windows 11`: https://www.microsoft.com/software-download/windows11
-.. _`Windows 10`: https://www.microsoft.com/en-us/software-download/windows10
-
 
 .. ### Source: ietf.org
 
@@ -624,7 +654,7 @@
 .. _`SETSOCKETOPT Service Spec Reference`: https://pubs.opengroup.org/onlinepubs/007908799/xns/setsockopt.html
 .. _`GETSOCKETOPT Service Spec Reference`: https://pubs.opengroup.org/onlinepubs/007908799/xns/getsockopt.html
 
-.. ### Source: aws.amazon.com
+.. ### Source: *.amazon.com
 
 .. _`AWS account`: https://aws.amazon.com/iot/
 .. _`Setting up an AWS account`: https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/
@@ -646,8 +676,6 @@
 .. _`AWS S3 Developer Guide: Using Bucket Policies and User Policies`: https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-iam-policies.html
 .. _`AWS S3 Developer Guide: Bucket Policy Examples`: https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html
 .. _`AWS IoT Core`: https://aws.amazon.com/iot-core/
-
-.. ### Source: developer.amazon.com & www.amazon.com
 
 .. _`Amazon Frustration-Free Setup (FFS)`: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-overview.html
 
@@ -680,6 +708,8 @@
 .. _`Thread Group members`: https://www.threadgroup.org/thread-group
 .. _`Thread Group's certification information`: https://www.threadgroup.org/What-is-Thread/Certification
 .. _`Thread 1.3.0 Features White Paper`: https://www.threadgroup.org/Portals/0/documents/support/Thread1.3.0WhitePaper_07192022_3990_1.pdf
+
+.. _`Thread Group's Confluence wiki page`: https://threadgroup.atlassian.net/wiki/spaces/THREADTEST/pages/25900869/Supporting+Material
 
 .. ### Source: nist.gov
 
@@ -729,6 +759,10 @@
 .. ### Source: memfault.com
 
 .. _`Memfault`: https://memfault.com/
+
+.. _`Memfault registration page`: https://app.memfault.com/register-nordic
+.. _`Memfault Dashboards`: https://app.memfault.com
+
 .. _`Memfault Docs`: https://docs.memfault.com/
 .. _`Memfault SDK`: https://docs.memfault.com/docs/embedded/introduction/
 .. _`Memfault nRF Connect SDK integration guide`: https://docs.memfault.com/docs/mcu/nrf-connect-sdk-guide
@@ -736,19 +770,12 @@
 .. _`Memfault Terminology`: https://docs.memfault.com/docs/platform/memfault-terminology/
 .. _`Memfault: Collecting Device Metrics`: https://docs.memfault.com/docs/embedded/metrics-api
 .. _`Memfault: Error Tracking with Trace Events`: https://docs.memfault.com/docs/embedded/trace-events/
-.. _`Memfault registration page`: https://app.memfault.com/register-nordic
 .. _`Memfault Demo CLI`: https://docs.memfault.com/docs/mcu/demo-cli/
-.. _`Memfault Diagnostic GATT Service`: https://memfault.notion.site/Memfault-Diagnostic-GATT-Service-MDS-ffd5a430062649cd9bf6edbf64e2563b
-.. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
-.. _`Memfault WebBluetooth Client source code`: https://github.com/memfault/web-ble-example/blob/main/mds.js
-.. _`Memfault Dashboards`: https://app.memfault.com
 
-.. ### Source: nrfcloud.com
+.. ### Source: *.nrfcloud.com
 
 .. _`nRF Cloud`:
 .. _`nRF Connect for Cloud`: https://nrfcloud.com/
-
-.. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
 
 .. _`nRF Cloud documentation`:
 .. _`nRF Connect for Cloud documentation`: https://docs.nrfcloud.com/
@@ -775,9 +802,7 @@
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
 .. _`nRF Cloud RegisterPublicKeys Endpoint`: https://api.nrfcloud.com/v1/#operation/RegisterPublicKeys
 
-.. _`device_credentials_installer.py`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/device_credentials_installer.py
-.. _`nrf_cloud_provision.py`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#nrf-cloud-device-provisioning
-.. _`nRF Cloud Utilities documentation`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md
+
 
 .. ### Source: zigbeealliance.org & csa-iot.org
 
@@ -807,6 +832,17 @@
 .. _`LVFS Uploading Firmware`: https://lvfs.readthedocs.io/en/latest/upload.html
 .. _`LVFS testing`: https://lvfs.readthedocs.io/en/latest/testing.html
 .. _`LVFS building fwupd`: https://lvfs.readthedocs.io/en/latest/custom-plugin.html#building-fwupd
+
+.. ### Source: *.readthedocs.io
+
+.. _`Breathe documentation`: https://breathe.readthedocs.io/en/latest/directives.html#directives
+
+.. _`IntelHex`: https://python-intelhex.readthedocs.io/en/latest/
+
+.. _`Requests`: https://requests.readthedocs.io/en/latest/
+
+.. _`Scancode-Toolkit`: https://scancode-toolkit.readthedocs.io/
+.. _`Scancode-Toolkit Installation`: https://scancode-toolkit.readthedocs.io/en/stable/getting-started/install.html
 
 .. ### Source: google.com
 
@@ -840,7 +876,16 @@
 .. _`Apple Notification Center Service Specification`: https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Introduction/Introduction.html
 .. _`Apple Media Service Reference`: https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/AppleMediaService_Reference/Introduction/Introduction.html
 
+.. ### Source: arm.com
+
+.. _`ARM TrustZone`: https://developer.arm.com/documentation/100690/0200/ARM-TrustZone-technology?lang=en
+.. _`ARM Flash Patch and Breakpoint Unit`: https://developer.arm.com/documentation/100166/0001/Debug/Flash-Patch-and-Breakpoint-Unit--FPB-
+.. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
+.. _`IDAU`: https://developer.arm.com/docs/100690/latest/attribution-units-sau-and-idau
+
 .. ### Source: other
+
+.. _`Memfault Diagnostic GATT Service`: https://memfault.notion.site/Memfault-Diagnostic-GATT-Service-MDS-ffd5a430062649cd9bf6edbf64e2563b
 
 .. _`Developing Matter products with nRF Connect SDK`: https://www.youtube.com/watch?v=kdMJQFDRoss
 
@@ -851,12 +896,6 @@
 
 .. _`ADXL362`: https://www.analog.com/en/products/adxl362.html#product-overview
 .. _`ADXL372`: https://www.analog.com/en/products/adxl372.html#product-overview
-
-.. _`ARM TrustZone`: https://developer.arm.com/documentation/100690/0200/ARM-TrustZone-technology?lang=en
-.. _`ARM Flash Patch and Breakpoint Unit`: https://developer.arm.com/documentation/100166/0001/Debug/Flash-Patch-and-Breakpoint-Unit--FPB-
-.. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
-.. _`PSA Cryptography API 1.1`: https://armmbed.github.io/mbed-crypto/html/
-.. _`IDAU`: https://developer.arm.com/docs/100690/latest/attribution-units-sau-and-idau
 
 .. _`Kconfig language`: https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html
 
@@ -874,8 +913,6 @@
 .. _`802.15.2-2003 specification`: https://standards.ieee.org/standard/802_15_2-2003.html
 
 .. _`JSON`: https://www.json.org/json-en.html
-
-.. _`cJSON`: https://github.com/nrfconnect/sdk-cjson
 
 .. _`SSL Labs`: https://www.ssllabs.com/ssltest/
 
@@ -914,7 +951,6 @@
 .. _`POSIX Programmer's Manual`: https://man7.org/linux/man-pages/dir_section_3.html
 .. _`LwM2M`: https://omaspecworks.org/what-is-oma-specworks/iot/lightweight-m2m-lwm2m/
 .. _`IPSO objects`: https://omaspecworks.org/develop-with-oma-specworks/ipso-smart-objects/
-.. _`OMA LwM2M Object and Resource Registry`: https://technical.openmobilealliance.org/OMNA/LwM2M/LwM2MRegistry.html
 .. _`raw XML`: https://raw.githubusercontent.com/OpenMobileAlliance/lwm2m-registry/prod/version_history/3300-1_0.xml
 
 .. _`DLPTest.com`: https://dlptest.com/ftp-test/
@@ -932,14 +968,6 @@
 .. _`Mscgen`: http://www.mcternan.me.uk/mscgen/
 
 .. _`Doxygen`: https://www.doxygen.nl/
-
-.. _`Breathe documentation`: https://breathe.readthedocs.io/en/latest/directives.html#directives
-
-.. _`IntelHex`: https://python-intelhex.readthedocs.io/en/latest/
-
-.. _`pc-ble-driver-py`: https://github.com/NordicSemiconductor/pc-ble-driver-py
-
-.. _`Requests`: https://requests.readthedocs.io/en/latest/
 
 .. _`HID usage tables`: https://www.usb.org/hid
 
@@ -979,8 +1007,6 @@
 
 .. _`Silvair EnOcean Switch Mesh Proxy Server`: https://silvair.com/resources/product-documents/
 
-.. _`Thread Group's Confluence wiki page`: https://threadgroup.atlassian.net/wiki/spaces/THREADTEST/pages/25900869/Supporting+Material
-
 .. _`JSON Web Token (JWT)`: https://jwt.io/introduction
 
 .. _`Semantic versioning`: https://semver.org/
@@ -992,9 +1018,6 @@
 .. _`SPDX tool`: https://spdx.dev/
 .. _`SPDX identifier`: https://spdx.dev/ids/
 .. _`SPDX License List`: https://spdx.org/licenses/
-
-.. _`Scancode-Toolkit`: https://scancode-toolkit.readthedocs.io/
-.. _`Scancode-Toolkit Installation`: https://scancode-toolkit.readthedocs.io/en/stable/getting-started/install.html
 
 .. _`dfu-util tool`: http://dfu-util.sourceforge.net/
 
@@ -1008,9 +1031,3 @@
 .. _`GNU Project Debugger`: https://www.sourceware.org/gdb/
 
 .. _`SIGMA`: https://webee.technion.ac.il/~hugo/sigma-pdf.pdf
-
-.. _`nRF Memfault for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.memfault&hl=en&gl=ES
-.. _`nRF Memfault for iOS`: https://apps.apple.com/no/app/nrf-memfault/id1641119282?platform=iphone
-
-.. _`nRF Wi-Fi Provisioner mobile app for iOS`: https://apps.apple.com/us/app/nrf-wi-fi-provisioner/id1638948698
-.. _`nRF Wi-Fi Provisioner mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.wifi.provisioning
