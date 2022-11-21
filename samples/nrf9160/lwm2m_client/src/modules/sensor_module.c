@@ -184,9 +184,14 @@ static int light_sensor_worker(int (*read_cb)(uint32_t *), const char *path, enu
 	char *old_str;
 	uint32_t old;
 	uint32_t new;
+	int ret;
 
 	/* Get latest registered light value */
-	lwm2m_engine_get_res_buf(path, (void **)&old_str, NULL, NULL, NULL);
+	ret = lwm2m_engine_get_res_buf(path, (void **)&old_str, NULL, NULL, NULL);
+	if (ret < 0) {
+		return ret;
+	}
+
 	old = strtol(old_str, NULL, 0);
 
 	/* Read sensor, try again later if busy */
