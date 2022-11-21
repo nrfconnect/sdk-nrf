@@ -107,7 +107,9 @@ ESB
 nRF IEEE 802.15.4 radio driver
 ------------------------------
 
-|no_changes_yet_note|
+* Added:
+
+  * RADIO trim values are reapplied after a ``POWER`` register write as a workaround for the hardware errata 158 of the nRF5340.
 
 Wi-Fi
 -----
