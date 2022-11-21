@@ -1,0 +1,8 @@
+This application can be found under |application path| in the |NCS| folder structure.
+
+When built as a firmware image for the ``_ns`` build target, the application has :term:`Cortex-M Security Extensions (CMSE)` enabled and separates the firmware between the :term:`Non-Secure Processing Environment (NSPE)` and the :term:`Secure Processing Environment (SPE)`.
+Because of this, it automatically includes the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
+To read more about CMSE, see :ref:`app_boards_spe_nspe`.
+
+To build the application with |VSC|, follow the steps listed on the `How to build an application`_ page in the |nRFVSC| documentation.
+See :ref:`gs_programming` for other building and programming scenarios and :ref:`gs_testing` for general information about testing and debugging in the |NCS|.

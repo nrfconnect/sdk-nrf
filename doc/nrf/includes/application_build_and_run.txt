@@ -1,0 +1,4 @@
+This application can be found under |application path| in the |NCS| folder structure.
+
+To build the application with |VSC|, follow the steps listed on the `How to build an application`_ page in the |nRFVSC| documentation.
+See :ref:`gs_programming` for other building and programming scenarios and :ref:`gs_testing` for general information about testing and debugging in the |NCS|.
