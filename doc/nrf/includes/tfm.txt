@@ -1,2 +1,2 @@
-When built for an ``_ns`` build target, the sample is configured to compile and run as a non-secure application.
+When built for an ``_ns`` build target, the sample is configured to compile and run as a non-secure application with :ref:`Cortex-M Security Extensions enabled <app_boards_spe_nspe_cpuapp_ns>`.
 Therefore, it automatically includes :ref:`Trusted Firmware-M <ug_tfm>` that prepares the required peripherals and secure services to be available for the application.
