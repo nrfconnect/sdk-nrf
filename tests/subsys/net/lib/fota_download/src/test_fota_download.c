@@ -111,6 +111,7 @@ int download_client_init(struct download_client *client,
 			 download_client_callback_t callback)
 {
 	download_client_event_handler = callback;
+	client->fd = -1;
 	return 0;
 }
 
@@ -120,6 +121,8 @@ int download_client_connect(struct download_client *client, const char *host,
 	if (fail_on_connect == true) {
 		return -1;
 	}
+	/* Mark connection */
+	client->fd = 1;
 
 	return 0;
 }

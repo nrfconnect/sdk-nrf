@@ -35,7 +35,7 @@
 LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
 static fota_download_callback_t callback;
-static struct download_client   dlc;
+static struct download_client dlc = { .fd = -1 };
 static struct k_work_delayable  dlc_with_offset_work;
 static int socket_retries_left;
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
@@ -210,7 +210,7 @@ static int download_client_callback(const struct download_client_evt *event)
 
 	case DOWNLOAD_CLIENT_EVT_DONE:
 		err = dfu_target_done(true);
-		if (err == 0) {
+		if (err == 0 && IS_ENABLED(CONFIG_FOTA_CLIENT_AUTOSCHEDULE_UPDATE)) {
 			err = dfu_target_schedule_update(0);
 		}
 
