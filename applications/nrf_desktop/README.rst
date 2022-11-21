@@ -531,6 +531,10 @@ The peripheral supports one wireless connection at a time, but it can be bonded 
 .. note::
    To simplify pairing the nRF Desktop peripherals with Windows 10 hosts, the peripherals include `Swift Pair`_ payload in the Bluetooth LE advertising data.
 
+   Some of the nRF Desktop configurations also include `Fast Pair`_ payload in the Bluetooth LE advertising data to simplify pairing the nRF Desktop peripherals with Android hosts.
+   These configurations apply further modifications that are needed to improve the user experience.
+   See :ref:`nrf_desktop_bluetooth_guide_fast_pair` for details.
+
 The nRF Desktop Bluetooth Central device scans for all bonded peripherals that are not connected.
 The scanning is interrupted when any device connected to the dongle through Bluetooth comes in use.
 Continuing the scanning in such scenario would cause report rate drop.
@@ -856,6 +860,13 @@ Selecting a build type from command line
 .. include:: /gs_modifying.rst
    :start-after: build_types_selection_cmd_start
    :end-before: build_types_selection_cmd_end
+
+.. note::
+   If nRF Desktop is built with `Fast Pair`_ support, you must provide your own Fast Pair Model ID and Anti Spoofing private key as CMake options.
+   See :ref:`ug_bt_fast_pair_provisioning` documentation for following information:
+
+   * Registering a Fast Pair Provider
+   * Provisioning a Fast Pair Provider in |NCS|
 
 .. _nrf_desktop_testing_steps:
 
@@ -1370,6 +1381,10 @@ The nRF Desktop devices come in the following types:
 
 Both central and peripheral devices have dedicated configuration options and use dedicated modules.
 
+The nRF Desktop peripheral configurations that enable `Fast Pair`_ support use slightly different Bluetooth configuration.
+This is needed to improve the user experience.
+See :ref:`nrf_desktop_bluetooth_guide_fast_pair` for more details.
+
 .. note::
     There is no nRF Desktop device that supports both central and peripheral roles.
 
@@ -1492,6 +1507,40 @@ Optionally, you can also enable the following module:
   The Bluetooth LE channel map is forwarded using GATT characteristic.
   The Bluetooth Central can apply the channel map to avoid congested RF channels.
   This results in better connection quality and higher report rate.
+
+.. _nrf_desktop_bluetooth_guide_fast_pair:
+
+Fast Pair
+~~~~~~~~~
+
+The nRF Desktop peripheral can be built with Google `Fast Pair`_ support.
+The configurations that enable Fast Pair are set in the :file:`prj_fast_pair.conf` and :file:`prj_release_fast_pair.conf` files.
+
+These configurations support multiple bonds per Bluetooth local identity (:kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` is set to ``3``) and erase advertising (:ref:`CONFIG_DESKTOP_BLE_PEER_ERASE <config_desktop_app_options>`), but Bluetooth peer selection (:ref:`CONFIG_DESKTOP_BLE_PEER_SELECT <config_desktop_app_options>`) is disabled.
+You can now pair with your other hosts without putting peripheral back in pairing mode (without triggering the erase advertising).
+The nRF Desktop peripheral that integrates Fast Pair behaves as follows:
+
+  * If the used Bluetooth local identity has no bonds, the device advertises in pairing mode, and Fast Pair discoverable advertising is used.
+    This allows to pair with nRF Desktop device using both Fast Pair and normal Bluetooth pairing flows.
+    This advertising payload is also used during the erase advertising.
+  * If the used Bluetooth local identity already has a bond, the device is no longer in pairing mode and Fast Pair not discoverable advertising is used.
+    This allows to pair only with Fast Pair Seekers linked to Google Accounts that are already associated with the nRF Desktop device.
+    In this mode the device by default rejects normal Bluetooth pairing (:ref:`CONFIG_DESKTOP_FAST_PAIR_LIMIT_NORMAL_PAIRING <config_desktop_app_options>` option is enabled).
+    The Fast Pair UI indication is hidden after the Provider reaches :kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` bonded peers on the used local identity.
+
+After successful erase advertising procedure, the peripheral removes all of the bonds of a given Bluetooth local identity.
+
+Apart from that, the following changes applied in configurations which enable Fast Pair:
+
+* The static :ref:`partition_manager` configuration is modified to introduce a dedicated FLASH partition used to store Fast Pair provisioning data.
+* Bluetooth privacy feature (:kconfig:option:`CONFIG_BT_PRIVACY`) is enabled.
+* The fast and slow advertising intervals defined in the :ref:`nrf_desktop_ble_adv` are aligned with Fast Pair expectations.
+* The Bluetooth advertising filter accept list (:kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST`) is disabled to allow Fast Pair Seekers other than the bonded one to connect outside of the pairing mode.
+* The security failure timeout (:ref:`CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S <config_desktop_app_options>`) is longer to prevent disconnections during the Fast Pair procedure.
+* Passkey authentication (:ref:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY <config_desktop_app_options>`) is disabled on keyboard.
+  Fast Pair currently does not support devices that use screen or keyboard for Bluetooth authentication.
+
+See :ref:`ug_bt_fast_pair` for detailed information about Fast Pair support in the |NCS|.
 
 Bluetooth Central
 -----------------
