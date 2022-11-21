@@ -6,6 +6,14 @@ on:
     branches:
       - main
       - 'v*-branch'
+    paths:
+      - '.github/workflows/docbuild.yml'
+      - '*.rst'
+      - '**/Kconfig'
+      - 'doc/**'
+      - 'include/**'
+      - 'scripts/requirements-doc.txt'
+      - 'west.yml'
   push:
     branches:
       - main
