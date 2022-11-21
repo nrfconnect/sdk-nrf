@@ -132,6 +132,14 @@ enum coneval_supported_data_type {
 	COUNT,
 };
 
+/* Whether `agps_request_buffer` has A-GPS request buffered for sending when connection to
+ * cloud has been re-established.
+ */
+bool agps_request_buffered;
+
+/* Buffered A-GPS request. */
+struct nrf_modem_gnss_agps_data_frame agps_request_buffer;
+
 /* Data module message queue. */
 #define DATA_QUEUE_ENTRY_COUNT		10
 #define DATA_QUEUE_BYTE_ALIGNMENT	4
@@ -1100,12 +1108,24 @@ static void on_cloud_state_disconnected(struct data_msg_data *msg)
 {
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONNECTED)) {
 		state_set(STATE_CLOUD_CONNECTED);
+		if (agps_request_buffered) {
+			LOG_DBG("Handle buffered A-GPS request");
+			agps_request_handle(&agps_request_buffer);
+			agps_request_buffered = false;
+		}
 		return;
 	}
 
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONFIG_EMPTY) &&
 	    IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
 		config_send();
+	}
+
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_AGPS_NEEDED)) {
+		LOG_DBG("A-GPS request buffered");
+		agps_request_buffered = true;
+		agps_request_buffer = msg->module.location.data.agps_request;
+		return;
 	}
 }
 
@@ -1195,7 +1215,7 @@ static void on_all_states(struct data_msg_data *msg)
 
 	if (IS_EVENT(msg, app, APP_EVT_DATA_GET)) {
 		/* Store which data is requested by the app, later to be used
-		 * to confirm data is reported to the data manger.
+		 * to confirm data is reported to the data manager.
 		 */
 		requested_data_list_set(msg->module.app.data_list,
 					msg->module.app.count);
