@@ -137,8 +137,6 @@ struct location_datetime {
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
 /** Location details for GNSS. */
 struct location_data_details_gnss {
-	/** Indicates whether these details are valid. */
-	bool valid;
 	/** Number of satellites tracked at the time of event. */
 	uint8_t satellites_tracked;
 	/** PVT data. */
