@@ -19,6 +19,7 @@ static const char * const fam_str[] = {
 
 static const char * const event_str[] = {
 	[PDN_EVENT_CNEC_ESM] = "ESM",
+	[PDN_EVENT_CNEC_EMM] = "EMM",
 	[PDN_EVENT_ACTIVATED] = "activated",
 	[PDN_EVENT_DEACTIVATED] = "deactivated",
 	[PDN_EVENT_IPV6_UP] = "IPv6 up",
@@ -30,6 +31,9 @@ void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 	switch (event) {
 	case PDN_EVENT_CNEC_ESM:
 		printk("Event: PDP context %d, %s\n", cid, pdn_esm_strerror(reason));
+		break;
+	case PDN_EVENT_CNEC_EMM:
+		printk("Event: PDP context %d, %s\n", cid, pdn_emm_strerror(reason));
 		break;
 	default:
 		printk("Event: PDP context %d %s\n", cid, event_str[event]);

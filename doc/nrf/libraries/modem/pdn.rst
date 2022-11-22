@@ -17,7 +17,7 @@ It provides an API for the following purposes:
 The library uses several AT commands, and it relies on the following two types of AT notifications to work:
 
 * Packet domain events notifications (``+CGEV``) - Subscribed by using the `AT+CGEREP set command`_ (``AT+CGEREP=1``)
-* Notifications for unsolicited reporting of error codes sent by the network (``+CNEC``) - Subscribed by using the `AT+CNEC set command`_ (``AT+CNEC=16``)
+* Notifications for unsolicited reporting of error codes sent by the network (``+CNEC``) - Subscribed by using the `AT+CNEC set command`_ (``AT+CNEC=24``)
 
 If the application uses the :ref:`lte_lc_readme` library to change the modem's functional mode, the PDN library automatically subscribes to the necessary AT notifications.
 This includes automatically resubscribing to the notifications upon functional mode changes.

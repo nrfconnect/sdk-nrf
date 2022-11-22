@@ -60,6 +60,7 @@ enum pdn_event {
 	PDN_EVENT_DEACTIVATED,	/**< PDN connection deactivated */
 	PDN_EVENT_IPV6_UP,	/**< PDN has IPv6 connectivity */
 	PDN_EVENT_IPV6_DOWN,	/**< PDN has lost IPv6 connectivity */
+	PDN_EVENT_CNEC_EMM,	/**< +CNEC EMM error code */
 };
 
 /** @brief PDN authentication method */
@@ -200,6 +201,20 @@ int pdn_default_ctx_cb_dereg(pdn_event_handler_t cb);
  *		       a placeholder string is returned instead.
  */
 const char *pdn_esm_strerror(int reason);
+
+#endif
+
+#if CONFIG_PDN_EMM_STRERROR
+
+/**
+ * @brief Retrieve a statically allocated textual description for a given EMM error reason.
+ *
+ * @param reason EMM error reason.
+ * @return const char* EMM error reason description.
+ *		       If no textual description for the given error is found,
+ *		       a placeholder string is returned instead.
+ */
+const char *pdn_emm_strerror(int reason);
 
 #endif
 

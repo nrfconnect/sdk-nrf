@@ -94,6 +94,13 @@ config PDN_ESM_STRERROR
 	  The description can be retrieved with pdn_esm_strerror().
 	  The table and function take about 2 KB of FLASH.
 
+config PDN_EMM_STRERROR
+	bool "Compile EMM error table"
+	help
+	  Compile a table with a textual description of EMM error reasons.
+	  The description can be retrieved with pdn_emm_strerror().
+	  The table and function take about 2 KB of FLASH.
+
 module=PDN
 module-dep=LOG
 module-str=PDN library

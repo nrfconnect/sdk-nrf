@@ -35,6 +35,7 @@ struct link_shell_pdn_info {
 
 static const char *const event_str[] = {
 	[PDN_EVENT_CNEC_ESM] = "ESM",
+	[PDN_EVENT_CNEC_EMM] = "EMM",
 	[PDN_EVENT_ACTIVATED] = "activated",
 	[PDN_EVENT_DEACTIVATED] = "deactivated",
 	[PDN_EVENT_IPV6_UP] = "IPv6 up",
@@ -46,6 +47,9 @@ void link_pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 	switch (event) {
 	case PDN_EVENT_CNEC_ESM:
 		mosh_print("PDN event: PDP context %d, %s", cid, pdn_esm_strerror(reason));
+		break;
+	case PDN_EVENT_CNEC_EMM:
+		mosh_print("PDN event: PDP context %d, %s", cid, pdn_emm_strerror(reason));
 		break;
 	default:
 		mosh_print("PDN event: PDP context %d %s", cid, event_str[event]);

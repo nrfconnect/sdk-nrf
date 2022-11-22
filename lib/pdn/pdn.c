@@ -56,6 +56,7 @@ static K_MUTEX_DEFINE(pdn_act_mutex);
  */
 AT_MONITOR(pdn_cgev, "+CGEV", on_cgev, PAUSED);
 AT_MONITOR(pdn_cnec_esm, "+CNEC_ESM", on_cnec_esm, PAUSED);
+AT_MONITOR(pdn_cnec_emm, "+CNEC_ESM", on_cnec_emm, PAUSED);
 
 static struct pdn *pdn_find(int cid)
 {
@@ -113,6 +114,37 @@ static void on_cnec_esm(const char *notif)
 
 	if (cid == pdn_act_notif.cid) {
 		pdn_act_notif.esm = esm_err;
+		k_sem_give(&pdn_act_notif.sem_cnec);
+	}
+}
+
+static void on_cnec_emm(const char *notif)
+{
+	char *p;
+	uint32_t cid = 0;
+	uint32_t emm_err = UINT32_MAX;
+	struct pdn *pdn;
+	int ret;
+
+	/* +CNEC_EMM: <cause>,<cid> */
+	ret = sscanf(notif, "+CNEC_EMM: %d,%d", emm_err, cid);
+
+	/* CID is optional for EMM errors */
+	if (ret < 1) {
+		return;
+	}
+
+	pdn = pdn_find(cid);
+	if (!pdn) {
+		return;
+	}
+
+	if (pdn->callback) {
+		pdn->callback((intptr_t)cid, PDN_EVENT_CNEC_EMM, emm_err);
+	}
+
+	if (cid == pdn_act_notif.cid) {
+		pdn_act_notif.esm = emm_err;
 		k_sem_give(&pdn_act_notif.sem_cnec);
 	}
 }
@@ -507,10 +539,10 @@ static void on_cfun(enum lte_lc_func_mode mode, void *ctx)
 
 	if (mode == LTE_LC_FUNC_MODE_NORMAL ||
 	    mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
-		LOG_DBG("Subscribing to +CNEC=16 and +CGEREP=1");
-		err = nrf_modem_at_printf("AT+CNEC=16");
+		LOG_DBG("Subscribing to +CNEC=24 and +CGEREP=1");
+		err = nrf_modem_at_printf("AT+CNEC=24");
 		if (err) {
-			LOG_ERR("Unable to subscribe to +CNEC=16, err %d", err);
+			LOG_ERR("Unable to subscribe to +CNEC=24, err %d", err);
 		}
 		err = nrf_modem_at_printf("AT+CGEREP=1");
 		if (err) {
@@ -535,6 +567,7 @@ static int pdn_sys_init(const struct device *unused)
 
 	at_monitor_resume(&pdn_cgev);
 	at_monitor_resume(&pdn_cnec_esm);
+	at_monitor_resume(&pdn_cnec_emm);
 
 	return 0;
 }
