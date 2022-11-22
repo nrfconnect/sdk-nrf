@@ -24,6 +24,8 @@ BUILD_ASSERT(
 	IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) &&
 	IS_ENABLED(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD));
 
+BUILD_ASSERT(!IS_ENABLED(CONFIG_MOSH_CLOUD_LWM2M));
+
 extern struct k_work_q mosh_common_work_q;
 extern const struct shell *mosh_shell;
 

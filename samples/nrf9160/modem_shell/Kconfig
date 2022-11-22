@@ -99,6 +99,11 @@ config MOSH_CLOUD_MQTT
 	help
 	  MQTT connection to nRFCloud.
 
+config MOSH_CLOUD_LWM2M
+	bool "Cloud connection using LwM2M"
+	help
+	  Cloud connection using LwM2M.
+
 config MOSH_AT_CMD_MODE
 	bool "Specific AT command mode"
 	default y
@@ -188,5 +193,22 @@ config MOSH_WORKER_THREADS_STACK_SIZE
 	default 4096
 
 endif #MOSH_WORKER_THREADS
+
+if MOSH_CLOUD_LWM2M
+
+config MOSH_LWM2M_PSK
+	string "LwM2M pre-shared key for communication"
+	default "000102030405060708090a0b0c0d0e0f"
+	help
+	  Pre-shared key must be identical to the PSK registered with the device on the LwM2M server.
+	  Use the hexadecimal representation.
+
+config MOSH_LWM2M_ENDPOINT_PREFIX
+	string "Prefix used in the LwM2M endpoint name"
+	default "urn:imei:"
+	help
+	  Sets the prefix of the endpoint name used when connecting to the LwM2M server.
+
+endif # MOSH_CLOUD_LWM2M
 
 endmenu # Modem Shell

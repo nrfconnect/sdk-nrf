@@ -1135,6 +1135,49 @@ For example:
 
    west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-rtt.conf
 
+LwM2M support
+=============
+
+Before building and running the sample, select the LwM2M server for testing.
+Follow the instructions in :ref:`server_setup_lwm2m` to set up the server and register your device to the server.
+
+Location assistance uses a proprietary mechanism to fetch location assistance data from nRF Cloud by proxying it through the LwM2M server.
+As of now, you can only use AVSystem's Coiote LwM2M server for the location assistance data from nRF Cloud.
+
+To build the MoSh sample with LwM2M support, use the ``-DOVERLAY_CONFIG=overlay-lwm2m.conf`` option and set the used Pre-Shared-Key (PSK) using :kconfig:option:`CONFIG_MOSH_LWM2M_PSK` Kconfig option.
+You can change the LwM2M server address by setting :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SERVER`.
+To enable P-GPS support, use the optional overlay files :file:`overlay-lwm2m_pgps.conf` and :file:`overlay-pgps.conf`.
+
+To build the sample with LwM2M support, use the following command:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-lwm2m.conf -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
+
+To enable also P-GPS, use the following command:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-lwm2m.conf overlay-lwm2m_pgps.conf overlay-pgps.conf" -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
+
+Use the following command to establish connection to the LwM2M server:
+
+.. code-block:: console
+
+   mosh:~$ cloud_lwm2m connect
+   LwM2M: Starting LwM2M client
+   LwM2M: Registration complete
+
+Use the following command to disconnect from the LwM2M server:
+
+.. code-block:: console
+
+   mosh:~$ cloud_lwm2m disconnect
+   LwM2M: Stopping LwM2M client
+   LwM2M: Disconnected
+
+When connected, the ``location`` and ``gnss`` commands use the LwM2M cloud connection for fetching GNSS assistance data and for cellular positioning.
+
 References
 **********
 
@@ -1145,9 +1188,16 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :ref:`lte_lc_readme`
-* :ref:`modem_info_readme`
 * :ref:`at_cmd_parser_readme`
+* :ref:`lib_date_time`
+* :ref:`lib_location`
+* :ref:`lte_lc_readme`
+* :ref:`lib_lwm2m_client_utils`
+* :ref:`lib_lwm2m_location_assistance`
+* :ref:`modem_info_readme`
+* :ref:`lib_modem_jwt`
+* :ref:`lib_nrf_cloud`
+* :ref:`lib_rest_client`
 * :ref:`sms_readme`
 
 This sample uses the following `sdk-nrfxlib`_ libraries:
