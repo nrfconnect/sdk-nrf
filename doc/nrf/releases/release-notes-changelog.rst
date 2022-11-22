@@ -602,7 +602,9 @@ Libraries for networking
 Libraries for NFC
 -----------------
 
-|no_changes_yet_note|
+* :ref:`lib_nfc_ndef`:
+
+  * Fixed a write to a constant field in the :c:func:`ac_rec_payload_parse` function.
 
 Other libraries
 ---------------
