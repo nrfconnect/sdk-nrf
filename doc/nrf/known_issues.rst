@@ -885,6 +885,20 @@ KRKNWK-6073: Potential delay during FOTA
 Matter
 ======
 
+.. rst-class:: v2-1-2 v2-1-1
+
+KRKNWK-15749: Invalid ZAP Tool revision used
+  The ZAP Tool revision used for the |NCS| v2.1.1 and v2.1.2 releases is not compatible with the :file:`zap` files that define the Data Model in |NCS| Matter samples.
+  This resuls in the ZAP Tool not being able to parse :file:`zap` files from Matter samples.
+
+  **Workaround:** Check out the proper ZAP Tool revision with the following commands, where *<NCS_root_directory>* is the path to your |NCS| installation:
+
+    .. code-block::
+
+       cd <NCS_root_directory>/modules/lib/matter/
+       git -C third_party/zap/repo/ checkout -f 2ae226
+       git add third_party/zap/repo/
+
 .. rst-class:: v2-1-2 v2-1-1 v2-1-0
 
 KRKNWK-14473: Unreliable communication with the window covering sample
