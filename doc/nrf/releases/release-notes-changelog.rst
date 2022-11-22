@@ -202,6 +202,9 @@ nRF Desktop
   See :ref:`nrf_desktop_bluetooth_guide_fast_pair` for details.
 * Added :ref:`nrf_desktop_fast_pair_app`.
   The module is used in configurations that integrate Google `Fast Pair`_.
+* Introduced :ref:`CONFIG_DESKTOP_USB_REMOTE_WAKEUP <config_desktop_app_options>` Kconfig option for :ref:`nrf_desktop_usb_state`.
+  The option enables the USB wakeup functionality in the application.
+  The option selects :kconfig:option:`CONFIG_USB_DEVICE_REMOTE_WAKEUP`.
 
 Thingy:53 Zigbee weather station
 --------------------------------
