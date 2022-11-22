@@ -547,7 +547,7 @@ static int enable_notifications(void)
 		 * not work for older versions. If the command fails, RRC
 		 * mode change notifications will not be received. This is not
 		 * considered a critical error, and the error code is therefore
-		 * not returned, while informative log messageas are printed.
+		 * not returned, while informative log messages are printed.
 		 */
 		LOG_WRN("AT+CSCON failed (%d), RRC notifications are not enabled", err);
 		LOG_WRN("AT+CSCON is supported in nRF9160 modem >= v1.1.0");
@@ -1389,6 +1389,7 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode)
 
 	err = nrf_modem_at_printf("AT+CFUN=%d", mode);
 	if (err) {
+		LOG_ERR("Failed to set functional mode. Please check XSYSTEMMODE.");
 		return -EFAULT;
 	}
 
