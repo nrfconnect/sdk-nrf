@@ -248,9 +248,10 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 		 */
 		if (evt->modem_evt == LTE_LC_MODEM_EVT_RESET_LOOP) {
 			LOG_WRN("The modem has detected a reset loop. LTE network attach is now "
-				"restricted for the next 30 minutes. Power-cycle the device to "
-				"circumvent this restriction. For more information see the "
-				"nRF91 AT Commands - Command Reference Guide v2.0 - chpt. 5.36");
+					"restricted for the next 30 minutes. Power-cycle the device to "
+					"circumvent this restriction.");
+			LOG_DBG("For more information see the nRF91 AT Commands - Command "
+					"Reference Guide v2.0 - chpt. 5.36");
 		}
 		break;
 	default:
@@ -265,7 +266,7 @@ void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 
 	switch (event) {
 	case PDN_EVENT_CNEC_ESM:
-		LOG_WRN("Event: PDP context %d, %s", cid, pdn_esm_strerror(reason));
+		LOG_ERR("Event: PDP context %d, %s", cid, pdn_esm_strerror(reason));
 		break;
 	case PDN_EVENT_ACTIVATED:
 		LOG_DBG("PDN_EVENT_ACTIVATED");
@@ -1080,7 +1081,7 @@ static void module_thread_fn(void)
 			/* The shutdown state has no transition. */
 			break;
 		default:
-			LOG_WRN("Invalid state: %d", state);
+			LOG_ERR("Invalid state: %d", state);
 			break;
 		}
 

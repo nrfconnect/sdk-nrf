@@ -479,8 +479,8 @@ static void connect_cloud(void)
 
 	connect_retries++;
 
-	LOG_WRN("Cloud connection establishment in progress");
-	LOG_WRN("New connection attempt in %d seconds if not successful",
+	LOG_DBG("Cloud connection establishment in progress");
+	LOG_DBG("New connection attempt in %d seconds if not successful",
 		backoff_sec);
 
 	/* Start timer to check connection status after backoff */
@@ -901,7 +901,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 			}
 			break;
 		default:
-			LOG_WRN("Unknown data type");
+			LOG_ERR("Unknown data type");
 			break;
 		}
 	}
@@ -955,7 +955,7 @@ static void on_sub_state_cloud_disconnected(struct cloud_msg_data *msg)
 		}
 			break;
 		default:
-			LOG_WRN("Unknown data type");
+			LOG_ERR("Unknown data type");
 			break;
 		}
 	}
@@ -1069,7 +1069,7 @@ static void module_thread_fn(void)
 				on_sub_state_cloud_disconnected(&msg);
 				break;
 			default:
-				LOG_ERR("Unknown Cloud module sub state");
+				LOG_ERR("Unknown sub state");
 				break;
 			}
 
@@ -1082,7 +1082,7 @@ static void module_thread_fn(void)
 			/* The shutdown state has no transition. */
 			break;
 		default:
-			LOG_ERR("Unknown Cloud module state.");
+			LOG_ERR("Unknown state.");
 			break;
 		}
 

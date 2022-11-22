@@ -205,7 +205,7 @@ static void handle_nrf_modem_lib_init_ret(void)
 		/* Initialization successful, no action required. */
 		return;
 	case MODEM_DFU_RESULT_OK:
-		LOG_WRN("MODEM UPDATE OK. Will run new modem firmware after reboot");
+		LOG_DBG("MODEM UPDATE OK. Will run new modem firmware after reboot");
 		break;
 	case MODEM_DFU_RESULT_UUID_ERROR:
 	case MODEM_DFU_RESULT_AUTH_ERROR:
@@ -229,7 +229,7 @@ static void handle_nrf_modem_lib_init_ret(void)
 #elif defined(CONFIG_LWM2M_INTEGRATION)
 	lwm2m_verify_modem_fw_update();
 #endif
-	LOG_WRN("Rebooting...");
+	LOG_DBG("Rebooting...");
 	LOG_PANIC();
 	sys_reboot(SYS_REBOOT_COLD);
 #endif /* CONFIG_NRF_MODEM_LIB */
@@ -560,7 +560,7 @@ void main(void)
 				on_sub_state_passive(&msg);
 				break;
 			default:
-				LOG_WRN("Unknown application sub state");
+				LOG_ERR("Unknown sub state");
 				break;
 			}
 
@@ -570,7 +570,7 @@ void main(void)
 			/* The shutdown state has no transition. */
 			break;
 		default:
-			LOG_WRN("Unknown application state");
+			LOG_ERR("Unknown state");
 			break;
 		}
 

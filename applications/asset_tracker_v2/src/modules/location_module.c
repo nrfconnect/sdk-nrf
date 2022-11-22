@@ -415,7 +415,7 @@ void location_event_handler(const struct location_event_data *event_data)
 		break;
 
 	case LOCATION_EVT_TIMEOUT:
-		LOG_WRN("Getting location timed out");
+		LOG_DBG("Getting location timed out");
 		stats.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 		LOG_DBG("  search time: %d", stats.search_time);
 
@@ -526,10 +526,10 @@ static void on_state_running_location_search(struct location_msg_data *msg)
 			return;
 		}
 
-		LOG_WRN("Location request already active and will not be restarted");
-		LOG_WRN("Seeing this message sometimes is normal, especially, "
+		LOG_DBG("Location request already active and will not be restarted");
+		LOG_DBG("Seeing this message sometimes is normal, especially, "
 			"when trying to acquire the first GNSS fix.");
-		LOG_WRN("If you see this often for other than the first location search, "
+		LOG_DBG("If you see this often for other than the first location search, "
 			"try setting the sample/publication interval a bit greater.");
 	}
 }
@@ -594,7 +594,7 @@ static void message_handler(struct location_msg_data *msg)
 			on_state_running_location_idle(msg);
 			break;
 		default:
-			LOG_ERR("Unknown Location module sub state.");
+			LOG_ERR("Unknown sub state.");
 			break;
 		}
 		break;
@@ -602,7 +602,7 @@ static void message_handler(struct location_msg_data *msg)
 		/* The shutdown state has no transition. */
 		break;
 	default:
-		LOG_ERR("Unknown GNSS module state.");
+		LOG_ERR("Unknown state.");
 		break;
 	}
 

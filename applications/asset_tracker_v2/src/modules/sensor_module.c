@@ -407,7 +407,7 @@ static void module_thread_fn(void)
 			/* The shutdown state has no transition. */
 			break;
 		default:
-			LOG_WRN("Unknown sensor module state.");
+			LOG_ERR("Unknown state.");
 			break;
 		}
 
