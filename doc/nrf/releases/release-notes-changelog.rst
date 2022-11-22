@@ -213,6 +213,10 @@ nRF Desktop
 * Introduced :ref:`CONFIG_DESKTOP_USB_REMOTE_WAKEUP <config_desktop_app_options>` Kconfig option for :ref:`nrf_desktop_usb_state`.
   The option enables the USB wakeup functionality in the application.
   The option selects :kconfig:option:`CONFIG_USB_DEVICE_REMOTE_WAKEUP`.
+* The Bluetooth GATT Service Changed (:kconfig:option:`CONFIG_BT_GATT_SERVICE_CHANGED`) is disabled on nRF Desktop dongles to reduce memory footprint.
+* Added application-specific Kconfig options to simplify the configuration.
+  Part of an application Kconfig configuration that is common for the selected HID device type is introduced as overlays for default Kconfig values.
+  See :ref:`nrf_desktop_porting_guide` for details.
 
 Thingy:53 Zigbee weather station
 --------------------------------
