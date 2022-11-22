@@ -770,6 +770,8 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
     * :kconfig:option:`CONFIG_PM_PARTITION_ALIGN_SETTINGS_STORAGE` Kconfig option to specify the alignment of the settings storage partition.
     * P-GPS partition section to the :file:`ncs/nrf/subsys/partition_manager/Kconfig` file.
+    * Board-specific static Partition Manager configuration shared among build types.
+      The configuration can be defined in the board's directory.
 
   * Updated:
 

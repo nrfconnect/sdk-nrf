@@ -41,12 +41,19 @@ ncs_file(CONF_FILES ${BOARD_DIR}
          BUILD ${CONF_FILE_BUILD_TYPE}
 )
 
+ncs_file(CONF_FILES ${BOARD_DIR}
+         PM board_dir_pm_static_common
+         DOMAIN ${DOMAIN}
+)
+
 if(EXISTS "${user_def_pm_static}" AND NOT IS_DIRECTORY "${user_def_pm_static}")
   set(static_configuration_file ${user_def_pm_static})
 elseif (EXISTS ${conf_dir_pm_static})
   set(static_configuration_file ${conf_dir_pm_static})
 elseif (EXISTS ${board_dir_pm_static})
   set(static_configuration_file ${board_dir_pm_static})
+elseif (EXISTS ${board_dir_pm_static_common})
+  set(static_configuration_file ${board_dir_pm_static_common})
 endif()
 
 if (EXISTS ${static_configuration_file})
