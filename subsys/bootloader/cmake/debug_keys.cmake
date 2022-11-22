@@ -78,7 +78,7 @@ endif()
 set(PUBLIC_KEY_FILES "")
 
 # Check if debug public and private keys for key revokation should be generated
-if ("${CONFIG_SB_PUBLIC_KEY_FILES}" STREQUAL "")
+if ("${CONFIG_SB_PUBLIC_KEY_FILES}" STREQUAL "debug")
   message(WARNING "
     ---------------------------------------------------------------
     --- WARNING: Using generated NSIB public/private key-pairs. ---

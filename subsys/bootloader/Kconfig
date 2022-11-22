@@ -107,7 +107,10 @@ config SB_PUBLIC_KEY_FILES
 	  is successfully validated against a public key in the list, all
 	  public keys before it in the list will be invalidated.
 	  Example value: ~/keys/pk1.pem,~/keys/pk2.pem,~/keys/pk3.pem
-	  If config is an empty string, 2 generated debug files will be used.
+	  If config is the string "debug", 2 generated debug files will be used.
+	  If config is an empty string then only the public key hash
+	  corresponding to the private signing key used to sign the image is
+	  included in provision.hex.
 
 config SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
 	bool "[DEBUG] Place signing public key last"
