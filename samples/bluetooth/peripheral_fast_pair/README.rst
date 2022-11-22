@@ -41,6 +41,10 @@ The device can be used to bond with the following devices:
   The device is linked with the user's Google account.
 * Bluetooth Central that is not a Fast Pair Seeker - Normal Bluetooth LE bonding is used in this scenario and there is no Bluetooth MITM protection.
 
+.. note::
+   The normal Bluetooth LE bonding can be used only if the Fast Pair discoverable advertising mode is selected.
+   In other Fast Pair advertising modes, the device rejects the normal Bluetooth LE bonding.
+
 The sample supports only one simultaneous Bluetooth connection, but it can be bonded with multiple Bluetooth Centrals.
 
 The sample supports both the discoverable and not discoverable Fast Pair advertising.
@@ -94,6 +98,8 @@ Button 1:
    * Fast Pair not discoverable advertising (with the show UI indication).
    * Fast Pair not discoverable advertising (with the hide UI indication).
 
+   The advertising pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`) is enabled only if the Fast Pair discoverable advertising mode is selected.
+
    .. note::
        The Bluetooth advertising is active only until the Fast Pair Provider connects to a Bluetooth Central.
        After the connection, you can still switch the advertising modes, but the switch will come into effect only after disconnection.
@@ -103,10 +109,15 @@ Button 1:
        * After a Bluetooth Central successfully pairs.
 
        After the device reaches the maximum number of paired devices (:kconfig:option:`CONFIG_BT_MAX_PAIRED`), the device stops looking for new peers.
-       Therefore, the Fast Pair payload is no longer included in the advertising data.
+       Therefore, the device no longer advertises in the pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`), and only the Fast Pair not discoverable advertising with hide UI indication mode includes the Fast Pair payload.
 
 Button 2:
    Increases audio volume of the connected Bluetooth Central.
+
+Button 3:
+   Removes the Bluetooth bonds.
+   This operation does not clear Fast Pair storage data.
+   The stored Account Keys are not removed.
 
 Button 4:
    Decreases audio volume of the connected Bluetooth Central.

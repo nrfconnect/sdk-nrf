@@ -237,8 +237,11 @@ Bluetooth samples
 * :ref:`peripheral_fast_pair` sample:
 
   * Switched to using :ref:`bt_le_adv_prov_readme` to generate Bluetooth advertising and scan response data.
+  * The advertising pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`) is enabled only in the Fast Pair discoverable advertising mode.
+    The device also rejects normal Bluetooth LE pairing when not in the pairing mode.
   * After the device reaches the maximum number of paired devices (:kconfig:option:`CONFIG_BT_MAX_PAIRED`), the device stops looking for new peers.
-    Therefore, the Fast Pair payload is no longer included in the advertising data.
+    Therefore, the device no longer advertises with the pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`) enabled, and only the Fast Pair not discoverable advertising with hide UI indication mode includes the Fast Pair payload.
+  * Added bond removal functionality.
 
 * :ref:`peripheral_mds` sample:
 
