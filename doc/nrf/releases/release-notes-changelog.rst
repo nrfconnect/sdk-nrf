@@ -343,6 +343,8 @@ nRF9160 samples
     * Overlay files for nRF9160 DK with nRF7002 EK to enable Wi-Fi scanning support.
       With this configuration, you can, for example, obtain the current location by using the ``location get`` command.
     * Support for new GCI (Global Cell ID) search types for ``link ncellmeas`` command, which are supported by the modem firmware versions >= 1.3.4.
+    * Support for connecting to cloud using the :ref:`lib_lwm2m_client_utils` library.
+      An overlay file is provided for building with the LwM2M support and an optional overlay to enable P-GPS.
 
 * :ref:`location_sample`:
 

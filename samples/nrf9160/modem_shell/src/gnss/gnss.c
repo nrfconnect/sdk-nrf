@@ -13,6 +13,12 @@
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS) || \
+	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
+#include <net/lwm2m_client_utils_location.h>
+#include "cloud_lwm2m.h"
+#endif
+
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 #include <stdlib.h>
 #include <modem/modem_jwt.h>
@@ -81,7 +87,8 @@ static bool agps_inject_pos = true;
 static bool agps_inject_int = true;
 #endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_SUPL_CLIENT_LIB */
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT)
+#if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
+	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
 static char agps_data_buf[3500];
 #endif /* CONFIG_NRF_CLOUD_AGPS && !CONFIG_NRF_CLOUD_MQTT */
 
@@ -96,11 +103,14 @@ static struct k_work get_pgps_data_work;
 #endif /* !CONFIG_NRF_CLOUD_MQTT */
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
-#if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)) && \
+#if ((defined(CONFIG_NRF_CLOUD_AGPS) && \
+	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)) || \
+	(defined(CONFIG_NRF_CLOUD_PGPS) && \
+	 !defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS))) && \
 	!defined(CONFIG_NRF_CLOUD_MQTT)
 static char jwt_buf[600];
 static char rx_buf[2048];
-#endif /* (CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS) && !CONFIG_NRF_CLOUD_MQTT */
+#endif
 
 #if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
 static bool gnss_filtered_ephemerides_enabled;
@@ -452,7 +462,8 @@ static int gnss_enable_all_nmeas(void)
 		NRF_MODEM_GNSS_NMEA_RMC_MASK);
 }
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT)
+#if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
+	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
 static int serving_cell_info_get(struct lte_lc_cell *serving_cell)
 {
 	int err;
@@ -491,7 +502,7 @@ static int serving_cell_info_get(struct lte_lc_cell *serving_cell)
 
 	return 0;
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
 static void get_filtered_agps_request(struct nrf_modem_gnss_agps_data_frame *agps_request)
@@ -534,6 +545,7 @@ static void get_agps_data(struct k_work *item)
 {
 	ARG_UNUSED(item);
 
+	int err;
 	char flags_string[48];
 	struct nrf_modem_gnss_agps_data_frame agps_request;
 
@@ -543,7 +555,9 @@ static void get_agps_data(struct k_work *item)
 
 	mosh_print(
 		"GNSS: Getting A-GPS data from %s (ephe: 0x%08x, alm: 0x%08x, flags: %s)...",
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+		"LwM2M",
+#elif defined(CONFIG_NRF_CLOUD_AGPS)
 		"nRF Cloud",
 #else
 		"SUPL",
@@ -552,14 +566,23 @@ static void get_agps_data(struct k_work *item)
 		agps_request.sv_mask_alm,
 		flags_string);
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-	int err;
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+	if (!cloud_lwm2m_is_connected()) {
+		mosh_error("GNSS: LwM2M not connected, can't request A-GPS data");
+		return;
+	}
+	location_assistance_agps_set_mask(&agps_request);
+	err = location_assistance_agps_request_send(cloud_lwm2m_client_ctx_get(), true);
+	if (err) {
+		mosh_error("GNSS: Failed to request A-GPS data, error: %d", err);
+	}
+#elif defined(CONFIG_NRF_CLOUD_AGPS)
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 	err = nrf_cloud_agps_request(&agps_request);
 	if (err == -EACCES) {
 		mosh_error("GNSS: Not connected to nRF Cloud");
 	} else if (err) {
-		mosh_error("GNSS: Failed to get A-GPS data, error: %d", err);
+		mosh_error("GNSS: Failed to request A-GPS data, error: %d", err);
 	}
 #else
 	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
@@ -623,7 +646,10 @@ static void get_agps_data(struct k_work *item)
 #endif
 #else /* CONFIG_SUPL_CLIENT_LIB */
 	if (open_supl_socket() == 0) {
-		supl_session((void *)&agps_request);
+		err = supl_session((void *)&agps_request);
+		if (err) {
+			mosh_error("GNSS: Failed to get A-GPS data, error: %d", err);
+		}
 		close_supl_socket();
 	}
 #endif
@@ -749,6 +775,25 @@ static void get_pgps_data_work_fn(struct k_work *work)
 
 	int err;
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
+	mosh_print("GNSS: Getting P-GPS predictions from LwM2M...");
+
+	err = location_assist_pgps_set_prediction_count(pgps_request.prediction_count);
+	err |= location_assist_pgps_set_prediction_interval(pgps_request.prediction_period_min);
+	location_assist_pgps_set_start_gps_day(pgps_request.gps_day);
+	err |= location_assist_pgps_set_start_time(pgps_request.gps_time_of_day);
+	if (err) {
+		mosh_error("GNSS: Failed to set P-GPS request parameters");
+		return;
+	}
+
+	err = location_assistance_pgps_request_send(cloud_lwm2m_client_ctx_get(), true);
+	if (err) {
+		mosh_error("GNSS: Failed to request P-GPS data, err: %d", err);
+	} else {
+		mosh_print("GNSS: P-GPS predictions requested");
+	}
+#else
 	mosh_print("GNSS: Getting P-GPS predictions from nRF Cloud...");
 
 	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
@@ -800,6 +845,7 @@ static void get_pgps_data_work_fn(struct k_work *work)
 	}
 
 	mosh_print("GNSS: P-GPS predictions requested");
+#endif
 }
 #endif /* !CONFIG_NRF_CLOUD_MQTT */
 
