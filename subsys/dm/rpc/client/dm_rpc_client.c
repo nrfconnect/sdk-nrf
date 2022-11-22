@@ -151,7 +151,7 @@ static void data_handler(struct k_work *work)
 	}
 
 	cmd = DM_END_PROCESS_RPC_CMD;
-	ipc_service_send(&ep, &cmd, sizeof(ret));
+	ipc_service_send(&ep, &cmd, sizeof(cmd));
 }
 
 static int ipc_init(const struct device *dev)

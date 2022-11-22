@@ -62,7 +62,6 @@ LOG_MODULE_REGISTER(nrf_dm, CONFIG_DM_MODULE_LOG_LEVEL);
 
 #define DM_TIMESLOT_OVERHEAD_US      400
 #define DM_REFLECTOR_OVERHEAD_US     2000
-#define DM_RANGING_EXTRA_TIMEOUT_US  200
 
 static K_MUTEX_DEFINE(ranging_mtx);
 static K_TIMER_DEFINE(timer, NULL, NULL);
@@ -127,7 +126,7 @@ static mpsl_timeslot_signal_return_param_t signal_callback_return_param;
 static void dm_config_get(struct dm_request *dm_req, nrf_dm_config_t *dm_config)
 {
 	*dm_config = NRF_DM_DEFAULT_CONFIG;
-	dm_config->access_address = dm_req->rng_seed;
+	dm_config->rng_seed = dm_req->rng_seed;
 
 	if (dm_req->role == DM_ROLE_INITIATOR) {
 		dm_config->role = NRF_DM_ROLE_INITIATOR;
@@ -150,7 +149,7 @@ static uint32_t dm_proc_execute_duration_us(struct dm_request *dm_req)
 	dm_config_get(dm_req, &config);
 
 	time_us = nrf_dm_get_duration_us(&config) + NRF_DM_PROC_EXECUTE_DURATION_OVERHEAD_US +
-	       DM_RANGING_EXTRA_TIMEOUT_US + dm_req->extra_window_time_us;
+						    dm_req->extra_window_time_us;
 
 	if (dm_req->role == DM_ROLE_REFLECTOR) {
 		time_us += DM_REFLECTOR_OVERHEAD_US;
