@@ -30,6 +30,13 @@ Changelog
 
 The following sections provide detailed lists of changes by component.
 
+MCUboot
+=======
+
+* Added the :kconfig:option:`PM_EXTERNAL_FLASH_HAS_DRIVER` kconfig option.
+  When set, it makes MCUboot fail to boot when the external flash memory is used for non-primary application images but the driver for the external flash memory is not enabled.
+  See :ref:`ug_bootloader_external_flash` and :ref:`pm_external_flash` for details.
+
 Application development
 =======================
 
