@@ -516,6 +516,10 @@ Modem libraries
     * Added timeout for the entire location request.
     * Added location data details such as entire PVT data.
     * Moved location method from the :c:struct:`location_data` structure to :c:struct:`location_event_data`.
+    * Started to use :ref:`lib_nrf_cloud_location` for nRF Cloud Wi-Fi positioning.
+
+  * Added:
+    * MQTT support for nRF Cloud Wi-Fi positioning.
 
 * :ref:`lte_lc_readme` library:
 

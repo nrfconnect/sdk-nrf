@@ -62,7 +62,8 @@ Each location method has its own implementation for the location retrieval:
     * The location library has an implementation for the Wi-Fi location services.
     * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
     * The services available are `nRF Cloud Location Services`_ and `HERE Positioning`_.
-    * The data transport method for the service is REST.
+    * The data transport method for the `nRF Cloud Location Services`_ can be configured to either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
+    * The only data transport method with `HERE Positioning`_ service is REST.
 
 Requirements
 ************
@@ -87,8 +88,8 @@ You can configure the required credentials for the location services using Kconf
 Wi-Fi chip
 ==========
 
-None of the supported DKs have a Wi-Fi chip. You can use external Wi-Fi chip, such as ESP8266, and connect it to the nRF9160 DK.
-You can see :ref:`location_sample` and its DTC overlay for some more information on ESP8266 integration.
+None of the supported DKs have an integrated Wi-Fi chip.
+You can use an external Wi-Fi chip, such as nRF7002 EK, and connect it to the nRF9160 DK.
 
 Library files
 *************

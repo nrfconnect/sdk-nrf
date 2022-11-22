@@ -53,6 +53,8 @@ The configuration files are in the |sample path| directory.
 
 The following files are available:
 
+* :file:`nrf9160dk_with_nrf7002ek.overlay` - DTC overlay for nRF7002 EK Wi-Fi chip support.
+* :file:`nrf7002ek-wifi-scan-only.conf` - Config overlay for nRF7002 EK Wi-Fi chip support.
 * :file:`esp_8266_nrf9160ns.overlay` - DTC overlay for ESP8266 Wi-Fi chip support.
 * :file:`overlay-esp-wifi.conf` - Config overlay for ESP8266 Wi-Fi chip support.
 * :file:`overlay-pgps.conf` - Config overlay for P-GPS support.

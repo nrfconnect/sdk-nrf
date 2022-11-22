@@ -6,5 +6,5 @@
 
 zephyr_library()
 zephyr_library_sources(wifi_service.c)
-zephyr_library_sources_ifdef(CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD wifi_nrf_cloud_rest.c)
+zephyr_library_sources_ifdef(CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD wifi_nrf_cloud.c)
 zephyr_library_sources_ifdef(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE wifi_here_rest.c)

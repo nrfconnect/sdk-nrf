@@ -29,7 +29,7 @@
 int wifi_here_rest_pos_get(
 	char *rcv_buf,
 	size_t rcv_buf_len,
-	const struct rest_wifi_pos_request *request,
+	const struct location_wifi_serv_pos_req *request,
 	struct location_data *result);
 
 #endif /* WIFI_HERE_REST_H */
