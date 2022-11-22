@@ -31,7 +31,7 @@ if (DEFINED SB_SIGNING_KEY_FILE)
   set(SIGNATURE_PRIVATE_KEY_FILE ${SB_SIGNING_KEY_FILE})
 endif()
 
-# Lastly, check if debug keys should be used.
+# Check if debug sign key should be generated.
 if( "${CONFIG_SB_SIGNING_KEY_FILE}" STREQUAL "")
   set(DEBUG_SIGN_KEY ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_SIGN_KEY_PRIVATE.pem)
   set(SIGNATURE_PRIVATE_KEY_FILE ${DEBUG_SIGN_KEY})
@@ -66,12 +66,17 @@ else()
   endif()
 endif()
 
+set(PUBLIC_KEY_FILES "")
+
+# Check if debug public and private keys for key revokation should be generated
 if ("${CONFIG_SB_PUBLIC_KEY_FILES}" STREQUAL "")
   set(debug_public_key_0 ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_PUBLIC_0.pem)
   set(debug_private_key_0 ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_PRIVATE_0.pem)
   set(debug_public_key_1 ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_PUBLIC_1.pem)
   set(debug_private_key_1 ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_PRIVATE_1.pem)
-  set (PUBLIC_KEY_FILES "${debug_public_key_0},${debug_public_key_1}")
+
+  list(APPEND PUBLIC_KEY_FILES ${debug_public_key_0} ${debug_public_key_1})
+
   add_custom_command(
     OUTPUT
     ${debug_public_key_0}
@@ -107,7 +112,6 @@ if ("${CONFIG_SB_PUBLIC_KEY_FILES}" STREQUAL "")
     )
   set(PROVISION_KEY_DEPENDS provision_key_target)
 else ()
-  string(REPLACE "," ";" PUBLIC_KEY_FILES_LIST ${CONFIG_SB_PUBLIC_KEY_FILES})
   foreach(key ${PUBLIC_KEY_FILES_LIST})
     # Resolve path.
     if(IS_ABSOLUTE ${key})
@@ -116,5 +120,4 @@ else ()
       list(APPEND PUBLIC_KEY_FILES ${CMAKE_SOURCE_DIR}/${key})
     endif()
   endforeach()
-  string(REPLACE ";" "," PUBLIC_KEY_FILES "${PUBLIC_KEY_FILES}")
 endif()
