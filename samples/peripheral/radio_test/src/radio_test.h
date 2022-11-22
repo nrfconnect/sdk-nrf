@@ -10,6 +10,20 @@
 #include <zephyr/types.h>
 #include <hal/nrf_radio.h>
 
+#ifdef NRF53_SERIES
+#ifndef RADIO_TXPOWER_TXPOWER_Pos3dBm
+	#define RADIO_TXPOWER_TXPOWER_Pos3dBm (0x03UL)
+#endif /* RADIO_TXPOWER_TXPOWER_Pos3dBm */
+
+#ifndef RADIO_TXPOWER_TXPOWER_Pos2dBm
+	#define RADIO_TXPOWER_TXPOWER_Pos2dBm (0x02UL)
+#endif /* RADIO_TXPOWER_TXPOWER_Pos2dBm */
+
+#ifndef RADIO_TXPOWER_TXPOWER_Pos1dBm
+	#define RADIO_TXPOWER_TXPOWER_Pos1dBm (0x01UL)
+#endif /* RADIO_TXPOWER_TXPOWER_Pos1dBm */
+#endif /* NRF53_SERIES */
+
 /** Maximum radio RX or TX payload. */
 #define RADIO_MAX_PAYLOAD_LEN	256
 /** IEEE 802.15.4 maximum payload length. */
@@ -77,7 +91,7 @@ struct radio_test_config {
 	union {
 		struct {
 			/** Radio output power. */
-			uint8_t txpower;
+			int8_t txpower;
 
 			/** Radio channel. */
 			uint8_t channel;
@@ -85,7 +99,7 @@ struct radio_test_config {
 
 		struct {
 			/** Radio output power. */
-			uint8_t txpower;
+			int8_t txpower;
 
 			/** Radio transmission pattern. */
 			enum transmit_pattern pattern;
@@ -113,7 +127,7 @@ struct radio_test_config {
 
 		struct {
 			/** Radio output power. */
-			uint8_t txpower;
+			int8_t txpower;
 
 			/** Radio start channel (frequency). */
 			uint8_t channel_start;
@@ -138,7 +152,7 @@ struct radio_test_config {
 
 		struct {
 			/** Radio output power. */
-			uint8_t txpower;
+			int8_t txpower;
 
 			/** Radio transmission pattern. */
 			enum transmit_pattern pattern;

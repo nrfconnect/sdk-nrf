@@ -125,7 +125,7 @@ void fem_txrx_stop(void);
  */
 int fem_antenna_select(enum fem_antenna ant);
 
-/**@brief @brief Get the radio ramp-up time in transmit mode.
+/**@brief Get the radio ramp-up time in transmit mode.
  *
  * @param[in] fast The radio is in the fast ramp-up mode.
  * @param[in] mode Radio mode.
@@ -142,6 +142,24 @@ uint32_t fem_radio_tx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode);
  * @retval Radio ramp-up time in microseconds.
  */
 uint32_t fem_radio_rx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode);
+
+/**@brief Set the front-end module gain and returns output power to be set on the radio peripheral
+ *        to get requested output power.
+ *
+ * This function calculates power value for RADIO peripheral register and
+ * sets front-end module gain value.
+ *
+ * @note If the exact value of @p power cannot be achieved, this function attempts to use less
+ *       power to not exceed the limits.
+ *
+ * @param[in] power TX power requested for transmission on air.
+ * @param[out] radio_tx_power Tx power value to be set on the radio peripheral.
+ * @param[in] freq_mhz Frequency in MHz. The output power is valid only for this frequency.
+ *
+ * @return The power in dBm that is achieved as device output power. It can be different from
+ *         the value requested by @p power.
+ */
+int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power, uint16_t freq_mhz);
 
 #ifdef __cplusplus
 }

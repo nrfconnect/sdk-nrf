@@ -69,6 +69,7 @@ See :ref:`radio_test_ui` for a list of available commands.
    For the IEEE 802.15.4 mode, the start channel and the end channel must be within the channel range of 11 to 26.
    Use the ``start_channel`` and ``end_channel`` commands to control this setting.
 
+
 .. _radio_test_ui:
 
 User interface
@@ -94,6 +95,7 @@ User interface
    * - output_power
      - <sub_cmd>
      - Output power set.
+       If a front-end module is attached and the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is enabled, it has the same effect as the ``total_output_power`` command.
    * - parameters_print
      -
      - Print current delay, channel, and other parameters.
@@ -130,6 +132,34 @@ User interface
    * - transmit_pattern
      - <sub_cmd>
      - Set transmission pattern.
+   * - total_output_power
+     - <tx output power>
+     - Set total output power in dBm.
+       This value includes SoC output power and front-end module gain.
+
+Tx output power
+===============
+
+This sample has a few commands that you can use to test the device output power.
+The behavior of the commands vary depending on the hardware configuration and Kconfig options as follows:
+
+* Radio Test without front-end module support:
+
+  * The ``output_power`` command sets the SoC output command with a subcommand set.
+    The output power is set directly in the radio peripheral.
+
+* Radio Test with front-end module support in default configuration (the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is enabled):
+
+  * The ``output_power`` command sets the total output power, including front-end module gain.
+  * The ``total_output_power`` command sets the total output power, including front-end module gain with a value in dBm unit provided by user.
+  * For these commands, the radio peripheral and FEM gain is calculated and set automatically to meet your requirements.
+  * If an exact output power value cannot be set, a lower value is used.
+
+* Radio Test with front-end module support and manual Tx output power control (the kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is disabled):
+
+  * The ``output_power`` command sets the SoC output command with a subcommands set.
+  * The ``fem`` command with the ``tx_gain`` subcommand sets the front-end module gain to an arbitrary value for given front-end module.
+  * You can use this configuration to perform tests on your hardware design.
 
 Building and running
 ********************
