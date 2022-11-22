@@ -11,23 +11,29 @@ set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})
 if ((CONFIG_SB_VALIDATE_FW_SIGNATURE OR CONFIG_SB_VALIDATE_FW_HASH) AND
    NOT (CONFIG_BOOTLOADER_MCUBOOT AND NOT CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE))
 
- include(${CMAKE_CURRENT_LIST_DIR}/debug_keys.cmake)
- include(${CMAKE_CURRENT_LIST_DIR}/sign.cmake)
- if (${CONFIG_SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
-    set(public_keys_files
-      "${PUBLIC_KEY_FILES},${SIGNATURE_PUBLIC_KEY_FILE}"
-      )
+  # Input is comma separated string, convert to CMake list type
+  string(REPLACE "," ";" PUBLIC_KEY_FILES_LIST "${CONFIG_SB_PUBLIC_KEY_FILES}")
+
+  include(${CMAKE_CURRENT_LIST_DIR}/debug_keys.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/sign.cmake)
+  if (${CONFIG_SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
     message(WARNING
       "
       -----------------------------------------------------------------
       --- WARNING: SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST is enabled.   ---
       --- This config should only be enabled for testing/debugging. ---
       -----------------------------------------------------------------")
+    list(APPEND PUBLIC_KEY_FILES ${SIGNATURE_PUBLIC_KEY_FILE})
   else()
-    set(public_keys_files
-      "${SIGNATURE_PUBLIC_KEY_FILE},${PUBLIC_KEY_FILES}"
-      )
+    list(INSERT PUBLIC_KEY_FILES 0 ${SIGNATURE_PUBLIC_KEY_FILE})
   endif()
+
+  # Convert CMake list type back to comma separated string.
+  string(REPLACE ";" "," PUBLIC_KEY_FILES_COMMA_SEPARATED "${PUBLIC_KEY_FILES}")
+
+  set(public_keys_file_arg
+    --public-key-files "${PUBLIC_KEY_FILES_COMMA_SEPARATED}"
+    )
   set(PROVISION_DEPENDS signature_public_key_file_target)
 endif()
 
