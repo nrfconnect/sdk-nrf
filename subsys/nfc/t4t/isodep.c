@@ -269,6 +269,13 @@ static int ats_parse(const uint8_t *data, size_t len)
 	/* Check if ATS contains historical bytes. */
 	if (index < len) {
 		t4t_isodep.tag.historical_len = len - index;
+		/* Maximum parsing length of the historical bytes is limited to 15
+		 * NFC Forum Digital Specification 2.0 14.6.2.
+		 */
+		if (t4t_isodep.tag.historical_len > NFC_T4T_ISODEP_HIST_MAX_LEN) {
+			t4t_isodep.tag.historical_len = NFC_T4T_ISODEP_HIST_MAX_LEN;
+		}
+
 		memcpy(t4t_isodep.tag.historical, &data[index],
 		       t4t_isodep.tag.historical_len);
 	}

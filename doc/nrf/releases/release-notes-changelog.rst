@@ -648,6 +648,10 @@ Libraries for NFC
 
   * Fixed a write to a constant field in the :c:func:`ac_rec_payload_parse` function.
 
+* :ref:`nfc_t4t_isodep_readme`:
+
+  * Fixed out of bounds access in the :c:func:`ats_parse` function.
+
 Other libraries
 ---------------
 
