@@ -100,7 +100,7 @@ static void update_led(enum led_state state)
 		/* Do nothing. */
 		break;
 	default:
-		LOG_WRN("Unrecognized LED state event send");
+		LOG_ERR("Unrecognized LED state event send");
 		break;
 	}
 

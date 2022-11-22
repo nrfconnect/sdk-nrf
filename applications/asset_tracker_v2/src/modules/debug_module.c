@@ -65,7 +65,7 @@ entry:
 
 	if (send_type == COREDUMP) {
 		if (memfault_coredump_has_valid_coredump(NULL)) {
-			LOG_WRN("Sending a coredump to Memfault!");
+			LOG_DBG("Sending a coredump to Memfault!");
 		} else {
 			LOG_DBG("No coredump available.");
 			goto entry;
@@ -280,7 +280,7 @@ static void add_location_metrics(uint8_t satellites, uint32_t search_time,
 		}
 		break;
 	default:
-		LOG_ERR("Unknown GNSS module event type");
+		LOG_ERR("Unknown location module event.");
 		return;
 	}
 

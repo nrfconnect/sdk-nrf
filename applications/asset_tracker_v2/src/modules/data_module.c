@@ -419,7 +419,7 @@ static void cloud_codec_event_handler(const struct cloud_codec_evt *evt)
 	if (evt->type == CLOUD_CODEC_EVT_CONFIG_UPDATE) {
 		new_config_handle((struct cloud_data_cfg *)&evt->config_update);
 	} else {
-		LOG_ERR("Unknown cloud codec event.");
+		LOG_ERR("Unknown event.");
 	}
 }
 
@@ -737,7 +737,7 @@ static int agps_request_encode(struct nrf_modem_gnss_agps_data_frame *incoming_r
 		data_send(DATA_EVT_AGPS_REQUEST_DATA_SEND, &codec);
 		break;
 	case -ENOTSUP:
-		LOG_WRN("Encoding of A-GPS requests are not supported by the configured codec");
+		LOG_ERR("Encoding of A-GPS requests are not supported by the configured codec");
 		break;
 	case -ENODATA:
 		LOG_DBG("No A-GPS request data to encode, error: %d", err);
@@ -793,7 +793,7 @@ static void data_ui_send(void)
 		LOG_DBG("No new UI data to encode, error: %d", err);
 		return;
 	} else if (err == -ENOTSUP) {
-		LOG_WRN("Encoding of UI data is not supported, error: %d", err);
+		LOG_ERR("Encoding of UI data is not supported, error: %d", err);
 		return;
 	} else if (err) {
 		LOG_ERR("Encoding button press, error: %d", err);
@@ -891,9 +891,9 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		current_cfg.active_mode = new_config->active_mode;
 
 		if (current_cfg.active_mode) {
-			LOG_WRN("New Device mode: Active");
+			LOG_DBG("New Device mode: Active");
 		} else {
-			LOG_WRN("New Device mode: Passive");
+			LOG_DBG("New Device mode: Passive");
 		}
 
 		config_change = true;
@@ -903,9 +903,9 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		current_cfg.no_data.gnss = new_config->no_data.gnss;
 
 		if (!current_cfg.no_data.gnss) {
-			LOG_WRN("Requesting of GNSS data is enabled");
+			LOG_DBG("Requesting of GNSS data is enabled");
 		} else {
-			LOG_WRN("Requesting of GNSS data is disabled");
+			LOG_DBG("Requesting of GNSS data is disabled");
 		}
 
 		config_change = true;
@@ -915,9 +915,9 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		current_cfg.no_data.neighbor_cell = new_config->no_data.neighbor_cell;
 
 		if (!current_cfg.no_data.neighbor_cell) {
-			LOG_WRN("Requesting of neighbor cell data is enabled");
+			LOG_DBG("Requesting of neighbor cell data is enabled");
 		} else {
-			LOG_WRN("Requesting of neighbor cell data is disabled");
+			LOG_DBG("Requesting of neighbor cell data is disabled");
 		}
 
 		config_change = true;
@@ -927,36 +927,36 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		if (current_cfg.location_timeout != new_config->location_timeout) {
 			current_cfg.location_timeout = new_config->location_timeout;
 
-			LOG_WRN("New location timeout: %d", current_cfg.location_timeout);
+			LOG_DBG("New location timeout: %d", current_cfg.location_timeout);
 
 			config_change = true;
 		}
 	} else {
-		LOG_ERR("New location timeout out of range: %d", new_config->location_timeout);
+		LOG_WRN("New location timeout out of range: %d", new_config->location_timeout);
 	}
 
 	if (new_config->active_wait_timeout > 0) {
 		if (current_cfg.active_wait_timeout != new_config->active_wait_timeout) {
 			current_cfg.active_wait_timeout = new_config->active_wait_timeout;
 
-			LOG_WRN("New Active wait timeout: %d", current_cfg.active_wait_timeout);
+			LOG_DBG("New Active wait timeout: %d", current_cfg.active_wait_timeout);
 
 			config_change = true;
 		}
 	} else {
-		LOG_ERR("New Active timeout out of range: %d", new_config->active_wait_timeout);
+		LOG_WRN("New Active timeout out of range: %d", new_config->active_wait_timeout);
 	}
 
 	if (new_config->movement_resolution > 0) {
 		if (current_cfg.movement_resolution != new_config->movement_resolution) {
 			current_cfg.movement_resolution = new_config->movement_resolution;
 
-			LOG_WRN("New Movement resolution: %d", current_cfg.movement_resolution);
+			LOG_DBG("New Movement resolution: %d", current_cfg.movement_resolution);
 
 			config_change = true;
 		}
 	} else {
-		LOG_ERR("New Movement resolution out of range: %d",
+		LOG_WRN("New Movement resolution out of range: %d",
 			new_config->movement_resolution);
 	}
 
@@ -964,19 +964,19 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		if (current_cfg.movement_timeout != new_config->movement_timeout) {
 			current_cfg.movement_timeout = new_config->movement_timeout;
 
-			LOG_WRN("New Movement timeout: %d", current_cfg.movement_timeout);
+			LOG_DBG("New Movement timeout: %d", current_cfg.movement_timeout);
 
 			config_change = true;
 		}
 	} else {
-		LOG_ERR("New Movement timeout out of range: %d", new_config->movement_timeout);
+		LOG_WRN("New Movement timeout out of range: %d", new_config->movement_timeout);
 	}
 
 	if (current_cfg.accelerometer_activity_threshold !=
 	    new_config->accelerometer_activity_threshold) {
 		current_cfg.accelerometer_activity_threshold =
 		new_config->accelerometer_activity_threshold;
-		LOG_WRN("New Accelerometer act threshold: %.2f",
+		LOG_DBG("New Accelerometer act threshold: %.2f",
 			current_cfg.accelerometer_activity_threshold);
 		config_change = true;
 	}
@@ -984,7 +984,7 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 	    new_config->accelerometer_inactivity_threshold) {
 		current_cfg.accelerometer_inactivity_threshold =
 		new_config->accelerometer_inactivity_threshold;
-		LOG_WRN("New Accelerometer inact threshold: %.2f",
+		LOG_DBG("New Accelerometer inact threshold: %.2f",
 			current_cfg.accelerometer_inactivity_threshold);
 		config_change = true;
 	}
@@ -992,7 +992,7 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 	    new_config->accelerometer_inactivity_timeout) {
 		current_cfg.accelerometer_inactivity_timeout =
 		new_config->accelerometer_inactivity_timeout;
-		LOG_WRN("New Accelerometer inact timeout: %.2f",
+		LOG_DBG("New Accelerometer inact timeout: %.2f",
 			current_cfg.accelerometer_inactivity_timeout);
 		config_change = true;
 	}
@@ -1004,7 +1004,7 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		int err = save_config(&current_cfg, sizeof(current_cfg));
 
 		if (err) {
-			LOG_WRN("Configuration not stored, error: %d", err);
+			LOG_ERR("Configuration not stored, error: %d", err);
 		}
 
 		config_distribute(DATA_EVT_CONFIG_READY);
@@ -1019,8 +1019,6 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 
 	/* LwM2M doesn't require reporting of the current configuration back to cloud. */
 	if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
-		LOG_WRN("Don't acknowledge configuration back to cloud. "
-			"This is not nessecary when building for LwM2M");
 		return;
 	}
 
@@ -1059,7 +1057,7 @@ static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_
 					   nrf_cloud_agps_request(&request);
 	if (err) {
 		LOG_WRN("Failed to request A-GPS data, error: %d", err);
-		LOG_WRN("This is expected to fail if we are not in a connected state");
+		LOG_DBG("This is expected to fail if we are not in a connected state");
 	} else {
 		if (nrf_cloud_agps_request_in_progress()) {
 			LOG_DBG("A-GPS request sent");
@@ -1446,7 +1444,7 @@ static void module_thread_fn(void)
 			/* The shutdown state has no transition. */
 			break;
 		default:
-			LOG_WRN("Unknown sub state.");
+			LOG_ERR("Unknown sub state.");
 			break;
 		}
 
