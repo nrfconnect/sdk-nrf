@@ -9,6 +9,8 @@ menu "Bluetooth LE configuration"
 config DESKTOP_BT
 	bool "Support for Bluetooth connectivity"
 	default y
+	select CAF_BLE_STATE
+	select DESKTOP_BLE_BOND_ENABLE
 	select BT
 	select BT_SETTINGS
 	select BT_SIGNING
@@ -19,6 +21,7 @@ if DESKTOP_BT
 config DESKTOP_BT_PERIPHERAL
 	bool
 	default y if DESKTOP_ROLE_HID_PERIPHERAL
+	select CAF_BLE_ADV
 	select BT_PERIPHERAL
 
 if DESKTOP_BT_PERIPHERAL
@@ -61,6 +64,8 @@ endif
 config DESKTOP_BT_CENTRAL
 	bool
 	default y if DESKTOP_ROLE_HID_DONGLE
+	select DESKTOP_BLE_SCAN_ENABLE
+	select DESKTOP_BLE_DISCOVERY_ENABLE
 	select BT_CENTRAL
 
 if DESKTOP_BT_CENTRAL
