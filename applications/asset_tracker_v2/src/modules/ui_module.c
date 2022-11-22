@@ -546,7 +546,7 @@ static void on_all_states(struct ui_msg_data *msg)
 			transition_list_append(LED_STATE_ERROR_SYSTEM_FAULT, HOLD_FOREVER);
 			break;
 		default:
-			LOG_WRN("Unknown shutdown reason");
+			LOG_ERR("Unknown shutdown reason");
 			break;
 		}
 
@@ -603,7 +603,7 @@ static void message_handler(struct ui_msg_data *msg)
 				on_active_location_inactive(msg);
 				break;
 			default:
-				LOG_WRN("Unknown ui module sub-sub state.");
+				LOG_ERR("Unknown sub-sub state.");
 				break;
 			}
 			break;
@@ -616,12 +616,12 @@ static void message_handler(struct ui_msg_data *msg)
 				on_passive_location_inactive(msg);
 				break;
 			default:
-				LOG_WRN("Unknown ui module sub-sub state.");
+				LOG_ERR("Unknown sub-sub state.");
 				break;
 			}
 			break;
 		default:
-			LOG_WRN("Unknown ui module sub state.");
+			LOG_ERR("Unknown sub state.");
 			break;
 		}
 		on_state_running(msg);
@@ -642,7 +642,7 @@ static void message_handler(struct ui_msg_data *msg)
 		/* The shutdown state has no transition. */
 		break;
 	default:
-		LOG_WRN("Unknown ui module state.");
+		LOG_ERR("Unknown state.");
 		break;
 	}
 

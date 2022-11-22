@@ -216,8 +216,8 @@ static void reboot_ack_check(uint32_t module_id)
 	 * initial error event.
 	 */
 	if (modules_shutdown_register(module_id)) {
-		LOG_WRN("All modules have ACKed the reboot request.");
-		LOG_WRN("Reboot in 5 seconds.");
+		LOG_DBG("All modules have ACKed the reboot request.");
+		LOG_DBG("Reboot in 5 seconds.");
 		k_work_reschedule(&reboot_work, K_SECONDS(5));
 	}
 }
@@ -323,7 +323,7 @@ static void message_handler(struct util_msg_data *msg)
 		on_state_reboot_pending(msg);
 		break;
 	default:
-		LOG_WRN("Unknown utility module state.");
+		LOG_ERR("Unknown state.");
 		break;
 	}
 
