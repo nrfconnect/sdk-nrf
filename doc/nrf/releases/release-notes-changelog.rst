@@ -189,6 +189,7 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
+* The :ref:`CONFIG_DESKTOP_BLE_SCANNING_ENABLE <config_desktop_app_options>` Kconfig option was renamed to :ref:`CONFIG_DESKTOP_BLE_SCAN_ENABLE <config_desktop_app_options>`.
 * The UUID16 values of GATT Human Interface Device Service (HIDS) and GATT Battery Service (BAS) are moved from advertising data to scan response data.
 
 Thingy:53 Zigbee weather station
