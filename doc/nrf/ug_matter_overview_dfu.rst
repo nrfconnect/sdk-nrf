@@ -109,9 +109,9 @@ The Matter OTA image download always happens in the background, without affectin
    Req=>Pro [label="Querying starts"];
    Pro=>Serv [label="OTA Provider\nlearns about new image"];
    |||;
-   Pro<=Serv [label="Image copy download over HTTP"];
+   Pro<=Serv [label="Image downloaded\nover HTTP"];
    |||;
-   Req<=Pro [label="Image download over BDX"];
+   Req<=Pro [label="Image downloaded\nover BDX"];
    |||;
    Req>>Pro [label="Notification\nof completed download"];
    Pro<=User [label="Update approval"];
