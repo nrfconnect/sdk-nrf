@@ -167,7 +167,9 @@ static int ac_rec_payload_parse(struct nfc_ndef_bin_payload_desc *payload_desc,
 	uint32_t payload_len = payload_desc->payload_length;
 	const uint32_t buf_size = *result_buf_len;
 	struct net_buf_simple buf;
-	struct nfc_ndef_ch_ac_rec *ac_rec;
+	struct nfc_ndef_ch_ac_rec_ref carrier_data_ref;
+	struct nfc_ndef_ch_ac_rec_ref *aux_data_ref;
+	uint8_t aux_data_ref_cnt;
 
 	/* Initialize memory allocator with buffer memory block and
 	 * its size.
@@ -175,23 +177,14 @@ static int ac_rec_payload_parse(struct nfc_ndef_bin_payload_desc *payload_desc,
 	net_buf_simple_init_with_data(&buf, result_buf, buf_size);
 	net_buf_simple_reset(&buf);
 
-	ac_rec = (struct nfc_ndef_ch_ac_rec *)
-			memory_allocate(&buf, sizeof(*ac_rec));
-	if (!ac_rec) {
-		return -ENOMEM;
-	}
-
-	memset(ac_rec, 0, sizeof(*ac_rec));
-
 	if (payload_len < AC_REC_CPS_BYTE_SIZE) {
 		return -EINVAL;
 	}
 
-	ac_rec->cps = (enum nfc_ndef_ch_ac_rec_cps)(*payload_buf);
 	payload_buf += AC_REC_CPS_BYTE_SIZE;
 	payload_len -= AC_REC_CPS_BYTE_SIZE;
 
-	err = ac_reference_parse(&ac_rec->carrier_data_ref, &buf,
+	err = ac_reference_parse(&carrier_data_ref, &buf,
 				 &payload_buf, &payload_len);
 	if (err) {
 		return err;
@@ -201,24 +194,24 @@ static int ac_rec_payload_parse(struct nfc_ndef_bin_payload_desc *payload_desc,
 		return -EINVAL;
 	}
 
-	ac_rec->aux_data_ref_cnt = *payload_buf;
+	aux_data_ref_cnt = *payload_buf;
 	payload_buf++;
 	payload_len--;
 
-	if (!ac_rec->aux_data_ref_cnt) {
+	if (!aux_data_ref_cnt) {
 		*result_buf_len =
 			(buf_size - net_buf_simple_tailroom(&buf));
 		return 0;
 	}
 
-	ac_rec->aux_data_ref = (struct nfc_ndef_ch_ac_rec_ref *)
-					memory_allocate(&buf, ac_rec->aux_data_ref_cnt * sizeof(*ac_rec->aux_data_ref));
-	if (ac_rec->aux_data_ref) {
+	aux_data_ref = (struct nfc_ndef_ch_ac_rec_ref *)
+				memory_allocate(&buf, aux_data_ref_cnt * sizeof(*aux_data_ref));
+	if (aux_data_ref) {
 		return -ENOMEM;
 	}
 
-	for (size_t i = 0; i < ac_rec->aux_data_ref_cnt; i++) {
-		err = ac_reference_parse(&ac_rec->aux_data_ref[i], &buf,
+	for (size_t i = 0; i < aux_data_ref_cnt; i++) {
+		err = ac_reference_parse(&aux_data_ref[i], &buf,
 					 &payload_buf, &payload_len);
 		if (err) {
 			return err;
