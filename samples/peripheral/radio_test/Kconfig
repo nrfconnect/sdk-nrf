@@ -14,5 +14,15 @@ config RADIO_TEST_USB
 	  Use USB instead of UART as the Radio Test shell transport.
 	  For nRF5340 the USB from application core is used as communication interface.
 
+config RADIO_TEST_POWER_CONTROL_AUTOMATIC
+	bool "Automatic power control"
+	depends on FEM
+	default y
+	help
+	  Set SoC output power and front-end module gain to achieve Tx output power requested
+	  by user. If the exact value cannot be achieved, power is set to closest value which does
+	  not exceed the limits. If this option is disabled, user has to set SoC output power and
+	  fem gain with separate commands.
+
 rsource "../../bluetooth/direct_test_mode/src/fem/Kconfig"
 source "Kconfig.zephyr"

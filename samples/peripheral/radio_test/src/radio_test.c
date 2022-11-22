@@ -7,7 +7,14 @@
 #include "radio_test.h"
 
 #include <string.h>
+#include <inttypes.h>
+
 #include <hal/nrf_power.h>
+
+#ifdef NRF53_SERIES
+#include <hal/nrf_vreqctrl.h>
+#endif /* NRF53_SERIES */
+
 #include <nrfx_timer.h>
 #include <zephyr/kernel.h>
 #include <zephyr/random/rand32.h>
@@ -65,6 +72,62 @@ static uint8_t ppi_radio_start;
 #if CONFIG_FEM
 static struct radio_test_fem fem;
 #endif /* CONFIG_FEM */
+
+static uint16_t channel_to_frequency(nrf_radio_mode_t mode, uint8_t channel)
+{
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
+	if (mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
+		if ((channel >= IEEE_MIN_CHANNEL) &&
+			(channel <= IEEE_MAX_CHANNEL)) {
+			return CHAN_TO_FREQ(IEEE_FREQ_CALC(channel));
+		} else {
+			return CHAN_TO_FREQ(IEEE_DEFAULT_FREQ);
+		}
+	} else {
+		return CHAN_TO_FREQ(channel);
+	}
+#else
+	return CHAN_TO_FREQ(channel);
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
+}
+
+static void radio_power_set(nrf_radio_mode_t mode, uint8_t channel, int8_t power)
+{
+	int8_t output_power = power;
+	int8_t radio_power = power;
+
+#if CONFIG_FEM
+	uint16_t frequency;
+
+	if (IS_ENABLED(CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC)) {
+		frequency = channel_to_frequency(mode, channel);
+		output_power = fem_tx_output_power_prepare(power, &radio_power, frequency);
+	}
+#else
+	ARG_UNUSED(mode);
+	ARG_UNUSED(channel);
+#endif /* CONFIG_FEM */
+
+#ifdef NRF53_SERIES
+	bool high_voltage_enable = false;
+
+	if (radio_power > 0) {
+		high_voltage_enable = true;
+
+		/* High voltage increases radio output power by 3 dBm. */
+		radio_power -= RADIO_TXPOWER_TXPOWER_Pos3dBm;
+	}
+
+	nrf_vreqctrl_radio_high_voltage_set(NRF_VREQCTRL, high_voltage_enable);
+#endif /* NRF53_SERIES */
+
+	nrf_radio_txpower_set(NRF_RADIO, (nrf_radio_txpower_t)radio_power);
+
+	if (!sweep_processing) {
+		printk("Requested tx output power: %" PRIi8 " dBm\n", power);
+		printk("Tx output power set to: %" PRIi8 " dBm\n", output_power);
+	}
+}
 
 static void radio_ppi_config(bool rx)
 {
@@ -124,7 +187,8 @@ static int fem_configure(bool rx, nrf_radio_mode_t mode,
 		return err;
 	}
 
-	if ((fem->gain != FEM_USE_DEFAULT_GAIN) &&
+	if ((!IS_ENABLED(CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC)) &&
+	    (fem->gain != FEM_USE_DEFAULT_GAIN) &&
 	    !sweep_processing) {
 		err = fem_tx_gain_set(fem->gain);
 		if (err) {
@@ -155,24 +219,10 @@ static void radio_start(bool rx, bool force_egu)
 
 static void radio_channel_set(nrf_radio_mode_t mode, uint8_t channel)
 {
-#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
-	if (mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
-		if ((channel >= IEEE_MIN_CHANNEL) &&
-			(channel <= IEEE_MAX_CHANNEL)) {
-			nrf_radio_frequency_set(
-				NRF_RADIO,
-				CHAN_TO_FREQ(IEEE_FREQ_CALC(channel)));
-		} else {
-			nrf_radio_frequency_set(
-				NRF_RADIO,
-				CHAN_TO_FREQ(IEEE_DEFAULT_FREQ));
-		}
-	} else {
-		nrf_radio_frequency_set(NRF_RADIO, CHAN_TO_FREQ(channel));
-	}
-#else
-	nrf_radio_frequency_set(NRF_RADIO, CHAN_TO_FREQ(channel));
-#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
+	uint16_t frequency;
+
+	frequency = channel_to_frequency(mode, channel);
+	nrf_radio_frequency_set(NRF_RADIO, frequency);
 }
 
 static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
@@ -359,13 +409,13 @@ static void radio_disable(void)
 #endif /* CONFIG_FEM */
 }
 
-static void radio_unmodulated_tx_carrier(uint8_t mode, uint8_t txpower, uint8_t channel)
+static void radio_unmodulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t channel)
 {
 	radio_disable();
 
 	nrf_radio_mode_set(NRF_RADIO, mode);
 	nrf_radio_shorts_enable(NRF_RADIO, NRF_RADIO_SHORT_READY_START_MASK);
-	nrf_radio_txpower_set(NRF_RADIO, txpower);
+	radio_power_set(mode, channel, txpower);
 
 	radio_channel_set(mode, channel);
 
@@ -380,7 +430,7 @@ static void radio_unmodulated_tx_carrier(uint8_t mode, uint8_t txpower, uint8_t 
 	radio_start(false, sweep_processing);
 }
 
-static void radio_modulated_tx_carrier(uint8_t mode, uint8_t txpower, uint8_t channel,
+static void radio_modulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t channel,
 				       enum transmit_pattern pattern)
 {
 	radio_disable();
@@ -413,7 +463,7 @@ static void radio_modulated_tx_carrier(uint8_t mode, uint8_t txpower, uint8_t ch
 	}
 
 	nrf_radio_mode_set(NRF_RADIO, mode);
-	nrf_radio_txpower_set(NRF_RADIO, txpower);
+	radio_power_set(mode, channel, txpower);
 
 	radio_channel_set(mode, channel);
 
@@ -464,7 +514,8 @@ static void radio_sweep_start(uint8_t channel, uint32_t delay_ms)
 #if CONFIG_FEM
 	(void)fem_power_up();
 
-	if (fem.gain != FEM_USE_DEFAULT_GAIN) {
+	if ((!IS_ENABLED(CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC)) &&
+	    fem.gain != FEM_USE_DEFAULT_GAIN) {
 		(void)fem_tx_gain_set(fem.gain);
 	}
 #endif /* CONFIG_FEM */
@@ -483,7 +534,7 @@ static void radio_sweep_start(uint8_t channel, uint32_t delay_ms)
 	nrfx_timer_enable(&timer);
 }
 
-static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, uint8_t txpower,
+static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 						  uint8_t channel,
 						  enum transmit_pattern pattern,
 						  uint32_t duty_cycle)
@@ -502,7 +553,7 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, uint8_t txpower,
 	nrf_radio_shorts_enable(NRF_RADIO,
 				NRF_RADIO_SHORT_READY_START_MASK |
 				NRF_RADIO_SHORT_END_DISABLE_MASK);
-	nrf_radio_txpower_set(NRF_RADIO, txpower);
+	radio_power_set(mode, channel, txpower);
 	radio_channel_set(mode, channel);
 
 	const uint32_t total_time_per_payload = time_in_us_per_byte[mode] * total_payload_size;

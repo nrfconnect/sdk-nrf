@@ -29,6 +29,7 @@
 	"Toggle DC/DC state regardless of state value"
 #endif
 
+
 /* Radio parameter configuration. */
 static struct radio_param_config {
 	/** Radio transmission pattern. */
@@ -59,7 +60,11 @@ static struct radio_param_config {
 } config = {
 	.tx_pattern = TRANSMIT_PATTERN_RANDOM,
 	.mode = NRF_RADIO_MODE_BLE_1MBIT,
+#if CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
+	.txpower = CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB,
+#else
 	.txpower = RADIO_TXPOWER_TXPOWER_0dBm,
+#endif /* CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
 	.channel_start = 0,
 	.channel_end = 80,
 	.delay_ms = 10,
@@ -1100,6 +1105,7 @@ static int cmd_fem(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
+#if !CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
 static int cmd_fem_gain_set(const struct shell *shell, size_t argc,
 			    char **argv)
 {
@@ -1123,6 +1129,7 @@ static int cmd_fem_gain_set(const struct shell *shell, size_t argc,
 
 	return 0;
 }
+#endif /* !CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
 
 static int cmd_fem_antenna_select(const struct shell *shell, size_t argc,
 				  char **argv)
@@ -1261,9 +1268,11 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_fem_antenna,
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_fem,
+#if !CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
 	SHELL_CMD(tx_gain, NULL,
 		  "Set the front-end module (FEM) Tx gain in an arbitrary units <gain>",
 		  cmd_fem_gain_set),
+#endif /* !CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
 	SHELL_CMD(antenna, &sub_fem_antenna,
 		  "Select the front-end module (FEM) antenna <sub_cmd>",
 		  cmd_fem_antenna_select),
@@ -1273,6 +1282,34 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_fem,
 	SHELL_SUBCMD_SET_END
 );
 #endif /* CONFIG_FEM */
+
+#if CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
+static int cmd_total_output_power_set(const struct shell *shell, size_t argc, char **argv)
+{
+	int power;
+
+	if (argc == 1) {
+		shell_help(shell);
+		return SHELL_CMD_HELP_PRINTED;
+	}
+
+	if (argc > 2) {
+		shell_error(shell, "%s: bad parameters count", argv[0]);
+		return -EINVAL;
+	}
+
+	power = atoi(argv[1]);
+
+	if ((power > INT8_MAX) || (power < INT8_MIN)) {
+		shell_error(shell, "%s: Out of range power value", argv[0]);
+		return -EINVAL;
+	}
+
+	config.txpower = (int8_t)power;
+
+	return 0;
+}
+#endif /* CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
 
 SHELL_CMD_REGISTER(start_channel, NULL,
 		   "Start channel for the sweep or the channel for"
@@ -1295,8 +1332,18 @@ SHELL_CMD_REGISTER(start_tx_modulated_carrier, NULL,
 		   cmd_tx_modulated_carrier_start);
 SHELL_CMD_REGISTER(output_power,
 		   &sub_output_power,
-		   "Output power set <sub_cmd>",
+		   "Output power set <sub_cmd>"
+		   "If front-end module is attached and automatic power control is enabled, "
+		   "this commands sets the total output power including fem gain",
 		   cmd_output_power_set);
+
+#if CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
+SHELL_CMD_REGISTER(total_output_power, NULL,
+		  "Total output power in dBm, including gain of the attached front-end module. "
+		  "<tx power> dBm",
+		  cmd_total_output_power_set);
+#endif /* CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
+
 SHELL_CMD_REGISTER(transmit_pattern,
 		   &sub_transmit_pattern,
 		   "Set the transmission pattern",

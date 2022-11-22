@@ -256,6 +256,26 @@ void fem_txrx_stop(void)
 	mpsl_fem_deactivate_now(MPSL_FEM_ALL);
 }
 
+int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power, uint16_t freq_mhz)
+{
+	int8_t output_power;
+	int32_t err;
+	mpsl_tx_power_split_t power_split = { 0 };
+
+	output_power = mpsl_fem_tx_power_split(power, &power_split, freq_mhz);
+
+	*radio_tx_power = power_split.radio_tx_power;
+
+	err = mpsl_fem_pa_gain_set(&power_split.fem);
+	if (err) {
+		/* Should not happen */
+		printk("Failed to set front-end module gain (err %d)\n", err);
+		__ASSERT_NO_MSG(false);
+	}
+
+	return output_power;
+}
+
 int fem_init(NRF_TIMER_Type *timer_instance, uint8_t compare_channel_mask)
 {
 	if (!timer_instance || (compare_channel_mask == 0)) {
