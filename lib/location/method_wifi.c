@@ -39,15 +39,12 @@ static bool running;
 static uint32_t current_scan_result_count;
 static uint32_t latest_scan_result_count;
 
-struct method_wifi_scan_result {
-	char mac_addr_str[WIFI_MAC_ADDR_STR_LEN + 1];
-	char ssid_str[WIFI_SSID_MAX_LEN + 1];
-	uint8_t channel;
-	int8_t rssi;
+static struct wifi_scan_result
+	latest_scan_results[CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT];
+static struct wifi_scan_info latest_wifi_info = {
+	.ap_info = latest_scan_results,
 };
 
-static struct method_wifi_scan_result
-	latest_scan_results[CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT];
 static K_SEM_DEFINE(wifi_scanning_ready, 0, 1);
 
 /******************************************************************************/
@@ -75,26 +72,21 @@ static int method_wifi_scanning_start(void)
 static void method_wifi_scan_result_handle(struct net_mgmt_event_callback *cb)
 {
 	const struct wifi_scan_result *entry = (const struct wifi_scan_result *)cb->info;
-	struct method_wifi_scan_result *current;
+	struct wifi_scan_result *current;
 
 	current_scan_result_count++;
 
 	if (current_scan_result_count <= CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT) {
 		current = &latest_scan_results[current_scan_result_count - 1];
-		sprintf(current->mac_addr_str,
-			"%02x:%02x:%02x:%02x:%02x:%02x",
-			entry->mac[0], entry->mac[1], entry->mac[2],
-			entry->mac[3], entry->mac[4], entry->mac[5]);
-		snprintf(current->ssid_str, entry->ssid_length + 1, "%s", entry->ssid);
+		*current = *entry;
 
-		current->channel = entry->channel;
-		current->rssi = entry->rssi;
-
-		LOG_DBG("scan result #%d stored: ssid %s, mac address: %s, channel %d,",
-			current_scan_result_count,
-			current->ssid_str,
-			current->mac_addr_str,
-			current->channel);
+		LOG_DBG("scan result #%d stored: ssid %s, channel %d,"
+			" mac %02x:%02x:%02x:%02x:%02x:%02x",
+				current_scan_result_count,
+				current->ssid,
+				current->channel,
+				current->mac[0], current->mac[1], current->mac[2],
+				current->mac[3], current->mac[4], current->mac[5]);
 	} else {
 		LOG_WRN("Scanning result (mac %02x:%02x:%02x:%02x:%02x:%02x) "
 			"did not fit to result buffer - dropping it",
@@ -149,7 +141,7 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 	struct location_data location_result = { 0 };
 	struct method_wifi_start_work_args *work_data =
 		CONTAINER_OF(work, struct method_wifi_start_work_args, work_item);
-	struct rest_wifi_pos_request request;
+	struct location_wifi_serv_pos_req request;
 	struct location_data result;
 	const struct location_wifi_config wifi_config = work_data->wifi_config;
 	int64_t starting_uptime_ms = work_data->starting_uptime_ms;
@@ -197,18 +189,10 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 		}
 
 		/* Fill scanning results: */
-		request.wifi_scanning_result_count = latest_scan_result_count;
-		for (int i = 0; i < latest_scan_result_count; i++) {
-			strcpy(request.scanning_results[i].mac_addr_str,
-			       latest_scan_results[i].mac_addr_str);
-			strcpy(request.scanning_results[i].ssid_str,
-			       latest_scan_results[i].ssid_str);
-			request.scanning_results[i].channel =
-				latest_scan_results[i].channel;
-			request.scanning_results[i].rssi =
-				latest_scan_results[i].rssi;
-		}
-		err = rest_services_wifi_location_get(wifi_config.service, &request, &result);
+		latest_wifi_info.cnt = latest_scan_result_count;
+		request.scanning_results = &latest_wifi_info;
+
+		err = wifi_service_location_get(wifi_config.service, &request, &result);
 		if (err) {
 			LOG_ERR("Failed to acquire a location by using "
 				"Wi-Fi positioning, err: %d",

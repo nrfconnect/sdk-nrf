@@ -96,7 +96,8 @@ if LOCATION_METHOD_WIFI
 config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
 	bool "nRF Cloud location service"
 	default y
-	depends on NRF_CLOUD_REST
+	depends on NRF_CLOUD_REST || NRF_CLOUD_MQTT
+	select NRF_CLOUD_LOCATION if NRF_CLOUD_MQTT
 	help
 	  Use nRF Cloud location service.
 
