@@ -536,11 +536,30 @@ See :ref:`ug_bootloader_external_flash` for more details on using external flash
 
 .. _pm_build_system:
 
-You must enable device drivers for each flash partition.
-Set the ``DEFAULT_DRIVER_KCONFIG`` parameter to the Kconfig option that enables the driver during compilation.
-When a driver for a partition is not enabled, the partition will not be included in the partition manager and will not be accessible at runtime.
-You can use the :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` Kconfig option to override the behavior and prevent compile-time check for external flash memory devices.
-This is useful when the external device does not have a driver controlled by Kconfig options.
+A partition can be accessible at runtime only if the flash device where it resides has its driver enabled at compile time.
+Partition manager ignores partitions that are located in a region without its driver enabled.
+To let partition manager know which Kconfig option ensures the existence of the driver, the option ``DEFAULT_DRIVER_KCONFIG`` is used.
+
+For partitions in the internal flash memory, ``DEFAULT_DRIVER_KCONFIG`` within :file:`partition_manager.cmake` is set automatically to :kconfig:option:`CONFIG_SOC_FLASH_NRF`, so that all the partitions placed in the internal flash are always available at runtime.
+For external regions, ``DEFAULT_DRIVER_KCONFIG`` within :file:`partition_manager.cmake` must be set to :kconfig:option:`CONFIG_PM_EXTERNAL_FLASH_HAS_DRIVER`.
+Out-of-tree drivers can select this value to attest that they provide support for the external flash.
+This is an hidden option and can be selected only by an external driver or a Kconfig option.
+
+This option is automatically set when :kconfig:option:`CONFIG_NRF_QSPI_NOR` or :kconfig:option:`CONFIG_SPI_NOR` are enabled.
+If the application provides the driver in an unusual way, this option can be overridden by setting :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` in the application configuration.
+
+As partition manager does not know if partitions are used at runtime, consider the following:
+
+  * Enabling Kconfig options that affect ``DEFAULT_DRIVER_KCONFIG`` will add a partition map entry for the partition depending on it, whether it is used at runtime or not.
+  * Not enabling the Kconfig options that affect ``DEFAULT_DRIVER_KCONFIG`` will not add partition map entry for partition depending on it, whether it is used at runtime or not.
+  * Enabling Kconfig options that affects ``DEFAULT_DRIVER_KCONFIG`` can cause linker errors when the option has no effect on including a driver into compilation.
+    In this case, partition manager adds a partition map entry that has a pointer to the flash device it is supposed to be placed on, but due to misconfiguration the driver is actually not compiled in.
+    This situation can also be caused by setting the :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK`, as partition manager will just assume that the driver is provided by the application.
+
+.. note::
+
+   When using an application configured with an MCUboot child image, both images use the same partition manager configuration, which means that the app and MCUboot have exactly the same partition maps.
+   The accessibility at runtime of flash partitions depend on the configurations of both the application and MCUboot and the values they give to the ``DEFAULT_DRIVER_KCONFIG`` option of the partition manager region specification.
 
 Build system
 ************
