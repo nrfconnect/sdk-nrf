@@ -75,6 +75,21 @@ config BT_GATT_CLIENT
 
 endif
 
+if BT_CTLR
+
+choice BT_LL_CHOICE
+	default BT_LL_SOFTDEVICE
+endchoice
+
+choice BT_CTLR_TX_PWR
+	default BT_CTLR_TX_PWR_0
+endchoice
+
+config BT_CTLR_CONN_PARAM_REQ
+	default n
+
+endif
+
 config BT_SETTINGS_CCC_STORE_ON_WRITE
 	default y
 
