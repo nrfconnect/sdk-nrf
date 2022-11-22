@@ -433,6 +433,10 @@ Other samples
     * Front-end module support is now provided by the :ref:`nrfxlib:mpsl_fem` API instead of the custom driver that was part of this sample.
     * On the nRF5340 development kit, the :ref:`nrf5340_remote_shell` is now a mandatory sample that must be programmed to the application core.
     * On the nRF5340 development kit, this sample uses the :ref:`shell_ipc_readme` library to forward shell data through the physical application core UART interface.
+    * Added support for the :ref:`nrfxlib:mpsl_fem` TX power split feature.
+      The new ``total_output_power`` shell command is introduced for sample builds with front-end module support.
+      It enables automatic setting of the SoC output power in a radio peripheral and front-end module gain to achieve requested output power or less if an exact value is not supported.
+    * Added support for +1 dBm, +2 dBm and +3 dBm output power on nRF5340 DK.
 
 Drivers
 =======
