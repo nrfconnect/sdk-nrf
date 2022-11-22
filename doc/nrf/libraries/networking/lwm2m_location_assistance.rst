@@ -41,6 +41,84 @@ There are three different supported methods of obtaining the location assistance
 * Query of P-GPS predictions - The P-GPS predictions are queried from nRF Cloud and provided back to the device through the LwM2M server.
   The predictions are stored in the device flash and injected to the GNSS module when needed.
 
+API usage
+*********
+
+This section describes API usage in different scenarios.
+
+Cell-based location
+===================
+
+Cell-based location uses only current cell or current and neighboring cells.
+To get information about the current cell, use the Connectivity Monitor object (ID 4).
+When you enable the Kconfig option :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT`, the connectivity monitor is populated with data about the current cell.
+
+To get information about the neighboring cells, use a collection of ECID-Signal Measurement Information objects (ID 10256).
+To populate the objects, call the :c:func:`lwm2m_ncell_handler_register` function to register the listener for the neighborhood measurements and :c:func:`lwm2m_ncell_schedule_measurement` to schedule a measurement.
+
+The Ground Fix Location object needs to address the ``report_back`` resource before sending a location request.
+Back reporting tells the server whether it needs to send the acquired location back to the device.
+If the location is sent back to the device, the location is stored only in the Ground Fix Location object.
+
+To send the location request for the cell-based location, call the :c:func:`location_assistance_ground_fix_request_send` function.
+
+A-GPS assistance
+================
+
+When using A-GPS assistance, the device requests A-GPS assistance data from the server.
+You can query the GNSS module for the data needed.
+A device can request for all data at once or split the request to reduce the memory usage.
+The request also contains information about the current cell the device is connected to and the information is similarly available on Connectivity Monitor object as in the cell-based location.
+
+When requesting for A-GPS assistance data, the device must first set the mask for the data it is requesting by calling the :c:func:`location_assistance_agps_set_mask` function.
+When the mask has been set, the :c:func:`location_assistance_agps_request_send` function sends the request with all necessary data to the server and responds with the A-GPS assistance data.
+The assistance data is written to the GNSS module automatically by the library.
+
+Filtered A-GPS
+--------------
+
+With filtered A-GPS, the satellites below the given angle above the ground are filtered out.
+You can set the the angle to a degree `[0 - 90]` using the :c:func:`location_assist_agps_set_elevation_mask` function.
+Setting the degree to `-1` disables filtering, which is the default setting.
+
+P-GPS assistance
+================
+
+When using P-GPS assistance, the device requests predictions for the satellites for a near future.
+P-GPS does not use information about current cell at all.
+It stores the information about satellites and injects the data to the GNSS module when needed.
+When using P-GPS, external flash is necessary as each prediction needs 2 kB of memory.
+
+When requesting for P-GPS assistance data, the device can set the P-GPS resources.
+If default values are used in the resources, predictions are requested for one week (42 predictions, 7 days, 4 hours between predictions).
+When the resources have been set, the :c:func:`location_assistance_pgps_request_send` function sends the request to the server.
+
+Result codes and automatic resend
+=================================
+
+The location assistance objects have a resource called ``result_code``.
+This resource contains information about the request handling in the server side.
+It can have three different values:
+
+* ``0``  - The request was handled successfully.
+* ``-1`` - A permanent error in the server needs fixing.
+  The library will reject further requests and the device must be rebooted after the issue has been resolved in the server.
+* ``1``  - Due to a temporary error in the server, the device needs to retry sending the request after a while.
+
+The library has a resend handler for the temporary error code.
+You can initialize it with the :c:func:`location_assistance_init_resend_handler` function.
+It uses an exponential backoff for scheduling the resends.
+You can also set your own callbacks for the result code for better control of the application.
+
+Using A-GPS and P-GPS simultaneously
+====================================
+
+A-GPS and P-GPS can be used simultaneously.
+However, only one active request at a time for the object is allowed.
+The functions :c:func:`location_assistance_agps_set_mask`, :c:func:`location_assistance_agps_request_send` and :c:func:`location_assistance_pgps_request_send` return ``-EAGAIN`` if there is an active request.
+In such case, the device must resend the request after the previous request has been handled.
+
+
 Configuration
 *************
 
@@ -55,6 +133,8 @@ Following are the other important library options:
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS` -  nRF Cloud provides P-GPS predictions and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL` -  nRF Cloud provides estimated location based on currently attached cell and its neighborhood.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS` - Disable this option if you provide your own method of sending the assistance requests to the LwM2M server.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT` - Enable support for connectivity monitoring utilities.
+  Provides data about the current cell and network the device has connected to.
 
 API documentation
 *****************
