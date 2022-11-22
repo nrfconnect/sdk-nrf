@@ -420,8 +420,7 @@ void location_event_handler(const struct location_event_data *event_data)
 		LOG_DBG("  search time: %d", stats.search_time);
 
 		stats.satellites_tracked = 0;
-		if (event_data->method == LOCATION_METHOD_GNSS &&
-		    event_data->error.details.gnss.valid) {
+		if (event_data->method == LOCATION_METHOD_GNSS) {
 			stats.satellites_tracked =
 				event_data->error.details.gnss.satellites_tracked;
 			LOG_DBG("  satellites tracked: %d", stats.satellites_tracked);

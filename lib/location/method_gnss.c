@@ -658,7 +658,6 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 	method_gnss_print_pvt(&pvt_data);
 
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
-	location_data_details_gnss.valid = true;
 	location_data_details_gnss.pvt_data = pvt_data;
 	location_data_details_gnss.satellites_tracked = satellites_tracked;
 #endif
