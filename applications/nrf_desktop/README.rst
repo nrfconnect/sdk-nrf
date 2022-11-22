@@ -942,6 +942,59 @@ You must modify these configuration sources when `Adding a new board`_, as descr
 For information about differences between DTS and Kconfig, see :ref:`zephyr:dt_vs_kconfig`.
 For detailed instructions for adding Zephyr support to a custom board, see Zephyr's :ref:`zephyr:board_porting_guide`.
 
+Application-specific Kconfig configuration
+==========================================
+
+The nRF Desktop introduces Kconfig options that can be used to simplify an application configuration.
+These options can be used to select a device role and to automatically apply a default configuration suitable for the selected role.
+
+HID configuration
+-----------------
+
+The nRF Desktop application introduces application-specific configuration options related to HID device configuration.
+These options are defined in :file:`Kconfig.hid`.
+
+The options define the nRF Desktop device role.
+The device role may be either HID dongle or HID peripheral.
+The HID peripheral role can also specify a peripheral type (HID mouse, HID keyboard or other HID device).
+
+Each role automatically selects nRF Desktop modules needed for the role.
+For example, :ref:`nrf_desktop_hid_state` is automatically enabled for the HID peripheral role.
+Apart from the device role, the application-specific Kconfigs specify a set of supported HID reports and a supported HID boot report (if any).
+
+By default, the nRF Desktop devices use predefined format of HID reports.
+The common HID report map is defined in the :file:`configuration/common/hid_report_desc.c` file.
+
+Default common configuration
+----------------------------
+
+The nRF Desktop application aligns the configuration with the nRF Desktop use case by overlaying Kconfig defaults and selecting the required Kconfig options.
+Among others, the Kconfig :ref:`app_event_manager` and :ref:`lib_caf` options are selected to ensure that they are enabled.
+See the :file:`Kconfig.defaults` file for details related to default common configuration.
+
+Bluetooth configuration
+-----------------------
+
+The nRF Desktop application introduces application-specific configuration options related to Bluetooth connectivity configuration.
+These options are defined in :file:`Kconfig.ble` file.
+
+The :ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>` Kconfig option enables support for Bluetooth connectivity in the nRF Desktop application.
+The option is enabled by default.
+The option performs the following:
+
+* Enables application modules related to Bluetooth that are required for the selected device role
+* Enables required functionalities in Zephyr's Bluetooth stack
+* Overlays Bluetooth Kconfig option defaults to align them with the nRF Desktop use-case
+
+See :file:`Kconfig.ble` file content for details.
+
+CAF configuration
+-----------------
+
+The nRF Desktop application overlays defaults of the :ref:`lib_caf` related Kconfig options to align them with the nRF Desktop use-case.
+The files that apply the overlays are located in the :file:`src/modules` directory and are named :file:`Kconfig.caf_module_name.default`.
+For example, the Kconfig defaults of :ref:`caf_settings_loader` are overlayed in the :file:`src/modules/Kconfig.caf_settings_loader.default`.
+
 .. _nrf_desktop_board_configuration:
 
 Board configuration
