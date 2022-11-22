@@ -91,12 +91,23 @@ static K_SEM_DEFINE(entered_rrc_idle, 1, 1);
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 static struct nrf_modem_gnss_agps_data_frame agps_request;
-static struct nrf_modem_gnss_agps_data_frame pgps_agps_request;
+static struct nrf_modem_gnss_agps_data_frame pgps_agps_request = {
+	/* Ephe mask is initially all set, because event PGPS_EVT_AVAILABLE may be received before
+	 * the assistance request from GNSS. If ephe mask would be zero, no predictions would be
+	 * injected.
+	 */
+	.sv_mask_ephe = 0xffffffff,
+	.sv_mask_alm = 0x00000000,
+	/* Also inject current time by default. */
+	.data_flags = NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST
+};
+#endif
+
 #if defined(CONFIG_NRF_CLOUD_REST) && !defined(CONFIG_NRF_CLOUD_MQTT)
-#if defined(CONFIG_NRF_CLOUD_PGPS) || !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if (defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)) || \
+	(defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL))
 static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
 			      AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
-#endif
 #endif
 #endif
 
@@ -425,27 +436,27 @@ static void method_gnss_request_assistance(void)
 		agps_request.sv_mask_ephe,
 		agps_request.sv_mask_alm,
 		agps_request.data_flags);
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
-	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_agps_ext_work);
-#else
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	/* Check the request. If no A-GPS data types except ephemeris or almanac are requested,
 	 * jump to P-GPS (if enabled)
 	 */
 	if (method_gnss_agps_required(&agps_request)) {
+#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+		k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_agps_ext_work);
+#else
 		k_work_submit_to_queue(
 			location_core_work_queue_get(),
 			&method_gnss_agps_request_work);
-	} else
 #endif
-	{
+	}
+#endif /* CONFIG_NRF_CLOUD_AGPS */
 #if defined(CONFIG_NRF_CLOUD_PGPS)
+	if (pgps_agps_request.sv_mask_ephe != 0) {
 		k_work_submit_to_queue(
 			location_core_work_queue_get(),
 			&method_gnss_notify_pgps_work);
-#endif
 	}
-#endif /* defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL) */
+#endif /* CONFIG_NRF_CLOUD_PGPS */
 }
 #endif /* defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS) */
 
