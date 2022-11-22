@@ -33,6 +33,15 @@ endif()
 
 # Check if debug sign key should be generated.
 if( "${CONFIG_SB_SIGNING_KEY_FILE}" STREQUAL "")
+  message(WARNING "
+    --------------------------------------------------------------
+    --- WARNING: Using generated NSIB public/private key-pair. ---
+    --- It should not be used for production.                  ---
+    --- See CONFIG_SB_SIGNING_KEY_FILE                         ---
+    --------------------------------------------------------------
+    \n"
+  )
+
   set(DEBUG_SIGN_KEY ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_SIGN_KEY_PRIVATE.pem)
   set(SIGNATURE_PRIVATE_KEY_FILE ${DEBUG_SIGN_KEY})
   add_custom_command(
@@ -70,6 +79,15 @@ set(PUBLIC_KEY_FILES "")
 
 # Check if debug public and private keys for key revokation should be generated
 if ("${CONFIG_SB_PUBLIC_KEY_FILES}" STREQUAL "")
+  message(WARNING "
+    ---------------------------------------------------------------
+    --- WARNING: Using generated NSIB public/private key-pairs. ---
+    --- They should not be used for production.                 ---
+    --- See CONFIG_SB_PUBLIC_KEY_FILES                          ---
+    ---------------------------------------------------------------
+    \n"
+    )
+
   set(debug_public_key_0 ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_PUBLIC_0.pem)
   set(debug_private_key_0 ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_PRIVATE_0.pem)
   set(debug_public_key_1 ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_PUBLIC_1.pem)
