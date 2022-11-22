@@ -24,7 +24,7 @@ Configuration
 *************
 
 The module is enabled by selecting :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_options>` option.
-It depends on :kconfig:option:`CONFIG_USB_DEVICE_HID`.
+The option selects :kconfig:option:`CONFIG_USB_DEVICE_STACK` and :kconfig:option:`CONFIG_USB_DEVICE_HID` Kconfig options.
 
 When enabling the USB support for the device, set the following generic device options:
 
@@ -38,25 +38,26 @@ Additionally, you can also configure the options described in the following sect
 Low latency device configuration
 ================================
 
-For low latency devices, make sure that the device requests a polling rate of 1 ms by setting :kconfig:option:`CONFIG_USB_HID_POLL_INTERVAL_MS` to ``1``.
+The module sets default value of :kconfig:option:`CONFIG_USB_HID_POLL_INTERVAL_MS` to ``1``.
+For low latency of HID reports, the device requests a polling rate of 1 ms.
 
 Boot protocol configuration
 ===========================
 
-If the device is meant to support the boot protocol, set the following options:
-
-#. Enable :kconfig:option:`CONFIG_USB_HID_BOOT_PROTOCOL`.
-#. Set the :kconfig:option:`CONFIG_USB_HID_PROTOCOL_CODE` Kconfig option to one of the following values to use the device for forwarding either the HID boot keyboard or the HID boot mouse reports, respectively:
-
-* If you want to forward HID boot keyboard reports, set the option to ``1``.
-* If you want to forward HID boot mouse reports, set the option to ``2``.
+The module sets default values of :kconfig:option:`CONFIG_USB_HID_BOOT_PROTOCOL` and :kconfig:option:`CONFIG_USB_HID_PROTOCOL_CODE` Kconfig options to support boot reports defined in the nRF Desktop configuration.
+The :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>` are used to control support of HID boot reports in the nRF Desktop application.
 
 USB device instance configuration
 =================================
 
 The nRF Desktop device can provide multiple instances of a HID-class USB device.
 The number of instances is controlled by :kconfig:option:`CONFIG_USB_HID_DEVICE_COUNT`.
+By default the option is set to:
 
+* ``1`` for HID peripherals (:ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>`).
+* :ref:`CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT <config_desktop_app_options>` for HID dongles (:ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>`).
+
+See the subsections below for details.
 
 nRF Desktop Peripheral
 ----------------------
@@ -94,7 +95,7 @@ In this example, the HID mouse input report is handled by the first HID-class US
 nRF Desktop Central
 -------------------
 
-The nRF Desktop Central device can use either a single HID-class USB instance or a number of instances equal to that specified in the :kconfig:option:`CONFIG_BT_MAX_PAIRED` option.
+The nRF Desktop Central device can use either a single HID-class USB instance or a number of instances equal to that specified in the :ref:`CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT <config_desktop_app_options>` option.
 If only one instance is used, reports from all Peripherals connected to the Central are forwarded to the same instance.
 In other cases, reports from each of the bonded peripherals are forwarded to a dedicated HID-class USB instance.
 The same instance is used after reconnection.
@@ -103,8 +104,8 @@ USB wakeup configuration
 ========================
 
 The nRF Desktop device can work as a source of wakeup events for the host device if connected through the USB.
-
-To use the feature, select :kconfig:option:`CONFIG_USB_DEVICE_REMOTE_WAKEUP`.
+To use the feature, enable the :ref:`CONFIG_DESKTOP_USB_REMOTE_WAKEUP <config_desktop_app_options>` option.
+This option selects the :kconfig:option:`CONFIG_USB_DEVICE_REMOTE_WAKEUP` to enable required dependencies in the USB stack.
 
 When host enters the suspended state, the USB will be suspended as well.
 With this feature enabled, this state change is used to suspend the nRF Desktop device (see :ref:`nrf_desktop_power_manager`).
@@ -143,6 +144,6 @@ Upon data delivery, :c:struct:`hid_report_sent_event` is submitted by the module
 The |usb_state| is a transport for :ref:`nrf_desktop_config_channel` when the channel is enabled.
 
 The module also handles an HID keyboard LED output report received through USB from the connected host.
-The module sends the report using ``hid_report_event``, that is handled either by :ref:`nrf_desktop_hid_state` (for peripheral) or by the :ref:`nrf_desktop_hid_forward` (for dongle).
+The module sends the report using :c:struct:`hid_report_event`, that is handled either by :ref:`nrf_desktop_hid_state` (for peripheral) or by the :ref:`nrf_desktop_hid_forward` (for dongle).
 
 .. |usb_state| replace:: USB state module
