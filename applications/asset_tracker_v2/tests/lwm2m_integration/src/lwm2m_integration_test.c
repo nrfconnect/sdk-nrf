@@ -39,7 +39,6 @@ static lwm2m_ctx_event_cb_t rd_client_callback;
 static lwm2m_engine_execute_cb_t engine_execute_cb;
 static modem_mode_cb_t modem_mode_change_cb;
 static lwm2m_firmware_get_update_state_cb_t firmware_update_state_cb;
-static lwm2m_engine_execute_cb_t firmware_update_cb;
 
 /* Forward declarations. */
 static int register_exec_callback_stub(const char *pathstr,
@@ -51,8 +50,6 @@ static int init_security_callback_stub(struct lwm2m_ctx *ctx,
 				       int no_of_calls);
 static void set_update_state_callback_stub(lwm2m_firmware_get_update_state_cb_t cb,
 					   int no_of_calls);
-static void set_update_callback_stub(lwm2m_engine_execute_cb_t cb,
-				     int no_of_calls);
 
 extern int unity_main(void);
 
@@ -82,14 +79,12 @@ void setUp(void)
 	__cmock_lwm2m_init_security_AddCallback(&init_security_callback_stub);
 
 	__cmock_lwm2m_firmware_set_update_state_cb_ExpectAnyArgs();
-	__cmock_lwm2m_firmware_set_update_cb_ExpectAnyArgs();
 
 	__cmock_lwm2m_engine_register_exec_callback_ExpectAndReturn(REBOOT_PATH, NULL, 0);
 	__cmock_lwm2m_engine_register_exec_callback_IgnoreArg_cb();
 
 	__cmock_lwm2m_engine_register_exec_callback_AddCallback(&register_exec_callback_stub);
 	__cmock_lwm2m_firmware_set_update_state_cb_AddCallback(&set_update_state_callback_stub);
-	__cmock_lwm2m_firmware_set_update_cb_AddCallback(&set_update_callback_stub);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_init(cloud_wrap_event_handler));
 }
@@ -148,11 +143,6 @@ static int init_security_callback_stub(struct lwm2m_ctx *ctx,
 void set_update_state_callback_stub(lwm2m_firmware_get_update_state_cb_t cb, int no_of_calls)
 {
 	firmware_update_state_cb = cb;
-}
-
-void set_update_callback_stub(lwm2m_engine_execute_cb_t cb, int no_of_calls)
-{
-	firmware_update_cb = cb;
 }
 
 /* Tests */
@@ -422,13 +412,10 @@ void test_lwm2m_integration_fota_updating(void)
 {
 	__cmock_lwm2m_engine_get_u8_IgnoreAndReturn(0);
 
-	/* Expect no event to be called by setting last_cb_type to UINT8_MAX and verifying that
-	 * the value has not changed after the state change.
-	 */
 	last_cb_type = UINT8_MAX;
 
 	firmware_update_state_cb(STATE_UPDATING);
-	TEST_ASSERT_EQUAL(UINT8_MAX, last_cb_type);
+	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_FOTA_DONE, last_cb_type);
 }
 
 void test_lwm2m_integration_fota_unexpected_event(void)
@@ -437,22 +424,6 @@ void test_lwm2m_integration_fota_unexpected_event(void)
 
 	/* Trigger an event update with an unknown event type. */
 	firmware_update_state_cb(UINT8_MAX);
-	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_FOTA_ERROR, last_cb_type);
-}
-
-void test_lwm2m_integration_fota_done(void)
-{
-	__cmock_lwm2m_firmware_apply_update_ExpectAndReturn(0, 0);
-
-	firmware_update_cb(0, NULL, 0);
-	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_FOTA_DONE, last_cb_type);
-}
-
-void test_lwm2m_integration_fota_done_error(void)
-{
-	__cmock_lwm2m_firmware_apply_update_ExpectAndReturn(0, -1);
-
-	firmware_update_cb(0, NULL, 0);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_FOTA_ERROR, last_cb_type);
 }
 
