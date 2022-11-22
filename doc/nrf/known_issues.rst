@@ -2458,6 +2458,23 @@ Trusted Firmware-M (TF-M)
 
 .. rst-class:: v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
+NCSDK-17501: Partition manager: Ignored alignment for partitions
+  The ``align`` setting for some partitions were set incorrectly, sometimes creating overlapping partitions. In debug builds of TF-M assertions will fail and the board will not boot.
+
+  Affected configuration files:
+    * :file:`pm.yml.bt_fast_pair`
+    * :file:`pm.yml.emds`
+    * :file:`pm.yml.file_system`
+    * :file:`pm.yml.memfault`
+    * :file:`pm.yml.nvs`
+    * :file:`pm.yml.pgps`
+    * :file:`pm.yml.tfm`
+    * :file:`pm.yml.zboss`
+
+  **Workaround:** Edit the affected configurations file so that ``align`` is correctly placed inside the ``placement`` section of the config file.
+
+.. rst-class:: v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
 NCSDK-15909: TF-M might fail to build due to flash overflow with Zephyr SDK 0.14.2
   when TFM_PROFILE_TYPE_NOT_SET=y.
 
