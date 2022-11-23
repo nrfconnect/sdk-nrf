@@ -15,6 +15,12 @@ config DESKTOP_BT
 	select BT_SETTINGS
 	select BT_SIGNING
 	select BT_SMP
+	help
+	  Enable support for Bluetooth connectivity in the nRF Desktop
+	  application. Specific Bluetooth configurations and application
+	  modules are selected according to the HID device role. Apart from
+	  that, the defaults of Bluetooth-related Kconfigs are aligned with
+	  the nRF Desktop use case.
 
 if DESKTOP_BT
 
@@ -23,6 +29,11 @@ config DESKTOP_BT_PERIPHERAL
 	default y if DESKTOP_ROLE_HID_PERIPHERAL
 	select CAF_BLE_ADV
 	select BT_PERIPHERAL
+	help
+	  HID peripherals are configured to use the GAP Peripheral role as
+	  required in the HID over GATT profile specification for the HID
+	  Device. This specification defines how to implement the HID Device
+	  using Bluetooth connectivity.
 
 if DESKTOP_BT_PERIPHERAL
 
@@ -40,24 +51,50 @@ config BT_ID_UNPAIR_MATCHING_BONDS
 
 config BT_DATA_LEN_UPDATE
 	default n
+	help
+	  nRF Desktop peripherals disable the Data Length Exchange (DLE)
+	  procedure as it expects this procedure to be initiated by the
+	  the central.
 
 config BT_AUTO_PHY_UPDATE
 	default n
+	help
+	  nRF Desktop peripherals disable the automatic PHY Update procedure
+	  as it expects this procedure to be initiated by the central.
 
 config BT_PERIPHERAL_PREF_MIN_INT
 	default 6
+	help
+	  nRF Desktop peripherals use the shortest available connection
+	  interval to lower the latency of HID reports.
 
 config BT_PERIPHERAL_PREF_MAX_INT
 	default 6
+	help
+	  nRF Desktop peripherals use the shortest available connection
+	  interval to lower the latency of HID reports.
 
 config BT_PERIPHERAL_PREF_LATENCY
 	default 99
+	help
+	  nRF Desktop peripherals use the non-zero value for the Bluetooth
+	  latency to lower the battery energy consumption. HID reports are
+	  sent as GATT notifications, so this parameter has no impact on their
+	  latency.
 
 config BT_PERIPHERAL_PREF_TIMEOUT
 	default 400
+	help
+	  nRF Desktop peripherals use the moderate value for the supervision
+	  timeout parameter as they do not have to be fast in the disconnect
+	  detection. The moderate value also provides connection stability as
+	  both devices take more time before reporting the connection timeout.
 
 config BT_CONN_PARAM_UPDATE_TIMEOUT
 	default 1000
+	help
+	  nRF Desktop peripherals update connection parameters earlier to lower
+	  HID data latency.
 
 endif
 
@@ -67,17 +104,32 @@ config DESKTOP_BT_CENTRAL
 	select DESKTOP_BLE_SCAN_ENABLE
 	select DESKTOP_BLE_DISCOVERY_ENABLE
 	select BT_CENTRAL
+	help
+	  nRF Desktop dongles are configured to use the GAP Central role as
+	  required in the HID over GATT profile specification for the Report
+	  and Boot Host. This specification defines how to implement the Host
+	  using Bluetooth connectivity.
 
 if DESKTOP_BT_CENTRAL
 
 config BT_GATT_CLIENT
 	default y
+	help
+	  nRF Desktop dongles are configured to use the GATT Client role as
+	  required in the HID over GATT profile specification for the Report
+	  and Boot Host.
 
 config BT_MAX_CONN
 	default DESKTOP_HID_DONGLE_CONN_COUNT
+	help
+	  Change the default value for the maximum number of simultaneous
+	  connections to be compatible with the dongle connection count.
 
 config BT_MAX_PAIRED
 	default DESKTOP_HID_DONGLE_BOND_COUNT
+	help
+	  Change the default value for the maximum number of paired devices
+	  to be compatible with the dongle bond count.
 
 endif
 
@@ -85,22 +137,40 @@ if BT_CTLR
 
 choice BT_LL_CHOICE
 	default BT_LL_SOFTDEVICE
+	help
+	  nRF Desktop devices should use the Softdevice controller by default.
+	  Other controller variants may be used for resource-constrained
+	  devices.
 endchoice
 
 choice BT_CTLR_TX_PWR
 	default BT_CTLR_TX_PWR_0
+	help
+	  nRF Desktop devices use the 0dBm TX power configuration by default.
 endchoice
 
 config BT_CTLR_CONN_PARAM_REQ
 	default n
+	help
+	  nRF Desktop devices disable support for the Connection Parameter
+	  Request feature as it is not needed.
 
 endif
 
 config BT_SETTINGS_CCC_STORE_ON_WRITE
 	default y
+	help
+	  nRF Desktop devices require to store the CCC descriptor in the
+	  context of the GATT write operation. This behaviour prevents
+	  discrepancies in the CCC descriptor configuration between the
+	  connected peers in case of a sudden shutdown or reset.
 
 config BT_SETTINGS_CCC_LAZY_LOADING
 	default n
+	help
+	  nRF Desktop devices disable the lazy loading feature for the CCC
+	  descriptor to speed up reconnections and reduce delay for the
+	  first HID report.
 
 endif
 
