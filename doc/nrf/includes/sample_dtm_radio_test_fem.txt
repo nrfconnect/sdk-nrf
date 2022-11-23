@@ -8,13 +8,10 @@ To add support for the nRF21540 FEM, build the sample for a board containing nRF
    The devicetree for the nRF21540 DK already contains the required FEM configuration, so you do not need to set an additional build option.
 
 For example, to build the sample from the command line for an nRF5340 DK with an attached nRF21540 EK, invoke the following command within the sample directory:
-``west build -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540_ek``
 
-.. note::
-   The nRF5340 DK network core peripherals, like UART and SPI, share an ID and a base address.
-   To configure the nRF21540 front-end module gain, write the gain value over the SPI.
-   In samples, UART is used as a control interface or shell transport.
-   To send the gain value UART is temporary disabled and restarted after the SPI transfer.
+.. code-block:: console
+
+  west build -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540_ek
 
 For more details refer to the following documentation:
 
