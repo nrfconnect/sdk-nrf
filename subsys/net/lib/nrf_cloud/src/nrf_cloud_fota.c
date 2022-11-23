@@ -198,6 +198,21 @@ static int load_fota_settings(void)
 	return ret;
 }
 
+static void send_fota_done_event_if_done(void)
+{
+	/* This event should cause reboot or modem-reinit.
+	 * Do not cleanup the job since a reboot should
+	 * occur or the user will call:
+	 * nrf_cloud_modem_fota_completed() or nrf_cloud_fota_pending_job_validate()
+	 * The validated job status will be sent after the reboot or upon
+	 * reconnection to nRF Cloud (see nrf_cloud_fota_endpoint_set_and_report())
+	 */
+	if ((current_fota.status == NRF_CLOUD_FOTA_IN_PROGRESS) &&
+	    (saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_PENDING)) {
+		send_event(NRF_CLOUD_FOTA_EVT_DONE, &current_fota);
+	}
+}
+
 static int pending_fota_job_validate(void)
 {
 	bool reboot = false;
@@ -421,6 +436,10 @@ static int report_validated_job_status(void)
 		return 1;
 	}
 
+	if (saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_PENDING) {
+		return -EOPNOTSUPP;
+	}
+
 	struct nrf_cloud_fota_job job = {
 		.info = {
 			.type = saved_job.type,
@@ -431,9 +450,20 @@ static int report_validated_job_status(void)
 	switch (saved_job.validate) {
 	case NRF_CLOUD_FOTA_VALIDATE_UNKNOWN:
 		job.error = NRF_CLOUD_FOTA_ERROR_UNABLE_TO_VALIDATE;
-		/* fall-through */
+		/* Fall-through */
 	case NRF_CLOUD_FOTA_VALIDATE_PASS:
 		job.status = NRF_CLOUD_FOTA_SUCCEEDED;
+		break;
+	case NRF_CLOUD_FOTA_VALIDATE_ERROR:
+		if (current_fota.info.type != NRF_CLOUD_FOTA_TYPE__INVALID) {
+			/* Use current FOTA info if valid */
+			job.status = current_fota.status;
+			job.error = current_fota.error;
+		} else {
+			/* Default to download error */
+			job.status = NRF_CLOUD_FOTA_FAILED;
+			job.error = NRF_CLOUD_FOTA_ERROR_DOWNLOAD;
+		}
 		break;
 	case NRF_CLOUD_FOTA_VALIDATE_FAIL:
 		job.status = NRF_CLOUD_FOTA_FAILED;
@@ -467,10 +497,21 @@ int nrf_cloud_fota_endpoint_set_and_report(struct mqtt_client *const client,
 		return ret;
 	}
 
-	ret = report_validated_job_status();
-	/* Positive value indicates no job exists, ignore */
-	if (ret > 0) {
-		ret = 0;
+	if ((current_fota.status == NRF_CLOUD_FOTA_IN_PROGRESS) &&
+	    (saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_PENDING)) {
+		/* In case of a prior disconnection from nRF Cloud during the
+		 * FOTA update, send a job update to the cloud
+		 */
+		ret = send_job_update(&current_fota);
+		if (ret < 0) {
+			send_fota_done_event_if_done();
+		}
+	} else {
+		ret = report_validated_job_status();
+		/* Positive value indicates no job exists, ignore */
+		if (ret > 0) {
+			ret = 0;
+		}
 	}
 
 	return ret;
@@ -689,12 +730,17 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 			current_fota.error = NRF_CLOUD_FOTA_ERROR_DOWNLOAD;
 		}
 
+		/* Save as ERROR status in case send_job_update() fails
+		 * so that the job status can be updated later.
+		 */
 		save_validate_status(current_fota.info.id,
 				     current_fota.info.type,
-				     NRF_CLOUD_FOTA_VALIDATE_DONE);
+				     NRF_CLOUD_FOTA_VALIDATE_ERROR);
 		ret = send_job_update(&current_fota);
 		send_event(NRF_CLOUD_FOTA_EVT_ERROR, &current_fota);
-		cleanup_job(&current_fota);
+		if (ret == 0) {
+			cleanup_job(&current_fota);
+		}
 		break;
 
 	case FOTA_DOWNLOAD_EVT_PROGRESS:
@@ -734,6 +780,11 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 
 	if (ret) {
 		LOG_ERR("Failed to send job update to cloud: %d", ret);
+		/* The done event is normally sent on the MQTT ACK, but if the
+		 * status update fails there will be no ACK. Send the done event
+		 * so the device can proceed to install the FOTA update.
+		 */
+		send_fota_done_event_if_done();
 	}
 
 	last_fota_dl_evt = evt->id;
@@ -1315,26 +1366,22 @@ int nrf_cloud_fota_mqtt_evt_handler(const struct mqtt_evt *evt)
 		case NRF_CLOUD_FOTA_VALIDATE_PASS:
 		case NRF_CLOUD_FOTA_VALIDATE_UNKNOWN:
 		case NRF_CLOUD_FOTA_VALIDATE_FAIL:
+		case NRF_CLOUD_FOTA_VALIDATE_ERROR:
 			save_validate_status(saved_job.id, saved_job.type,
 					NRF_CLOUD_FOTA_VALIDATE_DONE);
 			break;
 		case NRF_CLOUD_FOTA_VALIDATE_PENDING:
-		/* This event should cause reboot or modem-reinit.
-		 * Do not cleanup the job since a reboot should
-		 * occur or the user will call:
-		 * nrf_cloud_modem_fota_completed() or nrf_cloud_fota_pending_job_validate()
-		 * The validated job status will be sent after the reboot or upon
-		 * reconnection to nRF Cloud (see nrf_cloud_fota_endpoint_set_and_report())
-		 */
-			send_event(NRF_CLOUD_FOTA_EVT_DONE, &current_fota);
+			send_fota_done_event_if_done();
 			break;
 		default:
 			break;
 		}
 		break;
 	}
-	case MQTT_EVT_CONNACK:
 	case MQTT_EVT_DISCONNECT:
+		nrf_cloud_fota_endpoint_clear();
+		/* Fall-through */
+	case MQTT_EVT_CONNACK:
 	case MQTT_EVT_PUBREC:
 	case MQTT_EVT_PUBREL:
 	case MQTT_EVT_PUBCOMP:
