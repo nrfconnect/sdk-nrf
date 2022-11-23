@@ -126,6 +126,11 @@ nRF9160: Serial LTE modem
 
 |no_changes_yet_note|
 
+nRF Machine Learning (Edge Impulse)
+-----------------------------------
+
+* Brought back support for Thingy:52 (``thingy52_nrf52832``).
+
 Samples
 =======
 

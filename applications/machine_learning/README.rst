@@ -40,6 +40,7 @@ This approach allows to use any sensor available in Zephyr.
 
 By default, the following sensors are used by the application:
 
+* Thingy:52 - Built-in accelerometer (``LIS2DH``).
 * Thingy:53 - Built-in accelerometer (``ADXL362``).
 * nRF52840 Development Kit - Simulated sensor (:ref:`sensor_sim`).
   The simulated sensor generates predefined waves as acceleration.
@@ -54,6 +55,7 @@ Forwarding data
 The application uses `Edge Impulse's data forwarder`_ protocol to forward data to `Edge Impulse studio`_.
 By default, the following transports are used:
 
+* Thingy:52 uses :ref:`nus_service_readme`.
 * Thingy:53 uses :ref:`nus_service_readme`.
 * nRF52840 Development Kit uses :ref:`zephyr:uart_api`.
 * nRF5340 Development Kit uses :ref:`zephyr:uart_api`.
@@ -67,7 +69,7 @@ The labels that are assigned by the machine learning model are specific to the g
 
 By default, the application uses pretrained machine leaning models deployed in `Edge Impulse studio`_:
 
-* Thingy:53 uses the `NCS hardware accelerometer machine learning model`_.
+* Both Thingy:52 and Thingy:53 use the `NCS hardware accelerometer machine learning model`_.
   The model uses the data from the built-in accelerometer to recognize the following gestures:
 
   * ``idle`` - The device is placed on a flat surface.
@@ -136,6 +138,13 @@ For example, the :ref:`caf_ble_state` and :ref:`caf_ble_adv` modules are not ena
 
 See :ref:`nrf_machine_learning_app_internal_modules` for detailed information about every module used by the nRF Machine Learning application.
 
+Programming Thingy:52
+=====================
+
+The Thingy:52 does not have the J-Link debug IC and the application configuration does not use a bootloader.
+Use an external debugger to program the firmware.
+See :ref:`zephyr:thingy52_nrf52832` documentation for details.
+
 Programming Thingy:53
 =====================
 
@@ -178,7 +187,7 @@ Nordic UART Service requirements
 If you want to forward data over Nordic UART Service (NUS), you need an additional development kit that is able to run the :ref:`central_uart` sample.
 Check the sample Requirements section for the list of supported development kits.
 The sample is used to receive data over NUS and forward it to the host computer over UART.
-See `Testing with Thingy:53`_ for how to test this solution.
+See `Testing with Thingy devices`_ for how to test this solution.
 
 .. _nrf_machine_learning_app_requirements_build_types:
 
@@ -231,6 +240,10 @@ The change is triggered by any press of the button.
 
 By default, the following buttons are used by the application:
 
+* Thingy:52:
+
+  * The **SW2** button switches between data forwarding and running the machine learning model.
+
 * Thingy:53:
 
   * The **SW3** button switches between data forwarding and running the machine learning model.
@@ -252,7 +265,8 @@ The application defines common LED effects for both the machine learning results
 
 By default, the application uses the following LED effects:
 
-* Thingy:53 displays the application state in the RGB scale using **LED1**.
+* Thingy:52 and Thingy:53 display the application state in the RGB scale.
+  Thingy:52 uses the Lightwell LEDs and Thingy:53 uses the **LED1**.
 
   * If the device is returning the machine learning prediction results, the LED uses following predefined colors:
 
@@ -312,7 +326,7 @@ The nRF Machine Learning application uses the following files as configuration s
   The :file:`_def` files are used by the nRF Machine Learning application modules and :ref:`lib_caf` modules.
 
 The application configuration files for a given board must be defined in a board-specific directory in the :file:`applications/machine_learning/configuration/` directory.
-For example, the configuration files for the Thingy:53 are defined in the :file:`applications/machine_learning/configuration/thingy53_nrf5340_cpuapp` directory.
+For example, the configuration files for the Thingy:52 are defined in the :file:`applications/machine_learning/configuration/thingy52_nrf52832` directory.
 
 The following configuration files can be defined for any supported board:
 
@@ -402,7 +416,7 @@ Testing
 
 After programming the application to your development kit, you can test the nRF Machine Learning application.
 You can test running the machine learning model on an embedded device and forwarding data to `Edge Impulse studio`_.
-The detailed test steps for the Development Kits and the Thingy:53 are described in the following subsections.
+The detailed test steps for the Development Kits, the Thingy:52, and the Thingy:53 are described in the following subsections.
 
 Application logs
 ----------------
@@ -416,8 +430,8 @@ See :ref:`testing_rtt_connect` for detailed instructions about accessing the log
 
    You can also use ``rtt`` configuration to have the Thingy:53 use RTT for logs.
 
-Testing with Thingy:53
-----------------------
+Testing with Thingy devices
+---------------------------
 
 After programming the application, perform the following steps to test the nRF Machine Learning application on the Thingy:
 
