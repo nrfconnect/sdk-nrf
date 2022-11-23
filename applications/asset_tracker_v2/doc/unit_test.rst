@@ -16,6 +16,7 @@ Following are the modules that have unit tests:
 * JSON common library - :file:`asset_tracker_v2/src/cloud/cloud_codec/json_common.c`
 * LwM2M codec backend - :file:`asset_tracker_v2/src/cloud/cloud_codec/lwm2m/lwm2m_codec.c`
 * LwM2M integration layer - :file:`asset_tracker_v2/src/cloud/lwm2m_integration/lwm2m_integration.c`
+* nRF Cloud codec backend - :file:`asset_tracker_v2/src/cloud/cloud_codec/nrf_cloud/nrf_cloud_codec.c`
 
 Running the unit test
 *********************
