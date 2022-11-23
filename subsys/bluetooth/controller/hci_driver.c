@@ -529,6 +529,22 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_SYNC_TRANSFER_SENDER)) {
+		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			err = sdc_support_periodic_adv_sync_transfer_sender_central();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+
+		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			err = sdc_support_periodic_adv_sync_transfer_sender_peripheral();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+	}
+
 	if (IS_ENABLED(CONFIG_BT_CTLR_PHY_CODED)) {
 		err = sdc_support_le_coded_phy();
 		if (err) {
