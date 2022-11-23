@@ -448,7 +448,7 @@ int ble_mcs_state_update(struct bt_conn *conn)
 
 int ble_mcs_play_pause(struct bt_conn *conn)
 {
-	int ret;
+	int ret = 0;
 	struct mpl_cmd cmd;
 
 	if (media_player_state == BT_MCS_MEDIA_STATE_PLAYING) {

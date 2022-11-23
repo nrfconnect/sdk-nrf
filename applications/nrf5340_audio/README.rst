@@ -674,6 +674,8 @@ The application uses the following buttons on the supported development kit:
 |               |   Use this tone to check the synchronization of headsets.                              |
 |               | * Pressed on the gateway during playback multiple times: Changes the tone frequency.   |
 |               |   The available values are 1000 Hz, 2000 Hz, and 4000 Hz.                              |
+|               | * Pressed on a BIS headset during playback: Change audio stream, if more than one is   |
+|               |   available.                                                                           |
 +---------------+----------------------------------------------------------------------------------------+
 | **BTN 5**     | Depending on the moment it is pressed:                                                 |
 |               |                                                                                        |
@@ -1253,6 +1255,8 @@ Testing the BIS mode is identical to `Testing the default CIS mode`_, except for
   For example, you can decrease or increase the volume separately for each receiver during playback.
 * When pressing the **PLAY/PAUSE** button on a headset, the streaming state only changes for that given headset.
 * Pressing the **PLAY/PAUSE** button on the gateway will respectively start or stop the stream for all headsets listening in.
+* Pressing the **BTN 4** button on a headset will change the active audio stream.
+  The default configuration of the BIS mode supports two audio streams (left and right).
 
 .. _nrf53_audio_app_testing_steps_cis_walkie_talkie:
 

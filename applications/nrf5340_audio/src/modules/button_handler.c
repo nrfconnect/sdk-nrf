@@ -45,13 +45,13 @@ const static struct btn_config btn_cfg[] = {
 		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw2), gpios),
 	},
 	{
-		.btn_name = STRINGIFY(BUTTON_TEST_TONE),
-		.btn_pin = BUTTON_TEST_TONE,
+		.btn_name = STRINGIFY(BUTTON_4),
+		.btn_pin = BUTTON_4,
 		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw3), gpios),
 	},
 	{
-		.btn_name = STRINGIFY(BUTTON_MUTE),
-		.btn_pin = BUTTON_MUTE,
+		.btn_name = STRINGIFY(BUTTON_5),
+		.btn_pin = BUTTON_5,
 		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw4), gpios),
 	}
 };

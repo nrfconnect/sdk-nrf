@@ -570,6 +570,11 @@ static int initialize(le_audio_receive_cb recv_cb)
 	return 0;
 }
 
+int le_audio_user_defined_button_press(void)
+{
+	return 0;
+}
+
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 {
 	/* Get the configuration for the sink stream */

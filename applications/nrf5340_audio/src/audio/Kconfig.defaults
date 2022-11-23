@@ -35,6 +35,13 @@ config LC3_DEC_CHAN_MAX
 	int
 	default 1
 
+if TRANSPORT_BIS # Depends on TRANSPORT_BIS
+
+config AUDIO_TEST_TONE
+	default n
+
+endif # TRANSPORT_BIS
+
 endif # AUDIO_DEV = 1 (HEADSET)
 
 # GATEWAY

@@ -19,7 +19,7 @@
 LOG_MODULE_REGISTER(bis_gateway, CONFIG_BLE_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 2,
-	     "A maximum of two streams are currently supported");
+	     "A maximum of two audio streams are currently supported");
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 
@@ -37,8 +37,8 @@ static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_AUDIO_BROADCAST
 
 static struct bt_audio_broadcast_source *broadcast_source;
 
-static struct bt_audio_stream streams[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
-static struct bt_audio_stream *streams_p[ARRAY_SIZE(streams)];
+static struct bt_audio_stream audio_streams[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
+static struct bt_audio_stream *audio_streams_p[ARRAY_SIZE(audio_streams)];
 
 static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_NRF5340_AUDIO;
 
@@ -68,8 +68,8 @@ static bool is_iso_buffer_full(uint8_t idx)
 
 static int get_stream_index(struct bt_audio_stream *stream, uint8_t *index)
 {
-	for (int i = 0; i < ARRAY_SIZE(streams); i++) {
-		if (&streams[i] == stream) {
+	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+		if (&audio_streams[i] == stream) {
 			*index = i;
 			return 0;
 		}
@@ -82,7 +82,7 @@ static int get_stream_index(struct bt_audio_stream *stream, uint8_t *index)
 
 static void stream_sent_cb(struct bt_audio_stream *stream)
 {
-	static uint32_t sent_cnt[ARRAY_SIZE(streams)];
+	static uint32_t sent_cnt[ARRAY_SIZE(audio_streams)];
 	uint8_t index;
 
 	get_stream_index(stream, &index);
@@ -222,15 +222,16 @@ static int initialize(void)
 		return -EALREADY;
 	}
 
-	for (int i = 0; i < ARRAY_SIZE(streams); i++) {
-		streams_p[i] = &streams[i];
-		streams[i].ops = &stream_ops;
+	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+		audio_streams_p[i] = &audio_streams[i];
+		audio_streams[i].ops = &stream_ops;
 	}
 
 	LOG_DBG("Creating broadcast source");
 
-	ret = bt_audio_broadcast_source_create(streams_p, ARRAY_SIZE(streams_p), &lc3_preset.codec,
-					       &lc3_preset.qos, &broadcast_source);
+	ret = bt_audio_broadcast_source_create(audio_streams_p, ARRAY_SIZE(audio_streams_p),
+					       &lc3_preset.codec, &lc3_preset.qos,
+					       &broadcast_source);
 	if (ret) {
 		LOG_ERR("Failed to create broadcast source, ret: %d", ret);
 		return ret;
@@ -245,6 +246,11 @@ static int initialize(void)
 	}
 
 	initialized = true;
+	return 0;
+}
+
+int le_audio_user_defined_button_press(void)
+{
 	return 0;
 }
 
@@ -279,12 +285,12 @@ int le_audio_play_pause(void)
 	/* All streams in a broadcast source is in the same state,
 	 * so we can just check the first stream
 	 */
-	if (streams[0].ep == NULL) {
+	if (audio_streams[0].ep == NULL) {
 		LOG_ERR("stream->ep is NULL");
 		return -ECANCELED;
 	}
 
-	if (streams[0].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
+	if (audio_streams[0].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
 		ret = bt_audio_broadcast_source_stop(broadcast_source);
 		if (ret) {
 			LOG_WRN("Failed to stop broadcast, ret: %d", ret);
@@ -304,11 +310,11 @@ int le_audio_send(uint8_t const *const data, size_t size)
 	int ret;
 	static bool wrn_printed[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
 	struct net_buf *buf;
-	size_t num_streams = ARRAY_SIZE(streams);
+	size_t num_streams = ARRAY_SIZE(audio_streams);
 	size_t data_size = size / num_streams;
 
 	for (int i = 0; i < num_streams; i++) {
-		if (streams[i].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+		if (audio_streams[i].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
 			LOG_DBG("Stream %d not in streaming state", i);
 			continue;
 		}
@@ -336,7 +342,8 @@ int le_audio_send(uint8_t const *const data, size_t size)
 
 		atomic_inc(&iso_tx_pool_alloc[i]);
 
-		ret = bt_audio_stream_send(&streams[i], buf, seq_num[i]++, BT_ISO_TIMESTAMP_NONE);
+		ret = bt_audio_stream_send(&audio_streams[i], buf, seq_num[i]++,
+					   BT_ISO_TIMESTAMP_NONE);
 		if (ret < 0) {
 			LOG_WRN("Failed to send audio data: %d", ret);
 			net_buf_unref(buf);
@@ -348,7 +355,7 @@ int le_audio_send(uint8_t const *const data, size_t size)
 #if (CONFIG_AUDIO_SOURCE_I2S)
 	struct bt_iso_tx_info tx_info = { 0 };
 
-	ret = bt_iso_chan_get_tx_sync(streams[0].iso, &tx_info);
+	ret = bt_iso_chan_get_tx_sync(audio_streams[0].iso, &tx_info);
 
 	if (ret) {
 		LOG_DBG("Error getting ISO TX anchor point: %d", ret);
@@ -400,7 +407,7 @@ int le_audio_disable(void)
 {
 	int ret;
 
-	if (streams[0].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
+	if (audio_streams[0].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
 		/* Deleting broadcast source in stream_stopped_cb() */
 		delete_broadcast_src = true;
 
