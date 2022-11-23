@@ -73,6 +73,12 @@ if DESKTOP_BT_CENTRAL
 config BT_GATT_CLIENT
 	default y
 
+config BT_MAX_CONN
+	default DESKTOP_HID_DONGLE_CONN_COUNT
+
+config BT_MAX_PAIRED
+	default DESKTOP_HID_DONGLE_BOND_COUNT
+
 endif
 
 if BT_CTLR
