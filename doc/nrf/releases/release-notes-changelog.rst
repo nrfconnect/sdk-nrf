@@ -51,7 +51,9 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 Bluetooth LE
 ------------
 
-|no_changes_yet_note|
+* Added:
+
+  * Support for :c:func:`hci_driver_close`, so :c:func:`bt_disable` can now be used to disable the SoftDevice Controller.
 
 For details, see :ref:`nrfxlib:softdevice_controller_changelog`.
 

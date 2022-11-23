@@ -297,6 +297,14 @@ void hci_ecdh_init(void)
 #endif /* !defined(CONFIG_BT_CTLR_ECDH_IN_MPSL_WORK) */
 }
 
+void hci_ecdh_uninit(void)
+{
+#if !defined(CONFIG_BT_CTLR_ECDH_IN_MPSL_WORK)
+	k_thread_abort(&ecdh_thread_data);
+#endif /* !defined(CONFIG_BT_CTLR_ECDH_IN_MPSL_WORK) */
+}
+
+
 uint8_t hci_cmd_le_read_local_p256_public_key(void)
 {
 	if (!atomic_cas(&cmd, 0, GEN_PUBLIC_KEY)) {
