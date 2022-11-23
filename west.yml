@@ -182,7 +182,7 @@ manifest:
       revision: 2caab0c3314fe8477f6107ab105b653803babae8
     - name: ant
       repo-path: sdk-ant
-      revision: 36b2ac9fd02988319e9dcebc578d8f9a9f5ff892
+      revision: 8f6e2b0470d11b5c1a97c92df35eb1350e84c5f8
       remote: ant-nrfconnect
       groups:
         - ant
