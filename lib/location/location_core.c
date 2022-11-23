@@ -576,7 +576,7 @@ static void location_core_event_cb_fn(struct k_work *work)
 		if (current_method_index < current_config.methods_count) {
 			requested_method = current_config.methods[current_method_index].method;
 
-			LOG_WRN("Location retrieval %s using '%s', trying with '%s' next",
+			LOG_INF("Location retrieval %s using '%s', trying with '%s' next",
 				current_event_data.id != LOCATION_EVT_RESULT_UNKNOWN ?
 					"failed" : "completed",
 				(char *)location_method_api_get(current_method)->method_string,
@@ -647,7 +647,7 @@ static void location_core_method_timeout_work_fn(struct k_work *work)
 
 	ARG_UNUSED(work);
 
-	LOG_WRN("Method specific timeout expired");
+	LOG_INF("Method specific timeout expired");
 
 	location_method_api_get(current_method)->cancel();
 	location_core_event_cb_timeout();
@@ -660,7 +660,7 @@ static void location_core_timeout_work_fn(struct k_work *work)
 
 	ARG_UNUSED(work);
 
-	LOG_WRN("Timeout for entire location request expired");
+	LOG_INF("Timeout for entire location request expired");
 
 	location_method_api_get(current_method)->cancel();
 	/* config->timeout needs to expire without fallbacks */
