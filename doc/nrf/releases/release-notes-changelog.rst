@@ -174,7 +174,8 @@ nRF5340 Audio
 
 * Updated:
 
-  * LE Audio Controller Subsystem for nRF53 from version 3303 to version 3307.
+  * LE Audio Controller Subsystem for nRF53 (Experimental) to version 3310.
+    This version provides improved Android compatibility.
   * Removed support for the nRF5340 Audio DK (PCA10121) board version 0.7.1 or older
 
 * Fixed:
