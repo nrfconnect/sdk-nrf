@@ -170,7 +170,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.34.1
+      revision: 0.35.0
       remote: memfault
     - name: cirrus
       repo-path: sdk-mcu-drivers
