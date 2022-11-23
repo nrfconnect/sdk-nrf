@@ -8,7 +8,9 @@ Bootloader storage
    :depth: 2
 
 The bootloader storage library is used to read and write both one-time programmable (OTP) data and a non-volatile counter.
-It can be used by both the |NSIB| (NSIB) and the application, but the application has read access only.
+
+If the |NSIB| (NSIB) is enabled, it should be the only user of this library.
+The application image can only include this library when the NSIB is disabled.
 
 The library has the following functions for either reading or writing, or in some cases both reading and writing:
 
