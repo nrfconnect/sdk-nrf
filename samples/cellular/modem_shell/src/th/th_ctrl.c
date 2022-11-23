@@ -49,23 +49,6 @@ struct th_ctrl_data {
 static struct th_ctrl_data th_work_data_1;
 static struct th_ctrl_data th_work_data_2;
 
-static char *th_ctrl_get_command_str_from_argv(size_t argc, char **argv,
-					       char *out_buf,
-					       uint16_t out_buf_len)
-{
-	int i, total_len = 0, arg_len = 0;
-
-	for (i = 0; i < argc; i++) {
-		arg_len = strlen(argv[i]);
-		if (total_len + arg_len > out_buf_len) {
-			break;
-		}
-		sprintf(out_buf + total_len, "%s ", argv[i]);
-		total_len = strlen(out_buf);
-	}
-	return out_buf;
-}
-
 static char **th_ctrl_util_duplicate_argv(int argc, char **argv)
 {
 	char **ptr_array;
@@ -187,8 +170,8 @@ static void th_ctrl_data_status_print(struct th_ctrl_data *data)
 		if (print_buf != NULL) {
 			mosh_print(
 				"  command: %s",
-				th_ctrl_get_command_str_from_argv(
-					data->argc, data->argv,
+				shell_command_str_from_argv(
+					data->argc, data->argv, NULL,
 					print_buf,
 					data->cmd_len + 1));
 		} else {

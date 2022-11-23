@@ -14,6 +14,39 @@
 #include <nrf_modem_gnss.h>
 
 #include "str_utils.h"
+#include "mosh_print.h"
+
+char *shell_command_str_from_argv(
+	size_t argc,
+	char **argv,
+	const char *cmd_prefix,
+	char *out_buf,
+	uint16_t out_buf_len)
+{
+	int i, total_len = 0, arg_len = 0;
+
+	if (cmd_prefix != NULL) {
+		strncpy(out_buf, cmd_prefix, out_buf_len);
+		total_len = strlen(cmd_prefix);
+	}
+
+	for (i = 0; i < argc; i++) {
+		arg_len = strlen(argv[i]);
+		if (total_len + arg_len > out_buf_len) {
+			mosh_error("Converted shell command cut due to too short output buffer");
+			break;
+		}
+		if (i == (argc - 1)) {
+			/* Do not put space to last one */
+			sprintf(out_buf + total_len, "%s", argv[i]);
+		} else {
+			sprintf(out_buf + total_len, "%s ", argv[i]);
+		}
+		total_len = strlen(out_buf);
+	}
+
+	return out_buf;
+}
 
 int str_hex_to_bytes(char *str, uint32_t str_length, uint8_t *buf, uint16_t buf_length)
 {
