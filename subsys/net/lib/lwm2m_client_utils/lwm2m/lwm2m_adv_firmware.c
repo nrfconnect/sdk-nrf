@@ -12,6 +12,9 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #include <string.h>
 #include <stdio.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include <time.h>
 #include <zephyr/init.h>
 
@@ -40,7 +43,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define FIRMWARE_MAXIMUM_DEFERRED_PERIOD_ID     13	/* unused */
 #define FIRMWARE_COMPONENT_NAME_ID              14
 #define FIRMWARE_CURRENT_VERSION_ID             15
-#define FIRMWARE_LINKED_INSTANCES_ID            16	/* unused */
+#define FIRMWARE_LINKED_INSTANCES_ID            16
 #define FIRMWARE_CONFLICTING_INSTANCES_ID       17	/* unused */
 
 #define FIRMWARE_MAX_ID				17
@@ -65,6 +68,8 @@ static uint8_t delivery_method[MAX_INSTANCE_COUNT];
 static time_t last_change[MAX_INSTANCE_COUNT];
 static char package_uri[MAX_INSTANCE_COUNT][PACKAGE_URI_LEN];
 static char component_version[MAX_INSTANCE_COUNT][PACKAGE_URI_LEN];
+static struct lwm2m_objlnk linked_instances[MAX_INSTANCE_COUNT];
+static struct lwm2m_objlnk conflict_instances[MAX_INSTANCE_COUNT];
 
 /* A varying number of firmware object instances exists */
 static struct lwm2m_engine_obj firmware;
@@ -82,8 +87,8 @@ static struct lwm2m_engine_obj_field fields[] = {
 	OBJ_FIELD(FIRMWARE_LAST_STATE_CHANGE_TIME_ID, R, TIME),
 	OBJ_FIELD(FIRMWARE_COMPONENT_NAME_ID, R, STRING),
 	OBJ_FIELD(FIRMWARE_CURRENT_VERSION_ID, R, STRING),
-	OBJ_FIELD(FIRMWARE_LINKED_INSTANCES_ID, R_OPT, STRING),
-	OBJ_FIELD(FIRMWARE_CONFLICTING_INSTANCES_ID, R_OPT, STRING),
+	OBJ_FIELD(FIRMWARE_LINKED_INSTANCES_ID, R_OPT, OBJLNK),
+	OBJ_FIELD(FIRMWARE_CONFLICTING_INSTANCES_ID, R_OPT, OBJLNK),
 };
 
 static struct lwm2m_engine_obj_inst inst[MAX_INSTANCE_COUNT];
@@ -115,6 +120,11 @@ void lwm2m_adv_firmware_set_update_state(uint16_t obj_inst_id, uint8_t state)
 	bool error = false;
 	const char *path;
 	time_t now;
+
+	if (update_state[obj_inst_id] == state) {
+		LOG_DBG("Already at state %d", state);
+		return;
+	}
 
 	path = lwm2m_adv_path(obj_inst_id, FIRMWARE_UPDATE_RESULT_ID);
 
@@ -178,7 +188,7 @@ void lwm2m_adv_firmware_set_update_result(uint16_t obj_inst_id, uint8_t result)
 	case RESULT_DEFAULT:
 		/* Usually this is cancell operation */
 		if (update_state[obj_inst_id] != STATE_IDLE) {
-			result = LWM2M_ADV_FOTA_CANCELLED;
+			result = RESULT_ADV_FOTA_CANCELLED;
 		}
 
 		lwm2m_adv_firmware_set_update_state(obj_inst_id, STATE_IDLE);
@@ -222,6 +232,10 @@ void lwm2m_adv_firmware_set_update_result(uint16_t obj_inst_id, uint8_t result)
 
 		lwm2m_adv_firmware_set_update_state(obj_inst_id, STATE_IDLE);
 		break;
+
+	case RESULT_ADV_CONFLICT_STATE:
+		lwm2m_adv_firmware_set_update_state(obj_inst_id, STATE_IDLE);
+		break;
 	default:
 		LOG_ERR("Unhandled result: %u", result);
 		return;
@@ -247,8 +261,8 @@ static int package_write_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_
 	state = lwm2m_adv_firmware_get_update_state(obj_inst_id);
 	if (state == STATE_IDLE) {
 		lwm2m_adv_firmware_set_update_state(obj_inst_id, STATE_DOWNLOADING);
-	} else if (state == STATE_DOWNLOADED) {
-		if (data_len == 0U || (data_len == 1U && data[0] == '\0')) {
+	} else if (data_len == 0U || (data_len == 1U && data[0] == '\0')) {
+		if (state == STATE_DOWNLOADED || STATE_DOWNLOADING) {
 			/* reset to state idle and result default */
 			lwm2m_adv_firmware_set_update_result(obj_inst_id, RESULT_DEFAULT);
 			LOG_DBG("Update canceled by writing %d bytes", data_len);
@@ -256,6 +270,7 @@ static int package_write_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_
 		}
 		LOG_WRN("Download has already completed");
 		return -EPERM;
+
 	} else if (state != STATE_DOWNLOADING) {
 		LOG_WRN("Cannot download: state = %d", state);
 		return -EPERM;
@@ -284,6 +299,12 @@ static int package_write_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_
 		lwm2m_adv_firmware_set_update_result(obj_inst_id, RESULT_INTEGRITY_FAILED);
 	} else if (ret == -ENOMSG) {
 		lwm2m_adv_firmware_set_update_result(obj_inst_id, RESULT_UNSUP_FW);
+	} else if (ret == -EAGAIN) {
+		if (state == STATE_IDLE) {
+			/* Mark conflict state  */
+			lwm2m_adv_firmware_set_update_result(obj_inst_id,
+							     RESULT_ADV_CONFLICT_STATE);
+		}
 	} else {
 		lwm2m_adv_firmware_set_update_result(obj_inst_id, RESULT_UPDATE_FAILED);
 	}
@@ -301,6 +322,110 @@ lwm2m_engine_execute_cb_t lwm2m_adv_firmware_get_update_cb(uint16_t obj_inst_id)
 	return update_cb[obj_inst_id];
 }
 
+static bool update_object_link_parse(char *data_ptr, uint16_t obj_inst_id,
+				     struct lwm2m_objlnk *value)
+{
+	unsigned long id;
+	char *end;
+	char *idp = data_ptr;
+
+	for (int idx = 0; idx < 2; idx++) {
+		errno = 0;
+		id = strtoul(idp, &end, 10);
+
+		idp = end + 1;
+
+		if ((id == 0 && errno == ERANGE) || id > 65535) {
+			LOG_WRN("decoded id %lu out of range[0..65535]", id);
+			return false;
+		}
+
+		switch (idx) {
+		case 0:
+			value->obj_id = id;
+			LOG_ERR("Object id %d", value->obj_id);
+			continue;
+		case 1:
+			value->obj_inst = id;
+			LOG_ERR("Object instance %d", value->obj_inst);
+			continue;
+		}
+	}
+	if (value->obj_id != LWM2M_OBJECT_ADV_FIRMWARE_ID || value->obj_inst == obj_inst_id ||
+	    value->obj_inst >= next_instance) {
+		return false;
+	}
+
+	return true;
+}
+
+static int update_arguments_parse(uint16_t obj_inst_id, char *args, uint16_t args_len)
+{
+	struct lwm2m_objlnk object_link[2];
+	const char *path;
+	char *temp = args;
+	char *s_ptr;
+	char *e_ptr;
+	uint16_t link_to_this_instance;
+	uint8_t update_parameter;
+	int number_of_objects = 0;
+
+	if (!args || !args_len) {
+		return 0;
+	}
+
+	/* Parse possible parameters */
+	if (args && args_len) {
+		update_parameter = *args++;
+		args_len--;
+		if (update_parameter != '0') {
+			LOG_ERR("Update parameter not supported %d", update_parameter);
+			return -1;
+		}
+
+		while (args_len) {
+			/* Discover Object link start and end */
+			s_ptr = strchr(temp, '<');
+			e_ptr = strchr(temp, '>');
+			if (s_ptr && e_ptr) {
+				args_len -= e_ptr - args;
+				temp = e_ptr + 1;
+				/* Mark end prefix by end of string */
+				*e_ptr = '\0';
+
+				s_ptr++;
+				if (*s_ptr == '/') {
+					s_ptr++;
+				}
+
+				if (!update_object_link_parse(s_ptr, obj_inst_id,
+							      &object_link[number_of_objects])) {
+					return -1;
+				}
+
+				if (lwm2m_adv_firmware_get_update_state(
+					    object_link[number_of_objects].obj_inst) !=
+				    STATE_DOWNLOADED) {
+					return -1;
+				}
+				number_of_objects++;
+			} else {
+				/* No data with Parameter */
+				args_len = 0;
+			}
+		}
+	}
+
+	link_to_this_instance = obj_inst_id;
+	for (int i = 0; i < number_of_objects; i++) {
+		LOG_INF("Linked Update for instance %d", object_link[i].obj_inst);
+		path = lwm2m_adv_path(link_to_this_instance, FIRMWARE_LINKED_INSTANCES_ID);
+		lwm2m_engine_set_objlnk(path, &object_link[i]);
+		link_to_this_instance = object_link[i].obj_inst;
+	}
+	return 0;
+}
+
 static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args, uint16_t args_len)
 {
 	lwm2m_engine_execute_cb_t callback;
@@ -311,6 +436,10 @@ static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args, uint16_t args
 	if (state != STATE_DOWNLOADED) {
 		LOG_ERR("State other than downloaded: %d", state);
 		return -EPERM;
+	}
+
+	if (update_arguments_parse(obj_inst_id, args, args_len)) {
+		return -ECANCELED;
 	}
 
 	lwm2m_adv_firmware_set_update_state(obj_inst_id, STATE_UPDATING);
@@ -327,7 +456,7 @@ static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args, uint16_t args
 		}
 	}
 
-	return 0;
+		return 0;
 }
 
 static int cancel(uint16_t id, uint8_t *args, uint16_t args_len)
@@ -380,10 +509,12 @@ static struct lwm2m_engine_obj_inst *firmware_create(uint16_t obj_inst_id)
 	INIT_OBJ_RES_DATA_LEN(FIRMWARE_CURRENT_VERSION_ID, res[obj_inst_id], i,
 			      res_inst[obj_inst_id], j, &component_version[obj_inst_id],
 			      sizeof(component_version[obj_inst_id]), 0);
-	INIT_OBJ_RES_OPTDATA(FIRMWARE_LINKED_INSTANCES_ID, res[obj_inst_id], i,
-			     res_inst[obj_inst_id], j);
-	INIT_OBJ_RES_OPTDATA(FIRMWARE_CONFLICTING_INSTANCES_ID, res[obj_inst_id], i,
-			     res_inst[obj_inst_id], j);
+	INIT_OBJ_RES_DATA(FIRMWARE_LINKED_INSTANCES_ID, res[obj_inst_id], i, res_inst[obj_inst_id],
+			  j, &(linked_instances[obj_inst_id]),
+			  sizeof(linked_instances[obj_inst_id]));
+	INIT_OBJ_RES_DATA(FIRMWARE_CONFLICTING_INSTANCES_ID, res[obj_inst_id], i,
+			  res_inst[obj_inst_id], j, &(conflict_instances[obj_inst_id]),
+			  sizeof(conflict_instances[obj_inst_id]));
 	inst[obj_inst_id].resources = res[obj_inst_id];
 	inst[obj_inst_id].resource_count = i;
 
