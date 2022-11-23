@@ -57,38 +57,15 @@ You can use different linking and inclusion methods, depending on the content yo
 Hyperlinks
 ----------
 
-External links
-^^^^^^^^^^^^^^
-
 All external links must be defined in the :file:`links.txt` file.
 Do not define them directly in the RST file.
 This creates one location for validating links, making it easier to update broken links.
 
-Define each link only once in :file:`links.txt`.
+Each link should be defined only once in :file:`links.txt`.
 If you are adding a new link, make sure it has not already been added.
+If the link text that is defined in :file:`links.txt` does not fit in the context where the link will be used, you can override it by using the following syntax: ```new link text <original link text_>`_``.
 
-To use the link, use ```link text`_``.
-If you want to change the link text, you can override it with the following syntax: ```new link text <original link text_>`_``.
-
-If you need to use several different link texts for the same link, you can add more default link texts in the :file:`links.txt` file, for example::
-
-   .. _`nRF Programmer`:
-   .. _`nRF Programmer mobile app`: https://www.nordicsemi.com/Products/Development-tools/nrf-programmer
-
-Internal links
-^^^^^^^^^^^^^^
-
-For internal links, use ``:ref:`` followed by the label of the target document or section in backticks::
-
-   :ref:`target_label`
-
-If the link is targeted to another documentation set, for example Zephyr::
-
-   :ref:`zephyr:coding_style`
-
-If you want to change the link text::
-
-   :ref:`Zephyr coding style <zephyr:coding_style>`
+It is also possible to define more than one default link text for a link, which can be useful if you frequently need a different link text.
 
 Replacements
 ------------
@@ -142,7 +119,7 @@ To link directly to a doxygen reference from RST, use the following Breathe doma
 Kconfig
 -------
 
-To link to the Kconfig options from RST, use the ``:kconfig:option:`` domain::
+Kconfig options can be linked to from RST by using the ``:kconfig:option:`` domain::
 
    :kconfig:option:`CONFIG_DEBUG`
 
@@ -151,31 +128,26 @@ Doxygen |gl|
 
 These are the |gl| for the doxygen-based API documentation.
 
-General documentation |gl|
-==========================
+General documentation guidelines
+================================
 
-* Always write full sentences, and end them with a period.
-
-  * *Exception:* Sentence fragments are acceptable for descriptions of variables, structs, and enums.
-* Ensure that all documented items belong to a correct group (see the section below).
-* Use capitalization sparingly.
-  When in doubt, use lowercase.
-* Break the line after 100 characters.
-* Use ``@note`` only in the details section, and only when really needed for emphasis.
-* Use ``@warning`` only if an operating procedure or practice, which, if not correctly followed, could result in personal injury or loss of life.
+#. Always use full sentences, except for descriptions for variables, structs, and enums, where sentence fragments with no verb are accepted, and always end everything with period.
+#. Everything that is documented must belong to a group (see below).
+#. Use capitalization sparingly. When in doubt, use lowercase.
+#. Line breaks: In doxygen, break after 80 characters (following the dev guidelines). In RST, break after each sentence.
+#. ``@note`` and ``@warning`` should only be used in the details section, and only when really needed for emphasis.
+   Use notes for emphasis, and warnings only if things will really *really* go wrong if you ignore the warning.
 
 File headers and groups
 =======================
 
-* ``@file`` element is always required at the start of a file.
-* ``@brief`` is not needed for ``@file``.
-* ``@defgroup`` or ``@addgroup`` usually follows ``@file``.
-  You can divide a file into several groups.
-
-  * ``@{`` must open the group, ``@}`` must close it.
-* Add ``@brief`` for every defgroup.
-
-  * ``@details`` is optional within the defgroup.
+#. ``@file`` element is always required at the start of a file.
+#. There is no need to use ``@brief`` for ``@file``.
+#. ``@defgroup`` or ``@addgroup`` usually follows ``@file``.
+   You can divide a file into several groups as well.
+#. ``@{`` must open the group, ``@}`` must close it.
+#. ``@brief`` must be added for every defgroup.
+#. ``@details`` is optional to be used within the defgroup.
 
 .. code-block:: c
 
@@ -230,56 +202,56 @@ File headers and groups
 Functions
 =========
 
-* Do not use ``@fn``. Instead, document each function where it is defined.
-* ``@brief`` is mandatory.
+#. Do not use ``@fn``. Instead, document each function where it is defined.
+#. ``@brief`` is mandatory.
 
-  * Start the brief with the imperative form (for example "do something").
+   * Start the brief with the "do sth" form.
 
-    .. code-block:: none
+     .. code-block:: none
 
-       /** @brief Request a read operation to be executed from Secure Firmware.
+        /** @brief Request a read operation to be executed from Secure Firmware.
 
-       /** @brief Send Boot Keyboard Input Report.
+        /** @brief Send Boot Keyboard Input Report.
 
-* ``@details`` is optional.
-  You can introduce the additional information using ``@details`` or a blank line after ``@brief``.
-* Use ``@param`` for every parameter.
+#. ``@details`` is optional.
+   It can be introduced either by using ``@details`` or by leaving a blank line after ``@brief``.
+#. ``@param`` should be used for every parameter.
 
-  * Always add a parameter description.
-    Use a sentence fragment (no verb) with a period at the end.
-  * Make sure the parameter documentation within the function is consistently using the parameter type: ``[in]``, ``[out]``, or ``[in,out]``.
+   * Always add a parameter description.
+     Use a sentence fragment (no verb) with period at the end.
+   * Make sure the parameter documentation within the function is consistently using the parameter type: ``[in]``, ``[out]``, or ``[in,out]``.
 
-    .. code-block:: none
+     .. code-block:: none
 
-       * @param[out] destination Pointer to destination array where the content is
-       *                         to be copied.
-       * @param[in]  addr        Address to be copied from.
-       * @param[in]  len         Number of bytes to copy.
+        * @param[out] destination Pointer to destination array where the content is
+        *                         to be copied.
+        * @param[in]  addr        Address to be copied from.
+        * @param[in]  len         Number of bytes to copy.
 
-* If you include more than one ``@sa`` ("see also", optional), add them like this::
+#. If you include more than one ``@sa`` ("see also", optional), add them this way::
 
       @sa first_function
       @sa second_function
 
-* Use ``@return`` or ``@retval`` instead of ``@returns``.
+#. Do not user ``@returns``, use ``return`` or ``retval`` instead.
 
-  * Use ``@return`` to describe a generic return value without a specific value (for example, ``@return The length of ...``, ``@return The handle``).
-    Usually, there is only one return value.
+   * `` @return`` should be used to describe a generic return value without a specific value (for example, "@return The length of ...", "@return The handle").
+     There is usually only one return value.
 
-    .. code-block:: none
+     .. code-block:: none
 
-       *  @return  Initializer that sets up the pipe, length, and byte array for
-       *           content of the TX data.
+        *  @return  Initializer that sets up the pipe, length, and byte array for
+        *           content of the TX data.
 
-  * Use ``@retval`` for specific return values (for example, ``@retval true``, ``@retval CONN_ERROR``).
-    Describe the condition for each of the return values (for example, "If the function completes successfully", "If the connection cannot be established").
+   * ``@retval`` should be used for specific return values (for example, "@retval true", "@retval CONN_ERROR").
+     Describe the condition for each of the return values (for example, "If the function completes successfully", "If the connection cannot be established").
 
-    .. code-block:: none
+     .. code-block:: none
 
-       *  @retval 0 If the operation was successful.
-       *            Otherwise, a (negative) error code is returned.
-       *  @retval (-ENOTSUP) Special error code used when the UUID
-       *            of the service does not match the expected UUID.
+        *  @retval 0 If the operation was successful.
+        *            Otherwise, a (negative) error code is returned.
+        *  @retval (-ENOTSUP) Special error code used when the UUID
+        *            of the service does not match the expected UUID.
 
 Here is an example of a fully defined function:
 
@@ -305,50 +277,45 @@ Here is an example of a fully defined function:
 Enums
 =====
 
-The documentation block must precede the documented element.
-This is in accordance with the :ref:`Zephyr coding style <zephyr:coding_style>`.
+You can place the documentation block above the documented element or inline.
 
+An example with documentation preceding the documented element:
 
 .. code-block:: c
 
-        /** HID Service Protocol Mode events. */
-        enum hids_pm_evt {
+   /** HID Service Protocol Mode events. */
+   enum hids_pm_evt {
 
-           /** Boot mode entered. */
-           HIDS_PM_EVT_BOOT_MODE_ENTERED,
+      /** Boot mode entered. */
+      HIDS_PM_EVT_BOOT_MODE_ENTERED,
 
-           /** Report mode entered. */
-           HIDS_PM_EVT_REPORT_MODE_ENTERED,
-         };
+      /** Report mode entered. */
+      HIDS_PM_EVT_REPORT_MODE_ENTERED,
+    };
+
+An example with the documentation inline (note the left arrow `<` after the asterisks `**`):
+
+.. code-block:: c
+
+   /** @brief PDN library event */
+   enum pdn_event {
+           PDN_EVENT_CNEC_ESM,	/**< +CNEC ESM error code */
+           PDN_EVENT_ACTIVATED,	/**< PDN connection activated */
+           PDN_EVENT_DEACTIVATED,	/**< PDN connection deactivated */
+           PDN_EVENT_IPV6_UP,	/**< PDN has IPv6 connectivity */
+           PDN_EVENT_IPV6_DOWN,	/**< PDN has lost IPv6 connectivity */
 
 Structs
 =======
 
-The documentation block must precede the documented element.
-This is in accordance with the :ref:`Zephyr coding style <zephyr:coding_style>`.
+The documentation block should precede the documented element.
 Make sure to add ``:members:`` when you include the API documentation in RST; otherwise, the member documentation will not show up.
-
-In the RST file:
-
-.. code-block:: console
-
-   API documentation
-   *****************
-
-   | Header file: :file:`include/bluetooth/gatt_dm.h`
-   | Source file: :file:`subsys/bluetooth/gatt_dm.c`
-
-   .. doxygengroup:: bt_gatt_dm
-      :project: nrf
-      :members:
-
-In the header file:
 
 .. code-block:: c
 
    /** @brief Event header structure.
     *
-    * @warning When an event structure is defined, application event header must be placed
+    * @warning When event structure is defined application event header must be placed
     *          as the first field.
     */
    struct app_event_header {
@@ -369,7 +336,8 @@ In the header file:
 References
 ==========
 
-To link to functions, enums, or structs from within doxygen itself, use the ``@ref`` keyword.
+To link to functions, enums, or structs from within doxygen itself, use the
+``@ref`` keyword.
 
 .. code-block:: none
 
@@ -385,8 +353,7 @@ To link to functions, enums, or structs from within doxygen itself, use the ``@r
 Typedefs
 ========
 
-The documentation block must precede the documented element.
-This is in accordance with the :ref:`Zephyr coding style <zephyr:coding_style>`.
+The documentation block should precede the documented element.
 
 .. code-block:: c
 
