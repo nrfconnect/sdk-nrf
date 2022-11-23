@@ -305,27 +305,39 @@ Here is an example of a fully defined function:
 Enums
 =====
 
-The documentation block must precede the documented element.
-This is in accordance with the :ref:`Zephyr coding style <zephyr:coding_style>`.
+Place the documentation block above the enum.
+The documentation for the elements inside the enum can be above them or inline.
 
+An example with documentation preceding the documented element:
 
 .. code-block:: c
 
-        /** HID Service Protocol Mode events. */
-        enum hids_pm_evt {
+   /** HID Service Protocol Mode events. */
+   enum hids_pm_evt {
 
-           /** Boot mode entered. */
-           HIDS_PM_EVT_BOOT_MODE_ENTERED,
+      /** Boot mode entered. */
+      HIDS_PM_EVT_BOOT_MODE_ENTERED,
 
-           /** Report mode entered. */
-           HIDS_PM_EVT_REPORT_MODE_ENTERED,
-         };
+      /** Report mode entered. */
+      HIDS_PM_EVT_REPORT_MODE_ENTERED,
+    };
+
+An example with the documentation inline (note the less than sign `<` after the asterisks `**`):
+
+.. code-block:: c
+
+   /** @brief PDN library event. */
+   enum pdn_event {
+           PDN_EVENT_CNEC_ESM,		/**< +CNEC ESM error code. */
+           PDN_EVENT_ACTIVATED,		/**< PDN connection activated. */
+           PDN_EVENT_DEACTIVATED,	/**< PDN connection deactivated. */
+           PDN_EVENT_IPV6_UP,		/**< PDN has IPv6 connectivity. */
+           PDN_EVENT_IPV6_DOWN,		/**< PDN has lost IPv6 connectivity. */
 
 Structs
 =======
 
 The documentation block must precede the documented element.
-This is in accordance with the :ref:`Zephyr coding style <zephyr:coding_style>`.
 Make sure to add ``:members:`` when you include the API documentation in RST; otherwise, the member documentation will not show up.
 
 In the RST file:
@@ -386,7 +398,6 @@ Typedefs
 ========
 
 The documentation block must precede the documented element.
-This is in accordance with the :ref:`Zephyr coding style <zephyr:coding_style>`.
 
 .. code-block:: c
 
