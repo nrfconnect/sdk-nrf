@@ -247,6 +247,14 @@ Test not discoverable advertising by completing `Testing`_ and the following add
 #. Press **Button 2** to increase the audio volume.
 #. Press **Button 4** to decrease the audio volume.
 
+Personalized Name extension
+----------------------------
+
+Testing Personalized Name extension is described in `Fast Pair Certification Guidelines for Personalized Name`_.
+
+.. note::
+   To mitigate Android Personalized Name write issues, whenever you change the Personalized Name on an Android phone, you have to disconnect the phone from the Fast Pair Provider and wait for the phone to reconnect and write the new Personalized Name.
+
 Dependencies
 ************
 

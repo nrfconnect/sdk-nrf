@@ -20,9 +20,6 @@ Characteristics
 The Fast Pair GATT characteristics are described in detail in the `Fast Pair GATT Characteristics`_ documentation.
 The implementation in the |NCS| follows these requirements.
 
-.. note::
-   The Additional Data characteristic is not supported yet.
-
 Configuration
 *************
 
@@ -35,6 +32,8 @@ The following Kconfig options are also available for this module:
   MbedTLS is used by default, whereas Tinycrypt is used by default for cases of building with TF-M as the Secure Execution Environment (:kconfig:option:`CONFIG_BUILD_WITH_TFM`).
   This is because in such case the MbedTLS API cannot be directly used by the Fast Pair service.
   The Oberon backend can be used to limit memory consumption.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_EXT_PN` - The option enables the `Fast Pair Personalized Name extension`_.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_EXT_PN_LEN_MAX` - The option specifies the maximum length of a stored Fast Pair Personalized Name.
 
 See the Kconfig help for details.
 
