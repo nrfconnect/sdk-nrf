@@ -8,16 +8,6 @@
 #    - None
 
 - scenarios:
-    - sample.ant_advanced_burst
-    - sample.ant_broadcast_rx
-    - sample.ant_broadcast_tx
-    - sample.ant_rpc
-    - sample.hrm_tx
-  platforms:
-    - all
-  comment: "Zephyr include paths need to updated in the sdk-ant repository."
-
-- scenarios:
     - sample.tfm.psa_test_crypto
     - sample.tfm.psa_test_initial_attestation
     - sample.tfm.psa_test_internal_trusted_storage
