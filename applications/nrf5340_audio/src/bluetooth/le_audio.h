@@ -128,6 +128,14 @@ typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool
 				    uint32_t sdu_ref);
 
 /**
+ * @brief Generic function for a user defined button press
+ *
+ * @return	0 for success,
+ *		error otherwise
+ */
+int le_audio_user_defined_button_press(void);
+
+/**
  * @brief Get configuration for audio stream
  *
  * @param bitrate	Pointer to bitrate used

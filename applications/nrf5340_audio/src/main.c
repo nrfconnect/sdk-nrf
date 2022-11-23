@@ -99,7 +99,7 @@ static int bonding_clear_check(void)
 	int ret;
 	bool pressed;
 
-	ret = button_pressed(BUTTON_MUTE, &pressed);
+	ret = button_pressed(BUTTON_5, &pressed);
 	if (ret) {
 		return ret;
 	}

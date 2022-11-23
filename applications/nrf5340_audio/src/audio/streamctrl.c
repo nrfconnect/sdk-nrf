@@ -39,8 +39,6 @@ struct ble_iso_data {
 
 DATA_FIFO_DEFINE(ble_fifo_rx, CONFIG_BUF_BLE_RX_PACKET_NUM, WB_UP(sizeof(struct ble_iso_data)));
 
-#define TEST_TONE_BASE_FREQ_HZ 1000
-
 static struct k_thread audio_datapath_thread_data;
 static k_tid_t audio_datapath_thread_id;
 K_THREAD_STACK_DEFINE(audio_datapath_thread_stack, CONFIG_AUDIO_DATAPATH_STACK_SIZE);
@@ -222,11 +220,46 @@ void streamctrl_encoded_data_send(void const *const data, size_t len)
 	}
 }
 
+#if (CONFIG_AUDIO_TEST_TONE)
+#define TEST_TONE_BASE_FREQ_HZ 1000
+
+static int test_tone_button_press(void)
+{
+	int ret;
+	static uint32_t test_tone_hz;
+
+	if (CONFIG_AUDIO_BIT_DEPTH_BITS != 16) {
+		LOG_WRN("Tone gen only supports 16 bits");
+		return -ECANCELED;
+	}
+
+	if (strm_state == STATE_STREAMING) {
+		if (test_tone_hz == 0) {
+			test_tone_hz = TEST_TONE_BASE_FREQ_HZ;
+		} else if (test_tone_hz >= TEST_TONE_BASE_FREQ_HZ * 4) {
+			test_tone_hz = 0;
+		} else {
+			test_tone_hz = test_tone_hz * 2;
+		}
+
+		if (test_tone_hz != 0) {
+			LOG_INF("Test tone set at %d Hz", test_tone_hz);
+		} else {
+			LOG_INF("Test tone off");
+		}
+
+		ret = audio_encode_test_tone_set(test_tone_hz);
+		ERR_CHK_MSG(ret, "Failed to generate test tone");
+	}
+
+	return 0;
+}
+#endif /* (CONFIG_AUDIO_TEST_TONE) */
+
 /* Handle button activity events */
 static void button_evt_handler(struct button_evt event)
 {
 	int ret;
-	static uint32_t test_tone_hz;
 
 	LOG_DBG("Got btn evt from queue - id = %d, action = %d", event.button_pin,
 		event.button_action);
@@ -264,7 +297,7 @@ static void button_evt_handler(struct button_evt event)
 
 		break;
 
-	case BUTTON_MUTE:
+	case BUTTON_5:
 		ret = le_audio_volume_mute();
 		if (ret) {
 			LOG_WRN("Failed to mute volume");
@@ -273,40 +306,22 @@ static void button_evt_handler(struct button_evt event)
 
 		break;
 
-	case BUTTON_TEST_TONE:
+	case BUTTON_4:
 		if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
-			LOG_DBG("Test tone not supported in walkie-talkie mode");
-			return;
-		}
-		switch (strm_state) {
-		case STATE_STREAMING:
-			if (CONFIG_AUDIO_BIT_DEPTH_BITS != 16) {
-				LOG_WRN("Tone gen only supports 16 bits");
-				break;
-			}
-
-			if (test_tone_hz == 0) {
-				test_tone_hz = TEST_TONE_BASE_FREQ_HZ;
-			} else if (test_tone_hz >= TEST_TONE_BASE_FREQ_HZ * 4) {
-				test_tone_hz = 0;
-			} else {
-				test_tone_hz = test_tone_hz * 2;
-			}
-
-			if (test_tone_hz != 0) {
-				LOG_INF("Test tone set at %d Hz", test_tone_hz);
-			} else {
-				LOG_INF("Test tone off");
-			}
-
-			ret = audio_encode_test_tone_set(test_tone_hz);
-			ERR_CHK_MSG(ret, "Failed to generate test tone");
-			break;
-
-		default:
-			LOG_WRN("Test tone can only be set in streaming mode");
+			LOG_DBG("Button 4 functions not supported in walkie-talkie mode");
 			break;
 		}
+
+#if (CONFIG_AUDIO_TEST_TONE)
+		ret = test_tone_button_press();
+#else
+		ret = le_audio_user_defined_button_press();
+#endif /*CONFIG_AUDIO_TEST_TONE*/
+
+		if (ret) {
+			LOG_WRN("Failed button 4 press");
+		}
+
 		break;
 
 	default:
@@ -354,8 +369,8 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 	case LE_AUDIO_EVT_CONFIG_RECEIVED:
 		LOG_DBG("Config received");
 
-		int bitrate;
-		int sampling_rate;
+		uint32_t bitrate;
+		uint32_t sampling_rate;
 
 		ret = le_audio_config_get(&bitrate, &sampling_rate);
 		if (ret) {
@@ -363,8 +378,8 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 			break;
 		}
 
-		LOG_DBG("Sampling rate: %d", sampling_rate);
-		LOG_DBG("Bitrate: %d", bitrate);
+		LOG_DBG("Sampling rate: %d Hz", sampling_rate);
+		LOG_DBG("Bitrate: %d kbps", bitrate);
 		break;
 
 	default:

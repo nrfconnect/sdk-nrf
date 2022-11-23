@@ -136,7 +136,7 @@ void dfu_entry_check(void)
 	int ret;
 	bool pressed;
 
-	ret = button_pressed(BUTTON_TEST_TONE, &pressed);
+	ret = button_pressed(BUTTON_4, &pressed);
 	if (ret) {
 		return;
 	}

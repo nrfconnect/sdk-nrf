@@ -178,6 +178,7 @@ nRF5340 Audio
   * Added a walkie talkie demo for bidirectional CIS.
   * Added minimal Media Control Service (MCS) functionality to the Play/Pause button.
   * Added Coordinated Set Identification Service (CSIS) for the CIS headset.
+  * Added functionality for supporting multiple streams on BIS headsets.
 
 * Updated:
 
