@@ -834,8 +834,9 @@ static int setup(void)
 
 	err = lte_lc_modem_events_enable();
 	if (err) {
-		LOG_ERR("lte_lc_modem_events_enable failed, error: %d", err);
-		return err;
+		LOG_WRN("lte_lc_modem_events_enable failed, error: %d", err);
+		LOG_DBG("Modem firmware versions older than 1.3.0 do not support "
+			"enabling modem domain events");
 	}
 
 	err = modem_data_init();
