@@ -272,6 +272,7 @@ Bluetooth samples
   * After the device reaches the maximum number of paired devices (:kconfig:option:`CONFIG_BT_MAX_PAIRED`), the device stops looking for new peers.
     Therefore, the device no longer advertises with the pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`) enabled, and only the Fast Pair not discoverable advertising with hide UI indication mode includes the Fast Pair payload.
   * Added bond removal functionality.
+  * Added battery information to demonstrate the Fast Pair Battery Notification extension.
 
 * :ref:`peripheral_mds` sample:
 
@@ -559,6 +560,7 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
   * Disabled automatic security re-establishment request as a peripheral (:kconfig:option:`CONFIG_BT_GATT_AUTO_SEC_REQ`) to allow the Fast Pair Seeker to control the security re-establishment.
   * Added API to check Account Key presence (:c:func:`bt_fast_pair_has_account_key`).
   * Added support for the Personalized Name extension.
+  * Added support for the Battery Notification extension.
 
 Bootloader libraries
 --------------------
