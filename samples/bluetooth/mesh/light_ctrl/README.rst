@@ -120,6 +120,8 @@ Configuration
 
 |config|
 
+|nrf5340_mesh_sample_note|
+
 Source file setup
 =================
 
