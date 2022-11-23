@@ -746,6 +746,8 @@ static int hci_driver_open(void)
 {
 	BT_DBG("Open");
 
+	k_work_init(&receive_work, receive_work_handler);
+
 	if (IS_ENABLED(CONFIG_BT_CTLR_ECDH)) {
 		hci_ecdh_init();
 	}
@@ -757,16 +759,6 @@ static int hci_driver_open(void)
 			"SoftDevice Controller build revision: ");
 
 	int err;
-
-	err = configure_supported_features();
-	if (err) {
-		return err;
-	}
-
-	err = configure_memory_usage();
-	if (err) {
-		return err;
-	}
 
 	if (!device_is_ready(entropy_source)) {
 		BT_ERR("Entropy source device not ready");
@@ -785,8 +777,6 @@ static int hci_driver_open(void)
 		return -EINVAL;
 	}
 
-	k_work_init(&receive_work, receive_work_handler);
-
 	err = MULTITHREADING_LOCK_ACQUIRE();
 	if (!err) {
 		err = sdc_enable(receive_signal_raise, sdc_mempool);
@@ -799,10 +789,35 @@ static int hci_driver_open(void)
 	return 0;
 }
 
+static int hci_driver_close(void)
+{
+	int err;
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_ECDH)) {
+		hci_ecdh_uninit();
+	}
+
+	err = MULTITHREADING_LOCK_ACQUIRE();
+	if (err) {
+		return err;
+	}
+
+	err = sdc_disable();
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return err;
+	}
+
+	MULTITHREADING_LOCK_RELEASE();
+
+	return err;
+}
+
 static const struct bt_hci_driver drv = {
 	.name = "SoftDevice Controller",
 	.bus = BT_HCI_DRIVER_BUS_VIRTUAL,
 	.open = hci_driver_open,
+	.close = hci_driver_close,
 	.send = hci_driver_send,
 };
 
@@ -863,6 +878,17 @@ static int hci_driver_init(const struct device *unused)
 	bt_hci_driver_register(&drv);
 
 	err = sdc_init(sdc_assertion_handler);
+
+	err = configure_supported_features();
+	if (err) {
+		return err;
+	}
+
+	err = configure_memory_usage();
+	if (err) {
+		return err;
+	}
+
 	return err;
 }
 
