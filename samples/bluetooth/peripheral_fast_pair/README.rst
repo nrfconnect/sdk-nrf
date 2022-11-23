@@ -255,6 +255,18 @@ Testing Personalized Name extension is described in `Fast Pair Certification Gui
 .. note::
    To mitigate Android Personalized Name write issues, whenever you change the Personalized Name on an Android phone, you have to disconnect the phone from the Fast Pair Provider and wait for the phone to reconnect and write the new Personalized Name.
 
+Battery Notification extension
+------------------------------
+
+Test `Fast Pair Battery Notification extension`_ by completing the following steps:
+
+#. Pair the Fast Pair Provider with at least one Fast Pair Seeker.
+#. Put the Fast Pair Provider in not discoverable advertising mode.
+#. Verify that the Provider is advertising sample battery data using the `nRF Connect for Mobile`_ application.
+
+.. note::
+   Currently, Android phones have trouble with the Battery Notification extension and sometimes do not display battery information as a user indication.
+
 Dependencies
 ************
 
