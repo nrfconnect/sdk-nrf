@@ -323,7 +323,9 @@ enum nrf_cloud_fota_validate_status {
 	/** Validation result could not be determined */
 	NRF_CLOUD_FOTA_VALIDATE_UNKNOWN,
 	/** The validation process is finished */
-	NRF_CLOUD_FOTA_VALIDATE_DONE
+	NRF_CLOUD_FOTA_VALIDATE_DONE,
+	/** An error occurred before validation */
+	NRF_CLOUD_FOTA_VALIDATE_ERROR,
 };
 
 /** @brief Status flags for tracking the update process of the b1 bootloader (MCUBOOT) */

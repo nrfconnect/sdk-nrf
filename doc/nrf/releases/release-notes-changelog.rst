@@ -237,6 +237,12 @@ Libraries for networking
   * Fixed a bug were the :c:func:`download_client_callback` function was continuing to read the offset value even if :c:func:`dfu_target_offset_get` returned an error.
   * Fixed a bug where the cleanup of the downloading state was not happening when an error event was raised.
 
+* :ref:`lib_nrf_cloud` library:
+
+  * Updated:
+
+    * The MQTT disconnect event is now handled by the FOTA module, allowing for updates to be completed while disconnected and reported properly when reconnected.
+
 Libraries for NFC
 -----------------
 
