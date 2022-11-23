@@ -365,7 +365,7 @@ void location_event_handler(const struct location_event_data *event_data)
 		LOG_DBG("  accuracy: %.01f m", event_data->location.accuracy);
 		LOG_DBG("  altitude: %.01f m", event_data->location.details.gnss.pvt_data.altitude);
 		LOG_DBG("  speed: %.01f m", event_data->location.details.gnss.pvt_data.speed);
-		LOG_DBG("  heading: %.01f m", event_data->location.details.gnss.pvt_data.heading);
+		LOG_DBG("  heading: %.01f deg", event_data->location.details.gnss.pvt_data.heading);
 
 		if (event_data->location.datetime.valid) {
 			LOG_DBG("  date: %04d-%02d-%02d",
