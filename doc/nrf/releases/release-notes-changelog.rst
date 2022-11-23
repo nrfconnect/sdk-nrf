@@ -547,6 +547,7 @@ Bootloader libraries
 
     * PSA compatible lifecycle state.
     * PSA compatible implementation ID.
+    * Removed the option of application using the library to read OTP memory when the |NSIB| (NSIB) is enabled.
 
 Modem libraries
 ---------------
