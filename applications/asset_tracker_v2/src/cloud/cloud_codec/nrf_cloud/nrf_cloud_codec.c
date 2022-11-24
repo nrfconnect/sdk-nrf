@@ -534,9 +534,9 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 				LOG_ERR("Cannot convert pressure to string, buffer too small");
 			}
 
-			if (data[i].bsec_air_quality >= 0) {
+			if ((data[i].bsec_air_quality >= 0) || (data[i].bsec_air_quality <= 500)) {
 				len = snprintk(bsec_air_quality, sizeof(bsec_air_quality), "%d",
-					data[i].bsec_air_quality);
+					       data[i].bsec_air_quality);
 				if ((len < 0) || (len >= sizeof(bsec_air_quality))) {
 					LOG_ERR("Cannot convert BSEC air quality to string, "
 						"buffer too small");
