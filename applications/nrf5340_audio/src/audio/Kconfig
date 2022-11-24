@@ -176,7 +176,7 @@ config LC3_BITRATE_MIN
 	int "Min bitrate for LC3"
 	default 32000
 
-osource "../modules/lib/lc3/Kconfig"
+osource "../nrfxlib/lc3/Kconfig"
 
 endmenu # LC3
 endmenu # SW Codec
