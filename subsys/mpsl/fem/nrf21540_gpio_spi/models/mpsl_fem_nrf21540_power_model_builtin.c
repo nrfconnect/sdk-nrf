@@ -46,7 +46,7 @@ K_TIMER_DEFINE(model_update_timer, model_update_timeout, NULL);
 static int model_periodic_update_start(const struct device *unused)
 {
 	/* Perform initial model update */
-	model_update_work_handler(NULL);
+	k_work_submit(&model_update_work);
 
 	k_timer_start(&model_update_timer,
 				K_MSEC(CONFIG_MPSL_FEM_BUILTIN_POWER_MODEL_UPDATE_PERIOD),
