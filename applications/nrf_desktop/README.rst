@@ -983,6 +983,7 @@ nRF52840 Gaming Mouse (nrf52840gmouse_nrf52840)
         * Bluetooth is configured to use Nordic's SoftDevice link layer.
 
       * The configuration with the B0 bootloader is set as default.
+      * The board supports debug :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration (:file:`prj_fast_pair.conf`).
 
 nRF52832 Desktop Mouse (nrf52dmouse_nrf52832) and nRF52810 Desktop Mouse (nrf52810dmouse_nrf52810)
       * Both reference designs are meant for the project-specific hardware and are defined in :file:`nrf/boards/arm/nrf52dmouse_nrf52832` and :file:`nrf/boards/arm/nrf52810dmouse_nrf52810`, respectively.
@@ -996,6 +997,7 @@ Sample mouse, keyboard or dongle (nrf52840dk_nrf52840)
       * The build types allow to build the application as mouse, keyboard or dongle.
       * Inputs are simulated based on the hardware button presses.
       * The configuration with the B0 bootloader is set as default.
+      * The board supports debug :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (:file:`prj_fast_pair.conf`).
 
 Sample dongle (nrf52833dk_nrf52833)
       * The configuration uses the nRF52833 Development Kit.
@@ -1018,6 +1020,7 @@ nRF52832 Desktop Keyboard (nrf52kbd_nrf52832)
       * The preconfigured build types configure the device without the bootloader in debug mode and with B0 bootloader in release mode due to memory size limits.
       * Use configuration ``prj_shell.conf`` to add ``shell`` build type.
         This configuration do not have bootloader due to memory size limits.
+      * The board supports release :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration (:file:`prj_release_fast_pair.conf`).
 
 nRF52840 USB Dongle (nrf52840dongle_nrf52840) and nRF52833 USB Dongle (nrf52833dongle_nrf52833)
       * Since the nRF52840 Dongle is generic and defined in Zephyr, project-specific changes are applied in the DTS overlay file.
@@ -1530,7 +1533,7 @@ The nRF Desktop peripheral that integrates Fast Pair behaves as follows:
 
 After successful erase advertising procedure, the peripheral removes all of the bonds of a given Bluetooth local identity.
 
-Apart from that, the following changes applied in configurations enable Fast Pair:
+Apart from that, the following changes are applied in configurations that support Fast Pair:
 
 * The static :ref:`partition_manager` configuration is modified to introduce a dedicated FLASH partition used to store the Fast Pair provisioning data.
 * Bluetooth privacy feature (:kconfig:option:`CONFIG_BT_PRIVACY`) is enabled.
