@@ -96,6 +96,11 @@ Matter
   * Documentation page about :ref:`ug_matter_overview_security`, which is based on an earlier subsection of :ref:`ug_matter_overview_network_topologies`.
   * Documentation section about :ref:`ug_matter_device_certification_reqs_security` on the page about :ref:`ug_matter_device_certification`.
 
+* Updated:
+
+  * :ref:`ug_matter_overview_int_model` with an example of the interaction.
+  * :ref:`ug_matter_gs_adding_cluster` documentation with new code snippets to align it with the source code of refactored Matter template sample.
+
 See `Matter samples`_ for the list of changes for the Matter samples.
 
 Matter fork
@@ -887,7 +892,6 @@ Documentation
 * Updated:
 
   * :ref:`gs_assistant` steps to reflect the fact that the |nRFVSC| is the default recommended IDE.
-  * :ref:`ug_matter_gs_adding_cluster` documentation with new code snippets to align it with the source code of refactored Matter template sample.
   * Split the existing Working with the nRF52 Series information into :ref:`ug_nrf52_features` and :ref:`ug_nrf52_developing`.
   * :ref:`ug_tfm` with improved TF-M logging documentation on getting the secure output on nRF5340 DK.
   * :ref:`nrf_bt_scan_readme`, :ref:`ancs_client_readme`, :ref:`hogp_readme` and :ref:`lib_hrs_client_readme` libraries documentation to improve readability.
