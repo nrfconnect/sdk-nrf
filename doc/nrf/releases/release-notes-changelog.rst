@@ -35,6 +35,9 @@ Application development
 
 * Updated the :ref:`software_maturity` page with a section about API deprecation.
 
+* Updated the :ref:`app_boards` page with a section about processing environments.
+  Also, updated terminology across the documentation to avoid the use of "secure domain" and "non-secure domain" when referring to the adoption of Cortex-M Security Extensions for the ``_ns`` build targets.
+
 RF Front-End Modules
 --------------------
 
