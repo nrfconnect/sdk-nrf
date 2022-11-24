@@ -578,6 +578,11 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
   * Added support for the Personalized Name extension.
   * Added support for the Battery Notification extension.
 
+* :ref:`hids_readme`:
+
+  * Fixed a possible out-of-bounds memory access issue in the :c:func:`hids_protocol_mode_write` and :c:func:`bt_hids_boot_kb_inp_rep_send` functions.
+  * Fixed the :c:func:`hids_ctrl_point_write` function behavior.
+
 Bootloader libraries
 --------------------
 
