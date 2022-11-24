@@ -25,10 +25,10 @@ LOG_MODULE_REGISTER(cloud_codec, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 /* Some resources does not have designated buffers. Therefore we define those in here. */
 static uint8_t bearers[2] = { LTE_FDD_BEARER, NB_IOT_BEARER };
 static int battery_voltage;
-static int32_t pressure_ts;
-static int32_t temperature_ts;
-static int32_t humidity_ts;
-static int32_t button_ts;
+static time_t pressure_ts;
+static time_t temperature_ts;
+static time_t humidity_ts;
+static time_t button_ts;
 static int64_t current_time;
 
 /* Minimum and maximum values for the BME680 present on the Thingy:91. */

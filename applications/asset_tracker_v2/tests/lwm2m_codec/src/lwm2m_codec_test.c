@@ -32,10 +32,10 @@
 
 static uint8_t bearers[2] = { LTE_FDD_BEARER, NB_IOT_BEARER };
 static int battery_voltage;
-static int32_t pressure_ts;
-static int32_t temperature_ts;
-static int32_t humidity_ts;
-static int32_t button_ts;
+static time_t pressure_ts;
+static time_t temperature_ts;
+static time_t humidity_ts;
+static time_t button_ts;
 static int64_t current_time;
 static double temp_min_range_val = BME680_TEMP_MIN_RANGE_VALUE;
 static double temp_max_range_val = BME680_TEMP_MAX_RANGE_VALUE;
