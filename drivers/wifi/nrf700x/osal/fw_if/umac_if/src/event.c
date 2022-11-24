@@ -16,6 +16,7 @@
 #include "fmac_peer.h"
 #include "fmac_cmd.h"
 #include "fmac_ap.h"
+#include <string.h>
 
 #ifdef CONFIG_NRF700X_DATA_TX
 static enum wifi_nrf_status
@@ -566,6 +567,9 @@ static enum wifi_nrf_status umac_event_rf_test_process(struct wifi_nrf_fmac_dev_
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct nrf_wifi_event_rftest *rf_test_event = NULL;
+	struct nrf_wifi_temperature_params rf_test_get_temperature;
+	struct nrf_wifi_rf_get_rf_rssi rf_get_rf_rssi;
+	struct nrf_wifi_rf_test_xo_calib xo_calib_params;
 
 	if (!event) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
@@ -596,25 +600,34 @@ static enum wifi_nrf_status umac_event_rf_test_process(struct wifi_nrf_fmac_dev_
 
 		break;
 	case NRF_WIFI_RF_TEST_EVENT_TX_TONE_START:
-	case NRF_WIFI_RF_TEST_EVENT_TX_TONE_STOP:
 	case NRF_WIFI_RF_TEST_EVENT_DPD_ENABLE:
-	case NRF_WIFI_RF_TEST_EVENT_DPD_BYPASS:
 		break;	
-#ifdef notyet
-	case NRF_WIFI_RF_TEST_EVENT_RF_RSSI_MEAS:
-	case NRF_WIFI_RF_TEST_EVENT_SLEEP:
-	case NRF_WIFI_RF_TEST_EVENT_TEMP_MEAS;	
-		memcpy(&temperatureEvent, (const unsigned char*)&rf_test_event->rf_test_info.rfevent[1], sizeof(temperatureEvent));
 
-		if(temperatureEvent.readTemperatureStatus) {
-			rpu_osal_log_err("Temperature reading failed\n");
+	case NRF_WIFI_RF_TEST_GET_TEMPERATURE:	
+		memcpy(&rf_test_get_temperature, (const unsigned char*)&rf_test_event->rf_test_info.rfevent[0], sizeof(rf_test_get_temperature));
+
+		if(rf_test_get_temperature.readTemperatureStatus) {
+			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,"Temperature reading failed\n");
 		}
 		else
 		{
-			rpu_osal_log_err("Temperature reading success: \t");
-			rpu_osal_log_err("The temperature is = %d degree celsius \n",temperatureEvent.temperature);
+			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,"Temperature reading success: \t");
+			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,"The temperature is = %d degree celsius \n",rf_test_get_temperature.temperature);
 		}
+		break;	
+			
+	case NRF_WIFI_RF_TEST_EVENT_RF_RSSI:
+		memcpy(&rf_get_rf_rssi, (const unsigned char*)&rf_test_event->rf_test_info.rfevent[0], sizeof(rf_get_rf_rssi));
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,"RF RSSI value is = %d \n",rf_get_rf_rssi.agc_status_val);
+		break;
+		
+	case NRF_WIFI_RF_TEST_EVENT_XO_CALIB:
+		memcpy(&xo_calib_params, (const unsigned char*)&rf_test_event->rf_test_info.rfevent[0], sizeof(xo_calib_params));
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,"XO value configured is = %d \n",xo_calib_params.xo_val);
 		break;		
+#ifdef notyet
+	case NRF_WIFI_RF_TEST_EVENT_SLEEP:
+		
 #endif /* notyet */
 	default:
 		break;

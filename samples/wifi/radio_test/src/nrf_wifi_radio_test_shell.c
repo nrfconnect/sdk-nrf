@@ -1243,6 +1243,153 @@ out:
 	return ret;
 }
 
+static int nrf_wifi_radio_get_temperature(const struct shell *shell,
+				   size_t argc,
+				   const char *argv[])
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	char *ptr = NULL;
+	unsigned long val = 0;
+	int ret = -ENOEXEC;
+
+	val = strtoul(argv[1], &ptr, 10);
+
+	if (val > 1) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid value %lu\n",
+			      val);
+		shell_help(shell);
+		goto out;
+	}
+
+	if (val == 1) {
+		if (!check_test_in_prog(shell)) {
+			goto out;
+		}
+	}
+
+	ctx->rf_test_run = true;
+	ctx->rf_test = NRF_WIFI_RF_TEST_GET_TEMPERATURE;
+
+	status = nrf_wifi_fmac_rf_get_temperature(ctx->rpu_ctx);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "DPD programming failed\n");
+		goto out;
+	}
+
+	ret = 0;
+out:	
+	ctx->rf_test_run = false;
+	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
+
+	return ret;
+}
+
+static int nrf_wifi_radio_get_rf_rssi(const struct shell *shell,
+				   size_t argc,
+				   const char *argv[])
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	char *ptr = NULL;
+	unsigned long val = 0;
+	int ret = -ENOEXEC;
+
+	val = strtoul(argv[1], &ptr, 10);
+
+	if (val > 1) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid value %lu\n",
+			      val);
+		shell_help(shell);
+		goto out;
+	}
+
+	if (val == 1) {
+		if (!check_test_in_prog(shell)) {
+			goto out;
+		}
+	}
+
+	ctx->rf_test_run = true;
+	ctx->rf_test = NRF_WIFI_RF_TEST_RF_RSSI;
+
+	status = nrf_wifi_fmac_rf_get_rf_rssi(ctx->rpu_ctx);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "DPD programming failed\n");
+		goto out;
+	}
+
+	ret = 0;
+out:	
+	ctx->rf_test_run = false;
+	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
+
+	return ret;
+}
+
+
+static int nrf_wifi_radio_set_xo_val(const struct shell *shell,
+				   size_t argc,
+				   const char *argv[])
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	char *ptr = NULL;
+	unsigned long val = 0;
+	int ret = -ENOEXEC;
+
+	val = strtoul(argv[1], &ptr, 10);
+
+	if (val > 0x7f) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid value XO value should be <= 0x7f\n");
+		shell_help(shell);
+		goto out;
+	}
+	
+	if (val < 0) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid value XO value should be >= 0\n");
+		shell_help(shell);
+		goto out;
+	}
+
+	if (val == 1) {
+		 if (!check_test_in_prog(shell)) {
+			goto out;
+		}
+	}
+
+	ctx->rf_test_run = true;
+	ctx->rf_test = NRF_WIFI_RF_TEST_XO_CALIB; 
+
+	status = nrf_wifi_fmac_set_xo_val(ctx->rpu_ctx,
+					       (unsigned char)val);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "XO value programming failed\n");
+		goto out;
+	}
+
+	ret = 0;
+out:	
+	ctx->rf_test_run = false;
+	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
+
+	return ret;
+}
+
 
 static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 					size_t argc,
@@ -1678,6 +1825,24 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_dpd,
 		      2,
 		      0),
+	SHELL_CMD_ARG(get_temperature,
+		      NULL,
+		      "No arguments required\n",
+		      nrf_wifi_radio_get_temperature,
+		      1,
+		      0),
+	SHELL_CMD_ARG(get_rf_rssi,
+		      NULL,
+		      "No arguments required\n",
+		      nrf_wifi_radio_get_rf_rssi,
+		      1,
+		      0),
+	SHELL_CMD_ARG(xo_val,
+		      NULL,
+		      "<val> - XO value",
+		      nrf_wifi_radio_set_xo_val,
+		      2,
+		      0),			  
 	SHELL_CMD_ARG(show_config,
 		      NULL,
 		      "Display the current configuration values",

@@ -75,7 +75,8 @@ enum nrf_wifi_rf_test {
 	NRF_WIFI_RF_TEST_DPD,
 	NRF_WIFI_RF_TEST_RF_RSSI,
 	NRF_WIFI_RF_TEST_SLEEP,
-	NRF_WIFI_RF_TEST_TEMP_MEAS,
+	NRF_WIFI_RF_TEST_GET_TEMPERATURE,
+	NRF_WIFI_RF_TEST_XO_CALIB,
 	NRF_WIFI_RF_TEST_MAX,
 };
 
@@ -84,12 +85,11 @@ enum nrf_wifi_rf_test_event {
 	NRF_WIFI_RF_TEST_EVENT_RX_STAT_PKT_CAP,
 	NRF_WIFI_RF_TEST_EVENT_RX_DYN_PKT_CAP,
 	NRF_WIFI_RF_TEST_EVENT_TX_TONE_START,
-	NRF_WIFI_RF_TEST_EVENT_TX_TONE_STOP,
 	NRF_WIFI_RF_TEST_EVENT_DPD_ENABLE,
-	NRF_WIFI_RF_TEST_EVENT_DPD_BYPASS,
 	NRF_WIFI_RF_TEST_EVENT_RF_RSSI,
 	NRF_WIFI_RF_TEST_EVENT_SLEEP,
 	NRF_WIFI_RF_TEST_EVENT_TEMP_MEAS,
+	NRF_WIFI_RF_TEST_EVENT_XO_CALIB,
 	NRF_WIFI_RF_TEST_EVENT_MAX,
 };
 
@@ -98,10 +98,10 @@ enum nrf_wifi_rf_test_event {
 /* Holds the RX capture related info */
 struct nrf_wifi_rf_test_capture_params
 {
-	unsigned int test;
+	unsigned char test;
 
 	/* Number of samples to be captured. */
-	unsigned short cap_len;
+	unsigned short int cap_len;
 
 	/* LNA Gain to be configured. It is a 3 bit value. The mapping is,
 	 * '0' = 24dB
@@ -122,6 +122,8 @@ struct nrf_wifi_rf_test_capture_params
 /* Struct to hold the events from RF test SW. */
 struct nrf_wifi_rf_test_capture_meas
 {
+	unsigned char test;
+	
 	/*  Mean of I samples. Format: Q.11 */
 	signed short mean_I;
 
@@ -139,7 +141,7 @@ struct nrf_wifi_rf_test_capture_meas
 /* Holds the transmit related info */
 struct nrf_wifi_rf_test_tx_params
 {
-	unsigned short test;
+	unsigned char test;
 
 	/* Compute the normalized frequency for the tone to be transmitted
 	 * as,normFrequency =
@@ -160,9 +162,42 @@ struct nrf_wifi_rf_test_tx_params
 
 struct nrf_wifi_rf_test_dpd_params
 {
-	unsigned short test;
+	unsigned char test;
 	unsigned char enabled;
-	unsigned char reserved;
+
+} __NRF_WIFI_PKD;
+
+struct nrf_wifi_temperature_params
+{
+	unsigned char test;
+	
+	/*! current measured temperature */
+	signed int temperature;
+
+	/*! Temperature measurment status.
+	 *0: Reading successful
+	 *1: Reading failed
+	 */
+	unsigned int readTemperatureStatus;
+} __NRF_WIFI_PKD;
+
+
+struct nrf_wifi_rf_get_rf_rssi
+{
+	unsigned char test;
+	unsigned char lna_gain;
+	unsigned char bb_gain;
+	unsigned char agc_status_val;
+} __NRF_WIFI_PKD;
+
+
+struct nrf_wifi_rf_test_xo_calib
+{
+	unsigned char test;
+
+	/* Number of samples to be captured. */
+	unsigned char xo_val;
+
 } __NRF_WIFI_PKD;
 
 #endif /* CONFIG_NRF700X_RADIO_TEST */
