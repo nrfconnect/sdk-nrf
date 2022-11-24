@@ -1,31 +1,39 @@
 sample:
   name: Asset Tracker v2 Application
-common:
-  integration_platforms:
-    - nrf9160dk_nrf9160_ns
-    - thingy91_nrf9160_ns
 tests:
   applications.asset_tracker_v2.nrf_cloud:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     tags: ci_build
   applications.asset_tracker_v2.nrf_cloud-pgps:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_args: OVERLAY_CONFIG=overlay-pgps.conf
     tags: ci_build
   applications.asset_tracker_v2.nrf_cloud-no-agps:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_args: CONFIG_NRF_CLOUD_AGPS=n
     tags: ci_build
   applications.asset_tracker_v2.aws:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_configs:
       - CONFIG_AWS_IOT_BROKER_HOST_NAME="example-hostname.aws.com"
     extra_args: OVERLAY_CONFIG="overlay-aws.conf"
@@ -34,6 +42,9 @@ tests:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_configs:
       - CONFIG_AWS_IOT_BROKER_HOST_NAME="example-hostname.aws.com"
     extra_args: OVERLAY_CONFIG="overlay-aws.conf;overlay-pgps.conf"
@@ -42,6 +53,9 @@ tests:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_configs:
       - CONFIG_AWS_IOT_BROKER_HOST_NAME="example-hostname.aws.com"
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="PROJECTKEY"
@@ -51,6 +65,9 @@ tests:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME="global.azure-devices-provisioning.net"
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="IDSCOPE"
@@ -60,12 +77,18 @@ tests:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_args: OVERLAY_CONFIG=overlay-debug.conf
     tags: ci_build
   applications.asset_tracker_v2.debug-memfault:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_configs:
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="PROJECTKEY"
     extra_args: OVERLAY_CONFIG="overlay-debug.conf;overlay-memfault.conf"
@@ -74,6 +97,9 @@ tests:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_configs:
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="PROJECTKEY"
     extra_args: OVERLAY_CONFIG=overlay-memfault.conf
@@ -82,30 +108,44 @@ tests:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_args: OVERLAY_CONFIG=overlay-low-power.conf
     tags: ci_build
   applications.asset_tracker_v2.carrier:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
     extra_args: OVERLAY_CONFIG=overlay-carrier.conf
     tags: ci_build
   applications.asset_tracker_v2.lwm2m.low-power:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_args: OVERLAY_CONFIG="overlay-lwm2m.conf;overlay-low-power.conf"
     tags: ci_build
   applications.asset_tracker_v2.lwm2m.debug:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_args: OVERLAY_CONFIG="overlay-lwm2m.conf;overlay-debug.conf"
     tags: ci_build
   applications.asset_tracker_v2.lwm2m.debug-modem_trace:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_configs:
       - CONFIG_NRF_MODEM_LIB_TRACE=y
     extra_args: OVERLAY_CONFIG="overlay-lwm2m.conf;overlay-debug.conf"
@@ -114,6 +154,9 @@ tests:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_configs:
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="PROJECTKEY"
     extra_args: OVERLAY_CONFIG="overlay-lwm2m.conf;overlay-memfault.conf"
@@ -122,6 +165,9 @@ tests:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_configs:
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="PROJECTKEY"
     extra_args: OVERLAY_CONFIG="overlay-low-power.conf;overlay-memfault.conf"
