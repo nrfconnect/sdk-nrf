@@ -6,4 +6,4 @@
 
 config AT_CMD_PARSER
 	bool "AT command parser library"
-	depends on NEWLIB_LIBC || EXTERNAL_LIBC
+	depends on NEWLIB_LIBC || EXTERNAL_LIBC || PICOLIBC
