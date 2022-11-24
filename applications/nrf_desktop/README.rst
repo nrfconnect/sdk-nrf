@@ -863,7 +863,7 @@ Selecting a build type from command line
 
 .. note::
    If nRF Desktop is built with `Fast Pair`_ support, you must provide your own Fast Pair Model ID and Anti Spoofing private key as CMake options.
-   See :ref:`ug_bt_fast_pair_provisioning` documentation for following information:
+   See :ref:`ug_bt_fast_pair_provisioning` documentation for the following information:
 
    * Registering a Fast Pair Provider
    * Provisioning a Fast Pair Provider in |NCS|
@@ -1520,19 +1520,19 @@ These configurations support multiple bonds per Bluetooth local identity (:kconf
 You can now pair with your other hosts without putting peripheral back in pairing mode (without triggering the erase advertising).
 The nRF Desktop peripheral that integrates Fast Pair behaves as follows:
 
-  * If the used Bluetooth local identity has no bonds, the device advertises in pairing mode, and Fast Pair discoverable advertising is used.
-    This allows to pair with nRF Desktop device using both Fast Pair and normal Bluetooth pairing flows.
+  * If the used Bluetooth local identity has no bonds, the device advertises in pairing mode, and the Fast Pair discoverable advertising is used.
+    This allows to pair with the nRF Desktop device using both Fast Pair and normal Bluetooth pairing flows.
     This advertising payload is also used during the erase advertising.
-  * If the used Bluetooth local identity already has a bond, the device is no longer in pairing mode and Fast Pair not discoverable advertising is used.
-    This allows to pair only with Fast Pair Seekers linked to Google Accounts that are already associated with the nRF Desktop device.
+  * If the used Bluetooth local identity already has a bond, the device is no longer in the pairing mode and the Fast Pair not discoverable advertising is used.
+    This allows to pair only with the Fast Pair Seekers linked to Google Accounts that are already associated with the nRF Desktop device.
     In this mode the device by default rejects normal Bluetooth pairing (:ref:`CONFIG_DESKTOP_FAST_PAIR_LIMIT_NORMAL_PAIRING <config_desktop_app_options>` option is enabled).
     The Fast Pair UI indication is hidden after the Provider reaches :kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` bonded peers on the used local identity.
 
 After successful erase advertising procedure, the peripheral removes all of the bonds of a given Bluetooth local identity.
 
-Apart from that, the following changes applied in configurations which enable Fast Pair:
+Apart from that, the following changes applied in configurations enable Fast Pair:
 
-* The static :ref:`partition_manager` configuration is modified to introduce a dedicated FLASH partition used to store Fast Pair provisioning data.
+* The static :ref:`partition_manager` configuration is modified to introduce a dedicated FLASH partition used to store the Fast Pair provisioning data.
 * Bluetooth privacy feature (:kconfig:option:`CONFIG_BT_PRIVACY`) is enabled.
 * The fast and slow advertising intervals defined in the :ref:`nrf_desktop_ble_adv` are aligned with Fast Pair expectations.
 * The Bluetooth advertising filter accept list (:kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST`) is disabled to allow Fast Pair Seekers other than the bonded one to connect outside of the pairing mode.
