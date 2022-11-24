@@ -21,3 +21,4 @@ set(NRF_ALLOW_NON_SECURE_RESET          OFF         CACHE BOOL      "Allow syste
 set(TFM_DUMMY_PROVISIONING              OFF         CACHE BOOL      "Provision with dummy values. NOT to be used in production")
 set(PLATFORM_DEFAULT_PROVISIONING       OFF         CACHE BOOL      "Use default provisioning implementation")
 set(NRF_PROVISIONING                    OFF         CACHE BOOL      "Use Nordic provisioning implementation")
+set(CONFIG_NFCT_PINS_AS_GPIOS           OFF         CACHE BOOL      "Use NFCT pins as GPIOs.")
