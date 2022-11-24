@@ -67,7 +67,6 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 	#define SDC_ADV_SET_MEM_SIZE \
 		(SDC_ADV_SET_COUNT * SDC_MEM_PER_ADV_SET(SDC_ADV_BUF_SIZE))
 #else
-	#define SDC_ADV_SET_COUNT 0
 	#define SDC_ADV_SET_MEM_SIZE 0
 #endif
 
@@ -437,19 +436,19 @@ static int configure_supported_features(void)
 {
 	int err;
 
-	if (IS_ENABLED(CONFIG_BT_BROADCASTER)) {
-		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
-			err = sdc_support_ext_adv();
-			if (err) {
-				return -ENOTSUP;
-			}
-		} else {
-			err = sdc_support_adv();
-			if (err) {
-				return -ENOTSUP;
-			}
+#if defined(CONFIG_BT_BROADCASTER)
+	if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
+		err = sdc_support_ext_adv();
+		if (err) {
+			return -ENOTSUP;
+		}
+	} else {
+		err = sdc_support_adv();
+		if (err) {
+			return -ENOTSUP;
 		}
 	}
+#endif
 
 	if (IS_ENABLED(CONFIG_BT_PER_ADV)) {
 		err = sdc_support_le_periodic_adv();
@@ -688,6 +687,7 @@ static int configure_memory_usage(void)
 		return required_memory;
 	}
 
+#if defined(CONFIG_BT_BROADCASTER)
 	cfg.adv_count.count = SDC_ADV_SET_COUNT;
 
 	required_memory =
@@ -698,21 +698,20 @@ static int configure_memory_usage(void)
 		return required_memory;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_BROADCASTER)) {
 #if defined(CONFIG_BT_CTLR_ADV_DATA_LEN_MAX)
-		cfg.adv_buffer_cfg.max_adv_data = CONFIG_BT_CTLR_ADV_DATA_LEN_MAX;
+	cfg.adv_buffer_cfg.max_adv_data = CONFIG_BT_CTLR_ADV_DATA_LEN_MAX;
 #else
-		cfg.adv_buffer_cfg.max_adv_data = SDC_DEFAULT_ADV_BUF_SIZE;
+	cfg.adv_buffer_cfg.max_adv_data = SDC_DEFAULT_ADV_BUF_SIZE;
 #endif
 
-		required_memory =
-		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-			    SDC_CFG_TYPE_ADV_BUFFER_CFG,
-			    &cfg);
-		if (required_memory < 0) {
-			return required_memory;
-		}
+	required_memory =
+	sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+		    SDC_CFG_TYPE_ADV_BUFFER_CFG,
+		    &cfg);
+	if (required_memory < 0) {
+		return required_memory;
 	}
+#endif
 
 	if (IS_ENABLED(CONFIG_BT_PER_ADV)) {
 		cfg.periodic_adv_count.count = SDC_PERIODIC_ADV_COUNT;
