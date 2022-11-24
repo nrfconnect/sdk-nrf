@@ -10,4 +10,4 @@ config CJSON_LIB
 	# Allow external libc to allow native posix to be used for unit test
 	# The cJSON library is using snprintf with floats. We therefore need to
 	# enable NEWLIB_LIBC_FLOAT_PRINTF to ensure that these are handled correctly.
-	depends on (NEWLIB_LIBC && NEWLIB_LIBC_FLOAT_PRINTF) || EXTERNAL_LIBC
+	depends on (NEWLIB_LIBC && NEWLIB_LIBC_FLOAT_PRINTF) || EXTERNAL_LIBC || PICOLIBC
