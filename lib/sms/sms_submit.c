@@ -14,6 +14,9 @@
 #include "sms_internal.h"
 #include "string_conversion.h"
 
+#if defined(CONFIG_SMS_CMS_ERROR_STR)
+#include "sms_cms_codes.h"
+#endif
 
 LOG_MODULE_DECLARE(sms, CONFIG_SMS_LOG_LEVEL);
 
@@ -108,7 +111,12 @@ static void sms_submit_print_error(int err)
 		LOG_ERR("+CME ERROR: %d", nrf_modem_at_err(err));
 		break;
 	case NRF_MODEM_AT_CMS_ERROR:
+#if defined(CONFIG_SMS_CMS_ERROR_STR)
+		LOG_ERR("+CMS ERROR %d: %s", nrf_modem_at_err(err),
+			sms_cms_error_str(nrf_modem_at_err(err)));
+#else
 		LOG_ERR("+CMS ERROR: %d", nrf_modem_at_err(err));
+#endif
 		break;
 	}
 #endif
@@ -195,6 +203,12 @@ static int sms_submit_encode(
 
 	err = nrf_modem_at_printf(send_buf);
 	if (err) {
+#if defined(CONFIG_SMS_CMS_ERROR_STR)
+		if (nrf_modem_at_err_type(err) == NRF_MODEM_AT_CMS_ERROR) {
+			LOG_ERR("CMS Error %d: %s", nrf_modem_at_err(err),
+				sms_cms_error_str(nrf_modem_at_err(err)));
+		}
+#endif
 		LOG_ERR("Sending AT command failed, err=%d", err);
 		sms_submit_print_error(err);
 	} else {

@@ -18,6 +18,13 @@ config SMS_SUBSCRIBERS_MAX_CNT
 	help
 	  Maximum number of subscribers that can register to SMS library.
 
+config SMS_CMS_ERROR_STR
+	bool "Compile CMS error table"
+	help
+	  Compile a table with a textual description of CMS error reasons.
+	  The description can be retrieved with sms_cms_error_str().
+	  The table and function take about 3 KB of FLASH.
+
 module=SMS
 module-dep=LOG
 module-str= SMS library

@@ -16,6 +16,10 @@
 #include "sms_deliver.h"
 #include "sms_internal.h"
 
+#if defined(CONFIG_SMS_CMS_ERROR_STR)
+#include "sms_cms_codes.h"
+#endif
+
 LOG_MODULE_REGISTER(sms, CONFIG_SMS_LOG_LEVEL);
 
 /** @brief AT command to check if a client already exist. */
@@ -75,6 +79,17 @@ AT_MONITOR_ISR(sms_at_handler_cmt, "+CMT", sms_at_cmd_handler_cmt, PAUSED);
 AT_MONITOR_ISR(sms_at_handler_cds, "+CDS", sms_at_cmd_handler_cds, PAUSED);
 AT_MONITOR_ISR(sms_at_handler_cms, "+CMS", sms_at_cmd_handler_cms, PAUSED);
 
+static void sms_print_error_cms(int err)
+{
+#if defined(CONFIG_SMS_CMS_ERROR_STR)
+	int cms_code = nrf_modem_at_err(err);
+
+	if (nrf_modem_at_err_type(err) == NRF_MODEM_AT_CMS_ERROR) {
+		LOG_ERR("CMS Error %d: %s", cms_code, sms_cms_error_str(cms_code));
+	}
+#endif
+}
+
 /**
  * @brief Acknowledge SMS messages towards network.
  *
@@ -85,6 +100,7 @@ static void sms_ack(struct k_work *work)
 	int ret = nrf_modem_at_printf(AT_SMS_PDU_ACK);
 
 	if (ret != 0) {
+		sms_print_error_cms(ret);
 		LOG_ERR("Unable to ACK the SMS PDU");
 	}
 }
@@ -119,6 +135,7 @@ static void sms_reregister(struct k_work *work)
 	 */
 	err = nrf_modem_at_printf(AT_SMS_SUBSCRIBER_REGISTER);
 	if (err) {
+		sms_print_error_cms(err);
 		LOG_ERR("Unable to re-register SMS client, err: %d", err);
 		/* Pause AT commands notifications. */
 		at_monitor_pause(&sms_at_handler_cmt);
@@ -199,6 +216,14 @@ static void sms_at_cmd_handler_cds(const char *at_notif)
  */
 static void sms_at_cmd_handler_cms(const char *at_notif)
 {
+#if defined(CONFIG_SMS_CMS_ERROR_STR)
+	int err = 0;
+	int ret = sscanf(at_notif, "+CMS ERROR: %d", &err);
+
+	if (ret == 1) {
+		LOG_ERR("CMS Error %d: %s", err, sms_cms_error_str(err));
+	}
+#endif
 	if (strstr(at_notif, AT_SMS_UNREGISTERED_NTF) != NULL) {
 		LOG_WRN("Modem unregistered the SMS client, performing re-registration");
 
@@ -227,6 +252,7 @@ static int sms_init(void)
 	/* Check if one SMS client has already been registered. */
 	ret = nrf_modem_at_cmd(sms_buf_tmp, SMS_BUF_TMP_LEN, AT_SMS_SUBSCRIBER_READ);
 	if (ret) {
+		sms_print_error_cms(ret);
 		LOG_ERR("Unable to check if an SMS client exists, err: %d", ret);
 		return ret;
 	}
@@ -253,6 +279,7 @@ static int sms_init(void)
 	/* Register this module as an SMS client. */
 	ret = nrf_modem_at_printf(AT_SMS_SUBSCRIBER_REGISTER);
 	if (ret) {
+		sms_print_error_cms(ret);
 		at_monitor_pause(&sms_at_handler_cmt);
 		at_monitor_pause(&sms_at_handler_cds);
 		at_monitor_pause(&sms_at_handler_cms);
@@ -337,6 +364,7 @@ static void sms_uninit(void)
 
 	ret = nrf_modem_at_printf(AT_SMS_SUBSCRIBER_UNREGISTER);
 	if (ret < 0) {
+		sms_print_error_cms(ret);
 		LOG_ERR("Sending AT command failed, err: %d", ret);
 		return;
 	} else if (ret > 0) {
