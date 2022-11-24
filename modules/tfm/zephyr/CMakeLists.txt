@@ -145,6 +145,13 @@ if (CONFIG_TFM_NRF_PROVISIONING)
     )
 endif()
 
+if (CONFIG_NFCT_PINS_AS_GPIOS)
+  set_property(TARGET zephyr_property_target
+  APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DCONFIG_NFCT_PINS_AS_GPIOS=${CONFIG_NFCT_PINS_AS_GPIOS}
+  )
+endif()
+
 # The ENGINE_BUF_SIZE holds the dynamic allocation buffer for
 # TF-M, which is the equivalent of dynamic allocation in MBEDTLS
 set_property(TARGET zephyr_property_target
