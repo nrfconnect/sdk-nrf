@@ -136,8 +136,12 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 
 	uint8_t *cur_pm = &conn_data->pm_ctx_value;
 
-	if (offset + len > sizeof(uint8_t)) {
+	if (offset > 0) {
 		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+	}
+
+	if (len > sizeof(uint8_t)) {
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
 	}
 
 	switch (*new_pm) {
@@ -686,11 +690,15 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 
 	struct bt_hids_cp *cp = (struct bt_hids_cp *)attr->user_data;
 
-	uint8_t cur_cp = cp->value;
+	uint8_t *cur_cp = &cp->value;
 	uint8_t const *new_cp = (uint8_t const *)buf;
 
-	if (offset + len > sizeof(uint8_t)) {
+	if (offset > 0) {
 		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+	}
+
+	if (len > sizeof(uint8_t)) {
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
 	}
 
 	switch (*new_cp) {
@@ -708,7 +716,7 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 		return BT_GATT_ERR(BT_ATT_ERR_NOT_SUPPORTED);
 	}
 
-	memcpy(&cur_cp + offset, new_cp, len);
+	memcpy(cur_cp + offset, new_cp, len);
 	return len;
 }
 
@@ -1330,8 +1338,9 @@ int bt_hids_boot_kb_inp_rep_send(struct bt_hids *hids_obj,
 	rep_data = conn_data->hids_boot_kb_inp_rep_ctx;
 
 	memcpy(rep_data, rep, len);
-	memset(&rep_data[len], 0,
-	       (sizeof(conn_data->hids_boot_kb_inp_rep_ctx) - len));
+	if (len < sizeof(conn_data->hids_boot_kb_inp_rep_ctx)) {
+		memset(&rep_data[len], 0, (sizeof(conn_data->hids_boot_kb_inp_rep_ctx) - len));
+	}
 
 	struct bt_gatt_notify_params params = {0};
 
