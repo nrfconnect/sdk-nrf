@@ -39,6 +39,24 @@ config LOCATION_MODULE_ELEVATION_MASK
 	default NRF_CLOUD_AGPS_ELEVATION_MASK
 	depends on NRF_CLOUD_AGPS_FILTERED
 
+# The cloud interface for A-GPS, P-GPS and cell location is handled by the application
+config LOCATION_METHOD_GNSS_AGPS_EXTERNAL
+	default y if NRF_CLOUD_AGPS
+
+config LOCATION_METHOD_GNSS_PGPS_EXTERNAL
+	default y if NRF_CLOUD_PGPS
+
+config LOCATION_METHOD_CELLULAR_EXTERNAL
+	default y
+
+# When a dedicated partition is used for P-GPS, the partition size and the number of predictions
+# needs to be decreased from the default values to fit in flash
+config NRF_CLOUD_PGPS_PARTITION_SIZE
+	default 0x10000 if NRF_CLOUD_PGPS_STORAGE_PARTITION
+
+config NRF_CLOUD_PGPS_NUM_PREDICTIONS
+	default 32 if NRF_CLOUD_PGPS_STORAGE_PARTITION
+
 module = LOCATION_MODULE
 module-str = Location module
 source "subsys/logging/Kconfig.template.log_config"
