@@ -1,30 +1,48 @@
 .. _tfm_regression_test:
 
-TF-M Regression Test Sample
-###########################
+TF-M: Regression tests
+######################
+
+.. contents::
+   :local:
+   :depth: 2
+
+Use this test sample to run secure and non-secure Trusted Firmware-M (TF-M) regression tests.
+
+Requirements
+************
+
+The tests support the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340dk_nrf5340_cpuapp_ns, nrf9160dk_nrf9160_ns
 
 Overview
 ********
 
-Run both the Secure and Non-secure TF-M Regression tests using the Zephyr build system.
+Run both the secure and non-secure TF-M regression tests using the Zephyr build system.
 
-The build system will replace the Zephyr application with the Non-Secure TF-M test application,
-while the Secure tests will be included in the TF-M build itself.
+The build system will replace the Zephyr application with the non-secure TF-M test application, while the secure tests will be included in the TF-M build itself.
 
-The TF-M regression tests are implemented in the tf-m-tests repo: https://git.trustedfirmware.org/TF-M/tf-m-tests.git/
+The TF-M regression tests are implemented in the tf-m-tests repo: https://git.trustedfirmware.org/TF-M/tf-m-tests.git/.
 
-Building and Running
+Configuration
+*************
+
+Tests for both the secure and non-secure area are enabled by default, but can be controlled via the Kconfig options :kconfig:option:`CONFIG_TFM_REGRESSION_S` and :kconfig:option:`CONFIG_TFM_REGRESSION_NS` respectively.
+
+|config|
+
+Building and running
 ********************
 
-Tests for both the secure and non-secure domain are enabled by default, controlled via the CONFIG_TFM_REGRESSION_S and CONFIG_TFM_REGRESSION_NS configs.
+.. |test path| replace:: :file:`tests/tfm/tfm_regression_test/`
 
-On Target
-=========
+.. include:: /includes/build_and_run_test.txt
 
-Refer to :ref:`tfm_ipc` for detailed instructions.
-
-Sample Output
-=============
+Output
+======
 
    .. code-block:: console
 

@@ -1,49 +1,62 @@
 .. _tfm_psa_test:
 
-TF-M Platform Security Architecture Test Sample
-###############################################
+TF-M: Platform security architecture test
+#########################################
+
+.. contents::
+   :local:
+   :depth: 2
+
+The TF-M platform security architecture test sample provides a basis for validating compliance with PSA Certified requirements using the Arm® Platform Security Architecture (PSA) test suites.
+
+Requirements
+************
+
+The test supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340dk_nrf5340_cpuapp_ns, nrf9160dk_nrf9160_ns
 
 Overview
 ********
 
+The PSA tests are implemented in the psa-arch-tests repo: https://github.com/ARM-software/psa-arch-tests.
 Run PSA test suites tests with Zephyr and TFM.
 
-The PSA tests are implemented in the psa-arch-tests repo: https://github.com/ARM-software/psa-arch-tests
+To choose a test suite, use the ``CONFIG_TFM_PSA_TEST_*`` Kconfig options.
+Only one of these suites can be run at a time.
 
-This sample is supported for platforms that have a port in psa-arch-tests.
-See sample.yaml for a list of supported platforms.
+Configuration
+*************
 
-Building and Running
+The following Kconfig options can be used to choose a test suite:
+
+* :kconfig:option:`CONFIG_TFM_PSA_TEST_CRYPTO`
+* :kconfig:option:`CONFIG_TFM_PSA_TEST_PROTECTED_STORAGE`
+* :kconfig:option:`CONFIG_TFM_PSA_TEST_INTERNAL_TRUSTED_STORAGE`
+* :kconfig:option:`CONFIG_TFM_PSA_TEST_STORAGE`
+* :kconfig:option:`CONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION`
+
+|config|
+
+Building and running
 ********************
 
-You must choose a suite via the CONFIG_TFM_PSA_TEST_* configs.
+.. |test path| replace:: :file:`tests/tfm/tfm_psa_test/`
 
-Only one of these suites can be run at a time, with the test suite set via one
-of the following kconfig options:
+.. include:: /includes/build_and_run_test.txt
 
-* ``CONFIG_TFM_PSA_TEST_CRYPTO``
-* ``CONFIG_TFM_PSA_TEST_PROTECTED_STORAGE``
-* ``CONFIG_TFM_PSA_TEST_INTERNAL_TRUSTED_STORAGE``
-* ``CONFIG_TFM_PSA_TEST_STORAGE``
-* ``CONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION``
+You can indicate the desired test suite by using a configuration flag when building (replace ``<build_target>`` with your board name, for example ``nrf5340dk_nrf5340_cpuapp_ns``):
 
-You can indicate the desired test suite at build time via a config flag:
+.. code-block:: console
 
-   .. code-block:: bash
-
-     $ west build samples/tfm_integration/tfm_psa_test/ \
-       -p -b nrf5340dk_nrf5340_cpuapp_ns -t run -- \
-       -DCONFIG_TFM_PSA_TEST_STORAGE=y
+    west build -b <build_target> nrf/tests/tfm/tfm_psa_test -- -DCONFIG_TFM_PSA_TEST_STORAGE=y
 
 Note that not all test suites are valid on all boards.
 
-On Target
-=========
-
-Refer to :ref:`tfm_ipc` for detailed instructions.
-
-Sample Output
-=============
+Output
+======
 
    .. code-block:: console
 

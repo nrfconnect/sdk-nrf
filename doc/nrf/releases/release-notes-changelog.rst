@@ -368,6 +368,14 @@ nRF9160 samples
     * Board overlay file for nRF9160 DK with external flash.
     * Overlay file to enable P-GPS data storage in external flash.
 
+Trusted Firmware-M (TF-M) samples
+---------------------------------
+
+* Added:
+
+  * :ref:`tfm_psa_test` for validating compliance with PSA Certified requirements.
+  * :ref:`tfm_regression_test` to run secure and non-secure Trusted Firmware-M (TF-M) regression tests.
+
 Thread samples
 --------------
 
