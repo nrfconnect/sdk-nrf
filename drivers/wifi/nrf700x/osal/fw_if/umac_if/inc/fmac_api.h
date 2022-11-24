@@ -144,6 +144,51 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx 
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_dpd(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					       unsigned char enable);
 
+
+
+/**
+ * nrf_wifi_fmac_rf_get_temperature() - Get temperature in fahrenheit using temperature sensor.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ *
+ * This function is used to send a command to RPU to get the current temperature.
+ * using the radio test mode.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status nrf_wifi_fmac_rf_get_temperature(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+
+
+
+/**
+ * nrf_wifi_fmac_rf_get_rf_rssi() - Get RF RSSI status.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ *
+ * This function is used to send a command to RPU to get
+ * RF RSSI status in radio test mode.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status nrf_wifi_fmac_rf_get_rf_rssi(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+
+
+/**
+ * nrf_wifi_fmac_set_xo_val() - set XO adjustment value.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @value: XO adjustment value.
+ *
+ * This function is used to send a command to RPU to 
+ * set XO adjustment value in radio test mode.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status nrf_wifi_fmac_set_xo_val(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						  unsigned char value);
 #else
 
 /**
