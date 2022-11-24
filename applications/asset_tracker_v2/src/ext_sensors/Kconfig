@@ -11,7 +11,7 @@ if EXTERNAL_SENSORS
 
 config EXTERNAL_SENSORS_IMPACT_DETECTION
 	bool "Impact detection"
-	depends on ADXL372
+	select ADXL372
 	help
 	  Enable this option to use the impact detection feature.
 	  Please note that this increases power consumption.
