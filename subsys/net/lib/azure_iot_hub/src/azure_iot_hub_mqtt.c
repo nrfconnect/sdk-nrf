@@ -357,7 +357,7 @@ static int broker_init(struct sockaddr_storage *broker,
 	return err;
 }
 
-static int client_broker_init(struct mqtt_helper_conn_params *conn_params)
+static int client_connect(struct mqtt_helper_conn_params *conn_params)
 {
 	int err;
 	sec_tag_t sec_tag_list[] = {
@@ -407,14 +407,9 @@ static int client_broker_init(struct mqtt_helper_conn_params *conn_params)
 		LOG_ERR("Could not provision certificates, error: %d", err);
 		return err;
 	}
-#endif /* !defined(CONFIG_NRF_MODEM_LIB) */
+#endif /* defined(CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES) */
 
-	return 0;
-}
-
-static int client_connect(struct mqtt_helper_conn_params *conn_params)
-{
-	int err;
+	mqtt_state_set(MQTT_STATE_CONNECTING);
 
 	err = mqtt_connect(&mqtt_client);
 	if (err) {
@@ -480,14 +475,6 @@ int mqtt_helper_connect(struct mqtt_helper_conn_params *conn_params)
 
 		return -EOPNOTSUPP;
 	}
-
-	err = client_broker_init(conn_params);
-	if (err) {
-		LOG_ERR("client_broker_init failed, error: %d", err);
-		return err;
-	}
-
-	mqtt_state_set(MQTT_STATE_CONNECTING);
 
 	err = client_connect(conn_params);
 	if (err) {
