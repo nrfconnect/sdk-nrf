@@ -207,7 +207,8 @@ Shell integration
 *****************
 
 The nRF Profiler is integrated with Zephyr's :ref:`zephyr:shell_api` module.
-When the shell is turned on, an additional subcommand set (:command:`nrf_profiler`) is added.
+You can use the :kconfig:option:`CONFIG_NRF_PROFILER_SHELL` option to add an additional subcommand set (:command:`nrf_profiler`) to the shell.
+The option is enabled by default.
 
 This subcommand set contains the following commands:
 

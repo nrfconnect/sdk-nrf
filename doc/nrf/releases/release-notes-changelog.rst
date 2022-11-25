@@ -760,6 +760,11 @@ Other libraries
   * Added :kconfig:option:`CONFIG_APP_EVENT_MANAGER_SHELL` Kconfig option.
     The option can be used to disable Event Manager shell commands.
 
+* :ref:`nrf_profiler`:
+
+  * Added the :kconfig:option:`CONFIG_NRF_PROFILER_SHELL` Kconfig option.
+    The option can be used to disable the nRF Profiler shell commands.
+
 Common Application Framework (CAF)
 ----------------------------------
 

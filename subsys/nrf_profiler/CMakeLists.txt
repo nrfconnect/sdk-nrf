@@ -5,4 +5,4 @@
 #
 
 zephyr_sources_ifdef(CONFIG_NRF_PROFILER_NORDIC profiler_nordic.c)
-zephyr_sources_ifdef(CONFIG_SHELL nrf_profiler_common_shell.c)
+zephyr_sources_ifdef(CONFIG_NRF_PROFILER_SHELL  profiler_common_shell.c)

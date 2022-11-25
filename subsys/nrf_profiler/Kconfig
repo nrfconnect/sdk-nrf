@@ -25,6 +25,14 @@ config NRF_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS
 	int "Maximum number of characters used to describe single event type"
 	default 128
 
+config NRF_PROFILER_SHELL
+	bool "Enable shell integration"
+	depends on SHELL
+	default y
+	help
+	  Enable nRF Profiler shell commands to list the profiled event types
+	  and to enable or disable profiling of specified event types.
+
 choice
 	prompt "Profiler selection"
 	default NRF_PROFILER_NORDIC
