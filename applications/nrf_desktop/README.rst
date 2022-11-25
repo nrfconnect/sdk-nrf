@@ -1572,6 +1572,14 @@ Fast Pair
 The nRF Desktop peripheral can be built with Google `Fast Pair`_ support.
 The configurations that enable Fast Pair are set in the :file:`prj_fast_pair.conf` and :file:`prj_release_fast_pair.conf` files.
 
+.. note::
+   The Fast Pair integration in the nRF Desktop is :ref:`experimental <software_maturity>`.
+   The Resolvable Private Address (RPA) rotation is not yet synchronized with the Fast Pair not discoverable advertising payload update.
+   The factory reset of the Fast Pair non-volatile data is not yet supported.
+
+   The Fast Pair support in the |NCS| is :ref:`experimental <software_maturity>`.
+   See :ref:`ug_bt_fast_pair` for details.
+
 These configurations support multiple bonds per Bluetooth local identity (:kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` is set to ``3``) and erase advertising (:ref:`CONFIG_DESKTOP_BLE_PEER_ERASE <config_desktop_app_options>`), but Bluetooth peer selection (:ref:`CONFIG_DESKTOP_BLE_PEER_SELECT <config_desktop_app_options>`) is disabled.
 You can now pair with your other hosts without putting peripheral back in pairing mode (without triggering the erase advertising).
 The nRF Desktop peripheral that integrates Fast Pair behaves as follows:
