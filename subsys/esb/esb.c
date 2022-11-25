@@ -1088,9 +1088,10 @@ void ESB_EVT_IRQHandler(const void *args)
 	ISR_DIRECT_PM();
 }
 
-void ESB_SYS_TIMER_IRQHandler(const void *args)
+void ESB_TIMER_IRQHandler(const void *args)
 {
 	ARG_UNUSED(args);
+	ESB_TIMER_IRQ_HANDLER();
 	ISR_DIRECT_PM();
 }
 
@@ -1178,18 +1179,18 @@ int esb_init(const struct esb_config *config)
 	esb_irq_disable();
 
 	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(RADIO_IRQn, CONFIG_ESB_RADIO_IRQ_PRIORITY,
-					0, reschedule);
+				       0, reschedule);
 	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(ESB_EVT_IRQ, CONFIG_ESB_EVENT_IRQ_PRIORITY,
-					0, reschedule);
-	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(ESB_SYS_TIMER_IRQn, CONFIG_ESB_EVENT_IRQ_PRIORITY,
-					0, reschedule);
+				       0, reschedule);
+	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(ESB_TIMER_IRQ, CONFIG_ESB_EVENT_IRQ_PRIORITY,
+				       0, reschedule);
 
 	irq_connect_dynamic(RADIO_IRQn, CONFIG_ESB_RADIO_IRQ_PRIORITY,
-			   RADIO_IRQHandler, NULL, 0);
+			    RADIO_IRQHandler, NULL, 0);
 	irq_connect_dynamic(ESB_EVT_IRQ, CONFIG_ESB_EVENT_IRQ_PRIORITY,
-			   ESB_EVT_IRQHandler,  NULL, 0);
-	irq_connect_dynamic(ESB_SYS_TIMER_IRQn, CONFIG_ESB_EVENT_IRQ_PRIORITY,
-			   ESB_SYS_TIMER_IRQHandler, NULL, 0);
+			    ESB_EVT_IRQHandler,  NULL, 0);
+	irq_connect_dynamic(ESB_TIMER_IRQ, CONFIG_ESB_EVENT_IRQ_PRIORITY,
+			    ESB_TIMER_IRQHandler, NULL, 0);
 
 #else /* !IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS) */
 
