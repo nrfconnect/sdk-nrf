@@ -60,10 +60,10 @@ To make sure that your Bluetooth mesh device advertises the SMP service UUID, in
 
 #. Register Bluetooth connection callbacks and call ``smp_service_adv_init`` after Bluetooth is initialized:
 
-   ..literalinclude:: ../../samples/bluetooth/mesh/light/src/smp_dfu.c
-     :language: c
-	 :start-after: include_startingpoint_light_smp_dfu_rst_2
-	 :end-before: include_endpoint_light_smp_dfu_rst_2
+   .. literalinclude:: ../../samples/bluetooth/mesh/light/src/smp_dfu.c
+      :language: c
+      :start-after: include_startingpoint_light_smp_dfu_rst_2
+      :end-before: include_endpoint_light_smp_dfu_rst_2
 
 #. Increase the following configuration option values by one in the :file:`prj.conf` file of your application:
 
