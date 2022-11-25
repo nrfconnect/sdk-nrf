@@ -360,10 +360,11 @@ For details, refer to :ref:`app_event_manager_api`.
 Shell integration
 =================
 
-Shell integration is available to display additional information and to dynamically enable or disable logging for given event types.
+Shell integration (:kconfig:option:`CONFIG_APP_EVENT_MANAGER_SHELL`) is available to display additional information and to dynamically enable or disable logging for given event types.
+The shell integration is enabled by default.
 
 The Application Event Manager is integrated with Zephyr's :ref:`zephyr:shell_api` module.
-When the shell is turned on, an additional subcommand set (:command:`app_event_manager`) is added.
+When the shell integration is turned on, an additional subcommand set (:command:`app_event_manager`) is added.
 
 This subcommand set contains the following commands:
 

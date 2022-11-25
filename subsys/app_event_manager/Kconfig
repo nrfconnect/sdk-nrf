@@ -30,6 +30,15 @@ config APP_EVENT_MANAGER_TRACE_EVENT_DATA
 	help
 	  This option allows to gather information about events for tracing purposes.
 
+config APP_EVENT_MANAGER_SHELL
+	bool "Enable shell integration"
+	depends on SHELL
+	default y
+	help
+	  Enable Event Manager shell commands to display information about
+	  listeners, subscribers and events. The commands also allow to
+	  dynamically enable or disable logging for given event types.
+
 module = APP_EVENT_MANAGER
 module-str = Application Event Manager
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

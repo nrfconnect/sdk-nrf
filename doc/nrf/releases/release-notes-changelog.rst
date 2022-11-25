@@ -753,6 +753,11 @@ Other libraries
   * Improved the calculation of MPSL timeslot length by using the :ref:`nrf_dm` library functionality.
   * Renamed the ``access_address`` field to ``rng_seed`` in the :c:struct:`dm_request` structure.
 
+* :ref:`app_event_manager`:
+
+  * Added :kconfig:option:`CONFIG_APP_EVENT_MANAGER_SHELL` Kconfig option.
+    The option can be used to disable Event Manager shell commands.
+
 Common Application Framework (CAF)
 ----------------------------------
 
