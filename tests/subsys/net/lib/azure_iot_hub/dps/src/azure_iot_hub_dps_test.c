@@ -14,8 +14,8 @@
 #include "azure_iot_hub_dps.h"
 #include "azure_iot_hub_dps_private.h"
 
-#include "mock_azure_iot_hub_mqtt.h"
-#include "mock_settings.h"
+#include "cmock_azure_iot_hub_mqtt.h"
+#include "cmock_settings.h"
 
 #define TEST_DPS_HOSTNAME			CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME
 
@@ -70,8 +70,8 @@ static K_SEM_DEFINE(reg_assigning_sem, 0, 1);
 /* Test suite configuration functions */
 void setUp(void)
 {
-	mock_azure_iot_hub_mqtt_Init();
-	mock_settings_Init();
+	cmock_azure_iot_hub_mqtt_Init();
+	cmock_settings_Init();
 	__cmock_settings_subsys_init_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_settings_save_one_IgnoreAndReturn(0);
@@ -83,8 +83,8 @@ void setUp(void)
 
 void tearDown(void)
 {
-	mock_azure_iot_hub_mqtt_Verify();
-	mock_settings_Verify();
+	cmock_azure_iot_hub_mqtt_Verify();
+	cmock_settings_Verify();
 	__cmock_mqtt_helper_disconnect_IgnoreAndReturn(0);
 	azure_iot_hub_dps_reset();
 }

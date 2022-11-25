@@ -7,10 +7,10 @@
 #include <unity.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <mock_modules_common.h>
-#include <mock_app_event_manager_priv.h>
-#include <mock_app_event_manager.h>
-#include <mock_dk_buttons_and_leds.h>
+#include <cmock_modules_common.h>
+#include <cmock_app_event_manager_priv.h>
+#include <cmock_app_event_manager.h>
+#include <cmock_dk_buttons_and_leds.h>
 
 #include "events/app_module_event.h"
 #include "events/data_module_event.h"
@@ -76,8 +76,8 @@ int test_suiteTearDown(int num_failures)
 
 void setUp(void)
 {
-	mock_modules_common_Init();
-	mock_app_event_manager_Init();
+	cmock_modules_common_Init();
+	cmock_app_event_manager_Init();
 
 	/* Reset internal module states. */
 	state = 0;
@@ -90,8 +90,8 @@ void setUp(void)
 
 void tearDown(void)
 {
-	mock_modules_common_Verify();
-	mock_app_event_manager_Verify();
+	cmock_modules_common_Verify();
+	cmock_app_event_manager_Verify();
 }
 
 /* Stub used to verify parameters passed into module_start(). */

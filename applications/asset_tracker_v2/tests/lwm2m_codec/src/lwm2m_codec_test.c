@@ -8,12 +8,12 @@
 #include <string.h>
 #include <errno.h>
 
-#include "lwm2m_client_utils/mock_lwm2m_client_utils.h"
-#include "lwm2m_client_utils/mock_lwm2m_client_utils_location.h"
-#include "lwm2m/mock_lwm2m.h"
-#include "lwm2m/mock_lwm2m_resource_ids.h"
-#include "lte_lc/mock_lte_lc.h"
-#include "date_time/mock_date_time.h"
+#include "lwm2m_client_utils/cmock_lwm2m_client_utils.h"
+#include "lwm2m_client_utils/cmock_lwm2m_client_utils_location.h"
+#include "lwm2m/cmock_lwm2m.h"
+#include "lwm2m/cmock_lwm2m_resource_ids.h"
+#include "lte_lc/cmock_lte_lc.h"
+#include "date_time/cmock_date_time.h"
 
 #include "cloud_codec.h"
 #include "lwm2m_codec_defines.h"
@@ -58,20 +58,20 @@ int test_suiteTearDown(int num_failures)
 
 void setUp(void)
 {
-	mock_lwm2m_client_utils_Init();
-	mock_lwm2m_Init();
-	mock_date_time_Init();
-	mock_lwm2m_resource_ids_Init();
-	mock_lte_lc_Init();
+	cmock_lwm2m_client_utils_Init();
+	cmock_lwm2m_Init();
+	cmock_date_time_Init();
+	cmock_lwm2m_resource_ids_Init();
+	cmock_lte_lc_Init();
 }
 
 void tearDown(void)
 {
-	mock_lwm2m_client_utils_Verify();
-	mock_lwm2m_Verify();
-	mock_date_time_Verify();
-	mock_lwm2m_resource_ids_Init();
-	mock_lte_lc_Init();
+	cmock_lwm2m_client_utils_Verify();
+	cmock_lwm2m_Verify();
+	cmock_date_time_Verify();
+	cmock_lwm2m_resource_ids_Init();
+	cmock_lte_lc_Init();
 }
 
 static int post_write_callback_stub(const char *pathstr,

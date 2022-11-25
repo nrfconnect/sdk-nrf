@@ -6,7 +6,7 @@
 #include <unity.h>
 #include <uut.h>
 #include <stdbool.h>
-#include "foo/mock_foo.h"
+#include "foo/cmock_foo.h"
 
 bool runtime_CONFIG_UUT_PARAM_CHECK;
 

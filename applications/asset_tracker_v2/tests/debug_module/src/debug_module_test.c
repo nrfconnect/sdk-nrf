@@ -7,14 +7,14 @@
 #include <unity.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <mock_modules_common.h>
-#include <mock_app_event_manager.h>
-#include <mock_app_event_manager_priv.h>
-#include <mock_watchdog_app.h>
-#include <memfault/metrics/mock_metrics.h>
-#include <memfault/core/mock_data_packetizer.h>
-#include <memfault/ports/mock_watchdog.h>
-#include <memfault/panics/mock_coredump.h>
+#include <cmock_modules_common.h>
+#include <cmock_app_event_manager.h>
+#include <cmock_app_event_manager_priv.h>
+#include <cmock_watchdog_app.h>
+#include <memfault/metrics/cmock_metrics.h>
+#include <memfault/core/cmock_data_packetizer.h>
+#include <memfault/ports/cmock_watchdog.h>
+#include <memfault/panics/cmock_coredump.h>
 
 #include "app_module_event.h"
 #include "location_module_event.h"
@@ -67,16 +67,16 @@ int test_suiteTearDown(int num_failures)
 
 void setUp(void)
 {
-	mock_watchdog_app_Init();
-	mock_modules_common_Init();
-	mock_app_event_manager_Init();
+	cmock_watchdog_app_Init();
+	cmock_modules_common_Init();
+	cmock_app_event_manager_Init();
 }
 
 void tearDown(void)
 {
-	mock_watchdog_app_Verify();
-	mock_modules_common_Verify();
-	mock_app_event_manager_Verify();
+	cmock_watchdog_app_Verify();
+	cmock_modules_common_Verify();
+	cmock_app_event_manager_Verify();
 }
 
 static void latch_watchdog_callback(watchdog_evt_handler_t handler, int no_of_calls)

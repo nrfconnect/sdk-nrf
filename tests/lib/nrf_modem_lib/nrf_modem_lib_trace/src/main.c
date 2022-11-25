@@ -13,10 +13,10 @@
 
 #include "nrf_modem_lib_trace.h"
 
-#include "mock_trace_backend.h"
-#include "mock_nrf_modem.h"
-#include "mock_nrf_modem_trace.h"
-#include "mock_nrf_modem_os.h"
+#include "cmock_trace_backend.h"
+#include "cmock_nrf_modem.h"
+#include "cmock_nrf_modem_trace.h"
+#include "cmock_nrf_modem_os.h"
 
 LOG_MODULE_REGISTER(trace_test, CONFIG_NRF_MODEM_LIB_TRACE_TEST_LOG_LEVEL);
 
@@ -53,9 +53,9 @@ static void nrf_modem_at_printf_ExpectTraceLevelAndReturn(
 
 void setUp(void)
 {
-	mock_nrf_modem_Init();
-	mock_nrf_modem_trace_Init();
-	mock_trace_backend_Init();
+	cmock_nrf_modem_Init();
+	cmock_nrf_modem_trace_Init();
+	cmock_trace_backend_Init();
 
 	nrf_modem_trace_get_error = 0;
 	nrf_modem_trace_get_cmock_num_calls = 0;
@@ -70,9 +70,9 @@ void setUp(void)
 
 void tearDown(void)
 {
-	mock_nrf_modem_Verify();
-	mock_nrf_modem_trace_Verify();
-	mock_trace_backend_Verify();
+	cmock_nrf_modem_Verify();
+	cmock_nrf_modem_trace_Verify();
+	cmock_trace_backend_Verify();
 }
 
 static void NRF_MODEM_LIB_ON_INIT_callback(void)

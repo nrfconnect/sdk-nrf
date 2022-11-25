@@ -11,7 +11,7 @@
 
 #include <net/azure_iot_hub.h>
 
-#include "mock_azure_iot_hub_mqtt.h"
+#include "cmock_azure_iot_hub_mqtt.h"
 
 #define TEST_DEVICE_ID			"run-time-test-device-id"
 #define TEST_DEVICE_ID_LEN		(sizeof(TEST_DEVICE_ID) - 1)
@@ -88,14 +88,14 @@ extern int generic_suiteTearDown(int num_failures);
 
 void setUp(void)
 {
-	mock_azure_iot_hub_mqtt_Init();
+	cmock_azure_iot_hub_mqtt_Init();
 
 	iot_hub_state = STATE_UNINIT;
 }
 
 void tearDown(void)
 {
-	mock_azure_iot_hub_mqtt_Verify();
+	cmock_azure_iot_hub_mqtt_Verify();
 }
 
 int test_suiteTearDown(int num_failures)
