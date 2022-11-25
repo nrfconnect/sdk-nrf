@@ -6,12 +6,12 @@
 #include <unity.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <mock_modules_common.h>
-#include <mock_app_event_manager.h>
-#include <mock_app_event_manager_priv.h>
-#include <mock_location.h>
-#include <mock_lte_lc.h>
-#include <mock_nrf_modem_gnss.h>
+#include <cmock_modules_common.h>
+#include <cmock_app_event_manager.h>
+#include <cmock_app_event_manager_priv.h>
+#include <cmock_location.h>
+#include <cmock_lte_lc.h>
+#include <cmock_nrf_modem_gnss.h>
 
 #include "app_module_event.h"
 #include "location_module_event.h"
@@ -87,10 +87,10 @@ int test_suiteTearDown(int num_failures)
 
 void setUp(void)
 {
-	mock_modules_common_Init();
-	mock_app_event_manager_Init();
-	mock_location_Init();
-	mock_nrf_modem_gnss_Init();
+	cmock_modules_common_Init();
+	cmock_app_event_manager_Init();
+	cmock_location_Init();
+	cmock_nrf_modem_gnss_Init();
 
 	location_module_event_count = 0;
 	expected_location_module_event_count = 0;
@@ -105,10 +105,10 @@ void tearDown(void)
 	}
 	TEST_ASSERT_EQUAL(expected_location_module_event_count, location_module_event_count);
 
-	mock_modules_common_Verify();
-	mock_app_event_manager_Verify();
-	mock_location_Verify();
-	mock_nrf_modem_gnss_Verify();
+	cmock_modules_common_Verify();
+	cmock_app_event_manager_Verify();
+	cmock_location_Verify();
+	cmock_nrf_modem_gnss_Verify();
 }
 
 static void validate_location_module_evt(struct app_event_header *aeh, int no_of_calls)

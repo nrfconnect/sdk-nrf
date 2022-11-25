@@ -11,8 +11,8 @@
 
 #include "azure_iot_hub_mqtt.h"
 
-#include "zephyr/net/mock_socket.h"
-#include "mock_mqtt.h"
+#include "zephyr/net/cmock_socket.h"
+#include "cmock_mqtt.h"
 
 #define TEST_PORT		8883
 #define TEST_HOSTNAME		"test-hostname.azure-devices.net"
@@ -63,7 +63,7 @@ static K_SEM_DEFINE(error_msg_size_sem, 0, 1);
 
 void setUp(void)
 {
-	mock_mqtt_Init();
+	cmock_mqtt_Init();
 	__cmock_mqtt_keepalive_time_left_IgnoreAndReturn(0);
 
 	/* Suspend the polling thread to have full control over polling. */
@@ -75,7 +75,7 @@ void setUp(void)
 
 void tearDown(void)
 {
-	mock_mqtt_Verify();
+	cmock_mqtt_Verify();
 }
 
 int test_suiteTearDown(int num_failures)

@@ -7,10 +7,10 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "lwm2m_client_utils/mock_lwm2m_client_utils.h"
-#include "lwm2m_client_utils/mock_lwm2m_client_utils_location.h"
-#include "lwm2m/mock_lwm2m.h"
-#include "lte_lc/mock_lte_lc.h"
+#include "lwm2m_client_utils/cmock_lwm2m_client_utils.h"
+#include "lwm2m_client_utils/cmock_lwm2m_client_utils_location.h"
+#include "lwm2m/cmock_lwm2m.h"
+#include "lte_lc/cmock_lte_lc.h"
 #include "cloud_wrapper.h"
 
 #define LWM2M_INTEGRATION_CLIENT_ID_LEN 20
@@ -64,9 +64,9 @@ int test_suiteTearDown(int num_failures)
 /* Setup and teardown functions. */
 void setUp(void)
 {
-	mock_lwm2m_client_utils_Init();
-	mock_lwm2m_Init();
-	mock_lte_lc_Init();
+	cmock_lwm2m_client_utils_Init();
+	cmock_lwm2m_Init();
+	cmock_lte_lc_Init();
 
 	__cmock_lwm2m_init_image_ExpectAndReturn(0);
 	__cmock_lwm2m_init_firmware_ExpectAndReturn(0);
@@ -91,9 +91,9 @@ void setUp(void)
 
 void tearDown(void)
 {
-	mock_lwm2m_client_utils_Verify();
-	mock_lwm2m_Verify();
-	mock_lte_lc_Verify();
+	cmock_lwm2m_client_utils_Verify();
+	cmock_lwm2m_Verify();
+	cmock_lte_lc_Verify();
 }
 
 /* Callbacks stubs that latches events handlers in mocked libraries so that they can be triggered

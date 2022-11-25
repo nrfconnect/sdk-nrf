@@ -101,7 +101,7 @@ endfunction()
 function(cmock_generate header_path dst_path)
   cmake_parse_arguments(CMOCK "" "" "EXCLUDE" ${ARGN})
   get_property(CMOCK_DIR GLOBAL PROPERTY CMOCK_DIR)
-  set(MOCK_PREFIX mock_)
+  set(MOCK_PREFIX cmock_)
 
   get_filename_component(file_name "${header_path}" NAME_WE)
   set(MOCK_FILE ${dst_path}/${MOCK_PREFIX}${file_name}.c)
