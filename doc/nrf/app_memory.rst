@@ -79,74 +79,74 @@ Changing the values of the following options will affect the RAM footprint and t
 
 * General node configuration:
 
-  * :kconfig:option:`BT_MESH_MODEL_KEY_COUNT`
-  * :kconfig:option:`BT_MESH_MODEL_GROUP_COUNT`
-  * :kconfig:option:`BT_MESH_SUBNET_COUNT`
-  * :kconfig:option:`BT_MESH_APP_KEY_COUNT`
-  * :kconfig:option:`BT_MESH_LABEL_COUNT`
-  * :kconfig:option:`BT_MESH_CRPL`
+  * :kconfig:option:`CONFIG_BT_MESH_MODEL_KEY_COUNT`
+  * :kconfig:option:`CONFIG_BT_MESH_MODEL_GROUP_COUNT`
+  * :kconfig:option:`CONFIG_BT_MESH_SUBNET_COUNT`
+  * :kconfig:option:`CONFIG_BT_MESH_APP_KEY_COUNT`
+  * :kconfig:option:`CONFIG_BT_MESH_LABEL_COUNT`
+  * :kconfig:option:`CONFIG_BT_MESH_CRPL`
 
 * For Provisioner device, the following configuration database (CDB) options are available (like how many nodes it can provision, or maximum number of supported application keys):
 
-  * :kconfig:option:`BT_MESH_CDB_NODE_COUNT`
-  * :kconfig:option:`BT_MESH_CDB_SUBNET_COUNT`
-  * :kconfig:option:`BT_MESH_CDB_APP_KEY_COUNT`
+  * :kconfig:option:`CONFIG_BT_MESH_CDB_NODE_COUNT`
+  * :kconfig:option:`CONFIG_BT_MESH_CDB_SUBNET_COUNT`
+  * :kconfig:option:`CONFIG_BT_MESH_CDB_APP_KEY_COUNT`
 
 Changing the values of the following options will only affect the RAM footprint:
 
 * Configuration options for segmented messages (for example how many segmented messages a node can send or receive, and the number of segments per message):
 
-  * :kconfig:option:`BT_MESH_TX_SEG_MSG_COUNT`
-  * :kconfig:option:`BT_MESH_RX_SEG_MSG_COUNT`
-  * :kconfig:option:`BT_MESH_SEG_BUFS`
-  * :kconfig:option:`BT_MESH_RX_SEG_MAX`
-  * :kconfig:option:`BT_MESH_TX_SEG_MAX`
+  * :kconfig:option:`CONFIG_BT_MESH_TX_SEG_MSG_COUNT`
+  * :kconfig:option:`CONFIG_BT_MESH_RX_SEG_MSG_COUNT`
+  * :kconfig:option:`CONFIG_BT_MESH_SEG_BUFS`
+  * :kconfig:option:`CONFIG_BT_MESH_RX_SEG_MAX`
+  * :kconfig:option:`CONFIG_BT_MESH_TX_SEG_MAX`
 
 * Advertiser configuration:
 
-  * :kconfig:option:`BT_MESH_ADV_BUF_COUNT`
-  * :kconfig:option:`BT_MESH_RELAY_BUF_COUNT`
+  * :kconfig:option:`CONFIG_BT_MESH_ADV_BUF_COUNT`
+  * :kconfig:option:`CONFIG_BT_MESH_RELAY_BUF_COUNT`
 
 * Extended advertising configuration:
 
-  * :kconfig:option:`BT_MESH_ADV_EXT`
-  * :kconfig:option:`BT_MESH_RELAY_ADV_SETS`
-  * :kconfig:option:`BT_MESH_ADV_EXT_GATT_SEPARATE`
+  * :kconfig:option:`CONFIG_BT_MESH_ADV_EXT`
+  * :kconfig:option:`CONFIG_BT_MESH_RELAY_ADV_SETS`
+  * :kconfig:option:`CONFIG_BT_MESH_ADV_EXT_GATT_SEPARATE`
 
 * Legacy advertising configuration:
 
-  * :kconfig:option:`BT_MESH_ADV_STACK_SIZE`
+  * :kconfig:option:`CONFIG_BT_MESH_ADV_STACK_SIZE`
 
     .. note:
        This is an advanced option and should not be changed unless absolutely necessary.
 
 * If Friend feature is enabled, the following configuration options are relevant:
 
-  * :kconfig:option:`BT_MESH_FRIEND_QUEUE_SIZE`
-  * :kconfig:option:`BT_MESH_FRIEND_SUB_LIST_SIZE`
-  * :kconfig:option:`BT_MESH_FRIEND_LPN_COUNT`
-  * :kconfig:option:`BT_MESH_FRIEND_SEG_RX`
+  * :kconfig:option:`CONFIG_BT_MESH_FRIEND_QUEUE_SIZE`
+  * :kconfig:option:`CONFIG_BT_MESH_FRIEND_SUB_LIST_SIZE`
+  * :kconfig:option:`CONFIG_BT_MESH_FRIEND_LPN_COUNT`
+  * :kconfig:option:`CONFIG_BT_MESH_FRIEND_SEG_RX`
 
 * If Low Power node (LPN) feature is enabled, the following configuration option is relevant:
 
-  * :kconfig:option:`BT_MESH_LPN_GROUPS`
+  * :kconfig:option:`CONFIG_BT_MESH_LPN_GROUPS`
 
 * If the proxy server is enabled (option :kconfig:option:`BT_MESH_GATT_PROXY`), pay attention to the proxy server filter size:
 
-  * :kconfig:option:`BT_MESH_PROXY_FILTER_SIZE`
+  * :kconfig:option:`CONFIG_BT_MESH_PROXY_FILTER_SIZE`
 
 * Other device configuration:
 
-  * :kconfig:option:`BT_MESH_LOOPBACK_BUFS`
-  * :kconfig:option:`BT_MESH_MSG_CACHE_SIZE`
+  * :kconfig:option:`CONFIG_BT_MESH_LOOPBACK_BUFS`
+  * :kconfig:option:`CONFIG_BT_MESH_MSG_CACHE_SIZE`
 
 Model configuration options that affect stack size at runtime:
 
-* :kconfig:option:`BT_MESH_SENSOR_SRV_SENSORS_MAX`
-* :kconfig:option:`BT_MESH_SENSOR_SRV_SETTINGS_MAX`
-* :kconfig:option:`BT_MESH_SCENES_MAX`
-* :kconfig:option:`BT_MESH_PROP_MAXSIZE`
-* :kconfig:option:`BT_MESH_PROP_MAXCOUNT`
+* :kconfig:option:`CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX`
+* :kconfig:option:`CONFIG_BT_MESH_SENSOR_SRV_SETTINGS_MAX`
+* :kconfig:option:`CONFIG_BT_MESH_SCENES_MAX`
+* :kconfig:option:`CONFIG_BT_MESH_PROP_MAXSIZE`
+* :kconfig:option:`CONFIG_BT_MESH_PROP_MAXCOUNT`
 
 .. _app_memory_gazell:
 
