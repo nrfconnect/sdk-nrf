@@ -19,9 +19,3 @@
   platforms:
     - all
   comment: "Disable zephyr Regression and PSA Arch tests, we maintain copies of these in sdk-nrf"
-
-- scenarios:
-    - sample.nrf9160.modem_shell.esp_wifi
-  platforms:
-    - nrf9160dk_nrf9160_ns
-  comment: "Not passing using zephyr-sdk:0.15.1"
