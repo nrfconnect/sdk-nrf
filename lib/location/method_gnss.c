@@ -66,6 +66,9 @@ BUILD_ASSERT(
 
 static struct k_work method_gnss_start_work;
 static struct k_work method_gnss_pvt_work;
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+static struct k_work method_gnss_agps_req_work;
+#endif
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 static struct k_work method_gnss_agps_request_work;
@@ -816,6 +819,17 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 	location_core_timer_start(gnss_config.timeout);
 }
 
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+static void method_gnss_agps_req_work_fn(struct k_work *work)
+{
+	/* Start and stop GNSS to trigger NRF_MODEM_GNSS_EVT_AGPS_REQ event if assistance data
+	 * is needed.
+	 */
+	nrf_modem_gnss_start();
+	nrf_modem_gnss_stop();
+}
+#endif
+
 int method_gnss_location_get(const struct location_method_config *config)
 {
 	int err;
@@ -856,11 +870,8 @@ int method_gnss_location_get(const struct location_method_config *config)
 	}
 #endif
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-	/* Start and stop GNSS just to see if A-GPS data is needed
-	 * (triggers event NRF_MODEM_GNSS_EVT_AGPS_REQ)
-	 */
-	nrf_modem_gnss_start();
-	nrf_modem_gnss_stop();
+	/* Trigger GNSS to send NRF_MODEM_GNSS_EVT_AGPS_REQ event if assistance data is needed. */
+	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_agps_req_work);
 #endif
 
 	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_start_work);
@@ -890,6 +901,9 @@ int method_gnss_init(void)
 
 	k_work_init(&method_gnss_pvt_work, method_gnss_pvt_work_fn);
 	k_work_init(&method_gnss_start_work, method_gnss_positioning_work_fn);
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+	k_work_init(&method_gnss_agps_req_work, method_gnss_agps_req_work_fn);
+#endif
 
 #if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 	k_work_init(&method_gnss_agps_ext_work, method_gnss_agps_ext_work_fn);
