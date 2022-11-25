@@ -33,6 +33,10 @@ enum status_thread_state {
 
 #define OP_STATUS_POLLING_INTERVAL 1
 
+#define CONNECTION_SUCCESS 0
+#define CONNECTION_FAILURE 1
+#define CONNECTION_TERMINATED 2
+
 K_MUTEX_DEFINE(wpa_supplicant_mutex);
 
 
@@ -40,7 +44,7 @@ struct wpa_supp_api_ctrl {
 	const struct device *dev;
 	enum requested_ops requested_op;
 	enum status_thread_state status_thread_state;
-	int connection_timeout;
+	int connection_timeout; // in seconds
 	struct k_work_sync sync;
 	bool terminate;
 };
@@ -86,27 +90,28 @@ static inline struct wpa_supplicant * get_wpa_s_handle(const struct device *dev)
 
 static void supp_shell_connect_status(struct k_work *work)
 {
-	int i = 0, status = 0;
+	static int seconds_counter = 0;
+	int status = CONNECTION_SUCCESS;
 	struct wpa_supplicant *wpa_s;
 	struct wpa_supp_api_ctrl *ctrl = &wpa_supp_api_ctrl;
 
 	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
 	if (ctrl->status_thread_state == STATUS_THREAD_RUNNING &&  ctrl->terminate) {
-		status = 2;
+		status = CONNECTION_TERMINATED;
 		goto out;
 	}
 
 	wpa_s = get_wpa_s_handle(ctrl->dev);
 	if (!wpa_s) {
-		status = 1;
+		status = CONNECTION_FAILURE;
 		goto out;
 	}
 
 	if (ctrl->requested_op == CONNECT) {
 		if (wpa_s->wpa_state != WPA_COMPLETED &&
 			   (ctrl->connection_timeout == SYS_FOREVER_MS ||
-			    i++ <= ctrl->connection_timeout))
+			    seconds_counter++ <= ctrl->connection_timeout))
 		{
 			k_work_reschedule(&wpa_supp_status_work,
 				K_SECONDS(OP_STATUS_POLLING_INTERVAL));
@@ -115,10 +120,10 @@ static void supp_shell_connect_status(struct k_work *work)
 			return;
 		}
 
-		if (i > ctrl->connection_timeout){
+		if (seconds_counter > ctrl->connection_timeout){
 			if (wpa_s->wpa_state != WPA_COMPLETED){
 				wpas_request_disconnection(wpa_s);
-				status = 1;
+				status = CONNECTION_FAILURE;
 				goto out;
 			}
 		}
@@ -128,10 +133,12 @@ out:
 		wifi_mgmt_raise_connect_result_event(net_if_lookup_by_dev(ctrl->dev), status);
 	} else if (ctrl->requested_op == DISCONNECT) {
 		/* Disconnect is a synchronous operation i.e., we are already disconnected
-		 * we are just using this to post net_mgmt event asynchrnously.
+		 * we are just using this to post net_mgmt event asynchronously.
 		 */
 		wifi_mgmt_raise_disconnect_result_event(net_if_lookup_by_dev(ctrl->dev), 0);
 	}
+	/* The connection handling is done, so reset the counter (connection timeout) */
+	seconds_counter = 0;
 
 	ctrl->status_thread_state = STATUS_THREAD_STOPPED;
 	k_mutex_unlock(&wpa_supplicant_mutex);
