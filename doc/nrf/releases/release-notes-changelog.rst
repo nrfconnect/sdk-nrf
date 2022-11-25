@@ -226,12 +226,12 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
-* The :ref:`CONFIG_DESKTOP_BLE_SCANNING_ENABLE <config_desktop_app_options>` Kconfig option was renamed to :ref:`CONFIG_DESKTOP_BLE_SCAN_ENABLE <config_desktop_app_options>`.
+* The ``CONFIG_DESKTOP_BLE_SCANNING_ENABLE`` Kconfig option was renamed to :ref:`CONFIG_DESKTOP_BLE_SCAN_ENABLE <config_desktop_app_options>`.
 * The UUID16 values of GATT Human Interface Device Service (HIDS) and GATT Battery Service (BAS) are moved from advertising data to scan response data.
 * Added :ref:`CONFIG_DESKTOP_LED_STATE_DEF_PATH <config_desktop_app_options>`.
   The option can be used to specify file defining the used LED effects.
 * Added application configurations that enable `Fast Pair`_.
-  See :ref:`nrf_desktop_bluetooth_guide_fast_pair` for details.
+  See nRF Desktop's :ref:`nrf_desktop_bluetooth_guide_fast_pair` documentation section for details.
 * Added :ref:`nrf_desktop_fast_pair_app`.
   The module is used in configurations that integrate Google `Fast Pair`_.
 * Introduced :ref:`CONFIG_DESKTOP_USB_REMOTE_WAKEUP <config_desktop_app_options>` Kconfig option for :ref:`nrf_desktop_usb_state`.
@@ -241,6 +241,8 @@ nRF Desktop
 * Added application-specific Kconfig options to simplify the configuration.
   Part of an application Kconfig configuration that is common for the selected HID device type is introduced as overlays for default Kconfig values.
   See :ref:`nrf_desktop_porting_guide` for details.
+* The :kconfig:option:`CONFIG_BT_ID_UNPAIR_MATCHING_BONDS` is enabled by default.
+  This is done to pass the Fast Pair Validator's end-to-end integration tests and to improve the user experience during the erase advertising procedure.
 
 Thingy:53 Zigbee weather station
 --------------------------------
