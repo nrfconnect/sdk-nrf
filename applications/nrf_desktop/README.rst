@@ -533,7 +533,7 @@ The peripheral supports one wireless connection at a time, but it can be bonded 
 
    Some of the nRF Desktop configurations also include `Fast Pair`_ payload in the Bluetooth LE advertising data to simplify pairing the nRF Desktop peripherals with Android hosts.
    These configurations apply further modifications that are needed to improve the user experience.
-   See :ref:`nrf_desktop_bluetooth_guide_fast_pair` for details.
+   See the :ref:`nrf_desktop_bluetooth_guide_fast_pair` documentation section for details.
 
 The nRF Desktop Bluetooth Central device scans for all bonded peripherals that are not connected.
 The scanning is interrupted when any device connected to the dongle through Bluetooth comes in use.
@@ -1421,15 +1421,20 @@ The nRF Desktop devices use :ref:`Zephyr's Bluetooth API <zephyr:bluetooth>` to 
 This API is used only by the application modules that handle such connections.
 The information about peer and connection state is propagated to other application modules using :ref:`app_event_manager` events.
 
-The nRF Desktop devices come in the following types:
+The :ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>` Kconfig option enables support for Bluetooth connectivity in the nRF Desktop.
+Specific Bluetooth configurations and application modules are selected according to the HID device role.
+Apart from that, the defaults of Bluetooth-related Kconfigs are aligned with the nRF Desktop use case.
 
-* Peripheral devices (mouse or keyboard)
+The nRF Desktop devices come in the following roles:
 
+* HID peripheral (:ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>`)
+
+  * The HID peripherals can work as either mouse (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_MOUSE <config_desktop_app_options>`), keyboard (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`) or user-specific HID peripheral (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_OTHER <config_desktop_app_options>`).
   * Support only the Bluetooth Peripheral role (:kconfig:option:`CONFIG_BT_PERIPHERAL`).
   * Handle only one Bluetooth LE connection at a time.
   * Use more than one Bluetooth local identity.
 
-* Central devices (dongle)
+* HID dongle (:ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>`)
 
   * Support only the Bluetooth Central role (:kconfig:option:`CONFIG_BT_CENTRAL`).
   * Handle multiple Bluetooth LE connections simultaneously.
@@ -1460,6 +1465,7 @@ For detailed information about every option, see the Kconfig help.
 * :kconfig:option:`CONFIG_BT_MAX_PAIRED`
 
   * nRF Desktop central: The maximum number of paired devices is greater than or equal to the maximum number of simultaneously connected peers.
+    The :kconfig:option:`CONFIG_BT_MAX_PAIRED` is by default set to :ref:`CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT <config_desktop_app_options>`.
   * nRF Desktop peripheral: The maximum number of paired devices is equal to the number of peers plus one, where the one additional paired device slot is used for erase advertising.
 
 * :kconfig:option:`CONFIG_BT_ID_MAX`
@@ -1473,7 +1479,8 @@ For detailed information about every option, see the Kconfig help.
 
 * :kconfig:option:`CONFIG_BT_MAX_CONN`
 
-  * nRF Desktop central: Set the option to the maximum number of simultaneously connected devices.
+  * nRF Desktop central: This option is set to the maximum number of simultaneously connected devices.
+    The :kconfig:option:`CONFIG_BT_MAX_CONN` is by default set to :ref:`CONFIG_DESKTOP_HID_DONGLE_CONN_COUNT <config_desktop_app_options>`.
   * nRF Desktop peripheral: The default value (one) is used.
 
 .. note::
