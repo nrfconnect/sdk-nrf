@@ -6,7 +6,7 @@
 #include <unity.h>
 #include <stdbool.h>
 #include "call.h"
-#include "test_code/mock_test_code.h"
+#include "test_code/cmock_test_code.h"
 
 /*
  * These tests verify the wrapping functionality in scripts/unity that parse

@@ -9,7 +9,7 @@
 #include <string.h>
 #include <zephyr/kernel.h>
 #include <modem/modem_jwt.h>
-#include <mock_nrf_modem_at.h>
+#include <cmock_nrf_modem_at.h>
 
 
 void setUp(void)

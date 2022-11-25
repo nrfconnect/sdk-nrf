@@ -13,8 +13,8 @@
 
 #include <nrf_gai_errors.h>
 
-#include "mock_nrf_socket.h"
-#include "mock_nrf_modem_os.h"
+#include "cmock_nrf_socket.h"
+#include "cmock_nrf_modem_os.h"
 
 #define HTTPS_HOSTNAME "example.com"
 #define PORT 8080

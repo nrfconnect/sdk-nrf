@@ -10,7 +10,7 @@
 
 #include "trace_backend.h"
 
-#include "mock_SEGGER_RTT.h"
+#include "cmock_SEGGER_RTT.h"
 
 #define BACKEND_RTT_BUF_SIZE CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT_BUF_SIZE
 
@@ -28,12 +28,12 @@ static int trace_rtt_channel;
 
 void setUp(void)
 {
-	mock_SEGGER_RTT_Init();
+	cmock_SEGGER_RTT_Init();
 }
 
 void tearDown(void)
 {
-	mock_SEGGER_RTT_Verify();
+	cmock_SEGGER_RTT_Verify();
 }
 
 static int rtt_allocupbuffer_callback(const char *sName, void *pBuffer, unsigned int BufferSize,
