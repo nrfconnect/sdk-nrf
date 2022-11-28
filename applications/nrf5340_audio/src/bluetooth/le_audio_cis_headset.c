@@ -259,10 +259,12 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_audio_ep *ep, enu
 	static size_t configured_source_stream_count;
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 
+#if (CONFIG_BT_MCC)
 	ret = ble_mcs_discover(default_conn);
 	if (ret) {
 		LOG_ERR("Failed to start discovery of MCS: %d", ret);
 	}
+#endif /* CONFIG_BT_MCC */
 
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		struct bt_audio_stream *audio_stream = &audio_streams[i];
@@ -323,7 +325,7 @@ static int lc3_qos_cb(struct bt_audio_stream *stream, const struct bt_codec_qos 
 	int ret;
 
 	LOG_DBG("QoS: stream %p qos %p", (void *)stream, (void *)qos);
-	LOG_INF("Presentation delay %d ms is set by initiator", qos->pd);
+	LOG_INF("Presentation delay %d us is set by initiator", qos->pd);
 	ret = audio_datapath_pres_delay_us_set(qos->pd);
 
 	return ret;
@@ -482,11 +484,13 @@ static int initialize(le_audio_receive_cb recv_cb)
 		}
 #endif /* (CONFIG_BT_VCS) */
 
+#if (CONFIG_BT_MCC)
 		ret = ble_mcs_client_init();
 		if (ret) {
 			LOG_ERR("MCS client init failed");
 			return ret;
 		}
+#endif /* CONFIG_BT_MCC */
 
 		receive_cb = recv_cb;
 		channel_assignment_get(&channel);
