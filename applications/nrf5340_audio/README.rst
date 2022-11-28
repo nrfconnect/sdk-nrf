@@ -979,11 +979,12 @@ See the following examples of the parameter usage with the command run from the 
 
      python buildprog.py -c app -b debug -d both
 
-* Example 2: The following command builds the application as in *example 1*, but with the DFU internal flash memory layout enabled and using the minimal size of the network core bootloader:
+* Example 2: The following command builds the application using the script for both the application and the network core (``both``).
+  As in *example 1*, it builds with the ``debug`` application version, but with the DFU internal flash memory layout enabled and using the minimal size of the network core bootloader:
 
   .. code-block:: console
 
-     python buildprog.py -c app -b debug -d both -m internal -M
+     python buildprog.py -c both -b debug -d both -m internal -M
 
   If you run this command with the ``external`` DFU type parameter instead of ``internal``, the external flash memory layout will be enabled.
 
