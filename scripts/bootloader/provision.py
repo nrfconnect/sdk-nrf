@@ -93,8 +93,14 @@ def main():
     # data so add it to the given base address
     provision_address = args.provision_addr + LCS_STATE_SIZE + IMPLEMENTATION_ID_SIZE
 
-    hashes = get_hashes(args.public_key_files.split(','),
-                        not args.no_verify_hashes) if args.public_key_files else list()
+    hashes = []
+    if args.public_key_files:
+        hashes = get_hashes(
+            # Filter out empty strings
+            [key for key in args.public_key_files.split(',') if key],
+            not args.no_verify_hashes
+        )
+
     generate_provision_hex_file(s0_address=s0_address,
                                 s1_address=s1_address,
                                 hashes=hashes,
