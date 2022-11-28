@@ -123,6 +123,14 @@ static bool erase_adv_was_extended;
 
 
 #if CONFIG_BT_PERIPHERAL
+/* nRF Desktop peripheral requires a minimum of three Bluetooth identities:
+ * - BT_ID_DEFAULT is not used as it cannot be reset.
+ * - one identity is used for bonding with a peer.
+ * - one identity is used for the erased advertising operation as a temporary identity.
+ * The minimum threshold is increased if the configuration designates an additional identity
+ * for the dongle with the CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE Kconfig option.
+ */
+BUILD_ASSERT(CONFIG_BT_ID_MAX >= (IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE) ? 4 : 3));
 #define BT_STACK_ID_LUT_SIZE (CONFIG_BT_ID_MAX - 1)
 #elif CONFIG_BT_CENTRAL
 #define BT_STACK_ID_LUT_SIZE 0
@@ -130,6 +138,10 @@ static bool erase_adv_was_extended;
 #error Device must be Bluetooth peripheral or central.
 #endif
 
+/* The Bluetooth Identity look-up table cannot be used in the Bluetooth Central
+ * configuration (CONFIG_BT_CENTRAL), along with the definitions of special
+ * peer IDs.
+ */
 static uint8_t bt_stack_id_lut[BT_STACK_ID_LUT_SIZE];
 static bool bt_stack_id_lut_valid;
 
