@@ -474,7 +474,7 @@ static void connect_cloud(void)
 	 */
 	err = cloud_wrap_connect();
 	if (err) {
-		LOG_ERR("cloud_connect failed, error: %d", err);
+		LOG_DBG("cloud_connect failed, error: %d", err);
 	}
 
 	connect_retries++;
