@@ -99,6 +99,7 @@ Matter
 * Updated:
 
   * :ref:`ug_matter_overview_int_model` with an example of the interaction.
+  * :ref:`ug_matter_overview_data_model` with an example of the Data Model of a door lock device.
   * :ref:`ug_matter_gs_adding_cluster` documentation with new code snippets to align it with the source code of refactored Matter template sample.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
