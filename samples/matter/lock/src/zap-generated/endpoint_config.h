@@ -84,7 +84,7 @@
 			{ (uint16_t)0x0, (uint16_t)0x0, (uint16_t)0x4 }, /* OperatingMode */                           \
 			{ (uint16_t)0x3, (uint16_t)0x1, (uint16_t)0xFF }, /* WrongCodeEntryLimit */                    \
 		{                                                                                                      \
-			(uint16_t)0x0, (uint16_t)0x1, (uint16_t)0xFF                                                   \
+			(uint16_t)0xA, (uint16_t)0x1, (uint16_t)0xFF                                                   \
 		} /* UserCodeTemporaryDisableTime */                                                                   \
 	}
 
