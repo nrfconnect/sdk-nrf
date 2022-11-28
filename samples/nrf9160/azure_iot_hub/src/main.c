@@ -504,7 +504,13 @@ static int dps_run(struct azure_iot_hub_buf *hostname, struct azure_iot_hub_buf 
 
 	err = azure_iot_hub_dps_hostname_get(hostname);
 	if (err) {
-		printk("Failed to get hostname, error: %d", err);
+		printk("Failed to get hostname, error: %d\n", err);
+		return err;
+	}
+
+	err = azure_iot_hub_dps_device_id_get(device_id);
+	if (err) {
+		printk("Failed to get device ID, error: %d\n", err);
 		return err;
 	}
 
