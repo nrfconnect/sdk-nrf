@@ -104,7 +104,7 @@ manifest:
     # changes.
     - name: sdk-hostap
       path: modules/lib/hostap
-      revision: 5ee5972d527ede375f982fcedaeea26f2fb03f10
+      revision: 454c4f99d6aff07156cf3d9b340471774656dc61
     - name: mcuboot
       repo-path: sdk-mcuboot
       revision: pull/222/head
@@ -128,7 +128,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: ca68be2ae5417c65357e97a74ab33664943775b9
+      revision: 8080b5193c579da8d2e248885aa59f5886864fc8
       submodules:
         - name: nlio
           path: third_party/nlio/repo
