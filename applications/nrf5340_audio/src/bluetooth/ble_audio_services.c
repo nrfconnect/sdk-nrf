@@ -218,7 +218,7 @@ static void mcc_read_media_state_cb(struct bt_conn *conn, int err, uint8_t state
 
 	media_player_state = state;
 }
-#endif /* (CONFIG_BT_MCC) */
+#endif /* CONFIG_BT_MCC */
 
 #if (CONFIG_BT_MCS)
 /**
@@ -433,7 +433,7 @@ int ble_mcs_discover(struct bt_conn *conn)
 #else
 	LOG_ERR("MCC not enabled");
 	return -ECANCELED;
-#endif /* (CONFIG_BT_MCC) */
+#endif /* CONFIG_BT_MCC */
 }
 
 int ble_mcs_state_update(struct bt_conn *conn)
@@ -443,7 +443,7 @@ int ble_mcs_state_update(struct bt_conn *conn)
 #else
 	LOG_ERR("MCC not enabled");
 	return -ECANCELED;
-#endif /* (CONFIG_BT_MCC) */
+#endif /* CONFIG_BT_MCC */
 }
 
 int ble_mcs_play_pause(struct bt_conn *conn)
@@ -523,7 +523,7 @@ int ble_mcs_client_init(void)
 #else
 	LOG_ERR("MCC not enabled");
 	return -ECANCELED;
-#endif /* (CONFIG_BT_MCC) */
+#endif /* CONFIG_BT_MCC */
 }
 
 int ble_mcs_server_init(ble_mcs_play_pause_cb le_audio_play_pause_cb)
