@@ -60,7 +60,7 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
 Matter
 ------
 
-|no_changes_yet_note|
+* Updated the ZAP submodule revision to fix opening the ZAP files included in Matter samples in |NCS|.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
