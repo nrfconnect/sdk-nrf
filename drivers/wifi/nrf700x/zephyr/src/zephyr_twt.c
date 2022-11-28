@@ -27,7 +27,7 @@ int wifi_nrf_set_twt(const struct device *dev,
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct nrf_wifi_umac_config_twt_info twt_info;
+	struct nrf_wifi_umac_config_twt_info twt_info = {0};
 	double mantissa = 0;
 	int exponent;
 	int ret = -1;
