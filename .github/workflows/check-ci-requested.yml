@@ -8,9 +8,10 @@ jobs:
   check-label:
     runs-on: ubuntu-latest
     name: Check CI request exists
-    if: ${{ !contains(github.event.*.labels.*.name, 'CI-Requested') && contains(github.event.*.labels.*.name, 'external') }}
+    if: ${{ contains(github.event.*.labels.*.name, 'external') }}
     steps:
       - name: Label missing
+        if: ${{ !contains(github.event.*.labels.*.name, 'CI-Requested') }}
         run: |
           echo "External contribution detected - CI-requested label is needed for full CI execution"
           exit 1
