@@ -1842,7 +1842,7 @@ endpoint 1 {
     ram      attribute enableOneTouchLocking;
     ram      attribute enablePrivacyModeButton;
     ram      attribute wrongCodeEntryLimit default = 3;
-    ram      attribute userCodeTemporaryDisableTime;
+    ram      attribute userCodeTemporaryDisableTime default = 10;
     ram      attribute requirePINforRemoteOperation;
     callback attribute generatedCommandList;
     callback attribute acceptedCommandList;
