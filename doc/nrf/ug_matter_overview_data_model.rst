@@ -9,8 +9,9 @@ Matter Data Model and device types
 
 .. ug_matter_data_model_desc_start
 
-The Data Model layer describes how to separate data into abstract logical blocks that help maintain the application in a comfortable manner.
-The layer operates regardless of the business logic, and so for example it is identical for each door lock type of device.
+The Data Model layer describes the supported remote operations of a Matter node using the concepts of attributes, commands and events, grouped into logical blocks called clusters.
+The clusters included in the Matter specification have well-defined scope and behavior to assure interoperability between Matter nodes developed by different vendors.
+A cluster can be abstract, meaning that it can underlie several device types to reduce the time and cost of introducing new product categories to Matter.
 
 .. figure:: images/matter_components_DM.svg
    :alt: Data Model layer overview
@@ -55,6 +56,44 @@ Commands
 Events
    Events are a type of attributes that communicate device state changes.
    They can also be treated as historical data records of something that happened on the device in the past.
+
+Data Model example: Door Lock
+*****************************
+
+The following figure illustrates the Data Model structure of a common door lock device.
+
+.. figure:: images/matter_components_DM_doorlock.svg
+   :alt: Data Model Door Lock example
+
+Each Matter node must ensure that its Endpoint 0 satisfies the requirements of the Root Node device type.
+This device type enforces the availability of clusters used in the process of :ref:`Matter commissioning <ug_matter_overview_commissioning>` and further administering of a Matter node.
+
+Besides the Root Node endpoint, the door lock device provides Endpoint 1, which implements the Door Lock Device Type functionality as defined in the Matter specification.
+This device type enforces the availability of the ``Identify`` and ``DoorLock`` clusters.
+
+Identify cluster
+================
+
+The ``Identify`` cluster is a cluster shared across many device types.
+It provides commands that allow a user to trigger a special effect, such as blinking an LED, that helps find the physical location of the device.
+
+DoorLock cluster
+================
+
+The ``DoorLock`` cluster is a large cluster that contains many attributes, commands, and events for managing and operating a smart lock.
+
+Examples of the attributes are the following:
+
+ * ``LockType`` - A constant that assigns the device to one of the known lock categories.
+ * ``LockState`` - An attribute that renders the current state of the lock: locked, unlocked, or moving from one position to another.
+
+Examples of the commands are the following:
+
+ * ``LockDoor`` and ``UnlockDoor`` - For remotely operating the lock.
+ * ``SetCredential`` - For configuring the lock to require a specified credential, such as PIN code, to unlock the door.
+
+An example of the event is ``DoorLockAlarm``, which records occurrences of critical states of the lock.
+Examples of the critical states are jamming the lock or exceeding the limit of wrong PIN code entries.
 
 .. _ug_matter_device_types:
 
