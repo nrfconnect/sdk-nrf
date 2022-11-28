@@ -266,7 +266,7 @@ void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 
 	switch (event) {
 	case PDN_EVENT_CNEC_ESM:
-		LOG_ERR("Event: PDP context %d, %s", cid, pdn_esm_strerror(reason));
+		LOG_DBG("Event: PDP context %d, %s", cid, pdn_esm_strerror(reason));
 		break;
 	case PDN_EVENT_ACTIVATED:
 		LOG_DBG("PDN_EVENT_ACTIVATED");
