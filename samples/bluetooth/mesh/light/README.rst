@@ -35,14 +35,15 @@ The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobil
 DFU requirements
 ================
 
-The configuration overlay :file:`overlay-dfu.conf` enables DFU support in the application, and applies for the nRF52 series, including:
+The configuration overlay :file:`overlay-dfu.conf` enables DFU support in the application, and applies for the following platforms:
 
-* nrf52dk_nrf52832
 * nrf52840dk_nrf52840
-* nrf52833dk_nrf52833
 * nrf21540dk_nrf52840
 
-While this overlay configuration is only applicable for the nRF52 Series in this sample, DFU over Bluetooth Low Energy can be utilized on other platforms as well.
+While this overlay configuration is only applicable for the mentioned platforms in this sample, DFU over Bluetooth Low Energy may be used on other platforms as well.
+
+Take the flash size into consideration when using DFU over Bluetooth LE on other platforms.
+For example, both nRF52832 and nRF52833 have limited flash size.
 
 .. note::
    Point-to-point DFU over Bluetooth Low Energy for :ref:`zephyr:thingy53_nrf5340` is supported by default.
