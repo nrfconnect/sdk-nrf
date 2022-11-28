@@ -157,7 +157,7 @@
 			  ZAP_EMPTY_DEFAULT() }, /* CapabilityMinima */                                                                             \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_SIMPLE_DEFAULT(0) }, /* FeatureMap */                                           \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON),                                                           \
-			  ZAP_SIMPLE_DEFAULT(3) }, /* ClusterRevision */                                                                            \
+			  ZAP_SIMPLE_DEFAULT(1) }, /* ClusterRevision */                                                                            \
                                                                                                                                                     \
 			/* Endpoint: 0, Cluster: OTA Software Update Requestor (server) */                                                          \
 			{ 0x00000000, ZAP_TYPE(ARRAY), 0,                                                                                           \
