@@ -16,6 +16,8 @@ If you have already set up your Thingy:91 and want to learn more, see the follow
 * :ref:`ug_thingy91` for more advanced topics related to the Thingy:91.
 * The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
 
+If you want to go through a hands-on online training to familiarize yourself with cellular IoT technologies and development of cellular applications, enroll in the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
+
 Requirements for setting up the Thingy:91
 *****************************************
 

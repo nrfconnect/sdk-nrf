@@ -477,7 +477,7 @@
 .. _`Nordic Developer Academy`: https://academy.nordicsemi.com/
 
 .. _`nRF Connect SDK Fundamentals course`: https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/
-
+.. _`Cellular IoT Fundamentals course`: https://academy.nordicsemi.com/courses/cellular-iot-fundamentals/
 
 .. ### Source: devzone.nordicsemi.com
 
