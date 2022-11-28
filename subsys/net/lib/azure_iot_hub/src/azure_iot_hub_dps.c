@@ -925,7 +925,7 @@ int azure_iot_hub_dps_hostname_get(struct azure_iot_hub_buf *buf)
 	size_t hostname_len = az_span_size(dps_reg_ctx.assigned_hub);
 	char *hostname_ptr = az_span_ptr(dps_reg_ctx.assigned_hub);
 
-	LOG_DBG("hostname_ptr: %p, hostname_len: %d", hostname_ptr, hostname_len);
+	LOG_DBG("hostname_ptr: %p, hostname_len: %d", (void *)hostname_ptr, hostname_len);
 
 	if (buf == NULL) {
 		return -EINVAL;
@@ -947,7 +947,7 @@ int azure_iot_hub_dps_device_id_get(struct azure_iot_hub_buf *buf)
 	size_t dev_id_len = az_span_size(dps_reg_ctx.assigned_device_id);
 	char *dev_id_ptr = az_span_ptr(dps_reg_ctx.assigned_device_id);
 
-	LOG_DBG("dev_id_ptr: %p, dev_id_len: %d", dev_id_ptr, dev_id_len);
+	LOG_DBG("dev_id_ptr: %p, dev_id_len: %d", (void *)dev_id_ptr, dev_id_len);
 
 	if (buf == NULL) {
 		return -EINVAL;
