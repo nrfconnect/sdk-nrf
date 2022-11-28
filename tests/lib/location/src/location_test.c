@@ -11,6 +11,7 @@
 #include <modem/at_monitor.h>
 #include <modem/location.h>
 #include <modem/lte_lc.h>
+#include <mock_nrf_modem_at.h>
 #include <cmock_nrf_modem_at.h>
 #include <cmock_nrf_modem_gnss.h>
 #include <cmock_modem_key_mgmt.h>
@@ -109,6 +110,7 @@ void setUp(void)
 	location_callback_called_expected = false;
 	k_sem_reset(&event_handler_called_sem);
 
+	mock_nrf_modem_at_Init();
 	cmock_nrf_modem_at_Init();
 	cmock_nrf_modem_gnss_Init();
 	cmock_rest_client_Init();
@@ -125,6 +127,7 @@ void tearDown(void)
 	}
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
 
+	mock_nrf_modem_at_Verify();
 	cmock_nrf_modem_at_Verify();
 	cmock_nrf_modem_gnss_Verify();
 	cmock_rest_client_Verify();
@@ -295,8 +298,13 @@ void test_location_gnss(void)
 	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
 	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__cmock_nrf_modem_at_scanf_ExpectAndReturn(
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* NB-IoT support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* GNSS support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
+
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
 
@@ -496,8 +504,12 @@ void test_location_request_default(void)
 	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
 	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__cmock_nrf_modem_at_scanf_ExpectAndReturn(
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* NB-IoT support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* GNSS support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
 
 	err = location_request(NULL);
 	TEST_ASSERT_EQUAL(0, err);
@@ -625,8 +637,12 @@ void test_location_request_mode_all_cellular_gnss(void)
 	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
 	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__cmock_nrf_modem_at_scanf_ExpectAndReturn(
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* NB-IoT support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* GNSS support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
 
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
@@ -691,8 +707,12 @@ void test_location_request_timeout_cellular_gnss_mode_all(void)
 	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
 	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__cmock_nrf_modem_at_scanf_ExpectAndReturn(
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* NB-IoT support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* GNSS support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
 
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
@@ -756,8 +776,13 @@ void test_location_gnss_periodic(void)
 	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
 	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__cmock_nrf_modem_at_scanf_ExpectAndReturn(
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* NB-IoT support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* GNSS support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
+
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
 
@@ -790,8 +815,12 @@ void test_location_gnss_periodic(void)
 	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
 	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
-	__cmock_nrf_modem_at_scanf_ExpectAndReturn(
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* NB-IoT support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* GNSS support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
 
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
