@@ -89,6 +89,26 @@ Supported CLI commands
      - Configure the Wi-Fi interface as access point mode
    * - ap_disable
      - Configure the Wi-Fi interface as station mode
+   * - ps
+     - | Configure power save
+       | No argument - Prints current configuration
+       | on - Turns on power save feature
+       | off - Turns off power save feature
+   * - twt
+     - | Manage Target Wake Time (TWT) flows with below subcommands:
+       |
+       | setup - Start a TWT flow:
+       | <negotiation_type: 0 - Individual, 1 - Broadcast, 2 - Wake TBTT>
+       | <setup_cmd: 0 - Request, 1 - Suggest, 2 - Demand>
+       | <dialog_token> <flow_id> <responder> <trigger> <implicit>
+       | <announce> <twt_wake_interval_ms> <twt_interval_ms>
+       |
+       | teardown - Teardown a TWT flow:
+       | <negotiation_type: 0 - Individual, 1 - Broadcast, 2 - Wake TBTT>
+       | <setup_cmd: 0 - Request, 1 - Suggest, 2 - Demand>
+       | <dialog_token> <flow_id>
+       |
+       | teardown_all - Teardown all TWT flows
 
 Testing
 =======
