@@ -47,6 +47,7 @@ static const char *state_name_get(enum mqtt_state state)
 	switch (state) {
 	case MQTT_STATE_UNINIT: return "MQTT_STATE_UNINIT";
 	case MQTT_STATE_DISCONNECTED: return "MQTT_STATE_DISCONNECTED";
+	case MQTT_STATE_TRANSPORT_CONNECTING: return "MQTT_STATE_TRANSPORT_CONNECTING";
 	case MQTT_STATE_CONNECTING: return "MQTT_STATE_CONNECTING";
 	case MQTT_STATE_TRANSPORT_CONNECTED: return "MQTT_STATE_TRANSPORT_CONNECTED";
 	case MQTT_STATE_CONNECTED: return "MQTT_STATE_CONNECTED";
@@ -79,7 +80,14 @@ AZ_MQTT_STATIC void mqtt_state_set(enum mqtt_state new_state)
 		break;
 	case MQTT_STATE_DISCONNECTED:
 		if (new_state != MQTT_STATE_CONNECTING &&
-		    new_state != MQTT_STATE_UNINIT) {
+		    new_state != MQTT_STATE_UNINIT &&
+		    new_state != MQTT_STATE_TRANSPORT_CONNECTING) {
+			notify_error = true;
+		}
+		break;
+	case MQTT_STATE_TRANSPORT_CONNECTING:
+		if (new_state != MQTT_STATE_TRANSPORT_CONNECTED &&
+		    new_state != MQTT_STATE_DISCONNECTED) {
 			notify_error = true;
 		}
 		break;
@@ -409,13 +417,17 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 	}
 #endif /* defined(CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES) */
 
-	mqtt_state_set(MQTT_STATE_CONNECTING);
+	mqtt_state_set(MQTT_STATE_TRANSPORT_CONNECTING);
 
 	err = mqtt_connect(&mqtt_client);
 	if (err) {
 		LOG_ERR("mqtt_connect, error: %d", err);
 		return err;
 	}
+
+	mqtt_state_set(MQTT_STATE_TRANSPORT_CONNECTED);
+
+	mqtt_state_set(MQTT_STATE_CONNECTING);
 
 	if (IS_ENABLED(CONFIG_AZURE_IOT_HUB_SEND_TIMEOUT)) {
 		struct timeval timeout = {
@@ -581,7 +593,7 @@ int mqtt_helper_deinit(void)
 AZ_MQTT_STATIC void mqtt_helper_poll_loop(void)
 {
 	int ret;
-	struct pollfd fds[1];
+	struct pollfd fds[1] = {0};
 
 	LOG_DBG("Waiting for connection_poll_sem");
 	k_sem_take(&connection_poll_sem, K_FOREVER);
@@ -593,9 +605,12 @@ AZ_MQTT_STATIC void mqtt_helper_poll_loop(void)
 	LOG_DBG("Starting to poll on socket, fd: %d", fds[0].fd);
 
 	while (true) {
-		if (mqtt_state_verify(MQTT_STATE_DISCONNECTING)) {
-			LOG_DBG("Disconnect has been requested, ending poll loop");
+		if (!mqtt_state_verify(MQTT_STATE_CONNECTING) &&
+		    !mqtt_state_verify(MQTT_STATE_CONNECTED)) {
+			LOG_DBG("Disconnected on MQTT level, ending poll loop");
 			break;
+		} else {
+			LOG_DBG("Polling on socket fd: %d", fds[0].fd);
 		}
 
 		ret = poll(fds, ARRAY_SIZE(fds), mqtt_keepalive_time_left(&mqtt_client));
@@ -622,6 +637,7 @@ AZ_MQTT_STATIC void mqtt_helper_poll_loop(void)
 			if (ret) {
 				LOG_ERR("Cloud MQTT input error: %d", ret);
 				if (ret == -ENOTCONN) {
+					(void)mqtt_abort(&mqtt_client);
 					break;
 				}
 			}
@@ -651,24 +667,25 @@ AZ_MQTT_STATIC void mqtt_helper_poll_loop(void)
 				LOG_ERR("The socket was unexpectedly closed");
 			}
 
+			(void)mqtt_abort(&mqtt_client);
+
 			break;
 		}
 
 		if ((fds[0].revents & POLLHUP) == POLLHUP) {
 			LOG_ERR("Socket error: POLLHUP");
 			LOG_ERR("Connection was unexpectedly closed");
+			(void)mqtt_abort(&mqtt_client);
 			break;
 		}
 
 		if ((fds[0].revents & POLLERR) == POLLERR) {
 			LOG_ERR("Socket error: POLLERR");
 			LOG_ERR("Connection was unexpectedly closed");
+			(void)mqtt_abort(&mqtt_client);
 			break;
 		}
 	}
-
-	/* Always revert to the initialization state if the socket has been closed. */
-	mqtt_state_set(MQTT_STATE_DISCONNECTED);
 }
 
 static void mqtt_helper_run(void)

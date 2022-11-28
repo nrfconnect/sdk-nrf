@@ -517,7 +517,7 @@ void test_mqtt_helper_deinit_when_connected(void)
 	TEST_ASSERT_EQUAL(-EOPNOTSUPP, mqtt_helper_deinit());
 }
 
-/* Test that the polling stops and state is set to _DISCONNECTED when the
+/* Test that the polling stops and state is left unchanged when the
  * library has already initiated disconnection.
  * It's expected that no socket or MQTT APIs are called.
  */
@@ -527,10 +527,10 @@ void test_mqtt_helper_poll_loop_disconnecting(void)
 
 	k_sem_give(&connection_poll_sem);
 	mqtt_helper_poll_loop();
-	TEST_ASSERT_EQUAL(MQTT_STATE_DISCONNECTED, mqtt_state_get());
+	TEST_ASSERT_EQUAL(MQTT_STATE_DISCONNECTING, mqtt_state_get());
 }
 
-/* The test verifies that mqtt_live() is called whn poll() returns 0. */
+/* The test verifies that mqtt_live() is called when poll() returns 0. */
 void test_mqtt_helper_poll_loop_timeout(void)
 {
 	/* Let poll() return 0 first and then -1 on subsequent call to end the test. */
@@ -542,7 +542,6 @@ void test_mqtt_helper_poll_loop_timeout(void)
 
 	k_sem_give(&connection_poll_sem);
 	mqtt_helper_poll_loop();
-	TEST_ASSERT_EQUAL(MQTT_STATE_DISCONNECTED, mqtt_state_get());
 }
 
 /* The test verifies that mqtt_helper_poll_loop sets the fd's events
@@ -558,7 +557,6 @@ void test_mqtt_helper_poll_loop_pollin(void)
 
 	k_sem_give(&connection_poll_sem);
 	mqtt_helper_poll_loop();
-	TEST_ASSERT_EQUAL(MQTT_STATE_DISCONNECTED, mqtt_state_get());
 }
 
 /* The test verifies that mqtt_helper_poll_loop sets the fd's events
@@ -567,12 +565,12 @@ void test_mqtt_helper_poll_loop_pollin(void)
 void test_mqtt_helper_poll_loop_pollnval(void)
 {
 	__cmock_poll_Stub(poll_stub_pollnval);
+	__cmock_mqtt_abort_ExpectAndReturn(&mqtt_client, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
 	k_sem_give(&connection_poll_sem);
 	mqtt_helper_poll_loop();
-	TEST_ASSERT_EQUAL(MQTT_STATE_DISCONNECTED, mqtt_state_get());
 }
 
 /* The test verifies that mqtt_helper_poll_loop sets the fd's events
@@ -581,12 +579,12 @@ void test_mqtt_helper_poll_loop_pollnval(void)
 void test_mqtt_helper_poll_loop_pollhup(void)
 {
 	__cmock_poll_Stub(poll_stub_pollhup);
+	__cmock_mqtt_abort_ExpectAndReturn(&mqtt_client, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
 	k_sem_give(&connection_poll_sem);
 	mqtt_helper_poll_loop();
-	TEST_ASSERT_EQUAL(MQTT_STATE_DISCONNECTED, mqtt_state_get());
 }
 
 /* The test verifies that mqtt_helper_poll_loop sets the fd's events
@@ -595,12 +593,12 @@ void test_mqtt_helper_poll_loop_pollhup(void)
 void test_mqtt_helper_poll_loop_pollerr(void)
 {
 	__cmock_poll_Stub(poll_stub_pollerr);
+	__cmock_mqtt_abort_ExpectAndReturn(&mqtt_client, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
 	k_sem_give(&connection_poll_sem);
 	mqtt_helper_poll_loop();
-	TEST_ASSERT_EQUAL(MQTT_STATE_DISCONNECTED, mqtt_state_get());
 }
 
 void main(void)
