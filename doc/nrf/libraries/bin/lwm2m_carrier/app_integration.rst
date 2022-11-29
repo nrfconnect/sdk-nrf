@@ -73,7 +73,7 @@ Following are some of the general Kconfig options that you can configure:
 
   * This configuration allows the LwM2M carrier library to use the bootstrap information stored on the SIM card.
     The configuration in the SIM will take precedence over any other configuration.
-    For example, if a bootstrap server URI is fetched from the SIM, the configuration set by the :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP` Kconfig option is ignored.
+    For example, if a bootstrap server URI is fetched from the SIM, the configuration set by the :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER` Kconfig option is ignored.
 
 * :kconfig:option:`CONFIG_LWM2M_CARRIER_SESSION_IDLE_TIMEOUT`:
 
@@ -103,10 +103,10 @@ Following are some of the general Kconfig options that you can configure:
   * The default value is IPV4V6.
   * If :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` is not set, this configuration is ignored.
 
-* :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`, :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`, :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON`, :kconfig:option:`CONFIG_LWM2M_CARRIER_ATT` , :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS`.
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`, :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON`, :kconfig:option:`CONFIG_LWM2M_CARRIER_ATT` , :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS`.
 
-  * These configurations allows you to choose the networks in which the carrier library will apply.
-  * For example, If you are deploing a product in several networks but only need to enable the carrier library within Verizon, you must set :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON` to ``y`` and all the others to ``n``.
+  * These configurations allow you to choose the networks in which the carrier library will apply.
+  * For example, If you are deploying a product in several networks but only need to enable the carrier library within Verizon, you must set :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON` to ``y`` and all the others to ``n``.
   * If only one carrier is selected, then the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` and :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` will be used for this carrier.
 
     * This will typically have to be done while you are certifying your product, to be able to connect to the carriers certification servers, since they will require a URI different from the default live servers.
@@ -118,9 +118,9 @@ Following are some of the general Kconfig options that you can configure:
 
   * The :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE` Kconfig option sets the LG U+ service code, which is needed to identify your device in the LG U+ device management.
 
-* :kconfig:option:`LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER`:
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER`:
 
-  * This configurations lets you choose between using the nRF9160 SoC 2DID Serial Number, or the Device IMEI as a Serial Number when connecting to the LG U+ device management server.
+  * This configuration lets you choose between using the nRF9160 SoC 2DID Serial Number, or the device IMEI as a serial number when connecting to the LG U+ device management server.
 
   .. note::
      Application DFU is needed to enable LG U+ functionality.
@@ -132,7 +132,7 @@ Following are some of the server Kconfig options that you can configure:
 
 The server settings can put the LwM2M carrier library either in the normal mode where it connects to the applicable carriers, or in the generic mode where it can connect to any bootstrap server.
 
-* :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP`:
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER`:
 
   * This configuration specifies if the custom LwM2M server is an LwM2M Bootstrap Server.
 
@@ -147,14 +147,14 @@ The server settings can put the LwM2M carrier library either in the normal mode 
   * This configuration provides the library with a security tag containing a PSK.
   * This configuration should normally be left empty (0) unless stated by the operator, or when connecting to a custom URI.
     In this case, the library will automatically apply the correct PSK for the different carrier device management.
-  * The :ref:`sample <lwm2m_carrier>` allows you to set a PSK that is written to a modem security tag using the :kconfig:option:`CONFIG_CARRIER_APP_PSK` and :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` Kconfig options.
+  * The :ref:`sample <lwm2m_carrier>` allows you to set a PSK that is written to a modem security tag using the :ref:`CONFIG_CARRIER_APP_PSK <CONFIG_CARRIER_APP_PSK>` and :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` Kconfig options.
     This is convenient for developing and debugging but must be avoided in the final product.
     Instead, see :ref:`modem_key_mgmt` or :ref:`at_client_sample` sample for `provisioning a PSK <Managing credentials_>`_.
 
 * :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME`:
 
   * This configuration specifies the lifetime of the custom LwM2M server.
-  * This configuration is ignored if :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP` is set.
+  * This configuration is ignored if :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER` is set.
 
 *  :kconfig:option:`LWM2M_SERVER_BINDING_CHOICE`.
 
@@ -202,12 +202,14 @@ Following are the various LwM2M carrier library events that are also listed in :
 * :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_DOWN`:
 
   * This event indicates that the device must disconnect to the LTE network.
-  * It occurs during the bootstrapping process and FOTA. It can also be be triggered when the application calls :c:func:`lwm2m_carrier_request`.
+  * It occurs during the bootstrapping process and FOTA.
+    It can also be triggered when the application calls :c:func:`lwm2m_carrier_request`.
 
 * :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_UP`:
 
   * This event indicates that the device must connect from the LTE network.
-  * It occur during the bootstrapping process, startup and FOTA. It can also be be triggered when the application calls :c:func:`lwm2m_carrier_request`.
+  * It occurs during the bootstrapping process, startup, and FOTA.
+    It can also be triggered when the application calls :c:func:`lwm2m_carrier_request`.
 
 * :c:macro:`LWM2M_CARRIER_EVENT_BOOTSTRAPPED`:
 

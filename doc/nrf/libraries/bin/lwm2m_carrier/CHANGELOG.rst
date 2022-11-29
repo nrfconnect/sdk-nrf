@@ -27,10 +27,10 @@ See :ref:`lwm2m_lib_size` for an explanation of the library size in different sc
 +-------------------------+---------------+------------+
 |                         | Flash (Bytes) | RAM (Bytes)|
 +-------------------------+---------------+------------+
-| Library size            | 64044         | 10687      |
+| Library size            | 73482         | 15960      |
 | (binary)                |               |            |
 +-------------------------+---------------+------------+
-| Library size            | 94048         | 40176      |
+| Library size            | 94644         | 40192      |
 | (reference application) |               |            |
 +-------------------------+---------------+------------+
 
@@ -69,20 +69,20 @@ Changes
   * Added a new error event type :c:macro:`LWM2M_CARRIER_ERROR_RUN`.
     This event is returned if the configuration provided to :c:func:`lwm2m_carrier_run` is invalid.
 
-* Removed :c:macro:`certification_mode` from the configuration parameters of :c:macro:`lwm2m_carrier_config_t`.
+* Removed ``certification_mode`` from the configuration parameters of :c:macro:`lwm2m_carrier_config_t`.
 * Removed the ``CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE`` Kconfig.
 
   * The LwM2M carrier library always connects to the correct production (live) server (if in an applicable network).
   * To connect to a certification (test) server, you must enter the appropriate URI using :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI`.
 
-* Removed :c:macro:`psk` from the configuration parameters of :c:macro:`lwm2m_carrier_config_t`.
+* Removed ``psk`` from the configuration parameters of :c:macro:`lwm2m_carrier_config_t`.
 * Removed the ``CONFIG_LWM2M_CARRIER_CUSTOM_PSK`` Kconfig.
-* Added :c:macro:`server_sec_tag` to the configuration :c:macro:`lwm2m_carrier_config_t`.
+* Added ``server_sec_tag`` to the configuration :c:macro:`lwm2m_carrier_config_t`.
 * Added the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` Kconfig option.
 
   * The LwM2M carrier library no longer uses PSK as a configuration parameter.
     Instead, you can provide a ``sec_tag`` (containing a PSK).
-  * The :ref:`lwm2m_carrier` sample now contains a Kconfig option :kconfig:option:`CONFIG_CARRIER_APP_PSK`, which will be written to the security tag provided by :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG`.
+  * The :ref:`lwm2m_carrier` sample now contains a Kconfig option :ref:`CONFIG_CARRIER_APP_PSK <CONFIG_CARRIER_APP_PSK>`, which will be written to the security tag provided by :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG`.
     This was added for convenience during development but must not be used for production.
   * See :ref:`modem_key_mgmt` for more information about using security tags, and :ref:`lwm2m_carrier_provisioning` for information on provisioning them for the LwM2M carrier library.
 
@@ -93,14 +93,14 @@ Changes
 
 * Added the Kconfig option :kconfig:option:`CONFIG_LWM2M_CARRIER_PDN_TYPE`.
 
-  * The new :c:macro:`pdn_type` parameter in :c:macro:`lwm2m_carrier_config_t` is used to select the PDN type of the :c:macro:`apn` parameter.
+  * The new ``pdn_type`` parameter in :c:macro:`lwm2m_carrier_config_t` is used to select the PDN type of the ``apn`` parameter.
 
-* Added the Kconfig option :kconfig:option:`LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER`.
+* Added the Kconfig option :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER`.
 
   * This configuration lets you choose between using the nRF9160 SoC 2DID Serial Number, or the Device IMEI as a Serial Number when connecting to the LG U+ device management server.
   * Now that there are several LG U+ options, they have been grouped in :c:struct:`lwm2m_carrier_lg_uplus_config_t` inside :c:struct:`lwm2m_carrier_config_t`.
 
-* Added the :c:macro:`carriers_enabled` parameter to :c:macro:`lwm2m_carrier_config_t`.
+* Added the ``carriers_enabled`` parameter to :c:macro:`lwm2m_carrier_config_t`.
 
   * This parameter allows you to enable or disable the Carrier Library based on which Subscriber ID is used in the current network.
 
@@ -109,22 +109,22 @@ Changes
     * :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`
     * :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON`
     * :kconfig:option:`CONFIG_LWM2M_CARRIER_ATT`
-    * :kconfig:option:`CONFIG_LWM2M_CARRIER_TMO`
+    * :kconfig:option:`CONFIG_LWM2M_CARRIER_T_MOBILE`
     * :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS`
 
-* Added the :c:macro:`server_binding` parameter to :c:macro:`lwm2m_carrier_config_t`.
+* Added the ``server_binding`` parameter to :c:macro:`lwm2m_carrier_config_t`.
 
   * This optional value can be left empty to use the default binding (UDP).
-  * Added the new Kconfig :kconfig:option:`LWM2M_SERVER_BINDING_CHOICE`.
-  * The binding can be either 'U' (UDP) or 'N' (Non-IP).
+  * Added the new Kconfig :kconfig:option:`CONFIG_LWM2M_SERVER_BINDING_CHOICE`.
+  * The binding can be either ``U`` (UDP) or ``N`` (Non-IP).
 
-* Added the function :c:func:`lwm2m_carrier_request`
+* Added the function :c:func:`lwm2m_carrier_request`.
 
-  * This function allows the application to request that the carrier library takes a certain action.
+  * This function allows the application to request that the carrier library takes a certain action using the following definitions:
 
-     * LWM2M_CARRIER_REQUEST_REBOOT
-     * LWM2M_CARRIER_REQUEST_LINK_UP
-     * LWM2M_CARRIER_REQUEST_LINK_DOWN
+     * :c:macro:`LWM2M_CARRIER_REQUEST_REBOOT`
+     * :c:macro:`LWM2M_CARRIER_REQUEST_LINK_UP`
+     * :c:macro:`LWM2M_CARRIER_REQUEST_LINK_DOWN`
 
   * This function allows the LwM2M carrier library to disconnect gracefully and it is mandatory to use when the Subscriber ID is LG U+.
 
