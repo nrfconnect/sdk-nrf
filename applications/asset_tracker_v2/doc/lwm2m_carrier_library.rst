@@ -3,20 +3,6 @@
 Using the carrier library
 #########################
 
-The application supports the |NCS| :ref:`liblwm2m_carrier_readme` library that you can use to connect to the operator's device management platform.
-See the library's documentation for more information and configuration options.
+.. |application_sample_name| replace:: Asset Tracker v2 application
 
-To enable the LwM2M carrier library, add the parameter ``-DOVERLAY_CONFIG=overlay-carrier.conf`` to your build command.
-
-The CA root certificates that are needed for modem FOTA are not provisioned in the Asset Tracker v2 application.
-You can flash the :ref:`lwm2m_carrier` sample to write the certificates to modem before flashing the Asset Tracker v2 application, or use the :ref:`at_client_sample` sample as explained in :ref:`Preparing the nRF9160: LwM2M Client sample for production <lwm2m_client_provisioning>`.
-It is also possible to modify the Asset Tracker v2 project itself to include the certificate provisioning, as demonstrated in the :ref:`lwm2m_carrier` sample.
-
-.. code-block:: c
-
-   int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
-   {
-           switch (event->type) {
-           case LWM2M_CARRIER_EVENT_INIT:
-                   carrier_cert_provision();
-           ...
+.. include:: /includes/lwm2m_carrier_library.txt

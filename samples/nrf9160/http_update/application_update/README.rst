@@ -35,6 +35,13 @@ The sample updates between the two images, either from *version 1* to *version 2
 By default, the images are saved to the `MCUboot`_ second-stage bootloader secondary slot.
 To be used by MCUboot, the downloaded images must be signed using imgtool.
 
+Using the LwM2M carrier library
+===============================
+
+.. |application_sample_name| replace:: HTTP application update sample
+
+.. include:: /includes/lwm2m_carrier_library.txt
+
 Configuration
 *************
 
