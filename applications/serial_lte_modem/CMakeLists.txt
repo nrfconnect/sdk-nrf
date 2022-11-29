@@ -32,5 +32,6 @@ add_subdirectory_ifdef(CONFIG_SLM_HTTPC src/http_c)
 add_subdirectory_ifdef(CONFIG_SLM_TWI src/twi)
 add_subdirectory_ifdef(CONFIG_SLM_GPIO src/gpio)
 add_subdirectory_ifdef(CONFIG_SLM_NRF52_DFU src/dfu)
+add_subdirectory_ifdef(CONFIG_SLM_CARRIER src/lwm2m_carrier)
 
 zephyr_include_directories(src)

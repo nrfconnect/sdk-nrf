@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SLM_CARRIER
+	bool "LwM2M Carrier support in SLM"
+	default n
+	depends on LWM2M_CARRIER
+
+if SLM_CARRIER
+
+config SLM_CARRIER_APP_DATA_CONTAINER_BUFFER_LEN
+	int "Size of the buffer for sending application data"
+	default 512
+	help
+	  Specifies maximum application data size to be sent through the
+	  "UL data" resource of the App Data Container object.
+
+endif # SLM_CARRIER

@@ -152,6 +152,44 @@ int util_string_get(const struct at_param_list *list, size_t index, char *value,
 }
 
 /**
+ * @brief Get float value from string value input in AT command.
+ */
+int util_string_to_float_get(const struct at_param_list *list, size_t index, float *value)
+{
+	int ret;
+	char str[32];
+	size_t len = sizeof(str);
+
+	ret = util_string_get(list, index, str, &len);
+	if (ret) {
+		return ret;
+	}
+
+	*value = strtof(str, NULL);
+
+	return 0;
+}
+
+/**
+ * @brief Get double value from string value input in AT command.
+ */
+int util_string_to_double_get(const struct at_param_list *list, size_t index, double *value)
+{
+	int ret;
+	char str[32];
+	size_t len = sizeof(str);
+
+	ret = util_string_get(list, index, str, &len);
+	if (ret) {
+		return ret;
+	}
+
+	*value = strtod(str, NULL);
+
+	return 0;
+}
+
+/**
  * @brief use AT command to get IPv4 and/or IPv6 address for specified PDN
  */
 void util_get_ip_addr(int cid, char *addr4, char *addr6)

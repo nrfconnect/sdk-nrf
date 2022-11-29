@@ -47,3 +47,4 @@ The modem-specific AT commands are documented in the `nRF91 AT Commands Referenc
    HTTPC_AT_commands
    TWI_AT_commands
    GPIO_AT_commands
+   CARRIER_AT_commands
