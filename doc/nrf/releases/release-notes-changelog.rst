@@ -232,6 +232,11 @@ nRF9160 samples
     * The sensor module has been simplified.
       It does not use application events, filtering, or configurable periods anymore.
 
+* :ref:`http_application_update_sample`:
+
+  * Added:
+
+    * Support for the :ref:`liblwm2m_carrier_readme` library.
 
 * Removed:
 
