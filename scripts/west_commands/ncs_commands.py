@@ -11,6 +11,7 @@ from pathlib import Path
 import subprocess
 import sys
 from textwrap import dedent
+import ruamel.yaml
 
 from west import log
 from west.commands import WestCommand
@@ -584,27 +585,61 @@ class NcsChange(NcsWestCommand):
         m.indent(mapping=2, sequence=4, offset=2)
         m.preserve_quotes = True
 
-        with open(manifest.path, "r") as fh:
-            x = m.load(fh.read())
-            project_found = False
-            for p in x["manifest"]["projects"]:
-                if p["name"] == args.name:
-                    project_found = True
-                    if args.revision:
-                        self.inf(f'Revision of project {p["name"]} changed:\n'
-                                 f'  Old: {p["revision"]}\n'
-                                 f'  New: {args.revision}')
-                        p["revision"] = args.revision
-                    if args.path:
-                        self.inf(f'Path of project {p["name"]} changed:\n'
-                                 f'  Old: {p["path"]}\n'
-                                 f'  New: {args.path}')
-                        p["path"] = args.path
-                    if args.url:
-                        self.inf(f'Url of project {p["name"]} changed:\n'
-                                 f'  Old: {p["url"]}\n'
-                                 f'  New: {args.url}')
-                        p["url"] = args.url
+
+        try:
+            projects = self.manifest.get_projects(
+                args.name, only_cloned=True)
+        except ValueError as ve:
+            # West guarantees that get_projects()'s ValueError
+            # has exactly two values in args.
+            unknown, uncloned = ve.args
+            if unknown:
+                log.die('unknown projects:', ', '.join(unknown))
+            if uncloned:
+                log.die('uncloned downstream projects:',
+                        ', '.join(u.name for u in uncloned) + '\n' +
+                        'Run "west update", then retry.')
+
+
+        # z_project = self.manifest.get_projects(['zephyr'],
+        #                                        allow_paths=False,
+        #                                        only_cloned=True)[0]
+        # cp = z_project.git(f'show {self.zephyr_rev}:west.yml',
+        #                    capture_stdout=True, check=True)
+        # z_west_yml = cp.stdout.decode('utf-8')
+
+        # try:
+        #     ret = Manifest.from_data(source_data=yaml.safe_load(z_west_yml),
+        #                              import_flags=ImportFlag.IGNORE)
+        #     if WEST_V0_13_0_OR_LATER:
+        #         for project in ret.projects:
+        #             project.topdir = self.manifest.topdir
+        #     return ret
+        # except MalformedManifest:
+        #     log.die(f"can't load zephyr manifest; file {z_west_yml} "
+        #             "is malformed")
+
+        # with open(manifest.path, "r") as fh:
+        #     x = m.load(fh.read())
+        #     project_found = False
+        #     for p in x["manifest"]["projects"]:
+        #         if p["name"] == args.name:
+        #             project_found = True
+        #             if args.revision:
+        #                 self.inf(f'Revision of project {p["name"]} changed:\n'
+        #                          f'  Old: {p["revision"]}\n'
+        #                          f'  New: {args.revision}')
+        #                 p["revision"] = args.revision
+        #             if args.path:
+        #                 self.inf(f'Path of project {p["name"]} changed:\n'
+        #                          f'  Old: {p["path"]}\n'
+        #                          f'  New: {args.path}')
+        #                 p["path"] = args.path
+        #             if args.url:
+        #                 self.inf(f'Url of project {p["name"]} changed:\n'
+        #                          f'  Old: {p["url"]}\n'
+        #                          f'  New: {args.url}')
+        #                 p["url"] = args.url
 
             if not project_found:
                 self.wrn(f'Project {args.name} not found')
