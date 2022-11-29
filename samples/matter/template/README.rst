@@ -18,6 +18,9 @@ See the :ref:`ug_matter_creating_accessory` page for an overview of the process 
 Requirements
 ************
 
+.. note::
+    |matter_wifi_revb_ncs220_test_note|
+
 The sample supports the following development kits:
 
 .. table-from-sample-yaml::
