@@ -53,6 +53,8 @@ Disable the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT` Kconf
 
 If you are using the Firmware Update object and require downloading of firmware images from TLS enabled services like HTTPS, configure :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG` to specify the security tag that has root certificate for the target server.
 
+.. _lwm2m_client_utils_additional_confg:
+
 Additional configuration
 ========================
 
