@@ -277,7 +277,7 @@ Libraries for networking
 
 * :ref:`lib_fota_download` library:
 
-  * Fixed a bug were the :c:func:`download_client_callback` function was continuing to read the offset value even if :c:func:`dfu_target_offset_get` returned an error.
+  * Fixed a bug where the :c:func:`download_client_callback` function was continuing to read the offset value even if :c:func:`dfu_target_offset_get` returned an error.
   * Fixed a bug where the cleanup of the downloading state was not happening when an error event was raised.
 
 * :ref:`lib_nrf_cloud` library:
@@ -287,6 +287,10 @@ Libraries for networking
     * The MQTT disconnect event is now handled by the FOTA module, allowing for updates to be completed while disconnected and reported properly when reconnected.
     * GCI search results are now encoded in location requests.
     * The neighbor cell's time difference value is now encoded in location requests.
+
+* :ref:`lib_nrf_cloud` library:
+
+  * Fixed a bug where the same buffer was incorrectly shared between caching a P-GPS prediction and loading a new one, when external flash was used.
 
 Libraries for NFC
 -----------------

@@ -44,7 +44,8 @@ static int gps_leap_seconds = GPS_TO_UTC_LEAP_SECONDS;
 static struct gps_location saved_location;
 static struct nrf_cloud_pgps_header saved_header;
 
-static K_SEM_DEFINE(pgps_active, 1, 1);
+static K_SEM_DEFINE(dl_active, 1, 1);
+
 static struct download_client dlc;
 static int socket_retries_left;
 static npgps_buffer_handler_t buffer_handler;
@@ -98,24 +99,22 @@ static int settings_set(const char *key, size_t len_rd,
 	return -ENOTSUP;
 }
 
-/* Only allow one download; fail if one is already underway */
-int npgps_lock(void)
+int npgps_download_lock(void)
 {
-	int err = k_sem_take(&pgps_active, K_NO_WAIT);
+	int err = k_sem_take(&dl_active, K_NO_WAIT);
 
 	if (!err) {
-		LOG_DBG("pgps_active LOCKED");
+		LOG_DBG("dl_active locked");
 	} else {
-		LOG_ERR("Unable to lock pgps_active: %d", err);
+		LOG_ERR("Unable to lock dl_active: %d", err);
 	}
 	return err;
 }
 
-/* Download is over; allow another download */
-void npgps_unlock(void)
+void npgps_download_unlock(void)
 {
-	k_sem_give(&pgps_active);
-	LOG_DBG("pgps_active UNLOCKED");
+	k_sem_give(&dl_active);
+	LOG_DBG("dl_active unlocked");
 }
 
 int npgps_save_header(struct nrf_cloud_pgps_header *header)
