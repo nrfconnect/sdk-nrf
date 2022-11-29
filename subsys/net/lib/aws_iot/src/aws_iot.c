@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Nordic Semiconductor ASA
+ * Copyright (c) 2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -21,14 +21,23 @@
 
 LOG_MODULE_REGISTER(aws_iot, CONFIG_AWS_IOT_LOG_LEVEL);
 
+/* Check if the static host name is set and if its buffer is larger enough if
+ * static host name is used
+ */
+#if !defined(CONFIG_AWS_IOT_BROKER_HOST_NAME_APP)
 BUILD_ASSERT(sizeof(CONFIG_AWS_IOT_BROKER_HOST_NAME) > 1,
 	    "AWS IoT hostname not set");
+BUILD_ASSERT(CONFIG_AWS_IOT_BROKER_HOST_NAME_MAX_LEN >=
+	     sizeof(CONFIG_AWS_IOT_BROKER_HOST_NAME) - 1,
+	     "AWS IoT host name static buffer too small "
+	     "Increase CONFIG_AWS_IOT_BROKER_HOST_NAME_MAX_LEN");
+#endif /* !defined(CONFIG_AWS_IOT_BROKER_HOST_NAME_APP) */
 
 /* Check that the client ID buffer is large enough if a static ID is used. */
 #if !defined(CONFIG_AWS_IOT_CLIENT_ID_APP)
 BUILD_ASSERT(CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN >=
 	     sizeof(CONFIG_AWS_IOT_CLIENT_ID_STATIC) - 1,
-	     "AWS IoT client ID static buffer to small "
+	     "AWS IoT client ID static buffer too small "
 	     "Increase CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN");
 #endif /* !defined(CONFIG_AWS_IOT_CLIENT_ID_APP */
 
@@ -102,6 +111,8 @@ static char delete_rejected_topic[DELETE_REJECTED_TOPIC_LEN + 1];
 
 /* Empty string used to request the AWS IoT shadow document. */
 #define AWS_IOT_SHADOW_REQUEST_STRING ""
+
+static char aws_host_name_buf[CONFIG_AWS_IOT_BROKER_HOST_NAME_MAX_LEN + 1];
 
 static struct aws_iot_app_topic_data app_topic_data;
 static struct mqtt_client client;
@@ -215,6 +226,22 @@ static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 	aws_iot_notify_event(&aws_iot_evt);
 }
 #endif
+
+static int aws_iot_set_host_name(char *const host_name, size_t host_name_len)
+{
+	if (host_name == NULL) {
+		return -EINVAL;
+	}
+
+	if (host_name_len >= sizeof(aws_host_name_buf)) {
+		return -ENOMEM;
+	}
+
+	memcpy(aws_host_name_buf, host_name, host_name_len);
+	aws_host_name_buf[host_name_len] = '\0';
+
+	return 0;
+}
 
 static int aws_iot_topics_populate(char *const id, size_t id_len)
 {
@@ -739,8 +766,7 @@ static int broker_init(void)
 		.ai_socktype = SOCK_STREAM
 	};
 
-	err = getaddrinfo(CONFIG_AWS_IOT_BROKER_HOST_NAME,
-			  NULL, &hints, &result);
+	err = getaddrinfo(aws_host_name_buf, NULL, &hints, &result);
 	if (err) {
 		LOG_ERR("getaddrinfo, error %d", err);
 		return -ECHILD;
@@ -847,7 +873,7 @@ static int client_broker_init(struct mqtt_client *const client)
 	tls_cfg->cipher_list		= NULL;
 	tls_cfg->sec_tag_count		= ARRAY_SIZE(sec_tag_list);
 	tls_cfg->sec_tag_list		= sec_tag_list;
-	tls_cfg->hostname		= CONFIG_AWS_IOT_BROKER_HOST_NAME;
+	tls_cfg->hostname		= aws_host_name_buf;
 	tls_cfg->session_cache = TLS_SESSION_CACHE_DISABLED;
 
 #if defined(CONFIG_AWS_IOT_PROVISION_CERTIFICATES)
@@ -1061,8 +1087,9 @@ int aws_iot_init(const struct aws_iot_config *const config,
 {
 	int err;
 
-	if (IS_ENABLED(CONFIG_AWS_IOT_CLIENT_ID_APP) &&
-		config == NULL) {
+	if ((IS_ENABLED(CONFIG_AWS_IOT_CLIENT_ID_APP) ||
+	     IS_ENABLED(CONFIG_AWS_IOT_BROKER_HOST_NAME_APP)) &&
+	     config == NULL) {
 		LOG_ERR("config is NULL");
 		return -EINVAL;
 	}
@@ -1079,6 +1106,18 @@ int aws_iot_init(const struct aws_iot_config *const config,
 		return -ENODATA;
 	}
 
+	if (IS_ENABLED(CONFIG_AWS_IOT_BROKER_HOST_NAME_APP) &&
+	    config->host_name_len >= CONFIG_AWS_IOT_BROKER_HOST_NAME_MAX_LEN) {
+		LOG_ERR("AWS host name string too long");
+		return -EMSGSIZE;
+	}
+
+	if (IS_ENABLED(CONFIG_AWS_IOT_BROKER_HOST_NAME_APP) &&
+	    config->host_name == NULL) {
+		LOG_ERR("AWS host name not set in the application");
+		return -ENODATA;
+	}
+
 	if (IS_ENABLED(CONFIG_AWS_IOT_CLIENT_ID_APP)) {
 		err = aws_iot_topics_populate(config->client_id, config->client_id_len);
 	} else {
@@ -1087,6 +1126,17 @@ int aws_iot_init(const struct aws_iot_config *const config,
 
 	if (err) {
 		LOG_ERR("aws_topics_populate, error: %d", err);
+		return err;
+	}
+
+#if defined(CONFIG_AWS_IOT_BROKER_HOST_NAME_APP)
+	err = aws_iot_set_host_name(config->host_name, config->host_name_len);
+#else
+	err = aws_iot_set_host_name(CONFIG_AWS_IOT_BROKER_HOST_NAME,
+				    strlen(CONFIG_AWS_IOT_BROKER_HOST_NAME));
+#endif /* CONFIG_AWS_IOT_BROKER_HOST_NAME_APP */
+	if (err) {
+		LOG_ERR("aws_iot_set_host_name, error: %d", err);
 		return err;
 	}
 

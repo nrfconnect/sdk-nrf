@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -187,6 +187,13 @@ struct aws_iot_config {
 	char *client_id;
 	/** Length of client_id string. */
 	size_t client_id_len;
+	/** AWS IoT endpoint host name for broker connection, used when
+	 *  @kconfig{CONFIG_AWS_IOT_BROKER_HOST_NAME_APP} is set. If not the
+	 *  static @kconfig{AWS_IOT_BROKER_HOST_NAME} is used.
+	 */
+	char *host_name;
+	/** Length of host_name string. */
+	size_t host_name_len;
 };
 
 /** @brief Initialize the module.
