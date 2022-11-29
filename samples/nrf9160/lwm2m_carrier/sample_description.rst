@@ -70,8 +70,8 @@ a. Open :file:`prj.conf` (see :ref:`lwm2m_carrier_config_files` for more informa
    * For `Coiote Device Management`_ - ``coaps://eu.iot.avsystem.cloud:5684`` (`Coiote Device Management server`_).
    * For `Leshan Bootstrap Server Demo web UI <public Leshan Bootstrap Server Demo_>`_ - ``coaps://leshan.eclipseprojects.io:5784``
    * For Coiote bootstrap server - ``coaps://eu.iot.avsystem.cloud:5694``
-#. Set :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP` if bootstrap is used. If bootstrap is not used, set :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME` to specify the lifetime of the LwM2M server.
-#. Set :kconfig:option:`CONFIG_CARRIER_APP_PSK` to the hexadecimal representation of the PSK used when registering the device with the server.
+#. Set :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER` if bootstrap is used. If bootstrap is not used, set :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME` to specify the lifetime of the LwM2M server.
+#. Set :ref:`CONFIG_CARRIER_APP_PSK <CONFIG_CARRIER_APP_PSK>` to the hexadecimal representation of the PSK used when registering the device with the server.
 #. Specify a :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` to store the PSK.
    Alternatively, you could only specify a security tag if a PSK is previously stored to the security tag as shown in :ref:`LwM2M client provisioning documentation <lwm2m_client_provisioning>`.
 
