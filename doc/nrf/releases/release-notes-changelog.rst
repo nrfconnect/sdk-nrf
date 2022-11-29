@@ -9,6 +9,10 @@ Changelog for |NCS| v2.1.99
    :local:
    :depth: 2
 
+.. note::
+
+   You are looking at the page for the patch release. For the latest version of the page that tracks updates on the ``main`` branch, see the `changelog on the main branch`_.
+
 The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
 
 .. note::
@@ -60,7 +64,7 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
 Matter
 ------
 
-* Updated the ZAP submodule revision to fix opening the ZAP files included in Matter samples in |NCS|.
+|no_changes_yet_note|
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
