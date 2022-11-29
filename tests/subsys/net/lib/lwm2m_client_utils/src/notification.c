@@ -4,12 +4,37 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
+#include <zephyr/init.h>
 #include <zephyr/ztest.h>
 #include <zephyr/fff.h>
 
 #include <net/lwm2m_client_utils_location.h>
 #include "stubs.h"
 
+static struct lte_lc_ncell cells[] = {
+	[0].earfcn = 12345,
+	[0].time_diff = 123,
+	[0].phys_cell_id = 12345,
+	[0].rsrp = -54,
+	[0].rsrq = -32,
+	[1].earfcn = 23456,
+	[1].time_diff = 233,
+	[1].phys_cell_id = 23456,
+	[1].rsrp = -43,
+	[1].rsrq = -21,
+	[2].earfcn = 34567,
+	[2].time_diff = 345,
+	[2].phys_cell_id = 34567,
+	[2].rsrp = -32,
+	[2].rsrq = -10,
+};
+
+static struct lte_lc_cells_info cell_info = {
+	.ncells_count = 3,
+	.neighbor_cells = cells,
+};
 
 static void setup(void)
 {
@@ -79,7 +104,9 @@ ZTEST(lwm2m_client_utils_lte_notification, test_tau_prewarning)
 ZTEST(lwm2m_client_utils_lte_notification, test_neighbor_cell_meas)
 {
 	int rc;
-	struct lte_lc_evt evt = {0};
+	struct lte_lc_evt evt = {
+		.cells_info = cell_info,
+	};
 
 	setup();
 
@@ -89,6 +116,6 @@ ZTEST(lwm2m_client_utils_lte_notification, test_neighbor_cell_meas)
 	evt.type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
 	handler(&evt);
 
-	zassert_equal(lwm2m_update_signal_meas_objects_fake.call_count, 1,
-		      "No call to lwm2m_update_signal_meas_objects()");
+	zassert_equal(lwm2m_engine_set_s32_fake.call_count, 15,
+		      "Cell info not updated, was %d", lwm2m_engine_set_s32_fake.call_count);
 }

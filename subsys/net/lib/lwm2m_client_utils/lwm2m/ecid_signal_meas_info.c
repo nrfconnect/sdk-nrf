@@ -236,4 +236,4 @@ static int lwm2m_signal_meas_info_init(const struct device *dev)
 	return 0;
 }
 
-SYS_INIT(lwm2m_signal_meas_info_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+SYS_INIT(lwm2m_signal_meas_info_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
