@@ -2784,10 +2784,11 @@ struct nrf_wifi_umac_event_new_scan_results {
 	unsigned long long beacon_ies_tsf;
 	unsigned short beacon_interval;
 	unsigned short capability;
-	struct nrf_wifi_ie ies;
-	struct nrf_wifi_ie beacon_ies;
 	struct nrf_wifi_signal signal;
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
+	unsigned int    ies_len;
+	unsigned int    beacon_ies_len;
+	unsigned char   ies[0];
 } __NRF_WIFI_PKD;
 
 /**
