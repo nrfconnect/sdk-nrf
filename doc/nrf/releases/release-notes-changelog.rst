@@ -195,6 +195,7 @@ nRF9160: Serial LTE modem
   * RFC1350 TFTP client, currently supporting only *READ REQUEST*.
   * AT command ``#XSHUTDOWN`` to put nRF9160 SiP to System Off mode.
   * Support of nRF Cloud C2D appId ``MODEM`` and ``DEVICE``.
+  * Support for the :ref:`liblwm2m_carrier_readme` library.
 
 * Updated:
 

@@ -257,6 +257,9 @@ The following configuration files are provided:
   You can include it by adding ``-DOVERLAY_CONFIG=overlay-secure_bootloader`` to your build command.
   See :ref:`cmake_options`.
 
+* :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support.
+  See :ref:`slm_carrier_library_support` for more information on how to connect to an operator's device management platform.
+
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for the nRF9160 DK.
   This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
 
@@ -501,6 +504,19 @@ If you have an nRF52 Series DK running a client application, you can also use th
 #. Send AT commands and observe the responses from the development kit.
 
    See :ref:`slm_testing` for typical test cases.
+
+.. _slm_carrier_library_support:
+
+Using the LwM2M carrier library
+===============================
+
+.. |application_sample_name| replace:: Serial LTE Modem application
+
+.. include:: /includes/lwm2m_carrier_library.txt
+
+The certificate provisioning can also be done directly in the Serial LTE Modem application by using the same AT commands as described for the :ref:`at_client_sample` sample.
+
+Enabling the LwM2M carrier library will disable this application's support for GNSS in order to have enough space in flash.
 
 Dependencies
 ************
