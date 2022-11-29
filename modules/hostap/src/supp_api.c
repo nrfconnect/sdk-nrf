@@ -108,25 +108,17 @@ static void supp_shell_connect_status(struct k_work *work)
 		goto out;
 	}
 
-	if (ctrl->requested_op == CONNECT) {
-		if (wpa_s->wpa_state != WPA_COMPLETED &&
-			   (ctrl->connection_timeout == SYS_FOREVER_MS ||
-			    seconds_counter++ <= ctrl->connection_timeout))
-		{
-			k_work_reschedule(&wpa_supp_status_work,
-				K_SECONDS(OP_STATUS_POLLING_INTERVAL));
-			k_mutex_unlock(&wpa_supplicant_mutex);
-			ctrl->status_thread_state = STATUS_THREAD_RUNNING;
-			return;
+	if (ctrl->requested_op == CONNECT && wpa_s->wpa_state != WPA_COMPLETED) {
+		if (ctrl->connection_timeout > 0 && seconds_counter++ > ctrl->connection_timeout) {
+			wpas_request_disconnection(wpa_s);
+			status = CONNECTION_FAILURE;
+			goto out;
 		}
 
-		if (seconds_counter > ctrl->connection_timeout){
-			if (wpa_s->wpa_state != WPA_COMPLETED){
-				wpas_request_disconnection(wpa_s);
-				status = CONNECTION_FAILURE;
-				goto out;
-			}
-		}
+		k_work_reschedule(&wpa_supp_status_work, K_SECONDS(OP_STATUS_POLLING_INTERVAL));
+		ctrl->status_thread_state = STATUS_THREAD_RUNNING;
+		k_mutex_unlock(&wpa_supplicant_mutex);
+		return;
 	}
 out:
 	if (ctrl->requested_op == CONNECT) {
