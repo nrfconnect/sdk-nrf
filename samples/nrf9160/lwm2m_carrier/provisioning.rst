@@ -51,15 +51,15 @@ Carrier configuration and testing
   Not all requirements are documented here.
   You must contact your carrier for more information as mentioned in the :ref:`lwm2m_certification` documentation.
 
-  * With a few exceptions, if you leave the :c:func:`config_init` function empty, it configures the carrier library to behave correctly in the operator network it is currently connected to.
+  * With a few exceptions, if you leave the :c:struct:`lwm2m_carrier_config_t` structure empty when calling :c:func:`lwm2m_carrier_run`, it configures the carrier library to behave correctly in the operator network it is currently connected to.
 
 * The settings required to test and certify your product with the carrier will be different from the settings needed for mass deployment.
 
-  * When :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` is not set (when :c:func:`config_init` is empty), the URI is predetermined to connect to the live device management server of the currently connected operator network.
+  * When :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` is not set (when :c:struct:`lwm2m_carrier_config_t` is empty), the URI is predetermined to connect to the live device management server of the currently connected operator network.
   * During certification process, the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` and :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` Kconfig options must be set accordingly to connect to the carrier's test (certification) servers instead of the live (production) servers.
     See :ref:`lwm2m_app_int` for more information on the required configurations.
   * During certification, only one carrier should be enabled using :c:macro:`carriers_enabled`.
-    For example, when connecting to the Verizon's test servers, :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON` must be set to ``y``, and the others must be set to ``n``.
+    For example, when connecting to the Verizon's test servers, :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON` must be set to ``y``, and the other Kconfig options must be explicitly set to ``n``, as they are enabled by default.
 
 LG U+ operator requirements
 ===========================
@@ -72,6 +72,6 @@ Following are the configurations are required for using the library with the LG 
 * :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE` must be set.
   This service code is reflected in the Model Number resource of the Device object.
   Contact the carrier to obtain the correct service code.
-* :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_SERIAL` can be changed depending on your product.
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER` can be changed depending on your product.
   Contact the carrier for more information.
 * :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` is not used when the subscriber ID is ``LG U+``.
