@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Nordic Semiconductor
+# Copyright (c) 2022 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -45,8 +45,12 @@ config AWS_IOT_STATIC_IPV4_ADDR
 config AWS_IOT_SEC_TAG
 	int "Security tag to use for AWS IoT connection"
 
+config AWS_IOT_BROKER_HOST_NAME_APP
+	bool "AWS IoT sever hostname provided by application run-time"
+
 config AWS_IOT_BROKER_HOST_NAME
 	string "AWS IoT server hostname"
+	depends on !AWS_IOT_BROKER_HOST_NAME_APP
 
 config AWS_IOT_PORT
 	int "AWS server port"
@@ -69,6 +73,10 @@ config AWS_IOT_IPV6
 config AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT
 	int "Amount of entries in the application subscription list"
 	default 0
+
+config AWS_IOT_BROKER_HOST_NAME_MAX_LEN
+	int "Maximum length of broker host name"
+	default 64
 
 config AWS_IOT_CLIENT_ID_MAX_LEN
 	int "Maximum length of cliend id"

@@ -90,6 +90,8 @@ Complete the following steps to set the required library options:
 
 1. In the `AWS IoT console`_, navigate to :guilabel:`IoT core` > :guilabel:`Settings`.
 #. Find the ``Device data endpoint`` address and set :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME` to this address string.
+   The address can also be provided at runtime by setting the :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_APP` option.
+   See :ref:`lib_set_aws_hostname` for more details.
 #. Set the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` to the name of the *Thing* created earlier in the process.
    This is not needed if the application sets the client ID at run time.
    If you still want to set a custom client ID, make sure that the :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_APP` is disabled and set the :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` option to your desired client ID.
@@ -118,6 +120,8 @@ Other options:
 * :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_APP`
 * :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC`
 * :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN`
+* :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_MAX_LEN`
+* :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_APP`
 
 
 .. note::
@@ -155,6 +159,15 @@ Setting client ID at run-time
 
 The AWS IoT library also supports passing in the client ID at run time.
 To enable this feature, set the ``client_id`` entry in the :c:struct:`aws_iot_config` structure that is passed in the :c:func:`aws_iot_init` function when initializing the library, and set the :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_APP` Kconfig option.
+
+.. _lib_set_aws_hostname:
+
+Setting the AWS host name at runtime
+====================================
+
+The AWS IoT library also supports passing the endpoint address at runtime by setting the :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_APP` option.
+If this option is set, the ``host_name`` and ``host_name_len`` must be set in the :c:struct:`aws_iot_config` structure before it is passed into the :c:func:`aws_iot_init` function.
+The length of your AWS host name (:kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`) must be shorter than the default value of :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_MAX_LEN`, for proper initialization of the library.
 
 AWS FOTA
 ========
