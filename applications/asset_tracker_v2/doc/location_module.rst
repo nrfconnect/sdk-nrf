@@ -7,7 +7,7 @@ Location module
    :local:
    :depth: 2
 
-The location module controls the positioning functionality of the nRF9160 including GNSS and cellular positioning.
+The location module controls the GNSS, cellular and Wi-Fi positioning functionality.
 It can be used to retrieve the location of the device in the form of events containing a position, velocity and time (PVT) structure.
 
 Features
@@ -18,13 +18,16 @@ This section documents the various features implemented by the module.
 Location control
 ================
 
-The module uses the :ref:`lib_location` library to communicate with the nRF9160 modem and control its GNSS and LTE neighbor cell measurement functionalities.
-A location request starts when the module receives an ``APP_EVT_DATA_GET`` event and the ``APP_DATA_LOCATION`` type is listed in the event's ``data_list`` member containing the data types that shall be sampled.
+The module uses the :ref:`lib_location` library to communicate with the nRF9160 modem and
+control its GNSS and LTE neighbor cell measurement functionalities as well as with the nRF7002 Wi-Fi positioning functionality.
+A location request starts when the module receives an ``APP_EVT_DATA_GET`` event and
+the ``APP_DATA_LOCATION`` type is listed in the event's ``data_list`` member containing the data types that shall be sampled.
 
 The default configuration for the location request is set as follows:
 
-* GNSS set as the first priority method and cellular positioning as the second priority.
-  Fallback mode is used, which means that if GNSS fix cannot be acquired, cellular positioning is tried.
+* GNSS, Wi-Fi and cellular positioning are set in priority order of the location methods.
+  Wi-Fi is omitted if it is not built into the application.
+  If GNSS fails, both Wi-Fi and cellular positioning are tried.
   Methods that should not be used can be configured by adding them into ``No Data List``.
   See :ref:`Real-time configurations <real_time_configs>` for more information.
 * Timeout, which can be configured as part of :ref:`Real-time configurations <real_time_configs>` with ``Location timeout``.
@@ -38,6 +41,7 @@ The location module receives configuration updates as payload in the following t
 The module sends the following events based on the outcome of the location request:
 * ``LOCATION_MODULE_EVT_GNSS_DATA_READY``: GNSS position has been acquired
 * ``LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY``: neighbor cell measurements have been obtained
+* ``LOCATION_MODULE_EVT_WIFI_ACCESS_POINTS_DATA_READY``: Wi-Fi access points have been obtained
 * ``LOCATION_MODULE_EVT_DATA_NOT_READY``: Location request failed
 * ``LOCATION_MODULE_EVT_TIMEOUT``: Timeout occurred
 * ``LOCATION_MODULE_EVT_AGPS_NEEDED``: A-GPS request should be sent to cloud
@@ -57,6 +61,33 @@ GPS assistance data
 The location module receives requests for GPS assistance data from the :ref:`lib_location` library.
 When the module receives an A-GPS request, it distributes it to the other modules as a ``LOCATION_MODULE_EVT_AGPS_NEEDED`` event that contains information about the type of assistance data needed.
 Providing the requested A-GPS data typically reduces significantly the time it takes to acquire a GNSS fix.
+
+Wi-Fi positioning
+=================
+
+Wi-Fi positioning is supported with an nRF7002 EK on the nRF9160 DK.
+To enable Wi-Fi positioning and especially nRF7002 functionality, use a
+special DTC overlay with the compiler option ``-DDTC_OVERLAY_FILE=nrf9160dk_with_nrf7002ek.overlay`` and a
+configuration overlay ``-DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf``.
+
+To build for the nRF9160 DK with nRF7002 EK, use the ``nrf9160dk_nrf9160_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002_ek`` and a scan-only overlay configuration.
+The following is an example of the CLI command:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160ns -- -DSHIELD=nrf7002_ek -DDTC_OVERLAY_FILE=nrf9160dk_with_nrf7002ek.overlay -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
+
+Wi-Fi positioning has the following limitations:
+
+* Only `nRF Cloud`_ is supported.
+* The UI module must be disabled.
+  Functionalities related to LEDs and buttons have conflicts with the nRF7002 EK.
+
+.. note::
+
+   The Wi-Fi configuration uses both flash and SRAM extensively.
+   You can configure the number of scan results with the :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT` Kconfig option to reduce SRAM consumption.
+   You can also change the value of the :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` Kconfig option.
 
 Module internals
 ================

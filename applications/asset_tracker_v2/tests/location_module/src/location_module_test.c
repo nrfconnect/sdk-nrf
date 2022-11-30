@@ -469,7 +469,7 @@ void test_location_cellular(void)
 	/* Location module indicates that it has handled neighbor cells
 	 * but the location is undefined.
 	 */
-	__cmock_location_cellular_ext_result_set_Expect(LOCATION_CELLULAR_EXT_RESULT_UNKNOWN, NULL);
+	__cmock_location_cellular_ext_result_set_Expect(LOCATION_EXT_RESULT_UNKNOWN, NULL);
 
 	/* Location request is responded with location library events. */
 	struct location_event_data event_data_cellular = {

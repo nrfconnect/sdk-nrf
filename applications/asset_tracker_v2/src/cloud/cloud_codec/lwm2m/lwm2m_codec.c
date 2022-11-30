@@ -101,6 +101,14 @@ int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 	return 0;
 }
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+int cloud_codec_encode_wifi_access_points(struct cloud_codec_data *output,
+					  struct cloud_data_wifi_access_points *wifi_access_points)
+{
+	return -ENOTSUP;
+}
+#endif
+
 int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 				    struct cloud_data_agps_request *agps_request)
 {

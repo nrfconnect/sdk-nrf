@@ -21,8 +21,10 @@ LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 BUILD_ASSERT(
 	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD) ||
-	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE),
-	"At least one Wi-Fi positioning service must be enabled");
+	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE) ||
+	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL),
+	"At least one Wi-Fi positioning service, or handling the service externally "
+	"must be enabled");
 
 struct method_wifi_start_work_args {
 	struct k_work work_item;

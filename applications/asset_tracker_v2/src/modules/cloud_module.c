@@ -101,8 +101,8 @@ static struct cloud_data_cfg copy_cfg;
 const k_tid_t cloud_module_thread;
 
 /* Register message IDs that are used with the QoS library. */
-QOS_MESSAGE_TYPES_REGISTER(GENERIC, BATCH, UI, NEIGHBOR_CELLS, AGPS_REQUEST,
-			   PGPS_REQUEST, CONFIG, MEMFAULT);
+QOS_MESSAGE_TYPES_REGISTER(GENERIC, BATCH, UI, NEIGHBOR_CELLS, WIFI_ACCESS_POINTS,
+			   AGPS_REQUEST, PGPS_REQUEST, CONFIG, MEMFAULT);
 
 /* Cloud module message queue. */
 #define CLOUD_QUEUE_ENTRY_COUNT		20
@@ -812,6 +812,25 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 				true);
 	}
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	if (IS_EVENT(msg, data, DATA_EVT_WIFI_ACCESS_POINTS_DATA_SEND)) {
+		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
+			err = cloud_wrap_wifi_access_points_send(NULL, 0, true, 0);
+			if (err) {
+				LOG_ERR("cloud_wrap_wifi_access_points_send, err: %d", err);
+			}
+
+			return;
+		}
+
+		add_qos_message(msg->module.data.data.buffer.buf,
+				msg->module.data.data.buffer.len,
+				WIFI_ACCESS_POINTS,
+				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
+				true);
+	}
+#endif
+
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_DATA_SEND_QOS)) {
 
 		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
@@ -864,6 +883,17 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 				LOG_WRN("cloud_wrap_neighbor_cells_send, err: %d", err);
 			}
 			break;
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+		case WIFI_ACCESS_POINTS:
+			err = cloud_wrap_wifi_access_points_send(message->buf,
+								 message->len,
+								 ack,
+								 msg->module.cloud.data.message.id);
+			if (err) {
+				LOG_WRN("cloud_wrap_wifi_access_points_send, err: %d", err);
+			}
+			break;
+#endif
 		case AGPS_REQUEST:
 			err = cloud_wrap_agps_request_send(message->buf,
 							   message->len,

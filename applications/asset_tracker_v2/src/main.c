@@ -391,7 +391,7 @@ static void data_get(void)
 		app_module_event->data_list[count++] = APP_DATA_MODEM_STATIC;
 	}
 
-	if (!app_cfg.no_data.neighbor_cell || !app_cfg.no_data.gnss) {
+	if (!app_cfg.no_data.neighbor_cell || !app_cfg.no_data.gnss || !app_cfg.no_data.wifi) {
 		app_module_event->data_list[count++] = APP_DATA_LOCATION;
 
 		/* Set application module timeout when location sampling is requested.
