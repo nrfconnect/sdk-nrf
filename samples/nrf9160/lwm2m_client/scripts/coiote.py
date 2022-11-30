@@ -296,19 +296,25 @@ if __name__ == "__main__":
 
     def get(args):
         """Get a device"""
-        logging.info(coiote.get_device(args.id))
+        resp = coiote.get_device(args.id)
+        print(json.dumps(resp, indent=4))
 
     def delete(args):
         """Delete a device"""
-        logging.info(coiote.delete_device(args.id))
+        coiote.delete_device(args.id)
 
     def create(args):
         """Create a device"""
-        logging.info(coiote.create_device(args.id, args.psk, args.model,args.bootstrap))
+        coiote.create_device(args.id, args.psk, args.model,args.bootstrap)
 
     def batch_create(args):
         """Batch create devices from a file"""
         coiote.batch_create_device(args.file,args.model,args.lines,args.prefix)
+
+    def data(args):
+        """Get data from cached datamodel"""
+        resp = coiote.get(f'/cachedDataModels/{args.id}?parameters={args.query}')
+        print(json.dumps(resp, indent=4))
 
     parser = argparse.ArgumentParser(
         description='Coiote device management')
@@ -347,10 +353,15 @@ if __name__ == "__main__":
     batch_pars.add_argument(
         '-l', '--lines', action='store', type=int, default=100, help='Maximum batch size. Default is 100.')
 
+    data_pars = subparsers.add_parser('data', help='Get cached data from DataModel')
+    data_pars.set_defaults(func=data)
+    data_pars.add_argument('id', help='Device ID')
+    data_pars.add_argument('query', help='Data query')
+
     arg = parser.parse_args()
     if arg.func is None:
         parser.print_help()
         sys.exit(0)
     if arg.debug:
-        logging.basicConfig(level=logging.DEBUG, format='%(message)s')
+        logging.getLogger().setLevel(level = logging.DEBUG)
     arg.func(arg)
