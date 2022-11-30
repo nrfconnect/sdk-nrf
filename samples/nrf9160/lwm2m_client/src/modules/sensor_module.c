@@ -10,6 +10,7 @@
 #include <lwm2m_resource_ids.h>
 #include <math.h>
 #include <stdlib.h>
+#include <adp536x.h>
 
 #include "lwm2m_app_utils.h"
 
@@ -35,6 +36,7 @@ static struct k_work_delayable humid_work;
 static struct k_work_delayable gas_res_work;
 static struct k_work_delayable light_work;
 static struct k_work_delayable colour_work;
+static struct k_work_delayable pmic_work;
 
 #define PERIOD K_MINUTES(2)
 #define RETRY K_MSEC(200)
@@ -240,6 +242,37 @@ static void colour_work_cb(struct k_work *work)
 	k_work_schedule(&colour_work, PERIOD);
 }
 
+static void pmic_work_cb(struct k_work *work)
+{
+	int rc;
+	uint8_t percentage;
+	uint16_t millivolts;
+	uint8_t status;
+
+	rc = adp536x_fg_soc(&percentage);
+	if (rc) {
+		k_work_schedule(&pmic_work, RETRY);
+		return;
+	}
+
+	rc = adp536x_fg_volts(&millivolts);
+	if (rc) {
+		k_work_schedule(&pmic_work, RETRY);
+		return;
+	}
+
+	rc = adp536x_charger_status_1_read(&status);
+	if (rc) {
+		k_work_schedule(&pmic_work, RETRY);
+		return;
+	}
+
+	lwm2m_engine_set_s32("3/0/7/0", (int) millivolts);
+	lwm2m_engine_set_u8("3/0/9", percentage);
+
+	k_work_schedule(&pmic_work, PERIOD);
+}
+
 int sensor_module_init(void)
 {
 	if (IS_ENABLED(CONFIG_SENSOR_MODULE_ACCEL)) {
@@ -275,6 +308,11 @@ int sensor_module_init(void)
 	if (IS_ENABLED(CONFIG_SENSOR_MODULE_COLOUR)) {
 		k_work_init_delayable(&colour_work, colour_work_cb);
 		k_work_schedule(&colour_work, K_NO_WAIT);
+	}
+
+	if (IS_ENABLED(CONFIG_BOARD_THINGY91_NRF9160_NS)) {
+		k_work_init_delayable(&pmic_work, pmic_work_cb);
+		k_work_schedule(&pmic_work, K_NO_WAIT);
 	}
 
 	return 0;
