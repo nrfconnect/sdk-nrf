@@ -86,17 +86,73 @@ Cellular applications
 An nRF9160 DK can draw current ranging from a few micro amperes (in sleep mode) to hundreds of milli amperes (when the radio is active).
 To achieve long battery life, it is crucial that the application is optimized in the use of the radio.
 
+PSM usage
+=========
+
+Power Saving Mode (PSM) enables the modem to enter deep sleep when it does not need to communicate with the network.
+The modem can spend most of the time in deep sleep, only waking up when data needs to be sent or received.
+When implementing an application that uses PSM, keep in mind that requesting PSM does not mean that the modem can always enter PSM.
+
+Possible cases when PSM cannot be used:
+
+* Network does not support PSM.
+* Roaming network supports PSM, but does not allow the roaming subscription to use it.
+* Modem does not find a suitable cell (a cell that provides normal service for the device).
+
+You can detect the first two cases by checking the ``+CEREG`` notification or ``AT%XMONITOR`` command output for Active-Time granted by the network.
+If the Active-Time is ``11100000``, the timer is deactivated and PSM cannot be used.
+Using the :ref:`lte_lc_readme` library, the Active-Time is notified with the :c:enum:`LTE_LC_EVT_PSM_UPDATE` event and can be queried using the :c:func:`lte_lc_psm_get` function.
+Depending on the use case, it may be preferable to set the modem to offline mode during long periods of inactivity to save power when PSM is not available.
+
+The third case can happen when cellular network coverage is poor.
+After the modem has entered PSM, it stays in deep sleep regardless of cellular network availability.
+When the modem wakes up from PSM to transmit data or to do a periodic Tracking Area Update (TAU), it starts searching for a suitable cell.
+If a suitable cell is not found during the initial search, the modem will continue periodic cell searches until a suitable cell is found.
+Because modem can only enter PSM when it’s in registered state and camped on suitable cell, the modem cannot enter PSM until a suitable cell has been found.
+
+The following sections introduce ways to mitigate the increased power consumption caused by poor cellular coverage.
+
+Making periodic cell searches less frequent
+-------------------------------------------
+
+You can modify the periodic cell search configuration to perform periodic searches less frequently.
+Use the ``AT%XDATAPRFL`` command to set the data profile to "ultra-low power" or modify the cell search configuration directly using ``AT%PERIODICSEARCHCONF`` or the :c:func:`lte_lc_periodic_search_set` function.
+For example, you can configure periodic searches to be performed infrequently and when data connectivity is needed, trigger an extra search immediately using ``AT%PERIODICSEARCHCONF=3`` or the :c:func:`lte_lc_periodic_search_request` function.
+In addition to periodic cell searches, the modem may remain in limited service on a cell that does not provide normal service for the device.
+This prevents the modem from going to deep sleep between periodic cell searches.
+
+Setting modem to offline mode when it cannot enter PSM
+------------------------------------------------------
+
+If the modem does not enter PSM as expected, the application can set the modem to offline mode to prevent excessive current consumption when it cannot find a suitable cell.
+To detect this, monitor the modem sleep notifications.
+
+Preconditions:
+
+* PSM has been negotiated with the network.
+* ``+CSCON`` RRC connection status notifications have been subscribed.
+* ``%XMODEMSLEEP`` modem sleep notifications have been subscribed.
+* User data communication has been completed.
+
+To check whether the modem is able to activate PSM after RRC connection release, complete the following steps:
+
+1. Wait for AT notification indicating that RRC connection was released (``+CSCON: 0`` or :c:enum:`LTE_LC_EVT_RRC_UPDATE` event with RRC mode set to :c:enum:`LTE_LC_RRC_MODE_IDLE`).
+#. Read PSM active time using ``AT%XMONITOR`` or the :c:func:`lte_lc_psm_get` function.
+   The active time is used in Step 3.
+#. Wait for ``%XMODEMSLEEP: 1`` notification or :c:enum:`LTE_LC_EVT_MODEM_SLEEP_ENTER` event with type :c:enum:`LTE_LC_MODEM_SLEEP_PSM` indicating that modem has entered PSM.
+   If this notification is not received within PSM active time (allow for some margin), the modem was not able to enter PSM.
+#. If RRC connection is activated again (``+CSCON: 1`` or :c:enum:`LTE_LC_EVT_RRC_UPDATE` event with RRC mode set to :c:enum:`LTE_LC_RRC_MODE_CONNECTED`) while waiting for PSM, go back to Step 1.
+
+Power profiling example use case
+================================
+
 To optimize the power, perform the following steps:
 
 1. Simulate your use case with Online Power Profiler.
 #. Perform real-time current measurements using Power Profiler Kit II with the configuration obtained from Online Power Profiler.
 #. Use the results from the Power Profiler Kit II measurements to tune the simulation results in Online Power Profiler.
 
-
-Example use case
-================
-
-Specifications for an example use case in power profiling:
+Specifications for the example use case:
 
 * Application - A battery driven sensor application
 * Battery life - Two years battery life on 1000 mAh 3.7V battery
