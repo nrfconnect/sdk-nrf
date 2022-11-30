@@ -231,14 +231,14 @@ static void search_start(void)
 {
 	int err;
 	struct location_config config;
-	enum location_method methods[2];
+	enum location_method methods[3];
 	int methods_count = 0;
 	int methods_index_gnss = -1;
 	int methods_index_cellular = -1;
 
-	if (copy_cfg.no_data.neighbor_cell && copy_cfg.no_data.gnss) {
+	if (copy_cfg.no_data.neighbor_cell && copy_cfg.no_data.gnss && copy_cfg.no_data.wifi) {
 		SEND_EVENT(location, LOCATION_MODULE_EVT_DATA_NOT_READY);
-		LOG_ERR("Both GNSS and cellular are configured off");
+		LOG_ERR("All GNSS, cellular and Wi-Fi are configured off");
 		return;
 	}
 
@@ -247,6 +247,13 @@ static void search_start(void)
 		methods_index_gnss = methods_count;
 		methods_count++;
 	}
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	if (!copy_cfg.no_data.wifi) {
+		methods[methods_count] = LOCATION_METHOD_WIFI;
+		methods_count++;
+	}
+#endif
 
 	if (!copy_cfg.no_data.neighbor_cell) {
 		methods[methods_count] = LOCATION_METHOD_CELLULAR;
@@ -353,6 +360,26 @@ static void send_neighbor_cell_update(struct lte_lc_cells_info *cell_info)
 	APP_EVENT_SUBMIT(evt);
 }
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+static void send_wifi_ap_update(struct wifi_scan_info *wifi_ap_info)
+{
+	struct location_module_event *evt = new_location_module_event();
+
+	BUILD_ASSERT(sizeof(evt->data.wifi_access_points.ap_info) >=
+		     sizeof(struct wifi_scan_result) *
+		     CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT);
+
+	evt->data.wifi_access_points.cnt = wifi_ap_info->cnt;
+	memcpy(&evt->data.wifi_access_points.ap_info, wifi_ap_info->ap_info,
+	       sizeof(struct wifi_scan_result) * evt->data.wifi_access_points.cnt);
+
+	evt->type = LOCATION_MODULE_EVT_WIFI_ACCESS_POINTS_DATA_READY;
+	evt->data.wifi_access_points.timestamp = k_uptime_get();
+
+	APP_EVENT_SUBMIT(evt);
+}
+#endif
+
 /* Non-static so that this can be used in tests to mock location library API. */
 void location_event_handler(const struct location_event_data *event_data)
 {
@@ -409,8 +436,9 @@ void location_event_handler(const struct location_event_data *event_data)
 		stats.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 		LOG_DBG("  search time: %d", stats.search_time);
 		inactive_send();
-		/* No events are sent because LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY
-		 * has already been sent earlier and hence APP_LOCATION has been set already.
+		/* No events are sent because LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY and
+		 * LOCATION_MODULE_EVT_WIFI_ACCESS_POINTS_DATA_READY
+		 * have already been sent earlier and hence APP_LOCATION has been set already.
 		 */
 		break;
 
@@ -464,8 +492,16 @@ void location_event_handler(const struct location_event_data *event_data)
 		LOG_DBG("Getting cellular request");
 		send_neighbor_cell_update(
 			(struct lte_lc_cells_info *)&event_data->cellular_request);
-		location_cellular_ext_result_set(LOCATION_CELLULAR_EXT_RESULT_UNKNOWN, NULL);
+		location_cellular_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN, NULL);
 		break;
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	case LOCATION_EVT_WIFI_EXT_REQUEST:
+		LOG_DBG("Getting Wi-Fi request");
+		send_wifi_ap_update((struct wifi_scan_info *)&event_data->wifi_request);
+		location_wifi_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN, NULL);
+		break;
+#endif
 
 	default:
 		LOG_DBG("Getting location: Unknown event %d", event_data->id);

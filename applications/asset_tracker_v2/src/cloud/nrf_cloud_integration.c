@@ -439,6 +439,28 @@ int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id)
 	return 0;
 }
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+int cloud_wrap_wifi_access_points_send(char *buf, size_t len, bool ack, uint32_t id)
+{
+	int err;
+	struct nrf_cloud_tx_data msg = {
+		.data.ptr = buf,
+		.data.len = len,
+		.id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
+		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
+	};
+
+	err = nrf_cloud_send(&msg);
+	if (err) {
+		LOG_ERR("nrf_cloud_send, error: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+#endif
+
 int cloud_wrap_state_get(bool ack, uint32_t id)
 {
 	/* Not supported, the nRF Cloud library automatically requests the cloud-side state upon

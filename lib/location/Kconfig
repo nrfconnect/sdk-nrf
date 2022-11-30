@@ -101,7 +101,7 @@ config LOCATION_METHOD_WIFI_EXTERNAL
 
 config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
 	bool "nRF Cloud location service"
-	default y
+	default y if !LOCATION_METHOD_WIFI_EXTERNAL
 	depends on NRF_CLOUD_REST || NRF_CLOUD_MQTT
 	select NRF_CLOUD_LOCATION if NRF_CLOUD_MQTT
 	help

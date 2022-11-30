@@ -15,6 +15,17 @@ config LED_STATE_DEF_PATH
 	help
 	  Location of configuration file for led_state_def file.
 
+if CAF_LEDS
+
+choice CAF_LEDS_OUTPUT
+	prompt "Select LED driver"
+	default CAF_LEDS_PWM if BOARD_THINGY91_NRF9160_NS
+	default CAF_LEDS_GPIO
+
+endchoice
+
+endif
+
 module = LED_CONTROL
 module-str = LED control library
 source "subsys/logging/Kconfig.template.log_config"

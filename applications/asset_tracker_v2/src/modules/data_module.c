@@ -71,7 +71,9 @@ static struct cloud_data_impact impact_buf[CONFIG_DATA_IMPACT_BUFFER_COUNT];
 static struct cloud_data_battery bat_buf[CONFIG_DATA_BATTERY_BUFFER_COUNT];
 static struct cloud_data_modem_dynamic modem_dyn_buf[CONFIG_DATA_MODEM_DYNAMIC_BUFFER_COUNT];
 static struct cloud_data_neighbor_cells neighbor_cells;
-
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+static struct cloud_data_wifi_access_points wifi_access_points;
+#endif
 /* Static modem data does not change between firmware versions and does not
  * have to be buffered.
  */
@@ -129,6 +131,7 @@ enum coneval_supported_data_type {
 	GENERIC,
 	BATCH,
 	NEIGHBOR_CELLS,
+	WIFI_ACCESS_POINTS,
 	COUNT,
 };
 
@@ -494,6 +497,12 @@ static void config_print_all(void)
 	} else {
 		LOG_DBG("Requesting of GNSS data is disabled");
 	}
+
+	if (!current_cfg.no_data.wifi) {
+		LOG_DBG("Requesting of Wi-Fi data is enabled");
+	} else {
+		LOG_DBG("Requesting of Wi-Fi data is disabled");
+	}
 }
 
 static void config_distribute(enum data_module_event_type type)
@@ -595,6 +604,28 @@ static void data_encode(void)
 			return;
 		}
 	}
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	if (grant_send(WIFI_ACCESS_POINTS, &coneval, override)) {
+		err = cloud_codec_encode_wifi_access_points(&codec, &wifi_access_points);
+		switch (err) {
+		case 0:
+			LOG_DBG("Wi-Fi access point data encoded successfully");
+			data_send(DATA_EVT_WIFI_ACCESS_POINTS_DATA_SEND, &codec);
+			break;
+		case -ENOTSUP:
+			/* Wi-Fi access point data encoding not supported */
+			break;
+		case -ENODATA:
+			LOG_DBG("No Wi-Fi access point data to encode, error: %d", err);
+			break;
+		default:
+			LOG_ERR("Error encoding Wi-Fi access point data: %d", err);
+			SEND_ERROR(data, DATA_EVT_ERROR, err);
+			return;
+		}
+	}
+#endif
 
 	if (grant_send(GENERIC, &coneval, override)) {
 		err = cloud_codec_encode_data(&codec,
@@ -931,6 +962,18 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		config_change = true;
 	}
 
+	if (current_cfg.no_data.wifi != new_config->no_data.wifi) {
+		current_cfg.no_data.wifi = new_config->no_data.wifi;
+
+		if (!current_cfg.no_data.wifi) {
+			LOG_DBG("Requesting of Wi-Fi data is enabled");
+		} else {
+			LOG_DBG("Requesting of Wi-Fi data is disabled");
+		}
+
+		config_change = true;
+	}
+
 	if (new_config->location_timeout > 0) {
 		if (current_cfg.location_timeout != new_config->location_timeout) {
 			current_cfg.location_timeout = new_config->location_timeout;
@@ -1193,7 +1236,9 @@ static void on_all_states(struct data_msg_data *msg)
 			.no_data.gnss =
 				msg->module.cloud.data.config.no_data.gnss,
 			.no_data.neighbor_cell =
-				msg->module.cloud.data.config.no_data.neighbor_cell
+				msg->module.cloud.data.config.no_data.neighbor_cell,
+			.no_data.wifi =
+				msg->module.cloud.data.config.no_data.wifi
 		};
 
 		new_config_handle(&new);
@@ -1421,6 +1466,23 @@ static void on_all_states(struct data_msg_data *msg)
 
 		requested_data_status_set(APP_DATA_LOCATION);
 	}
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_WIFI_ACCESS_POINTS_DATA_READY)) {
+		BUILD_ASSERT(sizeof(wifi_access_points.ap_info) ==
+			     sizeof(msg->module.location.data.wifi_access_points.ap_info));
+
+		memcpy(&wifi_access_points.ap_info,
+		       &msg->module.location.data.wifi_access_points.ap_info,
+		       sizeof(wifi_access_points.ap_info));
+
+		wifi_access_points.cnt = msg->module.location.data.wifi_access_points.cnt;
+		wifi_access_points.ts = msg->module.location.data.wifi_access_points.timestamp;
+		wifi_access_points.queued = true;
+
+		requested_data_status_set(APP_DATA_LOCATION);
+	}
+#endif
 
 	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_TIMEOUT)) {
 		requested_data_status_set(APP_DATA_LOCATION);

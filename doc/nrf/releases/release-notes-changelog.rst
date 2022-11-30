@@ -121,7 +121,9 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
-|no_changes_yet_note|
+* Added:
+
+  * Wi-Fi support for nRF9160 DK + nRF7002 EK configuration.
 
 nRF9160: Serial LTE modem
 -------------------------
@@ -287,7 +289,11 @@ Bootloader libraries
 Modem libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`lib_location` library:
+
+  * Added:
+
+    * Support for the application to send the Wi-Fi access point list to the cloud.
 
   * Updated:
 

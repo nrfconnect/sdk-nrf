@@ -467,6 +467,18 @@ static int config_add(cJSON *parent, struct cloud_data_cfg *data, const char *ob
 		json_add_obj_array(nod_list, ncell_str);
 	}
 
+	if (data->no_data.wifi) {
+		cJSON *wifi_str = cJSON_CreateString(CONFIG_NO_DATA_LIST_WIFI);
+
+		if (wifi_str == NULL) {
+			cJSON_Delete(nod_list);
+			err = -ENOMEM;
+			goto exit;
+		}
+
+		json_add_obj_array(nod_list, wifi_str);
+	}
+
 	/* If there are no flag set in the no_data structure, an empty array is encoded. */
 	json_add_obj(config_obj, CONFIG_NO_DATA_LIST, nod_list);
 	json_add_obj(parent, object_label, config_obj);
@@ -526,6 +538,7 @@ static void config_get(cJSON *parent, struct cloud_data_cfg *data)
 		cJSON *item;
 		bool gnss_found = false;
 		bool ncell_found = false;
+		bool wifi_found = false;
 
 		for (int i = 0; i < cJSON_GetArraySize(nod_list); i++) {
 			item = cJSON_GetArrayItem(nod_list, i);
@@ -537,6 +550,10 @@ static void config_get(cJSON *parent, struct cloud_data_cfg *data)
 			if (strcmp(item->valuestring, CONFIG_NO_DATA_LIST_NEIGHBOR_CELL) == 0) {
 				ncell_found = true;
 			}
+
+			if (strcmp(item->valuestring, CONFIG_NO_DATA_LIST_WIFI) == 0) {
+				wifi_found = true;
+			}
 		}
 
 		/* If a supported entry is present in the no data list we set the corresponding flag
@@ -544,6 +561,7 @@ static void config_get(cJSON *parent, struct cloud_data_cfg *data)
 		 */
 		data->no_data.gnss = gnss_found;
 		data->no_data.neighbor_cell = ncell_found;
+		data->no_data.wifi = wifi_found;
 	}
 }
 
@@ -837,6 +855,58 @@ exit:
 
 	return -ENOTSUP;
 }
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+int cloud_codec_encode_wifi_access_points(struct cloud_codec_data *output,
+					  struct cloud_data_wifi_access_points *wifi_access_points)
+{
+#if defined(CONFIG_NRF_CLOUD_LOCATION)
+	int err;
+	char *buffer;
+	cJSON *root_obj = NULL;
+
+	__ASSERT_NO_MSG(output != NULL);
+	__ASSERT_NO_MSG(wifi_access_points != NULL);
+
+	struct wifi_scan_info info = {
+		.ap_info = wifi_access_points->ap_info,
+		.cnt = wifi_access_points->cnt
+	};
+
+	if (!wifi_access_points->queued) {
+		return -ENODATA;
+	}
+
+	err = nrf_cloud_location_request_json_get(NULL, &info, true, &root_obj);
+	if (err) {
+		LOG_ERR("nrf_cloud_location_request_json_get, error: %d", err);
+		return -ENOMEM;
+	}
+
+	buffer = cJSON_PrintUnformatted(root_obj);
+	if (buffer == NULL) {
+		LOG_ERR("Failed to allocate memory for JSON string");
+
+		err = -ENOMEM;
+		goto exit;
+	}
+
+	if (IS_ENABLED(CONFIG_CLOUD_CODEC_LOG_LEVEL_DBG)) {
+		json_print_obj("Encoded message:\n", root_obj);
+	}
+
+	output->buf = buffer;
+	output->len = strlen(buffer);
+
+exit:
+	wifi_access_points->queued = false;
+	cJSON_Delete(root_obj);
+	return err;
+#endif /* CONFIG_NRF_CLOUD_LOCATION */
+
+	return -ENOTSUP;
+}
+#endif /* CONFIG_LOCATION_METHOD_WIFI */
 
 int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 				    struct cloud_data_agps_request *agps_request)

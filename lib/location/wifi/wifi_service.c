@@ -11,6 +11,7 @@
 
 #include <modem/location.h>
 
+#include "wifi_service.h"
 #if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE)
 #include "wifi_here_rest.h"
 #endif
@@ -19,6 +20,8 @@
 #endif
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
+
+#if !defined(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL)
 
 /* Buffer for receiving REST service responses */
 static char location_wifi_receive_buffer[CONFIG_LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE];
@@ -44,3 +47,4 @@ int wifi_service_location_get(enum location_service service,
 	LOG_ERR("Requested Wi-Fi positioning service not configured on.");
 	return -ENOTSUP;
 }
+#endif /* !defined(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL) */

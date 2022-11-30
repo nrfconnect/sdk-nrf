@@ -60,6 +60,7 @@
 #define CONFIG_NO_DATA_LIST		  "nod"
 #define CONFIG_NO_DATA_LIST_GNSS	  "gnss"
 #define CONFIG_NO_DATA_LIST_NEIGHBOR_CELL "ncell"
+#define CONFIG_NO_DATA_LIST_WIFI	  "wifi"
 
 #define OBJECT_CONFIG	"config"
 #define OBJECT_REPORTED	"reported"

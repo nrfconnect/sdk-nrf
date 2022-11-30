@@ -15,6 +15,7 @@
 
 #include <nrf_modem_gnss.h>
 #include <modem/lte_lc.h>
+#include <net/wifi_location_common.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif
@@ -45,6 +46,12 @@ enum location_module_event_type {
 	 *  the ``data.neighbor_cells`` member.
 	 */
 	LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY,
+
+	/** Wi-Fi access point information has been gathered and the data is ready.
+	 *  The event has associated payload of type ``struct location_module_wifi_access_points``
+	 *  in the ``data.wifi_scan_info`` member.
+	 */
+	LOCATION_MODULE_EVT_WIFI_ACCESS_POINTS_DATA_READY,
 
 	/** The location search timed out without acquiring location.
 	 *  The event has associated payload of the type ``struct location_module_data`` in
@@ -123,6 +130,20 @@ struct location_module_neighbor_cells {
 	int64_t timestamp;
 };
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+/** @brief Location module data for associated payload for event of
+ *         LOCATION_MODULE_EVT_WIFI_ACCESS_POINTS_DATA_READY type.
+ */
+struct location_module_wifi_access_points {
+	/** Access points found during scan. */
+	struct wifi_scan_result ap_info[CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT];
+	/** The number of access points found during scan. */
+	uint16_t cnt;
+	/** Uptime when the event was sent. */
+	int64_t timestamp;
+};
+#endif
+
 /** @brief Location module data for associated payload for events of LOCATION_MODULE_EVT_TIMEOUT and
  *	   LOCATION_MODULE_EVT_GNSS_DATA_READY types.
  */
@@ -147,11 +168,16 @@ struct location_module_event {
 	/** Location module event type. */
 	enum location_module_event_type type;
 
+	/** Data for different events. */
 	union {
 		/** Data for event LOCATION_MODULE_EVT_GNSS_DATA_READY. */
 		struct location_module_data location;
 		/** Data for event LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY. */
 		struct location_module_neighbor_cells neighbor_cells;
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+		/** Data for event LOCATION_MODULE_EVT_WIFI_ACCESS_POINTS_DATA_READY. */
+		struct location_module_wifi_access_points wifi_access_points;
+#endif
 		/** Data for event LOCATION_MODULE_EVT_AGPS_NEEDED. */
 		struct nrf_modem_gnss_agps_data_frame agps_request;
 #if defined(CONFIG_NRF_CLOUD_PGPS)

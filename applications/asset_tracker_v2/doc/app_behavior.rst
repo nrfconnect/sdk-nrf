@@ -16,7 +16,7 @@ The data types that are collected by the application are listed in the following
 +----------------+----------------------------+-----------------------------------------------+--------------------------------+
 | Data type      | Description                | Identifiers                                   | String identifier for NOD list |
 +================+============================+===============================================+================================+
-| Location       | Position coordinates       | APP_DATA_LOCATION                             |``gnss``, ``ncell``             |
+| Location       | Position coordinates       | APP_DATA_LOCATION                             |``gnss``, ``ncell``, ``wifi``   |
 +----------------+----------------------------+-----------------------------------------------+--------------------------------+
 | Environmental  | Temperature, humidity      | APP_DATA_ENVIRONMENTAL                        | NA                             |
 +----------------+----------------------------+-----------------------------------------------+--------------------------------+
@@ -60,7 +60,10 @@ The real-time configurations supported by the application are listed in the foll
 |          +-------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 |          | Movement timeout        | Number of seconds between each cloud update in passive mode, regardless of movement.                                                 | 3600 seconds   |
 +----------+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| Location timeout                   | Timeout for location retrieval during data sampling.                                                                                 | 120 seconds    |
+| Location timeout                   | Timeout for location retrieval during data sampling.                                                                                 | 300 seconds    |
+|                                    | This value should be large enough so that the location can be retrieved in different conditions.                                     |                |
+|                                    | This can be considered more of a safeguard rather than the deadline when the operation must be completed.                            |                |
+|                                    | Hence, this value can be larger than the sampling interval.                                                                          |                |
 +------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 | Accelerometer activity threshold   | Accelerometer activity threshold in m/s². Minimal absolute value for accelerometer readings to be considered valid movement.         | 4 m/s²         |
 +------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
