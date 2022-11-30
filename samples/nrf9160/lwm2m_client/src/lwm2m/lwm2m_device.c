@@ -24,15 +24,16 @@ LOG_MODULE_REGISTER(app_lwm2m_device, CONFIG_APP_LOG_LEVEL);
 #define TIMEZONE_STR_LEN 33 /* Longest: 'America/Argentina/ComodRivadavia' + '\0' = 33 */
 
 static uint8_t bat_idx = LWM2M_DEVICE_PWR_SRC_TYPE_BAT_INT;
-static int bat_mv = 3800;
-static int bat_ma = 125;
+static int bat_mv;
+static int bat_ma;
 static uint8_t usb_idx = LWM2M_DEVICE_PWR_SRC_TYPE_USB;
-static int usb_mv = 5000;
-static int usb_ma = 900;
+static int usb_mv;
+static int usb_ma;
 static uint8_t bat_status = LWM2M_DEVICE_BATTERY_STATUS_CHARGING;
 static int mem_total = (CLIENT_FLASH_SIZE / 1024);
 static char utc_offset[UTC_OFFSET_STR_LEN] = "";
 static char timezone[TIMEZONE_STR_LEN] = "";
+static uint8_t bat_level;
 
 static int device_factory_default_cb(uint16_t obj_inst_id, uint8_t *args, uint16_t args_len)
 {
@@ -104,5 +105,7 @@ int lwm2m_app_init_device(char *serial_num)
 	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_CURRENT_RID, 1),
 				  &usb_ma, sizeof(usb_ma), sizeof(usb_ma), 0);
 
+	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, BATTERY_LEVEL_RID),
+				 &bat_level, sizeof(bat_level), sizeof(bat_level), 0);
 	return 0;
 }
