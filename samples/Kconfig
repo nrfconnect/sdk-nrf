@@ -87,6 +87,14 @@ config NCS_SAMPLE_RPC_HOST_CHILD_IMAGE
 
 endif # NCS_INCLUDE_RPMSG_CHILD_IMAGE
 
+config NCS_SAMPLE_EMPTY_NET_CORE_CHILD_IMAGE
+	bool
+	depends on SOC_NRF5340_CPUAPP && BOARD_ENABLE_CPUNET
+	depends on NRF53_UPGRADE_NETWORK_CORE && !NCS_INCLUDE_RPMSG_CHILD_IMAGE
+	default y
+	help
+	  nRF5340 empty network core sample as a child image (network core).
+
 endif # SOC_SERIES_NRF53X
 
 if LOG
