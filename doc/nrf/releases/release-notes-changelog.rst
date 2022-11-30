@@ -425,7 +425,7 @@ Trusted Firmware-M (TF-M) samples
 
   * :ref:`tfm_psa_test` for validating compliance with PSA Certified requirements.
   * :ref:`tfm_regression_test` to run secure and non-secure Trusted Firmware-M (TF-M) regression tests.
-  * :ref:`tfm_cert`: Reference sample for how to achieve PSA Certified Level 2 using TF-M on nRF devices.
+  * :ref:`tfm_psa_template`: Reference sample providing a template for Arm Platform Security Architecture (PSA) best practices on nRF devices.
   * :ref:`provisioning_image`: Running the provisioning image sample will provision the device in a manner compatible with Trusted Firmware-M (TF-M).
 
 Thread samples

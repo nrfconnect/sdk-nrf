@@ -1,13 +1,13 @@
-.. _tfm_cert:
+.. _tfm_psa_template:
 
-TF-M: PSA Certified Level 2
-###########################
+TF-M: PSA template
+##################
 
 .. contents::
    :local:
    :depth: 2
 
-This sample is a reference for how to achieve PSA Certified Level 2 using TF-M on nRF devices.
+This sample provides a template for Arm Platform Security Architecture (PSA) best practices on nRF devices.
 
 Requirements
 ************
@@ -21,13 +21,14 @@ The sample supports the following development kits:
 Overview
 ********
 
-This sample uses Trusted Firmware-M, nRF Secure Immutable bootloader and MCUboot to satisfy the Platform Security Architecture (PSA) Certified Level 2 requirements.
+This sample uses Trusted Firmware-M, nRF Secure Immutable bootloader and MCUboot to demonstrate how to implement the best practices that comply with the Arm PSA requirements.
+It includes provisioning the device with keys and being able to perform a device firmware update.
 The sample prints information about the identity of the device and the firmware versions that are currently running.
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/tfm/tfm_cert`
+.. |sample path| replace:: :file:`samples/tfm/tfm_psa_template`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -39,12 +40,12 @@ Build and flash the provisioning image sample to provision the device with the P
     west build -b nrf5340dk_nrf5340_cpuapp nrf/samples/tfm/provisioning_image -d build_provisioning_image
     west flash --erase -d build_provisioning_image
 
-Build and flash the TF-M PSA Certified Level 2 sample.
+Build and flash the TF-M PSA template sample.
 Do not flash with ``--erase`` as this will erase the PSA platform security parameters and they will be lost.
 
 .. code-block:: console
 
-    west build -b nrf5340dk_nrf5340_cpuapp_ns nrf/samples/tfm/tfm_cert
+    west build -b nrf5340dk_nrf5340_cpuapp_ns nrf/samples/tfm/tfm_psa_template
     west flash
 
 Testing
@@ -126,7 +127,7 @@ Generate security keys if needed:
 .. code-block:: console
 
     python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k /home/user/ncs/_keys/mcuboot_priv.pem
-    python3 nrf/scripts/bootloader/keygen.py --private -o /home/user/ncs/_keys/nsib_priv.pem
+    python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k /home/user/ncs/_keys/nsib_priv.pem
 
 Update the ``child_image/mcuboot/prj.conf`` file to set the private signing key for MCUBoot:
 
@@ -158,7 +159,7 @@ To upload a new application image, build an application with an updated image ve
 
 .. code-block:: console
 
-    west build -b nrf5340dk_nrf5340_cpuapp_ns nrf/samples/tfm/tfm_cert -d build_update \
+    west build -b nrf5340dk_nrf5340_cpuapp_ns nrf/samples/tfm/tfm_psa_template -d build_update \
     -DCONFIG_MCUBOOT_IMAGE_VERSION=\"1.2.3\"
 
 Then upload the new application image to the device.
@@ -190,7 +191,7 @@ Bootloader firmware update
 To upload a new bootloader image, build a bootloader targeting the correct bootloader slot with an updated firmware image version.
 The bootloader is placed in slot 0 by default, so enable building of the slot 1 bootloader.
 
-    west build -b nrf5340dk_nrf5340_cpuapp_ns nrf/samples/tfm/tfm_cert \
+    west build -b nrf5340dk_nrf5340_cpuapp_ns nrf/samples/tfm/tfm_psa_template \
     -DCONFIG_BUILD_S1_VARIANT=y \
     -Dmcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
 
