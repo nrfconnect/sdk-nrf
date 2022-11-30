@@ -1005,7 +1005,7 @@ Documentation
 * Updated:
 
   * The :ref:`software_maturity` page with details about Wi-Fi feature support.
-  * The :ref:`app_power_opt` user guide by adding a section about power saving features.
+  * The :ref:`app_power_opt` user guide by adding sections about power saving features and PSM usage.
   * The :ref:`ug_thingy53` by aligning with current simplified configuration.
   * The :ref:`ug_nrf52_developing` by aligning with current simplified FOTA configuration.
 
