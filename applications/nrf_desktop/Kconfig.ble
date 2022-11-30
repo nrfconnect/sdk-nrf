@@ -49,6 +49,14 @@ config BT_ID_UNPAIR_MATCHING_BONDS
 	  Enabling this option is needed to pass the Fast Pair Validator's
 	  end-to-end integration tests.
 
+config BT_ID_ALLOW_UNAUTH_OVERWRITE
+	default y
+	help
+	  Allow overwriting of an unauthenticated bond from a different local
+	  identity. This setting improves the user experience as it is no
+	  longer required to delete the bonding information from the old
+	  identity to pair using the new one.
+
 config BT_DATA_LEN_UPDATE
 	default n
 	help

@@ -247,6 +247,8 @@ nRF Desktop
   See :ref:`nrf_desktop_porting_guide` for details.
 * The :kconfig:option:`CONFIG_BT_ID_UNPAIR_MATCHING_BONDS` is enabled by default.
   This is done to pass the Fast Pair Validator's end-to-end integration tests and to improve the user experience during the erase advertising procedure.
+* The :kconfig:option:`CONFIG_BT_ID_ALLOW_UNAUTH_OVERWRITE` is enabled by default for the HID peripherals.
+  This setting improves the user experience as it is no longer required to delete the bonding information from the old identity to pair using the new one.
 
 Thingy:53 Zigbee weather station
 --------------------------------
