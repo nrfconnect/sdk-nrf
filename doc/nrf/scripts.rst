@@ -16,5 +16,6 @@ Here you can find documentation for these scripts.
    ../../scripts/nrf_provision/*/*
    ../../scripts/hid_configurator/*
    ../../scripts/partition_manager/*
+   ../../scripts/uart_terminal/*
    ../../scripts/west_commands/sbom/*
    ../../scripts/memfault/*
