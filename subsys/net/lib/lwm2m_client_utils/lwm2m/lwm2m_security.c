@@ -94,7 +94,10 @@ static int write_credential_type(int sec_obj_inst, int sec_tag, int res_id,
 	if (cred_len == 0) {
 		bool exist;
 
-		modem_key_mgmt_exists(sec_tag, type, &exist);
+		ret = modem_key_mgmt_exists(sec_tag, type, &exist);
+		if (ret) {
+			return ret;
+		}
 		if (exist) {
 			return -EEXIST;
 		}
