@@ -394,8 +394,11 @@ static void stream_stopped_cb(struct bt_audio_stream *stream)
 		atomic_clear(&headsets[channel_index].iso_tx_pool_alloc);
 	}
 
-	if (headsets[AUDIO_CH_L].sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING &&
-	    headsets[AUDIO_CH_R].sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+	if (headsets[AUDIO_CH_L].sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING
+#if !CONFIG_STREAM_BIDIRECTIONAL
+	    && headsets[AUDIO_CH_R].sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING
+#endif
+	) {
 		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 		ERR_CHK(ret);
 	}
@@ -406,8 +409,11 @@ static void stream_released_cb(struct bt_audio_stream *stream)
 	int ret;
 	LOG_DBG("Audio Stream %p released", (void *)stream);
 
-	if (headsets[AUDIO_CH_L].sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING &&
-	    headsets[AUDIO_CH_R].sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+	if (headsets[AUDIO_CH_L].sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING
+#if !CONFIG_STREAM_BIDIRECTIONAL
+	    && headsets[AUDIO_CH_R].sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING
+#endif
+	) {
 		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 		ERR_CHK(ret);
 	}
@@ -528,7 +534,8 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 	uint8_t stream_index = 0;
 	static bool group_created;
 	struct bt_audio_unicast_group_param
-		group_params[CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SRC_COUNT];
+		group_params[CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SRC_COUNT +
+			     CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT];
 
 	if (params->err) {
 		LOG_ERR("Discovery failed: %d", params->err);
@@ -846,6 +853,7 @@ static struct bt_conn_cb conn_callbacks = {
 
 };
 
+#if (CONFIG_BT_MCS)
 /**
  * @brief	Callback handler for play/pause.
  *
@@ -909,6 +917,7 @@ static void le_audio_play_pause_cb(bool play)
 
 	playing_state = play;
 }
+#endif /* CONFIG_BT_MCS */
 
 static int iso_stream_send(uint8_t const *const data, size_t size, struct le_audio_headset headset)
 {
@@ -1028,11 +1037,13 @@ static int initialize(le_audio_receive_cb recv_cb)
 	}
 #endif /* (CONFIG_BT_VCS_CLIENT) */
 
+#if (CONFIG_BT_MCS)
 	ret = ble_mcs_server_init(le_audio_play_pause_cb);
 	if (ret) {
 		LOG_ERR("MCS server init failed");
 		return ret;
 	}
+#endif /* CONFIG_BT_MCS */
 
 	receive_cb = recv_cb;
 

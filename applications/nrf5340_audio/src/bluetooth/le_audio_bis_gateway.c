@@ -83,7 +83,7 @@ static int get_stream_index(struct bt_audio_stream *stream, uint8_t *index)
 static void stream_sent_cb(struct bt_audio_stream *stream)
 {
 	static uint32_t sent_cnt[ARRAY_SIZE(audio_streams)];
-	uint8_t index;
+	uint8_t index = 0;
 
 	get_stream_index(stream, &index);
 
@@ -103,7 +103,7 @@ static void stream_sent_cb(struct bt_audio_stream *stream)
 static void stream_started_cb(struct bt_audio_stream *stream)
 {
 	int ret;
-	uint8_t index;
+	uint8_t index = 0;
 
 	get_stream_index(stream, &index);
 	seq_num[index] = 0;
