@@ -1783,6 +1783,16 @@ CIA-248: Samples with default SPM config fails to build for ``thingy91_nrf9160_n
 
    **Workaround:** Use the main branch.
 
+nRF Profiler
+============
+
+.. rst-class:: v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+NCSDK-18398: Build fails if shell is enabled
+   Enabling the Zephyr's :ref:`zephyr:shell_api` module together with :ref:`nrf_profiler` results in a build failure because of the bug in the :file:`CMakeLists.txt` file.
+
+   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``fdac428e902ebd96885160dd3ae5d08d21642926``).
+
 MCUboot
 *******
 
