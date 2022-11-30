@@ -246,6 +246,37 @@ function(add_child_image_from_source)
       )
 
     list(APPEND extra_cmake_args "-DCONFIG_NCS_IS_VARIANT_IMAGE=y")
+
+    if (CONFIG_SECURE_BOOT AND CONFIG_BUILD_S1_VARIANT AND "${ACI_NAME}" STREQUAL "s1_image")
+      # If secure boot is enabled and this is an s1 variant image, propagate
+      # the firmware version image configuation from the parent
+      set(fw_info_disallow_list)
+      list(APPEND
+        fw_info_disallow_list
+        CONFIG_FW_INFO_MAGIC_COMMON
+        CONFIG_FW_INFO_MAGIC_FIRMWARE_INFO
+        CONFIG_FW_INFO_MAGIC_EXT_API
+        CONFIG_FW_INFO_VERSION
+        CONFIG_FW_INFO_CRYPTO_ID
+        CONFIG_FW_INFO_MAGIC_LEN
+        CONFIG_FW_INFO_VALID_VAL
+        CONFIG_EXT_API_PROVIDE_EXT_API_ATLEAST_OPTIONAL
+        CONFIG_EXT_API_PROVIDE_EXT_API_ATLEAST_REQUIRED
+        CONFIG_EXT_API_PROVIDE_EXT_API_ID
+        CONFIG_EXT_API_PROVIDE_EXT_API_FLAGS
+        CONFIG_EXT_API_PROVIDE_EXT_API_VER
+        CONFIG_EXT_API_PROVIDE_EXT_API_MAX_VER
+      )
+
+      get_cmake_property(config_variables VARIABLES)
+      foreach(var_name ${config_variables})
+        if(("${var_name}" MATCHES "^CONFIG_FW_INFO_.*" OR "${var_name}" MATCHES "^CONFIG_EXT_API_.*")
+            AND NOT "${var_name}" IN_LIST fw_info_disallow_list)
+          # This assumes that all variables are integer-based
+          list(APPEND extra_cmake_args "-D${var_name}=${${var_name}}")
+        endif()
+      endforeach()
+    endif()
   else()
     set(source_dir ${ACI_SOURCE_DIR})
 
