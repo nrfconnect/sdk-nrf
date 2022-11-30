@@ -8,6 +8,7 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/sys/util.h>
+#include <adp536x.h>
 
 #define ADP536X_I2C_ADDR				0x46
 
@@ -24,6 +25,11 @@
 #define ADP536X_CHG_STATUS_2				0x09
 #define ADP536X_BAT_PROTECT_CTRL			0x11
 #define ADP536X_BAT_OC_CHG				0x15
+#define ADP536X_BAT_CAP					0x20
+#define ADP536X_BAT_SOC					0x21
+#define ADP536X_VBAT_READ_H				0x25
+#define ADP536X_VBAT_READ_L				0x26
+#define ADP536X_FUEL_GAUGE_MODE				0x27
 #define ADP536X_BUCK_CFG				0x29
 #define ADP536X_BUCK_OUTPUT				0x2A
 #define ADP536X_BUCKBST_CFG				0x2B
@@ -137,6 +143,11 @@
 #define ADP536X_DEFAULT_SET_MSK				GENMASK(7, 0)
 #define ADP536X_DEFAULT_SET(x)				(((x) & 0xFF) << 0)
 
+/* Fuel gauge configure register. */
+#define ADP536X_FUEL_GAUGE_MODE_FG_MODE_MSK		BIT(1)
+#define ADP536X_FUEL_GAUGE_MODE_FG_MODE(x)		(((x) & 0x01) << 1)
+#define ADP536X_FUEL_GAUGE_EN_FG_MSK			BIT(0)
+#define ADP536X_FUEL_GAUGE_EN_FG(x)			((x) & 0x01)
 
 static const struct device *i2c_dev;
 
@@ -299,5 +310,51 @@ int adp536x_init(const struct device *dev)
 
 	i2c_dev = dev;
 
+	return 0;
+}
+
+int adp536x_fg_set_mode(enum adp536x_fg_enabled en, enum adp536x_fg_mode mode)
+{
+	return adp536x_reg_write_mask(
+		ADP536X_FUEL_GAUGE_MODE,
+		ADP536X_FUEL_GAUGE_MODE_FG_MODE_MSK | ADP536X_FUEL_GAUGE_EN_FG_MSK,
+		ADP536X_FUEL_GAUGE_MODE_FG_MODE(mode) | ADP536X_FUEL_GAUGE_EN_FG(en));
+}
+
+int adp536x_fg_soc(uint8_t *percentage)
+{
+	int err;
+	uint8_t tmp;
+
+	err = adp536x_reg_read(ADP536X_BAT_SOC, &tmp);
+	if (err) {
+		return err;
+	}
+	*percentage = tmp & 0x7f;
+
+	return 0;
+}
+
+int adp536x_fg_volts(uint16_t *millivolts)
+{
+	int err;
+	uint8_t msb, lsb;
+	uint16_t v;
+
+	err = adp536x_reg_read(ADP536X_VBAT_READ_H, &msb);
+	if (err) {
+		return err;
+	}
+
+	err = adp536x_reg_read(ADP536X_VBAT_READ_L, &lsb);
+	if (err) {
+		return err;
+	}
+
+	v = msb;
+	v <<= 5;
+	v |= (lsb >> 3);
+
+	*millivolts = v;
 	return 0;
 }
