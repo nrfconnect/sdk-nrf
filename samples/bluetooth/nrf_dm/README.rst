@@ -119,6 +119,15 @@ The :kconfig:option:`CONFIG_DM_HIGH_PRECISION_CALC` Kconfig option enables high-
 High-precision calculation has an impact on MCPD ranging mode only.
 Due to its limited memory, the nRF52 Development Kit (nrf52dk_nrf52832) does not support high-precision calculations.
 
+Zero-distance calibration
+*************************
+
+The measured values of distance measurement include an offset.
+The offset value may depend on the design of the radio circuit, the antenna used, or the PCB layout.
+When using a library and a sample, you need to compensate the zero-distance offset and perform the calibration manually.
+To determine the offset value, place the devices at a reference distance of 60 cm from each other and collect a batch of measurement data.
+The difference between the average measurement value and the actual distance can be used as an estimate of the offset.
+
 User interface
 **************
 
