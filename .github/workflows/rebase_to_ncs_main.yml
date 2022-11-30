@@ -1,0 +1,42 @@
+name: Rebase from ncs main
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Rebase from main
+        run: |
+          git config --global user.email "actions@example.com"
+          git config --global user.name "github-actions[bot]"
+          git remote add  ncs https://github.com/nrfconnect/sdk-nrf
+          git fetch ncs
+          git rev-parse HEAD
+          git rebase --verbose ncs/main
+
+      - name: Check if changes were made
+        run: |
+          if [[ `git diff origin/main --exit-code` ]]; then
+            echo "HAS_CHANGES=1" >> $GITHUB_ENV
+          else
+            echo "HAS_CHANGES=0" >> $GITHUB_ENV
+          fi
+
+      - name: Create Pull Request
+        if: env.HAS_CHANGES == '1'
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.PR_CREATOR_TOKEN }} # Personal access token of balaji-nordic with contents:write and pull requestes:write permission
+          title: 'Updates from upstream ncs'
+          assignees: balaji-nordic
+          reviewers: balaji-nordic
