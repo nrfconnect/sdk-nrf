@@ -81,11 +81,11 @@ struct bt_mesh_dm_cli_handlers {
 	 *
 	 * @param[in] cli Client that received the status message.
 	 * @param[in] ctx Context of the message.
-	 * @param[in] result Result contained in the message.
+	 * @param[in] results Results contained in the message.
 	 */
 	void (*const result_handler)(struct bt_mesh_dm_cli *cli,
 				     struct bt_mesh_msg_ctx *ctx,
-				     const struct bt_mesh_dm_cli_result *result);
+				     const struct bt_mesh_dm_cli_results *results);
 };
 
 /** Distance Measurement Client instance. */
@@ -188,7 +188,7 @@ int bt_mesh_dm_cli_config(struct bt_mesh_dm_cli *cli,
  */
 int bt_mesh_dm_cli_measurement_start(struct bt_mesh_dm_cli *cli, struct bt_mesh_msg_ctx *ctx,
 				    const struct bt_mesh_dm_cli_start *start,
-				    struct bt_mesh_dm_cli_result *rsp);
+				    struct bt_mesh_dm_cli_results *rsp);
 
 /** @brief Get measurement results from a Distance Measurement server.
  *
@@ -211,7 +211,7 @@ int bt_mesh_dm_cli_measurement_start(struct bt_mesh_dm_cli *cli, struct bt_mesh_
  * @retval -EBADMSG Invalid entry count provided.
  */
 int bt_mesh_dm_cli_results_get(struct bt_mesh_dm_cli *cli, struct bt_mesh_msg_ctx *ctx,
-			       uint8_t entry_cnt, struct bt_mesh_dm_cli_result *rsp);
+			       uint8_t entry_cnt, struct bt_mesh_dm_cli_results *rsp);
 
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_dm_cli_op[];
