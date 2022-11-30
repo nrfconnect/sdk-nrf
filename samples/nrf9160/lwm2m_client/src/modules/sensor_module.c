@@ -41,7 +41,7 @@ static struct k_work_delayable pmic_work;
 #define PERIOD K_MINUTES(2)
 #define RETRY K_MSEC(200)
 #define ACCEL_DELTA 1.0
-#define TEMP_DELTA 1.0
+#define TEMP_DELTA 0.5
 #define PRESS_DELTA 0.5
 #define HUMID_DELTA 1.0
 #define GAS_RES_DELTA 5000
