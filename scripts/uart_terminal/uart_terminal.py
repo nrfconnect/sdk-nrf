@@ -8,12 +8,14 @@ from scripts.open_putty import open_putty
 import sys
 import subprocess
 
-sys.path.append("./scripts")
-
+print("Configure and open terminal(s)\n")
 
 if sys.platform == "linux":
     terminator = subprocess.Popen(
         ["terminator", "--config=scripts/linux_terminator_config"], stderr=subprocess.PIPE)
+
+    if terminator.returncode == None:
+        print("No nRF5340 audio DKs found\n")
 elif sys.platform == "win32":
     open_putty()
 else:
