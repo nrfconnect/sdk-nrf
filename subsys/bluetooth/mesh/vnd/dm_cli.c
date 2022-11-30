@@ -69,11 +69,11 @@ static int handle_result_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 				struct net_buf_simple *buf)
 {
 	struct bt_mesh_dm_cli *cli = model->user_data;
-	struct bt_mesh_dm_cli_result status = {
+	struct bt_mesh_dm_cli_results status = {
 		.res = cli->res_arr,
 		.entry_cnt = 0
 	};
-	struct bt_mesh_dm_cli_result *rsp;
+	struct bt_mesh_dm_cli_results *rsp;
 
 	status.status = net_buf_simple_pull_u8(buf);
 
@@ -182,7 +182,7 @@ int bt_mesh_dm_cli_config(struct bt_mesh_dm_cli *cli,
 int bt_mesh_dm_cli_measurement_start(struct bt_mesh_dm_cli *cli,
 				     struct bt_mesh_msg_ctx *ctx,
 				     const struct bt_mesh_dm_cli_start *start,
-				     struct bt_mesh_dm_cli_result *rsp)
+				     struct bt_mesh_dm_cli_results *rsp)
 {
 	if (!BT_MESH_ADDR_IS_UNICAST(start->addr)) {
 		return -EBADMSG;
@@ -211,7 +211,7 @@ int bt_mesh_dm_cli_measurement_start(struct bt_mesh_dm_cli *cli,
 int bt_mesh_dm_cli_results_get(struct bt_mesh_dm_cli *cli,
 			       struct bt_mesh_msg_ctx *ctx,
 			       uint8_t entry_cnt,
-			       struct bt_mesh_dm_cli_result *rsp)
+			       struct bt_mesh_dm_cli_results *rsp)
 {
 	if (entry_cnt > cli->entry_cnt) {
 		return -EBADMSG;

@@ -57,7 +57,7 @@ static int cmd_cfg(const struct shell *shell, size_t argc, char *argv[])
 }
 
 static void result_print(const struct shell *shell,
-			 struct bt_mesh_dm_cli_result *rsp)
+			 struct bt_mesh_dm_cli_results *rsp)
 {
 	shell_print(shell, "Status: %s (err: %d)", rsp->status ? "Fail" : "Success", rsp->status);
 
@@ -121,7 +121,7 @@ static int cmd_dm_start(const struct shell *shell, size_t argc, char *argv[])
 	}
 
 	struct bt_mesh_dm_cli *cli = mod->user_data;
-	struct bt_mesh_dm_cli_result rsp;
+	struct bt_mesh_dm_cli_results rsp;
 
 	err = bt_mesh_dm_cli_measurement_start(cli, NULL, &set, &rsp);
 
@@ -148,7 +148,7 @@ static int cmd_result_get(const struct shell *shell, size_t argc, char *argv[])
 	}
 
 	struct bt_mesh_dm_cli *cli = mod->user_data;
-	struct bt_mesh_dm_cli_result rsp;
+	struct bt_mesh_dm_cli_results rsp;
 
 	err = bt_mesh_dm_cli_results_get(cli, NULL, count, &rsp);
 
