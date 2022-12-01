@@ -49,49 +49,6 @@ static int core_config(void)
 		return ret;
 	}
 
-	/* Set on-board DSP/HW codec as default */
-	static const struct gpio_dt_spec hw_codec_sel =
-		GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), hw_codec_sel_out_gpios);
-
-	if (!device_is_ready(hw_codec_sel.port)) {
-		LOG_ERR("GPIO is not ready!");
-		return -ENODEV;
-	}
-
-	/* Select on-board HW codec by default */
-	ret = gpio_pin_configure_dt(&hw_codec_sel, GPIO_OUTPUT_ACTIVE);
-	if (ret) {
-		return ret;
-	}
-
-	/* Deassert CS47L63 HW codec reset line */
-	static const struct gpio_dt_spec hw_codec_reset =
-		GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), hw_codec_reset_out_gpios);
-
-	if (!device_is_ready(hw_codec_reset.port)) {
-		LOG_ERR("GPIO is not ready!");
-		return -ENODEV;
-	}
-
-	ret = gpio_pin_configure_dt(&hw_codec_reset, GPIO_OUTPUT_INACTIVE);
-	if (ret) {
-		return ret;
-	}
-
-	/* Disable board revision readback as default */
-	static const struct gpio_dt_spec board_id_en =
-		GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), board_id_en_out_gpios);
-
-	if (!device_is_ready(board_id_en.port)) {
-		LOG_ERR("GPIO is not ready!");
-		return -ENODEV;
-	}
-
-	ret = gpio_pin_configure_dt(&board_id_en, GPIO_OUTPUT_INACTIVE);
-	if (ret) {
-		return ret;
-	}
-
 	return 0;
 }
 

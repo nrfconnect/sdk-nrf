@@ -31,6 +31,9 @@ static cs47l63_t cs47l63_driver;
 static const struct gpio_dt_spec hw_codec_sel =
 	GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), hw_codec_sel_out_gpios);
 
+static const struct gpio_dt_spec hw_codec_reset =
+		GPIO_DT_SPEC_GET(DT_NODELABEL(nrf5340_audio_dk), hw_codec_reset_out_gpios);
+
 /**@brief Write to multiple registers in CS47L63
  */
 static int cs47l63_comm_reg_conf_write(const uint32_t config[][2], uint32_t num_of_regs)
@@ -75,6 +78,17 @@ static int hw_codec_on_board_set(void)
 
 	/* Allow for switches to flip when selecting on board hw_codec */
 	k_msleep(HW_CODEC_SELECT_DELAY_MS);
+
+	/* Ensure CS47L63 HW codec reset pin is not asserted */
+	if (!device_is_ready(hw_codec_reset.port)) {
+		LOG_ERR("GPIO is not ready!");
+		return -ENODEV;
+	}
+
+	ret = gpio_pin_configure_dt(&hw_codec_reset, GPIO_OUTPUT_INACTIVE);
+	if (ret) {
+		return ret;
+	}
 
 	return 0;
 }
