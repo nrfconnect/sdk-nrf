@@ -26,6 +26,8 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_get_u8, const char *, uint8_t *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_get_bool, const char *, bool *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_opaque, const char *, const char *, uint16_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_string, const char *, const char *)
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_send, struct lwm2m_ctx *,
+			char const **, uint8_t, bool);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_delete_obj_inst, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_delete_callback, uint16_t,
 			lwm2m_engine_user_cb_t);
@@ -35,7 +37,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_post_write_callback, const ch
 			lwm2m_engine_set_data_cb_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_create_obj_inst, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_create_obj_inst, uint16_t, uint16_t,
-		        struct lwm2m_engine_obj_inst **);
+			struct lwm2m_engine_obj_inst **);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_path_to_string, char *, size_t, struct lwm2m_obj_path *, int);
 DECLARE_FAKE_VALUE_FUNC(struct lwm2m_engine_obj_inst *, lwm2m_engine_get_obj_inst,
 			const struct lwm2m_obj_path *);
@@ -61,6 +63,10 @@ DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_param_set, enum lte_lc_lte_mode, const 
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_req, bool);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_neighbor_cell_measurement, struct lte_lc_ncellmeas_params *);
 DECLARE_FAKE_VOID_FUNC(lte_lc_register_handler, lte_lc_evt_handler_t);
+DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_agps_process, const char *, size_t);
+DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_begin_update);
+DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_process_update, uint8_t *, size_t);
+DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_finish_update);
 DECLARE_FAKE_VALUE_FUNC(int, settings_load_subtree, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, settings_register, struct settings_handler *);
 DECLARE_FAKE_VALUE_FUNC(int, settings_subsys_init);
@@ -95,6 +101,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
 	FUNC(lwm2m_engine_set_s32)                      \
 	FUNC(lwm2m_engine_set_opaque)                   \
 	FUNC(lwm2m_engine_set_string)                   \
+	FUNC(lwm2m_engine_send)				\
 	FUNC(lwm2m_engine_delete_obj_inst)              \
 	FUNC(lwm2m_engine_register_delete_callback)     \
 	FUNC(lwm2m_engine_register_create_callback)     \
@@ -131,6 +138,10 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
 	FUNC(lte_lc_edrx_req)                           \
 	FUNC(lte_lc_neighbor_cell_measurement)          \
 	FUNC(lte_lc_register_handler)                   \
+	FUNC(nrf_cloud_agps_process)			\
+	FUNC(nrf_cloud_pgps_begin_update)		\
+	FUNC(nrf_cloud_pgps_process_update)		\
+	FUNC(nrf_cloud_pgps_finish_update)		\
 	FUNC(settings_load_subtree)                     \
 	FUNC(settings_register)                         \
 	FUNC(settings_subsys_init)                      \

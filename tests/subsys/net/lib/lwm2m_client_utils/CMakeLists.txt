@@ -51,6 +51,8 @@ target_compile_options(..__nrf__subsys__net__lib__lwm2m_client_utils
 set(includes
 "$ENV{ZEPHYR_BASE}/subsys/net/lib/lwm2m/"
 "$ENV{ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/"
+"$ENV{ZEPHYR_BASE}/../modules/lib/cjson/"
+"$ENV{ZEPHYR_BASE}/../nrf/subsys/net/lib/nrf_cloud/include/"
 "src/"
 )
 
