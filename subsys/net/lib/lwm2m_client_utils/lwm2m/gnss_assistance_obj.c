@@ -8,6 +8,7 @@
 #define LOG_LEVEL CONFIG_LWM2M_LOG_LEVEL
 
 #include <zephyr/logging/log.h>
+#include <zephyr/kernel.h>
 LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #include <string.h>
@@ -204,11 +205,11 @@ static int gnss_assistance_result_code_cb(uint16_t obj_inst_id, uint16_t res_id,
 					  size_t total_size)
 {
 	if (result_code_cb) {
-		result_code_cb(result);
+		result_code_cb((int32_t)data);
 	}
 
 	if (result != LOCATION_ASSIST_RESULT_CODE_OK) {
-		LOG_ERR("Result code %d", result);
+		LOG_ERR("Result code %d", (int32_t)data);
 	}
 	return 0;
 }
