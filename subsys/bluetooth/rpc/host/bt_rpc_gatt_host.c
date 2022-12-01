@@ -911,6 +911,7 @@ static void bt_gatt_indicate_rpc_handler(const struct nrf_rpc_group *group,
 
 	return;
 decoding_error:
+	k_free(params);
 	report_decoding_error(BT_GATT_INDICATE_RPC_CMD, handler_data);
 }
 
