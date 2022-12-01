@@ -38,7 +38,14 @@ void location_core_event_cb_pgps_request(const struct gps_pgps_request *request)
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
 void location_core_event_cb_cellular_request(struct lte_lc_cells_info *request);
 void location_core_cellular_ext_result_set(
-	enum location_cellular_ext_result result,
+	enum location_ext_result result,
+	struct location_data *location);
+#endif
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL)
+void location_core_event_cb_wifi_request(struct wifi_scan_info *request);
+void location_core_wifi_ext_result_set(
+	enum location_ext_result result,
 	struct location_data *location);
 #endif
 

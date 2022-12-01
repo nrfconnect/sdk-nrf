@@ -443,7 +443,7 @@ void location_core_event_cb_cellular_request(struct lte_lc_cells_info *request)
 }
 
 void location_core_cellular_ext_result_set(
-	enum location_cellular_ext_result result,
+	enum location_ext_result result,
 	struct location_data *location)
 {
 	if (k_sem_count_get(&location_core_sem) > 0) {
@@ -453,19 +453,64 @@ void location_core_cellular_ext_result_set(
 	}
 
 	LOG_DBG("Location cellular result set with result=%s",
-		result == LOCATION_CELLULAR_EXT_RESULT_SUCCESS ? "success" :
-		result == LOCATION_CELLULAR_EXT_RESULT_UNKNOWN ? "unknown" : "error");
+		result == LOCATION_EXT_RESULT_SUCCESS ? "success" :
+		result == LOCATION_EXT_RESULT_UNKNOWN ? "unknown" : "error");
 
 	current_event_data.method = LOCATION_METHOD_CELLULAR;
 	switch (result) {
-	case LOCATION_CELLULAR_EXT_RESULT_SUCCESS:
+	case LOCATION_EXT_RESULT_SUCCESS:
 		current_event_data.id = LOCATION_EVT_LOCATION;
 		current_event_data.location = *location;
 		break;
-	case LOCATION_CELLULAR_EXT_RESULT_UNKNOWN:
+	case LOCATION_EXT_RESULT_UNKNOWN:
 		current_event_data.id = LOCATION_EVT_RESULT_UNKNOWN;
 		break;
-	case LOCATION_CELLULAR_EXT_RESULT_ERROR:
+	case LOCATION_EXT_RESULT_ERROR:
+	default:
+		current_event_data.id = LOCATION_EVT_ERROR;
+		break;
+	}
+
+	k_work_submit_to_queue(
+		location_core_work_queue_get(),
+		&location_event_cb_work);
+}
+#endif
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL)
+void location_core_event_cb_wifi_request(struct wifi_scan_info *request)
+{
+	struct location_event_data wifi_request_event_data;
+
+	wifi_request_event_data.id = LOCATION_EVT_WIFI_EXT_REQUEST;
+	wifi_request_event_data.method = LOCATION_METHOD_WIFI;
+	wifi_request_event_data.wifi_request = *request;
+	event_handler(&wifi_request_event_data);
+}
+
+void location_core_wifi_ext_result_set(
+	enum location_ext_result result,
+	struct location_data *location)
+{
+	if (k_sem_count_get(&location_core_sem) > 0) {
+		LOG_WRN("Location Wi-Fi result set called but no location request pending");
+		return;
+	}
+
+	LOG_DBG("Location Wi-Fi result set with result=%s",
+		result == LOCATION_EXT_RESULT_SUCCESS ? "success" :
+		result == LOCATION_EXT_RESULT_UNKNOWN ? "unknown" : "error");
+
+	current_event_data.method = LOCATION_METHOD_WIFI;
+	switch (result) {
+	case LOCATION_EXT_RESULT_SUCCESS:
+		current_event_data.id = LOCATION_EVT_LOCATION;
+		current_event_data.location = *location;
+		break;
+	case LOCATION_EXT_RESULT_UNKNOWN:
+		current_event_data.id = LOCATION_EVT_RESULT_UNKNOWN;
+		break;
+	case LOCATION_EXT_RESULT_ERROR:
 	default:
 		current_event_data.id = LOCATION_EVT_ERROR;
 		break;

@@ -142,7 +142,6 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 	struct method_wifi_start_work_args *work_data =
 		CONTAINER_OF(work, struct method_wifi_start_work_args, work_item);
 	struct location_wifi_serv_pos_req request;
-	struct location_data result;
 	const struct location_wifi_config wifi_config = work_data->wifi_config;
 	int64_t starting_uptime_ms = work_data->starting_uptime_ms;
 	int err;
@@ -192,6 +191,11 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 		latest_wifi_info.cnt = latest_scan_result_count;
 		request.scanning_results = &latest_wifi_info;
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL)
+		location_core_event_cb_wifi_request(&latest_wifi_info);
+#else
+		struct location_data result;
+
 		err = wifi_service_location_get(wifi_config.service, &request, &result);
 		if (err) {
 			LOG_ERR("Failed to acquire a location by using "
@@ -207,6 +211,7 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 				location_core_event_cb(&location_result);
 			}
 		}
+#endif
 	} else {
 		if (latest_scan_result_count == 1) {
 			/* Following statement seems to be true at least with HERE

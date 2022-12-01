@@ -289,6 +289,10 @@ Modem libraries
 
 |no_changes_yet_note|
 
+  * Updated:
+
+    * Renamed ``enum location_cellular_ext_result`` to c:enum:`location_ext_result`, because Wi-Fi will use the same enumeration.
+
 Libraries for networking
 ------------------------
 
