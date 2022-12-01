@@ -64,6 +64,7 @@ static K_SEM_DEFINE(error_msg_size_sem, 0, 1);
 void setUp(void)
 {
 	cmock_mqtt_Init();
+	cmock_socket_Init();
 	__cmock_mqtt_keepalive_time_left_IgnoreAndReturn(0);
 
 	/* Suspend the polling thread to have full control over polling. */
@@ -76,6 +77,7 @@ void setUp(void)
 void tearDown(void)
 {
 	cmock_mqtt_Verify();
+	cmock_socket_Verify();
 }
 
 int test_suiteTearDown(int num_failures)
