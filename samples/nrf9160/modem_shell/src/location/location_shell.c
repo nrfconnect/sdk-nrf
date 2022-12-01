@@ -361,9 +361,9 @@ static int location_ctrl_lwm2m_cell_result_cb(uint16_t obj_inst_id,
 
 exit:
 	if (err) {
-		location_cellular_ext_result_set(LOCATION_CELLULAR_EXT_RESULT_ERROR, NULL);
+		location_cellular_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
 	} else {
-		location_cellular_ext_result_set(LOCATION_CELLULAR_EXT_RESULT_SUCCESS, &location);
+		location_cellular_ext_result_set(LOCATION_EXT_RESULT_SUCCESS, &location);
 	}
 
 	return err;
@@ -404,10 +404,10 @@ static void location_ctrl_cellular_ext_handle(const struct lte_lc_cells_info *ce
 
 exit:
 	if (err) {
-		location_cellular_ext_result_set(LOCATION_CELLULAR_EXT_RESULT_ERROR, NULL);
+		location_cellular_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
 	}
 #else /* !CONFIG_MOSH_CLOUD_LWM2M */
-	location_cellular_ext_result_set(LOCATION_CELLULAR_EXT_RESULT_ERROR, NULL);
+	location_cellular_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
 #endif
 }
 #endif /* CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL */

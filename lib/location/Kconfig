@@ -84,14 +84,20 @@ endif # LOCATION_METHOD_GNSS
 if LOCATION_METHOD_CELLULAR
 
 config LOCATION_METHOD_CELLULAR_EXTERNAL
-	bool "Resolution to neighbor cell information is handled by the application outside of Location library"
+	bool "Neighbor cell information is handled by the application outside of Location library"
 	help
-	  Allow application to request resolution to neighbor cell information and
-	  respond the outcome to the Location library.
+	  Allow application to send neighbor cell information to a cloud service and respond to
+	  the Location library with the outcome.
 
 endif # LOCATION_METHOD_CELLULAR
 
 if LOCATION_METHOD_WIFI
+
+config LOCATION_METHOD_WIFI_EXTERNAL
+	bool "Access point information is handled by the application outside of Location library"
+	help
+	  Allow application to send access point information to a cloud service and respond to
+	  the Location library with the outcome.
 
 config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
 	bool "nRF Cloud location service"

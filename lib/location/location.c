@@ -230,10 +230,19 @@ int location_pgps_data_process(const char *buf, size_t buf_len)
 }
 
 void location_cellular_ext_result_set(
-	enum location_cellular_ext_result result,
+	enum location_ext_result result,
 	struct location_data *location)
 {
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
 	location_core_cellular_ext_result_set(result, location);
+#endif
+}
+
+void location_wifi_ext_result_set(
+	enum location_ext_result result,
+	struct location_data *location)
+{
+#if defined(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL)
+	location_core_wifi_ext_result_set(result, location);
 #endif
 }
