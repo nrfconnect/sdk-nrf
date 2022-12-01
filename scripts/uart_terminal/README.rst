@@ -42,14 +42,14 @@ For example, in a Windows environment, if you have three DKs connected, the scri
 
 .. code-block:: console
 
-Configure and open terminal(s)
+   Configure and open terminal(s)
 
-    ID        Port
- 960385074    COM28
-1050166277    COM16
- 960390887    COM18
+       ID        Port
+    960385074    COM28
+   1050166277    COM16
+    960390887    COM18
 
-Script finished 
+   Script finished 
 
 Using the default settings, the script will open a terminal window for each port listed.
 
