@@ -20,3 +20,5 @@ elif sys.platform == "win32":
     open_putty()
 else:
     print("OS not supported")
+
+print("\nScript finished\n")
