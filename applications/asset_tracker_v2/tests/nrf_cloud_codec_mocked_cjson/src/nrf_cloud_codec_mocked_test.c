@@ -11,9 +11,9 @@
 
 #include "cloud_codec.h"
 
-#include "mock_json_helpers.h"
-#include "mock_date_time.h"
-#include "mock_cJSON_to_mock.h"
+#include "cmock_json_helpers.h"
+#include "cmock_date_time.h"
+#include "cmock_cJSON_to_mock.h"
 #include "float.h"
 
 static struct cloud_codec_data codec;
@@ -21,9 +21,9 @@ static int ret;
 
 void setUp(void)
 {
-	mock_cJSON_to_mock_Init();
-	mock_date_time_Init();
-	mock_json_helpers_Init();
+	cmock_cJSON_to_mock_Init();
+	cmock_date_time_Init();
+	cmock_json_helpers_Init();
 
 	__cmock_cJSON_Init_Ignore();
 	ret = cloud_codec_init(NULL, NULL);
@@ -34,9 +34,9 @@ void setUp(void)
 
 void tearDown(void)
 {
-	mock_cJSON_to_mock_Verify();
-	mock_date_time_Verify();
-	mock_json_helpers_Verify();
+	cmock_cJSON_to_mock_Verify();
+	cmock_date_time_Verify();
+	cmock_json_helpers_Verify();
 }
 
 /* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */

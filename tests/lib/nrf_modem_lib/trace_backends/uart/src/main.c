@@ -11,8 +11,8 @@
 
 #include "trace_backend.h"
 
-#include "mock_nrfx_uarte.h"
-#include "mock_pinctrl.h"
+#include "cmock_nrfx_uarte.h"
+#include "cmock_pinctrl.h"
 
 extern int unity_main(void);
 
@@ -36,14 +36,14 @@ void nrfx_isr(const void *irq_handler)
 
 void setUp(void)
 {
-	mock_nrfx_uarte_Init();
-	mock_pinctrl_Init();
+	cmock_nrfx_uarte_Init();
+	cmock_pinctrl_Init();
 }
 
 void tearDown(void)
 {
-	mock_nrfx_uarte_Verify();
-	mock_pinctrl_Verify();
+	cmock_nrfx_uarte_Verify();
+	cmock_pinctrl_Verify();
 
 	p_uarte_inst_in_use = NULL;
 	uarte_callback = NULL;

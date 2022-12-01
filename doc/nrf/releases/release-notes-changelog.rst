@@ -840,6 +840,19 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
     * Fixed an issue with the driver and devicetree symbol for the external flash memory where the driver was sometimes NULL, even if the DT node was chosen.
 
+* Unity
+
+  * Added:
+
+    * Support for excluding functions from mock generation.
+      This provides a framework to implement custom mocks.
+
+  * Updated:
+
+    * Renamed generated mock functions from ``__wrap`` to ``__cmock``.
+    * Renamed generated mock headers from :file:`mock_<header_file>.h` to :file:`cmock_<header_file>.h`.
+    * Using compiler option ``--defsym`` instead of ``--wrap``.
+
 MCUboot
 =======
 

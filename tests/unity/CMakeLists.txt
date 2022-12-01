@@ -4,11 +4,42 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# Internal macro for creating unity configuration yaml.
+# The name of the output file is returned in `out_config_file`.
+# mock_name:       name of file that is mocked. Can be empty to create common file with no excludes.
+# exclude_list:    holds list of functions / match strings that should be placed in strippables.
+# out_config_file: return setting with path and name to generate config file
+macro(configure_unity_conf_file mock_name exclude_list out_config_file)
+  set(unity_config_template unity_cfg.yaml.template)
+  set(unity_config_file_name unity_cfg.yaml)
+  set(out_dir ${APPLICATION_BINARY_DIR}/mocks)
+
+  if("${mock_name}" STREQUAL "")
+    configure_file(${NRF_DIR}/tests/unity/${unity_config_template}
+                   ${out_dir}/${unity_config_file_name}
+    )
+    set(${out_config_file} ${out_dir}/${unity_config_file_name})
+  elseif("${exclude_list}" STREQUAL "")
+    # Just return the common file.
+    set(${out_config_file} ${out_dir}/${unity_config_file_name})
+  else()
+    set(CMOCK_STRIPPABLES ":strippables:\n")
+    foreach(ex ${exclude_list})
+      string(CONFIGURE "        - '(?:${ex}\\s*\\(+.*?\\)+)'\n" strip_regex)
+      set(CMOCK_STRIPPABLES "${CMOCK_STRIPPABLES}${strip_regex}")
+    endforeach()
+    set(${out_config_file} ${out_dir}/${mock_name}.${unity_config_file_name})
+    configure_file(${NRF_DIR}/tests/unity/${unity_config_template} ${${out_config_file}})
+    set(CMOCK_STRIPPABLES)
+  endif()
+endmacro()
+
 zephyr_library()
 
 set_property(GLOBAL PROPERTY CMOCK_DIR ${ZEPHYR_BASE}/../test/cmock)
 get_property(CMOCK_DIR GLOBAL PROPERTY CMOCK_DIR)
-set(UNITY_CONFIG_FILE ${CMAKE_CURRENT_LIST_DIR}/unity_cfg.yaml CACHE STRING "")
+
+configure_unity_conf_file("" "" unused)
 
 find_program(
   RUBY_EXECUTABLE
@@ -32,6 +63,7 @@ zephyr_library_sources(
 zephyr_library_sources(src/generic_teardown.c)
 zephyr_compile_definitions(UNITY_INCLUDE_CONFIG_H)
 
+
 # Generate test runner file.
 function(test_runner_generate test_file_path)
   get_property(CMOCK_DIR GLOBAL PROPERTY CMOCK_DIR)
@@ -39,13 +71,14 @@ function(test_runner_generate test_file_path)
   file(MAKE_DIRECTORY "${UNITY_PRODUCTS_DIR}")
   get_filename_component(test_file_name "${test_file_path}" NAME)
   set(output_file "${UNITY_PRODUCTS_DIR}/runner_${test_file_name}")
+  configure_unity_conf_file("${file_name}" "" conf_file)
 
   add_custom_command(
     COMMAND ${RUBY_EXECUTABLE}
     ${CMOCK_DIR}/vendor/unity/auto/generate_test_runner.rb
-    ${UNITY_CONFIG_FILE}
+    ${conf_file}
     ${test_file_path} ${output_file}
-    DEPENDS ${test_file_path} ${UNITY_CONFIG_FILE}
+    DEPENDS ${test_file_path}
     OUTPUT ${output_file}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   )
@@ -55,24 +88,35 @@ function(test_runner_generate test_file_path)
   message(STATUS "Generating test runner ${output_file}")
 endfunction()
 
+#
+# Usage
+#   cmock_generate(<header_path> <dst_path> [EXCLUDE <pattern>])
+#
 # Generate cmock for provided header file.
+#
+# header_path:       Path to header
+# dst_path:          Location of generated header
+# EXCLUDE <pattern>: Exclude functions matching pattern. Pattern can be a simple style regex.
+#
 function(cmock_generate header_path dst_path)
+  cmake_parse_arguments(CMOCK "" "" "EXCLUDE" ${ARGN})
   get_property(CMOCK_DIR GLOBAL PROPERTY CMOCK_DIR)
-  set(MOCK_PREFIX mock_)
+  set(MOCK_PREFIX cmock_)
 
   get_filename_component(file_name "${header_path}" NAME_WE)
   set(MOCK_FILE ${dst_path}/${MOCK_PREFIX}${file_name}.c)
 
   file(MAKE_DIRECTORY "${dst_path}")
+  configure_unity_conf_file("${file_name}" "${CMOCK_EXCLUDE}" conf_file)
 
   add_custom_command(OUTPUT ${MOCK_FILE}
     COMMAND ${RUBY_EXECUTABLE}
     ${CMOCK_DIR}/lib/cmock.rb
     --mock_prefix=${MOCK_PREFIX}
     --mock_path=${dst_path}
-    -o${UNITY_CONFIG_FILE}
+    -o${conf_file}
     ${header_path}
-    DEPENDS ${header_path} ${UNITY_CONFIG_FILE}
+    DEPENDS ${header_path}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   )
 
@@ -96,8 +140,15 @@ endfunction()
 # Function takes header file and generates a file containing list of functions.
 # File is then passed to 'cmock_linker_trick' which adds linker option for each
 # function listed in the file.
+# EXCLUDE <pattern>: Exclude functions matching pattern. Pattern can be a simple style regex.
 function(cmock_linker_wrap_trick header_file_path)
+  cmake_parse_arguments(CMOCK "" "" "EXCLUDE" ${ARGN})
   set(flist_file "${header_file_path}.flist")
+
+  if(DEFINED CMOCK_EXCLUDE)
+    string(JOIN "--exclude;" exclude_arg ${CMOCK_EXCLUDE})
+    set(exclude_arg "--exclude" ${exclude_arg})
+  endif()
 
   execute_process(
     COMMAND
@@ -105,6 +156,7 @@ function(cmock_linker_wrap_trick header_file_path)
     ${NRF_DIR}/scripts/unity/func_name_list.py
     --input ${header_file_path}
     --output ${flist_file}
+    ${exclude_arg}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     RESULT_VARIABLE op_result
     OUTPUT_VARIABLE output_result
@@ -146,12 +198,14 @@ endfunction()
 #for example if file under test is include mocked header as <foo/header.h> then
 # mock and replaced header should be placed in <mock_path>/foo with <mock_path>
 # added as include path.
+# EXCLUDE <pattern>: Exclude functions matching pattern. Pattern can be a simple style regex.
 function(cmock_handle header_file)
+  cmake_parse_arguments(CMOCK "" "" "EXCLUDE" ${ARGN})
   get_property(CMOCK_DIR GLOBAL PROPERTY CMOCK_DIR)
   set(CMOCK_PRODUCTS_DIR ${APPLICATION_BINARY_DIR}/mocks)
 
   #get optional offset macro
-  set (extra_macro_args ${ARGN})
+  set (extra_macro_args ${CMOCK_UNPARSED_ARGUMENTS})
   list(LENGTH extra_macro_args num_extra_args)
   if (${num_extra_args} EQUAL 1)
     list(GET extra_macro_args 0 optional_offset)
@@ -167,9 +221,9 @@ function(cmock_handle header_file)
   set(wrap_header "${dst_path}/internal/${header_name}")
 
   cmock_headers_prepare(${header_file} ${mod_header_path} ${wrap_header})
-  cmock_generate(${wrap_header} ${dst_path})
+  cmock_generate(${wrap_header} ${dst_path} EXCLUDE ${CMOCK_EXCLUDE})
 
-  cmock_linker_wrap_trick(${mod_header_path})
+  cmock_linker_wrap_trick(${mod_header_path} EXCLUDE ${CMOCK_EXCLUDE})
 
   target_include_directories(app BEFORE PRIVATE ${CMOCK_PRODUCTS_DIR})
   message(STATUS "Generating cmock for header ${header_file}")

@@ -16,8 +16,10 @@ endchoice
 
 config OPENTHREAD_LIBRARY_AVAILABLE
 	bool
-	# Switch to y when libraries for the current OpenThread revision are provided
-	default n
+	# Switch:
+	# - To `y` when libraries for the current OpenThread revision are provided
+	# - To `n` on the next OpenThread upmerge
+	default y
 	depends on OPENTHREAD_THREAD_VERSION_1_3
 	depends on OPENTHREAD_NORDIC_LIBRARY_FTD || OPENTHREAD_NORDIC_LIBRARY_MTD
 	depends on !OPENTHREAD_COPROCESSOR

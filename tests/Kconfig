@@ -11,5 +11,6 @@ config ZTEST_MULTICORE_DEFAULT_SETTINGS
 	default y
 
 rsource "unity/Kconfig"
+rsource "mocks/Kconfig"
 
 endmenu

@@ -231,6 +231,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/hw_id/                         @maxd-nordic
 /tests/lib/location/                      @trantanen @hiltunent @jhirsi @tokangas
 /tests/lib/lte_lc/                        @jtguggedal @tokangas @simensrostad
+/tests/lib/lte_lc_api/                    @maxd-nordic
 /tests/lib/modem_jwt/                     @SeppoTakalo
 /tests/lib/modem_info/                    @maxd-nordic
 /tests/lib/qos/                           @simensrostad

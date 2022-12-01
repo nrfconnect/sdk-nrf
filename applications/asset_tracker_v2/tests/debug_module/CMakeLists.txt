@@ -61,7 +61,7 @@ target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../nrfxlib/nrf_modem/inclu
 # Include platform specific header file that is used to describe the registers of
 # the given platform. Without this file, generation of mocks will
 # fail due to a incomplete type warning.
-set_property(SOURCE mocks/memfault/panics/mock_coredump.c PROPERTY COMPILE_FLAGS
+set_property(SOURCE mocks/memfault/panics/cmock_coredump.c PROPERTY COMPILE_FLAGS
 	     "-include ${MEMFAULT_SDK_DIR}/components/include/memfault/panics/arch/arm/cortex_m.h")
 
 # Options that cannot be passed through Kconfig fragments.
