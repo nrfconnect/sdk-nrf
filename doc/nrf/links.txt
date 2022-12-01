@@ -444,7 +444,8 @@
 
 .. _`nAN34`: https://infocenter.nordicsemi.com/pdf/nan_34.pdf
 
-.. _`nRF Util`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fug_nrfutil%2FUG%2Fnrfutil%2Fnrfutil_intro.html
+.. _`nRF Util`: https://infocenter.nordicsemi.com/topic/ug_nrfutils/UG/nrfutils/nrfutil_intro.html
+.. _`Installing nRF Util for nRF5 SDK`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_installing.html
 .. _`DFU over Zigbee`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_dfu_zigbee.html
 .. _`Generating DFU packages`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_pkg.html
 .. _`DFU over a serial USB connection`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_dfu_serial_usb.html
@@ -477,7 +478,7 @@
 .. _`Nordic Developer Academy`: https://academy.nordicsemi.com/
 
 .. _`nRF Connect SDK Fundamentals course`: https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/
-
+.. _`Cellular IoT Fundamentals course`: https://academy.nordicsemi.com/courses/cellular-iot-fundamentals/
 
 .. ### Source: devzone.nordicsemi.com
 
@@ -809,12 +810,18 @@
 .. _`Zigbee Specification`: https://zigbeealliance.org/developer_resources/
 .. _`Zigbee Cluster Library specification`: https://zigbeealliance.org/wp-content/uploads/2019/12/07-5123-06-zigbee-cluster-library-specification.pdf
 
+.. _`Matter Resource Kit`: https://groups.csa-iot.org/wg/all-users/home/matter-resource-kit
 .. _`Connectivity Standards Alliance Certification Policy`: https://csa-iot.org/wp-content/uploads/2021/12/07-4842-14-ptsc-certification-policy.pdf
+.. _`CSA's Testing Providers`: https://csa-iot.org/certification/testing-providers/
+.. _`CSA's Certification Team`: https://csa-iot.org/contact-us/
 .. _`Connectivity Standards Alliance members`: https://csa-iot.org/members/
 .. _`Join CSA`:
 .. _`CSA's Become Member page`: https://csa-iot.org/become-member/
+.. _`CSA Member Resources page`: https://groups.csa-iot.org/wg/all-users/home/member-resources
+.. _`Matter Attestation Form`: https://groups.csa-iot.org/wg/members-all/document/folder/2255
 .. _`Matter Attestation of Security template`: https://groups.csa-iot.org/wg/members-all/document/27432
 .. _`Connectivity Standards Alliance Certification Web Tool`: https://zigbeecertifiedproducts.knack.com/zigbee-certified#home/
+.. _`CSA Certified Products Database`: https://csa-iot.org/csa-iot_products/
 
 .. ### Source: Chocolatey
 

@@ -94,7 +94,10 @@ Matter
   * Documentation page about :ref:`ug_matter_overview_multi_fabrics` and entry about binding to :ref:`ug_matter_network_topologies_concepts`.
   * Documentation page about :ref:`ug_matter_overview_commissioning`, which is based on an earlier subsection of :ref:`ug_matter_overview_network_topologies`.
   * Documentation page about :ref:`ug_matter_overview_security`, which is based on an earlier subsection of :ref:`ug_matter_overview_network_topologies`.
-  * Documentation section about :ref:`ug_matter_device_certification_reqs_security` on the page about :ref:`ug_matter_device_certification`.
+
+* Updated:
+
+  * :ref:`ug_matter_device_certification` with several new sections that provide an overview of the certification process.
 
 * Updated:
 
@@ -425,7 +428,7 @@ Trusted Firmware-M (TF-M) samples
 
   * :ref:`tfm_psa_test` for validating compliance with PSA Certified requirements.
   * :ref:`tfm_regression_test` to run secure and non-secure Trusted Firmware-M (TF-M) regression tests.
-  * :ref:`tfm_cert`: Reference sample for how to achieve PSA Certified Level 2 using TF-M on nRF devices.
+  * :ref:`tfm_psa_template`: Reference sample providing a template for Arm Platform Security Architecture (PSA) best practices on nRF devices.
   * :ref:`provisioning_image`: Running the provisioning image sample will provision the device in a manner compatible with Trusted Firmware-M (TF-M).
 
 Thread samples
@@ -914,5 +917,6 @@ Documentation
   * :ref:`ug_tfm` with improved TF-M logging documentation on getting the secure output on nRF5340 DK.
   * :ref:`nrf_bt_scan_readme`, :ref:`ancs_client_readme`, :ref:`hogp_readme` and :ref:`lib_hrs_client_readme` libraries documentation to improve readability.
   * Pages :ref:`ug_nrf52_developing` and :ref:`ug_nrf5340` with sections describing FOTA in Bluetooth mesh.
+  * Page :ref:`ug_thread_tools` with new nRF Util installation information when configuring radio co-processor.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.

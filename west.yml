@@ -52,7 +52,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: c6184a9ff7382e5c699c35b11c9b4e096a7f247d
+      revision: 95f57f43fc2d6409e34d079bb702d5c9fdb3b642
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -104,7 +104,7 @@ manifest:
     # changes.
     - name: sdk-hostap
       path: modules/lib/hostap
-      revision: 454c4f99d6aff07156cf3d9b340471774656dc61
+      revision: 49fddb8f5bb9511cf8d9e56bf680576b26fe2fc8
     - name: mcuboot
       repo-path: sdk-mcuboot
       revision: 96fe9dd6c7ab672953d537175c6414e70965c7ab
@@ -116,7 +116,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 6c223f7a18cf1b4d67c0390925c931c5332d303c
+      revision: 7b5f28fe8bac6ec458e7aa77cdc6ae8349e3cbc4
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -179,7 +179,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 2caab0c3314fe8477f6107ab105b653803babae8
+      revision: 0759de4fc52c8935b90e7f1a79d85148b66dc56e
     - name: ant
       repo-path: sdk-ant
       revision: 8f6e2b0470d11b5c1a97c92df35eb1350e84c5f8

@@ -15,6 +15,8 @@ If you have already set up your nRF9160 DK and want to learn more, see the follo
 * :ref:`ug_nrf9160` for more advanced topics related to the nRF9160 DK if you are already familiar with the |NCS|.
 * The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
 
+If you want to go through a hands-on online training to familiarize yourself with cellular IoT technologies and development of cellular applications, enroll in the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
+
 .. _nrf9160_gs_requirements:
 
 Minimum requirements

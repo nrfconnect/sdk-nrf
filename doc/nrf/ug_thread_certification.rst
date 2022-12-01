@@ -92,11 +92,15 @@ Complete the following steps to prepare for the certification tests:
 
 #. Prepare Thread Test Harness.
 
-   a. Copy the provided :file:`ncs/modules/lib/openthread/tools/harness-thci/OpenThread.py` file into :file:`C:\\GRL\\Thread1.1\\Thread_Harness\\THCI\\nRF_Connect_SDK.py`.
+   a. Copy the provided :file:`ncs/modules/lib/openthread/tools/harness-thci/OpenThread.py` file into :file:`C:\\GRL\\Thread1.2\\Thread_Harness\\THCI\\nRF_Connect_SDK.py`.
 
-   b. Copy an image of your choice to :file:`C:\\GRL\\Thread1.1\\Web\\images\\nRF_Connect_SDK.jpg`.
+   b. Copy the provided :file:`ncs/nrf/samples/openthread/cli/harness-thci-1-3/nRF_Connect_SDK_1_3.py` file into :file:`C:\\GRL\\Thread1.2\\Thread_Harness\\THCI\\nRF_Connect_SDK_1_3.py`.
 
-   c. Edit :file:`C:\\GRL\\Thread1.1\\Thread_Harness\\THCI\\nRF_Connect_SDK.py` as follows:
+   c. Copy images of your choice to :file:`C:\\GRL\\Thread1.2\\Web\\images\\nRF_Connect_SDK.jpg` and :file:`C:\\GRL\\Thread1.2\\Web\\images\\nRF_Connect_SDK_1_3.jpg`.
+
+     You can use the same image for both.
+
+   d. Edit :file:`C:\\GRL\\Thread1.2\\Thread_Harness\\THCI\\nRF_Connect_SDK.py` as follows:
 
       .. code-block:: python
 
@@ -124,7 +128,7 @@ Complete the following steps to prepare for the certification tests:
 
          class nRF_Connect_SDK(OpenThreadTHCI, IThci):
 
-   d. Edit :file:`C:\\GRL\\Thread1.1\\Web\\data\\deviceInputFields.xml` and prepend the following code:
+   e. Edit :file:`C:\\GRL\\Thread1.2\\Web\\data\\deviceInputFields.xml` and prepend the following code:
 
       .. code-block::
 
@@ -142,6 +146,23 @@ Complete the following steps to prepare for the certification tests:
                hint="eg: 115200">115200
             </ITEM>
          </DEVICE>
+         <DEVICE name="nRF Connect SDK 1.3" thumbnail="nRF_Connect_SDK_1_3.jpg" description = "Nordic Semiconductor: NCS Baudrate:115200" THCI="nRF_Connect_SDK_1_3">
+            <ITEM label="Serial Line"
+               type="text"
+               forParam="SerialPort"
+               validation="COM"
+               hint="eg: COM1">COM
+            </ITEM>
+            <ITEM label="Speed"
+               type="text"
+               forParam="SerialBaudRate"
+               validation="baud-rate"
+               hint="eg: 115200">115200
+            </ITEM>
+         </DEVICE>
+
+      The device with name "nRF Connect SDK" is intended to be used for Thread 1.1 and Thread 1.2 Certification Programs tests.
+      The device with name "nRF Connect SDK 1.3" is intended to be used for Thread 1.3 Certification Program tests.
 
 See the following links for more information on OpenThread:
 
