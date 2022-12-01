@@ -295,7 +295,7 @@ class RepoAnalyzer:
                 # Heuristic #1:
                 ed(uc) < self._edit_dist_threshold or
                 # Heuristic #2:
-                commit_shortlog(uc).startswith(sl)
+                commit_shortlog(uc).startswith(shortlog_no_sauce(sl)[:-3])
             ]
 
             if len(matches) != 0:
