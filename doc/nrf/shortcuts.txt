@@ -131,7 +131,7 @@
 
 .. |nrf5340_mesh_sample_note| replace:: For nRF5340 and Thingy:53, the extended advertiser has to be set manually for the network core, because the Bluetooth® Low Energy does not know that the Bluetooth mesh is enabled when built for this core. This is already done for this sample by setting ``CONFIG_BT_EXT_ADV=y`` for the network core.
 
-.. |nrf5340_audio_note| replace:: The |NCS| includes the :ref:`nrf53_audio_app` application, a complete project that integrates the LE Audio standard with custom reference hardware based on the nRF5340 SiP.
+.. |nrf5340_audio_note| replace:: The |NCS| includes the :ref:`nrf53_audio_app` application, a complete project that integrates the LE Audio standard with custom reference hardware based on the nRF5340 DK.
 
 .. |trusted_execution| replace:: nRF5340 and nRF9160
 
