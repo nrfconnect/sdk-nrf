@@ -390,6 +390,7 @@ int handle_at_recv(enum at_cmd_type cmd_type);
 int handle_at_sendto(enum at_cmd_type cmd_type);
 int handle_at_recvfrom(enum at_cmd_type cmd_type);
 int handle_at_poll(enum at_cmd_type cmd_type);
+int handle_at_poller(enum at_cmd_type cmd_type);
 int handle_at_getaddrinfo(enum at_cmd_type cmd_type);
 
 #if defined(CONFIG_SLM_NATIVE_TLS)
@@ -489,6 +490,7 @@ static struct slm_at_cmd {
 	{"AT#XSENDTO", handle_at_sendto},
 	{"AT#XRECVFROM", handle_at_recvfrom},
 	{"AT#XPOLL", handle_at_poll},
+	{"AT#XPOLLER", handle_at_poller},
 	{"AT#XGETADDRINFO", handle_at_getaddrinfo},
 
 #if defined(CONFIG_SLM_NATIVE_TLS)

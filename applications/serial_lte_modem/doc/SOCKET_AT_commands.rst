@@ -1193,6 +1193,102 @@ Test command
 
 The test command is not supported.
 
+Poll sockets in background #XPOLLER
+===================================
+
+The ``#XPOLLER`` command allows you to poll sockets in the background.
+
+Set command
+-----------
+
+The set command allows you to poll all client-role sockets for incoming events.
+
+.. note::
+   The poller must be explicitly started and stopped by the MCU.
+
+Syntax
+~~~~~~
+
+::
+
+   #XPOLLER=<op>[,<timeout>]
+
+The ``<op>`` parameter can accept one of the following values:
+
+* ``0`` - Stop the poller.
+* ``1`` - Start the poller.
+
+The ``<timeout>`` value sets the polling cycle in milliseconds.
+By default, the poller uses a cycle of 10 seconds.
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XPOLLER: <handle>,<revents>
+
+The ``<handle>`` value is an integer.
+It is the handle of a socket that have events returned, called also ``revents``.
+
+The ``<revents>`` value is a hexadecimal string.
+It represents the returned events, which could be a combination of POLLIN, POLLERR, POLLHUP and POLLNVAL.
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XPOLLER=1,2000
+   OK
+   #XPOLLER: 0,"0x0001"
+   #XPOLLER: 1,"0x0001"
+
+Read command
+------------
+
+The read command allows you to check whether the poller is running or not.
+
+Syntax
+~~~~~~
+
+::
+
+   #XPOLLER?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+If the poller is running, the command returns ``OK``, otherwise it returns ``ERROR``.
+
+Test command
+------------
+
+::
+
+   #XPOLLER=?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XPOLLER: <list of op>,<timeout>
+
+The ``<list of op>`` value can be one of the following:
+
+* ``0`` - Stop the poller.
+* ``1`` - Start the poller.
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XPOLLER=?
+   #XPOLLER: (0,1),<timeout>
+   OK
+
 Resolve hostname #XGETADDRINFO
 ==============================
 

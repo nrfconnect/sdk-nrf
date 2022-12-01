@@ -26,7 +26,9 @@ LOG_MODULE_REGISTER(slm_sock, CONFIG_SLM_LOG_LEVEL);
 /**@brief Socket operations. */
 enum slm_socket_operation {
 	AT_SOCKET_CLOSE,
+	AT_POLLER_STOP = AT_SOCKET_CLOSE,
 	AT_SOCKET_OPEN,
+	AT_POLLER_START = AT_SOCKET_OPEN,
 	AT_SOCKET_OPEN6
 };
 
@@ -1711,6 +1713,151 @@ int handle_at_poll(enum at_cmd_type cmd_type)
 	return err;
 }
 
+#define POLLER_STACK_SIZE	KB(1)
+#define POLLER_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
+
+static struct k_thread poller_thread;
+static K_THREAD_STACK_DEFINE(poller_thread_stack, POLLER_STACK_SIZE);
+static k_tid_t poller_tid;
+static bool poller_stop_pending;
+static int poller_timeout;
+
+/* Socket poller thread */
+static void poller_thread_func(void *p1, void *p2, void *p3)
+{
+	int ret;
+	char msg_buf[32];
+	bool msg_sent;
+
+	ARG_UNUSED(p1);
+	ARG_UNUSED(p2);
+	ARG_UNUSED(p3);
+
+	while (true) {
+		/* poll all opened client-role sockets */
+		for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
+			fds[i].fd = socks[i].fd;
+			if (socks[i].fd != INVALID_SOCKET &&
+			    socks[i].role == AT_SOCKET_ROLE_CLIENT) {
+				fds[i].events = POLLIN;
+			}
+		}
+		ret = poll(fds, SLM_MAX_SOCKET_COUNT, poller_timeout);
+		if (ret < 0) {  /* IO error */
+			LOG_WRN("poll() error: %d", ret);
+			break;
+		}
+		if (ret == 0) {  /* timeout */
+			if (poller_stop_pending) {
+				break;
+			} else {
+				continue;
+			}
+		}
+		msg_sent = false;
+		for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
+			if (fds[i].revents != 0) {
+				sprintf(msg_buf, "\r\n#XPOLLER: %d,\"0x%04x\"\r\n",
+					fds[i].fd, fds[i].revents);
+				rsp_send(msg_buf, strlen(msg_buf));
+				msg_sent = true;
+			}
+		}
+		if (msg_sent) {
+			/* pause, wait for event be handled */
+			k_sleep(K_MSEC(poller_timeout));
+		}
+		if (poller_stop_pending) {
+			break;
+		}
+	}
+
+	poller_stop_pending = false;
+	poller_tid = NULL;
+	LOG_INF("Poller thread terminated");
+}
+
+/**@brief handle AT#XPOLLER commands
+ *  AT#XPOLLER=<op>[,<timeout>]
+ *  AT#XPOLLER?
+ *  AT#XPOLLER=?
+ */
+int handle_at_poller(enum at_cmd_type cmd_type)
+{
+	int err = -EINVAL;
+	uint16_t op;
+
+	switch (cmd_type) {
+	case AT_CMD_TYPE_SET_COMMAND:
+		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		if (err) {
+			return err;
+		}
+		if (op == AT_POLLER_START) {
+			if (poller_tid != NULL) {
+				LOG_ERR("Poller already started");
+				return -EINVAL;
+			}
+			err = -ENOENT;
+			/* Need at least one valid socket to enable poller */
+			for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
+				if (socks[i].fd != INVALID_SOCKET) {
+					err = 0;
+					break;
+				}
+			}
+
+			if (err == -ENOENT) {
+				LOG_ERR("No valid socket opened %d", err);
+				return err;
+			}
+
+			poller_timeout = 10000;  /* default 10 seconds */
+			if (at_params_valid_count_get(&at_param_list) > 2) {
+				err = at_params_int_get(&at_param_list, 2, &poller_timeout);
+				if (err) {
+					return err;
+				}
+			}
+
+			poller_stop_pending = false;
+			poller_tid = k_thread_create(&poller_thread, poller_thread_stack,
+					K_THREAD_STACK_SIZEOF(poller_thread_stack),
+					poller_thread_func,
+					NULL, NULL, NULL,
+					POLLER_PRIORITY, 0, K_NO_WAIT);
+		} else if (op == AT_POLLER_STOP) {
+			if (poller_tid != NULL) {
+				poller_stop_pending = true;
+			}
+			err = 0;
+		} else {
+			err = -EINVAL;
+		}
+		break;
+
+	case AT_CMD_TYPE_READ_COMMAND:
+		if (poller_tid != NULL) {
+			err = 0;
+		} else {
+			err = -EINVAL;
+		}
+		break;
+
+	case AT_CMD_TYPE_TEST_COMMAND:
+		sprintf(rsp_buf, "\r\n#XPOLLER: (%d,%d),<timeout>",
+			AT_POLLER_STOP, AT_POLLER_START);
+		rsp_send(rsp_buf, strlen(rsp_buf));
+		err = 0;
+		break;
+
+	default:
+		break;
+	}
+
+	return err;
+}
+
 /**@brief API to initialize Socket AT commands handler
  */
 int slm_at_socket_init(void)
@@ -1736,6 +1883,11 @@ int slm_at_socket_uninit(void)
 		if (socks[i].fd != INVALID_SOCKET) {
 			close(socks[i].fd);
 		}
+	}
+
+	if (poller_tid != NULL) {
+		poller_stop_pending = true;
+		poller_tid = NULL;
 	}
 
 	return 0;
