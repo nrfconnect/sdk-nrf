@@ -265,6 +265,9 @@ config TFM_NRF_PROVISIONING
 	  provisioning lifecycle state in order to boot. See provisioning
 	  guide for more details.
 
+config TFM_PSA_TEST_CUSTOM_INCLUDE_DIR
+	default "${ZEPHYR_BASE}/../nrf/modules/tfm/tfm/psa_arch_tests_includes"
+
 rsource "Kconfig.psa.defconfig"
 
 endif # BUILD_WITH_TFM
