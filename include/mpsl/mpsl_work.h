@@ -49,6 +49,11 @@ static inline int mpsl_work_submit(struct k_work *work)
 	return k_work_submit_to_queue(&mpsl_work_q, work);
 }
 
+static inline int mpsl_work_schedule(struct k_work_delayable *work, k_timeout_t delay)
+{
+	return k_work_reschedule_for_queue(&mpsl_work_q, work, delay);
+}
+
 #ifdef __cplusplus
 }
 #endif
