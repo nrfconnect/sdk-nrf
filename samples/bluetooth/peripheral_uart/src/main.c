@@ -267,6 +267,7 @@ static int uart_init(void)
 
 	err = uart_callback_set(uart, uart_cb, NULL);
 	if (err) {
+		k_free(rx);
 		LOG_ERR("Cannot initialize UART callback");
 		return err;
 	}
@@ -301,6 +302,7 @@ static int uart_init(void)
 			       "Starting Nordic UART service example\r\n");
 
 		if ((pos < 0) || (pos >= sizeof(tx->data))) {
+			k_free(rx);
 			k_free(tx);
 			LOG_ERR("snprintf returned %d", pos);
 			return -ENOMEM;
@@ -308,16 +310,26 @@ static int uart_init(void)
 
 		tx->len = pos;
 	} else {
+		k_free(rx);
 		return -ENOMEM;
 	}
 
 	err = uart_tx(uart, tx->data, tx->len, SYS_FOREVER_MS);
 	if (err) {
+		k_free(rx);
+		k_free(tx);
 		LOG_ERR("Cannot display welcome message (err: %d)", err);
 		return err;
 	}
 
-	return uart_rx_enable(uart, rx->data, sizeof(rx->data), 50);
+	err = uart_rx_enable(uart, rx->data, sizeof(rx->data), 50);
+	if (err) {
+		LOG_ERR("Cannot enable uart reception (err: %d)", err);
+		/* Free the rx buffer only because the tx buffer will be handled in the callback */
+		k_free(rx);
+	}
+
+	return err;
 }
 
 static void connected(struct bt_conn *conn, uint8_t err)

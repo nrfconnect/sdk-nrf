@@ -134,7 +134,17 @@ Samples
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* :ref:`peripheral_uart` sample:
+
+  * Changed:
+
+    * Fixed a possible memory leak in the :c:func:`uart_init` function.
+
+* :ref:`peripheral_hids_keyboard` sample:
+
+  * Changed:
+
+    * Fixed a possible out-of-bounds memory access issue in the :c:func:`hid_kbd_state_key_set` and :c:func:`hid_kbd_state_key_clear` functions.
 
 Bluetooth mesh samples
 ----------------------
