@@ -16,8 +16,8 @@ Overview
 ********
 
 Once started, the script checks for existing serial connections by running the ``nrfjprog --com`` command in the background.
-It then starts a terminal connection for each DK's COM port with number corresponding to the one specified in the :file:`get_serial_ports.py` file.
-By default, the terminal connection is opened for the COM port of the application core (``VCOM0``).
+It then starts a terminal connection for each DK's COM port with the number corresponding to the one specified in the :file:`get_serial_ports.py` file.
+By default, the terminal connection is opened for the virtual COM port (VCOM) of the application core (``VCOM0``).
 
 Requirements
 ************
@@ -36,28 +36,27 @@ To start the script, run the ``python .\uart_terminal.py`` command in the :file:
 
 The script does not take any arguments.
 
-After running the script, it will list all available VCOM ports for each connected development kit and open a terminal connection window for the desired port.
+After running the script, it will list all available COM ports for each connected development kit and open a terminal connection window for the desired VCOM port.
 
-For example, if you have three DKs connected, a similar output might appear:
+For example, in a Windows environment, if you have three DKs connected, the scritp output might appear as:
 
 .. code-block:: console
 
-   960385074    COM28    VCOM0
-   960385074    COM29    VCOM1
-   960385074    COM30    VCOM2
-   1050166277    COM16    VCOM0
-   1050166277    COM11    VCOM1
-   960390887    COM18    VCOM0
-   960390887    COM23    VCOM1
-   960390887    COM22    VCOM2
+Configure and open terminal(s)
 
-In this list, ``VCOM0`` refers to the application core and ``VCOM1`` refers to the network core.
-Using the default settings, the script will open a terminal window for each ``VCOM0`` port.
+    ID        Port
+ 960385074    COM28
+1050166277    COM16
+ 960390887    COM18
+
+Script finished 
+
+Using the default settings, the script will open a terminal window for each port listed.
 
 Changing the default port
 =========================
 
-If you want to change the port number for the terminal connection, edit the following lines in the :file:`get_serial_port.py` file in the :file:`scripts` directory by replacing ``VCOM0`` with the desired port number:
+If you want to change the connection to an alternative core, edit the following lines in the :file:`get_serial_port.py` file in the :file:`scripts` directory by replacing ``VCOM0`` with the desired virtual port number:
 
 .. core-block:: python
 
