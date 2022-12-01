@@ -20,6 +20,7 @@
 #include <app-common/zap-generated/attribute-type.h>
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/cluster-id.h>
+#include <app/DeferredAttributePersistenceProvider.h>
 #include <app/clusters/identify-server/identify-server.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
@@ -78,6 +79,18 @@ bool sIsNetworkEnabled = false;
 bool sHaveBLEConnections = false;
 
 const struct pwm_dt_spec sLightPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
+
+// Define a custom attribute persister which makes actual write of the CurrentLevel attribute value
+// to the non-volatile storage only when it has remained constant for 5 seconds. This is to reduce
+// the flash wearout when the attribute changes frequently as a result of MoveToLevel command.
+// DeferredAttribute object describes a deferred attribute, but also holds a buffer with a value to
+// be written, so it must live so long as the DeferredAttributePersistenceProvider object.
+DeferredAttribute gCurrentLevelPersister(ConcreteAttributePath(kLightEndpointId, Clusters::LevelControl::Id,
+							       Clusters::LevelControl::Attributes::CurrentLevel::Id));
+DeferredAttributePersistenceProvider gDeferredAttributePersister(Server::GetInstance().GetDefaultAttributePersister(),
+								 Span<DeferredAttribute>(&gCurrentLevelPersister, 1),
+								 System::Clock::Milliseconds32(5000));
+
 } /* namespace */
 
 namespace LedConsts
@@ -204,6 +217,7 @@ CHIP_ERROR AppTask::Init()
 	(void)initParams.InitializeStaticResourcesBeforeServerInit();
 
 	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
+	app::SetAttributePersistenceProvider(&gDeferredAttributePersister);
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 

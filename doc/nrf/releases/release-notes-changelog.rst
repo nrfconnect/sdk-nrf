@@ -448,6 +448,7 @@ Matter samples
 * :ref:`matter_light_bulb_sample`:
 
   * Introduced support for Matter over Wi-Fi on standalone ``nrf7002dk_nrf5340_cpuapp`` and on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached.
+  * Introduced the deferred attribute persister class to reduce the flash wear caused by handling the ``MoveToLevel`` command from the Level Control cluster.
 
 NFC samples
 -----------
