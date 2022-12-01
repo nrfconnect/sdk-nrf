@@ -103,7 +103,7 @@ config BT_VCS
 	default y
 
 config BT_MCC
-	default n if STREAM_BIDIRECTIONAL
+	default n if WALKIE_TALKIE_DEMO
 	default y
 
 
@@ -163,7 +163,7 @@ config BT_VCS_CLIENT
 	default y
 
 config BT_MCS
-	default n if STREAM_BIDIRECTIONAL
+	default n if WALKIE_TALKIE_DEMO
 	default y
 
 config BT_GATT_DYNAMIC_DB
