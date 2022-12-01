@@ -259,13 +259,6 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_audio_ep *ep, enu
 	static size_t configured_source_stream_count;
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 
-#if (CONFIG_BT_MCC)
-	ret = ble_mcs_discover(default_conn);
-	if (ret) {
-		LOG_ERR("Failed to start discovery of MCS: %d", ret);
-	}
-#endif /* CONFIG_BT_MCC */
-
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		struct bt_audio_stream *audio_stream = &audio_streams[i];
 
@@ -460,9 +453,31 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 	advertising_start();
 }
 
+static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
+{
+	int ret;
+
+	if (err) {
+		LOG_ERR("Security failed: level %d err %d", level, err);
+		ret = bt_conn_disconnect(conn, err);
+		if (ret) {
+			LOG_ERR("Failed to disconnect %d", ret);
+		}
+	} else {
+		LOG_DBG("Security changed: level %d", level);
+#if (CONFIG_BT_MCC)
+		ret = ble_mcs_discover(default_conn);
+		if (ret) {
+			LOG_ERR("Failed to start discovery of MCS: %d", ret);
+		}
+#endif /* CONFIG_BT_MCC */
+	}
+}
+
 static struct bt_conn_cb conn_callbacks = {
 	.connected = connected_cb,
 	.disconnected = disconnected_cb,
+	.security_changed = security_changed_cb,
 };
 
 static struct bt_audio_stream_ops stream_ops = { .recv = stream_recv_cb,
