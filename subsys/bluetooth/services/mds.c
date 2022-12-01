@@ -167,8 +167,8 @@ static ssize_t data_uri_read(struct bt_conn *conn, const struct bt_gatt_attr *at
 		return BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
 	}
 
-	strncpy(uri, MDS_URI_BASE, uri_base_length);
-	strncpy(&uri[uri_base_length], info.device_serial, uri_sn_length);
+	memcpy(uri, MDS_URI_BASE, uri_base_length);
+	memcpy(&uri[uri_base_length], info.device_serial, uri_sn_length);
 
 	return bt_gatt_attr_read(conn, attr, buf, len, offset, uri,
 				 uri_length);
