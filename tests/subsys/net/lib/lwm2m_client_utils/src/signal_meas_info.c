@@ -51,6 +51,7 @@ ZTEST_SUITE(lwm2m_client_utils_signal_meas_info, NULL, NULL, NULL, NULL, NULL);
 ZTEST(lwm2m_client_utils_signal_meas_info, test_update_ncells)
 {
 	int rc;
+
 	setup();
 
 	rc = lwm2m_update_signal_meas_objects(&cell_info);
