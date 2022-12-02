@@ -898,6 +898,13 @@ KRKNWK-6073: Potential delay during FOTA
 Matter
 ======
 
+.. rst-class:: v2-2-0 v2-1-2 v2-1-1
+
+KRKNWK-15846: Android CHIP Tool crashes when subscribing in the :guilabel:`LIGHT ON/OFF & LEVEL CLUSTER`
+  The Android CHIP Tool crashes when attempting to start the subscription after typing minimum and maximum subscription interval values.
+  Also, the Subscription window in the :guilabel:`LIGHT ON/OFF & LEVEL CLUSTER` contains faulty GUI layout (overlapping captions) used when passing minimum and maximum subscription interval values.
+  This affects the Android CHIP Tool revision used for the |NCS| v2.2.0, v2.1.1, and v2.1.2 releases.
+
 .. rst-class:: v2-1-2 v2-1-1
 
 KRKNWK-15749: Invalid ZAP Tool revision used
