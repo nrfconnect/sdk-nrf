@@ -21,6 +21,7 @@ target_sources(app
 target_include_directories(app
     PRIVATE
     ${ZEPHYR_BASE}/../nrf/subsys/bluetooth/mesh
+    ${ZEPHYR_BASE}/subsys/bluetooth
     )
 
 target_compile_options(app

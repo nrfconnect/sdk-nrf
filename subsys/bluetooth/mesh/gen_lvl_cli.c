@@ -87,9 +87,14 @@ int bt_mesh_lvl_cli_get(struct bt_mesh_lvl_cli *cli,
 				 BT_MESH_LVL_MSG_LEN_GET);
 	bt_mesh_model_msg_init(&msg, BT_MESH_LVL_OP_GET);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LVL_OP_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LVL_OP_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_lvl_cli_set(struct bt_mesh_lvl_cli *cli,
@@ -111,9 +116,14 @@ int bt_mesh_lvl_cli_set(struct bt_mesh_lvl_cli *cli,
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LVL_OP_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LVL_OP_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_lvl_cli_set_unack(struct bt_mesh_lvl_cli *cli,
@@ -134,7 +144,7 @@ int bt_mesh_lvl_cli_set_unack(struct bt_mesh_lvl_cli *cli,
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_lvl_cli_delta_set(struct bt_mesh_lvl_cli *cli,
@@ -156,9 +166,14 @@ int bt_mesh_lvl_cli_delta_set(struct bt_mesh_lvl_cli *cli,
 		model_transition_buf_add(&msg, delta_set->transition);
 	}
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LVL_OP_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LVL_OP_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_lvl_cli_delta_set_unack(
@@ -179,7 +194,7 @@ int bt_mesh_lvl_cli_delta_set_unack(
 		model_transition_buf_add(&msg, delta_set->transition);
 	}
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_lvl_cli_move_set(struct bt_mesh_lvl_cli *cli,
@@ -202,9 +217,14 @@ int bt_mesh_lvl_cli_move_set(struct bt_mesh_lvl_cli *cli,
 		model_transition_buf_add(&msg, move_set->transition);
 	}
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LVL_OP_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LVL_OP_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_lvl_cli_move_set_unack(struct bt_mesh_lvl_cli *cli,
@@ -226,5 +246,5 @@ int bt_mesh_lvl_cli_move_set_unack(struct bt_mesh_lvl_cli *cli,
 		model_transition_buf_add(&msg, move_set->transition);
 	}
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }

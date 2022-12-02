@@ -75,9 +75,14 @@ int bt_mesh_ponoff_cli_on_power_up_get(struct bt_mesh_ponoff_cli *cli,
 				 BT_MESH_PONOFF_MSG_LEN_GET);
 	bt_mesh_model_msg_init(&msg, BT_MESH_PONOFF_OP_GET);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       (rsp ? &cli->ack_ctx : NULL),
-			       BT_MESH_PONOFF_OP_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_PONOFF_OP_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_ponoff_cli_on_power_up_set(struct bt_mesh_ponoff_cli *cli,
@@ -94,9 +99,14 @@ int bt_mesh_ponoff_cli_on_power_up_set(struct bt_mesh_ponoff_cli *cli,
 	bt_mesh_model_msg_init(&msg, BT_MESH_PONOFF_OP_SET);
 	net_buf_simple_add_u8(&msg, on_power_up);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       (rsp ? &cli->ack_ctx : NULL),
-			       BT_MESH_PONOFF_OP_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_PONOFF_OP_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_ponoff_cli_on_power_up_set_unack(
@@ -112,5 +122,5 @@ int bt_mesh_ponoff_cli_on_power_up_set_unack(
 	bt_mesh_model_msg_init(&msg, BT_MESH_PONOFF_OP_SET_UNACK);
 	net_buf_simple_add_u8(&msg, on_power_up);
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }

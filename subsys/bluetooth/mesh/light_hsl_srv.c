@@ -617,5 +617,5 @@ int bt_mesh_light_hsl_srv_pub(struct bt_mesh_light_hsl_srv *srv,
 				 BT_MESH_LIGHT_HSL_MSG_MAXLEN_STATUS);
 	hsl_status_encode(&buf, BT_MESH_LIGHT_HSL_OP_STATUS, status);
 
-	return model_send(srv->model, ctx, &buf);
+	return bt_mesh_msg_send(srv->model, ctx, &buf);
 }

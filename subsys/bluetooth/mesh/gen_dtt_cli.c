@@ -70,9 +70,14 @@ int bt_mesh_dtt_get(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
 				 BT_MESH_DTT_MSG_LEN_GET);
 	bt_mesh_model_msg_init(&msg, BT_MESH_DTT_OP_GET);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp_transition_time ? &cli->ack_ctx : NULL,
-			       BT_MESH_DTT_OP_STATUS, rsp_transition_time);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_DTT_OP_STATUS,
+		.user_data = rsp_transition_time,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp_transition_time ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_dtt_set(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
@@ -88,9 +93,14 @@ int bt_mesh_dtt_set(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
 	net_buf_simple_add_u8(&msg,
 			      model_transition_encode((int32_t)transition_time));
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp_transition_time ? &cli->ack_ctx : NULL,
-			       BT_MESH_DTT_OP_STATUS, rsp_transition_time);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_DTT_OP_STATUS,
+		.user_data = rsp_transition_time,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp_transition_time ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_dtt_set_unack(struct bt_mesh_dtt_cli *cli,
@@ -106,5 +116,5 @@ int bt_mesh_dtt_set_unack(struct bt_mesh_dtt_cli *cli,
 	net_buf_simple_add_u8(&msg,
 			      model_transition_encode((int32_t)transition_time));
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }

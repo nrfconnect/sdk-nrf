@@ -147,7 +147,7 @@ static int scene_status_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 
 	scene_status_encode(srv, &buf, state);
 
-	return model_send(model, ctx, &buf);
+	return bt_mesh_msg_send(model, ctx, &buf);
 }
 
 static void curr_scene_state_get(struct bt_mesh_scene_srv *srv, struct bt_mesh_scene_state *state)
@@ -250,7 +250,7 @@ static int scene_register_status_send(struct bt_mesh_model *model,
 		net_buf_simple_add_le16(&buf, srv->all[i]);
 	}
 
-	return model_send(model, ctx, &buf);
+	return bt_mesh_msg_send(model, ctx, &buf);
 }
 
 static int handle_register_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,

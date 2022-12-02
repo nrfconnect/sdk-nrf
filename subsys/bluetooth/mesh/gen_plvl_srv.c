@@ -101,7 +101,7 @@ static int pub(struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx,
 				 BT_MESH_PLVL_MSG_MAXLEN_LEVEL_STATUS);
 	lvl_status_encode(&msg, status);
 
-	return model_send(srv->plvl_model, ctx, &msg);
+	return bt_mesh_msg_send(srv->plvl_model, ctx, &msg);
 }
 
 static void rsp_plvl_status(struct bt_mesh_model *model,

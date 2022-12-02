@@ -183,7 +183,7 @@ static int send_time_status(struct bt_mesh_model *model,
 		bt_mesh_time_encode_time_params(&msg, &status);
 	}
 
-	return model_send(model, ctx, &msg);
+	return bt_mesh_msg_send(model, ctx, &msg);
 }
 
 static int handle_time_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,

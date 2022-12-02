@@ -15,6 +15,7 @@
 #include <string.h>
 #include <bluetooth/mesh/model_types.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
+#include "mesh/msg.h"
 
 #if IS_ENABLED(CONFIG_EMDS)
 /**
@@ -28,58 +29,6 @@
  * @note Arguments are evaluated twice.
  */
 #define ROUNDED_DIV(A, B) (((A) + ((B) / 2)) / (B))
-
-/** @brief Send a model message.
- *
- * Sends a model message with the given context. If the context is NULL, this
- * updates the publish message, and publishes with the configured parameters.
- *
- * @param model Model to send on.
- * @param ctx Context to send with, or NULL to publish on the configured
- * publish parameters.
- * @param buf Message to send.
- *
- * @retval 0 The message was sent successfully.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
- * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
- * not configured.
- * @retval -EAGAIN The device has not been provisioned.
- */
-int model_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-	       struct net_buf_simple *buf);
-
-/** @brief Send an acknowledged model message.
- *
- * If a message context is not provided, the message is published using the
- * model's configured publish parameters, if supported. If a response context
- * is provided, the call is blocking until the response context is either
- * released or the request times out.
- *
- * If a response context is provided, the call blocks for
- * 200 + TTL * 50 milliseconds, or until the acknowledgment is received.
- *
- * @param model Model to send the message on.
- * @param ctx Message context, or NULL to send with the configured publish
- * parameters.
- * @param buf Message to send.
- * @param ack Message response context, or NULL if no response is expected.
- * @param rsp_op Expected response opcode.
- * @param user_data User defined parameter.
- *
- * @retval 0 The message was sent successfully.
- * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
- * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
- * not configured.
- * @retval -EAGAIN The device has not been provisioned.
- * @retval -ETIMEDOUT The request timed out without a response.
- */
-int model_ackd_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		    struct net_buf_simple *buf,
-		    struct bt_mesh_msg_ack_ctx *ack, uint32_t rsp_op,
-		    void *user_data);
 
 /** @brief Compare the TID of an incoming message with the previous
  * transaction, and update it if it's new.
@@ -140,6 +89,8 @@ model_transition_is_invalid(const struct bt_mesh_model_transition *transition)
 		(transition->time > BT_MESH_MODEL_TRANSITION_TIME_MAX_MS ||
 		 transition->delay > BT_MESH_MODEL_DELAY_TIME_MAX_MS));
 }
+
+int32_t model_ackd_timeout_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx);
 
 #endif /* MODEL_UTILS_H__ */
 

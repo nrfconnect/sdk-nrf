@@ -124,5 +124,5 @@ int bt_mesh_battery_srv_pub(struct bt_mesh_battery_srv *srv,
 				 BT_MESH_BATTERY_MSG_LEN_STATUS);
 	bt_mesh_model_msg_init(&msg, BT_MESH_BATTERY_OP_STATUS);
 	bt_mesh_gen_bat_encode_status(&msg, status);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

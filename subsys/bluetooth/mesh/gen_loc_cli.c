@@ -101,9 +101,14 @@ int bt_mesh_loc_cli_global_get(struct bt_mesh_loc_cli *cli,
 
 	bt_mesh_model_msg_init(&msg, BT_MESH_LOC_OP_GLOBAL_GET);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LOC_OP_GLOBAL_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LOC_OP_GLOBAL_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_loc_cli_global_set(struct bt_mesh_loc_cli *cli,
@@ -117,9 +122,14 @@ int bt_mesh_loc_cli_global_set(struct bt_mesh_loc_cli *cli,
 	bt_mesh_model_msg_init(&msg, BT_MESH_LOC_OP_GLOBAL_SET);
 	bt_mesh_loc_global_encode(&msg, loc);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LOC_OP_GLOBAL_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LOC_OP_GLOBAL_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_loc_cli_global_set_unack(struct bt_mesh_loc_cli *cli,
@@ -132,7 +142,7 @@ int bt_mesh_loc_cli_global_set_unack(struct bt_mesh_loc_cli *cli,
 	bt_mesh_model_msg_init(&msg, BT_MESH_LOC_OP_GLOBAL_SET_UNACK);
 	bt_mesh_loc_global_encode(&msg, loc);
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_loc_cli_local_get(struct bt_mesh_loc_cli *cli,
@@ -144,9 +154,14 @@ int bt_mesh_loc_cli_local_get(struct bt_mesh_loc_cli *cli,
 
 	bt_mesh_model_msg_init(&msg, BT_MESH_LOC_OP_LOCAL_GET);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LOC_OP_LOCAL_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LOC_OP_LOCAL_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_loc_cli_local_set(struct bt_mesh_loc_cli *cli,
@@ -160,9 +175,14 @@ int bt_mesh_loc_cli_local_set(struct bt_mesh_loc_cli *cli,
 	bt_mesh_model_msg_init(&msg, BT_MESH_LOC_OP_LOCAL_SET);
 	bt_mesh_loc_local_encode(&msg, loc);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LOC_OP_LOCAL_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LOC_OP_LOCAL_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_loc_cli_local_set_unack(struct bt_mesh_loc_cli *cli,
@@ -175,5 +195,5 @@ int bt_mesh_loc_cli_local_set_unack(struct bt_mesh_loc_cli *cli,
 	bt_mesh_model_msg_init(&msg, BT_MESH_LOC_OP_LOCAL_SET_UNACK);
 	bt_mesh_loc_local_encode(&msg, loc);
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }

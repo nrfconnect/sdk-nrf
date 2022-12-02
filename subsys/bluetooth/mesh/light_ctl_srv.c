@@ -492,7 +492,7 @@ int bt_mesh_light_ctl_pub(struct bt_mesh_light_ctl_srv *srv,
 				 BT_MESH_LIGHT_CTL_MSG_MAXLEN_STATUS);
 
 	ctl_encode_status(&msg, status);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }
 
 int bt_mesh_light_ctl_range_pub(struct bt_mesh_light_ctl_srv *srv,
@@ -502,7 +502,7 @@ int bt_mesh_light_ctl_range_pub(struct bt_mesh_light_ctl_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_TEMP_RANGE_STATUS,
 				 BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_STATUS);
 	range_encode_status(&msg, srv, status);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }
 
 int bt_mesh_light_ctl_default_pub(struct bt_mesh_light_ctl_srv *srv,
@@ -511,5 +511,5 @@ int bt_mesh_light_ctl_default_pub(struct bt_mesh_light_ctl_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_CTL_DEFAULT_STATUS,
 				 BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG);
 	default_encode_status(&msg, srv);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

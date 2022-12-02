@@ -159,8 +159,14 @@ static int get_msg(struct bt_mesh_time_cli *cli, struct bt_mesh_msg_ctx *ctx,
 	BT_MESH_MODEL_BUF_DEFINE(msg, opcode, BT_MESH_TIME_MSG_LEN_GET);
 	bt_mesh_model_msg_init(&msg, opcode);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL, ret_opcode, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = ret_opcode,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_time_cli_time_get(struct bt_mesh_time_cli *cli,
@@ -181,9 +187,14 @@ int bt_mesh_time_cli_time_set(struct bt_mesh_time_cli *cli,
 	bt_mesh_model_msg_init(&msg, BT_MESH_TIME_OP_TIME_SET);
 	bt_mesh_time_encode_time_params(&msg, set);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_TIME_OP_TIME_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_TIME_OP_TIME_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_time_cli_zone_get(struct bt_mesh_time_cli *cli,
@@ -205,9 +216,15 @@ int bt_mesh_time_cli_zone_set(struct bt_mesh_time_cli *cli,
 	net_buf_simple_add_u8(&msg,
 			      (uint8_t)(set->new_offset + ZONE_CHANGE_ZERO_POINT));
 	bt_mesh_time_buf_put_tai_sec(&msg, set->timestamp);
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_TIME_OP_TIME_ZONE_STATUS, rsp);
+
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_TIME_OP_TIME_ZONE_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_time_cli_tai_utc_delta_get(
@@ -230,9 +247,15 @@ int bt_mesh_time_cli_tai_utc_delta_set(
 	net_buf_simple_add_le16(
 		&msg, (uint16_t)(set->delta_new + UTC_CHANGE_ZERO_POINT));
 	bt_mesh_time_buf_put_tai_sec(&msg, set->timestamp);
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_TIME_OP_TAI_UTC_DELTA_STATUS, rsp);
+
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_TIME_OP_TAI_UTC_DELTA_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_time_cli_role_get(struct bt_mesh_time_cli *cli,
@@ -251,7 +274,12 @@ int bt_mesh_time_cli_role_set(struct bt_mesh_time_cli *cli,
 	bt_mesh_model_msg_init(&msg, BT_MESH_TIME_OP_TIME_ROLE_SET);
 	net_buf_simple_add_u8(&msg, *set);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_TIME_OP_TIME_ROLE_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_TIME_OP_TIME_ROLE_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
