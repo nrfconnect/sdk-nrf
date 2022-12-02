@@ -35,3 +35,4 @@
     :suite_teardown: >
        extern int test_suiteTearDown(int); return test_suiteTearDown(num_failures);
     :main_name: unity_main
+    :mock_prefix: 'cmock_'
