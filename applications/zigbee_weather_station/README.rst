@@ -56,7 +56,7 @@ Other build types are covered by dedicated files with the build type added as a 
 For example, the ``release`` build type file name is :file:`prj_release.conf`.
 If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_overview_start
    :end-before: build_types_overview_end
 
@@ -185,14 +185,14 @@ Before you start testing the application, you can select one of the :ref:`zigbee
 Selecting a build type in |VSC|
 -------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_vsc_start
    :end-before: build_types_selection_vsc_end
 
 Selecting a build type from command line
 ----------------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_cmd_start
    :end-before: For example, you can replace the
 

@@ -214,7 +214,7 @@ If you do, you'll get an error about a duplicate ID in :file:`links.txt`.
 Images
 ======
 
-.. figure:: /images/nrf9160_ug_overview.svg
+.. figure:: /images/ncs-toolchain.svg
    :alt: Alt text
 
    Figure caption
@@ -247,7 +247,7 @@ Include 1:
      :end-line: 27
 
 Include 2:
-  .. include:: ../gs_installing.rst
+  .. include:: ../getting_started/installing.rst
      :start-after: west-error-start
      :end-before: west-error-end
 
@@ -270,7 +270,7 @@ Include 4:
 You can also use ncs-include if you want to use the indentation options inside the nrf doc set:
 
 Include 5 (similar to include 2, but improved indentation):
-  .. ncs-include:: ../gs_installing.rst
+  .. ncs-include:: ../getting_started/installing.rst
      :start-after: west-error-start
      :end-before: west-error-end
      :auto-dedent:

@@ -17,14 +17,14 @@ A "99" at the end of the version number of this documentation indicates continuo
 
    introduction
    getting_started
-   ug_dev_model
-   ug_app_dev
-   security_chapter
-   ug_nrf91
-   ug_nrf70
-   ug_nrf53
-   ug_nrf52
-   ug_nrf_cloud
+   dev_model
+   app_dev
+   security
+   ecosystem_integration
+   nrf91
+   nrf70
+   nrf53
+   nrf52
    protocols
    applications
    samples
@@ -37,4 +37,4 @@ A "99" at the end of the version number of this documentation indicates continuo
    documentation
    glossary
 
-..   cheat_sheet
+..   templates/cheat_sheet

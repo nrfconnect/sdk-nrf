@@ -1,4 +1,4 @@
-.. _Ecosystem_integration:
+.. _Ecosystem_integration_template:
 
 Template: Ecosystem integration
 ###############################

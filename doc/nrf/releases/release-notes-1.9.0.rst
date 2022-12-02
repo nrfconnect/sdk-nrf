@@ -868,7 +868,7 @@ In addition to documentation related to the changes listed above, the following 
     * Added:
 
       * New subpage :ref:`app_optimize` and moved the optimization sections under it.
-      * New subpage :ref:`ext_components` and moved the sections for using external components or modules under it.
+      * New subpage "Using external components" and moved the sections for using external components or modules under it.
 
   * The contents of the :ref:`ug_radio_fem` section:
 
