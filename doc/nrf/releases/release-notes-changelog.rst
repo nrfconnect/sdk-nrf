@@ -633,6 +633,11 @@ Modem libraries
 
   * Added :c:func:`modem_info_get_hw_version` function to obtain the hardware version string using the ``AT%HWVERSION`` command.
 
+* :ref:`lte_lc_readme` library:
+
+  * Fixed an issue where cell update events could be sent without the cell information from the modem actually being updated.
+
+
 Libraries for networking
 ------------------------
 
