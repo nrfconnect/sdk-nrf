@@ -276,14 +276,17 @@ static void button_evt_handler(struct button_evt event)
 			return;
 		}
 		/* Starts/pauses the audio stream */
-		le_audio_play_pause();
+		ret = le_audio_play_pause();
+		if (ret) {
+			LOG_WRN("Could not play/pause");
+		}
+
 		break;
 
 	case BUTTON_VOLUME_UP:
 		ret = le_audio_volume_up();
 		if (ret) {
 			LOG_WRN("Failed to increase volume");
-			break;
 		}
 
 		break;
@@ -292,7 +295,6 @@ static void button_evt_handler(struct button_evt event)
 		ret = le_audio_volume_down();
 		if (ret) {
 			LOG_WRN("Failed to decrease volume");
-			break;
 		}
 
 		break;
@@ -301,7 +303,6 @@ static void button_evt_handler(struct button_evt event)
 		ret = le_audio_volume_mute();
 		if (ret) {
 			LOG_WRN("Failed to mute volume");
-			break;
 		}
 
 		break;
