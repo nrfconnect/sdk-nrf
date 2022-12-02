@@ -22,16 +22,16 @@ Those samples are a good starting point for understanding how to put together yo
    :glob:
    :caption: Subpages:
 
-   samples/samples_bl.rst
-   samples/samples_crypto.rst
-   samples/samples_edge.rst
-   samples/samples_gazell.rst
-   samples/samples_matter.rst
-   samples/samples_nfc.rst
-   samples/samples_nrf5340.rst
-   samples/samples_nrf9160.rst
-   samples/samples_tfm.rst
-   samples/samples_thread.rst
-   samples/samples_zigbee.rst
-   samples/samples_wifi.rst
-   samples/samples_other.rst
+   samples/bl
+   samples/crypto
+   samples/edge
+   samples/gazell
+   samples/matter
+   samples/nfc
+   samples/nrf5340
+   samples/nrf9160
+   samples/tfm
+   samples/thread
+   samples/zigbee
+   samples/wifi
+   samples/other

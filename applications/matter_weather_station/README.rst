@@ -82,7 +82,7 @@ Other build types are covered by dedicated files with the build type added as a 
 For example, the ``release`` build type file name is :file:`prj_release.conf`.
 If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_overview_start
    :end-before: build_types_overview_end
 
@@ -153,14 +153,14 @@ Before you start testing the application, you can select one of the :ref:`matter
 Selecting a build type in |VSC|
 -------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_vsc_start
    :end-before: build_types_selection_vsc_end
 
 Selecting a build type from command line
 ----------------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_cmd_start
    :end-before: For example, you can replace the
 
@@ -283,7 +283,7 @@ Alternatively, depending on your build type, you can also use one of the followi
        - Manual pairing code
      * - Scan the following QR code with the app for your ecosystem:
 
-         .. figure:: ../../doc/nrf/images/matter_qr_code_weather_station_default.png
+         .. figure:: /images/matter_qr_code_weather_station_default.png
             :width: 200px
             :alt: QR code for commissioning the weather station device (debug build type)
 
@@ -300,7 +300,7 @@ Alternatively, depending on your build type, you can also use one of the followi
        - Manual pairing code
      * - Scan the following QR code with the app for your ecosystem:
 
-         .. figure:: ../../doc/nrf/images/matter_qr_code_weather_station_factory_data.png
+         .. figure:: /images/matter_qr_code_weather_station_factory_data.png
             :width: 200px
             :alt: QR code for commissioning the weather station device (factory data build type)
 
