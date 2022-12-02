@@ -100,6 +100,12 @@ else()
     PROPERTY source_dir
     ${APPLICATION_SOURCE_DIR}
     )
+
+  set_property(
+    TARGET app_subimage
+    PROPERTY binary_dir
+    ${CMAKE_BINARY_DIR}
+    )
 endif(IMAGE_NAME)
 
 function(add_child_image)
@@ -245,7 +251,14 @@ function(add_child_image_from_source)
       PROPERTY source_dir
       )
 
+    get_property(
+      binary_dir
+      TARGET ${ACI_PRELOAD_IMAGE}_subimage
+      PROPERTY binary_dir
+      )
+
     list(APPEND extra_cmake_args "-DCONFIG_NCS_IS_VARIANT_IMAGE=y")
+    list(APPEND extra_cmake_args "-DPRELOAD_BINARY_DIR=${binary_dir}")
   else()
     set(source_dir ${ACI_SOURCE_DIR})
 
@@ -455,18 +468,26 @@ function(add_child_image_from_source)
     ${source_dir}
     )
 
-  foreach(kconfig_target
-      menuconfig
-      guiconfig
-      ${EXTRA_KCONFIG_TARGETS}
-      )
+  set_property(
+    TARGET ${ACI_NAME}_subimage
+    PROPERTY binary_dir
+    ${CMAKE_BINARY_DIR}/${ACI_NAME}
+    )
 
-    add_custom_target(${ACI_NAME}_${kconfig_target}
-      ${CMAKE_MAKE_PROGRAM} ${kconfig_target}
-      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${ACI_NAME}
-      USES_TERMINAL
-      )
-  endforeach()
+  if (NOT ACI_PRELOAD_IMAGE)
+    foreach(kconfig_target
+        menuconfig
+        guiconfig
+        ${EXTRA_KCONFIG_TARGETS}
+        )
+
+      add_custom_target(${ACI_NAME}_${kconfig_target}
+        ${CMAKE_MAKE_PROGRAM} ${kconfig_target}
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${ACI_NAME}
+        USES_TERMINAL
+        )
+    endforeach()
+  endif()
 
   if (NOT "${ACI_NAME}" STREQUAL "${${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION}")
     set_property(
