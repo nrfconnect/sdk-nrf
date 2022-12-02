@@ -122,7 +122,7 @@ static int pub(struct bt_mesh_lightness_srv *srv, struct bt_mesh_msg_ctx *ctx,
 				 BT_MESH_LIGHTNESS_MSG_MAXLEN_STATUS);
 	lvl_status_encode(&msg, status, repr);
 
-	return model_send(srv->lightness_model, ctx, &msg);
+	return bt_mesh_msg_send(srv->lightness_model, ctx, &msg);
 }
 
 static void rsp_lightness_status(struct bt_mesh_model *model,

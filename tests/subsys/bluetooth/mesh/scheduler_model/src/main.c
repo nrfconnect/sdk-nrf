@@ -147,7 +147,7 @@ void bt_mesh_time_encode_time_params(struct net_buf_simple *buf,
 {
 }
 
-int model_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+int bt_mesh_msg_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	       struct net_buf_simple *buf)
 {
 	return 0;

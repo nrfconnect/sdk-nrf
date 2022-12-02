@@ -182,9 +182,14 @@ int lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
 				 BT_MESH_LIGHTNESS_MSG_LEN_GET);
 	bt_mesh_model_msg_init(&buf, op_get(LIGHTNESS_OP_TYPE_GET, repr));
 
-	return model_ackd_send(cli->model, ctx, &buf,
-			       rsp ? &cli->ack_ctx : NULL,
-			       op_get(LIGHTNESS_OP_TYPE_STATUS, repr), rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = op_get(LIGHTNESS_OP_TYPE_STATUS, repr),
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 }
 
 int lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
@@ -202,9 +207,14 @@ int lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
 		model_transition_buf_add(&buf, set->transition);
 	}
 
-	return model_ackd_send(cli->model, ctx, &buf,
-			       rsp ? &cli->ack_ctx : NULL,
-			       op_get(LIGHTNESS_OP_TYPE_STATUS, repr), rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = op_get(LIGHTNESS_OP_TYPE_STATUS, repr),
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 }
 
 int lightness_cli_light_set_unack(struct bt_mesh_lightness_cli *cli,
@@ -222,7 +232,7 @@ int lightness_cli_light_set_unack(struct bt_mesh_lightness_cli *cli,
 		model_transition_buf_add(&buf, set->transition);
 	}
 
-	return model_send(cli->model, ctx, &buf);
+	return bt_mesh_msg_send(cli->model, ctx, &buf);
 }
 
 int bt_mesh_lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
@@ -255,9 +265,14 @@ int bt_mesh_lightness_cli_range_get(struct bt_mesh_lightness_cli *cli,
 				 BT_MESH_LIGHTNESS_MSG_LEN_RANGE_GET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHTNESS_OP_RANGE_GET);
 
-	return model_ackd_send(cli->model, ctx, &buf,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHTNESS_OP_RANGE_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHTNESS_OP_RANGE_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_lightness_cli_range_set(struct bt_mesh_lightness_cli *cli,
@@ -271,9 +286,14 @@ int bt_mesh_lightness_cli_range_set(struct bt_mesh_lightness_cli *cli,
 	net_buf_simple_add_le16(&buf, to_actual(range->min));
 	net_buf_simple_add_le16(&buf, to_actual(range->max));
 
-	return model_ackd_send(cli->model, ctx, &buf,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHTNESS_OP_RANGE_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHTNESS_OP_RANGE_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_lightness_cli_range_set_unack(
@@ -286,7 +306,7 @@ int bt_mesh_lightness_cli_range_set_unack(
 	net_buf_simple_add_le16(&buf, to_actual(range->min));
 	net_buf_simple_add_le16(&buf, to_actual(range->max));
 
-	return model_send(cli->model, ctx, &buf);
+	return bt_mesh_msg_send(cli->model, ctx, &buf);
 }
 
 int bt_mesh_lightness_cli_default_get(struct bt_mesh_lightness_cli *cli,
@@ -296,9 +316,14 @@ int bt_mesh_lightness_cli_default_get(struct bt_mesh_lightness_cli *cli,
 				 BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_GET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHTNESS_OP_DEFAULT_GET);
 
-	return model_ackd_send(cli->model, ctx, &buf,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHTNESS_OP_DEFAULT_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHTNESS_OP_DEFAULT_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_lightness_cli_default_set(struct bt_mesh_lightness_cli *cli,
@@ -310,9 +335,14 @@ int bt_mesh_lightness_cli_default_set(struct bt_mesh_lightness_cli *cli,
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHTNESS_OP_DEFAULT_SET);
 	net_buf_simple_add_le16(&buf, to_actual(default_light));
 
-	return model_ackd_send(cli->model, ctx, &buf,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHTNESS_OP_DEFAULT_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHTNESS_OP_DEFAULT_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_lightness_cli_default_set_unack(struct bt_mesh_lightness_cli *cli,
@@ -324,7 +354,7 @@ int bt_mesh_lightness_cli_default_set_unack(struct bt_mesh_lightness_cli *cli,
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHTNESS_OP_DEFAULT_SET_UNACK);
 	net_buf_simple_add_le16(&buf, to_actual(default_light));
 
-	return model_send(cli->model, ctx, &buf);
+	return bt_mesh_msg_send(cli->model, ctx, &buf);
 }
 
 int bt_mesh_lightness_cli_last_get(struct bt_mesh_lightness_cli *cli,
@@ -334,7 +364,12 @@ int bt_mesh_lightness_cli_last_get(struct bt_mesh_lightness_cli *cli,
 				 BT_MESH_LIGHTNESS_MSG_LEN_LAST_GET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHTNESS_OP_LAST_GET);
 
-	return model_ackd_send(cli->model, ctx, &buf,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHTNESS_OP_LAST_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHTNESS_OP_LAST_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 }

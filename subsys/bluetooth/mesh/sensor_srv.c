@@ -584,7 +584,7 @@ static int cadence_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		return err;
 	}
 
-	model_send(model, NULL, &rsp);
+	bt_mesh_msg_send(model, NULL, &rsp);
 
 respond:
 	if (ack) {
@@ -770,7 +770,7 @@ static int setting_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	BT_DBG("0x%04x: 0x%04x", id, setting_id);
 
-	model_send(model, NULL, &rsp);
+	bt_mesh_msg_send(model, NULL, &rsp);
 
 respond:
 	if (ack) {
@@ -1130,7 +1130,7 @@ int bt_mesh_sensor_srv_pub(struct bt_mesh_sensor_srv *srv,
 
 	sensor_cadence_update(sensor, value);
 
-	err = model_send(srv->model, ctx, &msg);
+	err = bt_mesh_msg_send(srv->model, ctx, &msg);
 	if (err) {
 		return err;
 	}

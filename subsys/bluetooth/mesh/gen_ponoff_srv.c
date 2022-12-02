@@ -410,5 +410,5 @@ int bt_mesh_ponoff_srv_pub(struct bt_mesh_ponoff_srv *srv,
 	bt_mesh_model_msg_init(&msg, BT_MESH_PONOFF_OP_STATUS);
 	net_buf_simple_add_u8(&msg, srv->on_power_up);
 
-	return model_send(srv->ponoff_model, ctx, &msg);
+	return bt_mesh_msg_send(srv->ponoff_model, ctx, &msg);
 }

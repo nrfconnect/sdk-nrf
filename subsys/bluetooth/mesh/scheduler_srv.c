@@ -598,7 +598,7 @@ static int send_scheduler_status(struct bt_mesh_model *model,
 			BT_MESH_SCHEDULER_MSG_LEN_STATUS);
 	encode_status(srv, &buf);
 
-	return model_send(model, ctx, &buf);
+	return bt_mesh_msg_send(model, ctx, &buf);
 }
 
 static int send_scheduler_action_status(struct bt_mesh_model *model,
@@ -615,7 +615,7 @@ static int send_scheduler_action_status(struct bt_mesh_model *model,
 
 	encode_action_status(srv, &buf, idx, is_reduced);
 
-	return model_send(model, ctx, &buf);
+	return bt_mesh_msg_send(model, ctx, &buf);
 }
 
 static int action_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,

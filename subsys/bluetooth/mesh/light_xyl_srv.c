@@ -672,7 +672,7 @@ int bt_mesh_light_xyl_srv_pub(struct bt_mesh_light_xyl_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_XYL_OP_STATUS,
 				 BT_MESH_LIGHT_XYL_MSG_MAXLEN_STATUS);
 	xyl_encode_status(&msg, status, BT_MESH_LIGHT_XYL_OP_STATUS);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }
 
 int bt_mesh_light_xyl_srv_target_pub(struct bt_mesh_light_xyl_srv *srv,
@@ -682,7 +682,7 @@ int bt_mesh_light_xyl_srv_target_pub(struct bt_mesh_light_xyl_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_XYL_OP_TARGET_STATUS,
 				 BT_MESH_LIGHT_XYL_MSG_MAXLEN_STATUS);
 	xyl_encode_status(&msg, status, BT_MESH_LIGHT_XYL_OP_TARGET_STATUS);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }
 
 int bt_mesh_light_xyl_srv_range_pub(struct bt_mesh_light_xyl_srv *srv,
@@ -692,7 +692,7 @@ int bt_mesh_light_xyl_srv_range_pub(struct bt_mesh_light_xyl_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_XYL_OP_RANGE_STATUS,
 				 BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_STATUS);
 	range_encode_status(&msg, srv, status_code);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }
 
 int bt_mesh_light_xyl_srv_default_pub(struct bt_mesh_light_xyl_srv *srv,
@@ -701,5 +701,5 @@ int bt_mesh_light_xyl_srv_default_pub(struct bt_mesh_light_xyl_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_XYL_OP_DEFAULT_STATUS,
 				 BT_MESH_LIGHT_XYL_MSG_LEN_DEFAULT);
 	default_encode_status(srv, &msg);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

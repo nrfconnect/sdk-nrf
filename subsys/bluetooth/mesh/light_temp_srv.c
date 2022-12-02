@@ -523,5 +523,5 @@ int bt_mesh_light_temp_srv_pub(struct bt_mesh_light_temp_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_TEMP_STATUS,
 				 BT_MESH_LIGHT_CTL_MSG_MAXLEN_TEMP_STATUS);
 	encode_status(&msg, status);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

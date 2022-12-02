@@ -220,8 +220,14 @@ int bt_mesh_light_ctrl_cli_mode_get(struct bt_mesh_light_ctrl_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHT_CTRL_OP_MODE_GET, 0);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_MODE_GET);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_CTRL_OP_MODE_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_CTRL_OP_MODE_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_ctrl_cli_mode_set(struct bt_mesh_light_ctrl_cli *cli,
@@ -232,8 +238,14 @@ int bt_mesh_light_ctrl_cli_mode_set(struct bt_mesh_light_ctrl_cli *cli,
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_MODE_SET);
 	net_buf_simple_add_u8(&buf, enabled);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_CTRL_OP_MODE_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_CTRL_OP_MODE_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_ctrl_cli_mode_set_unack(struct bt_mesh_light_ctrl_cli *cli,
@@ -244,7 +256,7 @@ int bt_mesh_light_ctrl_cli_mode_set_unack(struct bt_mesh_light_ctrl_cli *cli,
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_MODE_SET_UNACK);
 	net_buf_simple_add_u8(&buf, enabled);
 
-	return model_send(cli->model, ctx, &buf);
+	return bt_mesh_msg_send(cli->model, ctx, &buf);
 }
 
 int bt_mesh_light_ctrl_cli_occupancy_enabled_get(
@@ -254,8 +266,14 @@ int bt_mesh_light_ctrl_cli_occupancy_enabled_get(
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHT_CTRL_OP_OM_GET, 0);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_OM_GET);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_CTRL_OP_OM_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_CTRL_OP_OM_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_ctrl_cli_occupancy_enabled_set(
@@ -266,8 +284,14 @@ int bt_mesh_light_ctrl_cli_occupancy_enabled_set(
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_OM_SET);
 	net_buf_simple_add_u8(&buf, enabled);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_CTRL_OP_OM_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_CTRL_OP_OM_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_ctrl_cli_occupancy_enabled_set_unack(
@@ -278,7 +302,7 @@ int bt_mesh_light_ctrl_cli_occupancy_enabled_set_unack(
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_OM_SET_UNACK);
 	net_buf_simple_add_u8(&buf, enabled);
 
-	return model_send(cli->model, ctx, &buf);
+	return bt_mesh_msg_send(cli->model, ctx, &buf);
 }
 
 int bt_mesh_light_ctrl_cli_light_onoff_get(struct bt_mesh_light_ctrl_cli *cli,
@@ -288,8 +312,14 @@ int bt_mesh_light_ctrl_cli_light_onoff_get(struct bt_mesh_light_ctrl_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_GET, 0);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_GET);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_ctrl_cli_light_onoff_set(struct bt_mesh_light_ctrl_cli *cli,
@@ -305,8 +335,14 @@ int bt_mesh_light_ctrl_cli_light_onoff_set(struct bt_mesh_light_ctrl_cli *cli,
 		model_transition_buf_add(&buf, set->transition);
 	}
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_ctrl_cli_light_onoff_set_unack(
@@ -323,7 +359,7 @@ int bt_mesh_light_ctrl_cli_light_onoff_set_unack(
 		model_transition_buf_add(&buf, set->transition);
 	}
 
-	return model_send(cli->model, ctx, &buf);
+	return bt_mesh_msg_send(cli->model, ctx, &buf);
 }
 
 int bt_mesh_light_ctrl_cli_prop_get(struct bt_mesh_light_ctrl_cli *cli,
@@ -340,8 +376,14 @@ int bt_mesh_light_ctrl_cli_prop_get(struct bt_mesh_light_ctrl_cli *cli,
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_PROP_GET);
 	net_buf_simple_add_le16(&buf, id);
 
-	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
-			      BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, &ack);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_CTRL_OP_PROP_STATUS,
+		.user_data = &ack,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 	if (err) {
 		return err;
 	}
@@ -381,8 +423,14 @@ int bt_mesh_light_ctrl_cli_prop_set(struct bt_mesh_light_ctrl_cli *cli,
 		return err;
 	}
 
-	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
-			      BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, &ack);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_CTRL_OP_PROP_STATUS,
+		.user_data = &ack,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 	if (err) {
 		return err;
 	}
@@ -418,7 +466,7 @@ int bt_mesh_light_ctrl_cli_prop_set_unack(struct bt_mesh_light_ctrl_cli *cli,
 		return err;
 	}
 
-	return model_send(cli->model, ctx, &buf);
+	return bt_mesh_msg_send(cli->model, ctx, &buf);
 }
 
 int bt_mesh_light_ctrl_cli_coeff_get(struct bt_mesh_light_ctrl_cli *cli,
@@ -435,8 +483,14 @@ int bt_mesh_light_ctrl_cli_coeff_get(struct bt_mesh_light_ctrl_cli *cli,
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_PROP_GET);
 	net_buf_simple_add_le16(&buf, id);
 
-	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
-			      BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, &ack);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_CTRL_OP_PROP_STATUS,
+		.user_data = &ack,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 	if (err) {
 		return err;
 	}
@@ -464,8 +518,14 @@ int bt_mesh_light_ctrl_cli_coeff_set(struct bt_mesh_light_ctrl_cli *cli,
 	net_buf_simple_add_le16(&buf, id);
 	net_buf_simple_add_mem(&buf, &val, sizeof(float));
 
-	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
-			      BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, &ack);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_CTRL_OP_PROP_STATUS,
+		.user_data = &ack,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &buf, rsp ? &rsp_ctx : NULL);
 	if (err) {
 		return err;
 	}
@@ -488,5 +548,5 @@ int bt_mesh_light_ctrl_cli_coeff_set_unack(struct bt_mesh_light_ctrl_cli *cli,
 	net_buf_simple_add_le16(&buf, id);
 	net_buf_simple_add_mem(&buf, &val, sizeof(float));
 
-	return model_send(cli->model, ctx, &buf);
+	return bt_mesh_msg_send(cli->model, ctx, &buf);
 }

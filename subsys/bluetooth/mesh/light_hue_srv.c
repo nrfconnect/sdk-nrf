@@ -472,5 +472,5 @@ int bt_mesh_light_hue_srv_pub(struct bt_mesh_light_hue_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_HUE_OP_STATUS,
 				 BT_MESH_LIGHT_HSL_MSG_MAXLEN_HUE_STATUS);
 	encode_status(&msg, status);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

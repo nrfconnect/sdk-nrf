@@ -503,5 +503,5 @@ int bt_mesh_light_sat_srv_pub(struct bt_mesh_light_sat_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_SAT_OP_STATUS,
 				 BT_MESH_LIGHT_HSL_MSG_MAXLEN_SAT_STATUS);
 	encode_status(&msg, status);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

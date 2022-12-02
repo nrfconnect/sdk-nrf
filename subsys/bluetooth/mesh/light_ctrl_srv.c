@@ -263,7 +263,7 @@ static int light_onoff_status_send(struct bt_mesh_light_ctrl_srv *srv,
 				 3);
 	light_onoff_encode(srv, &buf, prev_state);
 
-	return model_send(srv->model, ctx, &buf);
+	return bt_mesh_msg_send(srv->model, ctx, &buf);
 }
 
 static void onoff_encode(struct bt_mesh_light_ctrl_srv *srv,
@@ -719,7 +719,7 @@ static void mode_rsp(struct bt_mesh_light_ctrl_srv *srv,
 	bt_mesh_model_msg_init(&rsp, BT_MESH_LIGHT_CTRL_OP_MODE_STATUS);
 	net_buf_simple_add_u8(&rsp, is_enabled(srv));
 
-	model_send(srv->model, ctx, &rsp);
+	bt_mesh_msg_send(srv->model, ctx, &rsp);
 }
 
 static int handle_mode_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
@@ -784,7 +784,7 @@ static void om_rsp(struct bt_mesh_light_ctrl_srv *srv,
 	net_buf_simple_add_u8(&rsp,
 			      atomic_test_bit(&srv->flags, FLAG_OCC_MODE));
 
-	model_send(srv->model, ctx, &rsp);
+	bt_mesh_msg_send(srv->model, ctx, &rsp);
 }
 
 static int handle_om_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
@@ -1269,7 +1269,7 @@ static int prop_tx(struct bt_mesh_light_ctrl_srv *srv,
 		return -ENOENT;
 	}
 
-	model_send(srv->setup_srv, ctx, &buf);
+	bt_mesh_msg_send(srv->setup_srv, ctx, &buf);
 
 	return 0;
 }

@@ -151,7 +151,7 @@ int tid_check_and_update(struct bt_mesh_tid_ctx *prev_transaction, uint8_t tid,
 	return 0;
 }
 
-int model_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+int bt_mesh_msg_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	       struct net_buf_simple *buf)
 {
 	ztest_check_expected_value(model);
@@ -266,10 +266,10 @@ static void expect_light_onoff_pub(uint8_t *expected_msg, size_t len, k_timeout_
 {
 	ztest_expect_value(bt_mesh_model_msg_init, opcode,
 			   BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS);
-	ztest_expect_value(model_send, model, &mock_ligth_ctrl_model);
-	ztest_expect_value(model_send, ctx, NULL);
-	ztest_expect_value(model_send, buf->len, len);
-	ztest_expect_data(model_send, buf->data, expected_msg);
+	ztest_expect_value(bt_mesh_msg_send, model, &mock_ligth_ctrl_model);
+	ztest_expect_value(bt_mesh_msg_send, ctx, NULL);
+	ztest_expect_value(bt_mesh_msg_send, buf->len, len);
+	ztest_expect_data(bt_mesh_msg_send, buf->data, expected_msg);
 	ztest_expect_value(bt_mesh_onoff_srv_pub, srv, &light_ctrl_srv.onoff);
 	ztest_expect_value(bt_mesh_onoff_srv_pub, status->present_on_off,
 			   expected_onoff_status.present_on_off);

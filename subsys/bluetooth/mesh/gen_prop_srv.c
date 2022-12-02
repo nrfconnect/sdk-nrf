@@ -711,7 +711,7 @@ int bt_mesh_prop_srv_pub_list(struct bt_mesh_prop_srv *srv,
 
 	pub_list_build(srv, &msg, 1);
 
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }
 
 int bt_mesh_prop_srv_pub(struct bt_mesh_prop_srv *srv,
@@ -739,5 +739,5 @@ int bt_mesh_prop_srv_pub(struct bt_mesh_prop_srv *srv,
 	net_buf_simple_add_u8(&msg, val->meta.user_access);
 	net_buf_simple_add_mem(&msg, val->value, val->size);
 
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

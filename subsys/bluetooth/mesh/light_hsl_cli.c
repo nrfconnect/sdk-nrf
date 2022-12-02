@@ -261,8 +261,14 @@ static int get_msg(struct bt_mesh_light_hsl_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(msg, opcode, BT_MESH_LIGHT_HSL_MSG_LEN_GET);
 	bt_mesh_model_msg_init(&msg, opcode);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL, ret_opcode, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = ret_opcode,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_hsl_get(struct bt_mesh_light_hsl_cli *cli,
@@ -287,9 +293,14 @@ int bt_mesh_light_hsl_set(struct bt_mesh_light_hsl_cli *cli,
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_HSL_OP_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_HSL_OP_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_hsl_set_unack(struct bt_mesh_light_hsl_cli *cli,
@@ -305,7 +316,7 @@ int bt_mesh_light_hsl_set_unack(struct bt_mesh_light_hsl_cli *cli,
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_light_hsl_target_get(struct bt_mesh_light_hsl_cli *cli,
@@ -334,9 +345,14 @@ int bt_mesh_light_hsl_default_set(struct bt_mesh_light_hsl_cli *cli,
 	bt_mesh_model_msg_init(&msg, BT_MESH_LIGHT_HSL_OP_DEFAULT_SET);
 	light_hsl_buf_push(&msg,  set);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_HSL_OP_DEFAULT_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_HSL_OP_DEFAULT_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_hsl_default_set_unack(struct bt_mesh_light_hsl_cli *cli,
@@ -348,7 +364,7 @@ int bt_mesh_light_hsl_default_set_unack(struct bt_mesh_light_hsl_cli *cli,
 	bt_mesh_model_msg_init(&msg, BT_MESH_LIGHT_HSL_OP_DEFAULT_SET_UNACK);
 	light_hsl_buf_push(&msg,  set);
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_light_hsl_range_get(struct bt_mesh_light_hsl_cli *cli,
@@ -369,9 +385,14 @@ int bt_mesh_light_hsl_range_set(struct bt_mesh_light_hsl_cli *cli,
 	bt_mesh_model_msg_init(&msg, BT_MESH_LIGHT_HSL_OP_RANGE_SET);
 	light_hue_sat_range_buf_push(&msg, set);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_HSL_OP_RANGE_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_HSL_OP_RANGE_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_hsl_range_set_unack(
@@ -383,7 +404,7 @@ int bt_mesh_light_hsl_range_set_unack(
 	bt_mesh_model_msg_init(&msg, BT_MESH_LIGHT_HSL_OP_RANGE_SET_UNACK);
 	light_hue_sat_range_buf_push(&msg, set);
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_light_hue_get(struct bt_mesh_light_hsl_cli *cli,
@@ -408,9 +429,14 @@ int bt_mesh_light_hue_set(struct bt_mesh_light_hsl_cli *cli,
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_HUE_OP_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_HUE_OP_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_hue_set_unack(struct bt_mesh_light_hsl_cli *cli,
@@ -426,7 +452,7 @@ int bt_mesh_light_hue_set_unack(struct bt_mesh_light_hsl_cli *cli,
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_light_saturation_get(struct bt_mesh_light_hsl_cli *cli,
@@ -451,9 +477,14 @@ int bt_mesh_light_saturation_set(struct bt_mesh_light_hsl_cli *cli,
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_SAT_OP_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_SAT_OP_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_saturation_set_unack(struct bt_mesh_light_hsl_cli *cli,
@@ -469,5 +500,5 @@ int bt_mesh_light_saturation_set_unack(struct bt_mesh_light_hsl_cli *cli,
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
