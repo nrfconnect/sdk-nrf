@@ -1064,7 +1064,7 @@ int qspi_cmd_wakeup_rpu(const struct device *dev, uint8_t data)
 	int ret;
 	/* Use lowest 8MHz for waking up RPU */
 	const nrf_qspi_phy_conf_t qspi_phy_8mhz = {
-		.sck_freq = qspi_freq_to_sckfreq(8 * 1000 * 1000),
+		.sck_freq = qspi_freq_to_sckfreq(8),
 		.sck_delay = QSPI_SCK_DELAY,
 		.spi_mode = NRF_QSPI_MODE_0
 	};
