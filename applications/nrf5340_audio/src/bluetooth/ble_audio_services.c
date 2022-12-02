@@ -469,7 +469,7 @@ int ble_mcs_play_pause(struct bt_conn *conn)
 #endif /* (CONFIG_BT_MCS) */
 
 	if (ret) {
-		LOG_ERR("Failed to send play/pause command: %d", ret);
+		LOG_WRN("Failed to send play/pause command: %d", ret);
 		return ret;
 	}
 
