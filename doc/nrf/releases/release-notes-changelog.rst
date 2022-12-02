@@ -162,6 +162,7 @@ Bluetooth samples
   * Changed:
 
     * Added energy consumption information to documentation.
+    * Added a documentation section about distance offset calibration.
 
 Bluetooth mesh samples
 ----------------------
