@@ -12,6 +12,7 @@
     - applications.asset_tracker_v2.cloud.cloud_codec.json_common.azure
     - sample.app_event_manager
     - sample.app_event_manager_shell
+    - sample.app_event_manager_shell.native_posix
     - sample.caf_sensor_manager.correctness_test
     - sample.edge_impulse.wrapper
   platforms:
