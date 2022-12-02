@@ -7,6 +7,8 @@ Building the |NCS| documentation
    :local:
    :depth: 2
 
+dummy change
+
 The |NCS| documentation is written using the reStructuredText markup language (:file:`.rst` file extension) with Sphinx extensions and processed using Sphinx.
 API documentation is generated from Doxygen comments.
 
