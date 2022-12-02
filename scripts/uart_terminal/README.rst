@@ -38,7 +38,7 @@ The script does not take any arguments.
 
 After running the script, it will list all available COM ports for each connected development kit and open a terminal connection window for the desired VCOM port.
 
-For example, in a Windows environment, if you have three DKs connected, the scritp output might appear as:
+For example, in a Windows environment, if you have three DKs connected, the script output might appear as:
 
 .. code-block:: console
 
@@ -49,7 +49,7 @@ For example, in a Windows environment, if you have three DKs connected, the scri
    1050166277    COM16
     960390887    COM18
 
-   Script finished 
+   Script finished
 
 Using the default settings, the script will open a terminal window for each port listed.
 
