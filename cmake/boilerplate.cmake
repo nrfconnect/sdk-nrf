@@ -28,3 +28,5 @@ if(DEFINED NRF_SUPPORTED_BUILD_TYPES)
                 message(FATAL_ERROR "${CMAKE_BUILD_TYPE} variant is not supported")
         endif()
 endif()
+
+list(PREPEND CMAKE_MODULE_PATH ${NRF_DIR}/cmake/modules)
