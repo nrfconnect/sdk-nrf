@@ -30,8 +30,10 @@
         'uint32_t': 'HEX32'
         'int64_t': 'INT64'
         'uint64_t': 'HEX64'
+    ${CMOCK_MOCK_PREFIX}
     ${CMOCK_STRIPPABLES}
 :unity:
     :suite_teardown: >
        extern int test_suiteTearDown(int); return test_suiteTearDown(num_failures);
     :main_name: unity_main
+    ${UNITY_MOCK_PREFIX}

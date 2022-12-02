@@ -9,11 +9,14 @@
 # mock_name:       name of file that is mocked. Can be empty to create common file with no excludes.
 # exclude_list:    holds list of functions / match strings that should be placed in strippables.
 # out_config_file: return setting with path and name to generate config file
-macro(configure_unity_conf_file mock_name exclude_list out_config_file)
+macro(configure_unity_conf_file mock_name exclude_list out_config_file out_cmock_prefix)
   set(unity_config_template unity_cfg.yaml.template)
   set(unity_config_file_name unity_cfg.yaml)
   set(out_dir ${APPLICATION_BINARY_DIR}/mocks)
+  set(cmock_prefix "cmock_")
 
+  set(CMOCK_MOCK_PREFIX ":mock_prefix: ${cmock_prefix}\n")
+  set(UNITY_MOCK_PREFIX ":mock_prefix: ${cmock_prefix}\n")
   if("${mock_name}" STREQUAL "")
     configure_file(${NRF_DIR}/tests/unity/${unity_config_template}
                    ${out_dir}/${unity_config_file_name}
@@ -39,7 +42,7 @@ zephyr_library()
 set_property(GLOBAL PROPERTY CMOCK_DIR ${ZEPHYR_BASE}/../test/cmock)
 get_property(CMOCK_DIR GLOBAL PROPERTY CMOCK_DIR)
 
-configure_unity_conf_file("" "" unused)
+configure_unity_conf_file("" "" unused unused)
 
 find_program(
   RUBY_EXECUTABLE
@@ -71,7 +74,7 @@ function(test_runner_generate test_file_path)
   file(MAKE_DIRECTORY "${UNITY_PRODUCTS_DIR}")
   get_filename_component(test_file_name "${test_file_path}" NAME)
   set(output_file "${UNITY_PRODUCTS_DIR}/runner_${test_file_name}")
-  configure_unity_conf_file("${file_name}" "" conf_file)
+  configure_unity_conf_file("${file_name}" "" conf_file unused)
 
   add_custom_command(
     COMMAND ${RUBY_EXECUTABLE}
@@ -101,18 +104,16 @@ endfunction()
 function(cmock_generate header_path dst_path)
   cmake_parse_arguments(CMOCK "" "" "EXCLUDE" ${ARGN})
   get_property(CMOCK_DIR GLOBAL PROPERTY CMOCK_DIR)
-  set(MOCK_PREFIX cmock_)
 
   get_filename_component(file_name "${header_path}" NAME_WE)
-  set(MOCK_FILE ${dst_path}/${MOCK_PREFIX}${file_name}.c)
 
   file(MAKE_DIRECTORY "${dst_path}")
-  configure_unity_conf_file("${file_name}" "${CMOCK_EXCLUDE}" conf_file)
+  configure_unity_conf_file("${file_name}" "${CMOCK_EXCLUDE}" conf_file cmock_prefix)
+  set(MOCK_FILE ${dst_path}/${cmock_prefix}${file_name}.c)
 
   add_custom_command(OUTPUT ${MOCK_FILE}
     COMMAND ${RUBY_EXECUTABLE}
     ${CMOCK_DIR}/lib/cmock.rb
-    --mock_prefix=${MOCK_PREFIX}
     --mock_path=${dst_path}
     -o${conf_file}
     ${header_path}
