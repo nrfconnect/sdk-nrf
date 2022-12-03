@@ -184,7 +184,7 @@ nRF9160
 
     * Added support for parsing parameters of type unsigned int or unsigned short.
 
-  * :ref:`lib_spm` library:
+  * Secure Partition Manager (SPM) library:
 
     * Added support for the nRF9160 pulse-density modulation (PDM) and inter-IC sound (I2S) peripherals in non-secure applications.
     * Fixed an issue where SPM and the application could have incompatible FPU configurations, resulting in a HardFault.
@@ -351,7 +351,7 @@ Trusted Firmware-M
   TF-M automatically generates and stores random hardware unique keys (if not present), using the :ref:`lib_hw_unique_key` library.
 * TFM_MINIMAL: Added a size-optimized configuration of TF-M which provides a minimal set of features:
 
-  * This configuration requires 32 KB of flash and provides random number generation, SHA-256, and the platform memory read service, which is analogous to the feature set of :ref:`secure_partition_manager`.
+  * This configuration requires 32 KB of flash and provides random number generation, SHA-256, and the platform memory read service, which is analogous to the feature set of Secure Partition Manager.
   * The configuration is showcased in the :ref:`tfm_hello_world` sample.
 
 * The TF-M protected storage service is now using non-static labels when deriving encryption keys.

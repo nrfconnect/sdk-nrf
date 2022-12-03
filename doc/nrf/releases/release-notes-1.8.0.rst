@@ -675,7 +675,7 @@ Other libraries
   * Increased the number of supported nRF Profiler events.
   * Added a special nRF Profiler event for indicating a situation where the nRF Profiler's data buffer has overflowed and some events have been dropped, which causes the device to stop sending events.
 
-* :ref:`lib_spm`:
+* Secure Partition Manager (SPM):
 
   * Fixed the NCSDK-5156 issue with the size calculation for the non-secure callable region, which prevented users from adding a large number of custom secure services.
   * All EGU peripherals, instead of just EGU1 and EGU2, are now configurable to be non-secure and are configured as non-secure by default.

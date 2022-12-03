@@ -369,8 +369,8 @@ Secure Partition Manager (SPM)
 
 * Added support for disabling some services in the nRF9160: Secure Services sample.
   It now works in more bootloader configurations.
-* Disabled :kconfig:option:`CONFIG_SPM_SERVICE_PREVALIDATE` in the :ref:`lib_spm` library, because this option requires the immutable bootloader.
-* Updated the :ref:`lib_spm` library to make it compatible with nRF5340 (with or without `anomaly 19`_).
+* Disabled ``CONFIG_SPM_SERVICE_PREVALIDATE`` in the Secure Partition Manager (SPM) library, because this option requires the immutable bootloader.
+* Updated the Secure Partition Manager (SPM) library to make it compatible with nRF5340 (with or without `anomaly 19`_).
 
 CPU load measurement
 --------------------
@@ -532,7 +532,7 @@ Common
 Samples and applications
 ------------------------
 
-* The build configuration consisting of :ref:`bootloader`, :ref:`secure_partition_manager`, and application does not work.
+* The build configuration consisting of :ref:`bootloader`, Secure Partition Manager, and application does not work.
   As a workaround, either include MCUboot in the build or use MCUboot instead of the immutable bootloader.
 * ``west flash`` and ``ninja flash`` only program one core, even if multiple cores are included in the build.
   As a workaround, execute the flash command from inside the build directory of the child image that is placed on the other core (for example, :file:`build/hci_rpmsg`).
@@ -550,14 +550,14 @@ Crypto
 Secure Partition Manager (SPM)
 ------------------------------
 
-* Enabling default logging in the :ref:`secure_partition_manager` sample makes it crash if the sample logs any data after the application has booted (for example, during a SecureFault, or in a secure service).
+* Enabling default logging in the Secure Partition Manager sample makes it crash if the sample logs any data after the application has booted (for example, during a SecureFault, or in a secure service).
   At that point, RTC1 and UARTE0 are non-secure.
   As a workaround, do not enable logging and add a breakpoint in the fault handling, or try a different logging backend. (NCSIDB-114)
 
 Build system
 ============
 
-* It is not possible to build and program :ref:`secure_partition_manager` and the application individually. (from v1.2.0)
+* It is not possible to build and program Secure Partition Manager and the application individually. (from v1.2.0)
 
 Zephyr
 ======

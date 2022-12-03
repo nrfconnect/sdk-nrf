@@ -47,7 +47,6 @@ To get access to all the benefits, like up to 100 free devices connected, regist
    When building applications with :ref:`Trusted Firmware-M <ug_tfm>` (TF-M), the faults resulting from memory access in secure regions are not caught by Memfault's fault handler.
    Instead, they are handled by TF-M.
    This means that those faults are not reported to the Memfault platform.
-   You can configure your application to use the :ref:`secure_partition_manager` instead of TF-M if you prefer all such faults to be reported to the Memfault platform.
 
 Configuration
 *************

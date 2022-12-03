@@ -271,7 +271,6 @@ It uses the following Zephyr libraries:
 
 In addition, it uses the following secure firmware components:
 
-* :ref:`secure_partition_manager`
 * :ref:`Trusted Firmware-M <ug_tfm>`
 
 The sample also uses drivers from `nrfx`_.
