@@ -26,12 +26,6 @@ if (CONFIG_BOOTLOADER_MCUBOOT)
     mcuboot
     ${CMAKE_CURRENT_SOURCE_DIR}/multi_image_mcuboot.conf
     )
-
-else()
-
-  if (CONFIG_SPM)
-    set(image_to_boot spm)
-  endif()
 endif()
 
 if (image_to_boot)
