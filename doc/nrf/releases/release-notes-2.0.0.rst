@@ -360,7 +360,7 @@ nRF9160 samples
   * :ref:`nrf_cloud_rest_cell_pos_sample` sample, demonstrating how to use the :ref:`lib_nrf_cloud_rest` library to perform cellular positioning requests.
   * :ref:`ciphersuites` sample, demonstrating how to use TLS ciphersuites.
 
-* :ref:`secure_partition_manager` (rather than TF-M) is enabled by default for the applications and samples that support Thingy:91.
+* Secure Partition Manager (rather than TF-M) is enabled by default for the applications and samples that support Thingy:91.
 
 * :ref:`at_monitor_sample` sample:
 

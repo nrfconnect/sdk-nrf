@@ -912,9 +912,9 @@ Other libraries
 
   * Added default metrics for Bluetooth.
 
-* :ref:`lib_spm`:
+* Secure Partition Manager (SPM):
 
-  * Deprecated Secure Partition Manager (SPM) and the Kconfig option :kconfig:option:`CONFIG_SPM`.
+  * Deprecated Secure Partition Manager (SPM) and the Kconfig option ``CONFIG_SPM``.
     It is replaced by the Trusted Firmware-M (TF-M) as the supported trusted execution solution.
     See :ref:`ug_tfm` for more information about the TF-M.
 

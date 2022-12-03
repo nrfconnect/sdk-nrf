@@ -391,7 +391,7 @@ Crypto
       For details, see :file:`crypto/nrf_cc310_mbedcrypto/include/mbedtls/cc3xx_kmu.h` in `sdk-nrfxlib`_.
 
     See the :ref:`crypto_changelog_nrf_cc3xx_mbedcrypto` for detailed information.
-  * RNG support in nRF5340 application core (using Secure Partition Manager's :ref:`lib_secure_services` and nrf_cc312_platform library).
+  * RNG support in nRF5340 application core (using Secure Partition Manager's Secure Services and nrf_cc312_platform library).
 
 * Updated:
 

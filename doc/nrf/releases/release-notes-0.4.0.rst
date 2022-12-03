@@ -111,7 +111,7 @@ Common libraries
 
   * :ref:`lib_download_client` - downloads files over HTTP and reports back the progress (as data fragments) to the application
   * Nordic CoAP library - ported to the |NCS|
-  * :ref:`lib_spm` (replacing Secure Boot) - configures security attributions for the flash, SRAM, and peripherals
+  * Secure Partition Manager (SPM) (replacing Secure Boot) - configures security attributions for the flash, SRAM, and peripherals
 
 
 Crypto
@@ -188,7 +188,7 @@ Documentation
   * :ref:`app_event_manager` and :ref:`nrf_profiler`
   * :ref:`at_cmd_parser_readme`, :ref:`at_params_readme`, and :ref:`modem_info_readme`
   * :ref:`lib_download_client`
-  * :ref:`lib_spm`
+  * Secure Partition Manager (SPM)
   * :ref:`st25r3911b_nfc_readme`
   * :ref:`dfu_smp_readme` and :ref:`lbs_readme`
 
