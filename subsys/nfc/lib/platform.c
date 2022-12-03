@@ -8,12 +8,8 @@
 #include <nrfx_nfct.h>
 #include <nrfx_timer.h>
 
-#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
 #if defined(CONFIG_BUILD_WITH_TFM)
 #include <tfm_ioctl_api.h>
-#elif defined(CONFIG_SPM_SERVICE_READ)
-#include <secure_services.h>
-#endif
 #endif
 
 #include <zephyr/logging/log.h>
@@ -86,18 +82,6 @@ static nrfx_err_t nfc_platform_tagheaders_get(uint32_t tag_header[3])
 	if (plt_err != TFM_PLATFORM_ERR_SUCCESS || err != 0) {
 		LOG_ERR("Could not read FICR NFC Tag Header (plt_err %d, err: %d)",
 			plt_err, err);
-		return NRFX_ERROR_INTERNAL;
-	}
-
-	ficr_nfc = &ficr_nfc_ns;
-#elif defined(CONFIG_SPM_SERVICE_READ)
-	int err;
-	FICR_NFC_Type ficr_nfc_ns;
-
-	err = spm_request_read(&ficr_nfc_ns, (uint32_t)ficr_nfc,
-			       sizeof(ficr_nfc_ns));
-	if (err != 0) {
-		LOG_ERR("Could not read FICR NFC Tag Header (err: %d)", err);
 		return NRFX_ERROR_INTERNAL;
 	}
 

@@ -4,56 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if (CONFIG_SPM)
-  get_cmake_property(VARIABLES              VARIABLES)
-  get_cmake_property(VARIABLES_CACHED CACHE_VARIABLES)
-
-  set(regex "^CONFIG_SPM_SERVICE.+")
-
-  list(FILTER VARIABLES        INCLUDE REGEX ${regex})
-  list(FILTER VARIABLES_CACHED INCLUDE REGEX ${regex})
-
-  foreach(var_name ${VARIABLES} ${VARIABLES_CACHED})
-    set(spm_${var_name} ${${var_name}})
-  endforeach()
-
-  set(spm_CONFIG_SPM_SECURE_SERVICES ${CONFIG_SPM_SECURE_SERVICES})
-
-  if (CONFIG_SPM_SERVICE_NS_HANDLER_FROM_SPM_FAULT)
-      add_overlay_config(
-        spm
-        ${NRF_DIR}/samples/spm/spm_ns_handler_from_spm_fault.conf
-        )
-
-      add_overlay_dts(
-        mcuboot
-        ${NRF_DIR}/samples/spm/spm_uart.overlay
-      )
-  endif()
-
-  if (CONFIG_BOARD_ENABLE_CPUNET)
-      add_overlay_config(
-        spm
-        ${NRF_DIR}/samples/spm/spm_enable_cpunet.conf
-        )
-  endif()
-
-  add_child_image(
-    NAME spm
-    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/spm
-    )
-
-  if (CONFIG_ARM_FIRMWARE_USES_SECURE_ENTRY_FUNCS AND
-      NOT CONFIG_SPM_BUILD_STRATEGY_FROM_SOURCE AND
-      NOT EXISTS ${CONFIG_ARM_ENTRY_VENEERS_LIB_NAME})
-    message(WARNING "NOTE: SPM is not built from source, and the firmware use secure "
-      "entry functions. However, the configured library file is not found.
-      Ensure that the configuration 'ARM_ENTRY_VENEERS_LIB_NAME'
-      points to the .a file (default 'spm/libspmsecureentries.a')
-      generated alongside the flashed or merged SPM hex file")
-  endif()
-endif()
-
 if (CONFIG_SECURE_BOOT)
   if (CONFIG_SOC_NRF5340_CPUNET)
     # Share some information which is used when generating the zip file

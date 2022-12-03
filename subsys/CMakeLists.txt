@@ -24,8 +24,6 @@ add_subdirectory(dfu)
 if (CONFIG_PCD OR CONFIG_PCD_APP OR CONFIG_PCD_NET)
 add_subdirectory(pcd)
 endif()
-add_subdirectory_ifdef(CONFIG_IS_SPM		spm)
-add_subdirectory_ifdef(CONFIG_TRUSTED_EXECUTION_NONSECURE nonsecure)
 
 if (CONFIG_MPSL AND NOT CONFIG_MPSL_FEM_ONLY)
   add_subdirectory(mpsl/init)

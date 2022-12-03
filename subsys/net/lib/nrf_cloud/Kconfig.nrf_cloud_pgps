@@ -129,7 +129,6 @@ choice NRF_CLOUD_PGPS_STORAGE
 
 config NRF_CLOUD_PGPS_STORAGE_PARTITION
 	bool "Define P-GPS subsystem flash partition"
-	select PM_SINGLE_IMAGE if !SPM
 	help
 	  If set, allocates flash for storing predictions.
 
