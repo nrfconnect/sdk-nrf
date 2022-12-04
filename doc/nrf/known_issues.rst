@@ -1853,7 +1853,7 @@ Secure Partition Manager (SPM)
 ==============================
 
 .. note::
-    As of the |NCS| v2.1.0, Secure Partition Manager (SPM) is deprecated and replaced by :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
+    The Secure Partition Manager (SPM) was deprecated in |NCS| v2.1.0 and removed in |NCS| v2.3.0. It is replaced by :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
 
 .. rst-class:: v2-2-0 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 

@@ -265,6 +265,12 @@ Other libraries
 
 |no_changes_yet_note|
 
+* Secure Partition Manager (SPM):
+
+  * Removed Secure Partition Manager (SPM) and the Kconfig option ``CONFIG_SPM``.
+    It is replaced by the Trusted Firmware-M (TF-M) as the supported trusted execution solution.
+    See :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` for more information about the TF-M.
+
 Common Application Framework (CAF)
 ----------------------------------
 
