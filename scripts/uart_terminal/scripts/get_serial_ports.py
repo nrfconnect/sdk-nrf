@@ -6,6 +6,7 @@
 
 import sys
 import subprocess
+import re
 
 
 def get_serial_ports():
@@ -26,7 +27,7 @@ def get_serial_ports():
         print("%6s %11s" % ("ID", "Port"))
         for line in output_decoded_lines:
             if "VCOM0" in line:
-                info = line.split("    ")
+                info = re.split(' +', line)
                 ports.append(info[1])
                 print("%10s %8s" % (info[0], info[1]))
 
