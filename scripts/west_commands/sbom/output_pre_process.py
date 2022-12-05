@@ -70,11 +70,6 @@ def pre_process(data: Data):
                     lic.friendly_id = id
                 used_licenses[id] = lic
     data.licenses = used_licenses
-    # Group files by license id or expression
-    for file in data.files:
-        if file.license_expr not in data.files_by_license:
-            data.files_by_license[file.license_expr] = list()
-        data.files_by_license[file.license_expr].append(file)
     # Sort licenses
     def lic_reorder(id: str):
         lic = data.licenses[id]
@@ -94,3 +89,23 @@ def pre_process(data: Data):
             else:
                 return 'F' + id
     data.licenses_sorted = sorted(data.licenses.keys(), key=lic_reorder)
+    # Sort packages
+    data.packages_sorted = sorted(data.packages.keys())
+    # Give more user friendly information of each package
+    package_name_map = dict()
+    for package in data.packages.values():
+        if (package.url is None) or (package.version is None):
+            continue
+        if (package.name is None) and (package.url.startswith('https://github.com/')):
+            package.name = package.url.replace('https://github.com/', '')
+            if package.name.endswith('.git'):
+                package.name = package.name[:-4]
+        if package.name in package_name_map:
+            existing = package_name_map[package.name]
+            del package_name_map[package.name]
+            package.name += '-' + package.version
+            existing.name += '-' + existing.version
+            package_name_map[existing.name] = existing
+        package_name_map[package.name] = package
+        if (package.browser_url is None) and (package.url.startswith('http')):
+            package.browser_url = package.url

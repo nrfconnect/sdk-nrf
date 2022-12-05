@@ -36,6 +36,9 @@ scancode-toolkit
 cache-databese
   License detection is based on a predefined database.
   The license type is obtained from the database.
+
+git-info
+  Detects the source repository of each file and its commit hash.
 '''
 
 
@@ -59,6 +62,7 @@ class ArgsClass:
     allowed_in_map_file_only: 'str'
     processes: int
     scancode: str
+    git: str
     ar: 'str|None'
     ninja: 'str|None'
     help_detectors: bool
@@ -95,7 +99,7 @@ def add_arguments(parser: argparse.ArgumentParser):
                              'with arguments from each line of the file.'
                              'You can provide this option more than once.')
     parser.add_argument('--license-detectors',
-                        default='spdx-tag,full-text,external-file,scancode-toolkit',
+                        default='spdx-tag,full-text,external-file,scancode-toolkit,git-info',
                         help='Comma separated list of enabled license detectors.')
     parser.add_argument('--optional-license-detectors', default='scancode-toolkit',
                         help='Comma separated list of optional license detectors. Optional license '
@@ -123,6 +127,8 @@ def add_arguments(parser: argparse.ArgumentParser):
                              'is equal to the number of processor cores.')
     parser.add_argument('--scancode', default='scancode',
                         help='Path to scancode-toolkit executable.')
+    parser.add_argument('--git', default='git',
+                        help='Path to git executable.')
     parser.add_argument('--ar', default=None,
                         help='Path to GNU binutils "ar" executable. '
                              'By default, it will be automatically detected.')

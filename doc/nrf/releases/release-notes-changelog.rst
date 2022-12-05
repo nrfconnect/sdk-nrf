@@ -311,7 +311,9 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-* |no_changes_yet_note|
+* :ref:`west_sbom`:
+
+  * Output now contains source repository and version information for each file.
 
 MCUboot
 =======

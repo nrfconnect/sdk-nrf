@@ -12,7 +12,7 @@ import re
 from enum import Enum
 from pathlib import Path
 from types import SimpleNamespace
-from west import log
+from west import log, util
 from args import args
 from data_structure import Data, FileInfo
 from common import SbomException, command_execute
@@ -362,6 +362,7 @@ class InputBuild:
         for leaf in leafs:
             file = FileInfo()
             file.file_path = leaf
+            file.file_rel_path = Path(os.path.relpath(leaf, util.west_topdir()))
             self.data.files.append(file)
 
 

@@ -1,3 +1,4 @@
+{% set files_by_license = func.group_by(files, 'license_expr') %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,6 +23,9 @@
 			margin: 1px 0 24px;
 			background: #f8f8f8;
 			min-width: fit-content;
+		}
+		pre.list {
+			padding: 0px 12px 12px;
 		}
 		h1 {
 			font-family: Roboto Slab,ff-tisa-web-pro,Georgia,Arial,sans-serif;
@@ -62,6 +66,22 @@
 		.fa:hover {
 			text-decoration: none;
 			color: #0077C8;
+		}
+		div.package {
+			background: #e7f2fa;
+			color: #404040;
+			padding: 8px 12px;
+			margin: 16px 0px 8px;
+			line-height: 1.7;
+			border: 1px solid #e1e4e5;
+		}
+		span.modifications {
+			font-weight: bold;
+			display: inline-block;
+			border: 1px solid #e1e4e5;
+			padding: 3px 7px 2px;
+			border-radius: 4px;
+			background-color: white;
 		}
 		div.note-header {
 			background: #6ab0de;
@@ -127,6 +147,15 @@
 			.fa:hover {
 				color: #66d1e9;
 			}
+			div.package {
+				background: #2c3e49;
+				color: #cccccc;
+				border: 1px solid #474747;
+			}
+			span.modifications {
+				border: 1px solid #474747;
+				background-color: #292929;
+			}
 			div.note-header, a#scroll-up {
 				background: #447291;
 			}
@@ -161,6 +190,15 @@
 		html[style*="--vscode"] .fa:hover {
 			text-decoration: none;
 			color: var(--vscode-textLink-activeForeground);
+		}
+		html[style*="--vscode"] div.package {
+			background: var(--vscode-quickInput-background);
+			color: var(--vscode-quickInput-foreground);
+			border: 1px solid var(--vscode-panel-border);
+		}
+		html[style*="--vscode"] span.modifications {
+			border: 1px solid var(--vscode-panel-border);
+			background-color: var(--vscode-quickInput-background);
 		}
 		html[style*="--vscode"] div.note-header, html[style*="--vscode"] a#scroll-up {
 			text-decoration: none;
@@ -219,6 +257,19 @@
 		{% endif %}
 	</ul>
 
+	<div>The files are obtained from the following sources:</div>
+	<ul>
+		{% set files_by_package = func.group_by(files, 'package') %}
+		{% for package_id in packages_sorted %}
+		{% if package_id and package_id in files_by_package %}
+		<li><a href="#package#{{package_id|e}}">{{packages[package_id].name if packages[package_id].name else packages[package_id].url|e}}, version {{packages[package_id].version|e}}</a></li>
+		{% endif %}
+		{% endfor %}
+		{% if '' in files_by_package %}
+		<li><a href="#no-package">Unknown source</a> that cannot be detected automatically</li>
+		{% endif %}
+	</ul>
+
 	<div>The texts of the following licenses are added to this report:</div>
 	<ul>
 		{% for license in licenses_sorted if not licenses[license].is_expr and licenses[license].text != None %}
@@ -231,8 +282,25 @@
 	{% if '' in files_by_license %}
 	<h2 id="no-license">No license information detected</h2>
 	<div>Files without any license information or with license information that cannot be detected automatically.</div>
-	<pre>
-{% for file_info in files_by_license[''] %}<a href="file:///{{file_info.file_path|e}}" class="fa">{{file_info.file_path|e}}</a>
+	<pre class="list">
+{% set license = '' -%}
+{% set files_by_package_and_license = func.group_by(files_by_license[license], 'package') -%}
+{% for package_id in packages_sorted -%}
+{% if package_id in files_by_package_and_license -%}
+<div class="package" id="package#{{package_id|e}}#{{license|e}}">Repository:
+{%- if packages[package_id].url %} <a href="#package#{{package_id|e}}">{{packages[package_id].name if packages[package_id].name else packages[package_id].url|e}}</a>
+{% else %} Unknown
+{% endif -%}
+Version:
+{%- if packages[package_id].version %}    {{packages[package_id].version|e}}
+{%- else %}    Unknown
+{%- endif -%}
+</div>
+{%- for file_info in files_by_package_and_license[package_id] -%}
+<a href="file:///{{file_info.file_path|e}}" class="fa">{{file_info.file_path|e}}</a>
+{%- if file_info.local_modifications %} <span class="modifications">with local modifications</span>{%- endif %}
+{% endfor -%}
+{% endif -%}
 {% endfor -%}
 	</pre>
 	{% endif %}
@@ -286,10 +354,73 @@
 			{% endif %}
 		{% endif %}
 	</div>
-	<pre>
-{% for file_info in files_by_license[license] %}<a href="file:///{{file_info.file_path|e}}" class="fa">{{file_info.file_path|e}}</a>
+	<pre class="list">
+{% set files_by_package_and_license = func.group_by(files_by_license[license], 'package') -%}
+{% for package_id in packages_sorted -%}
+{% if package_id in files_by_package_and_license -%}
+<div class="package" id="package#{{package_id|e}}#{{license|e}}">Repository:
+{%- if packages[package_id].url %} <a href="#package#{{package_id|e}}">{{packages[package_id].name if packages[package_id].name else packages[package_id].url|e}}</a>
+{% else %} Unknown
+{% endif -%}
+Version:
+{%- if packages[package_id].version %}    {{packages[package_id].version|e}}
+{%- else %}    Unknown
+{%- endif -%}
+</div>
+{%- for file_info in files_by_package_and_license[package_id] -%}
+<a href="file:///{{file_info.file_path|e}}" class="fa">{{file_info.file_path|e}}</a>
+{%- if file_info.local_modifications %} <span class="modifications">with local modifications</span>{%- endif %}
+{% endfor -%}
+{% endif -%}
 {% endfor -%}
 	</pre>
+	{% endif %}
+	{% endfor %}
+
+	<h1>Packages details</h1>
+
+	{% if '' in files_by_package %}
+	{% set package_id = '' %}
+	<h2 id="no-package">Unknown source</h2>
+	The files from unknown source are covered by the following licenses:
+	<ul>
+		{% set files_by_license_and_package = func.group_by(files_by_package[package_id], 'license_expr') %}
+		{% for license in licenses_sorted %}
+		{% if license and license in files_by_license_and_package %}
+		<li><a href="#package#{{package_id|e}}#{{license|e}}">{{licenses[license].friendly_id|e}}</a></li>
+		{% endif %}
+		{% endfor %}
+		{% if '' in files_by_license_and_package %}
+		<li><a href="#package#{{package_id|e}}#">Unknown licenses</a> that cannot be detected automatically</li>
+		{% endif %}
+	</ul>
+	{% endif %}
+
+	{% set files_by_package = func.group_by(files, 'package') %}
+	{% for package_id in packages_sorted %}
+	{% if package_id and package_id in files_by_package %}
+
+	<h2 id="package#{{package_id|e}}">{{packages[package_id].name if packages[package_id].name else packages[package_id].url|e}}</h2>
+	<h3>Version: {{packages[package_id].version|e}}</h3>
+	<p>URL:
+	{% if packages[package_id].browser_url %}
+	<a href="{{packages[package_id].browser_url|e}}">{{packages[package_id].url|e}}</a>
+	{% else %}
+	{{packages[package_id].url|e}}
+	{% endif %}
+	</p>
+	<p>The files from this source are covered by the following licenses:</p>
+	<ul>
+		{% set files_by_license_and_package = func.group_by(files_by_package[package_id], 'license_expr') %}
+		{% for license in licenses_sorted %}
+		{% if license and license in files_by_license_and_package %}
+		<li><a href="#package#{{package_id|e}}#{{license|e}}">{{licenses[license].friendly_id|e}}</a></li>
+		{% endif %}
+		{% endfor %}
+		{% if '' in files_by_license_and_package %}
+		<li><a href="#package#{{package_id|e}}#">Unknown licenses</a> that cannot be detected automatically</li>
+		{% endif %}
+	</ul>
 	{% endif %}
 	{% endfor %}
 

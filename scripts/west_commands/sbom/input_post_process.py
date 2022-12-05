@@ -8,7 +8,7 @@ Post-processing of input files.
 '''
 
 import hashlib
-from data_structure import Data, FileInfo
+from data_structure import Data, FileInfo, Package
 from common import SbomException
 
 
@@ -45,3 +45,4 @@ def post_process(data: Data):
         raise SbomException('No input files.\nRun "west ncs-sbom --help" for usage details.')
     remove_duplicates(data)
     calculate_hashes(data)
+    data.packages[''] = Package()
