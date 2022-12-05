@@ -16,7 +16,7 @@
 #include "../common/dm_rpc_common.h"
 #include "../common/serialize.h"
 
-LOG_MODULE_DECLARE(nrf_dm, CONFIG_DM_MODULE_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_dm, CONFIG_DM_MODULE_LOG_LEVEL);
 NRF_RPC_GROUP_DECLARE(dm_rpc_grp);
 
 static void data_handler(struct k_work *work);
