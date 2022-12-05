@@ -260,18 +260,21 @@ static const char link_ncellmeas_usage_str[] =
 	"                      performed for all supported bands.\n"
 	"\n"
 	"                      GCI search, default. Modem searches EARFCNs\n"
-	"                      based on previous cell history.\n"
+	"                      based on previous cell history. Supported with modem firmware\n"
+	"                      versions >= 1.3.4.\n"
 	"\n"
 	"                      GCI search, extended light. Modem starts with the same search\n"
 	"                      method than in search_type gci_default.\n"
 	"                      If less than <gci_count> cells were found, modem continues by\n"
 	"                      performing light search on bands that are valid for the area of\n"
-	"                      the current ITU-T region.\n"
+	"                      the current ITU-T region. Supported with modem firmware versions\n"
+	"                      >= 1.3.4.\n"
 	"\n"
 	"                      GCI search, extended complete. Modem starts with the same search\n"
 	"                      method than in search_type gci_default.\n"
 	"                      If less than <gci_count> cells were found, modem performs complete\n"
-	"                      search on all supported bands.\n";
+	"                      search on all supported bands. Supported with modem firmware\n"
+	"                      versions >= 1.3.4.\n";
 
 static const char link_msleep_usage_str[] =
 	"Usage: link msleep --subscribe [options] | --unsubscribe\n"

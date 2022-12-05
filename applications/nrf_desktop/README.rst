@@ -1610,6 +1610,7 @@ Apart from that, the following changes are applied in configurations that suppor
 * The security failure timeout (:ref:`CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S <config_desktop_app_options>`) is longer to prevent disconnections during the Fast Pair procedure.
 * Passkey authentication (:ref:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY <config_desktop_app_options>`) is disabled on keyboard.
   Fast Pair currently does not support devices that use screen or keyboard for Bluetooth authentication.
+* TX power correction value (:kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL`) is configured to align the TX power included in the advertising data with the Fast Pair expectations.
 
 See :ref:`ug_bt_fast_pair` for detailed information about Fast Pair support in the |NCS|.
 

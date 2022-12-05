@@ -355,6 +355,18 @@ LTE Sensor Gateway fails to run
 
     west build --board nrf9160dk_nrf9160_ns@1.1.0
 
+.. rst-class:: v2-2-0 v2-1-2 v2-1-1 v2-1-0
+
+CIA-738: FMFU does not use external flash partitions
+  Full modem FOTA support assumes full control of the external flash; it does not use an external flash partition.
+  It cannot be combined with other usages, such as storing settings or P-GPS data.
+
+.. rst-class:: v2-2-0
+
+NCSDK-18376: P-GPS in external flash fails to inject first prediction during load sequence
+  When using external flash with P-GPS, stored predictions cannot be reliably read to satisfy the modem's need for ephemeris data when actively downloading and storing predictions to the same external flash.
+  Once the download is complete, the predictions can be reliably read.
+
 nRF5
 ****
 
@@ -719,7 +731,8 @@ KRKNWK-11465: OTA Client issues in the Image Block Request
                 LOG_ERR("Failed to update Minimum Block Period attribute");
         }
 
-  #. In :file:`zboss/src/zcl/zcl_ota_upgrade_commands.c` file in the :file:`nrfxlib` directory, change the penultimate argument of the :c:macro:`ZB_ZCL_OTA_UPGRADE_SEND_IMAGE_BLOCK_REQ` macro to ``delay`` in :c:func:`zb_zcl_ota_upgrade_send_block_requset` and :c:func:`resend_buffer` functions.
+  #. In :file:`zboss/src/zcl/zcl_ota_upgrade_commands.c` file in the :file:`nrfxlib` directory, change the penultimate argument of the 360
+  :c:macro:`ZB_ZCL_OTA_UPGRADE_SEND_IMAGE_BLOCK_REQ` macro to ``delay`` in :c:func:`zb_zcl_ota_upgrade_send_block_requset` and :c:func:`resend_buffer` functions.
 
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
@@ -884,6 +897,13 @@ KRKNWK-6073: Potential delay during FOTA
 
 Matter
 ======
+
+.. rst-class:: v2-2-0 v2-1-2 v2-1-1
+
+KRKNWK-15846: Android CHIP Tool crashes when subscribing in the :guilabel:`LIGHT ON/OFF & LEVEL CLUSTER`
+  The Android CHIP Tool crashes when attempting to start the subscription after typing minimum and maximum subscription interval values.
+  Also, the Subscription window in the :guilabel:`LIGHT ON/OFF & LEVEL CLUSTER` contains faulty GUI layout (overlapping captions) used when passing minimum and maximum subscription interval values.
+  This affects the Android CHIP Tool revision used for the |NCS| v2.2.0, v2.1.1, and v2.1.2 releases.
 
 .. rst-class:: v2-1-2 v2-1-1
 

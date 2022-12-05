@@ -247,6 +247,8 @@ nRF Desktop
   See :ref:`nrf_desktop_porting_guide` for details.
 * The :kconfig:option:`CONFIG_BT_ID_UNPAIR_MATCHING_BONDS` is enabled by default.
   This is done to pass the Fast Pair Validator's end-to-end integration tests and to improve the user experience during the erase advertising procedure.
+* The :kconfig:option:`CONFIG_BT_ID_ALLOW_UNAUTH_OVERWRITE` is enabled by default for the HID peripherals.
+  This setting improves the user experience as it is no longer required to delete the bonding information from the old identity to pair using the new one.
 
 Thingy:53 Zigbee weather station
 --------------------------------
@@ -448,6 +450,7 @@ Matter samples
 * :ref:`matter_light_bulb_sample`:
 
   * Introduced support for Matter over Wi-Fi on standalone ``nrf7002dk_nrf5340_cpuapp`` and on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached.
+  * Introduced the deferred attribute persister class to reduce the flash wear caused by handling the ``MoveToLevel`` command from the Level Control cluster.
 
 NFC samples
 -----------
@@ -576,6 +579,11 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
   * Added API to check Account Key presence (:c:func:`bt_fast_pair_has_account_key`).
   * Added support for the Personalized Name extension.
   * Added support for the Battery Notification extension.
+
+* :ref:`hids_readme`:
+
+  * Fixed a possible out-of-bounds memory access issue in the :c:func:`hids_protocol_mode_write` and :c:func:`bt_hids_boot_kb_inp_rep_send` functions.
+  * Fixed the :c:func:`hids_ctrl_point_write` function behavior.
 
 Bootloader libraries
 --------------------

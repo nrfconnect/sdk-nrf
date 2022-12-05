@@ -10,8 +10,11 @@
 - scenarios:
     - applications.asset_tracker_v2.cloud.cloud_codec.json_common.aws
     - applications.asset_tracker_v2.cloud.cloud_codec.json_common.azure
-    - samples.edge_impulse.wrapper
-    - samples.event_manager
+    - sample.app_event_manager
+    - sample.app_event_manager_shell
+    - sample.app_event_manager_shell.native_posix
+    - sample.caf_sensor_manager.correctness_test
+    - sample.edge_impulse.wrapper
   platforms:
     - native_posix
     - qemu_cortex_m3
@@ -23,6 +26,8 @@
     - asset_tracker_v2.location_module_test.tester
     - asset_tracker_v2.lwm2m_codec
     - asset_tracker_v2.lwm2m_integration
+    - asset_tracker_v2.nrf_cloud_codec_test
+    - asset_tracker_v2.nrf_cloud_codec_mocked_cjson_test
     - asset_tracker_v2.ui_module_test.tester
   platforms:
     - all
@@ -30,6 +35,7 @@
 
 - scenarios:
     - samples.bluetooth.alexa_gadget
+    - sample.nrf7002.provisioning
   platforms:
     - all
   comment: "nanopb package not available in Windows toolchain"
