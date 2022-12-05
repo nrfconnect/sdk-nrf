@@ -338,7 +338,7 @@ struct location_config {
 	 * @brief Position update interval in seconds.
 	 *
 	 * @details Set to 0 for a single position update. For periodic position updates
-	 * the valid range is 10...65535 seconds.
+	 * the valid range is 1...65535 seconds.
 	 */
 	uint16_t interval;
 	/**

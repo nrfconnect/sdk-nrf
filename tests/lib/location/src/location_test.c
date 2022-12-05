@@ -457,20 +457,6 @@ void test_error_too_many_methods(void)
 	TEST_ASSERT_EQUAL(-EINVAL, err);
 }
 
-/* Test location request with invalid interval. */
-void test_error_invalid_interval(void)
-{
-	int err;
-	struct location_config config = { 0 };
-	enum location_method methods[] = {LOCATION_METHOD_GNSS, LOCATION_METHOD_CELLULAR};
-
-	location_config_defaults_set(&config, 2, methods);
-	config.interval = 1;
-
-	err = location_request(&config);
-	TEST_ASSERT_EQUAL(-EINVAL, err);
-}
-
 /* Test cancelling location request when there is no pending location request. */
 void test_error_cancel_no_operation(void)
 {
@@ -726,19 +712,16 @@ void test_location_request_timeout_cellular_gnss_mode_all(void)
 }
 
 /********* TESTS PERIODIC POSITIONING REQUESTS ***********************/
-/* Use this to disable periodic tests temporarily to save time while developing other tests */
-#define LOCATION_TEST_SKIP_PERIODIC 0
 
 /* Test periodic location request and cancel it once some iterations are done. */
 void test_location_gnss_periodic(void)
 {
-#if !LOCATION_TEST_SKIP_PERIODIC
 	int err;
 	struct location_config config = { 0 };
 	enum location_method methods[] = {LOCATION_METHOD_GNSS};
 
 	location_config_defaults_set(&config, 1, methods);
-	config.interval = 10;
+	config.interval = 1;
 	config.methods[0].gnss.timeout = 120 * MSEC_PER_SEC;
 	config.methods[0].gnss.accuracy = LOCATION_ACCURACY_NORMAL;
 
@@ -828,7 +811,7 @@ void test_location_gnss_periodic(void)
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 
-	k_sleep(K_MSEC(11000));
+	k_sleep(K_MSEC(1500));
 	at_monitor_dispatch("+CSCON: 0");
 
 	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
@@ -852,19 +835,17 @@ void test_location_gnss_periodic(void)
 	err = location_request_cancel();
 	TEST_ASSERT_EQUAL(0, err);
 	k_sleep(K_MSEC(1));
-#endif
 }
 
 /* Test periodic location request and cancel it once some iterations are done. */
 void test_location_cellular_periodic(void)
 {
-#if !LOCATION_TEST_SKIP_PERIODIC
 	int err;
 	struct location_config config = { 0 };
 	enum location_method methods[] = {LOCATION_METHOD_CELLULAR};
 
 	location_config_defaults_set(&config, 1, methods);
-	config.interval = 10;
+	config.interval = 1;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
 	test_location_event_data.location.latitude = 61.50375;
@@ -919,7 +900,7 @@ void test_location_cellular_periodic(void)
 	 * Note that we could first send results and then location library would send NCELLMEAS and
 	 * the test wouldn't see a failure so these things would need to be checked from the logs.
 	 */
-	k_sleep(K_MSEC(11000));
+	k_sleep(K_MSEC(1500));
 	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
 	at_monitor_dispatch(ncellmeas_resp);
 
@@ -936,7 +917,6 @@ void test_location_cellular_periodic(void)
 	err = location_request_cancel();
 	TEST_ASSERT_EQUAL(0, err);
 	k_sleep(K_MSEC(1));
-#endif
 }
 
 /* This is needed because AT Monitor library is initialized in SYS_INIT. */

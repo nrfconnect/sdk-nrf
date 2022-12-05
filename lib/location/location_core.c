@@ -267,11 +267,6 @@ int location_core_validate_params(const struct location_config *config)
 		return -EINVAL;
 	}
 
-	if ((config->interval > 0) && (config->interval < 10)) {
-		LOG_ERR("Interval for periodic location updates must be longer than 10 seconds");
-		return -EINVAL;
-	}
-
 	for (int i = 0; i < config->methods_count; i++) {
 		/* Check if the method is valid */
 		method_api = location_method_api_get(config->methods[i].method);
