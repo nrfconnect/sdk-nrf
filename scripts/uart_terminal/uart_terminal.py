@@ -4,9 +4,13 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-from scripts.open_putty import open_putty
 import sys
 import subprocess
+import os
+
+absolutePath = os.path.join(os.path.abspath(os.getcwd()), "scripts")
+sys.path.append(absolutePath)
+from open_putty import open_putty
 
 print("Configure and open terminal(s)\n")
 
