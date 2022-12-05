@@ -111,7 +111,7 @@ void test_validation_neg1(void)
 
 void test_validation_neg2(void)
 {
-#if PM_PROVISION_ADDRESS > 0xF00000
+#if PM_PROVISION_BL_STORAGE_ADDRESS > 0xF00000
 	uint32_t num_public_keys = num_public_keys_read();
 	bool any_valid = false;
 

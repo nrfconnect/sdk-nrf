@@ -1,11 +1,19 @@
 #include <autoconf.h>
 
+/*
+ * Define a provision container over both partitions for convenience
+ * when e.g. protecting the partitions from writes. But not for
+ * configurations that have OTP as the OTP partition is start_to_end and
+ * therefore does not support container partitions.
+ */
+#if !(defined(CONFIG_SOC_NRF9160) \
+      || defined(CONFIG_SOC_NRF5340_CPUAPP))
 provision:
   span: [provision_counters, provision_bl_storage]
+#endif
 
-#ifdef CONFIG_SECURE_BOOT
-provision_bl_storage:
-  size: CONFIG_PM_PARTITION_SIZE_PROVISION_BL_STORAGE
+provision_counters:
+  size: CONFIG_PM_PARTITION_SIZE_PROVISION_COUNTERS
 #if defined(CONFIG_SOC_NRF9160) || defined(CONFIG_SOC_NRF5340_CPUAPP)
   region: otp
 #elif defined(CONFIG_SOC_NRF5340_CPUNET)
@@ -16,16 +24,14 @@ provision_bl_storage:
     after: b0
     align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
 #endif
-#endif /* CONFIG_SECURE_BOOT */
 
-provision_counters:
-  size: CONFIG_PM_PARTITION_SIZE_PROVISION_COUNTERS
+#ifdef CONFIG_SECURE_BOOT
+provision_bl_storage:
+  size: CONFIG_PM_PARTITION_SIZE_PROVISION_BL_STORAGE
 #if defined(CONFIG_SOC_NRF9160) || defined(CONFIG_SOC_NRF5340_CPUAPP)
   region: otp
-#elif defined(CONFIG_SOC_NRF5340_CPUNET)
-#error "Not supported"
 #else
   placement:
-    after: b0
-    align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
+    after: provision_counters
 #endif
+#endif /* CONFIG_SECURE_BOOT */

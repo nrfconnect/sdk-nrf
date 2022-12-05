@@ -17,8 +17,8 @@
  * the provision area is not defined, so we have to point to the OTP manually
  * NCSDK-18032 is to prevent this workaround in the future
  */
-#ifndef PM_PROVISION_ADDRESS
-#define PM_PROVISION_ADDRESS (&NRF_UICR->OTP)
+#ifndef PM_PROVISION_BL_STORAGE_ADDRESS
+#define PM_PROVISION_BL_STORAGE_ADDRESS (&NRF_UICR->OTP)
 #endif
 
 #ifdef __cplusplus
@@ -71,7 +71,7 @@ struct bl_storage_data {
 	} key_data[1];
 };
 
-#define BL_STORAGE ((const volatile struct bl_storage_data *)(PM_PROVISION_ADDRESS))
+#define BL_STORAGE ((const volatile struct bl_storage_data *)(PM_PROVISION_BL_STORAGE_ADDRESS))
 
 /* This must be 32 bytes according to the IETF PSA token specification */
 #define BL_STORAGE_IMPLEMENTATION_ID_SIZE 32
