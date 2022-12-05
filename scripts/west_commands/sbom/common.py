@@ -23,7 +23,8 @@ class SbomException(Exception):
 
 
 def command_execute(*cmd_args: 'tuple[str|Path]', cwd: 'str|Path|None' = None,
-                    return_path: bool = False, allow_stderr: bool = False) -> 'Path|str':
+                    return_path: bool = False, allow_stderr: bool = False,
+                    return_error_code: bool = False) -> 'Path|str':
     '''Execute subprocess wrapper that handles errors and output redirections.'''
     cmd_args = tuple(str(x) for x in cmd_args)
     if cwd is not None:
@@ -50,19 +51,25 @@ def command_execute(*cmd_args: 'tuple[str|Path]', cwd: 'str|Path|None' = None,
                 log.wrn(f'Command "{cmd_args[0]}" reported errors:\n{err}')
             else:
                 log.err(f'Command "{cmd_args[0]}" reported errors:\n{err}')
-                if cp.returncode == 0:
+                if (cp.returncode == 0) or return_error_code:
                     log.err(f'Arguments: { json.dumps(cmd_args) }, cwd: "{cwd}"')
                     raise SbomException('Command execution error.')
         err_file.close()
 
-        if cp.returncode != 0:
+        if (cp.returncode != 0) and not return_error_code:
             log.err(f'Command "{cmd_args[0]}" exited with error code {cp.returncode}')
             log.err(f'Arguments: { json.dumps(cmd_args) }, cwd: "{cwd}"')
             raise SbomException('Command execution error.')
+
         if return_path:
-            return Path(out_file.name)
+            result = Path(out_file.name)
         else:
-            return out_file.read()
+            result = out_file.read()
+
+        if return_error_code:
+            return (result, cp.returncode)
+        else:
+            return result
 
 
 process_executor = None

@@ -96,5 +96,5 @@ def generate_input(data: Data):
     for file_path in full_set:
         file = FileInfo()
         file.file_path = file_path
-        file.file_rel_path = os.path.relpath(file_path, util.west_topdir())
+        file.file_rel_path = Path(os.path.relpath(file_path, util.west_topdir()))
         data.files.append(file)

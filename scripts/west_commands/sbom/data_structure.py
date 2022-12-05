@@ -10,7 +10,6 @@ the west ncs-sbom command.
 
 import copy
 from pathlib import Path
-from datetime import datetime, timezone
 from uuid import uuid4
 
 
@@ -26,17 +25,21 @@ class DataBaseClass:
 class FileInfo(DataBaseClass):
     ''' Contains file information about each input file
     Attributes:
-        file_path      File path
-        file_rel_path  Path relative to west workspace
-        licenses       Set of detected SPDX license IDs and expressions
-        license_expr   Contains SPDX license expression that covers all detected licesens
-        sha1           SHA-1 of the file
-        detectors      Set of detectors that contributed to the list of licenses
+        file_path           File path
+        file_rel_path       Path relative to west workspace
+        licenses            Set of detected SPDX license IDs and expressions
+        license_expr        Contains SPDX license expression that covers all detected licesens
+        package             Package ID of this file
+        local_modifications The file was modified and does not match version of this package
+        sha1                SHA-1 of the file
+        detectors           Set of detectors that contributed to the list of licenses
     '''
     file_path: Path
     file_rel_path: Path
     licenses: 'set[str]' = set()
     license_expr: str
+    package: 'str' = ''
+    local_modifications: bool = False
     sha1: str
     detectors: 'set[str]' = set()
 
@@ -51,7 +54,7 @@ class License(DataBaseClass):
         name           User friendly name of the license
         url            URL to the on-line license information
         text           Full license text
-        detector       Text with regex expression used by full-text detector
+        detectors      List of detector names that were involved into detecting licenses
     '''
     is_expr: bool = False
     id: str
@@ -61,6 +64,22 @@ class License(DataBaseClass):
     url: 'str|None' = None
     text: 'str|None' = None
     detectors: 'set[str]' = set()
+
+
+class Package(DataBaseClass):
+    ''' Contains package information
+    Attributes:
+        id             ID of this package
+        name           User friendly name
+        url            URL pointing to the source of this package
+        version        Version string of this package
+        browser_url    URL that can be opened in a web browser
+    '''
+    id: str = ''
+    name: 'str|None' = None
+    url: 'str|None' = None
+    version: 'str|None' = None
+    browser_url: 'str|None' = None
 
 
 class LicenseExpr(DataBaseClass):
@@ -95,15 +114,19 @@ class Data(DataBaseClass):
                          detecting license for each file.
         licenses         Dictionary of all licenses and expression. Key is normalized (upper case)
                          identifier of the license or the license expression.
-        files_by_license Files groupped by license. Key is the same as in licenses attribute.
         licenses_sorted  Sorted list of licenses. Output should contain licenses in that order.
+        packages         Dictionary of all packages. Key is package ID. It contains special
+                         package with empty ID string, which indicates unknown package.
+        packages_sorted  Sorted list of packages. Output should contain packages in that order.
         inputs           List of user friendly input description.
+        detectors        Set containing all detectors that were involved in license detection.
+        report_uuid      Random UUID that can be used in the output.
     '''
     files: 'list[FileInfo]' = list()
     licenses: 'dict[License|LicenseExpr]' = dict()
-    files_by_license: 'dict[list[FileInfo]]' = dict()
     licenses_sorted: 'list[str]' = list()
+    packages: 'dict[Package]' = dict()
+    packages_sorted: 'list[str]' = list()
     inputs: 'list[str]' = list()
     detectors: 'set[str]' = set()
-    timestamp: 'str' = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat()
     report_uuid: 'str' = uuid4()

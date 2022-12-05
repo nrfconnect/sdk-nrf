@@ -13,6 +13,7 @@ import full_text_detector
 import scancode_toolkit_detector
 import cache_database_detector
 import external_file_detector
+import git_info_detector
 import file_input
 import input_build
 import input_post_process
@@ -31,6 +32,7 @@ inputs = {
 
 detectors = {
     'spdx-tag': spdx_tag_detector.detect,
+    'git-info': git_info_detector.detect,
     'full-text': full_text_detector.detect,
     'scancode-toolkit': scancode_toolkit_detector.detect,
     'cache-database': cache_database_detector.detect,
