@@ -12,10 +12,7 @@ print("Configure and open terminal(s)\n")
 
 if sys.platform == "linux":
     terminator = subprocess.Popen(
-        ["terminator", "--config=scripts/linux_terminator_config"], stderr=subprocess.PIPE)
-
-    if terminator.returncode == None:
-        print("No nRF5340 audio DKs found\n")
+        ["terminator", "--config=scripts/linux_terminator_config"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 elif sys.platform == "win32":
     open_putty()
 else:

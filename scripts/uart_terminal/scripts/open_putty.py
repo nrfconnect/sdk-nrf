@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-import sys
 import subprocess
 from scripts.get_serial_ports import get_serial_ports
 
@@ -17,4 +16,4 @@ def open_putty():
             subprocess.Popen("putty -serial " + port +
                              " -sercfg 115200,8,n,1,N")
     else:
-        sys.exit("No ports found")
+        print("No ports found\n")

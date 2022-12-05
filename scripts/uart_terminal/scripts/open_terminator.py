@@ -6,7 +6,7 @@
 
 import sys
 import subprocess
-from scripts.get_serial_ports import get_serial_ports
+from get_serial_ports import get_serial_ports
 
 ports = get_serial_ports()
 
