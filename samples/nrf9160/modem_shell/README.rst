@@ -921,7 +921,7 @@ To build the MoSh sample with nRF9160 DK and nRF7002 EK Wi-Fi support, use the `
 
 For example:
 
-.. code-block: console
+.. code-block:: console
 
    west build -p -b nrf9160dk_nrf9160ns -- -DSHIELD=nrf7002_ek -DDTC_OVERLAY_FILE=nrf9160dk_with_nrf7002ek.overlay -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
 
@@ -934,7 +934,7 @@ To build the MoSh sample with ESP8266 Wi-Fi chip support, use the ``-DDTC_OVERLA
 
 For example:
 
-.. code-block: console
+.. code-block:: console
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DDTC_OVERLAY_FILE=esp_8266_nrf9160ns.overlay -DOVERLAY_CONFIG=overlay-esp-wifi.conf
 
