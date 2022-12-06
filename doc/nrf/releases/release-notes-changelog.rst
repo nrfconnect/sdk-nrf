@@ -375,6 +375,11 @@ Other libraries
     It is replaced by the Trusted Firmware-M (TF-M) as the supported trusted execution solution.
     See :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` for more information about the TF-M.
 
+* PCM Mix:
+
+  * PCM mix (Pulse Code Modulation) audio mixer has been moved out of the nRF5340 Audio
+    application, and into lib/pcm_mix.
+
 Common Application Framework (CAF)
 ----------------------------------
 
