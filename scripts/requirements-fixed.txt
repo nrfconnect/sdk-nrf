@@ -106,3 +106,4 @@ west==0.14.0
 wrapt==1.12.1
 zcbor==0.5.1
 zipp==3.4.0
+grpcio-tools==1.51.1
