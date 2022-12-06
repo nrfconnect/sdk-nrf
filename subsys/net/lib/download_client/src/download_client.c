@@ -420,7 +420,7 @@ static int reconnect(struct download_client *dl)
 	return 0;
 }
 
-static size_t socket_recv(struct download_client *dl)
+static ssize_t socket_recv(struct download_client *dl)
 {
 	int err, timeout = 0;
 
@@ -477,7 +477,7 @@ void download_thread(void *client, void *a, void *b)
 {
 	int rc = 0;
 	int error_cause;
-	size_t len;
+	ssize_t len;
 	struct download_client *const dl = client;
 
 wait_for_download:
@@ -567,7 +567,7 @@ wait_for_download:
 				continue;
 			}
 		} else if (IS_ENABLED(CONFIG_COAP)) {
-			rc = coap_parse(client, len);
+			rc = coap_parse(client, (size_t)len);
 			if (rc == 1) {
 				/* Duplicate packet received */
 				continue;
