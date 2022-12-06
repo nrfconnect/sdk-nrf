@@ -60,10 +60,6 @@ module = FW_INFO
 module-str = fw-info
 source "subsys/logging/Kconfig.template.log_config"
 
-module = PCM_MIX
-module-str = pcm-mix
-source "subsys/logging/Kconfig.template.log_config"
-
 module = PSCM
 module-str = pscm
 source "subsys/logging/Kconfig.template.log_config"

@@ -69,8 +69,11 @@ config CONTIN_ARRAY
 	bool
 	default y
 
-# I2S
 config NRFX_I2S
+	bool
+	default y
+
+config PCM_MIX
 	bool
 	default y
 

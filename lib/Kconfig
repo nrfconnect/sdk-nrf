@@ -42,5 +42,6 @@ rsource "qos/Kconfig"
 rsource "identity_key/Kconfig"
 rsource "sfloat/Kconfig"
 rsource "contin_array/Kconfig"
+rsource "pcm_mix/Kconfig"
 
 endmenu
