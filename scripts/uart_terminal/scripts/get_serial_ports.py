@@ -23,7 +23,7 @@ def get_serial_ports():
 
     ports = list()
 
-    if len(output_decoded_lines):
+    if len(output_decoded_lines) > 0:
         print("%6s %11s" % ("ID", "Port"))
         for line in output_decoded_lines:
             if "VCOM0" in line:
