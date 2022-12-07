@@ -1633,124 +1633,154 @@ int nrf_cloud_format_single_cell_pos_req_json(cJSON *const req_obj_out)
 	return err;
 }
 
-int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf,
-	size_t inf_cnt, cJSON *const req_obj_out)
+static int add_ncells(cJSON * const lte_obj, const uint8_t ncells_count,
+	const struct lte_lc_ncell *const neighbor_cells)
 {
-	if (!inf || !inf_cnt || !req_obj_out) {
+	if (!lte_obj) {
 		return -EINVAL;
 	}
 
-	cJSON *lte_obj = NULL;
-	cJSON *ncell_obj = NULL;
-	cJSON *lte_array = NULL;
-	cJSON *nmr_array = NULL;
+	if (!ncells_count || !neighbor_cells) {
+		return -ENODATA;
+	}
+
+	cJSON * nmr_array = cJSON_AddArrayToObjectCS(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_NBORS);
+
+	if (!nmr_array) {
+		return -ENOMEM;
+	}
+
+	for (uint8_t i = 0; i < ncells_count; ++i) {
+		const struct lte_lc_ncell *ncell = neighbor_cells + i;
+		cJSON *ncell_obj = cJSON_CreateObject();
+
+		if (!ncell_obj) {
+			return -ENOMEM;
+		}
+
+		if (!cJSON_AddItemToArray(nmr_array, ncell_obj)) {
+			cJSON_Delete(ncell_obj);
+			return -ENOMEM;
+		}
+
+		/* Required parameters for the API call */
+		if (json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_EARFCN,
+					ncell->earfcn) ||
+			json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_PCI,
+					ncell->phys_cell_id)) {
+			return -ENOMEM;
+		}
+
+		/* Optional parameters for the API call */
+		if ((ncell->rsrp != NRF_CLOUD_LOCATION_CELL_OMIT_RSRP) &&
+			json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRP,
+					RSRP_IDX_TO_DBM(ncell->rsrp))) {
+			return -ENOMEM;
+		}
+		if ((ncell->rsrq != NRF_CLOUD_LOCATION_CELL_OMIT_RSRQ) &&
+			json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRQ,
+					RSRQ_IDX_TO_DB(ncell->rsrq))) {
+			return -ENOMEM;
+		}
+	}
+
+	return 0;
+}
+
+static cJSON *add_lte_inf(cJSON *const lte_array, struct lte_lc_cell const *const inf)
+{
+	cJSON *lte_obj = cJSON_CreateObject();
+
+	if (!lte_obj) {
+		return NULL;
+	}
+
+	if (!cJSON_AddItemToArray(lte_array, lte_obj)) {
+		cJSON_Delete(lte_obj);
+		return NULL;
+	}
+
+	/* Required parameters for the API call */
+	if (json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_ECI, inf->id) ||
+		json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_MCC, inf->mcc) ||
+		json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_MNC, inf->mnc) ||
+		json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_TAC, inf->tac)) {
+		return NULL;
+	}
+
+	/* Optional parameters for the API call */
+	if ((inf->earfcn != NRF_CLOUD_LOCATION_CELL_OMIT_EARFCN) &&
+		json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_EARFCN, inf->earfcn)) {
+		return NULL;
+	}
+
+	if ((inf->rsrp != NRF_CLOUD_LOCATION_CELL_OMIT_RSRP) &&
+		json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRP,
+				RSRP_IDX_TO_DBM(inf->rsrp))) {
+		return NULL;
+	}
+
+	if ((inf->rsrq != NRF_CLOUD_LOCATION_CELL_OMIT_RSRQ) &&
+		json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRQ,
+				RSRQ_IDX_TO_DB(inf->rsrq))) {
+		return NULL;
+	}
+
+	if (inf->timing_advance != NRF_CLOUD_LOCATION_CELL_OMIT_TIME_ADV) {
+		uint16_t t_adv = inf->timing_advance;
+
+		if (t_adv > NRF_CLOUD_LOCATION_CELL_TIME_ADV_MAX) {
+			t_adv = NRF_CLOUD_LOCATION_CELL_TIME_ADV_MAX;
+		}
+
+		if (json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_T_ADV, t_adv)) {
+			return NULL;
+		}
+	}
+
+	return lte_obj;
+}
+
+int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf,
+	cJSON *const req_obj_out)
+{
+	if (!inf || !req_obj_out) {
+		return -EINVAL;
+	}
+
+	int err;
+	cJSON *lte_array;
+	cJSON *lte_obj;
 
 	lte_array = cJSON_AddArrayToObjectCS(req_obj_out, NRF_CLOUD_CELL_POS_JSON_KEY_LTE);
 	if (!lte_array) {
 		goto cleanup;
 	}
 
-	for (size_t i = 0; i < inf_cnt; ++i) {
-		struct lte_lc_cells_info const *const lte = (inf + i);
-		struct lte_lc_cell const *const cur = &lte->current_cell;
+	/* Add the current cell to the array */
+	lte_obj = add_lte_inf(lte_array, &inf->current_cell);
+	if (!lte_obj) {
+		goto cleanup;
+	}
 
-		lte_obj = cJSON_CreateObject();
+	/* Add neighbor cells if present */
+	err = add_ncells(lte_obj, inf->ncells_count, inf->neighbor_cells);
+	if ((err == -EINVAL) || (err == -ENOMEM)) {
+		goto cleanup;
+	}
 
+	/* Skip GCI cells if not present */
+	if (!inf->gci_cells_count || !inf->gci_cells) {
+		return 0;
+	}
+
+	/* Add GCI cells */
+	for (uint8_t i = 0; i < inf->gci_cells_count; ++i) {
+		struct lte_lc_cell *gci = inf->gci_cells + i;
+
+		lte_obj = add_lte_inf(lte_array, gci);
 		if (!lte_obj) {
 			goto cleanup;
-		}
-
-		if (!cJSON_AddItemToArray(lte_array, lte_obj)) {
-			cJSON_Delete(lte_obj);
-			goto cleanup;
-		}
-
-		/* Required parameters for the API call */
-		if (json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_ECI, cur->id) ||
-		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_MCC, cur->mcc) ||
-		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_MNC, cur->mnc) ||
-		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_TAC, cur->tac)) {
-			goto cleanup;
-		}
-
-		/* Optional parameters for the API call */
-		if ((cur->earfcn != NRF_CLOUD_LOCATION_CELL_OMIT_EARFCN) &&
-		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_EARFCN, cur->earfcn)) {
-			goto cleanup;
-		}
-
-		if ((cur->rsrp != NRF_CLOUD_LOCATION_CELL_OMIT_RSRP) &&
-		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRP,
-				    RSRP_IDX_TO_DBM(cur->rsrp))) {
-			goto cleanup;
-		}
-
-		if ((cur->rsrq != NRF_CLOUD_LOCATION_CELL_OMIT_RSRQ) &&
-		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRQ,
-				    RSRQ_IDX_TO_DB(cur->rsrq))) {
-			goto cleanup;
-		}
-
-		if (cur->timing_advance != NRF_CLOUD_LOCATION_CELL_OMIT_TIME_ADV) {
-			uint16_t t_adv = cur->timing_advance;
-
-			if (t_adv > NRF_CLOUD_LOCATION_CELL_TIME_ADV_MAX) {
-				t_adv = NRF_CLOUD_LOCATION_CELL_TIME_ADV_MAX;
-			}
-
-			if (json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_T_ADV, t_adv)) {
-				goto cleanup;
-			}
-		}
-
-		/* Add an array for neighbor cell data if there are any */
-		if (lte->ncells_count) {
-			if (lte->neighbor_cells == NULL) {
-				LOG_WRN("Neighbor cell count is %u, but buffer is NULL",
-					lte->ncells_count);
-				return 0;
-			}
-
-			nmr_array = cJSON_AddArrayToObjectCS(lte_obj,
-							     NRF_CLOUD_CELL_POS_JSON_KEY_NBORS);
-			if (!nmr_array) {
-				goto cleanup;
-			}
-		}
-
-		for (uint8_t j = 0; nmr_array && (j < lte->ncells_count); ++j) {
-			struct lte_lc_ncell *ncell = lte->neighbor_cells + j;
-
-			ncell_obj = cJSON_CreateObject();
-
-			if (!ncell_obj) {
-				goto cleanup;
-			}
-
-			if (!cJSON_AddItemToArray(nmr_array, ncell_obj)) {
-				cJSON_Delete(ncell_obj);
-				goto cleanup;
-			}
-
-			/* Required parameters for the API call */
-			if (json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_EARFCN,
-					    ncell->earfcn) ||
-			    json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_PCI,
-					    ncell->phys_cell_id)) {
-				goto cleanup;
-			}
-
-			/* Optional parameters for the API call */
-			if ((ncell->rsrp != NRF_CLOUD_LOCATION_CELL_OMIT_RSRP) &&
-			    json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRP,
-					    RSRP_IDX_TO_DBM(ncell->rsrp))) {
-				goto cleanup;
-			}
-			if ((ncell->rsrq != NRF_CLOUD_LOCATION_CELL_OMIT_RSRQ) &&
-			    json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRQ,
-					    RSRQ_IDX_TO_DB(ncell->rsrq))) {
-				goto cleanup;
-			}
 		}
 	}
 
@@ -1844,7 +1874,7 @@ int nrf_cloud_format_location_req(struct lte_lc_cells_info const *const cell_inf
 	cJSON *req_obj = cJSON_CreateObject();
 
 	if (cell_info) {
-		err = nrf_cloud_format_cell_pos_req_json(cell_info, 1, req_obj);
+		err = nrf_cloud_format_cell_pos_req_json(cell_info, req_obj);
 		if (err) {
 			goto cleanup;
 		}
