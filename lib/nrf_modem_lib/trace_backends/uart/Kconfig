@@ -12,8 +12,6 @@ config NRF_MODEM_LIB_TRACE_BACKEND_UART
 	# Modem tracing over UART use the UARTE1 as a dedicated peripheral.
 	# This enables the UARTE1 peripheral and includes nrfx UARTE driver.
 	select NRFX_UARTE1
-	# TF-M use UARTE1 as log output, disable TF-M logging to avoid conflict.
-	select TFM_LOG_LEVEL_SILENCE if BUILD_WITH_TFM
 
 if NRF_MODEM_LIB_TRACE_BACKEND_UART
 
