@@ -29,7 +29,7 @@ You may also use nRF Connect app to interact with the CGMS module.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_cgm`
+.. |sample path| replace:: :file:`samples/bluetooth/peripheral_cgms`
 
 .. include:: /includes/build_and_run_ns.txt
 
