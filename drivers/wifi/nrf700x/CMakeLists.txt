@@ -32,6 +32,7 @@ zephyr_library_sources(
 	osal/os_if/src/osal.c
 	osal/utils/src/list.c
 	osal/utils/src/queue.c
+	osal/utils/src/util.c
 	osal/hw_if/hal/src/hal_api.c
 	osal/hw_if/hal/src/hal_fw_patch_loader.c
 	osal/hw_if/hal/src/hal_interrupt.c
@@ -47,7 +48,6 @@ zephyr_library_sources(
 	zephyr/src/shim.c
 	zephyr/src/zephyr_work.c
 	zephyr/src/timer.c
-	zephyr/src/util.c
 	zephyr/src/zephyr_fmac_main.c
 	zephyr/src/qspi/src/device.c
 	zephyr/src/qspi/src/rpu_hw_if.c

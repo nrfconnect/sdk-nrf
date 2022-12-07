@@ -62,13 +62,11 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 void wifi_nrf_hal_dev_rem(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx);
 
-struct host_rpu_umac_info *wifi_nrf_hal_umac_info(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx);
 
 enum wifi_nrf_status wifi_nrf_hal_dev_init(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx);
 
 
 void wifi_nrf_hal_dev_deinit(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx);
-
 
 /**
  * wifi_nrf_hal_ctrl_cmd_send() - Sends a control command to the RPU.
@@ -172,3 +170,8 @@ enum wifi_nrf_status wifi_nrf_hal_fw_chk_boot(struct wifi_nrf_hal_dev_ctx *hal_c
 enum wifi_nrf_status hal_rpu_ps_wake(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 #endif /* __HAL_API_H__ */
+
+
+enum wifi_nrf_status wifi_nrf_hal_otp_info_get(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+					       struct host_rpu_umac_info *otp_info,
+					       unsigned int *otp_flags);

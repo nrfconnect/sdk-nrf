@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include "host_rpu_umac_if.h"
 #include "fmac_api.h"
-#include "zephyr_util.h"
 #include "zephyr_fmac_main.h"
 #include "zephyr_wifi_util.h"
 

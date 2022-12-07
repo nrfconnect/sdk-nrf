@@ -20,9 +20,9 @@
 
 #ifdef CONFIG_NRF700X_DATA_TX
 static enum wifi_nrf_status
-wifi_nrf_fmac_if_state_chg_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					 unsigned char *umac_head,
-					 enum wifi_nrf_fmac_if_state if_state)
+wifi_nrf_fmac_if_carr_state_event_proc(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+				       unsigned char *umac_head,
+				       enum wifi_nrf_fmac_if_carr_state carr_state)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
@@ -36,7 +36,7 @@ wifi_nrf_fmac_if_state_chg_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_
 		goto out;
 	}
 
-	if (!fmac_dev_ctx->fpriv->callbk_fns.if_state_chg_callbk_fn) {
+	if (!fmac_dev_ctx->fpriv->callbk_fns.if_carr_state_chg_callbk_fn) {
 		wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
 				      "%s: No callback handler registered\n",
 				      __func__);
@@ -57,12 +57,12 @@ wifi_nrf_fmac_if_state_chg_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_
 
 	vif_ctx = fmac_dev_ctx->vif_ctx[if_idx];
 
-	status = fmac_dev_ctx->fpriv->callbk_fns.if_state_chg_callbk_fn(vif_ctx->os_vif_ctx,
-									if_state);
+	status = fmac_dev_ctx->fpriv->callbk_fns.if_carr_state_chg_callbk_fn(vif_ctx->os_vif_ctx,
+									     carr_state);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: If state change callback function failed for VIF idx = %d\n",
+				      "%s: Interface carrier state change callback function failed for VIF idx = %d\n",
 				      __func__,
 				      if_idx);
 		goto out;
@@ -492,14 +492,14 @@ wifi_nrf_fmac_data_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 							     umac_head);
 		break;
 	case NRF_WIFI_CMD_CARRIER_ON:
-		status = wifi_nrf_fmac_if_state_chg_event_process(fmac_dev_ctx,
-								  umac_head,
-								  WIFI_NRF_FMAC_IF_STATE_UP);
+		status = wifi_nrf_fmac_if_carr_state_event_proc(fmac_dev_ctx,
+								umac_head,
+								WIFI_NRF_FMAC_IF_CARR_STATE_ON);
 		break;
 	case NRF_WIFI_CMD_CARRIER_OFF:
-		status = wifi_nrf_fmac_if_state_chg_event_process(fmac_dev_ctx,
-								  umac_head,
-								  WIFI_NRF_FMAC_IF_STATE_DOWN);
+		status = wifi_nrf_fmac_if_carr_state_event_proc(fmac_dev_ctx,
+								umac_head,
+								WIFI_NRF_FMAC_IF_CARR_STATE_OFF);
 		break;
 #endif /* CONFIG_NRF700X_DATA_TX */
 #ifdef CONFIG_NRF700X_AP_MODE
@@ -713,11 +713,11 @@ static enum wifi_nrf_status umac_process_sys_events(struct wifi_nrf_fmac_dev_ctx
 						  sys_head);
 		break;
 	case NRF_WIFI_EVENT_INIT_DONE:
-		fmac_dev_ctx->init_done = 1;
+		fmac_dev_ctx->fw_init_done = 1;
 		status = WIFI_NRF_STATUS_SUCCESS;
 		break;
 	case NRF_WIFI_EVENT_DEINIT_DONE:
-		fmac_dev_ctx->deinit_done = 1;
+		fmac_dev_ctx->fw_deinit_done = 1;
 		status = WIFI_NRF_STATUS_SUCCESS;
 		break;
 #ifdef CONFIG_NRF700X_RADIO_TEST

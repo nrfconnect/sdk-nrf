@@ -44,7 +44,7 @@ enum wifi_nrf_status umac_cmd_cfg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct host_rpu_msg *umac_cmd = NULL;
 
-	if (!fmac_dev_ctx->init_done) {
+	if (!fmac_dev_ctx->fw_init_done) {
 		struct nrf_wifi_umac_hdr *umac_hdr = NULL;
 
 		umac_hdr = (struct nrf_wifi_umac_hdr *)params;

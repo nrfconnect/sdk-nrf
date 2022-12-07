@@ -186,6 +186,103 @@
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 
 
+/* REGION PROTECT : OTP Address offsets (word offsets) */
+#define REGION_PROTECT 64
+#define QSPI_KEY 68
+#define MAC0_ADDR 72
+#define MAC1_ADDR 74
+#define CALIB_XO 76
+#define CALIB_PDADJM7 77
+#define CALIB_PDADJM0 78
+#define CALIB_PWR2G 79
+#define CALIB_PWR5GM7 80
+#define CALIB_PWR5GM0 81
+#define CALIB_RXGNOFF 82
+#define CALIB_TXPOWBACKOFFT 83
+#define CALIB_TXPOWBACKOFFV 84
+#define REGION_DEFAULTS 85
+#define OTP_MAX_WORD_LEN 128
+
+/* Size of OTP fields in bytes */
+#define OTP_SZ_CALIB_XO 1
+#define OTP_SZ_CALIB_PDADJM7 4
+#define OTP_SZ_CALIB_PDADJM0 4
+#define OTP_SZ_CALIB_PWR2G 1
+#define OTP_SZ_CALIB_PWR2GM0M7 2
+#define OTP_SZ_CALIB_PWR5GM7 3
+#define OTP_SZ_CALIB_PWR5GM0 3
+#define OTP_SZ_CALIB_RXGNOFF 4
+#define OTP_SZ_CALIB_TXP_BOFF_2GH 1
+#define OTP_SZ_CALIB_TXP_BOFF_2GL 1
+#define OTP_SZ_CALIB_TXP_BOFF_5GH 1
+#define OTP_SZ_CALIB_TXP_BOFF_5GL 1
+#define OTP_SZ_CALIB_TXP_BOFF_V 4
+
+/* Offsets of OTP calib values in the calib field */
+#define OTP_OFF_CALIB_XO 0
+#define OTP_OFF_CALIB_PDADJM7 4
+#define OTP_OFF_CALIB_PDADJM0 8
+#define OTP_OFF_CALIB_PWR2G 12
+#define OTP_OFF_CALIB_PWR2GM0M7 13
+#define OTP_OFF_CALIB_PWR5GM7 16
+#define OTP_OFF_CALIB_PWR5GM0 20
+#define OTP_OFF_CALIB_RXGNOFF 24
+#define OTP_OFF_CALIB_TXP_BOFF_2GH 28
+#define OTP_OFF_CALIB_TXP_BOFF_2GL 29
+#define OTP_OFF_CALIB_TXP_BOFF_5GH 30
+#define OTP_OFF_CALIB_TXP_BOFF_5GL 31
+#define OTP_OFF_CALIB_TXP_BOFF_V 32
+
+/* MASKS to program bit fields in REGION_DEFAULTS register */
+#define QSPI_KEY_FLAG_MASK ~(1U<<0)
+#define MAC0_ADDR_FLAG_MASK ~(1U<<1)
+#define MAC1_ADDR_FLAG_MASK ~(1U<<2)
+#define CALIB_XO_FLAG_MASK  ~(1U<<3)
+#define CALIB_PDADJM7_FLAG_MASK ~(1U<<4)
+#define CALIB_PDADJM0_FLAG_MASK ~(1U<<5)
+#define CALIB_PWR2G_FLAG_MASK ~(1U<<6)
+#define CALIB_PWR5GM7_FLAG_MASK ~(1U<<7)
+#define CALIB_PWR5GM0_FLAG_MASK ~(1U<<8)
+#define CALIB_RXGNOFF_FLAG_MASK ~(1U<<9)
+#define CALIB_TXPOWBACKOFFT_FLAG_MASK ~(1U<<10)
+#define CALIB_TXPOWBACKOFFV_FLAG_MASK ~(1U<<11)
+
+/* OTP Device address definitions */
+#define OTP_VOLTCTRL_ADDR 0x19004
+#define OTP_VOLTCTRL_2V5 0x3b
+#define OTP_VOLTCTRL_1V8 0xb
+
+#define OTP_POLL_ADDR 0x01B804
+#define OTP_WR_DONE 0x1
+#define OTP_READ_VALID 0x2
+#define OTP_READY 0x4
+
+
+#define OTP_RWSBMODE_ADDR 0x01B800
+#define OTP_STANDBY_MODE 0x0
+#define OTP_READ_MODE 0x1
+#define OTP_BYTE_WRITE_MODE 0x42
+
+
+#define OTP_RDENABLE_ADDR 0x01B810
+#define OTP_READREG_ADDR 0x01B814
+
+#define OTP_WRENABLE_ADDR 0x01B808
+#define OTP_WRITEREG_ADDR 0x01B80C
+
+#define OTP_TIMING_REG1_ADDR 0x01B820
+#define OTP_TIMING_REG1_VAL 0x0
+#define OTP_TIMING_REG2_ADDR 0x01B824
+#define OTP_TIMING_REG2_VAL 0x030D8B
+
+#define PRODTEST_TRIM_LEN 15
+
+#define OTP_FRESH_FROM_FAB 0xFFFFFFFF
+#define OTP_PROGRAMMED 0x00000000
+#define OTP_ENABLE_PATTERN 0x50FA50FA
+#define OTP_INVALID 0xDEADBEEF
+
+
 /**
  * struct nrf_wifi_rpu_pwr_data - Data that host may want to read from the Power IP.
  * @lfc_err: Estimated Lo Frequency Clock error in ppm.

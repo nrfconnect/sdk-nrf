@@ -30,12 +30,19 @@ int wifi_nrf_disp_scan_zep(const struct device *dev,
 	int ret = -1;
 
 	vif_ctx_zep = dev->data;
+
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
 		goto out;
 	}
 
+	if (vif_ctx_zep->if_op_state != WIFI_NRF_FMAC_IF_OP_STATE_UP) {
+		LOG_ERR("%s: Interface not UP\n", __func__);
+		goto out;
+	}
+
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
 	if (!rpu_ctx_zep) {
 		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
 		goto out;

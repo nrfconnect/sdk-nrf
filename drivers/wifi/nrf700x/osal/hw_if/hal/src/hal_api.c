@@ -1367,16 +1367,6 @@ void wifi_nrf_hal_dev_rem(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 }
 
 
-struct host_rpu_umac_info *wifi_nrf_hal_umac_info(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
-{
-	hal_rpu_mem_read(hal_dev_ctx, &hal_dev_ctx->umac_info,
-			 RPU_MEM_UMAC_BOOT_SIG,
-			 sizeof(hal_dev_ctx->umac_info));
-
-	return &hal_dev_ctx->umac_info;
-}
-
-
 enum wifi_nrf_status wifi_nrf_hal_dev_init(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
@@ -1739,4 +1729,47 @@ void wifi_nrf_hal_deinit(struct wifi_nrf_hal_priv *hpriv)
 
 	wifi_nrf_osal_mem_free(hpriv->opriv,
 			       hpriv);
+}
+
+
+enum wifi_nrf_status wifi_nrf_hal_otp_info_get(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+					       struct host_rpu_umac_info *otp_info,
+					       unsigned int *otp_flags)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+
+	if (!hal_dev_ctx || !otp_info) {
+		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+				      "%s: Invalid parameters\n",
+				      __func__);
+		goto out;
+	}
+
+	status = hal_rpu_mem_read(hal_dev_ctx,
+				  otp_info,
+				  RPU_MEM_UMAC_BOOT_SIG,
+				  sizeof(*otp_info));
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+				      "%s: OTP info get failed\n",
+				      __func__);
+		goto out;
+	}
+
+#ifndef CONFIG_NRF700X_REV_A
+	status = hal_rpu_mem_read(hal_dev_ctx,
+				  otp_flags,
+				  RPU_MEM_OTP_INFO_FLAGS,
+				  sizeof(*otp_flags));
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+				      "%s: OTP flags get failed\n",
+				      __func__);
+		goto out;
+	}
+#endif /* !CONFIG_NRF700X_REV_A */
+out:
+	return status;
 }
