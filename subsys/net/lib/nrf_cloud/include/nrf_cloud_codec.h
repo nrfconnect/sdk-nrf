@@ -209,7 +209,7 @@ int nrf_cloud_json_add_modem_info(cJSON * const data_obj);
  * using the provided cell info
  */
 int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf,
-				       size_t inf_cnt, cJSON * const req_obj_out);
+				       cJSON * const req_obj_out);
 
 /** @brief Obtain the necessary network info from the modem and build a
  * [single-cell] cellular positioning request in the provided cJSON object.
