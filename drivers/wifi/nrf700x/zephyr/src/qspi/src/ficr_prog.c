@@ -10,6 +10,7 @@
 
 #include <zephyr/logging/log.h>
 #include <zephyr/kernel.h>
+#include "rpu_if.h"
 #include "rpu_hw_if.h"
 #include "ficr_prog.h"
 
@@ -278,63 +279,63 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
 						(REGION_DEFAULTS) << 2, mask_val);
 		break;
-	case CALIB_PDADJMCS7:
-		mask_val = CALIB_PDADJMCS7_FLAG_MASK;
-		write_otp_location(CALIB_PDADJMCS7, write_val[0]);
+	case CALIB_PDADJM7:
+		mask_val = CALIB_PDADJM7_FLAG_MASK;
+		write_otp_location(CALIB_PDADJM7, write_val[0]);
 		write_otp_location(REGION_DEFAULTS, mask_val);
 
-		LOG_INF("Written CALIB_PDADJMCS7 (0x%x) to 0x%04x\n",
-						CALIB_PDADJMCS7 << 2, write_val[0]);
+		LOG_INF("Written CALIB_PDADJM7 (0x%x) to 0x%04x\n",
+						CALIB_PDADJM7 << 2, write_val[0]);
 		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
 						(REGION_DEFAULTS) << 2, mask_val);
 		break;
-	case CALIB_PDADJMCS0:
-		mask_val = CALIB_PDADJMCS0_FLAG_MASK;
-		write_otp_location(CALIB_PDADJMCS0, write_val[0]);
+	case CALIB_PDADJM0:
+		mask_val = CALIB_PDADJM0_FLAG_MASK;
+		write_otp_location(CALIB_PDADJM0, write_val[0]);
 		write_otp_location(REGION_DEFAULTS, mask_val);
 
-		LOG_INF("Written CALIB_PDADJMCS0 (0x%x) to 0x%04x\n",
-						CALIB_PDADJMCS0 << 2, write_val[0]);
+		LOG_INF("Written CALIB_PDADJM0 (0x%x) to 0x%04x\n",
+						CALIB_PDADJM0 << 2, write_val[0]);
 		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
 						(REGION_DEFAULTS) << 2, mask_val);
 		break;
-	case CALIB_MAXPOW2G4:
-		mask_val = CALIB_MAXPOW2G4_FLAG_MASK;
-		write_otp_location(CALIB_MAXPOW2G4, write_val[0]);
+	case CALIB_PWR2G:
+		mask_val = CALIB_PWR2G_FLAG_MASK;
+		write_otp_location(CALIB_PWR2G, write_val[0]);
 		write_otp_location(REGION_DEFAULTS, mask_val);
 
-		LOG_INF("Written CALIB_MAXPOW2G4 (0x%x) to 0x%04x\n",
-						CALIB_MAXPOW2G4 << 2, write_val[0]);
+		LOG_INF("Written CALIB_PWR2G (0x%x) to 0x%04x\n",
+						CALIB_PWR2G << 2, write_val[0]);
 		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
 						(REGION_DEFAULTS) << 2, mask_val);
 		break;
-	case CALIB_MAXPOW5G0MCS7:
-		mask_val = CALIB_MAXPOW5G0MCS7_FLAG_MASK;
-		write_otp_location(CALIB_MAXPOW5G0MCS7, write_val[0]);
+	case CALIB_PWR5GM7:
+		mask_val = CALIB_PWR5GM7_FLAG_MASK;
+		write_otp_location(CALIB_PWR5GM7, write_val[0]);
 		write_otp_location(REGION_DEFAULTS, mask_val);
 
-		LOG_INF("Written CALIB_MAXPOW5G0MCS7 (0x%x) to 0x%04x\n",
-						CALIB_MAXPOW5G0MCS7 << 2, write_val[0]);
+		LOG_INF("Written CALIB_PWR5GM7 (0x%x) to 0x%04x\n",
+						CALIB_PWR5GM7 << 2, write_val[0]);
 		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
 						(REGION_DEFAULTS) << 2, mask_val);
 		break;
-	case CALIB_MAXPOW5G0MCS0:
-		mask_val = CALIB_MAXPOW5G0MCS0_FLAG_MASK;
-		write_otp_location(CALIB_MAXPOW5G0MCS0, write_val[0]);
+	case CALIB_PWR5GM0:
+		mask_val = CALIB_PWR5GM0_FLAG_MASK;
+		write_otp_location(CALIB_PWR5GM0, write_val[0]);
 		write_otp_location(REGION_DEFAULTS, mask_val);
 
-		LOG_INF("Written CALIB_MAXPOW5G0MCS0 (0x%x) to 0x%04x\n",
-						CALIB_MAXPOW5G0MCS0 << 2, write_val[0]);
+		LOG_INF("Written CALIB_PWR5GM0 (0x%x) to 0x%04x\n",
+						CALIB_PWR5GM0 << 2, write_val[0]);
 		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
 						(REGION_DEFAULTS) << 2, mask_val);
 		break;
-	case CALIB_RXGAINOFFSET:
-		mask_val = CALIB_RXGAINOFFSET_FLAG_MASK;
-		write_otp_location(CALIB_RXGAINOFFSET, write_val[0]);
+	case CALIB_RXGNOFF:
+		mask_val = CALIB_RXGNOFF_FLAG_MASK;
+		write_otp_location(CALIB_RXGNOFF, write_val[0]);
 		write_otp_location(REGION_DEFAULTS, mask_val);
 
-		LOG_INF("Written CALIB_RXGAINOFFSET (0x%x) to 0x%04x\n",
-						CALIB_RXGAINOFFSET << 2, write_val[0]);
+		LOG_INF("Written CALIB_RXGNOFF (0x%x) to 0x%04x\n",
+						CALIB_RXGNOFF << 2, write_val[0]);
 		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
 						(REGION_DEFAULTS) << 2, mask_val);
 		break;

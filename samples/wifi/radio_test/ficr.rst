@@ -58,42 +58,42 @@ Wi-Fi radio FICR subcommands
      - arg
      - arg is 7-bit unsigned XO value. Bits [31:7] unused. Adjusts capacitor bank, 0 : Lowest capacitance (Highest frequency), 255 : Highest capacitance (Lowest frequency).
    * - otp_write_params
-     - CALIB_PDADJMCS7
+     - CALIB_PDADJM7
      - 0x134
      - arg
      - arg is 32-bit power detector adjustment for MCS7 for channel 7, 36, 100, 165 (channel 7 in bits[7:0] - signed).
    * - otp_write_params
-     - CALIB_PDADJMCS0
+     - CALIB_PDADJM0
      - 0x138
      - arg
      - arg is 32-bit power detector adjustment for MCS0 for channel 7, 36, 100, 165 (channel 7 in bits[7:0] - signed).
    * - otp_write_params
-     - CALIB_MAXPOW2G4
+     - CALIB_PWR2G
      - 0x13C
      - arg
      - arg is 32-bit value specifying maximum output power for DSSS, MCS0, MCS7 (DSSS in bits[7:0] - unsigned). Measured in channel 7. Bits [31:24] unused.
    * - otp_write_params
-     - CALIB_MAXPOW5G0MCS7
+     - CALIB_PWR5GM7
      - 0x140
      - arg
      - arg is 32-bit value specifying maximum output power for MCS7 in channel 36, 100, 165 (channel 36 in bits[7:0] - unsigned). Bits [31:24] unused.
    * - otp_write_params
-     - CALIB_MAXPOW5G0MCS0
+     - CALIB_PWR5GM0
      - 0x144
      - arg
      - arg is 32-bit value specifying maximum output power for MCS0 in channel 36, 100, 165 (channel 36 in bits[7:0] - unsigned). Bits [31:24] unused.
    * - otp_write_params
-     - CALIB_RXGAINOFFSET
+     - CALIB_RXGNOFF
      - 0x148
      - arg
      - arg is 32-bit value specifying RX gain offset for channel 7, 36, 100, 165 (channel 7 in bits[7:0] - signed).
    * - otp_write_params
-     - CALIB_TXPOWBACKOFFT
+     - CALIB_TXPBACKOFFT
      - 0x14C
      - arg
      - arg is 32-bit value specifying TX power backoff versus temperature. Bits[7:0] 2.4G at +80 degree Celsius, bits[15:8] 2.4G at -20 degree Celsius, bits[23:16] 5.0G at +80 degree Celsius, bits[31:24] 5.0G at -20 degree Celsius. Each 8-bit field is a signed value.
    * - otp_write_params
-     - CALIB_TXPOWBACKOFFV
+     - CALIB_TXPBACKOFFV
      - 0x150
      - arg
      - arg is 32-bit value specifying TX power backoff versus voltage. Backoff in 2.4GHz, 5GHz bands  at very low voltage. Backoff in 2.4GHz, 5GHz bands  at low voltage. Each 8-bit field is signed value.
@@ -108,12 +108,12 @@ Wi-Fi radio FICR subcommands
        | bit 1  : MAC0 Address
        | bit 2  : MAC1 Address
        | bit 3  : CALIB_XO
-       | bit 4  : CALIB_PDADJMCS7
-       | bit 5  : CALIB_PDADJMCS0
-       | bit 6  : CALIB_MAXPOW2G4
-       | bit 7  : CALIB_MAXPOW5G0MCS7
-       | bit 8  : CALIB_MAXPOW5G0MCS0
-       | bit 9  : CALIB_RXGAINOFFSET
-       | bit 10 : CALIB_TXPOWBACKOFFT
-       | bit 11 : CALIB_TXPOWBACKOFFV
+       | bit 4  : CALIB_PDADJM7
+       | bit 5  : CALIB_PDADJM0
+       | bit 6  : CALIB_PWR2G
+       | bit 7  : CALIB_PWR5GM7
+       | bit 8  : CALIB_PWR5GM0
+       | bit 9  : CALIB_RXGNOFF
+       | bit 10 : CALIB_TXPBACKOFFT
+       | bit 11 : CALIB_TXPBACKOFFV
        | bit 12-31 : Reserved

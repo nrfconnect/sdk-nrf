@@ -8,9 +8,9 @@
  * @brief NRF Wi-Fi radio test shell module
  */
 
-#include <zephyr_util.h>
 #include <zephyr_fmac_main.h>
 #include <nrf_wifi_radio_test_shell.h>
+#include <util.h>
 
 extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 struct wifi_nrf_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
@@ -266,9 +266,10 @@ void nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_params)
 	       0xFF,
 	       sizeof(conf_params->rf_params));
 
-	hex_str_to_val(conf_params->rf_params,
-		       sizeof(conf_params->rf_params),
-		       NRF_WIFI_DEF_RF_PARAMS);
+	nrf_wifi_utils_hex_str_to_val(rpu_drv_priv_zep.fmac_priv->opriv,
+				      conf_params->rf_params,
+				      sizeof(conf_params->rf_params),
+				      NRF_WIFI_DEF_RF_PARAMS);
 
 	conf_params->tx_pkt_nss = 1;
 	conf_params->tx_pkt_mcs = -1;
@@ -510,9 +511,10 @@ static int nrf_wifi_radio_test_set_rf_params(const struct shell *shell,
 	       0xFF,
 	       NRF_WIFI_RF_PARAMS_CONF_SIZE);
 
-	hex_str_to_val(ctx->conf_params.rf_params,
-		       NRF_WIFI_RF_PARAMS_CONF_SIZE,
-		       (char *)argv[1]);
+	nrf_wifi_utils_hex_str_to_val(rpu_drv_priv_zep.fmac_priv->opriv,
+				      ctx->conf_params.rf_params,
+				      NRF_WIFI_RF_PARAMS_CONF_SIZE,
+				      (char *)argv[1]);
 
 	return 0;
 }
