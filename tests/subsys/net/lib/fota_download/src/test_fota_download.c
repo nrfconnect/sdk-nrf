@@ -294,6 +294,14 @@ static void test_fota_download_start_generic(const char * const resource_locator
 
 ZTEST_SUITE(fota_download_tests, NULL, NULL, NULL, NULL, NULL);
 
+ZTEST(fota_download_tests, test_fota_download_cancel_before_init)
+{
+	/* Verify that calling fota_download_cancel without initializing results in an error. */
+	int err = fota_download_cancel();
+
+	zassert_equal(err, -EAGAIN);
+}
+
 ZTEST(fota_download_tests, test_download_single)
 {
 	test_fota_download_start_generic(S0_A, S0_A, S1_ACTIVE);
@@ -342,8 +350,9 @@ ZTEST(fota_download_tests, test_download_with_offset)
 	k_sem_take(&download_with_offset_sem, K_SECONDS(2));
 	zassert_false(fail_on_offset_get, NULL);
 
+	/* Expect the fota_download_cancel to fail as the download_with_offset() failed. */
 	err = fota_download_cancel();
-	zassert_ok(err, NULL);
+	zassert_equal(err, -EAGAIN);
 
 
 	/* Check that application is being notified when
@@ -359,8 +368,9 @@ ZTEST(fota_download_tests, test_download_with_offset)
 	k_sem_take(&download_with_offset_sem, K_SECONDS(2));
 	zassert_false(fail_on_connect, NULL);
 
+	/* Expect the fota_download_cancel to fail as the download_with_offset() failed. */
 	err = fota_download_cancel();
-	zassert_ok(err, NULL);
+	zassert_equal(err, -EAGAIN);
 
 
 	/* Check that application is being notified when
@@ -376,8 +386,9 @@ ZTEST(fota_download_tests, test_download_with_offset)
 	k_sem_take(&download_with_offset_sem, K_SECONDS(2));
 	zassert_false(fail_on_start, NULL);
 
+	/* Expect the fota_download_cancel to fail as the download_with_offset() failed. */
 	err = fota_download_cancel();
-	zassert_ok(err, NULL);
+	zassert_equal(err, -EAGAIN);
 
 
 	/* Successfully restart download with offset */
@@ -393,4 +404,8 @@ ZTEST(fota_download_tests, test_download_with_offset)
 
 	err = fota_download_cancel();
 	zassert_ok(err, NULL);
+
+	/* Try cancelling again and expect error. */
+	err = fota_download_cancel();
+	zassert_equal(err, -EAGAIN);
 }

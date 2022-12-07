@@ -226,7 +226,10 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* :ref:`lib_fota_download` library:
+
+  * Fixed a bug were the :c:func:`download_client_callback` function was continuing to read the offset value even if :c:func:`dfu_target_offset_get` returned an error.
+  * Fixed a bug where the cleanup of the downloading state was not happening when an error event was raised.
 
 Libraries for NFC
 -----------------
