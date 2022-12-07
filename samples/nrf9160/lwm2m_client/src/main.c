@@ -417,6 +417,13 @@ static void modem_connect(void)
 	int ret;
 
 #if defined(CONFIG_LWM2M_QUEUE_MODE_ENABLED)
+	if (!IS_ENABLED(CONFIG_LTE_EDRX_REQ)) {
+		ret = lte_lc_edrx_req(false);
+		if (ret < 0) {
+			LOG_ERR("EDRX request error %d", ret);
+		}
+	}
+
 	ret = lte_lc_psm_req(true);
 	if (ret < 0) {
 		LOG_ERR("lte_lc_psm_req, error: (%d)", ret);
