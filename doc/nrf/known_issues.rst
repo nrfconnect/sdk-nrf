@@ -1,5 +1,3 @@
-:orphan:
-
 .. _known_issues:
 
 Known issues
@@ -387,7 +385,7 @@ nRF5340
 
 .. rst-class:: v2-2-0 v2-1-2 v2-1-1 v2-1-0
 
-NCSDK-16856: Increased power consumption observed for the Low Power UART on nRF5340 DK
+NCSDK-16856: Increased power consumption observed for the Low Power UART sample on nRF5340 DK
   The power consumption of the :ref:`lpuart_sample` sample measured using the nRF5340 DK v2.0.0 is about 200 uA higher than expected.
 
   **Workaround:** Disconnect flow control lines for VCOM2 with the SW7 DIP switch on the board.
