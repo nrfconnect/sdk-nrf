@@ -13,9 +13,11 @@
 #include <nrfx_nvmc.h>
 #include <errno.h>
 #include <pm_config.h>
-/* In case this gets included in an image that is build without a bootloader
- * the provision area is not defined, so we have to point to the OTP manually
- * NCSDK-18032 is to prevent this workaround in the future
+
+/* When this header is included in an image that is built without a
+ * bootloader the provision area will not be defined, so we have to
+ * point to the OTP manually. NCSDK-18032 is to prevent this
+ * workaround in the future.
  */
 #ifndef PM_PROVISION_BL_STORAGE_ADDRESS
 #define PM_PROVISION_BL_STORAGE_ADDRESS (&NRF_UICR->OTP)
@@ -130,13 +132,6 @@ int public_key_data_read(uint32_t key_idx, uint8_t *p_buf);
  */
 void invalidate_public_key(uint32_t key_idx);
 
-/* In case this gets included in an image that is build without a bootloader
- * the provision area is not defined, so we have to point to the OTP manually
- * NCSDK-18032 is to prevent this workaround in the future
- */
-#ifndef PM_PROVISION_ADDRESS
-#define PM_PROVISION_ADDRESS &(NRF_UICR->OTP)
-#endif
 /**
  * @brief The PSA life cycle states a device can be in.
  *
