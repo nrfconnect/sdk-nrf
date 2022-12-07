@@ -88,6 +88,7 @@ static const struct location_method_api method_gnss_api = {
 	.init             = method_gnss_init,
 	.location_get     = method_gnss_location_get,
 	.cancel           = method_gnss_cancel,
+	.timeout          = method_gnss_timeout,
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
 	.details_get      = method_gnss_details_get,
 #endif
@@ -101,6 +102,7 @@ static const struct location_method_api method_cellular_api = {
 	.init             = method_cellular_init,
 	.location_get     = method_cellular_location_get,
 	.cancel           = method_cellular_cancel,
+	.timeout          = method_cellular_cancel,
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
 	.details_get      = NULL,
 #endif
@@ -114,6 +116,7 @@ static const struct location_method_api method_wifi_api = {
 	.init             = method_wifi_init,
 	.location_get     = method_wifi_location_get,
 	.cancel           = method_wifi_cancel,
+	.timeout          = method_wifi_cancel,
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
 	.details_get      = NULL,
 #endif
@@ -644,7 +647,7 @@ static void location_core_method_timeout_work_fn(struct k_work *work)
 
 	LOG_INF("Method specific timeout expired");
 
-	location_method_api_get(current_method)->cancel();
+	location_method_api_get(current_method)->timeout();
 	location_core_event_cb_timeout();
 }
 
@@ -657,7 +660,7 @@ static void location_core_timeout_work_fn(struct k_work *work)
 
 	LOG_INF("Timeout for entire location request expired");
 
-	location_method_api_get(current_method)->cancel();
+	location_method_api_get(current_method)->timeout();
 	/* config->timeout needs to expire without fallbacks */
 
 	current_event_data.id = LOCATION_EVT_TIMEOUT;
