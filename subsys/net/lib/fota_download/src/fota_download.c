@@ -35,7 +35,7 @@
 LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
 static fota_download_callback_t callback;
-static struct download_client dlc = { .fd = -1 };
+static struct download_client dlc;
 static struct k_work_delayable  dlc_with_offset_work;
 static int socket_retries_left;
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
@@ -63,6 +63,7 @@ static void send_error_evt(enum fota_download_error_cause cause)
 		.id = FOTA_DOWNLOAD_EVT_ERROR,
 		.cause = cause
 	};
+	first_fragment = true;
 	downloading = false;
 	callback(&evt);
 }
@@ -156,6 +157,8 @@ static int download_client_callback(const struct download_client_evt *event)
 				LOG_DBG("unable to get dfu target offset err: "
 					"%d", err);
 				send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
+
+				return -1;
 			}
 
 			if (offset != 0) {
@@ -486,9 +489,7 @@ int fota_download_cancel(void)
 {
 	int err;
 
-	downloading = false;
-
-	if (dlc.fd == -1) {
+	if (!downloading) {
 		/* Download not started, aborted or completed */
 		LOG_WRN("%s invalid state", __func__);
 		return -EAGAIN;
@@ -499,6 +500,7 @@ int fota_download_cancel(void)
 		LOG_ERR("%s failed to disconnect: %d", __func__, err);
 		return err;
 	}
+	downloading = false;
 
 	err = dfu_target_done(false);
 	if (err && err != -EACCES) {
