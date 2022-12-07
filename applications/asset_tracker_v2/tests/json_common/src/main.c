@@ -331,13 +331,6 @@ static void test_encode_modem_dynamic_data_object(void)
 		.ip = "10.81.183.99",
 		.ts = 1000,
 		.queued = true,
-		.band_fresh = true,
-		.nw_mode_fresh = true,
-		.area_code_fresh = true,
-		.cell_id_fresh = true,
-		.rsrp_fresh = true,
-		.ip_address_fresh = true,
-		.mccmnc_fresh = true
 	};
 
 	ret = json_common_modem_dynamic_data_add(dummy.root_obj,
@@ -392,13 +385,6 @@ static void test_encode_modem_dynamic_data_array(void)
 		.ip = "10.81.183.99",
 		.ts = 1000,
 		.queued = true,
-		.band_fresh = true,
-		.nw_mode_fresh = true,
-		.area_code_fresh = true,
-		.cell_id_fresh = true,
-		.rsrp_fresh = true,
-		.ip_address_fresh = true,
-		.mccmnc_fresh = true
 	};
 
 	ret = json_common_modem_dynamic_data_add(dummy.array_obj,
@@ -845,13 +831,6 @@ static void test_encode_batch_data_object(void)
 		[0].ip = "10.81.183.99",
 		[0].ts = 1000,
 		[0].queued = true,
-		[0].band_fresh = true,
-		[0].nw_mode_fresh = true,
-		[0].area_code_fresh = true,
-		[0].cell_id_fresh = true,
-		[0].rsrp_fresh = true,
-		[0].ip_address_fresh = true,
-		[0].mccmnc_fresh = true,
 		/* Second entry */
 		[1].band = 20,
 		[1].nw_mode = LTE_LC_LTE_MODE_LTEM,
@@ -862,13 +841,6 @@ static void test_encode_batch_data_object(void)
 		[1].ip = "10.81.183.99",
 		[1].ts = 1000,
 		[1].queued = true,
-		[1].band_fresh = true,
-		[1].nw_mode_fresh = true,
-		[1].area_code_fresh = true,
-		[1].cell_id_fresh = true,
-		[1].rsrp_fresh = true,
-		[1].ip_address_fresh = true,
-		[1].mccmnc_fresh = true,
 	};
 	struct cloud_data_modem_static modem_static[2] = {
 		[0].imei = "352656106111232",

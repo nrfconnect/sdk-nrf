@@ -144,7 +144,6 @@ int json_common_modem_dynamic_data_add(cJSON *parent,
 	int err;
 	uint32_t mccmnc;
 	char *end_ptr;
-	bool values_added = false;
 
 	if (!data->queued) {
 		return -ENODATA;
@@ -164,85 +163,57 @@ int json_common_modem_dynamic_data_add(cJSON *parent,
 		goto exit;
 	}
 
-	if (data->band_fresh) {
-		err = json_add_number(modem_val_obj, MODEM_CURRENT_BAND, data->band);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(modem_val_obj, MODEM_CURRENT_BAND, data->band);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->nw_mode_fresh) {
-		err = json_add_str(modem_val_obj, MODEM_NETWORK_MODE,
-				   (data->nw_mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" :
-				   (data->nw_mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" : "Unknown");
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_str(modem_val_obj, MODEM_NETWORK_MODE,
+			   (data->nw_mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" :
+			   (data->nw_mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" : "Unknown");
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->rsrp_fresh) {
-		err = json_add_number(modem_val_obj, MODEM_RSRP, data->rsrp);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(modem_val_obj, MODEM_RSRP, data->rsrp);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->area_code_fresh) {
-		err = json_add_number(modem_val_obj, MODEM_AREA_CODE, data->area);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(modem_val_obj, MODEM_AREA_CODE, data->area);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->mccmnc_fresh) {
-		/* Convert mccmnc to unsigned long integer. */
-		errno = 0;
-		mccmnc = strtoul(data->mccmnc, &end_ptr, 10);
+	/* Convert mccmnc to unsigned long integer. */
+	errno = 0;
+	mccmnc = strtoul(data->mccmnc, &end_ptr, 10);
 
-		if ((errno == ERANGE) || (*end_ptr != '\0')) {
-			LOG_ERR("MCCMNC string could not be converted.");
-			err = -ENOTEMPTY;
-			goto exit;
-		}
-
-		err = json_add_number(modem_val_obj, MODEM_MCCMNC, mccmnc);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	if ((errno == ERANGE) || (*end_ptr != '\0')) {
+		LOG_ERR("MCCMNC string could not be converted.");
+		err = -ENOTEMPTY;
+		goto exit;
 	}
 
-	if (data->cell_id_fresh) {
-		err = json_add_number(modem_val_obj, MODEM_CELL_ID, data->cell);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(modem_val_obj, MODEM_MCCMNC, mccmnc);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->ip_address_fresh) {
-		err = json_add_str(modem_val_obj, MODEM_IP_ADDRESS, data->ip);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(modem_val_obj, MODEM_CELL_ID, data->cell);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (!values_added) {
-		err = -ENODATA;
-		data->queued = false;
-		LOG_WRN("No valid dynamic modem data values present, entry unqueued");
+	err = json_add_str(modem_val_obj, MODEM_IP_ADDRESS, data->ip);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
 	}
 
