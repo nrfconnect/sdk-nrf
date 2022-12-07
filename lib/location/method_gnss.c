@@ -516,6 +516,15 @@ int method_gnss_cancel(void)
 	return err;
 }
 
+int method_gnss_timeout(void)
+{
+	if (insuf_timewin_count == -1 && gnss_config.priority_mode == false) {
+		LOG_WRN("GNSS timed out possibly due to too short GNSS time windows");
+	}
+
+	return method_gnss_cancel();
+}
+
 #if !defined(CONFIG_NRF_CLOUD_AGPS)
 static bool method_gnss_psm_enabled(void)
 {
@@ -710,22 +719,26 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 	}
 
 	/* Trigger GNSS priority mode if GNSS indicates that it is not getting long enough time
-	 * windows for 5 consecutive epochs.
+	 * windows for 5 consecutive epochs. If the priority mode option is not enabled, a trace
+	 * is output in case of a timeout to warn that GNSS may be getting too short time windows
+	 * to get a fix.
 	 */
 	if ((pvt_data.flags & NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME) &&
 	    (insuf_timewin_count >= 0)) {
 		insuf_timewin_count++;
 
 		if (insuf_timewin_count == 5) {
-			LOG_DBG("GNSS is not getting long enough time windows. "
-				"Triggering GNSS priority mode.");
-			int err = nrf_modem_gnss_prio_mode_enable();
+			if (gnss_config.priority_mode) {
+				LOG_DBG("GNSS is not getting long enough time windows. "
+					"Triggering GNSS priority mode.");
+				int err = nrf_modem_gnss_prio_mode_enable();
 
-			if (err) {
-				LOG_ERR("Unable to trigger GNSS priority mode.");
+				if (err) {
+					LOG_ERR("Unable to trigger GNSS priority mode.");
+				}
 			}
 
-			/* Special value -1 indicates that priority has been already requested.
+			/* Special value -1 indicates that the condition has been already triggered.
 			 * Allow triggering priority mode only once in order to not block LTE
 			 * operation excessively.
 			 */
@@ -772,6 +785,9 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 #if defined(CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK)
 	err |= nrf_modem_gnss_elevation_threshold_set(CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK);
 #endif
+
+	insuf_timewin_count = 0;
+
 	/* By default we take the first fix. */
 	fixes_remaining = 1;
 
@@ -792,14 +808,6 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 	}
 
 	err |= nrf_modem_gnss_use_case_set(use_case);
-
-	if (gnss_config.priority_mode) {
-		/* Initialize counter to a valid value to enable the priority mode */
-		insuf_timewin_count = 0;
-	} else {
-		/* Disable priority mode by initializing the counter to an invalid value */
-		insuf_timewin_count = -1;
-	}
 
 	if (err) {
 		LOG_ERR("Failed to configure GNSS");
