@@ -559,13 +559,6 @@ void test_codec_helpers_set_modem_dynamic_data(void)
 		.apn = "telenor.iot",
 		.ts = 1000,
 		.queued = true,
-		.band_fresh = true,
-		.nw_mode_fresh = true,
-		.area_code_fresh = true,
-		.cell_id_fresh = true,
-		.rsrp_fresh = true,
-		.ip_address_fresh = true,
-		.mccmnc_fresh = true,
 	};
 	int64_t current_time = UNIX_TIMESTAMP_DUMMY;
 	uint8_t bearers[2] = { LTE_FDD_BEARER, NB_IOT_BEARER };

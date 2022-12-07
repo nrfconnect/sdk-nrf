@@ -178,13 +178,6 @@ const static struct cloud_data_modem_dynamic modem_dyn_data_example = {
 	.ip = "10.81.183.99",
 	.ts = 1000,
 	.queued = true,
-	.band_fresh = true,
-	.nw_mode_fresh = true,
-	.area_code_fresh = true,
-	.cell_id_fresh = true,
-	.rsrp_fresh = true,
-	.ip_address_fresh = true,
-	.mccmnc_fresh = true,
 };
 
 #define SENSORS_BATCH_EXAMPLE \
