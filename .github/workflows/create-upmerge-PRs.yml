@@ -8,6 +8,7 @@ on: workflow_dispatch
 env:
   GH_TOKEN: ${{ secrets.NCS_GITHUB_UPMERGE_TOKEN }}
   ZEPHYR_UPSTREAM: https://github.com/zephyrproject-rtos/zephyr
+  PR_TARGET_BRANCH: upmerge-tmp
 
 jobs:
   auto-upmerge-create-PRs:
@@ -49,8 +50,9 @@ jobs:
           git checkout -b upmerge_local
           west ncs-upmerger zephyr
           git push origin upmerge_local:auto-upmerge/$GITHUB_RUN_ID -u
-          UPSTREAMHASH=$(git rev-parse --short upstream/main)
-          ZEPHYR_PR_URL=$(gh pr create --base main --title "[nrf mergeup] Merge upstream automatically up to commit $UPSTREAMHASH" --body "Automatic upmerge action" --repo $SDK_ZEPHYR --label "auto-upmerge")
+
+          UPSTREAMHASH=$(git rev-parse --short upstream/$PR_TARGET_BRANCH)
+          ZEPHYR_PR_URL=$(gh pr create --base $PR_TARGET_BRANCH --title "[nrf mergeup] Merge upstream automatically up to commit $UPSTREAMHASH" --body "Automatic upmerge action" --repo $SDK_ZEPHYR --label "auto-upmerge")
           echo "ZEPHYR_PR_URL=$ZEPHYR_PR_URL" >> $GITHUB_ENV
           echo "Created PR: $ZEPHYR_PR_URL"
 
