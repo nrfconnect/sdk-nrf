@@ -260,6 +260,7 @@ struct lte_lc_edrx_cfg {
 #define LTE_LC_CELL_RSRQ_INVALID		255
 #define LTE_LC_CELL_EUTRAN_ID_INVALID		UINT32_MAX
 #define LTE_LC_CELL_EUTRAN_ID_MAX		268435455
+#define LTE_LC_CELL_TIME_DIFF_INVALID		0
 
 /** @brief Structure containing neighbor cell information. */
 struct lte_lc_ncell {

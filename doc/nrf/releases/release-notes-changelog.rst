@@ -271,6 +271,7 @@ Libraries for networking
 
     * The MQTT disconnect event is now handled by the FOTA module, allowing for updates to be completed while disconnected and reported properly when reconnected.
     * GCI search results are now encoded in location requests.
+    * The neighbor cell's time difference value is now encoded in location requests.
 
 Libraries for NFC
 -----------------
