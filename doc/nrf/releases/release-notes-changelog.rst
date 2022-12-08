@@ -137,7 +137,7 @@ nRF9160: Asset Tracker v2
 nRF9160: Serial LTE modem
 -------------------------
 
-|no_changes_yet_note|
+* Added an RFC1350 TFTP client, currently supporting only *READ REQUEST*.
 
 nRF5340 Audio
 -------------

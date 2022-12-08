@@ -7,3 +7,8 @@ config SLM_FTPC
 	bool "FTP client support in SLM"
 	default y
 	select FTP_CLIENT
+
+config SLM_TFTPC
+	bool "TFTP client support in SLM"
+	default y
+	select TFTP_LIB

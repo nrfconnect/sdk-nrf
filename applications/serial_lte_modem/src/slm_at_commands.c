@@ -419,6 +419,9 @@ int handle_at_cellpos(enum at_cmd_type cmd_type);
 #if defined(CONFIG_SLM_FTPC)
 int handle_at_ftp(enum at_cmd_type cmd_type);
 #endif
+#if defined(CONFIG_SLM_TFTPC)
+int handle_at_tftp(enum at_cmd_type cmd_type);
+#endif
 
 #if defined(CONFIG_SLM_MQTTC)
 int handle_at_mqtt_connect(enum at_cmd_type cmd_type);
@@ -524,6 +527,10 @@ static struct slm_at_cmd {
 #if defined(CONFIG_SLM_FTPC)
 	/* FTP commands */
 	{"AT#XFTP", handle_at_ftp},
+#endif
+#if defined(CONFIG_SLM_TFTPC)
+	/* TFTP commands */
+	{"AT#XTFTP", handle_at_tftp},
 #endif
 
 #if defined(CONFIG_SLM_MQTTC)
