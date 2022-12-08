@@ -69,7 +69,9 @@ Bluetooth mesh
 Matter
 ------
 
-|no_changes_yet_note|
+* Added:
+
+  * Support for Wi-Fi Network Diagnostic Cluster (which counts the number of packets received and transmitted on the Wi-Fi interface).
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
