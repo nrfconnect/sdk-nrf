@@ -38,15 +38,12 @@ namespace chip
 {
 namespace app
 {
-
 	// Cluster specific command parsing
 
 	namespace Clusters
 	{
-
 		namespace AdministratorCommissioning
 		{
-
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -111,7 +108,6 @@ namespace app
 
 		namespace GeneralCommissioning
 		{
-
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -176,7 +172,6 @@ namespace app
 
 		namespace GeneralDiagnostics
 		{
-
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -221,7 +216,6 @@ namespace app
 
 		namespace GroupKeyManagement
 		{
-
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -295,7 +289,6 @@ namespace app
 
 		namespace Groups
 		{
-
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -384,7 +377,6 @@ namespace app
 
 		namespace Identify
 		{
-
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -428,7 +420,6 @@ namespace app
 
 		namespace NetworkCommissioning
 		{
-
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -523,7 +514,6 @@ namespace app
 
 		namespace OtaSoftwareUpdateRequestor
 		{
-
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -568,7 +558,6 @@ namespace app
 
 		namespace OperationalCredentials
 		{
-
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -682,7 +671,6 @@ namespace app
 
 		namespace ThreadNetworkDiagnostics
 		{
-
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -725,51 +713,6 @@ namespace app
 
 		} // namespace ThreadNetworkDiagnostics
 
-		namespace WiFiNetworkDiagnostics
-		{
-
-			void DispatchServerCommand(CommandHandler *apCommandObj,
-						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
-			{
-				CHIP_ERROR TLVError = CHIP_NO_ERROR;
-				bool wasHandled = false;
-				{
-					switch (aCommandPath.mCommandId) {
-					case Commands::ResetCounts::Id: {
-						Commands::ResetCounts::DecodableType commandData;
-						TLVError = DataModel::Decode(aDataTlv, commandData);
-						if (TLVError == CHIP_NO_ERROR) {
-							wasHandled =
-								emberAfWiFiNetworkDiagnosticsClusterResetCountsCallback(
-									apCommandObj, aCommandPath, commandData);
-						}
-						break;
-					}
-					default: {
-						// Unrecognized command ID, error status will apply.
-						apCommandObj->AddStatus(
-							aCommandPath,
-							Protocols::InteractionModel::Status::UnsupportedCommand);
-						ChipLogError(Zcl,
-							     "Unknown command " ChipLogFormatMEI
-							     " for cluster " ChipLogFormatMEI,
-							     ChipLogValueMEI(aCommandPath.mCommandId),
-							     ChipLogValueMEI(aCommandPath.mClusterId));
-						return;
-					}
-					}
-				}
-
-				if (CHIP_NO_ERROR != TLVError || !wasHandled) {
-					apCommandObj->AddStatus(aCommandPath,
-								Protocols::InteractionModel::Status::InvalidCommand);
-					ChipLogProgress(Zcl, "Failed to dispatch command, TLVError=%" CHIP_ERROR_FORMAT,
-							TLVError.Format());
-				}
-			}
-
-		} // namespace WiFiNetworkDiagnostics
-
 	} // namespace Clusters
 
 	void DispatchSingleClusterCommand(const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aReader,
@@ -809,9 +752,6 @@ namespace app
 			break;
 		case Clusters::ThreadNetworkDiagnostics::Id:
 			Clusters::ThreadNetworkDiagnostics::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
-			break;
-		case Clusters::WiFiNetworkDiagnostics::Id:
-			Clusters::WiFiNetworkDiagnostics::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
 			break;
 		default:
 			ChipLogError(Zcl, "Unknown cluster " ChipLogFormatMEI,
