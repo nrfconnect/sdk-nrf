@@ -13,6 +13,11 @@ config REST_CELL_LOCATION_DO_JITP
 	  nRF Cloud, enable this option and press the configured button when
 	  prompted after the sample starts.
 
+config REST_CELL_GCI_COUNT
+	int "Maximum number of cells to be searched"
+	range 2 15
+	default 5
+
 endmenu
 
 menu "Zephyr Kernel"

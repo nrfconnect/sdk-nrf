@@ -161,7 +161,16 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
-|no_changes_yet_note|
+* :ref:`nrf_cloud_rest_cell_pos_sample` sample:
+
+  * Added:
+
+    * Usage of GCI search option if running modem firmware 1.3.4.
+
+  * Updated:
+
+    * The sample now waits for RRC idle mode before requesting neighbor cell measurements.
+
 
 Peripheral samples
 ------------------
