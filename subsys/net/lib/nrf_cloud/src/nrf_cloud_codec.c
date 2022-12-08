@@ -1682,6 +1682,11 @@ static int add_ncells(cJSON * const lte_obj, const uint8_t ncells_count,
 					RSRQ_IDX_TO_DB(ncell->rsrq))) {
 			return -ENOMEM;
 		}
+		if ((ncell->time_diff != LTE_LC_CELL_TIME_DIFF_INVALID) &&
+			json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_TDIFF,
+					ncell->time_diff)) {
+			return -ENOMEM;
+		}
 	}
 
 	return 0;
