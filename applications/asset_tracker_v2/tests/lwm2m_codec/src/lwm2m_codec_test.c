@@ -11,7 +11,7 @@
 #include "lwm2m_client_utils/cmock_lwm2m_client_utils.h"
 #include "lwm2m_client_utils/cmock_lwm2m_client_utils_location.h"
 #include "lwm2m/cmock_lwm2m.h"
-#include "lwm2m/cmock_lwm2m_resource_ids.h"
+#include "lwm2m_resource_ids.h"
 #include "lte_lc/cmock_lte_lc.h"
 #include "date_time/cmock_date_time.h"
 
@@ -61,7 +61,6 @@ void setUp(void)
 	cmock_lwm2m_client_utils_Init();
 	cmock_lwm2m_Init();
 	cmock_date_time_Init();
-	cmock_lwm2m_resource_ids_Init();
 	cmock_lte_lc_Init();
 }
 
@@ -70,7 +69,6 @@ void tearDown(void)
 	cmock_lwm2m_client_utils_Verify();
 	cmock_lwm2m_Verify();
 	cmock_date_time_Verify();
-	cmock_lwm2m_resource_ids_Init();
 	cmock_lte_lc_Init();
 }
 
@@ -330,8 +328,8 @@ void test_lwm2m_cloud_codec_init(void)
 
 	__cmock_lwm2m_engine_register_post_write_callback_AddCallback(&post_write_callback_stub);
 
-	TEST_ASSERT_NOT_NULL(post_write_callback_stub);
 	TEST_ASSERT_EQUAL(0, cloud_codec_init(&cfg, cloud_codec_event_handler));
+	TEST_ASSERT_NOT_NULL(post_write_cb);
 }
 
 void test_lwm2m_cloud_codec_encode_neighbor_cells(void)
@@ -791,6 +789,7 @@ void test_lwm2m_codec_config_update(void)
 	__cmock_lwm2m_engine_get_bool_IgnoreArg_value();
 	__cmock_lwm2m_engine_get_bool_ReturnThruPtr_value(&ncell_enable_temp);
 
+	TEST_ASSERT_NOT_NULL(post_write_cb);
 	/* Trigger a configuration update. */
 	post_write_cb(0, 0, 0, NULL, 0, false, 0);
 }
