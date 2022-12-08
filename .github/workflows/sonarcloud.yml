@@ -26,7 +26,6 @@ jobs:
           fetch-depth: 0
 
       # Install more dependencies that are not part of the docker image but are needed by the workflow
-      # lcov is not needed for now but needed later when we introduce code coverage analysis
       - name: Install more deps
         run: |
           apt install -y lcov gcc-multilib curl
@@ -40,6 +39,12 @@ jobs:
           west init -l ncs/nrf
           cd ncs
           west update --narrow -o=--depth=1
+
+      - name: Run native_posix tests without sonar cloud build wrapper (with code coverage enabled)
+        shell: bash
+        run: |
+          source ncs/zephyr/zephyr-env.sh
+          ncs/zephyr/scripts/twister -v -i -C -T ncs/nrf/applications/asset_tracker_v2/tests/ -p native_posix
 
       - name: Set up JDK 11
         uses: actions/setup-java@v1
@@ -63,23 +68,28 @@ jobs:
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
           echo "$HOME/.sonar/build-wrapper-linux-x86" >> $GITHUB_PATH
 
-      - name: Run build-wrapper
+      - name: Build native_posix tests with sonarcloud build wrapper
         shell: bash
         run: |
           source ncs/zephyr/zephyr-env.sh
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister -v -i -b -T ncs/nrf/applications/asset_tracker_v2/ -t ci_build -G
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister -b -v -i -T ncs/nrf/applications/asset_tracker_v2/ -p native_posix
+
+      - name: Build asset tracker v2 configurations with sonarcloud build wrapper
+        shell: bash
+        run: |
+          source ncs/zephyr/zephyr-env.sh
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister -b -v -i -T ncs/nrf/applications/asset_tracker_v2/ -t ci_build -G
 
       - name: Run sonar-scanner
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+# Use the older run's twister output folder in reportsPath because thats the one that has coverage data
         run: |
           sonar-scanner --define sonar.projectKey=balaji-nordic_sdk-nrf \
                         --define sonar.organization=balaji-nordic \
                         --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" \
                         --define sonar.exclusions="**/*.py,**twister-out**,**/*.java,**/*.html,**/*.php" \
                         --define sonar.cpd.exclusions="**CMakeFiles**" \
-                        --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
-# Uncomment to following and add -C option for twister to get code coverage reports.
-#                        --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
-#                        --define sonar.cfamily.gcov.reportsPath="twister-out"
+                        --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
+                        --define sonar.cfamily.gcov.reportsPath="twister-out.1"
