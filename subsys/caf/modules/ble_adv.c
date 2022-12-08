@@ -750,8 +750,10 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 		break;
 
 	case PEER_STATE_DISCONNECTED:
-		req_fast_adv = true;
-		update_state(STATE_DELAYED_ACTIVE);
+		if (state != STATE_OFF) {
+			req_fast_adv = true;
+			update_state(STATE_DELAYED_ACTIVE);
+		}
 		break;
 
 	case PEER_STATE_CONN_FAILED:
