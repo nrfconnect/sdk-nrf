@@ -23,7 +23,6 @@ set(ASSET_TRACKER_V2_DIR ../..)
 # Create mocks
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/socket.h net)
 cmock_handle(${ZEPHYR_BASE}/subsys/net/lib/lwm2m/lwm2m_engine.h lwm2m)
-cmock_handle(${ZEPHYR_BASE}/subsys/net/lib/lwm2m/lwm2m_resource_ids.h lwm2m)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/lwm2m.h lwm2m)
 cmock_handle(${NRF_DIR}/include/net/lwm2m_client_utils.h lwm2m_client_utils)
 cmock_handle(${NRF_DIR}/include/net/lwm2m_client_utils_location.h lwm2m_client_utils)
