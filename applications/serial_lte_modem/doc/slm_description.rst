@@ -187,6 +187,11 @@ CONFIG_SLM_CELL_POS - nRF Cloud cellular positioning support in SLM
 CONFIG_SLM_FTPC - FTP client support in SLM
    This option enables additional AT commands for using the FTP client service.
 
+.. _CONFIG_SLM_TFTPC:
+
+CONFIG_SLM_TFTPC - TFTP client support in SLM
+   This option enables additional AT commands for using the TFTP client service.
+
 .. _CONFIG_SLM_MQTTC:
 
 CONFIG_SLM_MQTTC - MQTT client support in SLM
