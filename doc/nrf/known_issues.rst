@@ -1163,6 +1163,13 @@ NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth® L
 
 .. rst-class:: v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
+.. rst-class:: v2-2-0 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+NCSDK-18552: :ref:`nrf_desktop_nrf_profiler_sync` build fails
+  The build failure is caused by the invalid name of the module's source file.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``28ff23ac26c079eb966893e9a64a624bf4f50b71``).
+
 NCSDK-17088: :ref:`nrf_desktop_ble_qos` might crash on application start
   The Bluetooth LE Quality of Service (QoS) module might trigger an ARM fault on application start.
   The ARM fault is caused by invalid memory alignment.
