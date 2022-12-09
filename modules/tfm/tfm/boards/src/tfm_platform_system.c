@@ -19,9 +19,6 @@
 #include <tfm_hal_isolation.h>
 #include <tfm_memory_utils.h>
 
-/* This contains the user provided allowed ranges */
-#include <tfm_read_ranges.h>
-
 #include <hal/nrf_gpio.h>
 
 void tfm_platform_hal_system_reset(void)
