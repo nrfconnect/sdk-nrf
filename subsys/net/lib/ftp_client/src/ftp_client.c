@@ -54,7 +54,7 @@ static struct data_task {
 	enum data_task_type task;
 	char *ctrl_msg;		/* PSAV resposne */
 	uint8_t *data;		/* TX data */
-	uint16_t length;	/* TX length */
+	uint32_t length;	/* TX length */
 } data_task_param;
 
 static bool ftp_inactivity;
@@ -193,7 +193,7 @@ static void close_connection(int code, int error)
 
 /**@brief Send FTP message via socket
  */
-static int do_ftp_send_ctrl(const uint8_t *message, int length)
+static int do_ftp_send_ctrl(const uint8_t *message, uint32_t length)
 {
 	int ret = 0;
 	uint32_t offset = 0;
@@ -221,7 +221,7 @@ static int do_ftp_send_ctrl(const uint8_t *message, int length)
 
 /**@brief Send FTP data via socket
  */
-static int do_ftp_send_data(const char *pasv_msg, uint8_t *message, uint16_t length)
+static int do_ftp_send_data(const char *pasv_msg, uint8_t *message, uint32_t length)
 {
 	int ret;
 	uint32_t offset = 0;
@@ -351,9 +351,6 @@ static int poll_data_task_done(void)
 
 	do {
 		ret = do_ftp_recv_ctrl(true, FTP_CODE_226);
-		if (ret < 0) {
-			break;
-		}
 		if (ret == FTP_CODE_226) {
 			break;
 		}
@@ -363,8 +360,10 @@ static int poll_data_task_done(void)
 			} else {
 				sprintf(ctrl_buf, "%d Transfer timeout.\r\n", FTP_CODE_910);
 				client.ctrl_callback(ctrl_buf, strlen(ctrl_buf));
-				break;
+				break;											 
 			}
+		}else if (ret < 0) {
+			break;
 		}
 	} while (1);
 
@@ -768,7 +767,7 @@ int ftp_get(const char *file)
 	return ret;
 }
 
-int ftp_put(const char *file, const uint8_t *data, uint16_t length, int type)
+int ftp_put(const char *file, const uint8_t *data, uint32_t length, int type)
 {
 	int ret;
 	char put_cmd[128];
