@@ -193,7 +193,7 @@ int bt_mesh_dm_cli_measurement_start(struct bt_mesh_dm_cli *cli,
 
 	net_buf_simple_add_u8(&msg, BT_MESH_DM_START_OP);
 	net_buf_simple_add_le16(&msg, (start->mode << 15) | (start->addr & 0x7FFF));
-	net_buf_simple_add_u8(&msg, start->reuse_transaction ? cli->tid : cli->tid++);
+	net_buf_simple_add_u8(&msg, start->reuse_transaction ? cli->tid : ++cli->tid);
 	if (start->cfg) {
 		if ((start->cfg->ttl == 1 || start->cfg->ttl > 127) || start->cfg->timeout < 10) {
 			return -EBADMSG;

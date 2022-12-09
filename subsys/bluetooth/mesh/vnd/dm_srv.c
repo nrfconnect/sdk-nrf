@@ -233,9 +233,12 @@ static int handle_start(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	uint8_t tid = net_buf_simple_pull_u8(buf);
 
 	if (tid_check_and_update(&srv->prev_transaction, tid, ctx) != 0) {
-		/* Ignore duplicate message */
-		err = EAGAIN;
-		goto rsp;
+		/* Ignore duplicate message.
+		 * (Do not send a response, because this might arrive before
+		 * the successful response which is sent after ranging and
+		 * confuse clients)
+		 */
+		return 0;
 	}
 
 	if (srv->is_busy) {
