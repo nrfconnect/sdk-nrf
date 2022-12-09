@@ -22,6 +22,9 @@ LOG_MODULE_REGISTER(slm_gnss, CONFIG_SLM_LOG_LEVEL);
 #define SERVICE_INFO_GNSS \
 	"{\"state\":{\"reported\":{\"device\": {\"serviceInfo\":{\"ui\":[\"GNSS\"]}}}}}"
 
+#define MODEM_AT_RSP \
+	"{\"appId\":\"MODEM\", \"messageType\":\"RSP\", \"data\":\"%s\"}"
+
 #define LOCATION_REPORT_MS 5000
 
 /**@brief GNSS operations. */
@@ -40,6 +43,7 @@ enum slm_gnss_operation {
 	CELLPOS_START_MCELL  = nRF_CLOUD_SEND
 };
 
+static struct k_work cloud_cmd;
 static struct k_work agps_req;
 static struct k_work pgps_req;
 static struct k_work fix_rep;
@@ -774,9 +778,114 @@ static void on_cloud_evt_cell_pos_data_received(const struct nrf_cloud_data *con
 	}
 }
 
+static void cloud_cmd_wk(struct k_work *work)
+{
+	int ret;
+	char *cmd_rsp;
+
+	ARG_UNUSED(work);
+
+	/* Send AT command to modem */
+	ret = nrf_modem_at_cmd(rsp_buf, sizeof(rsp_buf), "%s", rsp_buf);
+	if (ret < 0) {
+		LOG_ERR("AT command failed: %d", ret);
+		return;
+	} else if (ret > 0) {
+		LOG_WRN("AT command error, type: %d", nrf_modem_at_err_type(ret));
+	}
+	LOG_INF("MODEM RSP %s", rsp_buf);
+	/* replace \" with \' in JSON string-type value */
+	for (int i = 0; i < strlen(rsp_buf); i++) {
+		if (rsp_buf[i] == '\"') {
+			rsp_buf[i] = '\'';
+		}
+	}
+	/* format JSON reply */
+	cmd_rsp = k_malloc(strlen(rsp_buf) + sizeof(MODEM_AT_RSP));
+	if (cmd_rsp == NULL) {
+		LOG_WRN("Unable to allocate buffer");
+		return;
+	}
+	sprintf(cmd_rsp, MODEM_AT_RSP, rsp_buf);
+	/* Send AT response to cloud */
+	ret = do_cloud_send_msg(cmd_rsp, strlen(cmd_rsp));
+	if (ret) {
+		LOG_ERR("Send AT response to cloud error: %d", ret);
+	}
+	k_free(cmd_rsp);
+}
+
+static bool handle_cloud_cmd(const char *buf_in)
+{
+	const cJSON *app_id = NULL;
+	const cJSON *msg_type = NULL;
+	bool ret = false;
+
+	cJSON *cloud_cmd_json = cJSON_Parse(buf_in);
+
+	if (cloud_cmd_json == NULL) {
+		const char *error_ptr = cJSON_GetErrorPtr();
+
+		if (error_ptr != NULL) {
+			LOG_ERR("JSON parsing error before: %s", error_ptr);
+		}
+		goto end;
+	}
+
+	app_id = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, "appId");
+	if (cJSON_GetStringValue(app_id) == NULL) {
+		goto end;
+	}
+
+	/* Format expected from nrf cloud:
+	 * {"appId":"MODEM", "messageType":"CMD", "data":"<AT command>"}
+	 */
+	if (strcmp(app_id->valuestring, "MODEM") == 0) {
+		msg_type = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, "messageType");
+		if (cJSON_GetStringValue(msg_type) != NULL) {
+			if (strcmp(msg_type->valuestring, "CMD") != 0) {
+				goto end;
+			}
+		}
+
+		const cJSON *at_cmd = NULL;
+
+		/* The value of attribute "data" contains the actual command */
+		at_cmd = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, "data");
+		if (cJSON_GetStringValue(at_cmd) != NULL) {
+			LOG_INF("MODEM CMD %s", at_cmd->valuestring);
+			strcpy(rsp_buf, at_cmd->valuestring);
+			k_work_submit_to_queue(&slm_work_q, &cloud_cmd);
+			ret = true;
+		}
+	/* Format expected from nrf cloud:
+	 * {"appId":"DEVICE", "messageType":"DISCON"}
+	 */
+	} else if (strcmp(app_id->valuestring, "DEVICE") == 0) {
+		msg_type = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, "messageType");
+		if (cJSON_GetStringValue(msg_type) != NULL) {
+			if (strcmp(msg_type->valuestring, "DISCON") == 0) {
+				LOG_INF("DEVICE DISCON");
+				/* No action required, handled in lib_nrf_cloud */
+				ret = true;
+			}
+		}
+	}
+
+end:
+	cJSON_Delete(cloud_cmd_json);
+	return ret;
+}
+
 static void on_cloud_evt_data_received(const struct nrf_cloud_data *const data)
 {
 	if (nrf_cloud_ready) {
+		if (((char *)data->ptr)[0] == '{') {
+			/* Check if it's a cloud command sent from the cloud */
+			if (handle_cloud_cmd(data->ptr)) {
+				return;
+			}
+		}
 		sprintf(rsp_buf, "\r\n#XNRFCLOUD: %s\r\n", (char *)data->ptr);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
@@ -1286,6 +1395,7 @@ int slm_at_gnss_init(void)
 		return err;
 	}
 
+	k_work_init(&cloud_cmd, cloud_cmd_wk);
 	k_work_init(&agps_req, agps_req_wk);
 	k_work_init(&pgps_req, pgps_req_wk);
 	k_work_init(&cell_pos_req, cell_pos_req_wk);
