@@ -11,6 +11,7 @@
 #include <zephyr/drivers/flash/flash_simulator.h>
 #include "bootutil/image.h"
 #include "bootutil/bootutil.h"
+#include "bootutil/boot_hooks.h"
 #include "bootutil/fault_injection_hardening.h"
 #include "flash_map_backend/flash_map_backend.h"
 
@@ -125,5 +126,15 @@ int boot_serial_uploaded_hook(int img_index, const struct flash_area *area,
 		return network_core_update(false);
 	}
 
+	return 0;
+}
+
+int boot_reset_request_hook(bool force)
+{
+	ARG_UNUSED(force);
+
+	if (pcd_fw_copy_status_get() == PCD_STATUS_COPY) {
+		return BOOT_RESET_REQUEST_HOOK_BUSY;
+	}
 	return 0;
 }
