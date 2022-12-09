@@ -32,7 +32,10 @@ target_compile_definitions(platform_s
   )
 
 target_include_directories(platform_s
-  PUBLIC ${partition_includes} ${board_includes}
+  PUBLIC
+  ${partition_includes}
+  ${board_includes}
+  services/include
   ${NRF_DIR}/include
   )
 
