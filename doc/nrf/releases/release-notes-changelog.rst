@@ -222,7 +222,13 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`mds_readme`:
+
+  * Fixed URI generation in the :c:func:`data_uri_read` function.
+
+* :ref:`ble_rpc` library:
+
+  * Fixed a possible memory leak in the :c:func:`bt_gatt_indicate_rpc_handler` function.
 
 Bootloader libraries
 --------------------
