@@ -209,6 +209,13 @@ config MOSH_LWM2M_ENDPOINT_PREFIX
 	help
 	  Sets the prefix of the endpoint name used when connecting to the LwM2M server.
 
+# Make AVSystem the default LwM2M server.
+config LWM2M_CLIENT_UTILS_SERVER
+	string "LwM2M server address"
+	default "coaps://eu.iot.avsystem.cloud:5684"
+	help
+	  Kconfig redefinition, please see the help text of the original definition.
+
 endif # MOSH_CLOUD_LWM2M
 
 endmenu # Modem Shell
