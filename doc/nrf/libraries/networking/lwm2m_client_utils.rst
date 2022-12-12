@@ -151,26 +151,12 @@ To define an object that follows the Generic Sensor definition, complete the fol
    Therefore, the full path for the sensor value will be ``3300/0/5700``.
    You must use this path in the LwM2M client utils library API.
 
-#. Create a structure for storing the resource value:
-
-   In the example, the datatype of the resource is float.
-   Use the following structure to store the float values associated with the resource:
-
-   .. code:: c
-
-      typedef struct float32_value {
-         int32_t val1;
-         int32_t val2;
-      } float32_value_t;
-
-   The variable ``val1`` corresponds to the integer component of the value and ``val2`` corresponds to the decimal component, which is multiplied by the constant ``LWM2M_FLOAT32_DEC_MAX`` that is equal to ``1000000``.
-
 #. Define a read function that responds to the read requests for the resource value from the server:
 
 
    .. code:: c
 
-     static struct float32_value sensor_value = { 1, 0 };
+     static double sensor_value = 1.0;
 
       static void *read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, size_t *data_len)
       {
@@ -181,7 +167,7 @@ To define an object that follows the Generic Sensor definition, complete the fol
          }
 
          /* Demo: change the sensor value */
-         ++sensor_value.val2;
+         sensor_value += 0.1;
 
          /* Return sensor value for the LwM2M library */
          lwm2m_engine_set_float32("3300/0/5700", &sensor_value);
