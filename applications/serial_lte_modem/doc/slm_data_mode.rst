@@ -37,6 +37,10 @@ See the following examples:
 * ``AT#XSEND`` makes SLM enter data mode to receive arbitrary data to transmit.
 * ``AT#XSEND="data"`` makes SLM transmit data in normal AT Command mode.
 
+.. note::
+   If the data contains either  ``,`` or ``"`` as characters, it can only be sent in data mode.
+   A typical use case is to send JSON messages.
+
 Other examples:
 
 * ``AT#XTCPSEND``
@@ -52,8 +56,11 @@ The SLM application sends an *OK* response when it successfully enters data mode
 Sending data in data mode
 =========================
 
+Any arbitrary data received from the MCU is sent to LTE network *as-is*.
+
 If the current sending function succeeds and :ref:`CONFIG_SLM_DATAMODE_URC <CONFIG_SLM_DATAMODE_URC>` is defined, the SLM application reports back the total size as ``#XDATAMODE: <size>``.
 The ``<size>`` value is a positive integer.
+This Unsolicited Result Code (URC) can also be used to impose flow control on uplink sending.
 
 Exiting data mode
 =================
@@ -61,6 +68,11 @@ Exiting data mode
 To exit data mode, the MCU sends the termination command set by the :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` configuration option over UART.
 
 The pattern string could be sent alone or as an affix to the data.
+The pattern string must be sent in full.
+
+.. note::
+   Some terminal software, like LTE Link Monitor, always appends an AT command terminator (for example ``<CR><LF>``) to uplink data.
+   This makes it unsuitable for data mode as exiting data mode can't work.
 
 If the current sending function fails, the SLM application exits data mode and returns the error code as ``#XDATAMODE: <error>``.
 The ``<error>`` value is a negative integer.
