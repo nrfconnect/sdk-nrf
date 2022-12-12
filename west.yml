@@ -50,7 +50,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 65a99697fa604e28cb26ec96ce935ad720222892
+      revision: v3.1.99-ncs1-2
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -112,7 +112,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 9dcbcf6b3b1256f3d39502ef146ddc952c4b569b
+      revision: v2.1.3
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -124,7 +124,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: e99aa9daa4a5acd36e8be5347bb104d8c4d3f6c6
+      revision: v2.1.3
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -137,7 +137,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v2.1.2
+      revision: v2.1.3
       groups:
       - nrf-802154
     - name: cjson
@@ -146,12 +146,12 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: v2.1.2
+      revision: v2.1.3
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: v2.1.2
+      revision: v2.1.3
       groups:
       - find-my
     - name: azure-sdk-for-c
