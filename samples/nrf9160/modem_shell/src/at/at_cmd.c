@@ -51,7 +51,7 @@ static bool at_cmd_mode_util_mosh_cmd(const char *at_cmd, const char *mosh_cmd)
 			return false;
 		}
 	}
-#if defined(CONFIG_SLM_CR_LF_TERMINATION)
+#if defined(CONFIG_MOSH_AT_CMD_MODE_CR_LF_TERMINATION)
 	if (strlen(at_cmd) > (mosh_cmd_len + 2)) {
 #else
 	if (strlen(at_cmd) > (mosh_cmd_len + 1)) {
