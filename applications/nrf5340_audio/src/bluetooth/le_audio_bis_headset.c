@@ -177,7 +177,7 @@ static struct bt_audio_stream_ops stream_ops = { .started = stream_started_cb,
 static bool scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf_simple *ad,
 			 uint32_t broadcast_id)
 {
-	char name[DEVICE_NAME_PEER_LEN];
+	static char name[DEVICE_NAME_PEER_LEN];
 
 	bt_data_parse(ad, adv_data_parse, (void *)name);
 	if (strncmp(name, CONFIG_BT_DEVICE_NAME, DEVICE_NAME_PEER_LEN) == 0) {
