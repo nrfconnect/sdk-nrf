@@ -369,6 +369,10 @@ Modem libraries
 Libraries for networking
 ------------------------
 
+* :ref:`lib_multicell_location` library:
+
+  * This library is now deprecated and relevant functionality is available through the :ref:`lib_location` library.
+
 * :ref:`lib_fota_download` library:
 
   * Fixed a bug where the :c:func:`download_client_callback` function was continuing to read the offset value even if :c:func:`dfu_target_offset_get` returned an error.
