@@ -204,6 +204,17 @@ int lwm2m_update_signal_meas_objects(const struct lte_lc_cells_info *const cells
 int lwm2m_ncell_handler_register(void);
 void lwm2m_ncell_schedule_measurement(void);
 
+/**
+ * @brief Request a Wi-Fi scan for nearby access points.
+ *
+ * The Wi-Fi access points are added to the Visible Wi-Fi Access Point objects (ID 33627)
+ * and used for the Wi-Fi based location when sending a ground fix request.
+ *
+ * @return Returns a negative error code (errno.h) indicating
+ *         the reason for failure or 0 for success.
+ */
+int lwm2m_wifi_request_scan(void);
+
 #endif /* LWM2M_CLIENT_UTILS_LOCATION_H__ */
 
 /**@} */
