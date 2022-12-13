@@ -26,6 +26,15 @@ config STATE_LEDS
 	  the device into a network or the factory reset initiation. Note that setting this option to
 	  'n' does not disable the LED indicating the state of the simulated bolt.
 
+config THREAD_WIFI_SWITCHING
+	bool "Switching between Thread and Wi-Fi network support"
+	depends on SOC_SERIES_NRF53X
+	select EXPERIMENTAL
+	help
+	  Enable the functionality that allows a user to switch between Matter over Thread and Matter
+	  over Wi-Fi variants of the application, stored in the respective partitions in the external
+	  flash memory.
+
 # Sample configuration used for Thread networking
 if NET_L2_OPENTHREAD
 

@@ -202,7 +202,9 @@ Thread samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* :ref:`matter_lock_sample`:
+
+  * Added `thread_wifi_switched` build type that enables switching between Thread and Wi-Fi network support in the field.
 
 NFC samples
 -----------
