@@ -231,6 +231,11 @@ nRF9160 samples
       It does not use application events, filtering, or configurable periods anymore.
 
 
+* Removed:
+
+  * Multicell location sample because of the deprecation of the Multicell location library.
+    Relevant functionality is available through the :ref:`lib_location` library.
+
 Peripheral samples
 ------------------
 
