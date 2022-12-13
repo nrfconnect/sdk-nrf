@@ -1,4 +1,0 @@
-The sample is configured to compile and run as a non-secure application on nRF91's Cortex-M33.
-Therefore, it automatically includes the :ref:`secure_partition_manager` that prepares the required peripherals to be available for the application.
-
-You can also configure it to use :ref:`TF-M <ug_tfm>` instead of Secure Partition Manager.

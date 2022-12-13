@@ -41,6 +41,15 @@ struct active_stream {
 	struct audio_codec_info *codec;
 };
 
+struct bt_name {
+	char *name;
+	unsigned int size;
+};
+
+static const char *broadcast_device_name[2] = { CONFIG_BT_DEVICE_NAME, CONFIG_BT_DEVICE_NAME_ALT };
+
+static uint8_t active_bt_device_name = 0;
+
 static struct bt_audio_broadcast_sink *broadcast_sink;
 
 static struct bt_audio_stream audio_streams[CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT];
@@ -119,9 +128,14 @@ static bool bitrate_check(const struct bt_codec *codec)
 
 static bool adv_data_parse(struct bt_data *data, void *user_data)
 {
+	struct bt_name *bis_name = (struct bt_name *)user_data;
+
 	if (data->type == BT_DATA_BROADCAST_NAME && data->data_len) {
-		memcpy((char *)user_data, data->data, data->data_len);
-		return false;
+		if (data->data_len <= bis_name->size) {
+			memcpy(bis_name->name, data->data, data->data_len);
+			bis_name->name[data->data_len] = '\0';
+			return false;
+		}
 	}
 
 	return true;
@@ -177,12 +191,19 @@ static struct bt_audio_stream_ops stream_ops = { .started = stream_started_cb,
 static bool scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf_simple *ad,
 			 uint32_t broadcast_id)
 {
-	static char name[DEVICE_NAME_PEER_LEN];
+	char name[(sizeof(CONFIG_BT_DEVICE_NAME) > sizeof(CONFIG_BT_DEVICE_NAME_ALT) ?
+			   sizeof(CONFIG_BT_DEVICE_NAME) :
+			   sizeof(CONFIG_BT_DEVICE_NAME_ALT))] = { '\0' };
+	struct bt_name bis_name = { &name[0], sizeof(name) };
 
-	bt_data_parse(ad, adv_data_parse, (void *)name);
-	if (strncmp(name, CONFIG_BT_DEVICE_NAME, DEVICE_NAME_PEER_LEN) == 0) {
-		LOG_INF("Broadcast source %s found", name);
-		return true;
+	bt_data_parse(ad, adv_data_parse, (void *)&bis_name);
+
+	if (strlen(bis_name.name) == strlen(broadcast_device_name[active_bt_device_name])) {
+		if (strncmp(bis_name.name, broadcast_device_name[active_bt_device_name],
+			    strlen(broadcast_device_name[active_bt_device_name])) == 0) {
+			LOG_INF("Broadcast source %s found", bis_name.name);
+			return true;
+		}
 	}
 
 	return false;
@@ -407,7 +428,7 @@ static int bis_headset_cleanup(bool from_sync_lost_cb)
 	return 0;
 }
 
-int le_audio_user_defined_button_press(void)
+static int button_id_4_pressed(void)
 {
 	int ret = 0;
 
@@ -434,6 +455,49 @@ int le_audio_user_defined_button_press(void)
 	LOG_DBG("Changed to stream %d", active_stream_index);
 
 	return ret;
+}
+
+static int button_id_5_pressed(void)
+{
+	int ret;
+
+	LOG_INF("Change broadcast gateway");
+
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
+	ERR_CHK(ret);
+
+	ret = bis_headset_cleanup(false);
+	if (ret) {
+		LOG_ERR("Error cleaning up");
+		return ret;
+	}
+
+	/* Wrap broadcaster names */
+	if (++active_bt_device_name >= ARRAY_SIZE(broadcast_device_name)) {
+		active_bt_device_name = 0;
+	}
+	LOG_INF("Switching to %s", broadcast_device_name[active_bt_device_name]);
+
+	ret = bt_audio_broadcast_sink_scan_start(BT_LE_SCAN_PASSIVE);
+	if (ret) {
+		return ret;
+	}
+
+	return 0;
+}
+
+int le_audio_user_defined_button_press(enum le_audio_button_id id)
+{
+	if (id == LE_AUDIO_BUTTON_ID_4) {
+		LOG_INF("Button 4 pressed");
+		return button_id_4_pressed();
+	} else if (id == LE_AUDIO_BUTTON_ID_5) {
+		LOG_INF("Button 5 pressed");
+		return button_id_5_pressed();
+	} else {
+		LOG_WRN("Button ID not recognised (%d)", id);
+		return -ECANCELED;
+	}
 }
 
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)

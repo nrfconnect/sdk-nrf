@@ -107,7 +107,6 @@
   - "include/fprotect.h"
   - "include/fw_info.*"
   - "include/mgmt/*"
-  - "include/spm.h"
   - "include/dfu/**/*"
   - "include/net/**/*"
   - "cmake/*"
@@ -126,7 +125,6 @@
   - "subsys/fw_info/**/*"
   - "subsys/mgmt/**/*"
   - "subsys/pcd/*"
-  - "subsys/spm/*"
   - "subsys/net/lib/*fota*/**/*"
   - "subsys/net/lib/download_client/**/*"
   - "tests/subsys/bootloader/**/*"
@@ -148,7 +146,6 @@
   - "subsys/bootloader/**/*"
   - "subsys/partition_manager/**/*"
   - "tests/modules/tfm"
-  - "tests/subsys/spm/secure_services/**/*"
   - "tests/tfm/**/*"
 
 "CI-ble-test":

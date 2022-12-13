@@ -129,6 +129,12 @@ config AUDIO_TEST_TONE
 	help
 	  Use button 4 to set the test tone.
 
+config AUDIO_TEST_MUTE
+	bool "Testing audio mute"
+	default y
+	help
+	  Use button 4 to set to test muting.
+
 if AUDIO_HEADSET_CHANNEL_COMPILE_TIME
 
 config AUDIO_HEADSET_CHANNEL

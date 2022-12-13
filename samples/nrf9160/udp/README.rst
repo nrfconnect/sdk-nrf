@@ -100,7 +100,7 @@ The following configurations are recommended for low power behavior:
 
 * :kconfig:option:`CONFIG_LTE_PSM_REQ_RPTAU` option set to a value greater than the value of :ref:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS <CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS>`.
 * :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT` set to 0.
-* :kconfig:option:`CONFIG_SERIAL` disabled in :file:`prj.conf` and :file:`spm.conf`.
+* :kconfig:option:`CONFIG_SERIAL` disabled in :file:`prj.conf`.
 * :ref:`CONFIG_UDP_EDRX_ENABLE <CONFIG_UDP_EDRX_ENABLE>` set to false.
 * :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` set to true for NB-IoT. It is not supported for LTE-M.
 
@@ -135,7 +135,7 @@ After programming the sample to your device, test it by performing the following
 
 1. |connect_kit|
 #. |connect_terminal|
-#. Enable logging by setting the :kconfig:option:`CONFIG_SERIAL` option to ``y`` in the :file:`prj.conf` and :file:`spm.conf` configuration files.
+#. Enable logging by setting the :kconfig:option:`CONFIG_SERIAL` option to ``y`` in the :file:`prj.conf` configuration file.
 #. Observe that the sample shows output similar to the following in the terminal emulator:
 
    .. code-block:: console

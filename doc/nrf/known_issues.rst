@@ -149,10 +149,10 @@ CIA-661: Asset Tracker v2 application configured for LwM2M cannot be built for t
 
   **Workaround:** Use one of the following workarounds for modem traces:
 
-  * Use :ref:`secure_partition_manager` instead of TF-M by setting :kconfig:option:`CONFIG_SPM` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
+  * Use Secure Partition Manager instead of TF-M by setting ``CONFIG_SPM`` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
   * Reduce the value of :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_TRACE_SIZE` to 8 Kb, however, this might lead to loss of modem traces.
 
-  For memfault, use :ref:`secure_partition_manager` instead of TF-M by setting :kconfig:option:`CONFIG_SPM` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
+  For memfault, use Secure Partition Manager instead of TF-M by setting ``CONFIG_SPM`` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
 
 Serial LTE Modem
 ================
@@ -186,7 +186,7 @@ NCSDK-15471: Compilation with SUPL client library fails when TF-M is enabled
 
   **Workaround:** Use one of the following workarounds:
 
-  * Use :ref:`secure_partition_manager` instead of TF-M.
+  * Use Secure Partition Manager instead of TF-M.
   * Disable the FPU by setting :kconfig:option:`CONFIG_FPU` to ``n``.
 
 .. rst-class:: v2-2-0 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
@@ -1691,7 +1691,7 @@ Build system
 .. rst-class:: v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-6117: Build configuration issues
-  The build configuration consisting of :ref:`bootloader`, :ref:`secure_partition_manager`, and application does not work.
+  The build configuration consisting of :ref:`bootloader`, Secure Partition Manager, and application does not work.
   (The SPM has been deprecated with the |NCS| v2.1.0.)
 
   **Workaround:** Either include MCUboot in the build or use MCUboot instead of the immutable bootloader.
@@ -1860,12 +1860,12 @@ Secure Partition Manager (SPM)
 ==============================
 
 .. note::
-    As of the |NCS| v2.1.0, Secure Partition Manager (SPM) is deprecated and replaced by :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
+    The Secure Partition Manager (SPM) was deprecated in |NCS| v2.1.0 and removed in |NCS| v2.3.0. It is replaced by :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
 
 .. rst-class:: v2-2-0 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSIDB-114: Default logging causes crash
-  Enabling default logging in the :ref:`secure_partition_manager` sample makes it crash if the sample logs any data after the application has booted (for example, during a SecureFault, or in a secure service).
+  Enabling default logging in the Secure Partition Manager sample makes it crash if the sample logs any data after the application has booted (for example, during a SecureFault, or in a secure service).
   At that point, RTC1 and UARTE0 are non-secure.
 
   **Workaround:** Do not enable logging and add a breakpoint in the fault handling, or try a different logging backend.
@@ -1873,7 +1873,7 @@ NCSIDB-114: Default logging causes crash
 .. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
 NCSDK-8232: Secure Partition Manager and application building together
-  It is not possible to build and program :ref:`secure_partition_manager` and the application individually.
+  It is not possible to build and program Secure Partition Manager and the application individually.
 
 .. rst-class:: v1-5-2 v1-5-1 v1-5-0
 
@@ -2653,14 +2653,14 @@ TF-M is not supported for Thingy:91 v1.5.0 and lower versions
 NCSDK-15382: TF-M uses more RAM compared to SPM in the minimal configuration
   TF-M uses 64 KB of RAM in the minimal configuration, while SPM uses 32 KB of RAM.
 
-  **Workaround:** Free up memory in the application if needed or keep :kconfig:option:`CONFIG_SPM` enabled in the application.
+  **Workaround:** Free up memory in the application if needed or keep ``CONFIG_SPM`` enabled in the application.
 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
 NCSDK-15379: TF-M does not support FP Hard ABI
   TF-M does not support enabling the Float Point Hard Application Binary Interface configuration enabled with :kconfig:option:`CONFIG_FP_HARDABI`.
 
-  **Workaround:** Use :kconfig:option:`CONFIG_FP_SOFTABI` or keep :kconfig:option:`CONFIG_SPM` enabled in the application.
+  **Workaround:** Use :kconfig:option:`CONFIG_FP_SOFTABI` or keep ``CONFIG_SPM`` enabled in the application.
 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
@@ -2668,7 +2668,7 @@ NCSDK-15345: TF-M does not support non-secure partitions in external flash
   TF-M does not support configuring a non-secure partition in external flash, such as non-secure storage or MCUboot secondary partition.
   Partitions that TF-M will attempt to configure as non-secure are: ``tfm_nonsecure``, ``nonsecure_storage``, and ``mcuboot_secondary``.
 
-  **Workaround:** Do not put non-secure partitions in external flash or keep :kconfig:option:`CONFIG_SPM` enabled in the application.
+  **Workaround:** Do not put non-secure partitions in external flash or keep ``CONFIG_SPM`` enabled in the application.
 
 .. rst-class:: v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0
 
@@ -2706,7 +2706,7 @@ NCSDK-14590: Usage fault in interrupt handlers when using FPU extensions
 NCSDK-15443: TF-M cannot be booted by MCUboot without enabling :kconfig:option:`CONFIG_MCUBOOT_CLEANUP_ARM_CORE` in MCUboot
   TF-M cannot be booted by MCUboot unless MCUboot cleans up the ARM hardware state to reset values before booting TF-M.
 
-  **Workaround:** Upgrade MCUboot with :kconfig:option:`CONFIG_MCUBOOT_CLEANUP_ARM_CORE` enabled or keep :kconfig:option:`CONFIG_SPM` enabled in the application.
+  **Workaround:** Upgrade MCUboot with :kconfig:option:`CONFIG_MCUBOOT_CLEANUP_ARM_CORE` enabled or keep ``CONFIG_SPM`` enabled in the application.
 
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0
 

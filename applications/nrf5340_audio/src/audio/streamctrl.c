@@ -276,7 +276,7 @@ static void button_evt_handler(struct button_evt event)
 			return;
 		}
 		/* Starts/pauses the audio stream */
-		ret = le_audio_play_pause();
+		le_audio_play_pause();
 		if (ret) {
 			LOG_WRN("Could not play/pause");
 		}
@@ -295,14 +295,7 @@ static void button_evt_handler(struct button_evt event)
 		ret = le_audio_volume_down();
 		if (ret) {
 			LOG_WRN("Failed to decrease volume");
-		}
-
-		break;
-
-	case BUTTON_5:
-		ret = le_audio_volume_mute();
-		if (ret) {
-			LOG_WRN("Failed to mute volume");
+			break;
 		}
 
 		break;
@@ -316,13 +309,24 @@ static void button_evt_handler(struct button_evt event)
 #if (CONFIG_AUDIO_TEST_TONE)
 		ret = test_tone_button_press();
 #else
-		ret = le_audio_user_defined_button_press();
+		ret = le_audio_user_defined_button_press(LE_AUDIO_BUTTON_ID_4);
 #endif /*CONFIG_AUDIO_TEST_TONE*/
 
 		if (ret) {
 			LOG_WRN("Failed button 4 press");
 		}
 
+		break;
+
+	case BUTTON_5:
+#if (CONFIG_TRANSPORT_BIS) && (CONFIG_AUDIO_DEV == 1)
+		ret = le_audio_user_defined_button_press(LE_AUDIO_BUTTON_ID_5);
+#else
+		ret = le_audio_volume_mute();
+		if (ret) {
+			LOG_WRN("Failed to mute volume");
+		}
+#endif
 		break;
 
 	default:

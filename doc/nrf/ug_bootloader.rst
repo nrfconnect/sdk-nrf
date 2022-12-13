@@ -72,7 +72,7 @@ For detailed information about the memory layout, see the partition configuratio
    See :ref:`partition_manager` and :ref:`ug_multi_image` for details.
 
 By default, building an application with any bootloader configuration creates a :ref:`multi-image build <ug_multi_image>`, where the :ref:`partition_manager` manages its memory partitions.
-When building an application with :ref:`Cortex-M Security Extensions (CMSE) enabled <app_boards_spe_nspe_cpuapp_ns>`, the :ref:`secure_partition_manager` is also built with the image automatically.
+When building an application with :ref:`Cortex-M Security Extensions (CMSE) enabled <app_boards_spe_nspe_cpuapp_ns>`, then :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` is also built with the image automatically.
 
 .. _immutable_bootloader:
 

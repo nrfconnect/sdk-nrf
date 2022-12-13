@@ -150,7 +150,6 @@ Kconfig*                                  @tejlmand
 /samples/nrf9160/modem_shell/             @trantanen @hiltunent @jhirsi @tokangas
 /samples/nrf9160/nrf_cloud_*              @plskeggs @jayteemo @glarsennordic
 /samples/nrf9160/modem_trace_flash/       @gregersrygg @balaji-nordic
-/samples/spm/                             @lemrey @hakonfam @SebastianBoe
 /samples/openthread/                      @rlubos @edmont @canisLupus1313 @mariuszpos
 /samples/nrf_profiler/                    @pdunaj
 /samples/peripheral/radio_test/           @KAGA164 @maje-emb
@@ -211,7 +210,6 @@ Kconfig*                                  @tejlmand
 /subsys/pcd/                              @hakonfam
 /subsys/nrf_profiler/                     @pdunaj
 /subsys/shell/                            @nordic-krch
-/subsys/spm/                              @SebastianBoe
 /subsys/nonsecure/                        @SebastianBoe
 /modules/                                 @tejlmand
 /modules/tfm/                             @SebastianBoe @joerchan
@@ -266,7 +264,6 @@ Kconfig*                                  @tejlmand
 /tests/subsys/partition_manager/region/   @hakonfam @sigvartmh
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
-/tests/subsys/spm/                        @oyvindronningstad @SebastianBoe
 /tests/subsys/zigbee/                     @tomchy @sebastiandraus
 /tests/tfm/                               @SebastianBoe @joerchan @torsteingrindvik @magnev
 /tests/unity/                             @nordic-krch

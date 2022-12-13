@@ -15,7 +15,7 @@ s0_pad:
     align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
 
 app_image:
-  span: [tfm, spm, app]
+  span: [tfm, app]
 
 s0_image:
   # S0 spans over the image booted by B0

@@ -127,13 +127,24 @@ struct le_audio_evt {
 typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool bad_frame,
 				    uint32_t sdu_ref);
 
+enum le_audio_button_id {
+	LE_AUDIO_BUTTON_ID_1,
+	LE_AUDIO_BUTTON_ID_2,
+	LE_AUDIO_BUTTON_ID_3,
+	LE_AUDIO_BUTTON_ID_4,
+	LE_AUDIO_BUTTON_ID_5,
+	LE_AUDIO_BUTTON_ID_NUM
+};
+
 /**
  * @brief Generic function for a user defined button press
+ *
+ * @param id		Button ID
  *
  * @return	0 for success,
  *		error otherwise
  */
-int le_audio_user_defined_button_press(void);
+int le_audio_user_defined_button_press(enum le_audio_button_id id);
 
 /**
  * @brief Get configuration for audio stream

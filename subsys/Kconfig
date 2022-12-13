@@ -33,8 +33,6 @@ rsource "event_manager_proxy/Kconfig"
 
 rsource "nrf_profiler/Kconfig"
 
-rsource "spm/Kconfig"
-
 rsource "fw_info/Kconfig"
 
 rsource "debug/Kconfig"

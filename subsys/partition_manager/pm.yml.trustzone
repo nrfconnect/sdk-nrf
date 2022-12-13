@@ -1,4 +1,4 @@
-# Create a span for the RAM to be configured as SECURE by the spm.
+# Create a span for the RAM to be configured as SECURE by TF-M.
 sram_secure:
   region: sram_primary
   span:

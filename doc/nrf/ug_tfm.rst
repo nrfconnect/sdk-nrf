@@ -78,8 +78,6 @@ A minimal version of the TF-M secure application is provided in |NCS| to show ho
 
 The secure services supported by this minimal version allow for generating random numbers, and the platform services.
 
-This corresponds to the feature set provided by the deprecated :ref:`secure_partition_manager` (SPM).
-
 The minimal version of TF-M is disabled by setting the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` option or one of the other build profiles.
 
 When :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` is set, the configurability of TF-M is severely limited.
@@ -157,7 +155,7 @@ Migrating from Secure Partition Manager to Trusted Firmware-M
 *************************************************************
 
 The interface to TF-M is different from the interface to SPM.
-Due to that, the application code that uses the SPM :ref:`lib_secure_services` needs to be ported to use TF-M instead.
+Due to that, the application code that uses the SPM Secure Services needs to be ported to use TF-M instead.
 
 TF-M can replace the following SPM services:
 

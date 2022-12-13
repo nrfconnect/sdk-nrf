@@ -28,6 +28,21 @@ config BLE_LE_POWER_CONTROL_ENABLED
 	  dynamically and automatically during connection, which provides effective
 	  communication.
 
+config BT_DEVICE_NAME_ALT
+	string "Alternative Bluetooth device name"
+	default "NRF5340_AUDIO_ALT"
+	depends on TRANSPORT_BIS
+	help
+	  Alternative Bluetooth device name. Name can be up to 248 bytes long 
+	  (excluding NULL termination). Can be empty string.
+
+config BT_ALTERNATIVE_DEVICE_NAME
+	bool "Use the alternative device name"
+	default n
+	depends on TRANSPORT_BIS
+	help
+	  Use the alternative Bluetooth device name.
+
 choice	BLE_CONN_TX_POWER
 	prompt "Default TX power for BLE connections"
 	default BLE_CONN_TX_POWER_0DBM

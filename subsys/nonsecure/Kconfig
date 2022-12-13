@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if BUILD_WITH_TFM || IS_SPM
+if BUILD_WITH_TFM
 menu "Trusted Execution Non-Secure"
 
 menu "TF-M UART pins"
@@ -386,4 +386,4 @@ endmenu # Peripheral Secure mapping
 
 endmenu # Trusted Execution Non-Secure
 
-endif # BUILD_WITH_TFM || IS_SPM
+endif # BUILD_WITH_TFM

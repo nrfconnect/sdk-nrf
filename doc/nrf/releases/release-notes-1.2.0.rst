@@ -150,7 +150,7 @@ Updated libraries
   * Added the ``CONFIG_DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE`` option that allows to configure fragment sizes for TLS connections and non-TLS connections independently.
   * Added support for using non-default ports.
 
-* :ref:`lib_spm`:
+* Secure Partition Manager (SPM):
 
   * Updated the security attribution to configure the peripherals NRF_REGULATORS and NRF_WDT as Non-secure.
   * Added the RTC0 peripheral (as Non-Secure).
@@ -584,7 +584,7 @@ NFC
 Build system
 ============
 
-* It is not possible to build and program :ref:`secure_partition_manager` and the application individually.
+* It is not possible to build and program Secure Partition Manager and the application individually.
 
 nrfxlib
 =======

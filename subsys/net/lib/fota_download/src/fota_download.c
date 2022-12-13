@@ -16,9 +16,7 @@
 #if defined(PM_S1_ADDRESS) || defined(CONFIG_DFU_TARGET_MCUBOOT)
 /* MCUBoot support is required */
 #include <fw_info.h>
-#ifdef CONFIG_SPM
-#include <secure_services.h>
-#elif CONFIG_BUILD_WITH_TFM
+#if CONFIG_BUILD_WITH_TFM
 #include <tfm_ioctl_api.h>
 #endif
 #include <dfu/dfu_target_mcuboot.h>
