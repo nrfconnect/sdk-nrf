@@ -17,15 +17,13 @@ config LOCATION_METHOD_GNSS
 
 config LOCATION_METHOD_CELLULAR
 	bool "Allow cellular positioning to be used for obtaining the location"
-	select MULTICELL_LOCATION if !LOCATION_METHOD_CELLULAR_EXTERNAL
-	depends on LTE_LINK_CONTROL
+	select CJSON_LIB if !LOCATION_METHOD_CELLULAR_EXTERNAL
 	default y
 
 config LOCATION_METHOD_WIFI
 	bool "Allow Wi-Fi positioning to be used for obtaining the location"
 	depends on WIFI
-	select REST_CLIENT
-	select CJSON_LIB
+	select CJSON_LIB if !LOCATION_METHOD_WIFI_EXTERNAL
 	select NET_MGMT
 	select NET_MGMT_EVENT
 	select NET_MGMT_EVENT_INFO
@@ -89,6 +87,13 @@ config LOCATION_METHOD_CELLULAR_EXTERNAL
 	  Allow application to send neighbor cell information to a cloud service and respond to
 	  the Location library with the outcome.
 
+config LOCATION_METHOD_CELLULAR_RECV_BUF_SIZE
+	int "Receive buffer size"
+	default 512
+	help
+	  Size of the buffer used to store the response from the location
+	  service.
+
 endif # LOCATION_METHOD_CELLULAR
 
 if LOCATION_METHOD_WIFI
@@ -98,19 +103,6 @@ config LOCATION_METHOD_WIFI_EXTERNAL
 	help
 	  Allow application to send access point information to a cloud service and respond to
 	  the Location library with the outcome.
-
-config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
-	bool "nRF Cloud location service"
-	default y if !LOCATION_METHOD_WIFI_EXTERNAL
-	depends on NRF_CLOUD_REST || NRF_CLOUD_MQTT
-	select NRF_CLOUD_LOCATION if NRF_CLOUD_MQTT
-	help
-	  Use nRF Cloud location service.
-
-config LOCATION_METHOD_WIFI_SERVICE_HERE
-	bool "Wi-Fi positioning using HERE service"
-	help
-	  Use HERE location service.
 
 config LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT
 	int "Max number of Wi-Fi scanning results"
@@ -126,39 +118,66 @@ config LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE
 	  Size of the buffer used to store the response from the Wi-Fi positioning
 	  service.
 
-if LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
+endif # LOCATION_METHOD_WIFI
 
-config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_HOSTNAME
-	string "nRF Cloud REST API hostname"
-	default NRF_CLOUD_REST_HOST_NAME
+if LOCATION_METHOD_CELLULAR || LOCATION_METHOD_WIFI
+
+config LOCATION_SERVICE_HERE
+	bool "HERE location service"
 	help
-	  Server hostname to use when connecting to the nRF Cloud location service.
+	  Use HERE location service.
 
-endif # LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
-
-if LOCATION_METHOD_WIFI_SERVICE_HERE
-
-config LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME
-	string "HERE server hostname"
-	default "positioning.hereapi.com"
+config LOCATION_SERVICE_NRF_CLOUD
+	bool "nRF Cloud location service"
+	default y if !LOCATION_METHOD_CELLULAR_EXTERNAL || !LOCATION_METHOD_WIFI_EXTERNAL
+	depends on NRF_CLOUD_REST || NRF_CLOUD_MQTT
+	select NRF_CLOUD_LOCATION if NRF_CLOUD_MQTT
+	select NRF_CLOUD_REST_AUTOGEN_JWT if NRF_CLOUD_REST
 	help
-	  Server hostname to use when connecting to the HERE location service.
+	  Use nRF Cloud location service.
 
-config LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY
+if LOCATION_SERVICE_HERE
+
+config LOCATION_REST_CLIENT
+	bool
+	default y
+	select REST_CLIENT
+	help
+	  Use the REST client library for cellular service. This is
+	  separated here from other dependencies to allow disabling of
+	  REST client library in tests for mocking purposes.
+
+config LOCATION_MODEM_KEY_MGMT
+	bool
+	default y
+	select MODEM_KEY_MGMT
+	help
+	  Use the Modem key management library for cellular service. This is
+	  separated here from other dependencies to allow disabling of
+	  Modem key management library in tests for mocking purposes.
+
+config LOCATION_SERVICE_HERE_API_KEY
 	string "HERE API key"
 	help
 	  HERE API key used for authentication.
 
-config LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG
-	int "Security tag for TLS certificates"
+config LOCATION_SERVICE_HERE_HOSTNAME
+	string "Server hostname for HERE"
+	default "positioning.hereapi.com"
+	help
+	  Server hostname to use when connecting to the HERE location service.
+
+config LOCATION_SERVICE_HERE_TLS_SEC_TAG
+	int "Security tag for HERE TLS certificates"
 	default 175
 	help
 	  Security tag where the required TLS certificates for the HERE location
-	  service are stored.
+	  service are stored. This sec tag will also be used to provision CA
+	  certificates.
 
-endif # LOCATION_METHOD_WIFI_SERVICE_HERE
+endif # LOCATION_SERVICE_HERE
 
-endif # LOCATION_METHOD_WIFI
+endif # LOCATION_METHOD_CELLULAR || LOCATION_METHOD_WIFI
 
 module = LOCATION
 module-str = Location

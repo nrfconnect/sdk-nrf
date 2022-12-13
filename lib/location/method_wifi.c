@@ -15,13 +15,14 @@
 
 #include "location_core.h"
 #include "location_utils.h"
+#include "location_service_utils.h"
 #include "wifi/wifi_service.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 BUILD_ASSERT(
-	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD) ||
-	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE) ||
+	IS_ENABLED(CONFIG_LOCATION_SERVICE_NRF_CLOUD) ||
+	IS_ENABLED(CONFIG_LOCATION_SERVICE_HERE) ||
 	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL),
 	"At least one Wi-Fi positioning service, or handling the service externally "
 	"must be enabled");
@@ -287,5 +288,19 @@ int method_wifi_init(void)
 	net_mgmt_init_event_callback(&method_wifi_net_mgmt_cb, method_wifi_net_mgmt_event_handler,
 				     (NET_EVENT_WIFI_SCAN_RESULT | NET_EVENT_WIFI_SCAN_DONE));
 	net_mgmt_add_event_callback(&method_wifi_net_mgmt_cb);
+
+#if defined(CONFIG_LOCATION_SERVICE_HERE)
+	int ret = location_service_utils_provision_ca_certificates();
+
+	if (ret) {
+		LOG_ERR("Certificate provisioning failed, ret %d", ret);
+		if (ret == -EACCES) {
+			LOG_WRN("err: -EACCESS, that might indicate that modem is in state where "
+				"cert cannot be written, i.e. not in pwroff or offline");
+		}
+		return ret;
+	}
+#endif
+
 	return 0;
 }
