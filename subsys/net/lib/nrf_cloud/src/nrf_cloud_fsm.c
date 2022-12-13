@@ -605,7 +605,7 @@ static int location_process(const char * const buf)
 		/* ret == 1 indicates that no location data was found */
 	}
 #endif
-	return -EFTYPE;
+	return -ENOSYS;
 }
 
 static int dc_rx_data_handler(const struct nct_evt *nct_evt)

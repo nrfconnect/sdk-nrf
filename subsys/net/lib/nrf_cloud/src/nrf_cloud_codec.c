@@ -1434,7 +1434,7 @@ int nrf_cloud_rest_fota_execution_parse(const char *const response,
 	size_obj = cJSON_GetObjectItem(job_doc, NRF_CLOUD_FOTA_REST_KEY_SIZE);
 
 	if (!id_obj || !path_obj || !host_obj || !type_obj || !size_obj) {
-		ret = -EFTYPE;
+		ret = -EPROTO;
 		goto err_cleanup;
 	}
 
@@ -1514,7 +1514,7 @@ int nrf_cloud_parse_pgps_response(const char *const response,
 		if (get_string_from_array(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST, &host_ptr) ||
 		    get_string_from_array(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH, &path_ptr)) {
 			LOG_ERR("Invalid P-GPS array response format");
-			err = -EFTYPE;
+			err = -EPROTO;
 			goto cleanup;
 		}
 	} else if (get_string_from_obj(rsp_obj, NRF_CLOUD_PGPS_RCV_REST_HOST, &host_ptr) ||
@@ -1529,7 +1529,7 @@ int nrf_cloud_parse_pgps_response(const char *const response,
 			err = -EFAULT;
 		} else {
 			LOG_ERR("Invalid P-GPS response format");
-			err = -EFTYPE;
+			err = -EPROTO;
 		}
 
 		goto cleanup;
@@ -2268,7 +2268,7 @@ int nrf_cloud_gnss_msg_json_encode(const struct nrf_cloud_gnss_data * const gnss
 		}
 		break;
 	default:
-		ret = -EFTYPE;
+		ret = -EPROTO;
 		goto cleanup;
 	}
 

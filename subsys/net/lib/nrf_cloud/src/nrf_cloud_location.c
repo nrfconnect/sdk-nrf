@@ -7,7 +7,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/net/socket.h>
-#include <nrf_socket.h>
 #include <zephyr/logging/log.h>
 #include <net/nrf_cloud_location.h>
 

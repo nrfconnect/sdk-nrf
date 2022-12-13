@@ -45,9 +45,9 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
 	     IS_ENABLED(CONFIG_LWM2M_INTEGRATION),
 	     "A cloud transport service must be enabled");
 
-#if defined(CONFIG_BOARD_QEMU_X86)
+#if defined(CONFIG_BOARD_QEMU_X86) || defined(CONFIG_BOARD_NATIVE_POSIX)
 BUILD_ASSERT(IS_ENABLED(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM),
-	     "Passing IMEI as cloud client ID is not supported when building for QEMU x86. "
+	     "Passing IMEI as cloud client ID is not supported when building for PC builds. "
 	     "This is because IMEI is retrieved from the modem and not available when running "
 	     "Zephyr's native TCP/IP stack.");
 #endif
@@ -608,7 +608,7 @@ static int setup(void)
 static void on_state_init(struct cloud_msg_data *msg)
 {
 	if ((IS_EVENT(msg, modem, MODEM_EVT_INITIALIZED)) ||
-	    (IS_EVENT(msg, debug, DEBUG_EVT_QEMU_X86_INITIALIZED))) {
+	    (IS_EVENT(msg, debug, DEBUG_EVT_EMULATOR_INITIALIZED))) {
 		int err;
 
 		state_set(STATE_LTE_DISCONNECTED);
@@ -645,7 +645,7 @@ static void on_state_lte_connected(struct cloud_msg_data *msg)
 static void on_state_lte_disconnected(struct cloud_msg_data *msg)
 {
 	if ((IS_EVENT(msg, modem, MODEM_EVT_LTE_CONNECTED)) ||
-	    (IS_EVENT(msg, debug, DEBUG_EVT_QEMU_X86_NETWORK_CONNECTED))) {
+	    (IS_EVENT(msg, debug, DEBUG_EVT_EMULATOR_NETWORK_CONNECTED))) {
 		state_set(STATE_LTE_CONNECTED);
 
 		/* LTE is now connected, cloud connection can be attempted */
