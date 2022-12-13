@@ -351,9 +351,6 @@ static int poll_data_task_done(void)
 
 	do {
 		ret = do_ftp_recv_ctrl(true, FTP_CODE_226);
-		if (ret < 0) {
-			break;
-		}
 		if (ret == FTP_CODE_226) {
 			break;
 		}
@@ -365,6 +362,8 @@ static int poll_data_task_done(void)
 				client.ctrl_callback(ctrl_buf, strlen(ctrl_buf));
 				break;
 			}
+		} else if (ret < 0) {
+			break;
 		}
 	} while (1);
 
