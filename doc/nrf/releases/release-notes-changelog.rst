@@ -181,6 +181,11 @@ nRF9160 samples
 
     * The sample now waits for RRC idle mode before requesting neighbor cell measurements.
 
+* :ref:`lwm2m_client` sample:
+
+  * Added:
+
+    * Support for nRF7002 EK shield and Wi-Fi based location.
 
 Peripheral samples
 ------------------
@@ -297,6 +302,13 @@ Libraries for networking
 * :ref:`lib_nrf_cloud` library:
 
   * Fixed a bug where the same buffer was incorrectly shared between caching a P-GPS prediction and loading a new one, when external flash was used.
+
+* :ref:`lib_lwm2m_location_assistance` library:
+
+  * Added:
+
+    * Support for Wi-Fi based location through LwM2M.
+    * API for scanning Wi-Fi access points.
 
 Libraries for NFC
 -----------------

@@ -85,6 +85,17 @@ void ncell_meas_work_handler(struct k_work *work)
 	k_work_schedule(&ncell_meas_work, K_SECONDS(CONFIG_APP_NEIGHBOUR_CELL_SCAN_INTERVAL));
 }
 #endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT)
+static struct k_work_delayable ground_fix_work;
+void ground_fix_work_handler(struct k_work *work)
+{
+	LOG_INF("Send ground fix location request event");
+	struct ground_fix_location_request_event *ground_fix_event =
+	new_ground_fix_location_request_event();
+
+	APP_EVENT_SUBMIT(ground_fix_event);
+}
+#endif
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE)
 static bool button_callback(const struct app_event_header *aeh)
@@ -107,14 +118,14 @@ defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 #endif
 			break;
 		case 2:
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)
 			LOG_INF("Send cell location request event");
-			struct cell_location_request_event *cell_event =
-				new_cell_location_request_event();
+			struct ground_fix_location_request_event *ground_fix_event =
+				new_ground_fix_location_request_event();
 
-			APP_EVENT_SUBMIT(cell_event);
+			APP_EVENT_SUBMIT(ground_fix_event);
 #else
-			LOG_INF("Cell location not enabled");
+			LOG_INF("Ground fix location not enabled");
 #endif
 			break;
 		}
@@ -593,6 +604,13 @@ void main(void)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
 	k_work_init_delayable(&ncell_meas_work, ncell_meas_work_handler);
 	k_work_schedule(&ncell_meas_work, K_SECONDS(1));
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT)
+	k_work_init_delayable(&ground_fix_work, ground_fix_work_handler);
+	k_work_schedule(&ground_fix_work, K_SECONDS(60));
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_WIFI_AP_SCANNER)
+	lwm2m_wifi_request_scan();
+#endif
 #endif
 #if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
 	k_work_init_delayable(&send_periodical_work, send_periodically_work_handler);
