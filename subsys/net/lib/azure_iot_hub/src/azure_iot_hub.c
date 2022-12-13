@@ -83,6 +83,12 @@ AZ_HUB_STATIC void iot_hub_state_set(enum iot_hub_state new_state)
 {
 	bool notify_error = false;
 
+	if (iot_hub_state == new_state) {
+		LOG_DBG("Skipping transition to the same state (%s)",
+			state_name_get(iot_hub_state));
+		return;
+	}
+
 	/* Check for legal state transitions. */
 	switch (iot_hub_state) {
 	case STATE_UNINIT:
