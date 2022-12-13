@@ -298,6 +298,10 @@ Other libraries
 
 * :ref:`lib_location` library:
 
+  * Updated:
+
+    * GNSS filtered ephemerides are no longer used when the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME` Kconfig option is enabled.
+
   * Fixed:
 
     * An issue causing the A-GPS data download to be delayed until the RRC connection release.
