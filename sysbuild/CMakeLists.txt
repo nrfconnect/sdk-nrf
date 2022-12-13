@@ -4,6 +4,19 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
+  cmake_parse_arguments(PRE_CMAKE "" "" "IMAGES" ${ARGN})
+
+  foreach(image ${PRE_CMAKE_IMAGES})
+    if(SB_CONFIG_PARTITION_MANAGER)
+      set_config_bool(${image} CONFIG_PARTITION_MANAGER_ENABLED y)
+    else()
+      set_config_bool(${image} CONFIG_PARTITION_MANAGER_ENABLED n)
+    endif()
+  endforeach()
+
+endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
+
 include(${CMAKE_CURRENT_LIST_DIR}/extensions.cmake)
 
 if(SB_CONFIG_SECURE_BOOT)

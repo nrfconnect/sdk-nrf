@@ -6,5 +6,9 @@
 
 # This file contains extra images which can be used with sysbuild based builds.
 
+config PARTITION_MANAGER
+	bool "Partition Manager"
+	default y
+
 rsource "Kconfig.netcore"
 rsource "Kconfig.secureboot"

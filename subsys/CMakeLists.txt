@@ -66,7 +66,7 @@ add_subdirectory_ifdef(CONFIG_FW_INFO	fw_info)
 add_subdirectory(shell)
 
 add_subdirectory(debug)
-add_subdirectory(partition_manager)
+add_subdirectory_ifdef(CONFIG_PARTITION_MANAGER_ENABLED partition_manager)
 
 add_subdirectory_ifdef(CONFIG_NRF_RPC nrf_rpc)
 add_subdirectory_ifdef(CONFIG_NRF_802154_RADIO_DRIVER ieee802154)
