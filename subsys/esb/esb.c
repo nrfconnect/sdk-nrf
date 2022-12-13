@@ -12,12 +12,23 @@
 
 #include <hal/nrf_radio.h>
 #include <hal/nrf_timer.h>
-#include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
 
+#ifdef NRF53_SERIES
+#include "hal/nrf_vreqctrl.h"
+#endif /* NRF53_SERIES */
+
 #include <zephyr/irq.h>
+#include <zephyr/logging/log.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/byteorder.h>
+
+#include <mpsl_fem_protocol_api.h>
+
+#include "esb_peripherals.h"
+#include "esb_ppi_api.h"
+
+LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 
 /* Constants */
 
@@ -35,6 +46,12 @@
 /* Minimum retransmit time */
 #define RETRANSMIT_DELAY_MIN 435
 
+/* Radio Tx ramp-up time in microseconds. */
+#define TX_RAMP_UP_TIME_US 129
+
+/* Radio Rx ramp-up time in microseconds. */
+#define RX_RAMP_UP_TIME_US 124
+
 /* Interrupt flags */
 /* Interrupt mask value for TX success. */
 #define INT_TX_SUCCESS_MSK BIT(0)
@@ -50,12 +67,19 @@
 /* Mask value to signal updating radio prefixes. */
 #define ADDR_UPDATE_MASK_PREFIX BIT(2)
 
+/* Radio address event latency in microseconds. */
+#define ADDR_EVENT_LATENCY_US (13)
+
  /* The maximum value for PID. */
 #define PID_MAX 3
 
 #define BIT_MASK_UINT_8(x) (0xFF >> (8 - (x)))
 
+/* Radio base frequency. */
 #define RADIO_BASE_FREQUENCY 2400UL
+
+/* NRF5340 Radio high voltage gain. */
+#define NRF5340_HIGH_VOLTAGE_GAIN 3
 
 #define RADIO_SHORTS_COMMON                                                              \
 	(NRF_RADIO_SHORT_READY_START_MASK | NRF_RADIO_SHORT_END_DISABLE_MASK |           \
@@ -171,17 +195,7 @@ struct esb_address {
 	uint8_t rf_channel;        /* Channel to use (between 0 and 100). */
 };
 
-/** The ESB event IRQ number when running on an nRF5 device. */
-#define ESB_EVT_IRQ        SWI0_IRQn
-/** The handler for @ref ESB_EVT_IRQ when running on an nRF5 device. */
-#define ESB_EVT_IRQHandler SWI0_IRQHandler
-
-#define ESB_TIMER_IRQ          NRFX_CONCAT_3(TIMER, CONFIG_ESB_SYS_TIMER_INSTANCE, _IRQn)
-#define ESB_TIMER_IRQ_HANDLER  NRFX_CONCAT_3(nrfx_timer_,		    \
-					     CONFIG_ESB_SYS_TIMER_INSTANCE, \
-					     _irq_handler)
-
-static nrfx_timer_t esb_timer = NRFX_TIMER_INSTANCE(CONFIG_ESB_SYS_TIMER_INSTANCE);
+static nrfx_timer_t esb_timer = ESB_TIMER_INSTANCE;
 
 static bool esb_initialized;
 static struct esb_config esb_cfg;
@@ -228,11 +242,39 @@ static volatile uint32_t wait_for_ack_timeout_us;
 
 static uint32_t radio_shorts_common = RADIO_SHORTS_COMMON;
 
-static uint8_t ppi_ch_radio_address_timer_stop;
-static uint8_t ppi_ch_timer_compare0_radio_disable;
-static uint8_t ppi_ch_timer_compare1_radio_txen;
+static const mpsl_fem_event_t rx_event = {
+	.type = MPSL_FEM_EVENT_TYPE_TIMER,
+	.event.timer = {
+		.p_timer_instance = ESB_NRF_TIMER_INSTANCE,
+		.compare_channel_mask = (BIT(NRF_TIMER_CC_CHANNEL2) | BIT(NRF_TIMER_CC_CHANNEL3)),
+		.counter_period = {
+			.end = RX_RAMP_UP_TIME_US,
+		},
+	},
+};
 
-static uint32_t ppi_all_channels_mask;
+static const mpsl_fem_event_t tx_event = {
+	.type = MPSL_FEM_EVENT_TYPE_TIMER,
+	.event.timer = {
+		.p_timer_instance = ESB_NRF_TIMER_INSTANCE,
+		.compare_channel_mask = (BIT(NRF_TIMER_CC_CHANNEL2) | BIT(NRF_TIMER_CC_CHANNEL3)),
+		.counter_period = {
+			.end = TX_RAMP_UP_TIME_US,
+		},
+	},
+};
+
+static mpsl_fem_event_t tx_time_shifted = {
+	.type = MPSL_FEM_EVENT_TYPE_TIMER,
+	.event.timer = {
+		.p_timer_instance = ESB_NRF_TIMER_INSTANCE,
+		.compare_channel_mask = (BIT(NRF_TIMER_CC_CHANNEL2) | BIT(NRF_TIMER_CC_CHANNEL3)),
+	},
+};
+
+static mpsl_fem_event_t disable_event = {
+	.type = MPSL_FEM_EVENT_TYPE_GENERIC,
+};
 
 /* These function pointers are changed dynamically, depending on protocol
  * configuration and state. Note that they will be 0 initialized.
@@ -313,6 +355,147 @@ static inline void apply_errata143_workaround(void)
 	}
 }
 
+static void esb_fem_for_tx_set(bool ack)
+{
+	uint32_t timer_shorts;
+
+	timer_shorts = NRF_TIMER_SHORT_COMPARE2_STOP_MASK;
+
+	if (ack) {
+		/* In case of expecting ACK reception, clear the timer to start counting from 0
+		 * on the RADIO_DISABLED event. This is needed to start external front-end module
+		 * with valid timeout because radio uses DISABLED_RXEN short.
+		 */
+		timer_shorts |= NRF_TIMER_SHORT_COMPARE2_CLEAR_MASK;
+	}
+
+	if (mpsl_fem_pa_configuration_set(&tx_event, &disable_event) == 0) {
+		esb_ppi_for_fem_set();
+	} else {
+		/* We want to start counting ACK timeout and potential packet retransmission from
+		 * RADIO_DISABLED event so timer starts through EGU together with radio ramp-up,
+		 * we want to stop and clear it before RADIO_DISABLED event to start it again
+		 * when this event occurs. The timer value must be big enough to give us possibility
+		 * to reconfigure timer shorts before timer will be cleared by them.
+		 */
+		nrf_timer_cc_set(esb_timer.p_reg, NRF_TIMER_CC_CHANNEL2, TX_RAMP_UP_TIME_US);
+	}
+
+	nrf_timer_shorts_set(esb_timer.p_reg, timer_shorts);
+}
+
+static void esb_fem_for_rx_set(void)
+{
+	if (mpsl_fem_lna_configuration_set(&rx_event, &disable_event) == 0) {
+		esb_ppi_for_fem_set();
+		nrf_timer_shorts_set(esb_timer.p_reg,
+			(NRF_TIMER_SHORT_COMPARE2_CLEAR_MASK | NRF_TIMER_SHORT_COMPARE2_STOP_MASK));
+	}
+}
+
+static void esb_fem_for_ack_rx(void)
+{
+	/* Timer is running and timer's shorts and PPI connections have been configured. */
+	mpsl_fem_pa_configuration_clear();
+	mpsl_fem_lna_configuration_set(&rx_event, &disable_event);
+}
+
+static void esb_fem_for_tx_ack(void)
+{
+	/* Timer is running and timer's shorts and PPI connections have been configured. */
+	mpsl_fem_lna_configuration_clear();
+	mpsl_fem_pa_configuration_set(&tx_event, &disable_event);
+}
+
+static void esb_fem_reset(void)
+{
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_SHUTDOWN);
+
+	mpsl_fem_lna_configuration_clear();
+	mpsl_fem_pa_configuration_clear();
+
+	esb_ppi_for_fem_clear();
+
+	mpsl_fem_deactivate_now(MPSL_FEM_ALL);
+	mpsl_fem_disable();
+}
+
+static void esb_fem_lna_reset(void)
+{
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_SHUTDOWN);
+
+	esb_ppi_for_fem_clear();
+
+	mpsl_fem_lna_configuration_clear();
+	mpsl_fem_disable();
+}
+
+static void esb_fem_pa_reset(void)
+{
+	mpsl_fem_pa_configuration_clear();
+
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_SHUTDOWN);
+	esb_ppi_for_fem_clear();
+
+	mpsl_fem_disable();
+}
+
+void esb_fem_for_rx_ack(void)
+{
+	mpsl_fem_pa_configuration_clear();
+	mpsl_fem_lna_configuration_set(&rx_event, &disable_event);
+
+	/* The timer is running, shorts must be reconfigured because we do not want to
+	 * stop timer after front-end module was triggered. Timer needs to count ACK reception
+	 * timeout and potential retransmission delay. Timer cannot be stopped here because
+	 * these timeout are counted since RADIO_DISABLED event.
+	 */
+	nrf_timer_shorts_disable(esb_timer.p_reg,
+			(NRF_TIMER_SHORT_COMPARE2_CLEAR_MASK | NRF_TIMER_SHORT_COMPARE2_STOP_MASK));
+}
+
+void esb_fem_for_tx_retry(void)
+{
+	/* The radio is ramped-up with delay set in the timer compare channel 1.
+	 * Calculate the ramp-up time for external front-end module.
+	 */
+	tx_time_shifted.event.timer.counter_period.end =
+		nrf_timer_cc_get(esb_timer.p_reg, NRF_TIMER_CC_CHANNEL1) + TX_RAMP_UP_TIME_US;
+
+	/* This starts the ESB TIMER on the radio disabled event. This connection is needed even
+	 * when front-end module is not used.
+	 */
+	esb_ppi_for_fem_set();
+
+	if (mpsl_fem_pa_configuration_set(&tx_time_shifted, &disable_event) == 0) {
+		/* In case of retransmission timer is configured to trigger RADIO_TXEN task after
+		 * retransmission timeout, but with external front-end module, it must also
+		 * schedule front-end module ramp-up which occurs later. Shorts need to be
+		 * reconfigured here to stop and clear the timer after front-end module will be
+		 * ramped-up.
+		 */
+		nrf_timer_shorts_set(esb_timer.p_reg,
+			(NRF_TIMER_SHORT_COMPARE2_CLEAR_MASK | NRF_TIMER_SHORT_COMPARE2_STOP_MASK));
+	}
+}
+
+void esb_fem_for_tx_retry_clear(void)
+{
+	esb_ppi_for_fem_clear();
+
+	mpsl_fem_pa_configuration_clear();
+	mpsl_fem_deactivate_now(MPSL_FEM_ALL);
+
+	nrf_timer_shorts_disable(esb_timer.p_reg,
+			(NRF_TIMER_SHORT_COMPARE2_CLEAR_MASK | NRF_TIMER_SHORT_COMPARE2_STOP_MASK));
+}
+
+static void radio_start(void)
+{
+	/* Event generator unit is used to start radio and protocol timer if needed. */
+	nrf_egu_task_trigger(ESB_EGU, ESB_EGU_TASK);
+}
+
 static void update_rf_payload_format_esb_dpl(uint32_t payload_length)
 {
 	nrf_radio_packet_conf_t packet_config = { 0 };
@@ -372,7 +555,30 @@ static void update_radio_addresses(uint8_t update_mask)
 
 static void update_radio_tx_power(void)
 {
-	nrf_radio_txpower_set(NRF_RADIO, esb_cfg.tx_output_power);
+	int32_t err;
+	mpsl_tx_power_split_t tx_power;
+
+	(void)mpsl_fem_tx_power_split(esb_cfg.tx_output_power, &tx_power,
+				      (RADIO_BASE_FREQUENCY + esb_addr.rf_channel));
+
+	err = mpsl_fem_pa_gain_set(&tx_power.fem);
+	if (err) {
+		/* Should not happen. */
+		__ASSERT_NO_MSG(false);
+	}
+
+#ifdef NRF53_SERIES
+	bool high_voltage = false;
+
+	if (tx_power.radio_tx_power > 0) {
+		high_voltage = true;
+		tx_power.radio_tx_power -= NRF5340_HIGH_VOLTAGE_GAIN;
+	}
+
+	nrf_vreqctrl_radio_high_voltage_set(NRF_VREQCTRL_NS, high_voltage);
+#endif /* NRF53_SERIES */
+
+	nrf_radio_txpower_set(NRF_RADIO, tx_power.radio_tx_power);
 }
 
 static bool update_radio_bitrate(void)
@@ -461,7 +667,6 @@ static bool update_radio_parameters(void)
 {
 	bool params_valid = true;
 
-	update_radio_tx_power();
 	params_valid &= update_radio_bitrate();
 	params_valid &= update_radio_protocol();
 	params_valid &= update_radio_crc();
@@ -590,11 +795,9 @@ static int sys_timer_init(void)
 
 	nrfx_err = nrfx_timer_init(&esb_timer, &config, esb_timer_handler);
 	if (nrfx_err != NRFX_SUCCESS) {
+		LOG_ERR("Failed to initialize nrfx timer (err %d)", nrfx_err);
 		return -EFAULT;
 	}
-
-	nrf_timer_shorts_set(esb_timer.p_reg,
-		(NRF_TIMER_SHORT_COMPARE1_STOP_MASK | NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK));
 
 	return 0;
 }
@@ -604,73 +807,9 @@ static void sys_timer_deinit(void)
 	nrfx_timer_uninit(&esb_timer);
 }
 
-static int ppi_init(void)
-{
-	nrfx_err_t nrfx_err;
-
-	nrfx_err = nrfx_gppi_channel_alloc(&ppi_ch_radio_address_timer_stop);
-	if (nrfx_err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	nrfx_err = nrfx_gppi_channel_alloc(&ppi_ch_timer_compare0_radio_disable);
-	if (nrfx_err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	nrfx_err = nrfx_gppi_channel_alloc(&ppi_ch_timer_compare1_radio_txen);
-	if (nrfx_err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	nrfx_gppi_channel_endpoints_setup(ppi_ch_radio_address_timer_stop,
-			nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS),
-			nrfx_timer_task_address_get(&esb_timer, NRF_TIMER_TASK_SHUTDOWN));
-
-	nrfx_gppi_channel_endpoints_setup(ppi_ch_timer_compare0_radio_disable,
-			nrfx_timer_event_address_get(&esb_timer, NRF_TIMER_EVENT_COMPARE0),
-			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_DISABLE));
-
-	nrfx_gppi_channel_endpoints_setup(ppi_ch_timer_compare1_radio_txen,
-			nrfx_timer_event_address_get(&esb_timer, NRF_TIMER_EVENT_COMPARE1),
-			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
-
-	ppi_all_channels_mask = (BIT(ppi_ch_radio_address_timer_stop) |
-				 BIT(ppi_ch_timer_compare0_radio_disable) |
-				 BIT(ppi_ch_timer_compare1_radio_txen));
-
-	return 0;
-
-error:
-	return -EFAULT;
-}
-
-static void ppi_deinit(void)
-{
-	nrfx_gppi_channels_disable(ppi_all_channels_mask);
-
-	nrfx_gppi_event_endpoint_clear(ppi_ch_radio_address_timer_stop,
-			nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS));
-	nrfx_gppi_event_endpoint_clear(ppi_ch_timer_compare0_radio_disable,
-			nrfx_timer_event_address_get(&esb_timer, NRF_TIMER_EVENT_COMPARE0));
-	nrfx_gppi_event_endpoint_clear(ppi_ch_timer_compare1_radio_txen,
-			nrfx_timer_event_address_get(&esb_timer, NRF_TIMER_EVENT_COMPARE1));
-
-	nrfx_gppi_task_endpoint_clear(ppi_ch_radio_address_timer_stop,
-			nrfx_timer_task_address_get(&esb_timer, NRF_TIMER_TASK_SHUTDOWN));
-	nrfx_gppi_event_endpoint_clear(ppi_ch_timer_compare0_radio_disable,
-			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_DISABLE));
-	nrfx_gppi_event_endpoint_clear(ppi_ch_timer_compare1_radio_txen,
-			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
-
-	nrfx_gppi_channel_free(ppi_ch_radio_address_timer_stop);
-	nrfx_gppi_channel_free(ppi_ch_timer_compare0_radio_disable);
-	nrfx_gppi_channel_free(ppi_ch_timer_compare1_radio_txen);
-}
-
 static void start_tx_transaction(void)
 {
-	bool ack;
+	bool ack = true;
 	struct esb_radio_pdu *pdu = (struct esb_radio_pdu *)tx_payload_buffer;
 	last_tx_attempts = 1;
 	/* Prepare the payload */
@@ -736,6 +875,8 @@ static void start_tx_transaction(void)
 	nrf_radio_rxaddresses_set(NRF_RADIO, BIT(current_payload->pipe));
 	nrf_radio_frequency_set(NRF_RADIO, (RADIO_BASE_FREQUENCY + esb_addr.rf_channel));
 
+	update_radio_tx_power();
+
 	nrf_radio_packetptr_set(NRF_RADIO, pdu);
 
 	NVIC_ClearPendingIRQ(RADIO_IRQn);
@@ -745,11 +886,17 @@ static void start_tx_transaction(void)
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_PAYLOAD);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 
-	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_TXEN);
+	esb_ppi_for_txrx_set(false, ack);
+	esb_fem_for_tx_set(ack);
+
+	radio_start();
 }
 
 static void on_radio_disabled_tx_noack(void)
 {
+	esb_fem_pa_reset();
+	esb_ppi_for_txrx_clear(false, false);
+
 	interrupt_flags |= INT_TX_SUCCESS_MSK;
 	tx_fifo_remove_last();
 
@@ -764,6 +911,11 @@ static void on_radio_disabled_tx_noack(void)
 
 static void on_radio_disabled_tx(void)
 {
+	esb_ppi_for_txrx_clear(false, true);
+	/* The timer was triggered on radio disabled event so we can clear PPI connections here. */
+	esb_ppi_for_fem_clear();
+	esb_fem_for_rx_ack();
+
 	/* Remove the DISABLED -> RXEN shortcut, to make sure the radio stays
 	 * disabled after the RX window
 	 */
@@ -774,19 +926,19 @@ static void on_radio_disabled_tx(void)
 	 * received by the time defined in wait_for_ack_timeout_us
 	 */
 
-	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL0, wait_for_ack_timeout_us, false);
-	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL1, (esb_cfg.retransmit_delay - 130),
-			   false);
+	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL0,
+			   (wait_for_ack_timeout_us + ADDR_EVENT_LATENCY_US), false);
+	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL1,
+			   (esb_cfg.retransmit_delay - TX_RAMP_UP_TIME_US), false);
 
-	nrfx_timer_clear(&esb_timer);
+	nrf_timer_shorts_set(esb_timer.p_reg,
+		(NRF_TIMER_SHORT_COMPARE1_STOP_MASK | NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK));
 
 	nrf_timer_event_clear(esb_timer.p_reg, NRF_TIMER_EVENT_COMPARE0);
 	nrf_timer_event_clear(esb_timer.p_reg, NRF_TIMER_EVENT_COMPARE1);
 
-	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_START);
-
-	nrfx_gppi_channels_enable(ppi_all_channels_mask);
-	nrfx_gppi_channels_disable(BIT(ppi_ch_timer_compare1_radio_txen));
+	esb_ppi_for_wait_for_ack_set();
+	esb_ppi_for_retransmission_clear();
 
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
 
@@ -807,7 +959,11 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 	/* Make sure the timer will not deactivate the radio if a packet is
 	 * received.
 	 */
-	nrfx_gppi_channels_disable(ppi_all_channels_mask);
+	esb_ppi_for_wait_for_ack_clear();
+
+	/* Just clear LNA configuration and disable front-end module. */
+	mpsl_fem_lna_configuration_clear();
+	mpsl_fem_disable();
 
 	/* If the radio has received a packet and the CRC status is OK */
 	if (nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_END) &&
@@ -844,6 +1000,10 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 			esb_state = ESB_STATE_IDLE;
 			NVIC_SetPendingIRQ(ESB_EVT_IRQ);
 		} else {
+			bool radio_started = true;
+
+			nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_READY);
+
 			/* There are still more retransmits left, TX mode should
 			 * be entered again as soon as the system timer reaches
 			 * CC[1].
@@ -857,12 +1017,34 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 			on_radio_disabled = on_radio_disabled_tx;
 			esb_state = ESB_STATE_PTX_TX_ACK;
 
-			nrfx_gppi_channels_enable(BIT(ppi_ch_timer_compare1_radio_txen));
+			update_radio_tx_power();
 
-			nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_START);
+			/* Transmission is armed on TIMER's CC1. */
+			esb_fem_for_tx_retry();
+			esb_ppi_for_retransmission_set();
 
+			/* Check if PPI worked. If not we are to late with retransmission but it is
+			 * ok to start retransmission here.
+			 */
 			if (nrf_timer_event_check(esb_timer.p_reg, NRF_TIMER_EVENT_COMPARE1)) {
-				nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_TXEN);
+				radio_started =
+					(nrf_radio_state_get(NRF_RADIO) == NRF_RADIO_STATE_TXRU) ||
+					(nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_READY));
+			} else {
+				/* Resume timer in case of CRC errors. */
+				nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_START);
+			}
+
+			if (!radio_started) {
+				/* Clear retransmission configuration. */
+				esb_fem_for_tx_retry_clear();
+				esb_ppi_for_retransmission_clear();
+
+				/* Start radio here. */
+				esb_ppi_for_txrx_set(false, true);
+				esb_fem_for_tx_set(true);
+
+				radio_start();
 			}
 		}
 	}
@@ -870,11 +1052,15 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 
 static void clear_events_restart_rx(void)
 {
+	esb_fem_lna_reset();
+	esb_ppi_for_txrx_clear(true, false);
+
 	nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
 
 	update_rf_payload_format(esb_cfg.payload_length);
 
 	nrf_radio_packetptr_set(NRF_RADIO, rx_payload_buffer);
+
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
 
@@ -883,9 +1069,13 @@ static void clear_events_restart_rx(void)
 	}
 
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+
 	nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common | NRF_RADIO_SHORT_DISABLED_TXEN_MASK));
 
-	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
+	esb_ppi_for_txrx_set(true, false);
+	esb_fem_for_rx_set();
+
+	radio_start();
 }
 
 static void on_radio_disabled_rx_dpl(bool retransmit_payload,
@@ -968,6 +1158,8 @@ static void on_radio_disabled_rx(void)
 
 	/* Check if an ack should be sent */
 	if ((esb_cfg.selective_auto_ack == false) || rx_pdu->type.dpl_pdu.no_ack) {
+		esb_fem_for_tx_ack();
+
 		nrf_radio_shorts_set(NRF_RADIO,
 				     (radio_shorts_common | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
 
@@ -986,6 +1178,8 @@ static void on_radio_disabled_rx(void)
 		}
 
 		esb_state = ESB_STATE_PRX_SEND_ACK;
+
+		update_radio_tx_power();
 
 		nrf_radio_txaddress_set(NRF_RADIO, nrf_radio_rxmatch_get(NRF_RADIO));
 		nrf_radio_packetptr_set(NRF_RADIO, tx_pdu);
@@ -1009,6 +1203,8 @@ static void on_radio_disabled_rx(void)
 
 static void on_radio_disabled_rx_ack(void)
 {
+	esb_fem_for_ack_rx();
+
 	nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common | NRF_RADIO_SHORT_DISABLED_TXEN_MASK));
 	update_rf_payload_format(esb_cfg.payload_length);
 
@@ -1165,13 +1361,17 @@ int esb_init(const struct esb_config *config)
 
 	err = sys_timer_init();
 	if (err) {
+		LOG_ERR("Failed to initialize ESB system timer");
 		return err;
 	}
 
-	err = ppi_init();
+	err = esb_ppi_init();
 	if (err) {
+		LOG_ERR("Failed to initialize PPI");
 		return err;
 	}
+
+	disable_event.event.generic.event = esb_ppi_radio_disabled_get();
 
 #if IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS)
 
@@ -1226,7 +1426,7 @@ int esb_suspend(void)
 	}
 
 	/*  Clear PPI */
-	nrfx_gppi_channels_disable(ppi_all_channels_mask);
+	esb_ppi_disable_all();
 
 	esb_state = ESB_STATE_IDLE;
 
@@ -1235,8 +1435,11 @@ int esb_suspend(void)
 
 void esb_disable(void)
 {
+	esb_ppi_disable_all();
+	esb_fem_reset();
+
 	sys_timer_deinit();
-	ppi_deinit();
+	esb_ppi_deinit();
 
 	esb_state = ESB_STATE_IDLE;
 	esb_initialized = false;
@@ -1414,7 +1617,10 @@ int esb_start_rx(void)
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_PAYLOAD);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 
-	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
+	esb_ppi_for_txrx_set(true, false);
+	esb_fem_for_rx_set();
+
+	radio_start();
 
 	return 0;
 }
@@ -1424,6 +1630,9 @@ int esb_stop_rx(void)
 	if ((esb_state != ESB_STATE_PRX) && (esb_state != ESB_STATE_PRX_SEND_ACK)) {
 		return -EINVAL;
 	}
+
+	esb_ppi_for_txrx_clear(true, false);
+	esb_fem_reset();
 
 	nrf_radio_shorts_disable(NRF_RADIO, 0xFFFFFFFF);
 	nrf_radio_int_disable(NRF_RADIO, 0xFFFFFFFF);
@@ -1627,16 +1836,13 @@ int esb_get_rf_channel(uint32_t *channel)
 	return 0;
 }
 
-int esb_set_tx_power(enum esb_tx_power tx_output_power)
+int esb_set_tx_power(int8_t tx_output_power)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
 	}
 
-	if (esb_cfg.tx_output_power != tx_output_power) {
-		esb_cfg.tx_output_power = tx_output_power;
-		update_radio_tx_power();
-	}
+	esb_cfg.tx_output_power = tx_output_power;
 
 	return 0;
 }
