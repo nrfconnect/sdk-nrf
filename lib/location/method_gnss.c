@@ -46,7 +46,7 @@ BUILD_ASSERT(
 	"CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL must be enabled");
 #endif
 
-/* Maximun waiting time before GNSS is started regardless of RRC or PSM state [min]. This prevents
+/* Maximum waiting time before GNSS is started regardless of RRC or PSM state [min]. This prevents
  * Location library from getting stuck indefinitely if the application keeps LTE connection
  * constantly active.
  */
@@ -261,16 +261,12 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 	rest_ctx.auth = (char *)jwt_buf;
 
 	struct nrf_cloud_rest_agps_request request = {
-						     NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
-						     &agps_request,
-						     NULL,
-#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
-						     true,
-						     CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK
-#else
-						     false, 0
-#endif
-						     };
+		NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
+		&agps_request,
+		NULL,
+		false,
+		0
+	};
 
 	struct lte_lc_cells_info net_info = {0};
 	struct location_utils_modem_params_info modem_params = { 0 };
