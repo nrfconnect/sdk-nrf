@@ -19,17 +19,14 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #include "gnss_assistance_obj.h"
 #include "ground_fix_obj.h"
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
-#define CELL_LOCATION_PATHS 7
-#else
-#define CELL_LOCATION_PATHS 6
-#endif
-
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_BUF_SIZE)
 #define AGPS_BUF_SIZE CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_BUF_SIZE
 #else
 #define AGPS_BUF_SIZE 4096
 #endif
+
+#define GROUND_FIX_PATHS_DEFAULT 6
+#define GROUND_FIX_PATHS_MAX 8
 
 #define PGPS_LOCATION_PATHS_DEFAULT 4
 #define PGPS_LOCATION_PATHS_MAX 5
@@ -234,7 +231,16 @@ int location_assistance_agps_request_send(struct lwm2m_ctx *ctx, bool confirmabl
 
 static int do_ground_fix_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 {
-	char const *send_path[CELL_LOCATION_PATHS] = {
+	int path_count = GROUND_FIX_PATHS_DEFAULT;
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
+	path_count++;
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT)
+	path_count++;
+#endif
+
+	char const *send_path[GROUND_FIX_PATHS_MAX] = {
 		LWM2M_PATH(GROUND_FIX_OBJECT_ID, 0, GROUND_FIX_SEND_LOCATION_BACK),
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, 8), /* ECI */
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, 9), /* MNC */
@@ -242,15 +248,18 @@ static int do_ground_fix_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, 2), /* RSRP */
 		LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, 12), /* LAC */
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
-		LWM2M_PATH(ECID_SIGNAL_MEASUREMENT_INFO_OBJECT_ID)
+		LWM2M_PATH(ECID_SIGNAL_MEASUREMENT_INFO_OBJECT_ID),
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT)
+		LWM2M_PATH(VISIBLE_WIFI_AP_OBJECT_ID),
 #endif
 	};
 
 	/* Send Request to server */
-	return lwm2m_engine_send(ctx, send_path, CELL_LOCATION_PATHS, confirmable);
+	return lwm2m_engine_send(ctx, send_path, path_count, confirmable);
 }
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)
 int location_assistance_ground_fix_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 {
 	if (permanent_error) {
@@ -318,7 +327,7 @@ int location_assistance_init_resend_handler(void)
 		gnss_assistance_set_result_code_cb(location_assist_gnss_result_cb);
 	}
 
-	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)) {
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)) {
 		k_work_init_delayable(&location_assist_ground_fix_work,
 				      location_assist_ground_fix_work_handler);
 		ground_fix_set_result_code_cb(location_assist_ground_fix_result_cb);

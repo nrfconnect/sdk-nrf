@@ -44,8 +44,8 @@ static bool handle_agps_request(const struct gnss_agps_request_event *event)
 }
 #endif
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
-static bool handle_cell_location_event(bool send_back)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)
+static bool handle_ground_fix_location_event(bool send_back)
 {
 	ground_fix_set_report_back(send_back);
 	location_assistance_ground_fix_request_send(client_ctx, true);
@@ -77,12 +77,12 @@ static bool event_handler(const struct app_event_header *eh)
 		return true;
 	}
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
-	if (is_cell_location_request_event(eh)) {
-		handle_cell_location_event(true);
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)
+	if (is_ground_fix_location_request_event(eh)) {
+		handle_ground_fix_location_event(true);
 		return true;
-	} else if (is_cell_location_inform_event(eh)) {
-		handle_cell_location_event(false);
+	} else if (is_ground_fix_location_inform_event(eh)) {
+		handle_ground_fix_location_event(false);
 		return true;
 	}
 #endif
@@ -100,9 +100,9 @@ APP_EVENT_LISTENER(MODULE, event_handler);
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
 APP_EVENT_SUBSCRIBE(MODULE, gnss_agps_request_event);
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
-APP_EVENT_SUBSCRIBE(MODULE, cell_location_request_event);
-APP_EVENT_SUBSCRIBE(MODULE, cell_location_inform_event);
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)
+APP_EVENT_SUBSCRIBE(MODULE, ground_fix_location_request_event);
+APP_EVENT_SUBSCRIBE(MODULE, ground_fix_location_inform_event);
 #endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 APP_EVENT_SUBSCRIBE(MODULE, pgps_data_request_event);

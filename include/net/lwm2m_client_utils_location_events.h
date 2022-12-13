@@ -31,19 +31,19 @@ struct gnss_agps_request_event {
 APP_EVENT_TYPE_DECLARE(gnss_agps_request_event);
 
 #endif /* CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS */
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
-struct cell_location_request_event {
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)
+struct ground_fix_location_request_event {
 	struct app_event_header header;
 };
 
-APP_EVENT_TYPE_DECLARE(cell_location_request_event);
+APP_EVENT_TYPE_DECLARE(ground_fix_location_request_event);
 
-struct cell_location_inform_event {
+struct ground_fix_location_inform_event {
 	struct app_event_header header;
 };
 
-APP_EVENT_TYPE_DECLARE(cell_location_inform_event);
-#endif /* CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL */
+APP_EVENT_TYPE_DECLARE(ground_fix_location_inform_event);
+#endif /* CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT */
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 struct pgps_data_request_event {
