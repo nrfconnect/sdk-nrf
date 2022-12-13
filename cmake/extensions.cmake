@@ -96,6 +96,7 @@ function(add_overlay image overlay_file overlay_type)
     set(${image}_${overlay_type} "${old_overlays};${overlay_file}" CACHE STRING
       "Extra config fragments for ${image} child image" FORCE
     )
+    set(${image}_${overlay_type} "${old_overlays};${overlay_file}" PARENT_SCOPE)
   endif()
 endfunction()
 
