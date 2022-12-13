@@ -61,6 +61,10 @@ config NFCT_PINS_AS_GPIOS
 	bool
 	default y
 
+config SENSOR
+	bool
+	default y
+
 # I2S
 config NRFX_I2S
 	bool
