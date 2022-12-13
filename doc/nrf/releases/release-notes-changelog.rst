@@ -328,7 +328,20 @@ Modem libraries
 
   * Updated:
 
-    * Renamed ``enum location_cellular_ext_result`` to c:enum:`location_ext_result`, because Wi-Fi will use the same enumeration.
+    * Use of :ref:`lib_multicell_location` library has been removed because the library is deprecated.
+      Relevant functionality from the library is moved to this library.
+      The following features were not copied:
+
+      * Definition of HTTPS port for HERE service, that is :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_HTTPS_PORT`.
+      * HERE v1 API.
+      * nRF Cloud CA certificate handling.
+
+    * Renamed ``enum location_cellular_ext_result`` to ``enum location_ext_result``, because Wi-Fi will use the same enumeration.
+    * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD` to :kconfig:option:`CONFIG_LOCATION_SERVICE_NRF_CLOUD`.
+    * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE`.
+    * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_API_KEY`.
+    * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_HOSTNAME`.
+    * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG`.
 
 Libraries for networking
 ------------------------

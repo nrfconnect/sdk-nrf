@@ -7,25 +7,22 @@
 config LOCATION
 	bool "Internal"
 	#depends on NRF_MODEM_LIB
-	default y
-	help
-	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
-
-config MULTICELL_LOCATION
-	bool "Internal"
-	#depends on NRF_MODEM_LIB
 	depends on LTE_LINK_CONTROL
-	#select MODEM_KEY_MGMT
-	select CJSON_LIB
 	default y
 	help
 	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
 
-config MULTICELL_LOCATION_REST_CLIENT
+config LOCATION_REST_CLIENT
 	bool
 	default n
 	help
-	  Used in tests to enable mocking of REST client library
+	  Used in tests to enable mocking of REST client library.
+
+config LOCATION_MODEM_KEY_MGMT
+	bool
+	default n
+	help
+	  Used in tests to enable mocking of Modem key management library.
 
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"

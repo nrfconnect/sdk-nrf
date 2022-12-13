@@ -19,15 +19,15 @@
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
-#define HOSTNAME	CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME
+#define HOSTNAME	CONFIG_LOCATION_SERVICE_HERE_HOSTNAME
 
 BUILD_ASSERT(sizeof(HOSTNAME) > 1, "Hostname must be configured");
 BUILD_ASSERT(
-	sizeof(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY) > 1, "API key must be configured");
-#define AUTHENTICATION	"apiKey="CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY
+	sizeof(CONFIG_LOCATION_SERVICE_HERE_API_KEY) > 1, "API key must be configured");
+#define AUTHENTICATION	"apiKey="CONFIG_LOCATION_SERVICE_HERE_API_KEY
 
 #define API_LOCATE_PATH		"/v2/locate"
-#define API_KEY_PARAM		"apiKey="CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY
+#define API_KEY_PARAM		"apiKey="CONFIG_LOCATION_SERVICE_HERE_API_KEY
 #define REQUEST_URL		API_LOCATE_PATH"?"API_KEY_PARAM
 
 #define HEADER_CONTENT_TYPE    "Content-Type: application/json\r\n"
@@ -202,7 +202,7 @@ int wifi_here_rest_pos_get(
 	rest_client_request_defaults_set(&req_ctx);
 	req_ctx.http_method = HTTP_POST;
 	req_ctx.url = REQUEST_URL;
-	req_ctx.sec_tag = CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG;
+	req_ctx.sec_tag = CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG;
 	req_ctx.port = HTTPS_PORT;
 	req_ctx.host = HOSTNAME;
 	req_ctx.header_fields = (const char **)headers;
