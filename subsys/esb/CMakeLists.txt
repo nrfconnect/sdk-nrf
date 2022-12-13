@@ -5,4 +5,7 @@
 #
 
 zephyr_library()
-zephyr_library_sources_ifdef(CONFIG_ESB esb.c)
+zephyr_library_sources(esb.c)
+
+zephyr_library_sources_ifdef(CONFIG_HAS_HW_NRF_PPI esb_ppi.c)
+zephyr_library_sources_ifdef(CONFIG_HAS_HW_NRF_DPPIC esb_dppi.c)
