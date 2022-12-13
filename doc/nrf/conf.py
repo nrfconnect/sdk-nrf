@@ -10,6 +10,7 @@ import sys
 NRF_BASE = Path(__file__).absolute().parents[2]
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
+import redirects
 import utils
 
 ZEPHYR_BASE = utils.get_projdir("zephyr")
@@ -141,12 +142,7 @@ ncs_include_mapping = {
 
 # Options for html_redirect ----------------------------------------------------
 
-html_redirect_pages = [
-    ("gs_ins_windows", "gs_installing"),
-    ("gs_ins_linux", "gs_installing"),
-    ("gs_ins_mac", "gs_installing"),
-    ("examples", "samples"),
-]
+html_redirect_pages = redirects.NRF
 
 # -- Options for zephyr.warnings_filter ----------------------------------------
 
