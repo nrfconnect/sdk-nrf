@@ -238,7 +238,7 @@ static int nrf_wifi_radio_test_otp_write_params(const struct shell *shell,
 	ret = check_protection(&val[0], REGION_PROTECT, REGION_PROTECT + 1,
 						REGION_PROTECT + 2, REGION_PROTECT + 3);
 	disp_location_status(shell, "OTP", ret);
-	if (ret != OTP_ENABLE_PATTERN) {
+	if (ret != OTP_ENABLE_PATTERN && ret != OTP_FRESH_FROM_FAB) {
 		shell_fprintf(shell, SHELL_ERROR, "USER Region is not Writeable\n");
 		return -ENOEXEC;
 	}
