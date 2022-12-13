@@ -378,11 +378,11 @@ static void message_handler(struct debug_msg_data *msg)
 		}
 
 		/* Notify the rest of the application that it is connected to network
-		 * when building for QEMU x86.
+		 * when building for PC.
 		 */
-		if (IS_ENABLED(CONFIG_BOARD_QEMU_X86)) {
-			{ SEND_EVENT(debug, DEBUG_EVT_QEMU_X86_INITIALIZED); }
-			SEND_EVENT(debug, DEBUG_EVT_QEMU_X86_NETWORK_CONNECTED);
+		if (IS_ENABLED(CONFIG_BOARD_QEMU_X86) || IS_ENABLED(CONFIG_BOARD_NATIVE_POSIX)) {
+			{ SEND_EVENT(debug, DEBUG_EVT_EMULATOR_INITIALIZED); }
+			SEND_EVENT(debug, DEBUG_EVT_EMULATOR_NETWORK_CONNECTED);
 		}
 	}
 

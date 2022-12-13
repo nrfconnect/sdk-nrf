@@ -4,7 +4,7 @@ tests:
   applications.asset_tracker_v2.nrf_cloud:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns native_posix
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -30,7 +30,7 @@ tests:
   applications.asset_tracker_v2.aws:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns native_posix
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -64,7 +64,7 @@ tests:
   applications.asset_tracker_v2.azure:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns native_posix
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -76,7 +76,7 @@ tests:
   applications.asset_tracker_v2.debug:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns native_posix
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -133,7 +133,7 @@ tests:
   applications.asset_tracker_v2.lwm2m.debug:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns native_posix
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
