@@ -276,7 +276,7 @@ static void button_evt_handler(struct button_evt event)
 			return;
 		}
 		/* Starts/pauses the audio stream */
-		le_audio_play_pause();
+		ret = le_audio_play_pause();
 		if (ret) {
 			LOG_WRN("Could not play/pause");
 		}

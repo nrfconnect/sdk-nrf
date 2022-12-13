@@ -48,7 +48,7 @@ struct bt_name {
 
 static const char *broadcast_device_name[2] = { CONFIG_BT_DEVICE_NAME, CONFIG_BT_DEVICE_NAME_ALT };
 
-static uint8_t active_bt_device_name = 0;
+static uint8_t active_bt_device_name;
 
 static struct bt_audio_broadcast_sink *broadcast_sink;
 
@@ -364,6 +364,8 @@ static void initialize(le_audio_receive_cb recv_cb)
 	enum audio_channel channel;
 
 	if (!initialized) {
+		active_bt_device_name = 0;
+
 		receive_cb = recv_cb;
 
 		channel_assignment_get(&channel);
@@ -488,16 +490,20 @@ static int button_id_5_pressed(void)
 
 int le_audio_user_defined_button_press(enum le_audio_button_id id)
 {
+	int ret = 0;
+
 	if (id == LE_AUDIO_BUTTON_ID_4) {
 		LOG_INF("Button 4 pressed");
-		return button_id_4_pressed();
+		ret = button_id_4_pressed();
 	} else if (id == LE_AUDIO_BUTTON_ID_5) {
 		LOG_INF("Button 5 pressed");
-		return button_id_5_pressed();
+		ret = button_id_5_pressed();
 	} else {
 		LOG_WRN("Button ID not recognised (%d)", id);
-		return -ECANCELED;
+		ret = -ECANCELED;
 	}
+
+	return ret;
 }
 
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)

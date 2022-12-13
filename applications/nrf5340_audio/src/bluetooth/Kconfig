@@ -33,7 +33,7 @@ config BT_DEVICE_NAME_ALT
 	default "NRF5340_AUDIO_ALT"
 	depends on TRANSPORT_BIS
 	help
-	  Alternative Bluetooth device name. Name can be up to 248 bytes long 
+	  Alternative Bluetooth device name. Name can be up to 248 bytes long
 	  (excluding NULL termination). Can be empty string.
 
 config BT_ALTERNATIVE_DEVICE_NAME

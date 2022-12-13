@@ -198,7 +198,7 @@ config BT_BUF_ACL_RX_SIZE
 if AUDIO_DEV = 1
 
 config BT_DEVICE_NAME
-	default "NRF5340_AUDIO" 
+	default "NRF5340_AUDIO"
 
 config BT_OBSERVER
 	default y
@@ -231,7 +231,7 @@ if AUDIO_DEV = 2
 
 config BT_DEVICE_NAME
 	default BT_DEVICE_NAME_ALT if BT_ALTERNATIVE_DEVICE_NAME
-	default "NRF5340_AUDIO" 
+	default "NRF5340_AUDIO"
 
 config BT_ISO_BROADCASTER
 	default y
