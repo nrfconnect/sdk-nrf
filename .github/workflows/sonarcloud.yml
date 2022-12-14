@@ -66,18 +66,30 @@ jobs:
         shell: bash
         run: |
           source ncs/zephyr/zephyr-env.sh
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister -b -C -v -i -T ncs/nrf/applications/asset_tracker_v2/ -p native_posix --coverage-tool gcovr
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister -b -C -v -i -T ncs/nrf/ -p native_posix --coverage-tool gcovr
 
       - name: Run native_posix tests
         shell: bash
         run: |
           source ncs/zephyr/zephyr-env.sh
-          ncs/zephyr/scripts/twister --test-only -v -i -C -T ncs/nrf/applications/asset_tracker_v2/ -p native_posix
+          ncs/zephyr/scripts/twister --test-only -v -i -C -T ncs/nrf/ -p native_posix
 
+      # Exclude twister-out because we dont need coverage reports for mocks and generated files.
+      # Exclude tests/unity because it is not interesting
+      # Exclude folders that contain source code with multiple definitions of the same function
+      # depending on preprocessor macros. gcovr misbehaves due to this.
+      # Issue: https://github.com/gcovr/gcovr/issues/586
       - name: Collect coverage into one XML report
         shell: bash
         run: |
-          gcovr --exclude=twister-out --exclude=tests/unity --sonarqube coverage.xml
+          gcovr twister-out  \
+            --exclude=twister-out \
+            --exclude=tests/unity \
+            --exclude=ncs/zephyr/include/ \
+            --exclude=ncs/zephyr/subsys/net/ip/ \
+            --exclude=ncs/nrf/tests/subsys/dfu/dfu_target_stream/ \
+            --exclude=ncs/nrf/lib/hw_id/ \
+            --sonarqube coverage.xml
           cat coverage.xml
 
       - name: Run sonar-scanner
@@ -90,5 +102,6 @@ jobs:
                         --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" \
                         --define sonar.exclusions="**/*.py,**twister-out**,**/*.java,**/*.html,**/*.xml,**/*.php" \
                         --define sonar.cpd.exclusions="**CMakeFiles**" \
+                        --define sonar.coverageReportPaths=coverage.xml \
                         --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
-                        --define sonar.coverageReportPaths=coverage.xml
+                        --define sonar.cfamily.cache.enabled=false
