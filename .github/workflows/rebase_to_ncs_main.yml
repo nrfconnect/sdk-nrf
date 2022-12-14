@@ -40,3 +40,4 @@ jobs:
           title: 'Updates from upstream ncs'
           assignees: balaji-nordic
           reviewers: balaji-nordic
+          draft: true
