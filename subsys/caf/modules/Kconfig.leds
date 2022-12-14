@@ -13,7 +13,7 @@ menuconfig CAF_LEDS
 
 if CAF_LEDS
 
-choice
+choice CAF_LEDS_OUTPUT
 	prompt "Select LED driver"
 	default CAF_LEDS_PWM
 
