@@ -25,6 +25,7 @@ config BT_LL_SOFTDEVICE
 	select BT_CTLR_ADV_PERIODIC_SUPPORT
 	select BT_CTLR_SYNC_PERIODIC_SUPPORT
 	select BT_CTLR_SYNC_TRANSFER_SENDER_SUPPORT
+	select BT_CTLR_SYNC_TRANSFER_RECEIVER_SUPPORT
 	select BT_CTLR_PHY_2M_SUPPORT if HAS_HW_NRF_RADIO_BLE_2M
 	select BT_CTLR_PHY_CODED_SUPPORT if HAS_HW_NRF_RADIO_BLE_CODED
 	select BT_HAS_HCI_VS
@@ -314,5 +315,13 @@ config BT_CTLR_SYNC_TRANSFER_SENDER
 	  Enable support for sending Periodic Advertising Sync Transfer as
 	  defined in the Bluetooth Core Specification, Version 5.3 | Vol 6,
 	  Part B, Section 4.6.23.
+
+config BT_CTLR_SYNC_TRANSFER_RECEIVER
+	bool "Periodic Advertising Sync Transfer - Receiver [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Enable support for receiving Periodic Advertising Sync Transfer as
+	  defined in the Bluetooth Core Specification, Version 5.3 | Vol 6,
+	  Part B, Section 4.6.24.
 endmenu
 endif  # BT_LL_SOFTDEVICE
