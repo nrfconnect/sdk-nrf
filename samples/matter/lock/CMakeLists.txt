@@ -60,6 +60,10 @@ if(CONFIG_MCUMGR_SMP_BT)
     target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu_over_smp.cpp)
 endif()
 
+if(CONFIG_THREAD_WIFI_SWITCHING)
+    target_sources(app PRIVATE src/software_images_swapper.cpp)
+endif()
+
 chip_configure_data_model(app
     INCLUDE_SERVER
     ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/lock.zap

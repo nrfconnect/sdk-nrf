@@ -1,0 +1,138 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "software_images_swapper.h"
+
+#include <pm_config.h>
+
+#include <dfu/dfu_multi_image.h>
+#include <dfu/dfu_target.h>
+#include <dfu/dfu_target_mcuboot.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/reboot.h>
+
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
+
+int SoftwareImagesSwapper::Swap(ApplicationImageId applicationId, SoftwareImagesSwapDoneCallback swapDoneCallback)
+{
+	uint32_t app_address;
+	uint32_t app_size;
+	uint32_t net_address;
+	uint32_t net_size;
+	int result;
+
+	if (mSwapInProgress) {
+		return -EALREADY;
+	}
+
+	if (!swapDoneCallback) {
+		return -EINVAL;
+	}
+
+	if (applicationId == ApplicationImageId::Image_1) {
+		app_address = PM_APP_1_CORE_APP_ADDRESS;
+		app_size = PM_APP_1_CORE_APP_SIZE;
+		net_address = PM_APP_1_CORE_NET_ADDRESS;
+		net_size = PM_APP_1_CORE_NET_SIZE;
+	} else if (applicationId == ApplicationImageId::Image_2) {
+		app_address = PM_APP_2_CORE_APP_ADDRESS;
+		app_size = PM_APP_2_CORE_APP_SIZE;
+		net_address = PM_APP_2_CORE_NET_ADDRESS;
+		net_size = PM_APP_2_CORE_NET_SIZE;
+	} else {
+		LOG_ERR("Requested to swap application image with invalid identifier: %d",
+			static_cast<int>(applicationId));
+		return -EINVAL;
+	}
+
+	uint8_t *dfuImageBuffer = (uint8_t *)k_malloc(kBufferSize);
+	if (!dfuImageBuffer) {
+		return -ENOMEM;
+	}
+
+	result = dfu_target_mcuboot_set_buf(dfuImageBuffer, kBufferSize);
+	if (result != 0) {
+		goto exit;
+	}
+
+	mSwapInProgress = true;
+
+	result = SwapImage(app_address, app_size, 0);
+	if (result != 0) {
+		mSwapInProgress = false;
+		goto exit;
+	}
+
+	result = SwapImage(net_address, net_size, 1);
+	if (result != 0) {
+		mSwapInProgress = false;
+		goto exit;
+	}
+
+	result = dfu_target_schedule_update(-1);
+	if (result != 0) {
+		mSwapInProgress = false;
+		goto exit;
+	}
+
+	swapDoneCallback();
+
+exit:
+	k_free(dfuImageBuffer);
+
+	return result;
+}
+
+int SoftwareImagesSwapper::SwapImage(uint32_t address, uint32_t size, uint8_t id)
+{
+	int result;
+	LOG_INF("Requested to swap image %d from address %x with size %x", id, address, size);
+
+	if (!device_is_ready(mFlashDevice)) {
+		LOG_ERR("Flash device is not ready");
+		return -ENODEV;
+	}
+
+	uint8_t *flashImageBuffer = (uint8_t *)k_malloc(kBufferSize);
+	if (!flashImageBuffer) {
+		return -ENOMEM;
+	}
+
+	result = dfu_target_init(DFU_TARGET_IMAGE_TYPE_MCUBOOT, id, size, nullptr);
+	if (result != 0) {
+		goto exit;
+	}
+
+	for (uint32_t offset = 0; offset < size; offset += kBufferSize) {
+		result = flash_read(mFlashDevice, address + offset, flashImageBuffer, kBufferSize);
+		if (result != 0) {
+			LOG_ERR("Failed to read data from flash");
+			dfu_target_reset();
+			goto exit;
+		}
+
+		result = dfu_target_write(flashImageBuffer, kBufferSize);
+		if (result != 0) {
+			LOG_ERR("Failed to write data chunk");
+			dfu_target_reset();
+			goto exit;
+		}
+
+		/* Print progress log every 10th chunk to reduce number of messages */
+		if (offset % (kBufferSize * 10) == 0) {
+			LOG_INF("Image %d swap progress %u B/ %u B", id, offset, size);
+		}
+	}
+
+	result = dfu_target_done(true);
+
+exit:
+	k_free(flashImageBuffer);
+
+	return result;
+}
