@@ -10,6 +10,7 @@
 #include <modem/lte_lc.h>
 #include <nrf_modem_at.h>
 #include <zephyr/logging/log.h>
+#include <net/lwm2m_client_utils.h>
 
 LOG_MODULE_REGISTER(lwm2m_rai, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 static void lte_rrc_event_handler(const struct lte_lc_evt *const evt);
@@ -29,25 +30,36 @@ static int set_rel14feat(void)
 	return 0;
 }
 
-static int read_rai(void)
+int lwm2m_rai_get(enum lwm2m_rai_mode *mode)
 {
-	uint16_t rai;
+	uint16_t rai_tmp;
 	int ret;
 
-	ret = nrf_modem_at_scanf("AT%RAI?", "%%RAI: %hu", &rai);
+	if (mode == NULL) {
+		return -EINVAL;
+	}
+
+	ret = nrf_modem_at_scanf("AT%RAI?", "%%RAI: %hu", &rai_tmp);
 	if (ret != 1) {
 		LOG_ERR("Failed to read RAI, error code: %d", ret);
 		return ret;
 	}
-	LOG_DBG("RAI: %d", rai);
+
+	LOG_DBG("AS RAI: %d", rai_tmp);
+	if (rai_tmp) {
+		*mode = LWM2M_RAI_MODE_ENABLED;
+	} else {
+		*mode = LWM2M_RAI_MODE_DISABLED;
+	}
+
 	return 0;
 }
 
-static int rai_req(bool enable)
+int lwm2m_rai_req(enum lwm2m_rai_mode mode)
 {
 	int ret;
 
-	ret = nrf_modem_at_printf("AT%%RAI=%d", enable);
+	ret = nrf_modem_at_printf("AT%%RAI=%d", mode);
 	if (ret) {
 		LOG_ERR("AT command failed, error code: %d", ret);
 		return -EFAULT;
@@ -162,9 +174,27 @@ int lwm2m_rai_last(void)
 
 int lwm2m_init_rai(void)
 {
-	set_rel14feat();
-	rai_req(true);
-	read_rai();
+	int ret;
+	enum lwm2m_rai_mode mode;
+
+	ret = set_rel14feat();
+	if (ret) {
+		LOG_ERR("set_rel14feat failed, error code: %d", ret);
+		return ret;
+	}
+
+	ret = lwm2m_rai_req(LWM2M_RAI_MODE_ENABLED);
+	if (ret) {
+		LOG_ERR("RAI request failed, error code: %d", ret);
+		return ret;
+	}
+
+	ret = lwm2m_rai_get(&mode);
+	if (ret) {
+		LOG_ERR("Get RAI mode failed, error code: %d", ret);
+		return ret;
+	}
+
 	lwm2m_lte_handler_register();
 
 	return 0;

@@ -182,7 +182,6 @@ static uint8_t edrx_nbs1;
 static uint8_t active_psm_modes;
 #if defined(CONFIG_LWM2M_CELL_CONN_OBJ_VERSION_1_1)
 static uint8_t supported_psm_modes = PSM_AND_EDRX_MODE;
-static char rai_param[2] = CONFIG_LTE_RAI_REQ_VALUE;
 static uint8_t rai_usage;
 #endif
 static struct k_work radio_period_work;
@@ -467,12 +466,10 @@ static uint8_t get_rai_kconfig(void)
 {
 	uint8_t ret = 0;
 
-	if (rai_param[0] == '4') {
-		ret = 2; /* no response, set 2nd LSB */
-	} else if (rai_param[0] == '3') {
-		ret = 6; /* one response, set 2nd and 3rd LSB */
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
+		ret = 2; /* RAI used when transmitting last message. No response required */
 	} else {
-		ret = 1;
+		ret = 1; /* RAI not used */
 	}
 
 	return ret;
@@ -482,21 +479,20 @@ static int rai_update_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_ins
 			 uint16_t data_len, bool last_block, size_t total_size)
 {
 	int err = 0;
-	bool rai_enabled = false;
 
 	LOG_DBG("RAI value: %d", *data);
 
 	switch (*data & 7U) {
 	case 1:
+		err = lwm2m_rai_req(LWM2M_RAI_MODE_DISABLED);
 		break;
 	case 2:
-		rai_enabled = true;
-		err = lte_lc_rai_param_set("4");
+		err = lwm2m_rai_req(LWM2M_RAI_MODE_ENABLED);
 		break;
 	case 6:
-		rai_enabled = true;
-		err = lte_lc_rai_param_set("3");
-		break;
+		LOG_WRN("Unsupported RAI mode");
+		return -ENOTSUP;
+		;
 	default:
 		LOG_ERR("Invalid RAI param");
 		return -EINVAL;
@@ -504,13 +500,7 @@ static int rai_update_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_ins
 	}
 
 	if (err) {
-		LOG_ERR("RAI set error %d", err);
-		return err;
-	}
-
-	err = lte_lc_rai_req(rai_enabled);
-	if (err) {
-		LOG_ERR("RAI req error %d", err);
+		LOG_ERR("RAI request error %d", err);
 		return err;
 	}
 

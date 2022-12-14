@@ -161,7 +161,7 @@ ZTEST(lwm2m_client_utils_cellconn, test_rai_update_cb)
 	zassert_equal(rc, 0, "Wrong return value");
 	rai = 6;
 	rc = set_uri_cb_rai(10, 0, 14, &rai, sizeof(rai), true, sizeof(rai));
-	zassert_equal(rc, 0, "Wrong return value");
+	zassert_equal(rc, -ENOTSUP, "Wrong return value");
 	rai = 7;
 	rc = set_uri_cb_rai(10, 0, 14, &rai, sizeof(rai), true, sizeof(rai));
 	zassert_equal(rc, -EINVAL, "Wrong return value");
