@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _FP_STORAGE_H_
-#define _FP_STORAGE_H_
+#ifndef _FP_STORAGE_AK_H_
+#define _FP_STORAGE_AK_H_
 
 #include <sys/types.h>
 #include "fp_common.h"
 
 /**
- * @defgroup fp_storage Fast Pair storage module
- * @brief Internal API for Fast Pair storage
+ * @defgroup fp_storage_ak Fast Pair storage of Account Keys module
+ * @brief Internal API for Fast Pair storage of Account Keys
  *
  * @{
  */
@@ -22,7 +22,7 @@ extern "C" {
 #endif
 
 /**
- * @typedef fp_storage_account_key_check_cb
+ * @typedef fp_storage_ak_check_cb
  * @brief Callback used to check if a given Account Key satisfies user-defined
  *        conditions.
  *
@@ -32,8 +32,7 @@ extern "C" {
  * @return True if Account Key satisfies user-defined conditions.
  *         False otherwise.
  */
-typedef bool (*fp_storage_account_key_check_cb)(const struct fp_account_key *account_key,
-						void *context);
+typedef bool (*fp_storage_ak_check_cb)(const struct fp_account_key *account_key, void *context);
 
 /** Save Account Key.
  *
@@ -41,14 +40,14 @@ typedef bool (*fp_storage_account_key_check_cb)(const struct fp_account_key *acc
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_storage_account_key_save(const struct fp_account_key *account_key);
+int fp_storage_ak_save(const struct fp_account_key *account_key);
 
 /** Get number of stored Account Keys.
  *
  * @return Number of stored Account Keys, if the operation was successful.
  *	   Otherwise, a (negative) error code is returned.
  */
-int fp_storage_account_key_count(void);
+int fp_storage_ak_count(void);
 
 /** Get stored Account Key List.
  *
@@ -61,7 +60,7 @@ int fp_storage_account_key_count(void);
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_storage_account_keys_get(struct fp_account_key *buf, size_t *key_count);
+int fp_storage_ak_get(struct fp_account_key *buf, size_t *key_count);
 
 /** Iterate over stored Account Keys to find a key that matches user-defined conditions.
  *  If such a key is found, the iteration process stops and this function returns.
@@ -74,15 +73,14 @@ int fp_storage_account_keys_get(struct fp_account_key *buf, size_t *key_count);
  *
  * @return 0 If the Account Key was found. Otherwise, a (negative) error code is returned.
  */
-int fp_storage_account_key_find(struct fp_account_key *account_key,
-				fp_storage_account_key_check_cb account_key_check_cb,
-				void *context);
+int fp_storage_ak_find(struct fp_account_key *account_key,
+		       fp_storage_ak_check_cb account_key_check_cb, void *context);
 
 /** Clear storage data loaded to RAM.
  *
  * The function is used only by fp_storage unit test.
  */
-void fp_storage_ram_clear(void);
+void fp_storage_ak_ram_clear(void);
 
 #ifdef __cplusplus
 }
@@ -92,4 +90,4 @@ void fp_storage_ram_clear(void);
  * @}
  */
 
-#endif /* _FP_STORAGE_H_ */
+#endif /* _FP_STORAGE_AK_H_ */

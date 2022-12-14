@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _FP_STORAGE_PRIV_H_
-#define _FP_STORAGE_PRIV_H_
+#ifndef _FP_STORAGE_AK_PRIV_H_
+#define _FP_STORAGE_AK_PRIV_H_
 
 #include <zephyr/sys/__assert.h>
 #include <zephyr/settings/settings.h>
@@ -13,11 +13,11 @@
 #include "fp_common.h"
 
 /**
- * @defgroup fp_storage_priv Fast Pair storage module private
- * @brief Private data of the Fast Pair storage module
+ * @defgroup fp_storage_ak_priv Fast Pair storage of Account Keys module private
+ * @brief Private data of the Fast Pair storage of Account Keys module
  *
  * Private data structures, definitions and functionalities of the Fast Pair
- * storage module. Used only by the module and by the unit test to prepopulate
+ * storage of Account Keys module. Used only by the module and by the unit test to prepopulate
  * settings with mocked data.
  * @{
  */
@@ -26,7 +26,7 @@
 extern "C" {
 #endif
 
-/** Settings subtree name for Fast Pair storage. */
+/** Settings subtree name for Fast Pair Account Key storage. */
 #define SETTINGS_AK_SUBTREE_NAME "fp_ak"
 
 /** Settings key name prefix for Account Key. */
@@ -105,4 +105,4 @@ static inline uint8_t next_account_key_id(uint8_t account_key_id)
  * @}
  */
 
-#endif /* _FP_STORAGE_PRIV_H_ */
+#endif /* _FP_STORAGE_AK_PRIV_H_ */

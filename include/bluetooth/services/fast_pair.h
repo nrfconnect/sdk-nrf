@@ -167,6 +167,16 @@ bool bt_fast_pair_has_account_key(void);
 int bt_fast_pair_battery_set(enum bt_fast_pair_battery_comp battery_comp,
 			     struct bt_fast_pair_battery battery);
 
+/** Perform a reset to the default factory settings for Google Fast Pair Service.
+ *
+ * Clears the Fast Pair storage. If the reset operation is interrupted by system reboot or power
+ * outage, the reset is automatically resumed at the stage of loading the Fast Pair storage.
+ * It prevents the Fast Pair storage from ending in unwanted state after the reset interruption.
+ *
+ * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int bt_fast_pair_factory_reset(void);
+
 #ifdef __cplusplus
 }
 #endif
