@@ -198,22 +198,52 @@ int lwm2m_init_connmon(const struct device *dev);
 int lwm2m_init_cellular_connectivity_object(void);
 #endif
 
+enum lwm2m_rai_mode {
+	LWM2M_RAI_MODE_DISABLED	= 0,
+	LWM2M_RAI_MODE_ENABLED	= 1
+};
+
 /**
  * @brief Initialize release assistance indication (RAI) module.
+ *
+ * @return Zero if success, negative error code otherwise.
  */
 int lwm2m_init_rai(void);
 
 /**
  * @brief Set socket option SO_RAI_NO_DATA to bypass
  * RRC Inactivity period and immediately switch to Idle mode.
+ *
+ * @return Zero if success, negative error code otherwise.
  */
 int lwm2m_rai_no_data(void);
 
 /**
  * @brief Set socket option SO_RAI_LAST and send dummy packet to bypass
  * RRC Inactivity period and immediately switch to Idle mode.
+ *
+ * @return Zero if success, negative error code otherwise.
  */
 int lwm2m_rai_last(void);
+
+/**
+ * @brief Get the RAI mode.
+ *
+ * @param mode Pointer to RAI mode variable.
+ *
+ * @return Zero if success, negative error code otherwise.
+ */
+int lwm2m_rai_get(enum lwm2m_rai_mode *mode);
+
+/**
+ * @brief Function for requesting modem to enable or disable
+ * use of AS RAI.
+ *
+ * @param mode Requested RAI mode.
+ *
+ * @return Zero if success, negative error code otherwise.
+ */
+int lwm2m_rai_req(enum lwm2m_rai_mode mode);
 
 /* Advanced firmare object support */
 uint8_t lwm2m_adv_firmware_get_update_state(uint16_t obj_inst_id);

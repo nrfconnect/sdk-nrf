@@ -76,14 +76,15 @@ DECLARE_FAKE_VALUE_FUNC(int, modem_info_params_init, struct modem_param_info *);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_params_get, struct modem_param_info *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_lte_mode_get, enum lte_lc_lte_mode *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_create_res_inst, const char *);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_res_buf, const char *, void *, uint16_t,
-			     uint16_t, uint8_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_res_buf, const char *, void *, uint16_t, uint16_t,
+			uint8_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_u32, const char *, uint32_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_s8, const char *, int8_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_s32, const char *, int32_t);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_rsrp_register, rsrp_cb_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
 			lwm2m_engine_execute_cb_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_rai_req, enum lwm2m_rai_mode);
 
 /* List of fakes used by this unit tester */
 #define DO_FOREACH_FAKE(FUNC) do { \
@@ -144,6 +145,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
 	FUNC(settings_delete)                           \
 	FUNC(settings_name_next)                        \
 	FUNC(engine_trigger_update)                     \
+	FUNC(lwm2m_rai_req)                             \
 	} while (0)
 
 #endif
