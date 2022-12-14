@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Azure FOTA sample"
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = AZURE_FOTA_SAMPLE
+module-str = Azure FOTA sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu

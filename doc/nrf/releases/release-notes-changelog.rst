@@ -334,6 +334,10 @@ nRF9160 samples
     * MCUboot child image files to properly access external flash on newer nRF9160DK versions.
     * An :file:``overlay_mcuboot_ext_flash.conf`` file to enable MCUboot use of external flash.
 
+* :ref:`azure_fota_sample` sample:
+
+  * The sample now uses the logging subsystem for console output.
+
 Peripheral samples
 ------------------
 
