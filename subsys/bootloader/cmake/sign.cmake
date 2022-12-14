@@ -15,7 +15,7 @@ set(SIGNATURE_PUBLIC_KEY_FILE ${GENERATED_PATH}/public.pem)
 if (CONFIG_SB_SIGNING_PYTHON)
   set(PUB_GEN_CMD
     ${PYTHON_EXECUTABLE}
-    ${NRF_BOOTLOADER_SCRIPTS}/keygen.py
+    ${NRF_DIR}/scripts/bootloader/keygen.py
     --public
     --in ${SIGNATURE_PRIVATE_KEY_FILE}
     --out ${SIGNATURE_PUBLIC_KEY_FILE}
@@ -98,7 +98,7 @@ foreach (slot ${slots})
 
   set(hash_cmd
     ${PYTHON_EXECUTABLE}
-    ${NRF_BOOTLOADER_SCRIPTS}/hash.py
+    ${NRF_DIR}/scripts/bootloader/hash.py
     --in ${to_sign}
     > ${hash_file}
     )
@@ -106,7 +106,7 @@ foreach (slot ${slots})
   if (CONFIG_SB_SIGNING_PYTHON)
     set(sign_cmd
       ${PYTHON_EXECUTABLE}
-      ${NRF_BOOTLOADER_SCRIPTS}/do_sign.py
+      ${NRF_DIR}/scripts/bootloader/do_sign.py
       --private-key ${SIGNATURE_PRIVATE_KEY_FILE}
       --in ${hash_file}
       > ${signature_file}
@@ -117,7 +117,7 @@ foreach (slot ${slots})
       -sha256
       -sign ${SIGNATURE_PRIVATE_KEY_FILE} ${hash_file} |
       ${PYTHON_EXECUTABLE}
-      ${NRF_BOOTLOADER_SCRIPTS}/asn1parse.py
+      ${NRF_DIR}/scripts/bootloader/asn1parse.py
       --alg ecdsa
       --contents signature
       > ${signature_file}
@@ -164,7 +164,7 @@ foreach (slot ${slots})
     ${signed_bin}
     COMMAND
     ${PYTHON_EXECUTABLE}
-    ${NRF_BOOTLOADER_SCRIPTS}/validation_data.py
+    ${NRF_DIR}/scripts/bootloader/validation_data.py
     --input ${to_sign}
     --output-hex ${signed_hex}
     --output-bin ${signed_bin}
