@@ -402,6 +402,10 @@ nRF9160 samples
 
   * The sample now uses the logging subsystem for console output.
 
+* :ref:`azure_iot_hub` sample:
+
+  * The sample now uses the logging subsystem for console output.
+
 Peripheral samples
 ------------------
 
