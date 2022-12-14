@@ -250,6 +250,7 @@ Drivers
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
 * Reduced log verbosity of :ref:`pmw3360`.
+* Reduced log verbosity of :ref:`paw3212`.
 
 Libraries
 =========
