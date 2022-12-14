@@ -89,15 +89,12 @@ Testing
 #. Observe that the sample displays the configured application version in the terminal and connects to Azure IoT Hub as shown below::
 
       *** Booting Zephyr OS build v2.3.0-rc1-ncs1-1453-gf41496cd30d5  ***
-      Traces enabled
-      Azure FOTA sample started
-      Initializing Modem library
-      This may take a while if a modem firmware update is pending
-      Modem library initialized
-      Connecting to LTE network
-      AZURE_IOT_HUB_EVT_CONNECTING
-      AZURE_IOT_HUB_EVT_CONNECTED
-      AZURE_IOT_HUB_EVT_READY
+      <inf> azure-fota_sample: Azure FOTA sample started
+      <inf> azure-fota_sample: This may take a while if a modem firmware update is pending
+      <inf> azure-fota_sample: Connecting to LTE network
+      <inf> azure-fota_sample: AZURE_IOT_HUB_EVT_CONNECTING
+      <inf> azure-fota_sample: AZURE_IOT_HUB_EVT_CONNECTED
+      <inf> azure-fota_sample: AZURE_IOT_HUB_EVT_READY
 
 
 #. Log in to the `Azure Portal`_, navigate to :guilabel:`IoT Hub` and select your IoT hub.
@@ -136,7 +133,7 @@ Testing
       [00:01:22.761,657] <inf> STREAM_FLASH: Erasing page at offset 0x000fd000
       [00:01:22.857,238] <inf> dfu_target_mcuboot: MCUBoot image upgrade scheduled. Reset the device to apply
       [2020-08-28 00:38:18] [00:01:15.665,679] <inf> azure_fota: FOTA download completed evt received
-      [2020-08-28 00:38:18] AZURE_IOT_HUB_EVT_FOTA_DONE
+      [2020-08-28 00:38:18] <inf> azure-fota_sample: AZURE_IOT_HUB_EVT_FOTA_DONE
       [2020-08-28 00:38:18] The device will reboot in 5 seconds to apply update
 
 #. When the development kit reboots, observe that the sample displays the logs from the new application.

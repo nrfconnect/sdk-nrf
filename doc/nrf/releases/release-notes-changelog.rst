@@ -398,6 +398,10 @@ nRF9160 samples
     * Device status information, including FOTA enablement, is now sent to nRF Cloud when the device connects.
     * Removed user prompt and button press handling for FOTA enablement.
 
+* :ref:`azure_fota_sample` sample:
+
+  * The sample now uses the logging subsystem for console output.
+
 Peripheral samples
 ------------------
 
