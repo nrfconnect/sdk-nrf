@@ -249,7 +249,7 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-* |no_changes_yet_note|
+* Reduced log verbosity of :ref:`pmw3360`.
 
 Libraries
 =========
