@@ -25,6 +25,12 @@ choice SETTINGS_BACKEND
 	default SETTINGS_NVS
 endchoice
 
+config NVS_LOG_LEVEL
+	default 2
+	help
+	  The nRF Desktop shows only warning and error logs related to the NVS.
+	  This is done to avoid flooding logs.
+
 config SETTINGS_DYNAMIC_HANDLERS
 	default n
 	help

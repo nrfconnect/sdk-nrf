@@ -653,7 +653,7 @@ static void load_identities(void)
 			break;
 		} else {
 			__ASSERT_NO_MSG(err == count);
-			LOG_INF("Identity %zu created", count);
+			LOG_DBG("Identity %zu created", count);
 		}
 	}
 }
