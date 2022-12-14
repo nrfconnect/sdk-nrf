@@ -349,6 +349,7 @@ Modem libraries
     * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_API_KEY`.
     * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_HOSTNAME`.
     * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG`.
+    * Improved GNSS assistance data need handling.
 
 Libraries for networking
 ------------------------

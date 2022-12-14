@@ -1087,10 +1087,8 @@ static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_
 	struct nrf_modem_gnss_agps_data_frame request;
 
 	if (incoming_request != NULL) {
-		request.sv_mask_ephe = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ?
-				       0u : incoming_request->sv_mask_ephe;
-		request.sv_mask_alm = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ?
-				       0u : incoming_request->sv_mask_alm;
+		request.sv_mask_ephe = incoming_request->sv_mask_ephe;
+		request.sv_mask_alm = incoming_request->sv_mask_alm;
 		request.data_flags = incoming_request->data_flags;
 	}
 
