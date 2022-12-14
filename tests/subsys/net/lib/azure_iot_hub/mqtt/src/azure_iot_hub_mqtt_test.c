@@ -311,9 +311,21 @@ void test_mqtt_helper_connect_when_disconnected_mqtt_api_error(void)
 	struct mqtt_helper_conn_params conn_params_dummy;
 
 	__cmock_mqtt_client_init_Expect(&mqtt_client);
-	__cmock_getaddrinfo_ExpectAnyArgsAndReturn(0);
+
 	__cmock_freeaddrinfo_ExpectAnyArgs();
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -2);
+
+	/* Make getddrinfo return a pointer that points to NULL. Otherwise the unit under test
+	 * would be dereferencing uninitialized memory location. The behavior of the unit
+	 * under test for when non-NULL values are returned is out of scope of this test.
+	 */
+	struct zsock_addrinfo *test_res = NULL;
+
+	__cmock_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
+	__cmock_getaddrinfo_IgnoreArg_host();
+	__cmock_getaddrinfo_IgnoreArg_hints();
+	__cmock_getaddrinfo_IgnoreArg_res();
+	__cmock_getaddrinfo_ReturnThruPtr_res(&test_res);
 
 	mqtt_state = MQTT_STATE_DISCONNECTED;
 
