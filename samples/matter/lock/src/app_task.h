@@ -65,6 +65,15 @@ private:
 	static void RequestSMPAdvertisingStart(void);
 #endif
 
+#ifdef CONFIG_THREAD_WIFI_SWITCHING
+	static void SwitchImagesDone();
+	static void SwitchImagesTriggerHandler(const AppEvent &event);
+	static void SwitchImagesTimerTimeoutCallback(k_timer *timer);
+	static void SwitchImagesEventHandler(const AppEvent &event);
+
+	bool mSwitchImagesTimerActive = false;
+#endif
+
 	FunctionEvent mFunction = FunctionEvent::NoneSelected;
 	bool mFunctionTimerActive = false;
 
