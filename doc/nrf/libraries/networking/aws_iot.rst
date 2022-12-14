@@ -154,6 +154,78 @@ To subscribe to non-AWS specific topics, complete the following steps:
 * Specify the number of additional topics that needs to be subscribed to, by setting the :kconfig:option:`CONFIG_AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT` option.
 * Pass a list containing application specific topics in the :c:func:`aws_iot_subscription_topics_add` function, after the :c:func:`aws_iot_init` function call and before the :c:func:`aws_iot_connect` function call.
 
+The following code example shows how to subscribe to non-AWS specific topics:
+
+.. code-block:: c
+
+	#define CUSTOM_TOPIC_1	"my-custom-topic/example"
+	#define CUSTOM_TOPIC_2	"my-custom-topic/example2"
+
+	const struct aws_iot_topic_data topics_list[2] = {
+		[0].str = CUSTOM_TOPIC_1,
+		[0].len = strlen(CUSTOM_TOPIC_1),
+		[1].str = CUSTOM_TOPIC_2,
+		[1].len = strlen(CUSTOM_TOPIC_2)
+	};
+
+	err = aws_iot_subscription_topics_add(topics_list, ARRAY_SIZE(topics_list));
+	if (err) {
+		LOG_ERR("aws_iot_subscription_topics_add, error: %d", err);
+		return err;
+	}
+
+	err = aws_iot_init(NULL, aws_iot_event_handler);
+	if (err) {
+		LOG_ERR("AWS IoT library could not be initialized, error: %d", err);
+		return err;
+	}
+
+Publishing to non-AWS specific topics
+=====================================
+
+To publish to a non-AWS specific topic, complete the following steps:
+
+* Populate a :c:struct:`aws_iot_topic_data` with the custom topics that you want to publish to.
+  It is not necessary to set the topic type when populating the :c:struct:`aws_iot_topic_data` structure.
+  This type is reserved for AWS IoT shadow topics.
+* Pass in the entry that corresponds to the topic that the payload is to be published to in the message structure :c:struct:`aws_iot_data`.
+  This structure is then passed into the :c:func:`aws_iot_send` function.
+
+The following code example shows how to publish to non-AWS specific topics:
+
+.. code-block:: c
+
+	#define MY_CUSTOM_TOPIC_1 "my-custom-topic/example"
+	#define MY_CUSTOM_TOPIC_1_IDX 0
+
+	static struct aws_iot_topic_data pub_topics[1] = {
+		[MY_CUSTOM_TOPIC_1_IDX].str = MY_CUSTOM_TOPIC_1,
+		[MY_CUSTOM_TOPIC_1_IDX].len = strlen(MY_CUSTOM_TOPIC_1),
+	};
+
+	struct aws_iot_data msg = {
+		/* Pointer to payload */
+		.ptr = buf,
+
+		/* Length of payload */
+		.len = len,
+
+		 /* Message ID , if not set it will be provided by the AWS IoT library */
+		.message_id = id,
+
+		/* Quality of Service level */
+		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+
+		/* "my-custom-topic/example" */
+		.topic = pub_topics[MY_CUSTOM_TOPIC_1_IDX]
+	};
+
+	err = aws_iot_send(&msg);
+	if (err) {
+		LOG_ERR("aws_iot_send, error: %d", err);
+		return err;
+	}
+
 Setting client ID at run-time
 =============================
 
