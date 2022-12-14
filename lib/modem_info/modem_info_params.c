@@ -153,6 +153,7 @@ int modem_info_params_get(struct modem_param_info *modem)
 			&modem->network.nbiot_mode,
 			&modem->network.gps_mode,
 			&modem->network.apn,
+			&modem->network.rsrp,
 #endif
 #if IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM_ICCID)
 			&modem->sim.iccid,
