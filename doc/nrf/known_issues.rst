@@ -1322,6 +1322,14 @@ NCSDK-13058: Directed advertising does not work
 
   **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``c61c677872943bcf7905ddeec8b24b07ae50752e``).
 
+.. rst-class:: v2-2-0
+
+NCSDK-18587: :ref:`caf_ble_adv` leaves off state on peer disconnection
+  If Bluetooth peer disconnects while the module is in the off state, the Bluetooth LE advertising module enters the ready state.
+  The module must remain in the off state until :c:struct:`wake_up_event` is received.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``d5f1390f724b08ebe6bc72d0ff7ba2296a6f4acd``).
+
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
 NCSDK-15675: Possible advertising start failure and module state error in :ref:`caf_ble_adv`

@@ -153,6 +153,12 @@ Bluetooth samples
 
     * Fixed a possible out-of-bounds memory access issue in the :c:func:`hid_kbd_state_key_set` and :c:func:`hid_kbd_state_key_clear` functions.
 
+* :ref: `ble_nrf_dm` sample:
+
+  * Changed:
+
+    * Added energy consumption information to documentation.
+
 Bluetooth mesh samples
 ----------------------
 
@@ -161,7 +167,16 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
-|no_changes_yet_note|
+* :ref:`nrf_cloud_rest_cell_pos_sample` sample:
+
+  * Added:
+
+    * Usage of GCI search option if running modem firmware 1.3.4.
+
+  * Updated:
+
+    * The sample now waits for RRC idle mode before requesting neighbor cell measurements.
+
 
 Peripheral samples
 ------------------
@@ -270,6 +285,8 @@ Libraries for networking
   * Updated:
 
     * The MQTT disconnect event is now handled by the FOTA module, allowing for updates to be completed while disconnected and reported properly when reconnected.
+    * GCI search results are now encoded in location requests.
+    * The neighbor cell's time difference value is now encoded in location requests.
 
 Libraries for NFC
 -----------------

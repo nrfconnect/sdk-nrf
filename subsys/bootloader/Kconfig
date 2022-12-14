@@ -140,14 +140,14 @@ config SB_MONOTONIC_COUNTER
 config SB_NUM_VER_COUNTER_SLOTS
 	int "Number of monotonic counter slots used for the firmware version"
 	default 240
-	range 1 300 if SOC_NRF5340_CPUAPP || SOC_NRF9160
-	range 1 1800 if SOC_SERIES_NRF52X
-	range 1 400 if SOC_SERIES_NRF51X
+	range 2 300 if SOC_NRF5340_CPUAPP || SOC_NRF9160
+	range 2 1800 if SOC_SERIES_NRF52X
+	range 2 400 if SOC_SERIES_NRF51X
 	depends on SB_MONOTONIC_COUNTER
 	help
 	  The number of monotonic counter slots available for the counter,
 	  i.e., the number of times the counter can be updated.
-	  The slots are 16 bits each. The number of slots is rounded up to the nearest even
+	  The slots are 16 bits each. The number of slots must be an even
 	  number to ensure that the total size of header and slots is aligned on a 32-bit word.
 	  Rationale for the default number (240): Assume one update a month for
 	  10 years, then double that value just in case. This default fits

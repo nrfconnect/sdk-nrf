@@ -16,6 +16,7 @@ import os
 # Size of LCS storage in OTP in bytes
 LCS_STATE_SIZE = 0x8
 IMPLEMENTATION_ID_SIZE = 0x20
+NUM_BYTES_PROVISIONED_ELSEWHERE = LCS_STATE_SIZE + IMPLEMENTATION_ID_SIZE
 
 def generate_provision_hex_file(s0_address, s1_address, hashes, provision_address, output, max_size,
                                 num_counter_slots_version):
@@ -31,10 +32,9 @@ def generate_provision_hex_file(s0_address, s1_address, hashes, provision_addres
     provision_data += struct.pack('H', 1) # Type "counter collection"
     provision_data += struct.pack('H', num_counters)
 
+    assert num_counter_slots_version % 2 == 0, "--num-counters-slots-version must be an even number"
+
     if num_counters == 1:
-        if num_counter_slots_version % 2 == 1:
-            num_counter_slots_version += 1
-            print(f'Monotonic counter slots rounded up to {num_counter_slots_version}')
         provision_data += struct.pack('H', 1) # counter description
         provision_data += struct.pack('H', num_counter_slots_version)
 
@@ -89,9 +89,11 @@ def main():
 
     s0_address = args.s0_addr
     s1_address = args.s1_addr if args.s1_addr is not None else s0_address
-    # The LCS is stored in the OTP before the rest of the provisioning
-    # data so add it to the given base address
-    provision_address = args.provision_addr + LCS_STATE_SIZE + IMPLEMENTATION_ID_SIZE
+    # The LCS and implementation ID is stored in the OTP before the
+    # rest of the provisioning data so add it to the given base
+    # address
+    provision_address = args.provision_addr + NUM_BYTES_PROVISIONED_ELSEWHERE
+    max_size          = args.max_size       - NUM_BYTES_PROVISIONED_ELSEWHERE
 
     hashes = []
     if args.public_key_files:
@@ -106,7 +108,7 @@ def main():
                                 hashes=hashes,
                                 provision_address=provision_address,
                                 output=args.output,
-                                max_size=args.max_size,
+                                max_size=max_size,
                                 num_counter_slots_version=args.num_counter_slots_version)
 
 

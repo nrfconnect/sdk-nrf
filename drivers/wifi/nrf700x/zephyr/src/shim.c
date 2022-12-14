@@ -505,24 +505,14 @@ static void zep_shim_work_kill(void *item)
 
 static unsigned long zep_shim_time_get_curr_us(void)
 {
-	struct timeval curr_time;
-	unsigned long curr_time_us = 0;
-
-	gettimeofday(&curr_time, NULL);
-
-	curr_time_us = (curr_time.tv_sec * 1000 * 1000) + curr_time.tv_usec;
-
-	return curr_time_us;
+	return k_uptime_get() * USEC_PER_MSEC;
 }
 
 static unsigned int zep_shim_time_elapsed_us(unsigned long start_time_us)
 {
-	struct timeval curr_time;
 	unsigned long curr_time_us = 0;
 
-	gettimeofday(&curr_time, NULL);
-
-	curr_time_us = (curr_time.tv_sec * 1000 * 1000) + curr_time.tv_usec;
+	curr_time_us = zep_shim_time_get_curr_us();
 
 	return curr_time_us - start_time_us;
 }

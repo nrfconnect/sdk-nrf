@@ -40,8 +40,10 @@ extern "C" {
 #define NRF_CLOUD_JSON_APPID_VAL_AIR_QUAL	"AIR_QUAL"
 #define NRF_CLOUD_JSON_APPID_VAL_RSRP		"RSRP"
 #define NRF_CLOUD_JSON_APPID_VAL_LIGHT		"LIGHT"
+#define NRF_CLOUD_JSON_APPID_VAL_MODEM		"MODEM"
 
 #define NRF_CLOUD_JSON_MSG_TYPE_KEY		"messageType"
+#define NRF_CLOUD_JSON_MSG_TYPE_VAL_CMD		"CMD"
 #define NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA	"DATA"
 #define NRF_CLOUD_JSON_MSG_TYPE_VAL_DISCONNECT	"DISCON"
 #define NRF_CLOUD_JSON_MSG_MAX_LEN_DISCONNECT	200
@@ -77,6 +79,7 @@ extern "C" {
 #define NRF_CLOUD_CELL_POS_JSON_KEY_NBORS	"nmr"
 #define NRF_CLOUD_CELL_POS_JSON_KEY_RSRP	NRF_CLOUD_JSON_RSRP_KEY
 #define NRF_CLOUD_CELL_POS_JSON_KEY_RSRQ	"rsrq"
+#define NRF_CLOUD_CELL_POS_JSON_KEY_TDIFF	"timeDiff"
 
 /* Location */
 #define NRF_CLOUD_LOCATION_KEY_DOREPLY		"doReply"
@@ -209,7 +212,7 @@ int nrf_cloud_json_add_modem_info(cJSON * const data_obj);
  * using the provided cell info
  */
 int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf,
-				       size_t inf_cnt, cJSON * const req_obj_out);
+				       cJSON * const req_obj_out);
 
 /** @brief Obtain the necessary network info from the modem and build a
  * [single-cell] cellular positioning request in the provided cJSON object.
