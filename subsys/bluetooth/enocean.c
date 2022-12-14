@@ -11,9 +11,10 @@
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/crypto.h>
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_ENOCEAN_DEBUG)
-#define LOG_MODULE_NAME bt_enocean
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_ENOCEAN_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_enocean);
+
 #include "common/bt_str.h"
 
 #define SIGNATURE_LEN 4
@@ -60,7 +61,7 @@ static struct bt_enocean_device *device_find(const bt_addr_le_t *addr)
 		}
 	}
 
-	BT_DBG("Unknown device %s", bt_addr_le_str(addr));
+	LOG_DBG("Unknown device %s", bt_addr_le_str(addr));
 	return NULL;
 }
 
@@ -194,7 +195,7 @@ static void handle_switch_data(const struct bt_le_scan_recv_info *info,
 		opt_data = net_buf_simple_pull_mem(buf, opt_data_len);
 	}
 
-	BT_DBG("%p %u %s: 0b%u%u%u%u", dev, seq,
+	LOG_DBG("%p %u %s: 0b%u%u%u%u", dev, seq,
 	       status & BIT(0) ? "pressed" : "released", !!(status & BIT(1)),
 	       !!(status & BIT(2)), !!(status & BIT(3)), !!(status & BIT(4)));
 
@@ -202,7 +203,7 @@ static void handle_switch_data(const struct bt_le_scan_recv_info *info,
 
 	err = auth(dev, seq, signature, payload, 9 + opt_data_len);
 	if (err) {
-		BT_ERR("Auth failed: %d", err);
+		LOG_ERR("Auth failed: %d", err);
 		return;
 	}
 
@@ -300,7 +301,7 @@ static void handle_sensor_data(const struct bt_le_scan_recv_info *info,
 	uint16_t light_solar_cell;
 	uint8_t energy_lvl;
 
-	BT_DBG("Sensor data:");
+	LOG_DBG("Sensor data:");
 	while (buf->len >= 2 + SIGNATURE_LEN) {
 		data_entry_pull(buf, &entry);
 
@@ -308,39 +309,39 @@ static void handle_sensor_data(const struct bt_le_scan_recv_info *info,
 		case DATA_TYPE_BATTERY:
 			battery_voltage = entry.value / 2;
 			data.battery_voltage = &battery_voltage;
-			BT_DBG("\tBattery:        %u mV", battery_voltage);
+			LOG_DBG("\tBattery:        %u mV", battery_voltage);
 			break;
 		case DATA_TYPE_ENERGY_LEVEL:
 			energy_lvl = entry.value / 2;
 			data.energy_lvl = &energy_lvl;
-			BT_DBG("\tEnergy level:   %u %%", energy_lvl);
+			LOG_DBG("\tEnergy level:   %u %%", energy_lvl);
 			break;
 		case DATA_TYPE_LIGHT_LEVEL_SENSOR:
 			light_sensor = entry.value;
 			data.light_sensor = &light_sensor;
-			BT_DBG("\tLight (sensor): %u lx", light_sensor);
+			LOG_DBG("\tLight (sensor): %u lx", light_sensor);
 			break;
 		case DATA_TYPE_LIGHT_LEVEL_SOLAR_CELL:
 			light_solar_cell = entry.value;
 			data.light_solar_cell = &light_solar_cell;
-			BT_DBG("\tLight (solar):  %u lx", light_solar_cell);
+			LOG_DBG("\tLight (solar):  %u lx", light_solar_cell);
 			break;
 		case DATA_TYPE_OCCUPANCY:
 			occupancy = entry.value == 2;
 			data.occupancy = &occupancy;
-			BT_DBG("\tOccupancy:      %s",
+			LOG_DBG("\tOccupancy:      %s",
 			       occupancy ? "true" : "false");
 			break;
 		case DATA_TYPE_OPTIONAL_DATA:
 			opt_data = entry.pointer;
 			opt_data_len = entry.len;
-			BT_DBG("\tOptional data (%u bytes)", opt_data_len);
+			LOG_DBG("\tOptional data (%u bytes)", opt_data_len);
 			break;
 		case DATA_TYPE_COMMISSIONING:
-			BT_DBG("\tCommissioning");
+			LOG_DBG("\tCommissioning");
 			return;
 		default:
-			BT_DBG("\tUnknown type:   %x", entry.type);
+			LOG_DBG("\tUnknown type:   %x", entry.type);
 			break;
 		}
 	}
@@ -353,7 +354,7 @@ static void handle_sensor_data(const struct bt_le_scan_recv_info *info,
 
 	err = auth(dev, seq, signature, payload, tot_len);
 	if (err) {
-		BT_ERR("Auth failed: %d", err);
+		LOG_ERR("Auth failed: %d", err);
 		return;
 	}
 
@@ -455,11 +456,11 @@ static void store_dirty(struct k_work *work)
 		err = settings_save_one(tag, &devices[i].seq,
 					sizeof(devices[i].seq));
 		if (err) {
-			BT_WARN("#%u err: %d", i, err);
+			LOG_WRN("#%u err: %d", i, err);
 			break;
 		}
 
-		BT_DBG("Stored #%u", i);
+		LOG_DBG("Stored #%u", i);
 
 		devices[i].flags &= ~FLAG_DIRTY;
 	}
@@ -497,7 +498,7 @@ static int settings_set(const char *key, size_t len, settings_read_cb read_cb,
 		memcpy(dev->key, entry.key, sizeof(dev->key));
 		dev->flags |= FLAG_ACTIVE;
 
-		BT_DBG("Loaded %s", bt_addr_le_str(&dev->addr));
+		LOG_DBG("Loaded %s", bt_addr_le_str(&dev->addr));
 		return 0;
 	}
 
@@ -571,7 +572,7 @@ int bt_enocean_commission(const bt_addr_le_t *addr, const uint8_t key[16],
 
 	dev = device_alloc(addr, seq, key);
 	if (!dev) {
-		BT_WARN("No more slots");
+		LOG_WRN("No more slots");
 		return -ENOMEM;
 	}
 
@@ -588,7 +589,7 @@ int bt_enocean_commission(const bt_addr_le_t *addr, const uint8_t key[16],
 
 	err = store_new_dev(dev);
 	if (err) {
-		BT_WARN("Storage failed: %d", err);
+		LOG_WRN("Storage failed: %d", err);
 		return -EBUSY;
 	}
 

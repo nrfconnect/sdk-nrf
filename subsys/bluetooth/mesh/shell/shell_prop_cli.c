@@ -11,7 +11,11 @@
 #include "mesh/net.h"
 #include "mesh/access.h"
 #include "shell_utils.h"
-#include "common/log.h"
+
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_shell_prop_cli);
+
 #include "common/bt_str.h"
 
 static struct bt_mesh_model *mod;

@@ -8,9 +8,9 @@
 #include <bluetooth/mesh/gen_plvl_srv.h>
 #include "model_utils.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_gen_lvl_srv
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_gen_lvl_srv);
 
 #define LVL_TO_POWER(_lvl) ((_lvl) + 32768)
 #define POWER_TO_LVL(_power) ((_power)-32768)

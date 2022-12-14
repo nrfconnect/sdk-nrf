@@ -10,9 +10,9 @@
 #include "mesh/net.h"
 #include "mesh/access.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_dm_srv
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_dm_srv);
 
 BUILD_ASSERT(CONFIG_BT_MESH_DM_SRV_DEFAULT_TTL != 1, "Illegal TTL value for DM server.");
 BUILD_ASSERT(CONFIG_MPSL_TIMESLOT_SESSION_COUNT >= 2, "Illegal MPSL timelsot cnt for DM server.");
@@ -207,7 +207,7 @@ static int handle_cfg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	uint8_t delay = net_buf_simple_pull_u8(buf);
 
 	if ((ttl == 1 || ttl > 127) || timeout < 10) {
-		BT_WARN("Invalid params for configuring DM");
+		LOG_WRN("Invalid params for configuring DM");
 		cfg_status_send(model, ctx, EBADMSG);
 		return -EBADMSG;
 	}
@@ -239,7 +239,7 @@ static int handle_start(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	}
 
 	if (srv->is_busy) {
-		BT_ERR("Failed to start DM. Measurement already in progress");
+		LOG_ERR("Failed to start DM. Measurement already in progress");
 		err = EBUSY;
 		goto rsp;
 	}
@@ -262,7 +262,7 @@ static int handle_start(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	}
 
 	if ((tx_ctx.send_ttl == 1 || tx_ctx.send_ttl > 127) || (timeout < 10) || !tx_ctx.addr) {
-		BT_WARN("Invalid params for starting DM");
+		LOG_WRN("Invalid params for starting DM");
 		err = EBADMSG;
 		goto rsp;
 	}
@@ -276,14 +276,14 @@ static int handle_start(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 		.extra_window_time_us = CONFIG_BT_MESH_DM_SRV_REFLECTOR_RANGING_WINDOW_US
 	};
 
-	BT_INFO("Starting %s DM for target node 0x%04x",
+	LOG_INF("Starting %s DM for target node 0x%04x",
 		dm_mode == DM_RANGING_MODE_RTT ? "RTT" : "MCPD", dm_srv->target_addr);
 
 	srv->is_busy = true;
 	k_sem_reset(&dm_srv->dm_ready_sem);
 	err = dm_request_add(&req);
 	if (err) {
-		BT_ERR("DM add request failed: %d", err);
+		LOG_ERR("DM add request failed: %d", err);
 		srv->is_busy = false;
 		goto rsp;
 	}
@@ -346,7 +346,7 @@ static int handle_sync(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	k_sem_reset(&srv->dm_ready_sem);
 	err = dm_request_add(&req);
 	if (err) {
-		BT_ERR("DM add request failed: %d", err);
+		LOG_ERR("DM add request failed: %d", err);
 		srv->is_busy = false;
 		return err;
 	}
@@ -388,11 +388,11 @@ const struct bt_mesh_model_op _bt_mesh_dm_srv_op[] = {
 static void data_ready(struct dm_result *result)
 {
 	if (!dm_srv->is_busy) {
-		BT_WARN("Unexpected DM result ready, discarding");
+		LOG_WRN("Unexpected DM result ready, discarding");
 		return;
 	}
 
-	BT_INFO("New DM result ready for target node %04x", dm_srv->target_addr);
+	LOG_INF("New DM result ready for target node %04x", dm_srv->target_addr);
 
 	new_entry_store(result);
 	if (k_work_delayable_is_pending(&dm_srv->timeout)) {
@@ -411,7 +411,7 @@ static struct dm_cb dm_cb = {
 
 static void timeout_work(struct k_work *work)
 {
-	BT_ERR("DM attempt timed out");
+	LOG_ERR("DM attempt timed out");
 
 	struct dm_result result = {
 		.quality = DM_QUALITY_DO_NOT_USE,
@@ -439,7 +439,7 @@ static int bt_mesh_dm_srv_init(struct bt_mesh_model *model)
 
 	err = dm_init(&init_param);
 	if (err) {
-		BT_ERR("Failed to initialize DM: %d", err);
+		LOG_ERR("Failed to initialize DM: %d", err);
 		return err;
 	}
 

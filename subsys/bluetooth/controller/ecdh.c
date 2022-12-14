@@ -18,9 +18,9 @@
 
 #include "ecdh.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
-#define LOG_MODULE_NAME bt_ecdh
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_HCI_DRIVER_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_sdc_ecdh);
 
 static struct {
 	uint8_t private_key_be[32];
@@ -87,7 +87,7 @@ static uint8_t common_secret(bool use_debug)
 		 * return an error and should use the error code
 		 * Invalid HCI Command Parameters (0x12).
 		 */
-		BT_ERR("public key is not valid (err %d)", err);
+		LOG_ERR("public key is not valid (err %d)", err);
 		return BT_HCI_ERR_INVALID_PARAM;
 	}
 
@@ -114,7 +114,7 @@ static uint8_t public_key(void)
 		rc = uECC_make_key(ecdh.public_key_be, ecdh.private_key_be,
 				   &curve_secp256r1);
 		if (rc != TC_CRYPTO_SUCCESS) {
-			BT_ERR("Failed to create ECC public/private pair");
+			LOG_ERR("Failed to create ECC public/private pair");
 			return BT_HCI_ERR_UNSPECIFIED;
 		}
 
@@ -135,7 +135,7 @@ static uint8_t common_secret(bool use_debug)
 		 * return an error and should use the error code
 		 * Invalid HCI Command Parameters (0x12).
 		 */
-		BT_ERR("public key is not valid (err %d)", err);
+		LOG_ERR("public key is not valid (err %d)", err);
 		return BT_HCI_ERR_INVALID_PARAM;
 	}
 
@@ -234,7 +234,7 @@ void ecdh_cmd_process(void)
 		buf = ecdh_p256_common_secret(true);
 		break;
 	default:
-		BT_WARN("Unknown command");
+		LOG_WRN("Unknown command");
 		buf = NULL;
 		break;
 	}

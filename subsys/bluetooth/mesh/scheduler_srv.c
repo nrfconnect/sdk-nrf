@@ -16,9 +16,9 @@
 #include "mesh/net.h"
 #include "mesh/access.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_scheduler_srv
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_scheduler_srv);
 
 #define MAX_DAY        0x1F
 #define JANUARY           0
@@ -408,14 +408,14 @@ static void run_scheduler(struct bt_mesh_scheduler_srv *srv)
 			&sched_time);
 
 	if (scheduled_uptime < 0) {
-		BT_WARN("Scheduler not started. Error: %lld.", scheduled_uptime);
+		LOG_WRN("Scheduler not started. Error: %lld.", scheduled_uptime);
 		return;
 	}
 
 	srv->idx = planned_idx;
 	k_work_reschedule(&srv->delayed_work,
 			  K_MSEC(MAX(scheduled_uptime - current_uptime, 0)));
-	BT_DBG("Scheduler started. Target uptime: %lld. Current uptime: %lld.",
+	LOG_DBG("Scheduler started. Target uptime: %lld. Current uptime: %lld.",
 			scheduled_uptime, current_uptime);
 }
 
@@ -430,37 +430,37 @@ static void schedule_action(struct bt_mesh_scheduler_srv *srv,
 			current_uptime);
 
 	if (current_local == NULL) {
-		BT_WARN("Local time not available");
+		LOG_WRN("Local time not available");
 		return;
 	}
 
-	BT_DBG("Current uptime %lld", current_uptime);
+	LOG_DBG("Current uptime %lld", current_uptime);
 
-	BT_DBG("Current time:");
-	BT_DBG("        year: %d", current_local->tm_year);
-	BT_DBG("       month: %d", current_local->tm_mon);
-	BT_DBG("         day: %d", current_local->tm_mday);
-	BT_DBG("        hour: %d", current_local->tm_hour);
-	BT_DBG("      minute: %d", current_local->tm_min);
-	BT_DBG("      second: %d", current_local->tm_sec);
+	LOG_DBG("Current time:");
+	LOG_DBG("        year: %d", current_local->tm_year);
+	LOG_DBG("       month: %d", current_local->tm_mon);
+	LOG_DBG("         day: %d", current_local->tm_mday);
+	LOG_DBG("        hour: %d", current_local->tm_hour);
+	LOG_DBG("      minute: %d", current_local->tm_min);
+	LOG_DBG("      second: %d", current_local->tm_sec);
 
 	if (!convert_scheduler_time_to_tm(&sched_time, current_local, entry)) {
-		BT_WARN("Cannot convert scheduled action time to struct tm");
+		LOG_WRN("Cannot convert scheduled action time to struct tm");
 		return;
 	}
 
 	if (ts_to_tai(&srv->sched_tai[idx], &sched_time)) {
-		BT_WARN("tm cannot be converted into TAI");
+		LOG_WRN("tm cannot be converted into TAI");
 		return;
 	}
 
-	BT_DBG("Scheduled time:");
-	BT_DBG("          year: %d", sched_time.tm_year);
-	BT_DBG("         month: %d", sched_time.tm_mon);
-	BT_DBG("           day: %d", sched_time.tm_mday);
-	BT_DBG("          hour: %d", sched_time.tm_hour);
-	BT_DBG("        minute: %d", sched_time.tm_min);
-	BT_DBG("        second: %d", sched_time.tm_sec);
+	LOG_DBG("Scheduled time:");
+	LOG_DBG("          year: %d", sched_time.tm_year);
+	LOG_DBG("         month: %d", sched_time.tm_mon);
+	LOG_DBG("           day: %d", sched_time.tm_mday);
+	LOG_DBG("          hour: %d", sched_time.tm_hour);
+	LOG_DBG("        minute: %d", sched_time.tm_min);
+	LOG_DBG("        second: %d", sched_time.tm_sec);
 
 	WRITE_BIT(srv->active_bitmap, idx, 1);
 }
@@ -491,7 +491,7 @@ static void scheduled_action_handle(struct k_work *work)
 	uint16_t scene = srv->sch_reg[srv->idx].scene_number;
 	struct bt_mesh_elem *elem = bt_mesh_model_elem(srv->model);
 
-	BT_DBG("Scheduler action fired: %d", srv->sch_reg[srv->idx].action);
+	LOG_DBG("Scheduler action fired: %d", srv->sch_reg[srv->idx].action);
 
 	do {
 		struct bt_mesh_model *handled_model =
@@ -504,7 +504,7 @@ static void scheduled_action_handle(struct k_work *work)
 
 			bt_mesh_scene_srv_set(scene_srv, scene, &transition);
 			bt_mesh_scene_srv_pub(scene_srv, NULL);
-			BT_DBG("Scene srv addr: %d recalled scene: %d",
+			LOG_DBG("Scene srv addr: %d recalled scene: %d",
 				elem->addr,
 				srv->sch_reg[srv->idx].scene_number);
 		}
@@ -522,7 +522,7 @@ static void scheduled_action_handle(struct k_work *work)
 			onoff_srv->handlers->set(onoff_srv,
 					NULL, &set, &status);
 			bt_mesh_onoff_srv_pub(onoff_srv, NULL, &status);
-			BT_DBG("Onoff srv addr: %d set: %d",
+			LOG_DBG("Onoff srv addr: %d set: %d",
 				elem->addr,
 				srv->sch_reg[srv->idx].action);
 		}
@@ -558,7 +558,7 @@ static void encode_status(struct bt_mesh_scheduler_srv *srv,
 	}
 
 	net_buf_simple_add_le16(buf, status_bitmap);
-	BT_DBG("Tx: scheduler server status: %#2x", status_bitmap);
+	LOG_DBG("Tx: scheduler server status: %#2x", status_bitmap);
 }
 
 static void encode_action_status(struct bt_mesh_scheduler_srv *srv,
@@ -568,24 +568,24 @@ static void encode_action_status(struct bt_mesh_scheduler_srv *srv,
 {
 	bt_mesh_model_msg_init(buf, BT_MESH_SCHEDULER_OP_ACTION_STATUS);
 
-	BT_DBG("Tx: scheduler server action status:");
-	BT_DBG("        index: %d", idx);
+	LOG_DBG("Tx: scheduler server action status:");
+	LOG_DBG("        index: %d", idx);
 
 	if (is_reduced) {
 		net_buf_simple_add_u8(buf, idx);
 	} else {
 		scheduler_action_pack(buf, idx, &srv->sch_reg[idx]);
 
-		BT_DBG("         year: %d", srv->sch_reg[idx].year);
-		BT_DBG("        month: %#2x", srv->sch_reg[idx].month);
-		BT_DBG("          day: %d", srv->sch_reg[idx].day);
-		BT_DBG("         wday: %#2x", srv->sch_reg[idx].day_of_week);
-		BT_DBG("         hour: %d", srv->sch_reg[idx].hour);
-		BT_DBG("       minute: %d", srv->sch_reg[idx].minute);
-		BT_DBG("       second: %d", srv->sch_reg[idx].second);
-		BT_DBG("       action: %d", srv->sch_reg[idx].action);
-		BT_DBG("   transition: %d", srv->sch_reg[idx].transition_time);
-		BT_DBG("        scene: %d", srv->sch_reg[idx].scene_number);
+		LOG_DBG("         year: %d", srv->sch_reg[idx].year);
+		LOG_DBG("        month: %#2x", srv->sch_reg[idx].month);
+		LOG_DBG("          day: %d", srv->sch_reg[idx].day);
+		LOG_DBG("         wday: %#2x", srv->sch_reg[idx].day_of_week);
+		LOG_DBG("         hour: %d", srv->sch_reg[idx].hour);
+		LOG_DBG("       minute: %d", srv->sch_reg[idx].minute);
+		LOG_DBG("       second: %d", srv->sch_reg[idx].second);
+		LOG_DBG("       action: %d", srv->sch_reg[idx].action);
+		LOG_DBG("   transition: %d", srv->sch_reg[idx].transition_time);
+		LOG_DBG("        scene: %d", srv->sch_reg[idx].scene_number);
 	}
 }
 
@@ -640,7 +640,7 @@ static int action_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	srv->sch_reg[idx] = tmp;
-	BT_DBG("Rx: scheduler server action index %d set, ack %d", idx, ack);
+	LOG_DBG("Rx: scheduler server action index %d set, ack %d", idx, ack);
 
 	if (srv->sch_reg[idx].action < BT_MESH_SCHEDULER_SCENE_RECALL ||
 	   (srv->sch_reg[idx].action == BT_MESH_SCHEDULER_SCENE_RECALL &&
@@ -672,7 +672,7 @@ static int action_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 static int handle_scheduler_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				struct net_buf_simple *buf)
 {
-	BT_DBG("Rx: scheduler server get");
+	LOG_DBG("Rx: scheduler server get");
 	send_scheduler_status(model, ctx);
 
 	return 0;
@@ -688,7 +688,7 @@ static int handle_scheduler_action_get(struct bt_mesh_model *model, struct bt_me
 		return -ENOENT;
 	}
 
-	BT_DBG("Rx: scheduler server action index %d get", idx);
+	LOG_DBG("Rx: scheduler server action index %d get", idx);
 	send_scheduler_action_status(model, ctx, idx,
 			!is_entry_defined(srv, idx));
 

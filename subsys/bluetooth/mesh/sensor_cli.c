@@ -12,9 +12,9 @@
 #include "mesh/net.h"
 #include "mesh/transport.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_sensor_cli
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_sensor_cli);
 
 struct list_rsp {
 	struct bt_mesh_sensor_info *sensors;
@@ -135,7 +135,7 @@ static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 		type = bt_mesh_sensor_type_get(id);
 		if (!type) {
 			if (buf->len < length) {
-				BT_WARN("Invalid length for 0x%04x: %u", id,
+				LOG_WRN("Invalid length for 0x%04x: %u", id,
 					length);
 				return -EMSGSIZE;
 			}
@@ -147,7 +147,7 @@ static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 		uint8_t expected_len = sensor_value_len(type);
 
 		if (length != expected_len) {
-			BT_WARN("Invalid length for 0x%04x: %u (expected %u)",
+			LOG_WRN("Invalid length for 0x%04x: %u (expected %u)",
 				id, length, expected_len);
 			return -EMSGSIZE;
 		}
@@ -156,7 +156,7 @@ static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 
 		err = sensor_value_decode(buf, type, value);
 		if (err) {
-			BT_ERR("Invalid format, err=%d", err);
+			LOG_ERR("Invalid format, err=%d", err);
 			return err; /* Invalid format, should ignore message */
 		}
 
@@ -201,7 +201,7 @@ static int parse_series_entry(const struct bt_mesh_sensor_type *type,
 	}
 
 	if (buf->len == 0) {
-		BT_WARN("The requested column didn't exist: %s",
+		LOG_WRN("The requested column didn't exist: %s",
 			bt_mesh_sensor_ch_str(&entry->column.start));
 		return -ENOENT;
 	}
@@ -317,7 +317,7 @@ static int handle_series_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 
 		err = parse_series_entry(type, col_format, buf, &entry);
 		if (err) {
-			BT_ERR("Failed parsing column %u (err: %d)", i, err);
+			LOG_ERR("Failed parsing column %u (err: %d)", i, err);
 			return err;
 		}
 
@@ -354,7 +354,7 @@ static int handle_cadence_status(struct bt_mesh_model *model, struct bt_mesh_msg
 	}
 
 	if (buf->len == 0 || type->channel_count != 1) {
-		BT_WARN("Type 0x%04x doesn't support cadence", id);
+		LOG_WRN("Type 0x%04x doesn't support cadence", id);
 		err = -ENOTSUP;
 		goto yield_ack;
 	}
