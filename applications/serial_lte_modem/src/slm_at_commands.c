@@ -56,10 +56,10 @@ LOG_MODULE_REGISTER(slm_at, CONFIG_SLM_LOG_LEVEL);
 #define SLM_UART_RESPONSE_DELAY 50
 
 /**@brief Shutdown modes. */
-enum shutdown_modes {
-	SHUTDOWN_MODE_INVALID,
-	SHUTDOWN_MODE_SLEEP,
-	SHUTDOWN_MODE_IDLE
+enum sleep_modes {
+	SLEEP_MODE_INVALID,
+	SLEEP_MODE_DEEP,
+	SLEEP_MODE_IDLE
 };
 
 /**@brief AT command handler type. */
@@ -80,6 +80,7 @@ extern struct uart_config slm_uart;
 /* global functions defined in different files */
 void enter_idle(void);
 void enter_sleep(void);
+void enter_shutdown(void);
 int slm_uart_configure(void);
 int poweroff_uart(void);
 bool verify_datamode_control(uint16_t time_limit, uint16_t *time_limit_min);
@@ -137,13 +138,13 @@ static void go_sleep_wk(struct k_work *work)
 {
 	ARG_UNUSED(work);
 
-	if (slm_work.data == SHUTDOWN_MODE_IDLE) {
+	if (slm_work.data == SLEEP_MODE_IDLE) {
 		if (poweroff_uart() == 0) {
 			enter_idle();
 		} else {
 			LOG_ERR("failed to power off UART");
 		}
-	} else if (slm_work.data == SHUTDOWN_MODE_SLEEP) {
+	} else if (slm_work.data == SLEEP_MODE_DEEP) {
 		slm_at_host_uninit();
 		modem_power_off();
 		enter_sleep();
@@ -151,7 +152,7 @@ static void go_sleep_wk(struct k_work *work)
 }
 
 /**@brief handle AT#XSLEEP commands
- *  AT#XSLEEP=<shutdown_mode>
+ *  AT#XSLEEP=<sleep_mode>
  *  AT#XSLEEP? not supported
  *  AT#XSLEEP=?
  */
@@ -164,16 +165,36 @@ static int handle_at_sleep(enum at_cmd_type type)
 		if (ret) {
 			return -EINVAL;
 		}
-		if (slm_work.data == SHUTDOWN_MODE_SLEEP || slm_work.data == SHUTDOWN_MODE_IDLE) {
+		if (slm_work.data == SLEEP_MODE_DEEP || slm_work.data == SLEEP_MODE_IDLE) {
 			k_work_reschedule(&slm_work.sleep_work, K_MSEC(100));
 		} else {
 			ret = -EINVAL;
 		}
 	} else if (type == AT_CMD_TYPE_TEST_COMMAND) {
-		sprintf(rsp_buf, "\r\n#XSLEEP: (%d,%d)\r\n", SHUTDOWN_MODE_SLEEP,
-			SHUTDOWN_MODE_IDLE);
+		sprintf(rsp_buf, "\r\n#XSLEEP: (%d,%d)\r\n", SLEEP_MODE_DEEP, SLEEP_MODE_IDLE);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
+	}
+
+	return ret;
+}
+
+/**@brief handle AT#XSHUTDOWN commands
+ *  AT#XSHUTDOWN
+ *  AT#XSHUTDOWN? not supported
+ *  AT#XSHUTDOWN=? not supported
+ */
+static int handle_at_shutdown(enum at_cmd_type type)
+{
+	int ret = -EINVAL;
+	char ok_str[] = "\r\nOK\r\n";
+
+	if (type == AT_CMD_TYPE_SET_COMMAND) {
+		rsp_send(ok_str, strlen(ok_str));
+		k_sleep(K_MSEC(SLM_UART_RESPONSE_DELAY));
+		slm_at_host_uninit();
+		modem_power_off();
+		enter_shutdown();
 	}
 
 	return ret;
@@ -460,6 +481,7 @@ static struct slm_at_cmd {
 	/* Generic commands */
 	{"AT#XSLMVER", handle_at_slmver},
 	{"AT#XSLEEP", handle_at_sleep},
+	{"AT#XSHUTDOWN", handle_at_shutdown},
 	{"AT#XRESET", handle_at_reset},
 	{"AT#XUUID", handle_at_uuid},
 	{"AT#XCLAC", handle_at_clac},

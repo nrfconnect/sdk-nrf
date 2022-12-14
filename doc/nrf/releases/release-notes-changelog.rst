@@ -142,6 +142,7 @@ nRF9160: Serial LTE modem
 -------------------------
 
 * Added an RFC1350 TFTP client, currently supporting only *READ REQUEST*.
+* Added new AT command #XSHUTDOWN to put nRF9160 SiP to System OFF mode.
 
 nRF5340 Audio
 -------------

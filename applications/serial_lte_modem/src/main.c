@@ -254,6 +254,18 @@ void enter_sleep(void)
 	nrf_regulators_system_off(NRF_REGULATORS_NS);
 }
 
+void enter_shutdown(void)
+{
+	/* De-configure GPIOs */
+	gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN, GPIO_INT_DISABLE);
+	gpio_pin_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN, GPIO_DISCONNECTED);
+	gpio_pin_configure(gpio_dev, CONFIG_SLM_INDICATE_PIN, GPIO_DISCONNECTED);
+
+	k_sleep(K_MSEC(100));
+
+	nrf_regulators_system_off(NRF_REGULATORS_NS);
+}
+
 static void handle_nrf_modem_lib_init_ret(void)
 {
 	int ret = modem_lib_init_result;
