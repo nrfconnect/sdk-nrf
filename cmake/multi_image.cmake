@@ -313,6 +313,15 @@ function(add_child_image_from_source)
         DTS ${ACI_NAME}_DTC_OVERLAY_FILE
         BUILD ${CONF_FILE_BUILD_TYPE}
         )
+      # Place the result in the CMake cache and remove local scoped variable.
+      foreach(file CONF_FILE DTC_OVERLAY_FILE)
+        if(DEFINED ${ACI_NAME}_${file})
+          set(${ACI_NAME}_${file} ${${ACI_NAME}_${file}} CACHE STRING
+            "Default ${ACI_NAME} configuration file" FORCE
+            )
+	  set(${ACI_NAME}_${file})
+        endif()
+      endforeach()
 
       # Check for configuration fragment. The contents of these are appended
       # to the project configuration, as opposed to the CONF_FILE which is used
@@ -330,11 +339,6 @@ function(add_child_image_from_source)
       set(child_image_dts_overlay ${ACI_CONF_DIR}/${ACI_NAME}.overlay)
       if (EXISTS ${child_image_dts_overlay})
         add_overlay_dts(${ACI_NAME} ${child_image_dts_overlay})
-      endif()
-      if(DEFINED ${ACI_NAME}_CONF_FILE)
-        set(${ACI_NAME}_CONF_FILE ${${ACI_NAME}_CONF_FILE} CACHE STRING
-          "Default ${ACI_NAME} configuration file"
-          )
       endif()
     endif()
     # Construct a list of variables that, when present in the root
