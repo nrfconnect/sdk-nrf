@@ -69,7 +69,15 @@ static void validate_and_boot(const struct fw_info *fw_info, uint16_t slot)
 
 	printk("Firmware version %d\r\n", fw_info->version);
 
-	if (fw_info->version > get_monotonic_version(NULL)) {
+	uint16_t version;
+	int err = get_monotonic_version(NULL, &version);
+
+	if (err) {
+		printk("Failed to read the monotonic counter!\n\r");
+		return;
+	}
+
+	if (fw_info->version > version) {
 		set_monotonic_version(fw_info->version, slot);
 	}
 
