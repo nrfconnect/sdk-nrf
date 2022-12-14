@@ -13,6 +13,18 @@ config BT_FAST_PAIR_STORAGE
 
 if BT_FAST_PAIR_STORAGE
 
+config BT_FAST_PAIR_STORAGE_MANAGER
+	bool
+	default y
+	help
+	  Add Fast Pair storage manager source files.
+
+config BT_FAST_PAIR_STORAGE_AK
+	bool
+	default y
+	help
+	  Add Fast Pair storage of Account Keys source files.
+
 config BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX
 	int "Maximum number of stored Account Keys"
 	range 5 10

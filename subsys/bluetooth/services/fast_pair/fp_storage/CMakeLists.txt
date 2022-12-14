@@ -6,8 +6,12 @@
 
 add_library(fp_storage STATIC)
 
-if(CONFIG_BT_FAST_PAIR_STORAGE)
-  target_sources(fp_storage PRIVATE fp_storage.c)
+if(CONFIG_BT_FAST_PAIR_STORAGE_MANAGER)
+  zephyr_linker_sources(SECTIONS fp_storage_manager.ld)
+  target_sources(fp_storage PRIVATE fp_storage_manager.c)
+endif()
+if(CONFIG_BT_FAST_PAIR_STORAGE_AK)
+  target_sources(fp_storage PRIVATE fp_storage_ak.c)
 endif()
 if(CONFIG_BT_FAST_PAIR_STORAGE_EXT_PN)
   target_sources(fp_storage PRIVATE fp_storage_pn.c)

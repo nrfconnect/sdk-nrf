@@ -7,7 +7,7 @@
 #include <zephyr/ztest.h>
 
 #include "fp_common.h"
-#include "fp_storage.h"
+#include "fp_storage_ak.h"
 
 #define ACCOUNT_KEY_MAX_CNT	CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX
 #define ACCOUNT_KEY_LEN		FP_ACCOUNT_KEY_LEN
@@ -45,13 +45,13 @@ void cu_account_keys_validate_unloaded(void)
 	struct fp_account_key all_keys[ACCOUNT_KEY_MAX_CNT];
 	size_t key_count = ACCOUNT_KEY_MAX_CNT;
 
-	err = fp_storage_account_key_count();
+	err = fp_storage_ak_count();
 	zassert_equal(err, -ENODATA, "Expected error before settings load");
 
-	err = fp_storage_account_keys_get(all_keys, &key_count);
+	err = fp_storage_ak_get(all_keys, &key_count);
 	zassert_equal(err, -ENODATA, "Expected error before settings load");
 
-	err = fp_storage_account_key_find(&all_keys[0], unloaded_account_key_find_cb, NULL);
+	err = fp_storage_ak_find(&all_keys[0], unloaded_account_key_find_cb, NULL);
 	zassert_equal(err, -ENODATA, "Expected error before settings load");
 }
 
@@ -62,9 +62,9 @@ void cu_account_keys_validate_loaded(uint8_t seed_first, uint8_t stored_cnt)
 	struct fp_account_key read_keys[ACCOUNT_KEY_MAX_CNT];
 	size_t read_cnt = ACCOUNT_KEY_MAX_CNT;
 
-	key_cnt = fp_storage_account_key_count();
+	key_cnt = fp_storage_ak_count();
 
-	res = fp_storage_account_keys_get(read_keys, &read_cnt);
+	res = fp_storage_ak_get(read_keys, &read_cnt);
 	zassert_ok(res, "Getting Account Keys failed");
 	zassert_equal(key_cnt, read_cnt, "Invalid key count");
 	zassert_equal(key_cnt, MIN(stored_cnt, ACCOUNT_KEY_MAX_CNT), "Invalid key count");
