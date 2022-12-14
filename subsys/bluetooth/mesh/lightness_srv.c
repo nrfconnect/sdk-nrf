@@ -10,9 +10,9 @@
 #include "lightness_internal.h"
 #include <bluetooth/mesh/light_ctrl_srv.h>
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_light_srv
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_light_srv);
 
 #define LVL_TO_LIGHT(_lvl) (from_actual((_lvl) + 32768))
 #define LIGHT_TO_LVL(_light) (to_actual((_light)) - 32768)
@@ -48,11 +48,11 @@ static void store_timeout(struct k_work *work)
 	};
 
 #if !IS_ENABLED(CONFIG_EMDS)
-	BT_DBG("Store: Last: %u Default: %u State: %s Range: [%u - %u]",
+	LOG_DBG("Store: Last: %u Default: %u State: %s Range: [%u - %u]",
 	       data.last, data.default_light, data.is_on ? "On" : "Off",
 	       data.range.min, data.range.max);
 #else
-	BT_DBG("Store: Default: %u Range: [%u - %u]",
+	LOG_DBG("Store: Default: %u Range: [%u - %u]",
 	       data.default_light, data.range.min, data.range.max);
 #endif
 
@@ -91,7 +91,7 @@ static int pub(struct bt_mesh_lightness_srv *srv, struct bt_mesh_msg_ctx *ctx,
 	       const struct bt_mesh_lightness_status *status,
 	       enum light_repr repr)
 {
-	BT_DBG("%u -> %u [%u ms]", status->current, status->target,
+	LOG_DBG("%u -> %u [%u ms]", status->current, status->target,
 	       status->remaining_time);
 
 	if (ctx == NULL) {
@@ -134,7 +134,7 @@ static void rsp_lightness_status(struct bt_mesh_model *model,
 				 BT_MESH_LIGHTNESS_MSG_MAXLEN_STATUS);
 	lvl_status_encode(&rsp, status, repr);
 
-	BT_DBG("Light %s Response: %u -> %u [%u ms]", repr_str[repr],
+	LOG_DBG("Light %s Response: %u -> %u [%u ms]", repr_str[repr],
 		light_to_repr(status->current, repr),
 		light_to_repr(status->target, repr),
 		status->remaining_time);
@@ -145,7 +145,7 @@ static void rsp_lightness_status(struct bt_mesh_model *model,
 static int handle_light_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf, enum light_repr repr)
 {
-	BT_DBG("%s", repr_str[repr]);
+	LOG_DBG("%s", repr_str[repr]);
 
 	struct bt_mesh_lightness_srv *srv = model->user_data;
 	struct bt_mesh_lightness_status status = { 0 };
@@ -184,10 +184,10 @@ void bt_mesh_lightness_srv_set(struct bt_mesh_lightness_srv *srv,
 			       struct bt_mesh_lightness_status *status)
 {
 	if (bt_mesh_model_transition_time(set->transition)) {
-		BT_DBG("%u [%u + %u ms]", set->lvl, set->transition->delay,
+		LOG_DBG("%u [%u + %u ms]", set->lvl, set->transition->delay,
 		       set->transition->time);
 	} else {
-		BT_DBG("%u", set->lvl);
+		LOG_DBG("%u", set->lvl);
 	}
 
 	memset(status, 0, sizeof(*status));
@@ -221,7 +221,7 @@ void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 	}
 
 	if (publish) {
-		BT_DBG("Publishing Light %s to 0x%04x", repr_str[ACTUAL], srv->pub.addr);
+		LOG_DBG("Publishing Light %s to 0x%04x", repr_str[ACTUAL], srv->pub.addr);
 
 		/* Publishing is always done as an Actual, according to test spec. */
 		pub(srv, NULL, status, ACTUAL);
@@ -247,10 +247,10 @@ static int lightness_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 	set.transition = model_transition_get(model, &transition, buf);
 
 	if (bt_mesh_model_transition_time(set.transition)) {
-		BT_DBG("Light set %s: %u [%u + %u ms]", repr_str[repr], set.lvl,
+		LOG_DBG("Light set %s: %u [%u + %u ms]", repr_str[repr], set.lvl,
 		set.transition->delay, set.transition->time);
 	} else {
-		BT_DBG("Light set %s: %u", repr_str[repr], set.lvl);
+		LOG_DBG("Light set %s: %u", repr_str[repr], set.lvl);
 	}
 
 	if (!tid_check_and_update(&srv->tid, tid, ctx)) {
@@ -337,7 +337,7 @@ void lightness_srv_default_set(struct bt_mesh_lightness_srv *srv,
 		return;
 	}
 
-	BT_DBG("%u", set);
+	LOG_DBG("%u", set);
 
 	srv->default_light = set;
 	if (srv->handlers->default_update) {
@@ -540,7 +540,7 @@ static void lvl_get(struct bt_mesh_lvl_srv *lvl_srv,
 	rsp->current = LIGHT_TO_LVL(status.current);
 	rsp->target = LIGHT_TO_LVL(status.target);
 	rsp->remaining_time = status.remaining_time;
-	BT_DBG("%i -> %i [%u ms]", rsp->current, rsp->target,
+	LOG_DBG("%i -> %i [%u ms]", rsp->current, rsp->target,
 	       rsp->remaining_time);
 }
 
@@ -571,7 +571,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 		rsp->current = LIGHT_TO_LVL(status.current);
 		rsp->target = LIGHT_TO_LVL(status.target);
 		rsp->remaining_time = status.remaining_time;
-		BT_DBG("%i -> %i [%u ms]", rsp->current, rsp->target,
+		LOG_DBG("%i -> %i [%u ms]", rsp->current, rsp->target,
 		       rsp->remaining_time);
 	}
 }
@@ -632,7 +632,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		rsp->current = LIGHT_TO_LVL(status.current);
 		rsp->target = LIGHT_TO_LVL(status.target);
 		rsp->remaining_time = status.remaining_time;
-		BT_DBG("Delta set rsp: %i (light: %u) -> %i (light: %u) [%u ms]",
+		LOG_DBG("Delta set rsp: %i (light: %u) -> %i (light: %u) [%u ms]",
 			rsp->current, status.current, rsp->target, status.target,
 			status.remaining_time);
 	}
@@ -677,7 +677,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 					 (uint64_t)move_set->transition->time) /
 					abs(move_set->delta);
 
-		BT_DBG("Move: distance: %u delta: %i step: %u ms time: %u ms",
+		LOG_DBG("Move: distance: %u delta: %i step: %u ms time: %u ms",
 		       (uint32_t)distance, move_set->delta,
 		       move_set->transition->time, time_to_edge);
 
@@ -699,7 +699,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		rsp->target = LIGHT_TO_LVL(status.target);
 		rsp->remaining_time = status.remaining_time;
 
-		BT_DBG("Move set rsp: %i (light: %u) -> %i (light: %u) [%u ms]",
+		LOG_DBG("Move set rsp: %i (light: %u) -> %i (light: %u) [%u ms]",
 		       rsp->current, status.current, rsp->target, status.target,
 		       status.remaining_time);
 	}
@@ -839,7 +839,7 @@ static int update_handler(struct bt_mesh_model *model)
 	struct bt_mesh_lightness_status status = { 0 };
 
 	srv->handlers->light_get(srv, NULL, &status);
-	BT_DBG("Republishing: %u -> %u [%u ms]", status.current, status.target,
+	LOG_DBG("Republishing: %u -> %u [%u ms]", status.current, status.target,
 	       status.remaining_time);
 	lvl_status_encode(model->pub->msg, &status, ACTUAL);
 	return 0;
@@ -907,11 +907,11 @@ static int bt_mesh_lightness_srv_settings_set(struct bt_mesh_model *model,
 	srv->transient.last = data.last;
 	srv->transient.is_on = data.is_on;
 
-	BT_DBG("Set: Last: %u Default: %u State: %s Range: [%u - %u]",
+	LOG_DBG("Set: Last: %u Default: %u State: %s Range: [%u - %u]",
 	       srv->transient.last, srv->default_light, data.is_on ? "On" : "Off",
 	       srv->range.min, srv->range.max);
 #else
-	BT_DBG("Set: Default: %u Range: [%u - %u]",
+	LOG_DBG("Set: Default: %u Range: [%u - %u]",
 	       srv->default_light, srv->range.min, srv->range.max);
 #endif
 
@@ -944,7 +944,7 @@ int lightness_on_power_up(struct bt_mesh_lightness_srv *srv)
 		return -EINVAL;
 	}
 
-	BT_DBG("Loading POnOff: %u -> %u [%u ms]", srv->ponoff.on_power_up,
+	LOG_DBG("Loading POnOff: %u -> %u [%u ms]", srv->ponoff.on_power_up,
 	       set.lvl, transition.time);
 
 	lightness_srv_change_lvl(srv, NULL, &set, &dummy, true);

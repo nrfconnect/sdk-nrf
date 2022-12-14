@@ -12,9 +12,9 @@
 #include "light_hsl_internal.h"
 #include "model_utils.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_light_sat_srv
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_light_sat_srv);
 
 #define LVL_TO_SAT(_lvl) ((_lvl) + 32768)
 #define SAT_TO_LVL(_satur) ((_satur) - 32768)
@@ -298,7 +298,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 					 (uint64_t)move_set->transition->time) /
 					abs(move_set->delta);
 
-		BT_DBG("Move: distance: %u delta: %u step: %u ms time: %u ms",
+		LOG_DBG("Move: distance: %u delta: %u step: %u ms time: %u ms",
 		       (uint32_t)distance, move_set->delta,
 		       move_set->transition->time, time_to_edge);
 
