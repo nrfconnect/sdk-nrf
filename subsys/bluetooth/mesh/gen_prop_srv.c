@@ -11,9 +11,9 @@
 #include "mesh/net.h"
 #include "mesh/transport.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_gen_prop_srv
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_gen_prop_srv);
 
 #define PROP_FOREACH(_srv, _prop)                                              \
 	for (_prop = &(_srv)->properties[0];                                   \
@@ -608,7 +608,7 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *model)
 				      sizeof(srv->pub_data));
 
 	if (srv->property_count > CONFIG_BT_MESH_PROP_MAXCOUNT) {
-		BT_ERR("Property counter is larger than max allowed value");
+		LOG_ERR("Property counter is larger than max allowed value");
 		return -EINVAL;
 	}
 
@@ -617,7 +617,7 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *model)
 	PROP_FOREACH(srv, prop)
 	{
 		if (prop->id == BT_MESH_PROP_ID_PROHIBITED) {
-			BT_ERR("Property ID cannot be 0");
+			LOG_ERR("Property ID cannot be 0");
 			return -EINVAL;
 		}
 	}
@@ -633,7 +633,7 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *model)
 			bt_mesh_model_elem(model), BT_MESH_MODEL_ID_GEN_USER_PROP_SRV);
 
 		if (!usr_prop_srv) {
-			BT_ERR("Failed to find Generic User Property Server on element");
+			LOG_ERR("Failed to find Generic User Property Server on element");
 			return -EINVAL;
 		}
 

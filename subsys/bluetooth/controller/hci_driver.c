@@ -31,9 +31,9 @@
 #include "ecdh.h"
 #include "radio_nrf5_txp.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
-#define LOG_MODULE_NAME sdc_hci_driver
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_HCI_DRIVER_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_sdc_hci_driver);
 
 #if defined(CONFIG_BT_CONN)
 /* It should not be possible to set CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT larger than
@@ -157,7 +157,7 @@ void sdc_assertion_handler(const char *const file, const uint32_t line)
 #else /* !IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
 void sdc_assertion_handler(const char *const file, const uint32_t line)
 {
-	BT_ERR("SoftDevice Controller ASSERT: %s, %d", file, line);
+	LOG_ERR("SoftDevice Controller ASSERT: %s, %d", file, line);
 	k_oops();
 }
 #endif /* IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
@@ -170,7 +170,7 @@ static inline void receive_signal_raise(void)
 
 static int cmd_handle(struct net_buf *cmd)
 {
-	BT_DBG("");
+	LOG_DBG("");
 
 	int errcode = MULTITHREADING_LOCK_ACQUIRE();
 
@@ -190,7 +190,7 @@ static int cmd_handle(struct net_buf *cmd)
 #if defined(CONFIG_BT_CONN)
 static int acl_handle(struct net_buf *acl)
 {
-	BT_DBG("");
+	LOG_DBG("");
 
 	int errcode = MULTITHREADING_LOCK_ACQUIRE();
 
@@ -213,10 +213,10 @@ static int hci_driver_send(struct net_buf *buf)
 	int err;
 	uint8_t type;
 
-	BT_DBG("");
+	LOG_DBG("");
 
 	if (!buf->len) {
-		BT_DBG("Empty HCI packet");
+		LOG_DBG("Empty HCI packet");
 		return -EINVAL;
 	}
 
@@ -231,7 +231,7 @@ static int hci_driver_send(struct net_buf *buf)
 		err = cmd_handle(buf);
 		break;
 	default:
-		BT_DBG("Unknown HCI type %u", type);
+		LOG_DBG("Unknown HCI type %u", type);
 		return -EINVAL;
 	}
 
@@ -239,7 +239,7 @@ static int hci_driver_send(struct net_buf *buf)
 		net_buf_unref(buf);
 	}
 
-	BT_DBG("Exit: %d", err);
+	LOG_DBG("Exit: %d", err);
 	return err;
 }
 
@@ -251,7 +251,7 @@ static void data_packet_process(uint8_t *hci_buf)
 	uint8_t flags, pb, bc;
 
 	if (!data_buf) {
-		BT_ERR("No data buffer available");
+		LOG_ERR("No data buffer available");
 		return;
 	}
 
@@ -262,7 +262,7 @@ static void data_packet_process(uint8_t *hci_buf)
 	pb = bt_acl_flags_pb(flags);
 	bc = bt_acl_flags_bc(flags);
 
-	BT_DBG("Data: handle (0x%02x), PB(%01d), BC(%01d), len(%u)", handle,
+	LOG_DBG("Data: handle (0x%02x), PB(%01d), BC(%01d), len(%u)", handle,
 	       pb, bc, len);
 
 	net_buf_add_mem(data_buf, &hci_buf[0], len + sizeof(*hdr));
@@ -320,24 +320,24 @@ static void event_packet_process(uint8_t *hci_buf)
 	if (hdr->evt == BT_HCI_EVT_LE_META_EVENT) {
 		struct bt_hci_evt_le_meta_event *me = (void *)&hci_buf[2];
 
-		BT_DBG("LE Meta Event (0x%02x), len (%u)",
+		LOG_DBG("LE Meta Event (0x%02x), len (%u)",
 		       me->subevent, hdr->len);
 	} else if (hdr->evt == BT_HCI_EVT_CMD_COMPLETE) {
 		struct bt_hci_evt_cmd_complete *cc = (void *)&hci_buf[2];
 		struct bt_hci_evt_cc_status *ccs = (void *)&hci_buf[5];
 		uint16_t opcode = sys_le16_to_cpu(cc->opcode);
 
-		BT_DBG("Command Complete (0x%04x) status: 0x%02x,"
+		LOG_DBG("Command Complete (0x%04x) status: 0x%02x,"
 		       " ncmd: %u, len %u",
 		       opcode, ccs->status, cc->ncmd, hdr->len);
 	} else if (hdr->evt == BT_HCI_EVT_CMD_STATUS) {
 		struct bt_hci_evt_cmd_status *cs = (void *)&hci_buf[2];
 		uint16_t opcode = sys_le16_to_cpu(cs->opcode);
 
-		BT_DBG("Command Status (0x%04x) status: 0x%02x",
+		LOG_DBG("Command Status (0x%04x) status: 0x%02x",
 		       opcode, cs->status);
 	} else {
-		BT_DBG("Event (0x%02x) len %u", hdr->evt, hdr->len);
+		LOG_DBG("Event (0x%02x) len %u", hdr->evt, hdr->len);
 	}
 
 	evt_buf = bt_buf_get_evt(hdr->evt, discardable,
@@ -345,11 +345,11 @@ static void event_packet_process(uint8_t *hci_buf)
 
 	if (!evt_buf) {
 		if (discardable) {
-			BT_DBG("Discarding event");
+			LOG_DBG("Discarding event");
 			return;
 		}
 
-		BT_ERR("No event buffer available");
+		LOG_ERR("No event buffer available");
 		return;
 	}
 
@@ -377,7 +377,7 @@ static bool fetch_and_process_hci_msg(uint8_t *p_hci_buffer)
 	} else if (msg_type == SDC_HCI_MSG_TYPE_DATA) {
 		data_packet_process(p_hci_buffer);
 	} else {
-		BT_ERR("Unexpected msg_type: %u. This if-else needs a new branch", msg_type);
+		LOG_ERR("Unexpected msg_type: %u. This if-else needs a new branch", msg_type);
 	}
 
 	return true;
@@ -766,11 +766,11 @@ static int configure_memory_usage(void)
 #endif
 	}
 
-	BT_DBG("BT mempool size: %u, required: %u",
+	LOG_DBG("BT mempool size: %u, required: %u",
 	       sizeof(sdc_mempool), required_memory);
 
 	if (required_memory > sizeof(sdc_mempool)) {
-		BT_ERR("Allocated memory too low: %u < %u",
+		LOG_ERR("Allocated memory too low: %u < %u",
 		       sizeof(sdc_mempool), required_memory);
 		k_panic();
 		/* No return from k_panic(). */
@@ -782,7 +782,7 @@ static int configure_memory_usage(void)
 
 static int hci_driver_open(void)
 {
-	BT_DBG("Open");
+	LOG_DBG("Open");
 
 	k_work_init(&receive_work, receive_work_handler);
 
@@ -799,7 +799,7 @@ static int hci_driver_open(void)
 	int err;
 
 	if (!device_is_ready(entropy_source)) {
-		BT_ERR("Entropy source device not ready");
+		LOG_ERR("Entropy source device not ready");
 		return -ENODEV;
 	}
 
@@ -811,7 +811,7 @@ static int hci_driver_open(void)
 
 	err = sdc_rand_source_register(&rand_functions);
 	if (err) {
-		BT_ERR("Failed to register rand source (%d)", err);
+		LOG_ERR("Failed to register rand source (%d)", err);
 		return -EINVAL;
 	}
 

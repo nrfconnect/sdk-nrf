@@ -11,9 +11,9 @@
 #include <stdlib.h>
 #include "model_utils.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_gen_ponoff_srv
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_gen_ponoff_srv);
 
 /** Persistent storage handling */
 struct ponoff_settings_data {
@@ -78,7 +78,7 @@ static void store_timeout(struct k_work *work)
 	err = store_data(srv, &onoff_status);
 
 	if (err) {
-		BT_ERR("Failed storing data: %d", err);
+		LOG_ERR("Failed storing data: %d", err);
 	}
 }
 #endif
