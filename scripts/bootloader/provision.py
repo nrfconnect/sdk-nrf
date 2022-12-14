@@ -32,10 +32,9 @@ def generate_provision_hex_file(s0_address, s1_address, hashes, provision_addres
     provision_data += struct.pack('H', 1) # Type "counter collection"
     provision_data += struct.pack('H', num_counters)
 
+    assert num_counter_slots_version % 2 == 0, "--num-counters-slots-version must be an even number"
+
     if num_counters == 1:
-        if num_counter_slots_version % 2 == 1:
-            num_counter_slots_version += 1
-            print(f'Monotonic counter slots rounded up to {num_counter_slots_version}')
         provision_data += struct.pack('H', 1) # counter description
         provision_data += struct.pack('H', num_counter_slots_version)
 

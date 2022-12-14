@@ -39,6 +39,11 @@ struct counter_collection {
 #define TYPE_COUNTERS 1 /* Type referring to counter collection. */
 #define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
 
+#ifdef CONFIG_SB_NUM_VER_COUNTER_SLOTS
+BUILD_ASSERT(CONFIG_SB_NUM_VER_COUNTER_SLOTS % 2 == 0,
+			 "CONFIG_SB_NUM_VER_COUNTER_SLOTS must be an even number");
+#endif
+
 uint32_t s0_address_read(void)
 {
 	uint32_t addr = BL_STORAGE->s0_address;
