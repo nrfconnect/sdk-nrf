@@ -32,7 +32,7 @@
 /applications/connectivity_bridge/        @jtguggedal @nordic-auko
 /applications/machine_learning/           @pdunaj
 /applications/matter_weather_station/     @Damian-Nordic @kkasperczyk-no
-/applications/nrf_desktop/                @pdunaj
+/applications/nrf_desktop/                @MarekPieta
 /applications/nrf5340_audio/              @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /applications/serial_lte_modem/           @junqingzou @pirun @rlubos
 /applications/zigbee_weather_station/     @adsz-nordic @tomchy
