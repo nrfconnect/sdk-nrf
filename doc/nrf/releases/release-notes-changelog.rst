@@ -296,7 +296,11 @@ Libraries for NFC
 Other libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`lib_location` library:
+
+  * Fixed:
+
+    * An issue causing the A-GPS data download to be delayed until the RRC connection release.
 
 * Secure Partition Manager (SPM):
 
