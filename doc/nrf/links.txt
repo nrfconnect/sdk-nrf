@@ -662,6 +662,9 @@
 
 .. _`AWS account`: https://aws.amazon.com/iot/
 .. _`Setting up an AWS account`: https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/
+.. _`Set up your AWS account`: https://docs.aws.amazon.com/iot/latest/developerguide/setting-up.html#aws-registration
+.. _`AWS IoT Core policy examples`: https://docs.aws.amazon.com/iot/latest/developerguide/example-iot-policies.html
+.. _`Security best practices in AWS IoT Core`: https://docs.aws.amazon.com/iot/latest/developerguide/security-best-practices.html
 
 .. _`AWS IoT console`: https://console.aws.amazon.com/iot/home
 .. _`AWS S3 console`: https://console.aws.amazon.com/s3/home
