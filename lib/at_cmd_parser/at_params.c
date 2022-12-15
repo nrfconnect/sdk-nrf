@@ -349,8 +349,7 @@ int at_params_int64_get(const struct at_param_list *list, size_t index, int64_t 
 int at_params_string_get(const struct at_param_list *list, size_t index,
 			 char *value, size_t *len)
 {
-	if (list == NULL || list->params == NULL || value == NULL ||
-	    value == NULL || len == NULL) {
+	if (list == NULL || list->params == NULL || value == NULL || len == NULL) {
 		return -EINVAL;
 	}
 
