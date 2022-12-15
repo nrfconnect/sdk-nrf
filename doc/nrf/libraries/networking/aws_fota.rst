@@ -49,6 +49,12 @@ Creating a FOTA job
       }
 
    Replace the *bucket_name* with the name of your bucket.
+
+.. note::
+   The policy example is only intended for development environments.
+   AWS Best Practices recommends that the **principal** is specified in the Bucket Policy to prevent anonymous users access to S3.
+   For more information, refer to the example policies listed in `AWS IoT Core policy examples`_ and `Security best practices in AWS IoT Core`_.
+
 #. Click :guilabel:`Objects` to go back to the bucket.
 #. Click :guilabel:`Upload` and :guilabel:`Add files`.
 #. Select the file :file:`app_update.bin` (located in the :file:`zephyr` subfolder of your build directory).

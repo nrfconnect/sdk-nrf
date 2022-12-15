@@ -89,6 +89,8 @@ CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS
    In certain LTE networks, the NAT timeout can be considerably lower than 1200 seconds.
    As a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, set the option :kconfig:option:`CONFIG_MQTT_KEEPALIVE` to the lowest timeout limit (Maximum allowed MQTT keepalive and NAT timeout).
 
+.. _aws_iot_sample_building_and_running:
+
 Building and running
 ********************
 
@@ -166,6 +168,20 @@ When the sample runs, the device boots, and the sample displays the following ou
         }
         } to AWS IoT broker
         Next data publication in 60 seconds
+
+To observe incoming messages in the AWS IoT console, navigate to the AWS IoT Core service and
+click :guilabel:`MQTT test client`.
+To observe messages that are sent from the device, subscribe to the **$aws/things/<client_id>/shadow/update** shadow topic or the wild card token **#**.
+
+.. figure:: /images/aws_mqtt_test_client.PNG
+   :alt: AWS IoT Core MQTT test client
+
+   AWS IoT Core MQTT test client
+
+Testing and debugging
+=====================
+
+If you have issues with the sample, refer to :ref:`gs_testing`.
 
 Dependencies
 ************

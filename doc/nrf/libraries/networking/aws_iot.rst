@@ -13,13 +13,22 @@ The library supports the following technologies:
 * TLS secured MQTT transmission protocol
 * Firmware-Over-The-Air (FOTA)
 
-To connect to AWS IoT, the following steps must be completed:
+To connect to AWS IoT, complete the following steps:
 
-1. :ref:`creating_a_thing_in_AWS_IoT`
+1. :ref:`setup_aws_and_permissions`
+#. :ref:`creating_a_thing_in_AWS_IoT`
 #. :ref:`flash_certi_device`
 #. :ref:`Configuring the application <configuring>`
 
 See `AWS IoT Developer Guide`_ for general information about the Amazon Web Services IoT service.
+
+.. _setup_aws_and_permissions:
+
+Set up your AWS account and permissions
+***************************************
+
+To connect to AWS IoT, you need to set up an AWS account with the appropriate permissions.
+Complete the steps documented in `Set up your AWS account`_.
 
 .. _creating_a_thing_in_AWS_IoT:
 
@@ -50,6 +59,12 @@ To create a Thing for your device:
              }
           ]
        }
+
+.. note::
+   The policy example is only intended for development environments.
+   All devices in your production fleet must have credentials with privileges that authorize only intended actions on specific resources.
+   The specific permission policies can vary depending on the use case and should meet business and security requirements.
+   For more information, refer to the example policies listed in `AWS IoT Core policy examples`_ and `Security best practices in AWS IoT Core`_.
 
 #. Click :guilabel:`Create`.
 #. Go to :guilabel:`Manage` > :guilabel:`All devices`> :guilabel:`Things` and select :guilabel:`Create things`.
@@ -126,6 +141,12 @@ Other options:
 
 .. note::
    If you are using a longer device ID that is either set by the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` or passed in during initialization, it might be required to increase the value of the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN` for proper initialization of the library.
+
+Usage
+*****
+
+The :ref:`aws_iot` sample showcases the use of this library and can be used to verify a connection to AWS IoT.
+To configure and run the sample, complete the steps described in :ref:`setup_awsiot` and :ref:`aws_iot_sample_building_and_running`.
 
 Initializing the library
 ========================
@@ -240,6 +261,16 @@ Setting the AWS host name at runtime
 The AWS IoT library also supports passing the endpoint address at runtime by setting the :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_APP` option.
 If this option is set, the ``host_name`` and ``host_name_len`` must be set in the :c:struct:`aws_iot_config` structure before it is passed into the :c:func:`aws_iot_init` function.
 The length of your AWS host name (:kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`) must be shorter than the default value of :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_MAX_LEN`, for proper initialization of the library.
+
+Testing and debugging
+=====================
+
+If you have issues with the library or sample, refer to :ref:`gs_testing`.
+
+Troubleshooting
+===============
+
+For issues related to the library and |NCS| in general, refer to :ref:`known_issues`.
 
 AWS FOTA
 ========
