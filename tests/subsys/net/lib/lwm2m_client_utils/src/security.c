@@ -542,29 +542,6 @@ static int copy_settings_hanler(struct settings_handler *cf)
 	handler = cf;
 	return 0;
 }
-static int str_to_pk_obj(const char *pathstr, struct lwm2m_obj_path *path, char delim)
-{
-	struct lwm2m_obj_path obj = {
-		.level = 3,
-		.obj_id = 0,
-		.obj_inst_id = 1,
-		.res_id = 3,
-	};
-	*path = obj;
-	return 0;
-}
-
-static int str_to_bs_obj(const char *pathstr, struct lwm2m_obj_path *path, char delim)
-{
-	struct lwm2m_obj_path obj = {
-		.level = 3,
-		.obj_id = 0,
-		.obj_inst_id = 2,
-		.res_id = 1,
-	};
-	*path = obj;
-	return 0;
-}
 
 static struct lwm2m_engine_obj_inst *get_pk_obj(const struct lwm2m_obj_path *path)
 {
@@ -592,7 +569,6 @@ ZTEST(lwm2m_client_utils_security, test_load_from_flash)
 
 	setup();
 	settings_register_fake.custom_fake = copy_settings_hanler;
-	lwm2m_string_to_path_fake.custom_fake = str_to_pk_obj;
 	lwm2m_engine_get_obj_inst_fake.custom_fake = get_pk_obj;
 	lwm2m_engine_get_res_buf_fake.custom_fake = lwm2m_engine_get_res_buf_custom_fake;
 	modem_key_mgmt_exists_fake.custom_fake = modem_key_mgmt_exists_custom_fake;
@@ -630,7 +606,6 @@ ZTEST(lwm2m_client_utils_security, test_load_boostrap_from_flash)
 
 	setup();
 	settings_register_fake.custom_fake = copy_settings_hanler;
-	lwm2m_string_to_path_fake.custom_fake = str_to_bs_obj;
 	lwm2m_engine_get_obj_inst_fake.custom_fake = get_pk_obj;
 	lwm2m_engine_get_res_buf_fake.custom_fake = lwm2m_engine_get_res_buf_custom_fake;
 	lwm2m_engine_get_bool_fake.custom_fake = get_bs_flag;

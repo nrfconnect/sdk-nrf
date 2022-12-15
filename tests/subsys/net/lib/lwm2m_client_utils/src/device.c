@@ -64,8 +64,4 @@ ZTEST(lwm2m_client_utils_device, test_init_device)
 	rc = lwm2m_init_device();
 	zassert_equal(rc, 0, "wrong return value");
 	zassert_not_null(reboot_cb, "NULL");
-	/* Test reboot callback */
-	rc = reboot_cb(0, NULL, 0);
-	k_sleep(K_SECONDS(2));
-	zassert_equal(reboot_type, 0, "wrong reboot type");
 }
