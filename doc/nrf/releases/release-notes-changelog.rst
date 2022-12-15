@@ -101,7 +101,11 @@ See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 ESB
 ---
 
-|no_changes_yet_note|
+  * Added support for front-end modules.
+  * The ESB module requires linking the :ref:`MPSL library <nrfxlib:mpsl_lib>`.
+  * The number of PPI/DPPI channels used is increased from 3 to 6.
+  * Assigned events 6-7 from the EGU0 instance to the ESB module.
+  * Changed the type parameter of the function :c:func:`esb_set_tx_power` to ``int8_t``.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------
@@ -200,6 +204,7 @@ nRF9160 samples
 
     * Support for nRF7002 EK shield and Wi-Fi based location.
 
+
 Peripheral samples
 ------------------
 
@@ -259,7 +264,11 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`esb_prx_ptx` sample:
+
+  * Added:
+
+    * Support for front-end modules and :ref:`zephyr:nrf21540dk_nrf52840`.
 
 Drivers
 =======
