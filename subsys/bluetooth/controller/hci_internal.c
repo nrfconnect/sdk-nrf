@@ -485,7 +485,7 @@ static void le_supported_features(sdc_hci_le_le_features_t *features)
 	features->periodic_advertising_sync_transfer_sender = 1;
 #endif
 #ifdef CONFIG_BT_CTLR_SYNC_TRANSFER_RECEIVER
-	features->periodic_advertising_sync_transfer_receiver = 1;
+	features->periodic_advertising_sync_transfer_recipient = 1;
 #endif
 #endif
 
