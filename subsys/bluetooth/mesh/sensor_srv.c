@@ -539,23 +539,21 @@ static int cadence_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		return err;
 	}
 
-	if (BT_DBG_ENABLED) {
-		char delta_down_str[BT_MESH_SENSOR_CH_STR_LEN];
-		char delta_up_str[BT_MESH_SENSOR_CH_STR_LEN];
-		char range_low_str[BT_MESH_SENSOR_CH_STR_LEN];
-		char range_high_str[BT_MESH_SENSOR_CH_STR_LEN];
+	char delta_down_str[BT_MESH_SENSOR_CH_STR_LEN];
+	char delta_up_str[BT_MESH_SENSOR_CH_STR_LEN];
+	char range_low_str[BT_MESH_SENSOR_CH_STR_LEN];
+	char range_high_str[BT_MESH_SENSOR_CH_STR_LEN];
 
-		strcpy(delta_down_str, bt_mesh_sensor_ch_str(&threshold.delta.down));
-		strcpy(delta_up_str, bt_mesh_sensor_ch_str(&threshold.delta.up));
-		strcpy(range_low_str, bt_mesh_sensor_ch_str(&threshold.range.low));
-		strcpy(range_high_str, bt_mesh_sensor_ch_str(&threshold.range.high));
+	strcpy(delta_down_str, bt_mesh_sensor_ch_str(&threshold.delta.down));
+	strcpy(delta_up_str, bt_mesh_sensor_ch_str(&threshold.delta.up));
+	strcpy(range_low_str, bt_mesh_sensor_ch_str(&threshold.range.low));
+	strcpy(range_high_str, bt_mesh_sensor_ch_str(&threshold.range.high));
 
-		LOG_DBG("Min int: %u div: %u delta: %s to %s range: %s to %s (%s)", min_int,
-		       period_div, delta_down_str, delta_up_str, range_low_str, range_high_str,
-		       (threshold.range.cadence == BT_MESH_SENSOR_CADENCE_FAST ?
-			"fast" :
-			"slow"));
-	}
+	LOG_DBG("Min int: %u div: %u delta: %s to %s range: %s to %s (%s)", min_int,
+	       period_div, delta_down_str, delta_up_str, range_low_str, range_high_str,
+	       (threshold.range.cadence == BT_MESH_SENSOR_CADENCE_FAST ?
+		"fast" :
+		"slow"));
 
 	sensor->state.min_int = min_int;
 	sensor->state.pub_div = period_div;
