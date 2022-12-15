@@ -60,6 +60,11 @@ The Receiver sample can be found under :file:`samples/esb/prx` in the |NCS| fold
 
 See :ref:`gs_programming` for information about how to build and program the application.
 
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
+
 Testing
 =======
 
