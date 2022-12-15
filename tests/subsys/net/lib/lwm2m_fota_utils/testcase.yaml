@@ -1,0 +1,12 @@
+tests:
+  subsys.net.lib.lwm2m_fota_utils.unittest_adv:
+    tags: unittest
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+  subsys.net.lib.lwm2m_fota_utils.unittest_obj5:
+    extra_args: CONF_FILE="prj_obj5.conf"
+    tags: unittest
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
