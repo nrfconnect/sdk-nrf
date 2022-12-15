@@ -39,6 +39,7 @@ Features
  * Packet acknowledgment and automatic packet retransmission functionality
  * Individual TX and RX FIFOs for every pipe
  * Backward compatible with legacy nRF24Lxx Enhanced ShockBurst
+ * Support for external front-end modules.
 
 .. _esb_config:
 
@@ -59,9 +60,12 @@ ESB requires exclusive access to all fixed and configured resources for the :ref
    * - Timer
      - NRF_TIMER2
      - configurable
-   * - PPI channels
-     - 5-11
-     - configurable
+   * - DPPI/PPI channels
+     - 6 channels
+     - automatically allocated
+   * - Event generator unit
+     - NRF_EGU0 events 6 - 7
+     - fixed
    * - Software interrupt
      - 0
      - fixed
@@ -71,6 +75,10 @@ ESB requires exclusive access to all fixed and configured resources for the :ref
 
 The radio and timer interrupt handlers run at priority level 0 (highest level), and the ESB callback functions run at priority level 1.
 Other interrupts used by the application must use priority level 2 or lower (level 2 to 7) to ensure correct operation.
+
+ESB requires the :ref:`MPSL library <nrfxlib:mpsl_lib>` for front-end module support.
+This library is always linked into the build, however, it is not initialized by default to provide your application and the ESB protocol with access to all hardware resources.
+See :ref:`ug_radio_fem_direct_support` for more details.
 
 .. _esb_backwards:
 
@@ -267,6 +275,12 @@ Therefore, there might be multiple radio interrupts between each event that is a
 A single :c:macro:`ESB_EVENT_TX_SUCCESS` or :c:macro:`ESB_EVENT_TX_FAILED` event indicates one or more successful or failed operations, respectively.
 An :c:macro:`ESB_EVENT_RX_RECEIVED` event indicates that there is at least one new packet in the RX FIFO.
 The event handler should make sure to completely empty the RX FIFO when appropriate.
+
+Front-end module support
+========================
+
+The ESB protocol supports external front-end modules.
+See :ref:`ug_radio_fem` for more details.
 
 .. _esb_errata:
 
