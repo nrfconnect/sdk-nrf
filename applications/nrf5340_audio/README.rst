@@ -935,6 +935,25 @@ Before building the application, you can verify if the kit is working by complet
 
 You can now program the development kits with either gateway or headset firmware before they can be used.
 
+.. _nrf53_audio_app_adding_FEM_support:
+
+Adding FEM support
+==================
+
+You can add support for the nRF21540 front-end module (FEM) to this application by using one of the following options, depending on how you decide to build the application:
+
+* If you opt for :ref:`nrf53_audio_app_building_script`, add the `--nrf21540` to the script's building command.
+* If you opt for :ref:`nrf53_audio_app_building_standard`, add the `-DSHIELD=nrf21540_ek_fwd` to the `west build` command.
+  For example:
+
+  .. code-block:: console
+
+     west build -b nrf5340_audio_dk_nrf5340_cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DSHIELD=nrf21540_ek_fwd -DCONF_FILE=prj_release.conf
+
+You can use the :kconfig:option:`CONFIG_NRF_21540_MAIN_TX_POWER` and :kconfig:option:`CONFIG_NRF_21540_PRI_ADV_TX_POWER` to set the TX power output.
+
+See :ref:`ug_radio_fem` for more information about FEM in the |NCS|.
+
 .. _nrf53_audio_app_building_script:
 
 Building and programming using script
