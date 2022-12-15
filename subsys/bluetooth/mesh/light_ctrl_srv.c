@@ -1281,8 +1281,6 @@ static int handle_prop_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *
 	uint16_t id = net_buf_simple_pull_le16(buf);
 
 	return prop_tx(srv, ctx, id);
-
-	return 0;
 }
 
 static int handle_prop_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
