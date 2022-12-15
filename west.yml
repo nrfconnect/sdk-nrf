@@ -82,7 +82,6 @@ manifest:
           - loramac-node
           - lvgl
           - lz4
-          - mbedtls
           - mipi-sys-t
           - nanopb
           - net-tools
