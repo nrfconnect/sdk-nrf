@@ -1781,7 +1781,7 @@ int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf
 
 	/* Add GCI cells */
 	for (uint8_t i = 0; i < inf->gci_cells_count; ++i) {
-		struct lte_lc_cell *gci = inf->gci_cells + i;
+		const struct lte_lc_cell *gci = inf->gci_cells + i;
 
 		lte_obj = add_lte_inf(lte_array, gci);
 		if (!lte_obj) {
