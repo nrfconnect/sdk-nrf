@@ -11,13 +11,6 @@
 #include <zephyr/shell/shell.h>
 #include "mosh_print.h"
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-#include <net/nrf_cloud_agps.h>
-#endif
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-#include <net/nrf_cloud_pgps.h>
-#endif
-
 #define CLOUD_CMD_MAX_LENGTH 150
 
 BUILD_ASSERT(
@@ -30,9 +23,6 @@ extern struct k_work_q mosh_common_work_q;
 extern const struct shell *mosh_shell;
 
 static struct k_work_delayable cloud_reconnect_work;
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-static struct k_work notify_pgps_work;
-#endif
 static struct k_work cloud_cmd_work;
 static struct k_work shadow_update_work;
 
@@ -64,19 +54,6 @@ static void cloud_reconnect_work_fn(struct k_work *work)
 		mosh_error("nrf_cloud_connect, error: %d", err);
 	}
 }
-
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-static void notify_pgps(struct k_work *work)
-{
-	ARG_UNUSED(work);
-	int err;
-
-	err = nrf_cloud_pgps_notify_prediction();
-	if (err) {
-		mosh_error("Error requesting notification of prediction availability: %d", err);
-	}
-}
-#endif /* defined(CONFIG_NRF_CLOUD_PGPS) */
 
 static void cloud_cmd_execute(struct k_work *work)
 {
@@ -253,9 +230,6 @@ static void cmd_cloud_connect(const struct shell *shell, size_t argc, char **arg
 
 		k_work_init(&cloud_cmd_work, cloud_cmd_execute);
 		k_work_init(&shadow_update_work, nrf_cloud_update_shadow);
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-		k_work_init(&notify_pgps_work, notify_pgps);
-#endif
 		k_work_init_delayable(&cloud_reconnect_work, cloud_reconnect_work_fn);
 	}
 
