@@ -539,7 +539,7 @@ static int cadence_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		return err;
 	}
 
-	if (BT_DBG_ENABLED) {
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_LOG_LEVEL_DBG)) {
 		char delta_down_str[BT_MESH_SENSOR_CH_STR_LEN];
 		char delta_up_str[BT_MESH_SENSOR_CH_STR_LEN];
 		char range_low_str[BT_MESH_SENSOR_CH_STR_LEN];
@@ -551,10 +551,8 @@ static int cadence_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		strcpy(range_high_str, bt_mesh_sensor_ch_str(&threshold.range.high));
 
 		LOG_DBG("Min int: %u div: %u delta: %s to %s range: %s to %s (%s)", min_int,
-		       period_div, delta_down_str, delta_up_str, range_low_str, range_high_str,
-		       (threshold.range.cadence == BT_MESH_SENSOR_CADENCE_FAST ?
-			"fast" :
-			"slow"));
+			period_div, delta_down_str, delta_up_str, range_low_str, range_high_str,
+			(threshold.range.cadence == BT_MESH_SENSOR_CADENCE_FAST ? "fast" : "slow"));
 	}
 
 	sensor->state.min_int = min_int;

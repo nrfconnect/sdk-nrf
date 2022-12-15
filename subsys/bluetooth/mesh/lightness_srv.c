@@ -27,9 +27,7 @@ struct bt_mesh_lightness_srv_settings_data {
 #endif
 } __packed;
 
-#ifdef BT_DBG_ENABLED
 static const char *const repr_str[] = { "Actual", "Linear" };
-#endif
 
 #if CONFIG_BT_SETTINGS
 static void store_timeout(struct k_work *work)

@@ -61,7 +61,7 @@ bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 		thrsh_mill = (prev_mill * thrsh_mill) / (100LL * 1000000LL);
 	}
 
-	if (BT_DBG_ENABLED) {
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_LOG_LEVEL_DBG)) {
 		char delta_str[BT_MESH_SENSOR_CH_STR_LEN];
 		char curr_str[BT_MESH_SENSOR_CH_STR_LEN];
 		char prev_str[BT_MESH_SENSOR_CH_STR_LEN];
@@ -70,9 +70,9 @@ bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 		strcpy(delta_str, bt_mesh_sensor_ch_str(&delta));
 		strcpy(curr_str, bt_mesh_sensor_ch_str(curr));
 		strcpy(prev_str, bt_mesh_sensor_ch_str(&sensor->state.prev));
-		strcpy(thrsh_str, delta_mill < 0 ?
-		       bt_mesh_sensor_ch_str(&sensor->state.threshold.delta.down) :
-		       bt_mesh_sensor_ch_str(&sensor->state.threshold.delta.up));
+		strcpy(thrsh_str,
+		       delta_mill < 0 ? bt_mesh_sensor_ch_str(&sensor->state.threshold.delta.down) :
+					bt_mesh_sensor_ch_str(&sensor->state.threshold.delta.up));
 
 		LOG_DBG("Delta: %s (%s - %s) thrsh: %s", delta_str, curr_str, prev_str, thrsh_str);
 	}
