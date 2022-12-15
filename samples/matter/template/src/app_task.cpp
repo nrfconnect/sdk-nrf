@@ -8,10 +8,6 @@
 #include "app_config.h"
 #include "led_util.h"
 
-#ifdef CONFIG_NET_L2_OPENTHREAD
-#include "thread_util.h"
-#endif
-
 #include <platform/CHIPDeviceLayer.h>
 
 #include "board_util.h"
@@ -123,13 +119,6 @@ CHIP_ERROR AppTask::Init()
 		return err;
 	}
 
-#ifdef CONFIG_OPENTHREAD_DEFAULT_TX_POWER
-	err = SetDefaultThreadOutputPower();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("Cannot set default Thread output power");
-		return err;
-	}
-#endif /* CONFIG_OPENTHREAD_DEFAULT_TX_POWER */
 #elif defined(CONFIG_CHIP_WIFI)
 	sWiFiCommissioningInstance.Init();
 #else
