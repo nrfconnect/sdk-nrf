@@ -549,7 +549,9 @@ static bool method_gnss_psm_enabled(void)
 
 static bool method_gnss_entered_psm(void)
 {
-	LOG_DBG("Waiting for LTE to enter PSM...");
+	LOG_DBG("%s", k_sem_count_get(&entered_psm_mode) == 0 ?
+		"Waiting for LTE to enter PSM..." :
+		"LTE already in PSM");
 
 	/* Wait for the PSM to start. If semaphore is reset during the waiting
 	 * period, the position request was canceled.
@@ -595,7 +597,9 @@ static bool method_gnss_allowed_to_start(void)
 		return true;
 	}
 
-	LOG_DBG("Waiting for the RRC connection release...");
+	LOG_DBG("%s", k_sem_count_get(&entered_rrc_idle) == 0 ?
+		"Waiting for the RRC connection release..." :
+		"RRC already in idle mode");
 
 	/* If semaphore is reset during the waiting period, the position request was canceled.*/
 	if (k_sem_take(&entered_rrc_idle, K_MINUTES(SLEEP_WAIT_BACKSTOP)) == -EAGAIN) {
@@ -878,8 +882,14 @@ int method_gnss_location_get(const struct location_method_config *config)
 	}
 #endif
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-	/* Trigger GNSS to send NRF_MODEM_GNSS_EVT_AGPS_REQ event if assistance data is needed. */
 	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_agps_req_work);
+	/* Sleep for a while before submitting the next work, otherwise A-GPS data may not be
+	 * downloaded before GNSS is started. GNSS is briefly started and stopped to trigger
+	 * the NRF_MODEM_GNSS_EVT_AGPS_REQ event, which in turn causes the A-GPS data download
+	 * work item to be submitted into the work queue. This all needs to happen before the
+	 * work item below is submitted.
+	 */
+	k_sleep(K_MSEC(100));
 #endif
 
 	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_start_work);
