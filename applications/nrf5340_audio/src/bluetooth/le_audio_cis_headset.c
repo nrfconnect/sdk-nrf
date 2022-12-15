@@ -9,6 +9,7 @@
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/audio/pacs.h>
 #include <zephyr/bluetooth/audio/csis.h>
@@ -18,6 +19,7 @@
 #include "macros_common.h"
 #include "ctrl_events.h"
 #include "ble_audio_services.h"
+#include "ble_hci_vsc.h"
 #include "audio_datapath.h"
 #include "channel_assignment.h"
 
@@ -429,8 +431,25 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	}
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
 	LOG_INF("Connected: %s", addr);
+
+#if (CONFIG_NRF_21540_ACTIVE)
+	int ret;
+	uint16_t conn_handle;
+
+	ret = bt_hci_get_conn_handle(conn, &conn_handle);
+	if (ret) {
+		LOG_ERR("Unable to get conn handle");
+	} else {
+		ret = ble_hci_vsc_conn_tx_pwr_set(conn_handle, CONFIG_NRF_21540_MAIN_DBM);
+		if (ret) {
+			LOG_ERR("Failed to set TX power for conn");
+		} else {
+			LOG_INF("\tTX power set to %d dBm", CONFIG_NRF_21540_MAIN_DBM);
+		}
+	}
+#endif /* (CONFIG_NRF_21540_ACTIVE) */
+
 	default_conn = bt_conn_ref(conn);
 }
 

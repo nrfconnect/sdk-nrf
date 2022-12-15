@@ -131,6 +131,10 @@ nRF9160: Serial LTE modem
 nRF5340 Audio
 -------------
 
+* Added:
+
+  * Support for Front End Module nRF21540.
+
 * Updated:
 
   * Power module has been re-factored so that it uses upstream Zephyr INA23X sensor driver.
