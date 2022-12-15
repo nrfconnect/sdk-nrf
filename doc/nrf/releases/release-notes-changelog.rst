@@ -87,6 +87,8 @@ Matter
   * :ref:`ug_matter_overview_commissioning` page with information about :ref:`ug_matter_network_topologies_commissioning_onboarding_formats`.
   * Default retry intervals used by Matter Reliability Protocol for Matter over Thread to account for longer round-trip times in Thread networks with multiple intermediate nodes.
   * The Bluetooth LE connection timeout parameters and the update timeout parameters to make communication over Bluetooth LE more reliable.
+  * Default transmission output power for Matter over Thread devices to the maximum available one for all targets:
+    8 dBm for nRF52840, 3 dBm for nRF5340, 20 dBm for all devices with FEM enabled, and 0 dBm for sleepy devices.
 
 * Fixed the issue of connection timing out when attaching to a Wi-Fi access point that requires Wi-Fi Protected Access 3 (WPA3).
 
@@ -112,7 +114,10 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
-|no_changes_yet_note|
+* Added:
+
+  * Support for setting the default Thread output power using the :kconfig:option:`OPENTHREAD_DEFAULT_TX_POWER` Kconfig option.
+
 
 See `Thread samples`_ for the list of changes for the Thread samples.
 
@@ -381,6 +386,8 @@ Matter samples
 --------------
 
 * Enabled Matter shell commands for all build types except ``release`` in all Matter samples.
+* Removed FEM-related Kconfig options from all samples.
+  Now, the transmission output power for Matter over Thread can be set using the :kconfig:option:`OPENTHREAD_DEFAULT_TX_POWER` Kconfig option.
 
 * :ref:`matter_lock_sample` sample:
 
