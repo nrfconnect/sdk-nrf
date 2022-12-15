@@ -9,7 +9,11 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(lwm2m_client_unittest)
 
 FILE(GLOB app_sources src/*.c)
-target_sources(app PRIVATE ${app_sources})
+target_sources(app
+  PRIVATE
+    ${app_sources}
+    $ENV{ZEPHYR_BASE}/subsys/net/lib/lwm2m/lwm2m_util.c
+)
 
 set(options
   -DCONFIG_LWM2M_ENGINE_MAX_PENDING=5

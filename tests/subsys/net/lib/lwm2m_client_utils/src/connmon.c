@@ -12,7 +12,6 @@
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
 #include <zephyr/settings/settings.h>
-#include <modem/modem_info.h>
 
 #include "stubs.h"
 

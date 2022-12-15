@@ -43,10 +43,8 @@ DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_post_write_callback, const cha
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_create_obj_inst, const char *);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_create_obj_inst, uint16_t, uint16_t,
 		       struct lwm2m_engine_obj_inst **);
-DEFINE_FAKE_VALUE_FUNC(int, lwm2m_path_to_string, char *, size_t, struct lwm2m_obj_path *, int);
 DEFINE_FAKE_VALUE_FUNC(struct lwm2m_engine_obj_inst *, lwm2m_engine_get_obj_inst,
 		       const struct lwm2m_obj_path *);
-DEFINE_FAKE_VALUE_FUNC(int, lwm2m_string_to_path, const char *, struct lwm2m_obj_path *, char);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_notify_observer, uint16_t, uint16_t, uint16_t);
 DEFINE_FAKE_VALUE_FUNC(struct lwm2m_ctx *, lwm2m_rd_client_ctx);
 DEFINE_FAKE_VOID_FUNC(lwm2m_rd_client_update);

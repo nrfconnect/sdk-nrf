@@ -9,7 +9,6 @@
 
 #include <zephyr/ztest.h>
 #include <zephyr/fff.h>
-
 #include <net/lwm2m_client_utils.h>
 #include <modem/modem_key_mgmt.h>
 #include <modem/modem_info.h>
@@ -38,10 +37,8 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_post_write_callback, const ch
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_create_obj_inst, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_create_obj_inst, uint16_t, uint16_t,
 			struct lwm2m_engine_obj_inst **);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_path_to_string, char *, size_t, struct lwm2m_obj_path *, int);
 DECLARE_FAKE_VALUE_FUNC(struct lwm2m_engine_obj_inst *, lwm2m_engine_get_obj_inst,
 			const struct lwm2m_obj_path *);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_string_to_path, const char *, struct lwm2m_obj_path *, char);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_notify_observer, uint16_t, uint16_t, uint16_t);
 DECLARE_FAKE_VALUE_FUNC(struct lwm2m_ctx *, lwm2m_rd_client_ctx);
 DECLARE_FAKE_VOID_FUNC(lwm2m_rd_client_update);
@@ -86,7 +83,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_s8, const char *, int8_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_s32, const char *, int32_t);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_rsrp_register, rsrp_cb_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
-		       lwm2m_engine_execute_cb_t);
+			lwm2m_engine_execute_cb_t);
 
 /* List of fakes used by this unit tester */
 #define DO_FOREACH_FAKE(FUNC) do { \
@@ -111,9 +108,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
 	FUNC(lwm2m_engine_create_res_inst)              \
 	FUNC(lwm2m_engine_set_res_buf)                  \
 	FUNC(lwm2m_create_obj_inst)			\
-	FUNC(lwm2m_path_to_string)                      \
 	FUNC(lwm2m_engine_get_obj_inst)                 \
-	FUNC(lwm2m_string_to_path)                      \
 	FUNC(lwm2m_notify_observer)                     \
 	FUNC(lwm2m_register_obj)                        \
 	FUNC(lwm2m_rd_client_ctx)                       \
