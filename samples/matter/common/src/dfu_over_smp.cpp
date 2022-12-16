@@ -10,8 +10,8 @@
 #error "DFUOverSMP requires MCUMGR module configs enabled"
 #endif
 
-#include <img_mgmt/img_mgmt.h>
-#include <os_mgmt/os_mgmt.h>
+#include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
+#include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
 #include <zephyr/dfu/mcuboot.h>
 #include <zephyr/mgmt/mcumgr/smp_bt.h>
 

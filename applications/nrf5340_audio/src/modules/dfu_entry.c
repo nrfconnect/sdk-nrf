@@ -19,13 +19,13 @@
 #include "channel_assignment.h"
 
 #ifdef CONFIG_MCUMGR_CMD_OS_MGMT
-#include <os_mgmt/os_mgmt.h>
+#include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
 #endif
 #ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
-#include <img_mgmt/img_mgmt.h>
+#include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
 #endif
 #ifdef CONFIG_MCUMGR_CMD_STAT_MGMT
-#include <stat_mgmt/stat_mgmt.h>
+#include <zephyr/mgmt/mcumgr/grp/stat_mgmt/stat_mgmt.h>
 #endif
 #ifdef CONFIG_MCUMGR_SMP_BT
 #include <zephyr/mgmt/mcumgr/smp_bt.h>

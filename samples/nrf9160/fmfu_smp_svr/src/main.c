@@ -9,8 +9,8 @@
 #include <mgmt/fmfu_mgmt_stat.h>
 #include <modem/modem_info.h>
 #include <modem/nrf_modem_lib.h>
-#include "os_mgmt/os_mgmt.h"
-#include "img_mgmt/img_mgmt.h"
+#include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
+#include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
 #include <zephyr/dfu/mcuboot.h>
 
 void main(void)
