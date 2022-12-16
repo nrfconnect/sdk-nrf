@@ -213,7 +213,7 @@ unsigned int spim_cmd_sleep_rpu(void)
 
 int spim_init(struct qspi_config *config)
 {
-	if (!spi_is_ready(&spi_spec)) {
+	if (!spi_is_ready_dt(&spi_spec)) {
 		LOG_ERR("Device %s is not ready\n", spi_spec.bus->name);
 		return -ENODEV;
 	}

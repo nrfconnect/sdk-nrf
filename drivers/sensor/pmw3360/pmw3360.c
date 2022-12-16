@@ -826,7 +826,7 @@ static int pmw3360_init(const struct device *dev)
 	data->dev = dev;
 	k_work_init(&data->trigger_handler_work, trigger_handler);
 
-	if (!spi_is_ready(&config->bus)) {
+	if (!spi_is_ready_dt(&config->bus)) {
 		LOG_ERR("SPI device not ready");
 		return -ENODEV;
 	}
