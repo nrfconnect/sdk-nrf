@@ -10,7 +10,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/net/lwm2m.h>
-#include <lwm2m_resource_ids.h>
 #include <modem/lte_lc.h>
 #include <net/lwm2m_client_utils.h>
 
