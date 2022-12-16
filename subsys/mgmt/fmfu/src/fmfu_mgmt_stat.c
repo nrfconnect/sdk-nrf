@@ -6,8 +6,8 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/stats/stats.h>
-#include <mgmt/mgmt.h>
-#include <stat_mgmt/stat_mgmt.h>
+#include <zephyr/mgmt/mcumgr/mgmt/mgmt.h>
+#include <zephyr/mgmt/mcumgr/grp/stat_mgmt/stat_mgmt.h>
 #include "fmfu_mgmt_internal.h"
 #include <mgmt/fmfu_mgmt.h>
 #include <mgmt/fmfu_mgmt_stat.h>

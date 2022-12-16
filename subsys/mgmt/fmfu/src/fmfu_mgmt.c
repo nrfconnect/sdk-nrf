@@ -6,8 +6,8 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <smp/smp.h>
-#include <mgmt/mgmt.h>
+#include <zephyr/mgmt/mcumgr/mgmt/mgmt.h>
+#include <zephyr/mgmt/mcumgr/smp/smp.h>
 #include <nrfx_ipc.h>
 #include <nrf_modem_full_dfu.h>
 #include <mgmt/fmfu_mgmt.h>
@@ -15,7 +15,7 @@
 #include <zcbor_common.h>
 #include <zcbor_decode.h>
 #include <zcbor_encode.h>
-#include "zcbor_bulk/zcbor_bulk_priv.h"
+#include <mgmt/mcumgr/util/zcbor_bulk.h>
 #include <zephyr/stats/stats.h>
 
 LOG_MODULE_REGISTER(mgmt_fmfu, CONFIG_MGMT_FMFU_LOG_LEVEL);
