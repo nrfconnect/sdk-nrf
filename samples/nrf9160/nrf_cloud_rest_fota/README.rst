@@ -19,7 +19,7 @@ The sample supports the following development kits:
 .. include:: /includes/tfm.txt
 
 .. note::
-   Full modem FOTA requires development kit version 1.0.1 or higher.
+   Full modem FOTA requires development kit version 0.14.0 or higher.
 
 The sample requires an `nRF Cloud`_ account.
 
@@ -111,6 +111,9 @@ To create a FOTA test version of this sample, add the following parameter to you
 To enable full modem FOTA, add the following parameter to your build command:
 
 ``-DOVERLAY_CONFIG=overlay_full_modem_fota.conf``
+
+Also, specify your development kit version by appending it to the board name.
+For example, if your development kit version is 1.0.1, use the board name ``nrf9160dk_nrf9160_ns@1_0_1`` in your build command.
 
 Dependencies
 ************

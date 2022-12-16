@@ -49,7 +49,7 @@ static cloud_wrap_evt_handler_t wrapper_evt_handler;
 #if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
 /* Full modem FOTA requires external flash to hold the full modem image.
  * Below is the external flash device present on the nRF9160 DK version
- * 1.0.1 and higher.
+ * 0.14.0 and higher.
  */
 static struct dfu_target_fmfu_fdev ext_flash_dev = {
 	.size = 0,

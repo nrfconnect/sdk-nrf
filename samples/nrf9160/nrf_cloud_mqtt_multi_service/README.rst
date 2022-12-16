@@ -134,7 +134,7 @@ Reboot after download completion is handled by the :file:`src/fota_support.c` fi
 In a real-world setting, these two behaviors could be directly implemented in the :file:`src/connection.c` file.
 In this sample, they are separated for clarity.
 
-This sample supports full modem FOTA for the nRF9160 development kit version 1.0.1 and higher.
+This sample supports full modem FOTA for the nRF9160 development kit version 0.14.0 and higher.
 To enable full modem FOTA, add the following parameter to your build command:
 
 ``-DOVERLAY_CONFIG=overlay_full_modem_fota.conf``
@@ -182,7 +182,7 @@ When enabled, this location method scans the MAC addresses of nearby access poin
 
 See :ref:`nrf_cloud_mqtt_multi_service_building_wifi` for details on how to enable Wi-Fi location tracking.
 
-This sample supports placing P-GPS data in external flash for the nRF9160 development kit version 1.0.1 and later.
+This sample supports placing P-GPS data in external flash for the nRF9160 development kit version 0.14.0 and later.
 Currently, you cannot combine this with full modem FOTA.
 To enable this, add the following parameter to your build command:
 
