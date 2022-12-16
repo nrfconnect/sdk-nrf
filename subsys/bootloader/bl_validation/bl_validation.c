@@ -10,6 +10,10 @@
 #include <zephyr/kernel.h>
 #include <bl_storage.h>
 
+/* The 15 bit version is encoded into the most significant bits of
+ * the 16 bit monotonic_counter, and the 1 bit slot is encoded
+ * into the least significant bit.
+ */
 
 int set_monotonic_version(uint16_t version, uint16_t slot)
 {
@@ -17,6 +21,7 @@ int set_monotonic_version(uint16_t version, uint16_t slot)
 	__ASSERT(slot <= 1, "Slot must be either 0 or 1.\r\n");
 	printk("Setting monotonic counter (version: %d, slot: %d)\r\n",
 		version, slot);
+
 	int err = set_monotonic_counter((version << 1) | !slot);
 
 	if (num_monotonic_counter_slots() == 0) {
@@ -29,12 +34,15 @@ int set_monotonic_version(uint16_t version, uint16_t slot)
 
 uint16_t get_monotonic_version(uint16_t *slot_out)
 {
-	uint16_t monotonic_version = get_monotonic_counter();
+	uint16_t monotonic_version_and_slot = get_monotonic_counter();
 
-	if (slot_out != NULL) {
-		*slot_out = !(monotonic_version & 1);
+	bool slot = !(monotonic_version_and_slot & 1);
+	uint16_t version = monotonic_version_and_slot >> 1;
+
+	if (slot_out) {
+		*slot_out = slot;
 	}
-	return monotonic_version >> 1;
+	return version;
 }
 
 
