@@ -164,6 +164,28 @@ Syntax
   If it is given, a TLS client will be started.
   It indicates to the modem the credential of the security tag used for establishing a secure connection.
 
+::
+
+   #XTCPCLI=<op>,<name>[,<value>]
+
+* The ``<op>`` parameter can accept the following value:
+
+  * ``3`` - Config socket option for TCP or TLS client.
+
+For a complete list of the supported SET ``<name>`` accepted parameters, see the `SETSOCKETOPT Service Spec Reference`_.
+In case of TLS client, the ``<name>`` parameter can accept one of the following values:
+
+  * ``2`` - ``TLS_HOSTNAME``.
+    ``<value>`` is a string.
+  * ``5`` - ``TLS_PEER_VERIFY``.
+    ``<value>`` is an integer and can be either ``0`` or ``1``.
+  * ``12`` - ``TLS_SESSION_CACHE``.
+    ``<value>`` is an integer and can be either ``0`` or ``1``.
+  * ``13`` - ``TLS_SESSION_CACHE_PURGE``.
+    ``<value>`` can accept any integer value.
+  * ``14`` - ``TLS_DTLS_HANDSHAKE_TIMEO``.
+    ``<value>`` is the timeout in seconds and can be one of the following integers: ``1``, ``3``, ``7``, ``15``, ``31``, ``63``, ``123``.
+
 Response syntax
 ~~~~~~~~~~~~~~~
 
@@ -240,7 +262,7 @@ Examples
 ::
 
    AT#XTCPCLI=?
-   #XTCPCLI: (0,1,2),<url>,<port>,<sec_tag>
+   #XTCPCLI: (0,1,2,3),<url>,<port>,<sec_tag>
    OK
 
 TCP send data #XTCPSEND
@@ -519,6 +541,28 @@ Syntax
   If it is given, a DTLS client will be started.
   It indicates to the modem the credential of the security tag used for establishing a secure connection.
 
+::
+
+   #XUDPCLI=<op>,<name>[,<value>]
+
+* The ``<op>`` parameter can accept the following value:
+
+  * ``3`` - Config socket option for UDP or DTLS client.
+
+For a complete list of the supported SET ``<name>`` accepted parameters, see the `SETSOCKETOPT Service Spec Reference`_.
+In case of DTLS client, the ``<name>`` parameter can accept one of the following values:
+
+  * ``2`` - ``TLS_HOSTNAME``.
+    ``<value>`` is a string.
+  * ``5`` - ``TLS_PEER_VERIFY``.
+    ``<value>`` is an integer and can be either ``0`` or ``1``.
+  * ``12`` - ``TLS_SESSION_CACHE``.
+    ``<value>`` is an integer and can be either ``0`` or ``1``.
+  * ``13`` - ``TLS_SESSION_CACHE_PURGE``.
+    ``<value>`` can accept any integer value.
+  * ``14`` - ``TLS_DTLS_HANDSHAKE_TIMEO``.
+    ``<value>`` is the timeout in seconds and can be one of the following integers: ``1``, ``3``, ``7``, ``15``, ``31``, ``63``, ``123``.
+
 Response syntax
 ~~~~~~~~~~~~~~~
 
@@ -588,7 +632,7 @@ Examples
 ::
 
    AT#XUDPCLI=?
-   #XUDPCLI: (0,1,2),<url>,<port>,<sec_tag>
+   #XUDPCLI: (0,1,2,3),<url>,<port>,<sec_tag>
    OK
 
 UDP send data #XUDPSEND

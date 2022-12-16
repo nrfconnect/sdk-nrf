@@ -30,7 +30,8 @@ enum slm_udp_proxy_operation {
 	SERVER_START,
 	CLIENT_CONNECT = SERVER_START,
 	SERVER_START6,
-	CLIENT_CONNECT6 = SERVER_START6
+	CLIENT_CONNECT6 = SERVER_START6,
+	CLIENT_CONFIG
 };
 
 static struct k_thread udp_thread;
@@ -60,6 +61,11 @@ extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 
 /** forward declaration of thread function **/
 static void udp_thread_func(void *p1, void *p2, void *p3);
+
+/* global functions defined in different files */
+int do_socketopt_set(int socket, int option, int value);
+int do_secure_socketopt_set_int(int socket, int option, int value);
+int do_secure_socketopt_set_str(int socket, int option, const char *value);
 
 static int do_udp_server_start(uint16_t port)
 {
@@ -536,6 +542,49 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 			err = do_udp_client_connect(url, port);
 		} else if (op == CLIENT_DISCONNECT) {
 			err = do_udp_client_disconnect();
+		} else if (op == CLIENT_CONFIG) {
+			uint16_t name;
+			int value_int = 0;
+
+			if (proxy.sock == INVALID_SOCKET) {
+				return -EINVAL;
+			}
+			err = at_params_unsigned_short_get(&at_param_list, 2, &name);
+			if (err) {
+				return err;
+			}
+			if (at_params_valid_count_get(&at_param_list) > 3) {
+				enum at_param_type type = at_params_type_get(&at_param_list, 3);
+				/* only possible for TLS_HOSTNAME in SOL_TLS */
+				if (type == AT_PARAM_TYPE_STRING) {
+					char value_str[SLM_MAX_URL] = {0};
+					int size = SLM_MAX_URL;
+
+					err = util_string_get(&at_param_list, 3, value_str, &size);
+					if (err) {
+						return err;
+					}
+					if (proxy.sec_tag == INVALID_SEC_TAG) {
+						return do_secure_socketopt_set_str(proxy.sock,
+										  name, value_str);
+					}
+					return -EINVAL;
+				} else if (type == AT_PARAM_TYPE_NUM_INT) {
+					err = at_params_int_get(&at_param_list, 3, &value_int);
+					if (err) {
+						return err;
+					}
+				} else {
+					return -EINVAL;
+				}
+			}
+			if (proxy.sec_tag != INVALID_SEC_TAG) {
+				err = do_secure_socketopt_set_int(proxy.sock, name, value_int);
+			} else {
+				err = do_socketopt_set(proxy.sock, name, value_int);
+			}
+		} else {
+			err = -EINVAL;
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
@@ -545,8 +594,8 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XUDPCLI: (%d,%d,%d),<url>,<port>,<sec_tag>\r\n",
-			CLIENT_DISCONNECT, CLIENT_CONNECT, CLIENT_CONNECT6);
+		sprintf(rsp_buf, "\r\n#XUDPCLI: (%d,%d,%d,%d),<url>,<port>,<sec_tag>\r\n",
+			CLIENT_DISCONNECT, CLIENT_CONNECT, CLIENT_CONNECT6, CLIENT_CONFIG);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
