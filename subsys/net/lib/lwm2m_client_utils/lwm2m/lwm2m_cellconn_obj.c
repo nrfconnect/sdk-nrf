@@ -194,17 +194,29 @@ static enum lte_lc_lte_mode lte_mode = LTE_LC_LTE_MODE_NONE;
 
 static void radio_period_update(struct k_work *work)
 {
+	int err;
+
 	LOG_DBG("Set radio online");
 	disable_radio_period_tmp = 0;
 	lwm2m_engine_set_u16("10/0/1", disable_radio_period_tmp);
-	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
+
+	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
+	if (err) {
+		LOG_ERR("Unable to set modem online, error %d", err);
+	}
 }
 
 static void set_radio_offline(struct k_work *work)
 {
+	int err;
+
 	k_sleep(K_MSEC(200));
 	LOG_DBG("Set radio offline");
-	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+
+	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+	if (err) {
+		LOG_ERR("Unable to set modem offline, error %d", err);
+	}
 }
 
 static void radio_period_timer_fn(struct k_timer *dummy)
