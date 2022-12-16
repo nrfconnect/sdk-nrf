@@ -88,7 +88,7 @@ There are three ways to define this storage location:
 * To use a dedicated partition, enable the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION` option.
 
   By default, this partition is stored in the main SoC flash.
-  This partition can optionally be located in external flash for the nRF9160 development kit version 1.0.1 and later.
+  This partition can optionally be located in external flash for the nRF9160 development kit version 0.14.0 and later.
   This conserves space in the main flash for storing code or other data.
   Currently, you cannot combine storing P-GPS data in external flash with full modem FOTA.
 

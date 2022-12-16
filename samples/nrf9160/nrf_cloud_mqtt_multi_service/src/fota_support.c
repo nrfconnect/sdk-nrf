@@ -16,7 +16,7 @@ LOG_MODULE_REGISTER(fota_support, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 #if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
 /* Full modem FOTA requires external flash to hold the full modem image.
  * Below is the external flash device present on the nRF9160 DK version
- * 1.0.1 and higher.
+ * 0.14.0 and higher.
  */
 #define FULL_MODEM_FOTA_FLASH_DEVICE DEVICE_DT_GET_ONE(jedec_spi_nor)
 #else

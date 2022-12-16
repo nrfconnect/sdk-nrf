@@ -20,7 +20,7 @@ LOG_MODULE_REGISTER(nrf_cloud_rest_fota, CONFIG_NRF_CLOUD_REST_FOTA_SAMPLE_LOG_L
 
 #if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
 /* Full modem FOTA requires external flash to hold the full modem image.
- * Below is the external flash device present on the nRF9160 DK version 1.0.1 and higher.
+ * Below is the external flash device present on the nRF9160 DK version 0.14.0 and higher.
  */
 #define EXT_FLASH_DEVICE jedec_spi_nor
 #endif
