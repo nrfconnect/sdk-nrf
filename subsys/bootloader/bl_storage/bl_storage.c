@@ -135,6 +135,15 @@ void invalidate_public_key(uint32_t key_idx)
 	}
 }
 
+/*
+ * Don't include functions for reading and writing the counter when
+ * the counter has been disabled as this can only happen for corrupt
+ * configurations.
+ *
+ * We would rather have a link error in the build, than the API
+ * returning 0 at runtime for such builds.
+ */
+#ifdef CONFIG_SECURE_BOOT_STORAGE_MONOTONIC_COUNTER
 
 /** Get the counter_collection data structure in the provision data. */
 static const struct counter_collection *get_counter_collection(void)
@@ -174,7 +183,6 @@ static const struct monotonic_counter *get_counter_struct(uint16_t description)
 	}
 	return NULL;
 }
-
 
 uint16_t num_monotonic_counter_slots(void)
 {
@@ -247,3 +255,5 @@ int set_monotonic_counter(uint16_t new_counter)
 	nrfx_nvmc_halfword_write((uint32_t)next_counter_addr, ~new_counter);
 	return 0;
 }
+
+#endif /* CONFIG_SECURE_BOOT_STORAGE_MONOTONIC_COUNTER */

@@ -296,7 +296,8 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 		return false;
 	}
 
-	if (fwinfo->version < get_monotonic_version(NULL)) {
+	if (IS_ENABLED(CONFIG_SECURE_BOOT_STORAGE_MONOTONIC_COUNTER) &&
+		(fwinfo->version < get_monotonic_version(NULL))) {
 		PRINT("Firmware version (%u) is smaller than monotonic counter (%u).\n\r",
 			fwinfo->version, get_monotonic_version(NULL));
 		return false;

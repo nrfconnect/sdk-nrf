@@ -69,7 +69,8 @@ static void validate_and_boot(const struct fw_info *fw_info, uint16_t slot)
 
 	printk("Firmware version %d\r\n", fw_info->version);
 
-	if (fw_info->version > get_monotonic_version(NULL)) {
+	if (IS_ENABLED(CONFIG_SECURE_BOOT_STORAGE_MONOTONIC_COUNTER) &&
+	    (fw_info->version > get_monotonic_version(NULL))) {
 		set_monotonic_version(fw_info->version, slot);
 	}
 
