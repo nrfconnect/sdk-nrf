@@ -9,9 +9,9 @@
 #include <caf/events/ble_smp_event.h>
 
 #include <zephyr/mgmt/mcumgr/smp_bt.h>
-#include <img_mgmt/img_mgmt.h>
+#include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
 #ifdef CONFIG_MCUMGR_CMD_OS_MGMT
-#include <os_mgmt/os_mgmt.h>
+#include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
 #endif
 
 #include <zephyr/logging/log.h>
