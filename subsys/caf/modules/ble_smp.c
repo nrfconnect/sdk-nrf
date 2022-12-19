@@ -8,6 +8,7 @@
 #include <caf/events/module_state_event.h>
 #include <caf/events/ble_smp_event.h>
 
+#include <zephyr/mgmt/mcumgr/mgmt/callbacks.h>
 #include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
 #include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
 #ifdef CONFIG_MCUMGR_CMD_OS_MGMT
@@ -20,15 +21,23 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_SMP_LOG_LEVEL);
 static atomic_t event_active = ATOMIC_INIT(false);
 
 
-static int upload_confirm(const struct img_mgmt_upload_req req,
-			  const struct img_mgmt_upload_action action)
+static int32_t upload_confirm_cb(uint32_t event,
+				 int32_t rc,
+				 bool *abort_more,
+				 void *data,
+				 size_t data_size)
 {
 	if (atomic_cas(&event_active, false, true)) {
 		APP_EVENT_SUBMIT(new_ble_smp_transfer_event());
 	}
 
-	return 0;
+	return MGMT_ERR_EOK;
 }
+
+static struct mgmt_callback mgmt_callback = {
+	.callback = upload_confirm_cb,
+	.event_id = MGMT_EVT_OP_IMG_MGMT_DFU_CHUNK,
+};
 
 static bool app_event_handler(const struct app_event_header *aeh)
 {
@@ -45,7 +54,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		const struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			img_mgmt_set_upload_cb(upload_confirm);
+			mgmt_callback_register(&mgmt_callback);
 			img_mgmt_register_group();
 #ifdef CONFIG_MCUMGR_CMD_OS_MGMT
 			os_mgmt_register_group();
