@@ -5,14 +5,19 @@
  */
 
 #include <zephyr/kernel.h>
-#include <stdio.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/device.h>
 #include <zephyr/data/json.h>
+#include <modem/nrf_modem_lib.h>
+#include <stdio.h>
 #include <net/fota_download.h>
 #include <net/aws_jobs.h>
 #include <net/aws_fota.h>
-#include <zephyr/logging/log.h>
 
 #include "aws_fota_json.h"
+
+#include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 
 LOG_MODULE_REGISTER(aws_fota, CONFIG_AWS_FOTA_LOG_LEVEL);
 
@@ -65,6 +70,18 @@ static uint8_t file_path[CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN];
 /* Allocated buffer used to keep track the job ID currently being handled by the library. */
 static uint8_t job_id_handling[AWS_JOBS_JOB_ID_MAX_LEN] = AWS_JOB_ID_DEFAULT;
 static aws_fota_callback_t callback;
+
+NRF_MODEM_LIB_ON_INIT(aws_fota_init_hook, on_modem_lib_init, NULL);
+
+/* Initialized to value different than success (0) */
+static int modem_lib_init_result = -1;
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	ARG_UNUSED(ctx);
+
+	modem_lib_init_result = ret;
+}
 
 /* Convenience functions used in internal state handling. */
 static char *state2str(enum internal_state state)
@@ -805,3 +822,50 @@ int aws_fota_get_job_id(uint8_t *const job_id_buf, size_t buf_size)
 	}
 	return snprintf(job_id_buf, buf_size, "%s", (char *)job_id_handling);
 }
+
+void aws_fota_modem_firmware_update_validate(void)
+{
+	/* Handle return values relating to modem firmware update */
+	switch (modem_lib_init_result) {
+	case 0:
+		/* Initialization successful, no action required. */
+		return;
+	case MODEM_DFU_RESULT_OK:
+		LOG_DBG("MODEM UPDATE OK. Will run new modem firmware after reboot");
+		break;
+	case MODEM_DFU_RESULT_UUID_ERROR:
+	case MODEM_DFU_RESULT_AUTH_ERROR:
+		LOG_ERR("MODEM UPDATE ERROR %d. Will run old firmware", modem_lib_init_result);
+		break;
+	case MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failure", modem_lib_init_result);
+		break;
+	default:
+		/* All non-zero return codes other than DFU result codes are
+		 * considered irrecoverable and a reboot is needed.
+		 */
+		LOG_ERR("nRF modem lib initialization failed, error: %d", modem_lib_init_result);
+		break;
+	}
+
+	/* If the Carrier library is enabled, the reboot will be handled there. */
+	if (!IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
+		LOG_DBG("Rebooting...");
+		LOG_PANIC();
+		sys_reboot(SYS_REBOOT_COLD);
+	}
+}
+
+#if defined(CONFIG_AWS_FOTA_MODEM_FW_UPDATE_AUTO_VALIDATE)
+static int init(const struct device *unused)
+{
+	ARG_UNUSED(unused);
+
+	aws_fota_modem_firmware_update_validate();
+
+	return 0;
+}
+
+SYS_INIT(init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+#endif /* CONFIG_AWS_FOTA_MODEM_FW_UPDATE_AUTO_VALIDATE */

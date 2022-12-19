@@ -85,6 +85,14 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
  */
 int aws_fota_get_job_id(uint8_t *const job_id_buf, size_t buf_size);
 
+/** @brief Validate modem firwmare update.
+ *	   This function must be called before any other modem related functionality is called.
+ *	   If required, the device will be rebooted to complete the modem update.
+ *	   By default, CONFIG_AZURE_FOTA_MODEM_FW_UPDATE_AUTO_VALIDATE is set which will cause
+ *	   modem initialization handling to occur automatically, before the application is run.
+ */
+void aws_fota_modem_firmware_update_validate(void);
+
 #ifdef __cplusplus
 }
 #endif

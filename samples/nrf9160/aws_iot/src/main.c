@@ -34,18 +34,6 @@ static bool cloud_connected;
 static K_SEM_DEFINE(lte_connected, 0, 1);
 static K_SEM_DEFINE(date_time_obtained, 0, 1);
 
-#if defined(CONFIG_NRF_MODEM_LIB)
-NRF_MODEM_LIB_ON_INIT(aws_iot_init_hook, on_modem_lib_init, NULL);
-
-/* Initialized to value different than success (0) */
-static int modem_lib_init_result = -1;
-
-static void on_modem_lib_init(int ret, void *ctx)
-{
-	modem_lib_init_result = ret;
-}
-#endif
-
 static int json_add_obj(cJSON *parent, const char *str, cJSON *item)
 {
 	cJSON_AddItemToObject(parent, str, item);
@@ -414,33 +402,6 @@ static void modem_configure(void)
 		}
 	}
 }
-
-static void nrf_modem_lib_dfu_handler(void)
-{
-	int err;
-
-	err = modem_lib_init_result;
-
-	switch (err) {
-	case MODEM_DFU_RESULT_OK:
-		printk("Modem update suceeded, reboot\n");
-		sys_reboot(SYS_REBOOT_COLD);
-		break;
-	case MODEM_DFU_RESULT_UUID_ERROR:
-	case MODEM_DFU_RESULT_AUTH_ERROR:
-		printk("Modem update failed, error: %d\n", err);
-		printk("Modem will use old firmware\n");
-		sys_reboot(SYS_REBOOT_COLD);
-		break;
-	case MODEM_DFU_RESULT_HARDWARE_ERROR:
-	case MODEM_DFU_RESULT_INTERNAL_ERROR:
-		printk("Modem update malfunction, error: %d, reboot\n", err);
-		sys_reboot(SYS_REBOOT_COLD);
-		break;
-	default:
-		break;
-	}
-}
 #endif
 
 static int app_topics_subscribe(void)
@@ -497,10 +458,6 @@ void main(void)
 	printk("The AWS IoT sample started, version: %s\n", CONFIG_APP_VERSION);
 
 	cJSON_Init();
-
-#if defined(CONFIG_NRF_MODEM_LIB)
-	nrf_modem_lib_dfu_handler();
-#endif
 
 	err = aws_iot_init(NULL, aws_iot_event_handler);
 	if (err) {
