@@ -72,6 +72,12 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define ACTIVE_POLL_COUNT (CONFIG_ETH_POLL_PERIOD_MS / \
 			   CONFIG_ETH_POLL_ACTIVE_PERIOD_MS)
 
+#if defined(CONFIG_NET_BUF_FIXED_DATA_SIZE)
+#define RTT_FRAG_LEN CONFIG_NET_BUF_DATA_SIZE
+#else
+#define RTT_FRAG_LEN CONFIG_ETH_RTT_MTU
+#endif /* CONFIG_NET_BUF_FIXED_DATA_SIZE */
+
 BUILD_ASSERT(CONFIG_ETH_RTT_CHANNEL < SEGGER_RTT_MAX_NUM_UP_BUFFERS,
 		 "RTT channel number used in RTT network driver "
 		 "must be lower than SEGGER_RTT_MAX_NUM_UP_BUFFERS");
@@ -324,7 +330,7 @@ static void recv_frame(struct eth_rtt_context *context, const uint8_t *data,
 	dbg_hex_dump_begin("ETH<");
 
 	while (len > 0) {
-		pkt_buf = net_pkt_get_frag(pkt, K_NO_WAIT);
+		pkt_buf = net_pkt_get_frag(pkt, RTT_FRAG_LEN, K_NO_WAIT);
 		if (!pkt_buf) {
 			LOG_ERR("Could not allocate data for rx pkt");
 			net_pkt_unref(pkt);
