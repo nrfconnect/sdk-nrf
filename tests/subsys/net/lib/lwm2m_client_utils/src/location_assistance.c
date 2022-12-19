@@ -151,6 +151,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_temporary_failure)
 	int rc;
 	uint8_t buf[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 	int32_t result = 1;
+	void *resbuf = &result;
 
 	setup();
 
@@ -166,7 +167,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_temporary_failure)
 	zassert_equal(lwm2m_engine_send_fake.call_count, 1, "Request not sent");
 
 	gnss_obj->resources[GNSS_ASSIST_RESULT_CODE].post_write_cb(0, GNSS_ASSIST_RESULT_CODE, 0,
-								   (uint8_t *)result, 4, true, 4);
+								   resbuf, 4, true, 4);
 	k_sleep(K_MSEC(100));
 
 	rc = location_assistance_agps_request_send(&client_ctx, true);
@@ -176,13 +177,14 @@ ZTEST(lwm2m_client_utils_location_assistance, test_temporary_failure)
 	gnss_obj->resources[GNSS_ASSIST_ASSIST_DATA].post_write_cb(0, GNSS_ASSIST_ASSIST_DATA, 0,
 								   buf, 8, true, 8);
 	gnss_obj->resources[GNSS_ASSIST_RESULT_CODE].post_write_cb(0, GNSS_ASSIST_RESULT_CODE, 0,
-								   (uint8_t *)result, 4, true, 4);
+								   resbuf, 4, true, 4);
 }
 
 ZTEST(lwm2m_client_utils_location_assistance, test_zzzpermanent_failure)
 {
 	int rc;
 	int32_t result = -1;
+	void *resbuf = &result;
 
 	setup();
 
@@ -198,7 +200,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_zzzpermanent_failure)
 	zassert_equal(lwm2m_engine_send_fake.call_count, 1, "Request not sent");
 
 	gnss_obj->resources[GNSS_ASSIST_RESULT_CODE].post_write_cb(0, GNSS_ASSIST_RESULT_CODE, 0,
-								   (uint8_t *)result, 4, true, 4);
+								   resbuf, 4, true, 4);
 	k_sleep(K_MSEC(100));
 	rc = location_assistance_agps_set_mask(&agps_req);
 	zassert_equal(rc, -EPIPE, "Error %d", rc);
