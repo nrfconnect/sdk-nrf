@@ -203,7 +203,10 @@ nRF9160 samples
 Peripheral samples
 ------------------
 
-* Added support for nrf7002 board for :ref:`radio_test`.
+* :ref:`radio_test` sample:
+
+  * Added support for the nRF7002 board.
+  * Fixed sample building with support for the Skyworks front-end module.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------

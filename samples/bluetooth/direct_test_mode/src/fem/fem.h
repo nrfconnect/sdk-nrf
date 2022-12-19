@@ -161,6 +161,12 @@ uint32_t fem_radio_rx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode);
  */
 int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power, uint16_t freq_mhz);
 
+/** @brief Get the front-end module default Tx gain.
+ *
+ * @return The front-end module default Tx gain value.
+ */
+uint32_t fem_default_tx_gain_get(void);
+
 #ifdef __cplusplus
 }
 #endif

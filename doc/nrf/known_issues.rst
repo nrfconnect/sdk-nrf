@@ -2739,6 +2739,17 @@ NCSDK-14015: Execution halts during boot
 NCSDK-13949: TF-M Secure Image copies FICR to RAM on nRF9160
   TF-M Secure Image copies the FICR to RAM address between ``0x2003E000`` and ``0x2003F000`` during boot on nRF9160.
 
+Samples
+*******
+
+.. rst-class:: v2-2-0
+
+NCSDK-18847: :ref:`radio_test` sample does not build with support for Skyworks front-end module.
+  When building a sample with support for a front-end module different from nRF21540, the sample uses a non-existing configuration to initialize Tx power data.
+  This causes a compilation error because the source file containing code for a generic front-end module is not included in the build.
+
+  **Workaround:** Do not use the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option and replace ``CONFIG_GENERIC_FEM`` with ``CONFIG_MPSL_FEM_SIMPLE_GPIO`` in the :file:`CMakeLists.txt` file of the sample.
+
 Zephyr
 ******
 
