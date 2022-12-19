@@ -106,7 +106,7 @@ manifest:
       revision: c1f1e0593d5bde73ba5d512b44fb765472829574
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 34b3ac78780f861fb6a6eeffa42e6c7242c4eec9
+      revision: 9d2f9b5742c5cabcb87b7f7f22ff5269b13403bf
       path: bootloader/mcuboot
     - name: mbedtls-nrf
       path: mbedtls
