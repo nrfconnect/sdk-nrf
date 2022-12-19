@@ -37,7 +37,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		struct sensor_data_aggregator_release_buffer_event *release_evt =
 		new_sensor_data_aggregator_release_buffer_event();
 
-		release_evt->buf = event->buf;
+		release_evt->samples = event->samples;
 		release_evt->sensor_descr = event->sensor_descr;
 		APP_EVENT_SUBMIT(release_evt);
 
@@ -54,10 +54,11 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		} else if (strcmp(event->sensor_descr, ORDER_TEST_AGG_DESCR) == 0) {
 
 			for (int j = 0; j < SAMPLES_IN_AGG_BUF; j++) {
-				zassert_equal(event->buf[j * sizeof(struct sensor_value) *
-							ORDER_TEST_SENSOR_SAMPLE_SIZE],
-					      order_event_indicator,
-					      "Incorrent event order");
+				uint8_t *event_data = (uint8_t *)&event->samples[j *
+						ORDER_TEST_SENSOR_SAMPLE_SIZE];
+
+				zassert_equal(*event_data, order_event_indicator,
+						"Incorrent event order");
 				order_event_indicator--;
 			}
 
@@ -73,10 +74,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		} else if (strcmp(event->sensor_descr, STATUS_TEST_AGG_DESCR) == 0) {
 
 			for (int k = 0; k < STATUS_TEST_SENSOR_EVENTS; k++) {
-				zassert_equal(event->buf[k * sizeof(struct sensor_value) *
-							STATUS_TEST_SENSOR_SAMPLE_SIZE],
-					      k,
-					      "Incorrent event order");
+				uint8_t *event_data = (uint8_t *)&event->samples[k *
+						STATUS_TEST_SENSOR_SAMPLE_SIZE];
+
+				zassert_equal(*event_data, k, "Incorrent event order");
 			}
 
 			struct test_end_event *te = new_test_end_event();
