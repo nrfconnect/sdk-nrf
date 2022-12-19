@@ -16,8 +16,12 @@
 #include <net/azure_fota.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
+#include <modem/nrf_modem_lib.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/device.h>
 
 #include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 
 LOG_MODULE_REGISTER(azure_fota, CONFIG_AZURE_FOTA_LOG_LEVEL);
 
@@ -108,6 +112,18 @@ static char current_version[CONFIG_AZURE_FOTA_VERSION_MAX_LEN] =
 #if IS_ENABLED(AZURE_FOTA_TLS) && !defined(CONFIG_AZURE_FOTA_SEC_TAG)
 BUILD_ASSERT(0, "CONFIG_AZURE_FOTA_SEC_TAG must be defined");
 #endif
+
+NRF_MODEM_LIB_ON_INIT(azure_fota_init_hook, on_modem_lib_init, NULL);
+
+/* Initialized to value different than success (0) */
+static int modem_lib_init_result = -1;
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	ARG_UNUSED(ctx);
+
+	modem_lib_init_result = ret;
+}
 
 static void rep_status_set(enum fota_status new_status)
 {
@@ -750,3 +766,50 @@ int azure_fota_msg_process(const char *const buf, size_t size)
 
 	return 1;
 }
+
+void azure_fota_modem_firmware_update_validate(void)
+{
+	/* Handle return values relating to modem firmware update */
+	switch (modem_lib_init_result) {
+	case 0:
+		/* Initialization successful, no action required. */
+		return;
+	case MODEM_DFU_RESULT_OK:
+		LOG_DBG("MODEM UPDATE OK. Will run new modem firmware after reboot");
+		break;
+	case MODEM_DFU_RESULT_UUID_ERROR:
+	case MODEM_DFU_RESULT_AUTH_ERROR:
+		LOG_ERR("MODEM UPDATE ERROR %d. Will run old firmware", modem_lib_init_result);
+		break;
+	case MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failure", modem_lib_init_result);
+		break;
+	default:
+		/* All non-zero return codes other than DFU result codes are
+		 * considered irrecoverable and a reboot is needed.
+		 */
+		LOG_ERR("nRF modem lib initialization failed, error: %d", modem_lib_init_result);
+		break;
+	}
+
+	/* If the Carrier library is enabled, the reboot will be handled there. */
+	if (!IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
+		LOG_DBG("Rebooting...");
+		LOG_PANIC();
+		sys_reboot(SYS_REBOOT_COLD);
+	}
+}
+
+#if defined(CONFIG_AZURE_FOTA_MODEM_FW_UPDATE_AUTO_VALIDATE)
+static int init(const struct device *unused)
+{
+	ARG_UNUSED(unused);
+
+	azure_fota_modem_firmware_update_validate();
+
+	return 0;
+}
+
+SYS_INIT(init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+#endif /* CONFIG_AZURE_FOTA_MODEM_FW_UPDATE_AUTO_VALIDATE */

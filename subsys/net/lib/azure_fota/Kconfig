@@ -14,6 +14,19 @@ menuconfig AZURE_FOTA
 
 if AZURE_FOTA
 
+config AZURE_FOTA_MODEM_FW_UPDATE_AUTO_VALIDATE
+	bool "Auto validate modem firwmare update"
+	depends on NRF_MODEM_LIB_SYS_INIT
+	default y
+	help
+	  Auto validate the initialization of the modem firmware before
+	  the application (main thread) gets to run.
+	  During modem FOTA the modem needs to be reinitialized / rebooted twice.
+	  Once to apply the update and once to run the new image. During this process
+	  any socket / AT commands to the modem will fail. Enabling this option ensures that the
+	  the modem is in a healthy state before the application is allowed to run.
+	  This option will cause a reboot if required by the modem after DFU.
+
 config AZURE_FOTA_HOSTNAME_MAX_LEN
 	int "Hostname buffer size"
 	default 64

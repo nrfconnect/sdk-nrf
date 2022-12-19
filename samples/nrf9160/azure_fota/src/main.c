@@ -6,8 +6,6 @@
 
 #include <zephyr/kernel.h>
 #include <stdio.h>
-#include <nrf_modem.h>
-#include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
 #include <net/azure_iot_hub.h>
 #include <net/azure_fota.h>
@@ -22,16 +20,6 @@ static struct k_work_delayable reboot_work;
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 			 "This sample does not support auto init and connect");
-
-NRF_MODEM_LIB_ON_INIT(azure_fota_init_hook, on_modem_lib_init, NULL);
-
-/* Initialized to value different than success (0) */
-static int modem_lib_init_result = -1;
-
-static void on_modem_lib_init(int ret, void *ctx)
-{
-	modem_lib_init_result = ret;
-}
 
 static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 {
@@ -197,31 +185,6 @@ void main(void)
 	int err;
 
 	printk("Azure FOTA sample started\n");
-	printk("This may take a while if a modem firmware update is pending\n");
-
-	switch (modem_lib_init_result) {
-	case MODEM_DFU_RESULT_OK:
-		printk("Modem firmware update successful!\n");
-		printk("Modem will run the new firmware after reboot\n");
-		k_thread_suspend(k_current_get());
-		break;
-	case MODEM_DFU_RESULT_UUID_ERROR:
-	case MODEM_DFU_RESULT_AUTH_ERROR:
-		printk("Modem firmware update failed\n");
-		printk("Modem will run non-updated firmware on reboot.\n");
-		break;
-	case MODEM_DFU_RESULT_HARDWARE_ERROR:
-	case MODEM_DFU_RESULT_INTERNAL_ERROR:
-		printk("Modem firmware update failed\n");
-		printk("Fatal error.\n");
-		break;
-	case -1:
-		printk("Could not initialize modem library.\n");
-		printk("Fatal error.\n");
-		return;
-	default:
-		break;
-	}
 
 	k_work_init_delayable(&reboot_work, reboot_work_fn);
 
