@@ -8,6 +8,7 @@
 #else
 #include <zephyr/net/socket.h>
 #endif
+#include <zephyr/device.h>
 #include <net/nrf_cloud.h>
 #include <zephyr/net/mqtt.h>
 #include "nrf_cloud_codec.h"

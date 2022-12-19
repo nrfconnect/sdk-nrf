@@ -1492,3 +1492,21 @@ int nrf_cloud_fota_ble_job_update(const struct nrf_cloud_fota_ble_job
 	return publish_and_free_array(array, &topic_ble_updt, &param);
 }
 #endif
+
+#if defined(CONFIG_NRF_CLOUD_FOTA_MODEM_FW_UPDATE_AUTO_VALIDATE)
+static int init(const struct device *unused)
+{
+	ARG_UNUSED(unused);
+
+	int ret = nrf_cloud_fota_pending_job_validate(NULL);
+
+	/* If the Carrier library is enabled, the reboot will be handled there. */
+	if ((ret == 1) && !IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
+		fota_reboot();
+	}
+
+	return 0;
+}
+
+SYS_INIT(init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+#endif /* CONFIG_NRF_CLOUD_FOTA_MODEM_FW_UPDATE_AUTO_VALIDATE */
