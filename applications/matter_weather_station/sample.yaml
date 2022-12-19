@@ -4,7 +4,6 @@ sample:
 tests:
   applications.matter_weather_station.debug:
     build_only: true
-    platform_allow: thingy53_nrf5340_cpuapp
     platform_exclude: thingy53_nrf5340_cpuapp_ns
     integration_platforms:
       - thingy53_nrf5340_cpuapp
