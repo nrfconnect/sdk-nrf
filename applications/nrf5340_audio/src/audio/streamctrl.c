@@ -299,14 +299,6 @@ static void button_evt_handler(struct button_evt event)
 
 		break;
 
-	case BUTTON_5:
-		ret = le_audio_volume_mute();
-		if (ret) {
-			LOG_WRN("Failed to mute volume");
-		}
-
-		break;
-
 	case BUTTON_4:
 		if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
 			LOG_DBG("Button 4 functions not supported in walkie-talkie mode");
@@ -316,13 +308,27 @@ static void button_evt_handler(struct button_evt event)
 #if (CONFIG_AUDIO_TEST_TONE)
 		ret = test_tone_button_press();
 #else
-		ret = le_audio_user_defined_button_press();
+		ret = le_audio_user_defined_button_press(LE_AUDIO_USER_DEFINED_ACTION_1);
 #endif /*CONFIG_AUDIO_TEST_TONE*/
 
 		if (ret) {
 			LOG_WRN("Failed button 4 press");
 		}
 
+		break;
+
+	case BUTTON_5:
+#if (CONFIG_AUDIO_MUTE)
+		ret = le_audio_volume_mute();
+		if (ret) {
+			LOG_WRN("Failed to mute volume");
+		}
+#else
+		ret = le_audio_user_defined_button_press(LE_AUDIO_USER_DEFINED_ACTION_2);
+		if (ret) {
+			LOG_WRN("User defined button 5 action failed");
+		}
+#endif
 		break;
 
 	default:

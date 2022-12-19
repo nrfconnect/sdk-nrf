@@ -18,10 +18,10 @@ config BT_HCI_VS_EXT
 config BT_EXT_ADV
 	default y
 
+if TRANSPORT_CIS # Depends on TRANSPORT_CIS
+
 config BT_DEVICE_NAME
 	default "NRF5340_AUDIO"
-
-if TRANSPORT_CIS # Depends on TRANSPORT_CIS
 
 config BT_GATT_CLIENT
 	default y
@@ -197,6 +197,9 @@ config BT_BUF_ACL_RX_SIZE
 # HEADSET
 if AUDIO_DEV = 1
 
+config BT_DEVICE_NAME
+	default "NRF5340_AUDIO"
+
 config BT_OBSERVER
 	default y
 
@@ -225,6 +228,10 @@ endif # AUDIO_DEV = 1 (HEADSET)
 
 # GATEWAY
 if AUDIO_DEV = 2
+
+config BT_DEVICE_NAME
+	default BT_DEVICE_NAME_ALT if BT_USE_DEVICE_NAME_ALT
+	default "NRF5340_AUDIO"
 
 config BT_ISO_BROADCASTER
 	default y

@@ -134,6 +134,7 @@ nRF5340 Audio
 * Updated:
 
   * Power module has been re-factored so that it uses upstream Zephyr INA23X sensor driver.
+  * BIS headsets can now switch between two broadcast sources (two hardcoded broadcast names).
 
 nRF Desktop
 -----------
