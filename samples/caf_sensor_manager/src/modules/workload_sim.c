@@ -20,9 +20,10 @@ BUILD_ASSERT(WORKLOAD_SIMULATED_THREAD_PRIORITY >= 0);
 LOG_MODULE_REGISTER(MODULE);
 
 struct workload {
-	uint8_t *buf;
+	struct sensor_value *samples;
 	struct k_work work;
 	uint8_t sample_cnt;
+	uint8_t values_in_sample;
 	atomic_t busy;
 	const char *sensor_descr;
 };
@@ -41,8 +42,7 @@ static void simulated_work_handler(struct k_work *work)
 	k_busy_wait(BUSY_TIME * workload->sample_cnt);
 	struct sensor_data_aggregator_release_buffer_event *release_evt =
 		new_sensor_data_aggregator_release_buffer_event();
-
-	release_evt->buf = workload->buf;
+	release_evt->samples = workload->samples;
 	release_evt->sensor_descr = workload->sensor_descr;
 	atomic_clear_bit(&workload->busy, 0);
 	APP_EVENT_SUBMIT(release_evt);
@@ -81,8 +81,9 @@ static bool event_handler(const struct app_event_header *aeh)
 		struct workload *workload = get_free_workload();
 
 		__ASSERT_NO_MSG(workload);
-		workload->buf = event->buf;
+		workload->samples = event->samples;
 		workload->sample_cnt = event->sample_cnt;
+		workload->values_in_sample = event->values_in_sample;
 		workload->sensor_descr = event->sensor_descr;
 		k_work_submit_to_queue(&workload_simulated_work_q, &workload->work);
 

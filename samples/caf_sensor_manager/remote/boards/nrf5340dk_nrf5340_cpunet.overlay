@@ -22,7 +22,7 @@
 		compatible = "caf,aggregator";
 		sensor_descr = "accel_sim_xyz";
 		buf_data_length = <240>;
-		sensor_data_size = <24>;
+		sample_size = <3>;
 		memory-region = <&sram0_aggregator_area0>;
 		status = "okay";
 	};
