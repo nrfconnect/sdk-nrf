@@ -60,11 +60,7 @@ static struct radio_param_config {
 } config = {
 	.tx_pattern = TRANSMIT_PATTERN_RANDOM,
 	.mode = NRF_RADIO_MODE_BLE_1MBIT,
-#if CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
-	.txpower = CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB,
-#else
 	.txpower = RADIO_TXPOWER_TXPOWER_0dBm,
-#endif /* CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
 	.channel_start = 0,
 	.channel_end = 80,
 	.delay_ms = 10,
@@ -1371,6 +1367,13 @@ SHELL_CMD_REGISTER(fem,
 static int radio_cmd_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
+
+#if CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
+	/* When front-end module is used, set output power to the front-end module
+	 * default gain.
+	 */
+	config.txpower = fem_default_tx_gain_get();
+#endif /* CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
 
 	return radio_test_init(&test_config);
 }
