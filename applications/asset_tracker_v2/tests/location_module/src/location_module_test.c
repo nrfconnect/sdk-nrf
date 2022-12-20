@@ -6,12 +6,13 @@
 #include <unity.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <cmock_modules_common.h>
-#include <cmock_app_event_manager.h>
-#include <cmock_app_event_manager_priv.h>
-#include <cmock_location.h>
-#include <cmock_lte_lc.h>
-#include <cmock_nrf_modem_gnss.h>
+
+#include "cmock_modules_common.h"
+#include "cmock_app_event_manager.h"
+#include "cmock_app_event_manager_priv.h"
+#include "cmock_location.h"
+#include "cmock_lte_lc.h"
+#include "cmock_nrf_modem_gnss.h"
 
 #include "app_module_event.h"
 #include "location_module_event.h"
@@ -75,23 +76,8 @@ struct event_type __event_type_modem_module_event;
  */
 extern int unity_main(void);
 
-
-/* Suite teardown finalizes with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
-}
-
-
 void setUp(void)
 {
-	cmock_modules_common_Init();
-	cmock_app_event_manager_Init();
-	cmock_location_Init();
-	cmock_nrf_modem_gnss_Init();
-
 	location_module_event_count = 0;
 	expected_location_module_event_count = 0;
 	memset(&expected_location_module_events, 0, sizeof(expected_location_module_events));
@@ -104,11 +90,6 @@ void tearDown(void)
 		k_sem_take(&location_module_event_sem, K_SECONDS(1));
 	}
 	TEST_ASSERT_EQUAL(expected_location_module_event_count, location_module_event_count);
-
-	cmock_modules_common_Verify();
-	cmock_app_event_manager_Verify();
-	cmock_location_Verify();
-	cmock_nrf_modem_gnss_Verify();
 }
 
 static void validate_location_module_evt(struct app_event_header *aeh, int no_of_calls)
@@ -531,6 +512,7 @@ void test_location_fail_init(void)
 {
 	setup_location_module_in_init_state();
 
+	__cmock__event_submit_Stub(&validate_location_module_evt);
 	__cmock_location_init_ExpectAndReturn(&location_event_handler, -EINVAL);
 
 	/* Set expected GNSS module events. */

@@ -12,10 +12,11 @@
 #include <modem/location.h>
 #include <modem/lte_lc.h>
 #include <mock_nrf_modem_at.h>
-#include <cmock_nrf_modem_at.h>
-#include <cmock_nrf_modem_gnss.h>
-#include <cmock_modem_key_mgmt.h>
-#include <cmock_rest_client.h>
+
+#include "cmock_nrf_modem_at.h"
+#include "cmock_nrf_modem_gnss.h"
+#include "cmock_modem_key_mgmt.h"
+#include "cmock_rest_client.h"
 
 /* NOTE: Sleep, e.g. k_sleep(K_MSEC(1)), is used after many location library API
  *       function calls because otherwise some of the threaded work in location library
@@ -111,10 +112,6 @@ void setUp(void)
 	k_sem_reset(&event_handler_called_sem);
 
 	mock_nrf_modem_at_Init();
-	cmock_nrf_modem_at_Init();
-	cmock_nrf_modem_gnss_Init();
-	cmock_rest_client_Init();
-	cmock_modem_key_mgmt_Init();
 }
 
 void tearDown(void)
@@ -128,10 +125,6 @@ void tearDown(void)
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
 
 	mock_nrf_modem_at_Verify();
-	cmock_nrf_modem_at_Verify();
-	cmock_nrf_modem_gnss_Verify();
-	cmock_rest_client_Verify();
-	cmock_modem_key_mgmt_Verify();
 }
 
 static void location_event_handler(const struct location_event_data *event_data)

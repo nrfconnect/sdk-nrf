@@ -53,21 +53,9 @@ static void set_update_state_callback_stub(lwm2m_firmware_get_update_state_cb_t 
 
 extern int unity_main(void);
 
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
-}
-
 /* Setup and teardown functions. */
 void setUp(void)
 {
-	cmock_lwm2m_client_utils_Init();
-	cmock_lwm2m_Init();
-	cmock_lte_lc_Init();
-
 	__cmock_lwm2m_init_image_ExpectAndReturn(0);
 	__cmock_lwm2m_init_firmware_ExpectAndReturn(0);
 	__cmock_lwm2m_init_security_ExpectAndReturn(&client,
@@ -87,13 +75,6 @@ void setUp(void)
 	__cmock_lwm2m_firmware_set_update_state_cb_AddCallback(&set_update_state_callback_stub);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_init(cloud_wrap_event_handler));
-}
-
-void tearDown(void)
-{
-	cmock_lwm2m_client_utils_Verify();
-	cmock_lwm2m_Verify();
-	cmock_lte_lc_Verify();
 }
 
 /* Callbacks stubs that latches events handlers in mocked libraries so that they can be triggered

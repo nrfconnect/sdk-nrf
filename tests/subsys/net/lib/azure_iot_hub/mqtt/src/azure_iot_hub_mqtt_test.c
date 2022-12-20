@@ -49,9 +49,6 @@ extern void mqtt_helper_poll_loop(void);
 extern void on_publish(const struct mqtt_evt *mqtt_evt);
 extern char payload_buf[];
 
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
 /* Semaphores used by tests to wait for a certain callbacks */
 static K_SEM_DEFINE(connack_success_sem, 0, 1);
 static K_SEM_DEFINE(connack_failed_sem, 0, 1);
@@ -63,8 +60,6 @@ static K_SEM_DEFINE(error_msg_size_sem, 0, 1);
 
 void setUp(void)
 {
-	cmock_mqtt_Init();
-	cmock_socket_Init();
 	__cmock_mqtt_keepalive_time_left_IgnoreAndReturn(0);
 
 	/* Suspend the polling thread to have full control over polling. */
@@ -72,17 +67,6 @@ void setUp(void)
 
 	/* Force all tests to start in uninitialized state. */
 	mqtt_state = MQTT_STATE_UNINIT;
-}
-
-void tearDown(void)
-{
-	cmock_mqtt_Verify();
-	cmock_socket_Verify();
-}
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
 }
 
 /* Stubs */

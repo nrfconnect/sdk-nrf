@@ -7,10 +7,11 @@
 #include <unity.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <cmock_modules_common.h>
-#include <cmock_app_event_manager_priv.h>
-#include <cmock_app_event_manager.h>
-#include <cmock_dk_buttons_and_leds.h>
+
+#include "cmock_modules_common.h"
+#include "cmock_app_event_manager_priv.h"
+#include "cmock_app_event_manager.h"
+#include "cmock_dk_buttons_and_leds.h"
 
 #include "events/app_module_event.h"
 #include "events/data_module_event.h"
@@ -66,19 +67,8 @@ struct event_type __event_type_util_module_event;
  */
 extern int unity_main(void);
 
-/* Suite teardown finalizes with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
-}
-
 void setUp(void)
 {
-	cmock_modules_common_Init();
-	cmock_app_event_manager_Init();
-
 	/* Reset internal module states. */
 	state = 0;
 	sub_state = 0;
@@ -86,12 +76,6 @@ void setUp(void)
 
 	/* Clear internal LED pattern transition list. */
 	transition_list_clear();
-}
-
-void tearDown(void)
-{
-	cmock_modules_common_Verify();
-	cmock_app_event_manager_Verify();
 }
 
 /* Stub used to verify parameters passed into module_start(). */
