@@ -12,9 +12,11 @@ typedef void (*SoftwareImagesSwapDoneCallback)(void);
 
 class SoftwareImagesSwapper {
 public:
-	enum class ApplicationImageId : uint8_t {
-		Image_1 = 0,
-		Image_2,
+	struct ImageLocation {
+		const uint32_t app_address;
+		const uint32_t app_size;
+		const uint32_t net_address;
+		const uint32_t net_size;
 	};
 
 	static SoftwareImagesSwapper &Instance()
@@ -23,7 +25,7 @@ public:
 		return sSoftwareImagesSwapper;
 	};
 
-	int Swap(ApplicationImageId applicationId, SoftwareImagesSwapDoneCallback swapDoneCallback);
+	int Swap(const ImageLocation &source, SoftwareImagesSwapDoneCallback swapDoneCallback);
 
 private:
 	const struct device *mFlashDevice = DEVICE_DT_GET(DT_CHOSEN(nordic_pm_ext_flash));

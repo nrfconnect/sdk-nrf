@@ -91,7 +91,7 @@ This sample supports the following build types, depending on the selected board:
 
 * ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
 * ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
-* ``thread_wifi_switched`` -- Debug version of the application with the ability to switch between Thread and Wi-Fi network support in the field - can be used for the nRF5340 DK with the nRF7002 EK shield attached.
+* ``thread_wifi_switched`` -- Debug version of the application with the ability to :ref:`switch between Thread and Wi-Fi network support <matter_lock_sample_switching_thread_wifi>` in the field - can be used for the nRF5340 DK with the nRF7002 EK shield attached.
 * ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used for the nRF52840 DK, nRF5340 DK, nRF7002 DK, and nRF21540 DK.
 
 .. note::
@@ -328,6 +328,57 @@ Upgrading the device firmware
 =============================
 
 To upgrade the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial of the Matter documentation.
+
+.. _matter_lock_sample_switching_thread_wifi:
+
+Switching between Thread and Wi-Fi
+==================================
+
+The ``thread_wifi_switched`` build type allows you to build the door lock application that supports dynamic switching between Matter over Thread and Matter over Wi-Fi.
+This feature requires that both variants of the application are built and placed in appropriate partitions of the external flash.
+After that, when a user triggers the switch, the device is rebooted into the MCUboot bootloader, which swaps the current variant.
+
+To test switching between Thread and Wi-Fi, complete the following steps:
+
+#. Build the door lock application for Matter over Thread:
+
+   .. code-block:: console
+
+      west build -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -DCONFIG_CHIP_WIFI=n
+
+#. Program the application to the kit using the following command:
+
+   .. code-block:: console
+
+      west flash --erase
+
+#. Program the application to a partition of the external flash using the following command:
+
+   .. code-block:: console
+
+      west build -t flash-external
+
+#. Build the door lock application for Matter over Wi-Fi:
+
+   .. code-block:: console
+
+      west build -b nrf5340dk_nrf5340_cpuapp -p always -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek
+
+#. Program the application to another partition of the external flash using the following command:
+
+   .. code-block:: console
+
+      west build -t flash-external
+
+#. |connect_terminal_ANSI|
+#. Press **Button 3** for more than ten seconds to trigger switching to the Matter over Wi-Fi variant of the application.
+#. Observe logs showing the progress of the operation until the device shuts down.
+#. Wait until the device boots again.
+#. Find the following log message which indicates that the expected variant of the application is running:
+
+   .. code-block:: console
+
+      D: 823 [DL]WiFiManager has been initialized
 
 Dependencies
 ************

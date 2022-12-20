@@ -48,6 +48,10 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#ifdef CONFIG_THREAD_WIFI_SWITCHING
+#include <pm_config.h>
+#endif
+
 LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
 
 using namespace ::chip;
@@ -296,16 +300,18 @@ void AppTask::SwitchImagesDone()
 
 void AppTask::SwitchImagesEventHandler(const AppEvent &event)
 {
-	/* Swap the application from using Thread to Wi-Fi or opposite. */
-#if defined(CONFIG_NET_L2_OPENTHREAD)
-	LOG_INF("Switching application from Thread to Wi-FI triggered.");
-	SoftwareImagesSwapper::Instance().Swap(SoftwareImagesSwapper::ApplicationImageId::Image_2,
-					       AppTask::SwitchImagesDone);
-#elif defined(CONFIG_CHIP_WIFI)
-	LOG_INF("Switching application from Wi-Fi to Thread triggered.");
-	SoftwareImagesSwapper::Instance().Swap(SoftwareImagesSwapper::ApplicationImageId::Image_1,
-					       AppTask::SwitchImagesDone);
-#endif
+	LOG_INF("Switching application from " CONFIG_APPLICATION_LABEL " to " CONFIG_APPLICATION_OTHER_LABEL);
+
+#define CONCAT3(a, b, c) UTIL_CAT(UTIL_CAT(a, b), c)
+	SoftwareImagesSwapper::ImageLocation source = {
+		.app_address = CONCAT3(PM_APP_, CONFIG_APPLICATION_OTHER_IDX, _CORE_APP_ADDRESS),
+		.app_size = CONCAT3(PM_APP_, CONFIG_APPLICATION_OTHER_IDX, _CORE_APP_SIZE),
+		.net_address = CONCAT3(PM_APP_, CONFIG_APPLICATION_OTHER_IDX, _CORE_NET_ADDRESS),
+		.net_size = CONCAT3(PM_APP_, CONFIG_APPLICATION_OTHER_IDX, _CORE_NET_SIZE),
+	};
+#undef CONCAT3
+
+	SoftwareImagesSwapper::Instance().Swap(source, AppTask::SwitchImagesDone);
 }
 
 void AppTask::SwitchImagesTimerTimeoutCallback(k_timer *timer)
@@ -332,23 +338,14 @@ void AppTask::SwitchImagesTriggerHandler(const AppEvent &event)
 	    !Instance().mSwitchImagesTimerActive) {
 		k_timer_start(&sSwitchImagesTimer, K_MSEC(kSwitchImagesTimeout), K_NO_WAIT);
 		Instance().mSwitchImagesTimerActive = true;
-#if defined(CONFIG_NET_L2_OPENTHREAD)
-		LOG_INF("Keep button pressed for %u ms to switch application from Thread to Wi-FI.",
+		LOG_INF("Keep button pressed for %u ms to switch application from " CONFIG_APPLICATION_LABEL
+			" to " CONFIG_APPLICATION_OTHER_LABEL,
 			kSwitchImagesTimeout);
-#elif defined(CONFIG_CHIP_WIFI)
-		LOG_INF("Keep button pressed for %u ms to switch application from Wi-Fi to Thread.",
-			kSwitchImagesTimeout);
-#endif
-	} else {
-		if (Instance().mSwitchImagesTimerActive) {
-			k_timer_stop(&sSwitchImagesTimer);
-			Instance().mSwitchImagesTimerActive = false;
-#if defined(CONFIG_NET_L2_OPENTHREAD)
-			LOG_INF("Switching application from Thread to Wi-Fi cancelled.");
-#elif defined(CONFIG_CHIP_WIFI)
-			LOG_INF("Switching application from Wi-Fi to Thread cancelled.");
-#endif
-		}
+	} else if (Instance().mSwitchImagesTimerActive) {
+		k_timer_stop(&sSwitchImagesTimer);
+		Instance().mSwitchImagesTimerActive = false;
+		LOG_INF("Switching application from " CONFIG_APPLICATION_LABEL " to " CONFIG_APPLICATION_OTHER_LABEL
+			" cancelled");
 	}
 }
 #endif
