@@ -241,6 +241,10 @@ Bluetooth samples
     The vendor-specific commands for setting the SoC output power and the front-end module gain are not available when the :kconfig:option:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC` Kconfig option is enabled.
   * Added support for +1 dBm, +2 dBm, and +3 dBm output power on the nRF5340 DK.
 
+* :ref:`peripheral_uart` sample:
+
+  * Fixed the unit of the :kconfig:option:`CONFIG_BT_NUS_UART_RX_WAIT_TIME` Kconfig option to comply with the UART API.
+
 Bluetooth mesh samples
 ----------------------
 
