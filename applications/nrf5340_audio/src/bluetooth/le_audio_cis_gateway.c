@@ -10,6 +10,7 @@
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/hci.h>
 #include <../subsys/bluetooth/audio/endpoint.h>
+#include <../subsys/bluetooth/audio/audio_iso.h>
 
 #include "macros_common.h"
 #include "ctrl_events.h"
@@ -17,6 +18,7 @@
 #include "ble_hci_vsc.h"
 #include "ble_audio_services.h"
 #include "channel_assignment.h"
+
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(cis_gateway, CONFIG_BLE_LOG_LEVEL);
@@ -515,12 +517,12 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 
 	(void)memset(params, 0, sizeof(*params));
 
-#if (CONFIG_BT_VCS_CLIENT)
+#if (CONFIG_BT_VCP_VOL_CTLR)
 	ret = ble_vcs_discover(conn, channel_index);
 	if (ret) {
 		LOG_ERR("Could not do VCS discover");
 	}
-#endif /* (CONFIG_BT_VCS_CLIENT) */
+#endif /* (CONFIG_BT_VCP_VOL_CTLR ) */
 	ret = next_free_audio_stream_index_get(&stream_index);
 	if (ret) {
 		LOG_WRN("Failed to get free index");
@@ -1066,13 +1068,13 @@ static int initialize(le_audio_receive_cb recv_cb)
 	}
 #endif /* !CONFIG_STREAM_BIDIRECTIONAL */
 
-#if (CONFIG_BT_VCS_CLIENT)
+#if (CONFIG_BT_VCP_VOL_CTLR)
 	ret = ble_vcs_client_init();
 	if (ret) {
 		LOG_ERR("VCS client init failed");
 		return ret;
 	}
-#endif /* (CONFIG_BT_VCS_CLIENT) */
+#endif /* (CONFIG_BT_VCP_VOL_CTLR) */
 
 #if (CONFIG_BT_MCS)
 	ret = ble_mcs_server_init(le_audio_play_pause_cb);
@@ -1165,12 +1167,14 @@ int le_audio_send(uint8_t const *const data, size_t size)
 	}
 
 	if (headsets[AUDIO_CH_L].sink_stream->ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
-		ret = bt_iso_chan_get_tx_sync(headsets[AUDIO_CH_L].sink_stream->iso, &tx_info);
+		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_L].sink_stream->ep->iso->chan,
+										&tx_info);
 	}
 #if !CONFIG_STREAM_BIDIRECTIONAL
 	else if (headsets[AUDIO_CH_R].sink_stream->ep->status.state ==
 		 BT_AUDIO_EP_STATE_STREAMING) {
-		ret = bt_iso_chan_get_tx_sync(headsets[AUDIO_CH_R].sink_stream->iso, &tx_info);
+		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_R].sink_stream->ep->iso->chan,
+										&tx_info);
 	}
 #endif /* !CONFIG_STREAM_BIDIRECTIONAL */
 	else {

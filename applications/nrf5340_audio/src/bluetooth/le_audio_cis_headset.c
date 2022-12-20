@@ -12,7 +12,7 @@
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/audio/pacs.h>
-#include <zephyr/bluetooth/audio/csis.h>
+#include <zephyr/bluetooth/audio/csip.h>
 #include <zephyr/bluetooth/audio/cap.h>
 #include <../subsys/bluetooth/audio/endpoint.h>
 
@@ -48,48 +48,50 @@ static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ASCS_ASE_SRC_CO
 /* clang-format on */
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 
-enum csis_set_rank { CSIS_HL_RANK = 1, CSIS_HR_RANK = 2, CSIS_SET_SIZE = 2 };
+#define CSIP_SET_SIZE 2
+enum csip_set_rank { CSIP_HL_RANK = 1, CSIP_HR_RANK = 2};
 
-static struct bt_csis *csis;
+static struct bt_csip_set_member_svc_inst *csip;
 static struct bt_le_ext_adv *adv_ext;
 /* Advertising data for peer connection */
-static uint8_t csis_rsi[BT_CSIS_RSI_SIZE];
+static uint8_t csip_rsi[BT_CSIP_RSI_SIZE];
 
 static const struct bt_data ad_peer[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_ASCS_VAL)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_PACS_VAL)),
-	BT_CSIS_DATA_RSI(csis_rsi)
+	BT_CSIP_DATA_RSI(csip_rsi)
 };
 
 /* Callback for locking state change from server side */
-static void csis_lock_changed_cb(struct bt_conn *conn, struct bt_csis *csis, bool locked)
+static void csip_lock_changed_cb(struct bt_conn *conn, struct bt_csip_set_member_svc_inst *csip,
+									bool locked)
 {
 	LOG_DBG("Client %p %s the lock", (void *)conn, locked ? "locked" : "released");
 }
 
 /* Callback for SIRK read request from peer side */
-static uint8_t sirk_read_req_cb(struct bt_conn *conn, struct bt_csis *csis)
+static uint8_t sirk_read_req_cb(struct bt_conn *conn, struct bt_csip_set_member_svc_inst *csip)
 {
 	/* Accept the request to read the SIRK, but return encrypted SIRK instead of plaintext */
-	return BT_CSIS_READ_SIRK_REQ_RSP_ACCEPT_ENC;
+	return BT_CSIP_READ_SIRK_REQ_RSP_ACCEPT_ENC;
 }
 
-static struct bt_csis_cb csis_callbacks = {
-	.lock_changed = csis_lock_changed_cb,
+static struct bt_csip_set_member_cb csip_callbacks = {
+	.lock_changed = csip_lock_changed_cb,
 	.sirk_read_req = sirk_read_req_cb,
 };
-struct bt_csis_register_param csis_param = {
-	.set_size = CSIS_SET_SIZE,
+struct bt_csip_set_member_register_param csip_param = {
+	.set_size = CSIP_SET_SIZE,
 	.lockable = true,
-#if !CONFIG_BT_CSIS_TEST_SAMPLE_DATA
-	/* CSIS SIRK for demo is used, must be changed before production */
+#if !CONFIG_BT_CSIP_SET_MEMBER_TEST_SAMPLE_DATA
+	/* CSIP SIRK for demo is used, must be changed before production */
 	.set_sirk = { 'N', 'R', 'F', '5', '3', '4', '0', '_', 'T', 'W', 'S', '_', 'D', 'E', 'M',
 		      'O' },
 #else
-#warning "CSIS test sample data is used, must be changed before production"
+#warning "CSIP test sample data is used, must be changed before production"
 #endif
-	.cb = &csis_callbacks,
+	.cb = &csip_callbacks,
 };
 
 static le_audio_receive_cb receive_cb;
@@ -197,7 +199,7 @@ static void advertising_process(struct k_work *work)
 	} else
 #endif /* CONFIG_BT_BONDABLE */
 	{
-		ret = bt_csis_generate_rsi(csis, csis_rsi);
+		ret = bt_csip_set_member_generate_rsi(csip, csip_rsi);
 		if (ret) {
 			LOG_ERR("Failed to generate RSI (ret %d)", ret);
 			return;
@@ -510,13 +512,13 @@ static int initialize(le_audio_receive_cb recv_cb)
 	if (!initialized) {
 		bt_audio_unicast_server_register_cb(&unicast_server_cb);
 		bt_conn_cb_register(&conn_callbacks);
-#if (CONFIG_BT_VCS)
+#if (BT_VCP_VOL_REND)
 		ret = ble_vcs_server_init();
 		if (ret) {
 			LOG_ERR("VCS server init failed");
 			return ret;
 		}
-#endif /* (CONFIG_BT_VCS) */
+#endif /* (BT_VCP_VOL_REND) */
 
 #if (CONFIG_BT_MCC)
 		ret = ble_mcs_client_init();
@@ -537,7 +539,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 			}
 		}
 		if (channel == AUDIO_CH_L) {
-			csis_param.rank = CSIS_HL_RANK;
+			csip_param.rank = CSIP_HL_RANK;
 			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_LEFT);
 			if (ret) {
 				LOG_ERR("Location set failed");
@@ -545,7 +547,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 			}
 
 		} else {
-			csis_param.rank = CSIS_HR_RANK;
+			csip_param.rank = CSIP_HR_RANK;
 			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
 						   BT_AUDIO_LOCATION_FRONT_RIGHT);
 			if (ret) {
@@ -590,7 +592,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 			bt_audio_stream_cb_register(&audio_streams[i], &stream_ops);
 		}
 
-		ret = bt_cap_acceptor_register(&csis_param, &csis);
+		ret = bt_cap_acceptor_register(&csip_param, &csip);
 		if (ret) {
 			LOG_ERR("Failed to register CAP acceptor");
 			return ret;
