@@ -21,20 +21,7 @@ static int callback(size_t len)
 
 extern int unity_main(void);
 
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
 static int trace_rtt_channel;
-
-void setUp(void)
-{
-	cmock_SEGGER_RTT_Init();
-}
-
-void tearDown(void)
-{
-	cmock_SEGGER_RTT_Verify();
-}
 
 static int rtt_allocupbuffer_callback(const char *sName, void *pBuffer, unsigned int BufferSize,
 				      unsigned int Flags, int no_of_calls)
@@ -47,11 +34,6 @@ static int rtt_allocupbuffer_callback(const char *sName, void *pBuffer, unsigned
 	TEST_ASSERT_EQUAL(SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL, Flags);
 
 	return trace_rtt_channel;
-}
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
 }
 
 void test_trace_backend_init_rtt(void)

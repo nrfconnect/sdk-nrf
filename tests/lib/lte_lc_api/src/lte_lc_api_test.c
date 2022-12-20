@@ -11,8 +11,9 @@
 #include <zephyr/device.h>
 #include <modem/lte_lc.h>
 #include <nrf_errno.h>
-#include <cmock_nrf_modem_at.h>
 #include <mock_nrf_modem_at.h>
+
+#include "cmock_nrf_modem_at.h"
 
 void wrap_lc_init(void)
 {
@@ -33,7 +34,6 @@ void wrap_lc_init(void)
 
 void setUp(void)
 {
-	cmock_nrf_modem_at_Init();
 	mock_nrf_modem_at_Init();
 	wrap_lc_init();
 }
@@ -46,7 +46,6 @@ void tearDown(void)
 
 	ret = lte_lc_deinit();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-	cmock_nrf_modem_at_Verify();
 	mock_nrf_modem_at_Verify();
 }
 

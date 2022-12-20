@@ -47,7 +47,6 @@
 #define TEST_EXPECTED_USER_NAME_DEFAULT_LEN	(sizeof(TEST_EXPECTED_USER_NAME_DEFAULT) - 1)
 
 extern int unity_main(void);
-extern int generic_suiteTearDown(int num_failures);
 
 /* Pull in variables and functions from the DPS library. */
 extern enum dps_state dps_state;
@@ -70,8 +69,6 @@ static K_SEM_DEFINE(reg_assigning_sem, 0, 1);
 /* Test suite configuration functions */
 void setUp(void)
 {
-	cmock_azure_iot_hub_mqtt_Init();
-	cmock_settings_Init();
 	__cmock_settings_subsys_init_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_settings_save_one_IgnoreAndReturn(0);
@@ -83,16 +80,8 @@ void setUp(void)
 
 void tearDown(void)
 {
-	cmock_azure_iot_hub_mqtt_Verify();
-	cmock_settings_Verify();
 	__cmock_mqtt_helper_disconnect_IgnoreAndReturn(0);
 	azure_iot_hub_dps_reset();
-}
-
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
 }
 
 /* Stubs */

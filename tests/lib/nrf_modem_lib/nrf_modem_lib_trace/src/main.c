@@ -22,9 +22,6 @@ LOG_MODULE_REGISTER(trace_test, CONFIG_NRF_MODEM_LIB_TRACE_TEST_LOG_LEVEL);
 
 extern int unity_main(void);
 
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
 static void clear_rw_frags(void);
 
 static const char *trace_level_set_fmt = "AT%%XMODEMTRACE=1,%d";
@@ -53,10 +50,6 @@ static void nrf_modem_at_printf_ExpectTraceLevelAndReturn(
 
 void setUp(void)
 {
-	cmock_nrf_modem_Init();
-	cmock_nrf_modem_trace_Init();
-	cmock_trace_backend_Init();
-
 	nrf_modem_trace_get_error = 0;
 	nrf_modem_trace_get_cmock_num_calls = 0;
 	trace_backend_write_error = 0;
@@ -66,13 +59,6 @@ void setUp(void)
 		"AT%%XMODEMTRACE=1,%d", NRF_MODEM_LIB_TRACE_LEVEL_FULL, 0);
 
 	clear_rw_frags();
-}
-
-void tearDown(void)
-{
-	cmock_nrf_modem_Verify();
-	cmock_nrf_modem_trace_Verify();
-	cmock_trace_backend_Verify();
 }
 
 static void NRF_MODEM_LIB_ON_INIT_callback(void)
@@ -210,11 +196,6 @@ int trace_backend_deinit_stub(int cmock_num_calls)
 	k_sem_give(&backend_deinit_sem);
 
 	return 0;
-}
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
 }
 
 void test_trace_thread_handler_get_single(void)

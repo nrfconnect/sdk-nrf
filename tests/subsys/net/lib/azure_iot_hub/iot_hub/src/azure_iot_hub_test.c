@@ -83,24 +83,9 @@ extern int unity_main(void);
 extern void iot_hub_state_set(enum iot_hub_state state);
 extern enum iot_hub_state iot_hub_state;
 
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
 void setUp(void)
 {
-	cmock_azure_iot_hub_mqtt_Init();
-
 	iot_hub_state = STATE_UNINIT;
-}
-
-void tearDown(void)
-{
-	cmock_azure_iot_hub_mqtt_Verify();
-}
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
 }
 
 /* Stubs */

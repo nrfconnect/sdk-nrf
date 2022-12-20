@@ -7,14 +7,15 @@
 #include <unity.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <cmock_modules_common.h>
-#include <cmock_app_event_manager.h>
-#include <cmock_app_event_manager_priv.h>
-#include <cmock_watchdog_app.h>
 #include <memfault/metrics/cmock_metrics.h>
 #include <memfault/core/cmock_data_packetizer.h>
 #include <memfault/ports/cmock_watchdog.h>
 #include <memfault/panics/cmock_coredump.h>
+
+#include "cmock_modules_common.h"
+#include "cmock_app_event_manager.h"
+#include "cmock_app_event_manager_priv.h"
+#include "cmock_watchdog_app.h"
 
 #include "app_module_event.h"
 #include "location_module_event.h"
@@ -56,30 +57,6 @@ extern int unity_main(void);
  * infuse callback events directly from the test runner.
  */
 watchdog_evt_handler_t debug_module_watchdog_callback;
-
-/* Suite teardown finalizes with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
-}
-
-void setUp(void)
-{
-	cmock_watchdog_app_Init();
-	cmock_modules_common_Init();
-	cmock_app_event_manager_Init();
-	cmock_app_event_manager_priv_Init();
-}
-
-void tearDown(void)
-{
-	cmock_watchdog_app_Verify();
-	cmock_modules_common_Verify();
-	cmock_app_event_manager_Verify();
-	cmock_app_event_manager_priv_Verify();
-}
 
 static void latch_watchdog_callback(watchdog_evt_handler_t handler, int no_of_calls)
 {

@@ -27,14 +27,6 @@ void tearDown(void)
 	cJSON_FreeString(codec.buf);
 }
 
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
-}
-
 #define CONF_RECV_EXAMPLE \
 "{"\
 	"\"config\":{"\

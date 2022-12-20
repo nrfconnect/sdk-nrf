@@ -16,9 +16,6 @@
 
 extern int unity_main(void);
 
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
 static const nrfx_uarte_t *p_uarte_inst_in_use;
 /* Variable to store the event_handler registered by the modem_trace module.*/
 static nrfx_uarte_event_handler_t uarte_callback;
@@ -34,17 +31,8 @@ void nrfx_isr(const void *irq_handler)
 	TEST_ASSERT(false);
 }
 
-void setUp(void)
-{
-	cmock_nrfx_uarte_Init();
-	cmock_pinctrl_Init();
-}
-
 void tearDown(void)
 {
-	cmock_nrfx_uarte_Verify();
-	cmock_pinctrl_Verify();
-
 	p_uarte_inst_in_use = NULL;
 	uarte_callback = NULL;
 }
@@ -122,11 +110,6 @@ static void trace_test_thread(void)
 
 K_THREAD_DEFINE(trace_test_thread_id, TRACE_TEST_THREAD_STACK_SIZE, trace_test_thread,
 		NULL, NULL, NULL, TRACE_THREAD_PRIORITY, 0, 0);
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
-}
 
 /* Test that uart trace backend returns zero when NRFX UART Init succeeds. */
 void test_trace_backend_init_uart(void)
