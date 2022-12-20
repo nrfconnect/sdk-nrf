@@ -241,6 +241,10 @@ Bluetooth samples
 
   * Removed a compilation warning when used with minimal pinout Skyworks FEM.
 
+* :ref:`peripheral_uart` sample:
+
+  * Fixed the unit of the :kconfig:option:`CONFIG_BT_NUS_UART_RX_WAIT_TIME` Kconfig option to comply with the UART API.
+
 Bluetooth mesh samples
 ----------------------
 
