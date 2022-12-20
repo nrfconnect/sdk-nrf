@@ -60,31 +60,31 @@ static int cmd_wifi_status(void)
 
 	if (net_mgmt(NET_REQUEST_WIFI_IFACE_STATUS, iface, &status,
 				sizeof(struct wifi_iface_status))) {
-		printk("Status request failed\n");
+		LOG_INF("Status request failed");
 
 		return -ENOEXEC;
 	}
 
-	printk("==================\n");
-	printk("State: %s\n", wifi_state_txt(status.state));
+	LOG_INF("==================");
+	LOG_INF("State: %s", wifi_state_txt(status.state));
 
 	if (status.state >= WIFI_STATE_ASSOCIATED) {
 		uint8_t mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
 
-		printk("Interface Mode: %s\n",
+		LOG_INF("Interface Mode: %s",
 		       wifi_mode_txt(status.iface_mode));
-		printk("Link Mode: %s\n",
+		LOG_INF("Link Mode: %s",
 		       wifi_link_mode_txt(status.link_mode));
-		printk("SSID: %-32s\n", status.ssid);
-		printk("BSSID: %s\n",
+		LOG_INF("SSID: %-32s", status.ssid);
+		LOG_INF("BSSID: %s",
 		       net_sprint_ll_addr_buf(
 				status.bssid, WIFI_MAC_ADDR_LEN,
 				mac_string_buf, sizeof(mac_string_buf)));
-		printk("Band: %s\n", wifi_band_txt(status.band));
-		printk("Channel: %d\n", status.channel);
-		printk("Security: %s\n", wifi_security_txt(status.security));
-		printk("MFP: %s\n", wifi_mfp_txt(status.mfp));
-		printk("RSSI: %d\n", status.rssi);
+		LOG_INF("Band: %s", wifi_band_txt(status.band));
+		LOG_INF("Channel: %d", status.channel);
+		LOG_INF("Security: %s", wifi_security_txt(status.security));
+		LOG_INF("MFP: %s", wifi_mfp_txt(status.mfp));
+		LOG_INF("RSSI: %d", status.rssi);
 	}
 	return 0;
 }
