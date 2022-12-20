@@ -98,7 +98,7 @@ config BT_PERIPHERAL
 config BT_GAP_PERIPHERAL_PREF_PARAMS
 	default n
 
-config BT_VCS
+config BT_VCP_VOL_REND
 	default n if WALKIE_TALKIE_DEMO
 	default y
 
@@ -114,7 +114,7 @@ config BT_PACS_SNK_CONTEXT
 config BT_PACS_SRC_CONTEXT
 	default 0x0007 if STREAM_BIDIRECTIONAL
 
-config BT_CSIS
+config BT_CSIP_SET_MEMBER
 	bool
 	default y
 
@@ -158,7 +158,7 @@ config BT_AUDIO_UNICAST_CLIENT_ASE_SRC_COUNT
 	default 1 if STREAM_BIDIRECTIONAL
 	default 0
 
-config BT_VCS_CLIENT
+config BT_VCP_VOL_CTLR
 	default n if WALKIE_TALKIE_DEMO
 	default y
 
