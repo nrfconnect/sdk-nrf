@@ -6,8 +6,6 @@
 
 #include "software_images_swapper.h"
 
-#include <pm_config.h>
-
 #include <dfu/dfu_multi_image.h>
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_mcuboot.h>
@@ -18,12 +16,8 @@
 
 LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
 
-int SoftwareImagesSwapper::Swap(ApplicationImageId applicationId, SoftwareImagesSwapDoneCallback swapDoneCallback)
+int SoftwareImagesSwapper::Swap(const ImageLocation &source, SoftwareImagesSwapDoneCallback swapDoneCallback)
 {
-	uint32_t app_address;
-	uint32_t app_size;
-	uint32_t net_address;
-	uint32_t net_size;
 	int result;
 
 	if (mSwapInProgress) {
@@ -31,22 +25,6 @@ int SoftwareImagesSwapper::Swap(ApplicationImageId applicationId, SoftwareImages
 	}
 
 	if (!swapDoneCallback) {
-		return -EINVAL;
-	}
-
-	if (applicationId == ApplicationImageId::Image_1) {
-		app_address = PM_APP_1_CORE_APP_ADDRESS;
-		app_size = PM_APP_1_CORE_APP_SIZE;
-		net_address = PM_APP_1_CORE_NET_ADDRESS;
-		net_size = PM_APP_1_CORE_NET_SIZE;
-	} else if (applicationId == ApplicationImageId::Image_2) {
-		app_address = PM_APP_2_CORE_APP_ADDRESS;
-		app_size = PM_APP_2_CORE_APP_SIZE;
-		net_address = PM_APP_2_CORE_NET_ADDRESS;
-		net_size = PM_APP_2_CORE_NET_SIZE;
-	} else {
-		LOG_ERR("Requested to swap application image with invalid identifier: %d",
-			static_cast<int>(applicationId));
 		return -EINVAL;
 	}
 
@@ -62,13 +40,13 @@ int SoftwareImagesSwapper::Swap(ApplicationImageId applicationId, SoftwareImages
 
 	mSwapInProgress = true;
 
-	result = SwapImage(app_address, app_size, 0);
+	result = SwapImage(source.app_address, source.app_size, 0);
 	if (result != 0) {
 		mSwapInProgress = false;
 		goto exit;
 	}
 
-	result = SwapImage(net_address, net_size, 1);
+	result = SwapImage(source.net_address, source.net_size, 1);
 	if (result != 0) {
 		mSwapInProgress = false;
 		goto exit;
