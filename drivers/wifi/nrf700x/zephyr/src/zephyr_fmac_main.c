@@ -548,6 +548,7 @@ static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 	.send_mlme = wifi_nrf_nl80211_send_mlme,
 	.get_wiphy = wifi_nrf_supp_get_wiphy,
 	.register_frame = wifi_nrf_supp_register_frame,
+	.get_capa = wifi_nrf_supp_get_capa,
 };
 #endif /* CONFIG_WPA_SUPP */
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
