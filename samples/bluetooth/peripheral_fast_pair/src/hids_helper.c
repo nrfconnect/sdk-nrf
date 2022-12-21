@@ -92,7 +92,7 @@ int hids_helper_volume_ctrl(enum hids_helper_volume_change volume_change)
 {
 	static const uint16_t usage_id_vol_up = 0x00E9;
 	static const uint16_t usage_id_vol_down = 0x00EA;
-	static const uint16_t usage_id_empty;
+	static const uint16_t usage_id_empty = 0x0000;
 
 	uint8_t buf[REPORT_SIZE_CONSUMER_CTRL];
 
