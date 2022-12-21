@@ -53,6 +53,15 @@ jobs:
         west update
         west zephyr-export
 
+    - name: Run CODEOWNERS test
+      id: codeowners
+      env:
+        BASE_REF: ${{ github.base_ref }}
+      working-directory: ncs/nrf
+      if: contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
+      run: |
+        ./scripts/ci/codeowners.py -c origin/${BASE_REF}..
+
     - name: Run Compliance Tests
       continue-on-error: true
       id: compliance
