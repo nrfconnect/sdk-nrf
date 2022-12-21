@@ -32,12 +32,6 @@ config BOOTLOADER_MCUBOOT
 	bool
 	default y
 
-config EMPTY_NET_CORE_CHILD_IMAGE
-	bool "Dummy Net core application"
-	default y
-	help
-		Dummy Net core child image for generating bootloader
-
 config SYSTEM_WORKQUEUE_STACK_SIZE
 	int
 	default 4096

@@ -25,10 +25,10 @@ config THREAD_NAME
 	bool
 	default y
 
-# Avoid multi-build system build network core firmware
-config NCS_INCLUDE_RPMSG_CHILD_IMAGE
-	bool
-	default n
+# Empty net core image is needed whether DFU is enabled or not
+config NCS_SAMPLE_EMPTY_NET_CORE_CHILD_IMAGE
+	bool "Dummy Net core application"
+	default y
 
 # Workaround to not use fatal_error.c in NCS. Note that the system may still
 # reset on error depending on the build configuraion

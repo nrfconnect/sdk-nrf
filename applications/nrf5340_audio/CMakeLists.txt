@@ -28,9 +28,12 @@ if (CONFIG_AUDIO_DFU EQUAL 2)
 endif()
 
 if ((CONFIG_AUDIO_DFU EQUAL 1) OR (CONFIG_AUDIO_DFU EQUAL 2))
+    list(APPEND empty_net_core_OVERLAY_CONFIG
+        "${CMAKE_CURRENT_LIST_DIR}/dfu/conf/overlay-empty_net_core.conf"
+    )
     if (CONFIG_B0N_MINIMAL)
         set(min_b0n_flag "-m")
-        list(APPEND empty_net_b0n_OVERLAY_CONFIG overlay-minimal-size.conf)
+        list(APPEND empty_net_core_b0n_OVERLAY_CONFIG overlay-minimal-size.conf)
     endif()
 endif()
 
@@ -38,7 +41,6 @@ endif()
 add_compile_definitions(HEADSET=1)
 add_compile_definitions(GATEWAY=2)
 
-set(ZEPHYR_EXTRA_MODULES ${CMAKE_CURRENT_LIST_DIR}/dfu/conf/)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(NRF5340_AUDIO)
