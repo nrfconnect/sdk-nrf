@@ -535,6 +535,10 @@ Common Application Framework (CAF)
   * Added a macro intended to set the size of events member enums to 32 bits when the Event Manager Proxy is enabled.
   * Applied macro to all affected CAF events.
 
+* :ref:`caf_sensor_data_aggregator`:
+
+  * :c:struct:`sensor_data_aggregator_event` now uses the :c:struct:`sensor_value` struct data buffer and carries a number of sensor values in a single sample, which is sufficient to describe data layout.
+
 Shell libraries
 ---------------
 
