@@ -29,16 +29,6 @@ config LOCATION_MODULE_NEIGHBOR_CELLS_DATA_CONVERT_RSRQ_TO_DB
 	  Don't convert RSRQ to dB when building for nRF Cloud, this is handled during encoding
 	  using the nRF Cloud cellular positioning library.
 
-config LOCATION_MODULE_AGPS_FILTERED
-	bool "Request only visible satellite ephemerides"
-	default NRF_CLOUD_AGPS_FILTERED
-	depends on NRF_CLOUD_AGPS_FILTERED
-
-config LOCATION_MODULE_ELEVATION_MASK
-	int "Minimum elevation angle for visible satellites"
-	default NRF_CLOUD_AGPS_ELEVATION_MASK
-	depends on NRF_CLOUD_AGPS_FILTERED
-
 # The cloud interface for A-GPS, P-GPS and cell location is handled by the application
 config LOCATION_METHOD_GNSS_AGPS_EXTERNAL
 	default y if NRF_CLOUD_AGPS
