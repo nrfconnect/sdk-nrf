@@ -73,6 +73,10 @@ Matter
 
   * Support for Wi-Fi Network Diagnostic Cluster (which counts the number of packets received and transmitted on the Wi-Fi interface).
 
+* Updated:
+
+  * Default heap implementation to use Zephyr's ``sys_heap`` (:kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEAP`) to better control the RAM usage of Matter applications.
+
 See `Matter samples`_ for the list of changes for the Matter samples.
 
 Matter fork
