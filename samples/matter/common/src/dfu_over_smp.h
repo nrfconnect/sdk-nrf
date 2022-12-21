@@ -19,12 +19,14 @@ public:
 	void StartServer();
 	void StartBLEAdvertising();
 	bool IsEnabled() { return mIsEnabled; }
+	static int32_t UploadConfirmHandler(uint32_t event, int32_t rc, bool *abort_more,
+					    void *data, size_t data_size);
+	static int32_t CommandHandler(uint32_t event, int32_t rc, bool *abort_more,
+				      void *data, size_t data_size);
 
 private:
 	friend DFUOverSMP &GetDFUOverSMP(void);
 
-	static int UploadConfirmHandler(const struct img_mgmt_upload_req req,
-					const struct img_mgmt_upload_action action);
 	static void OnBleDisconnect(bt_conn *conn, uint8_t reason);
 	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 

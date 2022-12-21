@@ -12,6 +12,8 @@
 
 #include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
 #include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
+#include <zephyr/mgmt/mcumgr/mgmt/mgmt.h>
+#include <zephyr/mgmt/mcumgr/mgmt/callbacks.h>
 #include <zephyr/dfu/mcuboot.h>
 #include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
 
@@ -28,28 +30,27 @@ constexpr uint16_t kAdvertisingIntervalMaxMs = 500;
 
 DFUOverSMP DFUOverSMP::sDFUOverSMP;
 
+static mgmt_callback sUploadCallback = {
+	.callback = DFUOverSMP::UploadConfirmHandler,
+	.event_id = MGMT_EVT_OP_IMG_MGMT_DFU_CHUNK,
+};
+
+static mgmt_callback sCommandCallback = {
+	.callback = DFUOverSMP::CommandHandler,
+	.event_id = (MGMT_EVT_OP_CMD_RECV | MGMT_EVT_OP_CMD_DONE),
+};
+
 void DFUOverSMP::Init(DFUOverSMPRestartAdvertisingHandler startAdvertisingCb)
 {
 	os_mgmt_register_group();
 	img_mgmt_register_group();
-	img_mgmt_set_upload_cb(UploadConfirmHandler);
+	mgmt_callback_register(&sUploadCallback);
+	mgmt_callback_register(&sCommandCallback);
 
 	memset(&mBleConnCallbacks, 0, sizeof(mBleConnCallbacks));
 	mBleConnCallbacks.connected = nullptr;
 	mBleConnCallbacks.disconnected = OnBleDisconnect;
 	bt_conn_cb_register(&mBleConnCallbacks);
-	mgmt_register_evt_cb([](uint8_t opcode, uint16_t group, uint8_t id, void *arg) {
-		switch (opcode) {
-		case MGMT_EVT_OP_CMD_RECV:
-			GetFlashHandler().DoAction(ExternalFlashManager::Action::WAKE_UP);
-			break;
-		case MGMT_EVT_OP_CMD_DONE:
-			GetFlashHandler().DoAction(ExternalFlashManager::Action::SLEEP);
-			break;
-		default:
-			break;
-		}
-	});
 
 	restartAdvertisingCallback = startAdvertisingCb;
 
@@ -70,14 +71,29 @@ void DFUOverSMP::ConfirmNewImage()
 	}
 }
 
-int DFUOverSMP::UploadConfirmHandler(const struct img_mgmt_upload_req req, const struct img_mgmt_upload_action action)
+int32_t DFUOverSMP::CommandHandler(uint32_t event, int32_t rc, bool *abort_more,
+				   void *data, size_t data_size)
 {
+	if (event == MGMT_EVT_OP_CMD_RECV) {
+		GetFlashHandler().DoAction(ExternalFlashManager::Action::WAKE_UP);
+	} else if (event == MGMT_EVT_OP_CMD_DONE) {
+		GetFlashHandler().DoAction(ExternalFlashManager::Action::SLEEP);
+	}
+
+	return MGMT_ERR_EOK;
+}
+
+int32_t DFUOverSMP::UploadConfirmHandler(uint32_t event, int32_t rc, bool *abort_more,
+					 void *data, size_t data_size)
+{
+	img_mgmt_upload_check *img_data = (img_mgmt_upload_check *)data;
+
 	/* For now just print update progress and confirm data chunk without any additional checks. */
 	ChipLogProgress(DeviceLayer, "Software update progress of image %u: %u B / %u B",
-			static_cast<unsigned>(req.image), static_cast<unsigned>(req.off),
-			static_cast<unsigned>(action.size));
+			static_cast<unsigned>(img_data->req->image), static_cast<unsigned>(img_data->req->off),
+			static_cast<unsigned>(img_data->action->size));
 
-	return 0;
+	return MGMT_ERR_EOK;
 }
 
 void DFUOverSMP::StartServer()
