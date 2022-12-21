@@ -19,7 +19,7 @@ FINAL_BLE5_CTR_HEX = 'ble5-ctr_CPUNET.hex'
 FINAL_BLE5_CTR_UPDATE_BIN = 'ble5-ctr_net_core_update.bin'
 ORIG_BLE5_CTR_PATTERN = r'ble5-ctr-rpmsg_shifted_\d{4}.hex'
 ORIG_BLE5_CTR_MIN_PATTERN = r'ble5-ctr-rpmsg_shifted_min_\d{4}.hex'
-NET_CORE_APP_NAME = 'empty_net'
+NET_CORE_APP_NAME = 'empty_net_core'
 
 ZEPHYR_BASE = os.environ['ZEPHYR_BASE']
 MANUALLY_SIGN_DIR = Path(__file__).resolve().parent

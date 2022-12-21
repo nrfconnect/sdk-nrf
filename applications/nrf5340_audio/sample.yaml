@@ -10,10 +10,34 @@ tests:
     platform_allow: nrf5340_audio_dk_nrf5340_cpuapp
     platform_exclude: nrf5340_audio_dk_nrf5340_cpuapp_ns
     tags: ci_build
-    extra_args: CMAKE_BUILD_TYPE=RELEASE DEV_HEADSET=ON
+    extra_args: CONF_FILE="prj_release.conf" CONFIG_AUDIO_DEV=1
   applications.nrf5340_audio.gateway:
     build_only: true
     platform_allow: nrf5340_audio_dk_nrf5340_cpuapp
     platform_exclude: nrf5340_audio_dk_nrf5340_cpuapp_ns
     tags: ci_build
-    extra_args: CMAKE_BUILD_TYPE=RELEASE DEV_GATEWAY=ON
+    extra_args: CONF_FILE="prj_release.conf" CONFIG_AUDIO_DEV=2
+  applications.nrf5340_audio.headset_dfu_internal:
+    build_only: true
+    platform_allow: nrf5340_audio_dk_nrf5340_cpuapp
+    platform_exclude: nrf5340_audio_dk_nrf5340_cpuapp_ns
+    tags: ci_build
+    extra_args: CONF_FILE="prj_release.conf" CONFIG_AUDIO_DEV=1 CONFIG_AUDIO_DFU=1
+  applications.nrf5340_audio.gateway_dfu_internal:
+    build_only: true
+    platform_allow: nrf5340_audio_dk_nrf5340_cpuapp
+    platform_exclude: nrf5340_audio_dk_nrf5340_cpuapp_ns
+    tags: ci_build
+    extra_args: CONF_FILE="prj_release.conf" CONFIG_AUDIO_DEV=2 CONFIG_AUDIO_DFU=1
+  applications.nrf5340_audio.headset_dfu_external:
+    build_only: true
+    platform_allow: nrf5340_audio_dk_nrf5340_cpuapp
+    platform_exclude: nrf5340_audio_dk_nrf5340_cpuapp_ns
+    tags: ci_build
+    extra_args: CONF_FILE="prj_release.conf" CONFIG_AUDIO_DEV=1 CONFIG_AUDIO_DFU=2
+  applications.nrf5340_audio.gateway_dfu_external:
+    build_only: true
+    platform_allow: nrf5340_audio_dk_nrf5340_cpuapp
+    platform_exclude: nrf5340_audio_dk_nrf5340_cpuapp_ns
+    tags: ci_build
+    extra_args: CONF_FILE="prj_release.conf" CONFIG_AUDIO_DEV=2 CONFIG_AUDIO_DFU=2
