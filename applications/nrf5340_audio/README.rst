@@ -920,7 +920,8 @@ You can build and program the application in one of the following ways:
 * :ref:`nrf53_audio_app_building_standard`.
   Using this method requires building and programming each development kit separately.
 
-You might want to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` before building and programming the application.
+.. note::
+   You might want to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` before building and programming the application.
 
 Testing out of the box
 ======================
@@ -1129,6 +1130,10 @@ Programming the application
 After building the files for the development kit you want to program, complete the following steps to program the application from the command line:
 
 1. Plug the device into the USB port.
+
+   .. note::
+      |usb_known_issues|
+
 #. Turn on the development kit using the On/Off switch.
 #. Open a command prompt.
 #. Run the following command to print the SEGGER serial number of your development kit:
@@ -1202,6 +1207,10 @@ Testing the default CIS mode
 Complete the following steps to test the unidirectional CIS mode for one gateway and two headset devices:
 
 1. Make sure that the development kits are still plugged into the USB ports and are turned on.
+
+   .. note::
+      |usb_known_issues|
+
    After programming, **RGB2** starts blinking green on every device to indicate the ongoing CPU activity on the network core.
    **LED3** starts blinking green on every device to indicate the ongoing CPU activity on the application core.
 #. Wait for the **LED1** on the gateway to start blinking blue.
@@ -1482,3 +1491,4 @@ Legal notices for the nRF5340 Audio DK
 .. |net_core_hex_note| replace:: The network core for both gateway and headsets is programmed with the precompiled Bluetooth Low Energy Controller binary file :file:`ble5-ctr-rpmsg_<XYZ>.hex`, where *<XYZ>* corresponds to the controller version, for example :file:`ble5-ctr-rpmsg_3216.hex`.
    This file includes the LE Audio Controller Subsystem for nRF53 and is provided in the :file:`applications/nrf5340_audio/bin` directory.
    If :ref:`DFU is enabled <nrf53_audio_app_configuration_configure_fota>`, the subsystem's binary file will be generated in the :file:`build/zephyr/` directory and will be called :file:`net_core_app_signed.hex`.
+.. |usb_known_issues| replace:: Make sure to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` related to serial connection with the USB.
