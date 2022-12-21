@@ -18,6 +18,7 @@
 #include "stubs.h"
 
 extern void lwm2m_firmware_emulate_modem_lib_init(int modem_init_ret_val);
+static int write_fota_dynamic_url(uint8_t instance_id, const char *url, uint16_t len);
 static void tear_down_test(void *fixie);
 static void setup_tear_up(void *fixie);
 static void *init_firmware(void);
@@ -99,7 +100,7 @@ static void tear_down_test(void *fixie)
 	uint8_t result, state;
 
 	for (uint16_t i = 0; i < INSTANCE_COUNT; i++) {
-		post_write_to_resource(i, LWM2M_FOTA_PACKAGE_URI_ID, NULL, 0, false, 0);
+		write_fota_dynamic_url(i, NULL, 0);
 		lwm2m_get_u8(&LWM2M_OBJ(FIRM_UPDATE_OBJECT_ID, i, LWM2M_FOTA_UPDATE_RESULT_ID),
 			     &result);
 		lwm2m_get_u8(&LWM2M_OBJ(FIRM_UPDATE_OBJECT_ID, i, LWM2M_FOTA_STATE_ID),
@@ -339,10 +340,28 @@ static void modem_firmware_update(uint8_t *state, uint8_t *result, int modem_lib
 	*result = test_object[modem_instance].result;
 }
 
-static void prepare_firmware_pull(uint8_t instance_id, enum dfu_target_image_type type)
+static int write_fota_url(uint8_t inst_id)
 {
 	int rc;
 	char test_url[] = "https://test_server.com/test.bin";
+
+	rc = lwm2m_set_opaque(&LWM2M_OBJ(FIRM_UPDATE_OBJECT_ID, inst_id, LWM2M_FOTA_PACKAGE_URI_ID),
+			      test_url, sizeof(test_url));
+	return rc;
+}
+
+static int write_fota_dynamic_url(uint8_t inst_id, const char *url, uint16_t len)
+{
+	int rc;
+
+	rc = lwm2m_set_opaque(&LWM2M_OBJ(FIRM_UPDATE_OBJECT_ID, inst_id, LWM2M_FOTA_PACKAGE_URI_ID),
+			      url, len);
+	return rc;
+}
+
+static void prepare_firmware_pull(uint8_t instance_id, enum dfu_target_image_type type)
+{
+	int rc;
 
 	fota_download_target_fake.return_val = type;
 	if (fota_download_ret_val == 0) {
@@ -350,8 +369,7 @@ static void prepare_firmware_pull(uint8_t instance_id, enum dfu_target_image_typ
 		firmware_fota_download_cb = NULL;
 	}
 
-	rc = post_write_to_resource(instance_id, LWM2M_FOTA_PACKAGE_URI_ID, test_url,
-				    sizeof(test_url), false, sizeof(test_url));
+	rc = write_fota_url(instance_id);
 
 	zassert_equal(rc, 0, "wrong return value");
 	k_sleep(K_SECONDS(1));
@@ -465,14 +483,12 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_pull)
 	fota_download_ret_val = 0;
 
 	/* Test Pull start fail by EINVAL*/
-	post_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_URI_ID, test_broken_url,
-			       sizeof(test_broken_url), false, sizeof(test_broken_url));
+	write_fota_dynamic_url(app_instance, test_broken_url, sizeof(test_broken_url));
 	result = get_app_result();
 	printf("Result %d\r\n", result);
 	zassert_equal(result, RESULT_INVALID_URI, "wrong result value");
 
-	post_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_URI_ID, test_broken_url2,
-			       sizeof(test_broken_url2), false, sizeof(test_broken_url2));
+	write_fota_dynamic_url(app_instance, test_broken_url2, sizeof(test_broken_url2));
 	result = get_app_result();
 	printf("Result %d\r\n", result);
 	zassert_equal(result, RESULT_INVALID_URI, "wrong result value");
@@ -749,11 +765,13 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_multinstace_download)
 	/* Test to start modem download middle of app download phase */
 	temp_copy = firmware_fota_download_cb;
 	prepare_firmware_pull(modem_instance, DFU_TARGET_IMAGE_TYPE_MODEM_DELTA);
-	result = get_modem_result();
-	zassert_equal(result, RESULT_ADV_CONFLICT_STATE, "wrong result value");
+	state = get_modem_state();
+	zassert_equal(state, STATE_DOWNLOADING, "wrong result value");
 	firmware_fota_download_cb = temp_copy;
 
+	fota_download_target_fake.return_val = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
 	pull_callback_event_stub(FOTA_DOWNLOAD_EVT_FINISHED, 0);
+	k_sleep(K_SECONDS(1));
 	state = get_app_state();
 	printf("State %d\r\n", state);
 	zassert_equal(state, STATE_DOWNLOADED, "wrong result value");
@@ -764,18 +782,13 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_multinstace_download)
 	printf("Update %d\r\n", rc);
 	zassert_equal(rc, -ECANCELED, "wrong result value");
 
-	/* Download Modem */
-	prepare_firmware_pull(modem_instance, DFU_TARGET_IMAGE_TYPE_MODEM_DELTA);
-	state = get_modem_state();
-	printf("State %d\r\n", state);
-	zassert_equal(state, STATE_DOWNLOADING, "wrong result value");
-
-	/* Test linkek update with not downloaded linked instance */
+	/* Test linked update with not downloaded linked instance */
 	rc = lwm2m_firmware_update(app_instance, link_modem_instance, sizeof(link_modem_instance));
 	printf("Update %d\r\n", rc);
 	zassert_equal(rc, -ECANCELED, "wrong result value");
 
 	zassert_not_null(firmware_fota_download_cb, "Fota client cb is NULL");
+	fota_download_target_fake.return_val = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
 	pull_callback_event_stub(FOTA_DOWNLOAD_EVT_FINISHED, 0);
 	state = get_modem_state();
 	printf("State %d\r\n", state);

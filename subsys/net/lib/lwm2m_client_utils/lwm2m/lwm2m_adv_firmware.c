@@ -332,11 +332,11 @@ static bool update_object_link_parse(char *data_ptr, uint16_t obj_inst_id,
 		switch (idx) {
 		case 0:
 			value->obj_id = id;
-			LOG_ERR("Object id %d", value->obj_id);
+			LOG_DBG("Object id %d", value->obj_id);
 			continue;
 		case 1:
 			value->obj_inst = id;
-			LOG_ERR("Object instance %d", value->obj_inst);
+			LOG_DBG("Object instance %d", value->obj_inst);
 			continue;
 		}
 	}
@@ -378,9 +378,6 @@ static int update_arguments_parse(uint16_t obj_inst_id, char *args, uint16_t arg
 			if (s_ptr && e_ptr) {
 				args_len -= e_ptr - args;
 				temp = e_ptr + 1;
-				/* Mark end prefix by end of string */
-				*e_ptr = '\0';
-
 				s_ptr++;
 				if (*s_ptr == '/') {
 					s_ptr++;
