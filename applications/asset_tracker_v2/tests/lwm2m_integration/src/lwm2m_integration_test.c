@@ -341,6 +341,7 @@ void test_lwm2m_integration_fota_result_get(void)
 
 	__cmock_lwm2m_get_u8_ExpectAndReturn(&LWM2M_OBJ(5, 0, 5), NULL, 0);
 	__cmock_lwm2m_get_u8_IgnoreArg_value();
+	__cmock_lwm2m_firmware_set_update_state_cb_Expect(NULL);
 
 	firmware_update_state_cb(STATE_IDLE);
 	firmware_update_state_cb(STATE_DOWNLOADING);
@@ -389,6 +390,7 @@ void test_lwm2m_integration_fota_downloaded(void)
 void test_lwm2m_integration_fota_updating(void)
 {
 	__cmock_lwm2m_get_u8_IgnoreAndReturn(0);
+	__cmock_lwm2m_firmware_set_update_state_cb_Expect(NULL);
 
 	last_cb_type = UINT8_MAX;
 

@@ -200,13 +200,13 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 /* Callback handler triggered when lwm2m object resource 1/0/4 (device/reboot) is executed. */
 static int device_reboot_cb(uint16_t obj_inst_id, uint8_t *args, uint16_t args_len)
 {
-	ARG_UNUSED(args);
-	ARG_UNUSED(args_len);
 	ARG_UNUSED(obj_inst_id);
 
-	struct cloud_wrap_event cloud_wrap_evt = {
-		.type = CLOUD_WRAP_EVT_REBOOT_REQUEST
-	};
+	struct cloud_wrap_event cloud_wrap_evt = { .type = CLOUD_WRAP_EVT_REBOOT_REQUEST };
+
+	if (args_len && args && *args == REBOOT_SOURCE_FOTA_OBJ) {
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_FOTA_DONE;
+	}
 
 	cloud_wrapper_notify_event(&cloud_wrap_evt);
 	return 0;
@@ -290,6 +290,8 @@ static int firmware_update_state_cb(uint8_t update_state)
 	case STATE_UPDATING:
 		LOG_DBG("STATE_UPDATING, result: %d", update_result);
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_FOTA_DONE;
+		/* Disable further callbacks from FOTA */
+		lwm2m_firmware_set_update_state_cb(NULL);
 		break;
 	default:
 		LOG_ERR("Unknown state: %d", update_state);
