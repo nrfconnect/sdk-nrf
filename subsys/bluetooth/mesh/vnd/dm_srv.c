@@ -458,7 +458,6 @@ static void bt_mesh_dm_srv_reset(struct bt_mesh_model *model)
 	srv->cfg.ttl = CONFIG_BT_MESH_DM_SRV_DEFAULT_TTL;
 	srv->cfg.timeout = CONFIG_BT_MESH_DM_SRV_DEFAULT_TIMEOUT,
 	srv->cfg.delay = CONFIG_BT_MESH_DM_SRV_REFLECTOR_DELAY,
-	net_buf_simple_reset(srv->pub.msg);
 
 #if CONFIG_BT_SETTINGS
 	(void)bt_mesh_model_data_store(srv->model, true, NULL, NULL, 0);
