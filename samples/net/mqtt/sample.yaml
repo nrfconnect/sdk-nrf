@@ -1,0 +1,41 @@
+sample:
+  name: mqtt
+tests:
+  sample.net.mqtt:
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
+      - nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns nrf7002dk_nrf5340_cpuapp native_posix
+    tags: ci_build
+    extra_configs:
+      - CONFIG_MQTT_SAMPLE_NETWORK_WIFI_SSID="ssid"
+      - CONFIG_MQTT_SAMPLE_NETWORK_WIFI_PSK="psk"
+  sample.net.mqtt.nrf7002.tls:
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf7002dk_nrf5340_cpuapp
+    tags: ci_build
+    extra_args: OVERLAY_CONFIG=overlay-tls-nrf7002.conf
+    extra_configs:
+      - CONFIG_MQTT_SAMPLE_NETWORK_WIFI_SSID="ssid"
+      - CONFIG_MQTT_SAMPLE_NETWORK_WIFI_PSK="psk"
+  sample.net.mqtt.nrf9160.tls:
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    tags: ci_build
+    extra_args: OVERLAY_CONFIG=overlay-tls-nrf9160.conf
+  sample.net.mqtt.native_posix.tls:
+    build_only: true
+    build_on_all: true
+    platform_allow: native_posix
+    tags: ci_build
+    extra_args: OVERLAY_CONFIG=overlay-tls-native_posix.conf

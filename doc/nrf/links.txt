@@ -943,6 +943,10 @@
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
 .. _`IDAU`: https://developer.arm.com/docs/100690/latest/attribution-units-sau-and-idau
 
+.. ### Source: MQTT
+
+.. _`MQTT getting started`: https://mqtt.org/getting-started/
+
 .. ### Source: other
 
 .. _`Memfault Diagnostic GATT Service`: https://memfault.notion.site/Memfault-Diagnostic-GATT-Service-MDS-ffd5a430062649cd9bf6edbf64e2563b
@@ -983,6 +987,10 @@
 .. _`Azure Portal`: https://portal.azure.com/
 
 .. _`Mosquitto`: https://mosquitto.org/
+.. _`mosquitto.org server CA`: https://test.mosquitto.org/ssl/mosquitto.org.crt
+.. _`test.mosquitto.org`: https://test.mosquitto.org
+
+.. _`VSMQTT`: https://marketplace.visualstudio.com/items?itemName=rpdswtk.vsmqtt
 
 .. _`Verizon's Thingspace`: https://thingspace.verizon.com
 
