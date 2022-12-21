@@ -21,6 +21,9 @@
 #include <zephyr/settings/settings.h>
 /* Firmware update needs access to internal functions as well */
 #include <lwm2m_engine.h>
+#ifndef CONFIG_ZTEST
+#include <zephyr/sys/reboot.h>
+#endif
 
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
 #include <dfu/dfu_target_full_modem.h>
@@ -222,11 +225,25 @@ static void target_image_type_store(uint16_t instance, int img_type)
 
 static void reboot_work_handler(void)
 {
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_REBOOT) &&                                   \
-	defined(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT) && \
-	!defined(CONFIG_ZTEST)
+#if !defined(CONFIG_ZTEST)
+	/* Call reboot execute */
+	struct lwm2m_engine_res *dev_res;
+	struct lwm2m_obj_path path;
+	uint8_t reboot_src = REBOOT_SOURCE_FOTA_OBJ;
 
-	lwm2m_device_reboot_cb(0, NULL, 0);
+	path.level = LWM2M_PATH_LEVEL_RESOURCE;
+	path.obj_id = LWM2M_OBJECT_DEVICE_ID;
+	path.obj_inst_id = 0;
+	path.res_id = 4;
+	dev_res = lwm2m_engine_get_res(&path);
+
+	if (dev_res && dev_res->execute_cb) {
+		dev_res->execute_cb(0, &reboot_src, 1);
+	} else {
+		LOG_PANIC();
+		sys_reboot(SYS_REBOOT_COLD);
+		LOG_WRN("Rebooting");
+	}
 #endif
 }
 /************** Wrappers between normal FOTA object and Advanced FOTA object ********/
@@ -459,11 +476,8 @@ static void update_work_handler(struct k_work *work)
 
 	if (update_data.type == MODEM_DELTA) {
 		updated_instance = modem_obj_id;
-		if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_REBOOT) ||
-		    IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)) {
-			result = apply_firmware_delta_modem_update();
-			set_result(modem_obj_id, result);
-		}
+		result = apply_firmware_delta_modem_update();
+		set_result(modem_obj_id, result);
 	} else if (update_data.type == MODEM_FULL) {
 		updated_instance = modem_obj_id;
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)

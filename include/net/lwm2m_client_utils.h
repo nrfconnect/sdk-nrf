@@ -264,7 +264,9 @@ int lwm2m_adv_firmware_create_inst(const char *component,
 #define RESULT_ADV_CONFLICT_STATE 12
 #define RESULT_ADV_DEPENDENCY_ERR 13
 
-
+/* Reboot execute possible argument's */
+#define REBOOT_SOURCE_DEVICE_OBJ 0
+#define REBOOT_SOURCE_FOTA_OBJ 1
 
 /* Firmware resource IDs */
 #define LWM2M_FOTA_PACKAGE_ID 0
