@@ -28,7 +28,7 @@
 #include <zephyr/mgmt/mcumgr/grp/stat_mgmt/stat_mgmt.h>
 #endif
 #ifdef CONFIG_MCUMGR_SMP_BT
-#include <zephyr/mgmt/mcumgr/smp_bt.h>
+#include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
 #endif
 
 #include <zephyr/logging/log.h>
