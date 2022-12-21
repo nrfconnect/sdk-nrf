@@ -30,8 +30,6 @@ struct bt_mesh_dm_srv {
 	struct bt_mesh_tid_ctx prev_transaction;
 	/** Access model pointer. */
 	struct bt_mesh_model *model;
-	/** Publish parameters. */
-	struct bt_mesh_model_pub pub;
 #if CONFIG_BT_SETTINGS
 	/** Storage timer */
 	struct k_work_delayable store_timer;
@@ -90,7 +88,7 @@ struct bt_mesh_dm_srv {
  */
 #define BT_MESH_MODEL_DM_SRV(_srv)                                                       \
 	BT_MESH_MODEL_VND_CB(BT_MESH_VENDOR_COMPANY_ID, BT_MESH_MODEL_ID_DM_SRV,         \
-			     _bt_mesh_dm_srv_op, &(_srv)->pub,                           \
+			     _bt_mesh_dm_srv_op, NULL,                                   \
 			     BT_MESH_MODEL_USER_DATA(struct bt_mesh_dm_srv, _srv),       \
 			     &_bt_mesh_dm_srv_cb)
 
