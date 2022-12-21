@@ -10,22 +10,26 @@ if (CONFIG_SECURE_BOOT)
     # with the update binaries.
     set_shared(IMAGE net_core PROPERTY SOC ${CONFIG_SOC})
     set_shared(IMAGE net_core PROPERTY VERSION ${CONFIG_FW_INFO_FIRMWARE_VERSION})
-    add_child_image(
-      NAME b0n
-      SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/nrf5340/netboot
-      )
+
+    set(nsib_child_image_name b0n)
+    set(nsib_child_image_path ${CMAKE_CURRENT_LIST_DIR}/nrf5340/netboot)
   else()
-    add_child_image(
-      NAME b0
-      SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/bootloader
+    set(nsib_child_image_name b0)
+    set(nsib_child_image_path ${CMAKE_CURRENT_LIST_DIR}/bootloader)
+  endif()
+
+  add_child_image(
+    NAME       ${nsib_child_image_name}
+    SOURCE_DIR ${nsib_child_image_path}
+  )
+
+  if (CONFIG_SOC_NRF5340_CPUAPP AND CONFIG_BOOTLOADER_MCUBOOT)
+    add_overlay_config(
+      mcuboot
+      ${NRF_DIR}/subsys/bootloader/image/log_minimal.conf
       )
   endif()
-  if (CONFIG_SOC_NRF5340_CPUAPP AND CONFIG_BOOTLOADER_MCUBOOT)
-      add_overlay_config(
-        mcuboot
-        ${NRF_DIR}/subsys/bootloader/image/log_minimal.conf
-        )
-  endif()
+
   if (CONFIG_BUILD_S1_VARIANT AND "${CONFIG_S1_VARIANT_IMAGE_NAME}" STREQUAL "app")
     add_child_image(
       NAME s1_image
