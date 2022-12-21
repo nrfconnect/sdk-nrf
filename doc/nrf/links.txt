@@ -171,8 +171,8 @@
 .. _`Configuring with nRF Kconfig`: https://nrfconnect.github.io/vscode-nrf-connect/guides/ncs_configure_app.html
 .. _`Installing using Visual Studio Code`:
 .. _`Installing on Linux`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/install.html
-.. _`How to build an application`:
-.. _`Migrating IDE`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/build_app_ncs.html
+.. _`How to build an application`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/build_app_ncs.html
+.. _`Migrating IDE`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_welcome.html#open-an-existing-application
 .. _`How to debug an application`:
 .. _`How to connect to the terminal`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/quick_debug.html
 .. _`Debugging applications for a multi-core System on Chip`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_concepts.html

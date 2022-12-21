@@ -283,7 +283,7 @@ To speed up the start up, you can prevent the provisioning by completing the fol
 
    .. group-tab:: Using |VSC|
 
-      a. In |VSC|, select `Add an existing application <Migrating IDE_>`_ and select the sample folder.
+      a. In |VSC|, select `Open an existing application <Migrating IDE_>`_ and select the sample folder.
       #. Under **Actions**, click :guilabel:`Kconfig`.
       #. Click :guilabel:`Application sample`.
       #. Under **LwM2M objects**, remove the key value next to :guilabel:`LwM2M pre-shared key for communication`.

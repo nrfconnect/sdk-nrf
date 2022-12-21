@@ -28,7 +28,7 @@ Default IDE change
 |VSC| extension IDE has replaced SEGGER Embedded Studio as the default supported IDE for working with the |NCS|.
 
 Required action:
-   If you are building the application or sample using SEGGER Embedded Studio or on the command line and want to migrate to |VSC| extension IDE, use the `Add an existing application <Migrating IDE_>`_ option in the |nRFVSC| to migrate your application.
+   If you are building the application or sample using SEGGER Embedded Studio or on the command line and want to migrate to |VSC| extension IDE, use the `Open an existing application <Migrating IDE_>`_ option in the |nRFVSC| to migrate your application.
 
 Pin control transition
 **********************

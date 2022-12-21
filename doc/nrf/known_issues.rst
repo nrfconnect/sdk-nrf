@@ -3161,7 +3161,7 @@ SEGGER Embedded Studio Nordic Edition
 .. note::
     SEGGER Embedded Studio Nordic Edition support has been deprecated with the |NCS| v2.0.0 release.
     |VSC| is now the default IDE for the |NCS|.
-    Use the `Add an existing application <Migrating IDE_>`_ option in the |nRFVSC| to migrate your application.
+    Use the `Open an existing application <Migrating IDE_>`_ option in the |nRFVSC| to migrate your application.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
