@@ -20,9 +20,6 @@ You can use this sample as a reference for creating your own application.
 Requirements
 ************
 
-.. note::
-    |matter_wifi_revb_ncs220_test_note|
-
 The sample supports the following development kits:
 
 .. table-from-sample-yaml::

@@ -72,6 +72,11 @@ Matter
 * Added:
 
   * Support for Wi-Fi Network Diagnostic Cluster (which counts the number of packets received and transmitted on the Wi-Fi interface).
+  * Default support for nRF7002 revision B.
+
+* Fixed:
+
+  * Connection timing out when attaching to a Wi-Fi Access Point that requires Wi-Fi Protected Access 3 (WPA3).
 
 * Updated:
 
