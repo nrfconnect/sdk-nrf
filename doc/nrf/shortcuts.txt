@@ -67,8 +67,8 @@
 
 .. ### VSC shortcuts
 
-.. |vsc_extension_instructions| replace:: The |nRFVSC| is a complete IDE for developing applications for nRF91, nRF53 and nRF52 Series devices.
-   This includes an interface to the compiler and linker, an RTOS-aware debugger, a seamless interface to the nRF Connect SDK, and a serial terminal.
+.. |vsc_extension_instructions| replace:: The |nRFVSC| is a complete IDE for developing applications compatible with the |NCS|.
+   This includes an interface to the compiler and linker, an RTOS-aware debugger, a seamless interface to the |NCS|, and a serial terminal.
    For installation instructions, see `Installing using Visual Studio Code`_.
    For other instructions related to |nRFVSC|, see the `nRF Connect for Visual Studio Code`_ documentation site.
 .. |VSC| replace:: Visual Studio Code
