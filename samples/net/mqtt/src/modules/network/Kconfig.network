@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Network"
+	depends on LTE_LINK_CONTROL || WIFI_NRF700X || BOARD_NATIVE_POSIX
+
+config MQTT_SAMPLE_NETWORK_THREAD_STACK_SIZE
+	int "Thread stack size"
+	default 4096
+
+# Wi-Fi
+config MQTT_SAMPLE_NETWORK_WIFI_SSID
+	string "SSID"
+	depends on WIFI_NRF700X
+	default ""
+
+config MQTT_SAMPLE_NETWORK_WIFI_PSK
+	string "PSK"
+	depends on WIFI_NRF700X
+	default ""
+
+config MQTT_SAMPLE_NETWORK_WIFI_CONNECTION_REQUEST_TIMEOUT_SECONDS
+	int "Connection request timeout"
+	depends on WIFI_NRF700X
+	default 10
+	help
+	  Number of seconds that the device will try to connect to the configured SSID
+
+module = MQTT_SAMPLE_NETWORK
+module-str = Network
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Network

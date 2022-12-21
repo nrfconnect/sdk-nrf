@@ -445,6 +445,8 @@ Wi-Fi samples
 Other samples
 -------------
 
+* Added :ref:`mqtt_sample` sample that supports Wi-Fi and LTE connectivity.
+
 * :ref:`esb_prx_ptx` sample:
 
   * Added support for front-end modules and :ref:`zephyr:nrf21540dk_nrf52840`.

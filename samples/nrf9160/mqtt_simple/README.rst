@@ -114,7 +114,7 @@ For example, when building on the command line, you can build the sample with th
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf9160/mqtt_simple`
+.. |sample path| replace:: :file:`samples/net/mqtt`
 
 .. include:: /includes/build_and_run_ns.txt
 
