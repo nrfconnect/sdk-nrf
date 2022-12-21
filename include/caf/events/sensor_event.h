@@ -77,9 +77,9 @@ APP_EVENT_TYPE_DECLARE(sensor_state_event);
  * application. The Common Application Framework does not impose any standard way of describing
  * sensors. Format and content of the sensor description is defined by the application.
  *
- * The dyndata contains sensor readouts represented as array of floating-point values. Content of
+ * The dyndata contains sensor readouts represented as array of fixed-point values. Content of
  * the array depends only on selected sensor. For example an accelerometer may report acceleration
- * in X, Y and Z axis as three floating-point values. @ref sensor_event_get_data_cnt and @ref
+ * in X, Y and Z axis as three fixed-point values. @ref sensor_event_get_data_cnt and @ref
  * sensor_event_get_data_ptr can be used to access the sensor data provided by a given sensor event.
  *
  * @note The sensor event related to the given sensor must use the same description as
@@ -89,7 +89,7 @@ struct sensor_event {
 	struct app_event_header header; /**< Event header. */
 
 	const char *descr; /**< Description of the sensor. */
-	struct event_dyndata dyndata; /**< Sensor data. Provided as floating-point values. */
+	struct event_dyndata dyndata; /**< Sensor data. Provided as fixed-point values. */
 };
 
 /** @brief Set sensor period event.
