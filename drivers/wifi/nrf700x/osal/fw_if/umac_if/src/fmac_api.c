@@ -856,7 +856,9 @@ enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_rx(struct wifi_nrf_fmac_dev_c
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						  enum nrf_wifi_rf_test rf_test_type,
 						  void *cap_data,
-						  unsigned long num_samples)
+						  unsigned long num_samples,
+						  unsigned char lna_gain,
+						  unsigned char bb_gain)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct nrf_wifi_rf_test_capture_params rf_test_cap_params;
@@ -869,8 +871,8 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *
 
 	rf_test_cap_params.test = rf_test_type;
 	rf_test_cap_params.cap_len = num_samples;
-	rf_test_cap_params.lna_gain = 0;
-	rf_test_cap_params.bb_gain = 10;
+	rf_test_cap_params.lna_gain = lna_gain;
+	rf_test_cap_params.bb_gain = bb_gain;
 
 	fmac_dev_ctx->rf_test_type = rf_test_type;
 	fmac_dev_ctx->rf_test_cap_data = cap_data;
@@ -904,14 +906,17 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *
 		status = WIFI_NRF_STATUS_FAIL;
 		goto out;
 	}
-	
+
 out:
 	return status;
 }
 
 
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-						  unsigned char enable)
+						  unsigned char enable,
+						  signed int norm_frequency,
+						  unsigned short int tone_amplitude,
+						  unsigned char tx_power)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct nrf_wifi_rf_test_tx_params rf_test_tx_params;
@@ -923,9 +928,9 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx 
 			      sizeof(rf_test_tx_params));
 
 	rf_test_tx_params.test = NRF_WIFI_RF_TEST_TX_TONE;
-	rf_test_tx_params.norm_freq = 0x400000;
-	rf_test_tx_params.tone_amp = 0xFF;
-	rf_test_tx_params.tx_pow = 18;
+	rf_test_tx_params.norm_freq = norm_frequency;
+	rf_test_tx_params.tone_amp = tone_amplitude;
+	rf_test_tx_params.tx_pow = tx_power;
 	rf_test_tx_params.enabled = enable;
 
 	fmac_dev_ctx->rf_test_type = NRF_WIFI_RF_TEST_TX_TONE;
@@ -960,7 +965,7 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx 
 		status = WIFI_NRF_STATUS_FAIL;
 		goto out;
 	}
-	
+
 out:
 	return status;
 }
@@ -1013,13 +1018,13 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_dpd(struct wifi_nrf_fmac_dev_ctx *fma
 		status = WIFI_NRF_STATUS_FAIL;
 		goto out;
 	}
-	
+
 out:
 	return status;
 }
 
 
-enum wifi_nrf_status nrf_wifi_fmac_rf_get_temperature(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
+enum wifi_nrf_status nrf_wifi_fmac_rf_get_temp(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct nrf_wifi_temperature_params rf_test_get_temperature;
@@ -1064,7 +1069,7 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_get_temperature(struct wifi_nrf_fmac_dev_c
 		status = WIFI_NRF_STATUS_FAIL;
 		goto out;
 	}
-	
+
 out:
 	return status;
 }
@@ -1082,7 +1087,7 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_get_rf_rssi(struct wifi_nrf_fmac_dev_ctx *
 
 	rf_get_rf_rssi_params.test = NRF_WIFI_RF_TEST_RF_RSSI;
 	rf_get_rf_rssi_params.lna_gain = 3;
-	rf_get_rf_rssi_params.bb_gain = 10;	
+	rf_get_rf_rssi_params.bb_gain = 10;
 
 	fmac_dev_ctx->rf_test_type = NRF_WIFI_RF_TEST_RF_RSSI;
 	fmac_dev_ctx->rf_test_cap_data = NULL;
@@ -1116,7 +1121,7 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_get_rf_rssi(struct wifi_nrf_fmac_dev_ctx *
 		status = WIFI_NRF_STATUS_FAIL;
 		goto out;
 	}
-	
+
 out:
 	return status;
 }
@@ -1170,10 +1175,64 @@ enum wifi_nrf_status nrf_wifi_fmac_set_xo_val(struct wifi_nrf_fmac_dev_ctx *fmac
 		status = WIFI_NRF_STATUS_FAIL;
 		goto out;
 	}
-	
+
 out:
 	return status;
 }
+
+
+enum wifi_nrf_status nrf_wifi_fmac_rf_test_get_xo_value(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					unsigned int tone_frequency)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_rf_get_xo_value rf_get_xo_value_params;
+	unsigned int count = 0;
+
+	wifi_nrf_osal_mem_set(fmac_dev_ctx->fpriv->opriv,
+			      &rf_get_xo_value_params,
+			      0,
+			      sizeof(rf_get_xo_value_params));
+
+	rf_get_xo_value_params.test = NRF_WIFI_RF_TEST_XO_TUNE;
+	rf_get_xo_value_params.tone_frequency = tone_frequency;
+
+	fmac_dev_ctx->rf_test_type = NRF_WIFI_RF_TEST_XO_TUNE;
+	fmac_dev_ctx->rf_test_cap_data = NULL;
+	fmac_dev_ctx->rf_test_cap_sz = 0;
+
+	status = umac_cmd_prog_rf_test(fmac_dev_ctx,
+					   &rf_get_xo_value_params,
+					   sizeof(rf_get_xo_value_params));
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: umac_cmd_prog_rf_get_xo_value failed\n",
+				      __func__);
+
+		goto out;
+	}
+
+	do {
+		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv,
+				       100);
+		count++;
+	} while ((fmac_dev_ctx->rf_test_type != NRF_WIFI_RF_TEST_MAX) &&
+		 (count < WIFI_NRF_FMAC_RF_TEST_EVNT_TIMEOUT));
+
+	if (count == WIFI_NRF_FMAC_RF_TEST_EVNT_TIMEOUT) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Timed out\n",
+				      __func__);
+		fmac_dev_ctx->rf_test_type = NRF_WIFI_RF_TEST_MAX;
+		fmac_dev_ctx->rf_test_cap_data = NULL;
+		status = WIFI_NRF_STATUS_FAIL;
+		goto out;
+	}
+
+out:
+	return status;
+}
+
 #else /* CONFIG_NRF700X_RADIO_TEST */
 
 enum wifi_nrf_status wifi_nrf_fmac_scan(void *dev_ctx,

@@ -101,6 +101,44 @@ Wi-Fi radio test subcommands
      - | 0 - Disable
        | 1 - Enable
      - Enable/Disable packet reception.
+   * - rx_adc_cap
+     - | <CAPTURE LENGTH> - Number of RX ADC samples to be captured.
+       | <LNA GAIN> - 0: 24dB, 1: 18dB, 2: 12dB, 3: 0dB & 4: -12dB.
+       | <BASEBAND GAIN> - Valid range 0 to 31. Supports 64dB range. The increment happens linearly 2dB/step.
+     -
+   * - rx_stat_pkt_cap
+     - | <CAPTURE LENGTH> - Number of RX ADC samples to be captured.
+       | <LNA GAIN> - 0: 24dB, 1: 18dB, 2: 12dB, 3: 0dB & 4: -12dB.
+       | <BASEBAND GAIN> - Valid range 0 to 31. Supports 64dB range. The increment happens linearly 2dB/step.
+     -
+   * - rx_dyn_pkt_cap
+     - | <val> - Number of RX dynamic pkt samples to be captured.
+     -
+   * - tx_tone
+     - | <TONE CONTROL> - 0: Disable Tone 1: Enable tone
+       | <NORMALIZED FREQUENCY> - Compute the normalized frequency for the tone to be transmitted as
+       | normFreq = round(toneFreq * ((1/(DAC sampling rate/2))*(2^25))).
+       | <TONE AMPLITUDE> - Value between 0 to 1023.
+       | <TX POWER> - TX power in the range -16dBm to +24dBm. Example, to transmit 5MHz tone: wifi_radio_test 1 4194304 255 10.
+     -
+   * - dpd
+     - | 0 - DPD bypass
+       | 1 - Enable DPD
+     -
+   * - get_temperature
+     - | No arguments required
+     -
+   * - get_rf_rssi
+     - | No arguments required
+     -
+   * - set_xo_val
+     - | <val> - XO value
+     -
+   * - get_xo_val
+     - | <TONE FREQUENCY> - Default is 0.5MHz(4194304).
+       | The range supported is -1MHz to +1MHz.
+       | Compute the tone frequency for the tone to be transmitted as tone frequency = round(tone_frequency * 2^23).
+     -
    * - show_config
      - N/A
      - Display the current configuration values.

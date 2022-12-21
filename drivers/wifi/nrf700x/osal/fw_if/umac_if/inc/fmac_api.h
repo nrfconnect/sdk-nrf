@@ -98,6 +98,8 @@ enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_rx(struct wifi_nrf_fmac_dev_c
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @cap_data: Pointer to the memory where the RF test capture is to be stored.
  * @num_samples: Number of RF test samples to capture.
+ * @lna_gain: LNA gain value.
+ * @bb_gain: Baseband gain value.
  *
  * This function is used to send a command to RPU to start
  * the RF test capture in radio test mode.
@@ -109,13 +111,18 @@ enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_rx(struct wifi_nrf_fmac_dev_c
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						  enum nrf_wifi_rf_test rf_test_type,
 						  void *cap_data,
-						  unsigned long num_samples);
+						  unsigned long num_samples,
+						  unsigned char lna_gain,
+						  unsigned char bb_gain);
 
 
 /**
  * nrf_wifi_fmac_rf_test_tx_tone() - Start/Stop RF TX tone test in radio test mode.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @enable: Enable/Disable TX tone test.
+ * @norm_frequency: Desired tone frequency.
+ * @tone_amplitude: Desired tone amplitude in the range 0 to 1023.
+ * @tx_power: Desired TX power in the range -16dBm to +24dBm.
  *
  * This function is used to send a command to RPU to start
  * the RF TX tone test in radio test mode.
@@ -125,7 +132,10 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *
  *              Error: %WIFI_NRF_STATUS_FAIL
  */
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-						  unsigned char enable);
+						  unsigned char enable,
+						  signed int norm_frequency,
+						  unsigned short int tone_amplitude,
+						  unsigned char tx_power);
 
 
 
@@ -147,7 +157,7 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_dpd(struct wifi_nrf_fmac_dev_ctx *fma
 
 
 /**
- * nrf_wifi_fmac_rf_get_temperature() - Get temperature in fahrenheit using temperature sensor.
+ * nrf_wifi_fmac_rf_get_temp() - Get temperature in fahrenheit using temperature sensor.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  *
  * This function is used to send a command to RPU to get the current temperature.
@@ -157,7 +167,7 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_dpd(struct wifi_nrf_fmac_dev_ctx *fma
  *              Pass : %WIFI_NRF_STATUS_SUCCESS
  *              Error: %WIFI_NRF_STATUS_FAIL
  */
-enum wifi_nrf_status nrf_wifi_fmac_rf_get_temperature(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+enum wifi_nrf_status nrf_wifi_fmac_rf_get_temp(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 
 
 
@@ -180,7 +190,7 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_get_rf_rssi(struct wifi_nrf_fmac_dev_ctx *
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @value: XO adjustment value.
  *
- * This function is used to send a command to RPU to 
+ * This function is used to send a command to RPU to
  * set XO adjustment value in radio test mode.
  *
  * Returns: Status
@@ -188,7 +198,22 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_get_rf_rssi(struct wifi_nrf_fmac_dev_ctx *
  *              Error: %WIFI_NRF_STATUS_FAIL
  */
 enum wifi_nrf_status nrf_wifi_fmac_set_xo_val(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-						  unsigned char value);
+						 unsigned char value);
+
+/**
+ * nrf_wifi_fmac_rf_test_get_xo_value() - Get XO calibrated value.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @tone_frequency: Tone frequency used for XO calibration.
+ *
+ * This function is used to send a command to RPU to
+ * get XO adjustment value in radio test mode.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status nrf_wifi_fmac_rf_test_get_xo_value(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						 unsigned int tone_frequency);
 #else
 
 /**

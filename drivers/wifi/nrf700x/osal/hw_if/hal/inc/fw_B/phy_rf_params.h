@@ -66,13 +66,6 @@
 
 
 
-
-
-
-
-
-
-
 #ifdef CONFIG_NRF700X_RADIO_TEST
 enum nrf_wifi_rf_test {
 	NRF_WIFI_RF_TEST_RX_ADC_CAP,
@@ -84,6 +77,7 @@ enum nrf_wifi_rf_test {
 	NRF_WIFI_RF_TEST_SLEEP,
 	NRF_WIFI_RF_TEST_GET_TEMPERATURE,
 	NRF_WIFI_RF_TEST_XO_CALIB,
+	NRF_WIFI_RF_TEST_XO_TUNE,
 	NRF_WIFI_RF_TEST_MAX,
 };
 
@@ -103,8 +97,7 @@ enum nrf_wifi_rf_test_event {
 
 
 /* Holds the RX capture related info */
-struct nrf_wifi_rf_test_capture_params
-{
+struct nrf_wifi_rf_test_capture_params {
 	unsigned char test;
 
 	/* Number of samples to be captured. */
@@ -127,10 +120,9 @@ struct nrf_wifi_rf_test_capture_params
 
 
 /* Struct to hold the events from RF test SW. */
-struct nrf_wifi_rf_test_capture_meas
-{
+struct nrf_wifi_rf_test_capture_meas {
 	unsigned char test;
-	
+
 	/*  Mean of I samples. Format: Q.11 */
 	signed short mean_I;
 
@@ -146,8 +138,7 @@ struct nrf_wifi_rf_test_capture_meas
 
 
 /* Holds the transmit related info */
-struct nrf_wifi_rf_test_tx_params
-{
+struct nrf_wifi_rf_test_tx_params {
 	unsigned char test;
 
 	/* Compute the normalized frequency for the tone to be transmitted
@@ -167,17 +158,15 @@ struct nrf_wifi_rf_test_tx_params
 	unsigned char enabled;
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_rf_test_dpd_params
-{
+struct nrf_wifi_rf_test_dpd_params {
 	unsigned char test;
 	unsigned char enabled;
 
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_temperature_params
-{
+struct nrf_wifi_temperature_params {
 	unsigned char test;
-	
+
 	/*! current measured temperature */
 	signed int temperature;
 
@@ -189,8 +178,7 @@ struct nrf_wifi_temperature_params
 } __NRF_WIFI_PKD;
 
 
-struct nrf_wifi_rf_get_rf_rssi
-{
+struct nrf_wifi_rf_get_rf_rssi {
 	unsigned char test;
 	unsigned char lna_gain;
 	unsigned char bb_gain;
@@ -198,12 +186,22 @@ struct nrf_wifi_rf_get_rf_rssi
 } __NRF_WIFI_PKD;
 
 
-struct nrf_wifi_rf_test_xo_calib
-{
+struct nrf_wifi_rf_test_xo_calib {
 	unsigned char test;
 
 	/* Number of samples to be captured. */
 	unsigned char xo_val;
+
+} __NRF_WIFI_PKD;
+
+
+struct nrf_wifi_rf_get_xo_value {
+	unsigned char test;
+
+	/* Number of samples to be captured. */
+	unsigned char xo_value;
+
+	unsigned int tone_frequency;
 
 } __NRF_WIFI_PKD;
 
