@@ -32,9 +32,11 @@ When using ground fix, the library always sends as much information about the lo
 Supported features
 ******************
 
-There are three different supported methods of obtaining the location assistance:
+There are four different supported methods of obtaining the location assistance:
 
-* Location based on cell information - The device sends information about the current cell and possibly about the neighboring cells to the  LwM2M server.
+* Location based on cell information - The device sends information about the current cell and possibly about the neighboring cells to the LwM2M server.
+  The LwM2M server then sends the location request to nRF Cloud, which responds with the location data.
+* Location based on Wi-Fi access points - The device sends information about the nearby Wi-Fi access points to the LwM2M server.
   The LwM2M server then sends the location request to nRF Cloud, which responds with the location data.
 * Query of A-GPS assistance data - The A-GPS assistance data is queried from nRF Cloud and provided back to the device through the LwM2M server.
   The A-GPS assistance data is then provided to the GNSS module for obtaining the position fix faster.
@@ -61,6 +63,19 @@ Back reporting tells the server whether it needs to send the acquired location b
 If the location is sent back to the device, the location is stored only in the Ground Fix Location object.
 
 To send the location request for the cell-based location, call the :c:func:`location_assistance_ground_fix_request_send` function.
+
+Wi-Fi based location
+====================
+
+Wi-Fi based location uses the nearby Wi-Fi access points for estimating location.
+The library uses a collection of Visible Wi-Fi Access Point objects (ID 33627) for storing the information about nearby Wi-Fi access points.
+To populate the objects, first enable the Kconfig option for the access point scanner :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_WIFI_AP_SCANNER` and call the :c:func:`lwm2m_wifi_request_scan` function to request the access point scan.
+
+The Ground Fix Location object is used in the same manner as it is used in the cell-based location when sending the location request.
+
+.. note::
+   Cell-based location and Wi-Fi based location can be combined.
+   When combined, the ground fix assistance request contains data from both, the nearby cells and nearby Wi-Fi access points.
 
 A-GPS assistance
 ================
@@ -135,6 +150,8 @@ Following are the other important library options:
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS` - Disable this option if you provide your own method of sending the assistance requests to the LwM2M server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT` - Enable support for connectivity monitoring utilities.
   Provides data about the current cell and network the device has connected to.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT` - Enable support for the Visible Wi-Fi Access Point objects (ID 33627).
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_WIFI_AP_SCANNER` - Enable support for scanning Wi-Fi access points and populating Visible Wi-Fi Access Point objects.
 
 API documentation
 *****************
