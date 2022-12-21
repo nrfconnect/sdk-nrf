@@ -17,6 +17,9 @@ Adding files and changing compiler settings
 The |NCS| build system is based on Zephyr, whose build system is based on `CMake <CMake documentation_>`_.
 For more information about how the build system works in Zephyr, see :ref:`zephyr:build_overview` and :ref:`zephyr:application` in the Zephyr documentation.
 
+Role of CMakeLists.txt
+======================
+
 In the |NCS|, the application is a CMake project.
 As such, the application controls the configuration and build process of itself, Zephyr, and sourced libraries.
 The application's :file:`CMakeLists.txt` file is the main CMake project file and the source of the build process configuration.
@@ -27,7 +30,11 @@ When loaded, the application can reference items provided by both Zephyr and the
 Loading Zephyr's `CMake <CMake documentation_>`_ package creates the ``app`` CMake target.
 You can add application source files to this target from the application :file:`CMakeLists.txt` file.
 
-To update the :file:`CMakeLists.txt` file, either edit it directly or use the |nRFVSC| to maintain it.
+Updating CMakeLists.txt
+=======================
+
+The recommended method to update the :file:`CMakeLists.txt` file is to use the |nRFVSC| to maintain it.
+You can also edit the file directly.
 
 Editing CMakeLists.txt
 ======================
@@ -164,20 +171,32 @@ When building your application, the different :file:`.config`, :file:`*_defconfi
 The resulting configuration is written to the :file:`zephyr/.config` file in your :file:`build` directory.
 This means that this file is available when building the application, but it is deleted when you clean the build directory with the ``pristine`` target (see Zephyr's :ref:`zephyr:application_rebuild` for more information).
 
-To quickly test different configuration options, or to build your application in different variants, you can update the :file:`.config` file in the build directory.
-Changes are picked up immediately.
+The documentation for each :ref:`configuration option <configuration_options>` lists the menu path where the option can be found.
 
-While it is possible to edit the :file:`.config` file directly, you should use the nRF Kconfig GUI in the |nRFVSC| or a tool like menuconfig or guiconfig to update it.
-These tools present all available options and allow you to select the ones that you need.
+.. tabs::
 
-The nRF Kconfig GUI in the |nRFVSC| organizes the Kconfig options in a hierarchical list and lets you select the desired options.
-To save the changes made using the nRF Kconfig GUI, click the :guilabel:`Save` button.
-Read the `Configuring with nRF Kconfig`_ page in the |nRFVSC| documentation for more information.
+   .. group-tab:: nRF Connect for VS Code
 
-See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run menuconfig or guiconfig.
+      Use the nRF Kconfig GUI in the |nRFVSC| to select the desired options.
+      The GUI organizes the Kconfig options in a hierarchical list and lets you view and manage your selection.
 
-To locate a specific configuration option, use the filter (**Search modules** field in the nRF Kconfig GUI or **Jump to** in menuconfig and guiconfig).
-The documentation for each :ref:`configuration option <configuration_options>` also lists the menu path where the option can be found.
+      To locate a specific configuration option, use the **Search modules** field.
+      Read the `Configuring with nRF Kconfig`_ page in the |nRFVSC| documentation for more information.
+
+   .. group-tab:: Command line
+
+      To quickly test different configuration options, or to build your application in different variants, you can update the :file:`.config` file in the build directory.
+      Changes are picked up immediately.
+
+      .. note::
+         While it is possible to edit the :file:`.config` file directly, you should use the nRF Kconfig GUI in the |nRFVSC| or a tool like menuconfig or guiconfig to update it.
+         These tools present all available options and allow you to select the ones that you need.
+
+   .. group-tab:: menuconfig
+
+      See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run menuconfig or guiconfig.
+      To locate a specific configuration option, use the **Jump to** field.
+
 
 Changing the configuration permanently
 ======================================
@@ -194,11 +213,20 @@ See :ref:`zephyr:setting_configuration_values` in the Zephyr documentation for i
    This may result in a bloated configuration compared to changing the setting directly in :file:`prj.conf`.
    See the section Stuck symbols in menuconfig and guiconfig on the :ref:`kconfig_tips_and_tricks` in the Zephyr documentation for more information.
 
-If you work with |nRFVSC|, you can use one of the following options:
+.. tabs::
 
-* Select an extra Kconfig fragment file when you `build an application <How to build an application_>`_.
-* Edit the Kconfig options using the nRF Kconfig GUI and save changes permanently to an existing or new :file:`prj.conf` file.
-  See the extension's documentation for more information.
+   .. group-tab:: nRF Connect for VS Code
+
+      If you work with |nRFVSC|, you can use one of the following options:
+
+      * Select an extra Kconfig fragment file when you `build an application <How to build an application_>`_.
+      * Edit the Kconfig options using the nRF Kconfig GUI and save changes permanently to an existing or new :file:`prj.conf` file.
+
+      See the `extension's documentation about Kconfig <Configuring with nRF Kconfig_>`_ for more information.
+
+   .. group-tab:: Command line
+
+      |west_build_option|
 
 The :file:`prj.conf` file is read when you open a project.
 The file will be reloaded when CMake re-runs.
@@ -212,12 +240,16 @@ Providing CMake options
 You can provide additional options for building your application to the CMake process, which can be useful, for example, to switch between different build scenarios.
 These options are specified when CMake is run, thus not during the actual build, but when configuring the build.
 
-If you work with the |nRFVSC|, you can specify project-specific CMake options when you add the build configuration for a new |NCS| project.
-See `How to build an application`_ in the |nRFVSC| documentation.
+.. tabs::
 
-If you work on the command line, pass the additional options to the ``west build`` command.
-The options must be added after a ``--`` at the end of the command.
-See :ref:`zephyr:west-building-cmake-args` for more information.
+   .. group-tab:: nRF Connect for VS Code
+
+      If you work with the |nRFVSC|, you can specify project-specific CMake options when you add the build configuration for a new |NCS| project.
+      See `How to build an application`_ in the |nRFVSC| documentation.
+
+   .. group-tab:: Command line
+
+      |west_build_option|
 
 .. _gs_modifying_build_types:
 
@@ -245,38 +277,42 @@ The Devicetree configuration is not affected by the build type.
 .. note::
     For an example of an application that is using build types, see the :ref:`nrf_desktop` application (:ref:`nrf_desktop_requirements_build_types`) or the :ref:`nrf_machine_learning_app` application (:ref:`nrf_machine_learning_app_requirements_build_types`).
 
-Selecting a build type in |VSC|
-===============================
+.. tabs::
 
-.. build_types_selection_vsc_start
+   .. group-tab:: nRF Connect for VS Code
 
-To select the build type in the |nRFVSC|:
+      .. build_types_selection_vsc_start
 
-1. When `building an application <How to build an application_>`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
-#. In the **Add Build Configuration** screen, select the desired :file:`.conf` file from the :guilabel:`Configuration` drop-down menu.
-#. Fill in other configuration options, if applicable, and click :guilabel:`Build Configuration`.
+      To select the build type in the |nRFVSC|:
 
-.. build_types_selection_vsc_end
+      1. When `building an application <How to build an application_>`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
+      #. In the **Add Build Configuration** screen, select the desired :file:`.conf` file from the :guilabel:`Configuration` drop-down menu.
+      #. Fill in other configuration options, if applicable, and click :guilabel:`Build Configuration`.
 
-Selecting a build type from command line
-========================================
+      .. build_types_selection_vsc_end
 
-.. build_types_selection_cmd_start
+   .. group-tab:: Command line
 
-To select the build type when building the application from command line, specify the build type by adding the following parameter to the ``west build`` command:
+      .. build_types_selection_cmd_start
 
-.. parsed-literal::
-   :class: highlight
+      To select the build type when building the application from command line, specify the build type by adding the following parameter to the ``west build`` command:
 
-   -- -DCONF_FILE=prj_\ *selected_build_type*\.conf
+      .. parsed-literal::
+         :class: highlight
 
-For example, you can replace the *selected_build_type* variable to build the ``release`` firmware for ``nrf52840dk_nrf52840`` by running the following command in the project directory:
+         -- -DCONF_FILE=prj_\ *selected_build_type*\.conf
 
-.. parsed-literal::
-   :class: highlight
+      For example, you can replace the *selected_build_type* variable to build the ``release`` firmware for ``nrf52840dk_nrf52840`` by running the following command in the project directory:
 
-   west build -b nrf52840dk_nrf52840 -d build_nrf52840dk_nrf52840 -- -DCONF_FILE=prj_release.conf
+      .. parsed-literal::
+         :class: highlight
 
-The ``build_nrf52840dk_nrf52840`` parameter specifies the output directory for the build files.
+         west build -b nrf52840dk_nrf52840 -d build_nrf52840dk_nrf52840 -- -DCONF_FILE=prj_release.conf
 
-.. build_types_selection_cmd_end
+      The ``build_nrf52840dk_nrf52840`` parameter specifies the output directory for the build files.
+
+      .. build_types_selection_cmd_end
+
+.. |west_build_option| replace:: If you work on the command line, pass the additional options to the ``west build`` command.
+   The options must be added after a ``--`` at the end of the command.
+   See :ref:`zephyr:west-building-cmake-args` for more information.
