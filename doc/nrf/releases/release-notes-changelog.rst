@@ -673,5 +673,6 @@ Documentation
   * The :ref:`ug_nrf70_developing` user guide.
   * A page on :ref:`ug_nrf70_features`.
 * Updated the :ref:`software_maturity` page with details about Wi-Fi feature support.
+  * Section about power saving features in the :ref:`app_power_opt` user guide.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
