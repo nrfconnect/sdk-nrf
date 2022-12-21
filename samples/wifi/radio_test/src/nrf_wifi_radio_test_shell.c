@@ -152,37 +152,42 @@ static bool check_valid_data_rate(const struct shell *shell,
 static bool check_valid_channel(unsigned char chan_num)
 {
 	if (((chan_num >= 1) && (chan_num <= 14)) ||
-	    (chan_num == 32) ||
-	    (chan_num == 36) ||
-	    (chan_num == 40) ||
-	    (chan_num == 44) ||
-	    (chan_num == 48) ||
-	    (chan_num == 52) ||
-	    (chan_num == 56) ||
-	    (chan_num == 60) ||
-	    (chan_num == 64) ||
-	    (chan_num == 68) ||
-	    (chan_num == 96) ||
-	    (chan_num == 100) ||
-	    (chan_num == 104) ||
-	    (chan_num == 108) ||
-	    (chan_num == 112) ||
-	    (chan_num == 116) ||
-	    (chan_num == 120) ||
-	    (chan_num == 124) ||
-	    (chan_num == 128) ||
-	    (chan_num == 132) ||
-	    (chan_num == 136) ||
-	    (chan_num == 140) ||
-	    (chan_num == 144) ||
-	    (chan_num == 149) ||
-	    (chan_num == 153) ||
-	    (chan_num == 157) ||
-	    (chan_num == 161) ||
-	    (chan_num == 165) ||
-	    (chan_num == 169) ||
-	    (chan_num == 173) ||
-	    (chan_num == 177)) {
+		(chan_num == 32) ||
+		(chan_num == 36) ||
+		(chan_num == 40) ||
+		(chan_num == 44) ||
+		(chan_num == 48) ||
+		(chan_num == 52) ||
+		(chan_num == 56) ||
+		(chan_num == 60) ||
+		(chan_num == 64) ||
+		(chan_num == 68) ||
+		(chan_num == 96) ||
+		(chan_num == 100) ||
+		(chan_num == 104) ||
+		(chan_num == 108) ||
+		(chan_num == 112) ||
+		(chan_num == 116) ||
+		(chan_num == 120) ||
+		(chan_num == 124) ||
+		(chan_num == 128) ||
+		(chan_num == 132) ||
+		(chan_num == 136) ||
+		(chan_num == 140) ||
+		(chan_num == 144) ||
+		(chan_num == 149) ||
+		(chan_num == 153) ||
+		(chan_num == 157) ||
+		(chan_num == 159) ||
+		(chan_num == 161) ||
+		(chan_num == 163) ||
+		(chan_num == 165) ||
+		(chan_num == 167) ||
+		(chan_num == 169) ||
+		(chan_num == 171) ||
+		(chan_num == 173) ||
+		(chan_num == 175) ||
+		(chan_num == 177)) {
 		return true;
 	}
 
@@ -730,7 +735,7 @@ static int nrf_wifi_radio_test_set_chnl_primary(const struct shell *shell,
 		return -ENOEXEC;
 	}
 
-	
+
 	if (!check_test_in_prog(shell)) {
 		return -ENOEXEC;
 	}
@@ -758,7 +763,7 @@ static int nrf_wifi_radio_test_set_tx_pkt_num(const struct shell *shell,
 		shell_help(shell);
 		return -ENOEXEC;
 	}
-	
+
 	if (!check_test_in_prog(shell)) {
 		return -ENOEXEC;
 	}
@@ -786,7 +791,7 @@ static int nrf_wifi_radio_test_set_tx_pkt_len(const struct shell *shell,
 		shell_help(shell);
 		return -ENOEXEC;
 	}
-	
+
 	if (!check_test_in_prog(shell)) {
 		return -ENOEXEC;
 	}
@@ -941,31 +946,36 @@ static int nrf_wifi_radio_test_rx_adc_cap(const struct shell *shell,
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	char *ptr = NULL;
-	unsigned long val = 0;
+	unsigned long capture_length = 0;
 	unsigned int *rx_adc_cap = NULL;
 	unsigned int i = 0;
 	int ret = -ENOEXEC;
+	unsigned char lna_gain;
+	unsigned char bb_gain;
 
-	val = strtoul(argv[1], &ptr, 10);
+	capture_length = strtoul(argv[1], &ptr, 10);
+	lna_gain = strtoul(argv[2], &ptr, 10);
+	bb_gain  = strtoul(argv[3], &ptr, 10);
 
-	if (val >= 1) {
+	if (capture_length >= 1) {
 		if (!check_test_in_prog(shell)) {
 			goto out;
 		}
 	} else {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "%s: Invalid val %ld\n", __func__, val);
+			      "%s: Invalid capture_length %ld\n", __func__, capture_length);
 		shell_help(shell);
 		goto out;
 	}
 
-	rx_adc_cap = k_calloc((val * 4), sizeof(char));
+	rx_adc_cap = k_calloc((capture_length * 4), sizeof(char));
 
 	if (!rx_adc_cap) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "%s: Unable to allocate (%ld) bytes for RX ADC capture\n", __func__, (val * 4));
+			      "%s: Unable to allocate (%ld) bytes for RX ADC capture\n",
+				   __func__, (capture_length * 4));
 		goto out;
 	}
 
@@ -975,7 +985,9 @@ static int nrf_wifi_radio_test_rx_adc_cap(const struct shell *shell,
 	status = nrf_wifi_fmac_rf_test_rx_cap(ctx->rpu_ctx,
 					      NRF_WIFI_RF_TEST_RX_ADC_CAP,
 					      rx_adc_cap,
-					      val);
+					      capture_length,
+						  lna_gain,
+						  bb_gain);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		shell_fprintf(shell,
@@ -988,17 +1000,17 @@ static int nrf_wifi_radio_test_rx_adc_cap(const struct shell *shell,
 		      SHELL_INFO,
 		      "************* RX ADC capture data ***********\n");
 
-	for (i = 0; i < val/4; i++)
+	for (i = 0; i < capture_length/4; i++)
 		shell_fprintf(shell,
 			      SHELL_INFO,
 			      "%08X\n",
-			      rx_adc_cap[i]);
+				  rx_adc_cap[i]);
 
 	ret = 0;
-out:	
+out:
 	if (rx_adc_cap)
 		k_free(rx_adc_cap);
-	
+
 	ctx->rf_test_run = false;
 	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
 
@@ -1012,31 +1024,36 @@ static int nrf_wifi_radio_test_rx_stat_pkt_cap(const struct shell *shell,
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	char *ptr = NULL;
-	unsigned long val = 0;
+	unsigned long capture_length = 0;
 	unsigned int *rx_stat_pkt_cap = NULL;
 	unsigned int i = 0;
 	int ret = -ENOEXEC;
+	unsigned char lna_gain;
+	unsigned char bb_gain;
 
-	val = strtoul(argv[1], &ptr, 10);
+	capture_length = strtoul(argv[1], &ptr, 10);
+	lna_gain = strtoul(argv[2], &ptr, 10);
+	bb_gain  = strtoul(argv[3], &ptr, 10);
 
-	if (val >= 1) {
+	if (capture_length >= 1) {
 		if (!check_test_in_prog(shell)) {
 			goto out;
 		}
 	} else {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "%s: Invalid val %ld\n", __func__, val);
+			      "%s: Invalid capture_length %ld\n", __func__, capture_length);
 		shell_help(shell);
 		goto out;
 	}
 
-	rx_stat_pkt_cap = k_calloc((val * 4), sizeof(char));
+	rx_stat_pkt_cap = k_calloc((capture_length * 4), sizeof(char));
 
 	if (!rx_stat_pkt_cap) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "%s: Unable to allocate (%ld) bytes for RX static packet capture\n", __func__, (val * 4));
+			      "%s: Unable to allocate (%ld) bytes for RX static packet capture\n",
+				  __func__, (capture_length * 4));
 		goto out;
 	}
 
@@ -1046,7 +1063,9 @@ static int nrf_wifi_radio_test_rx_stat_pkt_cap(const struct shell *shell,
 	status = nrf_wifi_fmac_rf_test_rx_cap(ctx->rpu_ctx,
 					      NRF_WIFI_RF_TEST_RX_STAT_PKT_CAP,
 					      rx_stat_pkt_cap,
-					      val);
+					      capture_length,
+						  lna_gain,
+						  bb_gain);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		shell_fprintf(shell,
@@ -1059,17 +1078,17 @@ static int nrf_wifi_radio_test_rx_stat_pkt_cap(const struct shell *shell,
 		      SHELL_INFO,
 		      "************* RX static packet capture data ***********\n");
 
-	for (i = 0; i < val/4; i++)
+	for (i = 0; i < capture_length/4; i++)
 		shell_fprintf(shell,
 			      SHELL_INFO,
 			      "%08X\n",
 			      rx_stat_pkt_cap[i]);
 
 	ret = 0;
-out:	
+out:
 	if (rx_stat_pkt_cap)
 		k_free(rx_stat_pkt_cap);
-	
+
 	ctx->rf_test_run = false;
 	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
 
@@ -1083,31 +1102,34 @@ static int nrf_wifi_radio_test_rx_dyn_pkt_cap(const struct shell *shell,
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	char *ptr = NULL;
-	unsigned long val = 0;
+	unsigned long capture_length = 0;
 	unsigned int *rx_dyn_pkt_cap = NULL;
 	unsigned int i = 0;
 	int ret = -ENOEXEC;
+	unsigned char lna_gain = 0;
+	unsigned char bb_gain = 0;
 
-	val = strtoul(argv[1], &ptr, 10);
+	capture_length = strtoul(argv[1], &ptr, 10);
 
-	if (val >= 1) {
+	if (capture_length >= 1) {
 		if (!check_test_in_prog(shell)) {
 			goto out;
 		}
 	} else {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "%s: Invalid val %ld\n", __func__, val);
+			      "%s: Invalid capture_length %ld\n", __func__, capture_length);
 		shell_help(shell);
 		goto out;
 	}
 
-	rx_dyn_pkt_cap = k_calloc((val * 4), sizeof(char));
+	rx_dyn_pkt_cap = k_calloc((capture_length * 4), sizeof(char));
 
 	if (!rx_dyn_pkt_cap) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "%s: Unable to allocate (%ld) bytes for RX dynamic packet capture\n", __func__, (val * 4));
+			      "%s: Unable to allocate (%ld) bytes for RX dynamic packet capture\n",
+				  __func__, (capture_length * 4));
 		goto out;
 	}
 
@@ -1117,7 +1139,9 @@ static int nrf_wifi_radio_test_rx_dyn_pkt_cap(const struct shell *shell,
 	status = nrf_wifi_fmac_rf_test_rx_cap(ctx->rpu_ctx,
 					      NRF_WIFI_RF_TEST_RX_DYN_PKT_CAP,
 					      rx_dyn_pkt_cap,
-					      val);
+					      capture_length,
+						  lna_gain,
+						  bb_gain);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		shell_fprintf(shell,
@@ -1130,17 +1154,17 @@ static int nrf_wifi_radio_test_rx_dyn_pkt_cap(const struct shell *shell,
 		      SHELL_INFO,
 		      "************* RX dynamic packet capture data ***********\n");
 
-	for (i = 0; i < val/4; i++)
+	for (i = 0; i < capture_length/4; i++)
 		shell_fprintf(shell,
 			      SHELL_INFO,
 			      "%08X\n",
 			      rx_dyn_pkt_cap[i]);
 
 	ret = 0;
-out:	
+out:
 	if (rx_dyn_pkt_cap)
 		k_free(rx_dyn_pkt_cap);
-	
+
 	ctx->rf_test_run = false;
 	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
 
@@ -1156,8 +1180,14 @@ static int nrf_wifi_radio_test_tx_tone(const struct shell *shell,
 	char *ptr = NULL;
 	unsigned long val = 0;
 	int ret = -ENOEXEC;
+	signed int norm_frequency;
+	unsigned short int tone_amplitude;
+	unsigned char tx_power;
 
 	val = strtoul(argv[1], &ptr, 10);
+	norm_frequency = strtoul(argv[2], &ptr, 10);
+	tone_amplitude = strtoul(argv[3], &ptr, 10);
+	tx_power = strtoul(argv[4], &ptr, 10);
 
 	if (val > 1) {
 		shell_fprintf(shell,
@@ -1166,6 +1196,12 @@ static int nrf_wifi_radio_test_tx_tone(const struct shell *shell,
 			      val);
 		shell_help(shell);
 		goto out;
+	}
+
+	if (norm_frequency == 0)	{
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+				  "Tone frequency is not configured\n");
 	}
 
 	if (val == 1) {
@@ -1178,7 +1214,10 @@ static int nrf_wifi_radio_test_tx_tone(const struct shell *shell,
 	ctx->rf_test = NRF_WIFI_RF_TEST_TX_TONE;
 
 	status = nrf_wifi_fmac_rf_test_tx_tone(ctx->rpu_ctx,
-					       (unsigned char)val);
+					       (unsigned char)val,
+						   norm_frequency,
+						   tone_amplitude,
+						   tx_power);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		shell_fprintf(shell,
@@ -1188,7 +1227,7 @@ static int nrf_wifi_radio_test_tx_tone(const struct shell *shell,
 	}
 
 	ret = 0;
-out:	
+out:
 	ctx->rf_test_run = false;
 	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
 
@@ -1236,7 +1275,7 @@ static int nrf_wifi_radio_test_dpd(const struct shell *shell,
 	}
 
 	ret = 0;
-out:	
+out:
 	ctx->rf_test_run = false;
 	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
 
@@ -1272,7 +1311,7 @@ static int nrf_wifi_radio_get_temperature(const struct shell *shell,
 	ctx->rf_test_run = true;
 	ctx->rf_test = NRF_WIFI_RF_TEST_GET_TEMPERATURE;
 
-	status = nrf_wifi_fmac_rf_get_temperature(ctx->rpu_ctx);
+	status = nrf_wifi_fmac_rf_get_temp(ctx->rpu_ctx);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		shell_fprintf(shell,
@@ -1282,7 +1321,7 @@ static int nrf_wifi_radio_get_temperature(const struct shell *shell,
 	}
 
 	ret = 0;
-out:	
+out:
 	ctx->rf_test_run = false;
 	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
 
@@ -1328,7 +1367,7 @@ static int nrf_wifi_radio_get_rf_rssi(const struct shell *shell,
 	}
 
 	ret = 0;
-out:	
+out:
 	ctx->rf_test_run = false;
 	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
 
@@ -1354,7 +1393,7 @@ static int nrf_wifi_radio_set_xo_val(const struct shell *shell,
 		shell_help(shell);
 		goto out;
 	}
-	
+
 	if (val < 0) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
@@ -1364,13 +1403,13 @@ static int nrf_wifi_radio_set_xo_val(const struct shell *shell,
 	}
 
 	if (val == 1) {
-		 if (!check_test_in_prog(shell)) {
+		if (!check_test_in_prog(shell)) {
 			goto out;
 		}
 	}
 
 	ctx->rf_test_run = true;
-	ctx->rf_test = NRF_WIFI_RF_TEST_XO_CALIB; 
+	ctx->rf_test = NRF_WIFI_RF_TEST_XO_CALIB;
 
 	status = nrf_wifi_fmac_set_xo_val(ctx->rpu_ctx,
 					       (unsigned char)val);
@@ -1383,7 +1422,51 @@ static int nrf_wifi_radio_set_xo_val(const struct shell *shell,
 	}
 
 	ret = 0;
-out:	
+out:
+	ctx->rf_test_run = false;
+	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
+
+	return ret;
+}
+
+static int nrf_wifi_radio_get_xo_value(const struct shell *shell,
+				   size_t argc,
+				   const char *argv[])
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	char *ptr = NULL;
+	unsigned int tone_frequency = 0;
+	int ret = -ENOEXEC;
+
+	tone_frequency = strtoul(argv[1], &ptr, 10);
+
+	if (tone_frequency < 1) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid value %d\n",
+			      tone_frequency);
+		shell_help(shell);
+		goto out;
+	} else {
+		if (!check_test_in_prog(shell)) {
+			goto out;
+		}
+	}
+
+	ctx->rf_test_run = true;
+	ctx->rf_test = NRF_WIFI_RF_TEST_XO_TUNE;
+
+	status = nrf_wifi_fmac_rf_test_get_xo_value(ctx->rpu_ctx, tone_frequency);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "XO value programming failed\n");
+		goto out;
+	}
+
+	ret = 0;
+out:
 	ctx->rf_test_run = false;
 	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
 
@@ -1795,15 +1878,21 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 #endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
 	SHELL_CMD_ARG(rx_adc_cap,
 		      NULL,
-		      "<val> - Number of RX ADC samples to be captured",
+		      "\n<CAPTURE LENGTH> - Number of RX ADC samples to be captured\n"
+		      "\n<LNA GAIN> - 0: 24dB, 1: 18dB, 2: 12dB, 3: 0dB & 4: -12dB\n"
+		      "\n<BASEBAND GAIN> - valid range 0 to 31.It supports 64dB range."
+			  "The increment happens lineraly 2dB/step\n",
 		      nrf_wifi_radio_test_rx_adc_cap,
-		      2,
+		      4,
 		      0),
 	SHELL_CMD_ARG(rx_stat_pkt_cap,
 		      NULL,
-		      "<val> - Number of RX static pkt samples to be captured",
+			  "\n<CAPTURE LENGTH> - Number of RX ADC samples to be captured\n"
+		      "\n<LNA GAIN> - 0: 24dB, 1: 18dB, 2: 12dB, 3: 0dB & 4: -12dB\n"
+		      "\n<BASEBAND GAIN> - valid range 0 to 31.It supports 64dB range."
+			  "The increment happens lineraly 2dB/step\n",
 		      nrf_wifi_radio_test_rx_stat_pkt_cap,
-		      2,
+		      4,
 		      0),
 	SHELL_CMD_ARG(rx_dyn_pkt_cap,
 		      NULL,
@@ -1813,10 +1902,14 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      0),
 	SHELL_CMD_ARG(tx_tone,
 		      NULL,
-		      "0 - Disable TX tone\n"
-		      "1 - Enable TX tone",
+		      "\n<TONE CONTROL> - 0: Disable Tone 1: Enable tone\n"
+		      "\n<NORMALIZED FREQUENCY> - Compute the normalized frequency for the tone to be transmitted as\n"
+					   "\tnormFreq = round(toneFreq * ((1/(DAC sampling rate /2))*(2^25)))\n"
+		      "\n<TONE AMPLITUDE> - Value between 0 to 1023\n"
+		      "\n<TX POWER> - TX power in the range -16dBm to +24dBm\n"
+			  "Example to transmit 5MHz tone: wifi_radio_test  wifi_radio_test 1 4194304 255 10\n",
 		      nrf_wifi_radio_test_tx_tone,
-		      2,
+		      5,
 		      0),
 	SHELL_CMD_ARG(dpd,
 		      NULL,
@@ -1837,12 +1930,21 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_get_rf_rssi,
 		      1,
 		      0),
-	SHELL_CMD_ARG(xo_val,
+	SHELL_CMD_ARG(set_xo_val,
 		      NULL,
 		      "<val> - XO value",
 		      nrf_wifi_radio_set_xo_val,
 		      2,
-		      0),			  
+			  0),
+	SHELL_CMD_ARG(get_xo_val,
+		      NULL,
+		      "\n<TONE FREQUENCY> - Default is 0.5MHz(4194304)\n"
+			  "The range supported is -1MHz to +1MHz\n"
+			  "Compute the tone frequency for the tone to be transmitted as\n"
+			  "tone frequency = round(tone_frequency * 2^23)",
+		      nrf_wifi_radio_get_xo_value,
+		      2,
+			  0),
 	SHELL_CMD_ARG(show_config,
 		      NULL,
 		      "Display the current configuration values",
