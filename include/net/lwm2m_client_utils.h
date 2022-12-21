@@ -160,7 +160,7 @@ typedef int (*lwm2m_firmware_get_update_state_cb_t)(uint8_t update_state);
  * LwM2M clients use this function to register a callback for receiving the
  * update state changes when performing a firmware update.
  *
- * @param[in] cb A callback function to receive firmware update state changes.
+ * @param[in] cb A callback function to receive firmware update state changes or NULL for disable.
  */
 void lwm2m_firmware_set_update_state_cb(lwm2m_firmware_get_update_state_cb_t cb);
 
@@ -264,7 +264,9 @@ int lwm2m_adv_firmware_create_inst(const char *component,
 #define RESULT_ADV_CONFLICT_STATE 12
 #define RESULT_ADV_DEPENDENCY_ERR 13
 
-
+/* Reboot execute possible argument's */
+#define REBOOT_SOURCE_DEVICE_OBJ 0
+#define REBOOT_SOURCE_FOTA_OBJ 1
 
 /* Firmware resource IDs */
 #define LWM2M_FOTA_PACKAGE_ID 0
