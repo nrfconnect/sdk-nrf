@@ -280,7 +280,7 @@ To clone the repositories, complete the following steps:
    * To work with a branch, the identifier is the branch name (for example, ``main`` to work with the latest state of development).
    * To work with a specific state, the identifier is the SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``).
 
-#. From the command line, initialize west with the revision of the |NCS| that you want to check out, replacing *nRFConnectSDK_revision* with the identifier:
+#. On the command line, go to the :file:`ncs` folder (``cd ncs``) and initialize west with the revision of the |NCS| that you want to check out, replacing *nRFConnectSDK_revision* with the identifier:
 
    .. parsed-literal::
       :class: highlight
