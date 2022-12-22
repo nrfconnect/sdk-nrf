@@ -205,7 +205,10 @@ enum module_state {
 	MODULE_STATE_ERROR,
 
 	/** Number of module states. */
-	MODULE_STATE_COUNT
+	MODULE_STATE_COUNT,
+
+	/** Unused in code, required for inter-core compatibility. */
+	APP_EM_ENFORCE_ENUM_SIZE(MODULE_STATE)
 };
 
 /** @brief Module state event.

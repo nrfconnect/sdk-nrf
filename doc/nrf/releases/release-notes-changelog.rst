@@ -524,7 +524,11 @@ Other libraries
 Common Application Framework (CAF)
 ----------------------------------
 
-|no_changes_yet_note|
+* :ref:`caf_overview_events`:
+
+  * Improved inter-core compatibility.
+  * Added a macro intended to set the size of events member enums to 32 bits when the Event Manager Proxy is enabled.
+  * Applied macro to all affected CAF events.
 
 Shell libraries
 ---------------

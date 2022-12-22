@@ -27,7 +27,10 @@ enum net_state {
 	NET_STATE_DISCONNECTED,
 	NET_STATE_CONNECTED,
 
-	NET_STATE_COUNT
+	NET_STATE_COUNT,
+
+	/** Unused in code, required for inter-core compatibility. */
+	APP_EM_ENFORCE_ENUM_SIZE(NET_STATE)
 };
 
 /** @brief NET state event. */
