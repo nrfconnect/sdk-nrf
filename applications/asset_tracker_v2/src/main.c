@@ -13,9 +13,6 @@
 #include <modem/nrf_modem_lib.h>
 #endif /* CONFIG_NRF_MODEM_LIB */
 #include <zephyr/sys/reboot.h>
-#if defined(CONFIG_LWM2M_INTEGRATION)
-#include <net/lwm2m_client_utils.h>
-#endif /* CONFIG_LWM2M_INTEGRATION */
 #include <net/nrf_cloud.h>
 
 /* Module name is used by the Application Event Manager macros in this file */
@@ -226,8 +223,6 @@ static void handle_nrf_modem_lib_init_ret(void)
 #if defined(CONFIG_NRF_CLOUD_FOTA)
 	/* Ignore return value, rebooting below */
 	(void)nrf_cloud_fota_pending_job_validate(NULL);
-#elif defined(CONFIG_LWM2M_INTEGRATION)
-	lwm2m_verify_modem_fw_update();
 #endif
 	LOG_DBG("Rebooting...");
 	LOG_PANIC();
