@@ -558,6 +558,11 @@ Glossary
    Request to Send (RTS)
       In :term:`flow control <Hardware Flow Control (HWFC)>`, the transmitting end is ready and requesting the far end for permission to transfer data.
 
+   Revision
+      A tracked state in time of a Git repository.
+      It can always be represented by a Git SHA, but can also be a Git tag.
+      For more information, see :ref:`intro_vers_revs` and `Git revisions`_.
+
    Root of Trust (RoT)
       The property or component in a secure system that provides the foundation of a :term:`Chain of Trust`.
 
@@ -674,6 +679,9 @@ Glossary
 
    User Information Configuration Registers (UICR)
       Non-volatile memory registers used to configure user-specific settings.
+
+   Version
+      A string that identifies a project release.
 
    Watchdog timer (WDT)
       A timer that causes a system reset if it is not poked periodically.

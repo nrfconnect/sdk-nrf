@@ -13,13 +13,14 @@ It offers an extensible framework for building size-optimized software for memor
 It integrates the Zephyr™ real-time operating system (RTOS) and a wide range of complete applications, samples, and protocol stacks such as Bluetooth® Low Energy, Bluetooth mesh, Matter, Thread/Zigbee and LTE-M/NB-IoT/GPS, TCP/IP.
 It also includes middleware such as CoAP, MQTT, LwM2M, various libraries, hardware drivers, Trusted Firmware-M for security, and a secure bootloader (MCUBoot).
 
-
 Repositories
 ************
 
 The |NCS| is a combination of software developed by Nordic Semiconductor and open source projects, hosted as `Git`_ repositories in the `nrfconnect GitHub organization`_.
 
-The ``sdk-nrf`` repository contains the SDK manifest file that manages the repositories as one :ref:`code base <dm_code_base>` with the :ref:`ncs_west_intro` tool.
+The ``sdk-nrf`` repository is the manifest repository.
+It contains the SDK's `west manifest file`_ that lists all the SDK's repositories and their revisions.
+This :ref:`code base <dm_code_base>` is managed with the :ref:`ncs_west_intro` tool.
 
 Some notable repositories include:
 
@@ -35,6 +36,34 @@ Some notable repositories include:
 Every |NCS| release consists of a combination of all included repositories at different revisions.
 See the :ref:`repos_and_revs` section for a comprehensive list of repositories and their current revisions.
 The revision of each of those repositories is determined by the current revision of the main (manifest) repository ``sdk-nrf``.
+
+.. _intro_vers_revs:
+
+Versions and revisions
+**********************
+
+The |NCS| uses a versioning scheme similar to `Semantic versioning`_, but with important semantic differences.
+Every release of the |NCS| is identified with a version string, in the format ``MAJOR.MINOR.PATCH``.
+The version numbers are incremented based on the following criteria:
+
+* The ``MAJOR`` version number is increased seldom, whenever a release is deemed to be introducing a large number of substantial changes across the board.
+* The ``MINOR`` version number is increased every time a major release is cut.
+  Major releases are the default types of an |NCS| release.
+  They introduce new functionality and may break APIs.
+* The ``PATCH`` version number is increased whenever a minor or bugfix release is cut.
+  Minor releases only address functional issues but do not introduce new functionality.
+
+In between releases, |NCS| is not static.
+Instead, it changes its revision every time a Git commit is merged into the `sdk-nrf`_ repository.
+The revision of the SDK is considered to be equivalent to the repository revision of ``sdk-nrf``, because it is the :ref:`manifest repository <zephyr:west-manifests>`.
+This means that, by virtue of containing the `west manifest file`_, its revision uniquely identifies the revisions of all other repositories included in the SDK.
+
+A special value of ``99`` for the ``PATCH`` version number indicates that the version string does not belong to a release, but rather a point in between two major releases.
+For example, ``2.2.99`` indicates that this particular revision of the |NCS| is somewhere between versions ``2.2.0`` and ``2.3.0``.
+
+Revisions can either be Git SHAs or tags, depending on whether the current revision is associated with a release (in which case it is a tag) or is just any revision in between releases.
+
+For a more formal description of versions and revisions, see :ref:`dm-revisions`.
 
 Tools and configuration
 ***********************

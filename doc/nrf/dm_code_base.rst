@@ -66,13 +66,15 @@ In this way, you can decide to work with a specific |NCS| release either by init
 Alternatively, you can work with the latest state of development by using the main branch of the `sdk-nrf`_ repository, updating it with Git regularly and using ``west update`` to update the project repositories every time the manifest repository changes.
 More information about manifests can be found in the :ref:`west manifest section <zephyr:west-manifests>` of the Zephyr documentation.
 
+.. _dm-revisions:
+
 Revisions
 *********
 
 There are two fundamental revisions that are relevant to most |NCS| users:
 
 * The ``main`` branch of the `sdk-nrf`_ repository
-* Any Git tag (that is, release) of the `sdk-nrf`_ repository
+* Any Git tag (that is, release, release candidate or development tag) of the `sdk-nrf`_ repository
 
 As discussed above, the revision of the manifest repository, `sdk-nrf`_, uniquely determines the revisions of all other repositories, so a discussion about |NCS| revisions can be essentially limited to the manifest repository revision.
 
@@ -80,7 +82,7 @@ The ``main`` branch of the `sdk-nrf`_ repository always contains the latest deve
 Since all development is done openly, you can use it if you are not particularly concerned about stability and want to track the latest changes that are being merged continuously into the different repositories.
 
 The Git tags correspond to official releases tested and signed by the Nordic engineers.
-The format is as follows::
+The format for nRF repositories is as follows::
 
   vX.Y.Z(-rcN)
 
@@ -91,10 +93,17 @@ The Git tags are composed as follows::
   vX.Y.Z(-rcN|-devN)
 
 X, Y, and Z are the major, minor, and patch version, respectively.
+A special value of ``99`` for the patch version number is reserved for any revision in between releases.
 Tags without a suffix correspond to official releases tested and signed by Nordic Semiconductor engineers.
 A release candidate suffix ``-rcN`` is attached if the tag identifies a candidate instead of the actual release.
 In between releases, there might be development tags.
 These are identified by a ``-devN`` suffix.
+
+In the case of OSS repositories, the git tag format reuses the upstream project's version along with some |NCS| specific postfixes::
+
+  vX.Y.Z-ncsN(-rcM)
+
+In this format, X, Y and Z are the major, minor and patch versions of the upstream project, and ``-ncsN`` is used to identify the number of |NCS| releases based on that particular version.
 
 .. _dm-oss-downstreams:
 
