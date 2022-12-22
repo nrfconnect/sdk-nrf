@@ -976,6 +976,7 @@
 .. _`ZBOSS Open Initiative (ZOI)`: https://dsr-zoi.com/
 
 .. _`Git`: https://git-scm.com/
+.. _`Git revisions`: https://git-scm.com/docs/gitrevisions
 
 .. _`Go language package`: https://golang.org/doc/install
 
