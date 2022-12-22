@@ -32,7 +32,6 @@ static const char app_state[] = "lwm2m:fir/33629/0/3";
 static const char app_result[] = "lwm2m:fir/33629/0/5";
 static const char modem_state[] = "lwm2m:fir/33629/1/3";
 static const char modem_result[] = "lwm2m:fir/33629/1/5";
-static const char modem_type[] = "/33629/1";
 
 static uint8_t app_instance;
 static uint8_t modem_instance = 1;
@@ -44,7 +43,6 @@ static const char app_result[] = "lwm2m:fir/5/0/5";
 
 static const char modem_state[] = "lwm2m:fir/5/0/3";
 static const char modem_result[] = "lwm2m:fir/5/0/5";
-static const char *modem_type = "/5/0";
 
 static uint8_t app_instance;
 static uint8_t modem_instance;
@@ -222,12 +220,6 @@ static int copy_settings_hanler(struct settings_handler *cf)
 	return 0;
 }
 
-static ssize_t read_cb(void *cb_arg, void *data, size_t len)
-{
-	memcpy(data, cb_arg, len);
-	return len;
-}
-
 static int fota_download_init_stub(fota_download_callback_t client_callback)
 {
 	firmware_fota_download_cb = client_callback;
@@ -332,14 +324,6 @@ static void *init_firmware(void)
 	return NULL;
 }
 
-static void modem_firmware_update(uint8_t *state, uint8_t *result, int modem_lib_init_ret_val)
-{
-	lwm2m_firmware_emulate_modem_lib_init(modem_lib_init_ret_val);
-	lwm2m_verify_modem_fw_update();
-	*state = test_object[modem_instance].state;
-	*result = test_object[modem_instance].result;
-}
-
 static int write_fota_url(uint8_t inst_id)
 {
 	int rc;
@@ -408,31 +392,6 @@ static void do_firmware_update(uint8_t instance)
 		printf("Firmware update fail %d", rc);
 	}
 	k_sleep(K_SECONDS(6));
-}
-
-ZTEST(lwm2m_client_utils_firmware, test_verfy_modem_fw_update)
-{
-	int image_type;
-	uint8_t state, result;
-
-	lwm2m_firmware_emulate_modem_lib_init(MODEM_DFU_RESULT_OK);
-	image_type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
-	handler->h_set(modem_type, sizeof(image_type), read_cb, &image_type);
-	modem_firmware_update(&state, &result, MODEM_DFU_RESULT_OK);
-	zassert_equal(state, STATE_IDLE, "wrong state");
-	zassert_equal(result, RESULT_SUCCESS, "wrong result");
-
-	modem_firmware_update(&state, &result, MODEM_DFU_RESULT_UUID_ERROR);
-	zassert_equal(state, STATE_IDLE, "wrong state");
-	zassert_equal(result, RESULT_UPDATE_FAILED, "wrong result");
-
-	modem_firmware_update(&state, &result, MODEM_DFU_RESULT_HARDWARE_ERROR);
-	zassert_equal(state, STATE_IDLE, "wrong state");
-	zassert_equal(result, RESULT_UPDATE_FAILED, "wrong result");
-
-	modem_firmware_update(&state, &result, 0);
-	zassert_equal(state, STATE_IDLE, "wrong state");
-	zassert_equal(result, RESULT_UPDATE_FAILED, "wrong result");
 }
 
 ZTEST(lwm2m_client_utils_firmware, test_init_image_failure)
