@@ -146,8 +146,6 @@ static void pend_req_pin_idle(struct lpuart_data *data)
 	/* Wait until pin is high */
 	while (!nrfx_gpiote_in_is_set(data->req_pin)) {
 	}
-
-	req_pin_idle(data);
 }
 
 /* Used to force pin assertion. Pin is kept high during uart transfer. */
@@ -368,7 +366,13 @@ static void deactivate_rx(struct lpuart_data *data)
 static void tx_complete(struct lpuart_data *data)
 {
 	LOG_DBG("TX completed, pin idle");
-	pend_req_pin_idle(data);
+	if (data->tx_active) {
+		pend_req_pin_idle(data);
+	} else {
+		req_pin_set(data);
+	}
+
+	req_pin_idle(data);
 	data->tx_buf = NULL;
 	data->tx_active = false;
 }
@@ -595,7 +599,9 @@ static int api_tx(const struct device *dev, const uint8_t *buf,
 
 	LOG_DBG("tx len:%d", len);
 	data->tx_len = len;
-	k_timer_start(&data->tx_timer, SYS_TIMEOUT_MS(timeout), K_NO_WAIT);
+	k_timer_start(&data->tx_timer,
+		      timeout == SYS_FOREVER_US ? K_FOREVER : K_USEC(timeout),
+		      K_NO_WAIT);
 
 	/* Enable interrupt on pin going low. */
 	req_pin_arm(data);
