@@ -85,6 +85,10 @@ DECLARE_FAKE_VALUE_FUNC(int, modem_info_rsrp_register, rsrp_cb_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
 			lwm2m_engine_execute_cb_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_rai_req, enum lwm2m_rai_mode);
+DECLARE_FAKE_VALUE_FUNC(struct net_if*, net_if_lookup_by_dev, const struct device *);
+DECLARE_FAKE_VOID_FUNC(net_mgmt_add_event_callback, struct net_mgmt_event_callback *);
+DECLARE_FAKE_VALUE_FUNC(int, net_mgmt_NET_REQUEST_WIFI_SCAN, uint32_t, struct net_if *,
+			void *, size_t);
 
 /* List of fakes used by this unit tester */
 #define DO_FOREACH_FAKE(FUNC) do { \
@@ -146,6 +150,9 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_rai_req, enum lwm2m_rai_mode);
 	FUNC(settings_name_next)                        \
 	FUNC(engine_trigger_update)                     \
 	FUNC(lwm2m_rai_req)                             \
+	FUNC(net_if_lookup_by_dev)			\
+	FUNC(net_mgmt_add_event_callback)		\
+	FUNC(net_mgmt_NET_REQUEST_WIFI_SCAN)		\
 	} while (0)
 
 #endif
