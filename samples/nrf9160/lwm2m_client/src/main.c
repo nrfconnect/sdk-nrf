@@ -535,11 +535,6 @@ void main(void)
 	}
 #endif
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	/* Modem FW update needs to be verified before modem is used. */
-	lwm2m_verify_modem_fw_update();
-#endif
-
 	ret = app_event_manager_init();
 	if (ret) {
 		LOG_ERR("Unable to init Application Event Manager (%d)", ret);
