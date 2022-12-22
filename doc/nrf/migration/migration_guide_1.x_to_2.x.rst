@@ -434,7 +434,10 @@ Zephyr v3.x.x namespace change
 
 All Zephyr public headers have been moved to :file:`include/zephyr`, meaning they must be prefixed with ``<zephyr/...>`` when included.
 Because this change can potentially break many applications or libraries, :kconfig:option:`CONFIG_LEGACY_INCLUDE_PATH` is provided to allow using the old include path.
-This option is now enabled by default to allow a smooth transition.
+
+.. note::
+   The :kconfig:option:`CONFIG_LEGACY_INCLUDE_PATH` Kconfig option is disabled by default and will be removed soon.
+
 In order to facilitate the migration to the new include prefix, a script to automate the process is also provided in :file:`scripts/utils/migrate_includes.py` (in Zephyr).
 
 Changes in PWM API
