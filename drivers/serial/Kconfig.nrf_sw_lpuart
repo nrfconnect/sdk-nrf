@@ -44,8 +44,8 @@ config NRF_SW_LPUART_MAX_PACKET_SIZE
 	  size is created.
 
 config NRF_SW_LPUART_DEFAULT_TX_TIMEOUT
-	int "TX Timeout in milliseconds"
-	default 1000
+	int "TX Timeout in microseconds"
+	default 1000000
 	help
 	  Timeout is used in uart_poll_out and uart_fifo_fill (if interrupt
 	  driven API is enabled).
