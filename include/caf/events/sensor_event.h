@@ -43,7 +43,10 @@ enum sensor_state {
 	SENSOR_STATE_ERROR,
 
 	/** Number of sensor states. */
-	SENSOR_STATE_COUNT
+	SENSOR_STATE_COUNT,
+
+	/** Unused in code, required for inter-core compatibility. */
+	APP_EM_ENFORCE_ENUM_SIZE(SENSOR_STATE)
 };
 
 /** @brief Sensor state event.

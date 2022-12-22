@@ -41,7 +41,10 @@ enum click {
 	CLICK_DOUBLE,
 
 	/** Number of click types. */
-	CLICK_COUNT
+	CLICK_COUNT,
+
+	/** Unused in code, required for inter-core compatibility. */
+	APP_EM_ENFORCE_ENUM_SIZE(CLICK)
 };
 
 /** @brief Click event.

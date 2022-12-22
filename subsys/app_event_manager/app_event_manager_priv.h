@@ -63,6 +63,13 @@ extern "C" {
 #define _APP_EM_SUBS_PRIO_EARLY  05
 #define _APP_EM_SUBS_PRIO_NORMAL 10
 
+/* Enum element enforcing 32-bit size, required for inter-core compatibility.
+ * Shall be added as the last element of enum.
+ */
+#define APP_EM_ENFORCE_ENUM_SIZE(ename) COND_CODE_1(IS_ENABLED(CONFIG_EVENT_MANAGER_PROXY),	\
+	(ename##_FORCE_ENUM_SIZE = UINT32_MAX),							\
+	()											\
+)
 
 /* Convenience macros generating section names. */
 
