@@ -16,10 +16,13 @@
 #include <math.h>
 
 #include "fmac_api.h"
+#include "fmac_tx.h"
 #include "zephyr_fmac_main.h"
 #include "zephyr_twt.h"
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
+
+extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 
 int wifi_nrf_set_twt(const struct device *dev,
 		     struct wifi_twt_params *twt_params)
@@ -175,4 +178,82 @@ void wifi_nrf_event_proc_twt_teardown_zep(void *vif_ctx,
 	vif_ctx_zep->neg_twt_flow_id = 0XFF;
 
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
+}
+
+void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
+					struct nrf_wifi_umac_event_twt_sleep *sleep_evnt,
+					unsigned int event_len)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct wifi_nrf_fmac_priv *fmac_priv =	rpu_drv_priv_zep.fmac_priv;
+#ifdef CONFIG_NRF700X_DATA_TX
+	unsigned int pkts_pending = 0;
+	unsigned char queue = 0;
+	int desc = 0;
+	void *txq = NULL;
+	struct tx_pkt_info *pkt_info = NULL;
+#endif
+	vif_ctx_zep = vif_ctx;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		return;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
+		return;
+	}
+
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+
+	if (!sleep_evnt) {
+		LOG_ERR("%s: sleep_evnt is NULL\n", __func__);
+		return;
+	}
+
+	switch (sleep_evnt->info.type) {
+	case TWT_BLOCK_TX:
+		wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
+					    fmac_dev_ctx->tx_config.tx_lock);
+
+		fmac_priv->twt_sleep_status = true;
+
+		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
+					    fmac_dev_ctx->tx_config.tx_lock);
+	break;
+	case TWT_UNBLOCK_TX:
+		wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
+					    fmac_dev_ctx->tx_config.tx_lock);
+
+#ifdef CONFIG_NRF700X_DATA_TX
+		desc = fmac_priv->last_tx_done_desc;
+		if (desc >= 0) {
+			pkts_pending = tx_buff_req_free(fmac_dev_ctx,
+						fmac_priv->last_tx_done_desc,
+						&queue);
+			if (pkts_pending) {
+				pkt_info =
+				&fmac_dev_ctx->tx_config.pkt_info_p[desc];
+
+				txq = pkt_info->pkt;
+
+				tx_cmd_init(fmac_dev_ctx,
+					    txq,
+					    desc,
+					    pkt_info->peer_id);
+			}
+		}
+#endif
+		fmac_priv->twt_sleep_status = false;
+
+		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
+				fmac_dev_ctx->tx_config.tx_lock);
+	break;
+	default:
+	break;
+	}
 }

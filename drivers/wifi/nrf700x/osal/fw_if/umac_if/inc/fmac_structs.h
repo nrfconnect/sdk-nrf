@@ -247,6 +247,10 @@ struct wifi_nrf_fmac_callbk_fns {
 	void (*event_get_wiphy)(void *if_priv,
 		struct nrf_wifi_event_get_wiphy *get_wiphy,
 		unsigned int event_len);
+
+	void (*twt_sleep_callbk_fn)(void *if_priv,
+		struct nrf_wifi_umac_event_twt_sleep *twt_sleep_event_info,
+		unsigned int event_len);
 };
 
 
@@ -391,6 +395,9 @@ struct wifi_nrf_fmac_priv {
 	unsigned int num_rx_bufs;
 
 	struct wifi_nrf_fmac_callbk_fns callbk_fns;
+
+	bool twt_sleep_status;
+	int last_tx_done_desc;
 };
 
 

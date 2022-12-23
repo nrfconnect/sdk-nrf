@@ -244,6 +244,7 @@
 #define NRF_WIFI_UMAC_EVENT_CMD_STATUS 292
 #define NRF_WIFI_UMAC_EVENT_CONFIG_TWT 293
 #define NRF_WIFI_UMAC_EVENT_TEARDOWN_TWT 294
+#define NRF_WIFI_UMAC_EVENT_TWT_SLEEP 296
 
 /**
  * enum nrf_wifi_band - Frequency band.

@@ -807,12 +807,12 @@ out:
 
 
 unsigned int tx_buff_req_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-			      struct nrf_wifi_tx_buff_done *config,
+			      unsigned int tx_desc_num,
 			      unsigned char *ac)
 {
 	struct wifi_nrf_fmac_priv *fpriv = NULL;
 	unsigned int pkts_pend = 0;
-	unsigned int desc = config->tx_desc_num;
+	unsigned int desc = tx_desc_num;
 	int tx_done_q = 0, start_ac, end_ac, cnt = 0;
 	unsigned int queue_map = fmac_dev_ctx->tx_config.spare_desc_queue_map;
 
@@ -828,7 +828,7 @@ unsigned int tx_buff_req_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		start_ac = end_ac = tx_done_q;
 	} else {
 		if (desc >= (fpriv->num_tx_tokens_per_ac * WIFI_NRF_FMAC_AC_MAX)) {
-			switch (desc %  (fpriv->num_tx_tokens_per_ac * WIFI_NRF_FMAC_AC_MAX)) {
+			switch (desc %	(fpriv->num_tx_tokens_per_ac * WIFI_NRF_FMAC_AC_MAX)) {
 			case 0:
 				tx_done_q = (queue_map & 0x0f);
 				break;
@@ -972,17 +972,26 @@ enum wifi_nrf_status tx_done_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	fmac_dev_ctx->host_stats.total_tx_done_pkts += pkt;
 
-	pkts_pending = tx_buff_req_free(fmac_dev_ctx, config, &queue);
+	/* Save the tx_desc_num for use in case of UNBLOCK_TX event received */
+	fpriv->last_tx_done_desc = config->tx_desc_num;
+
+	pkts_pending = tx_buff_req_free(fmac_dev_ctx, config->tx_desc_num, &queue);
 
 	if (pkts_pending) {
-		pkt_info = &fmac_dev_ctx->tx_config.pkt_info_p[desc];
+		if (!fpriv->twt_sleep_status) {
 
-		txq = pkt_info->pkt;
+			pkt_info = &fmac_dev_ctx->tx_config.pkt_info_p[desc];
 
-		status = tx_cmd_init(fmac_dev_ctx,
-				     txq,
-				     desc,
-				     pkt_info->peer_id);
+			txq = pkt_info->pkt;
+
+			status = tx_cmd_init(fmac_dev_ctx,
+					     txq,
+					     desc,
+					     pkt_info->peer_id);
+		} else {
+			status = WIFI_NRF_STATUS_SUCCESS;
+		}
+
 	} else {
 		status = WIFI_NRF_STATUS_SUCCESS;
 	}
@@ -1043,6 +1052,7 @@ enum wifi_nrf_status wifi_nrf_fmac_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx
 	wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
 				    fmac_dev_ctx->tx_config.tx_lock);
 
+
 	if (fpriv->num_tx_tokens == 0) {
 		goto out;
 	}
@@ -1054,6 +1064,11 @@ enum wifi_nrf_status wifi_nrf_fmac_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx
 			    peer_id);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		goto out;
+	}
+
+
+	if (fpriv->twt_sleep_status) {
 		goto out;
 	}
 
@@ -1301,7 +1316,8 @@ enum wifi_nrf_status tx_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 
 		goto out;
 	}
-
+	fmac_dev_ctx->fpriv->last_tx_done_desc  = -1;
+	fmac_dev_ctx->fpriv->twt_sleep_status  = false;
 	status = WIFI_NRF_STATUS_SUCCESS;
 out:
 	return status;
