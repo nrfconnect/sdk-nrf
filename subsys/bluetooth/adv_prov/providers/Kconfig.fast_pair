@@ -36,7 +36,7 @@ config BT_ADV_PROV_FAST_PAIR_SHOW_UI_PAIRING
 
 choice BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_MODE
 	prompt "Select advertising battery data mode"
-	default BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_SHOW_UI
+	default BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_NONE
 	help
 	  The provider also exposes API to change battery data advertising mode in runtime.
 
