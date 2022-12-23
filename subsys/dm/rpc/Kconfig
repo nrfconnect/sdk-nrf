@@ -23,9 +23,15 @@ choice DM_MODULE_RPC_ROLE_CHOICE
 
 config DM_MODULE_RPC_HOST
 	bool "Distance Measurement over RPC Host"
+	help
+	  The Distance Measurement API uses the nRF RPC library to provide API for the client.
+	  It is supposed to run on the same core as the Nordic Distance Measurement library.
 
 config DM_MODULE_RPC_CLIENT
 	bool "Distance Measurement over RPC Client"
+	help
+	  The Distance Measurement API uses the nRF RPC library to access host on a remote core.
+	  It is supposed to run on the application core.
 
 endchoice
 
