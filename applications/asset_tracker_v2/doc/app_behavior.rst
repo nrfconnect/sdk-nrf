@@ -3,6 +3,10 @@
 Application behavior and functionality
 ######################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This section describes the general functioning of the Asset Tracker v2 application.
 
 Data types
