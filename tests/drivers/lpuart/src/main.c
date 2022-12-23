@@ -7,7 +7,13 @@
 #include <zephyr/ztest.h>
 #include <zephyr/busy_sim.h>
 #include <zephyr/drivers/uart.h>
+#include <zephyr/drivers/counter.h>
 #include <zephyr/random/rand32.h>
+#include <hal/nrf_gpio.h>
+#include <hal/nrf_uarte.h>
+#include <nrfx_gpiote.h>
+
+#define DT_DRV_COMPAT nordic_nrf_sw_lpuart
 
 static uint32_t tx_req_cnt;
 static uint32_t tx_done_cnt;
@@ -26,6 +32,7 @@ static void kill_timer_handler(struct k_timer *timer)
 	TC_PRINT("TX_DONE: %d, RX_CNT:%d\n", tx_done_cnt, rx_cnt);
 	test_time++;
 	if (test_time == CONFIG_TEST_LPUART_TIMEOUT) {
+		TC_PRINT("Killing test\n");
 		k_timer_stop(timer);
 		test_kill = true;
 	}
@@ -78,7 +85,7 @@ static void next_tx(const struct device *dev)
 	}
 
 	tx_req_cnt++;
-	int err = uart_tx(dev, tx_buf, tx_len, 10000);
+	int err = uart_tx(dev, tx_buf, tx_len, 100000);
 
 	if (err != 0) {
 		TC_PRINT("uart_tx returned err:%d\n", err);
@@ -119,6 +126,8 @@ static void on_rx_rdy(const struct device *dev, struct uart_event *evt)
 	k_timer_stop(&wdt_timer);
 
 	if (is_kill_packet(evt->data.rx.buf, evt->data.rx.len)) {
+		TC_PRINT("Got kill packet\n");
+		test_kill = true;
 		return;
 	}
 
@@ -178,8 +187,6 @@ static void uart_callback(const struct device *dev,
 		break;
 
 	case UART_RX_DISABLED:
-		TC_PRINT("Unexpected RX disabled event.\n");
-		report_error();
 		break;
 
 	case UART_RX_STOPPED:
@@ -194,7 +201,7 @@ int __weak bt_hci_transport_setup(const struct device *h4)
 	return 0;
 }
 
-static void test_async_api_stress(void)
+ZTEST(test_lpuart_stress, test_stress)
 {
 	const struct device *lpuart = DEVICE_DT_GET(DT_NODELABEL(lpuart));
 	int err;
@@ -229,9 +236,226 @@ static void test_async_api_stress(void)
 	zassert_equal(err, 0, NULL);
 	zassert_false(test_err, NULL);
 	zassert_equal(tx_req_cnt, tx_done_cnt, NULL);
+
+	k_msleep(100);
+
+	err = uart_rx_disable(lpuart);
+	zassert_equal(err, 0, NULL);
+
+	if (IS_ENABLED(CONFIG_TEST_BUSY_SIM)) {
+		busy_sim_stop();
+	}
 }
 
-void test_main(void)
+static uint8_t tx_buf[] = {0xA, 0xAA, 0xB, 0xBB};
+
+static void resilency_uart_callback(const struct device *dev,
+				    struct uart_event *evt,
+				    void *user_data)
+{
+	switch (evt->type) {
+	case UART_TX_DONE:
+		if ((evt->data.tx.buf != tx_buf) || (evt->data.tx.len != sizeof(tx_buf))) {
+			report_error();
+		}
+		break;
+
+	case UART_TX_ABORTED:
+		TC_PRINT("Unexpected TX aborted.\n");
+		report_error();
+		break;
+
+	case UART_RX_RDY:
+		if (evt->data.rx.len != sizeof(tx_buf)) {
+			report_error();
+		}
+		if (memcmp(evt->data.rx.buf, tx_buf, sizeof(tx_buf)) != 0) {
+			report_error();
+		}
+		break;
+
+	case UART_RX_BUF_REQUEST:
+		break;
+
+	case UART_RX_BUF_RELEASED:
+		break;
+
+	case UART_RX_DISABLED:
+		break;
+
+	case UART_RX_STOPPED:
+		TC_PRINT("Unexpected RX stopped event.\n");
+		report_error();
+		break;
+	}
+}
+
+static void validate_lpuart(const struct device *lpuart)
+{
+	int err;
+
+	k_timer_start(&wdt_timer, K_MSEC(200), K_NO_WAIT);
+
+	err = uart_tx(lpuart, tx_buf, sizeof(tx_buf), 10000);
+	zassert_equal(err, 0, NULL);
+
+	k_msleep(10);
+
+	k_timer_stop(&wdt_timer);
+	zassert_false(test_err, NULL);
+}
+
+static const struct device *counter =
+	DEVICE_DT_GET(DT_PHANDLE(DT_COMPAT_GET_ANY_STATUS_OKAY(vnd_busy_sim), counter));
+
+static void next_alarm(const struct device *counter, struct counter_alarm_cfg *alarm_cfg)
+{
+	int err;
+	int mul = IS_ENABLED(CONFIG_NO_OPTIMIZATIONS) ? 10 : 1;
+
+	alarm_cfg->ticks = (50 + sys_rand32_get() % 300) * mul;
+
+	err = counter_set_channel_alarm(counter, 0, alarm_cfg);
+	__ASSERT_NO_MSG(err == 0);
+}
+
+static nrf_gpio_pin_pull_t pin_toggle(uint32_t pin, nrf_gpio_pin_pull_t pull)
+{
+	nrf_gpio_cfg(pin,
+		     NRF_GPIO_PIN_DIR_INPUT,
+		     NRF_GPIO_PIN_INPUT_DISCONNECT,
+		     pull,
+		     NRF_GPIO_PIN_S0S1,
+		     NRF_GPIO_PIN_NOSENSE);
+	return (pull == NRF_GPIO_PIN_PULLUP) ? NRF_GPIO_PIN_PULLDOWN : NRF_GPIO_PIN_PULLUP;
+}
+
+static void pins_toggle(int32_t tx_pin)
+{
+	static nrf_gpio_pin_pull_t pull = NRF_GPIO_PIN_PULLUP;
+	static nrf_gpio_pin_pull_t tx_pull = NRF_GPIO_PIN_PULLUP;
+	nrfx_gpiote_pin_t req_pin = DT_INST_PROP(0, req_pin);
+	bool req_pin_toggle;
+	bool tx_pin_toggle;
+
+	if (tx_pin > 0) {
+		uint32_t rnd = sys_rand32_get();
+
+		req_pin_toggle = (rnd & 0x6) == 0;
+		tx_pin_toggle = rnd & 0x1;
+	} else {
+		req_pin_toggle = true;
+		tx_pin_toggle = false;
+	}
+
+	if (req_pin_toggle) {
+		pull = pin_toggle(req_pin, pull);
+	}
+
+	if (tx_pin_toggle) {
+		tx_pull = pin_toggle(tx_pin, tx_pull);
+	}
+}
+
+static void pins_to_default(int32_t tx_pin)
+{
+	nrfx_gpiote_pin_t req_pin = DT_INST_PROP(0, req_pin);
+
+	nrf_gpio_cfg(req_pin,
+		     NRF_GPIO_PIN_DIR_OUTPUT,
+		     NRF_GPIO_PIN_INPUT_DISCONNECT,
+		     NRF_GPIO_PIN_NOPULL,
+		     NRF_GPIO_PIN_S0S1,
+		     NRF_GPIO_PIN_NOSENSE);
+
+	if (tx_pin > 0) {
+		nrf_gpio_cfg(tx_pin,
+			     NRF_GPIO_PIN_DIR_OUTPUT,
+			     NRF_GPIO_PIN_INPUT_DISCONNECT,
+			     NRF_GPIO_PIN_NOPULL,
+			     NRF_GPIO_PIN_S0S1,
+			     NRF_GPIO_PIN_NOSENSE);
+	}
+}
+
+struct test_data {
+	struct counter_alarm_cfg alarm_cfg;
+	int32_t tx_pin;
+};
+
+static void counter_alarm_callback(const struct device *dev,
+				   uint8_t chan_id, uint32_t ticks,
+				   void *user_data)
+{
+	struct test_data *data = (struct test_data *)user_data;
+
+	pins_toggle(data->tx_pin);
+	next_alarm(dev, &data->alarm_cfg);
+}
+
+static void floating_pins_start(int32_t tx_pin)
+{
+	struct test_data data;
+
+	data.alarm_cfg.callback = counter_alarm_callback;
+	data.alarm_cfg.flags = COUNTER_ALARM_CFG_EXPIRE_WHEN_LATE;
+	data.alarm_cfg.user_data = (void *)&data;
+	data.tx_pin = tx_pin;
+
+	counter_start(counter);
+	next_alarm(counter, &data.alarm_cfg);
+}
+
+static void floating_pins_stop(int32_t tx_pin)
+{
+	counter_cancel_channel_alarm(counter, 0);
+	counter_stop(counter);
+	pins_to_default(tx_pin);
+}
+
+static void test_resilency(bool tx_pin_float)
+{
+	const struct device *lpuart = DEVICE_DT_GET(DT_NODELABEL(lpuart));
+	uint32_t t = k_uptime_get_32() + 3000;
+	int err;
+	NRF_UARTE_Type *uarte = (NRF_UARTE_Type *)DT_REG_ADDR(DT_INST_BUS(0));
+	int32_t tx_pin = nrf_uarte_tx_pin_get(uarte);
+
+	if (!IS_ENABLED(CONFIG_TEST_LPUART_LOOPBACK)) {
+		return;
+	}
+
+	zassert_true(device_is_ready(lpuart), NULL);
+
+	uart_callback_set(lpuart, resilency_uart_callback, NULL);
+
+	while (k_uptime_get_32() < t) {
+		err = uart_rx_enable(lpuart, rx_buf, sizeof(rx_buf), 100);
+		zassert_equal(err, 0, "Unexpected err:%d", err);
+
+		floating_pins_start(tx_pin_float ? tx_pin : -1);
+		k_msleep(100);
+		floating_pins_stop(tx_pin_float ? tx_pin : -1);
+		k_msleep(2);
+
+		validate_lpuart(lpuart);
+
+		err = uart_rx_disable(lpuart);
+		zassert_equal(err, 0, "Unexpected err:%d", err);
+	}
+}
+
+ZTEST(test_lpuart_resilency, test_resilency_no_tx_pin_float)
+{
+	test_resilency(false);
+}
+
+ZTEST(test_lpuart_resilency, test_resilency_with_tx_pin_float)
+{
+	test_resilency(true);
+}
+
+static void *suite_setup(void)
 {
 	/* Read first random number. There are some generators which do not support
 	 * reading first random number from an interrupt context (initialization
@@ -239,8 +463,8 @@ void test_main(void)
 	 */
 	(void)sys_rand32_get();
 
-	ztest_test_suite(lpuart_test,
-			 ztest_unit_test(test_async_api_stress)
-			);
-	ztest_run_test_suite(lpuart_test);
+	return NULL;
 }
+
+ZTEST_SUITE(test_lpuart_stress, NULL, suite_setup, NULL, NULL, NULL);
+ZTEST_SUITE(test_lpuart_resilency, NULL, suite_setup, NULL, NULL, NULL);
