@@ -59,7 +59,7 @@ Complete the following steps to prepare the Thingy:91 for setup:
    a. Go to `nRF Connect for Desktop Downloads <Download nRF Connect for Desktop_>`_.
    #. Download and install nRF Connect for Desktop.
    #. Open `nRF Connect for Desktop`_.
-   #. Find **Programmer** in the list of applications and click :guilabel:`Install`.
+   #. Find **Programmer** in the list of apps and click :guilabel:`Install`.
 
 .. _download_firmware_thingy91:
 
@@ -142,7 +142,7 @@ Updating the firmware in the nRF52840 SoC
 
       To update the firmware, complete the following steps:
 
-      1. Open `nRF Connect for Desktop`_ and launch the Programmer application.
+      1. Open `nRF Connect for Desktop`_ and launch the Programmer app.
       #. Scroll down in the menu on the left and make sure **Enable MCUboot** is selected.
 
          .. figure:: /images/programmer_enable_mcuboot.png
@@ -161,12 +161,12 @@ Updating the firmware in the nRF52840 SoC
       #. In the Programmer navigation bar, click :guilabel:`SELECT DEVICE`.
          A drop-down menu appears.
 
-         .. figure:: /images/programmer_select_device.png
+         .. figure:: /images/programmer_select_device2.png
             :alt: Programmer - Select device
 
             Programmer - Select device
 
-      #. In the menu, select the entry corresponding to your device.
+      #. In the menu, select the entry corresponding to your device (:guilabel:`MCUBOOT`).
 
          .. note::
             The device entry might not be the same in all cases and can vary depending on the application version and the operating system.
@@ -174,7 +174,7 @@ Updating the firmware in the nRF52840 SoC
       #. In the menu on the left, click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
          A file explorer window appears.
 
-         .. figure:: /images/programmer_add_file.png
+         .. figure:: /images/programmer_add_file2.png
             :alt: Programmer - Add file
 
             Programmer - Add file
@@ -190,7 +190,7 @@ Updating the firmware in the nRF52840 SoC
 
       #. Scroll down in the menu on the left to the **DEVICE** section and click :guilabel:`Write`.
 
-         .. figure:: /images/programmer_hex_write.png
+         .. figure:: /images/programmer_hex_write1.png
             :alt: Programmer - Writing of HEX files
 
             Programmer - Writing of HEX files
@@ -210,7 +210,7 @@ Updating the firmware in the nRF52840 SoC
 
       To update the firmware using the nRF9160 DK as the external debug probe, complete the following steps:
 
-      1. Open `nRF Connect for Desktop`_ and launch the Programmer application.
+      1. Open `nRF Connect for Desktop`_ and launch the Programmer app.
 
       .. _prepare_hw_ext_dp:
 
@@ -291,7 +291,7 @@ Update the modem firmware on the nRF9160 SiP
 
      To update the modem firmware using USB, complete the following steps:
 
-      1. Open `nRF Connect for Desktop`_ and launch the Programmer application if you do not have it open already.
+      1. Open `nRF Connect for Desktop`_ and launch the Programmer app if you do not have it open already.
       #. Make sure that **Enable MCUboot** is selected.
       #. Switch off the Thingy:91.
       #. Press **SW3** while switching **SW1** to the **ON** position.
@@ -323,7 +323,7 @@ Update the modem firmware on the nRF9160 SiP
 
       .. update_modem_end
 
-      8. In the Programmer application, scroll down in the menu on the left to the **DEVICE** section and click :guilabel:`Write`.
+      8. In the Programmer app, scroll down in the menu on the left to the **DEVICE** section and click :guilabel:`Write`.
 
          .. figure:: /images/programmer_usb_update_modem.png
             :alt: Programmer - Update modem
@@ -344,7 +344,7 @@ Update the modem firmware on the nRF9160 SiP
 
       To update the modem firmware using external debug probe, complete the following steps:
 
-      1. Open `nRF Connect for Desktop`_ and launch the Programmer application and :ref:`prepare the hardware <prepare_hw_ext_dp>` if you have not done it already.
+      1. Open `nRF Connect for Desktop`_ and launch the Programmer app and :ref:`prepare the hardware <prepare_hw_ext_dp>` if you have not done it already.
       #. Set the SWD selection switch **SW2** to **nRF91** on the Thingy:91.
 
       #. In the menu on the left, click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
@@ -362,7 +362,7 @@ Update the modem firmware on the nRF9160 SiP
             Do not extract the modem firmware zip file.
 
       #. Select the zip file and click :guilabel:`Open`.
-      #. In the Programmer application, scroll down in the menu on the left to the **DEVICE** section and click :guilabel:`Write`.
+      #. In the Programmer app, scroll down in the menu on the left to the **DEVICE** section and click :guilabel:`Write`.
 
          .. figure:: /images/programmer_ext_debug_update_modem.png
             :alt: Programmer - Update modem
@@ -397,7 +397,7 @@ Program the nRF9160 SiP application
 
       To program the application firmware using USB, complete the following steps:
 
-      1. Open `nRF Connect for Desktop`_ and launch the Programmer application if you have not done already.
+      1. Open `nRF Connect for Desktop`_ and launch the Programmer app if you have not done already.
       #. Make sure that **Enable MCUboot** is selected.
       #. Switch off the Thingy:91.
       #. Press **SW3** while switching **SW1** to the **ON** position.
@@ -460,7 +460,7 @@ Program the nRF9160 SiP application
 
       To program the application firmware using external debug probe, complete the following steps:
 
-      1. Open `nRF Connect for Desktop`_ and launch the Programmer application and :ref:`prepare the hardware <prepare_hw_ext_dp>` if you have not done it already.
+      1. Open `nRF Connect for Desktop`_ and launch the Programmer app and :ref:`prepare the hardware <prepare_hw_ext_dp>` if you have not done it already.
       #. Make sure the SWD selection switch **SW2** is set to **nRF91** on the Thingy:91.
 
       #. In the menu on the left, click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
