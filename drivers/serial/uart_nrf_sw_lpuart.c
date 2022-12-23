@@ -25,7 +25,7 @@ enum rx_state {
 	/* RX is in low power, idle state with pin detection armed. */
 	RX_IDLE,
 
-	/* RX request is pending, recevier is in preparation. */
+	/* RX request is pending, receiver is in preparation. */
 	RX_PREPARE,
 
 	/* RX is in active state, receiver is running. */
@@ -84,6 +84,9 @@ struct lpuart_data {
 
 	/* Set to true if physical transfer is started. */
 	bool tx_active;
+
+	/* Set to true if any data was received. */
+	bool rx_got_data;
 
 	/* Current RX buffer. */
 	uint8_t *rx_buf;
@@ -259,8 +262,11 @@ static void rdy_pin_idle(struct lpuart_data *data)
 
 /* Indicated to the transmitter that receiver is ready by pulling pin down for
  * a moment, and reconfiguring it back to input with low state detection.
+ *
+ * Function checks if transmitter has request pin in the expected state and if not
+ * false is returned.
  */
-static void rdy_pin_blink(struct lpuart_data *data)
+static bool rdy_pin_blink(struct lpuart_data *data)
 {
 	nrfx_err_t err;
 	nrfx_gpiote_trigger_config_t trigger_config = {
@@ -269,6 +275,7 @@ static void rdy_pin_blink(struct lpuart_data *data)
 	};
 	const nrf_gpio_pin_dir_t dir_in = NRF_GPIO_PIN_DIR_INPUT;
 	const nrf_gpio_pin_dir_t dir_out = NRF_GPIO_PIN_DIR_OUTPUT;
+	bool ret;
 
 	/* Drive low for a moment */
 	nrf_gpio_reconfigure(data->rdy_pin, &dir_out, NULL, NULL, NULL, NULL);
@@ -278,7 +285,54 @@ static void rdy_pin_blink(struct lpuart_data *data)
 
 	nrfx_gpiote_trigger_enable(data->rdy_pin, true);
 
+	int key = irq_lock();
+
+	nrf_gpiote_event_t event = nrf_gpiote_in_event_get(data->rdy_ch);
+
 	nrf_gpio_reconfigure(data->rdy_pin, &dir_in, NULL, NULL, NULL, NULL);
+
+	/* Wait a bit, after switching to input transmitter pin pullup should drive
+	 * this pin high.
+	 */
+	k_busy_wait(1);
+	if (nrf_gpio_pin_read(data->rdy_pin) == 0 && !nrf_gpiote_event_check(NRF_GPIOTE, event)) {
+		/* Suspicious pin state (low). It might be that context was preempted
+		 * for long enough and transfer ended (in that case event will be set)
+		 * or transmitter is working abnormally or pin is just floating.
+		 */
+		ret = false;
+		LOG_WRN("req pin low when expected high");
+	} else {
+		ret = true;
+	}
+	irq_unlock(key);
+
+	return ret;
+}
+
+/* Called when end of transfer is detected. It sets response pin to idle and
+ * disables RX.
+ */
+static void deactivate_rx(struct lpuart_data *data)
+{
+	int err;
+
+	if (IS_ENABLED(CONFIG_NRF_SW_LPUART_HFXO_ON_RX)) {
+		struct onoff_manager *mgr =
+		     z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+
+		err = onoff_cancel_or_release(mgr, &data->rx_clk_cli);
+		__ASSERT_NO_MSG(err >= 0);
+	}
+
+	/* abort rx */
+	data->rx_state = RX_TO_IDLE;
+	err = uart_rx_disable(data->uart);
+	if (err < 0 && err != -EFAULT) {
+		LOG_ERR("RX: Failed to disable (err: %d)", err);
+	} else if (err == -EFAULT) {
+		LOG_ERR("Rx disable failed.");
+	}
 }
 
 /* Function enables RX, after that it informs transmitter about readiness by
@@ -294,14 +348,19 @@ static void activate_rx(struct lpuart_data *data)
 		return;
 	}
 
+	LOG_DBG("RX: Ready");
+	data->rx_got_data = false;
+	data->rx_state = RX_ACTIVE;
 	err = uart_rx_enable(data->uart, data->rx_buf,
 				data->rx_len, data->rx_timeout);
 	__ASSERT(err == 0, "RX: Enabling failed (err:%d)", err);
 
 	/* Ready. Confirm by toggling the pin. */
-	rdy_pin_blink(data);
-	LOG_DBG("RX: Ready");
-	data->rx_state = RX_ACTIVE;
+	if (!rdy_pin_blink(data)) {
+		/* If tranmitter behaves abnormally deactivate RX. */
+		rdy_pin_suspend(data);
+		deactivate_rx(data);
+	}
 }
 
 static void rx_hfclk_callback(struct onoff_manager *mgr,
@@ -335,31 +394,6 @@ static void start_rx_activation(struct lpuart_data *data)
 		rx_hfclk_request(data);
 	} else {
 		activate_rx(data);
-	}
-}
-
-/* Called when end of transfer is detected. It sets response pin to idle and
- * disables RX.
- */
-static void deactivate_rx(struct lpuart_data *data)
-{
-	int err;
-
-	if (IS_ENABLED(CONFIG_NRF_SW_LPUART_HFXO_ON_RX)) {
-		struct onoff_manager *mgr =
-		     z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
-
-		err = onoff_cancel_or_release(mgr, &data->rx_clk_cli);
-		__ASSERT_NO_MSG(err >= 0);
-	}
-
-	/* abort rx */
-	data->rx_state = RX_TO_IDLE;
-	err = uart_rx_disable(data->uart);
-	if (err < 0 && err != -EFAULT) {
-		LOG_ERR("RX: Failed to disable (err: %d)", err);
-	} else if (err == -EFAULT) {
-		LOG_ERR("Rx disable failed.");
 	}
 }
 
@@ -436,7 +470,12 @@ static void rdy_pin_handler(nrfx_gpiote_pin_t pin,
 			start_rx_activation(data);
 		}
 	} else { /* HITOLO */
-		__ASSERT_NO_MSG(data->rx_state == RX_ACTIVE);
+		if (data->rx_state != RX_ACTIVE) {
+			LOG_WRN("RX: End detected at unexpected state (%d).", data->rx_state);
+			data->rx_state = RX_IDLE;
+			rdy_pin_idle(data);
+			return;
+		}
 
 		LOG_DBG("RX: End detected.");
 		deactivate_rx(data);
@@ -490,15 +529,9 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 
 	case UART_RX_RDY:
 		LOG_DBG("RX: Ready buf:%p, offset: %d,len: %d",
-		     evt->data.rx.buf, evt->data.rx.offset, evt->data.rx.len);
+		     (void *)evt->data.rx.buf, evt->data.rx.offset, evt->data.rx.len);
+		data->rx_got_data = true;
 		user_callback(dev, evt);
-		if (data->rx_state == RX_BLOCKED) {
-			/* If order of rx_rdy and rx_disabled events were swapped
-			 * call rx_buf_req now.
-			 */
-			evt->type = UART_RX_BUF_REQUEST;
-			user_callback(dev, evt);
-		}
 		break;
 
 	case UART_RX_BUF_REQUEST:
@@ -512,6 +545,9 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 
 	case UART_RX_BUF_RELEASED:
 		LOG_DBG("Rx buf released");
+		if (!data->rx_got_data) {
+			LOG_ERR("Empty receiver state:%d", data->rx_state);
+		}
 		user_callback(dev, evt);
 		break;
 
@@ -524,15 +560,16 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 			 (data->rx_state != RX_OFF));
 
 		if (data->rx_state == RX_TO_IDLE) {
-			call_cb = true;
-			data->rx_state = RX_BLOCKED;
-			/* Need to request new buffer since uart was disabled */
-			evt->type = UART_RX_BUF_REQUEST;
-		} else if (data->rx_state == RX_ACTIVE) {
-			/* Evt order flipped. RX_RDY will follow. */
-			LOG_WRN("Uart events flipped.");
-			data->rx_state = RX_BLOCKED;
-			call_cb = false;
+			if (data->rx_got_data) {
+				call_cb = true;
+				data->rx_state = RX_BLOCKED;
+				/* Need to request new buffer since uart was disabled */
+				evt->type = UART_RX_BUF_REQUEST;
+			} else {
+				call_cb = false;
+				data->rx_state = RX_IDLE;
+				rdy_pin_idle(data);
+			}
 		} else {
 			data->rx_buf = NULL;
 			data->rx_state = RX_OFF;
@@ -655,7 +692,7 @@ static int api_rx_enable(const struct device *dev, uint8_t *buf,
 
 	__ASSERT_NO_MSG(data->rx_state == RX_OFF);
 
-	if (atomic_ptr_cas((atomic_ptr_t *)&data->rx_buf, NULL, buf) == false) {
+	if (!atomic_ptr_cas((atomic_ptr_t *)&data->rx_buf, NULL, buf)) {
 		return -EBUSY;
 	}
 
@@ -693,10 +730,26 @@ static int api_rx_buf_rsp(const struct device *dev, uint8_t *buf, size_t len)
 static int api_rx_disable(const struct device *dev)
 {
 	struct lpuart_data *data = get_dev_data(dev);
+	int err;
+
+	if (data->rx_state == RX_OFF) {
+		return -EFAULT;
+	}
 
 	data->rx_state = RX_TO_OFF;
 
-	return uart_rx_disable(data->uart);
+	err = uart_rx_disable(data->uart);
+	if (err == -EFAULT) {
+		struct uart_event event = {
+			.type = UART_RX_DISABLED
+		};
+
+		data->rx_state = RX_OFF;
+		data->rx_buf = NULL;
+		user_callback(dev, &event);
+	}
+
+	return 0;
 }
 
 #if CONFIG_NRF_SW_LPUART_INT_DRIVEN
