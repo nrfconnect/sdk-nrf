@@ -10,6 +10,7 @@ nRF9160: Memfault
 The Memfault sample shows how to use the `Memfault SDK`_ in an |NCS| application to collect coredumps and metrics.
 The sample connects to an LTE network and sends the collected data to Memfault's cloud using HTTPS.
 
+To get started with Memfault integration in |NCS|, see :ref:`ug_memfault`.
 
 Requirements
 ************
@@ -18,18 +19,13 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-Before using the Memfault platform, you must register an account in the `Memfault registration page`_ and `create a new project in Memfault`_.
-
 .. include:: /includes/tfm.txt
-
-To get access to all the benefits, like up to 100 free devices connected, register at the `Memfault registration page`_.
 
 Overview
 ********
 
 In this sample, Memfault SDK is used as a module in |NCS| to collect coredumps, reboot reasons, metrics and trace events from devices and send to the Memfault cloud.
 See `Memfault terminology`_ for more details on the various Memfault concepts.
-
 
 Metrics
 =======
