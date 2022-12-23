@@ -158,6 +158,10 @@
 .. _`nRF Asset Tracker project`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.1.x/docs/project/Index.html
 .. _`Getting started guide for nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.1.x/docs/aws/GettingStarted/Index.html
 .. _`Getting started guide for nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.1.x/docs/azure/GettingStarted/Index.html
+.. _`nRF Asset Tracker Memfault integration for AWS IoT`: https://github.com/NordicSemiconductor/asset-tracker-cloud-memfault-aws-js
+.. _`nRF Asset Tracker Memfault integration for Azure IoT Hub`: https://github.com/NordicSemiconductor/asset-tracker-cloud-memfault-azure-js
+.. _`nRF Asset Tracker Memfault integration`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.2.x/docs/memfault/Index.html
+
 
 .. _`latest release notes for nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect/release_notes/connect/2022.11.140.html
 .. _`nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect
@@ -804,6 +808,19 @@
 .. _`Memfault: Collecting Device Metrics`: https://docs.memfault.com/docs/embedded/metrics-api
 .. _`Memfault: Error Tracking with Trace Events`: https://docs.memfault.com/docs/embedded/trace-events/
 .. _`Memfault Demo CLI`: https://docs.memfault.com/docs/mcu/demo-cli/
+.. _`Memfault Diagnostic GATT Service`: https://memfault.notion.site/Memfault-Diagnostic-GATT-Service-MDS-ffd5a430062649cd9bf6edbf64e2563b
+.. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
+.. _`Memfault WebBluetooth Client source code`: https://github.com/memfault/web-ble-example/blob/main/mds.js
+.. _`Memfault Dashboards`: https://app.memfault.com
+.. _`Memfault debugging`: https://docs.memfault.com/docs/platform/introduction#debugging
+.. _`Memfault OTA`: https://docs.memfault.com/docs/platform/introduction#ota
+.. _`Memfault monitoring`: https://docs.memfault.com/docs/platform/introduction#metrics
+.. _`Memfault introduction`: https://docs.memfault.com/docs/platform/introduction
+.. _`Memfault-SDK`: https://github.com/memfault/memfault-firmware-sdk
+.. _`Memfault MCU Guide`: https://docs.memfault.com/docs/mcu/introduction
+.. _`Memfault: Reboot tracking`: https://docs.memfault.com/docs/mcu/reboot-reason-tracking
+.. _`Memfault: Coredumps`: https://docs.memfault.com/docs/mcu/coredumps
+
 
 .. ### Source: *.nrfcloud.com
 

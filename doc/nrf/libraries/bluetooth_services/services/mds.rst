@@ -9,7 +9,8 @@ Memfault Diagnostic Service (MDS)
 
 The Bluetooth® LE GATT Memfault Diagnostic Service is a custom service that forwards diagnostic data collected by firmware through a Bluetooth gateway.
 The diagnostic data is collected by the `Memfault SDK`_ integrated with the |NCS|.
-For more details, see :ref:`mod_memfault`.
+
+To get started with Memfault integration in |NCS|, see :ref:`ug_memfault`.
 
 The MDS is used in the :ref:`peripheral_mds` sample.
 
