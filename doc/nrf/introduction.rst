@@ -123,6 +123,16 @@ It also makes it fairly simple to add and remove modules.
 See :ref:`getting_started` for information about how to install the |NCS| and about the first steps.
 See :ref:`dev-model` for more information about the |NCS| code base and how to manage it.
 
+Applications
+************
+
+To start developing your application you need to understand a few fundamental concepts.
+Follow the :ref:`Zephyr guide to Application Development <zephyr:application>` and browse through the included :ref:`reference applications <applications>` in the |NCS| to get familiar with the basics.
+
+You also need to decide how to structure your application.
+You can choose from a few alternative :ref:`user workflows <dm_user_workflows>`, but having the :ref:`application as the manifest repository <dm_workflow_4>` is recommended.
+An `ncs-example-application`_ repository is provided to serve as a reference or starting point.
+
 Licenses
 ********
 
