@@ -415,6 +415,8 @@ Modem libraries
       * ``CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL``
 
       The new configuration handles also Wi-Fi positioning.
+    * Introduced several new Kconfig options for default location request configurations, including default method priority configuration.
+      These new Kconfig options are applied when :c:func:`location_config_defaults_set` function is called.
 
   * Updated:
 
