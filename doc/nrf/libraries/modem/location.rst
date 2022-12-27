@@ -55,8 +55,12 @@ Each location method has its own implementation for the location retrieval:
   * Zephyr's Network Management API :ref:`zephyr:net_mgmt_interface` for getting the visible Wi-Fi access points.
   * Sending access point information to the selected location service and getting the calculated location back to the device.
 
+The default priority order of location methods is GNSS positioning, Wi-Fi positioning and Cellular positioning.
+If any of these methods are disabled, the method is simply omitted from the list.
+
 Here are details related to the services handling cell information for cellular positioning, or access point information for Wi-Fi positioning:
 
+  * Services can be handled by the application by enabling the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option, in which case rest of the service configurations are ignored.
   * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
   * The services available are `nRF Cloud Location Services`_ and `HERE Positioning`_.
   * The data transport method for the `nRF Cloud Location Services`_ can be configured to either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
@@ -151,6 +155,22 @@ The following options are related to the HERE service and can usually have the d
 
 * :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_HOSTNAME`
 * :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG`
+
+The following options control the default location request configurations and are applied
+when :c:func:`location_config_defaults_set` function is called:
+
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_FIRST` - Choice symbol for first priority location method.
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_SECOND` - Choice symbol for second priority location method.
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_THIRD` - Choice symbol for third priority location method.
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_INTERVAL`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_TIMEOUT`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_TIMEOUT`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_NUM_CONSECUTIVE_FIXES`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_VISIBILITY_DETECTION`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_PRIORITY_MODE`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT`
 
 Usage
 *****

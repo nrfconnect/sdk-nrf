@@ -94,6 +94,8 @@ config LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE
 
 endif # LOCATION_METHOD_WIFI
 
+# Cellular and Wi-Fi service configurations
+
 if LOCATION_METHOD_CELLULAR || LOCATION_METHOD_WIFI
 
 config LOCATION_SERVICE_HERE
@@ -160,6 +162,144 @@ config LOCATION_SERVICE_EXTERNAL
 	  Location library for processing.
 	  Also, allow application to send cellular neighbor cell and Wi-Fi access point information
 	  to a cloud service and respond to the Location library with the outcome.
+
+# Configurations for location_request() default values
+
+choice LOCATION_REQUEST_DEFAULT_METHOD_FIRST
+	prompt "Default first priority method"
+	default LOCATION_REQUEST_DEFAULT_METHOD_FIRST_GNSS
+	help
+	  Default first priority method used in location_config_defaults_set() function
+	  within location_config structure if method_types member is NULL.
+
+	config LOCATION_REQUEST_DEFAULT_METHOD_FIRST_GNSS
+		bool "GNSS positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_FIRST_WIFI
+		bool "Wi-Fi positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_FIRST_CELLULAR
+		bool "Cellular positioning"
+
+endchoice
+
+choice LOCATION_REQUEST_DEFAULT_METHOD_SECOND
+	prompt "Default second priority method"
+	default LOCATION_REQUEST_DEFAULT_METHOD_SECOND_WIFI if LOCATION_METHOD_WIFI
+	default LOCATION_REQUEST_DEFAULT_METHOD_SECOND_CELLULAR
+	help
+	  Default second priority method used in location_config_defaults_set() function
+	  within location_config structure if method_types member is NULL.
+
+	config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_GNSS
+		bool "GNSS positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_WIFI
+		bool "Wi-Fi positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_CELLULAR
+		bool "Cellular positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_NONE
+		bool "No second priority method"
+
+endchoice
+
+choice LOCATION_REQUEST_DEFAULT_METHOD_THIRD
+	prompt "Default third priority method"
+	default LOCATION_REQUEST_DEFAULT_METHOD_THIRD_CELLULAR if LOCATION_METHOD_WIFI
+	default LOCATION_REQUEST_DEFAULT_METHOD_THIRD_NONE
+	help
+	  Default third priority method used in location_config_defaults_set() function
+	  within location_config structure if method_types member is NULL.
+
+	config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_GNSS
+		bool "GNSS positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_WIFI
+		bool "Wi-Fi positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_CELLULAR
+		bool "Cellular positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_NONE
+		bool "No third priority method"
+endchoice
+
+config LOCATION_REQUEST_DEFAULT_INTERVAL
+	int "Default interval in seconds"
+	default 0
+	help
+	  Default value used in location_config_defaults_set() function for interval
+	  member within location_config structure.
+
+config LOCATION_REQUEST_DEFAULT_TIMEOUT
+	int "Default timeout in milliseconds"
+	default 300000
+	help
+	  Default value used in location_config_defaults_set() function for timeout
+	  member within location_config structure.
+
+if LOCATION_METHOD_GNSS
+
+config LOCATION_REQUEST_DEFAULT_GNSS_TIMEOUT
+	int "Default GNSS timeout in milliseconds"
+	default 120000
+	help
+	  Default value used in location_config_defaults_set() function for timeout
+	  member within location_gnss_config structure.
+
+choice LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY
+	prompt "Default GNSS accuracy level"
+	default LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_NORMAL
+	help
+	  Default value used in location_config_defaults_set() function for accuracy
+	  member within location_gnss_config structure.
+
+	config LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_LOW
+		bool "GNSS low accuracy"
+	config LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_NORMAL
+		bool "GNSS normal accuracy"
+	config LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_HIGH
+		bool "GNSS high accuracy"
+
+endchoice
+
+config LOCATION_REQUEST_DEFAULT_GNSS_NUM_CONSECUTIVE_FIXES
+	int "Default number of consecutive fixes in high accuracy mode"
+	default 3
+	range 2 256
+	help
+	  Default value used in location_config_defaults_set() function for num_consecutive_fixes
+	  member within location_gnss_config structure.
+
+config LOCATION_REQUEST_DEFAULT_GNSS_VISIBILITY_DETECTION
+	bool "Default GNSS visibility detection"
+	help
+	  Default value used in location_config_defaults_set() function for visibility_detection
+	  member within location_gnss_config structure.
+
+config LOCATION_REQUEST_DEFAULT_GNSS_PRIORITY_MODE
+	bool "Default GNSS priority mode"
+	help
+	  Default value used in location_config_defaults_set() function for priority_mode
+	  member within location_gnss_config structure.
+
+endif # LOCATION_METHOD_GNSS
+
+if LOCATION_METHOD_CELLULAR
+
+config LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT
+	int "Default cellular timeout in milliseconds"
+	default 30000
+	help
+	  Default value used in location_config_defaults_set() function for timeout
+	  member within location_cellular_config structure.
+
+endif # LOCATION_METHOD_CELLULAR
+
+if LOCATION_METHOD_WIFI
+
+config LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT
+	int "Default Wi-Fi timeout in milliseconds"
+	default 30000
+	help
+	  Default value used in location_config_defaults_set() function for timeout
+	  member within location_wifi_config structure.
+
+endif # LOCATION_METHOD_WIFI
 
 module = LOCATION
 module-str = Location
