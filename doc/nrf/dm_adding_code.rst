@@ -69,6 +69,8 @@ Every time you want to update the revision of the |NCS| that you want to use as 
 
 If you have changes in additional repositories beyond `sdk-nrf`_ itself, you can point to your own forks of those in the :file:`west.yml` included in your fork.
 
+.. _dm_workflow_4:
+
 Workflow 4: Application as the manifest repository
 ==================================================
 
@@ -78,8 +80,52 @@ This workflow is particularly beneficial if your application is split among mult
 In order to implement this approach, you first need to create a manifest repository of your own, which just means a repository that contains a :file:`west.yml` manifest file in its root.
 Next you must populate the manifest file with the list of repositories and their revisions.
 
-In general, the easiest thing to do is to import the :file:`west.yml` into `sdk-nrf`_, using west's manifest imports feature.
-This is demonstrated by the following code:
+You have a couple of different options to create your own repository.
+
+Once you have your new manifest repository hosted online, you can use it with west just like you use the `sdk-nrf`_  repository when :ref:`getting <dm-wf-get-ncs>` and later :ref:`updating <dm-wf-update-ncs>` the source code.
+You just need to replace ``sdk-nrf`` and ``nrf`` with the repository name and path you have chosen for your manifest repository (*your-name/your-application* and *your-app-workspace*, respectively), as shown in the following code:
+
+.. parsed-literal::
+   :class: highlight
+
+   west init -m https:\ //github.com/*your-name/your-application* *your-app-worskpace*
+   cd *your-app-workspace*
+   west update
+
+After that, to modify the |NCS| version associated with your app, change the ``revision`` value in the manifest file to the `sdk-nrf`_ Git tag, SHA, or the branch you want to use, save the file, and run ``west update``.
+See :ref:`zephyr:west-basics` for more details.
+
+Recommended: Using the example application repository
+-----------------------------------------------------
+
+Nordic Semiconductor maintains a templated example repository as a reference for users that choose this workflow, `ncs-example-application`_.
+This repository showcases the following features of both the |NCS| and Zephyr:
+
+* Basic :ref:`Zephyr application <zephyr:application>` skeleton
+* :ref:`Zephyr workspace applications <zephyr:zephyr-workspace-app>`
+* :ref:`West T2 topology <zephyr:west-t2>`
+* :ref:`Custom boards <zephyr:board_porting_guide>`
+* Custom :ref:`devicetree bindings <zephyr:dt-bindings>`
+* Out-of-tree :ref:`drivers <zephyr:device_model_api>`
+* Out-of-tree libraries
+* Example CI configuration (using Github Actions)
+* Custom :ref:`west extension <zephyr:west-extensions>`
+
+It is highly recommended to use this templated repository as a starting point for your own application manifest repository.
+Click the :guilabel:`Use this template` button on the GitHub web user interface.
+Once you have your own copy of the repository, you can then modify it.
+You can add your own projects to the manifest file, as well as your own boards, drivers, and libraries as required by your application.
+
+The `ncs-example-application`_ repository is tagged every time a new release of the |NCS| is launched (starting with v2.3.0), using the same version number.
+This allows you to select the tag that matches the version of the |NCS| you intend to use.
+
+Creating your own manifest repository from scratch
+--------------------------------------------------
+
+If you decide not to use the example application repository as a starting point, you can start from scratch to create your own manifest repository that imports the |NCS|.
+
+To start the process, ``import`` `sdk-nrf`_ in your own :file:`west.yml`, using the :ref:`manifest imports <zephyr:west-manifest-import>` feature of west.
+This is demonstrated by the following code, that would be placed somewhere in your repository (typically in :file:`root/west.yml`):
 
 .. code-block:: yaml
 
@@ -97,9 +143,9 @@ This is demonstrated by the following code:
      self:
        path: application
 
-Importing :file:`west.yml` also results in the addition of all the |NCS| projects, including those imported from Zephyr, into your workspace.
+Importing the ``sdk-nrf`` project in your :file:`west.yml` also results in the addition of all the |NCS| projects, including those imported from Zephyr, into your workspace.
 
-Then, make the following changes:
+Then, make the following changes if required:
 
 * Point the entries of any |NCS| repositories that you have forked to your fork and fork revision, by adding them to the ``projects`` list using a new remote.
 * Add any entries for repositories that you need that are not part of the |NCS|.
@@ -134,16 +180,3 @@ For example:
 
 The variable values starting with *your-* in the above code block are just examples and you can replace them as needed.
 The above example includes a fork of the ``mcuboot`` project, but you can fork any project in :file:`nrf/west.yml`.
-
-Once you have your new manifest repository hosted online, you can use it with west just like you use the `sdk-nrf`_  repository when :ref:`getting <dm-wf-get-ncs>` and later :ref:`updating <dm-wf-update-ncs>` the source code.
-You just need to replace ``sdk-nrf`` and ``nrf`` with the repository name and path you have chosen for your manifest repository (*your-name/your-application* and *your-ncs-fork*, respectively), as shown in the following code:
-
-.. parsed-literal::
-   :class: highlight
-
-   west init -m https:\ //github.com/*your-name/your-application* *your-ncs-fork*
-   cd *your-ncs-fork*
-   west update
-
-After that, to modify the |NCS| version associated with your app, change the ``revision`` value in the manifest file to the `sdk-nrf`_ Git tag, SHA, or the branch you want to use, save the file, and run ``west update``.
-See :ref:`zephyr:west-basics` for more details.
