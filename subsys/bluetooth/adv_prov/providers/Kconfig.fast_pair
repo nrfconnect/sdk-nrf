@@ -12,7 +12,7 @@ menuconfig BT_ADV_PROV_FAST_PAIR
 
 	  If device is in pairing mode, provider uses Fast Pair discoverable
 	  advertising. Otherwise, Fast Pair not discoverable advertising is used.
-	  By default, battery data is included in not discoverable advertising payload.
+	  By default, battery data is not included in advertising payload.
 
 	  Application can control the generated payload using provider's Kconfig
 	  options or dedicated API.

@@ -308,6 +308,10 @@ Bluetooth libraries and services
 
   * Fixed a possible memory leak in the :c:func:`bt_gatt_indicate_rpc_handler` function.
 
+* :ref:`bt_le_adv_prov_readme` library:
+
+  * Changed the :kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_MODE` Kconfig option (default value) to not include Fast Pair battery data in the Fast Pair advertising payload by default.
+
 Bootloader libraries
 --------------------
 
