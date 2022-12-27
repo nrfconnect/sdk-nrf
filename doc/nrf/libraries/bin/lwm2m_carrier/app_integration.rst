@@ -60,7 +60,7 @@ Enable the library by setting the :kconfig:option:`CONFIG_LWM2M_CARRIER` Kconfig
 The :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`) contains all the configurations that are needed by the LwM2M carrier library.
 
 To overwrite the carrier default settings, you can provide the initialization parameter :c:type:`lwm2m_carrier_config_t` with the Kconfig options specified in the following sections.
-You can also use the provided :ref:`lwm2m_shell` to quickly get started and experiment with the API.
+You can also use the provided :ref:`lwm2m_carrier_shell` to quickly get started and experiment with the API.
 
 .. _general_options_lwm2m:
 
@@ -296,7 +296,7 @@ Following are the various LwM2M carrier library events that are also listed in :
 
     * :c:macro:`LWM2M_CARRIER_ERROR_INTERNAL` - This error indicates an irrecoverable error between the modem and carrier library. The LwM2M carrier library recovers only upon reboot.
 
-.. _lwm2m_shell:
+.. _lwm2m_carrier_shell:
 
 LwM2M carrier shell configuration
 *********************************

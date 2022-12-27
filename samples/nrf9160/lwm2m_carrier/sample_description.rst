@@ -99,7 +99,7 @@ The sample provides predefined configuration files for typical use cases.
 The following files are available:
 
 * :file:`prj.conf` - Standard default configuration file.
-* :file:`overlay-shell.conf` - Enables the :ref:`lwm2m_shell` and :ref:`lib_at_shell`.
+* :file:`overlay-shell.conf` - Enables the :ref:`lwm2m_carrier_shell` and :ref:`lib_at_shell`.
 
 The sample can either be configured by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
 
@@ -159,7 +159,7 @@ If you connected to the carrier (test) servers or live (production) servers, rea
 Testing with the LwM2M shell
 ----------------------------
 
-See :ref:`lwm2m_shell` for more information about the LwM2M carrier shell and shell commands.
+See :ref:`lwm2m_carrier_shell` for more information about the LwM2M carrier shell and shell commands.
 To test with the sample, complete the following steps:
 
 1. Make sure the sample was built with the shell overlay as described in :ref:`lwm2m_carrier_shell_overlay`.
