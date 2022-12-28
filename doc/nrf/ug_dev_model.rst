@@ -25,3 +25,4 @@ Contributions are welcome but entirely optional, as the licenses used by the |NC
    dm_code_base
    dm_managing_code
    dm_adding_code
+   dm_ncs_distro

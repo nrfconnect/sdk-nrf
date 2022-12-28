@@ -42,6 +42,7 @@
 .. |ncs_repo| replace:: https://github.com/nrfconnect/sdk-nrf
 .. _`sdk-nrf`: https://github.com/nrfconnect/sdk-nrf
 .. _`ncs-example-application`: https://github.com/nrfconnect/ncs-example-application
+.. _`manifest group filter`: https://github.com/nrfconnect/sdk-nrf/blob/20f40501f69bc9bfd2b321704917da1769411936/west.yml#L42
 
 .. |ncs_nrfxlib_repo| replace:: https://github.com/nrfconnect/sdk-nrfxlib
 .. _`sdk-nrfxlib`: https://github.com/nrfconnect/sdk-nrfxlib
@@ -49,6 +50,15 @@
 .. _`nRF Blinky`: https://github.com/NordicSemiconductor/Android-nRF-Blinky
 
 .. _`Ethernet over RTT for Linux`: https://github.com/doki-nordic/experimental-eth-rtt-link/
+
+.. _`Memfault firmware SDK`: https://github.com/memfault/memfault-firmware-sdk
+.. _`Memfault entry in the manifest`: https://github.com/nrfconnect/sdk-nrf/blob/20f40501f69bc9bfd2b321704917da1769411936/west.yml#L170-L173
+.. _`ANT entry in the manifest`: https://github.com/nrfconnect/sdk-nrf/blob/20f40501f69bc9bfd2b321704917da1769411936/west.yml#L182-L187
+
+.. _`Golioth Zephyr SDK`: https://github.com/golioth/golioth-zephyr-sdk
+.. _`Golioth module.yml`: https://github.com/golioth/golioth-zephyr-sdk/blob/v0.5.0/zephyr/module.yml
+.. _`Golioth west-ncs.yml`: https://github.com/golioth/golioth-zephyr-sdk/blob/v0.5.0/west-ncs.yml
+.. _`Golioth README nRF Connect SDK`: https://github.com/golioth/golioth-zephyr-sdk/tree/v0.5.0#using-with-nrf-connect-sdk
 
 .. _`nrfx`: https://github.com/NordicSemiconductor/nrfx/
 .. _`Changelog for nrfx 2.2.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-220---2020-04-28
