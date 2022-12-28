@@ -11,7 +11,8 @@ DT_COMPAT_NORDIC_NRF7002_SPI := nordic,nrf7002-spi
 config WIFI_NRF700X
 	bool "nRF700x driver"
 	depends on WIFI
-	select WIFI_USE_NATIVE_NETWORKING
+	select NET_L2_WIFI_MGMT if NETWORKING
+	select WIFI_USE_NATIVE_NETWORKING if NETWORKING
 	help
 	  Nordic Wi-Fi Driver
 
