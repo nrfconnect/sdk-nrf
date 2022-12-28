@@ -28,6 +28,7 @@ The default configuration for the location request is set as follows:
 * GNSS, Wi-Fi and cellular positioning are set in priority order of the location methods.
   Wi-Fi is omitted if it is not built into the application.
   If GNSS fails, both Wi-Fi and cellular positioning are tried.
+  The priority order of the methods can be changed through :ref:`lib_location` library Kconfig options.
   Methods that should not be used can be configured by adding them into ``No Data List``.
   See :ref:`Real-time configurations <real_time_configs>` for more information.
 * Timeout, which can be configured as part of :ref:`Real-time configurations <real_time_configs>` with ``Location timeout``.
