@@ -936,6 +936,13 @@ KRKNWK-15846: Android CHIP Tool crashes when subscribing in the :guilabel:`LIGHT
   Also, the Subscription window in the :guilabel:`LIGHT ON/OFF & LEVEL CLUSTER` contains faulty GUI layout (overlapping captions) used when passing minimum and maximum subscription interval values.
   This affects the Android CHIP Tool revision used for the |NCS| v2.2.0, v2.1.1, and v2.1.2 releases.
 
+.. rst-class:: v2-2-0 v2-1-2 v2-1-1
+
+KRKNWK-15913: Factory data set parsing issues
+  The ``user`` field in the factory data set is not properly parsed. The field should be of the ``MAP`` type instead of the ``BSTR`` type.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix to ``sdk-connectedhomeip`` (commit hash: ``3875c6f78c77212a3f62a5c825ff9b4e5054bbb4``).
+
 .. rst-class:: v2-1-2 v2-1-1
 
 KRKNWK-15749: Invalid ZAP Tool revision used
