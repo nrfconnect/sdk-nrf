@@ -232,6 +232,9 @@ static int check_channel_settings(const struct shell *shell,
 			return -1;
 		}
 	} else if ((tput_mode == RPU_TPUT_MODE_HE_SU) ||
+#ifndef CONFIG_NRF700X_REV_A
+		   (tput_mode == RPU_TPUT_MODE_HE_TB) ||
+#endif /* !CONFIG_NRF700X_REV_A */
 		   (tput_mode == RPU_TPUT_MODE_HE_ER_SU)) {
 		if (chan->bw != RPU_CH_BW_20) {
 			shell_fprintf(shell,
@@ -276,6 +279,7 @@ void nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_params)
 	conf_params->tx_mode = 1;
 	conf_params->tx_pkt_num = -1;
 	conf_params->tx_pkt_len = 1400;
+	conf_params->tx_pkt_tput_mode = RPU_TPUT_MODE_MAX;
 	conf_params->aux_adc_input_chain_id = 1;
 	conf_params->set_he_ltf_gi = 0;
 	conf_params->phy_calib = NRF_WIFI_DEF_PHY_CALIB;
@@ -792,6 +796,52 @@ static int nrf_wifi_radio_test_set_tx_pkt_len(const struct shell *shell,
 		return -ENOEXEC;
 	}
 
+	if (ctx->conf_params.tx_pkt_tput_mode == RPU_TPUT_MODE_MAX) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Throughput mode not set\n");
+		return -ENOEXEC;
+	}
+
+#ifndef CONFIG_NRF700X_REV_A
+	if (ctx->conf_params.tx_pkt_tput_mode == RPU_TPUT_MODE_HE_TB) {
+		if (ctx->conf_params.ru_tone == 26) {
+			if (val >= 350) {
+				shell_fprintf(shell,
+					      SHELL_ERROR,
+					      "'tx_pkt_len' has to be less than 350 bytes\n");
+				return -ENOEXEC;
+			}
+		} else if (ctx->conf_params.ru_tone == 52) {
+			if (val >= 800) {
+				shell_fprintf(shell,
+					      SHELL_ERROR,
+					      "'tx_pkt_len' has to be less than 800 bytes\n");
+				return -ENOEXEC;
+			}
+		} else if (ctx->conf_params.ru_tone == 106) {
+			if (val >= 1800) {
+				shell_fprintf(shell,
+					      SHELL_ERROR,
+					      "'tx_pkt_len' has to be less than 1800 bytes\n");
+				return -ENOEXEC;
+			}
+		} else if (ctx->conf_params.ru_tone == 242) {
+			if (val >= 4000) {
+				shell_fprintf(shell,
+					      SHELL_ERROR,
+					      "'tx_pkt_len' has to be less than 4000 bytes\n");
+				return -ENOEXEC;
+			}
+		} else {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "'ru_tone' not set\n");
+			return -ENOEXEC;
+		}
+	}
+#endif /* !CONFIG_NRF700X_REV_A */
+
 	if (!check_test_in_prog(shell)) {
 		return -ENOEXEC;
 	}
@@ -819,6 +869,103 @@ static int nrf_wifi_radio_test_set_tx_power(const struct shell *shell,
 
 	return 0;
 }
+
+
+#ifndef CONFIG_NRF700X_REV_A
+static int nrf_wifi_radio_test_set_ru_tone(const struct shell *shell,
+					   size_t argc,
+					   const char *argv[])
+{
+	char *ptr = NULL;
+	unsigned long val = 0;
+
+	val = strtoul(argv[1], &ptr, 10);
+
+	if ((val != 26) &&
+	    (val != 52) &&
+	    (val != 106) &&
+	    (val != 242)) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid value %lu\n",
+			      val);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	if (!check_test_in_prog(shell)) {
+		return -ENOEXEC;
+	}
+
+	ctx->conf_params.ru_tone = val;
+
+	return 0;
+}
+
+
+static int nrf_wifi_radio_test_set_ru_index(const struct shell *shell,
+					    size_t argc,
+					    const char *argv[])
+{
+	char *ptr = NULL;
+	unsigned long val = 0;
+
+	val = strtoul(argv[1], &ptr, 10);
+
+	if (ctx->conf_params.ru_tone == 26) {
+		if ((val < 1) || (val > 9)) {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "Invalid value %lu\n",
+				      val);
+			shell_help(shell);
+			return -ENOEXEC;
+		}
+	} else if (ctx->conf_params.ru_tone == 52) {
+		if ((val < 1) || (val > 4)) {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "Invalid value %lu\n",
+				      val);
+			shell_help(shell);
+			return -ENOEXEC;
+		}
+	} else if (ctx->conf_params.ru_tone == 106) {
+		if ((val < 1) || (val > 2)) {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "Invalid value %lu\n",
+				      val);
+			shell_help(shell);
+			return -ENOEXEC;
+		}
+	} else if (ctx->conf_params.ru_tone == 242) {
+		if ((val != 1)) {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "Invalid value %lu\n",
+				      val);
+			shell_help(shell);
+			return -ENOEXEC;
+		}
+	} else {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "RU tone not set\n");
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+
+	if (!check_test_in_prog(shell)) {
+		return -ENOEXEC;
+	}
+
+	ctx->conf_params.ru_index = val;
+
+	return 0;
+}
+#endif /* !CONFIG_NRF700X_REV_A */
 
 
 static int nrf_wifi_radio_test_set_tx(const struct shell *shell,
@@ -1765,7 +1912,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      NULL,
 		      "0 - 1x HE LTF\n"
 		      "1 - 2x HE LTF\n"
-		      "2 - 3x HE LTF                                        ",
+		      "2 - 4x HE LTF                                        ",
 		      nrf_wifi_radio_test_set_he_ltf,
 		      2,
 		      0),
@@ -1783,16 +1930,30 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_rf_params,
 		      2,
 		      0),
+#ifdef CONFIG_NRF700X_REV_A
 	SHELL_CMD_ARG(tx_pkt_tput_mode,
 		      NULL,
 		      "0 - Legacy mode\n"
 		      "1 - HT mode\n"
 		      "2 - VHT mode\n"
 		      "3 - HE(SU) mode\n"
-		      "4 - HE(ER SU) mode                                   ",
+		      "4 - HE(ER SU) mode\n                             ",
 		      nrf_wifi_radio_test_set_tx_pkt_tput_mode,
 		      2,
 		      0),
+#else
+	SHELL_CMD_ARG(tx_pkt_tput_mode,
+		      NULL,
+		      "0 - Legacy mode\n"
+		      "1 - HT mode\n"
+		      "2 - VHT mode\n"
+		      "3 - HE(SU) mode\n"
+		      "4 - HE(ER SU) mode\n"
+		      "5 - HE_TB mode                                   ",
+		      nrf_wifi_radio_test_set_tx_pkt_tput_mode,
+		      2,
+		      0),
+#endif /* !CONFIG_NRF700X_REV_A */
 	SHELL_CMD_ARG(tx_pkt_sgi,
 		      NULL,
 		      "0 - Disable\n"
@@ -1853,6 +2014,25 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_tx_power,
 		      2,
 		      0),
+#ifndef CONFIG_NRF700X_REV_A
+	SHELL_CMD_ARG(ru_tone,
+		      NULL,
+		      "<val> - Resource unit (RU) size (26,52,106 or 242)",
+		      nrf_wifi_radio_test_set_ru_tone,
+		      2,
+		      0),
+	SHELL_CMD_ARG(ru_index,
+		      NULL,
+		      "<val> - Location of resource unit (RU) in 20 MHz spectrum\n"
+		      "        Valid Values:\n"
+		      "           For 26 ru_tone: 1 to 9\n"
+		      "           For 52 ru_tone:  1 to 4\n"
+		      "           For 106 ru_tone:  1 to 2\n"
+		      "           For 242 ru_tone:  1",
+		      nrf_wifi_radio_test_set_ru_index,
+		      2,
+		      0),
+#endif /* !CONFIG_NRF700X_REV_A */
 	SHELL_CMD_ARG(tx,
 		      NULL,
 		      "0 - Disable TX\n"
