@@ -9,7 +9,7 @@
 #include <zephyr/devicetree.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(ui_buzzer, CONFIG_UI_LOG_LEVEL);
+LOG_MODULE_DECLARE(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 
 /* Transform frequency in Hz to period in microseconds */
 #define PERIOD(freq) ((USEC_PER_SEC) / (freq))

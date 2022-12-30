@@ -13,11 +13,6 @@
 #include "accelerometer.h"
 #include "lwm2m_app_utils.h"
 
-#define MODULE app_lwm2m_accel
-
-#include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
-
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(sensor_sim), okay)
 #define ACCEL_APP_TYPE "Simulated Accelerometer"
 #else

@@ -13,11 +13,6 @@
 #include "gnss_pvt_event.h"
 #include "lwm2m_app_utils.h"
 
-#define MODULE lwm2m_app_loc
-
-#include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
-
 static time_t gnss_mktime(struct nrf_modem_gnss_datetime *date)
 {
 	struct tm tm = {
@@ -63,5 +58,5 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	return false;
 }
 
-APP_EVENT_LISTENER(MODULE, app_event_handler);
-APP_EVENT_SUBSCRIBE(MODULE, gnss_pvt_event);
+APP_EVENT_LISTENER(location, app_event_handler);
+APP_EVENT_SUBSCRIBE(location, gnss_pvt_event);

@@ -13,7 +13,7 @@
 #include "ui_led.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(app_lwm2m_light_control, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_DECLARE(app_lwm2m, CONFIG_APP_LOG_LEVEL);
 
 #if defined(CONFIG_BOARD_THINGY91_NRF9160_NS) && defined(CONFIG_UI_LED_USE_PWM)
 #define APP_TYPE	"RGB PWM LED controller"

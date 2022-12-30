@@ -11,11 +11,6 @@
 #include "env_sensor.h"
 #include "lwm2m_app_utils.h"
 
-#define MODULE app_lwm2m_press_sensor
-
-#include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
-
 #define MIN_RANGE_VALUE 30.0
 #define MAX_RANGE_VALUE 110.0
 

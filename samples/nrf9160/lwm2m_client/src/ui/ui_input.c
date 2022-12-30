@@ -10,7 +10,7 @@
 #include "ui_input_event.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(ui_input, CONFIG_UI_LOG_LEVEL);
+LOG_MODULE_DECLARE(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 
 /**
  * @brief Callback used by the DK buttons and LEDs library.

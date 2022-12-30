@@ -12,11 +12,6 @@
 #include "light_sensor.h"
 #include "lwm2m_app_utils.h"
 
-#define MODULE app_lwm2m_light_sensor
-
-#include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
-
 #define LIGHT_OBJ_INSTANCE_ID 0
 #define COLOUR_OBJ_INSTANCE_ID 1
 

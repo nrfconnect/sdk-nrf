@@ -12,10 +12,8 @@
 #include "ui_input_event.h"
 #include "lwm2m_app_utils.h"
 
-#define MODULE app_lwm2m_onoff_switch
-
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_DECLARE(app_lwm2m, CONFIG_APP_LOG_LEVEL);
 
 #define SWICTH1_OBJ_INST_ID 0
 #define SWITCH1_APP_NAME "On/Off Switch 1"
@@ -107,5 +105,5 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	return false;
 }
 
-APP_EVENT_LISTENER(MODULE, app_event_handler);
-APP_EVENT_SUBSCRIBE(MODULE, ui_input_event);
+APP_EVENT_LISTENER(onoff_switch, app_event_handler);
+APP_EVENT_SUBSCRIBE(onoff_switch, ui_input_event);

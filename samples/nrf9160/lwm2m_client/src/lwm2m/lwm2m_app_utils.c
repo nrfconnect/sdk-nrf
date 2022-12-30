@@ -5,13 +5,13 @@
  */
 
 #include <zephyr/kernel.h>
-#include <zephyr/logging/log.h>
 #include <zephyr/net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
 
 #include "lwm2m_app_utils.h"
 
-LOG_MODULE_REGISTER(app_lwm2m_utils, CONFIG_APP_LOG_LEVEL);
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(app_lwm2m, CONFIG_APP_LOG_LEVEL);
 
 void set_ipso_obj_timestamp(int ipso_obj_id, unsigned int obj_inst_id)
 {

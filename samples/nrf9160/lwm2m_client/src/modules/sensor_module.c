@@ -17,10 +17,8 @@
 #include "env_sensor.h"
 #include "light_sensor.h"
 
-#define MODULE sensor_module
-
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_REGISTER(app_sensors, CONFIG_APP_LOG_LEVEL);
 
 #define LIGHT_OBJ_INSTANCE_ID 0
 #define COLOUR_OBJ_INSTANCE_ID 1
