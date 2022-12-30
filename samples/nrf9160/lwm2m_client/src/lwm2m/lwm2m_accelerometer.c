@@ -11,7 +11,6 @@
 #include <zephyr/devicetree.h>
 
 #include "accelerometer.h"
-#include "accel_event.h"
 #include "lwm2m_app_utils.h"
 
 #define MODULE app_lwm2m_accel
@@ -40,6 +39,13 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
 static time_t timestamp;
 
+static int update_timestamp_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
+			       uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+{
+	set_ipso_obj_timestamp(IPSO_OBJECT_ACCELEROMETER_ID, obj_inst_id);
+	return 0;
+}
+
 int lwm2m_init_accel(void)
 {
 	double min_range_val = MIN_RANGE_VALUE;
@@ -65,43 +71,16 @@ int lwm2m_init_accel(void)
 		lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, TIMESTAMP_RID),
 					 &timestamp, sizeof(timestamp),
 					 sizeof(timestamp), LWM2M_RES_DATA_FLAG_RW);
+		lwm2m_engine_register_post_write_callback(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID,
+								     0, X_VALUE_RID),
+							  update_timestamp_cb);
+		lwm2m_engine_register_post_write_callback(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID,
+								     0, Y_VALUE_RID),
+							  update_timestamp_cb);
+		lwm2m_engine_register_post_write_callback(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID,
+								     0, Z_VALUE_RID),
+							  update_timestamp_cb);
 	}
 
 	return 0;
 }
-
-static bool app_event_handler(const struct app_event_header *aeh)
-{
-	if (is_accel_event(aeh)) {
-		struct accel_event *event = cast_accel_event(aeh);
-		double received_value;
-
-		if (IS_ENABLED(CONFIG_LWM2M_IPSO_ACCELEROMETER_VERSION_1_1)) {
-			set_ipso_obj_timestamp(IPSO_OBJECT_ACCELEROMETER_ID, 0);
-		}
-
-		LOG_DBG("Accelerometer sensor event received:"
-			"x = %d.%06d, y = %d.%06d, z = %d.%06d",
-			event->data.x.val1, event->data.x.val2, event->data.y.val1,
-			event->data.y.val2, event->data.z.val1, event->data.z.val2);
-
-		received_value = sensor_value_to_double(&event->data.x);
-		lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
-				       &received_value);
-
-		received_value = sensor_value_to_double(&event->data.y);
-		lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
-				       &received_value);
-
-		received_value = sensor_value_to_double(&event->data.z);
-		lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
-				       &received_value);
-
-		return true;
-	}
-
-	return false;
-}
-
-APP_EVENT_LISTENER(MODULE, app_event_handler);
-APP_EVENT_SUBSCRIBE(MODULE, accel_event);

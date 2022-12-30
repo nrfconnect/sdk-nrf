@@ -225,6 +225,11 @@ nRF9160 samples
     * Support for nRF7002 EK shield and Wi-Fi based location.
     * Location events and event handlers.
 
+  * Updated:
+
+    * The sensor module has been simplified.
+      It does not use application events, filtering, or configurable periods anymore.
+
 
 Peripheral samples
 ------------------
