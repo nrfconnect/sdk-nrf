@@ -197,6 +197,12 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
+* :ref:`modem_shell_application` sample:
+
+  * Updated:
+
+    * Timeout command-line arguments for the ``location get`` command changed from integers in milliseconds to floating-point values in seconds.
+
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
   * Added:
