@@ -43,7 +43,7 @@ Wi-Fi radio test subcommands
    * - he_ltf
      - | 0 - 1x HE LTF
        | 1 - 2x HE LTF
-       | 2 - 3x HE LTF
+       | 2 - 4x HE LTF
      - Configure HE long training field (LTF) value while transmitting the packet.
    * - he_gi
      - | 0 - 0.8 us
@@ -59,6 +59,7 @@ Wi-Fi radio test subcommands
        | 2 - VHT mode
        | 3 - HE (SU) mode
        | 4 - HE (ERSU) mode
+       | 5 - HE (TB) mode
      - Throughput mode to be used for transmitting the packet.
    * - tx_pkt_sgi
      - | 0 - Disable
@@ -93,6 +94,16 @@ Wi-Fi radio test subcommands
    * - tx_power
      - <val> - Transmit power in dBm.
      - Transmit power for frame transmission.
+   * - ru_tone
+     - <val> – Desired resource unit (RU) size (26, 52, 106 or 242).
+     - Configure the resource unit (RU) size.
+   * - ru_index
+     - | <val> – Valid values:
+       | For 26 ru_tone: 1 to 9
+       | For 52 ru_tone: 1 to 4
+       | For 106 ru_tone: 1 to 2
+       | For 242 ru_tone: 1
+     - Configure the location of resource unit (RU) in 20 MHz spectrum.
    * - tx
      - | 0 - Disable
        | 1 - Enable
@@ -103,23 +114,23 @@ Wi-Fi radio test subcommands
      - Enable/Disable packet reception.
    * - rx_adc_cap
      - | <CAPTURE LENGTH> - Number of RX ADC samples to be captured.
-       | <LNA GAIN> - 0: 24dB, 1: 18dB, 2: 12dB, 3: 0dB & 4: -12dB.
-       | <BASEBAND GAIN> - Valid range 0 to 31. Supports 64dB range. The increment happens linearly 2dB/step.
+       | <LNA GAIN> - 0: 24 dB, 1: 18 dB, 2: 12 dB, 3: 0 dB and 4: -12 dB.
+       | <BASEBAND GAIN> - Valid range 0 to 31. Supports 64 dB range. The increment happens linearly 2 dB/step.
      -
    * - rx_stat_pkt_cap
      - | <CAPTURE LENGTH> - Number of RX ADC samples to be captured.
-       | <LNA GAIN> - 0: 24dB, 1: 18dB, 2: 12dB, 3: 0dB & 4: -12dB.
-       | <BASEBAND GAIN> - Valid range 0 to 31. Supports 64dB range. The increment happens linearly 2dB/step.
+       | <LNA GAIN> - 0: 24 dB, 1: 18 dB, 2: 12 dB, 3: 0 dB and 4: -12 dB.
+       | <BASEBAND GAIN> - Valid range 0 to 31. Supports 64 dB range. The increment happens linearly 2 dB/step.
      -
    * - rx_dyn_pkt_cap
-     - | <val> - Number of RX dynamic pkt samples to be captured.
+     - | <val> - Number of RX dynamic packet samples to be captured.
      -
    * - tx_tone
-     - | <TONE CONTROL> - 0: Disable Tone 1: Enable tone
-       | <NORMALIZED FREQUENCY> - Compute the normalized frequency for the tone to be transmitted as
+     - | <TONE CONTROL> - 0: Disable 1: Enable
+       | <NORMALIZED FREQUENCY> - Compute the normalized frequency for the tone to be transmitted as:
        | normFreq = round(toneFreq * ((1/(DAC sampling rate/2))*(2^25))).
        | <TONE AMPLITUDE> - Value between 0 to 1023.
-       | <TX POWER> - TX power in the range -16dBm to +24dBm. Example, to transmit 5MHz tone: wifi_radio_test 1 4194304 255 10.
+       | <TX POWER> - TX power in the range -16 dBm to +24 dBm. Example, to transmit 5 MHz tone: wifi_radio_test 1 4194304 255 10.
      -
    * - dpd
      - | 0 - DPD bypass
@@ -135,9 +146,9 @@ Wi-Fi radio test subcommands
      - | <val> - XO value
      -
    * - get_xo_val
-     - | <TONE FREQUENCY> - Default is 0.5MHz(4194304).
-       | The range supported is -1MHz to +1MHz.
-       | Compute the tone frequency for the tone to be transmitted as tone frequency = round(tone_frequency * 2^23).
+     - | <TONE FREQUENCY> - Default is 0.5 MHz(4194304).
+       | The range supported is -1 MHz to +1 MHz.
+       | Compute the tone frequency for the tone to be transmitted as: tone frequency = round(tone_frequency * 2^23).
      -
    * - show_config
      - N/A
