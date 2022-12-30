@@ -21,6 +21,8 @@ The following instructions describe how to register your device to `Leshan Demo 
 
       .. tab:: Coiote Device Management
 
+         .. coiote_start
+
          1. Open `Coiote Device Management server`_.
          #. Click on :guilabel:`Device inventory` in the left menu in the UI.
          #. Click on :guilabel:`Add new device`.
@@ -33,6 +35,8 @@ The following instructions describe how to register your device to `Leshan Demo 
             * Key - your key (for example, ``000102030405060708090a0b0c0d0e0f``)
 
             Also, make sure to select the :guilabel:`Key in hexadecimal` checkbox.
+
+         .. coiote_end
 
    .. _bootstrap_server_reg:
 

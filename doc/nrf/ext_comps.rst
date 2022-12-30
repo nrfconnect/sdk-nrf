@@ -13,3 +13,4 @@ The following user guides show how you can use external components in your appli
    ug_bt_fast_pair
    ug_edge_impulse
    ug_memfault
+   ug_avsystem

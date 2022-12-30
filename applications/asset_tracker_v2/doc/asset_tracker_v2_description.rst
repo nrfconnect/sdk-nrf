@@ -31,7 +31,8 @@ Following are the cloud services that are supported by the application:
 * `AWS IoT Core`_
 * `Azure IoT Hub`_
 * `nRF Cloud`_
-* `LwM2M`_ v1.1 compliant service (for example, `Coiote Device Management`_, `Leshan LwM2M server <Leshan homepage_>`_).
+* `LwM2M`_ v1.1 compliant service (for example, AVSystem's `Coiote Device Management`_, `Leshan LwM2M server <Leshan homepage_>`_).
+  To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 
 To run the application on a development kit and connect to a cloud service, you must complete the following steps:
 

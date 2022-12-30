@@ -15,6 +15,7 @@ Overview
 Location Assistance object is a proprietary LwM2M object used to deliver information required by various location services through LwM2M.
 This feature is currently under development and considered :ref:`experimental <software_maturity>`.
 As of now, only AVSystem's Coiote LwM2M server can be used for utilizing the location assistance data from nRF Cloud.
+To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 
 The library adds support for four objects related to location assistance:
 
@@ -48,6 +49,8 @@ API usage
 
 This section describes API usage in different scenarios.
 
+.. _location_assistance_cell:
+
 Cell-based location
 ===================
 
@@ -64,6 +67,8 @@ If the location is sent back to the device, the location is stored only in the G
 
 To send the location request for the cell-based location, call the :c:func:`location_assistance_ground_fix_request_send` function.
 
+.. _location_assistance_wifi:
+
 Wi-Fi based location
 ====================
 
@@ -76,6 +81,8 @@ The Ground Fix Location object is used in the same manner as it is used in the c
 .. note::
    Cell-based location and Wi-Fi based location can be combined.
    When combined, the ground fix assistance request contains data from both, the nearby cells and nearby Wi-Fi access points.
+
+.. _location_assistance_agps_lwm2m:
 
 A-GPS assistance
 ================
@@ -95,6 +102,8 @@ Filtered A-GPS
 With filtered A-GPS, the satellites below the given angle above the ground are filtered out.
 You can set the the angle to a degree `[0 - 90]` using the :c:func:`location_assist_agps_set_elevation_mask` function.
 Setting the degree to `-1` disables filtering, which is the default setting.
+
+.. _location_assistance_pgps_lwm2m:
 
 P-GPS assistance
 ================

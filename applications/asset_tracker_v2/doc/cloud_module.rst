@@ -183,6 +183,8 @@ If not using the default DPS (Device Provisioning Service) host, ensure that the
 
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME`
 
+.. _assettracker_v2_cloudmodule_lwm2m:
+
 Configurations for LwM2M integration layer
 ------------------------------------------
 
