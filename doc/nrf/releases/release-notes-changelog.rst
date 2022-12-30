@@ -786,6 +786,7 @@ Documentation
 * Added:
 
   * Documentation template for the :ref:`Ecosystem integration <Ecosystem_integration>` user guides.
+  * Documentation on :ref:`ug_avsystem`.
   * The :ref:`ug_nrf70_developing` user guide.
   * A page on :ref:`ug_nrf70_features`.
   * Documentation template for :ref:`Applications <application>`.

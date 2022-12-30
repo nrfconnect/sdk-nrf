@@ -1081,6 +1081,11 @@
 
 .. _`Coiote Device Management`: https://www.avsystem.com/products/coiote-iot-device-management-platform/
 .. _`Coiote Device Management server`: https://eu.iot.avsystem.cloud/
+.. _`nRF Cloud integration with Coiote Device Management`: https://iotdevzone.avsystem.com/docs/Cloud_integrations/nRF_Cloud_Location_services/Configure_nRF_Cloud_integration/
+.. _`Viewing device location in Coiote Device Management`: https://iotdevzone.avsystem.com/docs/Cloud_integrations/nRF_Cloud_Location_services/Configure_nRF_Cloud_integration/#view-device-location-in-coiote-dm
+.. _`Setting observations for an object`: https://iotdevzone.avsystem.com/docs/Coiote_IoT_DM/Quick_Start/Visualize_device_data/#set-observation-and-add-widget
+.. _`nRF9160 Anjay integration`: https://iotdevzone.avsystem.com/docs/LwM2M_Client/Nordic/nRF9160/
+.. _`Thingy:91 integration`: https://iotdevzone.avsystem.com/docs/LwM2M_Client/Nordic/Thingy91/#thingy91
 
 .. _`Termite`: https://www.compuphase.com/software_termite.htm
 

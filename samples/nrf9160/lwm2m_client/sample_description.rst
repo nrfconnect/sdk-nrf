@@ -25,7 +25,8 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-Additionally, the sample requires an activated SIM card, and an LwM2M server such as `Leshan Demo Server`_ or `Coiote Device Management`_ server.
+Additionally, the sample requires an activated SIM card, and an LwM2M server such as `Leshan Demo Server`_ or AVSystem's `Coiote Device Management`_ server.
+To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 
 Overview
 ********
@@ -163,12 +164,6 @@ You need to provide the following information to the LwM2M server before you can
 
 See :ref:`server setup <server_setup_lwm2m_client>` for instructions on providing the information to the server.
 
-Sensor simulation
-=================
-
-If a sensor simulator is defined in Devicetree with the ``sensor_sim`` node label, it will be used over real devices.
-This is useful, for example, on the nRF9160 DK, where only simulated sensor data is available, as it does not have any of the external sensors needed for actual measurements.
-
 .. _notifications_lwm2m:
 
 Notifications
@@ -194,9 +189,11 @@ The frequency of notification packets is configured by LwM2M attributes set by t
 
 See :ref:`sensor_module_options` for information on enabling and configuring the sensor module.
 
-.. note::
+Sensor simulation
+=================
 
-   When you track several resources and enable sensor module for several sensors , socket errors such as ``net_lwm2m_engine: Poll reported a socket error, 08`` and ``net_lwm2m_rd_client: RD Client socket error: 5`` might occur.
+If a sensor simulator is defined in devicetree with the ``sensor_sim`` node label, it will be used over real devices.
+This is useful, for example, on the nRF9160 DK, where only simulated sensor data is available, as it does not have any of the external sensors needed for actual measurements.
 
 Configuration
 *************
@@ -219,13 +216,6 @@ Before building and running the sample, complete the following steps:
 .. _server_setup_lwm2m_client:
 
 .. include:: /includes/lwm2m_common_server_setup.txt
-
-
-.. note::
-
-   The **Client Configuration** page of the LwM2M Bootstrap server and the **Registered Clients** page of the LwM2M server display only a limited number of devices by default.
-   You can increase the number of displayed devices from the drop-down menu associated with **Rows per page**.
-   In both cases, the menu is displayed at the bottom-right corner of the **Client Configuration** pages.
 
 .. _server_addr_PSK:
 
@@ -283,6 +273,32 @@ Following are the instructions for enabling notifications in the Leshan Demo ser
 
       #. Click :guilabel:`Limit data usage` to configure how often notifications are sent.
 
+Avoiding re-writing credentials to modem
+----------------------------------------
+
+Every time the sample starts, it provisions the keys to the modem and this is only needed once.
+To speed up the start up, you can prevent the provisioning by completing the following steps:
+
+.. tabs::
+
+   .. group-tab:: Using |VSC|
+
+      a. In |VSC|, select `Add an existing application <Migrating IDE_>`_ and select the sample folder.
+      #. Under **Actions**, click :guilabel:`Kconfig`.
+      #. Click :guilabel:`Application sample`.
+      #. Under **LwM2M objects**, remove the key value next to :guilabel:`LwM2M pre-shared key for communication`.
+      #. Save and close the configuration.
+
+   .. group-tab:: Using :file:`src/prj.conf`
+
+      a. Open :file:`src/prj.conf`.
+      #. Set :kconfig:option:`CONFIG_APP_LWM2M_PSK` to an empty string.
+
+You can also edit this configuration using menuconfig.
+For more information, see |config|.
+
+For the changes to be added, rebuild the sample.
+
 Configuration options
 =====================
 
@@ -295,6 +311,7 @@ Server options
 
 CONFIG_APP_LWM2M_PSK - Configuration for Pre-Shared Key
    The sample configuration sets the hexadecimal representation of the PSK used when registering the device with the server.
+   To prevent provisioning of the key to the modem, set this option to an empty string.
 
 .. _CONFIG_APP_ENDPOINT_PREFIX:
 
@@ -357,9 +374,35 @@ CONFIG_SENSOR_MODULE - Configuration for periodic sensor reading
 CONFIG_SENSOR_MODULE_TEMP - Configuration to enable Temperature sensor
    This configuration option enables the Temperature sensor in the Sensor Module.
 
-.. note::
+.. _CONFIG_SENSOR_MODULE_ACCEL:
 
-   You can use the configuration options for different sensor types by modifying the configuration options accordingly.
+CONFIG_SENSOR_MODULE_ACCEL - Configuration to enable accelerometer
+   This configuration option enables the accelerometer.
+
+.. _CONFIG_SENSOR_MODULE_PRESS:
+
+CONFIG_SENSOR_MODULE_PRESS - Configuration for pressure reading
+   This configuration option enables the reading of pressure values.
+
+.. _CONFIG_SENSOR_MODULE_HUMID:
+
+CONFIG_SENSOR_MODULE_HUMID - Configuration for humidity reading
+   This configuration option enables the reading of humidity values.
+
+.. _CONFIG_SENSOR_MODULE_GAS_RES:
+
+CONFIG_SENSOR_MODULE_GAS_RES - Configuration for gas resistance reading
+   This configuration option enables the reading of gas resistance values.
+
+.. _CONFIG_SENSOR_MODULE_LIGHT:
+
+CONFIG_SENSOR_MODULE_LIGHT - Configuration for light reading
+   This configuration option enables the reading of light values.
+
+.. _CONFIG_SENSOR_MODULE_COLOR:
+
+CONFIG_SENSOR_MODULE_COLOR - Cpnfiguration for color
+   This configuration option enables the reading of color values.
 
 Additional configuration
 ========================
