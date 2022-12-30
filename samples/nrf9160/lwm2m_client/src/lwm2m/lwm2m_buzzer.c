@@ -12,7 +12,7 @@
 #include "lwm2m_app_utils.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(app_lwm2m_buzzer, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_DECLARE(app_lwm2m, CONFIG_APP_LOG_LEVEL);
 
 #define FREQUENCY_START_VAL 440U
 #define INTENSITY_START_VAL 100.0

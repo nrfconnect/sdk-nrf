@@ -91,16 +91,16 @@ static bool event_handler(const struct app_event_header *eh)
 	return false;
 }
 
-APP_EVENT_LISTENER(MODULE, event_handler);
+APP_EVENT_LISTENER(location_handler, event_handler);
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-APP_EVENT_SUBSCRIBE(MODULE, gnss_agps_request_event);
+APP_EVENT_SUBSCRIBE(location_handler, gnss_agps_request_event);
 #endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)
-APP_EVENT_SUBSCRIBE(MODULE, ground_fix_location_request_event);
-APP_EVENT_SUBSCRIBE(MODULE, ground_fix_location_inform_event);
+APP_EVENT_SUBSCRIBE(location_handler, ground_fix_location_request_event);
+APP_EVENT_SUBSCRIBE(location_handler, ground_fix_location_inform_event);
 #endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-APP_EVENT_SUBSCRIBE(MODULE, pgps_data_request_event);
+APP_EVENT_SUBSCRIBE(location_handler, pgps_data_request_event);
 #endif
 
 int location_event_handler_init(struct lwm2m_ctx *ctx)

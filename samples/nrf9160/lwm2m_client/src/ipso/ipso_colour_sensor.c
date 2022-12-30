@@ -16,7 +16,7 @@
 #include <lwm2m_resource_ids.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(app_ipso_colour_sensor, CONFIG_LWM2M_LOG_LEVEL);
+LOG_MODULE_DECLARE(app_sensors, CONFIG_APP_LOG_LEVEL);
 
 #define IPSO_OBJECT_COLOUR_ID 3335
 

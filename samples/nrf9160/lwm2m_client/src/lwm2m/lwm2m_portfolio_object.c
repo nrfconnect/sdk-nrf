@@ -9,12 +9,6 @@
 #include <lwm2m_resource_ids.h>
 #include "lwm2m_app_utils.h"
 
-#define MODULE app_lwm2m_portfolio
-
-#include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
-
-
 static char host_device_id[40] = "Host Device ID #1";
 static char manufacturer_id[40] = "Host Develce Manufacturer #1";
 static char device_model[40] = "Host Device Model #1";

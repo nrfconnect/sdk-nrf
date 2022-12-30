@@ -10,7 +10,7 @@
 #include <zephyr/drivers/gpio.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(ui_sense_led, CONFIG_UI_LOG_LEVEL);
+LOG_MODULE_DECLARE(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 
 static const struct gpio_dt_spec red_led =
 	GPIO_DT_SPEC_GET(DT_NODELABEL(sense_red_led), gpios);

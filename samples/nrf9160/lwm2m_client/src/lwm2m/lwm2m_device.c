@@ -14,7 +14,7 @@
 #include "lwm2m_app_utils.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(app_lwm2m_device, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_DECLARE(app_lwm2m, CONFIG_APP_LOG_LEVEL);
 
 #define CLIENT_MODEL_NUMBER CONFIG_BOARD
 #define CLIENT_HW_VER CONFIG_SOC
