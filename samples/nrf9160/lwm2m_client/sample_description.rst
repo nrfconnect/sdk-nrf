@@ -185,16 +185,12 @@ For more information, see :ref:`notifications_setup_lwm2m`.
 Sensor Module
 =============
 
-The sample has a sensor module which, if enabled, reads the selected sensors, and updates the client's resource values if it detects a sufficiently large change in one of the values.
-The threshold for a sufficiently large change can be configured.
-For example, a change in temperature of one degree Celsius.
-
+The sample has a sensor module which, if enabled, reads the selected sensors and updates the client's LwM2M resource values.
 Each sensor can be enabled separately.
-The sampling period and change threshold of a sensor can also be configured independently of all the other sensors.
 
 The sensor module is intended to be used together with notifications.
-If notifications are enabled for a Sensor Value resource, and the corresponding sensor is enabled in the sensor module, a notification will be sent only when that value changes significantly (as specified by the change threshold).
-Thus, the bandwidth usage can be significantly limited, while simultaneously registering important changes in sensor values.
+If notifications are enabled for a Sensor Value resource and the corresponding sensor is enabled in the sensor module, a notification will be sent when the value changes.
+The frequency of notification packets is configured by LwM2M attributes set by the server.
 
 See :ref:`sensor_module_options` for information on enabling and configuring the sensor module.
 

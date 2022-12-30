@@ -9,7 +9,6 @@
 #include <lwm2m_resource_ids.h>
 
 #include "env_sensor.h"
-#include "sensor_event.h"
 #include "lwm2m_app_utils.h"
 
 #define MODULE app_lwm2m_press_sensor
@@ -29,6 +28,13 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 #define PRESS_UNIT "kPa"
 
 static time_t timestamp;
+
+static int update_timestamp_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
+			       uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+{
+	set_ipso_obj_timestamp(IPSO_OBJECT_PRESSURE_ID, obj_inst_id);
+	return 0;
+}
 
 int lwm2m_init_press_sensor(void)
 {
@@ -53,39 +59,10 @@ int lwm2m_init_press_sensor(void)
 		lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, TIMESTAMP_RID),
 					 &timestamp, sizeof(timestamp),
 					 sizeof(timestamp), LWM2M_RES_DATA_FLAG_RW);
+		lwm2m_engine_register_post_write_callback(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0,
+								     SENSOR_VALUE_RID),
+							  update_timestamp_cb);
 	}
 
 	return 0;
 }
-
-static bool app_event_handler(const struct app_event_header *aeh)
-{
-	if (is_sensor_event(aeh)) {
-		struct sensor_event *event = cast_sensor_event(aeh);
-
-		if (event->type == PRESSURE_SENSOR) {
-			double received_value;
-
-			LOG_DBG("Pressure sensor event received: val1 = %06d, val2 = %06d",
-				event->sensor_value.val1, event->sensor_value.val2);
-
-			if (IS_ENABLED(CONFIG_LWM2M_IPSO_PRESSURE_SENSOR_VERSION_1_1)) {
-				set_ipso_obj_timestamp(IPSO_OBJECT_PRESSURE_ID, 0);
-			}
-
-			received_value = sensor_value_to_double(&event->sensor_value);
-			lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0,
-							  SENSOR_VALUE_RID),
-					       &received_value);
-
-			return true;
-		}
-
-		return false;
-	}
-
-	return false;
-}
-
-APP_EVENT_LISTENER(MODULE, app_event_handler);
-APP_EVENT_SUBSCRIBE(MODULE, sensor_event);
