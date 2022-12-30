@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <net/lwm2m_client_utils_location.h>
-#include <net/lwm2m_client_utils_location_events.h>
-
 #include <stdio.h>
+#include <net/lwm2m_client_utils_location.h>
+
+#include "location_events.h"
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
 static void log_gnss_agps_request_event(const struct app_event_header *eh)

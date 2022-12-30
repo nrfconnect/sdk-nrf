@@ -9,12 +9,12 @@
 #include <app_event_manager.h>
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
 #include <net/lwm2m_client_utils_location.h>
-#include <net/lwm2m_client_utils_location_events.h>
+#include "location_events.h"
 #endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 #include <net/lwm2m_client_utils_location.h>
-#include <net/lwm2m_client_utils_location_events.h>
 #include <net/nrf_cloud_pgps.h>
+#include "location_events.h"
 #endif
 
 #include "gnss_module.h"

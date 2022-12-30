@@ -134,9 +134,6 @@ config LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
 
 if LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
 
-config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS
-	bool "Use events to send lwm2m-messages to lwm2m-server to request assistance"
-
 config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL
 	bool "Use location based on current cell and possibly neighboring cells"
 	imply LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
