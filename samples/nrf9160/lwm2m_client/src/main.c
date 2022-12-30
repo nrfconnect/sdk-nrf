@@ -15,7 +15,6 @@
 #include <net/lwm2m_client_utils.h>
 #include <app_event_manager.h>
 #include <net/lwm2m_client_utils_location.h>
-#include <net/lwm2m_client_utils_location_events.h>
 #include <date_time.h>
 
 #include <zephyr/logging/log.h>
@@ -30,6 +29,7 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #include "sensor_module.h"
 #include "gnss_module.h"
 #include "lwm2m_engine.h"
+#include "location_events.h"
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE)
 #include "ui_input.h"
@@ -259,8 +259,7 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_PORTFOLIO_OBJ_SUPPORT)
 	lwm2m_init_portfolio_object();
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE) && \
-	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE)
 	location_event_handler_init(&client);
 	location_assistance_init_resend_handler();
 #endif

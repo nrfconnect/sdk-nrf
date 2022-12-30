@@ -212,6 +212,7 @@ nRF9160 samples
   * Added:
 
     * Support for nRF7002 EK shield and Wi-Fi based location.
+    * Location events and event handlers.
 
 
 Peripheral samples
@@ -356,6 +357,10 @@ Libraries for networking
 
     * Support for Wi-Fi based location through LwM2M.
     * API for scanning Wi-Fi access points.
+
+  * Removed:
+
+    * Location events and event handlers.
 
 Libraries for NFC
 -----------------

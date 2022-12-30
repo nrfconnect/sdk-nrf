@@ -6,12 +6,12 @@
 
 #include <zephyr/kernel.h>
 #include <nrf_modem_gnss.h>
-
 #include <zephyr/net/lwm2m_path.h>
 #include <net/lwm2m_client_utils_location.h>
-#include <net/lwm2m_client_utils_location_events.h>
 #include <net/lwm2m_client_utils.h>
 #include <zephyr/net/lwm2m.h>
+
+#include "location_events.h"
 
 static struct lwm2m_ctx *client_ctx;
 
@@ -25,14 +25,9 @@ static struct lwm2m_ctx *client_ctx;
 
 #define REQUEST_WAIT_INTERVAL K_SECONDS(5)
 
-#include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(lwm2m_location_event_handler, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
-
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
 static bool handle_agps_request(const struct gnss_agps_request_event *event)
 {
-	LOG_DBG("AGPS request");
-
 	while (location_assistance_agps_set_mask(&event->agps_req) == -EAGAIN) {
 		k_sleep(REQUEST_WAIT_INTERVAL);
 	}

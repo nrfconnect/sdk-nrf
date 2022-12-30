@@ -147,7 +147,6 @@ Following are the other important library options:
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS` -  nRF Cloud provides A-GPS assistance data and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS` -  nRF Cloud provides P-GPS predictions and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL` -  nRF Cloud provides estimated location based on currently attached cell and its neighborhood.
-* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS` - Disable this option if you provide your own method of sending the assistance requests to the LwM2M server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT` - Enable support for connectivity monitoring utilities.
   Provides data about the current cell and network the device has connected to.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT` - Enable support for the Visible Wi-Fi Access Point objects (ID 33627).
@@ -156,15 +155,10 @@ Following are the other important library options:
 API documentation
 *****************
 
-| Header files: :file:`include/net/lwm2m_client_utils_location.h`, :file:`include/net/lwm2m_client_utils_location_events.h`
-| Source files: :file:`subsys/net/lib/lwm2m_client_utils/location/location_assistance.c`, :file:`subsys/net/lib/wm2m_client_utils/location/location_events.c`
+| Header file: :file:`include/net/lwm2m_client_utils_location.h`
+| Source file: :file:`subsys/net/lib/lwm2m_client_utils/location/location_assistance.c`
 
 .. doxygengroup:: lwm2m_client_utils_location
-   :project: nrf
-   :members:
-   :inner:
-
-.. doxygengroup:: lwm2m_client_utils_location_events
    :project: nrf
    :members:
    :inner:
