@@ -128,7 +128,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 	/* Stop the timer and let rest_client timer handle the request */
 	location_core_timer_stop();
 
-#if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 	location_core_event_cb_cellular_request(&cell_data);
 #else
 	struct location_cellular_serv_pos_req params = { 0 };
@@ -182,7 +182,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 			location_core_event_cb(&location_result);
 		}
 	}
-#endif /* defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL) */
+#endif /* defined(CONFIG_LOCATION_SERVICE_EXTERNAL) */
 }
 
 int method_cellular_location_get(const struct location_method_config *config)

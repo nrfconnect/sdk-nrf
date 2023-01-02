@@ -9,16 +9,17 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL) || defined(CONFIG_LOCATION_DATA_DETAILS)
+#if (defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)) ||\
+	defined(CONFIG_LOCATION_DATA_DETAILS)
 #include <nrf_modem_gnss.h>
 #endif
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif
-#if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_CELLULAR)
 #include <modem/lte_lc.h>
 #endif
-#if defined(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_WIFI)
 #include <net/wifi_location_common.h>
 #endif
 
@@ -62,7 +63,7 @@ enum location_event_id {
 	/**
 	 * Application has indicated that getting location has been completed,
 	 * the result is not known, and the Location library does not need to care about it.
-	 * This event can occur only if CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL is set.
+	 * This event can occur only if CONFIG_LOCATION_SERVICE_EXTERNAL is set.
 	 */
 	LOCATION_EVT_RESULT_UNKNOWN,
 	/**
@@ -204,21 +205,21 @@ struct location_event_data {
 		struct location_data_error error;
 #endif
 
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
 		/**
 		 * A-GPS notification data frame used by GNSS to let the application know it
 		 * needs new assistance data, used with event LOCATION_EVT_GNSS_ASSISTANCE_REQUEST.
 		 */
 		struct nrf_modem_gnss_agps_data_frame agps_request;
 #endif
-#if  defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 		/**
 		 * P-GPS notification data frame used by GNSS to let the application know it
 		 * needs new assistance data, used with event LOCATION_EVT_GNSS_PREDICTION_REQUEST.
 		 */
 		struct gps_pgps_request pgps_request;
 #endif
-#if  defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_CELLULAR)
 		/**
 		 * Cellular cell information to let the application know it should send these
 		 * to a cloud service to resolve the location.
@@ -226,7 +227,7 @@ struct location_event_data {
 		 */
 		struct lte_lc_cells_info cellular_request;
 #endif
-#if  defined(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_WIFI)
 		/**
 		 * Wi-Fi access point information to let the application know it should send these
 		 * to a cloud service to resolve the location.

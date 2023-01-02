@@ -395,7 +395,7 @@ void location_core_event_cb_timeout(void)
 	location_core_event_cb(NULL);
 }
 
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
 void location_core_event_cb_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 {
 	struct location_event_data agps_request_event_data;
@@ -412,7 +412,7 @@ void location_core_event_cb_agps_request(const struct nrf_modem_gnss_agps_data_f
 }
 #endif
 
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 void location_core_event_cb_pgps_request(const struct gps_pgps_request *request)
 {
 	struct location_event_data pgps_request_event_data;
@@ -431,7 +431,7 @@ void location_core_event_cb_pgps_request(const struct gps_pgps_request *request)
 }
 #endif
 
-#if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_CELLULAR)
 void location_core_event_cb_cellular_request(struct lte_lc_cells_info *request)
 {
 	struct location_event_data cell_request_event_data;
@@ -477,7 +477,7 @@ void location_core_cellular_ext_result_set(
 }
 #endif
 
-#if defined(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_WIFI)
 void location_core_event_cb_wifi_request(struct wifi_scan_info *request)
 {
 	struct location_event_data wifi_request_event_data;

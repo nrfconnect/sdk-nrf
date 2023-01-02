@@ -21,11 +21,10 @@
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
-#if !defined(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL)
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 
 BUILD_ASSERT(IS_ENABLED(CONFIG_LOCATION_SERVICE_NRF_CLOUD) ||
-	     IS_ENABLED(CONFIG_LOCATION_SERVICE_HERE) ||
-	     IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL),
+	     IS_ENABLED(CONFIG_LOCATION_SERVICE_HERE),
 	     "At least one location service must be enabled");
 
 /* Buffer for receiving REST service responses */
@@ -52,4 +51,4 @@ int wifi_service_location_get(enum location_service service,
 	LOG_ERR("Requested Wi-Fi positioning service not configured on.");
 	return -ENOTSUP;
 }
-#endif /* !defined(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL) */
+#endif /* !defined(CONFIG_LOCATION_SERVICE_EXTERNAL) */

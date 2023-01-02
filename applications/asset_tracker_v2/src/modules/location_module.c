@@ -466,7 +466,7 @@ void location_event_handler(const struct location_event_data *event_data)
 
 	case LOCATION_EVT_GNSS_ASSISTANCE_REQUEST: {
 		LOG_DBG("Requested A-GPS data");
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if defined(CONFIG_NRF_CLOUD_AGPS)
 		struct location_module_event *location_module_event = new_location_module_event();
 
 		location_module_event->data.agps_request = event_data->agps_request;
@@ -478,7 +478,7 @@ void location_event_handler(const struct location_event_data *event_data)
 
 	case LOCATION_EVT_GNSS_PREDICTION_REQUEST: {
 		LOG_DBG("Requested P-GPS data");
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_NRF_CLOUD_PGPS)
 		struct location_module_event *location_module_event = new_location_module_event();
 
 		location_module_event->data.pgps_request = event_data->pgps_request;

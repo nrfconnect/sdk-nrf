@@ -26,24 +26,14 @@
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-/* Verify that MQTT, REST or external AGPS is enabled */
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+/* Verify that MQTT, REST or external service is enabled */
 BUILD_ASSERT(
 	IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
 	IS_ENABLED(CONFIG_NRF_CLOUD_REST) ||
-	IS_ENABLED(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL),
+	IS_ENABLED(CONFIG_LOCATION_SERVICE_EXTERNAL),
 	"CONFIG_NRF_CLOUD_MQTT, CONFIG_NRF_CLOUD_REST or "
-	"CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL must be enabled");
-#endif
-
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-/* Verify that MQTT, REST or external PGPS is enabled */
-BUILD_ASSERT(
-	IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
-	IS_ENABLED(CONFIG_NRF_CLOUD_REST) ||
-	IS_ENABLED(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL),
-	"CONFIG_NRF_CLOUD_MQTT, CONFIG_NRF_CLOUD_REST or "
-	"CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL must be enabled");
+	"CONFIG_LOCATION_SERVICE_EXTERNAL must be enabled");
 #endif
 
 /* Maximum waiting time before GNSS is started regardless of RRC or PSM state [min]. This prevents
@@ -99,14 +89,14 @@ static struct k_work method_gnss_agps_req_work;
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 static int64_t agps_req_timestamp;
-#if !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL) && \
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && \
 	defined(CONFIG_NRF_CLOUD_REST) && !defined(CONFIG_NRF_CLOUD_MQTT)
 static char agps_rest_data_buf[AGPS_REQUEST_RECV_BUF_SIZE];
 #endif
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-#if !defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 static struct k_work method_gnss_pgps_request_work;
 #endif
 static struct k_work method_gnss_inject_pgps_work;
@@ -138,14 +128,14 @@ static struct nrf_modem_gnss_agps_data_frame pgps_agps_request = {
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_REST) && !defined(CONFIG_NRF_CLOUD_MQTT)
-#if (defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)) || \
-	(defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL))
+#if (defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)) || \
+	(defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL))
 static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
 			      AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
 #endif
 #endif
 
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 static struct k_work method_gnss_pgps_ext_work;
 static void method_gnss_pgps_ext_work_fn(struct k_work *item);
 #endif
@@ -189,7 +179,7 @@ void method_gnss_pgps_handler(struct nrf_cloud_pgps_event *event)
 				       &method_gnss_inject_pgps_work);
 	} else if (event->type == PGPS_EVT_REQUEST) {
 		memcpy(&pgps_request, event->request, sizeof(pgps_request));
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 		k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_pgps_ext_work);
 #else
 		k_work_submit_to_queue(location_core_work_queue_get(),
@@ -248,7 +238,7 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 static void method_gnss_nrf_cloud_agps_request(void)
 {
@@ -336,10 +326,10 @@ static void method_gnss_nrf_cloud_agps_request(void)
 #endif
 }
 #endif /* #elif defined(CONFIG_NRF_CLOUD_REST) */
-#endif /* defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL) */
+#endif /* defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL) */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
-	!defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+	!defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 static void method_gnss_pgps_request_work_fn(struct k_work *item)
 {
 	const char *jwt_buf;
@@ -503,7 +493,7 @@ static void method_gnss_assistance_request(void)
 			 */
 			agps_req_timestamp = k_uptime_get();
 		}
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 		location_core_event_cb_agps_request(&agps_request);
 #else
 		method_gnss_nrf_cloud_agps_request();
@@ -857,7 +847,7 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 	}
 }
 
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 static void method_gnss_pgps_ext_work_fn(struct k_work *item)
 {
 	location_core_event_cb_pgps_request(&pgps_request);
@@ -1141,11 +1131,11 @@ int method_gnss_init(void)
 	k_work_init(&method_gnss_agps_req_work, method_gnss_agps_req_work_fn);
 #endif
 
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 	k_work_init(&method_gnss_pgps_ext_work, method_gnss_pgps_ext_work_fn);
 #endif
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-#if !defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if !defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 	k_work_init(&method_gnss_pgps_request_work, method_gnss_pgps_request_work_fn);
 #endif
 	k_work_init(&method_gnss_inject_pgps_work, method_gnss_inject_pgps_work_fn);
