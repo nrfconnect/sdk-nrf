@@ -30,6 +30,14 @@ Changelog
 
 The following sections provide detailed lists of changes by component.
 
+MCUboot
+=======
+
+* Updated:
+
+  * MCUBoot now uses the Secure RAM region on Trustzone-enabled devices.
+    The option :kconfig:option:`CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM` was added to allow MCUBoot to use all the available RAM.
+
 Application development
 =======================
 

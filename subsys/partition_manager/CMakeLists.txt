@@ -91,6 +91,9 @@ endif()
 
 if (CONFIG_TRUSTED_EXECUTION_NONSECURE OR CONFIG_TRUSTED_EXECUTION_SECURE)
   ncs_add_partition_manager_config(pm.yml.trustzone)
+  if (CONFIG_BOOTLOADER_MCUBOOT)
+    ncs_add_partition_manager_config(pm.yml.mcuboot)
+  endif()
 endif()
 
 if (CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP)
