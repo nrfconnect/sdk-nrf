@@ -419,8 +419,11 @@ static void update_config(const uint8_t opt_id, const uint8_t *data,
 			return;
 		}
 
-		if (set_option(option, sys_get_le32(data))) {
+		uint32_t value = sys_get_le32(data);
+
+		if (set_option(option, value)) {
 			store_config(opt_id, data, size);
+			LOG_INF("Option: %s set to %" PRIu32, opt_descr[opt_id], value);
 		}
 	} else {
 		LOG_WRN("Unsupported set opt_id: %" PRIu8, opt_id);
