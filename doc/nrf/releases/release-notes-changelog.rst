@@ -158,6 +158,8 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
+* Added an application log informing about the configuration option value update in the :ref:`nrf_desktop_motion`.
+
 * Changed:
 
    * Implemented adjustments to avoid flooding logs:
