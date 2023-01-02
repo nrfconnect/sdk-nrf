@@ -23,7 +23,7 @@ LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 BUILD_ASSERT(
 	IS_ENABLED(CONFIG_LOCATION_SERVICE_NRF_CLOUD) ||
 	IS_ENABLED(CONFIG_LOCATION_SERVICE_HERE) ||
-	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL),
+	IS_ENABLED(CONFIG_LOCATION_SERVICE_EXTERNAL),
 	"At least one Wi-Fi positioning service, or handling the service externally "
 	"must be enabled");
 
@@ -194,7 +194,7 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 		latest_wifi_info.cnt = latest_scan_result_count;
 		request.scanning_results = &latest_wifi_info;
 
-#if defined(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 		location_core_event_cb_wifi_request(&latest_wifi_info);
 #else
 		struct location_data result;

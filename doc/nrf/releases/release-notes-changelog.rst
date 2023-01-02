@@ -332,6 +332,13 @@ Modem libraries
   * Added:
 
     * Support for the application to send the Wi-Fi access point list to the cloud.
+    * Introduced the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option that replaces the following configurations that are removed:
+
+      * ``CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL``
+      * ``CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL``
+      * ``CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL``
+
+      The new configuration handles also Wi-Fi positioning.
 
   * Updated:
 
@@ -344,11 +351,11 @@ Modem libraries
       * nRF Cloud CA certificate handling.
 
     * Renamed ``enum location_cellular_ext_result`` to ``enum location_ext_result``, because Wi-Fi will use the same enumeration.
-    * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD` to :kconfig:option:`CONFIG_LOCATION_SERVICE_NRF_CLOUD`.
-    * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE`.
-    * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_API_KEY`.
-    * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_HOSTNAME`.
-    * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG`.
+    * Renamed ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_NRF_CLOUD`.
+    * Renamed ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE`.
+    * Renamed ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_API_KEY`.
+    * Renamed ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_HOSTNAME`.
+    * Renamed ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG`.
     * Improved GNSS assistance data need handling.
 
 Libraries for networking

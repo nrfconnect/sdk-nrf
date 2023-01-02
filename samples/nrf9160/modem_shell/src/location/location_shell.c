@@ -248,7 +248,7 @@ static void location_evt_led_worker(struct k_work *work_item)
 
 /******************************************************************************/
 
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
 static void location_ctrl_agps_ext_handle(const struct nrf_modem_gnss_agps_data_frame *agps_req)
 {
 #if defined(CONFIG_MOSH_CLOUD_LWM2M)
@@ -273,9 +273,9 @@ static void location_ctrl_agps_ext_handle(const struct nrf_modem_gnss_agps_data_
 	}
 #endif /* CONFIG_MOSH_CLOUD_LWM2M */
 }
-#endif /* CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL */
+#endif /* CONFIG_LOCATION_SERVICE_EXTERNAL && CONFIG_NRF_CLOUD_AGPS */
 
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 static void location_ctrl_pgps_ext_handle(const struct gps_pgps_request *pgps_req)
 {
 #if defined(CONFIG_MOSH_CLOUD_LWM2M)
@@ -307,9 +307,10 @@ static void location_ctrl_pgps_ext_handle(const struct gps_pgps_request *pgps_re
 	}
 #endif /* CONFIG_MOSH_CLOUD_LWM2M */
 }
-#endif /* CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL */
+#endif /* CONFIG_LOCATION_SERVICE_EXTERNAL && CONFIG_NRF_CLOUD_PGPS */
 
-#if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL) && defined(CONFIG_MOSH_CLOUD_LWM2M)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_CELLULAR)
+#if defined(CONFIG_MOSH_CLOUD_LWM2M)
 static int location_ctrl_lwm2m_cell_result_cb(uint16_t obj_inst_id,
 					      uint16_t res_id, uint16_t res_inst_id,
 					      uint8_t *data, uint16_t data_len,
@@ -370,9 +371,8 @@ exit:
 
 	return err;
 }
-#endif /* CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL && CONFIG_MOSH_CLOUD_LWM2M */
+#endif /* CONFIG_MOSH_CLOUD_LWM2M */
 
-#if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
 static void location_ctrl_cellular_ext_handle(const struct lte_lc_cells_info *cell_info)
 {
 #if defined(CONFIG_MOSH_CLOUD_LWM2M)
@@ -412,7 +412,7 @@ exit:
 	location_cellular_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
 #endif
 }
-#endif /* CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL */
+#endif /* CONFIG_LOCATION_SERVICE_EXTERNAL && CONFIG_LOCATION_METHOD_CELLULAR */
 
 void location_ctrl_event_handler(const struct location_event_data *event_data)
 {
@@ -466,7 +466,7 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 		mosh_error("Location request failed");
 		break;
 	case LOCATION_EVT_GNSS_ASSISTANCE_REQUEST:
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
 		mosh_print(
 			"A-GPS request from Location library "
 			"(ephe: 0x%08x alm: 0x%08x flags: 0x%02x)",
@@ -477,7 +477,7 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 #endif
 		break;
 	case LOCATION_EVT_GNSS_PREDICTION_REQUEST:
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 		mosh_print(
 			"P-GPS request from Location library "
 			"(prediction count: %d validity time: %d gps day: %d time of day: %d)",
@@ -489,7 +489,7 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 #endif
 		break;
 	case LOCATION_EVT_CELLULAR_EXT_REQUEST:
-#if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_CELLULAR)
 		mosh_print("Cellular location request from Location library "
 			   "(neighbor cells: %d GCI cells: %d)",
 			   event_data->cellular_request.ncells_count,

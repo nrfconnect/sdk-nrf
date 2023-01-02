@@ -638,7 +638,7 @@ Modem libraries
     * Improved integration of A-GPS and P-GPS when both are enabled.
     * A missing call to the :c:func:`nrf_cloud_pgps_notify_prediction` function, when using the REST interface with P-GPS.
     * Support for P-GPS data retrieval from an external source, implemented separately by the application.
-      Enabled by setting the :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL` option.
+      Enabled by setting the ``CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL`` option.
       The library triggers a :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` event when assistance is needed.
     * Obstructed satellite visibility detection feature for GNSS.
       When this feature is enabled, the library tries to detect occurrences where getting a GNSS fix is unlikely or would consume a lot of energy.

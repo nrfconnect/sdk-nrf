@@ -17,13 +17,13 @@ config LOCATION_METHOD_GNSS
 
 config LOCATION_METHOD_CELLULAR
 	bool "Allow cellular positioning to be used for obtaining the location"
-	select CJSON_LIB if !LOCATION_METHOD_CELLULAR_EXTERNAL
+	select CJSON_LIB if !LOCATION_SERVICE_EXTERNAL
 	default y
 
 config LOCATION_METHOD_WIFI
 	bool "Allow Wi-Fi positioning to be used for obtaining the location"
 	depends on WIFI
-	select CJSON_LIB if !LOCATION_METHOD_WIFI_EXTERNAL
+	select CJSON_LIB if !LOCATION_SERVICE_EXTERNAL
 	select NET_MGMT
 	select NET_MGMT_EVENT
 	select NET_MGMT_EVENT_INFO
@@ -43,20 +43,6 @@ config LOCATION_WORKQUEUE_STACK_SIZE
 	default 4096
 
 if LOCATION_METHOD_GNSS
-
-config LOCATION_METHOD_GNSS_AGPS_EXTERNAL
-	bool "Requesting A-GPS data is handled by the application outside of Location library"
-	depends on NRF_CLOUD_AGPS
-	help
-	  Allow application to download the A-GPS data and merely feed it to Location library for
-	  processing.
-
-config LOCATION_METHOD_GNSS_PGPS_EXTERNAL
-	bool "Requesting P-GPS data is handled by the application outside of Location library"
-	depends on NRF_CLOUD_PGPS
-	help
-	  Allow application to download the P-GPS data and merely feed it to Location library for
-	  processing.
 
 config LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_EXEC_TIME
 	int "GNSS execution time for obstructed visibility detection"
@@ -81,12 +67,6 @@ endif # LOCATION_METHOD_GNSS
 
 if LOCATION_METHOD_CELLULAR
 
-config LOCATION_METHOD_CELLULAR_EXTERNAL
-	bool "Neighbor cell information is handled by the application outside of Location library"
-	help
-	  Allow application to send neighbor cell information to a cloud service and respond to
-	  the Location library with the outcome.
-
 config LOCATION_METHOD_CELLULAR_RECV_BUF_SIZE
 	int "Receive buffer size"
 	default 512
@@ -97,12 +77,6 @@ config LOCATION_METHOD_CELLULAR_RECV_BUF_SIZE
 endif # LOCATION_METHOD_CELLULAR
 
 if LOCATION_METHOD_WIFI
-
-config LOCATION_METHOD_WIFI_EXTERNAL
-	bool "Access point information is handled by the application outside of Location library"
-	help
-	  Allow application to send access point information to a cloud service and respond to
-	  the Location library with the outcome.
 
 config LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT
 	int "Max number of Wi-Fi scanning results"
@@ -129,7 +103,7 @@ config LOCATION_SERVICE_HERE
 
 config LOCATION_SERVICE_NRF_CLOUD
 	bool "nRF Cloud location service"
-	default y if !LOCATION_METHOD_CELLULAR_EXTERNAL || !LOCATION_METHOD_WIFI_EXTERNAL
+	default y if !LOCATION_SERVICE_EXTERNAL
 	depends on NRF_CLOUD_REST || NRF_CLOUD_MQTT
 	select NRF_CLOUD_LOCATION if NRF_CLOUD_MQTT
 	select NRF_CLOUD_REST_AUTOGEN_JWT if NRF_CLOUD_REST
@@ -178,6 +152,14 @@ config LOCATION_SERVICE_HERE_TLS_SEC_TAG
 endif # LOCATION_SERVICE_HERE
 
 endif # LOCATION_METHOD_CELLULAR || LOCATION_METHOD_WIFI
+
+config LOCATION_SERVICE_EXTERNAL
+	bool "Requesting A-GPS, P-GPS, LTE neighbor cell and Wi-Fi access point data is handled by the application outside of Location library"
+	help
+	  Allow application to download the A-GPS and P-GPS data and merely feed it to
+	  Location library for processing.
+	  Also, allow application to send cellular neighbor cell and Wi-Fi access point information
+	  to a cloud service and respond to the Location library with the outcome.
 
 module = LOCATION
 module-str = Location

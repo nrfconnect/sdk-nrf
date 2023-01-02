@@ -8,10 +8,10 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <modem/location.h>
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
 #include <net/nrf_cloud_agps.h>
 #endif
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif
 
@@ -188,7 +188,7 @@ const char *location_method_str(enum location_method method)
 
 int location_agps_data_process(const char *buf, size_t buf_len)
 {
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
 	if (!buf) {
 		LOG_ERR("A-GPS data buffer cannot be a NULL pointer.");
 		return -EINVAL;
@@ -204,7 +204,7 @@ int location_agps_data_process(const char *buf, size_t buf_len)
 
 int location_pgps_data_process(const char *buf, size_t buf_len)
 {
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 	int err;
 
 	if (!buf) {
@@ -233,7 +233,7 @@ void location_cellular_ext_result_set(
 	enum location_ext_result result,
 	struct location_data *location)
 {
-#if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_CELLULAR)
 	location_core_cellular_ext_result_set(result, location);
 #endif
 }
@@ -242,7 +242,7 @@ void location_wifi_ext_result_set(
 	enum location_ext_result result,
 	struct location_data *location)
 {
-#if defined(CONFIG_LOCATION_METHOD_WIFI_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_WIFI)
 	location_core_wifi_ext_result_set(result, location);
 #endif
 }
