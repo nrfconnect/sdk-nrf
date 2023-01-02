@@ -377,8 +377,7 @@ static bool fetch_and_process_hci_msg(uint8_t *p_hci_buffer)
 	} else if (msg_type == SDC_HCI_MSG_TYPE_DATA) {
 		data_packet_process(p_hci_buffer);
 	} else {
-		__ASSERT(false, "sdc_hci_msg_type_t has changed. This if-else needs a new branch");
-		return false;
+		BT_ERR("Unexpected msg_type: %u. This if-else needs a new branch", msg_type);
 	}
 
 	return true;
