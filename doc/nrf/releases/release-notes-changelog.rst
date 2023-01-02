@@ -201,7 +201,47 @@ Bluetooth samples
 Bluetooth mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* :ref:`bluetooth_ble_peripheral_lbs_coex` sample:
+
+  * Updated:
+
+    * Enabled :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` configuration option.
+
+* :ref:`bt_mesh_chat` sample:
+
+  * Updated:
+
+    * Enabled :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` configuration option.
+
+* :ref:`bluetooth_mesh_light` sample:
+
+  * Updated:
+
+    * Enabled :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` configuration option.
+
+* :ref:`bluetooth_mesh_light_switch` sample:
+
+  * Updated:
+
+    * Enabled :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` configuration option.
+
+* :ref:`bluetooth_mesh_sensor_client` sample:
+
+  * Updated:
+
+    * Enabled :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` configuration option.
+
+* :ref:`bluetooth_mesh_sensor_server` sample:
+
+  * Updated:
+
+    * Enabled :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` configuration option.
+
+* :ref:`bluetooth_mesh_light_lc` sample:
+
+  * Updated:
+
+    * Enabled :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` configuration option.
 
 nRF9160 samples
 ---------------
