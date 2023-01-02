@@ -18,6 +18,7 @@
 #include <zephyr/irq.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/byteorder.h>
+#include <zephyr/drivers/gpio.h>
 
 /* Constants */
 
@@ -34,6 +35,9 @@
 
 /* Minimum retransmit time */
 #define RETRANSMIT_DELAY_MIN 435
+
+/* Transmission time */
+#define TRANSMIT_DELAY_US 84
 
 /* Interrupt flags */
 /* Interrupt mask value for TX success. */
@@ -61,6 +65,10 @@
 	(NRF_RADIO_SHORT_READY_START_MASK | NRF_RADIO_SHORT_END_DISABLE_MASK |           \
 	NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK | NRF_RADIO_SHORT_DISABLED_RSSISTOP_MASK)
 
+#ifdef DEBUG_ESB_TX
+extern const struct gpio_dt_spec debug_output;
+#endif 
+
 /* Internal Enhanced ShockBurst module state. */
 enum esb_state {
 	ESB_STATE_IDLE,		/* Idle. */
@@ -72,6 +80,7 @@ enum esb_state {
 				 */
 	ESB_STATE_PRX,		/* Receiving packets without ACK. */
 	ESB_STATE_PRX_SEND_ACK, /* Transmitting ACK in RX mode. */
+	ESB_STATE_PTX_TXIDLE,  /* Transmitter stage is idle but enabled */
 };
 
 /* Pipe info PID and CRC and acknowledgment payload. */
@@ -231,6 +240,7 @@ static uint32_t radio_shorts_common = RADIO_SHORTS_COMMON;
 static uint8_t ppi_ch_radio_address_timer_stop;
 static uint8_t ppi_ch_timer_compare0_radio_disable;
 static uint8_t ppi_ch_timer_compare1_radio_txen;
+static uint8_t ppi_ch_radio_end_timer_start;
 
 static uint32_t ppi_all_channels_mask;
 
@@ -238,6 +248,7 @@ static uint32_t ppi_all_channels_mask;
  * configuration and state. Note that they will be 0 initialized.
  */
 static void (*on_radio_disabled)(void);
+static void (*on_timer_compare1)(void);
 static void (*update_rf_payload_format)(uint32_t payload_length);
 
 /*  The following functions are assigned to the function pointers above. */
@@ -246,6 +257,7 @@ static void on_radio_disabled_tx(void);
 static void on_radio_disabled_tx_wait_for_ack(void);
 static void on_radio_disabled_rx(void);
 static void on_radio_disabled_rx_ack(void);
+static void on_radio_end_tx_noack(void);
 
 /*  Function to do bytewise bit-swap on an unsigned 32-bit value */
 static uint32_t bytewise_bit_swap(const uint8_t *input)
@@ -576,7 +588,10 @@ static bool rx_fifo_push_rfbuf(uint8_t pipe, uint8_t pid)
 
 static void esb_timer_handler(nrf_timer_event_t event_type, void *context)
 {
-
+	nrf_timer_event_clear(esb_timer.p_reg, NRF_TIMER_EVENT_COMPARE1);	
+	if(NULL != on_timer_compare1) {
+		on_timer_compare1();
+	}
 }
 
 static int sys_timer_init(void)
@@ -623,6 +638,11 @@ static int ppi_init(void)
 		goto error;
 	}
 
+	nrfx_err = nrfx_gppi_channel_alloc(&ppi_ch_radio_end_timer_start);
+	if (nrfx_err != NRFX_SUCCESS) {
+		goto error;
+	}
+
 	nrfx_gppi_channel_endpoints_setup(ppi_ch_radio_address_timer_stop,
 			nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS),
 			nrfx_timer_task_address_get(&esb_timer, NRF_TIMER_TASK_SHUTDOWN));
@@ -634,6 +654,11 @@ static int ppi_init(void)
 	nrfx_gppi_channel_endpoints_setup(ppi_ch_timer_compare1_radio_txen,
 			nrfx_timer_event_address_get(&esb_timer, NRF_TIMER_EVENT_COMPARE1),
 			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
+
+	nrfx_gppi_channel_endpoints_setup(ppi_ch_radio_end_timer_start,
+			nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_END),
+			nrfx_timer_task_address_get(&esb_timer, NRF_TIMER_TASK_START));
+
 
 	ppi_all_channels_mask = (BIT(ppi_ch_radio_address_timer_stop) |
 				 BIT(ppi_ch_timer_compare0_radio_disable) |
@@ -655,6 +680,8 @@ static void ppi_deinit(void)
 			nrfx_timer_event_address_get(&esb_timer, NRF_TIMER_EVENT_COMPARE0));
 	nrfx_gppi_event_endpoint_clear(ppi_ch_timer_compare1_radio_txen,
 			nrfx_timer_event_address_get(&esb_timer, NRF_TIMER_EVENT_COMPARE1));
+	nrfx_gppi_event_endpoint_clear(ppi_ch_radio_end_timer_start,
+			nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_END));
 
 	nrfx_gppi_task_endpoint_clear(ppi_ch_radio_address_timer_stop,
 			nrfx_timer_task_address_get(&esb_timer, NRF_TIMER_TASK_SHUTDOWN));
@@ -662,15 +689,19 @@ static void ppi_deinit(void)
 			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_DISABLE));
 	nrfx_gppi_event_endpoint_clear(ppi_ch_timer_compare1_radio_txen,
 			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
+	nrfx_gppi_task_endpoint_clear(ppi_ch_radio_end_timer_start,
+			nrfx_timer_task_address_get(&esb_timer, NRF_TIMER_TASK_START));
 
 	nrfx_gppi_channel_free(ppi_ch_radio_address_timer_stop);
 	nrfx_gppi_channel_free(ppi_ch_timer_compare0_radio_disable);
 	nrfx_gppi_channel_free(ppi_ch_timer_compare1_radio_txen);
+	nrfx_gppi_channel_free(ppi_ch_radio_end_timer_start);
 }
 
 static void start_tx_transaction(void)
 {
 	bool ack;
+    bool isTxIdle = false;
 	struct esb_radio_pdu *pdu = (struct esb_radio_pdu *)tx_payload_buffer;
 	last_tx_attempts = 1;
 	/* Prepare the payload */
@@ -716,14 +747,29 @@ static void start_tx_transaction(void)
 			retransmits_remaining = esb_cfg.retransmit_count;
 			on_radio_disabled = on_radio_disabled_tx;
 			esb_state = ESB_STATE_PTX_TX_ACK;
+			nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
+		} else if(esb_cfg.never_disable_tx) {
+			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common & ~RADIO_SHORTS_END_DISABLE_Msk);
+
+			// Configure timer to produce an ISR after retransmit_delay
+			nrfx_timer_clear(&esb_timer);
+			nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL1, esb_cfg.retransmit_delay - TRANSMIT_DELAY_US, true);
+
+			// Configure PPI to start the timer when transmission ends
+			nrfx_gppi_channels_disable(ppi_all_channels_mask);
+			nrfx_gppi_channels_enable(BIT(ppi_ch_radio_end_timer_start));
+
+			on_timer_compare1 = on_radio_end_tx_noack;
+			on_radio_disabled = NULL;
+            isTxIdle = (esb_state == ESB_STATE_PTX_TXIDLE || esb_state == ESB_STATE_PTX_TX) ? true : false;
+			esb_state = ESB_STATE_PTX_TX;
 		} else {
 			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
 
 			on_radio_disabled = on_radio_disabled_tx_noack;
 			esb_state = ESB_STATE_PTX_TX;
+			nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
 		}
-
-		nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
 
 		break;
 
@@ -744,8 +790,36 @@ static void start_tx_transaction(void)
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_PAYLOAD);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
 
-	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_TXEN);
+#ifdef DEBUG_ESB_TX
+	gpio_pin_set_dt(&debug_output, 1);
+#endif
+	// Trigger different radio event if radio is disabled or idle
+	if (isTxIdle) {
+    	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_START);
+	}
+    else {
+		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_TXEN);
+	}
+#ifdef DEBUG_ESB_TX
+	gpio_pin_set_dt(&debug_output, 0);
+#endif
+
+}
+
+static void on_radio_end_tx_noack(void)
+{
+	interrupt_flags |= INT_TX_SUCCESS_MSK;
+	tx_fifo_remove_last();
+
+	if (tx_fifo.count == 0) {
+		esb_state = ESB_STATE_PTX_TXIDLE;
+		NVIC_SetPendingIRQ(ESB_EVT_IRQ);
+	} else {
+		NVIC_SetPendingIRQ(ESB_EVT_IRQ);
+		start_tx_transaction();
+	}
 }
 
 static void on_radio_disabled_tx_noack(void)
@@ -775,8 +849,14 @@ static void on_radio_disabled_tx(void)
 	 */
 
 	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL0, wait_for_ack_timeout_us, false);
-	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL1, (esb_cfg.retransmit_delay - 130),
+	if(esb_cfg.optimize_txen_delay) {
+		nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL1, (esb_cfg.retransmit_delay - 40),
 			   false);
+	} else {
+		nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL1, (esb_cfg.retransmit_delay - 130),
+			   false);		
+	}
+
 
 	nrfx_timer_clear(&esb_timer);
 
@@ -1173,6 +1253,11 @@ int esb_init(const struct esb_config *config)
 		return err;
 	}
 
+	if(esb_cfg.optimize_txen_delay) {
+		NRF_RADIO->MODECNF0 = (NRF_RADIO->MODECNF0 & ~RADIO_MODECNF0_RU_Pos) | RADIO_MODECNF0_RU_Fast << RADIO_MODECNF0_RU_Pos;
+	}
+
+	
 #if IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS)
 
 	/* Ensure IRQs are disabled before attaching. */
@@ -1267,6 +1352,7 @@ static struct payload_wrap *find_free_payload_cont(void)
 
 int esb_write_payload(const struct esb_payload *payload)
 {
+
 	if (!esb_initialized) {
 		return -EACCES;
 	}
@@ -1480,6 +1566,11 @@ int esb_pop_tx(void)
 	irq_unlock(key);
 
 	return 0;
+}
+
+bool esb_tx_full(void)
+{
+    return tx_fifo.count >= CONFIG_ESB_TX_FIFO_SIZE;
 }
 
 int esb_flush_rx(void)

@@ -45,7 +45,9 @@ extern "C" {
 		.retransmit_count = 3,					       \
 		.tx_mode = ESB_TXMODE_AUTO,				       \
 		.payload_length = 32,					       \
-		.selective_auto_ack = false                                    \
+		.selective_auto_ack = false,                                    \
+		.never_disable_tx = false,                                    \
+		.optimize_txen_delay = false                                    \
 	}
 
 /** @brief Default legacy radio parameters.
@@ -64,7 +66,9 @@ extern "C" {
 		.retransmit_count = 3,					       \
 		.tx_mode = ESB_TXMODE_AUTO,				       \
 		.payload_length = 32,					       \
-		.selective_auto_ack = false                                    \
+		.selective_auto_ack = false,                                    \
+		.never_disable_tx = false,                                    \
+		.optimize_txen_delay = false                                    \
 	}
 
 /** @brief Macro to create an initializer for a TX data packet.
@@ -238,6 +242,20 @@ struct esb_config {
 				   *  will be acknowledged ignoring the noack
 				   *  field.
 				   */
+	bool never_disable_tx; 	/**< When this feature is enabled, 
+					* if mode is NRF_ESB_MODE_PTX and if packet 
+					* is not acknowledged, then radio peripheral will
+					* remain in TXIDLE state instead of TXDISABLE when
+					* transmission is pending. This reduce delay between
+					* consecutive transmissions but consumes more energy. */
+
+	bool optimize_txen_delay; 	/**<  When this feature is enabled, radio TXEN delay is 
+					* cut off from 130µs to 40 µs.
+					* The radio peripheral needs some time to start-up
+					* analogs components of the radio. On nRF51 and nRF24L series, 
+					* a hard coded 130 µs delay is implemented. If ESB connection 
+					* is achieved only between nRF52 devices, this delay can be cut off
+					* to 40 µs. */
 };
 
 /** @brief Initialize the Enhanced ShockBurst module.
@@ -333,6 +351,13 @@ int esb_flush_tx(void);
  *           Otherwise, a (negative) error code is returned.
  */
 int esb_pop_tx(void);
+
+/** @brief This function will check if space is remaining in Tx FIFO.
+ *
+ * @retval  True                            If the Tx FIFO is full
+ *   		False                           If space left in Tx FIFO
+ */
+bool esb_tx_full(void);
 
 /** @brief Flush the RX buffer.
  *
