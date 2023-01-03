@@ -164,7 +164,7 @@ void esb_ppi_for_wait_for_rx_set(void)
 	
 	nrf_ppi_channel_endpoint_setup(NRF_PPI, radio_end_timer_start,
 		nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_END),
-		nrfx_timer_task_address_get(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_START));
+		nrf_timer_task_address_get(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_START));
 	
 	ppi_channels_mask = (BIT(radio_end_timer_start));
 	

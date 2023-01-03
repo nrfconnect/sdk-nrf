@@ -876,7 +876,7 @@ static void start_tx_transaction(void)
 			nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
 		} else if(esb_cfg.never_disable_tx) {
 			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common & ~RADIO_SHORTS_END_DISABLE_Msk);
-
+			nrf_timer_shorts_set(esb_timer.p_reg,(NRF_TIMER_SHORT_COMPARE1_STOP_MASK | NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK));
 			// Configure timer to produce an ISR after retransmit_delay
 			nrfx_timer_clear(&esb_timer);
 			nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL1, esb_cfg.retransmit_delay - TRANSMIT_DELAY_US, true);
