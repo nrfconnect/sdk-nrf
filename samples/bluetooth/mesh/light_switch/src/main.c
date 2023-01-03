@@ -31,6 +31,10 @@ static void bt_ready(int err)
 		return;
 	}
 
+	if (IS_ENABLED(CONFIG_BT_MESH_LOW_POWER)) {
+		bt_mesh_lpn_set(true);
+	}
+
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
 	}
