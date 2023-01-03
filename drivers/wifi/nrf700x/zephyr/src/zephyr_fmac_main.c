@@ -35,17 +35,18 @@ struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 #ifndef CONFIG_NRF700X_RADIO_TEST
 #ifdef CONFIG_NRF700X_DATA_TX
 
-#define MAX_TX_AGG 9
-#define RX_NUM_BUFS 63
-#define RX_BUF_SIZE 1600
 #define MAX_RX_QUEUES 3
 
-#define TOTAL_TX_SIZE (TX_MAX_DATA_SIZE + TX_BUF_HEADROOM)
+#define TOTAL_TX_SIZE (CONFIG_TX_MAX_DATA_SIZE + TX_BUF_HEADROOM)
+
+BUILD_ASSERT(CONFIG_MAX_TX_TOKENS >= 1, "At least one TX token is required");
+BUILD_ASSERT(CONFIG_MAX_TX_AGGREGATION <= 16, "Max TX aggregation is 16");
+BUILD_ASSERT(CONFIG_RX_NUM_BUFS >= 1, "At least one RX buffer is required");
 
 BUILD_ASSERT(RPU_PKTRAM_SIZE >=
-		((MAX_TX_AGG * MAX_TX_TOKENS * TOTAL_TX_SIZE) +
-		(RX_NUM_BUFS * RX_BUF_SIZE)),
-		"Not enough PKTRAM");
+		((CONFIG_MAX_TX_AGGREGATION * CONFIG_MAX_TX_TOKENS * TOTAL_TX_SIZE) +
+		(CONFIG_RX_NUM_BUFS * CONFIG_RX_MAX_DATA_SIZE)),
+		"Packet RAM overflow in Sheliak");
 
 static const unsigned char aggregation = 1;
 static const unsigned char wmm = 1;
@@ -54,15 +55,15 @@ static const unsigned char max_num_rx_agg_sessions = 2;
 static const unsigned char reorder_buf_size = 64;
 static const unsigned char max_rxampdu_size = MAX_RX_AMPDU_SIZE_64KB;
 
-static const unsigned char max_tx_aggregation = MAX_TX_AGG;
+static const unsigned char max_tx_aggregation = CONFIG_MAX_TX_AGGREGATION;
 
-static const unsigned int rx1_num_bufs = RX_NUM_BUFS / MAX_RX_QUEUES;
-static const unsigned int rx2_num_bufs = RX_NUM_BUFS / MAX_RX_QUEUES;
-static const unsigned int rx3_num_bufs = RX_NUM_BUFS / MAX_RX_QUEUES;
+static const unsigned int rx1_num_bufs = CONFIG_RX_NUM_BUFS / MAX_RX_QUEUES;
+static const unsigned int rx2_num_bufs = CONFIG_RX_NUM_BUFS / MAX_RX_QUEUES;
+static const unsigned int rx3_num_bufs = CONFIG_RX_NUM_BUFS / MAX_RX_QUEUES;
 
-static const unsigned int rx1_buf_sz = RX_BUF_SIZE;
-static const unsigned int rx2_buf_sz = RX_BUF_SIZE;
-static const unsigned int rx3_buf_sz = RX_BUF_SIZE;
+static const unsigned int rx1_buf_sz = CONFIG_RX_MAX_DATA_SIZE;
+static const unsigned int rx2_buf_sz = CONFIG_RX_MAX_DATA_SIZE;
+static const unsigned int rx3_buf_sz = CONFIG_RX_MAX_DATA_SIZE;
 
 static const unsigned char rate_protection_type;
 #else
