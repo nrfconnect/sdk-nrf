@@ -8,7 +8,7 @@ on:
       - 'v*-branch'
     paths:
       - '.github/workflows/docbuild.yml'
-      - '*.rst'
+      - '**.rst'
       - '**/Kconfig'
       - 'doc/**'
       - 'include/**'
