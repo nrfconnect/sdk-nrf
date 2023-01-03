@@ -23,4 +23,4 @@ config AZURE_FOTA_VERSION_MAX_LEN
 # to Azure IoT Hub. If this Kconfig is not set when building with Azure FOTA, the library will
 # throw a build assert.
 config AZURE_FOTA_SEC_TAG
-	default AZURE_IOT_HUB_SEC_TAG
+	default MQTT_HELPER_SEC_TAG

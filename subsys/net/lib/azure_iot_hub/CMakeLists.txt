@@ -6,7 +6,6 @@
 
 zephyr_library_sources(
 	src/azure_iot_hub.c
-	src/azure_iot_hub_mqtt.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_AZURE_IOT_HUB_DPS

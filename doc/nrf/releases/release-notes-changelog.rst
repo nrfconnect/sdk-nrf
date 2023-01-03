@@ -506,6 +506,12 @@ Modem libraries
 Libraries for networking
 ------------------------
 
+* Added :ref:`lib_mqtt_helper` library that simplifies Zephyr MQTT API and socket handling.
+
+* :ref:`lib_azure_iot_hub` library:
+
+  * Pulled out :file:`azure_iot_hub_mqtt.c` that is now implemented by a new library :ref:`lib_mqtt_helper`.
+
 * :ref:`lib_multicell_location` library:
 
   * This library is now deprecated and relevant functionality is available through the :ref:`lib_location` library.

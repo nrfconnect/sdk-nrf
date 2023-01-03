@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -8,14 +8,12 @@
 #include <zephyr/kernel.h>
 #include <string.h>
 #include <zephyr/init.h>
-
-#include "azure_iot_hub_mqtt.h"
+#include <net/mqtt_helper.h>
 
 #include "zephyr/net/cmock_socket.h"
 #include "cmock_mqtt.h"
 
-#define TEST_PORT		8883
-#define TEST_HOSTNAME		"test-hostname.azure-devices.net"
+#define TEST_HOSTNAME		"test-some-host-name.net"
 #define TEST_HOSTNAME_LEN	(sizeof(TEST_HOSTNAME) - 1)
 
 #define TEST_DEVICE_ID		"test-device"
@@ -39,7 +37,7 @@
 extern struct mqtt_client mqtt_client;
 extern enum mqtt_state mqtt_state;
 extern struct k_sem connection_poll_sem;
-extern k_tid_t azure_iot_hub_mqtt_thread;
+extern k_tid_t mqtt_helper_thread;
 extern int unity_main(void);
 extern enum mqtt_state mqtt_state_get(void);
 extern void mqtt_state_set(enum mqtt_state state);
@@ -63,7 +61,7 @@ void setUp(void)
 	__cmock_mqtt_keepalive_time_left_IgnoreAndReturn(0);
 
 	/* Suspend the polling thread to have full control over polling. */
-	k_thread_suspend(azure_iot_hub_mqtt_thread);
+	k_thread_suspend(mqtt_helper_thread);
 
 	/* Force all tests to start in uninitialized state. */
 	mqtt_state = MQTT_STATE_UNINIT;
@@ -168,8 +166,7 @@ static void send_mqtt_event(enum mqtt_evt_type type, int optional_data)
 }
 
 /* Callbacks used in tests. */
-static void cb_on_publish(struct azure_iot_hub_buf topic,
-		       struct azure_iot_hub_buf payload)
+static void cb_on_publish(struct mqtt_helper_buf topic, struct mqtt_helper_buf payload)
 {
 	TEST_ASSERT_EQUAL(TEST_TOPIC_1_LEN, topic.size);
 	TEST_ASSERT_EQUAL_MEMORY(TEST_TOPIC_1, topic.ptr, TEST_TOPIC_1_LEN);
@@ -252,7 +249,6 @@ void test_mqtt_helper_init_when_connected(void)
 void test_mqtt_helper_connect_when_disconnected(void)
 {
 	struct mqtt_helper_conn_params conn_params = {
-		.port = TEST_PORT,
 		.hostname = {
 			.ptr = TEST_HOSTNAME,
 			.size = TEST_HOSTNAME_LEN,
@@ -384,7 +380,7 @@ void test_on_publish_too_large_incoming_msg(void)
 		.type = MQTT_EVT_PUBLISH,
 		.param.publish.message = {
 			.payload = {
-				.len = CONFIG_AZURE_IOT_HUB_MQTT_PAYLOAD_BUFFER_LEN + 1,
+				.len = CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN + 1,
 			},
 		}
 	};

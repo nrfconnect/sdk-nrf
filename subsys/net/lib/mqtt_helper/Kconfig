@@ -1,0 +1,114 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig MQTT_HELPER
+	bool "MQTT helper library"
+	select NET_SOCKETS_POSIX_NAMES if !POSIX_API
+	select MQTT_LIB
+	help
+	  Convenience library that simplifies Zephyr MQTT API and socket handling.
+
+if MQTT_HELPER
+
+config MQTT_HELPER_NATIVE_TLS
+	bool "Native TLS socket"
+	help
+	  Enabling this option will configure the socket to be native for TLS
+	  instead of offloading TLS operations to the device's networking stack.
+
+config MQTT_HELPER_PORT
+	int "MQTT broker port"
+	default 8883 if MQTT_LIB_TLS
+	default 1883
+	help
+	  Port number to connect to the MQTT broker.
+
+config MQTT_HELPER_SEC_TAG
+	int "TLS sec tag"
+	depends on MQTT_LIB_TLS
+	default -1
+	help
+	  Security tag where TLS credentials are stored.
+
+config MQTT_HELPER_SEND_TIMEOUT
+	bool "Send data with socket timeout"
+	default y
+	help
+	  Configures a timeout on the MQTT socket to ensure that a call to the send
+	  function will not block indefinitely. To configure the length of the timeout,
+	  use MQTT_HELPER_SEND_TIMEOUT_SEC.
+
+config MQTT_HELPER_SEND_TIMEOUT_SEC
+	int "Send timeout"
+	depends on MQTT_HELPER_SEND_TIMEOUT
+	default 60
+	help
+	  Timeout in seconds to use when the MQTT socket is configured to
+	  send with a timeout by enabling MQTT_HELPER_SEND_TIMEOUT.
+
+config MQTT_HELPER_STATIC_IP_ADDRESS
+	string "Static IP address"
+	help
+	  Set a static IP address to use when connecting to the MQTT broker.
+	  Leave the string empty to use DNS to resolve the IoT Hub hostname instead.
+
+config MQTT_HELPER_SECONDARY_SEC_TAG
+	int "Secondary TLS sec tag"
+	default -1
+	help
+	  Security tag where TLS credentials are stored.
+	  The secondary tag can be used to store for instance an additional server certificate.
+	  -1 indicates that the secondary sec tag is not used.
+
+config MQTT_HELPER_STACK_SIZE
+	int "Connection thread stack size"
+	default 2560
+	help
+	  The stack size of the internal thread in the library.
+	  The thread polls the MQTT socket while it's open.
+	  All MQTT-related callbacks happen in context of this thread, so the stack size may have
+	  to be adjusted for your needs.
+
+config MQTT_HELPER_RX_TX_BUFFER_SIZE
+	int "Buffer sizes for the MQTT library"
+	default 256
+	help
+	  Specifies maximum message size can be transmitted/received through
+	  MQTT (exluding MQTT PUBLISH payload).
+
+config MQTT_HELPER_PAYLOAD_BUFFER_LEN
+	int "Size of the MQTT PUBLISH payload buffer (receiving MQTT messages)"
+	default 2048 if NRF_MODEM_LIB
+	default 4096
+
+config MQTT_HELPER_PROVISION_CERTIFICATES
+	bool "Run-time provisioning of certificates"
+	depends on (BOARD_QEMU_X86 || BOARD_NATIVE_POSIX || BOARD_NRF7002DK_NRF5340_CPUAPP) && MQTT_LIB_TLS
+	default y
+	imply MBEDTLS_PEM_CERTIFICATE_FORMAT if MBEDTLS
+	help
+	  Enable run-time provisioning of certificates from the
+	  certificates header file selected by using MQTT_HELPER_CERTIFICATES_FILE
+	  This option is only available for emulation build targets,
+	  such as QEMU x86 or Native Posix.
+	  This option is only intended for testing and should not be used in a production scenario.
+	  Enabling this option means that the credentials used in the TLS communication towards the
+	  server will be exposed in flash memory.
+
+config MQTT_HELPER_CERTIFICATES_FILE
+	string "TLS certificates"
+	depends on MQTT_HELPER_PROVISION_CERTIFICATES
+	default "../cert/mqtt-certs.h"
+	help
+	  The default path for a header file that contains definitions for certificates that are
+	  used during run-time provisioning of TLS credentials.
+	  By default, the library expects the credentials to be in
+	  Privacy Enhanced Mail (PEM) format. See "mqtt-certs.h" for a template.
+
+module = MQTT_HELPER
+module-str = MQTT helper library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # MQTT_HELPER
