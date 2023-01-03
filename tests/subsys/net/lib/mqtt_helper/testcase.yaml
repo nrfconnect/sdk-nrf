@@ -1,7 +1,7 @@
 tests:
-  net.lib.azure_iot_hub_mqtt:
+  net.lib.mqtt_helper:
     platform_allow: qemu_cortex_m3 native_posix
     integration_platforms:
       - qemu_cortex_m3
       - native_posix
-    tags: azure_iot_hub_mqtt
+    tags: mqtt_helper

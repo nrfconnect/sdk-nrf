@@ -13,7 +13,7 @@ project(azure_iot_hub_dps_test)
 test_runner_generate(src/azure_iot_hub_dps_test.c)
 
 # Create mock
-cmock_handle(${NRF_DIR}/subsys/net/lib/azure_iot_hub/include/azure_iot_hub_mqtt.h)
+cmock_handle(${NRF_DIR}/include/net/mqtt_helper.h)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/settings/settings.h)
 
 # Add Unit Under Test source files
@@ -53,7 +53,7 @@ target_compile_options(app PRIVATE
 	-DCONFIG_AZURE_IOT_HUB_DPS_TIMEOUT_SEC=90
 	-DCONFIG_AZURE_IOT_HUB_DPS_DEVICE_ID_MAX_LEN=128
 	-DCONFIG_AZURE_IOT_HUB_DPS_HOSTNAME_MAX_LEN=64
-	-DCONFIG_AZURE_IOT_HUB_SEC_TAG=1
-	-DCONFIG_AZURE_IOT_HUB_PORT=8883
+	-DCONFIG_MQTT_HELPER_SEC_TAG=1
+	-DCONFIG_MQTT_HELPER_PORT=8883
 	-DCONFIG_AZURE_IOT_HUB_DPS_USER_NAME_BUFFER_SIZE=128
 )

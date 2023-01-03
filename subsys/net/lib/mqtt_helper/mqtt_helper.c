@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -14,33 +14,36 @@
 #else
 #include <zephyr/net/socket.h>
 #endif /* CONFIG_POSIX_API */
-#include <net/azure_iot_hub.h>
-#include <net/azure_iot_hub_dps.h>
 
-#include "azure_iot_hub_mqtt.h"
+#include <net/mqtt_helper.h>
+#include <zephyr/net/mqtt.h>
 
-#if defined(CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES)
-#include CONFIG_AZURE_IOT_HUB_CERTIFICATES_FILE
-#endif /* CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES */
+#if defined(CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES)
+#include CONFIG_MQTT_HELPER_CERTIFICATES_FILE
+#endif /* CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES */
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_REGISTER(azure_iot_hub_mqtt, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
+LOG_MODULE_REGISTER(mqtt_helper, CONFIG_MQTT_HELPER_LOG_LEVEL);
 
-/* Define a custom AZ_MQTT_STATIC macro that exposes internal variables when unit testing. */
+#if defined(CONFIG_MQTT_LIB_TLS)
+BUILD_ASSERT((CONFIG_MQTT_HELPER_SEC_TAG != -1), "Security tag must be configured");
+#endif /* CONFIG_MQTT_LIB_TLS */
+
+/* Define a custom MQTT_HELPER_STATIC macro that exposes internal variables when unit testing. */
 #if defined(CONFIG_UNITY)
-#define AZ_MQTT_STATIC
+#define MQTT_HELPER_STATIC
 #else
-#define AZ_MQTT_STATIC static
+#define MQTT_HELPER_STATIC static
 #endif
 
-AZ_MQTT_STATIC struct mqtt_client mqtt_client;
+MQTT_HELPER_STATIC struct mqtt_client mqtt_client;
 static struct sockaddr_storage broker;
-static char rx_buffer[CONFIG_AZURE_IOT_HUB_MQTT_RX_TX_BUFFER_LEN];
-static char tx_buffer[CONFIG_AZURE_IOT_HUB_MQTT_RX_TX_BUFFER_LEN];
-AZ_MQTT_STATIC char payload_buf[CONFIG_AZURE_IOT_HUB_MQTT_PAYLOAD_BUFFER_LEN];
-AZ_MQTT_STATIC K_SEM_DEFINE(connection_poll_sem, 0, 1);
+static char rx_buffer[CONFIG_MQTT_HELPER_RX_TX_BUFFER_SIZE];
+static char tx_buffer[CONFIG_MQTT_HELPER_RX_TX_BUFFER_SIZE];
+MQTT_HELPER_STATIC char payload_buf[CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN];
+MQTT_HELPER_STATIC K_SEM_DEFINE(connection_poll_sem, 0, 1);
 static struct mqtt_helper_cfg current_cfg;
-AZ_MQTT_STATIC enum mqtt_state mqtt_state = MQTT_STATE_UNINIT;
+MQTT_HELPER_STATIC enum mqtt_state mqtt_state = MQTT_STATE_UNINIT;
 
 static const char *state_name_get(enum mqtt_state state)
 {
@@ -56,12 +59,12 @@ static const char *state_name_get(enum mqtt_state state)
 	}
 }
 
-AZ_MQTT_STATIC enum mqtt_state mqtt_state_get(void)
+MQTT_HELPER_STATIC enum mqtt_state mqtt_state_get(void)
 {
 	return mqtt_state;
 }
 
-AZ_MQTT_STATIC void mqtt_state_set(enum mqtt_state new_state)
+MQTT_HELPER_STATIC void mqtt_state_set(enum mqtt_state new_state)
 {
 	bool notify_error = false;
 
@@ -140,7 +143,7 @@ static bool mqtt_state_verify(enum mqtt_state state)
 	return (mqtt_state_get() == state);
 }
 
-#if defined(CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES)
+#if defined(CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES)
 static int certificates_provision(void)
 {
 	static bool certs_added;
@@ -150,40 +153,83 @@ static int certificates_provision(void)
 		return 0;
 	}
 
-	err = tls_credential_add(CONFIG_AZURE_IOT_HUB_SEC_TAG,
-				 TLS_CREDENTIAL_CA_CERTIFICATE,
-				 ca_certificate,
-				 sizeof(ca_certificate));
-	if (err < 0) {
-		LOG_ERR("Failed to register CA certificate: %d",
-			err);
-		return err;
+	if (sizeof(ca_certificate) > 0) {
+		err = tls_credential_add(CONFIG_MQTT_HELPER_SEC_TAG,
+					 TLS_CREDENTIAL_CA_CERTIFICATE,
+					 ca_certificate,
+					 sizeof(ca_certificate));
+		if (err < 0) {
+			LOG_ERR("Failed to register CA certificate: %d", err);
+			return err;
+		}
 	}
 
-	err = tls_credential_add(CONFIG_AZURE_IOT_HUB_SEC_TAG,
-				 TLS_CREDENTIAL_PRIVATE_KEY,
-				 private_key,
-				 sizeof(private_key));
-	if (err < 0) {
-		LOG_ERR("Failed to register private key: %d", err);
-		return err;
+	if (sizeof(private_key) > 0) {
+		err = tls_credential_add(CONFIG_MQTT_HELPER_SEC_TAG,
+					 TLS_CREDENTIAL_PRIVATE_KEY,
+					 private_key,
+					 sizeof(private_key));
+		if (err < 0) {
+			LOG_ERR("Failed to register private key: %d", err);
+			return err;
+		}
 	}
 
-	err = tls_credential_add(CONFIG_AZURE_IOT_HUB_SEC_TAG,
-				 TLS_CREDENTIAL_SERVER_CERTIFICATE,
-				 device_certificate,
-				 sizeof(device_certificate));
-	if (err < 0) {
-		LOG_ERR("Failed to register public certificate: %d",
-			err);
-		return err;
+	if (sizeof(device_certificate) > 0) {
+		err = tls_credential_add(CONFIG_MQTT_HELPER_SEC_TAG,
+					 TLS_CREDENTIAL_SERVER_CERTIFICATE,
+					 device_certificate,
+					 sizeof(device_certificate));
+		if (err < 0) {
+			LOG_ERR("Failed to register public certificate: %d", err);
+			return err;
+		}
 	}
+
+	/* Secondary security tag entries. */
+
+#if CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG != -1
+
+	if (sizeof(ca_certificate_2) > 0) {
+		err = tls_credential_add(CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG,
+					 TLS_CREDENTIAL_CA_CERTIFICATE,
+					 ca_certificate_2,
+					 sizeof(ca_certificate_2));
+		if (err < 0) {
+			LOG_ERR("Failed to register secondary CA certificate: %d", err);
+			return err;
+		}
+	}
+
+	if (sizeof(private_key_2) > 0) {
+		err = tls_credential_add(CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG,
+					 TLS_CREDENTIAL_PRIVATE_KEY,
+					 private_key_2,
+					 sizeof(private_key_2));
+		if (err < 0) {
+			LOG_ERR("Failed to register secondary private key: %d", err);
+			return err;
+		}
+	}
+
+	if (sizeof(device_certificate_2) > 0) {
+		err = tls_credential_add(CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG,
+					 TLS_CREDENTIAL_SERVER_CERTIFICATE,
+					 device_certificate_2,
+					 sizeof(device_certificate_2));
+		if (err < 0) {
+			LOG_ERR("Failed to register secondary public certificate: %d", err);
+			return err;
+		}
+	}
+
+#endif /* CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG != -1 */
 
 	certs_added = true;
 
 	return 0;
 }
-#endif /* CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES */
+#endif /* CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES */
 
 static int publish_get_payload(struct mqtt_client *const mqtt_client, size_t length)
 {
@@ -211,15 +257,15 @@ static void send_ack(struct mqtt_client *const mqtt_client, uint16_t message_id)
 	LOG_DBG("PUBACK sent for message ID %d", message_id);
 }
 
-AZ_MQTT_STATIC void on_publish(const struct mqtt_evt *mqtt_evt)
+MQTT_HELPER_STATIC void on_publish(const struct mqtt_evt *mqtt_evt)
 {
 	int err;
 	const struct mqtt_publish_param *p = &mqtt_evt->param.publish;
-	struct azure_iot_hub_buf topic = {
+	struct mqtt_helper_buf topic = {
 		.ptr = (char *)p->message.topic.topic.utf8,
 		.size = p->message.topic.topic.size,
 	};
-	struct azure_iot_hub_buf payload = {
+	struct mqtt_helper_buf payload = {
 		.ptr = payload_buf,
 	};
 
@@ -245,7 +291,7 @@ AZ_MQTT_STATIC void on_publish(const struct mqtt_evt *mqtt_evt)
 	}
 }
 
-AZ_MQTT_STATIC void mqtt_evt_handler(struct mqtt_client *const mqtt_client,
+MQTT_HELPER_STATIC void mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			     const struct mqtt_evt *mqtt_evt)
 {
 	switch (mqtt_evt->type) {
@@ -320,10 +366,10 @@ static int broker_init(struct sockaddr_storage *broker,
 		.ai_socktype = SOCK_STREAM
 	};
 
-	if (sizeof(CONFIG_AZURE_IOT_HUB_STATIC_IP_ADDRESS) > 1) {
-		conn_params->hostname.ptr = CONFIG_AZURE_IOT_HUB_STATIC_IP_ADDRESS;
+	if (sizeof(CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS) > 1) {
+		conn_params->hostname.ptr = CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS;
 
-		LOG_DBG("Using static IP address: %s", CONFIG_AZURE_IOT_HUB_STATIC_IP_ADDRESS);
+		LOG_DBG("Using static IP address: %s", CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS);
 	} else {
 		LOG_DBG("Resolving IP address for %s", conn_params->hostname.ptr);
 	}
@@ -344,7 +390,7 @@ static int broker_init(struct sockaddr_storage *broker,
 			broker4->sin_addr.s_addr =
 				((struct sockaddr_in *)addr->ai_addr)->sin_addr.s_addr;
 			broker4->sin_family = AF_INET;
-			broker4->sin_port = htons(CONFIG_AZURE_IOT_HUB_PORT);
+			broker4->sin_port = htons(CONFIG_MQTT_HELPER_PORT);
 
 			inet_ntop(AF_INET, &broker4->sin_addr.s_addr, ipv4_addr,
 				  sizeof(ipv4_addr));
@@ -368,13 +414,6 @@ static int broker_init(struct sockaddr_storage *broker,
 static int client_connect(struct mqtt_helper_conn_params *conn_params)
 {
 	int err;
-	sec_tag_t sec_tag_list[] = {
-		CONFIG_AZURE_IOT_HUB_SEC_TAG,
-#if CONFIG_AZURE_IOT_HUB_SECONDARY_SEC_TAG > -1
-		CONFIG_AZURE_IOT_HUB_SECONDARY_SEC_TAG,
-#endif
-	};
-	struct mqtt_sec_config *tls_cfg = &(mqtt_client.transport).tls.config;
 	struct mqtt_utf8 user_name = {
 		.utf8 = conn_params->user_name.ptr,
 		.size = conn_params->user_name.size,
@@ -397,8 +436,22 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 	mqtt_client.rx_buf_size	        = sizeof(rx_buffer);
 	mqtt_client.tx_buf	        = tx_buffer;
 	mqtt_client.tx_buf_size	        = sizeof(tx_buffer);
+#if defined(CONFIG_MQTT_LIB_TLS)
 	mqtt_client.transport.type      = MQTT_TRANSPORT_SECURE;
+#else
+	mqtt_client.transport.type	= MQTT_TRANSPORT_NON_SECURE;
+#endif /* CONFIG_MQTT_LIB_TLS */
 	mqtt_client.user_name	        = conn_params->user_name.size > 0 ? &user_name : NULL;
+
+#if defined(CONFIG_MQTT_LIB_TLS)
+	struct mqtt_sec_config *tls_cfg = &(mqtt_client.transport).tls.config;
+
+	sec_tag_t sec_tag_list[] = {
+		CONFIG_MQTT_HELPER_SEC_TAG,
+#if CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG > -1
+		CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG,
+#endif
+	};
 
 	tls_cfg->peer_verify	        = TLS_PEER_VERIFY_REQUIRED;
 	tls_cfg->cipher_count	        = 0;
@@ -407,15 +460,16 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 	tls_cfg->sec_tag_list	        = sec_tag_list;
 	tls_cfg->session_cache	        = TLS_SESSION_CACHE_DISABLED;
 	tls_cfg->hostname	        = conn_params->hostname.ptr;
-	tls_cfg->set_native_tls		= IS_ENABLED(CONFIG_AZURE_IOT_HUB_NATIVE_TLS);
+	tls_cfg->set_native_tls		= IS_ENABLED(CONFIG_MQTT_HELPER_NATIVE_TLS);
 
-#if defined(CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES)
+#if defined(CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES)
 	err = certificates_provision();
 	if (err) {
 		LOG_ERR("Could not provision certificates, error: %d", err);
 		return err;
 	}
-#endif /* defined(CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES) */
+#endif /* defined(CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES) */
+#endif /* defined(CONFIG_MQTT_LIB_TLS) */
 
 	mqtt_state_set(MQTT_STATE_TRANSPORT_CONNECTING);
 
@@ -429,16 +483,18 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 
 	mqtt_state_set(MQTT_STATE_CONNECTING);
 
-	if (IS_ENABLED(CONFIG_AZURE_IOT_HUB_SEND_TIMEOUT)) {
+	if (IS_ENABLED(CONFIG_MQTT_HELPER_SEND_TIMEOUT)) {
 		struct timeval timeout = {
-			.tv_sec = CONFIG_AZURE_IOT_HUB_SEND_TIMEOUT_SEC
+			.tv_sec = CONFIG_MQTT_HELPER_SEND_TIMEOUT_SEC
 		};
 
-		err = setsockopt(mqtt_client.transport.tls.sock,
-				 SOL_SOCKET,
-				 SO_SNDTIMEO,
-				 &timeout,
-				 sizeof(timeout));
+#if defined(CONFIG_MQTT_LIB_TLS)
+		int sock  = mqtt_client.transport.tls.sock;
+#else
+		int sock = mqtt_client.transport.tcp.sock;
+#endif /* CONFIG_MQTT_LIB_TLS */
+
+		err = setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
 		if (err == -1) {
 			LOG_WRN("Failed to set timeout, errno: %d", errno);
 
@@ -446,7 +502,7 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 			err = 0;
 		} else {
 			LOG_DBG("Using send socket timeout of %d seconds",
-				CONFIG_AZURE_IOT_HUB_SEND_TIMEOUT_SEC);
+				CONFIG_MQTT_HELPER_SEND_TIMEOUT_SEC);
 		}
 	}
 
@@ -590,7 +646,7 @@ int mqtt_helper_deinit(void)
 	return 0;
 }
 
-AZ_MQTT_STATIC void mqtt_helper_poll_loop(void)
+MQTT_HELPER_STATIC void mqtt_helper_poll_loop(void)
 {
 	int ret;
 	struct pollfd fds[1] = {0};
@@ -600,7 +656,11 @@ AZ_MQTT_STATIC void mqtt_helper_poll_loop(void)
 	LOG_DBG("Took connection_poll_sem");
 
 	fds[0].events = POLLIN;
-	fds[0].fd = mqtt_client.transport.tls.sock;
+#if defined(CONFIG_MQTT_LIB_TLS)
+	fds[0].fd  = mqtt_client.transport.tls.sock;
+#else
+	fds[0].fd = mqtt_client.transport.tcp.sock;
+#endif /* CONFIG_MQTT_LIB_TLS */
 
 	LOG_DBG("Starting to poll on socket, fd: %d", fds[0].fd);
 
@@ -636,10 +696,8 @@ AZ_MQTT_STATIC void mqtt_helper_poll_loop(void)
 			ret = mqtt_input(&mqtt_client);
 			if (ret) {
 				LOG_ERR("Cloud MQTT input error: %d", ret);
-				if (ret == -ENOTCONN) {
-					(void)mqtt_abort(&mqtt_client);
-					break;
-				}
+				(void)mqtt_abort(&mqtt_client);
+				break;
 			}
 
 			/* If connection state is set to STATE_DISCONNECTED at
@@ -695,6 +753,6 @@ static void mqtt_helper_run(void)
 	}
 }
 
-K_THREAD_DEFINE(azure_iot_hub_mqtt_thread, CONFIG_AZURE_IOT_HUB_STACK_SIZE,
+K_THREAD_DEFINE(mqtt_helper_thread, CONFIG_MQTT_HELPER_STACK_SIZE,
 		mqtt_helper_run, false, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);

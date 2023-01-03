@@ -14,7 +14,7 @@
 #include "azure_iot_hub_dps.h"
 #include "azure_iot_hub_dps_private.h"
 
-#include "cmock_azure_iot_hub_mqtt.h"
+#include "cmock_mqtt_helper.h"
 #include "cmock_settings.h"
 
 #define TEST_DPS_HOSTNAME			CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME
@@ -88,7 +88,6 @@ void tearDown(void)
 
 int mqtt_helper_connect_stub(struct mqtt_helper_conn_params *conn_params, int num_calls)
 {
-	TEST_ASSERT_EQUAL(8883, conn_params->port);
 	TEST_ASSERT_EQUAL_STRING(TEST_DPS_HOSTNAME, conn_params->hostname.ptr);
 	TEST_ASSERT_EQUAL_MEMORY(conn_params->device_id.ptr, TEST_REGISTRATION_ID,
 				 TEST_REGISTRATION_ID_LEN);
@@ -100,7 +99,6 @@ int mqtt_helper_connect_stub(struct mqtt_helper_conn_params *conn_params, int nu
 
 int mqtt_helper_connect_stub_defaults(struct mqtt_helper_conn_params *conn_params, int num_calls)
 {
-	TEST_ASSERT_EQUAL(8883, conn_params->port);
 	TEST_ASSERT_EQUAL_STRING(TEST_DPS_HOSTNAME, conn_params->hostname.ptr);
 	TEST_ASSERT_EQUAL_MEMORY(conn_params->device_id.ptr, TEST_REGISTRATION_ID_DEFAULT,
 				 TEST_REGISTRATION_ID_DEFAULT_LEN);

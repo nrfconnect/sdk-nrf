@@ -12,8 +12,7 @@ menuconfig $(module)
 	bool
 	prompt "Azure IoT Hub" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
 	select AZURE_SDK
-	select NET_SOCKETS_POSIX_NAMES if !POSIX_API
-	select MQTT_LIB
+	select MQTT_HELPER
 	select MQTT_LIB_TLS
 	select EXPERIMENTAL
 
@@ -29,17 +28,6 @@ config AZURE_IOT_HUB_HOSTNAME
 	string "Azure IoT Hub hostname"
 	help
 	  Hostname to Azure IoT Hub instance.
-
-config AZURE_IOT_HUB_PORT
-	int "Azure IoT Hub port"
-	default 8883
-	help
-	  Port number to connect to on Azure IoT Hub instance.
-
-config AZURE_IOT_HUB_SEC_TAG
-	int "TLS sec tag"
-	help
-	  Security tag where TLS credentials are stored.
 
 config AZURE_IOT_HUB_AUTO_DEVICE_TWIN_REQUEST
 	bool "Request device twin automatically when connected"
@@ -57,88 +45,11 @@ config AZURE_IOT_HUB_DPS
 	  host name, provision the device and retrieve the IoT hub host name to
 	  use.
 
-config AZURE_IOT_HUB_SEND_TIMEOUT
-	bool "Send data with socket timeout"
-	default y
-	help
-	  Configures a timeout on the Azure IoT Hub socket to ensure that a call to the send
-	  function will not block indefinitely. To configure the length of the timeout,
-	  use AZURE_IOT_HUB_SEND_TIMEOUT_SEC.
-
-config AZURE_IOT_HUB_STATIC_IP_ADDRESS
-	string "Static IP address"
-	help
-	  Set a static IP address to use when connecting to Azure IoT Hub.
-	  Leave the string empty to use DNS to resolve the IoT Hub hostname instead.
-
-config AZURE_IOT_HUB_NATIVE_TLS
-	bool "Native TLS socket"
-	help
-	  Enabling this option will configure the socket to be native for TLS
-	  instead of offloading TLS operations to the modem.
-
-config AZURE_IOT_HUB_PROVISION_CERTIFICATES
-	bool "Run-time provisioning of certificates"
-	default y if BOARD_QEMU_X86
-	imply MBEDTLS_PEM_CERTIFICATE_FORMAT if MBEDTLS
-	help
-	  Enable run-time provisioning of certificates from the
-	  certificates header file selected by using AZURE_IOT_HUB_CERTIFICATES_FILE
-	  This option is only available for QEMU x86 build targets.
-
-config AZURE_IOT_HUB_CERTIFICATES_FILE
-	string "Azure IoT Hub certificates"
-	depends on AZURE_IOT_HUB_PROVISION_CERTIFICATES
-	default "../include/azure-certs.h"
-	help
-	  The default path for a header file that contains definitions for certificates that are
-	  used during run-time provisioning of TLS credentials.
-	  By default, the library expects the credentials to be in
-	  Privacy Enhanced Mail (PEM) format. See "azure-certs.h" for a template.
-
-
-config AZURE_IOT_HUB_SEND_TIMEOUT_SEC
-	int "Send timeout"
-	depends on AZURE_IOT_HUB_SEND_TIMEOUT
-	default 60
-	help
-	  Timeout in seconds to use when the Azure IoT Hub socket is configured to
-	  send with a timeout by enabling AZURE_IOT_HUB_SEND_TIMEOUT.
-
 config AZURE_IOT_HUB_USER_NAME_BUF_SIZE
 	int "User name max length"
 	default 128
 	help
 	  Maximum length of the user name.
-
-config AZURE_IOT_HUB_SECONDARY_SEC_TAG
-	int "Secondary TLS sec tag"
-	default -1
-	help
-	  Security tag where TLS credentials are stored.
-	  The secondary tag can be used to store for instance an additional server certificate.
-	  -1 indicates that the secondary sec tag is not used.
-
-config AZURE_IOT_HUB_MQTT_RX_TX_BUFFER_LEN
-	int "Buffer sizes for the MQTT library"
-	default 256
-	help
-	  Specifies maximum message size can be transmitted/received through
-	  MQTT (exluding MQTT PUBLISH payload).
-
-config AZURE_IOT_HUB_MQTT_PAYLOAD_BUFFER_LEN
-	int "Size of the MQTT PUBLISH payload buffer (receiving MQTT messages)"
-	default 2048 if NRF_MODEM_LIB
-	default 4096
-
-config AZURE_IOT_HUB_STACK_SIZE
-	int "Connection thread stack size"
-	default 2560
-	help
-	  The stack size of the internal thread in the library.
-	  The thread polls the MQTT socket while it's open.
-	  All MQTT-related callbacks happen in context of this thread, so the stack size may have
-	  to be adjusted for your needs.
 
 config AZURE_IOT_HUB_TOPIC_MAX_LEN
 	int "Max length of topic"
@@ -196,7 +107,7 @@ config AZURE_IOT_HUB_DPS_TIMEOUT_SEC
 	  This timeout is useful if the device can't reach the server and vice versa in the middle
 	  of the registration process.
 	  The timer is reset on every incoming MQTT message from the server.
-	  Note the difference between this timeout and AZURE_IOT_HUB_SEND_TIMEOUT, which only
+	  Note the difference between this timeout and MQTT_HELPER_SEND_TIMEOUT, which only
 	  affects send() calls.
 
 config AZURE_IOT_HUB_DPS_HOSTNAME_MAX_LEN

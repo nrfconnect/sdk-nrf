@@ -49,7 +49,7 @@ The Azure IoT Hub library requires provisioning of the following certificates an
    Azure has started the process of migrating their IoT Hub and DPS server certificates from `Baltimore CyberTrust Root Certificate`_ to `DigiCert Global Root G2`_.
    Azure advises to have both Baltimore CyberTrust Root and DigiCert Global Root G2 certificates for all devices to avoid disruption of service during the transition.
    Refer to `Azure IoT TLS: Critical changes`_ for updated information and timeline.
-   Due to this, it is recommended to provision the DigiCert Root G2 certificate to a secondary security tag set by the :kconfig:option:`CONFIG_AZURE_IOT_HUB_SECONDARY_SEC_TAG` option.
+   Due to this, it is recommended to provision the DigiCert Root G2 certificate to a secondary security tag set by the :kconfig:option:`CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG` option.
    This ensures that the device can connect after the transition.
 
 .. note::
@@ -71,10 +71,10 @@ Provisioning of the certificates
 .. include:: /includes/cert-flashing.txt
 
 .. note::
-   The chosen security tag while provisioning the certificates must be same as the security tag configured by the :kconfig:option:`CONFIG_AZURE_IOT_HUB_SEC_TAG` option.
+   The chosen security tag while provisioning the certificates must be same as the security tag configured by the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` option.
 
 .. note::
-   If more than one root server certificate is used, the second one can be provisioned to a different security tag and configured in the application using the :kconfig:option:`CONFIG_AZURE_IOT_HUB_SECONDARY_SEC_TAG` Kconfig option.
+   If more than one root server certificate is used, the second one can be provisioned to a different security tag and configured in the application using the :kconfig:option:`CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG` Kconfig option.
    The modem will check both security tags if necessary when verifying the server's certificate.
 
 
@@ -98,9 +98,9 @@ To connect to Azure IoT Hub without using DPS, complete the following minimum re
    You can also set the device ID at run time by populating the ``device_id`` member of the :c:struct:`azure_iot_hub_config` structure passed to the :c:func:`azure_iot_hub_connect` function when connecting.
    If the ``device_id.size`` buffer size is zero, the compile-time option :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID`` is used.
 #. Make sure that the device is already registered with your Azure IoT Hub, or follow the instructions in `Registering the device with Azure IoT Hub`_.
-#. Set the :kconfig:option:`CONFIG_AZURE_IOT_HUB_SEC_TAG` option to the security tag used in :ref:`azure_iot_hub_flash_certs`.
+#. Set the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` option to the security tag used in :ref:`azure_iot_hub_flash_certs`.
 
-   Optionally, set the :kconfig:option:`CONFIG_AZURE_IOT_HUB_SEC_TAG` option if multiple server certificates are provisioned.
+   Optionally, set the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` option if multiple server certificates are provisioned.
 
 
 .. _dps_config:
@@ -121,8 +121,8 @@ To connect to Azure IoT Hub using DPS, complete the following steps:
 #. Set the :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_REG_ID` option to the registration ID.
 
    You can also set the registration ID at run time.
-#. Set :kconfig:option:`CONFIG_AZURE_IOT_HUB_SEC_TAG` to the security tag used while :ref:`azure_iot_hub_flash_certs`.
-   Optionally, set the :kconfig:option:`CONFIG_AZURE_IOT_HUB_SEC_TAG` option if multiple server certificates are provisioned.
+#. Set :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` to the security tag used while :ref:`azure_iot_hub_flash_certs`.
+   Optionally, set the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` option if multiple server certificates are provisioned.
 
 
 Application integration
@@ -302,20 +302,23 @@ You can configure the following options when using this library:
 
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_HOSTNAME` - Sets the Azure IoT Hub host name. Note that the hostname can also be provided at run time.
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Configures the device ID. The device ID can also be set at run time.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_SEND_TIMEOUT` - Enables timeout when sending data to an IoT Hub.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_SEND_TIMEOUT_SEC` - The send timeout (in seconds) to use when sending data.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_USER_NAME_BUF_SIZE` - Set the user name buffer size. You can adjust the  buffer size to reduce stack usage, if you know the approximate size of your device ID.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_SEC_TAG` - Security tag where the Azure IoT Hub certificates are stored.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_SECONDARY_SEC_TAG` - Secondary security tag that can be used for a second CA root certificate.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_PORT` - TCP port number to connect to.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_MQTT_RX_TX_BUFFER_LEN` - Size of the MQTT RX and TX buffer that limits the message size, excluding the payload size.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_MQTT_PAYLOAD_BUFFER_LEN` - MQTT payload buffer size.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_STACK_SIZE` - Stack size for the internal thread in the library.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_AUTO_DEVICE_TWIN_REQUEST` - Automatically request the device twin upon connection to an IoT Hub.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_TOPIC_MAX_LEN` - The maximum topic length. The topic buffers are allocated on the stack. You may have to adjust this option to match with your device ID length.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_MSG_PROPERTY_RECV_MAX_COUNT` - The maximum number of message properties that can be parsed from an incoming message's topic.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_MSG_PROPERTY_BUFFER_SIZE` - The size of the internal message property buffer used when sending messages with message properties, allocated on the stack. You can adjust this to fit your needs.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_NATIVE_TLS` - Configures the socket to be native for TLS instead of offloading TLS operations to the modem.
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_USER_NAME_BUF_SIZE` - Sets the user name buffer size. You can adjust the  buffer size to reduce stack usage, if you know the approximate size of your device ID.
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_AUTO_DEVICE_TWIN_REQUEST` - Automatically requests the device twin upon connection to an IoT Hub.
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_TOPIC_MAX_LEN` - Sets the maximum topic length. The topic buffers are allocated on the stack. You may have to adjust this option to match with your device ID length.
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_MSG_PROPERTY_RECV_MAX_COUNT` - Sets the maximum number of message properties that can be parsed from an incoming message's topic.
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_MSG_PROPERTY_BUFFER_SIZE` - Sets the size of the internal message property buffer used when sending messages with message properties, allocated on the stack. You can adjust this to fit your needs.
+
+MQTT helper library specific options:
+
+* :kconfig:option:`CONFIG_MQTT_HELPER_SEND_TIMEOUT` - Enables timeout when sending data to an IoT Hub.
+* :kconfig:option:`CONFIG_MQTT_HELPER_SEND_TIMEOUT_SEC` - Sets the send timeout value (in seconds) to use when sending data.
+* :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` - Sets the security tag where the Azure IoT Hub certificates are stored.
+* :kconfig:option:`CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG` - Sets the secondary security tag that can be used for a second CA root certificate.
+* :kconfig:option:`CONFIG_MQTT_HELPER_PORT` - Sets the TCP port number to connect to.
+* :kconfig:option:`CONFIG_MQTT_HELPER_RX_TX_BUFFER_SIZE` - Sets the size of the MQTT RX and TX buffer that limits the message size, excluding the payload size.
+* :kconfig:option:`CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN` - Sets the MQTT payload buffer size.
+* :kconfig:option:`CONFIG_MQTT_HELPER_STACK_SIZE` - Sets the stack size for the internal thread in the library.
+* :kconfig:option:`CONFIG_MQTT_HELPER_NATIVE_TLS` - Configures the socket to be native for TLS instead of offloading TLS operations to the modem.
 
 DPS-specific configuration:
 

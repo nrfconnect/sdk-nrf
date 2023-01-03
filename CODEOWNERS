@@ -206,6 +206,7 @@ Kconfig*                                  @tejlmand
 /subsys/mpsl/cx/                          @jciupis @martintv
 /subsys/mpsl/fem/                         @jciupis @martintv
 /subsys/net/                              @rlubos
+/subsys/net/lib/mqtt_helper/              @simensrostad @jtguggedal
 /subsys/net/lib/azure_*                   @jtguggedal @simensrostad @coderbyheart
 /subsys/net/lib/ftp_client/               @junqingzou
 /subsys/net/lib/icalendar_parser/         @lats1980
@@ -273,6 +274,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/net/lib/lwm2m_*/            @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen @VeijoPesonen
 /tests/subsys/net/lib/nrf_cloud/          @tony-le-24
 /tests/subsys/net/lib/wifi_credentials*/  @maxd-nordic
+/tests/subsys/net/lib/mqtt_helper/        @simensrostad @jtguggedal
 /tests/subsys/partition_manager/region/   @hakonfam @sigvartmh
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
