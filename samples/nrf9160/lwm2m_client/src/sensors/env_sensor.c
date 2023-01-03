@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(env_sensor, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_DECLARE(app_sensors, CONFIG_APP_LOG_LEVEL);
 
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(sensor_sim), okay)
 #define ENV_SENSOR_NODE DT_NODELABEL(sensor_sim)

@@ -40,6 +40,9 @@ if TRANSPORT_BIS # Depends on TRANSPORT_BIS
 config AUDIO_TEST_TONE
 	default n
 
+config AUDIO_MUTE
+	default n
+
 endif # TRANSPORT_BIS
 
 endif # AUDIO_DEV = 1 (HEADSET)

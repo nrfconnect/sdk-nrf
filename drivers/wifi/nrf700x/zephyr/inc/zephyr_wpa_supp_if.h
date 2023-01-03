@@ -116,5 +116,7 @@ void wifi_nrf_wpa_supp_event_mgmt_rx_callbk_fn(void *if_priv,
 						struct nrf_wifi_umac_event_mlme *mgmt_rx_event,
 						unsigned int event_len);
 
+int wifi_nrf_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa);
+
 #endif /* CONFIG_WPA_SUPP */
 #endif /*  __ZEPHYR_WPA_SUPP_IF_H__ */

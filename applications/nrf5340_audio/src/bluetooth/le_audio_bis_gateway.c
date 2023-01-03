@@ -249,7 +249,7 @@ static int initialize(void)
 	return 0;
 }
 
-int le_audio_user_defined_button_press(void)
+int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
 {
 	return 0;
 }

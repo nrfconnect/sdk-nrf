@@ -56,4 +56,7 @@ int rpu_clks_on(void);
 int rpu_enable(void);
 int rpu_disable(void);
 
+#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
+int ble_ant_switch(unsigned int ant_switch);
+#endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
 #endif /* __RPU_HW_IF_H_ */

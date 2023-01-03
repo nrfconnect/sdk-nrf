@@ -5,7 +5,7 @@
 #
 
 menuconfig MULTICELL_LOCATION
-	bool "Multicell Location"
+	bool "Multicell Location [deprecated]"
 	depends on NRF_MODEM_LIB
 	depends on LTE_LINK_CONTROL
 	select MODEM_KEY_MGMT

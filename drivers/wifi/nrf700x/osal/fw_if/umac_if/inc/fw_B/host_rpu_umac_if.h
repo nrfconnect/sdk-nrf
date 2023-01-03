@@ -155,7 +155,8 @@ enum nrf_wifi_umac_commands {
 	NRF_WIFI_UMAC_CMD_CONFIG_TWT,
 	NRF_WIFI_UMAC_CMD_TEARDOWN_TWT,
 	NRF_WIFI_UMAC_CMD_ABORT_SCAN,
-	NRF_WIFI_UMAC_CMD_MCAST_FILTER
+	NRF_WIFI_UMAC_CMD_MCAST_FILTER,
+	NRF_WIFI_UMAC_CMD_CHANGE_MACADDR
 };
 
 
@@ -1391,6 +1392,23 @@ struct nrf_wifi_umac_cmd_mcast_filter {
 } __NRF_WIFI_PKD;
 
 
+/**
+ * struct nrf_wifi_umac_cmd_change_macaddr - Change MAC Address
+ *
+ *    - This has to be used only when the interface is down.
+ *
+ * @umac_hdr: Refer to &struct img_umac_hdr.
+ * @mac_addr : MAC address to be set
+ *
+ */
+struct nrf_wifi_umac_change_macaddr_info {
+	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
+} __NRF_WIFI_PKD;
+
+struct nrf_wifi_umac_cmd_change_macaddr {
+	struct nrf_wifi_umac_hdr umac_hdr;
+	struct nrf_wifi_umac_change_macaddr_info macaddr_info;
+} __NRF_WIFI_PKD;
 
 
 

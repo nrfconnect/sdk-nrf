@@ -907,6 +907,26 @@ static int nrf_wifi_radio_test_set_rx(const struct shell *shell,
 	return 0;
 }
 
+#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
+static int nrf_wifi_radio_test_ble_ant_switch_ctrl(const struct shell *shell,
+					     size_t argc,
+					     const char *argv[])
+{
+	unsigned int val;
+
+	if (argc < 2) {
+		shell_fprintf(shell, SHELL_ERROR, "invalid # of args : %d\n", argc);
+		return -ENOEXEC;
+	}
+
+	val  = strtoul(argv[1], NULL, 0);
+
+	ctx->conf_params.ble_ant_switch_ctrl = val;
+
+	return ble_ant_switch(val);
+}
+#endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
+
 
 static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 					size_t argc,
@@ -1039,6 +1059,20 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      "rx = %d\n",
 		      conf_params->rx);
 
+#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "ble_ant_switch_ctrl = %d\n",
+		      conf_params->ble_ant_switch_ctrl);
+#endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
+
+#ifndef CONFIG_NRF700X_REV_A
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "wlan_ant_switch_ctrl = %d\n",
+		      conf_params->wlan_ant_switch_ctrl);
+#endif /* ! CONFIG_NRF700X_REV_A */
+
 	return 0;
 }
 
@@ -1097,6 +1131,52 @@ static int nrf_wifi_radio_test_get_stats(const struct shell *shell,
 	return 0;
 }
 
+#ifndef CONFIG_NRF700X_REV_A
+/* See enum CD2CM_MSG_ID_T in RPU Coexistence Manager API */
+#define CD2CM_UPDATE_SWITCH_CONFIG 0x7
+static int nrf_wifi_radio_test_wlan_switch_ctrl(const struct shell *shell,
+				 size_t argc,
+				 const char *argv[])
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	char *ptr = NULL;
+	struct rpu_btcoex params = { 0 };
+
+	if (argc < 2) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid number of parameters\n");
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	params.rpu_msg_id = CD2CM_UPDATE_SWITCH_CONFIG;
+	params.switch_A = strtoul(argv[1], &ptr, 10);
+
+	if (params.switch_A > 1) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid WLAN switch config (%d)\n",
+			      params.switch_A);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	ctx->conf_params.wlan_ant_switch_ctrl = params.switch_A;
+
+	status = wifi_nrf_fmac_conf_btcoex(ctx->rpu_ctx,
+					   &params);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "WLAN switch configuration failed\n");
+		return -ENOEXEC;
+	}
+
+	return 0;
+}
+#endif
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf_wifi_radio_test_subcmds,
@@ -1241,6 +1321,15 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_rx,
 		      2,
 		      0),
+#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
+	SHELL_CMD_ARG(ble_ant_switch_ctrl,
+		      NULL,
+		      "0 - Switch set to use the BLE antenna\n"
+		      "1 - Switch set to use the shared Wi-Fi antenna",
+		      nrf_wifi_radio_test_ble_ant_switch_ctrl,
+		      2,
+		      0),
+#endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
 	SHELL_CMD_ARG(show_config,
 		      NULL,
 		      "Display the current configuration values",
@@ -1253,6 +1342,14 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_get_stats,
 		      1,
 		      0),
+#ifndef CONFIG_NRF700X_REV_A
+	SHELL_CMD_ARG(wlan_ant_switch_ctrl,
+		      NULL,
+		      "Configure WLAN Antenna switch (0-separate/1-shared)",
+		      nrf_wifi_radio_test_wlan_switch_ctrl,
+		      2,
+		      0),
+#endif
 	SHELL_SUBCMD_SET_END);
 
 

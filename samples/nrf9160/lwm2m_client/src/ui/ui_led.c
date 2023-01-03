@@ -11,7 +11,7 @@
 #include "ui_led.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(ui_led, CONFIG_UI_LOG_LEVEL);
+LOG_MODULE_DECLARE(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 
 #define PWM_PERIOD_USEC (USEC_PER_SEC / 100U)
 

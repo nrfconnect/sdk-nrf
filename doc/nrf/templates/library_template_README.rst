@@ -41,28 +41,25 @@ Implementation*
 
 .. note::
    Use this section to describe the library architecture and implementation.
-   This is optional.
 
 Supported features*
 ===================
 
 .. note::
    Use this section to describe the features supported by the library.
-   This is optional.
 
 Supported backends*
 ===================
 
 .. note::
    Use this section to describe the backends supported by the library, if applicable.
-   This is optional.
 
 Requirements*
 *************
 
 .. note::
    Use this section to list the requirements needed to use the library.
-   This is not required if there are no specific requirements to use the library. It is a mandatory section if there are specific requirements that have to be met to use the library.
+   It is a mandatory section if there are specific requirements that must be met to use the library.
 
 Configuration
 *************
@@ -79,21 +76,19 @@ Shell commands list*
 
 .. note::
    Use this section to list available library shell commands, if applicable.
-   This is optional.
 
 Usage
 *****
 
 .. note::
    Use this section to explain how to use the library.
-   This is optional if the library is so small the initial short description also gives information about how to use the library.
+   This is optional if the library is so small that the initial short description also provides information about how to use the library.
 
 Samples using the library*
 **************************
 
 .. note::
-   Use this section to list all |NCS| samples using this library, if present.
-   This is optional.
+   Use this section to list all the |NCS| samples using this library, if present.
 
 The following |NCS| samples use this library:
 
@@ -106,21 +101,18 @@ Application integration*
 
 .. note::
    Use this section to explain how to integrate the library in a custom application.
-   This is optional.
 
 Additional information*
 ***********************
 
 .. note::
-   Use this section to describe any additional information relevant to the user.
-   This is optional.
+   Use this section to provide any additional information relevant to the user.
 
 Limitations*
 ************
 
 .. note::
    Use this section to describe any limitations to the library, if present.
-   This is optional.
 
 Dependencies
 ************
@@ -132,13 +124,13 @@ API documentation
 *****************
 
 .. note::
-   Use this section to call the API documentation as follows:
+   Add the following section to use the API documentation:
 
-   .. code-block::
+.. code-block::
 
-      | Header file: :file:`*indicate_the_path*`
-      | Source files: :file:`*indicate_the_path*`
+   | Header file: :file:`*provide_the_path*`
+   | Source files: :file:`*provide_the_path*`
 
-      .. doxygengroup:: *indicate_the_doxygroup_if_needed*
-         :project: *indicate_the_project_name_if_needed*
-         :members:
+   .. doxygengroup:: *doxygen_group_name*
+      :project: *project_name*
+      :members:

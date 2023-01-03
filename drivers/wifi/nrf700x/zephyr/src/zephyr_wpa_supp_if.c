@@ -1358,3 +1358,38 @@ void wifi_nrf_wpa_supp_event_mgmt_rx_callbk_fn(void *if_priv,
 			mlme_event->frequency,
 			mlme_event->rx_signal_dbm);
 }
+
+int wifi_nrf_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_SUCCESS;
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+
+	if (!if_priv || !capa) {
+		LOG_ERR("%s: Invalid parameters\n", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	/* TODO: Get these from RPU*/
+	os_memset(capa, 0, sizeof(*capa));
+	/* Use SME */
+	capa->flags = 0;
+	capa->flags |= WPA_DRIVER_FLAGS_SME;
+	capa->flags |= WPA_DRIVER_FLAGS_SAE;
+	capa->flags |= WPA_DRIVER_FLAGS_SET_KEYS_AFTER_ASSOC_DONE;
+	capa->rrm_flags |= WPA_DRIVER_FLAGS_SUPPORT_RRM;
+
+	capa->enc |= WPA_DRIVER_CAPA_ENC_WEP40 |
+			WPA_DRIVER_CAPA_ENC_WEP104 |
+			WPA_DRIVER_CAPA_ENC_TKIP |
+			WPA_DRIVER_CAPA_ENC_CCMP |
+			WPA_DRIVER_CAPA_ENC_CCMP |
+			WPA_DRIVER_CAPA_ENC_CCMP_256 |
+			WPA_DRIVER_CAPA_ENC_GCMP_256;
+
+out:
+	return status;
+}

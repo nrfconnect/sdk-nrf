@@ -28,11 +28,26 @@ config BLE_LE_POWER_CONTROL_ENABLED
 	  dynamically and automatically during connection, which provides effective
 	  communication.
 
+config BT_DEVICE_NAME_ALT
+	string "Alternative Bluetooth device name"
+	default "NRF5340_AUDIO_ALT"
+	depends on TRANSPORT_BIS
+	help
+	  Alternative Bluetooth device name. Name can be up to 248 bytes long
+	  (excluding NULL termination). Can be empty string.
+
+config BT_USE_DEVICE_NAME_ALT
+	bool "Use the alternative Bluetooth device name"
+	default n
+	depends on TRANSPORT_BIS
+	help
+	  Use the alternative Bluetooth device name.
+
 choice	BLE_CONN_TX_POWER
 	prompt "Default TX power for BLE connections"
 	default BLE_CONN_TX_POWER_0DBM
 	help
-	  Set the default TX power for BLE connections.
+	  Set the default TX power for BLE connections
 
 config BLE_CONN_TX_POWER_0DBM
 	bool "0dBm"
@@ -153,6 +168,70 @@ config BLE_ADV_TX_POWER_DBM
 	default -16 if BLE_ADV_TX_POWER_NEG_16DBM
 	default -20 if BLE_ADV_TX_POWER_NEG_20DBM
 	default -40 if BLE_ADV_TX_POWER_NEG_40DBM
+
+config NRF_21540_ACTIVE
+	def_bool $(shields_list_contains,nrf21540_ek_fwd)
+	select EXPERIMENTAL
+	help
+	  The front end module can help boost the TX power as high as 20 dBm.
+	  Usually set through buildprog, if not set there, remember to add
+	  -DSHIELD=nrf21540_ek_fwd when building app core to include the shield
+	  overlay file
+
+config NRF_21540_MAIN_DBM
+	int
+	default 0 if NRF_21540_MAIN_TX_POWER_0DBM
+	default 10 if NRF_21540_MAIN_TX_POWER_10DBM
+	default 20 if NRF_21540_MAIN_TX_POWER_20DBM
+
+choice NRF_21540_MAIN_TX_POWER
+	prompt "TX power for the secondary channels"
+	default NRF_21540_MAIN_TX_POWER_10DBM
+	help
+	  Set the TX power for the secondary Bluetooth LE channels (0-36).
+	  Please check your local regulations for max output power. If the
+	  nRF21540 is used with the nRF5340 Audio DK the actual output power
+	  will be about 25% lower due to the VDD being 1.8V instead of the
+	  nominal 3.3V
+
+config NRF_21540_MAIN_TX_POWER_0DBM
+	bool "0dBm"
+
+config NRF_21540_MAIN_TX_POWER_10DBM
+	bool "+10dBm"
+
+config NRF_21540_MAIN_TX_POWER_20DBM
+	bool "+20dBm"
+
+endchoice
+
+config NRF_21540_PRI_ADV_DBM
+	int
+	default 0 if NRF_21540_PRI_ADV_TX_POWER_0DBM
+	default 10 if NRF_21540_PRI_ADV_TX_POWER_10DBM
+	default 20 if NRF_21540_PRI_ADV_TX_POWER_20DBM
+
+choice NRF_21540_PRI_ADV_TX_POWER
+	prompt "TX power for the primary advertising channels"
+	default NRF_21540_PRI_ADV_TX_POWER_10DBM
+	help
+	  Set the TX power for the primary Bluetooth LE advertising channels
+	  (37, 38, 39).
+	  Please check your local regulations for max output power. If the
+	  nRF21540 is used with the nRF5340 Audio DK the actual output power
+	  will be about 25% lower due to the VDD being 1.8V instead of the
+	  nominal 3.3V
+
+config NRF_21540_PRI_ADV_TX_POWER_0DBM
+	bool "0dBm"
+
+config NRF_21540_PRI_ADV_TX_POWER_10DBM
+	bool "+10dBm"
+
+config NRF_21540_PRI_ADV_TX_POWER_20DBM
+	bool "+20dBm"
+
+endchoice
 
 config BLE_ISO_TEST_PATTERN
 	bool "Transmit a test pattern to measure link performance"

@@ -7,6 +7,10 @@ Multicell location
    :local:
    :depth: 2
 
+.. note::
+
+   This library is deprecated since v2.3.0 and relevant functionality is available through the :ref:`lib_location` library.
+
 The Multicell location library provides a way to acquire the location of the device based on LTE cell measurements.
 
 

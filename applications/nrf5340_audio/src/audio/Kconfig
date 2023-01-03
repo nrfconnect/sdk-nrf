@@ -124,10 +124,19 @@ config AUDIO_HEADSET_CHANNEL_COMPILE_TIME
 endchoice
 
 config AUDIO_TEST_TONE
-	bool "Testing audio chain using a test tone"
+	bool "Test tone instead of doing user defined action"
 	default y
 	help
-	  Use button 4 to set the test tone.
+	  Use button 4 to set a test tone
+	  instead of doing a user defined action.
+	  The test tone is generated on the device itself.
+
+config AUDIO_MUTE
+	bool "Mute instead of doing user defined action"
+	default y
+	help
+	  Use button 5 to mute audio instead of
+	  doing a user defined action.
 
 if AUDIO_HEADSET_CHANNEL_COMPILE_TIME
 

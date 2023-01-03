@@ -105,6 +105,9 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine,
         if options.min_b0n:
             device_flag += " -DCONFIG_B0N_MINIMAL=y"
 
+        if options.nrf21540:
+            device_flag += " -DSHIELD=nrf21540_ek_fwd"
+
         if os.name == 'nt':
             release_flag = release_flag.replace('\\', '/')
 
@@ -289,7 +292,15 @@ def __main():
         required=("-M" in sys.argv or "--min_b0n" in sys.argv),
         choices=["external", "internal"],
         default='',
-        help="MCUBOOT with external, internal flash",)
+        help="MCUBOOT with external, internal flash",
+        )
+    parser.add_argument(
+        "--nrf21540",
+        action="store_true",
+        dest="nrf21540",
+        default=False,
+        help="Set when using nRF21540 for extra TX power",
+        )
     options = parser.parse_args(args=sys.argv[1:])
 
     # Post processing for Enums

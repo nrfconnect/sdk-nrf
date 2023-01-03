@@ -27,7 +27,3 @@ config UI_SENSE_LED
 	bool "UI Sense LED module"
 	help
 	  Enables the sense LEDs available on the Thingy:91.
-
-module = UI
-module-str = User Interface
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

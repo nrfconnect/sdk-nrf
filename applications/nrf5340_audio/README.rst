@@ -681,6 +681,8 @@ The application uses the following buttons on the supported development kit:
 |               |                                                                                        |
 |               | * Long-pressed during startup: Clears the previously stored bonding information.       |
 |               | * Pressed during playback: Mutes the playback volume.                                  |
+|               | * Pressed on a BIS headset during playback: Change the gateway, if more than one is    |
+|               |   available.                                                                           |
 +---------------+----------------------------------------------------------------------------------------+
 | **RESET**     | Resets the device.                                                                     |
 +---------------+----------------------------------------------------------------------------------------+
@@ -778,7 +780,12 @@ Selecting the BIS mode
 ======================
 
 The CIS mode is the default operating mode for the application.
-You can switch to the BIS mode by adding the ``CONFIG_TRANSPORT_BIS`` Kconfig option set to ``y``  to the :file:`prj.conf` file for the debug version and the :file:`prj_release.conf` file for the release version.
+You can switch to the BIS mode by adding the ``CONFIG_TRANSPORT_BIS`` Kconfig option set to ``y`` to the :file:`prj.conf` file for the debug version and the :file:`prj_release.conf` file for the release version.
+To build the BIS gateway with the alternative name, given by ``CONFIG_BT_DEVICE_NAME_ALT``, add the option ``CONFIG_BT_USE_DEVICE_NAME_ALT`` Kconfig option set to ``y`` to the :file:`prj.conf` file for the debug version and the :file:`prj_release.conf` file for the release version.
+
+.. note::
+   The gateway firmware must be built twice to give two separate gateway devices two separate names (``CONFIG_BT_DEVICE_NAME`` and ``CONFIG_BT_DEVICE_NAME_ALT``).
+   Program the two firmware versions to two separate gateway devices.
 
 .. _nrf53_audio_app_configuration_select_bidirectional:
 
@@ -934,6 +941,25 @@ Before building the application, you can verify if the kit is working by complet
 #. Observe **RGB1** (bottom side LEDs around the center opening that illuminate the Nordic Semiconductor logo) turn solid yellow, **OB/EXT** turn solid green, and **LED3** start blinking green.
 
 You can now program the development kits with either gateway or headset firmware before they can be used.
+
+.. _nrf53_audio_app_adding_FEM_support:
+
+Adding FEM support
+==================
+
+You can add support for the nRF21540 front-end module (FEM) to this application by using one of the following options, depending on how you decide to build the application:
+
+* If you opt for :ref:`nrf53_audio_app_building_script`, add the `--nrf21540` to the script's building command.
+* If you opt for :ref:`nrf53_audio_app_building_standard`, add the `-DSHIELD=nrf21540_ek_fwd` to the `west build` command.
+  For example:
+
+  .. code-block:: console
+
+     west build -b nrf5340_audio_dk_nrf5340_cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DSHIELD=nrf21540_ek_fwd -DCONF_FILE=prj_release.conf
+
+You can use the :kconfig:option:`CONFIG_NRF_21540_MAIN_TX_POWER` and :kconfig:option:`CONFIG_NRF_21540_PRI_ADV_TX_POWER` to set the TX power output.
+
+See :ref:`ug_radio_fem` for more information about FEM in the |NCS|.
 
 .. _nrf53_audio_app_building_script:
 
@@ -1262,6 +1288,8 @@ Testing the BIS mode is identical to `Testing the default CIS mode`_, except for
 * Pressing the **PLAY/PAUSE** button on the gateway will respectively start or stop the stream for all headsets listening in.
 * Pressing the **BTN 4** button on a headset will change the active audio stream.
   The default configuration of the BIS mode supports two audio streams (left and right).
+* Pressing the **BTN 5** button on a headset will change the gateway source for the audio stream.
+  The default configuration of the BIS mode supports two gateways (``CONFIG_BT_DEVICE_NAME`` and ``CONFIG_BT_DEVICE_NAME_ALT``).
 
 .. _nrf53_audio_app_testing_steps_cis_walkie_talkie:
 

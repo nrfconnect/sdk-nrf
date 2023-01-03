@@ -8,11 +8,13 @@
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/audio/audio.h>
+#include <zephyr/bluetooth/hci.h>
 #include <../subsys/bluetooth/audio/endpoint.h>
 
 #include "macros_common.h"
 #include "ctrl_events.h"
 #include "audio_datapath.h"
+#include "ble_hci_vsc.h"
 #include "ble_audio_services.h"
 #include "channel_assignment.h"
 
@@ -758,8 +760,23 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	}
 
 	/* ACL connection established */
-	/* TODO: Setting TX power for connection if set to anything but 0 */
 	LOG_INF("Connected: %s", addr);
+
+#if (CONFIG_NRF_21540_ACTIVE)
+	uint16_t conn_handle;
+
+	ret = bt_hci_get_conn_handle(conn, &conn_handle);
+	if (ret) {
+		LOG_ERR("Unable to get conn handle");
+	} else {
+		ret = ble_hci_vsc_conn_tx_pwr_set(conn_handle, CONFIG_NRF_21540_MAIN_DBM);
+		if (ret) {
+			LOG_ERR("Failed to set TX power for conn");
+		} else {
+			LOG_INF("\tTX power set to %d dBm", CONFIG_NRF_21540_MAIN_DBM);
+		}
+	}
+#endif /* (CONFIG_NRF_21540_ACTIVE) */
 
 	ret = bt_conn_set_security(conn, BT_SECURITY_L2);
 	if (ret) {
@@ -1054,7 +1071,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 	return 0;
 }
 
-int le_audio_user_defined_button_press(void)
+int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
 {
 	return 0;
 }

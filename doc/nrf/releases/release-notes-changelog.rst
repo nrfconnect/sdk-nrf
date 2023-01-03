@@ -146,9 +146,14 @@ nRF9160: Serial LTE modem
 nRF5340 Audio
 -------------
 
+* Added:
+
+  * Support for Front End Module nRF21540.
+
 * Updated:
 
   * Power module has been re-factored so that it uses upstream Zephyr INA23X sensor driver.
+  * BIS headsets can now switch between two broadcast sources (two hardcoded broadcast names).
 
 nRF Desktop
 -----------
@@ -220,6 +225,16 @@ nRF9160 samples
     * Support for nRF7002 EK shield and Wi-Fi based location.
     * Location events and event handlers.
 
+  * Updated:
+
+    * The sensor module has been simplified.
+      It does not use application events, filtering, or configurable periods anymore.
+
+
+* Removed:
+
+  * Multicell location sample because of the deprecation of the Multicell location library.
+    Relevant functionality is available through the :ref:`lib_location` library.
 
 Peripheral samples
 ------------------
@@ -349,9 +364,14 @@ Modem libraries
     * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_API_KEY`.
     * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_HOSTNAME`.
     * Renamed :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG`.
+    * Improved GNSS assistance data need handling.
 
 Libraries for networking
 ------------------------
+
+* :ref:`lib_multicell_location` library:
+
+  * This library is now deprecated and relevant functionality is available through the :ref:`lib_location` library.
 
 * :ref:`lib_fota_download` library:
 
@@ -518,6 +538,8 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Added:
+
+  * Documentation template for the :ref:`Ecosystem integration <Ecosystem_integration>` user guides.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
