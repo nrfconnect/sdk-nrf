@@ -92,10 +92,6 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 	(NRF_RADIO_SHORT_READY_START_MASK | NRF_RADIO_SHORT_END_DISABLE_MASK |           \
 	NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK | NRF_RADIO_SHORT_DISABLED_RSSISTOP_MASK)
 
-#ifdef DEBUG_ESB_TX
-extern const struct gpio_dt_spec debug_output;
-#endif 
-
 /* Internal Enhanced ShockBurst module state. */
 enum esb_state {
 	ESB_STATE_IDLE,		/* Idle. */
@@ -919,9 +915,6 @@ static void start_tx_transaction(void)
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
 
-#ifdef DEBUG_ESB_TX
-	gpio_pin_set_dt(&debug_output, 1);
-#endif
 	// Trigger different radio event if radio is disabled or idle
 	if (isTxIdle) {
     	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_START);
@@ -932,11 +925,6 @@ static void start_tx_transaction(void)
 
 		radio_start();
 	}
-#ifdef DEBUG_ESB_TX
-	gpio_pin_set_dt(&debug_output, 0);
-#endif
-
-
 }
 
 static void on_radio_end_tx_noack(void)
