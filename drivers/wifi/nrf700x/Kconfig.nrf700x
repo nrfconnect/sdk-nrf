@@ -64,4 +64,26 @@ config NRF700X_DATA_TX
 config NRF700X_WIFI_UTIL
 	bool "Enable Utility shell in nRF700x driver"
 
+# Performance fine tuning options
+
+config RX_NUM_BUFS
+	int "Number of RX buffers"
+	default 63
+
+config MAX_TX_AGGREGATION
+	int "Maximum number of TX packets to aggregate"
+	default 9
+
+config MAX_TX_TOKENS
+	int "Maximum number of TX tokens"
+	default 5
+
+config TX_MAX_DATA_SIZE
+	int "Maximum size of TX data"
+	default 1600
+
+config RX_MAX_DATA_SIZE
+	int "Maximum size of RX data"
+	default 1600
+
 endif

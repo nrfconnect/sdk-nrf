@@ -18,7 +18,6 @@
 #include "pack_def.h"
 
 #define NRF_WIFI_ETH_ADDR_LEN 6
-#define TX_MAX_DATA_SIZE (1600)
 #define TX_BUF_HEADROOM 52
 
 /*
