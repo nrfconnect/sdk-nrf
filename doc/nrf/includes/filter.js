@@ -28,6 +28,8 @@
     $("#known-issues dl").each(function() {
 
       var thisDl = $(this);
+      var versionList = $("<div class='versiontag-list'></div>");
+      thisDl.children("dt").append(versionList);
 
       $(this).attr("class").split(" ").forEach(function(className) {
 
@@ -36,7 +38,7 @@
         if(RegExp('v\\d+-\\d+-\\d+').test(className)) {
 
           var versionName = className.replace(/v(\d+)-(\d+)-(\d+)/i, 'v$1.$2.$3');
-          thisDl.children("dt").append('<a href="' + URL + '?v=' + className + '"><span class="versiontag" version="' + className + '">' + versionName + '</span></a>');
+          versionList.append('<a href="' + URL + '?v=' + className + '"><span class="versiontag" version="' + className + '">' + versionName + '</span></a>');
 
         } else if (className === 'main') {
 
