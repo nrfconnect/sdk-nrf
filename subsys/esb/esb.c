@@ -51,7 +51,7 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 #define TX_RAMP_UP_TIME_US 129
 
 /* Radio Rx fast ramp-up time in microseconds. */
-#define TX_RAMP_UP_TIME_US 40
+#define TX_FAST_RAMP_UP_TIME_US 40
 
 /* Radio Rx ramp-up time in microseconds. */
 #define RX_RAMP_UP_TIME_US 124
