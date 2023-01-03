@@ -10,6 +10,7 @@
 #include <zephyr/bluetooth/audio/audio.h>
 /* TODO: Remove when a get_info function is implemented in host */
 #include <../subsys/bluetooth/audio/endpoint.h>
+#include <../subsys/bluetooth/audio/audio_iso.h>
 
 #include "macros_common.h"
 #include "ctrl_events.h"
@@ -41,7 +42,6 @@ static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_AUDIO_BROADCAST
 static struct bt_audio_broadcast_source *broadcast_source;
 
 static struct bt_audio_stream audio_streams[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
-static struct bt_audio_stream *audio_streams_p[ARRAY_SIZE(audio_streams)];
 
 static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_NRF5340_AUDIO;
 
@@ -265,22 +265,42 @@ static int initialize(void)
 {
 	int ret;
 	static bool initialized;
+	struct bt_codec_data bis_codec_data =
+		BT_CODEC_DATA(BT_CODEC_CONFIG_LC3_FREQ, BT_CODEC_CONFIG_LC3_FREQ_48KHZ);
+	struct bt_audio_broadcast_source_stream_param stream_params[ARRAY_SIZE(audio_streams)];
+	struct bt_audio_broadcast_source_subgroup_param
+		subgroup_params[CONFIG_BT_AUDIO_BROADCAST_SRC_SUBGROUP_COUNT];
+	struct bt_audio_broadcast_source_create_param create_param;
 
 	if (initialized) {
 		LOG_WRN("Already initialized");
 		return -EALREADY;
 	}
 
-	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
-		audio_streams_p[i] = &audio_streams[i];
-		audio_streams[i].ops = &stream_ops;
+	(void)memset(audio_streams, 0, sizeof(audio_streams));
+
+	for (size_t i = 0; i < ARRAY_SIZE(stream_params); i++) {
+		stream_params[i].stream = &audio_streams[i];
+		bt_audio_stream_cb_register(stream_params[i].stream, &stream_ops);
+		stream_params[i].data_count = 1U;
+		stream_params[i].data = &bis_codec_data;
 	}
+
+	for (size_t i = 0U; i < ARRAY_SIZE(subgroup_params); i++) {
+		subgroup_params[i].params_count = ARRAY_SIZE(stream_params);
+		subgroup_params[i].params = &stream_params[i];
+		subgroup_params[i].codec = &lc3_preset.codec;
+	}
+
+	create_param.params_count = ARRAY_SIZE(subgroup_params);
+	create_param.params = subgroup_params;
+	create_param.qos = &lc3_preset.qos;
+	create_param.packing = BT_ISO_PACKING_SEQUENTIAL;
 
 	LOG_DBG("Creating broadcast source");
 
-	ret = bt_audio_broadcast_source_create(audio_streams_p, ARRAY_SIZE(audio_streams_p),
-					       &lc3_preset.codec, &lc3_preset.qos,
-					       &broadcast_source);
+	ret = bt_audio_broadcast_source_create(&create_param, &broadcast_source);
+
 	if (ret) {
 		LOG_ERR("Failed to create broadcast source, ret: %d", ret);
 		return ret;
@@ -404,7 +424,7 @@ int le_audio_send(uint8_t const *const data, size_t size)
 #if (CONFIG_AUDIO_SOURCE_I2S)
 	struct bt_iso_tx_info tx_info = { 0 };
 
-	ret = bt_iso_chan_get_tx_sync(audio_streams[0].iso, &tx_info);
+	ret = bt_iso_chan_get_tx_sync(&audio_streams[0].ep->iso->chan, &tx_info);
 
 	if (ret) {
 		LOG_DBG("Error getting ISO TX anchor point: %d", ret);

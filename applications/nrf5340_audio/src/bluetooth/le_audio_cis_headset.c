@@ -49,7 +49,7 @@ static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ASCS_ASE_SRC_CO
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 
 #define CSIP_SET_SIZE 2
-enum csip_set_rank { CSIP_HL_RANK = 1, CSIP_HR_RANK = 2};
+enum csip_set_rank { CSIP_HL_RANK = 1, CSIP_HR_RANK = 2 };
 
 static struct bt_csip_set_member_svc_inst *csip;
 static struct bt_le_ext_adv *adv_ext;
@@ -65,7 +65,7 @@ static const struct bt_data ad_peer[] = {
 
 /* Callback for locking state change from server side */
 static void csip_lock_changed_cb(struct bt_conn *conn, struct bt_csip_set_member_svc_inst *csip,
-									bool locked)
+				 bool locked)
 {
 	LOG_DBG("Client %p %s the lock", (void *)conn, locked ? "locked" : "released");
 }
@@ -512,13 +512,13 @@ static int initialize(le_audio_receive_cb recv_cb)
 	if (!initialized) {
 		bt_audio_unicast_server_register_cb(&unicast_server_cb);
 		bt_conn_cb_register(&conn_callbacks);
-#if (BT_VCP_VOL_REND)
+#if (CONFIG_BT_VCP_VOL_REND)
 		ret = ble_vcs_server_init();
 		if (ret) {
 			LOG_ERR("VCS server init failed");
 			return ret;
 		}
-#endif /* (BT_VCP_VOL_REND) */
+#endif /* (CONFIG_BT_VCP_VOL_REND) */
 
 #if (CONFIG_BT_MCC)
 		ret = ble_mcs_client_init();

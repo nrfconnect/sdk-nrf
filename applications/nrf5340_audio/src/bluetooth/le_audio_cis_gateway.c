@@ -19,7 +19,6 @@
 #include "ble_audio_services.h"
 #include "channel_assignment.h"
 
-
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(cis_gateway, CONFIG_BLE_LOG_LEVEL);
 
@@ -552,9 +551,10 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 	uint8_t channel_index = 0;
 	uint8_t stream_index = 0;
 	static bool group_created;
-	struct bt_audio_unicast_group_param
+	struct bt_audio_unicast_group_stream_param
 		group_params[CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SRC_COUNT +
 			     CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT];
+	struct bt_audio_unicast_group_param param;
 
 	if (params->err) {
 		LOG_ERR("Discovery failed: %d", params->err);
@@ -614,9 +614,10 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 				LOG_DBG("Source stream: %p", (void *)&audio_streams[i]);
 			}
 		}
-
-		ret = bt_audio_unicast_group_create(group_params, ARRAY_SIZE(audio_streams),
-						    &unicast_group);
+		param.params = group_params;
+		param.params_count = ARRAY_SIZE(audio_streams);
+		param.packing = BT_ISO_PACKING_SEQUENTIAL;
+		ret = bt_audio_unicast_group_create(&param, &unicast_group);
 		if (ret) {
 			LOG_ERR("Failed to create unicast group: %d", ret);
 			return;
@@ -1052,7 +1053,8 @@ static int initialize(le_audio_receive_cb recv_cb)
 	}
 
 #if !CONFIG_STREAM_BIDIRECTIONAL
-	struct bt_audio_unicast_group_param group_params[ARRAY_SIZE(audio_streams)];
+	struct bt_audio_unicast_group_stream_param group_params[ARRAY_SIZE(audio_streams)];
+	struct bt_audio_unicast_group_param param;
 
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		group_params[i].stream = &audio_streams[i];
@@ -1060,8 +1062,11 @@ static int initialize(le_audio_receive_cb recv_cb)
 		group_params[i].dir = BT_AUDIO_DIR_SINK;
 	}
 
-	ret = bt_audio_unicast_group_create(group_params, ARRAY_SIZE(audio_streams),
-					    &unicast_group);
+	param.params = group_params;
+	param.params_count = ARRAY_SIZE(audio_streams);
+	param.packing = BT_ISO_PACKING_SEQUENTIAL;
+
+	ret = bt_audio_unicast_group_create(&param, &unicast_group);
 	if (ret) {
 		LOG_ERR("Failed to create unicast group: %d", ret);
 		return ret;
@@ -1168,13 +1173,13 @@ int le_audio_send(uint8_t const *const data, size_t size)
 
 	if (headsets[AUDIO_CH_L].sink_stream->ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
 		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_L].sink_stream->ep->iso->chan,
-										&tx_info);
+					      &tx_info);
 	}
 #if !CONFIG_STREAM_BIDIRECTIONAL
 	else if (headsets[AUDIO_CH_R].sink_stream->ep->status.state ==
 		 BT_AUDIO_EP_STATE_STREAMING) {
 		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_R].sink_stream->ep->iso->chan,
-										&tx_info);
+					      &tx_info);
 	}
 #endif /* !CONFIG_STREAM_BIDIRECTIONAL */
 	else {
