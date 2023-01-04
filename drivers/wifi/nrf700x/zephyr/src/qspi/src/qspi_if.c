@@ -397,6 +397,7 @@ static int qspi_device_init(const struct device *dev)
 	if (!qspi_initialized) {
 		res = nrfx_qspi_init(&QSPIconfig, qspi_handler, dev_data);
 		ret = qspi_get_zephyr_ret_code(res);
+		NRF_QSPI->IFTIMING |= qspi_config->RDC4IO;
 		qspi_initialized = (ret == 0);
 	}
 
