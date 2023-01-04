@@ -11,7 +11,7 @@ The |NCS| is a scalable and unified software development kit for building low-po
 It offers an extensible framework for building size-optimized software for memory-constrained devices as well as powerful and complex software for more advanced devices and applications.
 
 It integrates the Zephyr™ real-time operating system (RTOS) and a wide range of complete applications, samples, and protocol stacks such as Bluetooth® Low Energy, Bluetooth mesh, Matter, Thread/Zigbee and LTE-M/NB-IoT/GPS, TCP/IP.
-It also includes middleware such as CoAP, MQTT, LwM2M, various libraries, hardware drivers, Trusted Firmware-M for security, and a secure bootloader (MCUBoot).
+It also includes middleware such as CoAP, MQTT, LwM2M, various libraries, hardware drivers, Trusted Firmware-M for security, and a secure bootloader (MCUboot).
 
 Repositories
 ************
@@ -24,15 +24,22 @@ This :ref:`code base <dm_code_base>` is managed with the :ref:`ncs_west_intro` t
 
 Some notable repositories include:
 
-* `sdk-nrf`_ repository - contains applications, samples, libraries, and drivers that are specifically targeted at Nordic Semiconductor devices.
-* `sdk-nrfxlib`_ repository - contains closed-source libraries and modules in binary format.
+* `sdk-nrf`_ repository - Contains applications, samples, libraries, and drivers that are specifically targeted at Nordic Semiconductor devices.
+* `sdk-nrfxlib`_ repository - Contains closed-source libraries and modules in binary format.
   See the :doc:`nrfxlib documentation <nrfxlib:README>`.
-* `sdk-zephyr`_ repository - contains a fork of the `Zephyr`_ project, which provides samples, libraries, and drivers for a wide variety of devices, including Nordic Semiconductor devices.
-  See the :doc:`documentation <zephyr:index>` in Nordic Semiconductor’s Zephyr fork.
-* `sdk-mcuboot`_ repository - contains a fork of the `MCUboot`_ project, which provides a secure bootloader application.
-  You can find the fork in :file:`bootloader/mcuboot` after obtaining the |NCS| source code.
-  See the :doc:`documentation <mcuboot:index-ncs>` in Nordic Semiconductor’s MCUboot fork.
+* `sdk-zephyr`_ repository - Contains a fork of the `Zephyr`_ project, which provides samples, libraries, and drivers for a wide variety of devices, including Nordic Semiconductor devices.
+  See the :doc:`documentation <zephyr:index>` in Nordic Semiconductor's Zephyr fork.
 
+  .. note::
+
+     The `sdk-zephyr`_ repository is a :term:`soft fork` that Nordic Semiconductor maintains.
+     It is not the same as Zephyr SDK, which is a set of :ref:`installation tools <gs_installing_toolchain>` used while installing the |NCS|.
+
+* `sdk-mcuboot`_ repository - Contains a fork of the `MCUboot`_ project, which provides a secure bootloader application.
+  You can find the fork in :file:`bootloader/mcuboot` after obtaining the |NCS| source code.
+  See the :doc:`documentation <mcuboot:index-ncs>` in Nordic Semiconductor's MCUboot fork.
+
+All repositories with the prefix ``sdk`` contain the |NCS| firmware and code.
 Every |NCS| release consists of a combination of all included repositories at different revisions.
 See the :ref:`repos_and_revs` section for a comprehensive list of repositories and their current revisions.
 The revision of each of those repositories is determined by the current revision of the main (manifest) repository ``sdk-nrf``.
