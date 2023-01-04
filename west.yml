@@ -120,10 +120,6 @@ manifest:
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
       revision: 3017e45d1276ed739ddbd9650546b8bc02748d8a
-    - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
-      repo-path: sdk-mcuboot
-      path: modules/tee/tfm-mcuboot
-      revision: v1.7.2-ncs3
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
