@@ -1038,7 +1038,7 @@ nrfxlib
 * :ref:`nrf_modem`:
 
   * :ref:`architecture` - Added information on shared memory configuration.
-  * :ref:`tls_dtls_configuration` - Added information on supported cipher suites.
+  * ``tls_dtls_configuration`` - Added information on supported cipher suites.
   * :ref:`nrf_modem_ug_porting` - Added information about the modem functions.
 * :ref:`mpsl` - Added :ref:`mpsl_fem`.
 * :ref:`nrf_802154_sl` - Added.
