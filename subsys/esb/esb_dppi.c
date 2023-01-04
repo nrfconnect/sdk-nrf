@@ -23,6 +23,7 @@ static uint8_t timer_compare1_radio_txen;
 static uint8_t disabled_egu;
 static uint8_t egu_timer_start;
 static uint8_t egu_ramp_up;
+static uint8_t radio_end_timer_start;
 
 static nrf_dppi_channel_group_t ramp_up_dppi_group;
 
@@ -292,7 +293,7 @@ void esb_ppi_deinit(void)
 		goto error;
 	}
 
-	err = nrfx_ppi_channel_free(radio_end_timer_start);
+	err = nrfx_dppi_channel_free(radio_end_timer_start);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
