@@ -65,6 +65,9 @@ static const unsigned int rx2_buf_sz = RX_BUF_SIZE;
 static const unsigned int rx3_buf_sz = RX_BUF_SIZE;
 
 static const unsigned char rate_protection_type;
+
+const char default_mac_addr[] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55};
+
 #else
 /* Reduce buffers to Scan only operation */
 static const unsigned int rx1_num_bufs = 2;
@@ -77,6 +80,8 @@ static const unsigned int rx3_buf_sz = 1000;
 #endif
 
 struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
+
+int wifi_nrf_if_start(const struct device *dev);
 
 void wifi_nrf_event_proc_scan_start_zep(void *if_priv,
 					struct nrf_wifi_umac_event_trigger_scan *scan_start_event,
@@ -141,9 +146,10 @@ static int wifi_nrf_umac_info(struct wifi_nrf_ctx_zep *rpu_ctx_zep)
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
 	if (umac_info->mac_address0[0] == 0xffffffff &&
-	    umac_info->mac_address0[1] == 0xffffffff) {
-		LOG_ERR("Invalid MAC address0. OTP uninitialized !\n");
-		return -1;
+		umac_info->mac_address0[1] == 0xffffffff) {
+		memcpy(&rpu_ctx_zep->mac_addr, default_mac_addr,
+			   NRF_WIFI_ETH_ADDR_LEN);
+		return 0;
 	}
 
 	if (umac_info->mac_address1[0] == 0xffffffff &&
@@ -496,7 +502,10 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
 	/* Bring the default interface up in the firmware */
-	status = wifi_nrf_fmac_def_vif_state_chg(vif_ctx_zep, 1);
+	status = wifi_nrf_if_start(dev);
+
+	/* Ignore status since it won't start if default mac address */
+	status = WIFI_NRF_STATUS_SUCCESS;
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: wifi_nrf_fmac_def_vif_state_chg failed\n", __func__);
@@ -519,11 +528,65 @@ err:
 	return -1;
 }
 
+int wifi_nrf_if_start(const struct device *dev)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = dev->data;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	/* Disallow if MAC default_mac_addr is set */
+	/* If using default mac address, keep interface down */
+	if (memcmp(&rpu_ctx_zep->mac_addr, default_mac_addr,
+		sizeof(default_mac_addr)) == 0) {
+		net_if_down(net_if_lookup_by_dev(dev));
+		LOG_ERR("%s: Please configure a valid MAC Address!\n", __func__);
+		return -1;
+	}
+
+	wifi_nrf_fmac_def_vif_state_chg(vif_ctx_zep, true);
+
+	return 0;
+}
+
+int wifi_nrf_if_stop(const struct device *dev)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = dev->data;
+
+	wifi_nrf_fmac_def_vif_state_chg(vif_ctx_zep, false);
+
+	return 0;
+}
+
+int wifi_nrf_if_set_config(const struct device *dev, enum ethernet_config_type type,
+			   const struct ethernet_config *config)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = dev->data;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	if (type == ETHERNET_CONFIG_TYPE_MAC_ADDRESS) {
+		memcpy(&rpu_ctx_zep->mac_addr, config->mac_address.addr,
+			sizeof(rpu_ctx_zep->mac_addr));
+
+		net_if_set_link_addr(vif_ctx_zep->zep_net_if_ctx,
+				(unsigned char *)&rpu_ctx_zep->mac_addr,
+			     sizeof(rpu_ctx_zep->mac_addr), NET_LINK_ETHERNET);
+
+		wifi_nrf_fmac_set_macaddr(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, 
+				(unsigned char *)&rpu_ctx_zep->mac_addr);
+
+		wifi_nrf_wpa_supp_event_mac_changed(vif_ctx_zep);
+	}
+
+	return 0;
+}
+
 #ifndef CONFIG_NRF700X_RADIO_TEST
 static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 	.wifi_iface.iface_api.init = wifi_nrf_if_init,
 	.wifi_iface.get_capabilities = wifi_nrf_if_caps_get,
 	.wifi_iface.send = wifi_nrf_if_send,
+	.wifi_iface.start = wifi_nrf_if_start,
+	.wifi_iface.stop = wifi_nrf_if_stop,
+	.wifi_iface.set_config = wifi_nrf_if_set_config,
 	.scan = wifi_nrf_disp_scan_zep,
 #ifdef CONFIG_NET_STATISTICS_WIFI
 	.get_stats = wifi_nrf_stats_get,

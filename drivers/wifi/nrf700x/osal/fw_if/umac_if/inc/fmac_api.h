@@ -649,6 +649,23 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_chg_vif_attr_info *vif_info);
 
+/**
+ * wifi_nrf_fmac_set_macaddr() - Set MAC address on interface.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: Index of the interface on which the functionality is to be
+ *              bound.
+ * @mac_addr: Mac address to set.
+ *
+ * This function is used to change the NAC address of an interface identified
+ * with @if_idx.
+ *
+ * Returns: Status
+ *		Pass: %WIFI_NRF_STATUS_SUCCESS
+ *		Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_set_macaddr(void *dev_ctx,
+					   unsigned char if_idx,
+					   unsigned char *mac_addr);
 
 /**
  * wifi_nrf_fmac_chg_vif_state() - Change the state of a virtual interface.
