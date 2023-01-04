@@ -52,7 +52,6 @@ PROJECT_TAGS[nrf-802154]=""
 PROJECT_TAGS[zephyr]=""
 PROJECT_TAGS[mcuboot]=""
 PROJECT_TAGS[trusted-firmware-m]=""
-PROJECT_TAGS[tfm-mcuboot]=""
 PROJECT_TAGS[mbedtls-nrf]=""
 
 
