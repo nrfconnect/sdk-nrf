@@ -256,6 +256,7 @@ static void rdy_pin_idle(struct lpuart_data *data)
 	err = nrfx_gpiote_input_configure(data->rdy_pin, NULL, &trigger_config, NULL);
 	__ASSERT(err == NRFX_SUCCESS, "Unexpected err: %08x/%d", err, err);
 
+	LOG_DBG("*** RDY IDLE");
 	nrfx_gpiote_trigger_enable(data->rdy_pin, true);
 }
 
@@ -281,6 +282,8 @@ static void rdy_pin_blink(struct lpuart_data *data)
 	nrfx_gpiote_trigger_enable(data->rdy_pin, true);
 
 	nrf_gpio_reconfigure(data->rdy_pin, &dir_in, NULL, NULL, NULL, NULL);
+
+	LOG_DBG("*** RDY BLINK");
 }
 
 /* Function enables RX, after that it informs transmitter about readiness by
@@ -368,7 +371,13 @@ static void deactivate_rx(struct lpuart_data *data)
 static void tx_complete(struct lpuart_data *data)
 {
 	LOG_DBG("TX completed, pin idle");
-	pend_req_pin_idle(data);
+	if (data->tx_active) {
+		pend_req_pin_idle(data);
+	} else {
+		req_pin_set(data);
+	}
+
+	req_pin_idle(data);
 	data->tx_buf = NULL;
 	data->tx_active = false;
 }
@@ -432,7 +441,14 @@ static void rdy_pin_handler(nrfx_gpiote_pin_t pin,
 			start_rx_activation(data);
 		}
 	} else { /* HITOLO */
-		__ASSERT_NO_MSG(data->rx_state == RX_ACTIVE);
+		// __ASSERT_NO_MSG(data->rx_state == RX_ACTIVE);
+		if (data->rx_state != RX_ACTIVE) {
+			LOG_WRN("RX: End detected but not active. (state: %d)", data->rx_state);
+			// Reset state to idle
+			data->rx_state = RX_IDLE;
+			rdy_pin_idle(data);
+			return;
+		}
 
 		LOG_DBG("RX: End detected.");
 		deactivate_rx(data);
@@ -487,6 +503,8 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 	case UART_RX_RDY:
 		LOG_DBG("RX: Ready buf:%p, offset: %d,len: %d",
 		     evt->data.rx.buf, evt->data.rx.offset, evt->data.rx.len);
+		LOG_HEXDUMP_DBG(evt->data.rx.buf + evt->data.rx.offset, evt->data.rx.len,
+				"RX Data:");
 		user_callback(dev, evt);
 		if (data->rx_state == RX_BLOCKED) {
 			/* If order of rx_rdy and rx_disabled events were swapped
@@ -541,7 +559,7 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 		break;
 	}
 	case UART_RX_STOPPED:
-		LOG_DBG("Rx stopped");
+		LOG_DBG("Rx stopped, reason %d", evt->data.rx_stop.reason);
 		user_callback(dev, evt);
 		break;
 	}
@@ -732,9 +750,9 @@ static void int_driven_evt_handler(const struct device *lpuart,
 	       LPUART will be reset during NRF91 init anway.*/
 		// __ASSERT_NO_MSG(data->int_driven.rxlen == 0);
 		if (data->int_driven.rxlen != 0) {
-				// Ignore count of bytes received before we were ready.
-                data->int_driven.rxrd = 0;
-        }
+			// Ignore count of bytes received before we were ready.
+			data->int_driven.rxrd = 0;
+		}
 		data->int_driven.rxlen = evt->data.rx.len;
 		call_handler = data->int_driven.rx_enabled;
 		break;
