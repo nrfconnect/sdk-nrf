@@ -11,5 +11,6 @@ supported:
   - adc
   - usb_device
   - ble
+  - gpio
   - ieee802154
   - netif:openthread
