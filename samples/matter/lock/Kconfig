@@ -72,7 +72,6 @@ choice OPENTHREAD_DEVICE_TYPE
 endchoice
 
 config CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT
-	bool
 	default y
 
 endif # NET_L2_OPENTHREAD
