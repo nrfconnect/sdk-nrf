@@ -68,6 +68,7 @@ config MOSH_LOCATION
 	bool "Location"
 	default y
 	select LOCATION
+	select NRF_CLOUD_LOCATION if MOSH_CLOUD_MQTT && (LOCATION_METHOD_CELLULAR || LOCATION_METHOD_WIFI)
 	help
 	  Tool for location queries via location library.
 

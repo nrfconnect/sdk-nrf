@@ -418,6 +418,12 @@ You can use the Location tool for retrieving device's location with different me
 See :ref:`lib_location` library for information on the configuration of different location methods and services.
 Some default configurations are available to facilitate trials.
 
+This sample is using cloud service for positioning through the :ref:`lib_location` library by default.
+However, an application can also handle the cloud communication for the location services by itself.
+To enable cloud communication, use the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option and
+a separate configuration (:file:`overlay-cloud_mqtt.conf`) to enable nRF Cloud service over MQTT for retrieving location data.
+Use the ``cloud`` command to establish the MQTT connection before ``location`` commands.
+
 Examples
 --------
 
@@ -1044,6 +1050,25 @@ For example:
 .. code-block:: console
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-cloud_mqtt.conf
+
+Location service handled in application
+=======================================
+
+This sample is using cloud service for positioning through the :ref:`lib_location` library by default.
+To build the sample with location cloud services handled in the MoSh,
+use the ``-DOVERLAY_CONFIG="overlay-cloud_mqtt.conf"`` and ``-DCONFIG_LOCATION_SERVICE_EXTERNAL=y`` options.
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG="overlay-cloud_mqtt.conf" -DCONFIG_LOCATION_SERVICE_EXTERNAL=y
+
+To add P-GPS on top of that, use the ``-DOVERLAY_CONFIG="overlay-cloud_mqtt.conf;overlay-pgps.conf"``, ``-DCONFIG_LOCATION_SERVICE_EXTERNAL=y`` and ``-DCONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y`` options.
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG="overlay-cloud_mqtt.conf;overlay-pgps.conf" -DCONFIG_LOCATION_SERVICE_EXTERNAL=y -DCONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
 
 Remote control using nRF Cloud over MQTT
 ========================================
