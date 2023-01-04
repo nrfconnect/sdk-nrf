@@ -1140,13 +1140,17 @@ LwM2M support
 
 Before building and running the sample, select the LwM2M server for testing.
 Follow the instructions in :ref:`server_setup_lwm2m_client` to set up the server and register your device to the server.
+With the default LwM2M configuration, the device connects directly to the device management server without bootstrap support.
+You can change the LwM2M server address by setting the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SERVER` Kconfig option.
 
 Location assistance uses a proprietary mechanism to fetch location assistance data from nRF Cloud by proxying it through the LwM2M server.
 As of now, you can only use AVSystem's Coiote LwM2M server for the location assistance data from nRF Cloud.
 
-To build the MoSh sample with LwM2M support, use the ``-DOVERLAY_CONFIG=overlay-lwm2m.conf`` option and set the used Pre-Shared-Key (PSK) using :kconfig:option:`CONFIG_MOSH_LWM2M_PSK` Kconfig option.
-You can change the LwM2M server address by setting :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SERVER`.
-To enable P-GPS support, use the optional overlay files :file:`overlay-lwm2m_pgps.conf` and :file:`overlay-pgps.conf`.
+You can build the MoSh sample with different LwM2M configurations:
+
+  * To build the MoSh sample with the default LwM2M configuration, use the ``-DOVERLAY_CONFIG=overlay-lwm2m.conf`` option and set the used Pre-Shared-Key (PSK) using :kconfig:option:`CONFIG_MOSH_LWM2M_PSK` Kconfig option.
+  * To enable bootstrapping, use the optional overlay file :file:`overlay-lwm2m_bootstrap.conf`.
+  * To enable P-GPS support, use the optional overlay files :file:`overlay-lwm2m_pgps.conf` and :file:`overlay-pgps.conf`.
 
 To build the sample with LwM2M support, use the following command:
 
@@ -1158,7 +1162,7 @@ To enable also P-GPS, use the following command:
 
 .. code-block:: console
 
-   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-lwm2m.conf overlay-lwm2m_pgps.conf overlay-pgps.conf" -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
+   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-lwm2m.conf;overlay-lwm2m_pgps.conf;overlay-pgps.conf" -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
 
 Use the following command to establish connection to the LwM2M server:
 
