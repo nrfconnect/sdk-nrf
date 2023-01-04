@@ -506,6 +506,11 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 		return;
 	}
 
+	if (headsets[channel_index].sink_ep == NULL) {
+		LOG_WRN("No sink endpoints found");
+		return;
+	}
+
 	LOG_DBG("Sink discover complete: err %d", params->err);
 
 	(void)memset(params, 0, sizeof(*params));
@@ -568,6 +573,11 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 
 	if (ep != NULL) {
 		headsets[channel_index].source_ep = ep;
+		return;
+	}
+
+	if (headsets[channel_index].source_ep == NULL) {
+		LOG_WRN("No source endpoints found");
 		return;
 	}
 
