@@ -949,8 +949,8 @@ Adding FEM support
 
 You can add support for the nRF21540 front-end module (FEM) to this application by using one of the following options, depending on how you decide to build the application:
 
-* If you opt for :ref:`nrf53_audio_app_building_script`, add the `--nrf21540` to the script's building command.
-* If you opt for :ref:`nrf53_audio_app_building_standard`, add the `-DSHIELD=nrf21540_ek_fwd` to the `west build` command.
+* If you opt for :ref:`nrf53_audio_app_building_script`, add the ``--nrf21540`` to the script's building command.
+* If you opt for :ref:`nrf53_audio_app_building_standard`, add the ``-DSHIELD=nrf21540_ek_fwd`` to the ``west build`` command.
   For example:
 
   .. code-block:: console
