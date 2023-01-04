@@ -8,5 +8,6 @@ toolchain:
 ram: 128
 flash: 256
 supported:
+  - gpio
   - i2c
   - netif:modem

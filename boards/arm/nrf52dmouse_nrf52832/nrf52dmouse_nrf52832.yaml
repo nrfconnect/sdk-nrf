@@ -8,5 +8,6 @@ toolchain:
   - xtools
 supported:
   - ble
+  - gpio
 ram: 64
 flash: 512
