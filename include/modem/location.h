@@ -330,9 +330,13 @@ struct location_cellular_config {
 	 * @brief Timeout (in milliseconds) of how long the cellular positioning procedure can take.
 	 * SYS_FOREVER_MS means that the timer is disabled.
 	 *
-	 * Default value is 30000 (30 seconds). It is applied when
+	 * @details Default value is 30000 (30 seconds). It is applied when
 	 * @ref location_config_defaults_set function is called and can be changed
 	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT configuration.
+	 *
+	 * When CONFIG_LOCATION_SERVICE_EXTERNAL is enabled, this timeout stops when
+	 * event LOCATION_EVT_CELLULAR_EXT_REQUEST is sent. However, timeout specified in
+	 * @ref location_config structure is still valid.
 	 */
 	int32_t timeout;
 
@@ -341,6 +345,8 @@ struct location_cellular_config {
 	 *
 	 * @details Default value is LOCATION_SERVICE_ANY. It is applied when
 	 * @ref location_config_defaults_set function is called.
+	 *
+	 * This parameter is ignored when CONFIG_LOCATION_SERVICE_EXTERNAL is enabled.
 	 */
 	enum location_service service;
 };
@@ -351,9 +357,13 @@ struct location_wifi_config {
 	 * @brief Timeout (in milliseconds) of how long the Wi-Fi positioning procedure can take.
 	 * SYS_FOREVER_MS means that the timer is disabled.
 	 *
-	 * Default value is 30000 (30 seconds). It is applied when
+	 * @details Default value is 30000 (30 seconds). It is applied when
 	 * @ref location_config_defaults_set function is called and can be changed
 	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT configuration.
+	 *
+	 * When CONFIG_LOCATION_SERVICE_EXTERNAL is enabled, this timeout stops when
+	 * event LOCATION_EVT_WIFI_EXT_REQUEST is sent. However, timeout specified in
+	 * @ref location_config structure is still valid.
 	 */
 	int32_t timeout;
 
@@ -362,6 +372,8 @@ struct location_wifi_config {
 	 *
 	 * @details Default value is LOCATION_SERVICE_ANY. It is applied when
 	 * @ref location_config_defaults_set function is called.
+	 *
+	 * This parameter is ignored when CONFIG_LOCATION_SERVICE_EXTERNAL is enabled.
 	 */
 	enum location_service service;
 };
@@ -384,6 +396,7 @@ struct location_method_config {
 struct location_config {
 	/** Number of location methods in 'methods'. */
 	uint8_t methods_count;
+
 	/**
 	 * @brief Selected location methods and associated configurations in priority order.
 	 *
@@ -391,6 +404,7 @@ struct location_config {
 	 * 'methods_count' and it can be smaller than the size of this table.
 	 */
 	struct location_method_config methods[CONFIG_LOCATION_METHODS_LIST_SIZE];
+
 	/**
 	 * @brief Position update interval in seconds.
 	 *
@@ -402,6 +416,7 @@ struct location_config {
 	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_INTERVAL configuration.
 	 */
 	uint16_t interval;
+
 	/**
 	 * @brief Timeout (in milliseconds) for the entire location request.
 	 *

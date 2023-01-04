@@ -264,6 +264,11 @@ nRF9160 samples
 
 * :ref:`modem_shell_application` sample:
 
+  * Added:
+
+    * External location service handling to test :ref:`lib_location` library functionality commonly used by applications.
+      The :ref:`lib_nrf_cloud` library is used with MQTT for location requests to the cloud.
+
   * Updated:
 
     * Timeout command-line arguments for the ``location get`` command changed from integers in milliseconds to floating-point values in seconds.

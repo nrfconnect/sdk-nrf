@@ -204,8 +204,29 @@ Use GNSS and cellular and set custom timeout values for them:
    location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
 
    /* Now you have default values set and here you can modify the parameters you want */
+   config.timeout = 180 * MSEC_PER_SEC;
    config.methods[0].gnss.timeout = 90 * MSEC_PER_SEC;
    config.methods[1].cellular.timeout = 15 * MSEC_PER_SEC;
+
+   err = location_request(&config);
+
+Use method priority list defined by Kconfig options and set custom timeout values for entire :c:func:location_request operation and cellular positioning:
+
+.. code-block:: c
+
+   int err;
+   struct location_config config;
+
+   location_config_defaults_set(&config, 0, NULL);
+
+   /* Now you have default values set and you can modify the parameters you want but you
+    * need to iterate through the method list as the order is defined by Kconfig options.
+    */
+   for (int i = 0; i < config.methods_count; i++) {
+       if (config.methods[i].method == LOCATION_METHOD_GNSS) {
+           config.methods[i].cellular.timeout = 15 * MSEC_PER_SEC;
+       }
+   }
 
    err = location_request(&config);
 
