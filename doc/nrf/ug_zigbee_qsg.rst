@@ -75,7 +75,7 @@ If you want to learn more about Zigbee topics and terminology mentioned in this 
 
 * :ref:`ug_zigbee_architectures` page to learn more about the Zigbee architecture available in the |NCS|
 * `Common ZCL terms and definitions`_ section in the ZBOSS user guide
-* Zigbee topologies in section 1.1.4 of the `Zigbee Specification`_
+* Zigbee topologies in section 1.1.4 of the `Zigbee Specification <CSA Specifications Download Request_>`_
 * :ref:`zigbee_ug_sed` section on the :ref:`ug_zigbee_configuring` page
 
 Requirements

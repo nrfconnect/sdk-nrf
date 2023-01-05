@@ -29,7 +29,7 @@ The following are some of the key features of Matter:
 * Breaking new ground with a reference, open-source Matter stack delivered by `Connectivity Standards Alliance`_.
 * Enabling accelerated adoption in smart home, building and commercial use.
 
-The following pages provide a brief overview of the Matter structure.
+The following pages provide a brief overview of the Matter structure, in accordance with `Matter specifications <CSA Specifications Download Request_>`_.
 
 .. toctree::
    :maxdepth: 1

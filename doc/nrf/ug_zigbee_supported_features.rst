@@ -23,4 +23,4 @@ Experimental support also means that the feature is either not certified or no s
 
 See the :ref:`nrfxlib:zboss` page in nrfxlib and the `external ZBOSS development guide and API documentation`_ for more information about the ZBOSS library.
 
-For more information about Zigbee, visit the `Connectivity Standards Alliance`_ page and read `Zigbee Specification`_.
+For more information about Zigbee, download the `Zigbee Specification <CSA Specifications Download Request_>`_ from Connectivity Standards Alliance.

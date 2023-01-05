@@ -14,21 +14,21 @@ Connectivity Standards Alliance membership
 
 The most important prerequisite is becoming member of the `Connectivity Standards Alliance`_, which grants you access to a variety of Matter member resources, lets you contribute to the Matter Specification GitHub repository, and allows you to add information to the `Distributed Compliance Ledger`_, among other things.
 
-You can become a CSA member by applying on the `CSA's Become Member page`_.
+You can become a CSA member by applying on the `CSA's Become Member page <Join CSA_>`_.
 You need at least the Adopter membership level in order to use approved specifications to build products and certify them.
 Once you join CSA, you need to apply for membership in the Matter Working Group to get access to Matter resources and community.
 
-Matter specification and other documents
-========================================
+Matter specifications and other documents
+=========================================
 
 To develop products for Matter, you need to be familiar with several official documents, which you will gain access to after joining Matter Working Group.
 Most important of these documents are the following:
 
-* Matter Specification
-* Matter Device Library
-* Matter Application Clusters
+* Matter Core Specification
+* Matter Device Library Specification
+* Matter Application Cluster Specification
 
-These documents describe the Matter protocol and are available to CSA members from the restricted `Matter specification repository`_.
+These documents describe the Matter protocol and are available to CSA members from the `CSA Specifications Download Request`_ page.
 
 Being familiar with the following documents is crucial for the success of your :ref:`ug_matter_device_certification` procedure:
 

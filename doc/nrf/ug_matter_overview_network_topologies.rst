@@ -40,7 +40,7 @@ Binding
   A feature that allows establishing a relationship between Matter endpoints on a single or two separate Matter nodes.
   The relationships are described by binding entries stored persistently in the device memory and managed by the Binding Cluster.
   Bindings are used to assign target or targets of a client cluster on the node, so that the device knows which remote device it should act upon.
-  The behavior induced by establishing a binding is application-defined and is not limited anyhow by the Matter specification, which opens the way for different custom scenarios.
+  The behavior induced by establishing a binding is application-defined and is not limited anyhow by the Matter Core Specification, which opens the way for different custom scenarios.
   For example, you can create a relationship in which a button press on light switch device results in changing the state of one or group of light bulb devices.
 
 Bridge

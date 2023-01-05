@@ -111,7 +111,6 @@
 .. _`Matter nRF Connect releases`: https://github.com/nrfconnect/sdk-connectedhomeip/releases
 .. _`Matter Certification Policy`: https://github.com/CHIP-Specifications/connectedhomeip-spec/blob/master/policies/matter_certificate_policy.adoc
 .. _`Kconfig.mcuboot.defaults`: https://github.com/project-chip/connectedhomeip/blob/master/config/nrfconnect/chip-module/Kconfig.mcuboot.defaults
-.. _`Matter specification repository`: https://github.com/CHIP-Specifications/connectedhomeip-spec/blob/master/policies/
 .. _`Matter SDK tagged as v1.0.0`: https://github.com/project-chip/connectedhomeip/releases/tag/v1.0.0
 
 .. _`DCL Quick Start Guide`: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/quickStartGuide.adoc
@@ -830,7 +829,7 @@
 
 .. _`Zigbee Alliance`:
 .. _`Connectivity Standards Alliance`: https://csa-iot.org
-.. _`Zigbee Specification`: https://zigbeealliance.org/developer_resources/
+.. _`CSA Specifications Download Request`: https://csa-iot.org/developer-resource/specifications-download-request/
 .. _`Zigbee Cluster Library specification`: https://zigbeealliance.org/wp-content/uploads/2019/12/07-5123-06-zigbee-cluster-library-specification.pdf
 
 .. _`Matter Resource Kit`: https://groups.csa-iot.org/wg/all-users/home/matter-resource-kit
@@ -838,13 +837,14 @@
 .. _`CSA's Testing Providers`: https://csa-iot.org/certification/testing-providers/
 .. _`CSA's Certification Team`: https://csa-iot.org/contact-us/
 .. _`Connectivity Standards Alliance members`: https://csa-iot.org/members/
-.. _`Join CSA`:
-.. _`CSA's Become Member page`: https://csa-iot.org/become-member/
+.. _`Join CSA`: https://csa-iot.org/become-member/
 .. _`CSA Member Resources page`: https://groups.csa-iot.org/wg/all-users/home/member-resources
 .. _`Matter Attestation Form`: https://groups.csa-iot.org/wg/members-all/document/folder/2255
 .. _`Matter Attestation of Security template`: https://groups.csa-iot.org/wg/members-all/document/27432
 .. _`Connectivity Standards Alliance Certification Web Tool`: https://zigbeecertifiedproducts.knack.com/zigbee-certified#home/
 .. _`CSA Certified Products Database`: https://csa-iot.org/csa-iot_products/
+
+.. _`Distributed Compliance Ledger`: https://webui.dcl.csa-iot.org/
 
 .. ### Source: Chocolatey
 
@@ -1027,9 +1027,6 @@
 .. _`GN website`: https://gn.googlesource.com/gn/#getting-a-binary
 
 .. _`Power Saving Mode (PSM)`: https://www.sharetechnote.com/html/Handbook_LTE_PSM.html
-
-.. _`Distributed Compliance Ledger`:
-.. _`Distributed Compliance Ledger website`: https://webui.dcl.csa-iot.org/
 
 .. _`Leshan Demo Server web UI`:
 .. _`public Leshan Demo Server`: https://leshan.eclipseprojects.io
