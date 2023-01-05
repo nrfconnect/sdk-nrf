@@ -22,6 +22,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/byteorder.h>
+#include <zephyr/drivers/gpio.h>
 
 #include <mpsl_fem_protocol_api.h>
 
@@ -48,6 +49,9 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 
 /* Radio Tx ramp-up time in microseconds. */
 #define TX_RAMP_UP_TIME_US 129
+
+/* Radio Rx fast ramp-up time in microseconds. */
+#define TX_FAST_RAMP_UP_TIME_US 40
 
 /* Radio Rx ramp-up time in microseconds. */
 #define RX_RAMP_UP_TIME_US 124
@@ -96,6 +100,7 @@ enum esb_state {
 				 */
 	ESB_STATE_PRX,		/* Receiving packets without ACK. */
 	ESB_STATE_PRX_SEND_ACK, /* Transmitting ACK in RX mode. */
+	ESB_STATE_PTX_TXIDLE,   /* Transmitter stage is idle but enabled */
 };
 
 /* Pipe info PID and CRC and acknowledgment payload. */
@@ -284,6 +289,7 @@ static mpsl_fem_event_t disable_event = {
  * configuration and state. Note that they will be 0 initialized.
  */
 static void (*on_radio_disabled)(void);
+static void (*on_timer_compare1)(void);
 static void (*update_rf_payload_format)(uint32_t payload_length);
 
 /*  The following functions are assigned to the function pointers above. */
@@ -292,6 +298,7 @@ static void on_radio_disabled_tx(void);
 static void on_radio_disabled_tx_wait_for_ack(void);
 static void on_radio_disabled_rx(void);
 static void on_radio_disabled_rx_ack(void);
+static void on_radio_end_tx_noack(void);
 
 /*  Function to do bytewise bit-swap on an unsigned 32-bit value */
 static uint32_t bytewise_bit_swap(const uint8_t *input)
@@ -785,7 +792,12 @@ static bool rx_fifo_push_rfbuf(uint8_t pipe, uint8_t pid)
 
 static void esb_timer_handler(nrf_timer_event_t event_type, void *context)
 {
-
+	if (nrf_timer_int_enable_check(esb_timer.p_reg, NRF_TIMER_INT_COMPARE1_MASK)) {
+		nrf_timer_event_clear(esb_timer.p_reg, NRF_TIMER_EVENT_COMPARE1);
+		if (on_timer_compare1 != NULL) {
+			on_timer_compare1();
+		}
+	}
 }
 
 static int sys_timer_init(void)
@@ -814,6 +826,7 @@ static void sys_timer_deinit(void)
 static void start_tx_transaction(void)
 {
 	bool ack = true;
+	bool is_tx_idle = false;
 	struct esb_radio_pdu *pdu = (struct esb_radio_pdu *)tx_payload_buffer;
 	last_tx_attempts = 1;
 	/* Prepare the payload */
@@ -859,14 +872,34 @@ static void start_tx_transaction(void)
 			retransmits_remaining = esb_cfg.retransmit_count;
 			on_radio_disabled = on_radio_disabled_tx;
 			esb_state = ESB_STATE_PTX_TX_ACK;
+			nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
+		} else if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
+			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common &
+					~RADIO_SHORTS_END_DISABLE_Msk);
+			nrf_timer_shorts_set(esb_timer.p_reg,
+					(NRF_TIMER_SHORT_COMPARE1_STOP_MASK |
+					NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK));
+
+			/* Configure timer to produce an ISR after retransmit_delay */
+			nrfx_timer_clear(&esb_timer);
+			nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL1,
+				esb_cfg.retransmit_delay, true);
+
+			/* Configure PPI to start the timer when transmission ends */
+			esb_ppi_for_wait_for_rx_set();
+
+			on_timer_compare1 = on_radio_end_tx_noack;
+			on_radio_disabled = NULL;
+			is_tx_idle = ((esb_state == ESB_STATE_PTX_TXIDLE) ||
+						(esb_state == ESB_STATE_PTX_TX));
+			esb_state = ESB_STATE_PTX_TX;
 		} else {
 			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
 
 			on_radio_disabled = on_radio_disabled_tx_noack;
 			esb_state = ESB_STATE_PTX_TX;
+			nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
 		}
-
-		nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
 
 		break;
 
@@ -889,11 +922,35 @@ static void start_tx_transaction(void)
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_PAYLOAD);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
 
-	esb_ppi_for_txrx_set(false, ack);
-	esb_fem_for_tx_set(ack);
+	/* Trigger different radio event if radio is disabled or idle */
+	if (is_tx_idle) {
+		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_START);
+	} else {
+		esb_ppi_for_txrx_set(false, ack);
+		esb_fem_for_tx_set(ack);
 
-	radio_start();
+		radio_start();
+	}
+}
+
+static void on_radio_end_tx_noack(void)
+{
+	/* Timer compare is cleared by PPI - we still need to disable Interrupt flag */
+	nrf_timer_int_disable(esb_timer.p_reg,  nrf_timer_compare_int_get(NRF_TIMER_CC_CHANNEL1));
+	esb_ppi_for_wait_for_rx_clear();
+
+	interrupt_flags |= INT_TX_SUCCESS_MSK;
+	tx_fifo_remove_last();
+
+	if (tx_fifo.count == 0) {
+		esb_state = ESB_STATE_PTX_TXIDLE;
+		NVIC_SetPendingIRQ(ESB_EVT_IRQ);
+	} else {
+		NVIC_SetPendingIRQ(ESB_EVT_IRQ);
+		start_tx_transaction();
+	}
 }
 
 static void on_radio_disabled_tx_noack(void)
@@ -932,8 +989,10 @@ static void on_radio_disabled_tx(void)
 
 	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL0,
 			   (wait_for_ack_timeout_us + ADDR_EVENT_LATENCY_US), false);
+
+	uint16_t ramp_up = esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US : TX_RAMP_UP_TIME_US;
 	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL1,
-			   (esb_cfg.retransmit_delay - TX_RAMP_UP_TIME_US), false);
+			   (esb_cfg.retransmit_delay - ramp_up), false);
 
 	nrf_timer_shorts_set(esb_timer.p_reg,
 		(NRF_TIMER_SHORT_COMPARE1_STOP_MASK | NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK));
@@ -1377,6 +1436,9 @@ int esb_init(const struct esb_config *config)
 
 	disable_event.event.generic.event = esb_ppi_radio_disabled_get();
 
+	nrf_radio_modecnf0_set(NRF_RADIO, esb_cfg.use_fast_ramp_up,
+		nrf_radio_modecnf0_dtx_get(NRF_RADIO));
+
 #if IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS)
 
 	/* Ensure IRQs are disabled before attaching. */
@@ -1444,6 +1506,9 @@ void esb_disable(void)
 
 	sys_timer_deinit();
 	esb_ppi_deinit();
+
+	/* Radio ramp-up time to default mode */
+	nrf_radio_modecnf0_set(NRF_RADIO, false, nrf_radio_modecnf0_dtx_get(NRF_RADIO));
 
 	esb_state = ESB_STATE_IDLE;
 	esb_initialized = false;
@@ -1693,6 +1758,11 @@ int esb_pop_tx(void)
 	irq_unlock(key);
 
 	return 0;
+}
+
+bool esb_tx_full(void)
+{
+	return tx_fifo.count >= CONFIG_ESB_TX_FIFO_SIZE;
 }
 
 int esb_flush_rx(void)

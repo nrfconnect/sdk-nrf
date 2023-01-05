@@ -302,3 +302,28 @@ Examples
 The |NCS| provides the following example application that shows how to use the ESB protocol:
 
 * :ref:`esb_prx_ptx`
+
+.. _esb_fast_ramp_up:
+
+Fast ramp-up
+============
+
+The ESB driver is designed for bidirectional data transfer between devices.
+This implies that the radio peripheral is continuously switching between reception and transmission mode.
+When switching to transmission or reception mode, the radio peripheral needs some time to start internal analog components.
+On the nRF51 and nRF24L Series devices, a hardware-limited 130 µs delay is implemented.
+If the ESB connection is established only between nRF52 and/or nRF53 Series devices, this delay can be reduced to 40 µs.
+
+When the value of the ``use_fast_ramp_up`` parameter is ``true``, fast ramp-up is enabled, resulting in reduced ramp-up delay of 40 µs.
+
+.. _esb_never_disable_tx:
+
+Experimental feature: Never disable transmission stage
+======================================================
+
+If you need to reduce the delay between TX FIFO filling and reception to minimum, enabling fast ramp-up might not be sufficient.
+In this case, you can use the :kconfig:option:`CONFIG_ESB_NEVER_DISABLE_TX` Kconfig option.
+It changes the ESB driver's behavior.
+If a packet is not acknowledged, the radio peripheral remains in TXIDLE state instead of TXDISABLE when transmission is pending.
+Using this experimental feature can reduce transmission delay below 100 µs for a 32 bits (four bytes) payload.
+However, this process consumes more energy, because the radio transmitter stage remains enabled when transmission is taking place.
