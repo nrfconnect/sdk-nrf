@@ -81,6 +81,7 @@ Matter
 * Updated:
 
   * Default heap implementation to use Zephyr's ``sys_heap`` (:kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEAP`) to better control the RAM usage of Matter applications.
+  * :ref:`ug_matter_device_certification` page with a section about certification document templates.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
