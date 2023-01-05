@@ -891,7 +891,8 @@ This script generates a file for each partition - "pm_config.h".
 This file contains all addresses and sizes of all partitions.
 
 "pm_config.h" is in the same folder as the given 'pm.yml' file.''',
-        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False)
     parser.add_argument('--input-files', required=True, type=str, nargs='+',
                         help='List of paths to input yaml files.')
 
@@ -915,7 +916,7 @@ This file contains all addresses and sizes of all partitions.
     main_args, region_args = parser.parse_known_args()
 
     # Create new instance to parse regions
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
     for x in main_args.regions:
         # Generate arguments for each region dynamically
         parser.add_argument(f'--{x}-size', required=True, type=lambda z: int(z, 0))

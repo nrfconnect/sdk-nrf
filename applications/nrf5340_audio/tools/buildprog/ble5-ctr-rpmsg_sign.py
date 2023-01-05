@@ -284,7 +284,8 @@ def __main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description='This script sign and generate netcore hex and upgradable binary for the\
-         nRF5340 Audio project on Windows and Linux')
+         nRF5340 Audio project on Windows and Linux',
+        allow_abbrev=False)
     parser.add_argument('-i', '--input_file', type=str,
                         help='Input hex file name. Higher priority than -I')
     parser.add_argument('-b', '--build_dir', required=True, type=str,

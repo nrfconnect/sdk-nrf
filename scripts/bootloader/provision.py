@@ -49,7 +49,8 @@ Reduce the number of public keys or counter slots and try again."""
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Generate provisioning hex file.',
-        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False)
     parser.add_argument('--s0-addr', type=lambda x: int(x, 0), required=True, help='Address of image slot s0')
     parser.add_argument('--s1-addr', type=lambda x: int(x, 0), required=False, help='Address of image slot s1')
     parser.add_argument('--provision-addr', type=lambda x: int(x, 0),

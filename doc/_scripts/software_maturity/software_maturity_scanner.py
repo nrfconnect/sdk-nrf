@@ -620,7 +620,7 @@ if __name__ == "__main__":
     build_output = os.environ.get("TWISTER_OUT_DIR", None)
     access_key = os.environ.get("AZURE_REPORT_CACHE_ACCESS_KEY", None)
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
 
     parser.add_argument(
         "-bo",

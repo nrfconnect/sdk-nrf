@@ -36,7 +36,7 @@ def main():
     descr = "Merge data from Peripheral and Central. Synchronization events" \
             " should be registered at the beginning and at the end of" \
             " measurements (used to compensate clock drift)."
-    parser = argparse.ArgumentParser(description=descr)
+    parser = argparse.ArgumentParser(description=descr, allow_abbrev=False)
     parser.add_argument("peripheral_dataset", help="Name of Peripheral dataset")
     parser.add_argument("peripheral_sync_event",
                         help="Event used for synchronization - Peripheral")

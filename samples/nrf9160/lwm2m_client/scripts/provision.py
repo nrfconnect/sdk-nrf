@@ -24,7 +24,8 @@ if __name__ == "__main__":
         pass
 
     parser = argparse.ArgumentParser(
-        description='nRF91 device provisioning example')
+        description='nRF91 device provisioning example',
+        allow_abbrev=False)
     parser.add_argument('-f', help='Build and flash the AT client', action='store_true')
     parser.add_argument('-d', help='Enable debug logs', action='store_true')
     parser.add_argument('-p', '--purge', dest='purge', help='Wipe the security tags and remove the device from the server', action='store_true')

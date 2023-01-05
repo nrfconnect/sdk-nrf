@@ -39,7 +39,8 @@ def get_ecdsa_signature(der, clength):
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Decode DER format using OpenSSL.',
-        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False)
 
     parser.add_argument('-a', '--alg', required=True, choices=['rsa', 'ecdsa'],
                         help='Expected algorithm')

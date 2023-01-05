@@ -24,7 +24,7 @@ from pc_ble_driver_py.ble_adapter import BLEAdapter, BLEAdapterObserver, EvtSync
 
 CFG_TAG = 1
 
-parser = argparse.ArgumentParser(description='BLE serial daemon.')
+parser = argparse.ArgumentParser(description='BLE serial daemon.', allow_abbrev=False)
 parser.add_argument('--com', help='COM port name (e.g. COM110).',
                     nargs='*', required=True, default="")
 parser.add_argument('--snr', help='segger id.',

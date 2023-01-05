@@ -19,7 +19,7 @@ import sys
 
 def main():
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
 
     parser.add_argument("dir", nargs=1)
     args = parser.parse_args()

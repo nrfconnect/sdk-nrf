@@ -45,7 +45,8 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
 
     parser = argparse.ArgumentParser(
-        description='Collecting data from Nordic nrf_profiler for given time and saving to files.')
+        description='Collecting data from Nordic nrf_profiler for given time and saving to files.',
+        allow_abbrev=False)
     parser.add_argument('time', type=int, help='Time of collecting data [s]')
     parser.add_argument('dataset_name', help='Name of dataset')
     parser.add_argument('--log', help='Log level')

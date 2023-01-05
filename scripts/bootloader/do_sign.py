@@ -14,7 +14,8 @@ from ecdsa import SigningKey
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Sign data from stdin or file.',
-        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False)
 
     parser.add_argument('-k', '--private-key', required=True, type=argparse.FileType('rb'),
                         help='Private key to use.')

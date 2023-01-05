@@ -9,7 +9,8 @@ import logging
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Plotting events from given files.')
+        description='Plotting events from given files.',
+        allow_abbrev=False)
     parser.add_argument('dataset_name', help='Name of dataset')
     parser.add_argument('--log', help='Log level')
     args = parser.parse_args()

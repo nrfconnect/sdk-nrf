@@ -75,7 +75,8 @@ def print_region(domain, region, size, pm_config):
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Parse given Partition Manager output YAML file and print a pretty report',
-        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False)
     parser.add_argument('-i', '--input', required=True, type=str, nargs='+',
                         help='Path to the domain specific YAML files from Partition Manager')
 
