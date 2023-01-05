@@ -13,6 +13,8 @@
 #include "mosh_print.h"
 #include "cloud_lwm2m.h"
 
+BUILD_ASSERT(sizeof(CONFIG_MOSH_LWM2M_PSK) > 1, "LwM2M pre-shared key (PSK) must be configured");
+
 /* Device RIDs */
 #define MANUFACTURER_RID 0
 #define MODEL_NUMBER_RID 1

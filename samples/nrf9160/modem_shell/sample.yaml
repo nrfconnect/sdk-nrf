@@ -72,6 +72,8 @@ tests:
     tags: ci_build
   sample.nrf9160.modem_shell.lwm2m:
     build_only: true
+    extra_configs:
+      - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
     extra_args: OVERLAY_CONFIG=overlay-lwm2m.conf
     integration_platforms:
       - nrf9160dk_nrf9160_ns
@@ -79,6 +81,8 @@ tests:
     tags: ci_build
   sample.nrf9160.modem_shell.lwm2m_bootstrap:
     build_only: true
+    extra_configs:
+      - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
     extra_args: OVERLAY_CONFIG="overlay-lwm2m.conf;overlay-lwm2m_bootstrap.conf"
     integration_platforms:
       - nrf9160dk_nrf9160_ns
@@ -86,6 +90,8 @@ tests:
     tags: ci_build
   sample.nrf9160.modem_shell.lwm2m_pgps:
     build_only: true
+    extra_configs:
+      - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
     extra_args: OVERLAY_CONFIG="overlay-lwm2m.conf;overlay-lwm2m_pgps.conf;overlay-pgps.conf"
     integration_platforms:
       - nrf9160dk_nrf9160_ns
