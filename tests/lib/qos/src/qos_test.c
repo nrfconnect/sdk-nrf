@@ -12,8 +12,8 @@
 /* Include header that exposes internal variables in QoS library. */
 #include "vars_internal.h"
 
-/* Register a test message type. */
-QOS_MESSAGE_TYPES_REGISTER(MESSAGE_1);
+/* Test message type. */
+#define TEST_MESSAGE_TYPE 0
 
 /* Dummy payload. */
 static uint8_t *var = "some text";
@@ -122,7 +122,7 @@ void test_message_add(void)
 		.data.buf = var,
 		.data.len = DUMMY_SIZE,
 		.id = qos_message_id_get_next(),
-		.type = MESSAGE_1,
+		.type = TEST_MESSAGE_TYPE,
 		.flags = QOS_FLAG_RELIABILITY_ACK_DISABLED
 	};
 
@@ -179,7 +179,7 @@ void test_message_remove(void)
 		.data.buf = var,
 		.data.len = DUMMY_SIZE,
 		.id = QOS_MESSAGE_ID_BASE,
-		.type = MESSAGE_1,
+		.type = TEST_MESSAGE_TYPE,
 		.flags = QOS_FLAG_RELIABILITY_ACK_REQUIRED
 	};
 
@@ -296,7 +296,7 @@ void test_message_timeout_work(void)
 		.data.buf = var,
 		.data.len = DUMMY_SIZE,
 		.id = qos_message_id_get_next(),
-		.type = MESSAGE_1,
+		.type = TEST_MESSAGE_TYPE,
 		.flags = QOS_FLAG_RELIABILITY_ACK_REQUIRED
 	};
 
