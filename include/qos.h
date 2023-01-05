@@ -22,10 +22,6 @@
 extern "C" {
 #endif
 
-/** @brief Macro used to register message types that are supported by the application. */
-#define X(name) const uint8_t name = __COUNTER__
-#define QOS_MESSAGE_TYPES_REGISTER(...) FOR_EACH(X, (;), __VA_ARGS__)
-
 /** @brief ID base used for message IDs retrieved using qos_message_id_get_next() API. */
 #define QOS_MESSAGE_ID_BASE 15000
 
@@ -103,9 +99,6 @@ struct qos_data {
 	uint16_t notified_count;
 
 	/** Type of the message.
-	 *
-	 *  When adding a message to the library using qos_message_add(), the message types defined
-	 *  with the QOS_MESSAGE_TYPES_REGISTER macro can be used to assign a type to the message.
 	 *
 	 *  The message type can be used to route data after a new or timed out message is
 	 *  received with the QOS_MESSAGE_NEW or QOS_EVT_MESSAGE_TIMER_EXPIRED events.
