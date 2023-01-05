@@ -136,6 +136,17 @@ static int get_prediction_block(int pnum)
 	return npgps_pointer_to_block((uint8_t *)index.predictions[pnum]);
 }
 
+/**
+ * @brief When using external flash, ensure the prediction at the requested flash device offset
+ * is available via the prediction cache.  When using internal flash, just the flash device offset
+ * as a direct pointer to the location of the prediction in flash.
+ *
+ * @param off Offset from the start of the flash device, when using external flash, or offset from
+ * the start of application processor memory space when using internal flash.
+ *
+ * @return struct nrf_cloud_pgps_prediction* Pointer to a cached copy of the prediction when
+ * using external flash, or a direct pointer the prediction when using internal flash.
+ */
 static struct nrf_cloud_pgps_prediction *get_cached_prediction(off_t off)
 {
 #if defined(CONFIG_PM_PARTITION_REGION_PGPS_EXTERNAL)
@@ -143,7 +154,10 @@ static struct nrf_cloud_pgps_prediction *get_cached_prediction(off_t off)
 	if (prediction_cache_flash_offset != off) {
 		int err;
 
-		err = flash_area_read(prediction_flash_area, off,
+		/* Subtract fa_off from off to convert from flash device address space
+		 * to partition address space.
+		 */
+		err = flash_area_read(prediction_flash_area, off - prediction_flash_area->fa_off,
 				      prediction_cache, sizeof(prediction_cache));
 
 		if (err) {
@@ -152,6 +166,7 @@ static struct nrf_cloud_pgps_prediction *get_cached_prediction(off_t off)
 			return NULL;
 		}
 		prediction_cache_flash_offset = off;
+		LOG_DBG("Caching offset 0x%X", (uint32_t)(off - prediction_flash_area->fa_off));
 	}
 
 	return (struct nrf_cloud_pgps_prediction *)prediction_cache;
@@ -372,7 +387,7 @@ static int validate_stored_predictions(uint16_t *first_bad_day,
 
 		i = get_prediction_block(pnum);
 		LOG_DBG("Prediction num:%u, loc:%p, blk:%d", pnum, pred, i);
-		__ASSERT(i != -1, "unexpected pointer value %p", pred);
+		__ASSERT(i != NO_BLOCK, "unexpected pointer value %p", pred);
 		npgps_mark_block_used(i, true);
 	}
 
