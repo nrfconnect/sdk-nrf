@@ -435,181 +435,210 @@ static int configure_supported_features(void)
 {
 	int err;
 
-#if defined(CONFIG_BT_BROADCASTER)
-	if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
-		err = sdc_support_ext_adv();
-		if (err) {
-			return -ENOTSUP;
-		}
-	} else {
-		err = sdc_support_adv();
-		if (err) {
-			return -ENOTSUP;
-		}
+#if IS_ENABLED(CONFIG_BT_BROADCASTER)
+#if IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)
+	err = sdc_support_ext_adv();
+	if (err) {
+		return -ENOTSUP;
+	}
+#else
+	err = sdc_support_adv();
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
+#endif
+
+#if IS_ENABLED(CONFIG_BT_PER_ADV)
+	err = sdc_support_le_periodic_adv();
+	if (err) {
+		return -ENOTSUP;
 	}
 #endif
 
-	if (IS_ENABLED(CONFIG_BT_PER_ADV)) {
-		err = sdc_support_le_periodic_adv();
-		if (err) {
-			return -ENOTSUP;
-		}
+#if IS_ENABLED(CONFIG_BT_PERIPHERAL)
+	err = sdc_support_peripheral();
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
+
+#if IS_ENABLED(CONFIG_BT_OBSERVER)
+#if !IS_ENABLED(CONFIG_BT_CENTRAL)
+#if IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)
+	err = sdc_support_ext_scan();
+	if (err) {
+		return -ENOTSUP;
+	}
+#else
+	err = sdc_support_scan();
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
+#endif /* !IS_ENABLED(CONFIG_BT_CENTRAL) */
+
+#if IS_ENABLED(CONFIG_BT_PER_ADV_SYNC)
+	err = sdc_support_le_periodic_sync();
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
+#endif /* IS_ENABLED(CONFIG_BT_OBSERVER) */
+
+#if IS_ENABLED(CONFIG_BT_CENTRAL)
+#if IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)
+	err = sdc_support_ext_central();
+	if (err) {
+		return -ENOTSUP;
+	}
+#else
+	err = sdc_support_central();
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
+#endif
+
+#if IS_ENABLED(CONFIG_BT_CTLR_DATA_LENGTH)
+#if IS_ENABLED(CONFIG_BT_CENTRAL)
+	err = sdc_support_dle_central();
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
+#if IS_ENABLED(CONFIG_BT_PERIPHERAL)
+	err = sdc_support_dle_peripheral();
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
+#endif
+
+#if IS_ENABLED(CONFIG_BT_CTLR_PHY_2M)
+	err = sdc_support_le_2m_phy();
+	if (err) {
+		return -ENOTSUP;
+	}
+#if IS_ENABLED(CONFIG_BT_CENTRAL)
+	err = sdc_support_phy_update_central();
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
+#if IS_ENABLED(CONFIG_BT_PERIPHERAL)
+	err = sdc_support_phy_update_peripheral();
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
+#endif
+
+#if IS_ENABLED(CONFIG_BT_CTLR_DATA_LENGTH) && IS_ENABLED(CONFIG_BT_PERIPHERAL)
+	err = sdc_support_dle_peripheral();
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
+
+#if IS_ENABLED(CONFIG_BT_CTLR_PHY_2M)
+	err = sdc_support_le_2m_phy();
+	if (err) {
+		return -ENOTSUP;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-		err = sdc_support_peripheral();
-		if (err) {
-			return -ENOTSUP;
-		}
+#if IS_ENABLED(CONFIG_BT_CENTRAL)
+	err = sdc_support_phy_update_central();
+	if (err) {
+		return -ENOTSUP;
 	}
+#endif
 
-	if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
-		if (!IS_ENABLED(CONFIG_BT_CENTRAL)) {
-			if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
-				err = sdc_support_ext_scan();
-				if (err) {
-					return -ENOTSUP;
-				}
-			} else {
-				err = sdc_support_scan();
-				if (err) {
-					return -ENOTSUP;
-				}
-			}
-		}
-
-		if (IS_ENABLED(CONFIG_BT_PER_ADV_SYNC)) {
-			err = sdc_support_le_periodic_sync();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
+#if IS_ENABLED(CONFIG_BT_PERIPHERAL)
+	err = sdc_support_phy_update_peripheral();
+	if (err) {
+		return -ENOTSUP;
 	}
+#endif
+#endif
 
-	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
-			err = sdc_support_ext_central();
-			if (err) {
-				return -ENOTSUP;
-			}
-		} else {
-			err = sdc_support_central();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
+#if IS_ENABLED(CONFIG_BT_CTLR_SYNC_TRANSFER_SENDER)
+#if IS_ENABLED(CONFIG_BT_CENTRAL)
+	err = sdc_support_periodic_adv_sync_transfer_sender_central();
+	if (err) {
+		return -ENOTSUP;
 	}
+#endif
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_DATA_LENGTH)) {
-		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-			err = sdc_support_dle_central();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
-		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-			err = sdc_support_dle_peripheral();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
+#if IS_ENABLED(CONFIG_BT_PERIPHERAL)
+	err = sdc_support_periodic_adv_sync_transfer_sender_peripheral();
+	if (err) {
+		return -ENOTSUP;
 	}
+#endif
+#endif
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_PHY_2M)) {
-		err = sdc_support_le_2m_phy();
-		if (err) {
-			return -ENOTSUP;
-		}
-		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-			err = sdc_support_phy_update_central();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
-		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-			err = sdc_support_phy_update_peripheral();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
+#if IS_ENABLED(CONFIG_BT_CTLR_SYNC_TRANSFER_RECEIVER)
+#if IS_ENABLED(CONFIG_BT_CENTRAL)
+	err = sdc_support_periodic_adv_sync_transfer_receiver_central();
+	if (err) {
+		return -ENOTSUP;
 	}
+#endif
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_SYNC_TRANSFER_SENDER)) {
-		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-			err = sdc_support_periodic_adv_sync_transfer_sender_central();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
-
-		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-			err = sdc_support_periodic_adv_sync_transfer_sender_peripheral();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
+#if IS_ENABLED(CONFIG_BT_PERIPHERAL)
+	err = sdc_support_periodic_adv_sync_transfer_receiver_peripheral();
+	if (err) {
+		return -ENOTSUP;
 	}
+#endif
+#endif
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_SYNC_TRANSFER_RECEIVER)) {
-		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-			err = sdc_support_periodic_adv_sync_transfer_receiver_central();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
-
-		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-			err = sdc_support_periodic_adv_sync_transfer_receiver_peripheral();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
+#if IS_ENABLED(CONFIG_BT_CTLR_PHY_CODED)
+	err = sdc_support_le_coded_phy();
+	if (err) {
+		return -ENOTSUP;
 	}
-
-	if (IS_ENABLED(CONFIG_BT_CTLR_PHY_CODED)) {
-		err = sdc_support_le_coded_phy();
-		if (err) {
-			return -ENOTSUP;
-		}
-		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-			err = sdc_support_phy_update_central();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
-		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-			err = sdc_support_phy_update_peripheral();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
+#if IS_ENABLED(CONFIG_BT_CENTRAL)
+	err = sdc_support_phy_update_central();
+	if (err) {
+		return -ENOTSUP;
 	}
+#endif
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_CX_ADV_TRY_CONTINUE_ON_DENIAL)) {
-		err = sdc_coex_adv_mode_configure(true);
-		if (err) {
-			return -ENOTSUP;
-		}
-	} else if (IS_ENABLED(CONFIG_BT_CTLR_SDC_CX_ADV_CLOSE_ADV_EVT_ON_DENIAL)) {
-		err = sdc_coex_adv_mode_configure(false);
-		if (err) {
-			return -ENOTSUP;
-		}
+#if IS_ENABLED(CONFIG_BT_PERIPHERAL)
+	err = sdc_support_phy_update_peripheral();
+	if (err) {
+		return -ENOTSUP;
 	}
+#endif
+#endif
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_DF_CONN_CTE_RSP) && IS_ENABLED(CONFIG_BT_CENTRAL)) {
-		err = sdc_support_le_conn_cte_rsp_central();
-		if (err) {
-			return -ENOTSUP;
-		}
+#if IS_ENABLED(CONFIG_BT_CTLR_SDC_CX_ADV_TRY_CONTINUE_ON_DENIAL)
+	err = sdc_coex_adv_mode_configure(true);
+	if (err) {
+		return -ENOTSUP;
 	}
+#elif IS_ENABLED(CONFIG_BT_CTLR_SDC_CX_ADV_CLOSE_ADV_EVT_ON_DENIAL)
+	err = sdc_coex_adv_mode_configure(false);
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_DF_CONN_CTE_RSP) && IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-		err = sdc_support_le_conn_cte_rsp_peripheral();
-		if (err) {
-			return -ENOTSUP;
-		}
+#if IS_ENABLED(CONFIG_BT_CTLR_DF_CONN_CTE_RSP) && IS_ENABLED(CONFIG_BT_CENTRAL)
+	err = sdc_support_le_conn_cte_rsp_central();
+	if (err) {
+		return -ENOTSUP;
 	}
+#endif
+
+#if IS_ENABLED(CONFIG_BT_CTLR_DF_CONN_CTE_RSP) && IS_ENABLED(CONFIG_BT_PERIPHERAL)
+	err = sdc_support_le_conn_cte_rsp_peripheral();
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
 
 #if RADIO_TXP_DEFAULT != 0
 	err = sdc_default_tx_power_set(RADIO_TXP_DEFAULT);
@@ -618,21 +647,21 @@ static int configure_supported_features(void)
 	}
 #endif
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_LE_POWER_CONTROL)) {
-		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-			err = sdc_support_le_power_control_central();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
-
-		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-			err = sdc_support_le_power_control_peripheral();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
+#if IS_ENABLED(CONFIG_BT_CTLR_LE_POWER_CONTROL)
+#if IS_ENABLED(CONFIG_BT_CENTRAL)
+	err = sdc_support_le_power_control_central();
+	if (err) {
+		return -ENOTSUP;
 	}
+#endif
+
+#if IS_ENABLED(CONFIG_BT_PERIPHERAL)
+	err = sdc_support_le_power_control_peripheral();
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
+#endif
 
 	return 0;
 }
@@ -642,6 +671,7 @@ static int configure_memory_usage(void)
 	int required_memory;
 	sdc_cfg_t cfg;
 
+#if IS_ENABLED(CONFIG_BT_CENTRAL)
 	cfg.central_count.count = SDC_CENTRAL_COUNT;
 
 	/* NOTE: sdc_cfg_set() returns a negative errno on error. */
@@ -652,7 +682,9 @@ static int configure_memory_usage(void)
 	if (required_memory < 0) {
 		return required_memory;
 	}
+#endif
 
+#if IS_ENABLED(CONFIG_BT_PERIPHERAL)
 	cfg.peripheral_count.count = CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT;
 
 	required_memory =
@@ -662,7 +694,9 @@ static int configure_memory_usage(void)
 	if (required_memory < 0) {
 		return required_memory;
 	}
+#endif
 
+#if IS_ENABLED(CONFIG_BT_CENTRAL) || IS_ENABLED(CONFIG_BT_PERIPHERAL)
 	cfg.buffer_cfg.rx_packet_size = MAX_RX_PACKET_SIZE;
 	cfg.buffer_cfg.tx_packet_size = MAX_TX_PACKET_SIZE;
 	cfg.buffer_cfg.rx_packet_count = CONFIG_BT_CTLR_SDC_RX_PACKET_COUNT;
@@ -685,8 +719,9 @@ static int configure_memory_usage(void)
 	if (required_memory < 0) {
 		return required_memory;
 	}
+#endif
 
-#if defined(CONFIG_BT_BROADCASTER)
+#if IS_ENABLED(CONFIG_BT_BROADCASTER)
 	cfg.adv_count.count = SDC_ADV_SET_COUNT;
 
 	required_memory =
@@ -697,7 +732,7 @@ static int configure_memory_usage(void)
 		return required_memory;
 	}
 
-#if defined(CONFIG_BT_CTLR_ADV_DATA_LEN_MAX)
+#if IS_ENABLED(CONFIG_BT_CTLR_ADV_DATA_LEN_MAX)
 	cfg.adv_buffer_cfg.max_adv_data = CONFIG_BT_CTLR_ADV_DATA_LEN_MAX;
 #else
 	cfg.adv_buffer_cfg.max_adv_data = SDC_DEFAULT_ADV_BUF_SIZE;
@@ -712,49 +747,50 @@ static int configure_memory_usage(void)
 	}
 #endif
 
-	if (IS_ENABLED(CONFIG_BT_PER_ADV)) {
-		cfg.periodic_adv_count.count = SDC_PERIODIC_ADV_COUNT;
-		required_memory =
-		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-			    SDC_CFG_TYPE_PERIODIC_ADV_COUNT,
-			    &cfg);
-		if (required_memory < 0) {
-			return required_memory;
-		}
+#if IS_ENABLED(CONFIG_BT_PER_ADV)
+	cfg.periodic_adv_count.count = SDC_PERIODIC_ADV_COUNT;
+	required_memory =
+	sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+		    SDC_CFG_TYPE_PERIODIC_ADV_COUNT,
+		    &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+#endif
+
+#if IS_ENABLED(CONFIG_BT_OBSERVER)
+	cfg.scan_buffer_cfg.count = CONFIG_BT_CTLR_SDC_SCAN_BUFFER_COUNT;
+
+	required_memory =
+	sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+		    SDC_CFG_TYPE_SCAN_BUFFER_CFG,
+		    &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+#endif
+
+#if IS_ENABLED(CONFIG_BT_PER_ADV_SYNC)
+	cfg.periodic_sync_count.count = SDC_PERIODIC_ADV_SYNC_COUNT;
+	required_memory =
+	sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+		    SDC_CFG_TYPE_PERIODIC_SYNC_COUNT,
+		    &cfg);
+	if (required_memory < 0) {
+		return required_memory;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
-		cfg.scan_buffer_cfg.count = CONFIG_BT_CTLR_SDC_SCAN_BUFFER_COUNT;
-
-		required_memory =
-		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-			    SDC_CFG_TYPE_SCAN_BUFFER_CFG,
-			    &cfg);
-		if (required_memory < 0) {
-			return required_memory;
-		}
+	cfg.periodic_sync_buffer_cfg.count = CONFIG_BT_CTLR_SDC_PERIODIC_SYNC_BUFFER_COUNT;
+	required_memory =
+	sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+		    SDC_CFG_TYPE_PERIODIC_SYNC_BUFFER_CFG,
+		    &cfg);
+	if (required_memory < 0) {
+		return required_memory;
 	}
+#endif
 
-	if (IS_ENABLED(CONFIG_BT_PER_ADV_SYNC)) {
-		cfg.periodic_sync_count.count = SDC_PERIODIC_ADV_SYNC_COUNT;
-		required_memory =
-		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-			    SDC_CFG_TYPE_PERIODIC_SYNC_COUNT,
-			    &cfg);
-		if (required_memory < 0) {
-			return required_memory;
-		}
-
-		cfg.periodic_sync_buffer_cfg.count = CONFIG_BT_CTLR_SDC_PERIODIC_SYNC_BUFFER_COUNT;
-		required_memory =
-		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-			    SDC_CFG_TYPE_PERIODIC_SYNC_BUFFER_CFG,
-			    &cfg);
-		if (required_memory < 0) {
-			return required_memory;
-		}
-
-#if defined(CONFIG_BT_CTLR_SYNC_PERIODIC_ADV_LIST_SIZE)
+#if IS_ENABLED(CONFIG_BT_CTLR_SYNC_PERIODIC_ADV_LIST_SIZE)
 		cfg.periodic_adv_list_size = CONFIG_BT_CTLR_SYNC_PERIODIC_ADV_LIST_SIZE;
 		required_memory =
 		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
@@ -764,7 +800,6 @@ static int configure_memory_usage(void)
 			return required_memory;
 		}
 #endif
-	}
 
 	BT_DBG("BT mempool size: %u, required: %u",
 	       sizeof(sdc_mempool), required_memory);
@@ -786,9 +821,9 @@ static int hci_driver_open(void)
 
 	k_work_init(&receive_work, receive_work_handler);
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_ECDH)) {
-		hci_ecdh_init();
-	}
+#if IS_ENABLED(CONFIG_BT_CTLR_ECDH)
+	hci_ecdh_init();
+#endif
 
 	uint8_t build_revision[SDC_BUILD_REVISION_SIZE];
 
@@ -820,15 +855,15 @@ static int hci_driver_open(void)
 		return err;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_UNINIT_MPSL_ON_DISABLE)) {
-		if (!mpsl_is_initialized()) {
-			err = mpsl_lib_init();
-			if (err) {
-				MULTITHREADING_LOCK_RELEASE();
-				return err;
-			}
+#if IS_ENABLED(CONFIG_BT_UNINIT_MPSL_ON_DISABLE)
+	if (!mpsl_is_initialized()) {
+		err = mpsl_lib_init();
+		if (err) {
+			MULTITHREADING_LOCK_RELEASE();
+			return err;
 		}
 	}
+#endif
 
 	err = sdc_enable(receive_signal_raise, sdc_mempool);
 	if (err) {
@@ -845,9 +880,9 @@ static int hci_driver_close(void)
 {
 	int err;
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_ECDH)) {
-		hci_ecdh_uninit();
-	}
+#if IS_ENABLED(CONFIG_BT_CTLR_ECDH)
+	hci_ecdh_uninit();
+#endif
 
 	err = MULTITHREADING_LOCK_ACQUIRE();
 	if (err) {
@@ -860,13 +895,13 @@ static int hci_driver_close(void)
 		return err;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_UNINIT_MPSL_ON_DISABLE)) {
-		err = mpsl_lib_uninit();
-		if (err) {
-			MULTITHREADING_LOCK_RELEASE();
-			return err;
-		}
+#if IS_ENABLED(CONFIG_BT_UNINIT_MPSL_ON_DISABLE)
+	err = mpsl_lib_uninit();
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return err;
 	}
+#endif
 
 	MULTITHREADING_LOCK_RELEASE();
 
