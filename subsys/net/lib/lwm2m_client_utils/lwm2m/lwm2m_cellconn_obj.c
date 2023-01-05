@@ -483,12 +483,14 @@ static int rai_update_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_ins
 	LOG_DBG("RAI value: %d", *data);
 
 	switch (*data & 7U) {
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_RAI)
 	case 1:
 		err = lwm2m_rai_req(LWM2M_RAI_MODE_DISABLED);
 		break;
 	case 2:
 		err = lwm2m_rai_req(LWM2M_RAI_MODE_ENABLED);
 		break;
+#endif
 	case 6:
 		LOG_WRN("Unsupported RAI mode");
 		return -ENOTSUP;
