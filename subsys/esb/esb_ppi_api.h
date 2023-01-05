@@ -90,6 +90,16 @@ void esb_ppi_for_wait_for_ack_set(void);
  */
 void esb_ppi_for_wait_for_ack_clear(void);
 
+/** @brief Configure PPIs/DPPIs for a packet with ACK disabled and
+ *         CONFIG_ESB_NEVER_DISABLE_TX Kconfig option enabled.
+ */
+void esb_ppi_for_wait_for_rx_set(void);
+
+/** @brief Clear PPIs/DPPIs configuration for a packet with ACK disabled and
+ *        CONFIG_ESB_NEVER_DISABLE_TX Kconfig option enabled.
+ */
+void esb_ppi_for_wait_for_rx_clear(void);
+
 /** @brief Get radio disable event address or DPPI channel.
  *
  * @retval RADIO_DISABLED event address if PPI is used.

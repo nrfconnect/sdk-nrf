@@ -108,6 +108,16 @@ config ESB_DYNAMIC_INTERRUPTS
 	  interrupts. This allows reconfiguring ESB_SYS_TIMER_IRQn, ESB_EVT_IRQ,
 	  and RADIO_IRQn handlers during runtime when ESB is uninitialized.
 
+config ESB_NEVER_DISABLE_TX
+	select EXPERIMENTAL
+	bool "Never disable radio transmission stage"
+	help
+	  This option changes the radio behavior so that the
+	  transmitter remains IDLE between transmissions instead of being disabled.
+	  This is applicable only when the packet is not acknowledged. Otherwise,
+	  the radio emitter needs to be turned off to enable the radio receiver.
+	  This reduces delay between consecutive transmissions but consumes more energy.
+
 endif # NRF_ENHANCED_SHOCKBURST
 
 module=ESB

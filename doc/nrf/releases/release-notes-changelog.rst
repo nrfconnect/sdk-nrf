@@ -121,6 +121,17 @@ Enhanced ShockBurst (ESB)
 * Added support for bigger payload size.
   ESB supports a payload with a size of 64 bytes or more.
 
+* Added:
+
+  * The `use_fast_ramp_up` feature that reduces radio ramp-up delay from 130 µs to 40 µs.
+  * The :kconfig:option:`CONFIG_ESB_NEVER_DISABLE_TX` Kconfig option as an experimental feature that enables the radio peripheral to remain in TXIDLE state instead of TXDISABLE when transmission is pending.
+
+* Updated:
+
+  * The number of PPI/DPPI channels used from three to six.
+  * Events 6 and 7 from the EGU0 instance by assigning them to the ESB module.
+  * The type parameter of the :c:func:`esb_set_tx_power` function to ``int8_t``.
+
 nRF IEEE 802.15.4 radio driver
 ------------------------------
 

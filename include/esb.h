@@ -45,7 +45,8 @@ extern "C" {
 		.retransmit_count = 3,					       \
 		.tx_mode = ESB_TXMODE_AUTO,				       \
 		.payload_length = 32,					       \
-		.selective_auto_ack = false                                    \
+		.selective_auto_ack = false,                                   \
+		.use_fast_ramp_up = false                                      \
 	}
 
 /** @brief Default legacy radio parameters.
@@ -64,7 +65,8 @@ extern "C" {
 		.retransmit_count = 3,					       \
 		.tx_mode = ESB_TXMODE_AUTO,				       \
 		.payload_length = 32,					       \
-		.selective_auto_ack = false                                    \
+		.selective_auto_ack = false,                                   \
+		.use_fast_ramp_up = false                                      \
 	}
 
 /** @brief Macro to create an initializer for a TX data packet.
@@ -222,6 +224,11 @@ struct esb_config {
 
 	uint16_t retransmit_delay; /**< The delay between each retransmission of
 				  *  unacknowledged packets.
+				  *  If the CONFIG_ESB_NEVER_DISABLE_TX Kconfig option is enabled,
+				  *  this is the delay between two consecutive transmissions.
+				  *  Depending on the reception processing time, a minimal
+				  *  value might be required (for example, a typical value
+				  *  for 32-bit payload is 20 µs).
 				  */
 	uint16_t retransmit_count; /**< The number of retransmission attempts
 				  *  before transmission fail.
@@ -238,6 +245,15 @@ struct esb_config {
 				   *  will be acknowledged ignoring the noack
 				   *  field.
 				   */
+	bool use_fast_ramp_up; /**<  When this feature is enabled, radio TXEN and
+				 *  RXEN delays are reduced from 130 µs to 40 µs.
+				 *  The radio peripheral needs some time to start up
+				 *  analog components of the radio. On the nRF51 and
+				 *  nRF24L Series devices, a hard-coded 130 µs delay is
+				 *  implemented. If ESB connection is achieved only
+				 *  between nRF52 and/or nRF53 Series devices, this delay can
+				 *  be reduced to 40 µs.
+				 */
 };
 
 /** @brief Initialize the Enhanced ShockBurst module.
@@ -333,6 +349,12 @@ int esb_flush_tx(void);
  *           Otherwise, a (negative) error code is returned.
  */
 int esb_pop_tx(void);
+
+/** @brief Check if there is some free space left in TX FIFO.
+ *
+ * @retval true when the TX FIFO is full, otherwise false.
+ */
+bool esb_tx_full(void);
 
 /** @brief Flush the RX buffer.
  *
@@ -450,7 +472,11 @@ int esb_set_tx_power(int8_t tx_output_power);
 int esb_set_retransmit_delay(uint16_t delay);
 
 /** @brief Set the number of retransmission attempts.
- *
+ *  @details If the CONFIG_ESB_NEVER_DISABLE_TX Kconfig option is enabled,
+ *           this is the delay between two consecutive transmissions.
+ *           Depending on the reception processing time, a minimal
+ *           value might be required (for example, a typical value
+ *           for 32-bit payload is 20 µs).
  *  @param[in] count	Number of retransmissions.
  *
  * @retval 0 If successful.
