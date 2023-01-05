@@ -243,6 +243,14 @@ Matter dependent certification inheritance
 If your product uses qualified Bluetooth stack and certified Thread libraries provided as part of the |NCS|, you can *inherit* certification from Nordic Semiconductor, provided that you do not introduce any changes to these stacks.
 In practice, this means reusing Nordic Semiconductor's certification identifiers, which were obtained as a result of the official certification procedures.
 
+.. note::
+   The inheritance is granted by the related SDO after you join the organization and apply for certification by inheritance.
+   The procedure differs from SDO to SDO and has different names.
+   For details, contact the appropriate certification body in the SDO.
+
+Certification identifiers
+-------------------------
+
 Nordic Semiconductor provides the following certification identifiers:
 
 * Bluetooth Qualified Design IDs (Bluetooth QDIDs) - Obtained in accordance with `Bluetooth SIG's Qualification Process`_.
@@ -253,7 +261,15 @@ You can visit the following pages on Nordic Semiconductor Infocenter to check th
 * `nRF5340 DK Compatibility Matrix`_
 * `nRF52840 DK Compatibility Matrix`_
 
+Certification document templates
+--------------------------------
+
+Some of the certification documents require providing information about Nordic Semiconductor's SoCs or the |NCS|.
+To help you with filling in these documents, Nordic Semiconductor can provide you with appropriate templates.
+
+To request and obtain such documents, open a private ticket on `DevZone`_ after you join the related SDO.
+
 .. note::
-   The inheritance is granted by the related SDO after you join the organization and apply for certification by inheritance.
-   The procedure differs from SDO to SDO.
-   For details, contact the appropriate certification body in the SDO.
+   Nordic Semiconductor provides just an example answers based on the reference SDK applications, which may guide you on how to answer to certain platform-related questions.
+   You are still solely responsibility for filling original documents according to a product specifiction.
+   The final approval depends on the Director of Certification in the given Standards Developing Organization (SDO).
