@@ -483,6 +483,11 @@ static void nrf91_non_offload_modem_dl_data_thread_handler(void)
 					net_pkt_unref(rcv_pkt);
 				}
 			}
+		} else {
+			/* nrf_recv() failed, LTE connection might have dropped.
+			 * Let other threads run and to update possible mdm_socket_sem.
+			 */
+			k_sleep(K_MSEC(200));
 		}
 	}
 }
