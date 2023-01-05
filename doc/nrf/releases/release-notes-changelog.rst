@@ -33,7 +33,7 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
-|no_changes_yet_note|
+* Added a documentation page about :ref:`app_approtect`.
 
 RF Front-End Modules
 --------------------
@@ -882,6 +882,7 @@ Documentation
 
 * Added:
 
+  * Documentation page about :ref:`ug_matter_device_security` in the Matter protocol section.
   * Documentation template for the :ref:`Ecosystem integration <Ecosystem_integration>` user guides.
   * Documentation on :ref:`ug_avsystem`.
   * The :ref:`ug_nrf70_developing` user guide.

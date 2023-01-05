@@ -470,6 +470,16 @@
 
 .. _`Measuring Current on Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/hw_power_current_measurement.html
 
+.. _`Debugger access protection for nRF9160`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/dif.html#debugger_access
+.. _`AP-Protect for nRF5340`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/debugandtrace.html#access_port_protection
+.. _`AP-Protect for nRF52840`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52833`: https://infocenter.nordicsemi.com/topic/ps_nrf52833/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52832`: https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.nrf52832.ps.v1.1/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52820`: https://infocenter.nordicsemi.com/topic/ps_nrf52820/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52811`: https://infocenter.nordicsemi.com/topic/ps_nrf52811/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52810`: https://infocenter.nordicsemi.com/topic/ps_nrf52810/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52805`: https://infocenter.nordicsemi.com/topic/ps_nrf52805/dif.html#concept_udr_mns_1s
+
 .. _`Mobile network operator certifications`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_operator_certifications.html
 .. _`Modem firmware compatibility matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_modem_fw.html
 
@@ -507,6 +517,8 @@
 .. _`nRF9160 SiP revisions and variants`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_ic_revision_overview.html
 
 .. _`SWD Select`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/programming_debugging_interface.html
+
+.. _`access port protection mechanism`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf52840%2Fdif.html&anchor=concept_udr_mns_1s
 
 .. ### Source: academy.nordicsemi.com
 
