@@ -19,7 +19,7 @@ For more information, see the `Support for Zigbee commissioning`_ section in the
 Start of commissioning
 **********************
 
-There are several ways the commissioning process can be started, according to the Zigbee specification:
+There are several ways the commissioning process can be started, according to the `Zigbee Specification <CSA Specifications Download Request_>`_:
 
 * Automatically after device initialization.
 * With a user action, for example a button press or a command.

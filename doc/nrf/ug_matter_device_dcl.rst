@@ -18,7 +18,7 @@ The DCL is based on the Tendermint protocol, which is used for running the block
 
 During the :ref:`ug_matter_device_attestation` procedure, the DCL acts as the secure distribution point of the list of active and revoked Product Attestation Authority root certificates.
 
-The ledger is publicly available at the `Distributed Compliance Ledger website`_.
+The ledger is publicly available at the `Distributed Compliance Ledger website <Distributed Compliance Ledger_>`_.
 
 .. _ug_matter_device_certification_dcl_definition_roles:
 

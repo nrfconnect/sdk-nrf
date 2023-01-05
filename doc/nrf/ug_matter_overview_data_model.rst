@@ -10,7 +10,7 @@ Matter Data Model and device types
 .. ug_matter_data_model_desc_start
 
 The Data Model layer describes the supported remote operations of a Matter node using the concepts of attributes, commands and events, grouped into logical blocks called clusters.
-The clusters included in the Matter specification have well-defined scope and behavior to assure interoperability between Matter nodes developed by different vendors.
+The clusters included in the `Matter Application Cluster Specification <CSA Specifications Download Request_>`_ have well-defined scope and behavior to assure interoperability between Matter nodes developed by different vendors.
 A cluster can be abstract, meaning that it can underlie several device types to reduce the time and cost of introducing new product categories to Matter.
 
 .. figure:: images/matter_components_DM.svg
@@ -42,8 +42,8 @@ Clusters
    * Server -- responsible for holding values for Attributes, Commands, and Events.
    * Client -- responsible for performing interactions with other Server Clusters.
 
-   The supported Matter application clusters are described in the Application Clusters specification, available to the `Connectivity Standards Alliance`_ members.
-   Sets of clusters on one or more endpoint can form a :ref:`device type <ug_matter_device_types>`, that is an officially defined collection of requirements that is conformant with the Device Library specification.
+   The supported Matter application clusters are described in the Application Cluster Specification, available from the `CSA Specifications Download Request`_ page.
+   Sets of clusters on one or more endpoint can form a :ref:`device type <ug_matter_device_types>`, that is an officially defined collection of requirements that is conformant with the Device Library Specification.
 
 Attributes
    Attributes are data entities that represent a physical quantity or state.
@@ -68,7 +68,7 @@ The following figure illustrates the Data Model structure of a common door lock 
 Each Matter node must ensure that its Endpoint 0 satisfies the requirements of the Root Node device type.
 This device type enforces the availability of clusters used in the process of :ref:`Matter commissioning <ug_matter_overview_commissioning>` and further administering of a Matter node.
 
-Besides the Root Node endpoint, the door lock device provides Endpoint 1, which implements the Door Lock Device Type functionality as defined in the Matter specification.
+Besides the Root Node endpoint, the door lock device provides Endpoint 1, which implements the Door Lock Device Type functionality as defined in the Matter Device Library Specification.
 This device type enforces the availability of the ``Identify`` and ``DoorLock`` clusters.
 
 Identify cluster
@@ -103,7 +103,7 @@ Matter device types
 A Matter device type is an officially defined collection of requirements for one or more endpoints.
 Device types are intended to ensure interoperability of different device brands on the market.
 
-All device types are defined in the Device Library specification, which is available to `Connectivity Standards Alliance`_ members.
+All device types are defined in the Device Library Specification, which is available from the `CSA Specifications Download Request`_ page.
 Each device type definition is composed of the following elements:
 
 * Device type ID
@@ -119,9 +119,9 @@ A device type can require other device types for its composition, making it a *c
 Device type overview
 ********************
 
-The following tables list the application device types that are supported in the Matter specification.
+The following tables list the *application device types* that are supported in Matter.
 
-* The description for each device type is taken from the Device Library specification.
+* The description for each device type is taken from the Device Library Specification.
 * The state of the device specifies whether a device type can be subject to certification.
   The `Provisional` state indicates that the device type implementation is not yet fully tested and certified, even though the implementation may be ready and you can use it on your own risk.
 * The dedicated sample column provides the link to the sample in the |NCS| that implements the given device type, if available.
@@ -134,7 +134,7 @@ Lighting device types
 =====================
 
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Device type       | Description (from Device Library specification)                              | State of the device | Dedicated sample in the |NCS|         |
+| Device type       | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
 +===================+==============================================================================+=====================+=======================================+
 | On/Off Light      | The On/Off Light is a lighting device that is capable of being switched on   | Certifiable         |                                       |
 |                   | or off by means of a bound controller device such as an on/off light switch  |                     |                                       |
@@ -168,7 +168,7 @@ Smart Plugs/Outlets device types
 ================================
 
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Device type       | Description (from Device Library specification)                              | State of the device | Dedicated sample in the |NCS|         |
+| Device type       | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
 +===================+==============================================================================+=====================+=======================================+
 | On/Off Plug-in    | An On/Off Plug-in Unit is a device that is capable of being switched on      | Certifiable         |                                       |
 | Unit              | or off by means of a bound controller device such as an on/off light switch  |                     |                                       |
@@ -191,7 +191,7 @@ Switches and Controls device types
 ==================================
 
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Device type       | Description (from Device Library specification)                              | State of the device | Dedicated sample in the |NCS|         |
+| Device type       | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
 +===================+==============================================================================+=====================+=======================================+
 | On/Off Light      | An On/Off Light Switch is a controller device that,                          | Certifiable         |                                       |
 | Switch            | when bound to a lighting device such as an on/off light, is capable of       |                     |                                       |
@@ -229,7 +229,7 @@ Sensor device types
 ===================
 
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Device type       | Description (from Device Library specification)                              | State of the device | Dedicated sample in the |NCS|         |
+| Device type       | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
 +===================+==============================================================================+=====================+=======================================+
 | Contact Sensor    | A Contact Sensor device reports boolean state (open/close                    | Certifiable         |                                       |
 |                   | or contact/no-contact).                                                      |                     |                                       |
@@ -264,7 +264,7 @@ Closure device types
 ====================
 
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Device type       | Description (from Device Library specification)                              | State of the device | Dedicated sample in the |NCS|         |
+| Device type       | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
 +===================+==============================================================================+=====================+=======================================+
 | Door Lock         | A Door Lock is a device used to secure a door. It is possible to actuate     | Certifiable         | :ref:`matter_lock_sample`             |
 |                   | a door lock either by means of a manual or a remote method.                  |                     |                                       |
@@ -285,7 +285,7 @@ HVAC device types
 =================
 
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Device type       | Description (from Device Library specification)                              | State of the device | Dedicated sample in the |NCS|         |
+| Device type       | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
 +===================+==============================================================================+=====================+=======================================+
 | Heating/Cooling   | A Heating/Cooling Unit is a device capable of heating or cooling a space     | Provisional         |                                       |
 | Unit              | in a house. It is not mandatory to provide both functionalities              |                     |                                       |

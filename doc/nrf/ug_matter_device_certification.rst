@@ -65,8 +65,8 @@ Before you start applying for the Matter certification, you must join CSA, as de
 
 Joining CSA allows you to meet the following requirements:
 
-* Familiarity with the Matter specification, which is the standard for the certification.
-  You can access the specification from the `Matter Resource Kit`_ after you join CSA.
+* Familiarity with the Matter Core Specification, which is the standard for the certification.
+  You can download it from the `CSA Specifications Download Request`_ page.
 * Assignment of Vendor ID (VID), which is required when applying for certification.
   You can apply to `CSA's Certification Team`_ to obtain VID.
   The VID codes are valid immediately upon assignment.
@@ -130,7 +130,7 @@ Matter Attestation of Security
 ++++++++++++++++++++++++++++++
 
 For a Matter component to be certified, CSA's policies require an Attestation of Security that provides detailed information about the security level of the Matter component.
-The attestation document lists robustness security requirements based on the Matter specification.
+The attestation document lists robustness security requirements based on the Matter Core Specification.
 The product developer must indicate the level of compliance and briefly justify the choice.
 
 The attestation must be filled by the person responsible for end product certification who meets the following requirements:
@@ -175,7 +175,7 @@ To be considered of the same family, the other products must meet the following 
 
 * All products must share the same device type as the first product.
 * All products must be variants of the first product, which should also be the most feature complete.
-* All products must conform with the Matter specification, regardless of differences.
+* All products must conform with the Matter specifications, regardless of differences.
 
 .. figure:: images/matter_device_certification_process_pf.svg
    :alt: Matter's Product Family certification overview

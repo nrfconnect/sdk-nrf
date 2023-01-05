@@ -12,7 +12,7 @@ Most of the Matter devices will require such an update at some point during thei
 The software image is provided by another Matter node, which acquired information about it and downloaded it from a centralized and reliable source.
 The download takes place over a special transfer protocol and user consent is required for the image to be applied on the target Matter device.
 
-This page provides an overview of the Matter OTA process, described in detail in the `Matter specification <Matter specification repository_>`_, and mentions :ref:`ug_matter_overview_dfu_image_nordic` to the process.
+This page provides an overview of the Matter OTA process, described in detail in the `Matter Core Specification <CSA Specifications Download Request_>`_, and mentions :ref:`ug_matter_overview_dfu_image_nordic` to the process.
 
 .. _ug_matter_overview_dfu_roles:
 
@@ -87,7 +87,7 @@ Matter OTA process
 ******************
 
 The following chart shows a simplified overview of the Matter OTA process.
-For detailed description, see the official Matter specification.
+For detailed description, see the Matter Core Specification.
 
 The Matter OTA image download always happens in the background, without affecting the device's normal operation.
 
@@ -144,7 +144,7 @@ The software image must use fixed encoding and it must include the mandatory fie
 +-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
 | ``HeaderSize``        | uint32 |                                               | Indicates the total size of the TLV-encoded header field.                                                                                            |
 +-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``Header``            | TLV    | TLV encoding type and value.                  | Includes the `ota-image-header-struct` with a predefined order. See section 11.20.2.4 of the Matter specification for more information.              |
+| ``Header``            | TLV    | TLV encoding type and value.                  | Includes the `ota-image-header-struct` with a predefined order. See section 11.20.2.4 of the `Matter Core Specification`_ for more information.      |
 +-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
 | ``Payload``           | n/a    | Software image contents.                      | Includes the new software to be installed on the OTA Requestor. When using the |NCS|, this field also includes `Nordic Matter platform additions`_.  |
 +-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
