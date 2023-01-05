@@ -100,9 +100,18 @@ static int connect_retries;
 static struct cloud_data_cfg copy_cfg;
 const k_tid_t cloud_module_thread;
 
-/* Register message IDs that are used with the QoS library. */
-QOS_MESSAGE_TYPES_REGISTER(GENERIC, BATCH, UI, NEIGHBOR_CELLS, WIFI_ACCESS_POINTS,
-			   AGPS_REQUEST, PGPS_REQUEST, CONFIG, MEMFAULT);
+/* Message IDs that are used with the QoS library. */
+enum {
+	GENERIC = 0,
+	BATCH,
+	UI,
+	NEIGHBOR_CELLS,
+	WIFI_ACCESS_POINTS,
+	AGPS_REQUEST,
+	PGPS_REQUEST,
+	CONFIG,
+	MEMFAULT,
+};
 
 /* Cloud module message queue. */
 #define CLOUD_QUEUE_ENTRY_COUNT		20
