@@ -197,7 +197,6 @@ if MOSH_CLOUD_LWM2M
 
 config MOSH_LWM2M_PSK
 	string "LwM2M pre-shared key for communication"
-	default "000102030405060708090a0b0c0d0e0f"
 	help
 	  Pre-shared key must be identical to the PSK registered with the device on the LwM2M server.
 	  Use the hexadecimal representation.
