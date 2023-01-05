@@ -95,7 +95,9 @@ def show_header(input_file: str) -> None:
 
 
 def main():
-    parser = argparse.ArgumentParser(description='DFU Multi Image tool', fromfile_prefix_chars='@')
+    parser = argparse.ArgumentParser(description='DFU Multi Image tool',
+                                     fromfile_prefix_chars='@',
+                                     allow_abbrev=False)
     subcommands = parser.add_subparsers(dest='subcommand', title='valid subcommands')
 
     create_parser = subcommands.add_parser(

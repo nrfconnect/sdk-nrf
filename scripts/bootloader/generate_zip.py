@@ -19,7 +19,8 @@ def parse_args():
         description="Generate zip file for binary artifact. Provide a list of 'key=value' pairs separated by space for"
                     "information that should be stored in manifest.json. To provide information specific for one of "
                     "the files, prepend the 'key' with the name of the file (only the basename, not the path)",
-        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False)
 
     parser.add_argument('--output', required=True, type=argparse.FileType(mode='w'), help='Output zip path')
     parser.add_argument('--bin-files', required=True, type=argparse.FileType(mode='r'), nargs='+',

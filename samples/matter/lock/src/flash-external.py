@@ -34,7 +34,8 @@ def main():
     # Type for an integer of arbitrary base
     def any_base_int(s): return int(s, 0)
 
-    parser = argparse.ArgumentParser(description="Program firmware into external flash")
+    parser = argparse.ArgumentParser(description="Program firmware into external flash",
+                                     allow_abbrev=False)
     parser.add_argument('--app', required=True, type=argparse.FileType('rb'),
                         help="Application core image in MCUboot format")
     parser.add_argument('--app-offset', type=any_base_int, required=True,

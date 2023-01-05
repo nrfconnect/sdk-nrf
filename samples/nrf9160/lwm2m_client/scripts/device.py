@@ -169,7 +169,8 @@ if __name__ == "__main__":
     def store(args):
         dev.store_psk(args.tag, args.identity, args.psk)
 
-    parser = argparse.ArgumentParser(description='nRF91 Secure Tag management')
+    parser = argparse.ArgumentParser(description='nRF91 Secure Tag management',
+                                     allow_abbrev=False)
     parser.set_defaults(func=None)
     parser.add_argument('-d', help='Enable debug logs', action='store_true')
 

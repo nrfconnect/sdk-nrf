@@ -213,6 +213,7 @@ def __main():
             "This script builds and programs the nRF5340 "
             "Audio project on Windows and Linux"
         ),
+        allow_abbrev=False
     )
     parser.add_argument(
         "-r",

@@ -177,7 +177,7 @@ def perform_led_stream(dev, args):
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
 
     parser.add_argument(dest='device', default=None, nargs='?',
                         help='Device specified by type, board name or HW ID '

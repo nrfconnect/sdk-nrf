@@ -317,7 +317,8 @@ if __name__ == "__main__":
         print(json.dumps(resp, indent=4))
 
     parser = argparse.ArgumentParser(
-        description='Coiote device management')
+        description='Coiote device management',
+        allow_abbrev=False)
     parser.set_defaults(func=None)
     parser.add_argument("-d", "--debug", action="store_true", default=False, help="Output debug information.")
     subparsers = parser.add_subparsers(title='commands')

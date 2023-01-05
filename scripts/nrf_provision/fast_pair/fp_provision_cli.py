@@ -63,7 +63,8 @@ def prepare_fast_pair_provisioning(out_file, address, model_id, anti_spoofing_ke
 
 
 def parse_arguments():
-    p = argparse.ArgumentParser(description='Fast Pair Provisioning Tool')
+    p = argparse.ArgumentParser(description='Fast Pair Provisioning Tool',
+                                allow_abbrev=False)
 
     p.add_argument("-o", "--out_file", type=str, required=True, help="Name of the output file")
     p.add_argument("-a", "--address", type=lambda x: int(x,16), required=True,

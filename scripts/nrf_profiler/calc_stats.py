@@ -10,7 +10,8 @@ import logging
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Calculating stats for events.')
+    parser = argparse.ArgumentParser(description='Calculating stats for events.',
+                                     allow_abbrev=False)
     parser.add_argument('dataset_name', help='Name of dataset')
     parser.add_argument('--start_time', help='Measurement start time[s]')
     parser.add_argument('--end_time', help='Measurement end time[s]')

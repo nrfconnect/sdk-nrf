@@ -152,7 +152,8 @@ def init_args(allowed_detectors: dict):
     if not args._initialized:
         # Parse command line arguments if running outside west
         parser = argparse.ArgumentParser(description=COMMAND_DESCRIPTION,
-                                        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+                                         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                         allow_abbrev=False)
         add_arguments(parser)
         copy_arguments(parser.parse_args())
 

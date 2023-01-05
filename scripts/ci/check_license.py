@@ -47,7 +47,8 @@ def parse_args():
     '''Parse command line arguments.'''
     default_allow_list = Path(__file__).parent / 'license_allow_list.yaml'
     parser = argparse.ArgumentParser(
-        description='Check for allowed licenses.')
+        description='Check for allowed licenses.',
+        allow_abbrev=False)
     parser.add_argument('-c', '--commits', default='HEAD~1..',
                         help='Commit range in the form: a..[b], default is HEAD~1..HEAD')
     parser.add_argument('-o', '--output', type=Path, default='licenses.xml',
