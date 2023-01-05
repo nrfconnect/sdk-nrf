@@ -152,6 +152,7 @@ nRF5340 Audio
 * Added:
 
   * Support for Front End Module nRF21540.
+  * Possibility to create a Public Broadcast Announcement (PBA) needed for Auracast.
 
 * Updated:
 
