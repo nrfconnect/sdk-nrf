@@ -22,6 +22,9 @@ BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 2,
 	     "A maximum of two audio streams are currently supported");
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
+#define STANDARD_QUALITY_16KHZ 16000
+#define STANDARD_QUALITY_24KHZ 24000
+#define HIGH_QUALITY_48KHZ 48000
 
 /* For being able to dynamically define iso_tx_pools */
 #define NET_BUF_POOL_ITERATE(i, _)                                                                 \
@@ -143,17 +146,50 @@ static struct bt_audio_stream_ops stream_ops = { .sent = stream_sent_cb,
 						 .started = stream_started_cb,
 						 .stopped = stream_stopped_cb };
 
+#if (CONFIG_AURACAST)
+static void public_broadcast_features_set(uint8_t *features)
+{
+	int freq = bt_codec_cfg_get_freq(&lc3_preset.codec);
+
+	if (features == NULL) {
+		LOG_ERR("No pointer to features");
+		return;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
+		*features |= 0x01;
+	}
+
+	if (freq == STANDARD_QUALITY_16KHZ || freq == STANDARD_QUALITY_24KHZ) {
+		*features |= 0x02;
+	} else if (freq == HIGH_QUALITY_48KHZ) {
+		*features |= 0x04;
+	} else {
+		LOG_WRN("%dkHz is not compatible with Auracast, choose 16kHz, 24kHz or 48kHz",
+			freq);
+	}
+}
+#endif /* (CONFIG_AURACAST) */
+
 static int adv_create(void)
 {
 	int ret;
 
 	/* Broadcast Audio Streaming Endpoint advertising data */
 	NET_BUF_SIMPLE_DEFINE(ad_buf, BT_UUID_SIZE_16 + BT_AUDIO_BROADCAST_ID_SIZE);
+	/* Buffer for Public Broadcast Announcement */
 	NET_BUF_SIMPLE_DEFINE(base_buf, 128);
+
+#if (CONFIG_AURACAST)
+	NET_BUF_SIMPLE_DEFINE(pba_buf, BT_UUID_SIZE_16 + 2);
+	struct bt_data ext_ad[3];
+	uint8_t pba_features = 0;
+#else
 	struct bt_data ext_ad[2];
+#endif /* (CONFIG_AURACAST) */
 	struct bt_data per_ad;
-	uint32_t broadcast_id;
-	char name[] = CONFIG_BT_DEVICE_NAME;
+
+	uint32_t broadcast_id = 0;
 
 	/* Create a non-connectable non-scannable advertising set */
 	ret = bt_le_ext_adv_create(BT_LE_EXT_ADV_NCONN_NAME, NULL, &adv);
@@ -168,23 +204,36 @@ static int adv_create(void)
 		LOG_ERR("Failed to set periodic advertising parameters (ret %d)", ret);
 		return ret;
 	}
-	ret = bt_audio_broadcast_source_get_id(broadcast_source, &broadcast_id);
-	if (ret) {
-		LOG_ERR("Unable to get broadcast ID: %d", ret);
-		return ret;
+
+	if (IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_ID_RANDOM)) {
+		ret = bt_audio_broadcast_source_get_id(broadcast_source, &broadcast_id);
+		if (ret) {
+			LOG_ERR("Unable to get broadcast ID: %d", ret);
+			return ret;
+		}
+	} else {
+		broadcast_id = CONFIG_BT_AUDIO_BROADCAST_ID_FIXED;
 	}
+
+	ext_ad[0] = (struct bt_data)BT_DATA(BT_DATA_BROADCAST_NAME, CONFIG_BT_AUDIO_BROADCAST_NAME,
+					    strlen(CONFIG_BT_AUDIO_BROADCAST_NAME));
 
 	/* Setup extended advertising data */
 	net_buf_simple_add_le16(&ad_buf, BT_UUID_BROADCAST_AUDIO_VAL);
 	net_buf_simple_add_le24(&ad_buf, broadcast_id);
 
-	ext_ad[0].type = BT_DATA_BROADCAST_NAME;
-	ext_ad[0].data = name;
-	ext_ad[0].data_len = strlen(name);
+	ext_ad[1] = (struct bt_data)BT_DATA(BT_DATA_SVC_DATA16, ad_buf.data, ad_buf.len);
 
-	ext_ad[1].type = BT_DATA_SVC_DATA16;
-	ext_ad[1].data_len = ad_buf.len;
-	ext_ad[1].data = ad_buf.data;
+#if (CONFIG_AURACAST)
+	public_broadcast_features_set(&pba_features);
+
+	net_buf_simple_add_le16(&pba_buf, 0x1856);
+	net_buf_simple_add_u8(&pba_buf, pba_features);
+	/* No metadata, set length to 0 */
+	net_buf_simple_add_u8(&pba_buf, 0x00);
+
+	ext_ad[2] = (struct bt_data)BT_DATA(BT_DATA_SVC_DATA16, pba_buf.data, pba_buf.len);
+#endif /* (CONFIG_AURACAST) */
 
 	ret = bt_le_ext_adv_set_data(adv, ext_ad, ARRAY_SIZE(ext_ad), NULL, 0);
 	if (ret) {

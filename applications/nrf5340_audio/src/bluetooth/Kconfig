@@ -9,15 +9,15 @@ rsource "Kconfig.defaults"
 menu "Bluetooth"
 
 config BLE_ACL_CONN_INTERVAL
-	int "BLE ACL Connection Interval (x*1.25ms)"
+	int "Bluetooth LE ACL Connection Interval (x*1.25ms)"
 	default 80
 
 config BLE_ACL_SLAVE_LATENCY
-	int "BLE Slave Latency"
+	int "Bluetooth LE Slave Latency"
 	default 0
 
 config BLE_ACL_SUP_TIMEOUT
-	int "BLE Supervision Timeout (x*10ms)"
+	int "Bluetooth LE Supervision Timeout (x*10ms)"
 	default 400
 
 config BLE_LE_POWER_CONTROL_ENABLED
@@ -28,26 +28,11 @@ config BLE_LE_POWER_CONTROL_ENABLED
 	  dynamically and automatically during connection, which provides effective
 	  communication.
 
-config BT_DEVICE_NAME_ALT
-	string "Alternative Bluetooth device name"
-	default "NRF5340_AUDIO_ALT"
-	depends on TRANSPORT_BIS
-	help
-	  Alternative Bluetooth device name. Name can be up to 248 bytes long
-	  (excluding NULL termination). Can be empty string.
-
-config BT_USE_DEVICE_NAME_ALT
-	bool "Use the alternative Bluetooth device name"
-	default n
-	depends on TRANSPORT_BIS
-	help
-	  Use the alternative Bluetooth device name.
-
 choice	BLE_CONN_TX_POWER
-	prompt "Default TX power for BLE connections"
+	prompt "Default TX power for Bluetooth LE connections"
 	default BLE_CONN_TX_POWER_0DBM
 	help
-	  Set the default TX power for BLE connections
+	  Set the default TX power for Bluetooth LE connections.
 
 config BLE_CONN_TX_POWER_0DBM
 	bool "0dBm"
@@ -107,10 +92,10 @@ config BLE_CONN_TX_POWER_DBM
 	default -40 if BLE_CONN_TX_POWER_NEG_40DBM
 
 choice	BLE_ADV_TX_POWER
-	prompt "Default TX power for BLE advertising"
+	prompt "Default TX power for Bluetooth LE advertising"
 	default BLE_ADV_TX_POWER_0DBM
 	help
-	  Set the default TX power for BLE advertising
+	  Set the default TX power for Bluetooth LE advertising.
 
 config BLE_ADV_TX_POWER_0DBM
 	bool "0dBm"
@@ -176,7 +161,7 @@ config NRF_21540_ACTIVE
 	  The front end module can help boost the TX power as high as 20 dBm.
 	  Usually set through buildprog, if not set there, remember to add
 	  -DSHIELD=nrf21540_ek_fwd when building app core to include the shield
-	  overlay file
+	  overlay file.
 
 config NRF_21540_MAIN_DBM
 	int
@@ -192,7 +177,7 @@ choice NRF_21540_MAIN_TX_POWER
 	  Please check your local regulations for max output power. If the
 	  nRF21540 is used with the nRF5340 Audio DK the actual output power
 	  will be about 25% lower due to the VDD being 1.8V instead of the
-	  nominal 3.3V
+	  nominal 3.3V.
 
 config NRF_21540_MAIN_TX_POWER_0DBM
 	bool "0dBm"
@@ -220,7 +205,7 @@ choice NRF_21540_PRI_ADV_TX_POWER
 	  Please check your local regulations for max output power. If the
 	  nRF21540 is used with the nRF5340 Audio DK the actual output power
 	  will be about 25% lower due to the VDD being 1.8V instead of the
-	  nominal 3.3V
+	  nominal 3.3V.
 
 config NRF_21540_PRI_ADV_TX_POWER_0DBM
 	bool "0dBm"
@@ -242,7 +227,7 @@ config BLE_ISO_TEST_PATTERN
 	  Note that enabling this feature will disable the audio stream.
 
 config BLE_ISO_RX_STATS_S
-	int "Interval in seconds to print BLE ISO RX stats. 0 to deactivate"
+	int "Interval in seconds to print Bluetooth LE ISO RX stats. 0 to deactivate"
 	default 0
 
 choice BT_AUDIO_UNICAST_BAP_CONFIGURATION
@@ -251,28 +236,28 @@ choice BT_AUDIO_UNICAST_BAP_CONFIGURATION
 	default BT_AUDIO_UNICAST_RECOMMENDED
 	help
 	  Select the unicast codec configuration as given in
-	  Table 5.2 of BAP Specification, USB only supports BT_AUDIO_UNICAST_RECOMMENDED
+	  Table 5.2 of BAP Specification, USB only supports BT_AUDIO_UNICAST_RECOMMENDED.
 
 config BT_AUDIO_UNICAST_RECOMMENDED
 	bool "Recommended unicast codec capability"
 	depends on TRANSPORT_CIS
 	help
 	  Recommended unicast settings for the nRF5340_audio application
-	  48kHz, 96kbps, 2 retransmits, 20ms transport latency, and 10ms presentation delay
+	  48kHz, 96kbps, 2 retransmits, 20ms transport latency, and 10ms presentation delay.
 
 config BT_AUDIO_UNICAST_16_2_1
 	bool "16_2_1"
 	depends on TRANSPORT_CIS
 	help
 	  Unicast mandatory codec capability 16_2_1
-	  16kHz, 32kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay
+	  16kHz, 32kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
 
 config BT_AUDIO_UNICAST_24_2_1
 	bool "24_2_1"
 	depends on TRANSPORT_CIS
 	help
 	  Unicast codec capability 24_2_1
-	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay
+	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
 endchoice
 
 choice BT_AUDIO_BROADCAST_BAP_CONFIGURATION
@@ -281,43 +266,100 @@ choice BT_AUDIO_BROADCAST_BAP_CONFIGURATION
 	default BT_AUDIO_BROADCAST_RECOMMENDED
 	help
 	  Select the broadcast codec configuration as given
-	  in Table 6.4 of the BAP specification. USB only supports BT_AUDIO_BROADCAST_RECOMMENDED
+	  in Table 6.4 of the BAP specification. USB only supports BT_AUDIO_BROADCAST_RECOMMENDED.
 
 config BT_AUDIO_BROADCAST_RECOMMENDED
 	bool "Recommended Broadcast codec capability"
 	depends on TRANSPORT_BIS
 	help
 	  Recommended broadcast settings for the nRF5340_audio application
-	  48kHz, 96kbps, 4 retransmits, 20ms transport latency, and 10ms presentation delay
+	  48kHz, 96kbps, 4 retransmits, 20ms transport latency, and 10ms presentation delay.
 
 config BT_AUDIO_BROADCAST_16_2_1
 	bool "16_2_1"
 	depends on TRANSPORT_BIS
 	help
 	  Broadcast mandatory codec capability 16_2_1
-	  16kHz, 32kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay
+	  16kHz, 32kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
 
 config BT_AUDIO_BROADCAST_24_2_1
 	bool "24_2_1"
 	depends on TRANSPORT_BIS
 	help
 	  Broadcast codec capability 24_2_1
-	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay
+	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
 
 config BT_AUDIO_BROADCAST_16_2_2
 	bool "16_2_2"
 	depends on TRANSPORT_BIS
 	help
 	  Broadcast mandatory codec capability 16_2_2
-	  16kHz, 32kbps, 4 retransmits, 60ms transport latency, and 40ms presentation delay
+	  16kHz, 32kbps, 4 retransmits, 60ms transport latency, and 40ms presentation delay.
 
 config BT_AUDIO_BROADCAST_24_2_2
 	bool "24_2_2"
 	depends on TRANSPORT_BIS
 	help
 	  Broadcast codec capability 24_2_2
-	  24kHz, 48kbps, 4 retransmits, 60ms transport latency, and 40ms presentation delay
+	  24kHz, 48kbps, 4 retransmits, 60ms transport latency, and 40ms presentation delay.
 endchoice
+
+config BT_AUDIO_BROADCAST_NAME
+	string "Broadcast name"
+	depends on TRANSPORT_BIS
+	default "NRF5340_BROADCASTER"
+	help
+	  Name of the broadcast; not the same as BT_DEVICE_NAME.
+
+config BT_AUDIO_BROADCAST_NAME_ALT
+	string "Alternative broadcast name"
+	depends on TRANSPORT_BIS
+	default "NRF5340_BROADCASTER_ALT"
+	help
+	  Alternative name of the broadcast.
+
+config BT_USE_AUDIO_BROADCAST_NAME_ALT
+	bool "Use the alternative broadcast name"
+	default n
+	depends on TRANSPORT_BIS
+	help
+	  Use the alternative broadcast name.
+
+config BT_AUDIO_BROADCAST_ENCRYPTED
+	bool "Encrypted broadcast"
+	depends on TRANSPORT_BIS
+	default n
+	help
+	  Encrypt the broadcast to limit the connectability
+	  (NOTE: Encrypting broadcast source is not yet supported by host.)
+
+config BT_AUDIO_BROADCAST_ENCRYPTION_KEY
+	string "Broadcast encryption key"
+	depends on TRANSPORT_BIS
+	default "NRF5340_BIS_DEMO"
+	help
+	  Key to use for encryption and decryption; max 16 characters.
+
+config BT_AUDIO_USE_BROADCAST_ID_RANDOM
+	bool "Use a random broadcast ID"
+	depends on TRANSPORT_BIS
+	default y
+	help
+	  Use a randomly generated broadcast ID.
+
+config BT_AUDIO_BROADCAST_ID_FIXED
+	hex "Fixed broadcast ID"
+	depends on TRANSPORT_BIS
+	default 0x123456
+	help
+	  Fixed broadcast ID; 3 octets. Will only be used if BT_AUDIO_USE_BROADCAST_ID_RANDOM=n.
+	  Should only be used for debugging.
+
+config AURACAST
+	bool "Enable Auracast"
+	default y
+	help
+	  When Auracast is enabled a Public Broadcast Announcement will be included when advertising.
 
 #----------------------------------------------------------------------------#
 menu "Log levels"

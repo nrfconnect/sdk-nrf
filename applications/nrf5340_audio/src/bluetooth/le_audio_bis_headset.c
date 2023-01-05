@@ -47,7 +47,8 @@ struct bt_name {
 	size_t size;
 };
 
-static const char *const brdcast_src_names[] = { CONFIG_BT_DEVICE_NAME, CONFIG_BT_DEVICE_NAME_ALT };
+static const char *const brdcast_src_names[] = { CONFIG_BT_AUDIO_BROADCAST_NAME,
+						 CONFIG_BT_AUDIO_BROADCAST_NAME_ALT };
 
 static struct bt_audio_broadcast_sink *broadcast_sink;
 
@@ -190,7 +191,8 @@ static struct bt_audio_stream_ops stream_ops = { .started = stream_started_cb,
 static bool scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf_simple *ad,
 			 uint32_t broadcast_id)
 {
-	char name[MAX(sizeof(CONFIG_BT_DEVICE_NAME), sizeof(CONFIG_BT_DEVICE_NAME_ALT))] = { '\0' };
+	char name[MAX(sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME),
+		      sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME_ALT))] = { '\0' };
 	struct bt_name bis_name = { &name[0], ARRAY_SIZE(name) };
 
 	bt_data_parse(ad, adv_data_parse, (void *)&bis_name);
@@ -320,6 +322,11 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 {
 	int ret;
+	static uint8_t bis_encryption_key[16];
+
+#if (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)
+	strncpy(bis_encryption_key, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY, 16);
+#endif /* (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED) */
 
 	if (active_stream.stream->ep->status.state == BT_AUDIO_EP_STATE_STREAMING ||
 	    !playing_state) {
@@ -335,7 +342,7 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 	LOG_INF("Syncing to broadcast stream index %d", active_stream_index);
 
 	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfields[active_stream_index],
-					   audio_streams_p, NULL);
+					   audio_streams_p, bis_encryption_key);
 	if (ret) {
 		LOG_WRN("Unable to sync to broadcast source, ret: %d", ret);
 		return;

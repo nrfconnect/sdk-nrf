@@ -786,8 +786,8 @@ Enabling the BIS mode with two gateways
 ---------------------------------------
 
 In addition to the standard BIS mode with one gateway, you can also add a second gateway device that the BIS headsets can receive audio stream from.
-To configure the second gateway, add both the :kconfig:option:`CONFIG_TRANSPORT_BIS` and the :kconfig:option:`CONFIG_BT_USE_DEVICE_NAME_ALT` Kconfig options set to ``y`` to the :file:`prj.conf` file for the debug version and to the :file:`prj_release.conf` file for the release version.
-You can provide an alternative name to the second gateway using the :kconfig:option:`CONFIG_BT_DEVICE_NAME_ALT` or use the default alternative name.
+To configure the second gateway, add both the :kconfig:option:`CONFIG_TRANSPORT_BIS` and the :kconfig:option:`CONFIG_BT_USE_AUDIO_BROADCAST_NAME_ALT` Kconfig options set to ``y`` to the :file:`prj.conf` file for the debug version and to the :file:`prj_release.conf` file for the release version.
+You can provide an alternative name to the second gateway using the :kconfig:option:`CONFIG_BT_AUDIO_BROADCAST_NAME_ALT` or use the default alternative name.
 
 You build each BIS gateway separately using the normal procedures from :ref:`nrf53_audio_app_building`.
 After building the first gateway, configure the required Kconfig options for the second gateway and build the second gateway firmware.
