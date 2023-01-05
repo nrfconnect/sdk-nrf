@@ -226,7 +226,7 @@ int nrf_cloud_bootloader_fota_slot_set(struct nrf_cloud_settings_fota_job * cons
 	/* Only set the slot flag once for bootloader updates */
 	if (job->type == NRF_CLOUD_FOTA_BOOTLOADER &&
 	    !(job->bl_flags & NRF_CLOUD_FOTA_BL_STATUS_S0_FLAG_SET)) {
-		bool s0_active;
+		bool s0_active = false;
 
 #if defined(CONFIG_FOTA_DOWNLOAD)
 		err = fota_download_s0_active_get(&s0_active);
