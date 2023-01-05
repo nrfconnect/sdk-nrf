@@ -108,8 +108,8 @@ manifest:
       repo-path: sdk-mcuboot
       revision: 9d2f9b5742c5cabcb87b7f7f22ff5269b13403bf
       path: bootloader/mcuboot
-    - name: mbedtls-nrf
-      path: mbedtls
+    - name: mbedtls
+      path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
       revision: v3.1.0-ncs2
     - name: nrfxlib
