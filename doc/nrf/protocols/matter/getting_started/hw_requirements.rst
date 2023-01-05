@@ -9,6 +9,8 @@ Matter hardware and memory requirements
 
 Hardware that runs Matter protocol applications must meet specification requirements, including providing the right amount of flash memory and being able to run Bluetooth LE and Thread concurrently.
 
+.. _ug_matter_hw_requirements_socs:
+
 Supported SoCs
 **************
 
@@ -141,7 +143,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF7002 DK
 
-      The following table lists memory requirements for samples running on the :ref:`nRF7002 DK <gs_programming_board_names>` (:ref:`nrf5340dk_nrf5340_cpuapp <zephyr:nrf5340dk_nrf5340>`).
+      The following table lists memory requirements for samples running on the :ref:`nRF7002 DK <gs_programming_board_names>` (:ref:`nrf7002dk_nrf5340_cpuapp <nrf7002dk_nrf5340>`).
 
       +------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+-------------+
       | Sample                                                     |   MCUBoot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM |

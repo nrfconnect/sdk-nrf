@@ -68,3 +68,12 @@ The Kconfig option :kconfig:option:`CONFIG_NRF_SECURITY` prioritizes the usage o
 For more information about the configuration and usage of the :ref:`nrfxlib:nrf_security`, see the :ref:`nrfxlib:nrf_security_config` page.
 
 See also :ref:`crypto_samples` for examples of how to configure and perform different cryptographic operations in the |NCS|.
+
+Access port protection mechanism
+********************************
+
+.. include:: app_dev/ap_protect/index.rst
+   :start-after: app_approtect_info_start
+   :end-before: app_approtect_info_end
+
+For more information, see :ref:`app_approtect`.
