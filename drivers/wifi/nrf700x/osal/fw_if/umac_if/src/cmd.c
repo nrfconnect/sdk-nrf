@@ -82,11 +82,9 @@ out:
 
 enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 #ifndef CONFIG_NRF700X_RADIO_TEST
-				   unsigned char *def_mac_addr,
-				   unsigned char def_vif_idx,
 				   unsigned char *rf_params,
 				   bool rf_params_valid,
-				   struct nrf_wifi_data_config_params config,
+				   struct nrf_wifi_data_config_params *config,
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 				   int sleep_type,
@@ -117,12 +115,6 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	umac_cmd_data->sys_head.len = len;
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
-	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
-			      umac_cmd_data->sys_params.mac_addr,
-			      def_mac_addr,
-			      NRF_WIFI_ETH_ADDR_LEN);
-
-	umac_cmd_data->wdev_id = def_vif_idx;
 	umac_cmd_data->sys_params.rf_params_valid = rf_params_valid;
 
 	if (rf_params_valid) {
@@ -149,7 +141,12 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			      umac_cmd_data->rx_buf_pools,
 			      fmac_dev_ctx->fpriv->rx_buf_pools,
 			      sizeof(umac_cmd_data->rx_buf_pools));
-	umac_cmd_data->data_config_params = config;
+
+	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+			      &umac_cmd_data->data_config_params,
+			      config,
+			      sizeof(umac_cmd_data->data_config_params));
+
 	umac_cmd_data->temp_vbat_config_params.temp_based_calib_en = NRF_WIFI_TEMP_CALIB_ENABLE;
 	umac_cmd_data->temp_vbat_config_params.temp_calib_bitmap = NRF_WIFI_DEF_PHY_TEMP_CALIB;
 	umac_cmd_data->temp_vbat_config_params.vbat_calibp_bitmap = NRF_WIFI_DEF_PHY_VBAT_CALIB;

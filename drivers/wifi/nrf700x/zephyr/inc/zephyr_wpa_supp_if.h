@@ -12,8 +12,6 @@
 #ifndef __ZEPHYR_WPA_SUPP_IF_H__
 #define __ZEPHYR_WPA_SUPP_IF_H__
 
-#include "wpa_supplicant_i.h"
-#include "bss.h"
 
 #define RPU_RESP_EVENT_TIMEOUT  1000
 #ifdef CONFIG_WPA_SUPP
@@ -118,5 +116,6 @@ void wifi_nrf_wpa_supp_event_mgmt_rx_callbk_fn(void *if_priv,
 
 int wifi_nrf_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa);
 
+void wifi_nrf_wpa_supp_event_mac_chgd(void *if_priv);
 #endif /* CONFIG_WPA_SUPP */
 #endif /*  __ZEPHYR_WPA_SUPP_IF_H__ */

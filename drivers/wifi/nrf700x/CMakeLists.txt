@@ -16,6 +16,8 @@ zephyr_include_directories(
 	osal/fw_load/mips/fw/inc
 	osal/hw_if/hal/inc
 	zephyr/src/qspi/inc
+	# for net_sprint_ll_addr
+	${ZEPHYR_BASE}/subsys/net/ip
 )
 
 zephyr_include_directories_ifdef(CONFIG_NRF700X_REV_A

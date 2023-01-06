@@ -18,7 +18,15 @@
 #include <fmac_structs.h>
 #include <zephyr/net/wifi_mgmt.h>
 
-void wifi_nrf_if_init(struct net_if *iface);
+void wifi_nrf_if_init_zep(struct net_if *iface);
+
+int wifi_nrf_if_start_zep(const struct device *dev);
+
+int wifi_nrf_if_stop_zep(const struct device *dev);
+
+int wifi_nrf_if_set_config_zep(const struct device *dev,
+			       enum ethernet_config_type type,
+			       const struct ethernet_config *config);
 
 enum ethernet_hw_caps wifi_nrf_if_caps_get(const struct device *dev);
 
