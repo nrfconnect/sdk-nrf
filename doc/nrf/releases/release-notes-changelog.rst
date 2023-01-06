@@ -1,7 +1,7 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.2.99
-###########################
+Changelog for |NCS| v2.2.99-dev1
+################################
 
 .. contents::
    :local:
@@ -82,16 +82,14 @@ Matter
   * Default support for nRF7002 revision B.
   * Specific QR code and onboarding information in the documentation for each :ref:`Matter sample <matter_samples>` and the :ref:`Matter weather station <matter_weather_station_app>`.
 
-* Fixed:
-
-  * Connection timing out when attaching to a Wi-Fi Access Point that requires Wi-Fi Protected Access 3 (WPA3).
-
 * Updated:
 
-  * Default heap implementation to use Zephyr's ``sys_heap`` (:kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEAP`) to better control the RAM usage of Matter applications.
+  * The default heap implementation to use Zephyr's ``sys_heap`` (:kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEAP`) to better control the RAM usage of Matter applications.
   * :ref:`ug_matter_device_certification` page with a section about certification document templates.
   * :ref:`ug_matter_overview_commissioning` page with information about :ref:`ug_matter_network_topologies_commissioning_onboarding_formats`.
   * Default retry intervals used by Matter Reliability Protocol for Matter over Thread to account for longer round-trip times in Thread networks with multiple intermediate nodes.
+
+* Fixed the issue of connection timing out when attaching to a Wi-Fi access point that requires Wi-Fi Protected Access 3 (WPA3).
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
@@ -102,10 +100,15 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-* Added initial implementation of Matter's cryptographic operations based on PSA crypto API.
-* Added build-time generation of some Zigbee Cluster Library (ZCL) source files using the ``codegen.py`` Python script.
-* Added an alternative factory reset implementation that erases the entire non-volatile storage flash partition.
-* Renamed Basic cluster to Basic Information cluster to match the specification.
+* Added:
+
+  * The initial implementation of Matter's cryptographic operations based on PSA crypto API.
+  * Build-time generation of some Zigbee Cluster Library (ZCL) source files using the :file:`codegen.py` Python script.
+  * An alternative factory reset implementation that erases the entire non-volatile storage flash partition.
+
+* Updated:
+
+  * Basic cluster has been renamed to Basic Information cluster to match the specification.
 
 Thread
 ------
@@ -121,14 +124,17 @@ Zigbee
 
 See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 
-ESB
----
+Enhanced ShockBurst (ESB)
+-------------------------
 
-  * Added support for front-end modules.
-  * The ESB module requires linking the :ref:`MPSL library <nrfxlib:mpsl_lib>`.
-  * The number of PPI/DPPI channels used is increased from 3 to 6.
-  * Assigned events 6-7 from the EGU0 instance to the ESB module.
-  * Changed the type parameter of the function :c:func:`esb_set_tx_power` to ``int8_t``.
+* Added support for front-end modules.
+  The ESB module requires linking the :ref:`MPSL library <nrfxlib:mpsl_lib>`.
+
+* Updated:
+
+  * Number of PPI/DPPI channels used from three to six.
+  * Events 6 and 7 from the EGU0 instance by assigning them to the ESB module.
+  * The type parameter of the function :c:func:`esb_set_tx_power` to ``int8_t``.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------
@@ -140,7 +146,8 @@ Wi-Fi
 
 * Added:
 
-  * Sample demonstrating Wi-Fi Bluetooth LE coexistence
+  * New sample :ref:`wifi_sr_coex_sample` demonstrating Wi-Fi Bluetooth LE coexistence.
+  * :ref:`ug_wifi` document.
 
 Applications
 ============
@@ -150,9 +157,7 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
-* Added:
-
-  * Wi-Fi support for nRF9160 DK + nRF7002 EK configuration.
+* Added Wi-Fi support for nRF9160 DK + nRF7002 EK configuration.
 
 nRF9160: Serial LTE modem
 -------------------------
@@ -160,12 +165,12 @@ nRF9160: Serial LTE modem
 * Added:
 
   * RFC1350 TFTP client, currently supporting only *READ REQUEST*.
-  * AT command #XSHUTDOWN to put nRF9160 SiP to System Off mode.
-  * Support of nRF Cloud C2D appId "MODEM" and "DEVICE".
+  * AT command ``#XSHUTDOWN`` to put nRF9160 SiP to System Off mode.
+  * Support of nRF Cloud C2D appId ``MODEM`` and ``DEVICE``.
 
 * Updated:
 
-  * The response for the #XDFUGET command, using unsolicited notification to report download progress.
+  * The response for the ``#XDFUGET`` command, using unsolicited notification to report download progress.
 
 nRF5340 Audio
 -------------
@@ -175,7 +180,6 @@ nRF5340 Audio
   * Support for Front End Module nRF21540.
   * Possibility to create a Public Broadcast Announcement (PBA) needed for Auracast.
   * Encryption for BISes.
-
 * Updated:
 
   * Power module has been re-factored so that it uses upstream Zephyr INA23X sensor driver.
@@ -191,18 +195,21 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
-* Removed separate configurations enabling :ref:`zephyr:shell_api` (:file:`prj_shell.conf`).
-  Shell support can be enabled for a given configuration with the single Kconfig option (:ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>`).
-* Added an application log informing about the configuration option value update in the :ref:`nrf_desktop_motion`.
-* Added application-specific Kconfig options (:ref:`CONFIG_DESKTOP_LOG <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_SHELL<config_desktop_app_options>`) to simplify the debug configurations for the Logging and Shell subsystems.
-  See the debug configuration section of the :ref:`nrf_desktop` application for more details.
+* Added:
 
-* Changed:
+  * An application log indicating that the value of a configuration option has been updated in the :ref:`nrf_desktop_motion`.
+  * Application-specific Kconfig options :ref:`CONFIG_DESKTOP_LOG <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>` to simplify the debug configurations for the Logging and Shell subsystems.
+    See the debug configuration section of the :ref:`nrf_desktop` application for more details.
 
-   * Implemented adjustments to avoid flooding logs:
+* Updated:
 
-      * Set the max compiled-in log level to ``warning`` for the Non-Volatile Storage (:kconfig:option:`CONFIG_NVS_LOG_LEVEL`).
-      * Lowered a log level to ``debug`` for the ``Identity x created`` log in the :ref:`nrf_desktop_ble_bond`.
+  * Implemented the following adjustments to avoid flooding logs:
+
+    * Set the max compiled-in log level to ``warning`` for the Non-Volatile Storage (:kconfig:option:`CONFIG_NVS_LOG_LEVEL`).
+    * Lowered a log level to ``debug`` for the ``Identity x created`` log in the :ref:`nrf_desktop_ble_bond`.
+
+  * Removed separate configurations enabling :ref:`zephyr:shell_api` (:file:`prj_shell.conf`).
+    Shell support can be enabled for a given configuration with the single Kconfig option (:ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>`).
 
 Samples
 =======
@@ -212,26 +219,19 @@ Bluetooth samples
 
 * :ref:`peripheral_uart` sample:
 
-  * Changed:
-
-    * Fixed a possible memory leak in the :c:func:`uart_init` function.
+  * Fixed a possible memory leak in the :c:func:`uart_init` function.
 
 * :ref:`peripheral_hids_keyboard` sample:
 
-  * Changed:
+  * Fixed a possible out-of-bounds memory access issue in the :c:func:`hid_kbd_state_key_set` and :c:func:`hid_kbd_state_key_clear` functions.
 
-    * Fixed a possible out-of-bounds memory access issue in the :c:func:`hid_kbd_state_key_set` and :c:func:`hid_kbd_state_key_clear` functions.
+* :ref:`ble_nrf_dm` sample:
 
-* :ref: `ble_nrf_dm` sample:
+  * Added support for high-precision distance estimate using more compute-intensive algorithms.
+  * Updated:
 
-  * Added:
-
-    * Support for high-precision distance estimate using more compute-intensive algorithms.
-
-  * Changed:
-
-    * Added energy consumption information to documentation.
-    * Added a documentation section about distance offset calibration.
+    * Documentation by adding energy consumption information.
+    * Documentation by adding a section about distance offset calibration.
 
 Bluetooth mesh samples
 ----------------------
@@ -296,13 +296,8 @@ nRF9160 samples
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
-  * Added:
-
-    * Usage of GCI search option if running modem firmware 1.3.4.
-
-  * Updated:
-
-    * The sample now waits for RRC idle mode before requesting neighbor cell measurements.
+  * Added the usage of GCI search option if running modem firmware v1.3.4.
+  * Updated the sample, so that it waits for RRC idle mode before requesting neighbor cell measurements.
 
 * :ref:`lwm2m_client` sample:
 
@@ -316,11 +311,9 @@ nRF9160 samples
     * The sensor module has been simplified.
       It does not use application events, filtering, or configurable periods anymore.
 
-* :ref:`http_application_update_sample`:
+* :ref:`http_application_update_sample` sample:
 
-  * Added:
-
-    * Support for the :ref:`liblwm2m_carrier_readme` library.
+  * Added support for the :ref:`liblwm2m_carrier_readme` library.
 
 * Removed:
 
@@ -332,7 +325,7 @@ nRF9160 samples
   * Added:
 
     * MCUboot child image files to properly access external flash on newer nRF9160DK versions.
-    * An :file:``overlay_mcuboot_ext_flash.conf`` file to enable MCUboot use of external flash.
+    * An :file:`overlay_mcuboot_ext_flash.conf` file to enable MCUboot use of external flash.
 
 Peripheral samples
 ------------------
@@ -349,23 +342,24 @@ Trusted Firmware-M (TF-M) samples
 
 Thread samples
 --------------
-
 * Added:
 
-  * ``overlay-low_power.conf`` and ``low_power.overlay`` to the CLI sample to facilitate power consumption measurements.
+  * :file:`overlay-low_power.conf` and :file:`low_power.overlay` to the CLI sample to facilitate power consumption measurements.
 
-* Changed:
+* Updated:
 
-  * Overlay structure changed:
-    * ``overlay-rtt.conf`` removed from all samples.
-    * ``overlay-log.conf`` now uses RTT backend by default.
-    * Logs removed from default configuration (moved to ``overlay-logging.conf``).
-    * Asserts removed from default configuration (moved to ``overlay-debug.conf``).
+  * Overlay structure:
+
+    * :file:`overlay-rtt.conf` removed from all samples.
+    * :file:`overlay-log.conf` now uses RTT backend by default.
+    * Logs removed from default configuration (moved to :file:`overlay-logging.conf`).
+    * Asserts removed from default configuration (moved to :file:`overlay-debug.conf`).
+
 
 Matter samples
 --------------
 
-* :ref:`matter_lock_sample`:
+* :ref:`matter_lock_sample` sample:
 
   * Added:
 
@@ -407,17 +401,20 @@ Other samples
 
 * :ref:`esb_prx_ptx` sample:
 
-  * Added:
-
-    * Support for front-end modules and :ref:`zephyr:nrf21540dk_nrf52840`.
+  * Added support for front-end modules and :ref:`zephyr:nrf21540dk_nrf52840`.
 
 Drivers
 =======
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-* Reduced log verbosity of :ref:`pmw3360`.
-* Reduced log verbosity of :ref:`paw3212`.
+* :ref:`pmw3360`:
+
+  * Updated by reducing log verbosity.
+
+* :ref:`paw3212`:
+
+  * Updated by reducing log verbosity.
 
 Libraries
 =========
@@ -432,7 +429,7 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-* :ref:`mds_readme`:
+* :ref:`mds_readme` library:
 
   * Fixed URI generation in the :c:func:`data_uri_read` function.
 
@@ -457,13 +454,13 @@ Modem libraries
   * Added:
 
     * Support for the application to send the Wi-Fi access point list to the cloud.
-    * Introduced the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option that replaces the following configurations that are removed:
+    * :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option that replaces the following configurations:
 
       * ``CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL``
       * ``CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL``
       * ``CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL``
 
-      The new configuration handles also Wi-Fi positioning.
+      The new configuration also handles Wi-Fi positioning.
     * Introduced several new Kconfig options for default location request configurations, including default method priority configuration.
       These new Kconfig options are applied when :c:func:`location_config_defaults_set` function is called.
 
@@ -471,19 +468,24 @@ Modem libraries
 
     * Use of :ref:`lib_multicell_location` library has been removed because the library is deprecated.
       Relevant functionality from the library is moved to this library.
-      The following features were not copied:
+      The following features were not moved:
 
       * Definition of HTTPS port for HERE service, that is :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_HTTPS_PORT`.
       * HERE v1 API.
       * nRF Cloud CA certificate handling.
-
-    * Renamed ``enum location_cellular_ext_result`` to ``enum location_ext_result``, because Wi-Fi will use the same enumeration.
-    * Renamed ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_NRF_CLOUD`.
-    * Renamed ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE`.
-    * Renamed ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_API_KEY`.
-    * Renamed ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_HOSTNAME`.
-    * Renamed ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG`.
     * Improved GNSS assistance data need handling.
+
+    * GNSS filtered ephemerides are no longer used when the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME` Kconfig option is enabled.
+    * Renamed:
+
+      * ``enum location_cellular_ext_result`` to ``enum location_ext_result``, because Wi-Fi will use the same enumeration.
+      * ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_NRF_CLOUD`.
+      * ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE`.
+      * ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_API_KEY`.
+      * ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_HOSTNAME`.
+      * ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG`.
+
+    * Fixed an issue causing the A-GPS data download to be delayed until the RRC connection release.
 
 Libraries for networking
 ------------------------
@@ -494,8 +496,10 @@ Libraries for networking
 
 * :ref:`lib_fota_download` library:
 
-  * Fixed a bug where the :c:func:`download_client_callback` function was continuing to read the offset value even if :c:func:`dfu_target_offset_get` returned an error.
-  * Fixed a bug where the cleanup of the downloading state was not happening when an error event was raised.
+  * Fixed:
+
+    * An issue where the :c:func:`download_client_callback` function was continuing to read the offset value even if :c:func:`dfu_target_offset_get` returned an error.
+    * An issue where the cleanup of the downloading state was not happening when an error event was raised.
 
 * :ref:`lib_nrf_cloud` library:
 
@@ -507,8 +511,8 @@ Libraries for networking
 
   * Fixed:
 
-    * A bug where the same buffer was incorrectly shared between caching a P-GPS prediction and loading a new one, when external flash was used.
-    * A bug where external flash only worked if the P-GPS partition was located at address 0.
+    * An issue where the same buffer was incorrectly shared between caching a P-GPS prediction and loading a new one, when external flash was used.
+    * An issue where external flash only worked if the P-GPS partition was located at address 0.
 
 * :ref:`lib_lwm2m_location_assistance` library:
 
@@ -517,42 +521,31 @@ Libraries for networking
     * Support for Wi-Fi based location through LwM2M.
     * API for scanning Wi-Fi access points.
 
-  * Removed:
-
-    * Location events and event handlers.
+  * Removed location events and event handlers.
 
 Libraries for NFC
 -----------------
 
-* :ref:`lib_nfc`
+* :ref:`lib_nfc` library:
 
-  * Updated:
+  * Added:
 
-    * Added the possibility of moving an NFC callback to a thread context.
-    * Added support for zero-latency interrupts for NFC.
-    * Aligned the :file:`ncs/nrf/subsys/nfc/lib/platform.c` file with new library implementation.
+    * The possibility of moving an NFC callback to a thread context.
+    * Support for zero-latency interrupts for NFC.
+
+  * Updated by aligning the :file:`ncs/nrf/subsys/nfc/lib/platform.c` file with new library implementation.
 
 Other libraries
 ---------------
 
 * :ref:`lib_contin_array` library:
 
-  * Separated the library from the :ref:`nrf53_audio_app` and moved it to :file:`lib/contin_array`.
+  * Updated by separating the library from the :ref:`nrf53_audio_app` application and moving it to :file:`lib/contin_array`.
     Updated code and documentation accordingly.
 
 * :ref:`QoS` library:
 
-  * Removed the ``QOS_MESSAGE_TYPES_REGISTER`` macro.
-
-* :ref:`lib_location` library:
-
-  * Updated:
-
-    * GNSS filtered ephemerides are no longer used when the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME` Kconfig option is enabled.
-
-  * Fixed:
-
-    * An issue causing the A-GPS data download to be delayed until the RRC connection release.
+  * Updated by removing the ``QOS_MESSAGE_TYPES_REGISTER`` macro.
 
 * Secure Partition Manager (SPM):
 
@@ -560,23 +553,30 @@ Other libraries
     It is replaced by the Trusted Firmware-M (TF-M) as the supported trusted execution solution.
     See :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` for more information about the TF-M.
 
-* PCM Mix:
+* :ref:`lib_pcm_mix` library:
 
-  * PCM mix (Pulse Code Modulation) audio mixer has been moved out of the nRF5340 Audio
-    application, and into lib/pcm_mix.
+  * New library.
+    This was previously a component of the :ref:`nrf53_audio_app` application, now moved to :file:`lib/pcm_mix`.
 
 Common Application Framework (CAF)
 ----------------------------------
 
 * :ref:`caf_overview_events`:
 
-  * Improved inter-core compatibility.
-  * Added a macro intended to set the size of events member enums to 32 bits when the Event Manager Proxy is enabled.
-  * Applied macro to all affected CAF events.
+  * Added:
+
+    * A macro intended to set the size of events member enums to 32 bits when the Event Manager Proxy is enabled.
+      Applied macro to all affected CAF events.
+
+  * Updated:
+
+    * Inter-core compatibility has been improved.
 
 * :ref:`caf_sensor_data_aggregator`:
 
-  * :c:struct:`sensor_data_aggregator_event` now uses the :c:struct:`sensor_value` struct data buffer and carries a number of sensor values in a single sample, which is sufficient to describe data layout.
+  * Updated:
+
+    * :c:struct:`sensor_data_aggregator_event` now uses the :c:struct:`sensor_value` struct data buffer and carries a number of sensor values in a single sample, which is sufficient to describe data layout.
 
 * :ref:`caf_sensor_manager`:
 
@@ -610,7 +610,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
 * :ref:`west_sbom`:
 
-  * Output now contains source repository and version information for each file.
+  * Updated so that the output contains source repository and version information for each file.
 
 MCUboot
 =======
@@ -626,7 +626,7 @@ The following list summarizes both the main changes inherited from upstream MCUb
 Zephyr
 ======
 
-.. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each NCS release.
+.. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each nRF Connect SDK release.
 
 The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``e1e06d05fa8d1b6ac1b0dffb1712e94e308861f8``, with some |NCS| specific additions.
 
@@ -671,5 +671,7 @@ Documentation
 
   * Documentation template for the :ref:`Ecosystem integration <Ecosystem_integration>` user guides.
   * The :ref:`ug_nrf70_developing` user guide.
+  * A page on :ref:`ug_nrf70_features`.
+* Updated the :ref:`software_maturity` page with details about Wi-Fi feature support.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
