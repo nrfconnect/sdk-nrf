@@ -141,20 +141,15 @@ struct nrf_wifi_rf_test_capture_meas {
 struct nrf_wifi_rf_test_tx_params {
 	unsigned char test;
 
-	/* Compute the normalized frequency for the tone to be transmitted
-	 * as,normFrequency =
-	 * round(toneFrequency * ((1/(DAC sampling rate /2))*(2^25)))
+    /* Tone frequency in the range -10MHz to +10MHz*/
+	signed char tone_freq;
+
+	/* Desired TX power in the range -16dBm to +24dBm.
+	 * in steps of 2dBm
 	 */
-	signed int norm_freq;
-
-	/* Number of samples to be transmitted. */
-	unsigned short tx_vect_len;
-
-	/* Desired amplitude of the tone (between 0 – 0x3FF). */
-	unsigned short tone_amp;
-
-	/* Desired TX power*/
-	unsigned char tx_pow;
+	signed char tx_pow;
+	
+	/* Set 1 for staring tone transmission.*/
 	unsigned char enabled;
 } __NRF_WIFI_PKD;
 
@@ -189,7 +184,7 @@ struct nrf_wifi_rf_get_rf_rssi {
 struct nrf_wifi_rf_test_xo_calib {
 	unsigned char test;
 
-	/* Number of samples to be captured. */
+	/* XO value in the range between 0 to 127 */
 	unsigned char xo_val;
 
 } __NRF_WIFI_PKD;
@@ -198,11 +193,8 @@ struct nrf_wifi_rf_test_xo_calib {
 struct nrf_wifi_rf_get_xo_value {
 	unsigned char test;
 
-	/* Number of samples to be captured. */
+	/* Optimal XO value computed. */
 	unsigned char xo_value;
-
-	unsigned int tone_frequency;
-
 } __NRF_WIFI_PKD;
 
 #endif /* CONFIG_NRF700X_RADIO_TEST */

@@ -688,6 +688,11 @@ struct rpu_conf_params {
 	unsigned char ble_ant_switch_ctrl;
 	unsigned char ru_tone;
 	unsigned char ru_index;
+	signed char tx_tone_freq;
+	unsigned char lna_gain;
+	unsigned char bb_gain;
+	unsigned char capture_length;
+	unsigned char xo_value;
 } __NRF_WIFI_PKD;
 
 /**
