@@ -7,7 +7,7 @@ Getting started with nRF7002 DK
    :local:
    :depth: 2
 
-The nRF7002 DK (PCA10143) is a single-board development kit for evaluation and development on the Nordic nRF7002, a Wi-Fi companion IC to Nordic nRF5340 System-on-Chip (SoC) host processor.
+The nRF7002 DK (PCA10143) is a single-board development kit for evaluation and development on the nRF7002, a Wi-Fi® companion IC to Nordic Semiconductor's nRF5340 System-on-Chip (SoC) host processor.
 
 Overview
 ********
@@ -24,12 +24,10 @@ It has the following features:
 The ``nrf7002dk_nrf5340_cpuapp`` build target provides support for the application core on the nRF5340 SoC.
 The ``nrf7002dk_nrf5340_cpunet`` build target provides support for the network core on the nRF5340 SoC.
 
-.. figure:: images/nrf7002dk.jpg
-     :width: 711px
-     :align: center
-     :alt: nRF7002 DK
+.. figure:: images/nRF70dk.png
+   :alt: nRF7002 DK
 
-     nRF7002 PDK (Preview DK will later be replaced by the certified nRF7002 DK)
+   nRF7002 DK
 
 
 Hardware
