@@ -74,9 +74,28 @@ int wifi_nrf_set_twt(const struct device *dev,
 	case WIFI_TWT_TEARDOWN:
 		twt_info.twt_flow_id = twt_params->flow_id;
 
+		if (twt_params->teardown.teardown_all) {
+			if (vif_ctx_zep->neg_twt_flow_id == 0xFF) {
+				LOG_ERR("Invalid negotiated TWT flow id\n");
+				goto out;
+			}
+			/* Update the negotiated flow id
+			 * from the negotiated value.
+			 */
+			twt_info.twt_flow_id = vif_ctx_zep->neg_twt_flow_id;
+		} else {
+			/* Update the flow id as given by the user. */
+			twt_info.twt_flow_id = twt_params->flow_id;
+		}
+
 		status = wifi_nrf_fmac_twt_teardown(rpu_ctx_zep->rpu_ctx,
 						    vif_ctx_zep->vif_idx,
 						    &twt_info);
+
+		if (status == WIFI_NRF_STATUS_SUCCESS) {
+			vif_ctx_zep->neg_twt_flow_id = 0XFF;
+		}
+
 		break;
 
 	default:
@@ -114,6 +133,8 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 
 	twt_params.operation = WIFI_TWT_SETUP;
 	twt_params.flow_id = twt_setup_info->info.twt_flow_id;
+	/* Store the negotiated flow id and pass it to user. */
+	vif_ctx_zep->neg_twt_flow_id = twt_setup_info->info.twt_flow_id;
 	twt_params.negotiation_type = twt_setup_info->info.neg_type;
 	twt_params.setup_cmd = twt_setup_info->info.setup_cmd;
 	twt_params.setup.trigger = twt_setup_info->info.ap_trigger_frame;
@@ -149,6 +170,7 @@ void wifi_nrf_event_proc_twt_teardown_zep(void *vif_ctx,
 	twt_params.flow_id = twt_teardown_info->info.twt_flow_id;
 	//TODO: ADD reason code in the twt_params structure
 	//twt_params.reason_code = twt_teardown_info->info.reason_code;
+	vif_ctx_zep->neg_twt_flow_id = 0XFF;
 
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
 }

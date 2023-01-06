@@ -49,6 +49,10 @@ struct wifi_nrf_vif_ctx_zep {
 #ifdef CONFIG_WPA_SUPP
 	struct zep_wpa_supp_dev_callbk_fns supp_callbk_fns;
 #endif /* CONFIG_WPA_SUPP */
+	/* Used to store the negotiated twt flow id
+	 * for "twt_teardown_all" command.
+	 */
+	unsigned char neg_twt_flow_id;
 };
 
 struct wifi_nrf_vif_ctx_map {
