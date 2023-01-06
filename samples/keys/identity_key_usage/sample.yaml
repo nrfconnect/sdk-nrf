@@ -15,3 +15,4 @@ common:
 tests:
   sample.keys.identity_key_usage:
     tags: keys ci_build
+    build_only: True
