@@ -89,7 +89,7 @@ static int wifi_config_save(struct wifi_config *config)
 
 	rc = settings_save_one(WIFI_CONFIG_KEY, config, sizeof(struct wifi_config));
 	if (rc != 0) {
-		LOG_WRN("Error! Cannot write condig.");
+		LOG_WRN("Cannot write config.");
 		return -EIO;
 	}
 	return 0;
@@ -101,7 +101,7 @@ static int wifi_config_read(struct wifi_config *config)
 
 	rc = load_immediate_value(WIFI_CONFIG_KEY, config, sizeof(struct wifi_config));
 	if (rc != 0) {
-		LOG_WRN("Error! Cannot read config.");
+		LOG_WRN("Cannot read config.");
 		return -EIO;
 	}
 	return 0;
@@ -113,7 +113,7 @@ static int wifi_config_delete(void)
 
 	rc = settings_delete(WIFI_CONFIG_KEY);
 	if (rc != 0) {
-		LOG_WRN("Error! Cannot delete config.");
+		LOG_WRN("Cannot delete config.");
 		return -EIO;
 	}
 	return 0;
