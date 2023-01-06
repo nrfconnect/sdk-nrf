@@ -11,6 +11,7 @@
 
 #include <string.h>
 #include <util.h>
+#include "host_rpu_data_if.h"
 
 
 int nrf_wifi_utils_hex_str_to_val(struct wifi_nrf_osal_priv *opriv,
@@ -76,4 +77,15 @@ int nrf_wifi_utils_hex_str_to_val(struct wifi_nrf_osal_priv *opriv,
 	ret = j;
 out:
 	return ret;
+}
+
+
+bool nrf_wifi_utils_is_mac_addr_valid(const char *mac_addr)
+{
+	unsigned char zero_addr[NRF_WIFI_ETH_ADDR_LEN] = {0};
+
+	return ((memcmp(mac_addr,
+			zero_addr,
+			sizeof(zero_addr)) != 0) &&
+		!(mac_addr[0] & 0x1));
 }

@@ -16,6 +16,7 @@
 #include <zephyr/logging/log.h>
 
 #include <rpu_fw_patches.h>
+#include <util.h>
 #include <fmac_api.h>
 #include <zephyr_fmac_main.h>
 #ifdef CONFIG_WPA_SUPP
@@ -140,6 +141,15 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
 	struct wifi_nrf_fmac_fw_info fw_info;
 	void *rpu_ctx = NULL;
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
+	int sleep_type = -1;
+
+#ifndef CONFIG_NRF700X_RADIO_TEST
+	sleep_type = HW_SLEEP_ENABLE;
+#else
+	sleep_type = SLEEP_DISABLE;
+#endif /* CONFIG_NRF700X_RADIO_TEST */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	rpu_ctx_zep = &drv_priv_zep->rpu_ctx_zep;
 
@@ -155,7 +165,9 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 
 	rpu_ctx_zep->rpu_ctx = rpu_ctx;
 
-	memset(&fw_info, 0, sizeof(fw_info));
+	memset(&fw_info,
+	       0,
+	       sizeof(fw_info));
 
 	fw_info.lmac_patch_pri.data = wifi_nrf_lmac_patch_pri_bimg;
 	fw_info.lmac_patch_pri.size = sizeof(wifi_nrf_lmac_patch_pri_bimg);
@@ -167,191 +179,16 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 	fw_info.umac_patch_sec.size = sizeof(wifi_nrf_umac_patch_sec_bin);
 
 	/* Load the FW patches to the RPU */
-	status = wifi_nrf_fmac_fw_load(rpu_ctx, &fw_info);
+	status = wifi_nrf_fmac_fw_load(rpu_ctx,
+				       &fw_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: wifi_nrf_fmac_fw_load failed\n", __func__);
 		goto out;
 	}
-out:
-	return status;
-}
-
-void wifi_nrf_fmac_dev_rem_zep(struct wifi_nrf_ctx_zep *rpu_ctx_zep)
-{
-	wifi_nrf_fmac_dev_rem(rpu_ctx_zep->rpu_ctx);
-}
-
-
-#ifndef CONFIG_NRF700X_RADIO_TEST
-enum wifi_nrf_status wifi_nrf_fmac_vif_add_zep(struct wifi_nrf_ctx_zep *rpu_ctx_zep,
-					       unsigned char vif_idx,
-					       const struct device *dev)
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct nrf_wifi_umac_add_vif_info add_vif_info;
-	struct wifi_nrf_fmac_otp_info otp_info;
-
-	if (vif_idx >= MAX_NUM_VIFS) {
-		LOG_ERR("%s: Invalid VIF index (%d)\n",
-			__func__,
-			vif_idx);
-
-		goto out;
-	}
-
-	vif_ctx_zep = &rpu_ctx_zep->vif_ctx_zep[vif_idx];
-
-	vif_ctx_zep->rpu_ctx_zep = rpu_ctx_zep;
-	vif_ctx_zep->zep_dev_ctx = dev;
-
-	memset(&add_vif_info,
-	       0,
-	       sizeof(add_vif_info));
-
-	add_vif_info.iftype = NRF_WIFI_IFTYPE_STATION;
-
-	memcpy(add_vif_info.ifacename,
-	       "wlan0",
-	       strlen("wlan0"));
-
-	status = wifi_nrf_fmac_otp_info_get(rpu_ctx_zep->rpu_ctx,
-					    &otp_info);
-
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s:  Fetching of RPU OTP information failed\n",
-			__func__);
-		goto out;
-	}
-
-	if (net_eth_is_addr_unspecified(&vif_ctx_zep->mac_addr)) {
-		if (vif_idx == 0) {
-			/* Check if MAC address has been programmed in the OTP */
-#ifdef CONFIG_NRF700X_REV_A
-			if (otp_info.info.mac_address0[0] == 0xFFFFFFFF &&
-			    otp_info.info.mac_address0[1] == 0xFFFFFFFF) {
-#else
-			if (otp_info.flags & (~MAC0_ADDR_FLAG_MASK)) {
-#endif /* !CONFIG_NRF700X_REV_A */
-				LOG_ERR("%s: MAC address 0 not programmed in OTP !\n",
-						      __func__);
-
-				status = WIFI_NRF_STATUS_FAIL;
-				goto out;
-			}
-		} else if (vif_idx == 1) {
-#ifdef CONFIG_NRF700X_REV_A
-			if (otp_info.info.mac_address1[0] == 0xFFFFFFFF &&
-			    otp_info.info.mac_address1[1] == 0xFFFFFFFF) {
-#else
-			if (otp_info.flags & (~MAC1_ADDR_FLAG_MASK)) {
-#endif /* !CONFIG_NRF700X_REV_A */
-				LOG_ERR("%s: MAC address 1 not programmed in OTP !\n",
-						      __func__);
-
-				status = WIFI_NRF_STATUS_FAIL;
-				goto out;
-			}
-		}
-
-		memcpy(&vif_ctx_zep->mac_addr,
-		       otp_info.info.mac_address0,
-		       NRF_WIFI_ETH_ADDR_LEN);
-	}
-
-	memcpy(add_vif_info.mac_addr,
-	       &vif_ctx_zep->mac_addr,
-	       sizeof(add_vif_info.mac_addr));
-
-	vif_ctx_zep->vif_idx = wifi_nrf_fmac_add_vif(rpu_ctx_zep->rpu_ctx,
-						     vif_ctx_zep,
-						     &add_vif_info);
-
-	if (vif_ctx_zep->vif_idx != vif_idx) {
-		LOG_ERR("%s: FMAC returned invalid interface index\n",
-			__func__);
-		k_free(vif_ctx_zep);
-		goto out;
-	}
-
-	status = WIFI_NRF_STATUS_SUCCESS;
-out:
-	return status;
-}
-
-
-void wifi_nrf_fmac_vif_rem_zep(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep)
-{
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-
-	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-
-	wifi_nrf_fmac_del_vif(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
-}
-
-
-enum wifi_nrf_status wifi_nrf_fmac_vif_state_chg(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep,
-						 enum wifi_nrf_fmac_if_op_state state)
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct nrf_wifi_umac_chg_vif_state_info vif_info;
-
-	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-
-	memset(&vif_info,
-	       0,
-	       sizeof(vif_info));
-
-	vif_info.state = state;
-
-	memcpy(vif_info.ifacename,
-	       "wlan0",
-	       strlen("wlan0"));
-
-	status = wifi_nrf_fmac_chg_vif_state(rpu_ctx_zep->rpu_ctx,
-					     vif_ctx_zep->vif_idx,
-					     &vif_info);
-
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_chg_vif_state failed\n", __func__);
-		goto out;
-	}
-
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
-	status = wifi_nrf_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
-					      vif_ctx_zep->vif_idx,
-					      NRF_WIFI_PS_ENABLED);
-
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_set_power_save failed\n", __func__);
-		goto out;
-	}
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
-out:
-	return status;
-}
-#endif /* !CONFIG_NRF700X_RADIO_TEST */
-
-
-enum wifi_nrf_status wifi_nrf_fmac_dev_init_zep(struct wifi_nrf_ctx_zep *rpu_ctx_zep)
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
-	int sleep_type = -1;
-
-#ifndef CONFIG_NRF700X_RADIO_TEST
-	sleep_type = HW_SLEEP_ENABLE;
-#else
-	sleep_type = SLEEP_DISABLE;
-#endif /* CONFIG_NRF700X_RADIO_TEST */
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	status = wifi_nrf_fmac_dev_init(rpu_ctx_zep->rpu_ctx,
 #ifndef CONFIG_NRF700X_RADIO_TEST
-					0,
-					(unsigned char *)&rpu_ctx_zep->vif_ctx_zep[0].mac_addr,
 					NULL,
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
@@ -368,40 +205,16 @@ out:
 }
 
 
-void wifi_nrf_fmac_dev_deinit_zep(struct wifi_nrf_ctx_zep *rpu_ctx_zep)
-{
-#ifndef CONFIG_NRF700X_RADIO_TEST
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	unsigned char vif_idx = MAX_NUM_VIFS;
-	unsigned char i = 0;
-
-	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
-
-	/* Delete all other interfaces */
-	for (i = 1; i < MAX_NUM_VIFS; i++) {
-		if (fmac_dev_ctx->vif_ctx[i]) {
-			vif_ctx_zep = fmac_dev_ctx->vif_ctx[i]->os_vif_ctx;
-			vif_idx = vif_ctx_zep->vif_idx;
-			wifi_nrf_fmac_del_vif(fmac_dev_ctx, vif_idx);
-			fmac_dev_ctx->vif_ctx[i] = NULL;
-		}
-	}
-#endif /* !CONFIG_NRF700X_RADIO_TEST */
-
-	wifi_nrf_fmac_dev_deinit(rpu_ctx_zep->rpu_ctx);
-}
-
 static int wifi_nrf_drv_main_zep(const struct device *dev)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 #ifndef CONFIG_NRF700X_RADIO_TEST
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_fmac_callbk_fns callbk_fns = { 0 };
 	struct nrf_wifi_data_config_params data_config = { 0 };
 	struct rx_buf_pool_params rx_buf_pools[MAX_NUM_OF_RX_QUEUES];
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = dev->data;
 
-	vif_ctx_zep = dev->data;
+	vif_ctx_zep->rpu_ctx_zep = &rpu_drv_priv_zep.rpu_ctx_zep;
 
 #ifdef CONFIG_NRF700X_DATA_TX
 	data_config.aggregation = aggregation;
@@ -464,53 +277,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 		goto fmac_deinit;
 	}
 
-#ifndef CONFIG_NRF700X_RADIO_TEST
-	status = wifi_nrf_fmac_vif_add_zep(&rpu_drv_priv_zep.rpu_ctx_zep,
-					   0,
-					   dev);
-
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_vif_add_zep failed\n",
-			__func__);
-		goto rpu_rem;
-	}
-#endif /* !CONFIG_NRF700X_RADIO_TEST */
-
-	status = wifi_nrf_fmac_dev_init_zep(&rpu_drv_priv_zep.rpu_ctx_zep);
-
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_dev_init_zep failed\n",
-			__func__);
-#ifdef CONFIG_NRF700X_RADIO_TEST
-		goto rpu_rem;
-#else
-		goto vif_rem;
-#endif /* !CONFIG_NRF700X_RADIO_TEST */
-	}
-
-#ifndef CONFIG_NRF700X_RADIO_TEST
-	/* Bring the default interface up in the firmware */
-	status = wifi_nrf_fmac_vif_state_chg(vif_ctx_zep,
-					     WIFI_NRF_FMAC_IF_OP_STATE_UP);
-
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_vif_state_chg failed\n",
-			__func__);
-		goto dev_deinit;
-	} else {
-		vif_ctx_zep->if_op_state = WIFI_NRF_FMAC_IF_OP_STATE_UP;
-	}
-#endif /* !CONFIG_NRF700X_RADIO_TEST */
-
 	return 0;
-#ifndef CONFIG_NRF700X_RADIO_TEST
-dev_deinit:
-	wifi_nrf_fmac_dev_deinit_zep(&rpu_drv_priv_zep.rpu_ctx_zep);
-vif_rem:
-	wifi_nrf_fmac_vif_rem_zep(vif_ctx_zep);
-#endif /* !CONFIG_NRF700X_RADIO_TEST */
-rpu_rem:
-	wifi_nrf_fmac_dev_rem_zep(&rpu_drv_priv_zep.rpu_ctx_zep);
 fmac_deinit:
 	wifi_nrf_fmac_deinit(rpu_drv_priv_zep.fmac_priv);
 err:
@@ -519,7 +286,10 @@ err:
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
 static const struct net_wifi_mgmt_offload wifi_offload_ops = {
-	.wifi_iface.iface_api.init = wifi_nrf_if_init,
+	.wifi_iface.iface_api.init = wifi_nrf_if_init_zep,
+	.wifi_iface.start = wifi_nrf_if_start_zep,
+	.wifi_iface.stop = wifi_nrf_if_stop_zep,
+	.wifi_iface.set_config = wifi_nrf_if_set_config_zep,
 	.wifi_iface.get_capabilities = wifi_nrf_if_caps_get,
 	.wifi_iface.send = wifi_nrf_if_send,
 	.scan = wifi_nrf_disp_scan_zep,
@@ -573,7 +343,7 @@ DEVICE_DEFINE(wlan0, /* name - token */
 	      wifi_nrf_drv_main_zep, /* init_fn */
 	      NULL, /* pm_action_cb */
 #ifndef CONFIG_NRF700X_RADIO_TEST
-	      &rpu_drv_priv_zep.rpu_ctx_zep.vif_ctx_zep[0], /* data */
+	      &rpu_drv_priv_zep, /* data */
 #else /* !CONFIG_NRF700X_RADIO_TEST */
 	      NULL,
 #endif /* CONFIG_NRF700X_RADIO_TEST */
