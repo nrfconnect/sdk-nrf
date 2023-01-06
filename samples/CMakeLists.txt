@@ -18,6 +18,13 @@ if (CONFIG_SECURE_BOOT)
     set(nsib_child_image_path ${CMAKE_CURRENT_LIST_DIR}/bootloader)
   endif()
 
+  if(CONFIG_SB_MONOTONIC_COUNTER)
+    add_overlay_config(
+      ${nsib_child_image_name}
+      ${NRF_DIR}/subsys/bootloader/bl_storage/sb_monotonic_counter.conf
+      )
+  endif()
+
   add_child_image(
     NAME       ${nsib_child_image_name}
     SOURCE_DIR ${nsib_child_image_path}

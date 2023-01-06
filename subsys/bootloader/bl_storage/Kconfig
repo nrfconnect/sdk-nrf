@@ -4,6 +4,17 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config SECURE_BOOT_STORAGE
+menuconfig SECURE_BOOT_STORAGE
 	bool "Library for accessing the bootloader storage"
 	depends on SECURE_BOOT_CRYPTO
+
+if SECURE_BOOT_STORAGE
+
+config SECURE_BOOT_STORAGE_MONOTONIC_COUNTER
+	bool "Add functionality for checking the firmware version with a counter"
+	help
+	  Only enabled in the bootloader child image. Will be enabled by a
+	  Kconfig fragment when the parent has enabled
+	  CONFIG_SB_MONOTONIC_COUNTER.
+
+endif # SECURE_BOOT_STORAGE
