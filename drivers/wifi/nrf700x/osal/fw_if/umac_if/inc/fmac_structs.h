@@ -442,7 +442,6 @@ struct wifi_nrf_fmac_dev_ctx {
 	unsigned char num_sta;
 	unsigned char num_ap;
 	struct rpu_fw_stats *fw_stats;
-	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
 	bool stats_req;
 	bool fw_boot_done;
 	bool fw_init_done;
