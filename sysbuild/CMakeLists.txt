@@ -17,6 +17,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
+# Enable use of partition manager with sysbuild.
+# Consider if this shoulc come through Sysbuild Kconfig flag.
+set(NCS_SYSBUILD_PARTITION_MANAGER TRUE PARENT_SCOPE)
+
 include(${CMAKE_CURRENT_LIST_DIR}/extensions.cmake)
 
 if(SB_CONFIG_SECURE_BOOT)

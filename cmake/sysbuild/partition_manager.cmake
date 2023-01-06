@@ -145,8 +145,164 @@ function(partition_manager)
     message(FATAL_ERROR "Partition Manager output generation failed, aborting. Command: ${pm_output_cmd}")
   endif()
 
+
+  add_custom_target(partition_manager${underscore}${PM_DOMAIN})
+  set(pm_var_names)
+  import_kconfig(PM_ ${pm_out_dotconf_file} pm_var_names)
+
+  foreach(name ${pm_var_names})
+    set_property(
+      TARGET partition_manager${underscore}${PM_DOMAIN}
+      PROPERTY ${name}
+      ${${name}}
+      )
+  endforeach()
+
+  # Turn the space-separated list into a Cmake list.
+  string(REPLACE " " ";" PM_ALL_BY_SIZE ${PM_ALL_BY_SIZE})
+
+  # Iterate over every partition, from smallest to largest.
+  foreach(part ${PM_ALL_BY_SIZE})
+    if(${part} STREQUAL "app")
+      if(DEFINED PM_DOMAIN)
+        set(part "${DOMAIN_APP_${PM_DOMAIN}}")
+      else()
+        set(part "${DEFAULT_IMAGE}")
+      endif()
+    endif()
+    string(TOUPPER ${part} PART)
+    get_property(${part}_PM_HEX_FILE GLOBAL PROPERTY ${part}_PM_HEX_FILE)
+    get_property(${part}_PM_ELF_FILE GLOBAL PROPERTY ${part}_PM_ELF_FILE)
+
+    # Process container partitions (if it has a SPAN list it is a container partition).
+    if(DEFINED PM_${PART}_SPAN)
+      string(REPLACE " " ";" PM_${PART}_SPAN ${PM_${PART}_SPAN})
+      list(APPEND containers ${part})
+    endif()
+
+    # Include the partition in the merge operation if it has a hex file.
+    if(${part} IN_LIST IMAGES)
+      # Question, what is it we want to know ?
+      # We are now in sysbuild, meaning we know everything.
+      # So for each domain we should just include the generated hex file.
+      # Those are available thorugh sysbuild_get, but not locally as there is no parent image.
+      list(APPEND explicitly_assigned ${part})
+      sysbuild_get(${part}_PM_HEX_FILE IMAGE ${part} VAR BYPRODUCT_KERNEL_SIGNED_HEX_NAME CACHE)
+      if(NOT ${part}_PM_HEX_FILE)
+        sysbuild_get(${part}_PM_HEX_FILE IMAGE ${part} VAR BYPRODUCT_KERNEL_HEX_NAME CACHE)
+      endif()
+      set(${part}_PM_TARGET ${part})
+    else()
+      if(${part} IN_LIST containers)
+        set_ifndef(${part}_PM_HEX_FILE ${PROJECT_BINARY_DIR}/${part}.hex)
+        set_ifndef(${part}_PM_TARGET ${part}_hex)
+      endif()
+      list(APPEND implicitly_assigned ${part})
+    endif()
+  endforeach()
+
+  if (DEFINED PM_DOMAIN)
+    set(merged_suffix _${PM_DOMAIN})
+    string(TOUPPER ${merged_suffix} MERGED_SUFFIX)
+  endif()
+  set(merged merged${merged_suffix})
+  set(MERGED MERGED${MERGED_SUFFIX})
+
+  set(PM_${MERGED}_SPAN ${implicitly_assigned} ${explicitly_assigned})
+  set(${merged}_overlap TRUE) # Enable overlapping for the merged hex file.
+
+  # Iterate over all container partitions, plus the "fake" merged paritition.
+  # The loop will create a hex file for each iteration.
+  foreach(container ${containers} ${merged})
+    string(TOUPPER ${container} CONTAINER)
+
+    # Prepare the list of hex files and list of dependencies for the merge command.
+    foreach(part ${PM_${CONTAINER}_SPAN})
+      string(TOUPPER ${part} PART)
+      list(APPEND ${container}hex_files ${${part}_PM_HEX_FILE})
+      list(APPEND ${container}elf_files ${${part}_PM_ELF_FILE})
+      list(APPEND ${container}targets ${${part}_PM_TARGET})
+    endforeach()
+
+    # Do not merge hex files for empty partitions
+    if(NOT ${container}hex_files)
+      list(REMOVE_ITEM PM_${MERGED}_SPAN ${container})
+      continue()
+    endif()
+
+    # If overlapping is enabled, add the appropriate argument.
+    if(${${container}_overlap})
+      set(${container}overlap_arg --overlap=replace)
+    endif()
+
+    # Should all files still be merged ?
+    # And under which circumstances.
+    # Add command to merge files.
+    add_custom_command(
+      OUTPUT ${PROJECT_BINARY_DIR}/${container}.hex
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${ZEPHYR_BASE}/scripts/build/mergehex.py
+      -o ${PROJECT_BINARY_DIR}/${container}.hex
+      ${${container}overlap_arg}
+      ${${container}hex_files}
+      DEPENDS
+      ${${container}targets}
+      ${${container}hex_files}
+      )
+
+    # Wrapper target for the merge command.
+    add_custom_target(
+      ${container}_hex
+      ALL DEPENDS
+      ${PROJECT_BINARY_DIR}/${container}.hex
+      )
+
+    if (DEFINED PM_DOMAIN)
+      update_runner(IMAGE ${DOMAIN_APP_${PM_DOMAIN}} HEX ${PROJECT_BINARY_DIR}/${container}.hex)
+    endif()
+
+    if ("${container}" STREQUAL "merged")
+      update_runner(IMAGE ${DEFAULT_IMAGE} HEX ${PROJECT_BINARY_DIR}/${container}.hex)
+    endif()
+  endforeach()
+
 endfunction()
 
+# Function to update an already generated runners file for a Zephyr image.
+# This function allows the build system to adjust files to flash in the config
+# section of the runners.yaml on a given image.
+function(update_runner)
+  cmake_parse_arguments(RUNNER "" "IMAGE;HEX;BIN;ELF" "" ${ARGN})
+
+  check_arguments_required("update_runner" RUNNER IMAGE)
+
+  get_target_property(bin_dir ${RUNNER_IMAGE} _EP_BINARY_DIR)
+  set(runners_file ${bin_dir}/zephyr/runners.yaml)
+
+  set(runners_content_update)
+  file(STRINGS ${runners_file} runners_content)
+  foreach(line ${runners_content})
+    if(DEFINED RUNNER_ELF AND ${line} MATCHES "^.*elf_file: .*$")
+      string(REGEX REPLACE "(.*elf_file:) .*" "\\1 ${RUNNER_ELF}" line ${line})
+    endif()
+
+    if(DEFINED RUNNER_HEX AND ${line} MATCHES "^.*hex_file: .*$")
+      string(REGEX REPLACE "(.*hex_file:) .*" "\\1 ${RUNNER_HEX}" line ${line})
+    endif()
+
+    if(DEFINED RUNNER_BIN AND ${line} MATCHES "^.*bin_file: .*$")
+      string(REGEX REPLACE "(.*bin_file:) .*" "\\1 ${RUNNER_BIN}" line ${line})
+    endif()
+    list(APPEND runners_content_update "${line}\n")
+  endforeach()
+  file(WRITE ${runners_file} ${runners_content_update})
+endfunction()
+
+
+# APP is a special domain which is handled differently.
+# Remove it from the list.
+list(REMOVE_ITEM PM_DOMAINS APP)
 
 ## Check if current image is the dynamic partition in its domain.
 ## I.E. it is the only partition without a statically configured size in this
@@ -190,6 +346,7 @@ get_property(PM_SUBSYS_PREPROCESSED GLOBAL PROPERTY PM_SUBSYS_PREPROCESSED)
 # always "app".
 if (NOT is_dynamic_partition_in_domain)
   set(dynamic_partition "app")  # Should this be renamed to main image name, or does it matter at all ?
+#  set(dynamic_partition "${DEFAULT_IMAGE}")  # Should this be renamed to main image name, or does it matter at all ?
 else()
   set(dynamic_partition ${${DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION})
   set(
@@ -271,17 +428,13 @@ foreach (d ${PM_DOMAINS})
   list(APPEND ${d}_header_files ${PROJECT_BINARY_DIR}/${generated_path}/pm_config.h)
 endforeach()
 
-# ToDo images can probably be remove now.
-list(APPEND images ${dynamic_partition})
-
 # Add subsys defined pm.yml to the input_files
 list(APPEND input_files ${PM_SUBSYS_PREPROCESSED})
 
-set(DOMAIN_APP_MAIN ${app_name})
-foreach(d MAIN ${PM_DOMAINS})
+foreach(d APP ${PM_DOMAINS})
   # CPUNET
   set(image_name ${DOMAIN_APP_${d}})
-  if(${d} STREQUAL "MAIN")
+  if(${d} STREQUAL "APP")
     set(d)
   endif()
   sysbuild_get(${image_name}_CONFIG_PM_SRAM_SIZE IMAGE ${image_name} VAR CONFIG_PM_SRAM_SIZE KCONFIG)
@@ -409,115 +562,6 @@ foreach(d ${PM_DOMAINS})
 #  endforeach()
 endforeach()
 
-# Create a dummy target that we can add properties to for
-# extraction in generator expressions.
-add_custom_target(partition_manager)
-
-## Make Partition Manager configuration available in CMake
-#import_kconfig(PM_ ${pm_out_dotconf_file} pm_var_names)
-#
-#foreach(name ${pm_var_names})
-#  set_property(
-#    TARGET partition_manager
-#    PROPERTY ${name}
-#    ${${name}}
-#    )
-#endforeach()
-#
-## Turn the space-separated list into a Cmake list.
-#string(REPLACE " " ";" PM_ALL_BY_SIZE ${PM_ALL_BY_SIZE})
-
-# Iterate over every partition, from smallest to largest.
-foreach(part ${PM_ALL_BY_SIZE})
-  string(TOUPPER ${part} PART)
-  get_property(${part}_PM_HEX_FILE GLOBAL PROPERTY ${part}_PM_HEX_FILE)
-  get_property(${part}_PM_ELF_FILE GLOBAL PROPERTY ${part}_PM_ELF_FILE)
-
-  # Process container partitions (if it has a SPAN list it is a container partition).
-  if(DEFINED PM_${PART}_SPAN)
-    string(REPLACE " " ";" PM_${PART}_SPAN ${PM_${PART}_SPAN})
-    list(APPEND containers ${part})
-  endif()
-
-  # Include the partition in the merge operation if it has a hex file.
-  if(DEFINED ${part}_PM_HEX_FILE)
-    get_property(${part}_PM_TARGET GLOBAL PROPERTY ${part}_PM_TARGET)
-    list(APPEND explicitly_assigned ${part})
-  else()
-    if(${part} IN_LIST images)
-      get_shared(${part}_bin_dir  IMAGE ${part} PROPERTY ZEPHYR_BINARY_DIR)
-      get_shared(${part}_hex_file IMAGE ${part} PROPERTY KERNEL_HEX_NAME)
-      get_shared(${part}_elf_file IMAGE ${part} PROPERTY KERNEL_ELF_NAME)
-      set(${part}_PM_HEX_FILE ${${part}_bin_dir}/${${part}_hex_file})
-      set(${part}_PM_ELF_FILE ${${part}_bin_dir}/${${part}_elf_file})
-      set(${part}_PM_TARGET ${part}_subimage)
-    elseif(${part} IN_LIST containers)
-      set(${part}_PM_HEX_FILE ${PROJECT_BINARY_DIR}/${part}.hex)
-      set(${part}_PM_TARGET ${part}_hex)
-    endif()
-    list(APPEND implicitly_assigned ${part})
-  endif()
-endforeach()
-
-if (${is_dynamic_partition_in_domain})
-  set(merged_suffix _${DOMAIN})
-  string(TOUPPER ${merged_suffix} MERGED_SUFFIX)
-endif()
-set(merged merged${merged_suffix})
-set(MERGED MERGED${MERGED_SUFFIX})
-
-set(PM_${MERGED}_SPAN ${implicitly_assigned} ${explicitly_assigned})
-set(${merged}_overlap TRUE) # Enable overlapping for the merged hex file.
-
-# Iterate over all container partitions, plus the "fake" merged paritition.
-# The loop will create a hex file for each iteration.
-foreach(container ${containers} ${merged})
-  string(TOUPPER ${container} CONTAINER)
-
-  # Prepare the list of hex files and list of dependencies for the merge command.
-  foreach(part ${PM_${CONTAINER}_SPAN})
-    string(TOUPPER ${part} PART)
-    list(APPEND ${container}hex_files ${${part}_PM_HEX_FILE})
-    list(APPEND ${container}elf_files ${${part}_PM_ELF_FILE})
-    list(APPEND ${container}targets ${${part}_PM_TARGET})
-  endforeach()
-
-  # Do not merge hex files for empty partitions
-  if(NOT ${container}hex_files)
-    list(REMOVE_ITEM PM_${MERGED}_SPAN ${container})
-    continue()
-  endif()
-
-  # If overlapping is enabled, add the appropriate argument.
-  if(${${container}_overlap})
-    set(${container}overlap_arg --overlap=replace)
-  endif()
-
-# Should all files still be merged ?
-# And under which circumstances.
-#  # Add command to merge files.
-#  add_custom_command(
-#    OUTPUT ${PROJECT_BINARY_DIR}/${container}.hex
-#    COMMAND
-#    ${PYTHON_EXECUTABLE}
-#    ${ZEPHYR_BASE}/scripts/build/mergehex.py
-#    -o ${PROJECT_BINARY_DIR}/${container}.hex
-#    ${${container}overlap_arg}
-#    ${${container}hex_files}
-#    DEPENDS
-#    ${${container}targets}
-#    ${${container}hex_files}
-#    )
-#
-#  # Wrapper target for the merge command.
-#  add_custom_target(
-#    ${container}_hex
-#    ALL DEPENDS
-#    ${PROJECT_BINARY_DIR}/${container}.hex
-#    )
-
-endforeach()
-
 # Start - Code related to network core update. Multi image updates are part of NCSDK-17807
 #if (CONFIG_SECURE_BOOT AND CONFIG_BOOTLOADER_MCUBOOT)
 #  # Create symbols for the offsets required for moving test update hex files
@@ -606,31 +650,8 @@ else()
     endif()
   endforeach()
 
-  if (CONFIG_BOOTLOADER_MCUBOOT)
-    if (CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY AND CONFIG_HAS_HW_NRF_QSPI)
-      # First we see if an ext flash dev has been chosen, if not, then we look
-      # up the 'qspi' node and assume that this has the required address.
-      if (DEFINED ext_flash_dev)
-        get_filename_component(qspi_node ${ext_flash_dev} DIRECTORY)
-      else()
-        dt_nodelabel(qspi_node NODELABEL "qspi")
-      endif()
-
-      # If the qspi node is still not defined we are building on a platform
-      # which does not have the qspi peripheral, in which case no hex files
-      # will be generated for the secondary slot.
-      if(DEFINED qspi_node)
-        dt_reg_addr(xip_addr PATH ${qspi_node} NAME qspi_mm)
-        if(NOT DEFINED xip_addr)
-          message(WARNING "\
-Could not find memory mapped address for XIP. Generated update hex files will \
-not have the correct base address. Hence they can not be programmed directly \
-to the external flash")
-        endif()
-      endif()
-    endif()
-
 # Start - Code related to network core update. Multi image updates are part of NCSDK-17807
+#  if (CONFIG_BOOTLOADER_MCUBOOT)
 #    # Create symbols for the offset required for moving the signed network
 #    # core application to MCUBoots secondary slot. This is needed
 #    # because  objcopy does not support arithmetic expressions as argument
@@ -698,8 +719,8 @@ to the external flash")
 #      PROPERTY app_TO_SECONDARY
 #      ${app_to_secondary}
 #      )
+#  endif()
 # End - Code related to network core update. Multi image updates are part of NCSDK-17807
-  endif()
 
   # Explicitly add the root image domain hex file to the list
   list(APPEND domain_hex_files ${PROJECT_BINARY_DIR}/${merged}.hex)
@@ -775,30 +796,3 @@ to the external flash")
     CACHE STRING "Path to merged image in Intel Hex format" FORCE)
 
 endif()
-
-# We need to tell the flash runner use the merged hex file instead of
-# 'zephyr.hex'This is typically done by setting the 'hex_file' property of the
-# 'runners_yaml_props_target' target. However, since the CMakeLists.txt file
-# reading those properties has already run, and the 'hex_file' property
-# is not evaluated in a generator expression, it is too late at this point to
-# set that variable. Hence we must operate on the 'yaml_contents' property,
-# which is evaluated in a generator expression.
-
-#if (final_merged)
-#  # Multiple domains are included in the build, point to the result of
-#  # merging the merged hex file for all domains.
-#  set(merged_hex_to_flash ${final_merged})
-#else()
-#  set(merged_hex_to_flash ${PROJECT_BINARY_DIR}/${merged}.hex)
-#endif()
-#
-#get_target_property(runners_content runners_yaml_props_target yaml_contents)
-#
-#string(REGEX REPLACE "hex_file:[^\n]*"
-#  "hex_file: ${merged_hex_to_flash}" new  ${runners_content})
-#
-#set_property(
-#  TARGET         runners_yaml_props_target
-#  PROPERTY       yaml_contents
-#  ${new}
-#  )
