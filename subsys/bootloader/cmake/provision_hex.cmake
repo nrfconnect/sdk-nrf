@@ -7,6 +7,16 @@
 # This CMakeLists.txt is executed only by the parent application
 # and generates the provision.hex file.
 
+set_ifndef(partition_manager_target partition_manager)
+
+if(NCS_SYSBUILD_PARTITION_MANAGER)
+  # Get the main app of the domain that secure boot should handle.
+  set(main_app ${DOMAIN_APP_${SB_CONFIG_SECURE_BOOT_DOMAIN}})
+  ExternalProject_Get_Property(${main_app} BINARY_DIR)
+  import_kconfig(CONFIG_ ${BINARY_DIR}/zephyr/.config)
+  sysbuild_get(APPLICATION_CONFIG_DIR IMAGE ${main_app} VAR APPLICATION_CONFIG_DIR CACHE)
+endif()
+
 if (CONFIG_NCS_IS_VARIANT_IMAGE)
   # When building the variant of an image, the configuration of the variant image
   # is identical to the base image, except 'CONFIG_NCS_IS_VARIANT_IMAGE'. This file is
@@ -29,7 +39,7 @@ if(CONFIG_SECURE_BOOT)
 
     # Skip signing if MCUBoot is to be booted and its not built from source
     if ((CONFIG_SB_VALIDATE_FW_SIGNATURE OR CONFIG_SB_VALIDATE_FW_HASH) AND
-        NOT (CONFIG_BOOTLOADER_MCUBOOT AND NOT CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE))
+       ((NOT (CONFIG_BOOTLOADER_MCUBOOT AND NOT CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE)) OR NCS_SYSBUILD_PARTITION_MANAGER))
 
       # Input is comma separated string, convert to CMake list type
       string(REPLACE "," ";" PUBLIC_KEY_FILES_LIST "${CONFIG_SB_PUBLIC_KEY_FILES}")
@@ -59,11 +69,12 @@ if(CONFIG_SECURE_BOOT)
       set(PROVISION_DEPENDS signature_public_key_file_target)
     endif()
 
-    if (CONFIG_SOC_NRF5340_CPUNET)
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>)
+    # Adjustment to be able to load into sysbuild
+    if (CONFIG_SOC_NRF5340_CPUNET OR "${domain}" STREQUAL "CPUNET")
+      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_APP_ADDRESS>)
     else()
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>)
-      set(s1_arg --s1-addr $<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>)
+      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S0_ADDRESS>)
+      set(s1_arg --s1-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S1_ADDRESS>)
     endif()
 
     if (CONFIG_SB_DEBUG_NO_VERIFY_HASHES)
@@ -81,10 +92,10 @@ add_custom_command(
   ${PROVISION_HEX}
   COMMAND
   ${PYTHON_EXECUTABLE}
-  ${NRF_DIR}/scripts/bootloader/provision.py
+  ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
   ${s0_arg}
   ${s1_arg}
-  --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
+  --provision-addr $<TARGET_PROPERTY:${partition_manager_target},PM_PROVISION_ADDRESS>
   ${public_keys_file_arg}
   --output ${PROVISION_HEX}
   --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
@@ -105,7 +116,7 @@ add_custom_command(
   ${PROVISION_HEX}
   COMMAND
   ${PYTHON_EXECUTABLE}
-  ${NRF_DIR}/scripts/bootloader/provision.py
+  ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
   --mcuboot-only
   --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
   --output ${PROVISION_HEX}

@@ -7,12 +7,12 @@
 
 set(PRIV_CMD
   ${PYTHON_EXECUTABLE}
-  ${NRF_DIR}/scripts/bootloader/keygen.py --private
+  ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/keygen.py --private
   )
 
 set(PUB_CMD
   ${PYTHON_EXECUTABLE}
-  ${NRF_DIR}/scripts/bootloader/keygen.py --public
+  ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/keygen.py --public
   )
 
 # Check if PEM file is specified by user, if not, create one.
