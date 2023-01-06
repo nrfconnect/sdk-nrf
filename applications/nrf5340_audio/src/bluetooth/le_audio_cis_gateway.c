@@ -275,9 +275,19 @@ static void stream_configured_cb(struct bt_audio_stream *stream,
 	}
 
 	if (unicast_group) {
-		ret = bt_audio_stream_qos(headsets[channel_index].headset_conn, unicast_group);
-		if (ret) {
-			LOG_ERR("Unable to set up QoS for headset %d: %d", channel_index, ret);
+#if CONFIG_STREAM_BIDIRECTIONAL
+		if ((headsets[channel_index].sink_stream->ep->status.state ==
+		     BT_AUDIO_EP_STATE_CODEC_CONFIGURED) &&
+		    (headsets[channel_index].source_stream->ep->status.state ==
+		     BT_AUDIO_EP_STATE_CODEC_CONFIGURED))
+#endif
+		{
+			ret = bt_audio_stream_qos(headsets[channel_index].headset_conn,
+						  unicast_group);
+			if (ret) {
+				LOG_ERR("Unable to set up QoS for headset %d: %d", channel_index,
+					ret);
+			}
 		}
 	}
 }
