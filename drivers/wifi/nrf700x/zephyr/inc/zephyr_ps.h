@@ -19,4 +19,7 @@
 
 int wifi_nrf_set_power_save(const struct device *dev,
 			    struct wifi_ps_params *params);
+
+int wifi_nrf_set_power_save_mode(const struct device *dev,
+				 struct wifi_ps_mode_params *ps_mode_params);
 #endif /*  __ZEPHYR_PS_H__ */

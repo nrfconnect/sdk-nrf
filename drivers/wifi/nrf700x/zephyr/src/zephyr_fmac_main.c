@@ -527,6 +527,7 @@ static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 #endif /* CONFIG_NET_STATISTICS_WIFI */
 	.set_power_save = wifi_nrf_set_power_save,
 	.set_twt = wifi_nrf_set_twt,
+	.set_power_save_mode = wifi_nrf_set_power_save_mode,
 };
 
 #ifdef CONFIG_WPA_SUPP
