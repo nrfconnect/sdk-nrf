@@ -202,7 +202,7 @@ static void prov_set_config_handler(Request *req, Response *rsp)
 		memcpy(config.bssid, req->config.wifi.bssid.bytes, req->config.wifi.bssid.size);
 	}
 	/* Channel */
-	config.channel = req->config.wifi.channel;
+	config.channel = WIFI_CHANNEL_ANY;
 	/* Password and security */
 	if (req->config.has_passphrase == true) {
 		memcpy(config.password, req->config.passphrase.bytes, req->config.passphrase.size);
