@@ -143,6 +143,13 @@ Also, specify your development kit version by appending it to the board name. Fo
 
 ``nrf9160dk_nrf9160_ns@1_0_1``
 
+This sample also supports placement of the MCUboot secondary partition in external flash for the nRF9160 development kit version 0.14.0 and higher.
+To enable this, add the following parameter to your build command:
+
+``-DOVERLAY_CONFIG=overlay_mcuboot_ext_flash.conf``
+
+Then specify your development kit version as described earlier.
+
 .. _nrf_cloud_mqtt_multi_service_temperature_sensing:
 
 Temperature sensing
