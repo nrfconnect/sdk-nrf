@@ -1474,6 +1474,7 @@ int wifi_nrf_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
 	capa->flags |= WPA_DRIVER_FLAGS_SAE;
 	capa->flags |= WPA_DRIVER_FLAGS_SET_KEYS_AFTER_ASSOC_DONE;
 	capa->rrm_flags |= WPA_DRIVER_FLAGS_SUPPORT_RRM;
+	capa->rrm_flags |= WPA_DRIVER_FLAGS_SUPPORT_BEACON_REPORT;
 
 	capa->enc |= WPA_DRIVER_CAPA_ENC_WEP40 |
 			WPA_DRIVER_CAPA_ENC_WEP104 |

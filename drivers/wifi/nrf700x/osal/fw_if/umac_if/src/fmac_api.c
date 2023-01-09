@@ -1644,6 +1644,9 @@ enum wifi_nrf_status wifi_nrf_fmac_assoc(void *dev_ctx,
 	connect_common_info->valid_fields |=
 		NRF_WIFI_CONNECT_COMMON_INFO_USE_MFP_VALID;
 
+	connect_common_info->nrf_wifi_flags |=
+		NRF_WIFI_CMD_CONNECT_COMMON_INFO_USE_RRM;
+
 	connect_common_info->control_port =
 		assoc_info->control_port;
 
