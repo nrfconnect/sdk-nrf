@@ -1088,19 +1088,6 @@ int qspi_init(struct qspi_config *config)
 
 	k_sem_init(&qspi_config->lock, 1, 1);
 
-#if defined(CONFIG_SOC_SERIES_NRF53X)
-	/* once encryption is enabled, do not reinit until bitfile re-load */
-	if (!config->enc_enabled) {
-		if (config->encryption)
-			nrfx_qspi_dma_encrypt(&config->p_cfg);
-
-		if (config->CMD_CNONCE)
-			qspi_cmd_encryption(&qspi_perip, &config->p_cfg);
-
-		if (config->encryption)
-			config->enc_enabled = true;
-	}
-#endif
 	LOG_INF("QSPI freq = %d MHz\n", INST_0_SCK_FREQUENCY/MHZ(1));
 	LOG_INF("QSPI latency = %d\n", qspi_config->qspi_slave_latency);
 	return rc;
@@ -1246,4 +1233,29 @@ int qspi_cmd_sleep_rpu(const struct device *dev)
 	}
 
 	return ret;
+}
+
+// Encryption public API
+
+int qspi_enable_encryption(void)
+{
+#if defined(CONFIG_SOC_SERIES_NRF53X)
+	nrfx_qspi_dma_encrypt(&qspi_config->p_cfg);
+
+	qspi_cmd_encryption(&qspi_perip, &qspi_config->p_cfg);
+
+	qspi_config->encryption = true;
+
+	return 0;
+#endif
+}
+
+
+int qspi_configure_encryption(uint8_t *key)
+{
+#if defined(CONFIG_SOC_SERIES_NRF53X)
+	memcpy(qspi_config->p_cfg.key, key, 16);
+
+	return 0;
+#endif
 }
