@@ -77,6 +77,8 @@ See the following table for more details:
      - Incomplete verification
      - Not applicable.
 
+.. _api_deprecation:
+
 API deprecation
 ***************
 
