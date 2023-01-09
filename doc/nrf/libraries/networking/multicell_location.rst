@@ -9,7 +9,7 @@ Multicell location
 
 .. note::
 
-   This library is deprecated since v2.3.0 and relevant functionality is available through the :ref:`lib_location` library.
+   This library has been marked as :ref:`deprecated <api_deprecation>` after the release of the |NCS| v2.2.0 and relevant functionality is available through the :ref:`lib_location` library.
 
 The Multicell location library provides a way to acquire the location of the device based on LTE cell measurements.
 

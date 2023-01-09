@@ -18,7 +18,7 @@ extern "C" {
  * @{
  * @brief Library for performing multicell location requests towards the cloud.
  *
- * @deprecated Since v2.3.0.
+ * @deprecated After nRF Connect SDK v2.2.0.
  */
 
 struct multicell_location {
