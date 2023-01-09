@@ -23,6 +23,8 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/net_event.h>
 
+#include <qspi_if.h>
+
 #include "net_private.h"
 
 #define WIFI_SHELL_MODULE "wifi"
@@ -237,6 +239,26 @@ static int wifi_disconnect(void)
 	return 0;
 }
 
+int bytes_from_str(const char *str, uint8_t *bytes, size_t bytes_len)
+{
+	size_t i;
+	char byte_str[3];
+
+	if (strlen(str) != bytes_len * 2) {
+		LOG_ERR("Invalid string length: %zu (expected: %d)\n",
+			strlen(str), bytes_len * 2);
+		return -EINVAL;
+	}
+
+	for (i = 0; i < bytes_len; i++) {
+		memcpy(byte_str, str + i * 2, 2);
+		byte_str[2] = '\0';
+		bytes[i] = strtol(byte_str, NULL, 16);
+	}
+
+	return 0;
+}
+
 void main(void)
 {
 	int i;
@@ -262,6 +284,30 @@ void main(void)
 #endif
 	LOG_INF("Starting %s with CPU frequency: %d MHz", CONFIG_BOARD, SystemCoreClock/MHZ(1));
 	k_sleep(K_SECONDS(1));
+
+	if (strlen(CONFIG_NRF700X_QSPI_ENCRYPTION_KEY)) {
+		char key[QSPI_KEY_LEN_BYTES];
+		int ret;
+
+		ret = bytes_from_str(CONFIG_NRF700X_QSPI_ENCRYPTION_KEY, key, sizeof(key));
+		if (ret) {
+			LOG_ERR("Failed to parse encryption key: %d\n", ret);
+			return;
+		}
+
+		LOG_INF("QSPI Encryption enabled");
+
+		LOG_DBG("QSPI Encryption key: ");
+		for (int i = 0; i < QSPI_KEY_LEN_BYTES; i++) {
+			LOG_DBG("%02x", key[i]);
+		}
+		LOG_DBG("\n");
+
+		qspi_configure_encryption(key);
+		qspi_enable_encryption();
+	} else {
+		LOG_INF("QSPI Encryption disabled");
+	}
 
 	wifi_connect();
 
