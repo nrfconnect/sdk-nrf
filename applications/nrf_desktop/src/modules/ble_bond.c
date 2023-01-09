@@ -83,11 +83,11 @@ static const struct state_switch state_switch[] = {
 
 #if CONFIG_DESKTOP_BLE_PEER_ERASE
 	{STATE_IDLE,              CLICK_LONG,   STATE_ERASE_PEER,        erase_start},
-#if CONFIG_BT_PERIPHERAL
+#if CONFIG_DESKTOP_BT_PERIPHERAL
 	{STATE_ERASE_PEER,        CLICK_DOUBLE, STATE_ERASE_ADV,         erase_adv_confirm},
-#elif CONFIG_BT_CENTRAL
+#elif CONFIG_DESKTOP_BT_CENTRAL
 	{STATE_ERASE_PEER,        CLICK_DOUBLE, STATE_IDLE,              erase_confirm},
-#endif /* CONFIG_BT_PERIPHERAL */
+#endif
 
 #if CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_BUTTON
 	{STATE_DONGLE,            CLICK_LONG,   STATE_DONGLE_ERASE_PEER, erase_start},
@@ -109,9 +109,9 @@ enum ble_bond_opt {
 
 const static char * const opt_descr[] = {
 	[BLE_BOND_OPT_PEER_ERASE] = "peer_erase",
-#ifdef CONFIG_BT_CENTRAL
+#ifdef CONFIG_DESKTOP_BT_CENTRAL
 	[BLE_BOND_OPT_PEER_SEARCH] = "peer_search",
-#endif /* CONFIG_BT_CENTRAL */
+#endif /* CONFIG_DESKTOP_BT_CENTRAL */
 };
 
 static enum state state;
@@ -122,7 +122,7 @@ static bool dongle_peer_selected_on_init;
 static bool erase_adv_was_extended;
 
 
-#if CONFIG_BT_PERIPHERAL
+#if CONFIG_DESKTOP_BT_PERIPHERAL
 /* nRF Desktop peripheral requires a minimum of three Bluetooth identities:
  * - BT_ID_DEFAULT is not used as it cannot be reset.
  * - one identity is used for bonding with a peer.
@@ -132,14 +132,14 @@ static bool erase_adv_was_extended;
  */
 BUILD_ASSERT(CONFIG_BT_ID_MAX >= (IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE) ? 4 : 3));
 #define BT_STACK_ID_LUT_SIZE (CONFIG_BT_ID_MAX - 1)
-#elif CONFIG_BT_CENTRAL
+#elif CONFIG_DESKTOP_BT_CENTRAL
 #define BT_STACK_ID_LUT_SIZE 0
 #else
 #error Device must be Bluetooth peripheral or central.
 #endif
 
 /* The Bluetooth Identity look-up table cannot be used in the Bluetooth Central
- * configuration (CONFIG_BT_CENTRAL), along with the definitions of special
+ * configuration (CONFIG_DESKTOP_BT_CENTRAL), along with the definitions of special
  * peer IDs.
  */
 static uint8_t bt_stack_id_lut[BT_STACK_ID_LUT_SIZE];
@@ -213,14 +213,14 @@ static int settings_set(const char *key, size_t len_rd,
 	return 0;
 }
 
-#ifdef CONFIG_BT_PERIPHERAL
+#ifdef CONFIG_DESKTOP_BT_PERIPHERAL
 SETTINGS_STATIC_HANDLER_DEFINE(ble_bond, MODULE_NAME, NULL, settings_set, NULL,
 			       NULL);
-#endif /* CONFIG_BT_PERIPHERAL */
+#endif /* CONFIG_DESKTOP_BT_PERIPHERAL */
 
 static uint8_t get_bt_stack_peer_id(uint8_t id)
 {
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_BT_PERIPHERAL)) {
 		if ((state == STATE_ERASE_PEER) || (state == STATE_ERASE_ADV) ||
 		(state == STATE_DONGLE_ERASE_PEER) || (state == STATE_DONGLE_ERASE_ADV)) {
 			return bt_stack_id_lut[TEMP_PEER_ID];
@@ -479,7 +479,7 @@ static void erase_start(void)
 
 static void erase_confirm(void)
 {
-	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_BT_CENTRAL));
+	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_BT_CENTRAL));
 
 	remove_peers(BT_ID_DEFAULT);
 
@@ -494,7 +494,7 @@ static void erase_confirm(void)
 
 static void erase_adv_confirm(void)
 {
-	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_BT_PERIPHERAL));
+	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_BT_PERIPHERAL));
 
 	/* Update state to ensure that proper bt_stack_id will be used. */
 	if (state == STATE_IDLE) {
@@ -620,7 +620,7 @@ static void timeout_handler(struct k_work *work)
 
 static void init_bt_stack_id_lut(void)
 {
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_BT_PERIPHERAL)) {
 		for (size_t i = 0; i < ARRAY_SIZE(bt_stack_id_lut); i++) {
 			/* BT_ID_DEFAULT cannot be reset. */
 			bt_stack_id_lut[i] = i + 1;
@@ -661,7 +661,7 @@ static void load_identities(void)
 static void silence_unused(void)
 {
 	/* These things will be opt-out by the compiler. */
-	if (!IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+	if (!IS_ENABLED(CONFIG_DESKTOP_BT_PERIPHERAL)) {
 		ARG_UNUSED(settings_set);
 	};
 
@@ -756,13 +756,14 @@ static int init(void)
 	}
 
 	if ((IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_CONTROL)) ||
-	   (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) && IS_ENABLED(CONFIG_BT_PERIPHERAL))) {
+	    (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
+	     IS_ENABLED(CONFIG_DESKTOP_BT_PERIPHERAL))) {
 		k_work_init_delayable(&timeout, timeout_handler);
 	}
 
 	load_identities();
 
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
+	if (IS_ENABLED(CONFIG_DESKTOP_BT_PERIPHERAL) &&
 	    !storage_data_is_valid()) {
 		storage_data_overwrite();
 		bt_stack_id_lut_valid = true;
@@ -933,7 +934,7 @@ static void config_set(const uint8_t opt_id, const uint8_t *data, const size_t s
 
 	switch (opt_id) {
 	case BLE_BOND_OPT_PEER_SEARCH:
-		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+		if (IS_ENABLED(CONFIG_DESKTOP_BT_CENTRAL)) {
 			LOG_INF("Remote scan request");
 			scan_request();
 		} else {
@@ -943,7 +944,7 @@ static void config_set(const uint8_t opt_id, const uint8_t *data, const size_t s
 
 	case BLE_BOND_OPT_PEER_ERASE:
 		LOG_INF("Remote peer erase request");
-		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+		if (IS_ENABLED(CONFIG_DESKTOP_BT_PERIPHERAL)) {
 			if ((!IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_CONF_CHANNEL)
 				&& (state == STATE_DONGLE))) {
 				LOG_WRN("Peer erase not supported");
@@ -958,7 +959,7 @@ static void config_set(const uint8_t opt_id, const uint8_t *data, const size_t s
 
 			k_work_reschedule(&timeout, ERASE_ADV_TIMEOUT);
 
-		} else if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+		} else if (IS_ENABLED(CONFIG_DESKTOP_BT_CENTRAL)) {
 			erase_confirm();
 		}
 		break;
@@ -1087,7 +1088,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
+	if (IS_ENABLED(CONFIG_DESKTOP_BT_PERIPHERAL) &&
 	    is_ble_peer_event(aeh)) {
 		return ble_peer_event_handler(cast_ble_peer_event(aeh));
 	}
@@ -1123,7 +1124,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 }
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
-#if IS_ENABLED(CONFIG_BT_PERIPHERAL)
+#if IS_ENABLED(CONFIG_DESKTOP_BT_PERIPHERAL)
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 #endif
 #if IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)

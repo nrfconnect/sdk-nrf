@@ -16,7 +16,7 @@ config DESKTOP_CONFIG_CHANNEL_ENABLE
 config DESKTOP_CONFIG_CHANNEL_OUT_REPORT
 	bool "Enable additional HID output report"
 	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
-	depends on BT_PERIPHERAL
+	depends on DESKTOP_ROLE_HID_PERIPHERAL
 	help
 	  Use additional HID output report for configuration channel data
 	  transfer. The HID output report is used only by nRF Desktop dongle,

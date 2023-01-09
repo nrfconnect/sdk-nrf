@@ -786,7 +786,7 @@ static void ble_qos_thread_fn(void)
 		memcpy(event->chmap, chmap, CHMAP_BLE_BITMASK_SIZE);
 		APP_EVENT_SUBMIT(event);
 
-		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+		if (IS_ENABLED(CONFIG_DESKTOP_BT_CENTRAL)) {
 			err = bt_le_set_chan_map(chmap);
 			if (err) {
 				LOG_WRN("bt_le_set_chan_map: %d", err);
