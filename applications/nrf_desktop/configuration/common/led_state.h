@@ -69,12 +69,7 @@ enum led_id_nrf_desktop {
 
 #define LED_UNAVAILABLE 0xFF
 
-#if (defined(CONFIG_BT_PERIPHERAL) && defined(CONFIG_BT_CENTRAL)) || \
-    (!defined(CONFIG_BT_PERIPHERAL) && !defined(CONFIG_BT_CENTRAL))
-#error Device should be either Bluetooth peripheral or central
-#endif
-
-#if defined(CONFIG_BT_PERIPHERAL)
+#if defined(CONFIG_DESKTOP_BT_PERIPHERAL)
 /* By default, peripheral uses a separate Bluetooth local identity per every Bluetooth peer.
  * The default local identity cannot be used, because application cannot reset it.
  * One Bluetooth local identity is reserved for the erase advertising.

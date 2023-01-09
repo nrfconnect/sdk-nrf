@@ -9,8 +9,8 @@ menu "BLE HID Client"
 config DESKTOP_HID_FORWARD_ENABLE
 	bool "Enable HID forward"
 	depends on BT_HOGP
-	depends on BT_CENTRAL
-	depends on !DESKTOP_HID_STATE_ENABLE
+	depends on DESKTOP_ROLE_HID_DONGLE
+	depends on DESKTOP_BT_CENTRAL
 	help
 	  This option enables HID over GATT Client.
 	  The reports received from the BLE are forwarded to the USB.

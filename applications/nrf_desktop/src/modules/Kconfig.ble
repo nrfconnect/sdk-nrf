@@ -31,7 +31,7 @@ config DESKTOP_BLE_BOND_ENABLE
 
 config DESKTOP_BLE_USE_DEFAULT_ID
 	bool "Use default Bluetooth local identity"
-	depends on BT_PERIPHERAL
+	depends on DESKTOP_BT_PERIPHERAL
 	help
 	  Bluetooth default local identity is used as ID 0. This identity
 	  cannot be reset. After bond for the default identity is removed,
@@ -53,13 +53,13 @@ config DESKTOP_BLE_PEER_CONTROL_BUTTON
 
 config DESKTOP_BLE_PEER_SELECT
 	bool "Enable switching between peers"
-	depends on BT_PERIPHERAL
+	depends on DESKTOP_BT_PERIPHERAL
 	help
 	  Short click to switch peer. Double click to accept choice.
 
 config DESKTOP_BLE_NEW_PEER_SCAN_REQUEST
 	bool "Enable scanning on request"
-	depends on BT_CENTRAL
+	depends on DESKTOP_BT_CENTRAL
 	help
 	  Short click to start new peer scanning. When enabled the device will
 	  look for non-bonded devices only when requested.
@@ -82,7 +82,7 @@ config DESKTOP_BLE_PEER_ERASE
 
 config DESKTOP_BLE_PEER_ERASE_ON_START
 	bool "Enable peer erase (on system start)"
-	depends on BT_PERIPHERAL
+	depends on DESKTOP_BT_PERIPHERAL
 	help
 	  Hold dedicated button during system start to start erase advertising.
 endif
@@ -97,7 +97,7 @@ endif
 
 config DESKTOP_BLE_DONGLE_PEER_ENABLE
 	bool "Enable dongle peer"
-	depends on BT_PERIPHERAL
+	depends on DESKTOP_BT_PERIPHERAL
 	help
 	  Enable additional peer to connect with dongle.
 
@@ -150,7 +150,7 @@ endif
 
 comment "BLE connection parameters"
 
-if BT_PERIPHERAL
+if DESKTOP_BT_PERIPHERAL
 
 config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
 	int "Security fail timeout [s]"
@@ -175,7 +175,7 @@ source "subsys/logging/Kconfig.template.log_config"
 
 endif
 
-if BT_CENTRAL
+if DESKTOP_BT_CENTRAL
 
 config DESKTOP_BLE_USB_MANAGED_CI
 	bool "Manage connection intervals on the USB state change"

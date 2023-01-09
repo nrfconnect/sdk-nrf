@@ -9,7 +9,7 @@ menu "BLE QOS Service"
 config DESKTOP_QOS_ENABLE
 	bool "QoS service"
 	depends on DESKTOP_BLE_QOS_ENABLE
-	depends on BT_PERIPHERAL
+	depends on DESKTOP_BT_PERIPHERAL
 	help
 	  This option enables QoS service.
 
