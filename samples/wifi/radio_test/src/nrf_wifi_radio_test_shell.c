@@ -257,7 +257,9 @@ static int check_channel_settings(const struct shell *shell,
 
 void nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_params)
 {
-	memset(conf_params, 0, sizeof(*conf_params));
+	memset(conf_params,
+	       0,
+	       sizeof(*conf_params));
 
 	/* Initialize values which are other than 0 */
 	conf_params->op_mode = RPU_OP_MODE_RADIO_TEST;
@@ -284,6 +286,20 @@ void nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_params)
 	conf_params->aux_adc_input_chain_id = 1;
 	conf_params->set_he_ltf_gi = 0;
 	conf_params->phy_calib = NRF_WIFI_DEF_PHY_CALIB;
+}
+
+
+static int nrf_wifi_radio_test_set_defaults(const struct shell *shell,
+					    size_t argc,
+					    const char *argv[])
+{
+	if (!check_test_in_prog(shell)) {
+		return -ENOEXEC;
+	}
+
+	nrf_wifi_radio_test_conf_init(&ctx->conf_params);
+
+	return 0;
 }
 
 
@@ -1875,6 +1891,12 @@ static int nrf_wifi_radio_test_wlan_switch_ctrl(const struct shell *shell,
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf_wifi_radio_test_subcmds,
+	SHELL_CMD_ARG(set_defaults,
+		      NULL,
+		      "Reset configuration parameter to their default values",
+		      nrf_wifi_radio_test_set_defaults,
+		      1,
+		      0),
 	SHELL_CMD_ARG(phy_calib_rxdc,
 		      NULL,
 		      "0 - Disable RX DC calibration\n"
