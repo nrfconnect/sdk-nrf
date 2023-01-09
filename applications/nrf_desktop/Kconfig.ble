@@ -28,6 +28,8 @@ config DESKTOP_BT_PERIPHERAL
 	bool
 	default y if DESKTOP_ROLE_HID_PERIPHERAL
 	select CAF_BLE_ADV
+	select DESKTOP_BAS_ENABLE
+	select DESKTOP_HIDS_ENABLE
 	select BT_PERIPHERAL
 	help
 	  HID peripherals are configured to use the GAP Peripheral role as

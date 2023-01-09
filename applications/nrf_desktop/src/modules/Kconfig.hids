@@ -8,18 +8,9 @@ menu "BLE HID Service"
 
 config DESKTOP_HIDS_ENABLE
 	bool
+	select BT_HIDS
 	help
 	  This option enables HID over GATT service.
-
-config DESKTOP_HID_PERIPHERAL
-	bool
-	default y
-	depends on BT_PERIPHERAL
-	select BT_HIDS
-	select DESKTOP_BAS_ENABLE
-	select DESKTOP_HIDS_ENABLE
-	help
-	  This option selects required options if device is HID peripheral.
 
 if DESKTOP_HIDS_ENABLE
 
