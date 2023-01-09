@@ -20,6 +20,9 @@ Wi-Fi radio test subcommands
    * - Subcommand
      - Argument
      - Description
+   * - reset
+     - N/A
+     - Reset all parameters to their default values.
    * - phy_calib_rxdc
      - | 0 - Disable
        | 1 - Enable
