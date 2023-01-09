@@ -742,7 +742,8 @@ static void on_device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
 			bt_foreach_bond(BT_ID_DEFAULT, bond_connect, (void *)addr);
 		}
 		return;
-	} else if (type == BT_GAP_ADV_TYPE_ADV_IND || type == BT_GAP_ADV_TYPE_EXT_ADV) {
+	} else if ((type == BT_GAP_ADV_TYPE_ADV_IND || type == BT_GAP_ADV_TYPE_EXT_ADV) &&
+		   (bonded_num < CONFIG_BT_MAX_PAIRED)) {
 		/* Note: May lead to connection creation */
 		ad_parse(p_ad, addr);
 	}
@@ -757,8 +758,12 @@ static void ble_acl_start_scan(void)
 
 	bt_foreach_bond(BT_ID_DEFAULT, bond_check, NULL);
 
+	if (bonded_num >= CONFIG_BT_MAX_PAIRED) {
+		LOG_INF("All bonded slots filled, will not accept new devices");
+	}
+
 	ret = bt_le_scan_start(BT_LE_SCAN_PASSIVE, on_device_found);
-	if (ret) {
+	if (ret && ret != -EALREADY) {
 		LOG_WRN("Scanning failed to start: %d", ret);
 		return;
 	}
