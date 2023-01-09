@@ -31,6 +31,12 @@ This sample demonstrates QSPI encryption API usage, the key can be set by the :k
 If encryption of the QSPI traffic is required for the production devices, then matching keys must be programmed in both the nRF7002 OTP and non-volatile storage associated with the host.
 The key from non-volatile storage must be set as the encryption key using the APIs.
 
+Power management
+****************
+
+This sample also enables Zephyr's power management policy by default, which puts the nRF5340 :term:`System on Chip (SoC)` into low-power mode whenever it is idle.
+See :ref:`zephyr:pm-guide` in the Zephyr documentation for more information on power management.
+
 Building and running
 ********************
 
@@ -136,6 +142,37 @@ Testing
       <inf> sta: Disconnection request done (0)
       <inf> sta: ==================
       <inf> sta: State: DISCONNECTED
+
+Power management testing
+************************
+
+This sample can be used to measure current consumption of both the nRF5340 SoC and nRF7002 device independently by using two separate Power Profiler Kit II's (PPK2's).
+The nRF5340 SoC is connected to the first PPK2 and the nRF7002 DK is connected to the second PPK2.
+
+Hardware modifications
+======================
+
+To measure the current consumption of the nRF5340 SoC, complete the following steps:
+
+ * Remove jumper on **P22** (VDD jumper).
+ * Cut solder bridge **SB16**.
+ * Make a short on solder bridge **SB17**.
+ * Connect **GND** on PPK2 kit to **GND** on the nRF7002 DK.
+    You can use **P21** pin **1** mentioned as **GND** (-).
+ * Connect the **Vout** on PPK2 to **P22** pin **1** on the nRF7002 DK.
+
+To measure the current consumption of the nRF7002 device, complete the following steps:
+
+ * Remove jumper on **P23** (VBAT jumper).
+ * Connect **GND** on PPK2 kit to **GND** on the nRF7002 DK.
+    You can use **P21** pin **1** mentioned as  **GND** (-).
+ * Connect the **Vout** on PPK2 to **P23** pin **1** on the nRF7002 DK.
+
+PPK II usage and measurement
+============================
+
+See :ref:`app_power_opt` for more information on power management testing and usage of the PPK2.
+The average current consumption in an idle case can be around ~1-2 mA in the nRF5340 SoC and ~20 µA in the nRF7002 DK.
 
 Dependencies
 ************
