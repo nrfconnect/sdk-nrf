@@ -98,7 +98,7 @@ static void set_system_state_led(enum led_system_state state)
 
 static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_ble_peer_event(aeh)) {
+	if (IS_ENABLED(CONFIG_CAF_BLE_COMMON_EVENTS) && is_ble_peer_event(aeh)) {
 		struct ble_peer_event *event = cast_ble_peer_event(aeh);
 
 		switch (event->state)  {
@@ -124,9 +124,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (is_ble_peer_search_event(aeh)) {
-		struct ble_peer_search_event *event =
-			cast_ble_peer_search_event(aeh);
+	if (IS_ENABLED(CONFIG_CAF_BLE_COMMON_EVENTS) && is_ble_peer_search_event(aeh)) {
+		struct ble_peer_search_event *event = cast_ble_peer_search_event(aeh);
 
 		peer_search = event->active;
 		load_peer_state_led();
@@ -134,7 +133,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (is_ble_peer_operation_event(aeh)) {
+	if (IS_ENABLED(CONFIG_CAF_BLE_COMMON_EVENTS) && is_ble_peer_operation_event(aeh)) {
 		struct ble_peer_operation_event *event =
 			cast_ble_peer_operation_event(aeh);
 
@@ -171,6 +170,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			load_system_state_led();
+			if (!IS_ENABLED(CONFIG_CAF_BLE_COMMON_EVENTS)) {
+				/* BLE peer state will not be notified. Preload the LED. */
+				load_peer_state_led();
+			}
 		} else if (event->state == MODULE_STATE_ERROR) {
 			set_system_state_led(LED_SYSTEM_STATE_ERROR);
 		}
@@ -185,7 +188,9 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+#ifdef CONFIG_CAF_BLE_COMMON_EVENTS
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_search_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
+#endif /* CONFIG_CAF_BLE_COMMON_EVENTS */
 APP_EVENT_SUBSCRIBE(MODULE, battery_state_event);
