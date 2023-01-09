@@ -29,11 +29,18 @@ The data payload includes the following information, among other things:
 * 27-bit setup passcode
 * 8-bit Discovery Capabilities Bitmask
 
-The data can be encoded in one of the following ways, both included on-device or in the packaging for the end products:
+.. _ug_matter_network_topologies_commissioning_onboarding_formats:
 
-* Within Manual Pairing Code.
-* Within QR Code.
-  For testing purposes, this code can be printed to the UART console or be shared using an NFC tag.
+Onboarding information formats
+==============================
+
+The data payload can be encoded in one of the following ways, either included on-device or in the packaging for the end products (or both):
+
+* Manual Pairing Code - which provides the onboarding information as a sequence of digits that can be used with most Matter commissioners.
+* QR Code - which you can scan using the appropriate mobile application for your ecosystem.
+* QR Code Payload - which is a alphanumeric code that you can use in command-line tools.
+  For testing purposes, it can be printed to the UART console or be shared using an NFC tag.
+  This code is represented visually by the QR Code.
 
 Manual Pairing Code must always be supported, while the QR Code is recommended.
 Different ecosystems can also define their own methods of providing the discriminator and setup passcode.

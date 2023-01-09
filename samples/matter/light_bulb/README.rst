@@ -60,7 +60,7 @@ Remote testing in a network
 
 By default, the Matter accessory device has no IPv6 network configured.
 You must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread or Wi-Fi network.
-The controller must get the commissioning information from the Matter accessory device and provision the device into the network.
+The controller must get the `Onboarding information`_ from the Matter accessory device and provision the device into the network.
 For details, see the `Commissioning the device`_ section.
 
 .. matter_light_bulb_sample_remote_testing_end
@@ -151,7 +151,7 @@ Button 4:
     :end-before: matter_door_lock_sample_jlink_end
 
 NFC port with antenna attached:
-    Optionally used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
+    Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
 
 Building and running
 ********************
@@ -243,6 +243,8 @@ After building this sample and the :ref:`Matter light switch <matter_light_switc
 Bind both devices
 +++++++++++++++++
 
+Complete the following steps to bind both devices:
+
 .. include:: ../light_switch/README.rst
    :start-after: matter_light_switch_sample_prepare_to_testing_start
    :end-before: matter_light_switch_sample_prepare_to_testing_end
@@ -259,7 +261,7 @@ Test connection
 Enabling remote control
 =======================
 
-Remote control allows you to control the Matter light bulb device from IPv6 network.
+Remote control allows you to control the Matter light bulb device from an IPv6 network.
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_remote_control_start
@@ -296,9 +298,28 @@ If the Bluetooth LE advertising times out, use one of the following buttons to e
 
      * Press **Button 2** for at least three seconds.
 
-When you start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
-The data payload includes the device discriminator and setup PIN code.
-It is encoded within a QR code printed to the UART console and can be shared using an NFC tag.
+Onboarding information
+++++++++++++++++++++++
+
+When you start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
+The onboarding information representation depends on your commissioner setup.
+
+For this sample, you can use one of the following :ref:`onboarding information formats <ug_matter_network_topologies_commissioning_onboarding_formats>` to provide the commissioner with the data payload that includes the device discriminator and the setup PIN code:
+
+  .. list-table:: Light bulb sample onboarding information
+     :header-rows: 1
+
+     * - QR Code
+       - QR Code Payload
+       - Manual pairing code
+     * - Scan the following QR code with the app for your ecosystem:
+
+         .. figure:: ../../../doc/nrf/images/matter_qr_code_light_bulb.png
+            :width: 200px
+            :alt: QR code for commissioning the light bulb device
+
+       - MT:6FCJ142C00KA0648G00
+       - 34970112332
 
 Upgrading the device firmware
 =============================
