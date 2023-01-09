@@ -277,11 +277,6 @@ void main(void)
 
 	net_mgmt_add_event_callback(&net_shell_mgmt_cb);
 
-#ifdef CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT
-	/* For now hardcode to 128MHz */
-	nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK,
-			       NRF_CLOCK_HFCLK_DIV_1);
-#endif
 	LOG_INF("Starting %s with CPU frequency: %d MHz", CONFIG_BOARD, SystemCoreClock/MHZ(1));
 	k_sleep(K_SECONDS(1));
 
