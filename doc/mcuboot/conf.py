@@ -17,7 +17,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 # General configuration --------------------------------------------------------
 
 project = "MCUboot"
-copyright = "2019-2022, Nordic Semiconductor"
+copyright = "2019-2023, Nordic Semiconductor"
 version = release = "1.9.99"
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
