@@ -22,6 +22,7 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/net_event.h>
+#include <zephyr/drivers/gpio.h>
 
 #include <qspi_if.h>
 
@@ -37,10 +38,19 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 #define CONNECTION_TIMEOUT  100
 #define STATUS_POLLING_MS   300
 
+/* 1000 msec = 1 sec */
+#define LED_SLEEP_TIME_MS   100
+
+/* The devicetree node identifier for the "led0" alias. */
+#define LED0_NODE DT_ALIAS(led0)
+/*
+ * A build error on this line means your board is unsupported.
+ * See the sample documentation for information on how to fix this.
+ */
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
+
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
 static struct net_mgmt_event_callback net_shell_mgmt_cb;
-
-K_SEM_DEFINE(sem_dhcp, 0, 1);
 
 static struct {
 	const struct shell *sh;
@@ -48,12 +58,41 @@ static struct {
 		struct {
 			uint8_t connected	: 1;
 			uint8_t connect_result	: 1;
-			uint8_t disconnecting	: 1;
-			uint8_t _unused		: 6;
+			uint8_t disconnect_requested	: 1;
+			uint8_t _unused		: 5;
 		};
 		uint8_t all;
 	};
 } context;
+
+void toggle_led(void)
+{
+	int ret;
+
+	if (!device_is_ready(led.port)) {
+		LOG_ERR("LED device is not ready");
+		return;
+	}
+
+	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	if (ret < 0) {
+		LOG_ERR("Error %d: failed to configure LED pin", ret);
+		return;
+	}
+
+	while (1) {
+		if (context.connected) {
+			gpio_pin_toggle_dt(&led);
+			k_msleep(LED_SLEEP_TIME_MS);
+		} else {
+			gpio_pin_set_dt(&led, 0);
+			k_msleep(LED_SLEEP_TIME_MS);
+		}
+	}
+}
+
+K_THREAD_DEFINE(led_thread_id, 1024, toggle_led, NULL, NULL, NULL,
+		7, 0, 0);
 
 static int cmd_wifi_status(void)
 {
@@ -96,8 +135,12 @@ static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 	const struct wifi_status *status =
 		(const struct wifi_status *) cb->info;
 
+	if (context.connected) {
+		return;
+	}
+
 	if (status->status) {
-		LOG_ERR("Connection request failed (%d)", status->status);
+		LOG_ERR("Connection failed (%d)", status->status);
 	} else {
 		LOG_INF("Connected");
 		context.connected = true;
@@ -111,13 +154,18 @@ static void handle_wifi_disconnect_result(struct net_mgmt_event_callback *cb)
 	const struct wifi_status *status =
 		(const struct wifi_status *) cb->info;
 
-	if (context.disconnecting) {
+	if (!context.connected) {
+		return;
+	}
+
+	if (context.disconnect_requested) {
 		LOG_INF("Disconnection request %s (%d)",
 			 status->status ? "failed" : "done",
 					status->status);
-		context.disconnecting = false;
+		context.disconnect_requested = false;
 	} else {
-		LOG_INF("Disconnected");
+		LOG_INF("Received Disconnected");
+		context.connected = false;
 	}
 
 	cmd_wifi_status();
@@ -147,10 +195,8 @@ static void print_dhcp_ip(struct net_mgmt_event_callback *cb)
 
 	net_addr_ntop(AF_INET, addr, dhcp_info, sizeof(dhcp_info));
 
-	LOG_INF("IP address: %s", dhcp_info);
-	k_sem_give(&sem_dhcp);
+	LOG_INF("DHCP IP address: %s", dhcp_info);
 }
-
 static void net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 				    uint32_t mgmt_event, struct net_if *iface)
 {
@@ -214,31 +260,6 @@ static int wifi_connect(void)
 	return 0;
 }
 
-static int wifi_disconnect(void)
-{
-	struct net_if *iface = net_if_get_default();
-	int status;
-
-	context.disconnecting = true;
-
-	status = net_mgmt(NET_REQUEST_WIFI_DISCONNECT, iface, NULL, 0);
-
-	if (status) {
-		context.disconnecting = false;
-
-		if (status == -EALREADY) {
-			LOG_INF("Already disconnected");
-		} else {
-			LOG_ERR("Disconnect request failed");
-			return -ENOEXEC;
-		}
-	} else {
-		LOG_INF("Disconnect requested");
-	}
-
-	return 0;
-}
-
 int bytes_from_str(const char *str, uint8_t *bytes, size_t bytes_len)
 {
 	size_t i;
@@ -262,7 +283,7 @@ int bytes_from_str(const char *str, uint8_t *bytes, size_t bytes_len)
 void main(void)
 {
 	int i;
-	context.all = 0U;
+	memset(&context, 0, sizeof(context));
 
 	net_mgmt_init_event_callback(&wifi_shell_mgmt_cb,
 				     wifi_mgmt_event_handler,
@@ -304,23 +325,25 @@ void main(void)
 		LOG_INF("QSPI Encryption disabled");
 	}
 
-	wifi_connect();
+	LOG_INF("Static IP address (overridable): %s/%s -> %s",
+		CONFIG_NET_CONFIG_MY_IPV4_ADDR,
+		CONFIG_NET_CONFIG_MY_IPV4_NETMASK,
+		CONFIG_NET_CONFIG_MY_IPV4_GW);
 
-	for (i = 0; i < CONNECTION_TIMEOUT; i++) {
-		k_sleep(K_MSEC(STATUS_POLLING_MS));
-		cmd_wifi_status();
-		if (context.connect_result) {
-			break;
-		}
-	}
+	while (1) {
+		wifi_connect();
 
-	if (context.connected) {
-		if (k_sem_take(&sem_dhcp, K_SECONDS(DHCP_TIMEOUT)) == -EAGAIN) {
-			LOG_ERR("DHCP handshake timed out");
+		for (i = 0; i < CONNECTION_TIMEOUT; i++) {
+			k_sleep(K_MSEC(STATUS_POLLING_MS));
+			cmd_wifi_status();
+			if (context.connect_result) {
+				break;
+			}
 		}
-		k_sleep(K_SECONDS(CONFIG_CONNECTION_IDLE_TIMEOUT));
-		wifi_disconnect();
-	} else if (!context.connect_result) {
-		LOG_ERR("Connection Timed Out");
+		if (context.connected) {
+			k_sleep(K_FOREVER);
+		} else if (!context.connect_result) {
+			LOG_ERR("Connection Timed Out");
+		}
 	}
 }

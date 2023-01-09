@@ -20,6 +20,10 @@ Overview
 ********
 
 This sample can perform Wi-Fi operations such as connect and disconnect in the 2.4GHz and 5GHz bands depending on the capabilities of an access point.
+The sample also adds LED support to map with connection and disconnection events:
+
+    * **LED1** starts blinking when the sample is connected to the access point.
+    * **LED1** stops blinking when the sample is disconnected from the access point.
 
 Using this sample, the development kit can connect to the specified access point in :abbr:`STA (Station)` mode.
 
@@ -36,6 +40,19 @@ Power management
 
 This sample also enables Zephyr's power management policy by default, which puts the nRF5340 :term:`System on Chip (SoC)` into low-power mode whenever it is idle.
 See :ref:`zephyr:pm-guide` in the Zephyr documentation for more information on power management.
+
+IP addressing
+*************
+The sample uses DHCP to obtain an IP address for the Wi-Fi interface. It starts with a default static IP address to handle networks without DHCP servers, or if the DHCP server is not available.
+Successful DHCP handshake will override the default static IP configuration.
+
+The following static configuration is by default and can be changed in the ``prj.conf`` file:
+
+.. code-block:: console
+
+  CONFIG_NET_CONFIG_MY_IPV4_ADDR="192.168.1.98"
+  CONFIG_NET_CONFIG_MY_IPV4_NETMASK="255.255.255.0"
+  CONFIG_NET_CONFIG_MY_IPV4_GW="192.168.1.1"
 
 Building and running
 ********************
@@ -78,70 +95,75 @@ Testing
 
    .. code-block:: console
 
-      <inf> sta: Connection requested
+    [00:00:02.016,235] <inf> sta: Connection requested
+    [00:00:02.316,314] <inf> sta: ==================
+    [00:00:02.316,314] <inf> sta: State: SCANNING
+    [00:00:02.616,424] <inf> sta: ==================
+    [00:00:02.616,424] <inf> sta: State: SCANNING
+    [00:00:02.916,534] <inf> sta: ==================
+    [00:00:02.916,534] <inf> sta: State: SCANNING
+    [00:00:03.216,613] <inf> sta: ==================
+    [00:00:03.216,613] <inf> sta: State: SCANNING
+    [00:00:03.516,723] <inf> sta: ==================
+    [00:00:03.516,723] <inf> sta: State: SCANNING
+    [00:00:03.816,802] <inf> sta: ==================
+    [00:00:03.816,802] <inf> sta: State: SCANNING
+    [00:00:04.116,882] <inf> sta: ==================
+    [00:00:04.116,882] <inf> sta: State: SCANNING
+    [00:00:04.416,961] <inf> sta: ==================
+    [00:00:04.416,961] <inf> sta: State: SCANNING
+    [00:00:04.717,071] <inf> sta: ==================
+    [00:00:04.717,071] <inf> sta: State: SCANNING
+    [00:00:05.017,150] <inf> sta: ==================
+    [00:00:05.017,150] <inf> sta: State: SCANNING
+    [00:00:05.317,230] <inf> sta: ==================
+    [00:00:05.317,230] <inf> sta: State: SCANNING
+    [00:00:05.617,309] <inf> sta: ==================
+    [00:00:05.617,309] <inf> sta: State: SCANNING
+    [00:00:05.917,419] <inf> sta: ==================
+    [00:00:05.917,419] <inf> sta: State: SCANNING
+    [00:00:06.217,529] <inf> sta: ==================
+    [00:00:06.217,529] <inf> sta: State: SCANNING
+    [00:00:06.517,639] <inf> sta: ==================
+    [00:00:06.517,639] <inf> sta: State: SCANNING
+    [00:00:06.817,749] <inf> sta: ==================
+    [00:00:06.817,749] <inf> sta: State: SCANNING
+    [00:00:07.117,858] <inf> sta: ==================
+    [00:00:07.117,858] <inf> sta: State: SCANNING
+    [00:00:07.336,730] <inf> wpa_supp: wlan0: SME: Trying to authenticate with aa:bb:cc:dd:ee:ff (SSID='<MySSID>' freq=5785 MHz)
+    [00:00:07.353,027] <inf> wifi_nrf: wifi_nrf_wpa_supp_authenticate:Authentication request sent successfully
 
-      <inf> sta: ==================
-      <inf> sta: State: SCANNING
-      <inf> sta: ==================
-      <inf> sta: State: SCANNING
-      <inf> sta: ==================
-      <inf> sta: State: SCANNING
-      <inf> sta: ==================
-      <inf> sta: State: ASSOCIATING
-      <inf> sta: ==================
-      <inf> sta: State: ASSOCIATED
-        <inf> sta: Interface Mode: STATION
-        <inf> sta: Link Mode: WIFI 6 (802.11ax/HE)
-        <inf> sta: SSID: ABCDEFGH
-        <inf> sta: BSSID: F0:1D:2D:72:EB:EF
-        <inf> sta: Band: 5GHz
-        <inf> sta: Channel: 108
-        <inf> sta: Security: WPA2-PSK
-        <inf> sta: MFP: Optional
-        <inf> sta: RSSI: -47
-      <inf> sta: ==================
-      <inf> sta: State: 4WAY_HANDSHAKE
-        <inf> sta: Interface Mode: STATION
-        <inf> sta: Link Mode: WIFI 6 (802.11ax/HE)
-        <inf> sta: SSID: ABCDEFGH
-        <inf> sta: BSSID: F0:1D:2D:72:EB:EF
-        <inf> sta: Band: 5GHz
-        <inf> sta: Channel: 108
-        <inf> sta: Security: WPA2-PSK
-        <inf> sta: MFP: Optional
-        <inf> sta: RSSI: -47
-      <inf> sta: ==================
-      <inf> sta: State: COMPLETED
-        <inf> sta: Interface Mode: STATION
-        <inf> sta: Link Mode: WIFI 6 (802.11ax/HE)
-        <inf> sta: SSID: ABCDEFGH
-        <inf> sta: BSSID: F0:1D:2D:72:EB:EF
-        <inf> sta: Band: 5GHz
-        <inf> sta: Channel: 108
-        <inf> sta: Security: WPA2-PSK
-        <inf> sta: MFP: Optional
-        <inf> sta: RSSI: -47
+    [00:00:07.417,938] <inf> sta: ==================
+    [00:00:07.417,938] <inf> sta: State: AUTHENTICATING
+    [00:00:07.606,628] <inf> wpa_supp: wlan0: Trying to associate with aa:bb:cc:dd:ee:ff (SSID='<MySSID>' freq=5785 MHz)
+    [00:00:07.609,680] <inf> wifi_nrf: wifi_nrf_wpa_supp_associate: Association request sent successfully
 
-      <inf> sta: Connected
+    [00:00:07.621,978] <inf> wpa_supp: wpa_drv_zep_get_ssid: SSID size: 5
 
-      <inf> sta: ==================
-      <inf> sta: State: COMPLETED
-        <inf> sta: Interface Mode: STATION
-        <inf> sta: Link Mode: WIFI 6 (802.11ax/HE)
-        <inf> sta: SSID: ABCDEFGH
-        <inf> sta: BSSID: F0:1D:2D:72:EB:EF
-        <inf> sta: Band: 5GHz
-        <inf> sta: Channel: 108
-        <inf> sta: Security: WPA2-PSK
-        <inf> sta: MFP: Optional
-        <inf> sta: RSSI: -47
+    [00:00:07.622,070] <inf> wpa_supp: wlan0: Associated with aa:bb:cc:dd:ee:ff
+    [00:00:07.622,192] <inf> wpa_supp: wlan0: CTRL-EVENT-CONNECTED - Connection to aa:bb:cc:dd:ee:ff completed [id=0 id_str=]
+    [00:00:07.622,192] <inf> sta: Connected
+    [00:00:07.623,779] <inf> wpa_supp: wlan0: CTRL-EVENT-SUBNET-STATUS-UPDATE status=0
+    [00:00:07.648,406] <inf> net_dhcpv4: Received: 192.168.119.6
+    [00:00:07.648,468] <inf> net_config: IPv4 address: 192.168.119.6
+    [00:00:07.648,498] <inf> net_config: Lease time: 3599 seconds
+    [00:00:07.648,498] <inf> net_config: Subnet: 255.255.255.0
+    [00:00:07.648,529] <inf> net_config: Router: 192.168.119.147
+    [00:00:07.648,559] <inf> sta: DHCP IP address: 192.168.119.6
+    [00:00:07.720,153] <inf> sta: ==================
+    [00:00:07.720,153] <inf> sta: State: COMPLETED
+    [00:00:07.720,153] <inf> sta: Interface Mode: STATION
+    [00:00:07.720,184] <inf> sta: Link Mode: WIFI 6 (802.11ax/HE)
+    [00:00:07.720,184] <inf> sta: SSID: <MySSID>
+    [00:00:07.720,214] <inf> sta: BSSID: aa:bb:cc:dd:ee:ff
+    [00:00:07.720,214] <inf> sta: Band: 5GHz
+    [00:00:07.720,214] <inf> sta: Channel: 157
+    [00:00:07.720,245] <inf> sta: Security: OPEN
+    [00:00:07.720,245] <inf> sta: MFP: UNKNOWN
+    [00:00:07.720,245] <inf> sta: RSSI: -57
+    [00:00:07.720,245] <inf> sta: Static IP address:
 
-      <inf> sta: IP address: 192.168.50.237
 
-      <inf> sta: Disconnect requested
-      <inf> sta: Disconnection request done (0)
-      <inf> sta: ==================
-      <inf> sta: State: DISCONNECTED
 
 Power management testing
 ************************
