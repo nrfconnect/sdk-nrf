@@ -73,6 +73,7 @@ Matter
 
   * Support for Wi-Fi Network Diagnostic Cluster (which counts the number of packets received and transmitted on the Wi-Fi interface).
   * Default support for nRF7002 revision B.
+  * Specific QR code and onboarding information in the documentation for each :ref:`Matter sample <matter_samples>` and the :ref:`Matter weather station <matter_weather_station_app>`.
 
 * Fixed:
 
@@ -82,6 +83,7 @@ Matter
 
   * Default heap implementation to use Zephyr's ``sys_heap`` (:kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEAP`) to better control the RAM usage of Matter applications.
   * :ref:`ug_matter_device_certification` page with a section about certification document templates.
+  * :ref:`ug_matter_overview_commissioning` page with information about :ref:`ug_matter_network_topologies_commissioning_onboarding_formats`.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
