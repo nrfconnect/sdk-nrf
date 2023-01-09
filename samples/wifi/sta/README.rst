@@ -23,6 +23,14 @@ This sample can perform Wi-Fi operations such as connect and disconnect in the 2
 
 Using this sample, the development kit can connect to the specified access point in :abbr:`STA (Station)` mode.
 
+Quad Serial Peripheral Interface (QSPI) encryption
+**************************************************
+
+This sample demonstrates QSPI encryption API usage, the key can be set by the :kconfig:option:`CONFIG_NRF700X_QSPI_ENCRYPTION_KEY` Kconfig option.
+
+If encryption of the QSPI traffic is required for the production devices, then matching keys must be programmed in both the nRF7002 OTP and non-volatile storage associated with the host.
+The key from non-volatile storage must be set as the encryption key using the APIs.
+
 Building and running
 ********************
 
