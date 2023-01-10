@@ -66,6 +66,30 @@ config USB_HID_PROTOCOL_CODE
 	default 2 if DESKTOP_HID_BOOT_INTERFACE_MOUSE
 	default 1 if DESKTOP_HID_BOOT_INTERFACE_KEYBOARD
 
+config USB_DEVICE_MANUFACTURER
+	default DESKTOP_DEVICE_MANUFACTURER
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the USB subsystem configuration.
+
+config USB_DEVICE_PRODUCT
+	default DESKTOP_DEVICE_PRODUCT
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the USB subsystem configuration.
+
+config USB_DEVICE_VID
+	default DESKTOP_DEVICE_VID
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the USB subsystem configuration.
+
+config USB_DEVICE_PID
+	default DESKTOP_DEVICE_PID
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the USB subsystem configuration.
+
 choice USB_DEVICE_LOG_LEVEL_CHOICE
 	default USB_DEVICE_LOG_LEVEL_OFF
 	help

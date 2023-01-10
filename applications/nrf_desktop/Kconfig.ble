@@ -30,12 +30,17 @@ config DESKTOP_BT_PERIPHERAL
 	select CAF_BLE_ADV
 	select DESKTOP_BAS_ENABLE
 	select DESKTOP_HIDS_ENABLE
+	select BT_DIS
 	select BT_PERIPHERAL
 	help
 	  HID peripherals are configured to use the GAP Peripheral role as
 	  required in the HID over GATT profile specification for the HID
 	  Device. This specification defines how to implement the HID Device
 	  using Bluetooth connectivity.
+
+	  The nRF Desktop peripheral enables CAF Bluetooth LE advertising module
+	  and GATT Services required for a HID Device (HID Service, Battery
+	  Service and Device Information Service).
 
 if DESKTOP_BT_PERIPHERAL
 
@@ -105,6 +110,52 @@ config BT_CONN_PARAM_UPDATE_TIMEOUT
 	help
 	  nRF Desktop peripherals update connection parameters earlier to lower
 	  HID data latency.
+
+if BT_DIS
+
+config BT_DIS_MANUF
+	default DESKTOP_DEVICE_MANUFACTURER
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the Bluetooth DIS configuration.
+
+config BT_DIS_MODEL
+	default DESKTOP_DEVICE_PRODUCT
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the Bluetooth DIS configuration.
+
+config BT_DIS_PNP
+	default y
+	help
+	  The PnP ID characteristic is required for a HID Device.
+
+config BT_DIS_PNP_VID_SRC
+	default 2
+	help
+	  By default, nRF Desktop relies on Vendor ID of Nordic Semiconductor
+	  ASA assigned by the USB IF.
+
+config BT_DIS_PNP_VID
+	default DESKTOP_DEVICE_VID
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the Bluetooth DIS configuration.
+
+config BT_DIS_PNP_PID
+	default DESKTOP_DEVICE_PID
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the Bluetooth DIS configuration.
+
+config BT_DIS_PNP_VER
+	default 0x0100
+	help
+	  nRF Desktop by default defines product version representing major
+	  version number of 1, minor version number of 0 and sub-minor version
+	  number of 0.
+
+endif # BT_DIS
 
 endif
 
