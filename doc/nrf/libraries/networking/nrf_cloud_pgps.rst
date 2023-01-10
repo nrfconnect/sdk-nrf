@@ -90,7 +90,6 @@ There are three ways to define this storage location:
   By default, this partition is stored in the main SoC flash.
   This partition can optionally be located in external flash for the nRF9160 development kit version 0.14.0 and later.
   This conserves space in the main flash for storing code or other data.
-  Currently, you cannot combine storing P-GPS data in external flash with full modem FOTA.
 
   To use an external flash partition, enable the following options in your project's configuration file or place them in a configuration overlay file (for example :file:`samples/nrf9160/nrf_cloud_mqtt_multi_service/overlay_pgps_ext_flash.conf`):
 
@@ -100,6 +99,10 @@ There are three ways to define this storage location:
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION`
 * :kconfig:option:`CONFIG_PM_PARTITION_REGION_PGPS_EXTERNAL`
 * :kconfig:option:`CONFIG_SPI_NOR_FLASH_LAYOUT_PAGE_SIZE` set to 4096
+
+  If you are using the P-GPS external flash partition and full modem FOTA, ensure the FMFU partition is also enabled:
+
+* :kconfig:option:`CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION`
 
   Also, specify your development kit version by appending it to the board name.
   For example, if your development kit version is 1.0.1, use the following board name in your build command:

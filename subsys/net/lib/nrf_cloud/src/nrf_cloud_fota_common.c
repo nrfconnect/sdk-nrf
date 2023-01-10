@@ -49,30 +49,46 @@ int nrf_cloud_fota_fmfu_dev_set(const struct dfu_target_fmfu_fdev *const fmfu_de
 	if (fmfu_dev_set) {
 		LOG_DBG("Full modem FOTA flash device already set");
 		return 1;
-	} else if (!fmfu_dev_inf) {
-		return -EINVAL;
-	} else if (!fmfu_dev_inf->dev) {
-		LOG_ERR("Flash device is NULL");
-		return -ENODEV;
-	} else if (!device_is_ready(fmfu_dev_inf->dev)) {
-		LOG_ERR("Flash device is not ready");
-		return -EBUSY;
+	}
+
+	if (!IS_ENABLED(CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION)) {
+		if (!fmfu_dev_inf) {
+			return -EINVAL;
+		}
+
+		if (!fmfu_dev_inf->dev) {
+			LOG_ERR("Flash device is NULL");
+			return -ENODEV;
+		}
+
+		if (!device_is_ready(fmfu_dev_inf->dev)) {
+			LOG_ERR("Flash device is not ready");
+			return -EBUSY;
+		}
 	}
 
 	int ret;
 	const struct dfu_target_full_modem_params params = {
 		.buf = fmfu_buf,
 		.len = sizeof(fmfu_buf),
-		.dev = (struct dfu_target_fmfu_fdev *)fmfu_dev_inf
+		/* If a partition is used, the flash device info is not needed */
+		.dev = (IS_ENABLED(CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION) ?
+		       NULL : (struct dfu_target_fmfu_fdev *)fmfu_dev_inf)
 	};
 
 	ret = dfu_target_full_modem_cfg(&params);
 	if (ret) {
 		LOG_ERR("Failed to initialize full modem FOTA: %d", ret);
-	} else {
-		fmfu_dev = *fmfu_dev_inf;
-		fmfu_dev_set = true;
+		return ret;
 	}
+
+	ret = dfu_target_full_modem_fdev_get(&fmfu_dev);
+	if (ret) {
+		LOG_ERR("Failed to get flash device info: %d", ret);
+		return ret;
+	}
+
+	fmfu_dev_set = true;
 
 	return ret;
 }
@@ -99,7 +115,7 @@ int nrf_cloud_fota_fmfu_apply(void)
 		return err;
 	}
 
-	err = fmfu_fdev_load(fmfu_buf, sizeof(fmfu_buf), fmfu_dev.dev, 0);
+	err = fmfu_fdev_load(fmfu_buf, sizeof(fmfu_buf), fmfu_dev.dev, fmfu_dev.offset);
 	if (err != 0) {
 		LOG_ERR("Failed to apply full modem update, error: %d", err);
 		(void)nrf_modem_lib_init(NORMAL_MODE);
