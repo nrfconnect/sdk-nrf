@@ -101,6 +101,10 @@ if(CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION)
   ncs_add_partition_manager_config(pm.yml.pgps)
 endif()
 
+if(CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION)
+  ncs_add_partition_manager_config(pm.yml.fmfu)
+endif()
+
 if (CONFIG_EMDS)
   ncs_add_partition_manager_config(pm.yml.emds)
 endif()

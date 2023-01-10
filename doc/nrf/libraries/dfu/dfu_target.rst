@@ -141,6 +141,12 @@ To do so, enable the following options:
 
 The MCUboot target will then use the :ref:`zephyr:settings_api` subsystem in Zephyr to store the current progress used by the :c:func:`dfu_target_write` function across power failures and device resets.
 
+Using a dedicated partition for full modem upgrades
+===================================================
+
+Enable the :kconfig:option:`DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION` Kconfig option to use :ref:`partition_manager` for creating a dedicated partition for full modem upgrades.
+External flash partitions require ``nordic,pm-ext-flash`` to be set in the devicetree; see :ref:`partition_manager` for details.
+
 API documentation
 *****************
 
