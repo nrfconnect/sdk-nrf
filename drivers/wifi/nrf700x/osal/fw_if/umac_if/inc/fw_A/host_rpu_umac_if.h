@@ -2561,6 +2561,7 @@ struct nrf_wifi_umac_config_twt_info {
 	/*unsigned char target_wake_time[8];*/
 	unsigned long long target_wake_time;
 	unsigned short nominal_min_twt_wake_duration;
+	unsigned char dialog_token;
 } __NRF_WIFI_PKD;
 
 /**
