@@ -284,9 +284,11 @@ void nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_params)
 	conf_params->tx_mode = 1;
 	conf_params->tx_pkt_num = -1;
 	conf_params->tx_pkt_len = 1400;
-	conf_params->tx_pkt_tput_mode = RPU_TPUT_MODE_MAX;
 	conf_params->aux_adc_input_chain_id = 1;
-	conf_params->set_he_ltf_gi = 0;
+#ifndef CONFIG_NRF700X_REV_A
+	conf_params->ru_tone = 26;
+	conf_params->ru_index = 1;
+#endif /* !CONFIG_NRF700X_REV_A */
 	conf_params->phy_calib = NRF_WIFI_DEF_PHY_CALIB;
 }
 
@@ -1988,7 +1990,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "2 - VHT mode\n"
 		      "3 - HE(SU) mode\n"
 		      "4 - HE(ER SU) mode\n"
-		      "5 - HE_TB mode                                   ",
+		      "5 - HE (TB) mode                                   ",
 		      nrf_wifi_radio_test_set_tx_pkt_tput_mode,
 		      2,
 		      0),
