@@ -58,9 +58,9 @@ int wifi_nrf_set_twt(const struct device *dev,
 		twt_info.ap_trigger_frame = twt_params->setup.trigger;
 		twt_info.is_implicit = twt_params->setup.implicit;
 		twt_info.twt_flow_type = twt_params->setup.announce;
-		/* interval values are passed as us to UMAC */
+		/* Interval values are passed as ms to UMAC */
 		twt_info.nominal_min_twt_wake_duration =
-			((twt_params->setup.twt_wake_interval_ms * 1000) / 256);
+				twt_params->setup.twt_wake_interval_ms;
 
 		mantissa = frexp(twt_params->setup.twt_interval_ms, &exponent);
 		/* Ceiling and conversion to milli seconds */
@@ -140,9 +140,9 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 	twt_params.setup.trigger = twt_setup_info->info.ap_trigger_frame;
 	twt_params.setup.implicit = twt_setup_info->info.is_implicit;
 	twt_params.setup.announce = twt_setup_info->info.twt_flow_type;
-	/* interval values are passed as us to UMAC */
+	/* Interval values are passed as us to UMAC */
 	twt_params.setup.twt_wake_interval_ms =
-			((twt_setup_info->info.nominal_min_twt_wake_duration / 1000)  * 256);
+			twt_setup_info->info.nominal_min_twt_wake_duration;
 
 	exponent = twt_setup_info->info.twt_target_wake_interval_exponent;
 	mantissa = (twt_setup_info->info.twt_target_wake_interval_mantissa / 1000);
