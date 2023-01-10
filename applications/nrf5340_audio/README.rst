@@ -657,35 +657,42 @@ Buttons
 
 The application uses the following buttons on the supported development kit:
 
-+---------------+----------------------------------------------------------------------------------------+
-| Button        | Function                                                                               |
-+===============+========================================================================================+
-| **VOL-**      | Turns the playback volume down (and unmutes).                                          |
-+---------------+----------------------------------------------------------------------------------------+
-| **VOL+**      | Turns the playback volume up (and unmutes).                                            |
-+---------------+----------------------------------------------------------------------------------------+
-| **PLAY/PAUSE**| Starts or pauses the playback.                                                         |
-+---------------+----------------------------------------------------------------------------------------+
-| **BTN 4**     | Depending on the moment it is pressed:                                                 |
-|               |                                                                                        |
-|               | * Long-pressed during startup: Turns on the DFU mode, if                               |
-|               |   the device is :ref:`configured for it<nrf53_audio_app_configuration_configure_fota>`.|
-|               | * Pressed on the gateway during playback: Sends a test tone generated on the device.   |
-|               |   Use this tone to check the synchronization of headsets.                              |
-|               | * Pressed on the gateway during playback multiple times: Changes the tone frequency.   |
-|               |   The available values are 1000 Hz, 2000 Hz, and 4000 Hz.                              |
-|               | * Pressed on a BIS headset during playback: Change audio stream, if more than one is   |
-|               |   available.                                                                           |
-+---------------+----------------------------------------------------------------------------------------+
-| **BTN 5**     | Depending on the moment it is pressed:                                                 |
-|               |                                                                                        |
-|               | * Long-pressed during startup: Clears the previously stored bonding information.       |
-|               | * Pressed during playback: Mutes the playback volume.                                  |
-|               | * Pressed on a BIS headset during playback: Change the gateway, if more than one is    |
-|               |   available.                                                                           |
-+---------------+----------------------------------------------------------------------------------------+
-| **RESET**     | Resets the device.                                                                     |
-+---------------+----------------------------------------------------------------------------------------+
++---------------+-----------------------------------------------------------------------------------------------------------+
+| Button        | Function                                                                                                  |
++===============+===========================================================================================================+
+| **VOL-**      | Depending on the moment it is pressed:                                                                    |
+|               |                                                                                                           |
+|               | * Long-pressed during startup: Changes the headset to the left channel one.                               |
+|               | * Pressed on the headset or the CIS gateway during playback: Turns the playback volume down (and unmutes).|
++---------------+-----------------------------------------------------------------------------------------------------------+
+| **VOL+**      | Depending on the moment it is pressed:                                                                    |
+|               |                                                                                                           |
+|               | * Long-pressed during startup: Changes the headset to the right channel one.                              |
+|               | * Pressed on the headset or the CIS gateway during playback: Turns the playback volume up (and unmutes).  |
++---------------+-----------------------------------------------------------------------------------------------------------+
+| **PLAY/PAUSE**| Starts or pauses the playback.                                                                            |
++---------------+-----------------------------------------------------------------------------------------------------------+
+| **BTN 4**     | Depending on the moment it is pressed:                                                                    |
+|               |                                                                                                           |
+|               | * Long-pressed during startup: Turns on the DFU mode, if                                                  |
+|               |   the device is :ref:`configured for it<nrf53_audio_app_configuration_configure_fota>`.                   |
+|               | * Pressed on the gateway during playback: Sends a test tone generated on the device.                      |
+|               |   Use this tone to check the synchronization of headsets.                                                 |
+|               | * Pressed on the gateway during playback multiple times: Changes the tone frequency.                      |
+|               |   The available values are 1000 Hz, 2000 Hz, and 4000 Hz.                                                 |
+|               | * Pressed on a BIS headset during playback: Change audio stream, if more than one is                      |
+|               |   available.                                                                                              |
++---------------+-----------------------------------------------------------------------------------------------------------+
+| **BTN 5**     | Depending on the moment it is pressed:                                                                    |
+|               |                                                                                                           |
+|               | * Long-pressed during startup: Clears the previously stored bonding information.                          |
+|               | * Pressed during playback: Mutes the playback volume.                                                     |
+|               | * Pressed on a BIS headset during playback: Change the gateway, if more than one is                       |
+|               |   available.                                                                                              |
++---------------+-----------------------------------------------------------------------------------------------------------+
+| **RESET**     | Resets the device to the originally programmed settings.                                                  |
+|               | This reverts any changes made during testing, for example the channel switches with **VOL** buttons.      |
++---------------+-----------------------------------------------------------------------------------------------------------+
 
 .. _nrf53_audio_app_ui_leds:
 
@@ -1273,9 +1280,14 @@ Complete the following steps to test the unidirectional CIS mode for one gateway
 #. Press the **BTN 4** button on the gateway multiple times.
    For each button press, the audio stream playback is stopped and the gateway sends a test tone to both headsets.
    These tones can be used as audio cues to check the synchronization of the headsets.
+#. Hold down the **VOL+** button and press the **RESET** button on the left headset.
+   After startup, this headset will be configured as the right channel headset.
+#. Hold down the **VOL-** button and press the **RESET** button on the left headset.
+   After startup, this headset will go back to be configured as the left channel headset.
+   You can also just press the **RESET** button to restore the original programmed settings.
 
 After the kits have paired for the first time, they are now bonded.
-This means the Long-Term Key(LTK) is stored on each side, and that the kits will only connect to each other unless the bonding information is cleared.
+This means the Long-Term Key (LTK) is stored on each side, and that the kits will only connect to each other unless the bonding information is cleared.
 To clear the bonding information, press and hold **BTN 5** during boot.
 
 When you finish testing, power off the nRF5340 Audio development kits by switching the power switch from On to Off.
