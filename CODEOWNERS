@@ -118,6 +118,7 @@ Kconfig*                                  @tejlmand
 /lib/hw_unique_key/                       @oyvindronningstad @Vge0rge
 /lib/identity_key/                        @frkv @Vge0rge
 /lib/modem_jwt/                           @jayteemo @SeppoTakalo
+/lib/modem_slm/                           @junqingzou @pirun
 /lib/modem_attest_token/                  @jayteemo
 /lib/qos/                                 @simensrostad
 /lib/pcm_mix/                             @koffes @alexsven @erikrobstad @rick1082 @gWacey
