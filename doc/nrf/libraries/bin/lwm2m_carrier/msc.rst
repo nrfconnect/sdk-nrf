@@ -3,13 +3,6 @@
 Message sequence charts
 #######################
 
-The following message sequence chart shows the initialization of the LwM2M carrier library:
-
-.. figure:: /libraries/bin/lwm2m_carrier/images/lwm2m_carrier_msc_init.svg
-    :alt: LwM2M carrier library initialization
-
-    LwM2M carrier library initialization
-
 The following message sequence chart shows the states of the ``lwm2m_carrier_thread_run`` thread up until the registration with the device management server:
 
 .. figure:: /libraries/bin/lwm2m_carrier/images/lwm2m_carrier_msc_bootstrap.svg

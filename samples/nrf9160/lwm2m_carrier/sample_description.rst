@@ -21,7 +21,7 @@ The sample supports the following development kit:
 Overview
 ********
 
-LwM2M is an application layer protocol based on CoAP over UDP.
+LwM2M is an application layer protocol for IoT device management and service enablement.
 It is designed to expose various resources for reading, writing, and executing through an LwM2M server in a lightweight environment.
 
 The LwM2M carrier library is needed for certification in certain operator networks.
@@ -138,7 +138,8 @@ After programming the sample and all prerequisites to the development kit, test 
 
    .. code-block:: console
 
-      LWM2M_CARRIER_EVENT_INIT
+      LWM2M_CARRIER_EVENT_LTE_LINK_DOWN
+      LWM2M_CARRIER_EVENT_LTE_LINK_UP
       LWM2M_CARRIER_EVENT_LTE_LINK_DOWN
       LWM2M_CARRIER_EVENT_BOOTSTRAPPED
       LWM2M_CARRIER_EVENT_LTE_LINK_UP
@@ -149,7 +150,6 @@ Once bootstrap has been done, subsequent reconnects will not contain the bootstr
 .. code-block:: console
 
    LWM2M Carrier library sample.
-   LWM2M_CARRIER_EVENT_INIT
    LWM2M_CARRIER_EVENT_REGISTERED
 
 The device is now registered to an LwM2M server, and the server can interact with it.
@@ -222,7 +222,8 @@ You might encounter deferred events, as shown in the following output:
 .. code-block:: console
 
    LWM2M Carrier library sample.
-   LWM2M_CARRIER_EVENT_INIT
+   LWM2M_CARRIER_EVENT_LTE_LINK_DOWN
+   LWM2M_CARRIER_EVENT_LTE_LINK_UP
    LWM2M_CARRIER_EVENT_DEFERRED
    Reason: Failed to connect to bootstrap server, timeout: 60 seconds
    LWM2M_CARRIER_EVENT_DEFERRED

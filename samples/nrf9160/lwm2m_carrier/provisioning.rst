@@ -51,7 +51,7 @@ Carrier configuration and testing
   Not all requirements are documented here.
   You must contact your carrier for more information as mentioned in the :ref:`lwm2m_certification` documentation.
 
-  * With a few exceptions, if you leave the :c:struct:`lwm2m_carrier_config_t` structure empty when calling :c:func:`lwm2m_carrier_run`, it configures the carrier library to behave correctly in the operator network it is currently connected to.
+  * With a few exceptions, if you leave the :c:struct:`lwm2m_carrier_config_t` structure empty when calling :c:func:`lwm2m_carrier_main`, it configures the carrier library to behave correctly in the operator network it is currently connected to.
 
 * The settings required to test and certify your product with the carrier will be different from the settings needed for mass deployment.
 

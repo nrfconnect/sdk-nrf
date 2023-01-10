@@ -511,6 +511,11 @@ Binary libraries
 
 * Added the standalone :ref:`lib_bt_ll_acs_nrf53_readme` library, originally a part of the :ref:`nrf53_audio_app` application.
 
+* :ref:`liblwm2m_carrier_readme` library:
+
+  * Updated to v3.2.0.
+    See the :ref:`liblwm2m_carrier_changelog` for detailed information.
+
 Bluetooth libraries and services
 --------------------------------
 

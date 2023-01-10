@@ -9,8 +9,85 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 3.2.0
+**********************
+
+Release for modem firmware version 1.3.5.
+
+Certification status
+====================
+
+For certification status, see `Mobile network operator certifications`_.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            | 75955         | 16575      |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            | 96292         | 39712      |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
+
+Changes
+=======
+
+* Added preliminary support for SoftBank subscriber ID.
+  This carrier can be disabled or enabled with the Kconfig option :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK`.
+* Removed the error event types ``LWM2M_CARRIER_ERROR_FOTA_PKG``, ``LWM2M_CARRIER_ERROR_FOTA_PROTO``, ``LWM2M_CARRIER_ERROR_FOTA_CONN`` and ``LWM2M_CARRIER_ERROR_FOTA_CONN_LOST``.
+  Instead, the :c:member:`LWM2M_CARRIER_ERROR_FOTA_FAIL` error event indicates an error code ``error.value`` in :c:struct:`lwm2m_carrier_event_t` (when :c:member:`LWM2M_CARRIER_ERROR_FOTA_FAIL` is received).
+* Removed the dependency on the :ref:`lte_lc_readme` library.
+
+  * This was primarily done to save space in the :ref:`serial_lte_modem` application.
+  * All other relevant samples and applications use the :ref:`lte_lc_readme` library.
+    It is highly recommended that you include it in your applications.
+
+* Removed the event ``LWM2M_CARRIER_ERROR_INTERNAL``.
+
+* FOTA process has been improved.
+
+  * The FOTA procedure no longer requires the device to reboot.
+    It uses callbacks documented in the :ref:`nrf_modem_lib_readme`. The Modem library must reinitialize to perform a modem update.
+  * Added the events :c:member:`LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN` and :c:member:`LWM2M_CARRIER_EVENT_MODEM_INIT` to explicitly request the application to perform the reinitialization during FOTA.
+  * Added a new event, :c:member:`LWM2M_CARRIER_EVENT_FOTA_SUCCESS` to indicate the completion of FOTA update to the application.
+  * Old successful event flow: :c:member:`LWM2M_CARRIER_EVENT_FOTA_START` > :c:member:`LWM2M_CARRIER_EVENT_REBOOT` > :c:member:`LWM2M_CARRIER_EVENT_LTE_POWER_OFF` > :c:member:`LWM2M_CARRIER_EVENT_REGISTERED`.
+  * New successful event flow: :c:member:`LWM2M_CARRIER_EVENT_FOTA_START` > :c:member:`LWM2M_CARRIER_EVENT_LTE_POWER_OFF` > :c:member:`LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN` > :c:member:`LWM2M_CARRIER_EVENT_MODEM_INIT` > :c:member:`LWM2M_CARRIER_EVENT_MODEM_INIT` > :c:member:`LWM2M_CARRIER_EVENT_FOTA_SUCCESS` > :c:member:`LWM2M_CARRIER_EVENT_LTE_LINK_UP`.
+
+nRF modem dependency change
+---------------------------
+
+LwM2M carrier library no longer explicitly controls the :ref:`nrf_modem`.
+Instead, the application can initialize the Modem library at its own convenience.
+The LwM2M carrier library will then use the Modem library callbacks to start or pause its own operations.
+See the :ref:`mlil_callbacks` section under :ref:`nrf_modem_lib_readme` for more information.
+
+* Removed ``lwm2m_carrier_init()``.
+
+  * The LwM2M carrier library now initializes every time the init callback from the Modem library is called.
+  * Renamed ``lwm2m_carrier_run()`` to :c:func:`lwm2m_carrier_main`.
+
+* Removed the event ``LWM2M_CARRIER_EVENT_INIT``.
+
+  * This event was used to indicate that the modem was ready to be used by the application, but this is no longer necessary since the application now controls Modem library.
+  * Keep in mind that CA root certificates must still be provisioned while the modem is offline (any time the link is down).
+  * :c:func:`lte_lc_init` and :c:func:`lte_lc_register_handler` can be called at any time after :c:func:`nrf_modem_lib_init`.
+
+* Removed ``lwm2m_os_nrf_modem_init()`` and ``lwm2m_os_nrf_modem_shutdown()``.
+
+* The library no longer sends an initial ``LWM2M_CARRIER_EVENT_LTE_LINK_UP`` event after initialization.
+
+  * This event was meant to indicate to the application when it could go online for the first time, but this is no longer needed.
+    Instead, the library waits for the link to be brought up by the application.
+  * An additional :c:member:`LWM2M_CARRIER_EVENT_LTE_DOWN` event can be triggered by the LwM2M carrier library the first time the application goes online.
+    This is for continuing to write the correct bootstrap keys.
+
 liblwm2m_carrier 3.1.0
-***********************
+**********************
 
 Release for modem firmware version 1.3.3 and 1.3.4.
 
@@ -675,14 +752,14 @@ Known issues and limitations
 * It is not possible to use a TLS connection in parallel with LwM2M-managed modem firmware updates. The application should close any TLS connections when it receives the LWM2M_CARRIER_EVENT_FOTA_START event from the library.
 * The API to query the application for resource values is not implemented yet.
 
-	* The "Available Power Sources" resource is reported as "DC power (0)" and "External Battery (2)".
-	* The following resources are reported to have value "0" (zero):
+	* The "Available Power Sources" resource is reported as ``DC power (0)`` and ``External Battery (2)``.
+	* The following resources are reported to have value ``0`` (zero):
 
 		* Power Source Voltage, Power Source Current, Battery Level, Battery Status, Memory Free, Memory Total, Error Code.
-	* The "Device Type" resource is reported as "Smart Device".
-	* The "Software Version" resource is reported as "LwM2M 0.6.0".
-	* The "Hardware Version" is reported as "1.0".
+	* The "Device Type" resource is reported as ``Smart Device``.
+	* The "Software Version" resource is reported as ``LwM2M 0.6.0``.
+	* The "Hardware Version" is reported as ``1.0``.
 * The following values are reported as dummy values instead of being fetched from the modem:
 
-	* "IP address", reported as 192.168.0.0.
+	* "IP address", reported as ``192.168.0.0``.
 * The "Current Time" and "Timezone" resources do not respect write operations, instead, read operations on these resources will return the current time and timezone as kept by the nRF9160 modem.

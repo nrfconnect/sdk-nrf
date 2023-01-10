@@ -6,7 +6,7 @@
 
 menuconfig LWM2M_CARRIER
 	bool "LwM2M carrier library"
-	depends on NEWLIB_LIBC
+	depends on PICOLIBC || NEWLIB_LIBC || EXTERNAL_LIBC
 	depends on NRF_MODEM_LIB
 	depends on PDN
 	# Only have hard-float variant
@@ -27,6 +27,8 @@ menuconfig LWM2M_CARRIER
 	depends on NET_SOCKETS_OFFLOAD
 	# Networking NCS
 	depends on DOWNLOAD_CLIENT
+	depends on (DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE >= 64)
+	depends on (DOWNLOAD_CLIENT_MAX_FILENAME_SIZE >= 192)
 	# Credentials NCS
 	depends on MODEM_KEY_MGMT
 	# AT libraries
@@ -97,6 +99,12 @@ config LWM2M_CARRIER_T_MOBILE
 	default y
 	help
 	  Enable Carrier Library when the SIM Subscriber ID is T-Mobile.
+
+config LWM2M_CARRIER_SOFTBANK
+	bool "SoftBank"
+	default y
+	help
+	  Enable Carrier Library when the SIM Subscriber ID is SoftBank.
 
 endmenu
 

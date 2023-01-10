@@ -27,6 +27,8 @@ For more information, see :ref:`partition_mgr_integration`.
 
 When using the Modem library in |NCS|, the library must be initialized and shutdown using the :c:func:`nrf_modem_lib_init` and :c:func:`nrf_modem_lib_shutdown` function calls, respectively.
 
+.. _mlil_callbacks:
+
 Callbacks
 =========
 

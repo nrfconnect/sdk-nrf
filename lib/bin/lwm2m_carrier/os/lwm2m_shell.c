@@ -34,7 +34,8 @@ static const struct {
 	{ LWM2M_CARRIER_VERIZON, "Verizon" },
 	{ LWM2M_CARRIER_ATT, "AT&T" },
 	{ LWM2M_CARRIER_LG_UPLUS, "LG U+" },
-	{ LWM2M_CARRIER_T_MOBILE, "T-Mobile" }
+	{ LWM2M_CARRIER_T_MOBILE, "T-Mobile" },
+	{ LWM2M_CARRIER_SOFTBANK, "SoftBank" }
 };
 
 static int cmd_device_time_read(const struct shell *shell, size_t argc, char **argv)
@@ -189,7 +190,9 @@ static int cmd_device_power_sources_set(const struct shell *shell, size_t argc, 
 		}
 	}
 
-	switch (lwm2m_carrier_avail_power_sources_set(power_sources, power_source_count)) {
+	int err = lwm2m_carrier_avail_power_sources_set(power_sources, power_source_count);
+
+	switch (err) {
 	case 0:
 		shell_print(shell, "Available power sources set successfully");
 		if (internal_battery) {
@@ -208,7 +211,7 @@ static int cmd_device_power_sources_set(const struct shell *shell, size_t argc, 
 		shell_print(shell, "Object not initialized");
 		break;
 	default:
-		shell_print(shell, "Error: %d", errno);
+		shell_print(shell, "Error: %d", err);
 		break;
 	};
 
@@ -225,8 +228,9 @@ static int cmd_device_voltage_set(const struct shell *shell, size_t argc, char *
 
 	uint8_t power_source = (uint8_t)atoi(argv[1]);
 	int32_t voltage = atoi(argv[2]);
+	int err = lwm2m_carrier_power_source_voltage_set(power_source, voltage);
 
-	switch (lwm2m_carrier_power_source_voltage_set(power_source, voltage)) {
+	switch (err) {
 	case 0:
 		shell_print(shell, "Voltage measurement updated successfully");
 		break;
@@ -237,7 +241,7 @@ static int cmd_device_voltage_set(const struct shell *shell, size_t argc, char *
 		shell_print(shell, "Unsupported power source type");
 		break;
 	default:
-		shell_print(shell, "Error: %d", errno);
+		shell_print(shell, "Error: %d", err);
 		break;
 	};
 
@@ -254,8 +258,9 @@ static int cmd_device_current_set(const struct shell *shell, size_t argc, char *
 
 	uint8_t power_source = (uint8_t)atoi(argv[1]);
 	int32_t current = atoi(argv[2]);
+	int err = lwm2m_carrier_power_source_current_set(power_source, current);
 
-	switch (lwm2m_carrier_power_source_current_set(power_source, current)) {
+	switch (err) {
 	case 0:
 		shell_print(shell, "Current measurements updated successfully");
 		break;
@@ -266,7 +271,7 @@ static int cmd_device_current_set(const struct shell *shell, size_t argc, char *
 		shell_print(shell, "Unsupported power source type");
 		break;
 	default:
-		shell_print(shell, "Error: %d", errno);
+		shell_print(shell, "Error: %d", err);
 		break;
 	};
 
@@ -281,7 +286,9 @@ static int cmd_device_battery_level_set(const struct shell *shell, size_t argc, 
 		return 0;
 	}
 
-	switch (lwm2m_carrier_battery_level_set(atoi(argv[1]))) {
+	int err = lwm2m_carrier_battery_level_set(atoi(argv[1]));
+
+	switch (err) {
 	case 0:
 		shell_print(shell, "Battery level updated successfully");
 		break;
@@ -292,7 +299,7 @@ static int cmd_device_battery_level_set(const struct shell *shell, size_t argc, 
 		shell_print(shell, "No internal battery detected");
 		break;
 	default:
-		shell_print(shell, "Error: %d", errno);
+		shell_print(shell, "Error: %d", err);
 		break;
 	};
 
@@ -313,8 +320,9 @@ static int cmd_device_battery_status_set(const struct shell *shell, size_t argc,
 	}
 
 	int32_t status = (int32_t)atoi(argv[1]);
+	int err = lwm2m_carrier_battery_status_set(status);
 
-	switch (lwm2m_carrier_battery_status_set(status)) {
+	switch (err) {
 	case 0:
 		shell_print(shell, "Battery status updated successfully");
 		break;
@@ -325,7 +333,7 @@ static int cmd_device_battery_status_set(const struct shell *shell, size_t argc,
 		shell_print(shell, "Unsupported battery status");
 		break;
 	default:
-		shell_print(shell, "Error: %d", errno);
+		shell_print(shell, "Error: %d", err);
 		break;
 	};
 
@@ -347,7 +355,9 @@ static int cmd_device_error_code_add(const struct shell *shell, size_t argc, cha
 		return 0;
 	}
 
-	switch (lwm2m_carrier_error_code_add((int32_t)atoi(argv[1]))) {
+	int err = lwm2m_carrier_error_code_add((int32_t)atoi(argv[1]));
+
+	switch (err) {
 	case 0:
 		shell_print(shell, "Error code added successfully");
 		break;
@@ -358,7 +368,7 @@ static int cmd_device_error_code_add(const struct shell *shell, size_t argc, cha
 		shell_print(shell, "Object not initialized");
 		break;
 	default:
-		shell_print(shell, "Error: %d", errno);
+		shell_print(shell, "Error: %d", err);
 		break;
 	}
 
@@ -380,7 +390,9 @@ static int cmd_device_error_code_remove(const struct shell *shell, size_t argc, 
 		return 0;
 	}
 
-	switch (lwm2m_carrier_error_code_remove((int32_t)atoi(argv[1]))) {
+	int err = lwm2m_carrier_error_code_remove((int32_t)atoi(argv[1]));
+
+	switch (err) {
 	case 0:
 		shell_print(shell, "Error code removed successfully");
 		break;
@@ -391,7 +403,7 @@ static int cmd_device_error_code_remove(const struct shell *shell, size_t argc, 
 		shell_print(shell, "Unsupported error code");
 		break;
 	default:
-		shell_print(shell, "Error: %d", errno);
+		shell_print(shell, "Error: %d", err);
 		break;
 	}
 
@@ -526,9 +538,9 @@ static int cmd_portfolio_create(const struct shell *shell, size_t argc, char **a
 		shell_print(shell, "Portfolio object not initialized");
 		break;
 	case -ENOMEM:
-		shell_print(shell, "No slots available or already created");
+		shell_print(shell, "No slots available");
 		break;
-	case -EINVAL:
+	case -EBADR:
 		shell_print(shell, "Instance %d already in use", instance_id);
 		break;
 	default:
@@ -825,7 +837,8 @@ static char *carriers_enabled_str(void)
 	}
 
 	for (int i = 0; i < ARRAY_SIZE(carriers_enabled_map); i++) {
-		if (carriers_enabled & carriers_enabled_map[i].bit_num) {
+		if ((carriers_enabled & carriers_enabled_map[i].bit_num) &&
+		    (offset < sizeof(oper_str))) {
 			offset += snprintf(&oper_str[offset], sizeof(oper_str) - offset,
 					   "%s%s (%u)", (offset == 0) ? "" : ", ",
 					   carriers_enabled_map[i].name, i);

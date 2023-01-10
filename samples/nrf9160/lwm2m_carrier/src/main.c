@@ -31,14 +31,6 @@ void print_err(const lwm2m_carrier_event_t *evt)
 			"Failed to connect to the LTE network",
 		[LWM2M_CARRIER_ERROR_LTE_LINK_DOWN_FAIL] =
 			"Failed to disconnect from the LTE network",
-		[LWM2M_CARRIER_ERROR_FOTA_PKG] =
-			"Package refused from modem",
-		[LWM2M_CARRIER_ERROR_FOTA_PROTO] =
-			"Protocol error",
-		[LWM2M_CARRIER_ERROR_FOTA_CONN] =
-			"Connection to remote server failed",
-		[LWM2M_CARRIER_ERROR_FOTA_CONN_LOST] =
-			"Connection to remote server lost",
 		[LWM2M_CARRIER_ERROR_FOTA_FAIL] =
 			"Modem firmware update failed",
 		[LWM2M_CARRIER_ERROR_CONFIGURATION] =

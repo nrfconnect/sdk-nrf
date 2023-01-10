@@ -13,7 +13,6 @@
 #include <string.h>
 #include <nrf_modem.h>
 #include <modem/pdn.h>
-#include <modem/nrf_modem_lib.h>
 #include <modem/sms.h>
 #include <net/download_client.h>
 #include <zephyr/storage/flash_map.h>
@@ -62,17 +61,9 @@ AT_MONITOR(lwm2m_carrier_at_handler, ANY, lwm2m_os_at_handler);
 /* LwM2M carrier OS logs. */
 LOG_MODULE_REGISTER(lwm2m_os, LOG_LEVEL_DBG);
 
-NRF_MODEM_LIB_ON_INIT(lwm2m_os_init_hook, on_modem_lib_init, NULL);
+/* OS initialization. */
 
-/* Initialized to value different than success (0) */
-static int modem_lib_init_result = -1;
-
-static void on_modem_lib_init(int ret, void *ctx)
-{
-	modem_lib_init_result = ret;
-}
-
-int lwm2m_os_init(void)
+static int lwm2m_os_init(void)
 {
 #if defined CONFIG_LOG_RUNTIME_FILTERING
 	log_filter_set(NULL, CONFIG_LOG_DOMAIN_ID, LOG_CURRENT_MODULE_ID(),
@@ -86,6 +77,8 @@ int lwm2m_os_init(void)
 
 	return nvs_mount(&fs);
 }
+
+SYS_INIT(lwm2m_os_init, APPLICATION, 0);
 
 /* Memory management. */
 
@@ -109,11 +102,6 @@ int64_t lwm2m_os_uptime_get(void)
 int64_t lwm2m_os_uptime_delta(int64_t *ref)
 {
 	return k_uptime_delta(ref);
-}
-
-int lwm2m_os_sleep(int ms)
-{
-	return k_sleep(K_MSEC(ms));
 }
 
 /* OS functions */
@@ -233,11 +221,17 @@ lwm2m_os_work_q_t *lwm2m_os_work_q_start(int index, const char *name)
 	return work_q;
 }
 
-lwm2m_os_timer_t *lwm2m_os_timer_get(lwm2m_os_timer_handler_t handler)
+void lwm2m_os_timer_get(lwm2m_os_timer_handler_t handler, lwm2m_os_timer_t **timer)
 {
 	struct lwm2m_work *work = NULL;
 
 	uint32_t key = irq_lock();
+
+	/* Check whether timer exists */
+	if (*timer != NULL) {
+		__ASSERT(PART_OF_ARRAY(lwm2m_works, *timer), "get unknown timer");
+		return;
+	}
 
 	/* Find free delayed work */
 	for (int i = 0; i < ARRAY_SIZE(lwm2m_works); i++) {
@@ -256,7 +250,7 @@ lwm2m_os_timer_t *lwm2m_os_timer_get(lwm2m_os_timer_handler_t handler)
 		k_work_init_delayable(&work->work_item, work_handler);
 	}
 
-	return (lwm2m_os_timer_t *)work;
+	*timer = (lwm2m_os_timer_t *)work;
 }
 
 void lwm2m_os_timer_release(lwm2m_os_timer_t *timer)
@@ -364,54 +358,18 @@ int lwm2m_os_thread_start(int index, lwm2m_os_thread_entry_t entry, const char *
 	return 0;
 }
 
-int lwm2m_os_nrf_modem_init(void)
+void lwm2m_os_thread_resume(int index)
 {
-#if defined CONFIG_NRF_MODEM_LIB_SYS_INIT
-	int nrf_err = modem_lib_init_result;
-#else
-	int nrf_err = nrf_modem_lib_init();
-#endif /* CONFIG_NRF_MODEM_LIB_SYS_INIT */
+	__ASSERT(index < LWM2M_OS_MAX_THREAD_COUNT, "Invalid thread index");
 
-	switch (nrf_err) {
-	case 0:
-		break;
-	case NRF_MODEM_DFU_RESULT_OK:
-		LOG_INF("Modem firmware update successful.");
-		LOG_INF("Modem will run the new firmware after reboot.");
-		break;
-	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
-	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
-		LOG_ERR("Modem firmware update failed.");
-		LOG_ERR("Modem will run non-updated firmware on reboot.");
-		break;
-	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
-	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
-		LOG_ERR("Modem firmware update failed.");
-		LOG_ERR("Fatal error.");
-		break;
-	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
-		LOG_ERR("Modem firmware update cancelled.");
-		LOG_ERR("Please reboot once you have sufficient power for the DFU.");
-		break;
-	default:
-		LOG_ERR("Could not initialize modem library.");
-		LOG_ERR("Fatal error.");
-		return -EIO;
-	}
-
-	return nrf_err;
+	k_thread_resume(&lwm2m_os_threads[index]);
 }
 
-int lwm2m_os_nrf_modem_shutdown(void)
+int lwm2m_os_sleep(int ms)
 {
-	int err = nrf_modem_lib_shutdown();
+	k_timeout_t timeout = (ms == -1) ? K_FOREVER : K_MSEC(ms);
 
-	if (err != 0) {
-		LOG_ERR("nrf_modem_lib_shutdown() failed on: %d", err);
-		return -EIO;
-	}
-
-	return 0;
+	return k_sleep(timeout);
 }
 
 /* AT command module abstractions. */
@@ -504,21 +462,16 @@ void lwm2m_os_sms_client_deregister(int handle)
 
 static struct download_client http_downloader;
 static lwm2m_os_download_callback_t lwm2m_os_lib_callback;
-static int sec_tag_list[1];
 
-int lwm2m_os_download_connect(const char *host, const struct lwm2m_os_download_cfg *cfg)
+int lwm2m_os_download_get(const char *host, const struct lwm2m_os_download_cfg *cfg, size_t from)
 {
 	struct download_client_cfg config = {
+		.sec_tag_list = cfg->sec_tag_list,
+		.sec_tag_count = cfg->sec_tag_count,
 		.pdn_id = cfg->pdn_id,
 	};
 
-	if (cfg->sec_tag != -1) {
-		sec_tag_list[0] = cfg->sec_tag;
-		config.sec_tag_list = sec_tag_list;
-		config.sec_tag_count = 1;
-	}
-
-	return download_client_set_host(&http_downloader, host, &config);
+	return download_client_get(&http_downloader, host, &config, NULL, from);
 }
 
 int lwm2m_os_download_disconnect(void)
@@ -542,6 +495,9 @@ static void download_client_evt_translate(const struct download_client_evt *even
 		lwm2m_os_event->id = LWM2M_OS_DOWNLOAD_EVT_ERROR;
 		lwm2m_os_event->error = event->error;
 		break;
+	case DOWNLOAD_CLIENT_EVT_CLOSED:
+		lwm2m_os_event->id = LWM2M_OS_DOWNLOAD_EVT_CLOSED;
+		break;
 	default:
 		break;
 	}
@@ -561,11 +517,6 @@ int lwm2m_os_download_init(lwm2m_os_download_callback_t lib_callback)
 	lwm2m_os_lib_callback = lib_callback;
 
 	return download_client_init(&http_downloader, callback);
-}
-
-int lwm2m_os_download_start(const char *file, size_t from)
-{
-	return download_client_start(&http_downloader, file, from);
 }
 
 int lwm2m_os_download_file_size_get(size_t *size)
@@ -706,7 +657,8 @@ BUILD_ASSERT(
 	(int)LWM2M_OS_PDN_EVENT_ACTIVATED == (int)PDN_EVENT_ACTIVATED &&
 	(int)LWM2M_OS_PDN_EVENT_DEACTIVATED == (int)PDN_EVENT_DEACTIVATED &&
 	(int)LWM2M_OS_PDN_EVENT_IPV6_UP == (int)PDN_EVENT_IPV6_UP &&
-	(int)LWM2M_OS_PDN_EVENT_IPV6_DOWN == (int)PDN_EVENT_IPV6_DOWN,
+	(int)LWM2M_OS_PDN_EVENT_IPV6_DOWN == (int)PDN_EVENT_IPV6_DOWN &&
+	(int)LWM2M_OS_PDN_EVENT_NETWORK_DETACHED == (int)PDN_EVENT_NETWORK_DETACH,
 	"Incompatible enums"
 );
 
@@ -767,6 +719,14 @@ int lwm2m_os_nrf_errno(void)
 #include <pm_config.h>
 #include <zephyr/sys/crc.h>
 
+#define MCUBOOT_SECONDARY_ADDR	PM_MCUBOOT_SECONDARY_ADDRESS
+
+#if DT_NODE_EXISTS(PM_MCUBOOT_SECONDARY_DEV)
+#define MCUBOOT_SECONDARY_MTD	PM_MCUBOOT_SECONDARY_DEV
+#else
+#define MCUBOOT_SECONDARY_MTD	DT_NODELABEL(PM_MCUBOOT_SECONDARY_DEV)
+#endif
+
 static bool dfu_started;
 static bool dfu_in_progress;
 static uint8_t dfu_stream_buf[1024] __aligned(4);
@@ -775,6 +735,58 @@ static void dfu_target_cb(enum dfu_target_evt_id evt_id)
 {
 	/* This event handler is not in use by LwM2M carrier library. */
 	ARG_UNUSED(evt_id);
+}
+
+static int crc_validate_fragment(const uint8_t *buf, size_t len, uint32_t crc32)
+{
+	if (crc32 != crc32_ieee(buf, len)) {
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+static int crc_validate_stored_image(size_t len, uint32_t crc32)
+{
+	uintptr_t image_addr = MCUBOOT_SECONDARY_ADDR;
+
+	/* If the image is stored on the same memory technology device (and address space)
+	 * as this code, then it is best to CRC-validate the contents directly.
+	 */
+	if (DT_SAME_NODE(MCUBOOT_SECONDARY_MTD, DT_CHOSEN(zephyr_flash_controller))) {
+		return crc_validate_fragment((const uint8_t *)image_addr, len, crc32);
+	}
+
+	/* Otherwise, the image contents may need to be validated progressively,
+	 * with the help of a different driver (e.g., when using external flash over SPI).
+	 * Repurpose `dfu_stream_buf` to buffer the flash reads.
+	 */
+	uint32_t actual_crc32 = 0;
+	const struct device *image_dev = DEVICE_DT_GET_OR_NULL(MCUBOOT_SECONDARY_MTD);
+
+	if (!device_is_ready(image_dev)) {
+		return -EIO;
+	}
+
+	while (len > 0) {
+		size_t fragment_len = MIN(len, sizeof(dfu_stream_buf));
+		int err = flash_read(image_dev, image_addr, dfu_stream_buf, fragment_len);
+
+		if (err) {
+			return -EIO;
+		}
+
+		actual_crc32 = crc32_ieee_update(actual_crc32, dfu_stream_buf, fragment_len);
+
+		len -= fragment_len;
+		image_addr += fragment_len;
+	}
+
+	if (crc32 != actual_crc32) {
+		return -EINVAL;
+	}
+
+	return 0;
 }
 
 int lwm2m_os_app_fota_start(size_t max_file_size)
@@ -826,8 +838,9 @@ int lwm2m_os_app_fota_fragment(const char *buf, uint16_t len, uint16_t offset, u
 	}
 
 	/* CRC-validate whole fragment. */
-	if (crc32 != crc32_ieee(buf, len)) {
-		return -EINVAL;
+	err = crc_validate_fragment(buf, len, crc32);
+	if (err) {
+		return err;
 	}
 
 	if (!dfu_in_progress) {
@@ -876,8 +889,8 @@ int lwm2m_os_app_fota_finish(uint32_t crc32)
 		goto abort;
 	}
 
-	if (crc32 != crc32_ieee((const uint8_t *)PM_MCUBOOT_SECONDARY_ADDRESS, bytes_written)) {
-		err = -EINVAL;
+	err = crc_validate_stored_image(bytes_written, crc32);
+	if (err) {
 		goto abort;
 	}
 
@@ -899,13 +912,7 @@ abort:
 
 void lwm2m_os_app_fota_abort(void)
 {
-	struct stream_flash_ctx *stream;
-
 	if (dfu_started) {
-		/* Ensure that the firmware transfer progress is cleared. */
-		stream = dfu_target_stream_get_stream();
-		stream->bytes_written = 0;
-
 		dfu_target_reset();
 
 		dfu_in_progress = false;
