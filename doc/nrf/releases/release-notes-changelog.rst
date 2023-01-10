@@ -382,13 +382,11 @@ nRF9160 samples
 
   * Added support for the :ref:`liblwm2m_carrier_readme` library.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* :ref:`nrf_cloud_mqtt_multi_service` sample:
 
   * Updated:
 
     * The sample now uses a partition in external flash for full modem FOTA updates.
-
-* :ref:`nrf_cloud_mqtt_multi_service` sample:
 
   * Added:
 
@@ -419,6 +417,7 @@ nRF9160 samples
 
     * Device status information, including FOTA enablement, is now sent to nRF Cloud when the device connects.
     * Removed user prompt and button press handling for FOTA enablement.
+    * The sample now uses a partition in external flash for full modem FOTA updates.
 
 * :ref:`azure_fota_sample` sample:
 

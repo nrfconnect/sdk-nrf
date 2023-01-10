@@ -190,7 +190,6 @@ When enabled, this location method scans the MAC addresses of nearby access poin
 See :ref:`nrf_cloud_mqtt_multi_service_building_wifi` for details on how to enable Wi-Fi location tracking.
 
 This sample supports placing P-GPS data in external flash for the nRF9160 development kit version 0.14.0 and later.
-Currently, you cannot combine this with full modem FOTA.
 To enable this, add the following parameter to your build command:
 
 ``-DOVERLAY_CONFIG=overlay_pgps_ext_flash.conf``
