@@ -149,6 +149,7 @@ static bool check_valid_data_rate(const struct shell *shell,
 }
 
 
+#ifndef CONFIG_NRF700X_REV_A
 static bool check_valid_channel(unsigned char chan_num)
 {
 	if (((chan_num >= 1) && (chan_num <= 14)) ||
@@ -193,6 +194,7 @@ static bool check_valid_channel(unsigned char chan_num)
 
 	return false;
 }
+#endif /* !CONFIG_NRF700X_REV_A */
 
 
 static int check_channel_settings(const struct shell *shell,
@@ -740,34 +742,6 @@ static int nrf_wifi_radio_test_set_tx_pkt_gap(const struct shell *shell,
 }
 
 
-static int nrf_wifi_radio_test_set_chnl_primary(const struct shell *shell,
-						size_t argc,
-						const char *argv[])
-{
-	char *ptr = NULL;
-	unsigned long val = 0;
-
-	val = strtoul(argv[1], &ptr, 10);
-
-	if (!(check_valid_channel(val))) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid value %lu\n",
-			      val);
-		return -ENOEXEC;
-	}
-
-
-	if (!check_test_in_prog(shell)) {
-		return -ENOEXEC;
-	}
-
-	ctx->conf_params.chan.primary_num = val;
-
-	return 0;
-}
-
-
 static int nrf_wifi_radio_test_set_tx_pkt_num(const struct shell *shell,
 					      size_t argc,
 					      const char *argv[])
@@ -983,6 +957,47 @@ static int nrf_wifi_radio_test_set_ru_index(const struct shell *shell,
 
 	return 0;
 }
+
+
+static int nrf_wifi_radio_test_init(const struct shell *shell,
+				    size_t argc,
+				    const char *argv[])
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	char *ptr = NULL;
+	unsigned long val = 0;
+
+	val = strtoul(argv[1], &ptr, 10);
+
+	if (!(check_valid_channel(val))) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid value %lu\n",
+			      val);
+		return -ENOEXEC;
+	}
+
+	if (!check_test_in_prog(shell)) {
+		return -ENOEXEC;
+	}
+
+	nrf_wifi_radio_test_conf_init(&ctx->conf_params);
+	ctx->conf_params.chan.primary_num = val;
+
+	status = wifi_nrf_fmac_radio_test_init(ctx->rpu_ctx,
+					       &ctx->conf_params);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Programming init failed\n");
+		return -ENOEXEC;
+	}
+
+	return 0;
+}
+
+
 #endif /* !CONFIG_NRF700X_REV_A */
 
 
@@ -1732,11 +1747,6 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 
 	shell_fprintf(shell,
 		      SHELL_INFO,
-		      "chnl_primary = %d\n",
-		      conf_params->chan.primary_num);
-
-	shell_fprintf(shell,
-		      SHELL_INFO,
 		      "tx_pkt_num = %d\n",
 		      conf_params->tx_pkt_num);
 
@@ -1759,6 +1769,11 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      SHELL_INFO,
 		      "he_gi = %d\n",
 		      conf_params->he_gi);
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "init = %d\n",
+		      conf_params->chan.primary_num);
 
 	shell_fprintf(shell,
 		      SHELL_INFO,
@@ -2013,12 +2028,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_tx_pkt_gap,
 		      2,
 		      0),
-	SHELL_CMD_ARG(chnl_primary,
-		      NULL,
-		      "<val> - Primary channel number (Default: 1)",
-		      nrf_wifi_radio_test_set_chnl_primary,
-		      2,
-		      0),
 	SHELL_CMD_ARG(tx_pkt_num,
 		      NULL,
 		      "-1    - Transmit infinite packets\n"
@@ -2054,6 +2063,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "           For 106 ru_tone:  1 to 2\n"
 		      "           For 242 ru_tone:  1",
 		      nrf_wifi_radio_test_set_ru_index,
+		      2,
+		      0),
+	SHELL_CMD_ARG(init,
+		      NULL,
+		      "<val> - Primary channel number",
+		      nrf_wifi_radio_test_init,
 		      2,
 		      0),
 #endif /* !CONFIG_NRF700X_REV_A */
