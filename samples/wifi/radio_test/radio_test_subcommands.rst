@@ -19,42 +19,62 @@ Wi-Fi radio test subcommands
 
    * - Subcommand
      - Argument
+     - Default value
+     - Type
      - Description
    * - reset
      - N/A
-     - Reset all parameters to their default values.
+     - N/A
+     - Configuration
+     - Reset all configuration parameters to their default values.
    * - phy_calib_rxdc
      - | 0 - Disable
        | 1 - Enable
+     - 1
+     - Configuration
      - Enable/Disable RX DC calibration.
    * - phy_calib_txdc
      - | 0 - Disable
        | 1 - Enable
+     - 1
+     - Configuration
      - Enable/Disable TX DC calibration.
    * - phy_calib_txpow
      - | 0 - Disable
        | 1 - Enable
+     - 1
+     - Configuration
      - Enable/Disable TX power calibration.
    * - phy_calib_rxiq
      - | 0 - Disable
        | 1 - Enable
+     - 1
+     - Configuration
      - Enable/Disable RX IQ calibration.
    * - phy_calib_txiq
      - | 0 - Disable
        | 1 - Enable
+     - 1
+     - Configuration
      - Enable/Disable TX IQ calibration.
    * - he_ltf
      - | 0 - 1x HE LTF
        | 1 - 2x HE LTF
        | 2 - 4x HE LTF
+     - 0
+     - Configuration
      - Configure HE long training field (LTF) value while transmitting the packet.
    * - he_gi
      - | 0 - 0.8 us
        | 1 - 1.6 us
        | 2 - 3.2 us
+     - 0
+     - Configuration
      - Configure HE guard interval (GI) while transmitting the packet.
    * - rf_params
      - Hex value string
+     - N/A
+     - Configuration
      - Hexadecimal value string for RF related parameters. See :ref:`wifi_radio_test_rf_params` for the description.
    * - tx_pkt_tput_mode
      - | 0 - Legacy
@@ -63,39 +83,59 @@ Wi-Fi radio test subcommands
        | 3 - HE (SU) mode
        | 4 - HE (ERSU) mode
        | 5 - HE (TB) mode
+     - 0
+     - Configuration
      - Throughput mode to be used for transmitting the packet.
    * - tx_pkt_sgi
      - | 0 - Disable
        | 1 - Enable
+     - 0
+     - Configuration
      - Enable/Disable Short guard interval (GI) while transmitting the packet.
    * - tx_pkt_preamble
      - | 0 - Short Preamble
        | 1 - Long Preamble
        | 2 - Mixed Preamble
+     - 0
+     - Configuration
      - Type of preamble to be used for each packet. Short/Long Preamble are applicable only when tx_pkt_tput_mode is set to Legacy and Mixed Preamble is applicable only when tx_pkt_tput_mode is set to HT/VHT.
    * - tx_pkt_mcs
      - | -1 - Not being used
        | <val> - MCS index to be used
+     - -1
+     - Configuration
      - MCS index at which TX packet will be transmitted. Mutually exclusive with tx_pkt_rate.
    * - tx_pkt_rate
      - | -1 - Not being used
        | <val> - Legacy rate to be used (1, 2, 5.5, 11, 6, 9, 12, 18, 24, 36, 48, 54)
+     - -1
+     - Configuration
      - Legacy rate at which packets will be transmitted. Mutually exclusive with tx_pkt_mcs.
    * - tx_pkt_gap
      - <val> - (Min: 200, Max: 200000, Default: 200)
+     - 200
+     - Configuration
      - Interval between TX packets in microseconds.
    * - tx_pkt_num
      - | -1 - Transmit infinite packets
        | <val> - Number of packets to transmit
-     - Number of packets to transmit before stopping. Applicable only when tx_mode is set to Regular Tx.
+     - -1
+     - Configuration
+     - Number of packets to transmit before stopping.
    * - tx_pkt_len
      - <val> - Desired packet length (Default: 1400)
+     - 1400
+     - Configuration
      - Packet data length to be used for the TX stream.
    * - tx_power
      - <val> - Transmit power in dBm.
+     - 0
+     - Configuration
      - Transmit power for frame transmission.
    * - ru_tone
      - <val> – Desired resource unit (RU) size (26, 52, 106 or 242).
+     - 26
+     - Configuration
      - Configure the resource unit (RU) size.
    * - ru_index
      - | <val> – Valid values:
@@ -103,30 +143,44 @@ Wi-Fi radio test subcommands
        | For 52 ru_tone: 1 to 4
        | For 106 ru_tone: 1 to 2
        | For 242 ru_tone: 1
+     - 1
+     - Configuration
      - Configure the location of resource unit (RU) in 20 MHz spectrum.
    * - init
      - <val> - Primary channel number
+     - 1
+     - Action
      - Initialize the radio to a default state with the configured channel. This will also reset all other configuration parameters to their default values.
    * - tx
      - | 0 - Disable
        | 1 - Enable
+     - 0
+     - Action
      - Enable/Disable packet transmission. Transmits configured number of packets (tx_pkt_num) of packet length (tx_pkt_len).
    * - rx
      - | 0 - Disable
        | 1 - Enable
+     - 0
+     - Action
      - Enable/Disable packet reception.
    * - rx_adc_cap
      - | <CAPTURE LENGTH> - Number of RX ADC samples to be captured.
        | <LNA GAIN> - 0: 24 dB, 1: 18 dB, 2: 12 dB, 3: 0 dB and 4: -12 dB.
        | <BASEBAND GAIN> - Valid range 0 to 31. Supports 64 dB range. The increment happens linearly 2 dB/step.
+     - N/A
+     - Action
      -
    * - rx_stat_pkt_cap
      - | <CAPTURE LENGTH> - Number of RX ADC samples to be captured.
        | <LNA GAIN> - 0: 24 dB, 1: 18 dB, 2: 12 dB, 3: 0 dB and 4: -12 dB.
        | <BASEBAND GAIN> - Valid range 0 to 31. Supports 64 dB range. The increment happens linearly 2 dB/step.
+     - N/A
+     - Action
      -
    * - rx_dyn_pkt_cap
      - | <val> - Number of RX dynamic packet samples to be captured.
+     - N/A
+     - Action
      -
    * - tx_tone
      - | <TONE CONTROL> - 0: Disable 1: Enable
@@ -134,30 +188,46 @@ Wi-Fi radio test subcommands
        | normFreq = round(toneFreq * ((1/(DAC sampling rate/2))*(2^25))).
        | <TONE AMPLITUDE> - Value between 0 to 1023.
        | <TX POWER> - TX power in the range -16 dBm to +24 dBm. Example, to transmit 5 MHz tone: wifi_radio_test 1 4194304 255 10.
+     - 0
+     - Action
      -
    * - dpd
      - | 0 - DPD bypass
        | 1 - Enable DPD
+     - N/A
+     - Action
      -
    * - get_temperature
      - | No arguments required
+     - N/A
+     - Action
      -
    * - get_rf_rssi
      - | No arguments required
+     - N/A
+     - Action
      -
    * - set_xo_val
      - | <val> - XO value
+     - N/A
+     - Action
      -
    * - get_xo_val
      - | <TONE FREQUENCY> - Default is 0.5 MHz(4194304).
        | The range supported is -1 MHz to +1 MHz.
        | Compute the tone frequency for the tone to be transmitted as: tone frequency = round(tone_frequency * 2^23).
+     - N/A
+     - Action
      -
    * - show_config
      - N/A
+     - N/A
+     - Configuration
      - Display the current configuration values.
    * - get_stats
      - N/A
+     - N/A
+     - Action
      - Display statistics.
 
 
