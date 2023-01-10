@@ -11,6 +11,7 @@
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
 #include <net/nrf_cloud.h>
+#include <net/nrf_cloud_alerts.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif
@@ -41,6 +42,7 @@ extern "C" {
 #define NRF_CLOUD_JSON_APPID_VAL_RSRP		"RSRP"
 #define NRF_CLOUD_JSON_APPID_VAL_LIGHT		"LIGHT"
 #define NRF_CLOUD_JSON_APPID_VAL_MODEM		"MODEM"
+#define NRF_CLOUD_JSON_APPID_VAL_ALERT		"ALERT"
 
 #define NRF_CLOUD_JSON_MSG_TYPE_KEY		"messageType"
 #define NRF_CLOUD_JSON_MSG_TYPE_VAL_CMD		"CMD"
@@ -138,6 +140,12 @@ extern "C" {
 #define NRF_CLOUD_DEVICE_JSON_KEY_SIM_INF	"simInfo"
 #define NRF_CLOUD_DEVICE_JSON_KEY_DEV_INF	"deviceInfo"
 
+/* ALERTS */
+#define NRF_CLOUD_JSON_ALERT_SEQUENCE		"seq"
+#define NRF_CLOUD_JSON_ALERT_DESCRIPTION	"desc"
+#define NRF_CLOUD_JSON_ALERT_TYPE		"type"
+#define NRF_CLOUD_JSON_ALERT_VALUE		"value"
+
 enum nrf_cloud_rcv_topic {
 	NRF_CLOUD_RCV_TOPIC_GENERAL,
 	NRF_CLOUD_RCV_TOPIC_AGPS,
@@ -149,6 +157,14 @@ enum nrf_cloud_rcv_topic {
 
 /** @brief Initialize the codec used encoding the data to the cloud. */
 int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks);
+
+/** @brief Encode an alert and update the output struct with pointer
+ *  to data and its length.  Caller must free the pointer when done,
+ *  but only if it is not NULL; when CONFIG_NRF_CLOUD_ALERTS is disabled,
+ *  this function returns 0, and sets output->ptr = NULL and output->len = 0.
+ */
+int nrf_cloud_encode_alert(const struct nrf_cloud_alert_info *alert,
+			   struct nrf_cloud_data *output);
 
 /** @brief Encode the sensor data based on the indicated type. */
 int nrf_cloud_encode_sensor_data(const struct nrf_cloud_sensor_data *input,
@@ -177,6 +193,15 @@ int nrf_cloud_encode_state(uint32_t reported_state, const bool update_desired_to
 int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
 				     struct nrf_cloud_data *const output,
 				     bool *const has_config);
+
+/** @brief Parse input for control section, and return contents and status of it. */
+int nrf_cloud_decode_control(struct nrf_cloud_data const *const input,
+			     enum nrf_cloud_ctrl_status *status,
+			     struct nrf_cloud_ctrl_data *data);
+
+/** @brief Encode response that we have accepted a shadow delta. */
+int nrf_cloud_encode_control_response(struct nrf_cloud_ctrl_data const *const data,
+				      struct nrf_cloud_data *const output);
 
 /** @brief Encode the device status data into a JSON formatted buffer.
  * The include_state flag controls if the "state" JSON key is included in the output.

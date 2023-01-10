@@ -569,6 +569,35 @@ struct nrf_cloud_gw_data {
 };
 #endif
 
+/** @brief How the control section is handled when either a trimmed shadow
+ *  or a delta shadow is received.
+ */
+enum nrf_cloud_ctrl_status {
+	/** Data not present in shadow. */
+	NRF_CLOUD_CTRL_NOT_PRESENT = 0,
+	/** This was not a delta, so no need to send update back. */
+	NRF_CLOUD_CTRL_NO_REPLY = 1,
+	/** Send shadow update confirmation back. */
+	NRF_CLOUD_CTRL_REPLY = 2,
+};
+
+/** @brief Data to control behavior of the nrf_cloud library from the
+ *  cloud side. This data is stored in the device shadow.
+ */
+struct nrf_cloud_ctrl_data {
+	/** If true, nrf_cloud_alert_send() or nrf_cloud_rest_alert_send()
+	 *  will transfer alerts to the cloud whenever they are raised.
+	 *  If false, alerts will be suppressed.
+	 */
+	bool alerts_enabled;
+	/** If 0, the nrf_cloud library logging backend will be disabled.
+	 *  If values from 1 to 4, this level and any lower levels will
+	 *  be sent to the cloud. Level 1 is most urgent (LOG_ERR),
+	 *  level 4 least (LOG_DBG).
+	 */
+	int log_level;
+};
+
 /**
  * @brief  Event handler registered with the module to handle asynchronous
  * events from the module.

@@ -8,7 +8,8 @@ zephyr_library_sources(
 	src/nrf_cloud_codec.c
 	src/nrf_cloud_mem.c
 	src/nrf_cloud_client_id.c
-	src/nrf_cloud_fota_common.c)
+	src/nrf_cloud_fota_common.c
+	src/nrf_cloud_alerts.c)
 zephyr_library_sources_ifdef(
 	CONFIG_MODEM_JWT
 	src/nrf_cloud_jwt.c)
