@@ -14,5 +14,5 @@ common:
         - "Writing the identity key to KMU"
         - "Success!"
 tests:
-  sample.keys.identity_key_generate.random_key:
+  sample.tfm.provisioning_image:
     tags: keys ci_build
