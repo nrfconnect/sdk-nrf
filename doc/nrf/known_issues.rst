@@ -223,6 +223,14 @@ The time returned by :ref:`lib_date_time` library becomes incorrect after one we
   The time returned by :ref:`lib_date_time` library becomes incorrect after one week elapses.
   This is due to an issue with clock_gettime() API.
 
+.. rst-class:: v2-2-0
+
+NCSDK-18746: LwM2M carrier library fails to complete non-secure bootstrap when using a custom URI and the default security tag
+  If the LwM2M carrier library is operating in generic mode (not connecting to any of the predefined supported carriers), and the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` is set to connect to a non-secure server, the library attempts to retrieve a PSK from :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` even though a PSK is not needed for the non-secure bootstrap.
+  The PSK in this ``sec_tag`` is not used, but reading the ``sec_tag`` causes the bootstrap to fail if the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` is set to the default value (0).
+
+  **Workaround:** Assign any non-zero value to :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG`.
+
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-3-1 v1-2-1 v1-2-0
 
 NCSDK-12912: LwM2M carrier library does not recover if initial network connection fails
