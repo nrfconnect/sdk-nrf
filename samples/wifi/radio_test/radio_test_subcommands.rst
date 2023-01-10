@@ -84,9 +84,6 @@ Wi-Fi radio test subcommands
    * - tx_pkt_gap
      - <val> - (Min: 200, Max: 200000, Default: 200)
      - Interval between TX packets in microseconds.
-   * - chnl_primary
-     - <val> - Primary channel number (Default: 1)
-     - Configures the Primary channel to be used.
    * - tx_pkt_num
      - | -1 - Transmit infinite packets
        | <val> - Number of packets to transmit
@@ -107,6 +104,9 @@ Wi-Fi radio test subcommands
        | For 106 ru_tone: 1 to 2
        | For 242 ru_tone: 1
      - Configure the location of resource unit (RU) in 20 MHz spectrum.
+   * - init
+     - <val> - Primary channel number
+     - Initialize the radio to a default state with the configured channel. This will also reset all other configuration parameters to their default values.
    * - tx
      - | 0 - Disable
        | 1 - Enable
