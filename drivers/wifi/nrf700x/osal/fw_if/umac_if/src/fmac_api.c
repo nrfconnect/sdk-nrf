@@ -1003,6 +1003,39 @@ enum wifi_nrf_status wifi_nrf_fmac_conf_btcoex(struct wifi_nrf_fmac_dev_ctx *fma
 }
 
 #ifdef CONFIG_NRF700X_RADIO_TEST
+#ifndef CONFIG_NRF700X_REV_A
+enum wifi_nrf_status wifi_nrf_fmac_radio_test_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						   struct rpu_conf_params *params)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_radio_test_init_info init_params;
+
+	wifi_nrf_osal_mem_set(fmac_dev_ctx->fpriv->opriv,
+			      &init_params,
+			      0,
+			      sizeof(init_params));
+
+	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+			      init_params.rf_params,
+			      params->rf_params,
+			      NRF_WIFI_RF_PARAMS_SIZE);
+
+	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+			      &init_params.chan,
+			      &params->chan,
+			      sizeof(init_params.chan));
+
+	init_params.phy_threshold = params->phy_threshold;
+	init_params.phy_calib = params->phy_calib;
+
+	status = umac_cmd_prog_init(fmac_dev_ctx,
+				    &init_params);
+
+	return status;
+}
+#endif /* !CONFIG_NRF700X_REV_A */
+
+
 enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						      struct rpu_conf_params *params)
 {

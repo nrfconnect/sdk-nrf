@@ -47,6 +47,11 @@ enum wifi_nrf_status umac_cmd_he_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fmac_dev_c
 					unsigned char enabled);
 
 #ifdef CONFIG_NRF700X_RADIO_TEST
+#ifndef CONFIG_NRF700X_REV_A
+enum wifi_nrf_status umac_cmd_prog_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					struct nrf_wifi_radio_test_init_info *init_params);
+#endif /* !CONFIG_NRF700X_REV_A */
+
 enum wifi_nrf_status umac_cmd_prog_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				      struct rpu_conf_params *params);
 

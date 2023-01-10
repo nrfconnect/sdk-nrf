@@ -62,6 +62,23 @@ enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
 					     struct rpu_op_stats *stats);
 
 
+#ifndef CONFIG_NRF700X_REV_A
+/**
+ * wifi_nrf_fmac_radio_test_init() - Initialize the RPU for radio tests.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @params: Parameters necessary for the initialization.
+ *
+ * This function is used to send a command to RPU to initialize it
+ * for the radio test mode.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_radio_test_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						   struct rpu_conf_params *params);
+#endif /* !CONFIG_NRF700X_REV_A */
+
 /**
  * wifi_nrf_fmac_radio_test_prog_tx() - Start TX tests in radio test mode.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
