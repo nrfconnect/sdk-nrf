@@ -287,6 +287,13 @@ nRF9160 samples
   * Multicell location sample because of the deprecation of the Multicell location library.
     Relevant functionality is available through the :ref:`lib_location` library.
 
+* :ref:`nrf_cloud_mqtt_multi_service` sample:
+
+  * Added:
+
+    * MCUboot child image files to properly access external flash on newer nRF9160DK versions.
+    * An :file:``overlay_mcuboot_ext_flash.conf`` file to enable MCUboot use of external flash.
+
 Peripheral samples
 ------------------
 
@@ -444,9 +451,10 @@ Libraries for networking
     * GCI search results are now encoded in location requests.
     * The neighbor cell's time difference value is now encoded in location requests.
 
-* :ref:`lib_nrf_cloud` library:
+  * Fixed:
 
-  * Fixed a bug where the same buffer was incorrectly shared between caching a P-GPS prediction and loading a new one, when external flash was used.
+    * A bug where the same buffer was incorrectly shared between caching a P-GPS prediction and loading a new one, when external flash was used.
+    * A bug where external flash only worked if the P-GPS partition was located at address 0.
 
 * :ref:`lib_lwm2m_location_assistance` library:
 
