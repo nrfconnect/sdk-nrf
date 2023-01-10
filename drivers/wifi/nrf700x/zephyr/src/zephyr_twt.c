@@ -66,6 +66,7 @@ int wifi_nrf_set_twt(const struct device *dev,
 		/* Ceiling and conversion to milli seconds */
 		twt_info.twt_target_wake_interval_mantissa = ceil(mantissa * 1000);
 		twt_info.twt_target_wake_interval_exponent = exponent;
+		twt_info.dialog_token = twt_params->dialog_token;
 
 		status = wifi_nrf_fmac_twt_setup(rpu_ctx_zep->rpu_ctx,
 					   vif_ctx_zep->vif_idx,
@@ -148,6 +149,7 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 	mantissa = (twt_setup_info->info.twt_target_wake_interval_mantissa / 1000);
 	target_wake_time_ms = ldexp(mantissa, exponent);
 	twt_params.setup.twt_interval_ms = (target_wake_time_ms);
+	twt_params.dialog_token = twt_setup_info->info.dialog_token;
 
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
 }
