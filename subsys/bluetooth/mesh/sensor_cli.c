@@ -815,7 +815,7 @@ int bt_mesh_sensor_cli_setting_get(struct bt_mesh_sensor_cli *cli,
 
 	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
 		.ack = &cli->ack_ctx,
-		.op = BT_MESH_SENSOR_OP_SETTINGS_STATUS,
+		.op = BT_MESH_SENSOR_OP_SETTING_STATUS,
 		.user_data = &rsp_data,
 		.timeout = model_ackd_timeout_get(cli->model, ctx),
 	};
@@ -860,7 +860,7 @@ int bt_mesh_sensor_cli_setting_set(struct bt_mesh_sensor_cli *cli,
 
 	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
 		.ack = &cli->ack_ctx,
-		.op = BT_MESH_SENSOR_OP_SETTINGS_STATUS,
+		.op = BT_MESH_SENSOR_OP_SETTING_STATUS,
 		.user_data = &rsp_data,
 		.timeout = model_ackd_timeout_get(cli->model, ctx),
 	};
