@@ -818,7 +818,11 @@ See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:R
 DFU libraries
 -------------
 
-|no_changes_yet_note|
+* :ref:`lib_dfu_target` library:
+
+  * Added:
+    * :kconfig:option:`CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION` configuration option to support the ``FMFU_STORAGE`` partition in external flash.
+    * :c:func:`dfu_target_full_modem_fdev_get` function that gets the configured flash device information.
 
 Scripts
 =======
@@ -828,6 +832,13 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 * :ref:`west_sbom`:
 
   * Updated so that the output contains source repository and version information for each file.
+
+* :ref:`partition_manager`:
+
+  * Added:
+
+    * The :file:`ncs/nrf/subsys/partition_manager/pm.yml.fmfu` file.
+    * Support for the full modem FOTA update (FMFU) partition: ``FMFU_STORAGE``.
 
 MCUboot
 =======

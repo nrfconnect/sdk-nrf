@@ -44,7 +44,9 @@ struct dfu_target_full_modem_params {
 	/* Length of `buf` */
 	size_t len;
 
-	/* Flash device for storing the modem firmware */
+	/* Flash device for storing the modem firmware.
+	 * Ignored if CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION is enabled.
+	 */
 	struct dfu_target_fmfu_fdev *dev;
 };
 
@@ -56,6 +58,15 @@ struct dfu_target_full_modem_params {
  * @retval non-negative integer if successful, otherwise negative errno.
  */
 int dfu_target_full_modem_cfg(const struct dfu_target_full_modem_params *params);
+
+/**
+ * @brief Get the configured flash device information.
+ *
+ * @param[out] fdev Returns the flash device information.
+ *
+ * @retval 0 If successful, negative errno otherwise.
+ */
+int dfu_target_full_modem_fdev_get(struct dfu_target_fmfu_fdev * const fdev);
 
 /**
  * @brief See if data in buf indicates a full modem update.

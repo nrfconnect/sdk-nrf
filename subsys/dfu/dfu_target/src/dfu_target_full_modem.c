@@ -10,6 +10,8 @@
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_stream.h>
 #include <dfu/dfu_target_full_modem.h>
+#include <zephyr/storage/flash_map.h>
+#include <flash_map_pm.h>
 
 LOG_MODULE_REGISTER(dfu_target_full_modem, CONFIG_DFU_TARGET_LOG_LEVEL);
 
@@ -30,17 +32,49 @@ int dfu_target_full_modem_cfg(const struct dfu_target_full_modem_params *params)
 		return -EALREADY;
 	}
 
-	if (params->buf == NULL || params->dev->dev == NULL) {
+	if (params->buf == NULL ||
+	   ((params->dev->dev == NULL) &&
+	    (!IS_ENABLED(CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION)))) {
 		return -EINVAL;
 	}
 
-	/* Clone parametrs */
+	/* Clone parameters */
 	dfu_params.buf = params->buf;
 	dfu_params.len = params->len;
-	flash_dev = *params->dev;
 	dfu_params.dev = &flash_dev;
 
+#if defined(CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION)
+	const struct flash_area *fa;
+	int err;
+
+	err = flash_area_open(FLASH_AREA_ID(fmfu_storage), &fa);
+	if (err) {
+		return -ENODEV;
+	}
+
+	flash_dev.dev = fa->fa_dev;
+	flash_dev.offset = fa->fa_off;
+	flash_dev.size = fa->fa_size;
+#else
+	flash_dev = *params->dev;
+#endif
+
 	configured = true;
+
+	return 0;
+}
+
+int dfu_target_full_modem_fdev_get(struct dfu_target_fmfu_fdev * const fdev)
+{
+	if (!configured) {
+		return -EPERM;
+	}
+
+	if (!fdev) {
+		return -EINVAL;
+	}
+
+	*fdev = flash_dev;
 
 	return 0;
 }
