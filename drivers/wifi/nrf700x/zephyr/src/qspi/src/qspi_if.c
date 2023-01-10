@@ -101,17 +101,25 @@ struct qspi_nor_data {
 #endif /* CONFIG_MULTITHREADING */
 };
 
-static inline int qspi_freq_to_sckfreq(int freq)
+static inline int qspi_freq_mhz_to_sckfreq(int freq_m)
 {
+	if (freq_m > (NRF_QSPI_BASE_CLOCK_FREQ / MHZ(1))) {
+		return NRF_QSPI_FREQ_DIV1;
+	}
 #if defined(CONFIG_SOC_SERIES_NRF53X)
 	/* QSPIM (6-96MHz) : 192MHz / (2*(SCKFREQ + 1)) */
-	return ((192 / freq) / 2) - 1;
+	return ((192 / freq_m) / 2) - 1;
 #else
 	/* QSPIM (2-32MHz): 32 MHz / (SCKFREQ + 1) */
-	return (32 / freq) - 1;
+	return (32 / freq_m) - 1;
 #endif
 }
 
+static inline int qspi_dts_freq_to_sckfreq(void)
+{
+	/* DTS frequency is in HZ */
+	return qspi_freq_mhz_to_sckfreq(INST_0_SCK_FREQUENCY / MHZ(1));
+}
 
 static inline int qspi_get_mode(bool cpol, bool cpha)
 {
@@ -566,9 +574,7 @@ static inline void qspi_fill_init_struct(nrfx_qspi_config_t *initstruct)
 	initstruct->prot_if.dpmconfig = false;
 
 	/* Configure physical interface */
-	initstruct->phy_if.sck_freq = (INST_0_SCK_FREQUENCY > NRF_QSPI_BASE_CLOCK_FREQ) ?
-					      NRF_QSPI_FREQ_DIV1 :
-					      (NRF_QSPI_BASE_CLOCK_FREQ / INST_0_SCK_FREQUENCY) - 1;
+	initstruct->phy_if.sck_freq = qspi_dts_freq_to_sckfreq();
 	/* Using MHZ fails checkpatch constant check */
 	if (INST_0_SCK_FREQUENCY >= 16000000) {
 		qspi_config->qspi_slave_latency = 1;
@@ -978,7 +984,8 @@ int qspi_wait_while_rpu_awake(const struct device *dev)
 
 	/* Configure DTS settings */
 	if (val & RPU_AWAKE_BIT) {
-		nrf_qspi_ifconfig1_set(NRF_QSPI, &QSPIconfig.phy_if);
+		/* Restore QSPI clock frequency from DTS */
+		QSPIconfig.phy_if.sck_freq = qspi_dts_freq_to_sckfreq();
 	}
 
 	return val;
@@ -1048,14 +1055,9 @@ int qspi_WRSR2(const struct device *dev, uint8_t data)
 int qspi_cmd_wakeup_rpu(const struct device *dev, uint8_t data)
 {
 	int ret;
-	/* Use lowest 8MHz for waking up RPU */
-	const nrf_qspi_phy_conf_t qspi_phy_8mhz = {
-		.sck_freq = qspi_freq_to_sckfreq(8),
-		.sck_delay = QSPI_SCK_DELAY,
-		.spi_mode = NRF_QSPI_MODE_0
-	};
 
-	nrf_qspi_ifconfig1_set(NRF_QSPI, &qspi_phy_8mhz);
+	/* Waking RPU works reliably only with lowest frequency (8MHz) */
+	QSPIconfig.phy_if.sck_freq = qspi_freq_mhz_to_sckfreq(8);
 
 	ret = qspi_WRSR2(dev, data);
 
