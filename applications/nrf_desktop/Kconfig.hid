@@ -179,4 +179,45 @@ endchoice
 
 endmenu
 
+menu "HID device identification"
+
+config DESKTOP_DEVICE_PRODUCT
+	string "Product name"
+	default "Dongle nRF52 Desktop" if DESKTOP_ROLE_HID_DONGLE
+	default "Mouse nRF52 Desktop" if DESKTOP_PERIPHERAL_TYPE_MOUSE
+	default "Keyboard nRF52 Desktop" if DESKTOP_PERIPHERAL_TYPE_KEYBOARD
+	default "HID nRF52 Desktop"
+	help
+	  Product name used for both GATT Device Information Service and USB
+	  device. By default, name is determined by nRF Desktop device role and
+	  nRF Desktop peripheral type.
+
+config DESKTOP_DEVICE_MANUFACTURER
+	string "Manufacturer"
+	default "Nordic Semiconductor ASA"
+	help
+	  Device manufacturer used for both GATT Device Information Service and
+	  USB device. By default, device manufacturer is set to Nordic
+	  Semiconductor ASA.
+
+config DESKTOP_DEVICE_VID
+	hex "Vendor ID"
+	range 0 0XFFFF
+	default 0x1915
+	help
+	  Device Vendor ID used for both GATT Device Information Service and
+	  USB device. By default, Vendor ID of Nordic Semiconductor ASA is used.
+
+config DESKTOP_DEVICE_PID
+	hex "Product ID"
+	range 0 0XFFFF
+	default 0
+	help
+	  Device Product ID used for both GATT Device Information Service and
+	  USB device. Product ID is used to distinguish products made by the
+	  given vendor. Value must be configured in the application
+	  configuration.
+
+endmenu
+
 endmenu
