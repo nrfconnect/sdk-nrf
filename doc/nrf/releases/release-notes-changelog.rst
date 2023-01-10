@@ -341,6 +341,12 @@ nRF9160 samples
     * MCUboot child image files to properly access external flash on newer nRF9160DK versions.
     * An :file:`overlay_mcuboot_ext_flash.conf` file to enable MCUboot use of external flash.
 
+* :ref:`slm_shell_sample` sample:
+
+  * Added:
+
+    * Sample for nRF52 and nRF53 Series devices to send AT commands to nRF9160 SiP from shell.
+
 Peripheral samples
 ------------------
 
@@ -509,6 +515,12 @@ Modem libraries
       * ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG`.
 
   * Fixed an issue causing the A-GPS data download to be delayed until the RRC connection release.
+
+* :ref:`lib_modem_slm` library:
+
+  * Added:
+
+    * Library for external MCU to work with nRF9160 SiP through the Serial LTE Modem application.
 
 Libraries for networking
 ------------------------

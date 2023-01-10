@@ -371,7 +371,7 @@ Connecting with an external MCU
    This section does not apply to Thingy:91 as it does not have UART2.
 
 If you run your user application on an external MCU (for example, an nRF52 Series development kit), you can control the modem on nRF9160 directly from the application.
-See the `nRF52 client for Serial LTE Modem application`_ repository for a sample implementation of such an application.
+See the :ref:`slm_shell_sample` for a sample implementation of such an application.
 
 To connect with an external MCU using UART_2, change the configuration files for the default board as follows:
 
