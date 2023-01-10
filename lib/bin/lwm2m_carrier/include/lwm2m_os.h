@@ -113,6 +113,7 @@ typedef void (*lwm2m_os_sms_callback_t)(struct lwm2m_os_sms_data *const data, vo
 #define LWM2M_OS_DOWNLOAD_EVT_FRAGMENT 0
 #define LWM2M_OS_DOWNLOAD_EVT_ERROR    1
 #define LWM2M_OS_DOWNLOAD_EVT_DONE     2
+#define LWM2M_OS_DOWNLOAD_EVT_CLOSED   3
 /** @} */
 
 /**
@@ -132,15 +133,14 @@ struct lwm2m_os_download_evt {
 	};
 };
 
-/** @brief Download client configuration values. */
-#define LWM2M_OS_DOWNLOAD_SEC_TAG_NONE -1
-
 /**
  * @brief Download client configuration options.
  */
 struct lwm2m_os_download_cfg {
-	/** Security tag to be used for TLS. Set to LWM2M_OS_DOWNLOAD_SEC_TAG_NONE if non-secure. */
-	int sec_tag;
+	/** Security tag to be used for TLS. Set to NULL if non-secure. */
+	const int *sec_tag_list;
+	/** Number of security tags in list. Set to 0 if non-secure. */
+	uint8_t sec_tag_count;
 	/** PDN ID to be used for the download. */
 	int pdn_id;
 };
@@ -165,6 +165,7 @@ enum lwm2m_os_pdn_event {
 	LWM2M_OS_PDN_EVENT_DEACTIVATED,
 	LWM2M_OS_PDN_EVENT_IPV6_UP,
 	LWM2M_OS_PDN_EVENT_IPV6_DOWN,
+	LWM2M_OS_PDN_EVENT_NETWORK_DETACHED,
 };
 
 /**
@@ -273,11 +274,6 @@ int lwm2m_os_pdn_default_apn_get(char *buf, size_t len);
 int lwm2m_os_pdn_default_callback_set(lwm2m_os_pdn_event_handler_t cb);
 
 /**
- * @brief Initialize the LWM2M OS layer.
- */
-int lwm2m_os_init(void);
-
-/**
  * @brief Allocate memory.
  */
 void *lwm2m_os_malloc(size_t size);
@@ -303,7 +299,8 @@ int lwm2m_os_sem_init(lwm2m_os_sem_t **sem, unsigned int initial_count, unsigned
  * @brief Take a semaphore.
  *
  * @param sem     Address of the semaphore.
- * @param timeout Timeout in ms or -1 for forever.
+ * @param timeout Timeout in ms, or -1 for forever, in which case the semaphore is taken for as long
+ *                as necessary.
  *
  * @retval  0      Semaphore taken.
  * @retval -EBUSY  Returned without waiting.
@@ -337,6 +334,10 @@ int64_t lwm2m_os_uptime_delta(int64_t *ref);
 
 /**
  * @brief Put a thread to a sleep.
+ *
+ * @param ms Desired duration of sleep in milliseconds. Can be -1 for forever, in which case the
+ *           thread is suspended, but can be subsequently resumed by means of
+ *           @ref lwm2m_os_thread_resume.
  */
 int lwm2m_os_sleep(int ms);
 
@@ -379,10 +380,9 @@ lwm2m_os_work_q_t *lwm2m_os_work_q_start(int index, const char *name);
  * @brief Reserve a timer task from the OS.
  *
  * @param handler Function to run for this task.
- *
- * @return Timer task.
+ * @param timer   Assigned timer task.
  */
-lwm2m_os_timer_t *lwm2m_os_timer_get(lwm2m_os_timer_handler_t handler);
+void lwm2m_os_timer_get(lwm2m_os_timer_handler_t handler, lwm2m_os_timer_t **timer);
 
 /**
  * @brief Release a timer task.
@@ -450,21 +450,11 @@ bool lwm2m_os_timer_is_pending(lwm2m_os_timer_t *timer);
 int lwm2m_os_thread_start(int index, lwm2m_os_thread_entry_t entry, const char *name);
 
 /**
- * @brief Initialize modem library.
+ * @brief Resume a suspended thread. If the thread is not suspended, this function shall do nothing.
  *
- * @retval  0      If success.
- * @retval -EIO    If modem initialization failed.
- * @return  A positive number @em nrf_modem_dfu in case of modem firmware update.
+ * @param index Number of the thread.
  */
-int lwm2m_os_nrf_modem_init(void);
-
-/**
- * @brief Shutdown the Modem library.
- *
- * @retval  0      If success.
- * @retval -EIO    If modem shutdown failed.
- */
-int lwm2m_os_nrf_modem_shutdown(void);
+void lwm2m_os_thread_resume(int index);
 
 /**
  * @brief Initialize AT command driver.
@@ -498,11 +488,11 @@ int lwm2m_os_sms_client_register(lwm2m_os_sms_callback_t lib_callback, void *con
 void lwm2m_os_sms_client_deregister(int handle);
 
 /**
- * @brief Establish a connection with the server.
+ * @brief Establish a connection with the server and download a file.
  *
  * @retval  0      If success.
  */
-int lwm2m_os_download_connect(const char *host, const struct lwm2m_os_download_cfg *cfg);
+int lwm2m_os_download_get(const char *host, const struct lwm2m_os_download_cfg *cfg, size_t from);
 
 /**
  * @brief Disconnect from the server.
@@ -517,13 +507,6 @@ int lwm2m_os_download_disconnect(void);
  * @retval  0      If success.
  */
 int lwm2m_os_download_init(lwm2m_os_download_callback_t lib_callback);
-
-/**
- * @brief Download a file.
- *
- * @retval  0      If success.
- */
-int lwm2m_os_download_start(const char *file, size_t from);
 
 /**
  * @brief Retrieve size of file being downloaded.

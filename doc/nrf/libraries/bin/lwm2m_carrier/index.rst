@@ -21,6 +21,7 @@ In addition to this stand-alone sample, the following applications and samples i
   * :ref:`asset_tracker_v2`
   * :ref:`modem_shell_application`
   * :ref:`http_application_update_sample`
+  * :ref:`serial_lte_modem`
 
 .. note::
 
