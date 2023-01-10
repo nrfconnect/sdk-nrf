@@ -382,6 +382,12 @@ nRF9160 samples
 
   * Added support for the :ref:`liblwm2m_carrier_readme` library.
 
+* :ref:`nrf_cloud_rest_fota` sample:
+
+  * Updated:
+
+    * The sample now uses a partition in external flash for full modem FOTA updates.
+
 * :ref:`nrf_cloud_mqtt_multi_service` sample:
 
   * Added:
