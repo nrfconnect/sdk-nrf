@@ -622,6 +622,8 @@ struct nrf_cloud_init_param {
 	char *client_id;
 	/** Flash device information required for full modem FOTA updates.
 	 * Only used if CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE is enabled.
+	 * Ignored if CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION is
+	 * enabled.
 	 */
 	struct dfu_target_fmfu_fdev *fmfu_dev_inf;
 	/** Optional hooks to override memory management functions.

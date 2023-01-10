@@ -116,7 +116,8 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 
 	/* Set the flash device before initializing the transport/FOTA. */
 #if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
-	if (param->fmfu_dev_inf) {
+	if (param->fmfu_dev_inf ||
+	    IS_ENABLED(CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION)) {
 		err = nrf_cloud_fota_fmfu_dev_set(param->fmfu_dev_inf);
 		if (err < 0) {
 			return err;

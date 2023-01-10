@@ -674,6 +674,10 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud` library:
 
+  * Added:
+
+    * Support for full modem FOTA updates using a partition in external flash.
+
   * Updated:
 
     * The MQTT disconnect event is now handled by the FOTA module, allowing for updates to be completed while disconnected and reported properly when reconnected.
