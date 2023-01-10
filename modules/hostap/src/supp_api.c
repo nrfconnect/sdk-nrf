@@ -302,6 +302,7 @@ int z_wpa_supplicant_status(const struct device *dev,
 	struct wpa_supplicant *wpa_s;
 	int ret = -1;
 	struct wpa_signal_info *si = NULL;
+	struct wpa_conn_info *conn_info = NULL;
 
 	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
@@ -364,6 +365,23 @@ int z_wpa_supplicant_status(const struct device *dev,
 			wpa_printf(MSG_ERROR, "%s:Failed to read RSSI\n",
 				__func__);
 			status->rssi = -WPA_INVALID_NOISE;
+		}
+
+		conn_info = os_zalloc(sizeof(struct wpa_conn_info));
+		if (!conn_info) {
+			wpa_printf(MSG_ERROR, "%s:Failed to allocate memory\n",
+				__func__);
+			ret = -ENOMEM;
+			goto out;
+		}
+		ret = wpa_drv_get_conn_info(wpa_s, conn_info);
+		if (!ret) {
+			status->beacon_interval = conn_info->beacon_interval;
+			status->dtim_period = conn_info->dtim_period;
+		} else {
+			wpa_printf(MSG_ERROR, "%s: Failed to get connection info\n",
+				__func__);
+				goto out;
 		}
 	} else {
 		ret = 0;
