@@ -416,6 +416,7 @@ Bluetooth mesh samples
   * Updated:
 
     * Enabled :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` configuration option.
+    * The specification-defined illuminance regulator (:kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC`) now selects the :kconfig:option:`CONFIG_FPU` option by default, thus it is not required to enable it explicitly in the project file.
 
 nRF9160 samples
 ---------------
