@@ -286,7 +286,7 @@ if BT_MESH_LIGHT_CTRL_REG
 
 config BT_MESH_LIGHT_CTRL_REG_SPEC
 	bool "Spec Lightness PI Regulator"
-	depends on FPU
+	select FPU
 	default y
 	help
 	  Enable specification-defined lightness PI regulator implementation.
