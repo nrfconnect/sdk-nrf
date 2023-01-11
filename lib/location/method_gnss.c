@@ -499,23 +499,14 @@ static void method_gnss_assistance_request(void)
 		method_gnss_nrf_cloud_agps_request();
 #endif
 	}
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-	else if (pgps_agps_request.sv_mask_ephe != 0) {
-		/* When both A-GPS and P-GPS are enabled, this needs to be called only when no
-		 * A-GPS data is requested. When A-GPS data is requested, the nRF Cloud library
-		 * calls the function internally after processing the A-GPS data.
-		 */
-		int err = nrf_cloud_pgps_notify_prediction();
+#endif /* CONFIG_NRF_CLOUD_AGPS */
 
-		if (err) {
-			LOG_ERR("Error requesting notification of prediction availability: %d",
-				err);
-		}
-	}
-#endif /* CONFIG_NRF_CLOUD_PGPS */
-#elif defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_PGPS)
 	if (pgps_agps_request.sv_mask_ephe != 0) {
-		/* When only P-GPS is enabled, this needs to be always called. */
+		/* When A-GPS is used, the nRF Cloud library also calls this function after
+		 * A-GPS data has been processed. However, the call happens too late to trigger
+		 * the initial P-GPS data download at the correct stage.
+		 */
 		int err = nrf_cloud_pgps_notify_prediction();
 
 		if (err) {
