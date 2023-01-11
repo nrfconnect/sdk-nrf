@@ -137,7 +137,7 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *
  * nrf_wifi_fmac_rf_test_tx_tone() - Start/Stop RF TX tone test in radio test mode.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @enable: Enable/Disable TX tone test.
- * @tone_freq: Desired tone frequency in MHz in steps of 1MHz from -10MHz to +10MHz.
+ * @tone_freq: Desired tone frequency in MHz in steps of 1 MHz from -10 MHz to +10 MHz.
  * @tx_power: Desired TX power in the range -16dBm to +24dBm.
  *
  * This function is used to send a command to RPU to start the RF TX tone test
@@ -1290,7 +1290,7 @@ enum wifi_nrf_status wifi_nrf_fmac_otp_mac_addr_get(struct wifi_nrf_fmac_dev_ctx
  * @rf_params: Pointer to the address where the RF params information needs to be copied.
  *
  * This function is used to fetch RF parameters information from the RPU and
- * then updating the default RF parameter with the OTP values. The updated RF
+ * update the default RF parameter with the OTP values. The updated RF
  * parameters are then returned in the @rf_params.
  *
  * Returns: Status

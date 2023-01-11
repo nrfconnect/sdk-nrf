@@ -163,11 +163,11 @@ struct nrf_wifi_rf_test_capture_meas {
 struct nrf_wifi_rf_test_tx_params {
 	unsigned char test;
 
-	/* Desired tone frequency in MHz in steps of 1MHz from -10MHz to +10MHz.*/
+	/* Desired tone frequency in MHz in steps of 1 MHz from -10 MHz to +10 MHz.*/
 	signed char tone_freq;
 
-	/* Desired TX power in the range -16dBm to +24dBm.
-	 * in steps of 2dBm
+	/* Desired TX power in the range -16 dBm to +24 dBm.
+	 * in steps of 2 dBm
 	 */
 	signed char tx_pow;
 

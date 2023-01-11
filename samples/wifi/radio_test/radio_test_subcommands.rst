@@ -158,62 +158,73 @@ Wi-Fi radio test subcommands
      - 0
      - Action
      - Enable/Disable packet reception.
+   * - rx_capture_length
+     - | <val> (Min: 0, Max: 16384)
+     - 0
+     - Configuration
+     - Number of RX samples to be captured.
+   * - rx_lna_gain
+     - | 0 = 24 dB
+       | 1 = 18 dB
+       | 2 = 12 dB
+       | 3 = 0 dB
+       | 4 = -12dB
+     - 0
+     - Configuration
+     - LNA gain to be configured.
+   * - rx_bb_gain
+     - | <val>
+       | 5 bit value. Supports 64 dB range in steps of 2 dB
+     - 0
+     - Configuration
+     - Baseband gain to be configured.
    * - rx_adc_cap
-     - | <CAPTURE LENGTH> - Number of RX ADC samples to be captured.
-       | <LNA GAIN> - 0: 24 dB, 1: 18 dB, 2: 12 dB, 3: 0 dB and 4: -12 dB.
-       | <BASEBAND GAIN> - Valid range 0 to 31. Supports 64 dB range. The increment happens linearly 2 dB/step.
+     - N/A
      - N/A
      - Action
-     -
+     - Capture RX ADC samples.
    * - rx_stat_pkt_cap
-     - | <CAPTURE LENGTH> - Number of RX ADC samples to be captured.
-       | <LNA GAIN> - 0: 24 dB, 1: 18 dB, 2: 12 dB, 3: 0 dB and 4: -12 dB.
-       | <BASEBAND GAIN> - Valid range 0 to 31. Supports 64 dB range. The increment happens linearly 2 dB/step.
+     - N/A
      - N/A
      - Action
-     -
+     - Capture RX static packets.
    * - rx_dyn_pkt_cap
      - | <val> - Number of RX dynamic packet samples to be captured.
      - N/A
      - Action
-     -
+     - Capture RX dynamic packets.
    * - tx_tone
-     - | <TONE CONTROL> - 0: Disable 1: Enable
-       | <NORMALIZED FREQUENCY> - Compute the normalized frequency for the tone to be transmitted as:
-       | normFreq = round(toneFreq * ((1/(DAC sampling rate/2))*(2^25))).
-       | <TONE AMPLITUDE> - Value between 0 to 1023.
-       | <TX POWER> - TX power in the range -16 dBm to +24 dBm. Example, to transmit 5 MHz tone: wifi_radio_test 1 4194304 255 10.
+     - | 0: Disable tone
+       | 1: Enable tone
      - 0
      - Action
-     -
+     - Enable/Disable transmit tone.
    * - dpd
      - | 0 - DPD bypass
        | 1 - Enable DPD
      - 0
-     - Action
-     -
+     - Configuration
+     - Enable or bypass DPD.
    * - get_temperature
      - | No arguments required
      - N/A
      - Action
-     -
+     - Get temperature.
    * - get_rf_rssi
      - | No arguments required
      - N/A
      - Action
-     -
+     - Get RF RSSI.
    * - set_xo_val
      - | <val> - XO value (Min:0, Max: 127)
-     - 42 or Value programmed in OTP
+     - 42 or value programmed in OTP
      - Action
-     -
-   * - get_xo_val
-     - | <TONE FREQUENCY> - Default is 0.5 MHz(4194304).
-       | The range supported is -1 MHz to +1 MHz.
-       | Compute the tone frequency for the tone to be transmitted as: tone frequency = round(tone_frequency * 2^23).
+     - Set XO value.
+   * - compute_optimal_xo_val
+     - N/A
      - N/A
      - Action
-     -
+     - Compute optimal XO value. Note: This is still experimental and to be used at own risk.
    * - show_config
      - N/A
      - N/A
