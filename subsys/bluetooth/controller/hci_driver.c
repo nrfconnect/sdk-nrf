@@ -140,11 +140,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 		      (SDC_SCAN_BUF_SIZE) + \
 		      (SDC_EXTRA_MEMORY))
 
-#if CONFIG_BT_SDC_ADDITIONAL_MEMORY
-uint8_t sdc_mempool[MEMPOOL_SIZE];
-#else
 static uint8_t sdc_mempool[MEMPOOL_SIZE];
-#endif
 
 #if IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER)
 extern void bt_ctlr_assert_handle(char *file, uint32_t line);
