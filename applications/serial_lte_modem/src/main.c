@@ -21,6 +21,8 @@
 #include <zephyr/sys/reboot.h>
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
+#include <pm_config.h>
+#include <net/fota_download.h>
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
 
@@ -324,6 +326,21 @@ void handle_mcuboot_swap_ret(void)
 	switch (type) {
 	/** Attempt to boot the contents of slot 0. */
 	case BOOT_SWAP_TYPE_NONE:
+	/** MCUBOOT set BOOT_SWAP_TYPE_NONE after swapping B1 image, even TEST flag is set
+	 * by dfu_target_mcuboot library. There is no need to confirm image for B1 update.
+	 * But prompt which slot is activated.
+	 */
+#if defined(CONFIG_SECURE_BOOT)
+		bool s0_active;
+
+		fota_download_s0_active_get(&s0_active);
+		if (fota_type == SLM_DFU_TARGET_IMAGE_TYPE_BL1) {
+			LOG_INF("s0_active %d", s0_active);
+			fota_status = FOTA_STATUS_OK;
+			fota_info = 0;
+			break;
+		}
+#endif
 	/** Swap to slot 1. Absent a confirm command, revert back on next boot. */
 	case BOOT_SWAP_TYPE_TEST:
 	/** Swap to slot 1, and permanently switch to booting its contents. */
@@ -398,7 +415,8 @@ int main(void)
 	if (fota_stage != FOTA_STAGE_INIT) {
 		if (fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA) {
 			handle_nrf_modem_lib_init_ret();
-		} else if (fota_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
+		} else if (fota_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT ||
+			   fota_type == SLM_DFU_TARGET_IMAGE_TYPE_BL1) {
 			handle_mcuboot_swap_ret();
 		} else {
 			LOG_ERR("Unknown DFU type: %d", fota_type);
