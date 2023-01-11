@@ -118,7 +118,7 @@ Testing
 
          * To run a continuous Orthogonal frequency-division multiplexing (OFDM) TX traffic sequence with the following configuration:
 
-           * Channel: 14
+           * Channel: 1
            * Frame duration: 5484 us
            * Inter-frame gap: 4200 us
 
@@ -130,7 +130,7 @@ Testing
               wifi_radio_test tx 0
               wifi_radio_test tx_pkt_tput_mode 0
               wifi_radio_test tx_pkt_len 4095
-              wifi_radio_test chnl_primary 14
+              wifi_radio_test chnl_primary 1
               wifi_radio_test tx_pkt_rate 6
               wifi_radio_test tx_power 0
               wifi_radio_test tx_pkt_gap 4200

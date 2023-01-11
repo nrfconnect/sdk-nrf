@@ -22,7 +22,7 @@ Wi-Fi radio test subcommands
      - Default value
      - Type
      - Description
-   * - reset
+   * - set_defaults
      - N/A
      - N/A
      - Configuration
@@ -42,7 +42,7 @@ Wi-Fi radio test subcommands
    * - phy_calib_txpow
      - | 0 - Disable
        | 1 - Enable
-     - 1
+     - 0
      - Configuration
      - Enable/Disable TX power calibration.
    * - phy_calib_rxiq
@@ -91,7 +91,7 @@ Wi-Fi radio test subcommands
      - | 0 - Short Preamble
        | 1 - Long Preamble
        | 2 - Mixed Preamble
-     - 0
+     - 1
      - Configuration
      - Type of preamble to be used for each packet. Short/Long Preamble are applicable only when tx_pkt_tput_mode is set to Legacy and Mixed Preamble is applicable only when tx_pkt_tput_mode is set to HT/VHT.
    * - tx_pkt_mcs
@@ -103,11 +103,11 @@ Wi-Fi radio test subcommands
    * - tx_pkt_rate
      - | -1 - Not being used
        | <val> - Legacy rate to be used (1, 2, 5.5, 11, 6, 9, 12, 18, 24, 36, 48, 54)
-     - -1
+     - 6
      - Configuration
      - Legacy rate at which packets will be transmitted. Mutually exclusive with tx_pkt_mcs.
    * - tx_pkt_gap
-     - <val> - (Min: 200, Max: 200000, Default: 200)
+     - <val> - (Min: 200, Max: 200000)
      - 200
      - Configuration
      - Interval between TX packets in microseconds.
@@ -118,12 +118,12 @@ Wi-Fi radio test subcommands
      - Configuration
      - Number of packets to transmit before stopping.
    * - tx_pkt_len
-     - <val> - Desired packet length (Default: 1400)
+     - <val> - Desired packet length
      - 1400
      - Configuration
      - Packet data length to be used for the TX stream.
    * - tx_power
-     - <val> - Transmit power in dBm.
+     - <val> - Transmit power in dBm (Min: 0, Max: 24)
      - 0
      - Configuration
      - Transmit power for frame transmission.
@@ -189,7 +189,7 @@ Wi-Fi radio test subcommands
    * - dpd
      - | 0 - DPD bypass
        | 1 - Enable DPD
-     - N/A
+     - 0
      - Action
      -
    * - get_temperature
