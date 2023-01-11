@@ -12,10 +12,9 @@
 
 #include "low_power.h"
 
-static void on_thread_state_changed(uint32_t flags, void *context)
+static void on_thread_state_changed(otChangedFlags flags, struct openthread_context *ot_context,
+				    void *user_data)
 {
-	struct openthread_context *ot_context = context;
-
 	if (flags & OT_CHANGED_THREAD_ROLE) {
 		if (otThreadGetDeviceRole(ot_context->instance) == OT_DEVICE_ROLE_CHILD) {
 			const struct device *cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
@@ -30,7 +29,11 @@ static void on_thread_state_changed(uint32_t flags, void *context)
 	}
 }
 
+static struct openthread_state_changed_cb ot_state_chaged_cb = {
+	.state_changed_cb = on_thread_state_changed
+};
+
 void low_power_enable(void)
 {
-	openthread_set_state_changed_cb(on_thread_state_changed);
+	openthread_state_changed_cb_register(openthread_get_default_context(), &ot_state_chaged_cb);
 }
