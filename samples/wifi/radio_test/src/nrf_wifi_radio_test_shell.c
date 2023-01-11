@@ -257,8 +257,10 @@ static int check_channel_settings(const struct shell *shell,
 }
 
 
-void nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_params)
+enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_params)
 {
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+
 	memset(conf_params,
 	       0,
 	       sizeof(*conf_params));
@@ -266,14 +268,12 @@ void nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_params)
 	/* Initialize values which are other than 0 */
 	conf_params->op_mode = RPU_OP_MODE_RADIO_TEST;
 
-	memset(conf_params->rf_params,
-	       0xFF,
-	       sizeof(conf_params->rf_params));
+	status = wifi_nrf_fmac_rf_params_get(ctx->rpu_ctx,
+					     conf_params->rf_params);
 
-	nrf_wifi_utils_hex_str_to_val(rpu_drv_priv_zep.fmac_priv->opriv,
-				      conf_params->rf_params,
-				      sizeof(conf_params->rf_params),
-				      NRF_WIFI_DEF_RF_PARAMS);
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		goto out;
+	}
 
 	conf_params->tx_pkt_nss = 1;
 	conf_params->tx_pkt_mcs = -1;
@@ -284,12 +284,18 @@ void nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_params)
 	conf_params->tx_mode = 1;
 	conf_params->tx_pkt_num = -1;
 	conf_params->tx_pkt_len = 1400;
+	conf_params->tx_pkt_preamble = 1;
+	conf_params->tx_pkt_rate = 6;
+	conf_params->he_ltf = 2;
+	conf_params->he_gi = 2;
 	conf_params->aux_adc_input_chain_id = 1;
 #ifndef CONFIG_NRF700X_REV_A
 	conf_params->ru_tone = 26;
 	conf_params->ru_index = 1;
 #endif /* !CONFIG_NRF700X_REV_A */
 	conf_params->phy_calib = NRF_WIFI_DEF_PHY_CALIB;
+out:
+	return status;
 }
 
 
@@ -297,11 +303,20 @@ static int nrf_wifi_radio_test_set_defaults(const struct shell *shell,
 					    size_t argc,
 					    const char *argv[])
 {
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+
 	if (!check_test_in_prog(shell)) {
 		return -ENOEXEC;
 	}
 
-	nrf_wifi_radio_test_conf_init(&ctx->conf_params);
+	status = nrf_wifi_radio_test_conf_init(&ctx->conf_params);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Configuration init failed\n");
+		return -ENOEXEC;
+	}
 
 	return 0;
 }
@@ -514,27 +529,6 @@ static int nrf_wifi_radio_test_set_he_gi(const struct shell *shell,
 	}
 
 	ctx->conf_params.he_gi = he_gi;
-
-	return 0;
-}
-
-
-static int nrf_wifi_radio_test_set_rf_params(const struct shell *shell,
-					     size_t argc,
-					     const char *argv[])
-{
-	if (!check_test_in_prog(shell)) {
-		return -ENOEXEC;
-	}
-
-	memset(ctx->conf_params.rf_params,
-	       0xFF,
-	       NRF_WIFI_RF_PARAMS_CONF_SIZE);
-
-	nrf_wifi_utils_hex_str_to_val(rpu_drv_priv_zep.fmac_priv->opriv,
-				      ctx->conf_params.rf_params,
-				      NRF_WIFI_RF_PARAMS_CONF_SIZE,
-				      (char *)argv[1]);
 
 	return 0;
 }
@@ -983,7 +977,15 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 		return -ENOEXEC;
 	}
 
-	nrf_wifi_radio_test_conf_init(&ctx->conf_params);
+	status = nrf_wifi_radio_test_conf_init(&ctx->conf_params);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Configuration init failed\n");
+		return -ENOEXEC;
+	}
+
 	ctx->conf_params.chan.primary_num = val;
 
 	status = wifi_nrf_fmac_radio_test_init(ctx->rpu_ctx,
@@ -1603,6 +1605,8 @@ static int nrf_wifi_radio_set_xo_val(const struct shell *shell,
 		goto out;
 	}
 
+	conf_params->rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_X0] = val;
+
 	ret = 0;
 out:
 	ctx->rf_test_run = false;
@@ -1668,16 +1672,6 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 	shell_fprintf(shell,
 		      SHELL_INFO,
 		      "************* Configured Parameters ***********\n");
-	shell_fprintf(shell,
-		      SHELL_INFO,
-		      "rf_params =");
-
-	for (i = 0; i < NRF_WIFI_RF_PARAMS_CONF_SIZE; i++)
-		shell_fprintf(shell,
-			      SHELL_INFO,
-			      " %02X",
-			      conf_params->rf_params[i]);
-
 	shell_fprintf(shell,
 		      SHELL_INFO,
 		      "\n");
@@ -1771,6 +1765,11 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      SHELL_INFO,
 		      "he_gi = %d\n",
 		      conf_params->he_gi);
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "xo_val = %d\n",
+		      conf_params->rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_X0]);
 
 	shell_fprintf(shell,
 		      SHELL_INFO,
@@ -1963,12 +1962,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "1 - 1.6 us\n"
 		      "2 - 3.2 us                                           ",
 		      nrf_wifi_radio_test_set_he_gi,
-		      2,
-		      0),
-	SHELL_CMD_ARG(rf_params,
-		      NULL,
-		      "RF parameters in the form of a 42 byte hex value string",
-		      nrf_wifi_radio_test_set_rf_params,
 		      2,
 		      0),
 #ifdef CONFIG_NRF700X_REV_A
@@ -2199,7 +2192,11 @@ static int nrf_wifi_radio_test_shell_init(const struct device *unused)
 {
 	ARG_UNUSED(unused);
 
-	nrf_wifi_radio_test_conf_init(&ctx->conf_params);
+	status = nrf_wifi_radio_test_conf_init(&ctx->conf_params);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		return -ENOEXEC;
+	}
 
 	return 0;
 }

@@ -58,16 +58,6 @@ Wi-Fi radio FICR subcommands
      - arg
      - arg is 7-bit unsigned XO value. Bits [31:7] unused. Adjusts capacitor bank, 0 : Lowest capacitance (Highest frequency), 255 : Highest capacitance (Lowest frequency).
    * - otp_write_params
-     - CALIB_PDADJM7
-     - 0x134
-     - arg
-     - arg is 32-bit power detector adjustment for MCS7 for channel 7, 36, 100, 165 (channel 7 in bits[7:0] - signed).
-   * - otp_write_params
-     - CALIB_PDADJM0
-     - 0x138
-     - arg
-     - arg is 32-bit power detector adjustment for MCS0 for channel 7, 36, 100, 165 (channel 7 in bits[7:0] - signed).
-   * - otp_write_params
      - CALIB_PWR2G
      - 0x13C
      - arg
@@ -83,21 +73,6 @@ Wi-Fi radio FICR subcommands
      - arg
      - arg is 32-bit value specifying maximum output power for MCS0 in channel 36, 100, 165 (channel 36 in bits[7:0] - unsigned). Bits [31:24] unused.
    * - otp_write_params
-     - CALIB_RXGNOFF
-     - 0x148
-     - arg
-     - arg is 32-bit value specifying RX gain offset for channel 7, 36, 100, 165 (channel 7 in bits[7:0] - signed).
-   * - otp_write_params
-     - CALIB_TXPBACKOFFT
-     - 0x14C
-     - arg
-     - arg is 32-bit value specifying TX power backoff versus temperature. Bits[7:0] 2.4G at +80 degree Celsius, bits[15:8] 2.4G at -20 degree Celsius, bits[23:16] 5.0G at +80 degree Celsius, bits[31:24] 5.0G at -20 degree Celsius. Each 8-bit field is a signed value.
-   * - otp_write_params
-     - CALIB_TXPBACKOFFV
-     - 0x150
-     - arg
-     - arg is 32-bit value specifying TX power backoff versus voltage. Backoff in 2.4GHz, 5GHz bands  at very low voltage. Backoff in 2.4GHz, 5GHz bands  at low voltage. Each 8-bit field is signed value.
-   * - otp_write_params
      - REGION_DEFAULTS
      - 0x154
      - arg
@@ -108,12 +83,12 @@ Wi-Fi radio FICR subcommands
        | bit 1  : MAC0 Address
        | bit 2  : MAC1 Address
        | bit 3  : CALIB_XO
-       | bit 4  : CALIB_PDADJM7
-       | bit 5  : CALIB_PDADJM0
+       | bit 4  : Reserved
+       | bit 5  : Reserved
        | bit 6  : CALIB_PWR2G
        | bit 7  : CALIB_PWR5GM7
        | bit 8  : CALIB_PWR5GM0
-       | bit 9  : CALIB_RXGNOFF
-       | bit 10 : CALIB_TXPBACKOFFT
-       | bit 11 : CALIB_TXPBACKOFFV
+       | bit 9  : Reserved
+       | bit 10 : Reserved
+       | bit 11 : Reserved
        | bit 12-31 : Reserved

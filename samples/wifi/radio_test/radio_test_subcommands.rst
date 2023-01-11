@@ -61,21 +61,16 @@ Wi-Fi radio test subcommands
      - | 0 - 1x HE LTF
        | 1 - 2x HE LTF
        | 2 - 4x HE LTF
-     - 0
+     - 2
      - Configuration
      - Configure HE long training field (LTF) value while transmitting the packet.
    * - he_gi
      - | 0 - 0.8 us
        | 1 - 1.6 us
        | 2 - 3.2 us
-     - 0
+     - 2
      - Configuration
      - Configure HE guard interval (GI) while transmitting the packet.
-   * - rf_params
-     - Hex value string
-     - N/A
-     - Configuration
-     - Hexadecimal value string for RF related parameters. See :ref:`wifi_radio_test_rf_params` for the description.
    * - tx_pkt_tput_mode
      - | 0 - Legacy
        | 1 - HT mode
@@ -208,8 +203,8 @@ Wi-Fi radio test subcommands
      - Action
      -
    * - set_xo_val
-     - | <val> - XO value
-     - N/A
+     - | <val> - XO value (Min:0, Max: 127)
+     - 42 or Value programmed in OTP
      - Action
      -
    * - get_xo_val
@@ -251,81 +246,3 @@ Wi-Fi radio test statistics
      - Number of DSSS frames whose CRC32 check passed.
    * - dsss_crc32_fail_cnt
      - Number of DSSS frames whose CRC32 check failed.
-
-
-.. _wifi_radio_test_rf_params:
-
-RF parameters
-*************
-
-.. list-table:: RF parameters
-   :header-rows: 1
-
-   * - Byte(s)
-     - Type
-     - Units
-     - Description
-   * - 0 - 5
-     - NA
-     - NA
-     - Reserved.
-   * - 6
-     - Unsigned
-     - NA
-     - XO adjustment.
-   * - 7 - 10
-     - Signed
-     - 0.25 dB
-     - Power detector adjustment for MCS7 for channel 7, 36, 100 and 165.
-   * - 11 - 14
-     - Signed
-     - 0.25 dB
-     - Power detector adjustment for MCS0 for channel 7, 36, 100 and 165.
-   * - 15
-     - Signed
-     - 0.25 dBm
-     - Max output power for 11b for channel 7.
-   * - 16 - 17
-     - Signed
-     - 0.25 dBm
-     - Max output power for MCS7 and MCS0 for channel 7.
-   * - 18 - 20
-     - Signed
-     - 0.25 dBm
-     - Max output power for MCS7 for channel 36, 100 and 165.
-   * - 21 - 23
-     - Signed
-     - 0.25 dBm
-     - Max output power for MCS0 for channel 36, 100 and 165.
-   * - 24 - 27
-     - Signed
-     - 0.25 dBm
-     - Rx-Gain offset for channel 7, 36, 100 and 165.
-   * - 28
-     - Signed
-     - degree Celsius
-     - Maximum chip temperature.
-   * - 29
-     - Signed
-     - degree Celsius
-     - Minimum chip temperature.
-   * - 30
-     - Signed
-     - 0.25 dB
-     - TX Power backoff at high temperature (+80 degree Celsius) in 2.4G.
-   * - 31
-     - Signed
-     - 0.25 dB
-     - TX Power backoff at low temperature (-20 degree Celsius) in 2.4G.
-   * - 32
-     - Signed
-     - 0.25 dB
-     - TX Power backoff at high temperature (+80 degree Celsius) in 5G.
-   * - 33
-     - Signed
-     - 0.25 dB
-     - TX Power backoff at low temperature (-20 degree Celsius) in 5G.
-   * - 34 - 41
-     - Signed
-     - 0.25 dBm
-     - Voltage related power backoff.
