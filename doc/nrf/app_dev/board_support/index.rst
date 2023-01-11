@@ -10,6 +10,7 @@ Board support
 The |NCS| provides board definitions for all Nordic Semiconductor devices.
 In addition, you can define custom boards.
 
+.. _app_boards_names:
 .. _gs_programming_board_names:
 
 Board names
@@ -32,6 +33,8 @@ The build target column uses several entries for multi-core hardware platforms:
     By default, the build system automatically includes :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` in SPE and merges it with NSPE.
 
 Read more about separation of processing environments in the :ref:`app_boards_spe_nspe` section.
+
+.. _app_boards_names_zephyr:
 
 Boards included in sdk-zephyr
 =============================
@@ -88,6 +91,8 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 
    * The build target ``nrf9160dk_nrf9160_ns`` was named ``nrf9160dk_nrf9160ns``.
    * The build target ``nrf5340dk_nrf5340_cpuapp_ns`` was named ``nrf5340dk_nrf5340_cpuappns``.
+
+.. _app_boards_names_nrf:
 
 Boards included in sdk-nrf
 ==========================
