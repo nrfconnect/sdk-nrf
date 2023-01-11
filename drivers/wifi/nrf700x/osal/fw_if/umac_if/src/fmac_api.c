@@ -998,9 +998,8 @@ out:
 
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						  unsigned char enable,
-						  signed int norm_frequency,
-						  unsigned short int tone_amplitude,
-						  unsigned char tx_power)
+						  signed char tone_freq,
+						  signed char tx_power)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct nrf_wifi_rf_test_tx_params rf_test_tx_params;
@@ -1012,8 +1011,7 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx 
 			      sizeof(rf_test_tx_params));
 
 	rf_test_tx_params.test = NRF_WIFI_RF_TEST_TX_TONE;
-	rf_test_tx_params.norm_freq = norm_frequency;
-	rf_test_tx_params.tone_amp = tone_amplitude;
+	rf_test_tx_params.tone_freq = tone_freq;
 	rf_test_tx_params.tx_pow = tx_power;
 	rf_test_tx_params.enabled = enable;
 
@@ -1265,8 +1263,7 @@ out:
 }
 
 
-enum wifi_nrf_status nrf_wifi_fmac_rf_test_get_xo_value(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					unsigned int tone_frequency)
+enum wifi_nrf_status nrf_wifi_fmac_rf_test_compute_xo(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct nrf_wifi_rf_get_xo_value rf_get_xo_value_params;
@@ -1278,7 +1275,6 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_get_xo_value(struct wifi_nrf_fmac_dev
 			      sizeof(rf_get_xo_value_params));
 
 	rf_get_xo_value_params.test = NRF_WIFI_RF_TEST_XO_TUNE;
-	rf_get_xo_value_params.tone_frequency = tone_frequency;
 
 	fmac_dev_ctx->rf_test_type = NRF_WIFI_RF_TEST_XO_TUNE;
 	fmac_dev_ctx->rf_test_cap_data = NULL;

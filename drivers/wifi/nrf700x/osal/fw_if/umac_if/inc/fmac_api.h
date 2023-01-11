@@ -137,12 +137,11 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *
  * nrf_wifi_fmac_rf_test_tx_tone() - Start/Stop RF TX tone test in radio test mode.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @enable: Enable/Disable TX tone test.
- * @norm_frequency: Desired tone frequency.
- * @tone_amplitude: Desired tone amplitude in the range 0 to 1023.
+ * @tone_freq: Desired tone frequency in MHz in steps of 1MHz from -10MHz to +10MHz.
  * @tx_power: Desired TX power in the range -16dBm to +24dBm.
  *
- * This function is used to send a command to RPU to start
- * the RF TX tone test in radio test mode.
+ * This function is used to send a command to RPU to start the RF TX tone test
+ * in radio test mode.
  *
  * Returns: Status
  *              Pass : %WIFI_NRF_STATUS_SUCCESS
@@ -150,9 +149,8 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *
  */
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						  unsigned char enable,
-						  signed int norm_frequency,
-						  unsigned short int tone_amplitude,
-						  unsigned char tx_power);
+						  signed char tone_freq,
+						  signed char tx_power);
 
 
 
@@ -207,30 +205,28 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_get_rf_rssi(struct wifi_nrf_fmac_dev_ctx *
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @value: XO adjustment value.
  *
- * This function is used to send a command to RPU to
- * set XO adjustment value in radio test mode.
+ * This function is used to send a command to RPU to set XO adjustment
+ * value in radio test mode.
  *
  * Returns: Status
  *              Pass : %WIFI_NRF_STATUS_SUCCESS
  *              Error: %WIFI_NRF_STATUS_FAIL
  */
 enum wifi_nrf_status nrf_wifi_fmac_set_xo_val(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-						 unsigned char value);
+					      unsigned char value);
 
 /**
- * nrf_wifi_fmac_rf_test_get_xo_value() - Get XO calibrated value.
+ * nrf_wifi_fmac_rf_test_compute_optimal_xo_val() - Get XO calibrated value.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
- * @tone_frequency: Tone frequency used for XO calibration.
  *
- * This function is used to send a command to RPU to
- * get XO adjustment value in radio test mode.
+ * This function is used to send a command to RPU. RPU estimates and
+ * returns optimal XO value.
  *
  * Returns: Status
  *              Pass : %WIFI_NRF_STATUS_SUCCESS
  *              Error: %WIFI_NRF_STATUS_FAIL
  */
-enum wifi_nrf_status nrf_wifi_fmac_rf_test_get_xo_value(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-						 unsigned int tone_frequency);
+enum wifi_nrf_status nrf_wifi_fmac_rf_test_compute_xo(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 #else
 
 /**
