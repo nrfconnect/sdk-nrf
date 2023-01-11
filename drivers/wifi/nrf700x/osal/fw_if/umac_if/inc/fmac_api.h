@@ -1286,4 +1286,21 @@ enum wifi_nrf_status wifi_nrf_fmac_set_mcast_addr(struct wifi_nrf_fmac_dev_ctx *
 enum wifi_nrf_status wifi_nrf_fmac_otp_mac_addr_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						    unsigned char vif_idx,
 						    unsigned char *mac_addr);
+
+
+/**
+ * wifi_nrf_fmac_rf_params_get() - Get the RF parameters to be programmed to the RPU.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @rf_params: Pointer to the address where the RF params information needs to be copied.
+ *
+ * This function is used to fetch RF parameters information from the RPU and
+ * then updating the default RF parameter with the OTP values. The updated RF
+ * parameters are then returned in the @rf_params.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						 unsigned char *rf_params);
 #endif /* __FMAC_API_H__ */
