@@ -12,6 +12,7 @@ config WPA_SUPP
 	select NET_SOCKETS_PACKET
 	select NET_SOCKETPAIR
 	select NET_L2_WIFI_MGMT
+	select EXPERIMENTAL
 	help
 	  WPA supplicant implements 802.1X related functions.
 
