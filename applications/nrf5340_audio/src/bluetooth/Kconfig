@@ -318,7 +318,7 @@ config BT_AUDIO_BROADCAST_NAME_ALT
 	help
 	  Alternative name of the broadcast.
 
-config BT_USE_AUDIO_BROADCAST_NAME_ALT
+config BT_AUDIO_USE_BROADCAST_NAME_ALT
 	bool "Use the alternative broadcast name"
 	default n
 	depends on TRANSPORT_BIS
