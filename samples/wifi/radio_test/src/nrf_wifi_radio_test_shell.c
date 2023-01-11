@@ -849,6 +849,13 @@ static int nrf_wifi_radio_test_set_tx_power(const struct shell *shell,
 
 	val = strtoul(argv[1], &ptr, 10);
 
+	if (val > 24) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "'tx_power' cannot be more than 24 dBm\n");
+		return -ENOEXEC;
+	}
+
 	if (!check_test_in_prog(shell)) {
 		return -ENOEXEC;
 	}
