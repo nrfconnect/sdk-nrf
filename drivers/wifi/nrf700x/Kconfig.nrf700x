@@ -13,6 +13,7 @@ config WIFI_NRF700X
 	depends on WIFI
 	select NET_L2_WIFI_MGMT if NETWORKING
 	select WIFI_USE_NATIVE_NETWORKING if NETWORKING
+	select EXPERIMENTAL
 	help
 	  Nordic Wi-Fi Driver
 
