@@ -267,6 +267,9 @@ void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 	case PDN_EVENT_CNEC_ESM:
 		LOG_WRN("Event: PDP context %d, %s", cid, pdn_esm_strerror(reason));
 		break;
+	case PDN_EVENT_CNEC_EMM:
+		LOG_WRN("Event: PDP context %d, %s", cid, pdn_emm_strerror(reason));
+		break;
 	case PDN_EVENT_ACTIVATED:
 		LOG_DBG("PDN_EVENT_ACTIVATED");
 		{ SEND_EVENT(modem, MODEM_EVT_LTE_CONNECTED); }
