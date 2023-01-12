@@ -127,7 +127,9 @@ nRF IEEE 802.15.4 radio driver
 Wi-Fi
 -----
 
-|no_changes_yet_note|
+* Added:
+
+  * :ref:`ug_wifi` document.
 
 Applications
 ============
