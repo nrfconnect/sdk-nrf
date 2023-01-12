@@ -6,15 +6,8 @@
 
 #define DT_DRV_COMPAT nordic_sensor_stub
 
-#include <errno.h>
-#include <stdint.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
-#include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/sensor.h>
 #include <drivers/sensor_stub.h>
 #include <zephyr/kernel.h>
