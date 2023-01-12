@@ -141,7 +141,7 @@ function(add_child_image)
   endif()
 
   if (NOT CONFIG_PARTITION_MANAGER_ENABLED)
-    message(FATAL_ERROR
+    message(WARNING
       "CONFIG_PARTITION_MANAGER_ENABLED was not set for image ${ACI_NAME}."
       "This option must be set for an image to support being added as a child"
       "image through 'add_child_image'. This is typically done by invoking the"
@@ -174,10 +174,13 @@ function(add_child_image_from_source)
   endif()
 
   # Pass information that the partition manager is enabled to Kconfig.
-  add_overlay_config(
-    ${ACI_NAME}
-    ${NRF_DIR}/subsys/partition_manager/partition_manager_enabled.conf
-    )
+  # Do it only if partition manager is enabled for the parent image.
+  if (CONFIG_PARTITION_MANAGER_ENABLED)
+    add_overlay_config(
+      ${ACI_NAME}
+      ${NRF_DIR}/subsys/partition_manager/partition_manager_enabled.conf
+      )
+  endif()
 
   if (${ACI_NAME}_BOARD)
     message(FATAL_ERROR

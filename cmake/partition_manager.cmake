@@ -4,6 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# Skip if partition manager is not enabled
+if(NOT CONFIG_PARTITION_MANAGER_ENABLED)
+  return()
+endif()
+
 macro(add_region)
   set(oneValueArgs NAME SIZE BASE PLACEMENT DEVICE DEFAULT_DRIVER_KCONFIG DYNAMIC_PARTITION)
   cmake_parse_arguments(REGION "" "${oneValueArgs}" "" ${ARGN})
