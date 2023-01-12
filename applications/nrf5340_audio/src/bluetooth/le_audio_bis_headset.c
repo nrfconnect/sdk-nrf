@@ -334,11 +334,6 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 		return;
 	}
 
-	if (encrypted) {
-		LOG_ERR("Cannot sync to encrypted broadcast source");
-		return;
-	}
-
 	LOG_INF("Syncing to broadcast stream index %d", active_stream_index);
 
 	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfields[active_stream_index],

@@ -181,11 +181,11 @@ static int adv_create(void)
 	NET_BUF_SIMPLE_DEFINE(base_buf, 128);
 
 #if (CONFIG_AURACAST)
-	NET_BUF_SIMPLE_DEFINE(pba_buf, BT_UUID_SIZE_16 + 2);
-	struct bt_data ext_ad[3];
+	NET_BUF_SIMPLE_DEFINE(pba_buf, BT_UUID_SIZE_16 + 8);
+	struct bt_data ext_ad[4];
 	uint8_t pba_features = 0;
 #else
-	struct bt_data ext_ad[2];
+	struct bt_data ext_ad[3];
 #endif /* (CONFIG_AURACAST) */
 	struct bt_data per_ad;
 
@@ -215,8 +215,8 @@ static int adv_create(void)
 		broadcast_id = CONFIG_BT_AUDIO_BROADCAST_ID_FIXED;
 	}
 
-	ext_ad[0] = (struct bt_data)BT_DATA(BT_DATA_BROADCAST_NAME, CONFIG_BT_AUDIO_BROADCAST_NAME,
-					    strlen(CONFIG_BT_AUDIO_BROADCAST_NAME));
+	ext_ad[0] = (struct bt_data)BT_DATA_BYTES(BT_DATA_BROADCAST_NAME,
+						  CONFIG_BT_AUDIO_BROADCAST_NAME);
 
 	/* Setup extended advertising data */
 	net_buf_simple_add_le16(&ad_buf, BT_UUID_BROADCAST_AUDIO_VAL);
@@ -224,15 +224,27 @@ static int adv_create(void)
 
 	ext_ad[1] = (struct bt_data)BT_DATA(BT_DATA_SVC_DATA16, ad_buf.data, ad_buf.len);
 
+	ext_ad[2] = (struct bt_data)BT_DATA_BYTES(BT_DATA_GAP_APPEARANCE,
+						  (CONFIG_BT_DEVICE_APPEARANCE >> 0) & 0xff,
+						  (CONFIG_BT_DEVICE_APPEARANCE >> 8) & 0xff);
+
 #if (CONFIG_AURACAST)
 	public_broadcast_features_set(&pba_features);
 
 	net_buf_simple_add_le16(&pba_buf, 0x1856);
 	net_buf_simple_add_u8(&pba_buf, pba_features);
-	/* No metadata, set length to 0 */
-	net_buf_simple_add_u8(&pba_buf, 0x00);
+	/* Metadata*/
+	net_buf_simple_add_u8(&pba_buf, 0x06);
+	/* Parental */
+	net_buf_simple_add_u8(&pba_buf, 0x02);
+	net_buf_simple_add_u8(&pba_buf, BT_AUDIO_METADATA_TYPE_PARENTAL_RATING);
+	net_buf_simple_add_u8(&pba_buf, CONFIG_BT_AUDIO_BROADCAST_PARENTAL_RATING);
+	/* active */
+	net_buf_simple_add_u8(&pba_buf, 0x02);
+	net_buf_simple_add_u8(&pba_buf, 0x08);
+	net_buf_simple_add_u8(&pba_buf, 0x01);
 
-	ext_ad[2] = (struct bt_data)BT_DATA(BT_DATA_SVC_DATA16, pba_buf.data, pba_buf.len);
+	ext_ad[3] = (struct bt_data)BT_DATA(BT_DATA_SVC_DATA16, pba_buf.data, pba_buf.len);
 #endif /* (CONFIG_AURACAST) */
 
 	ret = bt_le_ext_adv_set_data(adv, ext_ad, ARRAY_SIZE(ext_ad), NULL, 0);
@@ -266,7 +278,7 @@ static int initialize(void)
 	int ret;
 	static bool initialized;
 	struct bt_codec_data bis_codec_data =
-		BT_CODEC_DATA(BT_CODEC_CONFIG_LC3_FREQ, BT_CODEC_CONFIG_LC3_FREQ_48KHZ);
+		BT_CODEC_DATA(BT_CODEC_CONFIG_LC3_FREQ, BT_AUDIO_FREQ);
 	struct bt_audio_broadcast_source_stream_param stream_params[ARRAY_SIZE(audio_streams)];
 	struct bt_audio_broadcast_source_subgroup_param
 		subgroup_params[CONFIG_BT_AUDIO_BROADCAST_SRC_SUBGROUP_COUNT];
@@ -290,12 +302,30 @@ static int initialize(void)
 		subgroup_params[i].params_count = ARRAY_SIZE(stream_params);
 		subgroup_params[i].params = &stream_params[i];
 		subgroup_params[i].codec = &lc3_preset.codec;
+#if (CONFIG_BT_AUDIO_BROADCAST_IMMEDIATE_FLAG)
+		/* Immediate rendering flag */
+		subgroup_params[i].codec->meta[0].data.type = 0x09;
+		subgroup_params[i].codec->meta[0].data.data_len = 0;
+		subgroup_params[i].codec->meta_count = 1;
+#endif /* (CONFIG_BT_AUDIO_BROADCAST_IMMEDIATE_FLAG) */
 	}
 
 	create_param.params_count = ARRAY_SIZE(subgroup_params);
 	create_param.params = subgroup_params;
 	create_param.qos = &lc3_preset.qos;
-	create_param.packing = BT_ISO_PACKING_SEQUENTIAL;
+	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_INTERLEAVED)) {
+		LOG_WRN("Setting interleaved!");
+		create_param.packing = BT_ISO_PACKING_INTERLEAVED;
+	} else {
+		create_param.packing = BT_ISO_PACKING_SEQUENTIAL;
+	}
+
+#if (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)
+	create_param.encryption = true;
+	strncpy(create_param.broadcast_code, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY, 16);
+#else
+	create_param.encryption = false;
+#endif /* (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED) */
 
 	LOG_DBG("Creating broadcast source");
 
