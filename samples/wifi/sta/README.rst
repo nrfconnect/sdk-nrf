@@ -19,6 +19,11 @@ The sample supports the following development kit:
 Overview
 ********
 
+.. figure:: /images/wifi_coex.svg
+   :alt: Wi-Fi Coex test setup
+
+   Wi-Fi Coex test setup
+
 This sample can perform Wi-Fi operations such as connect and disconnect in the 2.4GHz and 5GHz bands depending on the capabilities of an access point.
 
 Using this sample, the development kit can connect to the specified access point in :abbr:`STA (Station)` mode.
