@@ -1169,7 +1169,7 @@ int le_audio_send(uint8_t const *const data, size_t size)
 {
 	int ret;
 	struct bt_iso_tx_info tx_info = { 0 };
-	size_t sdu_size = LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE);
+	size_t sdu_size = LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_BT_AUDIO_BITRATE);
 
 	if (size != (sdu_size * 2)) {
 		LOG_ERR("Not enough data for stereo stream");
