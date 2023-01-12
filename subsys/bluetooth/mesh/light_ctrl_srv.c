@@ -1441,11 +1441,14 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	}
 #endif
 	if (scene->enabled) {
-		ctrl_enable(srv);
+		if (!is_enabled(srv)) {
+			ctrl_enable(srv);
+		}
 
-		if (!!scene->light) {
+		if (!!scene->light && !atomic_test_bit(&srv->flags, FLAG_ON)) {
 			turn_on(srv, transition, true);
-		} else {
+		} else if (atomic_test_bit(&srv->flags, FLAG_ON)) {
+			transition_start(srv, LIGHT_CTRL_STATE_STANDBY, 0);
 			light_onoff_pub(srv, srv->state, true);
 		}
 	} else {

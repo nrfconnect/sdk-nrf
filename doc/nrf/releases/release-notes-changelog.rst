@@ -102,7 +102,10 @@ Bluetooth LE
 Bluetooth mesh
 --------------
 
-|no_changes_yet_note|
+* Fixed:
+
+    * An issue in the :ref:`bt_mesh_light_ctrl_srv_readme` model where multiple scene recall messages for the same scene do not repeatedly trigger the same scene recall.
+      This prevents the interruption of an ongoing transition.
 
 Matter
 ------
