@@ -178,21 +178,13 @@ Wi-Fi radio test subcommands
      - 0
      - Configuration
      - Baseband gain to be configured.
-   * - rx_adc_cap
-     - N/A
-     - N/A
-     - Action
-     - Capture RX ADC samples.
-   * - rx_stat_pkt_cap
-     - N/A
+   * - rx_cap
+     - | 0 = ADC capture
+       | 1 = Static packet capture
+       | 2 = Dynamic packet capture
      - N/A
      - Action
-     - Capture RX static packets.
-   * - rx_dyn_pkt_cap
-     - | <val> - Number of RX dynamic packet samples to be captured.
-     - N/A
-     - Action
-     - Capture RX dynamic packets.
+     - Capture RX ADC samples, static or dynamic packets.
    * - tx_tone
      - | 0: Disable tone
        | 1: Enable tone

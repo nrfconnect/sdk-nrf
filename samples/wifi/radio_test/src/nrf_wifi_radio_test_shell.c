@@ -1232,41 +1232,52 @@ static int nrf_wifi_radio_test_ble_ant_switch_ctrl(const struct shell *shell,
 #endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
 
 
-static int nrf_wifi_radio_test_rx_adc_cap(const struct shell *shell,
-					  size_t argc,
-					  const char *argv[])
+static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
+				      size_t argc,
+				      const char *argv[])
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	unsigned long capture_length = 0;
-	unsigned int *rx_adc_cap = NULL;
+	unsigned long rx_cap_type = 0;
+	unsigned char *rx_cap_buf = NULL;
+	char *ptr = NULL;
 	unsigned int i = 0;
 	int ret = -ENOEXEC;
-	unsigned char lna_gain;
-	unsigned char bb_gain;
 
-	capture_length = ctx->conf_params.capture_length;
-	lna_gain = ctx->conf_params.lna_gain;
-	bb_gain  = ctx->conf_params.bb_gain;
+	rx_cap_type = strtoul(argv[1], &ptr, 10);
 
-	if (capture_length >= 1) {
-		if (!check_test_in_prog(shell)) {
-			goto out;
-		}
-	} else {
+	if ((rx_cap_type !=  NRF_WIFI_RF_TEST_RX_ADC_CAP) &&
+	    (rx_cap_type != NRF_WIFI_RF_TEST_RX_STAT_PKT_CAP) &&
+	    (rx_cap_type != NRF_WIFI_RF_TEST_RX_DYN_PKT_CAP)) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "%s: Invalid capture_length %ld\n", __func__, capture_length);
+			      "Invalid value %lu\n",
+			      rx_cap_type);
 		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	if (!ctx->conf_params.capture_length) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "%s: Invalid rx_capture_length %d\n",
+			      __func__,
+			      ctx->conf_params.capture_length);
 		goto out;
 	}
 
-	rx_adc_cap = k_calloc((capture_length * 4), sizeof(char));
+	if (!check_test_in_prog(shell)) {
+		goto out;
+	}
 
-	if (!rx_adc_cap) {
+	rx_cap_buf = k_calloc((ctx->conf_params.capture_length * 3),
+			      sizeof(char));
+
+	if (!rx_cap_buf) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "%s: Unable to allocate (%ld) bytes for RX ADC capture\n",
-				   __func__, (capture_length * 4));
+			      "%s: Unable to allocate (%d) bytes for RX capture\n",
+			      __func__,
+			      (ctx->conf_params.capture_length * 3));
 		goto out;
 	}
 
@@ -1274,11 +1285,11 @@ static int nrf_wifi_radio_test_rx_adc_cap(const struct shell *shell,
 	ctx->rf_test = NRF_WIFI_RF_TEST_RX_ADC_CAP;
 
 	status = nrf_wifi_fmac_rf_test_rx_cap(ctx->rpu_ctx,
-					      NRF_WIFI_RF_TEST_RX_ADC_CAP,
-					      rx_adc_cap,
-					      capture_length,
-						  lna_gain,
-						  bb_gain);
+					      rx_cap_type,
+					      rx_cap_buf,
+					      ctx->conf_params.capture_length,
+					      ctx->conf_params.lna_gain,
+					      ctx->conf_params.bb_gain);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		shell_fprintf(shell,
@@ -1289,170 +1300,21 @@ static int nrf_wifi_radio_test_rx_adc_cap(const struct shell *shell,
 
 	shell_fprintf(shell,
 		      SHELL_INFO,
-		      "************* RX ADC capture data ***********\n");
+		      "************* RX capture data ***********\n");
 
-	for (i = 0; i < capture_length/4; i++)
+	for (i = 0; i < (ctx->conf_params.capture_length); i++) {
 		shell_fprintf(shell,
-			      SHELL_INFO,
-			      "%08X\n",
-				  rx_adc_cap[i]);
+				SHELL_INFO,
+				"%02X%02X%02X\n",
+				rx_cap_buf[i*3 + 2],
+				rx_cap_buf[i*3 + 1],
+				rx_cap_buf[i*3 + 0]);
+	}
 
 	ret = 0;
 out:
-	if (rx_adc_cap)
-		k_free(rx_adc_cap);
-
-	ctx->rf_test_run = false;
-	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
-
-	return ret;
-}
-
-
-static int nrf_wifi_radio_test_rx_stat_pkt_cap(const struct shell *shell,
-					       size_t argc,
-					       const char *argv[])
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	unsigned long capture_length = 0;
-	unsigned int *rx_stat_pkt_cap = NULL;
-	unsigned int i = 0;
-	int ret = -ENOEXEC;
-	unsigned char lna_gain;
-	unsigned char bb_gain;
-
-	capture_length = ctx->conf_params.capture_length;
-	lna_gain = ctx->conf_params.lna_gain;
-	bb_gain  = ctx->conf_params.bb_gain;
-
-	if (capture_length >= 1) {
-		if (!check_test_in_prog(shell)) {
-			goto out;
-		}
-	} else {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "%s: Invalid capture_length %ld\n", __func__, capture_length);
-		shell_help(shell);
-		goto out;
-	}
-
-	rx_stat_pkt_cap = k_calloc((capture_length * 4), sizeof(char));
-
-	if (!rx_stat_pkt_cap) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "%s: Unable to allocate (%ld) bytes for RX static packet capture\n",
-				  __func__, (capture_length * 4));
-		goto out;
-	}
-
-	ctx->rf_test_run = true;
-	ctx->rf_test = NRF_WIFI_RF_TEST_RX_STAT_PKT_CAP;
-
-	status = nrf_wifi_fmac_rf_test_rx_cap(ctx->rpu_ctx,
-					      NRF_WIFI_RF_TEST_RX_STAT_PKT_CAP,
-					      rx_stat_pkt_cap,
-					      capture_length,
-						  lna_gain,
-						  bb_gain);
-
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "RX static packet capture programming failed\n");
-		goto out;
-	}
-
-	shell_fprintf(shell,
-		      SHELL_INFO,
-		      "************* RX static packet capture data ***********\n");
-
-	for (i = 0; i < capture_length/4; i++)
-		shell_fprintf(shell,
-			      SHELL_INFO,
-			      "%08X\n",
-			      rx_stat_pkt_cap[i]);
-
-	ret = 0;
-out:
-	if (rx_stat_pkt_cap)
-		k_free(rx_stat_pkt_cap);
-
-	ctx->rf_test_run = false;
-	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
-
-	return ret;
-}
-
-
-static int nrf_wifi_radio_test_rx_dyn_pkt_cap(const struct shell *shell,
-					      size_t argc,
-					      const char *argv[])
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	unsigned long capture_length = 0;
-	unsigned int *rx_dyn_pkt_cap = NULL;
-	unsigned int i = 0;
-	int ret = -ENOEXEC;
-	unsigned char lna_gain = 0;
-	unsigned char bb_gain = 0;
-
-	capture_length = ctx->conf_params.capture_length;
-
-	if (capture_length >= 1) {
-		if (!check_test_in_prog(shell)) {
-			goto out;
-		}
-	} else {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "%s: Invalid capture_length %ld\n", __func__, capture_length);
-		shell_help(shell);
-		goto out;
-	}
-
-	rx_dyn_pkt_cap = k_calloc((capture_length * 4), sizeof(char));
-
-	if (!rx_dyn_pkt_cap) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "%s: Unable to allocate (%ld) bytes for RX dynamic packet capture\n",
-				  __func__, (capture_length * 4));
-		goto out;
-	}
-
-	ctx->rf_test_run = true;
-	ctx->rf_test = NRF_WIFI_RF_TEST_RX_DYN_PKT_CAP;
-
-	status = nrf_wifi_fmac_rf_test_rx_cap(ctx->rpu_ctx,
-					      NRF_WIFI_RF_TEST_RX_DYN_PKT_CAP,
-					      rx_dyn_pkt_cap,
-					      capture_length,
-						  lna_gain,
-						  bb_gain);
-
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "RX dynamic packet capture programming failed\n");
-		goto out;
-	}
-
-	shell_fprintf(shell,
-		      SHELL_INFO,
-		      "************* RX dynamic packet capture data ***********\n");
-
-	for (i = 0; i < capture_length/4; i++)
-		shell_fprintf(shell,
-			      SHELL_INFO,
-			      "%08X\n",
-			      rx_dyn_pkt_cap[i]);
-
-	ret = 0;
-out:
-	if (rx_dyn_pkt_cap)
-		k_free(rx_dyn_pkt_cap);
+	if (rx_cap_buf)
+		k_free(rx_cap_buf);
 
 	ctx->rf_test_run = false;
 	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
@@ -1514,9 +1376,9 @@ out:
 }
 
 
-static int nrf_wifi_radio_test_dpd(const struct shell *shell,
-				   size_t argc,
-				   const char *argv[])
+static int nrf_wifi_radio_set_dpd(const struct shell *shell,
+				  size_t argc,
+				  const char *argv[])
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	char *ptr = NULL;
@@ -1609,8 +1471,8 @@ out:
 
 
 static int nrf_wifi_radio_get_rf_rssi(const struct shell *shell,
-				   size_t argc,
-				   const char *argv[])
+				      size_t argc,
+				      const char *argv[])
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	char *ptr = NULL;
@@ -1642,7 +1504,7 @@ static int nrf_wifi_radio_get_rf_rssi(const struct shell *shell,
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "DPD programming failed\n");
+			      "RF RSSI get failed\n");
 		goto out;
 	}
 
@@ -1731,7 +1593,7 @@ static int nrf_wifi_radio_comp_opt_xo_val(const struct shell *shell,
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "XO value programming failed\n");
+			      "XO value computation failed\n");
 		goto out;
 	}
 
@@ -2218,23 +2080,13 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_rx_capture_length,
 		      2,
 		      0),
-	SHELL_CMD_ARG(rx_adc_cap,
+	SHELL_CMD_ARG(rx_cap,
 		      NULL,
-		      "No arguments required",
-		      nrf_wifi_radio_test_rx_adc_cap,
-		      1,
-		      0),
-	SHELL_CMD_ARG(rx_stat_pkt_cap,
-		      NULL,
-		      "No arguments required",
-		      nrf_wifi_radio_test_rx_stat_pkt_cap,
-		      1,
-		      0),
-	SHELL_CMD_ARG(rx_dyn_pkt_cap,
-		      NULL,
-		      "No arguments required",
-		      nrf_wifi_radio_test_rx_dyn_pkt_cap,
-		      1,
+		      "0 = ADC capture\n"
+		      "1 = Static packet capture\n"
+		      "2 = Dynamic packet captur              ",
+		      nrf_wifi_radio_test_rx_cap,
+		      2,
 		      0),
 	SHELL_CMD_ARG(tx_tone_freq,
 		      NULL,
@@ -2254,7 +2106,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      NULL,
 		      "0 - Bypass DPD\n"
 		      "1 - Enable DPD",
-		      nrf_wifi_radio_test_dpd,
+		      nrf_wifi_radio_set_dpd,
 		      2,
 		      0),
 	SHELL_CMD_ARG(get_temperature,
