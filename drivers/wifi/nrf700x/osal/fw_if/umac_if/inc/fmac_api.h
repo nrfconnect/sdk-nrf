@@ -1299,4 +1299,36 @@ enum wifi_nrf_status wifi_nrf_fmac_otp_mac_addr_get(struct wifi_nrf_fmac_dev_ctx
  */
 enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						 unsigned char *rf_params);
+
+struct wifi_nrf_fmac_reg_info {
+	unsigned char alpha2[3];
+	bool force;
+};
+
+/**
+ * wifi_nrf_fmac_set_reg() - Set regulatory domain in RPU.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @reg_info: Pointer to the address where the regulatory domain information
+ *		  needs to be copied.
+ * This function is used to set regulatory domain in the RPU.
+ * Returns: Status
+ *			Pass : %WIFI_NRF_STATUS_SUCCESS
+ *			Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_set_reg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					   struct wifi_nrf_fmac_reg_info *reg_info);
+
+/**
+ * wifi_nrf_fmac_get_reg() - Get regulatory domain from RPU.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @reg_info: Pointer to the address where the regulatory domain information
+ *		  needs to be copied.
+ * This function is used to get regulatory domain from the RPU.
+ * Returns: Status
+ *			Pass : %WIFI_NRF_STATUS_SUCCESS
+ *			Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_get_reg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					   struct wifi_nrf_fmac_reg_info *reg_info);
+
 #endif /* __FMAC_API_H__ */

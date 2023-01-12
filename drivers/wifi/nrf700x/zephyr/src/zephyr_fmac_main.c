@@ -14,6 +14,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net/ethernet.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/net/wifi_mgmt.h>
 
 #include <rpu_fw_patches.h>
 #include <util.h>
@@ -26,6 +27,7 @@
 #include <zephyr_disp_scan.h>
 #include <zephyr_twt.h>
 #include <zephyr_ps.h>
+
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
@@ -132,8 +134,88 @@ void wifi_nrf_event_proc_scan_done_zep(void *vif_ctx,
 
 	status = WIFI_NRF_STATUS_SUCCESS;
 }
-#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
+void wifi_nrf_event_get_reg_zep(void *vif_ctx,
+				struct nrf_wifi_reg *get_reg_event,
+				unsigned int event_len)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	LOG_DBG("%s: alpha2 = %c%c\n", __func__,
+		   get_reg_event->nrf_wifi_alpha2[0],
+		   get_reg_event->nrf_wifi_alpha2[1]);
+	vif_ctx_zep = vif_ctx;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		return;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+
+	memcpy(&fmac_dev_ctx->alpha2,
+		   &get_reg_event->nrf_wifi_alpha2,
+		   sizeof(get_reg_event->nrf_wifi_alpha2));
+	fmac_dev_ctx->alpha2_valid = true;
+}
+
+int wifi_nrf_reg_domain(const struct device *dev, struct wifi_reg_domain *reg_domain)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_fmac_reg_info reg_domain_info = {0};
+	int ret = -1;
+
+	if (!dev || !reg_domain) {
+		goto err;
+	}
+
+	vif_ctx_zep = dev->data;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		goto err;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
+		goto err;
+	}
+
+	if (reg_domain->oper == WIFI_MGMT_SET) {
+		memcpy(reg_domain_info.alpha2, reg_domain->country_code, WIFI_COUNTRY_CODE_LEN);
+		reg_domain_info.alpha2[WIFI_COUNTRY_CODE_LEN] = '\0';
+
+		reg_domain_info.force = reg_domain->force;
+
+		status = wifi_nrf_fmac_set_reg(rpu_ctx_zep->rpu_ctx, &reg_domain_info);
+		if (status != WIFI_NRF_STATUS_SUCCESS) {
+			LOG_ERR("%s: Failed to set regulatory domain\n", __func__);
+			goto err;
+		}
+	} else if (reg_domain->oper == WIFI_MGMT_GET) {
+		status = wifi_nrf_fmac_get_reg(rpu_ctx_zep->rpu_ctx, &reg_domain_info);
+		if (status != WIFI_NRF_STATUS_SUCCESS) {
+			LOG_ERR("%s: Failed to get regulatory domain\n", __func__);
+			goto err;
+		}
+		memcpy(reg_domain->country_code, reg_domain_info.alpha2, WIFI_COUNTRY_CODE_LEN);
+	} else {
+		LOG_ERR("%s: Invalid operation: %d\n", __func__, reg_domain->oper);
+		goto err;
+	}
+
+	ret = 0;
+err:
+	return ret;
+}
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv_priv_zep)
 {
@@ -242,6 +324,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	callbk_fns.twt_config_callbk_fn = wifi_nrf_event_proc_twt_setup_zep;
 	callbk_fns.twt_teardown_callbk_fn = wifi_nrf_event_proc_twt_teardown_zep;
 	callbk_fns.twt_sleep_callbk_fn = wifi_nrf_event_proc_twt_sleep_zep;
+	callbk_fns.event_get_reg = wifi_nrf_event_get_reg_zep;
 #ifdef CONFIG_WPA_SUPP
 	callbk_fns.scan_res_callbk_fn = wifi_nrf_wpa_supp_event_proc_scan_res;
 	callbk_fns.auth_resp_callbk_fn = wifi_nrf_wpa_supp_event_proc_auth_resp;
@@ -299,6 +382,7 @@ static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 	.set_power_save = wifi_nrf_set_power_save,
 	.set_twt = wifi_nrf_set_twt,
 	.set_power_save_mode = wifi_nrf_set_power_save_mode,
+	.reg_domain = wifi_nrf_reg_domain,
 };
 
 #ifdef CONFIG_WPA_SUPP
