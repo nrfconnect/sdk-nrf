@@ -210,21 +210,11 @@ Testing
 
               CALIB_XO = 0x2c
 
-              CALIB_PDADJMCS7 = 0xffffffff
-
-              CALIB_PDADJMCS0 = 0xffffffff
-
               CALIB_MAXPOW2G4 = 0xffffffff
 
               CALIB_MAXPOW5G0MCS7 = 0xffffffff
 
               CALIB_MAXPOW5G0MCS0 = 0xffffffff
-
-              CALIB_RXGAINOFFSET = 0xffffffff
-
-              CALIB_TXPOWBACKOFFT = 0xffffffff
-
-              CALIB_TXPOWBACKOFFV = 0xffffffff
 
               REGION_DEFAULTS = 0xfffffff1
 
@@ -245,14 +235,9 @@ Testing
               MAC0 Address is programmed in OTP
               MAC1 Address is programmed in OTP
               CALIB_XO is programmed in OTP
-              CALIB_PDADJMCS7 not programmed in OTP
-              CALIB_PDADJMCS0 is not programmed in OTP
               CALIB_MAXPOW2G4 is not programmed in OTP
               CALIB_MAXPOW5G0MCS7 is not programmed in OTP
               CALIB_MAXPOW5G0MCS0 is not programmed in OTP
-              CALIB_RXGAINOFFSET is not programmed in OTP
-              CALIB_TXPOWBACKOFFT is not programmed in OTP
-              CALIB_TXPOWBACKOFFV is not programmed in OTP
 
          * To write different locations of the OTP and to program MAC0 address to F0:CE:36:00:00:4A, use the following command:
 

@@ -56,7 +56,7 @@ Wi-Fi radio FICR subcommands
      - CALIB_XO
      - 0x130
      - arg
-     - arg is 7-bit unsigned XO value. Bits [31:7] unused. Adjusts capacitor bank, 0 : Lowest capacitance (Highest frequency), 255 : Highest capacitance (Lowest frequency).
+     - arg is 7-bit unsigned XO value. Bits [31:7] unused. Adjusts capacitor bank, 0 : Lowest capacitance (Highest frequency), 127 : Highest capacitance (Lowest frequency).
    * - otp_write_params
      - CALIB_PWR2G
      - 0x13C
