@@ -6,21 +6,23 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
+file(TO_CMAKE_PATH $ENV{ZEPHYR_BASE} CMAKE_STYLE_ZEPHYR)
+
 if (CONFIG_AUDIO_DFU EQUAL 1)
     list(APPEND mcuboot_OVERLAY_CONFIG
         "${CMAKE_CURRENT_LIST_DIR}/dfu/conf/overlay-mcuboot.conf"
-        "$ENV{ZEPHYR_BASE}/../nrf/subsys/partition_manager/partition_manager_enabled.conf"
+        "${CMAKE_STYLE_ZEPHYR}/../nrf/subsys/partition_manager/partition_manager_enabled.conf"
     )
 endif()
 
 if (CONFIG_AUDIO_DFU EQUAL 2)
     list(APPEND mcuboot_OVERLAY_CONFIG
         "${CMAKE_CURRENT_LIST_DIR}/dfu/conf/overlay-mcuboot_external_flash.conf"
-        "$ENV{ZEPHYR_BASE}/../nrf/subsys/partition_manager/partition_manager_enabled.conf"
+        "${CMAKE_STYLE_ZEPHYR}/../nrf/subsys/partition_manager/partition_manager_enabled.conf"
     )
     list(APPEND mcuboot_DTC_OVERLAY_FILE
         "${CMAKE_CURRENT_LIST_DIR}/dfu/conf/overlay-dfu_external_flash.overlay"
-        "$ENV{ZEPHYR_BASE}/../nrf/modules/mcuboot/flash_sim.overlay"
+        "${CMAKE_STYLE_ZEPHYR}/../nrf/modules/mcuboot/flash_sim.overlay"
     )
     set(DTC_OVERLAY_FILE ${CMAKE_CURRENT_LIST_DIR}/dfu/conf/overlay-dfu_external_flash.overlay)
     set(mcuboot_PM_STATIC_YML_FILE ${CMAKE_CURRENT_LIST_DIR}/dfu/conf/pm_dfu_external_flash.yml)
