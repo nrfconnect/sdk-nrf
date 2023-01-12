@@ -393,8 +393,9 @@ Examples
 ::
 
    AT#XMQTTPUB="nrf91/slm/mqtt/topic0"
-   {"msg":"Test Json publish"}+++
    OK
+   {"msg":"Test Json publish"}+++
+   #XDATAMODE: 0
    #XMQTTMSG: 21,27
    nrf91/slm/mqtt/topic0
    {"msg":"Test Json publish"}
@@ -413,8 +414,9 @@ Examples
 ::
 
    AT#XMQTTPUB="nrf91/slm/mqtt/topic2","",2,0
-   Test message with QoS 2+++
    OK
+   Test message with QoS 2+++
+   #XDATAMODE: 0
    #XMQTTEVT: 4,0
    #XMQTTEVT: 6,0
    #XMQTTMSG: 21,23

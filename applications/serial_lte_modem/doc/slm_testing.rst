@@ -181,7 +181,7 @@ TCP client
          :class: highlight
 
          +++
-         OK
+         #XDATAMODE: 0
 
    #. Receive the response from the server.
 
