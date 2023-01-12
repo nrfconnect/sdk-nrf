@@ -10,3 +10,4 @@ The |NCS| provides support for development on the nRF70 Series, using the nRF700
    :caption: Subpages:
 
    ug_nrf70_developing_powersave
+   ug_nrf7002_constrained
