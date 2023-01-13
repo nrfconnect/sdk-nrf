@@ -1886,6 +1886,28 @@ Secure Partition Manager (SPM)
 .. note::
     The Secure Partition Manager (SPM) is deprecated as of |NCS| v2.1.0 and removed after |NCS| v2.2.0. It is replaced by :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
 
+.. rst-class:: v2-2-0
+
+NCSDK-19156: Building SPM for other boards than ``nrf5340dk_nrf5340_cpuapp`` and ``nrf9160dk_nrf9160`` fails with compilation error in cortex_m_systick.c
+  This happens because the :kconfig:option:`CONFIG_CORTEX_M_SYSTICK` configuration option is enabled while the systick node is disabled in the devicetree.
+
+  **Workaround** Enable the systick node in a DTS overlay file for the SPM build by completing the following steps:
+
+  1. Create an overlay file :file:`systick_enabled.overlay` with the following content:
+
+     .. code-block::
+
+        &systick {
+          status = "okay";
+        };
+
+  #. Add the overlay file as a build argument to SPM:
+
+     .. parsed-literal::
+       :class: highlight
+
+       west build -- -Dspm_DTC_OVERLAY_FILE=systick_enabled.overlay
+
 .. rst-class:: v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSIDB-114: Default logging causes crash
