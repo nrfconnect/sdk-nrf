@@ -48,7 +48,14 @@ RF Front-End Modules
 Build system
 ------------
 
-|no_changes_yet_note|
+* Removed:
+
+  * Manifest file entry ``mbedtls-nrf`` (:makevar:`ZEPHYR_MBEDTLS_NRF_MODULE_DIR`) checked out at path :file:`mbedtls`.
+  * Manifest file entry ``tfm-mcuboot`` (:makevar:`ZEPHYR_TFM_MCUBOOT_MODULE_DIR`) checked out at path :file:`modules/tee/tfm-mcuboot`.
+
+* Updated:
+
+  * Manifest file entry ``mbedtls`` (:makevar:`ZEPHYR_MBEDTLS_MODULE_DIR`) checked out at path :file:`modules/crypto/mbedtls` now points to |NCS|'s fork of MbedTLS instead of Zephyr's fork.
 
 Protocols
 =========
