@@ -12,6 +12,8 @@ The sample provides a set of predefined commands that allow you to configure the
 
 * Modulated carrier TX
 * Modulated carrier RX
+* Tone transmission
+* IQ sample capture at ADC output
 
 The sample also shows how to program the user region of FICR parameters on the development kit using a set of predefined commands.
 
@@ -95,30 +97,37 @@ Testing
            .. code-block:: console
 
               ************* Configured Parameters ***********
-              rf_params = 00 00 00 00 00 00 2C 00 00 00 00 00 00 00 00 30 20 30 20 20 20 30 30 30 00 00 00 00 50 EC 00 00 00 00 00 00 00 00 00 00 00 00
+
               tx_pkt_tput_mode = 0
               tx_pkt_sgi = 0
-              tx_pkt_preamble = 0
+              tx_pkt_preamble = 1
               tx_pkt_mcs = -1
-              tx_pkt_rate = -1
+              tx_pkt_rate = 6
               tx_pkt_gap = 200
               phy_calib_rxdc = 1
               phy_calib_txdc = 1
-              phy_calib_txpow = 1
+              phy_calib_txpow = 0
               phy_calib_rxiq = 1
               phy_calib_txiq = 1
-              chnl_primary = 1
               tx_pkt_num = -1
               tx_pkt_len = 1400
               tx_power = 0
-              he_ltf = 0
-              he_gi = 0
+              he_ltf = 2
+              he_gi = 2
+              xo_val = 42
+              init = 1
               tx = 0
               rx = 0
+              tx_tone_freq = 0
+              rx_lna_gain = 0
+              rx_lna_gain = 0
+              rx_capture_length = 0
+              wlan_ant_switch_ctrl = 0
+
 
          * To run a continuous Orthogonal frequency-division multiplexing (OFDM) TX traffic sequence with the following configuration:
 
-           * Channel: 1
+           * Channel: 11
            * Frame duration: 5484 us
            * Inter-frame gap: 4200 us
 
@@ -128,9 +137,9 @@ Testing
 
               wifi_radio_test rx 0
               wifi_radio_test tx 0
+              wifi_radio_test init 11
               wifi_radio_test tx_pkt_tput_mode 0
               wifi_radio_test tx_pkt_len 4095
-              wifi_radio_test chnl_primary 1
               wifi_radio_test tx_pkt_rate 6
               wifi_radio_test tx_power 0
               wifi_radio_test tx_pkt_gap 4200
@@ -139,7 +148,7 @@ Testing
 
          * To run a continuous Direct-sequence spread spectrum (DSSS) TX traffic sequence with the following configuration:
 
-           * Channel: 1
+           * Channel: 14
            * Frame duration: 8500 us
            * Inter-frame gap: 8600 us
 
@@ -149,9 +158,10 @@ Testing
 
               wifi_radio_test rx 0
               wifi_radio_test tx 0
+              wifi_radio_test init 14
               wifi_radio_test tx_pkt_tput_mode 0
+              wifi_radio_test tx_pkt_preamble 1
               wifi_radio_test tx_pkt_len 1024
-              wifi_radio_test chnl_primary 1
               wifi_radio_test tx_pkt_rate 1
               wifi_radio_test tx_power 0
               wifi_radio_test tx_pkt_gap 8600
@@ -174,6 +184,316 @@ Testing
               * L - Frame length (bytes)
               * R - Data rate (Mbps)
               * P - PHY overhead duration (us) (Values: 24 us - Legacy OFDM, 192 us - DSSS)
+
+         * To run a RX test with the following configuration:
+
+           * Channel: 11
+
+           Execute the following sequence of commands:
+
+           .. code-block:: console
+
+              wifi_radio_test tx 0
+              wifi_radio_test rx 0
+              wifi_radio_test init 11
+              wifi_radio_test rx 1
+
+         .. note::
+
+            After executing the above command sequence, start sending packets from a signal generator.
+
+
+         * To stop receiving packets, use the following command:
+
+           .. code-block:: console
+
+              wifi_radio_test rx 0
+
+         .. note::
+
+            The above command should be execeuted only after the signal generator has completed transmitting packets.
+
+
+         * To get rx stats, use the following command:
+
+           .. code-block:: console
+
+              wifi_radio_test get_stats
+
+           The sample below shows the output obtained after feeding 1000 DSSS packets:
+
+           .. code-block:: console
+
+              ************* PHY STATS ***********
+              rssi_avg = -45 dBm
+              ofdm_crc32_pass_cnt=0
+              ofdm_crc32_fail_cnt=0
+              dsss_crc32_pass_cnt=1000
+              ofdm_crc32_fail_cnt=0
+
+           The sample below shows the output obtained after feeding 1000 OFDM packets:
+
+           .. code-block:: console
+
+              ************* PHY STATS ***********
+              rssi_avg = -47 dBm
+              ofdm_crc32_pass_cnt=1000
+              ofdm_crc32_fail_cnt=0
+              dsss_crc32_pass_cnt=0
+              ofdm_crc32_fail_cnt=0
+
+
+         * To transmit a continuous tone, with the following configuration:
+
+           * Channel: 144
+           * TX power: 10 dBm
+           * Tone frequency: 2 MHz
+
+           Execute the following sequence of commands:
+
+           .. code-block:: console
+
+              wifi_radio_test rx 0
+              wifi_radio_test tx 0
+              wifi_radio_test init 144
+              wifi_radio_test tx_power 10
+              wifi_radio_test tx_tone_freq 2
+              wifi_radio_test tx_tone 1
+
+
+
+         * To stop ongoing transmission of a continuous tone, use the following command:
+
+           .. code-block:: console
+
+              wifi_radio_test tx_tone 0
+
+           .. note::
+
+              Use ``wifi_radio_test tx_tone 0`` only if the command issued before this is ``wifi_radio_test tx_tone 1``.
+
+
+         * To enable DPD hardware block, use the following command:
+
+           .. code-block:: console
+
+              wifi_radio_test dpd 1
+
+
+         * To disable DPD hardware block, use the following command:
+
+           .. code-block:: console
+
+              wifi_radio_test dpd 0
+
+         .. note::
+
+            DPD command can be used only during tone transmission.
+            For TX packet transmission, control of DPD hardware is taken care by firmware.
+
+
+         * To read chip temperature in degree Celsius, execute the following sequence of commands:
+
+           .. code-block:: console
+
+              wifi_radio_test get_temperature
+
+           The sample shows the following output:
+
+           .. code-block:: console
+
+               wifi_nrf: Temperature reading success:
+               wifi_nrf: The temperature is = 21 degree Celsius
+
+         * To measure RF RSSI status, with the following configuration:
+
+           * Channel: 144
+
+           Execute the following sequence of commands:
+
+           .. code-block:: console
+
+              wifi_radio_test rx 0
+              wifi_radio_test tx 0
+              wifi_radio_test init 144
+              wifi_radio_test get_rf_rssi
+
+           The sample shows the following output:
+
+           .. code-block:: console
+
+              wifi_nrf: RF RSSI value is = 0
+
+         .. note::
+
+            RF RSSI Status is a 3-bit indicator.
+            The higher the value of RF RSSI is, the higher is the level of saturation (non-linearity) at the LNA output.
+
+
+         * To compute optimal XO value, with the following configuration:
+
+           * Channel: 64
+
+           Execute the following sequence of commands:
+
+           .. code-block:: console
+
+              wifi_radio_test rx 0
+              wifi_radio_test tx 0
+              wifi_radio_test init 64
+              wifi_radio_test compute_optimal_xo_val
+
+           The sample shows the following output:
+
+           .. code-block:: console
+
+              wifi_nrf: Best XO value is = 43
+
+         .. note::
+
+            * This test requires a DUT to be connected with VSG using cabled setup.
+              VSG should be continuously generating 0.5 MHz tone.
+            * For channel 64, set the VSG frequency to 5320.5 MHz.
+              Set the signal power level between -40 dBm and -50 dBm.
+
+
+
+         * To capture ADC samples with fixed RX gain, with the following configuration:
+
+           * Channel: 144
+           * LNA gain: 2
+           * BB gain: 10
+           * Capture length: 64
+
+           Execute the following sequence of commands:
+
+           .. code-block:: console
+
+              wifi_radio_test rx 0
+              wifi_radio_test tx 0
+              wifi_radio_test init 144
+              wifi_radio_test rx_lna_gain 2
+              wifi_radio_test rx_bb_gain 10
+              wifi_radio_test rx_capture_length 64
+              wifi_radio_test rx_cap 0
+
+           The sample shows the following output:
+
+           .. code-block:: console
+
+              ************* RX capture data ***********
+              E84FE4
+              EC4F74
+              F34F24
+              FBCF04
+              ......
+              ......
+              ......
+              F6C1B4
+              EEC178
+              E94114
+
+
+         .. note::
+
+            * This test requires a DUT to be connected with VSG using cabled setup.
+              VSG should be continuously transmitting a tone or packets.
+            * Set the signal power level between -35 dBm and -45 dBm to get non saturated samples.
+              In the example, capture is taken for 64 samples.
+              Each complex sample is of 24 bits.
+            * The captured samples will vary from run to run.
+
+
+         * To capture baseband samples with fixed RX gain, with the following configuration:
+
+           * Channel: 144
+           * LNA gain: 2
+           * BB gain: 10
+           * Capture length: 64
+
+           Execute the following sequence of commands:
+
+           .. code-block:: console
+
+              wifi_radio_test rx 0
+              wifi_radio_test tx 0
+              wifi_radio_test init 144
+              wifi_radio_test rx_lna_gain 2
+              wifi_radio_test rx_bb_gain 10
+              wifi_radio_test rx_capture_length 64
+              wifi_radio_test rx_cap 1
+
+           The sample shows the following output:
+
+           .. code-block:: console
+
+              ************* RX capture data ***********
+              E940F0
+              E8EFE7
+              F3FF29
+              03CF27
+              ......
+              ......
+              ......
+              0DAF9B
+              115097
+              08A178
+
+
+         .. note::
+
+            * This test requires a DUT to be connected with VSG using cabled setup.
+              VSG should be continuously transmitting a tone or packets.
+            * Set the signal power level between -35 dBm and -45 dBm to get non saturated samples.
+            *  In the example, capture is taken for 64 samples.
+               Each complex sample is of 24 bits.
+            * The captured samples will vary from run to run.
+
+
+
+         * To capture AGC adjusted baseband samples after WLAN packet detection, with the following configuration:
+
+           * Channel: 144
+           * Capture length: 64
+
+           Execute the following sequence of commands:
+
+           .. code-block:: console
+
+              wifi_radio_test rx 0
+              wifi_radio_test tx 0
+              wifi_radio_test init 144
+              wifi_radio_test rx_capture_length 64
+              wifi_radio_test rx_cap 2
+
+           The sample shows the following output:
+
+           .. code-block:: console
+
+              ************* RX capture data ***********
+              062058
+              F8A31F
+              E9A05D
+              E800B9
+              ......
+              ......
+              ......
+              EA5FE4
+              FDDF45
+              07CF3D
+
+
+         .. note::
+
+            * This test requires a DUT to be connected with VSG using cabled setup.
+              VSG should be continuously transmitting WLAN packets.
+            * Set the desired signal power.
+            * The capture is taken for 64 samples.
+              Each complex sample is of 24 bits.
+              The captured samples will vary from run to run.
+            * The capture is taken after WLAN packet detection, so it will not have the first few samples in the first WLAN packet.
+            * Smaller packets should be used so that multiple packets can be seen in the capture.
+
 
       .. group-tab:: FICR/OTP programming
 

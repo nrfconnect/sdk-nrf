@@ -41,7 +41,8 @@ Wi-Fi radio FICR subcommands
      - QSPI_KEY
      - 0x110
      - arg1 arg2 arg3 arg4
-     - All four key arguments are 32-bit values forming the required 128-bit (Q)SPI key for encryption.
+     - | All four key arguments are 32-bit values forming the required 128-bit (Q)SPI key for encryption.
+       | For example, if QSPI key is "112233445566778899aabbccddeeff00" then arg1=0x44332211 arg2=0x88776655 arg3=0xccbbaa99 arg4=0x00ffeedd
    * - otp_write_params
      - MAC_ADDRESS0
      - 0x120

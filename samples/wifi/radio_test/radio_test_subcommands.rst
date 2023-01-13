@@ -141,6 +141,47 @@ Wi-Fi radio test subcommands
      - 1
      - Configuration
      - Configure the location of resource unit (RU) in 20 MHz spectrum.
+   * - rx_capture_length
+     - | <val> (Min: 0, Max: 16384)
+     - 0
+     - Configuration
+     - Number of RX samples to be captured.
+   * - rx_lna_gain
+     - | 0 = 24 dB
+       | 1 = 18 dB
+       | 2 = 12 dB
+       | 3 = 0 dB
+       | 4 = -12 dB
+     - 0
+     - Configuration
+     - LNA gain to be configured.
+   * - rx_bb_gain
+     - | <val>
+       | 5 bit value. Supports 64 dB range in steps of 2 dB
+     - 0
+     - Configuration
+     - Baseband gain to be configured.
+   * - tx_tone_freq
+     - | <val> (Min: -10, Max: 10)
+     - 0
+     - Configuration
+     - Transmit tone frequency in the range of -10 MHz to 10 MHz.
+   * - dpd
+     - | 0 - DPD bypass
+       | 1 - Enable DPD
+     - 0
+     - Configuration
+     - Enable or bypass DPD.
+   * - set_xo_val
+     - | <val> - XO value (Min:0, Max: 127)
+     - 42 or value programmed in OTP
+     - Configuration
+     - Set XO value.
+   * - show_config
+     - N/A
+     - N/A
+     - Configuration
+     - Display the current configuration values.
    * - init
      - <val> - Primary channel number
      - 1
@@ -158,26 +199,6 @@ Wi-Fi radio test subcommands
      - 0
      - Action
      - Enable/Disable packet reception.
-   * - rx_capture_length
-     - | <val> (Min: 0, Max: 16384)
-     - 0
-     - Configuration
-     - Number of RX samples to be captured.
-   * - rx_lna_gain
-     - | 0 = 24 dB
-       | 1 = 18 dB
-       | 2 = 12 dB
-       | 3 = 0 dB
-       | 4 = -12dB
-     - 0
-     - Configuration
-     - LNA gain to be configured.
-   * - rx_bb_gain
-     - | <val>
-       | 5 bit value. Supports 64 dB range in steps of 2 dB
-     - 0
-     - Configuration
-     - Baseband gain to be configured.
    * - rx_cap
      - | 0 = ADC capture
        | 1 = Static packet capture
@@ -191,12 +212,6 @@ Wi-Fi radio test subcommands
      - 0
      - Action
      - Enable/Disable transmit tone.
-   * - dpd
-     - | 0 - DPD bypass
-       | 1 - Enable DPD
-     - 0
-     - Configuration
-     - Enable or bypass DPD.
    * - get_temperature
      - | No arguments required
      - N/A
@@ -207,21 +222,11 @@ Wi-Fi radio test subcommands
      - N/A
      - Action
      - Get RF RSSI.
-   * - set_xo_val
-     - | <val> - XO value (Min:0, Max: 127)
-     - 42 or value programmed in OTP
-     - Action
-     - Set XO value.
    * - compute_optimal_xo_val
      - N/A
      - N/A
      - Action
      - Compute optimal XO value. Note: This is still experimental and to be used at own risk.
-   * - show_config
-     - N/A
-     - N/A
-     - Configuration
-     - Display the current configuration values.
    * - get_stats
      - N/A
      - N/A
