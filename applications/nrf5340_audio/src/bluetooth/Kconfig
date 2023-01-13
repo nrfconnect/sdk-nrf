@@ -330,7 +330,7 @@ config BT_AUDIO_BROADCAST_ENCRYPTED
 	depends on TRANSPORT_BIS
 	default n
 	help
-	  Encrypt the broadcast to limit the connectability
+	  Encrypt the broadcast to limit the connection possibilities.
 
 config BT_AUDIO_BROADCAST_ENCRYPTION_KEY
 	string "Broadcast encryption key"
