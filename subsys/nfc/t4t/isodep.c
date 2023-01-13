@@ -882,7 +882,14 @@ int nfc_t4t_isodep_transmit(const uint8_t *data, size_t data_len)
 			LOG_DBG("Wait %d ms before sending first frame after ATS Response",
 				delay);
 
-			return k_work_reschedule(&isodep_work, K_MSEC(delay));
+			int ret = k_work_reschedule(&isodep_work, K_MSEC(delay));
+
+			if (ret < 0) {
+				return ret;
+			}
+
+			__ASSERT_NO_MSG(ret == 1);
+			return 0;
 		}
 	}
 
