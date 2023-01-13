@@ -234,6 +234,10 @@ Bluetooth samples
     * Documentation by adding energy consumption information.
     * Documentation by adding a section about distance offset calibration.
 
+* :ref:`peripheral_nfc_pairing` and :ref:`central_nfc_pairing` samples:
+
+  * Fixed OOB pairing between these samples.
+
 Bluetooth mesh samples
 ----------------------
 
@@ -539,6 +543,12 @@ Libraries for NFC
     * Support for zero-latency interrupts for NFC.
 
   * Updated by aligning the :file:`ncs/nrf/subsys/nfc/lib/platform.c` file with new library implementation.
+
+* :ref:`nfc_ndef_ch_rec_parser_readme`
+
+  * Fixed:
+
+    * A bug where the AC Record Parser was not functional and returned invalid results.
 
 Other libraries
 ---------------
