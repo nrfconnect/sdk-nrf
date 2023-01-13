@@ -364,8 +364,7 @@ int ble_vcs_volume_up(void)
 #elif (CONFIG_BT_VCP_VOL_REND)
 	return bt_vcp_vol_rend_unmute_vol_up();
 #endif /* (CONFIG_BT_VCP_VOL_CTLR) */
-	hw_codec_volume_increase();
-	return 0;
+	return hw_codec_volume_increase();
 }
 
 int ble_vcs_volume_down(void)
@@ -389,8 +388,7 @@ int ble_vcs_volume_down(void)
 #elif (CONFIG_BT_VCP_VOL_REND)
 	return bt_vcp_vol_rend_unmute_vol_down();
 #endif /* (CONFIG_BT_VCP_VOL_CTLR) */
-	hw_codec_volume_decrease();
-	return 0;
+	return hw_codec_volume_decrease();
 }
 
 int ble_vcs_volume_mute(void)
@@ -414,7 +412,7 @@ int ble_vcs_volume_mute(void)
 #elif (CONFIG_BT_VCP_VOL_REND)
 	return bt_vcp_vol_rend_mute();
 #endif /* (CONFIG_BT_VCP_VOL_CTLR) */
-	return -ENXIO;
+	return hw_codec_volume_mute();
 }
 
 int ble_vcs_volume_unmute(void)
@@ -438,7 +436,7 @@ int ble_vcs_volume_unmute(void)
 #elif (CONFIG_BT_VCP_VOL_REND)
 	return bt_vcp_vol_rend_unmute();
 #endif /* (CONFIG_BT_VCP_VOL_CTLR) */
-	return -ENXIO;
+	return hw_codec_volume_unmute();
 }
 
 #if (CONFIG_BT_VCP_VOL_CTLR)
