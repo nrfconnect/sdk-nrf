@@ -5,6 +5,7 @@ top_table:
   LTE: LTE_LINK_CONTROL
   HomeKit: HOMEKIT
   Matter: CHIP
+  Wi-Fi: WIFI && WIFI_NRF700X
 features:
   zigbee:
     Zigbee (Sleepy) End Device: ZIGBEE_ROLE_END_DEVICE
@@ -44,6 +45,9 @@ features:
     HomeKit commissioning over Bluetooth LE with NFC: HOMEKIT && BT && CONFIG_HAP_HAVE_NFC
     HomeKit - OTA DFU over Bluetooth LE: HOMEKIT && HOMEKIT_NORDIC_DFU
     HomeKit - OTA DFU over HomeKit: HOMEKIT && BT && CONFIG_HAP_FIRMWARE_UPDATE
+  wifi:
+    STA Mode: WPA_SUPP && WIFI_NRF700X
+    Scan only (for location accuracy): WIFI_NRF700X && !WPA_SUPP
   trusted_firmware_m:
     Minimal Build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_MINIMAL
     Full build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_NOT_SET && NRF_SECURITY
