@@ -257,18 +257,21 @@ static int svc_param_record_get(const struct nfc_ndef_bin_payload_desc *bin_pay_
 
 static void on_svc_delayed_operation(void)
 {
-	int err;
+	int ret;
 	int64_t time_spent;
 
 	time_spent = k_uptime_delta(&tnep.last_time);
 
-	err = k_work_reschedule(&tnep.tnep_work,
+	ret = k_work_reschedule(&tnep.tnep_work,
 				time_spent > tnep.wait_time ?
 				K_NO_WAIT :
 				K_MSEC(tnep.wait_time - time_spent));
-	if (err) {
-		svc_error_notify(err);
+	if (ret < 0) {
+		svc_error_notify(ret);
+		return;
 	}
+
+	__ASSERT_NO_MSG(ret == 1);
 }
 
 static void tnep_delay_handler(struct k_work *work)

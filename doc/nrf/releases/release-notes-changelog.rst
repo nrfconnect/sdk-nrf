@@ -374,6 +374,10 @@ Matter samples
 NFC samples
 -----------
 
+* Fixed:
+
+  * An issue where NFC samples that use the NFC Reader feature returned false error code with value ``1`` during the NFC T4T operation.
+
 |no_changes_yet_note|
 
 nRF5340 samples
