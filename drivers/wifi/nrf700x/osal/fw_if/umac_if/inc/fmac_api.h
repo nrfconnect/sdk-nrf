@@ -1225,4 +1225,21 @@ enum wifi_nrf_status wifi_nrf_fmac_conf_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fma
 enum wifi_nrf_status wifi_nrf_fmac_otp_info_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						struct wifi_nrf_fmac_otp_info *otp_info);
 
+/**
+ * wifi_nrf_fmac_set_mcast_addr - set the Multicast filter address.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: Index of the interface whose state needs to be changed.
+ * @mcast_info: Multicast information to be set
+ *
+ * This function is used to send a command (%NRF_WIFI_UMAC_CMD_MCAST_FILTER) to
+ * instruct the firmware to set the multicast filter address to an interface
+ * with index @if_idx and parameters specified by @mcast_info.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_set_mcast_addr(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						  unsigned char if_idx,
+						  struct nrf_wifi_umac_mcast_cfg *mcast_info);
 #endif /* __FMAC_API_H__ */
