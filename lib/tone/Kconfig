@@ -1,0 +1,17 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig TONE
+	bool "TONE - Sinus creation library"
+	help
+	  Library for creating tones
+
+if TONE
+
+module = TONE
+module-str = tone
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif #TONE

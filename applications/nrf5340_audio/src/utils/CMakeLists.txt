@@ -10,6 +10,5 @@ target_sources(app PRIVATE
 	       ${CMAKE_CURRENT_SOURCE_DIR}/data_fifo.c
 	       ${CMAKE_CURRENT_SOURCE_DIR}/error_handler.c
 	       ${CMAKE_CURRENT_SOURCE_DIR}/pcm_stream_channel_modifier.c
-	       ${CMAKE_CURRENT_SOURCE_DIR}/tone.c
 	       ${CMAKE_CURRENT_SOURCE_DIR}/uicr.c
 )

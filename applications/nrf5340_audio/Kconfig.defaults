@@ -77,6 +77,10 @@ config PCM_MIX
 	bool
 	default y
 
+config TONE
+	bool
+	default y
+
 # Enable NRFX_CLOCK for ACLK control
 config NRFX_CLOCK
 	bool
