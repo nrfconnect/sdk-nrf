@@ -134,7 +134,6 @@ enum rpu_op_mode {
  *
  * To obtain statistics relevant to the operation mode set via op_mode
  * parameter.
- * Statistics will be updated in: /sys/kernel/debug/img/wlan/stats
  */
 
 enum rpu_stats_type {
@@ -190,7 +189,8 @@ enum nrf_wifi_sys_commands {
 	NRF_WIFI_CMD_BTCOEX,
 	NRF_WIFI_CMD_RF_TEST,
 	NRF_WIFI_CMD_HE_GI_LTF_CONFIG,
-	NRF_WIFI_CMD_UMAC_INT_STATS
+	NRF_WIFI_CMD_UMAC_INT_STATS,
+	NRF_WIFI_CMD_RADIO_TEST_INIT,
 };
 
 /**
@@ -687,6 +687,10 @@ struct rpu_conf_params {
 	unsigned char ble_ant_switch_ctrl;
 	unsigned char ru_tone;
 	unsigned char ru_index;
+	signed char tx_tone_freq;
+	unsigned char lna_gain;
+	unsigned char bb_gain;
+	unsigned short int capture_length;
 } __NRF_WIFI_PKD;
 
 /**
@@ -704,6 +708,24 @@ struct nrf_wifi_cmd_mode_params {
 	unsigned int ddr_ptrs[MAX_TX_AGG_SIZE];
 } __NRF_WIFI_PKD;
 
+/**
+ * struct nrf_wifi_cmd_radio_test_init - command radio_test_init
+ * @sys_head: UMAC header, See &struct nrf_wifi_sys_head
+ * @conf: radiotest init configuration parameters
+ * see &struct nrf_wifi_radio_test_init_info
+ *
+ */
+struct nrf_wifi_radio_test_init_info {
+	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
+	struct chan_params chan;
+	signed char phy_threshold;
+	unsigned int phy_calib;
+} __NRF_WIFI_PKD;
+
+struct nrf_wifi_cmd_radio_test_init {
+	struct nrf_wifi_sys_head sys_head;
+	struct nrf_wifi_radio_test_init_info conf;
+} __NRF_WIFI_PKD;
 
 /**
  * struct nrf_wifi_cmd_rx - command rx

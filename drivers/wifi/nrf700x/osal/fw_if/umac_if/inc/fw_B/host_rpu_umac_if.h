@@ -156,7 +156,10 @@ enum nrf_wifi_umac_commands {
 	NRF_WIFI_UMAC_CMD_TEARDOWN_TWT,
 	NRF_WIFI_UMAC_CMD_ABORT_SCAN,
 	NRF_WIFI_UMAC_CMD_MCAST_FILTER,
-	NRF_WIFI_UMAC_CMD_CHANGE_MACADDR
+	NRF_WIFI_UMAC_CMD_CHANGE_MACADDR,
+	NRF_WIFI_UMAC_CMD_SET_POWER_SAVE_TIMEOUT,
+	NRF_WIFI_UMAC_CMD_GET_CONNECTION_INFO,
+	NRF_WIFI_UMAC_CMD_GET_POWER_SAVE_INFO
 };
 
 
@@ -255,7 +258,9 @@ enum nrf_wifi_umac_events {
 	NRF_WIFI_UMAC_EVENT_TEARDOWN_TWT,
 	NRF_WIFI_UMAC_EVENT_TWT_SLEEP,
 	NRF_WIFI_UMAC_EVENT_COALESCING,
-	NRF_WIFI_UMAC_EVENT_MCAST_FILTER
+	NRF_WIFI_UMAC_EVENT_MCAST_FILTER,
+	NRF_WIFI_UMAC_EVENT_GET_CONNECTION_INFO,
+	NRF_WIFI_UMAC_EVENT_GET_POWER_SAVE_INFO
 };
 #define	IMG_UMAC_EVENT_MCAST_FILTER 298
 /**
@@ -1377,13 +1382,13 @@ struct nrf_wifi_umac_event_scan_done {
 	unsigned int scan_type;
 } __NRF_WIFI_PKD;
 
-struct mcast_bssid {
-	unsigned char bssid[NRF_WIFI_ETH_ADDR_LEN];
-} __NRF_WIFI_PKD;
+
+#define MCAST_ADDR_ADD 0
+#define MCAST_ADDR_DEL 1
 
 struct nrf_wifi_umac_mcast_cfg {
-	signed int count;
-	struct mcast_bssid  mcast_bssid[0];
+	unsigned int type;
+	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 } __NRF_WIFI_PKD;
 
 struct nrf_wifi_umac_cmd_mcast_filter {
@@ -2461,6 +2466,20 @@ struct nrf_wifi_umac_cmd_set_power_save {
 } __NRF_WIFI_PKD;
 
 /**
+ * struct nrf_wifi_umac_cmd_set_power_save_timeout - Set power save timeout.
+ * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
+ * @timeout: Timeout value in milli seconds.
+ *     if timeout < 0 RPU will set timeout to 100ms.
+ *
+ * This structure represents the command to configure power save timeout value.
+ */
+
+struct nrf_wifi_umac_cmd_set_power_save_timeout {
+	struct nrf_wifi_umac_hdr umac_hdr;
+	signed int timeout;
+} __NRF_WIFI_PKD;
+
+/**
  * struct nrf_wifi_umac_qos_map_info - qos map info.
  * @qos_map_info_len: length of qos_map info field.
  * @qos_map_info: contains qos_map info as received from stack.
@@ -2611,6 +2630,7 @@ enum nrf_wifi_twt_setup_cmd_type {
  * @twt_target_wake_interval_mantissa: wake interval mantissa value
  * @target_wake_time: start of the waketime value after successful TWT negotiation
  * @nominal_min_twt_wake_duration: min TWT wake duration
+ * @dialog_token: dialog_token of twt frame.
  * This structure represents the command provides TWT information.
  */
 
@@ -2869,6 +2889,7 @@ struct nrf_wifi_umac_event_new_scan_display_results {
 #define NRF_WIFI_EVENT_MLME_RX_SIGNAL_DBM_VALID (1 << 4)
 #define NRF_WIFI_EVENT_MLME_WME_UAPSD_QUEUES_VALID (1 << 5)
 #define NRF_WIFI_EVENT_MLME_RXMGMT_FLAGS_VALID (1 << 6)
+#define NRF_WIFI_EVENT_MLME_IE_VALID   (1 << 7)
 #define NRF_WIFI_EVENT_MLME_TIMED_OUT (1 << 0)
 #define NRF_WIFI_EVENT_MLME_ACK (1 << 1)
 
@@ -3128,6 +3149,33 @@ struct nrf_wifi_cmd_start_p2p {
 struct nrf_wifi_cmd_get_ifindex {
 	struct nrf_wifi_umac_hdr umac_hdr;
 	signed char ifacename[IFACENAMSIZ];
+} __NRF_WIFI_PKD;
+
+struct nrf_wifi_umac_cmd_conn_info {
+	struct nrf_wifi_umac_hdr umac_hdr;
+} __NRF_WIFI_PKD;
+
+struct nrf_wifi_umac_event_conn_info {
+	struct nrf_wifi_umac_hdr umac_hdr;
+	unsigned short beacon_interval;
+	unsigned char dtim_interval;
+} __NRF_WIFI_PKD;
+
+struct nrf_wifi_umac_cmd_get_power_save_info {
+	struct nrf_wifi_umac_hdr umac_hdr;
+} __NRF_WIFI_PKD;
+
+#define NRF_WIFI_MAX_TWT_FLOWS 8
+#define NRF_WIFI_PS_MODE_LEGACY 0
+#define NRF_WIFI_PS_MODE_WMM 1
+
+struct nrf_wifi_umac_event_power_save_info {
+	struct nrf_wifi_umac_hdr umac_hdr;
+	unsigned int ps_mode;
+	unsigned char enabled;
+	unsigned char twt_responder;
+	unsigned char num_twt_flows;
+	struct nrf_wifi_umac_config_twt_info twt_flow_info[0];
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_TX_BITRATE_MASK_LEGACY_MAX_LEN 8
@@ -3437,6 +3485,8 @@ struct nrf_wifi_cmd_req_set_reg {
 
 #define NRF_WIFI_CMD_REQ_SET_REG_ALPHA2_VALID (1 << 0)
 #define NRF_WIFI_CMD_REQ_SET_REG_USER_REG_HINT_TYPE_VALID (1 << 1)
+/* This bit in valid_fields indicates user settings are forced (1) or not (0) */
+#define NRF_WIFI_CMD_REQ_SET_REG_USER_REG_FORCE (1 << 2)
 	unsigned int valid_fields;
 	unsigned int nrf_wifi_user_reg_hint_type;
 	unsigned char nrf_wifi_alpha2[3];
