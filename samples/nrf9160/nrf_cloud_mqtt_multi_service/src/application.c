@@ -9,6 +9,7 @@
 #include <nrf_modem_at.h>
 #include <nrf_errno.h>
 #include <net/nrf_cloud.h>
+#include <net/nrf_cloud_alerts.h>
 #include <date_time.h>
 #include <cJSON.h>
 #include <stdio.h>
@@ -31,6 +32,11 @@ static K_TIMER_DEFINE(sensor_sample_timer, NULL, NULL);
 #define AT_CMD_REQUEST_ERR_MAX_LEN (sizeof(AT_CMD_REQUEST_ERR_FORMAT) + 20)
 BUILD_ASSERT(CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH >= AT_CMD_REQUEST_ERR_MAX_LEN,
 	     "Not enough AT command response buffer for printing error events.");
+
+/* Temperature alert limits. */
+#define TEMP_ALERT_LIMIT CONFIG_TEMP_ALERT_LIMIT
+#define TEMP_ALERT_HYSTERESIS 2
+#define TEMP_ALERT_LOWER_LIMIT (TEMP_ALERT_LIMIT + TEMP_ALERT_HYSTERESIS)
 
 /* Buffer to contain modem responses when performing AT command requests */
 static char at_req_resp_buf[CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH];
@@ -287,6 +293,29 @@ cleanup:
 	cJSON_Delete(msg_obj);
 }
 
+/** @brief Check whether temperature is acceptable.
+ * If the device exceeds a temperature limit, send the temperature alert one time.
+ * Once the temperature falls below a lower limit, re-enable the temperature alert
+ * so it will be sent if limit is exceeded again.
+ *
+ * The difference between the two limits should be sufficient to prevent sending
+ * new alerts if the temperature value oscillates between two nearby values.
+ *
+ * @param temp - The current device temperature.
+ */
+static void monitor_temperature(double temp)
+{
+	static bool temperature_alert_active;
+
+	if ((temp > TEMP_ALERT_LIMIT) && !temperature_alert_active) {
+		temperature_alert_active = true;
+		(void)nrf_cloud_alert_send(ALERT_TYPE_TEMPERATURE, (float)temp,
+					   "Temperature over limit!");
+	} else if (temp < TEMP_ALERT_LOWER_LIMIT) {
+		temperature_alert_active = false;
+	}
+}
+
 void main_application_thread_fn(void)
 {
 	if (IS_ENABLED(CONFIG_AT_CMD_REQUESTS)) {
@@ -298,6 +327,8 @@ void main_application_thread_fn(void)
 
 	/* Wait for first connection before starting the application. */
 	(void)await_connection(K_FOREVER);
+
+	(void)nrf_cloud_alert_send(ALERT_TYPE_DEVICE_NOW_ONLINE, 0, NULL);
 
 	/* Wait for the date and time to become known.
 	 * This is needed both for location services and for sensor sample timestamping.
@@ -332,6 +363,8 @@ void main_application_thread_fn(void)
 			if (get_temperature(&temp) == 0) {
 				LOG_INF("Temperature is %d degrees C", (int)temp);
 				(void)send_sensor_sample(NRF_CLOUD_JSON_APPID_VAL_TEMP, temp);
+
+				monitor_temperature(temp);
 			}
 		}
 
