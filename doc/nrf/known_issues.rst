@@ -1868,6 +1868,19 @@ FW upgrade is broken for multi-image builds
 NFC
 ===
 
+.. rst-class:: v2-2-0
+
+NCSDK-19168: The :ref:`peripheral_nfc_pairing` and :ref:`central_nfc_pairing` samples cannot pair using OOB data.
+  The :ref:`nfc_ndef_ch_rec_parser_readme` library parses AC records in an invalid way.
+  As a result, the samples cannot parse OOB data for pairing.
+
+  **Workaround:** Revert the :file:`subsys/nfc/ndef/ch_record_parser.c` file to the state from the :ref:`ncs_release_notes_210`.
+
+  .. code-block::
+
+     cd <NCS_root_directory>
+     git checkout v2.1.0 -- subsys/nfc/ndef/ch_record_parser.c
+
 .. rst-class:: v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
 NCSDK-19347: NFC Reader samples return false errors with value ``1``.
