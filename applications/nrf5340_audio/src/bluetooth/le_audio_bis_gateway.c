@@ -296,6 +296,7 @@ static int initialize(void)
 	create_param.params = subgroup_params;
 	create_param.qos = &lc3_preset.qos;
 	create_param.packing = BT_ISO_PACKING_SEQUENTIAL;
+	create_param.encryption = false;
 
 	LOG_DBG("Creating broadcast source");
 
