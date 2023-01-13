@@ -56,7 +56,7 @@ static int select_msg_handle(const struct nfc_ndef_msg_desc *msg,
 
 	err = nfc_tnep_ch_select_msg_parse(msg, &ch_select, buf);
 	if (err) {
-		LOG_ERR("Parsing Connetion Handover Select message failed: %d",
+		LOG_ERR("Parsing Connection Handover Select message failed: %d",
 			err);
 		return err;
 	}
@@ -82,7 +82,7 @@ static int request_msg_handle(const struct nfc_ndef_msg_desc *msg,
 
 	err = nfc_tnep_ch_request_msg_parse(msg, &ch_req, buf);
 	if (err) {
-		LOG_ERR("Parsing Connetion Handover Request message failed: %d",
+		LOG_ERR("Parsing Connection Handover Request message failed: %d",
 			err);
 		return err;
 	}
@@ -125,7 +125,7 @@ static int initiate_msg_handle(const struct nfc_ndef_msg_desc *msg,
 
 	err = nfc_tnep_ch_initiate_msg_parse(msg, &ch_init, buf);
 	if (err) {
-		LOG_ERR("Parsing Connetion Handover Initiate message failed: %d",
+		LOG_ERR("Parsing Connection Handover Initiate message failed: %d",
 			err);
 		return err;
 	}
@@ -201,7 +201,7 @@ static void ch_svc_msg_received(const uint8_t *data, size_t len)
 	case NFC_TNEP_CH_ROLE_SELECTOR:
 		if (nfc_ndef_ch_rec_check(*ch_msg->record,
 				   NFC_NDEF_CH_REC_TYPE_HANDOVER_INITIATE)) {
-			LOG_DBG("Handover Initate message received");
+			LOG_DBG("Handover Initiate message received");
 
 			err = initiate_msg_handle(ch_msg, &ch_buf);
 		} else if (nfc_ndef_ch_rec_check(*ch_msg->record,

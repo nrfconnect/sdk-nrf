@@ -49,7 +49,7 @@ static int request_msg_handle(const struct nfc_ndef_msg_desc *msg,
 
 	err = nfc_tnep_ch_request_msg_parse(msg, &ch_req, buf);
 	if (err) {
-		LOG_ERR("Parsing Connetion Handover Request message failed: %d",
+		LOG_ERR("Parsing Connection Handover Request message failed: %d",
 			err);
 		return err;
 	}
@@ -73,7 +73,7 @@ static int select_msg_handle(const struct nfc_ndef_msg_desc *msg,
 
 	err = nfc_tnep_ch_select_msg_parse(msg, &ch_select, buf);
 	if (err) {
-		LOG_ERR("Parsing Connetion Handover Select message failed: %d",
+		LOG_ERR("Parsing Connection Handover Select message failed: %d",
 			err);
 		return err;
 	}
@@ -119,7 +119,7 @@ static void tnep_svc_selected(const struct nfc_ndef_tnep_rec_svc_param *param,
 	if (timeout) {
 		err = nfc_tnep_poller_svc_deselect();
 		if (err) {
-			LOG_ERR("Deselecting Connetion Handover service failed %d",
+			LOG_ERR("Deselecting Connection Handover service failed %d",
 				err);
 			error_handler(err);
 		}
