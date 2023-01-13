@@ -216,6 +216,15 @@ The following table indicates the software maturity levels of the support for ea
 
   .. sml-table:: zigbee
 
+Wi-Fi feature support
+**********************
+
+The following table indicates the software maturity levels of the support for each Wi-Fi feature:
+
+.. toggle::
+
+  .. sml-table:: wifi
+
 Security Feature Support
 ************************
 
