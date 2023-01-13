@@ -656,7 +656,8 @@ static int connect_cloud(void)
 	}
 
 	LOG_INF("Connected to nRF Cloud");
-	return 0;
+
+	return err;
 }
 
 /**
