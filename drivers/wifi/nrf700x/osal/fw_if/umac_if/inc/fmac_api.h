@@ -128,7 +128,7 @@ enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_rx(struct wifi_nrf_fmac_dev_c
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						  enum nrf_wifi_rf_test rf_test_type,
 						  void *cap_data,
-						  unsigned long num_samples,
+						  unsigned short int num_samples,
 						  unsigned char lna_gain,
 						  unsigned char bb_gain);
 
