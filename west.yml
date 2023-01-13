@@ -72,7 +72,6 @@ manifest:
           - cmsis
           - edtt
           - fatfs
-          - fff
           - hal_nordic
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
           - hal_wurthelektronik
