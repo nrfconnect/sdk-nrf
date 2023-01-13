@@ -331,7 +331,6 @@ config BT_AUDIO_BROADCAST_ENCRYPTED
 	default n
 	help
 	  Encrypt the broadcast to limit the connectability
-	  (NOTE: Encrypting broadcast source is not yet supported by host.)
 
 config BT_AUDIO_BROADCAST_ENCRYPTION_KEY
 	string "Broadcast encryption key"
