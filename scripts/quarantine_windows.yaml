@@ -39,3 +39,12 @@
   platforms:
     - all
   comment: "nanopb package not available in Windows toolchain"
+
+- scenarios:
+    - applications.nrf5340_audio.gateway_dfu_external
+    - applications.nrf5340_audio.gateway_dfu_internal
+    - applications.nrf5340_audio.headset_dfu_external
+    - applications.nrf5340_audio.headset_dfu_internal
+  platforms:
+    - all
+  comment: "skip until fix sdk-nrf/pull/9898 is merged"
