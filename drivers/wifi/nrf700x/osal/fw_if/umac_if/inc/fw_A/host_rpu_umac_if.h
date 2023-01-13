@@ -153,6 +153,7 @@
 #define NRF_WIFI_UMAC_CMD_CONFIG_TWT 48
 #define NRF_WIFI_UMAC_CMD_TEARDOWN_TWT 49
 #define NRF_WIFI_UMAC_CMD_ABORT_SCAN 50
+#define NRF_WIFI_UMAC_CMD_MCAST_FILTER 51
 
 /**
  * enum nrf_wifi_umac_events - Events that the RPU can send to the host.
@@ -1329,6 +1330,30 @@ struct nrf_wifi_umac_event_scan_done {
 	struct nrf_wifi_umac_hdr umac_hdr;
 	int status;
 	unsigned int scan_type;
+} __NRF_WIFI_PKD;
+
+#define MCAST_ADDR_ADD 0
+#define MCAST_ADDR_DEL 1
+/**
+ * struct nrf_wifi_umac_mcast_cfg - mcast related information.
+ *
+ * @type: Add (0) or Delete (1)
+ * @mac-addr: multicast address to be added/deleted.
+ */
+struct nrf_wifi_umac_mcast_cfg {
+	unsigned int type;
+	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
+} __NRF_WIFI_PKD;
+
+/**
+ * struct nrf_wifi_umac_cmd_mcast_filter - set mcast address
+ *
+ * @umac_hdr: Refer to &struct nrf_wifi_umac_hdr.
+ * @info: Refer to &struct nrf_wifi_umac_mcast_cfg.
+ */
+struct nrf_wifi_umac_cmd_mcast_filter {
+	struct nrf_wifi_umac_hdr umac_hdr;
+	struct nrf_wifi_umac_mcast_cfg info;
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_CMD_AUTHENTICATE_KEY_INFO_VALID (1 << 0)
