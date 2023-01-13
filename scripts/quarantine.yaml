@@ -5,7 +5,7 @@
 # - scenarios:
 #    - None
 #  platforms:
-#    - None
+#    - all
 
 - scenarios:
     - sample.tfm.psa_test_crypto
