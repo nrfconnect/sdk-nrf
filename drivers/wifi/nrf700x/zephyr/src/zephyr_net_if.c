@@ -20,6 +20,12 @@
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
+extern char *net_sprint_ll_addr_buf(const uint8_t *ll, uint8_t ll_len,
+				    char *buf, int buflen);
+
+static struct net_mgmt_event_callback ip_maddr4_cb;
+static struct net_mgmt_event_callback ip_maddr6_cb;
+
 #ifdef CONFIG_NRF700X_DATA_TX
 void wifi_nrf_if_rx_frm(void *os_vif_ctx, void *frm)
 {
@@ -110,6 +116,89 @@ out:
 	return ret;
 }
 
+static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
+				   uint32_t mgmt_event,
+				   struct net_if *iface)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	const struct device *dev = NULL;
+	struct net_eth_addr mac_addr;
+	struct nrf_wifi_umac_mcast_cfg *mcast_info = NULL;
+	enum wifi_nrf_status status;
+	uint8_t mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
+
+	dev = net_if_get_device(iface);
+
+	if (!dev) {
+		LOG_ERR("%s: dev is NULL\n", __func__);
+		return;
+	}
+
+	vif_ctx_zep = dev->data;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	mcast_info = k_calloc(sizeof(*mcast_info), sizeof(char));
+
+	if (!mcast_info) {
+		LOG_ERR("%s: Unable to allocate memory of size %d "
+			"for mcast_info\n", __func__, sizeof(*mcast_info));
+		return;
+	}
+
+	if ((mgmt_event == NET_EVENT_IPV4_MADDR_ADD) ||
+	    (mgmt_event == NET_EVENT_IPV4_MADDR_DEL)) {
+		if ((cb->info == NULL) ||
+		    (cb->info_length != sizeof(struct in_addr))) {
+			return;
+		}
+
+		net_eth_ipv4_mcast_to_mac_addr((const struct in_addr *)cb->info,
+						&mac_addr);
+
+		if (mgmt_event == NET_EVENT_IPV4_MADDR_ADD) {
+			mcast_info->type = MCAST_ADDR_ADD;
+		} else {
+			mcast_info->type = MCAST_ADDR_DEL;
+		}
+
+	} else if ((mgmt_event == NET_EVENT_IPV6_MADDR_ADD) ||
+		   (mgmt_event == NET_EVENT_IPV6_MADDR_DEL)) {
+		if ((cb->info == NULL) ||
+		    (cb->info_length != sizeof(struct in6_addr))) {
+			return;
+		}
+
+		net_eth_ipv6_mcast_to_mac_addr(
+				(const struct in6_addr *)cb->info,
+				&mac_addr);
+
+		if (mgmt_event == NET_EVENT_IPV6_MADDR_ADD) {
+			mcast_info->type = MCAST_ADDR_ADD;
+		} else {
+			mcast_info->type = MCAST_ADDR_DEL;
+		}
+	}
+
+	memcpy(((char *)(mcast_info->mac_addr)),
+	       &mac_addr,
+	       NRF_WIFI_ETH_ADDR_LEN);
+
+	status = wifi_nrf_fmac_set_mcast_addr(rpu_ctx_zep->rpu_ctx,
+					      vif_ctx_zep->vif_idx,
+					      mcast_info);
+
+	if (status == WIFI_NRF_STATUS_FAIL) {
+		LOG_ERR("%s: nrf_wifi_fmac_set_multicast failed	for"
+			" mac addr=%s\n",
+			__func__,
+			net_sprint_ll_addr_buf(mac_addr.addr,
+					       WIFI_MAC_ADDR_LEN, mac_string_buf,
+					       sizeof(mac_string_buf)));
+	}
+
+	k_free(mcast_info);
+}
 
 void wifi_nrf_if_init(struct net_if *iface)
 {
@@ -134,6 +223,17 @@ void wifi_nrf_if_init(struct net_if *iface)
 			     (unsigned char *)&vif_ctx_zep->mac_addr,
 			     sizeof(vif_ctx_zep->mac_addr),
 			     NET_LINK_ETHERNET);
+
+	net_mgmt_init_event_callback(&ip_maddr4_cb,
+		     ip_maddr_event_handler,
+		     NET_EVENT_IPV4_MADDR_ADD | NET_EVENT_IPV4_MADDR_DEL);
+	net_mgmt_add_event_callback(&ip_maddr4_cb);
+
+	net_mgmt_init_event_callback(&ip_maddr6_cb,
+			     ip_maddr_event_handler,
+			     NET_EVENT_IPV6_MADDR_ADD | NET_EVENT_IPV6_MADDR_DEL);
+	net_mgmt_add_event_callback(&ip_maddr6_cb);
+
 }
 
 #ifdef CONFIG_NET_STATISTICS_WIFI
