@@ -1,7 +1,7 @@
-.. _ug_nrf70:
+.. _ug_nrf70_developing:
 
-Working with nRF70 Series
-#########################
+Developing with nRF70 Series
+############################
 
 The |NCS| provides support for development on the nRF70 Series, using the nRF7002 DK (PCA10143) that includes the Wi-Fi companion IC.
 
@@ -9,6 +9,4 @@ The |NCS| provides support for development on the nRF70 Series, using the nRF700
    :maxdepth: 2
    :caption: Subpages:
 
-   ug_nrf70_features
-   ug_nrf7002_gs
-   ug_nrf70_developing
+   ug_nrf70_developing_powersave

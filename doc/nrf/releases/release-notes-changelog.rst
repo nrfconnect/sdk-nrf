@@ -609,5 +609,6 @@ Documentation
 * Added:
 
   * Documentation template for the :ref:`Ecosystem integration <Ecosystem_integration>` user guides.
+  * The :ref:`ug_nrf70_developing` user guide.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
