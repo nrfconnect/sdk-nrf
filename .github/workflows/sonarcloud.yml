@@ -100,7 +100,7 @@ jobs:
           sonar-scanner --define sonar.projectKey=balaji-nordic_sdk-nrf \
                         --define sonar.organization=balaji-nordic \
                         --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" \
-                        --define sonar.exclusions="**/*.py,**twister-out**,**/*.java,**/*.html,**/*.xml,**/*.php" \
+                        --define sonar.exclusions="ncs/modules/**,**/*.py,**twister-out**,**/*.java,**/*.html,**/*.xml,**/*.php" \
                         --define sonar.cpd.exclusions="**CMakeFiles**" \
                         --define sonar.coverageReportPaths=coverage.xml \
                         --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
