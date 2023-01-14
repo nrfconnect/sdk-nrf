@@ -1212,6 +1212,7 @@ enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_de
 					  unsigned int *lmac_ver);
 
 
+#ifndef CONFIG_NRF700X_REV_A
 /**
  * wifi_nrf_fmac_conf_btcoex() - Configure BT-Coex parameters in RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1225,8 +1226,8 @@ enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_de
  *              Fail: %WIFI_NRF_STATUS_FAIL
  */
 enum wifi_nrf_status wifi_nrf_fmac_conf_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					       struct rpu_btcoex *params);
-
+					       void *cmd, unsigned int cmd_len);
+#endif
 
 /**
  * wifi_nrf_fmac_conf_ltf_gi() - Configure HE LTF and GI parameters.

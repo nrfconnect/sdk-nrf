@@ -38,8 +38,8 @@ out:
 
 
 enum wifi_nrf_status umac_cmd_cfg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-				  void *params,
-				  int len)
+				void *params,
+				int len)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct host_rpu_msg *umac_cmd = NULL;
@@ -193,15 +193,16 @@ out:
 }
 
 
+#ifndef CONFIG_NRF700X_REV_A
 enum wifi_nrf_status umac_cmd_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-				     struct rpu_btcoex *params)
+				void *cmd, unsigned int cmd_len)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct host_rpu_msg *umac_cmd = NULL;
 	struct nrf_wifi_cmd_coex_config *umac_cmd_data = NULL;
 	int len = 0;
 
-	len = sizeof(*umac_cmd_data) + sizeof(struct rpu_btcoex);
+	len = sizeof(*umac_cmd_data)+cmd_len;
 
 	umac_cmd = umac_cmd_alloc(fmac_dev_ctx,
 				  NRF_WIFI_HOST_RPU_MSG_TYPE_SYSTEM,
@@ -218,12 +219,12 @@ enum wifi_nrf_status umac_cmd_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_BTCOEX;
 	umac_cmd_data->sys_head.len = len;
-	umac_cmd_data->coex_config_info.len = sizeof(struct rpu_btcoex);
+	umac_cmd_data->coex_config_info.len = cmd_len;
 
 	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 			      umac_cmd_data->coex_config_info.coex_cmd,
-			      params,
-			      sizeof(struct rpu_btcoex));
+			      cmd,
+			      cmd_len);
 
 	status = wifi_nrf_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
 					    umac_cmd,
@@ -233,6 +234,7 @@ out:
 
 
 }
+#endif
 
 enum wifi_nrf_status umac_cmd_he_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					unsigned char he_ltf,

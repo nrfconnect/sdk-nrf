@@ -848,15 +848,17 @@ out:
 	return status;
 }
 
+#ifndef CONFIG_NRF700X_REV_A
 enum wifi_nrf_status wifi_nrf_fmac_conf_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					       struct rpu_btcoex *params)
+					       void *cmd, unsigned int cmd_len)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 
-	status = umac_cmd_btcoex(fmac_dev_ctx, params);
+	status = umac_cmd_btcoex(fmac_dev_ctx, cmd, cmd_len);
 
 	return status;
 }
+#endif
 
 #ifdef CONFIG_NRF700X_RADIO_TEST
 #ifndef CONFIG_NRF700X_REV_A

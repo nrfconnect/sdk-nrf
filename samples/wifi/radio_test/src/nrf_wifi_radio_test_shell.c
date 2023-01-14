@@ -1832,7 +1832,7 @@ static int nrf_wifi_radio_test_wlan_switch_ctrl(const struct shell *shell,
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	char *ptr = NULL;
-	struct rpu_btcoex params = { 0 };
+	struct coex_wlan_switch_ctrl params = { 0 };
 
 	if (argc < 2) {
 		shell_fprintf(shell,
@@ -1857,7 +1857,7 @@ static int nrf_wifi_radio_test_wlan_switch_ctrl(const struct shell *shell,
 	ctx->conf_params.wlan_ant_switch_ctrl = params.switch_A;
 
 	status = wifi_nrf_fmac_conf_btcoex(ctx->rpu_ctx,
-					   &params);
+					   &params, sizeof(params));
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		shell_fprintf(shell,

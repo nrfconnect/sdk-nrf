@@ -38,8 +38,10 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 enum wifi_nrf_status umac_cmd_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 
+#ifndef CONFIG_NRF700X_REV_A
 enum wifi_nrf_status umac_cmd_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-				     struct rpu_btcoex *params);
+	void *cmd, unsigned int cmd_len);
+#endif
 
 enum wifi_nrf_status umac_cmd_he_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					unsigned char he_ltf,
