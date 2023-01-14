@@ -30,6 +30,10 @@ zephyr_include_directories_ifndef(CONFIG_NRF700X_REV_A
 	osal/fw_if/umac_if/inc/fw_B
 )
 
+zephyr_library_sources_ifdef(CONFIG_NRF700X_WIFI_BT_COEX
+	zephyr/src/zephyr_coex.c
+)
+
 zephyr_library_sources(
 	osal/os_if/src/osal.c
 	osal/utils/src/list.c
