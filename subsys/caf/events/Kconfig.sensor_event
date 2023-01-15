@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CAF_SENSOR_EVENTS
+	bool "Enable sensor events"
+	help
+	  Enable support for sensor events.
+
+config CAF_INIT_LOG_SENSOR_EVENTS
+	bool "Log sensor events"
+	depends on CAF_SENSOR_EVENTS
+	depends on LOG
+	default y
+	help
+	  Log sensor events, used to notify about sensor measured data.
+
+config CAF_INIT_LOG_SENSOR_STATE_EVENTS
+	bool "Log sensor state events"
+	depends on CAF_SENSOR_EVENTS
+	depends on LOG
+	default y
+	help
+	  Log sensor state events, used to notify about sensor state change.
