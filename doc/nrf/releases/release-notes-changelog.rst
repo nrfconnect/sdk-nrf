@@ -165,6 +165,11 @@ nRF5340 Audio
   * :ref:`nrf53_audio_app_ui` and :ref:`nrf53_audio_app_testing_steps_cis` sections in the application documentation with information about using **VOL** buttons to switch headset channels.
   * :ref:`nrf53_audio_app_requirements` section in the application documentation by moving the information about the nRF5340 Audio DK to `Nordic Semiconductor Infocenter`_, under `nRF5340 Audio DK Hardware`_.
 
+nRF Machine Learning (Edge Impulse)
+-----------------------------------
+
+* Removed the usage of ``ml_runner_signin_event`` from the application.
+
 nRF Desktop
 -----------
 
