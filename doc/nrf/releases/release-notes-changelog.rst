@@ -558,6 +558,8 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
+* Added the :ref:`nsms_readme` library.
+
 * :ref:`mds_readme` library:
 
   * Fixed URI generation in the :c:func:`data_uri_read` function.
