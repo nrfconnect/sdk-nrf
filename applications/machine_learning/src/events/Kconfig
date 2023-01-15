@@ -24,12 +24,6 @@ config ML_APP_INIT_LOG_ML_RESULT_EVENTS
 	depends on LOG
 	default y
 
-config ML_APP_INIT_LOG_ML_RESULT_SIGNIN_EVENTS
-	bool "Log machine learning result signin event"
-	depends on ML_APP_ML_RESULT_EVENTS
-	depends on LOG
-	default y
-
 config ML_APP_MODE_EVENTS
 	bool "Enable machine learning mode events"
 

@@ -162,6 +162,11 @@ nRF5340 Audio
   * BIS headsets can now switch between two broadcast sources (two hardcoded broadcast names).
   * Documentation in the :ref:`nrf53_audio_app_ui` and :ref:`nrf53_audio_app_testing_steps_cis` sections with information about using **VOL** buttons to switch headset channels.
 
+nRF Machine Learning (Edge Impulse)
+-----------------------------------
+
+* Removed the usage of ``ml_runner_signin_event`` from the application.
+
 nRF Desktop
 -----------
 
