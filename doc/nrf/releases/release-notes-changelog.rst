@@ -273,6 +273,8 @@ Samples
 Bluetooth samples
 -----------------
 
+* Added the :ref:`peripheral_status` sample.
+
 * :ref:`peripheral_uart` sample:
 
   * Fixed a possible memory leak in the :c:func:`uart_init` function.

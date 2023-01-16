@@ -10,6 +10,8 @@ Nordic Status Message Service (NSMS)
 The Nordic Status Message Service (NSMS) is a custom service that provides the name of the status and a string describing the current status.
 The status can be either notified or directly read (without waiting for notification) to check the current status whenever the device is connected.
 
+The NSMS service is used in the :ref:`peripheral_status` sample.
+
 Multiple instances of the service can be implemented to show the status of different parts of the system.
 The instances can be distinguished by the client by its name provided in the Characteristic User Description (CUD).
 
