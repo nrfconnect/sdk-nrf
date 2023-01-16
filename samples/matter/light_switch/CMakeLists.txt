@@ -63,6 +63,7 @@ endif()
 
 chip_configure_data_model(app
     INCLUDE_SERVER
+    BYPASS_IDL
     ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/light_switch.zap
 )
 

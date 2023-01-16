@@ -90,11 +90,14 @@ See `Matter samples`_ for the list of changes for the Matter samples.
 Matter fork
 +++++++++++
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``bc6b43882a56ddb3e94d3e64956bd5f3292b4058``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``1.0.0.2`` tag.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-* |no_changes_yet_note|
+* Added initial implementation of Matter's cryptographic operations based on PSA crypto API.
+* Added build-time generation of some Zigbee Cluster Library (ZCL) source files using the ``codegen.py`` Python script.
+* Added an alternative factory reset implementation that erases the entire non-volatile storage flash partition.
+* Renamed Basic cluster to Basic Information cluster to match the specification.
 
 Thread
 ------
