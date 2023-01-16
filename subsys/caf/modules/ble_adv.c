@@ -438,7 +438,9 @@ static void broadcast_module_state(enum state prev_state, enum state new_state)
 	}
 
 	if (req_wakeup) {
-		APP_EVENT_SUBMIT(new_wake_up_event());
+		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_PM_EVENTS)) {
+			APP_EVENT_SUBMIT(new_wake_up_event());
+		}
 		req_wakeup = false;
 	}
 }
