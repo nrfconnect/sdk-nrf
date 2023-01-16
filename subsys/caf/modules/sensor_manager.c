@@ -224,7 +224,7 @@ static void sample_sensor(struct sensor_data *sd, const struct sm_sensor_config 
 	int err = sensor_sample_fetch(sc->dev);
 
 	for (size_t i = 0; !err && (i < sc->chan_cnt); i++) {
-		const struct sm_sampled_channel *sampled_chan = &sc->chans[i];
+		const struct caf_sampled_channel *sampled_chan = &sc->chans[i];
 
 		err = sensor_channel_get(sc->dev, sampled_chan->chan, &data[data_idx]);
 		data_idx += sampled_chan->data_cnt;
