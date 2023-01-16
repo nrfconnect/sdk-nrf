@@ -26,7 +26,7 @@ cryptography==3.4.8
 docopt==0.6.2
 docutils==0.16
 ecdsa==0.16.1
-future==0.18.2
+future==0.18.3
 gcovr==4.2
 gitlint==0.15.0
 idna==2.10
