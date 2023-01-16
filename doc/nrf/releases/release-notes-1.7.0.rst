@@ -325,7 +325,7 @@ Common Application Framework (CAF)
 
 * Added :ref:`caf_net_state`.
 * Added :ref:`caf_power_manager`.
-* Updated :ref:`caf_sensor_sampler` with a limit to the number of ``sensor_event`` events that it submits.
+* Updated :ref:`caf_sensor_manager` with a limit to the number of ``sensor_event`` events that it submits.
 
 Edge Impulse
 ------------
