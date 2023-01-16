@@ -23,7 +23,8 @@ For nRF70 series documentation, see the following:
 
 * :ref:`ug_nrf70` provides information related to Wi-Fi support in |NCS| and using the development kit (DK).
 * :ref:`wifi_samples` for the available samples.
-* `Product specification for nRF 70 Series devices`_ for the supported features.
+
+.. * `Product specification for nRF 70 Series devices`_ for the supported features.
 
 Overview
 ********
