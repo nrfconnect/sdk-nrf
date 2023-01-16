@@ -421,7 +421,7 @@ static void transition_start(struct bt_mesh_light_ctrl_srv *srv,
 	}
 	restart_timer(srv, fade_time);
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	if (srv->reg && atomic_test_bit(&srv->flags, FLAG_AMBIENT_LUXLEVEL_SET)) {
+	if (srv->reg) {
 		atomic_set_bit(&srv->flags, FLAG_REGULATOR);
 		bt_mesh_light_ctrl_reg_target_set(srv->reg, lux_getf(srv), fade_time);
 	}
@@ -524,10 +524,11 @@ static void prolong(struct bt_mesh_light_ctrl_srv *srv)
 static void ctrl_enable(struct bt_mesh_light_ctrl_srv *srv)
 {
 	atomic_clear_bit(&srv->flags, FLAG_RESUME_TIMER);
+	atomic_clear_bit(&srv->flags, FLAG_AMBIENT_LUXLEVEL_SET);
 	srv->lightness->ctrl = srv;
 	LOG_DBG("Enable Light Control");
 	transition_start(srv, LIGHT_CTRL_STATE_STANDBY, 0);
-	reg_start(srv);
+	/* Regulator remains stopped until fresh LuxLevel is received. */
 }
 
 static void ctrl_disable(struct bt_mesh_light_ctrl_srv *srv)
@@ -917,6 +918,10 @@ static int handle_sensor_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 	int err;
 
+	if (!is_enabled(srv)) {
+		return 0;
+	}
+
 	while (buf->len >= 3) {
 		uint8_t len;
 		uint16_t id;
@@ -962,7 +967,9 @@ static int handle_sensor_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 		if (id == BT_MESH_PROP_ID_PRESENT_AMB_LIGHT_LEVEL && srv->reg) {
 			srv->reg->measured = sensor_to_float(&value);
-			atomic_set_bit(&srv->flags, FLAG_AMBIENT_LUXLEVEL_SET);
+			if (!atomic_test_and_set_bit(&srv->flags, FLAG_AMBIENT_LUXLEVEL_SET)) {
+				reg_start(srv);
+			}
 			continue;
 		}
 #endif
