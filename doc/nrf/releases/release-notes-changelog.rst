@@ -107,6 +107,10 @@ Bluetooth mesh
     * An issue in the :ref:`bt_mesh_light_ctrl_srv_readme` model where multiple scene recall messages for the same scene do not repeatedly trigger the same scene recall.
       This prevents the interruption of an ongoing transition.
 
+* Updated:
+
+  * The :ref:`bt_mesh_light_ctrl_srv_readme` model to make sure that the illuminance regulator starts running when a fresh value of the ambient LuxLevel is reported when the controller is enabled.
+
 Matter
 ------
 
