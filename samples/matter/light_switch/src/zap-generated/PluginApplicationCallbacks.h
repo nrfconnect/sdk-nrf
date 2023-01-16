@@ -19,20 +19,30 @@
 
 #pragma once
 
-#include <app-common/zap-generated/callbacks/PluginCallbacks.h>
+void MatterIdentifyPluginServerInitCallback();
+void MatterGroupsPluginServerInitCallback();
+void MatterDescriptorPluginServerInitCallback();
+void MatterBindingPluginServerInitCallback();
+void MatterAccessControlPluginServerInitCallback();
+void MatterBasicInformationPluginServerInitCallback();
+void MatterOtaSoftwareUpdateRequestorPluginServerInitCallback();
+void MatterGeneralCommissioningPluginServerInitCallback();
+void MatterNetworkCommissioningPluginServerInitCallback();
+void MatterGeneralDiagnosticsPluginServerInitCallback();
+void MatterSoftwareDiagnosticsPluginServerInitCallback();
+void MatterThreadNetworkDiagnosticsPluginServerInitCallback();
+void MatterWiFiNetworkDiagnosticsPluginServerInitCallback();
+void MatterAdministratorCommissioningPluginServerInitCallback();
+void MatterOperationalCredentialsPluginServerInitCallback();
+void MatterGroupKeyManagementPluginServerInitCallback();
 
 #define MATTER_PLUGINS_INIT                                                                                            \
-	MatterIdentifyPluginClientInitCallback();                                                                      \
 	MatterIdentifyPluginServerInitCallback();                                                                      \
 	MatterGroupsPluginServerInitCallback();                                                                        \
-	MatterScenesPluginClientInitCallback();                                                                        \
-	MatterOnOffPluginClientInitCallback();                                                                         \
-	MatterLevelControlPluginClientInitCallback();                                                                  \
 	MatterDescriptorPluginServerInitCallback();                                                                    \
 	MatterBindingPluginServerInitCallback();                                                                       \
 	MatterAccessControlPluginServerInitCallback();                                                                 \
-	MatterBasicPluginServerInitCallback();                                                                         \
-	MatterOtaSoftwareUpdateProviderPluginClientInitCallback();                                                     \
+	MatterBasicInformationPluginServerInitCallback();                                                              \
 	MatterOtaSoftwareUpdateRequestorPluginServerInitCallback();                                                    \
 	MatterGeneralCommissioningPluginServerInitCallback();                                                          \
 	MatterNetworkCommissioningPluginServerInitCallback();                                                          \
