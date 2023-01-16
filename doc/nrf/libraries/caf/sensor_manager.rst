@@ -1,4 +1,3 @@
-.. _caf_sensor_sampler:
 .. _caf_sensor_manager:
 
 CAF: Sensor manager module

@@ -48,7 +48,7 @@ Two aggregators are defined here and each one is responsible to handle data of t
 The aggregator is defined as a separate node in the devicetree and consists of the following parameters:
 
 * ``compatible`` - This is DTS binding and should be set to ``caf,aggregator``.
-* ``sensor_descr`` - This parameter represents the description of the sensor and should be the same as the description in the :ref:`caf_sensor_sampler`.
+* ``sensor_descr`` - This parameter represents the description of the sensor and should be the same as the description in the :ref:`caf_sensor_manager`.
 * ``buf_data_length`` - This parameter represents the length of the buffer in bytes.
   Its default value is ``120``.
   You should set the value as a multiple of sensor sample size times the size of :c:struct:`sensor_value` (``i*sample_size*sizeof(struct sensor_value)``).
