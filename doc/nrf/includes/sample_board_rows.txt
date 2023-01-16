@@ -112,6 +112,10 @@
 |                                |          |                                              |                              |
 |                                |          |                                              | ``nrf5340dk_nrf5340_cpunet`` |
 
+.. nrf5340_audio_dk_nrf5340
+
+| `nRF5340 Audio DK <nRF5340 Audio DK Hardware_>`_    | PCA10121 revision 1.0.0 or above | :ref:`nrf5340_audio_dk_nrf5340 <nrf5340_audio_dk_nrf5340>`  | ``nrf5340_audio_dk_nrf5340_cpuapp`` |
+
 .. nrf21540dk_nrf52840
 
 | :ref:`nRF21540 DK <ug_radio_fem>` | PCA10112 | :ref:`nrf21540dk_nrf52840 <nrf21540dk_nrf52840>` | ``nrf21540dk_nrf52840`` |
