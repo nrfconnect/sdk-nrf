@@ -6,8 +6,10 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/sys/util.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <psa/crypto.h>
 #include <psa/crypto_extra.h>
 #include <zephyr/logging/log.h>
@@ -33,12 +35,14 @@ LOG_MODULE_REGISTER(sha256, LOG_LEVEL_DBG);
 /* ====================================================================== */
 /*				Global variables/defines for the SHA256 example			  */
 
-#define NRF_CRYPTO_EXAMPLE_SHA256_TEXT_SIZE (100)
+#define NRF_CRYPTO_EXAMPLE_SHA256_TEXT_SIZE (150)
 #define NRF_CRYPTO_EXAMPLE_SHA256_SIZE (32)
 
 /* Below text is used as plaintext for computing/verifying the hash. */
 static uint8_t m_plain_text[NRF_CRYPTO_EXAMPLE_SHA256_TEXT_SIZE] = {
 	"Example string to demonstrate basic usage of SHA256."
+	"That uses single and multi-part PSA crypto API's to "
+	"perform a SHA-256 hashing operation."
 };
 
 static uint8_t m_hash[NRF_CRYPTO_EXAMPLE_SHA256_SIZE];
@@ -57,7 +61,7 @@ int crypto_init(void)
 	return APP_SUCCESS;
 }
 
-int hash_sha256(void)
+int hash_singlepart_sha256(void)
 {
 	uint32_t olen;
 	psa_status_t status;
@@ -73,7 +77,57 @@ int hash_sha256(void)
 	}
 
 	LOG_INF("Hashing successful!");
-	PRINT_HEX("Plaintext", m_plain_text, sizeof(m_plain_text));
+	PRINT_HEX("SHA256 hash", m_hash, sizeof(m_hash));
+
+	return APP_SUCCESS;
+}
+
+int hash_multipart_sha256(void)
+{
+	psa_status_t status;
+	uint8_t *input_ptr = m_plain_text;
+	psa_hash_operation_t hash_operation = {0};
+
+	LOG_INF("Hashing using multi-part SHA256...");
+
+	/* Setup a multipart hash operation */
+	status = psa_hash_setup(&hash_operation, PSA_ALG_SHA_256);
+	if (status != PSA_SUCCESS) {
+		LOG_ERR("Could not setup the hash operation! Error %d", status);
+		return APP_ERROR;
+	}
+
+
+	/* Feed the chunks of the input data to the PSA driver */
+	status = psa_hash_update(&hash_operation, input_ptr, 42);
+	if (status != PSA_SUCCESS) {
+		LOG_ERR("Could not hash the next chunk! Error %d", status);
+		return APP_ERROR;
+
+	}
+	LOG_INF("Added %d bytes", 42);
+	input_ptr += 42;
+
+
+	status = psa_hash_update(&hash_operation, input_ptr, 58);
+	if (status != PSA_SUCCESS) {
+		LOG_ERR("Could not hash the next chunk! Error %d", status);
+		return APP_ERROR;
+
+	}
+	LOG_INF("Added %d bytes", 58);
+	input_ptr += 58;
+
+	status = psa_hash_update(&hash_operation, input_ptr, 50);
+	if (status != PSA_SUCCESS) {
+		LOG_ERR("Could not hash the next chunk! Error %d", status);
+		return APP_ERROR;
+
+	}
+	LOG_INF("Added %d bytes", 50);
+
+
+	LOG_INF("Hashing successful!");
 	PRINT_HEX("SHA256 hash", m_hash, sizeof(m_hash));
 
 	return APP_SUCCESS;
@@ -110,7 +164,24 @@ int main(void)
 		return APP_ERROR;
 	}
 
-	status = hash_sha256();
+	PRINT_HEX("Plaintext to hash", m_plain_text, sizeof(m_plain_text));
+
+	status = hash_singlepart_sha256();
+	if (status != APP_SUCCESS) {
+		LOG_INF(APP_ERROR_MESSAGE);
+		return APP_ERROR;
+	}
+
+	status = verify_sha256();
+	if (status != APP_SUCCESS) {
+		LOG_INF(APP_ERROR_MESSAGE);
+		return APP_ERROR;
+	}
+
+	/* Reset the hash */
+	memset(m_hash, 0, sizeof(m_hash));
+
+	status = hash_multipart_sha256();
 	if (status != APP_SUCCESS) {
 		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
