@@ -545,6 +545,11 @@ Common Application Framework (CAF)
 
   * :c:struct:`sensor_data_aggregator_event` now uses the :c:struct:`sensor_value` struct data buffer and carries a number of sensor values in a single sample, which is sufficient to describe data layout.
 
+* :ref:`caf_sensor_manager`:
+
+  * Clean up :file:`sensor_event.h` and :file:`sensor_manager.h` files.
+    Move unrelated declarations to a separate :file:`caf_sensor_common.h` file.
+
 Shell libraries
 ---------------
 

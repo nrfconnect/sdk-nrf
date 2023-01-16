@@ -23,8 +23,6 @@
 extern "C" {
 #endif
 
-/* This value has to be equal to fractional part of the sensor_value. */
-#define FLOAT_TO_SENSOR_VAL_CONST 1000000
 
 /** @brief Sensor states. */
 enum sensor_state {
@@ -137,41 +135,6 @@ static inline size_t sensor_event_get_data_cnt(const struct sensor_event *event)
 static inline struct sensor_value *sensor_event_get_data_ptr(const struct sensor_event *event)
 {
 	return (struct sensor_value *)event->dyndata.data;
-}
-
-/**
- * @brief Helper function for checking if one sensor_value is greater than the other.
- *
- * @param sensor_val1 First compered sensor value.
- * @param sensor_val2 Second compered sensor value.
- * @return True if sensor_val1 is greater than sensor_val2, false otherwise.
- */
-static inline bool sensor_value_greater_then(struct sensor_value sensor_val1,
-					     struct sensor_value sensor_val2)
-{
-	return ((sensor_val1.val1 > sensor_val2.val1) ||
-		((sensor_val1.val1 == sensor_val2.val1) && (sensor_val1.val2 > sensor_val2.val2)));
-}
-
-/**
- * @brief Helper function for calculating absolute value of difference of two sensor_values.
- *
- * @param sensor_val1 First sensor value.
- * @param sensor_val2 Second sensor value.
- * @return Absolute value of difference between sensor_val1 and sensor_val2.
- */
-static inline struct sensor_value sensor_value_abs_difference(struct sensor_value sensor_val1,
-							      struct sensor_value sensor_val2)
-{
-	struct sensor_value result;
-
-	result.val1 = abs(sensor_val1.val1 - sensor_val2.val1);
-	result.val2 = abs(sensor_val1.val2 - sensor_val2.val2);
-	if (result.val2 > FLOAT_TO_SENSOR_VAL_CONST) {
-		result.val2 = result.val2 - FLOAT_TO_SENSOR_VAL_CONST;
-		result.val1++;
-	}
-	return result;
 }
 
 #ifdef __cplusplus
