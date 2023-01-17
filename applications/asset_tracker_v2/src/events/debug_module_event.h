@@ -21,7 +21,7 @@ extern "C" {
 #endif
 
 enum debug_module_event_type {
-	/** Event carrying memfault data that should be forwarded via the configured cloud
+	/** Event carrying Memfault data that should be forwarded via the configured cloud
 	 *  backend to Memfault cloud. Only sent if
 	 *  CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT is enabled.
 	 *  Payload is of type @ref debug_module_memfault_data.

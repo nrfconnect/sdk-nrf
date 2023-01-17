@@ -159,6 +159,7 @@ nRF9160: Asset Tracker v2
 * Added:
 
   * Wi-Fi support for nRF9160 DK + nRF7002 EK configuration.
+  * A section about :ref:`Custom transport <asset_tracker_v2_ext_transport>` in the :ref:`asset_tracker_v2_debug_module` documentation.
 
 * Updated:
 

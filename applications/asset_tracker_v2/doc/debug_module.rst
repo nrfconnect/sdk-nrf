@@ -38,6 +38,18 @@ This enables the application to be able to collect coredump data before a reboot
 To enable Memfault, you must include the :file:`../overlay-memfault.conf` when building the application.
 To get started with Memfault, see :ref:`using_memfault`.
 
+.. _asset_tracker_v2_ext_transport:
+
+Custom transport
+----------------
+
+The data that is collected from the device can be routed through a custom transport to the Memfault cloud instead of using Memfault's own HTTPS transport.
+To do this, enable the :ref:`CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT <CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT>` Kconfig option.
+If this option is enabled, the debug module forwards the captured Memfault data through the :c:enumerator:`DEBUG_EVT_MEMFAULT_DATA_READY` event.
+If the :ref:`CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT <CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT>` Kconfig option is disabled, the debug module uses the `Memfault firmware SDK's <Memfault firmware SDK_>`_ own internal HTTP transport.
+Transporting Memfault data through a pre-established transport can save overhead related to maintaining multiple connections at the same time.
+Currently, only the AWS IoT configuration supports this configuration.
+
 Configuration options
 *********************
 
