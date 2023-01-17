@@ -146,6 +146,10 @@
 
 .. _`pc-ble-driver-py`: https://github.com/NordicSemiconductor/pc-ble-driver-py
 
+.. _`Threads`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/kernel/services/threads/index.html#threads
+
+.. _`Network Traffic Generator`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/connectivity/networking/api/zperf.html#zperf-network-traffic-generator
+
 .. ### Source: github.io
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
