@@ -157,7 +157,7 @@ config BT_DIS_PNP_VER
 
 endif # BT_DIS
 
-endif
+endif # DESKTOP_BT_PERIPHERAL
 
 config DESKTOP_BT_CENTRAL
 	bool
@@ -192,7 +192,7 @@ config BT_MAX_PAIRED
 	  Change the default value for the maximum number of paired devices
 	  to be compatible with the dongle bond count.
 
-endif
+endif # DESKTOP_BT_CENTRAL
 
 if BT_CTLR
 
@@ -216,7 +216,7 @@ config BT_CTLR_CONN_PARAM_REQ
 	  nRF Desktop devices disable support for the Connection Parameter
 	  Request feature as it is not needed.
 
-endif
+endif # BT_CTLR
 
 config BT_SETTINGS_CCC_STORE_ON_WRITE
 	default y
@@ -233,6 +233,6 @@ config BT_SETTINGS_CCC_LAZY_LOADING
 	  descriptor to speed up reconnections and reduce delay for the
 	  first HID report.
 
-endif
+endif # DESKTOP_BT
 
 endmenu
