@@ -107,6 +107,10 @@ static bool is_host_using_legacy_and_extended_commands(uint16_t hci_opcode)
 	case SDC_HCI_OPCODE_CMD_LE_CLEAR_PERIODIC_ADV_LIST:
 	case SDC_HCI_OPCODE_CMD_LE_READ_PERIODIC_ADV_LIST_SIZE:
 #endif
+#if defined(CONFIG_BT_PER_ADV_SYNC_TRANSFER_RECEIVER)
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_SYNC_TRANSFER_PARAMS:
+	case SDC_HCI_OPCODE_CMD_LE_SET_DEFAULT_PERIODIC_ADV_SYNC_TRANSFER_PARAMS:
+#endif /* CONFIG_BT_PER_ADV_SYNC_TRANSFER_RECEIVER */
 		if (type_of_adv_cmd_used_since_reset == ADV_COMMAND_TYPE_NONE) {
 			type_of_adv_cmd_used_since_reset = ADV_COMMAND_TYPE_EXTENDED;
 			return false;
