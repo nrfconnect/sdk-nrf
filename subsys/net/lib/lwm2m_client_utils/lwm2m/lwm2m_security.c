@@ -419,7 +419,7 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 		return -ENOENT;
 	}
 
-	lwm2m_engine_set_res_data_len((char *)key,  len + 1);
+	lwm2m_engine_set_res_data_len((char *)key,  len);
 
 	if (path.obj_id == LWM2M_OBJECT_SECURITY_ID && path.res_id == SECURITY_BOOTSTRAP_FLAG_ID) {
 		bool is_bootstrap;
