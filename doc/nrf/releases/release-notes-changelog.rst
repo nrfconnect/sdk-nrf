@@ -329,13 +329,17 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
+* Added:
+
+  * ``overlay-low_power.conf`` and ``low_power.overlay`` to the CLI sample to facilitate power consumption measurements.
+
 * Changed:
 
   * Overlay structure changed:
     * ``overlay-rtt.conf`` removed from all samples.
     * ``overlay-log.conf`` now uses RTT backend by default.
-    * Logs removed from default configuration (moved to ``overlay-logging.conf``)
-    * Asserts removed from default configuration (moved to ``overlay-debug.conf``)
+    * Logs removed from default configuration (moved to ``overlay-logging.conf``).
+    * Asserts removed from default configuration (moved to ``overlay-debug.conf``).
 
 Matter samples
 --------------

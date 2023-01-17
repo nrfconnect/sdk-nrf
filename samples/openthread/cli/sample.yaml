@@ -42,6 +42,17 @@ tests:
       - nrf52840dk_nrf52840
       - nrf52840dongle_nrf52840
       - nrf21540dk_nrf52840
+  sample.openthread.cli.low_power:
+    build_only: true
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf21540dk_nrf52840
+    tags: ci_build
+    extra_args: OVERLAY_CONFIG=overlay-ci.conf;overlay-low_power.conf
+                DTC_OVERLAY_FILE=low_power.overlay
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
+      - nrf52840dk_nrf52840
+      - nrf21540dk_nrf52840
   # Build integration regression protection.
   sample.nrf_security.openthread.integration:
       build_only: true
