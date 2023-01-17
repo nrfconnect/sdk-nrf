@@ -29,6 +29,7 @@ int set_monotonic_version(uint16_t version, uint16_t slot)
 	} else if (err != 0) {
 		printk("set_monotonic_counter() error: %d\n\r", err);
 	}
+
 	return err;
 }
 

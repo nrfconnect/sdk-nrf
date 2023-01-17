@@ -74,7 +74,6 @@ struct bl_validate_fw_ext_api {
  */
 int set_monotonic_version(uint16_t version, uint16_t slot);
 
-
 /** Read 15 bit version and 1 bit slot from a 16 bit monotonic counter.
  *
  * @param[out]  slot_out  Slot where firmware is located. Can be NULL.

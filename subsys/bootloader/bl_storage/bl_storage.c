@@ -12,16 +12,27 @@
 #include <nrfx_nvmc.h>
 #include <pm_config.h>
 
-/** A single monotonic counter. It consists of a description value, a 'type',
- *  to know what this counter counts. Further, it has a number of slots
- *  allocated to it. Each time the counter is updated, a new slot is written.
- *  This way, the counter can be updated without erasing anything. This is
+#define TYPE_COUNTERS 1 /* Type referring to counter collection. */
+#define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
+
+#ifdef CONFIG_SB_NUM_VER_COUNTER_SLOTS
+BUILD_ASSERT(CONFIG_SB_NUM_VER_COUNTER_SLOTS % 2 == 0,
+			 "CONFIG_SB_NUM_VER_COUNTER_SLOTS must be an even number");
+#endif
+
+/** This library implements monotonic counters where each time the counter
+ *  is increased, a new slot is written.
+ *  This way, the counter can be updated without erase. This is, among other things,
  *  necessary so the counter can be used in the OTP section of the UICR
  *  (available on e.g. nRF91 and nRF53).
  */
 struct monotonic_counter {
-	uint16_t description; /* Counter description. What the counter is used for. See COUNTER_DESC_*. */
-	uint16_t num_counter_slots; /* Number of entries in 'counter_slots' list. */
+	/* Counter description. What the counter is used for. See
+	 * BL_MONOTONIC_COUNTERS_DESC_x.
+	 */
+	uint16_t description;
+	/* Number of entries in 'counter_slots' list. */
+	uint16_t num_counter_slots;
 	uint16_t counter_slots[1];
 };
 
@@ -35,14 +46,6 @@ struct counter_collection {
 	uint16_t num_counters; /* Number of entries in 'counters' list. */
 	struct monotonic_counter counters[1];
 };
-
-#define TYPE_COUNTERS 1 /* Type referring to counter collection. */
-#define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
-
-#ifdef CONFIG_SB_NUM_VER_COUNTER_SLOTS
-BUILD_ASSERT(CONFIG_SB_NUM_VER_COUNTER_SLOTS % 2 == 0,
-			 "CONFIG_SB_NUM_VER_COUNTER_SLOTS must be an even number");
-#endif
 
 uint32_t s0_address_read(void)
 {
@@ -135,16 +138,14 @@ void invalidate_public_key(uint32_t key_idx)
 	}
 }
 
-
 /** Get the counter_collection data structure in the provision data. */
 static const struct counter_collection *get_counter_collection(void)
 {
-	struct counter_collection *collection = (struct counter_collection *)
+	const struct counter_collection *collection = (struct counter_collection *)
 		&BL_STORAGE->key_data[num_public_keys_read()];
 	return nrfx_nvmc_otp_halfword_read((uint32_t)&collection->type) == TYPE_COUNTERS
 		? collection : NULL;
 }
-
 
 /** Get one of the (possibly multiple) counters in the provision data.
  *
