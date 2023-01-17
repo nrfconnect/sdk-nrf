@@ -988,6 +988,24 @@ enum wifi_nrf_status wifi_nrf_fmac_set_uapsd_queue(void *fmac_dev_ctx,
 						   unsigned int uapsd_queue);
 
 /**
+ * nrf_wifi_fmac_set_power_save_timeout() - Configure Power save timeout.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: Index of the interface on which power management is to be set.
+ * @ps_timeout: Power save inactivity time.
+ *
+ * This function is used to send a command
+ * (%NRF_WIFI_UMAC_CMD_SET_POWER_SAVE_TIMEOUT) to RPU to set power save
+ * inactivity time.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Fail : %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_set_power_save_timeout(void *dev_ctx,
+							  unsigned char if_idx,
+							  int ps_timeout);
+
+/**
  * wifi_nrf_fmac_set_qos_map() - Configure qos_map of for data
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the qos map be set.
