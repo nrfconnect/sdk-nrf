@@ -13,6 +13,11 @@ It is developed for use with the :ref:`nRF5340 Audio development kit <nrf53_audi
 In its default configuration, the application requires the :ref:`LC3 software codec <nrfxlib:lc3>`.
 The application also comes with various tools, including the :file:`buildprog.py` Python script that simplifies building and programming the firmware.
 
+.. note::
+   There is an ongoing process of restructuring the nRF5340 Audio application project.
+   Several drivers and modules within the application folder are being moved to more suitable locations in the |NCS| or Zephyr.
+   Before this process has finished, developing out-of-tree applications can be more complex.
+
 .. _nrf53_audio_app_overview_features:
 
 Feature support matrix
@@ -1138,6 +1143,17 @@ Given the requirements for the Coordinated Set Identification Service (CSIS), ma
 
 Dependencies
 ************
+
+.. note::
+   The following lists mention the most important dependencies.
+   For the full list, check the application's Kconfig options.
+   All dependencies are automatically included.
+
+The application uses the following |NCS| components:
+
+* :ref:`lib_contin_array`
+* :ref:`lib_pcm_mix`
+* :ref:`lib_tone`
 
 This application uses the following `nrfx`_ libraries:
 
