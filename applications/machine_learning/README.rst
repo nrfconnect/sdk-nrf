@@ -67,7 +67,7 @@ The labels that are assigned by the machine learning model are specific to the g
 
 By default, the application uses pretrained machine leaning models deployed in `Edge Impulse studio`_:
 
-* Thingy:53 uses the `NCS hardware accelerometer machine learning model`_.
+* Thingy:53 uses the `nRF Connect SDK hardware accelerometer machine learning model`_.
   The model uses the data from the built-in accelerometer to recognize the following gestures:
 
   * ``idle`` - The device is placed on a flat surface.
@@ -76,7 +76,7 @@ By default, the application uses pretrained machine leaning models deployed in `
   * ``tap`` - The device is tapped while placed on a flat surface.
 
   Unknown gestures, such as shaking the device, are recognized as anomaly.
-* Both the nRF52840 Development Kit and nRF5340 Development Kit use the `NCS simulated sensor machine learning model`_.
+* Both the nRF52840 Development Kit and nRF5340 Development Kit use the `nRF Connect SDK simulated sensor machine learning model`_.
   The model uses simulated sensor data to recognize the following simulated wave types:
 
   * ``sine``

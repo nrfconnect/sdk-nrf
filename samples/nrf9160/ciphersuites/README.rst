@@ -1,14 +1,14 @@
 .. _ciphersuites:
 
-nRF9160: TLS ciphersuites
+nRF9160: TLS cipher suites
 ##########################
 
 .. contents::
    :local:
    :depth: 2
 
-The Transport Layer Security (TLS) ciphersuites sample demonstrates a minimal implementation of a client application that attempts to connect to a host by trying different TLS ciphersuites.
-This sample shows the ciphersuites and lists them as supported or not supported by the host, and provides a summary of the support.
+The Transport Layer Security (TLS) cipher suites sample demonstrates a minimal implementation of a client application that attempts to connect to a host by trying different TLS cipher suites.
+This sample shows the cipher suites and lists them as supported or not supported by the host, and provides a summary of the support.
 
 Requirements
 ************
@@ -26,10 +26,10 @@ The sample first initializes the :ref:`nrfxlib:nrf_modem` and AT communications.
 Next, it provisions a root CA certificate to the modem using the :ref:`modem_key_mgmt` library.
 Provisioning must be done before connecting to the LTE network because the certificates can only be provisioned when the device is not connected.
 
-The sample then iterates through a list of TLS ciphersuites, attempting connection to the host with each one of them.
-The sample connects successfully to the host (``www.example.com``) with the ciphersuites that are supported by the host, while unsupported ciphersuites cause a connection failure, setting ``errno`` to ``95``.
+The sample then iterates through a list of TLS cipher suites, attempting connection to the host with each one of them.
+The sample connects successfully to the host (``www.example.com``) with the cipher suites that are supported by the host, while unsupported cipher suites cause a connection failure, setting ``errno`` to ``95``.
 
-Finally, the sample provides a summary of the ciphersuites that are supported and not supported by the host, ``example.com``.
+Finally, the sample provides a summary of the cipher suites that are supported and not supported by the host, ``example.com``.
 
 Obtaining a certificate
 =======================
@@ -53,7 +53,7 @@ Check and configure the following Kconfig options:
 .. _CONFIG_EXTENDED_CIPHERSUITE_LIST:
 
 CONFIG_EXTENDED_CIPHERSUITE_LIST
-   The sample configuration extends the ciphersuite list with extra ciphersuites that are only supported by modem firmware v1.3.x, where x is greater than or equal to 1 and modem firmware v1.2.x, where x is greater than or equal to 7.
+   The sample configuration extends the cipher suite list with extra cipher suites that are only supported by modem firmware v1.3.x, where x is greater than or equal to 1 and modem firmware v1.2.x, where x is greater than or equal to 7.
 
 Building and running
 ********************
@@ -70,7 +70,7 @@ Testing
 1. |connect_kit|
 #. |connect_terminal|
 #. Observe that the sample starts, provisions certificates, and connects to the LTE network.
-#. Observe that the sample iterates through a list of ciphersuites, attempting a connection to ``example.com`` with each one of them, showing either a successful or an unsuccessful connection.
+#. Observe that the sample iterates through a list of cipher suites, attempting a connection to ``example.com`` with each one of them, showing either a successful or an unsuccessful connection.
 
 Sample output
 =============

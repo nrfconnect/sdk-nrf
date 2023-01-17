@@ -780,8 +780,8 @@
 .. _`Continuous motion recognition tutorial`: https://docs.edgeimpulse.com/docs/continuous-motion-recognition
 .. _`Edge Impulse's data forwarder`: https://docs.edgeimpulse.com/docs/cli-data-forwarder
 .. _`Edge Impulse CLI installation guide`: https://docs.edgeimpulse.com/docs/cli-installation
-.. _`NCS simulated sensor machine learning model`: https://studio.edgeimpulse.com/public/18121/latest
-.. _`NCS hardware accelerometer machine learning model`: https://studio.edgeimpulse.com/public/33129/latest
+.. _`nRF Connect SDK simulated sensor machine learning model`: https://studio.edgeimpulse.com/public/18121/latest
+.. _`nRF Connect SDK hardware accelerometer machine learning model`: https://studio.edgeimpulse.com/public/33129/latest
 .. _`Nordic Semi Thingy:53 page`: https://docs.edgeimpulse.com/docs/development-platforms/officially-supported-mcu-targets/nordic-semi-thingy53
 .. _`Nordic Semi nRF5340 DK page`: https://docs.edgeimpulse.com/docs/nordic-semi-nrf5340-dk
 
