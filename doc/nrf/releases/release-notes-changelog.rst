@@ -139,7 +139,7 @@ Wi-Fi
 
 * Added:
 
-  * :ref:`ug_wifi` document.
+  * Sample demonstrating Wi-Fi Bluetooth LE coexistence
 
 Applications
 ============
@@ -380,8 +380,9 @@ Zigbee samples
 
 Wi-Fi samples
 -------------
+* Added:
 
-|no_changes_yet_note|
+  * :ref:`wifi_sr_coex_sample` sample demonstrating Wi-Fi Bluetooth LE coexistence.
 
 Other samples
 -------------
