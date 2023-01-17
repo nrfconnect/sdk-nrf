@@ -22,33 +22,70 @@ int set_monotonic_version(uint16_t version, uint16_t slot)
 	printk("Setting monotonic counter (version: %d, slot: %d)\r\n",
 		version, slot);
 
-	int err = set_monotonic_counter((version << 1) | !slot);
+	uint16_t num_cnt_slots;
+	int err;
 
-	if (num_monotonic_counter_slots() == 0) {
+	err = num_monotonic_counter_slots(BL_MONOTONIC_COUNTERS_DESC_NSIB, &num_cnt_slots);
+	if (err != 0) {
+		printk("Failed during reading of the number of the counter slots, error: %d\r\n",
+		       err);
+		return err;
+	}
+
+	if (num_cnt_slots == 0) {
 		printk("Monotonic version counter is disabled.\r\n");
-	} else if (err != 0) {
-		printk("set_monotonic_counter() error: %d\n\r", err);
+		return -EINVAL;
+	}
+
+	err = set_monotonic_counter(BL_MONOTONIC_COUNTERS_DESC_NSIB, (version << 1) | !slot);
+	if (err != 0) {
+		printk("Failed during setting the monotonic counter, error: %d\r\n", err);
 	}
 
 	return err;
 }
 
-void get_monotonic_version(uint16_t * version_out)
+int get_monotonic_version(uint16_t *version_out)
 {
-	uint16_t monotonic_version_and_slot = get_monotonic_counter();
+	uint16_t monotonic_version_and_slot;
+	int err;
 
-	if(version_out) {
-		*version_out = monotonic_version_and_slot >> 1;
+	if (version_out == NULL) {
+		return -EINVAL;
 	}
+
+	err = get_monotonic_counter(BL_MONOTONIC_COUNTERS_DESC_NSIB, &monotonic_version_and_slot);
+	if (err) {
+		return err;
+	}
+
+	*version_out = monotonic_version_and_slot >> 1;
+
+	return err;
 }
 
-void get_monotonic_slot(uint16_t * slot_out)
+int get_monotonic_slot(uint16_t *slot_out)
 {
-	uint16_t monotonic_version_and_slot = get_monotonic_counter();
+	uint16_t monotonic_version_and_slot;
+	int err;
 
-	if(slot_out) {
-		*slot_out = monotonic_version_and_slot & 1;
+	if (slot_out == NULL) {
+		return -EINVAL;
 	}
+
+	err = get_monotonic_counter(BL_MONOTONIC_COUNTERS_DESC_NSIB, &monotonic_version_and_slot);
+	if (err) {
+		return err;
+	}
+
+	uint16_t inverted_slot = monotonic_version_and_slot & 1U;
+
+	/* We store the slot inverted to allow updating the counter from
+	 * slot 1 to the favoured slot 0.
+	 */
+	*slot_out = inverted_slot == 0U ? 1U : 0U;
+
+	return 0;
 }
 
 #ifndef CONFIG_BL_VALIDATE_FW_EXT_API_UNUSED
@@ -302,7 +339,24 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	}
 
 	uint16_t stored_version;
-	get_monotonic_version(&stored_version);
+
+	int err = get_monotonic_version(&stored_version);
+
+	if (err) {
+		PRINT("Cannot read the firmware version. %d\n\r", err);
+		PRINT("We assume this is due to the firmware version not being enabled.\n\r");
+
+		/*
+		 * Errors in reading the firmware version are assumed to be
+		 * due to the firmware version not being enabled. When the
+		 * firmware version is disabled we want no version checking to
+		 * be done so we set the version to 0 as this version is not
+		 * permitted in fwinfo and will therefore pass all version
+		 * checks.
+		 */
+		stored_version = 0;
+	}
+
 	if (fwinfo->version < stored_version) {
 		PRINT("Firmware version (%u) is smaller than monotonic counter (%u).\n\r",
 			fwinfo->version, stored_version);

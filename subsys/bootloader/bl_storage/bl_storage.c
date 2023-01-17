@@ -176,36 +176,52 @@ static const struct monotonic_counter *get_counter_struct(uint16_t description)
 	return NULL;
 }
 
-
-uint16_t num_monotonic_counter_slots(void)
+int num_monotonic_counter_slots(uint16_t counter_desc, uint16_t *counter_slots)
 {
-	const struct monotonic_counter *counter
-			= get_counter_struct(COUNTER_DESC_VERSION);
-	uint16_t num_slots = 0;
+	const struct monotonic_counter *counter = get_counter_struct(counter_desc);
 
-	if (counter != NULL) {
-		num_slots = nrfx_nvmc_otp_halfword_read((uint32_t)&counter->num_counter_slots);
+	if (counter == NULL || counter_slots == NULL) {
+		return -EINVAL;
 	}
-	return num_slots != 0xFFFF ? num_slots : 0;
-}
 
+	uint16_t num_slots = nrfx_nvmc_otp_halfword_read((uint32_t)&counter->num_counter_slots);
+
+	if (num_slots == 0xFFFF) {
+		/* We consider the 0xFFFF as invalid since it is the default value of the OTP */
+		*counter_slots = 0;
+		return -EINVAL;
+	}
+
+	*counter_slots = num_slots;
+	return 0;
+}
 
 /** Function for getting the current value and the first free slot.
  *
- * @param[out]  free_slot  Pointer to the first free slot. Can be NULL.
+ * @param[in]   counter_desc  Counter description
+ * @param[out]  counter_value The current value of the requested counter.
+ * @param[out]  free_slot     Pointer to the first free slot. Can be NULL.
  *
- * @return The current value of the counter (the highest value before the first
- *         free slot).
+ * @retval 0        Success
+ * @retval -EINVAL  Cannot find counters with description @p counter_desc or the pointer to
+ *                  @p counter_value is NULL.
  */
-static uint16_t get_counter(const uint16_t **free_slot)
+static int get_counter(uint16_t counter_desc, uint16_t *counter_value, const uint16_t **free_slot)
 {
 	uint16_t highest_counter = 0;
 	const uint16_t *addr = NULL;
-	const uint16_t *slots =
-			get_counter_struct(COUNTER_DESC_VERSION)->counter_slots;
-	uint16_t num_slots = num_monotonic_counter_slots();
+	const struct monotonic_counter *counter_obj = get_counter_struct(counter_desc);
+	const uint16_t *slots;
+	uint16_t num_counter_slots;
 
-	for (uint32_t i = 0; i < num_slots; i++) {
+	if (counter_obj == NULL || counter_value == NULL) {
+		return -EINVAL;
+	}
+
+	slots = counter_obj->counter_slots;
+	num_counter_slots = nrfx_nvmc_otp_halfword_read((uint32_t)&counter_obj->num_counter_slots);
+
+	for (uint32_t i = 0; i < num_counter_slots; i++) {
 		uint16_t counter = ~nrfx_nvmc_otp_halfword_read((uint32_t)&slots[i]);
 
 		if (counter == 0) {
@@ -220,22 +236,28 @@ static uint16_t get_counter(const uint16_t **free_slot)
 	if (free_slot != NULL) {
 		*free_slot = addr;
 	}
-	return highest_counter;
+
+	*counter_value = highest_counter;
+	return 0;
 }
 
-
-uint16_t get_monotonic_counter(void)
+int get_monotonic_counter(uint16_t counter_desc, uint16_t *counter_value)
 {
-	return get_counter(NULL);
+	return get_counter(counter_desc, counter_value, NULL);
 }
 
-
-int set_monotonic_counter(uint16_t new_counter)
+int set_monotonic_counter(uint16_t counter_desc, uint16_t new_counter)
 {
 	const uint16_t *next_counter_addr;
-	uint16_t counter = get_counter(&next_counter_addr);
+	uint16_t current_cnt_value;
+	int err;
 
-	if (new_counter <= counter) {
+	err = get_counter(counter_desc, &current_cnt_value, &next_counter_addr);
+	if (err != 0) {
+		return err;
+	}
+
+	if (new_counter <= current_cnt_value) {
 		/* Counter value must increase. */
 		return -EINVAL;
 	}
