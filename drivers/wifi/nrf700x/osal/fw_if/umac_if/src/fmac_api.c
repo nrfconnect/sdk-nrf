@@ -3515,6 +3515,44 @@ out:
 }
 
 
+enum wifi_nrf_status wifi_nrf_fmac_set_power_save_timeout(void *dev_ctx,
+							  unsigned char if_idx,
+							  int ps_timeout)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_umac_cmd_set_power_save_timeout *set_ps_timeout_cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	fmac_dev_ctx = dev_ctx;
+
+	set_ps_timeout_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+					      sizeof(*set_ps_timeout_cmd));
+
+	if (!set_ps_timeout_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n", __func__);
+		goto out;
+	}
+
+	set_ps_timeout_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_SET_POWER_SAVE;
+	set_ps_timeout_cmd->umac_hdr.ids.wdev_id = if_idx;
+	set_ps_timeout_cmd->umac_hdr.ids.valid_fields |=
+		NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+	set_ps_timeout_cmd->timeout = ps_timeout;
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      set_ps_timeout_cmd,
+			      sizeof(*set_ps_timeout_cmd));
+out:
+	if (set_ps_timeout_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       set_ps_timeout_cmd);
+	}
+
+	return status;
+}
+
+
 enum wifi_nrf_status wifi_nrf_fmac_set_wowlan(void *dev_ctx,
 					      unsigned int var)
 {
