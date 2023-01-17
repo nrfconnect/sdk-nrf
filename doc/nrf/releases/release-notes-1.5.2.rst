@@ -27,11 +27,11 @@ The |NCS| v1.5.2 is not available for installation from the :ref:`Toolchain Mana
 To upgrade from v1.5.1 to v1.5.2, complete the following steps:
 
 1. If not done already, install nRF Connect SDK v1.5.1 by following the :ref:`Toolchain Manager <gs_app_tcm>` section.
-#. In the command line, go to the :file:`nrf` directory in the NCS installation directory.
+#. In the command line, go to the :file:`nrf` directory in the :file:`ncs` installation directory.
    The default location is :file:`C:\\Users\\<username>\\ncs\\v1.5.1\\nrf`.
 #. Fetch the v1.5.2 release tag with the ``git fetch origin v1.5.2`` command.
 #. Checkout the release tag with the ``git checkout v1.5.2`` command.
-#. Update the NCS installation with the ``west update`` command.
+#. Update the |NCS| installation with the ``west update`` command.
 
 Release tag
 ***********

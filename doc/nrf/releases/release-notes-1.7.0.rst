@@ -301,7 +301,7 @@ Zigbee
   * Fixed the KRKNWK-10490 known issue that would cause a deadlock in the NCP frame fragmentation logic.
   * Fixed the KRKNWK-6071 known issue with inaccurate ZBOSS alarms.
   * Fixed the KRKNWK-5535 known issue where the device would assert if flooded with multiple Network Address requests.
-  * Fixed an issue where the NCS would assert in the host application when the host started just after SoC's SysReset.
+  * Fixed an issue where the |NCS| would assert in the host application when the host started just after SoC's SysReset.
 
 Other samples
 -------------

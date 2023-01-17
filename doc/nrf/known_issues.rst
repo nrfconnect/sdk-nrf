@@ -457,8 +457,8 @@ Nordic Thingy:53
 
 .. rst-class:: v2-2-0
 
-NCSDK-18263: NCS samples may fail to boot on Thingy:53
-  NCS samples and applications that are not listed under :ref:`thingy53_compatible_applications` fail to boot on Nordic Thingy:53.
+NCSDK-18263: |NCS| samples may fail to boot on Thingy:53
+  |NCS| samples and applications that are not listed under :ref:`thingy53_compatible_applications` fail to boot on Nordic Thingy:53.
   The MCUboot bootloader is not built together with these samples, but the Thingy:53's :ref:`static Partition Manager memory map <ug_pm_static>` requires it (the application image does not start at the beginning of the internal ``FLASH``.)
 
   **Workaround:** Revert the ``9a8680372fdb6e09f3d6537c8c6751dd5c50bf86`` commit in the sdk-zephyr repository and revert the ``1f9765df5acbb36afff0ce40c94ba65d44d19d70`` commit in sdk-nrf.
