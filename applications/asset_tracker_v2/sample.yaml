@@ -121,11 +121,11 @@ tests:
   applications.asset_tracker_v2.carrier:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
     extra_args: OVERLAY_CONFIG=overlay-carrier.conf
-                DTC_OVERLAY_FILE=nrf9160dk_with_ext_flash.overlay
     tags: ci_build
   applications.asset_tracker_v2.lwm2m.low-power:
     build_only: true
