@@ -62,6 +62,7 @@ Kconfig*                                  @tejlmand
 # All subfolders
 /drivers/                                 @anangl
 /drivers/serial/                          @nordic-krch @anangl
+/drivers/sensor/bh1749/                   @gregersrygg
 /drivers/sensor/paw3212/                  @anangl @pdunaj @MarekPieta
 /drivers/sensor/pmw3360/                  @anangl @pdunaj @MarekPieta
 /drivers/wifi/nrf700x/                    @krish2718 @sachinthegreen @sr1dh48r @rlubos
@@ -129,7 +130,7 @@ Kconfig*                                  @tejlmand
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
 /samples/                                 @nrfconnect/ncs-test-leads
 /samples/net/mqtt/                        @simensrostad
-/samples/sensor/bh1749/                   @wlgrd
+/samples/sensor/bh1749/                   @gregersrygg
 /samples/bluetooth/                       @alwa-nordic @carlescufi @KAGA164
 /samples/bluetooth/mesh/                  @ludvigsj
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga-nordic @alwa-nordic
