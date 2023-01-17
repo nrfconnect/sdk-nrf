@@ -494,7 +494,19 @@ Bluetooth libraries and services
 Bootloader libraries
 --------------------
 
-|no_changes_yet_note|
+* :ref:`doc_bl_storage` library:
+
+  * Updated:
+
+    * The monotonic counter functions can now return errors.
+    * The :c:func:`get_monotonic_version` function is split into functions :c:func:`get_monotonic_version` and :c:func:`get_monotonic_slot`.
+    * The monotonic counter functions now have a counter description parameter to be able to distinguish between different counters.
+
+* :ref:`doc_bl_validation` library:
+
+  * Updated:
+
+    * The :c:func:`get_monotonic_version` function can now return an error.
 
 Modem libraries
 ---------------
