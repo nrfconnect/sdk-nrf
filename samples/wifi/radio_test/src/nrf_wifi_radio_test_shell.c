@@ -277,7 +277,6 @@ enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 
 	conf_params->tx_pkt_nss = 1;
 	conf_params->tx_pkt_mcs = -1;
-	conf_params->tx_pkt_rate = -1;
 	conf_params->tx_pkt_gap_us = 200;
 
 	conf_params->chan.primary_num = 1;
@@ -649,13 +648,6 @@ static int nrf_wifi_radio_test_set_tx_pkt_mcs(const struct shell *shell,
 		return -ENOEXEC;
 	}
 
-	if (ctx->conf_params.tx_pkt_rate != -1) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "tx_pkt_rate is set\n");
-		return -ENOEXEC;
-	}
-
 	if (!(check_valid_data_rate(shell,
 				    ctx->conf_params.tx_pkt_tput_mode,
 				    ctx->conf_params.tx_pkt_nss,
@@ -683,13 +675,6 @@ static int nrf_wifi_radio_test_set_tx_pkt_rate(const struct shell *shell,
 	val = strtol(argv[1], &ptr, 10);
 
 	if (!check_test_in_prog(shell)) {
-		return -ENOEXEC;
-	}
-
-	if (ctx->conf_params.tx_pkt_mcs != -1) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "tx_pkt_mcs is set\n");
 		return -ENOEXEC;
 	}
 
@@ -1143,14 +1128,6 @@ static int nrf_wifi_radio_test_set_tx(const struct shell *shell,
 			shell_fprintf(shell,
 				      SHELL_ERROR,
 				      "Invalid channel settings\n");
-			return -ENOEXEC;
-		}
-
-		if ((ctx->conf_params.tx_pkt_rate != -1) &&
-		    (ctx->conf_params.tx_pkt_mcs != -1)) {
-			shell_fprintf(shell,
-				      SHELL_ERROR,
-				      "'tx_pkt_rate' & 'tx_pkt_mcs' cannot be set simultaneously\n");
 			return -ENOEXEC;
 		}
 	}
