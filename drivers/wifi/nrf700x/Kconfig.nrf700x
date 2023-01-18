@@ -72,8 +72,8 @@ config NRF700X_WIFI_UTIL
 
 config NRF700X_WIFI_BT_COEX
 	bool "Enable Wi-Fi Bluetooth coexistence support"
-	depends on SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX && !NRF700X_REV_A
-	default y if SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX && !NRF700X_REV_A
+	depends on BOARD_NRF7002DK_NRF5340_CPUAPP && NRF700X_RADIO_COEX && !NRF700X_REV_A
+	default y if BOARD_NRF7002DK_NRF5340_CPUAPP && NRF700X_RADIO_COEX && !NRF700X_REV_A
 
 # Performance fine tuning options
 
