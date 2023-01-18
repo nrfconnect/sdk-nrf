@@ -965,6 +965,23 @@ Apart from the device role, the application-specific Kconfigs specify a set of s
 By default, the nRF Desktop devices use predefined format of HID reports.
 The common HID report map is defined in the :file:`configuration/common/hid_report_desc.c` file.
 
+.. _nrf_desktop_hid_device_identifiers:
+
+HID device identifiers
+~~~~~~~~~~~~~~~~~~~~~~
+
+The nRF Desktop application defines the following common device identifiers:
+
+* Manufacturer (:ref:`CONFIG_DESKTOP_DEVICE_MANUFACTURER <config_desktop_app_options>`)
+* Vendor ID (:ref:`CONFIG_DESKTOP_DEVICE_VID <config_desktop_app_options>`)
+* Product name (:ref:`CONFIG_DESKTOP_DEVICE_PRODUCT <config_desktop_app_options>`)
+* Product ID (:ref:`CONFIG_DESKTOP_DEVICE_PID <config_desktop_app_options>`)
+
+These Kconfig options determine the default values of device identifiers used for:
+
+* :ref:`nrf_desktop_usb_state_identifiers`
+* BLE GATT Device Information Service (:kconfig:option:`CONFIG_BT_DIS`) that is required for :ref:`nrf_desktop_bluetooth_guide_peripheral`
+
 Debug configuration
 -------------------
 
@@ -1566,6 +1583,7 @@ The HID over GATT profile specification requires Bluetooth Peripherals to define
 * HID Service - Handled in the :ref:`nrf_desktop_hids`.
 * Battery Service - Handled in the :ref:`nrf_desktop_bas`.
 * Device Information Service - Implemented in Zephyr and enabled with :kconfig:option:`CONFIG_BT_DIS`.
+  The device identifiers are configured according to the common :ref:`nrf_desktop_hid_device_identifiers` by default.
   It can be configured using Kconfig options with the ``CONFIG_BT_DIS`` prefix.
 
 The nRF Desktop peripherals must also define a dedicated GATT Service, which is used to provide the following information:
