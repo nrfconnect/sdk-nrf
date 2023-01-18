@@ -174,7 +174,7 @@ The nRF5340 SoC is connected to the first PPK2 and the nRF7002 DK is connected t
 Hardware modifications
 ======================
 
-To measure the current consumption of the nRF5340 SoC in nRF7002 DK, complete the following steps:
+To measure the current consumption of the nRF5340 SoC in the nRF7002 DK, complete the following steps:
 
  * Remove jumper on **P22** (VDD jumper).
  * Cut solder bridge **SB16**.
@@ -186,7 +186,7 @@ To measure the current consumption of the nRF5340 SoC in nRF7002 DK, complete th
 
  * Connect the **Vout** on PPK2 to **P22** pin **1** on the nRF7002 DK.
 
-To measure the current consumption of the nRF7002 device in nRF7002 DK, complete the following steps:
+To measure the current consumption of the nRF7002 device in the nRF7002 DK, complete the following steps:
 
  * Remove jumper on **P23** (VBAT jumper).
  * Connect **GND** on PPK2 kit to **GND** on the nRF7002 DK.
@@ -205,10 +205,10 @@ The following diagram illustrates a typical configuration for measuring current 
 PPK2 usage and measurement
 ==========================
 
-To measure the current consumption of the nRF5340 SoC and nRF7002 device, complete the following steps:
+To measure the current consumption of the nRF5340 SoC and the nRF7002 device, complete the following steps:
 
-* Configure PPK2 connected to nRF5340 SoC as a source meter with 1.8 volts.
-* Configure PPK2 connected to nRF7002 device as a source meter with 3.6 volts.
+* Configure PPK2 connected to the nRF5340 SoC as a source meter with 1.8 volts.
+* Configure PPK2 connected to the nRF7002 device as a source meter with 3.6 volts.
 
 See :ref:`app_power_opt` for more information on power management testing and usage of the PPK2.
 
