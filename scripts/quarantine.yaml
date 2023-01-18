@@ -19,3 +19,9 @@
   platforms:
     - all
   comment: "Disable zephyr Regression and PSA Arch tests, we maintain copies of these in sdk-nrf"
+
+- scenarios:
+    - sample.nrf7002.provisioning
+  platforms:
+    - all
+  comment: "Depends on protobuf. Not present in toolchain/docker image"
