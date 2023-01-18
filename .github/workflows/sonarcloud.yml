@@ -18,6 +18,7 @@ jobs:
       SONAR_SCANNER_VERSION: 4.7.0.2747
       SONAR_SERVER_URL: "https://sonarcloud.io"
       BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory # Directory where build-wrapper output will be placed
+      NRF_DIR: ncs/nrf
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
@@ -62,17 +63,11 @@ jobs:
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
           echo "$HOME/.sonar/build-wrapper-linux-x86" >> $GITHUB_PATH
 
-      - name: Build native_posix tests with coverage enabled (via sonarcloud build wrapper)
-        shell: bash
-        run: |
-          source ncs/zephyr/zephyr-env.sh
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister -b -C -v -i -T ncs/nrf/ -p native_posix --coverage-tool gcovr
-
       - name: Run native_posix tests
         shell: bash
         run: |
           source ncs/zephyr/zephyr-env.sh
-          ncs/zephyr/scripts/twister --test-only -v -i -C -T ncs/nrf/ -p native_posix
+          ncs/zephyr/scripts/twister -v -i -C -T ncs/nrf/ -p native_posix
 
       # Exclude twister-out because we dont need coverage reports for mocks and generated files.
       # Exclude tests/unity because it is not interesting
@@ -91,6 +86,12 @@ jobs:
             --exclude=ncs/nrf/lib/hw_id/ \
             --sonarqube coverage.xml
           cat coverage.xml
+
+      - name: Invoke build wrapper with twister command to build with integrations scope
+        shell: bash
+        run: |
+          source ncs/zephyr/zephyr-env.sh
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister --ninja --integration --board-root ncs/nrf/boards --quarantine-list ncs/nrf/scripts/quarantine.yaml --clobber-output --build-only -v -T ncs/nrf
 
       - name: Run sonar-scanner
         env:
