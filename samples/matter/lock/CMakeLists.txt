@@ -61,7 +61,11 @@ if(CONFIG_MCUMGR_SMP_BT)
 endif()
 
 if(CONFIG_THREAD_WIFI_SWITCHING)
-    target_sources(app PRIVATE src/software_images_swapper.cpp)
+    target_sources(app PRIVATE
+        src/software_images_swapper.cpp
+        ${COMMON_ROOT}/src/ota_multi_image_processor_impl.cpp
+        ${COMMON_ROOT}/src/ota_multi_image_downloader.cpp
+    )
 endif()
 
 chip_configure_data_model(app

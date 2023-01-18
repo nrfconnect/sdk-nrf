@@ -400,6 +400,44 @@ To test switching between Thread and Wi-Fi, complete the following steps:
 
       D: 823 [DL]WiFiManager has been initialized
 
+.. _matter_lock_sample_switching_thread_wifi_dfu:
+
+Device Firmware Upgrade over Matter for Thread/Wi-Fi switchable application
+---------------------------------------------------------------------------
+
+To upgrade the device firmware when using the ``thread_wifi_switched`` build type, complete the steps from the *Device Firmware Upgrade over Matter* section in the :doc:`matter:nrfconnect_examples_software_update` tutorial of the Matter documentation.
+
+Because the application supports switching between Thread and Wi-Fi, you need to make sure that the Matter OTA image file served by the OTA Provider includes two application variants: for Matter over Thread and for Matter over Wi-Fi, respectively.
+
+To make sure that both application variants are included in the OTA image file, use the dedicated the ``combine_ota_images.py`` script.
+The script takes the Matter OTA image files generated for both variants and combines them in one file.
+It also assumes that both input images were created with the same *vendor_id*, *product_id*, *version*, *version_string*, *min_version*, *max_version*, and *release_notes*.
+
+Complete the following steps to generate the Matter OTA combined image file:
+
+#. Build the door lock application for Matter over Thread by running the following command:
+
+   .. code-block:: console
+
+      west build -b nrf5340dk_nrf5340_cpuapp -d build_thread -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -DCONFIG_CHIP_WIFI=n
+
+   This command creates the *build_thread* directory, where the Matter over Thread application is stored.
+#. Build the door lock application for Matter over Wi-Fi by running the following command:
+
+   .. code-block:: console
+
+      west build -b nrf5340dk_nrf5340_cpuapp -d build_wifi -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek
+
+   This command creates the *build_wifi* directory, where the Matter over Wi-Fi application is stored.
+#. Combine Matter OTA image files generated for both variants by running the ``combine_ota_images.py`` script in the sample directory by running the following command (with ``<output_directory>`` changed to the directory name of your choice):
+
+   .. code-block:: console
+
+      src/combine_ota_images.py build_thread/zephyr/matter.ota build_wifi/zephyr/matter.ota <output_directory>/combined_matter.ota
+
+.. note::
+    Keep the order in which the files are passed to the script, given that the Thread variant image file must be passed in front of the Wi-Fi variant image.
+
 Dependencies
 ************
 
