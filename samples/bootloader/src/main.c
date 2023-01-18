@@ -87,7 +87,20 @@ static void validate_and_boot(const struct fw_info *fw_info, uint16_t slot)
 	}
 
 	if (fw_info->version > stored_version) {
-		set_monotonic_version(fw_info->version, slot);
+		int err = set_monotonic_version(fw_info->version, slot);
+
+		if (err) {
+			/*
+			 * Errors in writing the firmware version are assumed to be
+			 * due to the firmware version not being enabled. When the
+			 * firmware version is disabled, no version updates should
+			 * be done and this case can be ignored.
+			 *
+			 * The body of this if-statement is intentionally empty.
+			 * It is left here solely for documentation purposes,
+			 * describing why we ignore the error.
+			 */
+		}
 	}
 
 	bl_boot(fw_info);
