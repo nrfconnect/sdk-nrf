@@ -114,12 +114,20 @@ static inline enum wifi_security_type drv_to_wifi_mgmt(int drv_security_type)
 	switch (drv_security_type) {
 	case NRF_WIFI_OPEN:
 		return WIFI_SECURITY_TYPE_NONE;
+	case NRF_WIFI_WEP:
+		return WIFI_SECURITY_TYPE_WEP;
+	case NRF_WIFI_WPA:
+		return WIFI_SECURITY_TYPE_WPA_PSK;
 	case NRF_WIFI_WPA2:
 		return WIFI_SECURITY_TYPE_PSK;
 	case NRF_WIFI_WPA2_256:
 		return WIFI_SECURITY_TYPE_PSK_SHA256;
 	case NRF_WIFI_WPA3:
 		return WIFI_SECURITY_TYPE_SAE;
+	case NRF_WIFI_WAPI:
+		return WIFI_SECURITY_TYPE_WAPI;
+	case NRF_WIFI_EAP:
+		return WIFI_SECURITY_TYPE_EAP;
 	default:
 		return WIFI_SECURITY_TYPE_UNKNOWN;
 	}
