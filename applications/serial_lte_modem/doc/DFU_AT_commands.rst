@@ -59,8 +59,8 @@ Syntax
   It is associated with the certificate or PSK.
   Specifying the ``<sec_tag>`` is mandatory when using HTTPS.
 
-Response syntax
-~~~~~~~~~~~~~~~
+Unsolicited notification
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -82,10 +82,10 @@ Get the image files for the legacy DFU from ``http://myserver.com/path/*.*``:
 ::
 
    AT#XDFUGET=1,"http://myserver.com","path/nrf52840_xxaa.dat","path/nrf52840_xxaa.bin"
+   OK
    #XDFUGET: 1,14
    ...
    #XDFUGET: 1,100
-   OK
 
 Erase the previous image after DFU:
 
@@ -99,10 +99,10 @@ Get the image files for the |NCS| DFU from ``http://myserver.com/path/*.*``:
 ::
 
    AT#XDFUGET=1,"https://myserver.com","path/nrf52_app_update.bin","",1234
+   OK
    #XDFUGET: 0,14
    ...
    #XDFUGET: 0,100
-   OK
 
 Read command
 ------------
