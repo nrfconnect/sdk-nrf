@@ -156,9 +156,15 @@ nRF9160: Asset Tracker v2
 nRF9160: Serial LTE modem
 -------------------------
 
-* Added an RFC1350 TFTP client, currently supporting only *READ REQUEST*.
-* Added new AT command #XSHUTDOWN to put nRF9160 SiP to System OFF mode.
-* Added support to nRF Cloud C2D appId "MODEM" and "DEVICE".
+* Added:
+
+  * RFC1350 TFTP client, currently supporting only *READ REQUEST*.
+  * AT command #XSHUTDOWN to put nRF9160 SiP to System Off mode.
+  * Support of nRF Cloud C2D appId "MODEM" and "DEVICE".
+
+* Updated:
+
+  * The response for the #XDFUGET command, using unsolicited notification to report download progress.
 
 nRF5340 Audio
 -------------
