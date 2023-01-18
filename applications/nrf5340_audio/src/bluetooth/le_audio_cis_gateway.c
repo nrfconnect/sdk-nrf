@@ -999,7 +999,12 @@ static int initialize(le_audio_receive_cb recv_cb)
 
 	param.params = pair_params;
 	param.params_count = ARRAY_SIZE(pair_params);
-	param.packing = BT_ISO_PACKING_SEQUENTIAL;
+
+	if (IS_ENABLED(CONFIG_BT_AUDIO_PACKING_INTERLEAVED)) {
+		param.packing = BT_ISO_PACKING_INTERLEAVED;
+	} else {
+		param.packing = BT_ISO_PACKING_SEQUENTIAL;
+	}
 
 	ret = bt_audio_unicast_group_create(&param, &unicast_group);
 	if (ret) {
