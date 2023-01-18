@@ -276,7 +276,6 @@ enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	}
 
 	conf_params->tx_pkt_nss = 1;
-	conf_params->tx_pkt_mcs = -1;
 	conf_params->tx_pkt_gap_us = 200;
 
 	conf_params->chan.primary_num = 1;
@@ -1068,8 +1067,70 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 		return -ENOEXEC;
 	}
 
-	if (!check_test_in_prog(shell)) {
-		return -ENOEXEC;
+	if (ctx->conf_params.rx) {
+		shell_fprintf(shell,
+			      SHELL_INFO,
+			      "Disabling ongoing RX test\n");
+
+		ctx->conf_params.rx = 0;
+
+		status = wifi_nrf_fmac_radio_test_prog_rx(ctx->rpu_ctx,
+							  &ctx->conf_params);
+
+		if (status != WIFI_NRF_STATUS_SUCCESS) {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "Disabling RX failed\n");
+			return -ENOEXEC;
+		}
+	}
+
+	if (ctx->conf_params.tx) {
+		shell_fprintf(shell,
+			      SHELL_INFO,
+			      "Disabling ongoing TX test\n");
+
+		ctx->conf_params.tx = 0;
+
+		status = wifi_nrf_fmac_radio_test_prog_tx(ctx->rpu_ctx,
+							  &ctx->conf_params);
+
+		if (status != WIFI_NRF_STATUS_SUCCESS) {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "Disabling TX failed\n");
+			return -ENOEXEC;
+		}
+	}
+
+	if (ctx->rf_test_run) {
+		if (ctx->rf_test != NRF_WIFI_RF_TEST_TX_TONE) {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "Unexpected: RF Test (%d) running\n",
+				      ctx->rf_test);
+
+			return -ENOEXEC;
+		}
+
+		shell_fprintf(shell,
+			      SHELL_INFO,
+			      "Disabling ongoing TX tone test\n");
+
+		status = nrf_wifi_fmac_rf_test_tx_tone(ctx->rpu_ctx,
+						       0,
+						       ctx->conf_params.tx_tone_freq,
+						       ctx->conf_params.tx_power);
+
+		if (status != WIFI_NRF_STATUS_SUCCESS) {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "Disabling TX tone test failed\n");
+			return -ENOEXEC;
+		}
+
+		ctx->rf_test_run = false;
+
 	}
 
 	status = nrf_wifi_radio_test_conf_init(&ctx->conf_params);
@@ -1308,8 +1369,6 @@ static int nrf_wifi_radio_test_tx_tone(const struct shell *shell,
 	char *ptr = NULL;
 	unsigned long val = 0;
 	int ret = -ENOEXEC;
-	signed char tone_frequency = ctx->conf_params.tx_tone_freq;
-	signed char tx_power = ctx->conf_params.tx_power;
 
 	val = strtoul(argv[1], &ptr, 10);
 
@@ -1334,8 +1393,8 @@ static int nrf_wifi_radio_test_tx_tone(const struct shell *shell,
 
 	status = nrf_wifi_fmac_rf_test_tx_tone(ctx->rpu_ctx,
 					       (unsigned char)val,
-						   tone_frequency,
-						   tx_power);
+					       ctx->conf_params.tx_tone_freq,
+					       ctx->conf_params.tx_power);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		shell_fprintf(shell,
