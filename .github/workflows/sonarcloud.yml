@@ -85,7 +85,6 @@ jobs:
             --exclude=ncs/nrf/tests/subsys/dfu/dfu_target_stream/ \
             --exclude=ncs/nrf/lib/hw_id/ \
             --sonarqube coverage.xml
-          cat coverage.xml
 
       - name: Invoke build wrapper with twister command to build with integrations scope
         shell: bash
