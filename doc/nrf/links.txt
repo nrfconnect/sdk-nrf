@@ -32,6 +32,7 @@
 .. _`Zephyr issue #27356`: https://github.com/zephyrproject-rtos/zephyr/issues/27356
 .. _`Zephyr issue #38516`: https://github.com/zephyrproject-rtos/zephyr/issues/38516
 .. _`Zephyr SDK`: https://github.com/zephyrproject-rtos/sdk-ng/releases
+.. _`BSEC2`: https://github.com/boschsensortec/Bosch-BSEC2-Library
 
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot

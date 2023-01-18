@@ -104,14 +104,14 @@ The sensor module supports integration with the BSEC signal processing library u
 If enabled, the BSEC library is used instead of the BME680 Zephyr driver to provide sensor readings from the BME680 for temperature, humidity, and atmospheric pressure.
 In addition, the BSEC driver provides an additional sensor reading, indoor air quality (IAQ), which is a metric given in between 0-500 range, which estimates the air quality of the environment.
 
-As the BSEC library requires a separate license, it is not a default part of |NCS|, but can be downloaded externally and imported into the |NCS| source tree.
+.. note::
+   Using the BSEC library requires accepting a separate license agreement.
+   For details, see `BSEC2`_.
 
 Perform the following steps to enable BSEC:
 
-1. Download the BSEC library, using the `Bosch BSEC`_ link.
-#. Extract and store the folder containing the library contents in the path specified by :ref:`CONFIG_EXTERNAL_SENSORS_BME680_BSEC_PATH <CONFIG_EXTERNAL_SENSORS_BME680_BSEC_PATH>` option or update the path configuration to reference the library location.
-#. Disable the Zephyr BME680 driver by setting :kconfig:option:`CONFIG_BME680` to false.
-#. Enable the external sensors API BSEC integration layer by enabling :ref:`CONFIG_EXTERNAL_SENSORS_BME680_BSEC <CONFIG_EXTERNAL_SENSORS_BME680_BSEC>` option.
+1. To disable the Zephyr BME680 driver, set the :kconfig:option:`CONFIG_BME680` Kconfig option to false.
+#. To enable the external sensors API BSEC integration layer, use the :ref:`CONFIG_EXTERNAL_SENSORS_BME680_BSEC <CONFIG_EXTERNAL_SENSORS_BME680_BSEC>` Kconfig option.
 
 Air quality readings are provided with the :c:enumerator:`SENSOR_EVT_ENVIRONMENTAL_DATA_READY` event.
 
@@ -139,11 +139,6 @@ External sensors API BSEC configurations
 
 CONFIG_EXTERNAL_SENSORS_BME680_BSEC
    This option configures the Bosch BSEC library for the BME680.
-
-.. _CONFIG_EXTERNAL_SENSORS_BME680_BSEC_PATH:
-
-CONFIG_EXTERNAL_SENSORS_BME680_BSEC_PATH
-   This option sets the path for the Bosch BSEC library folder.
 
 .. _CONFIG_EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_ULTRA_LOW_POWER:
 

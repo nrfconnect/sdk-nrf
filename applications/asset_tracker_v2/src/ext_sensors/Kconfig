@@ -32,9 +32,7 @@ config EXTERNAL_SENSORS_BME680_BSEC
 	bool "Use Bosch BME680 library"
 	depends on !BME680
 	help
-	  Enable the use of Bosch BSEC library. The library itself is not a part of
-	  NCS and must be downloaded from Bosch Sensortec and placed in the path referenced to by
-	  the CONFIG_EXTERNAL_SENSORS_BME680_BSEC_PATH.
+	  Enable the use of Bosch BSEC library.
 	  This configuration depends on the BME680 zephyr driver being disabled.
 
 if EXTERNAL_SENSORS_BME680_BSEC
@@ -72,19 +70,13 @@ endchoice # EXTERNAL_SENSORS_BME680_BSEC_MODE
 
 config EXTERNAL_SENSORS_BSEC_TEMPERATURE_OFFSET
 	int "BSEC temperature offset in degree celsius * 100"
-	default 120 if BOARD_THINGY91_NRF9160_NS
+	default 200 if BOARD_THINGY91_NRF9160_NS
 	default 100
 	help
 	  BSEC temperature offset. To account for external heat sources on the board.
 	  The actual value is divided by 100. This is due to the Kconfig parser
 	  not supporting floating point types.
-	  The default value 120 is translated to 1.2 degrees celsius offset.
-
-config EXTERNAL_SENSORS_BME680_BSEC_PATH
-	string "Path to Bosch BSEC library folder"
-	default "$(ZEPHYR_NRF_MODULE_DIR)/ext/BSEC_1.4.8.0_Generic_Release_updated_v3"
-	help
-	  Path to the folder where the Bosch BSEC library is placed.
+	  The default value 200 is translated to 2.0 degrees celsius offset.
 
 endif # EXTERNAL_SENSORS_BME680_BSEC
 

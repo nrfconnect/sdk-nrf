@@ -12,11 +12,15 @@
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/drivers/i2c.h>
 
-#include "bsec_integration.h"
+#include "bsec_interface.h"
+#include "bme68x.h"
 #include "ext_sensors_bsec.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ext_sensors_bsec, CONFIG_EXTERNAL_SENSORS_LOG_LEVEL);
+
+#define BSEC_TOTAL_HEAT_DUR		UINT16_C(140)
+#define BSEC_INPUT_PRESENT(x, shift)	(x.process_data & (1 << (shift - 1)))
 
 /* Sample rate for the BSEC library
  *
@@ -26,14 +30,43 @@ LOG_MODULE_REGISTER(ext_sensors_bsec, CONFIG_EXTERNAL_SENSORS_LOG_LEVEL);
  */
 #if defined(CONFIG_EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_ULTRA_LOW_POWER)
 #define BSEC_SAMPLE_RATE BSEC_SAMPLE_RATE_ULP
+#define BSEC_SAMPLE_PERIOD_S 300
 #elif defined(CONFIG_EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_LOW_POWER)
 #define BSEC_SAMPLE_RATE BSEC_SAMPLE_RATE_LP
+#define BSEC_SAMPLE_PERIOD_S 3
 #elif defined(CONFIG_EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_CONTINUOUS)
-#define BSEC_SAMPLE_RATE BSEC_SAMPLE_RATE_HP
+#define BSEC_SAMPLE_RATE BSEC_SAMPLE_RATE_CONT
+#define BSEC_SAMPLE_PERIOD_S 1
 #endif
 
 /* Temperature offset due to external heat sources. */
 float temp_offset = (CONFIG_EXTERNAL_SENSORS_BSEC_TEMPERATURE_OFFSET / (float)100);
+
+/* Define which sensor values to request.
+ * The order is not important, but output_ready needs to be updated if different types
+ * of sensor values are requested.
+ */
+static const bsec_sensor_configuration_t requested_virtual_sensors[4] = {
+		{
+			.sensor_id   = BSEC_OUTPUT_IAQ,
+			.sample_rate = BSEC_SAMPLE_RATE,
+		},
+		{
+			.sensor_id   = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
+			.sample_rate = BSEC_SAMPLE_RATE,
+		},
+		{
+			.sensor_id   = BSEC_OUTPUT_RAW_PRESSURE,
+			.sample_rate = BSEC_SAMPLE_RATE,
+		},
+		{
+			.sensor_id   = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
+			.sample_rate = BSEC_SAMPLE_RATE,
+		},
+	};
+
+/* some RAM space needed by bsec_get_state and bsec_set_state for (de-)serialization. */
+static uint8_t work_buffer[BSEC_MAX_WORKBUFFER_SIZE];
 
 /* @breif Interval for saving BSEC state to flash
  *
@@ -41,6 +74,7 @@ float temp_offset = (CONFIG_EXTERNAL_SENSORS_BSEC_TEMPERATURE_OFFSET / (float)10
  * Example:  600 * 1/0.33333 Hz = 1800 seconds = 0.5 hour
  */
 #define BSEC_SAVE_INTERVAL 600
+#define BSEC_SAVE_INTERVAL_S (BSEC_SAVE_INTERVAL * BSEC_SAMPLE_PERIOD_S)
 
 /* Definitions used to store and retrieve BSEC state from the settings API */
 #define SETTINGS_NAME_BSEC "bsec"
@@ -49,12 +83,10 @@ float temp_offset = (CONFIG_EXTERNAL_SENSORS_BSEC_TEMPERATURE_OFFSET / (float)10
 
 /* Stack size of internal BSEC thread. */
 #define BSEC_STACK_SIZE CONFIG_EXTERNAL_SENSORS_BSEC_THREAD_STACK_SIZE
-K_THREAD_STACK_DEFINE(thread_stack, BSEC_STACK_SIZE);
+static K_THREAD_STACK_DEFINE(thread_stack, BSEC_STACK_SIZE);
 
-struct config {
-	/* Variable used to reference the I2C device where BME680 is connected to. */
-	const struct device *i2c_master;
-};
+/* Used for a timeout for when BSEC's state should be saved. */
+static K_TIMER_DEFINE(bsec_save_state_timer, NULL, NULL);
 
 /* Structure used to maintain internal variables used by the library. */
 struct ctx {
@@ -74,11 +106,13 @@ struct ctx {
 	uint8_t state_buffer[BSEC_MAX_STATE_BLOB_SIZE];
 	int32_t state_buffer_len;
 
+	bsec_sensor_configuration_t required_sensor_settings[BSEC_MAX_PHYSICAL_SENSOR];
+	uint8_t n_required_sensor_settings;
+
+	struct bme68x_dev dev;
 };
 
-static const struct config config = {
-	.i2c_master = DEVICE_DT_GET(DT_BUS(DT_NODELABEL(bme680))),
-};
+const static struct i2c_dt_spec bme680_i2c_dev = I2C_DT_SPEC_GET(DT_NODELABEL(bme680));
 
 static struct ctx ctx;
 
@@ -115,6 +149,25 @@ static int settings_set(const char *key, size_t len_rd, settings_read_cb read_cb
 	return -ENOTSUP;
 }
 
+static void state_save(void)
+{
+	int ret;
+
+	ret = bsec_get_state(0, ctx.state_buffer, ARRAY_SIZE(ctx.state_buffer),
+				work_buffer, ARRAY_SIZE(work_buffer),
+				&ctx.state_buffer_len);
+
+	__ASSERT(ret == BSEC_OK, "bsec_get_state failed.");
+	__ASSERT(ctx.state_buffer_len <= sizeof(ctx.state_buffer), "state buffer too big to save.");
+
+	ret = settings_save_one(SETTINGS_BSEC_STATE, ctx.state_buffer,
+					ctx.state_buffer_len);
+
+
+	__ASSERT(ret == 0, "storing state to flash failed.");
+}
+
+
 static int enable_settings(void)
 {
 	int err;
@@ -133,81 +186,245 @@ static int enable_settings(void)
 	return err;
 }
 
-static int8_t bus_write(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data_ptr, uint16_t len)
+static int8_t bus_write(uint8_t reg_addr, const uint8_t *reg_data_ptr, uint32_t len, void *intf_ptr)
 {
 	uint8_t buf[len + 1];
 
 	buf[0] = reg_addr;
 	memcpy(&buf[1], reg_data_ptr, len);
 
-	return i2c_write(config.i2c_master, buf, len + 1, dev_addr);
+	return i2c_write_dt(&bme680_i2c_dev, buf, len + 1);
 }
 
-static int8_t bus_read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data_ptr, uint16_t len)
+static int8_t bus_read(uint8_t reg_addr, uint8_t *reg_data_ptr, uint32_t len, void *intf_ptr)
 {
-	return i2c_write_read(config.i2c_master, dev_addr, &reg_addr, 1, reg_data_ptr, len);
+	return i2c_write_read_dt(&bme680_i2c_dev, &reg_addr, 1, reg_data_ptr, len);
 }
 
-static int64_t get_timestamp_us(void)
+static void delay_us(uint32_t period, void *intf_ptr)
 {
-	return k_uptime_get() * MSEC_PER_SEC;
+	k_usleep((int32_t) period);
 }
 
-static void delay_ms(uint32_t period)
-{
-	k_sleep(K_MSEC(period));
-}
-
-static void output_ready(int64_t timestamp, float iaq, uint8_t iaq_accuracy, float temperature,
-			 float humidity, float pressure, float raw_temperature, float raw_humidity,
-			 float gas, bsec_library_return_t bsec_status, float static_iaq,
-			 float co2_equivalent, float breath_voc_equivalent)
+static void output_ready(const bsec_output_t *outputs, uint8_t n_outputs)
 {
 	k_spinlock_key_t key = k_spin_lock(&(ctx.sensor_read_lock));
 
-	ctx.temperature_latest = (double)temperature;
-	ctx.humidity_latest = (double)humidity;
-	ctx.pressure_latest = (double)pressure / 1000;
-	ctx.air_quality_latest = (uint16_t)iaq;
+	for (size_t i = 0; i < n_outputs; ++i) {
+		switch (outputs[i].sensor_id) {
+		case BSEC_OUTPUT_IAQ:
+			ctx.air_quality_latest = (uint16_t) outputs[i].signal;
+			LOG_DBG("IAQ: %d", ctx.air_quality_latest);
+			break;
+		case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
+			ctx.temperature_latest = (double) outputs[i].signal;
+			LOG_DBG("Temp: %.2f", ctx.temperature_latest);
+			break;
+		case BSEC_OUTPUT_RAW_PRESSURE:
+			ctx.pressure_latest = (double) outputs[i].signal;
+			LOG_DBG("Press: %.2f", ctx.pressure_latest);
+			break;
+		case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY:
+			ctx.humidity_latest = (double) outputs[i].signal;
+			LOG_DBG("Hum: %.2f", ctx.humidity_latest);
+			break;
+		default:
+			LOG_WRN("unknown bsec output id: %d", outputs[i].sensor_id);
+			break;
+		}
+	}
 
 	k_spin_unlock(&(ctx.sensor_read_lock), key);
 }
 
-static uint32_t state_load(uint8_t *state_buffer, uint32_t n_buffer)
+static size_t sensor_data_to_bsec_inputs(bsec_bme_settings_t sensor_settings,
+					 const struct bme68x_data *data,
+					 bsec_input_t *inputs, uint64_t timestamp_ns)
 {
-	if ((ctx.state_buffer_len > 0) && (ctx.state_buffer_len <= n_buffer)) {
-		memcpy(state_buffer, ctx.state_buffer, ctx.state_buffer_len);
-		return ctx.state_buffer_len;
-	}
+	size_t i = 0;
 
-	LOG_DBG("No stored state to load");
-	return 0;
+	if (BSEC_INPUT_PRESENT(sensor_settings, BSEC_INPUT_TEMPERATURE)) {
+		inputs[i].sensor_id = BSEC_INPUT_HEATSOURCE;
+		inputs[i].signal = temp_offset;
+		inputs[i].time_stamp = timestamp_ns;
+		LOG_DBG("Temp offset: %.2f", inputs[i].signal);
+		i++;
+		inputs[i].sensor_id = BSEC_INPUT_TEMPERATURE;
+		inputs[i].signal = data->temperature;
+
+		if (!IS_ENABLED(BME68X_USE_FPU)) {
+			inputs[i].signal /= 100.0f;
+		}
+
+		inputs[i].time_stamp = timestamp_ns;
+		LOG_DBG("Temp: %.2f", inputs[i].signal);
+		i++;
+	}
+	if (BSEC_INPUT_PRESENT(sensor_settings, BSEC_INPUT_HUMIDITY)) {
+		inputs[i].sensor_id = BSEC_INPUT_HUMIDITY;
+		inputs[i].signal =  data->humidity;
+
+		if (!IS_ENABLED(BME68X_USE_FPU)) {
+			inputs[i].signal /= 1000.0f;
+		}
+
+		inputs[i].time_stamp = timestamp_ns;
+		LOG_DBG("Hum: %.2f", inputs[i].signal);
+		i++;
+	}
+	if (BSEC_INPUT_PRESENT(sensor_settings, BSEC_INPUT_PRESSURE)) {
+		inputs[i].sensor_id = BSEC_INPUT_PRESSURE;
+		inputs[i].signal =  data->pressure;
+		inputs[i].time_stamp = timestamp_ns;
+		LOG_DBG("Press: %.2f", inputs[i].signal);
+		i++;
+	}
+	if (BSEC_INPUT_PRESENT(sensor_settings, BSEC_INPUT_GASRESISTOR)) {
+		inputs[i].sensor_id = BSEC_INPUT_GASRESISTOR;
+		inputs[i].signal =  data->gas_resistance;
+		inputs[i].time_stamp = timestamp_ns;
+		LOG_DBG("Gas: %.2f", inputs[i].signal);
+		i++;
+	}
+	if (BSEC_INPUT_PRESENT(sensor_settings, BSEC_INPUT_PROFILE_PART)) {
+		inputs[i].sensor_id = BSEC_INPUT_PROFILE_PART;
+		if (sensor_settings.op_mode == BME68X_FORCED_MODE) {
+			inputs[i].signal =  0;
+		} else {
+			inputs[i].signal =  data->gas_index;
+		}
+		inputs[i].time_stamp = timestamp_ns;
+		LOG_DBG("Profile: %.2f", inputs[i].signal);
+		i++;
+	}
+	return i;
 }
 
-static void state_save(const uint8_t *state_buffer, uint32_t length)
+static int apply_sensor_settings(bsec_bme_settings_t sensor_settings)
 {
-	LOG_INF("Storing state to flash");
-	if (length > sizeof(ctx.state_buffer)) {
-		LOG_ERR("State buffer too big to save: %d", length);
-		return;
+	int ret;
+	struct bme68x_conf config = {0};
+	struct bme68x_heatr_conf heater_config = {0};
+
+	heater_config.enable = BME68X_ENABLE;
+	heater_config.heatr_temp = sensor_settings.heater_temperature;
+	heater_config.heatr_dur = sensor_settings.heater_duration;
+	heater_config.heatr_temp_prof = sensor_settings.heater_temperature_profile;
+	heater_config.heatr_dur_prof = sensor_settings.heater_duration_profile;
+	heater_config.profile_len = sensor_settings.heater_profile_len;
+	heater_config.shared_heatr_dur = 0;
+
+	switch (sensor_settings.op_mode) {
+	case BME68X_PARALLEL_MODE:
+		heater_config.shared_heatr_dur =
+			BSEC_TOTAL_HEAT_DUR -
+			(bme68x_get_meas_dur(sensor_settings.op_mode, &config, &ctx.dev)
+			/ INT64_C(1000));
+
+		/* fall through */
+	case BME68X_FORCED_MODE:
+		ret = bme68x_get_conf(&config, &ctx.dev);
+		if (ret) {
+			LOG_ERR("bme68x_get_conf err: %d", ret);
+			return ret;
+		}
+
+		config.os_hum = sensor_settings.humidity_oversampling;
+		config.os_temp = sensor_settings.temperature_oversampling;
+		config.os_pres = sensor_settings.pressure_oversampling;
+
+		ret = bme68x_set_conf(&config, &ctx.dev);
+		if (ret) {
+			LOG_ERR("bme68x_set_conf err: %d", ret);
+			return ret;
+		}
+
+		bme68x_set_heatr_conf(sensor_settings.op_mode,
+					&heater_config, &ctx.dev);
+
+		/* fall through */
+	case BME68X_SLEEP_MODE:
+		ret = bme68x_set_op_mode(sensor_settings.op_mode, &ctx.dev);
+		if (ret) {
+			LOG_ERR("bme68x_set_op_mode err: %d", ret);
+			return ret;
+		}
+		break;
+	default:
+		LOG_ERR("unknown op mode: %d", sensor_settings.op_mode);
 	}
-
-	int err = settings_save_one(SETTINGS_BSEC_STATE, state_buffer, length);
-
-	if (err) {
-		LOG_ERR("Storing state to flash failed");
-	}
-}
-
-static uint32_t config_load(uint8_t *config_buffer, uint32_t n_buffer)
-{
-	/* Not implemented */
 	return 0;
 }
 
 static void bsec_thread_fn(void)
 {
-	bsec_iot_loop(delay_ms, get_timestamp_us, output_ready, state_save, BSEC_SAVE_INTERVAL);
+	int ret;
+	struct bme68x_data sensor_data[3] = {0};
+	bsec_bme_settings_t sensor_settings = {0};
+	bsec_input_t inputs[BSEC_MAX_PHYSICAL_SENSOR] = {0};
+	bsec_output_t outputs[ARRAY_SIZE(requested_virtual_sensors)] = {0};
+	uint8_t n_fields = 0;
+	uint8_t n_outputs = 0;
+	uint8_t n_inputs = 0;
+
+	while (true) {
+		uint64_t timestamp_ns = k_ticks_to_ns_floor64(k_uptime_ticks());
+
+		if (timestamp_ns < sensor_settings.next_call) {
+			LOG_DBG("bsec_sensor_control not ready yet");
+			k_sleep(K_NSEC(sensor_settings.next_call - timestamp_ns));
+			continue;
+		}
+
+		memset(&sensor_settings, 0, sizeof(sensor_settings));
+		ret = bsec_sensor_control((int64_t)timestamp_ns, &sensor_settings);
+		if (ret != BSEC_OK) {
+			LOG_ERR("bsec_sensor_control err: %d", ret);
+			continue;
+		}
+
+		if (apply_sensor_settings(sensor_settings)) {
+			continue;
+		}
+
+		if (sensor_settings.trigger_measurement &&
+		    sensor_settings.op_mode != BME68X_SLEEP_MODE) {
+			ret = bme68x_get_data(sensor_settings.op_mode,
+					      sensor_data, &n_fields, &ctx.dev);
+			if (ret) {
+				LOG_DBG("bme68x_get_data err: %d", ret);
+				continue;
+			}
+
+			for (size_t i = 0; i < n_fields; ++i) {
+				n_outputs = ARRAY_SIZE(requested_virtual_sensors);
+				n_inputs = sensor_data_to_bsec_inputs(sensor_settings,
+								      &sensor_data[i],
+								      inputs, timestamp_ns);
+
+				if (n_inputs > 0) {
+					ret = bsec_do_steps(inputs, n_inputs, outputs, &n_outputs);
+					if (ret != BSEC_OK) {
+						LOG_ERR("bsec_do_steps err: %d", ret);
+						continue;
+					}
+					output_ready(outputs, n_outputs);
+				}
+			}
+
+		}
+
+		/* if save timer is expired, save and restart timer */
+		if (k_timer_remaining_get(&bsec_save_state_timer) == 0) {
+			state_save();
+			k_timer_start(&bsec_save_state_timer,
+				      K_SECONDS(BSEC_SAVE_INTERVAL_S),
+				      K_NO_WAIT);
+		}
+
+		k_sleep(K_SECONDS(BSEC_SAMPLE_PERIOD_S));
+	}
+
 }
 
 /* Public API */
@@ -267,7 +484,6 @@ int ext_sensors_bsec_air_quality_get(uint16_t *air_quality)
 int ext_sensors_bsec_init(void)
 {
 	int err;
-	return_values_init bsec_ret;
 
 	err = enable_settings();
 	if (err) {
@@ -275,33 +491,50 @@ int ext_sensors_bsec_init(void)
 		return err;
 	}
 
-	if (!device_is_ready(config.i2c_master)) {
+	if (!device_is_ready(bme680_i2c_dev.bus)) {
 		LOG_ERR("I2C device not ready");
 		return -ENODEV;
 	}
 
-	bsec_ret = bsec_iot_init(BSEC_SAMPLE_RATE, temp_offset, bus_write, bus_read, delay_ms,
-				 state_load, config_load);
+	ctx.dev.intf = BME68X_I2C_INTF;
+	ctx.dev.intf_ptr = NULL;
+	ctx.dev.read = bus_read;
+	ctx.dev.write = bus_write;
+	ctx.dev.delay_us = delay_us;
+	ctx.dev.amb_temp = 25;
 
-	if (bsec_ret.bme680_status) {
-		LOG_ERR("Could not initialize BME680: %d", bsec_ret.bme680_status);
-		return -EIO;
-	} else if (bsec_ret.bsec_status) {
-		LOG_ERR("Could not initialize BSEC library: %d", bsec_ret.bsec_status);
-
-		if (bsec_ret.bsec_status == BSEC_E_CONFIG_VERSIONMISMATCH) {
-			LOG_ERR("Deleting state from flash");
-			settings_delete(SETTINGS_BSEC_STATE);
-		}
-
-		return -EIO;
+	err = bme68x_init(&ctx.dev);
+	if (err) {
+		LOG_ERR("Failed to init bme68x: %d", err);
+		return err;
 	}
+
+	err = bsec_init();
+	if (err != BSEC_OK) {
+		LOG_ERR("Failed to init BSEC: %d", err);
+		return err;
+	}
+
+	err = bsec_set_state(ctx.state_buffer, ctx.state_buffer_len,
+			     work_buffer, ARRAY_SIZE(work_buffer));
+	if (err != BSEC_OK && err != BSEC_E_CONFIG_EMPTY) {
+		LOG_ERR("Failed to set BSEC state: %d", err);
+	} else if (err == BSEC_OK) {
+		LOG_DBG("Setting BSEC state successful.");
+	}
+
+	bsec_update_subscription(requested_virtual_sensors, ARRAY_SIZE(requested_virtual_sensors),
+				 ctx.required_sensor_settings, &ctx.n_required_sensor_settings);
 
 	k_thread_create(&ctx.thread,
 			thread_stack,
 			BSEC_STACK_SIZE,
 			(k_thread_entry_t)bsec_thread_fn,
 			NULL, NULL, NULL, K_HIGHEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
+
+	k_timer_start(&bsec_save_state_timer,
+		      K_SECONDS(BSEC_SAVE_INTERVAL_S),
+		      K_NO_WAIT);
 
 	return 0;
 }

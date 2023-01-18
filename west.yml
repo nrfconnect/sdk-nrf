@@ -33,6 +33,8 @@ manifest:
       url-base: https://github.com/memfault
     - name: ant-nrfconnect
       url-base: https://github.com/ant-nrfconnect
+    - name: boschsensortec
+      url-base: https://github.com/boschsensortec
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -181,6 +183,16 @@ manifest:
       remote: ant-nrfconnect
       groups:
         - ant
+    - name: bsec2
+      repo-path: Bosch-BSEC2-Library
+      path: modules/lib/bsec2
+      revision: v1.4.2200
+      remote: boschsensortec
+    - name: bme68x
+      repo-path: Bosch-BME68x-Library
+      path: modules/lib/bme68x
+      revision: v1.1.40407
+      remote: boschsensortec
 
   # West-related configuration for the nrf repository.
   self:
