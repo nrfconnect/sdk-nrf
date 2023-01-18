@@ -8,11 +8,18 @@ Matter OTA
    :depth: 2
 
 The Matter Over-The-Air is a process that allows a Matter device in a Matter fabric to update its firmware.
-Most of the Matter devices will require such an update at some point during their lifecycle.
-The software image is provided by another Matter node, which acquired information about it and downloaded it from a centralized and reliable source.
+The `Matter Core Specification <CSA Specifications Download Request_>`_ requires that each device implements a method for firmware update for security reasons.
+Matter OTA provides a convenient way to fulfill this requirement.
+
+This page provides an overview of the Matter OTA process and mentions :ref:`ug_matter_overview_dfu_image_nordic`.
+In this process, recommended for Matter accessory devices, the software image is provided by another Matter node, which acquired information about the image and downloaded it from a centralized and reliable source.
 The download takes place over a special transfer protocol and user consent is required for the image to be applied on the target Matter device.
 
-This page provides an overview of the Matter OTA process, described in detail in the `Matter Core Specification <CSA Specifications Download Request_>`_, and mentions :ref:`ug_matter_overview_dfu_image_nordic` to the process.
+The Matter OTA is just one of the possible firmware update methods.
+You can also implement a custom solution.
+For example, the `nrfconnect platform <dedicated Matter fork_>`_ for Matter comes with a solution that lets you update the firmware outside of the Matter network, using Bluetooth LE and the :ref:`Simple Management Protocol <dfu_smp_readme>`.
+The conceptual details of this solution are outside the scope of this page.
+For detailed information about how to perform an update over Bluetooth LE, see :doc:`matter:nrfconnect_examples_software_update`.
 
 .. _ug_matter_overview_dfu_roles:
 
