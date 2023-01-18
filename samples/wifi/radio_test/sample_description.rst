@@ -101,7 +101,7 @@ Testing
               tx_pkt_tput_mode = 0
               tx_pkt_sgi = 0
               tx_pkt_preamble = 1
-              tx_pkt_mcs = -1
+              tx_pkt_mcs = 0
               tx_pkt_rate = 6
               tx_pkt_gap = 200
               phy_calib_rxdc = 1
@@ -135,13 +135,10 @@ Testing
 
            .. code-block:: console
 
-              wifi_radio_test rx 0
-              wifi_radio_test tx 0
               wifi_radio_test init 11
-              wifi_radio_test tx_pkt_tput_mode 0
               wifi_radio_test tx_pkt_len 4095
-              wifi_radio_test tx_pkt_rate 6
-              wifi_radio_test tx_power 0
+              wifi_radio_test tx_pkt_rate 12
+              wifi_radio_test tx_power 4
               wifi_radio_test tx_pkt_gap 4200
               wifi_radio_test tx 1
 
@@ -156,14 +153,11 @@ Testing
 
            .. code-block:: console
 
-              wifi_radio_test rx 0
-              wifi_radio_test tx 0
               wifi_radio_test init 14
-              wifi_radio_test tx_pkt_tput_mode 0
               wifi_radio_test tx_pkt_preamble 1
               wifi_radio_test tx_pkt_len 1024
               wifi_radio_test tx_pkt_rate 1
-              wifi_radio_test tx_power 0
+              wifi_radio_test tx_power 10
               wifi_radio_test tx_pkt_gap 8600
               wifi_radio_test tx 1
 
@@ -193,8 +187,6 @@ Testing
 
            .. code-block:: console
 
-              wifi_radio_test tx 0
-              wifi_radio_test rx 0
               wifi_radio_test init 11
               wifi_radio_test rx 1
 
@@ -253,8 +245,6 @@ Testing
 
            .. code-block:: console
 
-              wifi_radio_test rx 0
-              wifi_radio_test tx 0
               wifi_radio_test init 144
               wifi_radio_test tx_power 10
               wifi_radio_test tx_tone_freq 2
@@ -313,8 +303,6 @@ Testing
 
            .. code-block:: console
 
-              wifi_radio_test rx 0
-              wifi_radio_test tx 0
               wifi_radio_test init 144
               wifi_radio_test get_rf_rssi
 
@@ -338,8 +326,6 @@ Testing
 
            .. code-block:: console
 
-              wifi_radio_test rx 0
-              wifi_radio_test tx 0
               wifi_radio_test init 64
               wifi_radio_test compute_optimal_xo_val
 
@@ -369,8 +355,6 @@ Testing
 
            .. code-block:: console
 
-              wifi_radio_test rx 0
-              wifi_radio_test tx 0
               wifi_radio_test init 144
               wifi_radio_test rx_lna_gain 2
               wifi_radio_test rx_bb_gain 10
@@ -415,8 +399,6 @@ Testing
 
            .. code-block:: console
 
-              wifi_radio_test rx 0
-              wifi_radio_test tx 0
               wifi_radio_test init 144
               wifi_radio_test rx_lna_gain 2
               wifi_radio_test rx_bb_gain 10
@@ -460,8 +442,6 @@ Testing
 
            .. code-block:: console
 
-              wifi_radio_test rx 0
-              wifi_radio_test tx 0
               wifi_radio_test init 144
               wifi_radio_test rx_capture_length 64
               wifi_radio_test rx_cap 2
