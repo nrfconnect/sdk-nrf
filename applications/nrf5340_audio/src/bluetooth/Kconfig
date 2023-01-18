@@ -338,6 +338,7 @@ config BT_AUDIO_BROADCAST_ENCRYPTION_KEY
 	default "NRF5340_BIS_DEMO"
 	help
 	  Key to use for encryption and decryption; max 16 characters.
+	  Encryption keys larger than 16 characters will be cropped to 16.
 
 config BT_AUDIO_USE_BROADCAST_ID_RANDOM
 	bool "Use a random broadcast ID"
@@ -360,6 +361,13 @@ config BT_AUDIO_BROADCAST_IMMEDIATE_FLAG
 	default n
 	help
 	  Set the immediate rendering flag.
+
+config BT_AUDIO_PACKING_INTERLEAVED
+	bool "Interleaved packing"
+	depends on TRANSPORT_BIS
+	default n
+	help
+	  ISO channels can either be interleaved or sequentially packed; sequential is the default one.
 
 config AURACAST
 	bool "Enable Auracast"

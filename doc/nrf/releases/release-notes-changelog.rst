@@ -210,6 +210,7 @@ nRF5340 Audio
   * Possibility to create a Public Broadcast Announcement (PBA) needed for Auracast.
   * Encryption for BISes.
   * Support for bidirectional streams to or from two headsets (True Wireless Stereo).
+  * Support for interleaved packing.
 
 * Updated:
 
