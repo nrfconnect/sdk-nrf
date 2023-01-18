@@ -22,6 +22,8 @@ config MPSL_CX
 	bool "Radio Coexistence interface support"
 	depends on MPSL_CX_ANY_SUPPORT
 	default WIFI && (BT || NRF_802154_RADIO_DRIVER || NRF_802154_SER_HOST)
+	select NRF_RPC if SOC_SERIES_NRF53X
+	select NRF_RPC_CBOR if SOC_SERIES_NRF53X
 	help
 	  Controls if Radio Coexistence interface is to be configured and enabled
 	  when MPSL is initialized.
@@ -34,6 +36,8 @@ config MPSL_CX_PIN_FORWARDER
 	depends on SOC_NRF5340_CPUAPP
 	depends on MPSL_CX
 	default y
+	select NRF_RPC
+	select NRF_RPC_CBOR
 
 if MPSL_CX
 

@@ -12,6 +12,7 @@
 
 #if !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
 #include <mpsl_cx_abstract_interface.h>
+#include <mpsl/mpsl_cx_nrf700x.h>
 #else
 #include <string.h>
 #include <soc_secure.h>
@@ -59,6 +60,8 @@ static const struct gpio_dt_spec grant_spec   = GPIO_DT_SPEC_GET(CX_NODE, grant_
 static mpsl_cx_cb_t callback;
 static struct gpio_callback grant_cb;
 
+static bool enabled = true;
+
 static int32_t grant_pin_is_asserted(bool *is_asserted)
 {
 	int ret;
@@ -77,7 +80,7 @@ static mpsl_cx_op_map_t granted_ops_map(bool grant_is_asserted)
 {
 	mpsl_cx_op_map_t granted_ops = MPSL_CX_OP_IDLE_LISTEN | MPSL_CX_OP_RX;
 
-	if (grant_is_asserted) {
+	if (grant_is_asserted || !enabled) {
 		granted_ops |= MPSL_CX_OP_TX;
 	}
 
@@ -278,6 +281,11 @@ static int mpsl_cx_init(const struct device *dev)
 }
 
 SYS_INIT(mpsl_cx_init, POST_KERNEL, CONFIG_MPSL_CX_INIT_PRIORITY);
+
+void mpsl_cx_nrf700x_set_enabled(bool enable)
+{
+	enabled = enable;
+}
 
 #else // !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
 static int mpsl_cx_init(const struct device *dev)
