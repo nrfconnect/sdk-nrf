@@ -1130,6 +1130,7 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 		}
 
 		ctx->rf_test_run = false;
+		ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
 
 	}
 
@@ -1386,10 +1387,8 @@ static int nrf_wifi_radio_test_tx_tone(const struct shell *shell,
 		if (!check_test_in_prog(shell)) {
 			goto out;
 		}
-	}
 
-	ctx->rf_test_run = true;
-	ctx->rf_test = NRF_WIFI_RF_TEST_TX_TONE;
+	}
 
 	status = nrf_wifi_fmac_rf_test_tx_tone(ctx->rpu_ctx,
 					       (unsigned char)val,
@@ -1403,11 +1402,16 @@ static int nrf_wifi_radio_test_tx_tone(const struct shell *shell,
 		goto out;
 	}
 
+	if (val == 1) {
+		ctx->rf_test_run = true;
+		ctx->rf_test = NRF_WIFI_RF_TEST_TX_TONE;
+	} else {
+		ctx->rf_test_run = false;
+		ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
+	}
+
 	ret = 0;
 out:
-	ctx->rf_test_run = false;
-	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
-
 	return ret;
 }
 
