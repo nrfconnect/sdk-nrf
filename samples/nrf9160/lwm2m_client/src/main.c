@@ -267,6 +267,11 @@ static int lwm2m_setup(void)
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
 		lwm2m_init_rai();
 	}
+	if (IS_ENABLED(CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS) ||
+	    IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER)) {
+		lwm2m_ncell_handler_register();
+	}
+
 	return 0;
 }
 
