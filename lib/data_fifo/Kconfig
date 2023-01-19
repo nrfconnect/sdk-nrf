@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config DATA_FIFO
+	bool "data first-in first-out library"
+	help
+	  Enable the data first-in first-out library
+
+if DATA_FIFO
+
+module = DATA_FIFO
+module-str = Data first-in first-out
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif #DATA_FIFO
