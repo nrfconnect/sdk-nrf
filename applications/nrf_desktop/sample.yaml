@@ -61,7 +61,8 @@ tests:
       - nrf52840dongle_nrf52840
       - nrf52840gmouse_nrf52840
     tags: bluetooth ci_build
-    extra_args: CONF_FILE=prj_shell.conf
+    extra_configs:
+      - CONFIG_DESKTOP_SHELL=y
   applications.nrf_desktop.zdebug_3bleconn:
     build_only: true
     platform_allow: nrf52840dongle_nrf52840
