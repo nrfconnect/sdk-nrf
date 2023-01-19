@@ -191,6 +191,8 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
+* Removed separate configurations enabling :ref:`zephyr:shell_api` (:file:`prj_shell.conf`).
+  Shell support can be enabled for a given configuration with the single Kconfig option (:ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>`).
 * Added an application log informing about the configuration option value update in the :ref:`nrf_desktop_motion`.
 * Added application-specific Kconfig options (:ref:`CONFIG_DESKTOP_LOG <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_SHELL<config_desktop_app_options>`) to simplify the debug configurations for the Logging and Shell subsystems.
   See the debug configuration section of the :ref:`nrf_desktop` application for more details.
