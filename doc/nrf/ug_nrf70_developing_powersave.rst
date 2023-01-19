@@ -9,6 +9,8 @@ Operating in power save modes
 
 The nRF70 Series device supports multiple power save modes, enabling the device to minimize power consumption by shutting down most of the digital logic and RF circuits.
 
+.. _ug_nrf70_developing_powersave_device_states:
+
 nRF70 Series device states
 **************************
 
@@ -38,8 +40,10 @@ The nRF70 Series device can operate in either of the following two functional st
   In this state, the access point buffers the required frames intended for the device.
   The device can make a transition between the Active and Sleep states according to the IEEE 802.11 power save protocol.
 
+.. _ug_nrf70_developing_powersave_power_save_mode:
+
 Power Save mode
-*********************
+***************
 
 The nRF70 Series device can operate in Active mode or Power Save mode.
 When the device changes from Active mode to Power Save mode, it informs the access point through a successful frame exchange.
@@ -59,6 +63,7 @@ The following Power Save modes are supported and can be configured by the user o
   nRF70 Series devices operate in this mode by default.
   The user or application can change the device to the Permanent Active mode using the ``NET_REQUEST_WIFI_PS`` network management API.
 
+.. _ug_nrf70_developing_powersave_dtim:
 
 Delivery Traffic Indication Message (DTIM)
 ******************************************
@@ -71,6 +76,8 @@ Devices in DTIM Power Save mode can wake at any time to transmit uplink traffic,
 To make the device in Power Save mode aware that the access point has buffered downlink traffic, the access point uses the Traffic Indication Map (TIM) element present in the beacon frames.
 The device in Power Save mode wakes up to receive the DTIM beacon and checks the status of the TIM element.
 This element indicates whether there are any buffered group frames or unicast frames that need to be retrieved from the access point.
+
+.. _ug_nrf70_developing_powersave_dtim_group:
 
 Group frames
 ============
@@ -85,6 +92,8 @@ The following figure illustrates the group frame data retrieval mechanism in DTI
    :alt: Group frames
 
    Group frames
+
+.. _ug_nrf70_developing_powersave_dtim_unicast:
 
 Unicast frames
 ==============
@@ -136,6 +145,8 @@ The WMM mode does not deliver a significant performance or power difference when
 The average power consumption of the device is affected by the DTIM period.
 The typical value is three beacons, for example, 307 ms for a beacon period of 100-time units.
 The higher DTIM period results in increased power saving and higher latency to the application data.
+
+.. _ug_nrf70_developing_powersave_twt:
 
 Target Wake Time (TWT)
 **********************
@@ -225,6 +236,8 @@ The following figure illustrates the two key parameters of Target Wake Time:
 
    TWT Wake Duration and Interval
 
+.. _ug_nrf70_developing_powersave_usage:
+
 Usage
 *****
 
@@ -247,6 +260,8 @@ TWT-based power save allows devices to sleep for longer intervals than the DTIM 
 It is suitable for the devices that have low levels of periodic uplink traffic.
 As the device sleeps longer and does not wake up to receive DTIM beacons, it misses all multicast or broadcast frames.
 The TWT session is expected to be set up by the application after the network level negotiation, after which it is not expected to receive any multicast or broadcast frames.
+
+.. _ug_nrf70_developing_powersave_api:
 
 Power Save API
 **************
@@ -292,6 +307,8 @@ The following shell commands and network management APIs are provided for power 
      - TWT operation TWT teardown all flows
 
 See the :ref:`wifi_shell_sample` sample for more information.
+
+.. _ug_nrf70_developing_powersave_profiling:
 
 Power profiling
 ***************
