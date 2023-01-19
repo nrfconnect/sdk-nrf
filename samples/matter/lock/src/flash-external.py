@@ -12,13 +12,19 @@ import argparse
 from intelhex import IntelHex
 import os
 import subprocess
+import sys
 import tempfile
 
 # Base address of the memory-mapped QSPI flash on nRF53 SoCs
 NRF53_XIP_REGION_BASE = 0x10000000
 
 
-def program(app_data, app_offset, net_data, net_offset):
+def die(msg):
+    sys.stderr.write(msg + '\n')
+    sys.exit(1)
+
+
+def program(app_data, app_offset, net_data, net_offset, snr):
     with tempfile.TemporaryDirectory() as outdir:
         dest_file = os.path.join(outdir, 'external.hex')
 
@@ -27,8 +33,30 @@ def program(app_data, app_offset, net_data, net_offset):
         ihex.putsz(NRF53_XIP_REGION_BASE + net_offset, net_data)
         ihex.write_hex_file(dest_file)
 
-        subprocess.check_call(['nrfjprog', '--program', dest_file, '--reset'])
+        subprocess.check_call(['nrfjprog', '-s', snr,
+                               '--program', dest_file,
+                               '--reset', '--verify'])
 
+
+def select_board_snr():
+    boards = subprocess.check_output(['nrfjprog', '-i']).decode('ascii').splitlines()
+
+    if not boards:
+        die('There are no boards connected.')
+
+    if len(boards) == 1:
+        return boards[0]
+
+    print('There are multiple boards connected.')
+    print('\n'.join(f'{idx}. {snr}' for (idx, snr) in enumerate(boards, 1)))
+
+    while True:
+        idx = input(f'Please select one with desired serial number(1-{len(boards)}): ')
+
+        try:
+            return boards[int(idx) - 1]
+        except Exception:
+            pass
 
 def main():
     # Type for an integer of arbitrary base
@@ -54,14 +82,13 @@ def main():
     net_data = args.net.read()
 
     if len(app_data) > args.app_size:
-        raise ValueError(
-            f'Application core image exceeds partition size: {len(app_data)} > {args.app_size}')
+        die(f'Application core image exceeds partition size: {len(app_data)} > {args.app_size}')
 
     if len(app_data) > args.app_size:
-        raise ValueError(
-            f'Network core image exceeds partition size: {len(net_data)} > {args.net_size}')
+        die(f'Network core image exceeds partition size: {len(net_data)} > {args.net_size}')
 
-    program(app_data, args.app_offset, net_data, args.net_offset)
+    snr = select_board_snr()
+    program(app_data, args.app_offset, net_data, args.net_offset, snr)
 
 
 if __name__ == "__main__":
