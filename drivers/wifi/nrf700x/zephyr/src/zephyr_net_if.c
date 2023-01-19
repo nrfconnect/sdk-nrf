@@ -265,6 +265,9 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 						     vif_ctx_zep,
 						     &add_vif_info);
 
+	rpu_ctx_zep->vif_ctx_zep[vif_ctx_zep->vif_idx].if_type =
+		add_vif_info.iftype;
+
 	if (vif_ctx_zep->vif_idx >= MAX_NUM_VIFS) {
 		LOG_ERR("%s: FMAC returned invalid interface index\n",
 			__func__);

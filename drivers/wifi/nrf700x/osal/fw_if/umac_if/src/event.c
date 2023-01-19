@@ -439,6 +439,17 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 					      __func__,
 					      umac_hdr->cmd_evnt);
 		break;
+	case NRF_WIFI_UMAC_EVENT_GET_POWER_SAVE_INFO:
+		if (callbk_fns->event_get_ps_info)
+			callbk_fns->event_get_ps_info(vif_ctx->os_vif_ctx,
+						      event_data,
+						      event_len);
+		else
+			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+					      "%s: No callback registered for event %d\n",
+					      __func__,
+					      umac_hdr->cmd_evnt);
+		break;
 #ifdef CONFIG_WPA_SUPP
 	case NRF_WIFI_UMAC_EVENT_NEW_STATION:
 	case NRF_WIFI_UMAC_EVENT_DEL_STATION:

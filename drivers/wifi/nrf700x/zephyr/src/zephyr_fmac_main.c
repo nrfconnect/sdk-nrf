@@ -215,6 +215,31 @@ int wifi_nrf_reg_domain(const struct device *dev, struct wifi_reg_domain *reg_do
 err:
 	return ret;
 }
+
+void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
+					     struct nrf_wifi_umac_event_power_save_info *ps_info,
+					     unsigned int event_len)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	if (!vif_ctx || !ps_info) {
+		return;
+	}
+
+	vif_ctx_zep = vif_ctx;
+
+	vif_ctx_zep->ps_info->mode = ps_info->ps_mode;
+	vif_ctx_zep->ps_info->enabled = ps_info->enabled;
+	vif_ctx_zep->ps_info->num_twt_flows = ps_info->num_twt_flows;
+
+	for (int i = 0; i < ps_info->num_twt_flows; i++) {
+		memcpy(&vif_ctx_zep->ps_info->twt_flows[i],
+		       &ps_info->twt_flow_info[i],
+		       sizeof(struct wifi_twt_flow_info));
+	}
+
+	vif_ctx_zep->ps_config_info_evnt = true;
+}
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv_priv_zep)
@@ -325,6 +350,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	callbk_fns.twt_teardown_callbk_fn = wifi_nrf_event_proc_twt_teardown_zep;
 	callbk_fns.twt_sleep_callbk_fn = wifi_nrf_event_proc_twt_sleep_zep;
 	callbk_fns.event_get_reg = wifi_nrf_event_get_reg_zep;
+	callbk_fns.event_get_ps_info = wifi_nrf_event_proc_get_power_save_info;
 #ifdef CONFIG_WPA_SUPP
 	callbk_fns.scan_res_callbk_fn = wifi_nrf_wpa_supp_event_proc_scan_res;
 	callbk_fns.auth_resp_callbk_fn = wifi_nrf_wpa_supp_event_proc_auth_resp;
@@ -386,6 +412,7 @@ static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 	.set_twt = wifi_nrf_set_twt,
 	.set_power_save_mode = wifi_nrf_set_power_save_mode,
 	.reg_domain = wifi_nrf_reg_domain,
+	.get_power_save_config = wifi_nrf_get_power_save_config,
 };
 
 #ifdef CONFIG_WPA_SUPP
