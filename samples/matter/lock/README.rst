@@ -372,6 +372,12 @@ To test switching between Thread and Wi-Fi, complete the following steps:
 
       west flash --erase
 
+#. Erase the entire content of the external flash using the following command:
+
+   .. code-block:: console
+
+      nrfjprog --qspieraseall
+
 #. Program the application to a partition of the external flash using the following command:
 
    .. code-block:: console
