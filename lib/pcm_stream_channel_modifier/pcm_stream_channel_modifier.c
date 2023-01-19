@@ -9,8 +9,6 @@
 #include <zephyr/kernel.h>
 #include <errno.h>
 
-#include "channel_assignment.h"
-
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(pscm, CONFIG_PSCM_LOG_LEVEL);
 

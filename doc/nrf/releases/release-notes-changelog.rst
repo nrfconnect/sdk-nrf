@@ -528,6 +528,11 @@ Other libraries
   * Separated the library from the :ref:`nrf53_audio_app` and moved it to :file:`lib/contin_array`.
     Updated code and documentation accordingly.
 
+* :ref:`lib_pcm_stream_channel_modifier` library:
+
+  * Separated the library from the :ref:`nrf53_audio_app` and moved it to :file:`lib/pcm_stream_channel_modifier`.
+    Updated code and documentation accordingly.
+
 * :ref:`QoS` library:
 
   * Removed the ``QOS_MESSAGE_TYPES_REGISTER`` macro.
