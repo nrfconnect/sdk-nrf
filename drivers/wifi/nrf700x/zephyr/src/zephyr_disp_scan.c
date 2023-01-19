@@ -60,8 +60,11 @@ int wifi_nrf_disp_scan_zep(const struct device *dev,
 
 	scan_info.scan_mode = AUTO_SCAN;
 	scan_info.scan_reason = SCAN_DISPLAY;
-	/* Wildcard SSID to trigger active scan */
-	scan_info.scan_params.num_scan_ssids = 1;
+
+	if (!vif_ctx_zep->passive_scan) {
+		/* Wildcard SSID to trigger active scan */
+		scan_info.scan_params.num_scan_ssids = 1;
+	}
 	scan_info.scan_params.scan_ssids[0].nrf_wifi_ssid_len = 0;
 	scan_info.scan_params.scan_ssids[0].nrf_wifi_ssid[0] = 0;
 
