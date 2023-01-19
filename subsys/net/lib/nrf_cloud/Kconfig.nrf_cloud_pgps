@@ -25,15 +25,28 @@ config NRF_CLOUD_PGPS_REQUEST_UPON_INIT
 	  if only some of the predictions are in storage,
 	  or if the replacement threshold is reached.
 
-config NRF_CLOUD_PGPS_PREDICTION_PERIOD
-	int "Desired time in minutes between predictions"
-	range 60 480
-	default 240
+choice NRF_CLOUD_PGPS_PREDICTION_PERIOD
+	prompt "Desired time between predictions"
+	default NRF_CLOUD_PGPS_PREDICTION_PERIOD_240_MIN
 	help
 	  This value is used when requesting predicted GPS data from the
 	  cloud. More frequent predictions will result in more accurate
 	  ephemeris values for any given time, but will take more storage
 	  space in flash.
+
+config NRF_CLOUD_PGPS_PREDICTION_PERIOD_120_MIN
+	bool "120 min prediction period"
+	help
+	  Each prediction is used to cover 120 minutes. May increase fix
+	  accuracy compared to 240 minute prediction period, but doubles
+	  the amount of data transferred and storage space needed in flash.
+
+config NRF_CLOUD_PGPS_PREDICTION_PERIOD_240_MIN
+	bool "240 min prediction period"
+	help
+	  Each prediction is used to cover 240 minutes.
+
+endchoice
 
 config NRF_CLOUD_PGPS_NUM_PREDICTIONS
 	int "Desired number of predictions"

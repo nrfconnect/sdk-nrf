@@ -161,7 +161,8 @@ If the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT` option is disab
 In these cases, predictions might be unavailable until a connection is established to the cloud.
 
 .. note::
-   Each prediction requires 2 KB of flash. For prediction periods of 240 minutes (four hours), and with 42 predictions per week, the flash requirement adds up to 84 KB.
+   Each prediction requires 2 kB of flash.
+   For prediction period of 240 minutes (four hours), and with 42 predictions in a week, the flash requirement adds up to 84 kB.
 
 The P-GPS subsystem's :c:func:`nrf_cloud_pgps_init` function takes a pointer to a :c:struct:`nrf_cloud_pgps_init_param` structure.
 If the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_CUSTOM` option is enabled, the structure must specify the storage base address and the storage size in the flash memory where the P-GPS subsystem stores predictions.
