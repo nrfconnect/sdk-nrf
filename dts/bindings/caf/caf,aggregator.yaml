@@ -18,10 +18,10 @@ properties:
     type: int
     default: 120
 
-  sensor_data_size:
-    description: size in bytes of single sensor data, range 1-255.
+  sample_size:
+    description: number of sensor_values in a single sample, range 1-31.
     type: int
-    default: 4
+    default: 1
 
   buf_count:
     description: Number of buffers in aggregator, range 1-255.

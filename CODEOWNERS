@@ -65,6 +65,10 @@ Kconfig*                                  @tejlmand
 /drivers/sensor/paw3212/                  @anangl @pdunaj @MarekPieta
 /drivers/sensor/pmw3360/                  @anangl @pdunaj @MarekPieta
 /drivers/wifi/nrf700x/                    @krish2718 @sachinthegreen @sr1dh48r @rlubos
+/drivers/wifi/nrf700x/osal/fw_if/umac_if/inc/fw_B/  @udaynordic @srkanordic
+/drivers/wifi/nrf700x/osal/fw_if/umac_if/inc/fw_A/  @udaynordic @srkanordic
+/drivers/wifi/nrf700x/osal/hw_if/hal/inc/fw_B/  @udaynordic @srkanordic
+/drivers/wifi/nrf700x/osal/hw_if/hal/inc/fw_A/  @udaynordic @srkanordic
 /dts/                                     @mbolivar-nordic @anangl
 /ext/                                     @carlescufi
 /include/                                 @anangl @rlubos
@@ -118,6 +122,7 @@ Kconfig*                                  @tejlmand
 /lib/qos/                                 @simensrostad
 /lib/pcm_mix/                             @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /lib/contin_array/                        @koffes @alexsven @erikrobstad @rick1082 @gWacey
+/lib/tone/                                @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /modules/                                 @tejlmand
 /modules/mcuboot/                         @de-nordic @nordicjm
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
@@ -241,6 +246,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/nrf_modem_lib/                 @lemrey @MirkoCovizzi
 /tests/lib/nrf_modem_lib/nrf91_sockets/   @MirkoCovizzi
 /tests/lib/ram_pwrdn/                     @Damian-Nordic
+/tests/lib/tone/                          @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/direct_xip/        @hakonfam
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
@@ -260,7 +266,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/net/lib/aws_*/              @simensrostad
 /tests/subsys/net/lib/azure_iot_hub/      @jtguggedal
 /tests/subsys/net/lib/fota_download/      @hakonfam @sigvartmh
-/tests/subsys/net/lib/lwm2m_client_utils/ @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen @VeijoPesonen
+/tests/subsys/net/lib/lwm2m_*/            @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen @VeijoPesonen
 /tests/subsys/net/lib/nrf_cloud/          @tony-le-24
 /tests/subsys/net/lib/wifi_credentials*/  @maxd-nordic
 /tests/subsys/partition_manager/region/   @hakonfam @sigvartmh

@@ -27,18 +27,18 @@ Configuration
 *************
 
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-The module is automatically enabled for every nRF Desktop central device (:kconfig:option:`CONFIG_BT_CENTRAL`).
+The module is automatically enabled for every nRF Desktop central device (:ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>`).
 
-Enable :kconfig:option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` to manage Bluetooth connections' parameters reacting on the USB state change.
-The connection intervals for all of the Bluetooth connected peripherals are set to :kconfig:option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE` (100 ms by default) while USB is suspended.
+Enable :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI <config_desktop_app_options>` to manage Bluetooth connections' parameters reacting on the USB state change.
+The connection intervals for all of the Bluetooth connected peripherals are set to :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE <config_desktop_app_options>` (100 ms by default) while USB is suspended.
 The connections' peripheral latencies are set to 0.
 The connection parameter change is reverted when USB is active.
-The :kconfig:option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` is enabled by default.
+The :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI <config_desktop_app_options>` is enabled by default.
 
 Implementation details
 **********************
 
-The |ble_conn_params| receives the peripheral's connection parameters update request as ``ble_peer_conn_params_event``.
+The |ble_conn_params| receives the peripheral's connection parameters update request as :c:struct:`ble_peer_conn_params_event`.
 The module updates only the connection latency.
 The connection interval and supervision timeout are not changed according to the peripheral's request.
 

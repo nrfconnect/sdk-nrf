@@ -14,13 +14,8 @@ extern "C" {
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
 #include <caf/events/sensor_event.h>
+#include <caf/caf_sensor_common.h>
 
-#define FLOAT_TO_SENSOR_VALUE(float_val)							\
-	{											\
-		.val1 = (int32_t)(float_val),							\
-		.val2 = (int32_t)(((float_val) - (int32_t)(float_val)) *			\
-						FLOAT_TO_SENSOR_VAL_CONST),			\
-	}
 
 enum act_type {
 	ACT_TYPE_ABS,
@@ -35,18 +30,6 @@ struct sm_trigger_activation {
 struct sm_trigger {
 	struct sensor_trigger cfg;
 	struct sm_trigger_activation activation;
-};
-
-/**
- * @brief Description of single channel
- *
- * The description of the channel to do the measurement on.
- */
-struct sm_sampled_channel {
-	/** @brief Channel identifier */
-	enum sensor_channel chan;
-	/** @brief Number of data samples in selected channel */
-	uint8_t data_cnt;
 };
 
 /**
@@ -72,7 +55,7 @@ struct sm_sensor_config {
 	 *
 	 * Channels in the sensor that should be handled by sensor manager module
 	 */
-	const struct sm_sampled_channel *chans;
+	const struct caf_sampled_channel *chans;
 	/**
 	 * @brief Number of channels
 	 *

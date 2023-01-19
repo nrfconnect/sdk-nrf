@@ -301,22 +301,8 @@ static void setup_location_module_in_active_state(void)
 	/* Set callback to validate location module events. */
 	__cmock__event_submit_Stub(&validate_location_module_evt);
 
-	/* Set default location configuration. */
-	enum location_method methods[] = { LOCATION_METHOD_GNSS, LOCATION_METHOD_CELLULAR };
-
-	struct location_config config_defaults = {
-		.methods_count = 2,
-		.interval = 0,
-		.timeout = 300000,
-		.mode = LOCATION_REQ_MODE_FALLBACK,
-		.methods = {
-			{.method = LOCATION_METHOD_GNSS, .gnss.timeout = 90000},
-			{.method = LOCATION_METHOD_CELLULAR, .cellular.timeout = 11000}
-		}
-	};
-	__cmock_location_config_defaults_set_Expect(NULL, 2, methods);
+	__cmock_location_config_defaults_set_Expect(NULL, 0, NULL);
 	__cmock_location_config_defaults_set_IgnoreArg_config();
-	__cmock_location_config_defaults_set_ReturnThruPtr_config(&config_defaults);
 
 	/* Location configuration modified by location module for location request. */
 	struct location_config config_location_request = {

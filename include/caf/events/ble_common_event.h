@@ -50,7 +50,10 @@ enum peer_state {
 	PEER_STATE_CONN_FAILED,
 
 	/** Number of peer states. */
-	PEER_STATE_COUNT
+	PEER_STATE_COUNT,
+
+	/** Unused in code, required for inter-core compatibility. */
+	APP_EM_ENFORCE_ENUM_SIZE(PEER_STATE)
 };
 
 /** @brief Peer operations.
@@ -94,7 +97,10 @@ enum peer_operation {
 	PEER_OPERATION_CANCEL,
 
 	/** Number of peer operations. */
-	PEER_OPERATION_COUNT
+	PEER_OPERATION_COUNT,
+
+	/** Unused in code, required for inter-core compatibility. */
+	APP_EM_ENFORCE_ENUM_SIZE(PEER_OPERATION)
 };
 
 /** @brief Bluetooth LE peer event.

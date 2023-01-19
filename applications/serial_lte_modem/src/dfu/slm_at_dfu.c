@@ -57,7 +57,6 @@ static K_SEM_DEFINE(sem_init_packet, 0, 1);
 #endif
 static uint32_t file_image_size;
 static uint32_t file_download_size;
-static K_SEM_DEFINE(sem_file_image, 0, 1);
 
 static char hostname[URI_HOST_MAX];
 static char filepath[SLM_MAX_URL];
@@ -164,7 +163,8 @@ static int download_client_callback(const struct download_client_evt *event)
 			err = download_client_file_size_get(&dlc, &file_image_size);
 			if (err != 0) {
 				LOG_ERR("download_client_file_size_get err: %d", err);
-				k_sem_give(&sem_file_image);
+				sprintf(rsp_buf, "\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
+				rsp_send(rsp_buf, strlen(rsp_buf));
 				return err;
 			}
 #if defined(CONFIG_SLM_NRF52_DFU_LEGACY)
@@ -182,7 +182,8 @@ static int download_client_callback(const struct download_client_evt *event)
 				LOG_ERR("dfu_target_init error %d", err);
 				(void)download_client_disconnect(&dlc);
 				first_fragment = true;
-				k_sem_give(&sem_file_image);
+				sprintf(rsp_buf, "\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
+				rsp_send(rsp_buf, strlen(rsp_buf));
 				return err;
 			}
 			first_fragment = false;
@@ -201,7 +202,8 @@ static int download_client_callback(const struct download_client_evt *event)
 			}
 			first_fragment = true;
 			(void)download_client_disconnect(&dlc);
-			k_sem_give(&sem_file_image);
+			sprintf(rsp_buf, "\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
+			rsp_send(rsp_buf, strlen(rsp_buf));
 			return err;
 		}
 
@@ -234,11 +236,9 @@ static int download_client_callback(const struct download_client_evt *event)
 			k_sem_give(&sem_init_packet);
 		} else {
 			LOG_INF("File Image downloaded");
-			k_sem_give(&sem_file_image);
 		}
 #else
 		LOG_INF("File Image downloaded");
-		k_sem_give(&sem_file_image);
 #endif
 		break;
 
@@ -264,11 +264,11 @@ static int download_client_callback(const struct download_client_evt *event)
 				}
 			}
 			first_fragment = true;
+#if defined(CONFIG_SLM_NRF52_DFU_LEGACY)
 			if (dfu_step == DFU_INIT_PACKET_DOWNLOAD) {
 				k_sem_give(&sem_init_packet);
-			} else {
-				k_sem_give(&sem_file_image);
 			}
+#endif
 			/* Return non-zero to tell download_client to stop */
 			return event->error;
 		}
@@ -471,17 +471,6 @@ int handle_at_dfu_get(enum at_cmd_type cmd_type)
 			file_image_size = 0;
 			file_download_size = 0;
 			err = do_dfu_download(host, fw_file, sec_tag);
-			if (err) {
-				sprintf(rsp_buf, "\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
-				rsp_send(rsp_buf, strlen(rsp_buf));
-				return err;
-			}
-			k_sem_take(&sem_file_image, K_FOREVER);
-			if (file_image_size > 0 && file_image_size != file_download_size) {
-				err = -EAGAIN;
-				sprintf(rsp_buf, "\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
-				rsp_send(rsp_buf, strlen(rsp_buf));
-			}
 		} else if (op == SLM_DFU_ERASE) {
 			err = do_dfu_erase();
 		} else {

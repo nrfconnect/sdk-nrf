@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <core/CHIPError.h>
+#include <lib/core/CHIPError.h>
 
 #ifdef CONFIG_OPENTHREAD_DEFAULT_TX_POWER
 CHIP_ERROR SetDefaultThreadOutputPower();

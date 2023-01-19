@@ -43,7 +43,6 @@ config OPENTHREAD_NRF_SECURITY
 	select MBEDTLS_TLS_LIBRARY
 	select NORDIC_SECURITY_BACKEND
 	select NRF_SECURITY_ADVANCED
-	select NRF_SECURITY_RNG
 	select OBERON_BACKEND if !CC3XX_BACKEND
 	help
 	  Enables nrf_security module for use by OpenThread. This allows

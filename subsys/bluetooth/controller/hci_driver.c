@@ -67,6 +67,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 	#define SDC_ADV_SET_MEM_SIZE \
 		(SDC_ADV_SET_COUNT * SDC_MEM_PER_ADV_SET(SDC_ADV_BUF_SIZE))
 #else
+	#define SDC_ADV_SET_COUNT 0
 	#define SDC_ADV_SET_MEM_SIZE 0
 #endif
 
@@ -642,6 +643,7 @@ static int configure_memory_usage(void)
 	int required_memory;
 	sdc_cfg_t cfg;
 
+#if defined(CONFIG_BT_CENTRAL) || defined(CONFIG_BT_LL_SOFTDEVICE_MULTIROLE)
 	cfg.central_count.count = SDC_CENTRAL_COUNT;
 
 	/* NOTE: sdc_cfg_set() returns a negative errno on error. */
@@ -652,7 +654,9 @@ static int configure_memory_usage(void)
 	if (required_memory < 0) {
 		return required_memory;
 	}
+#endif
 
+#if defined(CONFIG_BT_PERIPHERAL) || defined(CONFIG_BT_LL_SOFTDEVICE_MULTIROLE)
 	cfg.peripheral_count.count = CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT;
 
 	required_memory =
@@ -662,6 +666,7 @@ static int configure_memory_usage(void)
 	if (required_memory < 0) {
 		return required_memory;
 	}
+#endif
 
 	cfg.buffer_cfg.rx_packet_size = MAX_RX_PACKET_SIZE;
 	cfg.buffer_cfg.tx_packet_size = MAX_TX_PACKET_SIZE;
@@ -686,7 +691,7 @@ static int configure_memory_usage(void)
 		return required_memory;
 	}
 
-#if defined(CONFIG_BT_BROADCASTER)
+#if defined(CONFIG_BT_BROADCASTER) || defined(CONFIG_BT_LL_SOFTDEVICE_MULTIROLE)
 	cfg.adv_count.count = SDC_ADV_SET_COUNT;
 
 	required_memory =

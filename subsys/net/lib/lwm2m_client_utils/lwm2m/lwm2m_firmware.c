@@ -161,7 +161,7 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 	}
 
 	if (path.level == LWM2M_PATH_LEVEL_RESOURCE) {
-		lwm2m_engine_set_res_data_len((char *)key, len + 1);
+		lwm2m_engine_set_res_data_len((char *)key, len);
 	}
 
 	return 0;

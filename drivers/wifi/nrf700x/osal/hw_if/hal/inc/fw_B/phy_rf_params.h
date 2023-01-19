@@ -14,7 +14,12 @@
 
 #define NRF_WIFI_RF_PARAMS_SIZE 200
 #define NRF_WIFI_RF_PARAMS_CONF_SIZE 42
-#define NRF_WIFI_DEF_RF_PARAMS "0000000000002C00000000000000004C3C443C3C3C4444440000000050EC000000000000000000000000002022003F032424001000002800323500000CF0080A7D8105010071630300EED501001F6F00003B350100F52E0000E35E0000B7B6000066EFFEFFB5F60000896200007A840200E28FFCFF08080808040A140100000000A1A10178000000080050003B020726181818181A120A140E0600"
+
+#ifdef CONFIG_NRF700X_RADIO_TEST
+#define NRF_WIFI_DEF_RF_PARAMS "0000000000002A00000000030303036060606060606060600000000050EC000000000000000000000000007077003F032424001000002800323500000CF008087D8105010071630300EED501001F6F00003B350100F52E0000E35E0000B7B6000066EFFEFFB5F60000896200007A840200E28FFCFF08080808040A140100000000A1A10178000000080050003B020726181818181A120A140E0600"
+#else
+#define NRF_WIFI_DEF_RF_PARAMS "0000000000002A00000000030303035440403838383838380000000050EC000000FCFCF8FCF800000000007077003F032424001000002800323500000CF008087D8105010071630300EED501001F6F00003B350100F52E0000E35E0000B7B6000066EFFEFFB5F60000896200007A840200E28FFCFF08080808040A140100000000A1A10178000000080050003B020726181818181A120A140E0600"
+#endif
 
 #define NRF_WIFI_RF_PARAMS_OFF_RESV_1 0
 #define NRF_WIFI_RF_PARAMS_OFF_CALIB_X0 6
@@ -73,7 +78,7 @@
 
 #define NRF_WIFI_TEMP_CALIB_PERIOD (1024 * 1024) /* micro seconds */
 #define NRF_WIFI_TEMP_CALIB_THRESHOLD (40)
-#define NRF_WIFI_TEMP_CALIB_ENABLE 0
+#define NRF_WIFI_TEMP_CALIB_ENABLE 1
 
 /* Battery voltage changes base calibrations and voltage thresholds */
 #define NRF_WIFI_DEF_PHY_VBAT_CALIB (NRF_WIFI_PHY_CALIB_FLAG_DPD)
@@ -158,20 +163,15 @@ struct nrf_wifi_rf_test_capture_meas {
 struct nrf_wifi_rf_test_tx_params {
 	unsigned char test;
 
-	/* Compute the normalized frequency for the tone to be transmitted
-	 * as,normFrequency =
-	 * round(toneFrequency * ((1/(DAC sampling rate /2))*(2^25)))
+	/* Desired tone frequency in MHz in steps of 1 MHz from -10 MHz to +10 MHz.*/
+	signed char tone_freq;
+
+	/* Desired TX power in the range -16 dBm to +24 dBm.
+	 * in steps of 2 dBm
 	 */
-	signed int norm_freq;
+	signed char tx_pow;
 
-	/* Number of samples to be transmitted. */
-	unsigned short tx_vect_len;
-
-	/* Desired amplitude of the tone (between 0 – 0x3FF). */
-	unsigned short tone_amp;
-
-	/* Desired TX power*/
-	unsigned char tx_pow;
+	/* Set 1 for staring tone transmission.*/
 	unsigned char enabled;
 } __NRF_WIFI_PKD;
 
@@ -206,7 +206,7 @@ struct nrf_wifi_rf_get_rf_rssi {
 struct nrf_wifi_rf_test_xo_calib {
 	unsigned char test;
 
-	/* Number of samples to be captured. */
+	/* XO value in the range between 0 to 127 */
 	unsigned char xo_val;
 
 } __NRF_WIFI_PKD;
@@ -215,11 +215,8 @@ struct nrf_wifi_rf_test_xo_calib {
 struct nrf_wifi_rf_get_xo_value {
 	unsigned char test;
 
-	/* Number of samples to be captured. */
+	/* Optimal XO value computed. */
 	unsigned char xo_value;
-
-	unsigned int tone_frequency;
-
 } __NRF_WIFI_PKD;
 
 #endif /* CONFIG_NRF700X_RADIO_TEST */

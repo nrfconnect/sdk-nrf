@@ -220,6 +220,15 @@ CAF sensor events
    :project: nrf
    :members:
 
+CAF sensor common
+=================
+
+| Header file: :file:`include/caf/caf_sensor_common.h`
+
+.. doxygengroup:: caf_sensor_common
+   :project: nrf
+   :members:
+
 CAF sensor data aggregator events
 =================================
 

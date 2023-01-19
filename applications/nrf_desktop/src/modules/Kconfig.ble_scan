@@ -8,7 +8,7 @@ menuconfig DESKTOP_BLE_SCAN_ENABLE
 	bool "Bluetooth LE scan module"
 	select BT_SCAN
 	select BT_SCAN_FILTER_ENABLE
-	depends on BT_CENTRAL
+	depends on DESKTOP_BT_CENTRAL
 	help
 	  Enable device to scan for peripheral devices.
 

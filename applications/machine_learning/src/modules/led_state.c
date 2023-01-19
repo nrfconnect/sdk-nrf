@@ -92,16 +92,6 @@ static const struct ml_result_led_effect *get_led_effect(const char *label)
 	return result;
 }
 
-static void ml_result_set_signin_state(bool state)
-{
-	struct ml_result_signin_event *event = new_ml_result_signin_event();
-
-	event->module_idx = MODULE_IDX(MODULE);
-	event->state = state;
-	APP_EVENT_SUBMIT(event);
-	LOG_INF("Currently %s result event", state ? "signed in" : "signed off from");
-}
-
 static void display_sensor_sim(const char *label)
 {
 	static const struct ml_result_led_effect *sensor_sim_effect;
@@ -154,10 +144,8 @@ static void display_ml_result(const char *label, bool force_update)
 
 	if (is_led_effect_blocking(&ml_result_effect->effect)) {
 		blocking_led_effect = &ml_result_effect->effect;
-		ml_result_set_signin_state(false);
 	} else {
 		blocking_led_effect = NULL;
-		ml_result_set_signin_state(true);
 	}
 }
 
@@ -287,7 +275,6 @@ static bool handle_module_state_event(const struct module_state_event *event)
 		__ASSERT_NO_MSG(!initialized);
 		module_set_state(MODULE_STATE_READY);
 		initialized = true;
-		ml_result_set_signin_state(true);
 	}
 
 	return false;

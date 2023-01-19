@@ -251,6 +251,10 @@ struct wifi_nrf_fmac_callbk_fns {
 	void (*twt_sleep_callbk_fn)(void *if_priv,
 		struct nrf_wifi_umac_event_twt_sleep *twt_sleep_event_info,
 		unsigned int event_len);
+
+	void (*event_get_reg)(void *if_priv,
+		struct nrf_wifi_reg *get_reg,
+		unsigned int event_len);
 };
 
 
@@ -442,11 +446,12 @@ struct wifi_nrf_fmac_dev_ctx {
 	unsigned char num_sta;
 	unsigned char num_ap;
 	struct rpu_fw_stats *fw_stats;
-	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
 	bool stats_req;
 	bool fw_boot_done;
 	bool fw_init_done;
 	bool fw_deinit_done;
+	bool alpha2_valid;
+	unsigned char alpha2[3];
 };
 
 

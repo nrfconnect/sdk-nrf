@@ -91,6 +91,8 @@ The following configuration files are available:
 * :file:`overlay-ci.conf` - Disables boot banner and shell prompt.
 * :file:`overlay-multiprotocol.conf` - Enables Bluetooth LE support in this sample.
 * :file:`overlay-tcp.conf` - Enables experimental TCP support in this sample.
+* :file:`overlay-low_power.conf` - Enables low power consumption mode in this sample.
+  Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`low_power.overlay`.
 
 FEM support
 ===========
@@ -356,7 +358,7 @@ To test the Thread 1.2 and Thread 1.3 features, complete the following steps:
 
 #. Run the following commands on the router kit:
 
-   a. Reattach the router kit as SED with a polling period of three seconds:
+   a. Reattach the router kit as Sleepy End Device (SED) with a polling period of three seconds:
 
       .. code-block:: console
 
@@ -517,6 +519,20 @@ To test the Thread 1.2 and Thread 1.3 features, complete the following steps:
             host: my-host.default.service.arpa.
             addresses: [fdde:ad00:beef:0:e0fc:dc28:1d12:8c2]
          Done
+
+Power consumption measurements
+==============================
+
+You can use the Thread CLI sample to perform power consumption measurements for Sleepy End Devices.
+
+After building and flashing with :file:`overlay-low_power.conf` and :file:`low_power.overlay`, the device will start regular operation with the UART console enabled.
+This allows for easy configuration of the device, specifically the Sleepy End Device polling period or the Synchronized Sleepy End Device (SSED) CSL period and other relevant parameters.
+
+When the device becomes attached to a Thread Router it will automatically suspend UART operation and power down unused RAM.
+In this mode, you can not use the CLI to control the device.
+Instead, the device will periodically wake up from deep sleep mode and turn on the radio to receive any messages from its parent.
+
+If the device is connected to a `Power Profiler Kit II (PPK2)`_, you can perform detailed power consumption measurements.
 
 Dependencies
 ************

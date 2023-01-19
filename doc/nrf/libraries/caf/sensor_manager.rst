@@ -1,4 +1,3 @@
-.. _caf_sensor_sampler:
 .. _caf_sensor_manager:
 
 CAF: Sensor manager module
@@ -47,11 +46,11 @@ To use the module, you must complete the following requirements:
       * :c:member:`sm_sensor_config.event_descr` - Sensor event description.
         The event description is used to identify the sensor in the application.
       * :c:member:`sm_sensor_config.chans` - Channel configuration.
-        This is an array of :c:struct:`sm_sampled_channel` struct that configures the sensor channel with the following information:
+        This is an array of :c:struct:`caf_sampled_channel` struct that configures the sensor channel with the following information:
 
-        * :c:member:`sm_sampled_channel.chan` - Sensor channel.
+        * :c:member:`caf_sampled_channel.chan` - Sensor channel.
           Depends on the particular sensor.
-        * :c:member:`sm_sampled_channel.data_cnt` - Number of values in :c:member:`sm_sampled_channel.chan`.
+        * :c:member:`caf_sampled_channel.data_cnt` - Number of values in :c:member:`caf_sampled_channel.chan`.
 
       * :c:member:`sm_sensor_config.chan_cnt` - Size of the :c:member:`sm_sensor_config.chans` array.
       * :c:member:`sm_sensor_config.sampling_period_ms` - Sensor sampling period, in milliseconds.
@@ -62,7 +61,7 @@ To use the module, you must complete the following requirements:
       .. code-block:: c
 
          #include <caf/sensor_manager.h>
-         static const struct sm_sampled_channel accel_chan[] = {
+         static const struct caf_sampled_channel accel_chan[] = {
                  {
                          .chan = SENSOR_CHAN_ACCEL_XYZ,
                          .data_cnt = 3,
@@ -125,7 +124,7 @@ To use the sensor trigger, complete the following steps:
 
         #include <caf/sensor_manager.h>
 
-        static const struct sm_sampled_channel accel_chan[] = {
+        static const struct caf_sampled_channel accel_chan[] = {
                 {
                         .chan = SENSOR_CHAN_ACCEL_XYZ,
                         .data_cnt = 3,

@@ -965,6 +965,23 @@ Apart from the device role, the application-specific Kconfigs specify a set of s
 By default, the nRF Desktop devices use predefined format of HID reports.
 The common HID report map is defined in the :file:`configuration/common/hid_report_desc.c` file.
 
+Debug configuration
+-------------------
+
+The nRF Desktop application introduces application-specific configuration options related to the debug configuration.
+These options are defined in the :file:`Kconfig.debug` file.
+
+The :ref:`CONFIG_DESKTOP_LOG <config_desktop_app_options>` Kconfig option enables support for logging in the nRF Desktop application.
+This option overlays Kconfig option defaults from the Logging subsystem to align them with the nRF Desktop requirements.
+The nRF Desktop configuration uses Segger J-Link RTT as the Logging subsystem backend.
+
+The :ref:`CONFIG_DESKTOP_SHELL<config_desktop_app_options>` Kconfig option enables support for CLI in the nRF Desktop application.
+This option overlays Kconfig option defaults from the Shell subsystem to align them with the nRF Desktop requirements.
+The nRF Desktop configuration uses Segger J-Link RTT as the Shell subsystem backend.
+If both shell and logging are enabled, logger uses shell as the logging backend.
+
+See the :file:`Kconfig.debug` file content for details.
+
 Default common configuration
 ----------------------------
 

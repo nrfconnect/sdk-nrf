@@ -528,9 +528,11 @@ int test_run(const struct shell *shell,
 	uint64_t stamp;
 	int64_t delta;
 	uint32_t data = 0;
+
 	const char *img_ptr = img;
 	char str_buf[7];
 	int str_len;
+
 
 	/* a dummy data buffer */
 	static char dummy[495];
@@ -567,21 +569,36 @@ int test_run(const struct shell *shell,
 	/* get cycle stamp */
 	stamp = k_uptime_get_32();
 
-	while (*img_ptr) {
-		err = bt_throughput_write(&throughput, dummy, 495);
-		if (err) {
-			shell_error(shell, "GATT write failed (err %d)", err);
-			break;
+	if (IS_ENABLED(CONFIG_BT_THROUGHPUT_FILE)) {
+		while (*img_ptr) {
+			err = bt_throughput_write(&throughput, dummy, 495);
+			if (err) {
+				shell_error(shell, "GATT write failed (err %d)", err);
+				break;
+			}
+
+			/* print graphics */
+			str_len = (*img_ptr == '\x1b') ? 6 : 1;
+			memcpy(str_buf, img_ptr, str_len);
+			str_buf[str_len] = '\0';
+			img_ptr += str_len;
+			printk("%s", str_buf);
+
+			data += 495;
 		}
-
-		/* print graphics */
-		str_len = (*img_ptr == '\x1b') ? 6 : 1;
-		memcpy(str_buf, img_ptr, str_len);
-		str_buf[str_len] = '\0';
-		img_ptr += str_len;
-		printk("%s", str_buf);
-
-		data += 495;
+	} else {
+		delta = 0;
+		while (true) {
+			err = bt_throughput_write(&throughput, dummy, 495);
+			if (err) {
+				shell_error(shell, "GATT write failed (err %d)", err);
+				break;
+			}
+			data += 495;
+			if (k_uptime_get_32() - stamp > CONFIG_BT_THROUGHPUT_DURATION) {
+				break;
+			}
+		}
 	}
 
 	delta = k_uptime_delta(&stamp);

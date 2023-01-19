@@ -103,27 +103,27 @@ manifest:
     # changes.
     - name: sdk-hostap
       path: modules/lib/hostap
-      revision: 00da43beb860447a5f0353647c9d91d8954f2065
+      revision: 7856cabe59a96466cafd27cad7e2fed0bb18cfc5
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 9d2f9b5742c5cabcb87b7f7f22ff5269b13403bf
+      revision: 4f775a87611a084a2f6ad9a8a5034e080ddcc579
       path: bootloader/mcuboot
-    - name: mbedtls-nrf
-      path: mbedtls
+    - name: mbedtls
+      path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
       revision: v3.1.0-ncs2
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: f5abba8a9bd3571e8b79b89a48360d7e5f32f21d
+      revision: d838a41265ed34efbde3772f052167130377aa06
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 1b7ee9d3cb09cb0081f49c3d20220cdf7d5f7b3c
+      revision: f2ae8d497d4411147a372fbe5558670f09189650
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: a374cc0d2234e9d2c7bc0b3f8e63b14aff8b5367
+      revision: c9ba5705daa6450b230e2d1ff67e4383b592876e
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -150,7 +150,7 @@ manifest:
         - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: v2.2.0
+      revision: 8ebcde08dcc808d6f632bb5cb3e330161a4dffcd
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -174,7 +174,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 48c0582e4e0abbdfa6470de90cad5a2e07e1a3b5
+      revision: a1953a7a34cd9167ba3eb101b4218c82bef2bf48
     - name: ant
       repo-path: sdk-ant
       revision: 8f6e2b0470d11b5c1a97c92df35eb1350e84c5f8

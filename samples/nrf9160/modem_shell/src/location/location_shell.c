@@ -16,24 +16,11 @@
 #endif
 #include <modem/location.h>
 #include <dk_buttons_and_leds.h>
-#if defined(CONFIG_MOSH_CLOUD_LWM2M)
-#include <net/lwm2m_client_utils_location.h>
-#include "cloud_lwm2m.h"
-#endif
 
 #include "mosh_print.h"
+#include "location_srv_ext.h"
 #include "location_cmd_utils.h"
-
 #include "mosh_defines.h"
-
-#if defined(CONFIG_MOSH_CLOUD_LWM2M)
-/* Location Assistance resource IDs */
-#define GROUND_FIX_SEND_LOCATION_BACK	0
-#define GROUND_FIX_RESULT_CODE		1
-#define GROUND_FIX_LATITUDE		2
-#define GROUND_FIX_LONGITUDE		3
-#define GROUND_FIX_ACCURACY		4
-#endif
 
 enum location_shell_command {
 	LOCATION_CMD_NONE = 0,
@@ -53,6 +40,12 @@ struct gnss_location_work_data {
 };
 static struct gnss_location_work_data gnss_location_work_data;
 
+/* Whether cellular and Wi-Fi positioning response is requested from the cloud.
+ * Or whether it is not requested and MoSh indicates to Location library that positioning
+ * result is unknown.
+ */
+static bool cloud_cellular_resp;
+static bool cloud_wifi_resp;
 
 #if defined(CONFIG_DK_LIBRARY)
 static struct k_work_delayable location_evt_led_work;
@@ -96,9 +89,13 @@ static const char location_get_usage_str[] =
 	"                              Zero means timeout is disabled.\n"
 	"  --cellular_service, [str]   Used cellular positioning service:\n"
 	"                              'any' (default), 'nrf' or 'here'\n"
+	"  --cellular_resp_disabled,   Do not wait for cellular positioning response from cloud.\n"
+	"                              Valid if CONFIG_LOCATION_SERVICE_EXTERNAL is set.\n"
 	"  --wifi_timeout, [float]     Wi-Fi timeout in seconds. Zero means timeout is disabled.\n"
 	"  --wifi_service, [str]       Used Wi-Fi positioning service:\n"
-	"                              'any' (default), 'nrf' or 'here'\n";
+	"                              'any' (default), 'nrf' or 'here'\n"
+	"  --wifi_resp_disabled,       Do not wait for Wi-Fi positioning response from cloud.\n"
+	"                              Valid if CONFIG_LOCATION_SERVICE_EXTERNAL is set.\n";
 
 /******************************************************************************/
 
@@ -115,8 +112,10 @@ enum {
 	LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT,
 	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT,
 	LOCATION_SHELL_OPT_CELLULAR_SERVICE,
+	LOCATION_SHELL_OPT_CELLULAR_RESP_DISABLED,
 	LOCATION_SHELL_OPT_WIFI_TIMEOUT,
 	LOCATION_SHELL_OPT_WIFI_SERVICE,
+	LOCATION_SHELL_OPT_WIFI_RESP_DISABLED,
 };
 
 /* Specifying the expected options */
@@ -134,8 +133,10 @@ static struct option long_options[] = {
 	{ "gnss_cloud_pvt", no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT },
 	{ "cellular_timeout", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
 	{ "cellular_service", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_SERVICE },
+	{ "cellular_resp_disabled", no_argument, 0, LOCATION_SHELL_OPT_CELLULAR_RESP_DISABLED },
 	{ "wifi_timeout", required_argument, 0, LOCATION_SHELL_OPT_WIFI_TIMEOUT },
 	{ "wifi_service", required_argument, 0, LOCATION_SHELL_OPT_WIFI_SERVICE },
+	{ "wifi_resp_disabled", no_argument, 0, LOCATION_SHELL_OPT_WIFI_RESP_DISABLED },
 	{ 0, 0, 0, 0 }
 };
 
@@ -246,174 +247,6 @@ static void location_evt_led_worker(struct k_work *work_item)
 }
 #endif
 
-/******************************************************************************/
-
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
-static void location_ctrl_agps_ext_handle(const struct nrf_modem_gnss_agps_data_frame *agps_req)
-{
-#if defined(CONFIG_MOSH_CLOUD_LWM2M)
-	int err;
-
-	if (!cloud_lwm2m_is_connected()) {
-		mosh_error("LwM2M not connected, can't request A-GPS data");
-		return;
-	}
-
-	location_assistance_agps_set_mask(agps_req);
-
-	while ((err = location_assistance_agps_request_send(cloud_lwm2m_client_ctx_get(), true)) ==
-	       -EAGAIN) {
-		/* LwM2M client utils library is currently handling a P-GPS data request, need to
-		 * wait until it has been completed.
-		 */
-		k_sleep(K_SECONDS(1));
-	}
-	if (err) {
-		mosh_error("Failed to request A-GPS data, err: %d", err);
-	}
-#endif /* CONFIG_MOSH_CLOUD_LWM2M */
-}
-#endif /* CONFIG_LOCATION_SERVICE_EXTERNAL && CONFIG_NRF_CLOUD_AGPS */
-
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
-static void location_ctrl_pgps_ext_handle(const struct gps_pgps_request *pgps_req)
-{
-#if defined(CONFIG_MOSH_CLOUD_LWM2M)
-	int err = -1;
-
-	if (!cloud_lwm2m_is_connected()) {
-		mosh_error("LwM2M not connected, can't request P-GPS data");
-		return;
-	}
-
-	err = location_assist_pgps_set_prediction_count(pgps_req->prediction_count);
-	err |= location_assist_pgps_set_prediction_interval(pgps_req->prediction_period_min);
-	location_assist_pgps_set_start_gps_day(pgps_req->gps_day);
-	err |= location_assist_pgps_set_start_time(pgps_req->gps_time_of_day);
-	if (err) {
-		mosh_error("Failed to set P-GPS request parameters");
-		return;
-	}
-
-	while ((err = location_assistance_pgps_request_send(cloud_lwm2m_client_ctx_get(), true)) ==
-	       -EAGAIN) {
-		/* LwM2M client utils library is currently handling an A-GPS data request, need to
-		 * wait until it has been completed.
-		 */
-		k_sleep(K_SECONDS(1));
-	}
-	if (err) {
-		mosh_error("Failed to request P-GPS data, err: %d", err);
-	}
-#endif /* CONFIG_MOSH_CLOUD_LWM2M */
-}
-#endif /* CONFIG_LOCATION_SERVICE_EXTERNAL && CONFIG_NRF_CLOUD_PGPS */
-
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_CELLULAR)
-#if defined(CONFIG_MOSH_CLOUD_LWM2M)
-static int location_ctrl_lwm2m_cell_result_cb(uint16_t obj_inst_id,
-					      uint16_t res_id, uint16_t res_inst_id,
-					      uint8_t *data, uint16_t data_len,
-					      bool last_block, size_t total_size)
-{
-	int err;
-	int32_t result;
-	struct location_data location = {0};
-	double temp_accuracy;
-
-	if (data_len != sizeof(int32_t)) {
-		mosh_error("Unexpected data length in callback");
-		err = -1;
-		goto exit;
-	}
-
-	result = (int32_t)*data;
-	switch (result) {
-	case LOCATION_ASSIST_RESULT_CODE_OK:
-		break;
-
-	case LOCATION_ASSIST_RESULT_CODE_PERMANENT_ERR:
-	case LOCATION_ASSIST_RESULT_CODE_TEMP_ERR:
-	default:
-		mosh_error("LwM2M server failed to get location");
-		err = -1;
-		goto exit;
-	}
-
-	err = lwm2m_engine_get_float(LWM2M_PATH(GROUND_FIX_OBJECT_ID, 0, GROUND_FIX_LATITUDE),
-				     &location.latitude);
-	if (err) {
-		mosh_error("Getting latitude from LwM2M engine failed, err: %d", err);
-		goto exit;
-	}
-
-	err = lwm2m_engine_get_float(LWM2M_PATH(GROUND_FIX_OBJECT_ID, 0, GROUND_FIX_LONGITUDE),
-				     &location.longitude);
-	if (err) {
-		mosh_error("Getting longitude from LwM2M engine failed, err: %d", err);
-		goto exit;
-	}
-
-	err = lwm2m_engine_get_float(LWM2M_PATH(GROUND_FIX_OBJECT_ID, 0, GROUND_FIX_ACCURACY),
-				     &temp_accuracy);
-	if (err) {
-		mosh_error("Getting accuracy from LwM2M engine failed, err: %d", err);
-		goto exit;
-	}
-	location.accuracy = temp_accuracy;
-
-exit:
-	if (err) {
-		location_cellular_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
-	} else {
-		location_cellular_ext_result_set(LOCATION_EXT_RESULT_SUCCESS, &location);
-	}
-
-	return err;
-}
-#endif /* CONFIG_MOSH_CLOUD_LWM2M */
-
-static void location_ctrl_cellular_ext_handle(const struct lte_lc_cells_info *cell_info)
-{
-#if defined(CONFIG_MOSH_CLOUD_LWM2M)
-	int err = -1;
-
-	if (!cloud_lwm2m_is_connected()) {
-		mosh_error("LwM2M not connected, can't send cellular location request");
-		goto exit;
-	}
-
-	err = lwm2m_engine_register_post_write_callback(
-		LWM2M_PATH(GROUND_FIX_OBJECT_ID, 0, GROUND_FIX_RESULT_CODE),
-		location_ctrl_lwm2m_cell_result_cb);
-	if (err) {
-		mosh_error("Failed to register post write callback, err: %d", err);
-	}
-
-	ground_fix_set_report_back(true);
-
-	err = lwm2m_update_signal_meas_objects(cell_info);
-	if (err) {
-		mosh_error("Failed to update LwM2M signal meas object, err: %d", err);
-		goto exit;
-	}
-
-	err = location_assistance_ground_fix_request_send(cloud_lwm2m_client_ctx_get(), true);
-	if (err) {
-		mosh_error("Failed to send cellular location request, err: %d", err);
-		goto exit;
-	}
-
-exit:
-	if (err) {
-		location_cellular_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
-	}
-#else /* !CONFIG_MOSH_CLOUD_LWM2M */
-	location_cellular_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
-#endif
-}
-#endif /* CONFIG_LOCATION_SERVICE_EXTERNAL && CONFIG_LOCATION_METHOD_CELLULAR */
-
 void location_ctrl_event_handler(const struct location_event_data *event_data)
 {
 	switch (event_data->id) {
@@ -465,19 +298,20 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 	case LOCATION_EVT_ERROR:
 		mosh_error("Location request failed");
 		break;
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+#if defined(CONFIG_NRF_CLOUD_AGPS)
 	case LOCATION_EVT_GNSS_ASSISTANCE_REQUEST:
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
 		mosh_print(
 			"A-GPS request from Location library "
 			"(ephe: 0x%08x alm: 0x%08x flags: 0x%02x)",
 			event_data->agps_request.sv_mask_ephe,
 			event_data->agps_request.sv_mask_alm,
 			event_data->agps_request.data_flags);
-		location_ctrl_agps_ext_handle(&event_data->agps_request);
-#endif
+		location_srv_ext_agps_handle(&event_data->agps_request);
 		break;
+#endif
+#if defined(CONFIG_NRF_CLOUD_PGPS)
 	case LOCATION_EVT_GNSS_PREDICTION_REQUEST:
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 		mosh_print(
 			"P-GPS request from Location library "
 			"(prediction count: %d validity time: %d gps day: %d time of day: %d)",
@@ -485,18 +319,29 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 			event_data->pgps_request.prediction_period_min,
 			event_data->pgps_request.gps_day,
 			event_data->pgps_request.gps_time_of_day);
-		location_ctrl_pgps_ext_handle(&event_data->pgps_request);
-#endif
+		location_srv_ext_pgps_handle(&event_data->pgps_request);
 		break;
+#endif
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 	case LOCATION_EVT_CELLULAR_EXT_REQUEST:
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_CELLULAR)
-		mosh_print("Cellular location request from Location library "
-			   "(neighbor cells: %d GCI cells: %d)",
-			   event_data->cellular_request.ncells_count,
-			   event_data->cellular_request.gci_cells_count);
-		location_ctrl_cellular_ext_handle(&event_data->cellular_request);
-#endif
+		mosh_print(
+			"Cellular location request from Location library "
+			"(neighbor cells: %d GCI cells: %d)",
+			event_data->cellular_request.ncells_count,
+			event_data->cellular_request.gci_cells_count);
+		location_srv_ext_cellular_handle(
+			&event_data->cellular_request, cloud_cellular_resp);
 		break;
+#endif
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	case LOCATION_EVT_WIFI_EXT_REQUEST:
+		mosh_print(
+			"Wi-Fi location request from Location library (access points: %d)",
+			event_data->wifi_request.cnt);
+		location_srv_ext_wifi_handle(&event_data->wifi_request, cloud_wifi_resp);
+		break;
+#endif
+#endif /* defined(CONFIG_LOCATION_SERVICE_EXTERNAL) */
 	case LOCATION_EVT_RESULT_UNKNOWN:
 		mosh_print("Location request completed, but the result is not known");
 		break;
@@ -558,6 +403,9 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 	enum location_req_mode req_mode = LOCATION_REQ_MODE_FALLBACK;
 
+	cloud_cellular_resp = true;
+	cloud_wifi_resp = true;
+
 	int opt;
 	int ret = 0;
 	int long_index = 0;
@@ -617,6 +465,16 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				goto show_usage;
 			}
 			break;
+		case LOCATION_SHELL_OPT_CELLULAR_RESP_DISABLED:
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+			cloud_cellular_resp = false;
+#else
+			mosh_error(
+				"Option --cellular_resp_disabled is not supported "
+				"when CONFIG_LOCATION_SERVICE_EXTERNAL is disabled");
+			goto show_usage;
+#endif
+			break;
 
 		case LOCATION_SHELL_OPT_WIFI_TIMEOUT:
 			wifi_timeout = atof(optarg);
@@ -629,6 +487,16 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				mosh_error("Unknown Wi-Fi positioning service. See usage:");
 				goto show_usage;
 			}
+			break;
+		case LOCATION_SHELL_OPT_WIFI_RESP_DISABLED:
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+			cloud_wifi_resp = false;
+#else
+			mosh_error(
+				"Option --wifi_resp_disabled is not supported "
+				"when CONFIG_LOCATION_SERVICE_EXTERNAL is disabled");
+			goto show_usage;
+#endif
 			break;
 
 		case LOCATION_SHELL_OPT_INTERVAL:

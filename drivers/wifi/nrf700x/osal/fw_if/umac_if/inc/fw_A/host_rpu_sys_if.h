@@ -644,6 +644,10 @@ struct rpu_conf_params {
 	unsigned int rts_threshold;
 	unsigned int uapsd_queue;
 	unsigned int tx_pkt_gap_us;
+	signed char tx_tone_freq;
+	unsigned char lna_gain;
+	unsigned char bb_gain;
+	unsigned short int capture_length;
 } __NRF_WIFI_PKD;
 
 /**

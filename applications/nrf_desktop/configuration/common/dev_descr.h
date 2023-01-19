@@ -16,8 +16,8 @@
 
 /* This structure enforces the header file is included only once in the build.
  * Violating this requirement triggers a multiple definition error at link time.
- * The header file is included only by dev_descr module for BT_PERIPHERAL or
- * by ble_discovery module for BT_CENTRAL.
+ * The header file is included only by dev_descr module for nRF Desktop BLE
+ * Peripheral or by ble_discovery for nRF Desktop BLE Central.
  */
 const struct {} dev_descr_include_once;
 

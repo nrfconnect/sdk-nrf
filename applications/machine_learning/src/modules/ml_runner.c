@@ -33,10 +33,6 @@ enum state {
 	 *  The state is used only before module is initialized.
 	 */
 	STATE_DISABLED,
-	/** Module is ready to work but no module is
-	 *  listening so data would not be processed.
-	 */
-	STATE_READY,
 	/** Module is currently processing the data. */
 	STATE_ACTIVE,
 	/** The module was suspended by user. */
@@ -57,18 +53,12 @@ static const char *handled_sensor_event_descr = CONFIG_ML_APP_ML_RUNNER_SENSOR_E
 
 static uint8_t ml_control;
 static enum state state;
-static struct module_flags active_listeners;
 
 
 static void report_error(void)
 {
 	state = STATE_ERROR;
 	module_set_state(MODULE_STATE_ERROR);
-}
-
-static enum state current_active_state(void)
-{
-	return module_flags_check_zero(&active_listeners) ? STATE_READY : STATE_ACTIVE;
 }
 
 static void submit_result(void)
@@ -224,12 +214,9 @@ static bool handle_sensor_event(const struct sensor_event *event)
 static bool handle_ml_app_mode_event(const struct ml_app_mode_event *event)
 {
 	if ((event->mode == ML_APP_MODE_MODEL_RUNNING) && (state == STATE_SUSPENDED)) {
-		state = current_active_state();
-		if (state == STATE_ACTIVE) {
-			start_prediction();
-		}
-	} else if ((event->mode != ML_APP_MODE_MODEL_RUNNING) &&
-		   ((state == STATE_ACTIVE) || (state == STATE_READY))) {
+		start_prediction();
+		state = STATE_ACTIVE;
+	} else if ((event->mode != ML_APP_MODE_MODEL_RUNNING) && (state == STATE_ACTIVE)) {
 		int err = buf_cleanup();
 
 		if (!err || (err == -EBUSY)) {
@@ -246,34 +233,10 @@ static bool handle_module_state_event(const struct module_state_event *event)
 		__ASSERT_NO_MSG(state == STATE_DISABLED);
 
 		if (!init()) {
-			state = APP_CONTROLS_ML_MODE ? STATE_SUSPENDED : current_active_state();
+			state = APP_CONTROLS_ML_MODE ? STATE_SUSPENDED : STATE_ACTIVE;
 			module_set_state(MODULE_STATE_READY);
 		} else {
 			report_error();
-		}
-	}
-
-	return false;
-}
-
-static bool handle_ml_result_signin_event(const struct ml_result_signin_event *event)
-{
-	__ASSERT_NO_MSG(module_check_id_valid(event->module_idx));
-	module_flags_set_bit_to(&active_listeners, event->module_idx, event->state);
-
-	if ((state == STATE_READY) || (state == STATE_ACTIVE)) {
-		enum state new_state = current_active_state();
-
-		if (state != new_state) {
-			LOG_INF("State changed because of active liseners, new state: %s",
-				new_state == STATE_READY ? "READY" : "ACTIVE");
-
-			if (new_state == STATE_ACTIVE) {
-				start_prediction();
-			} else {
-				(void)buf_cleanup();
-			}
-			state = new_state;
 		}
 	}
 
@@ -295,10 +258,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return handle_module_state_event(cast_module_state_event(aeh));
 	}
 
-	if (is_ml_result_signin_event(aeh)) {
-		return handle_ml_result_signin_event(cast_ml_result_signin_event(aeh));
-	}
-
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -308,7 +267,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 APP_EVENT_SUBSCRIBE(MODULE, sensor_event);
-APP_EVENT_SUBSCRIBE(MODULE, ml_result_signin_event);
 #if APP_CONTROLS_ML_MODE
 APP_EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
 #endif /* APP_CONTROLS_ML_MODE */

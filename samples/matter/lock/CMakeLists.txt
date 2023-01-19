@@ -46,8 +46,8 @@ target_sources(app PRIVATE
     src/bolt_lock_manager.cpp
     src/main.cpp
     src/zcl_callbacks.cpp
-    src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
+    src/zap-generated/IMClusterCommandHandler.cpp
     ${COMMON_ROOT}/src/led_widget.cpp
     $<$<BOOL:${CONFIG_NET_L2_OPENTHREAD}>:${COMMON_ROOT}/src/thread_util.cpp>
 )
@@ -61,11 +61,16 @@ if(CONFIG_MCUMGR_SMP_BT)
 endif()
 
 if(CONFIG_THREAD_WIFI_SWITCHING)
-    target_sources(app PRIVATE src/software_images_swapper.cpp)
+    target_sources(app PRIVATE
+        src/software_images_swapper.cpp
+        ${COMMON_ROOT}/src/ota_multi_image_processor_impl.cpp
+        ${COMMON_ROOT}/src/ota_multi_image_downloader.cpp
+    )
 endif()
 
 chip_configure_data_model(app
     INCLUDE_SERVER
+    BYPASS_IDL
     ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/lock.zap
 )
 

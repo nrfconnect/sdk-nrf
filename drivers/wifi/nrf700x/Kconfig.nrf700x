@@ -12,6 +12,7 @@ config WIFI_NRF700X
 	bool "nRF700x driver"
 	depends on WIFI
 	select NET_L2_WIFI_MGMT if NETWORKING
+	select NET_L2_ETHERNET_MGMT if NETWORKING && NET_L2_ETHERNET
 	select WIFI_USE_NATIVE_NETWORKING if NETWORKING
 	select EXPERIMENTAL
 	help
@@ -33,6 +34,10 @@ config NRF700X_ON_QSPI
 config NRF700X_ON_SPI
 	def_bool $(dt_compat_enabled,$(DT_COMPAT_NORDIC_NRF7002_SPI))
 	select SPI
+
+# RF switch based coexistence
+config NRF700X_RADIO_COEX
+	def_bool $(dt_nodelabel_has_prop,nrf_radio_coex,btrf-switch-gpios)
 
 config NRF700X_WORKQ_STACK_SIZE
 	int "Stack size for workqueue"
@@ -64,6 +69,11 @@ config NRF700X_DATA_TX
 
 config NRF700X_WIFI_UTIL
 	bool "Enable Utility shell in nRF700x driver"
+
+config NRF700X_WIFI_BT_COEX
+	bool "Enable Wi-Fi Bluetooth coexistence support"
+	depends on SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX && !NRF700X_REV_A
+	default y if SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX && !NRF700X_REV_A
 
 # Performance fine tuning options
 

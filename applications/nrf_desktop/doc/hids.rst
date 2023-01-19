@@ -27,13 +27,9 @@ Configuration
 Complete the following steps to configure the module:
 
 1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-   During this configuration, you must enable the :kconfig:option:`CONFIG_BT_PERIPHERAL` Kconfig option for every nRF Desktop peripheral.
-   When this option is enabled, the :ref:`CONFIG_DESKTOP_HID_PERIPHERAL <config_desktop_app_options>` is set to ``y``, which enables the following two additional options, among others:
-
-   * :kconfig:option:`CONFIG_BT_HIDS` - This is required because the HID Service module is based on the :ref:`hids_readme` implementation of the GATT Service.
-   * :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` - This enables the ``hids`` application module.
-
-   This step also enables the |GATT_HID|.
+   Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` options are enabled.
+   The HID Service application module is enabled by the :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option which is selected by :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` together with other GATT Services that are required for a HID device.
+#. The :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option selects :kconfig:option:`CONFIG_BT_HIDS` to automatically enable the :ref:`hids_readme`.
 #. Enable the :ref:`bt_conn_ctx_readme` (:kconfig:option:`CONFIG_BT_CONN_CTX`).
    This is required by the |GATT_HID|.
 #. Configure the :ref:`hids_readme`.

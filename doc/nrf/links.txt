@@ -106,7 +106,7 @@
 
 .. _`Matter GitHub repository`: https://github.com/project-chip/connectedhomeip
 .. _`dedicated Matter fork`: https://github.com/nrfconnect/sdk-connectedhomeip
-.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/bc6b4388/src/controller
+.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/c9ba5705/src/controller
 .. _`ZCL Advanced Platform`: https://github.com/project-chip/zap
 .. _`Matter nRF Connect releases`: https://github.com/nrfconnect/sdk-connectedhomeip/releases
 .. _`Matter Certification Policy`: https://github.com/CHIP-Specifications/connectedhomeip-spec/blob/master/policies/matter_certificate_policy.adoc
@@ -145,6 +145,10 @@
 .. _`cJSON`: https://github.com/nrfconnect/sdk-cjson
 
 .. _`pc-ble-driver-py`: https://github.com/NordicSemiconductor/pc-ble-driver-py
+
+.. _`Threads`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/kernel/services/threads/index.html#threads
+
+.. _`Network Traffic Generator`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/connectivity/networking/api/zperf.html#zperf-network-traffic-generator
 
 .. ### Source: github.io
 
@@ -415,6 +419,9 @@
 .. _`Execute in place page in the nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/qspi.html#execute_in_place
 .. _`nRF5340 DK Compatibility Matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf5340/COMP/nrf5340/nrf5340_comp_matrix.html
 
+.. _`nRF5340 Audio DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_audio/UG/nrf5340_audio/intro.html
+.. _`Requirements for external flash memory DFU`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_audio/UG/nrf5340_audio/hw_external_memory.html
+
 .. _`nRF52840 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/keyfeatures_html5.html
 .. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html#unique_1384365742
 .. _`nRF52840 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dk/UG/dk/intro.html
@@ -490,6 +497,7 @@
 
 .. _`SWD Select`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/programming_debugging_interface.html
 
+.. _`Product specification for nRF 70 Series devices`: https://infocenter.nordicsemi.com/topic/ps_nrf7002/keyfeatures_html5.html
 
 .. ### Source: academy.nordicsemi.com
 
@@ -1060,3 +1068,9 @@
 .. _`GNU Project Debugger`: https://www.sourceware.org/gdb/
 
 .. _`SIGMA`: https://webee.technion.ac.il/~hugo/sigma-pdf.pdf
+
+.. _`WPA Supplicant`: https://w1.fi/wpa_supplicant/
+
+.. _`Wi-Fi Alliance`: https://www.wi-fi.org/
+
+.. _`IEEE 802.11 Working Group`: https://www.ieee802.org/11/

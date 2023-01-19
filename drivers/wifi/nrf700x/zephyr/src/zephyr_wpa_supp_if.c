@@ -1393,3 +1393,20 @@ int wifi_nrf_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
 out:
 	return status;
 }
+
+
+void wifi_nrf_wpa_supp_event_mac_chgd(void *if_priv)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	if (!if_priv) {
+		LOG_ERR("%s: Invalid parameters\n", __func__);
+		return;
+	}
+
+	vif_ctx_zep = if_priv;
+
+	if (vif_ctx_zep->supp_callbk_fns.mac_changed) {
+		vif_ctx_zep->supp_callbk_fns.mac_changed(vif_ctx_zep->supp_drv_if_ctx);
+	}
+}

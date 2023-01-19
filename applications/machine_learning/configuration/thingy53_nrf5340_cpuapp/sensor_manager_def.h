@@ -31,7 +31,7 @@ static struct sm_trigger sensor_trigger = {
 	}
 };
 
-static const struct sm_sampled_channel accel_chan[] = {
+static const struct caf_sampled_channel accel_chan[] = {
 	{
 		.chan = SENSOR_CHAN_ACCEL_XYZ,
 		.data_cnt = 3,

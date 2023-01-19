@@ -22,6 +22,7 @@
 #include <zephyr/logging/log.h>
 #include <nrfx.h>
 #include <zephyr/dfu/mcuboot.h>
+#include <zephyr/storage/flash_map.h>
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_stream.h>
 
@@ -72,7 +73,11 @@ int dfu_target_nrf52_init(size_t file_size, dfu_target_callback_t cb)
 		return -EFBIG;
 	}
 
-	flash_dev = DEVICE_GET_DT(DT_NODELABEL(PM_MCUBOOT_SECONDARY_DEV));
+	flash_dev = FLASH_AREA_DEVICE(mcuboot_secondary);
+	if (!device_is_ready(flash_dev)) {
+		LOG_ERR("Failed to get device for secondary partition");
+		return -EFAULT;
+	}
 
 	err = dfu_target_stream_init(&(struct dfu_target_stream_init){
 		.id = "NRF52",

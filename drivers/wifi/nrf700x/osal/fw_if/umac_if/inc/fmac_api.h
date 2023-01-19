@@ -62,6 +62,23 @@ enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
 					     struct rpu_op_stats *stats);
 
 
+#ifndef CONFIG_NRF700X_REV_A
+/**
+ * wifi_nrf_fmac_radio_test_init() - Initialize the RPU for radio tests.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @params: Parameters necessary for the initialization.
+ *
+ * This function is used to send a command to RPU to initialize it
+ * for the radio test mode.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_radio_test_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						   struct rpu_conf_params *params);
+#endif /* !CONFIG_NRF700X_REV_A */
+
 /**
  * wifi_nrf_fmac_radio_test_prog_tx() - Start TX tests in radio test mode.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
@@ -111,7 +128,7 @@ enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_rx(struct wifi_nrf_fmac_dev_c
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						  enum nrf_wifi_rf_test rf_test_type,
 						  void *cap_data,
-						  unsigned long num_samples,
+						  unsigned short int num_samples,
 						  unsigned char lna_gain,
 						  unsigned char bb_gain);
 
@@ -120,12 +137,11 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *
  * nrf_wifi_fmac_rf_test_tx_tone() - Start/Stop RF TX tone test in radio test mode.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @enable: Enable/Disable TX tone test.
- * @norm_frequency: Desired tone frequency.
- * @tone_amplitude: Desired tone amplitude in the range 0 to 1023.
+ * @tone_freq: Desired tone frequency in MHz in steps of 1 MHz from -10 MHz to +10 MHz.
  * @tx_power: Desired TX power in the range -16dBm to +24dBm.
  *
- * This function is used to send a command to RPU to start
- * the RF TX tone test in radio test mode.
+ * This function is used to send a command to RPU to start the RF TX tone test
+ * in radio test mode.
  *
  * Returns: Status
  *              Pass : %WIFI_NRF_STATUS_SUCCESS
@@ -133,9 +149,8 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *
  */
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						  unsigned char enable,
-						  signed int norm_frequency,
-						  unsigned short int tone_amplitude,
-						  unsigned char tx_power);
+						  signed char tone_freq,
+						  signed char tx_power);
 
 
 
@@ -190,30 +205,28 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_get_rf_rssi(struct wifi_nrf_fmac_dev_ctx *
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @value: XO adjustment value.
  *
- * This function is used to send a command to RPU to
- * set XO adjustment value in radio test mode.
+ * This function is used to send a command to RPU to set XO adjustment
+ * value in radio test mode.
  *
  * Returns: Status
  *              Pass : %WIFI_NRF_STATUS_SUCCESS
  *              Error: %WIFI_NRF_STATUS_FAIL
  */
 enum wifi_nrf_status nrf_wifi_fmac_set_xo_val(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-						 unsigned char value);
+					      unsigned char value);
 
 /**
- * nrf_wifi_fmac_rf_test_get_xo_value() - Get XO calibrated value.
+ * nrf_wifi_fmac_rf_test_compute_optimal_xo_val() - Get XO calibrated value.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
- * @tone_frequency: Tone frequency used for XO calibration.
  *
- * This function is used to send a command to RPU to
- * get XO adjustment value in radio test mode.
+ * This function is used to send a command to RPU. RPU estimates and
+ * returns optimal XO value.
  *
  * Returns: Status
  *              Pass : %WIFI_NRF_STATUS_SUCCESS
  *              Error: %WIFI_NRF_STATUS_FAIL
  */
-enum wifi_nrf_status nrf_wifi_fmac_rf_test_get_xo_value(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-						 unsigned int tone_frequency);
+enum wifi_nrf_status nrf_wifi_fmac_rf_test_compute_xo(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 #else
 
 /**
@@ -717,6 +730,17 @@ enum wifi_nrf_status wifi_nrf_fmac_mac_addr(struct wifi_nrf_fmac_dev_ctx *fmac_d
 					    unsigned char *addr);
 
 /**
+ * wifi_nrf_fmac_vif_idx_get() - Assign a index for a new VIF.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ *
+ * This function searches for an unused VIF index and returns it.
+ *
+ * Returns: Index to be used for a new VIF
+ *          In case of error @MAX_VIFS will be returned.
+ */
+unsigned char wifi_nrf_fmac_vif_idx_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+
+/**
  * wifi_nrf_fmac_add_vif() - Add a new virtual interface.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @os_vif_ctx: Pointer to VIF context that the user of the UMAC IF would like
@@ -790,6 +814,23 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *fmac_dev_ctx,
 						 unsigned char if_idx,
 						 struct nrf_wifi_umac_chg_vif_state_info *vif_info);
 
+
+/**
+ * wifi_nrf_fmac_set_vif_macaddr() - Set MAC address on interface.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: Index of the interface whose MAC address is to be changed.
+ * @mac_addr: MAC address to set.
+ *
+ * This function is used to change the MAC address of an interface identified
+ * with @if_idx.
+ *
+ * Returns: Status
+ *		Pass: %WIFI_NRF_STATUS_SUCCESS
+ *		Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_set_vif_macaddr(void *fmac_dev_ctx,
+						   unsigned char if_idx,
+						   unsigned char *mac_addr);
 
 /**
  * wifi_nrf_fmac_start_xmit() - Trasmit a frame to the RPU.
@@ -1106,8 +1147,6 @@ void wifi_nrf_fmac_dev_rem(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 /**
  * wifi_nrf_fmac_dev_init() - Initializes a RPU instance.
  * @fmac_dev_ctx: Pointer to the context of the RPU instance to be removed.
- * @def_vif_idx: Index for the default VIF.
- * @base_mac_addr: The base mac address for the RPU.
  * @rf_params_usr: RF parameters (if any) to be passed to the RPU.
  * @sleep_type: Type of RPU sleep.
  * @phy_calib: PHY calibration flags to be passed to the RPU.
@@ -1120,8 +1159,6 @@ void wifi_nrf_fmac_dev_rem(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
  */
 enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 #ifndef CONFIG_NRF700X_RADIO_TEST
-					    unsigned char def_vif_idx,
-					    unsigned char *base_mac_addr,
 					    unsigned char *rf_params_usr,
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
@@ -1175,6 +1212,7 @@ enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_de
 					  unsigned int *lmac_ver);
 
 
+#ifndef CONFIG_NRF700X_REV_A
 /**
  * wifi_nrf_fmac_conf_btcoex() - Configure BT-Coex parameters in RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1188,8 +1226,8 @@ enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_de
  *              Fail: %WIFI_NRF_STATUS_FAIL
  */
 enum wifi_nrf_status wifi_nrf_fmac_conf_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					       struct rpu_btcoex *params);
-
+					       void *cmd, unsigned int cmd_len);
+#endif
 
 /**
  * wifi_nrf_fmac_conf_ltf_gi() - Configure HE LTF and GI parameters.
@@ -1212,17 +1250,86 @@ enum wifi_nrf_status wifi_nrf_fmac_conf_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fma
 
 
 /**
- * wifi_nrf_fmac_otp_info_get() - Fetch OTP information from RPU.
+ * wifi_nrf_fmac_set_mcast_addr - set the Multicast filter address.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
- * @otp_info: Pointer to the address where the OTP information needs to be copied.
+ * @if_idx: Index of the interface whose state needs to be changed.
+ * @mcast_info: Multicast information to be set
  *
- * This function is used to fetch OTP information from the RPU.
+ * This function is used to send a command (%NRF_WIFI_UMAC_CMD_MCAST_FILTER) to
+ * instruct the firmware to set the multicast filter address to an interface
+ * with index @if_idx and parameters specified by @mcast_info.
  *
  * Returns: Status
  *              Pass : %WIFI_NRF_STATUS_SUCCESS
  *              Error: %WIFI_NRF_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_otp_info_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-						struct wifi_nrf_fmac_otp_info *otp_info);
+enum wifi_nrf_status wifi_nrf_fmac_set_mcast_addr(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						  unsigned char if_idx,
+						  struct nrf_wifi_umac_mcast_cfg *mcast_info);
+
+
+/**
+ * wifi_nrf_fmac_otp_mac_addr_get() - Fetch MAC address from OTP.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @vif_idx: Interface index for which the MAC address is to be fetched.
+ * @mac_addr: Pointer to the address where the MAC address needs to be copied.
+ *
+ * This function is used to fetch MAC address from the OTP.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_otp_mac_addr_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						    unsigned char vif_idx,
+						    unsigned char *mac_addr);
+
+
+/**
+ * wifi_nrf_fmac_rf_params_get() - Get the RF parameters to be programmed to the RPU.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @rf_params: Pointer to the address where the RF params information needs to be copied.
+ *
+ * This function is used to fetch RF parameters information from the RPU and
+ * update the default RF parameter with the OTP values. The updated RF
+ * parameters are then returned in the @rf_params.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						 unsigned char *rf_params);
+
+struct wifi_nrf_fmac_reg_info {
+	unsigned char alpha2[3];
+	bool force;
+};
+
+/**
+ * wifi_nrf_fmac_set_reg() - Set regulatory domain in RPU.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @reg_info: Pointer to the address where the regulatory domain information
+ *		  needs to be copied.
+ * This function is used to set regulatory domain in the RPU.
+ * Returns: Status
+ *			Pass : %WIFI_NRF_STATUS_SUCCESS
+ *			Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_set_reg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					   struct wifi_nrf_fmac_reg_info *reg_info);
+
+/**
+ * wifi_nrf_fmac_get_reg() - Get regulatory domain from RPU.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @reg_info: Pointer to the address where the regulatory domain information
+ *		  needs to be copied.
+ * This function is used to get regulatory domain from the RPU.
+ * Returns: Status
+ *			Pass : %WIFI_NRF_STATUS_SUCCESS
+ *			Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_get_reg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					   struct wifi_nrf_fmac_reg_info *reg_info);
 
 #endif /* __FMAC_API_H__ */

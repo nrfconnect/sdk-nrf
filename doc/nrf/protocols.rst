@@ -18,4 +18,5 @@ They introduce you to concepts that are important to work with the protocol and 
    ug_multiprotocol_support
    ug_nfc
    ug_thread
+   ug_wifi
    ug_zigbee

@@ -48,7 +48,14 @@ RF Front-End Modules
 Build system
 ------------
 
-|no_changes_yet_note|
+* Removed:
+
+  * Manifest file entry ``mbedtls-nrf`` (:makevar:`ZEPHYR_MBEDTLS_NRF_MODULE_DIR`) checked out at path :file:`mbedtls`.
+  * Manifest file entry ``tfm-mcuboot`` (:makevar:`ZEPHYR_TFM_MCUBOOT_MODULE_DIR`) checked out at path :file:`modules/tee/tfm-mcuboot`.
+
+* Updated:
+
+  * Manifest file entry ``mbedtls`` (:makevar:`ZEPHYR_MBEDTLS_MODULE_DIR`) checked out at path :file:`modules/crypto/mbedtls` now points to |NCS|'s fork of MbedTLS instead of Zephyr's fork.
 
 Protocols
 =========
@@ -90,11 +97,14 @@ See `Matter samples`_ for the list of changes for the Matter samples.
 Matter fork
 +++++++++++
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``bc6b43882a56ddb3e94d3e64956bd5f3292b4058``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``1.0.0.2`` tag.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-* |no_changes_yet_note|
+* Added initial implementation of Matter's cryptographic operations based on PSA crypto API.
+* Added build-time generation of some Zigbee Cluster Library (ZCL) source files using the ``codegen.py`` Python script.
+* Added an alternative factory reset implementation that erases the entire non-volatile storage flash partition.
+* Renamed Basic cluster to Basic Information cluster to match the specification.
 
 Thread
 ------
@@ -127,7 +137,9 @@ nRF IEEE 802.15.4 radio driver
 Wi-Fi
 -----
 
-|no_changes_yet_note|
+* Added:
+
+  * Sample demonstrating Wi-Fi Bluetooth LE coexistence
 
 Applications
 ============
@@ -144,9 +156,15 @@ nRF9160: Asset Tracker v2
 nRF9160: Serial LTE modem
 -------------------------
 
-* Added an RFC1350 TFTP client, currently supporting only *READ REQUEST*.
-* Added new AT command #XSHUTDOWN to put nRF9160 SiP to System OFF mode.
-* Added support to nRF Cloud C2D appId "MODEM" and "DEVICE".
+* Added:
+
+  * RFC1350 TFTP client, currently supporting only *READ REQUEST*.
+  * AT command #XSHUTDOWN to put nRF9160 SiP to System Off mode.
+  * Support of nRF Cloud C2D appId "MODEM" and "DEVICE".
+
+* Updated:
+
+  * The response for the #XDFUGET command, using unsolicited notification to report download progress.
 
 nRF5340 Audio
 -------------
@@ -155,17 +173,26 @@ nRF5340 Audio
 
   * Support for Front End Module nRF21540.
   * Possibility to create a Public Broadcast Announcement (PBA) needed for Auracast.
+  * Encryption for BISes.
 
 * Updated:
 
   * Power module has been re-factored so that it uses upstream Zephyr INA23X sensor driver.
   * BIS headsets can now switch between two broadcast sources (two hardcoded broadcast names).
-  * Documentation in the :ref:`nrf53_audio_app_ui` and :ref:`nrf53_audio_app_testing_steps_cis` sections with information about using **VOL** buttons to switch headset channels.
+  * :ref:`nrf53_audio_app_ui` and :ref:`nrf53_audio_app_testing_steps_cis` sections in the application documentation with information about using **VOL** buttons to switch headset channels.
+  * :ref:`nrf53_audio_app_requirements` section in the application documentation by moving the information about the nRF5340 Audio DK to `Nordic Semiconductor Infocenter`_, under `nRF5340 Audio DK Hardware`_.
+
+nRF Machine Learning (Edge Impulse)
+-----------------------------------
+
+* Removed the usage of ``ml_runner_signin_event`` from the application.
 
 nRF Desktop
 -----------
 
 * Added an application log informing about the configuration option value update in the :ref:`nrf_desktop_motion`.
+* Added application-specific Kconfig options (:ref:`CONFIG_DESKTOP_LOG <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_SHELL<config_desktop_app_options>`) to simplify the debug configurations for the Logging and Shell subsystems.
+  See the debug configuration section of the :ref:`nrf_desktop` application for more details.
 
 * Changed:
 
@@ -253,6 +280,11 @@ nRF9160 samples
 
 * :ref:`modem_shell_application` sample:
 
+  * Added:
+
+    * External location service handling to test :ref:`lib_location` library functionality commonly used by applications.
+      The :ref:`lib_nrf_cloud` library is used with MQTT for location requests to the cloud.
+
   * Updated:
 
     * Timeout command-line arguments for the ``location get`` command changed from integers in milliseconds to floating-point values in seconds.
@@ -313,13 +345,17 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
+* Added:
+
+  * ``overlay-low_power.conf`` and ``low_power.overlay`` to the CLI sample to facilitate power consumption measurements.
+
 * Changed:
 
   * Overlay structure changed:
     * ``overlay-rtt.conf`` removed from all samples.
     * ``overlay-log.conf`` now uses RTT backend by default.
-    * Logs removed from default configuration (moved to ``overlay-logging.conf``)
-    * Asserts removed from default configuration (moved to ``overlay-debug.conf``)
+    * Logs removed from default configuration (moved to ``overlay-logging.conf``).
+    * Asserts removed from default configuration (moved to ``overlay-debug.conf``).
 
 Matter samples
 --------------
@@ -350,8 +386,9 @@ Zigbee samples
 
 Wi-Fi samples
 -------------
+* Added:
 
-|no_changes_yet_note|
+  * :ref:`wifi_sr_coex_sample` sample demonstrating Wi-Fi Bluetooth LE coexistence.
 
 Other samples
 -------------
@@ -415,6 +452,8 @@ Modem libraries
       * ``CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL``
 
       The new configuration handles also Wi-Fi positioning.
+    * Introduced several new Kconfig options for default location request configurations, including default method priority configuration.
+      These new Kconfig options are applied when :c:func:`location_config_defaults_set` function is called.
 
   * Updated:
 
@@ -517,7 +556,20 @@ Other libraries
 Common Application Framework (CAF)
 ----------------------------------
 
-|no_changes_yet_note|
+* :ref:`caf_overview_events`:
+
+  * Improved inter-core compatibility.
+  * Added a macro intended to set the size of events member enums to 32 bits when the Event Manager Proxy is enabled.
+  * Applied macro to all affected CAF events.
+
+* :ref:`caf_sensor_data_aggregator`:
+
+  * :c:struct:`sensor_data_aggregator_event` now uses the :c:struct:`sensor_value` struct data buffer and carries a number of sensor values in a single sample, which is sufficient to describe data layout.
+
+* :ref:`caf_sensor_manager`:
+
+  * Clean up :file:`sensor_event.h` and :file:`sensor_manager.h` files.
+    Move unrelated declarations to a separate :file:`caf_sensor_common.h` file.
 
 Shell libraries
 ---------------
@@ -606,5 +658,6 @@ Documentation
 * Added:
 
   * Documentation template for the :ref:`Ecosystem integration <Ecosystem_integration>` user guides.
+  * The :ref:`ug_nrf70_developing` user guide.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.

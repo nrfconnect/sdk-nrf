@@ -956,7 +956,7 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 			k_work_submit(&raw_send_work);
 		}
 		if (enable_rx_retry && !uart_recovery_pending) {
-			k_work_schedule(&uart_recovery_work, K_MSEC(UART_ERROR_DELAY_MS));
+			k_work_schedule(&uart_recovery_work, K_MSEC(UART_RX_MARGIN_MS));
 			enable_rx_retry = false;
 			uart_recovery_pending = true;
 		}

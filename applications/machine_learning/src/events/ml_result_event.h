@@ -19,7 +19,6 @@
 
 #include <app_event_manager.h>
 #include <app_event_manager_profiler_tracer.h>
-#include <caf/events/module_state_event.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,23 +38,7 @@ struct ml_result_event {
 	float anomaly;
 };
 
-/** @brief Sign in event
- *
- * The event that is called by modules
- * to mark that the module actively listens for the result event.
- */
-struct ml_result_signin_event {
-	/** Event header. */
-	struct app_event_header header;
-
-	/** The index of the module. */
-	size_t module_idx;
-	/** Requested state: true to sign in, false to sign off. */
-	bool state;
-};
-
 APP_EVENT_TYPE_DECLARE(ml_result_event);
-APP_EVENT_TYPE_DECLARE(ml_result_signin_event);
 
 #ifdef __cplusplus
 }
