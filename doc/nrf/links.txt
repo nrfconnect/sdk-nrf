@@ -171,6 +171,7 @@
 .. _`west module management`: https://nrfconnect.github.io/vscode-nrf-connect/guides/west_module_management.html
 .. _`Custom launch and debug configurations`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_advanced.html#custom-launch-and-debug-configurations
 .. _`Application-specific flash options`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_customize_config.html#application-specific-flash-options
+.. _`How to work with build configurations`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_config.html
 
 .. _`Azure SDK for Embedded C`: https://azure.github.io/azure-sdk-for-c/
 
