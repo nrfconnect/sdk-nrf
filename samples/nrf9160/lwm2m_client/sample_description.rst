@@ -394,6 +394,7 @@ Check and configure the following LwM2M options that are used by the sample:
 * :kconfig:option:`CONFIG_LTE_EDRX_REQ_VALUE_NBIOT` - Sets the eDRX value to request when NB-IoT is used. The format is half a byte in a four-bit format. The eDRX value refers to bit 4 to 1 of octet 3 of the Extended DRX parameters information element. See 3GPP TS 24.008, subclause 10.5.5.32.
 * :kconfig:option:`CONFIG_LTE_PTW_VALUE_LTE_M` - Sets the Paging Time Window value to be requested when enabling eDRX. The value will apply to LTE-M. The format is a string with half a byte in 4-bit format, corresponding to bits 8 to 5 in octet 3 of eDRX information element according to 10.5.5.32 of 3GPP TS 24.008.
 * :kconfig:option:`CONFIG_LTE_PTW_VALUE_NBIOT` - Sets the Paging Time Window value to be requested when enabling eDRX. The value will apply to NB-IoT. The format is a string with half a byte in 4-bit format, corresponding to bits 8 to 5 in octet 3 of eDRX information element according to 10.5.5.32 of 3GPP TS 24.008.
+* :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS` - Enables notifications before Tracking Area Update (TAU). Notification triggers LWM2M Registration Update and TAU will be sent together with the user data. This decreases power consumption.
 
 .. note::
    The nRF9160 modem will negotiate PSM and eDRX modes with the network it is trying to connect. The network may either accept the values, assing different ones or reject them.
