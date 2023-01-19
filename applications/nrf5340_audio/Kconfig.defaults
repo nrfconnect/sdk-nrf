@@ -83,6 +83,10 @@ config PSCM
 	bool
 	default y
 
+config DATA_FIFO
+	bool
+	default y
+
 # Enable NRFX_CLOCK for ACLK control
 config NRFX_CLOCK
 	bool
