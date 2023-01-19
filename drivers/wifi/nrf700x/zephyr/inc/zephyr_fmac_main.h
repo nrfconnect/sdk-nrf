@@ -57,6 +57,9 @@ struct wifi_nrf_vif_ctx_zep {
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
 	struct net_stats_eth eth_stats;
 #endif /* CONFIG_NET_STATISTICS_ETHERNET */
+	int if_type;
+	struct wifi_ps_config *ps_info;
+	bool ps_config_info_evnt;
 };
 
 struct wifi_nrf_vif_ctx_map {

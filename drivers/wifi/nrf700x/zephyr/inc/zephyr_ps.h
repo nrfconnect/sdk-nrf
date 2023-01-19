@@ -22,4 +22,11 @@ int wifi_nrf_set_power_save(const struct device *dev,
 
 int wifi_nrf_set_power_save_mode(const struct device *dev,
 				 struct wifi_ps_mode_params *ps_mode_params);
+
+int wifi_nrf_get_power_save_config(const struct device *dev,
+				   struct wifi_ps_config *ps_config);
+
+void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
+					     struct nrf_wifi_umac_event_power_save_info *ps_info,
+					     unsigned int event_len);
 #endif /*  __ZEPHYR_PS_H__ */

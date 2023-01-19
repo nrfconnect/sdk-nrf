@@ -154,6 +154,7 @@
 #define NRF_WIFI_UMAC_CMD_TEARDOWN_TWT 49
 #define NRF_WIFI_UMAC_CMD_ABORT_SCAN 50
 #define NRF_WIFI_UMAC_CMD_MCAST_FILTER 51
+#define NRF_WIFI_UMAC_CMD_GET_POWER_SAVE_INFO 51
 
 /**
  * enum nrf_wifi_umac_events - Events that the RPU can send to the host.
@@ -246,6 +247,7 @@
 #define NRF_WIFI_UMAC_EVENT_CONFIG_TWT 293
 #define NRF_WIFI_UMAC_EVENT_TEARDOWN_TWT 294
 #define NRF_WIFI_UMAC_EVENT_TWT_SLEEP 296
+#define NRF_WIFI_UMAC_EVENT_GET_POWER_SAVE_INFO 297
 
 /**
  * enum nrf_wifi_band - Frequency band.
@@ -3058,6 +3060,23 @@ struct nrf_wifi_cmd_start_p2p {
 struct nrf_wifi_cmd_get_ifindex {
 	struct nrf_wifi_umac_hdr umac_hdr;
 	char ifacename[IFACENAMSIZ];
+} __NRF_WIFI_PKD;
+
+struct nrf_wifi_umac_cmd_get_power_save_info {
+	struct nrf_wifi_umac_hdr umac_hdr;
+} __NRF_WIFI_PKD;
+
+#define NRF_WIFI_MAX_TWT_FLOWS 8
+#define NRF_WIFI_PS_MODE_LEGACY 0
+#define NRF_WIFI_PS_MODE_WMM 1
+
+struct nrf_wifi_umac_event_power_save_info {
+	struct nrf_wifi_umac_hdr umac_hdr;
+	unsigned int ps_mode;
+	unsigned char enabled;
+	unsigned char twt_responder;
+	unsigned char num_twt_flows;
+	struct nrf_wifi_umac_config_twt_info twt_flow_info[0];
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_TX_BITRATE_MASK_LEGACY_MAX_LEN 8

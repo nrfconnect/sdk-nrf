@@ -255,6 +255,10 @@ struct wifi_nrf_fmac_callbk_fns {
 	void (*event_get_reg)(void *if_priv,
 		struct nrf_wifi_reg *get_reg,
 		unsigned int event_len);
+
+	void (*event_get_ps_info)(void *if_priv,
+		struct nrf_wifi_umac_event_power_save_info *get_ps_config,
+		unsigned int event_len);
 };
 
 
