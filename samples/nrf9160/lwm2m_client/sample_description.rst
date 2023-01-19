@@ -383,11 +383,20 @@ Check and configure the following LwM2M options that are used by the sample:
 * :kconfig:option:`CONFIG_LWM2M_IPSO_TEMP_SENSOR_VERSION_1_1` - Sets the IPSO Temperature sensor object version to 1.1.
   You can use this configuration option for other IPSO objects also by modifying the option accordingly. See the `LwM2M Object and Resource Registry`_ for a list of objects and their available versions.
 * :kconfig:option:`CONFIG_LWM2M_SHELL` - Enables the Zephyr shell and all LwM2M specific commands.
+* :kconfig:option:`CONFIG_LWM2M_TLS_SESSION_CACHING` - Enables TLS session caching to prevent doing a full TLS handshake for every send.
+* :kconfig:option:`CONFIG_LWM2M_RD_CLIENT_SUSPEND_SOCKET_AT_IDLE` - Socket close is skipped at RX off idle state which optimize power consumption.
+* :kconfig:option:`CONFIG_LWM2M_QUEUE_MODE_UPTIME` - Specifies time (in seconds) the device should stay online after sending a message to the server.
+* :kconfig:option:`CONFIG_LWM2M_SECONDS_TO_UPDATE_EARLY` - Time in seconds before the registration timeout, when the LWM2M Registration Update is sent by the engine.
+* :kconfig:option:`CONFIG_LTE_PSM_REQ_RPTAU` - Power saving mode (PSM) setting for requested periodic TAU. Data format is described in 3GPP 24.008 Ch. 10.5.7.4a.
+* :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT` - Power saving mode setting (PSM) for requested active time. Data format is described in 3GPP 24.008 Ch. 10.5.7.3.
+* :kconfig:option:`CONFIG_LTE_EDRX_REQ` - Enables request for use of Extended DRX (eDRX). For reference, see 3GPP 27.007 Ch. 7.40.
+* :kconfig:option:`CONFIG_LTE_EDRX_REQ_VALUE_LTE_M` - Sets the eDRX value to request when LTE-M is used. The format is half a byte in a four-bit format. The eDRX value refers to bit 4 to 1 of octet 3 of the Extended DRX parameters information element. See 3GPP TS 24.008, subclause 10.5.5.32.
+* :kconfig:option:`CONFIG_LTE_EDRX_REQ_VALUE_NBIOT` - Sets the eDRX value to request when NB-IoT is used. The format is half a byte in a four-bit format. The eDRX value refers to bit 4 to 1 of octet 3 of the Extended DRX parameters information element. See 3GPP TS 24.008, subclause 10.5.5.32.
+* :kconfig:option:`CONFIG_LTE_PTW_VALUE_LTE_M` - Sets the Paging Time Window value to be requested when enabling eDRX. The value will apply to LTE-M. The format is a string with half a byte in 4-bit format, corresponding to bits 8 to 5 in octet 3 of eDRX information element according to 10.5.5.32 of 3GPP TS 24.008.
+* :kconfig:option:`CONFIG_LTE_PTW_VALUE_NBIOT` - Sets the Paging Time Window value to be requested when enabling eDRX. The value will apply to NB-IoT. The format is a string with half a byte in 4-bit format, corresponding to bits 8 to 5 in octet 3 of eDRX information element according to 10.5.5.32 of 3GPP TS 24.008.
 
 .. note::
-   Changing lifetime might not work correctly if you set it to a value beyond 60 seconds.
-   It might cause resending message error and eventually timeout.
-   This is an issue specific for IPV4 when NAT is in use.
+   The nRF9160 modem will negotiate PSM and eDRX modes with the network it is trying to connect. The network may either accept the values, assing different ones or reject them.
 
 For Thingy:91, configure the ADXL362 accelerometer sensor range by choosing one of the following options (default value is |plusminus| 2 g):
 
@@ -423,7 +432,6 @@ The sample provides predefined configuration files for typical use cases.
 The following files are available:
 
 * :file:`prj.conf` - Standard default configuration file.
-* :file:`overlay-queue.conf` - Enables LwM2M Queue Mode support.
 * :file:`overlay-leshan-bootstrap.conf` - Enables LwM2M bootstrap support with Leshan demo server.
 * :file:`overlay-avsystem.conf` - Uses `Coiote Device Management`_ server.
 * :file:`overlay-avsystem-bootstrap.conf` - Uses Coiote in bootstrap mode.
@@ -460,14 +468,10 @@ After building and running the sample, you can locate your device in the server:
 
 You can also optionally enable notifications for the resources so that the server actively monitors the resources.
 
-Queue Mode support
-==================
+Queue Mode
+==========
 
-To use the LwM2M Client with LwM2M Queue Mode support, build it with the ``-DOVERLAY_CONFIG=overlay-queue.conf`` option:
-
-.. code-block:: console
-
-   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-queue.conf
+The sample enables LwM2M queue mode by default. In this mode, the device is not required to actively listen for incoming packets and the client can reduce power consumption by sleeping longer.
 
 Bootstrap support
 =================
