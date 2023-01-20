@@ -50,6 +50,11 @@ int bh1749_attr_set(const struct device *dev,
 	const struct i2c_dt_spec *i2c = &config->i2c;
 	int err;
 
+	if (!bh1749_is_ready(dev)) {
+		LOG_INF("Device is not initialized yet");
+		return -EBUSY;
+	}
+
 	if (chan != SENSOR_CHAN_ALL) {
 		return -ENOTSUP;
 	}
@@ -99,6 +104,11 @@ int bh1749_trigger_set(const struct device *dev,
 	const struct i2c_dt_spec *i2c = &config->i2c;
 	uint8_t interrupt_source = 0;
 	int err;
+
+	if (!bh1749_is_ready(dev)) {
+		LOG_INF("Device is not initialized yet");
+		return -EBUSY;
+	}
 
 	err = gpio_pin_interrupt_configure_dt(&config->int_gpio,
 					      GPIO_INT_DISABLE);
