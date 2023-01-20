@@ -30,11 +30,13 @@ static struct {
 
 /* Allocation Table Entry */
 struct test_ate {
-	uint16_t id;       /* data id */
-	uint16_t offset;   /* data offset within sector */
-	uint16_t len;      /* data len within sector */
-	uint8_t crc8_data; /* crc8 check of the entry */
-	uint8_t crc8;      /* crc8 check of the entry */
+	uint16_t id; /* data id */
+	uint16_t offset; /* data offset within sector */
+	uint16_t len; /* data len within sector */
+	uint8_t crc8_data; /* crc8 check of the data entry */
+	uint8_t crc8; /* crc8 check of the ate entry */
+	uint8_t inval_flag; /* Invalid entry flag */
+	uint8_t rfu[3]; /* Reserved for future use */
 } __packed;
 
 static struct emds_fs ctx;
@@ -206,6 +208,7 @@ static int entry_write(uint32_t ate_wra, uint16_t id, const void *data, size_t l
 		.len = (uint16_t)len,
 		.crc8_data = crc8_ccitt(0xff, data, len),
 		.crc8 = crc8_ccitt(0xff, &entry, offsetof(struct test_ate, crc8)),
+		.inval_flag = 0XFF,
 	};
 
 	data_write(data, len);
@@ -214,7 +217,7 @@ static int entry_write(uint32_t ate_wra, uint16_t id, const void *data, size_t l
 
 static int ate_invalidate_write(uint32_t ate_wra)
 {
-	uint8_t invalid[8];
+	uint8_t invalid[sizeof(struct test_ate)];
 
 	memset(invalid, 0, sizeof(invalid));
 
@@ -223,7 +226,7 @@ static int ate_invalidate_write(uint32_t ate_wra)
 
 static int ate_corrupt_write(uint32_t ate_wra)
 {
-	uint8_t corrupt[8];
+	uint8_t corrupt[sizeof(struct test_ate)];
 
 	memset(corrupt, 69, sizeof(corrupt));
 

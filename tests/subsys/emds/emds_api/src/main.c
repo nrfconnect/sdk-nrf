@@ -17,6 +17,7 @@
 #include <mpsl.h>
 #endif
 
+#define ATE_SIZE 12
 
 enum test_states {
 	EMDS_TS_EMPTY_FLASH,
@@ -107,12 +108,12 @@ static void test_init(void)
 static void test_add_d_entries(void)
 {
 	int err;
-	uint32_t store_expected = NRFX_CEIL_DIV(sizeof(s_data), 4) * 4 + 8;
+	uint32_t store_expected = NRFX_CEIL_DIV(sizeof(s_data), 4) * 4 + ATE_SIZE;
 
 	for (int i = 0; i < ARRAY_SIZE(d_entries); i++) {
 		err = emds_entry_add(&d_entries[i]);
 		store_expected += NRFX_CEIL_DIV(d_entries[i].entry.len, 4) * 4;
-		store_expected += 8;
+		store_expected += ATE_SIZE;
 		zassert_equal(err, 0, "Add entry failed");
 
 		err = emds_entry_add(&d_entries[i]);

@@ -18,6 +18,8 @@ LOG_MODULE_REGISTER(emds_flash, CONFIG_EMDS_LOG_LEVEL);
 
 #define ADDR_OFFS_MASK 0x0000FFFF
 #define EMDS_FLASH_BLOCK_SIZE 4
+#define INVAL_VAL 0
+#define INVAL_FLAG_OFFSET offsetof(struct emds_ate, inval_flag)
 
 /* Allocation Table Entry */
 struct emds_ate {
@@ -26,6 +28,8 @@ struct emds_ate {
 	uint16_t len; /* data len within sector */
 	uint8_t crc8_data; /* crc8 check of the data entry */
 	uint8_t crc8; /* crc8 check of the ate entry */
+	uint8_t inval_flag; /* Invalid entry flag */
+	uint8_t rfu[3]; /* Reserved for future use */
 } __packed;
 
 enum ate_type {
@@ -34,9 +38,6 @@ enum ate_type {
 	ATE_TYPE_ERASED = BIT(2),
 	ATE_TYPE_UNKNOWN = BIT(3)
 };
-
-BUILD_ASSERT(offsetof(struct emds_ate, crc8) == sizeof(struct emds_ate) - sizeof(uint8_t),
-	     "crc8 must be the last member");
 
 #define SOC_NV_FLASH_NODE DT_INST(0, soc_nv_flash)
 
@@ -235,7 +236,7 @@ static int check_erased(struct emds_fs *fs, uint32_t addr, size_t len)
 	uint8_t cmp[EMDS_FLASH_BLOCK_SIZE];
 	uint8_t buf[EMDS_FLASH_BLOCK_SIZE];
 
-	(void)memset(cmp, 0xff, EMDS_FLASH_BLOCK_SIZE);
+	(void)memset(cmp, fs->flash_params->erase_value, EMDS_FLASH_BLOCK_SIZE);
 	while (len) {
 		bytes_to_cmp = MIN(EMDS_FLASH_BLOCK_SIZE, len);
 		if (flash_read(fs->flash_dev, addr, buf, bytes_to_cmp)) {
@@ -267,6 +268,7 @@ static int entry_wrt(struct emds_fs *fs, uint16_t id, const void *data, size_t l
 	entry.len = (uint16_t)len;
 	entry.crc8_data = crc8_ccitt(0xff, data, len);
 	entry.crc8 = crc8_ccitt(0xff, &entry, offsetof(struct emds_ate, crc8));
+	entry.inval_flag = fs->flash_params->erase_value;
 	rc = data_wrt(fs, data, len);
 	if (rc) {
 		return rc;
@@ -289,8 +291,7 @@ static enum ate_type ate_check(struct emds_fs *fs, uint32_t addr, struct emds_at
 		return ATE_TYPE_UNKNOWN;
 	}
 
-	memset(cmp_buf, 0, sizeof(cmp_buf));
-	if (!memcmp(entry, cmp_buf, fs->ate_size)) {
+	if (entry->inval_flag == INVAL_VAL) {
 		return ATE_TYPE_INVALIDATED;
 	}
 
@@ -366,12 +367,15 @@ static int ate_last_recover(struct emds_fs *fs)
 static int old_entries_invalidate(struct emds_fs *fs)
 {
 	int rc = 0;
-	uint8_t inval_buf[fs->ate_size];
+	uint8_t inval_buf[fs->ate_size - INVAL_FLAG_OFFSET];
 	uint32_t addr = fs->ate_wra + fs->ate_size;
 
-	memset(inval_buf, 0, sizeof(inval_buf));
+	memset(inval_buf, fs->flash_params->erase_value, sizeof(inval_buf));
+	inval_buf[0] = INVAL_VAL;
+
 	while (addr <= (fs->offset + fs->sector_cnt * fs->sector_size) - fs->ate_size) {
-		rc = flash_write(fs->flash_dev, addr, inval_buf, sizeof(inval_buf));
+		rc = flash_write(fs->flash_dev, addr + INVAL_FLAG_OFFSET, inval_buf,
+				 sizeof(inval_buf));
 		if (rc) {
 			return rc;
 		}
@@ -493,7 +497,8 @@ ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len)
 			return rc;
 		}
 
-		if ((wlk_ate.id == id) && (is_ate_valid(&wlk_ate))) {
+		if ((wlk_ate.id == id) && (is_ate_valid(&wlk_ate)) &&
+		    (wlk_ate.inval_flag != INVAL_VAL)) {
 			break;
 		}
 
