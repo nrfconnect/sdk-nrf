@@ -8,7 +8,7 @@ menu "BLE HID Client"
 
 config DESKTOP_HID_FORWARD_ENABLE
 	bool "Enable HID forward"
-	depends on BT_HOGP
+	select BT_HOGP
 	depends on DESKTOP_ROLE_HID_DONGLE
 	depends on DESKTOP_BT_CENTRAL
 	help
@@ -16,6 +16,13 @@ config DESKTOP_HID_FORWARD_ENABLE
 	  The reports received from the BLE are forwarded to the USB.
 
 if DESKTOP_HID_FORWARD_ENABLE
+
+config BT_HOGP_REPORTS_MAX
+	default 12
+	help
+	  By default, nRF Desktop dongle supports up to 12 HID reports to allow
+	  for connecting two peripherals with up to 6 HID reports each on
+	  average.
 
 config DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS
 	int "Enqueued reports limit"
