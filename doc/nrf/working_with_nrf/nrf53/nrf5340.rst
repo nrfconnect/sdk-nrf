@@ -2,8 +2,8 @@
 
 .. _ug_nrf5340:
 
-Working with nRF5340 DK
-#######################
+Developing with nRF5340 DK
+##########################
 
 .. contents::
    :local:
@@ -12,7 +12,8 @@ Working with nRF5340 DK
 The |NCS| provides support for developing on the nRF5340 System on Chip (SoC) using the nRF5340 DK (PCA10095).
 
 See the `nRF5340 DK User Guide`_ for detailed information about the nRF5340 DK hardware.
-To get started with the nRF5340 DK, follow the steps in the `Getting started with nRF Connect SDK (nRF53 Series)`_ guide.
+To get started with the nRF5340 DK, follow the steps in :ref:`ug_nrf5340_gs`.
+If you are not familiar with the |NCS| and the development environment, see the :ref:`introductory documentation <getting_started>`.
 
 .. note::
    The nRF5340 PDK has been deprecated with the introduction of the production-level nRF5340 DK.

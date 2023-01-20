@@ -798,6 +798,7 @@ Documentation
   * The :ref:`ug_nrf70_developing` user guide.
   * A page on :ref:`ug_nrf70_features`.
   * Documentation template for :ref:`Applications <application>`.
+  * The :ref:`ug_nrf5340_gs` guide.
 
 * Updated:
 
