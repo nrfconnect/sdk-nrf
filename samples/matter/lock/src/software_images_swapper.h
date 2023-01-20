@@ -29,7 +29,7 @@ public:
 
 private:
 	const struct device *mFlashDevice = DEVICE_DT_GET(DT_CHOSEN(nordic_pm_ext_flash));
-	static constexpr uint16_t kBufferSize = 256;
+	static constexpr uint16_t kBufferSize = 4096;
 
 	bool mSwapInProgress = false;
 	SoftwareImagesSwapDoneCallback swapDoneCallback;
