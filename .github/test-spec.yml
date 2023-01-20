@@ -388,7 +388,8 @@
   - "include/net/multicell_location.h"
   - "include/net/nrf_cloud.h"
   - "include/net/nrf_cloud_agps.h"
-  - "include/net/nrf_cloud_cell_pos.h"
+  - "include/net/nrf_cloud_location.h"
+  - "include/net/nrf_cloud_os.h"
   - "include/net/nrf_cloud_pgps.h"
   - "include/net/nrf_cloud_rest.h"
   - "include/net/rest_client.h"
@@ -427,7 +428,8 @@
   - "include/net/multicell_location.h"
   - "include/net/nrf_cloud.h"
   - "include/net/nrf_cloud_agps.h"
-  - "include/net/nrf_cloud_cell_pos.h"
+  - "include/net/nrf_cloud_location.h"
+  - "include/net/nrf_cloud_os.h"
   - "include/net/nrf_cloud_pgps.h"
   - "include/net/nrf_cloud_rest.h"
   - "include/net/rest_client.h"
@@ -451,3 +453,8 @@
 "CI-wifi":
   - "drivers/wifi/**/*"
   - "samples/wifi/**/*"
+
+"CI-cloud-test":
+  - "include/net/nrf_cloud*"
+  - "samples/nrf9160/nrf_cloud_*/**/*"
+  - "subsys/net/lib/nrf_cloud/**/*"
