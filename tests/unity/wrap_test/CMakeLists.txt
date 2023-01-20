@@ -13,7 +13,9 @@ project(wrap_test)
 test_runner_generate(src/wrap_test.c)
 
 # create mocks for test_code functions
-cmock_handle(src/test_code/test_code.h test_code)
+cmock_handle(src/test_code/test_code.h test_code
+  WORD_EXCLUDE "IGNORE_ME"
+)
 
 # add module test_code
 target_sources(app PRIVATE src/test_code/test_code.c)

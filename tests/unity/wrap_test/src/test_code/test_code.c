@@ -5,3 +5,7 @@
  */
 
 #include "test_code/test_code.h"
+
+void exclude_word_fn(void)
+{
+}

@@ -43,3 +43,8 @@ int call_multiline_def(int arg, int len)
 {
 	return multiline_def(arg, len);
 }
+
+void call_exclude_word_fn(void)
+{
+	exclude_word_fn();
+}

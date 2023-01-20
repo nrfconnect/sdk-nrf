@@ -86,4 +86,8 @@ typedef struct __attribute__ ((__packed__)) {
 int multiline_def(int arg,
 					int len);
 
+/* Test WORD_EXCLUDE parameter for cmock_handle() */
+#define IGNORE_ME
+IGNORE_ME void exclude_word_fn(void);
+
 #endif /* __TEST_CODE_H */
