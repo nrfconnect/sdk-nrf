@@ -79,6 +79,13 @@ void test_multiline_def(void)
 	TEST_ASSERT_EQUAL(EXPECT_MULTILINE_DEF, call_multiline_def(1, 2));
 }
 
+void test_word_exclude(void)
+{
+	__cmock_exclude_word_fn_Expect();
+
+	call_exclude_word_fn();
+}
+
 /* It is required to be added to each test. That is because unity is using
  * different main signature (returns int) and zephyr expects main which does
  * not return value.
