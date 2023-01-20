@@ -58,28 +58,33 @@ After installing and starting the application, install the Programmer app.
 You must also install a terminal emulator, such as :ref:`PuTTY <putty>` or the nRF Terminal, which is part of the `nRF Connect for Visual Studio Code`_ extension.
 The steps detailed in :ref:`nrf52_gs_connecting` use PuTTY, but any terminal emulator will work.
 
-On your mobile device, install the `nRF Connect for Mobile`_ mobile application from the corresponding application store.
+On your mobile device, install the `nRF Connect for Mobile`_ application from the corresponding application store.
 
+.. _nrf52_gs_installing_sample:
 .. _nrf52_gs_installing_application:
 
-Installing the application
-**************************
+Installing the sample
+*********************
 
-You must program and run a precompiled version of the :ref:`peripheral_uart` sample application on your development kit to test the functions.
+You must program and run a precompiled version of the :ref:`peripheral_uart` sample on your development kit to test the functions.
 
-Download the precompiled version of the application for your DK from the corresponding download page:
+Download the precompiled version of the sample for your DK from the corresponding download page:
 
 * `nRF52840 DK Downloads`_
 * `nRF52833 DK Downloads`_
 * `nRF52 DK Downloads`_
 
 After downloading the zip archive, extract it to a folder of your choice.
-The archive contains the HEX file used to program the application to your DK.
+The archive contains the HEX file used to program the sample to your DK.
 
-To program the precompiled sample application to your development kit, complete the following steps:
+.. |DK| replace:: nRF52 Series DK
+
+.. program_dk_sample_start
+
+To program the precompiled sample to your development kit, complete the following steps:
 
 1. Open the Programmer app.
-#. Connect the nRF52 Series DK to the computer with a micro-USB cable and turn on the DK.
+#. Connect the |DK| to the computer with a micro-USB cable and turn on the DK.
 
    **LED1** starts blinking.
 
@@ -96,34 +101,38 @@ To program the precompiled sample application to your development kit, complete 
    If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the **DEVICE** section of the side panel.
 
 #. Click :guilabel:`Add file` in the **FILE** section, and select **Browse**.
-#. Navigate to where you extracted the application HEX file and select it.
+#. Navigate to where you extracted the HEX file and select it.
 #. Click the :guilabel:`Erase & write` button in the **DEVICE** section to program the DK.
 
    Do not unplug or turn off the DK during this process.
 
 .. note::
-   If you experience any problems during the process, press Ctrl+R (command+R on macOS) to restart the Programmer app, and try again.
+   If you experience any problems during the process, press ``Ctrl+R`` (``command+R`` on macOS) to restart the Programmer app, and try again.
 
-After you have programmed the application to the DK, you can connect to it and test the functions.
-If you connect to the application now, you can go directly to Step 2 of :ref:`nrf52_gs_connecting`.
+.. program_dk_sample_end
+
+After you have programmed the sample to the DK, you can connect to it and test the functions.
+If you connect to the sample now, you can go directly to Step 2 of :ref:`nrf52_gs_connecting`.
 
 .. _nrf52_gs_connecting:
 
-Connecting to the application
-*****************************
+Connecting to the sample
+************************
 
-You can connect to the application on the DK with a terminal emulator on your computer using :term:`Universal Asynchronous Receiver/Transmitter (UART)`.
-This allows you to see the logging information the application outputs as well as to enter console inputs.
+.. uart_dk_connect_start
+
+You can connect to the sample on the |DK| with a terminal emulator on your computer using :term:`Universal Asynchronous Receiver/Transmitter (UART)`.
+This allows you to see the logging information the sample outputs as well as to enter console inputs.
 
 You can use an external UART to USB bridge.
 UART communication through the UART to USB CDC ACM bridge is referred to as CDC-UART.
 This is different from communication through the Nordic UART Service (NUS) over Bluetooth® Low Energy (LE).
 
-If you have problems connecting to the application, restart the DK and start over.
+If you have problems connecting to the sample, restart the DK and start over.
 
 To connect using CDC-UART, complete the following steps:
 
-1. Connect the nRF52 Series DK to the computer with a micro-USB cable, and then turn on the DK.
+1. Connect the |DK| to the computer with a micro-USB cable, and then turn on the DK.
 
    **LED1** starts blinking.
 
@@ -175,16 +184,20 @@ To connect using CDC-UART, complete the following steps:
 
    The terminal window opens.
 
+.. uart_dk_connect_end
+
 The connection has now been established.
-If you test the application now, you can go directly to Step 2 of :ref:`nrf52_gs_testing`.
+If you test the sample now, you can go directly to Step 2 of :ref:`nrf52_gs_testing`.
 
 .. _nrf52_gs_testing:
 
-Testing the application
-***********************
+Testing the sample
+******************
 
-You can test the :ref:`peripheral_uart` application on your DK using the `nRF Connect for Mobile`_ mobile application.
-The test requires that you have :ref:`connected to the application <nrf52_gs_connecting>` and have the connected terminal emulator open.
+You can test the :ref:`peripheral_uart` sample on your DK using the `nRF Connect for Mobile`_ application.
+The test requires that you have :ref:`connected to the sample <nrf52_gs_connecting>` and have the connected terminal emulator open.
+
+.. testing_dk_start
 
 To perform tests, complete the following steps:
 
@@ -192,7 +205,7 @@ To perform tests, complete the following steps:
 
    .. group-tab:: Android
 
-      1. Connect the nRF52 Series DK to the computer with a micro-USB cable and turn on the DK.
+      1. Connect the |DK| to the computer with a micro-USB cable and turn on the DK.
 
          **LED1** starts blinking.
 
@@ -200,7 +213,7 @@ To perform tests, complete the following steps:
       #. In nRF Connect for Mobile, tap :guilabel:`Scan`.
       #. Find the DK in the list, select it and tap :guilabel:`Connect`.
 
-         The default device name for the Peripheral UART sample is *Nordic_UART_Service*.
+         The default device name for the Peripheral UART sample is **Nordic_UART_Service**.
 
       #. When connected, tap the three-dot menu below the device name, and select **Enable CCCDs**.
 
@@ -212,9 +225,9 @@ To perform tests, complete the following steps:
             nRF Connect for Mobile - Enable services option
 
       #. Tap the three-dot menu next to **Disconnect** and select **Show log**.
-      #. On your computer, in the terminal emulator connected to the application through CDC-UART, type ``hello`` and send it to the DK.
+      #. On your computer, in the terminal emulator connected to the sample through CDC-UART, type ``hello`` and send it to the DK.
 
-         The text is sent through the nRF52 Series DK to your mobile device over a Bluetooth LE link.
+         The text is sent through the |DK| to your mobile device over a Bluetooth LE link.
          The device displays the text in the nRF Connect for Mobile log:
 
          .. figure:: images/nrf52_connect_log.png
@@ -224,14 +237,14 @@ To perform tests, complete the following steps:
 
    .. group-tab:: iOS
 
-      1. Connect the nRF52 Series DK to the computer with a micro-USB cable and turn on the DK.
+      1. Connect the |DK| to the computer with a micro-USB cable and turn on the DK.
 
          **LED1** starts blinking.
 
       #. Open the nRF Connect for Mobile application on your iOS device.
       #. If the application does not automatically start scanning, tap the **Play** icon in the upper right corner.
       #. Find the DK in the list and tap the corresponding :guilabel:`Connect` button.
-         The default device name for the Peripheral UART sample is *Nordic_UART_Service*.
+         The default device name for the Peripheral UART sample is **Nordic_UART_Service**.
 
          This opens a new window with information on the device.
 
@@ -242,7 +255,7 @@ To perform tests, complete the following steps:
 
             nRF Connect for Mobile - Client tab
 
-      #. Tap the up arrow button under **Client Characteristic Configuration** to write a value to the sample application.
+      #. Tap the up arrow button under **Client Characteristic Configuration** to write a value to the sample.
 
          The **Write Value** window opens.
 
@@ -259,10 +272,10 @@ To perform tests, complete the following steps:
 
          The **Write Value** window closes.
 
-      #. Select the **Log** tab and tap on the up arrow icon in the bottom right corner to enable scroll lock.
-      #. On your computer, in the terminal emulator connected to the application through CDC-UART, type ``hello`` and send it to the DK.
+      #. Select the **Log** tab.
+      #. On your computer, in the terminal emulator connected to the sample through CDC-UART, type ``hello`` and send it to the DK.
 
-         The text is sent through the nRF52 Series DK to your mobile device over a Bluetooth LE link.
+         The text is sent through the |DK| to your mobile device over a Bluetooth LE link.
          The device displays the text in the nRF Connect for Mobile log:
 
          .. figure:: images/nrf52_connect_log_ios.png
@@ -270,7 +283,9 @@ To perform tests, complete the following steps:
 
             nRF Connect for Mobile - Text shown in the log
 
-If you have a dongle or a second Nordic Semiconductor DK, you can test the application :ref:`using a computer <nrf52_computer_testing>` instead of using this process.
+.. testing_dk_end
+
+If you have a dongle or a second Nordic Semiconductor DK, you can test the sample :ref:`using a computer <nrf52_computer_testing>` instead of using this process.
 
 Next steps
 **********
@@ -278,5 +293,5 @@ Next steps
 You have now completed getting started with the nRF52 Series DK.
 See the following links for where to go next:
 
-* :ref:`ug_nrf52` for more advanced topics related to the nRF52 Series.
+* :ref:`ug_nrf52` documentation for more advanced topics related to the nRF52 Series.
 * The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
