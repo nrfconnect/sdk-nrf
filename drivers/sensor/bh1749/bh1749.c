@@ -50,7 +50,7 @@ static int bh1749_sample_fetch(const struct device *dev, enum sensor_channel cha
 		return -ENOTSUP;
 	}
 
-	if (unlikely(!data->ready)) {
+	if (!bh1749_is_ready(dev)) {
 		LOG_INF("Device is not initialized yet");
 		return -EBUSY;
 	}
@@ -105,7 +105,7 @@ static int bh1749_channel_get(const struct device *dev,
 {
 	struct bh1749_data *data = dev->data;
 
-	if (unlikely(!data->ready)) {
+	if (!bh1749_is_ready(dev)) {
 		LOG_INF("Device is not initialized yet");
 		return -EBUSY;
 	}
@@ -210,7 +210,7 @@ static void bh1749_async_init(struct k_work *work)
 		data->async_init_step++;
 
 		if (data->async_init_step == ASYNC_INIT_STEP_COUNT) {
-			data->ready = true;
+			atomic_set(&data->ready, 1);
 			LOG_INF("BH1749 initialized");
 		} else {
 			k_work_schedule(init_work,

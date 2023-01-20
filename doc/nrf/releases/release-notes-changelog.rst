@@ -435,6 +435,10 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
   * Updated by reducing log verbosity.
 
+* :ref:`lib_bh1749`:
+
+  * Fixed an issue where the driver would attempt to use APIs before the sensor was ready, which in turn could make the application hang.
+
 Libraries
 =========
 
