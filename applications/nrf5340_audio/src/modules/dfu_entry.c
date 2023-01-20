@@ -18,19 +18,6 @@
 #include "macros_common.h"
 #include "channel_assignment.h"
 
-#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
-#include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
-#endif
-#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
-#include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
-#endif
-#ifdef CONFIG_MCUMGR_CMD_STAT_MGMT
-#include <zephyr/mgmt/mcumgr/grp/stat_mgmt/stat_mgmt.h>
-#endif
-#ifdef CONFIG_MCUMGR_SMP_BT
-#include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
-#endif
-
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(dfu, CONFIG_MODULE_DFU_ENTRY_LOG_LEVEL);
 
@@ -45,24 +32,6 @@ static const struct bt_data ad_peer[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, 0x84, 0xaa, 0x60, 0x74, 0x52, 0x8a, 0x8b, 0x86, 0xd3,
 		      0x4c, 0xb7, 0x1d, 0x1d, 0xdc, 0x53, 0x8d),
 };
-
-/* MCUMGR related functions */
-static void mcumgr_register(void)
-{
-/* Enable MCUMGR */
-#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
-	os_mgmt_register_group();
-#endif
-#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
-	img_mgmt_register_group();
-#endif
-#ifdef CONFIG_MCUMGR_CMD_STAT_MGMT
-	stat_mgmt_register_group();
-#endif
-#ifdef CONFIG_MCUMGR_SMP_BT
-	smp_bt_register();
-#endif
-}
 
 static void smp_adv(void)
 {
@@ -126,7 +95,6 @@ static void on_ble_core_ready_dfu_entry(void)
 	bt_conn_cb_register(&dfu_conn_callbacks);
 	adv_param = *BT_LE_ADV_CONN_NAME;
 	dfu_set_bt_name();
-	mcumgr_register();
 	smp_adv();
 }
 

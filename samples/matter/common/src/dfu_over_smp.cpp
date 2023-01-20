@@ -17,11 +17,8 @@
 #include <lib/support/logging/CHIPLogging.h>
 
 #include <zephyr/dfu/mcuboot.h>
-#include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
-#include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
 #include <zephyr/mgmt/mcumgr/mgmt/callbacks.h>
 #include <zephyr/mgmt/mcumgr/mgmt/mgmt.h>
-#include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
 
 using namespace ::chip;
 using namespace ::chip::DeviceLayer;
@@ -92,8 +89,6 @@ void DFUOverSMP::Init()
 		}
 	};
 
-	os_mgmt_register_group();
-	img_mgmt_register_group();
 	mgmt_callback_register(&sUploadCallback);
 	mgmt_callback_register(&sCommandCallback);
 }
@@ -114,7 +109,6 @@ void DFUOverSMP::ConfirmNewImage()
 void DFUOverSMP::StartServer()
 {
 	VerifyOrReturn(!mIsStarted, ChipLogProgress(SoftwareUpdate, "DFU over SMP was already started"));
-	smp_bt_register();
 
 	/* Synchronize access to the advertising arbiter that normally runs on the CHIP thread. */
 	PlatformMgr().LockChipStack();

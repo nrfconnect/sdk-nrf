@@ -115,8 +115,6 @@ This sample is split into the following source files:
 
 * A :file:`main.c` file to handle initialization.
 * A file for handling mesh models, :file:`model_handler.c`.
-* A :file:`thingy53.c` file, used to handle preinitialization of the :ref:`zephyr:thingy53_nrf5340` board.
-  It is only compiled when the sample is built for the :ref:`zephyr:thingy53_nrf5340` board.
 
 FEM support
 ===========

@@ -127,8 +127,6 @@ This sample is split into the following source files:
 
 * :file:`main.c` used to handle initialization.
 * :file:`model_handler.c` used to handle mesh models.
-* :file:`thingy53.c` used to handle preinitialization of the :ref:`zephyr:thingy53_nrf5340` board.
-  Only compiled when the sample is built for :ref:`zephyr:thingy53_nrf5340` board.
 
 DFU configuration
 =================

@@ -7,7 +7,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/stats/stats.h>
 #include <zephyr/mgmt/mcumgr/mgmt/mgmt.h>
-#include <zephyr/mgmt/mcumgr/grp/stat_mgmt/stat_mgmt.h>
 #include "fmfu_mgmt_internal.h"
 #include <mgmt/fmfu_mgmt.h>
 #include <mgmt/fmfu_mgmt_stat.h>
@@ -29,8 +28,6 @@ STATS_SECT_DECL(smp_com_param) smp_com_param;
 int fmfu_mgmt_stat_init(void)
 {
 	/* Register/start the stat service */
-	stat_mgmt_register_group();
-
 	int rc = STATS_INIT_AND_REG(smp_com_param, STATS_SIZE_32, "smp_com");
 
 	STATS_INCN(smp_com_param, frame_max, SMP_UART_BUFFER_SIZE);

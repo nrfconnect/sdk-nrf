@@ -6,10 +6,6 @@
 
 #include <zephyr/init.h>
 
-#include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
-#include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
-#include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
-
 /* .. include_startingpoint_light_smp_dfu_rst_1 */
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
@@ -146,19 +142,6 @@ int smp_service_adv_init(void)
 
 int smp_dfu_init(void)
 {
-	int err;
-
-	img_mgmt_register_group();
-	os_mgmt_register_group();
-
-	err = smp_bt_register();
-
-	if (err) {
-		printk("SMP BT service registration failed (err %d)\n", err);
-		return err;
-	}
-
-
 /* .. include_startingpoint_light_smp_dfu_rst_2 */
 	bt_conn_cb_register(&conn_callbacks);
 
