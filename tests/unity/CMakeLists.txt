@@ -152,7 +152,7 @@ function(cmock_linker_wrap_trick header_file_path)
   set(flist_file "${header_file_path}.flist")
 
   if(DEFINED CMOCK_FUNC_EXCLUDE)
-    string(JOIN "--exclude;" exclude_arg ${CMOCK_FUNC_EXCLUDE})
+    string(JOIN ";--exclude;" exclude_arg ${CMOCK_FUNC_EXCLUDE})
     set(exclude_arg "--exclude" ${exclude_arg})
   endif()
 
