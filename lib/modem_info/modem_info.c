@@ -141,6 +141,9 @@ LOG_MODULE_REGISTER(modem_info);
 /* SVN is a NULL-terminated string with 2 digits: XX */
 #define SVN_SIZE 3
 
+#define HWVER_CMD_STR "HWVERSION"
+#define HWVER_FMT_STR "%%%%" HWVER_CMD_STR ": %%%d[^" AT_CMD_RSP_DELIM "]"
+
 struct modem_info_data {
 	const char *cmd;
 	const char *data_name;
@@ -787,6 +790,25 @@ int modem_info_get_fw_version(char *buf, size_t buf_size)
 	return 0;
 }
 
+int modem_info_get_hw_version(char *buf, uint8_t buf_size)
+{
+	int ret;
+	char format[sizeof(HWVER_FMT_STR)];
+
+	if ((buf == NULL) || (buf_size == 0)) {
+		return -EINVAL;
+	}
+
+	sprintf(format, HWVER_FMT_STR, buf_size);
+
+	ret = nrf_modem_at_scanf("AT%" HWVER_CMD_STR, format, buf);
+
+	if (ret != 1) {
+		LOG_ERR("Could not get HW version, error: %d", ret);
+		return map_nrf_modem_at_scanf_error(ret);
+	}
+	return 0;
+}
 
 int modem_info_get_svn(char *buf, size_t buf_size)
 {

@@ -586,6 +586,10 @@ Modem libraries
 
     * Library for external MCU to work with nRF9160 SiP through the Serial LTE Modem application.
 
+* :ref:`modem_info_readme` library:
+
+  * Added :c:func:`modem_info_get_hw_version` function to obtain the hardware version string using the ``AT%HWVERSION`` command.
+
 Libraries for networking
 ------------------------
 
