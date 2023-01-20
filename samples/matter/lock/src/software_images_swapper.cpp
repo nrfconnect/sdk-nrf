@@ -6,6 +6,7 @@
 
 #include "software_images_swapper.h"
 
+#include <cstdlib>
 #include <dfu/dfu_multi_image.h>
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_mcuboot.h>
@@ -28,7 +29,7 @@ int SoftwareImagesSwapper::Swap(const ImageLocation &source, SoftwareImagesSwapD
 		return -EINVAL;
 	}
 
-	uint8_t *dfuImageBuffer = (uint8_t *)k_malloc(kBufferSize);
+	uint8_t *dfuImageBuffer = (uint8_t *)malloc(kBufferSize);
 	if (!dfuImageBuffer) {
 		return -ENOMEM;
 	}
@@ -61,7 +62,7 @@ int SoftwareImagesSwapper::Swap(const ImageLocation &source, SoftwareImagesSwapD
 	swapDoneCallback();
 
 exit:
-	k_free(dfuImageBuffer);
+	free(dfuImageBuffer);
 
 	return result;
 }
@@ -76,7 +77,7 @@ int SoftwareImagesSwapper::SwapImage(uint32_t address, uint32_t size, uint8_t id
 		return -ENODEV;
 	}
 
-	uint8_t *flashImageBuffer = (uint8_t *)k_malloc(kBufferSize);
+	uint8_t *flashImageBuffer = (uint8_t *)malloc(kBufferSize);
 	if (!flashImageBuffer) {
 		return -ENOMEM;
 	}
@@ -87,14 +88,15 @@ int SoftwareImagesSwapper::SwapImage(uint32_t address, uint32_t size, uint8_t id
 	}
 
 	for (uint32_t offset = 0; offset < size; offset += kBufferSize) {
-		result = flash_read(mFlashDevice, address + offset, flashImageBuffer, kBufferSize);
+		uint16_t chunkSize = MIN(size - offset, kBufferSize);
+		result = flash_read(mFlashDevice, address + offset, flashImageBuffer, chunkSize);
 		if (result != 0) {
 			LOG_ERR("Failed to read data from flash");
 			dfu_target_reset();
 			goto exit;
 		}
 
-		result = dfu_target_write(flashImageBuffer, kBufferSize);
+		result = dfu_target_write(flashImageBuffer, chunkSize);
 		if (result != 0) {
 			LOG_ERR("Failed to write data chunk");
 			dfu_target_reset();
@@ -110,7 +112,7 @@ int SoftwareImagesSwapper::SwapImage(uint32_t address, uint32_t size, uint8_t id
 	result = dfu_target_done(true);
 
 exit:
-	k_free(flashImageBuffer);
+	free(flashImageBuffer);
 
 	return result;
 }
