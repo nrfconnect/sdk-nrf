@@ -9,11 +9,6 @@
 #include <caf/events/ble_smp_event.h>
 
 #include <zephyr/mgmt/mcumgr/mgmt/callbacks.h>
-#include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
-#include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
-#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
-#include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
-#endif
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_SMP_LOG_LEVEL);
@@ -55,26 +50,15 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			mgmt_callback_register(&mgmt_callback);
-			img_mgmt_register_group();
-#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
-			os_mgmt_register_group();
-#endif
 		} else if (check_state(event, MODULE_ID(ble_state), MODULE_STATE_READY)) {
 			static bool initialized;
 
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
-			int err = smp_bt_register();
-
-			if (err) {
-				LOG_ERR("Service init failed (err %d)", err);
-				module_set_state(MODULE_STATE_ERROR);
-			} else {
-				LOG_INF("Service initialized");
-				LOG_INF("MCUboot image version: %s", CONFIG_MCUBOOT_IMAGE_VERSION);
-				module_set_state(MODULE_STATE_READY);
-			}
+			LOG_INF("Service initialized");
+			LOG_INF("MCUboot image version: %s", CONFIG_MCUBOOT_IMAGE_VERSION);
+			module_set_state(MODULE_STATE_READY);
 		}
 
 		return false;

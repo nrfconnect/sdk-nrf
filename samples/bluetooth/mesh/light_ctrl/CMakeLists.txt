@@ -15,11 +15,3 @@ target_sources(app PRIVATE
 	src/lc_pwm_led.c)
 target_include_directories(app PRIVATE include)
 # NORDIC SDK APP END
-
-# Preinitialization related to Thingy:53 DFU
-target_sources_ifdef(CONFIG_BOARD_THINGY53_NRF5340_CPUAPP app PRIVATE
-  boards/thingy53.c
-)
-target_sources_ifdef(CONFIG_BOARD_THINGY53_NRF5340_CPUAPP_NS app PRIVATE
-  boards/thingy53.c
-)

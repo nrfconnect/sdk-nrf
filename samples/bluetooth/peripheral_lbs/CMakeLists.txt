@@ -13,14 +13,5 @@ target_sources(app PRIVATE
   src/main.c
 )
 
-# Preinitialization related to Thingy:53 DFU
-target_sources_ifdef(CONFIG_BOARD_THINGY53_NRF5340_CPUAPP app PRIVATE
-  boards/thingy53.c
-)
-target_sources_ifdef(CONFIG_BOARD_THINGY53_NRF5340_CPUAPP_NS app PRIVATE
-  boards/thingy53.c
-)
-
-
 # NORDIC SDK APP END
 zephyr_library_include_directories(.)
