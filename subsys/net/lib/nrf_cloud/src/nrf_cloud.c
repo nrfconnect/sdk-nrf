@@ -112,6 +112,8 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 		}
 	}
 
+	nrf_cloud_set_app_version(param->application_version);
+
 	/* Set the flash device before initializing the transport/FOTA. */
 #if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
 	if (param->fmfu_dev_inf) {
@@ -276,7 +278,7 @@ int nrf_cloud_shadow_device_status_update(const struct nrf_cloud_device_status *
 		return -EACCES;
 	}
 
-	err = nrf_cloud_device_status_encode(dev_status, &tx_data.data, true);
+	err = nrf_cloud_device_status_shadow_encode(dev_status, &tx_data.data, true);
 	if (err) {
 		return err;
 	}

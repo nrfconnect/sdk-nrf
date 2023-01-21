@@ -203,15 +203,25 @@ int nrf_cloud_decode_control(struct nrf_cloud_data const *const input,
 int nrf_cloud_encode_control_response(struct nrf_cloud_ctrl_data const *const data,
 				      struct nrf_cloud_data *const output);
 
-/** @brief Encode the device status data into a JSON formatted buffer.
+/** @brief Encode the device status data into a JSON formatted buffer to be saved to
+ * the device shadow.
  * The include_state flag controls if the "state" JSON key is included in the output.
  * When calling this function to encode data for use with the UpdateDeviceState nRF Cloud
  * REST endpoint, the "state" key should not be included.
+ * The user is responsible for freeing the memory by calling @ref nrf_cloud_device_status_free.
  */
-int nrf_cloud_device_status_encode(const struct nrf_cloud_device_status * const dev_status,
-				   struct nrf_cloud_data * const output, const bool include_state);
+int nrf_cloud_device_status_shadow_encode(const struct nrf_cloud_device_status * const dev_status,
+					  struct nrf_cloud_data * const output,
+					  const bool include_state);
 
-/** @brief Free memory allocated by @ref nrf_cloud_device_status_encode. */
+/** @brief Encode the device status data as an nRF Cloud device message in the provided
+ * cJSON object.
+ */
+int nrf_cloud_device_status_msg_encode(const struct nrf_cloud_device_status *const dev_status,
+				       const int64_t timestamp,
+				       cJSON * const msg_obj_out);
+
+/** @brief Free memory allocated by @ref nrf_cloud_device_status_shadow_encode */
 void nrf_cloud_device_status_free(struct nrf_cloud_data *status);
 
 /** @brief Free memory allocated by @ref nrf_cloud_rest_fota_execution_parse */
@@ -309,6 +319,11 @@ bool nrf_cloud_set_wildcard_c2d_topic(char *const topic, size_t topic_len);
 
 /** @brief Decode a dc receive topic string into an enum value */
 enum nrf_cloud_rcv_topic nrf_cloud_decode_dc_rx_topic(const char * const topic);
+
+/** @brief Set the application version that is reported to nRF Cloud if
+ * CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS is enabled.
+ */
+void nrf_cloud_set_app_version(const char * const app_ver);
 
 #ifdef CONFIG_NRF_CLOUD_GATEWAY
 typedef int (*gateway_state_handler_t)(void *root_obj);

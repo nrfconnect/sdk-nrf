@@ -623,6 +623,14 @@ Libraries for networking
     * An issue where the same buffer was incorrectly shared between caching a P-GPS prediction and loading a new one, when external flash was used.
     * An issue where external flash only worked if the P-GPS partition was located at address 0.
 
+  * Added:
+
+    * Device status information is automatically sent to nRF Cloud when the device connects if the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS` Kconfig option is enabled.
+      Network information is included if the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK` Kconfig option is enabled.
+      SIM card information is included if the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_SIM` Kconfig option is enabled.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_DEVICE_STATUS_ENCODE_VOLTAGE` Kconfig option controls if device voltage is included when device status data is encoded.
+    * An application version string can now be included in the :c:struct:`nrf_cloud_init_param` struct.
+
 * :ref:`lib_lwm2m_location_assistance` library:
 
   * Added:
