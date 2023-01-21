@@ -359,16 +359,16 @@ clean_up:
 int nrf_cloud_rest_shadow_device_status_update(struct nrf_cloud_rest_context *const rest_ctx,
 	const char *const device_id, const struct nrf_cloud_device_status *const dev_status)
 {
-	if (dev_status == NULL) {
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(rest_ctx != NULL);
+	__ASSERT_NO_MSG(device_id != NULL);
+	__ASSERT_NO_MSG(dev_status != NULL);
 
 	int ret;
 	struct nrf_cloud_data data_out;
 
 	(void)nrf_cloud_codec_init(NULL);
 
-	ret = nrf_cloud_device_status_encode(dev_status, &data_out, false);
+	ret = nrf_cloud_device_status_shadow_encode(dev_status, &data_out, false);
 	if (ret) {
 		LOG_ERR("Failed to encode device status, error: %d", ret);
 		return ret;
