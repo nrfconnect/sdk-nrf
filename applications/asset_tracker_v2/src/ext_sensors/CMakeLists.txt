@@ -18,14 +18,15 @@ if (CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
         endif()
 
         if(NOT EXISTS "${BSEC_LIB_DIR}/libalgobsec.a")
-                assert(0 "Could not find BSEC library. Minimum version is 1.4.8.0_Generic_Release")
+                assert(0 "Could not find BSEC library. Minimum version is 1.4.9.0_Generic_Release")
         endif()
 
         target_include_directories(app PRIVATE ${bsec_dir}/examples/bsec_iot_example)
+        target_include_directories(app PRIVATE ${bsec_dir}/Arduino/bsec/src/bme68x/)
         target_include_directories(app PRIVATE ${BSEC_LIB_DIR})
 
         target_sources(app PRIVATE ${bsec_dir}/examples/bsec_iot_example/bsec_integration.c)
-        target_sources(app PRIVATE ${bsec_dir}/examples/bsec_iot_example/bme680.c)
+        target_sources(app PRIVATE ${bsec_dir}/Arduino/bsec/src/bme68x/bme68x.c)
 
         add_library(bsec_lib STATIC IMPORTED GLOBAL)
         add_dependencies(bsec_lib math_lib bsec_target)

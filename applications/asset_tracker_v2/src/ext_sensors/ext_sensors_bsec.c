@@ -133,35 +133,35 @@ static int enable_settings(void)
 	return err;
 }
 
-static int8_t bus_write(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data_ptr, uint16_t len)
+static int8_t bus_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
 {
-	uint8_t buf[len + 1];
-
-	buf[0] = reg_addr;
-	memcpy(&buf[1], reg_data_ptr, len);
-
-	return i2c_write(config.i2c_master, buf, len + 1, dev_addr);
+  uint8_t buf[length + 1];
+  buf[0] = reg_addr;
+  memcpy(&buf[1], reg_data, length);
+  const uint8_t dev_addr = *(uint8_t *)intf_ptr;
+  return i2c_write(config.i2c_master, buf, length + 1, dev_addr);
 }
 
-static int8_t bus_read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data_ptr, uint16_t len)
+static int8_t bus_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr)
 {
-	return i2c_write_read(config.i2c_master, dev_addr, &reg_addr, 1, reg_data_ptr, len);
+  const uint8_t dev_addr = *(uint8_t *)intf_ptr;
+  return i2c_write_read(config.i2c_master, dev_addr, &reg_addr, 1, reg_data, length);
 }
 
 static int64_t get_timestamp_us(void)
 {
-	return k_uptime_get() * MSEC_PER_SEC;
+	return k_uptime_get() * 1000UL;
 }
 
-static void delay_ms(uint32_t period)
+static void delay_ms(uint32_t t_us, void *intf_ptr)
 {
-	k_sleep(K_MSEC(period));
+ 	ARG_UNUSED(intf_ptr);
+  	k_sleep(K_USEC(t_us));
 }
-
 static void output_ready(int64_t timestamp, float iaq, uint8_t iaq_accuracy, float temperature,
 			 float humidity, float pressure, float raw_temperature, float raw_humidity,
-			 float gas, bsec_library_return_t bsec_status, float static_iaq,
-			 float co2_equivalent, float breath_voc_equivalent)
+			 float gas, float gas_percentage, bsec_library_return_t bsec_status, float static_iaq,
+			 float stabStatus, float runInStatus, float co2_equivalent, float breath_voc_equivalent)
 {
 	k_spinlock_key_t key = k_spin_lock(&(ctx.sensor_read_lock));
 
@@ -283,8 +283,8 @@ int ext_sensors_bsec_init(void)
 	bsec_ret = bsec_iot_init(BSEC_SAMPLE_RATE, temp_offset, bus_write, bus_read, delay_ms,
 				 state_load, config_load);
 
-	if (bsec_ret.bme680_status) {
-		LOG_ERR("Could not initialize BME680: %d", bsec_ret.bme680_status);
+	if (bsec_ret.bme68x_status) {
+		LOG_ERR("Could not initialize BME680: %d", bsec_ret.bme68x_status);
 		return -EIO;
 	} else if (bsec_ret.bsec_status) {
 		LOG_ERR("Could not initialize BSEC library: %d", bsec_ret.bsec_status);
