@@ -81,6 +81,7 @@ Matter
   * Support for Wi-Fi Network Diagnostic Cluster (which counts the number of packets received and transmitted on the Wi-Fi interface).
   * Default support for nRF7002 revision B.
   * Specific QR code and onboarding information in the documentation for each :ref:`Matter sample <matter_samples>` and the :ref:`Matter weather station <matter_weather_station_app>`.
+  * The Bluetooth LE advertising arbiter class that enables easier coexistence of application components that want to advertise their Bluetooth LE services.
 
 * Updated:
 
