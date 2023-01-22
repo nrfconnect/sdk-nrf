@@ -43,9 +43,6 @@ private:
 	void UpdateRelativeHumidityClusterState();
 	void UpdatePowerSourceClusterState();
 
-#ifdef CONFIG_MCUMGR_SMP_BT
-	static void RequestSMPAdvertisingStart(void);
-#endif
 	static void ButtonStateHandler(uint32_t buttonState, uint32_t hasChanged);
 	static void ButtonPushHandler();
 	static void ButtonReleaseHandler();
