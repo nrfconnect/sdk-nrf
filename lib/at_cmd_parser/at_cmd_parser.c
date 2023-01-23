@@ -317,6 +317,11 @@ static int at_parse_param(const char **at_params_str,
 
 	reset_state();
 
+	/* trim leading CRLF */
+	while (is_lfcr(*str)) {
+		str++;
+	}
+
 	while ((!is_terminated(*str)) && (index < max_params)) {
 		if (isspace((int)*str)) {
 			str++;
