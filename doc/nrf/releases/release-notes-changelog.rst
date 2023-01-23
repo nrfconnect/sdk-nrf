@@ -86,6 +86,8 @@ Matter
   * Default support for nRF7002 revision B.
   * Specific QR code and onboarding information in the documentation for each :ref:`Matter sample <matter_samples>` and the :ref:`Matter weather station <matter_weather_station_app>`.
   * The Bluetooth LE advertising arbiter class that enables easier coexistence of application components that want to advertise their Bluetooth LE services.
+  * Support for erasing settings partition during DFU over Bluetooth LE SMP for the Nordic nRF52 Series' SoCs.
+  * Enabled Wi-Fi and Bluetooth LE coexistence.
 
 * Updated:
 
@@ -93,6 +95,7 @@ Matter
   * :ref:`ug_matter_device_certification` page with a section about certification document templates.
   * :ref:`ug_matter_overview_commissioning` page with information about :ref:`ug_matter_network_topologies_commissioning_onboarding_formats`.
   * Default retry intervals used by Matter Reliability Protocol for Matter over Thread to account for longer round-trip times in Thread networks with multiple intermediate nodes.
+  * Changed Bluetooth LE connection timeout and parameters update timeout parameters to make communication over Bluetooth LE more reliable.
 
 * Fixed the issue of connection timing out when attaching to a Wi-Fi access point that requires Wi-Fi Protected Access 3 (WPA3).
 
