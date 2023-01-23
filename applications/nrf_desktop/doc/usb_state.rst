@@ -26,14 +26,19 @@ Configuration
 The module is enabled by selecting :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_options>` option.
 The option selects :kconfig:option:`CONFIG_USB_DEVICE_STACK` and :kconfig:option:`CONFIG_USB_DEVICE_HID` Kconfig options.
 
-When enabling the USB support for the device, set the following generic device options:
+Additionally, you can also configure the options described in the following sections.
+
+.. _nrf_desktop_usb_state_identifiers:
+
+USB device identifiers
+======================
+
+When the USB support is enabled for the device, the following options are by default set to common :ref:`nrf_desktop_hid_device_identifiers` defined for the nRF Desktop application:
 
 * :kconfig:option:`CONFIG_USB_DEVICE_MANUFACTURER` - Manufacturer's name.
 * :kconfig:option:`CONFIG_USB_DEVICE_PRODUCT` - Product name.
 * :kconfig:option:`CONFIG_USB_DEVICE_VID` - Vendor ID (VID) number.
 * :kconfig:option:`CONFIG_USB_DEVICE_PID` - Product ID (PID) number.
-
-Additionally, you can also configure the options described in the following sections.
 
 Low latency device configuration
 ================================

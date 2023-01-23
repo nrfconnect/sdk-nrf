@@ -10,6 +10,7 @@
 #include <zephyr/settings/settings.h>
 
 #include "fp_storage_pn.h"
+#include "fp_storage_manager.h"
 
 #define SETTINGS_PN_SUBTREE_NAME "fp_pn"
 #define SETTINGS_PN_KEY_NAME "pn"
@@ -22,6 +23,7 @@ BUILD_ASSERT(SETTINGS_NAME_SEPARATOR == '/');
 static char personalized_name[FP_STORAGE_PN_BUF_LEN];
 
 static int settings_set_err;
+static bool reset_prepare;
 static atomic_t settings_loaded = ATOMIC_INIT(false);
 
 
@@ -73,6 +75,11 @@ static int fp_settings_set(const char *name, size_t len, settings_read_cb read_c
 
 static int fp_settings_commit(void)
 {
+	if (reset_prepare) {
+		/* The module expects to be reset by Fast Pair storage manager. */
+		return 0;
+	}
+
 	if (settings_set_err) {
 		return settings_set_err;
 	}
@@ -81,9 +88,6 @@ static int fp_settings_commit(void)
 
 	return 0;
 }
-
-SETTINGS_STATIC_HANDLER_DEFINE(fast_pair_storage_pn, SETTINGS_PN_SUBTREE_NAME, NULL,
-			       fp_settings_set, fp_settings_commit, NULL);
 
 int fp_storage_pn_get(char *buf)
 {
@@ -119,3 +123,45 @@ int fp_storage_pn_save(const char *pn_to_save)
 
 	return 0;
 }
+
+static void fp_storage_pn_ram_clear(void)
+{
+	memset(personalized_name, 0, sizeof(personalized_name));
+
+	settings_set_err = 0;
+	atomic_set(&settings_loaded, false);
+
+	reset_prepare = false;
+}
+
+static void fp_storage_pn_empty_init(void)
+{
+	atomic_set(&settings_loaded, true);
+}
+
+static int fp_storage_pn_reset(void)
+{
+	int err;
+
+	err = settings_delete(SETTINGS_PN_FULL_NAME);
+	if (err) {
+		return err;
+	}
+
+	fp_storage_pn_ram_clear();
+
+	fp_storage_pn_empty_init();
+
+	return 0;
+}
+
+static void reset_prepare_set(void)
+{
+	atomic_set(&settings_loaded, false);
+	reset_prepare = true;
+}
+
+SETTINGS_STATIC_HANDLER_DEFINE(fp_storage_pn, SETTINGS_PN_SUBTREE_NAME, NULL, fp_settings_set,
+			       fp_settings_commit, NULL);
+
+FP_STORAGE_MANAGER_MODULE_REGISTER(fp_storage_pn, fp_storage_pn_reset, reset_prepare_set);

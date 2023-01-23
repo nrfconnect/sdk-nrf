@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <modem/modem_info.h>
+#include <lwm2m_object.h>
 #include <net/lwm2m_client_utils.h>
 #include <net/lwm2m_client_utils_location.h>
 
@@ -63,6 +64,7 @@ static int usb_ma = 900;
 
 static bool connected;
 static bool no_serv_suspended;
+static bool update_session_lifetime;
 
 static void cloud_lwm2m_rd_client_stop(void);
 
@@ -197,6 +199,18 @@ static int cloud_lwm2m_init(const struct device *unused)
 	return 0;
 }
 
+static void cloud_lwm2m_rd_client_update_lifetime(int srv_obj_inst)
+{
+	char pathstr[MAX_RESOURCE_LEN];
+
+	snprintk(pathstr, sizeof(pathstr), "1/%d/1", srv_obj_inst);
+	lwm2m_engine_set_u32(pathstr, CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME);
+	mosh_print("LwM2M: Set session lifetime to default value %d",
+		   CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME);
+
+	update_session_lifetime = false;
+}
+
 static void cloud_lwm2m_rd_client_event_cb(struct lwm2m_ctx *client_ctx,
 					   enum lwm2m_rd_client_event client_event)
 {
@@ -212,6 +226,11 @@ static void cloud_lwm2m_rd_client_event_cb(struct lwm2m_ctx *client_ctx,
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_COMPLETE:
 		mosh_print("LwM2M: Bootstrap registration complete");
+		connected = false;
+		/* After bootstrapping the session lifetime needs to be set to the configured
+		 * default, otherwise the default value from the server is taken into use.
+		 */
+		update_session_lifetime = true;
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_TRANSFER_COMPLETE:
@@ -227,6 +246,10 @@ static void cloud_lwm2m_rd_client_event_cb(struct lwm2m_ctx *client_ctx,
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_COMPLETE:
 		mosh_print("LwM2M: Registration complete");
 		connected = true;
+		/* Check if session lifetime needs to be updated. */
+		if (update_session_lifetime) {
+			cloud_lwm2m_rd_client_update_lifetime(client.srv_obj_inst);
+		}
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REG_TIMEOUT:
@@ -243,7 +266,6 @@ static void cloud_lwm2m_rd_client_event_cb(struct lwm2m_ctx *client_ctx,
 	case LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE:
 		mosh_print("LwM2M: Deregister failure!");
 		connected = false;
-		cloud_lwm2m_rd_client_stop();
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_DISCONNECT:
@@ -267,11 +289,20 @@ static void cloud_lwm2m_rd_client_event_cb(struct lwm2m_ctx *client_ctx,
 	}
 }
 
-static void cloud_lwm2m_rd_client_stop(void)
+static void cloud_lwm2m_rd_client_stop_work_fn(struct k_work *work)
 {
+	ARG_UNUSED(work);
+
 	mosh_print("LwM2M: Stopping LwM2M client");
 
 	lwm2m_rd_client_stop(&client, cloud_lwm2m_rd_client_event_cb, false);
+}
+
+static K_WORK_DEFINE(cloud_lwm2m_rd_client_stop_work, cloud_lwm2m_rd_client_stop_work_fn);
+
+static void cloud_lwm2m_rd_client_stop(void)
+{
+	k_work_submit(&cloud_lwm2m_rd_client_stop_work);
 }
 
 struct lwm2m_ctx *cloud_lwm2m_client_ctx_get(void)

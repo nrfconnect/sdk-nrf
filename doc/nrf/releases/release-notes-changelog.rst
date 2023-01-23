@@ -91,6 +91,7 @@ Matter
   * Default heap implementation to use Zephyr's ``sys_heap`` (:kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEAP`) to better control the RAM usage of Matter applications.
   * :ref:`ug_matter_device_certification` page with a section about certification document templates.
   * :ref:`ug_matter_overview_commissioning` page with information about :ref:`ug_matter_network_topologies_commissioning_onboarding_formats`.
+  * Default retry intervals used by Matter Reliability Protocol for Matter over Thread to account for longer round-trip times in Thread networks with multiple intermediate nodes.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
@@ -190,6 +191,8 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
+* Removed separate configurations enabling :ref:`zephyr:shell_api` (:file:`prj_shell.conf`).
+  Shell support can be enabled for a given configuration with the single Kconfig option (:ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>`).
 * Added an application log informing about the configuration option value update in the :ref:`nrf_desktop_motion`.
 * Added application-specific Kconfig options (:ref:`CONFIG_DESKTOP_LOG <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_SHELL<config_desktop_app_options>`) to simplify the debug configurations for the Logging and Shell subsystems.
   See the debug configuration section of the :ref:`nrf_desktop` application for more details.
@@ -284,6 +287,8 @@ nRF9160 samples
 
     * External location service handling to test :ref:`lib_location` library functionality commonly used by applications.
       The :ref:`lib_nrf_cloud` library is used with MQTT for location requests to the cloud.
+    * New command ``th pipeline`` for executing several MoSh commands sequentially in one thread.
+    * New command ``sleep`` for introducing wait periods in between commands when using ``th pipeline``.
 
   * Updated:
 
@@ -362,7 +367,14 @@ Matter samples
 
 * :ref:`matter_lock_sample`:
 
-  * Added `thread_wifi_switched` build type that enables switching between Thread and Wi-Fi network support in the field.
+  * Added:
+
+    * `thread_wifi_switched` build type that enables switching between Thread and Wi-Fi network support in the field.
+    * Wi-Fi low power configuration using Wi-Fi's :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
+
+* :ref:`matter_light_switch_sample`:
+
+  * Added Wi-Fi low power configuration using Wi-Fi's :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
 
 NFC samples
 -----------

@@ -7,8 +7,8 @@
 #include <zephyr/ztest.h>
 #include <zephyr/settings/settings.h>
 
-#include "fp_storage.h"
-#include "fp_storage_priv.h"
+#include "fp_storage_ak.h"
+#include "fp_storage_ak_priv.h"
 
 #include "storage_mock.h"
 #include "common_utils.h"
@@ -31,14 +31,14 @@ static void teardown_fn(void)
 	zassert_not_equal(err, 0, "Expected error in settings load");
 	cu_account_keys_validate_unloaded();
 
-	fp_storage_ram_clear();
+	fp_storage_ak_ram_clear();
 	storage_mock_clear();
 }
 
 /* Self test is done to ensure that the test method is valid. */
 static void test_self_teardown_fn(void)
 {
-	fp_storage_ram_clear();
+	fp_storage_ak_ram_clear();
 	storage_mock_clear();
 	cu_account_keys_validate_unloaded();
 }

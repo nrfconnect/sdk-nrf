@@ -635,6 +635,22 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_SCA_UPDATE)) {
+		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			err = sdc_support_sca_central();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+
+		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			err = sdc_support_sca_peripheral();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+	}
+
 	return 0;
 }
 

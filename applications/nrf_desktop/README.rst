@@ -144,8 +144,8 @@ The following threads are kept running in the application:
 * System-related threads
     * Idle thread
     * System workqueue thread
-    * Logger thread (on debug :ref:`build types <nrf_desktop_requirements_build_types>`)
-    * Shell thread (on :ref:`build types <nrf_desktop_requirements_build_types>` with shell enabled)
+    * Logger thread (when :ref:`zephyr:logging_api` is enabled)
+    * Shell thread (when :ref:`zephyr:shell_api` is enabled)
     * Threads related to Bluetooth® LE (the exact number depends on the selected Link Layer)
 * Application-related threads
     * Motion sensor thread (running only on mouse)
@@ -398,16 +398,15 @@ The following build types are available for various boards in the nRF Desktop:
   See :ref:`nrf_desktop_board_configuration_files` for details about which boards have bootloader included in their default configuration.
 * ``release`` - Release version of the application with no debugging features.
 * ``debug`` - Debug version of the application; the same as the ``release`` build type, but with debug options enabled.
-* ``shell`` - ``debug`` build type with the shell enabled.
 * ``wwcb`` - ``debug`` build type with the support for the B0 bootloader enabled for `Works With ChromeBook (WWCB)`_.
 
 In nRF Desktop, not every development kit can support every build type mentioned above.
 If the given build type is not supported on the selected DK, an error message will appear when `Building and running`_.
-For example, if the ``shell`` build type is not supported on the selected DK, the following notification appears:
+For example, if the ``wwcb`` build type is not supported on the selected DK, the following notification appears:
 
 .. code-block:: console
 
-   File not found: ./ncs/nrf/applications/nrf_desktop/configuration/nrf52dmouse_nrf52832/prj_shell.conf
+   File not found: ./ncs/nrf/applications/nrf_desktop/configuration/nrf52dmouse_nrf52832/prj_wwcb.conf
 
 |nrf_desktop_build_type_conf|
 For example, the nRF52840 Development Kit supports the ``keyboard`` configuration, which is defined in the :file:`prj_keyboard.conf` file in the :file:`configuration/nrf52840dk_nrf52840` directory.
@@ -965,6 +964,23 @@ Apart from the device role, the application-specific Kconfigs specify a set of s
 By default, the nRF Desktop devices use predefined format of HID reports.
 The common HID report map is defined in the :file:`configuration/common/hid_report_desc.c` file.
 
+.. _nrf_desktop_hid_device_identifiers:
+
+HID device identifiers
+~~~~~~~~~~~~~~~~~~~~~~
+
+The nRF Desktop application defines the following common device identifiers:
+
+* Manufacturer (:ref:`CONFIG_DESKTOP_DEVICE_MANUFACTURER <config_desktop_app_options>`)
+* Vendor ID (:ref:`CONFIG_DESKTOP_DEVICE_VID <config_desktop_app_options>`)
+* Product name (:ref:`CONFIG_DESKTOP_DEVICE_PRODUCT <config_desktop_app_options>`)
+* Product ID (:ref:`CONFIG_DESKTOP_DEVICE_PID <config_desktop_app_options>`)
+
+These Kconfig options determine the default values of device identifiers used for:
+
+* :ref:`nrf_desktop_usb_state_identifiers`
+* BLE GATT Device Information Service (:kconfig:option:`CONFIG_BT_DIS`) that is required for :ref:`nrf_desktop_bluetooth_guide_peripheral`
+
 Debug configuration
 -------------------
 
@@ -975,7 +991,7 @@ The :ref:`CONFIG_DESKTOP_LOG <config_desktop_app_options>` Kconfig option enable
 This option overlays Kconfig option defaults from the Logging subsystem to align them with the nRF Desktop requirements.
 The nRF Desktop configuration uses Segger J-Link RTT as the Logging subsystem backend.
 
-The :ref:`CONFIG_DESKTOP_SHELL<config_desktop_app_options>` Kconfig option enables support for CLI in the nRF Desktop application.
+The :ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>` Kconfig option enables support for CLI in the nRF Desktop application.
 This option overlays Kconfig option defaults from the Shell subsystem to align them with the nRF Desktop requirements.
 The nRF Desktop configuration uses Segger J-Link RTT as the Shell subsystem backend.
 If both shell and logging are enabled, logger uses shell as the logging backend.
@@ -1088,8 +1104,6 @@ nRF52832 Desktop Keyboard (nrf52kbd_nrf52832)
       * The application is configured to act as a keyboard, with the Bluetooth LE transport enabled.
       * Bluetooth is configured to use Nordic's SoftDevice link layer.
       * The preconfigured build types configure the device without the bootloader in debug mode and with B0 bootloader in release mode due to memory size limits.
-      * Use configuration ``prj_shell.conf`` to add ``shell`` build type.
-        This configuration do not have bootloader due to memory size limits.
       * The board supports release :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration (:file:`prj_release_fast_pair.conf`).
 
 nRF52840 USB Dongle (nrf52840dongle_nrf52840) and nRF52833 USB Dongle (nrf52833dongle_nrf52833)
@@ -1566,6 +1580,7 @@ The HID over GATT profile specification requires Bluetooth Peripherals to define
 * HID Service - Handled in the :ref:`nrf_desktop_hids`.
 * Battery Service - Handled in the :ref:`nrf_desktop_bas`.
 * Device Information Service - Implemented in Zephyr and enabled with :kconfig:option:`CONFIG_BT_DIS`.
+  The device identifiers are configured according to the common :ref:`nrf_desktop_hid_device_identifiers` by default.
   It can be configured using Kconfig options with the ``CONFIG_BT_DIS`` prefix.
 
 The nRF Desktop peripherals must also define a dedicated GATT Service, which is used to provide the following information:

@@ -7,7 +7,7 @@
 #include <zephyr/ztest.h>
 #include <zephyr/settings/settings.h>
 
-#include "fp_storage.h"
+#include "fp_storage_ak.h"
 #include "fp_common.h"
 
 #include "storage_mock.h"
@@ -21,7 +21,7 @@ static void reload_keys_from_storage(void)
 {
 	int err;
 
-	fp_storage_ram_clear();
+	fp_storage_ak_ram_clear();
 	cu_account_keys_validate_unloaded();
 	err = settings_load();
 
@@ -42,7 +42,7 @@ static void setup_fn(void)
 
 static void teardown_fn(void)
 {
-	fp_storage_ram_clear();
+	fp_storage_ak_ram_clear();
 	storage_mock_clear();
 	cu_account_keys_validate_unloaded();
 }
@@ -57,7 +57,7 @@ static void test_unloaded(void)
 	cu_account_keys_validate_unloaded();
 	cu_generate_account_key(seed, &account_key);
 
-	err = fp_storage_account_key_save(&account_key);
+	err = fp_storage_ak_save(&account_key);
 	zassert_equal(err, -ENODATA, "Expected error before settings load");
 }
 
@@ -69,14 +69,14 @@ static void test_one_key(void)
 	struct fp_account_key account_key;
 
 	cu_generate_account_key(seed, &account_key);
-	err = fp_storage_account_key_save(&account_key);
+	err = fp_storage_ak_save(&account_key);
 	zassert_ok(err, "Unexpected error during Account Key save");
 
 	struct fp_account_key read_keys[ACCOUNT_KEY_MAX_CNT];
 	size_t read_cnt = ACCOUNT_KEY_MAX_CNT;
 
-	zassert_equal(fp_storage_account_key_count(), 1, "Invalid Account Key count");
-	err = fp_storage_account_keys_get(read_keys, &read_cnt);
+	zassert_equal(fp_storage_ak_count(), 1, "Invalid Account Key count");
+	err = fp_storage_ak_get(read_keys, &read_cnt);
 	zassert_ok(err, "Getting Account Keys failed");
 	zassert_equal(read_cnt, 1, "Invalid Account Key count");
 	zassert_true(cu_check_account_key_seed(seed, &read_keys[0]), "Invalid key on read");
@@ -86,8 +86,8 @@ static void test_one_key(void)
 	memset(read_keys, 0, sizeof(read_keys));
 	read_cnt = ACCOUNT_KEY_MAX_CNT;
 
-	zassert_equal(fp_storage_account_key_count(), 1, "Invalid Account Key count");
-	err = fp_storage_account_keys_get(read_keys, &read_cnt);
+	zassert_equal(fp_storage_ak_count(), 1, "Invalid Account Key count");
+	err = fp_storage_ak_get(read_keys, &read_cnt);
 	zassert_ok(err, "Getting Account Keys failed");
 	zassert_equal(read_cnt, 1, "Invalid Account Key count");
 	zassert_true(cu_check_account_key_seed(seed, &read_keys[0]), "Invalid key on read");
@@ -101,18 +101,18 @@ static void test_duplicate(void)
 	struct fp_account_key account_key;
 
 	cu_generate_account_key(seed, &account_key);
-	err = fp_storage_account_key_save(&account_key);
+	err = fp_storage_ak_save(&account_key);
 	zassert_ok(err, "Unexpected error during Account Key save");
 
 	/* Try to add key duplicate. */
-	err = fp_storage_account_key_save(&account_key);
+	err = fp_storage_ak_save(&account_key);
 	zassert_ok(err, "Unexpected error during Account Key save");
 
 	struct fp_account_key read_keys[ACCOUNT_KEY_MAX_CNT];
 	size_t read_cnt = ACCOUNT_KEY_MAX_CNT;
 
-	zassert_equal(fp_storage_account_key_count(), 1, "Invalid Account Key count");
-	err = fp_storage_account_keys_get(read_keys, &read_cnt);
+	zassert_equal(fp_storage_ak_count(), 1, "Invalid Account Key count");
+	err = fp_storage_ak_get(read_keys, &read_cnt);
 	zassert_ok(err, "Getting Account Keys failed");
 	zassert_equal(read_cnt, 1, "Invalid Account Key count");
 	zassert_true(cu_check_account_key_seed(seed, &read_keys[0]), "Invalid key on read");
@@ -122,8 +122,8 @@ static void test_duplicate(void)
 	memset(read_keys, 0, sizeof(read_keys));
 	read_cnt = ACCOUNT_KEY_MAX_CNT;
 
-	zassert_equal(fp_storage_account_key_count(), 1, "Invalid Account Key count");
-	err = fp_storage_account_keys_get(read_keys, &read_cnt);
+	zassert_equal(fp_storage_ak_count(), 1, "Invalid Account Key count");
+	err = fp_storage_ak_get(read_keys, &read_cnt);
 	zassert_ok(err, "Getting Account Keys failed");
 	zassert_equal(read_cnt, 1, "Invalid Account Key count");
 	zassert_true(cu_check_account_key_seed(seed, &read_keys[0]), "Invalid key on read");
@@ -139,7 +139,7 @@ static void generate_and_store_keys(uint8_t first_seed, uint8_t gen_count)
 	for (uint8_t i = 0; i < gen_count; i++) {
 		cu_generate_account_key(i + first_seed, &account_key);
 
-		err = fp_storage_account_key_save(&account_key);
+		err = fp_storage_ak_save(&account_key);
 		zassert_ok(err, "Failed to store Account Key");
 	}
 }
@@ -158,7 +158,7 @@ static void test_invalid_calls(void)
 	for (size_t read_cnt = 0; read_cnt <= ACCOUNT_KEY_MAX_CNT; read_cnt++) {
 		size_t read_cnt_ret = read_cnt;
 
-		err = fp_storage_account_keys_get(read_keys, &read_cnt_ret);
+		err = fp_storage_ak_get(read_keys, &read_cnt_ret);
 
 		if (read_cnt < test_key_cnt) {
 			zassert_equal(err, -EINVAL, "Expected error when array is too small");
@@ -176,7 +176,7 @@ static void test_invalid_calls(void)
 
 	uint8_t find_seed = first_seed;
 
-	err = fp_storage_account_key_find(&found_key, NULL, &find_seed);
+	err = fp_storage_ak_find(&found_key, NULL, &find_seed);
 	zassert_equal(err, -EINVAL, "Expected error when callback is NULL");
 }
 
@@ -199,7 +199,7 @@ static void test_find(void)
 		struct fp_account_key account_key;
 		uint8_t prev_seed = seed;
 
-		err = fp_storage_account_key_find(&account_key, account_key_find_cb, &seed);
+		err = fp_storage_ak_find(&account_key, account_key_find_cb, &seed);
 		zassert_ok(err, "Failed to find Account Key");
 		zassert_equal(prev_seed, seed, "Context should not be modified");
 		zassert_true(cu_check_account_key_seed(seed, &account_key),
@@ -209,7 +209,7 @@ static void test_find(void)
 	for (uint8_t seed = first_seed; seed < (first_seed + test_key_cnt + 1); seed++) {
 		uint8_t prev_seed = seed;
 
-		err = fp_storage_account_key_find(NULL, account_key_find_cb, &seed);
+		err = fp_storage_ak_find(NULL, account_key_find_cb, &seed);
 		zassert_equal(prev_seed, seed, "Context should not be modified");
 		if (err) {
 			zassert_equal(seed, (first_seed + test_key_cnt),

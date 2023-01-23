@@ -358,7 +358,7 @@ nRF9160 samples
   * :ref:`nrf_cloud_mqtt_multi_service` sample, demonstrating a simple but robust integration of location services, FOTA, sensor sampling, and more.
   * Shell functionality to HTTP Update samples.
   * :ref:`nrf_cloud_rest_cell_pos_sample` sample, demonstrating how to use the :ref:`lib_nrf_cloud_rest` library to perform cellular positioning requests.
-  * :ref:`ciphersuites` sample, demonstrating how to use TLS ciphersuites.
+  * :ref:`ciphersuites` sample, demonstrating how to use TLS cipher suites.
 
 * Secure Partition Manager (rather than TF-M) is enabled by default for the applications and samples that support Thingy:91.
 

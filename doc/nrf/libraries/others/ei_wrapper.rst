@@ -27,7 +27,7 @@ Configuration
 Enable the Edge Impulse wrapper by :kconfig:option:`CONFIG_EI_WRAPPER` option.
 The option is enabled by default if :kconfig:option:`CONFIG_EDGE_IMPULSE` is set.
 
-The Edge Impulse NCS library can be configured with the following Kconfig options:
+The Edge Impulse |NCS| library can be configured with the following Kconfig options:
 
 * :kconfig:option:`CONFIG_EI_WRAPPER_DATA_BUF_SIZE`
 * :kconfig:option:`CONFIG_EI_WRAPPER_THREAD_STACK_SIZE`

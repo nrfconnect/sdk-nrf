@@ -653,11 +653,14 @@ menuconfig BT_MESH_SCENE_SRV
 
 config BT_MESH_SCENES_MAX
 	int "Max number of scenes"
-	default 4
+	default 16
 	range 1 65535
 	depends on BT_MESH_SCENE_SRV
 	help
-	  Max number of scenes that can be stored by a single Scene Server.
+	  Maximum number of scenes that can be stored by a single Scene Server.
+	  According to the specification, this value should be 16.
+	  The Bluetooth Mesh Model specification v1.0.1 (MshMDLv1.0.1) defines the
+	  Scene Register state as a 16-element array of 16-bit values representing a Scene Number.
 
 config BT_MESH_SCENE_CLI
 	bool "Scene Client"

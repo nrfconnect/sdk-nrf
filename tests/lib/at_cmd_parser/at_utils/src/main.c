@@ -20,7 +20,7 @@ char *string_return     = "mfw_nrf9160_0.7.0-23.prealpha";
 static void test_notification_detection(void)
 {
 	for (char c = 0; c < 127; ++c) {
-		if ((c == '%') || (c == '+')) {
+		if ((c == '%') || (c == '+') || (c == '#')) {
 			continue;
 		}
 
@@ -31,6 +31,8 @@ static void test_notification_detection(void)
 	zassert_true(is_notification('%'),
 		     "Notification char was not detected");
 	zassert_true(is_notification('+'),
+		     "Notification char was not detected");
+	zassert_true(is_notification('#'),
 		     "Notification char was not detected");
 }
 

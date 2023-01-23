@@ -12,7 +12,7 @@ tests:
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
   sample.matter.light_bulb.debug.nrf7002dk:
     build_only: true
-    extra_args: CONFIG_CHIP_LIB_SHELL=y CONFIG_NET_SHELL=y
+    extra_args: CONFIG_CHIP_LIB_SHELL=y
     integration_platforms:
       - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf7002dk_nrf5340_cpuapp
@@ -53,7 +53,7 @@ tests:
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
   sample.matter.light_bulb.debug.nrf7002_ek:
     build_only: true
-    extra_args: CONFIG_CHIP_LIB_SHELL=y CONFIG_NET_SHELL=y SHIELD=nrf7002_ek
+    extra_args: CONFIG_CHIP_LIB_SHELL=y SHIELD=nrf7002_ek
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp

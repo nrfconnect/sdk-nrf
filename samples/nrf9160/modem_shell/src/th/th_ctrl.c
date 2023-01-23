@@ -43,6 +43,7 @@ struct th_ctrl_data {
 	uint16_t cmd_len;
 	uint8_t th_nbr;
 	bool background;
+	bool pipeline;
 };
 
 static struct th_ctrl_data th_work_data_1;
@@ -112,32 +113,48 @@ static void th_ctrl_work_handler(struct k_work *work_item)
 #if defined(CONFIG_MOSH_IPERF3)
 		if (!strcmp(data->argv[0], "iperf3")) {
 			ret = iperf_main(data->argc, data->argv, data->results_str,
-					TH_RESPONSE_BUFFER_SIZE, &(data->kill_signal));
+					 TH_RESPONSE_BUFFER_SIZE, &(data->kill_signal));
 		}
 #endif
 #if defined(CONFIG_MOSH_PING)
 		if (!strcmp(data->argv[0], "ping")) {
 			ret = icmp_ping_shell_th(data->shell, data->argc, data->argv,
-					      data->results_str,
-					      TH_RESPONSE_BUFFER_SIZE,
-					      &(data->kill_signal));
+						 data->results_str,
+						 TH_RESPONSE_BUFFER_SIZE,
+						 &(data->kill_signal));
 		}
 #endif
 	} else {
 		assert(data->results_str == NULL);
 
+		if (data->pipeline) {
+			for (int cmd_ix = 0; cmd_ix < data->argc; cmd_ix++) {
+				mosh_print("Executing command %d \"%s\"...",
+					   cmd_ix,
+					   data->argv[cmd_ix]);
+				shell_execute_cmd(data->shell, data->argv[cmd_ix]);
+			}
+		} else {
 #if defined(CONFIG_MOSH_IPERF3)
-		if (!strcmp(data->argv[0], "iperf3")) {
-			ret = iperf_main(data->argc, data->argv, NULL, 0, &(data->kill_signal));
-		}
+			if (!strcmp(data->argv[0], "iperf3")) {
+				ret = iperf_main(data->argc,
+						 data->argv,
+						 NULL,
+						 0,
+						 &(data->kill_signal));
+			}
 #endif
 #if defined(CONFIG_MOSH_PING)
-		if (!strcmp(data->argv[0], "ping")) {
-			ret = icmp_ping_shell_th(data->shell, data->argc, data->argv,
-					      NULL, 0,
-					      &(data->kill_signal));
+			if (!strcmp(data->argv[0], "ping")) {
+				ret = icmp_ping_shell_th(data->shell,
+							 data->argc,
+							 data->argv,
+							 NULL,
+							 0,
+							 &(data->kill_signal));
 		}
 #endif
+		}
 	}
 
 	mosh_print("--------------------------------------------------");
@@ -252,7 +269,7 @@ void th_ctrl_result_print(int nbr)
 
 static void th_ctrl_data_start(struct th_ctrl_data *data,
 			       const struct shell *shell, size_t argc,
-			       char **argv, bool is_background)
+			       char **argv, bool is_background, bool is_pipeline)
 {
 	assert(!k_work_is_pending(&(data->work)));
 
@@ -288,6 +305,7 @@ static void th_ctrl_data_start(struct th_ctrl_data *data,
 	}
 
 	data->background = is_background;
+	data->pipeline = is_pipeline;
 	data->shell = shell;
 	data->cmd_len = shell->ctx->cmd_buff_len;
 
@@ -299,32 +317,38 @@ static void th_ctrl_data_start(struct th_ctrl_data *data,
 	}
 }
 
-void th_ctrl_start(const struct shell *shell, size_t argc, char **argv, bool is_background)
+void th_ctrl_start(const struct shell *shell,
+		   size_t argc,
+		   char **argv,
+		   bool is_background,
+		   bool is_pipeline)
 {
-	bool start = false;
+	if (!is_pipeline) {
+		bool start = false;
 
-	/* Only iperf3 and ping are currently supported */
+		/* Only iperf3 and ping are currently supported */
 #if defined(CONFIG_MOSH_IPERF3)
-	if (!strcmp(argv[1], "iperf3")) {
-		start = true;
-	}
+		if (!strcmp(argv[1], "iperf3")) {
+			start = true;
+		}
 #endif
 #if defined(CONFIG_MOSH_PING)
-	if (!strcmp(argv[1], "ping")) {
-		start = true;
-	}
+		if (!strcmp(argv[1], "ping")) {
+			start = true;
+		}
 #endif
-	if (!start) {
-		mosh_error("Cannot start a thread: command %s", argv[1]);
-		return;
+		if (!start) {
+			mosh_error("Cannot start a thread: command %s", argv[1]);
+			return;
+		}
 	}
 
 	mosh_print("Starting ...");
 
 	if (!k_work_is_pending(&(th_work_data_1.work))) {
-		th_ctrl_data_start(&th_work_data_1, shell, argc, argv, is_background);
+		th_ctrl_data_start(&th_work_data_1, shell, argc, argv, is_background, is_pipeline);
 	} else if (!k_work_is_pending(&(th_work_data_2.work))) {
-		th_ctrl_data_start(&th_work_data_2, shell, argc, argv, is_background);
+		th_ctrl_data_start(&th_work_data_2, shell, argc, argv, is_background, is_pipeline);
 	} else {
 		mosh_error("Worker threads are all busy. Try again later.");
 	}

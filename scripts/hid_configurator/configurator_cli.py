@@ -177,7 +177,12 @@ def perform_led_stream(dev, args):
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(allow_abbrev=False)
+    try:
+        parser = argparse.ArgumentParser(allow_abbrev=False)
+    except TypeError:
+        # The allow_abbrev argument was added in Python 3.5.
+        # Skip setting the value if used Python version does not support it.
+        parser = argparse.ArgumentParser()
 
     parser.add_argument(dest='device', default=None, nargs='?',
                         help='Device specified by type, board name or HW ID '

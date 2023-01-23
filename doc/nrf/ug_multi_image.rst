@@ -103,7 +103,7 @@ Updating the build scripts
 ==========================
 
 To make it possible to enable a child image from a parent image, you must include the child image in the build script.
-If you need to perform this operation out-of-tree (that is, without modifying NCS code), or from the top-level CMakeLists.txt in your sample, see :ref:`ug_multi_image_add_child_image_oot`.
+If you need to perform this operation out-of-tree (that is, without modifying |NCS| code), or from the top-level CMakeLists.txt in your sample, see :ref:`ug_multi_image_add_child_image_oot`.
 
 To do so, place the code from the following example in the CMake tree that is conditional on a configuration option.
 In the |NCS|, the code is included in the :file:`CMakeLists.txt` file for the samples, and in the MCUboot repository.
@@ -147,7 +147,7 @@ Adding a child image using Zephyr modules
 =========================================
 
 Any call to ``add_child_image`` must be done *after* :file:`nrf/cmake/extensions.cmake` is invoked, but *before* :file:`multi_image.cmake` is invoked.
-In some scenarios, this is not possible without modifying the NCS build code, for example, from top-level sample files and project :file:`CMakeLists.txt` files.
+In some scenarios, this is not possible without modifying the |NCS| build code, for example, from top-level sample files and project :file:`CMakeLists.txt` files.
 
 To avoid this issue, use the *Modules* mechanism provided by the Zephyr build system.
 The following example shows how to add the required module from a top-level sample :file:`CMakeLists.txt`.

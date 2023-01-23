@@ -9,10 +9,15 @@ Matter: Door lock
    :depth: 2
 
 This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a door lock device with one basic bolt.
+You can use this sample as a reference for creating your application.
+
 This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread or Wi-Fi network.
 Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol can be supported for a specific lock device.
-In case of Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
-You can use this sample as a reference for creating your application.
+Depending on the network you choose:
+
+* In case of Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
+* In case of Wi-Fi, this device works in the :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
+  This means that the device sleeps most of the time and wakes up on each Delivery Traffic Indication Message (DTIM) interval to poll for pending messages.
 
 Requirements
 ************
@@ -371,6 +376,12 @@ To test switching between Thread and Wi-Fi, complete the following steps:
    .. code-block:: console
 
       west flash --erase
+
+#. Erase the entire content of the external flash using the following command:
+
+   .. code-block:: console
+
+      nrfjprog --qspieraseall
 
 #. Program the application to a partition of the external flash using the following command:
 

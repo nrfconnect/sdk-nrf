@@ -9,10 +9,15 @@ Matter: Light switch
    :depth: 2
 
 This light switch sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a switch device that binds with lighting devices and changes the state of their LEDs.
+You can use this sample as a reference for creating your own application.
+
 When configured together with the :ref:`Matter light bulb <matter_light_bulb_sample>` sample (or other lighting sample) and when using a Matter controller, the light switch can control one light bulb directly or a group of light bulbs remotely over a Matter network built on top of a low-power, 802.15.4 Thread, or on top of a Wi-Fi network.
 Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol can be supported for a specific light switch device.
-In case of Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
-You can use this sample as a reference for creating your own application.
+Depending on the network you choose:
+
+* In case of Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
+* In case of Wi-Fi, this device works in the :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
+  This means that the device sleeps most of the time and wakes up on each Delivery Traffic Indication Message (DTIM) interval to poll for pending messages.
 
 Requirements
 ************

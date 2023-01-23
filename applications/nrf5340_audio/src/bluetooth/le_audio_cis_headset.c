@@ -97,7 +97,7 @@ struct bt_csip_set_member_register_param csip_param = {
 static le_audio_receive_cb receive_cb;
 
 static struct bt_codec lc3_codec = BT_CODEC_LC3(
-	BT_CODEC_LC3_FREQ_48KHZ, (BT_CODEC_LC3_DURATION_10 | BT_CODEC_LC3_DURATION_PREFER_10),
+	BT_AUDIO_CODEC_CAPABILIY_FREQ, (BT_CODEC_LC3_DURATION_10 | BT_CODEC_LC3_DURATION_PREFER_10),
 	CHANNEL_COUNT_1, LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
 	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, BT_AUDIO_CONTEXT_TYPE_MEDIA);
 
@@ -130,6 +130,8 @@ static struct bt_audio_stream
 	audio_streams[CONFIG_BT_ASCS_ASE_SNK_COUNT + CONFIG_BT_ASCS_ASE_SRC_COUNT];
 
 #if CONFIG_STREAM_BIDIRECTIONAL
+BUILD_ASSERT(CONFIG_BT_ASCS_ASE_SRC_COUNT <= 1,
+	     "CIS headset only supports one source stream for now");
 static struct bt_audio_source {
 	struct bt_audio_stream *stream;
 	uint32_t seq_num;
@@ -259,10 +261,6 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_audio_ep *ep, enu
 {
 	int ret;
 
-#if CONFIG_STREAM_BIDIRECTIONAL
-	static size_t configured_source_stream_count;
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
-
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		struct bt_audio_stream *audio_stream = &audio_streams[i];
 
@@ -290,7 +288,9 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_audio_ep *ep, enu
 			else if (dir == BT_AUDIO_DIR_SOURCE) {
 				LOG_DBG("BT_AUDIO_DIR_SOURCE");
 				print_codec(codec);
-				sources[configured_source_stream_count++].stream = audio_stream;
+
+				/* CIS headset only supports one source stream for now */
+				sources[0].stream = audio_stream;
 			}
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 			else {
@@ -677,6 +677,7 @@ int le_audio_send(uint8_t const *const data, size_t size)
 	int ret;
 	struct net_buf *buf;
 
+	/* CIS headset only supports one source stream for now */
 	if (sources[0].stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
 		LOG_DBG("Return channel not connected");
 		return 0;

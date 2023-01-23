@@ -169,19 +169,17 @@ config THREAD_NAME
 endif # DESKTOP_SHELL
 
 config DESKTOP_RTT
-	bool
+	bool "Enable RTT backend for logs or shell"
 	default y
+	select USE_SEGGER_RTT
 	depends on DESKTOP_LOG || DESKTOP_SHELL
 	help
 	  The option enables support for Segger J-Link RTT in the nRF Desktop.
 
-if DESKTOP_RTT
+	  Disable the option only if you would like to use other backend for
+	  nRF Desktop logs or shell.
 
-config USE_SEGGER_RTT
-	default y
-	help
-	  nRF Desktop RTT configuration enables Segger J-Link RTT libraries
-	  that are required to communicate over RTT.
+if DESKTOP_RTT
 
 config SEGGER_RTT_BUFFER_SIZE_UP
 	default 4096

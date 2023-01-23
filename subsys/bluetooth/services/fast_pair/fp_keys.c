@@ -16,7 +16,7 @@ LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #include "fp_keys.h"
 #include "fp_crypto.h"
 #include "fp_common.h"
-#include "fp_storage.h"
+#include "fp_storage_ak.h"
 #include "fp_storage_pn.h"
 
 #define EMPTY_AES_KEY_BYTE	0xff
@@ -255,7 +255,7 @@ static int key_gen_account_key(const struct bt_conn *conn,
 	/* This function call assigns the Account Key internally to the Fast Pair Keys
 	 * module. The assignment happens in the provided callback method.
 	 */
-	return fp_storage_account_key_find(NULL, key_gen_account_key_check, &context);
+	return fp_storage_ak_find(NULL, key_gen_account_key_check, &context);
 }
 
 int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_params *keygen_params)
@@ -340,7 +340,7 @@ int fp_keys_store_account_key(const struct bt_conn *conn, const struct fp_accoun
 		LOG_WRN("Received invalid Account Key");
 		return -EINVAL;
 	}
-	err = fp_storage_account_key_save(account_key);
+	err = fp_storage_ak_save(account_key);
 	if (!err) {
 		LOG_DBG("Account Key stored");
 	} else {

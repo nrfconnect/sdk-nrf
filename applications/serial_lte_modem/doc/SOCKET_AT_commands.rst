@@ -618,7 +618,7 @@ Syntax
   * ``2`` - ``TLS_HOSTNAME``.
     ``<value>`` is a string.
   * ``4`` - ``TLS_CIPHERSUITE_USED`` (get-only).
-    It accepts the IANA assigned ciphersuite identifier of the chosen ciphersuite.
+    It accepts the IANA assigned cipher suite identifier of the chosen cipher suite.
   * ``5`` - ``TLS_PEER_VERIFY``.
     ``<value>`` is an integer and can be either ``0`` or ``1``.
   * ``12`` - ``TLS_SESSION_CACHE``.
