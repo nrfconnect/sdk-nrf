@@ -12,7 +12,6 @@
 	chosen {
 		zephyr,console = &cdc_acm_uart0;
 		zephyr,shell-uart = &cdc_acm_uart0;
-		nordic,pm-ext-flash = &mx25r64;
 	};
 
 	pwmbuzzer {
