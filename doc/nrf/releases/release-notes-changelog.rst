@@ -33,7 +33,11 @@ The following sections provide detailed lists of changes by component.
 MCUboot
 =======
 
-|no_changes_yet_note|
+* Added:
+
+  * An option to prevent inclusion of default nRF5340 network core DFU image hook, which allows a custom implementation by users if the :kconfig:option:`CONFIG_BOOT_IMAGE_ACCESS_HOOK_NRF5340` Kconfig option is disabled (enabled by default).
+    CMake can be used to add additional hook files.
+    See :file:`modules/mcuboot/hooks/CMakeLists.txt` for an example of how to achieve this.
 
 Application development
 =======================
