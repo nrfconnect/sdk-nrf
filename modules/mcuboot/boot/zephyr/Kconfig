@@ -95,6 +95,16 @@ config BOOT_IMAGE_ACCESS_HOOKS
 	default y if UPDATEABLE_IMAGE_NUMBER > 1 && SOC_NRF5340_CPUAPP && PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	depends on MCUBOOT
 
+config BOOT_IMAGE_ACCESS_HOOK_NRF5340
+	bool "Enable default nRF5340 hook"
+	default y if BOOT_IMAGE_ACCESS_HOOKS
+	depends on BOOT_IMAGE_ACCESS_HOOKS
+	help
+	  This enables the default nRF5340 image hook for MCUboot, which
+	  supports upgrading the network core image from the application core.
+	  To disable or override this feature, disable this option and add a
+	  custom file using CMake.
+
 DT_COMPAT_SIM_FLASH:= zephyr,sim-flash
 DT_SIM_FLASH_PATH := $(dt_nodelabel_path,flash_sim0)
 
