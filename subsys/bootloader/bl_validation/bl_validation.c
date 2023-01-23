@@ -33,19 +33,23 @@ int set_monotonic_version(uint16_t version, uint16_t slot)
 	return err;
 }
 
-uint16_t get_monotonic_version(uint16_t *slot_out)
+void get_monotonic_version(uint16_t * version_out)
 {
 	uint16_t monotonic_version_and_slot = get_monotonic_counter();
 
-	bool slot = !(monotonic_version_and_slot & 1);
-	uint16_t version = monotonic_version_and_slot >> 1;
-
-	if (slot_out) {
-		*slot_out = slot;
+	if(version_out) {
+		*version_out = monotonic_version_and_slot >> 1;
 	}
-	return version;
 }
 
+void get_monotonic_slot(uint16_t * slot_out)
+{
+	uint16_t monotonic_version_and_slot = get_monotonic_counter();
+
+	if(slot_out) {
+		*slot_out = monotonic_version_and_slot & 1;
+	}
+}
 
 #ifndef CONFIG_BL_VALIDATE_FW_EXT_API_UNUSED
 #ifdef CONFIG_BL_VALIDATE_FW_EXT_API_REQUIRED
@@ -297,9 +301,11 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 		return false;
 	}
 
-	if (fwinfo->version < get_monotonic_version(NULL)) {
+	uint16_t stored_version;
+	get_monotonic_version(&stored_version);
+	if (fwinfo->version < stored_version) {
 		PRINT("Firmware version (%u) is smaller than monotonic counter (%u).\n\r",
-			fwinfo->version, get_monotonic_version(NULL));
+			fwinfo->version, stored_version);
 		return false;
 	}
 
