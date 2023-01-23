@@ -200,7 +200,7 @@ static int flash_clear(void)
 	return flash_erase(m_test_fd.fd, m_test_fd.offset, m_test_fd.size);
 }
 
-static int entry_write(uint32_t ate_wra, uint16_t id, const void *data, size_t len)
+static int entry_write(uint32_t ate_wra, uint16_t id, const void *data, size_t len, bool is_valid)
 {
 	struct test_ate entry = {
 		.id = id,
@@ -208,18 +208,19 @@ static int entry_write(uint32_t ate_wra, uint16_t id, const void *data, size_t l
 		.len = (uint16_t)len,
 		.crc8_data = crc8_ccitt(0xff, data, len),
 		.crc8 = crc8_ccitt(0xff, &entry, offsetof(struct test_ate, crc8)),
-		.inval_flag = 0XFF,
+		.inval_flag = is_valid ? 0XFF : 0,
 	};
 
 	data_write(data, len);
 	return flash_write(m_test_fd.fd, ate_wra, &entry, sizeof(struct test_ate));
 }
 
-static int ate_invalidate_write(uint32_t ate_wra)
+static int ate_invalidate_mock_write(uint32_t ate_wra)
 {
 	uint8_t invalid[sizeof(struct test_ate)];
 
-	memset(invalid, 0, sizeof(invalid));
+	memset(invalid, 0xff, sizeof(invalid));
+	invalid[8] = 0;
 
 	return flash_write(m_test_fd.fd, ate_wra, invalid, sizeof(invalid));
 }
@@ -323,7 +324,7 @@ static void test_flash_recovery(void)
 	 * Expect: Normal behavior
 	 */
 	idx = m_test_fd.ate_idx_start;
-	entry_write(idx, 1, data_in1, sizeof(data_in1));
+	entry_write(idx, 1, data_in1, sizeof(data_in1), true);
 	idx -= sizeof(struct test_ate);
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in1)) > 0, "Could not read");
@@ -344,9 +345,9 @@ static void test_flash_recovery(void)
 	 * Expect: Normal behavior
 	 */
 	idx = m_test_fd.ate_idx_start;
-	ate_invalidate_write(idx);
+	ate_invalidate_mock_write(idx);
 	idx -= sizeof(struct test_ate);
-	entry_write(idx, 2, data_in2, sizeof(data_in2));
+	entry_write(idx, 2, data_in2, sizeof(data_in2), true);
 	idx -= sizeof(struct test_ate);
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_false(ctx.force_erase, "Expected false");
@@ -365,9 +366,9 @@ static void test_flash_recovery(void)
 	 *     ...
 	 * Expect:  Unexpected behavior
 	 */
-	ate_invalidate_write(idx);
+	ate_invalidate_mock_write(idx);
 	idx -= sizeof(struct test_ate);
-	entry_write(idx, 3, data_in3, sizeof(data_in3));
+	entry_write(idx, 3, data_in3, sizeof(data_in3), true);
 	idx -= sizeof(struct test_ate);
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(ctx.force_erase, "Expected true");
@@ -392,7 +393,7 @@ static void test_flash_recovery(void)
 	 */
 	idx = m_test_fd.ate_idx_start;
 	for (size_t i = 0; i < 3; i++) {
-		ate_invalidate_write(idx);
+		ate_invalidate_mock_write(idx);
 		idx -= sizeof(struct test_ate);
 	}
 
@@ -431,7 +432,7 @@ static void test_invalidate_on_prepare(void)
 	uint32_t idx = m_test_fd.ate_idx_start;
 
 	for (size_t i = 0; i < 5; i++) {
-		entry_write(idx, i, data_in, sizeof(data_in));
+		entry_write(idx, i, data_in, sizeof(data_in), true);
 		idx -= sizeof(struct test_ate);
 	}
 
@@ -673,6 +674,70 @@ static void test_write_speed(void)
 	zassert_true(store_time_us < 13000, "Storing 1024 bytes took to long time");
 }
 
+static void test_invalidate_recover(void)
+{
+
+	char data_in[9] = "Deadbeef";
+	char data_in2[9] = "Beafface";
+	char data_out[9] = {0};
+
+	flash_clear();
+	device_reset();
+
+	uint32_t idx = m_test_fd.ate_idx_start;
+
+	/* Put single valid entry in the flash */
+	entry_write(idx, 0, data_in, sizeof(data_in), true);
+
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
+
+	/* Check that the entry initially is valid and contain the correct data */
+	zassert_true(emds_flash_read(&ctx, 0, data_out, sizeof(data_in)) > 0, "Could not read");
+	zassert_false(memcmp(data_in, data_out, sizeof(data_in)), "Not same data");
+
+	/* Check that raw read also can read the valid entry */
+	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in)) > 0, "Could not read");
+	zassert_false(memcmp(data_in, data_out, sizeof(data_in)), "Not same data");
+
+	/* Prepare EMDS, thus invalidating the entry */
+	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
+
+	/* Check that conventional read is not possible after prepare*/
+	zassert_false(emds_flash_read(&ctx, 0, data_out, sizeof(data_in)) > 0,
+			"Should not be able to read");
+
+	/* Check that raw read can recover invalidated data */
+	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in)) > 0, "Could not read");
+	zassert_false(memcmp(data_in, data_out, sizeof(data_in)), "Not same data");
+
+	device_reset();
+
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
+
+	/* Check that conventional read is not possible after device reset */
+	zassert_false(emds_flash_read(&ctx, 0, data_out, sizeof(data_in)) > 0,
+			"Should not be able to read");
+
+	/* Check that raw read can recover invalidated data after device reset */
+	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in)) > 0, "Could not read");
+	zassert_false(memcmp(data_in, data_out, sizeof(data_in)), "Not same data");
+
+	/* Add "newer" invalidated entry for the same ID */
+	idx -= sizeof(struct test_ate);
+	entry_write(idx, 0, data_in2, sizeof(data_in2), true);
+
+	/* Check that raw read now recovers the newest invalidated entry */
+	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in2)) > 0, "Could not read");
+	zassert_false(memcmp(data_in2, data_out, sizeof(data_in2)), "Not same data");
+
+	/* Corrupt the newest invalidated entry */
+	ate_corrupt_write(idx);
+
+	/* Check that raw read can recover the uncorrupted invalid entry*/
+	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in)) > 0, "Could not read");
+	zassert_false(memcmp(data_in, data_out, sizeof(data_in)), "Not same data");
+}
+
 void test_main(void)
 {
 	fs_init();
@@ -689,7 +754,8 @@ void test_main(void)
 			 ztest_unit_test(test_full_corrupt_recovery),
 			 ztest_unit_test(test_overflow),
 			 ztest_unit_test(test_corrupted_data),
-			 ztest_unit_test(test_write_speed)
+			 ztest_unit_test(test_write_speed),
+			 ztest_unit_test(test_invalidate_recover)
 			 );
 
 	ztest_run_test_suite(emds_flash_tests);
