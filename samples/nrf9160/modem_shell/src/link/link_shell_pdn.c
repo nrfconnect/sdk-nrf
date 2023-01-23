@@ -39,6 +39,7 @@ static const char *const event_str[] = {
 	[PDN_EVENT_DEACTIVATED] = "deactivated",
 	[PDN_EVENT_IPV6_UP] = "IPv6 up",
 	[PDN_EVENT_IPV6_DOWN] = "IPv6 down",
+	[PDN_EVENT_NETWORK_DETACH] = "network detach",
 };
 
 void link_pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)

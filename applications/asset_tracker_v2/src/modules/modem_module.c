@@ -282,6 +282,9 @@ void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 	case PDN_EVENT_IPV6_DOWN:
 		LOG_DBG("PDN_EVENT_IPV6_DOWN");
 		break;
+	case PDN_EVENT_NETWORK_DETACH:
+		LOG_DBG("PDN_EVENT_NETWORK_DETACH");
+		break;
 	default:
 		LOG_WRN("Unexpected PDN event!");
 		break;

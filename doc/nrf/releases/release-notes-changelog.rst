@@ -447,6 +447,12 @@ Libraries for networking
 
   * Removed the old API ``lwm2m_firmware_get_update_state_cb()``.
 
+* :ref:`pdn_readme` library:
+
+  * Added:
+
+    * ``PDN_EVENT_NETWORK_DETACH`` event to indicate a full network detach.
+
 Libraries for NFC
 -----------------
 

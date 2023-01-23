@@ -55,11 +55,12 @@ struct pdn_pdp_opt {
 
 /** @brief PDN library event */
 enum pdn_event {
-	PDN_EVENT_CNEC_ESM,	/**< +CNEC ESM error code */
-	PDN_EVENT_ACTIVATED,	/**< PDN connection activated */
-	PDN_EVENT_DEACTIVATED,	/**< PDN connection deactivated */
-	PDN_EVENT_IPV6_UP,	/**< PDN has IPv6 connectivity */
-	PDN_EVENT_IPV6_DOWN,	/**< PDN has lost IPv6 connectivity */
+	PDN_EVENT_CNEC_ESM,		/**< +CNEC ESM error code */
+	PDN_EVENT_ACTIVATED,		/**< PDN connection activated */
+	PDN_EVENT_DEACTIVATED,		/**< PDN connection deactivated */
+	PDN_EVENT_IPV6_UP,		/**< PDN has IPv6 connectivity */
+	PDN_EVENT_IPV6_DOWN,		/**< PDN has lost IPv6 connectivity */
+	PDN_EVENT_NETWORK_DETACH,	/**< Network detached */
 };
 
 /** @brief PDN authentication method */
