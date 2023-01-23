@@ -480,7 +480,7 @@ ssize_t emds_flash_write(struct emds_fs *fs, uint16_t id, const void *data, size
 	return len;
 }
 
-ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len)
+static ssize_t emds_read(struct emds_fs *fs, uint16_t id, void *data, size_t len, bool any_entry)
 {
 	if (!fs->is_initialized) {
 		LOG_ERR("EMDS flash not initialized");
@@ -498,7 +498,7 @@ ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len)
 		}
 
 		if ((wlk_ate.id == id) && (is_ate_valid(&wlk_ate)) &&
-		    (wlk_ate.inval_flag != INVAL_VAL)) {
+		    (wlk_ate.inval_flag != INVAL_VAL || any_entry)) {
 			break;
 		}
 
@@ -522,6 +522,16 @@ ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len)
 	}
 
 	return wlk_ate.len;
+}
+
+ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len)
+{
+	return emds_read(fs ,id ,data ,len, false);
+}
+
+ssize_t emds_flash_read_raw(struct emds_fs *fs, uint16_t id, void *data, size_t len)
+{
+	return emds_read(fs ,id ,data ,len, true);
 }
 
 int emds_flash_prepare(struct emds_fs *fs, int byte_size)

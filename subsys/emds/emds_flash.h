@@ -83,7 +83,29 @@ int emds_flash_clear(struct emds_fs *fs);
 ssize_t emds_flash_write(struct emds_fs *fs, uint16_t id, const void *data, size_t len);
 
 /**
- * @brief Read an entry from the EMDS file system.
+ * @brief Read most recent available entry from the EMDS file system.
+ *
+ * @warning This call will return the latest valid OR invalidated entry for the given
+ * entry ID. Should only be used as a fallback method in a case where there is no
+ * valid entry present, i.e. the previous EMDS storage procedure failed.
+ * @ref emds_flash_read should always be attempted before using this call.
+ *
+ * Read most recent available entry from the EMDS file system.
+ *
+ * @param fs Pointer to file system
+ * @param id Id of the entry to be read
+ * @param data Pointer to data buffer
+ * @param len Number of bytes in data buffer
+ *
+ * @return Number of bytes read. On success, it will be equal to the number of bytes requested
+ * to be read. When the return value is larger than the number of bytes requested to read this
+ * indicates not all bytes were read, and more data is available. On error, returns negative
+ * value of errno.h defined error codes.
+ */
+ssize_t emds_flash_read_raw(struct emds_fs *fs, uint16_t id, void *data, size_t len);
+
+/**
+ * @brief Read a valid entry from the EMDS file system.
  *
  * Read an entry from the file system.
  *
