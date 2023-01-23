@@ -50,6 +50,12 @@ Glossary
    Band-Pass Filter (BPF)
       An electronic device or circuit that passes frequencies within a certain range and rejects frequencies outside that range.
 
+   Basic Service Set Identifier (BSSID)
+      The MAC address of an access point.
+
+   Binary Convolutional Codes (BCC)
+      A type of error-correcting code that generates parity symbols using the sliding application of a boolean polynomial function to a data stream.
+
    Bluetooth® LE Controller layer
       A layer of the Bluetooth LE protocol stack that implements the :term:`Link Layer (LL)`.
 
@@ -70,6 +76,10 @@ Glossary
 
    Buffer Status Report (BSR)
       Carries the information on the amount of data available for each Logical Channel Group (LCG) from UE to eNB.
+      From Wi-Fi perspective, BSR indicates the amount of queued uplink data buffered in the respective STA and access categories to which the queued data belong.
+
+   Carrier-sense Multiple Access with Collision Avoidance (CSMA/CA)
+      A network multiple access method in which carrier sensing is used, but nodes attempt to avoid collisions by beginning transmission only after the channel is sensed to be idle.
 
    Carrier Wave (CW)
       A single-frequency electromagnetic wave that can be modulated in amplitude, frequency, or phase to convey information.
@@ -125,6 +135,11 @@ Glossary
 
    Data Terminal Ready (DTR)
       A control signal in RS-232 serial communications transmitted from data terminal equipment, such as a computer, to data communication equipment.
+
+   Delivery Traffic Indication Message (DTIM)
+      A type of :term:`Traffic Indication Map (TIM)` that informs the clients about the presence of buffered multicast or broadcast data on the access point.
+      It is generated within the periodic beacon at a frequency specified by the DTIM Interval.
+      It is used by the device to control wake and sleep periods.
 
    Development Kit (DK)
       A hardware development platform used for application development.
@@ -195,6 +210,9 @@ Glossary
    Fork
       A server-hosted downstream copy of an upstream :term:`repository <Repository>` that intends to follow the changes made in the original upstream repository as time goes by, while at the same time keeping some other changes unique to it.
       It can be hosted on GitHub or elsewhere.
+
+   Forward Error Correction (FEC)
+      A technique that adds redundant data to the original message, which is used to detect and correct errors that occur during transmission over a network improving the overall performance by reducing the number of errors and retransmissions.
 
    GitHub fork
       A `GitHub fork`_ is a copy of a repository inside GitHub, that allows the user to create a :term:`Pull Request`.
@@ -277,7 +295,7 @@ Glossary
       A feature of the :term:`LE Audio` standard that allows for relaying audio data to multiple devices at the same time (isochronously) without having to split the stereo stream.
 
    Just In Time Provisioning (JITP)
-     A device is provisioned when it first tries to connect to the IoT broker and presents its device certificate.
+      A device is provisioned when it first tries to connect to the IoT broker and presents its device certificate.
       Before the first communication, the device is not known to the broker and is not stored in the fleet registry.
 
    Kconfig file
@@ -326,6 +344,9 @@ Glossary
       It carries out segmentation and reassembly of application data and multiplexing and de-multiplexing of multiple channels over a shared logical link."
       `Bluetooth Core Specification`_, Version 5.3, Vol 1, Part A, Section 1.1.
 
+   Low-density parity-check (LDPC)
+      A class of error correcting codes that may be employed for providing error correction of transmission errors in communication systems.
+
    Low Latency Packet Mode (LLPM)
       A mode that allows shorter connection intervals than specified in the `Bluetooth Core Specification`_.
 
@@ -364,6 +385,9 @@ Glossary
       A management library for 32-bit MCUs.
       It uses the :term:`Simple Management Protocol (SMP)`.
 
+   Media Access Control address (MAC address)
+      The unique 48-bit serial number in the network circuitry of every Ethernet and Wi-Fi device.
+
    Memory Watch Unit (MWU)
       A peripheral that can be used to generate events when a memory region is accessed by the CPU.
 
@@ -381,8 +405,14 @@ Glossary
       It was initially created for the Linux kernel.
       It uses the Kconfig configuration language.
 
+   Modulation Coding Scheme (MCS)
+      An index defined by the Wi-Fi standards where each index specifies a combination of modulation scheme and forward error correction coding rate.
+
    Multicast addressing
       An addressing type that uses a one-to-many association, where datagrams are routed from a single sender to multiple selected endpoints simultaneously in a single transmission.
+
+   Multiple-input and multiple-output (MIMO)
+      A method for multiplying the capacity of a radio link using multiple transmission and receiving antennas to exploit multipath propagation.
 
    Narrowband Internet of Things (NB-IoT)
       A narrowband technology standard with longer range, lower throughput, and better penetration in, for example, cellars and parking garages compared to LTE-M.
@@ -454,6 +484,13 @@ Glossary
 
    Operational Amplifier (op-amp)
       A high-gain voltage amplifier that has a differential input and, usually, a single output.
+
+   Orthogonal Frequency Division Multiplexing (OFDM)
+      A type of digital transmission and a method of encoding digital data on multiple carrier frequencies.
+
+   Orthogonal Frequency Division Multiple Access (OFDMA)
+      A multiple access mechanism for shared medium networks based on Orthogonal Frequency Division Multiplexing (OFDM) achieved by assigning subsets of channel sub-carriers to individual users.
+      This allows simultaneous on-air frame transmissions to or from multiple users.
 
    OSS repository
       An |NCS| repository, hosted in the `nrfconnect GitHub organization`_, that tracks an upstream Open Source Software counterpart that is externally maintained.
@@ -590,6 +627,11 @@ Glossary
    Serial Wire Debug (SWD)
       A standard two-wire interface for programming and debugging Arm CPUs.
 
+   Service Set Identifier (SSID)
+      A sequence of characters that uniquely names a wireless local area network (WLAN).
+      Sometimes referred to as a network name.
+      This name allows stations to connect to the desired network when multiple independent networks operate in the same physical area.
+
    Signal-to-Noise Ratio (SNR)
       The level of signal power compared to the level of noise power, often expressed in decibels (dB).
 
@@ -635,8 +677,19 @@ Glossary
    Target
       The goal of an operation, for example, programming a specific image on a device, compiling a specific set of files, or removing previously generated files.
 
+   Target Wake Time (TWT)
+      A function that allows an access point to define a specific time or set of times for individual devices to access the wireless network.
+      It is the mechanism that allows devices to negotiate when and how often they turn on and off, based on when they need to send and receive data.
+
+   Temporal Key Integrity Protocol (TKIP)
+      A security protocol used in the IEEE 802.11 wireless networking standard.
+
    Time to First Fix (TTFF)
       The time needed by a :term:`Global Navigation Satellite System (GNSS)` module to estimate its position.
+
+   Traffic Indication Map (TIM)
+      A field in the Wi-Fi access point's beacon frame containing information about which Wi-Fi stations have buffered data waiting for them.
+      This allows devices in power save mode to remain in a low-power state until they have data waiting for them.
 
    Transmission Control Protocol (TCP)
       A connection-oriented protocol that provides reliable transport.
@@ -701,6 +754,10 @@ Glossary
 
    West project
       Any of the listed :term:`repositories <Repository>` inside a :term:`West manifest file`.
+
+   Wi-Fi Protected Access® (WPA)
+      A security protocol developed by Wi-Fi Alliance.
+      It comes in three flavours WPA, WPA2 and WPA3 respectively, with each offering higher security compared to its predecessor.
 
    Wireshark
       A free software tool that captures wireless traffic and reproduces it in a readable format.
