@@ -75,6 +75,8 @@ The sample shows the following output, which may vary based on the network provi
 
    Event: PDP context 0 deactivated
    Event: PDP context 1 deactivated
+   Event: PDP context 0 network detach
+   Event: PDP context 1 network detach
    Bye
 
 Dependencies
