@@ -4,12 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- / {
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
-	};
-};
-
 / {
 	chosen {
 		zephyr,console = &cdc_acm_uart0;
