@@ -5,7 +5,9 @@
 #
 
 if(CONFIG_BOOT_IMAGE_ACCESS_HOOKS)
-  zephyr_library()
-  zephyr_library_sources(nrf53_hooks.c)
-  zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
+  if(CONFIG_BOOT_IMAGE_ACCESS_HOOK_NRF5340)
+    zephyr_library()
+    zephyr_library_sources(nrf53_hooks.c)
+    zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
+  endif()
 endif()
