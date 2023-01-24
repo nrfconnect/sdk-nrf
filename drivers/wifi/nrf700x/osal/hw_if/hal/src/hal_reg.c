@@ -54,7 +54,8 @@ enum wifi_nrf_status hal_rpu_reg_read(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 	status = pal_rpu_addr_offset_get(hal_dev_ctx->hpriv->opriv,
 					 rpu_reg_addr,
-					 &addr_offset);
+					 &addr_offset,
+					 hal_dev_ctx->curr_proc);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
@@ -127,7 +128,8 @@ enum wifi_nrf_status hal_rpu_reg_write(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 	status = pal_rpu_addr_offset_get(hal_dev_ctx->hpriv->opriv,
 					 rpu_reg_addr,
-					 &addr_offset);
+					 &addr_offset,
+					 hal_dev_ctx->curr_proc);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,

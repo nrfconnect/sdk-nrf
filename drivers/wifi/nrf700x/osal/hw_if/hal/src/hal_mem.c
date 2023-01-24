@@ -16,9 +16,11 @@
 #include "hal_mem.h"
 
 
-static bool hal_rpu_is_mem_ram(unsigned int addr_val)
+static bool hal_rpu_is_mem_ram(enum RPU_PROC_TYPE proc, unsigned int addr_val)
 {
 	if (((addr_val >= RPU_ADDR_GRAM_START) &&
+	     (addr_val <= RPU_ADDR_GRAM_END)) ||
+	    ((addr_val >= RPU_ADDR_PKTRAM_START) &&
 	     (addr_val <= RPU_ADDR_GRAM_END)) ||
 	    ((addr_val >= RPU_ADDR_PKTRAM_START) &&
 	     (addr_val <= RPU_ADDR_PKTRAM_END))) {
@@ -40,50 +42,24 @@ static bool hal_rpu_is_mem_bev(unsigned int addr_val)
 }
 
 
-static bool hal_rpu_is_mem_core(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+static bool hal_rpu_is_mem_core(enum RPU_PROC_TYPE proc,
 				unsigned int addr_val)
 {
-	bool is_mem = false;
-
-	if (hal_dev_ctx->curr_proc == RPU_PROC_TYPE_MCU_LMAC) {
-		if (((addr_val >= RPU_ADDR_MCU1_CORE_ROM_START) &&
-		     (addr_val <= RPU_ADDR_MCU1_CORE_ROM_END)) ||
-		    ((addr_val >= RPU_ADDR_MCU1_CORE_RET_START) &&
-		     (addr_val <= RPU_ADDR_MCU1_CORE_RET_END)) ||
-		    ((addr_val >= RPU_ADDR_MCU1_CORE_SCRATCH_START) &&
-		     (addr_val <= RPU_ADDR_MCU1_CORE_SCRATCH_END))) {
-			is_mem = true;
-		}
-	} else if (hal_dev_ctx->curr_proc == RPU_PROC_TYPE_MCU_UMAC) {
-		if (((addr_val >= RPU_ADDR_MCU2_CORE_ROM_START) &&
-		     (addr_val <= RPU_ADDR_MCU2_CORE_ROM_END)) ||
-		    ((addr_val >= RPU_ADDR_MCU2_CORE_RET_START) &&
-		     (addr_val <= RPU_ADDR_MCU2_CORE_RET_END)) ||
-		    ((addr_val >= RPU_ADDR_MCU2_CORE_SCRATCH_START) &&
-		     (addr_val <= RPU_ADDR_MCU2_CORE_SCRATCH_END))) {
-			is_mem = true;
-		}
-	}
-
-	return is_mem;
+	return pal_check_rpu_mcu_regions(proc, addr_val);
 }
 
 
-static bool hal_rpu_is_mem_readable(unsigned int addr)
+static bool hal_rpu_is_mem_readable(enum RPU_PROC_TYPE proc, unsigned int addr)
 {
-	if (hal_rpu_is_mem_ram(addr)) {
-		return true;
-	}
-
-	return false;
+	return hal_rpu_is_mem_ram(proc, addr);
 }
 
 
-static bool hal_rpu_is_mem_writable(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+static bool hal_rpu_is_mem_writable(enum RPU_PROC_TYPE proc,
 				    unsigned int addr)
 {
-	if (hal_rpu_is_mem_ram(addr) ||
-	    hal_rpu_is_mem_core(hal_dev_ctx, addr) ||
+	if (hal_rpu_is_mem_ram(proc, addr) ||
+	    hal_rpu_is_mem_core(proc, addr) ||
 	    hal_rpu_is_mem_bev(addr)) {
 		return true;
 	}
@@ -105,7 +81,8 @@ static enum wifi_nrf_status rpu_mem_read_ram(struct wifi_nrf_hal_dev_ctx *hal_de
 
 	status = pal_rpu_addr_offset_get(hal_dev_ctx->hpriv->opriv,
 					 ram_addr_val,
-					 &addr_offset);
+					 &addr_offset,
+					 hal_dev_ctx->curr_proc);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
@@ -160,7 +137,8 @@ static enum wifi_nrf_status rpu_mem_write_ram(struct wifi_nrf_hal_dev_ctx *hal_d
 
 	status = pal_rpu_addr_offset_get(hal_dev_ctx->hpriv->opriv,
 					 ram_addr_val,
-					 &addr_offset);
+					 &addr_offset,
+					 hal_dev_ctx->curr_proc);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
@@ -217,7 +195,7 @@ static enum wifi_nrf_status rpu_mem_write_core(struct wifi_nrf_hal_dev_ctx *hal_
 	/* The RPU core address is expected to be in multiples of 4 bytes (word
 	 * size). If not then something is amiss.
 	 */
-	if (!hal_rpu_is_mem_core(hal_dev_ctx,
+	if (!hal_rpu_is_mem_core(hal_dev_ctx->curr_proc,
 				 core_addr_val)) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Invalid memory address\n",
@@ -362,7 +340,7 @@ enum wifi_nrf_status hal_rpu_mem_read(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 		goto out;
 	}
 
-	if (!hal_rpu_is_mem_readable(rpu_mem_addr_val)) {
+	if (!hal_rpu_is_mem_readable(hal_dev_ctx->curr_proc, rpu_mem_addr_val)) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Invalid memory address 0x%X\n",
 				      __func__,
@@ -397,7 +375,7 @@ enum wifi_nrf_status hal_rpu_mem_write(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 		return status;
 	}
 
-	if (!hal_rpu_is_mem_writable(hal_dev_ctx,
+	if (!hal_rpu_is_mem_writable(hal_dev_ctx->curr_proc,
 				     rpu_mem_addr_val)) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Invalid memory address 0x%X\n",
@@ -406,13 +384,13 @@ enum wifi_nrf_status hal_rpu_mem_write(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 		return status;
 	}
 
-	if (hal_rpu_is_mem_core(hal_dev_ctx,
+	if (hal_rpu_is_mem_core(hal_dev_ctx->curr_proc,
 				rpu_mem_addr_val)) {
 		status = rpu_mem_write_core(hal_dev_ctx,
 					    rpu_mem_addr_val,
 					    src_addr,
 					    len);
-	} else if (hal_rpu_is_mem_ram(rpu_mem_addr_val)) {
+	} else if (hal_rpu_is_mem_ram(hal_dev_ctx->curr_proc, rpu_mem_addr_val)) {
 		status = rpu_mem_write_ram(hal_dev_ctx,
 					   rpu_mem_addr_val,
 					   src_addr,
@@ -444,6 +422,7 @@ enum wifi_nrf_status hal_rpu_mem_clr(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 	unsigned int start_addr = 0;
 	unsigned int end_addr = 0;
 	unsigned int mem_val = 0;
+	enum RPU_MCU_ADDR_REGIONS mcu_region = pal_mem_type_to_region(mem_type);
 
 	if (!hal_dev_ctx) {
 		goto out;
@@ -455,53 +434,17 @@ enum wifi_nrf_status hal_rpu_mem_clr(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 	} else if (mem_type == HAL_RPU_MEM_TYPE_PKTRAM) {
 		start_addr = RPU_ADDR_PKTRAM_START;
 		end_addr = RPU_ADDR_PKTRAM_END;
-	} else if (mem_type == HAL_RPU_MEM_TYPE_CORE_ROM) {
-		if (proc == RPU_PROC_TYPE_MCU_LMAC) {
-			start_addr = RPU_ADDR_MCU1_CORE_ROM_START;
-			end_addr = RPU_ADDR_MCU1_CORE_ROM_END;
-		} else if (proc == RPU_PROC_TYPE_MCU_UMAC) {
-			start_addr = RPU_ADDR_MCU2_CORE_ROM_START;
-			end_addr = RPU_ADDR_MCU2_CORE_ROM_END;
-		} else {
-			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: Invalid proc(%d)\n",
-					      __func__,
-					      hal_dev_ctx->curr_proc);
-			goto out;
-		}
-	} else if (mem_type == HAL_RPU_MEM_TYPE_CORE_RET) {
-		if (proc == RPU_PROC_TYPE_MCU_LMAC) {
-			start_addr = RPU_ADDR_MCU1_CORE_RET_START;
-			end_addr = RPU_ADDR_MCU1_CORE_RET_END;
-		} else if (proc == RPU_PROC_TYPE_MCU_UMAC) {
-			start_addr = RPU_ADDR_MCU2_CORE_RET_START;
-			end_addr = RPU_ADDR_MCU2_CORE_RET_END;
-		} else {
-			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: Invalid proc(%d)\n",
-					      __func__,
-					      hal_dev_ctx->curr_proc);
-			goto out;
-		}
-	} else if (mem_type == HAL_RPU_MEM_TYPE_CORE_SCRATCH) {
-		if (proc == RPU_PROC_TYPE_MCU_LMAC) {
-			start_addr = RPU_ADDR_MCU1_CORE_SCRATCH_START;
-			end_addr = RPU_ADDR_MCU1_CORE_SCRATCH_END;
-		} else if (proc == RPU_PROC_TYPE_MCU_UMAC) {
-			start_addr = RPU_ADDR_MCU2_CORE_SCRATCH_START;
-			end_addr = RPU_ADDR_MCU2_CORE_SCRATCH_END;
-		} else {
-			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: Invalid proc(%d)\n",
-					      __func__,
-					      hal_dev_ctx->curr_proc);
-			goto out;
-		}
+	} else if (mcu_region != RPU_MCU_ADDR_REGION_MAX) {
+		const struct rpu_addr_map *map = &RPU_ADDR_MAP_MCU[proc];
+		const struct rpu_addr_region *region = &map->regions[mcu_region];
+
+		start_addr = region->start;
+		end_addr = region->end;
 	} else {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Invalid mem_type(%d)\n",
-				      __func__,
-				      mem_type);
+			"%s: Invalid mem_type(%d)\n",
+			__func__,
+			mem_type);
 		goto out;
 	}
 
@@ -520,6 +463,8 @@ enum wifi_nrf_status hal_rpu_mem_clr(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 			goto out;
 		}
 	}
+
+
 
 	status = WIFI_NRF_STATUS_SUCCESS;
 out:

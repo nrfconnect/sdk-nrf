@@ -39,14 +39,18 @@
 #define SOC_MMAP_ADDR_OFFSET_GRAM_PKD 0x80000
 #define SOC_MMAP_ADDR_OFFSET_SYSBUS 0x00000
 #define SOC_MMAP_ADDR_OFFSET_PBUS 0x40000
+
+static const unsigned int SOC_MMAP_ADDR_OFFSETS_MCU[] = {
+	0x100000,
+	0x200000
+};
+
 #endif /* RPU_CONFIG_72 */
 
 #define WIFI_NRF_FW_LMAC_PATCH_LOC_PRI "img/wlan/wifi_nrf_lmac_patch_pri.bimg"
 #define WIFI_NRF_FW_LMAC_PATCH_LOC_SEC "img/wlan/wifi_nrf_lmac_patch_sec.bin"
 #define WIFI_NRF_FW_UMAC_PATCH_LOC_PRI "img/wlan/wifi_nrf_umac_patch_pri.bimg"
 #define WIFI_NRF_FW_UMAC_PATCH_LOC_SEC "img/wlan/wifi_nrf_umac_patch_sec.bin"
-
-
 
 enum wifi_nrf_fw_type {
 	WIFI_NRF_FW_TYPE_LMAC_PATCH,
@@ -60,10 +64,26 @@ enum wifi_nrf_fw_subtype {
 	WIFI_NRF_FW_SUBTYPE_MAX
 };
 
+bool pal_check_rpu_mcu_regions(enum RPU_PROC_TYPE proc, unsigned int addr_val);
+
+static inline enum RPU_MCU_ADDR_REGIONS pal_mem_type_to_region(enum HAL_RPU_MEM_TYPE mem_type)
+{
+	switch (mem_type) {
+	case HAL_RPU_MEM_TYPE_CORE_ROM:
+		return RPU_MCU_ADDR_REGION_ROM;
+	case HAL_RPU_MEM_TYPE_CORE_RET:
+		return RPU_MCU_ADDR_REGION_RETENTION;
+	case HAL_RPU_MEM_TYPE_CORE_SCRATCH:
+		return RPU_MCU_ADDR_REGION_SCRATCH;
+	default:
+		return RPU_MCU_ADDR_REGION_MAX;
+	}
+}
 
 enum wifi_nrf_status pal_rpu_addr_offset_get(struct wifi_nrf_osal_priv *opriv,
 					     unsigned int rpu_addr,
-					     unsigned long *addr_offset);
+					     unsigned long *addr_offset,
+						 enum RPU_PROC_TYPE proc);
 
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
