@@ -491,6 +491,12 @@ Bootloader libraries
 Modem libraries
 ---------------
 
+* :ref:`nrf_modem_lib_readme` library:
+
+  * Updated:
+
+    * The minimal value of :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE` to meet the requirements of modem firmware 1.3.4.
+
 * :ref:`lib_location` library:
 
   * Added:
