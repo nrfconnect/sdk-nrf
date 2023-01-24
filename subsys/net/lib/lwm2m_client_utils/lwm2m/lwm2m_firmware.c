@@ -140,7 +140,7 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 	}
 
 	if (path.level == LWM2M_PATH_LEVEL_RESOURCE) {
-		if (lwm2m_engine_get_res_buf((char *)key, &buf, &len, NULL, NULL) != 0) {
+		if (lwm2m_get_res_buf(&path, &buf, &len, NULL, NULL) != 0) {
 			return -ENOENT;
 		}
 	} else if (path.level == LWM2M_PATH_LEVEL_OBJECT_INST) {
@@ -161,7 +161,7 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 	}
 
 	if (path.level == LWM2M_PATH_LEVEL_RESOURCE) {
-		lwm2m_engine_set_res_data_len((char *)key, len);
+		lwm2m_set_res_data_len(&path, len);
 	}
 
 	return 0;
@@ -171,18 +171,6 @@ static struct settings_handler lwm2m_firm_settings = {
 	.name = LWM2M_FIRM_PREFIX,
 	.h_set = set,
 };
-
-static const char *lwm2m_adv_path(uint16_t inst, uint16_t res)
-{
-	int ret;
-	static char path[LWM2M_MAX_PATH_STR_LEN];
-
-	ret = snprintk(path, sizeof(path), "%d/%d/%d", ENABLED_LWM2M_FIRMWARE_OBJECT, inst, res);
-	if (ret < 0 || ret >= sizeof(path)) {
-		memset(path, 0, sizeof(path));
-	}
-	return path;
-}
 
 static int write_resource_to_settings(int inst, int res, uint8_t *data, uint16_t data_len)
 {
@@ -914,30 +902,32 @@ static void lwm2m_firmware_load_from_settings(int instance_id)
 
 static void lwm2m_firmware_register_write_callbacks(int instance_id)
 {
-	const char *path;
+	struct lwm2m_obj_path path = LWM2M_OBJ(ENABLED_LWM2M_FIRMWARE_OBJECT, instance_id,
+					       LWM2M_FOTA_PACKAGE_ID);
 
-	path = lwm2m_adv_path(instance_id, LWM2M_FOTA_PACKAGE_ID);
-	lwm2m_engine_register_pre_write_callback(path, firmware_get_buf);
-	path = lwm2m_adv_path(instance_id, LWM2M_FOTA_PACKAGE_URI_ID);
-	lwm2m_engine_register_post_write_callback(path, write_dl_uri);
+	lwm2m_register_pre_write_callback(&path, firmware_get_buf);
+
+	path.res_id = LWM2M_FOTA_PACKAGE_URI_ID;
+	lwm2m_register_post_write_callback(&path, write_dl_uri);
 	/* State */
-	path = lwm2m_adv_path(instance_id, LWM2M_FOTA_STATE_ID);
-	lwm2m_engine_register_post_write_callback(path, firmware_update_state);
+	path.res_id = LWM2M_FOTA_STATE_ID;
+	lwm2m_register_post_write_callback(&path, firmware_update_state);
 	/* Result */
-	path = lwm2m_adv_path(instance_id, LWM2M_FOTA_UPDATE_RESULT_ID);
-	lwm2m_engine_register_post_write_callback(path, firmware_update_result);
+	path.res_id = LWM2M_FOTA_UPDATE_RESULT_ID;
+	lwm2m_register_post_write_callback(&path, firmware_update_result);
 }
 
 static void firmware_update_check_linked_instances(int instance_id)
 {
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	const char *path;
+	struct lwm2m_obj_path path;
 	struct lwm2m_objlnk object_link;
 	uint8_t result;
 
-	path = lwm2m_adv_path(instance_id, LWM2M_ADV_FOTA_LINKED_INSTANCES_ID);
+	path = LWM2M_OBJ(ENABLED_LWM2M_FIRMWARE_OBJECT, instance_id,
+			 LWM2M_ADV_FOTA_LINKED_INSTANCES_ID);
 
-	if (lwm2m_engine_get_objlnk(path, &object_link)) {
+	if (lwm2m_get_objlnk(&path, &object_link)) {
 		return;
 	}
 
@@ -964,7 +954,7 @@ static void firmware_update_check_linked_instances(int instance_id)
 	}
 	object_link.obj_inst = 0;
 	object_link.obj_id = 0;
-	lwm2m_engine_set_objlnk(path, &object_link);
+	lwm2m_set_objlnk(&path, &object_link);
 #endif
 }
 
@@ -1022,19 +1012,21 @@ static void firmware_object_state_check(void)
 static void lwm2m_adv_firmware_versions_set(void)
 {
 	char buf[255];
-	const char *path;
+	struct lwm2m_obj_path path;
 	struct mcuboot_img_header header;
 
-	path = lwm2m_adv_path(modem_obj_id, LWM2M_ADV_FOTA_CURRENT_VERSION_ID);
+	path = LWM2M_OBJ(ENABLED_LWM2M_FIRMWARE_OBJECT, modem_obj_id,
+			 LWM2M_ADV_FOTA_CURRENT_VERSION_ID);
 	modem_info_string_get(MODEM_INFO_FW_VERSION, buf, sizeof(buf));
-	lwm2m_engine_set_string(path, buf);
+	lwm2m_set_string(&path, buf);
 
-	path = lwm2m_adv_path(application_obj_id, LWM2M_ADV_FOTA_CURRENT_VERSION_ID);
+	path.obj_inst_id = application_obj_id;
+	path.res_id = LWM2M_ADV_FOTA_CURRENT_VERSION_ID;
 	boot_read_bank_header(PM_MCUBOOT_PRIMARY_ID, &header, sizeof(header));
 	snprintk(buf, sizeof(buf), "%d.%d.%d-%d", header.h.v1.sem_ver.major,
 		 header.h.v1.sem_ver.minor, header.h.v1.sem_ver.revision,
 		 header.h.v1.sem_ver.build_num);
-	lwm2m_engine_set_string(path, buf);
+	lwm2m_set_string(&path, buf);
 }
 #endif
 
