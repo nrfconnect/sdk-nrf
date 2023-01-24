@@ -18,6 +18,12 @@
 #include <net/wifi_location_common.h>
 #include <nrf_modem_gnss.h>
 
+#if defined(CONFIG_LWM2M)
+#include <zephyr/net/lwm2m.h>
+#else
+#include "lwm2m/lwm2m_dummy.h"
+#endif
+
 /**@file
  *
  * @defgroup cloud_codec Cloud codec.
@@ -189,8 +195,7 @@ struct cloud_codec_data {
 	/** Length of encoded output. */
 	size_t len;
 	/** LwM2M object paths. */
-	char paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX]
-		  [CONFIG_CLOUD_CODEC_LWM2M_PATH_ENTRY_SIZE_MAX];
+	struct lwm2m_obj_path paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
 	/** Number of valid paths in the paths variable. */
 	uint8_t valid_object_paths;
 };
