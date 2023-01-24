@@ -56,13 +56,13 @@ ZTEST(lwm2m_client_utils_signal_meas_info, test_update_ncells)
 
 	rc = lwm2m_update_signal_meas_objects(&cell_info);
 	zassert_equal(rc, 0, "Error, %d", rc);
-	zassert_equal(lwm2m_engine_set_s32_fake.call_count, 15,
-		      "Cell info not updated, was %d", lwm2m_engine_set_s32_fake.call_count);
+	zassert_equal(lwm2m_set_s32_fake.call_count, 15,
+		      "Cell info not updated, was %d", lwm2m_set_s32_fake.call_count);
 
 	cell_info.ncells_count = 2;
 
 	rc = lwm2m_update_signal_meas_objects(&cell_info);
 	zassert_equal(rc, 0, "Error, %d", rc);
-	zassert_equal(lwm2m_engine_set_s32_fake.call_count, 30,
-		      "Cell info not updated, was %d", lwm2m_engine_set_s32_fake.call_count);
+	zassert_equal(lwm2m_set_s32_fake.call_count, 30,
+		      "Cell info not updated, was %d", lwm2m_set_s32_fake.call_count);
 }

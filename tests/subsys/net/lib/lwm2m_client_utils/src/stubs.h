@@ -16,25 +16,26 @@
 #include <zephyr/settings/settings.h>
 #include <zephyr/sys/reboot.h>
 
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_u16, const char *, uint16_t);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_u8, const char *, uint8_t);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_res_data_len, const char *, uint16_t);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_get_res_buf, const char *, void **, uint16_t *,
-			uint16_t *, uint8_t *);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_get_u8, const char *, uint8_t *);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_get_bool, const char *, bool *);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_opaque, const char *, const char *, uint16_t);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_string, const char *, const char *)
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_send, struct lwm2m_ctx *,
-			char const **, uint8_t, bool);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_delete_obj_inst, const char *);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_delete_callback, uint16_t,
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_u16, const struct lwm2m_obj_path *, uint16_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_u8, const struct lwm2m_obj_path *, uint8_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_res_data_len, const struct lwm2m_obj_path *, uint16_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_get_res_buf, const struct lwm2m_obj_path *, void **,
+			uint16_t *, uint16_t *, uint8_t *);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_get_u8, const struct lwm2m_obj_path *, uint8_t *);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_get_bool, const struct lwm2m_obj_path *, bool *);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_opaque, const struct lwm2m_obj_path *, const char *,
+			uint16_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_string, const struct lwm2m_obj_path *, const char *)
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_send, struct lwm2m_ctx *,
+			const struct lwm2m_obj_path *, uint8_t, bool);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_delete_object_inst, const struct lwm2m_obj_path *);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_register_delete_callback, uint16_t,
 			lwm2m_engine_user_cb_t);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_create_callback, uint16_t,
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_register_create_callback, uint16_t,
 			lwm2m_engine_user_cb_t);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_post_write_callback, const char *,
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_register_post_write_callback, const struct lwm2m_obj_path *,
 			lwm2m_engine_set_data_cb_t);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_create_obj_inst, const char *);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_create_object_inst, const struct lwm2m_obj_path *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_create_obj_inst, uint16_t, uint16_t,
 			struct lwm2m_engine_obj_inst **);
 DECLARE_FAKE_VALUE_FUNC(struct lwm2m_engine_obj_inst *, lwm2m_engine_get_obj_inst,
@@ -75,14 +76,14 @@ DECLARE_FAKE_VALUE_FUNC(int, modem_info_init);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_params_init, struct modem_param_info *);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_params_get, struct modem_param_info *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_lte_mode_get, enum lte_lc_lte_mode *);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_create_res_inst, const char *);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_res_buf, const char *, void *, uint16_t, uint16_t,
-			uint8_t);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_u32, const char *, uint32_t);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_s8, const char *, int8_t);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_set_s32, const char *, int32_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_create_res_inst, const struct lwm2m_obj_path *);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_res_buf, const struct lwm2m_obj_path *, void *, uint16_t,
+			uint16_t, uint8_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_u32, const struct lwm2m_obj_path *, uint32_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_s8, const struct lwm2m_obj_path *, int8_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_s32, const struct lwm2m_obj_path *, int32_t);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_rsrp_register, rsrp_cb_t);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_register_exec_callback, const char *,
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_register_exec_callback, const struct lwm2m_obj_path *,
 			lwm2m_engine_execute_cb_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_rai_req, enum lwm2m_rai_mode);
 DECLARE_FAKE_VALUE_FUNC(struct net_if*, net_if_lookup_by_dev, const struct device *);
@@ -92,26 +93,26 @@ DECLARE_FAKE_VALUE_FUNC(int, net_mgmt_NET_REQUEST_WIFI_SCAN, uint32_t, struct ne
 
 /* List of fakes used by this unit tester */
 #define DO_FOREACH_FAKE(FUNC) do { \
-	FUNC(lwm2m_engine_set_u32)                      \
-	FUNC(lwm2m_engine_set_u16)                      \
-	FUNC(lwm2m_engine_set_u8)                       \
-	FUNC(lwm2m_engine_set_res_data_len)             \
-	FUNC(lwm2m_engine_get_res_buf)                  \
-	FUNC(lwm2m_engine_get_u8)                       \
-	FUNC(lwm2m_engine_get_bool)                     \
-	FUNC(lwm2m_engine_set_s8)                       \
-	FUNC(lwm2m_engine_set_s32)                      \
-	FUNC(lwm2m_engine_set_opaque)                   \
-	FUNC(lwm2m_engine_set_string)                   \
-	FUNC(lwm2m_engine_send)				\
-	FUNC(lwm2m_engine_delete_obj_inst)              \
-	FUNC(lwm2m_engine_register_delete_callback)     \
-	FUNC(lwm2m_engine_register_create_callback)     \
-	FUNC(lwm2m_engine_register_post_write_callback) \
-	FUNC(lwm2m_engine_register_exec_callback)       \
-	FUNC(lwm2m_engine_create_obj_inst)              \
-	FUNC(lwm2m_engine_create_res_inst)              \
-	FUNC(lwm2m_engine_set_res_buf)                  \
+	FUNC(lwm2m_set_u32)                             \
+	FUNC(lwm2m_set_u16)                             \
+	FUNC(lwm2m_set_u8)                              \
+	FUNC(lwm2m_set_res_data_len)                    \
+	FUNC(lwm2m_get_res_buf)                         \
+	FUNC(lwm2m_get_u8)                              \
+	FUNC(lwm2m_get_bool)                            \
+	FUNC(lwm2m_set_s8)                              \
+	FUNC(lwm2m_set_s32)                             \
+	FUNC(lwm2m_set_opaque)                          \
+	FUNC(lwm2m_set_string)                          \
+	FUNC(lwm2m_send)                                \
+	FUNC(lwm2m_delete_object_inst)                  \
+	FUNC(lwm2m_register_delete_callback)            \
+	FUNC(lwm2m_register_create_callback)            \
+	FUNC(lwm2m_register_post_write_callback)        \
+	FUNC(lwm2m_register_exec_callback)              \
+	FUNC(lwm2m_create_object_inst)                  \
+	FUNC(lwm2m_create_res_inst)                     \
+	FUNC(lwm2m_set_res_buf)                         \
 	FUNC(lwm2m_create_obj_inst)			\
 	FUNC(lwm2m_engine_get_obj_inst)                 \
 	FUNC(lwm2m_notify_observer)                     \
