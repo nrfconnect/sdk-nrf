@@ -33,6 +33,18 @@ enum RPU_PROC_TYPE {
 	RPU_PROC_TYPE_MAX
 };
 
+static inline const char *rpu_proc_to_str(enum RPU_PROC_TYPE proc)
+{
+	switch (proc) {
+	case RPU_PROC_TYPE_MCU_LMAC:
+		return "LMAC";
+	case RPU_PROC_TYPE_MCU_UMAC:
+		return "UMAC";
+	default:
+		return "UNKNOWN";
+	}
+}
+
 
 enum WIFI_NRF_REGION_TYPE {
 	WIFI_NRF_REGION_TYPE_GRAM,

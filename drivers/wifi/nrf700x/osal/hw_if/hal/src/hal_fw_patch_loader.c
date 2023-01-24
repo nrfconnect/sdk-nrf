@@ -13,6 +13,95 @@
 #include "hal_fw_patch_loader.h"
 #include "hal_mem.h"
 
+/* To reduce HEAP maximum usage */
+#define MAX_PATCH_CHUNK_SIZE 8192
+#define ARRAY_SIZE(array) (sizeof(array) / sizeof((array)[0]))
+
+struct patch_contents {
+	const char *id_str;
+	const void *data;
+	unsigned int size;
+	unsigned int dest_addr;
+};
+
+/* In order to save RAM, divide the patch in to chunks download */
+static enum wifi_nrf_status hal_fw_patch_load(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+						enum RPU_PROC_TYPE rpu_proc,
+						const char *patch_id_str,
+						unsigned int dest_addr,
+						const void *fw_patch_data,
+						unsigned int fw_patch_size)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	int last_chunk_size = fw_patch_size % MAX_PATCH_CHUNK_SIZE;
+	int num_chunks = fw_patch_size / MAX_PATCH_CHUNK_SIZE +
+					(last_chunk_size ? 1 : 0);
+
+	for (int chunk = 0; chunk < num_chunks; chunk++) {
+		unsigned char *patch_data_ram;
+		unsigned int patch_chunk_size =
+			((chunk == num_chunks - 1) ? last_chunk_size : MAX_PATCH_CHUNK_SIZE);
+		const void *src_patch_offset = (const char *)fw_patch_data +
+			chunk * MAX_PATCH_CHUNK_SIZE;
+		int dest_chunk_offset = dest_addr + chunk * MAX_PATCH_CHUNK_SIZE;
+
+		patch_data_ram = wifi_nrf_osal_mem_alloc(hal_dev_ctx->hpriv->opriv,
+									patch_chunk_size);
+		if (!patch_data_ram) {
+			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+				"%s: Failed to allocate memory for patch %s-%s: chunk %d/%d, size: %d\n",
+				__func__,
+				rpu_proc_to_str(rpu_proc),
+				patch_id_str,
+				chunk + 1,
+				num_chunks,
+				patch_chunk_size);
+			status = WIFI_NRF_STATUS_FAIL;
+			goto out;
+		}
+
+		wifi_nrf_osal_mem_cpy(hal_dev_ctx->hpriv->opriv,
+							patch_data_ram,
+							src_patch_offset,
+							patch_chunk_size);
+
+
+		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+			"%s: Copying patch %s-%s: chunk %d/%d, size: %d\n",
+			__func__,
+			rpu_proc_to_str(rpu_proc),
+			patch_id_str,
+			chunk + 1,
+			num_chunks,
+			patch_chunk_size);
+
+		status = hal_rpu_mem_write(hal_dev_ctx,
+					dest_chunk_offset,
+					patch_data_ram,
+					patch_chunk_size);
+
+		if (status != WIFI_NRF_STATUS_SUCCESS) {
+			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+				"%s: Copying patch %s-%s: chunk %d/%d, size: %d failed\n",
+				__func__,
+				rpu_proc_to_str(rpu_proc),
+				patch_id_str,
+				chunk + 1,
+				num_chunks,
+				patch_chunk_size);
+			goto out;
+		}
+out:
+		if (patch_data_ram)
+			wifi_nrf_osal_mem_free(hal_dev_ctx->hpriv->opriv,
+				       patch_data_ram);
+		if (status != WIFI_NRF_STATUS_SUCCESS)
+			break;
+	}
+
+	return status;
+}
+
 /*
  * Copies the firmware patches to the RPU memory.
  */
@@ -66,44 +155,26 @@ enum wifi_nrf_status wifi_nrf_hal_fw_patch_load(struct wifi_nrf_hal_dev_ctx *hal
 		goto out;
 	}
 
-	/* First copy the primary patch */
-	status = hal_rpu_mem_write(hal_dev_ctx,
-				   pri_dest_addr,
-				   (unsigned char *)fw_pri_patch_data,
-				   fw_pri_patch_size);
+	const struct patch_contents patches[] = {
+		{ "bimg", fw_pri_patch_data, fw_pri_patch_size, pri_dest_addr },
+		{ "bin", fw_sec_patch_data, fw_sec_patch_size, sec_dest_addr },
+	};
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Copying of primary ROM patch to RPU (%d) failed\n",
-				      __func__,
-				      rpu_proc);
-
-		goto out;
+	for (int patch = 0; patch < ARRAY_SIZE(patches); patch++) {
+		status = hal_fw_patch_load(hal_dev_ctx,
+					   rpu_proc,
+					   patches[patch].id_str,
+					   patches[patch].dest_addr,
+					   patches[patch].data,
+					   patches[patch].size);
+		if (status != WIFI_NRF_STATUS_SUCCESS)
+			goto out;
 	}
-
-	/* Now copy the secondary patch */
-	status = hal_rpu_mem_write(hal_dev_ctx,
-				   sec_dest_addr,
-				   (unsigned char *)fw_sec_patch_data,
-				   fw_sec_patch_size);
-
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Copying of secondary ROM patch to RPU (%d) failed\n",
-				      __func__,
-				      rpu_proc);
-
-		goto out;
-	}
-
-	status = WIFI_NRF_STATUS_SUCCESS;
-
 out:
 	/* Reset the HAL RPU context to the LMAC context */
 	hal_dev_ctx->curr_proc = RPU_PROC_TYPE_MCU_LMAC;
 
 	return status;
-
 }
 
 
