@@ -659,7 +659,7 @@ static int configure_memory_usage(void)
 	int required_memory;
 	sdc_cfg_t cfg;
 
-#if defined(CONFIG_BT_CENTRAL) || defined(CONFIG_BT_LL_SOFTDEVICE_MULTIROLE)
+#if !defined(CONFIG_BT_LL_SOFTDEVICE_PERIPHERAL)
 	cfg.central_count.count = SDC_CENTRAL_COUNT;
 
 	/* NOTE: sdc_cfg_set() returns a negative errno on error. */
@@ -672,7 +672,7 @@ static int configure_memory_usage(void)
 	}
 #endif
 
-#if defined(CONFIG_BT_PERIPHERAL) || defined(CONFIG_BT_LL_SOFTDEVICE_MULTIROLE)
+#if !defined(CONFIG_BT_LL_SOFTDEVICE_CENTRAL)
 	cfg.peripheral_count.count = CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT;
 
 	required_memory =
