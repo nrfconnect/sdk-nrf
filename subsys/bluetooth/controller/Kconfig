@@ -31,7 +31,7 @@ config BT_LL_SOFTDEVICE
 	select BT_CTLR_PHY_CODED_SUPPORT if HAS_HW_NRF_RADIO_BLE_CODED
 	select BT_HAS_HCI_VS
 	select BT_CTLR_DF_CTE_TX_SUPPORT if HAS_HW_NRF_RADIO_DFE
-	depends on (SOC_SERIES_NRF52X || SOC_NRF5340_CPUNET)
+	depends on (SOC_SERIES_BSIM_NRFXX || SOC_SERIES_NRF52X || SOC_NRF5340_CPUNET)
 	help
 	  Use SoftDevice Link Layer implementation.
 
@@ -48,6 +48,14 @@ config BT_LL_SOFTDEVICE_BUILD_TYPE_LIB
 	bool "Use library"
 
 endchoice
+
+config BT_CTLR_SDC_BSIM_BUILD
+	bool
+	default y if SOC_SERIES_BSIM_NRFXX
+	select EXPERIMENTAL
+	help
+	  Convenience config to indicate the SDC is being built for a babblesim
+	  target. Internal use only.
 
 # BT_HCI_TX_STACK_SIZE is declared in Zephyr and also here for a second time,
 # for set the valid default size of the HCI Tx stack.
@@ -247,6 +255,7 @@ config BT_CTLR_ECDH_LIB_OBERON
 	# TODO: Fix ocrypto header not available in these configurations
 	depends on !BUILD_WITH_TFM
 	depends on !OBERON_BACKEND
+	depends on !SOC_SERIES_BSIM_NRFXX
 	bool "nRF Oberon (SW)"
 
 config BT_CTLR_ECDH_LIB_TINYCRYPT
