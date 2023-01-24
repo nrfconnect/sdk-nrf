@@ -29,7 +29,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 
 /* Resource ID used to register a reboot callback. */
 #define DEVICE_OBJECT_REBOOT_RID 4
-#define FIRMWARE_UPDATE_RESULT_PATH "5/0/5"
 #define MAX_RESOURCE_LEN 20
 
 /* Internal states. */
@@ -74,24 +73,19 @@ static void cloud_wrapper_notify_event(const struct cloud_wrap_event *evt)
  */
 static void rd_client_update_lifetime(int srv_obj_inst)
 {
-	char pathstr[MAX_RESOURCE_LEN];
-	int err, len;
+	int err;
 	uint32_t current_lifetime = 0;
 	uint32_t lifetime = CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME;
+	struct lwm2m_obj_path path = LWM2M_OBJ(1, srv_obj_inst, 1);
 
-	len = snprintk(pathstr, sizeof(pathstr), "1/%d/1", srv_obj_inst);
-	if ((len < 0) || (len >= sizeof(pathstr))) {
-		return;
-	}
-
-	err = lwm2m_engine_get_u32(pathstr, &current_lifetime);
+	err = lwm2m_get_u32(&path, &current_lifetime);
 	if (err) {
 		LOG_ERR("Failed getting current session lifetime, error: %d", err);
 		return;
 	}
 
 	if (current_lifetime != lifetime) {
-		err = lwm2m_engine_set_u32(pathstr, lifetime);
+		err = lwm2m_set_u32(&path, lifetime);
 		if (err) {
 			LOG_ERR("Failed setting current session lifetime, error: %d", err);
 			return;
@@ -270,7 +264,7 @@ static int firmware_update_state_cb(uint8_t update_state)
 	struct cloud_wrap_event cloud_wrap_evt = { 0 };
 
 	/* Get the firmware object update result code */
-	err = lwm2m_engine_get_u8(FIRMWARE_UPDATE_RESULT_PATH, &update_result);
+	err = lwm2m_get_u8(&LWM2M_OBJ(5, 0, 5), &update_result);
 	if (err) {
 		LOG_ERR("Failed getting firmware result resource value");
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
@@ -397,7 +391,7 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 				hex2bin(CONFIG_LWM2M_INTEGRATION_PSK,
 					sizeof(CONFIG_LWM2M_INTEGRATION_PSK) - 1, buf, sizeof(buf));
 
-			err = lwm2m_engine_set_opaque("0/0/5", buf, len);
+			err = lwm2m_set_opaque(&LWM2M_OBJ(0, 0, 5), buf, len);
 			if (err) {
 				LOG_ERR("Failed setting PSK, error: %d", err);
 				return err;
@@ -413,11 +407,11 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	}
 
 	/* Register callback for reboot requests. */
-	err = lwm2m_engine_register_exec_callback(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
-							     DEVICE_OBJECT_REBOOT_RID),
-						  device_reboot_cb);
+	err = lwm2m_register_exec_callback(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0,
+						      DEVICE_OBJECT_REBOOT_RID),
+					   device_reboot_cb);
 	if (err) {
-		LOG_ERR("lwm2m_engine_register_exec_callback, error: %d", err);
+		LOG_ERR("lwm2m_register_exec_callback, error: %d", err);
 		return err;
 	}
 
@@ -477,7 +471,8 @@ int cloud_wrap_state_send(char *buf, size_t len, bool ack, uint32_t id)
 	return -ENOTSUP;
 }
 
-int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
+int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id,
+			 const struct lwm2m_obj_path path_list[])
 {
 	ARG_UNUSED(buf);
 	ARG_UNUSED(len);
@@ -485,9 +480,9 @@ int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id, char *pat
 
 	int err;
 
-	err = lwm2m_engine_send(&client, (const char **)path_list, len, ack);
+	err = lwm2m_send(&client, path_list, len, ack);
 	if (err) {
-		LOG_ERR("lwm2m_engine_send, error: %d", err);
+		LOG_ERR("lwm2m_send, error: %d", err);
 		return err;
 	}
 
@@ -499,7 +494,8 @@ int cloud_wrap_batch_send(char *buf, size_t len, bool ack, uint32_t id)
 	return -ENOTSUP;
 }
 
-int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
+int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id,
+		       const struct lwm2m_obj_path path_list[])
 {
 	ARG_UNUSED(buf);
 	ARG_UNUSED(len);
@@ -507,9 +503,9 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id, char *path_
 
 	int err;
 
-	err = lwm2m_engine_send(&client, (const char **)path_list, len, ack);
+	err = lwm2m_send(&client, path_list, len, ack);
 	if (err) {
-		LOG_ERR("lwm2m_engine_send, error: %d", err);
+		LOG_ERR("lwm2m_send, error: %d", err);
 		return err;
 	}
 
