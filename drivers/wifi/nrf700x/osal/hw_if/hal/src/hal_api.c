@@ -26,7 +26,8 @@ wifi_nrf_hal_rpu_pktram_buf_map_init(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 
 	status = pal_rpu_addr_offset_get(hal_dev_ctx->hpriv->opriv,
 					 RPU_MEM_PKT_BASE,
-					 &hal_dev_ctx->addr_rpu_pktram_base);
+					 &hal_dev_ctx->addr_rpu_pktram_base,
+					 hal_dev_ctx->curr_proc);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
@@ -1695,7 +1696,8 @@ wifi_nrf_hal_init(struct wifi_nrf_osal_priv *opriv,
 
 	status = pal_rpu_addr_offset_get(opriv,
 					 RPU_ADDR_PKTRAM_START,
-					 &hpriv->addr_pktram_base);
+					 &hpriv->addr_pktram_base,
+					 RPU_PROC_TYPE_MAX);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(opriv,

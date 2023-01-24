@@ -12,9 +12,30 @@
 #include "pal.h"
 #include "hal_api.h"
 
+bool pal_check_rpu_mcu_regions(enum RPU_PROC_TYPE proc, unsigned int addr_val)
+{
+	const struct rpu_addr_map *map = &RPU_ADDR_MAP_MCU[proc];
+	enum RPU_MCU_ADDR_REGIONS region_type;
+
+	if (proc >= RPU_PROC_TYPE_MAX) {
+		return false;
+	}
+
+	for (region_type = 0; region_type < RPU_MCU_ADDR_REGION_MAX; region_type++) {
+		const struct rpu_addr_region *region = &map->regions[region_type];
+
+		if ((addr_val >= region->start) && (addr_val <= region->end)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 enum wifi_nrf_status pal_rpu_addr_offset_get(struct wifi_nrf_osal_priv *opriv,
 					     unsigned int rpu_addr,
-					     unsigned long *addr)
+					     unsigned long *addr,
+						 enum RPU_PROC_TYPE proc)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	unsigned int addr_base = (rpu_addr & RPU_ADDR_MASK_BASE);
@@ -29,6 +50,8 @@ enum wifi_nrf_status pal_rpu_addr_offset_get(struct wifi_nrf_osal_priv *opriv,
 		region_offset = SOC_MMAP_ADDR_OFFSET_PBUS;
 	} else if (addr_base == RPU_ADDR_PKTRAM_START) {
 		region_offset = SOC_MMAP_ADDR_OFFSET_PKTRAM_HOST_VIEW;
+	} else if (pal_check_rpu_mcu_regions(proc, rpu_addr)) {
+		region_offset = SOC_MMAP_ADDR_OFFSETS_MCU[proc];
 	} else {
 		wifi_nrf_osal_log_err(opriv,
 				      "%s: Invalid rpu_addr 0x%X\n",
