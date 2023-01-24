@@ -38,25 +38,24 @@ int lwm2m_init_press_sensor(void)
 
 	env_sensor_init();
 
-	lwm2m_engine_create_obj_inst(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0));
-	lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, SENSOR_UNITS_RID),
-				  PRESS_UNIT, sizeof(PRESS_UNIT), sizeof(PRESS_UNIT),
-				  LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, APPLICATION_TYPE_RID),
-				  PRESS_APP_TYPE, sizeof(PRESS_APP_TYPE), sizeof(PRESS_APP_TYPE),
-				  LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, MIN_RANGE_VALUE_RID),
-			       &min_range_val);
-	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, MAX_RANGE_VALUE_RID),
-			       &max_range_val);
+	lwm2m_create_object_inst(&LWM2M_OBJ(IPSO_OBJECT_PRESSURE_ID, 0));
+	lwm2m_set_res_buf(&LWM2M_OBJ(IPSO_OBJECT_PRESSURE_ID, 0, SENSOR_UNITS_RID),
+			  PRESS_UNIT, sizeof(PRESS_UNIT), sizeof(PRESS_UNIT),
+			  LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_set_res_buf(&LWM2M_OBJ(IPSO_OBJECT_PRESSURE_ID, 0, APPLICATION_TYPE_RID),
+			  PRESS_APP_TYPE, sizeof(PRESS_APP_TYPE), sizeof(PRESS_APP_TYPE),
+			  LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_set_f64(&LWM2M_OBJ(IPSO_OBJECT_PRESSURE_ID, 0, MIN_RANGE_VALUE_RID),
+		      min_range_val);
+	lwm2m_set_f64(&LWM2M_OBJ(IPSO_OBJECT_PRESSURE_ID, 0, MAX_RANGE_VALUE_RID),
+		      max_range_val);
 
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_PRESSURE_SENSOR_VERSION_1_1)) {
-		lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, TIMESTAMP_RID),
-					 &timestamp, sizeof(timestamp),
-					 sizeof(timestamp), LWM2M_RES_DATA_FLAG_RW);
-		lwm2m_engine_register_post_write_callback(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0,
-								     SENSOR_VALUE_RID),
-							  update_timestamp_cb);
+		lwm2m_set_res_buf(&LWM2M_OBJ(IPSO_OBJECT_PRESSURE_ID, 0, TIMESTAMP_RID),
+				  &timestamp, sizeof(timestamp),
+				  sizeof(timestamp), LWM2M_RES_DATA_FLAG_RW);
+		lwm2m_register_post_write_callback(&LWM2M_OBJ(IPSO_OBJECT_PRESSURE_ID, 0,
+						   SENSOR_VALUE_RID), update_timestamp_cb);
 	}
 
 	return 0;

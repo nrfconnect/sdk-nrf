@@ -33,11 +33,7 @@ static uint8_t colour_val[NUM_LEDS];
 
 static void reset_on_time(uint16_t obj_inst_id)
 {
-	char lwm2m_path[MAX_LWM2M_PATH_LEN];
-
-	snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u/%d", IPSO_OBJECT_LIGHT_CONTROL_ID,
-			obj_inst_id, ON_TIME_RID);
-	lwm2m_engine_set_s32(lwm2m_path, 0);
+	lwm2m_set_s32(&LWM2M_OBJ(IPSO_OBJECT_LIGHT_CONTROL_ID, obj_inst_id, ON_TIME_RID), 0);
 }
 
 static int rgb_lc_on_off_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
@@ -218,45 +214,40 @@ int lwm2m_init_light_control(void)
 
 	if (IS_ENABLED(CONFIG_BOARD_THINGY91_NRF9160_NS)) {
 		/* Create RGB light control object */
-		lwm2m_engine_create_obj_inst(LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0));
-		lwm2m_engine_register_post_write_callback(
-			LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, ON_OFF_RID), rgb_lc_on_off_cb);
-		lwm2m_engine_register_post_write_callback(
-			LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, COLOUR_RID), rgb_lc_colour_cb);
-		lwm2m_engine_register_post_write_callback(
-			LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, DIMMER_RID), rgb_lc_dimmer_cb);
-		lwm2m_engine_set_res_buf(
-			LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, APPLICATION_TYPE_RID),
+		lwm2m_create_object_inst(&LWM2M_OBJ(IPSO_OBJECT_LIGHT_CONTROL_ID, 0));
+		lwm2m_register_post_write_callback(
+			&LWM2M_OBJ(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, ON_OFF_RID), rgb_lc_on_off_cb);
+		lwm2m_register_post_write_callback(
+			&LWM2M_OBJ(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, COLOUR_RID), rgb_lc_colour_cb);
+		lwm2m_register_post_write_callback(
+			&LWM2M_OBJ(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, DIMMER_RID), rgb_lc_dimmer_cb);
+		lwm2m_set_res_buf(
+			&LWM2M_OBJ(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, APPLICATION_TYPE_RID),
 			APP_TYPE, sizeof(APP_TYPE), sizeof(APP_TYPE), LWM2M_RES_DATA_FLAG_RO);
-		lwm2m_engine_set_string(LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, COLOUR_RID),
+		lwm2m_set_string(&LWM2M_OBJ(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, COLOUR_RID),
 			colour_str);
-		lwm2m_engine_set_u8(LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, DIMMER_RID),
-			BRIGHTNESS_MAX);
+		lwm2m_set_u8(&LWM2M_OBJ(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, DIMMER_RID),
+			     BRIGHTNESS_MAX);
 	} else if (IS_ENABLED(CONFIG_BOARD_NRF9160DK_NRF9160_NS)) {
-		char lwm2m_path[MAX_LWM2M_PATH_LEN];
+		struct lwm2m_obj_path lwm2m_path = LWM2M_OBJ(IPSO_OBJECT_LIGHT_CONTROL_ID);
 
 		for (int i = 0; i < NUM_LEDS; ++i) {
+			lwm2m_path.obj_inst_id = i;
+			lwm2m_path.level = 2;
 			/* Create light control object */
-			snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u",
-				IPSO_OBJECT_LIGHT_CONTROL_ID, i);
-			lwm2m_engine_create_obj_inst(lwm2m_path);
+			lwm2m_create_object_inst(&lwm2m_path);
 
-			snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u/%d",
-				IPSO_OBJECT_LIGHT_CONTROL_ID, i, ON_OFF_RID);
-			lwm2m_engine_register_post_write_callback(lwm2m_path, lc_on_off_cb);
+			lwm2m_path.res_id = ON_OFF_RID;
+			lwm2m_path.level = 3;
+			lwm2m_register_post_write_callback(&lwm2m_path, lc_on_off_cb);
 
-			snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u/%d",
-				IPSO_OBJECT_LIGHT_CONTROL_ID, i, DIMMER_RID);
-			lwm2m_engine_register_post_write_callback(lwm2m_path, lc_dimmer_cb);
+			lwm2m_path.res_id = DIMMER_RID;
+			lwm2m_register_post_write_callback(&lwm2m_path, lc_dimmer_cb);
+			lwm2m_set_u8(&lwm2m_path, BRIGHTNESS_MAX);
 
-			snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u/%d",
-				IPSO_OBJECT_LIGHT_CONTROL_ID, i, APPLICATION_TYPE_RID);
-			lwm2m_engine_set_res_buf(lwm2m_path, APP_TYPE, sizeof(APP_TYPE),
-						 sizeof(APP_TYPE), LWM2M_RES_DATA_FLAG_RO);
-
-			snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u/%d",
-				IPSO_OBJECT_LIGHT_CONTROL_ID, i, DIMMER_RID);
-			lwm2m_engine_set_u8(lwm2m_path, BRIGHTNESS_MAX);
+			lwm2m_path.res_id = APPLICATION_TYPE_RID;
+			lwm2m_set_res_buf(&lwm2m_path, APP_TYPE, sizeof(APP_TYPE),
+					  sizeof(APP_TYPE), LWM2M_RES_DATA_FLAG_RO);
 		}
 	}
 
