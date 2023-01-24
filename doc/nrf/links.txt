@@ -1078,3 +1078,9 @@
 .. _`Wi-Fi Alliance`: https://www.wi-fi.org/
 
 .. _`IEEE 802.11 Working Group`: https://www.ieee802.org/11/
+
+.. _`3GPP TS 24.008, subclause 10.5.5.32`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=622
+
+.. _`3GPP TS 24.008 Ch. 10.5.7.3`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=667
+
+.. _`3GPP TS 24.008 Ch. 10.5.7.4a`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=668
