@@ -1,13 +1,13 @@
 .. _radio_test:
 
-Radio test
-##########
+Radio test (short-range)
+########################
 
 .. contents::
    :local:
    :depth: 2
 
-The Radio test sample demonstrates how to configure the radio in a specific mode and then test its performance.
+The Radio test sample demonstrates how to configure the 2.4 GHz short-range radio (Bluetooth® LE, IEEE 802.15.4 and proprietary) in a specific mode and then test its performance.
 The sample provides a set of predefined commands that allow you to configure the radio in three modes:
 
 * Constant RX or TX carrier

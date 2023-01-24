@@ -346,6 +346,7 @@ Peripheral samples
 
   * Added support for the nRF7002 board.
   * Fixed sample building with support for the Skyworks front-end module.
+  * Updated documentation to clarify that this sample is dedicated for the short-range radio (Bluetooth LE, IEEE 802.15.4 and proprietary modes).
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
