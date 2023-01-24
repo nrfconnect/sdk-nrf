@@ -47,5 +47,5 @@ int lwm2m_device_reboot_cb(uint16_t obj_inst_id, uint8_t *args,
 
 int lwm2m_init_device(void)
 {
-	return lwm2m_engine_register_exec_callback("3/0/4", lwm2m_device_reboot_cb);
+	return lwm2m_register_exec_callback(&LWM2M_OBJ(3, 0, 4), lwm2m_device_reboot_cb);
 }

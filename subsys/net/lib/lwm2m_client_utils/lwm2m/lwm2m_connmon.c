@@ -54,33 +54,33 @@ static uint8_t bearers[2] = { LTE_FDD_BEARER, NB_IOT_BEARER };
 
 static void connmon_data_init(void)
 {
-	lwm2m_engine_create_res_inst(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
-				     CONNMON_AVAIL_NETWORK_BEARER_ID, 0));
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
-				 CONNMON_AVAIL_NETWORK_BEARER_ID, 0), &bearers[0],
-				 sizeof(bearers[0]), sizeof(bearers[0]), LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_create_res_inst(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
+			      CONNMON_AVAIL_NETWORK_BEARER_ID, 0));
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
+			  CONNMON_AVAIL_NETWORK_BEARER_ID, 0), &bearers[0],
+			  sizeof(bearers[0]), sizeof(bearers[0]), LWM2M_RES_DATA_FLAG_RO);
 
-	lwm2m_engine_create_res_inst(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
-				     CONNMON_AVAIL_NETWORK_BEARER_ID, 1));
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
-				 CONNMON_AVAIL_NETWORK_BEARER_ID, 1), &bearers[1],
-				 sizeof(bearers[1]), sizeof(bearers[1]), LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_create_res_inst(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
+			      CONNMON_AVAIL_NETWORK_BEARER_ID, 1));
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
+			  CONNMON_AVAIL_NETWORK_BEARER_ID, 1), &bearers[1],
+			  sizeof(bearers[1]), sizeof(bearers[1]), LWM2M_RES_DATA_FLAG_RO);
 	/* interface IP address */
-	lwm2m_engine_create_res_inst(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
-				     CONNMON_IP_ADDRESSES, 0));
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
-				 CONNMON_IP_ADDRESSES, 0), ip_addr, sizeof(ip_addr), 0, 0);
+	lwm2m_create_res_inst(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
+			      CONNMON_IP_ADDRESSES, 0));
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
+			  CONNMON_IP_ADDRESSES, 0), ip_addr, sizeof(ip_addr), 0, 0);
 	/* APN */
-	lwm2m_engine_create_res_inst(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
-				     CONNMON_APN, 0));
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
-				 CONNMON_APN, 0), apn, sizeof(apn), 0, 0);
+	lwm2m_create_res_inst(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
+			      CONNMON_APN, 0));
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
+			  CONNMON_APN, 0), apn, sizeof(apn), 0, 0);
 	/* Set "Firmware Version" as modem firmware version in device object.
 	 * Do it here not to repeat the process elsewhere - we read the FW
 	 * version from the `modem_param_info` structure.
 	 */
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, DEVICE_FIRMWARE_VERSION_ID),
-				 fw_version, sizeof(fw_version), 0, 0);
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, DEVICE_FIRMWARE_VERSION_ID),
+			  fw_version, sizeof(fw_version), 0, 0);
 }
 
 static void modem_data_update(struct k_work *work)
@@ -93,22 +93,22 @@ static void modem_data_update(struct k_work *work)
 		return;
 	}
 
-	lwm2m_engine_set_string(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
-				CONNMON_IP_ADDRESSES, 0),
-				modem_param.network.ip_address.value_string);
-	lwm2m_engine_set_string(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
-				CONNMON_APN, 0), modem_param.network.apn.value_string);
-	lwm2m_engine_set_string(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, DEVICE_FIRMWARE_VERSION_ID),
-				modem_param.device.modem_fw.value_string);
-	lwm2m_engine_set_u32(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CONNMON_CELLID),
-			     (uint32_t)modem_param.network.cellid_dec);
-	lwm2m_engine_set_u16(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CONNMON_SMNC),
-			     modem_param.network.mnc.value);
-	lwm2m_engine_set_u16(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CONNMON_SMCC),
-			     modem_param.network.mcc.value);
+	lwm2m_set_string(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
+			 CONNMON_IP_ADDRESSES, 0),
+			 modem_param.network.ip_address.value_string);
+	lwm2m_set_string(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
+			 CONNMON_APN, 0), modem_param.network.apn.value_string);
+	lwm2m_set_string(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, DEVICE_FIRMWARE_VERSION_ID),
+			 modem_param.device.modem_fw.value_string);
+	lwm2m_set_u32(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CONNMON_CELLID),
+		      (uint32_t)modem_param.network.cellid_dec);
+	lwm2m_set_u16(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CONNMON_SMNC),
+		      modem_param.network.mnc.value);
+	lwm2m_set_u16(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CONNMON_SMCC),
+		      modem_param.network.mcc.value);
 #if defined(CONFIG_LWM2M_CONNMON_OBJECT_VERSION_1_2)
-	lwm2m_engine_set_u16(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CONNMON_LAC),
-			     modem_param.network.area_code.value);
+	lwm2m_set_u16(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CONNMON_LAC),
+		      modem_param.network.area_code.value);
 #endif
 }
 
@@ -134,7 +134,7 @@ static void modem_signal_update(struct k_work *work)
 		return;
 	}
 
-	lwm2m_engine_set_s8("4/0/2", modem_rsrp);
+	lwm2m_set_s8(&LWM2M_OBJ(4, 0, 2), modem_rsrp);
 	timestamp_prev = k_uptime_get_32();
 }
 
@@ -147,11 +147,11 @@ static void lwm2m_update_connmon_mode(const enum lte_lc_lte_mode lte_mode)
 {
 	switch (lte_mode) {
 	case LTE_LC_LTE_MODE_LTEM:
-		lwm2m_engine_set_u8("4/0/0", LTE_FDD_BEARER);
+		lwm2m_set_u8(&LWM2M_OBJ(4, 0, 0), LTE_FDD_BEARER);
 		break;
 
 	case LTE_LC_LTE_MODE_NBIOT:
-		lwm2m_engine_set_u8("4/0/0", NB_IOT_BEARER);
+		lwm2m_set_u8(&LWM2M_OBJ(4, 0, 0), NB_IOT_BEARER);
 		break;
 
 	case LTE_LC_LTE_MODE_NONE:
