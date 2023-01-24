@@ -138,11 +138,6 @@ int lwm2m_update_signal_meas_objects(const struct lte_lc_cells_info *const cells
 		return -EINVAL;
 	}
 
-	if (cells->ncells_count == 0) {
-		LOG_DBG("No neighbouring cells found");
-		return -ENODATA;
-	}
-
 	LOG_INF("Updating information for %d neighbouring cells", cells->ncells_count);
 
 	for (i = 0; i < MAX_INSTANCE_COUNT && i < cells->ncells_count; i++) {
