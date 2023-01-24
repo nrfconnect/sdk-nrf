@@ -18,6 +18,7 @@
 #include <sys/types.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/slist.h>
+#include "../../subsys/emds/emds_flash.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,6 +36,8 @@ struct emds_entry {
 	uint8_t *data;
 	/** Length of data that will be stored. */
 	size_t len;
+	/** Entry status. */
+	enum emds_entry_status status;
 };
 
 /**
@@ -136,17 +139,35 @@ int emds_entry_add(struct emds_dynamic_entry *entry);
 int emds_store(void);
 
 /**
- * @brief Load all static data from the emergency data storage.
+ * @brief Load valid static data from the emergency data storage.
  *
  * This function needs to be called after the static entries are added, as they
  * are used to select the data to be loaded. The function also needs to be
- * called before the @ref emds_prepare function which will delete all the
+ * called before the @ref emds_prepare function which will invalidate all the
  * previously stored data.
  *
  * @retval 0 Success
- * @retval -ERRNO errno code if error
+ * @retval -EBADMSG if one or more entries could not be retrieved
+ * @retval -ECANCELED if EMDS is not initialized properly
  */
 int emds_load(void);
+
+/**
+ * @brief Load static data from the emergency data storage, disregarding the validity.
+ *
+ * @warning This call will return the latest valid OR invalidated entry for the given
+ * entry ID. Should only be used as a fallback method in a case where @ref emds_load
+ * fails to retrieve all expected data. @ref emds_load should always be attempted before
+ * using this call.
+ *
+ * This function needs to be called after the static entries are added, as they
+ * are used to select the data to be loaded.
+ *
+ * @retval 0 Success
+ * @retval -EBADMSG if one or more entries could not be retrieved
+ * @retval -ECANCELED if EMDS is not initialized properly
+ */
+int emds_load_raw(void);
 
 /**
  * @brief Clear flash area from the emergency data storage.

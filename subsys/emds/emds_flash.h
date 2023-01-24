@@ -15,6 +15,19 @@
 extern "C" {
 #endif
 
+/** @brief Enumeration representing the status for a single EMDS entry
+ */
+enum emds_entry_status {
+	/** Not yet initialized */
+	EMDS_ENTRY_NO_INIT,
+	/** Valid entry */
+	EMDS_ENTRY_VALID,
+	/** Invalid old entry */
+	EMDS_ENTRY_INVALID,
+	/** Entry not found */
+	EMDS_ENTRY_NOT_FOUND,
+};
+
 /**
  * @brief Emergency data storage file system structure
  *
@@ -83,7 +96,7 @@ int emds_flash_clear(struct emds_fs *fs);
 ssize_t emds_flash_write(struct emds_fs *fs, uint16_t id, const void *data, size_t len);
 
 /**
- * @brief Read most recent available entry from the EMDS file system.
+ * @brief Read most recent available entry from the EMDS file system, disregarding the validity.
  *
  * @warning This call will return the latest valid OR invalidated entry for the given
  * entry ID. Should only be used as a fallback method in a case where there is no
@@ -96,13 +109,15 @@ ssize_t emds_flash_write(struct emds_fs *fs, uint16_t id, const void *data, size
  * @param id Id of the entry to be read
  * @param data Pointer to data buffer
  * @param len Number of bytes in data buffer
+ * @param status Pointer to status flag indicating the state of the entry
  *
  * @return Number of bytes read. On success, it will be equal to the number of bytes requested
  * to be read. When the return value is larger than the number of bytes requested to read this
  * indicates not all bytes were read, and more data is available. On error, returns negative
  * value of errno.h defined error codes.
  */
-ssize_t emds_flash_read_raw(struct emds_fs *fs, uint16_t id, void *data, size_t len);
+ssize_t emds_flash_read_raw(struct emds_fs *fs, uint16_t id, void *data, size_t len,
+			    enum emds_entry_status *status);
 
 /**
  * @brief Read a valid entry from the EMDS file system.
@@ -113,13 +128,15 @@ ssize_t emds_flash_read_raw(struct emds_fs *fs, uint16_t id, void *data, size_t 
  * @param id Id of the entry to be read
  * @param data Pointer to data buffer
  * @param len Number of bytes in data buffer
+ * @param status Pointer to status flag indicating the state of the entry
  *
  * @return Number of bytes read. On success, it will be equal to the number of bytes requested
  * to be read. When the return value is larger than the number of bytes requested to read this
  * indicates not all bytes were read, and more data is available. On error, returns negative
  * value of errno.h defined error codes.
  */
-ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len);
+ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len,
+			enum emds_entry_status *status);
 
 /**
  * @brief Prepare EMDS file system for next write events.
@@ -136,7 +153,9 @@ ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len)
  * @param fs Pointer to file system
  * @param byte_size Total number of bytes
  *
- * @retval 0 on success or negative error code
+ * @retval 0 on success without clearing flash
+ * @retval 1 on success and clearing flash
+ * @retval Negative error code on failure
  */
 int emds_flash_prepare(struct emds_fs *fs, int byte_size);
 
@@ -148,7 +167,6 @@ int emds_flash_prepare(struct emds_fs *fs, int byte_size);
  * @retval Remaining free space of the flash device in bytes
  */
 ssize_t emds_flash_free_space_get(struct emds_fs *fs);
-
 
 #ifdef __cplusplus
 }

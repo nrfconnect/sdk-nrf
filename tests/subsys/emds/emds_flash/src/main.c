@@ -144,7 +144,6 @@ static int data_write(const void *data, size_t len)
 end:
 	m_test_fd.data_wra_offset += align_size(len);
 	return rc;
-
 }
 
 static int fs_init(void)
@@ -168,7 +167,6 @@ static int fs_init(void)
 	} else if (rc != 0 && rc != -ENOMEM) {
 		__ASSERT(0, "Failed when getting sector information");
 	}
-
 
 	if (hw_flash_sector.fs_size > UINT16_MAX) {
 		return -EDOM;
@@ -275,14 +273,17 @@ static void test_rd_wr_simple(void)
 	 */
 	uint8_t data_in[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
 	uint8_t data_out[8] = { 0 };
+	enum emds_entry_status status;
 
 	flash_clear();
 	device_reset();
 
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
+	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size) < 0,
+		      "Prepare failed");
 	zassert_false(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) < 0, "Error when write");
-	zassert_false(emds_flash_read(&ctx, 1, data_out, sizeof(data_out)) < 0, "Error when read");
+	zassert_false(emds_flash_read(&ctx, 1, data_out, sizeof(data_out), &status) < 0,
+		      "Error when read");
 	zassert_false(memcmp(data_out, data_in, sizeof(data_out)), "Retrived wrong value");
 }
 
@@ -291,7 +292,8 @@ static void test_flash_recovery(void)
 	char data_in1[9] = "Deadbeef";
 	char data_in2[8] = "Beafded";
 	char data_in3[13] = "Deadbeefface";
-	char data_out[32] = {0};
+	char data_out[32] = { 0 };
+	enum emds_entry_status status;
 	uint32_t idx;
 
 	flash_clear();
@@ -327,8 +329,9 @@ static void test_flash_recovery(void)
 	entry_write(idx, 1, data_in1, sizeof(data_in1), true);
 	idx -= sizeof(struct test_ate);
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in1)) > 0, "Could not read");
-	(void)emds_flash_read(&ctx, 1, data_out, sizeof(data_in1));
+	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in1), &status) > 0,
+		     "Could not read");
+	(void)emds_flash_read(&ctx, 1, data_out, sizeof(data_in1), &status);
 	zassert_false(ctx.force_erase, "Expected false");
 	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
 	zassert_false(memcmp(data_in1, data_out, sizeof(data_in1)), "Not same data");
@@ -352,7 +355,8 @@ static void test_flash_recovery(void)
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_false(ctx.force_erase, "Expected false");
 	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
-	zassert_true(emds_flash_read(&ctx, 2, data_out, sizeof(data_in2)) > 0, "Could not read");
+	zassert_true(emds_flash_read(&ctx, 2, data_out, sizeof(data_in2), &status) > 0,
+		     "Could not read");
 	zassert_false(memcmp(data_in2, data_out, sizeof(data_in2)), "Not same data");
 	device_reset();
 
@@ -373,9 +377,11 @@ static void test_flash_recovery(void)
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(ctx.force_erase, "Expected true");
 	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
-	zassert_true(emds_flash_read(&ctx, 2, data_out, sizeof(data_in2)) > 0, "Could not read");
+	zassert_true(emds_flash_read(&ctx, 2, data_out, sizeof(data_in2), &status) > 0,
+		     "Could not read");
 	zassert_false(memcmp(data_in2, data_out, sizeof(data_in2)), "Not same data");
-	zassert_true(emds_flash_read(&ctx, 3, data_out, sizeof(data_in3)) > 0, "Could not read");
+	zassert_true(emds_flash_read(&ctx, 3, data_out, sizeof(data_in3), &status) > 0,
+		     "Could not read");
 	zassert_false(memcmp(data_in3, data_out, sizeof(data_in3)), "Not same data");
 	device_reset();
 
@@ -403,7 +409,8 @@ static void test_flash_recovery(void)
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(ctx.force_erase, "Expected true");
 	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
-	zassert_true(emds_flash_read(&ctx, 3, data_out, sizeof(data_in3)) > 0, "Could not read");
+	zassert_true(emds_flash_read(&ctx, 3, data_out, sizeof(data_in3), &status) > 0,
+		     "Could not read");
 	zassert_false(memcmp(data_in3, data_out, sizeof(data_in3)), "Not same data");
 }
 
@@ -420,11 +427,11 @@ static void test_flash_recovery_corner_case(void)
 	device_reset();
 }
 
-
 static void test_invalidate_on_prepare(void)
 {
 	char data_in[9] = "Deadbeef";
-	char data_out[9] = {0};
+	char data_out[9] = { 0 };
+	enum emds_entry_status status;
 
 	flash_clear();
 	device_reset();
@@ -441,26 +448,22 @@ static void test_invalidate_on_prepare(void)
 	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
 
 	for (size_t i = 0; i < 5; i++) {
-		zassert_true(emds_flash_read(&ctx, i, data_out, sizeof(data_in)) > 0,
+		zassert_true(emds_flash_read(&ctx, i, data_out, sizeof(data_in), &status) > 0,
 			     "Could not read");
 		zassert_false(memcmp(data_in, data_out, sizeof(data_in)), "Not same data");
 		memset(data_out, 0, sizeof(data_out));
 	}
 
-	zassert_false(emds_flash_prepare(&ctx, 0), "Error when preparing");
+	zassert_false(emds_flash_prepare(&ctx, 0) < 0, "Error when preparing");
 
 	device_reset();
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 
-	/* Expect the free storage integrity to fail due to no valid ATE and invalid presence.
-	 * This occurs only if the user does not store any new entry after emds_flash_prepare
-	 */
-	zassert_true(ctx.force_erase, "Expected true");
 	for (size_t i = 0; i < 5; i++) {
-		zassert_false(emds_flash_read(&ctx, i, data_out, sizeof(data_in)) > 0,
+		zassert_false(emds_flash_read(&ctx, i, data_out, sizeof(data_in), &status) > 0,
 			      "Should not be able to read");
 	}
-	zassert_false(emds_flash_prepare(&ctx, 0), "Error when preparing");
+	zassert_false(emds_flash_prepare(&ctx, 0) < 0, "Error when preparing");
 
 	/* Reset again without writing */
 	device_reset();
@@ -486,21 +489,22 @@ static void test_clear_on_strange_flash(void)
 	ate_corrupt_write(m_test_fd.ate_idx_start);
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(ctx.force_erase, "Force erase should be true");
-	zassert_false(emds_flash_prepare(&ctx, 0), "Error when preparing");
+	zassert_false(emds_flash_prepare(&ctx, 0) < 0, "Error when preparing");
 	zassert_false(flash_cmp_const(m_test_fd.offset, 0xff, m_test_fd.size), "Flash not cleared");
 }
 
 static void test_permission(void)
 {
 	char data_in[8] = "Deadbeef";
-	char data_out[8] = {0};
+	char data_out[8] = { 0 };
+	enum emds_entry_status status;
 
 	flash_clear();
 	device_reset();
 
 	zassert_true(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size) == -EACCES,
 		     "Prepare did not fail");
-	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in)) == -EACCES,
+	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in), &status) == -EACCES,
 		     "Should not be able to read");
 	zassert_true(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) == -EACCES,
 		     "Should not be able to read");
@@ -510,26 +514,29 @@ static void test_permission(void)
 	zassert_true(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) == -EACCES,
 		     "Should not be able to read");
 
-	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
+	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size) < 0,
+		      "Prepare failed");
 
 	zassert_true(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) == sizeof(data_in),
-				      "Should be able to write");
-	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in)) == sizeof(data_in),
-				     "Should be able to read");
+		     "Should be able to write");
+	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in), &status) ==
+			     sizeof(data_in),
+		     "Should be able to read");
 	zassert_false(memcmp(data_out, data_in, sizeof(data_out)), "Retrived wrong value");
-
 }
 
 static void test_overflow(void)
 {
 	char data_in[8] = "Deadbee";
-	char data_out[8] = {0};
+	char data_out[8] = { 0 };
+	enum emds_entry_status status;
 
 	flash_clear();
 	device_reset();
 
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
+	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size) < 0,
+		      "Prepare failed");
 
 	uint16_t test_cnt = 0;
 
@@ -541,22 +548,21 @@ static void test_overflow(void)
 
 	/* Try to write to full flash */
 	zassert_true(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) < 0,
-				      "Should not be able to write");
+		     "Should not be able to write");
 
 	device_reset();
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 
 	data_in[0] = 'D';
 	for (size_t i = 0; i < test_cnt; i++) {
-		emds_flash_read(&ctx, i, data_out,
-				  sizeof(data_out));
+		emds_flash_read(&ctx, i, data_out, sizeof(data_out), &status);
 		zassert_false(memcmp(data_out, data_in, sizeof(data_out)), "Retrived wrong value");
 		memset(data_out, 0, sizeof(data_out));
 		data_in[0]++;
 	}
 
-
-	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
+	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size) < 0,
+		      "Prepare failed");
 
 	data_in[0] = 'D';
 	emds_flash_write(&ctx, 0, data_in, sizeof(data_in));
@@ -564,13 +570,12 @@ static void test_overflow(void)
 	device_reset();
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 
-	emds_flash_read(&ctx, 0, data_out, sizeof(data_out));
+	emds_flash_read(&ctx, 0, data_out, sizeof(data_out), &status);
 	zassert_false(memcmp(data_out, data_in, sizeof(data_out)), "Retrived wrong value");
 
 	zassert_equal(emds_flash_free_space_get(&ctx),
 		      m_test_fd.size - (sizeof(data_out) + sizeof(struct test_ate) * 2), "");
 }
-
 
 static void test_prepare_overflow(void)
 {
@@ -578,9 +583,9 @@ static void test_prepare_overflow(void)
 	device_reset();
 
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_true(emds_flash_prepare(&ctx, m_test_fd.size), "Prepare should return error");
-	zassert_false(emds_flash_prepare(&ctx, m_test_fd.size - 16), "Prepare failed");
-	zassert_false(emds_flash_prepare(&ctx, m_test_fd.size - 24), "Prepare failed");
+	zassert_true(emds_flash_prepare(&ctx, m_test_fd.size) < 0, "Prepare should return error");
+	zassert_false(emds_flash_prepare(&ctx, m_test_fd.size - 16) < 0, "Prepare failed");
+	zassert_false(emds_flash_prepare(&ctx, m_test_fd.size - 24) < 0, "Prepare failed");
 }
 
 static void test_full_corrupt_recovery(void)
@@ -594,7 +599,7 @@ static void test_full_corrupt_recovery(void)
 	zassert_true(ctx.force_erase, "Force erase should be true");
 	zassert_equal(0, emds_flash_free_space_get(&ctx), "Expected no free space");
 
-	zassert_false(emds_flash_prepare(&ctx, 0), "Prepare failed");
+	zassert_false(emds_flash_prepare(&ctx, 0) < 0, "Prepare failed");
 	zassert_equal(m_test_fd.size - sizeof(struct test_ate), emds_flash_free_space_get(&ctx),
 		      "Expected no free space");
 
@@ -604,21 +609,23 @@ static void test_full_corrupt_recovery(void)
 
 static void test_corrupted_data(void)
 {
-	char corrupt[4] = {0};
+	char corrupt[4] = { 0 };
 	char data_in[8] = "Deadbee";
-	char data_out[8] = {0};
+	char data_out[8] = { 0 };
+	enum emds_entry_status status;
 
 	flash_clear();
 	device_reset();
 
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
+	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size) < 0,
+		      "Prepare failed");
 
 	zassert_true(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) == sizeof(data_in),
-				      "Should be able to write");
+		     "Should be able to write");
 
-	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in)) == sizeof(data_in),
-				     "Should be able to read");
+	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in), &status) ==
+		     sizeof(data_in), "Should be able to read");
 
 	/* Corrupt data entry */
 	flash_write(m_test_fd.fd, m_test_fd.data_wra_offset + m_test_fd.offset, corrupt,
@@ -628,8 +635,8 @@ static void test_corrupted_data(void)
 	device_reset();
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 
-	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in)) < 0,
-				     "Should not be able to read");
+	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in), &status) < 0,
+		     "Should not be able to read");
 }
 
 static void test_write_speed(void)
@@ -676,10 +683,10 @@ static void test_write_speed(void)
 
 static void test_invalidate_recover(void)
 {
-
 	char data_in[9] = "Deadbeef";
 	char data_in2[9] = "Beafface";
-	char data_out[9] = {0};
+	char data_out[9] = { 0 };
+	enum emds_entry_status status;
 
 	flash_clear();
 	device_reset();
@@ -692,50 +699,101 @@ static void test_invalidate_recover(void)
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 
 	/* Check that the entry initially is valid and contain the correct data */
-	zassert_true(emds_flash_read(&ctx, 0, data_out, sizeof(data_in)) > 0, "Could not read");
+	zassert_true(emds_flash_read(&ctx, 0, data_out, sizeof(data_in), &status) > 0,
+		     "Could not read");
 	zassert_false(memcmp(data_in, data_out, sizeof(data_in)), "Not same data");
 
 	/* Check that raw read also can read the valid entry */
-	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in)) > 0, "Could not read");
+	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in), &status) > 0,
+		     "Could not read");
 	zassert_false(memcmp(data_in, data_out, sizeof(data_in)), "Not same data");
+	zassert_equal(status, EMDS_ENTRY_VALID, "Expected valid entry");
 
 	/* Prepare EMDS, thus invalidating the entry */
-	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
+	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size) < 0,
+		      "Prepare failed");
 
 	/* Check that conventional read is not possible after prepare*/
-	zassert_false(emds_flash_read(&ctx, 0, data_out, sizeof(data_in)) > 0,
-			"Should not be able to read");
+	zassert_false(emds_flash_read(&ctx, 0, data_out, sizeof(data_in), &status) > 0,
+		      "Should not be able to read");
 
 	/* Check that raw read can recover invalidated data */
-	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in)) > 0, "Could not read");
+	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in), &status) > 0,
+		     "Could not read");
 	zassert_false(memcmp(data_in, data_out, sizeof(data_in)), "Not same data");
+	zassert_equal(status, EMDS_ENTRY_INVALID, "Expected invalid entry");
 
 	device_reset();
 
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 
 	/* Check that conventional read is not possible after device reset */
-	zassert_false(emds_flash_read(&ctx, 0, data_out, sizeof(data_in)) > 0,
-			"Should not be able to read");
+	zassert_false(emds_flash_read(&ctx, 0, data_out, sizeof(data_in), &status) > 0,
+		      "Should not be able to read");
 
 	/* Check that raw read can recover invalidated data after device reset */
-	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in)) > 0, "Could not read");
+	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in), &status) > 0,
+		     "Could not read");
 	zassert_false(memcmp(data_in, data_out, sizeof(data_in)), "Not same data");
+	zassert_equal(status, EMDS_ENTRY_INVALID, "Expected invalid entry");
 
 	/* Add "newer" invalidated entry for the same ID */
 	idx -= sizeof(struct test_ate);
-	entry_write(idx, 0, data_in2, sizeof(data_in2), true);
+	entry_write(idx, 0, data_in2, sizeof(data_in2), false);
 
 	/* Check that raw read now recovers the newest invalidated entry */
-	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in2)) > 0, "Could not read");
+	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in2), &status) > 0,
+		     "Could not read");
 	zassert_false(memcmp(data_in2, data_out, sizeof(data_in2)), "Not same data");
+	zassert_equal(status, EMDS_ENTRY_INVALID, "Expected invalid entry");
 
 	/* Corrupt the newest invalidated entry */
 	ate_corrupt_write(idx);
 
 	/* Check that raw read can recover the uncorrupted invalid entry*/
-	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in)) > 0, "Could not read");
+	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in), &status) > 0,
+		     "Could not read");
 	zassert_false(memcmp(data_in, data_out, sizeof(data_in)), "Not same data");
+	zassert_equal(status, EMDS_ENTRY_INVALID, "Expected invalid entry");
+}
+
+static void test_entry_status(void)
+{
+	char data_in[9] = "Deadbeef";
+	char data_out[9] = { 0 };
+	uint32_t idx = m_test_fd.ate_idx_start;
+	static enum emds_entry_status status;
+
+	flash_clear();
+
+	/* Put one valid and one invalid entry in flash */
+	entry_write(idx, 0, data_in, sizeof(data_in), true);
+	idx -= sizeof(struct test_ate);
+	entry_write(idx, 1, data_in, sizeof(data_in), false);
+
+	device_reset();
+
+	/* Try to read non-existent entry before init */
+	zassert_equal(emds_flash_read_raw(&ctx, 3, data_out, sizeof(data_in), &status), -EACCES,
+		      "Expected no entry");
+	zassert_equal(status, EMDS_ENTRY_NO_INIT, "Expected Invalid entry");
+
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
+
+	/* Read valid entry */
+	zassert_true(emds_flash_read_raw(&ctx, 0, data_out, sizeof(data_in), &status) > 0,
+		     "Could not read");
+	zassert_equal(status, EMDS_ENTRY_VALID, "Expected valid entry");
+
+	/* Read invalid entry */
+	zassert_true(emds_flash_read_raw(&ctx, 1, data_out, sizeof(data_in), &status) > 0,
+		     "Could not read");
+	zassert_equal(status, EMDS_ENTRY_INVALID, "Expected Invalid entry");
+
+	/* Read non-existent entry */
+	zassert_equal(emds_flash_read_raw(&ctx, 2, data_out, sizeof(data_in), &status), -ENXIO,
+		      "Expected no entry");
+	zassert_equal(status, EMDS_ENTRY_NOT_FOUND, "Expected Invalid entry");
 }
 
 void test_main(void)
@@ -755,7 +813,8 @@ void test_main(void)
 			 ztest_unit_test(test_overflow),
 			 ztest_unit_test(test_corrupted_data),
 			 ztest_unit_test(test_write_speed),
-			 ztest_unit_test(test_invalidate_recover)
+			 ztest_unit_test(test_invalidate_recover),
+			 ztest_unit_test(test_entry_status)
 			 );
 
 	ztest_run_test_suite(emds_flash_tests);

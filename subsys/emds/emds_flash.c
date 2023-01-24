@@ -480,16 +480,24 @@ ssize_t emds_flash_write(struct emds_fs *fs, uint16_t id, const void *data, size
 	return len;
 }
 
-static ssize_t emds_read(struct emds_fs *fs, uint16_t id, void *data, size_t len, bool any_entry)
+static ssize_t emds_read(struct emds_fs *fs, uint16_t id, void *data, size_t len,
+			 enum emds_entry_status *status, bool any_entry)
 {
 	if (!fs->is_initialized) {
 		LOG_ERR("EMDS flash not initialized");
 		return -EACCES;
 	}
 
+	if (!status) {
+		LOG_ERR("Status pointer uninitialized");
+		return -EACCES;
+	}
+
 	int rc;
 	uint32_t wlk_addr = fs->ate_wra;
 	struct emds_ate wlk_ate;
+
+	*status = EMDS_ENTRY_NOT_FOUND;
 
 	while (true) {
 		rc = flash_read(fs->flash_dev, wlk_addr, &wlk_ate, sizeof(struct emds_ate));
@@ -521,21 +529,27 @@ static ssize_t emds_read(struct emds_fs *fs, uint16_t id, void *data, size_t len
 		return -EFAULT;
 	}
 
+	*status = (wlk_ate.inval_flag != INVAL_VAL) ? EMDS_ENTRY_VALID : EMDS_ENTRY_INVALID;
+
 	return wlk_ate.len;
 }
 
-ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len)
+ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len,
+			enum emds_entry_status *status)
 {
-	return emds_read(fs ,id ,data ,len, false);
+	return emds_read(fs, id, data, len, status, false);
 }
 
-ssize_t emds_flash_read_raw(struct emds_fs *fs, uint16_t id, void *data, size_t len)
+ssize_t emds_flash_read_raw(struct emds_fs *fs, uint16_t id, void *data, size_t len,
+			    enum emds_entry_status *status)
 {
-	return emds_read(fs ,id ,data ,len, true);
+	return emds_read(fs, id, data, len, status, true);
 }
 
 int emds_flash_prepare(struct emds_fs *fs, int byte_size)
 {
+	int err = 0;
+
 	if (!fs->is_initialized) {
 		LOG_ERR("EMDS flash not initialized");
 		return -EACCES;
@@ -545,19 +559,21 @@ int emds_flash_prepare(struct emds_fs *fs, int byte_size)
 		return -ENOMEM;
 	}
 
-	int rc = old_entries_invalidate(fs);
+	err = old_entries_invalidate(fs);
 
-	if (rc) {
-		return rc;
+	if (err < 0) {
+		return err;
 	}
 
+	LOG_ERR("Byte size: %d, Free space: %d", byte_size, emds_flash_free_space_get(fs));
 	if (fs->force_erase || (byte_size > emds_flash_free_space_get(fs))) {
 		emds_flash_clear(fs);
 		fs->force_erase = false;
+		err = 1;
 	}
 
 	fs->is_prepeared = true;
-	return 0;
+	return err;
 }
 
 ssize_t emds_flash_free_space_get(struct emds_fs *fs)

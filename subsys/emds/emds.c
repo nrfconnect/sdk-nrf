@@ -137,6 +137,33 @@ int emds_entry_add(struct emds_dynamic_entry *entry)
 	return 0;
 }
 
+void store_entries(void)
+{
+	STRUCT_SECTION_FOREACH(emds_entry, ch)
+	{
+		ssize_t len = emds_flash_write(&emds_flash, ch->id, ch->data, ch->len);
+		if (len < 0) {
+			LOG_ERR("Write static entry: (%d) error (%d)", ch->id, len);
+		} else if (len != ch->len) {
+			LOG_ERR("Write static entry: (%d) failed (%d:%d)", ch->id, ch->len, len);
+		}
+	}
+
+	struct emds_dynamic_entry *ch;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
+		ssize_t len =
+			emds_flash_write(&emds_flash, ch->entry.id, ch->entry.data, ch->entry.len);
+		if (len < 0) {
+			LOG_ERR("Write dynamic entry: (%d) error (%d).", ch->entry.id, len);
+		}
+		if (len != ch->entry.len) {
+			LOG_ERR("Write dynamic entry: (%d) failed (%d:%d).", ch->entry.id,
+				ch->entry.len, len);
+		}
+	}
+}
+
 int emds_store(void)
 {
 	uint32_t store_key;
@@ -151,33 +178,7 @@ int emds_store(void)
 	/* Start the emergency data storage process. */
 	LOG_DBG("Emergency Data Storeage released");
 
-	STRUCT_SECTION_FOREACH(emds_entry, ch) {
-		ssize_t len = emds_flash_write(&emds_flash,
-					       ch->id, ch->data, ch->len);
-		if (len < 0) {
-			LOG_ERR("Write static entry: (%d) error (%d)",
-				ch->id, len);
-		} else if (len != ch->len) {
-			LOG_ERR("Write static entry: (%d) failed (%d:%d)",
-				ch->id, ch->len, len);
-		}
-	}
-
-	struct emds_dynamic_entry *ch;
-
-	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
-		ssize_t len = emds_flash_write(&emds_flash,
-					       ch->entry.id, ch->entry.data, ch->entry.len);
-		if (len < 0) {
-			LOG_ERR("Write dynamic entry: (%d) error (%d).",
-				ch->entry.id, len);
-		}
-		if (len != ch->entry.len) {
-			LOG_ERR("Write dynamic entry: (%d) failed (%d:%d).",
-				ch->entry.id, ch->entry.len, len);
-		}
-	}
-
+	store_entries();
 	emds_ready = false;
 
 	/* Unlock all interrupts */
@@ -189,47 +190,50 @@ int emds_store(void)
 
 	return 0;
 }
+static int entry_load(struct emds_fs *fs, uint16_t id, void *data, size_t entry_len,
+		      enum emds_entry_status *status, bool is_raw)
+{
+	ssize_t len = is_raw ? emds_flash_read_raw(fs, id, data, entry_len, status) :
+			       emds_flash_read(fs, id, data, entry_len, status);
 
-int emds_load(void)
+	if (len <= 0 || len != entry_len) {
+		LOG_ERR("Failed to retrieve dynamic entry: (%d)", id);
+		return -EBADMSG;
+	}
+
+	return 0;
+}
+
+static int stored_load(bool is_raw)
 {
 	struct emds_dynamic_entry *ch;
+	int err = 0;
 
 	if (!emds_initialized) {
 		return -ECANCELED;
 	}
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
-		ssize_t len = emds_flash_read(&emds_flash,
-					      ch->entry.id, ch->entry.data,
-					      ch->entry.len);
-
-		if (len < 0) {
-			if (len != -ENXIO) {
-				LOG_ERR("Read dynamic entry: (%d) error (%d)",
-					ch->entry.id, len);
-			}
-		} else if (len != ch->entry.len) {
-			LOG_WRN("Read dynamic entry: (%d) did not match (%d:%d).",
-				ch->entry.id, ch->entry.len, len);
-		}
+		err |= entry_load(&emds_flash, ch->entry.id, ch->entry.data, ch->entry.len,
+				  &ch->entry.status, is_raw);
 	}
 
-	STRUCT_SECTION_FOREACH(emds_entry, ch) {
-		ssize_t len = emds_flash_read(&emds_flash,
-					      ch->id, ch->data, ch->len);
-
-		if (len < 0) {
-			if (len != -ENXIO) {
-				LOG_ERR("Read static entry: (%d) error (%d)",
-					ch->id, len);
-			}
-		} else if (len != ch->len) {
-			LOG_WRN("Read static entry: (%d) entry did not match (%d:%d)",
-				ch->id, ch->len, len);
-		}
+	STRUCT_SECTION_FOREACH(emds_entry, ch)
+	{
+		err |= entry_load(&emds_flash, ch->id, ch->data, ch->len, &ch->status, is_raw);
 	}
 
-	return 0;
+	return err;
+}
+
+int emds_load(void)
+{
+	return stored_load(false);
+}
+
+int emds_load_raw(void)
+{
+	return stored_load(true);
 }
 
 int emds_clear(void)
@@ -253,7 +257,17 @@ int emds_prepare(void)
 	(void)emds_entries_size(&size);
 
 	rc = emds_flash_prepare(&emds_flash, size);
-	if (rc) {
+
+	/** If flash is empty after prepare, imediatley make an
+	 * extra copy of the current entries as backup before the
+	 * next EMDS event in case it should fail
+	 */
+	if (rc == 1) {
+		store_entries();
+		rc = emds_flash_prepare(&emds_flash, size);
+	}
+
+	if (rc < 0) {
 		return rc;
 	}
 
