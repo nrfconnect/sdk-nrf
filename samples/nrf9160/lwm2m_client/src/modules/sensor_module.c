@@ -47,14 +47,14 @@ static void accel_work_cb(struct k_work *work)
 	y = sensor_value_to_double(&data.y);
 	z = sensor_value_to_double(&data.z);
 
-	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID), &x);
-	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID), &y);
-	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID), &z);
+	lwm2m_set_f64(&LWM2M_OBJ(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID), x);
+	lwm2m_set_f64(&LWM2M_OBJ(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID), y);
+	lwm2m_set_f64(&LWM2M_OBJ(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID), z);
 
 	k_work_schedule(&accel_work, PERIOD);
 }
 
-static void sensor_worker(int (*read_cb)(struct sensor_value *), const char *path)
+static void sensor_worker(int (*read_cb)(struct sensor_value *), const struct lwm2m_obj_path *path)
 {
 	double val;
 	struct sensor_value data;
@@ -67,13 +67,13 @@ static void sensor_worker(int (*read_cb)(struct sensor_value *), const char *pat
 	}
 	val = sensor_value_to_double(&data);
 
-	lwm2m_engine_set_float(path, &val);
+	lwm2m_set_f64(path, val);
 }
 
 static void temp_work_cb(struct k_work *work)
 {
 	sensor_worker(env_sensor_read_temperature,
-		      LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, SENSOR_VALUE_RID));
+		      &LWM2M_OBJ(IPSO_OBJECT_TEMP_SENSOR_ID, 0, SENSOR_VALUE_RID));
 
 	k_work_schedule(&temp_work, PERIOD);
 }
@@ -81,7 +81,7 @@ static void temp_work_cb(struct k_work *work)
 static void press_work_cb(struct k_work *work)
 {
 	sensor_worker(env_sensor_read_pressure,
-		      LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, SENSOR_VALUE_RID));
+		      &LWM2M_OBJ(IPSO_OBJECT_PRESSURE_ID, 0, SENSOR_VALUE_RID));
 
 	k_work_schedule(&press_work, PERIOD);
 }
@@ -89,7 +89,7 @@ static void press_work_cb(struct k_work *work)
 static void humid_work_cb(struct k_work *work)
 {
 	sensor_worker(env_sensor_read_humidity,
-		      LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, SENSOR_VALUE_RID));
+		      &LWM2M_OBJ(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, SENSOR_VALUE_RID));
 
 	k_work_schedule(&humid_work, PERIOD);
 }
@@ -97,12 +97,12 @@ static void humid_work_cb(struct k_work *work)
 static void gas_res_work_cb(struct k_work *work)
 {
 	sensor_worker(env_sensor_read_gas_resistance,
-		      LWM2M_PATH(IPSO_OBJECT_GENERIC_SENSOR_ID, 0, SENSOR_VALUE_RID));
+		      &LWM2M_OBJ(IPSO_OBJECT_GENERIC_SENSOR_ID, 0, SENSOR_VALUE_RID));
 
 	k_work_schedule(&gas_res_work, PERIOD);
 }
 
-static int light_sensor_worker(int (*read_cb)(uint32_t *), const char *path)
+static int light_sensor_worker(int (*read_cb)(uint32_t *), const struct lwm2m_obj_path *path)
 {
 	uint32_t val;
 	int ret;
@@ -117,7 +117,7 @@ static int light_sensor_worker(int (*read_cb)(uint32_t *), const char *path)
 	if (ret <= 0) {
 		return -ENOMEM;
 	}
-	ret = lwm2m_engine_set_string(path, temp);
+	ret = lwm2m_set_string(path, temp);
 	if (ret) {
 		return ret;
 	}
@@ -128,7 +128,7 @@ static int light_sensor_worker(int (*read_cb)(uint32_t *), const char *path)
 static void light_work_cb(struct k_work *work)
 {
 	int rc = light_sensor_worker(light_sensor_read,
-				     LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, LIGHT_OBJ_INSTANCE_ID,
+				     &LWM2M_OBJ(IPSO_OBJECT_COLOUR_ID, LIGHT_OBJ_INSTANCE_ID,
 						COLOUR_RID));
 
 	if (rc) {
@@ -142,7 +142,7 @@ static void light_work_cb(struct k_work *work)
 static void colour_work_cb(struct k_work *work)
 {
 	int rc = light_sensor_worker(colour_sensor_read,
-				     LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, COLOUR_OBJ_INSTANCE_ID,
+				     &LWM2M_OBJ(IPSO_OBJECT_COLOUR_ID, COLOUR_OBJ_INSTANCE_ID,
 						COLOUR_RID));
 
 	if (rc) {
@@ -178,8 +178,8 @@ static void pmic_work_cb(struct k_work *work)
 		return;
 	}
 
-	lwm2m_engine_set_s32("3/0/7/0", (int) millivolts);
-	lwm2m_engine_set_u8("3/0/9", percentage);
+	lwm2m_set_s32(&LWM2M_OBJ(3, 0, 7, 0), (int) millivolts);
+	lwm2m_set_u8(&LWM2M_OBJ(3, 0, 9), percentage);
 
 	k_work_schedule(&pmic_work, PERIOD);
 }
