@@ -5,7 +5,6 @@ tests:
   # Excluded in quarantine.yaml to limit resources usage in integration builds
   sample.matter.window_cover.debug:
     build_only: true
-    extra_args: CONFIG_CHIP_LIB_SHELL=y
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
@@ -19,7 +18,7 @@ tests:
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
   sample.matter.window_cover.smp_dfu:
     build_only: true
-    extra_args: CONFIG_CHIP_LIB_SHELL=y CONFIG_CHIP_DFU_OVER_BT_SMP=y
+    extra_args: CONFIG_CHIP_DFU_OVER_BT_SMP=y
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
@@ -27,13 +26,12 @@ tests:
   # ---------------
   sample.matter.window_cover.debug.nrf5340dk:
     build_only: true
-    extra_args: CONFIG_CHIP_LIB_SHELL=y
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
   sample.matter.window_cover.no_dfu:
     build_only: true
-    extra_args: CONFIG_CHIP_LIB_SHELL=y CONF_FILE=prj_no_dfu.conf
+    extra_args: CONF_FILE=prj_no_dfu.conf
     integration_platforms:
       - nrf21540dk_nrf52840
     platform_allow: nrf52840dk_nrf52840 nrf21540dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp

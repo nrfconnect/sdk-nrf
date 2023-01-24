@@ -22,13 +22,10 @@
 
 - scenarios:
     - sample.matter.lock.debug
-    - sample.matter.lock.debug.nrf7002dk
     - sample.matter.lock.release
     - sample.matter.lock.smp_dfu
-    - sample.matter.lock.smp_dfu.nrf7002dk
     - sample.matter.lock.no_dfu
     - sample.matter.light_bulb.debug
-    - sample.matter.light_bulb.debug.nrf7002dk
     - sample.matter.light_bulb.release
     - sample.matter.light_bulb.smp_dfu
     - sample.matter.light_bulb.ffs

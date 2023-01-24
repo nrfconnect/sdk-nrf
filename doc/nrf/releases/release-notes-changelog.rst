@@ -371,11 +371,13 @@ Thread samples
 Matter samples
 --------------
 
+* Enabled Matter shell commands for all build types except ``release`` in all Matter samples.
+
 * :ref:`matter_lock_sample` sample:
 
   * Added:
 
-    * `thread_wifi_switched` build type that enables switching between Thread and Wi-Fi network support in the field.
+    * ``thread_wifi_switched`` build type that enables switching between Thread and Wi-Fi network support in the field.
     * Wi-Fi low power configuration using Wi-Fi's :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
 
 * :ref:`matter_light_switch_sample`:
