@@ -33,6 +33,7 @@ LOG_MODULE_DECLARE(fp_sample, LOG_LEVEL_INF);
 BUILD_ASSERT(RPA_TIMEOUT_FAST_PAIR_MAX < CONFIG_BT_RPA_TIMEOUT);
 
 static enum bt_fast_pair_adv_mode adv_helper_fp_adv_mode;
+static bool adv_helper_new_adv_session;
 
 static void rpa_rotate_fn(struct k_work *w);
 static K_WORK_DELAYABLE_DEFINE(rpa_rotate, rpa_rotate_fn);
@@ -112,6 +113,13 @@ static int adv_start_internal(enum bt_fast_pair_adv_mode fp_adv_mode)
 		return err;
 	}
 
+	/* Generate new Resolvable Private Address (RPA). */
+	err = bt_le_oob_get_local(BT_ID_DEFAULT, &oob);
+	if (err) {
+		LOG_ERR("Cannot trigger RPA rotation (err: %d)", err);
+		return err;
+	}
+
 	configure_fp_adv_prov(fp_adv_mode);
 
 	size_t ad_len = bt_le_adv_prov_get_ad_prov_cnt();
@@ -124,6 +132,10 @@ static int adv_start_internal(enum bt_fast_pair_adv_mode fp_adv_mode)
 
 	state.pairing_mode = pairing_mode(fp_adv_mode);
 	state.in_grace_period = false;
+	state.rpa_rotated = true;
+	state.new_adv_session = adv_helper_new_adv_session;
+
+	adv_helper_new_adv_session = false;
 
 	err = bt_le_adv_prov_get_ad(ad, &ad_len, &state, &fb);
 	if (err) {
@@ -134,13 +146,6 @@ static int adv_start_internal(enum bt_fast_pair_adv_mode fp_adv_mode)
 	err = bt_le_adv_prov_get_sd(sd, &sd_len, &state, &fb);
 	if (err) {
 		LOG_ERR("Cannot get scan response data (err: %d)", err);
-		return err;
-	}
-
-	/* Generate new Resolvable Private Address (RPA). */
-	err = bt_le_oob_get_local(BT_ID_DEFAULT, &oob);
-	if (err) {
-		LOG_ERR("Cannot trigger RPA rotation (err: %d)", err);
 		return err;
 	}
 
@@ -185,7 +190,7 @@ static void rpa_rotate_fn(struct k_work *w)
 	(void)adv_start_internal(adv_helper_fp_adv_mode);
 }
 
-int bt_adv_helper_adv_start(enum bt_fast_pair_adv_mode fp_adv_mode)
+int bt_adv_helper_adv_start(enum bt_fast_pair_adv_mode fp_adv_mode, bool new_adv_session)
 {
 	int ret = k_work_cancel_delayable(&rpa_rotate);
 
@@ -193,6 +198,8 @@ int bt_adv_helper_adv_start(enum bt_fast_pair_adv_mode fp_adv_mode)
 	ARG_UNUSED(ret);
 
 	adv_helper_fp_adv_mode = fp_adv_mode;
+	adv_helper_new_adv_session = new_adv_session;
+
 	LOG_INF("Looking for a new peer: %s", pairing_mode(adv_helper_fp_adv_mode) ? "yes" : "no");
 
 	return adv_start_internal(fp_adv_mode);
