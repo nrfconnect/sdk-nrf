@@ -383,21 +383,22 @@ Check and configure the following LwM2M options that are used by the sample:
 * :kconfig:option:`CONFIG_LWM2M_IPSO_TEMP_SENSOR_VERSION_1_1` - Sets the IPSO Temperature sensor object version to 1.1.
   You can use this configuration option for other IPSO objects also by modifying the option accordingly. See the `LwM2M Object and Resource Registry`_ for a list of objects and their available versions.
 * :kconfig:option:`CONFIG_LWM2M_SHELL` - Enables the Zephyr shell and all LwM2M specific commands.
-* :kconfig:option:`CONFIG_LWM2M_TLS_SESSION_CACHING` - Enables TLS session caching to prevent doing a full TLS handshake for every send.
-* :kconfig:option:`CONFIG_LWM2M_RD_CLIENT_SUSPEND_SOCKET_AT_IDLE` - Socket close is skipped at RX off idle state which optimize power consumption.
-* :kconfig:option:`CONFIG_LWM2M_QUEUE_MODE_UPTIME` - Specifies time (in seconds) the device should stay online after sending a message to the server.
-* :kconfig:option:`CONFIG_LWM2M_SECONDS_TO_UPDATE_EARLY` - Time in seconds before the registration timeout, when the LWM2M Registration Update is sent by the engine.
-* :kconfig:option:`CONFIG_LTE_PSM_REQ_RPTAU` - Power saving mode (PSM) setting for requested periodic TAU. Data format is described in 3GPP 24.008 Ch. 10.5.7.4a.
-* :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT` - Power saving mode setting (PSM) for requested active time. Data format is described in 3GPP 24.008 Ch. 10.5.7.3.
-* :kconfig:option:`CONFIG_LTE_EDRX_REQ` - Enables request for use of Extended DRX (eDRX). For reference, see 3GPP 27.007 Ch. 7.40.
-* :kconfig:option:`CONFIG_LTE_EDRX_REQ_VALUE_LTE_M` - Sets the eDRX value to request when LTE-M is used. The format is half a byte in a four-bit format. The eDRX value refers to bit 4 to 1 of octet 3 of the Extended DRX parameters information element. See 3GPP TS 24.008, subclause 10.5.5.32.
-* :kconfig:option:`CONFIG_LTE_EDRX_REQ_VALUE_NBIOT` - Sets the eDRX value to request when NB-IoT is used. The format is half a byte in a four-bit format. The eDRX value refers to bit 4 to 1 of octet 3 of the Extended DRX parameters information element. See 3GPP TS 24.008, subclause 10.5.5.32.
-* :kconfig:option:`CONFIG_LTE_PTW_VALUE_LTE_M` - Sets the Paging Time Window value to be requested when enabling eDRX. The value will apply to LTE-M. The format is a string with half a byte in 4-bit format, corresponding to bits 8 to 5 in octet 3 of eDRX information element according to 10.5.5.32 of 3GPP TS 24.008.
-* :kconfig:option:`CONFIG_LTE_PTW_VALUE_NBIOT` - Sets the Paging Time Window value to be requested when enabling eDRX. The value will apply to NB-IoT. The format is a string with half a byte in 4-bit format, corresponding to bits 8 to 5 in octet 3 of eDRX information element according to 10.5.5.32 of 3GPP TS 24.008.
-* :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS` - Enables notifications before Tracking Area Update (TAU). Notification triggers LWM2M Registration Update and TAU will be sent together with the user data. This decreases power consumption.
+* :kconfig:option:`CONFIG_LWM2M_TLS_SESSION_CACHING` - Enables TLS session caching to prevent a full TLS handshake for every send.
+* :kconfig:option:`CONFIG_LWM2M_RD_CLIENT_SUSPEND_SOCKET_AT_IDLE` - Enables the skipping of socket close at RX off idle state, which optimizes power consumption.
+* :kconfig:option:`CONFIG_LWM2M_QUEUE_MODE_UPTIME` - Specifies time (in seconds) the device must stay online after sending a message to the server.
+* :kconfig:option:`CONFIG_LWM2M_SECONDS_TO_UPDATE_EARLY` - Specifies time in seconds before the registration timeout, when the LWM2M registration update is sent by the engine.
+* :kconfig:option:`CONFIG_LTE_PSM_REQ_RPTAU` - Sets the :term:`Power saving mode (PSM)` for requested periodic TAU. Data format is described in `3GPP TS 24.008 Ch. 10.5.7.4a`_.
+* :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT` - Sets the :term:`Power saving mode (PSM)` for requested active time. Data format is described in `3GPP TS 24.008 Ch. 10.5.7.3`_.
+* :kconfig:option:`CONFIG_LTE_EDRX_REQ` - Enables request for use of Extended DRX (eDRX).
+* :kconfig:option:`CONFIG_LTE_EDRX_REQ_VALUE_LTE_M` - Sets the eDRX value to request when LTE-M is used. The format is half a byte in a four-bit format. The eDRX value refers to bit 4 to 1 of octet 3 of the Extended DRX parameters information element. See `3GPP TS 24.008, subclause 10.5.5.32`_.
+* :kconfig:option:`CONFIG_LTE_EDRX_REQ_VALUE_NBIOT` - Sets the eDRX value to request when NB-IoT is used. The format is half a byte in a four-bit format. The eDRX value refers to bit 4 to 1 of octet 3 of the Extended DRX parameters information element. See `3GPP TS 24.008, subclause 10.5.5.32`_.
+* :kconfig:option:`CONFIG_LTE_PTW_VALUE_LTE_M` - Sets the Paging Time Window value to be requested when enabling eDRX. The value will apply to LTE-M. The format is a string with half a byte in 4-bit format, corresponding to bits 8 to 5 in octet 3 of eDRX information element according to `3GPP TS 24.008, subclause 10.5.5.32`_.
+* :kconfig:option:`CONFIG_LTE_PTW_VALUE_NBIOT` - Sets the Paging Time Window value to be requested when enabling eDRX. The value applies to NB-IoT. The format is a string with half a byte in 4-bit format, corresponding to bits 8 to 5 in octet 3 of eDRX information element according to `3GPP TS 24.008, subclause 10.5.5.32`_.
+* :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS` - Enables notifications before Tracking Area Update (TAU). Notification triggers LWM2M registration update and TAU will be sent together with the user data. This decreases power consumption.
 
 .. note::
-   The nRF9160 modem will negotiate PSM and eDRX modes with the network it is trying to connect. The network may either accept the values, assing different ones or reject them.
+   The nRF9160 modem negotiates PSM and eDRX modes with the network it is trying to connect.
+   The network can either accept the values, assign different values or reject them.
 
 For Thingy:91, configure the ADXL362 accelerometer sensor range by choosing one of the following options (default value is |plusminus| 2 g):
 
@@ -472,7 +473,19 @@ You can also optionally enable notifications for the resources so that the serve
 Queue Mode
 ==========
 
-The sample enables LwM2M queue mode by default. In this mode, the device is not required to actively listen for incoming packets and the client can reduce power consumption by sleeping longer.
+The sample uses LwM2M queue mode by default.
+In this mode, the device need not actively listen for incoming packets and the client can reduce power consumption by being in the sleep state for longer duration.
+
+Queue mode is suitable for LTE connection where devices are not continuously reachable from the network.
+Both network and the modem try to release any resources as soon as possible.
+In LTE, the Radio Resource Control (RRC) protocol sometimes causes the close of idle connections as early as 10 seconds of idle time.
+This depends on the network operator.
+Another network dependent feature is the NAT timeout.
+Some networks drop unused UDP mappings after 30 seconds even if the RFC recommendation is 2 minutes.
+Therefore, after a short sleeping period, the device would not be addressable from the network as the mapping would not exist.
+Hence, by default, after contacting the LwM2M server, the device is configured to listen for 10 seconds after receiving the last packet.
+After that idle period, the device enables eDRX and PSM power saving modes if those are supported by the network.
+The device wakes up from sleep mode when it needs to send data.
 
 Bootstrap support
 =================

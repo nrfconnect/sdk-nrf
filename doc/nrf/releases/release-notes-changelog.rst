@@ -324,6 +324,10 @@ nRF9160 samples
     * The sensor module has been simplified.
       It does not use application events, filtering, or configurable periods anymore.
     * Replaced deprecated LwM2M API calls with calls to new functions.
+    * Enabled LwM2M queue mode and updated documentation accordingly.
+    * Moved configuration options from :file:`overlay-queue.conf` to default configuration :file:`prj.conf`.
+    * Removed :file:`overlay-queue.conf`.
+    * Enabled :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS` configuration option.
 
 * :ref:`http_application_update_sample` sample:
 
