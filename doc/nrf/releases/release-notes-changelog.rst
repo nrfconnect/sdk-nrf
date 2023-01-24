@@ -156,7 +156,13 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
-* Added Wi-Fi support for nRF9160 DK + nRF7002 EK configuration.
+* Added:
+
+  * Wi-Fi support for nRF9160 DK + nRF7002 EK configuration.
+
+* Updated:
+
+  * Replaced deprecated LwM2M API calls with calls to new functions.
 
 nRF9160: Serial LTE modem
 -------------------------
@@ -296,6 +302,7 @@ nRF9160 samples
   * Updated:
 
     * Timeout command-line arguments for the ``location get`` command changed from integers in milliseconds to floating-point values in seconds.
+    * Replaced deprecated LwM2M API calls with calls to new functions.
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
@@ -313,6 +320,7 @@ nRF9160 samples
 
     * The sensor module has been simplified.
       It does not use application events, filtering, or configurable periods anymore.
+    * Replaced deprecated LwM2M API calls with calls to new functions.
 
 * :ref:`http_application_update_sample` sample:
 
