@@ -7,6 +7,9 @@
 #include <bluetooth/adv_prov.h>
 #include <bluetooth/services/fast_pair.h>
 
+#include <zephyr/logging/log.h>
+LOG_MODULE_DECLARE(bt_le_adv_prov, CONFIG_BT_ADV_PROV_LOG_LEVEL);
+
 #define ADV_DATA_BUF_SIZE	CONFIG_BT_ADV_PROV_FAST_PAIR_ADV_BUF_SIZE
 
 static bool enabled = true;
@@ -41,6 +44,56 @@ int bt_le_adv_prov_fast_pair_set_battery_mode(enum bt_fast_pair_adv_battery_mode
 	return 0;
 }
 
+static enum bt_fast_pair_adv_mode get_adv_mode(bool pairing_mode, bool show_ui)
+{
+	enum bt_fast_pair_adv_mode adv_mode;
+
+	if (pairing_mode) {
+		adv_mode = BT_FAST_PAIR_ADV_MODE_DISCOVERABLE;
+	} else {
+		if (show_ui) {
+			adv_mode = BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND;
+		} else {
+			adv_mode = BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_HIDE_UI_IND;
+		}
+	}
+
+	return adv_mode;
+}
+
+static bool detect_discoverable_stop_condition(enum bt_fast_pair_adv_mode adv_mode,
+					       const struct bt_le_adv_prov_adv_state *state)
+{
+	static bool drop_disc_adv_payload;
+	static enum bt_fast_pair_adv_mode last_adv_mode = BT_FAST_PAIR_ADV_MODE_COUNT;
+
+	if (adv_mode != BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) {
+		last_adv_mode = adv_mode;
+
+		return false;
+	}
+
+	if (state->new_adv_session || (last_adv_mode != adv_mode)) {
+		drop_disc_adv_payload = false;
+		last_adv_mode = BT_FAST_PAIR_ADV_MODE_DISCOVERABLE;
+
+		return false;
+	}
+
+	if (state->rpa_rotated) {
+		drop_disc_adv_payload = true;
+	}
+
+	if (drop_disc_adv_payload) {
+		LOG_WRN("RPA rotated during Fast Pair discoverable advertising session");
+		LOG_WRN("Removed Fast Pair advertising payload");
+
+		return true;
+	}
+
+	return false;
+}
+
 static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *state,
 		    struct bt_le_adv_prov_feedback *fb)
 {
@@ -51,17 +104,14 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 		return -ENOENT;
 	}
 
-	if (state->pairing_mode) {
-		adv_config.adv_mode = BT_FAST_PAIR_ADV_MODE_DISCOVERABLE;
-	} else {
-		if (show_ui_pairing) {
-			adv_config.adv_mode = BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND;
-		} else {
-			adv_config.adv_mode = BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_HIDE_UI_IND;
+	adv_config.adv_mode = get_adv_mode(state->pairing_mode, show_ui_pairing);
+	adv_config.adv_battery_mode = adv_battery_mode;
+
+	if (IS_ENABLED(CONFIG_BT_ADV_PROV_FAST_PAIR_STOP_DISCOVERABLE_ON_RPA_ROTATION)) {
+		if (detect_discoverable_stop_condition(adv_config.adv_mode, state)) {
+			return -ENOENT;
 		}
 	}
-
-	adv_config.adv_battery_mode = adv_battery_mode;
 
 	if (IS_ENABLED(CONFIG_BT_ADV_PROV_FAST_PAIR_AUTO_SET_PAIRING_MODE)) {
 		/* Set Fast Pair pairing mode to match Fast Pair advertising mode. */
@@ -69,7 +119,8 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 					      BT_FAST_PAIR_ADV_MODE_DISCOVERABLE);
 	}
 
-	__ASSERT_NO_MSG(bt_fast_pair_adv_data_size(adv_config) <= sizeof(buf));
+	__ASSERT_NO_MSG((bt_fast_pair_adv_data_size(adv_config) <= sizeof(buf)) &&
+			(bt_fast_pair_adv_data_size(adv_config) > 0));
 
 	return bt_fast_pair_adv_data_fill(ad, buf, sizeof(buf), adv_config);
 }

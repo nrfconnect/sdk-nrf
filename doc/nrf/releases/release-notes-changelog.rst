@@ -572,6 +572,10 @@ Bluetooth libraries and services
 
 * :ref:`bt_le_adv_prov_readme` library:
 
+  * Added the :kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR_STOP_DISCOVERABLE_ON_RPA_ROTATION` Kconfig option to drop the Fast Pair advertising payload on RPA rotation.
+  * Extended the :c:struct:`bt_le_adv_prov_adv_state` structure to include new fields.
+    The new :c:member:`bt_le_adv_prov_adv_state.rpa_rotated` field is used to notify registered providers about Resolvable Private Address (RPA) rotation.
+    The new :c:member:`bt_le_adv_prov_adv_state.new_adv_session` field is used to notify registered providers that the new advertising session is about to start.
   * Changed the :kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_MODE` Kconfig option (default value) to not include Fast Pair battery data in the Fast Pair advertising payload by default.
 
 * :ref:`bt_fast_pair_readme` service:
