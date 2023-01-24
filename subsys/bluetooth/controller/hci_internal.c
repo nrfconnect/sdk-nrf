@@ -43,6 +43,7 @@ static bool command_generates_command_complete_event(uint16_t hci_opcode)
 	case SDC_HCI_OPCODE_CMD_LE_ENABLE_ENCRYPTION:
 	case SDC_HCI_OPCODE_CMD_LE_EXT_CREATE_CONN:
 	case SDC_HCI_OPCODE_CMD_LE_PERIODIC_ADV_CREATE_SYNC:
+	case SDC_HCI_OPCODE_CMD_LE_REQUEST_PEER_SCA:
 	case SDC_HCI_OPCODE_CMD_LE_READ_REMOTE_TRANSMIT_POWER_LEVEL:
 	case SDC_HCI_OPCODE_CMD_VS_CONN_UPDATE:
 	case SDC_HCI_OPCODE_CMD_VS_WRITE_REMOTE_TX_POWER:
@@ -394,6 +395,10 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_set_transmit_power_reporting_enable = 1;
 #endif
 
+#if defined(CONFIG_BT_CTLR_SCA_UPDATE)
+	cmds->hci_le_request_peer_sca = 1;
+#endif
+
 #if (defined(CONFIG_BT_HCI_RAW) && defined(CONFIG_BT_TINYCRYPT_ECC)) || defined(CONFIG_BT_CTLR_ECDH)
 	cmds->hci_le_read_local_p256_public_key = 1;
 	cmds->hci_le_generate_dhkey_v1 = 1;
@@ -506,6 +511,10 @@ static void le_supported_features(sdc_hci_le_le_features_t *features)
 
 #if defined(CONFIG_BT_CTLR_DF_CONN_CTE_RSP)
 	features->connection_cte_response = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_SCA_UPDATE)
+	features->sleep_clock_accuracy_updates = 1;
 #endif
 }
 
@@ -1060,6 +1069,11 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_LE_SET_DEFAULT_PERIODIC_ADV_SYNC_TRANSFER_PARAMS:
 		return sdc_hci_cmd_le_set_default_periodic_adv_sync_transfer_params(
 			(void *)cmd_params);
+#endif
+
+#if defined(CONFIG_BT_CTLR_SCA_UPDATE)
+	case SDC_HCI_OPCODE_CMD_LE_REQUEST_PEER_SCA:
+		return sdc_hci_cmd_le_request_peer_sca((void *)cmd_params);
 #endif
 
 	default:

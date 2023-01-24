@@ -199,7 +199,7 @@ static struct lwm2m_engine_obj_inst *signal_meas_info_create(uint16_t obj_inst_i
 	INIT_OBJ_RES_DATA(SIGNAL_MEAS_INFO_RSRP_RESULT, res[index], i, res_inst[index], j,
 			  &rsrp_result[index], sizeof(*rsrp_result));
 	INIT_OBJ_RES_DATA(SIGNAL_MEAS_INFO_RSRQ_RESULT, res[index], i, res_inst[index], j,
-			  &rsrq_result[index], sizeof(rsrq_result));
+			  &rsrq_result[index], sizeof(*rsrq_result));
 	INIT_OBJ_RES_DATA(SIGNAL_MEAS_INFO_UE_RXTX_TIMEDIFF, res[index], i, res_inst[index], j,
 			  &ue_rxtx_timediff[index], sizeof(*ue_rxtx_timediff));
 
