@@ -49,7 +49,7 @@ config BT_HIDS_FEATURE_REP_MAX
 	help
 	  Maximum number of HIDS Feature Reports that can be set for HIDS.
 
-choice
+choice BT_HIDS_DEFAULT_PERM
 	prompt "Default permissions used for HID attributes"
 	default BT_HIDS_DEFAULT_PERM_RW
 	help
