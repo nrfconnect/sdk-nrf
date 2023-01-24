@@ -352,6 +352,11 @@ nRF9160 samples
 
     * MCUboot child image files to properly access external flash on newer nRF9160DK versions.
     * An :file:`overlay_mcuboot_ext_flash.conf` file to enable MCUboot use of external flash.
+    * Sending an alert to the cloud on boot and when a temperature limit is exceeded.
+
+* :ref:`nrf_cloud_rest_device_message` sample:
+
+  * Added sending an alert to nRF Cloud on boot.
 
 * :ref:`slm_shell_sample` sample:
 
@@ -589,6 +594,10 @@ Libraries for networking
     * API for scanning Wi-Fi access points.
 
   * Removed location events and event handlers.
+
+* :ref:`lib_nrf_cloud_alerts` library:
+
+  * A new library for sending notifications of critical device events to nRF Cloud, using either REST or MQTT connections.
 
 Libraries for NFC
 -----------------
