@@ -19,7 +19,7 @@ ZTEST_SUITE(lwm2m_client_utils_device, NULL, NULL, NULL, NULL, NULL);
 static lwm2m_engine_execute_cb_t reboot_cb;
 static int reboot_type;
 
-static int lwm2m_engine_register_exec_callback_copy(const char *pathstr,
+static int lwm2m_register_exec_callback_copy(const struct lwm2m_obj_path *path,
 						    lwm2m_engine_execute_cb_t cb)
 {
 	reboot_cb = cb;
@@ -46,7 +46,7 @@ static void setup(void)
 	FFF_RESET_HISTORY();
 
 	reboot_cb = NULL;
-	lwm2m_engine_register_exec_callback_fake.custom_fake = NULL;
+	lwm2m_register_exec_callback_fake.custom_fake = NULL;
 }
 
 /*
@@ -58,8 +58,8 @@ ZTEST(lwm2m_client_utils_device, test_init_device)
 	int rc;
 
 	setup();
-	lwm2m_engine_register_exec_callback_fake.custom_fake =
-		lwm2m_engine_register_exec_callback_copy;
+	lwm2m_register_exec_callback_fake.custom_fake =
+		lwm2m_register_exec_callback_copy;
 
 	rc = lwm2m_init_device();
 	zassert_equal(rc, 0, "wrong return value");

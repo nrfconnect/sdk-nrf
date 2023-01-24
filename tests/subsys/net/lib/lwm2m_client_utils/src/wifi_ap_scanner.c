@@ -64,10 +64,10 @@ ZTEST(lwm2m_client_utils_wifi_ap_scanner, test_update_access_points)
 	callback.info = &status;
 	lwm2m_wifi_net_mgmt_event_handler(&callback, NET_EVENT_WIFI_SCAN_DONE, NULL);
 
-	zassert_equal(lwm2m_engine_set_s32_fake.call_count, 6,
+	zassert_equal(lwm2m_set_s32_fake.call_count, 6,
 		      "Wi-Fi info not updated");
-	zassert_equal(lwm2m_engine_set_opaque_fake.call_count, 2,
+	zassert_equal(lwm2m_set_opaque_fake.call_count, 2,
 		      "Mac addressess not updated");
-	zassert_equal(lwm2m_engine_set_string_fake.call_count, 2,
+	zassert_equal(lwm2m_set_string_fake.call_count, 2,
 		      "SSID not updated");
 }

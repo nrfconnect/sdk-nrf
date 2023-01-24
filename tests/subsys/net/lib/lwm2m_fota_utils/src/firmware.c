@@ -75,30 +75,9 @@ static int dfu_target_mcuboot_set_buf_stub(uint8_t *buf, size_t len)
 	return 0;
 }
 
-static const char *lwm2m_adv_path(uint16_t inst, uint16_t res)
-{
-	int ret;
-	static char path[LWM2M_MAX_PATH_STR_LEN];
-
-	ret = snprintk(path, sizeof(path), "%" PRIu16 "/%" PRIu16 "/%" PRIu16,
-		       FIRM_UPDATE_OBJECT_ID, inst, res);
-	if (ret < 0 || ret >= sizeof(path)) {
-		memset(path, 0, sizeof(path));
-	}
-	return path;
-}
-
 static struct lwm2m_engine_res *lwm2m_resource_get(uint16_t obj_inst_id, uint16_t resource_id)
 {
-	const char *pathstr;
-	struct lwm2m_obj_path path;
-
-	pathstr = lwm2m_adv_path(obj_inst_id, resource_id);
-
-	if (lwm2m_string_to_path(pathstr, &path, '/')) {
-		return NULL;
-	}
-	return lwm2m_engine_get_res(&path);
+	return lwm2m_engine_get_res(&LWM2M_OBJ(FIRM_UPDATE_OBJECT_ID, obj_inst_id, resource_id));
 }
 
 static int post_write_to_resource(uint16_t instance_id, uint16_t resource_id, uint8_t *data,
@@ -121,8 +100,10 @@ static void tear_down_test(void *fixie)
 
 	for (uint16_t i = 0; i < INSTANCE_COUNT; i++) {
 		post_write_to_resource(i, LWM2M_FOTA_PACKAGE_URI_ID, NULL, 0, false, 0);
-		lwm2m_engine_get_u8(lwm2m_adv_path(i, LWM2M_FOTA_UPDATE_RESULT_ID), &result);
-		lwm2m_engine_get_u8(lwm2m_adv_path(i, LWM2M_FOTA_STATE_ID), &state);
+		lwm2m_get_u8(&LWM2M_OBJ(FIRM_UPDATE_OBJECT_ID, i, LWM2M_FOTA_UPDATE_RESULT_ID),
+			     &result);
+		lwm2m_get_u8(&LWM2M_OBJ(FIRM_UPDATE_OBJECT_ID, i, LWM2M_FOTA_STATE_ID),
+			     &state);
 		printf("Firmware instance %d cancel result %d state %d\r\n", i, result, state);
 	}
 }
@@ -131,7 +112,8 @@ static uint8_t get_app_result(void)
 {
 	uint8_t result = 9;
 
-	lwm2m_engine_get_u8(lwm2m_adv_path(app_instance, LWM2M_FOTA_UPDATE_RESULT_ID), &result);
+	lwm2m_get_u8(&LWM2M_OBJ(FIRM_UPDATE_OBJECT_ID, app_instance, LWM2M_FOTA_UPDATE_RESULT_ID),
+		     &result);
 
 	return result;
 }
@@ -140,7 +122,8 @@ static uint8_t get_result(uint16_t obj_inst_id)
 {
 	uint8_t result = 9;
 
-	lwm2m_engine_get_u8(lwm2m_adv_path(obj_inst_id, LWM2M_FOTA_UPDATE_RESULT_ID), &result);
+	lwm2m_get_u8(&LWM2M_OBJ(FIRM_UPDATE_OBJECT_ID, obj_inst_id, LWM2M_FOTA_UPDATE_RESULT_ID),
+		     &result);
 
 	return result;
 }
@@ -149,7 +132,8 @@ static uint8_t get_modem_result(void)
 {
 	uint8_t result = 9;
 
-	lwm2m_engine_get_u8(lwm2m_adv_path(modem_instance, LWM2M_FOTA_UPDATE_RESULT_ID), &result);
+	lwm2m_get_u8(&LWM2M_OBJ(FIRM_UPDATE_OBJECT_ID, modem_instance, LWM2M_FOTA_UPDATE_RESULT_ID),
+		     &result);
 
 	return result;
 }
@@ -158,7 +142,7 @@ static uint8_t get_app_state(void)
 {
 	uint8_t state = 9;
 
-	lwm2m_engine_get_u8(lwm2m_adv_path(app_instance, LWM2M_FOTA_STATE_ID), &state);
+	lwm2m_get_u8(&LWM2M_OBJ(FIRM_UPDATE_OBJECT_ID, app_instance, LWM2M_FOTA_STATE_ID), &state);
 
 	return state;
 }
@@ -167,7 +151,8 @@ static uint8_t get_modem_state(void)
 {
 	uint8_t state = 9;
 
-	lwm2m_engine_get_u8(lwm2m_adv_path(modem_instance, LWM2M_FOTA_STATE_ID), &state);
+	lwm2m_get_u8(&LWM2M_OBJ(FIRM_UPDATE_OBJECT_ID, modem_instance, LWM2M_FOTA_STATE_ID),
+		     &state);
 
 	return state;
 }
