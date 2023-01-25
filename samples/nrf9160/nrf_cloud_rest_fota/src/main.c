@@ -42,7 +42,6 @@ LOG_MODULE_REGISTER(nrf_cloud_rest_fota, CONFIG_NRF_CLOUD_REST_FOTA_SAMPLE_LOG_L
 #define BTN_NUM			CONFIG_REST_FOTA_BUTTON_EVT_NUM
 #define LED_NUM			CONFIG_REST_FOTA_LED_NUM
 #define JITP_REQ_WAIT_SEC	10
-#define FOTA_ENABLE_WAIT_SEC	10
 
 /* FOTA job status strings that provide additional details for nrf_cloud_fota_status values */
 const char * const FOTA_STATUS_DETAILS_TIMEOUT = "Download did not complete in the allotted time";
@@ -80,6 +79,9 @@ static struct nrf_cloud_settings_fota_job pending_job = {
 /* nRF Cloud device ID */
 static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 
+/* Modem info */
+static struct modem_param_info mdm_param;
+
 #define REST_RX_BUF_SZ 2100
 /* Buffer used for REST calls */
 static char rx_buf[REST_RX_BUF_SZ];
@@ -113,9 +115,6 @@ static struct nrf_cloud_rest_context rest_ctx = {
 /* Flag to indicate if the user requested JITP to be performed */
 static bool jitp_requested;
 #endif
-
-/* Flag to indicate if FOTA should be enabled in the device shadow */
-static bool enable_fota_requested;
 
 /* Flag to indicate if full modem FOTA is enabled */
 static bool full_modem_fota_initd;
@@ -294,6 +293,17 @@ static void modem_time_wait(void)
 	LOG_INF("Network time obtained");
 }
 
+static void get_modem_info(void)
+{
+	int err = modem_info_params_get(&mdm_param);
+
+	if (!err) {
+		LOG_INF("Modem FW Ver: %s", mdm_param.device.modem_fw.value_string);
+	} else {
+		LOG_WRN("Unable to obtain modem info, error: %d", err);
+	}
+}
+
 #if defined(CONFIG_REST_FOTA_DO_JITP)
 static void request_jitp(void)
 {
@@ -315,8 +325,6 @@ static void request_jitp(void)
 	if (ret == 0) {
 		jitp_requested = true;
 		LOG_INF("JITP will be performed after network connection is obtained");
-		/* FOTA needs to be enabled for a newly JITP'd device */
-		enable_fota_requested = true;
 	} else {
 		if (ret != -EAGAIN) {
 			LOG_ERR("k_sem_take error: %d", ret);
@@ -348,39 +356,7 @@ static void do_jitp(void)
 }
 #endif
 
-static void request_fota_enable(void)
-{
-	if (pending_fota_job_exists()) {
-		/* Skip request if a FOTA job already exists */
-		return;
-	}
-
-	if (!enable_fota_requested) {
-		int ret;
-
-		k_sem_reset(&button_press_sem);
-
-		LOG_INF("---> Press button %d to enable FOTA in the device shadow", BTN_NUM);
-		LOG_INF("     Waiting %d seconds...", FOTA_ENABLE_WAIT_SEC);
-
-		ret = k_sem_take(&button_press_sem, K_SECONDS(FOTA_ENABLE_WAIT_SEC));
-
-		if (ret == 0) {
-			enable_fota_requested = true;
-		} else {
-			if (ret != -EAGAIN) {
-				LOG_ERR("k_sem_take error: %d", ret);
-			}
-			LOG_INF("Shadow will not be updated");
-		}
-	}
-
-	if (enable_fota_requested) {
-		LOG_INF("FOTA will be enabled after network connection is obtained");
-	}
-}
-
-static void do_fota_enable(void)
+static void send_device_status(void)
 {
 	int err;
 	/* Enable FOTA for bootloader, modem and application */
@@ -393,19 +369,36 @@ static void do_fota_enable(void)
 
 	struct nrf_cloud_svc_info svc_inf = {
 		.fota = &fota,
+		/* No UI components are required for this sample */
 		.ui = NULL
+	};
+
+	struct nrf_cloud_modem_info mdm_inf = {
+		/* Include all available modem info */
+		.device = NRF_CLOUD_INFO_SET,
+		.network = NRF_CLOUD_INFO_SET,
+		.sim = NRF_CLOUD_INFO_SET,
+		/* Use the modem info already obtained */
+		.mpi = &mdm_param,
+		/* Include the application version */
+		.application_version = CONFIG_REST_FOTA_SAMPLE_VERSION
+	};
+
+	struct nrf_cloud_device_status dev_status = {
+		.modem = &mdm_inf,
+		.svc = &svc_inf
 	};
 
 	err = generate_jwt();
 	if (err) {
-		LOG_ERR("Failed to generated JWT; FOTA not enabled.");
+		LOG_ERR("Failed to generated JWT; device status not sent");
 		return;
 	}
 
-	LOG_INF("Enabling FOTA...");
-	err = nrf_cloud_rest_shadow_service_info_update(&rest_ctx, device_id, &svc_inf);
+	LOG_INF("Sending device status...");
+	err = nrf_cloud_rest_shadow_device_status_update(&rest_ctx, device_id, &dev_status);
 	if (err) {
-		LOG_ERR("Failed to enable FOTA, error: %d", err);
+		LOG_ERR("Failed to send device status, FOTA not enabled; error: %d", err);
 	} else {
 		LOG_INF("FOTA enabled in device shadow");
 	}
@@ -431,7 +424,6 @@ static void process_pending_job(void)
 
 int init(void)
 {
-	struct modem_param_info mdm_param;
 	int err = init_led();
 
 	if (err) {
@@ -494,14 +486,6 @@ int init(void)
 	if (!err) {
 		LOG_INF("Application Name: %s", mdm_param.device.app_name);
 		LOG_INF("nRF Connect SDK version: %s", mdm_param.device.app_version);
-
-		err = modem_info_params_get(&mdm_param);
-		if (!err) {
-			LOG_INF("Modem FW Ver: %s",
-				mdm_param.device.modem_fw.value_string);
-		} else {
-			LOG_WRN("Unable to obtain modem info, error: %d", err);
-		}
 	} else {
 		LOG_WRN("Modem info params initialization failed, error: %d", err);
 	}
@@ -524,9 +508,6 @@ int init(void)
 	/* Present option for JITP via REST */
 	request_jitp();
 #endif
-
-	/* Present option to enable FOTA in device shadow via REST */
-	request_fota_enable();
 
 	return 0;
 }
@@ -783,6 +764,9 @@ void main(void)
 		return;
 	}
 
+	/* Now that the device is connected to the network, get the modem info */
+	get_modem_info();
+
 	/* Modem must have valid time/date in order to generate JWTs with
 	 * an expiration time
 	 */
@@ -795,10 +779,12 @@ void main(void)
 	}
 #endif
 
-	if (enable_fota_requested) {
-		/* Enable FOTA in shadow */
-		do_fota_enable();
-	}
+	/* Send the device status which contains HW/FW version info,
+	 * details about the network connection, and FOTA service info.
+	 * The FOTA service info is required by nRF Cloud to enable FOTA
+	 * for the device.
+	 */
+	send_device_status();
 
 	while (1) {
 
