@@ -466,11 +466,17 @@ static void update_work_handler(struct k_work *work)
 	if (update_data.type == MODEM_DELTA) {
 		updated_instance = modem_obj_id;
 		result = apply_firmware_delta_modem_update();
+		if (result == RESULT_SUCCESS) {
+			ongoing_obj_id = UNUSED_OBJ_ID;
+		}
 		set_result(modem_obj_id, result);
 	} else if (update_data.type == MODEM_FULL) {
 		updated_instance = modem_obj_id;
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
 		result = apply_fmfu_from_ext_flash();
+		if (result == RESULT_SUCCESS) {
+			ongoing_obj_id = UNUSED_OBJ_ID;
+		}
 		/* Set result */
 		set_result(modem_obj_id, result);
 #endif
@@ -1011,10 +1017,16 @@ static void firmware_update_check_linked_instances(int instance_id)
 		firmware_instance_schedule(object_link.obj_inst);
 		if (update_data.type == MODEM_DELTA) {
 			result = apply_firmware_delta_modem_update();
+			if (result == RESULT_SUCCESS) {
+				ongoing_obj_id = UNUSED_OBJ_ID;
+			}
 			set_result(modem_obj_id, result);
 		} else if (update_data.type == MODEM_FULL) {
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
 			result = apply_fmfu_from_ext_flash();
+			if (result == RESULT_SUCCESS) {
+				ongoing_obj_id = UNUSED_OBJ_ID;
+			}
 			/* Set result */
 			set_result(modem_obj_id, result);
 #endif
