@@ -6,6 +6,10 @@
 
 menu "MQTT Multi Service Sample Settings"
 
+config APP_VERSION
+	string "MQTT Multi Service Sample version"
+	default "1.0.0"
+
 config POWER_SAVING_MODE_ENABLE
 	bool "Enable Power Saving Mode (PSM)"
 	help
