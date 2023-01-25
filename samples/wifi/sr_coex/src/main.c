@@ -390,6 +390,7 @@ int main(void)
 
 	LOG_INF("test_wlan = %d and test_ble = %d\n", test_wlan, test_ble);
 
+
 #ifdef CONFIG_NRF700X_WIFI_BT_COEX
 	/* Configure SR side (nRF5340 side) switch in nRF7002 DK */
 	ret = nrf_wifi_config_sr_switch(separate_antennas);
@@ -398,6 +399,22 @@ int main(void)
 		goto err;
 	}
 #endif /* CONFIG_NRF700X_WIFI_BT_COEX */
+
+	/* Reset Coexistence Hardware */
+	ret = nrf_wifi_coex_hw_reset();
+	if (ret != 0) {
+		LOG_ERR("Coexistence Hardware reset FAIL\n");
+		goto err;
+	}
+
+	/* Configure Coexistence Hardware non-PTA registers */
+	LOG_INF("\n");
+	LOG_INF("Configuring non-PTA registers.\n");
+	ret = nrf_wifi_coex_config_non_pta(separate_antennas);
+	if (ret != 0) {
+		LOG_ERR("Configuring non-PTA registers of CoexHardware FAIL\n");
+		goto err;
+	}
 
 	if (test_wlan) {
 		/* Wi-Fi connection */
@@ -412,21 +429,13 @@ int main(void)
 		}
 
 #ifdef CONFIG_NRF700X_WIFI_BT_COEX
-		/* Configure Coexistence Hardware */
-		LOG_INF("\n");
-		LOG_INF("Configuring non-PTA registers.\n");
-		ret = nrf_wifi_coex_config_non_pta(separate_antennas);
-		if (ret != 0) {
-			LOG_ERR("Configuring non-PTA registers of CoexHardware FAIL\n");
-			goto err;
-		}
-
 		wlan_band = wifi_mgmt_to_pta_band(status.band);
 		if (wlan_band == NRF_WIFI_PTA_WLAN_OP_BAND_NONE) {
 			LOG_ERR("Invalid Wi-Fi band: %d\n", wlan_band);
 			goto err;
 		}
 
+		/* Configure Coexistence Hardware non-PTA registers */
 		LOG_INF("Configuring PTA registers for %s\n", wifi_band_txt(status.band));
 		ret = nrf_wifi_coex_config_pta(wlan_band, separate_antennas);
 		if (ret != 0) {
