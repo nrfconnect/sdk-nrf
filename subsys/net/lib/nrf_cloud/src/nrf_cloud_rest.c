@@ -1308,6 +1308,8 @@ int nrf_cloud_rest_send_location(struct nrf_cloud_rest_context *const rest_ctx,
 		LOG_ERR("Failed to print JSON");
 		goto clean_up;
 	}
+	cJSON_Delete(msg_obj);
+	msg_obj = NULL;
 
 	err = nrf_cloud_rest_send_device_message(rest_ctx, device_id, json_msg, false, NULL);
 
@@ -1375,6 +1377,9 @@ int nrf_cloud_rest_send_device_message(struct nrf_cloud_rest_context *const rest
 
 	/* Set payload */
 	req.body = cJSON_PrintUnformatted(root_obj);
+	cJSON_Delete(root_obj);
+	root_obj = NULL;
+
 	if (!req.body) {
 		ret = -ENOMEM;
 		goto clean_up;
@@ -1432,4 +1437,41 @@ clean_up:
 	close_connection(rest_ctx);
 
 	return ret;
+}
+
+int nrf_cloud_rest_device_status_message_send(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, const struct nrf_cloud_device_status *const dev_status,
+	const int64_t timestamp_ms)
+{
+	__ASSERT_NO_MSG(rest_ctx != NULL);
+	__ASSERT_NO_MSG(device_id != NULL);
+
+	int err = -ENOMEM;
+	cJSON *msg_obj;
+	char *json_msg = NULL;
+
+	(void)nrf_cloud_codec_init(NULL);
+
+	msg_obj = cJSON_CreateObject();
+	if (!msg_obj) {
+		goto clean_up;
+	}
+
+	err = nrf_cloud_device_status_msg_encode(dev_status, timestamp_ms, msg_obj);
+	if (err) {
+		goto clean_up;
+	}
+
+	json_msg = cJSON_PrintUnformatted(msg_obj);
+	cJSON_Delete(msg_obj);
+	msg_obj = NULL;
+
+	err = nrf_cloud_rest_send_device_message(rest_ctx, device_id, json_msg, false, NULL);
+
+clean_up:
+	cJSON_Delete(msg_obj);
+	if (json_msg) {
+		cJSON_free((void *)json_msg);
+	}
+	return err;
 }

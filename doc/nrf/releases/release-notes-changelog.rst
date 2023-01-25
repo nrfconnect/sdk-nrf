@@ -650,6 +650,12 @@ Libraries for networking
 
   * A new library for sending notifications of critical device events to nRF Cloud, using either REST or MQTT connections.
 
+* :ref:`lib_nrf_cloud_rest` library:
+
+  * Added:
+
+    * :c:func:`nrf_cloud_rest_device_status_message_send` function to send the device status information as an nRF Cloud device message.
+
 Libraries for NFC
 -----------------
 
