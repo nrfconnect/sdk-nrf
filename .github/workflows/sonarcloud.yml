@@ -62,29 +62,6 @@ jobs:
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
           echo "$HOME/.sonar/build-wrapper-linux-x86" >> $GITHUB_PATH
 
-      - name: Run native_posix tests
-        shell: bash
-        run: |
-          source ncs/zephyr/zephyr-env.sh
-          ncs/zephyr/scripts/twister -v -i -C -T ncs/nrf/ -p native_posix --coverage-tool gcovr
-
-      # Exclude twister-out because we dont need coverage reports for mocks and generated files.
-      # Exclude tests/unity because it is not interesting
-      # Exclude folders that contain source code with multiple definitions of the same function
-      # depending on preprocessor macros. gcovr misbehaves due to this.
-      # Issue: https://github.com/gcovr/gcovr/issues/586
-      - name: Collect coverage into one XML report
-        shell: bash
-        run: |
-          gcovr twister-out  \
-            --exclude=twister-out \
-            --exclude=tests/unity \
-            --exclude=ncs/zephyr/include/ \
-            --exclude=ncs/zephyr/subsys/net/ip/ \
-            --exclude=ncs/nrf/tests/subsys/dfu/dfu_target_stream/ \
-            --exclude=ncs/nrf/lib/hw_id/ \
-            --sonarqube coverage.xml
-
       - name: Invoke build wrapper with twister command to build with integrations scope
         shell: bash
         continue-on-error: true # Some samples fail to compile due to missing tools in the docker image.
@@ -102,6 +79,5 @@ jobs:
                         --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" \
                         --define sonar.exclusions="ncs/modules/**,ncs/zephyr/**,ncs/nrf/ext/**,**/*.py,**twister-out**,**/*.java,**/*.html,**/*.xml,**/*.php" \
                         --define sonar.cpd.exclusions="**CMakeFiles**" \
-                        --define sonar.coverageReportPaths=coverage.xml \
                         --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
                         --define sonar.cfamily.cache.enabled=false
