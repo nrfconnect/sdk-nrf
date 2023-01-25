@@ -694,6 +694,15 @@ int lwm2m_os_pdn_activate(uint8_t cid, int *esm, enum lwm2m_os_pdn_fam *family)
 
 int lwm2m_os_pdn_deactivate(uint8_t cid)
 {
+	/* Add a small delay as a workaround for a PDN deactivate (AT+CGACT)
+	 * issue in modem firmware version 1.3.0 to 1.3.3.
+	 *
+	 * This will avoid an issue due to which EPS bearer context status
+	 * information element is incorrectly built in certain scenario.
+	 * This causes confusion and extra signaling between UE and network.
+	 */
+	k_sleep(K_SECONDS(1));
+
 	return pdn_deactivate(cid);
 }
 
