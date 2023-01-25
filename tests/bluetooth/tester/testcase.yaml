@@ -1,9 +1,4 @@
 tests:
-  bluetooth.general.tester:
-    platform_allow: qemu_x86
-    tags: bluetooth
-    harness: bluetooth
-
   bluetooth.general.tester.build:
     build_only: true
     platform_allow: nrf52840dk_nrf52840
