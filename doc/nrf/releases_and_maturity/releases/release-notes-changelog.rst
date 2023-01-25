@@ -35,6 +35,13 @@ IDE and tool support
 
 |no_changes_yet_note|
 
+MCUboot
+=======
+
+* Added:
+
+  * Support for multi-image DFU without using external flash memory on nRF53.
+
 Application development
 =======================
 
