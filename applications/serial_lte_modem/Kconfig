@@ -33,27 +33,8 @@ config SLM_EXTERNAL_XTAL
 	default y
 
 #
-# Inter-Connect
+# AT command terminator
 #
-config SLM_UART_HWFC_RUNTIME
-	bool "Support of UART HWFC runtime configuration"
-	help
-		Selected if hw-flow-control is enabled in devicetree
-choice
-	prompt "UART for interconnect"
-	help
-		Selects which UART to use for interconnect:
-		-  UART 0
-		-  UART 2
-	config SLM_CONNECT_UART_0
-		bool "UART 0"
-		select SLM_UART_HWFC_RUNTIME if $(dt_nodelabel_bool_prop,uart0,hw-flow-control)
-
-	config SLM_CONNECT_UART_2
-		bool "UART 2"
-		select SLM_UART_HWFC_RUNTIME if $(dt_nodelabel_bool_prop,uart2,hw-flow-control)
-endchoice
-
 choice
 	prompt "Termination mode"
 	default SLM_CR_LF_TERMINATION

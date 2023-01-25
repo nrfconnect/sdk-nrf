@@ -25,14 +25,6 @@
 
 LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 
-#if defined(CONFIG_SLM_CONNECT_UART_0)
-#define UART_NODE DT_NODELABEL(uart0)
-#elif defined(CONFIG_SLM_CONNECT_UART_2)
-#define UART_NODE DT_NODELABEL(uart2)
-#else
-#error "Unknown Inter-Connect UART"
-#endif
-
 #define OK_STR		"\r\nOK\r\n"
 #define ERROR_STR	"\r\nERROR\r\n"
 #define FATAL_STR	"FATAL ERROR\r\n"
@@ -57,7 +49,21 @@ static enum slm_operation_modes {
 	SLM_DFU_MODE          /* nRF52 DFU controller */
 } slm_operation_mode;
 
-static const struct device *const uart_dev = DEVICE_DT_GET(UART_NODE);
+/* list supported UART instances and get HWFC property from DTS */
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(uart0), okay)
+static const struct device *const uart0_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
+static bool hw_flow_control = DT_NODE_HAS_PROP(DT_NODELABEL(uart0), hw-flow-control);
+static const struct device *const uart2_dev;	/* disabled or not used, set NULL */
+#elif DT_NODE_HAS_STATUS(DT_NODELABEL(uart2), okay)
+static const struct device *const uart2_dev = DEVICE_DT_GET(DT_NODELABEL(uart2));
+static bool hw_flow_control = DT_NODE_HAS_PROP(DT_NODELABEL(uart2), hw-flow-control);
+static const struct device *const uart0_dev;	/* disabled, set NULL */
+#else
+static const struct device *const uart0_dev;	/* disabled, set NULL */
+static const struct device *const uart2_dev;	/* disabled, set NULL */
+static bool hw_flow_control;			/* set false */
+#endif
+static const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_uart));
 static uint8_t at_buf[AT_MAX_CMD_LEN];
 static uint16_t at_buf_len;
 static bool at_buf_overflow;
@@ -292,13 +298,10 @@ int slm_uart_configure(void)
 		LOG_ERR("uart_configure: %d", err);
 		return err;
 	}
-#if defined(CONFIG_SLM_UART_HWFC_RUNTIME)
-	uint32_t RTS_PIN;
-	uint32_t CTS_PIN;
-/* Set HWFC dynamically */
-	#if defined(CONFIG_SLM_CONNECT_UART_0)
-		RTS_PIN = nrf_uarte_rts_pin_get(NRF_UARTE0);
-		CTS_PIN = nrf_uarte_cts_pin_get(NRF_UARTE0);
+	/* Set HWFC dynamically */
+	if (uart_dev == uart0_dev && hw_flow_control) {
+		uint32_t RTS_PIN = nrf_uarte_rts_pin_get(NRF_UARTE0);
+		uint32_t CTS_PIN = nrf_uarte_cts_pin_get(NRF_UARTE0);
 
 		if (slm_uart.flow_ctrl == UART_CFG_FLOW_CTRL_RTS_CTS) {
 			nrf_uarte_hwfc_pins_set(NRF_UARTE0,
@@ -308,10 +311,9 @@ int slm_uart_configure(void)
 			nrf_gpio_pin_clear(RTS_PIN);
 			nrf_gpio_cfg_output(RTS_PIN);
 		}
-	#endif
-	#if defined(CONFIG_SLM_CONNECT_UART_2)
-		RTS_PIN = nrf_uarte_rts_pin_get(NRF_UARTE2);
-		CTS_PIN = nrf_uarte_cts_pin_get(NRF_UARTE2);
+	} else if (uart_dev == uart2_dev && hw_flow_control) {
+		uint32_t RTS_PIN = nrf_uarte_rts_pin_get(NRF_UARTE2);
+		uint32_t CTS_PIN = nrf_uarte_cts_pin_get(NRF_UARTE2);
 
 		if (slm_uart.flow_ctrl == UART_CFG_FLOW_CTRL_RTS_CTS) {
 			nrf_uarte_hwfc_pins_set(NRF_UARTE2,
@@ -321,8 +323,8 @@ int slm_uart_configure(void)
 			nrf_gpio_pin_clear(RTS_PIN);
 			nrf_gpio_cfg_output(RTS_PIN);
 		}
-	#endif
-#endif
+	}
+
 	return err;
 }
 
@@ -990,14 +992,20 @@ int slm_at_host_init(void)
 		}
 	} else {
 		/* else re-config UART based on setting page */
-		LOG_DBG("UART baud: %d d/p/s-bits: %d/%d/%d HWFC: %d",
-			slm_uart.baudrate, slm_uart.data_bits, slm_uart.parity,
-			slm_uart.stop_bits, slm_uart.flow_ctrl);
 		err = slm_uart_configure();
 		if (err != 0) {
 			LOG_ERR("Fail to set uart baudrate: %d", err);
 			return err;
 		}
+	}
+	if (uart_dev == uart0_dev) {
+		LOG_INF("UART0 baud: %d d/p/s-bits: %d/%d/%d HWFC: %d",
+			slm_uart.baudrate, slm_uart.data_bits, slm_uart.parity,
+			slm_uart.stop_bits, slm_uart.flow_ctrl);
+	} else if (uart_dev == uart2_dev) {
+		LOG_INF("UART2 baud: %d d/p/s-bits: %d/%d/%d HWFC: %d",
+			slm_uart.baudrate, slm_uart.data_bits, slm_uart.parity,
+			slm_uart.stop_bits, slm_uart.flow_ctrl);
 	}
 	/* Wait for the UART line to become valid */
 	start_time = k_uptime_get_32();
