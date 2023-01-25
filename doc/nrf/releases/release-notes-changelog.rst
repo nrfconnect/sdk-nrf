@@ -615,6 +615,9 @@ Common Application Framework (CAF)
 
     * :c:struct:`sensor_data_aggregator_event` now uses the :c:struct:`sensor_value` struct data buffer and carries a number of sensor values in a single sample, which is sufficient to describe data layout.
 
+    * The way buffers are declared is updated when the instance is created.
+      Now the memory-region devicetree property works independently for each instance and does not require the specific instance name.
+
 * :ref:`caf_sensor_manager`:
 
   * Updated by cleaning up :file:`sensor_event.h` and :file:`sensor_manager.h` files.
