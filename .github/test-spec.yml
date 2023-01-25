@@ -61,6 +61,15 @@
   - "tests/nrf5340_audio/**/*"
   - "tests/lib/contin_array/**/*"
   - "tests/lib/pcm_mix/**/*"
+  - "tests/lib/data_fifo/**/*"
+  - "tests/lib/pcm_stream_channel_modifier/**/*"
+  - "tests/lib/tone/**/*"
+  - "lib/contin_array/**/*"
+  - "lib/pcm_mix/**/*"
+  - "lib/data_fifo/**/*"
+  - "lib/pcm_stream_channel_modifier/**/*"
+  - "lib/tone/**/*"
+  - "lib/bin/bt_ll_acs_nrf53/**/*"
 
 "CI-iot-samples-test":
   - "include/modem/at_monitor.h"
