@@ -106,6 +106,8 @@ const uint32_t output_enable[][2] = {
 	{ CS47L63_OUTPUT_ENABLE_1, 0x0002 },
 	{ CS47L63_OUT1L_INPUT1, 0x800020 },
 	{ CS47L63_OUT1L_INPUT2, 0x800021 },
+	{ CS47L63_OUT1L_INPUT3, 0x800012 },
+	{ CS47L63_OUT1L_INPUT4, 0x800013 },
 };
 
 const uint32_t output_disable[][2] = {

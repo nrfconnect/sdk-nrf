@@ -62,7 +62,7 @@ static void audio_gateway_configure(void)
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
 
-	sw_codec_cfg.encoder.channel_mode = SW_CODEC_STEREO;
+	sw_codec_cfg.encoder.channel_mode = CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT;
 	sw_codec_cfg.encoder.enabled = true;
 }
 
