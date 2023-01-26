@@ -7,11 +7,12 @@
 menu "BLE HID Service"
 
 config DESKTOP_HIDS_ENABLE
-	bool
+	bool "Enable GATT HID Service"
+	depends on BT
 	select BT_HIDS
 	select BT_CONN_CTX
 	help
-	  This option enables HID over GATT service.
+	  This option enables HID over GATT Service application module.
 
 if DESKTOP_HIDS_ENABLE
 

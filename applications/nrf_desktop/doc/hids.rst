@@ -28,7 +28,7 @@ Complete the following steps to configure the module:
 
 1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
    Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` options are enabled.
-   The HID Service application module is enabled by the :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option which is selected by :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` together with other GATT Services that are required for a HID device.
+   The HID Service application module is enabled by the :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option, which is implied by :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` together with other GATT Services that are required for a HID device.
 #. The :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option selects the following Kconfig options:
 
    * The :kconfig:option:`CONFIG_BT_HIDS` option that automatically enables the :ref:`hids_readme`.
