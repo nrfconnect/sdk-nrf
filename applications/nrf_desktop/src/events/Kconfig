@@ -34,6 +34,12 @@ config DESKTOP_INIT_LOG_BLE_QOS_EVENT
 	help
 	  Log Bluetooth LE QoS events in nRF Desktop application.
 
+config DESKTOP_INIT_LOG_BLE_DONGLE_PEER_EVENT
+	bool "Log Bluetooth dongle peer event"
+	default y
+	help
+	  Log Bluetooth dongle peer event in nRF Desktop application.
+
 config DESKTOP_INIT_LOG_CPU_LOAD_EVENT
 	bool "Log CPU load events"
 	depends on DESKTOP_CPU_MEAS_ENABLE

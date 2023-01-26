@@ -111,6 +111,13 @@ config DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_CONF_CHANNEL
 	bool "Allow erasing dongle peer using config channel"
 	depends on  DESKTOP_CONFIG_CHANNEL_ENABLE
 
+config DESKTOP_BLE_DONGLE_PEER_ID_INFO
+	bool "Enable the Dongle Peer ID information event"
+	help
+	  This option enables the event that broadcasts information about
+	  the dongle peer application identity. The Bluetooth LE bond module
+	  submits the event during initialization.
+
 endif # DESKTOP_BLE_DONGLE_PEER_ENABLE
 
 if !DESKTOP_BLE_DONGLE_PEER_ENABLE
