@@ -8,6 +8,7 @@ menuconfig DESKTOP_FAST_PAIR
 	bool "Fast Pair module"
 	depends on BT_ADV_PROV_FAST_PAIR
 	depends on CAF_BLE_COMMON_EVENTS
+	select DESKTOP_BLE_DONGLE_PEER_ID_INFO if DESKTOP_BLE_DONGLE_PEER_ENABLE
 	default y if (CAF_BLE_STATE_MAX_LOCAL_ID_BONDS > 1)
 	help
 	  Enable a small application module that control Fast Pair show/hide UI
