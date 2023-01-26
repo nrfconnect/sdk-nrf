@@ -97,7 +97,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          sonar-scanner --define sonar.projectKey=balaji-nordic_sdk-nrf \
+          sonar-scanner -X \
+                        --define sonar.projectKey=balaji-nordic_sdk-nrf \
                         --define sonar.organization=balaji-nordic \
                         --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" \
                         --define sonar.exclusions="ncs/modules/**,ncs/zephyr/**,ncs/nrf/ext/**,**/*.py,**twister-out**,**/*.java,**/*.html,**/*.xml,**/*.php" \
