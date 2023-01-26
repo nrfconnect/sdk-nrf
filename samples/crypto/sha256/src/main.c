@@ -84,6 +84,7 @@ int hash_singlepart_sha256(void)
 
 int hash_multipart_sha256(void)
 {
+	uint32_t olen;
 	psa_status_t status;
 	uint8_t *input_ptr = m_plain_text;
 	psa_hash_operation_t hash_operation = {0};
@@ -126,6 +127,11 @@ int hash_multipart_sha256(void)
 	}
 	LOG_INF("Added %d bytes", 50);
 
+	status = psa_hash_finish(&hash_operation, m_hash, sizeof(m_hash), &olen);
+	if (status != PSA_SUCCESS) {
+		LOG_ERR("Could not finish the hash operation! Error %d", status);
+		return APP_ERROR;
+	}
 
 	LOG_INF("Hashing successful!");
 	PRINT_HEX("SHA256 hash", m_hash, sizeof(m_hash));
