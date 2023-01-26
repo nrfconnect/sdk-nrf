@@ -90,7 +90,7 @@ jobs:
         continue-on-error: true # Some samples fail to compile due to missing tools in the docker image.
         run: |
           source ncs/zephyr/zephyr-env.sh
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister --ninja --integration --board-root ncs/nrf/boards --quarantine-list ncs/nrf/scripts/quarantine.yaml --clobber-output --build-only -v -T ncs/nrf
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister --ninja --integration --board-root ncs/nrf/boards --quarantine-list ncs/nrf/scripts/quarantine.yaml --clobber-output --build-only -v -i -T ncs/nrf
 
       - name: Run sonar-scanner
         env:
