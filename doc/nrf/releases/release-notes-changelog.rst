@@ -1,7 +1,7 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.2.99
-###########################
+Changelog for |NCS| v2.2.99-dev2
+################################
 
 .. contents::
    :local:
@@ -29,15 +29,6 @@ Changelog
 *********
 
 The following sections provide detailed lists of changes by component.
-
-MCUboot
-=======
-
-* Added:
-
-  * An option to prevent inclusion of default nRF5340 network core DFU image hook, which allows a custom implementation by users if the :kconfig:option:`CONFIG_BOOT_IMAGE_ACCESS_HOOK_NRF5340` Kconfig option is disabled (enabled by default).
-    CMake can be used to add additional hook files.
-    See :file:`modules/mcuboot/hooks/CMakeLists.txt` for an example of how to achieve this.
 
 Application development
 =======================
@@ -95,7 +86,7 @@ Matter
   * :ref:`ug_matter_device_certification` page with a section about certification document templates.
   * :ref:`ug_matter_overview_commissioning` page with information about :ref:`ug_matter_network_topologies_commissioning_onboarding_formats`.
   * Default retry intervals used by Matter Reliability Protocol for Matter over Thread to account for longer round-trip times in Thread networks with multiple intermediate nodes.
-  * Changed Bluetooth LE connection timeout and parameters update timeout parameters to make communication over Bluetooth LE more reliable.
+  * The Bluetooth LE connection timeout parameters and the update timeout parameters to make communication over Bluetooth LE more reliable.
 
 * Fixed the issue of connection timing out when attaching to a Wi-Fi access point that requires Wi-Fi Protected Access 3 (WPA3).
 
@@ -346,7 +337,7 @@ Peripheral samples
 
   * Added support for the nRF7002 board.
   * Fixed sample building with support for the Skyworks front-end module.
-  * Updated documentation to clarify that this sample is dedicated for the short-range radio (Bluetooth LE, IEEE 802.15.4 and proprietary modes).
+  * Updated the documentation to clarify that this sample is dedicated for the short-range radio (Bluetooth LE, IEEE 802.15.4, and proprietary modes).
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
@@ -388,9 +379,7 @@ Matter samples
 NFC samples
 -----------
 
-* Fixed:
-
-  * An issue where NFC samples that use the NFC Reader feature returned false error code with value ``1`` during the NFC T4T operation.
+* Fixed an issue where NFC samples that use the NFC Reader feature returned false error code with value ``1`` during the NFC T4T operation.
 
 |no_changes_yet_note|
 
@@ -504,7 +493,7 @@ Modem libraries
       * ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_HOSTNAME`.
       * ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG`.
 
-    * Fixed an issue causing the A-GPS data download to be delayed until the RRC connection release.
+  * Fixed an issue causing the A-GPS data download to be delayed until the RRC connection release.
 
 Libraries for networking
 ------------------------
@@ -545,20 +534,16 @@ Libraries for networking
 Libraries for NFC
 -----------------
 
-* :ref:`lib_nfc` library:
+* Added:
 
-  * Added:
+  * The possibility of moving an NFC callback to a thread context.
+  * Support for zero-latency interrupts for NFC.
 
-    * The possibility of moving an NFC callback to a thread context.
-    * Support for zero-latency interrupts for NFC.
+* Updated by aligning the :file:`ncs/nrf/subsys/nfc/lib/platform.c` file with new library implementation.
 
-  * Updated by aligning the :file:`ncs/nrf/subsys/nfc/lib/platform.c` file with new library implementation.
+* :ref:`nfc_ndef_ch_rec_parser_readme` library:
 
-* :ref:`nfc_ndef_ch_rec_parser_readme`
-
-  * Fixed:
-
-    * A bug where the AC Record Parser was not functional and returned invalid results.
+  * Fixed a bug where the AC Record Parser was not functional and returned invalid results.
 
 Other libraries
 ---------------
@@ -570,12 +555,12 @@ Other libraries
 
 * :ref:`lib_pcm_stream_channel_modifier` library:
 
-  * Separated the library from the :ref:`nrf53_audio_app` and moved it to :file:`lib/pcm_stream_channel_modifier`.
+  * Updated by separating the library from the :ref:`nrf53_audio_app` application and moving it to :file:`lib/pcm_stream_channel_modifier`.
     Updated code and documentation accordingly.
 
 * :ref:`lib_data_fifo` library:
 
-  * Separated the library from the :ref:`nrf53_audio_app` and moved it to :file:`lib/data_fifo`.
+  * Updated by separating the library from the :ref:`nrf53_audio_app` application and moving it to :file:`lib/data_fifo`.
     Updated code and documentation accordingly.
 
 * :ref:`QoS` library:
@@ -615,8 +600,8 @@ Common Application Framework (CAF)
 
 * :ref:`caf_sensor_manager`:
 
-  * Clean up :file:`sensor_event.h` and :file:`sensor_manager.h` files.
-    Move unrelated declarations to a separate :file:`caf_sensor_common.h` file.
+  * Updated by cleaning up :file:`sensor_event.h` and :file:`sensor_manager.h` files.
+    Moved unrelated declarations to a separate :file:`caf_sensor_common.h` file.
 
 Shell libraries
 ---------------
@@ -656,7 +641,9 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-* |no_changes_yet_note|
+* Added an option to prevent inclusion of default nRF5340 network core DFU image hook, which allows a custom implementation by users if the :kconfig:option:`CONFIG_BOOT_IMAGE_ACCESS_HOOK_NRF5340` Kconfig option is disabled (enabled by default).
+  CMake can be used to add additional hook files.
+  See :file:`modules/mcuboot/hooks/CMakeLists.txt` for an example of how to achieve this.
 
 Zephyr
 ======
@@ -707,7 +694,10 @@ Documentation
   * Documentation template for the :ref:`Ecosystem integration <Ecosystem_integration>` user guides.
   * The :ref:`ug_nrf70_developing` user guide.
   * A page on :ref:`ug_nrf70_features`.
-* Updated the :ref:`software_maturity` page with details about Wi-Fi feature support.
-  * Section about power saving features in the :ref:`app_power_opt` user guide.
+
+* Updated:
+
+  * The :ref:`software_maturity` page with details about Wi-Fi feature support.
+  * The :ref:`app_power_opt` user guide by adding a section about power saving features.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
