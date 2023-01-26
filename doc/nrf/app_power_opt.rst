@@ -35,7 +35,7 @@ It is because most of the samples and applications in the |NCS| are configured t
 The image below shows the power measurement output on Power Profiler Kit II for an nRF9160 DK with the :ref:`zephyr:blinky-sample` sample compiled for the ``nrf9160dk_nrf9160_ns`` build target without modifications in the sample configuration.
 
 .. figure:: images/app_power_opt_blinky_serial_on.png
-   :scale: 100 %
+   :width: 100 %
    :alt: Current measurement on the Blinky sample with serial logging enabled
 
    Current measurement for the Blinky sample with serial logging enabled
@@ -56,7 +56,7 @@ To disable serial output, you must change the project configuration associated w
 The output on Power Profiler Kit II shows the power consumption on an nRF9160 DK with the sample compiled for the ``nrf9160dk_nrf9160_ns`` build target with ``CONFIG_SERIAL=n``.
 
 .. figure:: images/app_power_opt_blink_serial_off.png
-   :scale: 100 %
+   :width: 100 %
    :alt: Current measurement on the Blinky sample with serial logging disabled
 
    Current measurement on the Blinky sample with serial logging disabled
@@ -133,7 +133,7 @@ To simulate the use case with Online Power Profiler, complete the following step
 	The following image shows the result of the power profile simulation using Online Power Profiler:
 
 	.. figure:: images/app_power_opt_opp_default_20byte_10min.png
-	   :scale: 100 %
+	   :width: 100 %
 	   :alt: Online Power Profiler simulation for 20 bytes payload with 10 minutes interval
 
 	The total average current is now 82.84 µA.
@@ -149,7 +149,7 @@ To simulate the use case with Online Power Profiler, complete the following step
 	The tuning of parameters results in the following output in Online Power Profiler:
 
 	.. figure:: images/app_power_opt_opp_default_40_byte_20min.png
-	   :scale: 100 %
+	   :width: 100 %
 	   :alt: Online Power Profiler simulation for 40-byte payload with 20 minutes interval
 
 	The average current is now 42.96 µA, which is below the calculated maximum limit of 57 µA.
@@ -172,7 +172,7 @@ To measure current on an nRF9160 DK using the Power Profiler Kit II, while it is
 #. If PSM is available in your network, the power measurement using Power Profiler Kit II produces the following results:
 
    .. figure:: images/app_power_opt_ppk_psm.png
-      :scale: 100 %
+      :width: 100 %
       :alt: Power Profiler Kit II sample output with PSM
 
    If PSM is activated, you can see that the current value drops to a few µA.
@@ -189,7 +189,7 @@ To measure current on an nRF9160 DK using the Power Profiler Kit II, while it is
    After a duration of two minutes, observe the following results in the Power Profiler Kit II interface:
 
    .. figure:: images/app_power_opt_ppk_40_byte.png
-      :scale: 100 %
+      :width: 100 %
       :alt: Power Profiler Kit II sample output for 40-byte payload
 
    The whole sequence of data transmission spans now 12.32 seconds and the process consumes a total battery charge of 115.06 mC.
@@ -211,7 +211,7 @@ To measure current on an nRF9160 DK using the Power Profiler Kit II, while it is
    Observe the results in the Power Profiler Kit II interface:
 
    .. figure:: images/app_power_opt_ppk_120_byte.png
-      :scale: 100 %
+      :width: 100 %
       :alt: Power Profiler Kit II sample output for 120-byte payload
 
   The overall charge is now 116.57 mC.
@@ -247,7 +247,7 @@ To tune the network parameters for the example use case, complete the following 
    The image shows how you can measure the RRC inactivity timer with Power Profiler Kit II:
 
    .. figure:: images/app_power_opt_ppk_inactivity_timer.png
-      :scale: 100 %
+      :width: 100 %
       :alt: Power Profiler Kit II RRC inactivity timer measurement
 
    For the example use case, the RRC inactivity timer is 11 seconds.
@@ -255,20 +255,20 @@ To tune the network parameters for the example use case, complete the following 
    A closer inspection of the highlighted time duration shows that the `cDRX Interval` is 0.32 seconds:
 
    .. figure:: images/app_power_opt_ppk_cdrx_interval.png
-      :scale: 100 %
+      :width: 100 %
       :alt: Power Profiler Kit II cDRX interval
 
    The parameter ``cDRX on duration`` varies as shown in the following image, but the baseline (lowest value) is 40 milliseconds:
 
    .. figure:: images/app_power_opt_ppk_cdrx_duration_40ms.png
-      :scale: 100 %
+      :width: 100 %
       :alt: Power Profiler Kit II cDRX duration
 
 
 #. Provide the measurements from the previous step to Online Power Profiler:
 
    .. figure:: images/app_power_opt_opp_tuned_with_measurements.png
-      :scale: 100 %
+      :width: 100 %
       :alt: Tuning in Online Power Profiler
 
    The total charge is now 99.59 mC.
@@ -281,13 +281,13 @@ To tune the network parameters for the example use case, complete the following 
    The battery charge value of 1.92 mC in the baseline case fits well with the Online Power Profiler value:
 
    .. figure:: images/app_power_opp_cdrx_normal.png
-      :scale: 100 %
+      :width: 100 %
       :alt: Normal cDRX
 
    However, in one of the worst case cDRX events, you can see a total charge of 7.96 mC, which is more than three times the charge in the baseline case:
 
    .. figure:: images/app_power_opt_drx_long.png
-      :scale: 100 %
+      :width: 100 %
       :alt: Long cDRX
 
 .. note::
@@ -314,7 +314,7 @@ Below is a measurement from Power Profiler Kit II with the PSM active timer set 
 The rest of the parameters are identical to the previous measurements.
 
 .. figure:: images/app_power_opt_ppk_10sec_active_timer.png
-   :scale: 100 %
+   :width: 100 %
    :alt: PSM active timer
 
 LTE activity is now extended by 10 seconds with a lower duty cycle operation (RRC Idle) compared to the previous measurements.
