@@ -215,6 +215,8 @@ nRF Desktop
 
   * Removed separate configurations enabling :ref:`zephyr:shell_api` (:file:`prj_shell.conf`).
     Shell support can be enabled for a given configuration with the single Kconfig option (:ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>`).
+  * By default, nRF Desktop dongles use Bluetooth appearance (:kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE)` of keyboard.
+     The new default configuration value improves consistency with the used HID boot interface.
 
 Samples
 =======
