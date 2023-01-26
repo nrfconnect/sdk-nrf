@@ -15,6 +15,19 @@ menuconfig EMDS
 
 if EMDS
 
+config EMDS_AUTO_RECOVER
+	bool "Automatically attempt entry recovery during load"
+	default n
+	help
+	 When enabled, the load functionality will automatically attempt
+	 to recover an older version of an entry if there are no valid
+	 entry in the flash. CAUTION: It is strongly recommended to NOT
+	 use recovered entries for security purposes. It may compromise
+	 the security of the device. When enabling this option, it is
+	 recommended to evaluate the status flag of each individual entry
+	 if the load procedure has failed to fetch explicitly valid entries,
+	 and take the necessary measures for each entry accordingly.
+
 config EMDS_SECTOR_COUNT
 	int "Sector count of the emergency data storage area"
 	default 1

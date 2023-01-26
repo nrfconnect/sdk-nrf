@@ -25,7 +25,6 @@ enum test_states {
 	EMDS_TS_CLEAR_FLASH,
 	EMDS_TS_NO_STORE,
 	EMDS_TS_SEVERAL_STORE,
-	EMDS_TS_LOAD_INVAL_STORE,
 	EMDS_TS_OVERFLOW_STORAGE,
 	EMDS_TS_LOAD_AFTER_OVERFLOW,
 };
@@ -40,9 +39,6 @@ static enum test_states state[] = {
 	EMDS_TS_CLEAR_FLASH,
 	EMDS_TS_EMPTY_FLASH,
 	EMDS_TS_NO_STORE,
-	EMDS_TS_LOAD_INVAL_STORE,
-	EMDS_TS_EMPTY_FLASH,
-	EMDS_TS_CLEAR_FLASH,
 	EMDS_TS_OVERFLOW_STORAGE,
 	EMDS_TS_LOAD_AFTER_OVERFLOW,
 };
@@ -63,7 +59,9 @@ static struct emds_dynamic_entry d_entries[3] = {
 static const uint8_t expect_s_data[1024] = { 0xCC };
 static uint8_t s_data[1024];
 
-EMDS_STATIC_ENTRY_DEFINE(s_entry, 0x100, s_data, sizeof(s_data));
+enum emds_entry_status s_entry_status;
+
+EMDS_STATIC_ENTRY_DEFINE(s_entry, 0x100, s_data, sizeof(s_data), &s_entry_status);
 
 static char *print_state(enum test_states s)
 {
@@ -78,8 +76,6 @@ static char *print_state(enum test_states s)
 		return "SEVERAL_STORE";
 	case EMDS_TS_NO_STORE:
 		return "NO_STORE";
-	case EMDS_TS_LOAD_INVAL_STORE:
-		return "LOAD_INVAL_STORE";
 	case EMDS_TS_OVERFLOW_STORAGE:
 		return "OVERFLOW_STORAGE";
 	case EMDS_TS_LOAD_AFTER_OVERFLOW:
@@ -88,6 +84,14 @@ static char *print_state(enum test_states s)
 	default:
 		return "UNKNOWN";
 	}
+}
+
+static void entry_status_check(enum emds_entry_status exp_status)
+{
+	for (int i = 0; i < ARRAY_SIZE(d_entries); i++) {
+		zassert_equal(d_entries->entry.status.val, exp_status, "Unexpected entry status");
+	}
+	zassert_equal(s_entry_status, exp_status, "Unexpected entry status");
 }
 
 static void app_store_cb(void)
@@ -141,17 +145,35 @@ static void test_add_d_entries(void)
 
 static void test_load_empty_flash(void)
 {
+	int rc;
+
 	uint8_t test_d_data[sizeof(d_data)] = { 0xAC };
 	uint8_t test_s_data[sizeof(s_data)] = { 0xAC };
 
 	memcpy(d_data, test_d_data, sizeof(d_data));
 	memcpy(s_data, test_s_data, sizeof(s_data));
 
-	zassert_equal(emds_load(), -EBADMSG, "Unexpected err message");
+	rc = emds_load();
+	zassert_true(rc == -ENOMSG, "Unexpected err message");
 
-	zassert_mem_equal(d_data, test_d_data, sizeof(d_data),
+	entry_status_check(EMDS_ENTRY_NO_INIT);
+
+	zassert_mem_equal(d_data, test_d_data, sizeof(d_data), "Data has changed");
+	zassert_mem_equal(s_data, test_s_data, sizeof(s_data), "Data has changed");
+}
+
+static void test_load_invalidated_flash(void)
+{
+	memset(d_data, 0, sizeof(d_data));
+	memset(s_data, 0, sizeof(s_data));
+
+	zassert_equal(emds_load(), -EBADMSG, "Load failed");
+
+	entry_status_check(EMDS_ENTRY_INVALID);
+
+	zassert_mem_equal(d_data, expect_d_data, sizeof(expect_d_data),
 			  "Data has changed");
-	zassert_mem_equal(s_data, test_s_data, sizeof(s_data),
+	zassert_mem_equal(s_data, expect_s_data, sizeof(expect_s_data),
 			  "Data has changed");
 }
 
@@ -162,21 +184,12 @@ static void test_load_flash(void)
 
 	zassert_equal(emds_load(), 0, "Load failed");
 
+	entry_status_check(EMDS_ENTRY_VALID);
+
 	zassert_mem_equal(d_data, expect_d_data, sizeof(expect_d_data),
 			  "Data has changed");
 	zassert_mem_equal(s_data, expect_s_data, sizeof(expect_s_data),
 			  "Data has changed");
-}
-
-static void test_load_raw_flash(void)
-{
-	memset(d_data, 0, sizeof(d_data));
-	memset(s_data, 0, sizeof(s_data));
-
-	zassert_equal(emds_load_raw(), 0, "Load failed");
-
-	zassert_mem_equal(d_data, expect_d_data, sizeof(expect_d_data), "Data has changed");
-	zassert_mem_equal(s_data, expect_s_data, sizeof(expect_s_data), "Data has changed");
 }
 
 static void test_load_raw_on_overflow(void)
@@ -184,7 +197,8 @@ static void test_load_raw_on_overflow(void)
 	memset(s_data, 0, sizeof(s_data));
 
 	zassert_equal(emds_load(), -EBADMSG, "Unexpected err message");
-	zassert_equal(emds_load_raw(), 0, "Load failed");
+
+	zassert_equal(s_entry_status, EMDS_ENTRY_INVALID, "Unexpected entry status");
 
 	zassert_mem_equal(s_data, expect_s_data, sizeof(expect_s_data), "Data has changed");
 }
@@ -276,13 +290,6 @@ static bool pragma_several_store(const void *s)
 	return *state == EMDS_TS_SEVERAL_STORE;
 }
 
-static bool pragma_load_inval_store(const void *s)
-{
-	const enum test_states *state = s;
-
-	return *state == EMDS_TS_LOAD_INVAL_STORE;
-}
-
 static bool pragma_overflow_store(const void *s)
 {
 	const enum test_states *state = s;
@@ -351,22 +358,18 @@ ztest_register_test_suite(no_store, pragma_no_store,
 			  ztest_unit_test(test_add_d_entries),
 			  ztest_unit_test(test_load_flash),
 			  ztest_unit_test(test_prepare),
-			  ztest_unit_test(test_load_empty_flash));
+			  ztest_unit_test(test_load_invalidated_flash));
 ztest_register_test_suite(several_store, pragma_several_store,
 			  ztest_unit_test(test_add_d_entries),
 			  ztest_unit_test(test_load_flash),
 			  ztest_unit_test(test_prepare),
-			  ztest_unit_test(test_load_empty_flash),
+			  ztest_unit_test(test_load_invalidated_flash),
 			  ztest_unit_test(test_store),
 			  ztest_unit_test(test_load_flash),
 			  ztest_unit_test(test_prepare),
-			  ztest_unit_test(test_load_empty_flash),
+			  ztest_unit_test(test_load_invalidated_flash),
 			  ztest_unit_test(test_store),
 			  ztest_unit_test(test_load_flash));
-ztest_register_test_suite(load_inval_store, pragma_load_inval_store,
-			  ztest_unit_test(test_add_d_entries),
-			  ztest_unit_test(test_load_raw_flash),
-			  ztest_unit_test(test_prepare));
 ztest_register_test_suite(overflow_store, pragma_overflow_store,
 			  ztest_unit_test(test_prepare),
 			  ztest_unit_test(test_store),
@@ -376,7 +379,8 @@ ztest_register_test_suite(overflow_store, pragma_overflow_store,
 			  ztest_unit_test(test_store),
 			  ztest_unit_test(test_prepare));
 ztest_register_test_suite(load_after_overflow, pragma_load_after_overflow,
-			  ztest_unit_test(test_load_raw_on_overflow));
+			  ztest_unit_test(test_load_raw_on_overflow),
+			  ztest_unit_test(test_clear));
 
 void test_main(void)
 {

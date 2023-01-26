@@ -107,6 +107,26 @@ To initialize the emergency data storage, complete the following steps:
 #. Call :c:func:`emds_prepare`.
 #. Create interrupt or other functionality that will call :c:func:`emds_store`.
 
+Entry Recovery Feature
+**********************
+In the rare event that an EMDS store procedure fails during shutdown, EMDS provides a fallback recovery mechanism.
+To use this feature the user must enable :kconfig:option:`CONFIG_EMDS_AUTO_RECOVER`. While enabled, the
+:c:func:`emds_load` call will now either return the last valid entry from storage or, if no such entry is present,
+the first old/invalidated entry for the given entry ID. To assess if one or more loaded data entries is restored
+from an old entry, the user can evaluate the return code from the :c:func:`emds_load` call. To evaluate the status
+on a per entry basis, the user can review the :c:struct:`emds_entry.status` parameter associated with each
+individual EMDS entry.
+
+.. warning::
+  It is highly recommended that the entry recovery feature is not used for security sensitive data since it might
+  compromise the device. A recovered entry does not contain any timestamp and can thus not guarantee that the
+  contained data has not expired from a security point of view.
+
+.. note::
+  While entry recovery is enabled it is recommended that the total allocated flash size is at least twice the size
+  of the combined data that is stored on a single :c:func:`emds_store` call. This ensures that there is always some
+  fallback data available after the EMDS module needs to clear the flash before the next store procedure.
+
 Limitations
 ***********
     The power-fail comparator for the nRF528xx cannot be used with EMDS, as it will prevent the NVMC from performing write operations to flash.

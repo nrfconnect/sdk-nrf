@@ -19,8 +19,10 @@ LOG_MODULE_REGISTER(bt_mesh_rpl);
 #include <emds/emds.h>
 
 static struct bt_mesh_rpl replay_list[CONFIG_BT_MESH_CRPL];
+enum emds_entry_status entry_status;
 
-EMDS_STATIC_ENTRY_DEFINE(rpl_store, CONFIG_BT_MESH_RPL_INDEX, replay_list, sizeof(replay_list));
+EMDS_STATIC_ENTRY_DEFINE(rpl_store, CONFIG_BT_MESH_RPL_INDEX, replay_list, sizeof(replay_list),
+			 &entry_status);
 
 void bt_mesh_rpl_update(struct bt_mesh_rpl *rpl,
 		struct bt_mesh_net_rx *rx)

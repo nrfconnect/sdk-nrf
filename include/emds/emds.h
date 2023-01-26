@@ -18,11 +18,23 @@
 #include <sys/types.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/slist.h>
-#include "../../subsys/emds/emds_flash.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/** @brief Enumeration representing the status for a single EMDS entry
+ */
+enum emds_entry_status {
+	/** Not yet initialized */
+	EMDS_ENTRY_NO_INIT,
+	/** Valid entry */
+	EMDS_ENTRY_VALID,
+	/** Invalid old entry */
+	EMDS_ENTRY_INVALID,
+	/** Entry not found */
+	EMDS_ENTRY_NOT_FOUND,
+};
 
 /**
  * @struct emds_entry
@@ -37,7 +49,12 @@ struct emds_entry {
 	/** Length of data that will be stored. */
 	size_t len;
 	/** Entry status. */
-	enum emds_entry_status status;
+	union {
+		/** Status value. */
+		enum emds_entry_status val;
+		/** Pointer to status value. */
+		enum emds_entry_status *ptr;
+	} status;
 };
 
 /**
@@ -59,14 +76,16 @@ struct emds_dynamic_entry {
  *            other value.
  * @param _data Data pointer to be stored at emergency data store.
  * @param _len Length of data to be stored at emergency data store.
+ * @param _status Pointer to EMDS entry status.
  *
  * This creates a variable _name prepended by emds_.
  */
-#define EMDS_STATIC_ENTRY_DEFINE(_name, _id, _data, _len)                      \
+#define EMDS_STATIC_ENTRY_DEFINE(_name, _id, _data, _len, _status)             \
 	static const STRUCT_SECTION_ITERABLE(emds_entry, emds_##_name) = {     \
 		.id = _id,                                                     \
 		.data = (uint8_t *)_data,                                      \
 		.len = _len,                                                   \
+		.status.ptr = _status,                                  \
 	}
 
 /**
@@ -139,7 +158,7 @@ int emds_entry_add(struct emds_dynamic_entry *entry);
 int emds_store(void);
 
 /**
- * @brief Load valid static data from the emergency data storage.
+ * @brief Load data from the emergency data storage.
  *
  * This function needs to be called after the static entries are added, as they
  * are used to select the data to be loaded. The function also needs to be
@@ -147,27 +166,13 @@ int emds_store(void);
  * previously stored data.
  *
  * @retval 0 Success
- * @retval -EBADMSG if one or more entries could not be retrieved
+ * @retval -ENOMSG if the EMDS flash area is empty, i.e. on first boot
+ * @retval -EBADMSG if one or more entries could not be retrieved or
+ * one or more entries that are retrieved are recovered entries
+ * (see CONFIG_EMDS_AUTO_RECOVER).
  * @retval -ECANCELED if EMDS is not initialized properly
  */
 int emds_load(void);
-
-/**
- * @brief Load static data from the emergency data storage, disregarding the validity.
- *
- * @warning This call will return the latest valid OR invalidated entry for the given
- * entry ID. Should only be used as a fallback method in a case where @ref emds_load
- * fails to retrieve all expected data. @ref emds_load should always be attempted before
- * using this call.
- *
- * This function needs to be called after the static entries are added, as they
- * are used to select the data to be loaded.
- *
- * @retval 0 Success
- * @retval -EBADMSG if one or more entries could not be retrieved
- * @retval -ECANCELED if EMDS is not initialized properly
- */
-int emds_load_raw(void);
 
 /**
  * @brief Clear flash area from the emergency data storage.

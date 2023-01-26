@@ -529,22 +529,7 @@ Other libraries
 
     * Added API to provide a fallback mechanism in the
       event where an EMDS procedure has failed to store the last
-      state during a shutdown procedure. In that event, a user
-      might use the new API to try salvaging some state by
-      retrieving an older, invalidated entry for the lost state. To
-      make this possible the following alterations has been made
-      to the EMDS modules:
-
-      * The EMDS flash module does no longer force an erase
-        when there are only invalid entries in the storage memory.
-      * Upon prepare, the EMDS module will immediately restore
-        the volatile entries data if the prepare procedure requires
-        the flash memory to be erased, thus providing some
-        fallback data to recover if the EMDS should fail on the
-        subsequent boot.
-      * Each entry has been provided a flag that indicates the
-        entry state, thus making it possible to check if the entry is
-        valid, invalid, or non-existent.
+      state during a shutdown procedure.
 
 * :ref:`lib_contin_array` library:
 

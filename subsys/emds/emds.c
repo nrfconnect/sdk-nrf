@@ -190,12 +190,28 @@ int emds_store(void)
 
 	return 0;
 }
-static int entry_load(struct emds_fs *fs, uint16_t id, void *data, size_t entry_len,
-		      enum emds_entry_status *status, bool is_raw)
-{
-	ssize_t len = is_raw ? emds_flash_read_raw(fs, id, data, entry_len, status) :
-			       emds_flash_read(fs, id, data, entry_len, status);
 
+static void status_reset(void)
+{
+	struct emds_dynamic_entry *ch;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
+		ch->entry.status.val = EMDS_ENTRY_NO_INIT;
+	}
+
+	STRUCT_SECTION_FOREACH(emds_entry, ch)
+	{
+		*ch->status.ptr = EMDS_ENTRY_NO_INIT;
+	}
+}
+
+static int entry_load(struct emds_fs *fs, uint16_t id, void *data, size_t entry_len,
+		      enum emds_entry_status *status, bool any_entry)
+{
+	int entry_status;
+	ssize_t len = emds_flash_read(fs, id, data, entry_len, &entry_status, any_entry);
+
+	*status = entry_status;
 	if (len <= 0 || len != entry_len) {
 		LOG_ERR("Failed to retrieve dynamic entry: (%d)", id);
 		return -EBADMSG;
@@ -204,23 +220,24 @@ static int entry_load(struct emds_fs *fs, uint16_t id, void *data, size_t entry_
 	return 0;
 }
 
-static int stored_load(bool is_raw)
+static int entry_load_itr(bool any_entry)
 {
-	struct emds_dynamic_entry *ch;
 	int err = 0;
-
-	if (!emds_initialized) {
-		return -ECANCELED;
-	}
+	struct emds_dynamic_entry *ch;
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
-		err |= entry_load(&emds_flash, ch->entry.id, ch->entry.data, ch->entry.len,
-				  &ch->entry.status, is_raw);
+		if ((ch->entry.status.val != EMDS_ENTRY_VALID) || !any_entry) {
+			err |= entry_load(&emds_flash, ch->entry.id, ch->entry.data, ch->entry.len,
+					  &ch->entry.status.val, any_entry);
+		}
 	}
 
 	STRUCT_SECTION_FOREACH(emds_entry, ch)
 	{
-		err |= entry_load(&emds_flash, ch->id, ch->data, ch->len, &ch->status, is_raw);
+		if ((*ch->status.ptr != EMDS_ENTRY_VALID) || !any_entry) {
+			err |= entry_load(&emds_flash, ch->id, ch->data, ch->len, ch->status.ptr,
+					  any_entry);
+		}
 	}
 
 	return err;
@@ -228,12 +245,26 @@ static int stored_load(bool is_raw)
 
 int emds_load(void)
 {
-	return stored_load(false);
-}
+	status_reset();
 
-int emds_load_raw(void)
-{
-	return stored_load(true);
+	if (emds_flash_is_empty(&emds_flash)) {
+		return -ENOMSG;
+	}
+
+	if (!emds_initialized) {
+		return -ECANCELED;
+	}
+
+	int err = entry_load_itr(false);
+
+	if (IS_ENABLED(CONFIG_EMDS_AUTO_RECOVER)) {
+		if (err == -EBADMSG) {
+			(void)entry_load_itr(true);
+			return -EBADMSG;
+		}
+	}
+
+	return err;
 }
 
 int emds_clear(void)
@@ -262,9 +293,15 @@ int emds_prepare(void)
 	 * extra copy of the current entries as backup before the
 	 * next EMDS event in case it should fail
 	 */
-	if (rc == 1) {
-		store_entries();
-		rc = emds_flash_prepare(&emds_flash, size);
+	if (IS_ENABLED(CONFIG_EMDS_AUTO_RECOVER) && rc == 1) {
+
+		ssize_t free_flash = emds_flash_free_space_get(&emds_flash);
+
+		/* Must be enough room for shutdown storage */
+		if (free_flash >= size * 2) {
+			store_entries();
+			rc = emds_flash_prepare(&emds_flash, size);
+		}
 	}
 
 	if (rc < 0) {

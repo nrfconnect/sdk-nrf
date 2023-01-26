@@ -39,6 +39,13 @@ enum ate_type {
 	ATE_TYPE_UNKNOWN = BIT(3)
 };
 
+enum entry_status {
+	ENTRY_NO_INIT,
+	ENTRY_VALID,
+	ENTRY_INVALID,
+	ENTRY_NOT_FOUND,
+};
+
 #define SOC_NV_FLASH_NODE DT_INST(0, soc_nv_flash)
 
 #if NRF52_ERRATA_242_PRESENT
@@ -312,6 +319,7 @@ static int ate_last_recover(struct emds_fs *fs)
 	struct emds_ate end_ate = { 0 };
 	enum ate_type type = 0;
 	uint8_t expect_field = 0xFF;
+	uint32_t ate_val_last = fs->offset;
 
 	fs->ate_wra = fs->offset + fs->sector_cnt * fs->sector_size - fs->ate_size;
 	fs->data_wra_offset = 0;
@@ -319,7 +327,7 @@ static int ate_last_recover(struct emds_fs *fs)
 		/* Ate wra has reached the start of the data area */
 		if (fs->ate_wra < fs->offset) {
 			fs->force_erase = true;
-			fs->ate_wra = fs->offset;
+			fs->ate_wra = ate_val_last;
 			fs->data_wra_offset = 0;
 			return 0;
 		}
@@ -335,6 +343,7 @@ static int ate_last_recover(struct emds_fs *fs)
 		case ATE_TYPE_VALID:
 			fs->data_wra_offset = align_size(fs, end_ate.offset + end_ate.len);
 			fs->ate_wra -= fs->ate_size;
+			ate_val_last = fs->ate_wra;
 			expect_field = ATE_TYPE_VALID | ATE_TYPE_ERASED;
 			break;
 
@@ -480,8 +489,8 @@ ssize_t emds_flash_write(struct emds_fs *fs, uint16_t id, const void *data, size
 	return len;
 }
 
-static ssize_t emds_read(struct emds_fs *fs, uint16_t id, void *data, size_t len,
-			 enum emds_entry_status *status, bool any_entry)
+ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len,
+			 int *status, bool any_entry)
 {
 	if (!fs->is_initialized) {
 		LOG_ERR("EMDS flash not initialized");
@@ -493,11 +502,16 @@ static ssize_t emds_read(struct emds_fs *fs, uint16_t id, void *data, size_t len
 		return -EACCES;
 	}
 
+	if (fs->ate_wra == fs->offset) {
+		LOG_ERR("Unable to recover last ATE");
+		return -EACCES;
+	}
+
 	int rc;
 	uint32_t wlk_addr = fs->ate_wra;
 	struct emds_ate wlk_ate;
 
-	*status = EMDS_ENTRY_NOT_FOUND;
+	*status = ENTRY_NOT_FOUND;
 
 	while (true) {
 		rc = flash_read(fs->flash_dev, wlk_addr, &wlk_ate, sizeof(struct emds_ate));
@@ -529,26 +543,15 @@ static ssize_t emds_read(struct emds_fs *fs, uint16_t id, void *data, size_t len
 		return -EFAULT;
 	}
 
-	*status = (wlk_ate.inval_flag != INVAL_VAL) ? EMDS_ENTRY_VALID : EMDS_ENTRY_INVALID;
+	*status = (wlk_ate.inval_flag != INVAL_VAL) ? ENTRY_VALID :
+						      ENTRY_INVALID;
 
 	return wlk_ate.len;
 }
 
-ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len,
-			enum emds_entry_status *status)
-{
-	return emds_read(fs, id, data, len, status, false);
-}
-
-ssize_t emds_flash_read_raw(struct emds_fs *fs, uint16_t id, void *data, size_t len,
-			    enum emds_entry_status *status)
-{
-	return emds_read(fs, id, data, len, status, true);
-}
-
 int emds_flash_prepare(struct emds_fs *fs, int byte_size)
 {
-	int err = 0;
+	int rc = 0;
 
 	if (!fs->is_initialized) {
 		LOG_ERR("EMDS flash not initialized");
@@ -559,26 +562,30 @@ int emds_flash_prepare(struct emds_fs *fs, int byte_size)
 		return -ENOMEM;
 	}
 
-	err = old_entries_invalidate(fs);
+	rc = old_entries_invalidate(fs);
 
-	if (err < 0) {
-		return err;
+	if (rc < 0) {
+		return rc;
 	}
 
-	LOG_ERR("Byte size: %d, Free space: %d", byte_size, emds_flash_free_space_get(fs));
 	if (fs->force_erase || (byte_size > emds_flash_free_space_get(fs))) {
 		emds_flash_clear(fs);
 		fs->force_erase = false;
-		err = 1;
+		rc = 1;
 	}
 
 	fs->is_prepeared = true;
-	return err;
+	return rc;
 }
 
 ssize_t emds_flash_free_space_get(struct emds_fs *fs)
 {
-	ssize_t space = fs->ate_wra - (fs->data_wra_offset + fs->offset);
+	ssize_t space = (fs->ate_wra + fs->ate_size) - (fs->data_wra_offset + fs->offset);
 
-	return (space > fs->ate_size) ? space : 0;
+	return (space > fs->ate_size && !fs->force_erase) ? space : 0;
+}
+
+bool emds_flash_is_empty(struct emds_fs *fs)
+{
+	return emds_flash_free_space_get(fs) == (fs->sector_cnt * fs->sector_size);
 }
