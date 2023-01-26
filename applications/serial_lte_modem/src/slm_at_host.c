@@ -16,6 +16,7 @@
 #include <zephyr/pm/device.h>
 #include <string.h>
 #include <zephyr/init.h>
+#include <pm_config.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
@@ -29,6 +30,7 @@ LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 #define ERROR_STR	"\r\nERROR\r\n"
 #define FATAL_STR	"FATAL ERROR\r\n"
 #define SLM_SYNC_STR	"Ready\r\n"
+#define CRLF_STR	"\r\n"
 
 /** The maximum allowed length of an AT command passed through the SLM.
  *  The space is allocated statically. */
@@ -114,15 +116,21 @@ static int uart_send(const uint8_t *buffer, size_t len)
 
 	k_sem_take(&tx_done, K_FOREVER);
 
-	uart_tx_buf = k_malloc(len);
-	if (uart_tx_buf == NULL) {
-		LOG_WRN("No ram buffer");
-		k_sem_give(&tx_done);
-		return -ENOMEM;
+	/* EasyDMA requires SRAM address */
+	if ((uint32_t)buffer < PM_SRAM_NONSECURE_ADDRESS ||
+	    (uint32_t)buffer > PM_SRAM_NONSECURE_END_ADDRESS) {
+		uart_tx_buf = k_malloc(len);
+		if (uart_tx_buf == NULL) {
+			LOG_WRN("No ram buffer");
+			k_sem_give(&tx_done);
+			return -ENOMEM;
+		}
+		memcpy(uart_tx_buf, buffer, len);
+		ret = uart_tx(uart_dev, uart_tx_buf, len, SYS_FOREVER_US);
+	} else {
+		uart_tx_buf = NULL; /* if NULL, no operation by k_free() */
+		ret = uart_tx(uart_dev, buffer, len, SYS_FOREVER_US);
 	}
-
-	memcpy(uart_tx_buf, buffer, len);
-	ret = uart_tx(uart_dev, uart_tx_buf, len, SYS_FOREVER_US);
 	if (ret) {
 		LOG_WRN("uart_tx failed: %d", ret);
 		k_free(uart_tx_buf);
@@ -708,8 +716,10 @@ static void format_final_result(char *buf)
 	static const char error_str[] = "ERROR\r\n";
 	static const char cme_error_str[] = "+CME ERROR:";
 	static const char cms_error_str[] = "+CMS ERROR:";
-	static const char crlf_str[] = "\r\n";
 	char *result = NULL, *temp;
+
+	/* insert <CR><LF> before information response*/
+	memcpy((void *)buf, CRLF_STR, strlen(CRLF_STR));
 
 	/* find the last occurrence of final result string */
 	result = strstr(buf, ok_str);
@@ -762,9 +772,9 @@ static void format_final_result(char *buf)
 
 final_result:
 	/* insert CRLF before final result if there is information response before it */
-	if (result != buf) {
-		memmove((void *)(result + strlen(crlf_str)), (void *)result, strlen(result) + 1);
-		memcpy((void *)result, (void *)crlf_str, strlen(crlf_str));
+	if (result != buf + strlen(CRLF_STR)) {
+		memmove((void *)(result + strlen(CRLF_STR)), (void *)result, strlen(result) + 1);
+		memcpy((void *)result, CRLF_STR, strlen(CRLF_STR));
 	}
 }
 
@@ -796,8 +806,9 @@ static void cmd_send(struct k_work *work)
 		goto done;
 	}
 
-	/* Send to modem */
-	err = nrf_modem_at_cmd(at_buf, sizeof(at_buf), "%s", at_buf);
+	/* Send to modem, reserve space for CRLF in response buffer */
+	err = nrf_modem_at_cmd((void *)(at_buf + strlen(CRLF_STR)),
+				sizeof(at_buf) - strlen(CRLF_STR), "%s", at_buf);
 	if (err < 0) {
 		LOG_ERR("AT command failed: %d", err);
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
@@ -809,9 +820,8 @@ static void cmd_send(struct k_work *work)
 	/** Format as TS 27.007 command V1 with verbose response format,
 	 *  based on current return of API nrf_modem_at_cmd() and MFWv1.3.x
 	 */
-	if (strlen(at_buf) > 0) {
-		rsp_send("\r\n", 2);		/* insert <CR><LF> before information response*/
-		format_final_result(at_buf);	/* insert <CR><LF> before final result */
+	if (strlen(at_buf) > strlen(CRLF_STR)) {
+		format_final_result(at_buf);
 		rsp_send(at_buf, strlen(at_buf));
 	}
 
