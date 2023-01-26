@@ -33,7 +33,13 @@ if(NOT NO_BOILERPLATE)
     if(${NcsToolchain_FOUND})
       message("-- Using NCS Toolchain ${NcsToolchain_VERSION} for building. (${NcsToolchain_DIR})")
 
-      set(CUSTOM_COMMAND_ENV       ${CMAKE_COMMAND} -E env PATH=${NCS_TOOLCHAIN_BIN_PATH})
+      if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
+        set(env_list_delimeter ";")
+      else()
+        set(env_list_delimeter ":")
+      endif()
+
+      set(CUSTOM_COMMAND_ENV       ${CMAKE_COMMAND} -E env PATH=${NCS_TOOLCHAIN_BIN_PATH}${env_list_delimeter}$ENV{PATH})
       set(GIT_EXECUTABLE           ${NCS_TOOLCHAIN_GIT}     CACHE FILEPATH "NCS Toolchain Git")
 
       set(DTC                      ${NCS_TOOLCHAIN_DTC}     CACHE FILEPATH "NCS Toolchain DTC")
@@ -56,12 +62,6 @@ if(NOT NO_BOILERPLATE)
 
       if(${CMAKE_GENERATOR} STREQUAL Ninja)
         set(CMAKE_MAKE_PROGRAM ${NCS_TOOLCHAIN_NINJA} CACHE INTERNAL "NCS Toolchain ninja")
-      endif()
-
-      if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
-        set(env_list_delimeter ";")
-      else()
-        set(env_list_delimeter ":")
       endif()
 
       # If NCS_TOOLCHAIN_ENV_PATH is set, then we must ensure to prepend it
