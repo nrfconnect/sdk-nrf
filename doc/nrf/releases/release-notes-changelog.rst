@@ -226,6 +226,7 @@ nRF Desktop
     See the debug configuration section of the :ref:`nrf_desktop` application for more details.
   * The :ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO <config_desktop_app_options>` configuration option.
     It can be used to indicate the dongle peer identity with a dedicated event.
+  * Updated the :ref:`nrf_desktop_fast_pair_app` to remove the Fast Pair advertising payload for the dongle peer.
 
 * Updated:
 

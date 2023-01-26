@@ -10,11 +10,14 @@
 #define MODULE fast_pair_app
 #include <caf/events/module_state_event.h>
 #include <caf/events/ble_common_event.h>
+#include "ble_dongle_peer_event.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_FAST_PAIR_LOG_LEVEL);
 
-static uint8_t local_id = BT_ID_DEFAULT;
+static uint8_t selected_stack_id = BT_ID_DEFAULT;
+static uint8_t dongle_app_id = UINT8_MAX;
+static bool fp_provider_enabled = true;
 
 
 static void bond_cnt_cb(const struct bt_bond_info *info, void *user_data)
@@ -48,16 +51,37 @@ static bool in_pairing_mode(uint8_t bt_local_id)
 
 static void update_fast_pair_ui_indication(void)
 {
-	bool show_ui_pairing = can_pair(local_id);
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO) && !fp_provider_enabled) {
+		return;
+	}
 
+	bool show_ui_pairing = can_pair(selected_stack_id);
 	bt_le_adv_prov_fast_pair_show_ui_pairing(show_ui_pairing);
 
-	if (in_pairing_mode(local_id)) {
+	if (in_pairing_mode(selected_stack_id)) {
 		LOG_INF("Fast Pair discoverable advertising");
 	} else {
 		LOG_INF("%s Fast Pair not discoverable advertising UI indication",
 			(show_ui_pairing) ? ("Show") : ("Hide"));
 	}
+}
+
+static void enable_fast_pair_provider(bool enable)
+{
+	fp_provider_enabled = enable;
+	bt_le_adv_prov_fast_pair_enable(enable);
+}
+
+static void control_fast_pair_provider(uint8_t app_id, uint8_t stack_id)
+{
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO)) {
+		__ASSERT_NO_MSG(dongle_app_id != UINT8_MAX);
+
+		enable_fast_pair_provider(app_id != dongle_app_id);
+	}
+
+	selected_stack_id = stack_id;
+	update_fast_pair_ui_indication();
 }
 
 static enum bt_security_err pairing_accept(struct bt_conn *conn,
@@ -119,6 +143,17 @@ static bool handle_module_state_event(const struct module_state_event *event)
 	return false;
 }
 
+static bool handle_ble_dongle_peer_event(const struct ble_dongle_peer_event *event)
+{
+	dongle_app_id = event->bt_app_id;
+
+	if (dongle_app_id == 0) {
+		enable_fast_pair_provider(false);
+	}
+
+	return false;
+}
+
 static bool handle_ble_peer_event(const struct ble_peer_event *event)
 {
 	if (event->state == PEER_STATE_DISCONNECTED) {
@@ -134,8 +169,7 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 	case PEER_OPERATION_SELECTED:
 	case PEER_OPERATION_ERASE_ADV:
 	case PEER_OPERATION_ERASE_ADV_CANCEL:
-		local_id = event->bt_stack_id;
-		update_fast_pair_ui_indication();
+		control_fast_pair_provider(event->bt_app_id, event->bt_stack_id);
 		break;
 
 	default:
@@ -149,6 +183,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_module_state_event(aeh)) {
 		return handle_module_state_event(cast_module_state_event(aeh));
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO) && is_ble_dongle_peer_event(aeh)) {
+		return handle_ble_dongle_peer_event(cast_ble_dongle_peer_event(aeh));
 	}
 
 	if (is_ble_peer_event(aeh)) {
@@ -166,6 +204,9 @@ static bool app_event_handler(const struct app_event_header *aeh)
 }
 
 APP_EVENT_LISTENER(MODULE, app_event_handler);
+#if IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO)
+APP_EVENT_SUBSCRIBE(MODULE, ble_dongle_peer_event);
+#endif
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, ble_peer_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, ble_peer_operation_event);
