@@ -66,7 +66,7 @@ jobs:
         shell: bash
         run: |
           source ncs/zephyr/zephyr-env.sh
-          ncs/zephyr/scripts/twister -v -i -C -T ncs/nrf/ -p native_posix --coverage-tool gcovr
+          ncs/zephyr/scripts/twister --clobber-output -v -i -C -T ncs/nrf/ -p native_posix --coverage-tool gcovr
 
       # Exclude twister-out because we dont need coverage reports for mocks and generated files.
       # Exclude tests/unity because it is not interesting
