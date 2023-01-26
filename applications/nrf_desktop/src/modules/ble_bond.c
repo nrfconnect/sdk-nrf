@@ -13,6 +13,7 @@
 #include <caf/events/module_state_event.h>
 #include <caf/events/click_event.h>
 #include <caf/events/ble_common_event.h>
+#include "ble_dongle_peer_event.h"
 #include "selector_event.h"
 #include "config_event.h"
 #include <caf/events/power_event.h>
@@ -745,6 +746,15 @@ static void storage_data_overwrite(void)
 	}
 }
 
+static void broadcast_ble_dongle_id_info(void)
+{
+	struct ble_dongle_peer_event *event = new_ble_dongle_peer_event();
+
+	event->bt_app_id = DONGLE_PEER_ID;
+
+	APP_EVENT_SUBMIT(event);
+}
+
 static int init(void)
 {
 	silence_unused();
@@ -768,6 +778,10 @@ static int init(void)
 		storage_data_overwrite();
 		bt_stack_id_lut_valid = true;
 		cur_peer_id_valid = true;
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO)) {
+		broadcast_ble_dongle_id_info();
 	}
 
 	if (dongle_peer_selected_on_init) {

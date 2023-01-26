@@ -224,6 +224,8 @@ nRF Desktop
   * An application log indicating that the value of a configuration option has been updated in the :ref:`nrf_desktop_motion`.
   * Application-specific Kconfig options :ref:`CONFIG_DESKTOP_LOG <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>` to simplify the debug configurations for the Logging and Shell subsystems.
     See the debug configuration section of the :ref:`nrf_desktop` application for more details.
+  * The :ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO <config_desktop_app_options>` configuration option.
+    It can be used to indicate the dongle peer identity with a dedicated event.
 
 * Updated:
 

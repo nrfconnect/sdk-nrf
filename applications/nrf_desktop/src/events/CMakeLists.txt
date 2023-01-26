@@ -14,6 +14,9 @@ target_sources(app PRIVATE
 	       ${CMAKE_CURRENT_SOURCE_DIR}/wheel_event.c
 )
 
+target_sources_ifdef(CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO app
+			PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_dongle_peer_event.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE app
 			PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/config_event.c)
 
