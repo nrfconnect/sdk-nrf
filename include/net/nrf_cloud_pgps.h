@@ -12,7 +12,11 @@
  */
 
 #include <zephyr/kernel.h>
+#if defined(CONFIG_NRF_MODEM)
 #include <nrf_modem_gnss.h>
+#else
+struct nrf_modem_gnss_agps_data_frame;
+#endif
 #include "nrf_cloud_agps_schema_v1.h"
 
 #ifdef __cplusplus

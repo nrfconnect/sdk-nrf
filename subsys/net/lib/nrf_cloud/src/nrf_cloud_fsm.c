@@ -8,7 +8,8 @@
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_mem.h"
 #include <zephyr/kernel.h>
-#include <net/nrf_cloud_alerts.h>
+#include <net/nrf_cloud_alert.h>
+#include <net/nrf_cloud_log.h>
 #include <zephyr/logging/log.h>
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 #include <net/nrf_cloud_agps.h>
@@ -228,21 +229,6 @@ static int handle_device_config_update(const struct nct_evt *const evt,
 	return err;
 }
 
-static int _log_level;
-
-/* Placeholder until cloud logging added in another PR */
-void nrf_cloud_log_control_set(int log_level)
-{
-	LOG_DBG("Setting nRF Cloud log level = %d", log_level);
-	_log_level = log_level;
-}
-
-/* Placeholder until cloud logging added in another PR */
-int nrf_cloud_log_control_get(void)
-{
-	return _log_level;
-}
-
 static int handle_device_control_update(const struct nct_evt *const evt,
 					bool *const control_found)
 {
@@ -258,11 +244,12 @@ static int handle_device_control_update(const struct nct_evt *const evt,
 		return -ENOENT;
 	}
 
-#if IS_ENABLED(CONFIG_NRF_CLOUD_ALERTS)
+#if IS_ENABLED(CONFIG_NRF_CLOUD_ALERT)
 	ctrl_data.alerts_enabled = nrf_cloud_alert_control_get();
 #else
 	ctrl_data.alerts_enabled = false;
-#endif /* CONFIG_NRF_CLOUD_ALERTS */
+#endif /* CONFIG_NRF_CLOUD_ALERT */
+
 	ctrl_data.log_level = nrf_cloud_log_control_get();
 
 	err = nrf_cloud_shadow_control_decode(&evt->param.cc->data, &status, &ctrl_data);
@@ -272,10 +259,22 @@ static int handle_device_control_update(const struct nct_evt *const evt,
 
 	*control_found = (status != NRF_CLOUD_CTRL_NOT_PRESENT);
 	if (*control_found) {
-#if IS_ENABLED(CONFIG_NRF_CLOUD_ALERTS)
+#if IS_ENABLED(CONFIG_NRF_CLOUD_ALERT)
 		nrf_cloud_alert_control_set(ctrl_data.alerts_enabled);
-#endif /* CONFIG_NRF_CLOUD_ALERTS */
+#endif /* CONFIG_NRF_CLOUD_ALERT */
 		nrf_cloud_log_control_set(ctrl_data.log_level);
+	} else {
+#if IS_ENABLED(CONFIG_NRF_CLOUD_ALERT)
+		ctrl_data.alerts_enabled = nrf_cloud_alert_control_get();
+#else
+		ctrl_data.alerts_enabled = false;
+#endif
+		ctrl_data.log_level = nrf_cloud_log_control_get();
+		nrf_cloud_log_enable(ctrl_data.log_level != LOG_LEVEL_NONE);
+		/* First boot, so update shadow with our current settings. */
+		status = NRF_CLOUD_CTRL_REPLY;
+		LOG_INF("Updating shadow with alertEn:%u and logLvl:%u",
+			ctrl_data.alerts_enabled, ctrl_data.log_level);
 	}
 
 	/* Acknowledge that shadow delta changes have been made. */
@@ -284,7 +283,7 @@ static int handle_device_control_update(const struct nct_evt *const evt,
 			.opcode = NCT_CC_OPCODE_UPDATE_REQ,
 			.message_id = NCT_MSG_ID_STATE_REPORT,
 		};
-
+		LOG_DBG("Confirming shadow delta");
 		err = nrf_cloud_shadow_control_response_encode(&ctrl_data, &msg.data);
 		if (err) {
 			LOG_ERR("nrf_cloud_shadow_control_response_encode failed %d", err);
@@ -450,9 +449,10 @@ static int handle_pin_complete(const struct nct_evt *nct_evt)
 	struct nrf_cloud_data rx;
 	struct nrf_cloud_data tx;
 	struct nrf_cloud_data bulk;
+	struct nrf_cloud_data bin;
 	struct nrf_cloud_data endpoint;
 
-	err = nrf_cloud_data_endpoint_decode(payload, &tx, &rx, &bulk, &endpoint);
+	err = nrf_cloud_data_endpoint_decode(payload, &tx, &rx, &bulk, &bin, &endpoint);
 	if (err) {
 		LOG_ERR("nrf_cloud_data_endpoint_decode failed %d", err);
 		return err;
@@ -462,7 +462,7 @@ static int handle_pin_complete(const struct nct_evt *nct_evt)
 	c2d_topic_modified = nrf_cloud_set_wildcard_c2d_topic((char *)rx.ptr, rx.len);
 
 	/* Set the endpoint information. */
-	nct_dc_endpoint_set(&tx, &rx, &bulk, &endpoint);
+	nct_dc_endpoint_set(&tx, &rx, &bulk, &bin, &endpoint);
 
 	return state_ua_pin_complete();
 }

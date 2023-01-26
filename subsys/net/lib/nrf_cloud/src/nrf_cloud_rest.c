@@ -254,7 +254,9 @@ static int do_rest_client_request(struct nrf_cloud_rest_context *const rest_ctx,
 	struct rest_client_resp_context *const resp,
 	bool check_status_good, bool expect_body)
 {
-	int ret = rest_client_request(req, resp);
+	int ret;
+
+	ret = rest_client_request(req, resp);
 
 	sync_rest_client_data(rest_ctx, req, resp);
 

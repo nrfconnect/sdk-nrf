@@ -13,13 +13,13 @@
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_transport.h"
 #include <net/nrf_cloud_rest.h>
-#include <net/nrf_cloud_alerts.h>
+#include <net/nrf_cloud_alert.h>
 
-LOG_MODULE_REGISTER(nrf_cloud_alerts, CONFIG_NRF_CLOUD_ALERTS_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_cloud_alert, CONFIG_NRF_CLOUD_ALERT_LOG_LEVEL);
 
-static int alerts_enabled = IS_ENABLED(CONFIG_NRF_CLOUD_ALERTS);
+static int alerts_enabled = IS_ENABLED(CONFIG_NRF_CLOUD_ALERT);
 
-#if defined(CONFIG_NRF_CLOUD_ALERTS)
+#if defined(CONFIG_NRF_CLOUD_ALERT)
 static atomic_t alert_sequence;
 
 static int alert_prepare(struct nrf_cloud_data *output,
@@ -35,7 +35,7 @@ static int alert_prepare(struct nrf_cloud_data *output,
 		date_time_now(&alert.ts_ms);
 	}
 
-	if (!alert.ts_ms || IS_ENABLED(CONFIG_NRF_CLOUD_ALERTS_SEQ_ALWAYS)) {
+	if (!alert.ts_ms || IS_ENABLED(CONFIG_NRF_CLOUD_ALERT_SEQ_ALWAYS)) {
 		alert.sequence = ++alert_sequence;
 	}
 
@@ -45,14 +45,14 @@ static int alert_prepare(struct nrf_cloud_data *output,
 
 	return nrf_cloud_alert_encode(&alert, output);
 }
-#endif /* CONFIG_NRF_CLOUD_ALERTS */
+#endif /* CONFIG_NRF_CLOUD_ALERT */
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 int nrf_cloud_alert_send(enum nrf_cloud_alert_type type,
 			 float value,
 			 const char *description)
 {
-#if defined(CONFIG_NRF_CLOUD_ALERTS)
+#if defined(CONFIG_NRF_CLOUD_ALERT)
 	struct nrf_cloud_tx_data output = {
 		.qos = MQTT_QOS_1_AT_LEAST_ONCE,
 		.topic_type = NRF_CLOUD_TOPIC_MESSAGE
@@ -93,7 +93,7 @@ int nrf_cloud_alert_send(enum nrf_cloud_alert_type type,
 	ARG_UNUSED(description);
 
 	return 0;
-#endif /* CONFIG_NRF_CLOUD_ALERTS */
+#endif /* CONFIG_NRF_CLOUD_ALERT */
 }
 #endif /* CONFIG_NRF_CLOUD_MQTT */
 
@@ -104,7 +104,7 @@ int nrf_cloud_rest_alert_send(struct nrf_cloud_rest_context *const rest_ctx,
 			      float value,
 			      const char *description)
 {
-#if defined(CONFIG_NRF_CLOUD_ALERTS)
+#if defined(CONFIG_NRF_CLOUD_ALERT)
 	struct nrf_cloud_data data;
 	int err;
 
@@ -140,13 +140,13 @@ int nrf_cloud_rest_alert_send(struct nrf_cloud_rest_context *const rest_ctx,
 	ARG_UNUSED(description);
 
 	return 0;
-#endif /* CONFIG_NRF_CLOUD_ALERTS */
+#endif /* CONFIG_NRF_CLOUD_ALERT */
 }
 #endif /* CONFIG_NRF_CLOUD_REST */
 
 void nrf_cloud_alert_control_set(bool enable)
 {
-	if (!IS_ENABLED(CONFIG_NRF_CLOUD_ALERTS)) {
+	if (!IS_ENABLED(CONFIG_NRF_CLOUD_ALERT)) {
 		return;
 	}
 	LOG_DBG("Changing alerts_enabled from:%d to:%d", alerts_enabled, enable);

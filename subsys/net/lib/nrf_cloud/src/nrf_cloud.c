@@ -419,6 +419,24 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 
 		break;
 	}
+	case NRF_CLOUD_TOPIC_BIN: {
+		if (current_state != STATE_DC_CONNECTED) {
+			err = -EACCES;
+			break;
+		}
+		const struct nct_dc_data buf = {
+			.data.ptr = msg->data.ptr,
+			.data.len = msg->data.len,
+			.message_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT
+		};
+
+		err = nct_dc_bin_send(&buf, msg->qos);
+		if (err) {
+			LOG_ERR("nct_dc_bin_send failed, error: %d", err);
+		}
+
+		break;
+	}
 	default:
 		LOG_ERR("Unknown topic type");
 		err = -ENODATA;

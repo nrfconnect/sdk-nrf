@@ -12,7 +12,7 @@
 #include <modem/lte_lc.h>
 #include <net/nrf_cloud_defs.h>
 #include <net/nrf_cloud.h>
-#include <net/nrf_cloud_alerts.h>
+#include <net/nrf_cloud_alert.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif
@@ -23,9 +23,11 @@
 #include <nrf_modem_gnss.h>
 #endif
 #include <net/nrf_cloud_location.h>
+#include <net/nrf_cloud_log.h>
 #include "cJSON.h"
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_agps_schema_v1.h"
+#include "nrf_cloud_log_internal.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,12 +42,34 @@ enum nrf_cloud_rcv_topic {
 	NRF_CLOUD_RCV_TOPIC_UNKNOWN
 };
 
+/** Special value indicating this is an nRF Cloud binary format */
+#define NRF_CLOUD_BINARY_MAGIC 0x4346526e /* 'nRFC' in little-endian order */
+
+/** Format identifier for remainder of this binary blob */
+#define NRF_CLOUD_DICT_LOG_FMT 0x0001
+
+/** @brief Header preceding binary blobs so nRF Cloud can
+ *  process them in correct order using ts_ms and sequence fields.
+ */
+struct nrf_cloud_bin_hdr {
+	/** Special marker value indicating this binary blob is a supported type */
+	uint32_t magic;
+	/** Value indicating the service format, such as a dictionary-based log */
+	uint16_t format;
+	/** Value for alignment */
+	uint16_t pad;
+	/** The time at which the log entry was generated */
+	int64_t ts;
+	/** Monotonically increasing sequence number */
+	uint32_t sequence;
+} __packed;
+
 /** @brief Initialize the codec used encoding the data to the cloud. */
 int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks);
 
 /** @brief Encode an alert and update the output struct with pointer
  *  to data and its length.  Caller must free the pointer when done,
- *  but only if it is not NULL; when CONFIG_NRF_CLOUD_ALERTS is disabled,
+ *  but only if it is not NULL; when CONFIG_NRF_CLOUD_ALERT is disabled,
  *  this function returns 0, and sets output->ptr = NULL and output->len = 0.
  */
 int nrf_cloud_alert_encode(const struct nrf_cloud_alert_info *alert,
@@ -68,6 +92,7 @@ int nrf_cloud_data_endpoint_decode(const struct nrf_cloud_data *input,
 				   struct nrf_cloud_data *tx_endpoint,
 				   struct nrf_cloud_data *rx_endpoint,
 				   struct nrf_cloud_data *bulk_endpoint,
+				   struct nrf_cloud_data *bin_endpoint,
 				   struct nrf_cloud_data *m_endpoint);
 
 /** @brief Encode state information. */
@@ -250,6 +275,10 @@ typedef int (*gateway_state_handler_t)(void *root_obj);
  */
 void nrf_cloud_register_gateway_state_handler(gateway_state_handler_t handler);
 #endif
+
+/** @brief Encode a log output buffer for transport to the cloud */
+int nrf_cloud_log_json_encode(struct nrf_cloud_log_context *ctx, uint8_t *buf, size_t size,
+			 struct nrf_cloud_data *output);
 
 #ifdef __cplusplus
 }

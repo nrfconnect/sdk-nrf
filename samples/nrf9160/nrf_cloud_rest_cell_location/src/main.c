@@ -379,7 +379,8 @@ static void do_location_card_enable(void)
 	int err;
 
 	struct nrf_cloud_svc_info_ui ui = {
-		.gnss = 1
+		.gnss = 1,
+		.logs = IS_ENABLED(CONFIG_NRF_CLOUD_LOG_BACKEND)
 	};
 	struct nrf_cloud_svc_info svc_inf = {
 		.fota = NULL,
