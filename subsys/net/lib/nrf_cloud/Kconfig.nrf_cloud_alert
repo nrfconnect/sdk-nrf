@@ -3,12 +3,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig NRF_CLOUD_ALERTS
+menuconfig NRF_CLOUD_ALERT
 	bool "nRF Cloud Alert System"
 
-if NRF_CLOUD_ALERTS
+if NRF_CLOUD_ALERT
 
-config NRF_CLOUD_ALERTS_SEQ_ALWAYS
+config NRF_CLOUD_ALERT_SEQ_ALWAYS
 	bool "Always include the sequence number in the alert message"
 	default y
 	help
@@ -16,8 +16,8 @@ config NRF_CLOUD_ALERTS_SEQ_ALWAYS
 	  is set.  If not set, only send the seq field when ts is not
 	  available.
 
-endif # NRF_CLOUD_ALERTS
+endif # NRF_CLOUD_ALERT
 
-module = NRF_CLOUD_ALERTS
-module-str = nRF Cloud Alerts
+module = NRF_CLOUD_ALERT
+module-str = nRF Cloud Alert
 source "subsys/logging/Kconfig.template.log_config"

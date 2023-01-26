@@ -30,6 +30,7 @@
 #define NRF_CLOUD_JSON_APPID_VAL_LIGHT		"LIGHT"
 #define NRF_CLOUD_JSON_APPID_VAL_MODEM		"MODEM"
 #define NRF_CLOUD_JSON_APPID_VAL_ALERT		"ALERT"
+#define NRF_CLOUD_JSON_APPID_VAL_LOG		"LOG"
 
 /* Message type */
 #define NRF_CLOUD_JSON_MSG_TYPE_KEY		"messageType"
@@ -128,11 +129,18 @@
 #define NRF_CLOUD_DEVICE_JSON_KEY_SIM_INF	"simInfo"
 #define NRF_CLOUD_DEVICE_JSON_KEY_DEV_INF	"deviceInfo"
 
-/* ALERTS */
+/* Alerts */
 #define NRF_CLOUD_JSON_ALERT_SEQUENCE		"seq"
 #define NRF_CLOUD_JSON_ALERT_DESCRIPTION	"desc"
 #define NRF_CLOUD_JSON_ALERT_TYPE		"type"
 #define NRF_CLOUD_JSON_ALERT_VALUE		"value"
+
+/* Logs */
+#define NRF_CLOUD_JSON_LOG_KEY_SEQUENCE		"seq"
+#define NRF_CLOUD_JSON_LOG_KEY_DOMAIN		"dom"
+#define NRF_CLOUD_JSON_LOG_KEY_SOURCE		"src"
+#define NRF_CLOUD_JSON_LOG_KEY_LEVEL		"lvl"
+#define NRF_CLOUD_JSON_LOG_KEY_MESSAGE		"msg"
 
 /* Settings Module */
 /** nRF Cloud's string identifier for persistent settings */
@@ -195,5 +203,6 @@
 #define NRF_CLOUD_JSON_VAL_TOPIC_GND_FIX	"/ground_fix"
 #define NRF_CLOUD_JSON_VAL_TOPIC_RCV		"/r"
 #define NRF_CLOUD_JSON_VAL_TOPIC_WILDCARD	"/+"
+#define NRF_CLOUD_JSON_VAL_TOPIC_BIN		"/bin"
 
 #endif /* NRF_CLOUD_DEFS_H__ */

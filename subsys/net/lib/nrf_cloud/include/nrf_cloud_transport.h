@@ -101,6 +101,16 @@ int nct_dc_stream(const struct nct_dc_data *dc);
  */
 int nct_dc_bulk_send(const struct nct_dc_data *dc_data, enum mqtt_qos qos);
 
+/** @brief Publish data on the binary endpoint topic.
+ *
+ *  @param[in] dc_data Pointer to structure containing the data to be published.
+ *  @param[in] qos MQTT Quality of Service level of the publication.
+ *
+ *  @return 0 If successful. Otherwise, a negative error code is returned.
+ *  @retval -EINVAL if one or several of the passed in arguments are invalid.
+ */
+int nct_dc_bin_send(const struct nct_dc_data *dc_data, enum mqtt_qos qos);
+
 /** @brief Disconnects the logical control channel. */
 int nct_cc_disconnect(void);
 
@@ -118,6 +128,7 @@ int nct_disconnect(void);
 void nct_dc_endpoint_set(const struct nrf_cloud_data *tx_endpoint,
 			 const struct nrf_cloud_data *rx_endpoint,
 			 const struct nrf_cloud_data *bulk_endpoint,
+			 const struct nrf_cloud_data *bin_endpoint,
 			 const struct nrf_cloud_data *m_endpoint);
 
 /**
@@ -126,6 +137,7 @@ void nct_dc_endpoint_set(const struct nrf_cloud_data *tx_endpoint,
 void nct_dc_endpoint_get(struct nrf_cloud_data *tx_endpoint,
 			 struct nrf_cloud_data *rx_endpoint,
 			 struct nrf_cloud_data *bulk_endpoint,
+			 struct nrf_cloud_data *bin_endpoint,
 			 struct nrf_cloud_data *m_endpoint);
 
 /** @brief Needed for keep alive. */

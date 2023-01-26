@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef NRF_CLOUD_ALERTS_H_
-#define NRF_CLOUD_ALERTS_H_
+#ifndef NRF_CLOUD_ALERT_H_
+#define NRF_CLOUD_ALERT_H_
 
-/** @file nrf_cloud_alerts.h
+/** @file nrf_cloud_alert.h
  * @brief Module to provide mechanism to send application alerts to nRF Cloud.
  */
 
@@ -23,7 +23,7 @@ struct nrf_cloud_rest_context;
 /** @brief Special value to pass when value should not be sent. */
 #define NRF_CLOUD_ALERT_UNUSED_VALUE NAN
 
-/** @defgroup nrf_cloud_alerts nRF Cloud Alerts
+/** @defgroup nrf_cloud_alert nRF Cloud Alert
  * @{
  */
 
@@ -62,7 +62,7 @@ struct nrf_cloud_alert_info {
 	/** A monotonically increasing alert counter used when current time not available. */
 	unsigned int sequence;
 	/** UNIX epoch timestamp (in milliseconds) of the data.
-	 * If a negative value is provided, the timestamp will be ignored.
+	 * If a value <= NRF_CLOUD_NO_TIMESTAMP (0) is provided, the timestamp will be ignored.
 	 */
 	int64_t ts_ms;
 };
@@ -78,7 +78,7 @@ struct nrf_cloud_alert_info {
  *
  * @return 0 if alert is successfully sent, otherwise, a negative error number.
  */
-#if defined(CONFIG_NRF_CLOUD_ALERTS) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF_CLOUD_ALERT) || defined(__DOXYGEN__)
 int nrf_cloud_alert_send(enum nrf_cloud_alert_type type, float value, const char *description);
 #else
 static inline int nrf_cloud_alert_send(enum nrf_cloud_alert_type type, float value,
@@ -86,7 +86,7 @@ static inline int nrf_cloud_alert_send(enum nrf_cloud_alert_type type, float val
 {
 	return 0;
 }
-#endif /* CONFIG_NRF_CLOUD_ALERTS */
+#endif /* CONFIG_NRF_CLOUD_ALERT */
 
 /**
  * @brief Transmit the specified alert to nRF Cloud using REST.
@@ -101,7 +101,7 @@ static inline int nrf_cloud_alert_send(enum nrf_cloud_alert_type type, float val
  *
  * @return 0 if alert is successfully sent, otherwise, a negative error number.
  */
-#if defined(CONFIG_NRF_CLOUD_ALERTS) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF_CLOUD_ALERT) || defined(__DOXYGEN__)
 int nrf_cloud_rest_alert_send(struct nrf_cloud_rest_context *const rest_ctx,
 			      const char *const device_id,
 			      enum nrf_cloud_alert_type type,
@@ -116,7 +116,7 @@ static inline int nrf_cloud_rest_alert_send(struct nrf_cloud_rest_context *const
 {
 	return 0;
 }
-#endif /* CONFIG_NRF_CLOUD_ALERTS */
+#endif /* CONFIG_NRF_CLOUD_ALERT */
 
 /**
  * @brief Enable or disable use of alerts.
@@ -138,4 +138,4 @@ bool nrf_cloud_alert_control_get(void);
 #ifdef __cplusplus
 #endif
 
-#endif /* NRF_CLOUD_PGPS_H_ */
+#endif /* NRF_CLOUD_ALERT_H_ */

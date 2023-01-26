@@ -1,7 +1,7 @@
-.. _lib_nrf_cloud_alerts:
+.. _lib_nrf_cloud_alert:
 
-nRF Cloud Alerts
-################
+nRF Cloud Alert
+###############
 
 .. contents::
    :local:
@@ -9,7 +9,7 @@ nRF Cloud Alerts
 
 This library is an enhancement to the :ref:`lib_nrf_cloud` library.
 It enables applications to generate and transmit messages that comply with the Alerts feature of nRF Cloud.
-Alerts messages are compact JSON documents that indicate a critical event, such as low battery or unexpected reset.
+Alert messages are compact JSON documents that indicate a critical event, such as low battery or unexpected reset.
 
 Overview
 ********
@@ -55,7 +55,7 @@ Configuration
 
 Configure the following options to enable or disable the library and to select the data transport method:
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_ALERTS`
+* :kconfig:option:`CONFIG_NRF_CLOUD_ALERT`
 * :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` or :kconfig:option:`CONFIG_NRF_CLOUD_REST`
 
 See :ref:`configure_application` for information on how to change configuration options.
@@ -65,7 +65,7 @@ Usage
 
 To use this library, complete the following steps:
 
-1. Include the :file:`nrf_cloud_alerts.h` file.
+1. Include the :file:`nrf_cloud_alert.h` file.
 #. Define a local variable of type :c:struct:`nrf_cloud_alert_info`.
 #. Initialize the structure members:
 
@@ -100,9 +100,9 @@ This library uses the following |NCS| libraries:
 API documentation
 *****************
 
-| Header file: :file:`include/net/nrf_cloud_alerts.h`
-| Source files: :file:`subsys/net/lib/nrf_cloud/src/nrf_cloud_alerts.c`
+| Header file: :file:`include/net/nrf_cloud_alert.h`
+| Source files: :file:`subsys/net/lib/nrf_cloud/src/nrf_cloud_alert.c`
 
-.. doxygengroup:: nrf_cloud_alerts
+.. doxygengroup:: nrf_cloud_alert
    :project: nrf
    :members:

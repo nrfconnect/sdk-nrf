@@ -805,7 +805,7 @@ Libraries for networking
 * Added:
 
   * The :ref:`lib_mqtt_helper` library that simplifies Zephyr MQTT API and socket handling.
-  * The :ref:`lib_nrf_cloud_alerts` library for sending notifications of critical device events to nRF Cloud, using either REST or MQTT connections.
+  * The :ref:`lib_nrf_cloud_alert` library for sending notifications of critical device events to nRF Cloud, using either REST or MQTT connections.
 
 * :ref:`lib_azure_iot_hub` library:
 
