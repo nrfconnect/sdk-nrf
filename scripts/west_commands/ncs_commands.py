@@ -551,7 +551,7 @@ class NcsUpmerger(NcsWestCommand):
                     log.inf(f'    {i}. {uc.oid} {commit_shortlog(uc)}')
             project.git('revert --no-edit ' + str(dc.oid))
         log.inf(f'Merging: {z_rev} to project: {project.name}')
-        msg = f"[nrf mergeup] Merge upstream automatically up to commit {z_sha}\nAuto-upmerge by ncs-upmerger"
+        msg = f"[nrf mergeup] Merge upstream automatically up to commit {z_sha}\n\nThis auto-upmerge was performed with ncs-upmerger script."
         project.git('merge --no-edit --no-ff --signoff -m "' + msg + '" ' + str(self.zephyr_rev))
 
 
