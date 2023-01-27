@@ -33,13 +33,11 @@ if(NOT NO_BOILERPLATE)
     if(${NcsToolchain_FOUND})
       message("-- Using NCS Toolchain ${NcsToolchain_VERSION} for building. (${NcsToolchain_DIR})")
 
-      if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
-        set(env_list_delimeter ";")
-      else()
-        set(env_list_delimeter ":")
-      endif()
+      set(CUSTOM_COMMAND_PATH ${NCS_TOOLCHAIN_BIN_PATH} $ENV{PATH})
+      cmake_path(CONVERT "${CUSTOM_COMMAND_PATH}" TO_NATIVE_PATH_LIST CUSTOM_COMMAND_PATH)
+      string(REPLACE ";" "\\\;" CUSTOM_COMMAND_PATH "${CUSTOM_COMMAND_PATH}")
 
-      set(CUSTOM_COMMAND_ENV       ${CMAKE_COMMAND} -E env PATH=${NCS_TOOLCHAIN_BIN_PATH}${env_list_delimeter}$ENV{PATH})
+      set(CUSTOM_COMMAND_ENV       ${CMAKE_COMMAND} -E env "PATH=${CUSTOM_COMMAND_PATH}")
       set(GIT_EXECUTABLE           ${NCS_TOOLCHAIN_GIT}     CACHE FILEPATH "NCS Toolchain Git")
 
       set(DTC                      ${NCS_TOOLCHAIN_DTC}     CACHE FILEPATH "NCS Toolchain DTC")
@@ -50,8 +48,8 @@ if(NOT NO_BOILERPLATE)
       set(PYTHON_PREFER            ${NCS_TOOLCHAIN_PYTHON}  CACHE FILEPATH "NCS Toolchain Python")
 
       if(DEFINED NCS_TOOLCHAIN_PROTOC)
-        set(PROTOC                     ${CUSTOM_COMMAND_ENV} ${NCS_TOOLCHAIN_PROTOC} CACHE FILEPATH "NCS Toolchain protoc")
-        set(PROTOBUF_PROTOC_EXECUTABLE ${PROTOC}                                     CACHE FILEPATH "NCS Toolchain protoc")
+        set(PROTOC                     ${CUSTOM_COMMAND_ENV} ${NCS_TOOLCHAIN_PROTOC} CACHE STRING "NCS Toolchain protoc")
+        set(PROTOBUF_PROTOC_EXECUTABLE ${CUSTOM_COMMAND_ENV} ${NCS_TOOLCHAIN_PROTOC} CACHE STRING "NCS Toolchain protoc")
       endif()
 
       set(ZEPHYR_TOOLCHAIN_VARIANT ${NCS_TOOLCHAIN_VARIANT}        CACHE STRING "NCS Toolchain Variant")
@@ -62,6 +60,12 @@ if(NOT NO_BOILERPLATE)
 
       if(${CMAKE_GENERATOR} STREQUAL Ninja)
         set(CMAKE_MAKE_PROGRAM ${NCS_TOOLCHAIN_NINJA} CACHE INTERNAL "NCS Toolchain ninja")
+      endif()
+
+      if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
+        set(env_list_delimeter ";")
+      else()
+        set(env_list_delimeter ":")
       endif()
 
       # If NCS_TOOLCHAIN_ENV_PATH is set, then we must ensure to prepend it
