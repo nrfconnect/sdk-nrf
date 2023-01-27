@@ -8,6 +8,7 @@ choice NRF_MODEM_LIB_TRACE_BACKEND
 endchoice
 
 rsource "uart/Kconfig"
+rsource "flash/Kconfig"
 rsource "rtt/Kconfig"
 
 module = MODEM_TRACE_BACKEND
