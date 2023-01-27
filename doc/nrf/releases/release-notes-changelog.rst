@@ -662,6 +662,12 @@ Other libraries
   * New library.
     This was previously a component of the :ref:`nrf53_audio_app` application, now moved to :file:`lib/pcm_mix`.
 
+* :ref:`app_event_manager`:
+
+  * Updated the way section names are created for event subscribers.
+    This allows you to use any event naming scheme.
+    For more information, see the :ref:`NCSIDB-925 <ncsidb_925>` issue description on the :ref:`known_issues` page.
+
 Common Application Framework (CAF)
 ----------------------------------
 
