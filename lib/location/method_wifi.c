@@ -16,7 +16,7 @@
 #include "location_core.h"
 #include "location_utils.h"
 #include "location_service_utils.h"
-#include "wifi/wifi_service.h"
+#include "cloud_service/cloud_service.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
@@ -144,7 +144,7 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 	struct location_data location_result = { 0 };
 	struct method_wifi_start_work_args *work_data =
 		CONTAINER_OF(work, struct method_wifi_start_work_args, work_item);
-	struct location_wifi_serv_pos_req request;
+	struct cloud_service_pos_req request = { 0 };
 	const struct location_wifi_config wifi_config = work_data->wifi_config;
 	int64_t starting_uptime_ms = work_data->starting_uptime_ms;
 	int err;
@@ -192,14 +192,16 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 
 		/* Fill scanning results: */
 		latest_wifi_info.cnt = latest_scan_result_count;
-		request.scanning_results = &latest_wifi_info;
+		request.wifi_data = &latest_wifi_info;
 
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 		location_core_event_cb_wifi_request(&latest_wifi_info);
 #else
 		struct location_data result;
 
-		err = wifi_service_location_get(wifi_config.service, &request, &result);
+		request.service = wifi_config.service;
+
+		err = cloud_service_location_get(&request, &result);
 		if (err) {
 			LOG_ERR("Failed to acquire a location by using "
 				"Wi-Fi positioning, err: %d",

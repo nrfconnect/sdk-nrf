@@ -13,7 +13,7 @@
 #include "location_core.h"
 #include "location_utils.h"
 #include "location_service_utils.h"
-#include "cellular/cellular_service.h"
+#include "cloud_service/cloud_service.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
@@ -131,7 +131,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 	location_core_event_cb_cellular_request(&cell_data);
 #else
-	struct location_cellular_serv_pos_req params = { 0 };
+	struct cloud_service_pos_req params = { 0 };
 	struct location_data location;
 	struct location_data location_result = { 0 };
 	int64_t ncellmeas_time;
@@ -147,7 +147,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 	location_utils_systime_to_location_datetime(&location_result.datetime);
 
 	/* Check if timeout is given */
-	params.timeout = cellular_config.timeout;
+	params.timeout_ms = cellular_config.timeout;
 	if (cellular_config.timeout != SYS_FOREVER_MS) {
 		/* +1 to round the time up */
 		ncellmeas_time = (k_uptime_get() - ncellmeas_start_time) + 1;
@@ -160,12 +160,12 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 			return;
 		}
 		/* Take time used for neighbour cell measurements into account */
-		params.timeout = cellular_config.timeout - ncellmeas_time;
+		params.timeout_ms = cellular_config.timeout - ncellmeas_time;
 	}
 
 	params.service = cellular_config.service;
 	params.cell_data = &cell_data;
-	ret = cellular_service_location_get(&params, &location);
+	ret = cloud_service_location_get(&params, &location);
 	if (ret) {
 		LOG_ERR("Failed to acquire location using cellular positioning, error: %d", ret);
 		if (ret == -ETIMEDOUT) {
