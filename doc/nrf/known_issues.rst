@@ -1365,6 +1365,21 @@ NCSDK-16644: :ref:`caf_sensor_manager` macro incorrectly converts float to senso
 
   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``7e8c23a6632632f0cee885abe955e37a6942911d``).
 
+.. _ncsidb_925:
+
+.. rst-class:: v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
+
+NCSIDB-925: Event subscribers in the :ref:`app_event_manager` may overlap when using a non-default naming convention
+  In order to locate the event subscribers start and stop address ranges, sections have to be sorted by the name with added postfixes.
+  Hence, using a non-default event naming scheme may break the expected subscribers sorting.
+  In this situation, one of the event subscribers arrays might be placed inside the other.
+  So, when the event related to the outer subscribers is processed, the event subscribers that are inside are also executed.
+  To resolve this issue, a new implementation was introduced that uses a section naming that cannot be used as event name (invalid variable identifier).
+
+  **Workaround:** Use the default event names, ensuring that each event name ends with the ``_event`` postfix.
+  Make sure that the event name does not start the same way as another event.
+  For example, creating the following events: ``rx_event`` and ``rx_event_error_event`` would still cause the issue.
+
 Subsystems
 **********
 

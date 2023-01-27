@@ -71,13 +71,9 @@ extern "C" {
 	()											\
 )
 
-/* Convenience macros generating section names. */
-
-#define _APP_EVENT_SUBSCRIBERS_SECTION_PREFIX(ename, marker) \
-	_CONCAT(_CONCAT(event_subscribers_, ename), marker)
-
+/* Convenience macro generating section names. */
 #define _APP_EVENT_SUBSCRIBERS_SECTION_NAME(ename, marker) \
-	STRINGIFY(_APP_EVENT_SUBSCRIBERS_SECTION_PREFIX(ename, marker))
+	STRINGIFY(_CONCAT(event_subscribers_, ename).marker)
 
 
 /* Macros related to subscriber array tags
@@ -86,12 +82,12 @@ extern "C" {
  */
 
 /* Convenience macro generating tag name. */
-#define _APP_EM_TAG_NAME(prefix) _CONCAT(prefix, _tag)
+#define _APP_EM_TAG_NAME(ename, marker) \
+	_CONCAT(_CONCAT(_CONCAT(event_subscribers_, ename), marker), _tag)
 
 /* Zero-length subscriber to be used as a tag. */
 #define _APP_EVENT_SUBSCRIBERS_TAG(ename, marker)					\
-	const struct {} _APP_EM_TAG_NAME(_APP_EVENT_SUBSCRIBERS_SECTION_PREFIX		\
-		(ename, marker))							\
+	const struct {} _APP_EM_TAG_NAME(ename, marker)					\
 	__used __aligned(__alignof(struct event_subscriber))				\
 	__attribute__((__section__(_APP_EVENT_SUBSCRIBERS_SECTION_NAME			\
 		(ename, marker)))) = {};
@@ -102,17 +98,12 @@ extern "C" {
 	_APP_EVENT_SUBSCRIBERS_TAG(ename, _APP_EM_MARKER_ARRAY_END)
 
 /* Pointer to the first element of subscriber array for a given event type. */
-#define _APP_EVENT_SUBSCRIBERS_START_TAG(ename)						\
-	((const struct event_subscriber *)						\
-	&_APP_EM_TAG_NAME(_APP_EVENT_SUBSCRIBERS_SECTION_PREFIX				\
-		(ename, _APP_EM_MARKER_ARRAY_START))					\
-	)
+#define _APP_EVENT_SUBSCRIBERS_START_TAG(ename) \
+	((const struct event_subscriber *)&_APP_EM_TAG_NAME(ename, _APP_EM_MARKER_ARRAY_START))
 
 /* Pointer to the element past the last element of subscriber array for a given event type. */
-#define _APP_EVENT_SUBSCRIBERS_END_TAG(ename)						\
-	((const struct event_subscriber *)						\
-	 &_APP_EM_TAG_NAME(_APP_EVENT_SUBSCRIBERS_SECTION_PREFIX(ename, _APP_EM_MARKER_ARRAY_END))\
-	 )
+#define _APP_EVENT_SUBSCRIBERS_END_TAG(ename) \
+	((const struct event_subscriber *)&_APP_EM_TAG_NAME(ename, _APP_EM_MARKER_ARRAY_END))
 
 
 /* Subscribe a listener to an event. */
