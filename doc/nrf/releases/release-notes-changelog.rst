@@ -453,7 +453,9 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Binary libraries
 ----------------
 
-|no_changes_yet_note|
+* :ref:`liblwm2m_carrier_readme` library:
+
+  * Removed the dependency on the :ref:`lte_lc_readme` library.
 
 Bluetooth libraries and services
 --------------------------------

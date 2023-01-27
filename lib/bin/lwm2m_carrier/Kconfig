@@ -26,7 +26,6 @@ menuconfig LWM2M_CARRIER
 	depends on NET_SOCKETS
 	depends on NET_SOCKETS_OFFLOAD
 	# Networking NCS
-	depends on LTE_LINK_CONTROL && !LTE_AUTO_INIT_AND_CONNECT
 	depends on DOWNLOAD_CLIENT
 	# Credentials NCS
 	depends on MODEM_KEY_MGMT
