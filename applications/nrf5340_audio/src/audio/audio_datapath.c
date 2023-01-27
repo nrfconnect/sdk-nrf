@@ -24,6 +24,9 @@
 #include "contin_array.h"
 #include "pcm_mix.h"
 #include "streamctrl.h"
+#if (CONFIG_MUSIC_LED_SYNC)
+#include "music_led_sync.h"
+#endif /* (CONFIG_MUSIC_LED_SYNC) */
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
@@ -828,6 +831,9 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 		LOG_WRN("SW codec decode error: %d", ret);
 	}
 
+#if (CONFIG_MUSIC_LED_SYNC)
+	music_led_sync_data_update(ctrl_blk.decoded_data, pcm_size);
+#endif /* CONFIG_MUSIC_LED_SYNC */
 	if (pcm_size != (BLK_STEREO_SIZE_OCTETS * NUM_BLKS_IN_FRAME)) {
 		LOG_WRN("Decoded audio has wrong size");
 		/* Discard frame */

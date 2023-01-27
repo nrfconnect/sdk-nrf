@@ -25,6 +25,9 @@
 #include "le_audio.h"
 #include "audio_datapath.h"
 #include "audio_sync_timer.h"
+#if (CONFIG_MUSIC_LED_SYNC)
+#include "music_led_sync.h"
+#endif /* (CONFIG_MUSIC_LED_SYNC) */
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(streamctrl, CONFIG_STREAMCTRL_LOG_LEVEL);
@@ -356,6 +359,9 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 		ret = led_blink(LED_APP_1_BLUE);
 		ERR_CHK(ret);
 
+#if (CONFIG_MUSIC_LED_SYNC && CONFIG_AUDIO_DEV == HEADSET)
+		music_led_sync_play();
+#endif /* (CONFIG_MUSIC_LED_SYNC && CONFIG_AUDIO_DEV == HEADSET) */
 		break;
 
 	case LE_AUDIO_EVT_NOT_STREAMING:
@@ -371,6 +377,20 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 		ret = led_on(LED_APP_1_BLUE);
 		ERR_CHK(ret);
 
+#if (CONFIG_MUSIC_LED_SYNC && CONFIG_AUDIO_DEV == HEADSET)
+			enum audio_channel channel;
+
+			ret = music_led_sync_pause();
+			channel_assignment_get(&channel);
+			if (channel == AUDIO_CH_L) {
+				ret = led_on(LED_APP_RGB, LED_COLOR_BLUE);
+			} else {
+				ret = led_on(LED_APP_RGB, LED_COLOR_MAGENTA);
+			}
+
+			ERR_CHK(ret);
+
+#endif /* (CONFIG_MUSIC_LED_SYNC && CONFIG_AUDIO_DEV == HEADSET) */
 		break;
 
 	case LE_AUDIO_EVT_CONFIG_RECEIVED:

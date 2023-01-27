@@ -39,6 +39,7 @@
 		};
 
 	};
+
 	buttons {
 		compatible = "gpio-keys";
 		button_1_vol_dn: button_1_vol_dn {

@@ -46,5 +46,6 @@ rsource "pcm_mix/Kconfig"
 rsource "tone/Kconfig"
 rsource "pcm_stream_channel_modifier/Kconfig"
 rsource "data_fifo/Kconfig"
+rsource "music_led_sync/Kconfig"
 
 endmenu

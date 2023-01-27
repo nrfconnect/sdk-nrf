@@ -108,3 +108,9 @@ if ((CONFIG_AUDIO_DFU EQUAL 1) OR (CONFIG_AUDIO_DFU EQUAL 2))
         ${BLE5_CTR_SIGN_STEP}
     )
 endif()
+
+## Music LED Synchronization
+if (CONFIG_MUSIC_LED_SYNC)
+    zephyr_library_include_directories(app PRIVATE
+        ${ZEPHYR_NRF_MODULE_DIR}/lib/music_led_sync/include)
+endif()

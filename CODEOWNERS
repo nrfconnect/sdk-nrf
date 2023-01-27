@@ -120,6 +120,7 @@ Kconfig*                                  @tejlmand
 /lib/modem_jwt/                           @jayteemo @SeppoTakalo
 /lib/modem_attest_token/                  @jayteemo
 /lib/qos/                                 @simensrostad
+/lib/music_led_sync/                      @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /lib/pcm_mix/                             @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /lib/contin_array/                        @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /lib/tone/                                @koffes @alexsven @erikrobstad @rick1082 @gWacey

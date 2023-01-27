@@ -1,0 +1,119 @@
+# Music Led Synchronization
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Music LED Synchronization"
+
+config MUSIC_LED_SYNC
+	depends on PWM && CMSIS_DSP_TRANSFORM
+	bool "Enable synchronization of RGB LED to music"
+	default n
+
+menu "FFT"
+
+choice FFT_SAMPLE_SIZE
+	prompt "Select sample size for FFT"
+	default FFT_SAMPLE_SIZE_512
+	help
+		CMSIS FFT supports sample size of 32, 64, 128, 256, 512,
+		 1024, 2048, 4096 and 8192.
+
+config FFT_SAMPLE_SIZE_32
+	bool "FFT sample size 32"
+
+config FFT_SAMPLE_SIZE_64
+	bool "FFT sample size 64"
+
+config FFT_SAMPLE_SIZE_128
+	bool "FFT sample size 128"
+
+config FFT_SAMPLE_SIZE_256
+	bool "FFT sample size 256"
+
+config FFT_SAMPLE_SIZE_512
+	bool "FFT sample size 512"
+
+config FFT_SAMPLE_SIZE_1024
+	bool "FFT sample size 1024"
+
+config FFT_SAMPLE_SIZE_2048
+	bool "FFT sample size 2048"
+
+config FFT_SAMPLE_SIZE_4096
+	bool "FFT sample size 4096"
+
+config FFT_SAMPLE_SIZE_8192
+	bool "FFT sample size 8192"
+endchoice
+
+config FFT_SAMPLE_SIZE
+	int
+	default 32 if FFT_SAMPLE_SIZE_32
+	default 64 if FFT_SAMPLE_SIZE_64
+	default 128 if FFT_SAMPLE_SIZE_128
+	default 256 if FFT_SAMPLE_SIZE_256
+	default 512 if FFT_SAMPLE_SIZE_512
+	default 1024 if FFT_SAMPLE_SIZE_1024
+	default 2048 if FFT_SAMPLE_SIZE_2048
+	default 4096 if FFT_SAMPLE_SIZE_4096
+	default 8192 if FFT_SAMPLE_SIZE_8192
+	help
+		Sample size for FFT
+
+config FFT_FLAG_INVERSE_TRANSFORM
+	int "Flag for transform direction"
+	range 0 1
+	default 0
+	help
+		0 for FFT and 1 for IFFT
+
+config FFT_FLAG_BIT_REVERSAL
+	int "Flag for bit reversal of output"
+	range 0 1
+	default 1
+	help
+		0 to disable and 1 to enable bitreversal
+
+config RGB_RED_FREQ_BIN_RANGE
+	int "Freq range for RED RGB LED"
+	range 0 256
+	default 15
+
+config RGB_GREEN_FREQ_BIN_RANGE
+	int "Freq range for GREEN RGB LED"
+	range 0 256
+	default 150
+
+config RGB_BLUE_FREQ_BIN_RANGE
+	int "Freq range for BLUE RGB LED"
+	range 0 256
+	default 256
+
+endmenu # FFT
+
+config PCM_NUM_BYTES_MONO
+	int "Number of bytes for MONO PCM signal"
+	range 0 1920
+	default 960
+
+config PCM_NUM_BYTES_STEREO
+	int "Number of bytes for STEREO PCM signal"
+	range 0 3920
+	default 1920
+
+config MUSIC_LED_SYNC_STACK_SIZE
+	int "Stack size for music color sync module"
+	default 3000
+
+config MUSIC_LED_SYNC_THREAD_PRIO
+	int "Priority for music color sync thread"
+	default 7
+
+config LOG_MUSIC_LED_SYNC_LEVEL
+	int "Log level for music_led_sync module"
+	default 3
+
+endmenu # Music LED Synchronization
