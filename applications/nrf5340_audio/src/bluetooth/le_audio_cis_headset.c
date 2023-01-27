@@ -671,11 +671,17 @@ int le_audio_play_pause(void)
 	return ble_mcs_play_pause(default_conn);
 }
 
-int le_audio_send(uint8_t const *const data, size_t size)
+int le_audio_send(struct encoded_audio enc_audio)
 {
+
 #if CONFIG_STREAM_BIDIRECTIONAL
 	int ret;
 	struct net_buf *buf;
+
+	if (enc_audio.num_ch != 1) {
+		LOG_ERR("Num encoded channels must be 1");
+		return -EINVAL;
+	}
 
 	/* CIS headset only supports one source stream for now */
 	if (sources[0].stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
@@ -690,7 +696,7 @@ int le_audio_send(uint8_t const *const data, size_t size)
 	}
 
 	net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
-	net_buf_add_mem(buf, data, size);
+	net_buf_add_mem(buf, enc_audio.data, enc_audio.size);
 
 	ret = bt_audio_stream_send(sources[0].stream, buf, sources[0].seq_num++,
 				   BT_ISO_TIMESTAMP_NONE);

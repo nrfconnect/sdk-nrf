@@ -391,13 +391,25 @@ int le_audio_play_pause(void)
 	return ret;
 }
 
-int le_audio_send(uint8_t const *const data, size_t size)
+int le_audio_send(struct encoded_audio enc_audio)
 {
 	int ret;
 	static bool wrn_printed[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
 	struct net_buf *buf;
 	size_t num_streams = ARRAY_SIZE(audio_streams);
-	size_t data_size = size / num_streams;
+	size_t data_size_pr_stream;
+
+	if ((enc_audio.num_ch == 1) || (enc_audio.num_ch == num_streams)) {
+		data_size_pr_stream = enc_audio.size / enc_audio.num_ch;
+	} else {
+		LOG_ERR("Num encoded channels must be 1 or equal to num streams");
+		return -EINVAL;
+	}
+
+	if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE)) {
+		LOG_ERR("The encoded data size does not match the SDU size");
+		return -ECANCELED;
+	}
 
 	for (int i = 0; i < num_streams; i++) {
 		if (audio_streams[i].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
@@ -424,7 +436,13 @@ int le_audio_send(uint8_t const *const data, size_t size)
 		}
 
 		net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
-		net_buf_add_mem(buf, &data[i * data_size], data_size);
+		if (enc_audio.num_ch == 1) {
+			net_buf_add_mem(buf, &enc_audio.data[0],
+				data_size_pr_stream);
+		} else {
+			net_buf_add_mem(buf, &enc_audio.data[i * data_size_pr_stream],
+				data_size_pr_stream);
+		}
 
 		atomic_inc(&iso_tx_pool_alloc[i]);
 

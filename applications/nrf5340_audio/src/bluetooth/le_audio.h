@@ -141,6 +141,16 @@ enum le_audio_user_defined_action {
 };
 
 /**
+ * @brief Encoded audio data and information.
+ * Container for SW codec (typically LC3) compressed audio data.
+ */
+struct encoded_audio {
+	uint8_t const * const data;
+	size_t size;
+	uint8_t num_ch;
+};
+
+/**
  * @brief Generic function for a user defined button press
  *
  * @param action	User defined action
@@ -191,7 +201,7 @@ int le_audio_volume_mute(void);
 
 /**
  * @brief	Either resume or pause the Bluetooth LE Audio stream,
- *              depending on the current state of the stream
+ *		depending on the current state of the stream
  *
  * @return	0 for success, error otherwise
  */
@@ -200,14 +210,13 @@ int le_audio_play_pause(void);
 /**
  * @brief Send Bluetooth LE Audio data
  *
- * @param data	Data to send
- * @param size	Size of data to send
+ * @param enc_audio	Encoded audio struct
  *
  * @return	0 for success,
  *		-ENXIO if the feature is disabled,
  *		error otherwise
  */
-int le_audio_send(uint8_t const *const data, size_t size);
+int le_audio_send(struct encoded_audio enc_audio);
 
 /**
  * @brief Enable Bluetooth LE Audio

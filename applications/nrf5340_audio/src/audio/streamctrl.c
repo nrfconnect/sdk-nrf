@@ -205,13 +205,15 @@ uint8_t stream_state_get(void)
 	return strm_state;
 }
 
-void streamctrl_encoded_data_send(void const *const data, size_t len)
+void streamctrl_encoded_data_send(void const *const data, size_t size, uint8_t num_ch)
 {
 	int ret;
 	static int prev_ret;
 
+	struct encoded_audio enc_audio = {.data = data, .size = size, .num_ch = num_ch};
+
 	if (strm_state == STATE_STREAMING) {
-		ret = le_audio_send(data, len);
+		ret = le_audio_send(enc_audio);
 
 		if (ret != 0 && ret != prev_ret) {
 			LOG_WRN("Problem with sending LE audio data, ret: %d", ret);

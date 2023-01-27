@@ -568,7 +568,7 @@ int le_audio_play_pause(void)
 	return 0;
 }
 
-int le_audio_send(uint8_t const *const data, size_t size)
+int le_audio_send(struct encoded_audio enc_audio)
 {
 	LOG_WRN("Not possible to send audio data from broadcast sink");
 	return -ENXIO;

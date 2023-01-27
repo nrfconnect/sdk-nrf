@@ -37,7 +37,7 @@ enum sw_codec_select {
 	SW_CODEC_LC3, /* Low Complexity Communication Codec */
 };
 
-enum sw_codec_select_ch {
+enum sw_codec_num_ch {
 	SW_CODEC_ZERO_CHANNELS,
 	SW_CODEC_MONO, /* Only use one channel */
 	SW_CODEC_STEREO, /* Use both channels */
@@ -46,13 +46,13 @@ enum sw_codec_select_ch {
 struct sw_codec_encoder {
 	bool enabled;
 	int bitrate;
-	enum sw_codec_select_ch channel_mode;
+	uint8_t num_ch;
 	enum audio_channel audio_ch; /* Only used if channel mode is mono */
 };
 
 struct sw_codec_decoder {
 	bool enabled;
-	enum sw_codec_select_ch channel_mode;
+	uint8_t num_ch;
 	enum audio_channel audio_ch; /* Only used if channel mode is mono */
 };
 
