@@ -12,9 +12,6 @@ module = MODEM_TRACE_FLASH_SAMPLE
 module-str = Modem trace flash backend
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-rsource "Kconfig.trace_flash"
-rsource "Kconfig.trace_storage"
-
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu

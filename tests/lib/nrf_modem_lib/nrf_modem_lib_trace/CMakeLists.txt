@@ -13,7 +13,7 @@ project(nrf_modem_lib_trace)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_os.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_trace.h)
-cmock_handle(${NRF_DIR}/include/modem/trace_backend.h)
+cmock_handle(trace_backend_mock.h)
 
 # generate runner for the test
 test_runner_generate(src/main.c)
@@ -22,6 +22,9 @@ target_include_directories(app PRIVATE src)
 
 # add test file
 target_sources(app PRIVATE src/main.c)
+
+# add mock for backend
+target_sources(app PRIVATE trace_backend_mock.c)
 
 # add unit under test
 target_sources(app PRIVATE ${NRF_DIR}/lib/nrf_modem_lib/nrf_modem_lib_trace.c)

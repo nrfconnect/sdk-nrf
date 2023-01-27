@@ -603,11 +603,14 @@ Modem libraries
   * Added:
 
     * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OFF` Kconfig option to set the modem trace level to off by default.
+    * The flash trace backend that enables the application to store trace data to flash for later retrieval.
 
   * Updated:
 
     * The minimal value of :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE` to meet the requirements of modem firmware 1.3.4.
     * The :c:func:`nrf_modem_lib_diag_stats_get` function now returns an error if called when the :ref:`nrf_modem_lib_readme` library has not been initialized.
+    * The trace backend interface to be exposed to the :ref:`modem_trace_module` using the :c:struct:`nrf_modem_lib_trace_backend` struct.
+    * The :ref:`modem_trace_module` to support backends that store the trace data for later retrieval.
 
 * :ref:`lib_location` library:
 
