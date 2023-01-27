@@ -11,6 +11,7 @@
 #include <lwm2m_settings.h>
 #include <lwm2m_carrier.h>
 #include <zephyr/settings/settings.h>
+#include <zephyr/kernel.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_settings, CONFIG_LOG_DEFAULT_LEVEL);

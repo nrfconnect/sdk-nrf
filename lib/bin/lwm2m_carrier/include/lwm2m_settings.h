@@ -14,8 +14,8 @@
 #ifndef LWM2M_SETTINGS_H__
 #define LWM2M_SETTINGS_H__
 
-#include <modem/lte_lc.h>
-#include <lwm2m_carrier.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 /**
  * @brief Check if automatic startup is enabled.
@@ -40,13 +40,13 @@ int lwm2m_settings_auto_startup_set(bool new_auto_startup);
  */
 bool lwm2m_settings_enable_custom_config_get(void);
 
- /**
-  * Enable or disable the LwM2M custom settings.
-  *
-  * @param new_enable_custom_config Whether to enable LwM2M custom settings or not.
-  *
-  * @retval 0 on success, non-zero on failure.
-  */
+/**
+ * Enable or disable the LwM2M custom settings.
+ *
+ * @param new_enable_custom_config Whether to enable LwM2M custom settings or not.
+ *
+ * @retval 0 on success, non-zero on failure.
+ */
 int lwm2m_settings_enable_custom_config_set(bool new_enable_custom_config);
 
 /**
@@ -56,13 +56,13 @@ int lwm2m_settings_enable_custom_config_set(bool new_enable_custom_config);
  */
 uint32_t lwm2m_settings_carriers_enabled_get(void);
 
- /**
-  * Set enabled carriers.
-  *
-  * @param new_carriers_enabled Bitmask corresponding to carrier oper_id values.
-  *
-  * @retval 0 on success, non-zero on failure.
-  */
+/**
+ * Set enabled carriers.
+ *
+ * @param new_carriers_enabled Bitmask corresponding to carrier oper_id values.
+ *
+ * @retval 0 on success, non-zero on failure.
+ */
 int lwm2m_settings_carriers_enabled_set(uint32_t new_carriers_enabled);
 
 /**
@@ -89,13 +89,13 @@ int lwm2m_settings_bootstrap_from_smartcard_set(bool new_bootstrap_from_smartcar
  */
 bool lwm2m_settings_enable_custom_server_config_get(void);
 
- /**
-  * Enable or disable the LwM2M server custom settings.
-  *
-  * @param new_enable_custom_server_config Whether to enable LwM2M custom server settings or not.
-  *
-  * @retval 0 on success, non-zero on failure.
-  */
+/**
+ * Enable or disable the LwM2M server custom settings.
+ *
+ * @param new_enable_custom_server_config Whether to enable LwM2M custom server settings or not.
+ *
+ * @retval 0 on success, non-zero on failure.
+ */
 int lwm2m_settings_enable_custom_server_config_set(bool new_enable_custom_server_config);
 
 /**
@@ -212,7 +212,6 @@ uint32_t lwm2m_settings_server_sec_tag_get(void);
  */
 int lwm2m_settings_server_sec_tag_set(const uint32_t new_server_sec_tag);
 
-
 /**
  * @brief Retrieve the APN from the custom LwM2M settings.
  *
@@ -252,13 +251,13 @@ int lwm2m_settings_pdn_type_set(uint32_t new_pdn_type);
  */
 bool lwm2m_settings_enable_custom_device_config_get(void);
 
- /**
-  * Enable or disable the LwM2M device custom settings.
-  *
-  * @param new_enable_custom_device_config Whether to enable LwM2M custom device settings or not.
-  *
-  * @retval 0 on success, non-zero on failure.
-  */
+/**
+ * Enable or disable the LwM2M device custom settings.
+ *
+ * @param new_enable_custom_device_config Whether to enable LwM2M custom device settings or not.
+ *
+ * @retval 0 on success, non-zero on failure.
+ */
 int lwm2m_settings_enable_custom_device_config_set(bool new_enable_custom_device_config);
 
 /**
