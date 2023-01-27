@@ -1165,14 +1165,21 @@ int le_audio_play_pause(void)
 	return 0;
 }
 
-int le_audio_send(uint8_t const *const data, size_t size)
+int le_audio_send(struct encoded_audio enc_audio)
 {
 	int ret;
+	size_t data_size_pr_stream;
 	struct bt_iso_tx_info tx_info = { 0 };
-	size_t sdu_size = LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_BT_AUDIO_BITRATE);
 
-	if (size != (sdu_size * 2)) {
-		LOG_ERR("Not enough data for stereo stream");
+	if ((enc_audio.num_ch == 1) || (enc_audio.num_ch == ARRAY_SIZE(headsets))) {
+		data_size_pr_stream = enc_audio.size / enc_audio.num_ch;
+	} else {
+		LOG_ERR("Num encoded channels must be 1 or equal to num headsets");
+		return -EINVAL;
+	}
+
+	if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_BT_AUDIO_BITRATE)) {
+		LOG_ERR("The encoded data size does not match the SDU size");
 		return -ECANCELED;
 	}
 
@@ -1203,13 +1210,18 @@ int le_audio_send(uint8_t const *const data, size_t size)
 		audio_datapath_just_in_time_check_and_adjust(tx_info.ts);
 	}
 
-	ret = iso_stream_send(data, sdu_size, headsets[AUDIO_CH_L]);
+	ret = iso_stream_send(enc_audio.data, data_size_pr_stream, headsets[AUDIO_CH_L]);
 	if (ret) {
 		LOG_DBG("Failed to send data to left channel");
 	}
 
 #if !CONFIG_STREAM_BIDIRECTIONAL
-	ret = iso_stream_send(&data[sdu_size], sdu_size, headsets[AUDIO_CH_R]);
+	if (enc_audio.num_ch == 1) {
+		ret = iso_stream_send(enc_audio.data, data_size_pr_stream, headsets[AUDIO_CH_R]);
+	} else {
+		ret = iso_stream_send(&enc_audio.data[data_size_pr_stream], data_size_pr_stream,
+			headsets[AUDIO_CH_R]);
+	}
 	if (ret) {
 		LOG_DBG("Failed to send data to right channel");
 	}

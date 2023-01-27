@@ -24,10 +24,11 @@ uint8_t stream_state_get(void);
 
 /** @brief Send encoded data over the stream
  *
- * @param data  Data to send
- * @param len   Length of data to send
+ * @param data		Data to send
+ * @param size		Size of data
+ * @param num_ch	Number of audio channels
  */
-void streamctrl_encoded_data_send(void const *const data, size_t len);
+void streamctrl_encoded_data_send(void const *const data, size_t size, uint8_t num_ch);
 
 /** @brief Drives streamctrl state machine
  *
