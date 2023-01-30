@@ -957,7 +957,7 @@ The options define the nRF Desktop device role.
 The device role may be either HID dongle or HID peripheral.
 The HID peripheral role can also specify a peripheral type (HID mouse, HID keyboard or other HID device).
 
-Each role automatically selects nRF Desktop modules needed for the role.
+Each role automatically implies nRF Desktop modules needed for the role.
 For example, :ref:`nrf_desktop_hid_state` is automatically enabled for the HID peripheral role.
 Apart from the device role, the application-specific Kconfigs specify a set of supported HID reports and a supported HID boot report (if any).
 
@@ -1001,7 +1001,7 @@ See the :file:`Kconfig.debug` file content for details.
 Default common configuration
 ----------------------------
 
-The nRF Desktop application aligns the configuration with the nRF Desktop use case by overlaying Kconfig defaults and selecting the required Kconfig options.
+The nRF Desktop application aligns the configuration with the nRF Desktop use case by overlaying Kconfig defaults and selecting or implying the required Kconfig options.
 Among others, the Kconfig :ref:`app_event_manager` and :ref:`lib_caf` options are selected to ensure that they are enabled.
 See the :file:`Kconfig.defaults` file for details related to default common configuration.
 
@@ -1015,8 +1015,8 @@ The :ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>` Kconfig option enables
 The option is enabled by default.
 The option performs the following:
 
-* Enables application modules related to Bluetooth that are required for the selected device role
-* Enables required functionalities in Zephyr's Bluetooth stack
+* Implies application modules related to Bluetooth that are required for the selected device role
+* Selects required functionalities in Zephyr's Bluetooth stack
 * Overlays Bluetooth Kconfig option defaults to align them with the nRF Desktop use-case
 
 See :file:`Kconfig.ble` file content for details.

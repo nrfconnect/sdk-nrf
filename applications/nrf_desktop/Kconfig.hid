@@ -12,7 +12,7 @@ choice DESKTOP_ROLE
 
 config DESKTOP_ROLE_HID_PERIPHERAL
 	bool "HID peripheral"
-	select DESKTOP_HID_STATE_ENABLE
+	imply DESKTOP_HID_STATE_ENABLE
 	help
 	  The option enables support for the nRF Desktop HID peripheral role.
 	  The peripheral uses HID state module to generate HID reports based
@@ -21,8 +21,8 @@ config DESKTOP_ROLE_HID_PERIPHERAL
 
 config DESKTOP_ROLE_HID_DONGLE
 	bool "HID dongle"
-	select DESKTOP_HID_FORWARD_ENABLE
-	select DESKTOP_USB_ENABLE
+	imply DESKTOP_HID_FORWARD_ENABLE
+	imply DESKTOP_USB_ENABLE
 	help
 	  The option enables support for the nRF Desktop HID dongle role.
 	  The dongle receives HID reports from Bluetooth connected peripherals
