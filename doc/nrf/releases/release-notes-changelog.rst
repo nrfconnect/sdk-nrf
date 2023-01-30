@@ -597,6 +597,13 @@ Other libraries
 Common Application Framework (CAF)
 ----------------------------------
 
+* :ref:`caf_ble_smp`:
+
+  * Updated:
+
+    * Aligned the module with the recent MCUmgr API, following the :ref:`zephyr:mcumgr_callbacks` migration guide in the Zephyr documentation.
+      The module now requires :kconfig:option:`CONFIG_MCUMGR_MGMT_NOTIFICATION_HOOKS` and :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_UPLOAD_CHECK_HOOK` configuration options to be enabled.
+
 * :ref:`caf_overview_events`:
 
   * Added:
