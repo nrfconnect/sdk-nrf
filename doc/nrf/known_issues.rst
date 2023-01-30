@@ -2696,6 +2696,16 @@ NCSDK-17501: Partition Manager: Ignored alignment for partitions
 
   **Workaround:** Edit the affected configurations file so that ``align`` is correctly placed inside the ``placement`` section of the config file.
 
+.. rst-class:: v2-2-0
+
+NCSDK-19536: TF-M does not compile when the board is missing a uart1 node and TF-M logging is enabled
+  TF-M does not compile when a uart1 node is not defined in a board's devicetree configuration and TF-M logging is enabled.
+
+  **Workaround:** Use one of the following workarounds:
+
+  * Add uart1 node with baudrate property in the devicetree configuration.
+  * Disable TF-M logging by enabling the :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` option.
+
 .. rst-class:: v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
 NCSDK-15909: TF-M failing to build with with Zephyr SDK 0.14.2
