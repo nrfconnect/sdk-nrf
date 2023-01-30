@@ -202,6 +202,8 @@ nRF5340 Audio
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
+* Added configuration option (:kconfig:option:`CONFIG_APP_SENSOR_SLEEP_TO`) to set the sensor idling timeout before suspending the sensor.
+
 * Removed the usage of ``ml_runner_signin_event`` from the application.
 
 nRF Desktop
