@@ -9,8 +9,8 @@ menu "Bluetooth LE configuration"
 config DESKTOP_BT
 	bool "Support for Bluetooth connectivity"
 	default y
-	select DESKTOP_BLE_STATE
-	select DESKTOP_BLE_BOND_ENABLE
+	imply DESKTOP_BLE_STATE
+	imply DESKTOP_BLE_BOND_ENABLE
 	select BT
 	select BT_SETTINGS
 	select BT_SIGNING
@@ -27,10 +27,10 @@ if DESKTOP_BT
 config DESKTOP_BT_PERIPHERAL
 	bool
 	default y if DESKTOP_ROLE_HID_PERIPHERAL
-	select DESKTOP_BLE_ADV
-	select DESKTOP_BAS_ENABLE
-	select DESKTOP_HIDS_ENABLE
-	select BT_DIS
+	imply DESKTOP_BLE_ADV
+	imply DESKTOP_BAS_ENABLE
+	imply DESKTOP_HIDS_ENABLE
+	imply BT_DIS
 	select BT_PERIPHERAL
 	help
 	  HID peripherals are configured to use the GAP Peripheral role as
@@ -162,8 +162,8 @@ endif # DESKTOP_BT_PERIPHERAL
 config DESKTOP_BT_CENTRAL
 	bool
 	default y if DESKTOP_ROLE_HID_DONGLE
-	select DESKTOP_BLE_SCAN_ENABLE
-	select DESKTOP_BLE_DISCOVERY_ENABLE
+	imply DESKTOP_BLE_SCAN_ENABLE
+	imply DESKTOP_BLE_DISCOVERY_ENABLE
 	select BT_CENTRAL
 	help
 	  nRF Desktop dongles are configured to use the GAP Central role as
