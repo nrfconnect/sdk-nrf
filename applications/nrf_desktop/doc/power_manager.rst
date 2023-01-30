@@ -9,6 +9,7 @@ Power manager module
 
 Use the power manager module to reduce the energy consumption of battery-powered devices.
 The module achieves this by switching to low power modes when the device is not used for a longer period of time.
+The power manager module is by default enabled, along with all of the required dependencies for every nRF Desktop device.
 
 Module events
 *************
@@ -20,8 +21,16 @@ Module events
 .. note::
     |nrf_desktop_module_event_note|
 
+Configuration
+*************
+
+nRF Desktop uses the power manager module from the :ref:`lib_caf` (CAF).
+The :ref:`CONFIG_DESKTOP_POWER_MANAGER <config_desktop_app_options>` Kconfig option selects :kconfig:option:`CONFIG_CAF_POWER_MANAGER` and aligns the default module configuration to the application requirements.
+
+By default, the nRF Desktop enables the :kconfig:option:`CONFIG_PM_POLICY_CUSTOM` option.
+Additionally, the :kconfig:option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` option is automatically enabled for nRF Desktop dongles (:ref:`CONFIG_DESKTOP_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>`).
+
 Implementation details
 **********************
 
-nrf Desktop uses the power manager module from :ref:`lib_caf` (CAF).
 See the :ref:`CAF power manager module <caf_power_manager>` page for implementation details.
