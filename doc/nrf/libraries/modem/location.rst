@@ -134,6 +134,7 @@ The following options control the use of GNSS assistance data:
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGPS` - Enables A-GPS data retrieval from `nRF Cloud`_.
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` - Enables P-GPS data retrieval from `nRF Cloud`_.
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED` - Reduces assistance size by only downloading ephemerides for visible satellites.
+  See :ref:`agps_filtered_ephemerides` for more details.
 
 The following option is useful when setting :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED`:
 
