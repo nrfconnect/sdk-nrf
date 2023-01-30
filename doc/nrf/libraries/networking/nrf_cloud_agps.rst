@@ -42,6 +42,8 @@ If :kconfig:option:`CONFIG_NRF_CLOUD_REST` is enabled, the :c:func:`nrf_cloud_re
 When nRF Cloud responds with the requested A-GPS data, the :c:func:`nrf_cloud_agps_process` function processes the received data.
 The function parses the data and passes it on to the modem.
 
+.. _agps_filtered_ephemerides:
+
 Optimizing cloud data downloads
 *******************************
 
