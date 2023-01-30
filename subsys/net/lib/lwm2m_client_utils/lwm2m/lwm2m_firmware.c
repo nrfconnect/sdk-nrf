@@ -15,6 +15,7 @@
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/net/lwm2m.h>
 #include <modem/nrf_modem_lib.h>
+#include <modem/modem_key_mgmt.h>
 #include <net/fota_download.h>
 #include <lwm2m_util.h>
 #include <net/lwm2m_client_utils.h>
@@ -41,16 +42,29 @@ LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 #define LWM2M_FIRM_PREFIX "lwm2m:fir"
 
+#define FOTA_PULL_SUPPORTED_COUNT 4
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
 #define FOTA_INSTANCE_COUNT 2
 #define ENABLED_LWM2M_FIRMWARE_OBJECT LWM2M_OBJECT_ADV_FIRMWARE_ID
 #else
 #define FOTA_INSTANCE_COUNT 1
 #define ENABLED_LWM2M_FIRMWARE_OBJECT LWM2M_OBJECT_FIRMWARE_ID
+static struct lwm2m_engine_res_inst pull_protocol_buff[FOTA_PULL_SUPPORTED_COUNT];
 #endif
+/* FOTA resource LWM2M_FOTA_UPDATE_PROTO_SUPPORT_ID  definition */
+#define FOTA_PULL_COAP 0
+#define FOTA_PULL_COAPS 1
+/* Only supported when Server root certicate SEC tag is available*/
+#define FOTA_PULL_HTTP 2
+#define FOTA_PULL_HTTPS 3
 
 static lwm2m_firmware_get_update_state_cb_t update_state_cb;
 static uint8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
+
+/* Supported Protocols */
+static uint8_t pull_protocol_support[FOTA_PULL_SUPPORTED_COUNT] = { FOTA_PULL_COAP, FOTA_PULL_HTTP,
+								    FOTA_PULL_COAPS,
+								    FOTA_PULL_HTTPS };
 
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
 static uint8_t apply_fmfu_from_ext_flash(void);
@@ -975,6 +989,77 @@ static void lwm2m_firmware_load_from_settings(int instance_id)
 	}
 }
 
+
+static void lwm2m_firmware_object_pull_protocol_init(int instance_id)
+{
+#ifndef CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT
+	struct lwm2m_engine_res *res;
+
+	res = lwm2m_engine_get_res(&LWM2M_OBJ(ENABLED_LWM2M_FIRMWARE_OBJECT, instance_id,
+					      LWM2M_FOTA_UPDATE_PROTO_SUPPORT_ID));
+	if (res && res->multi_res_inst && res->res_inst_count < FOTA_PULL_SUPPORTED_COUNT) {
+		/* Update resource instance count and buffer's */
+		res->res_instances = pull_protocol_buff;
+		res->res_inst_count = FOTA_PULL_SUPPORTED_COUNT;
+		for (int i = 0; i < FOTA_PULL_SUPPORTED_COUNT; i++) {
+			pull_protocol_buff[i].res_inst_id = RES_INSTANCE_NOT_CREATED;
+			pull_protocol_buff[i].data_len = 0;
+			pull_protocol_buff[i].max_data_len = 0;
+			pull_protocol_buff[i].data_ptr = NULL;
+			pull_protocol_buff[i].data_flags = 0;
+		}
+	}
+#endif
+}
+
+static bool modem_has_credentials(int sec_tag)
+{
+	bool exist;
+	int ret;
+
+	ret = modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &exist);
+	if (ret < 0) {
+		return false;
+	}
+	return exist;
+}
+
+static void lwm2m_firware_pull_protocol_support_resource_init(int instance_id)
+{
+	struct lwm2m_obj_path path;
+	int ret;
+	int supported_protocol_count;
+
+	if (!IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)) {
+		lwm2m_firmware_object_pull_protocol_init(instance_id);
+	}
+
+	if (modem_has_credentials(CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG)) {
+		/* Enable non-security &  Security protocols for download client */
+		supported_protocol_count = 4;
+	} else {
+		/* Enable non-security protocols for download client */
+		supported_protocol_count = 2;
+	}
+
+	for (int i = 0; i < supported_protocol_count; i++) {
+		path = LWM2M_OBJ(ENABLED_LWM2M_FIRMWARE_OBJECT, instance_id,
+				 LWM2M_FOTA_UPDATE_PROTO_SUPPORT_ID, i);
+
+		ret = lwm2m_create_res_inst(&path);
+		if (ret) {
+			return;
+		}
+
+		ret = lwm2m_set_res_buf(&path, &pull_protocol_support[i],
+					sizeof(uint8_t), sizeof(uint8_t), LWM2M_RES_DATA_FLAG_RO);
+		if (ret) {
+			lwm2m_delete_res_inst(&path);
+			return;
+		}
+	}
+}
+
 static void lwm2m_firmware_register_write_callbacks(int instance_id)
 {
 	struct lwm2m_obj_path path = LWM2M_OBJ(ENABLED_LWM2M_FIRMWARE_OBJECT, instance_id,
@@ -1149,16 +1234,19 @@ int lwm2m_init_firmware(void)
 	application_obj_id = lwm2m_adv_firmware_create_inst(
 		"application", firmware_block_received_cb, firmware_update_cb);
 	lwm2m_firmware_load_from_settings(application_obj_id);
+	lwm2m_firware_pull_protocol_support_resource_init(application_obj_id);
 	lwm2m_firmware_register_write_callbacks(application_obj_id);
 
 	modem_obj_id = lwm2m_adv_firmware_create_inst(
 		"modem:" CONFIG_SOC, firmware_block_received_cb, firmware_update_cb);
 	lwm2m_firmware_load_from_settings(modem_obj_id);
+	lwm2m_firware_pull_protocol_support_resource_init(modem_obj_id);
 	lwm2m_firmware_register_write_callbacks(modem_obj_id);
 	lwm2m_adv_firmware_versions_set();
 #else
 	application_obj_id = modem_obj_id = 0;
 	lwm2m_firmware_load_from_settings(application_obj_id);
+	lwm2m_firware_pull_protocol_support_resource_init(application_obj_id);
 	lwm2m_firmware_register_write_callbacks(application_obj_id);
 	lwm2m_firmware_set_update_cb(firmware_update_cb);
 	lwm2m_firmware_set_write_cb(firmware_block_received_cb);
