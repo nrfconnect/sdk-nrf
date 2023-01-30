@@ -41,43 +41,43 @@ int lwm2m_init_light_sensor(void)
 	light_sensor_init();
 
 	/* Ambient light sensor */
-	lwm2m_engine_create_obj_inst(LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, LIGHT_OBJ_INSTANCE_ID));
-	lwm2m_engine_set_string(LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, LIGHT_OBJ_INSTANCE_ID,
+	lwm2m_create_object_inst(&LWM2M_OBJ(IPSO_OBJECT_COLOUR_ID, LIGHT_OBJ_INSTANCE_ID));
+	lwm2m_set_string(&LWM2M_OBJ(IPSO_OBJECT_COLOUR_ID, LIGHT_OBJ_INSTANCE_ID,
 					    APPLICATION_TYPE_RID),
 				 LIGHT_APP_TYPE);
-	lwm2m_engine_set_string(LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, LIGHT_OBJ_INSTANCE_ID,
+	lwm2m_set_string(&LWM2M_OBJ(IPSO_OBJECT_COLOUR_ID, LIGHT_OBJ_INSTANCE_ID,
 					     SENSOR_UNITS_RID),
 				  LIGHT_UNIT);
 
 	/* Surface colour sensor */
-	lwm2m_engine_create_obj_inst(LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, COLOUR_OBJ_INSTANCE_ID));
-	lwm2m_engine_set_string(LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, COLOUR_OBJ_INSTANCE_ID,
+	lwm2m_create_object_inst(&LWM2M_OBJ(IPSO_OBJECT_COLOUR_ID, COLOUR_OBJ_INSTANCE_ID));
+	lwm2m_set_string(&LWM2M_OBJ(IPSO_OBJECT_COLOUR_ID, COLOUR_OBJ_INSTANCE_ID,
 					     APPLICATION_TYPE_RID),
 				  COLOUR_APP_TYPE);
-	lwm2m_engine_set_string(LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, COLOUR_OBJ_INSTANCE_ID,
+	lwm2m_set_string(&LWM2M_OBJ(IPSO_OBJECT_COLOUR_ID, COLOUR_OBJ_INSTANCE_ID,
 					     SENSOR_UNITS_RID),
 				  LIGHT_UNIT);
 
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_APP_COLOUR_SENSOR_VERSION_1_1)) {
 		/* Ambient light sensor */
-		lwm2m_engine_set_res_buf(
-			LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, LIGHT_OBJ_INSTANCE_ID, TIMESTAMP_RID),
+		lwm2m_set_res_buf(
+			&LWM2M_OBJ(IPSO_OBJECT_COLOUR_ID, LIGHT_OBJ_INSTANCE_ID, TIMESTAMP_RID),
 			&timestamp[LIGHT_OBJ_INSTANCE_ID],
 			sizeof(timestamp[LIGHT_OBJ_INSTANCE_ID]),
 			sizeof(timestamp[LIGHT_OBJ_INSTANCE_ID]), LWM2M_RES_DATA_FLAG_RW);
-		lwm2m_engine_register_post_write_callback(
-			LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, LIGHT_OBJ_INSTANCE_ID, COLOUR_RID),
+		lwm2m_register_post_write_callback(
+			&LWM2M_OBJ(IPSO_OBJECT_COLOUR_ID, LIGHT_OBJ_INSTANCE_ID, COLOUR_RID),
 			update_timestamp_cb);
 
 		/* Surface colour sensor */
-		lwm2m_engine_set_res_buf(
-			LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, COLOUR_OBJ_INSTANCE_ID, TIMESTAMP_RID),
+		lwm2m_set_res_buf(
+			&LWM2M_OBJ(IPSO_OBJECT_COLOUR_ID, COLOUR_OBJ_INSTANCE_ID, TIMESTAMP_RID),
 			&timestamp[COLOUR_OBJ_INSTANCE_ID],
 			sizeof(timestamp[COLOUR_OBJ_INSTANCE_ID]),
 			sizeof(timestamp[COLOUR_OBJ_INSTANCE_ID]),
 			LWM2M_RES_DATA_FLAG_RW);
-		lwm2m_engine_register_post_write_callback(
-			LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, COLOUR_OBJ_INSTANCE_ID, COLOUR_RID),
+		lwm2m_register_post_write_callback(
+			&LWM2M_OBJ(IPSO_OBJECT_COLOUR_ID, COLOUR_OBJ_INSTANCE_ID, COLOUR_RID),
 			update_timestamp_cb);
 	}
 

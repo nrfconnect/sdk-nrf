@@ -1868,6 +1868,30 @@ FW upgrade is broken for multi-image builds
 NFC
 ===
 
+.. rst-class:: v2-2-0
+
+NCSDK-19168: The :ref:`peripheral_nfc_pairing` and :ref:`central_nfc_pairing` samples cannot pair using OOB data.
+  The :ref:`nfc_ndef_ch_rec_parser_readme` library parses AC records in an invalid way.
+  As a result, the samples cannot parse OOB data for pairing.
+
+  **Workaround:** Revert the :file:`subsys/nfc/ndef/ch_record_parser.c` file to the state from the :ref:`ncs_release_notes_210`.
+
+  .. code-block::
+
+     cd <NCS_root_directory>
+     git checkout v2.1.0 -- subsys/nfc/ndef/ch_record_parser.c
+
+.. rst-class:: v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+NCSDK-19347: NFC Reader samples return false errors with value ``1``.
+  The :c:func:`nfc_t4t_isodep_transmit` function of the :ref:`nfc_t4t_isodep_readme` library can return ``1`` as error code even if a delayed operation has been scheduled correctly and should return ``0``.
+  This happens when the ISO-DEP frame is sent for the first time.
+  In samples, this error is propagated from the higher level :c:func:`nfc_t4t_hl_procedure_ndef_tag_app_select` function.
+  The :ref:`tnep_poller_readme` library operations can call the application error callback with error code ``1``, meaning that a delayed operation has been scheduled successfully.
+
+  **Workaround:** Ignore the :ref:`tnep_poller_readme` error callback with error value ``1``.
+  Treat the return value ``1`` of the functions :c:func:`nfc_t4t_isodep_transmit` and :c:func:`nfc_t4t_hl_procedure_ndef_tag_app_select` as success.
+
 .. rst-class:: v1-2-1 v1-2-0
 
 Sample incompatibility with the nRF5340 PDK

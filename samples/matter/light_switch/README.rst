@@ -32,7 +32,7 @@ To commission the device and run all required commands, you need also a :ref:`Ma
 By default, this sample is configured to use the CHIP Tool as Matter controller.
 See the :doc:`matter:chip_tool_guide` page in the Matter documentation for the CHIP Tool's setup information.
 
-If you decide to use :ref:`matter_light_switch_sample_remote_control_cli`, you also need a USB cable for the serial connection.
+If you decide to use :ref:`matter_light_switch_sample_ui_matter_cli`, you also need a USB cable for the serial connection.
 
 .. note::
     |matter_gn_required_note|
@@ -116,28 +116,6 @@ FEM support
 
 .. include:: /includes/sample_fem_support.txt
 
-.. _matter_light_switch_sample_remote_control_cli:
-
-Matter CLI support
-==================
-
-The Matter CLI allows to run commands through the serial interface using the USB cable connected to the USB port on Nordic Semiconductor's development kit.
-
-To enable the Matter CLI, you must build the light switch application with the additional option ``-DCONFIG_CHIP_LIB_SHELL=y``.
-Use the following command pattern, with ``<build-target>`` replaced with the build target name of Nordic Semiconductor's development kit you are using (see `Requirements`_):
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b <build-target> -- -DCONFIG_CHIP_LIB_SHELL=y
-
-For example:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b nrf52840dk_nrf52840_cpuapp -- -DCONFIG_CHIP_LIB_SHELL=y
-
 Device Firmware Upgrade support
 ===============================
 
@@ -205,7 +183,7 @@ NFC port with antenna attached:
 Matter CLI commands
 ===================
 
-If you build the application with the :ref:`matter_light_switch_sample_remote_control_cli`, you can use a series of commands to control the light switch device.
+If you build the application using the ``debug`` or ``no_dfu`` build type, you can use a series of commands to control the light switch device.
 These commands can be sent to one device (unicast) or a group of devices (groupcast).
 
 Unicast commands

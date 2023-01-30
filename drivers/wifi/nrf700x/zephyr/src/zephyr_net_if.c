@@ -226,6 +226,12 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 		return;
 	}
 
+	if (!device_is_ready(dev)) {
+		LOG_ERR("%s: Device %s is not ready\n",
+			__func__, dev->name);
+		return;
+	}
+
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
@@ -309,6 +315,12 @@ int wifi_nrf_if_start_zep(const struct device *dev)
 	if (!dev) {
 		LOG_ERR("%s: Invalid parameters\n",
 			__func__);
+		goto out;
+	}
+
+	if (!device_is_ready(dev)) {
+		LOG_ERR("%s: Device %s is not ready\n",
+			__func__, dev->name);
 		goto out;
 	}
 

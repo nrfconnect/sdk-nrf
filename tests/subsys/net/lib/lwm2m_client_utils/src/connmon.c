@@ -41,15 +41,17 @@ static struct modem_param_info modem_param = {
 
 ZTEST_SUITE(lwm2m_client_utils_connmon, NULL, NULL, NULL, NULL, NULL);
 
-static int set_string_custom_fake(const char *path, const char *data)
+static int set_string_custom_fake(const struct lwm2m_obj_path *path, const char *data)
 {
-	if (strcmp(path, "3/0/3") == 0) {
+	if (path->obj_id == 3 && path->obj_inst_id == 0 && path->res_id == 3) {
 		zassert_mem_equal(modem_param.device.modem_fw.value_string, data, strlen(data),
 				  "Wrong FW version");
-	} else if (strcmp(path, "4/0/4/0") == 0) {
+	} else if (path->obj_id == 4 && path->obj_inst_id == 0 && path->res_id == 4 &&
+		   path->res_inst_id == 0) {
 		zassert_mem_equal(modem_param.network.ip_address.value_string, data, strlen(data),
 				  "Wrong IP Address");
-	} else if (strcmp(path, "4/0/7/0") == 0) {
+	} else if (path->obj_id == 4 && path->obj_inst_id == 0 && path->res_id == 7 &&
+		   path->res_inst_id == 0){
 		zassert_mem_equal(modem_param.network.apn.value_string, data, strlen(data),
 				  "Wrong APN");
 	} else {
@@ -59,9 +61,9 @@ static int set_string_custom_fake(const char *path, const char *data)
 	return 0;
 }
 
-static int set_s8_custom_fake(const char *path, int8_t value)
+static int set_s8_custom_fake(const struct lwm2m_obj_path *path, int8_t value)
 {
-	if (strcmp(path, "4/0/2") == 0) {
+	if (path->obj_id == 4 && path->obj_inst_id == 0 && path->res_id == 2) {
 		zassert_equal((int8_t)RSRP_IDX_TO_DBM(modem_rsrp_resource), value);
 	} else {
 		zassert(0, "Invalid path");
@@ -70,9 +72,9 @@ static int set_s8_custom_fake(const char *path, int8_t value)
 	return 0;
 }
 
-static int set_u8_custom_fake(const char *path, uint8_t value)
+static int set_u8_custom_fake(const struct lwm2m_obj_path *path, uint8_t value)
 {
-	if (strcmp(path, "4/0/0") == 0) {
+	if (path->obj_id == 4 && path->obj_inst_id == 0 && path->res_id == 0) {
 		if (lte_mode == LTE_LC_LTE_MODE_LTEM) {
 			zassert_equal(LTE_FDD_BEARER, value);
 		} else if (lte_mode == LTE_LC_LTE_MODE_NBIOT) {
@@ -159,8 +161,8 @@ ZTEST(lwm2m_client_utils_connmon, test_connected)
 
 	modem_rsrp_resource = 50;
 	lte_lc_register_handler_fake.custom_fake = copy_event_handler;
-	lwm2m_engine_set_string_fake.custom_fake = set_string_custom_fake;
-	lwm2m_engine_set_s8_fake.custom_fake = set_s8_custom_fake;
+	lwm2m_set_string_fake.custom_fake = set_string_custom_fake;
+	lwm2m_set_s8_fake.custom_fake = set_s8_custom_fake;
 	modem_info_params_get_fake.custom_fake = copy_modem_info;
 	modem_info_rsrp_register_fake.custom_fake = copy_rsrp_handler;
 	lwm2m_init_connmon(NULL);
@@ -169,15 +171,15 @@ ZTEST(lwm2m_client_utils_connmon, test_connected)
 	handler(&evt);
 	k_sleep(K_MSEC(100));
 	zassert_equal(modem_info_params_get_fake.call_count, 1, "Info params get not called");
-	zassert_equal(lwm2m_engine_set_string_fake.call_count, 3, "Strings not set");
+	zassert_equal(lwm2m_set_string_fake.call_count, 3, "Strings not set");
 	modem_info_rsrp_cb(modem_rsrp_resource);
 	k_sleep(K_MSEC(100));
-	zassert_equal(lwm2m_engine_set_s8_fake.call_count, 1, "RSRP not set");
+	zassert_equal(lwm2m_set_s8_fake.call_count, 1, "RSRP not set");
 	evt.nw_reg_status = LTE_LC_NW_REG_NOT_REGISTERED;
 	handler(&evt);
 	k_sleep(K_MSEC(100));
 	zassert_equal(modem_info_params_get_fake.call_count, 1, "Info params called");
-	zassert_equal(lwm2m_engine_set_string_fake.call_count, 3, "Strings set");
+	zassert_equal(lwm2m_set_string_fake.call_count, 3, "Strings set");
 }
 
 ZTEST(lwm2m_client_utils_connmon, test_update_disconnected)
@@ -187,14 +189,14 @@ ZTEST(lwm2m_client_utils_connmon, test_update_disconnected)
 	setup();
 
 	lte_lc_register_handler_fake.custom_fake = copy_event_handler;
-	lwm2m_engine_set_string_fake.custom_fake = set_string_custom_fake;
+	lwm2m_set_string_fake.custom_fake = set_string_custom_fake;
 	modem_info_params_get_fake.custom_fake = copy_modem_info;
 	lwm2m_init_connmon(NULL);
 	evt.type = LTE_LC_EVT_CELL_UPDATE;
 	handler(&evt);
 	k_sleep(K_MSEC(100));
 	zassert_equal(modem_info_params_get_fake.call_count, 0, "Info params called");
-	zassert_equal(lwm2m_engine_set_string_fake.call_count, 0, "Strings set");
+	zassert_equal(lwm2m_set_string_fake.call_count, 0, "Strings set");
 }
 
 ZTEST(lwm2m_client_utils_connmon, test_update)
@@ -204,7 +206,7 @@ ZTEST(lwm2m_client_utils_connmon, test_update)
 	setup();
 
 	lte_lc_register_handler_fake.custom_fake = copy_event_handler;
-	lwm2m_engine_set_string_fake.custom_fake = set_string_custom_fake;
+	lwm2m_set_string_fake.custom_fake = set_string_custom_fake;
 	modem_info_params_get_fake.custom_fake = copy_modem_info;
 	lwm2m_init_connmon(NULL);
 	evt.type = LTE_LC_EVT_NW_REG_STATUS;
@@ -212,18 +214,18 @@ ZTEST(lwm2m_client_utils_connmon, test_update)
 	handler(&evt);
 	k_sleep(K_MSEC(100));
 	zassert_equal(modem_info_params_get_fake.call_count, 1, "Info params get not called");
-	zassert_equal(lwm2m_engine_set_string_fake.call_count, 3, "Strings not set");
+	zassert_equal(lwm2m_set_string_fake.call_count, 3, "Strings not set");
 	evt.type = LTE_LC_EVT_CELL_UPDATE;
 	handler(&evt);
 	k_sleep(K_MSEC(100));
 	zassert_equal(modem_info_params_get_fake.call_count, 2, "Info params called");
-	zassert_equal(lwm2m_engine_set_string_fake.call_count, 6, "Strings set");
+	zassert_equal(lwm2m_set_string_fake.call_count, 6, "Strings set");
 	evt.type = LTE_LC_EVT_NW_REG_STATUS;
 	evt.nw_reg_status = LTE_LC_NW_REG_NOT_REGISTERED;
 	handler(&evt);
 	k_sleep(K_MSEC(100));
 	zassert_equal(modem_info_params_get_fake.call_count, 2, "Info params called");
-	zassert_equal(lwm2m_engine_set_string_fake.call_count, 6, "Strings set");
+	zassert_equal(lwm2m_set_string_fake.call_count, 6, "Strings set");
 }
 
 ZTEST(lwm2m_client_utils_connmon, test_lte_mode_update)
@@ -234,10 +236,10 @@ ZTEST(lwm2m_client_utils_connmon, test_lte_mode_update)
 	lte_mode = LTE_LC_LTE_MODE_LTEM;
 
 	lte_lc_register_handler_fake.custom_fake = copy_event_handler;
-	lwm2m_engine_set_u8_fake.custom_fake = set_u8_custom_fake;
+	lwm2m_set_u8_fake.custom_fake = set_u8_custom_fake;
 	lwm2m_init_connmon(NULL);
 	evt.type = LTE_LC_EVT_LTE_MODE_UPDATE;
 	evt.lte_mode = lte_mode;
 	handler(&evt);
-	zassert_equal(lwm2m_engine_set_u8_fake.call_count, 1, "LTE mode not set");
+	zassert_equal(lwm2m_set_u8_fake.call_count, 1, "LTE mode not set");
 }

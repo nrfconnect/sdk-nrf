@@ -32,15 +32,15 @@ Disabling serial logging
 Current measurements on devices that have the |NCS| samples or applications programmed with the default configuration, might show elevated current values, when compared to the expected current values from  Nordic ultra-low power SoCs.
 It is because most of the samples and applications in the |NCS| are configured to perform logging over serial port (associated with UART(E) peripheral) by default.
 
-The image below shows the power measurement output on Power Profiler Kit II for an nRF9160 DK with the :ref:`zephyr:blinky-sample` sample compiled for the ``nrf9160dk_nrf9160`` build target without modifications in the sample configuration.
+The image below shows the power measurement output on Power Profiler Kit II for an nRF9160 DK with the :ref:`zephyr:blinky-sample` sample compiled for the ``nrf9160dk_nrf9160_ns`` build target without modifications in the sample configuration.
 
 .. figure:: images/app_power_opt_blinky_serial_on.png
-   :scale: 50 %
+   :width: 100 %
    :alt: Current measurement on the Blinky sample with serial logging enabled
 
    Current measurement for the Blinky sample with serial logging enabled
 
-The average current is close to 600 µA, which drains a 500 mAh lithium polymer battery approximately in a month.
+The average current is close to 470 µA, which drains a 500 mAh lithium polymer battery approximately in six weeks.
 To reduce current consumption, disable serial logging.
 
 To disable serial output, you must change the project configuration associated with the sample or application.
@@ -53,15 +53,15 @@ To disable serial output, you must change the project configuration associated w
 1. Set the project configuration ``CONFIG_SERIAL`` to ``n`` irrespective of whether you are building the sample for the :ref:`SPE-only <app_boards_spe_nspe_cpuapp>` build targets or build targets with :ref:`NSPE <app_boards_spe_nspe_cpuapp_ns>`.
 #. For the build target with NSPE (``nrf9160dk_nrf9160_ns``), ensure that serial logging is also disabled in Trusted Firmware-M by setting :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` to ``y``.
 
-The output on Power Profiler Kit II shows the power consumption on an nRF9160 DK with the sample compiled for the ``nrf9160dk_nrf9160`` build target with ``CONFIG_SERIAL=n``.
+The output on Power Profiler Kit II shows the power consumption on an nRF9160 DK with the sample compiled for the ``nrf9160dk_nrf9160_ns`` build target with ``CONFIG_SERIAL=n``.
 
 .. figure:: images/app_power_opt_blink_serial_off.png
-   :scale: 50 %
+   :width: 100 %
    :alt: Current measurement on the Blinky sample with serial logging disabled
 
    Current measurement on the Blinky sample with serial logging disabled
 
-The average current reduces to 4 µA, which implies 14 years of battery life on a 500 mAh lithium polymer battery compared to the 30-day battery life of the previous measurement.
+The average current reduces to 6 µA, which implies 9.5 years of battery life on a 500 mAh lithium polymer battery compared to the 6-week battery life of the previous measurement.
 
 For a similar configuration, see the :ref:`udp` sample, which transmits UDP packets to an LTE network using an nRF9160 DK.
 You can use the sample to characterize the current consumption of the nRF9160 SiP.
@@ -115,7 +115,7 @@ Assumptions:
 * The network is not present in the drop-down list corresponding to :guilabel:`Preset network parameters` in Online Power Profiler.
 
 .. note::
-   All measurements and calculations in the example use case are based on nRF9160 Revision 1.
+   All measurements and calculations in the example use case are based on nRF9160 Revision 2.
 
 Simulation using Online Power Profiler
 --------------------------------------
@@ -133,10 +133,10 @@ To simulate the use case with Online Power Profiler, complete the following step
 	The following image shows the result of the power profile simulation using Online Power Profiler:
 
 	.. figure:: images/app_power_opt_opp_default_20byte_10min.png
-	   :scale: 50 %
+	   :width: 100 %
 	   :alt: Online Power Profiler simulation for 20 bytes payload with 10 minutes interval
 
-	The total average current is now 93.61 µA.
+	The total average current is now 82.84 µA.
 	However, the battery charge is 1000 mAh.
 	If you are targeting the application to run for two years on a single battery, the maximum average current that can be allowed for the use case is 57 µA (1000 mAh/two years).
 	Hence, the estimation must target in bringing down the average current to or below 57 µA.
@@ -149,10 +149,10 @@ To simulate the use case with Online Power Profiler, complete the following step
 	The tuning of parameters results in the following output in Online Power Profiler:
 
 	.. figure:: images/app_power_opt_opp_default_40_byte_20min.png
-	   :scale: 50 %
+	   :width: 100 %
 	   :alt: Online Power Profiler simulation for 40-byte payload with 20 minutes interval
 
-	The average current is now 48.93 µA, which is below the calculated maximum limit of 57 µA.
+	The average current is now 42.96 µA, which is below the calculated maximum limit of 57 µA.
 
 #. Export the settings from the Online Power Profiler tool and compare them with the measurements in real networks.
    Complete the following sub-steps to export the settings from Online Power Profiler:
@@ -172,13 +172,13 @@ To measure current on an nRF9160 DK using the Power Profiler Kit II, while it is
 #. If PSM is available in your network, the power measurement using Power Profiler Kit II produces the following results:
 
    .. figure:: images/app_power_opt_ppk_psm.png
-      :scale: 50 %
+      :width: 100 %
       :alt: Power Profiler Kit II sample output with PSM
 
    If PSM is activated, you can see that the current value drops to a few µA.
    As long as the PSM mode is activated and no other activity occurs, the current value remains in the PSM floor as shown in the above image until a transmission occurs or until the PSM timer times out.
    Even though the requested time-out value in the use case is 60 minutes, it is decided by the network.
-   The PSM floor current is now 4.69 µA.
+   The PSM floor current is now 3.44 µA.
 
 #. Since the data transfer interval is 20 minutes, you can increase the frequency of transmission. Set :ref:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS <CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS>` to ``120`` in :file:`prj.conf`.
 #. Rebuild and program the sample.
@@ -189,18 +189,18 @@ To measure current on an nRF9160 DK using the Power Profiler Kit II, while it is
    After a duration of two minutes, observe the following results in the Power Profiler Kit II interface:
 
    .. figure:: images/app_power_opt_ppk_40_byte.png
-      :scale: 50 %
+      :width: 100 %
       :alt: Power Profiler Kit II sample output for 40-byte payload
 
-   The whole sequence of data transmission spans now 12.32 seconds and the process consumes a total battery charge of 139.9 mC.
-   According to the Online Power Profiler estimation, the time duration available for the data transmission sequence is 8.34 seconds with a battery charge of 53.94 mC.
+   The whole sequence of data transmission spans now 12.32 seconds and the process consumes a total battery charge of 115.06 mC.
+   According to the Online Power Profiler estimation, the time duration available for the data transmission sequence is 7.9 seconds with a battery charge of 48.33 mC.
    The longer data transmission duration in the real-time measurement using Power Profiler Kit II might be due to the RRC inactivity timer network parameter.
    Hence, tune the parameters to match the network environment.
 #. Before tuning, calculate the payload sending frequency, with the targeted battery life of two years:
 
    .. code-block:: none
 
-      139.9 mC / (57-4.6) µA = 44.5 minutes (4.6 µA is the measured PSM floor)
+      115.06 mC / (48.33-3.44) µA = 44.89 minutes (3.44 µA is the measured PSM floor)
 
    It is recommended to send a batch of six measurements for every 60 minutes to have some margin.
    Hence, you can change the payload size to a value of 120 bytes in the :file:`prj.conf` to observe how it affects the charge in a single transmission.
@@ -211,16 +211,16 @@ To measure current on an nRF9160 DK using the Power Profiler Kit II, while it is
    Observe the results in the Power Profiler Kit II interface:
 
    .. figure:: images/app_power_opt_ppk_120_byte.png
-      :scale: 50 %
+      :width: 100 %
       :alt: Power Profiler Kit II sample output for 120-byte payload
 
-  The overall charge is now 142 mC.
+  The overall charge is now 116.57 mC.
   However, in a real network, the values are bound to deviate.
   Therefore, it is recommended to do multiple measurements to understand the extent of deviations.
 
   .. code-block:: none
 
-     1000 mAh / ((142 mC/60 minutes) + 4.6 uA) = 2.59 years
+     1000 mAh / ((116.57 mC/60 minutes) + 3.44 uA) = 3.18 years
 
   With the above network conditions and the reporting interval, you can achieve two years of battery life.
 
@@ -247,47 +247,47 @@ To tune the network parameters for the example use case, complete the following 
    The image shows how you can measure the RRC inactivity timer with Power Profiler Kit II:
 
    .. figure:: images/app_power_opt_ppk_inactivity_timer.png
-      :scale: 50 %
+      :width: 100 %
       :alt: Power Profiler Kit II RRC inactivity timer measurement
 
    For the example use case, the RRC inactivity timer is 11 seconds.
-   The charge during the interval is 111.48 mC (cDRX charge in Online Power Profiler).
+   The charge during the interval is 93.82 mC (cDRX charge in Online Power Profiler).
    A closer inspection of the highlighted time duration shows that the `cDRX Interval` is 0.32 seconds:
 
    .. figure:: images/app_power_opt_ppk_cdrx_interval.png
-      :scale: 50 %
+      :width: 100 %
       :alt: Power Profiler Kit II cDRX interval
 
    The parameter ``cDRX on duration`` varies as shown in the following image, but the baseline (lowest value) is 40 milliseconds:
 
    .. figure:: images/app_power_opt_ppk_cdrx_duration_40ms.png
-      :scale: 50 %
+      :width: 100 %
       :alt: Power Profiler Kit II cDRX duration
 
 
 #. Provide the measurements from the previous step to Online Power Profiler:
 
    .. figure:: images/app_power_opt_opp_tuned_with_measurements.png
-      :scale: 50 %
+      :width: 100 %
       :alt: Tuning in Online Power Profiler
 
-   The total charge is now 108.9 mC.
-   There is still a difference of around 33 mC compared to the measurements with Power Profiler Kit II.
-   The cDRX charge in Online Power Profiler is 68.73 mC, but the measured cDRX charge in Power Profiler Kit II is 111.48 mC.
+   The total charge is now 99.59 mC.
+   There is still a difference of around 17 mC compared to the measurements with Power Profiler Kit II.
+   The cDRX charge in Online Power Profiler is 68.89 mC, but the measured cDRX charge in Power Profiler Kit II is 93.82 mC.
 
    After comparing the measurements, it can be concluded that the energy in the cDRX is the main contributor to the difference in measurements of Power Profiler Kit II and Online Power Profiler.
 
    Observe that the charge values associated with the cDRX events varies a lot.
-   The battery charge value of 2.16 mC in the baseline case fits well with the Online Power Profiler value:
+   The battery charge value of 1.92 mC in the baseline case fits well with the Online Power Profiler value:
 
    .. figure:: images/app_power_opp_cdrx_normal.png
-      :scale: 50 %
+      :width: 100 %
       :alt: Normal cDRX
 
-   However, in one of the worst case cDRX events, you can see a total charge of 7.22 mC, which is more than three times the charge in the baseline case:
+   However, in one of the worst case cDRX events, you can see a total charge of 7.96 mC, which is more than three times the charge in the baseline case:
 
    .. figure:: images/app_power_opt_drx_long.png
-      :scale: 50 %
+      :width: 100 %
       :alt: Long cDRX
 
 .. note::
@@ -299,7 +299,7 @@ For the example use case, an estimate (based on the values from Online Power Pro
 
    .. code-block:: none
 
-     (Total charge - cDRX charge) + cDRX charge * 1.5 = (108.91 mC - 68.73 mC) + 68.73 mC * 1.5 = 143.28 mC (which is close to the 142 mC from the Power Profiler Kit II measurements).
+     (Total charge - cDRX charge) + cDRX charge * 1.5 = (99.59 mC - 68.89 mC) + 68.89 mC * 1.5 = 134.04 mC (which is close to the 116.57 mC from the Power Profiler Kit II measurements).
 
 PSM active timer
 ++++++++++++++++
@@ -314,9 +314,97 @@ Below is a measurement from Power Profiler Kit II with the PSM active timer set 
 The rest of the parameters are identical to the previous measurements.
 
 .. figure:: images/app_power_opt_ppk_10sec_active_timer.png
-   :scale: 50 %
+   :width: 100 %
    :alt: PSM active timer
 
 LTE activity is now extended by 10 seconds with a lower duty cycle operation (RRC Idle) compared to the previous measurements.
 
 For additional information on power optimization for nRF52-based devices, see `Optimizing Power on nRF52 Designs`_.
+
+Power saving features
+*********************
+
+The following section lists some features you can use to fine-tune cellular power consumption.
+
+Reduced mobility
+================
+
+If the device in your application is mostly stationary, you can request the modem to reduce mobility.
+This feature is designed to reduce power consumption by reducing swapping between cells.
+You can use the :ref:`lte_lc_readme` to configure this feature.
+The following code shows how to configure this feature:
+
+.. code-block:: c
+
+	err = int lte_lc_reduced_mobility_set(LTE_LC_REDUCED_MOBILITY_NORDIC);
+	if (err) {
+		printk("lte_lc_reduced_mobility_set, error: %d\n", err);
+		return;
+	 }
+
+You can also enable this feature using the ``AT%REDMOB=1`` command.
+
+Country-specific search optimization
+====================================
+
+The initial search for a network in a new location can take several minutes and might therefore draw a considerable amount of power.
+This phase is not covered by the Online Power Profiler but might become a relevant factor if the device frequently travels long distances.
+
+To speed up network selection, you can provide country-specific search parameters for up to 70 countries.
+This list can be set using the ``AT%XCOUNTRYDATA`` command.
+
+Abort network search early
+==========================
+
+For weak radio conditions, the application can subscribe to ``LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE`` events.
+These occur when the modem finishes an initial search without connecting to a network.
+If the connection can wait some more time, the application can decide to abort the search and try again later.
+Without intervention, the modem continues with a more thorough search.
+
+Connection evaluation or Energy estimation
+==========================================
+
+Before sending data, the application can request the modem to estimate energy efficiency of the cell that it connects to.
+The :ref:`lte_lc_readme` can be used to query this information.
+The following code shows how to query this information:
+
+.. code-block:: c
+
+   struct lte_lc_conn_eval_params params = {0};
+   int err = lte_lc_conn_eval_params_get(&params);
+   if (err) {
+      printk("lte_lc_conn_eval_params_get, error: %d\n", err);
+      return;
+    }
+
+The following code block yields a high-level measure that can be used to delay network operations:
+
+.. code-block:: c
+
+   if (params.energy_estimate < LTE_LC_ENERGY_CONSUMPTION_NORMAL) {
+      /* start delay timer */
+    } else {
+      /* do network operation immediately */
+    }
+
+Synchronizing application with modem sleep
+==========================================
+
+Depending on network configuration, the modem wakes up at certain intervals.
+For example, it will have to do a Tracking Area Update (TAU) periodically to avoid reconnecting to the network.
+It is possible to subscribe to ``LTE_LC_EVT_TAU_PRE_WARNING`` or ``LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING`` events and then send application data whenever the modem wakes up.
+Use the pre-warning notifications to avoid having to wake up twice.
+
+Release Assistance Indication (RAI)
+===================================
+
+If you have low-level control over the protocol your IOT device uses, you might know when you should not expect more data.
+In that case, you can request to skip the RRC idle mode using :term:`Release Assistance Indication (RAI)`.
+The recommended way to do this is using setsockopt with an option like ``SO_RAI_LAST``.
+
+Low battery behavior
+====================
+
+You can configure low battery level warnings using the ``AT%XVBATLOWLVL`` command and subscribe using the ``AT%XVBATLVL`` command.
+There is also a power-off feature that notifies the application when the modem has shut down because of low power.
+It can be configured using the ``AT%XPOFWARN`` command.

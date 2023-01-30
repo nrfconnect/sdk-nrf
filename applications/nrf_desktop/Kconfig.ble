@@ -218,6 +218,23 @@ config BT_CTLR_CONN_PARAM_REQ
 
 endif # BT_CTLR
 
+config BT_DEVICE_NAME
+	default DESKTOP_DEVICE_PRODUCT
+	help
+	  By default, nRF Desktop devices use their product name as Bluetooth
+	  device name.
+
+config BT_DEVICE_APPEARANCE
+	default 962 if DESKTOP_PERIPHERAL_TYPE_MOUSE
+	default 961 if DESKTOP_PERIPHERAL_TYPE_KEYBOARD
+	default 961 if DESKTOP_ROLE_HID_DONGLE
+	default 960
+	help
+	  By default, nRF Desktop mice use Bluetooth appearance of mouse,
+	  nRF Desktop keyboards and dongles use Bluetooth appearance of
+	  keyboard. Other nRF Desktop devices use Bluetooth appearance of
+	  generic human interface device.
+
 config BT_SETTINGS_CCC_STORE_ON_WRITE
 	default y
 	help

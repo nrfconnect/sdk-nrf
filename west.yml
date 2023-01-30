@@ -115,15 +115,15 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: ffa944cecbe46b0d33588822aa24ee28c7ea33ba
+      revision: fc6e4b57f76bb945b9a0aede55858b196d36b609
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: f2ae8d497d4411147a372fbe5558670f09189650
+      revision: 81e6a7fbbc972b95affc9b6805b62237d0ffd6f4
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 292ead8ffa823fb4d0a9ac1acac5ce68d321abf3
+      revision: 515c7c67c59cbe1b3b97b235f8c93e63131dee7a
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -174,7 +174,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: a1953a7a34cd9167ba3eb101b4218c82bef2bf48
+      revision: 25506997f286fdbfa72725f4cee78c922c896255
     - name: ant
       repo-path: sdk-ant
       revision: 8f6e2b0470d11b5c1a97c92df35eb1350e84c5f8

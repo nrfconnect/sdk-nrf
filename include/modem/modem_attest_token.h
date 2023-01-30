@@ -69,12 +69,12 @@ struct nrf_attestation_data {
 	char nonce[NRF_ATTEST_NONCE_SZ];
 };
 
-/** @brief Device UUID v4 string */
+/** @brief Device UUID string (UUID v4 format) */
 struct nrf_device_uuid {
 	char str[NRF_DEVICE_UUID_STR_LEN + 1];
 };
 
-/** @brief Modem firmware UUID v4 string */
+/** @brief Modem firmware UUID string (UUID v4 format) */
 struct nrf_modem_fw_uuid {
 	char str[NRF_MODEM_FW_UUID_STR_LEN + 1];
 };

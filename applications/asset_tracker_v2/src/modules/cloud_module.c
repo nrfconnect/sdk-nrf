@@ -724,7 +724,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 
 		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
 
-			char *paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
+			struct lwm2m_obj_path paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
 
 			__ASSERT(ARRAY_SIZE(paths) ==
 				 ARRAY_SIZE(msg->module.data.data.buffer.paths),
@@ -774,7 +774,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 
 		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
 
-			char *paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
+			struct lwm2m_obj_path paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
 
 			__ASSERT(ARRAY_SIZE(paths) ==
 				 ARRAY_SIZE(msg->module.data.data.buffer.paths),

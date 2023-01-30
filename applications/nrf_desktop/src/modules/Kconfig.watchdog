@@ -8,7 +8,7 @@ menu "Watchdog settings"
 
 config DESKTOP_WATCHDOG_ENABLE
 	bool "Enable watchdog support"
-	depends on WATCHDOG
+	select WATCHDOG
 	help
 	  Enable watchdog to reset the device in case of problems.
 

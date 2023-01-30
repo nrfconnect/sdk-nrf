@@ -7,12 +7,12 @@ Wi-Fi
    :local:
    :depth: 2
 
-Wi-Fi is the branding used by the `Wi-Fi Alliance`_ (WFA) to describe the family of wireless local area network standards specified by the `IEEE 802.11 Working Group`_.
+Wi-Fi® is the branding used by the `Wi-Fi Alliance® <Wi-Fi Alliance_>`_ to describe the family of wireless local area network standards specified by the `IEEE 802.11 Working Group`_.
 The two industry bodies work closely together, with the Wi-Fi Alliance focusing on the requirements and certification of the technology, and the IEEE focusing on the underlying technical specifications.
 The Wi-Fi Alliance is responsible for the Wi-Fi CERTIFIED accreditation program, which aims to achieve high level of interoperability, reliability, and security compliance.
 
-Wi-Fi is an evolving standard, with new IEEE 802.11 standards being incorporated every 4-6 years, along with the corresponding WFA certification program.
-The branding *Wi-Fi 6* is defined by the WFA, and aligns with the IEEE 802.11ax specification, but includes all previous versions of the IEEE 802.11 specifications dating back to the introduction of Wi-Fi in 1997.
+Wi-Fi is an evolving standard, with new IEEE 802.11 standards being incorporated every 4-6 years, along with the corresponding Wi-Fi Alliance certification program.
+The branding *Wi-Fi 6* is defined by the Wi-Fi Alliance, and aligns with the IEEE 802.11ax specification, but includes all previous versions of the IEEE 802.11 specifications dating back to the introduction of Wi-Fi in 1997.
 The evolution from the base standard started with the introduction of IEEE 802.11b and IEEE 802.11a in 1999, IEEE 802.11g in 2003, IEEE 802.11n in 2008 (and subsequently branded Wi-Fi 4), IEEE 802.11ac in 2014 (subsequently branded Wi-Fi 5), and finally IEEE 802.11ax in 2019, branded Wi-Fi 6.
 These standards operate in the unlicensed spectrum of the 2.4 GHz and 5 GHz bands.
 However, 11b and 11g are only applicable in the 2.4 GHz band, while 11a and 11ac are only applicable in the 5 GHz band.
@@ -23,8 +23,8 @@ For nRF70 series documentation, see the following:
 
 * :ref:`ug_nrf70` provides information related to Wi-Fi support in |NCS| and using the development kit (DK).
 * :ref:`wifi_samples` for the available samples.
-
-.. * `Product specification for nRF 70 Series devices`_ for the supported features.
+* `Product specification for nRF70 Series devices`_ for the supported features.
+* `Guidelines and application notes for nRF70 Series devices`_.
 
 Overview
 ********
@@ -40,7 +40,7 @@ Wi-Fi is an Internet Protocol (IP) based network, with every device (AP or STA) 
 Since the radio frequency (RF) communication channel is unreliable, a number of mechanisms are used in an attempt to achieve reliability not typically present in wired networks.
 
 Firstly, multiple modulation schemes are used, with selection dependent on the prevailing RF channel conditions.
-Secondly, forward error protection (FEC) is used when the data is encoded.
+Secondly, forward error correction (FEC) is used when the data is encoded.
 This adds redundancy which can be used at the receiver in an attempt to recover the original data content.
 
 Multiple schemes (and rates) are available, depending on the version of the standard in use and the channel conditions.
@@ -48,7 +48,7 @@ Acknowledgements (ACKs) are used for unicast packet transmissions, with every su
 
 The RF medium also necessitates security to achieve privacy of the over-the-air packet transmissions.
 Again, multiple schemes are available depending on the version of the standard in use, though over time the older schemes tend to be deprecated as vulnerabilities emerge.
-The schemes are referred to as Wi-Fi Protected Access (WPA), with WPA3 being the latest version (mandated for all new WFA certifications).
+The schemes are referred to as Wi-Fi Protected Access (WPA), with WPA3 being the latest version (mandated for all new Wi-Fi Alliance certifications).
 
 Wi-Fi Protocol stack
 ********************
@@ -119,7 +119,7 @@ Rate adaption is the long-term adaption of the transmission parameters at the or
 Packet level security deals with performing symmetric encryption at the MAC frame level.
 The encryption algorithm in WPA is known as TKIP and uses the RC4 cipher, while WPA2 and WPA3 use encryption algorithms based on the AES cipher, with either 128 or 256-bit key lengths.
 WPA3 introduced an enhanced authentication scheme known as Simultaneous Authentication of Equals (SAE).
-WPA3 is now mandated and is a prerequisite for WFA certification.
+WPA3 is now mandated and is a prerequisite for Wi-Fi Alliance certification.
 
 Power save is the mechanism to enable network clients (STAs) to periodically enter a very low power state whereby they can shut down the majority of the transceiver functionality without risking any missed traffic.
 This has traditionally been coordinated by the AP using a mechanism referred to as Delivery Traffic Indication Message (DTIM).
@@ -133,7 +133,7 @@ Physical layer
 
 The Physical layer is the final layer before the data is presented on the medium (radio frequency channel) and is primarily responsible for modulation and demodulation.
 Various techniques are employed in the PHY to facilitate reliability, with forward error correction (FEC) being the most powerful.
-Two main schemes are used, namely Binary Convolution Codes (BCC) and Low Density Parity Check (LDPC) codes, the latter being introduced in Wi-Fi 5.
+Two main schemes are used, namely Binary Convolutional Codes (BCC) and Low Density Parity Check (LDPC) codes, the latter being introduced in Wi-Fi 5.
 Both schemes add redundancy at the transmitter to improve demodulation reliability in the presence of reduced Signal to Noise Ratios (SNRs).
 LDPC can operate down to approximately two dB lower SNR than BCC.
 

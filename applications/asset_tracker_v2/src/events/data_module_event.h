@@ -17,6 +17,12 @@
 #include <app_event_manager_profiler_tracer.h>
 #include "cloud/cloud_codec/cloud_codec.h"
 
+#if defined(CONFIG_LWM2M)
+#include <zephyr/net/lwm2m.h>
+#else
+#include "cloud/cloud_codec/lwm2m/lwm2m_dummy.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -132,8 +138,7 @@ struct data_module_data_buffers {
 	char *buf;
 	size_t len;
 	/** Object paths used in lwM2M. NULL terminated. */
-	char paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX]
-		  [CONFIG_CLOUD_CODEC_LWM2M_PATH_ENTRY_SIZE_MAX];
+	struct lwm2m_obj_path paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
 	uint8_t valid_object_paths;
 };
 

@@ -162,12 +162,10 @@ static int server_send_mute_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t r
 static void lwm2m_register_server_send_mute_cb(void)
 {
 	int ret;
-	char path[sizeof("/0/0/10")];
 	lwm2m_engine_set_data_cb_t cb;
 
 	cb = server_send_mute_cb;
-	snprintk(path, sizeof(path), "1/%d/23", client.srv_obj_inst);
-	ret = lwm2m_engine_register_post_write_callback(path, cb);
+	ret = lwm2m_register_post_write_callback(&LWM2M_OBJ(1, client.srv_obj_inst, 23), cb);
 	if (ret) {
 		LOG_ERR("Send enable CB fail %d", ret);
 	}
@@ -176,15 +174,15 @@ static void lwm2m_register_server_send_mute_cb(void)
 void send_periodically_work_handler(struct k_work *work)
 {
 	int ret;
-	char const *send_path[4] = {
-		LWM2M_PATH(3, 0, 0),
-		LWM2M_PATH(3, 0, 3),
-		LWM2M_PATH(3, 0, 13),
-		LWM2M_PATH(3, 0, 19),
+	const struct lwm2m_obj_path send_path[4] = {
+		LWM2M_OBJ(3, 0, 0),
+		LWM2M_OBJ(3, 0, 3),
+		LWM2M_OBJ(3, 0, 13),
+		LWM2M_OBJ(3, 0, 19),
 	};
 
 	/* lwm2m send post to server */
-	ret = lwm2m_engine_send(&client, send_path, 4, true);
+	ret = lwm2m_send(&client, send_path, 4, true);
 	if (ret) {
 		if (ret == EPERM) {
 			LOG_INF("Server Mute send block send operation");
@@ -280,7 +278,7 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 
 		LOG_INF("Obtained date-time from modem");
 		date_time_now(&time);
-		lwm2m_engine_set_s32(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, CURRENT_TIME_RID),
+		lwm2m_set_s32(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, CURRENT_TIME_RID),
 				     (int32_t)(time / 1000));
 		break;
 	}
@@ -290,7 +288,7 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 
 		LOG_INF("Obtained date-time from NTP server");
 		date_time_now(&time);
-		lwm2m_engine_set_s32(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, CURRENT_TIME_RID),
+		lwm2m_set_s32(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, CURRENT_TIME_RID),
 				     (int32_t)(time / 1000));
 		break;
 	}
@@ -306,17 +304,17 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 
 static void rd_client_update_lifetime(int srv_obj_inst)
 {
-	char pathstr[MAX_RESOURCE_LEN];
 	uint32_t current_lifetime = 0;
 
 	uint32_t lifetime = CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME;
 
-	snprintk(pathstr, sizeof(pathstr), "1/%d/1", srv_obj_inst);
-	lwm2m_engine_get_u32(pathstr, &current_lifetime);
+	struct lwm2m_obj_path path = LWM2M_OBJ(1, srv_obj_inst, 1);
+
+	lwm2m_get_u32(&path, &current_lifetime);
 
 	if (current_lifetime != lifetime) {
 		/* SET Configured value */
-		lwm2m_engine_set_u32(pathstr, lifetime);
+		lwm2m_set_u32(&path, lifetime);
 		LOG_DBG("Update session lifetime from %d to %d", current_lifetime, lifetime);
 	}
 	update_session_lifetime = false;
@@ -532,11 +530,6 @@ void main(void)
 		LOG_ERR("Unable to init modem library (%d)", ret);
 		return;
 	}
-#endif
-
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	/* Modem FW update needs to be verified before modem is used. */
-	lwm2m_verify_modem_fw_update();
 #endif
 
 	ret = app_event_manager_init();

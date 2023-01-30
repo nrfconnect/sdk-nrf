@@ -6,42 +6,12 @@
 
 menu "Utilities"
 
-if BT_ADV_PROV
-
-config BT_ADV_PROV_FLAGS
-	default y
-
-config BT_ADV_PROV_GAP_APPEARANCE
-	default y
-
-config BT_ADV_PROV_DEVICE_NAME
-	default y
-
-config BT_ADV_PROV_SWIFT_PAIR
-	default y
-
-config BT_ADV_PROV_FAST_PAIR
-	default y if BT_FAST_PAIR
-
-config BT_ADV_PROV_FAST_PAIR_SHOW_UI_PAIRING
-	depends on BT_ADV_PROV_FAST_PAIR
-	default n
-	help
-	  nRF Desktop peripheral supports one bond per local identity. Disable
-	  the UI indication during Fast Pair not discoverable advertising to
-	  prevent bonding failures.
-
-config BT_ADV_PROV_TX_POWER
-	default y
-
 config DESKTOP_ADV_PROV_UUID16_ALL
 	bool "UUID16 advertising provider"
+	depends on BT_ADV_PROV
 	depends on (DESKTOP_HIDS_ENABLE || DESKTOP_BAS_ENABLE)
-	default y
 	help
 	  Adds all UUID16 to the advertising payload if used Bluetooth local
 	  identity has no bond.
-
-endif # BT_ADV_PROV
 
 endmenu

@@ -571,8 +571,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	if (is_module_state_event(aeh)) {
 		struct module_state_event *event = cast_module_state_event(aeh);
 
-		if (check_state(event, MODULE_ID(ble_state),
-				MODULE_STATE_READY)) {
+		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
 
 			__ASSERT_NO_MSG(!initialized);
@@ -612,7 +611,12 @@ static bool app_event_handler(const struct app_event_header *aeh)
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
 APP_EVENT_SUBSCRIBE(MODULE, hid_notification_event);
-APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+/* The module is initialized before CAF BLE state module to make sure that the GATT HIDS is
+ * registered before Bluetooth is enabled. This is done to avoid submitting works related to Service
+ * Changed indication and GATT database hash calculation before system settings are loaded from
+ * non-volatile memory.
+ */
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, module_state_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 APP_EVENT_SUBSCRIBE(MODULE, config_event);
 #endif

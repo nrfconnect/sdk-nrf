@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig PSCM
+	bool "PSCM - PCM Stream Channel Modifier Library"
+	help
+	  Library for manipulating pulse coded modulation (PCM) streams
+
+if PSCM
+
+module = PSCM
+module-str = PCM Stream Channel Modifier
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif #PSCM

@@ -170,7 +170,7 @@ To define an object that follows the Generic Sensor definition, complete the fol
          sensor_value += 0.1;
 
          /* Return sensor value for the LwM2M library */
-         lwm2m_engine_set_float32("3300/0/5700", &sensor_value);
+         lwm2m_set_f64(&LWM2M_OBJ(3300, 0, 5700), sensor_value);
          *data_len = sizeof(sensor_value);
          return &sensor_value;
       }
@@ -183,8 +183,8 @@ To define an object that follows the Generic Sensor definition, complete the fol
 
       int init_resource(void)
       {
-         lwm2m_engine_create_obj_inst("3300/0");
-         lwm2m_engine_register_read_callback("3300/0/5700", read_cb);
+         lwm2m_create_obj_inst(&LWM2M_OBJ(3300, 0);
+         lwm2m_register_read_callback(&LWM2M_OBJ(3300, 0, 5700), read_cb);
          return 0;
       }
 
@@ -196,7 +196,7 @@ For defining outputs, the process is very much similar but instead of read callb
 Registering a read callback is optional and is recommended if you want to read the data directly from a sensor on each read operation.
 If the value of a readable resource is modified on an event, a read callback need not be registered.
 An example is the Push Button object.
-On receipt of an event that is triggered by button press or release, the value is updated through the lwm2m_engine with :c:func:`lwm2m_engine_set_bool`.
+On receipt of an event that is triggered by button press or release, the value is updated through the lwm2m_engine with :c:func:`lwm2m_set_bool`.
 When a read operation is issued by the server, the engine obtains the button value directly from the object's internal data instead of the read callback.
 This causes the internal engine to allocate memory and store all the resources that are defined for the IPSO object ID.
 
@@ -217,7 +217,7 @@ The following example shows how to create a new object type that follows the IPS
 
       #define IPSO_DIGITAL_OUTPUT_ID        3201
       #define OUTPUT_DIGITAL_STATE_ID        5550
-      #define RESOURCE_PATH LWM2M_PATH(IPSO_DIGITAL_OUTPUT_ID, 0, OUTPUT_DIGITAL_STATE_ID)
+      #define RESOURCE_PATH &LWM2M_OBJ(IPSO_DIGITAL_OUTPUT_ID, 0, OUTPUT_DIGITAL_STATE_ID)
 
 #. Define the storage for the output type:
 
@@ -301,8 +301,8 @@ The following example shows how to create a new object type that follows the IPS
          output_obj.max_instance_count = ARRAY_SIZE(inst);
          output_obj.create_cb = output_create;
          lwm2m_register_obj(&output_obj);
-         lwm2m_engine_create_obj_inst(LWM2M_PATH(3201, 0));
-         lwm2m_engine_register_post_write_callback(RESOURCE_PATH, on_off_cb);
+         lwm2m_create_obj_inst(&LWM2M_OBJ(3201, 0));
+         lwm2m_register_post_write_callback(RESOURCE_PATH, on_off_cb);
          return 0;
       }
 

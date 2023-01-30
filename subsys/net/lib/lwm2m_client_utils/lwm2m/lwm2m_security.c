@@ -81,13 +81,11 @@ static int write_credential_type(int sec_obj_inst, int sec_tag, int res_id,
 	int ret;
 	void *cred = NULL;
 	uint16_t cred_len;
-	char pathstr[sizeof("0/0/0")];
 	char psk_hex[65];
 
-	snprintk(pathstr, sizeof(pathstr), "0/%d/%d", sec_obj_inst, res_id);
-	ret = lwm2m_engine_get_res_buf(pathstr, &cred, NULL, &cred_len,  NULL);
+	ret = lwm2m_get_res_buf(&LWM2M_OBJ(0, sec_obj_inst, res_id), &cred, NULL, &cred_len,  NULL);
 	if (ret < 0) {
-		LOG_ERR("Unable to get resource data for '%s'", pathstr);
+		LOG_ERR("Unable to get resource data for '%d/%d/%d'", 0, sec_obj_inst, res_id);
 		return ret;
 	}
 
@@ -169,11 +167,9 @@ out:
 static int sec_mode(int sec_obj_inst)
 {
 	uint8_t mode;
-	char path[sizeof("0/0/0")];
 	int ret;
 
-	snprintk(path, sizeof(path), "0/%d/%d", sec_obj_inst, SECURITY_MODE_ID);
-	ret = lwm2m_engine_get_u8(path, &mode);
+	ret = lwm2m_get_u8(&LWM2M_OBJ(0, sec_obj_inst, SECURITY_MODE_ID), &mode);
 	if (ret < 0) {
 		return ret;
 	}
@@ -185,8 +181,8 @@ static bool sec_obj_has_credentials(int sec_obj_inst)
 	int ret;
 	void *cred = NULL;
 	uint16_t cred_len;
-	char path[sizeof("0/0/0")];
 	int mode;
+	struct lwm2m_obj_path path;
 
 	mode = sec_mode(sec_obj_inst);
 	if (mode < 0) {
@@ -196,23 +192,25 @@ static bool sec_obj_has_credentials(int sec_obj_inst)
 		return false;
 	}
 
-	snprintk(path, sizeof(path), "0/%d/%d", sec_obj_inst, SECURITY_CLIENT_PK_ID);
-	ret = lwm2m_engine_get_res_buf(path, &cred, NULL, &cred_len, NULL);
+	path = LWM2M_OBJ(0, sec_obj_inst, SECURITY_CLIENT_PK_ID);
+	ret = lwm2m_get_res_buf(&path, &cred, NULL, &cred_len, NULL);
 	if (ret < 0) {
 		goto fail;
 	}
 	if (cred_len == 0) {
 		return false;
 	}
-	snprintk(path, sizeof(path), "0/%d/%d", sec_obj_inst, SECURITY_SECRET_KEY_ID);
-	ret = lwm2m_engine_get_res_buf(path, &cred, NULL, &cred_len, NULL);
+
+	path.res_id = SECURITY_SECRET_KEY_ID;
+	ret = lwm2m_get_res_buf(&path, &cred, NULL, &cred_len, NULL);
 	if (ret < 0) {
 		goto fail;
 	}
 
 	return cred_len != 0;
 fail:
-	LOG_ERR("Unable to get resource data for '%s', rc = %d", path, ret);
+	LOG_ERR("Unable to get resource data for '%d/%d/%d', rc = %d", path.obj_id,
+		path.obj_inst_id, path.res_id, ret);
 	return false;
 }
 
@@ -380,6 +378,7 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 	uint8_t flags;
 	struct lwm2m_obj_path path;
 	int ret;
+	uint8_t level;
 
 	if (!key) {
 		return -ENOENT;
@@ -388,27 +387,27 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 	LOG_DBG("Loading \"%s\"", key);
 
 	ret = lwm2m_string_to_path(key, &path, '/');
+
 	if (ret) {
 		return ret;
 	}
 
+	level = path.level;
+	path.level = LWM2M_PATH_LEVEL_OBJECT_INST;
+
 	/* Create object instance, if it does not exist */
 	if (!object_instance_exist(path.obj_id, path.obj_inst_id)) {
-		char o_path[LWM2M_MAX_PATH_STR_LEN];
-
-		ret = lwm2m_path_to_string(o_path, sizeof(o_path), &path,
-					   LWM2M_PATH_LEVEL_OBJECT_INST);
-		if (ret < 0) {
-			return -EIO;
-		}
-		ret = lwm2m_engine_create_obj_inst(o_path);
+		ret = lwm2m_create_object_inst(&path);
 		if (ret) {
-			LOG_ERR("Failed to create object instance %s", o_path);
+			LOG_ERR("Failed to create object instance %d/%d", path.obj_id,
+				path.obj_inst_id);
 			return ret;
 		}
 	}
 
-	if (lwm2m_engine_get_res_buf((char *)key, &buf, &len, NULL, &flags) != 0) {
+	path.level = level;
+
+	if (lwm2m_get_res_buf(&path, &buf, &len, NULL, &flags) != 0) {
 		LOG_ERR("Failed to get data pointer");
 		return -ENOENT;
 	}
@@ -419,12 +418,12 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 		return -ENOENT;
 	}
 
-	lwm2m_engine_set_res_data_len((char *)key,  len);
+	lwm2m_set_res_data_len(&path,  len);
 
 	if (path.obj_id == LWM2M_OBJECT_SECURITY_ID && path.res_id == SECURITY_BOOTSTRAP_FLAG_ID) {
 		bool is_bootstrap;
 
-		lwm2m_engine_get_bool(key, &is_bootstrap);
+		lwm2m_get_bool(&path, &is_bootstrap);
 		if (is_bootstrap) {
 			bootstrap_settings_loaded_inst = path.obj_inst_id;
 		}
@@ -493,7 +492,6 @@ static int write_cb_srv(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst
 
 static void register_write_cb(int obj, int inst, int res)
 {
-	char path[sizeof("/0/0/10")];
 	lwm2m_engine_set_data_cb_t cb;
 
 	if (obj == LWM2M_OBJECT_SECURITY_ID) {
@@ -502,8 +500,7 @@ static void register_write_cb(int obj, int inst, int res)
 		cb = write_cb_srv;
 	}
 
-	snprintk(path, sizeof(path), "%d/%d/%d", obj, inst, res);
-	lwm2m_engine_register_post_write_callback(path, cb);
+	lwm2m_register_post_write_callback(&LWM2M_OBJ(obj, inst, res), cb);
 }
 
 static int server_deleted(uint16_t id)
@@ -569,9 +566,9 @@ static int init_default_security_obj(struct lwm2m_ctx *ctx, char *endpoint)
 	uint16_t server_url_len;
 
 	/* Server URL */
-	ret = lwm2m_engine_get_res_buf(LWM2M_PATH(LWM2M_OBJECT_SECURITY_ID, 0,
-						   SECURITY_SERVER_URI_ID),
-					(void **)&server_url, &server_url_len, NULL, NULL);
+	ret = lwm2m_get_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_SECURITY_ID, 0,
+					   SECURITY_SERVER_URI_ID),
+				(void **)&server_url, &server_url_len, NULL, NULL);
 	if (ret < 0) {
 		return ret;
 	}
@@ -579,24 +576,24 @@ static int init_default_security_obj(struct lwm2m_ctx *ctx, char *endpoint)
 	server_url_len = snprintk(server_url, server_url_len, "%s",
 				  CONFIG_LWM2M_CLIENT_UTILS_SERVER);
 
-	lwm2m_engine_set_res_data_len(LWM2M_PATH(LWM2M_OBJECT_SECURITY_ID, 0,
-						 SECURITY_SERVER_URI_ID), server_url_len + 1);
+	lwm2m_set_res_data_len(&LWM2M_OBJ(LWM2M_OBJECT_SECURITY_ID, 0,
+					  SECURITY_SERVER_URI_ID), server_url_len + 1);
 
 	/* Security Mode, default to PSK with key written by application */
 	if (IS_ENABLED(CONFIG_LWM2M_DTLS_SUPPORT)) {
 		lwm2m_security_set_psk(0, NULL, 0, false, endpoint);
 	} else {
-		lwm2m_engine_set_u8(LWM2M_PATH(LWM2M_OBJECT_SECURITY_ID, 0, SECURITY_MODE_ID),
-				    SEC_MODE_NO_SEC);
+		lwm2m_set_u8(&LWM2M_OBJ(LWM2M_OBJECT_SECURITY_ID, 0, SECURITY_MODE_ID),
+			     SEC_MODE_NO_SEC);
 	}
 
 #if defined(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP)
 	/* Mark 1st instance of security object as a bootstrap server */
-	lwm2m_engine_set_u8("0/0/1", 1);
+	lwm2m_set_u8(&LWM2M_OBJ(0, 0, 1), 1);
 #else
 	/* Security and Server object need matching Short Server ID value. */
-	lwm2m_engine_set_u16("0/0/10", 101);
-	lwm2m_engine_set_u16("1/0/0", 101);
+	lwm2m_set_u16(&LWM2M_OBJ(0, 0, 10), 101);
+	lwm2m_set_u16(&LWM2M_OBJ(1, 0, 0), 101);
 #endif
 	return 0;
 }
@@ -604,18 +601,10 @@ static int init_default_security_obj(struct lwm2m_ctx *ctx, char *endpoint)
 static int lwm2m_security_set_opaque_res(uint16_t sec_obj_inst, uint16_t resource, const void *buf,
 					 int len)
 {
-	int rc;
-	char path[sizeof("0/10/10")];
-
-	rc = snprintk(path, sizeof(path), "0/%d/%d", sec_obj_inst, resource);
-	if (rc < 0 || rc >= sizeof(path)) {
-		return -EINVAL;
-	}
-
 	if (buf && len) {
-		return lwm2m_engine_set_opaque(path, (void *) buf, len);
+		return lwm2m_set_opaque(&LWM2M_OBJ(0, sec_obj_inst, resource), (void *) buf, len);
 	} else {
-		return lwm2m_engine_set_res_data_len(path, 0);
+		return lwm2m_set_res_data_len(&LWM2M_OBJ(0, sec_obj_inst, resource), 0);
 	}
 }
 
@@ -709,15 +698,15 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode
 	 * because it is the bootstrap server that creates it for us.
 	 * Then on a next boot, we load it from flash.
 	 */
-	lwm2m_engine_delete_obj_inst("1/0");
+	lwm2m_delete_object_inst(&LWM2M_OBJ(1, 0));
 
 	/* Bootsrap server might delete or create our security&server object,
 	 * so I need to be aware of those.
 	 */
-	lwm2m_engine_register_create_callback(LWM2M_OBJECT_SECURITY_ID, security_created);
-	lwm2m_engine_register_delete_callback(LWM2M_OBJECT_SECURITY_ID, security_deleted);
-	lwm2m_engine_register_create_callback(LWM2M_OBJECT_SERVER_ID, server_created);
-	lwm2m_engine_register_delete_callback(LWM2M_OBJECT_SERVER_ID, server_deleted);
+	lwm2m_register_create_callback(LWM2M_OBJECT_SECURITY_ID, security_created);
+	lwm2m_register_delete_callback(LWM2M_OBJECT_SECURITY_ID, security_deleted);
+	lwm2m_register_create_callback(LWM2M_OBJECT_SERVER_ID, server_created);
+	lwm2m_register_delete_callback(LWM2M_OBJECT_SERVER_ID, server_deleted);
 
 	int ret = settings_subsys_init();
 
@@ -741,7 +730,7 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode
 	if (have_permanently_stored_keys && bootstrap_settings_loaded_inst > 0) {
 		/* I don't need the default security instance 0 anymore */
 		loading_in_progress = true;
-		lwm2m_engine_delete_obj_inst("0/0");
+		lwm2m_delete_object_inst(&LWM2M_OBJ(0, 0));
 		loading_in_progress = false;
 		return 0;
 	}

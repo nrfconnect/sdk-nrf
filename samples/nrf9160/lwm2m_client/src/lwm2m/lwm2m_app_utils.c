@@ -16,11 +16,8 @@ LOG_MODULE_REGISTER(app_lwm2m, CONFIG_APP_LOG_LEVEL);
 void set_ipso_obj_timestamp(int ipso_obj_id, unsigned int obj_inst_id)
 {
 	int ret;
-	char path[MAX_LWM2M_PATH_LEN];
 
-	snprintk(path, MAX_LWM2M_PATH_LEN, "%d/%u/%d", ipso_obj_id, obj_inst_id, TIMESTAMP_RID);
-
-	ret = lwm2m_engine_set_time(path, time(NULL));
+	ret = lwm2m_set_time(&LWM2M_OBJ(ipso_obj_id, obj_inst_id, TIMESTAMP_RID), time(NULL));
 	if (ret) {
 		LOG_ERR("Unable to set timestamp");
 	}

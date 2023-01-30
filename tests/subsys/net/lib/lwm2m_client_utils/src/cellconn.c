@@ -28,19 +28,19 @@ static void setup(void)
 	FFF_RESET_HISTORY();
 }
 
-static int copy_uri_write_cb(const char *path, lwm2m_engine_set_data_cb_t cb)
+static int copy_uri_write_cb(const struct lwm2m_obj_path *path, lwm2m_engine_set_data_cb_t cb)
 {
-	if (strcmp(path, "10/0/1") == 0) {
+	if (path->obj_id == 10 && path->obj_inst_id == 0 && path->res_id == 1) {
 		set_uri_cb = cb;
-	} else if (strcmp(path, "10/0/4") == 0) {
+	} else if (path->obj_id == 10 && path->obj_inst_id == 0 && path->res_id == 4) {
 		set_uri_cb_psm = cb;
-	} else if (strcmp(path, "10/0/5") == 0) {
+	} else if (path->obj_id == 10 && path->obj_inst_id == 0 && path->res_id == 5) {
 		set_uri_cb_active_time = cb;
-	} else if (strcmp(path, "10/0/8") == 0) {
+	} else if (path->obj_id == 10 && path->obj_inst_id == 0 && path->res_id == 8) {
 		set_uri_cb_edrx = cb;
-	} else if (strcmp(path, "10/0/13") == 0) {
+	} else if (path->obj_id == 10 && path->obj_inst_id == 0 && path->res_id == 13) {
 		set_uri_cb_psm_update = cb;
-	} else if (strcmp(path, "10/0/14") == 0) {
+	} else if (path->obj_id == 10 && path->obj_inst_id == 0 && path->res_id == 14) {
 		set_uri_cb_rai = cb;
 	}
 
@@ -64,9 +64,9 @@ ZTEST(lwm2m_client_utils_cellconn, test_init)
 
 	rc = lwm2m_init_cellular_connectivity_object();
 	zassert_equal(rc, 0, "Wrong return value");
-	zassert_equal(lwm2m_engine_register_post_write_callback_fake.call_count, 7,
+	zassert_equal(lwm2m_register_post_write_callback_fake.call_count, 7,
 		      "Callbacks not registered");
-	zassert_equal(lwm2m_engine_set_res_buf_fake.call_count, 9,
+	zassert_equal(lwm2m_set_res_buf_fake.call_count, 9,
 		      "Data buffers not set");
 }
 
@@ -77,7 +77,7 @@ ZTEST(lwm2m_client_utils_cellconn, test_disable_radio_period_cb)
 
 	setup();
 
-	lwm2m_engine_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
+	lwm2m_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
 	rc = lwm2m_init_cellular_connectivity_object();
 	zassert_equal(rc, 0, "Wrong return value");
 
@@ -93,7 +93,7 @@ ZTEST(lwm2m_client_utils_cellconn, test_psm_time_cb)
 
 	setup();
 
-	lwm2m_engine_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
+	lwm2m_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
 	rc = lwm2m_init_cellular_connectivity_object();
 	zassert_equal(rc, 0, "Wrong return value");
 
@@ -108,7 +108,7 @@ ZTEST(lwm2m_client_utils_cellconn, test_active_time_cb)
 
 	setup();
 
-	lwm2m_engine_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
+	lwm2m_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
 	rc = lwm2m_init_cellular_connectivity_object();
 	zassert_equal(rc, 0, "Wrong return value");
 
@@ -123,7 +123,7 @@ ZTEST(lwm2m_client_utils_cellconn, test_edrx_update_cb)
 
 	setup();
 
-	lwm2m_engine_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
+	lwm2m_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
 	rc = lwm2m_init_cellular_connectivity_object();
 	zassert_equal(rc, 0, "Wrong return value");
 
@@ -138,7 +138,7 @@ ZTEST(lwm2m_client_utils_cellconn, test_active_psm_update_cb)
 
 	setup();
 
-	lwm2m_engine_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
+	lwm2m_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
 	rc = lwm2m_init_cellular_connectivity_object();
 	zassert_equal(rc, 0, "Wrong return value");
 
@@ -153,7 +153,7 @@ ZTEST(lwm2m_client_utils_cellconn, test_rai_update_cb)
 
 	setup();
 
-	lwm2m_engine_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
+	lwm2m_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
 	rc = lwm2m_init_cellular_connectivity_object();
 	zassert_equal(rc, 0, "Wrong return value");
 

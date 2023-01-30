@@ -44,5 +44,7 @@ rsource "sfloat/Kconfig"
 rsource "contin_array/Kconfig"
 rsource "pcm_mix/Kconfig"
 rsource "tone/Kconfig"
+rsource "pcm_stream_channel_modifier/Kconfig"
+rsource "data_fifo/Kconfig"
 
 endmenu

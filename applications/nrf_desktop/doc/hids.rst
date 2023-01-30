@@ -28,15 +28,19 @@ Complete the following steps to configure the module:
 
 1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
    Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` options are enabled.
-   The HID Service application module is enabled by the :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option which is selected by :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` together with other GATT Services that are required for a HID device.
-#. The :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option selects :kconfig:option:`CONFIG_BT_HIDS` to automatically enable the :ref:`hids_readme`.
-#. Enable the :ref:`bt_conn_ctx_readme` (:kconfig:option:`CONFIG_BT_CONN_CTX`).
-   This is required by the |GATT_HID|.
-#. Configure the :ref:`hids_readme`.
-   See its documentation for configuration details.
+   The HID Service application module is enabled by the :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option, which is implied by :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` together with other GATT Services that are required for a HID device.
+#. The :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option selects the following Kconfig options:
+
+   * The :kconfig:option:`CONFIG_BT_HIDS` option that automatically enables the :ref:`hids_readme`.
+   * The :kconfig:option:`CONFIG_BT_CONN_CTX` option that automatically enables the :ref:`bt_conn_ctx_readme`, which is required by the |GATT_HID|.
+
+#. The nRF Desktop application modifies the defaults of Kconfig option values, defined by the :ref:`hids_readme`, to tailor the default configuration to application needs.
+   The configuration is tailored for either nRF Desktop mouse (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_MOUSE <config_desktop_app_options>`) or nRF Desktop keyboard (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`).
+   For more details, see the :file:`src/modules/Kconfig.hids` file.
 
    .. tip::
-     If the HID report configuration is identical to the configuration used for one of the existing devices, you can use the same |GATT_HID| configuration.
+     If the HID report configuration is identical to the default configuration of either nRF Desktop mouse or keyboard, you do not need to modify the |GATT_HID| configuration.
+     Otherwise, see :ref:`hids_readme` documentation for configuration details.
 
 The HID Service application module forwards the information about the enabled HID notifications to other application modules using ``hid_report_subscription_event``.
 These notifications are enabled by the connected Bluetooth® Central.
@@ -48,7 +52,7 @@ Sending the first HID report to the connected Bluetooth peer is delayed by this 
 .. note::
    The nRF Desktop centrals perform the GATT service discovery and reenable the HID notifications on every reconnection.
    A HID report that is received before the subscription is reenabled will be dropped before it reaches the application.
-   The :ref:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY <config_desktop_app_options>` is used for keyboard reference design (nRF52832 Desktop Keyboard) to make sure that the input will not be lost on reconnection with the nRF Desktop dongle.
+   The :ref:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY <config_desktop_app_options>` option is set to 500 ms for nRF Desktop keyboards (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`) to make sure that the input is not lost on reconnection with the nRF Desktop dongle.
 
 Implementation details
 **********************

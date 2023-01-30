@@ -1584,7 +1584,7 @@ endpoint 1 {
     ram      attribute maxLevel default = 0xFE;
     ram      attribute options;
     ram      attribute onOffTransitionTime;
-    ram      attribute onLevel default = 0xFE;
+    ram      attribute onLevel;
     ram      attribute onTransitionTime;
     ram      attribute offTransitionTime;
     ram      attribute defaultMoveRate default = 50;

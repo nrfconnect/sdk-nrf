@@ -14,6 +14,11 @@
 #include <zephyr/kernel.h>
 #include <stdbool.h>
 
+#if defined(CONFIG_LWM2M)
+#include <zephyr/net/lwm2m.h>
+#else
+#include "cloud/cloud_codec/lwm2m/lwm2m_dummy.h"
+#endif
 /**
  * @defgroup cloud_wrapper Cloud wrapper library
  * @{
@@ -156,11 +161,12 @@ int cloud_wrap_state_send(char *buf, size_t len, bool ack, uint32_t id);
  * @param[in] len Length of buffer.
  * @param[in] ack Flag signifying if the message should be acknowledged or not.
  * @param[in] id Message ID.
- * @param[in] path_list Pointer to list of LwM2M objects to be sent.
+ * @param[in] path_list List of LwM2M objects to be sent.
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[]);
+int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id,
+			 const struct lwm2m_obj_path path_list[]);
 
 /**
  * @brief Send batched data to cloud.
@@ -185,7 +191,8 @@ int cloud_wrap_batch_send(char *buf, size_t len, bool ack, uint32_t id);
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[]);
+int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id,
+		       const struct lwm2m_obj_path path_list[]);
 
 /**
  * @brief Send neighbor cell data to cloud.

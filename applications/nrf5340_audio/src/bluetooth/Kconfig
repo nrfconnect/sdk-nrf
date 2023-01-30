@@ -245,6 +245,12 @@ config BT_AUDIO_UNICAST_RECOMMENDED
 	  Recommended unicast settings for the nRF5340_audio application
 	  48kHz, 96kbps, 2 retransmits, 20ms transport latency, and 10ms presentation delay.
 
+config BT_AUDIO_UNICAST_CONFIGURABLE
+	bool "Configurable unicast settings"
+	depends on TRANSPORT_CIS
+	help
+	  Configurable option that doesn't follow any preset. Allows for more flexibility.
+
 config BT_AUDIO_UNICAST_16_2_1
 	bool "16_2_1"
 	depends on TRANSPORT_CIS
@@ -274,6 +280,12 @@ config BT_AUDIO_BROADCAST_RECOMMENDED
 	help
 	  Recommended broadcast settings for the nRF5340_audio application
 	  48kHz, 96kbps, 4 retransmits, 20ms transport latency, and 10ms presentation delay.
+
+config BT_AUDIO_BROADCAST_CONFIGURABLE
+	bool "Configurable broadcast settings"
+	depends on TRANSPORT_BIS
+	help
+	  Configurable option that doesn't follow any preset. Allows for more flexibility.
 
 config BT_AUDIO_BROADCAST_16_2_1
 	bool "16_2_1"
@@ -354,12 +366,53 @@ config BT_AUDIO_BROADCAST_ID_FIXED
 	  Fixed broadcast ID; 3 octets. Will only be used if BT_AUDIO_USE_BROADCAST_ID_RANDOM=n.
 	  Should only be used for debugging.
 
+config BT_AUDIO_BROADCAST_IMMEDIATE_FLAG
+	bool "Immediate rendering flag"
+	depends on TRANSPORT_BIS
+	default n
+	help
+	  Set the immediate rendering flag.
+
 config AURACAST
 	bool "Enable Auracast"
+	depends on TRANSPORT_BIS
 	default y
 	help
 	  When Auracast is enabled a Public Broadcast Announcement will be included when advertising.
 
+menu "QoS"
+
+config BT_AUDIO_PRESENTATION_DELAY_US
+	int "Presentation delay"
+	default 10000
+	help
+	  Presentation delay for the ISO link.
+
+config BT_AUDIO_MAX_TRANSPORT_LATENCY_MS
+	int "Max transport latency"
+	range 5 4000
+	default 20
+	help
+	  Max transport latency for the ISO link.
+
+config BT_AUDIO_RETRANSMITS
+	int "Number of retransmits"
+	range 0 30
+	default 2
+	help
+	  Number of retransmits for the ISO link. 2 retransmits means a total
+	  of 3 packets sent per stream.
+
+config BT_AUDIO_BITRATE
+	int "Bitrate for ISO stream"
+	default 96000 if BT_AUDIO_BROADCAST_RECOMMENDED || BT_AUDIO_UNICAST_RECOMMENDED
+	default 96000 if BT_AUDIO_UNICAST_CONFIGURABLE || BT_AUDIO_BROADCAST_CONFIGURABLE
+	default 32000 if BT_AUDIO_BROADCAST_16_2_1 || BT_AUDIO_BROADCAST_16_2_2 || BT_AUDIO_UNICAST_16_2_1
+	default 48000 if BT_AUDIO_BROADCAST_24_2_1 || BT_AUDIO_BROADCAST_24_2_2 || BT_AUDIO_UNICAST_24_2_1
+	help
+	  Bitrate for the ISO stream.
+
+endmenu # QoS
 #----------------------------------------------------------------------------#
 menu "Log levels"
 

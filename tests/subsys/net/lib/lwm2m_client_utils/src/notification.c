@@ -116,6 +116,6 @@ ZTEST(lwm2m_client_utils_lte_notification, test_neighbor_cell_meas)
 	evt.type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
 	handler(&evt);
 
-	zassert_equal(lwm2m_engine_set_s32_fake.call_count, 15,
-		      "Cell info not updated, was %d", lwm2m_engine_set_s32_fake.call_count);
+	zassert_equal(lwm2m_set_s32_fake.call_count, 15,
+		      "Cell info not updated, was %d", lwm2m_set_s32_fake.call_count);
 }

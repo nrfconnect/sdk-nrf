@@ -34,7 +34,7 @@ static uint32_t current_scan_result_count;
 static void lwm2m_wifi_scan_result_handle(struct net_mgmt_event_callback *cb)
 {
 	const struct wifi_scan_result *entry = (const struct wifi_scan_result *)cb->info;
-	char path[sizeof("33627/65535/0")];
+	struct lwm2m_obj_path path = LWM2M_OBJ(33627, 0, 0);
 
 	LOG_DBG("scan result #%d stored: ssid %s, channel %d, rssi %d,"
 		" mac %02x:%02x:%02x:%02x:%02x:%02x",
@@ -46,16 +46,21 @@ static void lwm2m_wifi_scan_result_handle(struct net_mgmt_event_callback *cb)
 			entry->mac[3], entry->mac[4], entry->mac[5]);
 
 	if (current_scan_result_count < CONFIG_LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_INSTANCE_COUNT) {
-		snprintk(path, sizeof(path), "33627/%" PRIu16 "/0", current_scan_result_count);
-		lwm2m_engine_set_opaque(path, entry->mac, 6);
-		snprintk(path, sizeof(path), "33627/%" PRIu16 "/1", current_scan_result_count);
-		lwm2m_engine_set_s32(path, entry->channel);
-		snprintk(path, sizeof(path), "33627/%" PRIu16 "/2", current_scan_result_count);
-		lwm2m_engine_set_s32(path, entry->band);
-		snprintk(path, sizeof(path), "33627/%" PRIu16 "/3", current_scan_result_count);
-		lwm2m_engine_set_s32(path, entry->rssi);
-		snprintk(path, sizeof(path), "33627/%" PRIu16 "/4", current_scan_result_count);
-		lwm2m_engine_set_string(path, entry->ssid);
+		path.obj_inst_id = current_scan_result_count;
+		path.res_id = VISIBLE_WIFI_AP_MAC_ADDRESS_ID;
+		lwm2m_set_opaque(&path, entry->mac, 6);
+
+		path.res_id = VISIBLE_WIFI_AP_CHANNEL_ID;
+		lwm2m_set_s32(&path, entry->channel);
+
+		path.res_id = VISIBLE_WIFI_AP_FREQUENCY_ID;
+		lwm2m_set_s32(&path, entry->band);
+
+		path.res_id = VISIBLE_WIFI_AP_SIGNAL_STRENGTH_ID;
+		lwm2m_set_s32(&path, entry->rssi);
+
+		path.res_id = VISIBLE_WIFI_AP_SSID_ID;
+		lwm2m_set_string(&path, entry->ssid);
 	}
 
 	current_scan_result_count++;

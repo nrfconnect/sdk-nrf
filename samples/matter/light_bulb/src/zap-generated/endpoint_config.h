@@ -497,7 +497,7 @@
 			{ 0x00000010, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(WRITABLE),                                              \
 			  ZAP_SIMPLE_DEFAULT(0x0000) }, /* OnOffTransitionTime */                                                     \
 			{ 0x00000011, ZAP_TYPE(INT8U), 1, ZAP_ATTRIBUTE_MASK(WRITABLE) | ZAP_ATTRIBUTE_MASK(NULLABLE),                \
-			  ZAP_SIMPLE_DEFAULT(0xFE) }, /* OnLevel */                                                                   \
+			  ZAP_SIMPLE_DEFAULT(0xFF) }, /* OnLevel */                                                                   \
 			{ 0x00000012, ZAP_TYPE(INT16U), 2,                                                                            \
 			  ZAP_ATTRIBUTE_MASK(WRITABLE) | ZAP_ATTRIBUTE_MASK(NULLABLE), ZAP_EMPTY_DEFAULT() }, /* OnTransitionTime     \
 													       */                     \

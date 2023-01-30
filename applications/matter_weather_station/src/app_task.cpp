@@ -218,11 +218,8 @@ CHIP_ERROR AppTask::Init()
 
 #ifdef CONFIG_MCUMGR_SMP_BT
 	/* Initialize DFU over SMP */
-	GetDFUOverSMP().Init(RequestSMPAdvertisingStart);
-#ifndef CONFIG_CHIP_OTA_REQUESTOR
-	/* When OTA Requestor is enabled, it is responsible for confirming new images. */
+	GetDFUOverSMP().Init();
 	GetDFUOverSMP().ConfirmNewImage();
-#endif
 	GetDFUOverSMP().StartServer();
 #endif
 
@@ -305,13 +302,6 @@ void AppTask::PostEvent(const AppEvent &event)
 	}
 }
 
-#ifdef CONFIG_MCUMGR_SMP_BT
-void AppTask::RequestSMPAdvertisingStart(void)
-{
-	sAppTask.PostEvent(AppEvent{ AppEvent::StartSMPAdvertising });
-}
-#endif
-
 void AppTask::DispatchEvent(AppEvent &event)
 {
 	switch (event.Type) {
@@ -333,11 +323,6 @@ void AppTask::DispatchEvent(AppEvent &event)
 	case AppEvent::UpdateLedState:
 		event.UpdateLedStateEvent.LedWidget->UpdateState();
 		break;
-#ifdef CONFIG_MCUMGR_SMP_BT
-	case AppEvent::StartSMPAdvertising:
-		GetDFUOverSMP().StartBLEAdvertising();
-		break;
-#endif
 	default:
 		LOG_INF("Unknown event received");
 		break;

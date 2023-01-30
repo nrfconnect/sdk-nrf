@@ -106,22 +106,22 @@ static int location_ctrl_lwm2m_cell_result_cb(uint16_t obj_inst_id,
 		goto exit;
 	}
 
-	err = lwm2m_engine_get_float(LWM2M_PATH(GROUND_FIX_OBJECT_ID, 0, GROUND_FIX_LATITUDE),
-				     &location.latitude);
+	err = lwm2m_get_f64(&LWM2M_OBJ(GROUND_FIX_OBJECT_ID, 0, GROUND_FIX_LATITUDE),
+			      &location.latitude);
 	if (err) {
 		mosh_error("Getting latitude from LwM2M engine failed, err: %d", err);
 		goto exit;
 	}
 
-	err = lwm2m_engine_get_float(LWM2M_PATH(GROUND_FIX_OBJECT_ID, 0, GROUND_FIX_LONGITUDE),
-				     &location.longitude);
+	err = lwm2m_get_f64(&LWM2M_OBJ(GROUND_FIX_OBJECT_ID, 0, GROUND_FIX_LONGITUDE),
+			      &location.longitude);
 	if (err) {
 		mosh_error("Getting longitude from LwM2M engine failed, err: %d", err);
 		goto exit;
 	}
 
-	err = lwm2m_engine_get_float(LWM2M_PATH(GROUND_FIX_OBJECT_ID, 0, GROUND_FIX_ACCURACY),
-				     &temp_accuracy);
+	err = lwm2m_get_f64(&LWM2M_OBJ(GROUND_FIX_OBJECT_ID, 0, GROUND_FIX_ACCURACY),
+			      &temp_accuracy);
 	if (err) {
 		mosh_error("Getting accuracy from LwM2M engine failed, err: %d", err);
 		goto exit;
@@ -149,10 +149,9 @@ void location_srv_ext_cellular_handle(
 		goto exit;
 	}
 
-	err = lwm2m_engine_register_post_write_callback(
-		LWM2M_PATH(
-			GROUND_FIX_OBJECT_ID, 0, GROUND_FIX_RESULT_CODE),
-			location_ctrl_lwm2m_cell_result_cb);
+	err = lwm2m_register_post_write_callback(&LWM2M_OBJ(GROUND_FIX_OBJECT_ID, 0,
+							    GROUND_FIX_RESULT_CODE),
+						 location_ctrl_lwm2m_cell_result_cb);
 	if (err) {
 		mosh_error("Failed to register post write callback, err: %d", err);
 	}

@@ -39,7 +39,7 @@ Advertised data
 ===============
 
 The :ref:`caf_ble_adv` relies on :ref:`bt_le_adv_prov_readme` to manage advertising data and scan response data.
-nRF Desktop application configures the data providers in :file:`src/util/Kconfig`.
+nRF Desktop application configures the data providers in :file:`src/modules/Kconfig.caf_ble_adv.default`.
 By default, the application enables a set of data providers available in the |NCS| and adds a custom provider of UUID16 values of Battery Service (BAS) and Human Interface Device Service (HIDS).
 The UUID16 of a given GATT Service is added to the advertising data only if the service is enabled in the configuration and the Bluetooth local identity in use has no bond.
 

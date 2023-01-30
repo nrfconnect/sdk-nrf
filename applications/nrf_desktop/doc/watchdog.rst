@@ -26,7 +26,7 @@ Configuration
 *************
 
 The module uses Zephyr's :ref:`zephyr:watchdog_api` driver.
-For this reason, set the :kconfig:option:`CONFIG_WATCHDOG` option.
+For this reason, it automatically selects the :kconfig:option:`CONFIG_WATCHDOG` option.
 
 The module is enabled by the :ref:`CONFIG_DESKTOP_WATCHDOG_ENABLE <config_desktop_app_options>` option.
 
@@ -40,7 +40,7 @@ After this amount of time (in ms), the device will be restarted if the watchdog 
 Implementation details
 **********************
 
-The watchdog timer is started when the :ref:`nrf_desktop_main` is ready (which is reported using ``module_state_event``).
+The watchdog timer is started when the :ref:`nrf_desktop_main` is ready (which is reported using :c:struct:`module_state_event`).
 The module periodically resets the watchdog timer using :c:struct:`k_work_delayable`.
 The work resubmits itself with delay equal to ``CONFIG_DESKTOP_WATCHDOG_TIMEOUT / 3``.
 In case of the system hang, the work will not be processed, the watchdog timer will not be reset on time, and the system will be restarted.
