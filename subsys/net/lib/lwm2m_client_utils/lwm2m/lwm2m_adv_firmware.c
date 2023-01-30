@@ -156,7 +156,7 @@ void lwm2m_adv_firmware_set_update_state(uint16_t obj_inst_id, uint8_t state)
 	path.res_id = FIRMWARE_STATE_ID;
 	lwm2m_set_u8(&path, state);
 
-	LOG_DBG("Update %s state = %d", path, state);
+	LOG_DBG("Update %d/%d/%d state = %d", path.obj_id, path.obj_inst_id, path.res_id, state);
 	now = time(NULL);
 	path.res_id = FIRMWARE_LAST_STATE_CHANGE_TIME_ID;
 	lwm2m_set_time(&path, now);
@@ -484,7 +484,7 @@ static struct lwm2m_engine_obj_inst *firmware_create(uint16_t obj_inst_id)
 	INIT_OBJ_RES_OPTDATA(FIRMWARE_PACKAGE_VERSION_ID, res[obj_inst_id], i,
 			     res_inst[obj_inst_id], j);
 	INIT_OBJ_RES_MULTI_OPTDATA(FIRMWARE_UPDATE_PROTO_SUPPORT_ID, res[obj_inst_id], i,
-				   res_inst[obj_inst_id], j, 1, false);
+				   res_inst[obj_inst_id], j, 4, false);
 	INIT_OBJ_RES_DATA(FIRMWARE_UPDATE_DELIV_METHOD_ID, res[obj_inst_id], i,
 			  res_inst[obj_inst_id], j, &(delivery_method[obj_inst_id]),
 			  sizeof(delivery_method[obj_inst_id]));
