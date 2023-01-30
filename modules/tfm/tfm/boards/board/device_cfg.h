@@ -19,6 +19,6 @@
 #include <autoconf.h>
 #include <zephyr/devicetree.h>
 
-#define DEFAULT_UART_BAUDRATE DT_PROP(DT_NODELABEL(uart1), current_speed)
+#define DEFAULT_UART_BAUDRATE DT_PROP_OR(DT_NODELABEL(uart1), current_speed, 115200)
 
 #endif /* DEVICE_CFG_H__ */
