@@ -1,7 +1,7 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.2.99
-###########################
+Changelog for |NCS| v2.2.99-dev3
+################################
 
 .. contents::
    :local:
@@ -215,8 +215,8 @@ nRF Desktop
 
   * Removed separate configurations enabling :ref:`zephyr:shell_api` (:file:`prj_shell.conf`).
     Shell support can be enabled for a given configuration with the single Kconfig option (:ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>`).
-  * By default, nRF Desktop dongles use Bluetooth appearance (:kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE)` of keyboard.
-     The new default configuration value improves consistency with the used HID boot interface.
+  * By default, nRF Desktop dongles use the Bluetooth appearance (:kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE)` of keyboard.
+    The new default configuration value improves consistency with the used HID boot interface.
 
 Samples
 =======
@@ -512,7 +512,7 @@ Libraries for networking
 
 * :ref:`lib_azure_iot_hub` library:
 
-  * Pulled out :file:`azure_iot_hub_mqtt.c` that is now implemented by a new library :ref:`lib_mqtt_helper`.
+  * Pulled out the :file:`azure_iot_hub_mqtt.c` file that is now implemented by a new library :ref:`lib_mqtt_helper`.
 
 * :ref:`lib_multicell_location` library:
 
