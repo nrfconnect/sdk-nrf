@@ -11,3 +11,5 @@ zephyr-sdk=0.16.0
 ccache=3.7.7
 dfu_util=0.9-1
 doxygen=1.9.6
+minicom=2.8
+terminator=2.1.2

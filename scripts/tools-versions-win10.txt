@@ -8,3 +8,4 @@ west=1.0.0
 nanopb=0.4.6
 zephyr-sdk=0.16.0
 doxygen=1.9.2
+putty=0.74
