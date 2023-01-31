@@ -7,7 +7,7 @@ Bluetooth LE discovery module
    :local:
    :depth: 2
 
-Use the |ble_discovery| to discover GATT Services and read GATT Attribute Values from an nRF Desktop peripheral.
+Use the Bluetooth® LE discovery module to discover GATT Services and read GATT Attribute Values from an nRF Desktop peripheral.
 The module is mandatory for the nRF Desktop central.
 
 Module events

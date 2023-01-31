@@ -7,7 +7,7 @@ Bluetooth LE connection parameters module
    :local:
    :depth: 2
 
-Use the |ble_conn_params| to:
+Use the Bluetooth® LE connection parameters module for the following purposes:
 
 * Update the connection parameters after the peripheral discovery.
 * React on connection parameter update requests from the connected peripherals.

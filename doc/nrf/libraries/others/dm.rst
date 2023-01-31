@@ -62,7 +62,7 @@ You can use this functionality to determine the synchronization accuracy.
 A logic analyzer or oscilloscope are helpful for this purpose.
 
 Enabling the :kconfig:option:`CONFIG_DM_GPIO_DEBUG` option changes the state of the pins when a new measurement request is added and the timeslot is assigned.
-To assign the pin numbers, create the appropriate nodes in the device tree as follows:
+To assign the pin numbers, create the appropriate nodes in the devicetree as follows:
 
 .. code-block:: dts
 

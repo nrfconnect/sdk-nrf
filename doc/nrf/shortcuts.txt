@@ -101,13 +101,13 @@
 .. ### nRF Desktop shortcuts
 
 .. |battery_meas| replace:: Battery measurement module
-.. |ble_adv| replace:: Bluetooth® LE advertising module
-.. |ble_bond| replace:: Bluetooth® LE bond module
-.. |ble_conn_params| replace:: Bluetooth® LE connection parameters module
-.. |ble_discovery| replace:: Bluetooth® LE discovery module
-.. |ble_latency| replace:: Bluetooth® LE latency module
-.. |ble_scan| replace:: Bluetooth® LE scanning module
-.. |ble_state| replace:: Bluetooth® LE state module
+.. |ble_adv| replace:: Bluetooth LE advertising module
+.. |ble_bond| replace:: Bluetooth LE bond module
+.. |ble_conn_params| replace:: Bluetooth LE connection parameters module
+.. |ble_discovery| replace:: Bluetooth LE discovery module
+.. |ble_latency| replace:: Bluetooth LE latency module
+.. |ble_scan| replace:: Bluetooth LE scanning module
+.. |ble_state| replace:: Bluetooth LE state module
 .. |ble_state_pm| replace:: Bluetooth state power manager module
 .. |button_sim| replace:: button simulator module
 .. |buttons_pm_keep_alive| replace:: Power manager keep alive module for buttons

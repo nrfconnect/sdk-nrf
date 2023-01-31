@@ -32,7 +32,7 @@ Provisioning the identity and security credentials
 
 To provision the credentials, complete the following steps:
 
-1. Ensure that you have removed the previous security tags from the modem by issuing the `AT%CMNG <Credential storage management %CMNG>`_ command:
+1. Ensure that you have removed the previous security tags from the modem by issuing the `AT%CMNG <Credential storage management %CMNG_>`_ command:
 
    .. code-block:: none
 

@@ -57,7 +57,7 @@ USB device instance configuration
 
 The nRF Desktop device can provide multiple instances of a HID-class USB device.
 The number of instances is controlled by :kconfig:option:`CONFIG_USB_HID_DEVICE_COUNT`.
-By default the option is set to:
+By default, the option is set to:
 
 * ``1`` for HID peripherals (:ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>`).
 * :ref:`CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT <config_desktop_app_options>` for HID dongles (:ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>`).

@@ -3,6 +3,11 @@
 Using external flash memory partitions
 ######################################
 
+.. contents::
+   :local:
+   :depth: 2
+
+
 When using MCUboot, you can store the storage partition for the secondary slot in the external flash memory, using a driver for the external flash memory that supports the following features:
 
 * Single-byte read and write.

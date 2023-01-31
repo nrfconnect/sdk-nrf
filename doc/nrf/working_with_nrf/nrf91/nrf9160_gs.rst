@@ -105,7 +105,7 @@ If you experience any problems during the process, restart the Programmer app by
 
       Programmer - COM ports
 
-   If the three COM ports are not visible, press Ctrl+R in Windows or command+R in macOS to restart the Programmer application.
+   If the three COM ports are not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
 
    The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
    The Device Memory Layout section also changes its name to the device name, and indicates that the device is connected.
@@ -164,7 +164,7 @@ If you experience any problems during the process, restart the Programmer app by
 
       Programmer - COM ports
 
-   If the three COM ports are not visible, press Ctrl+R in Windows or command+R in macOS to restart the Programmer application.
+   If the three COM ports are not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
 
    The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
    The Device Memory Layout section also changes its name to the device name, and indicates that the device is connected.

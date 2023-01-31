@@ -7,7 +7,7 @@ CAF: Bluetooth state power manager module
    :local:
    :depth: 2
 
-The |ble_state_pm| is a minor module that counts the number of active Bluetooth® connections and imposes a :ref:`power manager module <caf_power_manager>` power level restriction if there is at least one active connection.
+The Bluetooth® state power manager module is a minor module that counts the number of active Bluetooth® connections and imposes a :ref:`power manager module <caf_power_manager>` power level restriction if there is at least one active connection.
 
 Configuration
 *************

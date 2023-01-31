@@ -474,7 +474,7 @@ Send to Memfault
 ----------------
 
 To register an account and obtain the project key, refer to the :ref:`using_memfault` section of the :ref:`ug_memfault` guide.
-The memfault overlay config (:file:`overlay-memfault.conf`) includes the most common configuration options for using the Memfault with modem traces.
+The Memfault overlay config (:file:`overlay-memfault.conf`) includes the most common configuration options for using the Memfault with modem traces.
 
 After a modem trace session, prepare sending the trace data to Memfault using ``modem_trace send memfault``.
 This informs the `Memfault-SDK`_ about a Custom Data Recording (CDR) that will be sent as part of the next data transfer to Memfault.
@@ -605,12 +605,12 @@ The MoSh command is simple but you need to have a normal dial-up setup in your P
 
 .. note::
 
-   On Windows, dial-up connection is not functional when using Segger virtual UART ports.
+   On Windows, dial-up connection is not functional when using SEGGER virtual UART ports.
    PPP has been used successfully with FTDI UART port though.
    Refer to `nRF9160 Hardware Verification Guidelines - UART interface`_.
 
    PPP has been successfully used running Ubuntu Linux in a virtualization environment hosted by Windows.
-   In the hosted virtual Linux environment, using PPP is possible also with plain Segger UART ports.
+   In the hosted virtual Linux environment, using PPP is possible also with plain SEGGER UART ports.
 
 Examples
 --------
@@ -1324,7 +1324,7 @@ To build the sample with LwM2M support, use the following command:
 
    west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-lwm2m.conf -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
 
-To enable also P-GPS, use the following command:
+To also enable P-GPS, use the following command:
 
 .. code-block:: console
 

@@ -76,7 +76,7 @@ The synchronization will be performed cyclically.
 Based on the ``SCAN_RSP`` response, the device recognizes peers that support the distance measurement functionality within its coverage.
 The addresses of these devices are stored in a list.
 When a device does not respond within a certain period of time, it is removed from the list.
-Also the last measurement results with the peers are stored in this list.
+Also, the last measurement results with the peers are stored in this list.
 
 For the nRF5340, the ranging procedure is performed on the network core, while the calculation takes place on the application core.
 The distance calculation uses a floating-point unit (FPU).

@@ -37,6 +37,6 @@ Compatibility with commercial ecosystems
 One of the key features of the Matter protocol is the interoperability of different ecosystems it provides.
 Implementing support for Matter enables the :ref:`ug_matter_overview_multi_fabrics` and allows different vendor products to co-exist within the same Matter network.
 
-The Matter stack in the |NCS| will work with any commercial Matter ecosystem as long as these ecosystems are compatible with the official Matter implementation (for example `Apple Home <Apple Home integration with Matter>`_, `Google Home <Google Home integration with Matter>`_, or `Samsung SmartThings <Samsung SmartThings integration with Matter_>`_).
+The Matter stack in the |NCS| will work with any commercial Matter ecosystem as long as these ecosystems are compatible with the official Matter implementation (for example `Apple Home <Apple Home integration with Matter_>`_, `Google Home <Google Home integration with Matter_>`_, or `Samsung SmartThings <Samsung SmartThings integration with Matter_>`_).
 
 For an example of interoperability of some commercial ecosystems, see :ref:`ug_matter_gs_ecosystem_compatibility_testing`.

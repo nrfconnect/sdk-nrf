@@ -133,7 +133,7 @@ The Matter OTA image download always happens in the background, without affectin
 Matter OTA image structure and transfer
 ***************************************
 
-The software image transmitted during the Matter OTA process must meet specific structure requirements for it to be tranferred and applied correctly.
+The software image transmitted during the Matter OTA process must meet specific structure requirements for it to be transferred and applied correctly.
 
 All software images for the Matter OTA must contain a standardized header, which is used by the OTA Provider to validate the image before it is sent to the OTA Requestor.
 The header includes several types of information, including the software version, Vendor ID, and Product ID.
@@ -171,7 +171,7 @@ The default update components are firmware images for all MCU cores.
 
 During the Matter OTA firmware update process, the downloaded Matter OTA image is saved to external flash using the :ref:`lib_dfu_multi_image` and :ref:`lib_dfu_target` libraries.
 The DFU multi-image library uses `zcbor`_ for parsing the CBOR header.
-Applying the software image requires rebooting to :ref:`MCUBoot <mcuboot:mcuboot_ncs>` bootloader which installs the new firmware.
+Applying the software image requires rebooting to :ref:`MCUboot <mcuboot:mcuboot_ncs>` bootloader which installs the new firmware.
 
 .. _ug_matter_overview_dfu_image_tlv:
 

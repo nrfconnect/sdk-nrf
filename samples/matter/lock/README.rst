@@ -449,7 +449,7 @@ To upgrade the device firmware when using the ``thread_wifi_switched`` build typ
 
 Because the application supports switching between Thread and Wi-Fi, you need to make sure that the Matter OTA image file served by the OTA Provider includes two application variants: for Matter over Thread and for Matter over Wi-Fi, respectively.
 
-To make sure that both application variants are included in the OTA image file, use the dedicated the ``combine_ota_images.py`` script.
+To make sure that both application variants are included in the OTA image file, use the dedicated the :file:`combine_ota_images.py` script.
 The script takes the Matter OTA image files generated for both variants and combines them in one file.
 It also assumes that both input images were created with the same *vendor_id*, *product_id*, *version*, *version_string*, *min_version*, *max_version*, and *release_notes*.
 

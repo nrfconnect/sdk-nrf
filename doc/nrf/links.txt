@@ -7,12 +7,12 @@
 
 .. _`Zephyr`: https://zephyrproject.org/
 .. _`Zephyr Project documentation`: https://docs.zephyrproject.org/latest/
-.. _`Zephyr Devicetree Overlays`: https://docs.zephyrproject.org/latest/guides/dts/howtos.html#set-devicetree-overlays
+.. _`Zephyr Devicetree Overlays`: https://docs.zephyrproject.org/latest/build/dts/howtos.html#set-devicetree-overlays
 .. _`Zephyr Initial Configuration`: https://docs.zephyrproject.org/latest/guides/build/kconfig/setting.html#the-initial-configuration
-.. _`Zephyr Network APIs`: https://docs.zephyrproject.org/latest/reference/networking/apis.html
-.. _`Zephyr Events`: https://docs.zephyrproject.org/latest/reference/kernel/synchronization/events.html
+.. _`Zephyr Network APIs`: https://docs.zephyrproject.org/latest/connectivity/networking/api/apis.html#network-apis
+.. _`Zephyr Events`: https://docs.zephyrproject.org/latest/kernel/services/synchronization/events.html
 .. _`Zephyr LED API`: https://docs.zephyrproject.org/latest/hardware/peripherals/led.html
-.. _`Zephyr gpio-leds`: https://docs.zephyrproject.org/latest/build/dts/api/bindings/gpio/gpio-leds.html
+.. _`Zephyr gpio-leds`: https://docs.zephyrproject.org/latest/build/dts/api/bindings/led/gpio-leds.html
 .. _`Zephyr pwm-leds`: https://docs.zephyrproject.org/latest/build/dts/api/bindings/led/pwm-leds.html
 .. _`Pinctrl Migration Utility Script documentation`: https://github.com/zephyrproject-rtos/zephyr/blob/main/scripts/utils/pinctrl_nrf_migrate.py
 
@@ -271,7 +271,7 @@
 .. _`TF-M documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/index.html
 .. _`TF-M secure partition integration guide`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/integration_guide/services/tfm_secure_partition_addition.html
 
-.. _`Repositories and revisions for v2.2.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.2.0/nrf/introduction.html#repositories-and-revisions
+.. _`Repositories and revisions for v2.2.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.2.0/nrf/introduction.html#ncs-repository-revisions
 .. _`Repositories and revisions for v2.1.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.3/nrf/introduction.html#repositories-and-revisions
 .. _`Repositories and revisions for v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.2/nrf/introduction.html#repositories-and-revisions
 .. _`Repositories and revisions for v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.1/nrf/introduction.html#repositories-and-revisions
@@ -432,7 +432,7 @@
 .. _`Requirements for external flash memory DFU`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_audio/UG/nrf5340_audio/hw_external_memory.html
 
 .. _`nRF52840 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/keyfeatures_html5.html
-.. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html#unique_1384365742
+.. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html?cp=5_0_0_4_2_2#unique_220399309
 .. _`nRF52840 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dk/UG/dk/intro.html
 .. _`nRF52840 Dongle User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dongle/UG/nrf52840_Dongle/intro.html
 .. _`nRF52840 DK Compatibility Matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf52840/COMP/nrf52840/nrf52840_comp_matrix.html
@@ -708,7 +708,7 @@
 
 .. _`AWS account`: https://aws.amazon.com/iot/
 .. _`Setting up an AWS account`: https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/
-.. _`Set up your AWS account`: https://docs.aws.amazon.com/iot/latest/developerguide/setting-up.html#aws-registration
+.. _`Set up your AWS account`: https://docs.aws.amazon.com/iot/latest/developerguide/setting-up.html
 .. _`AWS IoT Core policy examples`: https://docs.aws.amazon.com/iot/latest/developerguide/example-iot-policies.html
 .. _`Security best practices in AWS IoT Core`: https://docs.aws.amazon.com/iot/latest/developerguide/security-best-practices.html
 
@@ -795,7 +795,7 @@
 .. _`EnOcean`: https://www.enocean.com
 .. _`Easyfit Single/Double Rocker Wall Switch for Bluetooth LE - EWSSB/EWSDB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-single-double-rocker-wall-switch-for-ble-ewssb-ewsdb/
 .. _`Easyfit Single/Double Rocker Pad for Bluetooth LE - ESRPB/EDRPB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-single-double-rocker-pad-for-ble-esrpb-edrpb/
-.. _`Easyfit Motion Detector with Illumination Sensor - EMDCB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-motion-detector-with-illumination-sensor-emdcb/
+.. _`Easyfit Motion Detector with Illumination Sensor - EMDCB`: https://www.enocean.com/en/product/motion-detector-with-illumination-sensor-emdc-oem/?frequency=bluetooth
 
 .. ### Source: edgeimpulse.com
 
@@ -862,11 +862,10 @@
 .. _`nRF Cloud MQTT API`: https://docs.nrfcloud.com/APIs/MQTT/MQTTIntro/
 .. _`nRF Cloud MQTT Topics`: https://docs.nrfcloud.com/APIs/MQTT/Topics/
 
-.. _`nRF Cloud REST API (v1)`:
-.. _`nRF Cloud Device API`: https://api.nrfcloud.com/v1
+.. _`nRF Cloud REST API (v1)`: https://api.nrfcloud.com/v1
 .. _`nRF Cloud Patch Device State`:
 .. _`nRF Connect for Cloud Patch Device State`: https://api.nrfcloud.com/v1#operation/UpdateDeviceState
-.. _`nRF Cloud REST API ListMessages`: https://api.nrfcloud.com/v1#operation/ListMessages
+.. _`nRF Cloud REST API ListMessages`: https://api.nrfcloud.com/v1#tag/Messages/operation/ListMessages
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
 .. _`nRF Cloud RegisterPublicKeys Endpoint`: https://api.nrfcloud.com/v1/#operation/RegisterPublicKeys
 
@@ -1004,8 +1003,6 @@
 
 .. _`Klobuchar Ionospheric Model`: https://gssc.esa.int/navipedia/index.php/Klobuchar_Ionospheric_Model
 
-.. _`LTE Positioning Protocol (LPP)`: https://www.etsi.org/deliver/etsi_ts/136300_136399/136355/11.01.00_60/ts_136355v110100p.pdf#page=12
-
 .. _`Azure Portal`: https://portal.azure.com/
 
 .. _`Mosquitto`: https://mosquitto.org/
@@ -1123,7 +1120,7 @@
 
 .. _`GNU Project Debugger`: https://www.sourceware.org/gdb/
 
-.. _`SIGMA`: https://webee.technion.ac.il/~hugo/sigma-pdf.pdf
+.. _`SIGMA`: https://link.springer.com/chapter/10.1007/978-3-540-45146-4_24
 
 .. _`WPA Supplicant`: https://w1.fi/wpa_supplicant/
 
@@ -1131,10 +1128,12 @@
 
 .. _`IEEE 802.11 Working Group`: https://www.ieee802.org/11/
 
-.. _`3GPP TS 24.008, subclause 10.5.5.32`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=622
-
-.. _`3GPP TS 24.008 Ch. 10.5.7.3`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=667
-
-.. _`3GPP TS 24.008 Ch. 10.5.7.4a`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=668
-
 .. _`Samsung SmartThings integration with Matter`: https://support.smartthings.com/hc/en-us/articles/11219700390804-SmartThings-x-Matter-Integration-
+
+
+.. ### Source: etsi.org
+
+.. _`3GPP TS 24.008, subclause 10.5.5.32`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=622
+.. _`3GPP TS 24.008 Ch. 10.5.7.3`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=667
+.. _`3GPP TS 24.008 Ch. 10.5.7.4a`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=668
+.. _`LTE Positioning Protocol (LPP)`: https://www.etsi.org/deliver/etsi_ts/136300_136399/136355/11.01.00_60/ts_136355v110100p.pdf#page=12

@@ -99,7 +99,7 @@ int fota_download_init(fota_download_callback_t client_callback);
  *
  * @param host Name of host to start downloading from. Can include scheme
  *             and port number, e.g. https://google.com:443
- * @param file Filepath to the file you wish to download. May be either a single
+ * @param file Path to the file you wish to download. May be either a single
  *              file path, relative to host (for example "path/to/binary.bin"),
  *              or, if bootloader FOTA is enabled, can be two paths (both relative
  *              to host), separated by a space (for example "path/to/s0.bin path/to/s1.bin").
@@ -130,7 +130,7 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
  *
  * @param host Name of host to start downloading from. Can include scheme
  *             and port number, for example https://google.com:443
- * @param file Filepath to the file you wish to download. See fota_download_start()
+ * @param file Path to the file you wish to download. See fota_download_start()
  *             for details on expected format.
  * @param sec_tag Security tag you want to use with HTTPS set to -1 to Disable.
  * @param pdn_id Packet Data Network ID to use for the download, or 0 to use the default.
