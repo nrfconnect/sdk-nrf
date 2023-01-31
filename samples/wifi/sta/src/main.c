@@ -322,9 +322,8 @@ void main(void)
 		if (ret) {
 			LOG_ERR("Failed to enable encryption: %d\n", ret);
 			return;
-		} else {
-			LOG_INF("QSPI Encryption enabled");
 		}
+		LOG_INF("QSPI Encryption enabled");
 	} else {
 		LOG_INF("QSPI Encryption disabled");
 	}

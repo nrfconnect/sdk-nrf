@@ -23,10 +23,11 @@ tests:
       - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf7002dk_nrf5340_cpuapp
     tags: ci_build
-  sample.nrf5340.radio_test:
+  sample.nrf7002_eks.radio_test:
     build_only: true
     extra_args: SHIELD=nrf7002_ek
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      - nrf52840dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
     tags: ci_build
