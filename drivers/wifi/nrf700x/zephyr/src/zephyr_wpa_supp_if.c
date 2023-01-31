@@ -1644,5 +1644,6 @@ void wifi_nrf_supp_event_proc_get_conn_info(void *if_priv,
 
 	conn_info->beacon_interval = info->beacon_interval;
 	conn_info->dtim_period = info->dtim_interval;
+	conn_info->twt_capable = info->twt_capable;
 	k_sem_give(&wait_for_event_sem);
 }
