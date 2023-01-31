@@ -34,7 +34,7 @@
 /applications/matter_weather_station/     @Damian-Nordic @kkasperczyk-no
 /applications/nrf_desktop/                @MarekPieta
 /applications/nrf5340_audio/              @koffes @alexsven @erikrobstad @rick1082 @gWacey
-/applications/serial_lte_modem/           @junqingzou @pirun @rlubos
+/applications/serial_lte_modem/           @SeppoTakalo @VTPeltoketo @MarkusLassila @rlubos
 /applications/zigbee_weather_station/     @adsz-nordic @tomchy
 # Boards
 /boards/                                  @anangl
@@ -116,7 +116,7 @@ Kconfig*                                  @tejlmand
 /lib/hw_unique_key/                       @oyvindronningstad @Vge0rge
 /lib/identity_key/                        @frkv @Vge0rge
 /lib/modem_jwt/                           @jayteemo @SeppoTakalo
-/lib/modem_slm/                           @junqingzou @pirun
+/lib/modem_slm/                           @SeppoTakalo @VTPeltoketo @MarkusLassila
 /lib/modem_attest_token/                  @jayteemo
 /lib/qos/                                 @simensrostad
 /lib/pcm_mix/                             @koffes @alexsven @erikrobstad @rick1082 @gWacey
