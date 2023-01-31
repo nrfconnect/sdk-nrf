@@ -1247,6 +1247,8 @@ int qspi_enable_encryption(void)
 	qspi_config->encryption = true;
 
 	return 0;
+#else
+	return -ENOTSUP;
 #endif
 }
 
@@ -1257,5 +1259,7 @@ int qspi_configure_encryption(uint8_t *key)
 	memcpy(qspi_config->p_cfg.key, key, 16);
 
 	return 0;
+#else
+	return -ENOTSUP;
 #endif
 }
