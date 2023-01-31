@@ -71,10 +71,8 @@ Specify the corresponding file names in the :makevar:`OVERLAY_CONFIG` option whe
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
-The following configuration files are available:
-
-* :file:`overlay-logging.conf` - Enables logging using RTT.
-  For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
+:file:`overlay-logging.conf` is a configuration file that enables logging using RTT.
+For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
 
 FEM support
 ===========

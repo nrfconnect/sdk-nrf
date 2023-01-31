@@ -120,23 +120,23 @@ There are three ways to define this storage location:
 
   Finally, add the following to a device tree overlay for your board.
 
-::
+.. code-block:: console
 
-    / {
-      chosen {
-        nordic,pm-ext-flash = &mx25r64;
-      };
-    };
+   / {
+     chosen {
+       nordic,pm-ext-flash = &mx25r64;
+     };
+   };
 
-    /* Enable high drive mode for the SPI3 pins to get a square signal at 8 MHz */
-    &spi3_default {
-      group1 {
-        nordic,drive-mode = <NRF_DRIVE_H0H1>;
-      };
-    };
+   /* Enable high drive mode for the SPI3 pins to get a square signal at 8 MHz */
+   &spi3_default {
+     group1 {
+       nordic,drive-mode = <NRF_DRIVE_H0H1>;
+     };
+   };
 
-  This is typically placed in a file within your application's source folder in a :file:`boards` subfolder.
-  See an example provided in the file :file:`samples/nrf9160/nrf_cloud_mqtt_multi_service/boards/nrf9160dk_nrf9160_ns_0_14_0.overlay`.
+This is typically placed in a file within your application's source folder in a :file:`boards` subfolder.
+See an example provided in the file :file:`samples/nrf9160/nrf_cloud_mqtt_multi_service/boards/nrf9160dk_nrf9160_ns_0_14_0.overlay`.
 
 * To use the MCUboot secondary partition as storage, enable the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY` option.
 

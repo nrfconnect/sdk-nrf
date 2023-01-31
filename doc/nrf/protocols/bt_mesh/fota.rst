@@ -3,6 +3,10 @@
 Performing FOTA updates in Bluetooth mesh
 #########################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 In |NCS|, there is currently no support for Device Firmware Update (DFU) over Bluetooth® mesh when performing firmware over-the-air (FOTA) updates for your Bluetooth mesh devices and applications.
 However, support for FOTA updates with point-to-point DFU over Bluetooth Low Energy using the MCUmgr subsystem and the Simple Management Protocol (SMP) is available.
 

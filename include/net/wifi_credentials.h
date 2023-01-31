@@ -14,7 +14,7 @@
 /**
  * @defgroup wifi_credentials Wi-Fi credentials library
  * @{
- * @brief Library that provides a way to store and load WiFi credentials.
+ * @brief Library that provides a way to store and load Wi-Fi credentials.
  */
 
 #ifdef __cplusplus
@@ -35,7 +35,7 @@ extern "C" {
 	MAX(WIFI_PSK_MAX_LEN, CONFIG_WIFI_CREDENTIALS_SAE_PASSWORD_LENGTH)
 
 /**
- * @brief WiFi credentials entry header
+ * @brief Wi-Fi credentials entry header
  * @note Every settings entry starts with this header.
  *       Depending on the `type` field, the header can be casted to a larger type.
  *       In addition to SSID (usually a string) and BSSID (a MAC address),
@@ -51,7 +51,7 @@ struct wifi_credentials_header {
 };
 
 /**
- * @brief WiFi Personal credentials entry
+ * @brief Wi-Fi Personal credentials entry
  * @note Contains only the header and a password.
  *       For PSK security, passwords can be up to `WIFI_PSK_MAX_LEN` bytes long
  *       including NULL termination. For SAE security it can range up to
@@ -65,7 +65,7 @@ struct wifi_credentials_personal {
 };
 
 /**
- * @brief WiFi Enterprise credentials entry
+ * @brief Wi-Fi Enterprise credentials entry
  * @note This functionality is not yet implemented.
  */
 struct wifi_credentials_enterprise {
@@ -84,7 +84,7 @@ struct wifi_credentials_enterprise {
  *
  * @param[in] ssid			SSID to look for
  * @param[in] ssid_len			length of SSID
- * @param[out] type			WiFi security type
+ * @param[out] type			Wi-Fi security type
  * @param[out] bssid_buf		buffer to store BSSID if it was fixed
  * @param[in] bssid_buf_len		length of bssid_buf
  * @param[out] password_buf		buffer to store password
@@ -114,7 +114,7 @@ int wifi_credentials_get_by_ssid_personal(
  *
  * @param[in] ssid		SSID to look for
  * @param[in] ssid_len		length of SSID
- * @param[in] type		WiFi security type
+ * @param[in] type		Wi-Fi security type
  * @param[in] bssid		BSSID (may be NULL)
  * @param[in] bssid_len		length of BSSID buffer (either 0 or WIFI_MAC_ADDR_LEN)
  * @param[in] password		password

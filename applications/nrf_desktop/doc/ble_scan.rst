@@ -7,7 +7,7 @@ Bluetooth LE scanning module
    :local:
    :depth: 2
 
-The nRF Desktop's |ble_scan| is based on the |NCS|'s :ref:`nrf_bt_scan_readme`.
+The nRF Desktop's Bluetooth® LE scanning module is based on the |NCS|'s :ref:`nrf_bt_scan_readme`.
 
 Use the |ble_scan| for the following purposes:
 

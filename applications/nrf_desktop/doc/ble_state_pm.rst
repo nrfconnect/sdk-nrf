@@ -7,7 +7,7 @@ Bluetooth state power manager module
    :local:
    :depth: 2
 
-In nRF Desktop, the |ble_state_pm| is responsible for blocking power off when there is at least one active Bluetooth® connection.
+In nRF Desktop, the Bluetooth® state power manager module is responsible for blocking power off when there is at least one active Bluetooth® connection.
 
 Module events
 *************

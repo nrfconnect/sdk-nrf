@@ -88,7 +88,7 @@ The Fast Pair service implementation provides API to generate the advertising da
   Make sure that these functions are called by the application from the cooperative context to ensure that not discoverable advertising data generation is not preempted by an Account Key write operation from a connected Fast Pair Seeker.
   Account Keys are used to generate not discoverable advertising data.
   Special battery data can be included in not discoverable advertising packet using the Fast Pair Battery Notification extension.
-  To use this extension, you have to:
+  To use this extension, ensure the following:
 
   #. Call :c:func:`bt_fast_pair_battery_set` to provide battery information.
   #. Set :c:member:`bt_fast_pair_adv_config.adv_battery_mode` to either :c:enum:`BT_FAST_PAIR_ADV_BATTERY_MODE_SHOW_UI_IND` or :c:enum:`BT_FAST_PAIR_ADV_BATTERY_MODE_HIDE_UI_IND` to include the battery notification in the generated advertising payload.

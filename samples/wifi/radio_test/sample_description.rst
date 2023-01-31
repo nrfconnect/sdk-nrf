@@ -203,7 +203,7 @@ Testing
 
          .. note::
 
-            The above command should be execeuted only after the signal generator has completed transmitting packets.
+            The above command should be executed only after the signal generator has completed transmitting packets.
 
 
          * To get rx stats, use the following command:

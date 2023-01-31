@@ -82,7 +82,7 @@ ssize_t bt_nsms_status_read(struct bt_conn *conn,
 /** @brief Create the Nordic Status Message Service instance
  *
  * This macro creates the Nordic Status Message Service instance and prepares it to work.
- * Note that it allows to implement multiple instances and the only differnce between them would be
+ * Note that it allows to implement multiple instances and the only difference between them would be
  * the name.
  *
  * @param _nsms        Name of Status Message Service instance.

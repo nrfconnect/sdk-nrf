@@ -153,7 +153,7 @@ config KERNEL_SHELL
 config INIT_STACKS
 	default y
 	help
-	  nRF Desktop Shell configuration enables stack area intializatiton
+	  nRF Desktop Shell configuration enables stack area initialization
 	  with a fixed value to easily calculate stack usage.
 
 config THREAD_MONITOR
@@ -176,7 +176,7 @@ config DESKTOP_RTT
 	select USE_SEGGER_RTT
 	depends on DESKTOP_LOG || DESKTOP_SHELL
 	help
-	  The option enables support for Segger J-Link RTT in the nRF Desktop.
+	  The option enables support for SEGGER J-Link RTT in the nRF Desktop.
 
 	  Disable the option only if you would like to use other backend for
 	  nRF Desktop logs or shell.
@@ -187,7 +187,7 @@ config SEGGER_RTT_BUFFER_SIZE_UP
 	default 4096
 	help
 	  nRF Desktop RTT configuration increases the default buffer size
-	  in the Segger J-Link RTT libraries to enhance logging capacity.
+	  in the SEGGER J-Link RTT libraries to enhance logging capacity.
 
 endif # DESKTOP_RTT
 

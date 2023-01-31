@@ -155,7 +155,7 @@ The behavior of the commands vary depending on the hardware configuration and Kc
   * For these commands, the radio peripheral and FEM gain is calculated and set automatically to meet your requirements.
   * If an exact output power value cannot be set, a lower value is used.
 
-* Radio Test with front-end module support and manual Tx output power control (the kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is disabled):
+* Radio Test with front-end module support and manual Tx output power control (the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is disabled):
 
   * The ``output_power`` command sets the SoC output command with a subcommands set.
   * The ``fem`` command with the ``tx_gain`` subcommand sets the front-end module gain to an arbitrary value for given front-end module.

@@ -91,7 +91,7 @@ int lwm2m_security_set_psk(uint16_t sec_obj_inst, const void *psk, int psk_len, 
  * @brief Set security object to certificate mode.
  *
  * Any pointer can be given as a NULL, which means that data related to this field is set to
- * zero legth in the engine. Effectively, it causes that relative data is not written into
+ * zero length in the engine. Effectively, it causes that relative data is not written into
  * the modem. This can be used if the given data is already provisioned to the modem.
  *
  * @param sec_obj_inst Security object ID to modify.

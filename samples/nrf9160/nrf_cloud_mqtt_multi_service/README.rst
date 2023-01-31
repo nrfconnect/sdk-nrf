@@ -29,7 +29,7 @@ Features
 
 This sample implements or demonstrates the following features:
 
-* Error-tolerant use of the `nRF Cloud MQTT API`_ using the :ref:`nrf_modem <nrfxlib:nrf_modem>` and :ref:`nrf_cloud <lib_nrf_cloud>` libraries.
+* Error-tolerant use of the `nRF Cloud MQTT API`_ using the :ref:`nrf_modem` and :ref:`lib_nrf_cloud` library.
 * Support for `Firmware-Over-The-Air (FOTA) update service <nRF Cloud Getting Started FOTA documentation_>`_ using the `nRF Cloud`_ portal.
 * Support for `modem AT commands <AT Commands Reference Guide_>`_ over UART using the :ref:`lib_at_host` library.
 * Support for remote execution of modem AT commands using application-specific device messages.
@@ -183,7 +183,7 @@ The GNSS and cellular location tracking methods are enabled by default and will 
 
 .. _nrf_cloud_mqtt_multi_service_wifi_location_tracking:
 
-The Wi-Fi location tracking method is not enabled by default and requires the nRF7002 wifi companion chip.
+The Wi-Fi location tracking method is not enabled by default and requires the nRF7002 Wi-Fi companion chip.
 
 When enabled, this location method scans the MAC addresses of nearby access points and submits them to nRF Cloud to obtain a location estimate.
 
@@ -204,7 +204,7 @@ For example, if your development kit version is 1.0.1, use the following board n
 Remote execution of modem AT commands
 =====================================
 
-If the :ref:`CONFIG_AT_CMD_REQUESTS <CONFIG_AT_CMD_REQUESTS>` KConfig option is enabled, you can remotely execute modem AT commands on your device by sending a device message with appId ``MODEM``, messageType ``CMD``, and the data key set to the command you would like to execute.
+If the :ref:`CONFIG_AT_CMD_REQUESTS <CONFIG_AT_CMD_REQUESTS>` Kconfig option is enabled, you can remotely execute modem AT commands on your device by sending a device message with appId ``MODEM``, messageType ``CMD``, and the data key set to the command you would like to execute.
 
 The application executes the command stored in the data key, and responds with a device message containing either an error code or the response from the modem to the AT command.
 
@@ -330,7 +330,7 @@ Enable :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` to use an external a
 Customizing LED status indication
 =================================
 
-To disable LED status indication (other than the selected idle behavior) after a connection to nrf Cloud has been established at least once, disable :ref:`CONFIG_LED_VERBOSE_INDICATION <CONFIG_LED_VERBOSE_INDICATION>`.
+To disable LED status indication (other than the selected idle behavior) after a connection to nRF Cloud has been established at least once, disable :ref:`CONFIG_LED_VERBOSE_INDICATION <CONFIG_LED_VERBOSE_INDICATION>`.
 
 To turn the LED off while the sample is idle (rather than show an idle pattern), disable :ref:`CONFIG_LED_CONTINUOUS_INDICATION <CONFIG_LED_CONTINUOUS_INDICATION>`.
 

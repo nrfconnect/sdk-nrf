@@ -124,7 +124,7 @@ Overlay configurations files that enable specific features:
 
 Custom DTC overlay file for enabling a specific feature:
 
-* :file:`rf9160dk_with_nrf7002ek.overlay` - Configuration file that enables Wi-Fi scanning with nRF7002 EK.
+* :file:`nrf9160dk_with_nrf7002ek.overlay` - Configuration file that enables Wi-Fi scanning with nRF7002 EK.
 
 Multiple overlay files can be included to enable multiple features at the same time.
 

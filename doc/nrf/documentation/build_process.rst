@@ -2,6 +2,11 @@
 
 Documentation build process
 ###########################
+
+.. contents::
+   :local:
+   :depth: 2
+
 Whenever the main branch of the `sdk-nrf`_ repository is updated or a pull request is made, a new version of the documentation is built and published. The following section describes the steps involved with building and publishing the documentation.
 
 Building with Sphinx

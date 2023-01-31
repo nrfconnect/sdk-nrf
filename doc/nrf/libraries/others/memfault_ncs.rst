@@ -38,15 +38,15 @@ Configuration files
 
 .. memfault_config_files_start
 
-If you just want to do a quick test with a sample, disable the :kconfig:option:`CONFIG_MEMFAULT_USER_CONFIG_ENABLE` option in the :file:`prj.conf` to avoid adding the user configuration files.
+If you just want to do a quick test with a sample, disable the :kconfig:option:`CONFIG_MEMFAULT_USER_CONFIG_ENABLE` option in the :file:`prj.conf` file to avoid adding the user configuration files.
 Otherwise, follow the instructions below.
 
 Memfault SDK requires three files in the include path during the build process.
 Add a new folder into your project called :file:`config` and add the following three files:
 
-* ``memfault_platform_config.h`` - Sets Memfault SDK configurations that are not covered by Kconfig options
-* ``memfault_metrics_heartbeat_config.def`` - Defines application-specific metrics
-* ``memfault_trace_reason_user_config.def`` - Defines application-specific trace reasons
+* :file:`memfault_platform_config.h` - Sets Memfault SDK configurations that are not covered by Kconfig options.
+* :file:`memfault_metrics_heartbeat_config.def` - Defines application-specific metrics.
+* :file:`memfault_trace_reason_user_config.def` - Defines application-specific trace reasons.
 
 For more information, you can see `Memfault nRF Connect SDK integration guide`_.
 You can use the files in the :ref:`memfault_sample` sample as a reference.
@@ -84,7 +84,7 @@ You can find more details on each option using ``menuconfig``, ``guiconfig``, an
 .. note::
 
    The Memfault shell is enabled by default, using the UART interface.
-   If :ref:`lib_at_host` library and the memfault module are enabled simultaneously, both will not behave as expected, as they both require the UART same interface.
+   If :ref:`lib_at_host` library and the Memfault module are enabled simultaneously, both will not behave as expected, as they both require the UART same interface.
    Therefore, it is recommended to only enable one of these at the same time.
    To disable the Memfault shell, you need to disable the two configurations, ``CONFIG_MEMFAULT_SHELL`` and ``CONFIG_MEMFAULT_NRF_SHELL``.
 

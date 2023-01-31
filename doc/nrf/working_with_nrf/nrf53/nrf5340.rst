@@ -582,7 +582,7 @@ To enable the simultaneous update of multiple images in the MCUboot, set the fol
 .. note::
 
    The application core can be reverted, but doing so bricks the network core upon revertion, as the reversion process fills the network core with the content currently in the RAM that pcd uses.
-   To enable this, define the ``USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY`` kconfig option in the project-level KConfig file.
+   To enable this, define the ``USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY`` Kconfig option in the project-level Kconfig file.
    When this is option is defined, you can enable it by setting :kconfig:option`CONFIG_USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY`.
 
 The :kconfig:option:`CONFIG_NRF53_MULTI_IMAGE_UPDATE` option selects this feature by default if these options and all its other dependencies are asserted.

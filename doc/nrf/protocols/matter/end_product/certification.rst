@@ -120,8 +120,8 @@ Certification document templates from Nordic Semiconductor
   To request and obtain such documents, open a private ticket on `DevZone`_ after you join the related SDO.
 
   .. note::
-     Nordic Semiconductor provides just an example answers based on the reference SDK applications, which may guide you on how to answer to certain platform-related questions.
-     You are still solely responsibility for filling original documents according to a product specifiction.
+     Nordic Semiconductor provides just example answers based on the reference SDK applications, which may guide you on how to answer to certain platform-related questions.
+     You are still solely responsible for filling original documents according to a product specification.
      The final approval depends on the Director of Certification in the given Standards Developing Organization (SDO).
 
 PICS

@@ -298,7 +298,7 @@ MCUboot is added to its boot chain by including the ``CONFIG_BOOTLOADER_MCUBOOT`
 |how_to_configure|
 
 MCUboot can use the cryptographic functionality exposed by the immutable bootloader, reducing the flash memory usage for MCUboot to less than 16 kB.
-To enable this configuration, apply both the :file:`prj_minimal.conf` Kconfig project file and the :file:`external_crypto.conf` kconfig fragment for the MCUboot image:
+To enable this configuration, apply both the :file:`prj_minimal.conf` Kconfig project file and the :file:`external_crypto.conf` Kconfig fragment for the MCUboot image:
 
 .. code-block::
 

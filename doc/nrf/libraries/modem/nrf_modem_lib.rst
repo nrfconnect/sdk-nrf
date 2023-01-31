@@ -302,7 +302,7 @@ If a fault occurs in the modem, the application is notified through the fault ha
 This lets the application read the fault reason (in some cases the modem's program counter) and take the appropriate action.
 
 On initialization (using :c:func:`nrf_modem_lib_init`), the Modem library integration layer registers the :c:func:`nrf_modem_fault_handler` function through the Modem library initialization parameters.
-The behavior of the :c:func:`nrf_modem_fault_handler` function is controlled with the three following KConfig options:
+The behavior of the :c:func:`nrf_modem_fault_handler` function is controlled with the three following Kconfig options:
 
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_DO_NOTHING` - This option lets the fault handler log the Modem fault and return (default).
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM` - This option lets the fault handler schedule a workqueue task to reinitialize the modem and Modem library.

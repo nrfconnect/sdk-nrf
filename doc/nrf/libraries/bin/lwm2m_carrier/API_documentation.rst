@@ -3,6 +3,10 @@
 API documentation
 *****************
 
+.. contents::
+   :local:
+   :depth: 2
+
 | Header files: :file:`lib/bin/lwm2m_carrier/include`
 | Source files: :file:`lib/bin/lwm2m_carrier`
 

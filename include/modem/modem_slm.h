@@ -46,7 +46,7 @@ enum at_cmd_state {
  * @typedef slm_data_handler_t
  *
  * Handler to handle data received from SLM, which could be AT response, AT notification
- * or or simply raw data (e.g. DFU image).
+ * or simply raw data (for example DFU image).
  *
  * @param data    Data received from SLM.
  * @param datalen Length of the data received.
