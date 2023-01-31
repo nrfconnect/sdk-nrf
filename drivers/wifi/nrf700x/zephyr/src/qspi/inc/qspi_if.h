@@ -103,8 +103,9 @@ int func_rpu_sleep(void);
 int func_rpu_wake(void);
 int func_rpu_sleep_status(void);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-#endif /* __QSPI_IF_H__ */
 
 #define QSPI_KEY_LEN_BYTES 16
 int qspi_configure_encryption(uint8_t *key);
 int qspi_enable_encryption(void);
+
+#endif /* __QSPI_IF_H__ */
