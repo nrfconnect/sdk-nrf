@@ -301,6 +301,7 @@ void main(void)
 	LOG_INF("Starting %s with CPU frequency: %d MHz", CONFIG_BOARD, SystemCoreClock/MHZ(1));
 	k_sleep(K_SECONDS(1));
 
+#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
 	if (strlen(CONFIG_NRF700X_QSPI_ENCRYPTION_KEY)) {
 		char key[QSPI_KEY_LEN_BYTES];
 		int ret;
@@ -327,6 +328,7 @@ void main(void)
 	} else {
 		LOG_INF("QSPI Encryption disabled");
 	}
+#endif
 
 	LOG_INF("Static IP address (overridable): %s/%s -> %s",
 		CONFIG_NET_CONFIG_MY_IPV4_ADDR,
