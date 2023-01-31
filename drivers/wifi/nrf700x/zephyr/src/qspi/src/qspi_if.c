@@ -1237,26 +1237,16 @@ int qspi_cmd_sleep_rpu(const struct device *dev)
 
 // Encryption public API
 
-int qspi_enable_encryption(void)
+int qspi_enable_encryption(uint8_t *key)
 {
 #if defined(CONFIG_SOC_SERIES_NRF53X)
+	memcpy(qspi_config->p_cfg.key, key, 16);
+
 	nrfx_qspi_dma_encrypt(&qspi_config->p_cfg);
 
 	qspi_cmd_encryption(&qspi_perip, &qspi_config->p_cfg);
 
 	qspi_config->encryption = true;
-
-	return 0;
-#else
-	return -ENOTSUP;
-#endif
-}
-
-
-int qspi_configure_encryption(uint8_t *key)
-{
-#if defined(CONFIG_SOC_SERIES_NRF53X)
-	memcpy(qspi_config->p_cfg.key, key, 16);
 
 	return 0;
 #else

@@ -319,8 +319,7 @@ void main(void)
 		}
 		LOG_DBG("\n");
 
-		qspi_configure_encryption(key);
-		qspi_enable_encryption();
+		qspi_enable_encryption(key);
 	} else {
 		LOG_INF("QSPI Encryption disabled");
 	}
