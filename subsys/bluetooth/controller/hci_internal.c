@@ -453,6 +453,12 @@ static void supported_features(sdc_hci_ip_lmp_features_t *features)
 
 static void le_supported_features(sdc_hci_le_le_features_t *features)
 {
+	uint16_t sizeof_features = sizeof(*features);
+	if (sizeof_features != 8)
+	{
+		__ASSERT(false, "features memset() has wrong size");
+	}
+
 	memset(features, 0, sizeof(*features));
 
 	features->le_encryption = 1;
