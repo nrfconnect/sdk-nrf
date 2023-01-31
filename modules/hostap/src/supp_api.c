@@ -379,11 +379,13 @@ int z_wpa_supplicant_status(const struct device *dev,
 		if (!ret) {
 			status->beacon_interval = conn_info->beacon_interval;
 			status->dtim_period = conn_info->dtim_period;
+			status->twt_capable = conn_info->twt_capable;
 		} else {
 			wpa_printf(MSG_WARNING, "%s: Failed to get connection info\n",
 				__func__);
 				status->beacon_interval = 0;
 				status->dtim_period = 0;
+				status->twt_capable = false;
 				ret = 0;
 		}
 	} else {
