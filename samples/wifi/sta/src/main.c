@@ -319,7 +319,11 @@ void main(void)
 		}
 		LOG_DBG("\n");
 
-		qspi_enable_encryption(key);
+		ret = qspi_enable_encryption(key);
+		if (ret) {
+			LOG_ERR("Failed to enable encryption: %d\n", ret);
+			return;
+		}
 	} else {
 		LOG_INF("QSPI Encryption disabled");
 	}
