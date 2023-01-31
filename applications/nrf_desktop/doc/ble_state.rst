@@ -23,14 +23,19 @@ Module events
 .. note::
     |nrf_desktop_module_event_note|
 
-Implementation details
-**********************
+Configuration
+*************
 
 nRF Desktop uses the Bluetooth LE state module from :ref:`lib_caf` (CAF).
-See the :ref:`CAF Bluetooth LE state <caf_ble_state>` page for implementation details.
+The :ref:`CONFIG_DESKTOP_BLE_STATE <config_desktop_app_options>` Kconfig option selects the :kconfig:option:`CONFIG_CAF_BLE_STATE` option.
+
+For more information about Bluetooth configuration in nRF Desktop, see :ref:`nrf_desktop_bluetooth_guide`.
+
+Implementation details
+**********************
 
 The Bluetooth LE state module handles, among others, Zephyr's connection parameters update request callback.
 The module rejects a connection parameters update request and submits the :c:struct:`ble_peer_conn_params_event` event.
 The event is handled by the :ref:`nrf_desktop_ble_conn_params`, which updates the connection parameters.
 
-For more information about Bluetooth configuration in nRF Desktop, see :ref:`nrf_desktop_bluetooth_guide`.
+For information on implementation details, see the :ref:`CAF Bluetooth LE state <caf_ble_state>` page.

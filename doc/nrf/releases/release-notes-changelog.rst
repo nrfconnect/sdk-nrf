@@ -341,6 +341,12 @@ nRF9160 samples
     * MCUboot child image files to properly access external flash on newer nRF9160DK versions.
     * An :file:`overlay_mcuboot_ext_flash.conf` file to enable MCUboot use of external flash.
 
+* :ref:`slm_shell_sample` sample:
+
+  * Added:
+
+    * Sample for nRF52 and nRF53 Series devices to send AT commands to nRF9160 SiP from shell.
+
 Peripheral samples
 ------------------
 
@@ -435,6 +441,10 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
   * Updated by reducing log verbosity.
 
+* :ref:`lib_bh1749`:
+
+  * Fixed an issue where the driver would attempt to use APIs before the sensor was ready, which in turn could make the application hang.
+
 Libraries
 =========
 
@@ -505,6 +515,12 @@ Modem libraries
       * ``CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG`` to :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG`.
 
   * Fixed an issue causing the A-GPS data download to be delayed until the RRC connection release.
+
+* :ref:`lib_modem_slm` library:
+
+  * Added:
+
+    * Library for external MCU to work with nRF9160 SiP through the Serial LTE Modem application.
 
 Libraries for networking
 ------------------------
@@ -597,6 +613,13 @@ Other libraries
 
 Common Application Framework (CAF)
 ----------------------------------
+
+* :ref:`caf_ble_smp`:
+
+  * Updated:
+
+    * Aligned the module with the recent MCUmgr API, following the :ref:`zephyr:mcumgr_callbacks` migration guide in the Zephyr documentation.
+      The module now requires :kconfig:option:`CONFIG_MCUMGR_MGMT_NOTIFICATION_HOOKS` and :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_UPLOAD_CHECK_HOOK` configuration options to be enabled.
 
 * :ref:`caf_overview_events`:
 

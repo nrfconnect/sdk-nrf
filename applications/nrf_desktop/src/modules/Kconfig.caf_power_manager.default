@@ -7,15 +7,23 @@
 # nRF Desktop specific configuration overlay for CAF power manager module.
 
 config DESKTOP_POWER_MANAGER
-	bool
+	bool "Power manager module (CAF)"
 	select CAF_POWER_MANAGER
-	select CAF_PM_EVENTS
 	imply CAF_POWER_MANAGER_STAY_ON if DESKTOP_ROLE_HID_DONGLE
+	help
+	  nRF Desktop uses power manager module from Common Application
+	  Framework (CAF).
+
+	  By default, the nRF Desktop dongle stays on and remains idle instead
+	  of switching SoC to OFF mode after the power manager timeout.
 
 if DESKTOP_POWER_MANAGER
 
 choice PM_POLICY
 	default PM_POLICY_CUSTOM
+	help
+	 By default, nRF Desktop overrides the default PM policy with a custom
+	 implementation.
 endchoice
 
 endif # DESKTOP_POWER_MANAGER

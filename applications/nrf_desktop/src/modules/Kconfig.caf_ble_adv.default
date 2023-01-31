@@ -6,7 +6,17 @@
 
 # nRF Desktop specific configuration overlay for CAF BLE advertising module.
 
-if CAF_BLE_ADV
+config DESKTOP_BLE_ADV
+	bool "Bluetooth LE advertising module (CAF)"
+	select CAF_BLE_ADV
+	help
+	  nRF Desktop uses Bluetooth LE advertising module from Common
+	  Application Framework (CAF).
+
+	  By default, nRF Desktop application does not use direct advertising,
+	  but uses fast advertising and enables filter accept list.
+
+if DESKTOP_BLE_ADV
 
 config CAF_BLE_ADV_DIRECT_ADV
 	default n
@@ -53,4 +63,4 @@ config DESKTOP_ADV_PROV_UUID16_ALL
 	depends on (DESKTOP_HIDS_ENABLE || DESKTOP_BAS_ENABLE)
 	default y
 
-endif # CAF_BLE_ADV
+endif # DESKTOP_BLE_ADV
