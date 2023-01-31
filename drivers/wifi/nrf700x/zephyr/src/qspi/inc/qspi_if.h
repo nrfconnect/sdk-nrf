@@ -105,6 +105,12 @@ int func_rpu_sleep_status(void);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 #define QSPI_KEY_LEN_BYTES 16
+
+/*! \brief Enable encryption
+ *
+ *  \param key Pointer to the 128-bit key
+ *  \return 0 on success, negative errno code on failure.
+ */
 int qspi_enable_encryption(uint8_t *key);
 
 #endif /* __QSPI_IF_H__ */
