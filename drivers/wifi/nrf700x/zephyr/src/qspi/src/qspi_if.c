@@ -1235,7 +1235,7 @@ int qspi_cmd_sleep_rpu(const struct device *dev)
 	return ret;
 }
 
-// Encryption public API
+/* Encryption public API */
 
 int qspi_enable_encryption(uint8_t *key)
 {
