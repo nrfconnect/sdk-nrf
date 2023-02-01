@@ -86,6 +86,12 @@ endif()
 if (${TFM_PARTITION_CRYPTO})
   target_link_libraries(platform_s PRIVATE platform_cc3xx)
 
+  # NCSDK-19561 cc3xx libraries requires heap.
+  target_compile_definitions(platform_region_defs
+    INTERFACE
+        ENABLE_HEAP
+  )
+
   # Needed in order to get crypto partition modules flags
   target_link_libraries(platform_s PRIVATE tfm_psa_rot_partition_crypto)
 endif()
