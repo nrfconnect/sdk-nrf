@@ -165,9 +165,14 @@ static void check_modem_fw_version(void)
 	if (ver_check(MFWV_MAJ_EXT_SRCH_GCI, MFWV_MIN_EXT_SRCH_GCI, MFWV_REV_EXT_SRCH_GCI,
 		      major, minor, rev)) {
 		search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE;
+		LOG_INF("Using LTE LC neighbor search type GCI extended complete for %d cells",
+			CONFIG_REST_CELL_GCI_COUNT);
 	} else if (ver_check(MFWV_MAJ_EXT_SRCH, MFWV_MIN_EXT_SRCH, MFWV_REV_EXT_SRCH,
 			     major, minor, rev)) {
 		search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE;
+		LOG_INF("Using LTE LC neighbor search type extended complete");
+	} else {
+		LOG_INF("Using LTE LC neighbor search type default");
 	}
 }
 
@@ -484,12 +489,18 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		break;
 	case LTE_LC_EVT_RRC_UPDATE:
 		cur_rrc_mode = evt->rrc_mode;
+		if (cur_rrc_mode == LTE_LC_RRC_MODE_IDLE) {
+			LOG_INF("RRC mode: idle");
+		} else {
+			LOG_INF("RRC mode: connected");
+		}
 		if (rrc_idle_wait && (cur_rrc_mode == LTE_LC_RRC_MODE_IDLE)) {
 			process_cell_pos_type_change();
 		}
 		break;
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS:
-		if (evt->cells_info.current_cell.id == LTE_LC_CELL_EUTRAN_ID_INVALID) {
+		if ((search_type < LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT) &&
+		    (evt->cells_info.current_cell.id == LTE_LC_CELL_EUTRAN_ID_INVALID)) {
 			LOG_WRN("Current cell ID not valid in neighbor cell measurement results");
 			break;
 		}
@@ -609,9 +620,13 @@ void main(void)
 
 		(void)k_mutex_lock(&cell_info_mutex, K_FOREVER);
 
-		LOG_INF("Current cell info: Cell ID: %u, TAC: %u, MCC: %d, MNC: %d",
-			cell_info.current_cell.id, cell_info.current_cell.tac,
-			cell_info.current_cell.mcc, cell_info.current_cell.mnc);
+		if (cell_info.current_cell.id != LTE_LC_CELL_EUTRAN_ID_INVALID) {
+			LOG_INF("Current cell info: Cell ID: %u, TAC: %u, MCC: %d, MNC: %d",
+				cell_info.current_cell.id, cell_info.current_cell.tac,
+				cell_info.current_cell.mcc, cell_info.current_cell.mnc);
+		} else {
+			LOG_WRN("No current serving cell available");
+		}
 
 		if (cell_info.ncells_count || cell_info.gci_cells_count) {
 			LOG_INF("Performing multi-cell request with "
