@@ -91,6 +91,11 @@ void tx_desc_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	bit = (desc % TX_DESC_BUCKET_BOUND);
 	pool_id = (desc / TX_DESC_BUCKET_BOUND);
+
+	if (!(fmac_dev_ctx->tx_config.buf_pool_bmp_p[pool_id] & (1 << bit))) {
+		return;
+	}
+
 	fmac_dev_ctx->tx_config.buf_pool_bmp_p[pool_id] &= (~(1 << bit));
 
 	fmac_dev_ctx->tx_config.outstanding_descs[queue]--;
@@ -861,30 +866,39 @@ unsigned int tx_buff_req_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		end_ac = WIFI_NRF_FMAC_AC_BK;
 	}
 
-	for (cnt = start_ac; cnt >= end_ac; cnt--) {
-		pkts_pend = _tx_pending_process(fmac_dev_ctx, desc, cnt);
-
-		if (pkts_pend) {
-			*ac = (unsigned char)cnt;
-
-			/* Spare Token Case*/
-			if (tx_done_q != *ac) {
-				/*Adjust the counters*/
-				fmac_dev_ctx->tx_config.outstanding_descs[tx_done_q]--;
-				fmac_dev_ctx->tx_config.outstanding_descs[*ac]++;
-			}
-
-			break;
-		}
-	}
-
-	if (!pkts_pend) {
-		/* Mark the desc as available */
+	if (fmac_dev_ctx->twt_sleep_status ==
+	    WIFI_NRF_FMAC_TWT_STATE_SLEEP) {
 		tx_desc_free(fmac_dev_ctx,
 			     desc,
 			     tx_done_q);
+		goto out;
+	} else {
+		for (cnt = start_ac; cnt >= end_ac; cnt--) {
+			pkts_pend = _tx_pending_process(fmac_dev_ctx, desc, cnt);
+
+			if (pkts_pend) {
+				*ac = (unsigned char)cnt;
+
+				/* Spare Token Case */
+				if (tx_done_q != *ac) {
+					/* Adjust the counters */
+					fmac_dev_ctx->tx_config.outstanding_descs[tx_done_q]--;
+					fmac_dev_ctx->tx_config.outstanding_descs[*ac]++;
+				}
+
+				break;
+			}
+		}
+
+		if (!pkts_pend) {
+			/* Mark the desc as available */
+			tx_desc_free(fmac_dev_ctx,
+				     desc,
+				     tx_done_q);
+		}
 	}
 
+out:
 	return pkts_pend;
 }
 
