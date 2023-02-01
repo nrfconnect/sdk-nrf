@@ -361,7 +361,7 @@ static void at_handler_ncellmeas_gci(const char *response)
 
 	evt.cells_info.gci_cells = cells;
 	err = parse_ncellmeas_gci(&ncellmeas_params, resp, &evt.cells_info);
-
+	LOG_DBG("parse_ncellmeas_gci returned %d", err);
 	switch (err) {
 	case -E2BIG:
 		LOG_WRN("Not all neighbor cells could be parsed");
