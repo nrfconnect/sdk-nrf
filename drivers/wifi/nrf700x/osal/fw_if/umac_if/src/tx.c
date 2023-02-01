@@ -91,6 +91,11 @@ void tx_desc_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	bit = (desc % TX_DESC_BUCKET_BOUND);
 	pool_id = (desc / TX_DESC_BUCKET_BOUND);
+
+	if (!(fmac_dev_ctx->tx_config.buf_pool_bmp_p[pool_id] & (1 << bit))) {
+		return;
+	}
+
 	fmac_dev_ctx->tx_config.buf_pool_bmp_p[pool_id] &= (~(1 << bit));
 
 	fmac_dev_ctx->tx_config.outstanding_descs[queue]--;
@@ -111,7 +116,6 @@ void tx_desc_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			break;
 		}
 	}
-
 }
 
 
@@ -199,7 +203,6 @@ unsigned int tx_desc_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			}
 		}
 	}
-
 
 	return desc;
 }
@@ -861,30 +864,36 @@ unsigned int tx_buff_req_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		end_ac = WIFI_NRF_FMAC_AC_BK;
 	}
 
-	for (cnt = start_ac; cnt >= end_ac; cnt--) {
-		pkts_pend = _tx_pending_process(fmac_dev_ctx, desc, cnt);
-
-		if (pkts_pend) {
-			*ac = (unsigned char)cnt;
-
-			/* Spare Token Case*/
-			if (tx_done_q != *ac) {
-				/*Adjust the counters*/
-				fmac_dev_ctx->tx_config.outstanding_descs[tx_done_q]--;
-				fmac_dev_ctx->tx_config.outstanding_descs[*ac]++;
-			}
-
-			break;
-		}
-	}
-
-	if (!pkts_pend) {
-		/* Mark the desc as available */
+	if (fmac_dev_ctx->twt_sleep_status) {
 		tx_desc_free(fmac_dev_ctx,
 			     desc,
 			     tx_done_q);
-	}
+		goto out;
+	} else {
+		for (cnt = start_ac; cnt >= end_ac; cnt--) {
+			pkts_pend = _tx_pending_process(fmac_dev_ctx, desc, cnt);
 
+			if (pkts_pend) {
+				*ac = (unsigned char)cnt;
+
+				/* Spare Token Case*/
+				if (tx_done_q != *ac) {
+					/*Adjust the counters*/
+					fmac_dev_ctx->tx_config.outstanding_descs[tx_done_q]--;
+					fmac_dev_ctx->tx_config.outstanding_descs[*ac]++;
+				}
+				break;
+			}
+		}
+
+		if (!pkts_pend) {
+			/* Mark the desc as available */
+			tx_desc_free(fmac_dev_ctx,
+				     desc,
+				     tx_done_q);
+		}
+	}
+out:
 	return pkts_pend;
 }
 
@@ -972,16 +981,12 @@ enum wifi_nrf_status tx_done_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	fmac_dev_ctx->host_stats.total_tx_done_pkts += pkt;
 
-	/* Save the tx_desc_num for use in case of UNBLOCK_TX event received */
-	fpriv->last_tx_done_desc = config->tx_desc_num;
-
 	pkts_pending = tx_buff_req_free(fmac_dev_ctx, config->tx_desc_num, &queue);
 
 	if (pkts_pending) {
-		if (!fpriv->twt_sleep_status) {
+		if (!fmac_dev_ctx->twt_sleep_status) {
 
 			pkt_info = &fmac_dev_ctx->tx_config.pkt_info_p[desc];
-
 			txq = pkt_info->pkt;
 
 			status = tx_cmd_init(fmac_dev_ctx,
@@ -991,7 +996,6 @@ enum wifi_nrf_status tx_done_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		} else {
 			status = WIFI_NRF_STATUS_SUCCESS;
 		}
-
 	} else {
 		status = WIFI_NRF_STATUS_SUCCESS;
 	}
@@ -1068,7 +1072,7 @@ enum wifi_nrf_status wifi_nrf_fmac_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx
 	}
 
 
-	if (fpriv->twt_sleep_status) {
+	if (fmac_dev_ctx->twt_sleep_status) {
 		goto out;
 	}
 
@@ -1316,8 +1320,8 @@ enum wifi_nrf_status tx_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 
 		goto out;
 	}
-	fmac_dev_ctx->fpriv->last_tx_done_desc  = -1;
-	fmac_dev_ctx->fpriv->twt_sleep_status  = false;
+
+	fmac_dev_ctx->twt_sleep_status = 0;
 	status = WIFI_NRF_STATUS_SUCCESS;
 out:
 	return status;
