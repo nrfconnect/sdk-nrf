@@ -248,6 +248,7 @@ Bluetooth samples
 
     * Documentation by adding energy consumption information.
     * Documentation by adding a section about distance offset calibration.
+    * Configuration of the GPIO pins used by the DM module using the device tree.
 
 * :ref:`peripheral_nfc_pairing` and :ref:`central_nfc_pairing` samples:
 
