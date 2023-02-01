@@ -312,8 +312,6 @@ void main(void)
 			return;
 		}
 
-		LOG_INF("QSPI Encryption enabled");
-
 		LOG_DBG("QSPI Encryption key: ");
 		for (int i = 0; i < QSPI_KEY_LEN_BYTES; i++) {
 			LOG_DBG("%02x", key[i]);
@@ -324,6 +322,8 @@ void main(void)
 		if (ret) {
 			LOG_ERR("Failed to enable encryption: %d\n", ret);
 			return;
+		} else {
+			LOG_INF("QSPI Encryption enabled");
 		}
 	} else {
 		LOG_INF("QSPI Encryption disabled");
