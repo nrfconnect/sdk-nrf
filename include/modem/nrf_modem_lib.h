@@ -165,6 +165,8 @@ struct nrf_modem_lib_diag_stats {
  * @brief Retrieve heap runtime statistics.
  *
  * Retrieve runtime statistics for the shared memory and library heaps.
+ *
+ * @return int Zero on success, non-zero otherwise.
  */
 int nrf_modem_lib_diag_stats_get(struct nrf_modem_lib_diag_stats *stats);
 
