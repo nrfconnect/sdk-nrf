@@ -206,7 +206,7 @@ static int mpsl_fem_init(const struct device *dev)
 	return fem_simple_gpio_configure();
 }
 
-SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
+SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 
 #else /* !defined(CONFIG_MPSL_FEM_PIN_FORWARDER) */
 
