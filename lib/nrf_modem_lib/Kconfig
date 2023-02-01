@@ -21,5 +21,6 @@ menuconfig NRF_MODEM_LIB
 if NRF_MODEM_LIB
 
 rsource "Kconfig.modemlib"
+rsource "lte_connectivity/Kconfig"
 
 endif # NRF_MODEM_LIB

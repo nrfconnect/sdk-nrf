@@ -1,0 +1,6 @@
+tests:
+  nrf_modem_lib.lte_connectivity:
+    tags: nrf_modem_lib
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
