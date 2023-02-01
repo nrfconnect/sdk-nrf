@@ -13,6 +13,13 @@ menuconfig MODEM_SLM
 
 if MODEM_SLM
 
+config MODEM_SLM_DMA_MAXLEN
+	int "Buffer size for UART RX EasyDMA"
+	range 256 2048
+	default 1024
+	help
+	  The maximum number of bytes in receive buffer.
+
 config MODEM_SLM_SHELL
 	bool "SLM Shell"
 	depends on SHELL

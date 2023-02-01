@@ -7,7 +7,7 @@ nRF9160: SLM Shell
    :local:
    :depth: 2
 
-The SLM Shell sample demonstrates how to send AT commands to modem through the Serial LTE Modem (:ref:`slm_description`) running on nRF9160 SiP.
+The SLM Shell sample demonstrates how to send AT commands to modem through the :ref:`Serial LTE Modem <slm_description>` application running on nRF9160 SiP.
 This sample enables an external MCU to send modem or SLM proprietary AT commands for LTE connection and IP services.
 
 Requirements
@@ -28,7 +28,7 @@ The following table shows how to connect PCA10056 UART_1 to nRF9160 UART_2 for c
    :align: center
    :header-rows: 1
 
-   * - nRF5340 DK
+   * - nRF52840 DK
      - nRF9160 DK
    * - UART TX P1.02
      - UART RX P0.11
@@ -47,7 +47,7 @@ The following table shows how to connect PCA10095 UART_1 to nRF9160 UART_2 for c
    :align: center
    :header-rows: 1
 
-   * - nRF52840 DK
+   * - nRF5340 DK
      - nRF9160 DK
    * - UART TX P1.01
      - UART RX P0.11
@@ -60,7 +60,8 @@ The following table shows how to connect PCA10095 UART_1 to nRF9160 UART_2 for c
    * - GPIO GND
      - GPIO GND
 
-NOTE SW9 on nRF9160 DK (VDD IO) should be set to 3V to work with nRF52 and nRF53 series DK.
+.. note::
+   SW9 on nRF9160 DK (VDD IO) should be set to 3V to work with the nRF52 and nRF53 series DK.
 
 References
 **********
