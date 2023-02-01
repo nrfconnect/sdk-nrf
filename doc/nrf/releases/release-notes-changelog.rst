@@ -547,6 +547,7 @@ Modem libraries
   * Updated:
 
     * The minimal value of :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE` to meet the requirements of modem firmware 1.3.4.
+    * The :c:func:`nrf_modem_lib_diag_stats_get` function now returns an error if called when the :ref:`nrf_modem_lib_readme` library has not been initialized.
 
 * :ref:`lib_location` library:
 
