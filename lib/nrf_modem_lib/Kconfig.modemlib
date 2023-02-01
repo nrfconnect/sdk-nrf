@@ -20,6 +20,18 @@ config NRF_MODEM_LIB_SYS_INIT
 	  This Kconfig option is deprecated. The application should instead use the
 	  nrf_modem_lib_init() function to initialize the modem library.
 
+config NRF_MODEM_LIB_NET_IF_AUTO_START
+	bool "Network interface auto-start"
+	depends on LTE_CONNECTIVITY
+	default y
+	help
+	  If this option is enabled, the modem is automatically initialized from the main context
+	  at SYS init.
+	  Initialization of the modem might take some time, so bear in mind that the main context
+	  will be blocked for that duration.
+	  If this option is disabled the modem must be manually initialized by bringing
+	  the network interface's administrative state up by calling net_if_up().
+
 menu "Memory configuration"
 
 config NRF_MODEM_LIB_HEAP_SIZE

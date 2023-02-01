@@ -23,12 +23,19 @@
 #include <sockets_internal.h>
 #include <zephyr/sys/fdtable.h>
 #include <zephyr/kernel.h>
+#include <zephyr/net/offloaded_netdev.h>
+#include <zephyr/net/conn_mgr_connectivity.h>
+#include <zephyr/net/net_if.h>
 
 #if defined(CONFIG_POSIX_API)
 #include <zephyr/posix/poll.h>
 #include <zephyr/posix/sys/time.h>
 #include <zephyr/posix/sys/socket.h>
 #endif
+
+#if defined(CONFIG_LTE_CONNECTIVITY)
+#include "lte_connectivity/lte_connectivity.h"
+#endif /* CONFIG_LTE_CONNECTIVITY */
 
 #if defined(CONFIG_NET_SOCKETS_OFFLOAD)
 
@@ -1077,15 +1084,22 @@ static void nrf91_iface_api_init(struct net_if *iface)
 	iface->if_dev->socket_offload = nrf91_socket_create;
 
 	socket_offload_dns_register(&nrf91_socket_dns_offload_ops);
+
+	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START)) {
+		net_if_flag_set(iface, NET_IF_NO_AUTO_START);
+	}
 }
 
 static int nrf91_iface_enable(const struct net_if *iface, bool enabled)
 {
 	/* Enables or disable the device (in response to admin state change) */
+#if defined(CONFIG_LTE_CONNECTIVITY)
+	return enabled ? lte_connectivity_enable() : lte_connectivity_disable();
+#else
 	ARG_UNUSED(iface);
 	ARG_UNUSED(enabled);
-
 	return 0;
+#endif /* CONFIG_NRF9160_CONNECTIVITY */
 }
 
 static struct offloaded_if_api nrf91_iface_offload_api = {
@@ -1100,4 +1114,18 @@ NET_DEVICE_OFFLOAD_INIT(nrf91_socket, "nrf91_socket",
 			&nrf91_iface_data, NULL,
 			0, &nrf91_iface_offload_api, 1280);
 
-#endif
+#if defined(CONFIG_LTE_CONNECTIVITY)
+/* Bind l2 connectity APIs. */
+static struct conn_mgr_conn_api conn_api = {
+	.init = lte_connectivity_init,
+	.connect = lte_connectivity_connect,
+	.disconnect = lte_connectivity_disconnect,
+	.set_opt = lte_connectivity_options_set,
+	.get_opt = lte_connectivity_options_get,
+};
+
+CONN_MGR_CONN_DEFINE(LTE_CONNECTIVITY, &conn_api);
+CONN_MGR_BIND_CONN(nrf91_socket, LTE_CONNECTIVITY);
+#endif /* CONFIG_LTE_CONNECTIVITY */
+
+#endif /* CONFIG_NET_SOCKETS_OFFLOAD */

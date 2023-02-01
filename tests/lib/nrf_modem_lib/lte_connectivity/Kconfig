@@ -1,0 +1,8 @@
+menu "Local sourcing"
+
+source "$(ZEPHYR_NRF_MODULE_DIR)/lib/nrf_modem_lib/Kconfig.modemlib"
+source "$(ZEPHYR_NRF_MODULE_DIR)/lib/nrf_modem_lib/lte_connectivity/Kconfig"
+
+endmenu
+
+source "Kconfig.zephyr"

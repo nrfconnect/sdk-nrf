@@ -1,0 +1,65 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig LTE_CONNECTIVITY
+	bool "LTE Connectivity"
+	select PDN
+	select PDN_ESM_STRERROR
+	select LTE_LINK_CONTROL
+	depends on NET_SOCKETS_OFFLOAD
+	depends on !NET_IPV6_NBR_CACHE
+	depends on !NET_IPV6_MLD
+	depends on NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
+	help
+	  Library used to provide connectivity for nRF91 based boards via Zephyr network management.
+
+if LTE_CONNECTIVITY
+
+config LTE_CONNECTIVITY_WORKQUEUE_STACK_SIZE
+	int "Workqueue stack size"
+	default 1024
+	help
+	  Stack size of the internal workqueue.
+
+config LTE_CONNECTIVITY_CONNECT_TIMEOUT_SECONDS
+	int "Connect timeout in seconds"
+	default 0
+	help
+	  Time period in seconds that the library will try to establish an LTE connection,
+	  before timing out. The connect timeout can be updated by calling
+	  conn_mgr_if_set_timeout(). Default value is 0 (timeout disabled).
+	  When the timeout is disabled, the library relies solely on the modem's internal
+	  connection handling to upkeep the connection.
+
+config LTE_CONNECTIVITY_CONNECTION_PERSISTENCE
+	bool "Connection persistency"
+	default y
+	help
+	  Persistent connection. If the connection is lost the modem will try to reconnect
+	  itself without the need for explicit calls to the network interface.
+	  Persistence can be updated run-time by calling conn_mgr_if_set_flag() with
+	  CONN_MGR_IF_PERSISTENT as flag parameter.
+
+config LTE_CONNECTIVITY_AUTO_CONNECT
+	bool "Auto connect"
+	default y
+	help
+	 If this option is set the Connection Manager will automatically call connect after the
+	 network interface has been brought up. This option sets the default value, the option has
+	 a corresponding flag that can be set at run time by calling conn_mgr_if_set_flag().
+
+config LTE_CONNECTIVITY_AUTO_DOWN
+	bool "Auto down"
+	default y
+	help
+	 If this option is set the Connection Manager will automatically take the network interface
+	 down when it stops trying to connect. This option sets the default value, the option has
+	 a corresponding flag that can be set at run time by calling conn_mgr_if_set_flag().
+
+endif # LTE_CONNECTIVITY
+
+module = LTE_CONNECTIVITY
+module-str = LTE Connectivity
+source "subsys/logging/Kconfig.template.log_config"
