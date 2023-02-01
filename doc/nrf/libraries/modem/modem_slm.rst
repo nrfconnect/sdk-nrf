@@ -7,7 +7,7 @@ Modem SLM
    :local:
    :depth: 2
 
-The Modem SLM library exposes the AT command interface of the Serial LTE Modem (:ref:`slm_description`) for external devices over a serial interface.
+The Modem SLM library exposes the AT command interface of the :ref:`Serial LTE Modem <slm_description>` application for external devices over a serial interface.
 This library is for applications running on external MCU that is built with |NCS| and is connected to nRF9160 SiP through UART.
 
 Overview
@@ -20,6 +20,7 @@ The Modem SLM library allows you to perform the following functions:
 * Send modem or SLM proprietary AT commands, receive responses and notifications, similar to the :ref:`lib_at_host` library.
   Received AT responses or notifications can be parsed by the :ref:`at_cmd_parser_readme` library.
 * Send raw data in SLM data mode.
+  Refer to :ref:`slm_data_mode`.
 * Monitor AT notifications with registered callbacks, similar to the :ref:`at_monitor_readme` library.
 * Send AT commands via UART or RTT shell, similar to the :ref:`lib_at_shell` library.
 
@@ -31,6 +32,7 @@ The library is enabled and configured entirely using the Kconfig system.
 Configure the following Kconfig options to enable this library:
 
 * :kconfig:option:`CONFIG_MODEM_SLM` - Enables the Modem SLM library.
+* :kconfig:option:`CONFIG_MODEM_SLM_DMA_MAXLEN` - Configures UART RX EasyDMA buffer size, which is configured to 1024 bytes by default.
 * :kconfig:option:`CONFIG_MODEM_SLM_WAKEUP_PIN` - Configures the mandatory wake-up GPIO, which is not configured by default.
 * :kconfig:option:`CONFIG_MODEM_SLM_WAKEUP_TIME` - Sets the toggle time value in milliseconds for wake-up GPIO, by default 100 ms.
 
