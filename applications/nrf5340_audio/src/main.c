@@ -8,7 +8,6 @@
 #include <zephyr/debug/stack.h>
 #include <zephyr/device.h>
 #include <string.h>
-
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/settings/settings.h>
 
