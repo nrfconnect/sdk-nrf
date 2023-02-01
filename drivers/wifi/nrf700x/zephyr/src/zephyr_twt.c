@@ -187,13 +187,9 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
-	struct wifi_nrf_fmac_priv *fmac_priv =	rpu_drv_priv_zep.fmac_priv;
 #ifdef CONFIG_NRF700X_DATA_TX
-	unsigned int pkts_pending = 0;
-	unsigned char queue = 0;
 	int desc = 0;
-	void *txq = NULL;
-	struct tx_pkt_info *pkt_info = NULL;
+	int ac = 0;
 #endif
 	vif_ctx_zep = vif_ctx;
 
@@ -223,35 +219,25 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 		fmac_priv->twt_sleep_status = true;
 
 		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
-					    fmac_dev_ctx->tx_config.tx_lock);
+					   fmac_dev_ctx->tx_config.tx_lock);
 	break;
 	case TWT_UNBLOCK_TX:
 		wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
 					    fmac_dev_ctx->tx_config.tx_lock);
 
 #ifdef CONFIG_NRF700X_DATA_TX
-		desc = fmac_priv->last_tx_done_desc;
-		if (desc >= 0) {
-			pkts_pending = tx_buff_req_free(fmac_dev_ctx,
-						fmac_priv->last_tx_done_desc,
-						&queue);
-			if (pkts_pending) {
-				pkt_info =
-				&fmac_dev_ctx->tx_config.pkt_info_p[desc];
-
-				txq = pkt_info->pkt;
-
-				tx_cmd_init(fmac_dev_ctx,
-					    txq,
-					    desc,
-					    pkt_info->peer_id);
+		for (ac = WIFI_NRF_FMAC_AC_BE;
+		     ac <= WIFI_NRF_FMAC_AC_MAX; ++ac) {
+			desc = tx_desc_get(fmac_dev_ctx, ac);
+			if (desc < fmac_dev_ctx->fpriv->num_tx_tokens) {
+				tx_pending_process(fmac_dev_ctx, desc, ac);
 			}
 		}
 #endif
 		fmac_priv->twt_sleep_status = false;
 
 		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
-				fmac_dev_ctx->tx_config.tx_lock);
+					   fmac_dev_ctx->tx_config.tx_lock);
 	break;
 	default:
 	break;

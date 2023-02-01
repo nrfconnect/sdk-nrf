@@ -972,9 +972,6 @@ enum wifi_nrf_status tx_done_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	fmac_dev_ctx->host_stats.total_tx_done_pkts += pkt;
 
-	/* Save the tx_desc_num for use in case of UNBLOCK_TX event received */
-	fpriv->last_tx_done_desc = config->tx_desc_num;
-
 	pkts_pending = tx_buff_req_free(fmac_dev_ctx, config->tx_desc_num, &queue);
 
 	if (pkts_pending) {
@@ -1316,8 +1313,10 @@ enum wifi_nrf_status tx_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 
 		goto out;
 	}
+
 	fmac_dev_ctx->fpriv->last_tx_done_desc  = -1;
 	fmac_dev_ctx->fpriv->twt_sleep_status  = false;
+
 	status = WIFI_NRF_STATUS_SUCCESS;
 out:
 	return status;
