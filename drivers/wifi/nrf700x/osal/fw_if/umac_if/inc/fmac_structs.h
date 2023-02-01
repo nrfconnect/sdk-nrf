@@ -399,9 +399,6 @@ struct wifi_nrf_fmac_priv {
 	unsigned int num_rx_bufs;
 
 	struct wifi_nrf_fmac_callbk_fns callbk_fns;
-
-	bool twt_sleep_status;
-	int last_tx_done_desc;
 };
 
 
@@ -452,6 +449,7 @@ struct wifi_nrf_fmac_dev_ctx {
 	bool fw_deinit_done;
 	bool alpha2_valid;
 	unsigned char alpha2[3];
+	int twt_sleep_status;
 };
 
 
