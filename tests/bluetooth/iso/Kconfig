@@ -1,0 +1,17 @@
+config PRINT_CONN_INTERVAL
+	int "Print pr X connection interval"
+	default 100
+	help
+	  For each set interval, a summary will be printed and a LED toggled.
+
+config BIS_ISO_CHAN_COUNT_MAX
+	int "Max number of ISO channels"
+	default 6
+	help
+	  It is not necessary to use all channels. Increasing will use more ROM.
+
+config ISO_TEST_LOG_LEVEL
+	int "Default log level for ISO test module"
+	default 3
+
+source "Kconfig.zephyr"
