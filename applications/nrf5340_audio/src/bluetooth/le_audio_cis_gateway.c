@@ -43,9 +43,9 @@ struct le_audio_headset {
 	char *ch_name;
 	bool hci_wrn_printed;
 	uint32_t seq_num;
-	struct bt_audio_stream *sink_stream;
+	struct bt_audio_stream sink_stream;
 	struct bt_audio_ep *sink_ep;
-	struct bt_audio_stream *source_stream;
+	struct bt_audio_stream source_stream;
 	struct bt_audio_ep *source_ep;
 	struct bt_conn *headset_conn;
 	struct net_buf_pool *iso_tx_pool;
@@ -63,20 +63,13 @@ BUILD_ASSERT(ARRAY_SIZE(headsets) >= CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SRC_COUN
 	     "We need to have at least one headset device per ASE SOURCE");
 
 static le_audio_receive_cb receive_cb;
-static struct bt_audio_stream audio_streams[CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT +
-					    CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SRC_COUNT];
+
 static struct bt_audio_unicast_group *unicast_group;
 static struct bt_codec *remote_codec[CONFIG_BT_AUDIO_UNICAST_CLIENT_PAC_COUNT * CONFIG_BT_MAX_CONN];
 
-static struct bt_audio_lc3_preset lc3_preset_nrf5340 = BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO;
-
-struct worker_data {
-	uint8_t stream_index;
-	uint8_t retries;
-} __aligned(4);
-K_MSGQ_DEFINE(kwork_msgq, sizeof(struct worker_data), ARRAY_SIZE(audio_streams), 4);
-
-static struct k_work_delayable stream_start_work[ARRAY_SIZE(audio_streams)];
+static struct bt_audio_lc3_preset lc3_preset_sink = BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK;
+static struct bt_audio_lc3_preset lc3_preset_source =
+	BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE;
 
 static uint8_t bonded_num;
 static bool playing_state = true;
@@ -94,38 +87,29 @@ static struct bt_audio_discover_params
 static int discover_source(struct bt_conn *conn);
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 
-static int next_free_audio_stream_index_get(uint8_t *index)
-{
-	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
-		if (audio_streams[i].conn == NULL) {
-			*index = i;
-			return 0;
-		}
-	}
-	LOG_WRN("All stream spots taken");
-	return -ENOSPC;
-}
-
 /**
- * @brief  Get audio stream index based on the stream pointer
+ * @brief  Check if an endpoint is in the given state
  *
- * @param  stream  The stream to search for
- * @param  index   The audio_stream index
+ * @note   If the endpoint is NULL, it is not in the
+ *         given state, and this function returns false
  *
- * @return 0 if succesfull, -EINVAL if there is no match
+ * @param[in] ep    The endpoint to check
+ * @param state     The state to check for
+ *
+ * @return True if the endpoint is in the given state, false otherwise
  */
-static int audio_stream_index_get(struct bt_audio_stream *stream, uint8_t *index)
+static bool ep_state_check(struct bt_audio_ep *ep, enum bt_audio_state state)
 {
-	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
-		if (&audio_streams[i] == stream) {
-			*index = i;
-			return 0;
-		}
+	if (ep == NULL) {
+		LOG_DBG("Endpoint is NULL");
+		return false;
 	}
 
-	LOG_WRN("Stream not found");
+	if (ep->status.state == state) {
+		return true;
+	}
 
-	return -EINVAL;
+	return false;
 }
 
 /**
@@ -139,9 +123,11 @@ static int audio_stream_index_get(struct bt_audio_stream *stream, uint8_t *index
 static bool all_active_headsets_started(void)
 {
 	for (int i = 0; i < ARRAY_SIZE(headsets); i++) {
-		if (headsets[i].sink_stream != NULL &&
-		    headsets[i].sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
-			return false;
+		if (headsets[i].headset_conn != NULL) {
+			if (!ep_state_check(headsets[i].sink_stream.ep,
+					    BT_AUDIO_EP_STATE_STREAMING)) {
+				return false;
+			}
 		}
 	}
 
@@ -149,34 +135,24 @@ static bool all_active_headsets_started(void)
 }
 
 /**
- * @brief  Get channel index based on either conn or stream
+ * @brief  Get channel index based on connection
  *
- * @param[in]  conn   The connection to search for, can be NULL
- * @param[in]  stream The stream to search for, can be NULL
+ * @param[in]  conn   The connection to search for
  * @param[out] index  The channel index
  *
  * @return 0 if succesfull, -EINVAL if there is no match
  */
-static int channel_index_get(const struct bt_conn *conn, const struct bt_audio_stream *stream,
-			     uint8_t *index)
+static int channel_index_get(const struct bt_conn *conn, uint8_t *index)
 {
-	if (conn == NULL && stream == NULL) {
-		LOG_ERR("No conn or stream provided");
+	if (conn == NULL) {
+		LOG_ERR("No connection provided");
 		return -EINVAL;
 	}
 
 	for (int i = 0; i < ARRAY_SIZE(headsets); i++) {
-		if (conn != NULL) {
-			if (headsets[i].headset_conn == conn) {
-				*index = i;
-				return 0;
-			}
-		} else if (stream != NULL) {
-			if (headsets[i].sink_stream == stream ||
-			    headsets[i].source_stream == stream) {
-				*index = i;
-				return 0;
-			}
+		if (headsets[i].headset_conn == conn) {
+			*index = i;
+			return 0;
 		}
 	}
 
@@ -189,7 +165,7 @@ static uint32_t get_and_incr_seq_num(const struct bt_audio_stream *stream)
 {
 	uint8_t channel_index;
 
-	if (channel_index_get(NULL, stream, &channel_index) == 0) {
+	if (channel_index_get(stream->conn, &channel_index) == 0) {
 		return headsets[channel_index].seq_num++;
 	}
 
@@ -203,24 +179,24 @@ static void unicast_client_location_cb(struct bt_conn *conn, enum bt_audio_dir d
 {
 	int ret;
 
-	if ((loc & BT_AUDIO_LOCATION_FRONT_LEFT) != 0) {
-		headsets[AUDIO_CH_L].headset_conn = conn;
-	}
-#if !CONFIG_STREAM_BIDIRECTIONAL
-	else if ((loc & BT_AUDIO_LOCATION_FRONT_RIGHT) != 0) {
-		headsets[AUDIO_CH_R].headset_conn = conn;
-	}
-#endif /* !CONFIG_STREAM_BIDIRECTIONAL */
-	else {
-		LOG_ERR("Channel location not supported");
-		ret = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
-		if (ret) {
-			LOG_ERR("Failed to disconnect %d", ret);
+	if (dir == BT_AUDIO_DIR_SINK) {
+		if (loc == BT_AUDIO_LOCATION_FRONT_LEFT) {
+			headsets[AUDIO_CH_L].headset_conn = conn;
+		} else if (loc == BT_AUDIO_LOCATION_FRONT_RIGHT) {
+			headsets[AUDIO_CH_R].headset_conn = conn;
+		} else {
+			LOG_ERR("Channel location not supported");
+			ret = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+			if (ret) {
+				LOG_ERR("Failed to disconnect %d", ret);
+			}
 		}
-	}
 
-	if (!ble_acl_gateway_all_links_connected()) {
-		ble_acl_start_scan();
+		if (!ble_acl_gateway_all_links_connected()) {
+			ble_acl_start_scan();
+		} else {
+			LOG_INF("All headsets connected");
+		}
 	}
 }
 
@@ -244,9 +220,9 @@ static void stream_sent_cb(struct bt_audio_stream *stream)
 	int ret;
 	uint8_t channel_index;
 
-	ret = channel_index_get(NULL, stream, &channel_index);
+	ret = channel_index_get(stream->conn, &channel_index);
 	if (ret) {
-		LOG_ERR("Stream not found");
+		LOG_ERR("Channel index not found");
 	} else {
 		atomic_dec(&headsets[channel_index].iso_tx_pool_alloc);
 	}
@@ -258,37 +234,31 @@ static void stream_configured_cb(struct bt_audio_stream *stream,
 	int ret;
 	uint8_t channel_index;
 
-	ret = channel_index_get(stream->conn, NULL, &channel_index);
+	ret = channel_index_get(stream->conn, &channel_index);
 	if (ret) {
-		LOG_ERR("Stream not found");
+		LOG_ERR("Channel index not found");
 		return;
 	}
 
 	if (stream->ep->dir == BT_AUDIO_DIR_SINK) {
-		headsets[channel_index].sink_stream = stream;
 		LOG_INF("%s sink stream connected", headsets[channel_index].ch_name);
 	} else if (stream->ep->dir == BT_AUDIO_DIR_SOURCE) {
-		headsets[channel_index].source_stream = stream;
 		LOG_INF("%s source stream connected", headsets[channel_index].ch_name);
 	} else {
 		LOG_WRN("Endpoint direction not recognized: %d", stream->ep->dir);
 		return;
 	}
 
-	if (unicast_group) {
 #if CONFIG_STREAM_BIDIRECTIONAL
-		if ((headsets[channel_index].sink_stream->ep->status.state ==
-		     BT_AUDIO_EP_STATE_CODEC_CONFIGURED) &&
-		    (headsets[channel_index].source_stream->ep->status.state ==
-		     BT_AUDIO_EP_STATE_CODEC_CONFIGURED))
+	if (ep_state_check(headsets[channel_index].sink_stream.ep,
+			   BT_AUDIO_EP_STATE_CODEC_CONFIGURED) &&
+	    ep_state_check(headsets[channel_index].source_stream.ep,
+			   BT_AUDIO_EP_STATE_CODEC_CONFIGURED))
 #endif
-		{
-			ret = bt_audio_stream_qos(headsets[channel_index].headset_conn,
-						  unicast_group);
-			if (ret) {
-				LOG_ERR("Unable to set up QoS for headset %d: %d", channel_index,
-					ret);
-			}
+	{
+		ret = bt_audio_stream_qos(headsets[channel_index].headset_conn, unicast_group);
+		if (ret) {
+			LOG_ERR("Unable to set up QoS for headset %d: %d", channel_index, ret);
 		}
 	}
 }
@@ -297,43 +267,13 @@ static void stream_qos_set_cb(struct bt_audio_stream *stream)
 {
 	int ret;
 
+	LOG_DBG("Stream QOS set: %p", stream);
+
 	if (playing_state) {
-		ret = bt_audio_stream_enable(stream, lc3_preset_nrf5340.codec.meta,
-					     lc3_preset_nrf5340.codec.meta_count);
+		ret = bt_audio_stream_enable(stream, lc3_preset_sink.codec.meta,
+					     lc3_preset_sink.codec.meta_count);
 		if (ret) {
 			LOG_ERR("Unable to enable stream: %d", ret);
-		}
-	}
-}
-
-static void work_stream_start(struct k_work *work)
-{
-	int ret;
-	struct worker_data work_data;
-
-	ret = k_msgq_get(&kwork_msgq, &work_data, K_NO_WAIT);
-	if (ret) {
-		LOG_ERR("Cannot get info for start stream");
-	}
-
-	ret = bt_audio_stream_start(&audio_streams[work_data.stream_index]);
-	work_data.retries++;
-
-	if (ret) {
-		if (work_data.retries < CIS_CONN_RETRY_TIMES) {
-			LOG_WRN("Got connect error from stream %d Retrying. code: %d count: %d",
-				work_data.stream_index, ret, work_data.retries);
-			ret = k_msgq_put(&kwork_msgq, &work_data, K_NO_WAIT);
-			if (ret) {
-				LOG_ERR("No space in the queue for the bond");
-			}
-			/* Delay added to prevent controller overloading */
-			k_work_reschedule(&stream_start_work[work_data.stream_index], K_MSEC(500));
-		} else {
-			LOG_ERR("Could not connect ch %d after %d retries", work_data.stream_index,
-				work_data.retries);
-			bt_conn_disconnect(audio_streams[work_data.stream_index].conn,
-					   BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 		}
 	}
 }
@@ -341,28 +281,38 @@ static void work_stream_start(struct k_work *work)
 static void stream_enabled_cb(struct bt_audio_stream *stream)
 {
 	int ret;
-	uint8_t stream_index;
+	uint8_t channel_index;
 
-	ret = audio_stream_index_get(stream, &stream_index);
+	LOG_DBG("Stream enabled: %p", stream);
+
+	ret = channel_index_get(stream->conn, &channel_index);
 	if (ret) {
-		LOG_ERR("Stream not found");
-	} else {
-		struct worker_data work_data;
-
-		work_data.stream_index = stream_index;
-		work_data.retries = 0;
-
-		ret = k_msgq_put(&kwork_msgq, &work_data, K_NO_WAIT);
-		if (ret) {
-			LOG_ERR("No space in the queue for the bond");
-		}
-
-		if (stream_index == 0) {
-			k_work_schedule(&stream_start_work[stream_index], K_MSEC(500));
-		} else {
-			k_work_schedule(&stream_start_work[stream_index], K_MSEC(2000));
-		}
+		LOG_ERR("Error getting channel index");
+		return;
 	}
+
+#if CONFIG_STREAM_BIDIRECTIONAL
+	if (ep_state_check(headsets[channel_index].sink_stream.ep, BT_AUDIO_EP_STATE_ENABLING) &&
+	    ep_state_check(headsets[channel_index].source_stream.ep, BT_AUDIO_EP_STATE_ENABLING)) {
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+		ret = bt_audio_stream_start(&headsets[channel_index].sink_stream);
+		if (ret) {
+			LOG_ERR("Failed to start %s headset sink stream",
+				headsets[channel_index].ch_name);
+			return;
+		}
+
+#if CONFIG_STREAM_BIDIRECTIONAL
+		ret = bt_audio_stream_start(&headsets[channel_index].source_stream);
+		if (ret) {
+			LOG_ERR("Failed to start %s headset source stream",
+				headsets[channel_index].ch_name);
+			return;
+		}
+	} else {
+		LOG_DBG("Sink or source stream not in enabling state");
+	}
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
 }
 
 static void stream_started_cb(struct bt_audio_stream *stream)
@@ -371,7 +321,7 @@ static void stream_started_cb(struct bt_audio_stream *stream)
 	uint8_t channel_index;
 
 	/* Reset sequence number for the stream */
-	if (channel_index_get(NULL, stream, &channel_index) == 0) {
+	if (channel_index_get(stream->conn, &channel_index) == 0) {
 		headsets[channel_index].seq_num = 0;
 	}
 
@@ -400,18 +350,15 @@ static void stream_stopped_cb(struct bt_audio_stream *stream)
 
 	LOG_INF("Stream %p stopped", (void *)stream);
 
-	ret = channel_index_get(NULL, stream, &channel_index);
+	ret = channel_index_get(stream->conn, &channel_index);
 	if (ret) {
-		LOG_ERR("Stream not found");
+		LOG_ERR("Channel index not found");
 	} else {
 		atomic_clear(&headsets[channel_index].iso_tx_pool_alloc);
 	}
 
-	if (headsets[AUDIO_CH_L].sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING
-#if !CONFIG_STREAM_BIDIRECTIONAL
-	    && headsets[AUDIO_CH_R].sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING
-#endif
-	) {
+	if (!ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_AUDIO_EP_STATE_STREAMING) &&
+	    !ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_AUDIO_EP_STATE_STREAMING)) {
 		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 		ERR_CHK(ret);
 	}
@@ -422,11 +369,8 @@ static void stream_released_cb(struct bt_audio_stream *stream)
 	int ret;
 	LOG_DBG("Audio Stream %p released", (void *)stream);
 
-	if (headsets[AUDIO_CH_L].sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING
-#if !CONFIG_STREAM_BIDIRECTIONAL
-	    && headsets[AUDIO_CH_R].sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING
-#endif
-	) {
+	if (!ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_AUDIO_EP_STATE_STREAMING) &&
+	    !ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_AUDIO_EP_STATE_STREAMING)) {
 		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 		ERR_CHK(ret);
 	}
@@ -435,8 +379,9 @@ static void stream_released_cb(struct bt_audio_stream *stream)
 static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_recv_info *info,
 			   struct net_buf *buf)
 {
-	static uint32_t recv_cnt;
+	int ret;
 	bool bad_frame = false;
+	uint8_t channel_index;
 
 	if (receive_cb == NULL) {
 		LOG_ERR("The RX callback has not been set");
@@ -447,12 +392,13 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 		bad_frame = true;
 	}
 
-	receive_cb(buf->data, buf->len, bad_frame, info->ts);
-
-	recv_cnt++;
-	if ((recv_cnt % 1000U) == 0U) {
-		LOG_DBG("Received %d total ISO packets", recv_cnt);
+	ret = channel_index_get(stream->conn, &channel_index);
+	if (ret) {
+		LOG_ERR("Channel index not found");
+		return;
 	}
+
+	receive_cb(buf->data, buf->len, bad_frame, info->ts, channel_index);
 }
 
 static struct bt_audio_stream_ops stream_ops = {
@@ -484,9 +430,11 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 {
 	int ret = 0;
 	uint8_t channel_index = 0;
-	uint8_t stream_index = 0;
 
-	if (params->err) {
+	if (params->err == BT_ATT_ERR_ATTRIBUTE_NOT_FOUND) {
+		LOG_INF("No sinks found");
+		return;
+	} else if (params->err) {
 		LOG_ERR("Discovery failed: %d", params->err);
 		return;
 	}
@@ -496,7 +444,7 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 		return;
 	}
 
-	ret = channel_index_get(conn, NULL, &channel_index);
+	ret = channel_index_get(conn, &channel_index);
 	if (ret) {
 		LOG_ERR("Unknown connection, should not reach here");
 		return;
@@ -522,14 +470,9 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 		LOG_ERR("Could not do VCS discover");
 	}
 #endif /* (CONFIG_BT_VCP_VOL_CTLR ) */
-	ret = next_free_audio_stream_index_get(&stream_index);
-	if (ret) {
-		LOG_WRN("Failed to get free index");
-		return;
-	}
 
-	ret = bt_audio_stream_config(conn, &audio_streams[stream_index],
-				     headsets[channel_index].sink_ep, &lc3_preset_nrf5340.codec);
+	ret = bt_audio_stream_config(conn, &headsets[channel_index].sink_stream,
+				     headsets[channel_index].sink_ep, &lc3_preset_sink.codec);
 	if (ret) {
 		LOG_ERR("Could not configure stream");
 	}
@@ -549,14 +492,11 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 	int ret = 0;
 
 	uint8_t channel_index = 0;
-	uint8_t stream_index = 0;
-	static bool group_created;
-	struct bt_audio_unicast_group_stream_param
-		group_params[CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SRC_COUNT +
-			     CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT];
-	struct bt_audio_unicast_group_param param;
 
-	if (params->err) {
+	if (params->err == BT_ATT_ERR_ATTRIBUTE_NOT_FOUND) {
+		LOG_INF("No sources found");
+		return;
+	} else if (params->err) {
 		LOG_ERR("Discovery failed: %d", params->err);
 		return;
 	}
@@ -566,7 +506,7 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 		return;
 	}
 
-	ret = channel_index_get(conn, NULL, &channel_index);
+	ret = channel_index_get(conn, &channel_index);
 
 	if (ret) {
 		LOG_ERR("Unknown connection, should not reach here");
@@ -587,43 +527,10 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 
 	(void)memset(params, 0, sizeof(*params));
 
-	ret = next_free_audio_stream_index_get(&stream_index);
-	if (ret) {
-		LOG_WRN("Failed to get free index");
-		return;
-	}
-
-	ret = bt_audio_stream_config(conn, &audio_streams[stream_index],
-				     headsets[channel_index].source_ep, &lc3_preset_nrf5340.codec);
+	ret = bt_audio_stream_config(conn, &headsets[channel_index].source_stream,
+				     headsets[channel_index].source_ep, &lc3_preset_source.codec);
 	if (ret) {
 		LOG_WRN("Could not configure stream");
-		return;
-	}
-
-	if (!group_created) {
-		for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
-			group_params[i].stream = &audio_streams[i];
-			group_params[i].qos = &lc3_preset_nrf5340.qos;
-
-			/* Make the first stream be sink */
-			if (i == 0) {
-				group_params[i].dir = BT_AUDIO_DIR_SINK;
-				LOG_DBG("Sink stream: %p", (void *)&audio_streams[i]);
-			} else {
-				group_params[i].dir = BT_AUDIO_DIR_SOURCE;
-				LOG_DBG("Source stream: %p", (void *)&audio_streams[i]);
-			}
-		}
-		param.params = group_params;
-		param.params_count = ARRAY_SIZE(audio_streams);
-		param.packing = BT_ISO_PACKING_SEQUENTIAL;
-		ret = bt_audio_unicast_group_create(&param, &unicast_group);
-		if (ret) {
-			LOG_ERR("Failed to create unicast group: %d", ret);
-			return;
-		}
-
-		group_created = true;
 	}
 }
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
@@ -754,10 +661,10 @@ static void ble_acl_start_scan(void)
 	int ret;
 	/* Scan interval as two times of ISO interval */
 	int scan_interval =
-		bt_codec_cfg_get_frame_duration_us(&lc3_preset_nrf5340.codec) / 1000 / 0.625 * 2;
+		bt_codec_cfg_get_frame_duration_us(&lc3_preset_sink.codec) / 1000 / 0.625 * 2;
 	/* Scan window as two times of ISO interval */
 	int scan_window =
-		bt_codec_cfg_get_frame_duration_us(&lc3_preset_nrf5340.codec) / 1000 / 0.625 * 2;
+		bt_codec_cfg_get_frame_duration_us(&lc3_preset_sink.codec) / 1000 / 0.625 * 2;
 	struct bt_le_scan_param *scan_param =
 		BT_LE_SCAN_PARAM(BT_LE_SCAN_TYPE_PASSIVE, BT_LE_SCAN_OPT_FILTER_DUPLICATE,
 				 scan_interval, scan_window);
@@ -833,7 +740,7 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 
 	bt_conn_unref(conn);
 
-	ret = channel_index_get(conn, NULL, &channel_index);
+	ret = channel_index_get(conn, &channel_index);
 	if (ret) {
 		LOG_WRN("Unknown connection");
 	} else {
@@ -923,50 +830,48 @@ static void le_audio_play_pause_cb(bool play)
 	LOG_DBG("Play/pause cb, state: %d", play);
 
 	if (play) {
-		if (audio_streams[AUDIO_CH_L].ep->status.state ==
-		    BT_AUDIO_EP_STATE_QOS_CONFIGURED) {
-			ret = bt_audio_stream_enable(&audio_streams[AUDIO_CH_L],
-						     lc3_preset_nrf5340.codec.meta,
-						     lc3_preset_nrf5340.codec.meta_count);
+		if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep,
+				   BT_AUDIO_EP_STATE_QOS_CONFIGURED)) {
+			ret = bt_audio_stream_enable(&headsets[AUDIO_CH_L].sink_stream,
+						     lc3_preset_sink.codec.meta,
+						     lc3_preset_sink.codec.meta_count);
 
 			if (ret) {
 				LOG_WRN("Failed to enable left stream");
 			}
 		}
 
-#if !CONFIG_STREAM_BIDIRECTIONAL
-		if (audio_streams[AUDIO_CH_R].ep->status.state ==
-		    BT_AUDIO_EP_STATE_QOS_CONFIGURED) {
-			ret = bt_audio_stream_enable(&audio_streams[AUDIO_CH_R],
-						     lc3_preset_nrf5340.codec.meta,
-						     lc3_preset_nrf5340.codec.meta_count);
+		if (ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep,
+				   BT_AUDIO_EP_STATE_QOS_CONFIGURED)) {
+			ret = bt_audio_stream_enable(&headsets[AUDIO_CH_R].sink_stream,
+						     lc3_preset_sink.codec.meta,
+						     lc3_preset_sink.codec.meta_count);
 
 			if (ret) {
 				LOG_WRN("Failed to enable right stream");
 			}
 		}
-#endif /* !CONFIG_STREAM_BIDIRECTIONAL */
 	} else {
 		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 		ERR_CHK(ret);
 
-		if (audio_streams[AUDIO_CH_L].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
-			ret = bt_audio_stream_disable(&audio_streams[AUDIO_CH_L]);
+		if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep,
+				   BT_AUDIO_EP_STATE_STREAMING)) {
+			ret = bt_audio_stream_disable(&headsets[AUDIO_CH_L].sink_stream);
 
 			if (ret) {
 				LOG_WRN("Failed to disable left stream");
 			}
 		}
 
-#if !CONFIG_STREAM_BIDIRECTIONAL
-		if (audio_streams[AUDIO_CH_R].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
-			ret = bt_audio_stream_disable(&audio_streams[AUDIO_CH_R]);
+		if (ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep,
+				   BT_AUDIO_EP_STATE_STREAMING)) {
+			ret = bt_audio_stream_disable(&headsets[AUDIO_CH_R].sink_stream);
 
 			if (ret) {
 				LOG_WRN("Failed to disable right stream");
 			}
 		}
-#endif /* !CONFIG_STREAM_BIDIRECTIONAL */
 	}
 
 	playing_state = play;
@@ -978,7 +883,7 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct le_aud
 	int ret;
 	struct net_buf *buf;
 
-	if (headset.sink_stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+	if (!ep_state_check(headset.sink_stream.ep, BT_AUDIO_EP_STATE_STREAMING)) {
 		LOG_DBG("%s channel not connected", headset.ch_name);
 		return 0;
 	}
@@ -1014,11 +919,11 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct le_aud
 
 	atomic_inc(&headset.iso_tx_pool_alloc);
 
-	ret = bt_audio_stream_send(headset.sink_stream, buf,
-				   get_and_incr_seq_num(headset.sink_stream),
+	ret = bt_audio_stream_send(&headset.sink_stream, buf,
+				   get_and_incr_seq_num(&headset.sink_stream),
 				   BT_ISO_TIMESTAMP_NONE);
 	if (ret < 0) {
-		LOG_WRN("Failed to send audio data: %d", ret);
+		LOG_WRN("Failed to send audio data to %s: %d", headset.ch_name, ret);
 		net_buf_unref(buf);
 		atomic_dec(&headset.iso_tx_pool_alloc);
 	}
@@ -1030,18 +935,21 @@ static int initialize(le_audio_receive_cb recv_cb)
 {
 	int ret;
 	static bool initialized;
+	int headset_iterator = 0;
+	int stream_iterator = 0;
+	struct bt_audio_unicast_group_stream_pair_param pair_params[ARRAY_SIZE(headsets)];
+	/* 2 streams (one sink and one source stream) for each headset */
+	struct bt_audio_unicast_group_stream_param stream_params[(ARRAY_SIZE(headsets) * 2)];
+	struct bt_audio_unicast_group_param param;
 
 	if (initialized) {
 		LOG_WRN("Already initialized");
 		return -EALREADY;
 	}
 
-	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
-		audio_streams[i].ops = &stream_ops;
-	}
-
-	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
-		k_work_init_delayable(&stream_start_work[i], work_stream_start);
+	for (int i = 0; i < ARRAY_SIZE(headsets); i++) {
+		headsets[i].sink_stream.ops = &stream_ops;
+		headsets[i].source_stream.ops = &stream_ops;
 	}
 
 	ret = bt_audio_unicast_client_register_cb(&unicast_client_cbs);
@@ -1066,18 +974,31 @@ static int initialize(le_audio_receive_cb recv_cb)
 		}
 	}
 
-#if !CONFIG_STREAM_BIDIRECTIONAL
-	struct bt_audio_unicast_group_stream_param group_params[ARRAY_SIZE(audio_streams)];
-	struct bt_audio_unicast_group_param param;
-
-	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
-		group_params[i].stream = &audio_streams[i];
-		group_params[i].qos = &lc3_preset_nrf5340.qos;
-		group_params[i].dir = BT_AUDIO_DIR_SINK;
+	for (int i = 0; i < ARRAY_SIZE(stream_params); i++) {
+		/* Every other stream should be sink or source */
+		if ((i % 2) == 0) {
+			stream_params[i].qos = &lc3_preset_sink.qos;
+			stream_params[i].stream = &headsets[headset_iterator].sink_stream;
+		} else {
+			stream_params[i].qos = &lc3_preset_source.qos;
+			stream_params[i].stream = &headsets[headset_iterator].source_stream;
+			headset_iterator++;
+		}
 	}
 
-	param.params = group_params;
-	param.params_count = ARRAY_SIZE(audio_streams);
+	for (int i = 0; i < ARRAY_SIZE(pair_params); i++) {
+		pair_params[i].tx_param = &stream_params[stream_iterator];
+		stream_iterator++;
+#if CONFIG_STREAM_BIDIRECTIONAL
+		pair_params[i].rx_param = &stream_params[stream_iterator];
+#else
+		pair_params[i].rx_param = NULL;
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+		stream_iterator++;
+	}
+
+	param.params = pair_params;
+	param.params_count = ARRAY_SIZE(pair_params);
 	param.packing = BT_ISO_PACKING_SEQUENTIAL;
 
 	ret = bt_audio_unicast_group_create(&param, &unicast_group);
@@ -1085,7 +1006,6 @@ static int initialize(le_audio_receive_cb recv_cb)
 		LOG_ERR("Failed to create unicast group: %d", ret);
 		return ret;
 	}
-#endif /* !CONFIG_STREAM_BIDIRECTIONAL */
 
 #if (CONFIG_BT_VCP_VOL_CTLR)
 	ret = ble_vcs_client_init();
@@ -1187,23 +1107,19 @@ int le_audio_send(struct encoded_audio enc_audio)
 		return -EINVAL;
 	}
 
-	if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_BT_AUDIO_BITRATE)) {
+	if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_BT_AUDIO_BITRATE_UNICAST_SINK)) {
 		LOG_ERR("The encoded data size does not match the SDU size");
 		return -ECANCELED;
 	}
 
-	if (headsets[AUDIO_CH_L].sink_stream->ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
-		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_L].sink_stream->ep->iso->chan,
+	if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_AUDIO_EP_STATE_STREAMING)) {
+		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_L].sink_stream.ep->iso->chan,
 					      &tx_info);
-	}
-#if !CONFIG_STREAM_BIDIRECTIONAL
-	else if (headsets[AUDIO_CH_R].sink_stream->ep->status.state ==
-		 BT_AUDIO_EP_STATE_STREAMING) {
-		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_R].sink_stream->ep->iso->chan,
+	} else if (ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep,
+				  BT_AUDIO_EP_STATE_STREAMING)) {
+		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_R].sink_stream.ep->iso->chan,
 					      &tx_info);
-	}
-#endif /* !CONFIG_STREAM_BIDIRECTIONAL */
-	else {
+	} else {
 		LOG_DBG("No headset in stream state");
 		return -ECANCELED;
 	}
@@ -1224,17 +1140,15 @@ int le_audio_send(struct encoded_audio enc_audio)
 		LOG_DBG("Failed to send data to left channel");
 	}
 
-#if !CONFIG_STREAM_BIDIRECTIONAL
 	if (enc_audio.num_ch == 1) {
 		ret = iso_stream_send(enc_audio.data, data_size_pr_stream, headsets[AUDIO_CH_R]);
 	} else {
 		ret = iso_stream_send(&enc_audio.data[data_size_pr_stream], data_size_pr_stream,
-			headsets[AUDIO_CH_R]);
+				      headsets[AUDIO_CH_R]);
 	}
 	if (ret) {
 		LOG_DBG("Failed to send data to right channel");
 	}
-#endif /* !CONFIG_STREAM_BIDIRECTIONAL */
 
 	return 0;
 }

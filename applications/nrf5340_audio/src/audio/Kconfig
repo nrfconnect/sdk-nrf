@@ -192,7 +192,7 @@ config LC3_BITRATE_MIN
 config LC3_BITRATE
 	int
 	range LC3_BITRATE_MIN LC3_BITRATE_MAX
-	default BT_AUDIO_BITRATE
+	default 96000
 
 osource "../nrfxlib/lc3/Kconfig"
 

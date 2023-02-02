@@ -437,11 +437,10 @@ int le_audio_send(struct encoded_audio enc_audio)
 
 		net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
 		if (enc_audio.num_ch == 1) {
-			net_buf_add_mem(buf, &enc_audio.data[0],
-				data_size_pr_stream);
+			net_buf_add_mem(buf, &enc_audio.data[0], data_size_pr_stream);
 		} else {
 			net_buf_add_mem(buf, &enc_audio.data[i * data_size_pr_stream],
-				data_size_pr_stream);
+					data_size_pr_stream);
 		}
 
 		atomic_inc(&iso_tx_pool_alloc[i]);
@@ -474,6 +473,8 @@ int le_audio_send(struct encoded_audio enc_audio)
 int le_audio_enable(le_audio_receive_cb recv_cb)
 {
 	int ret;
+
+	ARG_UNUSED(recv_cb);
 
 	ret = initialize();
 	if (ret) {

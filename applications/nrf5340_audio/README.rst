@@ -39,7 +39,7 @@ Overview
 The application can work as a gateway or a headset.
 The gateway receives the audio data from external sources (USB or I2S) and forwards it to one or more headsets.
 The headset is a receiver device that plays back the audio it gets from the gateway.
-It is also possible to enable a bidirectional mode where one gateway and one headset can send and receive audio to and from each other at the same time.
+It is also possible to enable a bidirectional mode where one gateway can send and receive audio to and from one or two headsets at the same time.
 
 Both device types use the same code base, but different firmware, and you need both types of devices for testing the application.
 Gateways and headsets can both run in one of the available application modes, either the *connected isochronous stream* (CIS) mode or in the *broadcast isochronous stream* (BIS) mode.
@@ -92,13 +92,12 @@ Connected Isochronous Stream (CIS)
   In this configuration, you can use the nRF5340 Audio development kit in the role of the gateway, the left headset, or the right headset.
 
   In the current version of the nRF5340 Audio application, the CIS mode offers both unidirectional and bidirectional communication.
-  You can configure the CIS to bidirectional communication, in which it will support a walkie-talkie demonstration.
   In the bidirectional communication, the headset device will send audio from the on-board PDM microphone.
-  In the walkie-talkie demonstration, the gateway device will send audio from the on-board PDM microphone instead of using the line-in.
-  See `Enabling the walkie-talkie demo`_ for more information.
+  See `Selecting the CIS bidirectional communication`_ for more information.
 
-  .. note::
-     Only one headset device can be connected when testing the bidirectional mode or the walkie-talkie demo.
+  You can also enable a walkie-talkie demonstration.
+  In this demonstration, the gateway device will send audio from the on-board PDM microphone instead of using USB or the line-in.
+  See `Enabling the walkie-talkie demo`_ for more information.
 
 Broadcast Isochronous Stream (BIS)
   BIS is a unidirectional communication protocol that allows for broadcasting one or more audio streams from a source device to an unlimited number of receivers that are not connected to the source.
@@ -532,11 +531,9 @@ You can switch to the bidirectional mode by adding the :kconfig:option:`CONFIG_S
 Enabling the walkie-talkie demo
 -------------------------------
 
-The walkie-talkie demo is a bidirectional stream using the PDM microphone as input on each side.
+The walkie-talkie demo uses one or two bidirectional streams from the gateway to one or two headsets.
+The PDM microphone is used as input on both the gateway and headset device.
 You can switch to using the walkie-talkie by adding the :kconfig:option:`CONFIG_WALKIE_TALKIE_DEMO` Kconfig option set to ``y``  to the :file:`prj.conf` file (for the debug version) or to the :file:`prj_release.conf` file (for the release version).
-
-.. note::
-   Only one headset can be connected when using the bidirectional mode or the walkie-talkie demo.
 
 .. _nrf53_audio_app_configuration_select_i2s:
 

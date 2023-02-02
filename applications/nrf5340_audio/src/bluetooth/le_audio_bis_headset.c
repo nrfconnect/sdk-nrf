@@ -176,7 +176,7 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 		bad_frame = true;
 	}
 
-	receive_cb(buf->data, buf->len, bad_frame, info->ts);
+	receive_cb(buf->data, buf->len, bad_frame, info->ts, active_stream_index);
 
 	recv_cnt++;
 	if ((recv_cnt % 1000U) == 0U) {

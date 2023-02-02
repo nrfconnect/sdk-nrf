@@ -148,7 +148,6 @@ The following table indicates the software maturity levels of the support for th
         - The following limitations apply:
 
           * BAP unicast, one CIG with two CIS.
-          * Bidirectional mode only supports connecting to *one* unicast server.
           * Audio input: USB or I2S (Line in or using Pulse Density Modulation).
           * Audio output: USB or I2S/Analog headset output.
           * Configuration: 48 kHz, 16 bit, several bit rates ranging from 24 kbps to 160 kbps.

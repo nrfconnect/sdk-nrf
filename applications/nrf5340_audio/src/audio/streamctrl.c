@@ -104,7 +104,7 @@ static void ble_test_pattern_receive(uint8_t const *const p_data, size_t data_si
 
 /* Callback for handling BLE RX */
 static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, bool bad_frame,
-				     uint32_t sdu_ref)
+				     uint32_t sdu_ref, enum audio_channel channel_index)
 {
 	/* Capture timestamp of when audio frame is received */
 	uint32_t recv_frame_ts = audio_sync_timer_curr_time_get();
@@ -121,6 +121,26 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 
 	int ret;
 	struct ble_iso_data *iso_received = NULL;
+
+#if (CONFIG_AUDIO_DEV == GATEWAY)
+	switch (channel_index) {
+	case AUDIO_CH_L:
+		/* Proceed */
+		break;
+	case AUDIO_CH_R:
+		static uint32_t packet_count_r;
+
+		packet_count_r++;
+		if ((packet_count_r % 1000) == 0) {
+			LOG_DBG("Packets received from right channel: %d", packet_count_r);
+		}
+
+		return;
+	default:
+		LOG_ERR("Channel index not supported");
+		return;
+	}
+#endif /* (CONFIG_AUDIO_DEV == GATEWAY) */
 
 #if (CONFIG_BLE_ISO_TEST_PATTERN)
 	ble_test_pattern_receive(p_data, data_size, bad_frame);
@@ -210,7 +230,7 @@ void streamctrl_encoded_data_send(void const *const data, size_t size, uint8_t n
 	int ret;
 	static int prev_ret;
 
-	struct encoded_audio enc_audio = {.data = data, .size = size, .num_ch = num_ch};
+	struct encoded_audio enc_audio = { .data = data, .size = size, .num_ch = num_ch };
 
 	if (strm_state == STATE_STREAMING) {
 		ret = le_audio_send(enc_audio);
@@ -302,12 +322,12 @@ static void button_evt_handler(struct button_evt event)
 		break;
 
 	case BUTTON_4:
+#if (CONFIG_AUDIO_TEST_TONE)
 		if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
-			LOG_DBG("Button 4 functions not supported in walkie-talkie mode");
+			LOG_DBG("Test tone is disabled in walkie-talkie mode");
 			break;
 		}
 
-#if (CONFIG_AUDIO_TEST_TONE)
 		ret = test_tone_button_press();
 #else
 		ret = le_audio_user_defined_button_press(LE_AUDIO_USER_DEFINED_ACTION_1);
