@@ -84,7 +84,7 @@ def main():
     if len(app_data) > args.app_size:
         die(f'Application core image exceeds partition size: {len(app_data)} > {args.app_size}')
 
-    if len(app_data) > args.app_size:
+    if len(net_data) > args.net_size:
         die(f'Network core image exceeds partition size: {len(net_data)} > {args.net_size}')
 
     snr = select_board_snr()
