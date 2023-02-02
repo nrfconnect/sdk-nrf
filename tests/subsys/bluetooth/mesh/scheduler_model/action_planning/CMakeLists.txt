@@ -11,6 +11,7 @@ project(bt_mesh_scheduler_model_action_plan_test)
 target_include_directories(app PUBLIC
   ${NRF_DIR}/subsys/bluetooth/mesh
   ${ZEPHYR_BASE}/subsys/bluetooth
+  ../common
   )
 
 FILE(GLOB app_sources src/*.c)
@@ -21,6 +22,7 @@ target_sources(app PRIVATE
   ${NRF_DIR}/subsys/bluetooth/mesh/time_util.c
   ${NRF_DIR}/subsys/bluetooth/mesh/model_utils.c
   ${ZEPHYR_BASE}/subsys/net/buf.c
+  ../common/sched_test.c
   )
 
 target_compile_options(app
