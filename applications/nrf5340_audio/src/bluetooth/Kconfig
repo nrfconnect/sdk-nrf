@@ -233,17 +233,11 @@ config BLE_ISO_RX_STATS_S
 choice BT_AUDIO_UNICAST_BAP_CONFIGURATION
 	prompt "Unicast codec configuration"
 	depends on TRANSPORT_CIS
-	default BT_AUDIO_UNICAST_RECOMMENDED
+	default BT_AUDIO_UNICAST_CONFIGURABLE
 	help
 	  Select the unicast codec configuration as given in
-	  Table 5.2 of BAP Specification, USB only supports BT_AUDIO_UNICAST_RECOMMENDED.
-
-config BT_AUDIO_UNICAST_RECOMMENDED
-	bool "Recommended unicast codec capability"
-	depends on TRANSPORT_CIS
-	help
-	  Recommended unicast settings for the nRF5340_audio application
-	  48kHz, 96kbps, 2 retransmits, 20ms transport latency, and 10ms presentation delay.
+	  Table 5.2 of BAP Specification.
+	  USB only supports 48 kHz samplig rate.
 
 config BT_AUDIO_UNICAST_CONFIGURABLE
 	bool "Configurable unicast settings"
@@ -269,17 +263,11 @@ endchoice
 choice BT_AUDIO_BROADCAST_BAP_CONFIGURATION
 	prompt "Broadcast codec configuration"
 	depends on TRANSPORT_BIS
-	default BT_AUDIO_BROADCAST_RECOMMENDED
+	default BT_AUDIO_BROADCAST_CONFIGURABLE
 	help
 	  Select the broadcast codec configuration as given
-	  in Table 6.4 of the BAP specification. USB only supports BT_AUDIO_BROADCAST_RECOMMENDED.
-
-config BT_AUDIO_BROADCAST_RECOMMENDED
-	bool "Recommended Broadcast codec capability"
-	depends on TRANSPORT_BIS
-	help
-	  Recommended broadcast settings for the nRF5340_audio application
-	  48kHz, 96kbps, 4 retransmits, 20ms transport latency, and 10ms presentation delay.
+	  in Table 6.4 of the BAP specification.
+	  USB only supports 48 kHz samplig rate.
 
 config BT_AUDIO_BROADCAST_CONFIGURABLE
 	bool "Configurable broadcast settings"
@@ -403,14 +391,33 @@ config BT_AUDIO_RETRANSMITS
 	  Number of retransmits for the ISO link. 2 retransmits means a total
 	  of 3 packets sent per stream.
 
-config BT_AUDIO_BITRATE
-	int "Bitrate for ISO stream"
-	default 96000 if BT_AUDIO_BROADCAST_RECOMMENDED || BT_AUDIO_UNICAST_RECOMMENDED
-	default 96000 if BT_AUDIO_UNICAST_CONFIGURABLE || BT_AUDIO_BROADCAST_CONFIGURABLE
-	default 32000 if BT_AUDIO_BROADCAST_16_2_1 || BT_AUDIO_BROADCAST_16_2_2 || BT_AUDIO_UNICAST_16_2_1
-	default 48000 if BT_AUDIO_BROADCAST_24_2_1 || BT_AUDIO_BROADCAST_24_2_2 || BT_AUDIO_UNICAST_24_2_1
+config BT_AUDIO_BITRATE_UNICAST_SINK
+	int "ISO stream bitrate"
+	depends on TRANSPORT_CIS
+	default 64000 if BT_AUDIO_UNICAST_CONFIGURABLE && STREAM_BIDIRECTIONAL
+	default 96000 if BT_AUDIO_UNICAST_CONFIGURABLE
+	default 32000 if BT_AUDIO_UNICAST_16_2_1
+	default 48000 if BT_AUDIO_UNICAST_24_2_1
 	help
-	  Bitrate for the ISO stream.
+	  Bitrate for the unicast sink ISO stream.
+
+config BT_AUDIO_BITRATE_UNICAST_SRC
+	int "ISO stream bitrate"
+	depends on TRANSPORT_CIS
+	default 32000 if BT_AUDIO_UNICAST_16_2_1
+	default 48000 if BT_AUDIO_UNICAST_24_2_1
+	default 64000
+	help
+	  Bitrate for the unicast source ISO stream.
+
+config BT_AUDIO_BITRATE_BROADCAST_SRC
+	int "ISO stream bitrate"
+	depends on TRANSPORT_BIS
+	default 96000 if BT_AUDIO_BROADCAST_CONFIGURABLE
+	default 32000 if BT_AUDIO_BROADCAST_16_2_1 || BT_AUDIO_BROADCAST_16_2_2
+	default 48000 if BT_AUDIO_BROADCAST_24_2_1 || BT_AUDIO_BROADCAST_24_2_2
+	help
+	  Bitrate for the broadcast source ISO stream.
 
 endmenu # QoS
 #----------------------------------------------------------------------------#

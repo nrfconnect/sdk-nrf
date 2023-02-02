@@ -103,7 +103,6 @@ config BT_GAP_PERIPHERAL_PREF_PARAMS
 	default n
 
 config BT_VCP_VOL_REND
-	default n if WALKIE_TALKIE_DEMO
 	default y
 
 config BT_MCC
@@ -142,7 +141,6 @@ config BT_ISO_TX_BUF_COUNT
 	default 2
 
 config BT_MAX_CONN
-	default 1 if STREAM_BIDIRECTIONAL
 	default 2
 
 config BT_DEVICE_APPEARANCE
@@ -150,24 +148,24 @@ config BT_DEVICE_APPEARANCE
 	default 2176
 
 config BT_ISO_MAX_CHAN
+	default 4 if STREAM_BIDIRECTIONAL
 	default 2
 
 config BT_MAX_PAIRED
 	default 2
 
 config BT_AUDIO_UNICAST_CLIENT_GROUP_STREAM_COUNT
+	default 4 if STREAM_BIDIRECTIONAL
 	default 2
 
 config BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT
-	default 1 if STREAM_BIDIRECTIONAL
 	default 2
 
 config BT_AUDIO_UNICAST_CLIENT_ASE_SRC_COUNT
-	default 1 if STREAM_BIDIRECTIONAL
+	default 2 if STREAM_BIDIRECTIONAL
 	default 0
 
 config BT_VCP_VOL_CTLR
-	default n if WALKIE_TALKIE_DEMO
 	default y
 
 config BT_MCS

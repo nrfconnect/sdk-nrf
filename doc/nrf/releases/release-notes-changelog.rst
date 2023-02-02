@@ -200,6 +200,7 @@ nRF5340 Audio
   * Support for Front End Module nRF21540.
   * Possibility to create a Public Broadcast Announcement (PBA) needed for Auracast.
   * Encryption for BISes.
+  * Support for bidirectional streams to or from two headsets (True Wireless Stereo).
 
 * Updated:
 

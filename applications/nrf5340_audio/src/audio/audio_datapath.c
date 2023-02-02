@@ -805,7 +805,8 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 					     CONFIG_AUDIO_FRAME_DURATION_US;
 			}
 		} else {
-			LOG_INF("sdu_ref_us not from consecutive frames");
+			LOG_INF("sdu_ref_us not from consecutive frames (diff: %d us)",
+				sdu_ref_delta_us);
 			sdu_ref_not_consecutive = true;
 		}
 	}
