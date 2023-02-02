@@ -4,6 +4,8 @@ sample:
 tests:
   sample.bluetooth.nrf_dm.timeslot:
     build_only: true
+    extra_configs:
+      - CONFIG_DM_HIGH_PRECISION_CALC=n
     integration_platforms:
       - nrf52dk_nrf52832
       - nrf52833dk_nrf52833
