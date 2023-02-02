@@ -1,8 +1,8 @@
 tests:
-  nrf5340_audio.sw_codec_lc3_test:
+  bluetooth.bis_and_acl:
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340_audio_dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340_audio_dk_nrf5340_cpuapp
-    tags: sw_codec_lc3
+    tags: bis_and_acl
     timeout: 20
