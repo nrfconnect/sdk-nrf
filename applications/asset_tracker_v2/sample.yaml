@@ -71,6 +71,7 @@ tests:
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME="global.azure-devices-provisioning.net"
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="IDSCOPE"
+      - CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES=n
     extra_args: OVERLAY_CONFIG="overlay-azure.conf"
     tags: ci_build
   applications.asset_tracker_v2.debug:
