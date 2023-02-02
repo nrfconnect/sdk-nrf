@@ -41,11 +41,17 @@ static bool hal_rpu_is_mem_bev(unsigned int addr_val)
 	}
 }
 
-
-static bool hal_rpu_is_mem_core(enum RPU_PROC_TYPE proc,
+static bool hal_rpu_is_mem_core_direct(enum RPU_PROC_TYPE proc,
 				unsigned int addr_val)
 {
 	return pal_check_rpu_mcu_regions(proc, addr_val);
+}
+
+
+static bool hal_rpu_is_mem_core_indirect(enum RPU_PROC_TYPE proc,
+				unsigned int addr_val)
+{
+	return ((addr_val & 0xFF000000) == RPU_MCU_CORE_INDIRECT_BASE);
 }
 
 
@@ -59,7 +65,8 @@ static bool hal_rpu_is_mem_writable(enum RPU_PROC_TYPE proc,
 				    unsigned int addr)
 {
 	if (hal_rpu_is_mem_ram(proc, addr) ||
-	    hal_rpu_is_mem_core(proc, addr) ||
+	    hal_rpu_is_mem_core_indirect(proc, addr) ||
+	    hal_rpu_is_mem_core_direct(proc, addr) ||
 	    hal_rpu_is_mem_bev(addr)) {
 		return true;
 	}
@@ -195,7 +202,7 @@ static enum wifi_nrf_status rpu_mem_write_core(struct wifi_nrf_hal_dev_ctx *hal_
 	/* The RPU core address is expected to be in multiples of 4 bytes (word
 	 * size). If not then something is amiss.
 	 */
-	if (!hal_rpu_is_mem_core(hal_dev_ctx->curr_proc,
+	if (!hal_rpu_is_mem_core_indirect(hal_dev_ctx->curr_proc,
 				 core_addr_val)) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Invalid memory address\n",
@@ -384,13 +391,14 @@ enum wifi_nrf_status hal_rpu_mem_write(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 		return status;
 	}
 
-	if (hal_rpu_is_mem_core(hal_dev_ctx->curr_proc,
+	if (hal_rpu_is_mem_core_indirect(hal_dev_ctx->curr_proc,
 				rpu_mem_addr_val)) {
 		status = rpu_mem_write_core(hal_dev_ctx,
 					    rpu_mem_addr_val,
 					    src_addr,
 					    len);
-	} else if (hal_rpu_is_mem_ram(hal_dev_ctx->curr_proc, rpu_mem_addr_val)) {
+	} else if (hal_rpu_is_mem_core_direct(hal_dev_ctx->curr_proc, rpu_mem_addr_val) ||
+		hal_rpu_is_mem_ram(hal_dev_ctx->curr_proc, rpu_mem_addr_val)) {
 		status = rpu_mem_write_ram(hal_dev_ctx,
 					   rpu_mem_addr_val,
 					   src_addr,

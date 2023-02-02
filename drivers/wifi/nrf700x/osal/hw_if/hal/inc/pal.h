@@ -47,6 +47,8 @@ static const unsigned int SOC_MMAP_ADDR_OFFSETS_MCU[] = {
 
 #endif /* RPU_CONFIG_72 */
 
+#define RPU_MCU_CORE_INDIRECT_BASE 0xC0000000
+
 #define WIFI_NRF_FW_LMAC_PATCH_LOC_PRI "img/wlan/wifi_nrf_lmac_patch_pri.bimg"
 #define WIFI_NRF_FW_LMAC_PATCH_LOC_SEC "img/wlan/wifi_nrf_lmac_patch_sec.bin"
 #define WIFI_NRF_FW_UMAC_PATCH_LOC_PRI "img/wlan/wifi_nrf_umac_patch_pri.bimg"

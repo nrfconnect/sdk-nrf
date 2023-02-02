@@ -888,6 +888,7 @@ enum wifi_nrf_status wifi_nrf_hal_data_cmd_send(struct wifi_nrf_hal_dev_ctx *hal
 	unsigned int addr_base = 0;
 	unsigned int max_cmd_size = 0;
 	unsigned int addr = 0;
+	unsigned int host_addr = 0;
 
 
 	wifi_nrf_osal_spinlock_take(hal_dev_ctx->hpriv->opriv,
@@ -907,11 +908,17 @@ enum wifi_nrf_status wifi_nrf_hal_data_cmd_send(struct wifi_nrf_hal_dev_ctx *hal
 	}
 
 	addr = addr_base + (max_cmd_size * desc_id);
+	host_addr = addr;
 
+	/* This is a indrect write to core memory */
+	if (cmd_type == WIFI_NRF_HAL_MSG_TYPE_CMD_DATA_RX) {
+		host_addr &= RPU_ADDR_MASK_OFFSET;
+		host_addr |= RPU_MCU_CORE_INDIRECT_BASE;
+	}
 
 	/* Copy the information to the suggested address */
 	status = hal_rpu_mem_write(hal_dev_ctx,
-				   addr,
+				   host_addr,
 				   cmd,
 				   cmd_size);
 
