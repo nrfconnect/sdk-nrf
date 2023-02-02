@@ -172,27 +172,35 @@ To test with the sample, complete the following steps:
       .. code-block:: console
 
          $ at AT+CFUN=4
-         $ OK
-         $ at AT+CMNG=0,450,3,\"000102030405060708090a0b0c0d0e0f\"
-         $ OK
+         OK
+         $ at AT%CMNG=0,450,3,\"000102030405060708090a0b0c0d0e0f\"
+         OK
          $ at AT+CFUN=1
-         $ OK
+         OK
 
    #. Set the URI and security tag (containing the PSK that was stored):
 
       .. code-block:: console
 
          $ carrier_config server uri coaps://leshan.eclipseprojects.io:5784
-         $
+         Set server URI: coaps://leshan.eclipseprojects.io:5784
          $ carrier_config server sec_tag 450
-         $
-         $ carrier_config
+         Set security tag: 450
 
-   #. Save the settings. Resetting the device will load them.
+   #. Apply the server config.
+      After rebooting, the sample loads these settings (instead of using the static Kconfigs).
 
       .. code-block:: console
 
-         $ Enable custom server settings  Yes
+         $ carrier_config server enable
+         Enabled custom server config
+
+   #. Finally, as described in ref:`lwm2m_carrier_shell`, set ``auto_startup`` (or else the sample will wait indefinitely for you to configure all the settings).
+
+      .. code-block:: console
+
+         $carrier_config auto_startup y
+         Set auto startup: Yes
 
    Once the device is registered to a device management server, you can experiment by setting some of the resources.
    For example, you can set the Location object (``/6``) resources for Latitude (``/6/0/0``) and Longitude (``/6/0/1``):
