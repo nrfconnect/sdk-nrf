@@ -162,7 +162,7 @@ static void print_codec(const struct bt_codec *codec)
 		uint32_t bitrate =
 			octets_per_sdu * 8 * (1000000 / bt_codec_cfg_get_frame_duration_us(codec));
 
-		LOG_INF("\tOctets per frame: %d (%d kbps)", octets_per_sdu, bitrate);
+		LOG_INF("\tOctets per frame: %d (%d bps)", octets_per_sdu, bitrate);
 		LOG_INF("\tFrames per SDU: %d", bt_codec_cfg_get_frame_blocks_per_sdu(codec, true));
 	} else {
 		LOG_WRN("Codec is not LC3, codec_id: 0x%2x", codec->id);
