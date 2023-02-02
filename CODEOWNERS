@@ -226,7 +226,7 @@ Kconfig*                                  @tejlmand
 /modules/tfm/                             @SebastianBoe @joerchan
 /subsys/zigbee/                           @tomchy @sebastiandraus
 /tests/                                   @gopiotr
-/tests/bluetooth/tester/                  @carlescufi @trond-snekvik
+/tests/bluetooth/tester/                  @carlescufi @ludvigsj
 /tests/crypto/                            @torsteingrindvik @magnev
 /tests/drivers/flash_patch/               @oyvindronningstad
 /tests/drivers/fprotect/                  @oyvindronningstad
