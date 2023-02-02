@@ -15,28 +15,7 @@
 #include <scheduler_internal.h>
 #include <model_utils.h>
 #include <time_util.h>
-
-#define DELTA_TIME   1
-#define SUBSEC_STEPS 256
-
-/* item of struct tm */
-#define ISTM(year, month, day, hour, minute, second) \
-		.tm_year = (year),  \
-		.tm_mon = (month),  \
-		.tm_mday = (day),   \
-		.tm_hour = (hour),  \
-		.tm_min = (minute), \
-		.tm_sec = (second)
-
-#define ANY_MONTH (BT_MESH_SCHEDULER_JAN | BT_MESH_SCHEDULER_FEB | \
-	BT_MESH_SCHEDULER_MAR | BT_MESH_SCHEDULER_APR | BT_MESH_SCHEDULER_MAY | \
-	BT_MESH_SCHEDULER_JUN | BT_MESH_SCHEDULER_JUL | BT_MESH_SCHEDULER_AUG | \
-	BT_MESH_SCHEDULER_SEP | BT_MESH_SCHEDULER_OCT | BT_MESH_SCHEDULER_NOV | \
-	BT_MESH_SCHEDULER_DEC)
-
-#define ANY_DAY_OF_WEEK (BT_MESH_SCHEDULER_MON | BT_MESH_SCHEDULER_TUE | \
-	BT_MESH_SCHEDULER_WED | BT_MESH_SCHEDULER_THU | BT_MESH_SCHEDULER_FRI | \
-	BT_MESH_SCHEDULER_SAT | BT_MESH_SCHEDULER_SUN)
+#include <sched_test.h>
 
 K_SEM_DEFINE(action_fired, 0, 1);
 
@@ -67,22 +46,6 @@ static struct {
 	int curr_idx;
 	struct sched_evt *events;
 } sched_evt_ctx;
-
-static inline uint64_t tai_to_ms(const struct bt_mesh_time_tai *tai)
-{
-	return MSEC_PER_SEC * tai->sec +
-	       (MSEC_PER_SEC * tai->subsec) / SUBSEC_STEPS;
-}
-
-static inline struct bt_mesh_time_tai tai_at(int64_t uptime)
-{
-	int64_t steps = (SUBSEC_STEPS * uptime) / MSEC_PER_SEC;
-
-	return (struct bt_mesh_time_tai) {
-		.sec = (steps / SUBSEC_STEPS),
-		.subsec = steps,
-	};
-}
 
 static void sched_evt_ctx_init(struct sched_evt *evt_list, int evt_cnt)
 {
@@ -320,7 +283,7 @@ struct tm *bt_mesh_time_srv_localtime(struct bt_mesh_time_srv *srv,
 
 	zassert_ok(ts_to_tai(&tai, &start_tm), "cannot convert tai time");
 
-	int64_t tmp =  tai_to_ms(&tai);
+	int64_t tmp = tai_to_ms(&tai);
 
 	tmp += uptime;
 	tai = tai_at(tmp);
@@ -406,31 +369,15 @@ static void teardown(void)
 	_bt_mesh_scheduler_srv_cb.reset(sched_mod_elem4);
 }
 
-static void start_time_adjust(void)
-{
-	int64_t uptime = k_uptime_get();
-	struct bt_mesh_time_tai tai;
-
-	zassert_ok(ts_to_tai(&tai, &start_tm), "cannot convert tai time");
-
-	int64_t tmp =  tai_to_ms(&tai);
-
-	tmp -= uptime;
-	tai = tai_at(tmp);
-	tai.sec++; /* 1 sec is lost during recalculation */
-	tai_to_ts(&tai, &start_tm);
-}
-
 static void action_put(const struct bt_mesh_schedule_entry *test_action,
 		       struct bt_mesh_model *sched_mod)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_SCHEDULER_OP_ACTION_SET_UNACK,
 				 BT_MESH_SCHEDULER_MSG_LEN_ACTION_SET);
 
-	net_buf_simple_init(&buf, 0);
 	scheduler_action_pack(&buf, 0, test_action);
 
-	start_time_adjust();
+	start_time_adjust(&start_tm);
 
 	zassert_false(_bt_mesh_scheduler_setup_srv_op[1].func(sched_mod, NULL, &buf),
 		"Cannot schedule test action.");
@@ -446,53 +393,6 @@ static void measurement_start(int64_t expected_time, int fire_cnt)
 
 	zassert_ok(k_sem_take(&action_fired, K_SECONDS(expected_time + DELTA_TIME)),
 		"Scheduled action isn't fired in time.");
-}
-
-static void expected_tm_check(struct tm *expected, int steps)
-{
-	for (int i = 0; i < steps; i++) {
-		zassert_equal(fired_tm[i].tm_year, expected[i].tm_year,
-			"real year %d is not equal to expected %d on step %d",
-			fired_tm[i].tm_year, expected[i].tm_year, i + 1);
-
-		zassert_equal(fired_tm[i].tm_mon, expected[i].tm_mon,
-			"real month %d is not equal to expected %d on step %d",
-			fired_tm[i].tm_mon, expected[i].tm_mon, i + 1);
-
-		zassert_equal(fired_tm[i].tm_mday, expected[i].tm_mday,
-			"real day %d is not equal to expected %d on step %d",
-			fired_tm[i].tm_mday, expected[i].tm_mday, i + 1);
-
-		if (expected[i].tm_hour == INT_MAX) {
-			zassert_within(fired_tm[i].tm_hour, 0, 23,
-				"real hour %d is not within expected 0-23 range on step %d",
-				fired_tm[i].tm_hour, i + 1);
-		} else {
-			zassert_equal(fired_tm[i].tm_hour, expected[i].tm_hour,
-				"real hour %d is not equal to expected %d on step %d",
-				fired_tm[i].tm_hour, expected[i].tm_hour, i + 1);
-		}
-
-		if (expected[i].tm_min == INT_MAX) {
-			zassert_within(fired_tm[i].tm_min, 0, 59,
-				"real minute %d is not within expected 0-59 range on step %d",
-				fired_tm[i].tm_min, i + 1);
-		} else {
-			zassert_equal(fired_tm[i].tm_min, expected[i].tm_min,
-				"real minute %d is not equal to expected %d on step %d",
-				fired_tm[i].tm_min, expected[i].tm_min, i + 1);
-		}
-
-		if (expected[i].tm_sec == INT_MAX) {
-			zassert_within(fired_tm[i].tm_sec, 0, 59,
-				"real second %d is not within expected 0-59 range on step %d",
-				fired_tm[i].tm_sec, i + 1);
-		} else {
-			zassert_equal(fired_tm[i].tm_sec, expected[i].tm_sec,
-				"real second %d is not equal to expected %d on step %d",
-				fired_tm[i].tm_sec, expected[i].tm_sec, i + 1);
-		}
-	}
 }
 
 static void test_first_sched_turn_on(void)
@@ -533,12 +433,12 @@ static void test_first_sched_turn_on(void)
 	measurement_start(60, ARRAY_SIZE(evt_list));
 
 	struct tm expected[3] = {
-		{ ISTM(110, 0, 1, 0, 0, 30) },
-		{ ISTM(110, 0, 1, 0, 0, 30) },
-		{ ISTM(110, 0, 1, 0, 0, 30) },
+		{ TM_INIT(110, 0, 1, 0, 0, 30) },
+		{ TM_INIT(110, 0, 1, 0, 0, 30) },
+		{ TM_INIT(110, 0, 1, 0, 0, 30) },
 	};
 
-	expected_tm_check(expected, 1);
+	expected_tm_check(fired_tm, expected, 1);
 }
 
 static void test_second_sched_turn_off(void)
@@ -576,11 +476,11 @@ static void test_second_sched_turn_off(void)
 	measurement_start(60, ARRAY_SIZE(evt_list));
 
 	struct tm expected[2] = {
-		{ ISTM(110, 0, 1, 0, 0, 30) },
-		{ ISTM(110, 0, 1, 0, 0, 30) },
+		{ TM_INIT(110, 0, 1, 0, 0, 30) },
+		{ TM_INIT(110, 0, 1, 0, 0, 30) },
 	};
 
-	expected_tm_check(expected, 1);
+	expected_tm_check(fired_tm, expected, 1);
 }
 
 static void test_first_sched_scene_recall(void)
@@ -636,9 +536,9 @@ static void test_first_sched_scene_recall(void)
 	measurement_start(60, ARRAY_SIZE(evt_list));
 
 	struct tm expected[3] = {
-		{ ISTM(110, 0, 1, 0, 0, 30) },
-		{ ISTM(110, 0, 1, 0, 0, 30) },
-		{ ISTM(110, 0, 1, 0, 0, 30) },
+		{ TM_INIT(110, 0, 1, 0, 0, 30) },
+		{ TM_INIT(110, 0, 1, 0, 0, 30) },
+		{ TM_INIT(110, 0, 1, 0, 0, 30) },
 	};
 
 	expected_tm_check(fired_tm, expected, 3);
@@ -689,11 +589,11 @@ static void test_second_sched_scene_recall(void)
 	measurement_start(60, ARRAY_SIZE(evt_list));
 
 	struct tm expected[2] = {
-		{ ISTM(110, 0, 1, 0, 0, 30) },
-		{ ISTM(110, 0, 1, 0, 0, 30) },
+		{ TM_INIT(110, 0, 1, 0, 0, 30) },
+		{ TM_INIT(110, 0, 1, 0, 0, 30) },
 	};
 
-	expected_tm_check(expected, 2);
+	expected_tm_check(fired_tm, expected, 2);
 }
 
 static void test_second_sched_turn_off_recurring(void)
@@ -737,17 +637,17 @@ static void test_second_sched_turn_off_recurring(void)
 	measurement_start(60, ARRAY_SIZE(evt_list));
 
 	struct tm expected[8] = {
-		{ ISTM(110, 0, 1, 0, 0, 15) },
-		{ ISTM(110, 0, 1, 0, 0, 15) },
-		{ ISTM(110, 0, 1, 0, 0, 30) },
-		{ ISTM(110, 0, 1, 0, 0, 30) },
-		{ ISTM(110, 0, 1, 0, 0, 45) },
-		{ ISTM(110, 0, 1, 0, 0, 45) },
-		{ ISTM(110, 0, 1, 0, 1, 0) },
-		{ ISTM(110, 0, 1, 0, 1, 0) },
+		{ TM_INIT(110, 0, 1, 0, 0, 15) },
+		{ TM_INIT(110, 0, 1, 0, 0, 15) },
+		{ TM_INIT(110, 0, 1, 0, 0, 30) },
+		{ TM_INIT(110, 0, 1, 0, 0, 30) },
+		{ TM_INIT(110, 0, 1, 0, 0, 45) },
+		{ TM_INIT(110, 0, 1, 0, 0, 45) },
+		{ TM_INIT(110, 0, 1, 0, 1, 0) },
+		{ TM_INIT(110, 0, 1, 0, 1, 0) },
 	};
 
-	expected_tm_check(expected, 8);
+	expected_tm_check(fired_tm, expected, 8);
 }
 
 void test_main(void)
