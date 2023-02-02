@@ -93,6 +93,13 @@ config MPSL_FEM_SIMPLE_GPIO
 
 endchoice	# MPSL_FEM_CHOICE
 
+config MPSL_FEM_INIT_PRIORITY
+	int "Initialization priority of the front-end module interface"
+	default KERNEL_INIT_PRIORITY_DEFAULT
+	help
+	  Set the initialization priority number. Do not mess with it unless
+	  you know what you are doing.
+
 if (MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI) && MPSL_FEM
 
 config MPSL_FEM_NRF21540_TX_GAIN_DB

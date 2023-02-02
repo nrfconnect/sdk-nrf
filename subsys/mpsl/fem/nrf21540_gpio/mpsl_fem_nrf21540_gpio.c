@@ -293,7 +293,7 @@ static int mpsl_fem_init(const struct device *dev)
 	return fem_nrf21540_gpio_configure();
 }
 
-SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_MPSL_FEM_INIT_PRIORITY);
 
 #else /* !defined(CONFIG_MPSL_FEM_PIN_FORWARDER) */
 
@@ -335,7 +335,7 @@ static int mpsl_fem_host_init(const struct device *dev)
 
 }
 
-SYS_INIT(mpsl_fem_host_init, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+SYS_INIT(mpsl_fem_host_init, PRE_KERNEL_1, CONFIG_MPSL_FEM_INIT_PRIORITY);
 
 #endif /* !defined(CONFIG_MPSL_FEM_PIN_FORWARDER) */
 
