@@ -18,7 +18,9 @@ The Asset Tracker v2 application is built on the following principles:
 Requirements
 ************
 
-.. table-from-sample-yaml::
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: thingy91_nrf9160_ns, nrf9160dk_nrf9160_ns
 
 .. include:: /includes/tfm.txt
 
