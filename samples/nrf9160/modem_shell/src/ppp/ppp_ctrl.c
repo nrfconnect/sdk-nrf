@@ -130,6 +130,7 @@ static int ppp_ctrl_start_net_if(void)
 	       sizeof(ctx->ipcp.my_options.dns2_address));
 
 	free(pdp_context_info);
+	net_if_flag_set(iface, NET_IF_POINTOPOINT);
 	net_if_up(iface);
 
 	return 0;
