@@ -24,6 +24,21 @@
   - "scripts/requirements*.txt"
   - "scripts/tools-versions-darwin.txt"
 
+"CI-iot-serial-lte-modem-test":
+  - "applications/serial_lte_modem/**/*"
+  - "lib/at_cmd_parser/**/*"
+  - "lib/at_monitor/**/*"
+  - "lib/date_time/**/*"
+  - "lib/modem_info/**/*"
+  - "lib/modem_jwt/**/*"
+  - "lib/nrf_modem_lib/**/*"
+  - "lib/sms/**/*"
+  - "subsys/dfu/dfu_target/**/*"
+  - "subsys/net/lib/download_client/**/*"
+  - "subsys/net/lib/fota_download/**/*"
+  - "subsys/net/lib/ftp_client/**/*"
+  - "subsys/net/lib/nrf_cloud/**/*"
+
 "CI-iot-zephyr-lwm2m-test":
   - "lib/nrf_modem_lib/**/*"
   - "lib/at_monitor/**/*"
