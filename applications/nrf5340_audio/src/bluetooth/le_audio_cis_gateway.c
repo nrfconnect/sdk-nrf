@@ -752,6 +752,15 @@ static void on_device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
 static void ble_acl_start_scan(void)
 {
 	int ret;
+	/* Scan interval as two times of ISO interval */
+	int scan_interval =
+		bt_codec_cfg_get_frame_duration_us(&lc3_preset_nrf5340.codec) / 1000 / 0.625 * 2;
+	/* Scan window as two times of ISO interval */
+	int scan_window =
+		bt_codec_cfg_get_frame_duration_us(&lc3_preset_nrf5340.codec) / 1000 / 0.625 * 2;
+	struct bt_le_scan_param *scan_param =
+		BT_LE_SCAN_PARAM(BT_LE_SCAN_TYPE_PASSIVE, BT_LE_SCAN_OPT_FILTER_DUPLICATE,
+				 scan_interval, scan_window);
 
 	/* Reset number of bonds found */
 	bonded_num = 0;
@@ -762,7 +771,7 @@ static void ble_acl_start_scan(void)
 		LOG_INF("All bonded slots filled, will not accept new devices");
 	}
 
-	ret = bt_le_scan_start(BT_LE_SCAN_PASSIVE, on_device_found);
+	ret = bt_le_scan_start(scan_param, on_device_found);
 	if (ret && ret != -EALREADY) {
 		LOG_WRN("Scanning failed to start: %d", ret);
 		return;
