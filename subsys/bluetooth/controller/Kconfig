@@ -310,20 +310,5 @@ config BT_UNINIT_MPSL_ON_DISABLE
 	  mpsl_lib_uninit, which releases all peripherals and allows the user to
 	  override any interrupt handlers used by MPSL.
 
-config BT_CTLR_SYNC_TRANSFER_SENDER
-	bool "Periodic Advertising Sync Transfer - Sender [EXPERIMENTAL]"
-	select EXPERIMENTAL
-	help
-	  Enable support for sending Periodic Advertising Sync Transfer as
-	  defined in the Bluetooth Core Specification, Version 5.3 | Vol 6,
-	  Part B, Section 4.6.23.
-
-config BT_CTLR_SYNC_TRANSFER_RECEIVER
-	bool "Periodic Advertising Sync Transfer - Receiver [EXPERIMENTAL]"
-	select EXPERIMENTAL
-	help
-	  Enable support for receiving Periodic Advertising Sync Transfer as
-	  defined in the Bluetooth Core Specification, Version 5.3 | Vol 6,
-	  Part B, Section 4.6.24.
 endmenu
 endif  # BT_LL_SOFTDEVICE
