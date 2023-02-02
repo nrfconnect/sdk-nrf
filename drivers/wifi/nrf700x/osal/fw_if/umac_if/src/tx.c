@@ -18,6 +18,55 @@
 #include "hal_mem.h"
 #include "fmac_util.h"
 
+/* Set the coresponding bit of access category.
+ * First 4 bits(0 to 3) represenst first spare desc access cateogories
+ * Second 4 bits(4 to 7) represenst second spare desc access cateogories and so on
+ */
+static void set_spare_desc_q_map(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+				 unsigned int desc,
+				 int tx_done_q)
+{
+	unsigned short spare_desc_indx = 0;
+
+	spare_desc_indx = (desc % (fmac_dev_ctx->fpriv->num_tx_tokens_per_ac *
+				   WIFI_NRF_FMAC_AC_MAX));
+
+	fmac_dev_ctx->tx_config.spare_desc_queue_map |=
+		(1 << ((spare_desc_indx * SPARE_DESC_Q_MAP_SIZE) + tx_done_q));
+}
+
+
+/* Clear the coresponding bit of access category.
+ * First 4 bits(0 to 3) represenst first spare desc access cateogories
+ * Second 4 bits(4 to 7) represenst second spare desc access cateogories and so on
+ */
+static void clear_spare_desc_q_map(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+				   unsigned int desc,
+				   int tx_done_q)
+{
+	unsigned short spare_desc_indx = 0;
+
+	spare_desc_indx = (desc % (fmac_dev_ctx->fpriv->num_tx_tokens_per_ac *
+				   WIFI_NRF_FMAC_AC_MAX));
+
+	fmac_dev_ctx->tx_config.spare_desc_queue_map &=
+		~(1 << ((spare_desc_indx * SPARE_DESC_Q_MAP_SIZE) + tx_done_q));
+}
+
+/*Get the spare descriptor queue map */
+static unsigned short get_spare_desc_q_map(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					   unsigned int desc)
+{
+	unsigned short spare_desc_indx = 0;
+
+	spare_desc_indx = (desc % (fmac_dev_ctx->fpriv->num_tx_tokens_per_ac *
+				   WIFI_NRF_FMAC_AC_MAX));
+
+	return	(fmac_dev_ctx->tx_config.spare_desc_queue_map >> (spare_desc_indx *
+			SPARE_DESC_Q_MAP_SIZE)) & 0x000F;
+}
+
+
 int pending_frames_count(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			 int peer_id)
 {
@@ -815,48 +864,29 @@ unsigned int tx_buff_req_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			      unsigned int tx_desc_num,
 			      unsigned char *ac)
 {
-	struct wifi_nrf_fmac_priv *fpriv = NULL;
 	unsigned int pkts_pend = 0;
 	unsigned int desc = tx_desc_num;
 	int tx_done_q = 0, start_ac, end_ac, cnt = 0;
-	unsigned int queue_map = fmac_dev_ctx->tx_config.spare_desc_queue_map;
-
-	fpriv = fmac_dev_ctx->fpriv;
+	unsigned short tx_done_spare_desc_q_map = 0;
 
 	/* Determine the Queue from the descriptor */
 	/* Reserved desc */
-	if (desc < (fpriv->num_tx_tokens_per_ac * WIFI_NRF_FMAC_AC_MAX)) {
-		/* Derive the queue here as it is not given by UMAC.
-		 * tx_done_q = desc
-		 */
+	if (desc < (fmac_dev_ctx->fpriv->num_tx_tokens_per_ac * WIFI_NRF_FMAC_AC_MAX)) {
 		tx_done_q = (desc % WIFI_NRF_FMAC_AC_MAX);
 		start_ac = end_ac = tx_done_q;
 	} else {
-		if (desc >= (fpriv->num_tx_tokens_per_ac * WIFI_NRF_FMAC_AC_MAX)) {
-			switch (desc %	(fpriv->num_tx_tokens_per_ac * WIFI_NRF_FMAC_AC_MAX)) {
-			case 0:
-				tx_done_q = (queue_map & 0x0f);
-				break;
-			case 1:
-				tx_done_q = ((queue_map & 0xf0) >> 4);
-				break;
-			case 2:
-				tx_done_q = ((queue_map & 0xf00) >> 8);
-				break;
-			case 3:
-				tx_done_q = ((queue_map & 0xf000) >> 12);
-				break;
-			}
-		}
+		/* Derive the queue here as it is not given by UMAC. */
+		if (desc >= (fmac_dev_ctx->fpriv->num_tx_tokens_per_ac * WIFI_NRF_FMAC_AC_MAX)) {
+			tx_done_spare_desc_q_map = get_spare_desc_q_map(fmac_dev_ctx, desc);
 
-		if (tx_done_q == 1) {
-			tx_done_q = WIFI_NRF_FMAC_AC_BK;
-		} else if (tx_done_q == 2) {
-			tx_done_q = WIFI_NRF_FMAC_AC_BE;
-		} else if (tx_done_q == 4) {
-			tx_done_q = WIFI_NRF_FMAC_AC_VI;
-		} else {
-			tx_done_q = WIFI_NRF_FMAC_AC_VO;
+			if (tx_done_spare_desc_q_map & (1 << WIFI_NRF_FMAC_AC_BK))
+				tx_done_q = WIFI_NRF_FMAC_AC_BK;
+			else if (tx_done_spare_desc_q_map & (1 << WIFI_NRF_FMAC_AC_BE))
+				tx_done_q = WIFI_NRF_FMAC_AC_BE;
+			else if (tx_done_spare_desc_q_map & (1 << WIFI_NRF_FMAC_AC_VI))
+				tx_done_q = WIFI_NRF_FMAC_AC_VI;
+			else if (tx_done_spare_desc_q_map & (1 << WIFI_NRF_FMAC_AC_VO))
+				tx_done_q = WIFI_NRF_FMAC_AC_VO;
 		}
 
 		/* Spare desc:
@@ -879,23 +909,29 @@ unsigned int tx_buff_req_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			if (pkts_pend) {
 				*ac = (unsigned char)cnt;
 
-				/* Spare Token Case */
+				/* Spare Token Case*/
 				if (tx_done_q != *ac) {
 					/* Adjust the counters */
 					fmac_dev_ctx->tx_config.outstanding_descs[tx_done_q]--;
 					fmac_dev_ctx->tx_config.outstanding_descs[*ac]++;
-				}
 
+					/* Update the queue_map */
+					/* Clear the last access category. */
+					clear_spare_desc_q_map(fmac_dev_ctx, desc, tx_done_q);
+					/* Set the new access category. */
+					set_spare_desc_q_map(fmac_dev_ctx, desc, *ac);
+				}
 				break;
 			}
 		}
 
-		if (!pkts_pend) {
-			/* Mark the desc as available */
-			tx_desc_free(fmac_dev_ctx,
-				     desc,
-				     tx_done_q);
-		}
+	}
+
+	if (!pkts_pend) {
+		/* Mark the desc as available */
+		tx_desc_free(fmac_dev_ctx,
+			     desc,
+			     tx_done_q);
 	}
 
 out:

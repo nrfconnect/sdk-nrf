@@ -18,6 +18,10 @@
 #define TX_DESC_BUCKET_BOUND 32
 #define DOT11_WMM_PARAMS_LEN 2
 
+/* 4 bits represent 4 access categories.
+ * (VOVIBEBO) respectively
+ */
+#define SPARE_DESC_Q_MAP_SIZE 4
 
 struct tx_pkt_info {
 	void *pkt;
