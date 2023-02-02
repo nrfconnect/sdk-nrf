@@ -854,9 +854,9 @@ unsigned int tx_buff_req_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		} else if (tx_done_q == 2) {
 			tx_done_q = WIFI_NRF_FMAC_AC_BE;
 		} else if (tx_done_q == 4) {
-			tx_done_q = WIFI_NRF_FMAC_AC_VO;
-		} else {
 			tx_done_q = WIFI_NRF_FMAC_AC_VI;
+		} else {
+			tx_done_q = WIFI_NRF_FMAC_AC_VO;
 		}
 
 		/* Spare desc:
