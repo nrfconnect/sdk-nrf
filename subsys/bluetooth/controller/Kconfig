@@ -49,6 +49,13 @@ config BT_LL_SOFTDEVICE_BUILD_TYPE_LIB
 
 endchoice
 
+config BT_HCI_INIT_PRIORITY
+	int "Initialization priority of the HCI driver"
+	default KERNEL_INIT_PRIORITY_DEVICE
+	help
+	  Set the initialization priority number. Do not mess with it unless
+	  you know what you are doing.
+
 # BT_HCI_TX_STACK_SIZE is declared in Zephyr and also here for a second time,
 # for set the valid default size of the HCI Tx stack.
 config BT_HCI_TX_STACK_SIZE

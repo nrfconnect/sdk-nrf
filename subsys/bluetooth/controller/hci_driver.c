@@ -973,4 +973,9 @@ static int hci_driver_init(const struct device *unused)
 	return err;
 }
 
-SYS_INIT(hci_driver_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
+#if defined(CONFIG_MPSL_FEM)
+BUILD_ASSERT(CONFIG_MPSL_FEM_INIT_PRIORITY < CONFIG_BT_HCI_INIT_PRIORITY,
+	     "HCI driver would be initialized before its dependency, MPSL FEM");
+#endif /* defined(CONFIG_MPSL_FEM) */
+
+SYS_INIT(hci_driver_init, POST_KERNEL, CONFIG_BT_HCI_INIT_PRIORITY);
