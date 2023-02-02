@@ -289,10 +289,9 @@ static int firmware_update_state_cb(uint8_t update_state)
 		return 0;
 	case STATE_UPDATING:
 		LOG_DBG("STATE_UPDATING, result: %d", update_result);
-		cloud_wrap_evt.type = CLOUD_WRAP_EVT_FOTA_DONE;
 		/* Disable further callbacks from FOTA */
 		lwm2m_firmware_set_update_state_cb(NULL);
-		break;
+		return 0;
 	default:
 		LOG_ERR("Unknown state: %d", update_state);
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_FOTA_ERROR;
