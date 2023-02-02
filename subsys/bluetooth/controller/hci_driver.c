@@ -612,13 +612,6 @@ static int configure_supported_features(void)
 		}
 	}
 
-#if RADIO_TXP_DEFAULT != 0
-	err = sdc_default_tx_power_set(RADIO_TXP_DEFAULT);
-	if (err) {
-		return -ENOTSUP;
-	}
-#endif
-
 	if (IS_ENABLED(CONFIG_BT_CTLR_LE_POWER_CONTROL)) {
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 			err = sdc_support_le_power_control_central();
@@ -850,6 +843,14 @@ static int hci_driver_open(void)
 			}
 		}
 	}
+
+#if RADIO_TXP_DEFAULT != 0
+	err = sdc_default_tx_power_set(RADIO_TXP_DEFAULT);
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return -ENOTSUP;
+	}
+#endif
 
 	err = sdc_enable(receive_signal_raise, sdc_mempool);
 	if (err) {
