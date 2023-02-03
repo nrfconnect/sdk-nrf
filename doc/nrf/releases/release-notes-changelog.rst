@@ -79,6 +79,7 @@ Matter
   * The Bluetooth LE advertising arbiter class that enables easier coexistence of application components that want to advertise their Bluetooth LE services.
   * Support for erasing settings partition during DFU over Bluetooth LE SMP for the Nordic nRF52 Series' SoCs.
   * Enabled Wi-Fi and Bluetooth LE coexistence.
+  * Mechanism to retry a failed Wi-Fi connection.
 
 * Updated:
 
