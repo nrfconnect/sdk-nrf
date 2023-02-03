@@ -65,7 +65,7 @@ static int boot_img_num;
 static bool target_reset_done;
 static bool target_done_result;
 static size_t target_offset;
-static uint8_t test_state_reg;
+static struct lwm2m_fota_event fota_event;
 
 static int dfu_target_mcuboot_set_buf_stub(uint8_t *buf, size_t len)
 {
@@ -250,12 +250,6 @@ static int target_offset_get_stub(size_t *offset)
 	return 0;
 }
 
-static int test_lwm2m_firmware_get_update_state_cb(uint8_t update_state)
-{
-	test_state_reg = update_state;
-	return 0;
-}
-
 static void setup_tear_up(void *fixie)
 {
 	/* Register resets */
@@ -288,13 +282,37 @@ static void setup_tear_up(void *fixie)
 	dfu_target_modem_delta_offset_get_fake.custom_fake = target_offset_get_stub;
 }
 
+static int lwm2m_firmware_event(struct lwm2m_fota_event *event)
+{
+	fota_event.id = event->id;
+	switch (event->id) {
+	case LWM2M_FOTA_DOWNLOAD_START:
+		fota_event.download_start.obj_inst_id = event->download_start.obj_inst_id;
+		break;
+	case LWM2M_FOTA_DOWNLOAD_FINISHED:
+		fota_event.download_ready.obj_inst_id = event->download_ready.obj_inst_id;
+		fota_event.download_ready.dfu_type = event->download_ready.dfu_type;
+		break;
+	case LWM2M_FOTA_UPDATE_IMAGE_REQ:
+		fota_event.update_req.obj_inst_id = event->update_req.obj_inst_id;
+		fota_event.update_req.dfu_type = event->update_req.dfu_type;
+		break;
+	case LWM2M_FOTA_UPDATE_ERROR:
+		fota_event.failure.obj_inst_id = event->failure.obj_inst_id;
+		fota_event.failure.update_failure = event->failure.update_failure;
+		break;
+	}
+
+	return 0;
+}
+
 static void init_firmware_success(void)
 {
 	int rc;
 
 	settings_register_fake.return_val = 0;
 	settings_register_fake.custom_fake = copy_settings_hanler;
-	rc = lwm2m_init_firmware();
+	rc = lwm2m_init_firmware_cb(lwm2m_firmware_event);
 	zassert_equal(rc, 0, "wrong return value");
 	zassert_not_null(stream_buf, "MCUboot is NULL");
 	zassert_not_null(handler, "Did not set handler");
@@ -403,17 +421,27 @@ ZTEST(lwm2m_client_utils_firmware, test_init_image_failure)
 	prepare_firmware_pull(app_instance, DFU_TARGET_IMAGE_TYPE_MCUBOOT);
 	state = get_app_state();
 	printf("State %d\r\n", state);
+	zassert_equal(fota_event.id, LWM2M_FOTA_DOWNLOAD_START, "Wrong event ID received");
+	zassert_equal(fota_event.download_start.obj_inst_id, app_instance, "Wrong instance");
 	zassert_equal(state, STATE_DOWNLOADING, "wrong result value");
 	zassert_not_null(firmware_fota_download_cb, "Fota client cb is NULL");
 
 	pull_callback_event_stub(FOTA_DOWNLOAD_EVT_FINISHED, 0);
 	state = get_app_state();
 	printf("State %d\r\n", state);
+	zassert_equal(fota_event.id, LWM2M_FOTA_DOWNLOAD_FINISHED, "Wrong event ID received");
+	zassert_equal(fota_event.download_ready.obj_inst_id, app_instance, "Wrong instance");
+	zassert_equal(fota_event.download_ready.dfu_type, DFU_TARGET_IMAGE_TYPE_MCUBOOT,
+		      "Wrong dfu_type received in event");
 	zassert_equal(state, STATE_DOWNLOADED, "wrong result value");
 
 	rc = lwm2m_firmware_update(app_instance, NULL, 0);
 	printf("Update %d\r\n", rc);
 	zassert_equal(rc, 0, "wrong result value");
+	zassert_equal(fota_event.id, LWM2M_FOTA_UPDATE_IMAGE_REQ, "Wrong event ID received");
+	zassert_equal(fota_event.update_req.obj_inst_id, app_instance, "Wrong instance");
+	zassert_equal(fota_event.update_req.dfu_type, DFU_TARGET_IMAGE_TYPE_MCUBOOT,
+		      "Wrong dfu_type received in event");
 	k_sleep(K_SECONDS(6));
 	state = get_app_state();
 	zassert_equal(state, STATE_UPDATING, "wrong result value");
@@ -423,6 +451,10 @@ ZTEST(lwm2m_client_utils_firmware, test_init_image_failure)
 	result = get_app_result();
 	state = get_app_state();
 	zassert_equal(rc, 0, "wrong return value");
+	zassert_equal(fota_event.id, LWM2M_FOTA_UPDATE_ERROR, "Wrong event ID received");
+	zassert_equal(fota_event.failure.obj_inst_id, app_instance, "Wrong instance");
+	zassert_equal(fota_event.failure.update_failure, RESULT_UPDATE_FAILED,
+		      "Unexpected value of update_failure param");
 	zassert_equal(result, RESULT_UPDATE_FAILED, "wrong state");
 	zassert_equal(state, STATE_IDLE, "wrong result value");
 }
@@ -461,13 +493,11 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_pull)
 
 	/* Test PULL start OK */
 	fota_download_start_with_image_type_fake.return_val = 0;
-	lwm2m_firmware_set_update_state_cb(test_lwm2m_firmware_get_update_state_cb);
 	prepare_firmware_pull(app_instance, DFU_TARGET_IMAGE_TYPE_MCUBOOT);
 	state = get_app_state();
 	printf("State %d\r\n", state);
 	zassert_equal(state, STATE_DOWNLOADING, "wrong result value");
 	zassert_not_null(firmware_fota_download_cb, "Fota client cb is NULL");
-	zassert_equal(test_state_reg, STATE_DOWNLOADING, "State Not correct");
 
 	pull_callback_event_stub(FOTA_DOWNLOAD_EVT_PROGRESS, 0);
 
@@ -476,7 +506,6 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_pull)
 	test_cancel_and_clear_state(app_instance);
 	state = get_app_state();
 	zassert_equal(state, STATE_IDLE, "State Not correct");
-	zassert_equal(test_state_reg, STATE_IDLE, "State Not correct");
 	zassert_equal(target_reset_done, true, "dfu target reset fail");
 }
 
