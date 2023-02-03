@@ -61,7 +61,7 @@ static struct slm_socket sock;
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
+extern uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];
 
 /* forward declarations */
 #define SOCKET_SEND_TMO_SEC      30
@@ -158,8 +158,7 @@ static int do_socket_open(void)
 		return ret;
 	}
 	socks[ret] = sock;
-	sprintf(rsp_buf, "\r\n#XSOCKET: %d,%d,%d\r\n", sock.fd, sock.type, proto);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XSOCKET: %d,%d,%d\r\n", sock.fd, sock.type, proto);
 
 	return 0;
 }
@@ -230,8 +229,7 @@ static int do_secure_socket_open(int peer_verify)
 		return ret;
 	}
 	socks[ret] = sock;
-	sprintf(rsp_buf, "\r\n#XSSOCKET: %d,%d,%d\r\n", sock.fd, sock.type, proto);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XSSOCKET: %d,%d,%d\r\n", sock.fd, sock.type, proto);
 
 	return 0;
 
@@ -277,8 +275,7 @@ static int do_socket_close(void)
 		ret = -errno;
 	}
 
-	sprintf(rsp_buf, "\r\n#XSOCKET: %d,\"closed\"\r\n", ret);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XSOCKET: %d,\"closed\"\r\n", ret);
 
 	/* Select most recent socket as current active */
 	int ranking = 0, index = -1;
@@ -356,8 +353,7 @@ static int do_socketopt_set(int option, int value)
 
 	case SO_PRIORITY:
 	case SO_TIMESTAMPING:
-		sprintf(rsp_buf, "\r\n#XSOCKETOPT: \"not supported\"\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XSOCKETOPT: \"not supported\"\r\n");
 		break;
 
 	default:
@@ -385,8 +381,7 @@ static int do_socketopt_get(int option)
 		if (ret) {
 			LOG_ERR("getsockopt(%d) error: %d", option, -errno);
 		} else {
-			sprintf(rsp_buf, "\r\n#XSOCKETOPT: %d\r\n", value);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send("\r\n#XSOCKETOPT: %d\r\n", value);
 		}
 	} break;
 
@@ -399,16 +394,14 @@ static int do_socketopt_get(int option)
 		if (ret) {
 			LOG_ERR("getsockopt(%d) error: %d", option, -errno);
 		} else {
-			sprintf(rsp_buf, "\r\n#XSOCKETOPT: \"%d sec\"\r\n", (int)tmo.tv_sec);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send("\r\n#XSOCKETOPT: \"%d sec\"\r\n", (int)tmo.tv_sec);
 		}
 	} break;
 
 	case SO_TYPE:
 	case SO_PRIORITY:
 	case SO_PROTOCOL:
-		sprintf(rsp_buf, "\r\n#XSOCKETOPT: \"not supported\"\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XSOCKETOPT: \"not supported\"\r\n");
 		break;
 
 	default:
@@ -464,8 +457,7 @@ static int do_secure_socketopt_set_int(int option, int value)
 	case TLS_DTLS_HANDSHAKE_TIMEOUT_MAX:
 	case TLS_CIPHERSUITE_LIST:
 	case TLS_ALPN_LIST:
-		sprintf(rsp_buf, "\r\n#XSSOCKETOPT: \"not supported\"\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XSSOCKETOPT: \"not supported\"\r\n");
 		break;
 
 	default:
@@ -489,8 +481,7 @@ static int do_secure_socketopt_get(int option)
 		if (ret) {
 			LOG_ERR("getsockopt(%d) error: %d", option, -errno);
 		} else {
-			sprintf(rsp_buf, "\r\n#XSSOCKETOPT: %d\r\n", value);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send("\r\n#XSSOCKETOPT: %d\r\n", value);
 		}
 	} break;
 
@@ -584,8 +575,7 @@ static int do_connect(const char *url, uint16_t port)
 		return -errno;
 	}
 
-	sprintf(rsp_buf, "\r\n#XCONNECT: 1\r\n");
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XCONNECT: 1\r\n");
 
 	return ret;
 }
@@ -641,8 +631,7 @@ static int do_accept(int timeout)
 	} else {
 		return -EINVAL;
 	}
-	sprintf(rsp_buf, "\r\n#XACCEPT: %d,\"%s\"\r\n", sock.fd_peer, peer_addr);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XACCEPT: %d,\"%s\"\r\n", sock.fd_peer, peer_addr);
 
 	return 0;
 }
@@ -678,8 +667,7 @@ static int do_send(const uint8_t *data, int datalen)
 		offset += ret;
 	}
 
-	sprintf(rsp_buf, "\r\n#XSEND: %d\r\n", offset);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XSEND: %d\r\n", offset);
 
 	if (ret >= 0) {
 		return 0;
@@ -725,8 +713,6 @@ static int do_recv(int timeout, int flags)
 {
 	int ret;
 	int sockfd = sock.fd;
-	char rx_data[SLM_MAX_PAYLOAD];
-	uint16_t length;
 
 	/* For TCP/TLS Server, receive from incoming socket */
 	if (sock.type == SOCK_STREAM && sock.role == AT_SOCKET_ROLE_SERVER) {
@@ -738,27 +724,11 @@ static int do_recv(int timeout, int flags)
 		}
 	}
 
-	if (sock.family == AF_INET) {
-		if (sock.type == SOCK_STREAM) {
-			length = TCP_MAX_PAYLOAD_IPV4;
-		} else {
-			length = UDP_MAX_PAYLOAD_IPV4;
-		}
-	} else if (sock.family == AF_INET6) {
-		if (sock.type == SOCK_STREAM) {
-			length = TCP_MAX_PAYLOAD_IPV6;
-		} else {
-			length = UDP_MAX_PAYLOAD_IPV6;
-		}
-	} else {
-		length = SLM_MAX_PAYLOAD;
-	}
-
 	ret = socket_poll(sockfd, POLLIN, timeout);
 	if (ret) {
 		return ret;
 	}
-	ret = recv(sockfd, (void *)rx_data, length, flags);
+	ret = recv(sockfd, (void *)data_buf, sizeof(data_buf), flags);
 	if (ret < 0) {
 		LOG_WRN("recv() error: %d", -errno);
 		return -errno;
@@ -773,9 +743,8 @@ static int do_recv(int timeout, int flags)
 	if (ret == 0) {
 		LOG_WRN("recv() return 0");
 	} else {
-		sprintf(rsp_buf, "\r\n#XRECV: %d\r\n", ret);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-		rsp_send(rx_data, ret);
+		rsp_send("\r\n#XRECV: %d\r\n", ret);
+		data_send(data_buf, ret);
 		ret = 0;
 	}
 
@@ -817,8 +786,7 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int da
 		offset += ret;
 	}
 
-	sprintf(rsp_buf, "\r\n#XSENDTO: %d\r\n", offset);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XSENDTO: %d\r\n", offset);
 
 	if (ret >= 0) {
 		return 0;
@@ -870,19 +838,12 @@ static int do_recvfrom(int timeout, int flags)
 	int ret;
 	struct sockaddr remote;
 	socklen_t addrlen = sizeof(struct sockaddr);
-	char rx_data[SLM_MAX_PAYLOAD];
-	int length;
 
-	if (sock.family == AF_INET) {
-		length = UDP_MAX_PAYLOAD_IPV4;
-	} else {
-		length = UDP_MAX_PAYLOAD_IPV6;
-	}
 	ret = socket_poll(sock.fd, POLLIN, timeout);
 	if (ret) {
 		return ret;
 	}
-	ret = recvfrom(sock.fd, (void *)rx_data, length, flags, &remote, &addrlen);
+	ret = recvfrom(sock.fd, (void *)data_buf, sizeof(data_buf), flags, &remote, &addrlen);
 	if (ret < 0) {
 		LOG_ERR("recvfrom() error: %d", -errno);
 		return -errno;
@@ -904,9 +865,8 @@ static int do_recvfrom(int timeout, int flags)
 			(void)inet_ntop(AF_INET6, &((struct sockaddr_in6 *)&remote)->sin6_addr,
 			    peer_addr, sizeof(peer_addr));
 		}
-		sprintf(rsp_buf, "\r\n#XRECVFROM: %d,\"%s\"\r\n", ret, peer_addr);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-		rsp_send(rx_data, ret);
+		rsp_send("\r\n#XRECVFROM: %d,\"%s\"\r\n", ret, peer_addr);
+		data_send(data_buf, ret);
 	}
 
 	return 0;
@@ -917,8 +877,7 @@ static int do_poll(int timeout)
 	int ret = poll(fds, SLM_MAX_SOCKET_COUNT, timeout);
 
 	if (ret < 0) {
-		sprintf(rsp_buf, "\r\n#XPOLL: %d\r\n", ret);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XPOLL: %d\r\n", ret);
 		return ret;
 	}
 	/* ret == 0 means timeout */
@@ -926,9 +885,8 @@ static int do_poll(int timeout)
 		for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
 			/* If fd is equal to -1	then revents is cleared (set to zero) */
 			if (fds[i].revents != 0) {
-				sprintf(rsp_buf, "\r\n#XPOLL: %d,\"0x%04x\"\r\n",
+				rsp_send("\r\n#XPOLL: %d,\"0x%04x\"\r\n",
 					fds[i].fd, fds[i].revents);
-				rsp_send(rsp_buf, strlen(rsp_buf));
 			}
 		}
 	}
@@ -1033,19 +991,17 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (sock.fd != INVALID_SOCKET) {
-			sprintf(rsp_buf, "\r\n#XSOCKET: %d,%d,%d,%d,%d\r\n", sock.fd,
+			rsp_send("\r\n#XSOCKET: %d,%d,%d,%d,%d\r\n", sock.fd,
 				sock.family, sock.role, sock.type, sock.cid);
-			rsp_send(rsp_buf, strlen(rsp_buf));
 		}
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XSOCKET: (%d,%d,%d),(%d,%d,%d),(%d,%d),<cid>",
+		rsp_send("\r\n#XSOCKET: (%d,%d,%d),(%d,%d,%d),(%d,%d),<cid>",
 			AT_SOCKET_CLOSE, AT_SOCKET_OPEN, AT_SOCKET_OPEN6,
 			SOCK_STREAM, SOCK_DGRAM, SOCK_RAW,
 			AT_SOCKET_ROLE_CLIENT, AT_SOCKET_ROLE_SERVER);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
@@ -1132,20 +1088,18 @@ int handle_at_secure_socket(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (sock.fd != INVALID_SOCKET) {
-			sprintf(rsp_buf, "\r\n#XSSOCKET: %d,%d,%d,%d,%d,%d\r\n", sock.fd,
+			rsp_send("\r\n#XSSOCKET: %d,%d,%d,%d,%d,%d\r\n", sock.fd,
 				sock.family, sock.role, sock.type, sock.sec_tag, sock.cid);
-			rsp_send(rsp_buf, strlen(rsp_buf));
 		}
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XSSOCKET: (%d,%d,%d),(%d,%d),(%d,%d)",
+		rsp_send("\r\n#XSSOCKET: (%d,%d,%d),(%d,%d),(%d,%d),"
+			 "<sec-tag>,<peer_verify>,<cid>\r\n",
 			AT_SOCKET_CLOSE, AT_SOCKET_OPEN, AT_SOCKET_OPEN6,
 			SOCK_STREAM, SOCK_DGRAM,
 			AT_SOCKET_ROLE_CLIENT, AT_SOCKET_ROLE_SERVER);
-		strcat(rsp_buf, "<sec-tag>,<peer_verify>,<cid>\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
@@ -1165,7 +1119,6 @@ int handle_at_socket_select(enum at_cmd_type cmd_type)
 {
 	int err = 0;
 	int fd;
-	char buf[64];
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
@@ -1179,8 +1132,7 @@ int handle_at_socket_select(enum at_cmd_type cmd_type)
 		for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
 			if (socks[i].fd == fd) {
 				sock = socks[i];
-				sprintf(rsp_buf, "\r\n#XSOCKETSELECT: %d\r\n", sock.fd);
-				rsp_send(rsp_buf, strlen(rsp_buf));
+				rsp_send("\r\n#XSOCKETSELECT: %d\r\n", sock.fd);
 				return 0;
 			}
 		}
@@ -1188,20 +1140,16 @@ int handle_at_socket_select(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		memset(rsp_buf, 0x00, sizeof(rsp_buf));
 		for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
 			if (socks[i].fd != INVALID_SOCKET) {
-				sprintf(buf, "\r\n#XSOCKETSELECT: %d,%d,%d,%d,%d,%d,%d\r\n",
+				rsp_send("\r\n#XSOCKETSELECT: %d,%d,%d,%d,%d,%d,%d\r\n",
 					socks[i].fd, socks[i].family, socks[i].role,
 					socks[i].type, socks[i].sec_tag, socks[i].ranking,
 					socks[i].cid);
-				strcat(rsp_buf, buf);
 			}
 		}
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		if (sock.fd != INVALID_SOCKET) {
-			sprintf(rsp_buf, "\r\n#XSOCKETSELECT: %d\r\n", sock.fd);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send("\r\n#XSOCKETSELECT: %d\r\n", sock.fd);
 		}
 		break;
 
@@ -1249,9 +1197,8 @@ int handle_at_socketopt(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XSOCKETOPT: (%d,%d),<name>,<value>\r\n",
+		rsp_send("\r\n#XSOCKETOPT: (%d,%d),<name>,<value>\r\n",
 			AT_SOCKETOPT_GET, AT_SOCKETOPT_SET);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
@@ -1314,8 +1261,7 @@ int handle_at_secure_socketopt(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XSSOCKETOPT: (%d),<name>,<value>\r\n", AT_SOCKETOPT_SET);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XSSOCKETOPT: (%d),<name>,<value>\r\n", AT_SOCKETOPT_SET);
 		err = 0;
 		break;
 
@@ -1441,11 +1387,10 @@ int handle_at_accept(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (sock.fd_peer != INVALID_SOCKET) {
-			sprintf(rsp_buf, "\r\n#XTCPACCEPT: %d\r\n", sock.fd_peer);
+			rsp_send("\r\n#XTCPACCEPT: %d\r\n", sock.fd_peer);
 		} else {
-			sprintf(rsp_buf, "\r\n#XTCPACCEPT: 0\r\n");
+			rsp_send("\r\n#XTCPACCEPT: 0\r\n");
 		}
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
@@ -1464,7 +1409,7 @@ int handle_at_accept(enum at_cmd_type cmd_type)
 int handle_at_send(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	char data[SLM_MAX_PAYLOAD + 1] = {0};
+	char data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
 	int size;
 
 	switch (cmd_type) {
@@ -1543,7 +1488,7 @@ int handle_at_sendto(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (at_params_valid_count_get(&at_param_list) > 3) {
-			char data[SLM_MAX_PAYLOAD + 1] = {0};
+			char data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
 
 			size = sizeof(data);
 			err = util_string_get(&at_param_list, 3, data, &size);
@@ -1609,6 +1554,7 @@ int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
 	int size = SLM_MAX_URL;
 	struct addrinfo *result;
 	struct addrinfo *res;
+	char rsp_buf[256];
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
@@ -1618,12 +1564,10 @@ int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
 		}
 		err = getaddrinfo(host, NULL, NULL, &result);
 		if (err) {
-			sprintf(rsp_buf, "\r\n#XGETADDRINFO: \"%s\"\r\n", gai_strerror(err));
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send("\r\n#XGETADDRINFO: \"%s\"\r\n", gai_strerror(err));
 			return err;
 		} else if (result == NULL) {
-			sprintf(rsp_buf, "\r\n#XGETADDRINFO: \"not found\"\r\n");
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send("\r\n#XGETADDRINFO: \"not found\"\r\n");
 			return -ENOENT;
 		}
 
@@ -1648,7 +1592,7 @@ int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
 			}
 		}
 		strcat(rsp_buf, "\"\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("%s", rsp_buf);
 		freeaddrinfo(result);
 		break;
 

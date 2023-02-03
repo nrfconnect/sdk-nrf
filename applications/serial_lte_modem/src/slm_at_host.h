@@ -51,11 +51,22 @@ void slm_at_host_uninit(void);
 /**
  * @brief Send AT command response
  *
- * @param str Response message
- * @param len Length of response message
+ * @param fmt Response message format string
  *
  */
-void rsp_send(const char *str, size_t len);
+void rsp_send(const char *fmt, ...);
+
+/**
+ * @brief Send AT command response of OK
+ *
+ */
+void rsp_send_ok(void);
+
+/**
+ * @brief Send AT command response of ERROR
+ *
+ */
+void rsp_send_error(void);
 
 /**
  * @brief Send raw data received in data mode

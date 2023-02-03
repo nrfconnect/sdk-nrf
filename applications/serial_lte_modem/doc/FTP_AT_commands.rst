@@ -117,7 +117,7 @@ TFTP client #XTFTP
 The ``#XTFTP`` command allows you to send TFTP commands.
 
    .. note::
-      The maximum supported file size is 2100 bytes.
+      The maximum supported file size is 2048 bytes.
       TFTP write request is not supported yet.
 
 Set command

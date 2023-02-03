@@ -30,7 +30,7 @@ enum slm_ftp_operation {
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
+extern uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];
 
 static int do_tftp_get(int family, const char *server, uint16_t port, const char *filepath,
 			const char *mode)
@@ -47,41 +47,38 @@ static int do_tftp_get(int family, const char *server, uint16_t port, const char
 	}
 
 	struct tftpc client = {
-		.user_buf = rsp_buf,
-		.user_buf_size = sizeof(rsp_buf)
+		.user_buf = data_buf,
+		.user_buf_size = sizeof(data_buf)
 	};
 
 	ret = tftp_get(&sa, &client, filepath, mode);
 	if (ret != 0) {
 		switch (ret) {
 		case TFTPC_DUPLICATE_DATA:
-			strcpy(rsp_buf, "\r\n#XTFTP: -1, \"duplicate data\"\r\n");
+			rsp_send("\r\n#XTFTP: -1, \"duplicate data\"\r\n");
 			break;
 		case TFTPC_BUFFER_OVERFLOW:
-			strcpy(rsp_buf, "\r\n#XTFTP: -2, \"buffer overflow\"\r\n");
+			rsp_send("\r\n#XTFTP: -2, \"buffer overflow\"\r\n");
 			break;
 		case TFTPC_REMOTE_ERROR:
-			strcpy(rsp_buf, "\r\n#XTFTP: -4, \"remote error\"\r\n");
+			rsp_send("\r\n#XTFTP: -4, \"remote error\"\r\n");
 			break;
 		case TFTPC_RETRIES_EXHAUSTED:
-			strcpy(rsp_buf, "\r\n#XTFTP: -5, \"retries exhausted\"\r\n");
+			rsp_send("\r\n#XTFTP: -5, \"retries exhausted\"\r\n");
 			break;
 		case TFTPC_UNKNOWN_FAILURE:
 		default:
-			strcpy(rsp_buf, "\r\n#XTFTP: -3, \"unknown failure\"\r\n");
+			rsp_send("\r\n#XTFTP: -3, \"unknown failure\"\r\n");
 			break;
 		}
 	} else {
-		char result[32];
-
-		sprintf(result, "\r\n#XTFTP: %d,\"success\"\r\n", client.user_buf_size);
-		rsp_send(result, strlen(result));
+		rsp_send("\r\n#XTFTP: %d,\"success\"\r\n", client.user_buf_size);
 	}
 	/* API does not add null-terminator */
-	if (client.user_buf_size < sizeof(rsp_buf)) {
-		rsp_buf[client.user_buf_size] = 0x00;
+	if (client.user_buf_size < sizeof(data_buf)) {
+		data_buf[client.user_buf_size] = 0x00;
 	}
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	data_send(data_buf, strlen(data_buf));
 	return ret;
 }
 
@@ -153,9 +150,8 @@ int handle_at_tftp(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XTFTP: (%d,%d,%d,%d),<url>,<port>,<file_path>,<mode>\r\n",
+		rsp_send("\r\n#XTFTP: (%d,%d,%d,%d),<url>,<port>,<file_path>,<mode>\r\n",
 			TFTP_GET, TFTP_PUT, TFTP_GET6, TFTP_PUT6);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 

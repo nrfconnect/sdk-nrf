@@ -26,7 +26,6 @@ static int sms_handle;
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 
 static void sms_callback(struct sms_data *const data, void *context)
 {
@@ -34,6 +33,7 @@ static void sms_callback(struct sms_data *const data, void *context)
 	static uint8_t total_msgs;
 	static uint8_t count;
 	static char messages[MAX_CONCATENATED_MESSAGE - 1][SMS_MAX_PAYLOAD_LEN_CHARS + 1];
+	char rsp_buf[MAX_CONCATENATED_MESSAGE * SMS_MAX_PAYLOAD_LEN_CHARS + 64];
 
 	ARG_UNUSED(context);
 
@@ -56,7 +56,7 @@ static void sms_callback(struct sms_data *const data, void *context)
 			strcat(rsp_buf, "\",\"");
 			strcat(rsp_buf, data->payload);
 			strcat(rsp_buf, "\"\r\n");
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send("%s", rsp_buf);
 		} else {
 			LOG_DBG("concatenated message %d, %d, %d",
 				header->concatenated.ref_number,
@@ -109,7 +109,7 @@ static void sms_callback(struct sms_data *const data, void *context)
 					strcat(rsp_buf, messages[i]);
 				}
 				strcat(rsp_buf, "\"\r\n");
-				rsp_send(rsp_buf, strlen(rsp_buf));
+				rsp_send("%s", rsp_buf);
 			} else {
 				return;
 			}
@@ -217,9 +217,8 @@ int handle_at_sms(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XSMS: (%d,%d,%d),<number>,<message>\r\n",
+		rsp_send("\r\n#XSMS: (%d,%d,%d),<number>,<message>\r\n",
 			AT_SMS_STOP, AT_SMS_START, AT_SMS_SEND);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 

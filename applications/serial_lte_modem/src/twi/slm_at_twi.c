@@ -28,10 +28,10 @@ static const struct device *slm_twi_dev[] = {
 	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(i2c3)),
 };
 static uint8_t twi_data[TWI_DATA_LEN * 2 + 1];
+static char rsp_buf[256];
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 
 static void do_twi_list(void)
 {
@@ -45,7 +45,7 @@ static void do_twi_list(void)
 	}
 	if (strlen(rsp_buf) > 0) {
 		strcat(rsp_buf, "\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("%s", rsp_buf);
 	}
 }
 
@@ -98,10 +98,9 @@ static int do_twi_read(uint16_t index, uint16_t dev_addr, uint8_t num_read)
 	memset(rsp_buf, 0, sizeof(rsp_buf));
 	ret = slm_util_htoa(twi_data, num_read, rsp_buf, num_read * 2);
 	if (ret > 0) {
-		sprintf(rsp_buf + ret, "\r\n#XTWIR: ");
-		rsp_send(rsp_buf + ret, strlen(rsp_buf + ret));
-		rsp_send(rsp_buf, ret);
-		rsp_send("\r\n", 2);
+		rsp_send("\r\n#XTWIR: ");
+		data_send(rsp_buf, ret);
+		rsp_send("\r\n");
 		ret = 0;
 	} else {
 		LOG_ERR("hex convert error: %d", ret);
@@ -138,10 +137,9 @@ static int do_twi_write_read(uint16_t index, uint16_t dev_addr, const uint8_t *t
 	memset(rsp_buf, 0, sizeof(rsp_buf));
 	ret = slm_util_htoa(twi_data, num_read, rsp_buf, num_read * 2);
 	if (ret > 0) {
-		sprintf(rsp_buf + ret, "\r\n#XTWIWR: ");
-		rsp_send(rsp_buf + ret, strlen(rsp_buf + ret));
-		rsp_send(rsp_buf, ret);
-		rsp_send("\r\n", 2);
+		rsp_send("\r\n#XTWIWR: ");
+		data_send(rsp_buf, ret);
+		rsp_send("\r\n");
 		ret = 0;
 	} else {
 		LOG_ERR("hex convert error: %d", ret);
@@ -213,8 +211,7 @@ int handle_at_twi_write(enum at_cmd_type cmd_type)
 		err = do_twi_write(index, dev_addr, twi_data, (uint16_t)ascii_len);
 		break;
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XTWIW: <index>,<dev_addr>,<data>\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("#XTWIW: <index>,<dev_addr>,<data>\r\n");
 		err = 0;
 		break;
 	default:
@@ -266,8 +263,7 @@ int handle_at_twi_read(enum at_cmd_type cmd_type)
 		}
 		break;
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XTWIR: <index>,<dev_addr>,<num_read>\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("#XTWIR: <index>,<dev_addr>,<num_read>\r\n");
 		err = 0;
 		break;
 	default:
@@ -325,8 +321,7 @@ int handle_at_twi_write_read(enum at_cmd_type cmd_type)
 		}
 		break;
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XTWIWR: <index>,<dev_addr>,<data>,<num_read>\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("#XTWIWR: <index>,<dev_addr>,<data>,<num_read>\r\n");
 		err = 0;
 		break;
 	default:
