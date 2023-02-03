@@ -57,6 +57,7 @@ static enum client_state {
 	BOOTSTRAP,	/* LwM2M engine is doing a bootstrap */
 	CONNECTED,	/* LwM2M Client connection establisment to server */
 	LTE_OFFLINE,	/* LTE offline and LwM2M engine should be suspended */
+	UPDATE_FIRMWARE, /* Prepare app ready for firmware update */
 	NETWORK_ERROR	/* Client network error handling. Client stop and modem reset */
 } client_state = START;
 
@@ -69,6 +70,7 @@ static K_MUTEX_DEFINE(lte_mutex);
 static bool modem_connected_to_network;
 /* Enable session lifetime check for initial boot */
 static bool update_session_lifetime = true;
+static bool ready_for_firmware_update;
 
 static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event client_event);
 
@@ -201,6 +203,49 @@ void send_periodically_work_handler(struct k_work *work)
 }
 #endif
 
+static void state_trigger_and_unlock(enum client_state new_state)
+{
+	if (new_state != client_state) {
+		client_state = new_state;
+		k_sem_give(&state_mutex);
+	}
+	k_mutex_unlock(&lte_mutex);
+}
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
+static int lwm2m_firmware_event_cb(struct lwm2m_fota_event *event)
+{
+	k_mutex_lock(&lte_mutex, K_FOREVER);
+	switch (event->id) {
+	case LWM2M_FOTA_DOWNLOAD_START:
+		LOG_INF("FOTA download started for instance %d", event->download_start.obj_inst_id);
+		break;
+	/** FOTA download process finished */
+	case LWM2M_FOTA_DOWNLOAD_FINISHED:
+		LOG_INF("FOTA download ready for instance %d, dfu_type %d",
+			event->download_ready.obj_inst_id, event->download_ready.dfu_type);
+		break;
+	/** FOTA update new image */
+	case LWM2M_FOTA_UPDATE_IMAGE_REQ:
+		if (!ready_for_firmware_update) {
+			state_trigger_and_unlock(UPDATE_FIRMWARE);
+			/* Postpone request by 2 seconds */
+			return 2;
+		}
+		LOG_INF("FOTA Update request for instance %d", event->update_req.obj_inst_id);
+
+		break;
+	/** Fota process fail or cancelled  */
+	case LWM2M_FOTA_UPDATE_ERROR:
+		LOG_INF("FOTA failure %d by status %d", event->failure.obj_inst_id,
+			event->failure.update_failure);
+		break;
+	}
+	k_mutex_unlock(&lte_mutex);
+	return 0;
+}
+#endif
+
 static int lwm2m_setup(void)
 {
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT)
@@ -222,7 +267,7 @@ static int lwm2m_setup(void)
 	}
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	lwm2m_init_firmware();
+	lwm2m_init_firmware_cb(lwm2m_firmware_event_cb);
 #endif
 #if defined(CONFIG_LWM2M_APP_LIGHT_CONTROL)
 	lwm2m_init_light_control();
@@ -325,15 +370,6 @@ static void rd_client_update_lifetime(int srv_obj_inst)
 	update_session_lifetime = false;
 }
 
-static void state_trigger_and_unlock(enum client_state new_state)
-{
-	if (new_state != client_state) {
-		client_state = new_state;
-		k_sem_give(&state_mutex);
-	}
-	k_mutex_unlock(&lte_mutex);
-}
-
 static void state_set_and_unlock(enum client_state new_state)
 {
 	client_state = new_state;
@@ -401,7 +437,10 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_DISCONNECT:
 		LOG_DBG("Disconnected");
-		state_set_and_unlock(START);
+		if (client_state != UPDATE_FIRMWARE) {
+			state_set_and_unlock(START);
+		}
+
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_QUEUE_MODE_RX_OFF:
@@ -490,7 +529,8 @@ static void lwm2m_lte_reg_handler_notify(enum lte_lc_nw_reg_status nw_reg_status
 	lte_registered = lte_connected(nw_reg_status);
 	if (lte_registered != modem_connected_to_network) {
 		modem_connected_to_network = lte_registered;
-		if (client_state != START && client_state != BOOTSTRAP) {
+		if (client_state != START && client_state != BOOTSTRAP &&
+		    client_state != UPDATE_FIRMWARE) {
 			k_sem_give(&state_mutex);
 		}
 	}
@@ -672,6 +712,17 @@ void main(void)
 				LOG_INF("LTE Offline");
 				k_mutex_unlock(&lte_mutex);
 			}
+			break;
+		case UPDATE_FIRMWARE:
+			LOG_INF("Prepare for Firmware update: Stop client and disbale Modem");
+			k_mutex_unlock(&lte_mutex);
+			lwm2m_rd_client_stop(&client, NULL, false);
+			ret = lte_lc_offline();
+			if (ret < 0) {
+				LOG_ERR("Failed to put LTE link in offline state (%d)", ret);
+			}
+			ready_for_firmware_update = true;
+			LOG_INF("App ready for firmware update");
 			break;
 
 		case NETWORK_ERROR:
