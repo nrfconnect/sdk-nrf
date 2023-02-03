@@ -496,6 +496,10 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme` library:
 
+  * Added:
+
+    * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OFF` Kconfig option to set the modem trace level to off by default.
+
   * Updated:
 
     * The minimal value of :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE` to meet the requirements of modem firmware 1.3.4.
