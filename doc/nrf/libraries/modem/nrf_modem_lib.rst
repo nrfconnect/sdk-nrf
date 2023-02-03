@@ -93,6 +93,7 @@ Complete the following steps to configure the modem trace level at compile time:
 #. Enable the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE` option in your project configuration.
 #. Enable any one of the following Kconfig options by setting it to ``y`` in your project configuration:
 
+   * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OFF`
    * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_FULL`
    * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP`
    * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY`
