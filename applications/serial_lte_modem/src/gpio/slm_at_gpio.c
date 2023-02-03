@@ -16,7 +16,6 @@ LOG_MODULE_REGISTER(slm_gpio, CONFIG_SLM_LOG_LEVEL);
 
 /* global variable defined in different resources */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 
 static const struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 static sys_slist_t slm_gpios = SYS_SLIST_STATIC_INIT(&slm_gpios);
@@ -143,16 +142,14 @@ static int do_gpio_pin_configure_read(void)
 	int err = 0;
 	struct slm_gpio_pin_node *cur = NULL, *next = NULL;
 
-	sprintf(rsp_buf, "\r\n#XGPIOCFG\r\n");
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XGPIOCFG\r\n");
 
 	if (sys_slist_peek_head(&slm_gpios) != NULL) {
 		SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&slm_gpios, cur,
 						  next, node) {
 			if (cur) {
 				LOG_DBG("%hu,%hu", cur->op, cur->pin);
-				sprintf(rsp_buf, "%hu,%hu\r\n", cur->op, cur->pin);
-				rsp_send(rsp_buf, strlen(rsp_buf));
+				rsp_send("%hu,%hu\r\n", cur->op, cur->pin);
 			}
 		}
 	}
@@ -185,8 +182,7 @@ static int do_gpio_pin_operate(uint16_t op, gpio_pin_t pin, uint16_t value)
 						return ret;
 					}
 					LOG_DBG("Read value: %d", ret);
-					sprintf(rsp_buf, "\r\n#XGPIO: %d,%d\r\n", pin, ret);
-					rsp_send(rsp_buf, strlen(rsp_buf));
+					rsp_send("\r\n#XGPIO: %d,%d\r\n", pin, ret);
 				} else if (op == SLM_GPIO_OP_TOGGLE) {
 					LOG_DBG("Toggle pin: %d", cur->pin);
 					ret = gpio_pin_toggle(gpio_dev, pin);

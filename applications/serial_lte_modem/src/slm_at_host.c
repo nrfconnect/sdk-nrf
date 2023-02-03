@@ -32,16 +32,12 @@ LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 #define SLM_SYNC_STR	"Ready\r\n"
 #define CRLF_STR	"\r\n"
 
-/** The maximum allowed length of an AT command passed through the SLM.
- *  The space is allocated statically. */
-#define AT_MAX_CMD_LEN          4096
-
 #define UART_RX_BUF_NUM         2
 #define UART_RX_LEN             256
 #define UART_RX_TIMEOUT_US      2000
 #define UART_ERROR_DELAY_MS     500
 #define UART_RX_MARGIN_MS       10
-#define UART_TX_DATA_SIZE	1024
+#define UART_DATA_SIZE		4096
 
 #define HEXDUMP_DATAMODE_MAX    16
 
@@ -66,17 +62,16 @@ static const struct device *const uart2_dev;	/* disabled, set NULL */
 static bool hw_flow_control;			/* set false */
 #endif
 static const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_uart));
-static uint8_t at_buf[AT_MAX_CMD_LEN];
+uint8_t at_buf[SLM_AT_MAX_CMD_LEN];
+static char rsp_buf[SLM_AT_MAX_RSP_LEN];
 static uint16_t at_buf_len;
 static bool at_buf_overflow;
-static struct ring_buf data_rb;
 static bool datamode_rx_disabled;
 static slm_datamode_handler_t datamode_handler;
 static struct k_work raw_send_work;
 static struct k_work cmd_send_work;
-static struct k_work datamode_quit_work;
 
-RING_BUF_DECLARE(delayed_rb, UART_TX_DATA_SIZE);
+RING_BUF_DECLARE(data_rb, UART_DATA_SIZE);
 static struct k_work delayed_send_work;
 
 static uint8_t uart_rx_buf[UART_RX_BUF_NUM][UART_RX_LEN];
@@ -85,7 +80,8 @@ static uint8_t *uart_tx_buf;
 static bool uart_recovery_pending;
 static struct k_work_delayable uart_recovery_work;
 
-static K_SEM_DEFINE(tx_done, 0, 1);
+K_SEM_DEFINE(tx_done, 0, 1);
+K_SEM_DEFINE(rsp_sent, 0, 1);
 
 /* global functions defined in different files */
 int slm_at_parse(const char *at_cmd);
@@ -96,7 +92,7 @@ int indicate_start(void);
 
 /* global variable used across different files */
 struct at_param_list at_param_list;           /* For AT parser */
-char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];    /* SLM URC and socket data */
+uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];       /* For socket data */
 uint16_t datamode_time_limit;                 /* Send trigger by time in data mode */
 
 /* global variable defined in different files */
@@ -106,13 +102,6 @@ extern struct uart_config slm_uart;
 static int uart_send(const uint8_t *buffer, size_t len)
 {
 	int ret;
-	enum pm_device_state state = PM_DEVICE_STATE_OFF;
-
-	pm_device_state_get(uart_dev, &state);
-	if (state != PM_DEVICE_STATE_ACTIVE) {
-		(void)indicate_start();
-		return -EAGAIN;
-	}
 
 	k_sem_take(&tx_done, K_FOREVER);
 
@@ -140,26 +129,57 @@ static int uart_send(const uint8_t *buffer, size_t len)
 	return ret;
 }
 
-void rsp_send(const char *str, size_t len)
+void rsp_send_ok(void)
 {
-	if (len == 0 || slm_operation_mode == SLM_DFU_MODE) {
+	if (slm_operation_mode == SLM_DFU_MODE) {
+		return;
+	}
+	(void)uart_send(OK_STR, sizeof(OK_STR) - 1);
+}
+
+void rsp_send_error(void)
+{
+	if (slm_operation_mode == SLM_DFU_MODE) {
+		return;
+	}
+	(void)uart_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+}
+
+void rsp_send(const char *fmt, ...)
+{
+	if (slm_operation_mode == SLM_DFU_MODE) {
 		return;
 	}
 
-	LOG_HEXDUMP_DBG(str, len, "TX");
-	if (uart_send(str, len) < 0) {
-		ring_buf_put(&delayed_rb, str, len);
+	k_sem_take(&rsp_sent, K_FOREVER);
+
+	va_list arg_ptr;
+
+	va_start(arg_ptr, fmt);
+	vsnprintf(rsp_buf, sizeof(rsp_buf), fmt, arg_ptr);
+	va_end(arg_ptr);
+
+	LOG_HEXDUMP_DBG(rsp_buf, strlen(rsp_buf), "TX");
+	if (uart_send(rsp_buf, strlen(rsp_buf)) < 0) {
+		k_sem_give(&rsp_sent);
 	}
 }
 
 void data_send(const uint8_t *data, size_t len)
 {
+	enum pm_device_state state = PM_DEVICE_STATE_OFF;
+
 	if (slm_operation_mode == SLM_DFU_MODE) {
 		return;
 	}
+
 	LOG_HEXDUMP_DBG(data, MIN(len, HEXDUMP_DATAMODE_MAX), "TX-DATA");
-	if (uart_send(data, len) < 0) {
-		ring_buf_put(&delayed_rb, data, len);
+
+	pm_device_state_get(uart_dev, &state);
+	if (state != PM_DEVICE_STATE_ACTIVE) {
+		ring_buf_put(&data_rb, data, len);
+	} else {
+		(void)uart_send(data, len);
 	}
 }
 
@@ -170,7 +190,7 @@ static int uart_receive(void)
 	ret = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_US);
 	if (ret && ret != -EBUSY) {
 		LOG_ERR("UART RX failed: %d", ret);
-		rsp_send(FATAL_STR, sizeof(FATAL_STR) - 1);
+		(void)uart_send(FATAL_STR, sizeof(FATAL_STR) - 1);
 		return ret;
 	}
 	next_buf = uart_rx_buf[1];
@@ -196,7 +216,12 @@ int enter_datamode(slm_datamode_handler_t handler)
 		return -EINVAL;
 	}
 
-	ring_buf_init(&data_rb, sizeof(at_buf), at_buf);
+	/* reset UART for data mode */
+	uart_rx_disable(uart_dev);
+	k_sleep(K_MSEC(10));
+	(void)uart_receive();
+
+	ring_buf_reset(&data_rb);
 	datamode_handler = handler;
 	slm_operation_mode = SLM_DATA_MODE;
 	if (datamode_time_limit == 0) {
@@ -221,17 +246,20 @@ bool in_datamode(void)
 bool exit_datamode(int result)
 {
 	if (slm_operation_mode == SLM_DATA_MODE) {
-		ring_buf_reset(&data_rb);
-		/* reset UART to restore command mode */
+		if (datamode_handler) {
+			(void)datamode_handler(DATAMODE_EXIT, NULL, 0);
+		} else {
+			LOG_WRN("missing datamode handler");
+		}
+		datamode_handler = NULL;
+
+		/* reset UART for command mode */
 		uart_rx_disable(uart_dev);
 		k_sleep(K_MSEC(10));
 		(void)uart_receive();
 
-		sprintf(rsp_buf, "\r\n#XDATAMODE: %d\r\n", result);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-
+		rsp_send("\r\n#XDATAMODE: %d\r\n", result);
 		slm_operation_mode = SLM_AT_COMMAND_MODE;
-		datamode_handler = NULL;
 		LOG_INF("Exit datamode");
 		return true;
 	}
@@ -260,10 +288,10 @@ static void delayed_send(struct k_work *work)
 
 	/* NOTE ring_buf_get_claim() might not return full size */
 	do {
-		size_send = ring_buf_get_claim(&delayed_rb, &data, UART_TX_DATA_SIZE);
+		size_send = ring_buf_get_claim(&data_rb, &data, UART_DATA_SIZE);
 		if (data != NULL && size_send > 0) {
 			(void)uart_send(data, size_send);
-			(void)ring_buf_get_finish(&delayed_rb, size_send);
+			(void)ring_buf_get_finish(&data_rb, size_send);
 		} else {
 			break;
 		}
@@ -288,7 +316,8 @@ int poweron_uart(void)
 	}
 
 	k_sem_give(&tx_done);
-	uart_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
+	k_sem_give(&rsp_sent);
+	(void)uart_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
 	k_work_submit(&delayed_send_work);
 
 	return 0;
@@ -362,12 +391,20 @@ bool verify_datamode_control(uint16_t time_limit, uint16_t *min_time_limit)
 
 AT_MONITOR(at_notify, ANY, notification_handler);
 
-static void notification_handler(const char *response)
+static void notification_handler(const char *notification)
 {
 	if (slm_operation_mode == SLM_AT_COMMAND_MODE) {
-		/* Forward the data over UART */
-		rsp_send("\r\n", 2);
-		rsp_send(response, strlen(response));
+		enum pm_device_state state = PM_DEVICE_STATE_OFF;
+
+		strcpy(rsp_buf, CRLF_STR);
+		strcat(rsp_buf, notification);
+
+		pm_device_state_get(uart_dev, &state);
+		if (state != PM_DEVICE_STATE_ACTIVE) {
+			ring_buf_put(&data_rb, rsp_buf, strlen(rsp_buf));
+		} else {
+			(void)uart_send(rsp_buf, strlen(rsp_buf));
+		}
 	}
 }
 
@@ -515,8 +552,7 @@ static void raw_send(struct k_work *work)
 					datamode_off_pending = true;
 				}
 				if (size_send == 0) {
-					k_work_submit(&datamode_quit_work);
-					LOG_INF("datamode off pending");
+					(void)exit_datamode(0);
 					return;
 				}
 			}
@@ -544,17 +580,13 @@ static void raw_send(struct k_work *work)
 
 			if (datamode_off_pending) {
 #if defined(CONFIG_SLM_DATAMODE_URC)
-				sprintf(rsp_buf, "\r\n#XDATAMODE: %d\r\n",
-					size_finish - quit_str_len);
-				rsp_send(rsp_buf, strlen(rsp_buf));
+				rsp_send("\r\n#XDATAMODE: %d\r\n", size_finish - quit_str_len);
 #endif
-				k_work_submit(&datamode_quit_work);
-				LOG_INF("datamode off pending");
+				(void)exit_datamode(0);
 				return;
 			}
 #if defined(CONFIG_SLM_DATAMODE_URC)
-			sprintf(rsp_buf, "\r\n#XDATAMODE: %d\r\n", size_finish);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send("\r\n#XDATAMODE: %d\r\n", size_finish);
 #endif
 		} else {
 			break;
@@ -581,19 +613,6 @@ static void inactivity_timer_handler(struct k_timer *timer)
 }
 
 K_TIMER_DEFINE(inactivity_timer, inactivity_timer_handler, NULL);
-
-static void datamode_quit(struct k_work *work)
-{
-	ARG_UNUSED(work);
-
-	/* quit datamode */
-	if (datamode_handler) {
-		(void)datamode_handler(DATAMODE_EXIT, NULL, 0);
-	} else {
-		LOG_WRN("missing datamode handler");
-	}
-	(void)exit_datamode(0);
-}
 
 static int raw_rx_handler(const uint8_t *data, int datalen)
 {
@@ -785,7 +804,7 @@ static void cmd_send(struct k_work *work)
 	ARG_UNUSED(work);
 
 	if (at_buf_overflow) {
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		rsp_send_error();
 		goto done;
 	}
 
@@ -793,16 +812,16 @@ static void cmd_send(struct k_work *work)
 
 	if (cmd_grammar_check(at_buf, at_buf_len) != 0) {
 		LOG_ERR("AT command invalid");
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		rsp_send_error();
 		goto done;
 	}
 
 	err = slm_at_parse(at_buf);
 	if (err == 0) {
-		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		rsp_send_ok();
 		goto done;
 	} else if (err != -ENOENT) {
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		rsp_send_error();
 		goto done;
 	}
 
@@ -811,7 +830,7 @@ static void cmd_send(struct k_work *work)
 				sizeof(at_buf) - strlen(CRLF_STR), "%s", at_buf);
 	if (err < 0) {
 		LOG_ERR("AT command failed: %d", err);
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		rsp_send_error();
 		goto done;
 	} else if (err > 0) {
 		LOG_ERR("AT command error, type: %d", nrf_modem_at_err_type(err));
@@ -822,7 +841,7 @@ static void cmd_send(struct k_work *work)
 	 */
 	if (strlen(at_buf) > strlen(CRLF_STR)) {
 		format_final_result(at_buf);
-		rsp_send(at_buf, strlen(at_buf));
+		(void)uart_send(at_buf, strlen(at_buf));
 	}
 
 done:
@@ -914,10 +933,12 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 	case UART_TX_DONE:
 		k_free(uart_tx_buf);
 		k_sem_give(&tx_done);
+		k_sem_give(&rsp_sent);
 		break;
 	case UART_TX_ABORTED:
 		k_free(uart_tx_buf);
 		k_sem_give(&tx_done);
+		k_sem_give(&rsp_sent);
 		LOG_INF("TX_ABORTED");
 		break;
 	case UART_RX_RDY:
@@ -1059,11 +1080,11 @@ int slm_at_host_init(void)
 
 	k_work_init(&raw_send_work, raw_send);
 	k_work_init(&cmd_send_work, cmd_send);
-	k_work_init(&datamode_quit_work, datamode_quit);
 	k_work_init(&delayed_send_work, delayed_send);
 	k_work_init_delayable(&uart_recovery_work, uart_recovery);
 	k_sem_give(&tx_done);
-	rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
+	k_sem_give(&rsp_sent);
+	(void)uart_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
 	slm_fota_post_process();
 
 	slm_operation_mode = SLM_AT_COMMAND_MODE;
