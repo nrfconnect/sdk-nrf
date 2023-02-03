@@ -149,6 +149,15 @@ tests:
       - thingy91_nrf9160_ns
     platform_allow: thingy91_nrf9160_ns
     tags: ci_build
+  sample.nrf9160.modem_shell.memfault_modem_trace:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    extra_args: OVERLAY_CONFIG="overlay-modem-trace.conf;overlay-memfault.conf" DTC_OVERLAY_FILE="nrf9160dk_ext_flash.overlay"
+    extra_configs:
+     - CONFIG_MEMFAULT_NCS_PROJECT_KEY="0123456789abcdef0123456789abcdef"
+    tags: ci_build
 
   # Configurations with modem UART traces to make sure they fit into image
   sample.nrf9160.modem_shell_modem_uart_trace:

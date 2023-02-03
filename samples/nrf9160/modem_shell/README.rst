@@ -453,6 +453,87 @@ Examples
 
      location cancel
 
+
+----
+
+Modem traces
+============
+
+MoSh command: ``modem_trace``
+
+You can use the modem trace commands to control the trace functionality in the modem.
+See :ref:`modem_trace_module` for more information on how to configure modem tracing and the built-in trace backends available.
+
+You need a trace backend that can store modem traces if you want to upload modem traces to the cloud.
+The flash backend can store modem traces to the external flash on the nRF9160 DK and can be retrieved for uploading.
+
+To enable modem traces with a flash backend, use the :file:`overlay-modem-trace.conf` configuration file.
+This also requires a device tree overlay for the external flash (:file:`nrf9160dk_ext_flash.overlay`).
+
+Send to Memfault
+----------------
+
+To register an account and obtain the project key, refer to the :ref:`using_memfault` section of the :ref:`ug_memfault` guide.
+The memfault overlay config (:file:`overlay-memfault.conf`) includes the most common configuration options for using the Memfault with modem traces.
+
+After a modem trace session, prepare sending the trace data to Memfault using ``modem_trace send memfault``.
+This informs the `Memfault-SDK`_ about a Custom Data Recording (CDR) that will be sent as part of the next data transfer to Memfault.
+To trigger sending immediately, it's possible to use the Memfault shell command ``mflt post_chunks``.
+
+Follow these steps to download the modem trace data:
+
+   a. In a web browser, navigate to `Memfault`_.
+   #. Log in to your account and select the project you created earlier.
+   #. Navigate to :guilabel:`Fleet` > :guilabel:`Devices` in the left side menu.
+   #. Select the **device** that sent a modem trace.
+   #. Navigate to the :guilabel:`Timeline` tab.
+   #. Find the CDR in the timeline and click on it.
+   #. Select :guilabel:`Download` from the pop-up window.
+
+See the following figure, which shows how to download the modem trace data in the `Memfault`_:
+
+.. figure:: /images/modem_shell_trace_download.png
+   :alt: Modem trace download
+
+   Modem trace download
+
+.. note::
+   The conversion of modem trace file to a Wireshark-compatible format will be available in one of the future releases of the Trace Collector tool.
+
+To build the MoSh sample with the nRF9160 DK and modem traces with a flash backend, see :ref:`modem_shell_trace_support`.
+
+Examples
+--------
+
+* Modem trace everything (LTE, IP and GNSS):
+
+  .. code-block:: console
+
+     modem_trace start full
+     <test using gnss-, lte-, or ip-commands>
+     modem_trace stop
+
+* Read out the size of stored modem traces:
+
+  .. code-block:: console
+
+     modem_trace size
+
+* Delete all stored modem traces:
+
+  .. code-block:: console
+
+     modem_trace clear
+
+* Send modem traces to Memfault:
+  (This will free up the stored traces as they are sent)
+
+  .. code-block:: console
+
+     modem_trace send memfault
+     mflt post_chunks
+
+
 ----
 
 GNSS
@@ -1266,6 +1347,19 @@ Use the following command to disconnect from the LwM2M server:
    LwM2M: Disconnected
 
 When connected, the ``location`` and ``gnss`` commands use the LwM2M cloud connection for fetching GNSS assistance data and for cellular positioning.
+
+.. _modem_shell_trace_support:
+
+nRF9160 DK and modem trace support
+==================================
+
+To build the MoSh sample with nRF9160 DK and modem traces with flash backend, use the ``-DDTC_OVERLAY_FILE=nrf9160dk_ext_flash.overlay`` and  ``-DOVERLAY_CONFIG="overlay-modem-trace.conf;overlay-memfault.conf"`` options.
+
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-modem-trace.conf;overlay-memfault.conf" -DDTC_OVERLAY_FILE=nrf9160dk_ext_flash.overlay
 
 References
 **********
