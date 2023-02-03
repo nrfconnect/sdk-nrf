@@ -225,6 +225,14 @@ void main(void)
 
 	mosh_print_version_info();
 
+#if !defined(CONFIG_LWM2M_CARRIER) && !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
+	/* Manually initialize modem library when CONFIG_NRF_MODEM_LIB_SYS_INIT is disabled.
+	 * This is necessary for the modem trace flash backend. Which depend on the flash device
+	 * to be initialized before initializing the nRF modem library.
+	 */
+	nrf_modem_lib_init(NORMAL_MODE);
+#endif
+
 #if defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_MQTT)
 #if defined(CONFIG_MOSH_IPERF3)
 	/* Due to iperf3, we cannot let nrf cloud lib to initialize cJSON lib to be
