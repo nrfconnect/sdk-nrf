@@ -58,7 +58,7 @@ static struct lwm2m_engine_res_inst pull_protocol_buff[FOTA_PULL_SUPPORTED_COUNT
 #define FOTA_PULL_HTTP 2
 #define FOTA_PULL_HTTPS 3
 
-static lwm2m_firmware_get_update_state_cb_t update_state_cb;
+static lwm2m_firmware_event_cb_t firmware_fota_event_cb;
 static uint8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
 
 /* Supported Protocols */
@@ -93,11 +93,16 @@ static void dfu_target_cb(enum dfu_target_evt_id evt);
 static void start_fota_download(struct k_work *work);
 static void start_pending_fota_download(struct k_work *work);
 static void firmware_update_check_linked_instances(int instance_id);
+static int target_image_type_get(uint16_t instance);
+static uint8_t get_state(uint16_t id);
+static void set_result(uint16_t id, uint8_t result);
 static K_WORK_DEFINE(download_work, start_fota_download);
 static K_WORK_DELAYABLE_DEFINE(pending_download_work, start_pending_fota_download);
 static struct update_data {
 	struct k_work_delayable work;
 	enum {APP, MODEM_DELTA, MODEM_FULL} type;
+	uint16_t object_instance;
+	bool update_accepted;
 } update_data;
 
 void client_acknowledge(void);
@@ -115,6 +120,98 @@ void lwm2m_firmware_emulate_modem_lib_init(int modem_init_ret_val)
 	modem_lib_init_result = modem_init_ret_val;
 }
 #endif
+
+static int fota_event_download_start(uint16_t obj_inst_id)
+{
+	struct lwm2m_fota_event event;
+
+	if (!firmware_fota_event_cb) {
+		return 0;
+	}
+
+	event.id = LWM2M_FOTA_DOWNLOAD_START;
+	event.download_start.obj_inst_id = obj_inst_id;
+	return firmware_fota_event_cb(&event);
+}
+
+static int fota_event_download_ready(uint16_t obj_inst_id)
+{
+	struct lwm2m_fota_event event;
+
+	if (!firmware_fota_event_cb) {
+		return 0;
+	}
+
+	event.id = LWM2M_FOTA_DOWNLOAD_FINISHED;
+	event.download_ready.obj_inst_id = obj_inst_id;
+	event.download_ready.dfu_type = target_image_type_get(obj_inst_id);
+	return firmware_fota_event_cb(&event);
+}
+
+static int fota_event_update_request(uint16_t obj_inst_id)
+{
+	struct lwm2m_fota_event event;
+
+	if (!firmware_fota_event_cb) {
+		return 0;
+	}
+
+	event.id = LWM2M_FOTA_UPDATE_IMAGE_REQ;
+	event.update_req.obj_inst_id = obj_inst_id;
+	event.update_req.dfu_type = target_image_type_get(obj_inst_id);
+	return firmware_fota_event_cb(&event);
+}
+
+static int fota_event_update_failure(uint16_t obj_inst_id, uint8_t failure_code)
+{
+	struct lwm2m_fota_event event;
+
+	if (!firmware_fota_event_cb) {
+		return 0;
+	}
+
+	event.id = LWM2M_FOTA_UPDATE_ERROR;
+	event.failure.obj_inst_id = obj_inst_id;
+	event.failure.update_failure = failure_code;
+	return firmware_fota_event_cb(&event);
+}
+
+static int firmware_request_linked_update(int instance_id)
+{
+	int postpone_update = 0;
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
+	struct lwm2m_obj_path path;
+	struct lwm2m_objlnk object_link;
+
+	path = LWM2M_OBJ(ENABLED_LWM2M_FIRMWARE_OBJECT, instance_id,
+			 LWM2M_ADV_FOTA_LINKED_INSTANCES_ID);
+
+	if (lwm2m_get_objlnk(&path, &object_link)) {
+		return 0;
+	}
+
+	if (object_link.obj_id != LWM2M_OBJECT_ADV_FIRMWARE_ID) {
+		return 0;
+	}
+
+	if (get_state(object_link.obj_inst) != STATE_DOWNLOADED) {
+		return 0;
+	}
+
+	postpone_update = fota_event_update_request(object_link.obj_inst);
+
+	if (postpone_update < 0) {
+		uint16_t temp_ongoing_id = ongoing_obj_id;
+
+		ongoing_obj_id = object_link.obj_inst;
+		/* Application deferred update */
+		set_result(object_link.obj_inst, RESULT_ADV_FOTA_DEFERRED);
+		ongoing_obj_id = temp_ongoing_id;
+	}
+
+#endif
+	return postpone_update;
+}
 
 static void on_modem_lib_init(int ret, void *ctx)
 {
@@ -474,31 +571,54 @@ static uint8_t apply_firmware_delta_modem_update(void)
 
 static void update_work_handler(struct k_work *work)
 {
+	int postpone_update;
 	uint8_t result;
-	int updated_instance;
+	uint16_t instance_id = update_data.object_instance;
+
+	if (instance_id == UNUSED_OBJ_ID) {
+		return;
+	}
+
+	if (!update_data.update_accepted) {
+
+		postpone_update = fota_event_update_request(instance_id);
+		if (postpone_update > 0) {
+			LOG_INF("Delay %d s Update instance %d ", postpone_update, instance_id);
+			k_work_schedule(&update_data.work, K_SECONDS(postpone_update));
+			return;
+		} else if (postpone_update < 0) {
+			/* Application deferred update */
+			set_result(instance_id, RESULT_ADV_FOTA_DEFERRED);
+			return;
+		}
+
+		/* Poll also possible linked */
+		postpone_update = firmware_request_linked_update(instance_id);
+
+		if (postpone_update > 0) {
+			k_work_schedule(&update_data.work, K_SECONDS(postpone_update));
+			return;
+		}
+	}
 
 	if (update_data.type == MODEM_DELTA) {
-		updated_instance = modem_obj_id;
 		result = apply_firmware_delta_modem_update();
 		if (result == RESULT_SUCCESS) {
 			ongoing_obj_id = UNUSED_OBJ_ID;
 		}
-		set_result(modem_obj_id, result);
+		set_result(instance_id, result);
 	} else if (update_data.type == MODEM_FULL) {
-		updated_instance = modem_obj_id;
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
 		result = apply_fmfu_from_ext_flash();
 		if (result == RESULT_SUCCESS) {
 			ongoing_obj_id = UNUSED_OBJ_ID;
 		}
 		/* Set result */
-		set_result(modem_obj_id, result);
+		set_result(instance_id, result);
 #endif
-	} else {
-		updated_instance = application_obj_id;
 	}
 
-	firmware_update_check_linked_instances(updated_instance);
+	firmware_update_check_linked_instances(instance_id);
 	reboot_work_handler();
 }
 
@@ -523,13 +643,46 @@ static int firmware_instance_schedule(uint16_t obj_inst_id)
 
 static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args, uint16_t args_len)
 {
+	int postpone_update;
 	ARG_UNUSED(args);
 	ARG_UNUSED(args_len);
+
+	if (update_data.object_instance != UNUSED_OBJ_ID) {
+		if (update_data.object_instance == obj_inst_id) {
+			return 0;
+		} else {
+			return -EPERM;
+		}
+	}
+
 	if (firmware_instance_schedule(obj_inst_id)) {
 		return -EACCES;
 	}
 
+	update_data.object_instance = obj_inst_id;
+
+	postpone_update = fota_event_update_request(obj_inst_id);
+	if (postpone_update > 0) {
+		LOG_INF("Delay %d s Update instance %d ", postpone_update, obj_inst_id);
+		update_data.update_accepted = false;
+		k_work_schedule(&update_data.work, K_SECONDS(postpone_update));
+		return 0;
+	} else if (postpone_update < 0) {
+		/* Application deferred update */
+		return -EPERM;
+	}
+
+	/* Poll also possible linked */
+	postpone_update = firmware_request_linked_update(obj_inst_id);
+
+	if (postpone_update > 0) {
+		k_work_schedule(&update_data.work, K_SECONDS(postpone_update));
+		return 0;
+	}
+
 	k_work_schedule(&update_data.work, K_SECONDS(5));
+	update_data.update_accepted = true;
+
 	return 0;
 }
 
@@ -546,6 +699,10 @@ static int firmware_update_result(uint16_t obj_inst_id, uint16_t res_id, uint16_
 {
 	/* Store state to pernament memory */
 	write_resource_to_settings(obj_inst_id, res_id, data, data_len);
+
+	if (*data != RESULT_SUCCESS && *data != RESULT_DEFAULT) {
+		fota_event_update_failure(obj_inst_id, *data);
+	}
 	return 0;
 }
 
@@ -580,10 +737,6 @@ static int firmware_update_state(uint16_t obj_inst_id, uint16_t res_id, uint16_t
 {
 	int ret;
 
-	if (update_state_cb) {
-		update_state_cb(*data);
-	}
-
 	/* Store state to pernament memory */
 	write_resource_to_settings(obj_inst_id, res_id, data, data_len);
 
@@ -598,10 +751,17 @@ static int firmware_update_state(uint16_t obj_inst_id, uint16_t res_id, uint16_t
 			}
 			init_firmware_variables();
 		}
+		if (update_data.object_instance == obj_inst_id) {
+			update_data.object_instance = UNUSED_OBJ_ID;
+			update_data.update_accepted = false;
+		}
 	} else if (*data == STATE_DOWNLOADED) {
 		if (obj_inst_id == ongoing_obj_id) {
+			fota_event_download_ready(obj_inst_id);
 			init_firmware_variables();
 		}
+	} else if (*data == STATE_DOWNLOADING) {
+		fota_event_download_start(obj_inst_id);
 	}
 
 	return 0;
@@ -970,11 +1130,6 @@ static int write_dl_uri(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst
 	return 0;
 }
 
-void lwm2m_firmware_set_update_state_cb(lwm2m_firmware_get_update_state_cb_t cb)
-{
-	update_state_cb = cb;
-}
-
 static void lwm2m_firmware_load_from_settings(int instance_id)
 {
 	int ret;
@@ -1190,7 +1345,7 @@ static void lwm2m_adv_firmware_versions_set(void)
 }
 #endif
 
-int lwm2m_init_firmware(void)
+int lwm2m_init_firmware_cb(lwm2m_firmware_event_cb_t cb)
 {
 	int ret;
 
@@ -1211,7 +1366,10 @@ int lwm2m_init_firmware(void)
 	}
 
 	k_work_init_delayable(&update_data.work, update_work_handler);
+	update_data.object_instance = UNUSED_OBJ_ID;
+	update_data.update_accepted = false;
 	ongoing_obj_id = UNUSED_OBJ_ID;
+	firmware_fota_event_cb = cb;
 
 	/* Init stream targets */
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
@@ -1253,6 +1411,11 @@ int lwm2m_init_firmware(void)
 #endif
 	firmware_object_state_check();
 	return 0;
+}
+
+int lwm2m_init_firmware(void)
+{
+	return lwm2m_init_firmware_cb(NULL);
 }
 
 int lwm2m_init_image(void)
