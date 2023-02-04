@@ -10,6 +10,7 @@
 #include <pm_config.h>
 #include <zephyr/dfu/mcuboot.h>
 #include <zephyr/net/socket.h>
+#include <zephyr/sys/crc.h>
 #include <zephyr/net/tls_credentials.h>
 #include <zephyr/net/http/parser_url.h>
 #include <net/download_client.h>
@@ -26,6 +27,7 @@ LOG_MODULE_REGISTER(dfu, CONFIG_SLM_LOG_LEVEL);
 #define SCHEMA_HTTP	"http"
 #define SCHEMA_HTTPS	"https"
 #define URI_HOST_MAX	64
+#define PERCENTAGE_STEP 5
 
 enum slm_dfu_operation {
 	SLM_DFU_CANCEL,
@@ -57,6 +59,7 @@ static K_SEM_DEFINE(sem_init_packet, 0, 1);
 #endif
 static uint32_t file_image_size;
 static uint32_t file_download_size;
+static uint32_t crc_32;
 
 static char hostname[URI_HOST_MAX];
 static char filepath[SLM_MAX_URL];
@@ -181,8 +184,11 @@ static int download_client_callback(const struct download_client_evt *event)
 			}
 			first_fragment = false;
 			file_download_size = event->fragment.len;
+			crc_32 = crc32_ieee(event->fragment.buf, event->fragment.len);
 		} else {
 			file_download_size += event->fragment.len;
+			crc_32 = crc32_ieee_update(crc_32, event->fragment.buf,
+						   event->fragment.len);
 		}
 
 		err = dfu_target_nrf52_write(event->fragment.buf, event->fragment.len);
@@ -200,8 +206,12 @@ static int download_client_callback(const struct download_client_evt *event)
 		}
 
 		if (!first_fragment) {
-			rsp_send("\r\n#XDFUGET: %d,%d\r\n", dfu_step,
-				(file_download_size * 100) / file_image_size);
+			uint32_t percentage = 0;
+
+			percentage = (file_download_size * 100) / file_image_size;
+			if ((percentage % PERCENTAGE_STEP) == 0) {
+				rsp_send("\r\n#XDFUGET: %d,%d\r\n", dfu_step, percentage);
+			}
 		}
 		break;
 	}
@@ -460,6 +470,7 @@ int handle_at_dfu_get(enum at_cmd_type cmd_type)
 			dfu_step = DFU_FILE_IMAGE_DOWNLOAD;
 			file_image_size = 0;
 			file_download_size = 0;
+			crc_32 = 0;
 			err = do_dfu_download(host, fw_file, sec_tag);
 		} else if (op == SLM_DFU_ERASE) {
 			err = do_dfu_erase();
@@ -490,7 +501,8 @@ int handle_at_dfu_size(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		rsp_send("\r\n#XDFUSIZE: %d,%d\r\n", file_image_size, file_download_size);
+		rsp_send("\r\n#XDFUSIZE: %d,%d,%d\r\n", file_image_size, file_download_size,
+			 crc_32);
 		err = 0;
 		break;
 	default:
