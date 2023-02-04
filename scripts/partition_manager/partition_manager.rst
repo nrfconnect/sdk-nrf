@@ -93,11 +93,11 @@ The following code shows how the ``settings`` subsystem configuration is added.
 .. code-block:: cmake
 
    if (CONFIG_SETTINGS_FCB OR CONFIG_SETTINGS_NVS)
-     add_partition_manager_config(pm.yml.settings)
+     ncs_add_partition_manager_config(pm.yml.settings)
    endif()
 
 When multiple application images, within the same domain, build the same subsystem code, there are some limitations if the code adds a Partition Manager configuration file using this methodology.
-In particular, partition definitions are global per domain, and must be identical across all the calls to ``add_partition_manager_config()``.
+In particular, partition definitions are global per domain, and must be identical across all the calls to ``ncs_add_partition_manager_config()``.
 If the same partition is defined twice with different configurations within a domain, the Partition Manager will fail.
 
 .. note::
