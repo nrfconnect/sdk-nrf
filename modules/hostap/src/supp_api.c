@@ -123,7 +123,7 @@ int z_wpa_supplicant_connect(const struct device *dev,
 	int ret = 0;
 	struct add_network_resp resp = {0};
 
-	if (!net_if_is_up(net_if_lookup_by_dev(dev))) {
+	if (!net_if_is_admin_up(net_if_lookup_by_dev(dev))) {
 		wpa_printf(MSG_ERROR,
 			   "Interface %s is down, dropping connect",
 			   dev->name);
