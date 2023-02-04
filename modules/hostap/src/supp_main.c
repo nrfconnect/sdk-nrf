@@ -30,26 +30,26 @@ LOG_MODULE_REGISTER(wpa_supplicant, LOG_LEVEL_DBG);
 #include "supp_main.h"
 #include "wpa_cli_zephyr.h"
 
-K_SEM_DEFINE(wpa_supplicant_ready_sem, 0, 1);
+K_SEM_DEFINE(z_wpas_ready_sem, 0, 1);
 
 struct wpa_global *global;
 
-static int wpa_event_sockpair[2];
+static int z_wpas_event_sockpair[2];
 
-static void start_wpa_supplicant(void);
+static void z_wpas_start(void);
 
-K_THREAD_DEFINE(wpa_s_tid,
-			CONFIG_WPA_SUPP_THREAD_STACK_SIZE,
-			start_wpa_supplicant,
-			NULL,
-			NULL,
-			NULL,
-			0,
-			0,
-			0);
+K_THREAD_DEFINE(z_wpa_s_tid,
+				CONFIG_WPA_SUPP_THREAD_STACK_SIZE,
+				z_wpas_start,
+				NULL,
+				NULL,
+				NULL,
+				0,
+				0,
+				0);
 
 #ifdef CONFIG_MATCH_IFACE
-static int wpa_supplicant_init_match(struct wpa_global *global)
+static int z_wpas_init_match(struct wpa_global *global)
 {
 	/*
 	 * The assumption is that the first driver is the primary driver and
@@ -69,17 +69,17 @@ static int wpa_supplicant_init_match(struct wpa_global *global)
 }
 #endif /* CONFIG_MATCH_IFACE */
 
-struct wpa_supplicant *get_wpa_s_handle_ifname(const char* ifname)
+struct wpa_supplicant *z_wpas_get_handle_by_ifname(const char* ifname)
 {
 	struct wpa_supplicant *wpa_s = NULL;
-	int ret = k_sem_take(&wpa_supplicant_ready_sem, K_SECONDS(2));
+	int ret = k_sem_take(&z_wpas_ready_sem, K_SECONDS(2));
 
 	if (ret) {
 		wpa_printf(MSG_ERROR, "%s: WPA supplicant not ready: %d", __func__, ret);
 		return NULL;
 	}
 
-	k_sem_give(&wpa_supplicant_ready_sem);
+	k_sem_give(&z_wpas_ready_sem);
 
 	wpa_s = wpa_supplicant_get_iface(global, ifname);
 	if (!wpa_s) {
@@ -121,7 +121,7 @@ static void iface_cb(struct net_if *iface, void *user_data)
 	os_free(ifname);
 }
 
-static void wpa_event_sock_handler(int sock, void *eloop_ctx, void *sock_ctx)
+static void z_wpas_event_sock_handler(int sock, void *eloop_ctx, void *sock_ctx)
 {
 	int ret;
 	ARG_UNUSED(eloop_ctx);
@@ -158,29 +158,29 @@ static int register_wpa_event_sock(void)
 {
 	int ret;
 
-	ret = socketpair(AF_UNIX, SOCK_STREAM, 0, wpa_event_sockpair);
+	ret = socketpair(AF_UNIX, SOCK_STREAM, 0, z_wpas_event_sockpair);
 
 	if (ret != 0) {
 		wpa_printf(MSG_ERROR, "Failed to initialize socket: %s", strerror(errno));
 		return -1;
 	}
 
-	eloop_register_read_sock(wpa_event_sockpair[0], wpa_event_sock_handler, NULL, NULL);
+	eloop_register_read_sock(z_wpas_event_sockpair[0], z_wpas_event_sock_handler, NULL, NULL);
 
 	return 0;
 }
 
-int send_wpa_supplicant_event(const struct wpa_supplicant_event_msg *msg)
+int z_wpas_send_event(const struct wpa_supplicant_event_msg *msg)
 {
 	int ret;
 	unsigned int retry = 0;
 
-	if (wpa_event_sockpair[1] < 0) {
+	if (z_wpas_event_sockpair[1] < 0) {
 		return -1;
 	}
 
 retry_send:
-	ret = send(wpa_event_sockpair[1], msg, sizeof(*msg), 0);
+	ret = send(z_wpas_event_sockpair[1], msg, sizeof(*msg), 0);
 	if (ret < 0) {
 		if (errno == EINTR || errno == EAGAIN || errno == EBUSY || errno == EWOULDBLOCK) {
 			k_msleep(2);
@@ -201,7 +201,7 @@ retry_send:
 	return 0;
 }
 
-static void start_wpa_supplicant(void)
+static void z_wpas_start(void)
 {
 	int i;
 	struct wpa_interface *ifaces, *iface;
@@ -228,7 +228,7 @@ static void start_wpa_supplicant(void)
 		goto out;
 	} else {
 		wpa_printf(MSG_INFO, "Successfully initialized "
-				     "wpa_supplicant");
+					 "wpa_supplicant");
 	}
 
 	if (fst_global_init()) {
@@ -253,8 +253,8 @@ static void start_wpa_supplicant(void)
 		struct wpa_supplicant *wpa_s;
 
 		if ((ifaces[i].confname == NULL &&
-		     ifaces[i].ctrl_interface == NULL) ||
-		    ifaces[i].ifname == NULL) {
+			 ifaces[i].ctrl_interface == NULL) ||
+			ifaces[i].ifname == NULL) {
 			if (iface_count == 1 && (params.ctrl_interface ||
 #ifdef CONFIG_MATCH_IFACE
 						 params.match_iface_count ||
@@ -282,24 +282,24 @@ static void start_wpa_supplicant(void)
 
 #ifdef CONFIG_MATCH_IFACE
 	if (exitcode == 0) {
-		exitcode = wpa_supplicant_init_match(global);
+		exitcode = z_wpas_init_match(global);
 	}
 #endif /* CONFIG_MATCH_IFACE */
 
 	if (exitcode == 0) {
-		k_sem_give(&wpa_supplicant_ready_sem);
+		k_sem_give(&z_wpas_ready_sem);
 		exitcode = wpa_supplicant_run(global);
 	}
 
-	eloop_unregister_read_sock(wpa_event_sockpair[0]);
+	eloop_unregister_read_sock(z_wpas_event_sockpair[0]);
 
 	z_wpa_ctrl_deinit();
 	wpa_supplicant_deinit(global);
 
 	fst_global_deinit();
 
-	close(wpa_event_sockpair[0]);
-	close(wpa_event_sockpair[1]);
+	close(z_wpas_event_sockpair[0]);
+	close(z_wpas_event_sockpair[1]);
 
 out:
 	os_free(ifaces);
@@ -308,5 +308,6 @@ out:
 #endif /* CONFIG_MATCH_IFACE */
 	os_free(params.pid_file);
 
-	wpa_printf(MSG_INFO, "wpa_supplicant_main: exitcode %d", exitcode);
+	wpa_printf(MSG_INFO, "z_wpas_start: exitcode %d", exitcode);
+	return;
 }

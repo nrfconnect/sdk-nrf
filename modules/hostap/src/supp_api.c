@@ -60,7 +60,7 @@ static K_WORK_DELAYABLE_DEFINE(wpa_supp_status_work,
 
 static inline struct wpa_supplicant * get_wpa_s_handle(const struct device *dev)
 {
-	return get_wpa_s_handle_ifname(dev->name);
+	return z_wpas_get_handle_by_ifname(dev->name);
 }
 
 static void supp_shell_connect_status(struct k_work *work)
