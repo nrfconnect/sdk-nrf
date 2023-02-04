@@ -115,6 +115,26 @@ static inline void wpa_supp_restart_status_work(void)
 		K_MSEC(10));
 }
 
+static inline int chan_to_freq(int chan)
+{
+	/* We use global channel list here and also use the widest
+	 * op_class for 5GHz channels as there is no user input
+	 * for these (yet).
+	 */
+	int freq  = ieee80211_chan_to_freq(NULL, 81, chan);
+
+	if (freq <= 0) {
+		freq  = ieee80211_chan_to_freq(NULL, 128, chan);
+	}
+
+	if (freq <= 0) {
+		wpa_printf(MSG_ERROR, "Invalid channel %d", chan);
+		return -1;
+	}
+
+	return freq;
+}
+
 
 int z_wpa_supplicant_connect(const struct device *dev,
 						struct wifi_connect_req_params *params)
@@ -181,8 +201,17 @@ int z_wpa_supplicant_connect(const struct device *dev,
 	/* enable and select network */
 	z_wpa_cli_cmd_v("enable_network %d", resp.network_id);
 
-	z_wpa_cli_cmd_v("select_network %d", resp.network_id);
+	if (params->channel != WIFI_CHANNEL_ANY) {
+		int freq = chan_to_freq(params->channel);
+		if (freq < 0) {
+			ret = -1;
+			goto out;
+		}
+		z_wpa_cli_cmd_v("set_network %d scan_freq %d",
+			resp.network_id, freq);
+	}
 
+	z_wpa_cli_cmd_v("select_network %d", resp.network_id);
 	wpa_supp_api_ctrl.dev = dev;
 	wpa_supp_api_ctrl.requested_op = CONNECT;
 	wpa_supp_api_ctrl.connection_timeout = params->timeout;
