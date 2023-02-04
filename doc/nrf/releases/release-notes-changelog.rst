@@ -264,6 +264,7 @@ nRF9160: Serial LTE modem
 * Updated:
 
   * The response for the ``#XDFUGET`` command, using unsolicited notification to report download progress.
+  * The response for the ``#XDFUSIZE`` command, adding a CRC32 checksum of the downloaded image.
   * The ``#XSLMVER`` command to report the versions of both the |NCS| and the modem library.
 
 nRF5340 Audio

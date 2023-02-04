@@ -159,12 +159,17 @@ Response syntax
 
 ::
 
-  XDFUSIZE: <file_size>,<download_size>
+  XDFUSIZE: <file_size>,<download_size>,<crc32_checksum>
 
 * The ``<file_size>`` is an integer.
   It indicates the size of the DFU image file.
 * The ``<download_size>`` is an integer.
   It indicates the size that has been downloaded so far.
+* The ``<crc32_checksum>`` is a 32-bit unsigned integer.
+  It indicates the IEEE CRC32 of the image content that has been downloaded.
+  You can use this CRC32 to check data integrity when you use MCUboot to perform a DFU.
+
+  You should check the CRC checksum after ``#XDFURUN`` has transferred the downloaded data image from nRF91 to nRF5x, before configuring MCUboot to use the new image.
 
 Examples
 ~~~~~~~~
@@ -175,7 +180,7 @@ Examples
    OK
 
    AT#XDFUSIZE
-   #XDFUSIZE: 17048,17048
+   #XDFUSIZE: 17048,17048,2316010324
    OK
 
 Read command
