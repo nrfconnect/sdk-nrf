@@ -22,6 +22,10 @@ config WPA_SUPP_THREAD_STACK_SIZE
 	int "Stack size for wpa_supplicant thread"
 	default 8192
 
+config WPA_SUPP_IFACE_WQ_STACK_SIZE
+    int "Stack size for wpa_supplicant iface workqueue"
+    default 4096
+
 config WEP
 	bool "WEP (Legacy crypto) support"
 

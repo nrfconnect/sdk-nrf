@@ -31,12 +31,20 @@ LOG_MODULE_REGISTER(wpa_supplicant, LOG_LEVEL_DBG);
 #include "wpa_cli_zephyr.h"
 
 K_SEM_DEFINE(z_wpas_ready_sem, 0, 1);
+#include <l2_packet/l2_packet.h>
+
+/* Should match with the driver name */
+#define DEFAULT_IFACE_NAME "wlan0"
+
+static struct net_mgmt_event_callback cb;
+struct k_mutex iface_up_mutex;
 
 struct wpa_global *global;
 
 static int z_wpas_event_sockpair[2];
 
 static void z_wpas_start(void);
+static void z_wpas_iface_work_handler(struct k_work *item);
 
 K_THREAD_DEFINE(z_wpa_s_tid,
 				CONFIG_WPA_SUPP_THREAD_STACK_SIZE,
@@ -47,6 +55,17 @@ K_THREAD_DEFINE(z_wpa_s_tid,
 				0,
 				0,
 				0);
+
+static K_THREAD_STACK_DEFINE(z_wpas_iface_wq_stack,
+	CONFIG_WPA_SUPP_IFACE_WQ_STACK_SIZE);
+
+/* TODO: Debug why wsing system workqueue blocks the driver dedicated
+ * workqueue?
+ */
+static struct k_work_q z_wpas_iface_wq;
+static K_WORK_DEFINE(z_wpas_iface_work,
+	z_wpas_iface_work_handler);
+
 
 #ifdef CONFIG_MATCH_IFACE
 static int z_wpas_init_match(struct wpa_global *global)
@@ -91,34 +110,130 @@ struct wpa_supplicant *z_wpas_get_handle_by_ifname(const char* ifname)
 	return wpa_s;
 }
 
+static int z_wpas_get_iface_count(void)
+{
+	struct wpa_supplicant *wpa_s;
+	unsigned count = 0;
+
+	for (wpa_s = global->ifaces; wpa_s; wpa_s = wpa_s->next) {
+			count += 1;
+	}
+	return count;
+}
+
+static int z_wpas_add_interface(const char* ifname)
+{
+	struct wpa_supplicant *wpa_s;
+	int ret;
+
+	ret = z_wpa_cli_global_cmd_v("interface_add %s %s %s %s",
+				ifname, "zephyr", "zephyr", "zephyr");
+	if (ret) {
+		wpa_printf(MSG_ERROR, "Failed to add interface: %s", ifname);
+		return -1;
+	}
+
+	/* This cannot be through control interface as need the handle */
+	wpa_s = wpa_supplicant_get_iface(global, ifname);
+	if (wpa_s == NULL) {
+		wpa_printf(MSG_ERROR, "Failed to add iface: %s", ifname);
+		return -1;
+	}
+	wpa_s->conf->filter_ssids = 1;
+	wpa_s->conf->ap_scan= 1;
+
+	/* Default interface, kick start wpa_supplicant */
+	if (z_wpas_get_iface_count() == 1) {
+		k_mutex_unlock(&iface_up_mutex);
+	}
+
+	z_wpa_ctrl_init(wpa_s);
+
+	return 0;
+}
+
+static int z_wpas_remove_interface(const char* ifname)
+{
+	int ret;
+
+	wpa_printf(MSG_INFO, "Remove interface %s\n", ifname);
+
+	ret = z_wpa_cli_global_cmd_v("interface_remove %s", ifname);
+	if (ret) {
+		wpa_printf(MSG_ERROR, "Failed to add interface: %s", ifname);
+		return -1;
+	}
+
+	return 0;
+}
+
+static void iface_event_handler(struct net_mgmt_event_callback *cb,
+							uint32_t mgmt_event, struct net_if *iface)
+{
+	const char *ifname = iface->if_dev->dev->name;
+
+	wpa_printf(MSG_INFO, "Event: %d", mgmt_event);
+	if (mgmt_event == NET_EVENT_IF_ADMIN_UP) {
+		z_wpas_add_interface(ifname);
+	} else if (mgmt_event == NET_EVENT_IF_ADMIN_DOWN) {
+		z_wpas_remove_interface(ifname);
+	}
+}
+
+static void register_iface_events(void)
+{
+	k_mutex_init(&iface_up_mutex);
+
+	k_mutex_lock(&iface_up_mutex, K_FOREVER);
+	net_mgmt_init_event_callback(&cb, iface_event_handler,
+		NET_EVENT_IF_ADMIN_UP | NET_EVENT_IF_ADMIN_DOWN);
+	net_mgmt_add_event_callback(&cb);
+}
+
+static void wait_for_interface_up(const char* iface_name)
+{
+	if (z_wpas_get_iface_count() == 0) {
+		k_mutex_lock(&iface_up_mutex, K_FOREVER);
+	}
+}
+
 #include "config.h"
 static void iface_cb(struct net_if *iface, void *user_data)
 {
-	struct wpa_interface *ifaces = user_data;
-	struct net_linkaddr *link_addr = NULL;
-	int ifindex;
-	char own_addr[NET_LINK_ADDR_MAX_LENGTH];
-	char *ifname;
+	const char *ifname = iface->if_dev->dev->name;
 
-	ifindex = net_if_get_by_iface(iface);
-	link_addr = &iface->if_dev->link_addr;
-	/* 802.15.4 interface, ignore */
-	if (link_addr->len > NET_LINK_ADDR_MAX_LENGTH) {
+	if (ifname == NULL) {
 		return;
 	}
-	os_memcpy(own_addr, link_addr->addr, link_addr->len);
-	ifname = os_strdup(iface->if_dev->dev->name);
 
-	wpa_printf(
-		MSG_INFO,
-		"iface_cb: iface %s ifindex %d %02x:%02x:%02x:%02x:%02x:%02x",
-		ifname ? ifname: "Unknown", ifindex, own_addr[0], own_addr[1],
-		own_addr[2], own_addr[3], own_addr[4], own_addr[5]);
+	if (strncmp(ifname, DEFAULT_IFACE_NAME, strlen(ifname)) != 0)
+	{
+		return;
+	}
 
-	/* TODO : make this user configurable*/
-	ifaces[0].ifname = "wlan0";
+	/* Check default interface */
+	if (net_if_is_admin_up(iface)) {
+		z_wpas_add_interface(ifname);
+	}
 
-	os_free(ifname);
+	register_iface_events();
+}
+
+
+static void z_wpas_iface_work_handler(struct k_work *item)
+{
+	ARG_UNUSED(item);
+
+	int ret = k_sem_take(&z_wpas_ready_sem, K_SECONDS(5));
+	if (ret) {
+		wpa_printf(MSG_ERROR, "Timed out waiting for wpa_supplicant");
+		return;
+	}
+
+	net_if_foreach(iface_cb, NULL);
+	wait_for_interface_up(DEFAULT_IFACE_NAME);
+
+	k_sem_give(&z_wpas_ready_sem);
 }
 
 static void z_wpas_event_sock_handler(int sock, void *eloop_ctx, void *sock_ctx)
@@ -203,22 +318,21 @@ retry_send:
 
 static void z_wpas_start(void)
 {
-	int i;
-	struct wpa_interface *ifaces, *iface;
-	int iface_count, exitcode = -1;
 	struct wpa_params params;
+	int exitcode = -1;
+	k_work_queue_init(&z_wpas_iface_wq);
+
+	k_work_queue_start(&z_wpas_iface_wq,
+					   z_wpas_iface_wq_stack,
+					   K_THREAD_STACK_SIZEOF(z_wpas_iface_wq_stack),
+					   7,
+					   NULL);
 
 	os_memset(&params, 0, sizeof(params));
 	params.wpa_debug_level = CONFIG_WPA_SUPP_DEBUG_LEVEL;
 
 	wpa_printf(MSG_INFO, "%s: %d Starting wpa_supplicant thread with debug level: %d\n",
 		  __func__, __LINE__, params.wpa_debug_level);
-
-	iface = ifaces = os_zalloc(sizeof(struct wpa_interface));
-	if (ifaces == NULL) {
-		return;
-	}
-	iface_count = 1;
 
 	exitcode = 0;
 	global = wpa_supplicant_init(&params);
@@ -242,43 +356,11 @@ static void z_wpas_start(void)
 		wpa_printf(MSG_WARNING, "Failed to add CLI FST ctrl");
 	}
 #endif
-
-	net_if_foreach(iface_cb, ifaces);
-
-	ifaces[0].ctrl_interface = "zephyr";
-	params.ctrl_interface = "zephyr";
-	wpa_printf(MSG_INFO, "Using interface %s\n", ifaces[0].ifname);
-
-	for (i = 0; exitcode == 0 && i < iface_count; i++) {
-		struct wpa_supplicant *wpa_s;
-
-		if ((ifaces[i].confname == NULL &&
-			 ifaces[i].ctrl_interface == NULL) ||
-			ifaces[i].ifname == NULL) {
-			if (iface_count == 1 && (params.ctrl_interface ||
-#ifdef CONFIG_MATCH_IFACE
-						 params.match_iface_count ||
-#endif /* CONFIG_MATCH_IFACE */
-						 params.dbus_ctrl_interface))
-				break;
-			wpa_printf(MSG_INFO,
-				   "Failed to initialize interface %d\n", i);
-			exitcode = -1;
-			break;
-		}
-		wpa_printf(MSG_INFO, "Initializing interface %d: %s\n", i,
-			   ifaces[i].ifname);
-		wpa_s = wpa_supplicant_add_iface(global, &ifaces[i], NULL);
-		if (wpa_s == NULL) {
-			exitcode = -1;
-			break;
-		}
-		z_wpa_ctrl_init(wpa_s);
-		wpa_s->conf->filter_ssids = 1;
-		wpa_s->conf->ap_scan = 1;
-	}
+	z_global_wpa_ctrl_init();
 
 	register_wpa_event_sock();
+
+	k_work_submit_to_queue(&z_wpas_iface_wq, &z_wpas_iface_work);
 
 #ifdef CONFIG_MATCH_IFACE
 	if (exitcode == 0) {
@@ -294,6 +376,7 @@ static void z_wpas_start(void)
 	eloop_unregister_read_sock(z_wpas_event_sockpair[0]);
 
 	z_wpa_ctrl_deinit();
+	z_global_wpa_ctrl_deinit();
 	wpa_supplicant_deinit(global);
 
 	fst_global_deinit();
@@ -302,7 +385,6 @@ static void z_wpas_start(void)
 	close(z_wpas_event_sockpair[1]);
 
 out:
-	os_free(ifaces);
 #ifdef CONFIG_MATCH_IFACE
 	os_free(params.match_ifaces);
 #endif /* CONFIG_MATCH_IFACE */
