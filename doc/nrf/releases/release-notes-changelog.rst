@@ -173,7 +173,7 @@ nRF9160: Serial LTE modem
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Moved the LE Audio controller for the network core to the standalone :ref:`lib_bt_ll_acs_nrf53_readme` library.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -308,7 +308,7 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Binary libraries
 ----------------
 
-|no_changes_yet_note|
+* Added the standalone :ref:`lib_bt_ll_acs_nrf53_readme` library, originally a part of the :ref:`nrf53_audio_app` application.
 
 Bluetooth libraries and services
 --------------------------------

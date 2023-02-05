@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/**
+ * @file ble_hci_vsc.h
+ *
+ * @defgroup ble_hci_vsc_api LE Audio Controller for nRF5340 API
+ * @{
+ */
+
 #ifndef _BLE_HCI_VSC_H_
 #define _BLE_HCI_VSC_H_
 
@@ -18,12 +25,13 @@
 #define HCI_OPCODE_VS_SET_ADV_TX_PWR BT_OP(BT_OGF_VS, 0x3F5)
 #define HCI_OPCODE_VS_SET_CONN_TX_PWR BT_OP(BT_OGF_VS, 0x3F6)
 
-/* This bit setting enables the flag from controller from controller
+/* This bit setting enables the flag from controller
  * if an ISO packet is lost.
  */
 #define BLE_HCI_VSC_OP_ISO_LOST_NOTIFY (1 << 17)
 #define BLE_HCI_VSC_OP_DIS_POWER_MONITOR (1 << 15)
 
+/** @brief nRF21540 Front End Module (FEM) pin definitions. */
 struct ble_hci_vs_cp_nrf21540_pins {
 	uint16_t mode;
 	uint16_t txen;
@@ -33,39 +41,47 @@ struct ble_hci_vs_cp_nrf21540_pins {
 	uint16_t csn;
 } __packed;
 
+/** @brief Host-Controller Interface vendor-specific response data. */
 struct ble_hci_vs_rp_status {
 	int8_t status;
 } __packed;
 
+/** @brief Host-Controller Interface vendor-specific structure for setting custom flags. */
 struct ble_hci_vs_cp_set_op_flag {
 	uint32_t flag_bit;
 	uint8_t setting;
 } __packed;
 
+/** @brief Host-Controller Interface vendor-specific Bluetooth address. */
 struct ble_hci_vs_cp_set_bd_addr {
 	uint8_t bd_addr[6];
 } __packed;
 
+/** @brief Host-Controller Interface vendor-specific advertising TX power. */
 struct ble_hci_vs_cp_set_adv_tx_pwr {
 	int8_t tx_power;
 } __packed;
 
+/** @brief Host-Controller Interface vendor-specific connection TX power. */
 struct ble_hci_vs_cp_set_conn_tx_pwr {
 	uint16_t handle;
 	int8_t tx_power;
 } __packed;
 
+/** @brief Host-Controller Interface vendor-specific LED pin mapping. */
 struct ble_hci_vs_cp_set_led_pin_map {
 	uint8_t id;
 	uint8_t mode;
 	uint16_t pin;
 } __packed;
 
+/** @brief Host-Controller Interface vendor-specific Front End Module (FEM) configuration. */
 struct ble_hci_vs_cp_set_radio_fe_cfg {
 	int8_t max_tx_power;
 	uint8_t ant_id;
 } __packed;
 
+/** @brief Host-Controller Interface vendor-specific connection max TX power values.*/
 enum ble_hci_vs_max_tx_power {
 	BLE_HCI_VSC_MAX_TX_PWR_0dBm = 0,
 	BLE_HCI_VSC_MAX_TX_PWR_3dBm = 3,
@@ -73,6 +89,7 @@ enum ble_hci_vs_max_tx_power {
 	BLE_HCI_VSC_MAX_TX_PWR_20dBm = 20
 };
 
+/** @brief Host-Controller Interface vendor-specific connection TX power values.*/
 enum ble_hci_vs_tx_power {
 	BLE_HCI_VSC_TX_PWR_0dBm = 0,
 	BLE_HCI_VSC_TX_PWR_Neg1dBm = -1,
@@ -90,6 +107,7 @@ enum ble_hci_vs_tx_power {
 	BLE_HCI_VSC_PRI_EXT_ADV_MAX_TX_PWR_DISABLE = 127,
 };
 
+/** @brief Host-Controller Interface vendor-specific LED functions.*/
 enum ble_hci_vs_led_function_id {
 	PAL_LED_ID_CPU_ACTIVE = 0x10,
 	PAL_LED_ID_ERROR = 0x11,
@@ -97,6 +115,7 @@ enum ble_hci_vs_led_function_id {
 	PAL_LED_ID_BLE_RX = 0x13,
 };
 
+/** @brief Host-Controller Interface vendor-specific LED modes of operation.*/
 enum ble_hci_vs_led_function_mode {
 	PAL_LED_MODE_ACTIVE_LOW = 0x00,
 	PAL_LED_MODE_ACTIVE_HIGH = 0x01,
@@ -104,32 +123,32 @@ enum ble_hci_vs_led_function_mode {
 };
 
 /**
- * @brief Set the pins to be used by the nRF21540 (Front End Module - FEM)
+ * @brief Set the pins to be used by the nRF21540 Front End Module (FEM).
  *
- * @param nrf21540_pins	Pointer to a struct containing the pins
+ * @param nrf21540_pins	Pointer to a struct containing the pins.
  *
  * @return 0 for success, error otherwise.
  */
 int ble_hci_vsc_nrf21540_pins_set(struct ble_hci_vs_cp_nrf21540_pins *nrf21540_pins);
 
 /**
- * @brief Enable VREGRADIO.VREQH in NET core for getting extra TX power
+ * @brief Enable VREGRADIO.VREQH in the network core for getting extra TX power.
  *
- * @param max_tx_power	Max TX power to set
+ * @param max_tx_power	Max TX power to set.
  *
  * @note        If the nRF21540 is not used, setting max_tx_power to 10 or 20 will
- *              result in +3dBm
+ *              result in +3 dBm.
  *
  * @return 0 for success, error otherwise.
  */
 int ble_hci_vsc_radio_high_pwr_mode_set(enum ble_hci_vs_max_tx_power max_tx_power);
 
 /**
- * @brief Set Bluetooth MAC device address
- * @param bd_addr	Bluetooth MAC device address
+ * @brief Set Bluetooth MAC device address.
+ * @param bd_addr	Bluetooth MAC device address.
  *
- * @note	This can be used to set a public address for the device
- *		Note that bt_setup_public_id_addr(void) should be called
+ * @note	This can be used to set a public address for the device.
+ *		bt_setup_public_id_addr(void) should be called
  *		after this function to properly set the address.
  *
  * @return 0 for success, error otherwise.
@@ -137,59 +156,61 @@ int ble_hci_vsc_radio_high_pwr_mode_set(enum ble_hci_vs_max_tx_power max_tx_powe
 int ble_hci_vsc_bd_addr_set(uint8_t *bd_addr);
 
 /**
- * @brief Set controller operation mode flag
- * @param flag_bit	The target bit in operation mode flag
- * @param setting	The setting of the bit
+ * @brief Set the controller operation mode flag.
+ * @param flag_bit	The target bit in operation mode flag.
+ * @param setting	The setting of the bit.
  *
  * @return 0 for success, error otherwise.
  */
 int ble_hci_vsc_op_flag_set(uint32_t flag_bit, uint8_t setting);
 
 /**
- * @brief Set advertising TX power
+ * @brief Set the advertising TX power.
  * @param tx_power TX power setting for the advertising.
- *                 Please check ble_hci_vs_tx_power for possible settings
+ *                 Check ble_hci_vs_tx_power for possible settings.
  *
  * @return 0 for success, error otherwise.
  */
 int ble_hci_vsc_adv_tx_pwr_set(enum ble_hci_vs_tx_power tx_power);
 
 /**
- * @brief Set TX power for specific connection
- * @param conn_handle Specific connection handle for TX power setting
- * @param tx_power TX power setting for the specific connection handle
- *                 Please check ble_hci_vs_tx_power for possible settings
+ * @brief Set TX power for specific connection.
+ * @param conn_handle Specific connection handle for the TX power setting.
+ * @param tx_power TX power setting for the specific connection handle.
+ *                 Check ble_hci_vs_tx_power for possible settings.
  *
  * @return 0 for success, error otherwise.
  */
 int ble_hci_vsc_conn_tx_pwr_set(uint16_t conn_handle, enum ble_hci_vs_tx_power tx_power);
 
 /**
- * @brief Set the maximum transmit power on primary advertising channels
+ * @brief Set the maximum transmit power on primary advertising channels.
  * @param tx_power TX power setting for the primary advertising channels
- *                 in advertising extension, which are BLE channel 37, 38 and 39
- *                 Please check ble_hci_vs_tx_power for possible settings
+ *                 in advertising extension, which are BLE channel 37, 38 and 39.
+ *                 Please check ble_hci_vs_tx_power for possible settings.
  *                 Set to BLE_HCI_VSC_PRI_EXT_ADV_MAX_TX_PWR_DISABLE (-127) for
- *                 disabling this feature
+ *                 disabling this feature.
  *
  * @return 0 for success, error otherwise.
  */
 int ble_hci_vsc_pri_ext_adv_max_tx_pwr_set(enum ble_hci_vs_tx_power tx_power);
 
 /**
- * @brief Map LED pin to a specific controller function
+ * @brief Map LED pin to a specific controller function.
  *
- * @details Only support for gpio0 (pin 0-31)
+ * @details Only support for gpio0 (pin 0-31).
  *
- * @param id Describes the LED function
- *           Please check ble_hci_vs_led_function_id for possible IDs
- * @param mode Describes how the pin is toggled
- *           Please check ble_hci_vs_led_function_mode for possible modes
- * @param pin Pin designator of the GPIO
+ * @param id Describes the LED function.
+ *           Please check ble_hci_vs_led_function_id for possible IDs.
+ * @param mode Describes how the pin is toggled.
+ *           Please check ble_hci_vs_led_function_mode for possible modes.
+ * @param pin Pin designator of the GPIO.
  *
  * @return 0 for success, error otherwise.
  */
 int ble_hci_vsc_led_pin_map(enum ble_hci_vs_led_function_id id,
 			    enum ble_hci_vs_led_function_mode mode, uint16_t pin);
+
+/** @} */
 
 #endif /* _BLE_HCI_VSC_H_ */

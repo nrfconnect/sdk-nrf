@@ -15,6 +15,7 @@ import os
 import json
 import subprocess
 import re
+import glob
 from colorama import Fore, Style
 from prettytable import PrettyTable
 from nrf5340_audio_dk_devices import (
@@ -32,12 +33,12 @@ from pathlib import Path
 
 BUILDPROG_FOLDER = Path(__file__).resolve().parent
 NRF5340_AUDIO_FOLDER = (BUILDPROG_FOLDER / "../..").resolve()
+NRF_FOLDER = (BUILDPROG_FOLDER / "../../../..").resolve()
 USER_CONFIG = BUILDPROG_FOLDER / "nrf5340_audio_dk_devices.json"
-
 TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME = "nrf5340_audio_dk_nrf5340_cpuapp"
 
 TARGET_CORE_APP_FOLDER = NRF5340_AUDIO_FOLDER
-TARGET_CORE_NET_FOLDER = NRF5340_AUDIO_FOLDER / "bin"
+TARGET_CORE_NET_FOLDER = NRF_FOLDER / "lib/bin/bt_ll_acs_nrf53/bin"
 TARGET_DEV_HEADSET_FOLDER = NRF5340_AUDIO_FOLDER / "build/dev_headset"
 TARGET_DEV_GATEWAY_FOLDER = NRF5340_AUDIO_FOLDER / "build/dev_gateway"
 
@@ -179,24 +180,21 @@ def __populate_hex_paths(dev, options):
 
     if dev.core_net_programmed == SelectFlags.TBD:
 
-        hex_files_found = [
-            file for file in TARGET_CORE_NET_FOLDER.iterdir() if file.suffix == ".hex"
-        ]
+        hex_files_found = 0
+        for hex_path in glob.glob(str(TARGET_CORE_NET_FOLDER) + "/ble5-ctr-rpmsg_????.hex"):
+            dev.hex_path_net = hex_path
+            hex_files_found += 1
 
         if options.mcuboot != '':
             dev.hex_path_net = dest_folder / "zephyr/net_core_app_signed.hex"
         else:
             dest_folder = TARGET_CORE_NET_FOLDER
 
-            if len(hex_files_found) == 0:
+            if hex_files_found != 1:
                 raise Exception(
-                    f"Found no net core hex file in folder: {dest_folder}")
-            elif len(hex_files_found) > 1:
-                raise Exception(
-                    f"Found more than one hex file in folder: {dest_folder}")
+                    f"Found zero or multiple NET hex files in folder: {dest_folder}")
             else:
-                dev.hex_path_net = dest_folder / hex_files_found[0]
-        print(f"Using NET hex: {dev.hex_path_net} for {dev}")
+                print(f"Using NET hex: {dev.hex_path_net} for {dev}")
 
 
 def __finish(device_list):
