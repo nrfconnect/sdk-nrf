@@ -94,10 +94,11 @@ endif()
 
 if ((CONFIG_AUDIO_DFU EQUAL 1) OR (CONFIG_AUDIO_DFU EQUAL 2))
     set(BLE5_CTR_SIGN_STEP ${APPLICATION_BINARY_DIR}/dummy)
+    file(TO_CMAKE_PATH ${ZEPHYR_NRF_MODULE_DIR}/lib/bin/bt_ll_acs_nrf53/bin CMAKE_STYLE_LL_ACS_NRF53_BIN)
 
     add_custom_command(
         COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/tools/buildprog/ble5-ctr-rpmsg_sign.py
-        -I ${CMAKE_CURRENT_LIST_DIR}/dfu/bin/ -b ${APPLICATION_BINARY_DIR} ${min_b0n_flag}
+        -I ${CMAKE_STYLE_LL_ACS_NRF53_BIN} -b ${APPLICATION_BINARY_DIR} ${min_b0n_flag}
         OUTPUT ${BLE5_CTR_SIGN_STEP}
         DEPENDS merged_domains_hex
         COMMENT "Running post-build ble5-ctr signing step..."

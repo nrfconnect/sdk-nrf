@@ -172,6 +172,9 @@
 .. |nrf5340_mesh_sample_note| replace:: For nRF5340 and Thingy:53, the extended advertiser has to be set manually for the network core, because the Bluetooth® Low Energy does not know that the Bluetooth mesh is enabled when built for this core. This is already done for this sample by setting ``CONFIG_BT_EXT_ADV=y`` for the network core.
 
 .. |nrf5340_audio_note| replace:: The |NCS| includes the :ref:`nrf53_audio_app` application, a complete project that integrates the LE Audio standard with custom reference hardware based on the nRF5340 DK.
+.. |nrf5340_audio_net_core_hex_note| replace:: The network core for both gateway and headsets is programmed with the precompiled Bluetooth Low Energy Controller binary file :file:`ble5-ctr-rpmsg_<XYZ>.hex`, where *<XYZ>* corresponds to the controller version, for example :file:`ble5-ctr-rpmsg_3216.hex`.
+   This file includes the LE Audio Controller Subsystem for nRF53 and is provided in the :file:`nrf/lib/bin/bt_ll_acs_nrf53/bin` directory.
+   If :ref:`DFU is enabled <nrf53_audio_app_configuration_configure_fota>`, the subsystem's binary file will be generated in the :file:`build/zephyr/` directory and will be called :file:`net_core_app_signed.hex`.
 
 .. |trusted_execution| replace:: nRF5340 and nRF9160
 

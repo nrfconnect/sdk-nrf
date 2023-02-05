@@ -7,5 +7,6 @@
 menu "Binary libraries"
 
 rsource "lwm2m_carrier/Kconfig"
+rsource "bt_ll_acs_nrf53/Kconfig"
 
 endmenu

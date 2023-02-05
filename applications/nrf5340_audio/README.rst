@@ -122,8 +122,8 @@ The following figure illustrates the software layout for the nRF5340 Audio appli
 
    nRF5340 Audio high-level design (overview)
 
-The network core of the nRF5340 SoC runs the *LE Audio Controller Subsystem for nRF53*.
-This subsystem is a Bluetooth LE Controller that is custom-made for the application.
+The network core of the nRF5340 SoC runs the *LE Audio Controller Subsystem for nRF53*, which is included in the :ref:`lib_bt_ll_acs_nrf53_readme` library's HEX file.
+This subsystem is custom-made for the application.
 It is responsible for receiving the audio stream data from hardware layers and forwarding the data to the Bluetooth LE host on the application core.
 The subsystem implements the lower layers of the Bluetooth Low Energy software stack and follows the LE Audio specification requirements.
 
@@ -601,7 +601,7 @@ The generated FOTA build files use the following naming patterns:
 See :ref:`app_build_output_files` for more information about the image files.
 
 .. note::
-   |net_core_hex_note|
+   |nrf5340_audio_net_core_hex_note|
 
 Entering the DFU mode
 ---------------------
@@ -630,7 +630,7 @@ This sample can be found under :file:`applications/nrf5340_audio` in the nRF Con
 .. note::
    Building and programming the nRF5340 Audio application is different from the :ref:`standard procedure <ug_nrf5340_building>` of building and programming for the nRF5340 DK.
    This is because the nRF5340 Audio application only builds and programs the files for the application core.
-   |net_core_hex_note|
+   |nrf5340_audio_net_core_hex_note|
 
 You can build and program the application in one of the following ways:
 
@@ -890,7 +890,7 @@ After building the files for the development kit you want to program, complete t
 
       nrfjprog --program bin/*.hex --chiperase --coprocessor CP_NETWORK -r
 
-   |net_core_hex_note|
+   |nrf5340_audio_net_core_hex_note|
 #. Program the application core on the development kit with the respective HEX file from the :file:`build` directory by running the following command:
 
    .. code-block:: console
@@ -1148,6 +1148,7 @@ Dependencies
 
 The application uses the following |NCS| components:
 
+* :ref:`lib_bt_ll_acs_nrf53_readme`
 * :ref:`lib_contin_array`
 * :ref:`lib_pcm_mix`
 * :ref:`lib_tone`
@@ -1188,13 +1189,6 @@ Application configuration options
 Disclaimers for the nRF5340 Audio application
 *********************************************
 
-This application and the LE Audio Controller Subsystem for nRF53 are marked as :ref:`experimental <software_maturity>`.
-The DFU/FOTA functionality in this application is also marked as :ref:`experimental <software_maturity>`.
+This application and its DFU/FOTA functionality are marked as :ref:`experimental <software_maturity>`.
 
-This LE Audio link controller is tested and works in configurations used by the present reference code (for example, 2 concurrent CIS, or BIS).
-No other configurations than the ones used in the reference application are tested nor documented in this release.
-
-.. |net_core_hex_note| replace:: The network core for both gateway and headsets is programmed with the precompiled Bluetooth Low Energy Controller binary file :file:`ble5-ctr-rpmsg_<XYZ>.hex`, where *<XYZ>* corresponds to the controller version, for example :file:`ble5-ctr-rpmsg_3216.hex`.
-   This file includes the LE Audio Controller Subsystem for nRF53 and is provided in the :file:`applications/nrf5340_audio/bin` directory.
-   If :ref:`DFU is enabled <nrf53_audio_app_configuration_configure_fota>`, the subsystem's binary file will be generated in the :file:`build/zephyr/` directory and will be called :file:`net_core_app_signed.hex`.
 .. |usb_known_issues| replace:: Make sure to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` related to serial connection with the USB.
