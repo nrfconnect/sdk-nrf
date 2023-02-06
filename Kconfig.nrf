@@ -71,8 +71,10 @@ config ZTEST_STACK_SIZE
 config PRIVILEGED_STACK_SIZE
 	default 2048 if ZTEST
 
-# nRF Connect SDK needs larger mcumgr buffers when supporting multi-image DFU.
+# nRF Connect SDK needs larger mcumgr buffers when supporting multi-image DFU
+# or when the Bluetooth Reassembly feature is enabled.
 config MCUMGR_BUF_SIZE
+	default 2475 if MCUMGR_SMP_REASSEMBLY_BT
 	default 1024 if UPDATEABLE_IMAGE_NUMBER > 1
 
 # When using HCI on the nRF5340 we need a larger command buffer.
