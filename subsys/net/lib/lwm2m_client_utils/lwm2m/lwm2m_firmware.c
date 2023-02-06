@@ -218,7 +218,7 @@ static int write_image_type_to_settings(int inst, int img_type)
 
 static void target_image_type_store(uint16_t instance, int img_type)
 {
-	if (instance == UNUSED_OBJ_ID) {
+	if (instance >= FOTA_INSTANCE_COUNT) {
 		LOG_WRN("Image type storage failure");
 		return;
 	}
@@ -252,7 +252,7 @@ static void reboot_work_handler(void)
 /************** Wrappers between normal FOTA object and Advanced FOTA object ********/
 static uint8_t get_state(uint16_t id)
 {
-	if (id == UNUSED_OBJ_ID || id >= FOTA_INSTANCE_COUNT) {
+	if (id >= FOTA_INSTANCE_COUNT) {
 		LOG_WRN("Get state blocked by id, state");
 		return 0;
 	}
@@ -268,7 +268,7 @@ static uint8_t get_state(uint16_t id)
 
 static void set_state(uint16_t id, uint8_t state)
 {
-	if (id == UNUSED_OBJ_ID) {
+	if (id >= FOTA_INSTANCE_COUNT) {
 		LOG_WRN("Set state blocked by id, state %d", state);
 		return;
 	}
@@ -284,7 +284,7 @@ static void set_state(uint16_t id, uint8_t state)
 
 static void set_result(uint16_t id, uint8_t result)
 {
-	if (id == UNUSED_OBJ_ID) {
+	if (id >= FOTA_INSTANCE_COUNT) {
 		LOG_WRN("Set result blocked by id,  result %d", result);
 		return;
 	}
