@@ -13,6 +13,7 @@
 #include <modem/modem_key_mgmt.h>
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
+#include <nrf_modem_at.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/sys/reboot.h>
 
@@ -90,6 +91,17 @@ DECLARE_FAKE_VALUE_FUNC(struct net_if*, net_if_lookup_by_dev, const struct devic
 DECLARE_FAKE_VOID_FUNC(net_mgmt_add_event_callback, struct net_mgmt_event_callback *);
 DECLARE_FAKE_VALUE_FUNC(int, net_mgmt_NET_REQUEST_WIFI_SCAN, uint32_t, struct net_if *,
 			void *, size_t);
+DECLARE_FAKE_VALUE_FUNC(int, lte_lc_conn_eval_params_get, struct lte_lc_conn_eval_params *);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_pause);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_resume);
+DECLARE_FAKE_VALUE_FUNC(int, at_parser_max_params_from_str, const char *, char **,
+			struct at_param_list *, size_t);
+DECLARE_FAKE_VALUE_FUNC(int, at_params_int_get, const struct at_param_list *, size_t, int32_t *);
+DECLARE_FAKE_VALUE_FUNC(int, at_params_unsigned_short_get, const struct at_param_list *, size_t,
+			uint16_t *);
+DECLARE_FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd_async, nrf_modem_at_resp_handler_t,
+			       const char *, ...);
+DECLARE_FAKE_VALUE_FUNC(int, at_params_list_init, struct at_param_list *, size_t);
 
 /* List of fakes used by this unit tester */
 #define DO_FOREACH_FAKE(FUNC) do { \
@@ -154,6 +166,14 @@ DECLARE_FAKE_VALUE_FUNC(int, net_mgmt_NET_REQUEST_WIFI_SCAN, uint32_t, struct ne
 	FUNC(net_if_lookup_by_dev)			\
 	FUNC(net_mgmt_add_event_callback)		\
 	FUNC(net_mgmt_NET_REQUEST_WIFI_SCAN)		\
+	FUNC(lte_lc_conn_eval_params_get)               \
+	FUNC(lwm2m_engine_pause)                        \
+	FUNC(lwm2m_engine_resume)                       \
+	FUNC(at_parser_max_params_from_str)             \
+	FUNC(at_params_int_get)                         \
+	FUNC(at_params_unsigned_short_get)              \
+	FUNC(nrf_modem_at_cmd_async)                    \
+	FUNC(at_params_list_init)                       \
 	} while (0)
 
 #endif

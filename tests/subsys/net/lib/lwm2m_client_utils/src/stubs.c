@@ -96,3 +96,14 @@ DEFINE_FAKE_VALUE_FUNC(struct net_if*, net_if_lookup_by_dev, const struct device
 DEFINE_FAKE_VOID_FUNC(net_mgmt_add_event_callback, struct net_mgmt_event_callback *);
 DEFINE_FAKE_VALUE_FUNC(int, net_mgmt_NET_REQUEST_WIFI_SCAN, uint32_t, struct net_if *,
 		       void *, size_t);
+DEFINE_FAKE_VALUE_FUNC(int, lte_lc_conn_eval_params_get, struct lte_lc_conn_eval_params *);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_pause);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_resume);
+DEFINE_FAKE_VALUE_FUNC(int, at_parser_max_params_from_str, const char *, char **,
+		       struct at_param_list *, size_t);
+DEFINE_FAKE_VALUE_FUNC(int, at_params_int_get, const struct at_param_list *, size_t, int32_t *);
+DEFINE_FAKE_VALUE_FUNC(int, at_params_unsigned_short_get, const struct at_param_list *, size_t,
+		       uint16_t *);
+DEFINE_FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd_async, nrf_modem_at_resp_handler_t,
+			      const char *, ...);
+DEFINE_FAKE_VALUE_FUNC(int, at_params_list_init, struct at_param_list *, size_t);

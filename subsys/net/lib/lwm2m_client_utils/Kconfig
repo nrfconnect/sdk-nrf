@@ -248,6 +248,15 @@ config LWM2M_CLIENT_UTILS_RAI
 	  When AS RAI is configured, device may indicate that no further data is
 	  expected in the near future and the connection may be released.
 
+config LWM2M_CLIENT_UTILS_LTE_CONNEVAL
+	bool "Enable connection pre-evaluation [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Connection pre-evaluation allows the application to get an estimation of the
+	  energy efficiency in a cell that the modem would use for data transmission.
+	  The information is used to determine when the actual data transmission is
+	  started.
+
 module = LWM2M_CLIENT_UTILS
 module-dep = LOG
 module-str = LwM2M client utilities library

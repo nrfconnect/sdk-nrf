@@ -47,6 +47,9 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #define LWM2M_SECURITY_CERTIFICATE 2
 #define LWM2M_SECURITY_NO_SEC 3
 
+#define CONNEVAL_MAX_DELAY_S 60
+#define CONNEVAL_POLL_PERIOD_MS 5000
+
 /* Client State Machine states */
 static enum client_state {
 	START,		/* Start Connection to a server*/
@@ -377,6 +380,10 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 {
 	k_mutex_lock(&lte_mutex, K_FOREVER);
 
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LTE_CONNEVAL)) {
+		lwm2m_utils_conneval(client, &client_event);
+	}
+
 	if (client_state == LTE_OFFLINE &&
 	    client_event != LWM2M_RD_CLIENT_EVENT_ENGINE_SUSPENDED) {
 		LOG_DBG("Drop network event %d at LTE offline state", client_event);
@@ -463,6 +470,11 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		reconnect = true;
 		state_trigger_and_unlock(NETWORK_ERROR);
 		break;
+
+	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE:
+		LOG_DBG("LwM2M engine update registration");
+		k_mutex_unlock(&lte_mutex);
+		break;
 	}
 }
 
@@ -510,6 +522,16 @@ static void modem_connect(void)
 			}
 		}
 	} while (ret < 0);
+
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LTE_CONNEVAL)) {
+		ret = lwm2m_utils_enable_conneval(LTE_LC_ENERGY_CONSUMPTION_NORMAL,
+						  CONNEVAL_MAX_DELAY_S, CONNEVAL_POLL_PERIOD_MS);
+		if (ret < 0) {
+			LOG_ERR("Failed to enable conneval (%d)", ret);
+		} else {
+			LOG_INF("Conneval enabled");
+		}
+	}
 }
 
 static bool lte_connected(enum lte_lc_nw_reg_status nw_reg_status)
