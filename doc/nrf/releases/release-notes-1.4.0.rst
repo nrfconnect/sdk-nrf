@@ -171,7 +171,7 @@ nRF9160
     * Added FOTA support.
     * Added TLS server support.
 
-* :ref:`mqtt_simple_sample` sample:
+* nRF9160: Simple MQTT sample:
 
     * Added TLS support to the sample.
 
@@ -569,7 +569,7 @@ nRF9160
 * nRF9160: Asset Tracker - added a note about external antenna performance and updated the dependencies section with the listing of modules abstracted using LwM2M carrier OS abstraction layer
 * :ref:`lwm2m_client` - updated with sections about DTLS support and bootstrap support
 * :ref:`lwm2m_carrier`  - updated the dependencies section with the listing of modules abstracted via LwM2M carrier OS abstraction layer
-* :ref:`mqtt_simple_sample` - updated with configuration and testing sections
+* nRF9160: Simple MQTT - updated with configuration and testing sections
 
 nRF5340
 -------

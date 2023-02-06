@@ -91,7 +91,7 @@ nRF9160
 * Added the following samples:
 
   * :ref:`http_application_update_sample` - demonstrates a basic FOTA (firmware over-the-air) update using the :ref:`lib_download_client`
-  * :ref:`mqtt_simple_sample` - connects to an MQTT broker and sends and receives data
+  * nRF9160: Simple MQTT - connects to an MQTT broker and sends and receives data
   * :ref:`nrf_coap_client_sample` - receives data from a public CoAP server using the Nordic CoAP library
   * Simple GPS sample - gets the current position and logs it on UART
 
@@ -175,7 +175,7 @@ Documentation
 
 * Added or updated documentation for the following samples:
 
-  * nRF9160: Asset Tracker, :ref:`nrf_coap_client_sample`,  :ref:`mqtt_simple_sample`, and :ref:`http_application_update_sample`
+  * nRF9160: Asset Tracker, :ref:`nrf_coap_client_sample`, nRF9160: Simple MQTT, and :ref:`http_application_update_sample`
   * :ref:`peripheral_hids_mouse`, :ref:`peripheral_hids_keyboard`,  :ref:`bluetooth_central_hids`, and :ref:`bluetooth_central_dfu_smp`
   * :ref:`record_text`, :ref:`writable_ndef_msg`, and :ref:`nfc_tag_reader`
   * :ref:`app_event_manager_sample` and :ref:`nrf_profiler_sample`
