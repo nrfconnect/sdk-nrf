@@ -1,5 +1,10 @@
-name: Sonarcloud analysis (Pull Request)
-on: pull_request
+name: Sonarcloud analysis (native_posix only)
+on:
+  pull_request:
+
+  push:
+    branches:
+      - main
 
 jobs:
   build:
