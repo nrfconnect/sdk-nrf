@@ -38,6 +38,14 @@ enum status_thread_state {
 #define CONNECTION_FAILURE 1
 #define CONNECTION_TERMINATED 2
 
+#define _wpa_cli_cmd_v(cmd, ...) \
+	do { \
+		if (z_wpa_cli_cmd_v(cmd, ##__VA_ARGS__) < 0) { \
+			wpa_printf(MSG_ERROR, "Failed to execute wpa_cli command: %s", cmd); \
+			goto out; \
+		} \
+	} while (0)
+
 K_MUTEX_DEFINE(wpa_supplicant_mutex);
 
 
@@ -84,7 +92,7 @@ static void supp_shell_connect_status(struct k_work *work)
 
 	if (ctrl->requested_op == CONNECT && wpa_s->wpa_state != WPA_COMPLETED) {
 		if (ctrl->connection_timeout > 0 && seconds_counter++ > ctrl->connection_timeout) {
-			z_wpa_cli_cmd_v("disconnect");
+			_wpa_cli_cmd_v("disconnect");
 			status = CONNECTION_FAILURE;
 			goto out;
 		}
@@ -156,7 +164,7 @@ int z_wpa_supplicant_connect(const struct device *dev,
 		goto out;
 	}
 
-	z_wpa_cli_cmd_v("remove_network all");
+	_wpa_cli_cmd_v("remove_network all");
 	ret = z_wpa_ctrl_add_network(&resp);
 	if (ret) {
 		goto out;
@@ -164,41 +172,41 @@ int z_wpa_supplicant_connect(const struct device *dev,
 
 	wpa_printf(MSG_DEBUG, "NET added: %d\n", resp.network_id);
 
-	z_wpa_cli_cmd_v("set_network %d ssid \"%s\"", resp.network_id, params->ssid);
-	z_wpa_cli_cmd_v("set_network %d key_mgmt NONE", resp.network_id);
-	z_wpa_cli_cmd_v("set_network %d ieee80211w 0", resp.network_id);
+	_wpa_cli_cmd_v("set_network %d ssid \"%s\"", resp.network_id, params->ssid);
+	_wpa_cli_cmd_v("set_network %d key_mgmt NONE", resp.network_id);
+	_wpa_cli_cmd_v("set_network %d ieee80211w 0", resp.network_id);
 	if (params->psk) {
 		/* WPA3 */
 		if (params->security == 3) {
 			if (params->sae_password) {
-				z_wpa_cli_cmd_v("set_network %d sae_password \"%s\"",
+				_wpa_cli_cmd_v("set_network %d sae_password \"%s\"",
 					resp.network_id, params->sae_password);
 			} else {
-				z_wpa_cli_cmd_v("set_network %d sae_password \"%s\"",
+				_wpa_cli_cmd_v("set_network %d sae_password \"%s\"",
 					resp.network_id, params->psk);
 			}
-			z_wpa_cli_cmd_v("set_network %d key_mgmt SAE",
+			_wpa_cli_cmd_v("set_network %d key_mgmt SAE",
 				resp.network_id);
 		} else if (params->security == 2) {
-			z_wpa_cli_cmd_v("set_network %d psk \"%s\"",
+			_wpa_cli_cmd_v("set_network %d psk \"%s\"",
 				resp.network_id, params->psk);
-			z_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK-SHA256",
+			_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK-SHA256",
 				resp.network_id);
 		} else {
-			z_wpa_cli_cmd_v( "set_network %d psk \"%s\"",
+			_wpa_cli_cmd_v( "set_network %d psk \"%s\"",
 			resp.network_id, params->psk);
-			z_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK",
+			_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK",
 				resp.network_id);
 		}
 
 		if (params->mfp) {
-			z_wpa_cli_cmd_v("set_network %d ieee80211w %d",
+			_wpa_cli_cmd_v("set_network %d ieee80211w %d",
 				resp.network_id, params->mfp);
 		}
 	}
 
 	/* enable and select network */
-	z_wpa_cli_cmd_v("enable_network %d", resp.network_id);
+	_wpa_cli_cmd_v("enable_network %d", resp.network_id);
 
 	if (params->channel != WIFI_CHANNEL_ANY) {
 		int freq = chan_to_freq(params->channel);
@@ -209,6 +217,7 @@ int z_wpa_supplicant_connect(const struct device *dev,
 		z_wpa_cli_cmd_v("set_network %d scan_freq %d",
 			resp.network_id, freq);
 	}
+	_wpa_cli_cmd_v("select_network %d", resp.network_id);
 
 	z_wpa_cli_cmd_v("select_network %d", resp.network_id);
 	wpa_supp_api_ctrl.dev = dev;
@@ -239,7 +248,7 @@ int z_wpa_supplicant_disconnect(const struct device *dev)
 	}
 	wpa_supp_api_ctrl.dev = dev;
 	wpa_supp_api_ctrl.requested_op = DISCONNECT;
-	z_wpa_cli_cmd_v("disconnect");
+	_wpa_cli_cmd_v("disconnect");
 
 out:
 	k_mutex_unlock(&wpa_supplicant_mutex);
