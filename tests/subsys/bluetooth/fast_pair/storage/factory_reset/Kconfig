@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_FAST_PAIR_STORAGE_EXT_PN
+	default y
+	help
+	  Unit test enables this option to be able to use API of Personalized Name extension.
+
+menu "Test configuration"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/bluetooth/services/fast_pair/fp_storage/Kconfig.fp_storage"
+endmenu
+
+menu "Zephyr"
+source "Kconfig.zephyr"
+endmenu

@@ -1,0 +1,32 @@
+tests:
+  fast_pair.storage.factory_reset.default:
+    integration_platforms:
+      - nrf52dk_nrf52832
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf9160dk_nrf9160_ns
+  fast_pair.storage.factory_reset.no_reboot:
+    integration_platforms:
+      - native_posix
+      - nrf52840dk_nrf52840
+    extra_args: CONFIG_REBOOT=n
+  fast_pair.storage.factory_reset.6keys:
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=6
+  fast_pair.storage.factory_reset.7keys:
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=7
+  fast_pair.storage.factory_reset.8keys:
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=8
+  fast_pair.storage.factory_reset.9keys:
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=9
+  fast_pair.storage.factory_reset.10keys:
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=10
