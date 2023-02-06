@@ -153,7 +153,7 @@ static int certificates_provision(void)
 		return 0;
 	}
 
-	if (sizeof(ca_certificate) > 0) {
+	if (sizeof(ca_certificate) > 1) {
 		err = tls_credential_add(CONFIG_MQTT_HELPER_SEC_TAG,
 					 TLS_CREDENTIAL_CA_CERTIFICATE,
 					 ca_certificate,
@@ -164,7 +164,7 @@ static int certificates_provision(void)
 		}
 	}
 
-	if (sizeof(private_key) > 0) {
+	if (sizeof(private_key) > 1) {
 		err = tls_credential_add(CONFIG_MQTT_HELPER_SEC_TAG,
 					 TLS_CREDENTIAL_PRIVATE_KEY,
 					 private_key,
@@ -175,7 +175,7 @@ static int certificates_provision(void)
 		}
 	}
 
-	if (sizeof(device_certificate) > 0) {
+	if (sizeof(device_certificate) > 1) {
 		err = tls_credential_add(CONFIG_MQTT_HELPER_SEC_TAG,
 					 TLS_CREDENTIAL_SERVER_CERTIFICATE,
 					 device_certificate,
@@ -190,7 +190,7 @@ static int certificates_provision(void)
 
 #if CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG != -1
 
-	if (sizeof(ca_certificate_2) > 0) {
+	if (sizeof(ca_certificate_2) > 1) {
 		err = tls_credential_add(CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG,
 					 TLS_CREDENTIAL_CA_CERTIFICATE,
 					 ca_certificate_2,
@@ -201,7 +201,7 @@ static int certificates_provision(void)
 		}
 	}
 
-	if (sizeof(private_key_2) > 0) {
+	if (sizeof(private_key_2) > 1) {
 		err = tls_credential_add(CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG,
 					 TLS_CREDENTIAL_PRIVATE_KEY,
 					 private_key_2,
@@ -212,7 +212,7 @@ static int certificates_provision(void)
 		}
 	}
 
-	if (sizeof(device_certificate_2) > 0) {
+	if (sizeof(device_certificate_2) > 1) {
 		err = tls_credential_add(CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG,
 					 TLS_CREDENTIAL_SERVER_CERTIFICATE,
 					 device_certificate_2,
