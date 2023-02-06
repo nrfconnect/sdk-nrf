@@ -84,6 +84,17 @@ if (CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE OR CONFIG_NCS_SAMPLE_EMPTY_NET_CORE_CHI
       "couldn't resolve which RPMsg sample to add.")
   endif()
 
+  if (CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP)
+    # By passing this value we don't require the user to pass any overlay files to the
+    # network core child image. Bluetooth buffer sizes are aligned automatically.
+    if (CONFIG_NCS_SAMPLE_HCI_RPMSG_CHILD_IMAGE OR CONFIG_NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE)
+      add_overlay_config(
+        ${CHILD_IMAGE_NAME}
+        ${NRF_DIR}/subsys/mgmt/mcumgr/bt_ota_dfu_rpmsg_child_image_overlay.conf
+      )
+    endif()
+  endif()
+
   # Only include a child image if both image name and path have been defined.
   # Prevents e.g. menuconfig from becoming inaccessible, among others.
   if(CHILD_IMAGE_NAME AND CHILD_IMAGE_PATH)
