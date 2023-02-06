@@ -175,9 +175,8 @@ int z_wpa_supplicant_connect(const struct device *dev,
 	_wpa_cli_cmd_v("set_network %d ssid \"%s\"", resp.network_id, params->ssid);
 	_wpa_cli_cmd_v("set_network %d key_mgmt NONE", resp.network_id);
 	_wpa_cli_cmd_v("set_network %d ieee80211w 0", resp.network_id);
-	if (params->psk) {
-		/* WPA3 */
-		if (params->security == 3) {
+	if (params->security != WIFI_SECURITY_TYPE_NONE) {
+		if (params->security == WIFI_SECURITY_TYPE_SAE) {
 			if (params->sae_password) {
 				_wpa_cli_cmd_v("set_network %d sae_password \"%s\"",
 					resp.network_id, params->sae_password);
@@ -187,16 +186,21 @@ int z_wpa_supplicant_connect(const struct device *dev,
 			}
 			_wpa_cli_cmd_v("set_network %d key_mgmt SAE",
 				resp.network_id);
-		} else if (params->security == 2) {
+		} else if (params->security == WIFI_SECURITY_TYPE_PSK_SHA256) {
 			_wpa_cli_cmd_v("set_network %d psk \"%s\"",
 				resp.network_id, params->psk);
 			_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK-SHA256",
 				resp.network_id);
-		} else {
+		} else if (params->security == WIFI_SECURITY_TYPE_PSK) {
 			_wpa_cli_cmd_v( "set_network %d psk \"%s\"",
 			resp.network_id, params->psk);
 			_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK",
 				resp.network_id);
+		} else {
+			ret = -1;
+			wpa_printf(MSG_ERROR, "Unsupported security type: %d",
+				params->security);
+			goto out;
 		}
 
 		if (params->mfp) {
