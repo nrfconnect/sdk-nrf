@@ -70,6 +70,7 @@ static int settings_mock_save(struct settings_store *cs, const char *name, const
 	const static size_t max_name_len = 64;
 
 	struct settings_data *record;
+	bool found = false;
 	size_t name_len = strnlen(name, max_name_len);
 
 	zassert_not_equal(name_len, max_name_len, "Too long settings key");
@@ -81,17 +82,39 @@ static int settings_mock_save(struct settings_store *cs, const char *name, const
 		record = CONTAINER_OF(cur_node, struct settings_data, node);
 
 		if (!strcmp(record->name, name)) {
-			if (val_len != record->val_len) {
-				k_free(record->val);
+			found = true;
+			break;
+		}
+	}
 
-				record->val = k_malloc(val_len);
-				zassert_not_null(record->val, "Heap too small. Increase heap size.");
-				record->val_len = val_len;
-			}
+	if (found) {
+		if (val_len == 0) {
+			bool ret;
 
-			memcpy(record->val, value, val_len);
+			k_free(record->val);
+			k_free(record->name);
+			ret = sys_slist_find_and_remove(&settings_list, &(record->node));
+			zassert_true(ret, "Unable to delete settings item");
+			k_free(record);
+
 			return 0;
 		}
+
+		if (val_len != record->val_len) {
+			k_free(record->val);
+
+			record->val = k_malloc(val_len);
+			zassert_not_null(record->val, "Heap too small. Increase heap size.");
+			record->val_len = val_len;
+		}
+
+		memcpy(record->val, value, val_len);
+
+		return 0;
+	}
+
+	if (val_len == 0) {
+		return 0;
 	}
 
 	record = k_malloc(sizeof(*record));
