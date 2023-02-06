@@ -109,7 +109,7 @@ nRF9160
 
   * The orientation detector now supports interrupt handling.
 
-* nRF Connect SDK now uses upstream CoAP implementation. The :ref:`mqtt_simple_sample` sample was rewritten to use the upstream library, and the downstream CoAP was removed.
+* nRF Connect SDK now uses upstream CoAP implementation. The nRF9160: Simple MQTT sample was rewritten to use the upstream library, and the downstream CoAP was removed.
 * The :ref:`http_application_update_sample` sample has been updated to use the :ref:`lib_fota_download` library.
 
 BSD library

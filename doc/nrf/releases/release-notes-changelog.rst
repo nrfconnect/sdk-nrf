@@ -343,11 +343,6 @@ nRF9160 samples
 
   * Added support for the :ref:`liblwm2m_carrier_readme` library.
 
-* Removed:
-
-  * Multicell location sample because of the deprecation of the Multicell location library.
-    Relevant functionality is available through the :ref:`lib_location` library.
-
 * :ref:`nrf_cloud_mqtt_multi_service` sample:
 
   * Added:
@@ -365,6 +360,14 @@ nRF9160 samples
   * Added:
 
     * Sample for nRF52 and nRF53 Series devices to send AT commands to nRF9160 SiP from shell.
+
+* Removed:
+
+  * Multicell location sample because of the deprecation of the Multicell location library.
+    Relevant functionality is available through the :ref:`lib_location` library.
+  * nRF9160: Simple MQTT sample.
+    This is now replaced by a new :ref:`mqtt_sample` sample that supports Wi-Fi and LTE connectivity.
+
 
 Peripheral samples
 ------------------
