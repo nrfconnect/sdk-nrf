@@ -19,7 +19,6 @@
 #include "supp_api.h"
 #include "wpa_cli_zephyr.h"
 
-int cli_main(int, const char **);
 extern struct k_sem wpa_supplicant_ready_sem;
 extern struct wpa_global *global;
 
