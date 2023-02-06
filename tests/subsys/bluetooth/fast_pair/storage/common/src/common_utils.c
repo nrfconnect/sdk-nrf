@@ -18,6 +18,21 @@ void cu_generate_account_key(uint8_t seed, struct fp_account_key *account_key)
 	memset(account_key->key, seed, ACCOUNT_KEY_LEN);
 }
 
+void cu_account_keys_generate_and_store(uint8_t first_seed, uint8_t gen_count)
+{
+	int err;
+	struct fp_account_key account_key;
+
+	zassert_true((first_seed + gen_count) <= (UCHAR_MAX + 1), "Invalid seed range");
+
+	for (uint8_t i = 0; i < gen_count; i++) {
+		cu_generate_account_key(i + first_seed, &account_key);
+
+		err = fp_storage_ak_save(&account_key);
+		zassert_ok(err, "Failed to store Account Key");
+	}
+}
+
 bool cu_check_account_key_seed(uint8_t seed, const struct fp_account_key *account_key)
 {
 	if (account_key->key[0] != seed) {

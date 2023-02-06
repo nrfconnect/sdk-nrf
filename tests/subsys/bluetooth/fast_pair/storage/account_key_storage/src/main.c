@@ -8,6 +8,7 @@
 #include <zephyr/settings/settings.h>
 
 #include "fp_storage_ak.h"
+#include "fp_storage_ak_priv.h"
 #include "fp_common.h"
 
 #include "storage_mock.h"
@@ -129,21 +130,6 @@ static void test_duplicate(void)
 	zassert_true(cu_check_account_key_seed(seed, &read_keys[0]), "Invalid key on read");
 }
 
-static void generate_and_store_keys(uint8_t first_seed, uint8_t gen_count)
-{
-	int err;
-	struct fp_account_key account_key;
-
-	zassert_true((first_seed + gen_count) <= (UCHAR_MAX + 1), "Invalid seed range");
-
-	for (uint8_t i = 0; i < gen_count; i++) {
-		cu_generate_account_key(i + first_seed, &account_key);
-
-		err = fp_storage_ak_save(&account_key);
-		zassert_ok(err, "Failed to store Account Key");
-	}
-}
-
 static void test_invalid_calls(void)
 {
 	static const uint8_t first_seed = 3;
@@ -153,7 +139,7 @@ static void test_invalid_calls(void)
 	struct fp_account_key found_key;
 	struct fp_account_key read_keys[ACCOUNT_KEY_MAX_CNT];
 
-	generate_and_store_keys(first_seed, test_key_cnt);
+	cu_account_keys_generate_and_store(first_seed, test_key_cnt);
 
 	for (size_t read_cnt = 0; read_cnt <= ACCOUNT_KEY_MAX_CNT; read_cnt++) {
 		size_t read_cnt_ret = read_cnt;
@@ -193,7 +179,7 @@ static void test_find(void)
 	static const size_t test_key_cnt = 3;
 	int err = 0;
 
-	generate_and_store_keys(first_seed, test_key_cnt);
+	cu_account_keys_generate_and_store(first_seed, test_key_cnt);
 
 	for (uint8_t seed = first_seed; seed < (first_seed + test_key_cnt); seed++) {
 		struct fp_account_key account_key;
@@ -228,7 +214,7 @@ static void test_loop(void)
 	for (uint8_t i = 1; i < UCHAR_MAX; i++) {
 		setup_fn();
 
-		generate_and_store_keys(first_seed, i);
+		cu_account_keys_generate_and_store(first_seed, i);
 		cu_account_keys_validate_loaded(first_seed, i);
 
 		/* Reload keys from storage and validate them again. */
