@@ -75,6 +75,12 @@ config WPA_CLI
 config NET_SOCKETPAIR_BUFFER_SIZE
     default 4096 if WPA_CLI
 
+config POSIX_MAX_FDS
+    # l2_packet - 1
+    # ctrl_iface - 2 * socketpairs = 4(local and global)
+    # z_wpa_event_sock - 1 socketpair = 2
+    default 7 if !POSIX_API
+
 module = WPA_SUPP
 module-str = WPA supplicant
 source "subsys/logging/Kconfig.template.log_config"
