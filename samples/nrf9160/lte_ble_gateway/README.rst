@@ -104,7 +104,7 @@ Program the board controller as follows:
       .. parsed-literal::
          :class: highlight
 
-         west build --board nrf9160dk_nrf52840_ns@1.1.0
+         west build --board nrf9160dk_nrf52840@1.1.0
 
 #. Verify that the programming was successful.
    Use a terminal emulator, like PuTTY, to connect to the second serial port and check the output.

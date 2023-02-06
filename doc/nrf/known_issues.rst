@@ -357,7 +357,7 @@ LTE Sensor Gateway fails to run
   .. parsed-literal::
     :class: highlight
 
-    west build --board nrf9160dk_nrf52840_ns@1.1.0
+    west build --board nrf9160dk_nrf52840@1.1.0
 
   The :ref:`lte_sensor_gateway` sample:
 
