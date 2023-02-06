@@ -28,9 +28,11 @@ config DESKTOP_BT_PERIPHERAL
 	bool
 	default y if DESKTOP_ROLE_HID_PERIPHERAL
 	imply DESKTOP_BLE_ADV
+	imply DESKTOP_BLE_LATENCY_ENABLE
 	imply DESKTOP_BAS_ENABLE
 	imply DESKTOP_HIDS_ENABLE
 	imply BT_DIS
+	imply DESKTOP_DEV_DESCR_ENABLE
 	select BT_PERIPHERAL
 	help
 	  HID peripherals are configured to use the GAP Peripheral role as
@@ -38,9 +40,14 @@ config DESKTOP_BT_PERIPHERAL
 	  Device. This specification defines how to implement the HID Device
 	  using Bluetooth connectivity.
 
-	  The nRF Desktop peripheral enables CAF Bluetooth LE advertising module
-	  and GATT Services required for a HID Device (HID Service, Battery
-	  Service and Device Information Service).
+	  The nRF Desktop peripheral enables CAF Bluetooth LE advertising
+	  module, Bluetooth LE latency module and GATT Services required for a
+	  HID Device (HID Service, Battery Service and Device Information
+	  Service).
+
+	  Additionally, the nRF Desktop peripheral enables device description
+	  module. The module implements a custom GATT Service which is required
+	  to connect with nRF Desktop dongles.
 
 if DESKTOP_BT_PERIPHERAL
 
@@ -162,6 +169,7 @@ endif # DESKTOP_BT_PERIPHERAL
 config DESKTOP_BT_CENTRAL
 	bool
 	default y if DESKTOP_ROLE_HID_DONGLE
+	imply DESKTOP_BLE_CONN_PARAMS_ENABLE
 	imply DESKTOP_BLE_SCAN_ENABLE
 	imply DESKTOP_BLE_DISCOVERY_ENABLE
 	select BT_CENTRAL
@@ -171,6 +179,9 @@ config DESKTOP_BT_CENTRAL
 	  and Boot Host. This specification defines how to implement the Host
 	  using Bluetooth connectivity.
 
+	  Application modules that control Bluetooth LE scanning, discovery and
+	  connection parameters are automatically enabled.
+
 if DESKTOP_BT_CENTRAL
 
 config BT_GATT_CLIENT
@@ -179,6 +190,13 @@ config BT_GATT_CLIENT
 	  nRF Desktop dongles are configured to use the GATT Client role as
 	  required in the HID over GATT profile specification for the Report
 	  and Boot Host.
+
+config BT_GATT_SERVICE_CHANGED
+	default n
+	help
+	  GATT Service Changed support is not needed for nRF Desktop dongles.
+	  The dongles do not change their GATT Services, they work mainly as
+	  GATT Clients and receive HID reports from BLE connected peripherals.
 
 config BT_MAX_CONN
 	default DESKTOP_HID_DONGLE_CONN_COUNT

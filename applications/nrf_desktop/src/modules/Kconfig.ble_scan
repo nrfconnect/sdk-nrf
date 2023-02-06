@@ -55,6 +55,13 @@ config DESKTOP_BLE_SCAN_KEYBOARD_LIMIT
 	default 1
 	range 0 255
 
+config DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT
+	bool "Look for peers after boot"
+	depends on DESKTOP_BLE_NEW_PEER_SCAN_REQUEST
+	help
+	  When enabled the device will look for new peers also after it was
+	  booted.
+
 config DESKTOP_BLE_SCAN_PM_EVENTS
 	bool "Stop and block scanning in the power down mode"
 	default y
