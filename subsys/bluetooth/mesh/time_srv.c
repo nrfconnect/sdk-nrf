@@ -168,12 +168,12 @@ static int send_time_status(struct bt_mesh_model *model,
 	int err;
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_TIME_OP_TIME_STATUS,
-				 BT_MESH_TIME_MSG_LEN_TIME_STATUS);
+				 BT_MESH_TIME_MSG_MAXLEN_TIME_STATUS);
 	bt_mesh_model_msg_init(&msg, BT_MESH_TIME_OP_TIME_STATUS);
 
 	err = bt_mesh_time_srv_status(srv, uptime, &status);
 	if (err) {
-		/* Mesh Model Specification 5.2.1.4: If the TAI Seconds field is
+		/* Mesh Model Specification 5.2.1.3: If the TAI Seconds field is
 		 * 0, all other fields shall be omitted
 		 */
 		bt_mesh_time_buf_put_tai_sec(&msg, 0);
@@ -337,7 +337,7 @@ const struct bt_mesh_model_op _bt_mesh_time_srv_op[] = {
 	},
 	{
 		BT_MESH_TIME_OP_TIME_STATUS,
-		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_TIME_STATUS),
+		BT_MESH_LEN_MIN(BT_MESH_TIME_MSG_MINLEN_TIME_STATUS),
 		handle_time_status,
 	},
 	{

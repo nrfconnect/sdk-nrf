@@ -112,7 +112,7 @@ static int handle_tai_utc_delta_status(struct bt_mesh_model *model, struct bt_me
 const struct bt_mesh_model_op _bt_mesh_time_cli_op[] = {
 	{
 		BT_MESH_TIME_OP_TIME_STATUS,
-		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_TIME_STATUS),
+		BT_MESH_LEN_MIN(BT_MESH_TIME_MSG_MINLEN_TIME_STATUS),
 		handle_status,
 	},
 	{
