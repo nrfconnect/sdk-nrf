@@ -10,17 +10,10 @@
 #include <bluetooth/services/fast_pair.h>
 
 #include "fp_storage_manager.h"
+#include "fp_storage_manager_priv.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(fp_storage, CONFIG_FP_STORAGE_LOG_LEVEL);
-
-#define SETTINGS_SM_SUBTREE_NAME "fp_sm"
-#define SETTINGS_RESET_IN_PROGRESS_NAME "reset"
-#define SETTINGS_NAME_SEPARATOR_STR "/"
-#define SETTINGS_RESET_IN_PROGRESS_FULL_NAME \
-	(SETTINGS_SM_SUBTREE_NAME SETTINGS_NAME_SEPARATOR_STR SETTINGS_RESET_IN_PROGRESS_NAME)
-
-BUILD_ASSERT(SETTINGS_NAME_SEPARATOR == '/');
 
 static bool reset_in_progress;
 static int settings_set_err;
@@ -159,4 +152,10 @@ int bt_fast_pair_factory_reset(void)
 	}
 
 	return 0;
+}
+
+void fp_storage_manager_ram_clear(void)
+{
+	reset_in_progress = false;
+	settings_set_err = 0;
 }

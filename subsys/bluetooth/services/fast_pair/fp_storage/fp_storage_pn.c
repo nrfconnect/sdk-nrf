@@ -10,15 +10,8 @@
 #include <zephyr/settings/settings.h>
 
 #include "fp_storage_pn.h"
+#include "fp_storage_pn_priv.h"
 #include "fp_storage_manager.h"
-
-#define SETTINGS_PN_SUBTREE_NAME "fp_pn"
-#define SETTINGS_PN_KEY_NAME "pn"
-#define SETTINGS_NAME_SEPARATOR_STR "/"
-#define SETTINGS_PN_FULL_NAME \
-	(SETTINGS_PN_SUBTREE_NAME SETTINGS_NAME_SEPARATOR_STR SETTINGS_PN_KEY_NAME)
-
-BUILD_ASSERT(SETTINGS_NAME_SEPARATOR == '/');
 
 static char personalized_name[FP_STORAGE_PN_BUF_LEN];
 
@@ -124,7 +117,7 @@ int fp_storage_pn_save(const char *pn_to_save)
 	return 0;
 }
 
-static void fp_storage_pn_ram_clear(void)
+void fp_storage_pn_ram_clear(void)
 {
 	memset(personalized_name, 0, sizeof(personalized_name));
 

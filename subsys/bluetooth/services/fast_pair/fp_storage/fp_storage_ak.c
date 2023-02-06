@@ -341,7 +341,7 @@ static void fp_storage_ak_empty_init(void)
 	atomic_set(&settings_loaded, true);
 }
 
-static int ak_delete(uint8_t index)
+int fp_storage_ak_delete(uint8_t index)
 {
 	int err;
 	char name[SETTINGS_AK_NAME_MAX_SIZE];
@@ -364,7 +364,7 @@ static int fp_storage_ak_reset(void)
 	for (uint8_t index = 0; index < ACCOUNT_KEY_CNT; index++) {
 		int err;
 
-		err = ak_delete(index);
+		err = fp_storage_ak_delete(index);
 		if (err) {
 			return err;
 		}

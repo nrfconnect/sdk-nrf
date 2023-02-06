@@ -97,6 +97,17 @@ static inline uint8_t next_account_key_id(uint8_t account_key_id)
 	return account_key_id + 1;
 }
 
+/** Delete an Account Key from settings.
+ *
+ * @param[in] index Account Key index.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_storage_ak_delete(uint8_t index);
+
+/** Clear storage data loaded to RAM. */
+void fp_storage_ak_ram_clear(void);
+
 #ifdef __cplusplus
 }
 #endif
