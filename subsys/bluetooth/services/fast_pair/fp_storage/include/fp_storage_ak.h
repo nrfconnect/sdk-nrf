@@ -78,12 +78,6 @@ int fp_storage_ak_get(struct fp_account_key *buf, size_t *key_count);
 int fp_storage_ak_find(struct fp_account_key *account_key,
 		       fp_storage_ak_check_cb account_key_check_cb, void *context);
 
-/** Clear storage data loaded to RAM.
- *
- * The function is used only by fp_storage unit test.
- */
-void fp_storage_ak_ram_clear(void);
-
 #ifdef __cplusplus
 }
 #endif
