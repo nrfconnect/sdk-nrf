@@ -16,7 +16,7 @@ target_include_directories(app PRIVATE include)
 
 # Preinitialization related to DFU over SMP for nRF52 series
 if(CONFIG_SOC_SERIES_NRF52X)
-  target_sources_ifdef(CONFIG_MCUMGR_SMP_BT app PRIVATE
+  target_sources_ifdef(CONFIG_MCUMGR_TRANSPORT_BT app PRIVATE
     src/smp_dfu.c)
 endif()
 

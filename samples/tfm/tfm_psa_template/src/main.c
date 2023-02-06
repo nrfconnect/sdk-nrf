@@ -13,22 +13,22 @@
 #include <pm_config.h>
 #include <ctype.h>
 
-#ifdef CONFIG_MCUMGR_CMD_FS_MGMT
+#ifdef CONFIG_MCUMGR_GRP_FS
 #include <zephyr/device.h>
 #include <zephyr/fs/fs.h>
 #include "zephyr/mgmt/mcumgr/grp/fs_mgmt/fs_mgmt.h"
 #include <zephyr/fs/littlefs.h>
 #endif
-#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
+#ifdef CONFIG_MCUMGR_GRP_OS
 #include "zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h"
 #endif
-#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
+#ifdef CONFIG_MCUMGR_GRP_IMG
 #include "zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h"
 #endif
-#ifdef CONFIG_MCUMGR_CMD_STAT_MGMT
+#ifdef CONFIG_MCUMGR_GRP_STAT
 #include "zephyr/mgmt/mcumgr/grp/stat_mgmt/stat_mgmt.h"
 #endif
-#ifdef CONFIG_MCUMGR_CMD_SHELL_MGMT
+#ifdef CONFIG_MCUMGR_GRP_SHELL
 #include "zephyr/mgmt/mcumgr/grp/shell_mgmt/shell_mgmt.h"
 #endif
 
@@ -45,7 +45,7 @@ STATS_NAME_END(smp_svr_stats);
 /* Define an instance of the stats group. */
 STATS_SECT_DECL(smp_svr_stats) smp_svr_stats;
 
-#ifdef CONFIG_MCUMGR_CMD_FS_MGMT
+#ifdef CONFIG_MCUMGR_GRP_FS
 FS_LITTLEFS_DECLARE_DEFAULT_CONFIG(cstorage);
 static struct fs_mount_t littlefs_mnt = {
 	.type = FS_LITTLEFS,
@@ -198,7 +198,7 @@ void main(void)
 	}
 
 	/* Register the built-in mcumgr command handlers. */
-#ifdef CONFIG_MCUMGR_CMD_FS_MGMT
+#ifdef CONFIG_MCUMGR_GRP_FS
 	err = fs_mount(&littlefs_mnt);
 	if (err < 0) {
 		printk("Error mounting littlefs [%d]", err);
@@ -206,22 +206,22 @@ void main(void)
 
 	fs_mgmt_register_group();
 #endif
-#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
+#ifdef CONFIG_MCUMGR_GRP_OS
 	os_mgmt_register_group();
 #endif
-#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
+#ifdef CONFIG_MCUMGR_GRP_IMG
 	img_mgmt_register_group();
 #endif
-#ifdef CONFIG_MCUMGR_CMD_STAT_MGMT
+#ifdef CONFIG_MCUMGR_GRP_STAT
 	stat_mgmt_register_group();
 #endif
-#ifdef CONFIG_MCUMGR_CMD_SHELL_MGMT
+#ifdef CONFIG_MCUMGR_GRP_SHELL
 	shell_mgmt_register_group();
 #endif
-#ifdef CONFIG_MCUMGR_SMP_BT
+#ifdef CONFIG_MCUMGR_TRANSPORT_BT
 	start_smp_bluetooth();
 #endif
-#ifdef CONFIG_MCUMGR_SMP_UDP
+#ifdef CONFIG_MCUMGR_TRANSPORT_UDP
 	start_smp_udp();
 #endif
 

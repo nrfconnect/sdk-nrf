@@ -301,14 +301,14 @@ The application supports SMP handlers related to:
 * Operating System (OS) management -- used to reboot the device after the firmware upload is complete.
 * Erasing settings partition -- used to ensure that a new application is not booted with incompatible content in the settings partition written by the previous application.
 
-To enable the MCUmanager library and handling of SMP commands over Bluetooth, use the options :kconfig:option:`CONFIG_MCUMGR` and :kconfig:option:`CONFIG_MCUMGR_SMP_BT`.
-Also, disable encryption and authentication requirement for the Bluetooth SMP transport using :kconfig:option:`CONFIG_MCUMGR_SMP_BT_AUTHEN`.
+To enable the MCUmanager library and handling of SMP commands over Bluetooth, use the options :kconfig:option:`CONFIG_MCUMGR` and :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT`.
+Also, disable encryption and authentication requirement for the Bluetooth SMP transport using :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT_AUTHEN`.
 
 You need to enable the MCUmanager handlers for image and OS management.
-Use the options :kconfig:option:`CONFIG_MCUMGR_CMD_IMG_MGMT` and :kconfig:option:`CONFIG_MCUMGR_CMD_OS_MGMT`.
+Use the options :kconfig:option:`CONFIG_MCUMGR_GRP_IMG` and :kconfig:option:`CONFIG_MCUMGR_CMD_OS_MGMT`.
 
 You also have to enable the MCUmanager processing of basic Zephyr group commands and storage erase commands.
-Use the options :kconfig:option:`CONFIG_MCUMGR_GRP_ZEPHYR_BASIC` and :kconfig:option:`CONFIG_MCUMGR_GRP_BASIC_CMD_STORAGE_ERASE`.
+Use the options :kconfig:option:`CONFIG_MCUMGR_GRP_ZEPHYR_BASIC` and :kconfig:option:`CONFIG_MCUMGR_GRP_ZBASIC_STORAGE_ERASE`.
 
 See :file:`thing53_nrf5340_cpuapp.conf` in a compatible sample for how this is done.
 
