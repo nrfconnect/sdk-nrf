@@ -199,7 +199,6 @@ choice BT_LL_SOFTDEVICE_VARIANT
 						     BT_CTLR_ADV_PERIODIC || \
 						     BT_CTLR_DF_CTE_TX || \
 						     MPSL_CX_BT_1WIRE || \
-						     MPSL_CX_BT_3WIRE || \
 						     BT_CTLR_SYNC_PERIODIC || \
 						     BT_CTLR_SCA_UPDATE || \
 						     BT_CTLR_SDC_PAWR_ADV || \
@@ -273,28 +272,6 @@ config BT_CTLR_ECDH_IN_MPSL_WORK
 	  This saves RAM at the cost of delaying MPSL work.
 
 endif # BT_CTLR_ECDH
-
-if (MPSL_CX && BT_BROADCASTER)
-choice BT_CTLR_SDC_CX_ADV_CONFIG
-	default BT_CTLR_SDC_CX_ADV_TRY_CONTINUE_ON_DENIAL if MPSL_CX_BT_3WIRE
-	default BT_CTLR_SDC_CX_ADV_CLOSE_ADV_EVT_ON_DENIAL
-	prompt "SoftDevice Controller advertising coexistance behavior"
-	help
-	  Select the behavior of the controller if the coexistence interface denies a packet during advertising.
-
-config BT_CTLR_SDC_CX_ADV_TRY_CONTINUE_ON_DENIAL
-	depends on MPSL_CX_BT_3WIRE
-	bool "Continue adv event on denial"
-	help
-	  The advertiser will try to send further adverting packets in the same advertising event if one
-	  of the advertising packets is denied by the coexistence interface.
-
-config BT_CTLR_SDC_CX_ADV_CLOSE_ADV_EVT_ON_DENIAL
-	bool "Close adv event on denial"
-	help
-	  The advertiser will close the advertising event if the coexistence interface denies an advertising packet.
-endchoice
-endif # MPSL_CX && BT_BROADCASTER
 
 config BT_CTLR_LE_POWER_CONTROL
 	bool "LE Power Control [EXPERIMENTAL]"

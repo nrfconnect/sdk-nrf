@@ -167,7 +167,9 @@ Samples
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* Removed:
+
+  * The Bluetooth 3-wire coex sample because of the removal of the 3-wire implementation.
 
 Bluetooth mesh samples
 ----------------------
