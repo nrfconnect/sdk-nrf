@@ -533,6 +533,28 @@ out:
 	return ret;
 }
 
+#ifdef CONFIG_NET_STATISTICS_ETHERNET
+struct net_stats_eth *wifi_nrf_eth_stats_get(const struct device *dev)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	if (!dev) {
+		LOG_ERR("%s Device not found\n", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = dev->data;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		goto out;
+	}
+
+	return &vif_ctx_zep->eth_stats;
+out:
+	return NULL;
+}
+#endif /* CONFIG_NET_STATISTICS_ETHERNET */
 
 #ifdef CONFIG_NET_STATISTICS_WIFI
 int wifi_nrf_stats_get(const struct device *dev, struct net_stats_wifi *zstats)

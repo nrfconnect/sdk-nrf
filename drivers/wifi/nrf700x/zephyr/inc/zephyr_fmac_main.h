@@ -54,6 +54,9 @@ struct wifi_nrf_vif_ctx_zep {
 	 * for "twt_teardown_all" command.
 	 */
 	unsigned char neg_twt_flow_id;
+#ifdef CONFIG_NET_STATISTICS_ETHERNET
+	struct net_stats_eth eth_stats;
+#endif /* CONFIG_NET_STATISTICS_ETHERNET */
 };
 
 struct wifi_nrf_vif_ctx_map {
