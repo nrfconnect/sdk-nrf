@@ -41,4 +41,6 @@ enum wifi_nrf_status wifi_nrf_if_carr_state_chg(void *os_vif_ctx,
 
 int wifi_nrf_stats_get(const struct device *dev,
 		       struct net_stats_wifi *stats);
+
+struct net_stats_eth *wifi_nrf_eth_stats_get(const struct device *dev);
 #endif /* __ZEPHYR_NET_IF_H__ */
