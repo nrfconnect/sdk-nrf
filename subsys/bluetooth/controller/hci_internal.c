@@ -1164,12 +1164,6 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_vs_qos_conn_event_report_enable((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_VS_EVENT_LENGTH_SET:
 		return sdc_hci_cmd_vs_event_length_set((void *)cmd_params);
-#ifdef CONFIG_MPSL_CX_BT_3WIRE
-	case SDC_HCI_OPCODE_CMD_VS_COEX_PRIORITY_CONFIG:
-		return sdc_hci_cmd_vs_coex_priority_config((void *)cmd_params);
-	case SDC_HCI_OPCODE_CMD_VS_COEX_SCAN_MODE_CONFIG:
-		return sdc_hci_cmd_vs_coex_scan_mode_config((void *)cmd_params);
-#endif	/* CONFIG_MPSL_CX_BT_3WIRE */
 #ifdef CONFIG_BT_PERIPHERAL
 	case SDC_HCI_OPCODE_CMD_VS_PERIPHERAL_LATENCY_MODE_SET:
 		return sdc_hci_cmd_vs_peripheral_latency_mode_set((void *)cmd_params);

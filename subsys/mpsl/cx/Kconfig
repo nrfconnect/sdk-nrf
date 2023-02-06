@@ -67,17 +67,6 @@ config MPSL_CX_THREAD
 	  Coexistence Practical recommendations for using a 3-wire PTA
 	  implementation for co-located 2.4 GHz radios.
 
-config MPSL_CX_BT_3WIRE
-	depends on SOC_SERIES_NRF52X
-	depends on !NRF_802154_RADIO_DRIVER
-	select NRFX_GPIOTE
-	select GPIO
-	select NRFX_TIMER1
-	bool "Bluetooth Radio 3-Wire Coexistence"
-	help
-	  Radio Coexistence interface implementation using a 3-wire PTA
-	  implementation for co-located 2.4 GHz radios.
-
 config MPSL_CX_BT_1WIRE
 	depends on SOC_SERIES_NRF52X
 	select NRFX_GPIOTE
