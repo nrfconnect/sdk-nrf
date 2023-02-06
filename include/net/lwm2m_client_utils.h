@@ -320,6 +320,36 @@ int lwm2m_rai_get(enum lwm2m_rai_mode *mode);
  */
 int lwm2m_rai_req(enum lwm2m_rai_mode mode);
 
+/**
+ * @brief Enable connection pre-evaluation module.
+ *
+ * @param min_energy_estimate Minimum estimated energy consumption
+ * when data transmission is started.
+ * @param maximum_delay_s Maximum time in seconds to delay
+ * data transmission.
+ * @param poll_period_ms Time period in milliseconds before new
+ * energy estimation.
+ *
+ * @return Zero if success, negative error code otherwise.
+ */
+int lwm2m_utils_enable_conneval(enum lte_lc_energy_estimate min_energy_estimate,
+				uint64_t maximum_delay_s, uint64_t poll_period_ms);
+
+/**
+ * @brief Disable connection pre-evaluation.
+ */
+void lwm2m_utils_disable_conneval(void);
+
+/**
+ * @brief Start connection pre-evaluation.
+ *
+ * @param client Pointer to LwM2M context
+ * @param client_event pointer to LwM2M RD client events
+ *
+ * @return Zero if success, negative error code otherwise.
+ */
+int lwm2m_utils_conneval(struct lwm2m_ctx *client, enum lwm2m_rd_client_event *client_event);
+
 /* Advanced firmare object support */
 uint8_t lwm2m_adv_firmware_get_update_state(uint16_t obj_inst_id);
 void lwm2m_adv_firmware_set_update_state(uint16_t obj_inst_id, uint8_t state);
