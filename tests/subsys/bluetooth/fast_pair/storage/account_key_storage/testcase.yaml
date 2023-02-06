@@ -1,28 +1,28 @@
 tests:
-  fast_pair.storage.default:
+  fast_pair.storage.account_key_storage.default:
     integration_platforms:
       - nrf52dk_nrf52832
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf9160dk_nrf9160_ns
       - qemu_cortex_m3
-  fast_pair.storage.6keys:
+  fast_pair.storage.account_key_storage.6keys:
     integration_platforms:
       - qemu_cortex_m3
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=6
-  fast_pair.storage.7keys:
+  fast_pair.storage.account_key_storage.7keys:
     integration_platforms:
       - qemu_cortex_m3
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=7
-  fast_pair.storage.8keys:
+  fast_pair.storage.account_key_storage.8keys:
     integration_platforms:
       - qemu_cortex_m3
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=8
-  fast_pair.storage.9keys:
+  fast_pair.storage.account_key_storage.9keys:
     integration_platforms:
       - qemu_cortex_m3
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=9
-  fast_pair.storage.10keys:
+  fast_pair.storage.account_key_storage.10keys:
     integration_platforms:
       - qemu_cortex_m3
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=10
