@@ -3,7 +3,8 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hwid.c)
+target_sources_ifdef(CONFIG_DESKTOP_HWID
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hwid.c)
 
 target_sources_ifdef(CONFIG_DESKTOP_ADV_PROV_UUID16_ALL
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/bt_le_adv_prov_uuid16.c)

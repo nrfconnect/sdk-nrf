@@ -1,22 +1,11 @@
 #
-# Copyright (c) 2018-2021 Nordic Semiconductor ASA
+# Copyright (c) 2023 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "BLE"
-
-config BT_GATT_SERVICE_CHANGED
-	default n if DESKTOP_ROLE_HID_DONGLE
-	help
-	  GATT Service Changed support is not needed for nRF Desktop dongles.
-	  The dongles do not change their GATT Services, they work mainly as
-	  GATT Clients and receive HID reports from BLE connected peripherals.
-
-comment "BLE Bond"
-
-config DESKTOP_BLE_BOND_ENABLE
-	bool "Enable BLE bond module"
+menuconfig DESKTOP_BLE_BOND_ENABLE
+	bool "BLE bond module"
 	depends on BT_BONDABLE
 	depends on BT_SETTINGS
 	depends on CAF_SETTINGS_LOADER
@@ -28,6 +17,8 @@ config DESKTOP_BLE_BOND_ENABLE
 
 	  The module selects the CAF_BLE_BOND_SUPPORTED option to inform CAF that BLE bond module is
 	  supported by the application.
+
+if DESKTOP_BLE_BOND_ENABLE
 
 config DESKTOP_BLE_USE_DEFAULT_ID
 	bool "Use default Bluetooth local identity"
@@ -68,13 +59,6 @@ config DESKTOP_BLE_NEW_PEER_SCAN_REQUEST
 	  Regardless of the choice made the device scans periodically for
 	  already bonded peers.
 
-config DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT
-	bool "Look for peers after boot"
-	depends on DESKTOP_BLE_NEW_PEER_SCAN_REQUEST
-	help
-	  When enabled the device will look for new peers also after it was
-	  booted.
-
 config DESKTOP_BLE_PEER_ERASE
 	bool "Enable peer erase"
 	help
@@ -85,7 +69,8 @@ config DESKTOP_BLE_PEER_ERASE_ON_START
 	depends on DESKTOP_BT_PERIPHERAL
 	help
 	  Hold dedicated button during system start to start erase advertising.
-endif
+
+endif # DESKTOP_BLE_PEER_CONTROL
 
 if !DESKTOP_BLE_PEER_CONTROL
 
@@ -93,7 +78,7 @@ config DESKTOP_BLE_PEER_CONTROL_BUTTON
 	hex
 	default 0x0000
 
-endif
+endif # !DESKTOP_BLE_PEER_CONTROL
 
 config DESKTOP_BLE_DONGLE_PEER_ENABLE
 	bool "Enable dongle peer"
@@ -126,7 +111,7 @@ config DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_CONF_CHANNEL
 	bool "Allow erasing dongle peer using config channel"
 	depends on  DESKTOP_CONFIG_CHANNEL_ENABLE
 
-endif
+endif # DESKTOP_BLE_DONGLE_PEER_ENABLE
 
 if !DESKTOP_BLE_DONGLE_PEER_ENABLE
 
@@ -138,79 +123,10 @@ config DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS
 	int
 	default 0
 
-endif
-
-if DESKTOP_BLE_BOND_ENABLE
+endif # !DESKTOP_BLE_DONGLE_PEER_ENABLE
 
 module = DESKTOP_BLE_BOND
 module-str = BLE bonds
 source "subsys/logging/Kconfig.template.log_config"
 
-endif
-
-comment "BLE connection parameters"
-
-if DESKTOP_BT_PERIPHERAL
-
-config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
-	int "Security fail timeout [s]"
-	default 10
-	help
-	  After this time peripheral device disconnects if security is not
-	  established.
-
-config DESKTOP_BLE_LOW_LATENCY_LOCK
-	bool "Keep the slave latency low for LLPM connections"
-	depends on BT_LL_SOFTDEVICE
-	help
-	  When this option is selected, the slave latency is kept low
-	  for the LLPM connection unless device is in low power mode. This
-	  speeds up sending the first HID report after not sending a report for
-	  some connection intervals. Enabling this option increases the power
-	  consumption of the device.
-
-module = DESKTOP_BLE_LATENCY
-module-str = BLE latency
-source "subsys/logging/Kconfig.template.log_config"
-
-endif
-
-if DESKTOP_BT_CENTRAL
-
-config DESKTOP_BLE_USB_MANAGED_CI
-	bool "Manage connection intervals on the USB state change"
-	default y
-	depends on DESKTOP_ROLE_HID_DONGLE
-	depends on DESKTOP_USB_ENABLE
-	help
-	  Manage BLE connection intervals depending on the USB state.
-	  Allows reduced power consumption of the USB dongle device by
-	  setting a larger connection intervals while the USB
-	  enters suspended state.
-	  After the USB resumes normal operation, connection interval is set to
-	  the previous value.
-
-config DESKTOP_BLE_USB_MANAGED_CI_VALUE
-	int "BLE connection interval when USB is suspended"
-	default 100
-	depends on DESKTOP_BLE_USB_MANAGED_CI
-	range 10 100
-	help
-	  Connection interval used for all connected peers while the USB is
-	  in suspended state.
-
-if !DESKTOP_BLE_USB_MANAGED_CI
-
-config DESKTOP_BLE_USB_MANAGED_CI_VALUE
-	int
-	default 0
-
-endif
-
-module = DESKTOP_BLE_CONN_PARAMS
-module-str = BLE connection parameters
-source "subsys/logging/Kconfig.template.log_config"
-
-endif
-
-endmenu
+endif # DESKTOP_BLE_BOND_ENABLE

@@ -1,0 +1,50 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_BLE_CONN_PARAMS_ENABLE
+	bool "BLE connection parameters module"
+	depends on DESKTOP_BT_CENTRAL
+	help
+	  The module updates the Bluetooth connection parameters after the
+	  peripheral discovery, handles connection parameter update requests
+	  from the connected peripherals and increases connection interval for
+	  peripherals while USB is suspended to reduce power consumption.
+
+if DESKTOP_BLE_CONN_PARAMS_ENABLE
+
+config DESKTOP_BLE_USB_MANAGED_CI
+	bool "Manage connection intervals on the USB state change"
+	default y
+	depends on DESKTOP_USB_ENABLE
+	help
+	  Manage BLE connection intervals depending on the USB state. Allows
+	  reduced power consumption of the USB dongle device by setting a larger
+	  connection intervals while the USB enters suspended state. After the
+	  USB resumes normal operation, connection interval is set to the
+	  previous value.
+
+config DESKTOP_BLE_USB_MANAGED_CI_VALUE
+	int "BLE connection interval when USB is suspended"
+	default 100
+	depends on DESKTOP_BLE_USB_MANAGED_CI
+	range 10 100
+	help
+	  Connection interval used for all connected peers while the USB is
+	  in suspended state.
+
+if !DESKTOP_BLE_USB_MANAGED_CI
+
+config DESKTOP_BLE_USB_MANAGED_CI_VALUE
+	int
+	default 0
+
+endif # !DESKTOP_BLE_USB_MANAGED_CI
+
+module = DESKTOP_BLE_CONN_PARAMS
+module-str = BLE connection parameters
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_BLE_CONN_PARAMS_ENABLE
