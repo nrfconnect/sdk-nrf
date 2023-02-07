@@ -116,10 +116,6 @@ TFTP client #XTFTP
 
 The ``#XTFTP`` command allows you to send TFTP commands.
 
-   .. note::
-      The maximum supported file size is 2048 bytes.
-      TFTP write request is not supported yet.
-
 Set command
 -----------
 
@@ -130,22 +126,21 @@ Syntax
 
 ::
 
-   AT#XTFTP=<op>,<url>,<port>,<file_path>[,<mode>]
+   AT#XTFTP=<op>,<url>,<port>,<file_path>[,<mode>,<data>]
 
 * The ``<op>`` parameter can accept one of the following values:
 
   * ``1`` - TFTP read request using IP protocol family version 4.
-  * *Currently not supported* ``2`` - TFTP write request using IP protocol family version 4.
+  * ``2`` - TFTP write request using IP protocol family version 4.
   * ``3`` - TFTP read request using IP protocol family version 6.
-  * *Currently not supported* ``4`` - TFTP write request using IP protocol family version 6.
+  * ``4`` - TFTP write request using IP protocol family version 6.
 
 * The ``<url>`` parameter is a string.
   It indicates the hostname or the IP address of the TFTP server.
   Its maximum size is 128 bytes.
   When the parameter is an IP address, it supports both IPv4 and IPv6.
 * The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
-  It represents the TFTP service port on the remote server.
-  Default port 69 is applied if this parameter is omitted or set to ``0``.
+  It represents the TFTP service port on the remote server, which is usually port 69.
 * The ``<file_path>`` parameter is a string.
   It indicates the file path on the TFTP server to read from or write to.
   Its maximum size is 128 bytes.
@@ -153,6 +148,12 @@ Syntax
   It indicates the three modes defined in TFTP protocol.
   Valid values are ``netascii``, ``octet`` and ``mail``.
   The default value ``octet`` is applied if this parameter is omitted.
+* The ``<data>`` parameter is a string.
+  When ``<op>`` has a value of ``2`` or ``4``, this is the data to be put to the remote server.
+
+   .. note::
+      The maximum data size supported in WRITE request is 1024 bytes.
+      The TFTP connection is terminated by writing less than 512 bytes, as defined in the protocol specification (RFC 1350).
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -177,18 +178,27 @@ Examples
 
 ::
 
-   AT#XTFTP=1,"tftp.server",,"test_tftp_fake.txt"
-   #XTFTP: -4, "remote error"
-   ERROR
+  AT#XTFTP=2,"tftp-server.com",69,"test_put_01.txt","octet","test send TFTP PUT"
+  #XTFTP: 18,"success"
+  OK
 
-   AT#XTFTP=1,"tftp.server",,"test_tftp.txt"
-   #XTFTP: 45,"success"
-   Test file for SLM TFTP client.
-   Does it work?
-   OK
+  AT#XTFTP=1,"tftp-server.com",69,"test_put_01.txt"
+  test send TFTP PUT
+  #XTFTP: 18,"success"
+  OK
 
-   AT#XTFTP=2,"tftp.server",,"test_upload.txt"
-   ERROR
+  AT#XTFTP=2,"tftp-server.com",69,"test_put_02.txt""octet","012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
+  #XTFTP: 540,"success"
+  OK
+
+  AT#XTFTP=1,"tftp-server.com",69,"test_put_02.txt"
+  012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+  #XTFTP: 540,"success"
+  OK
+
+  AT#XTFTP=1,"tftp-server.com",69,"test_put_not_exist.txt"
+  #XTFTP: -4, "remote error"
+  ERROR
 
 Read command
 ------------

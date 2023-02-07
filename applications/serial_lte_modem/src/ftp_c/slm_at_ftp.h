@@ -9,7 +9,7 @@
 
 /**@file
  *
- * @brief Vendor-specific AT command for FTP service.
+ * @brief Vendor-specific AT command for FTP and TFTP services.
  * @{
  */
 /**
@@ -19,6 +19,14 @@
  *           Otherwise, a (negative) error code is returned.
  */
 int slm_at_ftp_init(void);
+
+/**
+ * @brief Initialize TFTP AT command parser.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int slm_at_tftp_init(void);
 
 /**
  * @brief Uninitialize FTP AT command parser.
