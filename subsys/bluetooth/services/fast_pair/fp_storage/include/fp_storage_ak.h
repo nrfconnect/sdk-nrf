@@ -8,6 +8,8 @@
 #define _FP_STORAGE_AK_H_
 
 #include <sys/types.h>
+#include <stdbool.h>
+
 #include "fp_common.h"
 
 /**
