@@ -95,11 +95,6 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	struct host_rpu_msg *umac_cmd = NULL;
 	struct nrf_wifi_cmd_sys_init *umac_cmd_data = NULL;
 	unsigned int len = 0;
-#ifndef CONFIG_NRF700X_RADIO_TEST
-#ifdef CONFIG_NRF700X_REV_A
-	char dummy_mac_addr[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
-#endif /* CONFIG_NRF700X_REV_A */
-#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 	len = sizeof(*umac_cmd_data);
 
@@ -142,13 +137,6 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		umac_cmd_data->sys_params.sleep_enable == 2 ? "HW" :
 		umac_cmd_data->sys_params.sleep_enable == 1 ? "SW" : "DISABLED");
 #ifndef CONFIG_NRF700X_RADIO_TEST
-	/* Rev-A UMAC still expects valid MAC */
-#ifdef CONFIG_NRF700X_REV_A
-	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
-			      umac_cmd_data->sys_params.mac_addr,
-			      dummy_mac_addr,
-			      sizeof(umac_cmd_data->sys_params.mac_addr));
-#endif /* CONFIG_NRF700X_REV_A */
 	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 			      umac_cmd_data->rx_buf_pools,
 			      fmac_dev_ctx->fpriv->rx_buf_pools,
@@ -205,7 +193,6 @@ out:
 }
 
 
-#ifndef CONFIG_NRF700X_REV_A
 enum wifi_nrf_status umac_cmd_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				void *cmd, unsigned int cmd_len)
 {
@@ -246,7 +233,6 @@ out:
 
 
 }
-#endif
 
 enum wifi_nrf_status umac_cmd_he_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					unsigned char he_ltf,
@@ -300,7 +286,6 @@ out:
 }
 
 #ifdef CONFIG_NRF700X_RADIO_TEST
-#ifndef CONFIG_NRF700X_REV_A
 enum wifi_nrf_status umac_cmd_prog_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					struct nrf_wifi_radio_test_init_info *init_params)
 {
@@ -338,7 +323,6 @@ enum wifi_nrf_status umac_cmd_prog_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_c
 out:
 	return status;
 }
-#endif /* !CONFIG_NRF700X_REV_A */
 
 
 enum wifi_nrf_status umac_cmd_prog_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
