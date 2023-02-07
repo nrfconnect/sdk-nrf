@@ -42,6 +42,7 @@ static bool command_generates_command_complete_event(uint16_t hci_opcode)
 	case SDC_HCI_OPCODE_CMD_LE_READ_REMOTE_FEATURES:
 	case SDC_HCI_OPCODE_CMD_LE_ENABLE_ENCRYPTION:
 	case SDC_HCI_OPCODE_CMD_LE_EXT_CREATE_CONN:
+	case SDC_HCI_OPCODE_CMD_LE_EXT_CREATE_CONN_V2:
 	case SDC_HCI_OPCODE_CMD_LE_PERIODIC_ADV_CREATE_SYNC:
 	case SDC_HCI_OPCODE_CMD_LE_REQUEST_PEER_SCA:
 	case SDC_HCI_OPCODE_CMD_LE_READ_REMOTE_TRANSMIT_POWER_LEVEL:
@@ -331,6 +332,11 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_set_periodic_advertising_data = 1;
 	cmds->hci_le_set_periodic_advertising_enable = 1;
 #endif /* CONFIG_BT_PER_ADV*/
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
+	cmds->hci_le_set_periodic_advertising_subevent_data = 1;
+	cmds->hci_le_extended_create_connection_v2 = 1;
+	cmds->hci_le_set_periodic_advertising_parameters_v2 = 1;
+#endif /* CONFIG_BT_CTLR_SDC_PAWR_ADV */
 #endif /* CONFIG_BT_BROADCASTER */
 
 #if defined(CONFIG_BT_OBSERVER)
@@ -515,6 +521,10 @@ static void le_supported_features(sdc_hci_cmd_le_read_local_supported_features_r
 
 #if defined(CONFIG_BT_CTLR_SCA_UPDATE)
 	features->params.sleep_clock_accuracy_updates = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
+	features->params.periodic_advertising_with_responses_advertiser = 1;
 #endif
 }
 
@@ -1074,6 +1084,19 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 #if defined(CONFIG_BT_CTLR_SCA_UPDATE)
 	case SDC_HCI_OPCODE_CMD_LE_REQUEST_PEER_SCA:
 		return sdc_hci_cmd_le_request_peer_sca((void *)cmd_params);
+#endif
+
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
+	case SDC_HCI_OPCODE_CMD_LE_EXT_CREATE_CONN_V2:
+		return sdc_hci_cmd_le_ext_create_conn_v2((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_PARAMS_V2:
+		*param_length_out += sizeof(sdc_hci_cmd_le_set_periodic_adv_params_v2_return_t);
+		return sdc_hci_cmd_le_set_periodic_adv_params_v2((void *)cmd_params,
+								 (void *)event_out_params);
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_SUBEVENT_DATA:
+		*param_length_out += sizeof(sdc_hci_cmd_le_set_periodic_adv_subevent_data_return_t);
+		return sdc_hci_cmd_le_set_periodic_adv_subevent_data((void *)cmd_params,
+								     (void *)event_out_params);
 #endif
 
 	default:
