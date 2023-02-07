@@ -66,7 +66,7 @@ static enum wifi_nrf_status hal_fw_patch_load(struct wifi_nrf_hal_dev_ctx *hal_d
 							patch_chunk_size);
 
 
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+		wifi_nrf_osal_log_dbg(hal_dev_ctx->hpriv->opriv,
 			"%s: Copying patch %s-%s: chunk %d/%d, size: %d\n",
 			__func__,
 			rpu_proc_to_str(rpu_proc),
