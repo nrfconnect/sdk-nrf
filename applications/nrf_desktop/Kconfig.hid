@@ -21,13 +21,12 @@ config DESKTOP_ROLE_HID_PERIPHERAL
 
 config DESKTOP_ROLE_HID_DONGLE
 	bool "HID dongle"
-	imply DESKTOP_HID_FORWARD_ENABLE
 	imply DESKTOP_USB_ENABLE
 	help
-	  The option enables support for the nRF Desktop HID dongle role.
-	  The dongle receives HID reports from Bluetooth connected peripherals
-	  and then forwards the reports to the host. The dongle does not
-	  generate HID reports by itself.
+	  The option enables support for the nRF Desktop HID dongle role. The
+	  dongle forwards HID reports from the HID peripherals to the host
+	  connected over USB. The dongle does not generate HID reports by
+	  itself.
 
 endchoice # DESKTOP_ROLE
 
