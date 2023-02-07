@@ -157,6 +157,10 @@ Wi-Fi
   * New sample :ref:`wifi_sr_coex_sample` demonstrating Wi-Fi Bluetooth LE coexistence.
   * :ref:`ug_wifi` document.
 
+* Removed:
+
+  * nRF7002 revision A support.
+
 Applications
 ============
 
@@ -460,6 +464,10 @@ Wi-Fi samples
 * Added:
 
   * :ref:`wifi_sr_coex_sample` sample demonstrating Wi-Fi Bluetooth LE coexistence.
+
+* Removed:
+
+  * nRF7002 revision A support.
 
 Other samples
 -------------
