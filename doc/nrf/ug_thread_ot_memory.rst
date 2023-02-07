@@ -25,7 +25,7 @@ Moreover, take into account the following considerations:
   * The default :file:`prj.conf` and the corresponding :kconfig:option:`OPENTHREAD_NORDIC_LIBRARY`, :kconfig:option:`OPENTHREAD_THREAD_VERSION` choices.
   * The :kconfig:option:`CONFIG_ASSERT` Kconfig option set to ``n``.
 
-* * Values for the :ref:`Thread CLI sample <ot_cli_sample>`, which works with all OpenThread calls, are the highest possible for the OpenThread stack using the master image library configuration.
+* Values for the :ref:`Thread CLI sample <ot_cli_sample>`, which works with all OpenThread calls, are the highest possible for the OpenThread stack using the master image library configuration.
 
 The tables provide memory requirements for the following device type variants:
 

@@ -118,7 +118,7 @@ Thread
 * Added:
 
   * Support for setting the default Thread output power using the :kconfig:option:`OPENTHREAD_DEFAULT_TX_POWER` Kconfig option.
-
+  * A Thread :ref:`power consumption data <thread_power_consumption>` page.
 
 See `Thread samples`_ for the list of changes for the Thread samples.
 
