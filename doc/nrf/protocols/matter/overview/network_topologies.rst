@@ -90,7 +90,7 @@ Matter controller
 
 .. matter_controller_start
 
-The following figure shows the available Matter controllers in the |NCS|.
+The following figure shows the supported Matter controller types in the |NCS|.
 
 .. figure:: images/matter_setup_controllers_generic.png
    :width: 600
@@ -109,11 +109,7 @@ The Matter controller interacts with the accessory devices using the following p
 * Regular IPv6 communication after the accessory device joins the Thread or Wi-Fi network - to interact with each other by exchanging application messages.
   For example, to report temperature measurements of a sensor.
 
-The following Matter controllers can be used for testing Matter applications based on the |NCS|:
+For testing Matter applications in the |NCS|, we recommend using the CHIP Tool for Linux or macOS as the Matter controller, which is compatible with the |NCS| implementation of Matter.
 
-* **Recommended:** CHIP Tool for Linux or macOS
-* CHIP Tool for Android
-
-These controller types are compatible with the |NCS| implementation of Matter.
-For information about how to build and configure them, see the pages in the :ref:`ug_matter_gs_testing` section.
+For information about how to build and configure this controller, see the pages in the :ref:`ug_matter_gs_testing` section.
 In the Matter upstream repository, you can find information and resources for implementing `other controller setups`_ (for example, mobile Matter controller for iOS).

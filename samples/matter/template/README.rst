@@ -176,9 +176,6 @@ Testing
 When you have built the sample and programmed it to your development kit, it automatically starts the Bluetooth LE advertising and the **LED1** starts flashing (Short Flash On).
 At this point, you can press **Button 1** for six seconds to initiate the factory reset of the device.
 
-.. note::
-    If you are new to Matter, commission the Matter device using the Mobile Controller for Android (CHIP Tool for Android) when :ref:`setting up the Matter development environment <ug_matter_configuring_mobile>`.
-
 .. _matter_template_network_testing:
 
 Testing in a network

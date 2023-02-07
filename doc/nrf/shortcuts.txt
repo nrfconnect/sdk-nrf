@@ -154,7 +154,6 @@
 .. |matter_controller_def_nolink| replace:: The Matter controller is a node in the Matter network and a role within the Matter development environment.
    The controller device is used to pair and control the Matter accessory device remotely over a network, interacting with it using Bluetooth® LE and the regular IPv6 communication.
 .. |matter_chip_tool_pc_default_line| replace:: CHIP Tool for Linux or macOS is the default implementation of the :ref:`ug_matter_configuring_controller` role, recommended for the nRF Connect platform.
-.. |matter_chip_tool_android_recommended_line| replace:: CHIP Tool for Android (also known as Android CHIPTool) is the recommended :ref:`ug_matter_configuring_controller` for mobile, which allows you to test Matter applications using an Android smartphone.
 
 .. ### Other shortcuts
 

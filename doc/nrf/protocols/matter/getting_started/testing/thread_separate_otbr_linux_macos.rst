@@ -14,7 +14,7 @@ With the Thread Border Router installed on Raspberry Pi, this approach provides 
 For example, it allows using a mobile controller by providing connectivity between a Wi-Fi network and a Thread network.
 
 In such setup, Raspberry Pi runs the Thread Border Router, which provides communication between the Thread nodes and the Matter controller.
-The controller can be installed on a PC or a mobile phone.
+The controller can be installed on a PC.
 Both the Thread Border Router and the Matter controller must support IPv6 communication over backbone network, for example Wi-Fi or Ethernet.
 
 .. matter_over_thread_separate_intro_end

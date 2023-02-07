@@ -9,7 +9,7 @@ When you build any of the available Matter samples to the supported development 
 The development kit and the application running Matter stack that is programmed on the development kit together form the Matter accessory device.
 
 The |NCS| supports Matter stack that is built on top of a low-power, 802.15.4-compatible Thread network, or on top of a Wi-Fi network.
-To control the Matter accessory device remotely over either of these networks, you need to set up a Matter controller on a mobile or a PC.
+To control the Matter accessory device remotely over either of these networks, you need to set up a Matter controller on a PC or using one of the compatible ecosystems.
 
 |matter_controller_def_nolink|
 
@@ -53,7 +53,5 @@ The following subpages describe how to set up different development environments
    :caption: Subpages:
 
    thread_separate_otbr_linux_macos
-   thread_separate_otbr_android
    thread_one_otbr
    wifi_pc
-   wifi_mobile

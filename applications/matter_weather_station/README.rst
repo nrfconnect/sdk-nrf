@@ -214,7 +214,7 @@ After programming the application, perform the following steps to test the Matte
 1. Turn on the Thingy:53.
    The application starts in an unprovisioned state.
    The advertising over Bluetooth LE and DFU start automatically, and **LED (LD1)** starts blinking blue (short flash on).
-#. Commission the device into a Thread network by following the steps in :ref:`ug_matter_configuring_mobile`.
+#. Commission the device into a Thread network by following the steps in :ref:`ug_matter_gs_testing_thread_separate_otbr_linux_macos`.
    During the commissioning procedure, **LED (LD1)** of the Matter device starts blinking blue (rapid even flashing).
    This indicates that the device is connected over Bluetooth LE, but does not yet have full Thread network connectivity.
 
@@ -222,45 +222,56 @@ After programming the application, perform the following steps to test the Matte
         To start commissioning, the controller must get the `Onboarding information`_ from the Matter accessory device.
 
    Once the commissioning is complete and the device has full Thread connectivity, **LED (LD1)** starts blinking purple (short flash on).
-#. Read sensor measurements in CHIP Tool for Android:
+#. Request to read sensor measurements in CHIP Tool for Linux or macOS:
 
-   a. In the CHIP Tool for Android application main menu, tap the :guilabel:`SENSOR CLUSTERS` button to open the sensor measurements section.
-      This section contains text boxes to enter **Device ID** and **Endpoint ID**, a drop-down menu with available measurements and two buttons, :guilabel:`READ` and :guilabel:`WATCH`.
+   a. Choose one of the following measurement type and invoke the command using CHIP Tool for Linux or macOS (Fill the **Device ID** argument with the same as was used to commissioning):
 
-      .. figure:: /images/chiptool_sensor_cluster.gif
-         :alt: Sensor cluster section selection
+      * To read temperature:
 
-         Sensor cluster section selection
+         .. code-block:: console
 
-      On this image, **Device ID** has the value ``5`` and **Endpoint ID** has the value ``1``.
-   #. Select one of the available measurement types from the drop-down menu.
-   #. Enter one of the following values for **Endpoint ID**, depending on the selected measurement type:
+            chip-tool temperaturemeasurement read measured-value <Device ID> 1
 
-      * 1 - Temperature measurement
-      * 2 - Relative humidity measurement
-      * 3 - Air pressure measurement
+      * To read relative humidity:
 
-   #. Tap the :guilabel:`READ` button to read and display the single measurement value.
+         .. code-block:: console
 
-      .. figure:: /images/chiptool_temperature_read.gif
-         :alt: Single temperature measurement read
+            chip-tool relativehumiditymeasurement read measured-value <Device ID> 2
 
-         Single temperature measurement read
+      * To read air pressure:
 
-   #. Tap the :guilabel:`WATCH` button to start watching measurement changes in a continuous way and display values on a chart.
+         .. code-block:: console
 
-      .. figure:: /images/chiptool_temperature_watch.gif
-         :alt: Continuous temperature measurement watch
+            chip-tool pressuremeasurement read measured-value <Device ID> 3
 
-         Continuous temperature measurement watch
+   #. After invoking the chosen command, search the the CHIP Tool for Linux or macOS console logs and look for the measurement value:
 
-      The vertical axis represents the measurement values and the horizontal axis represents the current time.
-   #. To change the displayed measurement, select a different measurement type from the drop-down list and enter the corresponding **Endpoint ID** value.
+      * Example of the temperature measurement value log:
 
-      .. figure:: /images/chiptool_relative_humidity.gif
-         :alt: Relative humidity measurement type selection
+         .. code-block:: console
 
-         Relative humidity measurement type selection
+            [1675846190.922905][72877:72879] CHIP:TOO: Endpoint: 1 Cluster: 0x0000_0402 Attribute 0x0000_0000 DataVersion: 1236968801
+            [1675846190.922946][72877:72879] CHIP:TOO:   MeasuredValue: 2348
+
+         This means that the current temperature value is equal to 23.48°C.
+
+      * Example of the relative humidity measurement value log:
+
+         .. code-block:: console
+
+            [1675849697.750923][164859:164861] CHIP:TOO: Endpoint: 2 Cluster: 0x0000_0405 Attribute 0x0000_0000 DataVersion: 385127250
+            [1675849697.750953][164859:164861] CHIP:TOO:   measured value: 2526
+
+         This means that the current relative humidity value is equal to 25.26%.
+
+      * Example of the air pressure measurement value log:
+
+         .. code-block:: console
+
+            [1675849714.536985][164896:164898] CHIP:TOO: Endpoint: 3 Cluster: 0x0000_0403 Attribute 0x0000_0000 DataVersion: 3096547
+            [1675849714.537008][164896:164898] CHIP:TOO:   MeasuredValue: 1015
+
+         This means that the current current air pressure value is equal to 1015 hPa.
 
 Onboarding information
 ----------------------

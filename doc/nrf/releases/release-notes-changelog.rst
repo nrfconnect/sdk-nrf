@@ -92,6 +92,8 @@ Matter
     8 dBm for nRF52840, 3 dBm for nRF5340, 20 dBm for all devices with FEM enabled, and 0 dBm for sleepy devices.
 
 * Fixed the issue of connection timing out when attaching to a Wi-Fi access point that requires Wi-Fi Protected Access 3 (WPA3).
+* Removed support for Android CHIP Tool from the documentation and release artifacts.
+  Moving forward, we recommend using the development tool CHIP Tool for Linux or macOS or mobile applications from publicly available Matter Ecosystems.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 

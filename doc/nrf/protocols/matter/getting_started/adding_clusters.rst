@@ -375,7 +375,7 @@ Testing the new sensor application
 **********************************
 
 .. note::
-   Use CHIP Tool for Android when :ref:`setting up Matter development environment <ug_matter_configuring_mobile>`.
+   Use CHIP Tool for Linux or macOS when :ref:`setting up Matter development environment <ug_matter_gs_testing_thread_separate_otbr_linux_macos>`.
 
 To check if the sensor device is working, complete the following steps:
 
