@@ -491,6 +491,10 @@ Bluetooth libraries and services
 
   * Changed the :kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_MODE` Kconfig option (default value) to not include Fast Pair battery data in the Fast Pair advertising payload by default.
 
+* :ref:`bt_fast_pair_readme` service:
+
+  * Added the :c:func:`bt_fast_pair_factory_reset` function to clear the Fast Pair storage.
+
 Bootloader libraries
 --------------------
 

@@ -155,3 +155,7 @@ No application interaction is required.
 The Fast Pair GATT service modifies default values of related Kconfig options to follow Fast Pair requirements.
 The service also enables the needed functionalities using Kconfig select statement.
 For details, see the :ref:`bt_fast_pair_readme` Bluetooth service documentation in the |NCS|.
+
+The Fast Pair GATT service uses a non-volatile memory to store the Fast Pair user data such as Account Keys and the Personalized Name.
+This data can be cleared by calling the :c:func:`bt_fast_pair_factory_reset` function.
+For details, see the :c:func:`bt_fast_pair_factory_reset` function documentation.
