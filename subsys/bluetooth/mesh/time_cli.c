@@ -8,6 +8,10 @@
 #include "time_internal.h"
 #include "model_utils.h"
 
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_time_cli);
+
 static int handle_status(struct bt_mesh_model *model,
 			  struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
@@ -136,6 +140,11 @@ static int bt_mesh_time_cli_init(struct bt_mesh_model *model)
 	cli->model = model;
 	net_buf_simple_init(cli->pub.msg, 0);
 	bt_mesh_msg_ack_ctx_init(&cli->ack_ctx);
+
+	if (bt_mesh_model_find(bt_mesh_model_elem(model), BT_MESH_MODEL_ID_TIME_SRV)) {
+		LOG_ERR("Time server and time client can not share the same element");
+		return -EINVAL;
+	}
 
 	return 0;
 }
