@@ -81,6 +81,16 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 	#define SDC_PERIODIC_ADV_MEM_SIZE 0
 #endif
 
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
+#define SDC_PERIODIC_ADV_RSP_MEM_SIZE \
+	(CONFIG_BT_CTLR_SDC_PAWR_ADV_COUNT * \
+	 SDC_MEM_PER_PERIODIC_ADV_RSP_SET(CONFIG_BT_CTLR_SDC_PERIODIC_ADV_RSP_TX_BUFFER_COUNT, \
+					  CONFIG_BT_CTLR_SDC_PERIODIC_ADV_RSP_RX_BUFFER_COUNT, \
+					  CONFIG_BT_CTLR_SDC_PERIODIC_ADV_RSP_TX_MAX_DATA_SIZE))
+#else
+#define SDC_PERIODIC_ADV_RSP_MEM_SIZE 0
+#endif
+
 #if defined(CONFIG_BT_PER_ADV_SYNC)
 	#define SDC_PERIODIC_ADV_SYNC_COUNT CONFIG_BT_PER_ADV_SYNC_MAX
 	#define SDC_PERIODIC_SYNC_MEM_SIZE \
@@ -136,6 +146,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 		      (SDC_CENTRAL_COUNT * CENTRAL_MEM_SIZE) + \
 		      (SDC_ADV_SET_MEM_SIZE) + \
 		      (SDC_PERIODIC_ADV_MEM_SIZE) + \
+		      (SDC_PERIODIC_ADV_RSP_MEM_SIZE) + \
 		      (SDC_PERIODIC_SYNC_MEM_SIZE) + \
 		      (SDC_PERIODIC_ADV_LIST_MEM_SIZE) + \
 		      (SDC_SCAN_BUF_SIZE) + \
@@ -644,6 +655,13 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_PAWR_ADV)) {
+		err = sdc_support_le_periodic_adv_with_rsp();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 	return 0;
 }
 
@@ -779,6 +797,28 @@ static int configure_memory_usage(void)
 		}
 #endif
 	}
+
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
+	cfg.periodic_adv_rsp_count.count = CONFIG_BT_CTLR_SDC_PAWR_ADV_COUNT;
+	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+				      SDC_CFG_TYPE_PERIODIC_ADV_RSP_COUNT, &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+
+	cfg.periodic_adv_rsp_buffer_cfg.tx_buffer_count =
+		CONFIG_BT_CTLR_SDC_PERIODIC_ADV_RSP_TX_BUFFER_COUNT;
+	cfg.periodic_adv_rsp_buffer_cfg.max_tx_data_size =
+		CONFIG_BT_CTLR_SDC_PERIODIC_ADV_RSP_TX_MAX_DATA_SIZE;
+	cfg.periodic_adv_rsp_buffer_cfg.rx_buffer_count =
+		CONFIG_BT_CTLR_SDC_PERIODIC_ADV_RSP_RX_BUFFER_COUNT;
+
+	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+				      SDC_CFG_TYPE_PERIODIC_ADV_RSP_BUFFER_CFG, &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+#endif
 
 	LOG_DBG("BT mempool size: %u, required: %u",
 	       sizeof(sdc_mempool), required_memory);

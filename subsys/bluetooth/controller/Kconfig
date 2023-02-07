@@ -202,6 +202,7 @@ choice BT_LL_SOFTDEVICE_VARIANT
 						     MPSL_CX_BT_3WIRE || \
 						     BT_CTLR_SYNC_PERIODIC || \
 						     BT_CTLR_SCA_UPDATE || \
+						     BT_CTLR_SDC_PAWR_ADV || \
 						     SOC_NRF5340_CPUNET)
 	default BT_LL_SOFTDEVICE_CENTRAL if BT_OBSERVER
 	default BT_LL_SOFTDEVICE_PERIPHERAL if BT_BROADCASTER
@@ -310,5 +311,52 @@ config BT_UNINIT_MPSL_ON_DISABLE
 	  mpsl_lib_uninit, which releases all peripherals and allows the user to
 	  override any interrupt handlers used by MPSL.
 
+config BT_CTLR_SDC_PAWR_ADV
+	bool "LE Periodic Advertising with Responses Advertising State [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	depends on BT_PER_ADV
+	depends on BT_CTLR_SYNC_TRANSFER_SENDER
+	help
+	  Enable support for Periodic Advertising with Respsonses - Advertiser.
+
+if BT_CTLR_SDC_PAWR_ADV
+config BT_CTLR_SDC_PAWR_ADV_COUNT
+	int "Periodic Advertising with Responses - Advertiser sets"
+	range 0 10
+	default 1
+	help
+	  Maximum number of concurrent Periodic Advertising with Responses
+	  advertisers supported.
+
+config BT_CTLR_SDC_PERIODIC_ADV_RSP_TX_BUFFER_COUNT
+	int "Number of PAwR advertiser TX buffers"
+	range 1 128
+	default 1
+	help
+	  Maximum number of subevent indications that can be buffered at a time.
+	  When using a larger value the controller will send data requests for more
+	  subevents at a time.
+
+config BT_CTLR_SDC_PERIODIC_ADV_RSP_TX_MAX_DATA_SIZE
+	int "Maximum size of PawR advertiser TX buffers"
+	range 1 249
+	default 73
+	help
+	  Maximum size of subevent indications. Decreasing this will reduce memory
+	  usage and increase scheduling performance. The controller will disallow
+	  sending a subevent indication with a larger payload.
+
+config BT_CTLR_SDC_PERIODIC_ADV_RSP_RX_BUFFER_COUNT
+	int "Number of PAwR advertiser RX buffers"
+	range 0 255
+	default 2
+	help
+	  Maximum number of periodic advertising response reports that can be
+	  buffered at a time. This should be increased when a short response slot
+	  spacing is used so that the controller is able to buffer all responses
+	  until the host is able to pull the periodic advertising response reports.
+
+	  A value of 0 will disable reception of subevent responses.
+endif
 endmenu
 endif  # BT_LL_SOFTDEVICE
