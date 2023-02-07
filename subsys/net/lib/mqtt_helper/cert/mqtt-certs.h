@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#warning "Credentials are exposed in non-secure memory. Do avoid in a production scenario."
-
 /*
  *      "-----BEGIN CA CERTIFICATE-----\n"
  *      "-----CERTIFICATE-----\n"
