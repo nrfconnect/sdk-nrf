@@ -11,6 +11,7 @@
 #include <zephyr/settings/settings.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
+#include <net/nrf_cloud_alerts.h>
 #include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
 
@@ -106,6 +107,7 @@ static int send_message(const char *const msg)
 	/* Turn the SEND LED on for a bit */
 	set_led(SEND_LED_NUM, 1);
 
+	LOG_DBG("Sending message:'%s'", msg);
 	/* Send the message to nRF Cloud */
 	ret = nrf_cloud_rest_send_device_message(&rest_ctx, device_id, msg, false, NULL);
 	if (ret) {
@@ -115,6 +117,7 @@ static int send_message(const char *const msg)
 	/* Keep that LED on for at least 100ms */
 	k_sleep(K_MSEC(100));
 
+	LOG_DBG("Message sent");
 	/* Turn the LED back off */
 	set_led(SEND_LED_NUM, 0);
 
@@ -353,6 +356,11 @@ void main(void)
 		LOG_ERR("Setup failed, stopping.");
 		return;
 	}
+
+	rest_ctx.keep_alive = true;
+	(void)nrf_cloud_rest_alert_send(&rest_ctx, device_id,
+					ALERT_TYPE_DEVICE_NOW_ONLINE, 0, NULL);
+	rest_ctx.keep_alive = false;
 
 	/* Send off a hello world message! */
 	/* This does not match a predefined schema. But that's not a problem! */

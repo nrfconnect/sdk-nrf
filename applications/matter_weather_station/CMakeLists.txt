@@ -45,7 +45,6 @@ target_sources(app PRIVATE
     src/buzzer.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
-    ${COMMON_ROOT}/src/thread_util.cpp
     ${COMMON_ROOT}/src/led_widget.cpp
     ${COMMON_ROOT}/src/dfu_over_smp.cpp
 )

@@ -27,4 +27,5 @@ You can find more information about OpenThread at `OpenThread.io`_.
    ug_thread_communication.rst
    ug_thread_ot_integration.rst
    ug_thread_ot_memory.rst
+   ug_thread_power_consumption.rst
    ug_thread_commissioning.rst

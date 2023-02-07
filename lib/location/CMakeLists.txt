@@ -12,5 +12,7 @@ zephyr_library_sources_ifdef(CONFIG_LOCATION_SERVICE_HERE location_service_utils
 zephyr_library_sources_ifdef(CONFIG_LOCATION_METHOD_GNSS method_gnss.c)
 zephyr_library_sources_ifdef(CONFIG_LOCATION_METHOD_CELLULAR method_cellular.c)
 zephyr_library_sources_ifdef(CONFIG_LOCATION_METHOD_WIFI method_wifi.c)
-add_subdirectory_ifdef(CONFIG_LOCATION_METHOD_CELLULAR cellular)
-add_subdirectory_ifdef(CONFIG_LOCATION_METHOD_WIFI wifi)
+
+if(CONFIG_LOCATION_METHOD_CELLULAR OR CONFIG_LOCATION_METHOD_WIFI)
+add_subdirectory(cloud_service)
+endif()

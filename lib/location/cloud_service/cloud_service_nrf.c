@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -12,7 +12,7 @@
 #include <net/nrf_cloud_rest.h>
 #endif
 
-#include "cellular_service.h"
+#include "cloud_service.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
@@ -29,32 +29,33 @@ BUILD_ASSERT(
 	"If CONFIG_NRF_CLOUD_MQTT is enabled also CONFIG_NRF_CLOUD_LOCATION must be enabled");
 
 static struct location_data nrf_cloud_location;
-static K_SEM_DEFINE(location_ready, 0, 1);
+static K_SEM_DEFINE(nrf_location_ready, 0, 1);
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
-static void location_service_location_ready_cb(const struct nrf_cloud_location_result *const result)
+static void cloud_service_nrf_location_ready_cb(
+	const struct nrf_cloud_location_result *const result)
 {
 	if ((result != NULL) && (result->err == NRF_CLOUD_ERROR_NONE)) {
 		nrf_cloud_location.latitude = result->lat;
 		nrf_cloud_location.longitude = result->lon;
 		nrf_cloud_location.accuracy = (double)result->unc;
 
-		k_sem_give(&location_ready);
+		k_sem_give(&nrf_location_ready);
 	} else {
 		if (result) {
-			LOG_ERR("Unable to determine location from cellular data, error: %d",
+			LOG_ERR("Unable to determine location from cloud service, error: %d",
 				result->err);
 		}
-		/* Reset the semaphore to unblock cellular_nrf_cloud_pos_get()
+		/* Reset the semaphore to unblock cloud_service_nrf_pos_get()
 		 * and make it return an error.
 		 */
-		k_sem_reset(&location_ready);
+		k_sem_reset(&nrf_location_ready);
 	}
 }
 
-int cellular_nrf_cloud_pos_get(
-	const struct location_cellular_serv_pos_req *params,
+int cloud_service_nrf_pos_get(
+	const struct cloud_service_pos_req *params,
 	char * const rcv_buf,
 	const size_t rcv_buf_len,
 	struct location_data *const location)
@@ -64,23 +65,23 @@ int cellular_nrf_cloud_pos_get(
 
 	int err;
 
-	k_sem_reset(&location_ready);
+	k_sem_reset(&nrf_location_ready);
 
-	LOG_DBG("Sending cellular positioning request (MQTT)");
+	LOG_DBG("Sending positioning request (MQTT)");
 	err = nrf_cloud_location_request(
-		params->cell_data, NULL, true, location_service_location_ready_cb);
+		params->cell_data, params->wifi_data, true, cloud_service_nrf_location_ready_cb);
 	if (err == -EACCES) {
 		LOG_ERR("Cloud connection is not established");
 		return err;
 	} else if (err) {
-		LOG_ERR("Failed to request cellular positioning data, error: %d", err);
+		LOG_ERR("Failed to request positioning data, error: %d", err);
 		return err;
 	}
 
-	LOG_INF("Cellular positioning request sent");
+	LOG_DBG("Positioning request sent");
 
-	if (k_sem_take(&location_ready, K_MSEC(params->timeout)) == -EAGAIN) {
-		LOG_ERR("Cellular positioning data request timed out or "
+	if (k_sem_take(&nrf_location_ready, K_MSEC(params->timeout_ms)) == -EAGAIN) {
+		LOG_ERR("Positioning data request timed out or "
 			"cloud did not return a location");
 		return -ETIMEDOUT;
 	}
@@ -90,8 +91,8 @@ int cellular_nrf_cloud_pos_get(
 	return err;
 }
 #else /* defined(CONFIG_NRF_CLOUD_MQTT) */
-int cellular_nrf_cloud_pos_get(
-	const struct location_cellular_serv_pos_req *params,
+int cloud_service_nrf_pos_get(
+	const struct cloud_service_pos_req *params,
 	char * const rcv_buf,
 	const size_t rcv_buf_len,
 	struct location_data *const location)
@@ -101,17 +102,17 @@ int cellular_nrf_cloud_pos_get(
 	struct nrf_cloud_rest_context rest_ctx = {
 		.connect_socket = -1,
 		.keep_alive = false,
-		.timeout_ms = params->timeout,
+		.timeout_ms = params->timeout_ms,
 		.rx_buf = rcv_buf,
 		.rx_buf_len = rcv_buf_len,
 		.fragment_size = 0
 	};
 	const struct nrf_cloud_rest_location_request loc_req = {
-		.cell_info = (struct lte_lc_cells_info *)params->cell_data,
-		.wifi_info = NULL
+		.cell_info = params->cell_data,
+		.wifi_info = params->wifi_data
 	};
 
-	LOG_DBG("Sending cellular positioning request (REST)");
+	LOG_DBG("Sending positioning request (REST)");
 	err = nrf_cloud_rest_location_get(&rest_ctx, &loc_req, &result);
 	if (!err) {
 		location->accuracy = (double)result.unc;

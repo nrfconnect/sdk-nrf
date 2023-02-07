@@ -79,6 +79,7 @@ Matter
   * The Bluetooth LE advertising arbiter class that enables easier coexistence of application components that want to advertise their Bluetooth LE services.
   * Support for erasing settings partition during DFU over Bluetooth LE SMP for the Nordic nRF52 Series' SoCs.
   * Enabled Wi-Fi and Bluetooth LE coexistence.
+  * Mechanism to retry a failed Wi-Fi connection.
 
 * Updated:
 
@@ -87,6 +88,8 @@ Matter
   * :ref:`ug_matter_overview_commissioning` page with information about :ref:`ug_matter_network_topologies_commissioning_onboarding_formats`.
   * Default retry intervals used by Matter Reliability Protocol for Matter over Thread to account for longer round-trip times in Thread networks with multiple intermediate nodes.
   * The Bluetooth LE connection timeout parameters and the update timeout parameters to make communication over Bluetooth LE more reliable.
+  * Default transmission output power for Matter over Thread devices to the maximum available one for all targets:
+    8 dBm for nRF52840, 3 dBm for nRF5340, 20 dBm for all devices with FEM enabled, and 0 dBm for sleepy devices.
 
 * Fixed the issue of connection timing out when attaching to a Wi-Fi access point that requires Wi-Fi Protected Access 3 (WPA3).
 
@@ -112,7 +115,10 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
-|no_changes_yet_note|
+* Added:
+
+  * Support for setting the default Thread output power using the :kconfig:option:`OPENTHREAD_DEFAULT_TX_POWER` Kconfig option.
+  * A Thread :ref:`power consumption data <thread_power_consumption>` page.
 
 See `Thread samples`_ for the list of changes for the Thread samples.
 
@@ -195,6 +201,8 @@ nRF5340 Audio
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
+
+* Added configuration option (:kconfig:option:`CONFIG_APP_SENSOR_SLEEP_TO`) to set the sensor idling timeout before suspending the sensor.
 
 * Removed the usage of ``ml_runner_signin_event`` from the application.
 
@@ -324,6 +332,10 @@ nRF9160 samples
     * The sensor module has been simplified.
       It does not use application events, filtering, or configurable periods anymore.
     * Replaced deprecated LwM2M API calls with calls to new functions.
+    * Enabled LwM2M queue mode and updated documentation accordingly.
+    * Moved configuration options from :file:`overlay-queue.conf` to default configuration :file:`prj.conf`.
+    * Removed :file:`overlay-queue.conf`.
+    * Enabled :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS` configuration option.
 
 * :ref:`http_application_update_sample` sample:
 
@@ -340,6 +352,11 @@ nRF9160 samples
 
     * MCUboot child image files to properly access external flash on newer nRF9160DK versions.
     * An :file:`overlay_mcuboot_ext_flash.conf` file to enable MCUboot use of external flash.
+    * Sending an alert to the cloud on boot and when a temperature limit is exceeded.
+
+* :ref:`nrf_cloud_rest_device_message` sample:
+
+  * Added sending an alert to nRF Cloud on boot.
 
 * :ref:`slm_shell_sample` sample:
 
@@ -381,6 +398,8 @@ Matter samples
 --------------
 
 * Enabled Matter shell commands for all build types except ``release`` in all Matter samples.
+* Removed FEM-related Kconfig options from all samples.
+  Now, the transmission output power for Matter over Thread can be set using the :kconfig:option:`OPENTHREAD_DEFAULT_TX_POWER` Kconfig option.
 
 * :ref:`matter_lock_sample` sample:
 
@@ -453,7 +472,9 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Binary libraries
 ----------------
 
-|no_changes_yet_note|
+* :ref:`liblwm2m_carrier_readme` library:
+
+  * Removed the dependency on the :ref:`lte_lc_readme` library.
 
 Bluetooth libraries and services
 --------------------------------
@@ -473,10 +494,32 @@ Bluetooth libraries and services
 Bootloader libraries
 --------------------
 
-|no_changes_yet_note|
+* :ref:`doc_bl_storage` library:
+
+  * Updated:
+
+    * The monotonic counter functions can now return errors.
+    * The :c:func:`get_monotonic_version` function is split into functions :c:func:`get_monotonic_version` and :c:func:`get_monotonic_slot`.
+    * The monotonic counter functions now have a counter description parameter to be able to distinguish between different counters.
+
+* :ref:`doc_bl_validation` library:
+
+  * Updated:
+
+    * The :c:func:`get_monotonic_version` function can now return an error.
 
 Modem libraries
 ---------------
+
+* :ref:`nrf_modem_lib_readme` library:
+
+  * Added:
+
+    * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OFF` Kconfig option to set the modem trace level to off by default.
+
+  * Updated:
+
+    * The minimal value of :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE` to meet the requirements of modem firmware 1.3.4.
 
 * :ref:`lib_location` library:
 
@@ -563,6 +606,10 @@ Libraries for networking
     * API for scanning Wi-Fi access points.
 
   * Removed location events and event handlers.
+
+* :ref:`lib_nrf_cloud_alerts` library:
+
+  * A new library for sending notifications of critical device events to nRF Cloud, using either REST or MQTT connections.
 
 Libraries for NFC
 -----------------

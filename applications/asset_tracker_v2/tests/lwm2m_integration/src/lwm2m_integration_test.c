@@ -395,7 +395,7 @@ void test_lwm2m_integration_fota_updating(void)
 	last_cb_type = UINT8_MAX;
 
 	firmware_update_state_cb(STATE_UPDATING);
-	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_FOTA_DONE, last_cb_type);
+	TEST_ASSERT_EQUAL(UINT8_MAX, last_cb_type);
 }
 
 void test_lwm2m_integration_fota_unexpected_event(void)

@@ -49,6 +49,7 @@ config STA_SAMPLE_PASSWORD
 
 config NRF700X_QSPI_ENCRYPTION_KEY
 	string "16 bytes QSPI encryption key, only for testing purposes"
+	depends on BOARD_NRF7002DK_NRF5340
 	help
 	  Specify the QSPI encryption key
 endmenu

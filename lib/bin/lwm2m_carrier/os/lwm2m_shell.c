@@ -14,7 +14,6 @@
 #include <lwm2m_settings.h>
 #include <zephyr/shell/shell.h>
 #include <modem/modem_key_mgmt.h>
-#include <modem/lte_lc.h>
 #include <nrf_modem_at.h>
 
 #define RED	"\e[0;31m"

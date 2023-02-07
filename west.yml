@@ -103,7 +103,7 @@ manifest:
     # changes.
     - name: sdk-hostap
       path: modules/lib/hostap
-      revision: 7856cabe59a96466cafd27cad7e2fed0bb18cfc5
+      revision: 207e0508be39a4896ec584037888b747b9ace558
     - name: mcuboot
       repo-path: sdk-mcuboot
       revision: 4f775a87611a084a2f6ad9a8a5034e080ddcc579
@@ -115,7 +115,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 7dd2e19bf585e17c3572c87dc70151d58e1a2f1b
+      revision: d8c456d422a1180a564fc276ca8b06317f5717f4
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -123,7 +123,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 515c7c67c59cbe1b3b97b235f8c93e63131dee7a
+      revision: bf493678c95ede66a234b3952dd8e184875d716e
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -174,7 +174,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 25506997f286fdbfa72725f4cee78c922c896255
+      revision: 632b63089cd99c7984b1084bded3a00d8f450b49
     - name: ant
       repo-path: sdk-ant
       revision: 8f6e2b0470d11b5c1a97c92df35eb1350e84c5f8

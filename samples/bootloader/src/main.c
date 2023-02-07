@@ -69,8 +69,38 @@ static void validate_and_boot(const struct fw_info *fw_info, uint16_t slot)
 
 	printk("Firmware version %d\r\n", fw_info->version);
 
-	if (fw_info->version > get_monotonic_version(NULL)) {
-		set_monotonic_version(fw_info->version, slot);
+	uint16_t stored_version;
+	int err = get_monotonic_version(&stored_version);
+
+	if (err) {
+		printk("Failed to read the monotonic counter!\n\r");
+		printk("We assume this is due to the firmware version not being enabled.\n\r");
+
+		/*
+		 * Errors in reading the firmware version are assumed to be
+		 * due to the firmware version not being enabled. When the
+		 * firmware version is disabled, no version checking should
+		 * be done. The version is then set to 0 as it is not permitted
+		 * in fwinfo and will therefore pass all version checks.
+		 */
+		stored_version = 0;
+	}
+
+	if (fw_info->version > stored_version) {
+		int err = set_monotonic_version(fw_info->version, slot);
+
+		if (err) {
+			/*
+			 * Errors in writing the firmware version are assumed to be
+			 * due to the firmware version not being enabled. When the
+			 * firmware version is disabled, no version updates should
+			 * be done and this case can be ignored.
+			 *
+			 * The body of this if-statement is intentionally empty.
+			 * It is left here solely for documentation purposes,
+			 * describing why we ignore the error.
+			 */
+		}
 	}
 
 	bl_boot(fw_info);

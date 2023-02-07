@@ -18,7 +18,7 @@ The script scans for the :ref:`mds_readme` UUID in the advertising packets.
 Once it finds the MDS service UUID, it connects to the remote device and reads the MDS data.
 The scripts waits for the MDS notifications and forwards them to the URI read from the URI characteristics.
 
-For more details about the Memfault, see `Memfault SDK`_ and :ref:`mod_memfault` for details on integration with the |NCS|.
+For more details about the Memfault, see `Memfault SDK`_ and :ref:`ug_memfault` for details on integration with the |NCS|.
 
 Requirements
 ************

@@ -27,7 +27,7 @@ static struct sm_trigger sensor_trigger = {
 			 IS_ENABLED(CONFIG_ADXL362_ACCEL_RANGE_4G) ? 4.0 :
 			 IS_ENABLED(CONFIG_ADXL362_ACCEL_RANGE_2G) ? 2.0 : 1/0)
 			 / 2048.0),
-		.timeout_ms = 10 * 1000
+		.timeout_ms = (CONFIG_APP_SENSOR_SLEEP_TO) * 1000
 	}
 };
 

@@ -106,7 +106,7 @@ Otherwise, if SLM imposes flow control, it disables the UART reception when it r
 SLM reenables UART receptions after the transmission of the data previously received has freed up buffer space.
 The buffer size is set to 3884 bytes by default.
 
-.. note:
+.. note::
    There is no unsolicited notification defined for this event.
    UART hardware flow control is responsible for imposing and revoking flow control.
 

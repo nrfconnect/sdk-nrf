@@ -33,6 +33,7 @@ enum slm_fota_operation {
 	SLM_FOTA_STOP,
 	SLM_FOTA_START_APP,
 	SLM_FOTA_START_MFW,
+	SLM_FOTA_START_BL,
 	SLM_FOTA_PAUSE_RESUME,
 	SLM_FOTA_APP_READ = 6,
 	SLM_FOTA_MFW_READ,
@@ -318,7 +319,12 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 		}
 		if (op == SLM_FOTA_STOP) {
 			err = fota_download_cancel();
+#if defined(CONFIG_SECURE_BOOT)
+		} else if (op == SLM_FOTA_START_APP || op == SLM_FOTA_START_MFW ||
+			   op == SLM_FOTA_START_BL) {
+#else
 		} else if (op == SLM_FOTA_START_APP || op == SLM_FOTA_START_MFW) {
+#endif
 			char uri[FILE_URI_MAX];
 			uint16_t pdn_id;
 			int size = FILE_URI_MAX;
@@ -332,7 +338,7 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 			if (at_params_valid_count_get(&at_param_list) > 3) {
 				at_params_unsigned_int_get(&at_param_list, 3, &sec_tag);
 			}
-			if (op == SLM_FOTA_START_APP) {
+			if (op == SLM_FOTA_START_APP || op == SLM_FOTA_START_BL) {
 				type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
 			} else {
 				type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
@@ -343,6 +349,16 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 			} else {
 				err = do_fota_start(op, uri, sec_tag, 0, type);
 			}
+#if defined(CONFIG_SECURE_BOOT)
+			if (op == SLM_FOTA_START_BL) {
+				bool s0_active;
+
+				/* Override fota_type with SLM specified type */
+				fota_type = SLM_DFU_TARGET_IMAGE_TYPE_BL1;
+				(void)fota_download_s0_active_get(&s0_active);
+				LOG_INF("orig s0_active %d", s0_active);
+			}
+#endif
 #if FOTA_FUTURE_FEATURE
 		} else if (op == SLM_FOTA_PAUSE_RESUME) {
 			if (paused) {
@@ -369,11 +385,19 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
+#if defined(CONFIG_SECURE_BOOT)
+		sprintf(rsp_buf,
+			"\r\n#XFOTA: (%d,%d,%d,%d,%d,%d,%d,%d),<file_uri>,<sec_tag>,<apn>\r\n",
+			SLM_FOTA_STOP, SLM_FOTA_START_APP, SLM_FOTA_START_MFW, SLM_FOTA_START_BL,
+			SLM_FOTA_APP_READ, SLM_FOTA_MFW_READ,
+			SLM_FOTA_ERASE_APP, SLM_FOTA_ERASE_MFW);
+#else
 		sprintf(rsp_buf,
 			"\r\n#XFOTA: (%d,%d,%d,%d,%d,%d,%d),<file_uri>,<sec_tag>,<apn>\r\n",
 			SLM_FOTA_STOP, SLM_FOTA_START_APP, SLM_FOTA_START_MFW,
 			SLM_FOTA_APP_READ, SLM_FOTA_MFW_READ,
 			SLM_FOTA_ERASE_APP, SLM_FOTA_ERASE_MFW);
+#endif
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;

@@ -520,6 +520,8 @@ To test the Thread 1.2 and Thread 1.3 features, complete the following steps:
             addresses: [fdde:ad00:beef:0:e0fc:dc28:1d12:8c2]
          Done
 
+.. _ot_cli_sample_low_power:
+
 Power consumption measurements
 ==============================
 
@@ -533,6 +535,8 @@ In this mode, you can not use the CLI to control the device.
 Instead, the device will periodically wake up from deep sleep mode and turn on the radio to receive any messages from its parent.
 
 If the device is connected to a `Power Profiler Kit II (PPK2)`_, you can perform detailed power consumption measurements.
+
+See :ref:`thread_power_consumption` for more information.
 
 Dependencies
 ************

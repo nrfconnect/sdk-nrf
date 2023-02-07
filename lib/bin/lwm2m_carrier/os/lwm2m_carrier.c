@@ -7,10 +7,13 @@
 #include <string.h>
 #include <zephyr/kernel.h>
 #include <lwm2m_carrier.h>
-#include <modem/lte_lc.h>
 
 #define LWM2M_CARRIER_THREAD_STACK_SIZE 4096
 #define LWM2M_CARRIER_THREAD_PRIORITY K_LOWEST_APPLICATION_THREAD_PRIO
+
+
+#if defined(CONFIG_LTE_LINK_CONTROL)
+#include <modem/lte_lc.h>
 
 static void lte_event_handler(const struct lte_lc_evt *const evt)
 {
@@ -45,6 +48,42 @@ __weak int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 
 	return 0;
 }
+#else
+#include <nrf_modem_at.h>
+
+__weak int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
+{
+	int err;
+
+	/* Minimal event handling required by the LwM2M carrier library.
+	 * The application may replace this handler to have better control of the LTE link.
+	 */
+	switch (event->type) {
+	case LWM2M_CARRIER_EVENT_LTE_LINK_UP:
+		err = nrf_modem_at_printf("AT+CFUN=1");
+		if (err) {
+			printk("Failed to set the modem to normal functional mode.\n");
+		}
+		break;
+	case LWM2M_CARRIER_EVENT_LTE_LINK_DOWN:
+		err = nrf_modem_at_printf("AT+CFUN=4");
+		if (err) {
+			printk("Failed to set the modem to offline functional mode\n");
+		}
+		break;
+	case LWM2M_CARRIER_EVENT_LTE_POWER_OFF:
+		err = nrf_modem_at_printf("AT+CFUN=0");
+		if (err) {
+			printk("Failed to set the modem to powered off functional mode\n");
+		}
+		break;
+	default:
+		break;
+	}
+
+	return 0;
+}
+#endif
 
 __weak int lwm2m_carrier_custom_init(lwm2m_carrier_config_t *config)
 {

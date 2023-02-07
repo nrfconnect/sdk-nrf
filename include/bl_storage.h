@@ -33,6 +33,9 @@ extern "C" {
 /* We truncate the 32 byte sha256 down to 16 bytes before storing it */
 #define SB_PUBLIC_KEY_HASH_LEN 16
 
+/* Counter used by NSIB to check the firmware version */
+#define BL_MONOTONIC_COUNTERS_DESC_NSIB 0x1
+
 /** Storage for the PRoT Security Lifecycle state, that consists of 4 states:
  *  - Device assembly and test
  *  - PRoT Provisioning
@@ -134,17 +137,26 @@ void invalidate_public_key(uint32_t key_idx);
 /**
  * @brief Get the number of monotonic counter slots.
  *
- * @return The number of slots. If the provision page does not contain the
- *         information, 0 is returned.
+ * @param[in]   counter_desc  Counter description.
+ * @param[out]  counter_slots Number of slots occupied by the counter.
+ *
+ * @retval 0        Success
+ * @retval -EINVAL  Cannot find counters with description @p counter_desc or the pointer to
+ *                  @p counter_slots is NULL.
  */
-uint16_t num_monotonic_counter_slots(void);
+int num_monotonic_counter_slots(uint16_t counter_desc, uint16_t *counter_slots);
 
 /**
  * @brief Get the current HW monotonic counter.
  *
- * @return The current value of the counter.
+ * @param[in]  counter_desc  Counter description.
+ * @param[out] counter_value The value of the current counter.
+ *
+ * @retval 0        Success
+ * @retval -EINVAL  Cannot find counters with description @p counter_desc or the pointer to
+ *                  @p counter_value is NULL.
  */
-uint16_t get_monotonic_counter(void);
+int get_monotonic_counter(uint16_t counter_desc, uint16_t *counter_value);
 
 /**
  * @brief Set the current HW monotonic counter.
@@ -153,6 +165,7 @@ uint16_t get_monotonic_counter(void);
  *       Values are stored with their bits flipped. This is to squeeze one more
  *       value out of the counter.
  *
+ * @param[in]  counter_desc Counter description.
  * @param[in]  new_counter  The new counter value. Must be larger than the
  *                          current value.
  *
@@ -162,7 +175,7 @@ uint16_t get_monotonic_counter(void);
  * @retval -ENOMEM  There are no more free counter slots (see
  *                  @kconfig{CONFIG_SB_NUM_VER_COUNTER_SLOTS}).
  */
-int set_monotonic_counter(uint16_t new_counter);
+int set_monotonic_counter(uint16_t counter_desc, uint16_t new_counter);
 
 /**
  * @brief The PSA life cycle states a device can be in.

@@ -16,7 +16,7 @@ LOG_MODULE_REGISTER(mdm_slm, CONFIG_MODEM_SLM_LOG_LEVEL);
 BUILD_ASSERT(CONFIG_MODEM_SLM_WAKEUP_PIN >= 0, "Wake up pin not configured");
 
 #define UART_RX_BUF_NUM         2
-#define UART_RX_LEN             1024
+#define UART_RX_LEN             CONFIG_MODEM_SLM_DMA_MAXLEN
 #define UART_RX_TIMEOUT_US      2000
 #define UART_ERROR_DELAY_MS     500
 #define UART_RX_MARGIN_MS       10

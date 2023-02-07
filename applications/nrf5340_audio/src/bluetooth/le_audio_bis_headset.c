@@ -334,11 +334,6 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 		return;
 	}
 
-	if (encrypted) {
-		LOG_ERR("Cannot sync to encrypted broadcast source");
-		return;
-	}
-
 	LOG_INF("Syncing to broadcast stream index %d", active_stream_index);
 
 	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfields[active_stream_index],
@@ -568,7 +563,7 @@ int le_audio_play_pause(void)
 	return 0;
 }
 
-int le_audio_send(uint8_t const *const data, size_t size)
+int le_audio_send(struct encoded_audio enc_audio)
 {
 	LOG_WRN("Not possible to send audio data from broadcast sink");
 	return -ENXIO;

@@ -42,6 +42,7 @@ LOG_MODULE_REGISTER(cis_headset, CONFIG_BLE_LOG_LEVEL);
 #define NET_BUF_POOL_PTR_ITERATE(i, ...) IDENTITY(&iso_tx_pool_##i)
 LISTIFY(CONFIG_BT_ASCS_ASE_SRC_COUNT, NET_BUF_POOL_ITERATE, (;))
 
+static atomic_t iso_tx_pool_alloc;
 /* clang-format off */
 static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ASCS_ASE_SRC_COUNT,
 						       NET_BUF_POOL_PTR_ITERATE, (,)) };
@@ -161,7 +162,7 @@ static void print_codec(const struct bt_codec *codec)
 		uint32_t bitrate =
 			octets_per_sdu * 8 * (1000000 / bt_codec_cfg_get_frame_duration_us(codec));
 
-		LOG_INF("\tOctets per frame: %d (%d kbps)", octets_per_sdu, bitrate);
+		LOG_INF("\tOctets per frame: %d (%d bps)", octets_per_sdu, bitrate);
 		LOG_INF("\tFrames per SDU: %d", bt_codec_cfg_get_frame_blocks_per_sdu(codec, true));
 	} else {
 		LOG_WRN("Codec is not LC3, codec_id: 0x%2x", codec->id);
@@ -356,7 +357,13 @@ static int lc3_metadata_cb(struct bt_audio_stream *stream, const struct bt_codec
 
 static int lc3_disable_cb(struct bt_audio_stream *stream)
 {
+	int ret;
+
 	LOG_DBG("Disable: stream %p", (void *)stream);
+
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
+	ERR_CHK(ret);
+
 	return 0;
 }
 
@@ -374,7 +381,13 @@ static int lc3_stop_cb(struct bt_audio_stream *stream)
 
 static int lc3_release_cb(struct bt_audio_stream *stream)
 {
+	int ret;
+
 	LOG_DBG("Release: stream %p", (void *)stream);
+
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
+	ERR_CHK(ret);
+
 	return 0;
 }
 
@@ -389,6 +402,13 @@ static const struct bt_audio_unicast_server_cb unicast_server_cb = {
 	.stop = lc3_stop_cb,
 	.release = lc3_release_cb,
 };
+
+static void stream_sent_cb(struct bt_audio_stream *stream)
+{
+#if CONFIG_STREAM_BIDIRECTIONAL
+	atomic_dec(&iso_tx_pool_alloc);
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+}
 
 static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_recv_info *info,
 			   struct net_buf *buf)
@@ -418,7 +438,9 @@ static void stream_stop_cb(struct bt_audio_stream *stream)
 	int ret;
 
 	LOG_INF("Stream stopped");
-
+#if CONFIG_STREAM_BIDIRECTIONAL
+	atomic_clear(&iso_tx_pool_alloc);
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
 }
@@ -502,6 +524,7 @@ static struct bt_conn_cb conn_callbacks = {
 };
 
 static struct bt_audio_stream_ops stream_ops = { .recv = stream_recv_cb,
+						 .sent = stream_sent_cb,
 						 .stopped = stream_stop_cb };
 
 static int initialize(le_audio_receive_cb recv_cb)
@@ -671,11 +694,18 @@ int le_audio_play_pause(void)
 	return ble_mcs_play_pause(default_conn);
 }
 
-int le_audio_send(uint8_t const *const data, size_t size)
+int le_audio_send(struct encoded_audio enc_audio)
 {
+
 #if CONFIG_STREAM_BIDIRECTIONAL
 	int ret;
 	struct net_buf *buf;
+	static bool hci_wrn_printed;
+
+	if (enc_audio.num_ch != 1) {
+		LOG_ERR("Num encoded channels must be 1");
+		return -EINVAL;
+	}
 
 	/* CIS headset only supports one source stream for now */
 	if (sources[0].stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
@@ -683,20 +713,42 @@ int le_audio_send(uint8_t const *const data, size_t size)
 		return 0;
 	}
 
+	/* net_buf_alloc allocates buffers for APP->NET transfer over HCI RPMsg,
+	 * but when these buffers are released it is not guaranteed that the
+	 * data has actually been sent. The data might be queued on the NET core,
+	 * and this can cause delays in the audio.
+	 * When stream_sent_cb() is called the data has been sent.
+	 * Data will be discarded if allocation becomes too high, to avoid audio delays.
+	 * If the NET and APP core operates in clock sync, discarding should not occur.
+	 */
+	if (atomic_get(&iso_tx_pool_alloc) >= HCI_ISO_BUF_ALLOC_PER_CHAN) {
+		if (!hci_wrn_printed) {
+			LOG_WRN("HCI ISO TX overrun");
+			hci_wrn_printed = true;
+		}
+
+		return -ENOMEM;
+	}
+
+	hci_wrn_printed = false;
+
 	buf = net_buf_alloc(iso_tx_pools[0], K_NO_WAIT);
 	if (buf == NULL) {
+		/* This should never occur because of the iso_tx_pool_alloc check above */
 		LOG_WRN("Out of TX buffers");
 		return -ENOMEM;
 	}
 
 	net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
-	net_buf_add_mem(buf, data, size);
+	net_buf_add_mem(buf, enc_audio.data, enc_audio.size);
 
+	atomic_inc(&iso_tx_pool_alloc);
 	ret = bt_audio_stream_send(sources[0].stream, buf, sources[0].seq_num++,
 				   BT_ISO_TIMESTAMP_NONE);
 	if (ret < 0) {
 		LOG_WRN("Failed to send audio data: %d", ret);
 		net_buf_unref(buf);
+		atomic_dec(&iso_tx_pool_alloc);
 	}
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 

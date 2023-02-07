@@ -10,8 +10,6 @@
 #include "led_util.h"
 #include "window_covering.h"
 
-#include "thread_util.h"
-
 #include <app-common/zap-generated/attribute-id.h>
 #include <app-common/zap-generated/attribute-type.h>
 #include <app-common/zap-generated/cluster-id.h>
@@ -113,14 +111,6 @@ CHIP_ERROR AppTask::Init()
 		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed: %s", ErrorStr(err));
 		return err;
 	}
-
-#ifdef CONFIG_OPENTHREAD_DEFAULT_TX_POWER
-	err = SetDefaultThreadOutputPower();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("Cannot set default Thread output power");
-		return err;
-	}
-#endif
 
 	/* Initialize LEDs */
 	LEDWidget::InitGpio();
