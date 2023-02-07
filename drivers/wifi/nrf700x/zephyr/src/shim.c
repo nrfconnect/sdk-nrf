@@ -336,7 +336,6 @@ void *net_pkt_from_nbuf(void *iface, void *frm)
 	}
 
 	if (net_pkt_write(pkt, data, len)) {
-		net_pkt_unref(pkt);
 		pkt = NULL;
 	}
 

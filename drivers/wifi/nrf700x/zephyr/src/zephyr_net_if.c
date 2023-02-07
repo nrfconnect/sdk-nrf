@@ -48,7 +48,6 @@ void wifi_nrf_if_rx_frm(void *os_vif_ctx, void *frm)
 
 	if (status < 0) {
 		LOG_ERR("RCV Packet dropped by NET stack: %d", status);
-		net_pkt_unref(pkt);
 	}
 }
 
@@ -117,7 +116,6 @@ int wifi_nrf_if_send(const struct device *dev,
 
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
-		net_pkt_unref(pkt);
 		goto out;
 	}
 
@@ -132,7 +130,6 @@ int wifi_nrf_if_send(const struct device *dev,
 				       vif_ctx_zep->vif_idx,
 				       net_pkt_to_nbuf(pkt));
 #else
-	net_pkt_unref(pkt);
 	goto out;
 #endif /* CONFIG_NRF700X_DATA_TX */
 
