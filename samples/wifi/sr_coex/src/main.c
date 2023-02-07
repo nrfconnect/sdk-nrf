@@ -356,9 +356,6 @@ enum nrf_wifi_pta_wlan_op_band wifi_mgmt_to_pta_band(enum wifi_frequency_bands b
 
 int main(void)
 {
-#ifdef CONFIG_NRF700X_REV_A
-	BUILD_ASSERT(0, "This sample is not supported on nRF7000 Rev A");
-#endif
 	int ret = 0;
 	bool test_wlan = IS_ENABLED(CONFIG_TEST_TYPE_WLAN);
 	bool test_ble = IS_ENABLED(CONFIG_TEST_TYPE_BLE);
