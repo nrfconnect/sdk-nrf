@@ -484,6 +484,8 @@ int le_audio_enable(le_audio_receive_cb recv_cb)
 
 	ARG_UNUSED(recv_cb);
 
+	LOG_INF("Starting broadcast gateway %s", CONFIG_BT_AUDIO_BROADCAST_NAME);
+
 	ret = initialize();
 	if (ret) {
 		LOG_ERR("Failed to initialize");

@@ -334,7 +334,7 @@ static void button_evt_handler(struct button_evt event)
 #endif /*CONFIG_AUDIO_TEST_TONE*/
 
 		if (ret) {
-			LOG_WRN("Failed button 4 press");
+			LOG_WRN("Failed button 4 press, ret: %d", ret);
 		}
 
 		break;
@@ -348,7 +348,7 @@ static void button_evt_handler(struct button_evt event)
 #else
 		ret = le_audio_user_defined_button_press(LE_AUDIO_USER_DEFINED_ACTION_2);
 		if (ret) {
-			LOG_WRN("User defined button 5 action failed");
+			LOG_WRN("User defined button 5 action failed, ret: %d", ret);
 		}
 #endif
 		break;
