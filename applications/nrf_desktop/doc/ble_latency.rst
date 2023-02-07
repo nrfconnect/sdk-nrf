@@ -72,5 +72,3 @@ The module does not register itself using the ``GEN_CONFIG_EVENT_HANDLERS`` macr
    * The nRF Desktop central ignores the requested connection interval, and only the connection latency is updated.
 
    For more detailed information, see the :ref:`nrf_desktop_ble_conn_params` documentation page.
-
-.. |ble_latency| replace:: Bluetooth® LE latency module

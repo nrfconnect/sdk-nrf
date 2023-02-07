@@ -100,10 +100,48 @@
 
 .. ### nRF Desktop shortcuts
 
+.. |battery_meas| replace:: Battery measurement module
+.. |ble_adv| replace:: Bluetooth® LE advertising module
+.. |ble_bond| replace:: Bluetooth® LE bond module
+.. |ble_conn_params| replace:: Bluetooth® LE connection parameters module
+.. |ble_discovery| replace:: Bluetooth® LE discovery module
+.. |ble_latency| replace:: Bluetooth® LE latency module
+.. |ble_scan| replace:: Bluetooth® LE scanning module
+.. |ble_state| replace:: Bluetooth® LE state module
+.. |ble_state_pm| replace:: Bluetooth state power manager module
+.. |button_sim| replace:: button simulator module
+.. |buttons_pm_keep_alive| replace:: Power manager keep alive module for buttons
+.. |click_detector| replace:: click detector module
+.. |device_pm_note| replace:: Not all device power states might be supported by the sensor's device.
+   Check the sensor's driver implementation before configuring :c:member:`sm_sensor_config.suspend`.
+.. |conf_channel| replace:: Configuration channel
+.. |GATT_HID| replace:: GATT HID Service
+.. |hid_forward| replace:: HID forward module
+.. |hid_state| replace:: HID state module
+.. |hid_state_pm| replace:: HID state power manager module
+.. |led_note| replace:: A breathing LED indicates that the device has entered the advertising mode.
+   This happens when the device is looking for a peer to connect to.
+.. |led_state| replace:: LED state module
+.. |led_stream| replace:: LED stream module
+.. |net_state| replace:: network state module
 .. |nrf_desktop_module_event_note| replace:: See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 .. |nrf_desktop_build_type_conf| replace:: In addition to these build types, some boards can have additional build type configurations that you can use to generate an application in a specific variant.
    Such board-specific configurations use dedicated :file:`app_*build_type*.conf` files, where the name of the configuration replaces the ``*build_type*`` part in the file name.
    Given the potential number of such configurations, they are not listed above and you can read the description of each of them in the respective configuration file.
+.. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.
+   When a new Bluetooth Central device successfully connects and bonds, the old bond is removed and the new bond is used instead.
+   If the new peer does not connect in the predefined period of time, the advertising ends and the application switches back to the old peer.
+.. |nRF_Desktop_cancel_operation| replace:: You can cancel the ongoing peer operation with a standard button press.
+.. |only_configured_module_note| replace:: Only the configured module should include the configuration file.
+   Do not include the configuration file in other source files.
+.. |power_manager| replace:: power manager module
+.. |preconfigured_build_types| replace:: The preconfigured build types configure the device without the bootloader in debug mode and with MCUboot bootloader in release mode due to memory size limits.
+.. |sensor_manager| replace:: sensor manager module
+.. |sensor_data_aggregator| replace:: sensor data aggregator module
+.. |settings_loader| replace:: Settings loader module
+.. |smp| replace:: simple management protocol module
+.. |usb_state| replace:: USB state module
+.. |usb_state_pm| replace:: USB state power manager module
 
 .. ### Matter shortcuts
 

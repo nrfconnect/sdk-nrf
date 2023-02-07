@@ -44,5 +44,3 @@ The |button_sim| generates button sequence using :c:struct:`k_work_delayable`, w
 The work handler submits the press and the release of a single button from the sequence.
 
 Receiving ``button_event`` with the key ID set to :ref:`CONFIG_DESKTOP_BUTTONS_SIM_TRIGGER_KEY_ID <config_desktop_app_options>` either stops generating the sequence (in case it is already being generated) or starts generating it.
-
-.. |button_sim| replace:: button simulator module

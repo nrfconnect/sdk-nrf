@@ -75,5 +75,3 @@ LED effect API
 .. doxygengroup:: led_effect_CAF
    :project: nrf
    :members:
-
-.. |led_state| replace:: LED state module

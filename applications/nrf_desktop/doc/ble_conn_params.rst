@@ -67,5 +67,3 @@ After the :ref:`nrf_desktop_ble_discovery` completes the peripheral discovery, t
     This is the shortest interval allowed by the standard Bluetooth.
   * **10 ms** otherwise.
     This is required to avoid Bluetooth Link Layer scheduling conflicts that could lead to HID report rate drop.
-
-.. |ble_conn_params| replace:: Bluetooth® LE connection parameters module

@@ -57,5 +57,3 @@ The module assumes that only default Bluetooth local identity is used.
 .. note::
    If your application requires an application-specific Bluetooth LE bond and peer management, you must provide your own implementation of the Bluetooth LE bond module.
    See :ref:`nrf_desktop_ble_bond` for an example of implementation.
-
-.. |ble_bond| replace:: Bluetooth LE bond module

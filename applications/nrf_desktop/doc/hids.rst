@@ -64,7 +64,7 @@ Detailed information about HID-related configuration in nRF Desktop is available
 Sending HID input reports
 =========================
 
-After subscriptions are enabled in |HID_state|, the |HID_state| sends the HID input reports as ``hid_report_event``.
+After subscriptions are enabled in |hid_state|, the |hid_state| sends the HID input reports as ``hid_report_event``.
 The HID Service application module sends the report over Bluetooth LE and submits the ``hid_report_sent_event`` to inform that the given HID input report was sent.
 
 HID keyboard LED output report
@@ -72,7 +72,7 @@ HID keyboard LED output report
 
 The module can receive an HID output report setting state of the keyboard LEDs, e.g. state of the Caps Lock.
 The report is received from the Bluetooth connected host.
-The module forwards the report using ``hid_report_event``, that is handled either by |HID_state| (for peripheral) or :ref:`nrf_desktop_hid_forward` (for central).
+The module forwards the report using ``hid_report_event``, that is handled either by |hid_state| (for peripheral) or :ref:`nrf_desktop_hid_forward` (for central).
 
 Right now, the only board that displays information received in the HID output report using hardware LEDs is the :ref:`nrf52840dk_nrf52840 <nrf52840dk_nrf52840>` in ``keyboard`` build type configuration.
 The keyboard reference design (nrf52kbd_nrf52832) has only one LED that is used to display the Bluetooth LE peer state.
@@ -104,7 +104,3 @@ Transport for configuration channel
 
 The HID Service application module works as a transport for the :ref:`nrf_desktop_config_channel` and exchanges the |conf_channel| HID reports over Bluetooth LE.
 The module communicates with the |conf_channel| listeners using ``config_event``.
-
-.. |GATT_HID| replace:: GATT HID Service
-.. |HID_state| replace:: HID state module
-.. |conf_channel| replace:: Configuration channel

@@ -40,5 +40,3 @@ Upon reception of the event and depending on the current USB state, the module r
   The module restricts the power down level to the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED` and generates ``force_power_down_event``.
 
 For more information about the USB states in nRF Desktop, see the :ref:`nrf_desktop_usb_state`.
-
-.. |usb_state_pm| replace:: USB state power manager module

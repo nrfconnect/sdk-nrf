@@ -272,5 +272,3 @@ When the |hid_state| receives a :c:struct:`hid_report_event` that contains an HI
 By default, nRF Desktop supports only HID keyboard LED output report.
 The nRF Desktop peripheral displays the state of the keyboard LEDs that was specified by the HID subscriber that subscribed for keyboard key HID input report.
 When the subscriber is changed or it updates the state of the keyboard LEDs, the |hid_state| sends :c:struct:`leds_event` to update the state of the hardware LEDs.
-
-.. |hid_state| replace:: HID state module

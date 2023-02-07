@@ -145,5 +145,3 @@ The peripheral uses :ref:`nrf_desktop_dev_descr` to provide the HW ID to the nRF
 The |hid_forward| only forwards the configuration channel requests that come from the USB connected host, it does not generate its own requests.
 
 For more details, see :ref:`nrf_desktop_config_channel` documentation.
-
-.. |hid_forward| replace:: HID forward module
