@@ -733,8 +733,6 @@ enum wifi_nrf_status tx_enqueue(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	qlen = wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv, queue);
 
 	if (qlen >= CONFIG_NRF700x_MAX_TX_PENDING_QLEN) {
-		wifi_nrf_osal_nbuf_free(fmac_dev_ctx->fpriv->opriv,
-					nwb);
 		goto out;
 	}
 
@@ -1436,8 +1434,6 @@ enum wifi_nrf_status wifi_nrf_fmac_start_xmit(void *dev_ctx,
 
 	if (wifi_nrf_osal_nbuf_data_size(fmac_dev_ctx->fpriv->opriv,
 					 nbuf) < WIFI_NRF_FMAC_ETH_HDR_LEN) {
-		wifi_nrf_osal_nbuf_free(fmac_dev_ctx->fpriv->opriv,
-					nbuf);
 		goto out;
 	}
 
@@ -1469,6 +1465,11 @@ enum wifi_nrf_status wifi_nrf_fmac_start_xmit(void *dev_ctx,
 				  ac,
 				  peer_id);
 
+	return WIFI_NRF_STATUS_SUCCESS;
 out:
+	if (nbuf) {
+		wifi_nrf_osal_nbuf_free(fmac_dev_ctx->fpriv->opriv,
+			nbuf);
+	}
 	return status;
 }
