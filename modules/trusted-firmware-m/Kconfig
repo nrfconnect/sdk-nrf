@@ -210,6 +210,13 @@ config TFM_ALLOW_NON_SECURE_RESET
 	  to issue a system reset of the chip without going through a secure
 	  service.
 
+config TFM_S_CODE_VECTOR_TABLE_SIZE
+	hex
+	default 0x144 if SOC_NRF9160
+	default 0x154 if SOC_NRF5340_CPUAPP
+	default 0xffffffff # Invalid value to discover missing SOC support.
+	help
+	  The TF-M interrupt vector table size.
 
 config BOOTLOADER_MCUBOOT
 	bool
