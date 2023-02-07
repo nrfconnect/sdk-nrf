@@ -127,8 +127,6 @@ if (CONFIG_TFM_PROFILE_TYPE_MINIMAL)
     -DPLATFORM_DEFAULT_NV_SEED=OFF
     -DPLATFORM_DEFAULT_OTP=OFF
     -DPLATFORM_DEFAULT_OTP_WRITEABLE=OFF
-    -DCRYPTO_NV_SEED=OFF
-    -DPLATFORM_NV_COUNTER_MODULE_DISABLED=TRUE
     -DPLATFORM_DEFAULT_NV_COUNTERS=OFF
     )
 endif()
@@ -163,13 +161,8 @@ if (CONFIG_NFCT_PINS_AS_GPIOS)
   )
 endif()
 
-# The ENGINE_BUF_SIZE holds the dynamic allocation buffer for
-# TF-M, which is the equivalent of dynamic allocation in MBEDTLS
 set_property(TARGET zephyr_property_target
   APPEND PROPERTY TFM_CMAKE_OPTIONS
-    -DCRYPTO_ENGINE_BUF_SIZE=${CONFIG_TFM_CRYPTO_ENGINE_BUF_SIZE}
-    -DCRYPTO_CONC_OPER_NUM=${CONFIG_TFM_CRYPTO_CONC_OPER_NUM}
-    -DCRYPTO_IOVEC_BUFFER_SIZE=${CONFIG_TFM_CRYPTO_IOVEC_BUFFER_SIZE}
     # Pass Zephyr Python to TF-M so both uses identical Python.
     -DPython3_EXECUTABLE=${Python3_EXECUTABLE}
     # TF-M calls back into nrf_security which loads Zephyr Python lookup
@@ -178,3 +171,54 @@ set_property(TARGET zephyr_property_target
 )
 
 zephyr_include_directories(${NRF_DIR}/include/tfm)
+
+# Default values from config_base.h in TF-M.
+set(PLATFORM_SERVICE_INPUT_BUFFER_SIZE     64)
+set(PLATFORM_SERVICE_OUTPUT_BUFFER_SIZE    64)
+set(PLATFORM_SP_STACK_SIZE                 0x500)
+set(PLATFORM_NV_COUNTER_MODULE_DISABLED    ${CONFIG_TFM_PROFILE_TYPE_MINIMAL})
+set(CRYPTO_ENGINE_BUF_SIZE                 ${CONFIG_TFM_CRYPTO_ENGINE_BUF_SIZE})
+set(CRYPTO_CONC_OPER_NUM                   ${CONFIG_TFM_CRYPTO_CONC_OPER_NUM})
+set(CRYPTO_RNG_MODULE_ENABLED              ${CONFIG_TFM_CRYPTO_RNG_MODULE_ENABLED})
+set(CRYPTO_KEY_MODULE_ENABLED              ${CONFIG_TFM_CRYPTO_KEY_MODULE_ENABLED})
+set(CRYPTO_AEAD_MODULE_ENABLED             ${CONFIG_TFM_CRYPTO_AEAD_MODULE_ENABLED})
+set(CRYPTO_MAC_MODULE_ENABLED              ${CONFIG_TFM_CRYPTO_MAC_MODULE_ENABLED})
+set(CRYPTO_HASH_MODULE_ENABLED             ${CONFIG_TFM_CRYPTO_HASH_MODULE_ENABLED})
+set(CRYPTO_CIPHER_MODULE_ENABLED           ${CONFIG_TFM_CRYPTO_CIPHER_MODULE_ENABLED})
+set(CRYPTO_ASYM_SIGN_MODULE_ENABLED        ${CONFIG_TFM_CRYPTO_ASYM_SIGN_MODULE_ENABLED})
+set(CRYPTO_ASYM_ENCRYPT_MODULE_ENABLED     ${CONFIG_TFM_CRYPTO_ASYM_ENCRYPT_MODULE_ENABLED})
+set(CRYPTO_KEY_DERIVATION_MODULE_ENABLED   ${CONFIG_TFM_CRYPTO_KEY_DERIVATION_MODULE_ENABLED})
+set(CRYPTO_IOVEC_BUFFER_SIZE               ${CONFIG_TFM_CRYPTO_IOVEC_BUFFER_SIZE})
+set(CRYPTO_NV_SEED                         ${CONFIG_TFM_CRYPTO_NV_SEED})
+set(CRYPTO_SINGLE_PART_FUNCS_DISABLED      0)
+set(CRYPTO_STACK_SIZE                      ${CONFIG_TFM_CRYPTO_PARTITION_STACK_SIZE})
+set(TFM_FWU_BUF_SIZE                       PSA_FWU_MAX_WRITE_SIZE)
+set(FWU_STACK_SIZE                         0x600)
+set(ATTEST_INCLUDE_OPTIONAL_CLAIMS         1)
+set(ATTEST_INCLUDE_COSE_KEY_ID             0)
+set(ATTEST_STACK_SIZE                      0x700)
+set(ATTEST_TOKEN_PROFILE_PSA_IOT_1         1)
+set(ITS_CREATE_FLASH_LAYOUT                1)
+set(ITS_RAM_FS                             0)
+set(ITS_VALIDATE_METADATA_FROM_FLASH       1)
+set(ITS_MAX_ASSET_SIZE                     512)
+set(ITS_BUF_SIZE                           ITS_MAX_ASSET_SIZE)
+set(ITS_NUM_ASSETS                         10)
+set(ITS_STACK_SIZE                         0x720)
+set(PS_CREATE_FLASH_LAYOUT                 1)
+set(PS_RAM_FS                              0)
+set(PS_ROLLBACK_PROTECTION                 1)
+set(PS_VALIDATE_METADATA_FROM_FLASH        1)
+set(PS_MAX_ASSET_SIZE                      2048)
+set(PS_NUM_ASSETS                          10)
+set(PS_STACK_SIZE                          0x700)
+set(CONFIG_TFM_CONN_HANDLE_MAX_NUM         8)
+set(CONFIG_TFM_DOORBELL_API                0)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tfm_config.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/tfm_config.h)
+
+set_property(TARGET zephyr_property_target
+  APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DPROJECT_CONFIG_HEADER_FILE=${CMAKE_CURRENT_BINARY_DIR}/tfm_config.h
+)
