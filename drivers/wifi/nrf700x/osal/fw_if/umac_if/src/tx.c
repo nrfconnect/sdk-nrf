@@ -732,7 +732,7 @@ enum wifi_nrf_status tx_enqueue(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	qlen = wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv, queue);
 
-	if (qlen >= CONFIG_NRF700x_MAX_TX_PENDING_QLEN) {
+	if (qlen >= CONFIG_NRF700X_MAX_TX_PENDING_QLEN) {
 		goto out;
 	}
 
