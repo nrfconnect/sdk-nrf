@@ -25,6 +25,7 @@
 #define SLM_MAX_SOCKET_COUNT 8    /** re-define NRF_MODEM_MAX_SOCKET_COUNT */
 
 #define SLM_MAX_URL          128  /** max size of URL string */
+#define SLM_MAX_FILEPATH     128  /** max size of filepath string */
 #define SLM_MAX_USERNAME     32   /** max size of username in login */
 #define SLM_MAX_PASSWORD     32   /** max size of password in login */
 

@@ -171,9 +171,18 @@ nRF9160: Asset Tracker v2
 nRF9160: Serial LTE modem
 -------------------------
 
-* Added AT command ``#XWIFIPOS`` to get Wi-Fi location from nRF Cloud.
-* Updated the application to use defines from the :ref:`lib_nrf_cloud` library for string values related to nRF Cloud.
-* Fixed a bug in receiving a large MQTT Publish message.
+* Added:
+
+  * AT command ``#XWIFIPOS`` to get Wi-Fi location from nRF Cloud.
+  * Support for *WRITE REQUEST* in TFTP client.
+
+* Updated:
+
+  * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
+
+* Fixed:
+
+  * A bug in receiving large MQTT Publish message.
 
 nRF5340 Audio
 -------------
