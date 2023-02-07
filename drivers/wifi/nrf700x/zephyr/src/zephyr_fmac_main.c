@@ -26,9 +26,7 @@
 #include <zephyr_wpa_supp_if.h>
 #endif /* CONFIG_WPA_SUPP */
 #ifndef CONFIG_NRF700X_RADIO_TEST
-#include <zephyr_disp_scan.h>
-#include <zephyr_twt.h>
-#include <zephyr_ps.h>
+#include <zephyr_wifi_mgmt.h>
 
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 

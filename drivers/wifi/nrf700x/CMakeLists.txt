@@ -56,10 +56,8 @@ zephyr_library_sources_ifndef(CONFIG_NRF700X_RADIO_TEST
 	osal/fw_if/umac_if/src/rx.c
 	osal/fw_if/umac_if/src/fmac_vif.c
 	osal/fw_if/umac_if/src/fmac_util.c
-	zephyr/src/zephyr_disp_scan.c
+	zephyr/src/zephyr_wifi_mgmt.c
 	zephyr/src/zephyr_net_if.c
-	zephyr/src/zephyr_twt.c
-	zephyr/src/zephyr_ps.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_DATA_TX
