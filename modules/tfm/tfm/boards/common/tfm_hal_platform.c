@@ -20,6 +20,7 @@
 #include "uart_stdout.h"
 #include "tfm_spm_log.h"
 #include "hw_unique_key.h"
+#include "config_tfm.h"
 
 #if defined(TFM_PARTITION_CRYPTO)
 static enum tfm_hal_status_t crypto_platform_init(void)
@@ -27,7 +28,7 @@ static enum tfm_hal_status_t crypto_platform_init(void)
 	int err;
 
 	/* Initialize the nrf_cc3xx runtime */
-#if defined(TFM_CRYPTO_RNG_MODULE_DISABLED)
+#if !CRYPTO_RNG_MODULE_ENABLED
 	err = nrf_cc3xx_platform_init_no_rng();
 #else
 #if defined(PSA_WANT_ALG_CTR_DRBG)
@@ -43,7 +44,7 @@ static enum tfm_hal_status_t crypto_platform_init(void)
 		return TFM_HAL_ERROR_BAD_STATE;
 	}
 
-#if !defined(TFM_CRYPTO_KEY_DERIVATION_MODULE_DISABLED) && \
+#if CRYPTO_KEY_DERIVATION_MODULE_ENABLED && \
     !defined(PLATFORM_DEFAULT_CRYPTO_KEYS)
 	if (!hw_unique_key_are_any_written()) {
 		SPMLOG_INFMSG("Writing random Hardware Unique Keys to the KMU.\r\n");

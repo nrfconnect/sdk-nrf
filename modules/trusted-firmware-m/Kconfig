@@ -141,6 +141,14 @@ config TFM_CRYPTO_PARTITION_STACK_SIZE
 	help
 	  The stack size of the Crypto Secure Partition
 
+config TFM_CRYPTO_NV_SEED
+	# Hidden option to set value based on TF-M minimal profile
+	bool
+	default y if !TFM_PROFILE_TYPE_MINIMAL
+	help
+	  Prompt-less configuration controlling NV Seed support.
+	  Not set when TFM_PROFILE_TYPE_MINIMAL is used
+
 endif # TFM_PARTITION_CRYPTO
 
 config TFM_ITS_ENCRYPTED
