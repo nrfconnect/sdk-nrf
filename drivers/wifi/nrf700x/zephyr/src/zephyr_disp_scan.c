@@ -77,6 +77,7 @@ int wifi_nrf_disp_scan_zep(const struct device *dev,
 
 	vif_ctx_zep->scan_type = SCAN_DISPLAY;
 	vif_ctx_zep->scan_in_progress = true;
+	vif_ctx_zep->scan_res_cnt = 0;
 
 	ret = 0;
 out:
@@ -133,9 +134,15 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 
 	vif_ctx_zep = vif_ctx;
 
-	cb = (scan_result_cb_t) vif_ctx_zep->disp_scan_cb;
+	cb = (scan_result_cb_t)vif_ctx_zep->disp_scan_cb;
 
 	for (i = 0; i < scan_res->event_bss_count; i++) {
+		/* Limit the scan results to the configured maximum */
+		if ((CONFIG_NRF700X_SCAN_LIMIT >= 0) &&
+		    (vif_ctx_zep->scan_res_cnt >= CONFIG_NRF700X_SCAN_LIMIT)) {
+			break;
+		}
+
 		memset(&res, 0x0, sizeof(res));
 
 		r = &scan_res->display_results[i];
@@ -166,6 +173,8 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 		vif_ctx_zep->disp_scan_cb(vif_ctx_zep->zep_net_if_ctx,
 					  0,
 					  &res);
+
+		vif_ctx_zep->scan_res_cnt++;
 
 		/* NET_MGMT dropping events if too many are queued */
 		k_yield();

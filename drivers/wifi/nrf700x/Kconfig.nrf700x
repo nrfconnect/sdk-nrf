@@ -104,4 +104,8 @@ config RX_MAX_DATA_SIZE
 	int "Maximum size of RX data"
 	default 1600
 
+config NRF700X_SCAN_LIMIT
+	int "Maximum number of scan results returned to application. Use negative values for unlimited scan results."
+	default -1
+
 endif
