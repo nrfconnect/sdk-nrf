@@ -8,7 +8,7 @@ menu "BLE HID Service"
 
 config DESKTOP_HIDS_ENABLE
 	bool "Enable GATT HID Service"
-	depends on BT
+	depends on DESKTOP_BT_PERIPHERAL
 	select BT_HIDS
 	select BT_CONN_CTX
 	help

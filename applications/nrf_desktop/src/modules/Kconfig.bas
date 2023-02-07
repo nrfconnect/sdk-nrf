@@ -8,7 +8,7 @@ menu "BLE BAS Service"
 
 config DESKTOP_BAS_ENABLE
 	bool "Enable GATT Battery Service"
-	depends on BT
+	depends on DESKTOP_BT_PERIPHERAL
 	help
 	  This option enables GATT Battery Service application
 	  module.

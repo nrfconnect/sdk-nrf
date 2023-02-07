@@ -8,6 +8,7 @@
 
 config DESKTOP_BLE_ADV
 	bool "Bluetooth LE advertising module (CAF)"
+	depends on DESKTOP_BT_PERIPHERAL
 	select CAF_BLE_ADV
 	help
 	  nRF Desktop uses Bluetooth LE advertising module from Common
