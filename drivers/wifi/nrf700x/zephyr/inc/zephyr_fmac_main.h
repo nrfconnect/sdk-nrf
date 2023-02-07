@@ -40,6 +40,7 @@ struct wifi_nrf_vif_ctx_zep {
 	scan_result_cb_t disp_scan_cb;
 	bool scan_in_progress;
 	int scan_type;
+	unsigned int scan_res_cnt;
 
 	struct net_eth_addr mac_addr;
 
