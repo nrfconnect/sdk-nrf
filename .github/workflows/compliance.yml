@@ -76,7 +76,7 @@ jobs:
         git log --pretty=oneline | head -n 10
         # For now we run KconfigBasic, but we should transition to Kconfig
         $ZEPHYR_BASE/scripts/ci/check_compliance.py --annotate -e Kconfig \
-        -e BinaryFiles -c origin/${BASE_REF}..
+        -c origin/${BASE_REF}..
 
     - name: upload-results
       uses: actions/upload-artifact@v3
