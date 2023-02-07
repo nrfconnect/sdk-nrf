@@ -35,9 +35,6 @@ config NET_MGMT_EVENT_STACK_SIZE
 config NET_CONFIG_INIT_TIMEOUT
 	default 0 if NET_CONFIG_SETTINGS
 
-config NRF700X_REV_A
-	bool "nRF7002 Rev A"
-
 config NRF700X_ON_QSPI
 	def_bool $(dt_compat_enabled,$(DT_COMPAT_NORDIC_NRF7002_QSPI))
 	select NRFX_QSPI
@@ -83,8 +80,8 @@ config NRF700X_WIFI_UTIL
 
 config NRF700X_WIFI_BT_COEX
 	bool "Enable Wi-Fi Bluetooth coexistence support"
-	depends on SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX && !NRF700X_REV_A
-	default y if SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX && !NRF700X_REV_A
+	depends on SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX
+	default y if SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX
 
 # Performance fine tuning options
 

@@ -379,7 +379,6 @@ int wifi_nrf_if_start_zep(const struct device *dev)
 		goto out;
 	}
 
-#ifndef CONFIG_NRF700X_REV_A
 	status = wifi_nrf_fmac_set_vif_macaddr(rpu_ctx_zep->rpu_ctx,
 					       vif_ctx_zep->vif_idx,
 					       mac_addr);
@@ -389,8 +388,6 @@ int wifi_nrf_if_start_zep(const struct device *dev)
 			__func__);
 		goto out;
 	}
-
-#endif /* CONFIG_NRF700X_REV_A */
 
 	memset(&vif_info,
 	       0,

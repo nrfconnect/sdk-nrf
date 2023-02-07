@@ -149,23 +149,13 @@ void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
 	vif_ctx_zep = if_priv;
 
 	if (scan_res->valid_fields & NRF_WIFI_EVENT_NEW_SCAN_RESULTS_IES_VALID) {
-#ifdef CONFIG_NRF700X_REV_A
-		ie = scan_res->ies.ie;
-		ie_len = scan_res->ies.ie_len;
-#else /* CONFIG_NRF700X_REV_A */
 		ie = scan_res->ies;
 		ie_len = scan_res->ies_len;
-#endif /* CONFIG_NRF700X_REV_A */
 	}
 
 	if (scan_res->valid_fields & NRF_WIFI_EVENT_NEW_SCAN_RESULTS_BEACON_IES_VALID) {
-#ifdef CONFIG_NRF700X_REV_A
-		beacon_ie = scan_res->beacon_ies.ie;
-		beacon_ie_len = scan_res->beacon_ies.ie_len;
-#else /* CONFIG_NRF700X_REV_A */
 		beacon_ie = scan_res->ies + scan_res->ies_len;
 		beacon_ie_len = scan_res->beacon_ies_len;
-#endif /* CONFIG_NRF700X_REV_A */
 	}
 
 	r = k_calloc(sizeof(*r) + ie_len + beacon_ie_len, sizeof(char));

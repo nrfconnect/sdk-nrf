@@ -62,7 +62,6 @@ enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
 					     struct rpu_op_stats *stats);
 
 
-#ifndef CONFIG_NRF700X_REV_A
 /**
  * wifi_nrf_fmac_radio_test_init() - Initialize the RPU for radio tests.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
@@ -77,7 +76,6 @@ enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
  */
 enum wifi_nrf_status wifi_nrf_fmac_radio_test_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						   struct rpu_conf_params *params);
-#endif /* !CONFIG_NRF700X_REV_A */
 
 /**
  * wifi_nrf_fmac_radio_test_prog_tx() - Start TX tests in radio test mode.
@@ -1212,7 +1210,6 @@ enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_de
 					  unsigned int *lmac_ver);
 
 
-#ifndef CONFIG_NRF700X_REV_A
 /**
  * wifi_nrf_fmac_conf_btcoex() - Configure BT-Coex parameters in RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1227,7 +1224,6 @@ enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_de
  */
 enum wifi_nrf_status wifi_nrf_fmac_conf_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					       void *cmd, unsigned int cmd_len);
-#endif
 
 /**
  * wifi_nrf_fmac_conf_ltf_gi() - Configure HE LTF and GI parameters.
