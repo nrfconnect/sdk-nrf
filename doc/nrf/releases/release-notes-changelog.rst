@@ -520,5 +520,7 @@ Documentation
 =============
 
 Updated:
+
   * The :ref:`software_maturity` page with details about Bluetooth feature support.
   * The :ref:`ug_nrf5340_gs`, :ref:`ug_thingy53_gs`, :ref:`ug_nrf52_gs`, and :ref:`ug_ble_controller` pages with a link to the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
+  * The :ref:`zigbee_weather_station_app` documentation to match the application template.
