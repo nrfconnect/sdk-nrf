@@ -295,5 +295,3 @@ The module uses Zephyr's :ref:`zephyr:settings_api` subsystem to store the follo
 
 * Currently selected peer (application local identity)
 * Mapping between the application local identities and the Bluetooth local identities
-
-.. |ble_bond| replace:: Bluetooth® LE bond module

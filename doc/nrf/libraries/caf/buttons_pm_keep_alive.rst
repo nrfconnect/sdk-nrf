@@ -25,5 +25,3 @@ Implementation details
 
 The module reacts to :c:struct:`button_event` and generates :c:struct:`keep_alive_event` for the CAF power manager if any configured button is pressed.
 See :ref:`CAF buttons module <caf_buttons>` documentation page for information about how to configure buttons and the :ref:`CAF power manager module <caf_power_manager>` documentation page for more information about the power state management.
-
-.. |buttons_pm_keep_alive| replace:: Power manager keep alive module for buttons

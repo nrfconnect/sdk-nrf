@@ -61,5 +61,3 @@ This blocks the workqueue until the operation is finished.
 You can set the :kconfig:option:`CONFIG_CAF_SETTINGS_LOADER_USE_THREAD` Kconfig option to load the settings in a separate thread in the background instead of using the system workqueue for that purpose.
 This prevents blocking the system workqueue, but it requires creating an additional thread.
 The stack size for the background thread is defined in the :kconfig:option:`CONFIG_CAF_SETTINGS_LOADER_THREAD_STACK_SIZE` Kconfig option.
-
-.. |settings_loader| replace:: Settings loader module

@@ -56,5 +56,3 @@ After pressing the button, you can select the :file:`*.bin` file that is to be u
 
 .. note::
   The SMP firmware update file is generated as :file:`zephyr/app_update.bin` in the build directory when building your application for configuration with the |smp| enabled.
-
-.. |smp| replace:: simple management protocol module

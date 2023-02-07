@@ -128,5 +128,3 @@ Avoiding connection requests from unbonded centrals when bonded
 If :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST` is enabled and the Bluetooth local identity currently in use already has a bond, the device will filter incoming scan response data requests and connection requests.
 In that case, only the bonded peer can connect or request scan response data.
 This is done to prevent Bluetooth Centrals other than the bonded one from connecting with the device.
-
-.. |ble_adv| replace:: Bluetooth® LE advertising module

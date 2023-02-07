@@ -28,5 +28,3 @@ Depending on the count result:
 * If there is no active connection, the limitation on power level is removed.
 
 For more information about the CAF power levels, see the :ref:`caf_power_manager` documentation page.
-
-.. |ble_state_pm| replace:: Bluetooth state power manager module

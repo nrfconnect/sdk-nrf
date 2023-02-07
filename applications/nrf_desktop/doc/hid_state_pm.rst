@@ -34,5 +34,3 @@ The module relies on :c:struct:`hid_report_event` to detect HID report exchange.
    In the nRF Desktop application, most of the HID reports are broadcasted as :c:struct:`hid_report_event`, but there are exceptions.
    For example, the :ref:`nrf_desktop_config_channel` uses HID feature reports or HID output reports as transport and the configuration channel data is broadcasted using :c:struct:`config_event` in the application.
    Hence, the |hid_state_pm| does not prevent suspending the device when the configuration channel is in use.
-
-.. |hid_state_pm| replace:: HID state power manager module

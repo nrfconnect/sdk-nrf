@@ -2039,19 +2039,6 @@ Following are the application specific configuration options that can be configu
 .. options-from-kconfig::
    :show-type:
 
-.. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.
-   When a new Bluetooth Central device successfully connects and bonds, the old bond is removed and the new bond is used instead.
-   If the new peer does not connect in the predefined period of time, the advertising ends and the application switches back to the old peer.
-
-.. |nRF_Desktop_cancel_operation| replace:: You can cancel the ongoing peer operation with a standard button press.
-
-.. |preconfigured_build_types| replace:: The preconfigured build types configure the device without the bootloader in debug mode and with MCUboot bootloader in release mode due to memory size limits.
-
-.. |hid_state| replace:: HID state module
-
-.. |led_note| replace:: A breathing LED indicates that the device has entered the advertising mode.
-   This happens when the device is looking for a peer to connect to.
-
 API documentation
 *****************
 
