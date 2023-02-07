@@ -133,7 +133,6 @@ static bool adv_data_parse(struct bt_data *data, void *user_data)
 	if (data->type == BT_DATA_BROADCAST_NAME && data->data_len) {
 		if (data->data_len <= bis_name->size) {
 			memcpy(bis_name->name, data->data, data->data_len);
-			bis_name->name[data->data_len] = '\0';
 			return false;
 		}
 	}
@@ -180,7 +179,8 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 
 	recv_cnt++;
 	if ((recv_cnt % 1000U) == 0U) {
-		LOG_DBG("Received %d total ISO packets", recv_cnt);
+		LOG_DBG("Received %d total ISO packets for stream %d", recv_cnt,
+			active_stream_index);
 	}
 }
 
@@ -235,6 +235,8 @@ static void pa_sync_lost_cb(struct bt_audio_broadcast_sink *sink)
 {
 	int ret;
 
+	LOG_DBG("Periodic advertising sync lost");
+
 	if (broadcast_sink == NULL) {
 		LOG_ERR("Unexpected PA sync lost");
 		return;
@@ -248,7 +250,7 @@ static void pa_sync_lost_cb(struct bt_audio_broadcast_sink *sink)
 		return;
 	}
 
-	LOG_INF("Restarting scanning for broadcast sources");
+	LOG_INF("Restarting scanning for broadcast sources after sync lost");
 
 	ret = bt_audio_broadcast_sink_scan_start(BT_LE_SCAN_PASSIVE);
 	if (ret) {
@@ -324,6 +326,8 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 	int ret;
 	static uint8_t bis_encryption_key[16];
 
+	LOG_DBG("Broadcast sink is syncable");
+
 #if (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)
 	strncpy(bis_encryption_key, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY, 16);
 #endif /* (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED) */
@@ -391,9 +395,6 @@ static void initialize(le_audio_receive_cb recv_cb)
 			audio_streams[i].ops = &stream_ops;
 		}
 
-		active_stream.stream = NULL;
-		active_stream.codec = NULL;
-
 		initialized = true;
 	}
 }
@@ -430,31 +431,31 @@ static int bis_headset_cleanup(bool from_sync_lost_cb)
 
 static int change_active_audio_stream(void)
 {
-	int ret = 0;
+	int ret;
 
-	playing_state = false;
+	if (broadcast_sink != NULL) {
+		if (playing_state) {
+			ret = bt_audio_broadcast_sink_stop(broadcast_sink);
+			if (ret) {
+				LOG_WRN("Failed to stop sink");
+			}
+		}
 
-	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
-	ERR_CHK(ret);
+		/* Wrap streams */
+		if (++active_stream_index >= sync_stream_cnt) {
+			active_stream_index = 0;
+		}
 
-	ret = bt_audio_broadcast_sink_stop(broadcast_sink);
-	if (ret) {
-		LOG_WRN("Failed to pause playing");
+		active_stream.stream = &audio_streams[active_stream_index];
+		active_stream.codec = &audio_codec_info[active_stream_index];
+
+		LOG_INF("Changed to stream %d", active_stream_index);
+	} else {
+		LOG_WRN("No streams");
+		ret = -ECANCELED;
 	}
 
-	/* Wrap streams */
-	if (++active_stream_index >= sync_stream_cnt) {
-		active_stream_index = 0;
-	}
-
-	active_stream.stream = &audio_streams[active_stream_index];
-	active_stream.codec = &audio_codec_info[active_stream_index];
-
-	playing_state = true;
-
-	LOG_DBG("Changed to stream %d", active_stream_index);
-
-	return ret;
+	return 0;
 }
 
 static int change_active_brdcast_src(void)
