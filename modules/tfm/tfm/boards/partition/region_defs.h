@@ -12,23 +12,18 @@
 #define BL2_HEAP_SIZE           (0x00001000)
 #define BL2_MSP_STACK_SIZE      (0x00001800)
 
+#ifdef ENABLE_HEAP
 #define S_HEAP_SIZE             (0x00001000)
-#if !defined(TFM_CRYPTO_KEY_DERIVATION_MODULE_DISABLED) && \
-    !defined(PLATFORM_DEFAULT_CRYPTO_KEYS)
-/* Need a larger stack in init to write random Hardware Unique Keys to the KMU */
-#define S_MSP_STACK_SIZE_INIT   (0x00000800)
-#else
-#define S_MSP_STACK_SIZE_INIT   (0x00000400)
 #endif
+
 #define S_MSP_STACK_SIZE        (0x00000800)
 #define S_PSP_STACK_SIZE        (0x00000800)
 
 #define NS_HEAP_SIZE            (0x00001000)
-#define NS_MSP_STACK_SIZE       (0x000000A0)
-#define NS_PSP_STACK_SIZE       (0x00000140)
+#define NS_STACK_SIZE           (0x000001E0)
 
 /* Size of nRF SPU (Nordic IDAU) regions */
-#define SPU_FLASH_REGION_SIZE   (CONFIG_FPROTECT_BLOCK_SIZE)
+#define SPU_FLASH_REGION_SIZE   (CONFIG_NRF_SPU_FLASH_REGION_SIZE)
 #define SPU_SRAM_REGION_SIZE    (0x00002000)
 
 /* This size of buffer is big enough to store an attestation
@@ -58,22 +53,38 @@
 #define S_DATA_SIZE     (PM_TFM_SRAM_SIZE)
 #define S_DATA_LIMIT    (S_DATA_START + S_DATA_SIZE - 1)
 
+#define S_CODE_VECTOR_TABLE_SIZE (CONFIG_TFM_S_CODE_VECTOR_TABLE_SIZE)
+
+#if defined(NULL_POINTER_EXCEPTION_DETECTION) && S_CODE_START == 0
+/* If this image is placed at the beginning of flash make sure we
+ * don't put any code in the first 256 bytes of flash as that area
+ * is used for null-pointer dereference detection.
+ */
+#define TFM_LINKER_CODE_START_RESERVED (256)
+#if S_CODE_VECTOR_TABLE_SIZE < TFM_LINKER_CODE_START_RESERVED
+#error "The interrupt table is too short for null pointer detection"
+#endif
+#endif
+
+/* The veneers needs to be placed at the end of the secure image.
+ * This is because the NCS sub-region is defined as starting at the highest
+ * address of an SPU region and going downwards.
+ */
+#define TFM_LINKER_VENEERS_LOCATION_END
+
 /* The CMSE veneers shall be placed in an NSC region
  * which will be placed in a secure SPU region with the given alignment.
  */
-#define CMSE_VENEER_REGION_SIZE     (0x400)
+#define TFM_LINKER_VENEERS_SIZE     (0x400)
 /* The Nordic IDAU has different alignment requirements than the ARM SAU, so
  * these override the default start and end alignments.
  */
-#define CMSE_VENEER_REGION_START_ALIGN \
-	(ALIGN(SPU_FLASH_REGION_SIZE) - CMSE_VENEER_REGION_SIZE + \
-		(. > (ALIGN(SPU_FLASH_REGION_SIZE) - CMSE_VENEER_REGION_SIZE) \
+#define TFM_LINKER_VENEERS_START \
+	(ALIGN(SPU_FLASH_REGION_SIZE) - TFM_LINKER_VENEERS_SIZE + \
+		(. > (ALIGN(SPU_FLASH_REGION_SIZE) - TFM_LINKER_VENEERS_SIZE) \
 			? SPU_FLASH_REGION_SIZE : 0))
-#define CMSE_VENEER_REGION_END_ALIGN (ALIGN(SPU_FLASH_REGION_SIZE))
-/* We want the veneers placed in the secure code so it isn't placed at the very
- * end. When placed in code, we don't need an absolute start address.
- */
-#define CMSE_VENEER_REGION_IN_CODE
+
+#define TFM_LINKER_VENEERS_END ALIGN(SPU_FLASH_REGION_SIZE)
 
 /* Non-secure regions */
 #define NS_CODE_START   (PM_APP_OFFSET)
