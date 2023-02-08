@@ -78,7 +78,15 @@ struct nrf_cloud_alert_info {
  *
  * @return 0 if alert is successfully sent, otherwise, a negative error number.
  */
+#if defined(CONFIG_NRF_CLOUD_ALERTS) || defined(__DOXYGEN__)
 int nrf_cloud_alert_send(enum nrf_cloud_alert_type type, float value, const char *description);
+#else
+static inline int nrf_cloud_alert_send(enum nrf_cloud_alert_type type, float value,
+				       const char *description)
+{
+	return 0;
+}
+#endif /* CONFIG_NRF_CLOUD_ALERTS */
 
 /**
  * @brief Transmit the specified alert to nRF Cloud using REST.
@@ -93,11 +101,22 @@ int nrf_cloud_alert_send(enum nrf_cloud_alert_type type, float value, const char
  *
  * @return 0 if alert is successfully sent, otherwise, a negative error number.
  */
+#if defined(CONFIG_NRF_CLOUD_ALERTS) || defined(__DOXYGEN__)
 int nrf_cloud_rest_alert_send(struct nrf_cloud_rest_context *const rest_ctx,
 			      const char *const device_id,
 			      enum nrf_cloud_alert_type type,
 			      float value,
 			      const char *description);
+#else
+static inline int nrf_cloud_rest_alert_send(struct nrf_cloud_rest_context *const rest_ctx,
+					    const char *const device_id,
+					    enum nrf_cloud_alert_type type,
+					    float value,
+					    const char *description)
+{
+	return 0;
+}
+#endif /* CONFIG_NRF_CLOUD_ALERTS */
 
 /**
  * @brief Enable or disable use of alerts.
