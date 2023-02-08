@@ -920,9 +920,7 @@ int lwm2m_codec_helpers_set_neighbor_cell_data(struct cloud_data_neighbor_cells 
 	cells->ncells_count = neighbor_cells->cell_data.ncells_count;
 
 	err = lwm2m_update_signal_meas_objects((const struct lte_lc_cells_info *)cells);
-	if (err == -ENODATA) {
-		LOG_DBG("No neighboring cells available");
-	} else if (err) {
+	if (err) {
 		return err;
 	}
 

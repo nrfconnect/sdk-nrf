@@ -128,65 +128,68 @@ static void validate_location_module_evt(struct app_event_header *aeh, int no_of
 
 		/* Ignore search_time and timestamp verification as those values might change */
 		break;
-	case LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY: {
-		struct location_module_neighbor_cells *expected_ncells =
-			&expected_location_module_events[index].data.neighbor_cells;
-		struct location_module_neighbor_cells *received_ncells =
-			&event->data.neighbor_cells;
+	case LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY: {
+		struct location_module_cloud_location *expected_cloud_loc =
+			&expected_location_module_events[index].data.cloud_location;
+		struct location_module_cloud_location *received_cloud_loc =
+			&event->data.cloud_location;
 
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.mcc,
-			received_ncells->cell_data.current_cell.mcc);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.mcc,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.mcc);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.mnc,
-			received_ncells->cell_data.current_cell.mnc);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.mnc,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.mnc);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.id,
-			received_ncells->cell_data.current_cell.id);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.id,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.id);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.tac,
-			received_ncells->cell_data.current_cell.tac);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.tac,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.tac);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.earfcn,
-			received_ncells->cell_data.current_cell.earfcn);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.earfcn,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.earfcn);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.timing_advance,
-			received_ncells->cell_data.current_cell.timing_advance);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.timing_advance,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.timing_advance);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.timing_advance_meas_time,
-			received_ncells->cell_data.current_cell.timing_advance_meas_time);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell
+				.timing_advance_meas_time,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell
+				.timing_advance_meas_time);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.measurement_time,
-			received_ncells->cell_data.current_cell.measurement_time);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.measurement_time,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.measurement_time);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.phys_cell_id,
-			received_ncells->cell_data.current_cell.phys_cell_id);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.phys_cell_id,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.phys_cell_id);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.rsrp,
-			received_ncells->cell_data.current_cell.rsrp);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.rsrp,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.rsrp);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.rsrq,
-			received_ncells->cell_data.current_cell.rsrq);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.rsrq,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.rsrq);
 
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.ncells_count,
-			received_ncells->cell_data.ncells_count);
-		for (int i = 0; i < received_ncells->cell_data.ncells_count; i++) {
+			expected_cloud_loc->neighbor_cells.cell_data.ncells_count,
+			received_cloud_loc->neighbor_cells.cell_data.ncells_count);
+		for (int i = 0; i < received_cloud_loc->neighbor_cells.cell_data.ncells_count;
+		     i++) {
 			TEST_ASSERT_EQUAL(
-				expected_ncells->neighbor_cells[i].earfcn,
-				received_ncells->neighbor_cells[i].earfcn);
+				expected_cloud_loc->neighbor_cells.neighbor_cells[i].earfcn,
+				received_cloud_loc->neighbor_cells.neighbor_cells[i].earfcn);
 			TEST_ASSERT_EQUAL(
-				expected_ncells->neighbor_cells[i].time_diff,
-				received_ncells->neighbor_cells[i].time_diff);
+				expected_cloud_loc->neighbor_cells.neighbor_cells[i].time_diff,
+				received_cloud_loc->neighbor_cells.neighbor_cells[i].time_diff);
 			TEST_ASSERT_EQUAL(
-				expected_ncells->neighbor_cells[i].phys_cell_id,
-				received_ncells->neighbor_cells[i].phys_cell_id);
+				expected_cloud_loc->neighbor_cells.neighbor_cells[i].phys_cell_id,
+				received_cloud_loc->neighbor_cells.neighbor_cells[i].phys_cell_id);
 			TEST_ASSERT_EQUAL(
-				expected_ncells->neighbor_cells[i].rsrp,
-				received_ncells->neighbor_cells[i].rsrp);
+				expected_cloud_loc->neighbor_cells.neighbor_cells[i].rsrp,
+				received_cloud_loc->neighbor_cells.neighbor_cells[i].rsrp);
 			TEST_ASSERT_EQUAL(
-				expected_ncells->neighbor_cells[i].rsrq,
-				received_ncells->neighbor_cells[i].rsrq);
+				expected_cloud_loc->neighbor_cells.neighbor_cells[i].rsrq,
+				received_cloud_loc->neighbor_cells.neighbor_cells[i].rsrq);
 		}
 		break;
 	}
@@ -420,13 +423,13 @@ void test_location_cellular(void)
 	expected_location_module_event_count = 3;
 	expected_location_module_events[0].type = LOCATION_MODULE_EVT_ACTIVE;
 
-	expected_location_module_events[1].type = LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY;
-	expected_location_module_events[1].data.neighbor_cells.cell_data = lte_cells;
-	expected_location_module_events[1].data.neighbor_cells.neighbor_cells[0] =
+	expected_location_module_events[1].type = LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY;
+	expected_location_module_events[1].data.cloud_location.neighbor_cells.cell_data = lte_cells;
+	expected_location_module_events[1].data.cloud_location.neighbor_cells.neighbor_cells[0] =
 		neighbor_cells[0];
-	expected_location_module_events[1].data.neighbor_cells.neighbor_cells[1] =
+	expected_location_module_events[1].data.cloud_location.neighbor_cells.neighbor_cells[1] =
 		neighbor_cells[1];
-	expected_location_module_events[1].data.neighbor_cells.timestamp = 123456789;
+	expected_location_module_events[1].data.cloud_location.neighbor_cells.timestamp = 123456789;
 
 	expected_location_module_events[2].type = LOCATION_MODULE_EVT_INACTIVE;
 
@@ -436,12 +439,12 @@ void test_location_cellular(void)
 	/* Location module indicates that it has handled neighbor cells
 	 * but the location is undefined.
 	 */
-	__cmock_location_cellular_ext_result_set_Expect(LOCATION_EXT_RESULT_UNKNOWN, NULL);
+	__cmock_location_cloud_location_ext_result_set_Expect(LOCATION_EXT_RESULT_UNKNOWN, NULL);
 
 	/* Location request is responded with location library events. */
 	struct location_event_data event_data_cellular = {
-		.id = LOCATION_EVT_CELLULAR_EXT_REQUEST,
-		.cellular_request = lte_cells
+		.id = LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST,
+		.cloud_location_request.cell_data = &lte_cells
 	};
 	location_event_handler(&event_data_cellular);
 

@@ -195,6 +195,14 @@ nRF9160: Asset Tracker v2
 
 * Updated:
 
+  * Due to the :ref:`lib_location` library updates related to combined cellular and Wi-Fi positioning,
+    the following events and functions have been added replacing old ones:
+
+    * :c:enum:`LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY` replaces ``LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY`` and ``LOCATION_MODULE_EVT_WIFI_ACCESS_POINTS_DATA_READY``
+    * :c:enum:`DATA_EVT_CLOUD_LOCATION_DATA_SEND` replaces ``DATA_EVT_NEIGHBOR_CELLS_DATA_SEND`` and ``DATA_EVT_WIFI_ACCESS_POINTS_DATA_SEND``
+    * :c:func:`cloud_codec_encode_cloud_location` function replaces ``cloud_codec_encode_neighbor_cells`` and ``cloud_codec_encode_wifi_access_points``
+    * :c:func:`cloud_wrap_cloud_location_send` function replaces ``cloud_wrap_neighbor_cells_send`` and ``cloud_wrap_wifi_access_points_send``
+
   * Replaced deprecated LwM2M API calls with calls to new functions.
   * Removed static modem data handling from the application's nRF Cloud codec.
     Enabled the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS` configuration option to send static modem data.

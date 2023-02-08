@@ -37,4 +37,5 @@ target_sources(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/cloud/cloud_codec/cloud_c
 
 target_compile_options(app PRIVATE
 	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20
+	-DCONFIG_LTE_NEIGHBOR_CELLS_MAX=10
 )

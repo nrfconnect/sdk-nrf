@@ -68,23 +68,14 @@ enum data_module_event_type {
 	/** Send impact data, similar to DATA_EVT_UI_DATA_SEND */
 	DATA_EVT_IMPACT_DATA_SEND,
 
-	/** Send neighbor cell measurements.
+	/** Send cloud location data.
 	 *  The event has an associated payload of type @ref data_module_data_buffers in
 	 *  the `data.buffer` member.
 	 *
 	 *  If a non LwM2M build is used the data is heap allocated and must be freed after use by
 	 *  calling k_free() on `data.buffer.buf`.
 	 */
-	DATA_EVT_NEIGHBOR_CELLS_DATA_SEND,
-
-	/** Send Wi-Fi access points.
-	 *  The event has an associated payload of type @ref data_module_data_buffers in
-	 *  the `data.buffer` member.
-	 *
-	 *  If a non LwM2M build is used, the data is heap allocated and must be freed after use by
-	 *  calling k_free() on `data.buffer.buf`.
-	 */
-	DATA_EVT_WIFI_ACCESS_POINTS_DATA_SEND,
+	DATA_EVT_CLOUD_LOCATION_DATA_SEND,
 
 	/** Send A-GPS request.
 	 *  The event has an associated payload of type @ref data_module_data_buffers in
