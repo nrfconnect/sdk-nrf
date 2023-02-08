@@ -85,6 +85,11 @@ config POSIX_MAX_FDS
     # z_wpa_event_sock - 1 socketpair = 2
     default 7 if !POSIX_API
 
+# Control interface is stack heavy (buffers + snprintfs)
+# Making calls to RPU from net_mgmt callbacks (status - RSSI)
+config NET_MGMT_EVENT_STACK_SIZE
+    default 4096
+
 module = WPA_SUPP
 module-str = WPA supplicant
 source "subsys/logging/Kconfig.template.log_config"
