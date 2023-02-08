@@ -106,7 +106,7 @@ manifest:
       revision: 207e0508be39a4896ec584037888b747b9ace558
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 4f775a87611a084a2f6ad9a8a5034e080ddcc579
+      revision: pull/238/head
       path: bootloader/mcuboot
     - name: mbedtls
       path: modules/crypto/mbedtls
