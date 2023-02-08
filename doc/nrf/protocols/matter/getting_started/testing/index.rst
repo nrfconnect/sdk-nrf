@@ -9,7 +9,7 @@ When you build any of the available Matter samples to the supported development 
 The development kit and the application running Matter stack that is programmed on the development kit together form the Matter accessory device.
 
 The |NCS| supports Matter stack that is built on top of a low-power, 802.15.4-compatible Thread network, or on top of a Wi-Fi network.
-To control the Matter accessory device remotely over either of these networks, you need to set up a Matter controller on a PC or using one of the compatible ecosystems.
+To control the Matter accessory device remotely over either of these networks, you need to set up a Matter controller on a PC or using one of the :ref:`compatible commercial ecosystems <ug_matter_overview_dev_model_ecosystems>`.
 
 |matter_controller_def_nolink|
 
@@ -46,7 +46,9 @@ Matter over Thread
 Matter over Wi-Fi
   To enable the IPv6 communication with the Matter accessory device over the Wi-Fi network, you need a Wi-Fi Access Point, for example a Wi-Fi router, so that the Matter controller can interact with any Wi-Fi device directly.
 
-The following subpages describe how to set up different development environments, including Matter controller.
+Read the following subpages to learn how to set up different development environments for a basic Matter network and how to set up the Matter controller.
+Each of these guides focuses on a single Matter fabric.
+For an example of how to set up and test multiple fabrics at the same time, see :ref:`ug_matter_gs_ecosystem_compatibility_testing`.
 
 .. toctree::
    :maxdepth: 1
