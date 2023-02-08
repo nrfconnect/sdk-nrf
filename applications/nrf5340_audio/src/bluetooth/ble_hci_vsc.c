@@ -9,8 +9,37 @@
 #include "ble_hci_vsc.h"
 #include <zephyr/bluetooth/hci.h>
 
+#include "led.h"
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(ble, CONFIG_BLE_LOG_LEVEL);
+
+static void tx_gain_led_set(uint8_t tx_gain)
+{
+#if (CONFIG_NRF_21540_ACTIVE)
+	switch (tx_gain) {
+	case 0: {
+		LOG_INF("Setting green: 0");
+		(void)led_on(LED_APP_RGB, LED_COLOR_GREEN);
+		break;
+	}
+	case 10: {
+		LOG_INF("Setting magenta: 10");
+		(void)led_on(LED_APP_RGB, LED_COLOR_MAGENTA);
+		break;
+	}
+	case 20: {
+		LOG_INF("Setting white: 20");
+		(void)led_on(LED_APP_RGB, LED_COLOR_WHITE);
+		break;
+	}
+	default:
+		LOG_INF("Setting blue: default");
+		(void)led_on(LED_APP_RGB, LED_COLOR_BLUE);
+		break;
+	}
+#endif
+}
 
 int ble_hci_vsc_nrf21540_pins_set(struct ble_hci_vs_cp_nrf21540_pins *nrf21540_pins)
 {
@@ -57,7 +86,14 @@ int ble_hci_vsc_radio_high_pwr_mode_set(enum ble_hci_vs_max_tx_power max_tx_powe
 	ret = rp->status;
 	net_buf_unref(rsp);
 
-	return ret;
+	if (ret) {
+		LOG_ERR("high power set fail: %d", ret);
+		return ret;
+	}
+
+	tx_gain_led_set(max_tx_power);
+
+	return 0;
 }
 
 int ble_hci_vsc_bd_addr_set(uint8_t *bd_addr)
@@ -189,6 +225,44 @@ int ble_hci_vsc_pri_ext_adv_max_tx_pwr_set(enum ble_hci_vs_tx_power tx_power)
 	ret = rp->status;
 	net_buf_unref(rsp);
 	return ret;
+}
+
+int ble_hci_tx_gain_toggle(void)
+{
+	int ret;
+	static uint8_t tx_gain_toggle_value;
+
+	if (!IS_ENABLED(CONFIG_NRF_21540_ACTIVE)) {
+		LOG_WRN("nRF21540 is not active, will not toggle TX gain");
+		return -ENODEV;
+	}
+
+	uint8_t tx_gain = tx_gain_toggle_value * 10;
+
+	LOG_INF("Setting TX gain to %d", tx_gain);
+
+	ret = ble_hci_vsc_radio_high_pwr_mode_set(tx_gain);
+	if (ret) {
+		return ret;
+	}
+
+	ret = ble_hci_vsc_adv_tx_pwr_set(tx_gain);
+	if (ret) {
+		return ret;
+	}
+
+	ret = ble_hci_vsc_pri_ext_adv_max_tx_pwr_set(tx_gain);
+	if (ret) {
+		return ret;
+	}
+
+	tx_gain_toggle_value++;
+
+	if (tx_gain_toggle_value > 2) {
+		tx_gain_toggle_value = 0;
+	}
+
+	return 0;
 }
 
 int ble_hci_vsc_led_pin_map(enum ble_hci_vs_led_function_id id,

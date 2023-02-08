@@ -15,6 +15,7 @@
 #include "macros_common.h"
 #include "ctrl_events.h"
 #include "audio_datapath.h"
+#include "ble_hci_vsc.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bis_gateway, CONFIG_BLE_LOG_LEVEL);
@@ -350,7 +351,14 @@ static int initialize(void)
 
 int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
 {
-	return 0;
+	int ret;
+
+	ret = ble_hci_tx_gain_toggle();
+	if (ret) {
+		LOG_WRN("Failed to toggle TX gain");
+	}
+
+	return ret;
 }
 
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)

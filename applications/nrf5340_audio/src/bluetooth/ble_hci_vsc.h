@@ -177,6 +177,15 @@ int ble_hci_vsc_conn_tx_pwr_set(uint16_t conn_handle, enum ble_hci_vs_tx_power t
 int ble_hci_vsc_pri_ext_adv_max_tx_pwr_set(enum ble_hci_vs_tx_power tx_power);
 
 /**
+ * @brief Toggle different tx gains
+ *
+ * @note  Will toggle between 0, +10, and +20dBm. Dependent on nRF21540 being active
+ *
+ * @return 0 for success, error otherwise.
+ */
+int ble_hci_tx_gain_toggle(void);
+
+/**
  * @brief Map LED pin to a specific controller function
  *
  * @details Only support for gpio0 (pin 0-31)
