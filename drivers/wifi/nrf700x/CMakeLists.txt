@@ -22,7 +22,7 @@ zephyr_include_directories(
 	osal/fw_if/umac_if/inc/fw
 )
 
-zephyr_library_sources_ifdef(CONFIG_NRF700X_WIFI_BT_COEX
+zephyr_library_sources_ifdef(CONFIG_NRF700X_BT_COEX
 	zephyr/src/zephyr_coex.c
 )
 
@@ -91,6 +91,6 @@ zephyr_library_sources_ifdef(CONFIG_NRF700X_ON_SPI
 	zephyr/src/qspi/src/spi_if.c
 )
 
-zephyr_library_sources_ifdef(CONFIG_NRF700X_WIFI_UTIL
+zephyr_library_sources_ifdef(CONFIG_NRF700X_UTIL
 	zephyr/src/zephyr_wifi_util.c
 )

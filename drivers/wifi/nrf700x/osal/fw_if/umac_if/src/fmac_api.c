@@ -493,7 +493,7 @@ struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params
 			      data_config,
 			      sizeof(fpriv->data_config));
 
-	fpriv->num_tx_tokens = CONFIG_MAX_TX_TOKENS;
+	fpriv->num_tx_tokens = CONFIG_NRF700X_MAX_TX_TOKENS;
 	fpriv->num_tx_tokens_per_ac = (fpriv->num_tx_tokens / WIFI_NRF_FMAC_AC_MAX);
 	fpriv->num_tx_tokens_spare = (fpriv->num_tx_tokens % WIFI_NRF_FMAC_AC_MAX);
 
@@ -523,7 +523,7 @@ struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params
 			fpriv->rx_buf_pools[pool_idx].buf_sz + RX_BUF_HEADROOM;
 	}
 
-	hal_cfg_params.max_tx_frm_sz = CONFIG_TX_MAX_DATA_SIZE + TX_BUF_HEADROOM;
+	hal_cfg_params.max_tx_frm_sz = CONFIG_NRF700X_TX_MAX_DATA_SIZE + TX_BUF_HEADROOM;
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 	hal_cfg_params.max_cmd_size = MAX_NRF_WIFI_UMAC_CMD_SIZE;
