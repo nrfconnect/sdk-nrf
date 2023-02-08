@@ -12,6 +12,15 @@ menuconfig ML_APP_USB_STATE
 	help
 	  Enable USB subsystem on application start.
 
+if ML_APP_USB_STATE
+
+config USB_DEVICE_INITIALIZE_AT_BOOT
+	default n
+	help
+	  Leave USB device initialization to the USB module.
+
+endif # ML_APP_USB_STATE
+
 module = ML_APP_USB_STATE
 module-str = usb state module
 source "subsys/logging/Kconfig.template.log_config"
