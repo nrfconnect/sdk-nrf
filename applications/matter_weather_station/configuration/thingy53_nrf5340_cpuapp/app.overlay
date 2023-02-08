@@ -9,11 +9,6 @@
 		battery-charge-gpios = <&gpio1 0 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 	};
 
-	chosen {
-		zephyr,console = &cdc_acm_uart0;
-		zephyr,shell-uart = &cdc_acm_uart0;
-	};
-
 	pwmbuzzer {
 		compatible = "pwm-leds";
 		status = "okay";
@@ -26,12 +21,6 @@
 
 	aliases {
 		buzzer-pwm = &buzzer;
-	};
-};
-
-&zephyr_udc0 {
-	cdc_acm_uart0: cdc_acm_uart0 {
-		compatible = "zephyr,cdc-acm-uart";
 	};
 };
 
