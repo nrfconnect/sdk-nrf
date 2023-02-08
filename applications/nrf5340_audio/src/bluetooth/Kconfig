@@ -20,11 +20,43 @@ config BLE_ACL_SUP_TIMEOUT
 	int "Bluetooth LE Supervision Timeout (x*10ms)"
 	default 400
 
+config BLE_ACL_PER_ADV_INT_MIN
+	hex "Minimum periodic advertising interval"
+	range 0x0018 0x03C0
+	default 0x0078
+	help
+	  Minimum hexadecimal value for the interval of periodic advertisements.
+	  For ms, multiply the provided value by 1.25.
+
+config BLE_ACL_PER_ADV_INT_MAX
+	hex "Maximum periodic advertising interval"
+	range 0x0018 0x03C0
+	default 0x00A0
+	help
+	  Maximum hexadecimal value for the interval of periodic advertisements.
+	  For ms, multiply the provided value by 1.25.
+
+config BLE_ACL_EXT_ADV_INT_MIN
+	hex "Minimum extended advertising interval"
+	range 0x0030 0x0780
+	default 0x00A0
+	help
+	  Minimum hexadecimal value for the interval of extended advertisements.
+	  For ms, multiply the provided value by 0.625.
+
+config BLE_ACL_EXT_ADV_INT_MAX
+	hex "Maximum extended advertising interval"
+	range 0x0030 0x0780
+	default 0x00F0
+	help
+	  Maximum hexadecimal value for the interval of extended advertisements.
+	  For ms, multiply the provided value by 0.625.
+
 config BLE_LE_POWER_CONTROL_ENABLED
-	bool "Enable LE power control feature"
+	bool "Enable Bluetooth LE power control feature"
 	default n
 	help
-	  The LE power control feature makes devices be able to change TX power
+	  The Bluetooth LE power control feature makes devices be able to change TX power
 	  dynamically and automatically during connection, which provides effective
 	  communication.
 

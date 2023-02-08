@@ -16,6 +16,19 @@
 
 #define LE_AUDIO_SDU_SIZE_OCTETS(bitrate) (bitrate / (1000000 / CONFIG_AUDIO_FRAME_DURATION_US) / 8)
 
+#define LE_AUDIO_EXTENDED_ADV_NAME                                                                 \
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_USE_NAME,                            \
+			CONFIG_BLE_ACL_EXT_ADV_INT_MIN, CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
+
+#define LE_AUDIO_EXTENDED_ADV_CONN_NAME                                                            \
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONNECTABLE |                        \
+				BT_LE_ADV_OPT_USE_NAME,                                            \
+			CONFIG_BLE_ACL_EXT_ADV_INT_MIN, CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
+
+#define LE_AUDIO_PERIODIC_ADV                                                                      \
+	BT_LE_PER_ADV_PARAM(CONFIG_BLE_ACL_PER_ADV_INT_MIN, CONFIG_BLE_ACL_PER_ADV_INT_MAX,        \
+			    BT_LE_PER_ADV_OPT_NONE)
+
 #if (CONFIG_AUDIO_SAMPLE_RATE_48000_HZ)
 #define BT_AUDIO_CODEC_CONFIG_FREQ BT_CODEC_CONFIG_LC3_FREQ_48KHZ
 #define BT_AUDIO_CODEC_CAPABILIY_FREQ BT_CODEC_LC3_FREQ_48KHZ
