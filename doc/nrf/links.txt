@@ -112,6 +112,7 @@
 .. _`Matter Certification Policy`: https://github.com/CHIP-Specifications/connectedhomeip-spec/blob/master/policies/matter_certificate_policy.adoc
 .. _`Kconfig.mcuboot.defaults`: https://github.com/project-chip/connectedhomeip/blob/master/config/nrfconnect/chip-module/Kconfig.mcuboot.defaults
 .. _`Matter SDK tagged as v1.0.0`: https://github.com/project-chip/connectedhomeip/releases/tag/v1.0.0
+.. _`Testing with Apple Devices`: https://github.com/project-chip/connectedhomeip/blob/master/docs/guides/darwin.md
 
 .. _`DCL Quick Start Guide`: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/quickStartGuide.adoc
 
@@ -529,6 +530,7 @@
 
 .. _`An Introduction to Trusted Firmware-M (TF-M)`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/an-introduction-to-trusted-firmware-m-t-m#mcetoc_1gc9ihpcd0
 
+.. _`Testing the nRF Connect platform with Apple, Google and Samsung ecosystems`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/matter-testing-nrf-connect-sdk-platform-with-apple-google-and-samsung-ecosystems-218911247#mcetoc_1gkq24ojdf
 
 .. ### Source: App stores (play.google.com & apps.apple.com)
 
@@ -923,6 +925,8 @@
 
 .. _`Google Chrome browser`: https://www.google.com/chrome
 
+.. _`Google Home integration with Matter`: https://developers.home.google.com/matter
+
 .. ### Source: ubuntu.com
 
 .. _`Linux - Ubuntu 22.04 LTS`: https://releases.ubuntu.com/22.04/
@@ -935,6 +939,8 @@
 .. _`macOS 10.15`: https://support.apple.com/en-us/HT210642
 .. _`Apple Notification Center Service Specification`: https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Introduction/Introduction.html
 .. _`Apple Media Service Reference`: https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/AppleMediaService_Reference/Introduction/Introduction.html
+
+.. _`Apple Home integration with Matter`: https://www.apple.com/home-app/accessories/
 
 .. ### Source: arm.com
 
@@ -1114,3 +1120,5 @@
 .. _`3GPP TS 24.008 Ch. 10.5.7.3`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=667
 
 .. _`3GPP TS 24.008 Ch. 10.5.7.4a`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=668
+
+.. _`Samsung SmartThings integration with Matter`: https://support.smartthings.com/hc/en-us/articles/11219700390804-SmartThings-x-Matter-Integration-

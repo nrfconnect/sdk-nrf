@@ -20,6 +20,7 @@ The pages will guide you through the following getting started process:
 #. :ref:`ug_matter_gs_kconfig` describes the basic Kconfig configuration if you want to start developing your own Matter application.
 #. In :ref:`ug_matter_device_advanced_kconfigs`, you will learn about more advanced Kconfig options related to Matter.
 #. Once you have a grasp of the Matter configuration, :ref:`ug_matter_gs_adding_cluster` will teach you step by step how to add clusters to a Matter application created from the template sample.
+#. Finally, in :ref:`ug_matter_gs_ecosystem_compatibility_testing`, you will set up and test multiple Matter fabrics, each belonging to a different commercial ecosystem, and test their interoperability.
 
 Some of the pages will make reference to external documentation pages available in the |NCS| documentation under the :ref:`matter_index` tab.
 These are built from the files available in the official `Matter GitHub repository`_ and refer to the nRF Connect platform.
@@ -34,3 +35,4 @@ These are built from the files available in the official `Matter GitHub reposito
    kconfig
    advanced_kconfigs
    adding_clusters
+   ecosystem_compatibility_testing

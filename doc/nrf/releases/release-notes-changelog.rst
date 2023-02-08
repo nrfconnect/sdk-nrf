@@ -84,6 +84,7 @@ Matter
   * Support for erasing settings partition during DFU over Bluetooth LE SMP for the Nordic nRF52 Series' SoCs.
   * Enabled Wi-Fi and Bluetooth LE coexistence.
   * Mechanism to retry a failed Wi-Fi connection.
+  * Documentation about :ref:`ug_matter_gs_ecosystem_compatibility_testing`.
 
 * Updated:
 
