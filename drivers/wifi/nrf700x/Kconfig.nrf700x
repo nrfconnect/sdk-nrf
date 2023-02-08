@@ -75,10 +75,10 @@ config NRF700X_DATA_TX
 	bool "Enable TX data path in the driver"
 	default y if WPA_SUPP || NRF700X_AP_MODE || NRF700X_P2P_MODE
 
-config NRF700X_WIFI_UTIL
+config NRF700X_UTIL
 	bool "Enable Utility shell in nRF700x driver"
 
-config NRF700X_WIFI_BT_COEX
+config NRF700X_BT_COEX
 	bool "Enable Wi-Fi Bluetooth coexistence support"
 	depends on SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX
 	default y if SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX
@@ -89,23 +89,23 @@ config NRF700X_QSPI_LOW_POWER
 
 # Performance fine tuning options
 
-config RX_NUM_BUFS
+config NRF700X_RX_NUM_BUFS
 	int "Number of RX buffers"
 	default 63
 
-config MAX_TX_AGGREGATION
+config NRF700X_MAX_TX_AGGREGATION
 	int "Maximum number of TX packets to aggregate"
 	default 6
 
-config MAX_TX_TOKENS
+config NRF700X_MAX_TX_TOKENS
 	int "Maximum number of TX tokens"
 	default 10
 
-config TX_MAX_DATA_SIZE
+config NRF700X_TX_MAX_DATA_SIZE
 	int "Maximum size of TX data"
 	default 1600
 
-config RX_MAX_DATA_SIZE
+config NRF700X_RX_MAX_DATA_SIZE
 	int "Maximum size of RX data"
 	default 1600
 
