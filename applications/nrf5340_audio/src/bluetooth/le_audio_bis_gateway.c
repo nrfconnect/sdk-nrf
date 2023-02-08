@@ -28,6 +28,14 @@ BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 2,
 #define STANDARD_QUALITY_24KHZ 24000
 #define HIGH_QUALITY_48KHZ 48000
 
+#define BT_LE_EXT_ADV_AURACAST                                                                     \
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_USE_NAME,                            \
+			CONFIG_BLE_ACL_EXT_ADV_INT_MIN, CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
+
+#define BT_LE_PER_ADV_AURACAST                                                                     \
+	BT_LE_PER_ADV_PARAM(CONFIG_BLE_ACL_PER_ADV_INT_MIN, CONFIG_BLE_ACL_PER_ADV_INT_MAX,        \
+			    BT_LE_PER_ADV_OPT_NONE)
+
 /* For being able to dynamically define iso_tx_pools */
 #define NET_BUF_POOL_ITERATE(i, _)                                                                 \
 	NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool_##i, HCI_ISO_BUF_ALLOC_PER_CHAN,                     \
@@ -193,14 +201,14 @@ static int adv_create(void)
 	uint32_t broadcast_id = 0;
 
 	/* Create a non-connectable non-scannable advertising set */
-	ret = bt_le_ext_adv_create(BT_LE_EXT_ADV_NCONN_NAME, NULL, &adv);
+	ret = bt_le_ext_adv_create(BT_LE_EXT_ADV_AURACAST, NULL, &adv);
 	if (ret) {
 		LOG_ERR("Unable to create extended advertising set: %d", ret);
 		return ret;
 	}
 
 	/* Set periodic advertising parameters */
-	ret = bt_le_per_adv_set_param(adv, BT_LE_PER_ADV_DEFAULT);
+	ret = bt_le_per_adv_set_param(adv, BT_LE_PER_ADV_AURACAST);
 	if (ret) {
 		LOG_ERR("Failed to set periodic advertising parameters (ret %d)", ret);
 		return ret;
