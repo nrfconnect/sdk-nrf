@@ -130,9 +130,9 @@ static int location_ctrl_lwm2m_cell_result_cb(uint16_t obj_inst_id,
 
 exit:
 	if (err) {
-		location_cellular_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
+		location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
 	} else {
-		location_cellular_ext_result_set(LOCATION_EXT_RESULT_SUCCESS, &location);
+		location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_SUCCESS, &location);
 	}
 
 	return err;
@@ -172,19 +172,26 @@ void location_srv_ext_cellular_handle(
 
 exit:
 	if (err) {
-		location_cellular_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
+		location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
 	} else if (!cloud_resp_enabled) {
 		/* If there is no error and response from the cloud is not expected */
-		location_cellular_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN, NULL);
+		location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN, NULL);
 	}
 }
 #endif /* CONFIG_LOCATION_METHOD_CELLULAR */
 
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
-void location_srv_ext_wifi_handle(
-	const struct wifi_scan_info *wifi_request,
+void location_srv_ext_cloud_location_handle(
+	const struct location_data_cloud *cloud_location_request,
 	bool cloud_resp_enabled)
 {
-	mosh_error("No LwM2M support for Wi-Fi positioning");
-}
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	if (cloud_location_request->wifi_data != NULL) {
+		mosh_error("No LwM2M support for Wi-Fi positioning.");
+	}
 #endif /* CONFIG_LOCATION_METHOD_WIFI */
+
+	if (cloud_location_request->cell_data != NULL) {
+		location_srv_ext_cellular_handle(
+			cloud_location_request->cell_data, cloud_resp_enabled);
+	}
+}

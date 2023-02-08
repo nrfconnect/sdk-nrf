@@ -26,14 +26,9 @@ void location_srv_ext_agps_handle(const struct nrf_modem_gnss_agps_data_frame *a
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 void location_srv_ext_pgps_handle(const struct gps_pgps_request *pgps_req);
 #endif
-#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
-void location_srv_ext_cellular_handle(
-	const struct lte_lc_cells_info *cell_info,
-	bool cloud_resp_enabled);
-#endif
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
-void location_srv_ext_wifi_handle(
-	const struct wifi_scan_info *wifi_request,
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI)
+void location_srv_ext_cloud_location_handle(
+	const struct location_data_cloud *cloud_location_request,
 	bool cloud_resp_enabled);
 #endif
 

@@ -159,6 +159,51 @@ tests:
      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="0123456789abcdef0123456789abcdef"
     tags: ci_build
 
+  # Configurations for different location method combinations
+  sample.nrf9160.modem_shell.location_gnss_wifi_no_cellular:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    extra_configs:
+      - CONFIG_LOCATION_METHOD_GNSS=y CONFIG_LOCATION_METHOD_CELLULAR=n CONFIG_LOCATION_METHOD_WIFI=y
+    extra_args: SHIELD=nrf7002_ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
+    tags: ci_build
+  sample.nrf9160.modem_shell.location_wifi_cellular_no_gnss:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    extra_configs:
+      - CONFIG_LOCATION_METHOD_GNSS=n CONFIG_LOCATION_METHOD_CELLULAR=y CONFIG_LOCATION_METHOD_WIFI=y
+    extra_args: SHIELD=nrf7002_ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
+    tags: ci_build
+  sample.nrf9160.modem_shell.location_wifi_no_cellular_no_gnss:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    extra_configs:
+      - CONFIG_LOCATION_METHOD_GNSS=n CONFIG_LOCATION_METHOD_CELLULAR=n CONFIG_LOCATION_METHOD_WIFI=y
+    extra_args: SHIELD=nrf7002_ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
+    tags: ci_build
+  sample.nrf9160.modem_shell.location_gnss_no_wifi_no_cellular:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    extra_configs:
+      - CONFIG_LOCATION_METHOD_GNSS=y CONFIG_LOCATION_METHOD_CELLULAR=n CONFIG_LOCATION_METHOD_WIFI=n
+    tags: ci_build
+  sample.nrf9160.modem_shell.location_cellular_no_wifi_no_gnss:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    extra_configs:
+      - CONFIG_LOCATION_METHOD_GNSS=n CONFIG_LOCATION_METHOD_CELLULAR=y CONFIG_LOCATION_METHOD_WIFI=n
+    tags: ci_build
+
   # Configurations with modem UART traces to make sure they fit into image
   sample.nrf9160.modem_shell_modem_uart_trace:
     build_only: true
