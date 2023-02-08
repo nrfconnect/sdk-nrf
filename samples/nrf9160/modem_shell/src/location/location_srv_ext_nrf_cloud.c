@@ -149,14 +149,14 @@ static void location_srv_ext_nrf_cloud_location_ready_cb(
 				"Unable to determine location from cloud response, error: %d",
 				result->err);
 		}
-		/* Reset the semaphore to unblock location_srv_ext_nrf_cloud_pos_get()
+		/* Reset the semaphore to unblock location_srv_ext_nrf_cloud_location_get()
 		 * and make it return an error.
 		 */
 		k_sem_reset(&location_ready);
 	}
 }
 
-static int location_srv_ext_nrf_cloud_pos_get(
+static int location_srv_ext_nrf_cloud_location_get(
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 	const struct lte_lc_cells_info *cell_data,
 #else
@@ -211,49 +211,37 @@ static int location_srv_ext_nrf_cloud_pos_get(
 }
 #endif /* CONFIG_LOCATION_METHOD_CELLULAR || CONFIG_LOCATION_METHOD_WIFI */
 
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI)
+void location_srv_ext_cloud_location_handle(
+	const struct location_data_cloud *cloud_location_request,
+	bool cloud_resp_enabled)
+{
+	int err;
+	struct location_data *result = NULL;
+
+	if (cloud_resp_enabled) {
+		result = &nrf_cloud_location;
+	}
+	err = location_srv_ext_nrf_cloud_location_get(
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
-void location_srv_ext_cellular_handle(
-	const struct lte_lc_cells_info *cell_info,
-	bool cloud_resp_enabled)
-{
-	int err;
-	struct location_data *result = NULL;
-
-	if (cloud_resp_enabled) {
-		result = &nrf_cloud_location;
-	}
-	err = location_srv_ext_nrf_cloud_pos_get(cell_info, NULL, result);
-	if (err) {
-		mosh_error("Failed to send cellular location request, err: %d", err);
-		location_cellular_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
-	} else if (cloud_resp_enabled) {
-		location_cellular_ext_result_set(LOCATION_EXT_RESULT_SUCCESS, &nrf_cloud_location);
-	} else {
-		location_cellular_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN, NULL);
-	}
-}
-#endif /* CONFIG_LOCATION_METHOD_CELLULAR */
-
+		cloud_location_request->cell_data,
+#else
+		NULL,
+#endif
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
-void location_srv_ext_wifi_handle(
-	const struct wifi_scan_info *wifi_request,
-	bool cloud_resp_enabled)
-{
-	int err;
-	struct location_data *result = NULL;
-
-	if (cloud_resp_enabled) {
-		result = &nrf_cloud_location;
-	}
-
-	err = location_srv_ext_nrf_cloud_pos_get(NULL, wifi_request, result);
+		cloud_location_request->wifi_data,
+#else
+		NULL,
+#endif
+		result);
 	if (err) {
-		mosh_error("Failed to send Wi-Fi location request, err: %d", err);
-		location_wifi_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
+		mosh_error("Failed to send cloud location request, err: %d", err);
+		location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
 	} else if (cloud_resp_enabled) {
-		location_wifi_ext_result_set(LOCATION_EXT_RESULT_SUCCESS, &nrf_cloud_location);
+		location_cloud_location_ext_result_set(
+			LOCATION_EXT_RESULT_SUCCESS, &nrf_cloud_location);
 	} else {
-		location_wifi_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN, NULL);
+		location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN, NULL);
 	}
 }
-#endif /* CONFIG_LOCATION_METHOD_WIFI */
+#endif /* CONFIG_LOCATION_METHOD_CELLULAR && CONFIG_LOCATION_METHOD_WIFI */
