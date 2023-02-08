@@ -41,8 +41,7 @@ The location module receives configuration updates as payload in the following t
 
 The module sends the following events based on the outcome of the location request:
 * ``LOCATION_MODULE_EVT_GNSS_DATA_READY``: GNSS position has been acquired
-* ``LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY``: neighbor cell measurements have been obtained
-* ``LOCATION_MODULE_EVT_WIFI_ACCESS_POINTS_DATA_READY``: Wi-Fi access points have been obtained
+* ``LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY``: neighbor cell measurements or Wi-Fi access points (or both) have been obtained
 * ``LOCATION_MODULE_EVT_DATA_NOT_READY``: Location request failed
 * ``LOCATION_MODULE_EVT_TIMEOUT``: Timeout occurred
 * ``LOCATION_MODULE_EVT_AGPS_NEEDED``: A-GPS request should be sent to cloud
@@ -97,6 +96,10 @@ The location module is a threadless module in terms of message processing.
 In this sense, it differs from many other modules.
 
 All incoming events from other modules are handled in the context of the Application Event Manager callback, because they all complete fast enough to not require a separate thread.
+
+The :ref:`lib_location` library handles cellular and Wi-Fi positioning together when the location request method list has them next to each other.
+This means that LTE neighbor cell measurements and Wi-Fi scanning results are combined into the same ``LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST`` event.
+The location module responds to the :ref:`lib_location` library with unknown location resolution, because it does not request the location back from cloud service.
 
 Configuration options
 *********************

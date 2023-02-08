@@ -195,7 +195,7 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id,
 		       const struct lwm2m_obj_path path_list[]);
 
 /**
- * @brief Send neighbor cell data to cloud.
+ * @brief Send cloud location data to cloud.
  *
  * @note LwM2M builds: This function does not require passing in a list of objects, unlike other
  *		       functions in this API. The underlying LwM2M API called when calling this
@@ -208,25 +208,7 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id,
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id);
-
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
-/**
- * @brief Send Wi-Fi access point data to cloud.
- *
- * @note LwM2M builds: This function does not require passing in a list of objects, unlike other
- *		       functions in this API. The underlying LwM2M API called when calling this
- *		       function, keeps its own reference of the objects that needs to be updated.
- *
- * @param[in] buf Buffer containing data to be sent.
- * @param[in] len Length of buffer.
- * @param[in] ack Flag indicating whether the message should be acknowledged.
- * @param[in] id Message ID.
- *
- * @return 0 on success, or a negative error code on failure.
- */
-int cloud_wrap_wifi_access_points_send(char *buf, size_t len, bool ack, uint32_t id);
-#endif
+int cloud_wrap_cloud_location_send(char *buf, size_t len, bool ack, uint32_t id);
 
 /**
  * @brief Send A-GPS request to cloud.

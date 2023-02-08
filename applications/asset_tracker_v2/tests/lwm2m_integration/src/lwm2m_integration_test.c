@@ -202,7 +202,7 @@ void test_lwm2m_integration_neighbor_cells_send(void)
 {
 	__cmock_location_assistance_ground_fix_request_send_ExpectAndReturn(&client, true, 0);
 
-	TEST_ASSERT_EQUAL(0, cloud_wrap_neighbor_cells_send(NULL, 0, true, 0));
+	TEST_ASSERT_EQUAL(0, cloud_wrap_cloud_location_send(NULL, 0, true, 0));
 }
 
 void test_lwm2m_integration_agps_request_send(void)

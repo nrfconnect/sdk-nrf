@@ -37,4 +37,5 @@ target_sources(app PRIVATE ${ASSET_TRACKER_V2_DIR}/tests/json_common/mock/date_t
 target_compile_options(app PRIVATE
 	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20
 	-DEFTYPE=79
+	-DCONFIG_LTE_NEIGHBOR_CELLS_MAX=10
 )

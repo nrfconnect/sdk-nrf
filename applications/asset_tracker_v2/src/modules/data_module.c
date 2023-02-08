@@ -70,10 +70,8 @@ static struct cloud_data_ui ui_buf[CONFIG_DATA_UI_BUFFER_COUNT];
 static struct cloud_data_impact impact_buf[CONFIG_DATA_IMPACT_BUFFER_COUNT];
 static struct cloud_data_battery bat_buf[CONFIG_DATA_BATTERY_BUFFER_COUNT];
 static struct cloud_data_modem_dynamic modem_dyn_buf[CONFIG_DATA_MODEM_DYNAMIC_BUFFER_COUNT];
-static struct cloud_data_neighbor_cells neighbor_cells;
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
-static struct cloud_data_wifi_access_points wifi_access_points;
-#endif
+static struct cloud_data_cloud_location cloud_location;
+
 /* Static modem data does not change between firmware versions and does not
  * have to be buffered.
  */
@@ -130,8 +128,7 @@ enum coneval_supported_data_type {
 	UNUSED,
 	GENERIC,
 	BATCH,
-	NEIGHBOR_CELLS,
-	WIFI_ACCESS_POINTS,
+	CLOUD_LOCATION,
 	COUNT,
 };
 
@@ -585,47 +582,25 @@ static void data_encode(void)
 	}
 #endif
 
-	if (grant_send(NEIGHBOR_CELLS, &coneval, override)) {
-		err = cloud_codec_encode_neighbor_cells(&codec, &neighbor_cells);
+	if (grant_send(CLOUD_LOCATION, &coneval, override)) {
+		err = cloud_codec_encode_cloud_location(&codec, &cloud_location);
 		switch (err) {
 		case 0:
-			LOG_DBG("Neighbor cell data encoded successfully");
-			data_send(DATA_EVT_NEIGHBOR_CELLS_DATA_SEND, &codec);
+			LOG_DBG("Cloud location data encoded successfully");
+			data_send(DATA_EVT_CLOUD_LOCATION_DATA_SEND, &codec);
 			break;
 		case -ENOTSUP:
-			/* Neighbor cell data encoding not supported */
+			/* Cloud location data encoding not supported */
 			break;
 		case -ENODATA:
-			LOG_DBG("No neighbor cells data to encode, error: %d", err);
+			LOG_DBG("No cloud location data to encode, error: %d", err);
 			break;
 		default:
-			LOG_ERR("Error encoding neighbor cells data: %d", err);
+			LOG_ERR("Error encoding cloud location data: %d", err);
 			SEND_ERROR(data, DATA_EVT_ERROR, err);
 			return;
 		}
 	}
-
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
-	if (grant_send(WIFI_ACCESS_POINTS, &coneval, override)) {
-		err = cloud_codec_encode_wifi_access_points(&codec, &wifi_access_points);
-		switch (err) {
-		case 0:
-			LOG_DBG("Wi-Fi access point data encoded successfully");
-			data_send(DATA_EVT_WIFI_ACCESS_POINTS_DATA_SEND, &codec);
-			break;
-		case -ENOTSUP:
-			/* Wi-Fi access point data encoding not supported */
-			break;
-		case -ENODATA:
-			LOG_DBG("No Wi-Fi access point data to encode, error: %d", err);
-			break;
-		default:
-			LOG_ERR("Error encoding Wi-Fi access point data: %d", err);
-			SEND_ERROR(data, DATA_EVT_ERROR, err);
-			return;
-		}
-	}
-#endif
 
 	if (grant_send(GENERIC, &coneval, override)) {
 		err = cloud_codec_encode_data(&codec,
@@ -1430,43 +1405,55 @@ static void on_all_states(struct data_msg_data *msg)
 		requested_data_status_set(APP_DATA_LOCATION);
 	}
 
-	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY)) {
-		BUILD_ASSERT(sizeof(neighbor_cells.cell_data) ==
-			     sizeof(msg->module.location.data.neighbor_cells.cell_data));
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY)) {
+		if (msg->module.location.data.cloud_location.neighbor_cells_valid) {
+			BUILD_ASSERT(sizeof(cloud_location.neighbor_cells.cell_data) ==
+				     sizeof(msg->module.location.data.cloud_location
+					.neighbor_cells.cell_data));
 
-		BUILD_ASSERT(sizeof(neighbor_cells.neighbor_cells) ==
-			     sizeof(msg->module.location.data.neighbor_cells.neighbor_cells));
+			BUILD_ASSERT(sizeof(cloud_location.neighbor_cells.neighbor_cells) ==
+				     sizeof(msg->module.location.data.cloud_location
+					.neighbor_cells.neighbor_cells));
 
-		memcpy(&neighbor_cells.cell_data,
-		       &msg->module.location.data.neighbor_cells.cell_data,
-		       sizeof(neighbor_cells.cell_data));
+			cloud_location.neighbor_cells_valid = true;
+			cloud_location.neighbor_cells.ts =
+				msg->module.location.data.cloud_location.timestamp;
+			cloud_location.neighbor_cells.queued = true;
 
-		memcpy(&neighbor_cells.neighbor_cells,
-		       &msg->module.location.data.neighbor_cells.neighbor_cells,
-		       sizeof(neighbor_cells.neighbor_cells));
+			memcpy(&cloud_location.neighbor_cells.cell_data,
+			       &msg->module.location.data.cloud_location.neighbor_cells.cell_data,
+			       sizeof(cloud_location.neighbor_cells.cell_data));
 
-		neighbor_cells.ts = msg->module.location.data.neighbor_cells.timestamp;
-		neighbor_cells.queued = true;
-
-		requested_data_status_set(APP_DATA_LOCATION);
-	}
-
+			memcpy(&cloud_location.neighbor_cells.neighbor_cells,
+			       &msg->module.location.data.cloud_location
+					.neighbor_cells.neighbor_cells,
+			       sizeof(cloud_location.neighbor_cells.neighbor_cells));
+		}
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
-	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_WIFI_ACCESS_POINTS_DATA_READY)) {
-		BUILD_ASSERT(sizeof(wifi_access_points.ap_info) ==
-			     sizeof(msg->module.location.data.wifi_access_points.ap_info));
+		if (msg->module.location.data.cloud_location.wifi_access_points_valid) {
+			BUILD_ASSERT(sizeof(cloud_location.wifi_access_points.ap_info) ==
+				     sizeof(msg->module.location.data.cloud_location
+					.wifi_access_points.ap_info));
 
-		memcpy(&wifi_access_points.ap_info,
-		       &msg->module.location.data.wifi_access_points.ap_info,
-		       sizeof(wifi_access_points.ap_info));
+			cloud_location.wifi_access_points_valid = true;
+			cloud_location.wifi_access_points.ts =
+				msg->module.location.data.cloud_location.timestamp;
+			cloud_location.wifi_access_points.queued = true;
 
-		wifi_access_points.cnt = msg->module.location.data.wifi_access_points.cnt;
-		wifi_access_points.ts = msg->module.location.data.wifi_access_points.timestamp;
-		wifi_access_points.queued = true;
+			memcpy(&cloud_location.wifi_access_points.ap_info,
+			       &msg->module.location.data.cloud_location
+					.wifi_access_points.ap_info,
+			       sizeof(cloud_location.wifi_access_points.ap_info));
+
+			cloud_location.wifi_access_points.cnt =
+				msg->module.location.data.cloud_location.wifi_access_points.cnt;
+		}
+#endif
+		cloud_location.ts = msg->module.location.data.cloud_location.timestamp;
+		cloud_location.queued = true;
 
 		requested_data_status_set(APP_DATA_LOCATION);
 	}
-#endif
 
 	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_TIMEOUT)) {
 		requested_data_status_set(APP_DATA_LOCATION);

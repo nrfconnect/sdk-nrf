@@ -224,6 +224,23 @@ struct cloud_data_wifi_access_points {
 };
 #endif
 
+struct cloud_data_cloud_location {
+	/** Neighbor cell information is valid. */
+	bool neighbor_cells_valid;
+	/** Neighbor cells. */
+	struct cloud_data_neighbor_cells neighbor_cells;
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	/** Wi-Fi access point information is valid. */
+	bool wifi_access_points_valid;
+	/** Wi-Fi access points. */
+	struct cloud_data_wifi_access_points wifi_access_points;
+#endif
+	/** Cloud location info timestamp. UNIX milliseconds. */
+	int64_t ts;
+	/** Flag signifying that the data entry is to be encoded. */
+	bool queued : 1;
+};
+
 struct cloud_data_agps_request {
 	/** Mobile Country Code. */
 	int mcc;
@@ -283,34 +300,14 @@ typedef void (*cloud_codec_evt_handler_t)(const struct cloud_codec_evt *evt);
 int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event_handler);
 
 /**
- * @brief Encode cloud codec neighbor cells data.
- *
- * @note LwM2M builds: This function does not output a list of objects, unlike other
- *		       functions in this API. The object references that are required to update
- *		       neighbor cell measurements are kept internal in the LwM2M utils library.
- *
- * @param[out] output String buffer for encoding result.
- * @param[in] neighbor_cells Neighbor cells data.
- *
- * @retval 0 on success.
- * @retval -ENODATA if data object is not marked valid.
- * @retval -ENOMEM if codec couldn't allocate memory.
- * @retval -EINVAL if the data is invalid.
- * @retval -ENOTSUP if the function is not supported by the encoding backend.
- */
-int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
-				      struct cloud_data_neighbor_cells *neighbor_cells);
-
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
-/**
- * @brief Encode cloud codec Wi-Fi access points data.
+ * @brief Encode cloud codec cloud location data.
  *
  * @note LwM2M builds: This function does not output a list of objects, unlike other
  *		       functions in this API. The object references that are required to update
  *		       Wi-Fi access points are kept internal in the LwM2M utils library.
  *
  * @param[out] output String buffer for encoding result.
- * @param[in] wifi_access_points Wi-Fi access points.
+ * @param[in] cloud_location Cloud location data.
  *
  * @retval 0 on success.
  * @retval -ENODATA if data object is not marked valid.
@@ -318,9 +315,9 @@ int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
  * @retval -EINVAL if the data is invalid.
  * @retval -ENOTSUP if the function is not supported by the encoding backend.
  */
-int cloud_codec_encode_wifi_access_points(struct cloud_codec_data *output,
-					  struct cloud_data_wifi_access_points *wifi_access_points);
-#endif
+int cloud_codec_encode_cloud_location(
+	struct cloud_codec_data *output,
+	struct cloud_data_cloud_location *cloud_location);
 
 /**
  * @brief Encode cloud codec A-GPS request.

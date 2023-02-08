@@ -310,10 +310,7 @@ static void memfault_handle_event(struct debug_msg_data *msg)
 	 */
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_DATA_SEND_BATCH)) ||
-	    (IS_EVENT(msg, data, DATA_EVT_NEIGHBOR_CELLS_DATA_SEND)) ||
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
-	    (IS_EVENT(msg, data, DATA_EVT_WIFI_ACCESS_POINTS_DATA_SEND)) ||
-#endif
+	    (IS_EVENT(msg, data, DATA_EVT_CLOUD_LOCATION_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND))) {
 		/* Limit how often non-coredump memfault data (events and metrics) are sent
 		 * to memfault. Updates can never occur more often than the interval set by

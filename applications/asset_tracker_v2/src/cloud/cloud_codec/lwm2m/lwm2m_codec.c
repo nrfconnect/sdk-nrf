@@ -85,29 +85,21 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 	return 0;
 }
 
-int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
-				      struct cloud_data_neighbor_cells *neighbor_cells)
+int cloud_codec_encode_cloud_location(struct cloud_codec_data *output,
+				 struct cloud_data_cloud_location *cloud_location)
 {
 	ARG_UNUSED(output);
 
 	int err;
 
-	err = lwm2m_codec_helpers_set_neighbor_cell_data(neighbor_cells);
+	err = lwm2m_codec_helpers_set_neighbor_cell_data(&cloud_location->neighbor_cells);
 	if (err) {
 		return err;
 	}
 
-	neighbor_cells->queued = false;
+	cloud_location->queued = false;
 	return 0;
 }
-
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
-int cloud_codec_encode_wifi_access_points(struct cloud_codec_data *output,
-					  struct cloud_data_wifi_access_points *wifi_access_points)
-{
-	return -ENOTSUP;
-}
-#endif
 
 int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 				    struct cloud_data_agps_request *agps_request)
