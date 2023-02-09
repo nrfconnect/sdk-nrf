@@ -714,6 +714,27 @@ Disable UARTs for power measurement purposes.
 
      uart during_sleep disable
 
+----
+
+Heap usage statistics
+=====================
+
+You can use the ``heap`` command to print kernel and system heap usage statistics.
+
+  .. code-block:: console
+
+     mosh:~$ heap
+     kernel heap statistics:
+     free:             7804
+     allocated:         272
+     max. allocated:   1056
+
+     system heap statistics:
+     max. size:       81400
+     size:              248
+     free:              160
+     allocated:          88
+
 Configuration
 *************
 

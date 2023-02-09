@@ -310,6 +310,7 @@ nRF9160 samples
       The :ref:`lib_nrf_cloud` library is used with MQTT for location requests to the cloud.
     * New command ``th pipeline`` for executing several MoSh commands sequentially in one thread.
     * New command ``sleep`` for introducing wait periods in between commands when using ``th pipeline``.
+    * New command ``heap`` for printing kernel and system heap usage statistics.
 
   * Updated:
 
