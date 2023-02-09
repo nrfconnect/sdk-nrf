@@ -26,7 +26,6 @@ if WIFI_NRF700X
 
 # Making calls to RPU from net_mgmt callbacks
 config NET_MGMT_EVENT_STACK_SIZE
-	int "Stack size for net mgmt event"
 	default 2048
 
 config NRF700X_REV_A
