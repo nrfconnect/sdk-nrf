@@ -141,10 +141,11 @@ To create a source file for the event type you defined in the header file:
 1. Include the header file for the new event type in your source file.
 #. Define the event type with the :c:macro:`APP_EVENT_TYPE_DEFINE` macro.
    Pass the name of the event type as declared in the header along with additional parameters.
-   For example, you can provide a function that fills a buffer with a string version of the event data (used for logging).
+   For example, you can provide a function that logs a string version of the event data by using the :c:macro:APP_EVENT_MANAGER_LOG macro.
    The :c:macro:`APP_EVENT_TYPE_DEFINE` macro adds flags as a last parameter.
    These flags are constant and can only be set using :c:macro:`APP_EVENT_FLAGS_CREATE` on :c:macro:`APP_EVENT_TYPE_DEFINE` macro.
-   To not set any flag, use :c:macro:`APP_EVENT_FLAGS_CREATE` without any argument as shown in the below example.
+   To not set any flag, use the :c:macro:`APP_EVENT_FLAGS_CREATE` macro without any argument.
+   To enable logging from the application start, use the :c:enum:`APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE` enum as shown in the following example.
    To get value of specific flag, use :c:func:`app_event_get_type_flag` function.
 
 The following code example shows a source file for the event type ``sample_event``:
@@ -161,10 +162,10 @@ The following code example shows a source file for the event type ``sample_event
 			   event->value2, event->value3);
    }
 
-   APP_EVENT_TYPE_DEFINE(sample_event,			/* Unique event name. */
-		     log_sample_event,			/* Function logging event data. */
-		     NULL,				/* No event info provided. */
-		     APP_EVENT_FLAGS_CREATE());		/* Flags managing event type. */
+   APP_EVENT_TYPE_DEFINE(sample_event,							/* Unique event name. */
+		     log_sample_event,							/* Function logging event data. */
+		     NULL,								/* No event info provided. */
+		     APP_EVENT_FLAGS_CREATE(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));	/* Flags managing event type. */
 
 .. note::
 	There is a deprecated way of logging Application Event Manager events by writing a string to the provided buffer that will be supported until a future release of |NCS|.
@@ -236,7 +237,7 @@ To turn a module into a listener for specific event types, complete the followin
 #. :ref:`Implement an Event handler function <app_event_manager_register_module_as_listener_handler>` and define the module as a listener with the :c:macro:`APP_EVENT_LISTENER` macro, passing both the name of the module and the event handler function as arguments.
 #. Subscribe the listener to specific event types.
 
-For subscribing to an event type, the Application Event Manager provides three types of subscriptions, differing in priority.
+The Application Event Manager provides four types of events subscriptions, differing in priority.
 They can be registered with the following macros:
 
 * :c:macro:`APP_EVENT_SUBSCRIBE_FIRST` - notification as the first subscriber
