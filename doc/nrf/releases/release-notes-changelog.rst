@@ -73,6 +73,10 @@ Matter
 
 * Added:
 
+  * Support for switching between Matter over Thread and Matter over Wi-Fi.
+    This feature is available for the :ref:`matter_lock_sample` sample programmed on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached, using the ``thread_wifi_switched`` build type.
+    See :ref:`matter_lock_sample_wifi_thread_switching` in the sample documentation for more information.
+  * Documentation about :ref:`switchable Matter over Thread and Matter over Wi-Fi <ug_matter_overview_architecture_integration_designs>` platform design.
   * Support for Wi-Fi Network Diagnostic Cluster (which counts the number of packets received and transmitted on the Wi-Fi interface).
   * Default support for nRF7002 revision B.
   * Specific QR code and onboarding information in the documentation for each :ref:`Matter sample <matter_samples>` and the :ref:`Matter weather station <matter_weather_station_app>`.
@@ -430,6 +434,7 @@ Matter samples
   * Added:
 
     * ``thread_wifi_switched`` build type that enables switching between Thread and Wi-Fi network support in the field.
+      See :ref:`matter_lock_sample_wifi_thread_switching` in the sample documentation for more information.
     * Wi-Fi low power configuration using Wi-Fi's :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
 
 * :ref:`matter_light_switch_sample`:

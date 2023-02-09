@@ -12,12 +12,16 @@ This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` ap
 You can use this sample as a reference for creating your application.
 
 This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread or Wi-Fi network.
-Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol can be supported for a specific lock device.
+Support for both Thread and Wi-Fi depends on the hardware platform.
+The door lock sample can be configured to use only one transport protocol, for example Thread or Wi-Fi, or can use the :ref:`switchable Matter over Wi-Fi and Matter over Thread <matter_lock_sample_wifi_thread_switching>` architecture, where the application is able to load and run on boot an image with either the Thread or the Wi-Fi support.
+
 Depending on the network you choose:
 
 * In case of Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
 * In case of Wi-Fi, this device works in the :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
   This means that the device sleeps most of the time and wakes up on each Delivery Traffic Indication Message (DTIM) interval to poll for pending messages.
+
+The same distinction applies in the :ref:`matter_lock_sample_wifi_thread_switching` scenario, depending on the network you have switched to.
 
 Requirements
 ************
@@ -39,6 +43,7 @@ The development kits for this sample offer the following IPv6 network support fo
 
 * Matter over Thread is supported for ``nrf52840dk_nrf52840``, ``nrf5340dk_nrf5340_cpuapp``, and ``nrf21540dk_nrf52840``.
 * Matter over Wi-Fi is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached or for ``nrf7002dk_nrf5340_cpuapp``.
+* :ref:`Switching of Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached, using the ``thread_wifi_switched`` build type.
 
 Overview
 ********
@@ -65,6 +70,31 @@ The controller must get the `Onboarding information`_ from the Matter accessory 
 For details, see the `Commissioning the device`_ section.
 
 .. matter_door_lock_sample_remote_testing_end
+
+.. _matter_lock_sample_wifi_thread_switching:
+
+Thread and Wi-Fi switching
+==========================
+
+When built using the ``thread_wifi_switched`` build type and programmed to the nRF5340 DK with the nRF7002 EK shield attached, the door lock sample supports a feature that allows you to :ref:`dynamically switch between Matter over Thread and Matter over Wi-Fi <ug_matter_overview_architecture_integration_designs_switchable>` on the device boot.
+Due to internal flash size limitations, only one transport protocol can be used at a time.
+
+.. matter_door_lock_sample_thread_wifi_switch_desc_start
+
+The application is built in two variants: the first one is the application working with Matter over Thread and the second one is the application working with Matter over Wi-Fi.
+You can configure which transport is selected on the device boot as the default one.
+Both application variants are programmed into separate partitions of the external flash.
+The application runs from the internal flash memory, using one of the variants from the external flash.
+You can trigger the switch from one variant to another using the **Button 3** on the nRF5340 DK.
+The device is rebooted into the MCUboot bootloader, which replaces the current variant by swapping the application variant in the internal flash.
+
+.. note::
+   Because the external flash is used for both the DFU and the switching feature, this implementation has higher memory size requirements and you need an external flash with at least 6 MB of memory.
+
+.. matter_door_lock_sample_thread_wifi_switch_desc_end
+
+See `Matter door lock build types`_, `Selecting a build type`_, and :ref:`matter_lock_sample_switching_thread_wifi` for more information about how to configure and test this feature with this sample.
+The Thread and Wi-Fi switching also supports :ref:`dedicated Device Firmware Upgrades <matter_lock_sample_switching_thread_wifi_dfu>`.
 
 Configuration
 *************
@@ -93,7 +123,7 @@ This sample supports the following build types, depending on the selected board:
 
 * ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
 * ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
-* ``thread_wifi_switched`` -- Debug version of the application with the ability to :ref:`switch between Thread and Wi-Fi network support <matter_lock_sample_switching_thread_wifi>` in the field - can be used for the nRF5340 DK with the nRF7002 EK shield attached.
+* ``thread_wifi_switched`` -- Debug version of the application with the ability to :ref:`switch between Thread and Wi-Fi network support <matter_lock_sample_wifi_thread_switching>` in the field - can be used for the nRF5340 DK with the nRF7002 EK shield attached.
 * ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used for the nRF52840 DK, nRF5340 DK, nRF7002 DK, and nRF21540 DK.
 
 .. note::
@@ -356,14 +386,13 @@ To upgrade the device firmware, complete the steps listed for the selected metho
 
 .. _matter_lock_sample_switching_thread_wifi:
 
-Switching between Thread and Wi-Fi
-==================================
+Testing switching between Thread and Wi-Fi
+==========================================
 
-The ``thread_wifi_switched`` build type allows you to build the door lock application that supports dynamic switching between Matter over Thread and Matter over Wi-Fi.
-This feature requires that both variants of the application are built and placed in appropriate partitions of the external flash.
-After that, when a user triggers the switch, the device is rebooted into the MCUboot bootloader, which swaps the current variant.
+.. note::
+   You can only test :ref:`matter_lock_sample_wifi_thread_switching` on the nRF5340 DK with the nRF7002 EK shield attached, using the ``thread_wifi_switched`` build type.
 
-To test switching between Thread and Wi-Fi, complete the following steps:
+To test this feature, complete the following steps:
 
 #. Build the door lock application for Matter over Thread:
 
