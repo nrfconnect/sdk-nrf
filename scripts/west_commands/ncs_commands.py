@@ -26,7 +26,7 @@ except ImportError:
              "with pip3.")
 
 import ncs_west_helpers as nwh
-from pygit2_helpers import commit_affects_files, commit_shortlog
+from pygit2_helpers import commit_affects_files, commit_title
 
 WEST_V0_13_0_OR_LATER = version.parse(west_version) >= version.parse('0.13.0')
 
@@ -49,14 +49,14 @@ def likely_merged(np, zp, nsha, zsha):
                 '(revert these if appropriate):', color=log.WRN_COLOR)
         for dc, ucs in likely_merged.items():
             if len(ucs) == 1:
-                log.inf(f'- {dc.oid} {commit_shortlog(dc)}')
-                log.inf(f'  Similar upstream shortlog:\n'
-                        f'  {ucs[0].oid} {commit_shortlog(ucs[0])}')
+                log.inf(f'- {dc.oid} {commit_title(dc)}')
+                log.inf(f'  Similar upstream title:\n'
+                        f'  {ucs[0].oid} {commit_title(ucs[0])}')
             else:
-                log.inf(f'- {dc.oid} {commit_shortlog(dc)}\n'
-                        '  Similar upstream shortlogs:')
+                log.inf(f'- {dc.oid} {commit_title(dc)}\n'
+                        '  Similar upstream titles:')
                 for i, uc in enumerate(ucs, start=1):
-                    log.inf(f'    {i}. {uc.oid} {commit_shortlog(uc)}')
+                    log.inf(f'    {i}. {uc.oid} {commit_title(uc)}')
     else:
         log.dbg('no downstream patches seem to have been merged upstream')
 
@@ -280,7 +280,7 @@ class NcsLoot(NcsWestCommand):
                 (', output limited by --file' if args.files else ''))
 
         json_sha_list = []
-        json_shortlog_list = []
+        json_title_list = []
         for c in loot:
             if args.files and not commit_affects_files(c, args.files):
                 log.dbg(f"skipping {c.oid}; it doesn't affect file filter",
@@ -288,15 +288,15 @@ class NcsLoot(NcsWestCommand):
                 continue
 
             sha = str(c.oid)
-            shortlog = commit_shortlog(c)
+            title = commit_title(c)
             if args.sha_only:
                 log.inf(sha)
             else:
-                log.inf(f'- {sha} {shortlog}')
+                log.inf(f'- {sha} {title}')
 
             if args.json:
                 json_sha_list.append(sha)
-                json_shortlog_list.append(shortlog)
+                json_title_list.append(title)
 
         if args.json:
             json_data[name] = {
@@ -304,7 +304,7 @@ class NcsLoot(NcsWestCommand):
                 'ncs-commit': nsha,
                 'upstream-commit': zsha,
                 'shas': json_sha_list,
-                'shortlogs': json_shortlog_list,
+                'titles': json_title_list,
             }
 
 class NcsCompare(NcsWestCommand):
@@ -536,14 +536,14 @@ class NcsUpmerger(NcsWestCommand):
 
         for dc, ucs in reversed(analyzer.likely_merged.items()):
             if len(ucs) == 1:
-                log.inf(f'- Rerverting: {dc.oid} {commit_shortlog(dc)}')
-                log.inf(f'  Similar upstream shortlog:\n'
-                        f'  {ucs[0].oid} {commit_shortlog(ucs[0])}')
+                log.inf(f'- Rerverting: {dc.oid} {commit_title(dc)}')
+                log.inf(f'  Similar upstream title:\n'
+                        f'  {ucs[0].oid} {commit_title(ucs[0])}')
             else:
-                log.inf(f'- Reverting: {dc.oid} {commit_shortlog(dc)}\n'
-                        '  Similar upstream shortlogs:')
+                log.inf(f'- Reverting: {dc.oid} {commit_title(dc)}\n'
+                        '  Similar upstream titles:')
                 for i, uc in enumerate(ucs, start=1):
-                    log.inf(f'    {i}. {uc.oid} {commit_shortlog(uc)}')
+                    log.inf(f'    {i}. {uc.oid} {commit_title(uc)}')
             project.git('revert --no-edit ' + str(dc.oid))
         log.inf(f'Merging: {z_rev} to project: {project.name}')
         msg = f"[nrf mergeup] Merge upstream automatically up to commit {z_sha}\n\nThis auto-upmerge was performed with ncs-upmerger script."

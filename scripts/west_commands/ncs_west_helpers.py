@@ -23,8 +23,8 @@ except ImportError:
              "with pip3.")
 from west import log
 
-from pygit2_helpers import shortlog_is_revert, shortlog_has_sauce, \
-    shortlog_no_sauce, commit_reverts_what, commit_shortlog
+from pygit2_helpers import title_is_revert, title_has_sauce, \
+    title_no_sauce, commit_reverts_what, commit_title
 
 __all__ = ['InvalidRepositoryError', 'UnknownCommitsError', 'RepoAnalyzer']
 
@@ -68,7 +68,7 @@ class RepoAnalyzer:
         # this can also be a tuple of domains.
         self._downstream_domain = downstream_domain
 
-        # commit shortlog edit distance to use when fuzzy-matching
+        # commit title edit distance to use when fuzzy-matching
         # upstream and downstream patches
         self._edit_dist_threshold = edit_dist_threshold
 
@@ -118,7 +118,7 @@ class RepoAnalyzer:
 
     The map's keys are downstream pygit2 objects. Its values are lists
     of pygit2 commit objects that are merged upstream and have similar
-    shortlogs by edit distance to each key.'''
+    titles by edit distance to each key.'''
 
     #
     # Internal helpers
@@ -173,8 +173,8 @@ class RepoAnalyzer:
         # complete list of OOT patches.
         downstream_out = OrderedDict()
         for c in all_downstream_oot:
-            sha, sl = str(c.oid), commit_shortlog(c)
-            is_revert = shortlog_is_revert(sl)  # this is just a heuristic
+            sha, sl = str(c.oid), commit_title(c)
+            is_revert = title_is_revert(sl)  # this is just a heuristic
 
             if len(c.parents) > 1:
                 if not self._include_mergeups:
@@ -186,7 +186,7 @@ class RepoAnalyzer:
                     is_revert = False  # a merge is never a revert
 
             if is_revert:
-                # If a shortlog marks a revert, delete the original commit
+                # If a title marks a revert, delete the original commit
                 # from downstream_out, if it can be found.
                 try:
                     rsha = commit_reverts_what(c)
@@ -210,7 +210,7 @@ class RepoAnalyzer:
 
                 if rsha in downstream_out:
                     log.dbg('** commit {} ("{}") was reverted in {}'.
-                            format(rsha, commit_shortlog(downstream_out[rsha]),
+                            format(rsha, commit_title(downstream_out[rsha]),
                                    sha), level=log.VERBOSE_VERY)
                     del downstream_out[rsha]
                     continue
@@ -231,7 +231,7 @@ class RepoAnalyzer:
             # incorrect sauce tag. (Again, downstream might carry reverts
             # of upstream patches as hotfixes, which we shouldn't
             # warn about.)
-            if (not shortlog_has_sauce(sl, self._downstream_sauce) and
+            if (not title_has_sauce(sl, self._downstream_sauce) and
                     not is_revert):
                 log.wrn(f'{self._dp.name}: bad or missing sauce tag: {sha} ("{sl}")')
 
@@ -245,53 +245,53 @@ class RepoAnalyzer:
         # Compute patches which are downstream and probably were
         # merged upstream, using the following heuristics:
         #
-        # 1. downstream patches with small shortlog edit distances
+        # 1. downstream patches with small title edit distances
         #    from upstream patches
         #
-        # 2. downstream patches with shortlogs that are prefixes of
+        # 2. downstream patches with titles that are prefixes of
         #    upstream patches
         #
-        # Heuristic #1 catches patches with typos in the shortlogs
+        # Heuristic #1 catches patches with typos in the titles
         # that reviewers asked to be fixed, etc. E.g. upstream
-        # shortlog
+        # title
         #
         #    Bluetoth: do foo
         #
-        # matches downstream shortlog
+        # matches downstream title
         #
         #    [nrf fromlist] Bluetooth: do foo
         #
         # Heuristic #2 catches situations where we had to shorten our
-        # downstream shortlog to fit the "[nrf xyz]" sauce tag at the
-        # beginning and still fit within CI's shortlog length
-        # restrictions. E.g. upstream shortlog
+        # downstream title to fit the "[nrf xyz]" sauce tag at the
+        # beginning and still fit within CI's title length
+        # restrictions. E.g. upstream title
         #
         #    subsys: do a thing that is very useful for everyone
         #
-        # matches downstream shortlog
+        # matches downstream title
         #
         #    [nrf fromlist] subsys: do a thing that is very
         #
         # The return value is a map from pygit2 commit objects for
         # downstream patches, to a list of pygit2 commit objects that
-        # are upstream patches which have similar shortlogs and the
+        # are upstream patches which have similar titles and the
         # same authors.
 
         likely_merged = OrderedDict()
         for dc in self.downstream_outstanding:
-            sl = commit_shortlog(dc)
+            sl = commit_title(dc)
 
             def ed(upstream_commit):
                 return editdistance.eval(
-                    shortlog_no_sauce(sl, self._downstream_sauce),
-                    commit_shortlog(upstream_commit))
+                    title_no_sauce(sl, self._downstream_sauce),
+                    commit_title(upstream_commit))
 
             matches = [
                 uc for uc in self.upstream_new if
                 # Heuristic #1:
                 ed(uc) < self._edit_dist_threshold or
                 # Heuristic #2:
-                commit_shortlog(uc).startswith(sl)
+                commit_title(uc).startswith(sl)
             ]
 
             if len(matches) != 0:
