@@ -524,8 +524,26 @@ See the following instructions.
          Otherwise, if you recover the application core first and the network core last, the binary written to the application core is deleted and readback protection is enabled again after a reset.
 
 .. include:: ../nrf52/developing.rst
-   :start-after: fota_upgrades_start
-   :end-before: fota_upgrades_end
+   :start-after: fota_upgrades_intro_start
+   :end-before: fota_upgrades_intro_end
+
+.. include:: ../nrf52/developing.rst
+   :start-after: fota_upgrades_over_ble_intro_start
+   :end-before: fota_upgrades_over_ble_intro_end
+
+.. include:: ../nrf52/developing.rst
+   :start-after: fota_upgrades_over_ble_mandatory_mcuboot_start
+   :end-before: fota_upgrades_over_ble_mandatory_mcuboot_end
+
+Bluetooth buffers configuration introduced by the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP` Kconfig option is also automatically applied to the network core child image by the dedicated overlay file.
+
+.. include:: ../nrf52/developing.rst
+   :start-after: fota_upgrades_over_ble_additional_information_start
+   :end-before: fota_upgrades_over_ble_additional_information_end
+
+.. include:: ../nrf52/developing.rst
+   :start-after: fota_upgrades_outro_start
+   :end-before: fota_upgrades_outro_end
 
 .. include:: ../nrf52/developing.rst
    :start-after: fota_upgrades_bt_mesh_start

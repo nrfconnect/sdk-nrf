@@ -20,7 +20,7 @@ To get started with your nRF52 Series DK, follow the steps in the :ref:`ug_nrf52
 If you are not familiar with the |NCS| and the development environment, see the :ref:`introductory documentation <getting_started>`.
 
 .. _ug_nrf52_developing_ble_fota:
-.. fota_upgrades_start
+.. fota_upgrades_intro_start
 
 FOTA updates
 ************
@@ -31,20 +31,58 @@ You can also use FOTA updates to replace the application.
 .. note::
    For the possibility of introducing an upgradable bootloader, refer to :ref:`ug_bootloader_adding`.
 
+.. fota_upgrades_intro_end
+
+.. fota_upgrades_over_ble_intro_start
+
 FOTA over Bluetooth Low Energy
 ==============================
 
+FOTA updates are supported using MCUmgr's Simple Management Protocol (SMP) over Bluetooth.
+The application acts as a GATT server and allows the connected Bluetooth Central device to perform a firmware update.
+To use FOTA over Bluetooth LE, samples must support Bluetooth peripheral role (:kconfig:option:`CONFIG_BT_PERIPHERAL`).
+
+The application supports SMP handlers related to:
+
+* Image management.
+* Operating System (OS) management used to reboot the device after the firmware upload is complete.
+* Erasing settings partition used to ensure that a new application is not booted with incompatible content in the settings partition written by the previous application.
+
 To enable support for FOTA updates, do the following:
+
+* Enable the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option, which implies configuration of the following:
+
+   * All of the SMP command handlers mentioned in the previous paragraph.
+   * SMP BT reassembly feature.
+   * The :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP` Kconfig option automatically extends the Bluetooth buffers, which allows to speed up the FOTA transfer over Bluetooth, but also increases RAM usage.
+
+.. fota_upgrades_over_ble_intro_end
+
+.. fota_upgrades_over_ble_mandatory_mcuboot_start
 
 * Use MCUboot as the upgradable bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
   For more information, go to the :doc:`mcuboot:index-ncs` page.
-* Enable the mcumgr module that handles the transport protocol over Bluetooth® Low Energy as follows:
 
-  a. Enable the Kconfig options :kconfig:option:`CONFIG_MCUMGR_CMD_OS_MGMT`, :kconfig:option:`CONFIG_MCUMGR_CMD_IMG_MGMT`, and :kconfig:option:`CONFIG_MCUMGR_SMP_BT`.
-  #. Call the functions :c:func:`os_mgmt_register_group()` and :c:func:`img_mgmt_register_group()` in your application.
-  #. Call the :c:func:`smp_bt_register()` function in your application to initialize the mcumgr Bluetooth Low Energy transport.
+.. fota_upgrades_over_ble_mandatory_mcuboot_end
 
-  After completing these steps, your application advertises the SMP Service with ``UUID 8D53DC1D-1DB7-4CD3-868B-8A527460AA84``.
+.. fota_upgrades_over_ble_additional_information_start
+
+If necessary, you can modify any of the implied options or defaulted values introduced by the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option.
+
+You can either add these Kconfig options to the configuration files of your application or have them inline in a project build command.
+Here is an example of how you can build for the :ref:`peripheral_lbs` sample:
+
+.. parsed-literal::
+   :class: highlight
+
+    west build -b *build_target* -- -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
+
+When you connect to the device after the build has completed and the firmware has been programmed to it, the SMP Service is enabled with the ``UUID 8D53DC1D-1DB7-4CD3-868B-8A527460AA84``.
+If you want to add SMP Service to advertising data, refer to the :ref:`zephyr:smp_svr_sample`.
+
+.. fota_upgrades_over_ble_additional_information_end
+
+.. fota_upgrades_outro_start
 
 To perform a FOTA update, complete the following steps:
 
@@ -87,7 +125,7 @@ This configuration was carefully selected to achieve the maximum possible throug
 
 Consider using these features in your project to speed up the FOTA update process.
 
-.. fota_upgrades_end
+.. fota_upgrades_outro_end
 
 .. _ug_nrf52_developing_fota_in_mesh:
 .. fota_upgrades_bt_mesh_start
