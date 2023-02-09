@@ -146,3 +146,40 @@ The empty diff means you can always use:
 Additionally, both the old and new histories are committed sequentially into the ``revision`` fields for these projects in the :file:`nrf/west.yml` west
 manifest file.
 This means you can always combine ``git bisect`` in the ``nrf`` repository with ``west update`` at each bisection point to diagnose regressions and the rest.
+
+.. _dm-oss-userdata:
+
+Userdata associated with OSS repositories
+*****************************************
+
+The west manifest file :file:`nrf/west.yml` contains ``userdata`` values for
+some OSS repository projects.
+
+This section documents these values and their purpose. However, they are mainly
+meant for internal use and are safe to ignore.
+
+See :ref:`zephyr:west-project-userdata` for general information about the west
+``userdata`` feature.
+
+In the |NCS|, each ``userdata`` value has this format:
+
+.. code-block:: YAML
+
+   ncs:
+     upstream-url: https://...
+     upstream-sha: GIT_SHA
+     compare-by-default: <true|false>
+
+These fields are used to track some extra OSS repository metadata. The metadata
+is present for projects which are not included in the |NCS| directly from the
+Zephyr project's manifest in :file:`zephyr/west.yml`. Repository maintainers
+use this metadata while synchronizing the |NCS| fork of each repository with
+its upstream repository.
+
+The meaning of each ``userdata`` field is:
+
+- ``upstream-url``: Git URL that the project is synchronized against
+- ``upstream-sha``: most recent Git SHA in the ``upstream-url``
+  repository which is included in the |NCS| fork of the repository
+- ``compare-by-default``: if ``true``, internal |NCS| synchronization tooling
+  will include information related to this repository by default

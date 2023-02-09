@@ -43,6 +43,9 @@ manifest:
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
+  #
+  # For 'userdata' fields in the projects area, please refer to:
+  # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/dm_code_base.html
   projects:
 
     # The Zephyr RTOS fork in the NCS, along with the subset of its
