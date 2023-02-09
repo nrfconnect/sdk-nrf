@@ -386,7 +386,8 @@ void wifi_nrf_wpa_supp_event_proc_deauth(void *if_priv,
 	}
 
 	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.deauth) {
-		vif_ctx_zep->supp_callbk_fns.deauth(vif_ctx_zep->supp_drv_if_ctx, &event);
+		vif_ctx_zep->supp_callbk_fns.deauth(vif_ctx_zep->supp_drv_if_ctx,
+			&event, mgmt);
 	}
 }
 
@@ -465,9 +466,10 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct nrf_wifi_umac_scan_info scan_info;
+	struct nrf_wifi_umac_scan_info *scan_info = NULL;
 	int indx = 0;
 	int ret = -1;
+	int num_freqs = 0;
 
 	if (!if_priv || !params) {
 		LOG_ERR("%s: Invalid params\n", __func__);
@@ -483,36 +485,52 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 		goto out;
 	}
 
-	memset(&scan_info, 0x0, sizeof(scan_info));
+	if (params->freqs) {
+		for (indx = 0; params->freqs[indx]; indx++)
+			num_freqs++;
+	}
+
+	scan_info = k_calloc(sizeof(*scan_info) + (num_freqs * sizeof(struct nrf_wifi_channel)),
+			     sizeof(char));
+
+	memset(scan_info, 0x0, sizeof(*scan_info));
+
+	if (params->freqs) {
+		for (indx = 0; params->freqs[indx]; indx++) {
+			scan_info->scan_params.channels[indx].center_frequency =
+				params->freqs[indx];
+		}
+		scan_info->scan_params.num_scan_channels = indx;
+	}
 
 	if (params->filter_ssids) {
-		scan_info.scan_params.num_scan_ssids = params->num_filter_ssids;
+		scan_info->scan_params.num_scan_ssids = params->num_filter_ssids;
 
 		for (indx = 0; indx < params->num_filter_ssids; indx++) {
-			memcpy(scan_info.scan_params.scan_ssids[indx].nrf_wifi_ssid,
+			memcpy(scan_info->scan_params.scan_ssids[indx].nrf_wifi_ssid,
 			       params->filter_ssids[indx].ssid,
 			       params->filter_ssids[indx].ssid_len);
 
-			scan_info.scan_params.scan_ssids[indx].nrf_wifi_ssid_len =
+			scan_info->scan_params.scan_ssids[indx].nrf_wifi_ssid_len =
 				params->filter_ssids[indx].ssid_len;
 		}
 	}
 
 
-	scan_info.scan_mode = 0;
-	scan_info.scan_reason = SCAN_CONNECT;
+	scan_info->scan_mode = 0;
+	scan_info->scan_reason = SCAN_CONNECT;
 
 	/* Copy extra_ies */
 	if (params->extra_ies_len && params->extra_ies_len <= NRF_WIFI_MAX_IE_LEN) {
-		memcpy(scan_info.scan_params.ie.ie, params->extra_ies, params->extra_ies_len);
-		scan_info.scan_params.ie.ie_len = params->extra_ies_len;
+		memcpy(scan_info->scan_params.ie.ie, params->extra_ies, params->extra_ies_len);
+		scan_info->scan_params.ie.ie_len = params->extra_ies_len;
 	} else if (params->extra_ies_len) {
 		LOG_ERR("%s: extra_ies_len %d is greater than max IE len %d\n",
 			__func__, params->extra_ies_len, NRF_WIFI_MAX_IE_LEN);
 		goto out;
 	}
 
-	status = wifi_nrf_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &scan_info);
+	status = wifi_nrf_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, scan_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: Scan trigger failed\n", __func__);
@@ -524,6 +542,8 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 
 	ret = 0;
 out:
+	if (scan_info)
+		k_free(scan_info);
 	return ret;
 }
 
@@ -756,6 +776,11 @@ int wifi_nrf_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 		vif_ctx_zep->assoc_freq = params->freq.freq;
 	} else {
 		vif_ctx_zep->assoc_freq = 0;
+	}
+
+	if (params->prev_bssid) {
+		assoc_info.prev_bssid_flag = 1;
+		memcpy(assoc_info.prev_bssid, params->prev_bssid, ETH_ALEN);
 	}
 
 	if (params->ssid) {

@@ -1524,6 +1524,8 @@ struct nrf_wifi_umac_assoc_info {
 	struct nrf_wifi_ie wpa_ie;
 	unsigned char use_mfp;
 	signed char control_port;
+	unsigned int prev_bssid_flag;
+	unsigned char prev_bssid[NRF_WIFI_ETH_ADDR_LEN];
 } __NRF_WIFI_PKD;
 
 /**
