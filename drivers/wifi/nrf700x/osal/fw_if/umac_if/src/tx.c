@@ -374,6 +374,9 @@ size_t _tx_pending_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	void *nwb = NULL;
 	void *first_nwb = NULL;
 	int max_txq_len = fmac_dev_ctx->fpriv->data_config.max_tx_aggregation;
+	int ampdu_len = 0;
+	int max_ampdu_len_per_token = (RPU_PKTRAM_SIZE - (CONFIG_NRF700X_RX_NUM_BUFS *
+			CONFIG_NRF700X_RX_MAX_DATA_SIZE)) / CONFIG_NRF700X_MAX_TX_TOKENS;
 
 	peer_id = tx_curr_peer_opp_get(fmac_dev_ctx, ac);
 
@@ -406,12 +409,20 @@ size_t _tx_pending_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		nwb = wifi_nrf_utils_q_peek(fmac_dev_ctx->fpriv->opriv,
 					    pend_pkt_q);
 
-		if ((!tx_aggr_check(fmac_dev_ctx,
+		ampdu_len += TX_BUF_HEADROOM +
+			wifi_nrf_osal_nbuf_data_size(fmac_dev_ctx->fpriv->opriv,
+						     (void *)nwb);
+
+		if (ampdu_len >= max_ampdu_len_per_token) {
+			break;
+		}
+
+		if (!tx_aggr_check(fmac_dev_ctx,
 				    first_nwb,
 				    ac,
 				    peer_id) ||
-		     (wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv,
-					   txq)) >= max_txq_len)) {
+			(wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv,
+					      txq) >= max_txq_len)) {
 			break;
 		}
 
@@ -461,15 +472,17 @@ enum wifi_nrf_status tx_cmd_prep_callbk_fn(void *callbk_data,
 	struct nrf_wifi_tx_buff *config = NULL;
 	unsigned int desc_id = 0;
 	unsigned int buf_len = 0;
+	unsigned char frame_indx = 0;
 
 	info = (struct tx_cmd_prep_info *)callbk_data;
 	fmac_dev_ctx = info->fmac_dev_ctx;
 	config = info->config;
+	frame_indx = config->num_tx_pkts;
 
 	nwb = (unsigned long)nbuf;
 
 	desc_id = (config->tx_desc_num *
-		   fmac_dev_ctx->fpriv->data_config.max_tx_aggregation) + config->num_tx_pkts;
+		   fmac_dev_ctx->fpriv->data_config.max_tx_aggregation) + frame_indx;
 
 	tx_buf_info = &fmac_dev_ctx->tx_buf_info[desc_id];
 
@@ -492,7 +505,8 @@ enum wifi_nrf_status tx_cmd_prep_callbk_fn(void *callbk_data,
 	phy_addr = wifi_nrf_hal_buf_map_tx(fmac_dev_ctx->hal_dev_ctx,
 					   nwb_data,
 					   buf_len,
-					   desc_id);
+					   desc_id,
+					   frame_indx);
 
 	if (!phy_addr) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
@@ -505,10 +519,10 @@ enum wifi_nrf_status tx_cmd_prep_callbk_fn(void *callbk_data,
 	tx_buf_info->nwb = nwb;
 	tx_buf_info->mapped = true;
 
-	config->tx_buff_info[config->num_tx_pkts].ddr_ptr =
+	config->tx_buff_info[frame_indx].ddr_ptr =
 		(unsigned long long)phy_addr;
 
-	config->tx_buff_info[config->num_tx_pkts].pkt_length = buf_len;
+	config->tx_buff_info[frame_indx].pkt_length = buf_len;
 	config->num_tx_pkts++;
 
 	status = WIFI_NRF_STATUS_SUCCESS;
@@ -528,7 +542,6 @@ enum wifi_nrf_status tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	void *nwb = NULL;
 	void *nwb_data = NULL;
 	unsigned int txq_len = 0;
-	unsigned int max_txq_len = 0;
 	unsigned char *data = NULL;
 	struct tx_cmd_prep_info info;
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
@@ -538,9 +551,7 @@ enum wifi_nrf_status tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	txq_len = wifi_nrf_utils_list_len(fmac_dev_ctx->fpriv->opriv,
 					  txq);
 
-	max_txq_len = fmac_dev_ctx->fpriv->data_config.max_tx_aggregation;
-
-	if (txq_len == 0 || txq_len > max_txq_len) {
+	if (txq_len == 0) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: txq_len = %d\n",
 				      __func__,

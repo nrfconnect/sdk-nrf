@@ -39,24 +39,21 @@ struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 
 #define MAX_RX_QUEUES 3
 
-#define TOTAL_TX_FRAMES \
-	(CONFIG_NRF700X_MAX_TX_TOKENS * CONFIG_NRF700X_MAX_TX_AGGREGATION)
 #define MAX_TX_FRAME_SIZE \
 	(CONFIG_NRF700X_TX_MAX_DATA_SIZE + TX_BUF_HEADROOM)
 #define TOTAL_TX_SIZE \
-	(TOTAL_TX_FRAMES * MAX_TX_FRAME_SIZE)
+	(CONFIG_NRF700X_MAX_TX_TOKENS * CONFIG_NRF700X_TX_MAX_DATA_SIZE)
 #define TOTAL_RX_SIZE \
 	(CONFIG_NRF700X_RX_NUM_BUFS * CONFIG_NRF700X_RX_MAX_DATA_SIZE)
 
 BUILD_ASSERT(CONFIG_NRF700X_MAX_TX_TOKENS >= 1,
 	"At least one TX token is required");
-BUILD_ASSERT(CONFIG_NRF700X_MAX_TX_AGGREGATION <= 16,
-	"Max TX aggregation is 16");
+BUILD_ASSERT(CONFIG_NRF700X_MAX_TX_AGGREGATION <= 15,
+	"Max TX aggregation is 15");
 BUILD_ASSERT(CONFIG_NRF700X_RX_NUM_BUFS >= 1,
 	"At least one RX buffer is required");
-
-BUILD_ASSERT(RPU_PKTRAM_SIZE >= (TOTAL_TX_SIZE + TOTAL_RX_SIZE),
-		"Packet RAM overflow in Sheliak");
+BUILD_ASSERT(RPU_PKTRAM_SIZE - TOTAL_RX_SIZE >= TOTAL_TX_SIZE,
+	"Packet RAM overflow: not enough memory for TX");
 
 static const unsigned char aggregation = 1;
 static const unsigned char wmm = 1;
