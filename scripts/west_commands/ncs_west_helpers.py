@@ -9,19 +9,22 @@
 # Portions were copied from:
 # https://github.com/foundriesio/zephyr_tools/.
 
-from collections import OrderedDict
+from __future__ import annotations
+
 from pathlib import Path
 import sys
 import textwrap
+from typing import Union, Iterable
 
 try:
     import editdistance
-    import pygit2
+    import pygit2  # type: ignore
 except ImportError:
     sys.exit("Can't import extra dependencies needed for NCS west extensions.\n"
              "Please install packages in nrf/scripts/requirements-extra.txt "
              "with pip3.")
 from west import log
+from west.manifest import Project
 
 from pygit2_helpers import title_is_revert, title_has_sauce, \
     title_no_sauce, commit_reverts_what, commit_title
@@ -46,35 +49,47 @@ class RepoAnalyzer:
     '''Utility class for analyzing a repository, especially
     upstream/downstream differences.'''
 
-    def __init__(self, downstream_project, upstream_project,
-                 downstream_ref, upstream_ref,
-                 downstream_domain='@nordicsemi.no', downstream_sauce='nrf',
-                 edit_dist_threshold=3, include_mergeups=False):
-        # - downstream and upstream west.manifest.Project instances
-        # - revisions within them to analyze
-        # - corresponding pygit2.Repository instance
-        self._dp = downstream_project
-        self._dr = downstream_ref
-        self._up = upstream_project
-        self._ur = upstream_ref
+    def __init__(self,
+                 downstream_project: Project,
+                 upstream_project: Project,
+                 downstream_ref: str,
+                 upstream_ref: str,
+                 downstream_domain: Union[str, tuple[str]] = '@nordicsemi.no',
+                 downstream_sauce: str = 'nrf',
+                 edit_dist_threshold: int = 3,
+                 include_mergeups: bool = False):
+        '''
+        :param downstream_project: project loaded from downstream manifest
+        :param upstream_project: project loaded from upstream manifest
+        :param downstream_ref: downstream revision to analyze against
+        :param upstream_ref: upstream revision to analyze against
+        :param downstream_domain: email domains from downstream committers
+
+        :param downstream_sauce: string or strings identifying
+                                 downstream sauce tags: if your
+                                 sauce tags look like [xyz <tag>], use
+                                 "xyz". If they look like [xyz <tag>]
+                                 or [abc <tag>], use ['xyz', 'abc']
+
+        :param edit_dist_threshold: commit title edit distance to use when
+                                    fuzzy-matching upstream and downstream
+                                    patches
+
+        :param include_mergeups: include mergeup commits as downstream
+                                 outstanding patches
+        '''
+
+        self._dp: Project = downstream_project
+        self._dr: str = downstream_ref
+        self._up: Project = upstream_project
+        self._ur: str = upstream_ref
         assert self._dp.path == self._up.path
-        self._repo = _load_repo(self._dp.abspath)
-
-        # string identifying a downstream sauce tag;
-        # if your sauce tags look like [xyz <tag>], use "xyz". this can
-        # also be a tuple of strings to find multiple sources of sauce.
-        self._downstream_sauce = _parse_sauce(downstream_sauce)
-        # domain name (like "@example.com") used by downstream committers;
-        # this can also be a tuple of domains.
-        self._downstream_domain = downstream_domain
-
-        # commit title edit distance to use when fuzzy-matching
-        # upstream and downstream patches
-        self._edit_dist_threshold = edit_dist_threshold
-
-        # whether or not to include mergeup commits as downstream outstanding
-        # patches
-        self._include_mergeups = include_mergeups
+        assert self._dp.abspath
+        self._repo: pygit2.Repository = _load_repo(self._dp.abspath)
+        self._downstream_sauce: list[str] = _to_list(downstream_sauce)
+        self._downstream_domain: list[str] = _to_list(downstream_domain)
+        self._edit_dist_threshold: int = edit_dist_threshold
+        self._include_mergeups: bool = include_mergeups
 
     #
     # Main API, which is property based.
@@ -124,7 +139,7 @@ class RepoAnalyzer:
     # Internal helpers
     #
 
-    def _new_upstream_only_commits(self):
+    def _new_upstream_only_commits(self) -> list[pygit2.Commit]:
         '''Commits in `upstream_ref` history since merge base with
         `downstream_ref`'''
         try:
@@ -149,7 +164,7 @@ class RepoAnalyzer:
         walker.hide(merge_base)
         return list(walker)
 
-    def _downstream_outstanding_commits(self):
+    def _downstream_outstanding_commits(self) -> list[pygit2.Commit]:
         # Compute a list of commit objects for outstanding
         # downstream patches.
 
@@ -171,8 +186,9 @@ class RepoAnalyzer:
 
         # Now filter out reverted patches and mergeups from the
         # complete list of OOT patches.
-        downstream_out = OrderedDict()
+        downstream_out: dict[str, pygit2.Commit] = {}
         for c in all_downstream_oot:
+            assert isinstance(c, pygit2.Commit)
             sha, sl = str(c.oid), commit_title(c)
             is_revert = title_is_revert(sl)  # this is just a heuristic
 
@@ -241,7 +257,8 @@ class RepoAnalyzer:
 
         return list(downstream_out.values())
 
-    def _likely_merged_commits(self):
+    def _likely_merged_commits(self) -> dict[pygit2.Commit,
+                                             list[pygit2.Commit]]:
         # Compute patches which are downstream and probably were
         # merged upstream, using the following heuristics:
         #
@@ -277,7 +294,7 @@ class RepoAnalyzer:
         # are upstream patches which have similar titles and the
         # same authors.
 
-        likely_merged = OrderedDict()
+        likely_merged = {}
         for dc in self.downstream_outstanding:
             sl = commit_title(dc)
 
@@ -299,16 +316,16 @@ class RepoAnalyzer:
 
         return likely_merged
 
-def _parse_sauce(sauce):
+def _to_list(arg: Union[str, Iterable[str]]) -> list[str]:
     # Returns sauce as an immutable object (by copying a sequence
     # into a tuple if sauce is not a string)
 
-    if isinstance(sauce, str):
-        return sauce
-    else:
-        return tuple(sauce)
+    if isinstance(arg, str):
+        return [arg]
 
-def _load_repo(path):
+    return list(arg)
+
+def _load_repo(path: str) -> pygit2.Repository:
     try:
         return pygit2.Repository(path)
     except KeyError:
