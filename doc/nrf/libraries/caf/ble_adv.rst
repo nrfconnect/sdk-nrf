@@ -24,6 +24,7 @@ The following Kconfig options are available for this module:
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_GRACE_PERIOD`
+* :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA`
 
 Read about some of these options in the following sections.
 
@@ -62,6 +63,12 @@ This lets you speed up finding the Peripheral by Bluetooth Centrals.
   After the event is received, the device will switch to the low duty cycle directed advertising.
 
 Switching to slower advertising is done to reduce the energy consumption.
+
+Synchronizing RPA and advertising data updates
+==============================================
+
+With the :kconfig:option:`CONFIG_BT_PRIVACY` Kconfig option enabled, set the :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA` option to synchronize Resolvable Private Address (RPA) rotation with the undirected advertising data update.
+You can control the rotation period with the :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA_TIMEOUT` option and change the randomization factor of the rotation period with the :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA_TIMEOUT_RAND` option.
 
 Power-down
 ==========
@@ -106,6 +113,7 @@ The module automatically gets new advertising data and scan response data from B
 
 * Bluetooth LE undirected advertising is started or restarted.
 * Undirected advertising enters the :ref:`caf_ble_adv_grace_period`.
+* RPA is rotated with the :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA` option enabled.
 
 The payload update can be triggered by the application using :c:struct:`ble_adv_data_update_event`.
 Make sure to submit the event after changing the Bluetooth data provided by a provider.
@@ -128,3 +136,9 @@ Avoiding connection requests from unbonded centrals when bonded
 If :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST` is enabled and the Bluetooth local identity currently in use already has a bond, the device will filter incoming scan response data requests and connection requests.
 In that case, only the bonded peer can connect or request scan response data.
 This is done to prevent Bluetooth Centrals other than the bonded one from connecting with the device.
+
+Grace period with synchronized updates of RPA and advertising data
+==================================================================
+
+With both the :kconfig:option:`CONFIG_CAF_BLE_ADV_GRACE_PERIOD` and the :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA` options enabled, if the RPA rotation occurs in the grace period, it terminates the grace period prematurely.
+This limitation is caused by the Bluetooth API, which doesn't allow to delay the RPA rotation.

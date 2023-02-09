@@ -124,6 +124,52 @@ config CAF_BLE_ADV_GRACE_PERIOD
 	  and advertising is continued without Swift Pair data for additional
 	  time before the advertising is stopped.
 
+config CAF_BLE_ADV_ROTATE_RPA
+	bool "Rotate RPA together with advertising data"
+	depends on BT_PRIVACY
+	default y if BT_ADV_PROV_FAST_PAIR
+	help
+	  During active advertising, the module periodically triggers RPA
+	  rotation combined with advertising data update. This prevents
+	  automatic RPA rotations triggered by Zephyr in the background.
+
+	  Synchronizing RPA rotation with advertising data update is needed if
+	  an advertising provider uses a random value when generating data. In
+	  that case lack of synchronization could lead to compromising privacy.
+
+if CAF_BLE_ADV_ROTATE_RPA
+
+config CAF_BLE_ADV_ROTATE_RPA_TIMEOUT
+	int "RPA rotation timeout [s]"
+	range 60 900 if BT_ADV_PROV_FAST_PAIR
+	range 60 3600
+	default 720
+	help
+	  Period of time in seconds between subsequent RPA rotations
+	  triggered by module.
+
+config CAF_BLE_ADV_ROTATE_RPA_TIMEOUT_RAND
+	int "RPA rotation timeout randomization [s]"
+	range 10 50
+	default 30
+	help
+	  Used RPA timeout value is randomized by subtracting a random value
+	  that is between zero and randomization_timeout.
+
+endif # CAF_BLE_ADV_ROTATE_RPA
+
+if !CAF_BLE_ADV_ROTATE_RPA
+
+config CAF_BLE_ADV_ROTATE_RPA_TIMEOUT
+	int
+	default 0
+
+config CAF_BLE_ADV_ROTATE_RPA_TIMEOUT_RAND
+	int
+	default 0
+
+endif # !CAF_BLE_ADV_ROTATE_RPA
+
 config CAF_BLE_ADV_BLE_BOND_SUPPORTED
 	bool
 	default CAF_BLE_BOND_SUPPORTED

@@ -253,6 +253,8 @@ nRF Desktop
   * The :ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO <config_desktop_app_options>` configuration option.
     It can be used to indicate the dongle peer identity with a dedicated event.
   * Updated the :ref:`nrf_desktop_fast_pair_app` to remove the Fast Pair advertising payload for the dongle peer.
+  * Removed Fast Pair discoverable advertising payload on Resolvable Private Address (RPA) rotation during discoverable advertising session.
+  * Synchronization between the Resolvable Private Address (RPA) rotation and the advertising data update in the Fast Pair configurations using the :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA` option.
 
 * Updated:
 
@@ -795,6 +797,13 @@ Common Application Framework (CAF)
 
     * Aligned the module with the recent MCUmgr API, following the :ref:`zephyr:mcumgr_callbacks` migration guide in the Zephyr documentation.
       The module now requires :kconfig:option:`CONFIG_MCUMGR_MGMT_NOTIFICATION_HOOKS` and :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_UPLOAD_CHECK_HOOK` configuration options to be enabled.
+
+* :ref:`caf_ble_adv`:
+
+  * Added :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA`.
+    The option synchronizes Resolvable Private Address (RPA) rotation with the advertising data update in the Bluetooth Privacy mode.
+    Added dependent :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA_TIMEOUT` and :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA_TIMEOUT_RAND` options.
+    They are used to specify the rotation period and its randomization factor.
 
 * :ref:`caf_overview_events`:
 
