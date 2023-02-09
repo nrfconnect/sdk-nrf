@@ -97,7 +97,11 @@ Matter
   * Default transmission output power for Matter over Thread devices to the maximum available one for all targets:
     8 dBm for nRF52840, 3 dBm for nRF5340, 20 dBm for all devices with FEM enabled, and 0 dBm for sleepy devices.
 
-* Fixed the issue of connection timing out when attaching to a Wi-Fi access point that requires Wi-Fi Protected Access 3 (WPA3).
+* Fixed:
+
+  * The issue where the connection would time out when attaching to a Wi-Fi access point that requires Wi-Fi Protected Access 3 (WPA3).
+  * The issue where the ``NetworkInterfaces`` attribute of General Diagnostics cluster would return EUI-64 instead of MAC Extended Address for Thread network interfaces.
+
 * Removed support for Android CHIP Tool from the documentation and release artifacts.
   Moving forward, we recommend using the development tool CHIP Tool for Linux or macOS or mobile applications from publicly available Matter Ecosystems.
 
