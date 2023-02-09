@@ -95,14 +95,14 @@ class NcsWestCommand(WestCommand):
         # below, "pmap" means "project map": a dict mapping project
         # names to west.manifest.Project instances.
 
+        # zephyr_rev: validated --zephyr-rev argument. (quits and
+        #             print a message about what to do if things go
+        #             wrong).
         # z_manifest: upstream zephyr west.manifest.Manifest instance
-        #
-        # zephyr_rev: validated --zephyr-rev argument.
-        # (quits and print a message about what to do if things go wrong).
-        if hasattr(args, 'zephyr_rev'):
-            self.zephyr_rev = self.validate_zephyr_rev(args)
-            self.z_manifest = self.zephyr_manifest()
-            self.z_pmap = {p.name: p for p in self.z_manifest.projects}
+        # z_pmap: project map for the zephyr manifest
+        self.zephyr_rev = self.validate_zephyr_rev(args)
+        self.z_manifest = self.zephyr_manifest()
+        self.z_pmap = {p.name: p for p in self.z_manifest.projects}
 
         # we want to build an ncs_pmap too. if we have a projects arg,
         # we'll use that. otherwise, we'll just use all the projects
