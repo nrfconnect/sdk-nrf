@@ -134,17 +134,18 @@ enum tfm_plat_err_t tfm_plat_get_implementation_id(uint32_t *size, uint8_t *buf)
 	return TFM_PLAT_ERR_SUCCESS;
 }
 
-enum tfm_plat_err_t tfm_plat_get_hw_version(uint32_t *size, uint8_t *buf)
+enum tfm_plat_err_t tfm_plat_get_cert_ref(uint32_t *size, uint8_t *buf)
+
 {
 	enum tfm_plat_err_t err;
 	size_t otp_size;
 
-	err = tfm_plat_otp_read(PLAT_OTP_ID_HW_VERSION, *size, buf);
+	err = tfm_plat_otp_read(PLAT_OTP_ID_CERT_REF, *size, buf);
 	if (err != TFM_PLAT_ERR_SUCCESS) {
 		return err;
 	}
 
-	err = tfm_plat_otp_get_size(PLAT_OTP_ID_HW_VERSION, &otp_size);
+	err = tfm_plat_otp_get_size(PLAT_OTP_ID_CERT_REF, &otp_size);
 	if (err != TFM_PLAT_ERR_SUCCESS) {
 		return err;
 	}
