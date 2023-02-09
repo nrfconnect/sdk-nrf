@@ -464,7 +464,7 @@
 .. _`Programming SoCs with nrfjprog`: https://infocenter.nordicsemi.com/topic/ug_nrf_cltools/UG/cltools/nrf_nrfjprogexe.html
 
 .. _`Nordic Thingy:53 Hardware`: https://infocenter.nordicsemi.com/topic/ug_thingy53/UG/thingy53/intro/frontpage.html
-.. _`Nordic Thingy:53 Regulatory notices`: https://infocenter.nordicsemi.com/topic/ug_thingy53/UG/thingy53/regulatory/regulatory_notices.
+.. _`Nordic Thingy:53 Regulatory notices`: https://infocenter.nordicsemi.com/topic/ug_thingy53/UG/thingy53/regulatory/regulatory_notices.html
 
 .. _`Nordic Thingy:91 User Guide`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/intro/frontpage.html
 
