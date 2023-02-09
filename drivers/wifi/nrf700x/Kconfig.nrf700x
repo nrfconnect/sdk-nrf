@@ -24,9 +24,12 @@ config NRF_WIFI_LOW_POWER
 
 if WIFI_NRF700X
 
-# Making calls to RPU from net_mgmt callbacks
+# Making calls to RPU from net_mgmt callbacks.
+#
+# If WPA supplicant is enabled, then don't override as it has higher
+# stack requirements.
 config NET_MGMT_EVENT_STACK_SIZE
-	default 2048
+	default 2048 if !WPA_SUPP
 
 config NRF700X_REV_A
 	bool "nRF7002 Rev A"
