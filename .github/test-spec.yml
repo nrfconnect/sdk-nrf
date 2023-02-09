@@ -13,14 +13,17 @@
     - "!ncs_version.h.in"
 
 "CI-tool-test-linux":
+  - "scripts/ncs-toolchain-version-minimum.txt"
   - "scripts/requirements*.txt"
   - "scripts/tools-versions-linux.txt"
 
 "CI-tool-test-win":
+  - "scripts/ncs-toolchain-version-minimum.txt"
   - "scripts/requirements*.txt"
   - "scripts/tools-versions-win10.txt"
 
 "CI-tool-test-darwin":
+  - "scripts/ncs-toolchain-version-minimum.txt"
   - "scripts/requirements*.txt"
   - "scripts/tools-versions-darwin.txt"
 
