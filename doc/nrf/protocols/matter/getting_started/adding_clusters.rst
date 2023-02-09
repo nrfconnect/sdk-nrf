@@ -94,17 +94,97 @@ This tool is provided with the Matter repository in the |NCS|.
 
 To edit clusters using the ZAP tool, complete the following steps:
 
-1. Make sure that you have installed the ZAP tool prerequisites, as mentioned in the Quick instructions section in the :file:`README.md` file in the official `ZCL Advanced Platform`_ repository.
-#. Open your installation directory for the |NCS| in a command line.
-#. Navigate to :file:`modules/lib/matter`.
+1. Download the ZAP package containing pre-compiled executables and libraries and extract it:
+
+   .. note::
+       You can download the package in a compatible version manually from the `ZCL Advanced Platform releases`_, but we recommend using a dedicated helper script that will do it for you.
+
+   a. Open your installation directory for the |NCS| in a command line.
+   #. Navigate to :file:`modules/lib/matter`.
+   #. Run the helper script to download and extract the ZAP package in the directory that corresponds to the *location_path* argument:
+
+      .. note::
+       The `-o` argument in the command is used to allow overwriting files, if they already exist in the given location.
+       Otherwise the script will display prompt during download and ask for user consent to overwrite the files directly.
+
+      .. parsed-literal::
+         :class: highlight
+
+         python scripts/setup/nrfconnect/get_zap.py -l *location_path* -o
+
+#. Verify the ZAP tool version by comparing the script output with the following possible cases:
+
+   * Case 1: If your currently installed ZAP version matches the recommended one, you will see a message similar to the following one:
+
+     .. code-block::
+
+        Your currenly installed ZAP tool version: 2022.12.20 matches the recommended one.
+
+     This means that your ZAP version is correct and the tool executable can be accessed from the operating system environment, so you can skip the following step about adding the ZAP tool to the system :envvar:`PATH` environment variable.
+
+   * Case 2: If your currently installed ZAP version does not match the recommended one or no ZAP version is installed on your device, you will see a message similar to the following one:
+
+     .. code-block::
+
+        Your currenly installed ZAP tool version 2022.12.19 does not match the recommended one: 2022.12.20.
+
+     Alternatively, this message can look like the following one:
+
+     .. code-block::
+
+        No ZAP tool version was found installed on this device.
+
+     In this case, the package download process will start automatically:
+
+     .. parsed-literal::
+        :class: highlight
+
+        Trying to download ZAP tool package matching your system and recommended version.
+        100% [......................................................................] 150136551 / 150136551
+        ZAP tool package was downloaded and extracted in the given location.
+
+        #######################################################################################
+        # Please add the following location to the system PATH: *package_extraction_location* #
+        #######################################################################################
+
+     .. note::
+         The *package_extraction_location* in the example output will be replaced by the *location_path* from the previous step, where you extracted the package.
+
+#. Add the *package_extraction_location* ZAP package location printed in the script output to the system :envvar:`PATH` environment variables.
+   This is not needed if your currently installed ZAP version matches the recommended one (case 1 from the previous step).
+
+   .. tabs::
+
+      .. group-tab:: Linux
+
+         For example, if you are using bash, run the following commands:
+
+         .. parsed-literal::
+            :class: highlight
+
+            echo 'export PATH=package_extraction_location:"$PATH"' >> ${HOME}/.bashrc
+            source ${HOME}/.bashrc
+
+      .. group-tab:: Windows
+
+         For the detailed instructions for adding :envvar:`PATH` environment variables on Windows, see :ref:`zephyr:env_vars`.
+
+      .. group-tab:: macOS
+
+         For example, if you are using bash, run the following commands:
+
+         .. parsed-literal::
+            :class: highlight
+
+            echo 'export PATH=package_extraction_location:"$PATH"' >> ${HOME}/.bash_profile
+            source ${HOME}/.bash_profile
+   ..
+
 #. Open the :file:`src/template.zap` for editing by running the following command, where ``samples/matter/sensor`` stands for the path where you copied the template sample in the first step of this guide.
 
    .. code-block::
 
-      ./scripts/tools/zap/run_zaptool.sh ../../../nrf/samples/matter/sensor/src/template.zap
-
-   .. note::
-       The :file:`run_zaptool.sh` script will run the bootstrap procedure to install all required ZAP tool dependencies (Node.js packages).
+      zap ../../../nrf/samples/matter/sensor/src/template.zap
 
    The ZAP tool's Zigbee Cluster Configurator window appears.
 
@@ -160,7 +240,7 @@ To edit clusters using the ZAP tool, complete the following steps:
 
    .. code-block::
 
-      ./scripts/tools/zap/generate.py ../../../nrf/samples/matter/sensor/src/template.zap
+      python ./scripts/tools/zap/generate.py ../../../nrf/samples/matter/sensor/src/template.zap
 
 At this point, new clusters have been added to the Matter device.
 
@@ -339,7 +419,7 @@ For example, the implementation can look as follows:
    using namespace ::chip;
    using namespace ::chip::app::Clusters;
 
-   void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath & attributePath, uint8_t mask, uint8_t type,
+   void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath & attributePath, uint8_t type,
                                           uint16_t size, uint8_t * value)
    {
            if (attributePath.mClusterId != OnOff::Id || attributePath.mAttributeId != OnOff::Attributes::OnOff::Id)

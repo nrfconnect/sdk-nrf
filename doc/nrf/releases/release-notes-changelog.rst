@@ -85,6 +85,7 @@ Matter
   * Enabled Wi-Fi and Bluetooth LE coexistence.
   * Mechanism to retry a failed Wi-Fi connection.
   * Documentation about :ref:`ug_matter_gs_ecosystem_compatibility_testing`.
+  * Support for ZAP tool under Windows.
 
 * Updated:
 
@@ -96,6 +97,7 @@ Matter
   * The Bluetooth LE connection timeout parameters and the update timeout parameters to make communication over Bluetooth LE more reliable.
   * Default transmission output power for Matter over Thread devices to the maximum available one for all targets:
     8 dBm for nRF52840, 3 dBm for nRF5340, 20 dBm for all devices with FEM enabled, and 0 dBm for sleepy devices.
+  * :ref:`ug_matter_gs_adding_cluster` page with instructions on how to use ZAP tool binaries. Before this release, the ZAP tool had to be built from sources.
 
 * Fixed:
 
