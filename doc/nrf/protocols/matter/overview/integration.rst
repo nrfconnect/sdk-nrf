@@ -45,10 +45,12 @@ Matter platform designs (System-on-Chip, multiprotocol)
 Matter in the |NCS| supports the *System-on-Chip, multiprotocol* platform designs, available with the related network stack on Nordic Semiconductor devices in the |NCS|.
 For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
 
+.. _ug_matter_overview_architecture_integration_designs_thread:
+
 Matter over Thread
 ==================
 
-In this design, the Matter stack, the OpenThread stack and the Bluetooth LE stack run on a single SoC.
+In this design, the Matter stack, the OpenThread stack, and the Bluetooth LE stack run on a single SoC.
 
 This platform design is suitable for the following development kits:
 
@@ -71,10 +73,12 @@ The design differences between the supported SoCs are the following:
 
    Multiprotocol Thread and Bluetooth LE architecture on nRF53 Series devices
 
+.. _ug_matter_overview_architecture_integration_designs_wifi:
+
 Matter over Wi-Fi
 =================
 
-In this design, the Matter stack, the Wi-Fi stack and the Bluetooth LE stack run on a single SoC.
+In this design, the Matter stack, the Wi-Fi stack, and the Bluetooth LE stack run on a single SoC.
 
 This platform design is suitable for the following development kits:
 
@@ -91,3 +95,30 @@ For this design, the Wi-Fi driver on the application core communicates with the 
    :alt: Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF53 with the nRF7002 Wi-Fi 6 Companion IC)
 
    Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF53 with the nRF7002 Wi-Fi 6 Companion IC)
+
+.. _ug_matter_overview_architecture_integration_designs_switchable:
+
+Switchable Matter over Wi-Fi and Matter over Thread
+===================================================
+
+In this design, the Matter stack, the OpenThread stack, Wi-Fi stack, and the Bluetooth LE stack run on a single SoC.
+
+.. include:: ../../../../../samples/matter/lock/README.rst
+   :start-after: matter_door_lock_sample_thread_wifi_switch_desc_start
+   :end-before: matter_door_lock_sample_thread_wifi_switch_desc_end
+
+For an example of how this design works, see the :ref:`matter_lock_sample_wifi_thread_switching` feature in the Matter door lock sample.
+
+This platform design is suitable for the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340dk_nrf5340_cpuapp
+
+This design is only available for the ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield.
+The Wi-Fi driver on the application core communicates through SPI with the external nRF7002 EK shield, which works as the Wi-Fi 6 Companion IC.
+
+.. figure:: images/matter_platform_design_nRF53_wifi_switching.svg
+   :alt: Multiprotocol Wi-Fi/Thread and Bluetooth LE architecture (nRF53 with the nRF7002 EK shield as the Wi-Fi 6 Companion IC)
+
+   Multiprotocol Wi-Fi/Thread and Bluetooth LE architecture (nRF53 with the nRF7002 EK shield as the Wi-Fi 6 Companion IC)
