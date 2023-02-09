@@ -216,7 +216,7 @@ struct wifi_nrf_hal_dev_ctx {
 	unsigned long addr_rpu_pktram_base_tx;
 	unsigned long addr_rpu_pktram_base_rx;
 	unsigned long addr_rpu_pktram_base_rx_pool[MAX_NUM_OF_RX_QUEUES];
-
+	unsigned long addr_last_buf;
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	enum RPU_PS_STATE rpu_ps_state;
 	void *rpu_ps_timer;
