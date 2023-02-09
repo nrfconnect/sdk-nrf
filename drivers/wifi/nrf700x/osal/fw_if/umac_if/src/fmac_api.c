@@ -1650,6 +1650,14 @@ enum wifi_nrf_status wifi_nrf_fmac_assoc(void *dev_ctx,
 	connect_common_info->control_port =
 		assoc_info->control_port;
 
+	if (assoc_info->prev_bssid_flag) {
+		wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+			connect_common_info->prev_bssid,
+			assoc_info->prev_bssid,
+			NRF_WIFI_ETH_ADDR_LEN);
+		connect_common_info->nrf_wifi_flags |= NRF_WIFI_CONNECT_COMMON_INFO_PREV_BSSID;
+	}
+
 	status = umac_cmd_cfg(fmac_dev_ctx,
 			      assoc_cmd,
 			      sizeof(*assoc_cmd));
