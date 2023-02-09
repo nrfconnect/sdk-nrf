@@ -130,11 +130,11 @@ class RepoAnalyzer:
         try:
             doid = self._repo.revparse_single(self._dr + '^{commit}').oid
         except KeyError:
-            raise UnknownCommitsError(self._downstream_ref)
+            raise UnknownCommitsError(self._dr)
         try:
             uoid = self._repo.revparse_single(self._ur + '^{commit}').oid
         except KeyError:
-            raise UnknownCommitsError(self._upstream_ref)
+            raise UnknownCommitsError(self._ur)
 
         try:
             merge_base = self._repo.merge_base(doid, uoid)
