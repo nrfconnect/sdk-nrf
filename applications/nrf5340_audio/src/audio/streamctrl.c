@@ -353,8 +353,8 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 
 		audio_system_start();
 		stream_state_set(STATE_STREAMING);
-		ret = led_blink(LED_APP_1_BLUE);
-		ERR_CHK(ret);
+		// ret = led_blink(LED_APP_1_BLUE);
+		// ERR_CHK(ret);
 
 		break;
 
@@ -368,8 +368,8 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 
 		stream_state_set(STATE_PAUSED);
 		audio_system_stop();
-		ret = led_on(LED_APP_1_BLUE);
-		ERR_CHK(ret);
+		// ret = led_on(LED_APP_1_BLUE);
+		// ERR_CHK(ret);
 
 		break;
 

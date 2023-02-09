@@ -203,7 +203,7 @@ config NRF_21540_MAIN_DBM
 
 choice NRF_21540_MAIN_TX_POWER
 	prompt "TX power for the secondary channels"
-	default NRF_21540_MAIN_TX_POWER_10DBM
+	default NRF_21540_MAIN_TX_POWER_20DBM
 	help
 	  Set the TX power for the secondary Bluetooth LE channels (0-36).
 	  Please check your local regulations for max output power. If the
@@ -230,7 +230,7 @@ config NRF_21540_PRI_ADV_DBM
 
 choice NRF_21540_PRI_ADV_TX_POWER
 	prompt "TX power for the primary advertising channels"
-	default NRF_21540_PRI_ADV_TX_POWER_10DBM
+	default NRF_21540_PRI_ADV_TX_POWER_20DBM
 	help
 	  Set the TX power for the primary Bluetooth LE advertising channels
 	  (37, 38, 39).

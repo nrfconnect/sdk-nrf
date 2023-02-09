@@ -18,8 +18,7 @@
 		gpios = <&arduino_header 11 0>,		/* tx-en-gpios */
 			<&arduino_header 9 0>,		/* rx-en-gpios */
 			<&arduino_header 15 0>,		/* pdn-gpios */
-			<&arduino_header 10 0>,		/* ant-sel-gpios */
-			<&arduino_header 8 0>;		/* mode-gpios */
+			<&arduino_header 10 0>;		/* ant-sel-gpios */
 	};
 	nrf21540-spi-if {
 		gpios = <&arduino_header 16 0>,		/* cs-gpios */

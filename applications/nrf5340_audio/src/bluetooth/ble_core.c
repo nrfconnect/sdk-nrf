@@ -30,6 +30,7 @@ static void net_core_timeout_handler(struct k_timer *timer_id);
 static void net_core_watchdog_handler(struct k_timer *timer_id);
 
 static struct k_work net_core_ctrl_version_get_work;
+static const struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 
 K_TIMER_DEFINE(net_core_timeout_alarm_timer, net_core_timeout_handler, NULL);
 K_TIMER_DEFINE(net_core_watchdog_timer, net_core_watchdog_handler, NULL);
@@ -121,11 +122,9 @@ static void on_bt_ready(int err)
 						      gpios, 2);
 	uint8_t ant_pin = NRF_DT_GPIOS_TO_PSEL_BY_IDX(DT_PATH(nrf_gpio_forwarder, nrf21540_gpio_if),
 						      gpios, 3);
-	uint8_t mode_pin = NRF_DT_GPIOS_TO_PSEL_BY_IDX(
-		DT_PATH(nrf_gpio_forwarder, nrf21540_gpio_if), gpios, 4);
 
 	struct ble_hci_vs_cp_nrf21540_pins nrf21540_pins = {
-		.mode = mode_pin,
+		.mode = 0xffff,
 		.txen = tx_pin,
 		.rxen = rx_pin,
 		.antsel = ant_pin,
@@ -137,8 +136,9 @@ static void on_bt_ready(int err)
 	ret = ble_hci_vsc_nrf21540_pins_set(&nrf21540_pins);
 	ERR_CHK(ret);
 
-	ret = ble_hci_vsc_radio_high_pwr_mode_set(
-		MAX(CONFIG_NRF_21540_MAIN_DBM, CONFIG_NRF_21540_PRI_ADV_DBM));
+	gpio_pin_set(gpio_dev, 31, 0);
+
+	ret = ble_hci_vsc_radio_high_pwr_mode_set(20);
 	ERR_CHK(ret);
 
 	ret = ble_hci_vsc_adv_tx_pwr_set(CONFIG_NRF_21540_MAIN_DBM);
