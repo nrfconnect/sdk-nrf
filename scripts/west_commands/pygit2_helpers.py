@@ -12,10 +12,10 @@
 # https://github.com/foundriesio/zephyr_tools/.
 
 __all__ = [
-    'shortlog_is_revert', 'shortlog_reverts_what', 'shortlog_has_sauce',
-    'shortlog_no_sauce',
+    'title_is_revert', 'title_reverts_what', 'title_has_sauce',
+    'title_no_sauce',
 
-    'commit_reverts_what', 'commit_shortlog', 'commit_affects_files',
+    'commit_reverts_what', 'commit_title', 'commit_affects_files',
 
     'zephyr_commit_area',
 ]
@@ -23,18 +23,18 @@ __all__ = [
 from pathlib import Path
 import re
 
-def shortlog_is_revert(shortlog):
-    '''Return True if and only if the shortlog starts with 'Revert '.
+def title_is_revert(title):
+    '''Return True if and only if the title starts with 'Revert '.
 
-    :param shortlog: Git commit message shortlog.'''
-    return shortlog.startswith('Revert ')
+    :param title: Git commit message title.'''
+    return title.startswith('Revert ')
 
-def shortlog_reverts_what(shortlog):
-    '''If the shortlog is a revert, returns shortlog of what it reverted.
+def title_reverts_what(title):
+    '''If the title is a revert, returns title of what it reverted.
 
-    :param shortlog: Git commit message shortlog
+    :param title: Git commit message title
 
-    For example, if shortlog is:
+    For example, if title is:
 
     'Revert "whoops: this turned out to be a bad idea"'
 
@@ -42,22 +42,22 @@ def shortlog_reverts_what(shortlog):
     i.e. the double quotes are also stripped.
     '''
     revert = 'Revert '
-    return shortlog[len(revert) + 1:-1]
+    return title[len(revert) + 1:-1]
 
-def shortlog_has_sauce(shortlog, sauce='nrf'):
-    '''Check if a Git shortlog has a 'sauce tag'.
+def title_has_sauce(title, sauce='nrf'):
+    '''Check if a Git title has a 'sauce tag'.
 
-    :param shortlog: Git commit message shortlog, which might begin
+    :param title: Git commit message title, which might begin
                      with a "sauce tag" that looks like '[sauce <tag>] '
     :param sauce: String (or iterable of strings) indicating a source of
                   "sauce". This is organization-specific but defaults to
                   'nrf'.
 
-    For example, sauce="xyz" and the shortlog is:
+    For example, sauce="xyz" and the title is:
 
     [xyz fromlist] area: something
 
-    Then the return value is True. If the shortlog is any of these,
+    Then the return value is True. If the title is any of these,
     the return value is False:
 
     area: something
@@ -69,24 +69,24 @@ def shortlog_has_sauce(shortlog, sauce='nrf'):
     else:
         sauce = tuple('[' + s for s in sauce)
 
-    return shortlog.startswith(sauce)
+    return title.startswith(sauce)
 
-def shortlog_no_sauce(shortlog, sauce='nrf'):
-    '''Return a Git shortlog without a 'sauce tag'.
+def title_no_sauce(title, sauce='nrf'):
+    '''Return a Git title without a 'sauce tag'.
 
-    :param shortlog: Git commit message shortlog, which might begin
+    :param title: Git commit message title, which might begin
                      with a "sauce tag" that looks like '[sauce <tag>] '
     :param sauce: String (or iterable of strings) indicating a source of
                   "sauce". This is organization-specific but defaults to
                   'nrf'.
 
-    For example, sauce="xyz" and the shortlog is:
+    For example, sauce="xyz" and the title is:
 
     "[xyz fromlist] area: something"
 
     Then the return value is "area: something".
 
-    As another example with the same sauce, if shortlog is "foo: bar",
+    As another example with the same sauce, if title is "foo: bar",
     the return value is "foo: bar".
     '''
     if isinstance(sauce, str):
@@ -94,10 +94,10 @@ def shortlog_no_sauce(shortlog, sauce='nrf'):
     else:
         sauce = tuple('[' + s for s in sauce)
 
-    if shortlog.startswith(sauce):
-        return shortlog[shortlog.find(']') + 1:].strip()
+    if title.startswith(sauce):
+        return title[title.find(']') + 1:].strip()
     else:
-        return shortlog
+        return title
 
 def commit_reverts_what(commit):
     '''Look for the string "reverts commit SOME_SHA" in the commit message,
@@ -108,7 +108,7 @@ def commit_reverts_what(commit):
         raise ValueError(commit.message)
     return match.groups()[0]
 
-def commit_shortlog(commit):
+def commit_title(commit):
     '''Return the first line in a commit's log message.
 
     :param commit: pygit2 commit object'''
@@ -157,7 +157,7 @@ def zephyr_commit_area(commit):
 
     :param commit: pygit2.Commit object
     '''
-    area_pfx = _commit_area_prefix(commit_shortlog(commit))
+    area_pfx = _commit_area_prefix(commit_title(commit))
 
     if area_pfx is None:
         return 'Other'
@@ -177,7 +177,7 @@ def zephyr_commit_area(commit):
 
     return 'Other'
 
-def _commit_area_prefix(commit_shortlog):
+def _commit_area_prefix(commit_title):
     '''Get the prefix of a pull request title which describes its area.
 
     This returns the "raw" prefix as it appears in the title. To
@@ -185,19 +185,19 @@ def _commit_area_prefix(commit_shortlog):
     zephyr_pr_area() instead. If no prefix is present, returns None.
     '''
     # Base case for recursion.
-    if not commit_shortlog:
+    if not commit_title:
         return None
 
     # 'Revert "foo"' should map to foo's area prefix.
-    if shortlog_is_revert(commit_shortlog):
-        commit_shortlog = shortlog_reverts_what(commit_shortlog)
-        return _commit_area_prefix(commit_shortlog)
+    if title_is_revert(commit_title):
+        commit_title = title_reverts_what(commit_title)
+        return _commit_area_prefix(commit_title)
 
     # If there is no ':', there is no area. Otherwise, the candidate
     # area is the substring up to the first ':'.
-    if ':' not in commit_shortlog:
+    if ':' not in commit_title:
         return None
-    area, rest = [s.strip() for s in commit_shortlog.split(':', 1)]
+    area, rest = [s.strip() for s in commit_title.split(':', 1)]
 
     # subsys: foo should map to foo's area prefix, etc.
     if area in ['subsys', 'include', 'api']:
@@ -211,11 +211,11 @@ def _invert_keys_val_list(kvs):
             yield v, k
 
 # This list maps the 'area' a commit affects to a list of
-# shortlog prefixes (the content before the first ':') in the Zephyr
-# commit shortlogs that belong to it.
+# title prefixes (the content before the first ':') in the Zephyr
+# commit titles that belong to it.
 #
 # The values are lists of case-insensitive regular expressions that
-# are matched against the shortlog prefix of each commit. Matches are
+# are matched against the title prefix of each commit. Matches are
 # done with regex.fullmatch().
 #
 # Keep its definition sorted alphabetically by key.
@@ -269,6 +269,6 @@ _AREA_TO_SHORTLOG_RES = [
     ]
 
 # This 'inverts' the key/value relationship in _AREA_TO_SHORTLOG_RES to
-# make a list from shortlog prefix REs to areas.
+# make a list from title prefix REs to areas.
 _SHORTLOG_RE_TO_AREA = [(re.compile(k, flags=re.IGNORECASE), v) for k, v in
                         _invert_keys_val_list(_AREA_TO_SHORTLOG_RES)]
