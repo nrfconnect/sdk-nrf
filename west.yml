@@ -100,7 +100,8 @@ manifest:
     #
     # Some of these are also Zephyr modules which have NCS-specific
     # changes.
-    - name: sdk-hostap
+    - name: hostap
+      repo-path: sdk-hostap
       path: modules/lib/hostap
       revision: 73de50a279b35adf345eae35231813d0945991fd
     - name: mcuboot
