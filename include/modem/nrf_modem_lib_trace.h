@@ -55,7 +55,7 @@ int nrf_modem_lib_trace_level_set(enum nrf_modem_lib_trace_level trace_level);
 /** @brief Get the last measured rolling average bitrate of the trace backend.
  *
  * This function returns the last measured rolling average bitrate of the trace backend
- * calculated over the last @kconfig(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_PERIOD_MS) period.
+ * calculated over the last @kconfig{CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_PERIOD_MS} period.
  *
  * @return Rolling average bitrate of the trace backend
  */
