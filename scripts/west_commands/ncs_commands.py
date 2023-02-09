@@ -162,7 +162,7 @@ class NcsWestCommand(WestCommand):
             if not args.zephyr_rev:
                 msg += ('\nPlease run this in the zephyr repository and retry '
                         '(or use --zephyr-rev):' +
-                        '\n  git remote add -f upstream ' + _UPSTREAM)
+                        f'\n  git remote add -f upstream {_UPSTREAM_ZEPHYR_URL}')
             self.parser.error(msg)
         return zephyr_rev
 
@@ -556,7 +556,7 @@ def _name_and_path(project):
 
     return f'{project.name} ({project.path})'
 
-_UPSTREAM = 'https://github.com/zephyrproject-rtos/zephyr'
+_UPSTREAM_ZEPHYR_URL = 'https://github.com/zephyrproject-rtos/zephyr'
 
 # Set of project paths blocked from inclusion in the NCS.
 _BLOCKED_PROJECTS = set(
