@@ -11,6 +11,8 @@
 # Portions were copied from:
 # https://github.com/foundriesio/zephyr_tools/.
 
+from __future__ import annotations
+
 __all__ = [
     'title_is_revert', 'title_reverts_what', 'title_has_sauce',
     'title_no_sauce',
@@ -20,16 +22,21 @@ __all__ = [
     'zephyr_commit_area',
 ]
 
+from collections.abc import Iterable, Iterator
 from pathlib import Path
+from typing import Optional
+import os
 import re
 
-def title_is_revert(title):
+import pygit2  # type: ignore
+
+def title_is_revert(title: str) -> bool:
     '''Return True if and only if the title starts with 'Revert '.
 
     :param title: Git commit message title.'''
     return title.startswith('Revert ')
 
-def title_reverts_what(title):
+def title_reverts_what(title: str) -> str:
     '''If the title is a revert, returns title of what it reverted.
 
     :param title: Git commit message title
@@ -44,7 +51,7 @@ def title_reverts_what(title):
     revert = 'Revert '
     return title[len(revert) + 1:-1]
 
-def title_has_sauce(title, sauce='nrf'):
+def title_has_sauce(title: str, sauce='nrf') -> bool:
     '''Check if a Git title has a 'sauce tag'.
 
     :param title: Git commit message title, which might begin
@@ -71,7 +78,7 @@ def title_has_sauce(title, sauce='nrf'):
 
     return title.startswith(sauce)
 
-def title_no_sauce(title, sauce='nrf'):
+def title_no_sauce(title: str, sauce: str = 'nrf') -> str:
     '''Return a Git title without a 'sauce tag'.
 
     :param title: Git commit message title, which might begin
@@ -99,7 +106,7 @@ def title_no_sauce(title, sauce='nrf'):
     else:
         return title
 
-def commit_reverts_what(commit):
+def commit_reverts_what(commit: pygit2.Commit) -> str:
     '''Look for the string "reverts commit SOME_SHA" in the commit message,
     and return SOME_SHA. Raises ValueError if the string is not found.'''
     match = re.search(r'reverts\s+commit\s+([0-9a-f]+)',
@@ -108,13 +115,14 @@ def commit_reverts_what(commit):
         raise ValueError(commit.message)
     return match.groups()[0]
 
-def commit_title(commit):
+def commit_title(commit: pygit2.Commit) -> str:
     '''Return the first line in a commit's log message.
 
     :param commit: pygit2 commit object'''
     return commit.message.splitlines()[0]
 
-def commit_affects_files(commit, files):
+def commit_affects_files(commit: pygit2.Commit,
+                         files: Iterable[os.PathLike]) -> bool:
     '''True if and only if the commit affects one or more files.
 
     :param commit: pygit2 commit object
@@ -144,7 +152,7 @@ AREAS_NCS_SUBSET = set([
     # Keep this list sorted alphabetically.
 ])
 
-def zephyr_commit_area(commit):
+def zephyr_commit_area(commit: pygit2.Commit) -> str:
     '''Make a guess about what area a zephyr commit affected.
 
     This is entirely based on heuristics and may return complete
@@ -177,7 +185,7 @@ def zephyr_commit_area(commit):
 
     return 'Other'
 
-def _commit_area_prefix(commit_title):
+def _commit_area_prefix(commit_title: str) -> Optional[str]:
     '''Get the prefix of a pull request title which describes its area.
 
     This returns the "raw" prefix as it appears in the title. To
@@ -205,7 +213,8 @@ def _commit_area_prefix(commit_title):
 
     return area
 
-def _invert_keys_val_list(kvs):
+def _invert_keys_val_list(kvs: list[tuple[str, list[str]]],
+                          ) -> Iterator[tuple[str, str]]:
     for k, vs in kvs:
         for v in vs:
             yield v, k
@@ -270,5 +279,6 @@ _AREA_TO_SHORTLOG_RES = [
 
 # This 'inverts' the key/value relationship in _AREA_TO_SHORTLOG_RES to
 # make a list from title prefix REs to areas.
-_SHORTLOG_RE_TO_AREA = [(re.compile(k, flags=re.IGNORECASE), v) for k, v in
-                        _invert_keys_val_list(_AREA_TO_SHORTLOG_RES)]
+_SHORTLOG_RE_TO_AREA: list[tuple[re.Pattern, str]] = [
+    (re.compile(k, flags=re.IGNORECASE), v) for k, v in
+    _invert_keys_val_list(_AREA_TO_SHORTLOG_RES)]
