@@ -156,6 +156,15 @@ manifest:
       repo-path: azure-sdk-for-c
       path: modules/lib/azure-sdk-for-c
       revision: 308c171cb4b5eed266649012a68406487ec81fb2
+    - name: cirrus
+      repo-path: sdk-mcu-drivers
+      path: modules/hal/cirrus-logic
+      revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
+    - name: openthread
+      repo-path: sdk-openthread
+      path: modules/lib/openthread
+      revision: 2060039bbfec52ac00f22a7cc3213c2ab1df138e
+
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
@@ -166,14 +175,6 @@ manifest:
       path: modules/lib/memfault-firmware-sdk
       revision: 0.37.2
       remote: memfault
-    - name: cirrus
-      repo-path: sdk-mcu-drivers
-      path: modules/hal/cirrus-logic
-      revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
-    - name: openthread
-      repo-path: sdk-openthread
-      path: modules/lib/openthread
-      revision: 2060039bbfec52ac00f22a7cc3213c2ab1df138e
     - name: ant
       repo-path: sdk-ant
       revision: 7df46a12ace258473c1f2b3b98de690b5799ac64
