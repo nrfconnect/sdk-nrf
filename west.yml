@@ -11,7 +11,7 @@
 # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/west/index.html
 
 manifest:
-  version: "0.12"
+  version: "0.13"
 
   # "remotes" is a list of locations where git repositories are cloned
   # and fetched from.
@@ -104,6 +104,11 @@ manifest:
       repo-path: sdk-hostap
       path: modules/lib/hostap
       revision: 73de50a279b35adf345eae35231813d0945991fd
+      userdata:
+        ncs:
+          upstream-url: https://w1.fi/cgit/hostap/
+          upstream-sha: e792f38db8471f35ee94f109a4093dece8f78c6a
+          compare-by-default: false
     - name: mcuboot
       repo-path: sdk-mcuboot
       revision: v1.9.99-ncs4
@@ -133,6 +138,11 @@ manifest:
           path: third_party/nlunit-test/repo
         - name: pigweed
           path: third_party/pigweed/repo
+      userdata:
+        ncs:
+          upstream-url: https://github.com/project-chip/connectedhomeip
+          upstream-sha: 4088a77f557e8571a39338fad51a1d8eb0131d79
+          compare-by-default: false
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
@@ -143,6 +153,11 @@ manifest:
       repo-path: sdk-cjson
       path: modules/lib/cjson
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
+      userdata:
+        ncs:
+          upstream-url: https://github.com/DaveGamble/cJSON
+          upstream-sha: d2735278ed1c2e4556f53a7a782063b31331dbf7
+          compare-by-default: false
     - name: homekit
       repo-path: sdk-homekit
       revision: v2.3.0
@@ -157,14 +172,29 @@ manifest:
       repo-path: azure-sdk-for-c
       path: modules/lib/azure-sdk-for-c
       revision: 308c171cb4b5eed266649012a68406487ec81fb2
+      userdata:
+        ncs:
+          upstream-url: https://github.com/Azure/azure-sdk-for-c
+          upstream-sha: adc56bc6138a28b5490bce339a31a2581a072092
+          compare-by-default: false
     - name: cirrus
       repo-path: sdk-mcu-drivers
       path: modules/hal/cirrus-logic
       revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
+      userdata:
+        ncs:
+          upstream-url: https://github.com/CirrusLogic/mcu-drivers
+          upstream-sha: 1be6ca7253133a21a1e9fe0fbb4656e17d63a936
+          compare-by-default: false
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
       revision: 2060039bbfec52ac00f22a7cc3213c2ab1df138e
+      userdata:
+        ncs:
+          upstream-url: https://github.com/openthread/openthread
+          upstream-sha: 55074652907295709f9f3361244a6e76f732bcba
+          compare-by-default: false
 
     # Other third-party repositories.
     - name: cmock
