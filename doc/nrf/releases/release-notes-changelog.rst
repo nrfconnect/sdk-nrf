@@ -195,7 +195,14 @@ nRF5340 Audio
   * Support for Front End Module nRF21540.
   * Possibility to create a Public Broadcast Announcement (PBA) needed for Auracast.
   * Encryption for BISes.
+
 * Updated:
+
+  * Controller from version 3310 to 3322, with the following major changes:
+
+    * Changes to accommodate BIS + ACL combinations.
+    * Improvements to support creating CIS connections in any order.
+    * Basic support for interleaved broadcasts.
 
   * Power module has been re-factored so that it uses upstream Zephyr INA23X sensor driver.
   * BIS headsets can now switch between two broadcast sources (two hardcoded broadcast names).

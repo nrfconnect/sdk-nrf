@@ -1285,6 +1285,60 @@ OCT-2154: USB audio interface does not work correctly on macOS
   The audio stream is intermittent on the headset side after connecting the gateway to a Mac computer and starting audio stream.
   This issue occurs sporadically after building the nRF5340 Audio application with the default USB port as the audio source.
 
+Controller subsystem for nRF5340 Audio
+--------------------------------------
+
+The following known issues apply to the LE Audio subsystem (NET core controller) for nRF5340 used in the nRF5340 Audio application.
+
+.. rst-class:: v2-2-0
+
+OCX-138: Some conformance tests not passing
+   Not all Bluetooth conformance tests cases pass.
+
+.. rst-class:: v2-2-0
+
+OCX-152: OCX-146: 40 ms ACL interval may cause TWS to be unstable
+  There may be combinations of ACL intervals and other controller settings that cause instabilities to connected or true wireless stereo setups.
+
+  **Workaround:** Use an alternative ACL connection interval.
+
+.. rst-class:: v2-2-0
+
+OCX-155: Larger timestamps than intended
+   The timestamps/Service Data Unit references (SDU refs), may occasionally be larger than intended and then duplicated in the next interval.
+
+.. rst-class:: v2-2-0
+
+OCX-156: PTO is not supported
+   The controller does not support Pre-Transmission Offset.
+
+.. rst-class:: v2-2-0
+
+OCX-157: OCT-140: Interleaved broadcasts streaming issues
+ Interleaved broadcasts are unable to stream with certain Quality of Service (QoS) configurations.
+
+   **Workaround:** Set retransmits (RTN) to ``<= 2`` and octets per frame to ``<= 80`` for stereo.
+
+.. rst-class:: v2-2-0
+
+OCX-162: If the first CIS headset in a CIG is reset, this may impact the stream of the second headset as well
+   If the first CIS (Connected Isochronous Stream) in a CIG (Connected Isochronous Group) is reset, this may halt streaming to other CISes as well.
+
+.. rst-class:: v2-2-0
+
+OCX-165: Collisions of BIS and ACL on the same broadcaster/central
+   Broadcast Isochronous Stream (BIS) and Asynchronous Connection-oriented Logical transports (ACL) may collide in the scheduler.
+
+   **Workaround:** Create the ACLs before creating any BISes.
+
+.. rst-class:: v2-2-0
+
+OCX-168: Issues with reestablishing streams
+   Syncing of broadcast receivers takes longer than in version 3310, especially for high retransmit (RTN) values.
+
+   **Workaround:** Set retransmits (RTN) to a lower value to reduce the resynchronization time.
+
+
 nRF Machine Learning
 ====================
 
