@@ -10,7 +10,6 @@
 # https://github.com/foundriesio/zephyr_tools/.
 
 from collections import OrderedDict
-import os
 from pathlib import Path
 import sys
 import textwrap
@@ -23,9 +22,6 @@ except ImportError:
              "Please install packages in nrf/scripts/requirements-extra.txt "
              "with pip3.")
 from west import log
-
-# The parent scripts/ directory contains the pygit2_helpers module.
-sys.path.append(os.fspath(Path(__file__).parent.parent))
 
 from pygit2_helpers import shortlog_is_revert, shortlog_has_sauce, \
     shortlog_no_sauce, commit_reverts_what, commit_shortlog

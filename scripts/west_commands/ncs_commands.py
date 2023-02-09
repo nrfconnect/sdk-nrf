@@ -6,7 +6,6 @@
 
 import argparse
 import json
-import os
 from pathlib import Path
 import subprocess
 import sys
@@ -27,10 +26,6 @@ except ImportError:
              "with pip3.")
 
 import ncs_west_helpers as nwh
-
-# The parent scripts/ directory contains the pygit2_helpers module.
-sys.path.append(os.fspath(Path(__file__).parent.parent))
-
 from pygit2_helpers import commit_affects_files, commit_shortlog
 
 WEST_V0_13_0_OR_LATER = version.parse(west_version) >= version.parse('0.13.0')
