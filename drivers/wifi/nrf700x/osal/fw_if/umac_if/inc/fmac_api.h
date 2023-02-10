@@ -1332,4 +1332,18 @@ enum wifi_nrf_status wifi_nrf_fmac_set_reg(struct wifi_nrf_fmac_dev_ctx *fmac_de
 enum wifi_nrf_status wifi_nrf_fmac_get_reg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					   struct wifi_nrf_fmac_reg_info *reg_info);
 
+/**
+ * wifi_nrf_fmac_get_power_save_info() - Get the current power save info.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: Index of the interface on which power management is to be set.
+ *
+ * This function is used to send a command
+ * to RPU to Enable/Disable WLAN Power management.
+ *
+ * Returns: Status
+ *              Pass: %WIFI_NRF_STATUS_SUCCESS
+ *              Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_get_power_save_info(void *fmac_dev_ctx,
+						       unsigned char if_idx);
 #endif /* __FMAC_API_H__ */

@@ -258,7 +258,11 @@ static int handle_device_control_update(const struct nct_evt *const evt,
 		return -ENOENT;
 	}
 
+#if IS_ENABLED(CONFIG_NRF_CLOUD_ALERTS)
 	ctrl_data.alerts_enabled = nrf_cloud_alert_control_get();
+#else
+	ctrl_data.alerts_enabled = false;
+#endif /* CONFIG_NRF_CLOUD_ALERTS */
 	ctrl_data.log_level = nrf_cloud_log_control_get();
 
 	err = nrf_cloud_decode_control(&evt->param.cc->data, &status, &ctrl_data);
@@ -268,7 +272,9 @@ static int handle_device_control_update(const struct nct_evt *const evt,
 
 	*control_found = (status != NRF_CLOUD_CTRL_NOT_PRESENT);
 	if (*control_found) {
+#if IS_ENABLED(CONFIG_NRF_CLOUD_ALERTS)
 		nrf_cloud_alert_control_set(ctrl_data.alerts_enabled);
+#endif /* CONFIG_NRF_CLOUD_ALERTS */
 		nrf_cloud_log_control_set(ctrl_data.log_level);
 	}
 

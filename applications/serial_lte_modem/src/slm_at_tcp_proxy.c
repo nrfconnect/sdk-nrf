@@ -51,7 +51,7 @@ static struct tcp_proxy {
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
+extern uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];
 
 /** forward declaration of thread function **/
 static void tcpcli_thread_func(void *p1, void *p2, void *p3);
@@ -198,8 +198,7 @@ static int do_tcp_server_start(uint16_t port)
 			tcpsvr_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 	proxy.role = TCP_ROLE_SERVER;
-	sprintf(rsp_buf, "\r\n#XTCPSVR: %d,\"started\"\r\n", proxy.sock);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XTCPSVR: %d,\"started\"\r\n", proxy.sock);
 
 	return 0;
 
@@ -214,8 +213,7 @@ exit_svr:
 		close(proxy.sock);
 		proxy.sock = INVALID_SOCKET;
 	}
-	sprintf(rsp_buf, "\r\n#XTCPSVR: %d,\"not started\"\r\n", ret);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XTCPSVR: %d,\"not started\"\r\n", ret);
 
 	return ret;
 }
@@ -237,8 +235,7 @@ static int do_tcp_server_stop(void)
 	if (proxy.sock_peer != INVALID_SOCKET) {
 		(void)close(proxy.sock_peer);
 		proxy.sock_peer = INVALID_SOCKET;
-		sprintf(rsp_buf, "\r\n#XTCPSVR: 0,\"disconnected\"\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XTCPSVR: 0,\"disconnected\"\r\n");
 	} else {
 		ret = close(proxy.sock);
 		if (ret < 0) {
@@ -317,16 +314,14 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
 	proxy.role = TCP_ROLE_CLIENT;
-	sprintf(rsp_buf, "\r\n#XTCPCLI: %d,\"connected\"\r\n", proxy.sock);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XTCPCLI: %d,\"connected\"\r\n", proxy.sock);
 
 	return 0;
 
 exit_cli:
 	close(proxy.sock);
 	proxy.sock = INVALID_SOCKET;
-	sprintf(rsp_buf, "\r\n#XTCPCLI: %d,\"not connected\"\r\n", ret);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XTCPCLI: %d,\"not connected\"\r\n", ret);
 
 	return ret;
 }
@@ -349,8 +344,7 @@ static int do_tcp_client_disconnect(void)
 	    k_thread_join(&tcp_thread, K_SECONDS(CONFIG_SLM_TCP_POLL_TIME * 2)) != 0) {
 		LOG_WRN("Wait for thread terminate failed");
 	}
-	sprintf(rsp_buf, "\r\n#XTCPCLI: %d,\"disconnected\"\r\n", ret);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XTCPCLI: %d,\"disconnected\"\r\n", ret);
 
 	return ret;
 }
@@ -377,8 +371,7 @@ static int do_tcp_send(const uint8_t *data, int datalen)
 	}
 
 	if (ret >= 0) {
-		sprintf(rsp_buf, "\r\n#XTCPSEND: %d\r\n", offset);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XTCPSEND: %d\r\n", offset);
 		return 0;
 	}
 
@@ -431,8 +424,7 @@ static void tcpsvr_terminate_connection(int cause)
 	if (proxy.sock_peer != INVALID_SOCKET) {
 		close(proxy.sock_peer);
 		proxy.sock_peer = INVALID_SOCKET;
-		sprintf(rsp_buf, "\r\n#XTCPSVR: %d,\"disconnected\"\r\n", cause);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XTCPSVR: %d,\"disconnected\"\r\n", cause);
 	}
 }
 
@@ -526,8 +518,7 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 			}
 			proxy.sock_peer = ret;
 			fds[1].fd = proxy.sock_peer;
-			sprintf(rsp_buf, "\r\n#XTCPSVR: \"%s\",\"connected\"\r\n", peer_addr);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send("\r\n#XTCPSVR: \"%s\",\"connected\"\r\n", peer_addr);
 			LOG_DBG("New connection - %d", proxy.sock_peer);
 		}
 client_events:
@@ -554,10 +545,7 @@ client_events:
 			if ((fds[1].revents & POLLIN) != POLLIN) {
 				continue;
 			}
-			/* Receive data */
-			char rx_data[SLM_MAX_PAYLOAD];
-
-			ret = recv(fds[1].fd, (void *)rx_data, sizeof(rx_data), 0);
+			ret = recv(fds[1].fd, (void *)data_buf, sizeof(data_buf), 0);
 			if (ret < 0) {
 				LOG_WRN("recv() error: %d", -errno);
 				continue;
@@ -566,11 +554,10 @@ client_events:
 				continue;
 			}
 			if (in_datamode()) {
-				data_send(rx_data, ret);
+				data_send(data_buf, ret);
 			} else {
-				rsp_send(rx_data, ret);
-				sprintf(rsp_buf, "\r\n#XTCPDATA: %d\r\n", ret);
-				rsp_send(rsp_buf, strlen(rsp_buf));
+				rsp_send("\r\n#XTCPDATA: %d\r\n", ret);
+				data_send(data_buf, ret);
 			}
 		}
 	}
@@ -586,8 +573,7 @@ client_events:
 		(void)close(proxy.sock);
 		proxy.sock = INVALID_SOCKET;
 	}
-	sprintf(rsp_buf, "\r\n#XTCPSVR: %d,\"stopped\"\r\n", ret);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XTCPSVR: %d,\"stopped\"\r\n", ret);
 	server_stop_pending = false;
 	LOG_INF("TCP server thread terminated");
 }
@@ -635,10 +621,7 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 		if ((fds.revents & POLLIN) != POLLIN) {
 			continue;
 		}
-		/* Receive data */
-		char rx_data[SLM_MAX_PAYLOAD];
-
-		ret = recv(fds.fd, (void *)rx_data, sizeof(rx_data), 0);
+		ret = recv(fds.fd, (void *)data_buf, sizeof(data_buf), 0);
 		if (ret < 0) {
 			LOG_WRN("recv() error: %d", -errno);
 			continue;
@@ -647,11 +630,10 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 			continue;
 		}
 		if (in_datamode()) {
-			data_send(rx_data, ret);
+			data_send(data_buf, ret);
 		} else {
-			rsp_send(rx_data, ret);
-			sprintf(rsp_buf, "\r\n#XTCPDATA: %d\r\n", ret);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send("\r\n#XTCPDATA: %d\r\n", ret);
+			data_send(data_buf, ret);
 		}
 	}
 
@@ -661,8 +643,7 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 	if (proxy.sock != INVALID_SOCKET) {
 		(void)close(proxy.sock);
 		proxy.sock = INVALID_SOCKET;
-		sprintf(rsp_buf, "\r\n#XTCPCLI: %d,\"disconnected\"\r\n", ret);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XTCPCLI: %d,\"disconnected\"\r\n", ret);
 	}
 
 	LOG_INF("TCP client thread terminated");
@@ -709,16 +690,14 @@ int handle_at_tcp_server(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "\r\n#XTCPSVR: %d,%d,%d\r\n",
+		rsp_send("\r\n#XTCPSVR: %d,%d,%d\r\n",
 			proxy.sock, proxy.sock_peer, proxy.family);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XTCPSVR: (%d,%d,%d),<port>,<sec_tag>\r\n",
+		rsp_send("\r\n#XTCPSVR: (%d,%d,%d),<port>,<sec_tag>\r\n",
 			SERVER_STOP, SERVER_START, SERVER_START6);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
@@ -777,15 +756,13 @@ int handle_at_tcp_client(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "\r\n#XTCPCLI: %d,%d\r\n", proxy.sock, proxy.family);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XTCPCLI: %d,%d\r\n", proxy.sock, proxy.family);
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XTCPCLI: (%d,%d,%d),<url>,<port>,<sec_tag>\r\n",
+		rsp_send("\r\n#XTCPCLI: (%d,%d,%d),<url>,<port>,<sec_tag>\r\n",
 			CLIENT_DISCONNECT, CLIENT_CONNECT, CLIENT_CONNECT6);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
@@ -804,7 +781,7 @@ int handle_at_tcp_client(enum at_cmd_type cmd_type)
 int handle_at_tcp_send(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	char data[SLM_MAX_PAYLOAD + 1] = {0};
+	char data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
 	int size;
 
 	switch (cmd_type) {
@@ -855,8 +832,7 @@ int handle_at_tcp_hangup(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XTCPHANGUP: <handle>\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XTCPHANGUP: <handle>\r\n");
 		err = 0;
 		break;
 

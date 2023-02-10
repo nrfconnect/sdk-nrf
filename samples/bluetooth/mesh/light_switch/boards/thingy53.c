@@ -10,8 +10,6 @@
 #include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
 #include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
 
-#include <zephyr/usb/usb_device.h>
-
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(thingy53_setup);
 
@@ -33,16 +31,4 @@ static int bt_smp_init(const struct device *dev)
 	return err;
 }
 
-static int usb_cdc_init(const struct device *dev)
-{
-	int err = usb_enable(NULL);
-
-	if (err) {
-		LOG_ERR("Failed to enable USB");
-	}
-
-	return err;
-}
-
 SYS_INIT(bt_smp_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
-SYS_INIT(usb_cdc_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

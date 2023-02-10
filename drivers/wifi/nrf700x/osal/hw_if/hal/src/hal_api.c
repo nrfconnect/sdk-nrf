@@ -26,7 +26,8 @@ wifi_nrf_hal_rpu_pktram_buf_map_init(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 
 	status = pal_rpu_addr_offset_get(hal_dev_ctx->hpriv->opriv,
 					 RPU_MEM_PKT_BASE,
-					 &hal_dev_ctx->addr_rpu_pktram_base);
+					 &hal_dev_ctx->addr_rpu_pktram_base,
+					 hal_dev_ctx->curr_proc);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
@@ -887,6 +888,7 @@ enum wifi_nrf_status wifi_nrf_hal_data_cmd_send(struct wifi_nrf_hal_dev_ctx *hal
 	unsigned int addr_base = 0;
 	unsigned int max_cmd_size = 0;
 	unsigned int addr = 0;
+	unsigned int host_addr = 0;
 
 
 	wifi_nrf_osal_spinlock_take(hal_dev_ctx->hpriv->opriv,
@@ -906,11 +908,17 @@ enum wifi_nrf_status wifi_nrf_hal_data_cmd_send(struct wifi_nrf_hal_dev_ctx *hal
 	}
 
 	addr = addr_base + (max_cmd_size * desc_id);
+	host_addr = addr;
 
+	/* This is a indrect write to core memory */
+	if (cmd_type == WIFI_NRF_HAL_MSG_TYPE_CMD_DATA_RX) {
+		host_addr &= RPU_ADDR_MASK_OFFSET;
+		host_addr |= RPU_MCU_CORE_INDIRECT_BASE;
+	}
 
 	/* Copy the information to the suggested address */
 	status = hal_rpu_mem_write(hal_dev_ctx,
-				   addr,
+				   host_addr,
 				   cmd,
 				   cmd_size);
 
@@ -1695,7 +1703,8 @@ wifi_nrf_hal_init(struct wifi_nrf_osal_priv *opriv,
 
 	status = pal_rpu_addr_offset_get(opriv,
 					 RPU_ADDR_PKTRAM_START,
-					 &hpriv->addr_pktram_base);
+					 &hpriv->addr_pktram_base,
+					 RPU_PROC_TYPE_MAX);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(opriv,

@@ -146,5 +146,3 @@ a. The scanning is stopped and the |NCS|'s :ref:`nrf_bt_scan_readme` automatical
    This is done to avoid Bluetooth scheduling issues that may lead to HID input report rate drops and disconnections.
 
 At this point, the scanning can be restarted.
-
-.. |ble_scan| replace:: Bluetooth® LE scanning module

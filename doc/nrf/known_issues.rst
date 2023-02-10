@@ -223,6 +223,14 @@ The time returned by :ref:`lib_date_time` library becomes incorrect after one we
   The time returned by :ref:`lib_date_time` library becomes incorrect after one week elapses.
   This is due to an issue with clock_gettime() API.
 
+.. rst-class:: v2-2-0
+
+NCSDK-18746: LwM2M carrier library fails to complete non-secure bootstrap when using a custom URI and the default security tag
+  If the LwM2M carrier library is operating in generic mode (not connecting to any of the predefined supported carriers), and the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` is set to connect to a non-secure server, the library attempts to retrieve a PSK from :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` even though a PSK is not needed for the non-secure bootstrap.
+  The PSK in this ``sec_tag`` is not used, but reading the ``sec_tag`` causes the bootstrap to fail if the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` is set to the default value (0).
+
+  **Workaround:** Assign any non-zero value to :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG`.
+
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-3-1 v1-2-1 v1-2-0
 
 NCSDK-12912: LwM2M carrier library does not recover if initial network connection fails
@@ -1277,6 +1285,60 @@ OCT-2154: USB audio interface does not work correctly on macOS
   The audio stream is intermittent on the headset side after connecting the gateway to a Mac computer and starting audio stream.
   This issue occurs sporadically after building the nRF5340 Audio application with the default USB port as the audio source.
 
+Controller subsystem for nRF5340 Audio
+--------------------------------------
+
+The following known issues apply to the LE Audio subsystem (NET core controller) for nRF5340 used in the nRF5340 Audio application.
+
+.. rst-class:: v2-2-0
+
+OCX-138: Some conformance tests not passing
+   Not all Bluetooth conformance tests cases pass.
+
+.. rst-class:: v2-2-0
+
+OCX-152: OCX-146: 40 ms ACL interval may cause TWS to be unstable
+  There may be combinations of ACL intervals and other controller settings that cause instabilities to connected or true wireless stereo setups.
+
+  **Workaround:** Use an alternative ACL connection interval.
+
+.. rst-class:: v2-2-0
+
+OCX-155: Larger timestamps than intended
+   The timestamps/Service Data Unit references (SDU refs), may occasionally be larger than intended and then duplicated in the next interval.
+
+.. rst-class:: v2-2-0
+
+OCX-156: PTO is not supported
+   The controller does not support Pre-Transmission Offset.
+
+.. rst-class:: v2-2-0
+
+OCX-157: OCT-140: Interleaved broadcasts streaming issues
+ Interleaved broadcasts are unable to stream with certain Quality of Service (QoS) configurations.
+
+   **Workaround:** Set retransmits (RTN) to ``<= 2`` and octets per frame to ``<= 80`` for stereo.
+
+.. rst-class:: v2-2-0
+
+OCX-162: If the first CIS headset in a CIG is reset, this may impact the stream of the second headset as well
+   If the first CIS (Connected Isochronous Stream) in a CIG (Connected Isochronous Group) is reset, this may halt streaming to other CISes as well.
+
+.. rst-class:: v2-2-0
+
+OCX-165: Collisions of BIS and ACL on the same broadcaster/central
+   Broadcast Isochronous Stream (BIS) and Asynchronous Connection-oriented Logical transports (ACL) may collide in the scheduler.
+
+   **Workaround:** Create the ACLs before creating any BISes.
+
+.. rst-class:: v2-2-0
+
+OCX-168: Issues with reestablishing streams
+   Syncing of broadcast receivers takes longer than in version 3310, especially for high retransmit (RTN) values.
+
+   **Workaround:** Set retransmits (RTN) to a lower value to reduce the resynchronization time.
+
+
 nRF Machine Learning
 ====================
 
@@ -1364,6 +1426,21 @@ NCSDK-16644: :ref:`caf_sensor_manager` macro incorrectly converts float to senso
   :ref:`caf_sensor_manager` macro :c:macro:`FLOAT_TO_SENSOR_VALUE` might convert float to sensor value incorrectly, because of missing brackets around macro argument.
 
   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``7e8c23a6632632f0cee885abe955e37a6942911d``).
+
+.. _ncsidb_925:
+
+.. rst-class:: v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
+
+NCSIDB-925: Event subscribers in the :ref:`app_event_manager` may overlap when using a non-default naming convention
+  In order to locate the event subscribers start and stop address ranges, sections have to be sorted by the name with added postfixes.
+  Hence, using a non-default event naming scheme may break the expected subscribers sorting.
+  In this situation, one of the event subscribers arrays might be placed inside the other.
+  So, when the event related to the outer subscribers is processed, the event subscribers that are inside are also executed.
+  To resolve this issue, a new implementation was introduced that uses a section naming that cannot be used as event name (invalid variable identifier).
+
+  **Workaround:** Use the default event names, ensuring that each event name ends with the ``_event`` postfix.
+  Make sure that the event name does not start the same way as another event.
+  For example, creating the following events: ``rx_event`` and ``rx_event_error_event`` would still cause the issue.
 
 Subsystems
 **********
@@ -2212,6 +2289,11 @@ SoftDevice Controller
 
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0
+
+DRGN-18568: When the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option is used, the actual value of radio output power is lower than expected.
+  The actual value is lower than the default one in case the :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_ANTENNA` or :kconfig:option:`CONFIG_BT_CTLR_TX_PWR` Kconfig options are used together with the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option.
+
 .. rst-class:: v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0
 
 DRGN-16013: Initiating connections over extended advertising is not supported when external radio coexistence and FEM support are enabled
@@ -2690,6 +2772,16 @@ NCSDK-17501: Partition Manager: Ignored alignment for partitions
   * :file:`pm.yml.zboss`
 
   **Workaround:** Edit the affected configurations file so that ``align`` is correctly placed inside the ``placement`` section of the config file.
+
+.. rst-class:: v2-2-0
+
+NCSDK-19536: TF-M does not compile when the board is missing a uart1 node and TF-M logging is enabled
+  TF-M does not compile when a uart1 node is not defined in a board's devicetree configuration and TF-M logging is enabled.
+
+  **Workaround:** Use one of the following workarounds:
+
+  * Add uart1 node with baudrate property in the devicetree configuration.
+  * Disable TF-M logging by enabling the :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` option.
 
 .. rst-class:: v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 

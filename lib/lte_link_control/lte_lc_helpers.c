@@ -1076,10 +1076,12 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 		goto clean_exit;
 	}
 
-	if (status != AT_NCELLMEAS_STATUS_VALUE_SUCCESS) {
+	if (status == AT_NCELLMEAS_STATUS_VALUE_FAIL) {
 		err = 1;
 		LOG_DBG("NCELLMEAS status %d", status);
 		goto clean_exit;
+	} else if (status == AT_NCELLMEAS_STATUS_VALUE_INCOMPLETE) {
+		LOG_WRN("NCELLMEAS measurements interrupted; results incomplete");
 	}
 
 	/* Go through the cells. */
@@ -1099,6 +1101,8 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 		}
 
 		if (tmp_int > LTE_LC_CELL_EUTRAN_ID_MAX) {
+			LOG_WRN("cell_id = %d which is > LTE_LC_CELL_EUTRAN_ID_MAX; "
+				"marking invalid", tmp_int);
 			tmp_int = LTE_LC_CELL_EUTRAN_ID_INVALID;
 		}
 		parsed_cell.id = tmp_int;
@@ -1312,6 +1316,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 	if (incomplete) {
 		err = -E2BIG;
+		LOG_ERR("Buffer is too small; results incomplete: %d", err);
 	}
 
 clean_exit:

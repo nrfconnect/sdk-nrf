@@ -22,7 +22,7 @@ Feature support matrix
    .. note::
       Features not listed are not supported.
 
-   .. include:: ../../doc/nrf/software_maturity.rst
+   .. include:: /software_maturity.rst
       :start-after: software_maturity_application_nrf5340audio_table:
       :end-before: software_maturity_protocol
 

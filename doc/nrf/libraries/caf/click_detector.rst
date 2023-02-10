@@ -83,5 +83,3 @@ Power management states
 If the option :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS` is enabled, the module can react to power management events.
 The module stops tracing of key states when ``power_down_event`` is received.
 The module starts operating again when ``wake_up_event`` is received.
-
-.. |click_detector| replace:: click detector module

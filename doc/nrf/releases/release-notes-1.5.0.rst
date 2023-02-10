@@ -85,7 +85,7 @@ nRF9160
 
   * :ref:`lwm2m_client` sample - Added handling of network failures. The sample now tries to reconnect to the LTE network when a failure is reported.
   * :ref:`nrf_coap_client_sample` sample - Updated the default server URL to ``californium.eclipseprojects.io``.
-  * :ref:`mqtt_simple_sample` sample - Updated the default server URL to ``mqtt.eclipseprojects.io``.
+  * nRF9160: Simple MQTT sample - Updated the default server URL to ``mqtt.eclipseprojects.io``.
   * Extracted the certificate, button, and LED handling functionality from :ref:`http_application_update_sample` sample to :file:`samples/nrf9160/http_update/common`, to share them with :ref:`http_modem_delta_update_sample` sample.
   * Moved the :ref:`http_application_update_sample` sample from :file:`samples/nrf9160/http_application_update/` to :file:`samples/nrf9160/http_update/application_update`.
   * :ref:`lib_download_client` library:
@@ -1017,7 +1017,7 @@ Applications and samples
 * Updated the configuration sections of the following samples:
 
   * :ref:`download_sample`
-  * :ref:`mqtt_simple_sample`
+  * nRF9160: Simple MQTT
   * Bluetooth: Peripheral Alexa Gadgets
 * :ref:`bootloader` - Added information on bootloader overlays and building the sample from SEGGER Embedded Studio and command line.
 * Added information about FEM support to the :ref:`radio_test` and :ref:`direct_test_mode` samples.

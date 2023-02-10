@@ -86,12 +86,15 @@ Matter
   * The default heap implementation to use Zephyr's ``sys_heap`` (:kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEAP`) to better control the RAM usage of Matter applications.
   * :ref:`ug_matter_device_certification` page with a section about certification document templates.
   * :ref:`ug_matter_overview_commissioning` page with information about :ref:`ug_matter_network_topologies_commissioning_onboarding_formats`.
+  * :ref:`ug_matter_hw_requirements` page with a section about :ref:`ug_matter_hw_requirements_layouts`.
   * Default retry intervals used by Matter Reliability Protocol for Matter over Thread to account for longer round-trip times in Thread networks with multiple intermediate nodes.
   * The Bluetooth LE connection timeout parameters and the update timeout parameters to make communication over Bluetooth LE more reliable.
   * Default transmission output power for Matter over Thread devices to the maximum available one for all targets:
     8 dBm for nRF52840, 3 dBm for nRF5340, 20 dBm for all devices with FEM enabled, and 0 dBm for sleepy devices.
 
 * Fixed the issue of connection timing out when attaching to a Wi-Fi access point that requires Wi-Fi Protected Access 3 (WPA3).
+* Removed support for Android CHIP Tool from the documentation and release artifacts.
+  Moving forward, we recommend using the development tool CHIP Tool for Linux or macOS or mobile applications from publicly available Matter Ecosystems.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
@@ -192,7 +195,14 @@ nRF5340 Audio
   * Support for Front End Module nRF21540.
   * Possibility to create a Public Broadcast Announcement (PBA) needed for Auracast.
   * Encryption for BISes.
+
 * Updated:
+
+  * Controller from version 3310 to 3322, with the following major changes:
+
+    * Changes to accommodate BIS + ACL combinations.
+    * Improvements to support creating CIS connections in any order.
+    * Basic support for interleaved broadcasts.
 
   * Power module has been re-factored so that it uses upstream Zephyr INA23X sensor driver.
   * BIS headsets can now switch between two broadcast sources (two hardcoded broadcast names).
@@ -248,6 +258,7 @@ Bluetooth samples
 
     * Documentation by adding energy consumption information.
     * Documentation by adding a section about distance offset calibration.
+    * Configuration of the GPIO pins used by the DM module using the device tree.
 
 * :ref:`peripheral_nfc_pairing` and :ref:`central_nfc_pairing` samples:
 
@@ -309,6 +320,7 @@ nRF9160 samples
       The :ref:`lib_nrf_cloud` library is used with MQTT for location requests to the cloud.
     * New command ``th pipeline`` for executing several MoSh commands sequentially in one thread.
     * New command ``sleep`` for introducing wait periods in between commands when using ``th pipeline``.
+    * New command ``heap`` for printing kernel and system heap usage statistics.
 
   * Updated:
 
@@ -341,11 +353,6 @@ nRF9160 samples
 
   * Added support for the :ref:`liblwm2m_carrier_readme` library.
 
-* Removed:
-
-  * Multicell location sample because of the deprecation of the Multicell location library.
-    Relevant functionality is available through the :ref:`lib_location` library.
-
 * :ref:`nrf_cloud_mqtt_multi_service` sample:
 
   * Added:
@@ -363,6 +370,14 @@ nRF9160 samples
   * Added:
 
     * Sample for nRF52 and nRF53 Series devices to send AT commands to nRF9160 SiP from shell.
+
+* Removed:
+
+  * Multicell location sample because of the deprecation of the Multicell location library.
+    Relevant functionality is available through the :ref:`lib_location` library.
+  * nRF9160: Simple MQTT sample.
+    This is now replaced by a new :ref:`mqtt_sample` sample that supports Wi-Fi and LTE connectivity.
+
 
 Peripheral samples
 ------------------
@@ -443,6 +458,8 @@ Wi-Fi samples
 Other samples
 -------------
 
+* Added :ref:`mqtt_sample` sample that supports Wi-Fi and LTE connectivity.
+
 * :ref:`esb_prx_ptx` sample:
 
   * Added support for front-end modules and :ref:`zephyr:nrf21540dk_nrf52840`.
@@ -490,6 +507,10 @@ Bluetooth libraries and services
 * :ref:`bt_le_adv_prov_readme` library:
 
   * Changed the :kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_MODE` Kconfig option (default value) to not include Fast Pair battery data in the Fast Pair advertising payload by default.
+
+* :ref:`bt_fast_pair_readme` service:
+
+  * Added the :c:func:`bt_fast_pair_factory_reset` function to clear the Fast Pair storage.
 
 Bootloader libraries
 --------------------
@@ -658,6 +679,12 @@ Other libraries
   * New library.
     This was previously a component of the :ref:`nrf53_audio_app` application, now moved to :file:`lib/pcm_mix`.
 
+* :ref:`app_event_manager`:
+
+  * Updated the way section names are created for event subscribers.
+    This allows you to use any event naming scheme.
+    For more information, see the :ref:`NCSIDB-925 <ncsidb_925>` issue description on the :ref:`known_issues` page.
+
 Common Application Framework (CAF)
 ----------------------------------
 
@@ -782,8 +809,10 @@ Documentation
 * Added:
 
   * Documentation template for the :ref:`Ecosystem integration <Ecosystem_integration>` user guides.
+  * Documentation on :ref:`ug_avsystem`.
   * The :ref:`ug_nrf70_developing` user guide.
   * A page on :ref:`ug_nrf70_features`.
+  * Documentation template for :ref:`Applications <application>`.
 
 * Updated:
 

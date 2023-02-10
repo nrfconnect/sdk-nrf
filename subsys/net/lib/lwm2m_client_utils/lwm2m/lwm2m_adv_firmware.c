@@ -466,6 +466,11 @@ static struct lwm2m_engine_obj_inst *firmware_create(uint16_t obj_inst_id)
 {
 	int i = 0, j = 0;
 
+	/* Secure outside called lwm2m_create_obj_inst() create is still possible */
+	if (obj_inst_id >= MAX_INSTANCE_COUNT) {
+		return NULL;
+	}
+
 	init_res_instance(res_inst[obj_inst_id], ARRAY_SIZE(res_inst[obj_inst_id]));
 
 	/* initialize instance resource data */

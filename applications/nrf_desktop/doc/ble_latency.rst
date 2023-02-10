@@ -28,7 +28,9 @@ Configuration
 *************
 
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-The module is enabled for every nRF Desktop peripheral device.
+Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` options are enabled.
+The Bluetooth LE latency application module is enabled by the :ref:`CONFIG_DESKTOP_BLE_LATENCY_ENABLE <config_desktop_app_options>` option.
+The option is implied by :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` together with other features used by an HID peripheral device.
 
 You can use the option :ref:`CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S <config_desktop_app_options>` to define the maximum allowed time for establishing the connection security.
 If the connection is not secured during this period of time, the peripheral device disconnects.
@@ -70,5 +72,3 @@ The module does not register itself using the ``GEN_CONFIG_EVENT_HANDLERS`` macr
    * The nRF Desktop central ignores the requested connection interval, and only the connection latency is updated.
 
    For more detailed information, see the :ref:`nrf_desktop_ble_conn_params` documentation page.
-
-.. |ble_latency| replace:: Bluetooth® LE latency module

@@ -312,12 +312,6 @@ If the sensor's trigger functionality is configured, each time the trigger is ac
 
 Sending :c:struct:`wake_up_event` to other modules results in waking up the whole system.
 
-.. |sensor_manager| replace:: sensor manager module
-.. |only_configured_module_note| replace:: Only the configured module should include the configuration file.
-   Do not include the configuration file in other source files.
-.. |device_pm_note| replace:: Not all device power states might be supported by the sensor's device.
-   Check the sensor's driver implementation before configuring :c:member:`sm_sensor_config.suspend`.
-
 .. _sensor_sample_period:
 
 Changing sensor sample period

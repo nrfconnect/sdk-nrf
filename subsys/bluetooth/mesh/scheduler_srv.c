@@ -445,7 +445,7 @@ static void schedule_action(struct bt_mesh_scheduler_srv *srv,
 	LOG_DBG("      second: %d", current_local->tm_sec);
 
 	if (!convert_scheduler_time_to_tm(&sched_time, current_local, entry)) {
-		LOG_WRN("Cannot convert scheduled action time to struct tm");
+		LOG_DBG("Cannot convert scheduled action time to struct tm");
 		return;
 	}
 

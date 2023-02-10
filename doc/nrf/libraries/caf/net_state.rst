@@ -35,5 +35,3 @@ The following network states are available:
 
 :c:enum:`NET_STATE_CONNECTED` means that IP packets can be transmitted.
 For example, in case of a Thread network, this means not only that the connection to the mesh network is established, but also that the Border Router is working and it is possible to transfer data.
-
-.. |net_state| replace:: network state module

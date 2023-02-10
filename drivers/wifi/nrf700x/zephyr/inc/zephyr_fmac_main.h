@@ -40,6 +40,7 @@ struct wifi_nrf_vif_ctx_zep {
 	scan_result_cb_t disp_scan_cb;
 	bool scan_in_progress;
 	int scan_type;
+	unsigned int scan_res_cnt;
 
 	struct net_eth_addr mac_addr;
 
@@ -54,6 +55,14 @@ struct wifi_nrf_vif_ctx_zep {
 	 * for "twt_teardown_all" command.
 	 */
 	unsigned char neg_twt_flow_id;
+#ifdef CONFIG_NET_STATISTICS_ETHERNET
+	struct net_stats_eth eth_stats;
+#endif /* CONFIG_NET_STATISTICS_ETHERNET */
+	int if_type;
+	struct wifi_ps_config *ps_info;
+	bool ps_config_info_evnt;
+	bool passive_scan;
+	bool authorized;
 };
 
 struct wifi_nrf_vif_ctx_map {

@@ -46,7 +46,7 @@ The |NCS| provides two alternatives for testing the sample:
 Testing using shell_bt_nus
 ==========================
 
-.. include:: ../../../doc/nrf/libraries/shell/shell_bt_nus.rst
+.. include:: /libraries/shell/shell_bt_nus.rst
    :start-after: testing_bt_nus_shell_intro_start
    :end-before: testing_bt_nus_shell_intro_end
 

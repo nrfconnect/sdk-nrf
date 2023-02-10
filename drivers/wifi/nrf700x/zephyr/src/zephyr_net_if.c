@@ -68,10 +68,30 @@ enum wifi_nrf_status wifi_nrf_if_carr_state_chg(void *os_vif_ctx,
 
 	vif_ctx_zep->if_carr_state = carr_state;
 
+	if (vif_ctx_zep->zep_net_if_ctx) {
+		if (carr_state == WIFI_NRF_FMAC_IF_CARR_STATE_ON) {
+			net_eth_carrier_on(vif_ctx_zep->zep_net_if_ctx);
+		} else if (carr_state == WIFI_NRF_FMAC_IF_CARR_STATE_OFF) {
+			net_eth_carrier_off(vif_ctx_zep->zep_net_if_ctx);
+		}
+	}
+	LOG_INF("%s: Carrier state: %d\n", __func__, carr_state);
+
 	status = WIFI_NRF_STATUS_SUCCESS;
 
 out:
 	return status;
+}
+
+static bool is_eapol(struct net_pkt *pkt)
+{
+	struct net_eth_hdr *hdr;
+	uint16_t ethertype;
+
+	hdr = NET_ETH_HDR(pkt);
+	ethertype = ntohs(hdr->type);
+
+	return ethertype == NET_ETH_PTYPE_EAPOL;
 }
 #endif /* CONFIG_NRF700X_DATA_TX */
 
@@ -103,7 +123,8 @@ int wifi_nrf_if_send(const struct device *dev,
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
-	if (vif_ctx_zep->if_carr_state != WIFI_NRF_FMAC_IF_CARR_STATE_ON) {
+	if ((vif_ctx_zep->if_carr_state != WIFI_NRF_FMAC_IF_CARR_STATE_ON) ||
+	    (!vif_ctx_zep->authorized && !is_eapol(pkt))) {
 		ret = 0;
 		goto out;
 	}
@@ -265,6 +286,9 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 						     vif_ctx_zep,
 						     &add_vif_info);
 
+	rpu_ctx_zep->vif_ctx_zep[vif_ctx_zep->vif_idx].if_type =
+		add_vif_info.iftype;
+
 	if (vif_ctx_zep->vif_idx >= MAX_NUM_VIFS) {
 		LOG_ERR("%s: FMAC returned invalid interface index\n",
 			__func__);
@@ -283,6 +307,7 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 	}
 
 	ethernet_init(iface);
+	net_if_carrier_off(iface);
 
 	net_if_set_link_addr(iface,
 			     vif_ctx_zep->mac_addr.addr,
@@ -533,6 +558,28 @@ out:
 	return ret;
 }
 
+#ifdef CONFIG_NET_STATISTICS_ETHERNET
+struct net_stats_eth *wifi_nrf_eth_stats_get(const struct device *dev)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	if (!dev) {
+		LOG_ERR("%s Device not found\n", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = dev->data;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		goto out;
+	}
+
+	return &vif_ctx_zep->eth_stats;
+out:
+	return NULL;
+}
+#endif /* CONFIG_NET_STATISTICS_ETHERNET */
 
 #ifdef CONFIG_NET_STATISTICS_WIFI
 int wifi_nrf_stats_get(const struct device *dev, struct net_stats_wifi *zstats)

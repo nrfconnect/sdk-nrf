@@ -24,5 +24,3 @@ Implementation details
 
 nRF Desktop uses the |ble_state_pm| from :ref:`lib_caf` (CAF).
 See the :ref:`CAF Bluetooth state power manager module <caf_ble_state_pm>` page for implementation details.
-
-.. |ble_state_pm| replace:: Bluetooth state power manager module

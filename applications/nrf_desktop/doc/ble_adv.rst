@@ -48,5 +48,3 @@ Implementation details
 **********************
 
 See the :ref:`CAF Bluetooth LE advertising <caf_ble_adv>` page for implementation details.
-
-.. |ble_adv| replace:: Bluetooth® LE advertising module

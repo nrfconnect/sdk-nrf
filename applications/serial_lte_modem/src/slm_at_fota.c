@@ -49,7 +49,6 @@ int slm_setting_fota_init(void);
 int slm_setting_fota_save(void);
 
 /* global variable defined in different files */
-extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 extern struct at_param_list at_param_list;
 extern uint8_t fota_type;
 extern uint8_t fota_stage;
@@ -83,12 +82,11 @@ static void do_fota_app_read(uint8_t area_id)
 		return;
 	}
 
-	sprintf(rsp_buf, "\r\n#XFOTA: %d,%d,%d,\"%d.%d.%d+%d\"\r\n", area_id,
+	rsp_send("\r\n#XFOTA: %d,%d,%d,\"%d.%d.%d+%d\"\r\n", area_id,
 		header.mcuboot_version,
 		header.h.v1.image_size,
 		header.h.v1.sem_ver.major, header.h.v1.sem_ver.minor,
 		header.h.v1.sem_ver.revision, header.h.v1.sem_ver.build_num);
-	rsp_send(rsp_buf, strlen(rsp_buf));
 }
 
 static int do_fota_mfw_read(void)
@@ -109,8 +107,7 @@ static int do_fota_mfw_read(void)
 		return err;
 	}
 
-	sprintf(rsp_buf, "\r\n#XFOTA: %d,%d\r\n", area, offset);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XFOTA: %d,%d\r\n", area, offset);
 
 	return 0;
 }
@@ -242,9 +239,8 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 	}
 	/* Send an URC if failed to start */
 	if (ret) {
-		sprintf(rsp_buf, "\r\n#XFOTA: %d,%d,%d\r\n", FOTA_STAGE_DOWNLOAD,
+		rsp_send("\r\n#XFOTA: %d,%d,%d\r\n", FOTA_STAGE_DOWNLOAD,
 			FOTA_STATUS_ERROR, ret);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
 	fota_type = type;
@@ -259,27 +255,27 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 		fota_stage = FOTA_STAGE_DOWNLOAD;
 		fota_status = FOTA_STATUS_OK;
 		fota_info = evt->progress;
-		sprintf(rsp_buf, "\r\n#XFOTA: %d,%d,%d\r\n", fota_stage, fota_status, fota_info);
+		rsp_send("\r\n#XFOTA: %d,%d,%d\r\n", fota_stage, fota_status, fota_info);
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		fota_stage = FOTA_STAGE_ACTIVATE;
 		fota_info = 0;
-		sprintf(rsp_buf, "\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
+		rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
 		/* Save, in case reboot by reset */
 		slm_setting_fota_save();
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
 		fota_stage = FOTA_STAGE_DOWNLOAD_ERASE_PENDING;
-		sprintf(rsp_buf, "\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
+		rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_DONE:
 		fota_stage = FOTA_STAGE_DOWNLOAD_ERASED;
-		sprintf(rsp_buf, "\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
+		rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
 		break;
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		fota_status = FOTA_STATUS_ERROR;
 		fota_info = evt->cause;
-		sprintf(rsp_buf, "\r\n#XFOTA: %d,%d,%d\r\n", fota_stage, fota_status, fota_info);
+		rsp_send("\r\n#XFOTA: %d,%d,%d\r\n", fota_stage, fota_status, fota_info);
 		/* FOTA session terminated */
 		slm_setting_fota_init();
 		break;
@@ -287,7 +283,7 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 	case FOTA_DOWNLOAD_EVT_CANCELLED:
 		fota_status = FOTA_STATUS_CANCELLED;
 		fota_info = 0;
-		sprintf(rsp_buf, "\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
+		rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
 		/* FOTA session terminated */
 		slm_setting_fota_init();
 		break;
@@ -295,7 +291,6 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 	default:
 		return;
 	}
-	rsp_send(rsp_buf, strlen(rsp_buf));
 }
 
 /**@brief handle AT#XFOTA commands
@@ -386,19 +381,16 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_TEST_COMMAND:
 #if defined(CONFIG_SECURE_BOOT)
-		sprintf(rsp_buf,
-			"\r\n#XFOTA: (%d,%d,%d,%d,%d,%d,%d,%d),<file_uri>,<sec_tag>,<apn>\r\n",
+		rsp_send("\r\n#XFOTA: (%d,%d,%d,%d,%d,%d,%d,%d),<file_uri>,<sec_tag>,<apn>\r\n",
 			SLM_FOTA_STOP, SLM_FOTA_START_APP, SLM_FOTA_START_MFW, SLM_FOTA_START_BL,
 			SLM_FOTA_APP_READ, SLM_FOTA_MFW_READ,
 			SLM_FOTA_ERASE_APP, SLM_FOTA_ERASE_MFW);
 #else
-		sprintf(rsp_buf,
-			"\r\n#XFOTA: (%d,%d,%d,%d,%d,%d,%d),<file_uri>,<sec_tag>,<apn>\r\n",
+		rsp_send("\r\n#XFOTA: (%d,%d,%d,%d,%d,%d,%d),<file_uri>,<sec_tag>,<apn>\r\n",
 			SLM_FOTA_STOP, SLM_FOTA_START_APP, SLM_FOTA_START_MFW,
 			SLM_FOTA_APP_READ, SLM_FOTA_MFW_READ,
 			SLM_FOTA_ERASE_APP, SLM_FOTA_ERASE_MFW);
 #endif
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
@@ -431,12 +423,11 @@ void slm_fota_post_process(void)
 	if (fota_stage != FOTA_STAGE_INIT) {
 		/* report final result of last fota */
 		if (fota_status == FOTA_STATUS_OK) {
-			sprintf(rsp_buf, "\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
+			rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
 		} else {
-			sprintf(rsp_buf, "\r\n#XFOTA: %d,%d,%d\r\n", fota_stage, fota_status,
+			rsp_send("\r\n#XFOTA: %d,%d,%d\r\n", fota_stage, fota_status,
 				fota_info);
 		}
-		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 	/* FOTA session completed */
 	slm_setting_fota_init();

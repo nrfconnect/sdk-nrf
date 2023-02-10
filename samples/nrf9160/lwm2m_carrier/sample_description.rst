@@ -33,7 +33,8 @@ Some of the configurations of the library must be changed according to your spec
 For example, at some point during certification, you might have to connect to one or more of an operator's test (certification) servers, by overwriting the library's automatic URI and PSK selection.
 When :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` is empty, the library connects to live (production) servers.
 
-The sections below explain how you can configure the library in different ways to connect to Leshan and Coiote LwM2M servers.
+The sections below explain how you can configure the library in different ways to connect to Leshan and AVSystem's Coiote LwM2M servers.
+To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 Configuring your application to connect to other servers (such as your operator's test servers) might look different, depending on the operator's device management framework.
 
 Configuration

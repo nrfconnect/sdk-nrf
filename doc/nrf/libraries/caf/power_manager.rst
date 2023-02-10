@@ -161,5 +161,3 @@ In the off state, the CPU is not running and the CPU reboot is required.
 
 Before the application enters the off state, at least one module must configure the peripheral under its control, so that it issues a hardware-related event capable of rebooting the CPU (that is, capable of leaving the CPU off mode).
 After the reboot, the application initializes itself again.
-
-.. |power_manager| replace:: power manager module

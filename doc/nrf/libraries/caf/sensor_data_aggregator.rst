@@ -77,5 +77,3 @@ After receiving :c:struct:`sensor_data_aggregator_release_buffer_event`, the |se
 
 Several buffers can be reduced to one, in case of a situation where the sampling period is greater than the time needed to send and process :c:struct:`sensor_data_aggregator_event`.
 In the situation when sampling is much faster than the time needed to send and process :c:struct:`sensor_data_aggregator_event`, the number of buffers should be increased.
-
-.. |sensor_data_aggregator| replace:: sensor data aggregator module

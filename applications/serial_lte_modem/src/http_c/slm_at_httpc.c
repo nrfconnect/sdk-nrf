@@ -22,15 +22,12 @@ LOG_MODULE_REGISTER(slm_httpc, CONFIG_SLM_LOG_LEVEL);
 #define HTTPC_RES_LEN		256
 #define HTTPC_HEADERS_LEN	512
 #define HTTPC_REQ_LEN		(HTTPC_METHOD_LEN + HTTPC_RES_LEN + HTTPC_HEADER_LEN + 3)
-#define HTTPC_BUF_LEN		2048 /* align with NRF_MODEM_TLS_MAX_MESSAGE_SIZE */
+#define HTTPC_BUF_LEN		SLM_MAX_MESSAGE_SIZE
 #if HTTPC_REQ_LEN > HTTPC_BUF_LEN
 # error "Please specify larger HTTPC_BUF_LEN"
 #endif
 #define HTTPC_REQ_TO_S		10
 #define HTTPC_CONTEN_TYPE_LEN	64
-
-/* Buffers for HTTP client. */
-static uint8_t data_buf[HTTPC_BUF_LEN];
 
 /**@brief HTTP connect operations. */
 enum slm_httpccon_operation {
@@ -67,7 +64,7 @@ static struct slm_httpc_ctx {
 
 /* global variable defined in different resources */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
+extern uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];
 
 static struct k_thread httpc_thread;
 #define HTTPC_THREAD_STACK_SIZE       KB(2)
@@ -91,10 +88,9 @@ static void response_cb(struct http_response *rsp,
 				/* Send last chunk of headers and URC */
 				data_send(rsp->recv_buf, headers_len);
 				httpc.rsp_header_length += headers_len;
-				sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,%hu\r\n",
+				rsp_send("\r\n#XHTTPCRSP:%d,%hu\r\n",
 					httpc.rsp_header_length,
 					final_data);
-				rsp_send(rsp_buf, strlen(rsp_buf));
 				httpc.state = HTTPC_RSP_HEADER_DONE;
 				/* Send first chunk of body */
 				data_send(rsp->recv_buf + headers_len,
@@ -113,8 +109,7 @@ static void response_cb(struct http_response *rsp,
 	}
 
 	if (final_data == HTTP_DATA_FINAL) {
-		sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,%hu\r\n", httpc.rsp_body_length, final_data);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XHTTPCRSP:%d,%hu\r\n", httpc.rsp_body_length, final_data);
 		httpc.state = HTTPC_COMPLETE;
 	}
 	LOG_DBG("Response data received (%zd bytes)", rsp->data_len);
@@ -196,8 +191,7 @@ static int payload_cb(int sock, struct http_request *req, void *user_data)
 
 	if (httpc.content_length > 0 || httpc.chunked_transfer) {
 		enter_datamode(httpc_datamode_callback);
-		sprintf(rsp_buf, "\r\n#XHTTPCREQ: 1\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XHTTPCREQ: 1\r\n");
 		/* Wait until all payload is sent */
 		LOG_DBG("wait until payload is ready");
 		k_sem_take(&http_req_sem, K_FOREVER);
@@ -205,8 +199,7 @@ static int payload_cb(int sock, struct http_request *req, void *user_data)
 
 	if (httpc.total_sent >= 0) {
 		httpc.state = HTTPC_REQ_DONE;
-		sprintf(rsp_buf, "\r\n#XHTTPCREQ: 0\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XHTTPCREQ: 0\r\n");
 	}
 	return httpc.total_sent;
 }
@@ -321,8 +314,7 @@ static int do_http_connect(void)
 		goto exit_cli;
 	}
 
-	sprintf(rsp_buf, "\r\n#XHTTPCCON: 1\r\n");
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XHTTPCCON: 1\r\n");
 	return 0;
 
 exit_cli:
@@ -334,8 +326,7 @@ exit_cli:
 #endif
 	close(httpc.fd);
 	httpc.fd = INVALID_SOCKET;
-	sprintf(rsp_buf, "\r\n#XHTTPCCON: 0\r\n");
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XHTTPCCON: 0\r\n");
 
 	return ret;
 }
@@ -355,8 +346,7 @@ static int do_http_disconnect(void)
 	} else {
 		return -ENOTCONN;
 	}
-	sprintf(rsp_buf, "\r\n#XHTTPCCON: 0\r\n");
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XHTTPCCON: 0\r\n");
 
 	return 0;
 }
@@ -417,13 +407,11 @@ static int do_http_request(void)
 	err = http_client_req(httpc.fd, &req, timeout, "");
 	if (err < 0) {
 		/* Socket send/recv error */
-		sprintf(rsp_buf, "\r\n#XHTTPCREQ: %d\r\n", err);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XHTTPCREQ: %d\r\n", err);
 	} else if (httpc.state != HTTPC_COMPLETE) {
 		/* Socket was closed by remote */
 		err = -ECONNRESET;
-		sprintf(rsp_buf, "\r\n#XHTTPCRSP: 0,%d\r\n", err);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XHTTPCRSP: 0,%d\r\n", err);
 	} else {
 		err = 0;
 	}
@@ -476,23 +464,20 @@ int handle_at_httpc_connect(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (httpc.sec_tag != INVALID_SEC_TAG) {
-			sprintf(rsp_buf, "\r\n#XHTTPCCON: %d,\"%s\",%d,%d\r\n",
+			rsp_send("\r\n#XHTTPCCON: %d,\"%s\",%d,%d\r\n",
 				(httpc.fd == INVALID_SOCKET) ? 0 : 1,
 				httpc.host, httpc.port, httpc.sec_tag);
 		} else {
-			sprintf(rsp_buf, "\r\n#XHTTPCCON: %d,\"%s\",%d\r\n",
+			rsp_send("\r\n#XHTTPCCON: %d,\"%s\",%d\r\n",
 				(httpc.fd == INVALID_SOCKET) ? 0 : 1,
 				httpc.host, httpc.port);
 		}
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf,
-			"\r\n#XHTTPCCON: (%d,%d,%d),<host>,<port>,<sec_tag>\r\n",
+		rsp_send("\r\n#XHTTPCCON: (%d,%d,%d),<host>,<port>,<sec_tag>\r\n",
 			HTTPC_DISCONNECT, HTTPC_CONNECT, HTTPC_CONNECT6);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 

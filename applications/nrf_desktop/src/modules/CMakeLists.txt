@@ -10,10 +10,10 @@ target_sources_ifdef(CONFIG_DESKTOP_BLE_BOND_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_BLE_ENABLE_PASSKEY
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_passkey.c)
 
-target_sources_ifdef(CONFIG_DESKTOP_BT_PERIPHERAL
+target_sources_ifdef(CONFIG_DESKTOP_BLE_LATENCY_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_latency.c)
 
-target_sources_ifdef(CONFIG_DESKTOP_BT_CENTRAL
+target_sources_ifdef(CONFIG_DESKTOP_BLE_CONN_PARAMS_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_conn_params.c)
 
 target_sources_ifdef(CONFIG_DESKTOP_BLE_DISCOVERY_ENABLE
@@ -67,7 +67,7 @@ target_sources_ifdef(CONFIG_DESKTOP_BAS_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_QOS_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/qos.c)
 
-target_sources_ifdef(CONFIG_DESKTOP_BT_PERIPHERAL
+target_sources_ifdef(CONFIG_DESKTOP_DEV_DESCR_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dev_descr.c)
 
 target_sources_ifdef(CONFIG_DESKTOP_HIDS_ENABLE

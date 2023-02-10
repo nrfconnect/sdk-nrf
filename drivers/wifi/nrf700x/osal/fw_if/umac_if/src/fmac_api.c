@@ -3999,6 +3999,41 @@ enum wifi_nrf_status wifi_nrf_fmac_get_reg(struct wifi_nrf_fmac_dev_ctx *fmac_de
 err:
 	return WIFI_NRF_STATUS_FAIL;
 }
+
+enum wifi_nrf_status wifi_nrf_fmac_get_power_save_info(void *dev_ctx,
+						       unsigned char if_idx)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_umac_cmd_get_power_save_info *get_ps_info_cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	fmac_dev_ctx = dev_ctx;
+
+	get_ps_info_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+						   sizeof(*get_ps_info_cmd));
+
+	if (!get_ps_info_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n", __func__);
+		goto out;
+	}
+
+	get_ps_info_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_GET_POWER_SAVE_INFO;
+	get_ps_info_cmd->umac_hdr.ids.wdev_id = if_idx;
+	get_ps_info_cmd->umac_hdr.ids.valid_fields |=
+			NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      get_ps_info_cmd,
+			      sizeof(*get_ps_info_cmd));
+out:
+	if (get_ps_info_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       get_ps_info_cmd);
+	}
+
+	return status;
+}
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 enum wifi_nrf_status wifi_nrf_fmac_otp_mac_addr_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,

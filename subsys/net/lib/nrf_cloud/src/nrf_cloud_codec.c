@@ -1876,24 +1876,35 @@ int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf
 
 	lte_array = cJSON_AddArrayToObjectCS(req_obj_out, NRF_CLOUD_CELL_POS_JSON_KEY_LTE);
 	if (!lte_array) {
+		err = -ENOMEM;
 		goto cleanup;
 	}
 
-	/* Add the current cell to the array */
-	lte_obj = add_lte_inf(lte_array, &inf->current_cell);
-	if (!lte_obj) {
-		goto cleanup;
-	}
+	/* Add the current cell to the array; if using a GCI search type, sometimes
+	 * there is no current cell.
+	 */
+	if (inf->current_cell.id != LTE_LC_CELL_EUTRAN_ID_INVALID) {
+		lte_obj = add_lte_inf(lte_array, &inf->current_cell);
+		if (!lte_obj) {
+			err = -ENOMEM;
+			goto cleanup;
+		}
 
-	/* Add neighbor cells if present */
-	err = add_ncells(lte_obj, inf->ncells_count, inf->neighbor_cells);
-	if ((err == -EINVAL) || (err == -ENOMEM)) {
-		goto cleanup;
+		/* Add neighbor cells if present */
+		err = add_ncells(lte_obj, inf->ncells_count, inf->neighbor_cells);
+		if ((err == -EINVAL) || (err == -ENOMEM)) {
+			goto cleanup;
+		}
 	}
 
 	/* Skip GCI cells if not present */
 	if (!inf->gci_cells_count || !inf->gci_cells) {
-		return 0;
+		if (inf->current_cell.id == LTE_LC_CELL_EUTRAN_ID_INVALID) {
+			err = -ENODATA;
+			goto cleanup;
+		} else {
+			return 0;
+		}
 	}
 
 	/* Add GCI cells */
@@ -1902,6 +1913,7 @@ int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf
 
 		lte_obj = add_lte_inf(lte_array, gci);
 		if (!lte_obj) {
+			err = -ENOMEM;
 			goto cleanup;
 		}
 	}
@@ -1911,8 +1923,8 @@ int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf
 cleanup:
 	/* Only need to delete the lte_array since all items (if any) were added to it */
 	cJSON_DeleteItemFromObject(req_obj_out, NRF_CLOUD_CELL_POS_JSON_KEY_LTE);
-	LOG_ERR("Failed to format location request, out of memory");
-	return -ENOMEM;
+	LOG_ERR("Failed to format location request: %d", err);
+	return err;
 }
 
 int nrf_cloud_format_wifi_req_json(struct wifi_scan_info const *const wifi,
@@ -2012,6 +2024,8 @@ int nrf_cloud_format_location_req(struct lte_lc_cells_info const *const cell_inf
 	*string_out = cJSON_PrintUnformatted(req_obj);
 	if (*string_out == NULL) {
 		err = -ENOMEM;
+	} else {
+		LOG_DBG("JSON: %s", *string_out);
 	}
 
 cleanup:
