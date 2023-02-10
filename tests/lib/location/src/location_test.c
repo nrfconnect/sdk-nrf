@@ -40,6 +40,9 @@ static const char xmonitor_resp[] =
 	"334,6200,66,44,\"\","
 	"\"11100000\",\"00010011\",\"01001001\"";
 
+/* PDN active response */
+static const char cgact_resp_active[] = "+CGACT: 0,1";
+
 /* Strings for cellular positioning */
 static const char ncellmeas_resp[] =
 	"%NCELLMEAS:0,\"00011B07\",\"26295\",\"00B7\",2300,7,63,31,"
@@ -364,6 +367,11 @@ void test_location_cellular(void)
 	location_callback_called_expected = true;
 
 	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)cgact_resp_active, sizeof(cgact_resp_active));
 
 	cellular_rest_req_resp_handle();
 
@@ -512,6 +520,11 @@ void test_location_request_default(void)
 	/***** Fallback to cellular *****/
 
 	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)cgact_resp_active, sizeof(cgact_resp_active));
 
 	cellular_rest_req_resp_handle();
 
@@ -558,6 +571,11 @@ void test_location_request_mode_all_cellular_gnss(void)
 	/***** First cellular positioning *****/
 
 	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)cgact_resp_active, sizeof(cgact_resp_active));
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -664,7 +682,6 @@ void test_location_request_timeout_cellular_gnss_mode_all(void)
 	location_callback_called_expected = true;
 
 	/***** First cellular positioning *****/
-
 	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
 
 	err = location_request(&config);
@@ -852,6 +869,11 @@ void test_location_cellular_periodic(void)
 	location_callback_called_expected = true;
 
 	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)cgact_resp_active, sizeof(cgact_resp_active));
 
 	cellular_rest_req_resp_handle();
 
@@ -892,6 +914,11 @@ void test_location_cellular_periodic(void)
 	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
 
 	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)cgact_resp_active, sizeof(cgact_resp_active));
 	/* Wait a bit more than the interval so that NCELLMEAS is sent before we send response
 	 * Note that we could first send results and then location library would send NCELLMEAS and
 	 * the test wouldn't see a failure so these things would need to be checked from the logs.
