@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef LOCATION_SERVICE_UTILS_H
-#define LOCATION_SERVICE_UTILS_H
+#ifndef CLOUD_SERVICE_UTILS_H
+#define CLOUD_SERVICE_UTILS_H
 
 /**
  * @brief Provision TLS certificate that the selected location service requires
@@ -20,6 +20,6 @@
  *
  * @return 0 on success, or negative error code on failure.
  */
-int location_service_utils_provision_ca_certificates(void);
+int cloud_service_utils_provision_ca_certificates(void);
 
-#endif /* LOCATION_SERVICE_UTILS_H */
+#endif /* CLOUD_SERVICE_UTILS_H */

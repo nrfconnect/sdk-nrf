@@ -44,6 +44,11 @@ int cloud_service_location_get(
 	const struct cloud_service_pos_req *params,
 	struct location_data *location);
 
+/**
+ * @brief Initialize cloud services.
+ */
+void cloud_service_init(void);
+
 #ifdef __cplusplus
 }
 #endif
