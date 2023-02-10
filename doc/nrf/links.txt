@@ -618,6 +618,8 @@
 .. _`LwM2M editor`: http://devtoolkit.openmobilealliance.org/OEditor/LWMOView?url=https%3A%2F%2Fraw.githubusercontent.com%2FOpenMobileAlliance%2Flwm2m-registry%2Fprod%2Fversion_history%2F3300-1_0.xml
 .. _`LwM2M V1.1`: https://www.openmobilealliance.org/release/LightweightM2M/Lightweight_Machine_to_Machine-v1_1-OMASpecworks.pdf
 .. _`Enabler Test Specification (Interoperability) for Lightweight M2M`: https://www.openmobilealliance.org/release/LightweightM2M/ETS/OMA-ETS-LightweightM2M-V1_1-20190912-D.pdf
+.. _`LwM2M v1.2 specification`: http://www.openmobilealliance.org/release/LightweightM2M/V1_2-20201110-A/OMA-TS-LightweightM2M_Core-V1_2-20201110-A.pdf
+.. _`OMA LwM2M Firmware Update object v1.1`: https://www.openmobilealliance.org/release/LightweightM2M/V1_2-20201110-A/OMA-TS-LightweightM2M_Core-V1_2-20201110-A.pdf#page=118
 
 .. _`OMA LwM2M Object and Resource Registry`: https://technical.openmobilealliance.org/OMNA/LwM2M/LwM2MRegistry.html
 
