@@ -426,7 +426,7 @@ int modem_info_name_get(enum modem_info info, char *name)
 {
 	int len;
 
-	if (name == NULL) {
+	if (name == NULL || info < 0 || info >= MODEM_INFO_COUNT) {
 		return -EINVAL;
 	}
 
