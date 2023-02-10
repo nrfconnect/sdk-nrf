@@ -19,11 +19,15 @@ The power save state of the nRF70 Series device is described through a combinati
 Power state
 ===========
 
-The nRF70 Series device can operate in either of the following two power states:
+The nRF70 Series device can be in one of the following power states:
 
 * **Active:** The device is **ON** constantly so that it can receive and transmit the data.
-* **Sleep:** The device is **OFF** to majority of the blocks that can not receive and transmit the data.
+* **Sleep:** The device is **OFF** to majority of the blocks that cannot receive and transmit the data.
   In this state, the device consumes low power (~15 µA).
+  Real-time Clock (RTC) domain, RF retention memory, and firmware retention memory are powered **ON** to retain the state information.
+* **Shutdown:** The device is completely powered **OFF**.
+  In this state, the device consumes very low power (~2 µA) and does not retain any state information (apart from the values in the OTP memory).
+  The device will only respond to a BUCKEN assertion to wake from the Shutdown state.
 
 Functional state
 ================
@@ -68,7 +72,7 @@ The following Power Save modes are supported and can be configured by the user o
 Delivery Traffic Indication Message (DTIM)
 ******************************************
 
-Wi-Fi interface can be configured in either Delivery Traffic Indication Message or Target Wake Time (TWT) power save modes.
+The Wi-Fi® interface can be configured in either Delivery Traffic Indication Message or Target Wake Time (TWT) power save modes.
 DTIM is the default configuration and enabled by the application based on the traffic profile.
 TWT can be enabled if the connected access point is Wi-Fi 6 capable.
 
@@ -152,14 +156,15 @@ Target Wake Time (TWT)
 **********************
 
 Target Wake Time is a new feature in Wi-Fi 6.
-It allows an access point and devices to wake up at the negotiated times.
+It allows devices to wake up at the negotiated times to transmit and receive data.
 The access point and devices reach a TWT agreement that defines when a station is active and ready to receive and transmit data.
 
-TWT mechanism allows each device to negotiate its period with the AP to transmit and receive data packets.
-Stations will be active only at TWT Service Period and remain in the sleep state for the rest of the time.
+The TWT mechanism allows each device to negotiate its wake-up period with the AP to transmit and receive data packets.
+Stations will only receive and transmit during the TWT Service Period and remain in the sleep state for the rest of the time.
 
 .. note::
-   The device is not expected to be active for a DTIM beacon that does not receive any buffered broadcast or multicast frames.
+   The device follows the TWT wake schedule to save power and does not wake up for DTIM beacons.
+   It is not able to receive broadcast or multicast frames which are scheduled after the DTIM beacon.
    Applications are expected to keep note of this and set up TWT sessions based on their traffic profile.
 
 An access point has more control over the network in TWT mode and decides which device is going to transmit and when.
@@ -219,15 +224,45 @@ Following are the two key parameters of Target Wake Time:
 
 * **TWT Wake Duration**
 
-  * The minimum amount of time that the TWT requesting device needs to be active to complete the frame exchanges during the TWT wake interval.
+  * The amount of time that the TWT requesting device needs to be active to complete the frame exchanges during the TWT wake interval.
   * Valid range for duration is 1 ms to 256 ms.
+    Lower value results in more power saving at the cost of potential loss of data.
+    It is recommended not to go lower than 8 ms.
+    The application can choose a value lower than 8 ms at the cost of losing application data in the network.
   * The application must choose the right duration based on the traffic pattern.
+  * Applications must take appropriate action if uplink or downlink traffic is more than anticipated.
+    It could terminate the ongoing TWT session and negotiate a fresh session based on new requirements.
+
+  * Downlink traffic:
+
+    a. Predictability is the key for choosing the correct wake duration.
+    #. Wake duration must be sufficient for the AP to schedule all the incoming traffic to devices.
+       AP needs to contend the channel for scheduling frames and frames will be dropped if the duration is aggressive in busy channels.
+    #. AP will drop the device data if it cannot finish all transmission in the wake duration.
+       AP may buffer traffic until the next interval if sleep duration is in the order of 100 ms.
+       It will not buffer the device data if sleep duration is in the order of minutes and data will be lost.
+    #. Devices are allowed to sleep after the wake duration and there is no mechanism to extend the wake duration based on downlink traffic.
+       Device must be active during the wake duration even if there is no downlink traffic.
+
+  * Uplink traffic:
+
+    a. Trigger Enabled - When operating in Trigger Enabled mode, the nRF70 Series device:
+
+       * schedules uplink traffic as a response to trigger frames from the AP.
+       * expects the AP to schedule trigger frames in the wake duration.
+       * discards all pending uplink frames after wake time expiry before entering the sleep state.
+
+    #. Non-trigger Enabled - When operating in Non-trigger Enabled mode, the nRF70 Series device:
+
+       * schedules uplink traffic using the legacy channel contention.
+       * tries to schedule all uplink traffic in the wake duration and discard pending frames.
+       * discards all pending uplink frames after wake time expiry before entering the sleep state.
 
 * **TWT Wake Interval**
 
   * Interval between successive TWT wake periods.
   * Valid range for duration is one ms to a few days.
-  * The application must choose the right interval based on the traffic in receive direction.
+  * Application must choose the right interval based on the expected traffic.
 
 The following figure illustrates the two key parameters of Target Wake Time:
 
@@ -244,8 +279,9 @@ Usage
 DTIM-based power save is the default configuration of the device after connection to an access point.
 The wake-up and sleep period of the device is aligned to DTIM period advertised in the AP beacon.
 The access point is in control of DTIM period and can be configured while setting up the network.
+Stations connected to the AP cannot set or request a change in this value.
 
-A higher DTIM period provides higher power saving in devices, but it adds latency to the download traffic.
+A higher DTIM period provides higher power saving in devices, but it adds latency to the downlink traffic.
 The latency of the DTIM period is seen in the device for the initial downlink traffic.
 A device can wake up and schedule uplink traffic at any time and latency of a few milliseconds is observed.
 
@@ -257,7 +293,10 @@ When operating in DTIM Power Save mode, the nRF70 Series device:
 * maintains the Wi-Fi connection by responding to the keep alive packet exchange at any point of time.
 
 TWT-based power save allows devices to sleep for longer intervals than the DTIM power save.
-It is suitable for the devices that have low levels of periodic uplink traffic.
+It is suitable for devices that have predictable periodic uplink or downlink traffic and do not have low latency requirements.
+DTIM-based power save is more efficient for sleep intervals that are in the range of milliseconds to a few seconds.
+TWT will perform better if the sleep interval is in the 10s of seconds and above range.
+DTIM-based power save performs better in high throughput applications compared to TWT.
 As the device sleeps longer and does not wake up to receive DTIM beacons, it misses all multicast or broadcast frames.
 The TWT session is expected to be set up by the application after the network level negotiation, after which it is not expected to receive any multicast or broadcast frames.
 
@@ -294,8 +333,8 @@ The following shell commands and network management APIs are provided for power 
    * - net_mgmt(NET_REQUEST_WIFI_TWT)
      - wifi twt setup 0 0 1 1 0 1 1 1 65 524
      - | Set up TWT:
-       | TWT interval - 524 ms
-       | TWT wake interval - 65 ms
+       | TWT wake interval - 524 ms
+       | TWT wake duration - 65 ms
      - TWT operation TWT setup with dg - 1, flow_id - 1 requested
    * - net_mgmt(NET_REQUEST_WIFI_TWT)
      - wifi twt teardown 0 0 1 1
@@ -336,14 +375,51 @@ To measure the power consumption of the nRF70 Series device, complete the follow
 
       Power Profiler Kit II output for DTIM wakeup
 
-   * The following image shows the Power Profiler Kit II output for DTIM period of 3.
+   * To reproduce the plots for DTIM period of 3, complete the following steps using the :ref:`wifi_shell_sample` sample:
+
+     1. Configure an AP with DTIM value of 3.
+     #. Connect to the AP using the following Wi-Fi shell commands:
+
+        .. code-block:: console
+
+           wifi scan
+           wifi connect <SSID>
+
+     #. Check the connection status using the following Wi-Fi shell command:
+
+        .. code-block:: console
+
+           wifi status
+
+   The following image shows the Power Profiler Kit II output for DTIM period of 3.
 
    .. figure:: images/power_profiler_dtim_output.png
       :alt: Power profiler output for DTIM period of 3
 
       Power Profiler Kit II output for DTIM period of 3
 
-   * The following image shows the Power Profiler Kit II output for TWT interval of one minute.
+   * To reproduce the plots for TWT interval of one minute, complete the following steps using the :ref:`wifi_shell_sample` sample:
+
+     1. Connect to a TWT supported Wi-Fi 6 AP using the following Wi-Fi shell commands:
+
+        .. code-block:: console
+
+           wifi scan
+           wifi connect <SSID>
+
+     #. Check the connection status using the following Wi-Fi shell command:
+
+        .. code-block:: console
+
+           wifi status
+
+     #. Start a TWT session using the following Wi-Fi shell command:
+
+        .. code-block:: console
+
+           wifi twt setup 0 0 1 1 0 1 1 1 8 60000
+
+   The following image shows the Power Profiler Kit II output for TWT interval of one minute.
 
    .. figure:: images/power_profiler_twt.png
       :alt: Power profiler output for TWT
