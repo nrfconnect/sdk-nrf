@@ -8,6 +8,7 @@
 #include <zephyr/fff.h>
 
 #include <net/lwm2m_client_utils.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/modem_key_mgmt.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>

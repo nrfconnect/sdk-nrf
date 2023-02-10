@@ -118,6 +118,17 @@ BUILD_ASSERT(SHMEM_IN_USE < SHMEM_END,
 	     "The libmodem shmem configuration exceeds the range of "
 	     "memory readable by the Modem core");
 
+BUILD_ASSERT(PM_NRF_MODEM_LIB_CTRL_ADDRESS % 4 == 0,
+	"libmodem CTRL region base address must be word aligned");
+BUILD_ASSERT(PM_NRF_MODEM_LIB_TX_ADDRESS % 4 == 0,
+	"libmodem TX region base address must be word aligned");
+BUILD_ASSERT(PM_NRF_MODEM_LIB_RX_ADDRESS % 4 == 0,
+	"libmodem RX region base address must be word aligned");
+#if CONFIG_NRF_MODEM_LIB_TRACE
+BUILD_ASSERT(PM_NRF_MODEM_LIB_TRACE_ADDRESS % 4 == 0,
+	"libmodem Trace region base address must be word aligned");
+#endif
+
 /* Socket values sanity check */
 
 #if defined(CONFIG_NET_SOCKETS_OFFLOAD)

@@ -269,25 +269,25 @@ static void handle_nrf_modem_lib_init_ret(void)
 	switch (ret) {
 	case 0:
 		return; /* Initialization successful, no action required. */
-	case MODEM_DFU_RESULT_OK:
+	case NRF_MODEM_DFU_RESULT_OK:
 		LOG_INF("MODEM UPDATE OK. Will run new firmware");
 		fota_stage = FOTA_STAGE_COMPLETE;
 		fota_status = FOTA_STATUS_OK;
 		fota_info = 0;
 		break;
-	case MODEM_DFU_RESULT_UUID_ERROR:
-	case MODEM_DFU_RESULT_AUTH_ERROR:
+	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
+	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
 		LOG_ERR("MODEM UPDATE ERROR %d. Will run old firmware", ret);
 		fota_status = FOTA_STATUS_ERROR;
 		fota_info = ret;
 		break;
-	case MODEM_DFU_RESULT_HARDWARE_ERROR:
-	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
 		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failure", ret);
 		fota_status = FOTA_STATUS_ERROR;
 		fota_info = ret;
 		break;
-	case MODEM_DFU_RESULT_VOLTAGE_LOW:
+	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
 		LOG_ERR("MODEM UPDATE CANCELLED %d.", ret);
 		LOG_ERR("Please reboot once you have sufficient power for the DFU");
 		fota_status = FOTA_STATUS_ERROR;

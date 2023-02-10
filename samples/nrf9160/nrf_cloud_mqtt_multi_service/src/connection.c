@@ -680,7 +680,7 @@ static int setup_modem(void)
 		if (ret < 0) {
 			LOG_ERR("Modem library initialization failed, error: %d", ret);
 			return ret;
-		} else if (ret == MODEM_DFU_RESULT_OK) {
+		} else if (ret == NRF_MODEM_DFU_RESULT_OK) {
 			LOG_DBG("Modem library initialized after "
 				"successful modem firmware update.");
 		} else if (ret > 0) {

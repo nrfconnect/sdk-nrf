@@ -9,7 +9,7 @@
 #include <dfu/dfu_target_full_modem.h>
 #include <net/fota_download.h>
 #include <zephyr/shell/shell.h>
-#include <nrf_modem_full_dfu.h>
+#include <nrf_modem_bootloader.h>
 #include <modem/modem_info.h>
 #include <dfu/fmfu_fdev.h>
 #include <zephyr/drivers/gpio.h>
@@ -65,9 +65,9 @@ static void apply_fmfu_from_ext_flash(bool valid_init)
 		}
 	}
 
-	err = nrf_modem_lib_init(FULL_DFU_MODE);
+	err = nrf_modem_lib_init(BOOTLOADER_MODE);
 	if (err != 0) {
-		printk("nrf_modem_lib_init(FULL_DFU_MODE) failed: %d\n", err);
+		printk("nrf_modem_lib_init(BOOTLOADER_MODE) failed: %d\n", err);
 		return;
 	}
 

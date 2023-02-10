@@ -24,6 +24,7 @@ LOG_MODULE_REGISTER(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 struct sleeping_thread {
 	sys_snode_t node;
 	struct k_sem sem;
+	uint32_t context;
 };
 
 /* Heaps, extern in diag.c */
@@ -103,9 +104,10 @@ static bool can_thread_sleep(struct thread_monitor_entry *entry)
 }
 
 /* Initialize sleeping thread structure. */
-static void sleeping_thread_init(struct sleeping_thread *thread)
+static void sleeping_thread_init(struct sleeping_thread *thread, uint32_t context)
 {
 	k_sem_init(&thread->sem, 0, 1);
+	thread->context = context;
 }
 
 /* Add thread to the sleeping threads list. Will return information whether
@@ -170,7 +172,7 @@ int32_t nrf_modem_os_timedwait(uint32_t context, int32_t *timeout)
 		*timeout = SYS_FOREVER_MS;
 	}
 
-	sleeping_thread_init(&thread);
+	sleeping_thread_init(&thread, context);
 
 	if (!sleeping_thread_add(&thread)) {
 		return 0;
@@ -197,6 +199,15 @@ int32_t nrf_modem_os_timedwait(uint32_t context, int32_t *timeout)
 	}
 
 	return 0;
+}
+
+int nrf_modem_os_sleep(uint32_t timeout)
+{
+	if (timeout == NRF_MODEM_OS_NO_WAIT || timeout == NRF_MODEM_OS_FOREVER) {
+		return -NRF_EINVAL;
+	}
+
+	return k_sleep(K_MSEC(timeout));
 }
 
 /* Set OS errno from modem library.
@@ -266,7 +277,7 @@ unsigned int nrf_modem_os_sem_count_get(void *sem)
 	return k_sem_count_get(sem);
 }
 
-void nrf_modem_os_event_notify(void)
+void nrf_modem_os_event_notify(uint32_t context)
 {
 	atomic_inc(&rpc_event_cnt);
 
@@ -274,7 +285,9 @@ void nrf_modem_os_event_notify(void)
 
 	/* Wake up all sleeping threads. */
 	SYS_SLIST_FOR_EACH_CONTAINER(&sleeping_threads, thread, node) {
-		k_sem_give(&thread->sem);
+		if ((thread->context == context) || (context == 0)) {
+			k_sem_give(&thread->sem);
+		}
 	}
 }
 

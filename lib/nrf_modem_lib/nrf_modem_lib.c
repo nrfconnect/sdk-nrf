@@ -27,6 +27,11 @@ LOG_MODULE_DECLARE(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 #define NRF_MODEM_IPC_IRQ DT_IRQ_BY_IDX(DT_NODELABEL(ipc), 0, irq)
 BUILD_ASSERT(IPC_IRQn == NRF_MODEM_IPC_IRQ, "NRF_MODEM_IPC_IRQ mismatch");
 
+/* The heap implementation in `nrf_modem_os.c` require some overhead
+ * to allow allocating up to `NRF_MODEM_LIB_SHMEM_TX_SIZE` bytes.
+ */
+#define NRF_MODEM_LIB_SHMEM_TX_HEAP_OVERHEAD_SIZE 128
+
 struct shutdown_thread {
 	sys_snode_t node;
 	struct k_sem sem;
@@ -47,7 +52,8 @@ static const struct nrf_modem_init_params init_params = {
 	},
 	.shmem.tx = {
 		.base = PM_NRF_MODEM_LIB_TX_ADDRESS,
-		.size = CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE,
+		.size = CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE -
+			NRF_MODEM_LIB_SHMEM_TX_HEAP_OVERHEAD_SIZE,
 	},
 	.shmem.rx = {
 		.base = PM_NRF_MODEM_LIB_RX_ADDRESS,
@@ -59,6 +65,13 @@ static const struct nrf_modem_init_params init_params = {
 		.size = CONFIG_NRF_MODEM_LIB_SHMEM_TRACE_SIZE,
 	},
 #endif
+	.fault_handler = nrf_modem_fault_handler
+};
+
+static const struct nrf_modem_bootloader_init_params bootloader_init_params = {
+	.ipc_irq_prio = CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO,
+	.shmem.base = PM_NRF_MODEM_LIB_SRAM_ADDRESS,
+	.shmem.size = PM_NRF_MODEM_LIB_SRAM_SIZE,
 	.fault_handler = nrf_modem_fault_handler
 };
 
@@ -121,7 +134,7 @@ static int _nrf_modem_lib_init(const struct device *unused)
 	IRQ_CONNECT(NRF_MODEM_IPC_IRQ, CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO,
 		    nrfx_isr, nrfx_ipc_irq_handler, 0);
 
-	init_ret = nrf_modem_init(&init_params, NORMAL_MODE);
+	init_ret = nrf_modem_init(&init_params);
 
 	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_LOG_FW_VERSION_UUID)) {
 		log_fw_version_uuid();
@@ -180,7 +193,7 @@ int nrf_modem_lib_init(enum nrf_modem_mode mode)
 	if (mode == NORMAL_MODE) {
 		return _nrf_modem_lib_init(NULL);
 	} else {
-		return nrf_modem_init(&init_params, FULL_DFU_MODE);
+		return nrf_modem_bootloader_init(&bootloader_init_params);
 	}
 }
 

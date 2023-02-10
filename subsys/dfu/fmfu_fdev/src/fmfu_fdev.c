@@ -7,7 +7,7 @@
 #include <zephyr/drivers/flash.h>
 #include <zephyr/logging/log.h>
 #include <dfu/fmfu_fdev.h>
-#include <nrf_modem_full_dfu.h>
+#include <nrf_modem_bootloader.h>
 #include <mbedtls/sha256.h>
 #include <stdio.h>
 #include <modem_update_decode.h>
@@ -62,15 +62,15 @@ static int write_chunk(uint8_t *buf, size_t buf_len, uint32_t address,
 	int err;
 
 	if (is_bootloader) {
-		err = nrf_modem_full_dfu_bl_write(buf_len, buf);
+		err = nrf_modem_bootloader_bl_write(buf, buf_len);
 		if (err != 0) {
-			LOG_ERR("nrf_...dfu_bl_write failed, err: %d", err);
+			LOG_ERR("nrf_modem_bootloader_bl_write failed, err: %d", err);
 			return err;
 		}
 	} else {
-		err = nrf_modem_full_dfu_fw_write(address, buf_len, buf);
+		err = nrf_modem_bootloader_fw_write(address, buf, buf_len);
 		if (err != 0) {
-			LOG_ERR("nrf...full_dfu_fw_write failed, err: %d", err);
+			LOG_ERR("nrf_modem_bootloader_fw_write failed, err: %d", err);
 			return err;
 		}
 	}
@@ -114,9 +114,9 @@ static int load_segment(const struct device *fdev, size_t seg_size,
 		/* We need to explicitly call _apply() once all chunks of the
 		 * bootloader has been written.
 		 */
-		err = nrf_modem_full_dfu_apply();
+		err = nrf_modem_bootloader_update();
 		if (err != 0) {
-			LOG_ERR("nrf_..._full_dfu_apply (bl) failed, err: %d", err);
+			LOG_ERR("nrf_modem_bootloader_update (bl) failed, err: %d", err);
 			return err;
 		}
 	}
@@ -155,8 +155,7 @@ static int load_segments(const struct device *fdev, uint8_t *meta_buf,
 			 * perform the prevalidation.
 			 */
 			LOG_INF("Running prevalidation (can take minutes)");
-			err = nrf_modem_full_dfu_verify(wrapper_len,
-							(void *)meta_buf);
+			err = nrf_modem_bootloader_verify((void *)meta_buf, wrapper_len);
 			if (err != 0) {
 				LOG_ERR("nrf_fmfu_verify_signature failed, err: %d", err);
 				return err;
@@ -169,9 +168,9 @@ static int load_segments(const struct device *fdev, uint8_t *meta_buf,
 		prev_segments_len += seg_size;
 	}
 
-	err = nrf_modem_full_dfu_apply();
+	err = nrf_modem_bootloader_update();
 	if (err != 0) {
-		LOG_ERR("nrf_..._full_dfu_apply (fw) failed, err: %d", err);
+		LOG_ERR("nrf_modem_bootloader_update (fw) failed, err: %d", err);
 		return err;
 	}
 
@@ -197,13 +196,6 @@ int fmfu_fdev_load(uint8_t *buf, size_t buf_len, const struct device *fdev,
 
 	if (buf == NULL || fdev == NULL) {
 		return -ENOMEM;
-	}
-
-	/* Put modem in DFU/RPC state */
-	err = nrf_modem_full_dfu_init(NULL);
-	if (err != 0) {
-		LOG_ERR("nrf_modem_full_dfu_init failed, err: %d.", err);
-		return err;
 	}
 
 	/* Read the whole wrapper. */

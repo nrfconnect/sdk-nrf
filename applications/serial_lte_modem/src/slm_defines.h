@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/net/net_ip.h>
+#include <nrf_socket.h>
 
 #ifndef SLM_AT_DEFINES_
 #define SLM_AT_DEFINES_
@@ -19,7 +20,7 @@
 
 /** The maximum allowed length of data send/receive through the SLM */
 #define SLM_MAX_PAYLOAD_SIZE 1024 /** max size of payload sent in command mode */
-#define SLM_MAX_MESSAGE_SIZE 2048 /** align with NRF_MODEM_TLS_MAX_MESSAGE_SIZE */
+#define SLM_MAX_MESSAGE_SIZE NRF_SOCKET_TLS_MAX_MESSAGE_SIZE
 
 #define SLM_MAX_SOCKET_COUNT 8    /** re-define NRF_MODEM_MAX_SOCKET_COUNT */
 

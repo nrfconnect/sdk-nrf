@@ -599,7 +599,7 @@ nrfxlib
 * :ref:`nrf_modem` section pages:
 
   * :ref:`nrfxlib:nrf_modem_api` - Updated with new API sections.
-  * :ref:`full_dfu` - Updated with major changes.
+  * :ref:`nrfxlib:nrf_modem_bootloader` - Updated with major changes.
   * Renamed the "AT commands" page to ``AT socket``.
   * :ref:`nrfxlib:nrf_modem_at` - Page added.
   * :ref:`nrfxlib:nrf_modem_delta_dfu` - Page added.

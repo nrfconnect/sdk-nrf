@@ -348,21 +348,22 @@ This value is automatically passed by the integration layer to the library durin
 
 When the application is built using CMake, the :ref:`partition_manager` automatically reads the Kconfig options of the integration layer.
 Partition manager decides about the placement of the regions in RAM and reserves memory according to the given size.
-As a result, the Partition manager generates the following parameters:
+As a result, the Partition manager generates the following definitions:
 
 * ``PM_NRF_MODEM_LIB_CTRL_ADDRESS`` - Address of the Control region
 * ``PM_NRF_MODEM_LIB_TX_ADDRESS`` - Address of the TX region
 * ``PM_NRF_MODEM_LIB_RX_ADDRESS`` - Address of the RX region
 * ``PM_NRF_MODEM_LIB_TRACE_ADDRESS`` - Address of the Trace region
-
-Partition manager also generates the following additional parameters:
-
 * ``PM_NRF_MODEM_LIB_CTRL_SIZE`` - Size of the Control region
 * ``PM_NRF_MODEM_LIB_TX_SIZE`` - Size of the TX region
 * ``PM_NRF_MODEM_LIB_RX_SIZE`` - Size of the RX region
 * ``PM_NRF_MODEM_LIB_TRACE_SIZE`` - Size of the Trace region
 
-These parameters will have identical values as the ``CONFIG_NRF_MODEM_LIB_SHMEM_*_SIZE`` configuration options.
+These definitions will have identical values as the ``CONFIG_NRF_MODEM_LIB_SHMEM_*_SIZE`` configuration options.
+
+.. important::
+   The heap implementation used for allocations on the TX region has an overhead of up to 128 bytes.
+   Adjust the size of the TX region accordingly, so that its size is 128 bytes larger than the largest allocation you expect to happen (longest AT command, largest payload passed to :c:func:`nrf_send`) in your application.
 
 When the Modem library is initialized by the integration layer in |NCS|, the integration layer automatically passes the boundaries of each shared memory region to the Modem library during the :c:func:`nrf_modem_lib_init` call.
 
