@@ -88,9 +88,14 @@ config TFM_EXPERIMENTAL
 
 config TFM_PARTITION_INITIAL_ATTESTATION
 	bool
+	default y if !TFM_PROFILE_TYPE_MINIMAL
 	help
 	   We select "implementation ID" because it is a mandatory claim
 	   in the IAT.
+
+config TFM_QCBOR_PATH
+	string
+	default "$(ZEPHYR_TRUSTED_FIRMWARE_M_MODULE_DIR)/../qcbor"
 
 if TFM_PARTITION_CRYPTO
 

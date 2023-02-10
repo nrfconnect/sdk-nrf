@@ -116,6 +116,10 @@ manifest:
       repo-path: sdk-mcuboot
       revision: v1.9.99-ncs4
       path: bootloader/mcuboot
+    - name: qcbor
+      url: https://github.com/laurencelundblade/QCBOR.git
+      revision: b0e7033268e88c9f27146fa9a1415ef4c19ebaff
+      path: modules/tee/tf-m/qcbor
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
