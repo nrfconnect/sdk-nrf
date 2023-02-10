@@ -12,7 +12,9 @@
 #include <stdlib.h>
 
 #include <zephyr/kernel.h>
+#ifdef CONFIG_NET_L2_ETHERNET
 #include <zephyr/net/ethernet.h>
+#endif
 #include <zephyr/logging/log.h>
 #include <zephyr/net/wifi_mgmt.h>
 
@@ -438,7 +440,7 @@ static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 
-#ifdef CONFIG_NETWORKING
+#ifdef CONFIG_NET_L2_ETHERNET
 ETH_NET_DEVICE_INIT(wlan0, /* name - token */
 		    "wlan0", /* driver name - dev->name */
 		    wifi_nrf_drv_main_zep, /* init_fn */
