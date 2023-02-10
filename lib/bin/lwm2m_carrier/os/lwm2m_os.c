@@ -375,21 +375,21 @@ int lwm2m_os_nrf_modem_init(void)
 	switch (nrf_err) {
 	case 0:
 		break;
-	case MODEM_DFU_RESULT_OK:
+	case NRF_MODEM_DFU_RESULT_OK:
 		LOG_INF("Modem firmware update successful.");
 		LOG_INF("Modem will run the new firmware after reboot.");
 		break;
-	case MODEM_DFU_RESULT_UUID_ERROR:
-	case MODEM_DFU_RESULT_AUTH_ERROR:
+	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
+	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
 		LOG_ERR("Modem firmware update failed.");
 		LOG_ERR("Modem will run non-updated firmware on reboot.");
 		break;
-	case MODEM_DFU_RESULT_HARDWARE_ERROR:
-	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
 		LOG_ERR("Modem firmware update failed.");
 		LOG_ERR("Fatal error.");
 		break;
-	case MODEM_DFU_RESULT_VOLTAGE_LOW:
+	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
 		LOG_ERR("Modem firmware update cancelled.");
 		LOG_ERR("Please reboot once you have sufficient power for the DFU.");
 		break;

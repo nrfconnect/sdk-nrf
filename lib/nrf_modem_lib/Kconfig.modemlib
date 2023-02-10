@@ -169,11 +169,12 @@ config NRF_MODEM_LIB_SHMEM_CTRL_SIZE
 config NRF_MODEM_LIB_SHMEM_TX_SIZE
 	int "TX region size"
 	range 1024 32768
-	default 8192
+	# Set default to 8k plus Zephyr heap overhead (128 bytes)
+	default 8320
 	help
-	  Size of the shared memory region owned by the application. This area holds all outgoing data
-	  from the application to the modem, e.g. buffers passed to `send()`. Its size affects directly
-	  the largest payload that can be sent at once, and the largest AT command that can be sent.
+	  Size of the shared memory region owned by the application. This area holds all outgoing
+	  data from the application to the modem, e.g. buffers passed to `send()`, AT commands.
+	  The size must be a multiple of four to keep the memory partitions word-aligned.
 
 config NRF_MODEM_LIB_SHMEM_RX_SIZE
 	int "RX region size"
@@ -182,6 +183,7 @@ config NRF_MODEM_LIB_SHMEM_RX_SIZE
 	help
 	  Size of the shared memory region owned by the modem.
 	  This area holds all incoming data from the modem, plus the modem's own control structures.
+	  The size must be a multiple of four to keep the memory partitions word-aligned.
 
 config NRF_MODEM_LIB_SHMEM_TRACE_SIZE_OVERRIDE
 	bool "Custom trace region size"

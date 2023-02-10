@@ -10,7 +10,7 @@
 #include <fcntl.h>
 #include <zephyr/sys/fdtable.h>
 #include <zephyr/net/socket.h>
-
+#include <nrf_socket.h>
 #include <nrf_gai_errors.h>
 
 #include "cmock_nrf_socket.h"
@@ -19,6 +19,7 @@
 #define HTTPS_HOSTNAME "example.com"
 #define PORT 8080
 #define WRONG_VALUE 4242
+#define NRF_FD 2
 
 void setUp(void)
 {
@@ -44,12 +45,6 @@ static struct test_state_nrf_recvfrom {
 	struct nrf_sockaddr cliaddr;
 	nrf_socklen_t address_len;
 } test_state_nrf_recvfrom;
-
-static struct test_state_nrf_poll {
-	struct nrf_pollfd expected_in[1];
-	struct nrf_pollfd expected_out[1];
-	int ret;
-} test_state_nrf_poll;
 
 static int nrf_getaddrinfo_stub(const char *p_node, const char *p_service,
 				const struct nrf_addrinfo *p_hints,
@@ -93,17 +88,6 @@ static ssize_t nrf_recvfrom_stub(int socket, void *buffer, size_t length,
 	return test_state_nrf_recvfrom.ret;
 }
 
-
-static int nrf_poll_stub(struct nrf_pollfd *p_fds, uint32_t nfds,
-			 int timeout, int cmock_num_calls)
-{
-	TEST_ASSERT_EQUAL(p_fds[0].events,
-			  test_state_nrf_poll.expected_in->events);
-
-	p_fds[0].revents = test_state_nrf_poll.expected_out->revents;
-
-	return test_state_nrf_poll.ret;
-}
 
 void test_nrf91_socket_offload_getaddrinfo_errors(void)
 {
@@ -1649,69 +1633,6 @@ void test_nrf91_socket_offload_sendmsg_not_fits_buf(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_ioctl_poll_prepare(void)
-{
-	int ret;
-	int fd;
-	int nrf_fd = 2;
-	int family = AF_INET;
-	int type = SOCK_STREAM;
-	int proto = IPPROTO_TCP;
-
-	__cmock_nrf_socket_ExpectAndReturn(NRF_AF_INET, NRF_SOCK_STREAM,
-					  NRF_IPPROTO_TCP, nrf_fd);
-
-	fd = socket(family, type, proto);
-
-	TEST_ASSERT_EQUAL(fd, 0);
-
-	/* Skip connect, etc. since for testing we just
-	 * need a working socket
-	 */
-
-	ret = fcntl(fd, ZFD_IOCTL_POLL_PREPARE);
-
-	TEST_ASSERT_EQUAL(ret, -EXDEV);
-
-	__cmock_nrf_close_ExpectAndReturn(nrf_fd, 0);
-
-	ret = close(fd);
-
-	TEST_ASSERT_EQUAL(ret, 0);
-}
-
-void test_nrf91_socket_offload_ioctl_poll_update(void)
-{
-	int ret;
-	int fd;
-	int nrf_fd = 2;
-	int family = AF_INET;
-	int type = SOCK_STREAM;
-	int proto = IPPROTO_TCP;
-
-	__cmock_nrf_socket_ExpectAndReturn(NRF_AF_INET, NRF_SOCK_STREAM,
-					  NRF_IPPROTO_TCP, nrf_fd);
-
-	fd = socket(family, type, proto);
-
-	TEST_ASSERT_EQUAL(fd, 0);
-
-	/* Skip connect, etc. since for testing we just
-	 * need a working socket
-	 */
-
-	/* `fcntl` will call `ioctl` underneath */
-	ret = fcntl(fd, ZFD_IOCTL_POLL_UPDATE);
-
-	TEST_ASSERT_EQUAL(ret, -EOPNOTSUPP);
-
-	__cmock_nrf_close_ExpectAndReturn(nrf_fd, 0);
-
-	ret = close(fd);
-
-	TEST_ASSERT_EQUAL(ret, 0);
-}
-
 void test_nrf91_socket_offload_fcntl_einval(void)
 {
 	int ret;
@@ -1811,90 +1732,59 @@ void test_nrf91_socket_offload_fcntl_f_getfl(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_poll_non_offloaded_socket(void)
+static int stub_nrf_setsockopt_pollcb(int fd, int level, int opt, const void *val, size_t len,
+				      int cmock_calls)
 {
-	int ret;
-	int fd;
-	int nrf_fd = 2;
-	int family = AF_INET;
-	int type = SOCK_STREAM;
-	int proto = IPPROTO_TCP;
-	struct pollfd fds[3] = { 0 };
-
-	__cmock_nrf_socket_ExpectAndReturn(NRF_AF_INET, NRF_SOCK_STREAM,
-					  NRF_IPPROTO_TCP, nrf_fd);
-
-	fd = socket(family, type, proto);
-
-	TEST_ASSERT_EQUAL(fd, 0);
-
-	/* Skip connect, etc. since for testing we just
-	 * need a working socket
-	 */
-
-	fds[0].fd = fd;
-	fds[1].fd = 42;
-	fds[2].fd = 43;
-
-	ret = poll(fds, 3, 0);
-
-	/* We had two errors, i.e. two sockets weren't correctly offloaded */
-	TEST_ASSERT_EQUAL(ret, 2);
-	TEST_ASSERT_EQUAL(fds[1].revents, POLLNVAL);
-	TEST_ASSERT_EQUAL(fds[2].revents, POLLNVAL);
-
-	__cmock_nrf_close_ExpectAndReturn(nrf_fd, 0);
-
-	ret = close(fd);
-
-	TEST_ASSERT_EQUAL(ret, 0);
+	struct nrf_pollfd fds = {
+		.fd = NRF_FD,
+		.events = NRF_POLLOUT,
+		.revents = NRF_POLLOUT,
+	};
+	TEST_ASSERT_EQUAL(NRF_FD, fd);
+	TEST_ASSERT_EQUAL(NRF_SOL_SOCKET, level);
+	TEST_ASSERT_EQUAL(NRF_SO_POLLCB, opt);
+	TEST_ASSERT_EQUAL(NRF_POLLOUT, ((struct nrf_modem_pollcb *)val)->events);
+	TEST_ASSERT_EQUAL(true, ((struct nrf_modem_pollcb *)val)->oneshot);
+	TEST_ASSERT_EQUAL(sizeof(struct nrf_modem_pollcb), len);
+	TEST_ASSERT_EQUAL(0, cmock_calls); /* called once */
+	/* Invoke callback */
+	((struct nrf_modem_pollcb *)val)->callback(&fds);
+	return 0;
 }
 
-void test_nrf91_socket_offload_poll_all_events_success(void)
+void test_nrf91_socket_offload_poll(void)
 {
 	int ret;
 	int fd;
-	int nrf_fd = 2;
+	int nrf_fd = NRF_FD;
 	int family = AF_INET;
-	int type = SOCK_STREAM;
-	int proto = IPPROTO_TCP;
-	struct pollfd fds[1] = { 0 };
-	int events = POLLIN | POLLOUT;
-	int revents = POLLIN | POLLOUT |
-		      POLLERR | POLLNVAL |
-		      POLLHUP;
+	int type = SOCK_DGRAM;
+	int proto = IPPROTO_UDP;
+	struct pollfd fds[3] = { 0 };
 
-	__cmock_nrf_socket_ExpectAndReturn(NRF_AF_INET, NRF_SOCK_STREAM,
-					  NRF_IPPROTO_TCP, nrf_fd);
+	__cmock_nrf_socket_ExpectAndReturn(NRF_AF_INET, NRF_SOCK_DGRAM, NRF_IPPROTO_UDP, nrf_fd);
 
 	fd = socket(family, type, proto);
-
 	TEST_ASSERT_EQUAL(fd, 0);
 
-	/* Skip connect, etc. since for testing we just
-	 * need a working socket
-	 */
-
 	fds[0].fd = fd;
-	fds[0].events = events;
+	fds[0].events = POLLOUT;
+	fds[1].fd = 42;
+	fds[1].events = POLLOUT;
+	fds[2].fd = 43;
+	fds[2].events = POLLOUT;
 
-	test_state_nrf_poll.expected_in->events = NRF_POLLIN | NRF_POLLOUT;
-	test_state_nrf_poll.expected_out->revents = NRF_POLLIN | NRF_POLLOUT |
-						    NRF_POLLERR | NRF_POLLNVAL |
-						    NRF_POLLHUP;
-	test_state_nrf_poll.ret = 0;
+	__cmock_nrf_setsockopt_Stub(stub_nrf_setsockopt_pollcb);
 
-	__cmock_nrf_poll_Stub(nrf_poll_stub);
-
-	ret = poll(fds, 1, 0);
-
-	TEST_ASSERT_EQUAL(ret, 0);
-	TEST_ASSERT_EQUAL(fds[0].revents, revents);
+	ret = poll(fds, 3, 0);
+	TEST_ASSERT_EQUAL(3, ret);
+	TEST_ASSERT_EQUAL(POLLOUT, fds[0].revents);
+	TEST_ASSERT_EQUAL(POLLNVAL, fds[1].revents);
+	TEST_ASSERT_EQUAL(POLLNVAL, fds[2].revents);
 
 	__cmock_nrf_close_ExpectAndReturn(nrf_fd, 0);
 
 	ret = close(fd);
-
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 

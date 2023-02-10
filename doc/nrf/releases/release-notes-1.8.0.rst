@@ -719,7 +719,7 @@ Modem library
     See the :ref:`nrfxlib:nrf_modem_changelog` for detailed information.
   * nrf_errno values have been aligned with the errno values of newlibc C library.
   * The :ref:`Modem API <nrf_modem_api>` (:file:`nrf_modem.h`) has been updated to return negative errno values on error.
-  * The :ref:`Full Modem DFU API <nrf_modem_full_dfu_api>` (:file:`nrf_modem_full_dfu.h`) has been updated to return negative errno values on error.
+  * The :ref:`Full Modem DFU API <nrf_modem_bootloader_api>` (:file:`nrf_modem_full_dfu.h`) has been updated to return negative errno values on error.
   * The :ref:`GNSS API <nrf_modem_gnss_api>` (:file:`nrf_modem_gnss.h`) has been updated to return negative errno values on error.
 
 * Removed:

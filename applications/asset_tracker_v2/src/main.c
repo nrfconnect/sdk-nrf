@@ -201,18 +201,18 @@ static void handle_nrf_modem_lib_init_ret(void)
 	case 0:
 		/* Initialization successful, no action required. */
 		return;
-	case MODEM_DFU_RESULT_OK:
+	case NRF_MODEM_DFU_RESULT_OK:
 		LOG_DBG("MODEM UPDATE OK. Will run new modem firmware after reboot");
 		break;
-	case MODEM_DFU_RESULT_UUID_ERROR:
-	case MODEM_DFU_RESULT_AUTH_ERROR:
+	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
+	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
 		LOG_ERR("MODEM UPDATE ERROR %d. Will run old firmware", ret);
 		break;
-	case MODEM_DFU_RESULT_HARDWARE_ERROR:
-	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
 		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failure", ret);
 		break;
-	case MODEM_DFU_RESULT_VOLTAGE_LOW:
+	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
 		LOG_ERR("MODEM UPDATE CANCELLED %d.", ret);
 		LOG_ERR("Please reboot once you have sufficient power for the DFU");
 		break;

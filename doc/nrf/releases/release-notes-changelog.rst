@@ -634,6 +634,8 @@ Modem libraries
 
   * Updated:
 
+    * It is now possible to poll Modem library and Zephyr sockets at the same time using the :c:func:`poll` function.
+      This includes special sockets such as event sockets created using the :c:func:`eventfd` function.
     * The minimal value of :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE` to meet the requirements of modem firmware 1.3.4.
     * The :c:func:`nrf_modem_lib_diag_stats_get` function now returns an error if called when the :ref:`nrf_modem_lib_readme` library has not been initialized.
     * The trace backend interface to be exposed to the :ref:`modem_trace_module` using the :c:struct:`nrf_modem_lib_trace_backend` struct.

@@ -10,7 +10,7 @@
  * @brief nrf91 socket offload provider
  */
 
-#include <nrf_modem_limits.h>
+#include <nrf_modem.h>
 #include <nrf_modem_os.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -44,6 +44,7 @@
 static struct nrf_sock_ctx {
 	int nrf_fd; /* nRF socket descriptior. */
 	struct k_mutex *lock; /* Mutex associated with the socket. */
+	struct k_poll_signal poll; /* poll() signal. */
 } offload_ctx[NRF_MODEM_MAX_SOCKET_COUNT];
 
 static K_MUTEX_DEFINE(ctx_lock);
@@ -609,13 +610,6 @@ static ssize_t nrf91_socket_offload_sendmsg(void *obj, const struct msghdr *msg,
 		return -1;
 	}
 
-	/* The standard POSIX definition of sendmsg says it should return
-	 * EWOULDBLOCK if the socket is in NONBLOCK mode and handed too much data.
-	 * This implementation doesn't meet that requirement and will always
-	 * block, even in NONBLOCK mode.  See POSIX.1-2017:
-	 * <http://pubs.opengroup.org/onlinepubs/9699919799/functions/sendmsg.html>
-	 */
-
 	/* Try to reduce number of `sendto` calls - copy data if they fit into
 	 * a single buffer
 	 */
@@ -676,58 +670,6 @@ static ssize_t nrf91_socket_offload_sendmsg(void *obj, const struct msghdr *msg,
 	}
 
 	return len;
-}
-
-static inline int nrf91_socket_offload_poll(struct pollfd *fds, int nfds,
-					    int timeout)
-{
-	int retval = 0;
-	struct nrf_pollfd tmp[NRF_MODEM_MAX_SOCKET_COUNT] = { 0 };
-	void *obj;
-
-	for (int i = 0; i < nfds; i++) {
-		tmp[i].events = 0;
-		fds[i].revents = 0;
-
-		if (fds[i].fd < 0) {
-			/* Per POSIX, negative fd's are just ignored */
-			tmp[i].fd = fds[i].fd;
-			continue;
-		} else {
-			obj = z_get_fd_obj(fds[i].fd,
-					   (const struct fd_op_vtable *)
-						     &nrf91_socket_fd_op_vtable,
-					   ENOTSUP);
-			if (obj != NULL) {
-				/* Offloaded socket found. */
-				tmp[i].fd = OBJ_TO_SD(obj);
-			} else {
-				/* Non-offloaded socket, return an error. */
-				fds[i].revents = POLLNVAL;
-				retval++;
-			}
-		}
-
-		tmp[i].events = fds[i].events;
-	}
-
-	if (retval > 0) {
-		return retval;
-	}
-
-	retval = nrf_poll((struct nrf_pollfd *)&tmp, nfds, timeout);
-
-	/* Translate the API from nRF to native. */
-	/* No need to translate .events, shall be untouched by poll() */
-	for (int i = 0; i < nfds; i++) {
-		if (fds[i].fd < 0) {
-			continue;
-		}
-
-		fds[i].revents = tmp[i].revents;
-	}
-
-	return retval;
 }
 
 static void nrf91_socket_offload_freeaddrinfo(struct zsock_addrinfo *root)
@@ -848,29 +790,140 @@ static int nrf91_socket_offload_fcntl(int fd, int cmd, va_list args)
 	return retval;
 }
 
+static struct nrf_sock_ctx *find_ctx(int fd)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(offload_ctx); i++) {
+		if (offload_ctx[i].nrf_fd == fd) {
+			return &offload_ctx[i];
+		}
+	}
+
+	return NULL;
+}
+
+static void pollcb(struct nrf_pollfd *pollfd)
+{
+	int flags;
+	unsigned int signaled;
+	struct nrf_sock_ctx *ctx;
+
+	ctx = find_ctx(pollfd->fd);
+	if (!ctx) {
+		return;
+	}
+
+	k_poll_signal_check(&ctx->poll, &signaled, &flags);
+	if (!signaled) {
+		flags = 0;
+	}
+
+	if ((pollfd->events & NRF_POLLIN) && (pollfd->revents & NRF_POLLIN)) {
+		k_poll_signal_raise(&ctx->poll, flags |= ZSOCK_POLLIN);
+	}
+	if ((pollfd->events & NRF_POLLOUT) && (pollfd->revents & NRF_POLLOUT)) {
+		k_poll_signal_raise(&ctx->poll, flags |= ZSOCK_POLLOUT);
+	}
+
+	if (pollfd->revents & NRF_POLLHUP) {
+		k_poll_signal_raise(&ctx->poll, flags |= ZSOCK_POLLHUP);
+	}
+	if (pollfd->revents & NRF_POLLERR) {
+		k_poll_signal_raise(&ctx->poll, flags |= ZSOCK_POLLERR);
+	}
+}
+
+static int nrf91_poll_prepare(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd,
+			      struct k_poll_event **pev, struct k_poll_event *pev_end)
+{
+	int err;
+	int fd = OBJ_TO_SD(ctx);
+	struct nrf_modem_pollcb pcb = {
+		.callback = pollcb,
+		.events = pfd->events,
+		.oneshot = true, /* callback invoked only once */
+	};
+
+	if (*pev == pev_end) {
+		errno = ENOMEM;
+		return -1;
+	}
+
+	k_poll_signal_init(&ctx->poll);
+	k_poll_event_init(*pev, K_POLL_TYPE_SIGNAL, K_POLL_MODE_NOTIFY_ONLY, &ctx->poll);
+
+	err = nrf_setsockopt(fd, NRF_SOL_SOCKET, NRF_SO_POLLCB, &pcb, sizeof(pcb));
+	if (err) {
+		return -1;
+	}
+
+	/* Let other sockets use another k_poll_event */
+	(*pev)++;
+
+	return 0;
+}
+
+static int nrf91_poll_update(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd,
+			     struct k_poll_event **pev)
+{
+	int flags;
+	unsigned int signaled;
+
+	flags = 0;
+	k_poll_signal_check(&ctx->poll, &signaled, &flags);
+	if (!signaled) {
+		/* Let next polled socket use next k_poll_event */
+		(*pev)++;
+		return 0;
+	}
+
+	if ((pfd->events & ZSOCK_POLLIN) && (flags & ZSOCK_POLLIN)) {
+		pfd->revents |= ZSOCK_POLLIN;
+	}
+	if ((pfd->events & ZSOCK_POLLOUT) && (flags & ZSOCK_POLLOUT)) {
+		pfd->revents |= ZSOCK_POLLOUT;
+	}
+	if (flags & ZSOCK_POLLHUP) {
+		pfd->revents |= ZSOCK_POLLHUP;
+	}
+	if (flags & ZSOCK_POLLERR) {
+		pfd->revents |= ZSOCK_POLLERR;
+	}
+
+	k_poll_signal_reset(&ctx->poll);
+
+	return 0;
+}
+
 static int nrf91_socket_offload_ioctl(void *obj, unsigned int request,
 				      va_list args)
 {
 	int sd = OBJ_TO_SD(obj);
 
 	switch (request) {
-	case ZFD_IOCTL_POLL_PREPARE:
-		return -EXDEV;
+	case ZFD_IOCTL_POLL_PREPARE: {
+		struct zsock_pollfd *pfd;
+		struct k_poll_event **pev;
+		struct k_poll_event *pev_end;
 
-	case ZFD_IOCTL_POLL_UPDATE:
-		return -EOPNOTSUPP;
+		pfd = va_arg(args, struct zsock_pollfd *);
+		pev = va_arg(args, struct k_poll_event **);
+		pev_end = va_arg(args, struct k_poll_event *);
 
-	case ZFD_IOCTL_POLL_OFFLOAD: {
-		struct zsock_pollfd *fds;
-		int nfds;
-		int timeout;
-
-		fds = va_arg(args, struct zsock_pollfd *);
-		nfds = va_arg(args, int);
-		timeout = va_arg(args, int);
-
-		return nrf91_socket_offload_poll(fds, nfds, timeout);
+		return nrf91_poll_prepare(obj, pfd, pev, pev_end);
 	}
+
+	case ZFD_IOCTL_POLL_UPDATE: {
+		struct zsock_pollfd *pfd;
+		struct k_poll_event **pev;
+
+		pfd = va_arg(args, struct zsock_pollfd *);
+		pev = va_arg(args, struct k_poll_event **);
+
+		return nrf91_poll_update(obj, pfd, pev);
+	}
+
+	case ZFD_IOCTL_POLL_OFFLOAD:
+		return -EOPNOTSUPP;
 
 	case ZFD_IOCTL_SET_LOCK: {
 		struct nrf_sock_ctx *ctx = OBJ_TO_CTX(obj);

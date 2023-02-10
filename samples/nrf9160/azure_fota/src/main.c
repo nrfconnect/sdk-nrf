@@ -204,22 +204,22 @@ void main(void)
 	LOG_INF("This may take a while if a modem firmware update is pending");
 
 	switch (modem_lib_init_result) {
-	case MODEM_DFU_RESULT_OK:
-		LOG_INF("Modem firmware update successful");
+	case NRF_MODEM_DFU_RESULT_OK:
+		LOG_INF("Modem firmware update successful!");
 		LOG_INF("Modem will run the new firmware after reboot");
 		k_thread_suspend(k_current_get());
 		break;
-	case MODEM_DFU_RESULT_UUID_ERROR:
-	case MODEM_DFU_RESULT_AUTH_ERROR:
+	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
+	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
 		LOG_INF("Modem firmware update failed");
 		LOG_INF("Modem will run non-updated firmware on reboot.");
 		break;
-	case MODEM_DFU_RESULT_HARDWARE_ERROR:
-	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
 		LOG_INF("Modem firmware update failed");
 		LOG_INF("Fatal error.");
 		break;
-	case MODEM_DFU_RESULT_VOLTAGE_LOW:
+	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
 		LOG_INF("Modem firmware update failed");
 		LOG_INF("Please reboot once you have sufficient power for the DFU.");
 		break;
