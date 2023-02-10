@@ -118,6 +118,40 @@ config BT_CONN_PARAM_UPDATE_TIMEOUT
 	  nRF Desktop peripherals update connection parameters earlier to lower
 	  HID data latency.
 
+config BT_GATT_CHRC_POOL_SIZE
+	default 7 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		      !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 8 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		      DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 11 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 12 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	help
+	  The maximum number of GATT characteristic descriptors in GATT pool is
+	  set assuming that nRF Desktop peripheral uses default configuration
+	  specified for the selected peripheral type.
+
+	  By default, the GATT pool is used only by GATT HID Service. Make sure
+	  to update the pool size if your configuration uses more descriptors.
+
+config BT_GATT_UUID16_POOL_SIZE
+	default 10 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		      !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 12 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		      DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 17 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 19 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	help
+	  The maximum number of GATT 16-bit UUID descriptors in GATT pool is set
+	  assuming that nRF Desktop peripheral uses default configuration
+	  specified for the selected peripheral type.
+
+	  By default, the GATT pool is used only by GATT HID Service. Make sure
+	  to update the pool size if your configuration uses more descriptors.
+
 if BT_DIS
 
 config BT_DIS_MANUF
