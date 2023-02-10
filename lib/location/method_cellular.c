@@ -12,7 +12,6 @@
 
 #include "location_core.h"
 #include "location_utils.h"
-#include "location_service_utils.h"
 #include "cloud_service/cloud_service.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
@@ -222,17 +221,9 @@ int method_cellular_init(void)
 		    method_cellular_positioning_work_fn);
 	lte_lc_register_handler(method_cellular_lte_ind_handler);
 
-#if defined(CONFIG_LOCATION_SERVICE_HERE)
-	int ret = location_service_utils_provision_ca_certificates();
-
-	if (ret) {
-		LOG_ERR("Certificate provisioning failed, ret %d", ret);
-		if (ret == -EACCES) {
-			LOG_WRN("err: -EACCES, that might indicate that modem is in state where "
-				"cert cannot be written, i.e. not in pwroff or offline");
-		}
-		return ret;
-	}
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	cloud_service_init();
 #endif
+
 	return 0;
 }

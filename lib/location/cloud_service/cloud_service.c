@@ -16,6 +16,7 @@
 #include "cloud_service.h"
 #include "cloud_service_nrf.h"
 #include "cloud_service_here_rest.h"
+#include "cloud_service_utils.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
@@ -55,6 +56,21 @@ int cloud_service_location_get(
 #endif
 	/* We should never get here as at least one service must be enabled */
 	return -ENOTSUP;
+}
+
+void cloud_service_init(void)
+{
+#if defined(CONFIG_LOCATION_SERVICE_HERE)
+	int ret = cloud_service_utils_provision_ca_certificates();
+
+	if (ret) {
+		LOG_ERR("Certificate provisioning failed, ret %d", ret);
+		if (ret == -EACCES) {
+			LOG_WRN("err: -EACCES, that might indicate that modem is in state where "
+				"cert cannot be written, i.e. not in pwroff or offline");
+		}
+	}
+#endif
 }
 
 #endif /* !defined(CONFIG_LOCATION_SERVICE_EXTERNAL) */

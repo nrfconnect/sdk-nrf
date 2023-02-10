@@ -53,21 +53,21 @@ static const char tls_certificate_here[] =
 	"WD9f\n"
 	"-----END CERTIFICATE-----\n";
 
-static const char *location_service_utils_get_ca_certificate_here(void)
+static const char *cloud_service_utils_get_ca_certificate_here(void)
 {
 	return tls_certificate_here;
 }
 
-static const char *location_service_utils_get_ca_certificate(enum location_service service)
+static const char *cloud_service_utils_get_ca_certificate(enum location_service service)
 {
 	if (service == LOCATION_SERVICE_HERE) {
-		return location_service_utils_get_ca_certificate_here();
+		return cloud_service_utils_get_ca_certificate_here();
 	}
 
 	return NULL;
 }
 
-static int location_service_utils_provision_certificate(
+static int cloud_service_utils_provision_certificate(
 	int sec_tag,
 	const char *certificate)
 {
@@ -105,13 +105,13 @@ static int location_service_utils_provision_certificate(
 	return 0;
 }
 
-int location_service_utils_provision_ca_certificates(void)
+int cloud_service_utils_provision_ca_certificates(void)
 {
 	int ret;
 
-	ret = location_service_utils_provision_certificate(
+	ret = cloud_service_utils_provision_certificate(
 		CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG,
-		location_service_utils_get_ca_certificate(LOCATION_SERVICE_HERE));
+		cloud_service_utils_get_ca_certificate(LOCATION_SERVICE_HERE));
 
 	return ret;
 }
