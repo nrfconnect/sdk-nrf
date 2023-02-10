@@ -15,10 +15,9 @@ Requirements
 
 SLM application should be configured to use UART_2 on nRF9160 side.
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
-* PCA10056 nRF52840
-* PCA10095 nRF5340 (for the APP core only)
+.. table-from-sample-yaml::
 
 Connect the DK with a nRF9160 DK based on the pin configuration in DTS overlay files of both sides.
 
@@ -41,7 +40,7 @@ The following table shows how to connect PCA10056 UART_1 to nRF9160 UART_2 for c
    * - GPIO GND
      - GPIO GND
 
-The following table shows how to connect PCA10095 UART_1 to nRF9160 UART_2 for communication through UART:
+The following table shows how to connect PCA10095 UART_2 to nRF9160 UART_2 for communication through UART:
 
 .. list-table::
    :align: center
@@ -49,9 +48,9 @@ The following table shows how to connect PCA10095 UART_1 to nRF9160 UART_2 for c
 
    * - nRF5340 DK
      - nRF9160 DK
-   * - UART TX P1.01
+   * - UART TX P1.04
      - UART RX P0.11
-   * - UART RX P1.00
+   * - UART RX P1.05
      - UART TX P0.10
    * - GPIO OUT P0.23 (Button1)
      - GPIO IN P0.31
