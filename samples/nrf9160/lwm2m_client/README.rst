@@ -17,4 +17,5 @@ See the subpages for detailed documentation on the sample and its features.
    :caption: Subpages:
 
    sample_description.rst
+   fota.rst
    provisioning.rst
