@@ -57,14 +57,14 @@
 			<title>Dynamic connector.20</title>
 			<path d="M7.07 121.35 L7.11 56" class="st5"/>
 		</g>
-		<g id="shape20-23" v:mID="20" v:groupContext="shape" transform="translate(32.5807,-55.0049)">
+		<g id="shape20-23" v:mID="20" v:groupContext="shape" transform="translate(13.6423,-55.0049)">
 			<title>Sheet.20</title>
-			<desc>TWT Wake Duration</desc>
+			<desc>TWT Wake Duration/Service Period</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="25.7073" cy="110.718" width="51.42" height="21.2598"/>
-			<rect x="0" y="100.089" width="51.4146" height="21.2598" class="st6"/>
-			<text x="5.71" y="108.32" class="st7" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>TWT <tspan class="st8"
-						v:langID="1033">Wake </tspan><tspan x="10.59" dy="1.2em" class="st8" v:langID="1033">Duration</tspan></text>		</g>
+			<v:textRect cx="47.4803" cy="110.718" width="94.97" height="21.2598"/>
+			<rect x="0" y="100.089" width="94.9606" height="21.2598" class="st6"/>
+			<text x="10.14" y="108.32" class="st7" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>TWT <tspan
+						class="st8" v:langID="1033">Wake Duration/</tspan><tspan x="21.47" dy="1.2em" class="st8" v:langID="1033">Service Period</tspan></text>		</g>
 		<g id="shape21-28" v:mID="21" v:groupContext="shape" transform="translate(96.5557,-1)">
 			<title>Nordic Blue.24</title>
 			<desc>Sleep</desc>
