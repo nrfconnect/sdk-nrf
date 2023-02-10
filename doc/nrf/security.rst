@@ -66,3 +66,5 @@ These libraries include the binary versions of accelerated cryptographic librari
 
 The Kconfig option :kconfig:option:`CONFIG_NRF_SECURITY` prioritizes the usage of the accelerated libraries by default when this is supported by the platform.
 For more information about the configuration and usage of the :ref:`nrfxlib:nrf_security`, see the :ref:`nrfxlib:nrf_security_config` page.
+
+See also :ref:`crypto_samples` for examples of how to configure and perform different cryptographic operations in the |NCS|.
