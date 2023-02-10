@@ -13,6 +13,7 @@ target_sources(app
   PRIVATE
     ${app_sources}
     $ENV{ZEPHYR_BASE}/subsys/net/lib/lwm2m/lwm2m_util.c
+    $ENV{ZEPHYR_BASE}/../nrf/subsys/net/lib/lwm2m_client_utils/lwm2m/lwm2m_firmware.c
 )
 
 set(options
@@ -43,6 +44,7 @@ set(options
   -DCONFIG_NET_MGMT_EVENT_INFO
   -DCONFIG_NET_MGMT_EVENT
   -DCONFIG_LWM2M_CLIENT_UTILS_RAI
+  -DCONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG=-1
 )
 
 target_compile_options(app

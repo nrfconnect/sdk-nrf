@@ -1,6 +1,7 @@
 tests:
   subsys.net.lib.lwm2m_client_utils.unittest:
     tags: unittest
-    platform_allow: native_posix
+    platform_allow: native_posix qemu_x86
     integration_platforms:
       - native_posix
+      - qemu_x86

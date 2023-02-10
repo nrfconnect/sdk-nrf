@@ -143,7 +143,6 @@ int lwm2m_device_reboot_cb(uint16_t obj_inst_id, uint8_t *args, uint16_t args_le
 int lwm2m_init_location(void);
 #endif
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 /**
  * @brief Firmware update state change event callback.
  *
@@ -177,7 +176,6 @@ int lwm2m_init_firmware(void);
  * @brief Initialize Image Update object
  */
 int lwm2m_init_image(void);
-#endif
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT)
 /**
