@@ -265,6 +265,7 @@ nRF Desktop
     Shell support can be enabled for a given configuration with the single Kconfig option (:ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>`).
   * By default, nRF Desktop dongles use the Bluetooth appearance (:kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE)` of keyboard.
     The new default configuration value improves consistency with the used HID boot interface.
+  * The default values of the :kconfig:option:`CONFIG_BT_GATT_CHRC_POOL_SIZE` and :kconfig:option:`CONFIG_BT_GATT_UUID16_POOL_SIZE` Kconfig options are tailored to the nRF Desktop application requirements.
 
 Samples
 =======
