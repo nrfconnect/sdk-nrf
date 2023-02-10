@@ -84,6 +84,7 @@ static bool initialized;
 static const char LOCATION_METHOD_CELLULAR_STR[] = "Cellular";
 static const char LOCATION_METHOD_GNSS_STR[] = "GNSS";
 static const char LOCATION_METHOD_WIFI_STR[] = "Wi-Fi";
+static const char LOCATION_METHOD_INTERNAL_WIFI_CELLULAR_STR[] = "Wi-Fi + Cellular";
 static const char LOCATION_METHOD_UNKNOWN_STR[] = "Unknown";
 
 int location_init(location_event_handler_t handler)
@@ -171,6 +172,7 @@ static void location_config_method_defaults_set(
 
 	method->method = method_type;
 	if (method_type == LOCATION_METHOD_GNSS) {
+#if defined(CONFIG_LOCATION_METHOD_GNSS)
 		method->gnss.timeout = CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_TIMEOUT;
 
 		if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_LOW)) {
@@ -187,11 +189,14 @@ static void location_config_method_defaults_set(
 			IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_VISIBILITY_DETECTION);
 		method->gnss.priority_mode =
 			IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_PRIORITY_MODE);
+#endif
 	} else if (method_type == LOCATION_METHOD_CELLULAR) {
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 		method->cellular.timeout = CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT;
 		method->cellular.service = LOCATION_SERVICE_ANY;
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
+#endif
 	} else if (method_type == LOCATION_METHOD_WIFI) {
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
 		method->wifi.timeout = CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT;
 		method->wifi.service = LOCATION_SERVICE_ANY;
 #endif
@@ -278,6 +283,12 @@ const char *location_method_str(enum location_method method)
 		return LOCATION_METHOD_WIFI_STR;
 
 	default:
+		/* Wi-Fi + Cellular method cannot be checked in switch-case because
+		 * it's not defined in the enum
+		 */
+		if (method == LOCATION_METHOD_INTERNAL_WIFI_CELLULAR) {
+			return LOCATION_METHOD_INTERNAL_WIFI_CELLULAR_STR;
+		}
 		return LOCATION_METHOD_UNKNOWN_STR;
 	}
 }
@@ -325,20 +336,12 @@ int location_pgps_data_process(const char *buf, size_t buf_len)
 	return -ENOTSUP;
 }
 
-void location_cellular_ext_result_set(
+void location_cloud_location_ext_result_set(
 	enum location_ext_result result,
 	struct location_data *location)
 {
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_CELLULAR)
-	location_core_cellular_ext_result_set(result, location);
-#endif
-}
-
-void location_wifi_ext_result_set(
-	enum location_ext_result result,
-	struct location_data *location)
-{
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_WIFI)
-	location_core_wifi_ext_result_set(result, location);
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) &&\
+	(defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI))
+	location_core_cloud_location_ext_result_set(result, location);
 #endif
 }

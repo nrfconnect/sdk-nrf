@@ -1039,11 +1039,11 @@ static void method_gnss_agps_req_work_fn(struct k_work *work)
 }
 #endif
 
-int method_gnss_location_get(const struct location_method_config *config)
+int method_gnss_location_get(const struct location_request_info *request)
 {
 	int err;
 
-	gnss_config = config->gnss;
+	gnss_config = *request->gnss;
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
 	memset(&location_data_details_gnss, 0, sizeof(location_data_details_gnss));
 #endif

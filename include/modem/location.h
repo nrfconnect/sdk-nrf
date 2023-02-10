@@ -77,17 +77,11 @@ enum location_event_id {
 	 */
 	LOCATION_EVT_GNSS_PREDICTION_REQUEST,
 	/**
-	 * Cellular location request with neighbor cell information is available.
-	 * Application should send the cell information to cloud services and
-	 * then call location_cellular_ext_result_set().
+	 * Cloud location request with neighbor cell and/or Wi-Fi access point information
+	 * is available. The application should send the information to cloud services and
+	 * then call location_cloud_location_ext_result_set().
 	 */
-	LOCATION_EVT_CELLULAR_EXT_REQUEST,
-	/**
-	 * Wi-Fi location request with Wi-Fi access point information is available.
-	 * The application should send the access point information to cloud services and
-	 * then call location_wifi_ext_result_set().
-	 */
-	LOCATION_EVT_WIFI_EXT_REQUEST
+	LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST
 };
 
 /** Result of the external request. */
@@ -185,11 +179,29 @@ struct location_data_error {
 };
 #endif
 
+/** Cloud location information. */
+struct location_data_cloud {
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_CELLULAR)
+	/** Cellular cell information. */
+	const struct lte_lc_cells_info *cell_data;
+#endif
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_WIFI)
+	/** Wi-Fi access point information. */
+	const struct wifi_scan_info *wifi_data;
+#endif
+};
+
 /** Location event data. */
 struct location_event_data {
 	/** Event ID. */
 	enum location_event_id id;
-	/** Used location method. */
+	/**
+	 * Used location method.
+	 *
+	 * When cellular and Wi-Fi positioning are used and they are combined into a single
+	 * cloud request by the library, the method is not known so there is some uncertainty
+	 * on the reported location method.
+	 */
 	enum location_method method;
 
 	/** Event specific data. */
@@ -219,21 +231,14 @@ struct location_event_data {
 		 */
 		struct gps_pgps_request pgps_request;
 #endif
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_CELLULAR)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) &&\
+	(defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI))
 		/**
-		 * Cellular cell information to let the application know it should send these
+		 * Cloud location information to let the application know it should send these
 		 * to a cloud service to resolve the location.
-		 * Used with event LOCATION_EVT_CELLULAR_EXT_REQUEST.
+		 * Used with event LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST.
 		 */
-		struct lte_lc_cells_info cellular_request;
-#endif
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_WIFI)
-		/**
-		 * Wi-Fi access point information to let the application know it should send these
-		 * to a cloud service to resolve the location.
-		 * Used with event LOCATION_EVT_WIFI_EXT_REQUEST.
-		 */
-		struct wifi_scan_info wifi_request;
+		struct location_data_cloud cloud_location_request;
 #endif
 	};
 };
@@ -335,7 +340,7 @@ struct location_cellular_config {
 	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT configuration.
 	 *
 	 * When CONFIG_LOCATION_SERVICE_EXTERNAL is enabled, this timeout stops when
-	 * event LOCATION_EVT_CELLULAR_EXT_REQUEST is sent. However, timeout specified in
+	 * event LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST is sent. However, timeout specified in
 	 * @ref location_config structure is still valid.
 	 */
 	int32_t timeout;
@@ -362,7 +367,7 @@ struct location_wifi_config {
 	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT configuration.
 	 *
 	 * When CONFIG_LOCATION_SERVICE_EXTERNAL is enabled, this timeout stops when
-	 * event LOCATION_EVT_WIFI_EXT_REQUEST is sent. However, timeout specified in
+	 * event LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST is sent. However, timeout specified in
 	 * @ref location_config structure is still valid.
 	 */
 	int32_t timeout;
@@ -402,6 +407,12 @@ struct location_config {
 	 *
 	 * @details Index 0 has the highest priority. Number of used methods is indicated in
 	 * 'methods_count' and it can be smaller than the size of this table.
+	 *
+	 * Wi-Fi and cellular scan results are combined into single cloud request, that is,
+	 * these methods are handled together, if the following conditions are met:
+	 *   - Methods are one after the other in location request method list
+	 *   - @ref mode is @ref LOCATION_REQ_MODE_FALLBACK
+	 *   - Requested cloud service for Wi-Fi and cellular is the same
 	 */
 	struct location_method_config methods[CONFIG_LOCATION_METHODS_LIST_SIZE];
 
@@ -557,34 +568,12 @@ int location_agps_data_process(const char *buf, size_t buf_len);
 int location_pgps_data_process(const char *buf, size_t buf_len);
 
 /**
- * @brief Pass cellular location result to the library.
+ * @brief Pass cloud location result to the library.
  *
- * @details If the Location library is not receiving cellular position directly from services,
- * it triggers the @ref LOCATION_EVT_CELLULAR_EXT_REQUEST event, that indicates the
- * neighbor cell information is ready to be sent to cloud services for location resolution.
- * Then, the application responds with the result.
- *
- * In addition to 'success' and 'error' results, the application can indicate that the result is
- * unknown with @ref LOCATION_EXT_RESULT_UNKNOWN. This is useful when the application wants
- * the Location library to proceed irrespective of the outcome. The Location library will try to
- * perform a fallback to the next method, if available, just like in a failure case.
- * If there are no more methods, LOCATION_EVT_RESULT_UNKNOWN event will be sent to the application.
- *
- * @param[in] result Result of the external cellular request.
- * @param[in] location Cellular location data. Will be used only if @p result is
- *                     LOCATION_EXT_RESULT_SUCCESS.
- */
-void location_cellular_ext_result_set(
-	enum location_ext_result result,
-	struct location_data *location);
-
-/**
- * @brief Pass Wi-Fi location result to the library.
- *
- * @details If the Location library is not receiving Wi-Fi position directly from the services,
- * it triggers the @ref LOCATION_EVT_WIFI_EXT_REQUEST event, that indicates the
- * access point information is ready to be sent to cloud services for location resolution.
- * Then, the application responds with the result.
+ * @details If the Location library is not receiving cloud location directly from the services,
+ * it triggers the @ref LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST event, that indicates the
+ * LTE neighbor cell and/or Wi-Fi access point information is ready to be sent to cloud services
+ * for location resolution. Then, the application responds with the result.
  *
  * In addition to 'success' and 'error' results, the application can indicate that the result is
  * unknown with @ref LOCATION_EXT_RESULT_UNKNOWN. This is useful when the application wants
@@ -592,11 +581,11 @@ void location_cellular_ext_result_set(
  * perform a fallback to the next method, if available, just like in a failure case.
  * If there are no more methods, LOCATION_EVT_RESULT_UNKNOWN event will be sent to the application.
  *
- * @param[in] result Result of the external Wi-Fi request.
- * @param[in] location Wi-Fi location data. Will be used only if @p result is
+ * @param[in] result Result of the external cloud location request.
+ * @param[in] location Cloud location data. Will be used only if @p result is
  *                     LOCATION_EXT_RESULT_SUCCESS.
  */
-void location_wifi_ext_result_set(
+void location_cloud_location_ext_result_set(
 	enum location_ext_result result,
 	struct location_data *location);
 

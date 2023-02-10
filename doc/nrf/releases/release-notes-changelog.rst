@@ -644,15 +644,29 @@ Modem libraries
 
   * Updated:
 
-    * Use of :ref:`lib_multicell_location` library has been removed because the library is deprecated.
+    * Neighbor cell measurements and Wi-Fi scan results are combined into a single cloud request.
+      This also means that cellular and Wi-Fi positioning are combined into a single cloud positioning method
+      if they are one after the other in the method list of the location request.
+      Because of this, some parts of the API are replaced with new ones as follows:
+
+      * Event :c:enum:`LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST` replaces old events
+        ``LOCATION_EVT_CELLULAR_EXT_REQUEST`` and ``LOCATION_EVT_WIFI_EXT_REQUEST`` that are removed.
+      * Function :c:func:`location_cloud_location_ext_result_set` replaces old functions
+        ``location_cellular_ext_result_set`` and ``location_wifi_ext_result_set`` that are removed.
+      * Member variable :c:var:`cloud_location_request` replaces old members
+        ``cellular_request`` and ``wifi_request`` that are removed in :c:struct:`location_event_data`.
+
+      :kconfig:option:`CONFIG_LOCATION_SERVICE_CLOUD_RECV_BUF_SIZE` replaces ``CONFIG_LOCATION_METHOD_CELLULAR_RECV_BUF_SIZE`` and ``CONFIG_LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE``.
+
+    * The :ref:`lib_multicell_location` library is deprecated.
       Relevant functionality from the library is moved to this library.
       The following features were not moved:
 
       * Definition of HTTPS port for HERE service, that is :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_HTTPS_PORT`.
       * HERE v1 API.
       * nRF Cloud CA certificate handling.
-    * Improved GNSS assistance data need handling.
 
+    * Improved GNSS assistance data need handling.
     * GNSS filtered ephemerides are no longer used when the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME` Kconfig option is enabled.
     * Renamed:
 

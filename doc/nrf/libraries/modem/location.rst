@@ -28,7 +28,7 @@ Implementation
 ==============
 
 The location library has a compact API and a location core that handles the functionality that is independent of the location method, such as fallback to the next preferred method and timeouts.
-Each location method has its own implementation for the location retrieval:
+The supported location methods are as follows:
 
 * GNSS positioning
 
@@ -48,12 +48,15 @@ Each location method has its own implementation for the location retrieval:
 * Cellular positioning
 
   * :ref:`lte_lc_readme` for getting visible cellular base stations.
-  * Sending cell information to the selected location service and getting the calculated location back to the device.
+  * The ``cloud location`` method handles sending cell information to the selected location service and getting the calculated location back to the device.
 
 * Wi-Fi positioning
 
   * Zephyr's Network Management API :ref:`zephyr:net_mgmt_interface` for getting the visible Wi-Fi access points.
-  * Sending access point information to the selected location service and getting the calculated location back to the device.
+  * The ``cloud location`` method handles sending access point information to the selected location service and getting the calculated location back to the device.
+
+The ``cloud location`` method handles the location methods (cellular and Wi-Fi positioning)
+that scan for technology-specific information and sends it over to the cloud service for location resolution.
 
 The default priority order of location methods is GNSS positioning, Wi-Fi positioning and Cellular positioning.
 If any of these methods are disabled, the method is simply omitted from the list.

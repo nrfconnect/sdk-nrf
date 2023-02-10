@@ -26,7 +26,7 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_LOCATION_SERVICE_NRF_CLOUD) ||
 	     IS_ENABLED(CONFIG_LOCATION_SERVICE_HERE),
 	     "At least one location service must be enabled");
 
-static char recv_buf[CONFIG_LOCATION_METHOD_CELLULAR_RECV_BUF_SIZE];
+static char recv_buf[CONFIG_LOCATION_SERVICE_CLOUD_RECV_BUF_SIZE];
 
 int cloud_service_location_get(
 	const struct cloud_service_pos_req *params,
