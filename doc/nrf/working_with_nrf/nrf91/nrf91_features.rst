@@ -263,7 +263,7 @@ GNSS is designed to be used with a line of sight to the sky.
 Therefore, the performance is not ideal when there are obstructions overhead or if the receiver is indoors.
 
 The GNSS operation in an nRF9160-based device is time-multiplexed with the LTE modem.
-Therefore, the LTE modem must either be completely deactivated or in `RRC idle mode`_ or `Power Saving Mode (PSM)`_ when using the GNSS receiver.
+Therefore, the LTE modem must either be completely deactivated or in `RRC idle mode <Radio Resource Control_>`_ or `Power Saving Mode (PSM)`_ when using the GNSS receiver.
 See the `nRF9160 GPS receiver Specification`_ for more information.
 Customers who are developing their own hardware with the nRF9160 are strongly recommended to use the `nRF9160 Antenna and RF Interface Guidelines`_ as a reference.
 See `GPS interface and antenna`_ for more details on GNSS interface and antenna.
@@ -374,7 +374,7 @@ The following figure shows how the data transfer occurs in an nRF9160-based devi
 
 See `Energy efficiency`_ for more information.
 
-Asset Tracker enables the concurrent working of GNSS and LTE in eDRX and PSM modes when the device is in `RRC idle mode`_.
+Asset Tracker enables the concurrent working of GNSS and LTE in eDRX and PSM modes when the device is in `RRC idle mode <Radio Resource Control_>`_.
 The time between the transition of a device from RRC connected mode (data transfer mode) to RRC idle mode is dependent on the network.
 Typically, the time ranges between 5 seconds to 70 seconds after the last data transfer on LTE.
 Sensor and GNSS data are sent to the cloud only during the data transfer phase.

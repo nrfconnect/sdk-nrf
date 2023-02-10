@@ -636,7 +636,7 @@
 .. _`GPS`: https://en.wikipedia.org/wiki/Global_Positioning_System
 .. _`A-GPS`: https://en.wikipedia.org/wiki/Assisted_GPS
 
-.. _`RRC idle mode`: https://en.wikipedia.org/wiki/Radio_Resource_Control
+.. _`Radio Resource Control`: https://en.wikipedia.org/wiki/Radio_Resource_Control
 .. _`Ephemeris`: https://en.wikipedia.org/wiki/Ephemeris
 .. _`Almanac`: https://en.wikipedia.org/wiki/GPS_signals#Almanac
 
