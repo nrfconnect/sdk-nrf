@@ -83,20 +83,13 @@ CONFIG_MQTT_SAMPLE_TRANSPORT_SUBSCRIBE_TOPIC - MQTT subscribe topic
 Wi-Fi options
 -------------
 
-.. _CONFIG_MQTT_SAMPLE_NETWORK_WIFI_SSID:
-
-CONFIG_MQTT_SAMPLE_NETWORK_WIFI_SSID - Service Set Identifier (SSID) of Wi-Fi router or access point
-	This configuration option sets the SSID of the Wi-Fi router or access point to which the device connects.
-
-.. _CONFIG_MQTT_SAMPLE_NETWORK_WIFI_PSK:
-
-CONFIG_MQTT_SAMPLE_NETWORK_WIFI_PSK - Pre-Shared Key (PSK) of Wi-Fi router or access point
-	This configuration option sets the PSK of the Wi-Fi router or access point to which the device connects.
-
-.. _CONFIG_MQTT_SAMPLE_NETWORK_WIFI_CONNECTION_REQUEST_TIMEOUT_SECONDS:
-
-CONFIG_MQTT_SAMPLE_NETWORK_WIFI_CONNECTION_REQUEST_TIMEOUT_SECONDS - Wi-Fi connection request timeout
-	This configuration option sets the number of seconds that the device tries to connect to the configured SSID.
+* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC` - This option enables static Wi-Fi configuration.
+* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_SSID` - Wi-Fi SSID.
+* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_PASSWORD` - Wi-Fi password.
+* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_OPEN` - Wi-Fi network uses no password.
+* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_PSK` - Wi-Fi network uses a password and PSK security (default).
+* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_PSK_SHA256` - Wi-Fi network uses a password and PSK-256 security.
+* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_SAE` - Wi-Fi network uses a password and SAE security.
 
 Additional configuration
 ========================

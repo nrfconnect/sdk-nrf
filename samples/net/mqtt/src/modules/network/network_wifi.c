@@ -10,6 +10,7 @@
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/net_event.h>
+#include <net/wifi_mgmt_ext.h>
 
 #include "message_channel.h"
 
@@ -17,9 +18,7 @@
 LOG_MODULE_REGISTER(network, CONFIG_MQTT_SAMPLE_NETWORK_LOG_LEVEL);
 
 /* This module does not subscribe to any channels */
-
-BUILD_ASSERT((sizeof(CONFIG_MQTT_SAMPLE_NETWORK_WIFI_SSID) > 1), "SSID must be set");
-BUILD_ASSERT((sizeof(CONFIG_MQTT_SAMPLE_NETWORK_WIFI_PSK) > 1), "PSK must be set");
+BUILD_ASSERT(IS_ENABLED(CONFIG_WIFI_CREDENTIALS_STATIC), "Static Wi-Fi config must be used");
 
 #define MGMT_EVENTS (NET_EVENT_WIFI_CONNECT_RESULT | NET_EVENT_WIFI_DISCONNECT_RESULT)
 
@@ -35,21 +34,10 @@ static void connect(void)
 		return;
 	}
 
-	LOG_INF("Connecting to SSID: %s", CONFIG_MQTT_SAMPLE_NETWORK_WIFI_SSID);
+	int rc = net_mgmt(NET_REQUEST_WIFI_CONNECT_STORED, iface, NULL, 0);
 
-	static struct wifi_connect_req_params cnx_params = {
-		.ssid = CONFIG_MQTT_SAMPLE_NETWORK_WIFI_SSID,
-		.ssid_length = sizeof(CONFIG_MQTT_SAMPLE_NETWORK_WIFI_SSID) - 1,
-		.psk = CONFIG_MQTT_SAMPLE_NETWORK_WIFI_PSK,
-		.psk_length = sizeof(CONFIG_MQTT_SAMPLE_NETWORK_WIFI_PSK) - 1,
-		.channel = WIFI_CHANNEL_ANY,
-		.security = WIFI_SECURITY_TYPE_PSK,
-		.timeout = CONFIG_MQTT_SAMPLE_NETWORK_WIFI_CONNECTION_REQUEST_TIMEOUT_SECONDS,
-	};
-
-	if (net_mgmt(NET_REQUEST_WIFI_CONNECT, iface,
-		     &cnx_params, sizeof(struct wifi_connect_req_params))) {
-		LOG_ERR("Connecting to Wi-Fi failed");
+	if (rc) {
+		printk("Connecting to Wi-Fi failed. rc: %d", rc);
 	}
 }
 
