@@ -31,6 +31,10 @@ if WIFI_NRF700X
 config NET_MGMT_EVENT_STACK_SIZE
 	default 2048 if !WPA_SUPP
 
+# Wi-Fi interface will be operationally UP only after Wi-Fi connection.
+config NET_CONFIG_INIT_TIMEOUT
+	default 0 if NET_CONFIG_SETTINGS
+
 config NRF700X_REV_A
 	bool "nRF7002 Rev A"
 
