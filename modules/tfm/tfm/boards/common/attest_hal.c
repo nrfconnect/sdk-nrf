@@ -75,6 +75,7 @@ enum tfm_plat_err_t tfm_attest_hal_get_verification_service(uint32_t *size, uint
 {
 	enum tfm_plat_err_t err;
 	size_t otp_size;
+	size_t copy_size;
 
 	err = tfm_plat_otp_read(PLAT_OTP_ID_VERIFICATION_SERVICE_URL, *size, buf);
 	if (err != TFM_PLAT_ERR_SUCCESS) {
@@ -86,7 +87,10 @@ enum tfm_plat_err_t tfm_attest_hal_get_verification_service(uint32_t *size, uint
 		return err;
 	}
 
-	*size = tfm_strnlen((char *)buf, otp_size);
+	/* Actually copied data is always the smaller */
+	copy_size = *size < otp_size ? *size : otp_size;
+	/* String content */
+	*size = tfm_strnlen((char*)buf, copy_size);
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
@@ -95,6 +99,7 @@ enum tfm_plat_err_t tfm_attest_hal_get_profile_definition(uint32_t *size, uint8_
 {
 	enum tfm_plat_err_t err;
 	size_t otp_size;
+	size_t copy_size;
 
 	err = tfm_plat_otp_read(PLAT_OTP_ID_PROFILE_DEFINITION, *size, buf);
 	if (err != TFM_PLAT_ERR_SUCCESS) {
@@ -106,7 +111,10 @@ enum tfm_plat_err_t tfm_attest_hal_get_profile_definition(uint32_t *size, uint8_
 		return err;
 	}
 
-	*size = tfm_strnlen((char *)buf, otp_size);
+	/* Actually copied data is always the smaller */
+	copy_size = *size < otp_size ? *size : otp_size;
+	/* String content */
+	*size = tfm_strnlen((char*)buf, copy_size);
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
@@ -139,6 +147,7 @@ enum tfm_plat_err_t tfm_plat_get_cert_ref(uint32_t *size, uint8_t *buf)
 {
 	enum tfm_plat_err_t err;
 	size_t otp_size;
+	size_t copy_size;
 
 	err = tfm_plat_otp_read(PLAT_OTP_ID_CERT_REF, *size, buf);
 	if (err != TFM_PLAT_ERR_SUCCESS) {
@@ -150,7 +159,10 @@ enum tfm_plat_err_t tfm_plat_get_cert_ref(uint32_t *size, uint8_t *buf)
 		return err;
 	}
 
-	*size = tfm_strnlen((char *)buf, otp_size);
+	/* Actually copied data is always the smaller */
+	copy_size = *size < otp_size ? *size : otp_size;
+	/* String content */
+	*size = tfm_strnlen((char*)buf, copy_size);
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
