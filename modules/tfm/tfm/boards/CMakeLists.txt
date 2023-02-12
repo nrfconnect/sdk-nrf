@@ -41,7 +41,7 @@ target_include_directories(platform_s
 target_sources(platform_s
   PRIVATE
   common/tfm_hal_platform.c
-  common/attest_hal.c
+  $<$<BOOL:${TFM_PARTITION_INITIAL_ATTESTATION}>:${CMAKE_CURRENT_SOURCE_DIR}/common/attest_hal.c>
   common/assert.c
   $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_OTP}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_otp.c>
   )
