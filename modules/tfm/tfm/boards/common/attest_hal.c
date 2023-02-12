@@ -19,7 +19,8 @@
 #include <bl_storage.h>
 
 
-static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(enum lcs lcs){
+static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(enum lcs lcs)
+{
 	switch (lcs) {
 	case BL_STORAGE_LCS_ASSEMBLY:
 		return TFM_SLC_ASSEMBLY_AND_TEST;
@@ -34,7 +35,8 @@ static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(enum lcs lcs)
 	}
 }
 
-static enum lcs map_tfm_slc_to_bl_storage_lcs(enum tfm_security_lifecycle_t lcs){
+static enum lcs map_tfm_slc_to_bl_storage_lcs(enum tfm_security_lifecycle_t lcs)
+{
 	switch (lcs) {
 	case TFM_SLC_ASSEMBLY_AND_TEST:
 		return BL_STORAGE_LCS_ASSEMBLY;
@@ -54,7 +56,6 @@ enum tfm_security_lifecycle_t tfm_attest_hal_get_security_lifecycle(void)
 	int err;
 	enum lcs otp_lcs;
 
-
 	err = read_life_cycle_state(&otp_lcs);
 	if (err != 0) {
 		return TFM_SLC_UNKNOWN;
@@ -63,7 +64,8 @@ enum tfm_security_lifecycle_t tfm_attest_hal_get_security_lifecycle(void)
 	return map_bl_storage_lcs_to_tfm_slc(otp_lcs);
 }
 
-int tfm_attest_update_security_lifecycle_otp(enum tfm_security_lifecycle_t slc){
+int tfm_attest_update_security_lifecycle_otp(enum tfm_security_lifecycle_t slc)
+{
 	enum lcs next_lcs;
 
 	next_lcs = map_tfm_slc_to_bl_storage_lcs(slc);
@@ -122,6 +124,7 @@ enum tfm_plat_err_t tfm_attest_hal_get_profile_definition(uint32_t *size, uint8_
 enum tfm_plat_err_t tfm_plat_get_boot_seed(uint32_t size, uint8_t *buf)
 {
 	int nrf_err;
+
 	if (size != NRF_CC3XX_PLATFORM_TFM_BOOT_SEED_SIZE) {
 		return TFM_PLAT_ERR_INVALID_INPUT;
 	}
