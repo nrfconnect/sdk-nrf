@@ -94,11 +94,11 @@ config RX_NUM_BUFS
 
 config MAX_TX_AGGREGATION
 	int "Maximum number of TX packets to aggregate"
-	default 9
+	default 6
 
 config MAX_TX_TOKENS
 	int "Maximum number of TX tokens"
-	default 5
+	default 10
 
 config TX_MAX_DATA_SIZE
 	int "Maximum size of TX data"
