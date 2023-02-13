@@ -34,7 +34,8 @@ LOG_MODULE_REGISTER(pdn, CONFIG_PDN_LOG_LEVEL);
 
 static K_MUTEX_DEFINE(list_mutex);
 
-static sys_slist_t pdn_contexts;
+static sys_slist_t pdn_contexts = SYS_SLIST_STATIC_INIT(&pdn_context);
+
 struct pdn {
 	sys_snode_t node; /* list handling */
 	pdn_event_handler_t callback;
@@ -46,16 +47,19 @@ static struct {
 	int8_t cid;
 	int8_t esm;
 	int8_t reason;
-	struct k_sem sem_cgev;
-	struct k_sem sem_cnec;
-} pdn_act_notif;
+} pdn_act_notif = {
+	.cid = CID_UNASSIGNED
+};
+
 static K_MUTEX_DEFINE(pdn_act_mutex);
+static K_SEM_DEFINE(sem_cgev, 0, 1);
+static K_SEM_DEFINE(sem_cnec, 0, 1);
 
 /* Use one monitor for all CGEV events and distinguish
  * between the different type of events later (ME, IPV6, etc).
  */
-AT_MONITOR(pdn_cgev, "+CGEV", on_cgev, PAUSED);
-AT_MONITOR(pdn_cnec_esm, "+CNEC_ESM", on_cnec_esm, PAUSED);
+AT_MONITOR(pdn_cgev, "+CGEV", on_cgev);
+AT_MONITOR(pdn_cnec_esm, "+CNEC_ESM", on_cnec_esm);
 
 static struct pdn *pdn_find(int cid)
 {
@@ -113,7 +117,7 @@ static void on_cnec_esm(const char *notif)
 
 	if (cid == pdn_act_notif.cid) {
 		pdn_act_notif.esm = esm_err;
-		k_sem_give(&pdn_act_notif.sem_cnec);
+		k_sem_give(&sem_cnec);
 	}
 }
 
@@ -156,7 +160,7 @@ static void on_cgev(const char *notif)
 			} else {
 				pdn_act_notif.reason = PDN_ACT_REASON_NONE;
 			}
-			k_sem_give(&pdn_act_notif.sem_cgev);
+			k_sem_give(&sem_cgev);
 		}
 
 		SYS_SLIST_FOR_EACH_CONTAINER(&pdn_contexts, pdn, node) {
@@ -448,7 +452,7 @@ int pdn_activate(uint8_t cid, int *esm, enum pdn_fam *fam)
 
 	err = cgact(cid, true);
 	if (!err && fam) {
-		k_sem_take(&pdn_act_notif.sem_cgev, K_FOREVER);
+		k_sem_take(&sem_cgev, K_FOREVER);
 		if (pdn_act_notif.reason == PDN_ACT_REASON_IPV4_ONLY) {
 			*fam = PDN_FAM_IPV4;
 		} else if (pdn_act_notif.reason == PDN_ACT_REASON_IPV6_ONLY) {
@@ -456,7 +460,7 @@ int pdn_activate(uint8_t cid, int *esm, enum pdn_fam *fam)
 		}
 	}
 	if (esm) {
-		timeout = k_sem_take(&pdn_act_notif.sem_cnec, K_MSEC(CONFIG_PDN_ESM_TIMEOUT));
+		timeout = k_sem_take(&sem_cnec, K_MSEC(CONFIG_PDN_ESM_TIMEOUT));
 		if (!timeout) {
 			*esm = pdn_act_notif.esm;
 		} else if (timeout == -EAGAIN) {
@@ -548,24 +552,3 @@ static void on_cfun(enum lte_lc_func_mode mode, void *ctx)
 	}
 }
 #endif /* CONFIG_LTE_LINK_CONTROL */
-
-static int pdn_sys_init(void)
-{
-	pdn_act_notif.cid = CID_UNASSIGNED;
-
-	k_sem_init(&pdn_act_notif.sem_cgev, 0, 1);
-	k_sem_init(&pdn_act_notif.sem_cnec, 0, 1);
-
-	sys_slist_init(&pdn_contexts);
-
-	/* Do not process notifications until the PDN contexts
-	 * and the semaphores are initialized.
-	 */
-
-	at_monitor_resume(&pdn_cgev);
-	at_monitor_resume(&pdn_cnec_esm);
-
-	return 0;
-}
-
-SYS_INIT(pdn_sys_init, APPLICATION, CONFIG_PDN_INIT_PRIORITY);
