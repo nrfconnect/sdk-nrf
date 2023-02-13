@@ -639,7 +639,8 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 };
 #else
 static struct bt_conn_auth_cb conn_auth_callbacks;
-#endif
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks;
+#endif /* defined(CONFIG_BT_HIDS_SECURITY_ENABLED) */
 
 
 static void num_comp_reply(bool accept)

@@ -27,6 +27,14 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: bluetooth ci_build
+  sample.bluetooth.peripheral_hids_mouse.no_sec:
+    build_only: true
+    extra_configs:
+      - CONFIG_BT_HIDS_SECURITY_ENABLED=n
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    tags: bluetooth ci_build
   # Build integration regression protection.
   sample.nrf_security.bluetooth.integration:
       build_only: True
