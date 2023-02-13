@@ -14,6 +14,12 @@
 #include "software_images_swapper.h"
 #endif
 
+#ifdef CONFIG_THREAD_WIFI_SWITCHING_CLI_SUPPORT
+#include <lib/shell/Engine.h>
+using chip::Shell::Engine;
+using chip::Shell::shell_command_t;
+#endif
+
 #include <platform/CHIPDeviceLayer.h>
 
 #include "board_util.h"
@@ -216,6 +222,10 @@ CHIP_ERROR AppTask::Init()
 		return err;
 	}
 
+#ifdef CONFIG_THREAD_WIFI_SWITCHING_CLI_SUPPORT
+	RegisterSwitchCliCommand();
+#endif
+
 	return CHIP_NO_ERROR;
 }
 
@@ -287,7 +297,7 @@ void AppTask::SwitchImagesDone()
 	chip::Server::GetInstance().ScheduleFactoryReset();
 }
 
-void AppTask::SwitchImagesEventHandler(const AppEvent &event)
+void AppTask::SwitchImagesEventHandler(const AppEvent &)
 {
 	LOG_INF("Switching application from " CONFIG_APPLICATION_LABEL " to " CONFIG_APPLICATION_OTHER_LABEL);
 
@@ -666,3 +676,16 @@ void AppTask::UpdateClusterState(BoltLockManager::State state, BoltLockManager::
 		}
 	});
 }
+
+#ifdef CONFIG_THREAD_WIFI_SWITCHING_CLI_SUPPORT
+void AppTask::RegisterSwitchCliCommand()
+{
+	static const shell_command_t sSwitchCommand = { [](int, char **) {
+							       AppTask::Instance().SwitchImagesEventHandler(AppEvent{});
+							       return CHIP_NO_ERROR;
+						       },
+							"switch_images",
+							"Switch between Thread and Wi-Fi application variants" };
+	Engine::Root().RegisterCommands(&sSwitchCommand, 1);
+}
+#endif
