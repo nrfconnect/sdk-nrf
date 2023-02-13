@@ -75,13 +75,12 @@ jobs:
       - name: Collect coverage into one XML report
         shell: bash
         run: |
-          gcovr twister-out  \
+          gcovr twister-out -v \
             --exclude=twister-out \
             --exclude=tests/unity \
-            --exclude=ncs/zephyr/include/ \
-            --exclude=ncs/zephyr/subsys/net/ip/ \
-            --exclude=ncs/nrf/tests/subsys/dfu/dfu_target_stream/ \
-            --exclude=ncs/nrf/lib/hw_id/ \
+            --exclude=ncs/nrf/tests/subsys/dfu/dfu_target_stream/src/main.c \
+            --exclude=ncs/zephyr/subsys/net/ip \
+            --exclude=ncs/nrf/lib/hw_id/hw_id.c \
             --sonarqube coverage.xml
 
       - name: Run sonar-scanner
