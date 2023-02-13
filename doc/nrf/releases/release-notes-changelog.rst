@@ -172,6 +172,12 @@ Wi-Fi
 
   * nRF7002 revision A support.
 
+* Updated:
+
+  * WiFi Coexistence is no longer enabled by default.
+    It must be enabled explicitly in Kconfig using :kconfig:option:`CONFIG_MPSL_CX`.
+    On the nRF5340, this option must be selected for both the application core and the network core images.
+
 Applications
 ============
 
