@@ -398,6 +398,10 @@ Bluetooth samples
 
   * Fixed an issue where the antenna switching was not functional on the nRF5340 DK with the nRF21540 EK shield.
 
+* :ref:`peripheral_hids_mouse` sample:
+
+  * Fixed building the sample with the :kconfig:option:`CONFIG_BT_HIDS_SECURITY_ENABLED` Kconfig option disabled.
+
 Bluetooth mesh samples
 ----------------------
 
