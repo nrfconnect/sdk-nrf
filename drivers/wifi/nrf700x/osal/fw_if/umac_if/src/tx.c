@@ -150,20 +150,7 @@ void tx_desc_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	fmac_dev_ctx->tx_config.outstanding_descs[queue]--;
 
 	if (desc >= (fpriv->num_tx_tokens_per_ac * WIFI_NRF_FMAC_AC_MAX)) {
-		switch (desc % (fpriv->num_tx_tokens_per_ac * WIFI_NRF_FMAC_AC_MAX)) {
-		case 0:
-			fmac_dev_ctx->tx_config.spare_desc_queue_map &= 0xfff0;
-			break;
-		case 1:
-			fmac_dev_ctx->tx_config.spare_desc_queue_map &= 0xff0f;
-			break;
-		case 2:
-			fmac_dev_ctx->tx_config.spare_desc_queue_map &= 0xf0ff;
-			break;
-		case 3:
-			fmac_dev_ctx->tx_config.spare_desc_queue_map &= 0x0fff;
-			break;
-		}
+		clear_spare_desc_q_map(fmac_dev_ctx, desc, queue);
 	}
 
 }
@@ -230,25 +217,7 @@ unsigned int tx_desc_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				 * Fourth nibble represent second spare desc
 				 * (B15B14B13B12 : V0-VI-BE-BK)
 				 */
-				switch (desc % (fpriv->num_tx_tokens_per_ac *
-						WIFI_NRF_FMAC_AC_MAX)) {
-				case 0:
-					fmac_dev_ctx->tx_config.spare_desc_queue_map |=
-						(1 << queue);
-					break;
-				case 1:
-					fmac_dev_ctx->tx_config.spare_desc_queue_map |=
-						(1 << (4 + queue));
-					break;
-				case 2:
-					fmac_dev_ctx->tx_config.spare_desc_queue_map |=
-						(1 << (8 + queue));
-					break;
-				case 3:
-					fmac_dev_ctx->tx_config.spare_desc_queue_map |=
-						(1 << (12 + queue));
-					break;
-				}
+				set_spare_desc_q_map(fmac_dev_ctx, desc, queue);
 				break;
 			}
 		}
