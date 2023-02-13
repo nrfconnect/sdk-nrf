@@ -70,6 +70,10 @@ private:
 	bool mSwitchImagesTimerActive = false;
 #endif
 
+#ifdef CONFIG_THREAD_WIFI_SWITCHING_CLI_SUPPORT
+	static void RegisterSwitchCliCommand();
+#endif
+
 	FunctionEvent mFunction = FunctionEvent::NoneSelected;
 	bool mFunctionTimerActive = false;
 
