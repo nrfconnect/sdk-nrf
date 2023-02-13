@@ -81,6 +81,7 @@ jobs:
             --exclude=ncs/nrf/tests/subsys/dfu/dfu_target_stream/src/main.c \
             --exclude=ncs/zephyr/subsys/net/ip \
             --exclude=ncs/nrf/lib/hw_id/hw_id.c \
+            --exclude=ncs/zephyr/subsys/net/lib/sockets/sockets_tls.c \
             --sonarqube coverage.xml
 
       - name: Run sonar-scanner
