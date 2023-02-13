@@ -289,6 +289,7 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	int err;
 	struct nrf_cloud_init_param config = {
 		.event_handler = nrf_cloud_event_handler,
+		.application_version = CONFIG_ASSET_TRACKER_V2_APP_VERSION,
 #if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
 		.fmfu_dev_inf = &ext_flash_dev
 #endif
