@@ -90,6 +90,9 @@ config POSIX_MAX_FDS
 config NET_MGMT_EVENT_STACK_SIZE
 	default 4096
 
+config NET_SOCKETS_POLL_MAX
+    default 4
+
 module = WPA_SUPP
 module-str = WPA supplicant
 source "subsys/logging/Kconfig.template.log_config"
