@@ -402,7 +402,7 @@ void exec_test_case_aes_ecb_monte_carlo(void)
 	mbedtls_cipher_free(&ctx);
 }
 
-/** @brief  Macro for registering the the AES funtional test case by using section variables.
+/** @brief  Macro for registering the AES funtional test case by using section variables.
  *
  * @details     This macro places a variable in a section named "test_case_aes_data",
  *              which is initialized by main.
