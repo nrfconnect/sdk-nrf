@@ -21,7 +21,6 @@ config MPSL_CX_NRF700X_SUPPORT
 config MPSL_CX
 	bool "Radio Coexistence interface support"
 	depends on MPSL_CX_ANY_SUPPORT
-	default WIFI && (BT || NRF_802154_RADIO_DRIVER || NRF_802154_SER_HOST)
 	help
 	  Controls if Radio Coexistence interface is to be configured and enabled
 	  when MPSL is initialized.

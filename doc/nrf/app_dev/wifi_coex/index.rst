@@ -61,8 +61,8 @@ To enable Wi-Fi Coexistence, do as follows:
    See :ref:`ug_multi_image`.
 
 .. note::
-   When using the :ref:`ug_radio_cx_nrf700x_impl`, you do not need to select the :kconfig:option:`CONFIG_MPSL_CX` Kconfig option manually.
-   If a ``nordic,nrf700x-coex`` compatible node is present in the device tree and :kconfig:option:`CONFIG_WIFI` is set to ``y``, :kconfig:option:`CONFIG_MPSL_CX` and :kconfig:option:`MPSL_CX_NRF700X` will be selected by default.
+   When using the :ref:`ug_radio_cx_nrf700x_impl`, you do not need to select the :kconfig:option:`CONFIG_MPSL_CX_NRF700X` Kconfig option manually.
+   If a ``nordic,nrf700x-coex`` compatible node is present in the device tree and :kconfig:option:`CONFIG_MPSL_CX` is set to ``y``, :kconfig:option:`MPSL_CX_NRF700X` will be selected by default.
 
 .. _ug_radio_cx_hardware_description:
 
@@ -219,9 +219,8 @@ The nRF700x interface is supported out of the box.
 To use it, complete the following steps:
 
 1. Add the devicetree `nrf_radio_coex` node as described in :ref:`ug_radio_cx_nrf700x_hw_if`.
-2. If :kconfig:option:`CONFIG_WIFI` is set to ``y`` and one of the supported SR protocols is enabled no additional steps are needed.
-   If you do not wish to use the radio coexistence implementation, you must set  :kconfig:option:`CONFIG_MPSL_CX` to ``n``.
-3. If :kconfig:option:`CONFIG_WIFI` is disabled or none of the supported SR protocols are enabled, the implementation must be enabled manually with :kconfig:option:`CONFIG_MPSL_CX` and :kconfig:option:`CONFIG_MPSL_CX_NRF700X`.
+#. Set the :kconfig:option:`CONFIG_MPSL_CX` Kconfig option to ``y``.
+   On the nRF5340, you must apply the Kconfig option also to the network core.
 
 .. _ug_radio_cx_thread_impl:
 
