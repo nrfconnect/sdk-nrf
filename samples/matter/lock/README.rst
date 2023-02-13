@@ -398,7 +398,7 @@ To test this feature, complete the following steps:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -DCONFIG_CHIP_WIFI=n
+      west build -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -Dhci_rpmsg_SHIELD=nrf7002_ek_coex -DCONFIG_CHIP_WIFI=n
 
 #. Program the application to the kit using the following command:
 
@@ -422,7 +422,7 @@ To test this feature, complete the following steps:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -p always -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek
+      west build -b nrf5340dk_nrf5340_cpuapp -p always -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -Dhci_rpmsg_SHIELD=nrf7002_ek_coex
 
 #. Program the application to another partition of the external flash using the following command:
 
@@ -459,14 +459,14 @@ Complete the following steps to generate the Matter OTA combined image file:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -d build_thread -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -DCONFIG_CHIP_WIFI=n
+      west build -b nrf5340dk_nrf5340_cpuapp -d build_thread -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -Dhci_rpmsg_SHIELD=nrf7002_ek_coex -DCONFIG_CHIP_WIFI=n
 
    This command creates the *build_thread* directory, where the Matter over Thread application is stored.
 #. Build the door lock application for Matter over Wi-Fi by running the following command:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -d build_wifi -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek
+      west build -b nrf5340dk_nrf5340_cpuapp -d build_wifi -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -Dhci_rpmsg_SHIELD=nrf7002_ek_coex
 
    This command creates the *build_wifi* directory, where the Matter over Wi-Fi application is stored.
 #. Combine Matter OTA image files generated for both variants by running the ``combine_ota_images.py`` script in the sample directory by running the following command (with ``<output_directory>`` changed to the directory name of your choice):
