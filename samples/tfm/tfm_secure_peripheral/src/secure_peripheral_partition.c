@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <tfm_veneers.h>
 #include <tfm_ns_interface.h>
 
 #include "secure_peripheral_partition.h"

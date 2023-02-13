@@ -5,13 +5,13 @@
 #
 
 {
-  "name": "TF-M secure peripheral partition manifests",
+  "description": "TF-M secure peripheral partition manifests",
   "type": "manifest_list",
   "version_major": 0,
   "version_minor": 1,
   "manifest_list": [
     {
-      "name": "Secure Peripheral Partition",
+      "description": "Secure Peripheral Partition",
       "short_name": "TFM_SPP",
       "manifest": "${APPLICATION_SOURCE_DIR}/secure_peripheral_partition/tfm_secure_peripheral_partition.yaml",
       "output_path": "${TFM_BINARY_DIR}/secure_peripheral_partition",

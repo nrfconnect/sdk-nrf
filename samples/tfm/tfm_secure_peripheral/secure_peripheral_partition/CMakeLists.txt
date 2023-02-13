@@ -34,23 +34,25 @@ target_include_directories(tfm_app_rot_partition_spp
 # The generated sources
 target_sources(tfm_app_rot_partition_spp
     PRIVATE
-        $<$<BOOL:${TFM_PSA_API}>:
-            ${CMAKE_BINARY_DIR}/secure_peripheral_partition/auto_generated/intermedia_tfm_secure_peripheral_partition.c>
+        ${CMAKE_BINARY_DIR}/secure_peripheral_partition/auto_generated/intermedia_tfm_secure_peripheral_partition.c
 )
 target_sources(tfm_partitions
     INTERFACE
-        $<$<BOOL:${TFM_PSA_API}>:
-            ${CMAKE_BINARY_DIR}/secure_peripheral_partition/auto_generated/load_info_tfm_secure_peripheral_partition.c>
+        ${CMAKE_BINARY_DIR}/secure_peripheral_partition/auto_generated/load_info_tfm_secure_peripheral_partition.c
 )
 
 target_link_libraries(tfm_app_rot_partition_spp
     PRIVATE
-        tfm_secure_api
-        psa_interface
-        secure_fw
         platform_s
-        tfm_psa_rot_partition_crypto
+        tfm_sprt
 )
+
+target_link_libraries(tfm_spm
+    PRIVATE
+        tfm_app_rot_partition_spp
+)
+
+############################ Partition Defs ####################################
 
 target_link_libraries(tfm_partitions
     INTERFACE
