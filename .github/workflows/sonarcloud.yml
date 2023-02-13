@@ -67,6 +67,7 @@ jobs:
 
       # Exclude twister-out because we dont need coverage reports for mocks and generated files.
       # Exclude tests/unity because it is not interesting
+      # Exclude zephyr folder because we are not interested in code coverage for that.
       # Exclude folders that contain source code with multiple definitions of the same function
       # depending on preprocessor macros. gcovr misbehaves due to this.
       # Issue: https://github.com/gcovr/gcovr/issues/586
@@ -76,8 +77,7 @@ jobs:
           gcovr twister-out  \
             --exclude=twister-out \
             --exclude=tests/unity \
-            --exclude=ncs/zephyr/include/ \
-            --exclude=ncs/zephyr/subsys/net/ip/ \
+            --exclude=ncs/zephyr/ \
             --exclude=ncs/nrf/tests/subsys/dfu/dfu_target_stream/ \
             --exclude=ncs/nrf/lib/hw_id/ \
             --sonarqube coverage.xml
