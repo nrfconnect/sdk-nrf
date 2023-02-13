@@ -1,0 +1,6 @@
+manifest:
+  projects:
+    - name: cjson
+      url: https://github.com/nrfconnect/sdk-cjson
+      path: modules/lib/cjson
+      revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a

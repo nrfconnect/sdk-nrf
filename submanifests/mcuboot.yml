@@ -1,0 +1,6 @@
+manifest:
+  projects:
+    - name: mcuboot
+      url: https://github.com/nrfconnect/sdk-mcuboot
+      revision: 6242c860864bc6a1ed45f4f1af0e57b53cf3b858
+      path: bootloader/mcuboot

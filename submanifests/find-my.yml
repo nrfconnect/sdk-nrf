@@ -1,0 +1,7 @@
+manifest:
+  projects:
+    - name: find-my
+      url: https://github.com/nrfconnect/sdk-find-my
+      revision: 8ebcde08dcc808d6f632bb5cb3e330161a4dffcd
+      groups:
+        - find-my

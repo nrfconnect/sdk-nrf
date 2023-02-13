@@ -1,0 +1,6 @@
+manifest:
+  projects:
+    - name: cirrus
+      url: https://github.com/nrfconnect/sdk-mcu-drivers
+      path: modules/hal/cirrus-logic
+      revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a

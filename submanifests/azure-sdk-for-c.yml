@@ -1,0 +1,6 @@
+manifest:
+  projects:
+    - name: azure-sdk-for-c
+      url: https://github.com/nrfconnect/azure-sdk-for-c
+      path: modules/lib/azure-sdk-for-c
+      revision: 308c171cb4b5eed266649012a68406487ec81fb2

@@ -13,45 +13,29 @@
 manifest:
   version: "0.12"
 
-  # "remotes" is a list of locations where git repositories are cloned
-  # and fetched from.
-  remotes:
-    # nRF Connect SDK GitHub organization.
-    # NCS repositories are hosted here.
-    - name: ncs
-      url-base: https://github.com/nrfconnect
-    # Third-party repository sources:
-    - name: zephyrproject
-      url-base: https://github.com/zephyrproject-rtos
-    - name: throwtheswitch
-      url-base: https://github.com/ThrowTheSwitch
-    - name: armmbed
-      url-base: https://github.com/ARMmbed
-    - name: nordicsemi
-      url-base: https://github.com/NordicSemiconductor
-    - name: memfault
-      url-base: https://github.com/memfault
-    - name: ant-nrfconnect
-      url-base: https://github.com/ant-nrfconnect
-
-  # If not otherwise specified, the projects below should be obtained
-  # from the ncs remote.
-  defaults:
-    remote: ncs
-
   group-filter: [-homekit, -nrf-802154, -find-my, -ant]
 
-  # "projects" is a list of git repositories which make up the NCS
-  # source code.
+  # NCS-specific repositories and configuration.
+  self:
+    # This repository should be cloned to ncs/nrf.
+    path: nrf
+    # This line configures west extensions.
+    west-commands: scripts/west-commands.yml
+    # NCS-specific repositories, along with other third-party
+    # repositories, are defined by YML files in this subdirectory.
+    import: submanifests
+
+  # Repositories NCS bundles from its fork of the Zephyr repository,
+  # as well as other upstream Zephyr modules.
+  # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/introduction/index.html
+  # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
   projects:
 
     # The Zephyr RTOS fork in the NCS, along with the subset of its
     # modules which NCS imports directly.
     #
-    # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/introduction/index.html
-    # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
-      repo-path: sdk-zephyr
+      url: https://github.com/nrfconnect/sdk-zephyr
       revision: 19f4f80abe6690b78f848a042641696970c6b27c
       import:
         # In addition to the zephyr repository itself, NCS also
@@ -97,94 +81,3 @@ manifest:
           - zcbor
           - zscilib
 
-    # NCS repositories.
-    #
-    # Some of these are also Zephyr modules which have NCS-specific
-    # changes.
-    - name: sdk-hostap
-      path: modules/lib/hostap
-      revision: fa53e2c5aa660199fc306eaffc5374e276139079
-    - name: mcuboot
-      repo-path: sdk-mcuboot
-      revision: 6242c860864bc6a1ed45f4f1af0e57b53cf3b858
-      path: bootloader/mcuboot
-    - name: mbedtls
-      path: modules/crypto/mbedtls
-      repo-path: sdk-mbedtls
-      revision: v3.1.0-ncs2
-    - name: nrfxlib
-      repo-path: sdk-nrfxlib
-      path: nrfxlib
-      revision: d8c456d422a1180a564fc276ca8b06317f5717f4
-    - name: trusted-firmware-m
-      repo-path: sdk-trusted-firmware-m
-      path: modules/tee/tf-m/trusted-firmware-m
-      revision: 81e6a7fbbc972b95affc9b6805b62237d0ffd6f4
-    - name: matter
-      repo-path: sdk-connectedhomeip
-      path: modules/lib/matter
-      revision: 8087212c80d8c487bdc192136da5954cc7e516b8
-      submodules:
-        - name: nlio
-          path: third_party/nlio/repo
-        - name: nlassert
-          path: third_party/nlassert/repo
-        - name: nlunit-test
-          path: third_party/nlunit-test/repo
-        - name: pigweed
-          path: third_party/pigweed/repo
-    - name: nrf-802154
-      repo-path: sdk-nrf-802154
-      path: nrf-802154
-      revision: v2.2.0
-      groups:
-        - nrf-802154
-    - name: cjson
-      repo-path: sdk-cjson
-      path: modules/lib/cjson
-      revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
-    - name: homekit
-      repo-path: sdk-homekit
-      revision: a8a4b468abca2514f902d47ce4d7cde56e9fe762
-      groups:
-        - homekit
-    - name: find-my
-      repo-path: sdk-find-my
-      revision: 8ebcde08dcc808d6f632bb5cb3e330161a4dffcd
-      groups:
-        - find-my
-    - name: azure-sdk-for-c
-      repo-path: azure-sdk-for-c
-      path: modules/lib/azure-sdk-for-c
-      revision: 308c171cb4b5eed266649012a68406487ec81fb2
-    # Other third-party repositories.
-    - name: cmock
-      path: test/cmock
-      submodules: true
-      revision: f65066f15d8248e6dcb778efb8739904a4512087
-      remote: throwtheswitch
-    - name: memfault-firmware-sdk
-      path: modules/lib/memfault-firmware-sdk
-      revision: 0.37.2
-      remote: memfault
-    - name: cirrus
-      repo-path: sdk-mcu-drivers
-      path: modules/hal/cirrus-logic
-      revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
-    - name: openthread
-      repo-path: sdk-openthread
-      path: modules/lib/openthread
-      revision: 55074652907295709f9f3361244a6e76f732bcba
-    - name: ant
-      repo-path: sdk-ant
-      revision: 8f6e2b0470d11b5c1a97c92df35eb1350e84c5f8
-      remote: ant-nrfconnect
-      groups:
-        - ant
-
-  # West-related configuration for the nrf repository.
-  self:
-    # This repository should be cloned to ncs/nrf.
-    path: nrf
-    # This line configures west extensions.
-    west-commands: scripts/west-commands.yml

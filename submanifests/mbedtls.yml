@@ -1,0 +1,6 @@
+manifest:
+  projects:
+    - name: mbedtls
+      url: https://github.com/nrfconnect/sdk-mbedtls
+      path: modules/crypto/mbedtls
+      revision: v3.1.0-ncs2

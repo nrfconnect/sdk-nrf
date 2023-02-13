@@ -1,0 +1,5 @@
+manifest:
+  projects:
+    - name: nrfxlib
+      url: https://github.com/nrfconnect/sdk-nrfxlib
+      revision: d8c456d422a1180a564fc276ca8b06317f5717f4

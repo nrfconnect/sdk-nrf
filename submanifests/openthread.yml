@@ -1,0 +1,6 @@
+manifest:
+  projects:
+    - name: openthread
+      url: https://github.com/nrfconnect/sdk-openthread
+      path: modules/lib/openthread
+      revision: 55074652907295709f9f3361244a6e76f732bcba

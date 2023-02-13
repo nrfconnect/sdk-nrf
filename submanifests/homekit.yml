@@ -1,0 +1,7 @@
+manifest:
+  projects:
+    - name: homekit
+      url: https://github.com/nrfconnect/sdk-homekit
+      revision: a8a4b468abca2514f902d47ce4d7cde56e9fe762
+      groups:
+        - homekit

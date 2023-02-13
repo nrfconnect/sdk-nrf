@@ -1,0 +1,7 @@
+manifest:
+  projects:
+    - name: nrf-802154
+      url: https://github.com/nrfconnect/sdk-nrf-802154
+      revision: v2.2.0
+      groups:
+        - nrf-802154

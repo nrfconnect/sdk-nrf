@@ -1,0 +1,17 @@
+# Other third-party repositories included in NCS.
+manifest:
+  projects:
+    - name: cmock
+      url: https://github.com/ThrowTheSwitch/cmock
+      path: test/cmock
+      submodules: true
+      revision: f65066f15d8248e6dcb778efb8739904a4512087
+    - name: memfault-firmware-sdk
+      url: https://github.com/memfault/memfault-firmware-sdk
+      path: modules/lib/memfault-firmware-sdk
+      revision: 0.37.2
+    - name: ant
+      url: https://github.com/ant-nrfconnect/sdk-ant
+      revision: 8f6e2b0470d11b5c1a97c92df35eb1350e84c5f8
+      groups:
+        - ant

@@ -1,0 +1,6 @@
+manifest:
+  projects:
+    - name: trusted-firmware-m
+      url: https://github.com/nrfconnect/sdk-trusted-firmware-m
+      path: modules/tee/tf-m/trusted-firmware-m
+      revision: 81e6a7fbbc972b95affc9b6805b62237d0ffd6f4
