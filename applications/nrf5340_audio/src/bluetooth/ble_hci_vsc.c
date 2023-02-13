@@ -231,7 +231,6 @@ int ble_hci_vsc_pri_ext_adv_max_tx_pwr_set(enum ble_hci_vs_tx_power tx_power)
 
 int ble_hci_tx_gain_toggle(void)
 {
-	int ret;
 	static uint8_t toggle = 1;
 
 	if (!IS_ENABLED(CONFIG_NRF_21540_ACTIVE)) {

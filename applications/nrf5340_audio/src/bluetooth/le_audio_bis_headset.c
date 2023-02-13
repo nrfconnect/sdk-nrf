@@ -325,7 +325,8 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 	static uint8_t bis_encryption_key[16];
 
 #if (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)
-	strncpy(bis_encryption_key, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY, 16);
+	memcpy(bis_encryption_key, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
+	       MIN(sizeof(bis_encryption_key), sizeof(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY)));
 #endif /* (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED) */
 
 	if (active_stream.stream->ep->status.state == BT_AUDIO_EP_STATE_STREAMING ||

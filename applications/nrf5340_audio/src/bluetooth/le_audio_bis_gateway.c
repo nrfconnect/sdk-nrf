@@ -28,9 +28,15 @@ BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 2,
 #define STANDARD_QUALITY_24KHZ 24000
 #define HIGH_QUALITY_48KHZ 48000
 
-#define BT_LE_EXT_ADV_AURACAST                                                                     \
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_USE_NAME,                            \
-			CONFIG_BLE_ACL_EXT_ADV_INT_MIN, CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
+static struct bt_le_adv_param adv_param = {
+	.id = BT_ID_DEFAULT,
+	.sid = CONFIG_BLE_ACL_ADV_SID,
+	.secondary_max_skip = 0,
+	.options = BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_USE_NAME,
+	.interval_min = CONFIG_BLE_ACL_EXT_ADV_INT_MIN,
+	.interval_max = CONFIG_BLE_ACL_EXT_ADV_INT_MAX,
+	.peer = NULL,
+};
 
 #define BT_LE_PER_ADV_AURACAST                                                                     \
 	BT_LE_PER_ADV_PARAM(CONFIG_BLE_ACL_PER_ADV_INT_MIN, CONFIG_BLE_ACL_PER_ADV_INT_MAX,        \
@@ -201,7 +207,7 @@ static int adv_create(void)
 	uint32_t broadcast_id = 0;
 
 	/* Create a non-connectable non-scannable advertising set */
-	ret = bt_le_ext_adv_create(BT_LE_EXT_ADV_AURACAST, NULL, &adv);
+	ret = bt_le_ext_adv_create(&adv_param, NULL, &adv);
 	if (ret) {
 		LOG_ERR("Unable to create extended advertising set: %d", ret);
 		return ret;
@@ -329,12 +335,15 @@ static int initialize(void)
 		create_param.packing = BT_ISO_PACKING_SEQUENTIAL;
 	}
 
-#if (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)
-	create_param.encryption = true;
-	strncpy(create_param.broadcast_code, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY, 16);
-#else
-	create_param.encryption = false;
-#endif /* (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED) */
+	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
+		create_param.encryption = true;
+		memset(create_param.broadcast_code, 0, sizeof(create_param.broadcast_code));
+		memcpy(create_param.broadcast_code, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
+		       MIN(sizeof(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY),
+			   sizeof(create_param.broadcast_code)));
+	} else {
+		create_param.encryption = false;
+	}
 
 	LOG_DBG("Creating broadcast source");
 
