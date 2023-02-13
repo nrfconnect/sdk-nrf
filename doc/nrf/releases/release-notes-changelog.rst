@@ -186,6 +186,8 @@ nRF9160: Asset Tracker v2
 * Updated:
 
   * Replaced deprecated LwM2M API calls with calls to new functions.
+  * Removed static modem data handling from the application's nRF Cloud codec.
+    Enabled the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS` configuration option to send static modem data.
 
 nRF9160: Serial LTE modem
 -------------------------

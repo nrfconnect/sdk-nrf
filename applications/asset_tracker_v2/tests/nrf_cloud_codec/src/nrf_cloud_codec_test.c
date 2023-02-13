@@ -111,32 +111,6 @@ const static struct cloud_data_gnss gnss_data_example = {
 	}
 };
 
-#define MODEM_STATIC_BATCH_EXAMPLE \
-"[{"\
-	"\"appId\":\"DEVICE\","\
-	"\"messageType\":\"DATA\","\
-	"\"ts\":1563968747123,"\
-	"\"data\":{"\
-		"\"deviceInfo\":{"\
-			"\"imei\":\"352656106111232\","\
-			"\"iccid\":\"89450421180216211234\","\
-			"\"modemFirmware\":\"mfw_nrf9160_1.2.3\","\
-			"\"board\":\"nrf9160dk_nrf9160\","\
-			"\"appVersion\":\"v1.0.0-development\""\
-		"}"\
-	"}"\
-"}]"
-
-const static struct cloud_data_modem_static modem_stat_data_example = {
-	.queued = true,
-	.ts = 1563968747123,
-	.imei = "352656106111232",
-	.iccid = "89450421180216211234",
-	.fw = "mfw_nrf9160_1.2.3",
-	.brdv = "nrf9160dk_nrf9160",
-	.appv = "v1.0.0-development",
-};
-
 #define MODEM_DYNAMIC_BATCH_EXAMPLE \
 "[{"\
 	"\"appId\":\"DEVICE\","\
@@ -545,33 +519,6 @@ void test_enc_batch_data_gnss(void)
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	TEST_ASSERT_EQUAL_STRING(GNSS_BATCH_EXAMPLE, codec.buf);
 	TEST_ASSERT_FALSE(gnss_buf.queued);
-}
-
-/* tests batch encoding typical static modem data */
-void test_enc_batch_data_modem_static(void)
-{
-	struct cloud_data_gnss gnss_buf = {0};
-	struct cloud_data_sensors sensor_buf = {0};
-	struct cloud_data_modem_static modem_stat_buf = modem_stat_data_example;
-	struct cloud_data_modem_dynamic modem_dyn_buf = {0};
-	struct cloud_data_ui ui_buf = {0};
-	struct cloud_data_impact impact_buf = {0};
-	struct cloud_data_battery bat_buf = {0};
-
-	ret = cloud_codec_encode_batch_data(&codec,
-				&gnss_buf,
-				&sensor_buf,
-				&modem_stat_buf,
-				&modem_dyn_buf,
-				&ui_buf,
-				&impact_buf,
-				&bat_buf,
-				1, 1, 1, 1, 1, 1, 1);
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-	TEST_ASSERT_EQUAL(0, strncmp(MODEM_STATIC_BATCH_EXAMPLE,
-				     codec.buf,
-				     strlen(MODEM_STATIC_BATCH_EXAMPLE)));
-	TEST_ASSERT_FALSE(modem_stat_buf.queued);
 }
 
 /* tests batch encoding typical dynamic modem data */

@@ -26,7 +26,9 @@ enum batch_data_type {
 	GNSS,
 	ENVIRONMENTALS,
 	BUTTON,
-	MODEM_STATIC,
+	/* Only dynamic modem data is handled here. Static modem data is handled
+	 * in the nrf_cloud library; see CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS.
+	 */
 	MODEM_DYNAMIC,
 	VOLTAGE,
 	IMPACT,
@@ -187,67 +189,6 @@ static int add_pvt_data(cJSON *parent, struct cloud_data_gnss *gnss)
 
 	json_add_obj_array(parent, data_obj);
 	return 0;
-}
-
-static int modem_static_data_add(struct cloud_data_modem_static *data, cJSON **val_obj_ref)
-{
-	int err;
-
-	if (!data->queued) {
-		return -ENODATA;
-	}
-
-	err = date_time_uptime_to_unix_time_ms(&data->ts);
-	if (err) {
-		LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
-		return err;
-	}
-
-	cJSON *modem_val_obj = cJSON_CreateObject();
-
-	if (modem_val_obj == NULL) {
-		return -ENOMEM;
-	}
-
-	err = json_add_str(modem_val_obj, MODEM_IMEI, data->imei);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	err = json_add_str(modem_val_obj, MODEM_ICCID, data->iccid);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	err = json_add_str(modem_val_obj, MODEM_FIRMWARE_VERSION, data->fw);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	err = json_add_str(modem_val_obj, MODEM_BOARD, data->brdv);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	err = json_add_str(modem_val_obj, MODEM_APP_VERSION, data->appv);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	*val_obj_ref = modem_val_obj;
-
-	data->queued = false;
-
-	return 0;
-
-exit:
-	cJSON_Delete(modem_val_obj);
-	return err;
 }
 
 static int modem_dynamic_data_add(struct cloud_data_modem_dynamic *data, cJSON **val_obj_ref)
@@ -678,28 +619,6 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 			}
 
 			data[i].queued = false;
-			break;
-		}
-		case MODEM_STATIC: {
-			int err;
-			cJSON *data_ref = NULL;
-			struct cloud_data_modem_static *modem_static =
-						(struct cloud_data_modem_static *)buf;
-
-			err = modem_static_data_add(&modem_static[i], &data_ref);
-			if (err && err != -ENODATA) {
-				return err;
-			} else if (err == -ENODATA) {
-				break;
-			}
-
-			err = add_data(array, data_ref, APP_ID_DEVICE, NULL, &modem_static->ts,
-				       true, DATA_MODEM_STATIC, false);
-			if (err && err != -ENODATA) {
-				cJSON_Delete(data_ref);
-				return err;
-			}
-
 			break;
 		}
 		case MODEM_DYNAMIC: {
@@ -1159,6 +1078,8 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  size_t impact_buf_count,
 				  size_t bat_buf_count)
 {
+	ARG_UNUSED(modem_stat_buf);
+
 	int err;
 	char *buffer;
 
@@ -1195,12 +1116,6 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 	err = add_batch_data(root_array, VOLTAGE, bat_buf, bat_buf_count);
 	if (err) {
 		LOG_ERR("Failed adding battery data to array, error: %d", err);
-		goto exit;
-	}
-
-	err = add_batch_data(root_array, MODEM_STATIC, modem_stat_buf, modem_stat_buf_count);
-	if (err) {
-		LOG_ERR("Failed adding static modem data to array, error: %d", err);
 		goto exit;
 	}
 
