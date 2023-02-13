@@ -93,6 +93,9 @@ static void network_task(void)
 	net_mgmt_init_event_callback(&net_mgmt_callback, wifi_mgmt_event_handler, MGMT_EVENTS);
 	net_mgmt_add_event_callback(&net_mgmt_callback);
 
+	/* Add temporary fix to prevent using Wi-Fi before WPA supplicant is ready. */
+	k_sleep(K_SECONDS(1));
+
 	connect();
 }
 
