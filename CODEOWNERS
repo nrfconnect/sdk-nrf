@@ -173,6 +173,7 @@ Kconfig*                                  @tejlmand
 /samples/wifi/scan/                       @D-Triveni @bama-nordic
 /samples/wifi/shell/                      @krish2718 @sachinthegreen @sr1dh48r @rlubos
 /samples/wifi/sta/                        @D-Triveni @bama-nordic
+/samples/wifi/sr_coex/                    @muraliThokala @bama-nordic
 /scripts/                                 @mbolivar-nordic @tejlmand @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @MarekPieta
 /scripts/tools-versions-*.txt             @tejlmand @grho @shantha-14 @ihansse
