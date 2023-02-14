@@ -39,7 +39,7 @@ static struct bt_vcp_vol_ctlr *vcs_client_peer[CONFIG_BT_MAX_CONN];
 
 static int ble_vcs_client_remote_set(uint8_t channel_num)
 {
-	if (channel_num > CONFIG_BT_MAX_CONN) {
+	if (channel_num >= CONFIG_BT_MAX_CONN) {
 		return -EPERM;
 	}
 
@@ -444,9 +444,10 @@ int ble_vcs_discover(struct bt_conn *conn, uint8_t channel_num)
 {
 	int ret;
 
-	if (channel_num > CONFIG_BT_MAX_CONN) {
+	if (channel_num >= CONFIG_BT_MAX_CONN) {
 		return -EPERM;
 	}
+
 	ret = bt_vcp_vol_ctlr_discover(conn, &vcs);
 	vcs_client_peer[channel_num] = vcs;
 	return ret;
