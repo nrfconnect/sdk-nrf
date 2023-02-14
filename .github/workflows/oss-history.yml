@@ -21,8 +21,13 @@ jobs:
         run: |
           west init -l ncs/nrf
           cd ncs
-          west update zephyr mcuboot
+          west update
           git -C zephyr remote add upstream https://github.com/zephyrproject-rtos/zephyr
+
+      - name: Check manifest userdata
+        working_directory: ncs/nrf
+        run: |
+          python3 scripts/ci/check_manifest_userdata.py
 
       - name: Check OSS history
         uses: nrfconnect/action-oss-history@main
