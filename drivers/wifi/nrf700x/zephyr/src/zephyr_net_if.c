@@ -125,7 +125,6 @@ int wifi_nrf_if_send(const struct device *dev,
 
 	if ((vif_ctx_zep->if_carr_state != WIFI_NRF_FMAC_IF_CARR_STATE_ON) ||
 	    (!vif_ctx_zep->authorized && !is_eapol(pkt))) {
-		ret = 0;
 		goto out;
 	}
 
