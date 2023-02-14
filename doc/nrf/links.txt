@@ -183,7 +183,7 @@
 
 .. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
 
-.. _`PSA Cryptography API 1.1`: https://armmbed.github.io/mbed-crypto/html/
+.. _`PSA Cryptography API 1.0.1`: https://armmbed.github.io/mbed-crypto/1.0.1/html/index.html
 
 .. ### Source: developer.nordicsemi.com
 

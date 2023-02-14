@@ -59,7 +59,7 @@ Cryptographic operations in |NCS|
 *********************************
 
 Cryptographic operations in |NCS| are handled by the :ref:`nrfxlib:nrf_security`, which is configurable through Kconfig options.
-The module can be enabled through the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option, and it allows the usage of `Mbed TLS`_ and `PSA Cryptography API 1.1`_ for cryptographic operations and random number generation in the application.
+The module can be enabled through the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option, and it allows the usage of `Mbed TLS`_ and `PSA Cryptography API 1.0.1`_ for cryptographic operations and random number generation in the application.
 
 The :ref:`nrfxlib:nrf_security` acts as an orchestrator for the different cryptographic libraries available in the system.
 These libraries include the binary versions of accelerated cryptographic libraries listed in :ref:`nrfxlib:crypto`, and the open source Mbed TLS implementation in |NCS| located in `sdk-mbedtls`_.
