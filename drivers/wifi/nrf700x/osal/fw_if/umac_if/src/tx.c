@@ -1314,7 +1314,6 @@ enum wifi_nrf_status tx_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 		goto out;
 	}
 
-	fmac_dev_ctx->fpriv->last_tx_done_desc  = -1;
 	fmac_dev_ctx->fpriv->twt_sleep_status  = false;
 
 	status = WIFI_NRF_STATUS_SUCCESS;
