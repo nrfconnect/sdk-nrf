@@ -10,7 +10,8 @@
 #include <nrf_errno.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
-#include <net/nrf_cloud_alerts.h>
+#include <net/nrf_cloud_log.h>
+#include <net/nrf_cloud_alert.h>
 #include <date_time.h>
 #include <cJSON.h>
 #include <stdio.h>
@@ -35,9 +36,9 @@ BUILD_ASSERT(CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH >= AT_CMD_REQUEST_ERR_
 	     "Not enough AT command response buffer for printing error events.");
 
 /* Temperature alert limits. */
-#define TEMP_ALERT_LIMIT CONFIG_TEMP_ALERT_LIMIT
-#define TEMP_ALERT_HYSTERESIS 2
-#define TEMP_ALERT_LOWER_LIMIT (TEMP_ALERT_LIMIT + TEMP_ALERT_HYSTERESIS)
+#define TEMP_ALERT_LIMIT ((float)CONFIG_TEMP_ALERT_LIMIT)
+#define TEMP_ALERT_HYSTERESIS 1.5f
+#define TEMP_ALERT_LOWER_LIMIT (TEMP_ALERT_LIMIT - TEMP_ALERT_HYSTERESIS)
 
 /* Buffer to contain modem responses when performing AT command requests */
 static char at_req_resp_buf[CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH];
@@ -312,8 +313,11 @@ static void monitor_temperature(double temp)
 		temperature_alert_active = true;
 		(void)nrf_cloud_alert_send(ALERT_TYPE_TEMPERATURE, (float)temp,
 					   "Temperature over limit!");
-	} else if (temp < TEMP_ALERT_LOWER_LIMIT) {
+		LOG_INF("Temperature limit %f C exceeded: now %f C.",
+			TEMP_ALERT_LIMIT, temp);
+	} else if ((temp < TEMP_ALERT_LOWER_LIMIT) && temperature_alert_active) {
 		temperature_alert_active = false;
+		LOG_INF("Temperature now below limit: %f C.", temp);
 	}
 }
 
@@ -340,6 +344,11 @@ void main_application_thread_fn(void)
 	} else {
 		LOG_INF("Current date and time determined");
 	}
+
+	nrf_cloud_log_init();
+	/* Send a direct log to the nRF Cloud web portal indicating the sample has started up. */
+	nrf_cloud_log_send(LOG_LEVEL_INF, "nRF Cloud MQTT multi-service sample v%s",
+			   CONFIG_APP_VERSION);
 
 	/* Begin tracking location at the configured interval. */
 	(void)start_location_tracking(on_location_update,
@@ -370,6 +379,7 @@ void main_application_thread_fn(void)
 		}
 
 		if (IS_ENABLED(CONFIG_TEST_COUNTER)) {
+			LOG_INF("Sent test counter = %d", counter);
 			(void)send_sensor_sample("COUNT", counter++);
 		}
 
