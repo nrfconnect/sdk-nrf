@@ -61,7 +61,7 @@ BUILD_ASSERT(RPU_PKTRAM_SIZE >= (TOTAL_TX_SIZE + TOTAL_RX_SIZE),
 static const unsigned char aggregation = 1;
 static const unsigned char wmm = 1;
 static const unsigned char max_num_tx_agg_sessions = 4;
-static const unsigned char max_num_rx_agg_sessions = 2;
+static const unsigned char max_num_rx_agg_sessions = 8;
 static const unsigned char reorder_buf_size = 64;
 static const unsigned char max_rxampdu_size = MAX_RX_AMPDU_SIZE_64KB;
 
