@@ -190,9 +190,7 @@ Configuration management
 ************************
 
 The configuration management component manages Wi-Fi configurations.
-It ensures that the data in RAM and flash are in sync, and exposes APIs to add, read, or remove configurations in a multi-thread environment.
+It uses the wifi_credentials library to handle the configurations in flash.
+The component has one slot in RAM to save the configurations.
 
-The Wi-Fi Provisioning Service offloads all configuration management operations to the configuration management component, and only uses the APIs the component provides to change the configuration.
-
-This component saves data in non-volatile memory, which is the internal flash for nRF5x devices.
-You can save the configuration in both RAM and flash or only in RAM during provisioning.
+You can save the configuration in flash or RAM during provisioning.
