@@ -234,7 +234,7 @@ class NcsLoot(NcsWestCommand):
         # project: the west.manifest.Project instance in the NCS manifest
         # z_project: the Project instance in the upstream manifest
         # args: parsed arguments from argparse
-        name_path = _name_and_path(project)
+        name_path = project.name_and_path
 
         # Get the upstream revision of the project. The zephyr project
         # has to be treated as a special case.
@@ -375,7 +375,7 @@ class NcsCompare(NcsWestCommand):
 
         def print_lst(projects):
             for p in projects:
-                log.inf(f'{_name_and_path(p)}')
+                log.inf(f'{p.name_and_path}')
 
         if missing_blocked and log.VERBOSE >= log.VERBOSE_NORMAL:
             log.banner('blocked zephyr projects',
@@ -402,7 +402,7 @@ class NcsCompare(NcsWestCommand):
                 f"    4. run west {self.name} again to check your work\n"
                 f"  To block: edit _BLOCKED_PROJECTS in {__file__}")
             for p in missing_allowed:
-                log.small_banner(f'{_name_and_path(p)}:')
+                log.small_banner(f'{p.name_and_path}:')
                 log.inf(f'upstream revision: {p.revision}')
                 log.inf(f'upstream URL: {p.url}')
         else:
@@ -554,13 +554,6 @@ class NcsUpmerger(NcsWestCommand):
         log.inf(f'Merging: {z_rev} to project: {project.name}')
         msg = f"[nrf mergeup] Merge upstream automatically up to commit {z_sha}\n\nThis auto-upmerge was performed with ncs-upmerger script."
         project.git('merge --no-edit --no-ff --signoff -m "' + msg + '" ' + str(self.zephyr_rev))
-
-
-def _name_and_path(project: Project) -> str:
-    # This is just a compatibility shim to keep things going until we
-    # can rely on project.name_and_path's availability in west 0.7.
-
-    return f'{project.name} ({project.path})'
 
 _UPSTREAM_ZEPHYR_URL = 'https://github.com/zephyrproject-rtos/zephyr'
 
