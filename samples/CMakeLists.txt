@@ -90,7 +90,7 @@ if (CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE OR CONFIG_NCS_SAMPLE_EMPTY_NET_CORE_CHI
     if (CONFIG_NCS_SAMPLE_HCI_RPMSG_CHILD_IMAGE OR CONFIG_NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE)
       add_overlay_config(
         ${CHILD_IMAGE_NAME}
-        ${NRF_DIR}/subsys/mgmt/mcumgr/bt_ota_dfu_rpmsg_child_image_overlay.conf
+        ${CMAKE_CURRENT_LIST_DIR}/common/mcumgr_bt_ota_dfu/rpmsg_child_image_overlay.conf
       )
     endif()
   endif()
@@ -126,3 +126,5 @@ if (CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE OR CONFIG_NCS_SAMPLE_EMPTY_NET_CORE_CHI
   endif()
 
 endif()
+
+add_subdirectory(common)

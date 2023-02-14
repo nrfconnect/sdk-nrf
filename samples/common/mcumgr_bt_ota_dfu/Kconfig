@@ -118,3 +118,12 @@ config BT_CTLR_DATA_LENGTH_MAX
 	default 251 if BT_CTLR
 
 endif # NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP
+
+config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_VALIDATION
+	bool "MCUmgr OTA DFU build time validation"
+	default y
+	depends on NCS_SAMPLE_MCUMGR_BT_OTA_DFU || NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP
+	help
+	  Enable this option to validate the MCUmgr OTA DFU configuration at the
+	  build time. If the project configuration does not match predefined
+	  defaults, the build system issues a warning for each misaligned item.
