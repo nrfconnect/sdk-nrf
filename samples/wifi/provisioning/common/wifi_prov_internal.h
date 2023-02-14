@@ -57,15 +57,6 @@ int wifi_prov_send_rsp(struct net_buf_simple *rsp);
  */
 int wifi_prov_send_result(struct net_buf_simple *result);
 
-/**
- * @brief Initialize Bluetooth LE transport layer.
- *
- * This will enable the BT stack and start advertisement.
- *
- * @return 0 if transport layer initialized successfully, negative error code otherwise.
- */
-int wifi_prov_transport_layer_init(void);
-
 #ifdef __cplusplus
 }
 #endif
