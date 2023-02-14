@@ -542,7 +542,7 @@ class NcsUpmerger(NcsWestCommand):
 
         for dc, ucs in reversed(analyzer.likely_merged.items()):
             if len(ucs) == 1:
-                log.inf(f'- Rerverting: {dc.oid} {commit_title(dc)}')
+                log.inf(f'- Reverting: {dc.oid} {commit_title(dc)}')
                 log.inf(f'  Similar upstream title:\n'
                         f'  {ucs[0].oid} {commit_title(ucs[0])}')
             else:
