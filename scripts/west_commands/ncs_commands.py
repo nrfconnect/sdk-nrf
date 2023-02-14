@@ -12,7 +12,7 @@ from pathlib import Path
 import subprocess
 import sys
 from textwrap import dedent
-from typing import Any, NamedTuple, Optional
+from typing import Any, NamedTuple, Optional, TYPE_CHECKING
 
 from west import log
 from west.commands import WestCommand
@@ -23,6 +23,7 @@ import yaml
 
 try:
     from packaging import version
+    import pygit2  # type: ignore
 except ImportError:
     sys.exit("Can't import extra dependencies needed for NCS west extensions.\n"
              "Please install packages in nrf/scripts/requirements-extra.txt "
@@ -214,6 +215,58 @@ class NcsWestCommand(WestCommand):
             self.parser.error(msg)
         return zephyr_rev
 
+    def to_ncs_repository(self, project: Project) -> Optional[nwh.Repository]:
+        # Get necessary NCS-side metadata for the project and convert to
+        # a Repository.
+
+        ncs_rev = 'refs/heads/manifest-rev'
+        ncs_sha = self.checked_sha(project, ncs_rev)
+        if ncs_sha is None:
+            if not self.manifest.is_active(project):
+                help_url = 'https://docs.zephyrproject.org/latest/develop/west/manifest.html#project-groups-and-active-projects'
+                log.err(f"{project.name_and_path}: can't get loot: "
+                        "project is not cloned and is not active. "
+                        'To get loot, first enable these groups: '
+                        f"{' '.join(project.groups)} (see {help_url}). "
+                        'Then, run "west update".')
+            else:
+                log.err(f"{project.name_and_path}: can't get loot: "
+                        'project is not cloned; please run "west update"')
+            return None
+        return to_repository(project, ncs_sha)
+
+    def to_upstream_repository(self, project: Project) -> Optional[nwh.Repository]:
+        # Get the upstream metadata for the project and convert to a
+        # Repository.
+        name = project.name
+        userdata = ncs_userdata(project)
+
+        if userdata:
+            upstream_url = userdata.upstream_url
+            upstream_rev = userdata.upstream_sha
+        elif name in self.z_pmap and name != 'manifest':
+            upstream_url = self.z_pmap[name].url
+            upstream_rev = self.z_pmap[name].revision
+        elif name == 'zephyr':
+            upstream_url = _UPSTREAM_ZEPHYR_URL
+            upstream_rev = self.zephyr_rev
+        else:
+            return None
+
+        upstream_sha = self.checked_sha(project, upstream_rev)
+        if upstream_sha is None:
+            log.wrn(f"{project.name_and_path}: can't get loot: "
+                    "please fetch upstream URL "
+                    f'{upstream_url} (need revision {upstream_rev})')
+            return None
+        if TYPE_CHECKING:
+            assert project.abspath
+        return nwh.Repository(name=project.name,
+                              path=project.path,
+                              abspath=project.abspath,
+                              url=upstream_url,
+                              sha=upstream_sha)
+
 class NcsLoot(NcsWestCommand):
 
     def __init__(self):
@@ -253,106 +306,92 @@ class NcsLoot(NcsWestCommand):
             self.parser.error('--file used, so expected 1 project argument, '
                               f'but got: {len(args.projects)}')
         self.setup_upstream_downstream(args)
+        self.args = args
+        self.json_data: dict[str, Any] = {}
 
-        json_data: dict[str, Any] = {}
         for name, project in self.ncs_pmap.items():
-            if name in self.z_pmap and name != 'manifest':
-                z_project = self.z_pmap[name]
-            elif name == 'zephyr':
-                z_project = self.z_pmap['manifest']
-            else:
-                log.dbg(f'skipping downstream project {name}',
-                        level=log.VERBOSE_VERY)
+            if name == 'manifest':
                 continue
-            self.print_loot(name, project, z_project, args, json_data)
+
+            ncs_repository = self.to_ncs_repository(project)
+            if not ncs_repository:
+                continue
+
+            upstream_repository = self.to_upstream_repository(project)
+            if not upstream_repository:
+                continue
+
+            loot = self.get_loot(ncs_repository, upstream_repository)
+            self.print_loot(loot, ncs_repository, upstream_repository)
 
         if args.json:
             with open(args.json, 'w') as f:
-                json.dump(json_data, f)
+                json.dump(self.json_data, f)
 
-    def print_loot(self, name: str, project: Project, z_project: Project,
-                   args: argparse.Namespace, json_data: dict[str, Any]):
-        # Print a list of out of tree outstanding patches in the given
-        # project.
-        #
-        # name: project name
-        # project: the west.manifest.Project instance in the NCS manifest
-        # z_project: the Project instance in the upstream manifest
-        # args: parsed arguments from argparse
-        name_path = project.name_and_path
-
-        # Get the upstream revision of the project. The zephyr project
-        # has to be treated as a special case.
-        if name == 'zephyr':
-            z_rev = self.zephyr_rev
-        else:
-            z_rev = z_project.revision
-
-        n_rev = 'refs/heads/manifest-rev'
+    @staticmethod
+    def get_loot(ncs_repository: nwh.Repository,
+                 upstream_repository: nwh.Repository) -> list[pygit2.Commit]:
+        # Create analyzer object and get the loot for a pair of
+        # upstream/downstream repositories.
+        name_path = f'{ncs_repository.name} ({ncs_repository.path})'
 
         try:
-            nsha = project.sha(n_rev)
-            project.git('cat-file -e ' + nsha)
-        except subprocess.CalledProcessError:
-            log.wrn(f"{name_path}: can't get loot; please run "
-                    f'"west update" (no "{n_rev}" ref)')
-            return
-
-        try:
-            zsha = z_project.sha(z_rev)
-            z_project.git('cat-file -e ' + zsha)
-        except subprocess.CalledProcessError:
-            log.wrn(f"{name_path}: can't get loot; please fetch upstream URL "
-                    f'{z_project.url} (need revision {z_project.revision})')
-            return
-
-        try:
-            analyzer = repo_analyzer(project, nsha,
-                                     z_project, zsha)
+            analyzer = nwh.RepoAnalyzer(ncs_repository, upstream_repository)
         except nwh.InvalidRepositoryError as ire:
             log.die(f"{name_path}: {str(ire)}")
 
         try:
-            loot = analyzer.downstream_outstanding
+            return analyzer.downstream_outstanding
         except nwh.UnknownCommitsError as uce:
             log.die(f'{name_path}: unknown commits: {str(uce)}')
+
+    def print_loot(self,
+                   loot: list[pygit2.Commit],
+                   ncs_repository: nwh.Repository,
+                   upstream_repository: nwh.Repository) -> None:
+        # Print a list of out of tree outstanding patches.
+        #
+        # loot: the list itself
+        # ncs_repository: contains NCS information
+        # upstream_repository: contains upstream information
 
         if not loot and log.VERBOSE <= log.VERBOSE_NONE:
             # Don't print output if there's no loot unless verbose
             # mode is on.
             return
 
-        log.banner(name_path)
-        log.inf(f'     NCS commit: {nsha}\n'
-                f'upstream commit: {zsha}')
-        log.inf('OOT patches: ' +
-                (f'{len(loot)} total' if loot else 'none') +
-                (', output limited by --file' if args.files else ''))
+        log.banner(f'{ncs_repository.name} ({ncs_repository.path})')
+        log.inf(f'     NCS commit: {ncs_repository.sha}\n'
+                f'   upstream URL: {upstream_repository.url}\n'
+                f'upstream commit: {upstream_repository.sha}')
+        log.inf(f'    OOT patches: {len(loot)}' +
+                (', output limited by --file' if self.args.files else ''))
 
         json_sha_list = []
         json_title_list = []
-        for c in loot:
-            if args.files and not commit_affects_files(c, args.files):
-                log.dbg(f"skipping {c.oid}; it doesn't affect file filter",
+        for index, commit in enumerate(loot):
+            if self.args.files and not commit_affects_files(commit,
+                                                            self.args.files):
+                log.dbg(f"skipping {commit.oid}; it doesn't affect file filter",
                         level=log.VERBOSE_VERY)
                 continue
 
-            sha = str(c.oid)
-            title = commit_title(c)
-            if args.sha_only:
+            sha = str(commit.oid)
+            title = commit_title(commit)
+            if self.args.sha_only:
                 log.inf(sha)
             else:
-                log.inf(f'- {sha} {title}')
+                log.inf(f'{index+1}. {sha} {title}')
 
-            if args.json:
+            if self.args.json:
                 json_sha_list.append(sha)
                 json_title_list.append(title)
 
-        if args.json:
-            json_data[name] = {
-                'path': project.path,
-                'ncs-commit': nsha,
-                'upstream-commit': zsha,
+        if self.args.json:
+            self.json_data[ncs_repository.name] = {
+                'path': ncs_repository.path,
+                'ncs-commit': ncs_repository.sha,
+                'upstream-commit': upstream_repository.sha,
                 'shas': json_sha_list,
                 'titles': json_title_list,
             }
