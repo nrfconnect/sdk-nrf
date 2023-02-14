@@ -12,7 +12,7 @@ from pathlib import Path
 import subprocess
 import sys
 from textwrap import dedent
-from typing import Any, Optional
+from typing import Any, NamedTuple, Optional
 
 from west import log
 from west.commands import WestCommand
@@ -32,6 +32,30 @@ import ncs_west_helpers as nwh
 from pygit2_helpers import commit_affects_files, commit_title
 
 WEST_V0_13_0_OR_LATER = version.parse(west_version) >= version.parse('0.13.0')
+
+class NcsUserData(NamedTuple):
+    '''Represents userdata in a project in ncs/nrf/west.yml.'''
+
+    upstream_url: str
+    upstream_sha: str
+    compare_by_default: bool
+
+def ncs_userdata(project: Project) -> Optional[NcsUserData]:
+    # Converts raw userdata in 'project' to an NcsUserData, if
+    # possible. Otherwise returns None.
+
+    raw_userdata = project.userdata
+
+    if not (raw_userdata and
+            isinstance(raw_userdata, dict) and
+            'ncs' in raw_userdata):
+        return None
+
+    ncs_dict = raw_userdata['ncs']
+
+    return NcsUserData(upstream_url=ncs_dict['upstream-url'],
+                       upstream_sha=ncs_dict['upstream-sha'],
+                       compare_by_default=ncs_dict['compare-by-default'])
 
 def add_zephyr_rev_arg(parser: argparse.ArgumentParser) -> None:
     parser.add_argument('-z', '--zephyr-rev', metavar='REF',
