@@ -216,7 +216,7 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 		wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
 					    fmac_dev_ctx->tx_config.tx_lock);
 
-		fmac_priv->twt_sleep_status = true;
+		fmac_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_SLEEP;
 
 		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
 					   fmac_dev_ctx->tx_config.tx_lock);
@@ -225,6 +225,7 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 		wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
 					    fmac_dev_ctx->tx_config.tx_lock);
 
+		fmac_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_AWAKE;
 #ifdef CONFIG_NRF700X_DATA_TX
 		for (ac = WIFI_NRF_FMAC_AC_BE;
 		     ac <= WIFI_NRF_FMAC_AC_MAX; ++ac) {
@@ -234,7 +235,6 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 			}
 		}
 #endif
-		fmac_priv->twt_sleep_status = false;
 
 		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
 					   fmac_dev_ctx->tx_config.tx_lock);
