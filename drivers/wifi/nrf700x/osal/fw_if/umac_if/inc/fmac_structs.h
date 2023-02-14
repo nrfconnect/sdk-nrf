@@ -405,7 +405,6 @@ struct wifi_nrf_fmac_priv {
 	struct wifi_nrf_fmac_callbk_fns callbk_fns;
 
 	bool twt_sleep_status;
-	int last_tx_done_desc;
 };
 
 
