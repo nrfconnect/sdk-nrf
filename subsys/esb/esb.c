@@ -559,7 +559,7 @@ static void update_radio_tx_power(void)
 	mpsl_tx_power_split_t tx_power;
 
 	(void)mpsl_fem_tx_power_split(esb_cfg.tx_output_power, &tx_power,
-				      (RADIO_BASE_FREQUENCY + esb_addr.rf_channel));
+				      (RADIO_BASE_FREQUENCY + esb_addr.rf_channel), false);
 
 	err = mpsl_fem_pa_gain_set(&tx_power.fem);
 	if (err) {
