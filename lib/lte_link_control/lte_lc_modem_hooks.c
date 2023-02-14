@@ -25,14 +25,18 @@ static void on_modem_init(int err, void *ctx)
 		return;
 	}
 
-#if defined(CONFIG_LTE_EDRX_REQ)
-	/* Request configured eDRX settings to save power */
-	err = lte_lc_edrx_req(true);
+	/* Request configured PSM and eDRX settings to save power. */
+	err = lte_lc_psm_req(IS_ENABLED(CONFIG_LTE_PSM_REQ));
 	if (err) {
-		LOG_ERR("Failed to configure EDRX, err %d", err);
+		LOG_ERR("Failed to configure PSM, err %d", err);
 		return;
 	}
-#endif
+
+	err = lte_lc_edrx_req(IS_ENABLED(CONFIG_LTE_EDRX_REQ));
+	if (err) {
+		LOG_ERR("Failed to configure eDRX, err %d", err);
+		return;
+	}
 
 #if defined(CONFIG_LTE_LOCK_BANDS)
 	/* Set LTE band lock (volatile setting).
