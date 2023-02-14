@@ -211,7 +211,8 @@ enum nrf_wifi_sys_events {
 	NRF_WIFI_EVENT_DEINIT_DONE,
 	NRF_WIFI_EVENT_RF_TEST,
 	NRF_WIFI_EVENT_COEX_CONFIG,
-	NRF_WIFI_EVENT_INT_UMAC_STATS
+	NRF_WIFI_EVENT_INT_UMAC_STATS,
+	NRF_WIFI_EVENT_RADIOCMD_STATUS
 };
 
 enum rpu_ch_bw {
@@ -866,6 +867,24 @@ struct rpu_fw_stats {
 struct nrf_wifi_umac_event_stats {
 	struct nrf_wifi_sys_head sys_head;
 	struct rpu_fw_stats fw;
+} __NRF_WIFI_PKD;
+
+/**
+ * struct nrf_wifi_umac_event_cmd_err_status - cmd error indication
+ * @sys_head: UMAC header, See &struct nrf_wifi_sys_head.
+ * @status: status of the command ie Fail(Type of err) or success.
+ *
+ * This event is the response to command chanl_prog.
+ *
+ */
+enum nrf_wifi_radio_test_err_status {
+		NRF_WIFI_UMAC_CMD_SUCCESS,
+		NRF_WIFI_UMAC_INVALID_CHNL
+};
+
+struct nrf_wifi_umac_event_err_status {
+		struct nrf_wifi_sys_head sys_head;
+		unsigned int status;
 } __NRF_WIFI_PKD;
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
