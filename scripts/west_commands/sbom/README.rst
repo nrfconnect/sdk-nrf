@@ -123,6 +123,14 @@ You can also mix them, for example, to generate a report for the application and
 
   The :ref:`west_sbom Extracting from build` section describes in detail how to extract a list of files from a build directory.
 
+  You can use ``-d`` option multiple times.
+  For example, to include both the ``mcuboot`` child image and the main application, use the following command:
+
+  .. parsed-literal::
+     :class: highlight
+
+     west ncs-sbom -d *build* -d *build/mcuboot*
+
   .. note::
       All files that are not dependencies of the :file:`zephyr/zephyr.elf` target are not taken as an input.
       If you modify the :file:`.elf` file after the linking, the modifications are not applied.
@@ -413,3 +421,10 @@ There are two additional methods for improving the correctness of the above algo
      :class: highlight
 
      -d build_directory *target.elf*:*file.map*
+
+Integration with the GN meta-build system
+=========================================
+
+The ``ncs-sbom`` script reads a list of all commands needed to build provided targets.
+If there is a ``gn gen`` command, the script enters the command's build directory and tries to extract files from it using the same method as described earlier.
+The results are integrated with the main build directory results.

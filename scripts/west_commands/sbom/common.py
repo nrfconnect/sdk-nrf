@@ -25,17 +25,17 @@ class SbomException(Exception):
 
 def command_execute(*cmd_args: 'tuple[str|Path]', cwd: 'str|Path|None' = None,
                     return_path: bool = False, allow_stderr: bool = False,
-                    return_error_code: bool = False) -> 'Path|str':
+                    return_error_code: bool = False, shell: bool = False) -> 'Path|str':
     '''Execute subprocess wrapper that handles errors and output redirections.'''
     cmd_args = tuple(str(x) for x in cmd_args)
     if cwd is not None:
         cwd = str(cwd)
-    with NamedTemporaryFile(delete=(not return_path), mode='w+') as out_file, \
-            NamedTemporaryFile(mode='w+') as err_file:
+    with NamedTemporaryFile(delete=(not return_path), mode='w+', encoding='8859') as out_file, \
+            NamedTemporaryFile(mode='w+', encoding='8859') as err_file:
         try:
             t = dbg_time(f'Starting {cmd_args} in {cwd or "current directory"}',
                          level=log.VERBOSE_VERY)
-            cp = subprocess.run(cmd_args, stdout=out_file, stderr=err_file, cwd=cwd)
+            cp = subprocess.run(cmd_args, stdout=out_file, stderr=err_file, cwd=cwd, shell=shell)
             log.dbg(f'Subprocess done in {t}s', level=log.VERBOSE_VERY)
         except Exception as e:
             log.err(f'Running command "{cmd_args[0]}" failed!')
@@ -75,7 +75,14 @@ def command_execute(*cmd_args: 'tuple[str|Path]', cwd: 'str|Path|None' = None,
 
 process_executor = None
 thread_executor = None
-executor_workers = None
+
+def get_executor_workers():
+    ''' Returns number of worker executors used in "concurrent_pool_iter". '''
+    from args import args
+    executor_workers = args.processes if args.processes > 0 else os.cpu_count()
+    if executor_workers is None or executor_workers < 1:
+        executor_workers = 1
+    return executor_workers
 
 
 def concurrent_pool_iter(func: Callable, iterable: Iterable, use_process: bool=False,
@@ -89,17 +96,13 @@ def concurrent_pool_iter(func: Callable, iterable: Iterable, use_process: bool=F
     @param use_process  Runs function on separate process when True, thread if False
     @param threshold    If number of elements in iterable is less than threshold, no parallel
                         threads or processes will be started.
-    @returns            Iterator over tuples cotaining: return value of func, input element, index
+    @returns            Iterator over tuples containing: return value of func, input element, index
                         of that element (starting from 0)
     '''
-    from args import args
-    global process_executor, thread_executor, executor_workers
+    global process_executor, thread_executor
     collected = iterable if isinstance(iterable, tuple) else tuple(iterable)
     if len(collected) >= threshold:
-        if executor_workers is None:
-            executor_workers = args.processes if args.processes > 0 else os.cpu_count()
-            if executor_workers is None or executor_workers < 1:
-                executor_workers = 1
+        executor_workers = get_executor_workers()
         if use_process:
             if process_executor is None:
                 process_executor = concurrent.futures.ProcessPoolExecutor(executor_workers)
