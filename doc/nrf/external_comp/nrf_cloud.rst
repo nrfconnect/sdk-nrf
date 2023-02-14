@@ -13,8 +13,14 @@ Overview
 ********
 
 nRF Cloud allows you to remotely manage and update your IoT devices using :term:`Firmware Over-the-Air (FOTA) <Firmware Over-the-Air (FOTA) update>`.
-It also helps your devices determine their location.
-Additionally, it allows devices to report data to the cloud for collection and analysis later.
+FOTA can be used to update the device application, bootloader, and modem.
+The modem can be incrementally updated with a modem delta image.
+If the device has sufficiently large external flash storage, the modem can be entirely updated with a full modem image.
+
+nRF Cloud also helps your devices determine their location using assisted GPS (A-GPS) and predicted GPS (P-GPS).
+It can determine device location from cellular and Wi-Fi network information sent by the device.
+
+Additionally, nRF Cloud allows devices to report data to the cloud for collection and analysis later.
 To read more about nRF Cloud, see the `nRF Cloud`_ website and the `nRF Cloud documentation`_.
 
 You can use the services offered by nRF Cloud in the following scenarios:
