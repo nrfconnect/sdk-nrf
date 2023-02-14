@@ -42,8 +42,29 @@ def add_projects_arg(parser: argparse.ArgumentParser) -> None:
     parser.add_argument('projects', metavar='PROJECT', nargs='*',
                         help='projects (by name or path) to operate on')
 
+def repo_analyzer(ncs_project: Project,
+                  ncs_sha: str,
+                  upstream_project: Project,
+                  upstream_sha: str) -> nwh.RepoAnalyzer:
+    upstream_repository = to_repository(upstream_project, upstream_sha)
+    upstream_repository.name = to_ncs_name(upstream_project)
+
+    return nwh.RepoAnalyzer(to_repository(ncs_project, ncs_sha),
+                            upstream_repository)
+
+def to_repository(project: Project, sha: str) -> nwh.Repository:
+    # Converts west.manifest.Project to the more abstract format
+    # expected by ncs_west_helpers.
+
+    assert project.abspath
+    return nwh.Repository(name=project.name,
+                          path=project.path,
+                          abspath=project.abspath,
+                          url=project.url,
+                          sha=sha)
+
 def likely_merged(np: Project, zp: Project, nsha: str, zsha: str) -> None:
-    analyzer = nwh.RepoAnalyzer(np, zp, nsha, zsha)
+    analyzer = repo_analyzer(np, nsha, zp, zsha)
     likely_merged = analyzer.likely_merged
     if likely_merged:
         # likely_merged is a map from downstream commits to
@@ -262,7 +283,8 @@ class NcsLoot(NcsWestCommand):
             return
 
         try:
-            analyzer = nwh.RepoAnalyzer(project, z_project, n_rev, z_rev)
+            analyzer = repo_analyzer(project, nsha,
+                                     z_project, zsha)
         except nwh.InvalidRepositoryError as ire:
             log.die(f"{name_path}: {str(ire)}")
 
@@ -536,7 +558,8 @@ class NcsUpmerger(NcsWestCommand):
             return
 
         try:
-            analyzer = nwh.RepoAnalyzer(project, z_project, n_sha, z_sha)
+            analyzer = repo_analyzer(project, n_sha,
+                                     z_project, z_sha)
         except nwh.InvalidRepositoryError as ire:
             log.die(f"{project.name_and_path}: {str(ire)}")
 

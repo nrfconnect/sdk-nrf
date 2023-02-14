@@ -11,7 +11,9 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
+import subprocess
 import sys
 import textwrap
 from typing import Union, Iterable
@@ -24,7 +26,6 @@ except ImportError:
              "Please install packages in nrf/scripts/requirements-extra.txt "
              "with pip3.")
 from west import log
-from west.manifest import Project
 
 from pygit2_helpers import title_is_revert, title_has_sauce, \
     title_no_sauce, commit_reverts_what, commit_title
@@ -45,15 +46,34 @@ class UnknownCommitsError(RuntimeError):
 # Repository analysis
 #
 
+@dataclass
+class Repository:
+    '''Representation for a git repository on a local file system,
+    and associated metadata that we want to include in an analysis.
+
+    This is not the same thing as a pygit2.Repository.'''
+
+    name: str
+    path: str
+    abspath: str
+    url: str
+    sha: str
+
+def _run_git(repo: Repository, command: list[str],
+             check=True) -> subprocess.CompletedProcess:
+    return subprocess.run(['git'] + command,
+                          capture_output=True,
+                          text=True,
+                          cwd=repo.abspath,
+                          check=check)
+
 class RepoAnalyzer:
     '''Utility class for analyzing a repository, especially
     upstream/downstream differences.'''
 
     def __init__(self,
-                 downstream_project: Project,
-                 upstream_project: Project,
-                 downstream_ref: str,
-                 upstream_ref: str,
+                 downstream_repo: Repository,
+                 upstream_repo: Repository,
                  downstream_domain: Union[str, tuple[str]] = '@nordicsemi.no',
                  downstream_sauce: str = 'nrf',
                  edit_dist_threshold: int = 3,
@@ -79,13 +99,12 @@ class RepoAnalyzer:
                                  outstanding patches
         '''
 
-        self._dp: Project = downstream_project
-        self._dr: str = downstream_ref
-        self._up: Project = upstream_project
-        self._ur: str = upstream_ref
-        assert self._dp.path == self._up.path
-        assert self._dp.abspath
-        self._repo: pygit2.Repository = _load_repo(self._dp.abspath)
+        self.downstream_repo: Repository = downstream_repo
+        self.upstream_repo: Repository = upstream_repo
+        assert Path(self.downstream_repo.path).resolve() == \
+            Path(self.upstream_repo.path).resolve()
+        self._pygit2_repo: pygit2.Repository = \
+            _load_repo(self.downstream_repo.abspath)
         self._downstream_sauce: list[str] = _to_list(downstream_sauce)
         self._downstream_domain: list[str] = _to_list(downstream_domain)
         self._edit_dist_threshold: int = edit_dist_threshold
@@ -142,25 +161,19 @@ class RepoAnalyzer:
     def _new_upstream_only_commits(self) -> list[pygit2.Commit]:
         '''Commits in `upstream_ref` history since merge base with
         `downstream_ref`'''
+        downstream_sha = self.downstream_repo.sha
+        upstream_sha = self.upstream_repo.sha
         try:
-            doid = self._repo.revparse_single(self._dr + '^{commit}').oid
-        except KeyError:
-            raise UnknownCommitsError(self._dr)
-        try:
-            uoid = self._repo.revparse_single(self._ur + '^{commit}').oid
-        except KeyError:
-            raise UnknownCommitsError(self._ur)
-
-        try:
-            merge_base = self._repo.merge_base(doid, uoid)
+            merge_base = self._pygit2_repo.merge_base(downstream_sha,
+                                                      upstream_sha)
         except ValueError:
-            log.wrn("can't get merge base;",
-                    "downstream SHA: {}, upstream SHA: {}".
-                    format(doid, uoid))
+            log.wrn("can't get merge base; "
+                    f"downstream SHA: {downstream_sha}, "
+                    f"upstream SHA: {upstream_sha}")
             raise
 
         sort = pygit2.GIT_SORT_TOPOLOGICAL | pygit2.GIT_SORT_REVERSE
-        walker = self._repo.walk(uoid, sort)
+        walker = self._pygit2_repo.walk(upstream_sha, sort)
         walker.hide(merge_base)
         return list(walker)
 
@@ -169,26 +182,29 @@ class RepoAnalyzer:
         # downstream patches.
 
         # Convert downstream and upstream revisions to SHAs.
-        dsha = self._dp.sha(self._dr)
-        usha = self._up.sha(self._ur)
+        downstream_sha = self.downstream_repo.sha
+        upstream_sha = self.upstream_repo.sha
 
         # First, get a list of all downstream OOT patches. Note:
         # pygit2 doesn't seem to have any ready-made rev-list
-        # equivalent, so call out to Project.git() to get the commit
+        # equivalent, so call out to git to get the commit
         # SHAs, then wrap them with pygit2 objects.
-        cp = self._dp.git('rev-list --reverse {} ^{}'.format(dsha, usha),
-                          capture_stdout=True)
+        cp = _run_git(self.downstream_repo,
+                      ['rev-list',
+                       '--reverse',
+                       downstream_sha,
+                       f'^{upstream_sha}'])
         if not cp.stdout.strip():
             return []
-        commit_shas = cp.stdout.decode('utf-8').strip().splitlines()
-        all_downstream_oot = [self._repo.revparse_single(c)
-                              for c in commit_shas]
+        commit_shas = cp.stdout.strip().splitlines()
+        all_downstream_oot: list[pygit2.Commit] = [
+            self._pygit2_repo.revparse_single(c)
+            for c in commit_shas]
 
         # Now filter out reverted patches and mergeups from the
         # complete list of OOT patches.
         downstream_out: dict[str, pygit2.Commit] = {}
         for c in all_downstream_oot:
-            assert isinstance(c, pygit2.Commit)
             sha, sl = str(c.oid), commit_title(c)
             is_revert = title_is_revert(sl)  # this is just a heuristic
 
@@ -216,7 +232,7 @@ class RepoAnalyzer:
 
                 # Temporary workaround for any commit(s) that are known
                 # to specify incorrect SHAs of the commits they revert.
-                if self._dp.name == 'trusted-firmware-m':
+                if self.downstream_repo.name == 'trusted-firmware-m':
                     if rsha == '74ebcb636cb39b498a2ac05f7587f8ee9158bba9':
                         rsha = 'af7b2f48e88bd3f260347138f87e5c4f7819b273'
 
@@ -231,9 +247,10 @@ class RepoAnalyzer:
                     # (It might not be in all_downstream_oot if e.g.
                     # downstream reverts an upstream patch as a hotfix, and we
                     # shouldn't warn about that.)
-                    is_ancestor = self._dp.git(
-                        'merge-base --is-ancestor {} {}'.format(rsha, dsha),
-                        capture_stdout=True).returncode == 0
+                    is_ancestor = _run_git(
+                        self.downstream_repo,
+                        ['merge-base', '--is-ancestor', rsha, downstream_sha],
+                        check=False).returncode == 0
                     if not is_ancestor:
                         log.wrn(('commit {} ("{}") reverts {}, '
                                  "which isn't in downstream history").
@@ -245,7 +262,8 @@ class RepoAnalyzer:
             # warn about.)
             if (not title_has_sauce(sl, self._downstream_sauce) and
                     not is_revert):
-                log.wrn(f'{self._dp.name}: bad or missing sauce tag: {sha} ("{sl}")')
+                log.wrn(f'{self.downstream_repo.name}: bad or missing sauce tag: '
+                        f'{sha} ("{sl}")')
 
             downstream_out[sha] = c
             log.dbg('** added oot patch: {} ("{}")'.format(sha, sl),
