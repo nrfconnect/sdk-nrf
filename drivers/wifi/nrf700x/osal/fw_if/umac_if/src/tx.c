@@ -975,7 +975,8 @@ enum wifi_nrf_status tx_done_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	pkts_pending = tx_buff_req_free(fmac_dev_ctx, config->tx_desc_num, &queue);
 
 	if (pkts_pending) {
-		if (!fpriv->twt_sleep_status) {
+		if (fmac_dev_ctx->twt_sleep_status ==
+		    WIFI_NRF_FMAC_TWT_STATE_AWAKE) {
 
 			pkt_info = &fmac_dev_ctx->tx_config.pkt_info_p[desc];
 
@@ -1065,7 +1066,8 @@ enum wifi_nrf_status wifi_nrf_fmac_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx
 	}
 
 
-	if (fpriv->twt_sleep_status) {
+	if (fmac_dev_ctx->twt_sleep_status ==
+	    WIFI_NRF_FMAC_TWT_STATE_SLEEP) {
 		goto out;
 	}
 
@@ -1314,7 +1316,7 @@ enum wifi_nrf_status tx_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 		goto out;
 	}
 
-	fmac_dev_ctx->fpriv->twt_sleep_status  = false;
+	fmac_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_AWAKE;
 
 	status = WIFI_NRF_STATUS_SUCCESS;
 out:
