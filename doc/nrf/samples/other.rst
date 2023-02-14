@@ -13,6 +13,5 @@ Other samples
    ../../../samples/ipc/*/README
    ../../../samples/keys/*/README
    ../../../samples/mpsl/*/README
-   ../../../samples/net/*/README
    ../../../samples/peripheral/*/README
    ../../../samples/sensor/*/README
