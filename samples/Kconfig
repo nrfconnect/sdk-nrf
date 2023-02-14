@@ -130,4 +130,4 @@ config NCS_MCUBOOT_IN_BUILD
 
 endmenu
 
-rsource "Kconfig.mcumgr_bt_ota_dfu"
+rsource "common/Kconfig"
