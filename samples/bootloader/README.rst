@@ -207,14 +207,16 @@ A non-volatile *monotonic counter* can be stored in the *Provision* area and is 
 
 Counter updates are written to slots in the *Provision* area, with each new counter update occupying a new slot.
 For this reason, the number of counter updates, and therefore firmware version updates, is limited.
-Enable the counter with the :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER` option.
 
-The supported number of updates depends on the size of the *Provision* area and how much of that area is taken up by other features, like public key hashes.
-See option :kconfig:option:`CONFIG_SB_NUM_VER_COUNTER_SLOTS` for more details.
+Using a counter is optional and can be configured for the application using configuration options.
+You can also configure the supported number of updates, but the number is limited by the size of the *Provision* area and how much of that area is taken up by other features, like public key hashes.
+In addition, you can configure what firmware version of the image you want to boot.
 
-To set the firmware version for an image, build it using the :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` option set appropriately.
+For NSIB, the configuration options are :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER`, :kconfig:option:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`, and :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION`.
 
-To set options for child images, such as MCUBoot, see the :ref:`ug_multi_image_variables` section.
+For MCUboot, the configuration options are :kconfig:option:`CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`, :kconfig:option:`CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS`, and :kconfig:option:`MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE`.
+
+To set options for child images, such as NSIB and MCUboot, see the :ref:`ug_multi_image_variables` section.
 
 .. bootloader_monotonic_counter_end
 

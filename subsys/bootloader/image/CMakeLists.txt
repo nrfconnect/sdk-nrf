@@ -38,5 +38,3 @@ if (image_to_boot)
 else()
   assert(CONFIG_FW_INFO "CONFIG_FW_INFO must be set")
 endif()
-
-include(../cmake/provision_hex.cmake)

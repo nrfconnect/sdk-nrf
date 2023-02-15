@@ -31,6 +31,14 @@ config SECURE_BOOT
 	  Set this option to enable the first stage bootloader which
 	  verifies the signature of the app.
 
+config BOOTLOADER_PROVISION_HEX
+	bool
+	default y if SECURE_BOOT
+	default y if MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
+	help
+	  Generate provision.hex if NSIB is enabled or if MCUboot hardware
+	  counters are enabled.
+
 if SECURE_BOOT
 
 module=B0
@@ -139,6 +147,7 @@ config SB_MONOTONIC_COUNTER
 
 config SB_NUM_VER_COUNTER_SLOTS
 	int "Number of monotonic counter slots used for the firmware version"
+	default 20 if BOOTLOADER_MCUBOOT
 	default 240
 	range 2 300 if SOC_NRF5340_CPUAPP || SOC_NRF9160
 	range 2 1800 if SOC_SERIES_NRF52X
@@ -151,7 +160,10 @@ config SB_NUM_VER_COUNTER_SLOTS
 	  number to ensure that the total size of header and slots is aligned on a 32-bit word.
 	  Rationale for the default number (240): Assume one update a month for
 	  10 years, then double that value just in case. This default fits
-	  comfortably within the "OTP" region of UICR.
+	  comfortably within the OTP region of UICR.
+	  When a second stage bootloader is enabled, such as MCUboot, this counter is used
+	  for the updates of the second stage bootloader and not of the application image. Thus
+	  the default when MCUboot is enabled is 20, to allow two updates a year for 10 years.
 	  Regarding ranges: The actual maximum depends on the number of
 	  provisioned public keys, since they share the space. The same is true if
 	  other data is stored in the "OTP" region (on for example nRF91 and nRF53).

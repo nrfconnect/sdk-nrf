@@ -13,6 +13,10 @@ add_subdirectory_ifdef(CONFIG_SECURE_BOOT_CRYPTO bootloader/bl_crypto)
 add_subdirectory_ifdef(CONFIG_SECURE_BOOT_VALIDATION bootloader/bl_validation)
 add_subdirectory_ifdef(CONFIG_SECURE_BOOT_STORAGE bootloader/bl_storage)
 
+if(CONFIG_BOOTLOADER_PROVISION_HEX)
+  include(bootloader/cmake/provision_hex.cmake)
+endif()
+
 add_subdirectory(net)
 add_subdirectory_ifdef(CONFIG_ESB		esb)
 add_subdirectory_ifdef(CONFIG_APP_EVENT_MANAGER	app_event_manager)
