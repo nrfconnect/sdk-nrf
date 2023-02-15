@@ -145,6 +145,7 @@ Sink modules for module_state_event
 
 * :ref:`nrf_desktop_board`
 * :ref:`nrf_desktop_failsafe`
+* :ref:`nrf_desktop_hids`
 * :ref:`nrf_desktop_nrf_profiler_sync`
 * :ref:`nrf_desktop_watchdog`
 * :ref:`nrf_desktop_bas`
@@ -170,7 +171,6 @@ Sink modules for module_state_event
 * :ref:`nrf_desktop_hfclk_lock`
 * :ref:`nrf_desktop_hid_forward`
 * :ref:`nrf_desktop_hid_state`
-* :ref:`nrf_desktop_hids`
 * :ref:`nrf_desktop_info`
 * :ref:`nrf_desktop_led_state`
 * :ref:`nrf_desktop_led_stream`
