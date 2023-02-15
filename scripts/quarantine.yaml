@@ -45,3 +45,9 @@
   platforms:
     - all
   comment: "Disable building selected Matter samples to limit resources usage"
+
+- scenarios:
+    - sample.hw_id.ble
+  platforms:
+    - nrf51dk_nrf51422
+  comment: "nRF51 SoC is not supported, see NCSDK-19772"
