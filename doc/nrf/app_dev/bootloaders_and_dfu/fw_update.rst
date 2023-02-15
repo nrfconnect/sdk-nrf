@@ -282,13 +282,20 @@ See :ref:`ug_bootloader_adding_presigned_variants` for details.
 Using MCUboot
 =============
 
-Currently, the |NCS| supports only *semantic versioning* for all the applications verified by MCUboot.
+MCUboot supports two different implementations of downgrade protection:
 
-.. note::
-   Within the |NCS| framework, specifying this semantic version for an application serves no purpose and does not prevent downgrades from normal firmware updates.
+* Software-based prevention, where the current version can be encoded into the currently active image.
+* Hardware-based prevention, where the current version can be encoded into a non-volatile storage partition outside of any image.
 
-   To prevent downgrades from firmware upgrades in the field, see :ref:`ug_fw_update_image_versions_mcuboot_downgrade`.
-   See also the Kconfig documentation for the ``CONFIG_MCUBOOT_IMAGE_VERSION`` option for more details about its use within the |NCS|.
+.. _ug_fw_update_image_versions_mcuboot_downgrade:
+
+Software-based downgrade prevention
+-----------------------------------
+
+The |NCS| supports MCUboot's software-based downgrade prevention for application images, using semantic versioning.
+This feature offers protection against any outdated firmware that is uploaded to a device.
+
+You can enable this feature by setting the configuration options ``CONFIG_MCUBOOT_DOWNGRADE_PREVENTION`` and ``CONFIG_BOOT_UPGRADE_ONLY`` for the MCUboot image.
 
 To assign a semantic version number to your application, pass the version string into the ``CONFIG_MCUBOOT_IMAGE_VERSION`` option for the application:
 
@@ -297,16 +304,6 @@ To assign a semantic version number to your application, pass the version string
    CONFIG_MCUBOOT_IMAGE_VERSION="0.1.2+3"
 
 See the `Semantic versioning`_ webpage or :doc:`mcuboot:imgtool` for details on version syntax.
-
-.. _ug_fw_update_image_versions_mcuboot_downgrade:
-
-Preventing downgrades using MCUboot
------------------------------------
-
-The |NCS| supports MCUboot's software-based downgrade prevention for application images, using semantic versioning.
-This feature offers protection against any outdated firmware that is uploaded to a device.
-
-You can enable this feature by setting the ``CONFIG_MCUBOOT_DOWNGRADE_PREVENTION`` and ``CONFIG_BOOT_UPGRADE_ONLY`` options for the MCUboot image.
 
 .. warning::
 
@@ -333,6 +330,13 @@ If this image has, in order of precedence, a *major*, *minor*, or *revision* val
 
    The optional label or build number specified after the ``+`` character is ignored when evaluating the version.
    An existing application image with version ``0.1.2+3`` can be overwritten by an uploaded image with ``0.1.2+2``, but not by one with ``0.1.1+2``.
+
+Hardware-based downgrade prevention
+-----------------------------------
+
+Hardware-based downgrade prevention is implemented with a counter value stored in the *provision* partition of the non-volatile storage.
+
+See the :ref:`bootloader_monotonic_counter` section for how to enable and configure this feature.
 
 .. _ug_fw_mcuboot_output:
 

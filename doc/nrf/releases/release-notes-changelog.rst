@@ -312,7 +312,7 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-|no_changes_yet_note|
+* Added support for the downgrade prevention feature using hardware security counters (:kconfig:option:`MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`).
 
 Zephyr
 ======

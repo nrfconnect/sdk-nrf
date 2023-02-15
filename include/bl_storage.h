@@ -36,6 +36,12 @@ extern "C" {
 /* Counter used by NSIB to check the firmware version */
 #define BL_MONOTONIC_COUNTERS_DESC_NSIB 0x1
 
+/* Counter used by MCUBOOT to check the firmware version. Suffixed
+ * with ID0 as we might support checking the version of multiple
+ * images in the future.
+ */
+#define BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0 0x2
+
 /** Storage for the PRoT Security Lifecycle state, that consists of 4 states:
  *  - Device assembly and test
  *  - PRoT Provisioning

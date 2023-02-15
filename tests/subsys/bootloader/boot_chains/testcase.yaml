@@ -27,3 +27,7 @@ tests:
     platform_allow:
       nrf5340dk_nrf5340_cpuapp_ns
       nrf9160dk_nrf9160_ns
+  boot_chains.bootloader_mcuboot_and_nv_counters:
+    extra_args:
+      CONFIG_BOOTLOADER_MCUBOOT=y
+      CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION=y

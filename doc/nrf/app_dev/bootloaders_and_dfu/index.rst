@@ -57,7 +57,7 @@ You can find an overview of currently supported bootloaders in the table below:
      - No
      - Yes
      - Yes
-     - :ref:`Semantic (SW) <ug_fw_update_image_versions_mcuboot>`
+     - :ref:`Monotonic (HW) <bootloader_monotonic_counter>`, :ref:`Semantic (SW) <ug_fw_update_image_versions_mcuboot>`
      - Image swap - single primary
        Dual-slot direct-xip
 
