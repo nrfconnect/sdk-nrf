@@ -13,10 +13,10 @@ For detailed information about supported functionalities, see the official `Fast
 
 .. note::
    The Fast Pair support in the |NCS| is :ref:`experimental <software_maturity>`.
-   The implementation is not yet ready for production and extensions are not supported.
+   The implementation is not yet ready for production and extensions are not fully supported.
 
-   The implementation does not pass end-to-end integration tests in the Fast Pair Validator.
-   The procedure triggered in Android settings is successful (tested with Android 10).
+   The implementation passes Fast Pair Validator (beta version) tests.
+   The procedure triggered in Android settings is successful (tested with Android 11).
 
 .. _ug_integrating_fast_pair:
 
