@@ -931,7 +931,7 @@ int qspi_RDSR2(const struct device *dev, uint8_t *rdsr2)
 int qspi_validate_rpu_wake_writecmd(const struct device *dev)
 {
 	int ret = 0;
-	uint8_t rdsr2;
+	uint8_t rdsr2 = 0;
 
 	for (int ii = 0; ii < 1; ii++) {
 		ret = qspi_RDSR2(dev, &rdsr2);
