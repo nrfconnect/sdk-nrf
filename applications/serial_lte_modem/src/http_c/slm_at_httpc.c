@@ -504,6 +504,7 @@ static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
 	}
 
 	LOG_INF("HTTP thread terminated");
+	httpc.state = HTTPC_INIT;
 }
 
 #define HTTP_CRLF_STR "\\r\\n"
@@ -572,6 +573,11 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
+		if (httpc.state > HTTPC_INIT) {
+			LOG_ERR("Previous HTTP request is not finished");
+			return -EEXIST;
+		}
+
 		memset(data_buf, 0, sizeof(data_buf));
 		/* Get method string */
 		size = HTTPC_METHOD_LEN;

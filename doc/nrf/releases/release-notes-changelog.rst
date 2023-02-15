@@ -266,6 +266,10 @@ nRF9160: Serial LTE modem
   * The response for the ``#XDFUGET`` command, using unsolicited notification to report download progress.
   * The ``#XSLMVER`` command to report the versions of both the |NCS| and the modem library.
 
+* Fixed:
+
+  * Fixed multiple http_request causing UsageFault when closing socket.
+
 nRF5340 Audio
 -------------
 
