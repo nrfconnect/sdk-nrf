@@ -70,6 +70,7 @@ extern struct at_param_list at_param_list;
 extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 
 static struct k_thread httpc_thread;
+static bool httpc_in_thread;
 #define HTTPC_THREAD_STACK_SIZE       KB(2)
 #define HTTPC_THREAD_PRIORITY         K_LOWEST_APPLICATION_THREAD_PRIO
 static K_THREAD_STACK_DEFINE(httpc_thread_stack, HTTPC_THREAD_STACK_SIZE);
@@ -507,6 +508,7 @@ static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
 {
 	int err;
 
+	httpc_in_thread = true;
 	err = do_http_request();
 	(void)exit_datamode(DATAMODE_EXIT_URC);
 	if (err < 0) {
@@ -519,6 +521,7 @@ static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
 	}
 
 	LOG_INF("HTTP thread terminated");
+	httpc_in_thread = false;
 }
 
 #define HTTP_CRLF_STR "\\r\\n"
@@ -587,6 +590,11 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
+		if (httpc_in_thread) {
+			LOG_ERR("Previous HTTP request is not finished");
+			return -EEXIST;
+		}
+
 		memset(data_buf, 0, sizeof(data_buf));
 		/* Get method string */
 		size = HTTPC_METHOD_LEN;
@@ -676,6 +684,7 @@ int slm_at_httpc_init(void)
 	httpc.content_length = 0;
 	httpc.chunked_transfer = false;
 	httpc.total_sent = 0;
+	httpc_in_thread = false;
 
 	return 0;
 }
