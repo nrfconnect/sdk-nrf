@@ -15,6 +15,7 @@
     - sample.app_event_manager_shell.native_posix
     - sample.caf_sensor_manager.correctness_test
     - sample.edge_impulse.wrapper
+    - sample.net.mqtt.native_posix.tls
   platforms:
     - native_posix
     - qemu_cortex_m3
