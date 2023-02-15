@@ -17,7 +17,7 @@ from typing import Any, NamedTuple, Optional, TYPE_CHECKING
 from west import log
 from west.commands import WestCommand
 from west.manifest import Manifest, MalformedManifest, ImportFlag, \
-    MANIFEST_PROJECT_INDEX, Project
+    MANIFEST_PROJECT_INDEX, Project, QUAL_MANIFEST_REV_BRANCH
 from west.version import __version__ as west_version
 import yaml
 
@@ -88,24 +88,25 @@ def to_repository(project: Project, sha: str) -> nwh.Repository:
                           url=project.url,
                           sha=sha)
 
-def likely_merged(np: Project, zp: Project, nsha: str, zsha: str) -> None:
-    analyzer = repo_analyzer(np, nsha, zp, zsha)
+def print_likely_merged(downstream_repo: nwh.Repository,
+                        upstream_repo: nwh.Repository) -> None:
+    analyzer = nwh.RepoAnalyzer(downstream_repo, upstream_repo)
     likely_merged = analyzer.likely_merged
     if likely_merged:
         # likely_merged is a map from downstream commits to
         # lists of upstream commits that look similar.
         log.msg('downstream patches which are likely merged upstream',
                 '(revert these if appropriate):', color=log.WRN_COLOR)
-        for dc, ucs in likely_merged.items():
-            if len(ucs) == 1:
-                log.inf(f'- {dc.oid} {commit_title(dc)}')
+        for downstream_commit, upstream_commits in likely_merged.items():
+            if len(upstream_commits) == 1:
+                log.inf(f'- {downstream_commit.oid} {commit_title(downstream_commit)}')
                 log.inf(f'  Similar upstream title:\n'
-                        f'  {ucs[0].oid} {commit_title(ucs[0])}')
+                        f'  {upstream_commits[0].oid} {commit_title(upstream_commits[0])}')
             else:
-                log.inf(f'- {dc.oid} {commit_title(dc)}\n'
+                log.inf(f'- {downstream_commit.oid} {commit_title(downstream_commit)}\n'
                         '  Similar upstream titles:')
-                for i, uc in enumerate(ucs, start=1):
-                    log.inf(f'    {i}. {uc.oid} {commit_title(uc)}')
+                for i, upstream_commit in enumerate(upstream_commits, start=1):
+                    log.inf(f'    {i}. {upstream_commit.oid} {commit_title(upstream_commit)}')
     else:
         log.dbg('no downstream patches seem to have been merged upstream')
 
@@ -415,6 +416,10 @@ class NcsCompare(NcsWestCommand):
             formatter_class=argparse.RawDescriptionHelpFormatter,
             description=self.description)
         add_zephyr_rev_arg(parser)
+        parser.add_argument('--all', action='store_true',
+                            help='''compare all projects possible, including
+                            those with 'compare-by-default: false' in their
+                            NCS userdata''')
         return parser
 
     def do_run(self, args: argparse.Namespace,
@@ -443,24 +448,24 @@ class NcsCompare(NcsWestCommand):
         present_allowed = []
         missing_blocked = []
         missing_allowed = []
-        for zp in self.z_pmap.values():
-            nn = to_ncs_name(zp)
-            present = nn in self.ncs_pmap
-            blocked = Path(zp.path) in _BLOCKED_PROJECTS
+        for zephyr_project in self.z_pmap.values():
+            ncs_name = to_ncs_name(zephyr_project)
+            present = ncs_name in self.ncs_pmap
+            blocked = Path(zephyr_project.path) in _BLOCKED_PROJECTS
             if present:
                 if blocked:
-                    present_blocked.append(zp)
+                    present_blocked.append(zephyr_project)
                 else:
-                    present_allowed.append(zp)
+                    present_allowed.append(zephyr_project)
             else:
                 if blocked:
-                    missing_blocked.append(zp)
+                    missing_blocked.append(zephyr_project)
                 else:
-                    missing_allowed.append(zp)
+                    missing_allowed.append(zephyr_project)
 
         def print_lst(projects):
-            for p in projects:
-                log.inf(f'{p.name_and_path}')
+            for project in projects:
+                log.inf(f'{project.name_and_path}')
 
         if missing_blocked and log.VERBOSE >= log.VERBOSE_NORMAL:
             log.banner('blocked zephyr projects',
@@ -486,76 +491,127 @@ class NcsCompare(NcsWestCommand):
                 f"{west_yml}\n"
                 f"    4. run west {self.name} again to check your work\n"
                 f"  To block: edit _BLOCKED_PROJECTS in {__file__}")
-            for p in missing_allowed:
-                log.small_banner(f'{p.name_and_path}:')
-                log.inf(f'upstream revision: {p.revision}')
-                log.inf(f'upstream URL: {p.url}')
+            for project in missing_allowed:
+                log.small_banner(f'{project.name_and_path}:')
+                log.inf(f'upstream revision: {project.revision}')
+                log.inf(f'upstream URL: {project.url}')
         else:
             log.inf('none (OK)')
 
         if present_allowed:
             log.banner('projects in both zephyr and NCS:')
-            for zp in present_allowed:
-                # Do some extra checking on unmerged commits.
-                self.allowed_project(zp)
+            for zephyr_project in present_allowed:
+                ncs_project = self.ncs_pmap[to_ncs_name(zephyr_project)]
+                if ncs_project.userdata is not None:
+                    log.small_banner(f'{ncs_project.name_and_path}:')
+                    log.inf('This project has a custom upstream specified via '
+                            'userdata in nrf/west.yml; see below output for '
+                            'details')
+                    continue
+
+                if ncs_project.name == 'zephyr':
+                    upstream_url = _UPSTREAM_ZEPHYR_URL
+                    upstream_revision = self.zephyr_rev
+                else:
+                    upstream_url = zephyr_project.url
+                    upstream_revision = zephyr_project.revision
+
+                self.compare_project_with_upstream(ncs_project,
+                                                   upstream_url,
+                                                   upstream_revision)
+
+        log.banner('NCS projects with upstreams specified via userdata:')
+        projects_with_userdata = [project for project in ncs_only_projects
+                                  if project.userdata]
+        any_needs_update = False
+        for ncs_project in projects_with_userdata:
+            userdata = ncs_userdata(ncs_project)
+            assert userdata
+            if args.all or userdata.compare_by_default:
+                needs_update = self.compare_project_with_upstream(
+                    ncs_project,
+                    userdata.upstream_url,
+                    userdata.upstream_sha)
+                if needs_update:
+                    any_needs_update = True
+        if not any_needs_update:
+            log.inf('Everything is up to date or ahead of its upstream-sha.')
 
         if log.VERBOSE <= log.VERBOSE_NONE:
             log.inf('\nNote: verbose output was omitted,',
                     'use "west -v ncs-compare" for more details.')
 
-    def allowed_project(self, zp: Project) -> None:
-        nn = to_ncs_name(zp)
-        np = self.ncs_pmap[nn]
+    def compare_project_with_upstream(
+            self,
+            ncs_project: Project,
+            upstream_url: str,
+            upstream_revision: str
+    ) -> bool:
+        '''Compare the NCS version of a project with its upstream
+        counterpart.
+
+        Returns True if the project comparison means it needs, or may
+        need, an update. I.e., returns True if the project is behind
+        its upstream counterpart or has diverged from it, or if the
+        comparison failed due to missing data.
+        '''
+
         # is_imported is true if we imported this project from the
         # zephyr manifest rather than defining it directly ourselves
-        # in nrf/west.yml.
-        is_imported = nn in self.imported_pmap
+        # in nrf/west.yml. This is important because imported projects
+        # are basically always updated by upmerging zephyr itself and
+        # automatically getting the new revision in the updated
+        # zephyr/west.yml.
+        is_imported = ncs_project.name in self.imported_pmap
         imported = ', imported from zephyr' if is_imported else ''
-        banner = f'{nn} ({zp.path}){imported}:'
+        banner = f'{ncs_project.name} ({ncs_project.path}){imported}:'
+        ncs_sha = self.checked_sha(ncs_project, QUAL_MANIFEST_REV_BRANCH)
+        upstream_sha = self.checked_sha(ncs_project, upstream_revision)
 
-        nrev = 'refs/heads/manifest-rev'
-        if np.name == 'zephyr':
-            zrev = self.zephyr_sha
-        else:
-            zrev = zp.revision
-
-        nsha = self.checked_sha(np, nrev)
-        zsha = self.checked_sha(zp, zrev)
-
-        if not np.is_cloned() or nsha is None or zsha is None:
+        if not ncs_project.is_cloned() or ncs_sha is None or upstream_sha is None:
             log.small_banner(banner)
-            if not np.is_cloned():
+            if not ncs_project.is_cloned():
                 log.wrn('project is not cloned; please run "west update"')
-            elif nsha is None:
-                log.wrn(f"can't compare; please run \"west update {nn}\" "
-                        f'(need revision {np.revision})')
-            elif zsha is None:
-                log.wrn(f"can't compare; please fetch upstream URL {zp.url} "
-                        f'(need revision {zp.revision})')
-            return
+            elif ncs_sha is None:
+                log.wrn(f"can't compare; please run \"west update {ncs_project.name}\" "
+                        f'(need revision {ncs_project.revision})')
+            elif upstream_sha is None:
+                log.wrn(f"can't compare; please fetch upstream URL {upstream_url} "
+                        f'(need revision {upstream_revision})')
+            return True
 
-        cp = np.git(f'rev-list --left-right --count {zsha}...{nsha}',
-                    capture_stdout=True)
-        behind, ahead = [int(c) for c in cp.stdout.split()]
+        patch_counts = ncs_project.git(
+            f'rev-list --left-right --count {upstream_sha}...{ncs_sha}',
+            capture_stdout=True).stdout.split()
+        behind, ahead = [int(c) for c in patch_counts]
 
-        if zsha == nsha:
+        if upstream_sha == ncs_sha:
             status = 'up to date'
         elif ahead and not behind:
             status = f'ahead by {ahead} commit' + ("s" if ahead > 1 else "")
-        elif np.is_ancestor_of(nsha, zsha):
+        elif ncs_project.is_ancestor_of(ncs_sha, upstream_sha):
             status = f'behind by {behind} commit' + ("s" if behind > 1 else "")
         else:
             status = f'diverged: {ahead} ahead, {behind} behind'
+        up_or_ahead = 'up to date' in status or 'ahead by' in status
 
-        commits = (f'     NCS commit: {nsha}\n'
-                   f'upstream commit: {zsha}')
-        if 'up to date' in status or 'ahead by' in status:
+        commits = (f'     NCS commit: {ncs_sha}\n'
+                   f'   upstream URL: {upstream_url}\n'
+                   f'upstream commit: {upstream_sha}')
+        ncs_repo = to_repository(ncs_project, ncs_sha)
+        assert ncs_project.abspath
+        upstream_repo = nwh.Repository(name=ncs_project.name,
+                                       path=ncs_project.path,
+                                       abspath=ncs_project.abspath,
+                                       url=upstream_url,
+                                       sha=upstream_sha)
+        if up_or_ahead:
             if log.VERBOSE > log.VERBOSE_NONE:
                 # Up to date or ahead: only print in verbose mode.
                 log.small_banner(banner)
                 log.inf(commits)
                 log.inf(status)
-                likely_merged(np, zp, nsha, zsha)
+                print_likely_merged(ncs_repo, upstream_repo)
         else:
             # Behind or diverged: always print.
             if is_imported and 'behind by' in status:
@@ -564,7 +620,9 @@ class NcsCompare(NcsWestCommand):
             log.small_banner(banner)
             log.inf(commits)
             log.msg(status, color=log.WRN_COLOR)
-            likely_merged(np, zp, nsha, zsha)
+            print_likely_merged(ncs_repo, upstream_repo)
+
+        return not up_or_ahead
 
 class NcsUpmerger(NcsWestCommand):
     def __init__(self):
