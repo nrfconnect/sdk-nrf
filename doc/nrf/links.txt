@@ -309,6 +309,9 @@
 
 .. _`Matter weather station application from the v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.1/nrf/applications/matter_weather_station/README.html
 
+.. _`CONFIG_BT_CTLR_TX_PWR_MINUS`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_MINUS
+.. _`CONFIG_BT_CTLR_TX_PWR_PLUS`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_PLUS
+
 .. ### Source: www.nordicsemi.com
 
 .. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
@@ -521,6 +524,8 @@
 .. _`SWD Select`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/programming_debugging_interface.html
 
 .. _`access port protection mechanism`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf52840%2Fdif.html&anchor=concept_udr_mns_1s
+
+.. _`Electrical specification for nRF7002`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf7002%2Fchapters%2Felspec%2Fdoc%2Felectrical_specification.html
 
 .. ### Source: academy.nordicsemi.com
 

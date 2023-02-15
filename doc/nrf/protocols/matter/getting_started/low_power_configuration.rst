@@ -3,6 +3,10 @@
 Reducing power consumption in Matter applications
 #################################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Matter protocol can be used in various device types that are designed to be battery supplied, where a low power consumption is of critical importance.
 
 There are many ways to reduce the power consumption in your application, including methods related to the adopted network technology, disabling specific modules, or configuring features meant for optimizing power consumption.
@@ -22,7 +26,7 @@ The Matter supports using Thread and Wi-Fi as the IPv6-based networking technolo
 Both of the technologies come with their own solutions for optimizing the protocol behavior in terms of power consumption.
 However, the general goal of the optimization for both is to reduce the time spent in the active state and put the device in the inactive (sleep) state whenever possible.
 Reducing the device activity time usually comes with a higher response time and a lower performance.
-When optimizing the power consumption, you must be aware of the trade-off between the power consumption and the device performance, and choose the optimal configuration for his use case.
+When optimizing the power consumption, you must be aware of the trade-off between the power consumption and the device performance, and choose the optimal configuration for your use case.
 
 Matter over Thread
 ==================
@@ -150,22 +154,4 @@ The radio transmitter power (radio TX power) has a significant impact on the dev
 The higher the transmitting power, the greater the wireless communication range, which leads to higher power consumption.
 Make sure to choose the optimal configuration for your specific use case.
 
-The radio transmitter power configuration must be modified separately for every wireless technology used in the Matter applications.
-
-Bluetooth LE
-============
-
-To change the radio TX power used by the Bluetooth LE protocol, set the :kconfig:option:`CONFIG_BT_CTLR_TX_PWR` Kconfig option to the desired value.
-However, you cannot set this config value directly, as it obtains the value from the selected ``CONFIG_BT_CTLR_TX_PWR_MINUS_<X>`` or ``CONFIG_BT_CTLR_TX_PWR_PLUS_<X>``, where *<X>* is replaced by the desired power value.
-For example, to set Bluetooth LE TX power to +5 dBM, set the :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_5` Kconfig option to ``y``.
-The configuration must be applied to both the application and the network core images in a consistent manner.
-
-Thread
-======
-
-To change the radio TX power used by the Thread protocol, set the :kconfig:option:`CONFIG_OPENTHREAD_DEFAULT_TX_POWER` to the desired value.
-
-Wi-Fi
-=====
-
-Changing TX power for the Wi-Fi protocol is currently not supported.
+See :ref:`ug_matter_gs_transmission_power` for more information.
