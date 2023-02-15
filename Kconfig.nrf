@@ -72,7 +72,7 @@ config PRIVILEGED_STACK_SIZE
 	default 2048 if ZTEST
 
 # nRF Connect SDK needs larger mcumgr buffers when supporting multi-image DFU.
-config MCUMGR_TRANSPORT_NETBUF_SIZE
+config MCUMGR_BUF_SIZE
 	default 1024 if UPDATEABLE_IMAGE_NUMBER > 1
 
 # When using HCI on the nRF5340 we need a larger command buffer.

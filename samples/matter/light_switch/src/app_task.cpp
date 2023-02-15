@@ -166,7 +166,7 @@ CHIP_ERROR AppTask::Init()
 	k_timer_user_data_set(&sDimmerPressKeyTimer, this);
 	k_timer_user_data_set(&sFunctionTimer, this);
 
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+#ifdef CONFIG_MCUMGR_SMP_BT
 	/* Initialize DFU over SMP */
 	GetDFUOverSMP().Init();
 	GetDFUOverSMP().ConfirmNewImage();
@@ -255,7 +255,7 @@ void AppTask::ButtonReleaseHandler(const AppEvent &event)
 				Instance().CancelTimer(Timer::Function);
 				Instance().mFunction = FunctionEvent::NoneSelected;
 
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+#ifdef CONFIG_MCUMGR_SMP_BT
 				GetDFUOverSMP().StartServer();
 				UpdateStatusLED();
 #else

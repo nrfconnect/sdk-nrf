@@ -18,16 +18,16 @@
 #include "macros_common.h"
 #include "channel_assignment.h"
 
-#ifdef CONFIG_MCUMGR_GRP_OS
+#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
 #include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
 #endif
-#ifdef CONFIG_MCUMGR_GRP_IMG
+#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
 #include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
 #endif
-#ifdef CONFIG_MCUMGR_GRP_STAT
+#ifdef CONFIG_MCUMGR_CMD_STAT_MGMT
 #include <zephyr/mgmt/mcumgr/grp/stat_mgmt/stat_mgmt.h>
 #endif
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+#ifdef CONFIG_MCUMGR_SMP_BT
 #include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
 #endif
 
@@ -50,16 +50,16 @@ static const struct bt_data ad_peer[] = {
 static void mcumgr_register(void)
 {
 /* Enable MCUMGR */
-#ifdef CONFIG_MCUMGR_GRP_OS
+#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
 	os_mgmt_register_group();
 #endif
-#ifdef CONFIG_MCUMGR_GRP_IMG
+#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
 	img_mgmt_register_group();
 #endif
-#ifdef CONFIG_MCUMGR_GRP_STAT
+#ifdef CONFIG_MCUMGR_CMD_STAT_MGMT
 	stat_mgmt_register_group();
 #endif
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+#ifdef CONFIG_MCUMGR_SMP_BT
 	smp_bt_register();
 #endif
 }

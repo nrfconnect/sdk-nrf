@@ -11,7 +11,7 @@
 #include <zephyr/mgmt/mcumgr/mgmt/callbacks.h>
 #include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
 #include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
-#ifdef CONFIG_MCUMGR_GRP_OS
+#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
 #include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
 #endif
 
@@ -56,7 +56,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			mgmt_callback_register(&mgmt_callback);
 			img_mgmt_register_group();
-#ifdef CONFIG_MCUMGR_GRP_OS
+#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
 			os_mgmt_register_group();
 #endif
 		} else if (check_state(event, MODULE_ID(ble_state), MODULE_STATE_READY)) {
