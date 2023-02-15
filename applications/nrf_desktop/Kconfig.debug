@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+menu "Debug configuration"
+
 config DESKTOP_LOG
 	bool "nRF Desktop logging"
 	help
@@ -188,3 +190,5 @@ config SEGGER_RTT_BUFFER_SIZE_UP
 	  in the Segger J-Link RTT libraries to enhance logging capacity.
 
 endif # DESKTOP_RTT
+
+endmenu
