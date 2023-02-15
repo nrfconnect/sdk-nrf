@@ -188,6 +188,7 @@ Kconfig*                                  @tejlmand
 /subsys/bluetooth/controller/             @rugeGerritsen
 /subsys/bluetooth/adv_prov/               @MarekPieta @kapi-no @KAGA164
 /subsys/bluetooth/services/fast_pair/     @MarekPieta @kapi-no @KAGA164
+/subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
 /subsys/bootloader/                       @hakonfam @SebastianBoe
 /subsys/caf/                              @pdunaj
 /subsys/debug/                            @nordic-krch @anangl
