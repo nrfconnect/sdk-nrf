@@ -1623,6 +1623,7 @@ These configurations support multiple bonds per Bluetooth local identity (:kconf
 You can now pair with your other hosts without putting peripheral back in pairing mode (without triggering the erase advertising).
 The nRF Desktop peripheral that integrates Fast Pair behaves as follows:
 
+  * The dongle peer does not use the Fast Pair advertising payload.
   * If the used Bluetooth local identity has no bonds, the device advertises in pairing mode, and the Fast Pair discoverable advertising is used.
     This allows to pair with the nRF Desktop device using both Fast Pair and normal Bluetooth pairing flows.
     This advertising payload is also used during the erase advertising.

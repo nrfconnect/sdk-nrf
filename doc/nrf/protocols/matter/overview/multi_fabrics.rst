@@ -12,6 +12,9 @@ Because each Matter fabric has an administrator, this allows the device to be ad
 
 This Matter feature is key for achieving Matter's smart home interoperability.
 
+This page contains conceptual information about the multiple fabrics feature in Matter.
+For an example of how this feature works with multiple ecosystems, see :ref:`ug_matter_gs_ecosystem_compatibility_testing`.
+
 Matter node in multiple fabrics
 *******************************
 

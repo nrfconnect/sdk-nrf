@@ -27,6 +27,7 @@ However, the SLM data mode is applied automatically while using the following mo
 * MQTT publish
 * HTTP request
 * GNSS nRF Cloud send message
+* LwM2M carrier library app data send
 
 Entering data mode
 ==================
@@ -50,6 +51,7 @@ Other examples:
 * ``AT#XFTP="mput",<file>``
 * ``AT#XMQTTPUB=<topic>,"",<qos>,<retain>``
 * ``AT#XNRFCLOUD=2``
+* ``AT#XCARRIER="app_data"``
 
 The SLM application sends an *OK* response when it successfully enters data mode.
 

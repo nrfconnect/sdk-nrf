@@ -13,6 +13,7 @@ The following user guides introduce important concepts to consider when developi
    app_dev/pin_control/index
    app_dev/build_and_config_system/index
    app_dev/optimizing/index
+   app_dev/ap_protect/index
    app_dev/bootloaders_and_dfu/index
    app_dev/logging/index
    app_dev/multi_image/index

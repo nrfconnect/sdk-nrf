@@ -72,7 +72,6 @@ manifest:
           - cmsis
           - edtt
           - fatfs
-          - fff
           - hal_nordic
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
           - hal_wurthelektronik
@@ -103,7 +102,7 @@ manifest:
     # changes.
     - name: sdk-hostap
       path: modules/lib/hostap
-      revision: fa53e2c5aa660199fc306eaffc5374e276139079
+      revision: 8d3f26d7da1b49815fbd0fe8335189cfac4ded85
     - name: mcuboot
       repo-path: sdk-mcuboot
       revision: 6242c860864bc6a1ed45f4f1af0e57b53cf3b858
@@ -115,7 +114,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: d8c456d422a1180a564fc276ca8b06317f5717f4
+      revision: f8eeb71cc37c6622e7b26a16a68d031ab1364159
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -123,7 +122,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 8087212c80d8c487bdc192136da5954cc7e516b8
+      revision: a1b16af4fb8ce500ddc075520e9b2f493d169902
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -145,7 +144,7 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: a8a4b468abca2514f902d47ce4d7cde56e9fe762
+      revision: 16e10a3c7bfabd435ac768cd5262982e092411d5
       groups:
         - homekit
     - name: find-my
@@ -174,7 +173,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 632b63089cd99c7984b1084bded3a00d8f450b49
+      revision: 55074652907295709f9f3361244a6e76f732bcba
     - name: ant
       repo-path: sdk-ant
       revision: 8f6e2b0470d11b5c1a97c92df35eb1350e84c5f8

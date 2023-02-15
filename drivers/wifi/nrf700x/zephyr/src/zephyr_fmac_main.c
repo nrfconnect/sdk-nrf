@@ -12,7 +12,9 @@
 #include <stdlib.h>
 
 #include <zephyr/kernel.h>
+#ifdef CONFIG_NET_L2_ETHERNET
 #include <zephyr/net/ethernet.h>
+#endif
 #include <zephyr/logging/log.h>
 #include <zephyr/net/wifi_mgmt.h>
 
@@ -413,6 +415,7 @@ static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 	.set_power_save_mode = wifi_nrf_set_power_save_mode,
 	.reg_domain = wifi_nrf_reg_domain,
 	.get_power_save_config = wifi_nrf_get_power_save_config,
+	.set_power_save_timeout = wifi_nrf_set_power_save_timeout,
 };
 
 #ifdef CONFIG_WPA_SUPP
@@ -437,7 +440,7 @@ static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 
-#ifdef CONFIG_NETWORKING
+#ifdef CONFIG_NET_L2_ETHERNET
 ETH_NET_DEVICE_INIT(wlan0, /* name - token */
 		    "wlan0", /* driver name - dev->name */
 		    wifi_nrf_drv_main_zep, /* init_fn */

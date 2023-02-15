@@ -21,7 +21,7 @@ static void system_reboot_work(struct k_work *item)
 	sys_reboot(SYS_REBOOT_WARM);
 }
 
-K_WORK_DELAYABLE_DEFINE(system_reboot, system_reboot_work);
+static K_WORK_DELAYABLE_DEFINE(system_reboot, system_reboot_work);
 
 static const char *get_error_cause(enum fota_download_error_cause cause)
 {

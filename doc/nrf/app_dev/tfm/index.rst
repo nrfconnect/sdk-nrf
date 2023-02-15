@@ -66,7 +66,7 @@ In such case, the Kconfig configurations in the Nordic Security Backend control 
 You can configure what crypto modules to include in TF-M by using the ``TFM_CRYPTO_`` Kconfig options found in file :file:`zephyr/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules`.
 
 TF-M utilizes :ref:`hardware unique keys <lib_hw_unique_key>` when the PSA Crypto key derivation APIs are used, and ``psa_key_derivation_setup`` is called with the algorithm ``TFM_CRYPTO_ALG_HUK_DERIVATION``.
-For more information about the PSA cryptography and the API, see `PSA Cryptography API 1.1`_.
+For more information about the PSA cryptography and the API, see `PSA Cryptography API 1.0.1`_.
 
 .. _tfm_minimal_build:
 

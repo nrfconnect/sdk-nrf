@@ -1766,7 +1766,6 @@ enum wifi_nrf_status wifi_nrf_hal_otp_info_get(struct wifi_nrf_hal_dev_ctx *hal_
 		goto out;
 	}
 
-#ifndef CONFIG_NRF700X_REV_A
 	status = hal_rpu_mem_read(hal_dev_ctx,
 				  otp_flags,
 				  RPU_MEM_OTP_INFO_FLAGS,
@@ -1778,7 +1777,6 @@ enum wifi_nrf_status wifi_nrf_hal_otp_info_get(struct wifi_nrf_hal_dev_ctx *hal_
 				      __func__);
 		goto out;
 	}
-#endif /* !CONFIG_NRF700X_REV_A */
 out:
 	return status;
 }

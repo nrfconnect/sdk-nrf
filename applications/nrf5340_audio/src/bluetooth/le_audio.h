@@ -9,6 +9,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/bluetooth/audio/audio.h>
+#include <audio_defines.h>
 
 #define DEVICE_NAME_PEER CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_PEER_LEN (sizeof(DEVICE_NAME_PEER) - 1)
@@ -26,66 +27,56 @@
 #define BT_AUDIO_CODEC_CAPABILIY_FREQ BT_CODEC_LC3_FREQ_16KHZ
 #endif /* (CONFIG_AUDIO_SAMPLE_RATE_48000_HZ) */
 
-#define BT_AUDIO_LC3_PRESET_CONFIGURABLE(_loc, _stream_context)                                    \
+#define BT_AUDIO_LC3_PRESET_CONFIGURABLE(_loc, _stream_context, _bitrate)                          \
 	BT_AUDIO_LC3_PRESET(                                                                       \
 		BT_CODEC_LC3_CONFIG(BT_AUDIO_CODEC_CONFIG_FREQ, BT_CODEC_CONFIG_LC3_DURATION_10,   \
-				    _loc, LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_BT_AUDIO_BITRATE), 1,    \
-				    _stream_context),                                              \
-		BT_CODEC_LC3_QOS_10_UNFRAMED(LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_BT_AUDIO_BITRATE),    \
+				    _loc, LE_AUDIO_SDU_SIZE_OCTETS(_bitrate), 1, _stream_context), \
+		BT_CODEC_LC3_QOS_10_UNFRAMED(LE_AUDIO_SDU_SIZE_OCTETS(_bitrate),                   \
 					     CONFIG_BT_AUDIO_RETRANSMITS,                          \
 					     CONFIG_BT_AUDIO_MAX_TRANSPORT_LATENCY_MS,             \
 					     CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
 
 #if CONFIG_TRANSPORT_CIS
-#define BT_AUDIO_LC3_UNICAST_PRESET_RECOMMENDED(_loc, _stream_context)                             \
-	BT_AUDIO_LC3_PRESET(                                                                       \
-		BT_CODEC_LC3_CONFIG(BT_AUDIO_CODEC_CONFIG_FREQ, BT_CODEC_CONFIG_LC3_DURATION_10,   \
-				    _loc, LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_BT_AUDIO_BITRATE), 1,    \
-				    _stream_context),                                              \
-		BT_CODEC_LC3_QOS_10_UNFRAMED(LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_BT_AUDIO_BITRATE),    \
-					     2u, 20u, CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
+#if CONFIG_BT_AUDIO_UNICAST_CONFIGURABLE
+#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                             \
+	BT_AUDIO_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_MEDIA,                              \
+					 CONFIG_BT_AUDIO_BITRATE_UNICAST_SINK)
 
-#if CONFIG_BT_AUDIO_UNICAST_RECOMMENDED
-#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO                                                  \
-	BT_AUDIO_LC3_UNICAST_PRESET_RECOMMENDED(BT_AUDIO_LOCATION_FRONT_LEFT,                      \
-						BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#elif CONFIG_BT_AUDIO_UNICAST_CONFIGURABLE
-#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO                                                  \
-	BT_AUDIO_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
+#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                           \
+	BT_AUDIO_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_MEDIA,                              \
+					 CONFIG_BT_AUDIO_BITRATE_UNICAST_SRC)
 
 #elif CONFIG_BT_AUDIO_UNICAST_16_2_1
-#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO                                                  \
+#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                             \
+	BT_AUDIO_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                           \
+					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
+
+#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                           \
 	BT_AUDIO_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                           \
 					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
 #elif CONFIG_BT_AUDIO_UNICAST_24_2_1
-#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO                                                  \
+#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                             \
+	BT_AUDIO_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                           \
+					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
+
+#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                           \
 	BT_AUDIO_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                           \
 					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
 #else
 #error Unsupported LC3 codec preset for unicast
-#endif /* CONFIG_BT_AUDIO_UNICAST_RECOMMENDED */
+#endif /* CONFIG_BT_AUDIO_UNICAST_CONFIGURABLE */
 #endif /* CONFIG_TRANSPORT_CIS */
 
 #if CONFIG_TRANSPORT_BIS
-#define BT_AUDIO_LC3_BROADCAST_PRESET_RECOMMENDED(_loc, _stream_context)                           \
-	BT_AUDIO_LC3_PRESET(                                                                       \
-		BT_CODEC_LC3_CONFIG(BT_AUDIO_CODEC_CONFIG_FREQ, BT_CODEC_CONFIG_LC3_DURATION_10,   \
-				    _loc, LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_BT_AUDIO_BITRATE), 1,    \
-				    _stream_context),                                              \
-		BT_CODEC_LC3_QOS_10_UNFRAMED(LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_BT_AUDIO_BITRATE),    \
-					     4u, 20u, CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
-
-#if CONFIG_BT_AUDIO_BROADCAST_RECOMMENDED
+#if CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE
 #define BT_AUDIO_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                \
-	BT_AUDIO_LC3_BROADCAST_PRESET_RECOMMENDED(BT_AUDIO_LOCATION_FRONT_LEFT,                    \
-						  BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#elif CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE
-#define BT_AUDIO_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                \
-	BT_AUDIO_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
+	BT_AUDIO_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_MEDIA,                              \
+					 CONFIG_BT_AUDIO_BITRATE_BROADCAST_SRC)
 
 #elif CONFIG_BT_AUDIO_BROADCAST_16_2_1
 #define BT_AUDIO_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                \
@@ -109,7 +100,7 @@
 
 #else
 #error Unsupported LC3 codec preset for broadcast
-#endif /* CONFIG_BT_AUDIO_BROADCAST_RECOMMENDED */
+#endif /* CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE */
 #endif /* CONFIG_TRANSPORT_BIS */
 
 enum le_audio_evt_type {
@@ -130,9 +121,10 @@ struct le_audio_evt {
  * @param size		Size of received data
  * @param bad_frame	Indicating if the frame is a bad frame or not
  * @param sdu_ref	ISO timestamp
+ * @param channel_index	Audio channel index
  */
 typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool bad_frame,
-				    uint32_t sdu_ref);
+				    uint32_t sdu_ref, enum audio_channel channel_index);
 
 enum le_audio_user_defined_action {
 	LE_AUDIO_USER_DEFINED_ACTION_1,
@@ -145,7 +137,7 @@ enum le_audio_user_defined_action {
  * Container for SW codec (typically LC3) compressed audio data.
  */
 struct encoded_audio {
-	uint8_t const * const data;
+	uint8_t const *const data;
 	size_t size;
 	uint8_t num_ch;
 };

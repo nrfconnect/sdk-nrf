@@ -29,7 +29,6 @@ zephyr_library_include_directories(${CMAKE_CURRENT_BINARY_DIR})
 target_sources(app PRIVATE src/main.c
                            common/wifi_prov_handler.c
                            common/wifi_prov_ble.c
-                           common/wifi_config.c
                            ${proto_sources}
 )
 

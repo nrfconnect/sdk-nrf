@@ -708,7 +708,8 @@ static int setup_cloud(void)
 	/* Initialize nrf_cloud library. */
 	struct nrf_cloud_init_param params = {
 		.event_handler = cloud_event_handler,
-		.fmfu_dev_inf = get_full_modem_fota_fdev()
+		.fmfu_dev_inf = get_full_modem_fota_fdev(),
+		.application_version = CONFIG_APP_VERSION
 	};
 
 	int err = nrf_cloud_init(&params);

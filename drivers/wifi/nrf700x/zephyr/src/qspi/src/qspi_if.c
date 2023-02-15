@@ -392,6 +392,10 @@ static int qspi_device_init(const struct device *dev)
 	nrfx_err_t res;
 	int ret = 0;
 
+	if (!IS_ENABLED(CONFIG_NRF700X_QSPI_LOW_POWER)) {
+		return 0;
+	}
+
 	qspi_lock(dev);
 
 	/* In multithreading, driver can call qspi_device_init more than once
@@ -417,6 +421,10 @@ static int qspi_device_init(const struct device *dev)
 static void qspi_device_uninit(const struct device *dev)
 {
 	bool last = true;
+
+	if (!IS_ENABLED(CONFIG_NRF700X_QSPI_LOW_POWER)) {
+		return;
+	}
 
 	qspi_lock(dev);
 

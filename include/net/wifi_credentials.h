@@ -12,7 +12,7 @@
 #include <zephyr/kernel.h>
 
 /**
- * @defgroup WiFi Credentials Library
+ * @defgroup wifi_credentials Wi-Fi credentials library
  * @{
  * @brief Library that provides a way to store and load WiFi credentials.
  */

@@ -112,6 +112,7 @@
 .. _`Matter Certification Policy`: https://github.com/CHIP-Specifications/connectedhomeip-spec/blob/master/policies/matter_certificate_policy.adoc
 .. _`Kconfig.mcuboot.defaults`: https://github.com/project-chip/connectedhomeip/blob/master/config/nrfconnect/chip-module/Kconfig.mcuboot.defaults
 .. _`Matter SDK tagged as v1.0.0`: https://github.com/project-chip/connectedhomeip/releases/tag/v1.0.0
+.. _`Testing with Apple Devices`: https://github.com/project-chip/connectedhomeip/blob/master/docs/guides/darwin.md
 
 .. _`DCL Quick Start Guide`: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/quickStartGuide.adoc
 
@@ -182,7 +183,7 @@
 
 .. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
 
-.. _`PSA Cryptography API 1.1`: https://armmbed.github.io/mbed-crypto/html/
+.. _`PSA Cryptography API 1.0.1`: https://armmbed.github.io/mbed-crypto/1.0.1/html/index.html
 
 .. ### Source: developer.nordicsemi.com
 
@@ -329,6 +330,8 @@
 
 .. _`nRF52 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52-DK/Download#infotabs
 
+.. _`nRF5340 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF5340-DK/Download?lang=en#infotabs
+
 .. _`Nordic Thingy:53`:
 .. _`Thingy:53 product page`: https://www.nordicsemi.com/thingy53
 .. _`Nordic Thingy:53 Downloads`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-53/Downloads#infotabs
@@ -417,7 +420,6 @@
 .. _`AT%CONEVAL`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/coneval.html
 .. _`Modem trace AT command documentation`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xmodemtrace.html
 
-.. _`Getting started with nRF Connect SDK (nRF53 Series)`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs/UG/gsg/intro.html
 .. _`Debugging nRF5340 with SES`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs/UG/gsg/debug.html?cp=1_1_0_7
 
 .. _`nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/keyfeatures_html5.html
@@ -469,6 +471,16 @@
 
 .. _`Measuring Current on Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/hw_power_current_measurement.html
 
+.. _`Debugger access protection for nRF9160`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/dif.html#debugger_access
+.. _`AP-Protect for nRF5340`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/debugandtrace.html#access_port_protection
+.. _`AP-Protect for nRF52840`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52833`: https://infocenter.nordicsemi.com/topic/ps_nrf52833/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52832`: https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.nrf52832.ps.v1.1/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52820`: https://infocenter.nordicsemi.com/topic/ps_nrf52820/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52811`: https://infocenter.nordicsemi.com/topic/ps_nrf52811/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52810`: https://infocenter.nordicsemi.com/topic/ps_nrf52810/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52805`: https://infocenter.nordicsemi.com/topic/ps_nrf52805/dif.html#concept_udr_mns_1s
+
 .. _`Mobile network operator certifications`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_operator_certifications.html
 .. _`Modem firmware compatibility matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_modem_fw.html
 
@@ -507,6 +519,8 @@
 
 .. _`SWD Select`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/programming_debugging_interface.html
 
+.. _`access port protection mechanism`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf52840%2Fdif.html&anchor=concept_udr_mns_1s
+
 .. ### Source: academy.nordicsemi.com
 
 .. _`DevAcademy`:
@@ -529,6 +543,7 @@
 
 .. _`An Introduction to Trusted Firmware-M (TF-M)`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/an-introduction-to-trusted-firmware-m-t-m#mcetoc_1gc9ihpcd0
 
+.. _`Testing the nRF Connect platform with Apple, Google and Samsung ecosystems`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/matter-testing-nrf-connect-sdk-platform-with-apple-google-and-samsung-ecosystems-218911247#mcetoc_1gkq24ojdf
 
 .. ### Source: App stores (play.google.com & apps.apple.com)
 
@@ -923,6 +938,8 @@
 
 .. _`Google Chrome browser`: https://www.google.com/chrome
 
+.. _`Google Home integration with Matter`: https://developers.home.google.com/matter
+
 .. ### Source: ubuntu.com
 
 .. _`Linux - Ubuntu 22.04 LTS`: https://releases.ubuntu.com/22.04/
@@ -935,6 +952,8 @@
 .. _`macOS 10.15`: https://support.apple.com/en-us/HT210642
 .. _`Apple Notification Center Service Specification`: https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Introduction/Introduction.html
 .. _`Apple Media Service Reference`: https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/AppleMediaService_Reference/Introduction/Introduction.html
+
+.. _`Apple Home integration with Matter`: https://www.apple.com/home-app/accessories/
 
 .. ### Source: arm.com
 
@@ -1114,3 +1133,5 @@
 .. _`3GPP TS 24.008 Ch. 10.5.7.3`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=667
 
 .. _`3GPP TS 24.008 Ch. 10.5.7.4a`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=668
+
+.. _`Samsung SmartThings integration with Matter`: https://support.smartthings.com/hc/en-us/articles/11219700390804-SmartThings-x-Matter-Integration-

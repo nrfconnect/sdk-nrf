@@ -129,3 +129,5 @@ config NCS_MCUBOOT_IN_BUILD
 	  Helper option used to communicate to child images that MCUboot is included in the build.
 
 endmenu
+
+rsource "Kconfig.mcumgr_bt_ota_dfu"

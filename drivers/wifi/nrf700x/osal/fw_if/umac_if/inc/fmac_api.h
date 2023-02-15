@@ -62,7 +62,6 @@ enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
 					     struct rpu_op_stats *stats);
 
 
-#ifndef CONFIG_NRF700X_REV_A
 /**
  * wifi_nrf_fmac_radio_test_init() - Initialize the RPU for radio tests.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
@@ -77,7 +76,6 @@ enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
  */
 enum wifi_nrf_status wifi_nrf_fmac_radio_test_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						   struct rpu_conf_params *params);
-#endif /* !CONFIG_NRF700X_REV_A */
 
 /**
  * wifi_nrf_fmac_radio_test_prog_tx() - Start TX tests in radio test mode.
@@ -990,6 +988,24 @@ enum wifi_nrf_status wifi_nrf_fmac_set_uapsd_queue(void *fmac_dev_ctx,
 						   unsigned int uapsd_queue);
 
 /**
+ * nrf_wifi_fmac_set_power_save_timeout() - Configure Power save timeout.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: Index of the interface on which power management is to be set.
+ * @ps_timeout: Power save inactivity time.
+ *
+ * This function is used to send a command
+ * (%NRF_WIFI_UMAC_CMD_SET_POWER_SAVE_TIMEOUT) to RPU to set power save
+ * inactivity time.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Fail : %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_set_power_save_timeout(void *dev_ctx,
+							  unsigned char if_idx,
+							  int ps_timeout);
+
+/**
  * wifi_nrf_fmac_set_qos_map() - Configure qos_map of for data
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the qos map be set.
@@ -1212,7 +1228,6 @@ enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_de
 					  unsigned int *lmac_ver);
 
 
-#ifndef CONFIG_NRF700X_REV_A
 /**
  * wifi_nrf_fmac_conf_btcoex() - Configure BT-Coex parameters in RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1227,7 +1242,6 @@ enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_de
  */
 enum wifi_nrf_status wifi_nrf_fmac_conf_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					       void *cmd, unsigned int cmd_len);
-#endif
 
 /**
  * wifi_nrf_fmac_conf_ltf_gi() - Configure HE LTF and GI parameters.

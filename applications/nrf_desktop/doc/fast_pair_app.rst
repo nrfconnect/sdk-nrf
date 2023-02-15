@@ -12,6 +12,7 @@ The Fast Pair module is used to:
 * Update the Fast Pair advertising payload to automatically switch between showing and hiding user interface (UI) pairing indication on the Fast Pair Seeker.
   The UI indication must be displayed only if the Provider can bond with new peers on the currently used Bluetooth local identity.
 * Reject a normal Bluetooth pairing when outside of the pairing mode.
+* Remove the Fast Pair advertising payload for the dongle peer.
 
 The module is used when integrating Google `Fast Pair`_ to nRF Desktop application.
 See :ref:`nrf_desktop_bluetooth_guide_fast_pair` section of the nRF Desktop documentation for detailed information about Fast Pair integration in the application.
@@ -52,11 +53,16 @@ The :ref:`CONFIG_DESKTOP_FAST_PAIR_LIMIT_NORMAL_PAIRING <config_desktop_app_opti
 Normal Bluetooth pairing is rejected when outside of the pairing mode (if the used Bluetooth local identity already has a bonded peer).
 The option is enabled by default.
 
+With the dongle peer functionality enabled (:ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE <config_desktop_app_options>`), the Fast Pair module selects the :ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO <config_desktop_app_options>` option to track the application identity of the dongle peer.
+
 Implementation details
 **********************
 
 The module is an early subscriber for :c:struct:`ble_peer_event` and :c:struct:`ble_peer_operation_event`.
 This allows the module to update the Fast Pair advertising payload just before the Bluetooth advertising is started.
+
+The module is a subscriber for :c:struct:`ble_dongle_peer_event`.
+This allows the module to remove the Fast Pair advertising payload when the application identity of the dongle peer is used.
 
 The module registers the global application's Bluetooth authentication callbacks (:c:struct:`bt_conn_auth_cb`) on application start.
 The callbacks are used to reject normal Bluetooth pairing when outside of the pairing mode.

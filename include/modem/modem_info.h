@@ -253,6 +253,22 @@ int modem_info_get_fw_uuid(char *buf, size_t buf_size);
  */
 int modem_info_get_fw_version(char *buf, size_t buf_size);
 
+/** @brief Obtain the hardware version string.
+ *
+ * The hardware version is represented as a string, for example:
+ * nRF9160 SICA B0A
+ *
+ * See the documentation for the AT command %HWVERSION.
+ *
+ * @param buf Pointer to the target buffer.
+ * @param buf_size Size of target buffer.
+ *
+ * @retval 0 if the operation was successful.
+ * @retval -EINVAL if a parameter was invalid.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int modem_info_get_hw_version(char *buf, uint8_t buf_size);
+
 /** @brief Obtain the modem Software Version Number (SVN).
  *
  * The SVN is represented as a string, for example:

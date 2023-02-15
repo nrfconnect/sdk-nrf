@@ -313,7 +313,7 @@ void exec_test_case_ecdsa_random(void)
 	mbedtls_ecdsa_free(&ctx_verify);
 }
 
-/** @brief  Macro for registering the the ECDSA sign test case by using section variables.
+/** @brief  Macro for registering the ECDSA sign test case by using section variables.
  *
  * @details     This macro places a variable in a section named "test_case_data",
  *              which is initialized by main.
@@ -328,7 +328,7 @@ ITEM_REGISTER(test_case_ecdsa_data, test_case_t test_ecdsa_sign) = {
 	.vectors_stop = __stop_test_vector_ecdsa_sign_data,
 };
 
-/** @brief  Macro for registering the the ECDSA verify test case by using section variables.
+/** @brief  Macro for registering the ECDSA verify test case by using section variables.
  *
  * @details     This macro places a variable in a section named "test_case_data",
  *              which is initialized by main.
@@ -343,7 +343,7 @@ ITEM_REGISTER(test_case_ecdsa_data, test_case_t test_ecdsa_verify) = {
 	.vectors_stop = __stop_test_vector_ecdsa_verify_data,
 };
 
-/** @brief  Macro for registering the the ECDSA random test case by using section variables.
+/** @brief  Macro for registering the ECDSA random test case by using section variables.
  *
  * @details     This macro places a variable in a section named "test_case_data",
  *              which is initialized by main.

@@ -94,6 +94,34 @@ int slm_util_atoh(const char *ascii, uint16_t ascii_len, uint8_t *hex, uint16_t 
 int util_string_get(const struct at_param_list *list, size_t index, char *value, size_t *len);
 
 /**
+ * @brief Get float value from string value input in AT command.
+ *
+ * @note The string cannot be larger than 32.
+ *
+ * @param[in]     list    Parameter list.
+ * @param[in]     index   Parameter index in the list.
+ * @param[out]    value   Pointer to the float where to store the value.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int util_string_to_float_get(const struct at_param_list *list, size_t index, float *value);
+
+/**
+ * @brief Get double value from string value input in AT command.
+ *
+ * @note The string cannot be larger than 32.
+ *
+ * @param[in]     list    Parameter list.
+ * @param[in]     index   Parameter index in the list.
+ * @param[out]    value   Pointer to the double where to store the value.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int util_string_to_double_get(const struct at_param_list *list, size_t index, double *value);
+
+/**
  * @brief use AT command to get IPv4 and IPv6 addresses for specified PDN
  *
  * @param[in] cid PDP Context ID as defined in "+CGDCONT" command (0~10).

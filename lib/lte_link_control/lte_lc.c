@@ -222,7 +222,7 @@ static void at_handler_cereg(const char *response)
 	}
 
 	/* Cell update event */
-	if (memcmp(&cell, &prev_cell, sizeof(struct lte_lc_cell))) {
+	if ((cell.id != prev_cell.id) || (cell.tac != prev_cell.tac)) {
 		evt.type = LTE_LC_EVT_CELL_UPDATE;
 
 		memcpy(&prev_cell, &cell, sizeof(struct lte_lc_cell));
@@ -256,7 +256,8 @@ static void at_handler_cereg(const char *response)
 	}
 
 	/* PSM configuration update event */
-	if (memcmp(&psm_cfg, &prev_psm_cfg, sizeof(struct lte_lc_psm_cfg))) {
+	if ((psm_cfg.tau != prev_psm_cfg.tau) ||
+	    (psm_cfg.active_time != prev_psm_cfg.active_time)) {
 		evt.type = LTE_LC_EVT_PSM_UPDATE;
 
 		memcpy(&prev_psm_cfg, &psm_cfg, sizeof(struct lte_lc_psm_cfg));

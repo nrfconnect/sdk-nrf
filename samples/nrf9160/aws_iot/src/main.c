@@ -19,9 +19,12 @@
 #include <zephyr/dfu/mcuboot.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_REGISTER(aws_iot_sample, CONFIG_AWS_IOT_SAMPLE_LOG_LEVEL);
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
-		"This sample does not support LTE auto-init and connect");
+	     "This sample does not support LTE auto-init and connect");
 
 #define APP_TOPICS_COUNT CONFIG_AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT
 
@@ -86,7 +89,7 @@ static int shadow_update(bool version_number_include)
 
 	err = date_time_now(&message_ts);
 	if (err) {
-		printk("date_time_now, error: %d\n", err);
+		LOG_ERR("date_time_now, error: %d", err);
 		return err;
 	}
 
@@ -94,7 +97,7 @@ static int shadow_update(bool version_number_include)
 	/* Request battery voltage data from the modem. */
 	err = modem_info_short_get(MODEM_INFO_BATTERY, &bat_voltage);
 	if (err != sizeof(bat_voltage)) {
-		printk("modem_info_short_get, error: %d\n", err);
+		LOG_ERR("modem_info_short_get, error: %d", err);
 		return err;
 	}
 #endif
@@ -112,8 +115,7 @@ static int shadow_update(bool version_number_include)
 	}
 
 	if (version_number_include) {
-		err = json_add_str(reported_obj, "app_version",
-				    CONFIG_APP_VERSION);
+		err = json_add_str(reported_obj, "app_version", CONFIG_APP_VERSION);
 	} else {
 		err = 0;
 	}
@@ -124,13 +126,13 @@ static int shadow_update(bool version_number_include)
 	err += json_add_obj(root_obj, "state", state_obj);
 
 	if (err) {
-		printk("json_add, error: %d\n", err);
+		LOG_ERR("json_add, error: %d", err);
 		goto cleanup;
 	}
 
 	message = cJSON_Print(root_obj);
 	if (message == NULL) {
-		printk("cJSON_Print, error: returned NULL\n");
+		LOG_ERR("cJSON_Print, error: returned NULL");
 		err = -ENOMEM;
 		goto cleanup;
 	}
@@ -142,11 +144,11 @@ static int shadow_update(bool version_number_include)
 		.len = strlen(message)
 	};
 
-	printk("Publishing: %s to AWS IoT broker\n", message);
+	LOG_INF("Publishing: %s to AWS IoT broker", message);
 
 	err = aws_iot_send(&tx_data);
 	if (err) {
-		printk("aws_iot_send, error: %d\n", err);
+		LOG_ERR("aws_iot_send, error: %d", err);
 	}
 
 	cJSON_FreeString(message);
@@ -168,14 +170,12 @@ static void connect_work_fn(struct k_work *work)
 
 	err = aws_iot_connect(NULL);
 	if (err) {
-		printk("aws_iot_connect, error: %d\n", err);
+		LOG_ERR("aws_iot_connect, error: %d", err);
 	}
 
-	printk("Next connection retry in %d seconds\n",
-	       CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS);
+	LOG_INF("Next connection retry in %d seconds", CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS);
 
-	k_work_schedule(&connect_work,
-			K_SECONDS(CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS));
+	k_work_schedule(&connect_work, K_SECONDS(CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS));
 }
 
 static void shadow_update_work_fn(struct k_work *work)
@@ -188,14 +188,12 @@ static void shadow_update_work_fn(struct k_work *work)
 
 	err = shadow_update(false);
 	if (err) {
-		printk("shadow_update, error: %d\n", err);
+		LOG_ERR("shadow_update, error: %d", err);
 	}
 
-	printk("Next data publication in %d seconds\n",
-	       CONFIG_PUBLICATION_INTERVAL_SECONDS);
+	LOG_INF("Next data publication in %d seconds", CONFIG_PUBLICATION_INTERVAL_SECONDS);
 
-	k_work_schedule(&shadow_update_work,
-			K_SECONDS(CONFIG_PUBLICATION_INTERVAL_SECONDS));
+	k_work_schedule(&shadow_update_work, K_SECONDS(CONFIG_PUBLICATION_INTERVAL_SECONDS));
 }
 
 static void shadow_update_version_work_fn(struct k_work *work)
@@ -204,7 +202,7 @@ static void shadow_update_version_work_fn(struct k_work *work)
 
 	err = shadow_update(true);
 	if (err) {
-		printk("shadow_update, error: %d\n", err);
+		LOG_ERR("shadow_update, error: %d", err);
 	}
 }
 
@@ -216,18 +214,18 @@ static void print_received_data(const char *buf, const char *topic,
 
 	root_obj = cJSON_Parse(buf);
 	if (root_obj == NULL) {
-		printk("cJSON Parse failure");
+		LOG_ERR("cJSON Parse failure");
 		return;
 	}
 
 	str = cJSON_Print(root_obj);
 	if (str == NULL) {
-		printk("Failed to print JSON object");
+		LOG_ERR("Failed to print JSON object");
 		goto clean_exit;
 	}
 
-	printf("Data received from AWS IoT console:\nTopic: %.*s\nMessage: %s\n",
-	       topic_len, topic, str);
+	LOG_INF("Data received from AWS IoT console: Topic: %.*s Message: %s",
+		topic_len, topic, str);
 
 	cJSON_FreeString(str);
 
@@ -239,10 +237,10 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 {
 	switch (evt->type) {
 	case AWS_IOT_EVT_CONNECTING:
-		printk("AWS_IOT_EVT_CONNECTING\n");
+		LOG_INF("AWS_IOT_EVT_CONNECTING");
 		break;
 	case AWS_IOT_EVT_CONNECTED:
-		printk("AWS_IOT_EVT_CONNECTED\n");
+		LOG_INF("AWS_IOT_EVT_CONNECTED");
 
 		cloud_connected = true;
 		/* This may fail if the work item is already being processed,
@@ -253,7 +251,7 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 		(void)k_work_cancel_delayable(&connect_work);
 
 		if (evt->data.persistent_session) {
-			printk("Persistent session enabled\n");
+			LOG_INF("Persistent session enabled");
 		}
 
 #if defined(CONFIG_NRF_MODEM_LIB)
@@ -276,15 +274,15 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 #if defined(CONFIG_NRF_MODEM_LIB)
 		int err = lte_lc_psm_req(true);
 		if (err) {
-			printk("Requesting PSM failed, error: %d\n", err);
+			LOG_ERR("Requesting PSM failed, error: %d", err);
 		}
 #endif
 		break;
 	case AWS_IOT_EVT_READY:
-		printk("AWS_IOT_EVT_READY\n");
+		LOG_INF("AWS_IOT_EVT_READY");
 		break;
 	case AWS_IOT_EVT_DISCONNECTED:
-		printk("AWS_IOT_EVT_DISCONNECTED\n");
+		LOG_INF("AWS_IOT_EVT_DISCONNECTED");
 		cloud_connected = false;
 		/* This may fail if the work item is already being processed,
 		 * but in such case, the next time the work handler is executed,
@@ -295,53 +293,52 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 		k_work_schedule(&connect_work, K_NO_WAIT);
 		break;
 	case AWS_IOT_EVT_DATA_RECEIVED:
-		printk("AWS_IOT_EVT_DATA_RECEIVED\n");
+		LOG_INF("AWS_IOT_EVT_DATA_RECEIVED");
 		print_received_data(evt->data.msg.ptr, evt->data.msg.topic.str,
 				    evt->data.msg.topic.len);
 		break;
 	case AWS_IOT_EVT_PUBACK:
-		printk("AWS_IOT_EVT_PUBACK, message ID: %d\n", evt->data.message_id);
+		LOG_INF("AWS_IOT_EVT_PUBACK, message ID: %d", evt->data.message_id);
 		break;
 	case AWS_IOT_EVT_FOTA_START:
-		printk("AWS_IOT_EVT_FOTA_START\n");
+		LOG_INF("AWS_IOT_EVT_FOTA_START");
 		break;
 	case AWS_IOT_EVT_FOTA_ERASE_PENDING:
-		printk("AWS_IOT_EVT_FOTA_ERASE_PENDING\n");
-		printk("Disconnect LTE link or reboot\n");
+		LOG_INF("AWS_IOT_EVT_FOTA_ERASE_PENDING");
+		LOG_INF("Disconnect LTE link or reboot");
 #if defined(CONFIG_NRF_MODEM_LIB)
 		err = lte_lc_offline();
 		if (err) {
-			printk("Error disconnecting from LTE\n");
+			LOG_ERR("Error disconnecting from LTE");
 		}
 #endif
 		break;
 	case AWS_IOT_EVT_FOTA_ERASE_DONE:
-		printk("AWS_FOTA_EVT_ERASE_DONE\n");
-		printk("Reconnecting the LTE link");
+		LOG_INF("AWS_FOTA_EVT_ERASE_DONE");
+		LOG_INF("Reconnecting the LTE link");
 #if defined(CONFIG_NRF_MODEM_LIB)
 		err = lte_lc_connect();
 		if (err) {
-			printk("Error connecting to LTE\n");
+			LOG_ERR("Error connecting to LTE");
 		}
 #endif
 		break;
 	case AWS_IOT_EVT_FOTA_DONE:
-		printk("AWS_IOT_EVT_FOTA_DONE\n");
-		printk("FOTA done, rebooting device\n");
+		LOG_INF("AWS_IOT_EVT_FOTA_DONE");
+		LOG_INF("FOTA done, rebooting device");
 		aws_iot_disconnect();
 		sys_reboot(0);
 		break;
 	case AWS_IOT_EVT_FOTA_DL_PROGRESS:
-		printk("AWS_IOT_EVT_FOTA_DL_PROGRESS, (%d%%)",
-		       evt->data.fota_progress);
+		LOG_INF("AWS_IOT_EVT_FOTA_DL_PROGRESS, (%d%%)", evt->data.fota_progress);
 	case AWS_IOT_EVT_ERROR:
-		printk("AWS_IOT_EVT_ERROR, %d\n", evt->data.err);
+		LOG_INF("AWS_IOT_EVT_ERROR, %d", evt->data.err);
 		break;
 	case AWS_IOT_EVT_FOTA_ERROR:
-		printk("AWS_IOT_EVT_FOTA_ERROR");
+		LOG_INF("AWS_IOT_EVT_FOTA_ERROR");
 		break;
 	default:
-		printk("Unknown AWS IoT event type: %d\n", evt->type);
+		LOG_WRN("Unknown AWS IoT event type: %d", evt->type);
 		break;
 	}
 }
@@ -363,14 +360,14 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 			break;
 		}
 
-		printk("Network registration status: %s\n",
+		LOG_INF("Network registration status: %s",
 			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
 			"Connected - home network" : "Connected - roaming");
 
 		k_sem_give(&lte_connected);
 		break;
 	case LTE_LC_EVT_PSM_UPDATE:
-		printk("PSM parameter update: TAU: %d, Active time: %d\n",
+		LOG_INF("PSM parameter update: TAU: %d, Active time: %d",
 			evt->psm_cfg.tau, evt->psm_cfg.active_time);
 		break;
 	case LTE_LC_EVT_EDRX_UPDATE: {
@@ -381,17 +378,17 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 			       "eDRX parameter update: eDRX: %f, PTW: %f",
 			       evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
 		if (len > 0) {
-			printk("%s\n", log_buf);
+			LOG_INF("%s", log_buf);
 		}
 		break;
 	}
 	case LTE_LC_EVT_RRC_UPDATE:
-		printk("RRC mode: %s\n",
+		LOG_INF("RRC mode: %s",
 			evt->rrc_mode == LTE_LC_RRC_MODE_CONNECTED ?
 			"Connected" : "Idle");
 		break;
 	case LTE_LC_EVT_CELL_UPDATE:
-		printk("LTE cell changed: Cell ID: %d, Tracking area: %d\n",
+		LOG_INF("LTE cell changed: Cell ID: %d, Tracking area: %d",
 			evt->cell.id, evt->cell.tac);
 		break;
 	default:
@@ -408,8 +405,7 @@ static void modem_configure(void)
 	} else {
 		err = lte_lc_init_and_connect_async(lte_handler);
 		if (err) {
-			printk("Modem could not be configured, error: %d\n",
-				err);
+			LOG_ERR("Modem could not be configured, error: %d", err);
 			return;
 		}
 	}
@@ -423,18 +419,18 @@ static void nrf_modem_lib_dfu_handler(void)
 
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:
-		printk("Modem update suceeded, reboot\n");
+		LOG_INF("Modem update suceeded, reboot");
 		sys_reboot(SYS_REBOOT_COLD);
 		break;
 	case MODEM_DFU_RESULT_UUID_ERROR:
 	case MODEM_DFU_RESULT_AUTH_ERROR:
-		printk("Modem update failed, error: %d\n", err);
-		printk("Modem will use old firmware\n");
+		LOG_INF("Modem update failed, error: %d", err);
+		LOG_INF("Modem will use old firmware");
 		sys_reboot(SYS_REBOOT_COLD);
 		break;
 	case MODEM_DFU_RESULT_HARDWARE_ERROR:
 	case MODEM_DFU_RESULT_INTERNAL_ERROR:
-		printk("Modem update malfunction, error: %d, reboot\n", err);
+		LOG_INF("Modem update malfunction, error: %d, reboot", err);
 		sys_reboot(SYS_REBOOT_COLD);
 		break;
 	default:
@@ -456,10 +452,9 @@ static int app_topics_subscribe(void)
 		[1].len = strlen(custom_topic_2)
 	};
 
-	err = aws_iot_subscription_topics_add(topics_list,
-					      ARRAY_SIZE(topics_list));
+	err = aws_iot_subscription_topics_add(topics_list, ARRAY_SIZE(topics_list));
 	if (err) {
-		printk("aws_iot_subscription_topics_add, error: %d\n", err);
+		LOG_ERR("aws_iot_subscription_topics_add, error: %d", err);
 	}
 
 	return err;
@@ -473,7 +468,7 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 	case DATE_TIME_OBTAINED_NTP:
 		/* Fall through */
 	case DATE_TIME_OBTAINED_EXT:
-		printk("Date time obtained\n");
+		LOG_INF("Date time obtained");
 		k_sem_give(&date_time_obtained);
 
 		/* De-register handler. At this point the sample will have
@@ -482,10 +477,10 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 		date_time_register_handler(NULL);
 		break;
 	case DATE_TIME_NOT_OBTAINED:
-		printk("DATE_TIME_NOT_OBTAINED\n");
+		LOG_INF("DATE_TIME_NOT_OBTAINED");
 		break;
 	default:
-		printk("Unknown event: %d", evt->type);
+		LOG_ERR("Unknown event: %d", evt->type);
 		break;
 	}
 }
@@ -494,7 +489,7 @@ void main(void)
 {
 	int err;
 
-	printk("The AWS IoT sample started, version: %s\n", CONFIG_APP_VERSION);
+	LOG_INF("The AWS IoT sample started, version: %s", CONFIG_APP_VERSION);
 
 	cJSON_Init();
 
@@ -504,8 +499,7 @@ void main(void)
 
 	err = aws_iot_init(NULL, aws_iot_event_handler);
 	if (err) {
-		printk("AWS IoT library could not be initialized, error: %d\n",
-		       err);
+		LOG_ERR("AWS IoT library could not be initialized, error: %d", err);
 	}
 
 	/** Subscribe to customizable non-shadow specific topics
@@ -513,8 +507,7 @@ void main(void)
 	 */
 	err = app_topics_subscribe();
 	if (err) {
-		printk("Adding application specific topics failed, error: %d\n",
-			err);
+		LOG_ERR("Adding application specific topics failed, error: %d", err);
 	}
 
 	work_init();
@@ -523,8 +516,7 @@ void main(void)
 
 	err = modem_info_init();
 	if (err) {
-		printk("Failed initializing modem info module, error: %d\n",
-			err);
+		LOG_ERR("Failed initializing modem info module, error: %d", err);
 	}
 
 	k_sem_take(&lte_connected, K_FOREVER);

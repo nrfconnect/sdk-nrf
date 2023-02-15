@@ -121,7 +121,7 @@ int wifi_credentials_get_by_ssid_personal_struct(const char *ssid, size_t ssid_l
 	ssize_t idx = lookup_idx(ssid, ssid_len);
 
 	if (idx == -1) {
-		LOG_ERR("Cannot retrieve WiFi credentials, no entry found for the provided SSID");
+		LOG_WRN("Cannot retrieve WiFi credentials, no entry found for the provided SSID");
 		ret = -ENOENT;
 		goto exit;
 	}

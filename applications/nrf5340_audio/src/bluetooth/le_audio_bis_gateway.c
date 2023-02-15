@@ -305,14 +305,22 @@ static int initialize(void)
 	create_param.params_count = ARRAY_SIZE(subgroup_params);
 	create_param.params = subgroup_params;
 	create_param.qos = &lc3_preset.qos;
-	create_param.packing = BT_ISO_PACKING_SEQUENTIAL;
 
-#if (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)
-	create_param.encryption = true;
-	strncpy(create_param.broadcast_code, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY, 16);
-#else
-	create_param.encryption = false;
-#endif /* (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED) */
+	if (IS_ENABLED(CONFIG_BT_AUDIO_PACKING_INTERLEAVED)) {
+		create_param.packing = BT_ISO_PACKING_INTERLEAVED;
+	} else {
+		create_param.packing = BT_ISO_PACKING_SEQUENTIAL;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
+		create_param.encryption = true;
+		memset(create_param.broadcast_code, 0, sizeof(create_param.broadcast_code));
+		memcpy(create_param.broadcast_code, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
+		       MIN(sizeof(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY),
+			   sizeof(create_param.broadcast_code)));
+	} else {
+		create_param.encryption = false;
+	}
 
 	LOG_DBG("Creating broadcast source");
 
@@ -437,11 +445,10 @@ int le_audio_send(struct encoded_audio enc_audio)
 
 		net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
 		if (enc_audio.num_ch == 1) {
-			net_buf_add_mem(buf, &enc_audio.data[0],
-				data_size_pr_stream);
+			net_buf_add_mem(buf, &enc_audio.data[0], data_size_pr_stream);
 		} else {
 			net_buf_add_mem(buf, &enc_audio.data[i * data_size_pr_stream],
-				data_size_pr_stream);
+					data_size_pr_stream);
 		}
 
 		atomic_inc(&iso_tx_pool_alloc[i]);
@@ -474,6 +481,10 @@ int le_audio_send(struct encoded_audio enc_audio)
 int le_audio_enable(le_audio_receive_cb recv_cb)
 {
 	int ret;
+
+	ARG_UNUSED(recv_cb);
+
+	LOG_INF("Starting broadcast gateway %s", CONFIG_BT_AUDIO_BROADCAST_NAME);
 
 	ret = initialize();
 	if (ret) {

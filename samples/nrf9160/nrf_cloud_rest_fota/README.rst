@@ -48,11 +48,6 @@ If you have the option :ref:`CONFIG_REST_FOTA_DO_JITP <CONFIG_REST_FOTA_DO_JITP>
 This is useful when initially provisioning and associating a device on nRF Cloud.
 You only need to do this once for each device.
 
-When you start up your device and have not requested JITP, the sample will ask if FOTA should be enabled in the device's shadow.
-Press the button configured by :ref:`CONFIG_REST_FOTA_BUTTON_EVT_NUM <CONFIG_REST_FOTA_BUTTON_EVT_NUM>` to perform the shadow update.
-Depending on how you provisioned your device with nRF Cloud, this step might not be needed.
-You only need to do this once for each device.
-
 If you have enabled the :ref:`CONFIG_REST_FOTA_ENABLE_LED <CONFIG_REST_FOTA_ENABLE_LED>` option, an LED configured by the :ref:`CONFIG_REST_FOTA_LED_NUM <CONFIG_REST_FOTA_LED_NUM>` option indicates the state of the connection to the LTE network.
 
 Configuration

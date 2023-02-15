@@ -38,16 +38,11 @@
 
 #define MODEM_CURRENT_BAND     "currentBand"
 #define MODEM_NETWORK_MODE     "networkMode"
-#define MODEM_ICCID	       "iccid"
-#define MODEM_FIRMWARE_VERSION "modemFirmware"
-#define MODEM_BOARD	       "board"
-#define MODEM_APP_VERSION      "appVersion"
 #define MODEM_RSRP	       "rsrp"
 #define MODEM_AREA_CODE	       "areaCode"
 #define MODEM_MCCMNC	       "mccmnc"
 #define MODEM_CELL_ID	       "cellID"
 #define MODEM_IP_ADDRESS       "ipAddress"
-#define MODEM_IMEI             "imei"
 
 #define CONFIG_DEVICE_MODE		  "activeMode"
 #define CONFIG_ACTIVE_TIMEOUT		  "activeWaitTime"

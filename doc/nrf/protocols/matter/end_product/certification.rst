@@ -110,6 +110,20 @@ The final application for certification requires you to send the following docum
 * `Matter Attestation of Security`_
 * Description of the Matter component to be certified (and photos of the end product, for the product certification)
 
+Certification document templates from Nordic Semiconductor
+  When applying for certification for products that use Nordic Semiconductor's devices, some of the certification documents require providing information about Nordic Semiconductor's SoCs or the |NCS|.
+  To help you with filling in these documents, Nordic Semiconductor can provide you with appropriate templates for:
+
+  * Matter Attestation of Security
+  * Thread certification by inheritance application
+
+  To request and obtain such documents, open a private ticket on `DevZone`_ after you join the related SDO.
+
+  .. note::
+     Nordic Semiconductor provides just an example answers based on the reference SDK applications, which may guide you on how to answer to certain platform-related questions.
+     You are still solely responsibility for filling original documents according to a product specifiction.
+     The final approval depends on the Director of Certification in the given Standards Developing Organization (SDO).
+
 PICS
 ++++
 
@@ -120,6 +134,7 @@ Dependent Transport Attestation
 
 When applying for Matter certification, you must present a self-attestation that confirms you have applied for and obtained the certification for the transport platform you are using for your Matter component.
 The processes for obtaining such certification are governed by different Standard Development Organizations (SDOs).
+
 See the :ref:`ug_matter_device_certification_reqs` for more information about the processes compatible with the Matter platform in the |NCS|.
 
 CSA provides attestation forms to its members on the `Matter Attestation Form`_ directory page.
@@ -158,57 +173,6 @@ CSA will ensure that the following certification actions are completed when the 
 * Matter certified logos are available from the Certification Web Tool dashboard.
 * Certification Declaration file is available for download.
 * Certification record is entered into :ref:`ug_matter_device_dcl`.
-
-Matter certification process variants
-*************************************
-
-The standard Matter certification process has several variants that you can use if you want to certify several products of the same family or you have already obtained the certification.
-
-Product Family certification
-============================
-
-The Product Family certification lets you certify several variants of the same product.
-In this certification path, the first product must be tested according to the original certification process at an ATL.
-Then, you can apply for certification of the first product and a number of other products from the same family.
-
-To be considered of the same family, the other products must meet the following criteria:
-
-* All products must share the same device type as the first product.
-* All products must be variants of the first product, which should also be the most feature complete.
-* All products must conform with the Matter specifications, regardless of differences.
-
-.. figure:: images/matter_device_certification_process_pf.svg
-   :alt: Matter's Product Family certification overview
-
-   Matter's Product Family certification overview
-
-Certification by Similarity
-===========================
-
-Certification by Similarity lets you certify products that derive from a previously certified product.
-This variant is meant for Matter components that use Matter software that was already certified as part of either the standard procedure or the `Product Family certification`_.
-
-.. figure:: images/matter_device_certification_process_cbs.svg
-   :alt: Matter certification by similarity overview
-
-   Matter certification by similarity overview
-
-Rapid Recertification program
-=============================
-
-.. note::
-      The Rapid Recertification program is currently experimental.
-      You can read more about it in a dedicated document in the `Matter Resource Kit`_.
-
-The Rapid Recertification program lets you perform the product testing using the services of a qualified CSA Member, even your own organization, instead of an ATL.
-This allows for a potentially more streamlined recertification process when you want to certify
-The first certification must still be done at an ATL.
-
-.. figure:: images/matter_device_certification_process_rr.svg
-   :alt: Matter's Rapid Recertification program overview
-
-   Matter's Rapid Recertification program overview
-
 
 .. _ug_matter_device_certification_reqs:
 
@@ -261,15 +225,52 @@ You can visit the following pages on Nordic Semiconductor Infocenter to check th
 * `nRF5340 DK Compatibility Matrix`_
 * `nRF52840 DK Compatibility Matrix`_
 
-Certification document templates
---------------------------------
+Matter certification process variants
+*************************************
 
-Some of the certification documents require providing information about Nordic Semiconductor's SoCs or the |NCS|.
-To help you with filling in these documents, Nordic Semiconductor can provide you with appropriate templates.
+The standard Matter certification process has several variants that you can use if you have already obtained the certification or you want to certify several products of the same family.
 
-To request and obtain such documents, open a private ticket on `DevZone`_ after you join the related SDO.
+Rapid Recertification program
+=============================
 
 .. note::
-   Nordic Semiconductor provides just an example answers based on the reference SDK applications, which may guide you on how to answer to certain platform-related questions.
-   You are still solely responsibility for filling original documents according to a product specifiction.
-   The final approval depends on the Director of Certification in the given Standards Developing Organization (SDO).
+      The Rapid Recertification program is currently experimental.
+      You can read more about it in a dedicated document in the `Matter Resource Kit`_.
+
+The Rapid Recertification program lets you perform the product testing using the services of a qualified CSA Member, even your own organization, instead of an ATL.
+This allows for a potentially more streamlined recertification process when you want to certify
+The first certification must still be done at an ATL.
+
+.. figure:: images/matter_device_certification_process_rr.svg
+   :alt: Matter's Rapid Recertification program overview
+
+   Matter's Rapid Recertification program overview
+
+Product Family certification
+============================
+
+The Product Family certification lets you certify several variants of the same product.
+In this certification path, the first product must be tested according to the original certification process at an ATL.
+Then, you can apply for certification of the first product and a number of other products from the same family.
+
+To be considered of the same family, the other products must meet the following criteria:
+
+* All products must share the same device type as the first product.
+* All products must be variants of the first product, which should also be the most feature complete.
+* All products must conform with the Matter specifications, regardless of differences.
+
+.. figure:: images/matter_device_certification_process_pf.svg
+   :alt: Matter's Product Family certification overview
+
+   Matter's Product Family certification overview
+
+Certification by Similarity
+===========================
+
+Certification by Similarity lets you certify products that derive from a previously certified product.
+This variant is meant for Matter components that use Matter software that was already certified as part of either the standard procedure or the `Product Family certification`_.
+
+.. figure:: images/matter_device_certification_process_cbs.svg
+   :alt: Matter certification by similarity overview
+
+   Matter certification by similarity overview

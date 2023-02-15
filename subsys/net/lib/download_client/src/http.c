@@ -40,6 +40,8 @@ LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 	"Connection: keep-alive\r\n"                                           \
 	"\r\n"
 
+extern char *strnstr(const char *haystack, const char *needle, size_t haystack_sz);
+
 int url_parse_host(const char *url, char *host, size_t len);
 int url_parse_file(const char *url, char *file, size_t len);
 int socket_send(const struct download_client *client, size_t len, int timeout);
@@ -128,7 +130,7 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 
 	const unsigned int expected_status = using_range_requests ? 206 : 200;
 
-	p = strstr(client->buf, "\r\n\r\n");
+	p = strnstr(client->buf, "\r\n\r\n", sizeof(client->buf));
 	if (!p || p > client->buf + client->offset) {
 		/* Waiting full HTTP header */
 		LOG_DBG("Waiting full header in response");
@@ -148,7 +150,7 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 	}
 
 	/* Look for the status code just after "http/1.1 " */
-	p = strstr(client->buf, "http/1.1 ");
+	p = strnstr(client->buf, "http/1.1 ", sizeof(client->buf));
 	if (!p) {
 		LOG_ERR("Server response missing HTTP/1.1");
 		return -1;
@@ -182,19 +184,19 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 	 */
 	if (client->file_size == 0) {
 		if (using_range_requests) {
-			p = strstr(client->buf, "content-range");
+			p = strnstr(client->buf, "content-range", sizeof(client->buf));
 			if (!p) {
 				LOG_ERR("Server did not send "
 					"\"Content-Range\" in response");
 				return -1;
 			}
-			p = strstr(p, "/");
+			p = strnstr(p, "/", sizeof(client->buf) - (p - client->buf));
 			if (!p) {
 				LOG_ERR("No file size in response");
 				return -1;
 			}
 		} else { /* proto == PROTO_HTTP */
-			p = strstr(client->buf, "content-length");
+			p = strnstr(client->buf, "content-length", sizeof(client->buf));
 			if (!p) {
 				LOG_WRN("Server did not send "
 					"\"Content-Length\" in response");
@@ -215,7 +217,7 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 		LOG_DBG("File size = %u", client->file_size);
 	}
 
-	p = strstr(client->buf, "connection: close");
+	p = strnstr(client->buf, "connection: close", sizeof(client->buf));
 	if (p) {
 		LOG_WRN("Peer closed connection, will re-connect");
 		client->http.connection_close = true;

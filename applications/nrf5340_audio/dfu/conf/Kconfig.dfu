@@ -71,6 +71,9 @@ config MCUMGR_BUF_SIZE
 	default 1024
 
 # DFU over BLE
+config BT_PERIPHERAL
+	default y
+
 config MCUMGR_SMP_BT
 	bool
 	default y

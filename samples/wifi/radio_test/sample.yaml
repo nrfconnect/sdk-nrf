@@ -9,13 +9,6 @@ tests:
       - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf7002dk_nrf5340_cpuapp
     tags: ci_build
-  sample.nrf7002.radio_test_a:
-    build_only: true
-    extra_args: CONFIG_NRF700X_REV_A=y
-    integration_platforms:
-      - nrf7002dk_nrf5340_cpuapp
-    platform_allow: nrf7002dk_nrf5340_cpuapp
-    tags: ci_build
   sample.nrf7002.radio_test_combo:
     build_only: true
     extra_args: CONFIG_BOARD_ENABLE_CPUNET=y

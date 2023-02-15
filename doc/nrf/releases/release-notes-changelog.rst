@@ -33,7 +33,7 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
-|no_changes_yet_note|
+* Added a documentation page about :ref:`app_approtect`.
 
 RF Front-End Modules
 --------------------
@@ -73,6 +73,10 @@ Matter
 
 * Added:
 
+  * Support for switching between Matter over Thread and Matter over Wi-Fi.
+    This feature is available for the :ref:`matter_lock_sample` sample programmed on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached, using the ``thread_wifi_switched`` build type.
+    See :ref:`matter_lock_sample_wifi_thread_switching` in the sample documentation for more information.
+  * Documentation about :ref:`switchable Matter over Thread and Matter over Wi-Fi <ug_matter_overview_architecture_integration_designs>` platform design.
   * Support for Wi-Fi Network Diagnostic Cluster (which counts the number of packets received and transmitted on the Wi-Fi interface).
   * Default support for nRF7002 revision B.
   * Specific QR code and onboarding information in the documentation for each :ref:`Matter sample <matter_samples>` and the :ref:`Matter weather station <matter_weather_station_app>`.
@@ -80,6 +84,7 @@ Matter
   * Support for erasing settings partition during DFU over Bluetooth LE SMP for the Nordic nRF52 Series' SoCs.
   * Enabled Wi-Fi and Bluetooth LE coexistence.
   * Mechanism to retry a failed Wi-Fi connection.
+  * Documentation about :ref:`ug_matter_gs_ecosystem_compatibility_testing`.
 
 * Updated:
 
@@ -92,7 +97,11 @@ Matter
   * Default transmission output power for Matter over Thread devices to the maximum available one for all targets:
     8 dBm for nRF52840, 3 dBm for nRF5340, 20 dBm for all devices with FEM enabled, and 0 dBm for sleepy devices.
 
-* Fixed the issue of connection timing out when attaching to a Wi-Fi access point that requires Wi-Fi Protected Access 3 (WPA3).
+* Fixed:
+
+  * The issue where the connection would time out when attaching to a Wi-Fi access point that requires Wi-Fi Protected Access 3 (WPA3).
+  * The issue where the ``NetworkInterfaces`` attribute of General Diagnostics cluster would return EUI-64 instead of MAC Extended Address for Thread network interfaces.
+
 * Removed support for Android CHIP Tool from the documentation and release artifacts.
   Moving forward, we recommend using the development tool CHIP Tool for Linux or macOS or mobile applications from publicly available Matter Ecosystems.
 
@@ -156,6 +165,18 @@ Wi-Fi
 
   * New sample :ref:`wifi_sr_coex_sample` demonstrating Wi-Fi Bluetooth LE coexistence.
   * :ref:`ug_wifi` document.
+  * :ref:`lib_wifi_credentials` library to store credentials.
+  * :ref:`wifi_mgmt_ext` library to provide an autoconnect command based on Wi-Fi credentials.
+
+* Removed:
+
+  * nRF7002 revision A support.
+
+* Updated:
+
+  * WiFi Coexistence is no longer enabled by default.
+    It must be enabled explicitly in Kconfig using :kconfig:option:`CONFIG_MPSL_CX`.
+    On the nRF5340, this option must be selected for both the application core and the network core images.
 
 Applications
 ============
@@ -173,6 +194,8 @@ nRF9160: Asset Tracker v2
 * Updated:
 
   * Replaced deprecated LwM2M API calls with calls to new functions.
+  * Removed static modem data handling from the application's nRF Cloud codec.
+    Enabled the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS` configuration option to send static modem data.
 
 nRF9160: Serial LTE modem
 -------------------------
@@ -182,6 +205,7 @@ nRF9160: Serial LTE modem
   * RFC1350 TFTP client, currently supporting only *READ REQUEST*.
   * AT command ``#XSHUTDOWN`` to put nRF9160 SiP to System Off mode.
   * Support of nRF Cloud C2D appId ``MODEM`` and ``DEVICE``.
+  * Support for the :ref:`liblwm2m_carrier_readme` library.
 
 * Updated:
 
@@ -195,6 +219,8 @@ nRF5340 Audio
   * Support for Front End Module nRF21540.
   * Possibility to create a Public Broadcast Announcement (PBA) needed for Auracast.
   * Encryption for BISes.
+  * Support for bidirectional streams to or from two headsets (True Wireless Stereo).
+  * Support for interleaved packing.
 
 * Updated:
 
@@ -224,6 +250,9 @@ nRF Desktop
   * An application log indicating that the value of a configuration option has been updated in the :ref:`nrf_desktop_motion`.
   * Application-specific Kconfig options :ref:`CONFIG_DESKTOP_LOG <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>` to simplify the debug configurations for the Logging and Shell subsystems.
     See the debug configuration section of the :ref:`nrf_desktop` application for more details.
+  * The :ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO <config_desktop_app_options>` configuration option.
+    It can be used to indicate the dongle peer identity with a dedicated event.
+  * Updated the :ref:`nrf_desktop_fast_pair_app` to remove the Fast Pair advertising payload for the dongle peer.
 
 * Updated:
 
@@ -378,6 +407,24 @@ nRF9160 samples
   * nRF9160: Simple MQTT sample.
     This is now replaced by a new :ref:`mqtt_sample` sample that supports Wi-Fi and LTE connectivity.
 
+* :ref:`nrf_cloud_rest_fota` sample:
+
+  * Updated:
+
+    * Device status information, including FOTA enablement, is now sent to nRF Cloud when the device connects.
+    * Removed user prompt and button press handling for FOTA enablement.
+
+* :ref:`azure_fota_sample` sample:
+
+  * The sample now uses the logging subsystem for console output.
+
+* :ref:`azure_iot_hub` sample:
+
+  * The sample now uses the logging subsystem for console output.
+
+* :ref:`aws_iot` sample:
+
+  * The sample now uses the logging subsystem for console output.
 
 Peripheral samples
 ------------------
@@ -421,6 +468,7 @@ Matter samples
   * Added:
 
     * ``thread_wifi_switched`` build type that enables switching between Thread and Wi-Fi network support in the field.
+      See :ref:`matter_lock_sample_wifi_thread_switching` in the sample documentation for more information.
     * Wi-Fi low power configuration using Wi-Fi's :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
 
 * :ref:`matter_light_switch_sample`:
@@ -454,6 +502,14 @@ Wi-Fi samples
 * Added:
 
   * :ref:`wifi_sr_coex_sample` sample demonstrating Wi-Fi Bluetooth LE coexistence.
+
+* Removed:
+
+  * nRF7002 revision A support.
+
+* Changed:
+
+* The :ref:`wifi_shell_sample` sample now uses the :ref:`lib_wifi_credentials` and :ref:`wifi_mgmt_ext` libraries.
 
 Other samples
 -------------
@@ -541,6 +597,7 @@ Modem libraries
   * Updated:
 
     * The minimal value of :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE` to meet the requirements of modem firmware 1.3.4.
+    * The :c:func:`nrf_modem_lib_diag_stats_get` function now returns an error if called when the :ref:`nrf_modem_lib_readme` library has not been initialized.
 
 * :ref:`lib_location` library:
 
@@ -586,6 +643,15 @@ Modem libraries
 
     * Library for external MCU to work with nRF9160 SiP through the Serial LTE Modem application.
 
+* :ref:`modem_info_readme` library:
+
+  * Added :c:func:`modem_info_get_hw_version` function to obtain the hardware version string using the ``AT%HWVERSION`` command.
+
+* :ref:`lte_lc_readme` library:
+
+  * Fixed an issue where cell update events could be sent without the cell information from the modem actually being updated.
+
+
 Libraries for networking
 ------------------------
 
@@ -619,6 +685,14 @@ Libraries for networking
     * An issue where the same buffer was incorrectly shared between caching a P-GPS prediction and loading a new one, when external flash was used.
     * An issue where external flash only worked if the P-GPS partition was located at address 0.
 
+  * Added:
+
+    * Device status information is automatically sent to nRF Cloud when the device connects if the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS` Kconfig option is enabled.
+      Network information is included if the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK` Kconfig option is enabled.
+      SIM card information is included if the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_SIM` Kconfig option is enabled.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_DEVICE_STATUS_ENCODE_VOLTAGE` Kconfig option controls if device voltage is included when device status data is encoded.
+    * An application version string can now be included in the :c:struct:`nrf_cloud_init_param` struct.
+
 * :ref:`lib_lwm2m_location_assistance` library:
 
   * Added:
@@ -631,6 +705,12 @@ Libraries for networking
 * :ref:`lib_nrf_cloud_alerts` library:
 
   * A new library for sending notifications of critical device events to nRF Cloud, using either REST or MQTT connections.
+
+* :ref:`lib_nrf_cloud_rest` library:
+
+  * Added:
+
+    * :c:func:`nrf_cloud_rest_device_status_message_send` function to send the device status information as an nRF Cloud device message.
 
 Libraries for NFC
 -----------------
@@ -808,11 +888,13 @@ Documentation
 
 * Added:
 
+  * Documentation page about :ref:`ug_matter_device_security` in the Matter protocol section.
   * Documentation template for the :ref:`Ecosystem integration <Ecosystem_integration>` user guides.
   * Documentation on :ref:`ug_avsystem`.
   * The :ref:`ug_nrf70_developing` user guide.
   * A page on :ref:`ug_nrf70_features`.
   * Documentation template for :ref:`Applications <application>`.
+  * The :ref:`ug_nrf5340_gs` guide.
 
 * Updated:
 

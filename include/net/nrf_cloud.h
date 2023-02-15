@@ -468,6 +468,10 @@ struct nrf_cloud_modem_info {
 	const struct modem_param_info *mpi;
 #endif
 
+	/** Application version string to report to nRF Cloud.
+	 *  Used only if device parameter is NRF_CLOUD_INFO_SET.
+	 */
+	const char *application_version;
 };
 
 /** @brief Structure to specify which components are added to the encoded service info object */
@@ -624,6 +628,10 @@ struct nrf_cloud_init_param {
 	 *  If set, @ref nrf_cloud_os_mem_hooks_init will be called by @ref nrf_cloud_init.
 	 */
 	struct nrf_cloud_os_mem_hooks *hooks;
+	/** Optional application version that is reported to nRF Cloud if
+	 * CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS is enabled.
+	 */
+	const char *application_version;
 };
 
 /**

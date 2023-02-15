@@ -29,4 +29,7 @@ int wifi_nrf_get_power_save_config(const struct device *dev,
 void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 					     struct nrf_wifi_umac_event_power_save_info *ps_info,
 					     unsigned int event_len);
+
+int wifi_nrf_set_power_save_timeout(const struct device *dev,
+				    struct wifi_ps_timeout_params *ps_timeout);
 #endif /*  __ZEPHYR_PS_H__ */

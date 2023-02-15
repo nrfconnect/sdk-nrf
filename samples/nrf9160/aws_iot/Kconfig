@@ -18,6 +18,10 @@ config CONNECTION_RETRY_TIMEOUT_SECONDS
 	int "Number of seconds between each AWS IoT connection retry"
 	default 30
 
+module = AWS_IOT_SAMPLE
+module-str = AWS IoT sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
 endmenu
 
 menu "Zephyr Kernel"

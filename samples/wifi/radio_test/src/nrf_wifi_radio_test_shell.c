@@ -149,7 +149,6 @@ static bool check_valid_data_rate(const struct shell *shell,
 }
 
 
-#ifndef CONFIG_NRF700X_REV_A
 static bool check_valid_channel(unsigned char chan_num)
 {
 	if (((chan_num >= 1) && (chan_num <= 14)) ||
@@ -194,7 +193,6 @@ static bool check_valid_channel(unsigned char chan_num)
 
 	return false;
 }
-#endif /* !CONFIG_NRF700X_REV_A */
 
 
 static int check_channel_settings(const struct shell *shell,
@@ -234,9 +232,7 @@ static int check_channel_settings(const struct shell *shell,
 			return -1;
 		}
 	} else if ((tput_mode == RPU_TPUT_MODE_HE_SU) ||
-#ifndef CONFIG_NRF700X_REV_A
 		   (tput_mode == RPU_TPUT_MODE_HE_TB) ||
-#endif /* !CONFIG_NRF700X_REV_A */
 		   (tput_mode == RPU_TPUT_MODE_HE_ER_SU)) {
 		if (chan->bw != RPU_CH_BW_20) {
 			shell_fprintf(shell,
@@ -287,10 +283,8 @@ enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	conf_params->he_ltf = 2;
 	conf_params->he_gi = 2;
 	conf_params->aux_adc_input_chain_id = 1;
-#ifndef CONFIG_NRF700X_REV_A
 	conf_params->ru_tone = 26;
 	conf_params->ru_index = 1;
-#endif /* !CONFIG_NRF700X_REV_A */
 	conf_params->phy_calib = NRF_WIFI_DEF_PHY_CALIB;
 out:
 	return status;
@@ -775,7 +769,6 @@ static int nrf_wifi_radio_test_set_tx_pkt_len(const struct shell *shell,
 		return -ENOEXEC;
 	}
 
-#ifndef CONFIG_NRF700X_REV_A
 	if (ctx->conf_params.tx_pkt_tput_mode == RPU_TPUT_MODE_HE_TB) {
 		if (ctx->conf_params.ru_tone == 26) {
 			if (val >= 350) {
@@ -812,7 +805,6 @@ static int nrf_wifi_radio_test_set_tx_pkt_len(const struct shell *shell,
 			return -ENOEXEC;
 		}
 	}
-#endif /* !CONFIG_NRF700X_REV_A */
 
 	if (!check_test_in_prog(shell)) {
 		return -ENOEXEC;
@@ -953,7 +945,6 @@ static int nrf_wifi_radio_test_set_rx_capture_length(const struct shell *shell,
 	return 0;
 }
 
-#ifndef CONFIG_NRF700X_REV_A
 static int nrf_wifi_radio_test_set_ru_tone(const struct shell *shell,
 					   size_t argc,
 					   const char *argv[])
@@ -1157,7 +1148,6 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 
 	return 0;
 }
-#endif /* !CONFIG_NRF700X_REV_A */
 
 
 static int nrf_wifi_radio_test_set_tx(const struct shell *shell,
@@ -1798,12 +1788,10 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      conf_params->ble_ant_switch_ctrl);
 #endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
 
-#ifndef CONFIG_NRF700X_REV_A
 	shell_fprintf(shell,
 		      SHELL_INFO,
 		      "wlan_ant_switch_ctrl = %d\n",
 		      conf_params->wlan_ant_switch_ctrl);
-#endif /* ! CONFIG_NRF700X_REV_A */
 
 	return 0;
 }
@@ -1863,7 +1851,6 @@ static int nrf_wifi_radio_test_get_stats(const struct shell *shell,
 	return 0;
 }
 
-#ifndef CONFIG_NRF700X_REV_A
 /* See enum CD2CM_MSG_ID_T in RPU Coexistence Manager API */
 #define CD2CM_UPDATE_SWITCH_CONFIG 0x7
 static int nrf_wifi_radio_test_wlan_switch_ctrl(const struct shell *shell,
@@ -1908,7 +1895,6 @@ static int nrf_wifi_radio_test_wlan_switch_ctrl(const struct shell *shell,
 
 	return 0;
 }
-#endif
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf_wifi_radio_test_subcmds,
@@ -1969,18 +1955,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_he_gi,
 		      2,
 		      0),
-#ifdef CONFIG_NRF700X_REV_A
-	SHELL_CMD_ARG(tx_pkt_tput_mode,
-		      NULL,
-		      "0 - Legacy mode\n"
-		      "1 - HT mode\n"
-		      "2 - VHT mode\n"
-		      "3 - HE(SU) mode\n"
-		      "4 - HE(ER SU) mode                                 ",
-		      nrf_wifi_radio_test_set_tx_pkt_tput_mode,
-		      2,
-		      0),
-#else
 	SHELL_CMD_ARG(tx_pkt_tput_mode,
 		      NULL,
 		      "0 - Legacy mode\n"
@@ -1992,7 +1966,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_tx_pkt_tput_mode,
 		      2,
 		      0),
-#endif /* !CONFIG_NRF700X_REV_A */
 	SHELL_CMD_ARG(tx_pkt_sgi,
 		      NULL,
 		      "0 - Disable\n"
@@ -2047,7 +2020,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_tx_power,
 		      2,
 		      0),
-#ifndef CONFIG_NRF700X_REV_A
 	SHELL_CMD_ARG(ru_tone,
 		      NULL,
 		      "<val> - Resource unit (RU) size (26,52,106 or 242)",
@@ -2071,7 +2043,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_init,
 		      2,
 		      0),
-#endif /* !CONFIG_NRF700X_REV_A */
 	SHELL_CMD_ARG(tx,
 		      NULL,
 		      "0 - Disable TX\n"
@@ -2185,14 +2156,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_get_stats,
 		      1,
 		      0),
-#ifndef CONFIG_NRF700X_REV_A
 	SHELL_CMD_ARG(wlan_ant_switch_ctrl,
 		      NULL,
 		      "Configure WLAN antenna switch (0-separate/1-shared)",
 		      nrf_wifi_radio_test_wlan_switch_ctrl,
 		      2,
 		      0),
-#endif
 	SHELL_SUBCMD_SET_END);
 
 

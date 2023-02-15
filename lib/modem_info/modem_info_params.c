@@ -44,7 +44,12 @@ int modem_info_params_init(struct modem_param_info *modem)
 	modem->device.imei.type			= MODEM_INFO_IMEI;
 	modem->device.board			= CONFIG_BOARD;
 	modem->device.app_version		= STRINGIFY(APP_VERSION);
+
+#ifdef PROJECT_NAME
 	modem->device.app_name			= STRINGIFY(PROJECT_NAME);
+#else
+	modem->device.app_name			= "N/A";
+#endif
 
 	return 0;
 }

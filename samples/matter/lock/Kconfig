@@ -58,6 +58,11 @@ config APPLICATION_OTHER_LABEL
 	default "Wi-Fi" if NET_L2_OPENTHREAD
 	default "Thread" if CHIP_WIFI
 
+config THREAD_WIFI_SWITCHING_CLI_SUPPORT
+	bool "Add CLI command for triggering of the switch between Thread and Wi-Fi"
+	default n
+	select CHIP_LIB_SHELL
+
 endif
 
 # Sample configuration used for Thread networking

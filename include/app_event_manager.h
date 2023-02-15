@@ -42,19 +42,22 @@ typedef bool (*cb_fn)(const struct app_event_header *aeh);
  * @brief List of bits in event type flags.
  */
 enum app_event_type_flags {
-	/* Flags set internally by Application Event Manager. */
+	/** marks beginning of flags controlled internally by Application Event Manager.*/
 	APP_EVENT_TYPE_FLAGS_SYSTEM_START,
+	/** indicates that event type has variable data size.
+	 *  Flag set internally by Application Event Manager.
+	 */
 	APP_EVENT_TYPE_FLAGS_HAS_DYNDATA = APP_EVENT_TYPE_FLAGS_SYSTEM_START,
-
-	/* Flags available for user. */
+	/** marks beginning of flags set by user.*/
 	APP_EVENT_TYPE_FLAGS_USER_SETTABLE_START,
+	/** enables event logging from the application start.
+	 *  Flag set by user.
+	 */
 	APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE =
 		APP_EVENT_TYPE_FLAGS_USER_SETTABLE_START,
-
-	/* Number of predefined flags. */
+	/** shows number of predefined flags.*/
 	APP_EVENT_TYPE_FLAGS_COUNT,
-
-	/* Value greater or equal are user-specific. */
+	/** marks beginning of user-specific flags.*/
 	APP_EVENT_TYPE_FLAGS_USER_DEFINED_START = APP_EVENT_TYPE_FLAGS_COUNT,
 };
 

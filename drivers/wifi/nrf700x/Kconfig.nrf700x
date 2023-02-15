@@ -31,8 +31,9 @@ if WIFI_NRF700X
 config NET_MGMT_EVENT_STACK_SIZE
 	default 2048 if !WPA_SUPP
 
-config NRF700X_REV_A
-	bool "nRF7002 Rev A"
+# Wi-Fi interface will be operationally UP only after Wi-Fi connection.
+config NET_CONFIG_INIT_TIMEOUT
+	default 0 if NET_CONFIG_SETTINGS
 
 config NRF700X_ON_QSPI
 	def_bool $(dt_compat_enabled,$(DT_COMPAT_NORDIC_NRF7002_QSPI))
@@ -79,8 +80,12 @@ config NRF700X_WIFI_UTIL
 
 config NRF700X_WIFI_BT_COEX
 	bool "Enable Wi-Fi Bluetooth coexistence support"
-	depends on SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX && !NRF700X_REV_A
-	default y if SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX && !NRF700X_REV_A
+	depends on SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX
+	default y if SOC_NRF5340_CPUAPP_QKAA && NRF700X_RADIO_COEX
+
+config NRF700X_QSPI_LOW_POWER
+	bool "Enable low power mode in QSPI"
+	default y
 
 # Performance fine tuning options
 
@@ -90,11 +95,11 @@ config RX_NUM_BUFS
 
 config MAX_TX_AGGREGATION
 	int "Maximum number of TX packets to aggregate"
-	default 9
+	default 6
 
 config MAX_TX_TOKENS
 	int "Maximum number of TX tokens"
-	default 5
+	default 10
 
 config TX_MAX_DATA_SIZE
 	int "Maximum size of TX data"
