@@ -288,9 +288,18 @@ nRF Desktop
   * An application log indicating that the value of a configuration option has been updated in the :ref:`nrf_desktop_motion`.
   * Application-specific Kconfig options :ref:`CONFIG_DESKTOP_LOG <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>` to simplify the debug configurations for the Logging and Shell subsystems.
     See the debug configuration section of the :ref:`nrf_desktop` application for more details.
+  * The application-specific Kconfig options that define common HID device identification values (product name, manufacturer name, Vendor ID, and Product ID).
+    The identification values are used both by USB and the Bluetooth LE GATT Device Information Service.
+    See the :ref:`nrf_desktop_hid_device_identifiers` documentation for details.
   * The :ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO <config_desktop_app_options>` configuration option.
     It can be used to indicate the dongle peer identity with a dedicated event.
   * Synchronization between the Resolvable Private Address (RPA) rotation and the advertising data update in the Fast Pair configurations using the :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA` option.
+  * The application-specific Kconfig options that can be used to enable the :ref:`lib_caf` modules and to automatically tailor the default configuration to the nRF Desktop use case.
+    Each used Common Application Framework module is handled by a corresponding application-specific option with a modified prefix.
+    For example, :ref:`CONFIG_DESKTOP_SETTINGS_LOADER <config_desktop_app_options>` is used to automatically enable the :kconfig:option:`CONFIG_CAF_SETTINGS_LOADER` Kconfig option and to align the default configuration.
+  * Prompts to Kconfig options that enable :ref:`nrf_desktop_hids`, :ref:`nrf_desktop_bas`, and :ref:`nrf_desktop_dev_descr`.
+    An application-specific option (:ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>`) implies the Kconfig options that enable the mentioned modules together with other features that are needed for the Bluetooth HID peripheral role.
+    The option is enabled by default if the nRF Desktop Bluetooth support (:ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>`) is enabled.
 
 * Updated:
 
@@ -299,10 +308,24 @@ nRF Desktop
     * Set the max compiled-in log level to ``warning`` for the Non-Volatile Storage (:kconfig:option:`CONFIG_NVS_LOG_LEVEL`).
     * Lowered a log level to ``debug`` for the ``Identity x created`` log in the :ref:`nrf_desktop_ble_bond`.
 
-  * By default, nRF Desktop dongles use the Bluetooth appearance (:kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE)` of keyboard.
-    The new default configuration value improves consistency with the used HID boot interface.
   * The default values of the :kconfig:option:`CONFIG_BT_GATT_CHRC_POOL_SIZE` and :kconfig:option:`CONFIG_BT_GATT_UUID16_POOL_SIZE` Kconfig options are tailored to the nRF Desktop application requirements.
   * The :ref:`nrf_desktop_fast_pair_app` to remove the Fast Pair advertising payload for the dongle peer.
+  * The default values of Bluetooth device name (:kconfig:option:`CONFIG_BT_DEVICE_NAME`) and Bluetooth device appearance (:kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE`) are set to rely on the nRF Desktop product name or the nRF Desktop device role and type combination.
+  * The default value of the Bluetooth appearance (:kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE)` for nRF desktop dongle is set to keyboard.
+    This is done to improve consistency with the used HID boot interface.
+  * USB remote wakeup (:kconfig:option:`CONFIG_USB_DEVICE_REMOTE_WAKEUP`) is disabled in MCUboot bootloader configurations.
+    The functionality is not used by the bootloader.
+  * :ref:`nrf_desktop_hids` registers the GATT HID Service before Bluetooth LE is enabled.
+    This is done to avoid submitting works related to Service Changed indication and GATT database hash calculation before the system settings are loaded from non-volatile memory.
+  * Simplified configuration of application modules.
+    The modules automatically enable required libraries and align the related default configuration with the application use case.
+    Configuration of the following application modules was simplified:
+
+    * :ref:`nrf_desktop_hid_forward`
+    * :ref:`nrf_desktop_hids`
+    * :ref:`nrf_desktop_watchdog`
+
+    See documentation of the mentioned modules and their Kconfig configuration files for details.
 
 * Removed:
 
