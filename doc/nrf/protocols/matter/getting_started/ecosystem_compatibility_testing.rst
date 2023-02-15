@@ -23,8 +23,8 @@ At the very least, you need the following pieces of hardware to set up and test 
 * Matter over Wi-Fi development kit: 1x nRF7002 DK
 * Devices from at least one of commercial ecosystems compatible with the official Matter implementation, for example:
 
-  * `Apple Home <Apple Home integration with Matter>`_
-  * `Google Home <Google Home integration with Matter>`_
+  * `Apple Home <Apple Home integration with Matter_>`_
+  * `Google Home <Google Home integration with Matter_>`_
   * `Samsung SmartThings <Samsung SmartThings integration with Matter_>`_
 
 * 1x Wi-Fi Access Point supporting IPv6 connected to the Internet (for example, Asus RT-AC1300G, as used in the tutorial)
