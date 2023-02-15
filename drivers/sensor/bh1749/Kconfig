@@ -22,7 +22,7 @@ config BH1749_READY_WAIT_TIME_MSEC
 	help
 	  BH1749 requires certain configurations to happen with a delay, so that it may take some
 	  time before the sensor is ready to be used.
-	  This option configurues a wait time in milliseconds that the driver will wait for the the sensor
+	  This option configurues a wait time in milliseconds that the driver will wait for the sensor
 	  to be ready in cases where it is still initializing.
 
 endif # BH1749
