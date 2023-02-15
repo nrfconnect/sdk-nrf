@@ -100,7 +100,7 @@ Filtered A-GPS
 --------------
 
 With filtered A-GPS, the satellites below the given angle above the ground are filtered out.
-You can set the the angle to a degree `[0 - 90]` using the :c:func:`location_assist_agps_set_elevation_mask` function.
+You can set the angle to a degree `[0 - 90]` using the :c:func:`location_assist_agps_set_elevation_mask` function.
 Setting the degree to `-1` disables filtering, which is the default setting.
 
 .. _location_assistance_pgps_lwm2m:

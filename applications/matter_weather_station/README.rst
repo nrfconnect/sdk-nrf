@@ -244,7 +244,7 @@ After programming the application, perform the following steps to test the Matte
 
             chip-tool pressuremeasurement read measured-value <Device ID> 3
 
-   #. After invoking the chosen command, search the the CHIP Tool for Linux or macOS console logs and look for the measurement value:
+   #. After invoking the chosen command, search the CHIP Tool for Linux or macOS console logs and look for the measurement value:
 
       * Example of the temperature measurement value log:
 

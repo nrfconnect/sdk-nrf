@@ -79,7 +79,7 @@ config SB_SIGNING_COMMAND
 	help
 	  This command will be called to produce a signature of the firmware.
 	  It will be called as "${CONFIG_SB_SIGNING_COMMAND} <file>"
-	  The command must calculate the signature over the the contents
+	  The command must calculate the signature over the contents
 	  of the <file> and write the signature to stdout.
 	  The signature must be on DER format.
 
