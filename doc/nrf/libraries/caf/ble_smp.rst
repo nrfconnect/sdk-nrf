@@ -16,12 +16,12 @@ To use the module, you must enable the following Kconfig options:
 
 * :kconfig:option:`CONFIG_CAF_BLE_STATE` - This module enables :ref:`caf_ble_state`.
 * :kconfig:option:`CONFIG_CAF_BLE_SMP` - This option enables |smp| over Bluetooth LE.
-* :kconfig:option:`CONFIG_MCUMGR_CMD_IMG_MGMT` - This option enables MCUmgr image management handlers, which are required for the DFU process.
+* :kconfig:option:`CONFIG_MCUMGR_GRP_IMG` - This option enables MCUmgr image management handlers, which are required for the DFU process.
   For details, see :ref:`zephyr:device_mgmt` in the Zephyr documentation.
 * :kconfig:option:`CONFIG_MCUMGR_MGMT_NOTIFICATION_HOOKS` - This option enables MCUmgr notification hook support, which allows this module to listen for a MCUmgr event.
   For details, see :ref:`zephyr:mcumgr_callbacks` in the Zephyr documentation.
 * :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_UPLOAD_CHECK_HOOK` - This option enables MCUmgr upload check hook, which sends image upload requests to the registered callbacks.
-* :kconfig:option:`CONFIG_MCUMGR_SMP_BT` - This option enables support for the SMP commands over Bluetooth.
+* :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT` - This option enables support for the SMP commands over Bluetooth.
 * :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` - This option enables the MCUboot bootloader.
   The DFU over Simple Management Protocol in Zephyr is supported only with the MCUboot bootloader.
 
@@ -30,7 +30,7 @@ Enabling remote OS management
 
 The |smp| supports registering OS management handlers automatically, which you can enable using the following Kconfig option:
 
-* :kconfig:option:`CONFIG_MCUMGR_CMD_OS_MGMT` - This option enables MCUmgr OS management handlers.
+* :kconfig:option:`CONFIG_MCUMGR_GRP_OS` - This option enables MCUmgr OS management handlers.
   Use these handlers to remotely trigger the device reboot after the image transfer is completed.
   After the reboot, the device starts using the new firmware.
   One of the applications that support the remote reboot functionality is `nRF Connect for Mobile`_.
