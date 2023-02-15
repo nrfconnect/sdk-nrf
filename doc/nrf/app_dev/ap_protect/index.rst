@@ -26,18 +26,18 @@ For detailed information, refer to the hardware documentation.
 .. list-table:: AP-Protect implementations
    :header-rows: 1
 
-   * - Implementation type
+   * - AP-Protect implementation type
      - Default factory state
      - How to enable
      - How to disable
-   * - AP-Protect controlled by hardware
+   * - Hardware
      - Disabled
-     - Writing ``UICR.APPROTECT`` to ``Enabled`` and performing reset.
+     - Writing ``UICR.APPROTECT`` to ``Enabled`` and performing a reset.
      - Issuing an ``ERASEALL`` command via CTRL-AP.
        This command erases the flash, UICR, and RAM, including ``UICR.APPROTECT``.
-   * - AP-Protect controlled by hardware and software
+   * - Hardware and software
      - Enabled
-     - After it is disabled, a reset or a wake enables the access port protection again.
+     - When AP-Protect is disabled, a reset or a wake enables the access port protection again.
      - Issuing an ``ERASEALL`` command via CTRL-AP.
        This command erases the flash, UICR, and RAM, including ``UICR.APPROTECT``.
 
@@ -51,38 +51,58 @@ See the related hardware documentation for more information about which implemen
    :header-rows: 1
 
    * - SoC
-     - AP-Protect implementation supported
+     - Hardware AP-Protect support
+     - Hardware and software AP-Protect support
      - Related hardware documentation
+     - Additional information
    * - nRF9160
-     - Hardware; also supports Secure AP-Protect, given support for different :ref:`app_boards_spe_nspe`
+     - ✔
+     -
      - `Debugger access protection for nRF9160`_
+     - Also supports Secure AP-Protect (see note below)
    * - nRF5340
-     - Hardware and software; also supports Secure AP-Protect, given support for different :ref:`app_boards_spe_nspe`
+     -
+     - ✔
      - `AP-Protect for nRF5340`_
+     - Also supports Secure AP-Protect (see note below)
    * - nRF52840
-     - Hardware; Hardware and software
+     - ✔
+     - ✔
      - `AP-Protect for nRF52840`_
+     -
    * - nRF52833
-     - Hardware; Hardware and software
+     - ✔
+     - ✔
      - `AP-Protect for nRF52833`_
+     -
    * - nRF52832
-     - Hardware; Hardware and software
+     - ✔
+     - ✔
      - `AP-Protect for nRF52832`_
+     -
    * - nRF52820
-     - Hardware; Hardware and software
+     - ✔
+     - ✔
      - `AP-Protect for nRF52820`_
+     -
    * - nRF52811
-     - Hardware; Hardware and software
+     - ✔
+     - ✔
      - `AP-Protect for nRF52811`_
+     -
    * - nRF52810
-     - Hardware; Hardware and software
+     - ✔
+     - ✔
      - `AP-Protect for nRF52810`_
+     -
    * - nRF52805
-     - Hardware; Hardware and software
+     - ✔
+     - ✔
      - `AP-Protect for nRF52805`_
+     -
 
 .. note::
-    The SoCs that support `ARM TrustZone`_ (nRF5340 and nRF9160) implement two AP-Protect systems: AP-Protect and Secure AP-Protect.
+    The SoCs that support `ARM TrustZone`_ and different :ref:`app_boards_spe_nspe` (nRF5340 and nRF9160) implement two AP-Protect systems: AP-Protect and Secure AP-Protect.
     While AP-Protect blocks access to all CPU registers and memories, Secure AP-Protect limits access to the CPU to only non-secure accesses.
     This means that the CPU is entirely unavailable while it is running the code in the Secure Processing Environment, and only non-secure registers and address-mapped resources can be accessed.
 
