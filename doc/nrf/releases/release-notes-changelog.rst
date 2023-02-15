@@ -252,8 +252,6 @@ nRF Desktop
     See the debug configuration section of the :ref:`nrf_desktop` application for more details.
   * The :ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO <config_desktop_app_options>` configuration option.
     It can be used to indicate the dongle peer identity with a dedicated event.
-  * Updated the :ref:`nrf_desktop_fast_pair_app` to remove the Fast Pair advertising payload for the dongle peer.
-  * Removed Fast Pair discoverable advertising payload on Resolvable Private Address (RPA) rotation during discoverable advertising session.
   * Synchronization between the Resolvable Private Address (RPA) rotation and the advertising data update in the Fast Pair configurations using the :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA` option.
 
 * Updated:
@@ -263,11 +261,16 @@ nRF Desktop
     * Set the max compiled-in log level to ``warning`` for the Non-Volatile Storage (:kconfig:option:`CONFIG_NVS_LOG_LEVEL`).
     * Lowered a log level to ``debug`` for the ``Identity x created`` log in the :ref:`nrf_desktop_ble_bond`.
 
-  * Removed separate configurations enabling :ref:`zephyr:shell_api` (:file:`prj_shell.conf`).
-    Shell support can be enabled for a given configuration with the single Kconfig option (:ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>`).
   * By default, nRF Desktop dongles use the Bluetooth appearance (:kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE)` of keyboard.
     The new default configuration value improves consistency with the used HID boot interface.
   * The default values of the :kconfig:option:`CONFIG_BT_GATT_CHRC_POOL_SIZE` and :kconfig:option:`CONFIG_BT_GATT_UUID16_POOL_SIZE` Kconfig options are tailored to the nRF Desktop application requirements.
+  * The :ref:`nrf_desktop_fast_pair_app` to remove the Fast Pair advertising payload for the dongle peer.
+
+* Removed:
+
+  * Fast Pair discoverable advertising payload on Resolvable Private Address (RPA) rotation during discoverable advertising session.
+  * Separate configurations enabling :ref:`zephyr:shell_api` (:file:`prj_shell.conf`).
+    Shell support can be enabled for a given configuration with the single Kconfig option (:ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>`).
 
 Samples
 =======
