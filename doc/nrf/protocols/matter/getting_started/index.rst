@@ -19,6 +19,7 @@ The pages will guide you through the following getting started process:
    You will also use some of the :ref:`ug_matter_tools` for this process.
 #. :ref:`ug_matter_gs_kconfig` describes the basic Kconfig configuration if you want to start developing your own Matter application.
 #. In :ref:`ug_matter_device_advanced_kconfigs`, you will learn about more advanced Kconfig options related to Matter.
+#. :ref:`ug_matter_gs_transmission_power` provides information about the default transmission values for different protocols related to Matter and the list of Kconfig options that you can used to modify the transmission power.
 #. Once you have a grasp of the Matter configuration, :ref:`ug_matter_gs_adding_cluster` will teach you step by step how to add clusters to a Matter application created from the template sample.
 #. Finally, in :ref:`ug_matter_gs_ecosystem_compatibility_testing`, you will set up and test multiple Matter fabrics, each belonging to a different commercial ecosystem, and test their interoperability.
 
@@ -35,5 +36,6 @@ These are built from the files available in the official `Matter GitHub reposito
    kconfig
    advanced_kconfigs
    low_power_configuration
+   transmission_power
    adding_clusters
    ecosystem_compatibility_testing

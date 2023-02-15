@@ -17,6 +17,8 @@ For testing purposes, a FEM is usually integrated in either a development kit or
 
 This guide describes how to add support for 2 different front-end module (FEM) implementations to your application in |NCS|.
 
+.. _ug_radio_fem_sw_support:
+
 Software support
 ****************
 
@@ -28,6 +30,8 @@ The following test samples support FEM control:
 * :ref:`direct_test_mode`
 
 You can also use your own FEM driver when required.
+
+.. _ug_radio_fem_sw_support_mpsl:
 
 Using MPSL
 ==========
@@ -80,6 +84,8 @@ You can do that by setting the :kconfig:option:`CONFIG_MPSL_FEM_ONLY` Kconfig op
 
 Some applications can perform calls to the :ref:`nrfxlib:mpsl_fem` API even though no RF Front-End module is physically connected to the device and the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option is set to ``n``.
 In that case, ensure that the :kconfig:option:`CONFIG_MPSL_FEM_API_AVAILABLE` Kconfig option is set to ``y``.
+
+.. _ug_radio_fem_sw_support_mpsl_fem_output:
 
 Setting the FEM output power
 ----------------------------
