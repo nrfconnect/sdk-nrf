@@ -226,6 +226,7 @@ int nrf_cloud_agps_request_all(void)
 		.data_flags =
 			NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST |
 			NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST |
+			NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST |
 			NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST |
 			NRF_MODEM_GNSS_AGPS_POSITION_REQUEST |
 			NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST
@@ -343,6 +344,22 @@ static int copy_klobuchar(struct nrf_modem_gnss_agps_data_klobuchar *dst,
 	return 0;
 }
 
+static int copy_nequick(struct nrf_modem_gnss_agps_data_nequick *dst,
+			struct nrf_cloud_apgs_element *src)
+{
+	if ((src == NULL) || (dst == NULL)) {
+		return -EINVAL;
+	}
+
+	dst->ai0 = src->ion_correction.nequick->ai0;
+	dst->ai1 = src->ion_correction.nequick->ai1;
+	dst->ai2 = src->ion_correction.nequick->ai2;
+	dst->storm_cond = src->ion_correction.nequick->storm_cond;
+	dst->storm_valid = src->ion_correction.nequick->storm_valid;
+
+	return 0;
+}
+
 static int copy_location(struct nrf_modem_gnss_agps_data_location *dst,
 			 struct nrf_cloud_apgs_element *src)
 {
@@ -447,6 +464,16 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 		return send_to_modem(&klobuchar, sizeof(klobuchar),
 				     NRF_MODEM_GNSS_AGPS_KLOBUCHAR_IONOSPHERIC_CORRECTION);
 	}
+	case NRF_CLOUD_AGPS_NEQUICK_CORRECTION: {
+		struct nrf_modem_gnss_agps_data_nequick nequick;
+
+		processed.data_flags |= NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST;
+		copy_nequick(&nequick, agps_data);
+		LOG_DBG("A-GPS type: NRF_CLOUD_AGPS_NEQUICK_CORRECTION");
+
+		return send_to_modem(&nequick, sizeof(nequick),
+				     NRF_MODEM_GNSS_AGPS_NEQUICK_IONOSPHERIC_CORRECTION);
+	}
 	case NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK: {
 		struct nrf_modem_gnss_agps_data_system_time_and_sv_tow time_and_tow;
 
@@ -527,6 +554,11 @@ static size_t get_next_agps_element(struct nrf_cloud_apgs_element *element,
 		element->ion_correction.klobuchar =
 			(struct nrf_cloud_agps_klobuchar *)(buf + len);
 		len += sizeof(struct nrf_cloud_agps_klobuchar);
+		break;
+	case NRF_CLOUD_AGPS_NEQUICK_CORRECTION:
+		element->ion_correction.nequick =
+			(struct nrf_cloud_agps_nequick *)(buf + len);
+		len += sizeof(struct nrf_cloud_agps_nequick);
 		break;
 	case NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK:
 		element->time_and_tow =
