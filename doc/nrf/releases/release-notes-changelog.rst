@@ -249,6 +249,7 @@ nRF9160 samples
 
   * Updated the sample to use defines from the :ref:`lib_nrf_cloud` library for string values related to nRF Cloud.
     Removed the inclusion of the file :file:`nrf_cloud_codec.h`.
+  * Added sending of GNSS data to carrier library when the library is enabled.
 
 * :ref:`https_client` sample:
 
