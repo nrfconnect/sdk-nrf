@@ -15,7 +15,8 @@ Template: Application
    * Use the provided stock phrases and includes when possible.
    * Sections with * are optional and can be left out.
      All other sections are required.
-     Do not add new sections (unless in the sections that allow for further subsections) without discussion with the tech writer team.
+     There could be more sections, which can be added after discussion with the tech writer team.
+     However, it should have the mandatory sections from the template in the recommended format at the very least.
 
 The XYZ application demonstrates some functionality for the Nordic XX hardware.
 
