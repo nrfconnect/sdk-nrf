@@ -59,12 +59,15 @@ static void test_hw_unique_key_tfm1(void)
 	psa_set_key_type(&attributes, PSA_KEY_TYPE_AES);
 	psa_set_key_bits(&attributes, sizeof(out_key) * 8);
 
-	/* Set up a key derivation operation with HUK derivation as the alg */
-	status = psa_key_derivation_setup(&op, TFM_CRYPTO_ALG_HUK_DERIVATION);
+	status = psa_key_derivation_setup(&op, PSA_ALG_HKDF(PSA_ALG_SHA_256));
 	zassert_equal(PSA_SUCCESS, status, NULL);
 
+	/* Set up a key derivation operation with HUK  */
+	status = psa_key_derivation_input_key(&op, PSA_KEY_DERIVATION_INPUT_SECRET,
+					      TFM_BUILTIN_KEY_ID_HUK);
+
 	/* Supply the PS key label as an input to the key derivation */
-	status = psa_key_derivation_input_bytes(&op, PSA_KEY_DERIVATION_INPUT_LABEL,
+	status = psa_key_derivation_input_bytes(&op, PSA_KEY_DERIVATION_INPUT_INFO,
 						test_label,
 						sizeof(test_label));
 	zassert_equal(PSA_SUCCESS, status, "psa_key_derivation_input_bytes failed: %d\n", status);
