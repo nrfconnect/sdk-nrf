@@ -773,13 +773,13 @@ static int nrf_wifi_radio_test_set_tx_pkt_len(const struct shell *shell,
 		if ((ctx->conf_params.tx_pkt_rate == 1) ||
 		    (ctx->conf_params.tx_pkt_rate == 2) ||
 			(ctx->conf_params.tx_pkt_rate == 5) ||
-			(ctx->conf_params.tx_pkt_rate == 11) ){	
+			(ctx->conf_params.tx_pkt_rate == 11)) {
 			if (val > 2300) {
 				shell_fprintf(shell,
 					      SHELL_ERROR,
 					      "max 'tx_pkt_len' size for DSSS is 2300 bytes\n");
 				return -ENOEXEC;
-			}	
+			}
 		} else {
 			if (val > 4000) {
 				shell_fprintf(shell,
