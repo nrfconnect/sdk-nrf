@@ -23,6 +23,7 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_WIFI_CREDENTIALS_STATIC), "Static Wi-Fi config mu
 #define MGMT_EVENTS (NET_EVENT_WIFI_CONNECT_RESULT | NET_EVENT_WIFI_DISCONNECT_RESULT)
 
 static struct net_mgmt_event_callback net_mgmt_callback;
+static struct net_mgmt_event_callback net_mgmt_ipv4_callback;
 
 static void connect(void)
 {
@@ -56,10 +57,9 @@ static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 			return;
 		}
 
-		LOG_INF("Wi-Fi Connected");
+		LOG_INF("Wi-Fi Connected, waiting for IP address");
 
-		status = NETWORK_CONNECTED;
-		break;
+		return;
 	case NET_EVENT_WIFI_DISCONNECT_RESULT:
 		LOG_INF("Disconnected");
 
@@ -77,10 +77,42 @@ static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
+static void ipv4_mgmt_event_handler(struct net_mgmt_event_callback *cb,
+				    uint32_t event, struct net_if *iface)
+{
+	int err;
+	enum network_status status;
+
+	switch (event) {
+	case NET_EVENT_IPV4_ADDR_ADD:
+		LOG_INF("IPv4 address acquired");
+
+		status = NETWORK_CONNECTED;
+		break;
+	case NET_EVENT_IPV4_ADDR_DEL:
+		LOG_INF("IPv4 address lost");
+
+		status = NETWORK_DISCONNECTED;
+		break;
+	default:
+		LOG_DBG("Unknown event: 0x%08X", event);
+		return;
+	}
+
+	err = zbus_chan_pub(&NETWORK_CHAN, &status, K_SECONDS(1));
+	if (err) {
+		LOG_ERR("zbus_chan_pub, error: %d", err);
+		SEND_FATAL_ERROR();
+	}
+}
+
 static void network_task(void)
 {
 	net_mgmt_init_event_callback(&net_mgmt_callback, wifi_mgmt_event_handler, MGMT_EVENTS);
 	net_mgmt_add_event_callback(&net_mgmt_callback);
+	net_mgmt_init_event_callback(&net_mgmt_ipv4_callback, ipv4_mgmt_event_handler,
+				     NET_EVENT_IPV4_ADDR_ADD | NET_EVENT_IPV4_ADDR_DEL);
+	net_mgmt_add_event_callback(&net_mgmt_ipv4_callback);
 
 	/* Add temporary fix to prevent using Wi-Fi before WPA supplicant is ready. */
 	k_sleep(K_SECONDS(1));
