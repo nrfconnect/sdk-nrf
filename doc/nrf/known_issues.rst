@@ -155,6 +155,24 @@ CIA-661: Asset Tracker v2 application configured for LwM2M cannot be built for t
 
   For memfault, use Secure Partition Manager instead of TF-M by setting ``CONFIG_SPM`` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
 
+.. rst-class:: v2-3-0 v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+CIA-890: The application cannot be built with :file:`overlay-debug.conf` and :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` set to ``y``
+  Due to insufficient flash space for the application when it is not optimized, the :ref:`asset_tracker_v2` application cannot be built with :file:`overlay-debug.conf` and :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` set to ``y``.
+
+  **Workaround:** To free up flash space when debugging locally, uncomment the following kconfig options in the :file:`prj.conf` file:
+
+  * :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`
+  * :kconfig:option:`CONFIG_IMG_MANAGER`
+  * :kconfig:option:`CONFIG_MCUBOOT_IMG_MANAGER`
+  * :kconfig:option:`CONFIG_IMG_ERASE_PROGRESSIVELY`
+  * :kconfig:option:`CONFIG_BUILD_S1_VARIANT`
+
+  This removes the partitions for the MCUboot bootloader, the secondary bootloader, and the secondary application image slot.
+  Any functionality depending on those will not work with this configuration.
+
+  Alternatively, disable logging for non-relevant modules or libraries in the :file:`overlay-debug.conf` file until the image fits in flash.
+
 Serial LTE Modem
 ================
 
