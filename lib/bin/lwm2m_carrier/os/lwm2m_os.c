@@ -366,14 +366,12 @@ int lwm2m_os_thread_start(int index, lwm2m_os_thread_entry_t entry, const char *
 
 int lwm2m_os_nrf_modem_init(void)
 {
-#if defined CONFIG_NRF_MODEM_LIB_SYS_INIT
+	/* Silvertree SLM initializes modem lib at start of main. Don't need to init it here */
 	int nrf_err = modem_lib_init_result;
-#else
-	int nrf_err = nrf_modem_lib_init(NORMAL_MODE);
-#endif /* CONFIG_NRF_MODEM_LIB_SYS_INIT */
 
 	switch (nrf_err) {
 	case 0:
+		LOG_INF("Modem library initialized.");
 		break;
 	case MODEM_DFU_RESULT_OK:
 		LOG_INF("Modem firmware update successful.");
