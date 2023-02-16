@@ -769,7 +769,26 @@ static int nrf_wifi_radio_test_set_tx_pkt_len(const struct shell *shell,
 		return -ENOEXEC;
 	}
 
-	if (ctx->conf_params.tx_pkt_tput_mode == RPU_TPUT_MODE_HE_TB) {
+	if (ctx->conf_params.tx_pkt_tput_mode == RPU_TPUT_MODE_LEGACY) {
+		if ((ctx->conf_params.tx_pkt_rate == 1) ||
+		    (ctx->conf_params.tx_pkt_rate == 2) ||
+			(ctx->conf_params.tx_pkt_rate == 5) ||
+			(ctx->conf_params.tx_pkt_rate == 11) ){	
+			if (val > 2300) {
+				shell_fprintf(shell,
+					      SHELL_ERROR,
+					      "max 'tx_pkt_len' size for DSSS is 2300 bytes\n");
+				return -ENOEXEC;
+			}	
+		} else {
+			if (val > 4000) {
+				shell_fprintf(shell,
+					      SHELL_ERROR,
+					      "max 'tx_pkt_len' size for legacy is 4000 bytes\n");
+				return -ENOEXEC;
+			}
+		}
+	} else if (ctx->conf_params.tx_pkt_tput_mode == RPU_TPUT_MODE_HE_TB) {
 		if (ctx->conf_params.ru_tone == 26) {
 			if (val >= 350) {
 				shell_fprintf(shell,
