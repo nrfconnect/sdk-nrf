@@ -725,6 +725,7 @@ static int agps_request_encode(struct nrf_modem_gnss_agps_data_frame *incoming_r
 		cloud_agps_request.request.data_flags =
 					NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST |
 					NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST |
+					NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST |
 					NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST |
 					NRF_MODEM_GNSS_AGPS_POSITION_REQUEST |
 					NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;

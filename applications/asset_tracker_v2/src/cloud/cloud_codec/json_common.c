@@ -737,6 +737,15 @@ int json_common_agps_request_data_add(cJSON *parent,
 		}
 	}
 
+	if (data->request.data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) {
+		err = json_add_number_to_array(agps_types,
+					       DATA_AGPS_REQUEST_TYPE_NEQUICK_CORRECTION);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+	}
+
 	if (data->request.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
 		err = json_add_number_to_array(agps_types,
 					       DATA_AGPS_REQUEST_TYPE_GPS_TOWS);
