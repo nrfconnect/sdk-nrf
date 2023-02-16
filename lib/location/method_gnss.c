@@ -471,6 +471,7 @@ static void method_gnss_assistance_request(void)
 		agps_request.data_flags =
 			NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST |
 			NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST |
+			NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST |
 			NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST |
 			NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST |
 			NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
@@ -977,6 +978,10 @@ static bool method_gnss_agps_expiry_process(const struct nrf_modem_gnss_agps_exp
 
 	if (agps_expiry->klob_expiry <= AGPS_EXPIRY_THRESHOLD) {
 		agps_request.data_flags |= NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST;
+	}
+
+	if (agps_expiry->neq_expiry <= AGPS_EXPIRY_THRESHOLD) {
+		agps_request.data_flags |= NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST;
 	}
 
 	if (agps_expiry->data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
