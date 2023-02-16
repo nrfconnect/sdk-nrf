@@ -538,6 +538,8 @@ Wi-Fi samples
 
 * The :ref:`wifi_shell_sample` sample now uses the :ref:`lib_wifi_credentials` and :ref:`wifi_mgmt_ext` libraries.
 
+* The :ref:`wifi_provisioning` sample now uses the :ref:`lib_wifi_credentials` and :ref:`wifi_prov_readme` libraries.
+
 Other samples
 -------------
 
@@ -580,6 +582,8 @@ Bluetooth libraries and services
 --------------------------------
 
 * Added the :ref:`nsms_readme` library.
+
+* Added the :ref:`wifi_prov_readme` library.
 
 * :ref:`mds_readme` library:
 
