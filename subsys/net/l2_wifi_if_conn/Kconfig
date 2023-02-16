@@ -1,0 +1,54 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig L2_WIFI_CONNECTIVITY
+	bool "L2 Wi-Fi Connectivity"
+	depends on NET_CONNECTION_MANAGER
+
+if L2_WIFI_CONNECTIVITY
+
+config L2_WIFI_CONN_WQ_STACK_SIZE
+	int "Wi-Fi connectivity work queue stack size"
+	default 6144
+	help
+	  The workqueue stack size needs to be kept high to handle the
+	  disconnect case which invokes supplicant calls.
+
+config L2_WIFI_CONNECTIVITY_CONNECT_TIMEOUT_SECONDS
+	int "Connect timeout in seconds"
+	default 0
+	help
+	  Time period in seconds that the library will try to establish a Wi-Fi connection,
+	  before timing out. The connect timeout can be updated by calling
+	  conn_mgr_if_set_timeout(). Default value is 0 (timeout disabled).
+	  When the timeout is disabled, the library relies solely on the internal
+	  connection handling to upkeep the connection.
+
+config L2_WIFI_CONNECTIVITY_CONNECTION_PERSISTENCE
+	bool "Connection persistency"
+	default y
+	help
+	  Persistent connection. If the connection is lost the device will try to reconnect
+	  itself without the need for explicit calls to the network interface.
+	  Persistence can be updated run-time by calling conn_mgr_if_set_flag() with
+	  CONN_MGR_IF_PERSISTENT as flag parameter.
+
+config L2_WIFI_CONNECTIVITY_AUTO_CONNECT
+	bool "Auto connect"
+	default y
+	help
+	 If this option is set the Connection Manager will automatically call connect after the
+	 network interface has been brought up. This option sets the default value, the option has
+	 a corresponding flag that can be set at run time by calling conn_mgr_if_set_flag().
+
+config L2_WIFI_CONNECTIVITY_AUTO_DOWN
+	bool "Auto down"
+	default y
+	help
+	 If this option is set the Connection Manager will automatically take the network interface
+	 down when it stops trying to connect. This option sets the default value, the option has
+	 a corresponding flag that can be set at run time by calling conn_mgr_if_set_flag().
+
+endif # L2_WIFI_CONNECTIVITY

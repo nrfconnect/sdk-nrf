@@ -5,3 +5,4 @@
 #
 
 add_subdirectory(lib)
+add_subdirectory(l2_wifi_if_conn)
