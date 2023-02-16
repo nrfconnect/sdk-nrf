@@ -402,15 +402,20 @@ struct lte_lc_cells_info {
 };
 
 enum lte_lc_modem_sleep_type {
+	/** Power saving mode (PSM). */
 	LTE_LC_MODEM_SLEEP_PSM			= 1,
-	LTE_LC_MODEM_SLEEP_RF_INACTIVITY	= 2,	/* For example eDRX */
+	/** RF inactivity, for example eDRX. */
+	LTE_LC_MODEM_SLEEP_RF_INACTIVITY	= 2,
+	/** Limited service or out of coverage. */
+	LTE_LC_MODEM_SLEEP_LIMITED_SERVICE	= 3,
+	/** Flight mode. */
 	LTE_LC_MODEM_SLEEP_FLIGHT_MODE		= 4,
 };
 
 struct lte_lc_modem_sleep {
 	enum lte_lc_modem_sleep_type type;
 
-	/* If this value is set to -1. Sleep is considered infinite. */
+	/* If this value is set to -1, the sleep is considered infinite. */
 	int64_t time;
 };
 
