@@ -19,9 +19,11 @@
 #include <zephyr/net/wifi_mgmt.h>
 #include <net/wifi_credentials.h>
 
-#include "wifi_provisioning.h"
+#include <bluetooth/services/wifi_provisioning.h>
 
-#define ADV_DATA_UPDATE_INTERVAL      5
+#ifdef WIFI_PROV_ADV_DATA_UPDATE
+#define ADV_DATA_UPDATE_INTERVAL      WIFI_PROV_ADV_DATA_UPDATE_INTERVAL
+#endif /* WIFI_PROV_ADV_DATA_UPDATE */
 
 #define ADV_DATA_VERSION_IDX          (BT_UUID_SIZE_128 + 0)
 #define ADV_DATA_FLAG_IDX             (BT_UUID_SIZE_128 + 1)
@@ -58,8 +60,11 @@ static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_SVC_DATA128, prov_svc_data, sizeof(prov_svc_data)),
 };
 
-static struct k_work_delayable update_adv_data_work;
 static struct k_work_delayable update_adv_param_work;
+
+#ifdef WIFI_PROV_ADV_DATA_UPDATE
+static struct k_work_delayable update_adv_data_work;
+#endif /* WIFI_PROV_ADV_DATA_UPDATE */
 
 static void update_wifi_status_in_adv(void)
 {
@@ -70,7 +75,7 @@ static void update_wifi_status_in_adv(void)
 	prov_svc_data[ADV_DATA_VERSION_IDX] = PROV_SVC_VER;
 
 	/* If no config, mark it as unprovisioned. */
-	if (!wifi_prov_state_get()) {
+	if (!bt_wifi_prov_state_get()) {
 		prov_svc_data[ADV_DATA_FLAG_IDX] &= ~ADV_DATA_FLAG_PROV_STATUS_BIT;
 	} else {
 		prov_svc_data[ADV_DATA_FLAG_IDX] |= ADV_DATA_FLAG_PROV_STATUS_BIT;
@@ -106,7 +111,9 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 	printk("BT Connected: %s", addr);
+#ifdef WIFI_PROV_ADV_DATA_UPDATE
 	k_work_cancel_delayable(&update_adv_data_work);
+#endif /* WIFI_PROV_ADV_DATA_UPDATE */
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
@@ -117,8 +124,10 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	printk("BT Disconnected: %s (reason 0x%02x).\n", addr, reason);
 
 	k_work_reschedule_for_queue(&adv_daemon_work_q, &update_adv_param_work, K_NO_WAIT);
+#ifdef WIFI_PROV_ADV_DATA_UPDATE
 	k_work_reschedule_for_queue(&adv_daemon_work_q, &update_adv_data_work,
 				K_SECONDS(ADV_DATA_UPDATE_INTERVAL));
+#endif /* WIFI_PROV_ADV_DATA_UPDATE */
 }
 
 static void identity_resolved(struct bt_conn *conn, const bt_addr_le_t *rpa,
@@ -188,6 +197,7 @@ static struct bt_conn_auth_info_cb auth_info_cb_display = {
 	.pairing_failed = pairing_failed,
 };
 
+#ifdef WIFI_PROV_ADV_DATA_UPDATE
 static void update_adv_data_task(struct k_work *item)
 {
 	update_wifi_status_in_adv();
@@ -195,6 +205,7 @@ static void update_adv_data_task(struct k_work *item)
 	k_work_reschedule_for_queue(&adv_daemon_work_q, &update_adv_data_work,
 				K_SECONDS(ADV_DATA_UPDATE_INTERVAL));
 }
+#endif /* WIFI_PROV_ADV_DATA_UPDATE */
 
 static void update_adv_param_task(struct k_work *item)
 {
@@ -266,7 +277,7 @@ void main(void)
 
 	printk("Bluetooth initialized.\n");
 
-	rc = wifi_prov_init();
+	rc = bt_wifi_prov_init();
 	if (rc == 0) {
 		printk("Wi-Fi provisioning service starts successfully.\n");
 	} else {
@@ -294,16 +305,16 @@ void main(void)
 	update_wifi_status_in_adv();
 
 	k_work_queue_init(&adv_daemon_work_q);
-
 	k_work_queue_start(&adv_daemon_work_q, adv_daemon_stack_area,
 			K_THREAD_STACK_SIZEOF(adv_daemon_stack_area), ADV_DAEMON_PRIORITY,
 			NULL);
 
-	k_work_init_delayable(&update_adv_data_work, update_adv_data_task);
 	k_work_init_delayable(&update_adv_param_work, update_adv_param_task);
-
+#ifdef WIFI_PROV_ADV_DATA_UPDATE
+	k_work_init_delayable(&update_adv_data_work, update_adv_data_task);
 	k_work_schedule_for_queue(&adv_daemon_work_q, &update_adv_data_work,
 				K_SECONDS(ADV_DATA_UPDATE_INTERVAL));
+#endif /* WIFI_PROV_ADV_DATA_UPDATE */
 
 	/* Search for stored wifi credential and apply */
 	wifi_credentials_for_each_ssid(get_wifi_credential, &config);

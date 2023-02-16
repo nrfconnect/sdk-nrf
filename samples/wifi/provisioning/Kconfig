@@ -3,11 +3,19 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-menu "Wi-Fi Provisioning"
+menu "Wi-Fi Provisioning Sample"
 
-module = WIFI_PROVISIONING
-module-str = wifi provisioning service
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+config WIFI_PROV_ADV_DATA_UPDATE
+	bool "Enable periodic update of advertisement data"
+	default n
+
+if WIFI_PROV_ADV_DATA_UPDATE
+
+	config WIFI_PROV_ADV_DATA_UPDATE_INTERVAL
+		int "Periodic update interval in second"
+		default 5
+
+endif # WIFI_PROV_ADV_DATA_UPDATE
 
 endmenu
 
