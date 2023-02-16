@@ -19,6 +19,11 @@ size_t strnlen(const char *buf, size_t bufsz);
 
 LOG_MODULE_REGISTER(wifi_mgmt_ext, CONFIG_WIFI_MGMT_EXT_LOG_LEVEL);
 
+#if defined(CONFIG_WIFI_CREDENTIALS_STATIC)
+	BUILD_ASSERT(sizeof(CONFIG_WIFI_CREDENTIALS_STATIC_SSID) != 1,
+		     "CONFIG_WIFI_CREDENTIALS_STATIC_SSID required");
+#endif /* defined(CONFIG_WIFI_CREDENTIALS_STATIC) */
+
 static inline const char *wpa_supp_security_txt(enum wifi_security_type security)
 {
 	switch (security) {
