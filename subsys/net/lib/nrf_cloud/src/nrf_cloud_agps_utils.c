@@ -85,6 +85,16 @@ static void print_klobuchar(struct nrf_modem_gnss_agps_data_klobuchar *data)
 	printk("\tbeta3: %d\n", data->beta3);
 }
 
+static void print_nequick(struct nrf_modem_gnss_agps_data_nequick *data)
+{
+	printk("nequick\n");
+	printk("\tai0: %d\n", data->ai0);
+	printk("\tai1: %d\n", data->ai1);
+	printk("\tai2: %d\n", data->ai2);
+	printk("\tstorm_cond: %d\n", data->storm_cond);
+	printk("\tstorm_valid: %d\n", data->storm_valid);
+}
+
 static void print_clock_and_tows(struct nrf_modem_gnss_agps_data_system_time_and_sv_tow *data)
 {
 	printk("clock_and_tows\n");
@@ -141,7 +151,7 @@ void agps_print(uint16_t type, void *data)
 		break;
 	}
 	case NRF_MODEM_GNSS_AGPS_NEQUICK_IONOSPHERIC_CORRECTION: {
-		printk("nequick unhandled\n");
+		print_nequick((struct nrf_modem_gnss_agps_data_nequick *)data);
 		break;
 	}
 	case NRF_MODEM_GNSS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS: {
