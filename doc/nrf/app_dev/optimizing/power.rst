@@ -141,6 +141,9 @@ To check whether the modem is able to activate PSM after RRC connection release,
    The active time is used in Step 3.
 #. Wait for ``%XMODEMSLEEP: 1`` notification or :c:enum:`LTE_LC_EVT_MODEM_SLEEP_ENTER` event with type :c:enum:`LTE_LC_MODEM_SLEEP_PSM` indicating that modem has entered PSM.
    If this notification is not received within PSM active time (allow for some margin), the modem was not able to enter PSM.
+
+   If ``%XMODEMSLEEP: 3`` notification or :c:enum:`LTE_LC_EVT_MODEM_SLEEP_ENTER` event with type :c:enum:`LTE_LC_MODEM_SLEEP_LIMITED_SERVICE` is received while waiting for PSM, the cell has been lost and the modem cannot enter PSM.
+   You can use this as a trigger to set the modem to offline mode quicker in this case, but it is not mandatory.
 #. If RRC connection is activated again (``+CSCON: 1`` or :c:enum:`LTE_LC_EVT_RRC_UPDATE` event with RRC mode set to :c:enum:`LTE_LC_RRC_MODE_CONNECTED`) while waiting for PSM, go back to Step 1.
 
 Power profiling example use case
