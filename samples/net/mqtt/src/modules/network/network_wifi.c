@@ -34,10 +34,11 @@ static void connect(void)
 		return;
 	}
 
-	int rc = net_mgmt(NET_REQUEST_WIFI_CONNECT_STORED, iface, NULL, 0);
+	int err = net_mgmt(NET_REQUEST_WIFI_CONNECT_STORED, iface, NULL, 0);
 
-	if (rc) {
-		printk("Connecting to Wi-Fi failed. rc: %d", rc);
+	if (err) {
+		LOG_ERR("Connecting to Wi-Fi failed. error: %d", err);
+		SEND_FATAL_ERROR();
 	}
 }
 
