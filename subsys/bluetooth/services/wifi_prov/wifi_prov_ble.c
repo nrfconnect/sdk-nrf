@@ -22,11 +22,11 @@
 #include <zephyr/net/buf.h>
 
 #include <net/wifi_credentials.h>
+#include <bluetooth/services/wifi_provisioning.h>
 
-#include "wifi_provisioning.h"
 #include "wifi_prov_internal.h"
 
-LOG_MODULE_DECLARE(wifi_prov, CONFIG_WIFI_PROVISIONING_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_prov, CONFIG_BT_WIFI_PROV_LOG_LEVEL);
 
 #define PROV_SVC_CP_IDX               3
 #define PROV_SVC_DATA_IDX             6

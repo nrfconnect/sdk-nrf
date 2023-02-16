@@ -17,10 +17,10 @@
 #include <pb_encode.h>
 #include <pb_decode.h>
 
-#include "wifi_provisioning.h"
+#include <bluetooth/services/wifi_provisioning.h>
 #include "wifi_prov_internal.h"
 
-LOG_MODULE_REGISTER(wifi_prov, CONFIG_WIFI_PROVISIONING_LOG_LEVEL);
+LOG_MODULE_REGISTER(wifi_prov, CONFIG_BT_WIFI_PROV_LOG_LEVEL);
 
 #define WIFI_PROV_MGMT_EVENTS (NET_EVENT_WIFI_SCAN_RESULT | \
 				NET_EVENT_WIFI_CONNECT_RESULT)
@@ -569,7 +569,7 @@ static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
-bool wifi_prov_state_get(void)
+bool bt_wifi_prov_state_get(void)
 {
 	struct wifi_credentials_personal config = { 0 };
 
@@ -581,7 +581,7 @@ bool wifi_prov_state_get(void)
 	}
 }
 
-int wifi_prov_init(void)
+int bt_wifi_prov_init(void)
 {
 	net_mgmt_init_event_callback(&wifi_prov_mgmt_cb,
 				     wifi_mgmt_event_handler,
