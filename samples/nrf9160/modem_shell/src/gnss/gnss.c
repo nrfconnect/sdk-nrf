@@ -20,6 +20,11 @@
 #include "cloud_lwm2m.h"
 #endif
 
+#if defined(CONFIG_LWM2M_CARRIER)
+#include <time.h>
+#include <lwm2m_carrier.h>
+#endif
+
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 #include <stdlib.h>
 #include <modem/modem_jwt.h>
@@ -236,6 +241,38 @@ static void gnss_event_handler(int event_id)
 	}
 }
 
+#if defined(CONFIG_LWM2M_CARRIER)
+static time_t gnss_mktime(struct nrf_modem_gnss_datetime *date)
+{
+	struct tm tm = {
+		.tm_sec = date->seconds,
+		.tm_min = date->minute,
+		.tm_hour = date->hour,
+		.tm_mday = date->day,
+		.tm_mon = date->month - 1,
+		.tm_year = date->year - 1900
+	};
+
+	return mktime(&tm);
+}
+
+static void gnss_carrier_location(struct nrf_modem_gnss_pvt_data_frame *pvt)
+{
+	if (pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
+		lwm2m_carrier_location_set(pvt->latitude,
+					   pvt->longitude,
+					   pvt->altitude,
+					   gnss_mktime(&pvt->datetime),
+					   pvt->accuracy);
+		lwm2m_carrier_velocity_set(pvt->heading,
+					   pvt->speed,
+					   pvt->vertical_speed,
+					   pvt->speed_accuracy,
+					   pvt->vertical_speed_accuracy);
+	}
+}
+#endif
+
 static void print_pvt_flags(struct nrf_modem_gnss_pvt_data_frame *pvt)
 {
 	mosh_print("");
@@ -382,6 +419,9 @@ static void data_handler_thread_fn(void)
 		switch (event.id) {
 		case NRF_MODEM_GNSS_EVT_PVT:
 			print_pvt((struct nrf_modem_gnss_pvt_data_frame *)event.data);
+#if defined(CONFIG_LWM2M_CARRIER)
+			gnss_carrier_location((struct nrf_modem_gnss_pvt_data_frame *)event.data);
+#endif
 			break;
 
 		case NRF_MODEM_GNSS_EVT_FIX:
