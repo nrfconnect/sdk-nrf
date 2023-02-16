@@ -13,10 +13,11 @@ Template: Ecosystem integration
 
    * Provide a title that starts with the tool or service name with "integration" as a suffix, for example, "Memfault integration".
    * Place the documentation inside the :file:`nrf/doc/nrf` folder.
-   * List the file name in the ``.. toctree:`` of the :file:`ext_comps` RST file.
+   * List the file name with path in the ``.. toctree:`` of the :file:`ecosystem_integration` RST file.
    * Sections with * are optional and can be left out.
      All other sections are required.
-     Do not add new sections (unless in the sections that allow for further subsections) without discussion with the tech writer team.
+     There could be more sections, which can be added after discussion with the tech writer team.
+     However, it should have the mandatory sections from the template in the recommended format at the very least.
 
 .. tip::
    Describe the tool or service in one or two sentences maximum (full sentences, not sentence fragments), so that the user gets a clear idea of what the tool or service does.
