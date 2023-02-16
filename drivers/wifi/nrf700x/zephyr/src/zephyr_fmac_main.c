@@ -17,6 +17,7 @@
 #endif
 #include <zephyr/logging/log.h>
 #include <zephyr/net/wifi_mgmt.h>
+#include <net/l2_wifi_connect.h>
 
 #include <rpu_fw_patches.h>
 #include <util.h>
@@ -27,6 +28,7 @@
 #endif /* CONFIG_WPA_SUPP */
 #ifndef CONFIG_NRF700X_RADIO_TEST
 #include <zephyr_wifi_mgmt.h>
+#include <zephyr/net/conn_mgr_connectivity.h>
 
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
@@ -561,3 +563,7 @@ DEVICE_DEFINE(wlan0, /* name - token */
 	      CONFIG_WIFI_INIT_PRIORITY, /* prio */
 	      NULL); /* api */
 #endif /* CONFIG_WPA_SUPP */
+
+#ifdef CONFIG_L2_WIFI_CONNECTIVITY
+CONN_MGR_BIND_CONN(wlan0, L2_CONN_WLAN0);
+#endif /* CONFIG_L2_WIFI_CONNECTIVITY */

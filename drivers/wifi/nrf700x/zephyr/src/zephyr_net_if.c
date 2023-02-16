@@ -390,6 +390,10 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 	net_mgmt_add_event_callback(&ip_maddr6_cb);
 	k_work_init(&vif_ctx_zep->wifi_nrf_net_iface_work,
 		    wifi_nrf_net_iface_work_handler);
+
+#if !defined(CONFIG_NRF_WIFI_IF_AUTO_START)
+	net_if_flag_set(iface, NET_IF_NO_AUTO_START);
+#endif /* CONFIG_NRF_WIFI_IF_AUTO_START */
 }
 
 

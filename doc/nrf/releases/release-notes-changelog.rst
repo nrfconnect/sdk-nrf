@@ -124,7 +124,11 @@ nRF IEEE 802.15.4 radio driver
 Wi-Fi
 -----
 
-|no_changes_yet_note|
+* Added:
+
+  * Integration of Wi-Fi connectivity with Connection Manager connectivity API.
+  * The :kconfig:option:`CONFIG_NRF_WIFI_IF_AUTO_START` Kconfig option to enable an application to set/unset AUTO_START on an interface.
+    This can be done by using the ``NET_IF_NO_AUTO_START`` flag.
 
 Applications
 ============

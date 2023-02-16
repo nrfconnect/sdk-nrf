@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+zephyr_library()
+zephyr_library_sources_ifdef(CONFIG_L2_WIFI_CONNECTIVITY l2_wifi_conn.c)
+
+zephyr_library_include_directories(
+    ${ZEPHYR_BASE}/include
+    ${ZEPHYR_BASE}/../nrf/include
+    ${ZEPHYR_BASE}/../modules/lib/hostap
+    ${ZEPHYR_BASE}/subsys/net/conn_mgr
+    )
