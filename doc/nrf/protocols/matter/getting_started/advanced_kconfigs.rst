@@ -71,13 +71,23 @@ Some of these can be configured using the Kconfig options listed below:
 * :kconfig:option:`CONFIG_CHIP_ROTATING_DEVICE_ID` enables an optional rotating device identifier feature that provides an additional unique identifier for each device.
   This identifier is similar to the serial number, but it additionally changes at predefined times to protect against long-term tracking of the device.
 
-Amazon FFS support
-==================
+Amazon Frustration-Free Setup support
+=====================================
 
-Matter in the |NCS| supports `Amazon Frustration-Free Setup (FFS)`_ that allows Matter devices to be automatically commissioned to the Matter network using the Matter-enabled Amazon Echo device.
+Frustration-Free Setup (FFS) is Amazon's proprietary technology that uses the user's Amazon account and Alexa services to register an IoT device and provision it to a mesh network.
+It does not replace the default commissioning process, but uses the cloud-based Amazon Device Setup Service to provide commissioning information to the Matter network commissioner, instead of involving the user to provide it.
+FFS supports a variety of different network protocols, including Matter.
+For more information about how FFS works, see the `Understanding Frustration-Free Setup`_ page in the Amazon developer documentation.
+
+The support for FFS over Matter in the |NCS| allows Matter devices to be automatically commissioned to the Matter network using the Matter-enabled Amazon Echo device.
 To enable the FFS support, set the following configuration options to meet the Amazon FFS setup prerequisites:
 
 * :kconfig:option:`CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE` to ``y``.
 * :kconfig:option:`CONFIG_CHIP_ROTATING_DEVICE_ID` to ``y``.
 * :kconfig:option:`CONFIG_CHIP_DEVICE_TYPE` to the appropriate value, depending on the device used.
   The value must be compliant with the Matter Device Type Identifier.
+
+To read more about the FFS technology and its compatibility with Matter, see the following pages in the Amazon developer documentation:
+
+* `Matter Simple Setup for Wi-Fi Overview`_
+* `Matter Simple Setup for Thread Overview`_

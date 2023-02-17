@@ -730,7 +730,9 @@
 .. _`AWS S3 Developer Guide: Bucket Policy Examples`: https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html
 .. _`AWS IoT Core`: https://aws.amazon.com/iot-core/
 
-.. _`Amazon Frustration-Free Setup (FFS)`: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-overview.html
+.. _`Understanding Frustration-Free Setup`: https://developer.amazon.com/docs/frustration-free-setup/understanding-ffs.html
+.. _`Matter Simple Setup for Wi-Fi Overview`: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-for-wifi-overview.html
+.. _`Matter Simple Setup for Thread Overview`: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-for-thread-overview.html
 
 .. ### Source: openthread.io
 
