@@ -15,6 +15,7 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/modem_jwt.h>
 #include <zephyr/sys/reboot.h>
+#include "nrf_modem.h"
 #include "ncs_version.h"
 
 #include "slm_util.h"
@@ -123,11 +124,9 @@ static int handle_at_slmver(enum at_cmd_type type)
 	int ret = -EINVAL;
 
 	if (type == AT_CMD_TYPE_SET_COMMAND) {
-#if defined(CONFIG_SLM_CUSTOMIZED)
-		rsp_send("\r\n#XSLMVER: %s-CUSTOMIZED\r\n", STRINGIFY(NCS_VERSION_STRING));
-#else
-		rsp_send("\r\n#XSLMVER: %s\r\n", STRINGIFY(NCS_VERSION_STRING));
-#endif
+		char *libmodem = nrf_modem_build_version();
+
+		rsp_send("\r\n#XSLMVER: %s,\"%s\"\r\n", STRINGIFY(NCS_VERSION_STRING), libmodem);
 		ret = 0;
 	}
 
