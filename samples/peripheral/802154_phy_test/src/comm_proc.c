@@ -6,32 +6,39 @@
 /* Purpose: Communication interface for library */
 
 #include <stdint.h>
-
 #include <zephyr/shell/shell.h>
-
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(comm);
-
 #include "comm_proc.h"
 #include "ptt_uart_api.h"
+
+LOG_MODULE_REGISTER(comm);
 
 static char cmd_buf[COMM_MAX_TEXT_DATA_SIZE];
 static const struct shell *shell;
 
-static int cmd_custom(const struct shell *shell, size_t argc, char **argv)
+static int cmd_custom(const struct shell *shell_inst, size_t argc, char **argv)
 {
-	size_t len = 0;
+	size_t max_append_len = 0;
 
 	memset(cmd_buf, 0, sizeof(cmd_buf));
 
 	for (int i = 0; i < argc; i++) {
-		len = COMM_MAX_TEXT_DATA_SIZE - strlen(cmd_buf);
-		if (len < strlen(argv[i])) {
-			shell_error(shell, "the command is too long");
+		/* cmd_buf should contain space for the command and a NULL character.
+		 * Hence we reduce 1 here to compute the max_append_len of the maximum allowed
+		 * length of string that can be appended.
+		 */
+		max_append_len = COMM_MAX_TEXT_DATA_SIZE - strlen(cmd_buf) - 1;
+		if (i < (argc - 1)) {
+			/* For every command except the last one, we append a space character. So we
+			 * need to ensure that there is space for that as well.
+			 */
+			max_append_len = max_append_len - 1;
+		}
+		if (COMM_MAX_TEXT_DATA_SIZE < (strlen(cmd_buf) + max_append_len)) {
+			shell_error(shell_inst, "the command is too long");
 			return 0;
 		}
-
-		strncat(cmd_buf, argv[i], len);
+		strncat(cmd_buf, argv[i], max_append_len);
 
 		if (i < (argc - 1)) {
 			strncat(cmd_buf, " ", 1);
