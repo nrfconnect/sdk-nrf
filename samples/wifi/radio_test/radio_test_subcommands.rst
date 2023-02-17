@@ -7,7 +7,7 @@ Radio test subcommands
    :local:
    :depth: 2
 
-``wifi_radio_test`` is the Wi-Fi radio test command and it supports the following subcommands.
+``wifi_radio_test`` is the Wi-Fi® radio test command and it supports the following subcommands.
 
 .. _wifi_radio_test_subcmds:
 
