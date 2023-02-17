@@ -27,7 +27,7 @@ Configuration
 To configure the |button_sim|:
 
 1. Enable and configure the :ref:`caf_buttons`.
-   ``button_event`` is used to trigger the simulated button sequence.
+   :c:struct:`button_event` is used to trigger the simulated button sequence.
 #. Enable the ``buttons_sim`` module by setting the :ref:`CONFIG_DESKTOP_BUTTONS_SIM_ENABLE <config_desktop_app_options>` Kconfig option.
 #. Define the output key ID sequence in the :file:`buttons_sim_def.h` file located in the board-specific directory in the :file:`configuration` directory.
    The mapping from the defined key ID to the HID report ID and usage ID is defined in :file:`hid_keymap_def.h` (this might be different for different boards).
@@ -43,4 +43,4 @@ Implementation details
 The |button_sim| generates button sequence using :c:struct:`k_work_delayable`, which resubmits itself.
 The work handler submits the press and the release of a single button from the sequence.
 
-Receiving ``button_event`` with the key ID set to :ref:`CONFIG_DESKTOP_BUTTONS_SIM_TRIGGER_KEY_ID <config_desktop_app_options>` either stops generating the sequence (in case it is already being generated) or starts generating it.
+Receiving :c:struct:`button_event` with the key ID set to :ref:`CONFIG_DESKTOP_BUTTONS_SIM_TRIGGER_KEY_ID <config_desktop_app_options>` either stops generating the sequence (in case it is already being generated) or starts generating it.

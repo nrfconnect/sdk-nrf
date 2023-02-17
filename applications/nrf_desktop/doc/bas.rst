@@ -24,6 +24,7 @@ Configuration
 
 The module is enabled with the :ref:`CONFIG_DESKTOP_BAS_ENABLE <config_desktop_app_options>` option, that is implied by the :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` option.
 The Battery Service is required for the HID peripheral device.
+For more information about the Bluetooth configuration in the nRF Desktop, see the :ref:`nrf_desktop_bluetooth_guide` documentation.
 
 Implementation details
 **********************
