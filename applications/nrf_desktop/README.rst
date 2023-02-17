@@ -936,16 +936,23 @@ The nRF Desktop application uses the following files as configuration sources:
 * Kconfig files - These reflect the software configuration.
   See :ref:`kconfig_tips_and_tricks` for information about how to configure them.
 
-You must modify these configuration sources when `Adding a new board`_, as described below.
-
 For information about differences between DTS and Kconfig, see :ref:`zephyr:dt_vs_kconfig`.
-For detailed instructions for adding Zephyr support to a custom board, see Zephyr's :ref:`zephyr:board_porting_guide`.
 
 Application-specific Kconfig configuration
 ==========================================
 
 The nRF Desktop introduces Kconfig options that can be used to simplify an application configuration.
 These options can be used to select a device role and to automatically apply a default configuration suitable for the selected role.
+
+.. note::
+   Part of the default configuration is applied by modifying the default values of Kconfig options.
+   Changing configuration in menuconfig does not automatically adjust user-configurable values to the new defaults.
+   So, you must update those values manually.
+   For more information, see the Stuck symbols in menuconfig and guiconfig section on the :ref:`kconfig_tips_and_tricks` in the Zephyr documentation.
+
+   The default Kconfig option values are automatically updated if configuration changes are applied directly in the configuration files.
+
+.. _nrf_desktop_hid_configuration:
 
 HID configuration
 -----------------
@@ -954,15 +961,27 @@ The nRF Desktop application introduces application-specific configuration option
 These options are defined in :file:`Kconfig.hid`.
 
 The options define the nRF Desktop device role.
-The device role may be either HID dongle or HID peripheral.
-The HID peripheral role can also specify a peripheral type (HID mouse, HID keyboard or other HID device).
+The device role can be either the HID dongle (:ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>`) or the HID peripheral (:ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>`).
+The HID peripheral role can also specify a peripheral type:
+
+* HID mouse (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_MOUSE <config_desktop_app_options>`)
+* HID keyboard (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`)
+* other HID device (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_OTHER <config_desktop_app_options>`)
 
 Each role automatically implies nRF Desktop modules needed for the role.
 For example, :ref:`nrf_desktop_hid_state` is automatically enabled for the HID peripheral role.
-Apart from the device role, the application-specific Kconfigs specify a set of supported HID reports and a supported HID boot report (if any).
 
 By default, the nRF Desktop devices use predefined format of HID reports.
 The common HID report map is defined in the :file:`configuration/common/hid_report_desc.c` file.
+The selected role implies a set of related HID reports.
+For example, HID mouse automatically enables support for HID mouse report.
+If ``other HID device`` peripheral type is chosen, the set of HID reports needs to be explicitly defined in the configuration.
+
+Apart from this, the supported HID boot protocol interface can be specified as either:
+
+* mouse (:ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE <config_desktop_app_options>`)
+* keyboard (:ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>`)
+* none (:ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_DISABLED <config_desktop_app_options>`)
 
 .. _nrf_desktop_hid_device_identifiers:
 
@@ -1003,7 +1022,10 @@ Default common configuration
 
 The nRF Desktop application aligns the configuration with the nRF Desktop use case by overlaying Kconfig defaults and selecting or implying the required Kconfig options.
 Among others, the Kconfig :ref:`app_event_manager` and :ref:`lib_caf` options are selected to ensure that they are enabled.
+The :ref:`CONFIG_DESKTOP_SETTINGS_LOADER <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_POWER_MANAGER <config_desktop_app_options>` are implied to enable the :ref:`nrf_desktop_settings_loader` and :ref:`nrf_desktop_power_manager` modules, respectively.
 See the :file:`Kconfig.defaults` file for details related to default common configuration.
+
+.. _nrf_desktop_bluetooth_configuration:
 
 Bluetooth configuration
 -----------------------
@@ -1013,13 +1035,18 @@ These options are defined in :file:`Kconfig.ble` file.
 
 The :ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>` Kconfig option enables support for Bluetooth connectivity in the nRF Desktop application.
 The option is enabled by default.
-The option performs the following:
+
+The nRF Desktop Bluetooth peripheral configuration (:ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>`) is automatically enabled for the nRF Desktop HID peripheral role (:ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>`).
+The nRF Desktop Bluetooth central configuration (:ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>`) is automatically enabled for the nRF Desktop HID dongle role (:ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>`)
+
+The nRF Desktop Bluetooth configuration options perform the following:
 
 * Implies application modules related to Bluetooth that are required for the selected device role
 * Selects required functionalities in Zephyr's Bluetooth stack
 * Overlays Bluetooth Kconfig option defaults to align them with the nRF Desktop use-case
 
 See :file:`Kconfig.ble` file content for details.
+See the :ref:`nrf_desktop_bluetooth_guide` for more information about Bluetooth support in nRF Desktop application.
 
 CAF configuration
 -----------------
@@ -1075,7 +1102,7 @@ nRF52832 Desktop Mouse (nrf52dmouse_nrf52832) and nRF52810 Desktop Mouse (nrf528
       * Both reference designs are meant for the project-specific hardware and are defined in :file:`nrf/boards/arm/nrf52dmouse_nrf52832` and :file:`nrf/boards/arm/nrf52810dmouse_nrf52810`, respectively.
       * The application is configured to act as a mouse.
       * Only the Bluetooth LE transport is enabled.
-        Bluetooth uses Zephyr's software link layer.
+        Bluetooth uses either Zephyr's software link layer (nrf52810dmouse_nrf52810) or Nordic's SoftDevice link layer (nrf52dmouse_nrf52832).
       * The preconfigured build types for both nrf52dmouse_nrf52832 and nrf52810dmouse_nrf52810 boards are without the bootloader due to memory size limits on nrf52810dmouse_nrf52810 board.
 
 Sample mouse, keyboard or dongle (nrf52840dk_nrf52840)
@@ -1132,15 +1159,19 @@ Adding a new board
 
 When adding a new board for the first time, focus on a single configuration.
 Moreover, keep the default ``debug`` build type that the application is built with, and do not add any additional build type parameters.
+The following procedure uses the gaming mouse configuration as an example.
+
+Zephyr support for a board
+--------------------------
+
+Before introducing nRF Desktop application configuration for a given board, you need to ensure that the board is supported in Zephyr.
 
 .. note::
-    * The following procedure uses the gaming mouse configuration as an example.
-    * The first three steps of the configuration procedure are identical to the steps described in Zephyr's :ref:`zephyr:board_porting_guide`.
+   You can skip this step if your selected board is already supported in Zephyr.
 
-To use the nRF Desktop application with your custom board:
+Follow the Zephyr's :ref:`zephyr:board_porting_guide` for detailed instructions related to introducing Zephyr support for a new board.
+Make sure that the following conditions are met:
 
-1. Define the reference design by copying the nRF Desktop reference design files that are the closest match for your hardware.
-   For example, for gaming mouse use :file:`nrf/boards/arm/nrf52840gmouse_nrf52840`.
 #. Edit the DTS files to make sure they match the hardware configuration.
    Pay attention to the following elements:
 
@@ -1148,14 +1179,24 @@ To use the nRF Desktop application with your custom board:
    * Bus configuration for optical sensor.
    * `Changing interrupt priority`_.
 
-#. Edit the reference design's Kconfig files to make sure they match the required system configuration.
+#. Edit the board's Kconfig files to make sure they match the required system configuration.
    For example, disable the drivers that will not be used by your device.
-#. Copy the project files for the device that is the closest match for your hardware.
-   For example, for gaming mouse these are located at :file:`applications/nrf_desktop/configure/nrf52840gmouse_nrf52840`.
+
+.. tip::
+   You can define the new board by copying the nRF Desktop reference design files that are the closest match for your hardware and then aligning the configuration to your hardware.
+   For example, for gaming mouse use :file:`nrf/boards/arm/nrf52840gmouse_nrf52840`.
+
+nRF Desktop configuration
+-------------------------
+
+Perform the following steps to add nRF Desktop application configuration for a board that is already supported in Zephyr.
+
+1. Copy the project files for the device that is the closest match for your hardware.
+   For example, for gaming mouse these are located at :file:`applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840`.
 #. Optionally, depending on the reference design, edit the DTS overlay file.
    This step is not required if you have created a new reference design and its DTS files fully describe your hardware.
    In such case, the overlay file can be left empty.
-#. In Kconfig, ensure that the following modules that are specific for gaming mouse are enabled:
+#. In Kconfig, ensure that the following hardware interface modules that are specific for gaming mouse are enabled:
 
    * :ref:`caf_buttons`
    * :ref:`caf_leds`
@@ -1163,7 +1204,7 @@ To use the nRF Desktop application with your custom board:
    * :ref:`nrf_desktop_wheel`
    * :ref:`nrf_desktop_battery_meas`
 
-#. For each module enabled, change its :file:`_def` file to match your hardware.
+#. For each module enabled, change its configuration to match your hardware.
    Apply the following changes, depending on the module:
 
    Motion module
@@ -1181,11 +1222,14 @@ To use the nRF Desktop application with your custom board:
      * The application uses two logical LEDs - one for the peers state, and one for the system state indication.
      * Each of the logical LEDs can have either one (monochromatic) or three color channels (RGB).
        Such color channel is a physical LED.
-     * The project uses Pulse-Width Modulation (PWM) channels to control the brightness of each physical LED.
-       Configure the PWM peripheral in DTS files, and configure the :file:`_def` file of the LEDs module to indicate which PWM channel is assigned to each LED color.
-       Ensure that PWM channels are correctly configured in DTS and PWM driver is enabled in the Kconfig file.
+     * The module uses Zephyr's :ref:`zephyr:led_api` driver for setting the LED color.
+       Zephyr's LED driver can use the implementation based on either GPIO or PWM (Pulse-Width Modulation).
+       The hardware configuration is described through DTS.
+       See the :ref:`caf_leds` configuration section for details.
 
-#. Review Bluetooth options in Kconfig:
+#. Review the :ref:`nrf_desktop_hid_configuration`.
+#. By default, the nRF Desktop device enables Bluetooth connectivity support.
+   Review the :ref:`nrf_desktop_bluetooth_configuration`.
 
    a. Ensure that the Bluetooth role is properly configured.
       For mouse, it should be configured as peripheral.
@@ -1193,7 +1237,6 @@ To use the nRF Desktop application with your custom board:
       You can also disable the peer control using the :ref:`CONFIG_DESKTOP_BLE_PEER_CONTROL <config_desktop_app_options>` option.
       Peer control details are described in the :ref:`nrf_desktop_ble_bond` documentation.
 
-   Refer to the :ref:`nrf_desktop_bluetooth_guide` section and Zephyr's :ref:`zephyr:bluetooth` page for more detailed information about the Bluetooth configuration.
 #. Edit Kconfig to disable options that you do not use.
    Some options have dependencies that might not be needed when these options are disabled.
    For example, when the LEDs module is disabled, the PWM driver is not needed.
@@ -1453,19 +1496,18 @@ This API is used only by the application modules that handle such connections.
 The information about peer and connection state is propagated to other application modules using :ref:`app_event_manager` events.
 
 The :ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>` Kconfig option enables support for Bluetooth connectivity in the nRF Desktop.
-Specific Bluetooth configurations and application modules are selected according to the HID device role.
+Specific Bluetooth configurations and application modules are selected or implied according to the HID device role.
 Apart from that, the defaults of Bluetooth-related Kconfigs are aligned with the nRF Desktop use case.
 
 The nRF Desktop devices come in the following roles:
 
-* HID peripheral (:ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>`)
+* HID peripheral (:ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>`) that works as Bluetooth Peripheral (:ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>`)
 
-  * The HID peripherals can work as either mouse (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_MOUSE <config_desktop_app_options>`), keyboard (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`) or user-specific HID peripheral (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_OTHER <config_desktop_app_options>`).
   * Support only the Bluetooth Peripheral role (:kconfig:option:`CONFIG_BT_PERIPHERAL`).
   * Handle only one Bluetooth LE connection at a time.
   * Use more than one Bluetooth local identity.
 
-* HID dongle (:ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>`)
+* HID dongle (:ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>`) that works as Bluetooth Central (:ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>`)
 
   * Support only the Bluetooth Central role (:kconfig:option:`CONFIG_BT_CENTRAL`).
   * Handle multiple Bluetooth LE connections simultaneously.
@@ -1613,7 +1655,6 @@ The configurations that enable Fast Pair are set in the :file:`prj_fast_pair.con
 
 .. note::
    The Fast Pair integration in the nRF Desktop is :ref:`experimental <software_maturity>`.
-   The Resolvable Private Address (RPA) rotation is not yet synchronized with the Fast Pair not discoverable advertising payload update.
    The factory reset of the Fast Pair non-volatile data is not yet supported.
 
    The Fast Pair support in the |NCS| is :ref:`experimental <software_maturity>`.
