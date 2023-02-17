@@ -118,7 +118,7 @@ struct location_module_neighbor_cells {
 	/** Information about the current cell. */
 	struct lte_lc_cells_info cell_data;
 	/** Information about the neighbor cells. */
-	struct lte_lc_ncell neighbor_cells[17];
+	struct lte_lc_ncell neighbor_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
 	/** Uptime when the event was sent. */
 	int64_t timestamp;
 };

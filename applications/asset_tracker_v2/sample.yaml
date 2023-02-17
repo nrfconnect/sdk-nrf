@@ -8,6 +8,7 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
+      - native_posix
     tags: ci_build
   applications.asset_tracker_v2.nrf_cloud-pgps:
     build_only: true
@@ -34,6 +35,7 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
+      - native_posix
     extra_configs:
       - CONFIG_AWS_IOT_BROKER_HOST_NAME="example-hostname.aws.com"
     extra_args: OVERLAY_CONFIG="overlay-aws.conf"
@@ -68,6 +70,7 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
+      - native_posix
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME="global.azure-devices-provisioning.net"
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="IDSCOPE"
@@ -80,6 +83,7 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
+      - native_posix
     extra_args: OVERLAY_CONFIG=overlay-debug.conf
     tags: ci_build
   applications.asset_tracker_v2.debug-memfault:
