@@ -1321,11 +1321,6 @@ OCX-157: OCT-140: Interleaved broadcasts streaming issues
 
 .. rst-class:: v2-2-0
 
-OCX-162: If the first CIS headset in a CIG is reset, this may impact the stream of the second headset as well
-   If the first CIS (Connected Isochronous Stream) in a CIG (Connected Isochronous Group) is reset, this may halt streaming to other CISes as well.
-
-.. rst-class:: v2-2-0
-
 OCX-165: Collisions of BIS and ACL on the same broadcaster/central
    Broadcast Isochronous Stream (BIS) and Asynchronous Connection-oriented Logical transports (ACL) may collide in the scheduler.
 
