@@ -128,6 +128,7 @@ Kconfig*                                  @tejlmand
 /modules/mcuboot/                         @de-nordic @nordicjm
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
 /samples/                                 @nrfconnect/ncs-test-leads
+/samples/net/mqtt/                        @simensrostad
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @alwa-nordic @carlescufi @KAGA164
 /samples/bluetooth/mesh/                  @ludvigsj
