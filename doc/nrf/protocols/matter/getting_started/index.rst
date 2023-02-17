@@ -34,5 +34,6 @@ These are built from the files available in the official `Matter GitHub reposito
    tools
    kconfig
    advanced_kconfigs
+   low_power_configuration
    adding_clusters
    ecosystem_compatibility_testing
