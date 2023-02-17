@@ -271,6 +271,7 @@ Modem libraries
   * Removed:
 
     * The deprecated function ``nrf_modem_lib_get_init_ret``.
+    * The deprecated function ``nrf_modem_lib_shutdown_wait``.
 
 Libraries for networking
 ------------------------

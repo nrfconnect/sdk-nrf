@@ -124,14 +124,6 @@ struct nrf_modem_lib_shutdown_cb {
 	};
 
 /**
- * @brief Makes a thread sleep until next time nrf_modem_lib_init() is called.
- *
- * When nrf_modem_lib_shutdown() is called a thread can call this function to be
- * woken up next time nrf_modem_lib_init() is called.
- */
-__deprecated void nrf_modem_lib_shutdown_wait(void);
-
-/**
  * @brief Shutdown the Modem library, releasing its resources.
  *
  * @return int Zero on success, non-zero otherwise.
