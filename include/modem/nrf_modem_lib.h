@@ -132,17 +132,6 @@ struct nrf_modem_lib_shutdown_cb {
 __deprecated void nrf_modem_lib_shutdown_wait(void);
 
 /**
- * @brief Get the last return value of nrf_modem_lib_init.
- *
- * This function can be used to access the last return value of
- * nrf_modem_lib_init. This can be used to check the state of a modem
- * firmware exchange when the Modem library was initialized at boot-time.
- *
- * @return int The last return value of nrf_modem_lib_init.
- */
-__deprecated int nrf_modem_lib_get_init_ret(void);
-
-/**
  * @brief Shutdown the Modem library, releasing its resources.
  *
  * @return int Zero on success, non-zero otherwise.

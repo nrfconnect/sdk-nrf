@@ -197,11 +197,6 @@ int nrf_modem_lib_init(enum nrf_modem_mode mode)
 	}
 }
 
-int nrf_modem_lib_get_init_ret(void)
-{
-	return init_ret;
-}
-
 int nrf_modem_lib_shutdown(void)
 {
 	LOG_DBG("Shutting down modem library");

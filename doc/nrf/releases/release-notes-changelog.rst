@@ -301,7 +301,11 @@ Bootloader libraries
 Modem libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`nrf_modem_lib_readme` library:
+
+  * Removed:
+
+    * The deprecated function ``nrf_modem_lib_get_init_ret``.
 
 Libraries for networking
 ------------------------
