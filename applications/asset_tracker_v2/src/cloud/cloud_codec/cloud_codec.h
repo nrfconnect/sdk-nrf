@@ -204,7 +204,7 @@ struct cloud_data_neighbor_cells {
 	/** Contains current cell and number of neighbor cells. */
 	struct lte_lc_cells_info cell_data;
 	/** Contains neighborhood cells. */
-	struct lte_lc_ncell neighbor_cells[17];
+	struct lte_lc_ncell neighbor_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
 	/** Neighbor cells data timestamp. UNIX milliseconds. */
 	int64_t ts;
 	/** Flag signifying that the data entry is to be encoded. */
