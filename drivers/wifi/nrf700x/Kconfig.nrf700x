@@ -91,7 +91,7 @@ config NRF700X_QSPI_LOW_POWER
 
 config NRF700X_RX_NUM_BUFS
 	int "Number of RX buffers"
-	default 63
+	default 48
 
 config NRF700X_MAX_TX_AGGREGATION
 	int "Maximum number of TX packets to aggregate"
