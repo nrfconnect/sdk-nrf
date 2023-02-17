@@ -804,7 +804,6 @@ static struct nrf_sock_ctx *find_ctx(int fd)
 static void pollcb(struct nrf_pollfd *pollfd)
 {
 	int flags;
-	unsigned int signaled;
 	struct nrf_sock_ctx *ctx;
 
 	ctx = find_ctx(pollfd->fd);
@@ -812,24 +811,27 @@ static void pollcb(struct nrf_pollfd *pollfd)
 		return;
 	}
 
-	k_poll_signal_check(&ctx->poll, &signaled, &flags);
-	if (!signaled) {
-		flags = 0;
+	if (pollfd->revents & NRF_POLLNVAL) {
+		flags = ZSOCK_POLLNVAL;
+		goto signal;
 	}
 
-	if ((pollfd->events & NRF_POLLIN) && (pollfd->revents & NRF_POLLIN)) {
-		k_poll_signal_raise(&ctx->poll, flags |= ZSOCK_POLLIN);
+	flags = 0;
+	if ((pollfd->revents & NRF_POLLIN) && (pollfd->events & NRF_POLLIN)) {
+		flags |= ZSOCK_POLLIN;
 	}
-	if ((pollfd->events & NRF_POLLOUT) && (pollfd->revents & NRF_POLLOUT)) {
-		k_poll_signal_raise(&ctx->poll, flags |= ZSOCK_POLLOUT);
+	if ((pollfd->revents & NRF_POLLOUT) && (pollfd->events & NRF_POLLOUT)) {
+		flags |= ZSOCK_POLLOUT;
 	}
-
 	if (pollfd->revents & NRF_POLLHUP) {
-		k_poll_signal_raise(&ctx->poll, flags |= ZSOCK_POLLHUP);
+		flags |= ZSOCK_POLLHUP;
 	}
 	if (pollfd->revents & NRF_POLLERR) {
-		k_poll_signal_raise(&ctx->poll, flags |= ZSOCK_POLLERR);
+		flags |= ZSOCK_POLLERR;
 	}
+
+signal:
+	k_poll_signal_raise(&ctx->poll, flags);
 }
 
 static int nrf91_poll_prepare(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd,
@@ -876,10 +878,14 @@ static int nrf91_poll_update(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd,
 		return 0;
 	}
 
-	if ((pfd->events & ZSOCK_POLLIN) && (flags & ZSOCK_POLLIN)) {
+	if (flags & ZSOCK_POLLNVAL) {
+		pfd->revents = ZSOCK_POLLNVAL;
+		goto out;
+	}
+	if ((flags & ZSOCK_POLLIN) && (pfd->events & ZSOCK_POLLIN)) {
 		pfd->revents |= ZSOCK_POLLIN;
 	}
-	if ((pfd->events & ZSOCK_POLLOUT) && (flags & ZSOCK_POLLOUT)) {
+	if ((flags & ZSOCK_POLLOUT) && (pfd->events & ZSOCK_POLLOUT)) {
 		pfd->revents |= ZSOCK_POLLOUT;
 	}
 	if (flags & ZSOCK_POLLHUP) {
@@ -889,8 +895,8 @@ static int nrf91_poll_update(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd,
 		pfd->revents |= ZSOCK_POLLERR;
 	}
 
+out:
 	k_poll_signal_reset(&ctx->poll);
-
 	return 0;
 }
 
