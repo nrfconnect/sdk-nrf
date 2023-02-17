@@ -122,6 +122,7 @@ Matter
   * Mechanism to retry a failed Wi-Fi connection.
   * Documentation about :ref:`ug_matter_gs_ecosystem_compatibility_testing`.
   * Support for ZAP tool under Windows.
+  * Documentation about :ref:`ug_matter_device_low_power_configuration`.
 
 * Updated:
 
