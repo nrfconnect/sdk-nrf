@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -7,8 +7,8 @@
 #ifndef NRF_MODEM_LIB_H_
 #define NRF_MODEM_LIB_H_
 
-#include <zephyr/kernel.h>
 #include <nrf_modem.h>
+#include <zephyr/kernel.h>
 
 #if CONFIG_NRF_MODEM_LIB_MEM_DIAG
 #include <zephyr/sys/sys_heap.h>
@@ -21,11 +21,11 @@ extern "C" {
 /**
  * @file nrf_modem_lib.h
  *
- * @defgroup nrf_modem_lib nRF Modem library wrapper
+ * @defgroup nrf_modem_lib Modem library integration layer.
  *
  * @{
  *
- * @brief API of the SMS nRF Modem library wrapper module.
+ * @brief Modem library wrapper.
  */
 
 
@@ -38,31 +38,34 @@ enum nrf_modem_mode {
 };
 
 /**
- * @brief Initialize the Modem library.
+ * @brief Initialize the Modem library and turn on the modem.
  *
- * This function synchronously turns on the modem; it could block
- * for a few minutes when the modem firmware is being updated.
+ * This function initializes all integration components of the nrf_modem library
+ * and turns on the modem. The operation can take a few minutes when a firmware update
+ * is scheduled. If your application supports modem firmware updates, consider initializing
+ * the library manually to have control of what the application should do in the meantime.
  *
- * If your application supports modem firmware updates, consider
- * initializing the library manually to have control of what
- * the application should do while initialization is ongoing.
+ * The library can initialize the modem in normal mode or bootloader mode.
  *
- * The library has two operation modes, normal mode and full DFU mode.
- * The full DFU mode is used to update the whole modem firmware.
+ * The bootloader mode is used to update the whole modem firmware.
+ * When modem is initialized in bootloader mode, no other functionality is available.
+ * In particular, networking sockets and AT commands won't be available.
  *
- * When the library is initialized in full DFU mode, all shared memory regions
- * are reserved for the firmware update operation, and no other functionality
- * can be used. In particular, sockets won't be available to the application.
+ * To switch between the bootloader mode and normal mode, shutdown the modem
+ * with @ref nrf_modem_lib_shutdown() and re-initialize it in the desired mode.
  *
- * To switch between the full DFU mode and normal mode,
- * shutdown the modem with @ref nrf_modem_lib_shutdown() and re-initialize
- * it in the desired operation mode.
- *
- * @param[in] mode Library mode.
+ * @param[in] mode Initialization mode.
  *
  * @return int Zero on success, non-zero otherwise.
  */
 int nrf_modem_lib_init(enum nrf_modem_mode mode);
+
+/**
+ * @brief Shutdown the Modem library and turn off the modem.
+ *
+ * @return int Zero on success, non-zero otherwise.
+ */
+int nrf_modem_lib_shutdown(void);
 
 /**
  * @brief Modem library initialization callback struct.
@@ -122,13 +125,6 @@ struct nrf_modem_lib_shutdown_cb {
 		.callback = _callback,                                                             \
 		.context = _context,                                                               \
 	};
-
-/**
- * @brief Shutdown the Modem library, releasing its resources.
- *
- * @return int Zero on success, non-zero otherwise.
- */
-int nrf_modem_lib_shutdown(void);
 
 /**
  * @brief Modem fault handler.
