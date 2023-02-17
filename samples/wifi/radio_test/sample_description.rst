@@ -7,7 +7,7 @@ Sample description
    :local:
    :depth: 2
 
-The Wi-Fi Radio test sample demonstrates how to configure the Wi-Fi radio in a specific mode and then test its performance.
+The Wi-Fi Radio test sample demonstrates how to configure the Wi-Fi® radio in a specific mode and then test its performance.
 The sample provides a set of predefined commands that allow you to configure the radio in the following modes:
 
 * Modulated carrier TX
@@ -42,7 +42,7 @@ See :ref:`wifi_radio_ficr_prog_subcmds` for a list of available subcommands.
 .. note::
 
    All the FICR registers are stored in the one-time programmable (OTP) memory.
-   Consequently, the write commands are destructive, and once written, the contents of the OTP registers cannot be reprogrammed.
+   Consequently, the write commands are destructive. Once written, the contents of the OTP registers cannot be reprogrammed.
 
 Building and running
 ********************
@@ -235,7 +235,7 @@ Testing
               ofdm_crc32_fail_cnt=0
 
 
-         * To transmit a continuous tone, with the following configuration:
+         * To transmit a continuous tone with the following configuration:
 
            * Channel: 144
            * TX power: 10 dBm
@@ -295,7 +295,7 @@ Testing
                wifi_nrf: Temperature reading success:
                wifi_nrf: The temperature is = 21 degree Celsius
 
-         * To measure RF RSSI status, with the following configuration:
+         * To measure RF RSSI status with the following configuration:
 
            * Channel: 144
 
@@ -318,7 +318,7 @@ Testing
             The higher the value of RF RSSI is, the higher is the level of saturation (non-linearity) at the LNA output.
 
 
-         * To compute optimal XO value, with the following configuration:
+         * To compute the optimal XO value with the following configuration:
 
            * Channel: 64
 
@@ -344,7 +344,7 @@ Testing
 
 
 
-         * To capture ADC samples with fixed RX gain, with the following configuration:
+         * To capture ADC samples with fixed RX gain with the following configuration:
 
            * Channel: 144
            * LNA gain: 2
@@ -388,7 +388,7 @@ Testing
             * The captured samples will vary from run to run.
 
 
-         * To capture baseband samples with fixed RX gain, with the following configuration:
+         * To capture baseband samples with fixed RX gain with the following configuration:
 
            * Channel: 144
            * LNA gain: 2
@@ -433,7 +433,7 @@ Testing
 
 
 
-         * To capture AGC adjusted baseband samples after WLAN packet detection, with the following configuration:
+         * To capture AGC adjusted baseband samples after WLAN packet detection with the following configuration:
 
            * Channel: 144
            * Capture length: 64

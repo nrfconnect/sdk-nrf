@@ -7,7 +7,7 @@ Wi-Fi: Station
    :local:
    :depth: 2
 
-The Station sample demonstrates how to connect the Wi-Fi station to a specified access point using Dynamic Host Configuration Protocol (DHCP).
+The Station sample demonstrates how to connect the Wi-Fi® station to a specified access point using Dynamic Host Configuration Protocol (DHCP).
 
 Requirements
 ************
@@ -20,17 +20,23 @@ Overview
 ********
 
 This sample can perform Wi-Fi operations such as connect and disconnect in the 2.4GHz and 5GHz bands depending on the capabilities of an access point.
-The sample also adds LED support to map with connection and disconnection events:
-
-    * **LED1** starts blinking when the sample is connected to the access point.
-    * **LED1** stops blinking when the sample is disconnected from the access point.
 
 Using this sample, the development kit can connect to the specified access point in :abbr:`STA (Station)` mode.
+
+User interface
+**************
+The sample adds LED support to map with connection and disconnection events.
+
+LED 1:
+   Starts blinking when the sample is connected to the access point.
+
+   Stops blinking when the sample is disconnected from the access point.
 
 Quad Serial Peripheral Interface (QSPI) encryption
 **************************************************
 
-This sample demonstrates QSPI encryption API usage, the key can be set by the :kconfig:option:`CONFIG_NRF700X_QSPI_ENCRYPTION_KEY` Kconfig option.
+This sample demonstrates QSPI encryption API usage.
+The key can be set by the :kconfig:option:`CONFIG_NRF700X_QSPI_ENCRYPTION_KEY` Kconfig option.
 
 If encryption of the QSPI traffic is required for the production devices, then matching keys must be programmed in both the nRF7002 OTP and non-volatile storage associated with the host.
 The key from non-volatile storage must be set as the encryption key using the APIs.
@@ -162,8 +168,6 @@ Testing
     [00:00:07.720,245] <inf> sta: MFP: UNKNOWN
     [00:00:07.720,245] <inf> sta: RSSI: -57
     [00:00:07.720,245] <inf> sta: Static IP address:
-
-
 
 Power management testing
 ************************

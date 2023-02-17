@@ -7,7 +7,7 @@ Wi-Fi: Shell
    :local:
    :depth: 2
 
-This sample allows you to test Nordic Semiconductor's Wi-Fi chipsets.
+This sample allows you to test Nordic Semiconductor's Wi-Fi® chipsets.
 
 Requirements
 ************
@@ -197,7 +197,7 @@ Testing
       28 bytes from 142.250.74.46 to 192.168.50.199: icmp_seq=2 ttl=113 time=190 ms
 
 Dependencies
-============
+************
 
 This sample uses the following `sdk-nrfxlib`_ library:
 
@@ -205,5 +205,5 @@ This sample uses the following `sdk-nrfxlib`_ library:
 
 This sample also uses modules that can be found in the following locations in the |NCS| folder structure:
 
-* ``modules/lib/hostap``
-* ``modules/mbedtls``
+* :file:`modules/lib/hostap`
+* :file:`modules/mbedtls`
