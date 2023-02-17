@@ -26,7 +26,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       :class: highlight
 
       **AT#XSLMVER**
-      #XSLMVER: "1.5"
+      #XSLMVER: "2.3.0","2.3.0"
       OK
 
 #. Read the current baud rate.

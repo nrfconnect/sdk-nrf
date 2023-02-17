@@ -12,12 +12,13 @@ The following commands list contains generic AT commands.
 SLM version #XSLMVER
 ====================
 
-The ``#XSLMVER`` command requests the SLM version.
+The ``#XSLMVER`` command return the versions of the |NCS| in which the SLM application is built.
+It also returns the version of the modem library that SLM uses to communicate with the modem.
 
 Set command
 -----------
 
-The set command requests the SLM version.
+The set command returns the versions of the |NCS| and the modem library.
 
 Syntax
 ~~~~~~
@@ -31,19 +32,21 @@ Response syntax
 
 ::
 
-   #XSLMVERSION: <version>
+   #XSLMVER: <ncs_version>,<libmodem_version>
 
-The ``<version>`` value returns a string containing the SLM version.
+The ``<ncs_version>`` value returns a string containing the version of the |NCS|.
+
+The ``<libmodem_version>`` value returns a string containing the version of the modem library.
 
 Example
 ~~~~~~~
 
-The following command example reads the SLM version:
+The following command example reads the versions:
 
 ::
 
    AT#XSLMVER
-   #XSLMVER: 1.2
+   #XSLMVER: "2.3.0","2.3.0"
    OK
 
 Read command
