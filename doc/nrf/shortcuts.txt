@@ -119,14 +119,14 @@
 .. |hid_forward| replace:: HID forward module
 .. |hid_state| replace:: HID state module
 .. |hid_state_pm| replace:: HID state power manager module
-.. |led_note| replace:: A breathing LED indicates that the device has entered the advertising mode.
+.. |led_note| replace:: A breathing LED indicates that the device has entered either scanning or advertising mode.
    This happens when the device is looking for a peer to connect to.
 .. |led_state| replace:: LED state module
 .. |led_stream| replace:: LED stream module
 .. |net_state| replace:: network state module
 .. |nrf_desktop_module_event_note| replace:: See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 .. |nrf_desktop_build_type_conf| replace:: In addition to these build types, some boards can have additional build type configurations that you can use to generate an application in a specific variant.
-   Such board-specific configurations use dedicated :file:`app_*build_type*.conf` files, where the name of the configuration replaces the ``*build_type*`` part in the file name.
+   Such board-specific configurations use dedicated :file:`prj_*build_type*.conf` files, where the name of the configuration replaces the ``*build_type*`` part in the file name.
    Given the potential number of such configurations, they are not listed above and you can read the description of each of them in the respective configuration file.
 .. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.
    When a new Bluetooth Central device successfully connects and bonds, the old bond is removed and the new bond is used instead.
