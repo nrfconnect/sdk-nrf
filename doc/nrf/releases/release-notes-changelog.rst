@@ -437,6 +437,7 @@ nRF9160 samples
   * Updated:
 
     * The sample now uses a partition in external flash for full modem FOTA updates.
+    * Increased AT monitor heap to prevent occasional overruns
 
   * Added:
 
