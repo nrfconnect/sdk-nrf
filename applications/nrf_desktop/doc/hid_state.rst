@@ -29,8 +29,9 @@ Module events
 Configuration
 *************
 
-The |hid_state| is enabled by selecting :ref:`CONFIG_DESKTOP_HID_STATE_ENABLE <config_desktop_app_options>`.
-This module is optional and turned off by default.
+The |hid_state| is enabled by the :ref:`CONFIG_DESKTOP_HID_STATE_ENABLE <config_desktop_app_options>` option which is implied by the :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` option.
+An nRF Desktop peripheral uses the |hid_state| to generate HID reports based on the user input.
+For details related to HID configuration in the nRF Desktop, see the :ref:`nrf_desktop_hid_configuration` documentation.
 
 To send boot reports, enable the respective Kconfig option:
 
@@ -217,7 +218,6 @@ Discarding events
 
         * The associated key is not pressed anymore.
         * Every key that was pressed after the associated key had been pressed is also released.
-
 
 If there is no space to store the input event in the queue and no old event can be discarded, the entire content of the queue is dropped to ensure the sanity.
 

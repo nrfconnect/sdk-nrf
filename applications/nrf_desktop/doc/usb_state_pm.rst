@@ -37,6 +37,6 @@ Upon reception of the event and depending on the current USB state, the module r
 * If the USB state is set to :c:enum:`USB_STATE_POWERED` or :c:enum:`USB_STATE_ACTIVE`, the :c:enum:`POWER_MANAGER_LEVEL_ALIVE` is required.
 * If the USB state is set to :c:enum:`USB_STATE_DISCONNECTED`, any power level is allowed.
 * If the USB state is set to :c:enum:`USB_STATE_SUSPENDED`, the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED` is imposed.
-  The module restricts the power down level to the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED` and generates ``force_power_down_event``.
+  The module restricts the power down level to the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED` and generates :c:struct:`force_power_down_event`.
 
 For more information about the USB states in nRF Desktop, see the :ref:`nrf_desktop_usb_state`.

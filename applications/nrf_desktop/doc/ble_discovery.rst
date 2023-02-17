@@ -26,9 +26,12 @@ Configuration
 Complete the following steps to configure the module:
 
 1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
+   Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` options are enabled.
+   The |ble_discovery| is enabled by the :ref:`CONFIG_DESKTOP_BLE_DISCOVERY_ENABLE <config_desktop_app_options>` Kconfig option which is implied by the :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` Kconfig option together with other application modules.
+   These modules are required for HID dongle that forwards the data from HID peripherals connected over Bluetooth.
 #. Make sure that the :kconfig:option:`CONFIG_BT_GATT_CLIENT` Kconfig option is enabled to support the GATT Client role.
-#. The module automatically selects the :kconfig:option:`CONFIG_BT_GATT_DM` Kconfig option to enable the :ref:`gatt_dm_readme`.
-   The :ref:`gatt_dm_readme` is used by the |ble_discovery|.
+   The GATT Client role is enabled by default by the :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` Kconfig option.
+#. The |ble_discovery| module uses the :ref:`gatt_dm_readme` and selects the :kconfig:option:`CONFIG_BT_GATT_DM` Kconfig option to enable the library.
 #. Define the module configuration in the :file:`ble_discovery_def.h` file, located in the board-specific directory in the application configuration directory.
    You must define the following parameters for every nRF Desktop peripheral that connects with the given nRF Desktop central:
 
@@ -48,8 +51,6 @@ Complete the following steps to configure the module:
         Make sure to change this value to the VID of your company.
 
         The assigned PIDs should be unique for devices with the same VID.
-
-#. Set the :ref:`CONFIG_DESKTOP_BLE_DISCOVERY_ENABLE <config_desktop_app_options>` Kconfig option to enable the ``ble_discovery`` application module.
 
 Implementation details
 **********************

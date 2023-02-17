@@ -7,7 +7,7 @@ LEDs module
    :local:
    :depth: 2
 
-The LEDs module is responsible for controlling LEDs in response to the LED effect set by a ``led_event``.
+The LEDs module is responsible for controlling LEDs in response to the LED effect set by the :c:struct:`led_event`.
 The source of events could be any other module.
 
 Module events

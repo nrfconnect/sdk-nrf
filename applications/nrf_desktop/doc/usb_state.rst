@@ -26,6 +26,10 @@ Configuration
 The module is enabled by selecting :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_options>` option.
 The option selects :kconfig:option:`CONFIG_USB_DEVICE_STACK` and :kconfig:option:`CONFIG_USB_DEVICE_HID` Kconfig options.
 
+The :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_options>` option is implied by the :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` option.
+The module is enabled by default for the nRF Desktop dongles because the dongles forward the HID data to the host connected over USB.
+See the :ref:`nrf_desktop_hid_configuration` documentation for details.
+
 Additionally, you can also configure the options described in the following sections.
 
 .. _nrf_desktop_usb_state_identifiers:
@@ -118,7 +122,6 @@ When the nRF Desktop device wakes up from standby, the |usb_state| will issue a 
 
 .. note::
     The USB wakeup request is transmitted to the host only if the host enables this request before suspending the USB.
-
 
 Implementation details
 **********************

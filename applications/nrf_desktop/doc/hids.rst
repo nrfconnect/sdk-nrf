@@ -59,7 +59,7 @@ Implementation details
 
 The HID Service application module initializes and configures the |GATT_HID|.
 The application module registers the HID report map and every HID report that was enabled in the application configuration.
-Detailed information about HID-related configuration in nRF Desktop is available in the :ref:`nrf_desktop_hid_state` documentation.
+For detailed information about the HID-related configuration in the nRF Desktop, see the :ref:`nrf_desktop_hid_configuration` documentation.
 
 Sending HID input reports
 =========================
@@ -72,7 +72,7 @@ HID keyboard LED output report
 
 The module can receive an HID output report setting state of the keyboard LEDs, for example, state of the Caps Lock.
 The report is received from the Bluetooth connected host.
-The module forwards the report using ``hid_report_event``, that is handled either by |hid_state| (for peripheral) or :ref:`nrf_desktop_hid_forward` (for central).
+The module forwards the report using ``hid_report_event`` that is handled by |hid_state|.
 
 Right now, the only board that displays information received in the HID output report using hardware LEDs is the :ref:`nrf52840dk_nrf52840 <nrf52840dk_nrf52840>` in ``keyboard`` build type configuration.
 The keyboard reference design (nrf52kbd_nrf52832) has only one LED that is used to display the Bluetooth LE peer state.

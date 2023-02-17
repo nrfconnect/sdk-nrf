@@ -32,7 +32,10 @@ Configuration
 
 Complete the following steps to enable the |ble_scan|:
 
-1. Configure Bluetooth, as described in :ref:`nrf_desktop_bluetooth_guide`.
+1. Complete the basic Bluetooth configuration, as described in the :ref:`nrf_desktop_bluetooth_guide` documentation.
+   Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` options are enabled.
+   The |ble_scan| is enabled by the :ref:`CONFIG_DESKTOP_BLE_SCAN_ENABLE <config_desktop_app_options>` Kconfig option which is implied by :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` Kconfig option together with other application modules.
+   These modules that are required for HID dongle that forwards the data from HID peripherals connected over Bluetooth.
 #. Make sure that the number of scan filters based on the Bluetooth address (:kconfig:option:`CONFIG_BT_SCAN_ADDRESS_CNT`) is equal to the number of Bluetooth bonds.
    The number of Bluetooth bonds is defined by the :kconfig:option:`CONFIG_BT_MAX_PAIRED` Kconfig option.
    The |ble_scan| uses the Bluetooth address filters to look for bonded peripherals.
@@ -66,8 +69,8 @@ Complete the following steps to enable the |ble_scan|:
       The Bluetooth device name for given peripheral is defined as the :kconfig:option:`CONFIG_BT_DEVICE_NAME` Kconfig option in the peripheral's configuration.
       For more detailed information about the Bluetooth advertising configuration in the nRF Desktop application, see the :ref:`nrf_desktop_ble_adv` documentation.
 
-#. Set the :ref:`CONFIG_DESKTOP_BLE_SCAN_ENABLE <config_desktop_app_options>` option to enable the |ble_scan|.
 #. Set the :ref:`CONFIG_DESKTOP_BLE_SCAN_PM_EVENTS <config_desktop_app_options>` to block scanning in the power down mode to decrease the power consumption.
+   The Kconfig option is enabled by default.
 
 By default, the nRF Desktop central always looks for both bonded and unbonded peripherals.
 You can set the :ref:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST <config_desktop_app_options>` option to make the device look for unbonded peripherals only on user request.
@@ -140,9 +143,8 @@ a. The scanning is stopped and the |NCS|'s :ref:`nrf_bt_scan_readme` automatical
    The initial Bluetooth connection interval is set by default to 7.5 ms, that is to the shortest connection interval allowed by the Bluetooth specification.
 #. The peer discovery is started.
 #. After the :ref:`nrf_desktop_ble_discovery` completes the peer discovery, the :ref:`nrf_desktop_ble_conn_params` receives the ``ble_discovery_complete_event`` and updates the Bluetooth connection interval.
+   At this point, the scanning can be restarted.
 
 .. important::
    If the dongle supports Low Latency Packet Mode (:kconfig:option:`CONFIG_CAF_BLE_USE_LLPM`) and more than one Bluetooth connection (:kconfig:option:`CONFIG_BT_MAX_CONN`), a 10-ms connection interval is used instead of 7.5 ms.
    This is done to avoid Bluetooth scheduling issues that may lead to HID input report rate drops and disconnections.
-
-At this point, the scanning can be restarted.
