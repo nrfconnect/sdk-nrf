@@ -262,7 +262,7 @@ nRF5340 Audio
 
 * Updated:
 
-  * Controller from version 3310 to 3322, with the following major changes:
+  * Controller from version 3310 to 3330, with the following major changes:
 
     * Changes to accommodate BIS + ACL combinations.
     * Improvements to support creating CIS connections in any order.
