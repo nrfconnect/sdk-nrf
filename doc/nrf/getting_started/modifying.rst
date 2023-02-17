@@ -268,7 +268,10 @@ The Partition Manager's :ref:`static configuration <ug_pm_static>` can also be m
 When the build type has been inferred, the file :file:`pm_static_<buildtype>.yml` will have precedence over :file:`pm_static.yml`.
 
 The child image Kconfig configuration can also be made dependent on the build type.
-The child image Kconfig file is named :file:`<child_image>.conf` instead of :file:`prj.conf`, but otherwise follows the same pattern as the parent Kconfig.
+The child image Kconfig overlay file is named :file:`child_image/<child_image_name>.conf` instead of :file:`prj.conf`, but otherwise follows the same pattern as the parent Kconfig.
+
+Alternatively, the child image Kconfig configuration file can be introduced as :file:`child_image/<child_image_name>/prj.conf` and follow the same pattern as the parent Kconfig.
+For example, :file:`child_image/mcuboot/prj_release.conf` can be used to define ``release`` build type for ``mcuboot`` child image.
 
 .. build_types_overview_end
 
