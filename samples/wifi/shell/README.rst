@@ -94,6 +94,10 @@ Supported CLI commands
        | No argument - Prints current configuration
        | on - Turns on power save feature
        | off - Turns off power save feature
+   * - ps_mode
+     - | Configure Wi-Fi power save mode
+       | 0 - Legacy
+       | 1 - WMM
    * - twt
      - | Manage Target Wake Time (TWT) flows with below subcommands:
        |
@@ -109,6 +113,13 @@ Supported CLI commands
        | <dialog_token> <flow_id>
        |
        | teardown_all - Teardown all TWT flows
+   * - reg_domain
+     - | Set or get Wi-Fi regulatory domain
+       |
+       | Usage: wifi reg_domain [ISO/IEC 3166-1 alpha2] [-f]
+       |
+       | -f: Force to use this regulatory hint over any other regulatory hints.
+       | (Note that this may cause regulatory compliance issues.)
 
 ``wifi_cred`` is an extension to the Wi-Fi command line.
 It adds the following commands to interact with the :ref:`lib_wifi_credentials` library:
