@@ -107,7 +107,7 @@ void wifi_nrf_wpa_supp_event_proc_scan_start(void *if_priv)
 
 	vif_ctx_zep = if_priv;
 
-	if (vif_ctx_zep->supp_callbk_fns.scan_start) {
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.scan_start) {
 		vif_ctx_zep->supp_callbk_fns.scan_start(vif_ctx_zep->supp_drv_if_ctx);
 	}
 }
@@ -130,7 +130,12 @@ void wifi_nrf_wpa_supp_event_proc_scan_done(void *if_priv,
 	info->aborted = aborted;
 	info->external_scan = 0;
 	info->nl_scan_event = 1;
-	vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx, &event);
+
+	if (vif_ctx_zep->supp_drv_if_ctx &&
+		vif_ctx_zep->supp_callbk_fns.scan_done) {
+		vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx,
+			&event);
+	}
 }
 
 void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
@@ -230,7 +235,9 @@ void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
 		}
 	}
 
-	vif_ctx_zep->supp_callbk_fns.scan_res(vif_ctx_zep->supp_drv_if_ctx, r, more_res);
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.scan_res) {
+		vif_ctx_zep->supp_callbk_fns.scan_res(vif_ctx_zep->supp_drv_if_ctx, r, more_res);
+	}
 
 	if (!more_res) {
 		vif_ctx_zep->scan_in_progress = false;
@@ -281,7 +288,9 @@ void wifi_nrf_wpa_supp_event_proc_auth_resp(void *if_priv,
 		event.auth.ies_len = (frame_len - 24 - sizeof(mgmt->u.auth));
 	}
 
-	vif_ctx_zep->supp_callbk_fns.auth_resp(vif_ctx_zep->supp_drv_if_ctx, &event);
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.auth_resp) {
+		vif_ctx_zep->supp_callbk_fns.auth_resp(vif_ctx_zep->supp_drv_if_ctx, &event);
+	}
 }
 
 void wifi_nrf_wpa_supp_event_proc_assoc_resp(void *if_priv,
@@ -339,7 +348,11 @@ void wifi_nrf_wpa_supp_event_proc_assoc_resp(void *if_priv,
 
 	}
 
-	vif_ctx_zep->supp_callbk_fns.assoc_resp(vif_ctx_zep->supp_drv_if_ctx, &event, status);
+	if (vif_ctx_zep->supp_drv_if_ctx &&
+		vif_ctx_zep->supp_callbk_fns.assoc_resp) {
+		vif_ctx_zep->supp_callbk_fns.assoc_resp(vif_ctx_zep->supp_drv_if_ctx,
+			&event, status);
+	}
 }
 
 void wifi_nrf_wpa_supp_event_proc_deauth(void *if_priv,
@@ -372,7 +385,9 @@ void wifi_nrf_wpa_supp_event_proc_deauth(void *if_priv,
 		event.deauth_info.ie_len = (frame + frame_len - mgmt->u.deauth.variable);
 	}
 
-	return vif_ctx_zep->supp_callbk_fns.deauth(vif_ctx_zep->supp_drv_if_ctx, &event);
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.deauth) {
+		vif_ctx_zep->supp_callbk_fns.deauth(vif_ctx_zep->supp_drv_if_ctx, &event);
+	}
 }
 
 void wifi_nrf_wpa_supp_event_proc_disassoc(void *if_priv,
@@ -405,7 +420,9 @@ void wifi_nrf_wpa_supp_event_proc_disassoc(void *if_priv,
 		event.disassoc_info.ie_len = (frame + frame_len - mgmt->u.disassoc.variable);
 	}
 
-	return vif_ctx_zep->supp_callbk_fns.disassoc(vif_ctx_zep->supp_drv_if_ctx, &event);
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.disassoc)	{
+		vif_ctx_zep->supp_callbk_fns.disassoc(vif_ctx_zep->supp_drv_if_ctx, &event);
+	}
 }
 
 void *wifi_nrf_wpa_supp_dev_init(void *supp_drv_if_ctx, const char *iface_name,
@@ -1037,6 +1054,7 @@ void wifi_nrf_wpa_supp_event_mgmt_tx_status(void *if_priv,
 		unsigned int event_len)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	bool acked = false;
 
 	if (!if_priv) {
 		LOG_ERR("%s: Missing interface context\n", __func__);
@@ -1050,10 +1068,15 @@ void wifi_nrf_wpa_supp_event_mgmt_tx_status(void *if_priv,
 		return;
 	}
 
-	vif_ctx_zep->supp_callbk_fns.mgmt_tx_status(vif_ctx_zep->supp_drv_if_ctx,
-			mlme_event->frame.frame,
-			mlme_event->frame.frame_len,
-			mlme_event->nrf_wifi_flags & NRF_WIFI_EVENT_MLME_ACK ? true : false);
+	acked = mlme_event->nrf_wifi_flags & NRF_WIFI_EVENT_MLME_ACK ? true : false;
+
+	if (vif_ctx_zep->supp_drv_if_ctx &&
+		vif_ctx_zep->supp_callbk_fns.mgmt_tx_status) {
+		vif_ctx_zep->supp_callbk_fns.mgmt_tx_status(vif_ctx_zep->supp_drv_if_ctx,
+				mlme_event->frame.frame,
+				mlme_event->frame.frame_len,
+				acked);
+	}
 }
 
 void wifi_nrf_wpa_supp_event_proc_unprot_mgmt(void *if_priv,
@@ -1087,12 +1110,16 @@ void wifi_nrf_wpa_supp_event_proc_unprot_mgmt(void *if_priv,
 
 	if (cmd_evnt == NRF_WIFI_UMAC_EVENT_UNPROT_DEAUTHENTICATE) {
 		event.unprot_deauth.reason_code = le_to_host16(mgmt->u.deauth.reason_code);
-		return vif_ctx_zep->supp_callbk_fns.unprot_deauth(vif_ctx_zep->supp_drv_if_ctx,
-								  &event);
+		if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.unprot_deauth)	{
+			vif_ctx_zep->supp_callbk_fns.unprot_deauth(vif_ctx_zep->supp_drv_if_ctx,
+									  &event);
+		}
 	} else if (cmd_evnt == NRF_WIFI_UMAC_EVENT_UNPROT_DISASSOCIATE) {
 		event.unprot_disassoc.reason_code = le_to_host16(mgmt->u.deauth.reason_code);
-		return vif_ctx_zep->supp_callbk_fns.unprot_disassoc(vif_ctx_zep->supp_drv_if_ctx,
-								    &event);
+		if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.unprot_disassoc) {
+			vif_ctx_zep->supp_callbk_fns.unprot_disassoc(vif_ctx_zep->supp_drv_if_ctx,
+										&event);
+		}
 	}
 }
 
@@ -1304,8 +1331,10 @@ void wifi_nrf_wpa_supp_event_get_wiphy(void *if_priv,
 		if (wifi_nrf_parse_sband(&wiphy_info->sband[i], &band) != WLAN_STATUS_SUCCESS) {
 			break;
 		}
-		vif_ctx_zep->supp_callbk_fns.get_wiphy_res(vif_ctx_zep->supp_drv_if_ctx,
-							   &band);
+		if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.get_wiphy_res) {
+			vif_ctx_zep->supp_callbk_fns.get_wiphy_res(vif_ctx_zep->supp_drv_if_ctx,
+									&band);
+		}
 	}
 
 	if ((wiphy_info->params_valid & NRF_WIFI_GET_WIPHY_VALID_EXTENDED_CAPABILITIES) &&
@@ -1333,7 +1362,9 @@ void wifi_nrf_wpa_supp_event_get_wiphy(void *if_priv,
 
 	wifi_nrf_wiphy_info_extended_capab_cfg(&vif_ctx_zep->iface_ext_capa, wiphy_info);
 
-	vif_ctx_zep->supp_callbk_fns.get_wiphy_res(vif_ctx_zep->supp_drv_if_ctx, NULL);
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.get_wiphy_res) {
+		vif_ctx_zep->supp_callbk_fns.get_wiphy_res(vif_ctx_zep->supp_drv_if_ctx, NULL);
+	}
 }
 
 int wifi_nrf_supp_get_wiphy(void *if_priv)
@@ -1412,11 +1443,13 @@ void wifi_nrf_wpa_supp_event_mgmt_rx_callbk_fn(void *if_priv,
 		return;
 	}
 
-	vif_ctx_zep->supp_callbk_fns.mgmt_rx(vif_ctx_zep->supp_drv_if_ctx,
-			mlme_event->frame.frame,
-			mlme_event->frame.frame_len,
-			mlme_event->frequency,
-			mlme_event->rx_signal_dbm);
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.mgmt_rx) {
+		vif_ctx_zep->supp_callbk_fns.mgmt_rx(vif_ctx_zep->supp_drv_if_ctx,
+				mlme_event->frame.frame,
+				mlme_event->frame.frame_len,
+				mlme_event->frequency,
+				mlme_event->rx_signal_dbm);
+	}
 }
 
 int wifi_nrf_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
@@ -1475,7 +1508,7 @@ void wifi_nrf_wpa_supp_event_mac_chgd(void *if_priv)
 
 	vif_ctx_zep = if_priv;
 
-	if (vif_ctx_zep->supp_callbk_fns.mac_changed) {
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.mac_changed) {
 		vif_ctx_zep->supp_callbk_fns.mac_changed(vif_ctx_zep->supp_drv_if_ctx);
 	}
 }
