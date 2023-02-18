@@ -3047,6 +3047,7 @@ out:
 }
 
 
+#define RPU_CMD_TIMEOUT_MS 10000
 enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *dev_ctx,
 						 unsigned char if_idx,
 						 struct nrf_wifi_umac_chg_vif_state_info *vif_info)
@@ -3055,7 +3056,7 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *dev_ctx,
 	struct nrf_wifi_umac_cmd_chg_vif_state *chg_vif_state_cmd = NULL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
-	unsigned int count = 10000; /* used for handling timeout*/
+	unsigned int count = RPU_CMD_TIMEOUT_MS;
 
 	fmac_dev_ctx = dev_ctx;
 
@@ -3093,7 +3094,7 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *dev_ctx,
 	if (count == 0) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: RPU is unresponsive for %d sec\n",
-				      __func__, (count * 100) / 1000);
+				      __func__, RPU_CMD_TIMEOUT_MS);
 		goto out;
 	}
 
