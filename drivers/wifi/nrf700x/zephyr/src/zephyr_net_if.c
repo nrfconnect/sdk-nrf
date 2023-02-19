@@ -74,7 +74,7 @@ enum wifi_nrf_status wifi_nrf_if_carr_state_chg(void *os_vif_ctx,
 			net_eth_carrier_off(vif_ctx_zep->zep_net_if_ctx);
 		}
 	}
-	LOG_INF("%s: Carrier state: %d\n", __func__, carr_state);
+	LOG_DBG("%s: Carrier state: %d\n", __func__, carr_state);
 
 	status = WIFI_NRF_STATUS_SUCCESS;
 
