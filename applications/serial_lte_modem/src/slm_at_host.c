@@ -393,17 +393,16 @@ AT_MONITOR(at_notify, ANY, notification_handler);
 
 static void notification_handler(const char *notification)
 {
+	enum pm_device_state state = PM_DEVICE_STATE_OFF;
+
 	if (slm_operation_mode == SLM_AT_COMMAND_MODE) {
-		enum pm_device_state state = PM_DEVICE_STATE_OFF;
-
-		strcpy(rsp_buf, CRLF_STR);
-		strcat(rsp_buf, notification);
-
 		pm_device_state_get(uart_dev, &state);
 		if (state != PM_DEVICE_STATE_ACTIVE) {
-			ring_buf_put(&data_rb, rsp_buf, strlen(rsp_buf));
+			ring_buf_put(&data_rb, CRLF_STR, strlen(CRLF_STR));
+			ring_buf_put(&data_rb, notification, strlen(notification));
 		} else {
-			(void)uart_send(rsp_buf, strlen(rsp_buf));
+			(void)uart_send(CRLF_STR, strlen(CRLF_STR));
+			(void)uart_send(notification, strlen(notification));
 		}
 	}
 }
