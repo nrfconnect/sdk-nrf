@@ -23,7 +23,7 @@ extern struct k_work_q mosh_common_work_q;
 extern const struct shell *mosh_shell;
 
 static struct k_work_delayable cloud_reconnect_work;
-static struct k_work cloud_cmd_work;
+static struct k_work cloud_cmd_execute_work;
 static struct k_work shadow_update_work;
 
 static char shell_cmd[CLOUD_CMD_MAX_LENGTH + 1];
@@ -55,11 +55,15 @@ static void cloud_reconnect_work_fn(struct k_work *work)
 	}
 }
 
-static void cloud_cmd_execute(struct k_work *work)
+static K_WORK_DELAYABLE_DEFINE(cloud_reconnect_work, cloud_reconnect_work_fn);
+
+static void cloud_cmd_execute_work_fn(struct k_work *work)
 {
 	shell_execute_cmd(mosh_shell, shell_cmd);
 	memset(shell_cmd, 0, CLOUD_CMD_MAX_LENGTH);
 }
+
+static K_WORK_DEFINE(cloud_cmd_execute_work, cloud_cmd_execute_work_fn);
 
 static bool cloud_shell_parse_mosh_cmd(const char *buf_in)
 {
@@ -111,7 +115,7 @@ end:
 /**
  * @brief Updates the nRF Cloud shadow with information about supported capabilities.
  */
-static void nrf_cloud_update_shadow(struct k_work *work)
+static void shadow_update_work_fn(struct k_work *work)
 {
 	int err;
 	struct nrf_cloud_svc_info_ui ui_info = {
@@ -137,6 +141,8 @@ static void nrf_cloud_update_shadow(struct k_work *work)
 		mosh_error("Failed to update device shadow, error: %d", err);
 	}
 }
+
+static K_WORK_DEFINE(shadow_update_work, shadow_update_work_fn);
 
 static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 {
@@ -182,7 +188,8 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		if (((char *)evt->data.ptr)[0] == '{') {
 			/* Check if it's a MoSh command sent from the cloud */
 			if (cloud_shell_parse_mosh_cmd(evt->data.ptr)) {
-				k_work_submit_to_queue(&mosh_common_work_q, &cloud_cmd_work);
+				k_work_submit_to_queue(&mosh_common_work_q,
+						       &cloud_cmd_execute_work);
 			}
 		}
 		break;
@@ -227,10 +234,6 @@ static void cmd_cloud_connect(const struct shell *shell, size_t argc, char **arg
 		}
 
 		initialized = true;
-
-		k_work_init(&cloud_cmd_work, cloud_cmd_execute);
-		k_work_init(&shadow_update_work, nrf_cloud_update_shadow);
-		k_work_init_delayable(&cloud_reconnect_work, cloud_reconnect_work_fn);
 	}
 
 	k_work_reschedule_for_queue(&mosh_common_work_q, &cloud_reconnect_work, K_NO_WAIT);
@@ -240,13 +243,16 @@ static void cmd_cloud_connect(const struct shell *shell, size_t argc, char **arg
 
 static void cmd_cloud_disconnect(const struct shell *shell, size_t argc, char **argv)
 {
-	int err = nrf_cloud_disconnect();
+	int err;
 
+	/* Stop possibly pending reconnection attempt. */
+	k_work_cancel_delayable(&cloud_reconnect_work);
+
+	err = nrf_cloud_disconnect();
 	if (err == -EACCES) {
 		mosh_print("Not connected to nRF Cloud");
 	} else if (err) {
 		mosh_error("nrf_cloud_disconnect, error: %d", err);
-		return;
 	}
 }
 
