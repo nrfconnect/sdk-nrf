@@ -37,8 +37,9 @@ def generate_provision_hex_file(s0_address, s1_address, hashes, provision_addres
     if num_counters == 1:
         provision_data += struct.pack('H', 1) # counter description
         provision_data += struct.pack('H', num_counter_slots_version)
+        provision_data += bytes(2 * mcuboot_counters_slots * [0xFF])
 
-    assert (len(provision_data) + (2 * num_counter_slots_version)) <= max_size, """Provisioning data doesn't fit.
+    assert len(provision_data) <= max_size, """Provisioning data doesn't fit.
 Reduce the number of public keys or counter slots and try again."""
 
     ih = IntelHex()
