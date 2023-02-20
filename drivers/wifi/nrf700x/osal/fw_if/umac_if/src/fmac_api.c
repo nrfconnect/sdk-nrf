@@ -217,7 +217,7 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 	}
 	start_time_us = wifi_nrf_osal_time_get_curr_us(fmac_dev_ctx->fpriv->opriv);
 	while (!fmac_dev_ctx->fw_init_done) {
-		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv, 100);
+		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv, 1);
 #define MAX_INIT_WAIT (5 * 1000 * 1000)
 		if (wifi_nrf_osal_time_elapsed_us(fmac_dev_ctx->fpriv->opriv,
 						  start_time_us) >= MAX_INIT_WAIT) {
@@ -3055,7 +3055,7 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *dev_ctx,
 	struct nrf_wifi_umac_cmd_chg_vif_state *chg_vif_state_cmd = NULL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
-	unsigned int count = 100; /* used for handling timeout*/
+	unsigned int count = 10000; /* used for handling timeout*/
 
 	fmac_dev_ctx = dev_ctx;
 
@@ -3088,8 +3088,7 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *dev_ctx,
 			      sizeof(*chg_vif_state_cmd));
 
 	while (!vif_ctx->ifflags && (--count > 0))
-		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv,
-				       100);
+		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv, 1);
 
 	if (count == 0) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
