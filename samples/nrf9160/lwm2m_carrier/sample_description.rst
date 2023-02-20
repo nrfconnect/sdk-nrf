@@ -199,7 +199,7 @@ To test with the sample, complete the following steps:
 
       .. code-block:: console
 
-         $carrier_config auto_startup y
+         $ carrier_config auto_startup y
          Set auto startup: Yes
 
    Once the device is registered to a device management server, you can experiment by setting some of the resources.

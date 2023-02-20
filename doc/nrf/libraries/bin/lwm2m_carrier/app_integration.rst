@@ -47,7 +47,7 @@ It provides an abstraction of the following modules:
 The OS abstraction layer is fully implemented for the |NCS|, and it needs to be ported if used with other RTOS or on other systems.
 
 When the LwM2M carrier library is enabled in your application, it includes the file :file:`nrf/lib/bin/lwm2m_carrier/os/lwm2m_carrier.c`.
-This automatically initializes the library (using :c:func:`lwm2m_carrier_init`) and runs the library thread (:c:func:`lwm2m_carrier_run`).
+This automatically initializes the library (using :c:func:`lwm2m_carrier_init`) and runs the library's main function (:c:func:`lwm2m_carrier_run`).
 
 .. _lwm2m_configuration:
 
@@ -365,7 +365,7 @@ To allow time to change configurations before the library applies them, the appl
 The settings are applied by the function :c:func:`lwm2m_carrier_custom_init`.
 
 This function is implemented in :file:`nrf/lib/bin/lwm2m_carrier/os/lwm2m_settings.c` that is included in the project when you enable the LwM2M carrier shell.
-The ``__weak`` implementation of :c:func:`lwm2m_carrier_event_handler` calls :c:func:`lwm2m_carrier_custom_init` on receiving the :c:macro:`LWM2M_CARRIER_EVENT_INIT` event.
+The library thread calls the :c:func:`lwm2m_carrier_custom_init` function before calling the :c:func:`lwm2m_carrier_run` function.
 
 carrier_api
 ===========
