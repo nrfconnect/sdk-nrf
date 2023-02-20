@@ -183,7 +183,13 @@ See `Thread samples`_ for the list of changes for the Thread samples.
 Zigbee
 ------
 
-|no_changes_yet_note|
+* Updated:
+
+  * Zigbee Network Co-processor Host package to the new version v2.2.1.
+
+* Fixed:
+
+  * Fixed an issue where buffer would not be freed at the ZC after a secure rejoin of a ZED.
 
 See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 
