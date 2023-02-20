@@ -368,7 +368,6 @@ To measure the power consumption of the nRF70 Series device, complete the follow
 #. Configure PPK2 as a source meter with 3.6 volts.
 
    * The following image shows the Power Profiler Kit II example output for DTIM wakeup.
-     200 mA pulse in the figure are artifacts of the PPK2 and can be ignored.
 
    .. figure:: images/power_profiler_dtim_wakeup.png
       :alt: Power profiler output for DTIM wakeup
