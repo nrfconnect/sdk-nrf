@@ -13,7 +13,7 @@ from ecdsa import VerifyingKey
 from hashlib import sha256
 import os
 
-# Size of LCS storage in OTP in bytes
+# Size of LCS storage and implementation ID in OTP in bytes
 LCS_STATE_SIZE = 0x8
 IMPLEMENTATION_ID_SIZE = 0x20
 NUM_BYTES_PROVISIONED_ELSEWHERE = LCS_STATE_SIZE + IMPLEMENTATION_ID_SIZE
