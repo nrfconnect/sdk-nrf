@@ -55,10 +55,10 @@ The version numbers are incremented based on the following criteria:
 
 * The ``MAJOR`` version number is increased seldom, whenever a release is deemed to be introducing a large number of substantial changes across the board.
 * The ``MINOR`` version number is increased every time a major release is cut.
-  Major releases are the default types of an |NCS| release.
+  Minor releases are the default types of an |NCS| release.
   They introduce new functionality and may break APIs.
 * The ``PATCH`` version number is increased whenever a minor or bugfix release is cut.
-  Minor releases only address functional issues but do not introduce new functionality.
+  Patch releases only address functional issues but do not introduce new functionality.
 
 In between releases, |NCS| is not static.
 Instead, it changes its revision every time a Git commit is merged into the `sdk-nrf`_ repository.
@@ -67,6 +67,10 @@ This means that, by virtue of containing the `west manifest file`_, its revision
 
 A special value of ``99`` for the ``PATCH`` version number indicates that the version string does not belong to a release, but rather a point in between two major releases.
 For example, ``2.2.99`` indicates that this particular revision of the |NCS| is somewhere between versions ``2.2.0`` and ``2.3.0``.
+
+.. include:: developing/code_base.rst
+   :start-after: dev_tag_definition_start
+   :end-before: dev_tag_definition_end
 
 Revisions can either be Git SHAs or tags, depending on whether the current revision is associated with a release (in which case it is a tag) or is just any revision in between releases.
 
