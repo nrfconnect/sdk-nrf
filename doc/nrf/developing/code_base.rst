@@ -93,11 +93,19 @@ The Git tags are composed as follows::
   vX.Y.Z(-rcN|-devN)
 
 X, Y, and Z are the major, minor, and patch version, respectively.
+
 A special value of ``99`` for the patch version number is reserved for any revision in between releases.
 Tags without a suffix correspond to official releases tested and signed by Nordic Semiconductor engineers.
 A release candidate suffix ``-rcN`` is attached if the tag identifies a candidate instead of the actual release.
+
+.. dev_tag_definition_start
+
 In between releases, there might be development tags.
-These are identified by a ``-devN`` suffix.
+These are identified by a ``-devN`` suffix included after the |NCS| version, for example ``v1.9.99-dev1`` for the main branch or ``v1.9.2-dev1`` for the release branch.
+Such versions indicate a snapshot of the development state that is created to highlight the introduction of a new piece of functionality.
+Unlike an |NCS| release, a ``-devN`` version may or may not have received the same amount of testing.
+
+.. dev_tag_definition_end
 
 In the case of OSS repositories, the git tag format reuses the upstream project's version along with some |NCS| specific postfixes::
 
