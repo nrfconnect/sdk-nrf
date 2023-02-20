@@ -7,7 +7,7 @@ Wi-Fi: Provisioning Service
    :local:
    :depth: 2
 
-This sample allows you to provision a Wi-Fi® device over a Bluetooth® Low Energy link.
+This sample demonstrates how to provision a Wi-Fi® device over a Bluetooth® Low Energy link.
 
 .. _wifi_provisioning_app:
 
@@ -26,18 +26,17 @@ The sample requires a smartphone (configurator) with Nordic Semiconductor's nRF 
 Overview
 ********
 
-With this sample, you can provision a Wi-Fi® device that lacks input or output capability using the :ref:`wifi_prov_readme` library.
+With this sample, you can provision a Wi-Fi device that lacks input or output capability using the :ref:`wifi_prov_readme` library.
 The sample is divided into three parts:
 
 * Task and event handling component: Handles provisioning-related tasks and events.
-* Transport layer: Based on Bluetooth® Low Energy and exchanges information between the device and the nRF Wi-Fi Provisioner app.
+* Transport layer: Based on Bluetooth Low Energy and exchanges information between the device and the nRF Wi-Fi Provisioner app.
 * Configuration management component: Manages the provisioning data (in RAM and flash) accessed by multiple threads.
 
 Configuration
 *************
 
-Advertisement data update
-*************************
+|config|
 
 You can enable the :kconfig:option:`WIFI_PROV_ADV_DATA_UPDATE` Kconfig option to get the live update of the Wi-Fi status without setting up a Bluetooth connection.
 When periodic update is enabled, the update interval is controlled by the :kconfig:option:`WIFI_PROV_ADV_DATA_UPDATE_INTERVAL` Kconfig option.
@@ -45,8 +44,7 @@ When periodic update is enabled, the update interval is controlled by the :kconf
 Features
 ********
 
-Advertisement
-=============
+The sample implements advertisement feature to advertise over Bluetooth LE.
 
 After powerup, the device checks if it is provisioned. If it is, it loads saved credentials and tries to connect to the specified access point.
 
