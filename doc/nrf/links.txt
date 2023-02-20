@@ -225,48 +225,48 @@
 .. _`connecting to nRF Cloud`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/networking/nrf_cloud.html#connecting
 
 .. _`API documentation`:
-.. _`external ZBOSS development guide and API documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/zigbee_devguide.html
-.. _`Stack commissioning start sequence`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/using_zigbee__z_c_l.html#stack_start_initiation
-.. _`ZBOSS NCP Host`: https://developer.nordicsemi.com/Zigbee/ncp_sdk_for_host/ncp_host_v2.2.0.zip
-.. _`NCP Host documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/zboss_ncp_host_intro.html
-.. _`Rebuilding the ZBOSS libraries for host`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/zboss_ncp_host.html#rebuilding_libs
-.. _`process the frame`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/using_zigbee__z_c_l.html#process_zcl_cmd
-.. _`declaring custom cluster`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/using_zigbee__z_c_l.html#cluster_declaration_custom
-.. _`Configuring sleepy behavior for end devices`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/zigbee_prog_principles.html#zigbee_power_optimization_sleepy
-.. _`zboss_signal_handler()`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zb__comm__signals.html#gae05c0ff285cfd03e0997fe438e8047fc
-.. _`Common ZCL terms and definitions`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/using_zigbee__z_c_l.html#ZCL_definitions
-.. _`Declaring attributes`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/using_zigbee__z_c_l.html#att_declaration
-.. _`Declaring endpoint`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/using_zigbee__z_c_l.html#endpoint_dec
-.. _`Declaring simple descriptors`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/using_zigbee__z_c_l.html#simple_desc_declaration
-.. _`Declaring Zigbee device context`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/using_zigbee__z_c_l.html#zigbee_device_context_dec
-.. _`Declaring Zigbee device context with multiple endpoints`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/using_zigbee__z_c_l.html#zigbee_device_context_mult_ep_dec
-.. _`Resetting to factory defaults`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/using_zigbee__z_c_l.html#reset_factory_defaults
-.. _`Registering device context`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/using_zigbee__z_c_l.html#register_zigbee_device
-.. _`Support for Zigbee commissioning`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/using_zigbee__z_c_l.html#zcl_zigbee_commissioning
-.. _`BDB Commissioning API`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zboss__bdb__api.html
+.. _`external ZBOSS development guide and API documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/zigbee_devguide.html
+.. _`Stack commissioning start sequence`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/using_zigbee__z_c_l.html#stack_start_initiation
+.. _`ZBOSS NCP Host`: https://developer.nordicsemi.com/Zigbee/ncp_sdk_for_host/ncp_host_v2.2.1.zip
+.. _`NCP Host documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/zboss_ncp_host_intro.html
+.. _`Rebuilding the ZBOSS libraries for host`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/zboss_ncp_host.html#rebuilding_libs
+.. _`process the frame`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/using_zigbee__z_c_l.html#process_zcl_cmd
+.. _`declaring custom cluster`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/using_zigbee__z_c_l.html#cluster_declaration_custom
+.. _`Configuring sleepy behavior for end devices`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/zigbee_prog_principles.html#zigbee_power_optimization_sleepy
+.. _`zboss_signal_handler()`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zb__comm__signals.html#gae05c0ff285cfd03e0997fe438e8047fc
+.. _`Common ZCL terms and definitions`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/using_zigbee__z_c_l.html#ZCL_definitions
+.. _`Declaring attributes`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/using_zigbee__z_c_l.html#att_declaration
+.. _`Declaring endpoint`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/using_zigbee__z_c_l.html#endpoint_dec
+.. _`Declaring simple descriptors`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/using_zigbee__z_c_l.html#simple_desc_declaration
+.. _`Declaring Zigbee device context`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/using_zigbee__z_c_l.html#zigbee_device_context_dec
+.. _`Declaring Zigbee device context with multiple endpoints`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/using_zigbee__z_c_l.html#zigbee_device_context_mult_ep_dec
+.. _`Resetting to factory defaults`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/using_zigbee__z_c_l.html#reset_factory_defaults
+.. _`Registering device context`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/using_zigbee__z_c_l.html#register_zigbee_device
+.. _`Support for Zigbee commissioning`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/using_zigbee__z_c_l.html#zcl_zigbee_commissioning
+.. _`BDB Commissioning API`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zboss__bdb__api.html
 
-.. _`ZB_BDB_SIGNAL_FINDING_AND_BINDING_INITIATOR_FINISHED`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zb__comm__signals.html#ga18f5e7ddfefb7d01ef98f696a9694d79
-.. _`ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zb__comm__signals.html#ga3eb4631c12c345991be2461566c150e9
-.. _`ZB_ZDO_SIGNAL_SKIP_STARTUP`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zb__comm__signals.html#gab2b9e7a13fd471d7bb642655d825a04e
-.. _`ZB_BDB_SIGNAL_DEVICE_FIRST_START`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zb__comm__signals.html#gab55565980ef0580712f8dc160b01ea06
-.. _`ZB_BDB_SIGNAL_DEVICE_REBOOT`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zb__comm__signals.html#ga3e9d86f42d2c6c27240f423a40fb152b
-.. _`ZB_BDB_SIGNAL_FORMATION`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zb__comm__signals.html#ga342d4176c8932ff8ab0d8d6f997fa603
-.. _`ZB_BDB_SIGNAL_STEERING`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zb__comm__signals.html#ga25a801841c95d6daddb9c60b39542b13
-.. _`ZB_ZDO_SIGNAL_LEAVE`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zb__comm__signals.html#ga7942f336484c4fbb85626951480b2bba
-.. _`ZB_HA_DECLARE_ON_OFF_SWITCH_CLUSTER_LIST`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__ha__on__off__switch.html#ga566dbde2d408c46c488460219edf6002
-.. _`ZB_AF_REGISTER_DEVICE_CTX`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__af__management__service.html#ga2ba409e0ae3e25032b673a5f85859a45
-.. _`ZB_HA_DECLARE_TEMPERATURE_SENSOR_CLUSTER_LIST`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__ha__temperature__sensor.html#ga1baeb195bbce720ee97cf9c879726cbb
-.. _`zb_zcl_device_callback_param_t`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group___z_b___z_c_l___i_n_i_t_i_a_l_i_z_a_t_i_o_n.html#ga0dfcc989252b93252f8bb1d27d2639fa
-.. _`zb_zcl_device_callback_id_t`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group___z_b___z_c_l___i_n_i_t_i_a_l_i_z_a_t_i_o_n.html#gad27454b213ce8a00540ebc75288966ad
-.. _`ZB_ZCL_OTA_UPGRADE_VALUE_CB_ID`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group___z_b___z_c_l___i_n_i_t_i_a_l_i_z_a_t_i_o_n.html#gga35caa2e3a9ef37535b1f75e0fe919266a8a87688c465e80b46ad821741a60fe84
-.. _`zb_bdb_set_legacy_device_support`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zboss__bdb__comm__params.html#ga8bf3b3beef192c00bcdca17ad1240921
+.. _`ZB_BDB_SIGNAL_FINDING_AND_BINDING_INITIATOR_FINISHED`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zb__comm__signals.html#ga18f5e7ddfefb7d01ef98f696a9694d79
+.. _`ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zb__comm__signals.html#ga3eb4631c12c345991be2461566c150e9
+.. _`ZB_ZDO_SIGNAL_SKIP_STARTUP`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zb__comm__signals.html#gab2b9e7a13fd471d7bb642655d825a04e
+.. _`ZB_BDB_SIGNAL_DEVICE_FIRST_START`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zb__comm__signals.html#gab55565980ef0580712f8dc160b01ea06
+.. _`ZB_BDB_SIGNAL_DEVICE_REBOOT`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zb__comm__signals.html#ga3e9d86f42d2c6c27240f423a40fb152b
+.. _`ZB_BDB_SIGNAL_FORMATION`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zb__comm__signals.html#ga342d4176c8932ff8ab0d8d6f997fa603
+.. _`ZB_BDB_SIGNAL_STEERING`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zb__comm__signals.html#ga25a801841c95d6daddb9c60b39542b13
+.. _`ZB_ZDO_SIGNAL_LEAVE`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zb__comm__signals.html#ga7942f336484c4fbb85626951480b2bba
+.. _`ZB_HA_DECLARE_ON_OFF_SWITCH_CLUSTER_LIST`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__ha__on__off__switch.html#ga566dbde2d408c46c488460219edf6002
+.. _`ZB_AF_REGISTER_DEVICE_CTX`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__af__management__service.html#ga2ba409e0ae3e25032b673a5f85859a45
+.. _`ZB_HA_DECLARE_TEMPERATURE_SENSOR_CLUSTER_LIST`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__ha__temperature__sensor.html#ga1baeb195bbce720ee97cf9c879726cbb
+.. _`zb_zcl_device_callback_param_t`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group___z_b___z_c_l___i_n_i_t_i_a_l_i_z_a_t_i_o_n.html#ga0dfcc989252b93252f8bb1d27d2639fa
+.. _`zb_zcl_device_callback_id_t`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group___z_b___z_c_l___i_n_i_t_i_a_l_i_z_a_t_i_o_n.html#gad27454b213ce8a00540ebc75288966ad
+.. _`ZB_ZCL_OTA_UPGRADE_VALUE_CB_ID`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group___z_b___z_c_l___i_n_i_t_i_a_l_i_z_a_t_i_o_n.html#gga35caa2e3a9ef37535b1f75e0fe919266a8a87688c465e80b46ad821741a60fe84
+.. _`zb_bdb_set_legacy_device_support`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zboss__bdb__comm__params.html#ga8bf3b3beef192c00bcdca17ad1240921
 .. _`zboss_start()`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.1.177/group__zb__general__start.html#ga31b4d46033aaf6a400409d03bd40d392
-.. _`bdb_start_top_level_commissioning()`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zboss__bdb__comm__start.html#ga0b54e93a19cadc5fc02df8eab18ecd45
-.. _`zb_bdb_commissioning_mode_mask_e`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zboss__bdb__comm__start.html#ga9c44bbce9f6f6b19b623837914959c02
-.. _`ZB_BDB_NETWORK_STEERING`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zboss__bdb__comm__start.html#gga9c44bbce9f6f6b19b623837914959c02ae31d4a2067eb711a43f7049b08710299
-.. _`ZB_BDB_NETWORK_FORMATION`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zboss__bdb__comm__start.html#gga9c44bbce9f6f6b19b623837914959c02ac723cfd38f78c08a673ec3664539027c
-.. _`ZB_BDB_FINDING_N_BINDING`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zboss__bdb__comm__start.html#gga9c44bbce9f6f6b19b623837914959c02ad9bcb56a6668b6ba6f37edc73a796b58
-.. _`zb_bdb_finding_binding_initiator()`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.0/group__zboss__bdb__comm__fb.html#gae6fd60a050559ef0aa3c3e5ec32bc515
+.. _`bdb_start_top_level_commissioning()`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zboss__bdb__comm__start.html#ga0b54e93a19cadc5fc02df8eab18ecd45
+.. _`zb_bdb_commissioning_mode_mask_e`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zboss__bdb__comm__start.html#ga9c44bbce9f6f6b19b623837914959c02
+.. _`ZB_BDB_NETWORK_STEERING`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zboss__bdb__comm__start.html#gga9c44bbce9f6f6b19b623837914959c02ae31d4a2067eb711a43f7049b08710299
+.. _`ZB_BDB_NETWORK_FORMATION`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zboss__bdb__comm__start.html#gga9c44bbce9f6f6b19b623837914959c02ac723cfd38f78c08a673ec3664539027c
+.. _`ZB_BDB_FINDING_N_BINDING`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zboss__bdb__comm__start.html#gga9c44bbce9f6f6b19b623837914959c02ad9bcb56a6668b6ba6f37edc73a796b58
+.. _`zb_bdb_finding_binding_initiator()`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.2.1/group__zboss__bdb__comm__fb.html#gae6fd60a050559ef0aa3c3e5ec32bc515
 
 .. _`TF-M documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/index.html
 .. _`TF-M secure partition integration guide`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/integration_guide/services/tfm_secure_partition_addition.html
