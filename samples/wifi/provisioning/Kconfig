@@ -7,7 +7,7 @@ menu "Wi-Fi Provisioning Sample"
 
 config WIFI_PROV_ADV_DATA_UPDATE
 	bool "Enable periodic update of advertisement data"
-	default n
+	default y
 
 if WIFI_PROV_ADV_DATA_UPDATE
 
