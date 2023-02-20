@@ -717,6 +717,7 @@ Modem libraries
     * The :c:func:`nrf_modem_lib_diag_stats_get` function now returns an error if called when the :ref:`nrf_modem_lib_readme` library has not been initialized.
     * The trace backend interface to be exposed to the :ref:`modem_trace_module` using the :c:struct:`nrf_modem_lib_trace_backend` struct.
     * The :ref:`modem_trace_module` to support backends that store the trace data for later retrieval.
+    * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT` Kconfig option, enabling the RTT trace backend, now requires the :kconfig:option:`CONFIG_USE_SEGGER_RTT` to be enabled.
 
 * :ref:`lib_location` library:
 
