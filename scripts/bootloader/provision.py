@@ -18,9 +18,34 @@ LCS_STATE_SIZE = 0x8
 IMPLEMENTATION_ID_SIZE = 0x20
 NUM_BYTES_PROVISIONED_ELSEWHERE = LCS_STATE_SIZE + IMPLEMENTATION_ID_SIZE
 
+def generate_provision_intel_hex_file(provision_data, provision_address, output, max_size):
+    assert len(provision_data) <= max_size, """Provisioning data doesn't fit.
+Reduce the number of public keys or counter slots and try again."""
+
+    ih = IntelHex()
+    ih.frombytes(provision_data, offset=provision_address)
+    ih.write_hex_file(output)
+
+def add_hw_counters(provision_data, num_counter_slots_version):
+    num_counters = min(num_counter_slots_version, 1)
+
+    if num_counters == 0:
+        return provision_data
+
+    assert num_counter_slots_version % 2 == 0, "--num-counters-slots-version must be an even number"
+
+    provision_data += struct.pack('H', 1) # Type "counter collection"
+    provision_data += struct.pack('H', num_counters)
+
+    if num_counter_slots_version > 0:
+        provision_data += struct.pack('H', 1) # counter description
+        provision_data += struct.pack('H', num_counter_slots_version)
+        provision_data += bytes(2 * num_counter_slots_version * [0xFF])
+
+    return provision_data
+
 def generate_provision_hex_file(s0_address, s1_address, hashes, provision_address, output, max_size,
                                 num_counter_slots_version):
-    # Add addresses
     provision_data = struct.pack('III', s0_address, s1_address,
                                  len(hashes))
 
@@ -28,23 +53,9 @@ def generate_provision_hex_file(s0_address, s1_address, hashes, provision_addres
         provision_data += struct.pack('I', 0xFFFFFFFF) # Invalidation token
         provision_data += mhash
 
-    num_counters = 1 if num_counter_slots_version > 0 else 0
-    provision_data += struct.pack('H', 1) # Type "counter collection"
-    provision_data += struct.pack('H', num_counters)
+    provision_data = add_hw_counters(provision_data, num_counter_slots_version)
 
-    assert num_counter_slots_version % 2 == 0, "--num-counters-slots-version must be an even number"
-
-    if num_counters == 1:
-        provision_data += struct.pack('H', 1) # counter description
-        provision_data += struct.pack('H', num_counter_slots_version)
-        provision_data += bytes(2 * mcuboot_counters_slots * [0xFF])
-
-    assert len(provision_data) <= max_size, """Provisioning data doesn't fit.
-Reduce the number of public keys or counter slots and try again."""
-
-    ih = IntelHex()
-    ih.frombytes(provision_data, offset=provision_address)
-    ih.write_hex_file(output)
+    generate_provision_intel_hex_file(provision_data, provision_address, output, max_size)
 
 
 def parse_args():
