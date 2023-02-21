@@ -5,12 +5,11 @@
 #
 
 module = LWM2M_INTEGRATION
-module-prompt = "LwM2M integration [Experimental]"
+module-prompt = "LwM2M integration"
 orsource "../../../../subsys/net/lib/Kconfig.cloud_$(CLOUD_SERVICE_SELECTOR)"
 
 config $(module)
 	bool
-	select EXPERIMENTAL
 	prompt "LwM2M integration layer" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
 
 if LWM2M_INTEGRATION
