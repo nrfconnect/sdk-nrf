@@ -543,7 +543,7 @@ To let partition manager know which Kconfig option ensures the existence of the 
 For partitions in the internal flash memory, ``DEFAULT_DRIVER_KCONFIG`` within :file:`partition_manager.cmake` is set automatically to :kconfig:option:`CONFIG_SOC_FLASH_NRF`, so that all the partitions placed in the internal flash are always available at runtime.
 For external regions, ``DEFAULT_DRIVER_KCONFIG`` within :file:`partition_manager.cmake` must be set to :kconfig:option:`CONFIG_PM_EXTERNAL_FLASH_HAS_DRIVER`.
 Out-of-tree drivers can select this value to attest that they provide support for the external flash.
-This is an hidden option and can be selected only by an external driver or a Kconfig option.
+This is a hidden option and can be selected only by an external driver or a Kconfig option.
 
 This option is automatically set when :kconfig:option:`CONFIG_NRF_QSPI_NOR` or :kconfig:option:`CONFIG_SPI_NOR` are enabled.
 If the application provides the driver in an unusual way, this option can be overridden by setting :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` in the application configuration.
@@ -559,7 +559,7 @@ As partition manager does not know if partitions are used at runtime, consider t
 .. note::
 
    When using an application configured with an MCUboot child image, both images use the same partition manager configuration, which means that the app and MCUboot have exactly the same partition maps.
-   The accessibility at runtime of flash partitions depend on the configurations of both the application and MCUboot and the values they give to the ``DEFAULT_DRIVER_KCONFIG`` option of the partition manager region specification.
+   The accessibility at runtime of flash partitions depends on the configurations of both the application and MCUboot and the values they give to the ``DEFAULT_DRIVER_KCONFIG`` option of the partition manager region specification.
 
 Build system
 ************

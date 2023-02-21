@@ -7,7 +7,7 @@ Wi-Fi: Scan
    :local:
    :depth: 2
 
-The Scan sample demonstrates how to use the Nordic Semiconductor's Wi-Fi chipset to scan for the access points without using the wpa_supplicant.
+The Scan sample demonstrates how to use the Nordic Semiconductor's Wi-Fi® chipset to scan for the access points without using the wpa_supplicant.
 
 Requirements
 ************
@@ -19,7 +19,7 @@ The sample supports the following development kit:
 Overview
 ********
 
-This sample can perform Wi-Fi scan operation in the 2.4GHz and 5GHz bands.
+This sample can perform Wi-Fi scan operations in the 2.4GHz and 5GHz bands.
 
 Using this sample, the development kit can scan for available access points in :abbr:`STA (Station)` mode.
 

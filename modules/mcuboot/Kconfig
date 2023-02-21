@@ -112,4 +112,14 @@ config ADD_MCUBOOT_MEDIATE_SIM_FLASH_DTS
 	  multi image update of the network core or to allow serial recovery of
 	  the network core.
 
+config MCUBOOT_USE_ALL_AVAILABLE_RAM
+	bool "Allow MCUBoot to use all available RAM (security implications)"
+	depends on ARM_TRUSTZONE_M
+	default y if BOARD_THINGY91_NRF9160_NS || BOARD_THINGY91_NRF9160
+	default y if BOARD_THINGY53_NRF5340_CPUAPP_NS || BOARD_THINGY53_NRF5340_CPUAPP
+	help
+	  By default MCUBoot uses only the secure RAM partition. Enabling this
+	  may allow secrets to be leaked to non-secure through the non-secure
+	  RAM partition.
+
 endmenu

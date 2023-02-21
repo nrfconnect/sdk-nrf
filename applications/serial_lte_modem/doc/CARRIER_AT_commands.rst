@@ -33,7 +33,7 @@ Syntax
   * ``1`` - LwM2M carrier library initialized.
   * ``2`` - Request to set modem to full functional mode.
   * ``3`` - Request to set modem to flight functional mode.
-  * ``4`` - Request to set modem to minimum funtional mode.
+  * ``4`` - Request to set modem to minimum functional mode.
   * ``6`` - Bootstrap sequence complete.
   * ``7`` - Device registered successfully to the device management servers.
   * ``8`` - Connection to the server failed.

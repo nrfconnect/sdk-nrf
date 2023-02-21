@@ -225,6 +225,14 @@ void main(void)
 
 	mosh_print_version_info();
 
+#if !defined(CONFIG_LWM2M_CARRIER) && !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
+	/* Manually initialize modem library when CONFIG_NRF_MODEM_LIB_SYS_INIT is disabled.
+	 * This is necessary for the modem trace flash backend. Which depend on the flash device
+	 * to be initialized before initializing the nRF modem library.
+	 */
+	nrf_modem_lib_init(NORMAL_MODE);
+#endif
+
 #if defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_MQTT)
 #if defined(CONFIG_MOSH_IPERF3)
 	/* Due to iperf3, we cannot let nrf cloud lib to initialize cJSON lib to be
@@ -262,23 +270,27 @@ void main(void)
 	case 0:
 		/* Modem library was initialized successfully. */
 		break;
-	case MODEM_DFU_RESULT_OK:
+	case NRF_MODEM_DFU_RESULT_OK:
 		printk("Modem firmware update successful!\n");
 		printk("Modem will run the new firmware after reboot\n");
 		sys_reboot(SYS_REBOOT_WARM);
 		return;
-	case MODEM_DFU_RESULT_UUID_ERROR:
-	case MODEM_DFU_RESULT_AUTH_ERROR:
+	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
+	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
 		printk("Modem firmware update failed!\n");
 		printk("Modem will run non-updated firmware on reboot.\n");
 		sys_reboot(SYS_REBOOT_WARM);
 		return;
-	case MODEM_DFU_RESULT_HARDWARE_ERROR:
-	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
 		printk("Modem firmware update failed!\n");
 		printk("Fatal error.\n");
 		sys_reboot(SYS_REBOOT_WARM);
 		return;
+	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
+		printk("Modem firmware update cancelled due to low power.\n");
+		printk("Please reboot once you have sufficient power for the DFU\n");
+		break;
 	default:
 		/* Modem library initialization failed. */
 		printk("Could not initialize modemlib.\n");

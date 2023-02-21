@@ -113,6 +113,13 @@ config PM_PGPS_ALIGN
 
 endif
 
+if DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION
+partition=FMFU_STORAGE
+partition-size=DFU_TARGET_FULL_MODEM_EXT_FLASH_SIZE
+rsource "Kconfig.template.partition_config"
+rsource "Kconfig.template.partition_region"
+endif
+
 endmenu # Zephyr subsystem configurations
 menu "NCS subsystem configurations"
 

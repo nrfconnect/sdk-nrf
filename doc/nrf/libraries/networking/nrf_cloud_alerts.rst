@@ -31,7 +31,7 @@ The range of the alert type enumeration is split into two parts:
 * Values greater or equal to that are for application-specific use.
 
 Use the alert value to indicate more information about an alert.
-For example, for :c:enumerator:`ALERT_TYPE_TEMPERATURE`, the alert value could be the temperature in degrees Celcius.
+For example, for :c:enumerator:`ALERT_TYPE_TEMPERATURE`, the alert value could be the temperature in degrees Celsius.
 
 Use the description string to give more detail about a specific alert, if required.
 

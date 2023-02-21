@@ -55,6 +55,11 @@ config MCUBOOT_NRF_CLEANUP_PERIPHERAL
 	depends on SOC_FAMILY_NRF
 	default y
 
+config MCUBOOT_NRF_CLEANUP_NONSECURE_RAM
+	bool "Perform non-secure RAM cleanup before chain-load the application"
+	depends on SOC_FAMILY_NRF && ARM_TRUSTZONE_M
+	default y if MCUBOOT_USE_ALL_AVAILABLE_RAM
+
 config BOOT_SIGNATURE_KEY_FILE
 	string "MCUBoot PEM key file"
 	depends on !MCUBOOT_BUILD_STRATEGY_FROM_SOURCE

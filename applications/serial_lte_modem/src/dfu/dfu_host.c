@@ -38,10 +38,12 @@ int dfu_host_setup(uint16_t mtu_size, uint16_t pause_time)
 int dfu_host_send_fw(const uint8_t *data, uint32_t data_size)
 {
 	int rc = 0;
-	uint32_t crc_32 = 0;
 	uint32_t max_size, stp_size, pos;
 	uint32_t pos_start;
 	uint32_t hold_count = SLM_NRF52_BLK_SIZE / mtu;
+#if defined(CONFIG_SLM_LOG_LEVEL_DBG)
+	uint32_t crc_32 = 0;
+#endif
 
 	LOG_DBG("Sending firmware file, size %d ...", data_size);
 
@@ -60,6 +62,7 @@ int dfu_host_send_fw(const uint8_t *data, uint32_t data_size)
 			break;
 		}
 
+#if defined(CONFIG_SLM_LOG_LEVEL_DBG)
 		if (crc_32 == 0) {
 			crc_32 = crc32_ieee(data + pos, stp_size);
 		} else {
@@ -67,6 +70,7 @@ int dfu_host_send_fw(const uint8_t *data, uint32_t data_size)
 		}
 		LOG_DBG("Send %d/%d bytes, CRC: 0x%08x",
 			pos + stp_size, data_size, crc_32);
+#endif
 		hold_count--;
 		if (hold_count == 0) {
 			k_sleep(K_MSEC(SLM_NRF52_BLK_TIME));

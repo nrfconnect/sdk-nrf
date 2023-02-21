@@ -55,6 +55,8 @@ struct zep_work_item *work_alloc(void)
 		return NULL;
 	}
 
+	zep_work_item[free_work_index].in_use = true;
+
 	return &zep_work_item[free_work_index];
 }
 

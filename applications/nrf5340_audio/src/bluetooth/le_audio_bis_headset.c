@@ -462,12 +462,8 @@ static int change_active_brdcast_src(void)
 {
 	int ret;
 
-	LOG_INF("Change broadcast source");
-
-	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
-	ERR_CHK(ret);
-
-	ret = bis_headset_cleanup(false);
+	/* If the stream has been paused do not stop the sink again */
+	ret = bis_headset_cleanup(!playing_state);
 	if (ret) {
 		LOG_ERR("Error cleaning up");
 		return ret;
@@ -477,13 +473,17 @@ static int change_active_brdcast_src(void)
 	if (++active_stream.brdcast_src_name_idx >= ARRAY_SIZE(brdcast_src_names)) {
 		active_stream.brdcast_src_name_idx = 0;
 	}
+	LOG_INF("Switching to %s", brdcast_src_names[active_stream.brdcast_src_name_idx]);
 
-	LOG_DBG("Switching to %s", brdcast_src_names[active_stream.brdcast_src_name_idx]);
-
+	LOG_DBG("Restarting scanning for broadcast sources");
 	ret = bt_audio_broadcast_sink_scan_start(BT_LE_SCAN_PASSIVE);
-	if (ret) {
+	if (ret && ret != -EALREADY) {
+		LOG_ERR("Unable to start scanning for broadcast sources");
 		return ret;
 	}
+
+	/* Always start playing new source */
+	playing_state = true;
 
 	return 0;
 }

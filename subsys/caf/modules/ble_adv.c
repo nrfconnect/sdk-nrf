@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <zephyr/types.h>
+#include <zephyr/random/rand32.h>
 #include <zephyr/settings/settings.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
@@ -39,14 +40,17 @@ static enum state state;
 static size_t grace_period_s;
 static bool direct_adv;
 static bool fast_adv;
+static bool rpa_rotated;
 
 static size_t req_grace_period_s;
 static bool req_wakeup;
 static bool req_fast_adv = true;
+static bool req_new_adv_session = true;
 
 static struct k_work adv_delayed_start;
 static struct k_work_delayable fast_adv_end;
 static struct k_work_delayable grace_period_end;
+static struct k_work_delayable rpa_rotate;
 static uint8_t cur_identity = BT_ID_DEFAULT; /* We expect zero */
 
 enum peer_rpa {
@@ -168,6 +172,52 @@ static bool can_direct_adv(uint8_t local_id)
 	return ((bond_cnt(local_id) == 1) && (peer_is_rpa[local_id] != PEER_RPA_YES));
 }
 
+static void reschedule_rpa_rotation(void)
+{
+#if CONFIG_CAF_BLE_ADV_ROTATE_RPA
+	/* Due to the Bluetooth API limitations, it is necessary to manully
+	 * rotate the RPA before the actual timeout in the Bluetooth stack.
+	 * As a result, the module timeout value is smaller than the Bluetooth
+	 * stack configuration.
+	 */
+	BUILD_ASSERT(CONFIG_CAF_BLE_ADV_ROTATE_RPA_TIMEOUT < CONFIG_BT_RPA_TIMEOUT);
+#endif
+	if (!IS_ENABLED(CONFIG_CAF_BLE_ADV_ROTATE_RPA)) {
+		return;
+	}
+
+	unsigned int rpa_timeout_ms = CONFIG_CAF_BLE_ADV_ROTATE_RPA_TIMEOUT * MSEC_PER_SEC;
+	uint8_t rand;
+	int err = sys_csrand_get(&rand, sizeof(rand));
+
+	if (!err) {
+		rpa_timeout_ms -=
+			(CONFIG_CAF_BLE_ADV_ROTATE_RPA_TIMEOUT_RAND * MSEC_PER_SEC) *
+			rand / UINT8_MAX;
+	} else {
+		LOG_WRN("Cannot get random RPA timeout (err: %d). Used fixed value", err);
+	}
+
+	(void)k_work_reschedule(&rpa_rotate, K_MSEC(rpa_timeout_ms));
+}
+
+static void force_rpa_rotation(uint8_t local_id)
+{
+	if (!IS_ENABLED(CONFIG_CAF_BLE_ADV_ROTATE_RPA)) {
+		return;
+	}
+
+	struct bt_le_oob oob;
+	int err = bt_le_oob_get_local(local_id, &oob);
+
+	if (err) {
+		LOG_ERR("Cannot trigger RPA rotation on ID: %" PRIu8 " (err: %d)", local_id, err);
+	} else {
+		LOG_INF("RPA rotated on ID: %" PRIu8, local_id);
+		rpa_rotated = true;
+	}
+}
+
 static int ble_adv_start_directed(void)
 {
 	bt_addr_le_t addr;
@@ -214,8 +264,14 @@ static int update_undirected_advertising(struct bt_le_adv_param *adv_param)
 	struct bt_le_adv_prov_adv_state adv_state;
 	struct bt_le_adv_prov_feedback fb;
 
+	if (req_new_adv_session) {
+		force_rpa_rotation(cur_identity);
+	}
+
 	adv_state.pairing_mode = (bond_cnt(cur_identity) == 0);
 	adv_state.in_grace_period = (state == STATE_GRACE_PERIOD);
+	adv_state.new_adv_session = req_new_adv_session;
+	adv_state.rpa_rotated = rpa_rotated;
 	req_grace_period_s = 0;
 
 	int err = bt_le_adv_prov_get_ad(ad, &ad_len, &adv_state, &fb);
@@ -240,9 +296,21 @@ static int update_undirected_advertising(struct bt_le_adv_param *adv_param)
 				!IS_ENABLED(CONFIG_CAF_BLE_ADV_PM_EVENTS));
 	}
 
+	if (rpa_rotated) {
+		rpa_rotated = false;
+		reschedule_rpa_rotation();
+	}
+
+	if (req_new_adv_session) {
+		req_new_adv_session = false;
+	}
+
 	if (adv_param) {
 		return bt_le_adv_start(adv_param, ad, ad_len, sd, sd_len);
 	} else {
+		__ASSERT_NO_MSG(!adv_state.new_adv_session);
+		__ASSERT_NO_MSG(!adv_state.rpa_rotated);
+
 		return bt_le_adv_update_data(ad, ad_len, sd, sd_len);
 	}
 }
@@ -497,6 +565,17 @@ static void update_state_internal(enum state new_state)
 		state2str(state), fast_adv, direct_adv, grace_period_s);
 }
 
+static void update_rpa_rotate_work(void)
+{
+	if (!IS_ENABLED(CONFIG_CAF_BLE_ADV_ROTATE_RPA)) {
+		return;
+	}
+
+	if (((state != STATE_ACTIVE) && (state != STATE_GRACE_PERIOD)) || direct_adv) {
+		(void)k_work_cancel_delayable(&rpa_rotate);
+	}
+}
+
 static void update_grace_period_work(void)
 {
 	if (!IS_ENABLED(CONFIG_CAF_BLE_ADV_GRACE_PERIOD)) {
@@ -563,6 +642,7 @@ static void update_state(enum state new_state)
 	broadcast_module_state(prev_state, state);
 
 	notify_ble_stack();
+	update_rpa_rotate_work();
 	update_grace_period_work();
 	update_fast_adv_work();
 }
@@ -598,6 +678,37 @@ static void fast_adv_end_fn(struct k_work *work)
 	__ASSERT_NO_MSG(!fast_adv);
 }
 
+static void rpa_rotate_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_GRACE_PERIOD) && (state == STATE_GRACE_PERIOD)) {
+		/* Due to the Bluetooth API limitations, it is necessary to terminate
+		 * the Grace Period session prematurely as there is no way to delay
+		 * the RPA rotation.
+		 */
+		grace_period_end_fn(NULL);
+		return;
+	}
+
+	__ASSERT_NO_MSG(state == STATE_ACTIVE);
+	__ASSERT_NO_MSG(!direct_adv);
+
+	int err = bt_le_adv_stop();
+
+	if (!err) {
+		__ASSERT_NO_MSG(!req_new_adv_session);
+
+		force_rpa_rotation(cur_identity);
+
+		err = ble_adv_start_undirected();
+	}
+
+	if (err) {
+		module_set_state(MODULE_STATE_ERROR);
+	}
+}
+
 static void init(void)
 {
 	/* These things will be opt-out by the compiler. */
@@ -609,6 +720,10 @@ static void init(void)
 
 	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_FAST_ADV)) {
 		k_work_init_delayable(&fast_adv_end, fast_adv_end_fn);
+	}
+
+	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_ROTATE_RPA)) {
+		k_work_init_delayable(&rpa_rotate, rpa_rotate_fn);
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_GRACE_PERIOD)) {
@@ -753,6 +868,7 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 
 	case PEER_STATE_DISCONNECTED:
 		if (state != STATE_OFF) {
+			req_new_adv_session = true;
 			req_fast_adv = true;
 			update_state(STATE_DELAYED_ACTIVE);
 		}
@@ -806,6 +922,7 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 			req_wakeup = true;
 		}
 		req_fast_adv = true;
+		req_new_adv_session = true;
 
 		/* Advertising must be stopped while getting the connection object. */
 		int err = bt_le_adv_stop();
@@ -890,6 +1007,7 @@ static bool handle_wake_up_event(const struct wake_up_event *event)
 	switch (state) {
 	case STATE_OFF:
 	case STATE_GRACE_PERIOD:
+		req_new_adv_session = true;
 		req_fast_adv = true;
 		update_state(STATE_ACTIVE);
 		break;

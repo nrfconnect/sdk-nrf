@@ -63,6 +63,11 @@ struct wifi_nrf_vif_ctx_zep {
 	bool ps_config_info_evnt;
 	bool passive_scan;
 	bool authorized;
+	struct wifi_nrf_ext_capa {
+		enum nrf_wifi_iftype iftype;
+		unsigned char *ext_capa, *ext_capa_mask;
+		unsigned int ext_capa_len;
+	} iface_ext_capa;
 };
 
 struct wifi_nrf_vif_ctx_map {
@@ -80,10 +85,12 @@ struct wifi_nrf_ctx_zep {
 	unsigned char rf_test;
 #else /* CONFIG_NRF700X_RADIO_TEST */
 	struct wifi_nrf_vif_ctx_zep vif_ctx_zep[MAX_NUM_VIFS];
-#ifdef CONFIG_NRF700X_WIFI_UTIL
+#ifdef CONFIG_NRF700X_UTIL
 	struct rpu_conf_params conf_params;
-#endif /* CONFIG_NRF700X_WIFI_UTIL */
+#endif /* CONFIG_NRF700X_UTIL */
 #endif /* CONFIG_NRF700X_RADIO_TEST */
+	unsigned char *extended_capa, *extended_capa_mask;
+	unsigned int extended_capa_len;
 };
 
 struct wifi_nrf_drv_priv_zep {

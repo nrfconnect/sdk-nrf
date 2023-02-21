@@ -179,12 +179,12 @@ const static struct cloud_data_sensors sensor_data_example = {
 };
 
 
-/* tests encoding an empty neighbor cells object */
-void test_enc_neighbor_cells_empty(void)
+/* tests encoding an empty cloud_location object */
+void test_enc_cloud_location_empty(void)
 {
-	struct cloud_data_neighbor_cells data = { .queued = true };
+	struct cloud_data_cloud_location data = { .queued = true };
 
-	ret = cloud_codec_encode_neighbor_cells(&codec, &data);
+	ret = cloud_codec_encode_cloud_location(&codec, &data);
 
 	TEST_ASSERT_EQUAL(-ENOTSUP, ret);
 	TEST_ASSERT_EQUAL(NULL, codec.buf);

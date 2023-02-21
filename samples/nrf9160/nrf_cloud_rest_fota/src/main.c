@@ -18,13 +18,6 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_rest_fota, CONFIG_NRF_CLOUD_REST_FOTA_SAMPLE_LOG_LEVEL);
 
-#if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
-/* Full modem FOTA requires external flash to hold the full modem image.
- * Below is the external flash device present on the nRF9160 DK version 0.14.0 and higher.
- */
-#define EXT_FLASH_DEVICE jedec_spi_nor
-#endif
-
 /* Use the settings library to store FOTA job information to flash so
  * that the job status can be updated after a reboot
  */
@@ -444,18 +437,19 @@ int init(void)
 	struct dfu_target_fmfu_fdev fmfu_dev_inf = {
 		.size = 0,
 		.offset = 0,
-		.dev = DEVICE_DT_GET_ONE(EXT_FLASH_DEVICE)
+		/* CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION is enabled, so no need
+		 * to specify the flash device here
+		 */
+		.dev = NULL
 	};
 
-	if (fmfu_dev_inf.dev) {
-		err = nrf_cloud_fota_fmfu_dev_set(&fmfu_dev_inf);
-		if (err < 0) {
-			return err;
-		}
-		full_modem_fota_initd = true;
-	} else {
-		LOG_WRN("Full modem FOTA not initialized; flash device not specified");
+	err = nrf_cloud_fota_fmfu_dev_set(&fmfu_dev_inf);
+	if (err < 0) {
+		LOG_WRN("Full modem FOTA not initialized");
+		return err;
 	}
+
+	full_modem_fota_initd = true;
 #endif
 
 	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {

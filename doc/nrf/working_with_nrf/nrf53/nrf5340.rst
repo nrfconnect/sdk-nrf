@@ -524,8 +524,26 @@ See the following instructions.
          Otherwise, if you recover the application core first and the network core last, the binary written to the application core is deleted and readback protection is enabled again after a reset.
 
 .. include:: ../nrf52/developing.rst
-   :start-after: fota_upgrades_start
-   :end-before: fota_upgrades_end
+   :start-after: fota_upgrades_intro_start
+   :end-before: fota_upgrades_intro_end
+
+.. include:: ../nrf52/developing.rst
+   :start-after: fota_upgrades_over_ble_intro_start
+   :end-before: fota_upgrades_over_ble_intro_end
+
+.. include:: ../nrf52/developing.rst
+   :start-after: fota_upgrades_over_ble_mandatory_mcuboot_start
+   :end-before: fota_upgrades_over_ble_mandatory_mcuboot_end
+
+Bluetooth buffers configuration introduced by the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP` Kconfig option is also automatically applied to the network core child image by the dedicated overlay file.
+
+.. include:: ../nrf52/developing.rst
+   :start-after: fota_upgrades_over_ble_additional_information_start
+   :end-before: fota_upgrades_over_ble_additional_information_end
+
+.. include:: ../nrf52/developing.rst
+   :start-after: fota_upgrades_outro_start
+   :end-before: fota_upgrades_outro_end
 
 .. include:: ../nrf52/developing.rst
    :start-after: fota_upgrades_bt_mesh_start
@@ -564,7 +582,7 @@ To enable the simultaneous update of multiple images in the MCUboot, set the fol
 .. note::
 
    The application core can be reverted, but doing so bricks the network core upon revertion, as the reversion process fills the network core with the content currently in the RAM that pcd uses.
-   To enable this, define the ``USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY`` kconfig option in the project-level KConfig file.
+   To enable this, define the ``USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY`` Kconfig option in the project-level Kconfig file.
    When this is option is defined, you can enable it by setting :kconfig:option`CONFIG_USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY`.
 
 The :kconfig:option:`CONFIG_NRF53_MULTI_IMAGE_UPDATE` option selects this feature by default if these options and all its other dependencies are asserted.

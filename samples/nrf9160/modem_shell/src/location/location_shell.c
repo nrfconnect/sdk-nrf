@@ -40,12 +40,11 @@ struct gnss_location_work_data {
 };
 static struct gnss_location_work_data gnss_location_work_data;
 
-/* Whether cellular and Wi-Fi positioning response is requested from the cloud.
+/* Whether cloud location (cellular and Wi-Fi positioning) response is requested from the cloud.
  * Or whether it is not requested and MoSh indicates to Location library that positioning
  * result is unknown.
  */
-static bool cloud_cellular_resp;
-static bool cloud_wifi_resp;
+static bool cloud_resp_enabled;
 
 #if defined(CONFIG_DK_LIBRARY)
 static struct k_work_delayable location_evt_led_work;
@@ -67,6 +66,7 @@ static const char location_get_usage_str[] =
 	"[--gnss_priority] [--gnss_cloud_nmea] [--gnss_cloud_pvt]\n"
 	"[--cellular_timeout <timeout in secs>] [--cellular_service <service_string>]\n"
 	"[--wifi_timeout <timeout in secs>] [--wifi_service <service_string>]\n"
+	"[--cloud_resp_disabled]\n"
 	"\n"
 	"Options:\n"
 	"  -m, --method, [str]         Location method: 'gnss', 'cellular' or 'wifi'. Multiple\n"
@@ -89,12 +89,10 @@ static const char location_get_usage_str[] =
 	"                              Zero means timeout is disabled.\n"
 	"  --cellular_service, [str]   Used cellular positioning service:\n"
 	"                              'any' (default), 'nrf' or 'here'\n"
-	"  --cellular_resp_disabled,   Do not wait for cellular positioning response from cloud.\n"
-	"                              Valid if CONFIG_LOCATION_SERVICE_EXTERNAL is set.\n"
 	"  --wifi_timeout, [float]     Wi-Fi timeout in seconds. Zero means timeout is disabled.\n"
 	"  --wifi_service, [str]       Used Wi-Fi positioning service:\n"
 	"                              'any' (default), 'nrf' or 'here'\n"
-	"  --wifi_resp_disabled,       Do not wait for Wi-Fi positioning response from cloud.\n"
+	"  --cloud_resp_disabled,      Do not wait for location response from cloud.\n"
 	"                              Valid if CONFIG_LOCATION_SERVICE_EXTERNAL is set.\n";
 
 /******************************************************************************/
@@ -112,10 +110,9 @@ enum {
 	LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT,
 	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT,
 	LOCATION_SHELL_OPT_CELLULAR_SERVICE,
-	LOCATION_SHELL_OPT_CELLULAR_RESP_DISABLED,
+	LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED,
 	LOCATION_SHELL_OPT_WIFI_TIMEOUT,
 	LOCATION_SHELL_OPT_WIFI_SERVICE,
-	LOCATION_SHELL_OPT_WIFI_RESP_DISABLED,
 };
 
 /* Specifying the expected options */
@@ -133,10 +130,9 @@ static struct option long_options[] = {
 	{ "gnss_cloud_pvt", no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT },
 	{ "cellular_timeout", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
 	{ "cellular_service", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_SERVICE },
-	{ "cellular_resp_disabled", no_argument, 0, LOCATION_SHELL_OPT_CELLULAR_RESP_DISABLED },
+	{ "cloud_resp_disabled", no_argument, 0, LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED },
 	{ "wifi_timeout", required_argument, 0, LOCATION_SHELL_OPT_WIFI_TIMEOUT },
 	{ "wifi_service", required_argument, 0, LOCATION_SHELL_OPT_WIFI_SERVICE },
-	{ "wifi_resp_disabled", no_argument, 0, LOCATION_SHELL_OPT_WIFI_RESP_DISABLED },
 	{ 0, 0, 0, 0 }
 };
 
@@ -322,23 +318,26 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 		location_srv_ext_pgps_handle(&event_data->pgps_request);
 		break;
 #endif
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI)
+	case LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST:
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
-	case LOCATION_EVT_CELLULAR_EXT_REQUEST:
-		mosh_print(
-			"Cellular location request from Location library "
-			"(neighbor cells: %d GCI cells: %d)",
-			event_data->cellular_request.ncells_count,
-			event_data->cellular_request.gci_cells_count);
-		location_srv_ext_cellular_handle(
-			&event_data->cellular_request, cloud_cellular_resp);
-		break;
+		if (event_data->cloud_location_request.cell_data != NULL) {
+			mosh_print(
+				"Cloud positioning request from Location library "
+				"(neighbor cells: %d GCI cells: %d)",
+				event_data->cloud_location_request.cell_data->ncells_count,
+				event_data->cloud_location_request.cell_data->gci_cells_count);
+		}
 #endif
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
-	case LOCATION_EVT_WIFI_EXT_REQUEST:
-		mosh_print(
-			"Wi-Fi location request from Location library (access points: %d)",
-			event_data->wifi_request.cnt);
-		location_srv_ext_wifi_handle(&event_data->wifi_request, cloud_wifi_resp);
+		if (event_data->cloud_location_request.wifi_data != NULL) {
+			mosh_print(
+				"Cloud positioning request from Location library (access points: %d)",
+				event_data->cloud_location_request.wifi_data->cnt);
+		}
+#endif
+		location_srv_ext_cloud_location_handle(
+			&event_data->cloud_location_request, cloud_resp_enabled);
 		break;
 #endif
 #endif /* defined(CONFIG_LOCATION_SERVICE_EXTERNAL) */
@@ -403,8 +402,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 	enum location_req_mode req_mode = LOCATION_REQ_MODE_FALLBACK;
 
-	cloud_cellular_resp = true;
-	cloud_wifi_resp = true;
+	cloud_resp_enabled = true;
 
 	int opt;
 	int ret = 0;
@@ -465,12 +463,12 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				goto show_usage;
 			}
 			break;
-		case LOCATION_SHELL_OPT_CELLULAR_RESP_DISABLED:
+		case LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED:
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
-			cloud_cellular_resp = false;
+			cloud_resp_enabled = false;
 #else
 			mosh_error(
-				"Option --cellular_resp_disabled is not supported "
+				"Option --cloud_resp_disabled is not supported "
 				"when CONFIG_LOCATION_SERVICE_EXTERNAL is disabled");
 			goto show_usage;
 #endif
@@ -487,16 +485,6 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				mosh_error("Unknown Wi-Fi positioning service. See usage:");
 				goto show_usage;
 			}
-			break;
-		case LOCATION_SHELL_OPT_WIFI_RESP_DISABLED:
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
-			cloud_wifi_resp = false;
-#else
-			mosh_error(
-				"Option --wifi_resp_disabled is not supported "
-				"when CONFIG_LOCATION_SERVICE_EXTERNAL is disabled");
-			goto show_usage;
-#endif
 			break;
 
 		case LOCATION_SHELL_OPT_INTERVAL:

@@ -67,4 +67,13 @@ config BT_ADV_PROV_FAST_PAIR_AUTO_SET_PAIRING_MODE
 	  Pair pairing mode and advertised data if generated advertising data
 	  is instantly used in advertising packets.
 
+config BT_ADV_PROV_FAST_PAIR_STOP_DISCOVERABLE_ON_RPA_ROTATION
+	bool "Drop payload on RPA rotation while discoverable advertising"
+	default y
+	help
+	  The Fast Pair specification requires no Resolvable Private Address
+	  rotation during Fast Pair discoverable advertising session. The
+	  provider desists from providing data after RPA was rotated during
+	  ongoing Fast Pair discoverable advertising session.
+
 endif # BT_ADV_PROV_FAST_PAIR

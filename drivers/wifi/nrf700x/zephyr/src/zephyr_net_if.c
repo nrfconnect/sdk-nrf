@@ -48,7 +48,6 @@ void wifi_nrf_if_rx_frm(void *os_vif_ctx, void *frm)
 
 	if (status < 0) {
 		LOG_ERR("RCV Packet dropped by NET stack: %d", status);
-		net_pkt_unref(pkt);
 	}
 }
 
@@ -75,7 +74,7 @@ enum wifi_nrf_status wifi_nrf_if_carr_state_chg(void *os_vif_ctx,
 			net_eth_carrier_off(vif_ctx_zep->zep_net_if_ctx);
 		}
 	}
-	LOG_INF("%s: Carrier state: %d\n", __func__, carr_state);
+	LOG_DBG("%s: Carrier state: %d\n", __func__, carr_state);
 
 	status = WIFI_NRF_STATUS_SUCCESS;
 
@@ -117,7 +116,6 @@ int wifi_nrf_if_send(const struct device *dev,
 
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
-		net_pkt_unref(pkt);
 		goto out;
 	}
 
@@ -132,7 +130,6 @@ int wifi_nrf_if_send(const struct device *dev,
 				       vif_ctx_zep->vif_idx,
 				       net_pkt_to_nbuf(pkt));
 #else
-	net_pkt_unref(pkt);
 	goto out;
 #endif /* CONFIG_NRF700X_DATA_TX */
 
@@ -620,6 +617,8 @@ int wifi_nrf_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
 
 	zstats->pkts.tx = stats.host.total_tx_pkts;
 	zstats->pkts.rx = stats.host.total_rx_pkts;
+	zstats->errors.tx = stats.host.total_tx_drop_pkts;
+	zstats->errors.rx = stats.host.total_rx_drop_pkts;
 	zstats->bytes.received = stats.fw.umac.interface_data_stats.rx_bytes;
 	zstats->bytes.sent = stats.fw.umac.interface_data_stats.tx_bytes;
 	zstats->sta_mgmt.beacons_rx = stats.fw.umac.interface_data_stats.rx_beacon_success_count;

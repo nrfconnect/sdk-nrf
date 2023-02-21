@@ -286,7 +286,10 @@ struct wifi_nrf_fmac_buf_map_info {
 struct rpu_host_stats {
 	unsigned long long total_tx_pkts;
 	unsigned long long total_tx_done_pkts;
+	unsigned long long total_tx_drop_pkts;
+
 	unsigned long long total_rx_pkts;
+	unsigned long long total_rx_drop_pkts;
 };
 
 

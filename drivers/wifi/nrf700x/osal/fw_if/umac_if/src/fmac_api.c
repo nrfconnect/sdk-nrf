@@ -217,7 +217,7 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 	}
 	start_time_us = wifi_nrf_osal_time_get_curr_us(fmac_dev_ctx->fpriv->opriv);
 	while (!fmac_dev_ctx->fw_init_done) {
-		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv, 100);
+		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv, 1);
 #define MAX_INIT_WAIT (5 * 1000 * 1000)
 		if (wifi_nrf_osal_time_elapsed_us(fmac_dev_ctx->fpriv->opriv,
 						  start_time_us) >= MAX_INIT_WAIT) {
@@ -493,7 +493,7 @@ struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params
 			      data_config,
 			      sizeof(fpriv->data_config));
 
-	fpriv->num_tx_tokens = CONFIG_MAX_TX_TOKENS;
+	fpriv->num_tx_tokens = CONFIG_NRF700X_MAX_TX_TOKENS;
 	fpriv->num_tx_tokens_per_ac = (fpriv->num_tx_tokens / WIFI_NRF_FMAC_AC_MAX);
 	fpriv->num_tx_tokens_spare = (fpriv->num_tx_tokens % WIFI_NRF_FMAC_AC_MAX);
 
@@ -523,7 +523,7 @@ struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params
 			fpriv->rx_buf_pools[pool_idx].buf_sz + RX_BUF_HEADROOM;
 	}
 
-	hal_cfg_params.max_tx_frm_sz = CONFIG_TX_MAX_DATA_SIZE + TX_BUF_HEADROOM;
+	hal_cfg_params.max_tx_frm_sz = CONFIG_NRF700X_TX_MAX_DATA_SIZE + TX_BUF_HEADROOM;
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 	hal_cfg_params.max_cmd_size = MAX_NRF_WIFI_UMAC_CMD_SIZE;
@@ -3047,6 +3047,7 @@ out:
 }
 
 
+#define RPU_CMD_TIMEOUT_MS 10000
 enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *dev_ctx,
 						 unsigned char if_idx,
 						 struct nrf_wifi_umac_chg_vif_state_info *vif_info)
@@ -3055,7 +3056,7 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *dev_ctx,
 	struct nrf_wifi_umac_cmd_chg_vif_state *chg_vif_state_cmd = NULL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
-	unsigned int count = 100; /* used for handling timeout*/
+	unsigned int count = RPU_CMD_TIMEOUT_MS;
 
 	fmac_dev_ctx = dev_ctx;
 
@@ -3088,13 +3089,12 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *dev_ctx,
 			      sizeof(*chg_vif_state_cmd));
 
 	while (!vif_ctx->ifflags && (--count > 0))
-		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv,
-				       100);
+		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv, 1);
 
 	if (count == 0) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: RPU is unresponsive for %d sec\n",
-				      __func__, (count * 100) / 1000);
+				      __func__, RPU_CMD_TIMEOUT_MS);
 		goto out;
 	}
 

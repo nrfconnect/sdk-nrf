@@ -4,4 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-zephyr_library_sources_ifdef(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT rtt.c)
+zephyr_library_sources(rtt.c)

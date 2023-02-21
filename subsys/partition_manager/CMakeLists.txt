@@ -91,6 +91,9 @@ endif()
 
 if (CONFIG_TRUSTED_EXECUTION_NONSECURE OR CONFIG_TRUSTED_EXECUTION_SECURE)
   ncs_add_partition_manager_config(pm.yml.trustzone)
+  if (CONFIG_BOOTLOADER_MCUBOOT)
+    ncs_add_partition_manager_config(pm.yml.mcuboot)
+  endif()
 endif()
 
 if (CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP)
@@ -99,6 +102,10 @@ endif()
 
 if(CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION)
   ncs_add_partition_manager_config(pm.yml.pgps)
+endif()
+
+if(CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION)
+  ncs_add_partition_manager_config(pm.yml.fmfu)
 endif()
 
 if (CONFIG_EMDS)

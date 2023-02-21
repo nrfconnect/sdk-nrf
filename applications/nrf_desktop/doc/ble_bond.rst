@@ -7,7 +7,7 @@ Bluetooth LE bond module
    :local:
    :depth: 2
 
-Use the |ble_bond| to manage the Bluetooth peers and bonds.
+Use the Bluetooth® LE bond module to manage the Bluetooth peers and bonds.
 The module controls the following operations:
 
 * Switching between peers (only for nRF Desktop peripheral).

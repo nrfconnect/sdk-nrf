@@ -13,16 +13,6 @@
 
 LOG_MODULE_REGISTER(fota_support, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 
-#if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
-/* Full modem FOTA requires external flash to hold the full modem image.
- * Below is the external flash device present on the nRF9160 DK version
- * 0.14.0 and higher.
- */
-#define FULL_MODEM_FOTA_FLASH_DEVICE DEVICE_DT_GET_ONE(jedec_spi_nor)
-#else
-#define FULL_MODEM_FOTA_FLASH_DEVICE NULL
-#endif
-
 /* Called from nRF Cloud event handler in connection.c */
 void on_fota_downloaded(void)
 {
@@ -38,7 +28,10 @@ struct dfu_target_fmfu_fdev * get_full_modem_fota_fdev(void)
 		static struct dfu_target_fmfu_fdev ext_flash_dev = {
 			.size = 0,
 			.offset = 0,
-			.dev = FULL_MODEM_FOTA_FLASH_DEVICE
+			/* CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION is enabled,
+			 * so no need to specify the flash device here
+			 */
+			.dev = NULL
 		};
 
 		return &ext_flash_dev;

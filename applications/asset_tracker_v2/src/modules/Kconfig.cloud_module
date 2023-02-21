@@ -31,6 +31,12 @@ config MQTT_CLEAN_SESSION
 # Kconfig options that are specific to the nRF Cloud MQTT transport service library.
 if NRF_CLOUD_MQTT
 
+config NRF_CLOUD_SEND_DEVICE_STATUS_SIM
+	default y
+
+config NRF_CLOUD_DEVICE_STATUS_ENCODE_VOLTAGE
+	default n
+
 choice NRF_CLOUD_SEND_SOCKET
 	default NRF_CLOUD_SEND_TIMEOUT
 endchoice

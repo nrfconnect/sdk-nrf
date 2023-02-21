@@ -130,7 +130,7 @@ Full upgrade
   * When using a wireless connection, the upgrade is applied over-the-air (OTA).
     See :ref:`nrf9160_fota` for more information.
 
- See :ref:`nrfxlib:full_dfu` for more information on the full firmware updates of modem using :ref:`nrfxlib:nrf_modem`.
+ See :ref:`nrfxlib:nrf_modem_bootloader` for more information on the full firmware updates of modem using :ref:`nrfxlib:nrf_modem`.
 
 Delta patches
   Delta patches are upgrades that contain only the difference from the last version.

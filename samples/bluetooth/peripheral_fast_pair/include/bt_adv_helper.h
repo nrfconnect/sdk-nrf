@@ -29,10 +29,11 @@ extern "C" {
  * The function handles also periodic RPA rotation and Fast Pair advertising data update.
  *
  * @param[in] fp_adv_mode	Fast Pair advertising mode.
+ * @param[in] new_adv_session	A new advertising session was started.
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int bt_adv_helper_adv_start(enum bt_fast_pair_adv_mode fp_adv_mode);
+int bt_adv_helper_adv_start(enum bt_fast_pair_adv_mode fp_adv_mode, bool new_adv_session);
 
 /** Stop Fast Pair sample advertising
  *

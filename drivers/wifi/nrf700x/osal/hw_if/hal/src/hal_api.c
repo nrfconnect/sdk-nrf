@@ -1042,7 +1042,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		wifi_nrf_osal_log_err(hpriv->opriv,
 				      "%s: Unable to allocate hal_dev_ctx\n",
 				      __func__);
-		goto out;
+		goto err;
 	}
 
 	hal_dev_ctx->hpriv = hpriv;
@@ -1057,13 +1057,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		wifi_nrf_osal_log_err(hpriv->opriv,
 				      "%s: Unable to allocate command queue\n",
 				      __func__);
-
-		wifi_nrf_osal_mem_free(hpriv->opriv,
-				       hal_dev_ctx);
-
-		hal_dev_ctx = NULL;
-
-		goto out;
+		goto hal_dev_free;
 	}
 
 	hal_dev_ctx->event_q = wifi_nrf_utils_q_alloc(hpriv->opriv);
@@ -1072,12 +1066,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		wifi_nrf_osal_log_err(hpriv->opriv,
 				      "%s: Unable to allocate event queue\n",
 				      __func__);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->cmd_q);
-		wifi_nrf_osal_mem_free(hpriv->opriv,
-				       hal_dev_ctx);
-		hal_dev_ctx = NULL;
-		goto out;
+		goto cmd_q_free;
 	}
 
 	hal_dev_ctx->lock_hal = wifi_nrf_osal_spinlock_alloc(hpriv->opriv);
@@ -1085,14 +1074,8 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 	if (!hal_dev_ctx->lock_hal) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
 				      "%s: Unable to allocate HAL lock\n", __func__);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->cmd_q);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->event_q);
-		wifi_nrf_osal_mem_free(hpriv->opriv,
-				       hal_dev_ctx);
 		hal_dev_ctx = NULL;
-		goto out;
+		goto event_q_free;
 	}
 
 	wifi_nrf_osal_spinlock_init(hpriv->opriv,
@@ -1104,16 +1087,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		wifi_nrf_osal_log_err(hpriv->opriv,
 				      "%s: Unable to allocate HAL lock\n",
 				      __func__);
-		wifi_nrf_osal_spinlock_free(hpriv->opriv,
-					    hal_dev_ctx->lock_hal);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->cmd_q);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->event_q);
-		wifi_nrf_osal_mem_free(hpriv->opriv,
-				       hal_dev_ctx);
-		hal_dev_ctx = NULL;
-		goto out;
+		goto lock_hal_free;
 	}
 
 	wifi_nrf_osal_spinlock_init(hpriv->opriv,
@@ -1125,25 +1099,13 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		wifi_nrf_osal_log_err(hpriv->opriv,
 				      "%s: Unable to allocate rx_tasklet\n",
 				      __func__);
-		wifi_nrf_osal_spinlock_free(hpriv->opriv,
-					    hal_dev_ctx->lock_hal);
-		wifi_nrf_osal_spinlock_free(hpriv->opriv,
-					    hal_dev_ctx->lock_rx);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->cmd_q);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->event_q);
-		wifi_nrf_osal_mem_free(hpriv->opriv,
-				       hal_dev_ctx);
-		hal_dev_ctx = NULL;
-		goto out;
+		goto lock_rx_free;
 	}
 
 	wifi_nrf_osal_tasklet_init(hpriv->opriv,
 				   hal_dev_ctx->rx_tasklet,
 				   rx_tasklet_fn,
 				   (unsigned long)hal_dev_ctx);
-
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	status = hal_rpu_ps_init(hal_dev_ctx);
@@ -1152,20 +1114,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		wifi_nrf_osal_log_err(hpriv->opriv,
 				      "%s: hal_rpu_ps_init failed\n",
 				      __func__);
-		wifi_nrf_osal_tasklet_free(hpriv->opriv,
-					   hal_dev_ctx->rx_tasklet);
-		wifi_nrf_osal_spinlock_free(hpriv->opriv,
-					    hal_dev_ctx->lock_hal);
-		wifi_nrf_osal_spinlock_free(hpriv->opriv,
-					    hal_dev_ctx->lock_rx);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->cmd_q);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->event_q);
-		wifi_nrf_osal_mem_free(hpriv->opriv,
-				       hal_dev_ctx);
-		hal_dev_ctx = NULL;
-		goto out;
+		goto tasklet_free;
 	}
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
@@ -1176,21 +1125,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		wifi_nrf_osal_log_err(hpriv->opriv,
 				      "%s: wifi_nrf_bal_dev_add failed\n",
 				      __func__);
-
-		wifi_nrf_osal_tasklet_free(hpriv->opriv,
-					   hal_dev_ctx->rx_tasklet);
-		wifi_nrf_osal_spinlock_free(hpriv->opriv,
-					    hal_dev_ctx->lock_hal);
-		wifi_nrf_osal_spinlock_free(hpriv->opriv,
-					    hal_dev_ctx->lock_rx);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->cmd_q);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->event_q);
-		wifi_nrf_osal_mem_free(hpriv->opriv,
-				       hal_dev_ctx);
-		hal_dev_ctx = NULL;
-		goto out;
+		goto tasklet_free;
 	}
 
 	status = hal_rpu_irq_enable(hal_dev_ctx);
@@ -1199,23 +1134,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		wifi_nrf_osal_log_err(hpriv->opriv,
 				      "%s: hal_rpu_irq_enable failed\n",
 				      __func__);
-
-		wifi_nrf_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
-
-		wifi_nrf_osal_tasklet_free(hpriv->opriv,
-					   hal_dev_ctx->rx_tasklet);
-		wifi_nrf_osal_spinlock_free(hpriv->opriv,
-					    hal_dev_ctx->lock_hal);
-		wifi_nrf_osal_spinlock_free(hpriv->opriv,
-					    hal_dev_ctx->lock_rx);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->cmd_q);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->event_q);
-		wifi_nrf_osal_mem_free(hpriv->opriv,
-				       hal_dev_ctx);
-		hal_dev_ctx = NULL;
-		goto out;
+		goto bal_dev_free;
 	}
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
@@ -1232,24 +1151,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 					      "%s: No space for RX buf info[%d]\n",
 					      __func__,
 					      i);
-
-			wifi_nrf_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
-
-			wifi_nrf_osal_tasklet_free(hpriv->opriv,
-						   hal_dev_ctx->rx_tasklet);
-			wifi_nrf_osal_spinlock_free(hpriv->opriv,
-						    hal_dev_ctx->lock_hal);
-			wifi_nrf_osal_spinlock_free(hpriv->opriv,
-						    hal_dev_ctx->lock_rx);
-			wifi_nrf_utils_q_free(hpriv->opriv,
-					      hal_dev_ctx->cmd_q);
-			wifi_nrf_utils_q_free(hpriv->opriv,
-					      hal_dev_ctx->event_q);
-			wifi_nrf_osal_mem_free(hpriv->opriv,
-					       hal_dev_ctx);
-			hal_dev_ctx = NULL;
-
-			goto out;
+			goto bal_dev_free;
 		}
 	}
 #ifdef CONFIG_NRF700X_DATA_TX
@@ -1263,30 +1165,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		wifi_nrf_osal_log_err(hpriv->opriv,
 				      "%s: No space for TX buf info\n",
 				      __func__);
-
-		for (i = 0; i < MAX_NUM_OF_RX_QUEUES; i++) {
-			wifi_nrf_osal_mem_free(hpriv->opriv,
-					       hal_dev_ctx->rx_buf_info[i]);
-			hal_dev_ctx->rx_buf_info[i] = NULL;
-		}
-
-		wifi_nrf_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
-
-		wifi_nrf_osal_tasklet_free(hpriv->opriv,
-					   hal_dev_ctx->rx_tasklet);
-		wifi_nrf_osal_spinlock_free(hpriv->opriv,
-					    hal_dev_ctx->lock_hal);
-		wifi_nrf_osal_spinlock_free(hpriv->opriv,
-					    hal_dev_ctx->lock_rx);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->cmd_q);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->event_q);
-		wifi_nrf_osal_mem_free(hpriv->opriv,
-				       hal_dev_ctx);
-		hal_dev_ctx = NULL;
-
-		goto out;
+		goto rx_buf_free;
 	}
 #endif /* CONFIG_NRF700X_DATA_TX */
 
@@ -1296,37 +1175,51 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 		wifi_nrf_osal_log_err(hpriv->opriv,
 				      "%s: Buffer map init failed\n",
 				      __func__);
-		wifi_nrf_osal_mem_free(hpriv->opriv,
-				       hal_dev_ctx->tx_buf_info);
-		hal_dev_ctx->tx_buf_info = NULL;
-
-		for (i = 0; i < MAX_NUM_OF_RX_QUEUES; i++) {
-			wifi_nrf_osal_mem_free(hpriv->opriv,
-					       hal_dev_ctx->rx_buf_info[i]);
-			hal_dev_ctx->rx_buf_info[i] = NULL;
-		}
-
-		wifi_nrf_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
-
-		wifi_nrf_osal_tasklet_free(hpriv->opriv,
-					   hal_dev_ctx->rx_tasklet);
-		wifi_nrf_osal_spinlock_free(hpriv->opriv,
-					    hal_dev_ctx->lock_hal);
-		wifi_nrf_osal_spinlock_free(hpriv->opriv,
-					    hal_dev_ctx->lock_rx);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->cmd_q);
-		wifi_nrf_utils_q_free(hpriv->opriv,
-				      hal_dev_ctx->event_q);
-		wifi_nrf_osal_mem_free(hpriv->opriv,
-				       hal_dev_ctx);
-		hal_dev_ctx = NULL;
-		goto out;
+#ifdef CONFIG_NRF700X_DATA_TX
+		goto tx_buf_free;
+#endif /* CONFIG_NRF700X_DATA_TX */
 	}
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
-out:
 	return hal_dev_ctx;
+#ifndef CONFIG_NRF700X_RADIO_TEST
+#ifdef CONFIG_NRF700X_DATA_TX
+tx_buf_free:
+	wifi_nrf_osal_mem_free(hpriv->opriv,
+			       hal_dev_ctx->tx_buf_info);
+	hal_dev_ctx->tx_buf_info = NULL;
+rx_buf_free:
+
+	for (i = 0; i < MAX_NUM_OF_RX_QUEUES; i++) {
+		wifi_nrf_osal_mem_free(hpriv->opriv,
+						hal_dev_ctx->rx_buf_info[i]);
+		hal_dev_ctx->rx_buf_info[i] = NULL;
+	}
+#endif /* CONFIG_NRF700X_DATA_TX */
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
+bal_dev_free:
+	wifi_nrf_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
+tasklet_free:
+	wifi_nrf_osal_tasklet_free(hpriv->opriv,
+					hal_dev_ctx->rx_tasklet);
+lock_rx_free:
+	wifi_nrf_osal_spinlock_free(hpriv->opriv,
+					hal_dev_ctx->lock_rx);
+lock_hal_free:
+	wifi_nrf_osal_spinlock_free(hpriv->opriv,
+					hal_dev_ctx->lock_hal);
+event_q_free:
+	wifi_nrf_utils_q_free(hpriv->opriv,
+					hal_dev_ctx->event_q);
+cmd_q_free:
+	wifi_nrf_utils_q_free(hpriv->opriv,
+					hal_dev_ctx->cmd_q);
+hal_dev_free:
+	wifi_nrf_osal_mem_free(hpriv->opriv,
+					hal_dev_ctx);
+	hal_dev_ctx = NULL;
+err:
+	return NULL;
 }
 
 

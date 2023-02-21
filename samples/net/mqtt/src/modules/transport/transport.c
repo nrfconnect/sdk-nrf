@@ -167,7 +167,7 @@ static void connect_work_fn(struct k_work *work)
 		LOG_ERR("Failed connecting to MQTT, error code: %d", err);
 	}
 
-	k_work_reschedule(&connect_work,
+	k_work_reschedule_for_queue(&transport_queue, &connect_work,
 			  K_SECONDS(CONFIG_MQTT_SAMPLE_TRANSPORT_RECONNECTION_TIMEOUT_SECONDS));
 }
 

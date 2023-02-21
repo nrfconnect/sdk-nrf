@@ -46,7 +46,7 @@ tests:
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
   sample.matter.light_bulb.debug.nrf7002_ek:
     build_only: true
-    extra_args: SHIELD=nrf7002_ek
+    extra_args: SHIELD=nrf7002_ek hci_rpmsg_SHIELD=nrf7002_ek_coex
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp

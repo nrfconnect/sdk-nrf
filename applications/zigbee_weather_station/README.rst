@@ -33,7 +33,7 @@ If you have an nRF5340 DK that has an onboard J-Link programmer, you can also us
 If the Thingy:53 device is programmed with a Thingy:53-compatible sample or application, you can also update the firmware using MCUboot's serial recovery or DFU over Bluetooth LE.
 See :ref:`thingy53_app_guide` for details.
 
-For capturing packets while testing, you can use `nRF Sniffer for 802.15.4`_ with `Wireshark configured for Zigbee <Configuring Wireshark for Zigbee>`_.
+For capturing packets while testing, you can use `nRF Sniffer for 802.15.4`_ with `Wireshark configured for Zigbee <Configuring Wireshark for Zigbee_>`_.
 
 Overview
 ********

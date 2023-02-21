@@ -323,57 +323,59 @@ static inline int adjust_rsrq(int input)
 	return input;
 }
 
-static void send_neighbor_cell_update(struct lte_lc_cells_info *cell_info)
+static void send_cloud_location_update(const struct location_data_cloud *cloud_location_info)
 {
 	struct location_module_event *evt = new_location_module_event();
+	struct location_module_neighbor_cells *evt_ncells =
+		&evt->data.cloud_location.neighbor_cells;
 
-	BUILD_ASSERT(sizeof(evt->data.neighbor_cells.cell_data) ==
-		     sizeof(struct lte_lc_cells_info));
-	BUILD_ASSERT(sizeof(evt->data.neighbor_cells.neighbor_cells) >=
-		     sizeof(struct lte_lc_ncell) * CONFIG_LTE_NEIGHBOR_CELLS_MAX);
+	if (cloud_location_info->cell_data != NULL) {
+		BUILD_ASSERT(sizeof(evt_ncells->cell_data) == sizeof(struct lte_lc_cells_info));
+		BUILD_ASSERT(sizeof(evt_ncells->neighbor_cells) >=
+			     sizeof(struct lte_lc_ncell) * CONFIG_LTE_NEIGHBOR_CELLS_MAX);
 
-	memcpy(&evt->data.neighbor_cells.cell_data, cell_info, sizeof(struct lte_lc_cells_info));
-	memcpy(&evt->data.neighbor_cells.neighbor_cells, cell_info->neighbor_cells,
-	       sizeof(struct lte_lc_ncell) * evt->data.neighbor_cells.cell_data.ncells_count);
+		evt->data.cloud_location.neighbor_cells_valid = true;
+		memcpy(&evt_ncells->cell_data,
+		       cloud_location_info->cell_data,
+		       sizeof(struct lte_lc_cells_info));
+		memcpy(&evt_ncells->neighbor_cells,
+		       cloud_location_info->cell_data->neighbor_cells,
+		       sizeof(struct lte_lc_ncell) * evt_ncells->cell_data.ncells_count);
 
-	/* Convert RSRP to dBm and RSRQ to dB per "nRF91 AT Commands" v1.7. */
-	evt->data.neighbor_cells.cell_data.current_cell.rsrp =
-			adjust_rsrp(evt->data.neighbor_cells.cell_data.current_cell.rsrp);
-	evt->data.neighbor_cells.cell_data.current_cell.rsrq =
-			adjust_rsrq(evt->data.neighbor_cells.cell_data.current_cell.rsrq);
+		/* Convert RSRP to dBm and RSRQ to dB per "nRF91 AT Commands" v1.7. */
+		evt_ncells->cell_data.current_cell.rsrp =
+			adjust_rsrp(evt_ncells->cell_data.current_cell.rsrp);
+		evt_ncells->cell_data.current_cell.rsrq =
+			adjust_rsrq(evt_ncells->cell_data.current_cell.rsrq);
 
-	for (size_t i = 0; i < evt->data.neighbor_cells.cell_data.ncells_count; i++) {
-		evt->data.neighbor_cells.neighbor_cells[i].rsrp =
-			adjust_rsrp(evt->data.neighbor_cells.neighbor_cells[i].rsrp);
-		evt->data.neighbor_cells.neighbor_cells[i].rsrq =
-			adjust_rsrq(evt->data.neighbor_cells.neighbor_cells[i].rsrq);
+		for (size_t i = 0; i < evt_ncells->cell_data.ncells_count; i++) {
+			evt_ncells->neighbor_cells[i].rsrp =
+				adjust_rsrp(evt_ncells->neighbor_cells[i].rsrp);
+			evt_ncells->neighbor_cells[i].rsrq =
+				adjust_rsrq(evt_ncells->neighbor_cells[i].rsrq);
+		}
 	}
 
-	evt->type = LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY;
-	evt->data.neighbor_cells.timestamp = k_uptime_get();
-
-	APP_EVENT_SUBMIT(evt);
-}
-
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
-static void send_wifi_ap_update(struct wifi_scan_info *wifi_ap_info)
-{
-	struct location_module_event *evt = new_location_module_event();
+	if (cloud_location_info->wifi_data != NULL) {
+		BUILD_ASSERT(sizeof(evt->data.cloud_location.wifi_access_points.ap_info) >=
+			     sizeof(struct wifi_scan_result) *
+			     CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT);
 
-	BUILD_ASSERT(sizeof(evt->data.wifi_access_points.ap_info) >=
-		     sizeof(struct wifi_scan_result) *
-		     CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT);
-
-	evt->data.wifi_access_points.cnt = wifi_ap_info->cnt;
-	memcpy(&evt->data.wifi_access_points.ap_info, wifi_ap_info->ap_info,
-	       sizeof(struct wifi_scan_result) * evt->data.wifi_access_points.cnt);
-
-	evt->type = LOCATION_MODULE_EVT_WIFI_ACCESS_POINTS_DATA_READY;
-	evt->data.wifi_access_points.timestamp = k_uptime_get();
+		evt->data.cloud_location.wifi_access_points_valid = true;
+		evt->data.cloud_location.wifi_access_points.cnt =
+			cloud_location_info->wifi_data->cnt;
+		memcpy(&evt->data.cloud_location.wifi_access_points.ap_info,
+		       cloud_location_info->wifi_data->ap_info,
+		       sizeof(struct wifi_scan_result) *
+				evt->data.cloud_location.wifi_access_points.cnt);
+	}
+#endif
+	evt->type = LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY;
+	evt->data.cloud_location.timestamp = k_uptime_get();
 
 	APP_EVENT_SUBMIT(evt);
 }
-#endif
 
 /* Non-static so that this can be used in tests to mock location library API. */
 void location_event_handler(const struct location_event_data *event_data)
@@ -431,8 +433,7 @@ void location_event_handler(const struct location_event_data *event_data)
 		stats.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 		LOG_DBG("  search time: %d", stats.search_time);
 		inactive_send();
-		/* No events are sent because LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY and
-		 * LOCATION_MODULE_EVT_WIFI_ACCESS_POINTS_DATA_READY
+		/* No events are sent because LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY
 		 * have already been sent earlier and hence APP_LOCATION has been set already.
 		 */
 		break;
@@ -483,18 +484,11 @@ void location_event_handler(const struct location_event_data *event_data)
 		break;
 	}
 
-	case LOCATION_EVT_CELLULAR_EXT_REQUEST:
-		LOG_DBG("Getting cellular request");
-		send_neighbor_cell_update(
-			(struct lte_lc_cells_info *)&event_data->cellular_request);
-		location_cellular_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN, NULL);
-		break;
-
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
-	case LOCATION_EVT_WIFI_EXT_REQUEST:
-		LOG_DBG("Getting Wi-Fi request");
-		send_wifi_ap_update((struct wifi_scan_info *)&event_data->wifi_request);
-		location_wifi_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN, NULL);
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI)
+	case LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST:
+		LOG_DBG("Getting cloud location request");
+		send_cloud_location_update(&event_data->cloud_location_request);
+		location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN, NULL);
 		break;
 #endif
 

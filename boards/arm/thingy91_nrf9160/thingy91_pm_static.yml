@@ -1,4 +1,4 @@
-app: {address: 0x18200, size: 0x5ae00}
+app: {address: 0x18000, size: 0x5b000}
 mcuboot:
   address: 0x0
   placement:
@@ -45,12 +45,12 @@ nonsecure_storage:
   span: [settings_storage]
 tfm_secure:
   address: 0xc000
-  size: 0xc200
+  size: 0xc000
   span: [mcuboot_pad, tfm]
 tfm_nonsecure:
-  address: 0x18200
-  size: 0x5ae00
+  address: 0x18000
+  size: 0x5b000
   span: [app]
 tfm:
   address: 0xc200
-  size: 0xc000
+  size: 0xbe00

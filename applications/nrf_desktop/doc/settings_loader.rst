@@ -25,6 +25,9 @@ Configuration
 
 nRF Desktop uses the settings loader module from the :ref:`lib_caf` (CAF).
 The :ref:`CONFIG_DESKTOP_SETTINGS_LOADER <config_desktop_app_options>` Kconfig option selects :kconfig:option:`CONFIG_CAF_SETTINGS_LOADER` and aligns the module configuration to the application requirements.
+The :ref:`CONFIG_DESKTOP_SETTINGS_LOADER <config_desktop_app_options>` Kconfig option is implied by the :ref:`CONFIG_DESKTOP_COMMON_MODULES <config_desktop_app_options>` Kconfig option.
+The :ref:`CONFIG_DESKTOP_COMMON_MODULES <config_desktop_app_options>` option is enabled by default and is not user-assignable.
+
 For details on the default configuration alignment, see the following sections.
 
 Settings backend

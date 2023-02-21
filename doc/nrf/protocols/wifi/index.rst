@@ -98,6 +98,8 @@ Wi-Fi baseband
 
 The Wi-Fi baseband consists of the bottom two layers of the protocol stack, namely the Medium Access Control (MAC) layer and the Physical (PHY) layer. These two layers are fully specified in the IEEE 802.11 standard.
 
+.. _wifi_mac_layer:
+
 MAC layer
 ---------
 

@@ -486,7 +486,7 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id,
 	return 0;
 }
 
-int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id)
+int cloud_wrap_cloud_location_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	int err;
 	struct azure_iot_hub_msg msg = {

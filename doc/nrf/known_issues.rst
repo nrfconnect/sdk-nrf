@@ -145,15 +145,33 @@ CIA-604: ATv2 cannot be built for the ``thingy91_nrf9160_ns`` build target with 
 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
-CIA-661: Asset Tracker v2 application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with modem traces or memfault enabled
-  The :ref:`asset_tracker_v2` application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` for modem traces or ``overlay-memfault.conf`` for memfault due to memory constraints.
+CIA-661: Asset Tracker v2 application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with modem traces or Memfault enabled
+  The :ref:`asset_tracker_v2` application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` for modem traces or :file:`overlay-memfault.conf` for Memfault due to memory constraints.
 
   **Workaround:** Use one of the following workarounds for modem traces:
 
   * Use Secure Partition Manager instead of TF-M by setting ``CONFIG_SPM`` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
   * Reduce the value of :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_TRACE_SIZE` to 8 Kb, however, this might lead to loss of modem traces.
 
-  For memfault, use Secure Partition Manager instead of TF-M by setting ``CONFIG_SPM`` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
+  For Memfault, use Secure Partition Manager instead of TF-M by setting ``CONFIG_SPM`` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
+
+.. rst-class:: v2-3-0 v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+CIA-890: The application cannot be built with :file:`overlay-debug.conf` and :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` set to ``y``
+  Due to insufficient flash space for the application when it is not optimized, the :ref:`asset_tracker_v2` application cannot be built with :file:`overlay-debug.conf` and :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` set to ``y``.
+
+  **Workaround:** To free up flash space when debugging locally, uncomment the following kconfig options in the :file:`prj.conf` file:
+
+  * :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`
+  * :kconfig:option:`CONFIG_IMG_MANAGER`
+  * :kconfig:option:`CONFIG_MCUBOOT_IMG_MANAGER`
+  * :kconfig:option:`CONFIG_IMG_ERASE_PROGRESSIVELY`
+  * :kconfig:option:`CONFIG_BUILD_S1_VARIANT`
+
+  This removes the partitions for the MCUboot bootloader, the secondary bootloader, and the secondary application image slot.
+  Any functionality depending on those will not work with this configuration.
+
+  Alternatively, disable logging for non-relevant modules or libraries in the :file:`overlay-debug.conf` file until the image fits in flash.
 
 Serial LTE Modem
 ================
@@ -227,7 +245,7 @@ The time returned by :ref:`lib_date_time` library becomes incorrect after one we
 
 NCSDK-18746: LwM2M carrier library fails to complete non-secure bootstrap when using a custom URI and the default security tag
   If the LwM2M carrier library is operating in generic mode (not connecting to any of the predefined supported carriers), and the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` is set to connect to a non-secure server, the library attempts to retrieve a PSK from :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` even though a PSK is not needed for the non-secure bootstrap.
-  The PSK in this ``sec_tag`` is not used, but reading the ``sec_tag`` causes the bootstrap to fail if the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` is set to the default value (0).
+  The PSK in this ``sec_tag`` is not used, but reading the ``sec_tag`` causes the bootstrap to fail if the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` is set to the default value (``0``).
 
   **Workaround:** Assign any non-zero value to :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG`.
 
@@ -955,7 +973,7 @@ KRKNWK-15913: Factory data set parsing issues
 
 KRKNWK-15749: Invalid ZAP Tool revision used
   The ZAP Tool revision used for the |NCS| v2.1.1 and v2.1.2 releases is not compatible with the :file:`zap` files that define the Data Model in |NCS| Matter samples.
-  This resuls in the ZAP Tool not being able to parse :file:`zap` files from Matter samples.
+  This results in the ZAP Tool not being able to parse :file:`zap` files from Matter samples.
 
   **Workaround:** Check out the proper ZAP Tool revision with the following commands, where *<NCS_root_directory>* is the path to your |NCS| installation:
 
@@ -1321,11 +1339,6 @@ OCX-157: OCT-140: Interleaved broadcasts streaming issues
 
 .. rst-class:: v2-2-0
 
-OCX-162: If the first CIS headset in a CIG is reset, this may impact the stream of the second headset as well
-   If the first CIS (Connected Isochronous Stream) in a CIG (Connected Isochronous Group) is reset, this may halt streaming to other CISes as well.
-
-.. rst-class:: v2-2-0
-
 OCX-165: Collisions of BIS and ACL on the same broadcaster/central
    Broadcast Isochronous Stream (BIS) and Asynchronous Connection-oriented Logical transports (ACL) may collide in the scheduler.
 
@@ -1681,7 +1694,7 @@ NCSDK-16800: RPL is not cleared on IV index recovery
 
 .. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
 
-NCSDK-16798: Friend Subsciption List might have duplicate entries
+NCSDK-16798: Friend Subscription List might have duplicate entries
   If a Low Power node loses a Friend Subscription List Add Confirm message, it repeats the request.
   The Friend does not check both the transaction number and the presence of the addresses in the subscription list.
   This causes a situation where the Friend fills the subscription list with duplicate addresses.
@@ -1786,7 +1799,7 @@ Build system
 NCSIDB-816: nanopb/protoc not specified correctly by the |NCS| Toolchain
   The |NCS| Toolchain includes the nanopb/protoc tool when installed, but the path to the tool is not propagated correctly to the |NCS| build system.
 
-  ** Workaround:** Locate the nanopb :file:`generator-bin` directory in your |NCS| Toolchain and add its path to your system's global path.
+  **Workaround:** Locate the nanopb :file:`generator-bin` directory in your |NCS| Toolchain and add its path to your system's global path.
   This makes the protoc tool executable findable.
 
 .. rst-class:: v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
@@ -2262,7 +2275,7 @@ KRKNWK-14950: MPSL asserts during operation with heavy load
 
 .. rst-class:: v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0
 
-KRKNWK-14898: CSMA-CA backoff parameters might not be randomized in an uniform way
+KRKNWK-14898: CSMA-CA backoff parameters might not be randomized in a uniform way
   The backoff parameters of the CSMA-CA operation are generated by the logic which might not return the uniformly distributed random numbers.
 
 .. rst-class:: v1-7-1 v1-7-0
@@ -2291,7 +2304,7 @@ In addition to the known issues listed here, see also :ref:`softdevice_controlle
 
 .. rst-class:: v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0
 
-DRGN-18568: When the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option is used, the actual value of radio output power is lower than expected.
+DRGN-18568: When the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option is used, the actual value of radio output power is lower than expected
   The actual value is lower than the default one in case the :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_ANTENNA` or :kconfig:option:`CONFIG_BT_CTLR_TX_PWR` Kconfig options are used together with the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option.
 
 .. rst-class:: v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0

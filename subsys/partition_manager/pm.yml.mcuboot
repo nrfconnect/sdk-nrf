@@ -1,0 +1,8 @@
+#include <autoconf.h>
+
+mcuboot_sram:
+#ifdef CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM
+  span: [sram_primary, sram_nonsecure, sram_secure]
+#else
+  span: sram_secure
+#endif

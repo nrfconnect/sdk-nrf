@@ -30,6 +30,14 @@ Changelog
 
 The following sections provide detailed lists of changes by component.
 
+MCUboot
+=======
+
+* Updated:
+
+  * MCUBoot now uses the Secure RAM region on Trustzone-enabled devices.
+    The option :kconfig:option:`CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM` was added to allow MCUBoot to use all the available RAM.
+
 Application development
 =======================
 
@@ -52,6 +60,34 @@ Build system
 
   * Manifest file entry ``mbedtls`` (:makevar:`ZEPHYR_MBEDTLS_MODULE_DIR`) checked out at path :file:`modules/crypto/mbedtls` now points to |NCS|'s fork of MbedTLS instead of Zephyr's fork.
 
+Working with nRF52 Series
+=========================
+
+* Developing with nRF52 Series:
+
+  * Added Kconfig options :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` and :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP` to configure FOTA updates over Bluetooth Low Energy in the default setup.
+    The default setup uses MCUmgr libraries with the Bluetooth transport layer and requires the user to enable MCUboot bootloader.
+    See details in the FOTA updates section of :ref:`ug_nrf52_developing` guide.
+
+Working with nRF53 Series
+=========================
+
+* Developing with nRF5340 DK:
+
+  * Added Kconfig options :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` and :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP` to configure FOTA updates over Bluetooth Low Energy in the default setup.
+    The default setup uses MCUmgr libraries with the Bluetooth transport layer and requires the user to enable MCUboot bootloader.
+    See details in the FOTA updates section of :ref:`ug_nrf5340` guide.
+
+* Developing with Thingy:53:
+
+  * Added the :kconfig:option:`CONFIG_BOARD_SERIAL_BACKEND_CDC_ACM` Kconfig option to configure USB CDC ACM to be used as logger's backend by default.
+    See details in :ref:`thingy53_app_usb` section of Thingy:53 application guide.
+  * Provided support for Thingy:53 FOTA updates within the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` option.
+    See details in :ref:`thingy53_app_fota_smp` section of Thingy:53 application guide.
+  * Enabled MCUboot bootloader in Thingy:53 board configuration by default.
+    See details in :ref:`thingy53_app_mcuboot_bootloader` section of Thingy:53 application guide.
+  * Cleaned up Thingy:53 specific configuration files of samples and applications as a result of introducing simplifications.
+
 Protocols
 =========
 
@@ -66,7 +102,14 @@ Bluetooth LE
 Bluetooth mesh
 --------------
 
-|no_changes_yet_note|
+* Fixed:
+
+    * An issue in the :ref:`bt_mesh_light_ctrl_srv_readme` model where multiple scene recall messages for the same scene do not repeatedly trigger the same scene recall.
+      This prevents the interruption of an ongoing transition.
+
+* Updated:
+
+  * The :ref:`bt_mesh_light_ctrl_srv_readme` model to make sure that the illuminance regulator starts running when a fresh value of the ambient LuxLevel is reported when the controller is enabled.
 
 Matter
 ------
@@ -85,6 +128,8 @@ Matter
   * Enabled Wi-Fi and Bluetooth LE coexistence.
   * Mechanism to retry a failed Wi-Fi connection.
   * Documentation about :ref:`ug_matter_gs_ecosystem_compatibility_testing`.
+  * Support for ZAP tool under Windows.
+  * Documentation about :ref:`ug_matter_device_low_power_configuration`.
 
 * Updated:
 
@@ -96,6 +141,7 @@ Matter
   * The Bluetooth LE connection timeout parameters and the update timeout parameters to make communication over Bluetooth LE more reliable.
   * Default transmission output power for Matter over Thread devices to the maximum available one for all targets:
     8 dBm for nRF52840, 3 dBm for nRF5340, 20 dBm for all devices with FEM enabled, and 0 dBm for sleepy devices.
+  * :ref:`ug_matter_gs_adding_cluster` page with instructions on how to use ZAP tool binaries. Before this release, the ZAP tool had to be built from sources.
 
 * Fixed:
 
@@ -137,7 +183,13 @@ See `Thread samples`_ for the list of changes for the Thread samples.
 Zigbee
 ------
 
-|no_changes_yet_note|
+* Updated:
+
+  * Zigbee Network Co-processor Host package to the new version v2.2.1.
+
+* Fixed:
+
+  * Fixed an issue where buffer would not be freed at the ZC after a secure rejoin of a ZED.
 
 See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 
@@ -193,6 +245,14 @@ nRF9160: Asset Tracker v2
 
 * Updated:
 
+  * Due to the :ref:`lib_location` library updates related to combined cellular and Wi-Fi positioning,
+    the following events and functions have been added replacing old ones:
+
+    * :c:enum:`LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY` replaces ``LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY`` and ``LOCATION_MODULE_EVT_WIFI_ACCESS_POINTS_DATA_READY``
+    * :c:enum:`DATA_EVT_CLOUD_LOCATION_DATA_SEND` replaces ``DATA_EVT_NEIGHBOR_CELLS_DATA_SEND`` and ``DATA_EVT_WIFI_ACCESS_POINTS_DATA_SEND``
+    * :c:func:`cloud_codec_encode_cloud_location` function replaces ``cloud_codec_encode_neighbor_cells`` and ``cloud_codec_encode_wifi_access_points``
+    * :c:func:`cloud_wrap_cloud_location_send` function replaces ``cloud_wrap_neighbor_cells_send`` and ``cloud_wrap_wifi_access_points_send``
+
   * Replaced deprecated LwM2M API calls with calls to new functions.
   * Removed static modem data handling from the application's nRF Cloud codec.
     Enabled the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS` configuration option to send static modem data.
@@ -210,6 +270,8 @@ nRF9160: Serial LTE modem
 * Updated:
 
   * The response for the ``#XDFUGET`` command, using unsolicited notification to report download progress.
+  * The response for the ``#XDFUSIZE`` command, adding a CRC32 checksum of the downloaded image.
+  * The ``#XSLMVER`` command to report the versions of both the |NCS| and the modem library.
 
 nRF5340 Audio
 -------------
@@ -224,7 +286,7 @@ nRF5340 Audio
 
 * Updated:
 
-  * Controller from version 3310 to 3322, with the following major changes:
+  * Controller from version 3310 to 3330, with the following major changes:
 
     * Changes to accommodate BIS + ACL combinations.
     * Improvements to support creating CIS connections in any order.
@@ -250,9 +312,18 @@ nRF Desktop
   * An application log indicating that the value of a configuration option has been updated in the :ref:`nrf_desktop_motion`.
   * Application-specific Kconfig options :ref:`CONFIG_DESKTOP_LOG <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>` to simplify the debug configurations for the Logging and Shell subsystems.
     See the debug configuration section of the :ref:`nrf_desktop` application for more details.
+  * The application-specific Kconfig options that define common HID device identification values (product name, manufacturer name, Vendor ID, and Product ID).
+    The identification values are used both by USB and the Bluetooth LE GATT Device Information Service.
+    See the :ref:`nrf_desktop_hid_device_identifiers` documentation for details.
   * The :ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO <config_desktop_app_options>` configuration option.
     It can be used to indicate the dongle peer identity with a dedicated event.
-  * Updated the :ref:`nrf_desktop_fast_pair_app` to remove the Fast Pair advertising payload for the dongle peer.
+  * Synchronization between the Resolvable Private Address (RPA) rotation and the advertising data update in the Fast Pair configurations using the :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA` option.
+  * The application-specific Kconfig options that can be used to enable the :ref:`lib_caf` modules and to automatically tailor the default configuration to the nRF Desktop use case.
+    Each used Common Application Framework module is handled by a corresponding application-specific option with a modified prefix.
+    For example, :ref:`CONFIG_DESKTOP_SETTINGS_LOADER <config_desktop_app_options>` is used to automatically enable the :kconfig:option:`CONFIG_CAF_SETTINGS_LOADER` Kconfig option and to align the default configuration.
+  * Prompts to Kconfig options that enable :ref:`nrf_desktop_hids`, :ref:`nrf_desktop_bas`, and :ref:`nrf_desktop_dev_descr`.
+    An application-specific option (:ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>`) implies the Kconfig options that enable the mentioned modules together with other features that are needed for the Bluetooth HID peripheral role.
+    The option is enabled by default if the nRF Desktop Bluetooth support (:ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>`) is enabled.
 
 * Updated:
 
@@ -261,16 +332,38 @@ nRF Desktop
     * Set the max compiled-in log level to ``warning`` for the Non-Volatile Storage (:kconfig:option:`CONFIG_NVS_LOG_LEVEL`).
     * Lowered a log level to ``debug`` for the ``Identity x created`` log in the :ref:`nrf_desktop_ble_bond`.
 
-  * Removed separate configurations enabling :ref:`zephyr:shell_api` (:file:`prj_shell.conf`).
+  * The default values of the :kconfig:option:`CONFIG_BT_GATT_CHRC_POOL_SIZE` and :kconfig:option:`CONFIG_BT_GATT_UUID16_POOL_SIZE` Kconfig options are tailored to the nRF Desktop application requirements.
+  * The :ref:`nrf_desktop_fast_pair_app` to remove the Fast Pair advertising payload for the dongle peer.
+  * The default values of Bluetooth device name (:kconfig:option:`CONFIG_BT_DEVICE_NAME`) and Bluetooth device appearance (:kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE`) are set to rely on the nRF Desktop product name or the nRF Desktop device role and type combination.
+  * The default value of the Bluetooth appearance (:kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE)` for nRF desktop dongle is set to keyboard.
+    This is done to improve consistency with the used HID boot interface.
+  * USB remote wakeup (:kconfig:option:`CONFIG_USB_DEVICE_REMOTE_WAKEUP`) is disabled in MCUboot bootloader configurations.
+    The functionality is not used by the bootloader.
+  * :ref:`nrf_desktop_hids` registers the GATT HID Service before Bluetooth LE is enabled.
+    This is done to avoid submitting works related to Service Changed indication and GATT database hash calculation before the system settings are loaded from non-volatile memory.
+  * Simplified configuration of application modules.
+    The modules automatically enable required libraries and align the related default configuration with the application use case.
+    Configuration of the following application modules was simplified:
+
+    * :ref:`nrf_desktop_hid_forward`
+    * :ref:`nrf_desktop_hids`
+    * :ref:`nrf_desktop_watchdog`
+
+    See documentation of the mentioned modules and their Kconfig configuration files for details.
+
+* Removed:
+
+  * Fast Pair discoverable advertising payload on Resolvable Private Address (RPA) rotation during discoverable advertising session.
+  * Separate configurations enabling :ref:`zephyr:shell_api` (:file:`prj_shell.conf`).
     Shell support can be enabled for a given configuration with the single Kconfig option (:ref:`CONFIG_DESKTOP_SHELL <config_desktop_app_options>`).
-  * By default, nRF Desktop dongles use the Bluetooth appearance (:kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE)` of keyboard.
-    The new default configuration value improves consistency with the used HID boot interface.
 
 Samples
 =======
 
 Bluetooth samples
 -----------------
+
+* Added the :ref:`peripheral_status` sample.
 
 * :ref:`peripheral_uart` sample:
 
@@ -337,9 +430,14 @@ Bluetooth mesh samples
   * Updated:
 
     * Enabled :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` configuration option.
+    * The specification-defined illuminance regulator (:kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC`) now selects the :kconfig:option:`CONFIG_FPU` option by default, thus it is not required to enable it explicitly in the project file.
 
 nRF9160 samples
 ---------------
+
+* Added:
+
+  * :ref:`nidd_sample` sample that demonstrates how to use Non-IP Data Delivery (NIDD).
 
 * :ref:`modem_shell_application` sample:
 
@@ -384,6 +482,10 @@ nRF9160 samples
 
 * :ref:`nrf_cloud_mqtt_multi_service` sample:
 
+  * Updated:
+
+    * The sample now uses a partition in external flash for full modem FOTA updates.
+
   * Added:
 
     * MCUboot child image files to properly access external flash on newer nRF9160DK versions.
@@ -413,6 +515,7 @@ nRF9160 samples
 
     * Device status information, including FOTA enablement, is now sent to nRF Cloud when the device connects.
     * Removed user prompt and button press handling for FOTA enablement.
+    * The sample now uses a partition in external flash for full modem FOTA updates.
 
 * :ref:`azure_fota_sample` sample:
 
@@ -511,6 +614,8 @@ Wi-Fi samples
 
 * The :ref:`wifi_shell_sample` sample now uses the :ref:`lib_wifi_credentials` and :ref:`wifi_mgmt_ext` libraries.
 
+* The :ref:`wifi_provisioning` sample now uses the :ref:`lib_wifi_credentials` and :ref:`wifi_prov_readme` libraries.
+
 Other samples
 -------------
 
@@ -552,6 +657,10 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
+* Added the :ref:`nsms_readme` library.
+
+* Added the :ref:`wifi_prov_readme` library.
+
 * :ref:`mds_readme` library:
 
   * Fixed URI generation in the :c:func:`data_uri_read` function.
@@ -562,6 +671,10 @@ Bluetooth libraries and services
 
 * :ref:`bt_le_adv_prov_readme` library:
 
+  * Added the :kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR_STOP_DISCOVERABLE_ON_RPA_ROTATION` Kconfig option to drop the Fast Pair advertising payload on RPA rotation.
+  * Extended the :c:struct:`bt_le_adv_prov_adv_state` structure to include new fields.
+    The new :c:member:`bt_le_adv_prov_adv_state.rpa_rotated` field is used to notify registered providers about Resolvable Private Address (RPA) rotation.
+    The new :c:member:`bt_le_adv_prov_adv_state.new_adv_session` field is used to notify registered providers that the new advertising session is about to start.
   * Changed the :kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_MODE` Kconfig option (default value) to not include Fast Pair battery data in the Fast Pair advertising payload by default.
 
 * :ref:`bt_fast_pair_readme` service:
@@ -593,11 +706,16 @@ Modem libraries
   * Added:
 
     * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OFF` Kconfig option to set the modem trace level to off by default.
+    * The flash trace backend that enables the application to store trace data to flash for later retrieval.
 
   * Updated:
 
+    * It is now possible to poll Modem library and Zephyr sockets at the same time using the :c:func:`poll` function.
+      This includes special sockets such as event sockets created using the :c:func:`eventfd` function.
     * The minimal value of :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE` to meet the requirements of modem firmware 1.3.4.
     * The :c:func:`nrf_modem_lib_diag_stats_get` function now returns an error if called when the :ref:`nrf_modem_lib_readme` library has not been initialized.
+    * The trace backend interface to be exposed to the :ref:`modem_trace_module` using the :c:struct:`nrf_modem_lib_trace_backend` struct.
+    * The :ref:`modem_trace_module` to support backends that store the trace data for later retrieval.
 
 * :ref:`lib_location` library:
 
@@ -616,15 +734,29 @@ Modem libraries
 
   * Updated:
 
-    * Use of :ref:`lib_multicell_location` library has been removed because the library is deprecated.
+    * Neighbor cell measurements and Wi-Fi scan results are combined into a single cloud request.
+      This also means that cellular and Wi-Fi positioning are combined into a single cloud positioning method
+      if they are one after the other in the method list of the location request.
+      Because of this, some parts of the API are replaced with new ones as follows:
+
+      * Event :c:enum:`LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST` replaces old events
+        ``LOCATION_EVT_CELLULAR_EXT_REQUEST`` and ``LOCATION_EVT_WIFI_EXT_REQUEST`` that are removed.
+      * Function :c:func:`location_cloud_location_ext_result_set` replaces old functions
+        ``location_cellular_ext_result_set`` and ``location_wifi_ext_result_set`` that are removed.
+      * Member variable :c:var:`cloud_location_request` replaces old members
+        ``cellular_request`` and ``wifi_request`` that are removed in :c:struct:`location_event_data`.
+
+      :kconfig:option:`CONFIG_LOCATION_SERVICE_CLOUD_RECV_BUF_SIZE` replaces ``CONFIG_LOCATION_METHOD_CELLULAR_RECV_BUF_SIZE`` and ``CONFIG_LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE``.
+
+    * The :ref:`lib_multicell_location` library is deprecated.
       Relevant functionality from the library is moved to this library.
       The following features were not moved:
 
       * Definition of HTTPS port for HERE service, that is :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_HTTPS_PORT`.
       * HERE v1 API.
       * nRF Cloud CA certificate handling.
-    * Improved GNSS assistance data need handling.
 
+    * Improved GNSS assistance data need handling.
     * GNSS filtered ephemerides are no longer used when the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME` Kconfig option is enabled.
     * Renamed:
 
@@ -673,6 +805,10 @@ Libraries for networking
     * An issue where the cleanup of the downloading state was not happening when an error event was raised.
 
 * :ref:`lib_nrf_cloud` library:
+
+  * Added:
+
+    * Support for full modem FOTA updates using a partition in external flash.
 
   * Updated:
 
@@ -775,6 +911,13 @@ Common Application Framework (CAF)
     * Aligned the module with the recent MCUmgr API, following the :ref:`zephyr:mcumgr_callbacks` migration guide in the Zephyr documentation.
       The module now requires :kconfig:option:`CONFIG_MCUMGR_MGMT_NOTIFICATION_HOOKS` and :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_UPLOAD_CHECK_HOOK` configuration options to be enabled.
 
+* :ref:`caf_ble_adv`:
+
+  * Added :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA`.
+    The option synchronizes Resolvable Private Address (RPA) rotation with the advertising data update in the Bluetooth Privacy mode.
+    Added dependent :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA_TIMEOUT` and :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA_TIMEOUT_RAND` options.
+    They are used to specify the rotation period and its randomization factor.
+
 * :ref:`caf_overview_events`:
 
   * Added:
@@ -818,7 +961,11 @@ See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:R
 DFU libraries
 -------------
 
-|no_changes_yet_note|
+* :ref:`lib_dfu_target` library:
+
+  * Added:
+    * :kconfig:option:`CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION` configuration option to support the ``FMFU_STORAGE`` partition in external flash.
+    * :c:func:`dfu_target_full_modem_fdev_get` function that gets the configured flash device information.
 
 Scripts
 =======
@@ -828,6 +975,13 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 * :ref:`west_sbom`:
 
   * Updated so that the output contains source repository and version information for each file.
+
+* :ref:`partition_manager`:
+
+  * Added:
+
+    * The :file:`ncs/nrf/subsys/partition_manager/pm.yml.fmfu` file.
+    * Support for the full modem FOTA update (FMFU) partition: ``FMFU_STORAGE``.
 
 MCUboot
 =======
@@ -899,6 +1053,8 @@ Documentation
 * Updated:
 
   * The :ref:`software_maturity` page with details about Wi-Fi feature support.
-  * The :ref:`app_power_opt` user guide by adding a section about power saving features.
+  * The :ref:`app_power_opt` user guide by adding sections about power saving features and PSM usage.
+  * The :ref:`ug_thingy53` by aligning with current simplified configuration.
+  * The :ref:`ug_nrf52_developing` by aligning with current simplified FOTA configuration.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.

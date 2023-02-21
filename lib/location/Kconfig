@@ -65,17 +65,6 @@ config LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_SAT_LIMIT
 
 endif # LOCATION_METHOD_GNSS
 
-if LOCATION_METHOD_CELLULAR
-
-config LOCATION_METHOD_CELLULAR_RECV_BUF_SIZE
-	int "Receive buffer size"
-	default 512
-	help
-	  Size of the buffer used to store the response from the location
-	  service.
-
-endif # LOCATION_METHOD_CELLULAR
-
 if LOCATION_METHOD_WIFI
 
 config LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT
@@ -85,18 +74,17 @@ config LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT
 	  Maximum number of Wi-Fi scanning results to use when creating HTTP request.
 	  Increasing the max number will increase the library's RAM usage.
 
-config LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE
-	int "Receive buffer size"
-	default 1024
-	help
-	  Size of the buffer used to store the response from the Wi-Fi positioning
-	  service.
-
 endif # LOCATION_METHOD_WIFI
 
 # Cellular and Wi-Fi service configurations
 
 if LOCATION_METHOD_CELLULAR || LOCATION_METHOD_WIFI
+
+config LOCATION_SERVICE_CLOUD_RECV_BUF_SIZE
+	int "Receive buffer size"
+	default 512
+	help
+	  Size of the buffer used to store the response from the location service.
 
 config LOCATION_SERVICE_HERE
 	bool "HERE location service"
@@ -167,7 +155,9 @@ config LOCATION_SERVICE_EXTERNAL
 
 choice LOCATION_REQUEST_DEFAULT_METHOD_FIRST
 	prompt "Default first priority method"
-	default LOCATION_REQUEST_DEFAULT_METHOD_FIRST_GNSS
+	default LOCATION_REQUEST_DEFAULT_METHOD_FIRST_GNSS if LOCATION_METHOD_GNSS
+	default LOCATION_REQUEST_DEFAULT_METHOD_FIRST_WIFI if LOCATION_METHOD_WIFI
+	default LOCATION_REQUEST_DEFAULT_METHOD_FIRST_CELLULAR if LOCATION_METHOD_CELLULAR
 	help
 	  Default first priority method used in location_config_defaults_set() function
 	  within location_config structure if method_types member is NULL.
@@ -183,8 +173,9 @@ endchoice
 
 choice LOCATION_REQUEST_DEFAULT_METHOD_SECOND
 	prompt "Default second priority method"
-	default LOCATION_REQUEST_DEFAULT_METHOD_SECOND_WIFI if LOCATION_METHOD_WIFI
-	default LOCATION_REQUEST_DEFAULT_METHOD_SECOND_CELLULAR
+	default LOCATION_REQUEST_DEFAULT_METHOD_SECOND_WIFI if LOCATION_METHOD_WIFI && !LOCATION_REQUEST_DEFAULT_METHOD_FIRST_WIFI
+	default LOCATION_REQUEST_DEFAULT_METHOD_SECOND_CELLULAR if LOCATION_METHOD_CELLULAR && !LOCATION_REQUEST_DEFAULT_METHOD_FIRST_CELLULAR
+	default LOCATION_REQUEST_DEFAULT_METHOD_SECOND_NONE
 	help
 	  Default second priority method used in location_config_defaults_set() function
 	  within location_config structure if method_types member is NULL.
@@ -202,7 +193,7 @@ endchoice
 
 choice LOCATION_REQUEST_DEFAULT_METHOD_THIRD
 	prompt "Default third priority method"
-	default LOCATION_REQUEST_DEFAULT_METHOD_THIRD_CELLULAR if LOCATION_METHOD_WIFI
+	default LOCATION_REQUEST_DEFAULT_METHOD_THIRD_CELLULAR if LOCATION_METHOD_CELLULAR && !LOCATION_REQUEST_DEFAULT_METHOD_FIRST_CELLULAR && !LOCATION_REQUEST_DEFAULT_METHOD_SECOND_CELLULAR
 	default LOCATION_REQUEST_DEFAULT_METHOD_THIRD_NONE
 	help
 	  Default third priority method used in location_config_defaults_set() function

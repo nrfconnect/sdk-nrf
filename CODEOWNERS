@@ -128,6 +128,7 @@ Kconfig*                                  @tejlmand
 /modules/mcuboot/                         @de-nordic @nordicjm
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
 /samples/                                 @nrfconnect/ncs-test-leads
+/samples/net/mqtt/                        @simensrostad
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @alwa-nordic @carlescufi @KAGA164
 /samples/bluetooth/mesh/                  @ludvigsj
@@ -156,6 +157,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf9160/location/                @trantanen @hiltunent @jhirsi @tokangas
 /samples/nrf9160/lwm2m_client/            @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen @VeijoPesonen
 /samples/nrf9160/modem_shell/             @trantanen @hiltunent @jhirsi @tokangas
+/samples/nrf9160/nidd/                    @stig-bjorlykke
 /samples/nrf9160/nrf_cloud_*              @plskeggs @jayteemo @glarsennordic
 /samples/nrf9160/modem_trace_flash/       @gregersrygg @balaji-nordic
 /samples/openthread/                      @rlubos @edmont @canisLupus1313 @mariuszpos
@@ -187,6 +189,7 @@ Kconfig*                                  @tejlmand
 /subsys/bluetooth/controller/             @rugeGerritsen
 /subsys/bluetooth/adv_prov/               @MarekPieta @kapi-no @KAGA164
 /subsys/bluetooth/services/fast_pair/     @MarekPieta @kapi-no @KAGA164
+/subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
 /subsys/bootloader/                       @hakonfam @SebastianBoe
 /subsys/caf/                              @pdunaj
 /subsys/debug/                            @nordic-krch @anangl

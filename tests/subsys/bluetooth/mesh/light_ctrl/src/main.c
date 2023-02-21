@@ -383,8 +383,8 @@ expected_statemachine_cond(bool enabled,
 	zassert_equal(light_ctrl_srv.state, expected_state, "Wrong state, expected: %d, got: %d",
 		      expected_state, light_ctrl_srv.state);
 	zassert_equal(light_ctrl_srv.flags, expected_flags,
-		      "Wrong Flags: 0x%X:0x%X", light_ctrl_srv.flags,
-		      expected_flags);
+		      "Wrong Flags: exp 0x%X : got 0x%X", expected_flags,
+		      light_ctrl_srv.flags);
 }
 
 static void trigger_pi_reg(uint32_t steps)
@@ -434,7 +434,8 @@ static void teardown(void)
 static void enable_ctrl(void)
 {
 	enum bt_mesh_light_ctrl_srv_state expected_state = LIGHT_CTRL_STATE_STANDBY;
-	atomic_t expected_flags = FLAGS_CONFIGURATION | BIT(FLAG_CTRL_SRV_MANUALLY_ENABLED);
+	atomic_t expected_flags = FLAGS_CONFIGURATION | BIT(FLAG_CTRL_SRV_MANUALLY_ENABLED)
+				  | BIT(FLAG_REGULATOR);
 
 	expect_ctrl_enable();
 	bt_mesh_light_ctrl_srv_enable(&light_ctrl_srv);
@@ -489,6 +490,9 @@ static void setup_pi_reg(void)
 	setup();
 	enable_ctrl();
 	turn_on_ctrl();
+
+	/* Start regulator manually to allow the test to check operation */
+	light_ctrl_srv.reg->start(light_ctrl_srv.reg);
 }
 
 static void teardown_pi_reg(void)
@@ -517,9 +521,11 @@ static void test_fsm_no_change_by_light_onoff(void)
 
 	/* Enable light ctrl server, to enter STANDBY state */
 	expected_flags = expected_flags | BIT(FLAG_CTRL_SRV_MANUALLY_ENABLED);
-	expected_flags = expected_flags | BIT(FLAG_TRANSITION);
+	expected_flags = expected_flags | BIT(FLAG_TRANSITION) | BIT(FLAG_REGULATOR);
 	expect_ctrl_enable();
 	bt_mesh_light_ctrl_srv_enable(&light_ctrl_srv);
+	/* Start regulator manually to allow the test to check operation */
+	light_ctrl_srv.reg->start(light_ctrl_srv.reg);
 
 	/* Wait for transition to completed. */
 	expected_flags = expected_flags & ~BIT(FLAG_TRANSITION);

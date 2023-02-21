@@ -398,7 +398,7 @@ To test this feature, complete the following steps:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -DCONFIG_CHIP_WIFI=n
+      west build -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -Dhci_rpmsg_SHIELD=nrf7002_ek_coex -DCONFIG_CHIP_WIFI=n
 
 #. Program the application to the kit using the following command:
 
@@ -422,7 +422,7 @@ To test this feature, complete the following steps:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -p always -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek
+      west build -b nrf5340dk_nrf5340_cpuapp -p always -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -Dhci_rpmsg_SHIELD=nrf7002_ek_coex
 
 #. Program the application to another partition of the external flash using the following command:
 
@@ -449,7 +449,7 @@ To upgrade the device firmware when using the ``thread_wifi_switched`` build typ
 
 Because the application supports switching between Thread and Wi-Fi, you need to make sure that the Matter OTA image file served by the OTA Provider includes two application variants: for Matter over Thread and for Matter over Wi-Fi, respectively.
 
-To make sure that both application variants are included in the OTA image file, use the dedicated the ``combine_ota_images.py`` script.
+To make sure that both application variants are included in the OTA image file, use the dedicated the :file:`combine_ota_images.py` script.
 The script takes the Matter OTA image files generated for both variants and combines them in one file.
 It also assumes that both input images were created with the same *vendor_id*, *product_id*, *version*, *version_string*, *min_version*, *max_version*, and *release_notes*.
 
@@ -459,14 +459,14 @@ Complete the following steps to generate the Matter OTA combined image file:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -d build_thread -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -DCONFIG_CHIP_WIFI=n
+      west build -b nrf5340dk_nrf5340_cpuapp -d build_thread -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -Dhci_rpmsg_SHIELD=nrf7002_ek_coex -DCONFIG_CHIP_WIFI=n
 
    This command creates the *build_thread* directory, where the Matter over Thread application is stored.
 #. Build the door lock application for Matter over Wi-Fi by running the following command:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -d build_wifi -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek
+      west build -b nrf5340dk_nrf5340_cpuapp -d build_wifi -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -Dhci_rpmsg_SHIELD=nrf7002_ek_coex
 
    This command creates the *build_wifi* directory, where the Matter over Wi-Fi application is stored.
 #. Combine Matter OTA image files generated for both variants by running the ``combine_ota_images.py`` script in the sample directory by running the following command (with ``<output_directory>`` changed to the directory name of your choice):

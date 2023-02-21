@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+ / {
+	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
+};
+
 /* Enable high drive mode for the SPI3 pins to get a square signal at 8 MHz */
 &spi3_default {
 	group1 {

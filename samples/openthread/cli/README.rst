@@ -531,7 +531,7 @@ After building and flashing with :file:`overlay-low_power.conf` and :file:`low_p
 This allows for easy configuration of the device, specifically the Sleepy End Device polling period or the Synchronized Sleepy End Device (SSED) CSL period and other relevant parameters.
 
 When the device becomes attached to a Thread Router it will automatically suspend UART operation and power down unused RAM.
-In this mode, you can not use the CLI to control the device.
+In this mode, you cannot use the CLI to control the device.
 Instead, the device will periodically wake up from deep sleep mode and turn on the radio to receive any messages from its parent.
 
 If the device is connected to a `Power Profiler Kit II (PPK2)`_, you can perform detailed power consumption measurements.

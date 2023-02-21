@@ -26,7 +26,7 @@ Overview
 
 The sample acts directly on socket level abstraction.
 It configures a UDP socket and continuously transmits data over the socket to the modem's TCP/IP stack, where the data eventually gets transmitted to a server specified by an IP address and a port number.
-To control the LTE link, it uses the :ref:`lte_lc_readme` library and requests Power Saving Mode (PSM), extended Discontinuous Reception (eDRX) mode and `Release Assistance Indication (RAI)`_ parameters.
+To control the LTE link, it uses the :ref:`lte_lc_readme` library and requests Power Saving Mode (PSM), :term:`extended Discontinuous Reception (eDRX)` mode and `Release Assistance Indication (RAI)`_ parameters.
 These parameters can be set through the sample configuration file :file:`prj.conf`.
 
 You can configure the frequency with which the packets are transmitted and the size of the UDP payload through the Kconfig system.

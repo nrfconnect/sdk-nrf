@@ -28,7 +28,7 @@ Implementation
 ==============
 
 The location library has a compact API and a location core that handles the functionality that is independent of the location method, such as fallback to the next preferred method and timeouts.
-Each location method has its own implementation for the location retrieval:
+The supported location methods are as follows:
 
 * GNSS positioning
 
@@ -48,12 +48,15 @@ Each location method has its own implementation for the location retrieval:
 * Cellular positioning
 
   * :ref:`lte_lc_readme` for getting visible cellular base stations.
-  * Sending cell information to the selected location service and getting the calculated location back to the device.
+  * The ``cloud location`` method handles sending cell information to the selected location service and getting the calculated location back to the device.
 
 * Wi-Fi positioning
 
   * Zephyr's Network Management API :ref:`zephyr:net_mgmt_interface` for getting the visible Wi-Fi access points.
-  * Sending access point information to the selected location service and getting the calculated location back to the device.
+  * The ``cloud location`` method handles sending access point information to the selected location service and getting the calculated location back to the device.
+
+The ``cloud location`` method handles the location methods (cellular and Wi-Fi positioning)
+that scan for technology-specific information and sends it over to the cloud service for location resolution.
 
 The default priority order of location methods is GNSS positioning, Wi-Fi positioning and Cellular positioning.
 If any of these methods are disabled, the method is simply omitted from the list.
@@ -62,8 +65,8 @@ Here are details related to the services handling cell information for cellular 
 
   * Services can be handled by the application by enabling the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option, in which case rest of the service configurations are ignored.
   * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
-  * The services available are `nRF Cloud Location Services`_ and `HERE Positioning`_.
-  * The data transport method for the `nRF Cloud Location Services`_ can be configured to either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
+  * The services available are `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ and `HERE Positioning`_.
+  * The data transport method for the `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ can be configured to either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
   * The only data transport method with `HERE Positioning`_ service is REST.
 
 Requirements
@@ -81,7 +84,7 @@ Location service accounts
 
 To use the location services that provide A-GPS or P-GPS, cellular or Wi-Fi positioning data, see the respective documentation for setting up your account and getting the required credentials for authentication:
 
-* `nRF Cloud Location Services`_
+* `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_
 * `HERE Positioning`_
 
 You can configure the required credentials for the location services using Kconfig options.
@@ -211,7 +214,7 @@ Use GNSS and cellular and set custom timeout values for them:
 
    err = location_request(&config);
 
-Use method priority list defined by Kconfig options and set custom timeout values for entire :c:func:location_request operation and cellular positioning:
+Use method priority list defined by Kconfig options and set custom timeout values for entire :c:func:`location_request` operation and cellular positioning:
 
 .. code-block:: c
 

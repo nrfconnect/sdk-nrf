@@ -8,7 +8,7 @@
 #define METHOD_GNSS_H
 
 int method_gnss_init(void);
-int method_gnss_location_get(const struct location_method_config *config);
+int method_gnss_location_get(const struct location_request_info *request);
 int method_gnss_cancel(void);
 int method_gnss_timeout(void);
 #if defined(CONFIG_LOCATION_DATA_DETAILS)

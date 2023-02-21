@@ -79,6 +79,17 @@ config DFU_TARGET_FULL_MODEM
 	  Enable support for full updates to the modem firmware.
 	  Note that this requires an external flash.
 
+# Flash size required for storing full modem image
+config DFU_TARGET_FULL_MODEM_EXT_FLASH_SIZE
+	hex
+	depends on DFU_TARGET_FULL_MODEM
+	default 0x400000 if SOC_NRF9160
+
+config DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION
+	depends on DFU_TARGET_FULL_MODEM
+	select PM_PARTITION_REGION_FMFU_STORAGE_EXTERNAL
+	bool "Use a dedicated FMFU partition on the external flash device"
+
 module=DFU_TARGET
 module-dep=LOG
 module-str=Device Firmware Upgrade

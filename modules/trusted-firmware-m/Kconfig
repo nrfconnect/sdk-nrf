@@ -247,11 +247,12 @@ config PM_PARTITION_SIZE_TFM
 	hex
 	prompt  "Memory reserved for TFM" if !TFM_PROFILE_TYPE_MINIMAL
 	default 0x10000 if TFM_PROFILE_TYPE_MINIMAL && TFM_CMAKE_BUILD_TYPE_DEBUG
-	default 0xC000 if TFM_PROFILE_TYPE_MINIMAL && SOC_NRF9160 && BOOTLOADER_MCUBOOT && !SECURE_BOOT
+	default 0x7E00 if TFM_PROFILE_TYPE_MINIMAL && BOOTLOADER_MCUBOOT
 	default 0x8000 if TFM_PROFILE_TYPE_MINIMAL
 	# NCSDK-13503: Temporarily bump size while regressions are being fixed
 	default 0x60000 if TFM_REGRESSION_S
 	default 0x50000 if TFM_CMAKE_BUILD_TYPE_DEBUG
+	default 0x3FE00 if BOOTLOADER_MCUBOOT
 	default 0x40000
 	help
 	  Memory set aside for the TFM partition. This size is fixed if
