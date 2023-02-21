@@ -40,7 +40,7 @@ To enable support for FOTA updates, do the following:
   For more information, go to the :doc:`mcuboot:index-ncs` page.
 * Enable the mcumgr module that handles the transport protocol over Bluetooth® Low Energy as follows:
 
-  a. Enable the Kconfig options :kconfig:option:`CONFIG_MCUMGR_GRP_OS`, :kconfig:option:`CONFIG_MCUMGR_GRP_IMG`, and :kconfig:option:`CONFIG_MCUMGR_SMP_BT`.
+  a. Enable the Kconfig options :kconfig:option:`CONFIG_MCUMGR_CMD_OS_MGMT`, :kconfig:option:`CONFIG_MCUMGR_CMD_IMG_MGMT`, and :kconfig:option:`CONFIG_MCUMGR_SMP_BT`.
   #. Call the functions :c:func:`os_mgmt_register_group()` and :c:func:`img_mgmt_register_group()` in your application.
   #. Call the :c:func:`smp_bt_register()` function in your application to initialize the mcumgr Bluetooth Low Energy transport.
 
@@ -82,8 +82,8 @@ Make sure to indicate the :file:`overlay-bt.conf` overlay configuration for the 
 This configuration was carefully selected to achieve the maximum possible throughput of the FOTA update transport over Bluetooth with the help of the following features:
 
 * Bluetooth MTU - To increase the packet size of a single Bluetooth packet transmitted over the air (:kconfig:option:`CONFIG_BT_BUF_ACL_RX_SIZE` and others).
-* Bluetooth connection parameters - To adaptively change the connection interval and latency on the detection of the SMP service activity (:kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT_CONN_PARAM_CONTROL`).
-* MCUmgr packet reassembly - To allow exchange of large SMP packets (:kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT_REASSEMBLY`, :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_NETBUF_SIZE` and others).
+* Bluetooth connection parameters - To adaptively change the connection interval and latency on the detection of the SMP service activity (:kconfig:option:`CONFIG_MCUMGR_SMP_BT_CONN_PARAM_CONTROL`).
+* MCUmgr packet reassembly - To allow exchange of large SMP packets (:kconfig:option:`CONFIG_MCUMGR_SMP_REASSEMBLY_BT`, :kconfig:option:`CONFIG_MCUMGR_BUF_SIZE` and others).
 
 Consider using these features in your project to speed up the FOTA update process.
 
