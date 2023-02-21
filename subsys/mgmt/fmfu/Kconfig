@@ -8,7 +8,7 @@ menu "Full Modem Firmware Update Management(FMFU)"
 
 config MGMT_FMFU
 	bool "Serial Modem Firmware Update support"
-	depends on MCUMGR_SMP_UART
+	depends on MCUMGR_TRANSPORT_UART
 	depends on MCUMGR
 	depends on NRF_MODEM_LIB && !NRF_MODEM_LIB_SYS_INIT
 
