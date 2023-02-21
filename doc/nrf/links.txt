@@ -949,6 +949,7 @@
 
 .. ### Source: apple.com
 
+.. _`macOS 13`: https://www.apple.com/macos/ventura/
 .. _`macOS 12`: https://www.apple.com/macos/monterey/
 .. _`macOS 11`: https://support.apple.com/en-us/HT211896
 .. _`macOS 10.15`: https://support.apple.com/en-us/HT210642

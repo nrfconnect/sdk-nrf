@@ -52,6 +52,10 @@ The following table shows the operating system versions that support the |NCS| t
      - Not supported
      - Tier 1
      - Not supported
+   * - `macOS 13`_
+     - Not applicable
+     - Tier 3
+     - Tier 3
    * - `macOS 12`_
      - Not applicable
      - Tier 2
