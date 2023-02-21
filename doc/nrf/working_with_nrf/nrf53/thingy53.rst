@@ -220,7 +220,9 @@ The logs on the Thingy:53 board are provided by default using USB CDC ACM to all
 Most of the applications and samples for Thingy:53 use only a single instance of USB CDC ACM that works as the logger's backend.
 No other USB classes are used.
 These samples can share a common USB product name, vendor ID, and product ID.
+
 If a sample supports additional USB classes or more than one instance of USB CDC ACM, it must use a dedicated product name, vendor ID, and product ID.
+This sample must also enable USB composite device configuration (:kconfig:option:`CONFIG_USB_COMPOSITE_DEVICE`).
 
 The :kconfig:option:`CONFIG_BOARD_SERIAL_BACKEND_CDC_ACM` Kconfig option (defined in the :file:`zephyr/boards/arm/thingy53_nrf5340/Kconfig.defconfig` file) automatically sets the default values of USB product name, vendor ID and product ID of Thingy:53.
 It also enables the USB device stack and initializes the USB device at boot.
