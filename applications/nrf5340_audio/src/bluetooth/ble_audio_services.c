@@ -192,7 +192,7 @@ static void mcc_discover_mcs_cb(struct bt_conn *conn, int err)
 	} else {
 		LOG_DBG("Discovery of MCS finished");
 		ret = ble_mcs_state_update(conn);
-		if (ret < 0) {
+		if (ret < 0 && ret != -EBUSY) {
 			LOG_WRN("Failed to update media state: %d", ret);
 		}
 	}

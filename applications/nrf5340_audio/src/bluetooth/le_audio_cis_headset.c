@@ -301,6 +301,12 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_audio_ep *ep, enu
 
 			*stream = audio_stream;
 			*pref = qos_pref;
+			if (IS_ENABLED(CONFIG_BT_MCC)) {
+				ret = ble_mcs_discover(conn);
+				if (ret) {
+					LOG_ERR("Failed to start discovery of MCS: %d", ret);
+				}
+			}
 
 			return 0;
 		}
@@ -508,12 +514,6 @@ static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum 
 		}
 	} else {
 		LOG_DBG("Security changed: level %d", level);
-#if (CONFIG_BT_MCC)
-		ret = ble_mcs_discover(default_conn);
-		if (ret) {
-			LOG_ERR("Failed to start discovery of MCS: %d", ret);
-		}
-#endif /* CONFIG_BT_MCC */
 	}
 }
 
@@ -543,13 +543,13 @@ static int initialize(le_audio_receive_cb recv_cb)
 		}
 #endif /* (CONFIG_BT_VCP_VOL_REND) */
 
-#if (CONFIG_BT_MCC)
-		ret = ble_mcs_client_init();
-		if (ret) {
-			LOG_ERR("MCS client init failed");
-			return ret;
+		if (IS_ENABLED(CONFIG_BT_MCC)) {
+			ret = ble_mcs_client_init();
+			if (ret) {
+				LOG_ERR("MCS client init failed");
+				return ret;
+			}
 		}
-#endif /* CONFIG_BT_MCC */
 
 		receive_cb = recv_cb;
 		channel_assignment_get(&channel);
