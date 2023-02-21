@@ -40,7 +40,7 @@ To enable support for FOTA updates, do the following:
   For more information, go to the :doc:`mcuboot:index-ncs` page.
 * Enable the mcumgr module that handles the transport protocol over Bluetooth® Low Energy as follows:
 
-  a. Enable the Kconfig options :kconfig:option:`CONFIG_MCUMGR_GRP_OS`, :kconfig:option:`CONFIG_MCUMGR_GRP_IMG`, and :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT`.
+  a. Enable the Kconfig options :kconfig:option:`CONFIG_MCUMGR_GRP_OS`, :kconfig:option:`CONFIG_MCUMGR_GRP_IMG`, and :kconfig:option:`CONFIG_MCUMGR_SMP_BT`.
   #. Call the functions :c:func:`os_mgmt_register_group()` and :c:func:`img_mgmt_register_group()` in your application.
   #. Call the :c:func:`smp_bt_register()` function in your application to initialize the mcumgr Bluetooth Low Energy transport.
 
