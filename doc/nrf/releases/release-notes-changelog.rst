@@ -208,6 +208,9 @@ nRF9160 samples
   * Updated:
 
     * The sample now integrates the :ref:`lib_lwm2m_client_utils` FOTA callback functionality.
+* :ref:`pdn_sample` sample:
+
+  * Updated the sample to show how to get interface address information using the :c:func:`nrf_getifaddrs` function.
 
 Peripheral samples
 ------------------

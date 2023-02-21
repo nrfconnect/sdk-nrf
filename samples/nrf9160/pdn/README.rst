@@ -59,14 +59,22 @@ The sample shows the following output, which may vary based on the network provi
 
    PDN sample started
    Event: PDP context 0 activated
-   Created new PDP context 1
    Default APN is telenor.iot
-   PDP context 1 configured: APN telenor.iot, Family IPV4V6
-   Event: PDP context 0 IPv6 up
+   Created new PDP context 1
+   PDP contEvent: PDP context 0 IPv6 up
+   ext 1 configured: APN telenor.iot, Family IPV4V6
    Event: PDP context 1 activated
    Event: PDP context 1 IPv6 up
-   PDP Context 0 (cid)      PDN ID 0
-   PDP Context 1 (cid)      PDN ID 0
+   PDP Context 0, PDN ID 0
+   PDP Context 1, PDN ID 0
+
+   Interface addresses:
+   l0: (AF_INET) 10.243.140.208
+   l0: (AF_INET6) fe80::63:b639:ab01
+   l0: (AF_INET6) 2a02:2121:20d:175d:0:63:b639:ab01
+
+   Event: PDP context 0 deactivated
+   Event: PDP context 1 deactivated
    Bye
 
 Dependencies
