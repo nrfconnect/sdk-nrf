@@ -2629,6 +2629,9 @@ enum nrf_wifi_twt_setup_cmd_type {
 
 #define NRF_WIFI_TWT_FLOW_TYPE_ANNOUNCED 0
 #define NRF_WIFI_TWT_FLOW_TYPE_UNANNOUNCED 1
+
+#define NRF_WIFI_TWT_RESP_RECEIVED 0
+#define NRF_WIFI_TWT_RESP_NOT_RECEIVED 1
 /**
  * struct nrf_wifi_umac_config_twt_info - TWT params info.
  * @twt_flow_id: TWT flow Id.
@@ -2644,6 +2647,7 @@ enum nrf_wifi_twt_setup_cmd_type {
  * @target_wake_time: start of the waketime value after successful TWT negotiation
  * @nominal_min_twt_wake_duration: min TWT wake duration
  * @dialog_token: dialog_token of twt frame.
+ * @twt_resp_status: 0->not received 1->received.
  * This structure represents the command provides TWT information.
  */
 
@@ -2660,6 +2664,7 @@ struct nrf_wifi_umac_config_twt_info {
 	unsigned long long target_wake_time;
 	unsigned short nominal_min_twt_wake_duration;
 	unsigned char dialog_token;
+	unsigned char twt_resp_status;
 } __NRF_WIFI_PKD;
 
 /**
@@ -3168,10 +3173,22 @@ struct nrf_wifi_umac_cmd_conn_info {
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
+enum link_mode {
+	NRF_WIFI_MODE_11B = 1,
+	NRF_WIFI_MODE_11A,
+	NRF_WIFI_MODE_11G,
+	NRF_WIFI_MODE_11N,
+	NRF_WIFI_MODE_11AC,
+	NRF_WIFI_MODE_11AX
+};
+
 struct nrf_wifi_umac_event_conn_info {
 	struct nrf_wifi_umac_hdr umac_hdr;
 	unsigned short beacon_interval;
 	unsigned char dtim_interval;
+	unsigned char associated;
+	unsigned char twt_capable;
+	unsigned char linkmode;
 } __NRF_WIFI_PKD;
 
 struct nrf_wifi_umac_cmd_get_power_save_info {
