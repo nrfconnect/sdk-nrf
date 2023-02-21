@@ -178,6 +178,7 @@ void data_send(const uint8_t *data, size_t len)
 	pm_device_state_get(uart_dev, &state);
 	if (state != PM_DEVICE_STATE_ACTIVE) {
 		ring_buf_put(&data_rb, data, len);
+		(void)indicate_start();
 	} else {
 		(void)uart_send(data, len);
 	}
@@ -400,6 +401,7 @@ static void notification_handler(const char *notification)
 		if (state != PM_DEVICE_STATE_ACTIVE) {
 			ring_buf_put(&data_rb, CRLF_STR, strlen(CRLF_STR));
 			ring_buf_put(&data_rb, notification, strlen(notification));
+			(void)indicate_start();
 		} else {
 			(void)uart_send(CRLF_STR, strlen(CRLF_STR));
 			(void)uart_send(notification, strlen(notification));
