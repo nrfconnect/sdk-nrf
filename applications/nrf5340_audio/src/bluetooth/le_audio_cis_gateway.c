@@ -24,6 +24,7 @@ LOG_MODULE_REGISTER(cis_gateway, CONFIG_BLE_LOG_LEVEL);
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 #define CIS_CONN_RETRY_TIMES 5
+#define CIS_CONN_RETRY_DELAY_MS 500
 #define CONNECTION_PARAMETERS                                                                      \
 	BT_LE_CONN_PARAM(CONFIG_BLE_ACL_CONN_INTERVAL, CONFIG_BLE_ACL_CONN_INTERVAL,               \
 			 CONFIG_BLE_ACL_SLAVE_LATENCY, CONFIG_BLE_ACL_SUP_TIMEOUT)
@@ -52,7 +53,15 @@ struct le_audio_headset {
 	struct bt_conn *headset_conn;
 	struct net_buf_pool *iso_tx_pool;
 	atomic_t iso_tx_pool_alloc;
+	struct k_work_delayable stream_start_sink_work;
+	struct k_work_delayable stream_start_source_work;
 };
+
+struct worker_data {
+	uint8_t channel_index;
+	enum bt_audio_dir dir;
+	uint8_t retries;
+} __aligned(4);
 
 struct temp_codec_cap_storage {
 	struct bt_conn *conn;
@@ -61,6 +70,11 @@ struct temp_codec_cap_storage {
 };
 
 static struct le_audio_headset headsets[CONFIG_BT_MAX_CONN];
+
+K_MSGQ_DEFINE(kwork_msgq, sizeof(struct worker_data),
+	      2 * (CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT +
+		   CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SRC_COUNT),
+	      sizeof(uint32_t));
 
 static struct temp_codec_cap_storage temp_codec_cap[CONFIG_BT_MAX_CONN];
 
@@ -226,9 +240,9 @@ static void stream_configured_cb(struct bt_audio_stream *stream,
 	}
 
 	if (stream->ep->dir == BT_AUDIO_DIR_SINK) {
-		LOG_INF("%s sink stream connected", headsets[channel_index].ch_name);
+		LOG_INF("%s sink stream configured", headsets[channel_index].ch_name);
 	} else if (stream->ep->dir == BT_AUDIO_DIR_SOURCE) {
-		LOG_INF("%s source stream connected", headsets[channel_index].ch_name);
+		LOG_INF("%s source stream configured", headsets[channel_index].ch_name);
 	} else {
 		LOG_WRN("Endpoint direction not recognized: %d", stream->ep->dir);
 		return;
@@ -267,6 +281,7 @@ static void stream_enabled_cb(struct bt_audio_stream *stream)
 {
 	int ret;
 	uint8_t channel_index;
+	struct worker_data work_data;
 
 	LOG_DBG("Stream enabled: %p", stream);
 
@@ -280,22 +295,38 @@ static void stream_enabled_cb(struct bt_audio_stream *stream)
 	if (ep_state_check(headsets[channel_index].sink_stream.ep, BT_AUDIO_EP_STATE_ENABLING) &&
 	    ep_state_check(headsets[channel_index].source_stream.ep, BT_AUDIO_EP_STATE_ENABLING)) {
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
-		ret = bt_audio_stream_start(&headsets[channel_index].sink_stream);
-		if (ret) {
-			LOG_ERR("Failed to start %s headset sink stream",
-				headsets[channel_index].ch_name);
-			return;
-		}
 
-#if CONFIG_STREAM_BIDIRECTIONAL
-		ret = bt_audio_stream_start(&headsets[channel_index].source_stream);
-		if (ret) {
-			LOG_ERR("Failed to start %s headset source stream",
-				headsets[channel_index].ch_name);
-			return;
+		if (!k_work_delayable_is_pending(&headsets[channel_index].stream_start_sink_work)) {
+			work_data.channel_index = channel_index;
+			work_data.retries = 0;
+			work_data.dir = BT_AUDIO_DIR_SINK;
+
+			LOG_DBG("k_msg_put: ch: %d, dir: %d, retries %d", work_data.channel_index,
+				work_data.dir, work_data.retries);
+			ret = k_msgq_put(&kwork_msgq, &work_data, K_NO_WAIT);
+			if (ret) {
+				LOG_ERR("No space in the queue for work_data");
+				return;
+			}
+			k_work_schedule(&headsets[channel_index].stream_start_sink_work, K_NO_WAIT);
 		}
-	} else {
-		LOG_DBG("Sink or source stream not in enabling state");
+#if CONFIG_STREAM_BIDIRECTIONAL
+		if (!k_work_delayable_is_pending(
+			    &headsets[channel_index].stream_start_source_work)) {
+			work_data.channel_index = channel_index;
+			work_data.retries = 0;
+			work_data.dir = BT_AUDIO_DIR_SOURCE;
+
+			LOG_DBG("k_msg_put: ch: %d, dir: %d, retries %d", work_data.channel_index,
+				work_data.dir, work_data.retries);
+			ret = k_msgq_put(&kwork_msgq, &work_data, K_NO_WAIT);
+			if (ret) {
+				LOG_ERR("No space in the queue for work_data");
+				return;
+			}
+			k_work_schedule(&headsets[channel_index].stream_start_source_work,
+					K_NO_WAIT);
+		}
 	}
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 }
@@ -397,6 +428,59 @@ static struct bt_audio_stream_ops stream_ops = {
 	.released = stream_released_cb,
 	.recv = stream_recv_cb,
 };
+
+static void work_stream_start(struct k_work *work)
+{
+	int ret;
+	struct worker_data work_data;
+
+	ret = k_msgq_get(&kwork_msgq, &work_data, K_NO_WAIT);
+	if (ret) {
+		LOG_ERR("Cannot get info for start stream");
+		return;
+	}
+
+	LOG_DBG("k_msg_get: ch: %d, dir: %d, retries %d", work_data.channel_index, work_data.dir,
+		work_data.retries);
+
+	if (work_data.dir == BT_AUDIO_DIR_SINK) {
+		ret = bt_audio_stream_start(&headsets[work_data.channel_index].sink_stream);
+	} else if (work_data.dir == BT_AUDIO_DIR_SOURCE) {
+		ret = bt_audio_stream_start(&headsets[work_data.channel_index].source_stream);
+	} else {
+		LOG_ERR("Trying to use unknown direction");
+		bt_conn_disconnect(headsets[work_data.channel_index].headset_conn,
+				   BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+		return;
+	}
+
+	work_data.retries++;
+
+	if ((ret == -EBUSY) && (work_data.retries < CIS_CONN_RETRY_TIMES)) {
+		LOG_DBG("Got connect error from stream %d Retrying. code: %d count: %d",
+			work_data.channel_index, ret, work_data.retries);
+		LOG_DBG("k_msg_put: ch: %d, dir: %d, retries %d", work_data.channel_index,
+			work_data.dir, work_data.retries);
+		ret = k_msgq_put(&kwork_msgq, &work_data, K_NO_WAIT);
+		if (ret) {
+			LOG_ERR("No space in the queue for work_data");
+			return;
+		}
+		/* Delay added to prevent controller overloading */
+		if (work_data.dir == BT_AUDIO_DIR_SINK) {
+			k_work_reschedule(&headsets[work_data.channel_index].stream_start_sink_work,
+					  K_MSEC(CIS_CONN_RETRY_DELAY_MS));
+		} else if (work_data.dir == BT_AUDIO_DIR_SOURCE) {
+			k_work_reschedule(
+				&headsets[work_data.channel_index].stream_start_source_work,
+				K_MSEC(CIS_CONN_RETRY_DELAY_MS));
+		}
+	} else if (ret != 0) {
+		LOG_ERR("Failed to establish CIS, ret = %d", ret);
+		bt_conn_disconnect(headsets[work_data.channel_index].headset_conn,
+				   BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+	}
+}
 
 static int temp_codec_cap_index_get(struct bt_conn *conn, uint8_t *index)
 {
@@ -835,10 +919,10 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 static void disconnected_headset_cleanup(uint8_t chan_idx)
 {
 	headsets[chan_idx].headset_conn = NULL;
-	memset(&headsets[chan_idx].sink_stream, 0, sizeof(struct bt_audio_stream));
+	k_work_cancel_delayable(&headsets[chan_idx].stream_start_sink_work);
 	headsets[chan_idx].sink_ep = NULL;
 	memset(headsets[chan_idx].sink_codec_cap, 0, sizeof(headsets[chan_idx].sink_codec_cap));
-	memset(&headsets[chan_idx].source_stream, 0, sizeof(struct bt_audio_stream));
+	k_work_cancel_delayable(&headsets[chan_idx].stream_start_source_work);
 	headsets[chan_idx].source_ep = NULL;
 	memset(headsets[chan_idx].source_codec_cap, 0, sizeof(headsets[chan_idx].source_codec_cap));
 }
@@ -926,7 +1010,6 @@ static struct bt_conn_cb conn_callbacks = {
 	.connected = connected_cb,
 	.disconnected = disconnected_cb,
 	.security_changed = security_changed_cb,
-
 };
 
 #if (CONFIG_BT_MCS)
@@ -1065,6 +1148,8 @@ static int initialize(le_audio_receive_cb recv_cb)
 	for (int i = 0; i < ARRAY_SIZE(headsets); i++) {
 		headsets[i].sink_stream.ops = &stream_ops;
 		headsets[i].source_stream.ops = &stream_ops;
+		k_work_init_delayable(&headsets[i].stream_start_sink_work, work_stream_start);
+		k_work_init_delayable(&headsets[i].stream_start_source_work, work_stream_start);
 	}
 
 	ret = bt_audio_unicast_client_register_cb(&unicast_client_cbs);
@@ -1205,10 +1290,14 @@ int le_audio_play_pause(void)
 {
 	int ret;
 
-	ret = ble_mcs_play_pause(NULL);
-	if (ret) {
-		LOG_WRN("Failed to change streaming state");
-		return ret;
+	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+		LOG_WRN("Play/pause not supported for bidirectional mode");
+	} else {
+		ret = ble_mcs_play_pause(NULL);
+		if (ret) {
+			LOG_WRN("Failed to change streaming state");
+			return ret;
+		}
 	}
 
 	return 0;
