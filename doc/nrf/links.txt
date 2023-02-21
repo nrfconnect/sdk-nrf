@@ -152,6 +152,7 @@
 
 .. _`Network Traffic Generator`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/connectivity/networking/api/zperf.html#zperf-network-traffic-generator
 
+.. _`commit #d55314`: https://github.com/nrfconnect/sdk-nrf/commit/d553142f4f37bc324da9869e4837cdd9105e25ab
 
 .. ### Source: github.io
 
@@ -199,6 +200,7 @@
 .. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
 
 .. _`known issues page on the main branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html
+.. _`known issues for nRF Connect SDK v2.3.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-3-0
 .. _`known issues for nRF Connect SDK v2.2.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-2-0
 .. _`known issues for nRF Connect SDK v2.1.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-1-3
 .. _`known issues for nRF Connect SDK v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-1-2
@@ -271,6 +273,7 @@
 .. _`TF-M documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/index.html
 .. _`TF-M secure partition integration guide`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/integration_guide/services/tfm_secure_partition_addition.html
 
+.. _`Repositories and revisions for v2.3.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.3.0/nrf/introduction.html#ncs-repository-revisions
 .. _`Repositories and revisions for v2.2.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.2.0/nrf/introduction.html#ncs-repository-revisions
 .. _`Repositories and revisions for v2.1.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.3/nrf/introduction.html#repositories-and-revisions
 .. _`Repositories and revisions for v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.2/nrf/introduction.html#repositories-and-revisions
@@ -283,6 +286,7 @@
 .. _`Repositories and revisions for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrf/introduction.html#repositories-and-revisions
 .. _`Repositories and revisions`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrf/introduction.html#repositories-and-revisions
 
+.. _`Modem library changelog for v2.3.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.3.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.2.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.2.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.1.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.3/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.2/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
@@ -295,6 +299,7 @@
 .. _`Modem library changelog for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v1.9.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 
+.. _`LwM2M carrier library changelog for v2.3.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.3.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.2.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.2.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.1.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.3/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.2/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
@@ -358,6 +363,7 @@
 
 .. #### Source: www.nordicsemi.com/Events/
 
+.. _`nRF Connect SDK v2.3.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v23?utm_campaign=2023%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.3&utm_content=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.3
 .. _`nRF Connect SDK v2.2.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v220?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.2&utm_content=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.2
 .. _`nRF Connect SDK v2.1.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v210?utm_campaign=2022%20Webinars&utm_source=Documentation&utm_medium=Link%20to%20webinar%20%7C%20from%20documentation&utm_content=Link%20to%20webinar%20%7C%20from%20documentation
 .. _`nRF Connect SDK v2.0.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v2?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0&utm_content=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0
@@ -565,6 +571,7 @@
 .. _`nRF Wi-Fi Provisioner mobile app for iOS`: https://apps.apple.com/us/app/nrf-wi-fi-provisioner/id1638948698
 .. _`nRF Wi-Fi Provisioner mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.wifi.provisioning
 
+.. _`Bluetooth 5.4 DevZone blog`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/whats-new-in-bluetooth-v5-4-an-overview
 
 .. ### Source: www.segger.com
 
@@ -599,6 +606,8 @@
 .. _`Bluetooth mesh FAQ`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-faq/
 .. _`Bluetooth mesh study guide`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-developer-study-guide/
 .. _`Bluetooth mesh introduction blog`: https://www.bluetooth.com/blog/introducing-bluetooth-mesh-networking
+
+.. _`Auracast™`: https://www.bluetooth.com/auracast/how-it-works/
 
 .. ### Source: openmobilealliance.org
 

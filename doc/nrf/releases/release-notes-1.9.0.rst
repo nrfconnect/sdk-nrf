@@ -877,5 +877,3 @@ In addition to documentation related to the changes listed above, the following 
      * :ref:`ug_radio_fem_nrf21540_spi_gpio`.
      * :ref:`ug_radio_fem_direct_support`.
      * More information about supported protocols and hardware.
-
-.. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.

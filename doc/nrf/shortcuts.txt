@@ -185,3 +185,5 @@
    For more information about this driver, see the NFCT driver page in the `nrfx`_ repository.
 
 .. |Supported OS| replace:: The operating system versions that support the |NCS| tools are listed in the :ref:`gs_supported_OS` section.
+
+.. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.

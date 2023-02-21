@@ -138,5 +138,3 @@ This section contains changes in Zephyr that were cherry-picked into |NCS| for t
   * An issue where a Thread device would not properly handle fragmented IPv6 packets.
   * An issue where sensor readouts on Thingy:53 would be unstable due to PMIC not being set to the PWM mode.
   * An issue where SPI communication with sensors on Thingy:53 would be hindered because of the SPI interface being controlled by nRF5340 network core, instead of the application core.
-
-.. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
