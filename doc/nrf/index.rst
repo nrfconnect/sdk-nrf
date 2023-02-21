@@ -3,6 +3,17 @@
 Welcome to the |NCS|!
 #####################
 
+.. important::
+
+   |NCS| v1.9.2-dev1 is a development tag and may be replaced by a release in the future.
+
+   The development tag contains the following updates:
+
+   * Added workaround in sdk-zephyr for the Anomaly 160 that is affecting the nRF5340 SoC.
+   * Removed calls to ``__WFE()`` in MPSL for the nRF5340 SoC, to be in line with the Errata for the Anomaly 160.
+
+   For other changes that are included in this development tag, see :ref:`ncs_release_notes_changelog`.
+
 The |NCS| is where you begin building low-power wireless applications with Nordic Semiconductor nRF52, nRF53, and nRF91 Series devices.
 
 The SDK contains optimized cellular IoT (LTE-M and NB-IoT), Bluetooth® Low Energy, Thread, Zigbee, and Bluetooth mesh stacks, a range of applications, samples, and reference implementations, as well as a full suite of drivers for Nordic Semiconductor's devices.
