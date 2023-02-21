@@ -95,5 +95,3 @@ For a complete list of |NCS| specific commits since v1.9.0, run the following co
 .. code-block:: none
 
    git log --oneline manifest-rev ^v2.7.99-ncs1
-
-.. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.

@@ -81,6 +81,8 @@ Also, the last measurement results with the peers are stored in this list.
 For the nRF5340, the ranging procedure is performed on the network core, while the calculation takes place on the application core.
 The distance calculation uses a floating-point unit (FPU).
 
+.. _ble_nrf_dm_power:
+
 Power consumption
 *****************
 
@@ -118,6 +120,8 @@ The sample supports distance estimation using a more compute-intensive high-prec
 The :kconfig:option:`CONFIG_DM_HIGH_PRECISION_CALC` Kconfig option enables high-precision calculations.
 High-precision calculation has an impact on MCPD ranging mode only.
 Due to its limited memory, the nRF52 Development Kit (nrf52dk_nrf52832) does not support high-precision calculations.
+
+.. _ble_nrf_dm_calibr:
 
 Zero-distance calibration
 *************************
