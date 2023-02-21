@@ -183,3 +183,5 @@
 .. |nfc_nfct_driver_note| replace:: If you are using debug messages in the NFCT driver, the driver might not be working properly if you have :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` enabled.
    The NFCT driver is part of the nrfx driver package.
    For more information about this driver, see the NFCT driver page in the `nrfx`_ repository.
+
+.. |Supported OS| replace:: The operating system versions that support the |NCS| tools are listed in the :ref:`gs_supported_OS` section.

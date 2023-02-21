@@ -31,11 +31,13 @@ Hardware
 Software
 ========
 
-On your computer:
+On your computer, one of the following operating systems:
 
-* Microsoft Windows 10
-* macOS X, latest version
-* Ubuntu Linux, latest Long Term Support (LTS) version
+* Microsoft Windows
+* macOS
+* Ubuntu Linux
+
+|Supported OS|
 
 On your mobile device:
 

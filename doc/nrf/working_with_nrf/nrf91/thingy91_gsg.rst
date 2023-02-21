@@ -43,9 +43,13 @@ Hardware
 Software
 ========
 
-* Microsoft Windows 10
-* macOS X, latest version
-* Ubuntu Linux, latest Long Term Support (LTS) version
+On your computer, one of the following operating systems:
+
+* Microsoft Windows
+* macOS
+* Ubuntu Linux
+
+|Supported OS|
 
 Preparing for setup
 *******************
