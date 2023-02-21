@@ -439,6 +439,11 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 	}
 }
 
+static void stream_start_cb(struct bt_audio_stream *stream)
+{
+	LOG_INF("Stream started");
+}
+
 static void stream_stop_cb(struct bt_audio_stream *stream)
 {
 	int ret;
@@ -525,6 +530,7 @@ static struct bt_conn_cb conn_callbacks = {
 
 static struct bt_audio_stream_ops stream_ops = { .recv = stream_recv_cb,
 						 .sent = stream_sent_cb,
+						 .started = stream_start_cb,
 						 .stopped = stream_stop_cb };
 
 static int initialize(le_audio_receive_cb recv_cb)
