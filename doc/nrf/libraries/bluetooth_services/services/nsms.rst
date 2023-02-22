@@ -26,8 +26,8 @@ Characteristics
 This service has one characteristic with the CCC and CUD descriptors.
 CUD holds the name of the Status Message and helps to distinguish between different instances of the NSMS on the same device.
 
-Status Characteristic (57a70001-9350-11ed-a1eb-x0242ac120002)
-=============================================================
+Status Characteristic (57a70001-9350-11ed-a1eb-0242ac120002)
+============================================================
 
 Notify
   Enable notifications for the Status Characteristic to receive notifications when the status message changes.
