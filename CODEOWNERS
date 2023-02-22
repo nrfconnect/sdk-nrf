@@ -178,8 +178,8 @@ Kconfig*                                  @tejlmand
 /samples/wifi/sr_coex/                    @muraliThokala @bama-nordic
 /scripts/                                 @mbolivar-nordic @tejlmand @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @MarekPieta
-/scripts/tools-versions-*.txt             @tejlmand @grho @shantha-14 @ihansse
-/scripts/requirements-*.txt               @tejlmand @grho @shantha-14 @ihansse
+/scripts/tools-versions-*.txt             @tejlmand @grho @shanthanordic @ihansse
+/scripts/requirements-*.txt               @tejlmand @grho @shanthanordic @ihansse
 /scripts/west_commands/sbom/              @doki-nordic @maje-emb
 /scripts/bootloader/                      @hakonfam @sigvartmh
 /share/zephyrbuild-package/               @tejlmand
