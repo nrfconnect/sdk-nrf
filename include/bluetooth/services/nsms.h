@@ -72,6 +72,10 @@ ssize_t bt_nsms_status_read(struct bt_conn *conn,
 					 (BT_GATT_PERM_READ)          \
 				       )
 
+#define _BT_NSMS_CH_WRITE_PERM(_authen) ((_authen) ?                    \
+					  (BT_GATT_PERM_WRITE_AUTHEN) : \
+					  (BT_GATT_PERM_WRITE)          \
+					)
 /* @note:
  * The macro is required to provide proper arguments expansion as we are using name concatenation.
  * This allow proper double argument expansion.
@@ -107,7 +111,8 @@ ssize_t bt_nsms_status_read(struct bt_conn *conn,
 					       bt_nsms_status_read,                     \
 					       NULL,                                    \
 					       (void *)&CONCAT(_nsms, _status_str)),    \
-			BT_GATT_CCC(NULL, _BT_NSMS_CH_READ_PERM(_authen)),              \
+			BT_GATT_CCC(NULL, _BT_NSMS_CH_READ_PERM(_authen) |              \
+					  _BT_NSMS_CH_WRITE_PERM(_authen)),             \
 			BT_GATT_CUD(_name, _BT_NSMS_CH_READ_PERM(_authen)),             \
 	);                                                                              \
 	static const struct bt_nsms _nsms = {                                           \
