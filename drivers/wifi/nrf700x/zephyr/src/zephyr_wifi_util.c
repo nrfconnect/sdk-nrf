@@ -307,6 +307,66 @@ static int nrf_wifi_util_show_cfg(const struct shell *shell,
 	return 0;
 }
 
+static int nrf_wifi_util_tx_stats(const struct shell *shell,
+				  size_t argc,
+				  const char *argv[])
+{
+	struct vif_ctx_zep *vif_ctx_zep = NULL;
+	int vif_index = -1;
+	int queue_index = -1;
+	/* TODO: Get this from shell when AP mode is supported */
+	int peer_index = 0;
+	int max_vif_index = MAX(MAX_NUM_APS, MAX_NUM_STAS);
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	void *queue = NULL;
+	unsigned int tx_pending_pkts = 0;
+
+	vif_index = atoi(argv[1]);
+	if ((vif_index < 0) || (vif_index >= max_vif_index)) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid vif index(%d).\n",
+			      vif_index);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	queue_index = atoi(argv[2]);
+	if ((queue_index < 0) || (queue_index >= WIFI_NRF_FMAC_AC_MAX)) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid queue(%d).\n",
+			      queue_index);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	vif_ctx_zep = &ctx->vif_ctx_zep[vif_index];
+	fmac_dev_ctx = ctx->rpu_ctx;
+	queue = fmac_dev_ctx->tx_config.data_pending_txq[peer_index][queue_index];
+
+	tx_pending_pkts = wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv, queue);
+
+	shell_fprintf(shell,
+		SHELL_INFO,
+		"************* Tx Stats: vif(%d) queue(%d) ***********\n",
+		vif_index,
+		queue_index);
+
+	shell_fprintf(shell,
+		SHELL_INFO,
+		"tx_pending_pkts = %d\n",
+		tx_pending_pkts);
+
+	for (int i = 0; i < WIFI_NRF_FMAC_AC_MAX ; i++) {
+		shell_fprintf(
+			shell,
+			SHELL_INFO,
+			"Outstanding tokens: ac: %d -> %d\n",
+			i,
+			fmac_dev_ctx->tx_config.outstanding_descs[i]);
+	}
+}
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf_wifi_util_subcmds,
@@ -356,6 +416,14 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "<intf indx> <0 - Passive scan off>\n"
 		      "<intf indx> <1 - Passive scan on>\n",
 		      nrf_wifi_util_set_passive_scan,
+		      3,
+		      0),
+	SHELL_CMD_ARG(tx_stats,
+		      NULL,
+		      "Displays transmit statistics\n"
+			  "vif_index: 0 - 1\n"
+			  "queue: 0 - 4\n",
+		      nrf_wifi_util_tx_stats,
 		      3,
 		      0),
 	SHELL_SUBCMD_SET_END);
