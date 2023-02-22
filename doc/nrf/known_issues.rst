@@ -2924,6 +2924,12 @@ NCSDK-18847: :ref:`radio_test` sample does not build with support for Skyworks f
 
   **Workaround:** Do not use the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option and replace ``CONFIG_GENERIC_FEM`` with ``CONFIG_MPSL_FEM_SIMPLE_GPIO`` in the :file:`CMakeLists.txt` file of the sample.
 
+.. rst-class:: v2-3-0
+
+NCSDK-19858: :ref:`at_monitor_readme` library and :ref:`nrf_cloud_mqtt_multi_service` sample heap overrun.
+  Occasionally, the :ref:`at_monitor_readme` library heap becomes overrun, presumably due to one of the registerred AT event listeners becoming stalled.
+  This has only been observed with the :ref:`nrf_cloud_mqtt_multi_service` sample.
+
 Zephyr
 ******
 
