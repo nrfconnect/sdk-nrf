@@ -1098,12 +1098,6 @@ enum wifi_nrf_status wifi_nrf_fmac_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx
 				    desc,
 				    ac);
 out:
-	/* TODO: for goto cases also Returning success always
-	 * (same as in CL-5741850).
-	 * Check again
-	 */
-	status = WIFI_NRF_STATUS_SUCCESS;
-
 	wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
 				   fmac_dev_ctx->tx_config.tx_lock);
 
@@ -1464,6 +1458,13 @@ enum wifi_nrf_status wifi_nrf_fmac_start_xmit(void *dev_ctx,
 				  nbuf,
 				  ac,
 				  peer_id);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Failed to send packet\n",
+				      __func__);
+		goto out;
+	}
 
 	return WIFI_NRF_STATUS_SUCCESS;
 out:
