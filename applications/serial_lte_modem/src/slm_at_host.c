@@ -105,6 +105,10 @@ static int uart_send(const uint8_t *buffer, size_t len)
 
 	k_sem_take(&tx_done, K_FOREVER);
 
+	if (slm_operation_mode == SLM_AT_COMMAND_MODE) {
+		LOG_HEXDUMP_DBG(buffer, len, "TX");
+	}
+
 	/* EasyDMA requires SRAM address */
 	if ((uint32_t)buffer < PM_SRAM_NONSECURE_ADDRESS ||
 	    (uint32_t)buffer > PM_SRAM_NONSECURE_END_ADDRESS) {
@@ -159,7 +163,6 @@ void rsp_send(const char *fmt, ...)
 	vsnprintf(rsp_buf, sizeof(rsp_buf), fmt, arg_ptr);
 	va_end(arg_ptr);
 
-	LOG_HEXDUMP_DBG(rsp_buf, strlen(rsp_buf), "TX");
 	if (uart_send(rsp_buf, strlen(rsp_buf)) < 0) {
 		k_sem_give(&rsp_sent);
 	}
@@ -561,7 +564,7 @@ static void raw_send(struct k_work *work)
 			int size_finish = datamode_off_pending ? quit_str_len : 0;
 
 			LOG_INF("Raw send %d", size_send);
-			LOG_HEXDUMP_DBG(data, MIN(size_send, HEXDUMP_DATAMODE_MAX), "RX-DATAMODE");
+			LOG_HEXDUMP_DBG(data, MIN(size_send, HEXDUMP_DATAMODE_MAX), "RX-DATA");
 			if (datamode_handler && size_send > 0) {
 				size_sent = datamode_handler(DATAMODE_SEND, data, size_send);
 				if (size_sent > 0) {
