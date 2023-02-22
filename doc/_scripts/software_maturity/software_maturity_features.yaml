@@ -56,4 +56,4 @@ features:
   immutable_bootloader:
     Immutable Bootloader as part of build: SECURE_BOOT
   hw_unique_key:
-    Key Derviation from Hardware Unique Key: HW_UNIQUE_KEY
+    Key Derivation from Hardware Unique Key: HW_UNIQUE_KEY
