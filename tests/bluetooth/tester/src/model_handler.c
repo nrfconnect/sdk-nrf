@@ -264,7 +264,7 @@ static void prop_get(struct bt_mesh_prop_srv *srv, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	val->size = sizeof(property);
-	memcpy(val->value, &property.current, sizeof(property));
+	memcpy(val->value, &property, sizeof(property));
 }
 
 static void prop_mfr_get(struct bt_mesh_prop_srv *srv,
@@ -277,7 +277,7 @@ static void prop_mfr_get(struct bt_mesh_prop_srv *srv,
 	}
 
 	val->size = sizeof(property);
-	memcpy(val->value, &property.current, sizeof(property));
+	memcpy(val->value, &property, sizeof(property));
 }
 
 static int sensor_data_get(struct bt_mesh_sensor_srv *srv,
