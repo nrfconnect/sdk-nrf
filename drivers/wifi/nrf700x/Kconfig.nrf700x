@@ -57,7 +57,7 @@ config NRF700X_WORKQ_MAX_ITEMS
 
 config NRF700X_MAX_TX_PENDING_QLEN
 	int "Maximum number of pending TX packets"
-	default 48
+	default 18
 
 config NRF700X_RADIO_TEST
 	bool "Radio test mode of the nRF700x driver"
