@@ -26,6 +26,7 @@ At the very least, you need the following pieces of hardware to set up and test 
   * `Apple Home <Apple Home integration with Matter_>`_
   * `Google Home <Google Home integration with Matter_>`_
   * `Samsung SmartThings <Samsung SmartThings integration with Matter_>`_
+  * `Amazon Alexa <Amazon Alexa integration with Matter_>`_
 
 * 1x Wi-Fi Access Point supporting IPv6 connected to the Internet (for example, Asus RT-AC1300G, as used in the tutorial)
 * 1x PC with nRF Connect SDK v2.2.0 (or later) installed
