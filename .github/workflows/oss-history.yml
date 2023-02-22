@@ -3,7 +3,7 @@ on: pull_request
 
 jobs:
   contribs:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: Check OSS history
     steps:
       - name: Checkout the code
@@ -25,6 +25,6 @@ jobs:
           git -C zephyr remote add upstream https://github.com/zephyrproject-rtos/zephyr
 
       - name: Check OSS history
-        uses: nrfconnect/action-oss-history@main
+        uses: nrfconnect/action-oss-history@58f389dcef17b24bac57c668bb3c1c7a7a496be0
         with:
           workspace: 'ncs'

@@ -1,3 +1,4 @@
+cffi==1.15.0
 pygit2==1.6.1
 editdistance>=0.5.0
 PyGithub
