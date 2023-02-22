@@ -181,7 +181,7 @@ int main(void)
 			atomic_set(&op_flags, FLASH_WRITE_FINISHED);
 		}
 
-		__WFE();
+		k_cpu_atomic_idle(irq_lock());
 	}
 
 fail:
