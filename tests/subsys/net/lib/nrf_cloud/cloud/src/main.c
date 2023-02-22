@@ -47,6 +47,8 @@ void event_handler(const struct nrf_cloud_evt *const evt)
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTING:
 		atomic_set(&transport_connecting, 1);
+		break;
+	case NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR:
 		status = evt->status;
 		break;
 	case NRF_CLOUD_EVT_ERROR:
@@ -214,6 +216,8 @@ static void run_before(void *fixture)
 
 	/* Set the default fake for poll */
 	poll_fake.custom_fake = fake_poll__pollnval;
+
+	atomic_set(&transport_connecting, 0);
 }
 
 /* This function runs after each completed test */

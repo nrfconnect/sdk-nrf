@@ -42,7 +42,8 @@ The :c:func:`nrf_cloud_connect` function does not block and returns success if t
 
 When the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabled, an additional event, :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECTING`, is sent to the application.
 To adjust the stack size of the connection monitoring thread, set the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE` Kconfig option.
-The status field of :c:struct:`nrf_cloud_evt` contains the connection status that is defined by :c:enumerator:`nrf_cloud_connect_result`.
+The :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR` event is sent if an error occurs while the transport connection is being established.
+The status field of :c:struct:`nrf_cloud_evt` contains the reason for the error that is defined by :c:enumerator:`nrf_cloud_connect_result`.
 The event :c:enumerator:`NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED` also contains additional information in the status field that is defined by :c:enumerator:`nrf_cloud_disconnect_status`.
 
 First, the library tries to establish the transport for communicating with the cloud.
@@ -60,7 +61,7 @@ As the next step, the API subscribes to an MQTT topic to start receiving user as
 
 Every time nRF Cloud starts a communication session with a device, it verifies whether the device is uniquely associated with a user.
 If not, the user association procedure is triggered.
-When adding the device to an nRF Cloud account, the user must provide the correct device ID and PIN (for Thingy:91 and custom hardware) or HWID (for nRF9160 DK) to nRF Cloud.
+When adding the device to an nRF Cloud account, the user must provide the correct device ID and PIN to nRF Cloud.
 
 The following message sequence chart shows the flow of events and the expected application responses to each event during the user association procedure:
 
