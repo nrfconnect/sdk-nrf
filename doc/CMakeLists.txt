@@ -211,7 +211,6 @@ add_dependencies(zephyr-all zephyr-devicetree)
 # docset: nrf
 
 set(tools_version_files
-    ${NRF_BASE}/scripts/tools-versions-minimum.txt
     ${NRF_BASE}/scripts/tools-versions-darwin.txt
     ${NRF_BASE}/scripts/tools-versions-win10.txt
     ${NRF_BASE}/scripts/tools-versions-linux.txt

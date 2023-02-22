@@ -97,7 +97,8 @@ Required tools
 **************
 
 The following table shows the tools that are required for working with |NCS| v\ |version|.
-It lists the minimum version that is required and the version that is installed when using the :ref:`Toolchain Manager <gs_app_tcm>`, as described in :ref:`gs_assistant`.
+It lists the versions that are used for testing and installed when using the :ref:`Toolchain Manager <gs_app_tcm>`, as described in :ref:`gs_assistant`.
+Other versions might also work, but are not verified.
 
 .. _req_tools_table:
 
@@ -109,31 +110,22 @@ It lists the minimum version that is required and the version that is installed 
          :header-rows: 1
 
          * - Tool
-           - Minimum version
            - Toolchain Manager version
          * - Zephyr SDK
-           - |zephyr_sdk_min_ver|
            - |zephyr_sdk_recommended_ver_win10|
          * - CMake
-           - |cmake_min_ver|
            - |cmake_recommended_ver_win10|
          * - dtc
-           - |dtc_min_ver|
            - |dtc_recommended_ver_win10|
          * - Git
-           - |git_min_ver|
            - |git_recommended_ver_win10|
          * - gperf
-           - |gperf_min_ver|
            - |gperf_recommended_ver_win10|
          * - ninja
-           - |ninja_min_ver|
            - |ninja_recommended_ver_win10|
          * - Python
-           - |python_min_ver|
            - |python_recommended_ver_win10|
          * - West
-           - |west_min_ver|
            - |west_recommended_ver_win10|
 
    .. group-tab:: Linux
@@ -142,31 +134,22 @@ It lists the minimum version that is required and the version that is installed 
          :header-rows: 1
 
          * - Tool
-           - Minimum version
            - Toolchain Manager version
          * - Zephyr SDK
-           - |zephyr_sdk_min_ver|
            - |zephyr_sdk_recommended_ver_linux|
          * - CMake
-           - |cmake_min_ver|
            - |cmake_recommended_ver_linux|
          * - dtc
-           - |dtc_min_ver|
            - |dtc_recommended_ver_linux|
          * - Git
-           - |git_min_ver|
            - |git_recommended_ver_linux|
          * - gperf
-           - |gperf_min_ver|
            - |gperf_recommended_ver_linux|
          * - ninja
-           - |ninja_min_ver|
            - |ninja_recommended_ver_linux|
          * - Python
-           - |python_min_ver|
            - |python_recommended_ver_linux|
          * - West
-           - |west_min_ver|
            - |west_recommended_ver_linux|
 
    .. group-tab:: macOS
@@ -175,31 +158,22 @@ It lists the minimum version that is required and the version that is installed 
          :header-rows: 1
 
          * - Tool
-           - Minimum version
            - Toolchain Manager version
          * - Zephyr SDK
-           - |zephyr_sdk_min_ver|
            - |zephyr_sdk_recommended_ver_darwin|
          * - CMake
-           - |cmake_min_ver|
            - |cmake_recommended_ver_darwin|
          * - dtc
-           - |dtc_min_ver|
            - |dtc_recommended_ver_darwin|
          * - Git
-           - |git_min_ver|
            - |git_recommended_ver_darwin|
          * - gperf
-           - |gperf_min_ver|
            - |gperf_recommended_ver_darwin|
          * - ninja
-           - |ninja_min_ver|
            - |ninja_recommended_ver_darwin|
          * - Python
-           - |python_min_ver|
            - |python_recommended_ver_darwin|
          * - West
-           - |west_min_ver|
            - |west_recommended_ver_darwin|
 
 
