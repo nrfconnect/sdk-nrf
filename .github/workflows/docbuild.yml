@@ -13,6 +13,7 @@ on:
       - 'doc/**'
       - 'include/**'
       - 'scripts/requirements-doc.txt'
+      - 'scripts/tools-versions-*.txt'
       - 'west.yml'
   push:
     branches:
