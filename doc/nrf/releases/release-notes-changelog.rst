@@ -30,6 +30,12 @@ Changelog
 
 The following sections provide detailed lists of changes by component.
 
+IDE and tool support
+====================
+
+* Removed :file:`scripts/tool-version-minimum.txt` because we only test with one toolchain version.
+  The table in :ref:`gs_recommended_versions` has been updated accordingly to no longer specify minimum tool versions.
+
 MCUboot
 =======
 
