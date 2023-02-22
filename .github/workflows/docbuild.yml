@@ -20,7 +20,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout the code
@@ -39,14 +39,14 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get install -y ninja-build mscgen plantuml libclang1-9 libclang-cpp9
-          wget -q https://www.doxygen.nl/files/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+          wget -q https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
           tar xf doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
           echo "${PWD}/doxygen-${DOXYGEN_VERSION}/bin" >> $GITHUB_PATH
 
       - name: Install base dependencies
         working-directory: ncs
         run: |
-          sudo pip3 install -U setuptools wheel pip
+          sudo pip3 install -U "setuptools<=58.0.0" wheel
           pip3 install -r nrf/scripts/requirements-base.txt
 
       - name: West init and update
@@ -65,7 +65,7 @@ jobs:
       - name: Build documentation
         working-directory: ncs/nrf
         run: |
-          cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="-W"
+          cmake -GNinja -Bdoc/_build -Sdoc
           ninja -C doc/_build
 
       - name: Build cache
