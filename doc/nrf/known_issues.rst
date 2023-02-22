@@ -181,6 +181,13 @@ Serial LTE Modem
 NCSDK-13895: Build failure for target Thingy:91 with secure_bootloader overlay
   Building the application for Thingy:91 fails if secure_bootloader overlay is included.
 
+.. rst-class:: v2-3-0
+
+SLM logging over RTT is not available.
+  There is a conflict with MCUBOOT RTT logging.
+
+  **Workaround:** Remove ``CONFIG_USE_SEGGER_RTT=y`` and ``CONFIG_RTT_CONSOLE=y`` from :file:`child_image\mcuboot.conf`.
+
 .. _known_issues_other:
 
 Other issues
