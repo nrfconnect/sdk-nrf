@@ -82,7 +82,7 @@ enum nrf_cloud_evt_type {
 	/** In the process of connecting to nRF Cloud. */
 	NRF_CLOUD_EVT_TRANSPORT_CONNECTING,
 	/** There was a request from nRF Cloud to associate the device
-	 * with a user on the nRF Cloud.
+	 *  with a user on the nRF Cloud.
 	 */
 	NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST,
 	/** The device is successfully associated with a user. */
@@ -92,7 +92,7 @@ enum nrf_cloud_evt_type {
 	/** The device received non-specific data from the cloud. */
 	NRF_CLOUD_EVT_RX_DATA_GENERAL,
 	/** The device received location data from the cloud
-	 *  and no response callback was registered
+	 *  and no response callback was registered.
 	 */
 	NRF_CLOUD_EVT_RX_DATA_LOCATION,
 	/** The device received shadow related data from the cloud. */
@@ -101,7 +101,9 @@ enum nrf_cloud_evt_type {
 	NRF_CLOUD_EVT_PINGRESP,
 	/** The data sent to the cloud was acknowledged. */
 	NRF_CLOUD_EVT_SENSOR_DATA_ACK,
-	/** The transport was disconnected. */
+	/** The transport was disconnected. The status field in the event struct will
+	 *  be populated with a @ref nrf_cloud_disconnect_status value.
+	 */
 	NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED,
 	/** A FOTA update has started. */
 	NRF_CLOUD_EVT_FOTA_START,
@@ -109,13 +111,17 @@ enum nrf_cloud_evt_type {
 	NRF_CLOUD_EVT_FOTA_DONE,
 	/** An error occurred during the FOTA update. */
 	NRF_CLOUD_EVT_FOTA_ERROR,
+	/** An error occurred when connecting to the nRF Cloud. The status field in the event
+	 *  struct will be populated with a @ref nrf_cloud_connect_result value.
+	 */
+	NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR,
 	/** An error occurred. The status field in the event struct will
-	 * be populated with a @ref nrf_cloud_error_status value
+	 *  be populated with a @ref nrf_cloud_error_status value.
 	 */
 	NRF_CLOUD_EVT_ERROR = 0xFF
 };
 
-/** @brief nRF Cloud error status, used to describe NRF_CLOUD_EVT_ERROR */
+/** @brief nRF Cloud error status, used to describe @ref NRF_CLOUD_EVT_ERROR event. */
 enum nrf_cloud_error_status {
 	/** No error */
 	NRF_CLOUD_ERR_STATUS_NONE = 0,
@@ -140,7 +146,9 @@ enum nrf_cloud_error_status {
 	NRF_CLOUD_ERR_STATUS_PGPS_PROC,
 };
 
-/** @brief nRF Cloud disconnect status. */
+/** @brief nRF Cloud disconnect status, used to describe @ref NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED
+ * event.
+ */
 enum nrf_cloud_disconnect_status {
 	/** Disconnect was requested by user/application */
 	NRF_CLOUD_DISCONNECT_USER_REQUEST,
@@ -152,7 +160,10 @@ enum nrf_cloud_disconnect_status {
 	NRF_CLOUD_DISCONNECT_MISC,
 };
 
-/** @brief nRF Cloud connect result. */
+/** @brief nRF Cloud connect result.
+ * Used as return value for nrf_cloud_connect() and to describe
+ * @ref NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR event.
+ */
 enum nrf_cloud_connect_result {
 	/** The connection was successful */
 	NRF_CLOUD_CONNECT_RES_SUCCESS = 0,

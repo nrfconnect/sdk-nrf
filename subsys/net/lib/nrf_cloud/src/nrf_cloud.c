@@ -225,7 +225,7 @@ static int connect_error_translate(const int err)
 	case -EINPROGRESS:
 		return NRF_CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED;
 	default:
-		LOG_ERR("nRF cloud connect failed %d", err);
+		LOG_ERR("nRF Cloud connect failed %d", err);
 		return NRF_CLOUD_CONNECT_RES_ERR_MISC;
 	}
 }
@@ -494,7 +494,7 @@ start:
 	ret = connect_error_translate(ret);
 
 	if (ret != NRF_CLOUD_CONNECT_RES_SUCCESS) {
-		evt.type = NRF_CLOUD_EVT_TRANSPORT_CONNECTING;
+		evt.type = NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR;
 		evt.status = ret;
 		nfsm_set_current_state_and_notify(nfsm_get_current_state(), &evt);
 		goto reset;
