@@ -48,6 +48,7 @@ void wifi_nrf_if_rx_frm(void *os_vif_ctx, void *frm)
 
 	if (status < 0) {
 		LOG_ERR("RCV Packet dropped by NET stack: %d", status);
+		net_pkt_unref(pkt);
 	}
 }
 
