@@ -1523,6 +1523,8 @@ int gnss_get_agps_expiry(void)
 	mosh_print("NeQuick:    %s", expiry_string);
 	get_expiry_string(expiry_string, sizeof(expiry_string), agps_expiry.integrity_expiry);
 	mosh_print("Integrity:  %s", expiry_string);
+	get_expiry_string(expiry_string, sizeof(expiry_string), agps_expiry.position_expiry);
+	mosh_print("Position:   %s", expiry_string);
 
 	for (int i = 0; i < NRF_MODEM_GNSS_NUM_GPS_SATELLITES; i++) {
 		get_expiry_string(expiry_string, sizeof(expiry_string),
