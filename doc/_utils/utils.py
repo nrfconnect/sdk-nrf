@@ -119,3 +119,9 @@ def add_google_analytics(app: Sphinx) -> None:
 
     app.add_js_file("https://www.googletagmanager.com/gtag/js?id=G-ZPVZRKFQJR")
     app.add_js_file("js/ga-tracker.js")
+    app.add_js_file(
+        "https://policy.app.cookieinformation.com/uc.js",
+        id="CookieConsent",
+        type="text/javascript",
+        **{"data-culture": "EN"},
+    )
