@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
 from os import PathLike
 from pathlib import Path
 from typing import Tuple, Optional
@@ -83,7 +89,7 @@ def get_srcdir(docset: str) -> PathLike:
     return get_builddir() / docset / "src"
 
 
-def get_intersphinx_mapping(docset: str) -> Optional[Tuple[str, str]]:
+def get_intersphinx_mapping(docset: str) -> Optional[Tuple[str, str]]: # pylint: disable=unsubscriptable-object
     """Obtain intersphinx configuration for a given docset.
 
     Args:
