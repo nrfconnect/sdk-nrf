@@ -3545,7 +3545,7 @@ enum wifi_nrf_status wifi_nrf_fmac_set_power_save_timeout(void *dev_ctx,
 		goto out;
 	}
 
-	set_ps_timeout_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_SET_POWER_SAVE;
+	set_ps_timeout_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_SET_POWER_SAVE_TIMEOUT;
 	set_ps_timeout_cmd->umac_hdr.ids.wdev_id = if_idx;
 	set_ps_timeout_cmd->umac_hdr.ids.valid_fields |=
 		NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
