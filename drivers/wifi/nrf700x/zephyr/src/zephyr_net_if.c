@@ -36,7 +36,7 @@ void wifi_nrf_if_rx_frm(void *os_vif_ctx, void *frm)
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep;
 	struct net_if *iface;
 	struct net_pkt *pkt;
-	uint8_t status;
+	int status;
 
 	vif_ctx_zep = os_vif_ctx;
 
