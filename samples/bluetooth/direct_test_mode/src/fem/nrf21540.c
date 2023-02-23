@@ -24,16 +24,13 @@ enum nrf21540_ant {
 	NRF21540_ANT2
 };
 
+#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios)
 static struct nrf21540 {
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios)
 	const struct gpio_dt_spec ant_sel;
-#endif /* DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios) */
 } nrf21540_cfg = {
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios)
 	.ant_sel = GPIO_DT_SPEC_GET(NRF21540_NODE, ant_sel_gpios),
-#endif /* DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios) */
 };
-
+#endif /* DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios) */
 
 static int gpio_configure(void)
 {
