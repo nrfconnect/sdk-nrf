@@ -240,7 +240,7 @@ To edit clusters using the ZAP tool, complete the following steps:
 
    .. code-block::
 
-      python ./scripts/tools/zap/generate.py ../../../nrf/samples/matter/sensor/src/template.zap
+      python ./scripts/tools/zap/generate.py ../../../nrf/samples/matter/sensor/src/template.zap -t src/app/zap-templates/app-templates.json -o ../../../nrf/samples/matter/sensor/src/zap-generated
 
 At this point, new clusters have been added to the Matter device.
 

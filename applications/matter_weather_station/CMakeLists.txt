@@ -58,6 +58,7 @@ endif()
 chip_configure_data_model(app
     INCLUDE_SERVER
     BYPASS_IDL
+    GEN_DIR src/zap-generated
     ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/weather-station.zap
 )
 # NORDIC SDK APP END
