@@ -320,10 +320,14 @@ void *net_pkt_to_nbuf(struct net_pkt *pkt)
 
 void *net_pkt_from_nbuf(void *iface, void *frm)
 {
-	struct net_pkt *pkt;
+	struct net_pkt *pkt = NULL;
 	unsigned char *data;
 	unsigned int len;
 	struct nwb *nwb = frm;
+
+	if (!nwb) {
+		return NULL;
+	}
 
 	len = zep_shim_nbuf_data_size(nwb);
 
@@ -332,15 +336,17 @@ void *net_pkt_from_nbuf(void *iface, void *frm)
 	pkt = net_pkt_rx_alloc_with_buffer(iface, len, AF_UNSPEC, 0, K_MSEC(100));
 
 	if (!pkt) {
-		return NULL;
+		goto out;
 	}
 
 	if (net_pkt_write(pkt, data, len)) {
+		net_pkt_unref(pkt);
 		pkt = NULL;
+		goto out;
 	}
 
+out:
 	zep_shim_nbuf_free(nwb);
-
 	return pkt;
 }
 
