@@ -987,7 +987,16 @@ static bool method_gnss_agps_expiry_process(const struct nrf_modem_gnss_agps_exp
 		agps_request.data_flags |= NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
 	}
 
-	if (agps_expiry->data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
+	/* Position is reported as being valid for 2h. The uncertainty increases with time,
+	 * but in practice the position remains usable for a longer time. Because of this no
+	 * margin is used when checking if position assistance is needed.
+	 *
+	 * Position is only requested when also some other assistance data is needed.
+	 */
+	if (agps_expiry->position_expiry == 0 &&
+	    (agps_request.sv_mask_ephe != 0 ||
+	     agps_request.sv_mask_alm != 0 ||
+	     agps_request.data_flags != 0)) {
 		agps_request.data_flags |= NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
 	}
 
