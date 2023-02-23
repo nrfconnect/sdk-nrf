@@ -838,6 +838,8 @@ static int nrf91_poll_prepare(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd
 			      struct k_poll_event **pev, struct k_poll_event *pev_end)
 {
 	int err;
+	int flags;
+	unsigned int signaled;
 	int fd = OBJ_TO_SD(ctx);
 	struct nrf_modem_pollcb pcb = {
 		.callback = pollcb,
@@ -861,7 +863,16 @@ static int nrf91_poll_prepare(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd
 	/* Let other sockets use another k_poll_event */
 	(*pev)++;
 
-	return 0;
+	signaled = 0;
+	flags = 0;
+
+	k_poll_signal_check(&ctx->poll, &signaled, &flags);
+	if (!signaled) {
+		return 0;
+	}
+
+	/* Events are ready, don't wait */
+	return -EALREADY;
 }
 
 static int nrf91_poll_update(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd,
@@ -870,33 +881,19 @@ static int nrf91_poll_update(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd,
 	int flags;
 	unsigned int signaled;
 
+	(*pev)++;
+
+	signaled = 0;
 	flags = 0;
+
 	k_poll_signal_check(&ctx->poll, &signaled, &flags);
 	if (!signaled) {
-		/* Let next polled socket use next k_poll_event */
-		(*pev)++;
 		return 0;
 	}
 
-	if (flags & ZSOCK_POLLNVAL) {
-		pfd->revents = ZSOCK_POLLNVAL;
-		goto out;
-	}
-	if ((flags & ZSOCK_POLLIN) && (pfd->events & ZSOCK_POLLIN)) {
-		pfd->revents |= ZSOCK_POLLIN;
-	}
-	if ((flags & ZSOCK_POLLOUT) && (pfd->events & ZSOCK_POLLOUT)) {
-		pfd->revents |= ZSOCK_POLLOUT;
-	}
-	if (flags & ZSOCK_POLLHUP) {
-		pfd->revents |= ZSOCK_POLLHUP;
-	}
-	if (flags & ZSOCK_POLLERR) {
-		pfd->revents |= ZSOCK_POLLERR;
-	}
-
-out:
+	pfd->revents = flags;
 	k_poll_signal_reset(&ctx->poll);
+
 	return 0;
 }
 
