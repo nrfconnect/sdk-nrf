@@ -34,6 +34,10 @@ static struct media_player *local_player;
 static ble_mcs_play_pause_cb play_pause_cb;
 #endif /* (CONFIG_BT_MCS) */
 
+#if (CONFIG_BT_MCC)
+static bool mcs_discover_called;
+#endif /* (CONFIG_BT_MCC) */
+
 #if (CONFIG_BT_VCP_VOL_CTLR)
 static struct bt_vcp_vol_ctlr *vcs_client_peer[CONFIG_BT_MAX_CONN];
 
@@ -187,14 +191,20 @@ static void mcc_discover_mcs_cb(struct bt_conn *conn, int err)
 
 	LOG_DBG("mcc_discover_mcs_cb");
 
+	if (!mcs_discover_called) {
+		return;
+	}
+
+	mcs_discover_called = false;
 	if (err) {
 		LOG_ERR("Discovery of MCS failed (%d)", err);
-	} else {
-		LOG_DBG("Discovery of MCS finished");
-		ret = ble_mcs_state_update(conn);
-		if (ret < 0 && ret != -EBUSY) {
-			LOG_WRN("Failed to update media state: %d", ret);
-		}
+		return;
+	}
+
+	LOG_DBG("Discovery of MCS finished");
+	ret = ble_mcs_state_update(conn);
+	if (ret < 0 && ret != -EBUSY) {
+		LOG_WRN("Failed to update media state: %d", ret);
 	}
 }
 
@@ -457,7 +467,16 @@ int ble_vcs_discover(struct bt_conn *conn, uint8_t channel_num)
 int ble_mcs_discover(struct bt_conn *conn)
 {
 #if (CONFIG_BT_MCC)
-	return bt_mcc_discover_mcs(conn, true);
+	int ret;
+
+	ret = bt_mcc_discover_mcs(conn, true);
+
+	if (ret) {
+		return ret;
+	}
+
+	mcs_discover_called = true;
+	return 0;
 #else
 	LOG_ERR("MCC not enabled");
 	return -ECANCELED;
