@@ -10,7 +10,7 @@
 #endif
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
+LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace chip;
 using namespace chip::app;
@@ -265,9 +265,6 @@ void BindingHandler::PrintBindingTable()
 			break;
 		case EMBER_UNUSED_BINDING:
 			LOG_INF("[%d] UNUSED", i++);
-			break;
-		case EMBER_MANY_TO_ONE_BINDING:
-			LOG_INF("[%d] MANY TO ONE", i++);
 			break;
 		default:
 			break;

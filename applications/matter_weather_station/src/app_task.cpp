@@ -13,10 +13,7 @@
 
 #include <DeviceInfoProviderImpl.h>
 
-#include <app-common/zap-generated/attribute-id.h>
-#include <app-common/zap-generated/attribute-type.h>
 #include <app-common/zap-generated/attributes/Accessors.h>
-#include <app-common/zap-generated/cluster-id.h>
 #include <app-common/zap-generated/cluster-objects.h>
 #include <app/clusters/ota-requestor/OTATestEventTriggerDelegate.h>
 #include <app/server/OnboardingCodesUtil.h>
@@ -31,8 +28,8 @@
 
 #include <dk_buttons_and_leds.h>
 #include <zephyr/drivers/sensor.h>
-#include <zephyr/logging/log.h>
 #include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 
 using namespace ::chip;
 using namespace ::chip::Credentials;
@@ -483,20 +480,20 @@ void AppTask::UpdatePowerSourceClusterState()
 	/* Value is expressed in half percent units ranging from 0 to 200. */
 	uint8_t batteryPercentage;
 	uint32_t batteryTimeRemaining;
-	Clusters::PowerSource::PowerSourceStatus batteryStatus;
-	Clusters::PowerSource::BatChargeLevel batteryChargeLevel;
+	Clusters::PowerSource::PowerSourceStatusEnum batteryStatus;
+	Clusters::PowerSource::BatChargeLevelEnum batteryChargeLevel;
 	bool batteryPresent;
-	Clusters::PowerSource::BatChargeState batteryCharged;
+	Clusters::PowerSource::BatChargeStateEnum batteryCharged;
 
 	if (voltage < 0) {
 		voltage = 0;
 		batteryPercentage = 0;
-		batteryStatus = Clusters::PowerSource::PowerSourceStatus::kUnavailable;
+		batteryStatus = Clusters::PowerSource::PowerSourceStatusEnum::kUnavailable;
 		batteryPresent = false;
 
 		LOG_ERR("Battery level measurement failed %d", voltage);
 	} else {
-		batteryStatus = Clusters::PowerSource::PowerSourceStatus::kActive;
+		batteryStatus = Clusters::PowerSource::PowerSourceStatusEnum::kActive;
 		batteryPresent = true;
 	}
 
@@ -512,17 +509,17 @@ void AppTask::UpdatePowerSourceClusterState()
 	batteryTimeRemaining = kFullBatteryOperationTime * batteryPercentage / kMaxBatteryPercentage;
 
 	if (voltage < kCriticalThresholdVoltageMv) {
-		batteryChargeLevel = Clusters::PowerSource::BatChargeLevel::kCritical;
+		batteryChargeLevel = Clusters::PowerSource::BatChargeLevelEnum::kCritical;
 	} else if (voltage < kWarningThresholdVoltageMv) {
-		batteryChargeLevel = Clusters::PowerSource::BatChargeLevel::kWarning;
+		batteryChargeLevel = Clusters::PowerSource::BatChargeLevelEnum::kWarning;
 	} else {
-		batteryChargeLevel = Clusters::PowerSource::BatChargeLevel::kOk;
+		batteryChargeLevel = Clusters::PowerSource::BatChargeLevelEnum::kOk;
 	}
 
 	if (BatteryCharged()) {
-		batteryCharged = Clusters::PowerSource::BatChargeState::kIsCharging;
+		batteryCharged = Clusters::PowerSource::BatChargeStateEnum::kIsCharging;
 	} else {
-		batteryCharged = Clusters::PowerSource::BatChargeState::kIsNotCharging;
+		batteryCharged = Clusters::PowerSource::BatChargeStateEnum::kIsNotCharging;
 	}
 
 	status = Clusters::PowerSource::Attributes::BatVoltage::Set(kPowerSourceEndpointId, voltage);
@@ -647,7 +644,7 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 		sIsThreadEnabled = ConnectivityMgr().IsThreadEnabled();
 		UpdateStatusLED();
 		break;
-	case DeviceEventType::kDnssdPlatformInitialized:
+	case DeviceEventType::kDnssdInitialized:
 #if CONFIG_CHIP_OTA_REQUESTOR
 		InitBasicOTARequestor();
 #endif

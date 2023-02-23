@@ -15,7 +15,7 @@
 
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
+LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 int SoftwareImagesSwapper::Swap(const ImageLocation &source, SoftwareImagesSwapDoneCallback swapDoneCallback)
 {
