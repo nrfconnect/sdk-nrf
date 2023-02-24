@@ -21,6 +21,7 @@ enum class AppEventType : uint8_t {
 	UpdateLedState,
 	IdentifyStart,
 	IdentifyStop,
+	NUSCommand,
 };
 
 enum class FunctionEvent : uint8_t { NoneSelected = 0, SoftwareUpdate = 0, FactoryReset, AdvertisingStart };

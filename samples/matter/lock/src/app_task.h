@@ -70,6 +70,11 @@ private:
 	bool mSwitchImagesTimerActive = false;
 #endif
 
+#ifdef CONFIG_CHIP_NUS
+	static void NUSLockCallback(void* context);
+	static void NUSUnlockCallback(void* context);
+#endif
+
 #ifdef CONFIG_THREAD_WIFI_SWITCHING_CLI_SUPPORT
 	static void RegisterSwitchCliCommand();
 #endif
