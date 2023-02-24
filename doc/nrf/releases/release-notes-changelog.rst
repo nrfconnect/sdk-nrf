@@ -260,7 +260,11 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* :ref:`lib_nrf_cloud` library:
+
+  * Added:
+
+    * A public header file :file:`nrf_cloud_defs.h` that contains common defines for interacting with nRF Cloud and the :ref:`lib_nrf_cloud` library.
 
 Libraries for NFC
 -----------------

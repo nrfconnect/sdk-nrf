@@ -9,6 +9,7 @@
 #include <nrf_modem_gnss.h>
 #include <cJSON.h>
 #include <modem/modem_info.h>
+#include <net/nrf_cloud_defs.h>
 #include <net/nrf_cloud_agps.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
@@ -21,8 +22,6 @@ LOG_MODULE_REGISTER(nrf_cloud_agps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 #include "nrf_cloud_codec.h"
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_agps_schema_v1.h"
-
-#define AGPS_JSON_TYPES_KEY		"types"
 
 extern void agps_print(enum nrf_cloud_agps_type type, void *data);
 
@@ -67,7 +66,7 @@ static int json_add_types_array(cJSON * const obj, enum nrf_cloud_agps_type *typ
 		return -EINVAL;
 	}
 
-	array = cJSON_AddArrayToObject(obj, AGPS_JSON_TYPES_KEY);
+	array = cJSON_AddArrayToObject(obj, NRF_CLOUD_JSON_KEY_AGPS_TYPES);
 	if (!array) {
 		return -ENOMEM;
 	}
@@ -77,7 +76,7 @@ static int json_add_types_array(cJSON * const obj, enum nrf_cloud_agps_type *typ
 	}
 
 	if (cJSON_GetArraySize(array) != type_count) {
-		cJSON_DeleteItemFromObject(obj, AGPS_JSON_TYPES_KEY);
+		cJSON_DeleteItemFromObject(obj, NRF_CLOUD_JSON_KEY_AGPS_TYPES);
 		return -ENOMEM;
 	}
 
@@ -179,7 +178,7 @@ int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 	cJSON *mask;
 
 	mask = cJSON_AddNumberToObjectCS(data_obj,
-					 NRF_CLOUD_JSON_ELEVATION_MASK_KEY,
+					 NRF_CLOUD_JSON_KEY_ELEVATION_MASK,
 					 CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK);
 	if (!mask) {
 		err = -ENOMEM;
