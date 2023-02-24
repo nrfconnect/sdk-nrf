@@ -387,8 +387,7 @@ int nrf_cloud_rest_send_location(struct nrf_cloud_rest_context *const rest_ctx,
 
 /**
  * @brief Send the device status to nRF Cloud as a device message. In addition to standard
- * message storage, the data (excluding nrf_cloud_svc_info) will also be stored in the
- * device's shadow.
+ * message storage, the data will also be stored in the device's shadow.
  *
  * @param[in,out] rest_ctx Context for communicating with nRF Cloud's REST API.
  * @param[in]     device_id Null-terminated, unique device ID registered with nRF Cloud.

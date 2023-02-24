@@ -476,7 +476,7 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 	bool control_found = false;
 	const enum nfsm_state current_state = nfsm_get_current_state();
 
-	LOG_INF("CC RX on topic %s: %s",
+	LOG_DBG("CC RX on topic %s: %s",
 		(const char *)nct_evt->param.cc->topic.ptr,
 		(const char *)nct_evt->param.cc->data.ptr);
 	handle_device_config_update(nct_evt, &config_found);
