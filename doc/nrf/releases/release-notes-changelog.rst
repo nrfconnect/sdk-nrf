@@ -394,6 +394,10 @@ Bluetooth samples
 
   * Fixed OOB pairing between these samples.
 
+* :ref:`direct_test_mode` sample:
+
+  * Fixed an issue where the antenna switching was not functional on the nRF5340 DK with the nRF21540 EK shield.
+
 Bluetooth mesh samples
 ----------------------
 

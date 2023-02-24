@@ -417,6 +417,13 @@ nRF5
 nRF5340
 =======
 
+.. rst-class:: v2-2-0
+
+NCSDK-20070: The :ref:`direct_test_mode` antenna switching does not work on the nRF5340 DK with the nRF21540 EK shield.
+  The antenna select DTM command does not have any effect because the GPIO pin which controls antenna is not forwarded to nRF5340DK network core.
+
+  **Workaround** Add a ``<&gpio1 6 0>`` entry in :file:`samples/bluetooth/direct_test_mode/conf/remote_shell/pin_fwd.dts`.
+
 .. rst-class:: v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0
 
 NCSDK-16856: Increased power consumption observed for the Low Power UART sample on nRF5340 DK
