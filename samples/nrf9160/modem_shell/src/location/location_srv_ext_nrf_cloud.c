@@ -10,7 +10,6 @@
 #include <net/nrf_cloud_pgps.h>
 #include <net/nrf_cloud_location.h>
 #include <modem/location.h>
-#include "nrf_cloud_codec.h"
 
 #include "mosh_print.h"
 #include "mosh_defines.h"
