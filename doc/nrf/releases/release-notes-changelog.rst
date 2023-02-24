@@ -353,6 +353,10 @@ Libraries for networking
 
     * The old API ``lwm2m_firmware_get_update_state_cb()``.
 
+  * Updated:
+
+    * The :c:func:`nrf_cloud_device_status_msg_encode` function now includes the service info when encoding the device status.
+
 Libraries for NFC
 -----------------
 

@@ -1639,11 +1639,7 @@ int nrf_cloud_device_status_msg_encode(const struct nrf_cloud_device_status *con
 		}
 	}
 
-	/* For now, exclude dev_status->svc since the info is not useful in a device message.
-	 * This can be included when support for writing serviceInfo to the shadow from DEVICE
-	 * messages is added: IRIS-5448
-	 */
-	err = info_encode(data_obj, dev_status->modem, NULL);
+	err = info_encode(data_obj, dev_status->modem, dev_status->svc);
 
 	return err;
 }
