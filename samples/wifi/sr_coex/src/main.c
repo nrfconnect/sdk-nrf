@@ -363,6 +363,9 @@ int main(void)
 	enum nrf_wifi_pta_wlan_op_band wlan_band;
 	bool separate_antennas = IS_ENABLED(CONFIG_COEX_SEP_ANTENNAS);
 #endif /* CONFIG_NRF700X_BT_COEX */
+#if !defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP) && !defined(CONFIG_COEX_SEP_ANTENNAS)
+	BUILD_ASSERT("Shared antenna support is not available with nRF7002 shields");
+#endif
 
 	memset(&context, 0, sizeof(context));
 
