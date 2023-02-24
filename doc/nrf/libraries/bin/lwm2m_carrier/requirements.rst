@@ -18,7 +18,7 @@ Following are some of the requirements and limitations of the application while 
 
    * SMS events (``AT+CNMI``).
    * Packet Domain events (``AT+CGEREP``).
-   * Extended signal quality events (``AT+CESQ``).
+   * Signal quality events (``AT%CESQ``).
    * ODIS events (``AT+ODISNTF``).
    * Universal Integrated Circuit Card events (``AT%XSIM``).
    * Network Time events (``AT%XTIME``).
