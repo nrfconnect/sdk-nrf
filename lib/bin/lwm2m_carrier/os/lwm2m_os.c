@@ -512,7 +512,7 @@ int lwm2m_os_download_connect(const char *host, const struct lwm2m_os_download_c
 		.pdn_id = cfg->pdn_id,
 	};
 
-	return download_client_connect(&http_downloader, host, &config);
+	return download_client_set_host(&http_downloader, host, &config);
 }
 
 int lwm2m_os_download_disconnect(void)

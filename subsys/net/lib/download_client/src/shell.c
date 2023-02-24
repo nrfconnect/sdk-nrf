@@ -96,7 +96,7 @@ static int cmd_dc_config_sec_tag(const struct shell *shell, size_t argc,
 	return 0;
 }
 
-static int cmd_dc_connect(const struct shell *shell, size_t argc, char **argv)
+static int cmd_dc_set_host(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
 
@@ -109,12 +109,10 @@ static int cmd_dc_connect(const struct shell *shell, size_t argc, char **argv)
 
 	memcpy(host, argv[1], MIN(strlen(argv[1]) + 1, sizeof(host)));
 
-	err = download_client_connect(&downloader, host, &config);
+	err = download_client_set_host(&downloader, host, &config);
 	if (err) {
-		shell_warn(shell, "download_client_connect() failed, err %d",
+		shell_warn(shell, "download_client_set_host() failed, err %d",
 			   err);
-	} else {
-		shell_print(shell, "Connected");
 	}
 
 	return 0;
@@ -167,6 +165,31 @@ static int cmd_dc_download(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
+static int cmd_dc_get(const struct shell *shell, size_t argc, char **argv)
+{
+	int err;
+
+	if (argc != 3) {
+		shell_warn(shell, "usage: dc get <url> <file>");
+		return 0;
+	}
+
+	shell_instance = shell;
+
+	memcpy(host, argv[1], MIN(strlen(argv[1]) + 1, sizeof(host)));
+	memcpy(file, argv[2], MIN(strlen(argv[1]) + 1, sizeof(file)));
+
+	err = download_client_get(&downloader, host, &config, file, 0);
+
+	if (err) {
+		shell_warn(shell, "download_client_get() failed, err %d",
+			   err);
+	} else {
+		shell_print(shell, "Downloading");
+	}
+	return 0;
+}
+
 static int cmd_dc_disconnect(const struct shell *shell, size_t argc,
 			     char **argv)
 {
@@ -181,12 +204,13 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_config,
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_dc,
 	SHELL_CMD(config, &sub_config, "Configure", cmd_dc_config),
-	SHELL_CMD(connect, NULL, "Connect to a host", cmd_dc_connect),
+	SHELL_CMD(set_host, NULL, "Set a target host", cmd_dc_set_host),
 	SHELL_CMD(disconnect, NULL, "Disconnect from a host",
 		  cmd_dc_disconnect),
 	SHELL_CMD(download, NULL, "Download a file", cmd_dc_download),
 	SHELL_CMD(pause, NULL, "Pause download", cmd_dc_pause),
 	SHELL_CMD(resume, NULL, "Resume download", cmd_dc_resume),
+	SHELL_CMD(get, NULL, "Download", cmd_dc_get),
 	SHELL_SUBCMD_SET_END
 );
 

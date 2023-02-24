@@ -319,7 +319,7 @@ static  int dfu_download_start(const char *host, const char *file, int sec_tag,
 
 	socket_retries_left = CONFIG_SLM_DFU_SOCKET_RETRIES;
 	strncpy(file_buf, file, sizeof(file_buf));
-	err = download_client_connect(&dlc, host, &config);
+	err = download_client_set_host(&dlc, host, &config);
 	if (err != 0) {
 		return err;
 	}
