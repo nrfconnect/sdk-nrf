@@ -88,7 +88,7 @@ static void dl_coap_start(struct download_client *client)
 	err = download_client_init(client, download_client_callback);
 	zassert_ok(err, NULL);
 
-	err = download_client_connect(client, host, &config);
+	err = download_client_set_host(client, host, &config);
 	zassert_ok(err, NULL);
 
 	err = download_client_start(client, "no.file", 0);

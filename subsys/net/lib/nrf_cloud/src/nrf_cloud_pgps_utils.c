@@ -476,12 +476,7 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 		.set_tls_hostname = (sec_tag != -1),
 	};
 
-	err = download_client_connect(&dlc, host, &config);
-	if (err != 0) {
-		return err;
-	}
-
-	err = download_client_start(&dlc, file, 0);
+	err = download_client_get(&dlc, host, &config, file, 0);
 	if (err != 0) {
 		download_client_disconnect(&dlc);
 		return err;

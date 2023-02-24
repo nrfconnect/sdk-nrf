@@ -277,14 +277,7 @@ static void download_with_offset(struct k_work *unused)
 		return;
 	}
 
-	err = download_client_connect(&dlc, dlc.host, &dlc.config);
-	if (err != 0) {
-		LOG_ERR("%s failed to connect with error %d", __func__, err);
-		send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
-		return;
-	}
-
-	err = download_client_start(&dlc, dlc.file, offset);
+	err = download_client_get(&dlc, dlc.host, &dlc.config, dlc.file, offset);
 	if (err != 0) {
 		LOG_ERR("%s failed to start download  with error %d", __func__,
 			err);
@@ -427,14 +420,9 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	}
 #endif /* PM_S1_ADDRESS */
 
-	err = download_client_connect(&dlc, host, &config);
-	if (err != 0) {
-		return err;
-	}
-
 	img_type_expected = expected_type;
 
-	err = download_client_start(&dlc, file_buf_ptr, 0);
+	err = download_client_get(&dlc, host, &config, file_buf_ptr, 0);
 	if (err != 0) {
 		download_client_disconnect(&dlc);
 		return err;

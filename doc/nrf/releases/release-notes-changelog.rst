@@ -540,6 +540,11 @@ Libraries for networking
 
   * Removed the old API ``lwm2m_firmware_get_update_state_cb()``.
 
+* :ref:`lib_download_client` library:
+
+  * Refactored the :c:func:`download_client_connect` function to :c:func:`download_client_set_host` and made it non-blocking.
+  * Added the :c:func:`download_client_get` function that combines the functionality of functions :c:func:`download_client_set_host`, :c:func:`download_client_start`, and :c:func:`download_client_disconnect`.
+
 * :ref:`lib_lwm2m_location_assistance` library:
 
   * Updated:

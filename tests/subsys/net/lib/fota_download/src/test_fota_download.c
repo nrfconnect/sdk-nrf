@@ -115,7 +115,7 @@ int download_client_init(struct download_client *client,
 	return 0;
 }
 
-int download_client_connect(struct download_client *client, const char *host,
+int download_client_set_host(struct download_client *client, const char *host,
 			    const struct download_client_cfg *config)
 {
 	if (fail_on_connect == true) {
@@ -123,6 +123,29 @@ int download_client_connect(struct download_client *client, const char *host,
 	}
 	/* Mark connection */
 	client->fd = 1;
+
+	return 0;
+}
+
+int download_client_get(struct download_client *client, const char *host,
+			const struct download_client_cfg *config, const char *file, size_t from)
+{
+	if (fail_on_connect == true) {
+		return -1;
+	}
+	/* Mark connection */
+	client->fd = 1;
+
+	download_client_start_file = file;
+
+	if (fail_on_start == true) {
+		return -1;
+	}
+
+	if (from == ARBITRARY_IMAGE_OFFSET) {
+		download_with_offset_success = true;
+		k_sem_give(&download_with_offset_sem);
+	}
 
 	return 0;
 }
