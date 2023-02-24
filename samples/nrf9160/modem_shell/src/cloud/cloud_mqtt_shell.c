@@ -83,7 +83,7 @@ static bool cloud_shell_parse_mosh_cmd(const char *buf_in)
 	}
 
 	/* MoSh commands are identified by checking if appId equals "MODEM_SHELL" */
-	app_id = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, "appId");
+	app_id = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, NRF_CLOUD_JSON_APPID_KEY);
 	if (cJSON_IsString(app_id) && (app_id->valuestring != NULL)) {
 		if (strcmp(app_id->valuestring, "MODEM_SHELL") != 0) {
 			ret = false;
@@ -92,7 +92,7 @@ static bool cloud_shell_parse_mosh_cmd(const char *buf_in)
 	}
 
 	/* The value of attribute "data" contains the actual command */
-	mosh_cmd = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, "data");
+	mosh_cmd = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, NRF_CLOUD_JSON_DATA_KEY);
 	if (cJSON_IsString(mosh_cmd) && (mosh_cmd->valuestring != NULL)) {
 		mosh_print("%s", mosh_cmd->valuestring);
 		if (strlen(mosh_cmd->valuestring) <= CLOUD_CMD_MAX_LENGTH) {

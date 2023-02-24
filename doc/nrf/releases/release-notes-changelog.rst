@@ -177,7 +177,12 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
-|no_changes_yet_note|
+* :ref:`modem_shell_application` sample:
+
+  * Updated:
+
+    * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
+      Remove the inclusion of the file :file:`nrf_cloud_codec.h`.
 
 Peripheral samples
 ------------------
