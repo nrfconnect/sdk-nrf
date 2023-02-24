@@ -25,6 +25,7 @@
 #include "le_audio.h"
 #include "audio_datapath.h"
 #include "audio_sync_timer.h"
+#include "sw_codec_select.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(streamctrl, CONFIG_STREAMCTRL_LOG_LEVEL);
@@ -121,6 +122,7 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 
 	int ret;
 	struct ble_iso_data *iso_received = NULL;
+	static size_t last_data_size;
 
 #if (CONFIG_AUDIO_DEV == GATEWAY)
 	switch (channel_index) {
@@ -170,6 +172,11 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 	ret = data_fifo_pointer_first_vacant_get(&ble_fifo_rx, (void *)&iso_received, K_NO_WAIT);
 	ERR_CHK_MSG(ret, "Unable to get FIFO pointer");
 
+	if ((data_size != ENC_MAX_FRAME_SIZE) && (data_size != last_data_size)) {
+		LOG_WRN("Data length mismatch: %d (received), %d (codec)", data_size,
+			ENC_MAX_FRAME_SIZE);
+	}
+
 	if (data_size > ARRAY_SIZE(iso_received->data)) {
 		ERR_CHK_MSG(-ENOMEM, "Data size too large for buffer");
 		return;
@@ -185,6 +192,8 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 	ret = data_fifo_block_lock(&ble_fifo_rx, (void *)&iso_received,
 				   sizeof(struct ble_iso_data));
 	ERR_CHK_MSG(ret, "Failed to lock block");
+
+	last_data_size = data_size;
 }
 
 /* Thread to receive data from BLE through a k_fifo and send to audio datapath */
