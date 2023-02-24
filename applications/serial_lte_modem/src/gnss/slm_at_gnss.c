@@ -824,7 +824,7 @@ static bool handle_cloud_cmd(const char *buf_in)
 		goto end;
 	}
 
-	app_id = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, "appId");
+	app_id = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, NRF_CLOUD_JSON_APPID_KEY);
 	if (cJSON_GetStringValue(app_id) == NULL) {
 		goto end;
 	}
@@ -832,10 +832,11 @@ static bool handle_cloud_cmd(const char *buf_in)
 	/* Format expected from nrf cloud:
 	 * {"appId":"MODEM", "messageType":"CMD", "data":"<AT command>"}
 	 */
-	if (strcmp(app_id->valuestring, "MODEM") == 0) {
-		msg_type = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, "messageType");
+	if (strcmp(app_id->valuestring, NRF_CLOUD_JSON_APPID_VAL_MODEM) == 0) {
+		msg_type = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json,
+							    NRF_CLOUD_JSON_MSG_TYPE_KEY);
 		if (cJSON_GetStringValue(msg_type) != NULL) {
-			if (strcmp(msg_type->valuestring, "CMD") != 0) {
+			if (strcmp(msg_type->valuestring, NRF_CLOUD_JSON_MSG_TYPE_VAL_CMD) != 0) {
 				goto end;
 			}
 		}
@@ -843,7 +844,7 @@ static bool handle_cloud_cmd(const char *buf_in)
 		const cJSON *at_cmd = NULL;
 
 		/* The value of attribute "data" contains the actual command */
-		at_cmd = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, "data");
+		at_cmd = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, NRF_CLOUD_JSON_DATA_KEY);
 		if (cJSON_GetStringValue(at_cmd) != NULL) {
 			LOG_INF("MODEM CMD %s", at_cmd->valuestring);
 			strcpy(at_buf, at_cmd->valuestring);
@@ -853,10 +854,12 @@ static bool handle_cloud_cmd(const char *buf_in)
 	/* Format expected from nrf cloud:
 	 * {"appId":"DEVICE", "messageType":"DISCON"}
 	 */
-	} else if (strcmp(app_id->valuestring, "DEVICE") == 0) {
-		msg_type = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, "messageType");
+	} else if (strcmp(app_id->valuestring, NRF_CLOUD_JSON_APPID_VAL_DEVICE) == 0) {
+		msg_type = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json,
+							    NRF_CLOUD_JSON_MSG_TYPE_KEY);
 		if (cJSON_GetStringValue(msg_type) != NULL) {
-			if (strcmp(msg_type->valuestring, "DISCON") == 0) {
+			if (strcmp(msg_type->valuestring,
+			    NRF_CLOUD_JSON_MSG_TYPE_VAL_DISCONNECT) == 0) {
 				LOG_INF("DEVICE DISCON");
 				/* No action required, handled in lib_nrf_cloud */
 				ret = true;

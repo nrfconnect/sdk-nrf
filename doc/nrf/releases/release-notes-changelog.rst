@@ -139,7 +139,9 @@ nRF9160: Asset Tracker v2
 nRF9160: Serial LTE modem
 -------------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
 
 nRF5340 Audio
 -------------
