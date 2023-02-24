@@ -658,6 +658,7 @@ int download_client_init(struct download_client *const client,
 		return -EINVAL;
 	}
 
+	memset(client, 0, sizeof(*client));
 	client->fd = -1;
 	client->callback = callback;
 	k_sem_init(&client->wait_for_download, 0, 1);
@@ -685,9 +686,9 @@ int download_client_connect(struct download_client *client, const char *host,
 		return -EINVAL;
 	}
 
-	if (client->fd != -1) {
+	if (client->fd != -1 || client->host) {
 		/* Already connected */
-		return 0;
+		return -EALREADY;
 	}
 
 	if (config->frag_size_override > CONFIG_DOWNLOAD_CLIENT_BUF_SIZE) {
