@@ -16,6 +16,7 @@
 #include <ctype.h>
 #include <host_rpu_sys_if.h>
 #include <fmac_structs.h>
+#include <queue.h>
 
 struct nrf_wifi_ctx_zep {
 	struct wifi_nrf_fmac_priv *fmac_priv;

@@ -311,7 +311,6 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 				  size_t argc,
 				  const char *argv[])
 {
-	struct vif_ctx_zep *vif_ctx_zep = NULL;
 	int vif_index = -1;
 	int queue_index = -1;
 	/* TODO: Get this from shell when AP mode is supported */
@@ -341,7 +340,6 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 		return -ENOEXEC;
 	}
 
-	vif_ctx_zep = &ctx->vif_ctx_zep[vif_index];
 	fmac_dev_ctx = ctx->rpu_ctx;
 	queue = fmac_dev_ctx->tx_config.data_pending_txq[peer_index][queue_index];
 
@@ -366,6 +364,8 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 			i,
 			fmac_dev_ctx->tx_config.outstanding_descs[i]);
 	}
+
+	return 0;
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
