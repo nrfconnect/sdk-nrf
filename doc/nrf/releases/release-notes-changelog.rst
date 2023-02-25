@@ -395,6 +395,10 @@ Other samples
     * A workaround for the hardware `Errata 257`_ of the nRF52811 chip.
     * A workaround for the hardware `Errata 117`_ of the nRF5340 chip.
 
+* :ref:`802154_sniffer` sample:
+
+  * Added the 802.15.4 sniffer sample.
+
 Drivers
 =======
 

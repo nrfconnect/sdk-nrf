@@ -165,6 +165,7 @@ Kconfig*                                  @tejlmand
 /samples/peripheral/radio_test/           @KAGA164 @maje-emb
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/peripheral/802154_phy_test/      @czeslawmakarski
+/samples/peripheral/802154_sniffer/       @e-rk
 /samples/tfm/                             @SebastianBoe @joerchan
 /samples/zigbee/                          @tomchy @sebastiandraus
 /samples/CMakeLists.txt                   @tejlmand
