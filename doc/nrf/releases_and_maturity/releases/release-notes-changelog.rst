@@ -438,6 +438,10 @@ Other samples
 
   * Aligned the timer's configuration to the new nrfx API.
 
+* :ref:`802154_sniffer` sample:
+
+  * Added the 802.15.4 sniffer sample.
+
 Drivers
 =======
 

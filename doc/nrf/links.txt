@@ -1247,3 +1247,5 @@
 .. _`IEEE 802.11 Working Group`: https://www.ieee802.org/11/
 
 .. _`Samsung SmartThings integration with Matter`: https://support.smartthings.com/hc/en-us/articles/11219700390804-SmartThings-x-Matter-Integration-
+
+.. _`Wireshark`: https://www.wireshark.org
