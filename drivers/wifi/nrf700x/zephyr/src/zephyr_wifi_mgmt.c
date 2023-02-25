@@ -317,6 +317,8 @@ int wifi_nrf_get_power_save_config(const struct device *dev,
 
 	vif_ctx_zep->ps_info = ps_config;
 
+	vif_ctx_zep->ps_config_info_evnt = false;
+
 	status = wifi_nrf_fmac_get_power_save_info(rpu_ctx_zep->rpu_ctx,
 						   vif_ctx_zep->vif_idx);
 
@@ -325,8 +327,6 @@ int wifi_nrf_get_power_save_config(const struct device *dev,
 			__func__);
 		goto out;
 	}
-
-	vif_ctx_zep->ps_config_info_evnt = false;
 
 	do {
 		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv,
