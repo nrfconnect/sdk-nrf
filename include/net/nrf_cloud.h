@@ -397,10 +397,13 @@ struct nrf_cloud_evt {
 	struct nrf_cloud_topic topic;
 };
 
-/** @brief Structure used to send pre-encoded data to nRF Cloud. */
+/** @brief Structure used to send data to nRF Cloud. */
 struct nrf_cloud_tx_data {
-	/** Data that is to be published. */
+	/** Object containing data to be published */
+	struct nrf_cloud_obj *obj;
+	/** Pre-encoded data that is to be published if an object is not provided */
 	struct nrf_cloud_data data;
+
 	/** Endpoint topic type published to. */
 	enum nrf_cloud_topic_type topic_type;
 	/** Quality of Service of the message. */
@@ -739,13 +742,14 @@ int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param);
 /**
  * @brief Send data to nRF Cloud.
  *
- * This API is used to send pre-encoded data to nRF Cloud.
+ * This API is used to data to nRF Cloud.
  *
  * @param[in] msg Pointer to a structure containing data and topic
  *                information.
  *
  * @retval 0       If successful.
  * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
+ * @retval -EIO Error; failed to encode data.
  * @return A negative value indicates an error.
  */
 int nrf_cloud_send(const struct nrf_cloud_tx_data *msg);
