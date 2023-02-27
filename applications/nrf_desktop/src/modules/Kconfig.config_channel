@@ -57,8 +57,13 @@ comment "DFU"
 config DESKTOP_CONFIG_CHANNEL_DFU_ENABLE
 	bool "DFU over the config channel"
 	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
+	select SOC_FLASH_NRF_EMULATE_ONE_BYTE_WRITE_ACCESS if \
+	       !PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	help
 	  This option enables DFU over the config channel.
+	  The option automatically enables 8-bit write block size emulation to
+	  ensure that update images with size unaligned to word size can be
+	  handled while writing to SoC FLASH.
 
 if DESKTOP_CONFIG_CHANNEL_DFU_ENABLE
 
