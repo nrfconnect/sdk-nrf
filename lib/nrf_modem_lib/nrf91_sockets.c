@@ -803,7 +803,6 @@ static struct nrf_sock_ctx *find_ctx(int fd)
 
 static void pollcb(struct nrf_pollfd *pollfd)
 {
-	int flags;
 	struct nrf_sock_ctx *ctx;
 
 	ctx = find_ctx(pollfd->fd);
@@ -811,27 +810,7 @@ static void pollcb(struct nrf_pollfd *pollfd)
 		return;
 	}
 
-	if (pollfd->revents & NRF_POLLNVAL) {
-		flags = ZSOCK_POLLNVAL;
-		goto signal;
-	}
-
-	flags = 0;
-	if ((pollfd->revents & NRF_POLLIN) && (pollfd->events & NRF_POLLIN)) {
-		flags |= ZSOCK_POLLIN;
-	}
-	if ((pollfd->revents & NRF_POLLOUT) && (pollfd->events & NRF_POLLOUT)) {
-		flags |= ZSOCK_POLLOUT;
-	}
-	if (pollfd->revents & NRF_POLLHUP) {
-		flags |= ZSOCK_POLLHUP;
-	}
-	if (pollfd->revents & NRF_POLLERR) {
-		flags |= ZSOCK_POLLERR;
-	}
-
-signal:
-	k_poll_signal_raise(&ctx->poll, flags);
+	k_poll_signal_raise(&ctx->poll, pollfd->revents);
 }
 
 static int nrf91_poll_prepare(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd,
@@ -892,7 +871,6 @@ static int nrf91_poll_update(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd,
 	}
 
 	pfd->revents = flags;
-	k_poll_signal_reset(&ctx->poll);
 
 	return 0;
 }
