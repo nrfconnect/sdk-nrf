@@ -1478,6 +1478,28 @@ ZTEST(nrf_cloud_test, test_cloud_send_invalid_topic_type)
 	zassert_equal(-ENODATA, ret, "return should be -ENODATA with invalid topic type");
 }
 
+/* Verify that nrf_cloud_send will fail if object encoding fails */
+ZTEST(nrf_cloud_test, test_cloud_send_obj_encode_fail)
+{
+	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the idle state (uninitialized) at the start of test");
+
+	NRF_CLOUD_OBJ_JSON_DEFINE(tx_obj);
+
+	/* Message data */
+	struct nrf_cloud_tx_data tx = {
+		.topic_type = 0,
+		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.obj = &tx_obj
+	};
+
+	nrf_cloud_obj_cloud_encode_fake.custom_fake = fake_nrf_cloud_obj_cloud_encode__fails;
+
+	int ret = nrf_cloud_send(&tx);
+
+	zassert_equal(-EIO, ret, "return should be -EIO when obj encode fails");
+}
+
 #if defined(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD)
 
 /* TEST START_CONNECTION_POLL */

@@ -193,6 +193,10 @@ int get_string_from_array(const cJSON * const array, const int index,
 int get_string_from_obj(const cJSON * const obj, const char *const key,
 			char **string_out);
 
+/** @brief Get the number value of the specified key in the cJSON object. */
+int get_num_from_obj(const cJSON *const obj, const char *const key,
+		     double *num_out);
+
 /** @brief Send the cJSON object to nRF Cloud on the d2c topic */
 int json_send_to_cloud(cJSON * const request);
 

@@ -17,3 +17,11 @@ int cJSON_GetArraySize(const cJSON *array);
 char *cJSON_PrintUnformatted(const cJSON *item);
 void cJSON_Init(void);
 void cJSON_FreeString(char *ptr);
+cJSON *cJSON_AddStringToObjectCS(cJSON * const object, const char * const name,
+	const char * const string);
+cJSON *cJSON_AddNumberToObjectCS(cJSON * const object, const char * const name,
+	const double number);
+void cJSON_DeleteItemFromObject(cJSON *object, const char *string);
+cJSON *cJSON_AddStringToObject(cJSON * const object, const char * const name,
+	const char * const string);
+cJSON *cJSON_AddObjectToObject(cJSON * const object, const char * const name);
