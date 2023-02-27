@@ -494,11 +494,13 @@ static int change_active_brdcast_src(void)
 {
 	int ret;
 
-	if (active_stream.stream->ep->status.state == BT_BAP_EP_STATE_STREAMING) {
-		ret = bt_bap_broadcast_sink_stop(broadcast_sink);
-		if (ret) {
-			LOG_ERR("Failed to stop broadcast sink: %d", ret);
-			return ret;
+	if (active_stream.stream != NULL && active_stream.stream->ep != NULL) {
+		if (active_stream.stream->ep->status.state == BT_BAP_EP_STATE_STREAMING) {
+			ret = bt_bap_broadcast_sink_stop(broadcast_sink);
+			if (ret) {
+				LOG_ERR("Failed to stop broadcast sink: %d", ret);
+				return ret;
+			}
 		}
 	}
 
@@ -578,6 +580,10 @@ int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pr
 
 int le_audio_volume_up(void)
 {
+	if (active_stream.stream == NULL || active_stream.stream->ep == NULL) {
+		return -EFAULT;
+	}
+
 	if (active_stream.stream->ep->status.state != BT_BAP_EP_STATE_STREAMING) {
 		return -ECANCELED;
 	}
@@ -587,6 +593,10 @@ int le_audio_volume_up(void)
 
 int le_audio_volume_down(void)
 {
+	if (active_stream.stream == NULL || active_stream.stream->ep == NULL) {
+		return -EFAULT;
+	}
+
 	if (active_stream.stream->ep->status.state != BT_BAP_EP_STATE_STREAMING) {
 		return -ECANCELED;
 	}
@@ -596,6 +606,10 @@ int le_audio_volume_down(void)
 
 int le_audio_volume_mute(void)
 {
+	if (active_stream.stream == NULL || active_stream.stream->ep == NULL) {
+		return -EFAULT;
+	}
+
 	if (active_stream.stream->ep->status.state != BT_BAP_EP_STATE_STREAMING) {
 		return -ECANCELED;
 	}
