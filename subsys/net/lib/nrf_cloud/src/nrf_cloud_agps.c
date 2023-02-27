@@ -550,6 +550,7 @@ static size_t get_next_agps_element(struct nrf_cloud_apgs_element *element,
 		break;
 	default:
 		LOG_DBG("Unhandled A-GPS data type: %d", element->type);
+		elements_left_to_process = 0;
 		return 0;
 	}
 
