@@ -951,6 +951,29 @@ int json_send_to_cloud(cJSON *const request)
 }
 #endif /* CONFIG_NRF_CLOUD_MQTT */
 
+int nrf_cloud_pvt_data_encode(const struct nrf_cloud_gnss_pvt * const pvt,
+			      cJSON * const pvt_data_obj)
+{
+	if (!pvt || !pvt_data_obj) {
+		return -EINVAL;
+	}
+
+	if (json_add_num_cs(pvt_data_obj, NRF_CLOUD_JSON_GNSS_PVT_KEY_LON, pvt->lon) ||
+	    json_add_num_cs(pvt_data_obj, NRF_CLOUD_JSON_GNSS_PVT_KEY_LAT, pvt->lat) ||
+	    json_add_num_cs(pvt_data_obj, NRF_CLOUD_JSON_GNSS_PVT_KEY_ACCURACY, pvt->accuracy) ||
+	    (pvt->has_alt &&
+	     json_add_num_cs(pvt_data_obj, NRF_CLOUD_JSON_GNSS_PVT_KEY_ALTITUDE, pvt->alt)) ||
+	    (pvt->has_speed &&
+	     json_add_num_cs(pvt_data_obj, NRF_CLOUD_JSON_GNSS_PVT_KEY_SPEED, pvt->speed)) ||
+	    (pvt->has_heading &&
+	     json_add_num_cs(pvt_data_obj, NRF_CLOUD_JSON_GNSS_PVT_KEY_HEADING, pvt->heading))) {
+		LOG_DBG("Failed to encode PVT data");
+		return -ENOMEM;
+	}
+
+	return 0;
+}
+
 static int nrf_cloud_encode_service_info_fota(const struct nrf_cloud_svc_info_fota *const fota,
 					      cJSON *const svc_inf_obj)
 {
@@ -1802,10 +1825,14 @@ int get_string_from_array(const cJSON *const array, const int index,
 {
 	__ASSERT_NO_MSG(string_out != NULL);
 
+	if (!array) {
+		return -ENOENT;
+	}
+
 	cJSON *item = cJSON_GetArrayItem(array, index);
 
 	if (!cJSON_IsString(item)) {
-		return -EINVAL;
+		return item ? -ENOMSG : -ENODEV;
 	}
 
 	*string_out = item->valuestring;
@@ -1818,13 +1845,37 @@ int get_string_from_obj(const cJSON *const obj, const char *const key,
 {
 	__ASSERT_NO_MSG(string_out != NULL);
 
+	if (!obj) {
+		return -ENOENT;
+	}
+
 	cJSON *item = cJSON_GetObjectItem(obj, key);
 
 	if (!cJSON_IsString(item)) {
-		return -EINVAL;
+		return item ? -ENOMSG : -ENODEV;
 	}
 
 	*string_out = item->valuestring;
+
+	return 0;
+}
+
+int get_num_from_obj(const cJSON *const obj, const char *const key,
+		     double *num_out)
+{
+	__ASSERT_NO_MSG(num_out != NULL);
+
+	if (!obj) {
+		return -ENOENT;
+	}
+
+	cJSON *item = cJSON_GetObjectItem(obj, key);
+
+	if (!cJSON_IsNumber(item)) {
+		return item ? -ENOMSG : -ENODEV;
+	}
+
+	*num_out = item->valuedouble;
 
 	return 0;
 }
@@ -2381,29 +2432,6 @@ bool nrf_cloud_disconnection_request_decode(const char *const buf)
 
 	cJSON_Delete(discon_request_obj);
 	return ret;
-}
-
-int nrf_cloud_pvt_data_encode(const struct nrf_cloud_gnss_pvt * const pvt,
-			      cJSON * const pvt_data_obj)
-{
-	if (!pvt || !pvt_data_obj) {
-		return -EINVAL;
-	}
-
-	if (json_add_num_cs(pvt_data_obj, NRF_CLOUD_JSON_GNSS_PVT_KEY_LON, pvt->lon) ||
-	    json_add_num_cs(pvt_data_obj, NRF_CLOUD_JSON_GNSS_PVT_KEY_LAT, pvt->lat) ||
-	    json_add_num_cs(pvt_data_obj, NRF_CLOUD_JSON_GNSS_PVT_KEY_ACCURACY, pvt->accuracy) ||
-	    (pvt->has_alt &&
-	     json_add_num_cs(pvt_data_obj, NRF_CLOUD_JSON_GNSS_PVT_KEY_ALTITUDE, pvt->alt)) ||
-	    (pvt->has_speed &&
-	     json_add_num_cs(pvt_data_obj, NRF_CLOUD_JSON_GNSS_PVT_KEY_SPEED, pvt->speed)) ||
-	    (pvt->has_heading &&
-	     json_add_num_cs(pvt_data_obj, NRF_CLOUD_JSON_GNSS_PVT_KEY_HEADING, pvt->heading))) {
-		LOG_DBG("Failed to encode PVT data");
-		return -ENOMEM;
-	}
-
-	return 0;
 }
 
 int nrf_cloud_gnss_msg_json_encode(const struct nrf_cloud_gnss_data * const gnss,

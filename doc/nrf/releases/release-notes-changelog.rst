@@ -315,6 +315,12 @@ Libraries for networking
 
   * Added explanation of text versus dictionary logs.
 
+* :ref:`lib_nrf_cloud` library:
+
+  * Added:
+
+    * :c:struct:`nrf_cloud_obj` structure and functions for encoding and decoding nRF Cloud data.
+
 Libraries for NFC
 -----------------
 
