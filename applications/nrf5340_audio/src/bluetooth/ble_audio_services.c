@@ -479,8 +479,7 @@ int ble_mcs_discover(struct bt_conn *conn)
 	int ret;
 	uint8_t idx = bt_conn_index(conn);
 
-	if (mcp_mcs_disc_status[idx] == FINISHED ||
-	    mcp_mcs_disc_status[idx] == IN_PROGRESS) {
+	if (mcp_mcs_disc_status[idx] == FINISHED || mcp_mcs_disc_status[idx] == IN_PROGRESS) {
 		return -EALREADY;
 	}
 

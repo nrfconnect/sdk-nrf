@@ -30,6 +30,19 @@ config AUDIO_FRAME_DURATION_US
 	help
 	  Audio frame duration in µs.
 
+config AUDIO_MIN_PRES_DLY_US
+	int "The minimum presentation delay"
+	default 4000
+	help
+	  The minimum presentation delay in micro seconds determined by
+	  the audio system processing and the minimum buffering.
+
+config AUDIO_MAX_PRES_DLY_US
+	int "The maximum presentation delay"
+	default 60000
+	help
+	  The maximum presentation delay in micro seconds.
+
 choice AUDIO_SAMPLE_RATE
 	prompt "Audio sample rate"
 	default AUDIO_SAMPLE_RATE_16000_HZ if BT_AUDIO_BROADCAST_16_2_1 || BT_AUDIO_BROADCAST_16_2_2 || BT_AUDIO_UNICAST_16_2_1
