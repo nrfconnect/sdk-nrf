@@ -41,7 +41,7 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define BLK_PERIOD_US 1000
 
 /* Total sample FIFO period in microseconds */
-#define FIFO_SMPL_PERIOD_US (MAX_PRES_DLY_US * 2)
+#define FIFO_SMPL_PERIOD_US (CONFIG_AUDIO_MAX_PRES_DLY_US * 2)
 #define FIFO_NUM_BLKS NUM_BLKS(FIFO_SMPL_PERIOD_US)
 #define MAX_FIFO_SIZE (FIFO_NUM_BLKS * BLK_SIZE_SAMPLES(CONFIG_AUDIO_SAMPLE_RATE_HZ) * 2)
 
@@ -725,7 +725,7 @@ static void audio_datapath_i2s_stop(void)
 
 int audio_datapath_pres_delay_us_set(uint32_t delay_us)
 {
-	if (delay_us > MAX_PRES_DLY_US || delay_us < MIN_PRES_DLY_US) {
+	if (!IN_RANGE(delay_us, CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US)) {
 		LOG_WRN("Presentation delay not supported: %d", delay_us);
 		return -EINVAL;
 	}
@@ -929,7 +929,7 @@ int audio_datapath_init(void)
 	audio_i2s_blk_comp_cb_register(audio_datapath_i2s_blk_complete);
 	ctrl_blk.datapath_initialized = true;
 	ctrl_blk.drift_comp.hfclkaudio_comp_enabled = true;
-	ctrl_blk.pres_comp.pres_delay_us = DEFAULT_PRES_DLY_US;
+	ctrl_blk.pres_comp.pres_delay_us = CONFIG_BT_AUDIO_PRESENTATION_DELAY_US;
 
 	return 0;
 }

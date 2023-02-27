@@ -369,6 +369,58 @@ config BT_AUDIO_PACKING_INTERLEAVED
 	help
 	  ISO channels can either be interleaved or sequentially packed; sequential is the default one.
 
+config BT_AUDIO_PREFERRED_MIN_PRES_DLY_US
+	int "The preferred minimum presentation delay"
+	range AUDIO_MIN_PRES_DLY_US AUDIO_MAX_PRES_DLY_US
+	default 10000
+	help
+	  The preferred minimum presentation delay in micro seconds. This can not
+	  be less than the absolute minimum presentation delay.
+
+config BT_AUDIO_PREFERRED_MAX_PRES_DLY_US
+	int "The preferred maximum presentation delay"
+	range BT_AUDIO_PREFERRED_MIN_PRES_DLY_US AUDIO_MAX_PRES_DLY_US
+	default 40000
+	help
+	  The preferred maximum presentation delay in micro seconds. This can not
+	  be larger than the absolute maximum presentation delay.
+
+choice	BT_AUDIO_PRES_DLY_SRCH
+	prompt "Default search mode for the presentation delay"
+	default BT_AUDIO_PRES_DELAY_SRCH_PREF_MIN
+	help
+	  Set the default search mode for the presentation delay.
+
+config BT_AUDIO_PRES_DELAY_SRCH_MIN
+	bool "Largest minimum delay over all audio receivers"
+	help
+	  Search for the largest minimum delay over all audio receivers.
+
+config BT_AUDIO_PRES_DELAY_SRCH_MAX
+	bool "Smallest maximum delay over all audio receivers"
+	help
+	  Search for the smallest maximum delay over all audio receivers.
+
+config BT_AUDIO_PRES_DELAY_SRCH_PREF_MIN
+	bool "Largest minimum preferred delay over all audio receivers"
+	help
+	  Search for the largest minimum preferred delay over all audio receivers.
+
+config BT_AUDIO_PRES_DELAY_SRCH_PREF_MAX
+	bool "Smallest maximum preferred delay over all audio receivers"
+	help
+	  Search for the smallest maximum preferred delay over all audio receivers.
+
+config BT_AUDIO_PRES_DELAY_SRCH_SOURCE
+	bool "Use the audio source/client defined presentation delay"
+	help
+	  Use the audio source/client defined presentation delay if within
+	  AUDIO_MIN_PRES_DLY_US and AUDIO_MAX_PRES_DLY_US range. This will
+	  override the audio receivers presentation delay as long as it is in range of
+	  the max and min supported by the audio receivers. If it is outside this range,
+	  then it will revert to the closest supported value.
+endchoice
+
 config AURACAST
 	bool "Enable Auracast"
 	depends on TRANSPORT_BIS
@@ -376,13 +428,20 @@ config AURACAST
 	help
 	  When Auracast is enabled a Public Broadcast Announcement will be included when advertising.
 
+#----------------------------------------------------------------------------#
 menu "QoS"
 
 config BT_AUDIO_PRESENTATION_DELAY_US
 	int "Presentation delay"
+	range AUDIO_MIN_PRES_DLY_US AUDIO_MAX_PRES_DLY_US
 	default 10000
 	help
-	  Presentation delay for the ISO link.
+	  The audio source/client defined presentation delay if within
+	  AUDIO_MIN_PRES_DLY_US and AUDIO_MAX_PRES_DLY_US range. This will
+	  override the audio receivers presentation delay as long as it
+	  is in range of the max and min supported by the audio receivers.
+	  If it is outside this range, then it will revert to the closest
+	  supported value.
 
 config BT_AUDIO_MAX_TRANSPORT_LATENCY_MS
 	int "Max transport latency"
@@ -428,6 +487,7 @@ config BT_AUDIO_BITRATE_BROADCAST_SRC
 	  Bitrate for the broadcast source ISO stream.
 
 endmenu # QoS
+
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
