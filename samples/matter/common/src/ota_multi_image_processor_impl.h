@@ -6,16 +6,17 @@
 
 #pragma once
 
+#include "ota_image_processor_base_impl.h"
 #include <platform/nrfconnect/ExternalFlashManager.h>
 #include <platform/nrfconnect/OTAImageProcessorImpl.h>
 
 using namespace chip;
 using namespace chip::DeviceLayer;
 
-class OTAMultiImageProcessorImpl : public OTAImageProcessorImpl {
+class OTAMultiImageProcessorImpl : public OTAImageProcessorBaseImpl {
 public:
 	explicit OTAMultiImageProcessorImpl(ExternalFlashManager *flashHandler = nullptr)
-		: OTAImageProcessorImpl(flashHandler)
+		: OTAImageProcessorBaseImpl(flashHandler)
 	{
 	}
 
