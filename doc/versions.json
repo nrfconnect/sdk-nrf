@@ -1,7 +1,7 @@
 {
   "VERSIONS": [
     "latest",
-    "2.2.99-dev3",
+    "2.3.0",
     "2.2.0",
     "2.1.3",
     "2.1.2",
@@ -37,17 +37,17 @@
   ],
   "COMPONENTS_BY_VERSION": {
     "latest": {
-      "ncs": "2.2.99",
-      "nrfxlib": "2.2.99",
+      "ncs": "2.3.0",
+      "nrfxlib": "2.3.0",
       "zephyr": "3.2.99",
       "mcuboot": "1.9.99",
       "nrfx": "2.10",
       "tfm": "1.6.0",
       "matter": ""
     },
-    "2.2.99-dev3": {
-      "ncs": "2.2.99-dev3",
-      "nrfxlib": "2.2.99",
+    "2.3.0": {
+      "ncs": "2.3.0",
+      "nrfxlib": "2.3.0",
       "zephyr": "3.2.99",
       "mcuboot": "1.9.99",
       "nrfx": "2.10",
