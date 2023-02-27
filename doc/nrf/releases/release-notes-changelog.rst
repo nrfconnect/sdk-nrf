@@ -131,7 +131,6 @@ Matter
   * Specific QR code and onboarding information in the documentation for each :ref:`Matter sample <matter_samples>` and the :ref:`Matter weather station <matter_weather_station_app>`.
   * The Bluetooth LE advertising arbiter class that enables easier coexistence of application components that want to advertise their Bluetooth LE services.
   * Support for erasing settings partition during DFU over Bluetooth LE SMP for the Nordic nRF52 Series' SoCs.
-  * Enabled Wi-Fi and Bluetooth LE coexistence.
   * Mechanism to retry a failed Wi-Fi connection.
   * Documentation about :ref:`ug_matter_gs_ecosystem_compatibility_testing`.
   * Support for ZAP tool under Windows.
@@ -171,7 +170,6 @@ The following list summarizes the most important changes inherited from the upst
 * Added:
 
   * The initial implementation of Matter's cryptographic operations based on PSA crypto API.
-  * Build-time generation of some Zigbee Cluster Library (ZCL) source files using the :file:`codegen.py` Python script.
   * An alternative factory reset implementation that erases the entire non-volatile storage flash partition.
 
 * Updated:
@@ -586,9 +584,25 @@ Matter samples
       See :ref:`matter_lock_sample_wifi_thread_switching` in the sample documentation for more information.
     * Wi-Fi low power configuration using Wi-Fi's :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
 
+  * Positively verified against "Works with Google" certification tests.
+
 * :ref:`matter_light_switch_sample`:
 
   * Added Wi-Fi low power configuration using Wi-Fi's :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
+
+* :ref:`matter_light_bulb_sample`:
+
+  * Positively verified against "Works with Google" certification tests.
+  * Tested compatibility with the following ecosystems:
+
+    * Google Home ecosystem for both Matter over Thread and Matter over Wi-Fi solutions.
+       Tested with Google Nest Hub 2nd generation (software version: 47.9.4.447810048; Chromecast firmware version: 1.56.324896, and Google Home mobile application v2.63.1.12).
+    * Apple Home ecosystem for both Matter over Thread and Matter over Wi-Fi solutions.
+      Tested with Apple HomePod mini and Apple iPhone (iOS v16.3).
+    * Samsung SmartThings ecosystem for Matter over Thread solution.
+      Tested with Aeotec Smart Home Hub and SmartThings mobile application (v1.7.97.22).
+    * Amazon Alexa ecosystem for both Matter over Thread and Matter over Wi-Fi solutions.
+      Tested with Amazon Echo Dot and Amazon Alexa mobile application (v2.2.495949.0).
 
 NFC samples
 -----------
