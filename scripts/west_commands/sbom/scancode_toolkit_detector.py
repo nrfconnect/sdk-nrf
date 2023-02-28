@@ -37,6 +37,7 @@ def run_scancode(file: FileInfo) -> 'set(str)':
         command_execute(args.scancode, '-cl',
                         '--json', output_file.name,
                         '--license-text',
+                        '--license-score', '100',
                         '--license-text-diagnostics',
                         '--quiet',
                         file.file_path, allow_stderr=True)
