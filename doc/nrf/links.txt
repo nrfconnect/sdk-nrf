@@ -1137,6 +1137,7 @@
 
 .. _`Samsung SmartThings integration with Matter`: https://support.smartthings.com/hc/en-us/articles/11219700390804-SmartThings-x-Matter-Integration-
 
+.. _`CVE List Search`: https://cve.mitre.org/cve/search_cve_list.html
 
 .. ### Source: etsi.org
 

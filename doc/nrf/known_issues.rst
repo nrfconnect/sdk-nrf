@@ -7,8 +7,11 @@ Known issues
    :local:
    :depth: 2
 
-Known issues listed on this page *and* tagged with the :ref:`latest official release version <release_notes>` are valid for the current state of development.
-Use the drop-down filter to see known issues for previous releases and check if they are still valid.
+Known issues and :ref:`known_issues_vulnerabilities` listed on this page *and* tagged with the :ref:`latest official release version <release_notes>` are valid for the current state of development.
+Use the drop-down filter to see known issues and vulnerabilities for previous releases and check if they are still valid.
+
+In addition to known issues listed here, check the current issues in the `official Zephyr repository`_, since these might apply to the |NCS| fork of the Zephyr repository as well.
+To get help and report issues that are not related to Zephyr but to the |NCS|, go to Nordic's `DevZone`_.
 
 .. raw:: html
    :file: includes/filter.js
@@ -3042,7 +3045,37 @@ NCSDK-9992: Multiple extra CMake options applied as single option
 
   **Workaround:** Create a CMake preload script containing ``FOO`` and ``BAR`` settings, and then specify ``-C <pre-load-script>.cmake`` in :guilabel:`Extra CMake Build Options`.
 
-----
+.. _known_issues_vulnerabilities:
 
-In addition to these known issues, check the current issues in the `official Zephyr repository`_, since these might apply to the |NCS| fork of the Zephyr repository as well.
-To get help and report issues that are not related to Zephyr but to the |NCS|, go to Nordic's `DevZone`_.
+Security vulnerabilities
+************************
+
+Security vulnerabilities listed in this section *and* tagged with the :ref:`latest official release version <release_notes>` are valid for the current state of development.
+Use the drop-down filter at the top of the page to see vulnerabilities for previous releases and check if they are still valid.
+
+.. note::
+    The list of security vulnerbilities has been introduced only in the |NCS| v2.3.0.
+    For this reason, no previous versions are listed.
+
+The vulnerabilities mention CVE IDs that refer to the records you can check at the `CVE List Search`_ page.
+These records include more information about the vulnerability and potential workarounds.
+
+.. rst-class:: v2-3-0
+
+[Zephyr] `CVE-2022-3806 <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-3806>`_: Inconsistent handling of error cases in Bluetooth HCI
+  Inconsistent handling of error cases in Bluetooth HCI may lead to a double free condition of a network buffer.
+
+.. rst-class:: v2-3-0
+
+[Zephyr] `CVE-2023-0396 <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-0396>`_: Bluetooth Controller can cause buffer overreads
+  A malicious or defective Bluetooth Controller can cause buffer overreads in most functions that process HCI command responses.
+
+.. rst-class:: v2-3-0
+
+[Zephyr] `CVE-2023-0397 <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-0397>`_: Bluetooth Controller can cause a Denial of Service
+  A malicious or defective Bluetooth Controller can cause a Denial of Service due to unchecked input in :c:func:`le_read_buffer_size_complete`.
+
+.. rst-class:: v2-3-0
+
+[Zephyr] `CVE-2023-0359 <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-0359>`_: Heap-based buffer overflow in the GitHub repository vim/vim prior to 8.2
+  Details not yet disclosed.
