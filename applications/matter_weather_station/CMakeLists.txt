@@ -19,6 +19,8 @@ endif()
 # The application uses the configuration/<board> scheme for configuration files.
 set(APPLICATION_CONFIG_DIR "configuration/\${BOARD}")
 
+get_filename_component(MATTER_MODULE_ROOT $ENV{ZEPHYR_BASE}/../modules/lib/matter REALPATH)
+set(multiprotocol_rpmsg_KCONFIG_ROOT ${MATTER_MODULE_ROOT}/config/nrfconnect/chip-module/Kconfig.multiprotocol_rpmsg.root)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(matter-weather-station)
