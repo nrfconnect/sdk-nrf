@@ -301,13 +301,6 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_audio_ep *ep, enu
 
 			*stream = audio_stream;
 			*pref = qos_pref;
-			if (IS_ENABLED(CONFIG_BT_MCC)) {
-				ret = ble_mcs_discover(conn);
-				if (ret) {
-					LOG_ERR("Failed to start discovery of MCS: %d", ret);
-				}
-			}
-
 			return 0;
 		}
 	}
@@ -319,6 +312,7 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_audio_ep *ep, enu
 static int lc3_reconfig_cb(struct bt_audio_stream *stream, enum bt_audio_dir dir,
 			   const struct bt_codec *codec, struct bt_codec_qos_pref *const pref)
 {
+	LOG_WRN("LC3 reconfig cb");
 	LOG_DBG("ASE Codec Reconfig: stream %p", (void *)stream);
 
 	return 0;
@@ -344,6 +338,16 @@ static int lc3_enable_cb(struct bt_audio_stream *stream, const struct bt_codec_d
 
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
 	ERR_CHK(ret);
+
+	/* MCS discover needs to be done one per connection */
+	if (IS_ENABLED(CONFIG_BT_MCC)) {
+		ret = ble_mcs_discover(stream->conn);
+		if (ret == -EALREADY) {
+			LOG_WRN("Discovery alredy run or in progress");
+		} else if (ret) {
+			LOG_ERR("Failed to start discovery of MCS: %d", ret);
+		}
+	}
 
 	return 0;
 }
@@ -490,6 +494,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 
 static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 {
+	int ret;
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	if (conn != default_conn) {
@@ -503,6 +508,11 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 
 	bt_conn_unref(default_conn);
 	default_conn = NULL;
+
+	ret = ble_mcs_conn_disconnected(conn);
+	if (ret) {
+		LOG_ERR("ble_msc_conn_disconnected failed with %d", ret);
+	}
 
 	advertising_start();
 }
@@ -713,7 +723,19 @@ int le_audio_volume_mute(void)
 
 int le_audio_play_pause(void)
 {
-	return ble_mcs_play_pause(default_conn);
+	int ret;
+
+	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+		LOG_WRN("Play/pause not supported for bidirectional mode");
+	} else {
+		ret = ble_mcs_play_pause(default_conn);
+		if (ret) {
+			LOG_WRN("Failed to change streaming state");
+			return ret;
+		}
+	}
+
+	return 0;
 }
 
 int le_audio_send(struct encoded_audio enc_audio)
