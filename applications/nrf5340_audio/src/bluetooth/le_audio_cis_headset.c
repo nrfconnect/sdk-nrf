@@ -145,13 +145,20 @@ static enum audio_channel channel;
 /* Bonded address queue */
 K_MSGQ_DEFINE(bonds_queue, sizeof(bt_addr_le_t), CONFIG_BT_MAX_PAIRED, 4);
 
-static void print_codec(const struct bt_codec *codec)
+static void print_codec(const struct bt_codec *codec, enum bt_audio_dir dir)
 {
 	if (codec->id == BT_CODEC_LC3_ID) {
 		/* LC3 uses the generic LTV format - other codecs might do as well */
 		uint32_t chan_allocation;
 
-		LOG_INF("Codec config for LC3:");
+		if (dir == BT_AUDIO_DIR_SINK) {
+			LOG_INF("LC3 codec config for sink:");
+		} else if (dir == BT_AUDIO_DIR_SOURCE) {
+			LOG_INF("LC3 codec config for source:");
+		} else {
+			LOG_INF("LC3 codec config for <unknown dir>:");
+		}
+
 		LOG_INF("\tFrequency: %d Hz", bt_codec_cfg_get_freq(codec));
 		LOG_INF("\tFrame Duration: %d us", bt_codec_cfg_get_frame_duration_us(codec));
 		if (bt_codec_cfg_get_chan_allocation_val(codec, &chan_allocation) == 0) {
@@ -281,14 +288,14 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_audio_ep *ep, enu
 
 			if (dir == BT_AUDIO_DIR_SINK) {
 				LOG_DBG("BT_AUDIO_DIR_SINK");
-				print_codec(codec);
+				print_codec(codec, dir);
 				ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_CONFIG_RECEIVED);
 				ERR_CHK(ret);
 			}
 #if CONFIG_STREAM_BIDIRECTIONAL
 			else if (dir == BT_AUDIO_DIR_SOURCE) {
 				LOG_DBG("BT_AUDIO_DIR_SOURCE");
-				print_codec(codec);
+				print_codec(codec, dir);
 
 				/* CIS headset only supports one source stream for now */
 				sources[0].stream = audio_stream;
@@ -312,7 +319,6 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_audio_ep *ep, enu
 static int lc3_reconfig_cb(struct bt_audio_stream *stream, enum bt_audio_dir dir,
 			   const struct bt_codec *codec, struct bt_codec_qos_pref *const pref)
 {
-	LOG_WRN("LC3 reconfig cb");
 	LOG_DBG("ASE Codec Reconfig: stream %p", (void *)stream);
 
 	return 0;
