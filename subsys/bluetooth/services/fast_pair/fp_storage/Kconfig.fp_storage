@@ -19,6 +19,16 @@ config BT_FAST_PAIR_STORAGE_MANAGER
 	help
 	  Add Fast Pair storage manager source files.
 
+config BT_FAST_PAIR_STORAGE_USER_RESET_ACTION
+	bool "Enable user reset action during factory reset"
+	help
+	  Enable user reset action that executes together with the Fast Pair factory reset
+	  operation within the bt_fast_pair_factory_reset API function. To define the user reset
+	  action, you need to override the weak function definition of the
+	  bt_fast_pair_factory_reset_user_action_perform symbol. Optionally, you can override the
+	  bt_fast_pair_factory_reset_user_action_prepare symbol if you want an earlier notification
+	  that the reset operation is due to begin.
+
 config BT_FAST_PAIR_STORAGE_AK
 	bool
 	default y
