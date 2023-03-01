@@ -202,15 +202,15 @@ static void mcc_discover_mcs_cb(struct bt_conn *conn, int err)
 
 	if (mcs_discovery_status[idx] != IN_PROGRESS) {
 		/* Due to the design of MCC, there will be several
-		 * invocations of this callback. We are however, only interested
-		 * in what we have explicitly requested
+		 * invocations of this callback. We are only interested
+		 * in what we have explicitly requested.
 		 */
 		LOG_DBG("Filtered out callback");
 		return;
 	}
 
 	mcs_discovery_status[idx] = FINISHED;
-	LOG_WRN("Discovery of MCS finished");
+	LOG_DBG("Discovery of MCS finished");
 	ret = ble_mcs_state_update(conn);
 	if (ret < 0 && ret != -EBUSY) {
 		LOG_WRN("Failed to update media state: %d", ret);
@@ -546,7 +546,7 @@ int ble_mcs_play_pause(struct bt_conn *conn)
 	return 0;
 }
 
-int ble_mcs_conn_disconnected(struct bt_conn *conn)
+int ble_mcp_conn_disconnected(struct bt_conn *conn)
 {
 	if (!IS_ENABLED(CONFIG_BT_MCC)) {
 		LOG_ERR("MCC not enabled");
@@ -555,7 +555,7 @@ int ble_mcs_conn_disconnected(struct bt_conn *conn)
 
 	uint8_t idx = bt_conn_index(conn);
 
-	LOG_DBG("MCS state reset due to disconnection");
+	LOG_DBG("MCS discover state reset due to disconnection");
 	mcs_discovery_status[idx] = IDLE;
 	return 0;
 }
