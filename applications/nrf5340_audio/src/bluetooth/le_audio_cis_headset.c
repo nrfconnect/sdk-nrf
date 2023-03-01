@@ -515,7 +515,7 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 	bt_conn_unref(default_conn);
 	default_conn = NULL;
 
-	ret = ble_mcs_conn_disconnected(conn);
+	ret = ble_mcp_conn_disconnected(conn);
 	if (ret) {
 		LOG_ERR("ble_msc_conn_disconnected failed with %d", ret);
 	}
