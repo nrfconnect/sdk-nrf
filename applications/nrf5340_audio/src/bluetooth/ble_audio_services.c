@@ -34,9 +34,9 @@ static struct media_player *local_player;
 static ble_mcs_play_pause_cb play_pause_cb;
 #endif /* (CONFIG_BT_MCS) */
 
-static uint8_t mcs_discovery_status[CONFIG_BT_MAX_CONN];
+static uint8_t mcp_mcs_disc_status[CONFIG_BT_MAX_CONN];
 
-enum mcs_discovery_status {
+enum mcs_disc_status {
 	IDLE,
 	IN_PROGRESS,
 	FINISHED,
@@ -196,11 +196,11 @@ static void mcc_discover_mcs_cb(struct bt_conn *conn, int err)
 
 	if (err) {
 		LOG_ERR("Discovery of MCS failed (%d)", err);
-		mcs_discovery_status[idx] = IDLE;
+		mcp_mcs_disc_status[idx] = IDLE;
 		return;
 	}
 
-	if (mcs_discovery_status[idx] != IN_PROGRESS) {
+	if (mcp_mcs_disc_status[idx] != IN_PROGRESS) {
 		/* Due to the design of MCC, there will be several
 		 * invocations of this callback. We are only interested
 		 * in what we have explicitly requested.
@@ -209,7 +209,7 @@ static void mcc_discover_mcs_cb(struct bt_conn *conn, int err)
 		return;
 	}
 
-	mcs_discovery_status[idx] = FINISHED;
+	mcp_mcs_disc_status[idx] = FINISHED;
 	LOG_DBG("Discovery of MCS finished");
 	ret = ble_mcs_state_update(conn);
 	if (ret < 0 && ret != -EBUSY) {
@@ -479,16 +479,16 @@ int ble_mcs_discover(struct bt_conn *conn)
 	int ret;
 	uint8_t idx = bt_conn_index(conn);
 
-	if (mcs_discovery_status[idx] == FINISHED ||
-	    mcs_discovery_status[idx] == IN_PROGRESS) {
+	if (mcp_mcs_disc_status[idx] == FINISHED ||
+	    mcp_mcs_disc_status[idx] == IN_PROGRESS) {
 		return -EALREADY;
 	}
 
-	mcs_discovery_status[idx] = IN_PROGRESS;
+	mcp_mcs_disc_status[idx] = IN_PROGRESS;
 	ret = bt_mcc_discover_mcs(conn, true);
 
 	if (ret) {
-		mcs_discovery_status[idx] = IDLE;
+		mcp_mcs_disc_status[idx] = IDLE;
 		return ret;
 	}
 
@@ -504,7 +504,7 @@ int ble_mcs_state_update(struct bt_conn *conn)
 #if (CONFIG_BT_MCC)
 	uint8_t idx = bt_conn_index(conn);
 
-	if (mcs_discovery_status[idx] != FINISHED) {
+	if (mcp_mcs_disc_status[idx] != FINISHED) {
 		LOG_ERR("MCS discovery has not finished");
 		return -EBADR;
 	}
@@ -556,7 +556,7 @@ int ble_mcp_conn_disconnected(struct bt_conn *conn)
 	uint8_t idx = bt_conn_index(conn);
 
 	LOG_DBG("MCS discover state reset due to disconnection");
-	mcs_discovery_status[idx] = IDLE;
+	mcp_mcs_disc_status[idx] = IDLE;
 	return 0;
 }
 

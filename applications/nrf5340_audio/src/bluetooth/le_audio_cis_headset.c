@@ -345,11 +345,11 @@ static int lc3_enable_cb(struct bt_audio_stream *stream, const struct bt_codec_d
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
 	ERR_CHK(ret);
 
-	/* MCS discover needs to be done one per connection */
+	/* MCS discover needs to be done once per connection */
 	if (IS_ENABLED(CONFIG_BT_MCC)) {
 		ret = ble_mcs_discover(stream->conn);
 		if (ret == -EALREADY) {
-			LOG_WRN("Discovery alredy run or in progress");
+			LOG_INF("Discovery already run or in progress");
 		} else if (ret) {
 			LOG_ERR("Failed to start discovery of MCS: %d", ret);
 		}
