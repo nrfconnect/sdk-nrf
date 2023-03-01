@@ -37,6 +37,7 @@ struct hw_task_desc {
 	atomic_t state;
 	int32_t chan;
 	int32_t ppi;
+	uint64_t fire_lpticks;
 };
 
 static struct timer_desc m_timer;
@@ -311,6 +312,7 @@ nrf_802154_sl_lptimer_platform_result_t nrf_802154_platform_sl_lptimer_hw_task_p
 		nrfx_gppi_event_endpoint_setup(ppi_channel, evt_address);
 	}
 	m_hw_task.ppi = ppi_channel;
+	m_hw_task.fire_lpticks = fire_lpticks;
 	nrf_802154_sl_mcu_critical_exit(mcu_cs_state);
 	hw_task_state_set(HW_TASK_STATE_SETTING_UP, HW_TASK_STATE_READY);
 	return NRF_802154_SL_LPTIMER_PLATFORM_SUCCESS;
@@ -341,10 +343,18 @@ nrf_802154_sl_lptimer_platform_result_t nrf_802154_platform_sl_lptimer_hw_task_u
 		return NRF_802154_SL_LPTIMER_PLATFORM_WRONG_STATE;
 	}
 
+	nrf_802154_sl_mcu_critical_state_t mcu_cs_state;
+
+	nrf_802154_sl_mcu_critical_enter(mcu_cs_state);
+
 	cc_bind_to_ppi(m_hw_task.chan, ppi_channel);
 	m_hw_task.ppi = ppi_channel;
 
 	cc_triggered = cc_event_check(m_hw_task.chan);
+	if (z_nrf_rtc_timer_read() >= m_hw_task.fire_lpticks) {
+		cc_triggered = true;
+	}
+	nrf_802154_sl_mcu_critical_exit(mcu_cs_state);
 
 	hw_task_state_set(HW_TASK_STATE_UPDATING, HW_TASK_STATE_READY);
 
