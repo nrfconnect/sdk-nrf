@@ -93,7 +93,7 @@ config AUDIO_BIT_DEPTH_OCTETS
 choice AUDIO_SOURCE_GATEWAY
 	prompt "Audio source for gateway"
 	default AUDIO_SOURCE_I2S if WALKIE_TALKIE_DEMO
-	default AUDIO_SOURCE_USB
+	default AUDIO_SOURCE_I2S
 	help
 	  Select audio source for the gateway.
 
@@ -217,7 +217,7 @@ config BUF_BLE_RX_PACKET_NUM
 config STREAM_BIDIRECTIONAL
 	depends on TRANSPORT_CIS
 	bool "Bidirectional stream"
-	default n
+	default y
 	help
 	  Bidirectional stream enables encoder and decoder on both sides,
 	  and one device can both send and receive audio.

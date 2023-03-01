@@ -34,9 +34,13 @@ static struct media_player *local_player;
 static ble_mcs_play_pause_cb play_pause_cb;
 #endif /* (CONFIG_BT_MCS) */
 
-#if (CONFIG_BT_MCC)
-static bool mcs_discover_called;
-#endif /* (CONFIG_BT_MCC) */
+static uint8_t mcs_disc_status[2];
+
+enum mcs_discovery_status {
+	MCS_DISC_IDLE,
+	MCS_DISC_PROGRESS,
+	MCS_DISC_FINISHED,
+};
 
 #if (CONFIG_BT_VCP_VOL_CTLR)
 static struct bt_vcp_vol_ctlr *vcs_client_peer[CONFIG_BT_MAX_CONN];
@@ -179,6 +183,7 @@ static void vcs_discover_cb_handler(struct bt_vcp_vol_ctlr *vcs, int err, uint8_
 #endif /* (CONFIG_BT_VCP_VOL_CTLR) */
 
 #if (CONFIG_BT_MCC)
+
 /**
  * @brief  Callback handler for MCS discover finished.
  *
@@ -188,20 +193,30 @@ static void vcs_discover_cb_handler(struct bt_vcp_vol_ctlr *vcs, int err, uint8_
 static void mcc_discover_mcs_cb(struct bt_conn *conn, int err)
 {
 	int ret;
+	uint8_t idx = bt_conn_index(conn);
 
-	LOG_DBG("mcc_discover_mcs_cb");
-
-	if (!mcs_discover_called) {
+	if (idx > ARRAY_SIZE(mcs_disc_status)) {
+		LOG_ERR("conn index larger than status array");
 		return;
 	}
 
-	mcs_discover_called = false;
 	if (err) {
 		LOG_ERR("Discovery of MCS failed (%d)", err);
+		mcs_disc_status[idx] = MCS_DISC_IDLE;
 		return;
 	}
 
-	LOG_DBG("Discovery of MCS finished");
+	if (mcs_disc_status[idx] != MCS_DISC_PROGRESS) {
+		/* Due to the design of MCC, there will be several
+		 * invocations of this callback. We are however, only interested
+		 * in what we have explicitly requested
+		 */
+		LOG_DBG("Filtered out callback");
+		return;
+	}
+
+	mcs_disc_status[idx] = MCS_DISC_FINISHED;
+	LOG_WRN("Discovery of MCS finished");
 	ret = ble_mcs_state_update(conn);
 	if (ret < 0 && ret != -EBUSY) {
 		LOG_WRN("Failed to update media state: %d", ret);
@@ -468,14 +483,26 @@ int ble_mcs_discover(struct bt_conn *conn)
 {
 #if (CONFIG_BT_MCC)
 	int ret;
+	uint8_t idx = bt_conn_index(conn);
 
+	if (idx > ARRAY_SIZE(mcs_disc_status)) {
+		LOG_ERR("conn index larger than status array");
+		return -ENOMEM;
+	}
+
+	if (mcs_disc_status[idx] == MCS_DISC_FINISHED ||
+	    mcs_disc_status[idx] == MCS_DISC_PROGRESS) {
+		return -EALREADY;
+	}
+
+	mcs_disc_status[idx] = MCS_DISC_PROGRESS;
 	ret = bt_mcc_discover_mcs(conn, true);
 
 	if (ret) {
+		mcs_disc_status[idx] = MCS_DISC_IDLE;
 		return ret;
 	}
 
-	mcs_discover_called = true;
 	return 0;
 #else
 	LOG_ERR("MCC not enabled");
@@ -486,6 +513,18 @@ int ble_mcs_discover(struct bt_conn *conn)
 int ble_mcs_state_update(struct bt_conn *conn)
 {
 #if (CONFIG_BT_MCC)
+	uint8_t idx = bt_conn_index(conn);
+
+	if (idx > ARRAY_SIZE(mcs_disc_status)) {
+		LOG_ERR("conn index larger than status array");
+		return -ENOMEM;
+	}
+
+	if (mcs_disc_status[idx] != MCS_DISC_FINISHED) {
+		LOG_ERR("MCS discovery has not finished");
+		return -EBADR;
+	}
+
 	return bt_mcc_read_media_state(conn);
 #else
 	LOG_ERR("MCC not enabled");
@@ -520,6 +559,25 @@ int ble_mcs_play_pause(struct bt_conn *conn)
 		return ret;
 	}
 
+	return 0;
+}
+
+int ble_mcs_conn_disconnected(struct bt_conn *conn)
+{
+	if (!IS_ENABLED(CONFIG_BT_MCC)) {
+		LOG_ERR("MCC not enabled");
+		return -ECANCELED;
+	}
+
+	uint8_t idx = bt_conn_index(conn);
+
+	if (idx > ARRAY_SIZE(mcs_disc_status)) {
+		LOG_ERR("conn index larger than status array");
+		return -ENOMEM;
+	}
+
+	LOG_WRN("mcs state reset due to disconn");
+	mcs_disc_status[idx] = MCS_DISC_IDLE;
 	return 0;
 }
 

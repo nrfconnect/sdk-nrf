@@ -124,6 +124,8 @@ int ble_mcs_state_update(struct bt_conn *conn);
  */
 int ble_mcs_play_pause(struct bt_conn *conn);
 
+int ble_mcs_conn_disconnected(struct bt_conn *conn);
+
 /**
  * @brief Initialize the Volume Control Service client.
  */
