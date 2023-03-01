@@ -159,3 +159,4 @@ For details, see the :ref:`bt_fast_pair_readme` Bluetooth service documentation 
 The Fast Pair GATT service uses a non-volatile memory to store the Fast Pair user data such as Account Keys and the Personalized Name.
 This data can be cleared by calling the :c:func:`bt_fast_pair_factory_reset` function.
 For details, see the :c:func:`bt_fast_pair_factory_reset` function documentation.
+You can also use the :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_USER_RESET_ACTION` Kconfig option to enable a custom user reset action that executes together with this factory reset operation.
