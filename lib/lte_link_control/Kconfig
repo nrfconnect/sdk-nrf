@@ -140,7 +140,7 @@ config LTE_PTW_VALUE_NBIOT
 		value that is configured, and it's usually best to let the modem
 		use default PTW values.
 
-choice
+choice LTE_NETWORK_MODE
 	prompt "Select network mode"
 	default LTE_NETWORK_MODE_LTE_M
 	help
