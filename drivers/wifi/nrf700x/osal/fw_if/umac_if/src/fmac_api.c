@@ -4062,6 +4062,37 @@ out:
 
 	return status;
 }
+
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
+enum wifi_nrf_status wifi_nrf_fmac_get_host_rpu_ps_ctrl_state(void *dev_ctx,
+							      int *rpu_ps_ctrl_state)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	fmac_dev_ctx = dev_ctx;
+
+	if (!fmac_dev_ctx || !rpu_ps_ctrl_state) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Invalid parameters\n",
+				      __func__);
+		goto out;
+	}
+
+
+	status = wifi_nrf_hal_get_rpu_ps_state(fmac_dev_ctx->hal_dev_ctx,
+					       rpu_ps_ctrl_state);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Fetching of RPU PS state failed\n",
+				      __func__);
+		goto out;
+	}
+out:
+	return status;
+}
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 enum wifi_nrf_status wifi_nrf_fmac_otp_mac_addr_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,

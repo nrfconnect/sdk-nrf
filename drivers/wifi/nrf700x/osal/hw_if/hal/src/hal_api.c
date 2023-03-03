@@ -458,6 +458,26 @@ static void hal_rpu_ps_set_state(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 {
 	hal_dev_ctx->rpu_ps_state = ps_state;
 }
+
+enum wifi_nrf_status wifi_nrf_hal_get_rpu_ps_state(
+				struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+				int *rpu_ps_ctrl_state)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+
+	if (!hal_dev_ctx) {
+		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+				      "%s: Invalid parameters\n",
+				      __func__);
+		goto out;
+	}
+
+	*rpu_ps_ctrl_state = hal_dev_ctx->rpu_ps_state;
+
+	return WIFI_NRF_STATUS_SUCCESS;
+out:
+	return status;
+}
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 
