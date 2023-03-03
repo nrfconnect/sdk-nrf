@@ -303,6 +303,11 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme` library:
 
+  * Added:
+
+    * The function :c:func:`nrf_modem_lib_fault_strerror` to retrieve a statically allocated textual description of a given modem fault.
+      The function can be enabled using the new Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_FAULT_STRERROR`.
+
   * Removed:
 
     * The deprecated function ``nrf_modem_lib_get_init_ret``.

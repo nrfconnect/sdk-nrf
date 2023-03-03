@@ -230,6 +230,12 @@ config NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
 
 endchoice # NRF_MODEM_LIB_ON_FAULT
 
+config NRF_MODEM_LIB_FAULT_STRERROR
+	bool "Compile fault reason table"
+	help
+	  Compile a table with a textual description of fault reasons.
+	  The description can be retrieved with nrf_modem_lib_fault_strerror().
+
 module = NRF_MODEM_LIB
 module-str = Modem library
 source "subsys/logging/Kconfig.template.log_config"
