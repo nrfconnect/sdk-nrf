@@ -156,10 +156,10 @@ CONFIG_SLM_PGPS - nRF Cloud P-GPS support in SLM
    This option enables additional AT commands for using the nRF Cloud P-GPS service.
    It is not selected by default.
 
-.. _CONFIG_SLM_CELL_POS:
+.. _CONFIG_SLM_LOCATION:
 
-CONFIG_SLM_CELL_POS - nRF Cloud cellular positioning support in SLM
-   This option enables additional AT commands for using the nRF Cloud Cellular Positioning service.
+CONFIG_SLM_LOCATION - nRF Cloud cellular and Wi-Fi location support in SLM
+   This option enables additional AT commands for using the nRF Cloud location service.
    It is not selected by default.
 
 .. _CONFIG_SLM_FTPC:

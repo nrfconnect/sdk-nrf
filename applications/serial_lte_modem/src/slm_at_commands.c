@@ -425,6 +425,7 @@ int handle_at_agps(enum at_cmd_type cmd_type);
 int handle_at_pgps(enum at_cmd_type cmd_type);
 int handle_at_gps_delete(enum at_cmd_type cmd_type);
 int handle_at_cellpos(enum at_cmd_type cmd_type);
+int handle_at_wifipos(enum at_cmd_type cmd_type);
 #endif
 
 #if defined(CONFIG_SLM_FTPC)
@@ -535,8 +536,9 @@ static struct slm_at_cmd {
 	{"AT#XPGPS", handle_at_pgps},
 #endif
 	{"AT#XGPSDEL", handle_at_gps_delete},
-#if defined(CONFIG_SLM_CELL_POS)
+#if defined(CONFIG_SLM_LOCATION)
 	{"AT#XCELLPOS", handle_at_cellpos},
+	{"AT#XWIFIPOS", handle_at_wifipos},
 #endif
 #endif
 
