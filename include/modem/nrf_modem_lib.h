@@ -134,8 +134,17 @@ struct nrf_modem_lib_shutdown_cb {
  */
 void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info);
 
-#if defined(CONFIG_NRF_MODEM_LIB_MEM_DIAG) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF_MODEM_LIB_FAULT_STRERROR) || defined(__DOXYGEN__)
+/**
+ * @brief Retrieve a statically allocated textual description of a given fault.
+ *
+ * @param fault The fault.
+ * @return const char* Textual description of the given fault.
+ */
+const char *nrf_modem_lib_fault_strerror(int fault);
+#endif
 
+#if defined(CONFIG_NRF_MODEM_LIB_MEM_DIAG) || defined(__DOXYGEN__)
 struct nrf_modem_lib_diag_stats {
 	struct {
 		struct sys_memory_stats heap;
@@ -146,7 +155,6 @@ struct nrf_modem_lib_diag_stats {
 		uint32_t failed_allocs;
 	} shmem;
 };
-
 /**
  * @brief Retrieve heap runtime statistics.
  *
@@ -155,8 +163,7 @@ struct nrf_modem_lib_diag_stats {
  * @return int Zero on success, non-zero otherwise.
  */
 int nrf_modem_lib_diag_stats_get(struct nrf_modem_lib_diag_stats *stats);
-
-#endif /* defined(CONFIG_NRF_MODEM_LIB_MEM_DIAG) || defined(__DOXYGEN__) */
+#endif
 
 /** @} */
 

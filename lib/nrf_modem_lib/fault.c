@@ -11,28 +11,67 @@
 
 LOG_MODULE_DECLARE(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
-#if CONFIG_NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
-void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
-{
-	LOG_ERR("Modem error: 0x%x, PC: 0x%x", fault_info->reason, fault_info->program_counter);
-}
+#ifdef CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
+static K_SEM_DEFINE(fault_sem, 0, 1);
 #endif
 
-#if CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
-
-static K_SEM_DEFINE(fault_sem, 0, 1);
-
-void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
+#if CONFIG_NRF_MODEM_LIB_FAULT_STRERROR
+const char *nrf_modem_lib_fault_strerror(int reason)
 {
-	LOG_ERR("Modem error: 0x%x, PC: 0x%x", fault_info->reason, fault_info->program_counter);
-	k_sem_give(&fault_sem);
+	const static struct {
+		const char *str;
+		uint32_t reason;
+	} fault[] = {
+	#define FAULT(F) {.str = #F, .reason = F}
+		FAULT(NRF_MODEM_FAULT_UNDEFINED),
+		FAULT(NRF_MODEM_FAULT_HW_WD_RESET),
+		FAULT(NRF_MODEM_FAULT_HARDFAULT),
+		FAULT(NRF_MODEM_FAULT_MEM_MANAGE),
+		FAULT(NRF_MODEM_FAULT_BUS),
+		FAULT(NRF_MODEM_FAULT_USAGE),
+		FAULT(NRF_MODEM_FAULT_SECURE_RESET),
+		FAULT(NRF_MODEM_FAULT_PANIC_DOUBLE),
+		FAULT(NRF_MODEM_FAULT_PANIC_RESET_LOOP),
+		FAULT(NRF_MODEM_FAULT_ASSERT),
+		FAULT(NRF_MODEM_FAULT_PANIC),
+		FAULT(NRF_MODEM_FAULT_FLASH_ERASE),
+		FAULT(NRF_MODEM_FAULT_FLASH_WRITE),
+		FAULT(NRF_MODEM_FAULT_POFWARN),
+		FAULT(NRF_MODEM_FAULT_THWARN),
+	};
+	for (size_t i = 0; i < ARRAY_SIZE(fault); i++) {
+		if (fault[i].reason == reason) {
+			return fault[i].str;
+		}
+	}
+	return "<unknown>";
 }
+#endif /* CONFIG_NRF_MODEM_LIB_FAULT_STRERROR */
 
+#ifndef CONFIG_NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
+void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault)
+{
+#if CONFIG_NRF_MODEM_LIB_FAULT_STRERROR
+	LOG_ERR("Modem has crashed, reason 0x%x %s, PC: 0x%x",
+		fault->reason,
+		nrf_modem_lib_fault_strerror(fault->reason),
+		fault->program_counter);
+#else
+	LOG_ERR("Modem has crashed, reason 0x%x, PC: 0x%x",
+		fault->reason, fault->program_counter);
+#endif
+#if CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
+	k_sem_give(&fault_sem);
+#endif
+}
+#endif /* not CONFIG_NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC */
+
+#ifdef CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
 static void restart_on_fault(void *p1, void *p2, void *p3)
 {
 	while (true) {
 		k_sem_take(&fault_sem, K_FOREVER);
-		LOG_INF("Modem has faulted, re-initializing");
+		LOG_INF("Modem has crashed, re-initializing");
 
 		(void)nrf_modem_lib_shutdown();
 
