@@ -432,5 +432,4 @@ struct pta_ext_params {
 	 */
 	unsigned int dec_time;
 } __NRF_WIFI_PKD;
-
 #endif /* __RPU_IF_H__ */

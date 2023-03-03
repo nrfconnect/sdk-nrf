@@ -1365,5 +1365,22 @@ enum wifi_nrf_status wifi_nrf_fmac_get_power_save_info(void *fmac_dev_ctx,
 enum wifi_nrf_status wifi_nrf_fmac_set_tx_rate(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					       unsigned char rate_flag,
 					       int data_rate);
-#endif /* CONFIG_NRF700X_UTIL */
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
+/**
+ * wifi_nrf_fmac_get_host_ref_rpu_ps_ctrl_state() - Get the RPU power save
+ *			status from host perspective.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @rpu_ps_ctrl_state: Pointer to the address where the current rpu ps state
+ *			from host perspective needs to be copied.
+ *
+ * This function is used to fetch the RPU power save status
+ * from host perspective.
+ * Returns: Status
+ *              Pass: %WIFI_NRF_STATUS_SUCCESS
+ *              Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_get_host_rpu_ps_ctrl_state(void *fmac_dev_ctx,
+							      int *rpu_ps_ctrl_state);
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif
 #endif /* __FMAC_API_H__ */
