@@ -9,8 +9,8 @@ GNSS AT commands
 
 The following commands list contains GNSS-related AT commands.
 
-Run GNSS
-========
+GNSS
+====
 
 The ``#XGPS`` command controls the GNSS.
 
@@ -344,8 +344,8 @@ Example
 
   OK
 
-Run GNSS with nRF Cloud A-GPS
-=============================
+GNSS with nRF Cloud A-GPS
+=========================
 
 The ``#XAGPS`` command runs the GNSS together with the nRF Cloud A-GPS service.
 
@@ -518,8 +518,8 @@ Example
   OK
 
 
-Run GNSS with nRF Cloud P-GPS
-=============================
+GNSS with nRF Cloud P-GPS
+=========================
 
 The ``#XPGPS`` command runs the GNSS together with the nRF Cloud P-GPS service.
 
@@ -750,21 +750,21 @@ Example
 
   OK
 
-Run nRF Cloud cellular positioning
-==================================
+nRF Cloud cellular location
+===========================
 
-The ``#XCELLPOS`` command runs the nRF Cloud cellular positioning service for position information.
+The ``#XCELLPOS`` command runs the nRF Cloud cellular location service for location information.
 
 .. note::
    To use ``#XCELLPOS``, the following preconditions apply:
 
-   * You must define :ref:`CONFIG_SLM_CELL_POS <CONFIG_SLM_CELL_POS>`.
+   * You must define :ref:`CONFIG_SLM_LOCATION <CONFIG_SLM_LOCATION>`.
    * You must have access to nRF Cloud through the LTE network.
 
 Set command
 -----------
 
-The set command allows you to start and stop the nRF Cloud cellular positioning service.
+The set command allows you to start and stop the nRF Cloud cellular location service.
 
 Syntax
 ~~~~~~
@@ -775,10 +775,10 @@ Syntax
 
 The ``<op>`` parameter accepts the following integer values:
 
-* ``0`` - Stop cellular positioning.
-* ``1`` - Start cellular positioning in single-cell mode.
-* ``2`` - Start cellular positioning in multi-cell mode.
-  To use ``2``, you must issue the ``AT%NCELLMEAS`` command first.
+* ``0`` - Stop cellular location.
+* ``1`` - Start cellular location in single-cell mode.
+* ``2`` - Start cellular location in multi-cell mode.
+  To use ``2``, you must issue the ``AT%NCELLMEAS`` command with <search_type> of ``0-2`` first.
 
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -787,10 +787,10 @@ Unsolicited notification
 
    #XCELLPOS: <type>,<latitude>,<longitude>,<uncertainty>
 
-* The ``<type>`` value indicates in which mode the cellular positioning server is running:
+* The ``<type>`` value indicates in which mode the cellular location service is running:
 
-  * ``0`` - The server is running in single-cell mode
-  * ``1`` - The server is running in multi-cell mode
+  * ``0`` - The service is running in single-cell mode
+  * ``1`` - The service is running in multi-cell mode
 
 * The ``<latitude>`` value represents the latitude in degrees.
 * The ``<longitude>`` value represents the longitude in degrees.
@@ -835,7 +835,7 @@ Example
 Read command
 ------------
 
-The read command allows you to check GNSS support and CELLPOS service status.
+The read command allows you to check the cellular location service status.
 
 Syntax
 ~~~~~~
@@ -849,25 +849,19 @@ Response syntax
 
 ::
 
-   #XCELLPOS: <gnss_service>,<cellpos_status>
-
-* The ``<gnss_service>`` value is an integer.
-  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and is activated in ``+CFUN``.
-
-.. note::
-   CELLPOS does not require the GNSS service in modem.
+   #XCELLPOS: <cellpos_status>
 
 * The ``<cellpos_status>`` value is an integer.
-  When it returns the value of ``1``, it means that CELLPOS is started.
+  When it returns the value of ``1``, it means that the cellular location service is started.
 
 Example
 ~~~~~~~
 
 ::
 
-  AT#XAGPS?
+  AT#XCELLPOS?
 
-  #XAGPS: 1,1
+  #XCELLPOS: 1
 
   OK
 
@@ -891,5 +885,137 @@ Example
   AT#XCELLPOS=?
 
   #XCELLPOS: (0,1,2)
+
+  OK
+
+nRF Cloud Wi-Fi location
+========================
+
+The ``#XWIFIPOS`` command runs the nRF Cloud Wi-Fi location service for location information.
+
+.. note::
+   To use ``#XWIFIPOS``, the following preconditions apply:
+
+   * You must define :ref:`CONFIG_SLM_LOCATION <CONFIG_SLM_LOCATION>`.
+   * You must have access to nRF Cloud through the LTE network.
+
+Set command
+-----------
+
+The set command allows you to start and stop the nRF Cloud Wi-Fi location service.
+
+Syntax
+~~~~~~
+
+::
+
+   #XWIFIPOS=<op>[,<ssid0>,<mac0>[,<ssid1>,<mac1>[...]]]
+
+The ``<op>`` parameter accepts the following integer values:
+
+* ``0`` - Stop Wi-Fi location.
+* ``1`` - Start Wi-Fi location.
+
+* The ``<ssidX>`` parameter is a string.
+  It indicates the SSID of the Wi-Fi access point.
+
+* The ``<macX>`` parameter is a string.
+  It indicates the MAC address string of the Wi-Fi access point.
+  The string should be formatted as "%02x:%02x:%02x:%02x:%02x:%02x".
+
+The command accepts ``<ssidX>`` and ``<macX>`` of up to 5 access points.
+
+Unsolicited notification
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #XWIFIPOS: <type>,<latitude>,<longitude>,<uncertainty>
+
+* The ``<type>`` value indicates in which mode the Wi-Fi location service is running:
+
+  * ``2`` - The service is running in Wi-Fi mode
+
+* The ``<latitude>`` value represents the latitude in degrees.
+* The ``<longitude>`` value represents the longitude in degrees.
+* The ``<uncertainty>`` value represents the certainty of the result.
+
+Example
+~~~~~~~
+
+::
+
+  AT%XSYSTEMMODE=1,0,0,0
+
+  OK
+  AT+CFUN=1
+
+  OK
+  AT#XNRFCLOUD=1
+
+  OK
+  #XNRFCLOUD: 1,0
+  AT#XWIFIPOS=1,"Nordic_WLAN_5GHz","40:9b:cd:c1:5a:40","Nordic_Guest","00:90:fe:eb:4f:42"
+
+  OK
+
+  #XWIFIPOS: 2,35.457272,139.624395,60
+  AT#XWIFIPOS=0
+
+  OK
+
+Read command
+------------
+
+The read command allows you to check the Wi-Fi location service status.
+
+Syntax
+~~~~~~
+
+::
+
+   #XWIFIPOS?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XWIFIPOS: <wifipos_status>
+
+* The ``<wifipos_status>`` value is an integer.
+  When it returns the value of ``1``, it means that the Wi-Fi location service is started.
+
+Example
+~~~~~~~
+
+::
+
+  AT#XWIFIPOS?
+
+  #XWIFIPOS: 0
+
+  OK
+
+Test command
+------------
+
+The test command tests the existence of the command and provides information about the type of its subparameters.
+
+Syntax
+~~~~~~
+
+::
+
+   #XWIFIPOS=?
+
+Example
+~~~~~~~
+
+::
+
+  AT#XWIFIPOS=?
+
+  #XWIFIPOS: (0,1)
 
   OK

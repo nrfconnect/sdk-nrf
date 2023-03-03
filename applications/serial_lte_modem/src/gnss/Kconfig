@@ -23,12 +23,12 @@ config SLM_PGPS
 	help
 	  Use nRF Cloud P-GPS in GPS operation
 
-config SLM_CELL_POS
-	bool "Use nRF Cloud cellular positioning"
+config SLM_LOCATION
+	bool "Use nRF Cloud Location"
 	depends on AT_MONITOR
 	depends on NRF_CLOUD_LOCATION
 	depends on NRF_CLOUD_MQTT
 	help
-	  Request nRF Cloud cellular positioning service
+	  Request nRF Cloud cellular or Wi-Fi location service
 
 endif # SLM_GNSS

@@ -150,6 +150,10 @@ nRF9160: Asset Tracker v2
 nRF9160: Serial LTE modem
 -------------------------
 
+* Added:
+
+  * AT command ``#XWIFIPOS`` to get Wi-Fi location from nRF Cloud.
+
 * Updated:
 
   * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
