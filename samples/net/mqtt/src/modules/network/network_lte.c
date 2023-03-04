@@ -46,7 +46,7 @@ void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 		LOG_DBG("Event: PDP context %d, %s", cid, pdn_esm_strerror(reason));
 		return;
 	case PDN_EVENT_ACTIVATED:
-		LOG_INF("PDN connection activated, IPv4 up");
+		LOG_INF("PDN connection activated");
 		status = NETWORK_CONNECTED;
 		break;
 	case PDN_EVENT_DEACTIVATED:
