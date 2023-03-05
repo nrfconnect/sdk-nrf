@@ -216,6 +216,8 @@ static void connected_entry(void *o)
 	LOG_INF("Hostname: %s", CONFIG_MQTT_SAMPLE_TRANSPORT_BROKER_HOSTNAME);
 	LOG_INF("Client ID: %s", client_id);
 	LOG_INF("Port: %d", CONFIG_MQTT_HELPER_PORT);
+	LOG_INF("User name: %s%s", CONFIG_MQTT_SAMPLE_TRANSPORT_USER_NAME,
+		strlen(CONFIG_MQTT_SAMPLE_TRANSPORT_PASSWORD) > 0 ? " / ********" : "");
 	LOG_INF("TLS: %s", IS_ENABLED(CONFIG_MQTT_LIB_TLS) ? "Yes" : "No");
 
 	ARG_UNUSED(o);

@@ -401,7 +401,7 @@ static int broker_init(struct sockaddr_storage *broker,
 				broker6->sin6_family = AF_INET6;
 				broker6->sin6_port = htons(CONFIG_MQTT_HELPER_PORT);
 
-				LOG_DBG("IPv6 Address found %s", ipv6_addr);
+				LOG_INF("IPv6 Address found %s", ipv6_addr);
 				found = true;
 			}
 		} else if (addr->ai_addrlen == sizeof(struct sockaddr_in)) {
@@ -418,7 +418,7 @@ static int broker_init(struct sockaddr_storage *broker,
 				broker4->sin_family = AF_INET;
 				broker4->sin_port = htons(CONFIG_MQTT_HELPER_PORT);
 
-				LOG_DBG("IPv4 Address found %s", ipv4_addr);
+				LOG_INF("IPv4 Address found %s", ipv4_addr);
 				found = true;
 			}
 		} else {

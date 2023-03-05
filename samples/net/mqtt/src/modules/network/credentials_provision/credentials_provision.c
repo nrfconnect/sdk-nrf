@@ -66,7 +66,7 @@ static const unsigned char device_certificate_2[] = {
 int credentials_provision(void)
 {
 	int err = 0;
-  LOG_DBG("Provision credentials");
+  LOG_INF("Provisioning credentials to modem");
 
 	if (sizeof(ca_certificate) > 1) {
     LOG_DBG("Provision CA certificate '%s': %.64s", CONFIG_MQTT_SAMPLE_NETWORK_CERTIFICATE_FILE, ca_certificate);
