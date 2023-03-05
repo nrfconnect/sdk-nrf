@@ -362,11 +362,11 @@ static int broker_init(struct sockaddr_storage *broker,
 	struct addrinfo *result;
 	struct addrinfo *addr;
 	struct addrinfo hints = {
-//		.ai_family = AF_INET,
 		.ai_socktype = SOCK_STREAM
 	};
 	int count = 0;
 	bool found = false;
+	bool legacy_ipv4_only = IS_ENABLED(CONFIG_MQTT_HELPER_IPV4_ONLY);
 
 	if (sizeof(CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS) > 1) {
 		conn_params->hostname.ptr = CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS;
@@ -391,7 +391,7 @@ static int broker_init(struct sockaddr_storage *broker,
 				ipv6_addr, sizeof(ipv6_addr));
   	  LOG_DBG("[%d] IPv6 Address %s (%d/%d)", ++count, ipv6_addr, 
 				addr->ai_family, addr->ai_addr->sa_family);
-			if (!found) {
+			if (!found && !legacy_ipv4_only) {
 				struct sockaddr_in6 *broker6 = ((struct sockaddr_in6 *)broker);
 
 				memcpy(broker6->sin6_addr.s6_addr,

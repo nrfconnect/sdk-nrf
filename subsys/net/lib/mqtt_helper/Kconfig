@@ -54,6 +54,13 @@ config MQTT_HELPER_STATIC_IP_ADDRESS
 	  Set a static IP address to use when connecting to the MQTT broker.
 	  Leave the string empty to use DNS to resolve the IoT Hub hostname instead.
 
+config MQTT_HELPER_IPV4_ONLY
+	bool "Use legacy IPv4 only"
+	help
+	  Only use legacy IPv4 addresses when resolving MQTT broker, even if running in dual stack.
+	  If no address is initially found, then retry with IPv4 only hint
+		(because IPv4 may not be returned in dual stack unless explicitly requested).
+
 config MQTT_HELPER_SECONDARY_SEC_TAG
 	int "Secondary TLS sec tag"
 	default -1
