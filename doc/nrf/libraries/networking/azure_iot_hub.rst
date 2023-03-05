@@ -319,6 +319,7 @@ MQTT helper library specific options:
 * :kconfig:option:`CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN` - Sets the MQTT payload buffer size.
 * :kconfig:option:`CONFIG_MQTT_HELPER_STACK_SIZE` - Sets the stack size for the internal thread in the library.
 * :kconfig:option:`CONFIG_MQTT_HELPER_NATIVE_TLS` - Configures the socket to be native for TLS instead of offloading TLS operations to the modem.
+* :kconfig:option:`CONFIG_MQTT_HELPER_IPV4_ONLY` - Force using legacy IPv4 for even when running dual stack.
 
 DPS-specific configuration:
 
