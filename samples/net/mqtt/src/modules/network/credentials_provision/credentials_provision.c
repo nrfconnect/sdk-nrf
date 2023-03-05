@@ -12,8 +12,8 @@
 LOG_MODULE_DECLARE(transport, CONFIG_MQTT_SAMPLE_TRANSPORT_LOG_LEVEL);
 
 static const unsigned char ca_certificate[] = {
-#if __has_include(CONFIG_MQTT_SAMPLE_TRANSPORT_CERTIFICATE_FILE)
-#include CONFIG_MQTT_SAMPLE_TRANSPORT_CERTIFICATE_FILE
+#if __has_include(CONFIG_MQTT_SAMPLE_NETWORK_CERTIFICATE_FILE)
+#include CONFIG_MQTT_SAMPLE_NETWORK_CERTIFICATE_FILE
 #else
 ""
 #endif
@@ -69,7 +69,7 @@ int credentials_provision(void)
   LOG_DBG("Provision credentials");
 
 	if (sizeof(ca_certificate) > 1) {
-    LOG_DBG("Provision CA certificate '%s': %.64s", CONFIG_MQTT_SAMPLE_TRANSPORT_CERTIFICATE_FILE, ca_certificate);
+    LOG_DBG("Provision CA certificate '%s': %.64s", CONFIG_MQTT_SAMPLE_NETWORK_CERTIFICATE_FILE, ca_certificate);
 		err = modem_key_mgmt_write(CONFIG_MQTT_HELPER_SEC_TAG,
 					   MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
 					   ca_certificate,

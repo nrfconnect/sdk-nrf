@@ -42,10 +42,6 @@ config MQTT_SAMPLE_TRANSPORT_PASSWORD
 	string "MQTT broker password"
 	default ""
 
-config MQTT_SAMPLE_TRANSPORT_CERTIFICATE_FILE
-	string "MQTT certifiate authority file"
-	default "ca-cert.pem"
-
 config MQTT_SAMPLE_TRANSPORT_CLIENT_ID
 	string "MQTT Client ID"
 	default ""

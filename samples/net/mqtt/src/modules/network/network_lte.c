@@ -77,9 +77,9 @@ void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 static void network_task(void)
 {
 	// Initial delay to allow logging to start
-  LOG_INF("Network starting 1");
-	k_msleep(1000);
-  LOG_INF("Network starting 2");
+  LOG_INF("Network starting 0s");
+	k_sleep(K_SECONDS(1));
+  LOG_INF("Network starting 1s");
 
 	/* Setup a callback for the default PDP context. */
 	int err = pdn_default_ctx_cb_reg(pdn_event_handler);

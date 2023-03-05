@@ -11,6 +11,10 @@ config MQTT_SAMPLE_NETWORK_THREAD_STACK_SIZE
 	int "Thread stack size"
 	default 4096
 
+config MQTT_SAMPLE_NETWORK_CERTIFICATE_FILE
+	string "MQTT certifiate authority file"
+	default "ca-cert.pem"
+
 module = MQTT_SAMPLE_NETWORK
 module-str = Network
 source "subsys/logging/Kconfig.template.log_config"
