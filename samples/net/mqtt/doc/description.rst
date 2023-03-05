@@ -187,6 +187,32 @@ The following serial UART output is displayed in the terminal emulator:
       [00:04:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 241458" on topic: "my/publish/topic"
       [00:05:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 301459" on topic: "my/publish/topic"
 
+
+Output using a Thingy:91 over LTE with a dual stack connection (using IPv6) with TLS encryption and username/password (including receiving a message):
+
+.. code-block:: console
+
+      *** Booting Zephyr OS build v3.2.99-ncs2 ***
+      [00:00:00.491,455] <inf> network: Network starting 0s
+      [00:00:01.491,516] <inf> network: Network starting 1s
+      [00:00:01.491,577] <inf> transport: Provisioning credentials to modem
+      [00:00:01.649,993] <inf> network: Connecting to LTE...
+      [00:00:04.016,754] <inf> network: PDN connection activated
+      [00:00:09.526,031] <inf> mqtt_helper: IPv6 Address found 2001:41d0:1:925e::1
+      [00:00:13.339,477] <inf> transport: Connected to MQTT broker
+      [00:00:13.339,538] <inf> transport: Hostname: test.mosquitto.org
+      [00:00:13.339,569] <inf> transport: Client ID: 350457791735879
+      [00:00:13.339,569] <inf> transport: Port: 8885
+      [00:00:13.339,599] <inf> transport: User name: rw / ********
+      [00:00:13.339,630] <inf> transport: TLS: Yes
+      [00:00:14.104,583] <inf> transport: Subscribed to topic my/subscribe/topic
+      [00:00:14.104,888] <inf> transport: Received payload: $ on topic: my/subscribe/topic
+      [00:01:00.492,675] <inf> transport: Published message: "Hello MQTT! Current uptime is: 60491" on topic: "my/publish/topic"
+      [00:02:00.501,190] <inf> transport: Published message: "Hello MQTT! Current uptime is: 120491" on topic: "my/publish/topic"
+      [00:03:00.492,919] <inf> transport: Published message: "Hello MQTT! Current uptime is: 180492" on topic: "my/publish/topic"
+      [00:03:21.949,249] <inf> transport: Received payload: Test message on topic: my/subscribe/topic
+      [00:04:00.501,464] <inf> transport: Published message: "Hello MQTT! Current uptime is: 240492" on topic: "my/publish/topic"
+
 Reconnection logic
 ------------------
 
