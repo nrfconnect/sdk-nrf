@@ -34,6 +34,14 @@ config MQTT_SAMPLE_TRANSPORT_BROKER_HOSTNAME
 	string "MQTT broker hostname"
 	default "test.mosquitto.org"
 
+config MQTT_SAMPLE_TRANSPORT_USER_NAME
+	string "MQTT broker user name"
+	default ""
+
+config MQTT_SAMPLE_TRANSPORT_PASSWORD
+	string "MQTT broker password"
+	default ""
+
 config MQTT_SAMPLE_TRANSPORT_CERTIFICATE_FILE
 	string "MQTT certifiate authority file"
 	default "ca-cert.pem"

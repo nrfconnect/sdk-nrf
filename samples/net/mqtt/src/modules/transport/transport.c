@@ -157,6 +157,10 @@ static void connect_work_fn(struct k_work *work)
 		.hostname.size = strlen(CONFIG_MQTT_SAMPLE_TRANSPORT_BROKER_HOSTNAME),
 		.device_id.ptr = client_id,
 		.device_id.size = strlen(client_id),
+		.user_name.ptr = CONFIG_MQTT_SAMPLE_TRANSPORT_USER_NAME,
+		.user_name.size = strlen(CONFIG_MQTT_SAMPLE_TRANSPORT_USER_NAME),
+		.password.ptr = CONFIG_MQTT_SAMPLE_TRANSPORT_PASSWORD,
+		.password.size = strlen(CONFIG_MQTT_SAMPLE_TRANSPORT_PASSWORD)
 	};
 
 	err = mqtt_helper_connect(&conn_params);
