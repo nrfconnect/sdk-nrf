@@ -362,9 +362,11 @@ static int broker_init(struct sockaddr_storage *broker,
 	struct addrinfo *result;
 	struct addrinfo *addr;
 	struct addrinfo hints = {
-		.ai_family = AF_INET,
+//		.ai_family = AF_INET,
 		.ai_socktype = SOCK_STREAM
 	};
+	int count = 0;
+	bool found = false;
 
 	if (sizeof(CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS) > 1) {
 		conn_params->hostname.ptr = CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS;
@@ -383,30 +385,103 @@ static int broker_init(struct sockaddr_storage *broker,
 	addr = result;
 
 	while (addr != NULL) {
-		if (addr->ai_addrlen == sizeof(struct sockaddr_in)) {
-			struct sockaddr_in *broker4 = ((struct sockaddr_in *)broker);
+	  if (addr->ai_addrlen == sizeof(struct sockaddr_in6)) {
+		  char ipv6_addr[NET_IPV6_ADDR_LEN];
+			inet_ntop(AF_INET6, &((struct sockaddr_in6 *)addr->ai_addr)->sin6_addr.s6_addr,
+				ipv6_addr, sizeof(ipv6_addr));
+  	  LOG_DBG("[%d] IPv6 Address %s (%d/%d)", ++count, ipv6_addr, 
+				addr->ai_family, addr->ai_addr->sa_family);
+			if (!found) {
+				struct sockaddr_in6 *broker6 = ((struct sockaddr_in6 *)broker);
+
+				memcpy(broker6->sin6_addr.s6_addr,
+							((struct sockaddr_in6 *)addr->ai_addr)
+							->sin6_addr.s6_addr,
+							sizeof(struct in6_addr));
+				broker6->sin6_family = AF_INET6;
+				broker6->sin6_port = htons(CONFIG_MQTT_HELPER_PORT);
+
+				LOG_DBG("IPv6 Address found %s", ipv6_addr);
+				found = true;
+			}
+		} else if (addr->ai_addrlen == sizeof(struct sockaddr_in)) {
 			char ipv4_addr[INET_ADDRSTRLEN];
+			inet_ntop(AF_INET, &((struct sockaddr_in *)addr->ai_addr)->sin_addr.s_addr,
+				ipv4_addr, sizeof(ipv4_addr));
+  	  LOG_DBG("[%d] IPv4 Address %s (%d/%d)", ++count, ipv4_addr, 
+				addr->ai_family, addr->ai_addr->sa_family);
+			if (!found) {
+				struct sockaddr_in *broker4 = ((struct sockaddr_in *)broker);
 
-			broker4->sin_addr.s_addr =
-				((struct sockaddr_in *)addr->ai_addr)->sin_addr.s_addr;
-			broker4->sin_family = AF_INET;
-			broker4->sin_port = htons(CONFIG_MQTT_HELPER_PORT);
+				broker4->sin_addr.s_addr =
+					((struct sockaddr_in *)addr->ai_addr)->sin_addr.s_addr;
+				broker4->sin_family = AF_INET;
+				broker4->sin_port = htons(CONFIG_MQTT_HELPER_PORT);
 
-			inet_ntop(AF_INET, &broker4->sin_addr.s_addr, ipv4_addr,
-				  sizeof(ipv4_addr));
-			LOG_DBG("IPv4 Address found %s", ipv4_addr);
-			break;
+				LOG_DBG("IPv4 Address found %s", ipv4_addr);
+				found = true;
+			}
+		} else {
+			LOG_WRN("ai_addrlen = %u should be %u or %u",
+				(unsigned int)addr->ai_addrlen,
+				(unsigned int)sizeof(struct sockaddr_in),
+				(unsigned int)sizeof(struct sockaddr_in6));
 		}
 
-		LOG_DBG("ai_addrlen is %u, while it should be %u",
-			(unsigned int)addr->ai_addrlen,
-			(unsigned int)sizeof(struct sockaddr_in));
-
 		addr = addr->ai_next;
-		break;
 	}
 
 	freeaddrinfo(result);
+
+	if (!found) {
+		LOG_DBG("Address not found, trying again with IPv4 only hint");
+		struct addrinfo hints4 = {
+			.ai_family = AF_INET,
+			.ai_socktype = SOCK_STREAM
+		};
+
+		err = getaddrinfo(conn_params->hostname.ptr, NULL, &hints4, &result);
+		if (err) {
+			LOG_ERR("getaddrinfo(), with IPv4 only hint, failed, error %d", err);
+			return -err;
+		}
+
+		addr = result;
+
+		while (addr != NULL) {
+			if (addr->ai_addrlen == sizeof(struct sockaddr_in)) {
+				char ipv4_addr[INET_ADDRSTRLEN];
+				inet_ntop(AF_INET, &((struct sockaddr_in *)addr->ai_addr)->sin_addr.s_addr,
+					ipv4_addr, sizeof(ipv4_addr));
+				LOG_DBG("[%d] IPv4 Address %s (%d/%d)", ++count, ipv4_addr, 
+					addr->ai_family, addr->ai_addr->sa_family);
+				if (!found) {
+					struct sockaddr_in *broker4 = ((struct sockaddr_in *)broker);
+
+					broker4->sin_addr.s_addr =
+						((struct sockaddr_in *)addr->ai_addr)->sin_addr.s_addr;
+					broker4->sin_family = AF_INET;
+					broker4->sin_port = htons(CONFIG_MQTT_HELPER_PORT);
+
+					LOG_DBG("IPv4 Address found %s", ipv4_addr);
+					found = true;
+				}
+			} else {
+				LOG_WRN("ai_addrlen = %u should be %u",
+					(unsigned int)addr->ai_addrlen,
+					(unsigned int)sizeof(struct sockaddr_in));
+			}
+
+			addr = addr->ai_next;
+		}
+
+		freeaddrinfo(result);
+	}
+
+	if (!found) {
+		LOG_ERR("No usable address found for %s", conn_params->hostname.ptr);
+		return -1;
+	}
 
 	return err;
 }
