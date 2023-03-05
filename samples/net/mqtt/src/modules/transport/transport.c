@@ -11,9 +11,6 @@
 #include <net/mqtt_helper.h>
 
 #include "client_id.h"
-#if CONFIG_MODEM_KEY_MGMT
-#include "credentials_provision.h"
-#endif /* CONFIG_MODEM_KEY_MGMT */
 #include "message_channel.h"
 
 /* Register log module */
@@ -274,15 +271,6 @@ static void transport_task(void)
 			.on_suback = on_mqtt_suback,
 		},
 	};
-
-#if CONFIG_MODEM_KEY_MGMT
-	err = credentials_provision();
-	if (err) {
-		LOG_ERR("credentials_provision, error: %d", err);
-		SEND_FATAL_ERROR();
-		return;
-	}
-#endif /* CONFIG_MODEM_KEY_MGMT */
 
 	err = client_id_get(client_id, sizeof(client_id));
 	if (err) {

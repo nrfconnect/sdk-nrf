@@ -13,6 +13,9 @@
 #include <net/wifi_mgmt_ext.h>
 
 #include "message_channel.h"
+#if CONFIG_MODEM_KEY_MGMT
+#include "credentials_provision.h"
+#endif /* CONFIG_MODEM_KEY_MGMT */
 
 /* Register log module */
 LOG_MODULE_REGISTER(network, CONFIG_MQTT_SAMPLE_NETWORK_LOG_LEVEL);
@@ -108,6 +111,17 @@ static void ipv4_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 
 static void network_task(void)
 {
+#if CONFIG_MODEM_KEY_MGMT
+  /* Provision certificates to MBED TLS */
+	err = credentials_provision();
+	if (err) {
+		LOG_ERR("credentials_provision, error: %d", err);
+		SEND_FATAL_ERROR();
+		return;
+	}
+#endif /* CONFIG_MODEM_KEY_MGMT */
+
+  // TODO: Support IPv6, which is now >40% worldwide adoption, and >50% in many countries.
 	net_mgmt_init_event_callback(&net_mgmt_callback, wifi_mgmt_event_handler, MGMT_EVENTS);
 	net_mgmt_add_event_callback(&net_mgmt_callback);
 	net_mgmt_init_event_callback(&net_mgmt_ipv4_callback, ipv4_mgmt_event_handler,

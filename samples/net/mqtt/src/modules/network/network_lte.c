@@ -12,6 +12,9 @@
 #include <nrf_modem.h>
 
 #include "message_channel.h"
+#if CONFIG_MODEM_KEY_MGMT
+#include "credentials_provision.h"
+#endif /* CONFIG_MODEM_KEY_MGMT */
 
 /* Register log module */
 LOG_MODULE_REGISTER(network, CONFIG_MQTT_SAMPLE_NETWORK_LOG_LEVEL);
@@ -73,6 +76,11 @@ void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 
 static void network_task(void)
 {
+	// Initial delay to allow logging to start
+  LOG_INF("Network starting 1");
+	k_msleep(1000);
+  LOG_INF("Network starting 2");
+
 	/* Setup a callback for the default PDP context. */
 	int err = pdn_default_ctx_cb_reg(pdn_event_handler);
 
@@ -84,6 +92,16 @@ static void network_task(void)
 
 	/* Register handler to receive LTE link specific events. */
 	lte_lc_register_handler(lte_event_handler);
+
+#if CONFIG_MODEM_KEY_MGMT
+  /* Provision certificates before connecting to the LTE network */
+	err = credentials_provision();
+	if (err) {
+		LOG_ERR("credentials_provision, error: %d", err);
+		SEND_FATAL_ERROR();
+		return;
+	}
+#endif /* CONFIG_MODEM_KEY_MGMT */
 
 	/* Subscribe to modem domain events (AT%MDMEV).
 	 * Modem domain events is received in the lte_event_handler().
