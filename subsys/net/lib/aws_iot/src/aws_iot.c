@@ -806,7 +806,7 @@ static int broker_init(void)
 
 			inet_ntop(AF_INET6, &broker6->sin6_addr.s6_addr,
 				  ipv6_addr, sizeof(ipv6_addr));
-			LOG_DBG("IPv4 Address found %s", ipv6_addr);
+			LOG_DBG("IPv6 Address found %s", ipv6_addr);
 			break;
 		}
 
