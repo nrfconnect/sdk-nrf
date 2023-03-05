@@ -12,7 +12,7 @@ Provisioning
    This section is relevant only if you build the sample with TLS enabled.
 
 The server CA for the default MQTT broker (`test.mosquitto.org`_) is provisioned to the network stack at runtime prior to establishing a connection to the server.
-The server CA (:file:`ca-cert.pem`) is located in :file:`src/modules/transport/certs/`.
+The server CA (:file:`ca-cert.pem`) is located in :file:`src/modules/transport/credentials/`.
 Ensure that if the server is changed, the CA needs to be updated as well.
 
 To retrieve the server CA for a different MQTT broker, use the following command:
