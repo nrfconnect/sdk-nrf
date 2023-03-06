@@ -7,7 +7,7 @@ alabaster==0.7.12
 anytree==2.8.0
 appdirs==1.4.4
 arrow==0.17.0
-astroid==2.4.2
+astroid==2.15.0
 attrs==20.3.0
 Babel==2.9.1
 breathe==4.26.1
@@ -19,7 +19,7 @@ cffi==1.14.4
 chardet==4.0.0
 click==7.1.2
 cmsis-pack-manager==0.2.10
-colorama==0.4.4
+colorama==0.4.6
 commonmark==0.9.1
 coverage==5.4
 cryptography==3.4.8
@@ -64,7 +64,7 @@ pygit2==1.10.0
 Pygments==2.7.4
 pykwalify==1.8.0
 pylink-square==0.8.1
-pylint==2.6.0
+pylint==2.16.4
 pyocd==0.29.0
 pyparsing==2.4.7
 pyserial==3.5
@@ -99,7 +99,7 @@ tabulate==0.8.7
 toml==0.10.2
 tomli==2.0.1
 typed-ast==1.5.4
-typing-extensions==3.7.4.3
+typing-extensions==4.4.0
 urllib3==1.26.4
 wcwidth==0.2.5
 west==1.0.0
