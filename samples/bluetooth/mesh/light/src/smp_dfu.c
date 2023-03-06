@@ -150,7 +150,6 @@ int smp_dfu_init(void)
 	 * communication, a secondary advertising set is necessary to broadcast
 	 * the SMP service.
 	 */
-	err = smp_service_adv_init();
+	return smp_service_adv_init();
 /* .. include_endpoint_light_smp_dfu_rst_2 */
-	return err;
 }
