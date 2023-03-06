@@ -30,17 +30,19 @@ Syntax
 * The ``<evt_type>`` value is an integer indicating the type of the event.
   It can return the following values:
 
-  * ``1`` - LwM2M carrier library initialized.
-  * ``2`` - Request to set modem to full functional mode.
-  * ``3`` - Request to set modem to flight functional mode.
-  * ``4`` - Request to set modem to minimum functional mode.
-  * ``6`` - Bootstrap sequence complete.
-  * ``7`` - Device registered successfully to the device management servers.
-  * ``8`` - Connection to the server failed.
-  * ``9`` - Firmware update started.
-  * ``10`` - Request application reboot.
-  * ``12`` - Modem domain event received.
-  * ``13`` - Data received through the App Data Container object.
+  * ``1`` - Request to set the modem to full functional mode.
+  * ``2`` - Request to set the modem to flight functional mode.
+  * ``3`` - Request to set the modem to minimum functional mode.
+  * ``4`` - Bootstrap sequence complete.
+  * ``5`` - Device registered successfully to the device management servers.
+  * ``6`` - Connection to the server failed.
+  * ``7`` - Firmware update started.
+  * ``8`` - Firmware updated successfully.
+  * ``9`` - Request to perform an application reboot.
+  * ``10`` - Modem domain event received.
+  * ``11`` - Data received through the App Data Container object.
+  * ``12`` - Request to initialize the modem.
+  * ``13`` - Request to shut down the modem.
   * ``20`` - LwM2M carrier library error occurred.
 
 * The ``<info>`` value is an integer providing additional information about the event.
@@ -52,7 +54,7 @@ Syntax
 
 * The ``<data>`` parameter is a string that contains the data received through the App Data Container object.
 
-The events of type ``2``, ``3`` and ``4`` will typically be followed by an error event of type ``20``.
+The events of type ``1``, ``2`` and ``3`` will typically be followed by an error event of type ``20``.
 This indicates to the application that the library is waiting for the appropriate modem functional mode change.
 
 LwM2M Carrier library #XCARRIER

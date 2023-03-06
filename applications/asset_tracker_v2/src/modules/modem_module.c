@@ -50,10 +50,6 @@ struct modem_msg_data {
 
 /* Modem module super states. */
 static enum state_type {
-	/* Initialization state where all libraries that the module depends
-	 * on need to be initialized before you can enter any other state.
-	 */
-	STATE_INIT,
 	STATE_DISCONNECTED,
 	STATE_CONNECTING,
 	STATE_CONNECTED,
@@ -90,6 +86,16 @@ NRF_MODEM_LIB_ON_INIT(asset_tracker_init_hook, on_modem_lib_init, NULL);
 
 static void on_modem_lib_init(int ret, void *ctx)
 {
+	int err;
+
+	if (ret == 0) {
+		/* LTE LC is uninitialized on every modem shutdown. */
+		err = lte_lc_init();
+		if (err) {
+			LOG_ERR("lte_lc_init, error: %d", err);
+		}
+	}
+
 	k_sem_give(&nrf_modem_initialized);
 }
 
@@ -109,8 +115,6 @@ static inline int adjust_rsrp(int input);
 static char *state2str(enum state_type state)
 {
 	switch (state) {
-	case STATE_INIT:
-		return "STATE_INIT";
 	case STATE_DISCONNECTED:
 		return "STATE_DISCONNECTED";
 	case STATE_CONNECTING:
@@ -344,8 +348,6 @@ static void print_carrier_error(const lwm2m_carrier_event_t *evt)
 			"Illegal object configuration detected",
 		[LWM2M_CARRIER_ERROR_INIT] =
 			"Initialization failure",
-		[LWM2M_CARRIER_ERROR_INTERNAL] =
-			"Internal failure",
 		[LWM2M_CARRIER_ERROR_RUN] =
 			"Configuration failure",
 	};
@@ -392,11 +394,6 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *evt)
 	int err = 0;
 
 	switch (evt->type) {
-	case LWM2M_CARRIER_EVENT_INIT: {
-		LOG_INF("LWM2M_CARRIER_EVENT_INIT");
-		SEND_EVENT(modem, MODEM_EVT_CARRIER_INITIALIZED);
-		break;
-	}
 	case LWM2M_CARRIER_EVENT_LTE_LINK_UP: {
 		LOG_INF("LWM2M_CARRIER_EVENT_LTE_LINK_UP");
 		SEND_EVENT(modem, MODEM_EVT_CARRIER_EVENT_LTE_LINK_UP_REQUEST);
@@ -425,6 +422,9 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *evt)
 		SEND_EVENT(modem, MODEM_EVT_CARRIER_FOTA_PENDING);
 		break;
 	}
+	case LWM2M_CARRIER_EVENT_FOTA_SUCCESS:
+		LOG_INF("LWM2M_CARRIER_EVENT_FOTA_SUCCESS");
+		break;
 	case LWM2M_CARRIER_EVENT_REBOOT: {
 		LOG_INF("LWM2M_CARRIER_EVENT_REBOOT");
 		SEND_EVENT(modem, MODEM_EVT_CARRIER_REBOOT_REQUEST);
@@ -436,20 +436,17 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *evt)
 		 */
 		return 1;
 	}
+	case LWM2M_CARRIER_EVENT_MODEM_INIT:
+		LOG_INF("LWM2M_CARRIER_EVENT_MODEM_INIT");
+		err = nrf_modem_lib_init();
+		break;
+	case LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN:
+		LOG_INF("LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN");
+		err = nrf_modem_lib_shutdown();
+		break;
 	case LWM2M_CARRIER_EVENT_ERROR: {
-		const lwm2m_carrier_event_error_t *err = evt->data.error;
-
 		LOG_ERR("LWM2M_CARRIER_EVENT_ERROR");
 		print_carrier_error(evt);
-
-		bool fota_error = err->type == LWM2M_CARRIER_ERROR_FOTA_PKG ||
-				  err->type == LWM2M_CARRIER_ERROR_FOTA_PROTO ||
-				  err->type == LWM2M_CARRIER_ERROR_FOTA_CONN ||
-				  err->type == LWM2M_CARRIER_ERROR_FOTA_CONN_LOST ||
-				  err->type == LWM2M_CARRIER_ERROR_FOTA_FAIL;
-		if (fota_error) {
-			SEND_EVENT(modem, MODEM_EVT_CARRIER_FOTA_STOPPED);
-		}
 		break;
 	}
 	}
@@ -705,12 +702,6 @@ static int setup(void)
 	}
 #endif
 
-	err = lte_lc_init();
-	if (err) {
-		LOG_ERR("lte_lc_init, error: %d", err);
-		return err;
-	}
-
 	/* Setup a callback for the default PDP context. */
 	err = pdn_default_ctx_cb_reg(pdn_event_handler);
 	if (err) {
@@ -738,20 +729,6 @@ static int setup(void)
 	}
 
 	return 0;
-}
-
-/* Message handler for STATE_INIT */
-static void on_state_init(struct modem_msg_data *msg)
-{
-	if (IS_EVENT(msg, modem, MODEM_EVT_CARRIER_INITIALIZED)) {
-		int err;
-
-		state_set(STATE_DISCONNECTED);
-
-		err = setup();
-		__ASSERT(err == 0, "Failed running setup()");
-		SEND_EVENT(modem, MODEM_EVT_INITIALIZED);
-	}
 }
 
 /* Message handler for STATE_DISCONNECTED. */
@@ -849,13 +826,6 @@ static void on_all_states(struct modem_msg_data *msg)
 	if (IS_EVENT(msg, app, APP_EVT_START)) {
 		int err;
 
-		if (IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
-			/* The carrier library handles the LTE connection
-			 * establishment.
-			 */
-			return;
-		}
-
 		err = lte_connect();
 		if (err) {
 			LOG_ERR("Failed connecting to LTE, error: %d", err);
@@ -914,26 +884,19 @@ static void module_thread_fn(void)
 
 	k_sem_take(&nrf_modem_initialized, K_FOREVER);
 
-	if (IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
-		state_set(STATE_INIT);
-	} else {
-		state_set(STATE_DISCONNECTED);
-		SEND_EVENT(modem, MODEM_EVT_INITIALIZED);
+	state_set(STATE_DISCONNECTED);
+	SEND_EVENT(modem, MODEM_EVT_INITIALIZED);
 
-		err = setup();
-		if (err) {
-			LOG_ERR("Failed setting up the modem, error: %d", err);
-			SEND_ERROR(modem, MODEM_EVT_ERROR, err);
-		}
+	err = setup();
+	if (err) {
+		LOG_ERR("Failed setting up the modem, error: %d", err);
+		SEND_ERROR(modem, MODEM_EVT_ERROR, err);
 	}
 
 	while (true) {
 		module_get_next_msg(&self, &msg);
 
 		switch (state) {
-		case STATE_INIT:
-			on_state_init(&msg);
-			break;
 		case STATE_DISCONNECTED:
 			on_state_disconnected(&msg);
 			break;

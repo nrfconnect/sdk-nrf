@@ -86,10 +86,7 @@ Module states
 
 The modem module has an internal state machine with the following states:
 
-  * ``STATE_INIT`` - The initial state of the module in which it awaits the modem to be initialized.
-    The module enters this state only if the :ref:`liblwm2m_carrier_readme` library is enabled because the modem is automatically initialized otherwise.
   * ``STATE_DISCONNECTED`` - The module has performed all required initializations and is ready to establish an LTE connection.
-    This is the initial state for applications that do not use the :ref:`liblwm2m_carrier_readme` library.
   * ``STATE_CONNECTING`` - The modem is currently searching for a suitable LTE network and attempting to establish a connection.
   * ``STATE_CONNECTED`` - The device is connected to an LTE network.
   * ``STATE_SHUTDOWN`` - The module has been shut down after receiving a request from the utility module.

@@ -54,11 +54,10 @@
 #include "uart/uart_shell.h"
 #include "mosh_print.h"
 
-extern struct k_sem mosh_carrier_lib_initialized;
 extern struct k_poll_signal mosh_signal;
 
 #if defined(CONFIG_LWM2M_CARRIER)
-void lwm2m_print_err(const lwm2m_carrier_event_t *evt)
+void lwm2m_handle_error(const lwm2m_carrier_event_t *evt)
 {
 	const lwm2m_carrier_event_error_t *err = evt->data.error;
 
@@ -77,8 +76,6 @@ void lwm2m_print_err(const lwm2m_carrier_event_t *evt)
 			"Illegal object configuration detected",
 		[LWM2M_CARRIER_ERROR_INIT] =
 			"Initialization failure",
-		[LWM2M_CARRIER_ERROR_INTERNAL] =
-			"Internal failure",
 		[LWM2M_CARRIER_ERROR_RUN] =
 			"Configuration failure",
 	};
@@ -121,25 +118,21 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	int err = 0;
 
 	switch (event->type) {
-	case LWM2M_CARRIER_EVENT_INIT:
-		mosh_print("LwM2M carrier event: carrier lib initialized");
-		k_sem_give(&mosh_carrier_lib_initialized);
-		break;
 	case LWM2M_CARRIER_EVENT_LTE_LINK_UP:
 		mosh_print("LwM2M carrier event: request LTE Link up");
 #if defined(CONFIG_LTE_LINK_CONTROL) && defined(CONFIG_MOSH_LINK)
 		link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL,
 				   link_sett_is_normal_mode_autoconn_rel14_used());
+		return 0;
 #else
-		err = lte_lc_connect_async(NULL);
+		return lte_lc_normal();
 #endif
-		break;
 	case LWM2M_CARRIER_EVENT_LTE_LINK_DOWN:
 		mosh_print("LwM2M carrier event: request LTE Link down");
 #if defined(CONFIG_LTE_LINK_CONTROL) && defined(CONFIG_MOSH_LINK)
 		link_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE, false);
 #else
-		err = lte_lc_offline(NULL);
+		err = lte_lc_offline();
 #endif
 		break;
 	case LWM2M_CARRIER_EVENT_LTE_POWER_OFF:
@@ -147,7 +140,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 #if defined(CONFIG_LTE_LINK_CONTROL) && defined(CONFIG_MOSH_LINK)
 		link_func_mode_set(LTE_LC_FUNC_MODE_POWER_OFF, false);
 #else
-		err = lte_lc_power_off(NULL);
+		err = lte_lc_power_off();
 #endif
 		break;
 	case LWM2M_CARRIER_EVENT_BOOTSTRAPPED:
@@ -163,12 +156,23 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	case LWM2M_CARRIER_EVENT_FOTA_START:
 		mosh_print("LwM2M carrier event: fota start");
 		break;
+	case LWM2M_CARRIER_EVENT_FOTA_SUCCESS:
+		mosh_print("LwM2M carrier event: fota success");
+		break;
 	case LWM2M_CARRIER_EVENT_REBOOT:
 		mosh_print("LwM2M carrier event: reboot");
 		break;
+	case LWM2M_CARRIER_EVENT_MODEM_INIT:
+		mosh_print("LwM2M carrier event: modem init");
+		err = nrf_modem_lib_init();
+		break;
+	case LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN:
+		mosh_print("LwM2M carrier event: modem shutdown");
+		err = nrf_modem_lib_shutdown();
+		break;
 	case LWM2M_CARRIER_EVENT_ERROR:
 		mosh_print("LwM2M carrier event: error");
-		lwm2m_print_err(event);
+		lwm2m_handle_error(event);
 		break;
 	}
 

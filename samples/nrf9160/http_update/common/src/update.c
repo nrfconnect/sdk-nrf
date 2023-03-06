@@ -142,7 +142,6 @@ static int button_init(void)
  */
 static void modem_configure(void)
 {
-#if !defined(CONFIG_LWM2M_CARRIER)
 #if defined(CONFIG_LTE_LINK_CONTROL)
 	BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 			"This sample does not support auto init and connect");
@@ -158,7 +157,6 @@ static void modem_configure(void)
 	__ASSERT(err == 0, "LTE link could not be established.");
 	printk("LTE Link Connected!\n");
 #endif /* CONFIG_LTE_LINK_CONTROL */
-#endif /* CONFIG_LWM2M_CARRIER */
 }
 
 static void fota_work_cb(struct k_work *work)
