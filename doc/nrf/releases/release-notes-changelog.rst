@@ -209,6 +209,12 @@ nRF9160 samples
 
     * The sample now integrates the :ref:`lib_lwm2m_client_utils` FOTA callback functionality.
 
+* :ref:`nrf_cloud_mqtt_multi_service` sample:
+
+  * Updated:
+
+    * Increased the MCUboot partition size to the minimum necessary to allow bootloader FOTA.
+
 Peripheral samples
 ------------------
 
