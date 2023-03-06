@@ -8,6 +8,7 @@
 #include <time.h>
 #include <lwm2m_carrier.h>
 #include <zephyr/logging/log.h>
+#include <modem/nrf_modem_lib.h>
 #include "slm_at_host.h"
 #include "slm_util.h"
 
@@ -116,22 +117,12 @@ static void print_err(const lwm2m_carrier_event_t *evt)
 			"Failed to connect to the LTE network",
 		[LWM2M_CARRIER_ERROR_LTE_LINK_DOWN_FAIL] =
 			"Failed to disconnect from the LTE network",
-		[LWM2M_CARRIER_ERROR_FOTA_PKG] =
-			"Package refused from modem",
-		[LWM2M_CARRIER_ERROR_FOTA_PROTO] =
-			"Protocol error",
-		[LWM2M_CARRIER_ERROR_FOTA_CONN] =
-			"Connection to remote server failed",
-		[LWM2M_CARRIER_ERROR_FOTA_CONN_LOST] =
-			"Connection to remote server lost",
 		[LWM2M_CARRIER_ERROR_FOTA_FAIL] =
 			"Modem firmware update failed",
 		[LWM2M_CARRIER_ERROR_CONFIGURATION] =
 			"Illegal object configuration detected",
 		[LWM2M_CARRIER_ERROR_INIT] =
 			"Initialization failure",
-		[LWM2M_CARRIER_ERROR_INTERNAL] =
-			"Internal failure",
 		[LWM2M_CARRIER_ERROR_RUN] =
 			"Configuration failure",
 	};
@@ -192,9 +183,6 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	int err = 0;
 
 	switch (event->type) {
-	case LWM2M_CARRIER_EVENT_INIT:
-		LOG_DBG("LWM2M_CARRIER_EVENT_INIT");
-		break;
 	case LWM2M_CARRIER_EVENT_LTE_LINK_UP:
 		LOG_DBG("LWM2M_CARRIER_EVENT_LTE_LINK_UP");
 		/* AT+CFUN=1 to be issued. */
@@ -222,6 +210,9 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	case LWM2M_CARRIER_EVENT_FOTA_START:
 		LOG_DBG("LWM2M_CARRIER_EVENT_FOTA_START");
 		break;
+	case LWM2M_CARRIER_EVENT_FOTA_SUCCESS:
+		LOG_DBG("LWM2M_CARRIER_EVENT_FOTA_SUCCESS");
+		break;
 	case LWM2M_CARRIER_EVENT_REBOOT:
 		LOG_DBG("LWM2M_CARRIER_EVENT_REBOOT");
 		/* Return -1 to defer the reboot until the application decides to do so. */
@@ -231,6 +222,14 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		LOG_DBG("LWM2M_CARRIER_EVENT_APP_DATA");
 		on_event_app_data(event);
 		return 0;
+	case LWM2M_CARRIER_EVENT_MODEM_INIT:
+		LOG_DBG("LWM2M_CARRIER_EVENT_MODEM_INIT");
+		nrf_modem_lib_init();
+		break;
+	case LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN:
+		LOG_DBG("LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN");
+		nrf_modem_lib_shutdown();
+		break;
 	case LWM2M_CARRIER_EVENT_ERROR:
 		print_err(event);
 		break;

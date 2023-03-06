@@ -103,13 +103,6 @@ enum modem_module_event_type {
 	 */
 	MODEM_EVT_ERROR,
 
-	/** The carrier library has initialized the modem library and it is
-	 *  now ready to be used. When the carrier library is enabled, this
-	 *  event must be received before the modem module can proceed to initialize
-	 *  other dependencies and subsequently send MODEM_EVT_INITIALIZED.
-	 *  The event has no associated payload.
-	 */
-	MODEM_EVT_CARRIER_INITIALIZED,
 	/** Due to modem limitations for active TLS connections, the carrier
 	 *  library requires all other TLS connections in the system to
 	 *  be terminated while FOTA update is ongoing.

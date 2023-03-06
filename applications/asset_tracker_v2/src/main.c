@@ -517,12 +517,7 @@ int main(void)
 		SEND_EVENT(app, APP_EVT_START);
 
 #if defined(CONFIG_NRF_MODEM_LIB)
-		/* The carrier library will initialize the modem if enabled, if not,
-		 * we initialize the modem in here, before the rest of the application is started.
-		 */
-		if (!IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
-			modem_init();
-		}
+		modem_init();
 #endif
 	}
 

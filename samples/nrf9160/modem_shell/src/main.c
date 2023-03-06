@@ -84,8 +84,6 @@ struct k_poll_signal mosh_signal;
 char mosh_at_resp_buf[MOSH_AT_CMD_RESPONSE_MAX_LEN];
 K_MUTEX_DEFINE(mosh_at_resp_buf_mutex);
 
-K_SEM_DEFINE(mosh_carrier_lib_initialized, 0, 1);
-
 static const char *modem_crash_reason_get(uint32_t reason)
 {
 	switch (reason) {
@@ -245,18 +243,14 @@ int main(void)
 		MOSH_COMMON_WORKQ_PRIORITY,
 		&cfg);
 
-#if !defined(CONFIG_LWM2M_CARRIER)
 	err = nrf_modem_lib_init();
 	if (err) {
 		/* Modem library initialization failed. */
-		printk("Could not initialize nrf_modem_lib, err %d.\n", err);
-		printk("Fatal error.\n");
+		printk("Could not initialize nrf_modem_lib, err %d\n", err);
+		printk("Fatal error\n");
 		return 0;
 	}
-#else
-	/* Wait until the LwM2M carrier library has initialized the modem library. */
-	k_sem_take(&mosh_carrier_lib_initialized, K_FOREVER);
-#endif
+
 	lte_lc_init();
 #if defined(CONFIG_MOSH_PPP)
 	ppp_ctrl_init();
