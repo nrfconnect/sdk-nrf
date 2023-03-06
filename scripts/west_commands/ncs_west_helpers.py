@@ -11,6 +11,7 @@
 
 from __future__ import annotations
 
+import collections
 from dataclasses import dataclass
 from pathlib import Path
 import subprocess
@@ -274,59 +275,51 @@ class RepoAnalyzer:
     def _likely_merged_commits(self) -> dict[pygit2.Commit,
                                              list[pygit2.Commit]]:
         # Compute patches which are downstream and probably were
-        # merged upstream, using the following heuristics:
+        # merged upstream, by looking for downstream patches with
+        # small title edit distances from upstream patches.
         #
-        # 1. downstream patches with small title edit distances
-        #    from upstream patches
+        # Using edit distance catches patches with typos in the titles
+        # that reviewers asked to be fixed.
         #
-        # 2. downstream patches with titles that are prefixes of
-        #    upstream patches
-        #
-        # Heuristic #1 catches patches with typos in the titles
-        # that reviewers asked to be fixed, etc. E.g. upstream
-        # title
+        # For example, we want this upstream title:
         #
         #    Bluetoth: do foo
         #
-        # matches downstream title
+        # to be matched with this downstream title:
         #
         #    [nrf fromlist] Bluetooth: do foo
         #
-        # Heuristic #2 catches situations where we had to shorten our
-        # downstream title to fit the "[nrf xyz]" sauce tag at the
-        # beginning and still fit within CI's title length
-        # restrictions. E.g. upstream title
-        #
-        #    subsys: do a thing that is very useful for everyone
-        #
-        # matches downstream title
-        #
-        #    [nrf fromlist] subsys: do a thing that is very
+        # assuming both commits have the same author.
         #
         # The return value is a map from pygit2 commit objects for
         # downstream patches, to a list of pygit2 commit objects that
-        # are upstream patches which have similar titles and the
-        # same authors.
+        # are upstream patches which have similar titles and the same
+        # authors.
+
+        email2title_commit = collections.defaultdict(list)
+        for upstream_commit in self.upstream_new:
+            email = upstream_commit.author.email
+            email2title_commit[email].append(
+                (commit_title(upstream_commit), upstream_commit))
 
         likely_merged = {}
-        for dc in self.downstream_outstanding:
-            sl = commit_title(dc)
+        for downstream_commit in self.downstream_outstanding:
+            downstream_email = downstream_commit.author.email
 
-            def ed(upstream_commit):
-                return editdistance.eval(
-                    title_no_sauce(sl, self._downstream_sauce),
-                    commit_title(upstream_commit))
+            def is_match(upstream_title):
+                edit_dist = editdistance.eval(
+                    title_no_sauce(commit_title(downstream_commit)),
+                    upstream_title)
+                return edit_dist < self._edit_dist_threshold
 
             matches = [
-                uc for uc in self.upstream_new if
-                # Heuristic #1:
-                ed(uc) < self._edit_dist_threshold or
-                # Heuristic #2:
-                commit_title(uc).startswith(sl)
+                upstream_commit for upstream_title, upstream_commit in
+                email2title_commit[downstream_email] if
+                is_match(upstream_title)
             ]
 
             if len(matches) != 0:
-                likely_merged[dc] = matches
+                likely_merged[downstream_commit] = matches
 
         return likely_merged
 
