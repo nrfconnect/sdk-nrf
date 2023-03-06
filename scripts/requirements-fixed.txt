@@ -73,7 +73,7 @@ python-can==3.3.4
 python-dateutil==2.8.1
 python-magic==0.4.18
 pytz==2020.5
-pyusb==1.1.1
+pyusb==1.2.0
 PyYAML==5.4.1
 recommonmark==0.6.0
 regex==2022.3.15
