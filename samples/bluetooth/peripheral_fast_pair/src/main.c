@@ -352,6 +352,11 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 	bond_remove_btn_handle(button_state, has_changed);
 }
 
+static void fp_account_key_written(struct bt_conn *conn)
+{
+	LOG_INF("Fast Pair Account Key has been written");
+}
+
 void main(void)
 {
 	bool run_led_on = true;
@@ -361,6 +366,9 @@ void main(void)
 	};
 	static struct bt_conn_auth_info_cb auth_info_cb = {
 		.pairing_complete = pairing_complete
+	};
+	static const struct bt_fast_pair_info_cb fp_info_callbacks = {
+		.account_key_written = fp_account_key_written,
 	};
 
 	LOG_INF("Starting Bluetooth Fast Pair example");
@@ -374,6 +382,12 @@ void main(void)
 	err = bt_conn_auth_info_cb_register(&auth_info_cb);
 	if (err) {
 		LOG_ERR("Registering authentication info callbacks failed (err %d)", err);
+		return;
+	}
+
+	err = bt_fast_pair_info_cb_register(&fp_info_callbacks);
+	if (err) {
+		LOG_ERR("Registering Fast Pair info callbacks failed (err %d)", err);
 		return;
 	}
 
