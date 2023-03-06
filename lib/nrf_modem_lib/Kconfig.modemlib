@@ -19,8 +19,7 @@ config NRF_MODEM_LIB_SYS_INIT
 	  minute in case the modem firmware is updated.
 
 menuconfig NRF_MODEM_LIB_TRACE
-	bool "Tracing" if !NRF_MODEM_LIB_TRACE_ENABLED
-	default y if NRF_MODEM_LIB_TRACE_ENABLED
+	bool "Tracing"
 	help
 	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
 	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
@@ -245,13 +244,3 @@ config NRF_MODEM_LIB_LOG_FW_VERSION_UUID
 module = NRF_MODEM_LIB
 module-str = Modem library
 source "subsys/logging/Kconfig.template.log_config"
-
-comment "Deprecated"
-
-config NRF_MODEM_LIB_TRACE_ENABLED
-	bool "Enable proprietary traces (DEPRECATED)"
-	help
-	  Deprecated, use NRF_MODEM_LIB_TRACE instead.
-	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
-	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
-	  Trace data is output on the chosen trace backend.

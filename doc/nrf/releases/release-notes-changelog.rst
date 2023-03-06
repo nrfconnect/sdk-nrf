@@ -307,6 +307,7 @@ Modem libraries
 
     * The deprecated function ``nrf_modem_lib_get_init_ret``.
     * The deprecated function ``nrf_modem_lib_shutdown_wait``.
+    * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_TRACE_ENABLED``.
 
 Libraries for networking
 ------------------------
