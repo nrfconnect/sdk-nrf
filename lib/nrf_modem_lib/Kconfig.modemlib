@@ -18,104 +18,7 @@ config NRF_MODEM_LIB_SYS_INIT
 	  Please note that initialization is synchronous and can take up to one
 	  minute in case the modem firmware is updated.
 
-menuconfig NRF_MODEM_LIB_TRACE
-	bool "Tracing"
-	help
-	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
-	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
-	  Trace data is output on the chosen trace backend.
-
-if NRF_MODEM_LIB_TRACE
-
-# Add trace backends
-rsource "trace_backends/Kconfig"
-
-config NRF_MODEM_LIB_TRACE_STACK_SIZE
-	int "Modem trace thread stack size"
-	default 768 if SIZE_OPTIMIZATIONS
-	default 1024
-
-config NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
-	bool "Override trace level"
-	default y
-
-if NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
-
-choice NRF_MODEM_LIB_TRACE_LEVEL_CHOICE
-	prompt "Trace level"
-
-config NRF_MODEM_LIB_TRACE_LEVEL_FULL
-	bool "Full"
-config NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP
-	bool "IP and LTE"
-config NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY
-	bool "IP only"
-config NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY
-	bool "Coredump only"
-config NRF_MODEM_LIB_TRACE_LEVEL_OFF
-	bool "Off"
-
-endchoice
-
-config NRF_MODEM_LIB_TRACE_LEVEL
-	int
-	default 0 if NRF_MODEM_LIB_TRACE_LEVEL_OFF
-	default 1 if NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY
-	default 2 if NRF_MODEM_LIB_TRACE_LEVEL_FULL
-	default 4 if NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY
-	default 5 if NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP
-
-endif # NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
-
-config NRF_MODEM_LIB_TRACE_THREAD_PRIO_OVERRIDE
-	bool "Override trace thread priority"
-
-config NRF_MODEM_LIB_TRACE_THREAD_PRIO
-	int "Priority of the trace processing thread"
-	depends on NRF_MODEM_LIB_TRACE_THREAD_PRIO_OVERRIDE
-	default 0
-
-config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
-	bool "Measure trace backend bitrate"
-
-if NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
-
-config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_PERIOD_MS
-	int "Rolling interval where the bitrate is measured (millisec)"
-	default 1000
-
-config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
-	depends on LOG
-	bool "Log trace backend bitrate"
-
-if NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
-
-config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG_PERIOD_MS
-	int "Bitrate log interval (millisec)"
-	default 5000
-
-endif # NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
-
-endif # NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
-
-config NRF_MODEM_LIB_TRACE_BITRATE_LOG
-	depends on NRF_MODEM_LIB_LOG_LEVEL_INF || NRF_MODEM_LIB_LOG_LEVEL_DBG
-	bool "Log trace bitrate"
-
-if NRF_MODEM_LIB_TRACE_BITRATE_LOG
-
-config NRF_MODEM_LIB_TRACE_BITRATE_LOG_PERIOD_MS
-	int "Bitrate log interval (millisec)"
-	default 1000
-
-endif # NRF_MODEM_LIB_TRACE_BITRATE_LOG
-
-endif # NRF_MODEM_LIB_TRACE
-
-menu "Interrupt priorities"
-
 DT_IPC := $(dt_nodelabel_path,ipc)
-
 config NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE
 	bool "Override IPC IRQ priority"
 	help
@@ -124,30 +27,8 @@ config NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE
 config NRF_MODEM_LIB_IPC_IRQ_PRIO
 	int "IPC IRQ priority" if NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE
 	default $(dt_node_array_prop_int,$(DT_IPC),interrupts,1) if !NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE
-endmenu
 
-choice NRF_MODEM_LIB_ON_FAULT
-	prompt "Action on modem fault"
-	default NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
-
-config NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
-	bool "Do nothing"
-	help
-	  Let the fault handler log the fault and return.
-
-config NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
-	bool "Reset modem"
-	help
-	  Let the fault handler reset the modem.
-
-config NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
-	bool "Application defined"
-	help
-	  Let the application define the fault handler function.
-
-endchoice # NRF_MODEM_LIB_ON_FAULT
-
-comment "Heap and buffers"
+menu "Memory configuration"
 
 config NRF_MODEM_LIB_HEAP_SIZE
 	int "Library heap size"
@@ -233,14 +114,126 @@ config NRF_MODEM_LIB_MEM_DIAG_DUMP_PERIOD_MS
 	int "Period (millisec)"
 	default 20000
 
-endif
+endif # NRF_MODEM_LIB_MEM_DIAG && LOG
+endmenu # Memory config
 
-comment "Logging"
+menuconfig NRF_MODEM_LIB_TRACE
+	bool "Tracing"
+	help
+	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
+	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
+	  Trace data is output on the chosen trace backend.
 
-config NRF_MODEM_LIB_LOG_FW_VERSION_UUID
-	depends on LOG
-	bool "Log FW version and UUID during initialization"
+if NRF_MODEM_LIB_TRACE
+
+# Add trace backends
+rsource "trace_backends/Kconfig"
+
+config NRF_MODEM_LIB_TRACE_STACK_SIZE
+	int "Modem trace thread stack size"
+	default 768 if SIZE_OPTIMIZATIONS
+	default 1024
+
+config NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
+	bool "Override trace level"
+	default y
+
+if NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
+
+choice NRF_MODEM_LIB_TRACE_LEVEL_CHOICE
+	prompt "Trace level"
+
+config NRF_MODEM_LIB_TRACE_LEVEL_FULL
+	bool "Full"
+config NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP
+	bool "IP and LTE"
+config NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY
+	bool "IP only"
+config NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY
+	bool "Coredump only"
+config NRF_MODEM_LIB_TRACE_LEVEL_OFF
+	bool "Off"
+
+endchoice
+
+config NRF_MODEM_LIB_TRACE_LEVEL
+	int
+	default 0 if NRF_MODEM_LIB_TRACE_LEVEL_OFF
+	default 1 if NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY
+	default 2 if NRF_MODEM_LIB_TRACE_LEVEL_FULL
+	default 4 if NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY
+	default 5 if NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP
+
+endif # NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
+
+config NRF_MODEM_LIB_TRACE_THREAD_PRIO_OVERRIDE
+	bool "Override trace thread priority"
+
+config NRF_MODEM_LIB_TRACE_THREAD_PRIO
+	int "Priority of the trace processing thread"
+	depends on NRF_MODEM_LIB_TRACE_THREAD_PRIO_OVERRIDE
+	default 0
+
+config NRF_MODEM_LIB_TRACE_BITRATE_LOG
+	depends on NRF_MODEM_LIB_LOG_LEVEL_INF || NRF_MODEM_LIB_LOG_LEVEL_DBG
+	bool "Log trace bitrate"
+	help
+	  Log the speed at which the modem emits traces, in bps.
+
+config NRF_MODEM_LIB_TRACE_BITRATE_LOG_PERIOD_MS
+	int "Bitrate log interval (millisec)"
+	depends on NRF_MODEM_LIB_TRACE_BITRATE_LOG
+	default 1000
+
+config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
+	bool "Measure trace backend bitrate"
+	help
+	  Measure the speed at which the backend processes traces, in bps.
+	  Enables compilation of nrf_modem_lib_trace_backend_bitrate_get().
+
+config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_PERIOD_MS
+	int "Rolling interval where the bitrate is measured (millisec)"
+	depends on NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
+	default 1000
+
+config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
+	bool "Log trace backend bitrate"
+	depends on NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
+	help
+	  Log the speed at which the selected backend is processing traces, in bps.
+
+config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG_PERIOD_MS
+	int "Bitrate log interval (millisec)"
+	depends on NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
+	default 5000
+
+endif # NRF_MODEM_LIB_TRACE
+
+choice NRF_MODEM_LIB_ON_FAULT
+	prompt "Action on modem fault"
+	default NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
+
+config NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
+	bool "Do nothing"
+	help
+	  Let the fault handler log the fault and return.
+
+config NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
+	bool "Reset modem"
+	help
+	  Let the fault handler reset the modem.
+
+config NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
+	bool "Application defined"
+	help
+	  Let the application define the fault handler function.
+
+endchoice # NRF_MODEM_LIB_ON_FAULT
 
 module = NRF_MODEM_LIB
 module-str = Modem library
 source "subsys/logging/Kconfig.template.log_config"
+
+config NRF_MODEM_LIB_LOG_FW_VERSION_UUID
+	depends on LOG
+	bool "Log FW version and UUID during initialization"
