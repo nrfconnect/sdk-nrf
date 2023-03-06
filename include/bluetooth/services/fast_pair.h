@@ -99,6 +99,20 @@ struct bt_fast_pair_battery {
 	uint8_t level;
 };
 
+/** Fast Pair information callback descriptor. */
+struct bt_fast_pair_info_cb {
+	/** Notify that the Account Key has been written.
+	 *
+	 * This information can be used for example to update the Fast Pair advertising
+	 * data in the not discoverable mode. Due to execution context constraints
+	 * (Bluetooth RX thread), it is not recommended to block for long periods
+	 * of time in this callback.
+	 *
+	 *  @param conn Connection object that wrote the Account Key.
+	 */
+	void (*account_key_written)(struct bt_conn *conn);
+};
+
 /** Get Fast Pair advertising data buffer size.
  *
  * @param[in] fp_adv_config	Fast Pair advertising config.
@@ -166,6 +180,18 @@ bool bt_fast_pair_has_account_key(void);
  */
 int bt_fast_pair_battery_set(enum bt_fast_pair_battery_comp battery_comp,
 			     struct bt_fast_pair_battery battery);
+
+/** Register Fast Pair information callbacks.
+ *
+ *  This function registers an instance of information callbacks. The registered instance needs to
+ *  persist in the memory after this function exits, as it is used directly without the copy
+ *  operation. It is possible to register only one instance of callbacks with this API.
+ *
+ *  @param cb Callback struct.
+ *
+ *  @return Zero on success or negative error code otherwise
+ */
+int bt_fast_pair_info_cb_register(const struct bt_fast_pair_info_cb *cb);
 
 /** Perform a reset to the default factory settings for Google Fast Pair Service.
  *
