@@ -25,7 +25,7 @@ jobs:
           git -C zephyr remote add upstream https://github.com/zephyrproject-rtos/zephyr
 
       - name: Check OSS history
-        uses: nrfconnect/action-oss-history@main
+        uses: nrfconnect/action-oss-history@d4259fb8e2e7b272a5d12fd43e6ab8be740bd512
         with:
           workspace: 'ncs'
           args: -p zephyr -p mcuboot
