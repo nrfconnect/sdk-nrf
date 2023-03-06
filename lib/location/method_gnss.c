@@ -722,6 +722,25 @@ static uint8_t method_gnss_tracked_satellites(const struct nrf_modem_gnss_pvt_da
 	return tracked;
 }
 
+static uint8_t method_gnss_tracked_satellites_nonzero_cn0(
+		const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+{
+	uint8_t tracked = 0;
+
+	for (uint32_t i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; i++) {
+		if (pvt_data->sv[i].sv == 0) {
+			break;
+		}
+		if (pvt_data->sv[i].cn0 == 0) {
+			break;
+		}
+
+		tracked++;
+	}
+
+	return tracked;
+}
+
 static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
 	LOG_DBG("Tracked satellites: %d, fix valid: %s, insuf. time window: %s",
@@ -751,6 +770,7 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 	struct nrf_modem_gnss_pvt_data_frame pvt_data;
 	static struct location_data location_result = { 0 };
 	uint8_t satellites_tracked;
+	uint8_t satellites_tracked_nonzero_cn0;
 
 	if (!running) {
 		/* Cancel has already been called, so ignore the notification. */
@@ -763,6 +783,8 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 		return;
 	}
 
+	/* Only satellites with a reasonable C/N0 count towards the obstructed visibility limit */
+	satellites_tracked_nonzero_cn0 = method_gnss_tracked_satellites_nonzero_cn0(&pvt_data);
 	satellites_tracked = method_gnss_tracked_satellites(&pvt_data);
 
 	method_gnss_print_pvt(&pvt_data);
@@ -798,7 +820,7 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 	} else if (gnss_config.visibility_detection) {
 		if (pvt_data.execution_time >= VISIBILITY_DETECTION_EXEC_TIME &&
 		    pvt_data.execution_time < (VISIBILITY_DETECTION_EXEC_TIME + MSEC_PER_SEC) &&
-		    satellites_tracked < VISIBILITY_DETECTION_SAT_LIMIT) {
+		    satellites_tracked_nonzero_cn0 < VISIBILITY_DETECTION_SAT_LIMIT) {
 			LOG_DBG("GNSS visibility obstructed, canceling");
 			method_gnss_cancel();
 			location_core_event_cb_error();
