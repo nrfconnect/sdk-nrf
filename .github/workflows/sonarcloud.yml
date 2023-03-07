@@ -13,7 +13,7 @@ jobs:
     container: nordicplayground/nrfconnect-sdk:main
     env:
       SONAR_SCANNER_VERSION: 4.7.0.2747
-      SONAR_SERVER_URL: "https://sonarcloud.io"
+      BUILD_WRAPPER_DOWNLOAD_URL: https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
       BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory # Directory where build-wrapper output will be placed
     steps:
       - name: Checkout the code
@@ -52,8 +52,6 @@ jobs:
           echo "$HOME/.sonar/sonar-scanner-${{ env.SONAR_SCANNER_VERSION }}-linux/bin" >> $GITHUB_PATH
 
       - name: Download and set up build-wrapper
-        env:
-          BUILD_WRAPPER_DOWNLOAD_URL: ${{ env.SONAR_SERVER_URL }}/static/cpp/build-wrapper-linux-x86.zip
         run: |
           curl -sSLo $HOME/.sonar/build-wrapper-linux-x86.zip ${{ env.BUILD_WRAPPER_DOWNLOAD_URL }}
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
@@ -96,11 +94,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           sonar-scanner -X \
-                        --define sonar.projectKey=balaji-nordic_sdk-nrf \
-                        --define sonar.organization=balaji-nordic \
-                        --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" \
-                        --define sonar.exclusions="ncs/modules/**,ncs/zephyr/**,ncs/nrf/ext/**,**/*.py,**/*.vsdx,**twister-out**,**/*.java,**/*.html,**/*.xml,**/*.php" \
-                        --define sonar.cpd.exclusions="**CMakeFiles**" \
+                        --define project.settings=ncs/nrf/sonar-project.properties \
                         --define sonar.coverageReportPaths=coverage.xml \
-                        --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
-                        --define sonar.cfamily.cache.enabled=false
+                        --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
