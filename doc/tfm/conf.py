@@ -77,4 +77,4 @@ def setup(app):
     app.add_css_file("css/common.css")
     app.add_css_file("css/tfm.css")
 
-    utils.add_google_analytics(app)
+    utils.add_google_analytics(app, html_theme_options)

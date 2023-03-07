@@ -196,4 +196,4 @@ notfound_urls_prefix = "/nRF_Connect_SDK/doc/{}/nrf/".format(
 def setup(app):
     app.add_css_file("css/nrf.css")
 
-    utils.add_google_analytics(app)
+    utils.add_google_analytics(app, html_theme_options)

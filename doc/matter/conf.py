@@ -63,4 +63,4 @@ ncs_cache_manifest = NRF_BASE / "west.yml"
 def setup(app):
     app.add_css_file("css/matter.css")
 
-    utils.add_google_analytics(app)
+    utils.add_google_analytics(app, html_theme_options)

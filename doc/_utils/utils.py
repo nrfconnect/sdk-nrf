@@ -110,18 +110,21 @@ def get_intersphinx_mapping(docset: str) -> Optional[Tuple[str, str]]: # pylint:
     return (str(Path("..") / docset), str(inventory))
 
 
-def add_google_analytics(app: Sphinx) -> None:
+def add_google_analytics(app: Sphinx, options: dict) -> None:
     """Add Google Analytics to a docset.
 
     Args:
         app: Sphinx instance.
+        options: HTML theme options
     """
 
-    app.add_js_file("https://www.googletagmanager.com/gtag/js?id=G-ZPVZRKFQJR")
-    app.add_js_file("js/ga-tracker.js")
+    app.add_js_file("js/gtm-insert.js")
     app.add_js_file(
         "https://policy.app.cookieinformation.com/uc.js",
         id="CookieConsent",
         type="text/javascript",
         **{"data-culture": "EN"},
     )
+
+    options["add_gtm"] = True
+    options["gtm_id"] = "GTM-WF4CVFX"
