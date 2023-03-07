@@ -144,6 +144,7 @@ nRF9160: Asset Tracker v2
 * Updated:
 
   * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
+  * The application now integrates the :ref:`lib_lwm2m_client_utils` FOTA callback functionality.
 
 nRF9160: Serial LTE modem
 -------------------------
@@ -198,6 +199,12 @@ nRF9160 samples
   * Added:
 
     * Support for the nRF7002 DK PCA10143.
+
+* :ref:`lwm2m_client` sample:
+
+  * Updated:
+
+    * The sample now integrates the :ref:`lib_lwm2m_client_utils` FOTA callback functionality.
 
 Peripheral samples
 ------------------
@@ -295,6 +302,16 @@ Libraries for networking
   * Added:
 
     * A public header file :file:`nrf_cloud_defs.h` that contains common defines for interacting with nRF Cloud and the :ref:`lib_nrf_cloud` library.
+
+* :ref:`lib_lwm2m_client_utils` library:
+
+  * Updated:
+
+    * :file:`lwm2m_client_utils.h` includes new API for FOTA to register application callback to receive state changes and requests for the update process.
+
+  * Removed:
+
+    * The old API ``lwm2m_firmware_get_update_state_cb()``.
 
 Libraries for NFC
 -----------------
