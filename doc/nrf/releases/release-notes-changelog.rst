@@ -186,6 +186,12 @@ nRF9160 samples
     * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
       Remove the inclusion of the file :file:`nrf_cloud_codec.h`.
 
+* :ref:`slm_shell_sample` sample:
+
+  * Added:
+
+    * Support for the nRF7002 DK PCA10143.
+
 Peripheral samples
 ------------------
 
