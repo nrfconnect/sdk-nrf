@@ -27,6 +27,10 @@ on:
           description: Optional resolver token for resolver service
           required: false
           default: ''
+      debug_mode:
+          description: Optional resolver token for resolver service
+          required: false
+          default: true
 
 jobs:
   gitStream:
