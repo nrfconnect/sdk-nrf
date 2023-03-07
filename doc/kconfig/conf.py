@@ -72,4 +72,4 @@ os.environ["NCS_MEMFAULT_FIRMWARE_SDK_KCONFIG"] = str(
 def setup(app):
     app.add_css_file("css/kconfig.css")
 
-    utils.add_google_analytics(app)
+    utils.add_google_analytics(app, html_theme_options)
