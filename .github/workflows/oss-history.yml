@@ -25,7 +25,7 @@ jobs:
           git -C zephyr remote add upstream https://github.com/zephyrproject-rtos/zephyr
 
       - name: Check manifest userdata
-        working_directory: ncs/nrf
+        working-directory: ncs/nrf
         run: |
           python3 scripts/ci/check_manifest_userdata.py
 
