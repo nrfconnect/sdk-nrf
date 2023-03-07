@@ -149,3 +149,7 @@
 .. nrf7002dk_nrf5340_cpunet
 
 | :ref:`nRF7002 DK <nrf7002dk_nrf5340>` | PCA10143 | :ref:`nrf7002dk_nrf5340 <nrf7002dk_nrf5340>` | ``nrf7002dk_nrf5340_cpunet`` |
+
+.. native_posix
+
+| Native Posix | | native_posix | ``native_posix`` |
