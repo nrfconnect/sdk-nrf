@@ -210,6 +210,7 @@ choice BT_LL_SOFTDEVICE_VARIANT
 						     BT_CTLR_SYNC_PERIODIC || \
 						     BT_CTLR_SCA_UPDATE || \
 						     BT_CTLR_SDC_PAWR_ADV || \
+						     BT_CTLR_SDC_PAWR_SYNC || \
 						     SOC_NRF5340_CPUNET)
 	default BT_LL_SOFTDEVICE_CENTRAL if BT_OBSERVER
 	default BT_LL_SOFTDEVICE_PERIPHERAL if BT_BROADCASTER
@@ -303,7 +304,7 @@ config BT_CTLR_SDC_PAWR_ADV
 	depends on BT_PER_ADV
 	depends on BT_CTLR_SYNC_TRANSFER_SENDER
 	help
-	  Enable support for Periodic Advertising with Respsonses - Advertiser.
+	  Enable support for Periodic Advertising with Responses - Advertiser.
 
 if BT_CTLR_SDC_PAWR_ADV
 config BT_CTLR_SDC_PAWR_ADV_COUNT
@@ -343,6 +344,27 @@ config BT_CTLR_SDC_PERIODIC_ADV_RSP_RX_BUFFER_COUNT
 	  until the host is able to pull the periodic advertising response reports.
 
 	  A value of 0 will disable reception of subevent responses.
+endif
+
+
+config BT_CTLR_SDC_PAWR_SYNC
+	bool "LE Periodic Advertising with Responses Synchronization State [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	depends on BT_CTLR_SYNC_PERIODIC
+	depends on BT_CTLR_SYNC_TRANSFER_SENDER
+	depends on BT_CTLR_SYNC_TRANSFER_RECEIVER
+	help
+	  Enable support for Periodic Advertising with Responses - Scanner.
+
+if BT_CTLR_SDC_PAWR_SYNC
+config BT_CTLR_SDC_PERIODIC_SYNC_RSP_TX_BUFFER_COUNT
+	int "BT_CTLR_SDC_PERIODIC_SYNC_RSP_TX_BUFFER_COUNT"
+	range 0 255
+	default 0
+	help
+	  Maximum number of response data packets that can be buffered at a time.
+	  Increasing this will make it possible to prepare multiple responses ahead of time.
+
 endif
 endmenu
 endif  # BT_LL_SOFTDEVICE

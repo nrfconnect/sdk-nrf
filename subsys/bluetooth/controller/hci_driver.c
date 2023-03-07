@@ -91,17 +91,27 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #define SDC_PERIODIC_ADV_RSP_MEM_SIZE 0
 #endif
 
-#if defined(CONFIG_BT_PER_ADV_SYNC)
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC) || defined(CONFIG_BT_PER_ADV_SYNC)
 	#define SDC_PERIODIC_ADV_SYNC_COUNT CONFIG_BT_PER_ADV_SYNC_MAX
-	#define SDC_PERIODIC_SYNC_MEM_SIZE \
-		(SDC_PERIODIC_ADV_SYNC_COUNT * \
-		 SDC_MEM_PER_PERIODIC_SYNC(CONFIG_BT_CTLR_SDC_PERIODIC_SYNC_BUFFER_COUNT))
 	#define SDC_PERIODIC_ADV_LIST_MEM_SIZE \
 		SDC_MEM_PERIODIC_ADV_LIST(CONFIG_BT_CTLR_SYNC_PERIODIC_ADV_LIST_SIZE)
 #else
 	#define SDC_PERIODIC_ADV_SYNC_COUNT 0
-	#define SDC_PERIODIC_SYNC_MEM_SIZE 0
 	#define SDC_PERIODIC_ADV_LIST_MEM_SIZE 0
+#endif
+
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
+	#define SDC_PERIODIC_SYNC_MEM_SIZE \
+		(SDC_PERIODIC_ADV_SYNC_COUNT * \
+		 SDC_MEM_PER_PERIODIC_SYNC_RSP( \
+					CONFIG_BT_CTLR_SDC_PERIODIC_SYNC_RSP_TX_BUFFER_COUNT, \
+					CONFIG_BT_CTLR_SDC_PERIODIC_SYNC_BUFFER_COUNT))
+#elif defined(CONFIG_BT_PER_ADV_SYNC)
+	#define SDC_PERIODIC_SYNC_MEM_SIZE \
+		(SDC_PERIODIC_ADV_SYNC_COUNT * \
+		 SDC_MEM_PER_PERIODIC_SYNC(CONFIG_BT_CTLR_SDC_PERIODIC_SYNC_BUFFER_COUNT))
+#else
+	#define SDC_PERIODIC_SYNC_MEM_SIZE 0
 #endif
 
 #if defined(CONFIG_BT_OBSERVER)
@@ -662,6 +672,13 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_PAWR_SYNC)) {
+		err = sdc_support_le_periodic_sync_with_rsp();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 	return 0;
 }
 
@@ -815,6 +832,16 @@ static int configure_memory_usage(void)
 
 	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
 				      SDC_CFG_TYPE_PERIODIC_ADV_RSP_BUFFER_CFG, &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+#endif
+
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
+	cfg.periodic_sync_rsp_tx_buffer_cfg.count =
+		CONFIG_BT_CTLR_SDC_PERIODIC_SYNC_RSP_TX_BUFFER_COUNT;
+	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+					  SDC_CFG_TYPE_PERIODIC_SYNC_TX_BUFFER_CFG, &cfg);
 	if (required_memory < 0) {
 		return required_memory;
 	}
