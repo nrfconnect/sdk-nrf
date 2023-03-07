@@ -37,6 +37,7 @@ static int encoded_output_check(cJSON *object, char *validation_string, int8_t q
 
 	if (strcmp(validation_string, dummy.buffer) != 0) {
 		/* Dummy buffer should equal the validation string. */
+		printk("validation: %s, buffer: %s", validation_string, dummy.buffer);
 		return -2;
 	}
 
@@ -619,6 +620,48 @@ static void test_encode_neighbor_cells_data_object(void)
 	ret = json_common_neighbor_cells_data_add(dummy.root_obj,
 					     &data,
 					     JSON_COMMON_ADD_DATA_TO_OBJECT);
+	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+}
+
+static void test_encode_wifi_aps_data_object(void)
+{
+	int ret;
+	struct cloud_data_wifi_access_points data = {
+		.ap_info = {
+			{.mac = {0x13, 0x00, 0xa5, 0xa0, 0xd2, 0x9c}},
+			{.mac = {0x5c, 0x35, 0xb5, 0xc2, 0x7b, 0x3e}},
+			{.mac = {0x73, 0x44, 0xf6, 0xc9, 0x00, 0xcd}},
+			{.mac = {0x54, 0x5e, 0x8d, 0x44, 0x3d, 0x81}},
+		},
+		.cnt = 4,
+		.ts = 1000,
+		.queued = true,
+	};
+
+	ret = json_common_wifi_ap_data_add(dummy.root_obj,
+					   &data,
+					   JSON_COMMON_ADD_DATA_TO_OBJECT);
+	zassert_equal(0, ret, "Return value %d is wrong", ret);
+
+	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_WIFI_AP_JSON_DATA,
+				   data.queued);
+	zassert_equal(0, ret, "Return value %d is wrong", ret);
+
+	/* Check for invalid inputs. */
+
+	data.queued = false;
+
+	ret = json_common_wifi_ap_data_add(dummy.root_obj,
+					   &data,
+					   JSON_COMMON_ADD_DATA_TO_OBJECT);
+	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+
+	data.queued = true;
+	data.cnt = 1;
+
+	ret = json_common_wifi_ap_data_add(dummy.root_obj,
+					   &data,
+					   JSON_COMMON_ADD_DATA_TO_OBJECT);
 	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
 }
 
@@ -1241,6 +1284,11 @@ void test_main(void)
 
 		/* Neighbor cell */
 		ztest_unit_test_setup_teardown(test_encode_neighbor_cells_data_object,
+					       test_setup_object,
+					       test_teardown_object),
+
+		/* Wi-Fi APs */
+		ztest_unit_test_setup_teardown(test_encode_wifi_aps_data_object,
 					       test_setup_object,
 					       test_teardown_object),
 

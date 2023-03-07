@@ -27,7 +27,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 #define PROP_BAG_CONTENT_ENCODING_VALUE "utf-8"
 
 #define PROP_BAG_BATCH_KEY "batch"
-#define PROP_BAG_NEIGHBOR_CELLS_KEY "ncellmeas"
+#define PROP_BAG_GROUND_FIX_KEY "ground-fix"
 
 #define PROP_BAG_AGPS_KEY "agps"
 #define PROP_BAG_AGPS_GET_VALUE "get"
@@ -112,10 +112,10 @@ static struct azure_iot_hub_property prop_bag_pgps[] = {
 		.value.size = sizeof(PROP_BAG_CONTENT_ENCODING_VALUE) - 1,
 	},
 };
-static struct azure_iot_hub_property prop_bag_ncellmeas[] = {
+static struct azure_iot_hub_property prop_bag_ground_fix[] = {
 	{
-		.key.ptr = PROP_BAG_NEIGHBOR_CELLS_KEY,
-		.key.size = sizeof(PROP_BAG_NEIGHBOR_CELLS_KEY) - 1,
+		.key.ptr = PROP_BAG_GROUND_FIX_KEY,
+		.key.size = sizeof(PROP_BAG_GROUND_FIX_KEY) - 1,
 		.value.ptr = NULL,
 	},
 	{
@@ -495,8 +495,8 @@ int cloud_wrap_cloud_location_send(char *buf, size_t len, bool ack, uint32_t id)
 		.message_id = id,
 		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic.type = AZURE_IOT_HUB_TOPIC_EVENT,
-		.topic.properties = prop_bag_ncellmeas,
-		.topic.property_count = ARRAY_SIZE(prop_bag_ncellmeas)
+		.topic.properties = prop_bag_ground_fix,
+		.topic.property_count = ARRAY_SIZE(prop_bag_ground_fix)
 	};
 
 	err = azure_iot_hub_send(&msg);
