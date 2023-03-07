@@ -86,6 +86,15 @@ int cloud_codec_encode_cloud_location(
 		goto exit;
 	}
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	err = json_common_wifi_ap_data_add(root_obj, &cloud_location->wifi_access_points,
+					   JSON_COMMON_ADD_DATA_TO_OBJECT);
+	if (err) {
+		goto exit;
+	}
+#endif
+
+
 	buffer = cJSON_PrintUnformatted(root_obj);
 	if (buffer == NULL) {
 		LOG_ERR("Failed to allocate memory for JSON string");

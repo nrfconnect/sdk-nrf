@@ -198,6 +198,24 @@ int json_common_neighbor_cells_data_add(cJSON *parent,
 					struct cloud_data_neighbor_cells *data,
 					enum json_common_op_code op);
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+/**
+ * @brief Encode and add wifi survey data to the parent object.
+ *
+ * @param[out] parent Pointer to object that the encoded data is added to.
+ * @param[in] data Pointer to data that is to be encoded.
+ * @param[in] op Operation that is to be carried out.
+ *
+ * @retval 0 on success.
+ * @retval -ENODATA if the passed in data is not queued or has an invalid timestamp value.
+ * @retval -ENOMEM if the function fails to allocate memory.
+ * @retval -EFAULT if an error occurs in the call to snprintk.
+ */
+int json_common_wifi_ap_data_add(cJSON *parent,
+				 struct cloud_data_wifi_access_points *data,
+				 enum json_common_op_code op);
+#endif
+
 /**
  * @brief Encode and add A-GPS request data to the parent object.
  *

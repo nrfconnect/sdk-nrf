@@ -28,8 +28,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 #define BATCH_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 6)
 #define MESSAGES_TOPIC "%s/messages"
 #define MESSAGES_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 9)
-#define NEIGHBOR_CELLS_TOPIC "%s/ncellmeas"
-#define NEIGHBOR_CELLS_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 10)
+#define GROUND_FIX_TOPIC "%s/ground-fix"
+#define GROUND_FIX_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 11)
 #define AGPS_REQUEST_TOPIC "%s/agps/get"
 #define AGPS_REQUEST_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 9)
 #define AGPS_RESPONSE_TOPIC "%s/agps"
@@ -67,7 +67,7 @@ static char client_id_buf[AWS_CLOUD_CLIENT_ID_LEN + 1];
 static char batch_topic[BATCH_TOPIC_LEN + 1];
 static char cfg_topic[CFG_TOPIC_LEN + 1];
 static char messages_topic[MESSAGES_TOPIC_LEN + 1];
-static char neighbor_cells_topic[NEIGHBOR_CELLS_TOPIC_LEN + 1];
+static char ground_fix_topic[GROUND_FIX_TOPIC_LEN + 1];
 static char agps_request_topic[AGPS_REQUEST_TOPIC_LEN + 1];
 static char agps_response_topic[AGPS_RESPONSE_TOPIC_LEN + 1];
 static char pgps_request_topic[PGPS_REQUEST_TOPIC_LEN + 1];
@@ -112,14 +112,14 @@ static int populate_app_endpoint_topics(void)
 	pub_topics[APP_PUB_TOPIC_IDX_UI].str = messages_topic;
 	pub_topics[APP_PUB_TOPIC_IDX_UI].len = MESSAGES_TOPIC_LEN;
 
-	err = snprintf(neighbor_cells_topic, sizeof(neighbor_cells_topic),
-		       NEIGHBOR_CELLS_TOPIC, client_id_buf);
-	if (err != NEIGHBOR_CELLS_TOPIC_LEN) {
+	err = snprintf(ground_fix_topic, sizeof(ground_fix_topic),
+		       GROUND_FIX_TOPIC, client_id_buf);
+	if (err != GROUND_FIX_TOPIC_LEN) {
 		return -ENOMEM;
 	}
 
-	pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS].str = neighbor_cells_topic;
-	pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS].len = NEIGHBOR_CELLS_TOPIC_LEN;
+	pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS].str = ground_fix_topic;
+	pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS].len = GROUND_FIX_TOPIC_LEN;
 
 	err = snprintf(agps_request_topic, sizeof(agps_request_topic),
 		       AGPS_REQUEST_TOPIC, client_id_buf);
