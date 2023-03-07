@@ -12,6 +12,6 @@ if (CONFIG_MPSL_CX_THREAD OR CONFIG_MPSL_CX_BT_1WIRE OR CONFIG_MPSL_CX_NRF700X)
     zephyr_library_sources_ifdef(CONFIG_MPSL_CX_NRF700X nrf700x/mpsl_cx_nrf700x.c)
 endif()
 
-if (CONFIG_MPSL_CX_NRF700X AND CONFIG_SOC_SERIES_NRF53X)
+if (CONFIG_MPSL_CX_NRF700X AND CONFIG_SOC_SERIES_NRF53X AND CONFIG_NRF_RPC)
     zephyr_library_sources(nrf700x/mpsl_cx_nrf700x_rpc.c)
 endif()

@@ -50,8 +50,8 @@ config MPSL_CX_NRF700X
 	depends on MPSL_CX_NRF700X_SUPPORT
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
 	select GPIO if !MPSL_CX_PIN_FORWARDER
-	select NRF_RPC if SOC_SERIES_NRF53X
-	select NRF_RPC_CBOR if SOC_SERIES_NRF53X
+	imply NRF_RPC if SOC_SERIES_NRF53X
+	imply NRF_RPC_CBOR if SOC_SERIES_NRF53X
 	bool "nRF700x Radio Coexistence"
 	help
 	  Radio Coexistence supporting nRF700x interface.
