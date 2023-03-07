@@ -145,12 +145,13 @@ static int rest_client_sckt_timeouts_set(int fd, int32_t timeout_ms)
 	return 0;
 }
 
+/* The time taken in this function is deducted from the given timeout value. */
 static int rest_client_sckt_connect(int *const fd,
 				    const char *const hostname,
 				    const uint16_t port_num,
 				    const sec_tag_t sec_tag,
 				    int tls_peer_verify,
-				    int32_t timeout_ms)
+				    int32_t *timeout_ms)
 {
 	int ret;
 	struct addrinfo *addr_info;
@@ -164,6 +165,10 @@ static int rest_client_sckt_connect(int *const fd,
 	};
 	struct sockaddr *sa;
 	int proto = 0;
+	int64_t sckt_connect_start_time;
+	int64_t time_used = 0;
+
+	sckt_connect_start_time = k_uptime_get();
 
 	/* Make sure fd is always initialized when this function is called */
 	*fd = -1;
@@ -185,6 +190,17 @@ static int rest_client_sckt_connect(int *const fd,
 		  INET6_ADDRSTRLEN);
 	LOG_DBG("getaddrinfo() %s", peer_addr);
 
+	if (*timeout_ms != SYS_FOREVER_MS) {
+		/* Take time used for DNS query into account */
+		time_used = k_uptime_get() - sckt_connect_start_time;
+
+		/* Check if timeout has already elapsed */
+		if (time_used >= *timeout_ms) {
+			LOG_WRN("Timeout occurred during DNS query");
+			return -ETIMEDOUT;
+		}
+	}
+
 	proto = (sec_tag == REST_CLIENT_SEC_TAG_NO_SEC) ? IPPROTO_TCP : IPPROTO_TLS_1_2;
 	*fd = socket(addr_info->ai_family, SOCK_STREAM, proto);
 	if (*fd == -1) {
@@ -201,7 +217,7 @@ static int rest_client_sckt_connect(int *const fd,
 		}
 	}
 
-	ret = rest_client_sckt_timeouts_set(*fd, timeout_ms);
+	ret = rest_client_sckt_timeouts_set(*fd, *timeout_ms - time_used);
 	if (ret) {
 		LOG_ERR("Failed to set socket timeouts, error: %d", errno);
 		ret = -EINVAL;
@@ -219,6 +235,18 @@ static int rest_client_sckt_connect(int *const fd,
 			ret = -ECONNREFUSED;
 		}
 		goto clean_up;
+	}
+
+	if (*timeout_ms != SYS_FOREVER_MS) {
+		/* Take time used for socket connect into account */
+		time_used = k_uptime_get() - sckt_connect_start_time;
+
+		/* Check if timeout has already elapsed */
+		if (time_used >= *timeout_ms) {
+			LOG_WRN("Timeout occurred during socket connect");
+			return -ETIMEDOUT;
+		}
+		*timeout_ms -= time_used;
 	}
 
 clean_up:
@@ -269,10 +297,6 @@ static int rest_client_do_api_call(struct http_request *http_req,
 				   struct rest_client_resp_context *const resp_ctx)
 {
 	int err = 0;
-	int64_t sckt_connect_start_time;
-	int64_t sckt_connect_time;
-
-	sckt_connect_start_time = k_uptime_get();
 
 	if (req_ctx->connect_socket < 0) {
 		err = rest_client_sckt_connect(&req_ctx->connect_socket,
@@ -280,7 +304,7 @@ static int rest_client_do_api_call(struct http_request *http_req,
 						req_ctx->port,
 						req_ctx->sec_tag,
 						req_ctx->tls_peer_verify,
-						req_ctx->timeout_ms);
+						&req_ctx->timeout_ms);
 		if (err) {
 			return err;
 		}
@@ -300,18 +324,6 @@ static int rest_client_do_api_call(struct http_request *http_req,
 	resp_ctx->total_response_len = 0;
 	resp_ctx->used_socket_id = req_ctx->connect_socket;
 	resp_ctx->http_status_code_str[0] = '\0';
-
-	if (req_ctx->timeout_ms != SYS_FOREVER_MS) {
-		/* Take time used for socket connect into account */
-		sckt_connect_time = k_uptime_get() - sckt_connect_start_time;
-
-		/* Check if timeout has already elapsed */
-		if (sckt_connect_time >= req_ctx->timeout_ms) {
-			LOG_WRN("Timeout occurred during socket connect");
-			return -ETIMEDOUT;
-		}
-		req_ctx->timeout_ms -= sckt_connect_time;
-	}
 
 	err = http_client_req(req_ctx->connect_socket, http_req, req_ctx->timeout_ms, resp_ctx);
 	if (err < 0) {
