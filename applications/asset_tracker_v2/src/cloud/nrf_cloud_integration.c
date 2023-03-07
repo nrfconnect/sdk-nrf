@@ -49,7 +49,7 @@ static cloud_wrap_evt_handler_t wrapper_evt_handler;
 #if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
 /* Full modem FOTA requires external flash to hold the full modem image.
  * Below is the external flash device present on the nRF9160 DK version
- * 1.0.1 and higher.
+ * 0.14.0 and higher.
  */
 static struct dfu_target_fmfu_fdev ext_flash_dev = {
 	.size = 0,
@@ -289,6 +289,7 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	int err;
 	struct nrf_cloud_init_param config = {
 		.event_handler = nrf_cloud_event_handler,
+		.application_version = CONFIG_ASSET_TRACKER_V2_APP_VERSION,
 #if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
 		.fmfu_dev_inf = &ext_flash_dev
 #endif
@@ -397,7 +398,8 @@ int cloud_wrap_batch_send(char *buf, size_t len, bool ack, uint32_t id)
 	return 0;
 }
 
-int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
+int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id,
+		       const struct lwm2m_obj_path path_list[])
 {
 	ARG_UNUSED(path_list);
 
@@ -419,7 +421,7 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id, char *path_
 	return 0;
 }
 
-int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id)
+int cloud_wrap_cloud_location_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	int err;
 	struct nrf_cloud_tx_data msg = {
@@ -439,6 +441,28 @@ int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id)
 	return 0;
 }
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+int cloud_wrap_wifi_access_points_send(char *buf, size_t len, bool ack, uint32_t id)
+{
+	int err;
+	struct nrf_cloud_tx_data msg = {
+		.data.ptr = buf,
+		.data.len = len,
+		.id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
+		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
+	};
+
+	err = nrf_cloud_send(&msg);
+	if (err) {
+		LOG_ERR("nrf_cloud_send, error: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+#endif
+
 int cloud_wrap_state_get(bool ack, uint32_t id)
 {
 	/* Not supported, the nRF Cloud library automatically requests the cloud-side state upon
@@ -447,7 +471,8 @@ int cloud_wrap_state_get(bool ack, uint32_t id)
 	return -ENOTSUP;
 }
 
-int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
+int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id,
+			 const struct lwm2m_obj_path path_list[])
 {
 	ARG_UNUSED(path_list);
 	/* Not supported, all data is sent to the bulk topic. */

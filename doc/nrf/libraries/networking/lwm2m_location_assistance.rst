@@ -15,6 +15,7 @@ Overview
 Location Assistance object is a proprietary LwM2M object used to deliver information required by various location services through LwM2M.
 This feature is currently under development and considered :ref:`experimental <software_maturity>`.
 As of now, only AVSystem's Coiote LwM2M server can be used for utilizing the location assistance data from nRF Cloud.
+To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 
 The library adds support for four objects related to location assistance:
 
@@ -32,9 +33,11 @@ When using ground fix, the library always sends as much information about the lo
 Supported features
 ******************
 
-There are three different supported methods of obtaining the location assistance:
+There are four different supported methods of obtaining the location assistance:
 
-* Location based on cell information - The device sends information about the current cell and possibly about the neighboring cells to the  LwM2M server.
+* Location based on cell information - The device sends information about the current cell and possibly about the neighboring cells to the LwM2M server.
+  The LwM2M server then sends the location request to nRF Cloud, which responds with the location data.
+* Location based on Wi-Fi access points - The device sends information about the nearby Wi-Fi access points to the LwM2M server.
   The LwM2M server then sends the location request to nRF Cloud, which responds with the location data.
 * Query of A-GPS assistance data - The A-GPS assistance data is queried from nRF Cloud and provided back to the device through the LwM2M server.
   The A-GPS assistance data is then provided to the GNSS module for obtaining the position fix faster.
@@ -45,6 +48,8 @@ API usage
 *********
 
 This section describes API usage in different scenarios.
+
+.. _location_assistance_cell:
 
 Cell-based location
 ===================
@@ -62,6 +67,23 @@ If the location is sent back to the device, the location is stored only in the G
 
 To send the location request for the cell-based location, call the :c:func:`location_assistance_ground_fix_request_send` function.
 
+.. _location_assistance_wifi:
+
+Wi-Fi based location
+====================
+
+Wi-Fi based location uses the nearby Wi-Fi access points for estimating location.
+The library uses a collection of Visible Wi-Fi Access Point objects (ID 33627) for storing the information about nearby Wi-Fi access points.
+To populate the objects, first enable the Kconfig option for the access point scanner :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_WIFI_AP_SCANNER` and call the :c:func:`lwm2m_wifi_request_scan` function to request the access point scan.
+
+The Ground Fix Location object is used in the same manner as it is used in the cell-based location when sending the location request.
+
+.. note::
+   Cell-based location and Wi-Fi based location can be combined.
+   When combined, the ground fix assistance request contains data from both, the nearby cells and nearby Wi-Fi access points.
+
+.. _location_assistance_agps_lwm2m:
+
 A-GPS assistance
 ================
 
@@ -78,8 +100,10 @@ Filtered A-GPS
 --------------
 
 With filtered A-GPS, the satellites below the given angle above the ground are filtered out.
-You can set the the angle to a degree `[0 - 90]` using the :c:func:`location_assist_agps_set_elevation_mask` function.
+You can set the angle to a degree `[0 - 90]` using the :c:func:`location_assist_agps_set_elevation_mask` function.
 Setting the degree to `-1` disables filtering, which is the default setting.
+
+.. _location_assistance_pgps_lwm2m:
 
 P-GPS assistance
 ================
@@ -132,22 +156,18 @@ Following are the other important library options:
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS` -  nRF Cloud provides A-GPS assistance data and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS` -  nRF Cloud provides P-GPS predictions and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL` -  nRF Cloud provides estimated location based on currently attached cell and its neighborhood.
-* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS` - Disable this option if you provide your own method of sending the assistance requests to the LwM2M server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT` - Enable support for connectivity monitoring utilities.
   Provides data about the current cell and network the device has connected to.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT` - Enable support for the Visible Wi-Fi Access Point objects (ID 33627).
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_WIFI_AP_SCANNER` - Enable support for scanning Wi-Fi access points and populating Visible Wi-Fi Access Point objects.
 
 API documentation
 *****************
 
-| Header files: :file:`include/net/lwm2m_client_utils_location.h`, :file:`include/net/lwm2m_client_utils_location_events.h`
-| Source files: :file:`subsys/net/lib/lwm2m_client_utils/location/location_assistance.c`, :file:`subsys/net/lib/wm2m_client_utils/location/location_events.c`
+| Header file: :file:`include/net/lwm2m_client_utils_location.h`
+| Source file: :file:`subsys/net/lib/lwm2m_client_utils/location/location_assistance.c`
 
 .. doxygengroup:: lwm2m_client_utils_location
-   :project: nrf
-   :members:
-   :inner:
-
-.. doxygengroup:: lwm2m_client_utils_location_events
    :project: nrf
    :members:
    :inner:

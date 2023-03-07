@@ -1,0 +1,157 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA.
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ */
+
+#ifndef __TFM_CONFIG_H__
+#define __TFM_CONFIG_H__
+
+/* Platform Partition Configs */
+
+/* Size of input buffer in platform service */
+#cmakedefine PLATFORM_SERVICE_INPUT_BUFFER_SIZE @PLATFORM_SERVICE_INPUT_BUFFER_SIZE@
+
+/* Size of output buffer in platform service */
+#cmakedefine PLATFORM_SERVICE_OUTPUT_BUFFER_SIZE @PLATFORM_SERVICE_OUTPUT_BUFFER_SIZE@
+
+/* The stack size of the Platform Secure Partition */
+#cmakedefine PLATFORM_SP_STACK_SIZE @PLATFORM_SP_STACK_SIZE@
+
+/* Disable Non-volatile counter module */
+#cmakedefine01 PLATFORM_NV_COUNTER_MODULE_DISABLED
+
+/* Crypto Partition Configs */
+
+/*
+ * Heap size for the crypto backend
+ * CRYPTO_ENGINE_BUF_SIZE needs to be >8KB for EC signing by attest module.
+ */
+#cmakedefine CRYPTO_ENGINE_BUF_SIZE @CRYPTO_ENGINE_BUF_SIZE@
+
+/* The max number of concurrent operations that can be active (allocated) at any time in Crypto */
+#cmakedefine CRYPTO_CONC_OPER_NUM @CRYPTO_CONC_OPER_NUM@
+
+/* Enable PSA Crypto random number generator module */
+#cmakedefine01 CRYPTO_RNG_MODULE_ENABLED
+
+/* Enable PSA Crypto Key module */
+#cmakedefine01 CRYPTO_KEY_MODULE_ENABLED
+
+/* Enable PSA Crypto AEAD module */
+#cmakedefine01 CRYPTO_AEAD_MODULE_ENABLED
+
+/* Enable PSA Crypto MAC module */
+#cmakedefine01 CRYPTO_MAC_MODULE_ENABLED
+
+/* Enable PSA Crypto Hash module */
+#cmakedefine01 CRYPTO_HASH_MODULE_ENABLED
+
+/* Enable PSA Crypto Cipher module */
+#cmakedefine01 CRYPTO_CIPHER_MODULE_ENABLED
+
+/* Enable PSA Crypto asymmetric key signature module */
+#cmakedefine01 CRYPTO_ASYM_SIGN_MODULE_ENABLED
+
+/* Enable PSA Crypto asymmetric key encryption module */
+#cmakedefine01 CRYPTO_ASYM_ENCRYPT_MODULE_ENABLED
+
+/* Enable PSA Crypto key derivation module */
+#cmakedefine01 CRYPTO_KEY_DERIVATION_MODULE_ENABLED
+
+/* Default size of the internal scratch buffer used for PSA FF IOVec allocations */
+#cmakedefine CRYPTO_IOVEC_BUFFER_SIZE @CRYPTO_IOVEC_BUFFER_SIZE@
+
+/* Use stored NV seed to provide entropy */
+#cmakedefine01 CRYPTO_NV_SEED
+
+/*
+ * Only enable multi-part operations in Hash, MAC, AEAD and symmetric ciphers,
+ * to optimize memory footprint in resource-constrained devices.
+ */
+#cmakedefine01 CRYPTO_SINGLE_PART_FUNCS_DISABLED
+
+/* The stack size of the Crypto Secure Partition */
+#cmakedefine CRYPTO_STACK_SIZE @CRYPTO_STACK_SIZE@
+
+/* FWU Partition Configs */
+
+/* Size of the FWU internal data transfer buffer */
+#cmakedefine TFM_FWU_BUF_SIZE @TFM_FWU_BUF_SIZE@
+
+/* The stack size of the Firmware Update Secure Partition */
+#cmakedefine FWU_STACK_SIZE @FWU_STACK_SIZE@
+
+/* Attest Partition Configs */
+
+/* Include optional claims in initial attestation token */
+#cmakedefine01 ATTEST_INCLUDE_OPTIONAL_CLAIMS
+
+/* Include COSE key-id in initial attestation token */
+#cmakedefine01 ATTEST_INCLUDE_COSE_KEY_ID
+
+/* The stack size of the Initial Attestation Secure Partition */
+#cmakedefine ATTEST_STACK_SIZE @ATTEST_STACK_SIZE@
+
+/* Set the initial attestation token profile */
+#cmakedefine01 ATTEST_TOKEN_PROFILE_PSA_IOT_1
+
+/* ITS Partition Configs */
+
+/* Create flash FS if it doesn't exist for Internal Trusted Storage partition */
+#cmakedefine01 ITS_CREATE_FLASH_LAYOUT
+
+/* Enable emulated RAM FS for platforms that don't have flash for Internal Trusted Storage partition */
+#cmakedefine01 ITS_RAM_FS
+
+/* Validate filesystem metadata every time it is read from flash */
+#cmakedefine01 ITS_VALIDATE_METADATA_FROM_FLASH
+
+/* The maximum asset size to be stored in the Internal Trusted Storage */
+#cmakedefine ITS_MAX_ASSET_SIZE @ITS_MAX_ASSET_SIZE@
+
+/*
+ * Size of the ITS internal data transfer buffer
+ * (Default to the max asset size so that all requests can be handled in one iteration.)
+ */
+#cmakedefine ITS_BUF_SIZE @ITS_BUF_SIZE@
+
+/* The maximum number of assets to be stored in the Internal Trusted Storage */
+#cmakedefine ITS_NUM_ASSETS @ITS_NUM_ASSETS@
+
+/* The stack size of the Internal Trusted Storage Secure Partition */
+#cmakedefine ITS_STACK_SIZE @ITS_STACK_SIZE@
+
+/* PS Partition Configs */
+
+/* Create flash FS if it doesn't exist for Protected Storage partition */
+#cmakedefine01 PS_CREATE_FLASH_LAYOUT
+
+/* Enable emulated RAM FS for platforms that don't have flash for Protected Storage partition */
+#cmakedefine01 PS_RAM_FS
+
+/* Enable rollback protection for Protected Storage partition */
+#cmakedefine01 PS_ROLLBACK_PROTECTION
+
+/* Validate filesystem metadata every time it is read from flash */
+#cmakedefine01 PS_VALIDATE_METADATA_FROM_FLASH
+
+/* The maximum asset size to be stored in the Protected Storage */
+#cmakedefine PS_MAX_ASSET_SIZE @PS_MAX_ASSET_SIZE@
+
+/* The maximum number of assets to be stored in the Protected Storage */
+#cmakedefine PS_NUM_ASSETS @PS_NUM_ASSETS@
+
+/* The stack size of the Protected Storage Secure Partition */
+#cmakedefine PS_STACK_SIZE @PS_STACK_SIZE@
+
+/* SPM Partition Configs */
+
+/* The maximal number of secure services that are connected or requested at the same time */
+#cmakedefine CONFIG_TFM_CONN_HANDLE_MAX_NUM @CONFIG_TFM_CONN_HANDLE_MAX_NUM@
+
+/* Enable/Disable the doorbell APIs */
+#cmakedefine01 CONFIG_TFM_DOORBELL_API
+
+#endif /* __TFM_CONFIG_H__ */

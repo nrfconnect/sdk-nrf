@@ -47,7 +47,7 @@ It provides an abstraction of the following modules:
 The OS abstraction layer is fully implemented for the |NCS|, and it needs to be ported if used with other RTOS or on other systems.
 
 When the LwM2M carrier library is enabled in your application, it includes the file :file:`nrf/lib/bin/lwm2m_carrier/os/lwm2m_carrier.c`.
-This automatically initializes the library (using :c:func:`lwm2m_carrier_init`) and runs the library thread (:c:func:`lwm2m_carrier_run`).
+This automatically initializes the library (using :c:func:`lwm2m_carrier_init`) and runs the library's main function (:c:func:`lwm2m_carrier_run`).
 
 .. _lwm2m_configuration:
 
@@ -60,7 +60,7 @@ Enable the library by setting the :kconfig:option:`CONFIG_LWM2M_CARRIER` Kconfig
 The :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`) contains all the configurations that are needed by the LwM2M carrier library.
 
 To overwrite the carrier default settings, you can provide the initialization parameter :c:type:`lwm2m_carrier_config_t` with the Kconfig options specified in the following sections.
-You can also use the provided :ref:`lwm2m_shell` to quickly get started and experiment with the API.
+You can also use the provided :ref:`lwm2m_carrier_shell` to quickly get started and experiment with the API.
 
 .. _general_options_lwm2m:
 
@@ -296,7 +296,7 @@ Following are the various LwM2M carrier library events that are also listed in :
 
     * :c:macro:`LWM2M_CARRIER_ERROR_INTERNAL` - This error indicates an irrecoverable error between the modem and carrier library. The LwM2M carrier library recovers only upon reboot.
 
-.. _lwm2m_shell:
+.. _lwm2m_carrier_shell:
 
 LwM2M carrier shell configuration
 *********************************
@@ -365,7 +365,7 @@ To allow time to change configurations before the library applies them, the appl
 The settings are applied by the function :c:func:`lwm2m_carrier_custom_init`.
 
 This function is implemented in :file:`nrf/lib/bin/lwm2m_carrier/os/lwm2m_settings.c` that is included in the project when you enable the LwM2M carrier shell.
-The ``__weak`` implementation of :c:func:`lwm2m_carrier_event_handler` calls :c:func:`lwm2m_carrier_custom_init` on receiving the :c:macro:`LWM2M_CARRIER_EVENT_INIT` event.
+The library thread calls the :c:func:`lwm2m_carrier_custom_init` function before calling the :c:func:`lwm2m_carrier_run` function.
 
 carrier_api
 ===========

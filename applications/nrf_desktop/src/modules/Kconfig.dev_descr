@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_DEV_DESCR_ENABLE
+	bool "Device description module"
+	depends on DESKTOP_BT_PERIPHERAL
+	select DESKTOP_HWID
+	help
+	  The device description module defines custom GATT Service, which
+	  contains information about whether the peripheral supports the Low
+	  Latency Packet Mode (LLPM) and Hardware ID (HW ID) of the peripheral.

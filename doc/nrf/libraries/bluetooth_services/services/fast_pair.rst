@@ -101,7 +101,7 @@ The GFPS selects :kconfig:option:`CONFIG_PM_SINGLE_IMAGE` to enable the :ref:`pa
 Settings
 --------
 
-The GFPS uses Zephyr's :ref:`zephyr:settings_api` to store Account Keys.
+The GFPS uses Zephyr's :ref:`zephyr:settings_api` to store Account Keys and the Personalized Name.
 Because of this, the GFPS selects :kconfig:option:`CONFIG_SETTINGS`.
 
 Implementation details

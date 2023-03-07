@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Azure IoT Hub sample"
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = AZURE_IOT_HUB_SAMPLE
+module-str = Azure IoT Hub sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu

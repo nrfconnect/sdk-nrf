@@ -59,8 +59,8 @@ Syntax
   It is associated with the certificate or PSK.
   Specifying the ``<sec_tag>`` is mandatory when using HTTPS.
 
-Response syntax
-~~~~~~~~~~~~~~~
+Unsolicited notification
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -82,10 +82,10 @@ Get the image files for the legacy DFU from ``http://myserver.com/path/*.*``:
 ::
 
    AT#XDFUGET=1,"http://myserver.com","path/nrf52840_xxaa.dat","path/nrf52840_xxaa.bin"
+   OK
    #XDFUGET: 1,14
    ...
    #XDFUGET: 1,100
-   OK
 
 Erase the previous image after DFU:
 
@@ -99,10 +99,10 @@ Get the image files for the |NCS| DFU from ``http://myserver.com/path/*.*``:
 ::
 
    AT#XDFUGET=1,"https://myserver.com","path/nrf52_app_update.bin","",1234
+   OK
    #XDFUGET: 0,14
    ...
    #XDFUGET: 0,100
-   OK
 
 Read command
 ------------
@@ -159,12 +159,17 @@ Response syntax
 
 ::
 
-  XDFUSIZE: <file_size>,<download_size>
+  XDFUSIZE: <file_size>,<download_size>,<crc32_checksum>
 
 * The ``<file_size>`` is an integer.
   It indicates the size of the DFU image file.
 * The ``<download_size>`` is an integer.
   It indicates the size that has been downloaded so far.
+* The ``<crc32_checksum>`` is a 32-bit unsigned integer.
+  It indicates the IEEE CRC32 of the image content that has been downloaded.
+  You can use this CRC32 to check data integrity when you use MCUboot to perform a DFU.
+
+  You should check the CRC checksum after ``#XDFURUN`` has transferred the downloaded data image from nRF91 to nRF5x, before configuring MCUboot to use the new image.
 
 Examples
 ~~~~~~~~
@@ -175,7 +180,7 @@ Examples
    OK
 
    AT#XDFUSIZE
-   #XDFUSIZE: 17048,17048
+   #XDFUSIZE: 17048,17048,2316010324
    OK
 
 Read command

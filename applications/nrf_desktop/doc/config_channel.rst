@@ -197,7 +197,6 @@ Module discovery operations
     For example, the ``nrf52840gmouse_nrf52840`` build target would return ``nrf52840gmouse`` as the board name.
 
   .. note::
-
      You must use :ref:`nrf_desktop_info` for every device that is configurable with the configuration channel.
      The module provides information that is necessary to identify the device.
 

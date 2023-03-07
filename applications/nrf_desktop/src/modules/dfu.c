@@ -689,7 +689,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, update_config,
 				  fetch_config);
 
-	if (is_ble_peer_event(aeh)) {
+	if (IS_ENABLED(CONFIG_CAF_BLE_COMMON_EVENTS) && is_ble_peer_event(aeh)) {
 		device_in_use = true;
 
 		return false;
@@ -727,4 +727,6 @@ APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+#ifdef CONFIG_CAF_BLE_COMMON_EVENTS
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+#endif /* CONFIG_CAF_BLE_COMMON_EVENTS */

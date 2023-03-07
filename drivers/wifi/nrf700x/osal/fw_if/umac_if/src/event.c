@@ -10,17 +10,19 @@
  */
 
 #include "host_rpu_umac_if.h"
+#include "hal_mem.h"
 #include "fmac_rx.h"
 #include "fmac_tx.h"
 #include "fmac_peer.h"
 #include "fmac_cmd.h"
 #include "fmac_ap.h"
+#include <string.h>
 
 #ifdef CONFIG_NRF700X_DATA_TX
 static enum wifi_nrf_status
-wifi_nrf_fmac_if_state_chg_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					 unsigned char *umac_head,
-					 enum wifi_nrf_fmac_if_state if_state)
+wifi_nrf_fmac_if_carr_state_event_proc(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+				       unsigned char *umac_head,
+				       enum wifi_nrf_fmac_if_carr_state carr_state)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
@@ -34,7 +36,7 @@ wifi_nrf_fmac_if_state_chg_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_
 		goto out;
 	}
 
-	if (!fmac_dev_ctx->fpriv->callbk_fns.if_state_chg_callbk_fn) {
+	if (!fmac_dev_ctx->fpriv->callbk_fns.if_carr_state_chg_callbk_fn) {
 		wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
 				      "%s: No callback handler registered\n",
 				      __func__);
@@ -55,12 +57,12 @@ wifi_nrf_fmac_if_state_chg_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_
 
 	vif_ctx = fmac_dev_ctx->vif_ctx[if_idx];
 
-	status = fmac_dev_ctx->fpriv->callbk_fns.if_state_chg_callbk_fn(vif_ctx->os_vif_ctx,
-									if_state);
+	status = fmac_dev_ctx->fpriv->callbk_fns.if_carr_state_chg_callbk_fn(vif_ctx->os_vif_ctx,
+									     carr_state);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: If state change callback function failed for VIF idx = %d\n",
+				      "%s: Interface carrier state change callback function failed for VIF idx = %d\n",
 				      __func__,
 				      if_idx);
 		goto out;
@@ -215,6 +217,17 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 			goto out;
 
 		vif_ctx->ifflags = true;
+		break;
+	case NRF_WIFI_UMAC_EVENT_TWT_SLEEP:
+		if (callbk_fns->twt_sleep_callbk_fn)
+			callbk_fns->twt_sleep_callbk_fn(vif_ctx->os_vif_ctx,
+							event_data,
+							event_len);
+		else
+			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+					      "%s: No callback registered for event %d\n",
+					      __func__,
+					      umac_hdr->cmd_evnt);
 		break;
 #ifdef CONFIG_WPA_SUPP
 	case NRF_WIFI_UMAC_EVENT_SCAN_RESULT:
@@ -415,6 +428,28 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 	case NRF_WIFI_UMAC_EVENT_DISCONNECT:
 		/* Nothing to be done */
 		break;
+	case NRF_WIFI_UMAC_EVENT_GET_REG:
+		if (callbk_fns->event_get_reg)
+			callbk_fns->event_get_reg(vif_ctx->os_vif_ctx,
+						      event_data,
+						      event_len);
+		else
+			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+					      "%s: No callback registered for event %d\n",
+					      __func__,
+					      umac_hdr->cmd_evnt);
+		break;
+	case NRF_WIFI_UMAC_EVENT_GET_POWER_SAVE_INFO:
+		if (callbk_fns->event_get_ps_info)
+			callbk_fns->event_get_ps_info(vif_ctx->os_vif_ctx,
+						      event_data,
+						      event_len);
+		else
+			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+					      "%s: No callback registered for event %d\n",
+					      __func__,
+					      umac_hdr->cmd_evnt);
+		break;
 #ifdef CONFIG_WPA_SUPP
 	case NRF_WIFI_UMAC_EVENT_NEW_STATION:
 	case NRF_WIFI_UMAC_EVENT_DEL_STATION:
@@ -490,14 +525,14 @@ wifi_nrf_fmac_data_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 							     umac_head);
 		break;
 	case NRF_WIFI_CMD_CARRIER_ON:
-		status = wifi_nrf_fmac_if_state_chg_event_process(fmac_dev_ctx,
-								  umac_head,
-								  WIFI_NRF_FMAC_IF_STATE_UP);
+		status = wifi_nrf_fmac_if_carr_state_event_proc(fmac_dev_ctx,
+								umac_head,
+								WIFI_NRF_FMAC_IF_CARR_STATE_ON);
 		break;
 	case NRF_WIFI_CMD_CARRIER_OFF:
-		status = wifi_nrf_fmac_if_state_chg_event_process(fmac_dev_ctx,
-								  umac_head,
-								  WIFI_NRF_FMAC_IF_STATE_DOWN);
+		status = wifi_nrf_fmac_if_carr_state_event_proc(fmac_dev_ctx,
+								umac_head,
+								WIFI_NRF_FMAC_IF_CARR_STATE_OFF);
 		break;
 #endif /* CONFIG_NRF700X_DATA_TX */
 #ifdef CONFIG_NRF700X_AP_MODE
@@ -559,6 +594,104 @@ out:
 	return status;
 }
 
+#else /* CONFIG_NRF700X_RADIO_TEST */
+static enum wifi_nrf_status umac_event_rf_test_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						       void *event)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_event_rftest *rf_test_event = NULL;
+	struct nrf_wifi_temperature_params rf_test_get_temperature;
+	struct nrf_wifi_rf_get_rf_rssi rf_get_rf_rssi;
+	struct nrf_wifi_rf_test_xo_calib xo_calib_params;
+	struct nrf_wifi_rf_get_xo_value rf_get_xo_value_params;
+
+	if (!event) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Invalid parameters\n",
+				      __func__);
+		goto out;
+	}
+
+	rf_test_event = ((struct nrf_wifi_event_rftest *)event);
+
+	if (rf_test_event->rf_test_info.rfevent[0] != fmac_dev_ctx->rf_test_type) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Invalid event type (%d) recd for RF test type (%d)\n",
+				      __func__,
+				      rf_test_event->rf_test_info.rfevent[0],
+				      fmac_dev_ctx->rf_test_type);
+		goto out;
+	}
+
+	switch (rf_test_event->rf_test_info.rfevent[0]) {
+	case NRF_WIFI_RF_TEST_EVENT_RX_ADC_CAP:
+	case NRF_WIFI_RF_TEST_EVENT_RX_STAT_PKT_CAP:
+	case NRF_WIFI_RF_TEST_EVENT_RX_DYN_PKT_CAP:
+		status = hal_rpu_mem_read(fmac_dev_ctx->hal_dev_ctx,
+					  fmac_dev_ctx->rf_test_cap_data,
+					  RPU_MEM_RF_TEST_CAP_BASE,
+					  fmac_dev_ctx->rf_test_cap_sz);
+
+		break;
+	case NRF_WIFI_RF_TEST_EVENT_TX_TONE_START:
+	case NRF_WIFI_RF_TEST_EVENT_DPD_ENABLE:
+		break;
+
+	case NRF_WIFI_RF_TEST_GET_TEMPERATURE:
+		memcpy(&rf_test_get_temperature,
+			(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
+			sizeof(rf_test_get_temperature));
+
+		if (rf_test_get_temperature.readTemperatureStatus) {
+			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+			"Temperature reading failed\n");
+		} else {
+			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+			"Temperature reading success: \t");
+
+			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+			"The temperature is = %d degree celsius\n",
+			rf_test_get_temperature.temperature);
+		}
+		break;
+	case NRF_WIFI_RF_TEST_EVENT_RF_RSSI:
+		memcpy(&rf_get_rf_rssi,
+			(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
+			sizeof(rf_get_rf_rssi));
+
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+		"RF RSSI value is = %d\n",
+		rf_get_rf_rssi.agc_status_val);
+		break;
+	case NRF_WIFI_RF_TEST_EVENT_XO_CALIB:
+		memcpy(&xo_calib_params,
+			(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
+			sizeof(xo_calib_params));
+
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+		"XO value configured is = %d\n",
+		xo_calib_params.xo_val);
+		break;
+	case NRF_WIFI_RF_TEST_XO_TUNE:
+		memcpy(&rf_get_xo_value_params,
+			(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
+			sizeof(rf_get_xo_value_params));
+
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+		"Best XO value is = %d\n",
+		rf_get_xo_value_params.xo_value);
+		break;
+	default:
+		break;
+	}
+
+	fmac_dev_ctx->rf_test_type = NRF_WIFI_RF_TEST_MAX;
+	status = WIFI_NRF_STATUS_SUCCESS;
+
+out:
+	return status;
+}
+
 
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
@@ -613,13 +746,19 @@ static enum wifi_nrf_status umac_process_sys_events(struct wifi_nrf_fmac_dev_ctx
 						  sys_head);
 		break;
 	case NRF_WIFI_EVENT_INIT_DONE:
-		fmac_dev_ctx->init_done = 1;
+		fmac_dev_ctx->fw_init_done = 1;
 		status = WIFI_NRF_STATUS_SUCCESS;
 		break;
 	case NRF_WIFI_EVENT_DEINIT_DONE:
-		fmac_dev_ctx->deinit_done = 1;
+		fmac_dev_ctx->fw_deinit_done = 1;
 		status = WIFI_NRF_STATUS_SUCCESS;
 		break;
+#ifdef CONFIG_NRF700X_RADIO_TEST
+	case NRF_WIFI_EVENT_RF_TEST:
+		status = umac_event_rf_test_process(fmac_dev_ctx,
+						    sys_head);
+		break;
+#endif /* CONFIG_NRF700X_RADIO_TEST */
 	default:
 		status = WIFI_NRF_STATUS_FAIL;
 		break;

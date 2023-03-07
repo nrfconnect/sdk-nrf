@@ -9,9 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_sensor
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_sensor);
 
 /** Scale away the sensor_value fraction, to allow integer math */
 #define SENSOR_MILL(_val) ((1000000LL * (_val)->val1) + (_val)->val2)
@@ -61,7 +61,7 @@ bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 		thrsh_mill = (prev_mill * thrsh_mill) / (100LL * 1000000LL);
 	}
 
-	if (BT_DBG_ENABLED) {
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_LOG_LEVEL_DBG)) {
 		char delta_str[BT_MESH_SENSOR_CH_STR_LEN];
 		char curr_str[BT_MESH_SENSOR_CH_STR_LEN];
 		char prev_str[BT_MESH_SENSOR_CH_STR_LEN];
@@ -70,11 +70,11 @@ bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 		strcpy(delta_str, bt_mesh_sensor_ch_str(&delta));
 		strcpy(curr_str, bt_mesh_sensor_ch_str(curr));
 		strcpy(prev_str, bt_mesh_sensor_ch_str(&sensor->state.prev));
-		strcpy(thrsh_str, delta_mill < 0 ?
-		       bt_mesh_sensor_ch_str(&sensor->state.threshold.delta.down) :
-		       bt_mesh_sensor_ch_str(&sensor->state.threshold.delta.up));
+		strcpy(thrsh_str,
+		       delta_mill < 0 ? bt_mesh_sensor_ch_str(&sensor->state.threshold.delta.down) :
+					bt_mesh_sensor_ch_str(&sensor->state.threshold.delta.up));
 
-		BT_DBG("Delta: %s (%s - %s) thrsh: %s", delta_str, curr_str, prev_str, thrsh_str);
+		LOG_DBG("Delta: %s (%s - %s) thrsh: %s", delta_str, curr_str, prev_str, thrsh_str);
 	}
 
 	return (delta_mill > thrsh_mill);
@@ -298,7 +298,7 @@ int sensor_column_encode(struct net_buf_simple *buf,
 	};
 	int err;
 
-	BT_DBG("Column width: %s", bt_mesh_sensor_ch_str(&width));
+	LOG_DBG("Column width: %s", bt_mesh_sensor_ch_str(&width));
 
 	col_format = bt_mesh_sensor_column_format_get(sensor->type);
 	if (!col_format) {
@@ -587,7 +587,7 @@ void sensor_cadence_update(struct bt_mesh_sensor *sensor,
 	}
 
 	if (sensor->state.fast_pub != new) {
-		BT_DBG("0x%04x new cadence: %s", sensor->type->id,
+		LOG_DBG("0x%04x new cadence: %s", sensor->type->id,
 		       (new == BT_MESH_SENSOR_CADENCE_FAST) ? "fast" :
 							      "normal");
 	}

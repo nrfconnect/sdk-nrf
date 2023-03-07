@@ -231,41 +231,43 @@ static void search_start(void)
 {
 	int err;
 	struct location_config config;
-	enum location_method methods[2];
 	int methods_count = 0;
-	int methods_index_gnss = -1;
-	int methods_index_cellular = -1;
+	struct location_method_config methods_updated[CONFIG_LOCATION_METHODS_LIST_SIZE] = { 0 };
 
-	if (copy_cfg.no_data.neighbor_cell && copy_cfg.no_data.gnss) {
+	if (copy_cfg.no_data.neighbor_cell && copy_cfg.no_data.gnss && copy_cfg.no_data.wifi) {
 		SEND_EVENT(location, LOCATION_MODULE_EVT_DATA_NOT_READY);
-		LOG_ERR("Both GNSS and cellular are configured off");
+		LOG_ERR("All GNSS, cellular and Wi-Fi are configured off");
 		return;
 	}
 
-	if (!copy_cfg.no_data.gnss) {
-		methods[methods_count] = LOCATION_METHOD_GNSS;
-		methods_index_gnss = methods_count;
-		methods_count++;
-	}
-
-	if (!copy_cfg.no_data.neighbor_cell) {
-		methods[methods_count] = LOCATION_METHOD_CELLULAR;
-		methods_index_cellular = methods_count;
-		methods_count++;
-	}
-
-	location_config_defaults_set(&config, methods_count, methods);
+	/* Set default location configuration configured at compile time */
+	location_config_defaults_set(&config, 0, NULL);
 
 	config.timeout = copy_cfg.location_timeout * MSEC_PER_SEC;
 
-	if (methods_index_gnss != -1) {
-		config.methods[methods_index_gnss].gnss.timeout =
-			DATA_FETCH_TIMEOUT_GNSS_SEARCH * MSEC_PER_SEC;
-	}
+	/* If any method type has been disabled, update the method list by using those methods
+	 * that are enabled
+	 */
+	if (copy_cfg.no_data.neighbor_cell || copy_cfg.no_data.gnss || copy_cfg.no_data.wifi) {
+		for (int i = 0; i < config.methods_count; i++) {
+			/* Use methods that are not disabled at run-time in no_data configuration */
+			if ((config.methods[i].method == LOCATION_METHOD_GNSS &&
+			     !copy_cfg.no_data.gnss) ||
+			    (config.methods[i].method == LOCATION_METHOD_WIFI &&
+			     !copy_cfg.no_data.wifi) ||
+			    (config.methods[i].method == LOCATION_METHOD_CELLULAR &&
+			     !copy_cfg.no_data.neighbor_cell)) {
+				memcpy(&methods_updated[methods_count],
+				       &config.methods[i],
+				       sizeof(struct location_method_config));
+				methods_count++;
+			}
+		}
 
-	if (methods_index_cellular != -1) {
-		config.methods[methods_index_cellular].cellular.timeout =
-			DATA_FETCH_TIMEOUT_NEIGHBORHOOD_SEARCH * MSEC_PER_SEC;
+		config.methods_count = methods_count;
+		memcpy(config.methods,
+		       methods_updated,
+		       CONFIG_LOCATION_METHODS_LIST_SIZE * sizeof(struct location_method_config));
 	}
 
 	LOG_DBG("Requesting location...");
@@ -321,34 +323,56 @@ static inline int adjust_rsrq(int input)
 	return input;
 }
 
-static void send_neighbor_cell_update(struct lte_lc_cells_info *cell_info)
+static void send_cloud_location_update(const struct location_data_cloud *cloud_location_info)
 {
 	struct location_module_event *evt = new_location_module_event();
+	struct location_module_neighbor_cells *evt_ncells =
+		&evt->data.cloud_location.neighbor_cells;
 
-	BUILD_ASSERT(sizeof(evt->data.neighbor_cells.cell_data) ==
-		     sizeof(struct lte_lc_cells_info));
-	BUILD_ASSERT(sizeof(evt->data.neighbor_cells.neighbor_cells) >=
-		     sizeof(struct lte_lc_ncell) * CONFIG_LTE_NEIGHBOR_CELLS_MAX);
+	if (cloud_location_info->cell_data != NULL) {
+		BUILD_ASSERT(sizeof(evt_ncells->cell_data) == sizeof(struct lte_lc_cells_info));
+		BUILD_ASSERT(sizeof(evt_ncells->neighbor_cells) >=
+			     sizeof(struct lte_lc_ncell) * CONFIG_LTE_NEIGHBOR_CELLS_MAX);
 
-	memcpy(&evt->data.neighbor_cells.cell_data, cell_info, sizeof(struct lte_lc_cells_info));
-	memcpy(&evt->data.neighbor_cells.neighbor_cells, cell_info->neighbor_cells,
-	       sizeof(struct lte_lc_ncell) * evt->data.neighbor_cells.cell_data.ncells_count);
+		evt->data.cloud_location.neighbor_cells_valid = true;
+		memcpy(&evt_ncells->cell_data,
+		       cloud_location_info->cell_data,
+		       sizeof(struct lte_lc_cells_info));
+		memcpy(&evt_ncells->neighbor_cells,
+		       cloud_location_info->cell_data->neighbor_cells,
+		       sizeof(struct lte_lc_ncell) * evt_ncells->cell_data.ncells_count);
 
-	/* Convert RSRP to dBm and RSRQ to dB per "nRF91 AT Commands" v1.7. */
-	evt->data.neighbor_cells.cell_data.current_cell.rsrp =
-			adjust_rsrp(evt->data.neighbor_cells.cell_data.current_cell.rsrp);
-	evt->data.neighbor_cells.cell_data.current_cell.rsrq =
-			adjust_rsrq(evt->data.neighbor_cells.cell_data.current_cell.rsrq);
+		/* Convert RSRP to dBm and RSRQ to dB per "nRF91 AT Commands" v1.7. */
+		evt_ncells->cell_data.current_cell.rsrp =
+			adjust_rsrp(evt_ncells->cell_data.current_cell.rsrp);
+		evt_ncells->cell_data.current_cell.rsrq =
+			adjust_rsrq(evt_ncells->cell_data.current_cell.rsrq);
 
-	for (size_t i = 0; i < evt->data.neighbor_cells.cell_data.ncells_count; i++) {
-		evt->data.neighbor_cells.neighbor_cells[i].rsrp =
-			adjust_rsrp(evt->data.neighbor_cells.neighbor_cells[i].rsrp);
-		evt->data.neighbor_cells.neighbor_cells[i].rsrq =
-			adjust_rsrq(evt->data.neighbor_cells.neighbor_cells[i].rsrq);
+		for (size_t i = 0; i < evt_ncells->cell_data.ncells_count; i++) {
+			evt_ncells->neighbor_cells[i].rsrp =
+				adjust_rsrp(evt_ncells->neighbor_cells[i].rsrp);
+			evt_ncells->neighbor_cells[i].rsrq =
+				adjust_rsrq(evt_ncells->neighbor_cells[i].rsrq);
+		}
 	}
 
-	evt->type = LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY;
-	evt->data.neighbor_cells.timestamp = k_uptime_get();
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	if (cloud_location_info->wifi_data != NULL) {
+		BUILD_ASSERT(sizeof(evt->data.cloud_location.wifi_access_points.ap_info) >=
+			     sizeof(struct wifi_scan_result) *
+			     CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT);
+
+		evt->data.cloud_location.wifi_access_points_valid = true;
+		evt->data.cloud_location.wifi_access_points.cnt =
+			cloud_location_info->wifi_data->cnt;
+		memcpy(&evt->data.cloud_location.wifi_access_points.ap_info,
+		       cloud_location_info->wifi_data->ap_info,
+		       sizeof(struct wifi_scan_result) *
+				evt->data.cloud_location.wifi_access_points.cnt);
+	}
+#endif
+	evt->type = LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY;
+	evt->data.cloud_location.timestamp = k_uptime_get();
 
 	APP_EVENT_SUBMIT(evt);
 }
@@ -409,8 +433,8 @@ void location_event_handler(const struct location_event_data *event_data)
 		stats.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 		LOG_DBG("  search time: %d", stats.search_time);
 		inactive_send();
-		/* No events are sent because LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY
-		 * has already been sent earlier and hence APP_LOCATION has been set already.
+		/* No events are sent because LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY
+		 * have already been sent earlier and hence APP_LOCATION has been set already.
 		 */
 		break;
 
@@ -438,7 +462,7 @@ void location_event_handler(const struct location_event_data *event_data)
 
 	case LOCATION_EVT_GNSS_ASSISTANCE_REQUEST: {
 		LOG_DBG("Requested A-GPS data");
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if defined(CONFIG_NRF_CLOUD_AGPS)
 		struct location_module_event *location_module_event = new_location_module_event();
 
 		location_module_event->data.agps_request = event_data->agps_request;
@@ -450,7 +474,7 @@ void location_event_handler(const struct location_event_data *event_data)
 
 	case LOCATION_EVT_GNSS_PREDICTION_REQUEST: {
 		LOG_DBG("Requested P-GPS data");
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_NRF_CLOUD_PGPS)
 		struct location_module_event *location_module_event = new_location_module_event();
 
 		location_module_event->data.pgps_request = event_data->pgps_request;
@@ -460,12 +484,13 @@ void location_event_handler(const struct location_event_data *event_data)
 		break;
 	}
 
-	case LOCATION_EVT_CELLULAR_EXT_REQUEST:
-		LOG_DBG("Getting cellular request");
-		send_neighbor_cell_update(
-			(struct lte_lc_cells_info *)&event_data->cellular_request);
-		location_cellular_ext_result_set(LOCATION_CELLULAR_EXT_RESULT_UNKNOWN, NULL);
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI)
+	case LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST:
+		LOG_DBG("Getting cloud location request");
+		send_cloud_location_update(&event_data->cloud_location_request);
+		location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN, NULL);
 		break;
+#endif
 
 	default:
 		LOG_DBG("Getting location: Unknown event %d", event_data->id);

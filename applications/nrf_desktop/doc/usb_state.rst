@@ -26,14 +26,23 @@ Configuration
 The module is enabled by selecting :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_options>` option.
 The option selects :kconfig:option:`CONFIG_USB_DEVICE_STACK` and :kconfig:option:`CONFIG_USB_DEVICE_HID` Kconfig options.
 
-When enabling the USB support for the device, set the following generic device options:
+The :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_options>` option is implied by the :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` option.
+The module is enabled by default for the nRF Desktop dongles because the dongles forward the HID data to the host connected over USB.
+See the :ref:`nrf_desktop_hid_configuration` documentation for details.
+
+Additionally, you can also configure the options described in the following sections.
+
+.. _nrf_desktop_usb_state_identifiers:
+
+USB device identifiers
+======================
+
+When the USB support is enabled for the device, the following options are by default set to common :ref:`nrf_desktop_hid_device_identifiers` defined for the nRF Desktop application:
 
 * :kconfig:option:`CONFIG_USB_DEVICE_MANUFACTURER` - Manufacturer's name.
 * :kconfig:option:`CONFIG_USB_DEVICE_PRODUCT` - Product name.
 * :kconfig:option:`CONFIG_USB_DEVICE_VID` - Vendor ID (VID) number.
 * :kconfig:option:`CONFIG_USB_DEVICE_PID` - Product ID (PID) number.
-
-Additionally, you can also configure the options described in the following sections.
 
 Low latency device configuration
 ================================
@@ -52,7 +61,7 @@ USB device instance configuration
 
 The nRF Desktop device can provide multiple instances of a HID-class USB device.
 The number of instances is controlled by :kconfig:option:`CONFIG_USB_HID_DEVICE_COUNT`.
-By default the option is set to:
+By default, the option is set to:
 
 * ``1`` for HID peripherals (:ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>`).
 * :ref:`CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT <config_desktop_app_options>` for HID dongles (:ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>`).
@@ -114,7 +123,6 @@ When the nRF Desktop device wakes up from standby, the |usb_state| will issue a 
 .. note::
     The USB wakeup request is transmitted to the host only if the host enables this request before suspending the USB.
 
-
 Implementation details
 **********************
 
@@ -145,5 +153,3 @@ The |usb_state| is a transport for :ref:`nrf_desktop_config_channel` when the ch
 
 The module also handles an HID keyboard LED output report received through USB from the connected host.
 The module sends the report using :c:struct:`hid_report_event`, that is handled either by :ref:`nrf_desktop_hid_state` (for peripheral) or by the :ref:`nrf_desktop_hid_forward` (for dongle).
-
-.. |usb_state| replace:: USB state module

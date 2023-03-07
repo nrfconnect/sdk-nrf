@@ -6,6 +6,16 @@ on:
     branches:
       - main
       - 'v*-branch'
+    paths:
+      - '.github/workflows/docbuild.yml'
+      - '**.rst'
+      - '**/Kconfig'
+      - '**/sample.yaml'
+      - 'doc/**'
+      - 'include/**'
+      - 'scripts/requirements-doc.txt'
+      - 'scripts/tools-versions-*.txt'
+      - 'west.yml'
   push:
     branches:
       - main
@@ -35,7 +45,7 @@ jobs:
           sudo apt update
           sudo apt-get install -y ninja-build mscgen plantuml
           DOXYGEN_VERSION=$(cat ./ncs/nrf/scripts/tools-versions-linux.txt |grep 'doxygen' | sed 's/^.*=//')
-          wget --no-verbose https://downloads.sourceforge.net/project/doxygen/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+          wget --no-verbose "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
           tar xf doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
           echo "${PWD}/doxygen-${DOXYGEN_VERSION}/bin" >> $GITHUB_PATH
 

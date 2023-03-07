@@ -214,8 +214,14 @@ static int get_msg(struct bt_mesh_light_ctl_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(msg, opcode, BT_MESH_LIGHT_CTL_MSG_LEN_GET);
 	bt_mesh_model_msg_init(&msg, opcode);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL, ret_opcode, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = ret_opcode,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_ctl_get(struct bt_mesh_light_ctl_cli *cli,
@@ -242,9 +248,14 @@ int bt_mesh_light_ctl_set(struct bt_mesh_light_ctl_cli *cli,
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_CTL_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_CTL_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_ctl_set_unack(struct bt_mesh_light_ctl_cli *cli,
@@ -262,7 +273,7 @@ int bt_mesh_light_ctl_set_unack(struct bt_mesh_light_ctl_cli *cli,
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_light_temp_get(struct bt_mesh_light_ctl_cli *cli,
@@ -288,9 +299,14 @@ int bt_mesh_light_temp_set(struct bt_mesh_light_ctl_cli *cli,
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_TEMP_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_TEMP_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_temp_set_unack(
@@ -307,7 +323,7 @@ int bt_mesh_light_temp_set_unack(
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_light_ctl_default_get(struct bt_mesh_light_ctl_cli *cli,
@@ -330,9 +346,14 @@ int bt_mesh_light_ctl_default_set(struct bt_mesh_light_ctl_cli *cli,
 	net_buf_simple_add_le16(&msg, set->temp);
 	net_buf_simple_add_le16(&msg, set->delta_uv);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_CTL_DEFAULT_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_CTL_DEFAULT_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_ctl_default_set_unack(
@@ -346,7 +367,7 @@ int bt_mesh_light_ctl_default_set_unack(
 	net_buf_simple_add_le16(&msg, set->temp);
 	net_buf_simple_add_le16(&msg, set->delta_uv);
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_light_temp_range_get(
@@ -368,9 +389,14 @@ int bt_mesh_light_temp_range_set(
 	net_buf_simple_add_le16(&msg, set->min);
 	net_buf_simple_add_le16(&msg, set->max);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_TEMP_RANGE_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_TEMP_RANGE_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_temp_range_set_unack(
@@ -383,5 +409,5 @@ int bt_mesh_light_temp_range_set_unack(
 	net_buf_simple_add_le16(&msg, set->min);
 	net_buf_simple_add_le16(&msg, set->max);
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }

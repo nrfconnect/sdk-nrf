@@ -6,6 +6,10 @@
 
 menu "MQTT Multi Service Sample Settings"
 
+config APP_VERSION
+	string "MQTT Multi Service Sample version"
+	default "1.0.0"
+
 config POWER_SAVING_MODE_ENABLE
 	bool "Enable Power Saving Mode (PSM)"
 	help
@@ -145,6 +149,13 @@ config TEMP_TRACKING
 	help
 	  Sets whether to take temperature measurements.
 
+config TEMP_ALERT_LIMIT
+	int "Temperature limit to send alert"
+	default 30
+	help
+	  Sets the temperature in degrees C over which a temperature alert will
+	  be sent to the cloud.
+
 choice
 	prompt "LED indication"
 	default LED_INDICATION_PWM if BOARD_THINGY91_NRF9160_NS
@@ -210,6 +221,18 @@ config GNSS_FIX_TIMEOUT_SECONDS
 
 config TEST_COUNTER
 	bool "Sets whether the test counter is enabled"
+
+config AT_CMD_REQUESTS
+	bool "Enables remote execution of AT commands using device messages"
+	default y
+
+config AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH
+	int "Max length (in bytes) for Modem responses during AT command requests"
+	help
+	  Responses to modem AT commands are stored in a buffer of this length before being sent to
+	  nRF Cloud. If a response from the modem exceeds this length, it will be dropped, and an
+	  error code sent in its place (-NRF_E2BIG). Cannot be less than 40 bytes.
+	default 200
 
 endmenu
 

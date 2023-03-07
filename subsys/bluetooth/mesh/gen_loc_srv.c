@@ -255,7 +255,7 @@ int bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
 	bt_mesh_loc_global_encode(&msg, global);
 	srv->pub_op = BT_MESH_LOC_OP_GLOBAL_STATUS;
 
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }
 
 int bt_mesh_loc_srv_local_pub(struct bt_mesh_loc_srv *srv,
@@ -269,5 +269,5 @@ int bt_mesh_loc_srv_local_pub(struct bt_mesh_loc_srv *srv,
 	bt_mesh_loc_local_encode(&msg, local);
 	srv->pub_op = BT_MESH_LOC_OP_LOCAL_STATUS;
 
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

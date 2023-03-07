@@ -9,7 +9,7 @@
 		compatible = "caf,aggregator";
 		sensor_descr = "void_basic_test_sensor";
 		buf_data_length = <160>;
-		sensor_data_size = <16>;
+		sample_size = <2>;
 		status = "okay";
 	};
 
@@ -17,7 +17,7 @@
 		compatible = "caf,aggregator";
 		sensor_descr = "void_order_test_sensor";
 		buf_data_length = <80>;
-		sensor_data_size = <8>;
+		sample_size = <1>;
 		status = "okay";
 	};
 
@@ -25,7 +25,7 @@
 		compatible = "caf,aggregator";
 		sensor_descr = "void_status_test_sensor";
 		buf_data_length = <80>;
-		sensor_data_size = <8>;
+		sample_size = <1>;
 		status = "okay";
 	};
 };

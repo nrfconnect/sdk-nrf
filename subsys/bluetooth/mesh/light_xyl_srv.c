@@ -10,9 +10,9 @@
 #include "lightness_internal.h"
 #include "model_utils.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_light_xyl_srv
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_light_xyl_srv);
 
 struct bt_mesh_light_xyl_srv_settings_data {
 	struct bt_mesh_light_xy default_params;
@@ -555,7 +555,7 @@ static int bt_mesh_light_xyl_srv_init(struct bt_mesh_model *model)
 		bt_mesh_model_find(bt_mesh_model_elem(model), BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SRV);
 
 	if (!lightness_srv) {
-		BT_ERR("Failed to find Lightness Server on element");
+		LOG_ERR("Failed to find Lightness Server on element");
 		return -EINVAL;
 	}
 
@@ -654,7 +654,7 @@ static int bt_mesh_light_xyl_setup_srv_init(struct bt_mesh_model *model)
 						 BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SETUP_SRV);
 
 	if (!lightness_setup_srv) {
-		BT_ERR("Failed to find Lightness Setup Server on element");
+		LOG_ERR("Failed to find Lightness Setup Server on element");
 		return -EINVAL;
 	}
 
@@ -672,7 +672,7 @@ int bt_mesh_light_xyl_srv_pub(struct bt_mesh_light_xyl_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_XYL_OP_STATUS,
 				 BT_MESH_LIGHT_XYL_MSG_MAXLEN_STATUS);
 	xyl_encode_status(&msg, status, BT_MESH_LIGHT_XYL_OP_STATUS);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }
 
 int bt_mesh_light_xyl_srv_target_pub(struct bt_mesh_light_xyl_srv *srv,
@@ -682,7 +682,7 @@ int bt_mesh_light_xyl_srv_target_pub(struct bt_mesh_light_xyl_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_XYL_OP_TARGET_STATUS,
 				 BT_MESH_LIGHT_XYL_MSG_MAXLEN_STATUS);
 	xyl_encode_status(&msg, status, BT_MESH_LIGHT_XYL_OP_TARGET_STATUS);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }
 
 int bt_mesh_light_xyl_srv_range_pub(struct bt_mesh_light_xyl_srv *srv,
@@ -692,7 +692,7 @@ int bt_mesh_light_xyl_srv_range_pub(struct bt_mesh_light_xyl_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_XYL_OP_RANGE_STATUS,
 				 BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_STATUS);
 	range_encode_status(&msg, srv, status_code);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }
 
 int bt_mesh_light_xyl_srv_default_pub(struct bt_mesh_light_xyl_srv *srv,
@@ -701,5 +701,5 @@ int bt_mesh_light_xyl_srv_default_pub(struct bt_mesh_light_xyl_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_XYL_OP_DEFAULT_STATUS,
 				 BT_MESH_LIGHT_XYL_MSG_LEN_DEFAULT);
 	default_encode_status(srv, &msg);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

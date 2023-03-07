@@ -29,5 +29,3 @@ Implementation details
 
 nRF Desktop uses the |smp| from :ref:`lib_caf` (CAF).
 See the :ref:`CAF module <caf_ble_smp>` page for implementation details.
-
-.. |smp| replace:: simple management protocol module

@@ -27,6 +27,11 @@ static struct k_work_delayable diag_work;
 
 int nrf_modem_lib_diag_stats_get(struct nrf_modem_lib_diag_stats *stats)
 {
+	/* Prevent runtime stats get of uninitialized heap which causes unresponsiveness. */
+	if (!nrf_modem_is_initialized()) {
+		return -EPERM;
+	}
+
 	if (!stats) {
 		return -EFAULT;
 	}

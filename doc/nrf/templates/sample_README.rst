@@ -247,7 +247,7 @@ Dependencies*
 
 .. note::
    * List all relevant libraries.
-     Standard libraries (for example, types.h, errno.h, or printk.h) do not need to be listed.
+     Standard libraries (for example, :file:`types.h`, :file:`errno.h`, or :file:`printk.h`) do not need to be listed.
    * Delete the parts that are not relevant.
    * Drivers can be listed under libraries, no need for a separate part.
    * If possible, link to the respective library.
@@ -271,7 +271,6 @@ It uses the following Zephyr libraries:
 
 In addition, it uses the following secure firmware components:
 
-* :ref:`secure_partition_manager`
 * :ref:`Trusted Firmware-M <ug_tfm>`
 
 The sample also uses drivers from `nrfx`_.

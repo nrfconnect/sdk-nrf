@@ -9,3 +9,5 @@ toolchain:
   - gnuarmemb
   - xtools
   - netif:openthread
+supported:
+  - gpio

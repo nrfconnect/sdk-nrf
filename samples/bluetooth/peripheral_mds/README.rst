@@ -10,6 +10,8 @@ Bluetooth: Peripheral Memfault Diagnostic Service (MDS)
 The Peripheral Memfault Diagnostic Service sample demonstrates how to use the :ref:`mds_readme` with the `Memfault SDK`_ in an |NCS| Bluetooth application to collect core dumps and metrics.
 The Memfault diagnostic data is sent through a Bluetooth gateway.
 
+To get started with Memfault integration in |NCS|, see :ref:`ug_memfault`.
+
 Requirements
 ************
 
@@ -20,9 +22,6 @@ The sample supports the following development kits:
 .. include:: /includes/tfm.txt
 
 .. include:: /includes/hci_rpmsg_overlay.txt
-
-Before using the Memfault platform, you must register an account in the `Memfault registration page`_ and `create a new project in Memfault`_.
-After the registration, you can connect up to 100 devices for free.
 
 Overview
 ********

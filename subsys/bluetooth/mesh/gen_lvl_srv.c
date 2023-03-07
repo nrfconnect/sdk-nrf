@@ -325,5 +325,5 @@ int bt_mesh_lvl_srv_pub(struct bt_mesh_lvl_srv *srv,
 				 BT_MESH_LVL_MSG_MAXLEN_STATUS);
 	encode_status(status, &msg);
 
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

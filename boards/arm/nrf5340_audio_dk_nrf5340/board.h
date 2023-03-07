@@ -31,6 +31,7 @@ struct board_version {
 #define BOARD_PCA10121_0_10_0_MSK (BIT(8))
 #define BOARD_PCA10121_1_0_0_MSK (BIT(9))
 #define BOARD_PCA10121_1_1_0_MSK (BIT(10))
+#define BOARD_PCA10121_1_2_0_MSK (BIT(11))
 
 static const struct board_version BOARD_VERSION_ARR[] = {
 	{ "0.0.0", BOARD_PCA10121_0_0_0_MSK, INT_MIN },
@@ -45,16 +46,17 @@ static const struct board_version BOARD_VERSION_ARR[] = {
 	{ "0.10.0", BOARD_PCA10121_0_10_0_MSK, 1480 },
 	{ "1.0.0", BOARD_PCA10121_1_0_0_MSK, 1743 },
 	{ "1.1.0", BOARD_PCA10121_1_1_0_MSK, 1982 },
+	{ "1.2.0", BOARD_PCA10121_1_2_0_MSK, 2219 },
 };
 
 #define BOARD_VERSION_VALID_MSK                                                                    \
 	(BOARD_PCA10121_0_8_0_MSK | BOARD_PCA10121_0_8_1_MSK | BOARD_PCA10121_0_8_2_MSK |          \
 	 BOARD_PCA10121_0_9_0_MSK | BOARD_PCA10121_0_10_0_MSK | BOARD_PCA10121_1_0_0_MSK |         \
-	 BOARD_PCA10121_1_1_0_MSK)
+	 BOARD_PCA10121_1_1_0_MSK | BOARD_PCA10121_1_2_0_MSK)
 
 #define BOARD_VERSION_VALID_MSK_SD_CARD                                                            \
 	(BOARD_PCA10121_0_8_0_MSK | BOARD_PCA10121_0_8_1_MSK | BOARD_PCA10121_0_8_2_MSK |          \
 	 BOARD_PCA10121_0_9_0_MSK | BOARD_PCA10121_0_10_0_MSK | BOARD_PCA10121_1_0_0_MSK |         \
-	 BOARD_PCA10121_1_1_0_MSK)
+	 BOARD_PCA10121_1_1_0_MSK | BOARD_PCA10121_1_2_0_MSK)
 
 #endif

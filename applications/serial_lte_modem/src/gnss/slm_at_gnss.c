@@ -22,6 +22,9 @@ LOG_MODULE_REGISTER(slm_gnss, CONFIG_SLM_LOG_LEVEL);
 #define SERVICE_INFO_GNSS \
 	"{\"state\":{\"reported\":{\"device\": {\"serviceInfo\":{\"ui\":[\"GNSS\"]}}}}}"
 
+#define MODEM_AT_RSP \
+	"{\"appId\":\"MODEM\", \"messageType\":\"RSP\", \"data\":\"%s\"}"
+
 #define LOCATION_REPORT_MS 5000
 
 /**@brief GNSS operations. */
@@ -40,6 +43,7 @@ enum slm_gnss_operation {
 	CELLPOS_START_MCELL  = nRF_CLOUD_SEND
 };
 
+static struct k_work cloud_cmd;
 static struct k_work agps_req;
 static struct k_work pgps_req;
 static struct k_work fix_rep;
@@ -95,7 +99,7 @@ static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN];
 /* global variable defined in different files */
 extern struct k_work_q slm_work_q;
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
+extern uint8_t at_buf[SLM_AT_MAX_CMD_LEN];
 
 static bool is_gnss_activated(void)
 {
@@ -123,13 +127,12 @@ static bool is_gnss_activated(void)
 static void gnss_status_notify(int status)
 {
 	if (run_type == RUN_TYPE_AGPS) {
-		sprintf(rsp_buf, "\r\n#XAGPS: 1,%d\r\n", status);
+		rsp_send("\r\n#XAGPS: 1,%d\r\n", status);
 	} else if (run_type == RUN_TYPE_PGPS) {
-		sprintf(rsp_buf, "\r\n#XPGPS: 1,%d\r\n", status);
+		rsp_send("\r\n#XPGPS: 1,%d\r\n", status);
 	} else {
-		sprintf(rsp_buf, "\r\n#XGPS: 1,%d\r\n", status);
+		rsp_send("\r\n#XGPS: 1,%d\r\n", status);
 	}
-	rsp_send(rsp_buf, strlen(rsp_buf));
 	run_status = status;
 }
 
@@ -413,8 +416,7 @@ static void cell_pos_req_wk(struct k_work *work)
 			}
 		} else {
 			LOG_WRN("No request of MCELL");
-			sprintf(rsp_buf, "\r\n#XCELLPOS: \r\n");
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send("\r\n#XCELLPOS: \r\n");
 			run_type = RUN_TYPE_NONE;
 		}
 	}
@@ -584,13 +586,11 @@ static void fix_rep_wk(struct k_work *work)
 	}
 
 	/* GIS accuracy: http://wiki.gis.com/wiki/index.php/Decimal_degrees, use default .6lf */
-	sprintf(rsp_buf,
-		"\r\n#XGPS: %lf,%lf,%f,%f,%f,%f,\"%04u-%02u-%02u %02u:%02u:%02u\"\r\n",
+	rsp_send("\r\n#XGPS: %lf,%lf,%f,%f,%f,%f,\"%04u-%02u-%02u %02u:%02u:%02u\"\r\n",
 		pvt.latitude, pvt.longitude, pvt.altitude,
 		pvt.accuracy, pvt.speed, pvt.heading,
 		pvt.datetime.year, pvt.datetime.month, pvt.datetime.day,
 		pvt.datetime.hour, pvt.datetime.minute, pvt.datetime.seconds);
-	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	for (int i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; ++i) {
 		if (pvt.sv[i].sv) { /* SV number 0 indicates no satellite */
@@ -618,8 +618,7 @@ static void fix_rep_wk(struct k_work *work)
 
 		/* GGA,hhmmss.ss,llll.ll,a,yyyyy.yy,a,x,xx,x.x,x.x,M,x.x,M,x.x,xxxx \r\n */
 		if (location_signify) {
-			sprintf(rsp_buf, "\r\n#XGPS: %s", nmea.nmea_str);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send("\r\n#XGPS: %s", nmea.nmea_str);
 		}
 	}
 
@@ -730,16 +729,14 @@ static void on_cloud_evt_ready(void)
 	}
 
 	nrf_cloud_ready = true;
-	sprintf(rsp_buf, "\r\n#XNRFCLOUD: %d,%d\r\n", nrf_cloud_ready, location_signify);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XNRFCLOUD: %d,%d\r\n", nrf_cloud_ready, location_signify);
 	at_monitor_resume(&ncell_meas);
 }
 
 static void on_cloud_evt_disconnected(void)
 {
 	nrf_cloud_ready = false;
-	sprintf(rsp_buf, "\r\n#XNRFCLOUD: %d,%d\r\n", nrf_cloud_ready, location_signify);
-	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send("\r\n#XNRFCLOUD: %d,%d\r\n", nrf_cloud_ready, location_signify);
 	at_monitor_pause(&ncell_meas);
 }
 
@@ -759,9 +756,8 @@ static void on_cloud_evt_cell_pos_data_received(const struct nrf_cloud_data *con
 			LOG_INF("TTFF %ds", (int)k_uptime_delta(&ttft_start)/1000);
 			ttft_start = 0;
 		}
-		sprintf(rsp_buf, "\r\n#XCELLPOS: %d,%lf,%lf,%d\r\n",
+		rsp_send("\r\n#XCELLPOS: %d,%lf,%lf,%d\r\n",
 			result.type, result.lat, result.lon, result.unc);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		run_type = RUN_TYPE_NONE;
 	} else if (err == 1) {
 		LOG_WRN("No position found");
@@ -774,11 +770,118 @@ static void on_cloud_evt_cell_pos_data_received(const struct nrf_cloud_data *con
 	}
 }
 
+static void cloud_cmd_wk(struct k_work *work)
+{
+	int ret;
+	char *cmd_rsp;
+
+	ARG_UNUSED(work);
+
+	/* Send AT command to modem */
+	ret = nrf_modem_at_cmd(at_buf, sizeof(at_buf), "%s", at_buf);
+	if (ret < 0) {
+		LOG_ERR("AT command failed: %d", ret);
+		return;
+	} else if (ret > 0) {
+		LOG_WRN("AT command error, type: %d", nrf_modem_at_err_type(ret));
+	}
+	LOG_INF("MODEM RSP %s", at_buf);
+	/* replace \" with \' in JSON string-type value */
+	for (int i = 0; i < strlen(at_buf); i++) {
+		if (at_buf[i] == '\"') {
+			at_buf[i] = '\'';
+		}
+	}
+	/* format JSON reply */
+	cmd_rsp = k_malloc(strlen(at_buf) + sizeof(MODEM_AT_RSP));
+	if (cmd_rsp == NULL) {
+		LOG_WRN("Unable to allocate buffer");
+		return;
+	}
+	sprintf(cmd_rsp, MODEM_AT_RSP, at_buf);
+	/* Send AT response to cloud */
+	ret = do_cloud_send_msg(cmd_rsp, strlen(cmd_rsp));
+	if (ret) {
+		LOG_ERR("Send AT response to cloud error: %d", ret);
+	}
+	k_free(cmd_rsp);
+}
+
+static bool handle_cloud_cmd(const char *buf_in)
+{
+	const cJSON *app_id = NULL;
+	const cJSON *msg_type = NULL;
+	bool ret = false;
+
+	cJSON *cloud_cmd_json = cJSON_Parse(buf_in);
+
+	if (cloud_cmd_json == NULL) {
+		const char *error_ptr = cJSON_GetErrorPtr();
+
+		if (error_ptr != NULL) {
+			LOG_ERR("JSON parsing error before: %s", error_ptr);
+		}
+		goto end;
+	}
+
+	app_id = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, NRF_CLOUD_JSON_APPID_KEY);
+	if (cJSON_GetStringValue(app_id) == NULL) {
+		goto end;
+	}
+
+	/* Format expected from nrf cloud:
+	 * {"appId":"MODEM", "messageType":"CMD", "data":"<AT command>"}
+	 */
+	if (strcmp(app_id->valuestring, NRF_CLOUD_JSON_APPID_VAL_MODEM) == 0) {
+		msg_type = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json,
+							    NRF_CLOUD_JSON_MSG_TYPE_KEY);
+		if (cJSON_GetStringValue(msg_type) != NULL) {
+			if (strcmp(msg_type->valuestring, NRF_CLOUD_JSON_MSG_TYPE_VAL_CMD) != 0) {
+				goto end;
+			}
+		}
+
+		const cJSON *at_cmd = NULL;
+
+		/* The value of attribute "data" contains the actual command */
+		at_cmd = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, NRF_CLOUD_JSON_DATA_KEY);
+		if (cJSON_GetStringValue(at_cmd) != NULL) {
+			LOG_INF("MODEM CMD %s", at_cmd->valuestring);
+			strcpy(at_buf, at_cmd->valuestring);
+			k_work_submit_to_queue(&slm_work_q, &cloud_cmd);
+			ret = true;
+		}
+	/* Format expected from nrf cloud:
+	 * {"appId":"DEVICE", "messageType":"DISCON"}
+	 */
+	} else if (strcmp(app_id->valuestring, NRF_CLOUD_JSON_APPID_VAL_DEVICE) == 0) {
+		msg_type = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json,
+							    NRF_CLOUD_JSON_MSG_TYPE_KEY);
+		if (cJSON_GetStringValue(msg_type) != NULL) {
+			if (strcmp(msg_type->valuestring,
+			    NRF_CLOUD_JSON_MSG_TYPE_VAL_DISCONNECT) == 0) {
+				LOG_INF("DEVICE DISCON");
+				/* No action required, handled in lib_nrf_cloud */
+				ret = true;
+			}
+		}
+	}
+
+end:
+	cJSON_Delete(cloud_cmd_json);
+	return ret;
+}
+
 static void on_cloud_evt_data_received(const struct nrf_cloud_data *const data)
 {
 	if (nrf_cloud_ready) {
-		sprintf(rsp_buf, "\r\n#XNRFCLOUD: %s\r\n", (char *)data->ptr);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		if (((char *)data->ptr)[0] == '{') {
+			/* Check if it's a cloud command sent from the cloud */
+			if (handle_cloud_cmd(data->ptr)) {
+				return;
+			}
+		}
+		rsp_send("\r\n#XNRFCLOUD: %s\r\n", (char *)data->ptr);
 	}
 }
 
@@ -918,15 +1021,12 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "\r\n#XGPS: %d,%d\r\n", (int)is_gnss_activated(), run_status);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XGPS: %d,%d\r\n", (int)is_gnss_activated(), run_status);
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XGPS: (%d,%d),<interval>,<timeout>\r\n",
-			GPS_STOP, GPS_START);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XGPS: (%d,%d),<interval>,<timeout>\r\n", GPS_STOP, GPS_START);
 		err = 0;
 		break;
 
@@ -986,16 +1086,14 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND: {
-		sprintf(rsp_buf, "\r\n#XNRFCLOUD: %d,%d,%d,\"%s\"\r\n", nrf_cloud_ready,
+		rsp_send("\r\n#XNRFCLOUD: %d,%d,%d,\"%s\"\r\n", nrf_cloud_ready,
 			location_signify, CONFIG_NRF_CLOUD_SEC_TAG, device_id);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 	} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XNRFCLOUD: (%d,%d,%d),<signify>\r\n",
+		rsp_send("\r\n#XNRFCLOUD: (%d,%d,%d),<signify>\r\n",
 			nRF_CLOUD_DISCONNECT, nRF_CLOUD_CONNECT, nRF_CLOUD_SEND);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
@@ -1073,15 +1171,12 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "\r\n#XAGPS: %d,%d\r\n", (int)is_gnss_activated(), run_status);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XAGPS: %d,%d\r\n", (int)is_gnss_activated(), run_status);
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XAGPS: (%d,%d),<interval>,<timeout>\r\n",
-			AGPS_STOP, AGPS_START);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XAGPS: (%d,%d),<interval>,<timeout>\r\n", AGPS_STOP, AGPS_START);
 		err = 0;
 		break;
 
@@ -1161,15 +1256,12 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "\r\n#XPGPS: %d,%d\r\n", (int)is_gnss_activated(), run_status);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XPGPS: %d,%d\r\n", (int)is_gnss_activated(), run_status);
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XPGPS: (%d,%d),<interval>,<timeout>\r\n",
-			PGPS_STOP, PGPS_START);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XPGPS: (%d,%d),<interval>,<timeout>\r\n", PGPS_STOP, PGPS_START);
 		err = 0;
 		break;
 
@@ -1200,8 +1292,7 @@ int handle_at_gps_delete(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XGPSDEL: <mask>\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XGPSDEL: <mask>\r\n");
 		err = 0;
 		break;
 
@@ -1245,16 +1336,14 @@ int handle_at_cellpos(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "\r\n#XCELLPOS: %d,%d\r\n", (int)is_gnss_activated(),
+		rsp_send("\r\n#XCELLPOS: %d,%d\r\n", (int)is_gnss_activated(),
 			(run_type == RUN_TYPE_CELL_POS) ? 1 : 0);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XCELLPOS: (%d,%d,%d)\r\n",
+		rsp_send("\r\n#XCELLPOS: (%d,%d,%d)\r\n",
 			CELLPOS_STOP, CELLPOS_START_SCELL, CELLPOS_START_MCELL);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
@@ -1286,6 +1375,7 @@ int slm_at_gnss_init(void)
 		return err;
 	}
 
+	k_work_init(&cloud_cmd, cloud_cmd_wk);
 	k_work_init(&agps_req, agps_req_wk);
 	k_work_init(&pgps_req, pgps_req_wk);
 	k_work_init(&cell_pos_req, cell_pos_req_wk);

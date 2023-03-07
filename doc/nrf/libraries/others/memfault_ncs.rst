@@ -8,46 +8,15 @@ Memfault
    :depth: 2
 
 The Memfault module provides an integration of `Memfault SDK`_ into |NCS| and expands the functionality of the SDK with some options that are specific to |NCS|.
-
-Overview
-********
+To get started with Memfault integration in |NCS|, see :ref:`ug_memfault`.
 
 `Memfault SDK`_ is an SDK for embedded devices to make use of services that `Memfault`_ offers on their platform.
-
-The SDK provides a functionality to collect debug information from devices in the form of coredumps, error traces, metrics, logs and more.
-Information that is collected from the device can be sent to Memfault's cloud solution for further analysis.
-Communication with the Memfault Cloud is handled by APIs available in Memfault SDK, while the integration code of the SDK in |NCS| provides some additional functionality.
-
 For official documentation for Memfault SDK and the Memfault platform in general, see `Memfault Docs`_.
-
-See the following examples of Memfault implementation in |NCS|:
-
-   * :ref:`memfault_sample` - This sample connects to the LTE network and sends data using HTTPS.
-     It supports nRF9160-based build targets
-   * :ref:`peripheral_mds` - This sample has an implementation of the MDS.
-     It sends data to the Memfault cloud through a Bluetooth gateway.
-
-.. _using_memfault:
-
-Using Memfault SDK
-******************
-
-The SDK is part of the West manifest in |NCS| and is automatically downloaded when running ``west update``.
-By default, it is downloaded to ``<nRF Connect SDK path>/modules/lib/memfault-firmware-sdk/``.
-
-To include Memfault in your build, enable the Kconfig option :kconfig:option:`CONFIG_MEMFAULT`.
-The APIs in Memfault SDK can then be linked into your application.
-
-In addition, you must configure a Memfault project key using :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`.
-:kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` is located in :file:`../overlay-memfault.conf`.
-
-To get access to all the benefits, like up to 100 free devices connected, register at the `Memfault registration page`_.
 
 .. note::
    When building applications with :ref:`Trusted Firmware-M <ug_tfm>` (TF-M), the faults resulting from memory access in secure regions are not caught by Memfault's fault handler.
    Instead, they are handled by TF-M.
    This means that those faults are not reported to the Memfault platform.
-   You can configure your application to use the :ref:`secure_partition_manager` instead of TF-M if you prefer all such faults to be reported to the Memfault platform.
 
 Configuration
 *************
@@ -69,15 +38,15 @@ Configuration files
 
 .. memfault_config_files_start
 
-If you just want to do a quick test with a sample, disable the :kconfig:option:`CONFIG_MEMFAULT_USER_CONFIG_ENABLE` option in the :file:`prj.conf` to avoid adding the user configuration files.
+If you just want to do a quick test with a sample, disable the :kconfig:option:`CONFIG_MEMFAULT_USER_CONFIG_ENABLE` option in the :file:`prj.conf` file to avoid adding the user configuration files.
 Otherwise, follow the instructions below.
 
 Memfault SDK requires three files in the include path during the build process.
 Add a new folder into your project called :file:`config` and add the following three files:
 
-* ``memfault_platform_config.h`` - Sets Memfault SDK configurations that are not covered by Kconfig options
-* ``memfault_metrics_heartbeat_config.def`` - Defines application-specific metrics
-* ``memfault_trace_reason_user_config.def`` - Defines application-specific trace reasons
+* :file:`memfault_platform_config.h` - Sets Memfault SDK configurations that are not covered by Kconfig options.
+* :file:`memfault_metrics_heartbeat_config.def` - Defines application-specific metrics.
+* :file:`memfault_trace_reason_user_config.def` - Defines application-specific trace reasons.
 
 For more information, you can see `Memfault nRF Connect SDK integration guide`_.
 You can use the files in the :ref:`memfault_sample` sample as a reference.
@@ -115,7 +84,7 @@ You can find more details on each option using ``menuconfig``, ``guiconfig``, an
 .. note::
 
    The Memfault shell is enabled by default, using the UART interface.
-   If :ref:`lib_at_host` library and the memfault module are enabled simultaneously, both will not behave as expected, as they both require the UART same interface.
+   If :ref:`lib_at_host` library and the Memfault module are enabled simultaneously, both will not behave as expected, as they both require the UART same interface.
    Therefore, it is recommended to only enable one of these at the same time.
    To disable the Memfault shell, you need to disable the two configurations, ``CONFIG_MEMFAULT_SHELL`` and ``CONFIG_MEMFAULT_NRF_SHELL``.
 

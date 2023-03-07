@@ -13,7 +13,7 @@
 #include "ui_sense_led.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(light_sensor, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_DECLARE(app_sensors, CONFIG_APP_LOG_LEVEL);
 
 #if !DT_NODE_HAS_STATUS(DT_NODELABEL(bh1749), okay)
 #define LIGHT_SENSOR_SIMULATED 1

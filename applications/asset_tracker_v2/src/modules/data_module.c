@@ -70,7 +70,7 @@ static struct cloud_data_ui ui_buf[CONFIG_DATA_UI_BUFFER_COUNT];
 static struct cloud_data_impact impact_buf[CONFIG_DATA_IMPACT_BUFFER_COUNT];
 static struct cloud_data_battery bat_buf[CONFIG_DATA_BATTERY_BUFFER_COUNT];
 static struct cloud_data_modem_dynamic modem_dyn_buf[CONFIG_DATA_MODEM_DYNAMIC_BUFFER_COUNT];
-static struct cloud_data_neighbor_cells neighbor_cells;
+static struct cloud_data_cloud_location cloud_location;
 
 /* Static modem data does not change between firmware versions and does not
  * have to be buffered.
@@ -128,7 +128,7 @@ enum coneval_supported_data_type {
 	UNUSED,
 	GENERIC,
 	BATCH,
-	NEIGHBOR_CELLS,
+	CLOUD_LOCATION,
 	COUNT,
 };
 
@@ -494,6 +494,12 @@ static void config_print_all(void)
 	} else {
 		LOG_DBG("Requesting of GNSS data is disabled");
 	}
+
+	if (!current_cfg.no_data.wifi) {
+		LOG_DBG("Requesting of Wi-Fi data is enabled");
+	} else {
+		LOG_DBG("Requesting of Wi-Fi data is disabled");
+	}
 }
 
 static void config_distribute(enum data_module_event_type type)
@@ -576,21 +582,21 @@ static void data_encode(void)
 	}
 #endif
 
-	if (grant_send(NEIGHBOR_CELLS, &coneval, override)) {
-		err = cloud_codec_encode_neighbor_cells(&codec, &neighbor_cells);
+	if (grant_send(CLOUD_LOCATION, &coneval, override)) {
+		err = cloud_codec_encode_cloud_location(&codec, &cloud_location);
 		switch (err) {
 		case 0:
-			LOG_DBG("Neighbor cell data encoded successfully");
-			data_send(DATA_EVT_NEIGHBOR_CELLS_DATA_SEND, &codec);
+			LOG_DBG("Cloud location data encoded successfully");
+			data_send(DATA_EVT_CLOUD_LOCATION_DATA_SEND, &codec);
 			break;
 		case -ENOTSUP:
-			/* Neighbor cell data encoding not supported */
+			/* Cloud location data encoding not supported */
 			break;
 		case -ENODATA:
-			LOG_DBG("No neighbor cells data to encode, error: %d", err);
+			LOG_DBG("No cloud location data to encode, error: %d", err);
 			break;
 		default:
-			LOG_ERR("Error encoding neighbor cells data: %d", err);
+			LOG_ERR("Error encoding cloud location data: %d", err);
 			SEND_ERROR(data, DATA_EVT_ERROR, err);
 			return;
 		}
@@ -731,12 +737,6 @@ static int agps_request_encode(struct nrf_modem_gnss_agps_data_frame *incoming_r
 	cloud_agps_request.cell = modem_info.network.cellid_dec;
 	cloud_agps_request.area = modem_info.network.area_code.value;
 	cloud_agps_request.queued = true;
-#if defined(CONFIG_LOCATION_MODULE_AGPS_FILTERED)
-	cloud_agps_request.filtered = CONFIG_LOCATION_MODULE_AGPS_FILTERED;
-#endif
-#if defined(CONFIG_LOCATION_MODULE_ELEVATION_MASK)
-	cloud_agps_request.mask_angle = CONFIG_LOCATION_MODULE_ELEVATION_MASK;
-#endif
 
 	err = cloud_codec_encode_agps_request(&codec, &cloud_agps_request);
 	switch (err) {
@@ -931,6 +931,18 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		config_change = true;
 	}
 
+	if (current_cfg.no_data.wifi != new_config->no_data.wifi) {
+		current_cfg.no_data.wifi = new_config->no_data.wifi;
+
+		if (!current_cfg.no_data.wifi) {
+			LOG_DBG("Requesting of Wi-Fi data is enabled");
+		} else {
+			LOG_DBG("Requesting of Wi-Fi data is disabled");
+		}
+
+		config_change = true;
+	}
+
 	if (new_config->location_timeout > 0) {
 		if (current_cfg.location_timeout != new_config->location_timeout) {
 			current_cfg.location_timeout = new_config->location_timeout;
@@ -1050,10 +1062,8 @@ static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_
 	struct nrf_modem_gnss_agps_data_frame request;
 
 	if (incoming_request != NULL) {
-		request.sv_mask_ephe = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ?
-				       0u : incoming_request->sv_mask_ephe;
-		request.sv_mask_alm = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ?
-				       0u : incoming_request->sv_mask_alm;
+		request.sv_mask_ephe = incoming_request->sv_mask_ephe;
+		request.sv_mask_alm = incoming_request->sv_mask_alm;
 		request.data_flags = incoming_request->data_flags;
 	}
 
@@ -1193,7 +1203,9 @@ static void on_all_states(struct data_msg_data *msg)
 			.no_data.gnss =
 				msg->module.cloud.data.config.no_data.gnss,
 			.no_data.neighbor_cell =
-				msg->module.cloud.data.config.no_data.neighbor_cell
+				msg->module.cloud.data.config.no_data.neighbor_cell,
+			.no_data.wifi =
+				msg->module.cloud.data.config.no_data.wifi
 		};
 
 		new_config_handle(&new);
@@ -1290,14 +1302,6 @@ static void on_all_states(struct data_msg_data *msg)
 			.mcc = msg->module.modem.data.modem_dynamic.mcc,
 			.mnc = msg->module.modem.data.modem_dynamic.mnc,
 			.ts = msg->module.modem.data.modem_dynamic.timestamp,
-
-			.area_code_fresh = msg->module.modem.data.modem_dynamic.area_code_fresh,
-			.nw_mode_fresh = msg->module.modem.data.modem_dynamic.nw_mode_fresh,
-			.band_fresh = msg->module.modem.data.modem_dynamic.band_fresh,
-			.cell_id_fresh = msg->module.modem.data.modem_dynamic.cell_id_fresh,
-			.rsrp_fresh = msg->module.modem.data.modem_dynamic.rsrp_fresh,
-			.ip_address_fresh = msg->module.modem.data.modem_dynamic.ip_address_fresh,
-			.mccmnc_fresh = msg->module.modem.data.modem_dynamic.mccmnc_fresh,
 			.queued = true
 		};
 
@@ -1401,23 +1405,52 @@ static void on_all_states(struct data_msg_data *msg)
 		requested_data_status_set(APP_DATA_LOCATION);
 	}
 
-	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY)) {
-		BUILD_ASSERT(sizeof(neighbor_cells.cell_data) ==
-			     sizeof(msg->module.location.data.neighbor_cells.cell_data));
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY)) {
+		if (msg->module.location.data.cloud_location.neighbor_cells_valid) {
+			BUILD_ASSERT(sizeof(cloud_location.neighbor_cells.cell_data) ==
+				     sizeof(msg->module.location.data.cloud_location
+					.neighbor_cells.cell_data));
 
-		BUILD_ASSERT(sizeof(neighbor_cells.neighbor_cells) ==
-			     sizeof(msg->module.location.data.neighbor_cells.neighbor_cells));
+			BUILD_ASSERT(sizeof(cloud_location.neighbor_cells.neighbor_cells) ==
+				     sizeof(msg->module.location.data.cloud_location
+					.neighbor_cells.neighbor_cells));
 
-		memcpy(&neighbor_cells.cell_data,
-		       &msg->module.location.data.neighbor_cells.cell_data,
-		       sizeof(neighbor_cells.cell_data));
+			cloud_location.neighbor_cells_valid = true;
+			cloud_location.neighbor_cells.ts =
+				msg->module.location.data.cloud_location.timestamp;
+			cloud_location.neighbor_cells.queued = true;
 
-		memcpy(&neighbor_cells.neighbor_cells,
-		       &msg->module.location.data.neighbor_cells.neighbor_cells,
-		       sizeof(neighbor_cells.neighbor_cells));
+			memcpy(&cloud_location.neighbor_cells.cell_data,
+			       &msg->module.location.data.cloud_location.neighbor_cells.cell_data,
+			       sizeof(cloud_location.neighbor_cells.cell_data));
 
-		neighbor_cells.ts = msg->module.location.data.neighbor_cells.timestamp;
-		neighbor_cells.queued = true;
+			memcpy(&cloud_location.neighbor_cells.neighbor_cells,
+			       &msg->module.location.data.cloud_location
+					.neighbor_cells.neighbor_cells,
+			       sizeof(cloud_location.neighbor_cells.neighbor_cells));
+		}
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+		if (msg->module.location.data.cloud_location.wifi_access_points_valid) {
+			BUILD_ASSERT(sizeof(cloud_location.wifi_access_points.ap_info) ==
+				     sizeof(msg->module.location.data.cloud_location
+					.wifi_access_points.ap_info));
+
+			cloud_location.wifi_access_points_valid = true;
+			cloud_location.wifi_access_points.ts =
+				msg->module.location.data.cloud_location.timestamp;
+			cloud_location.wifi_access_points.queued = true;
+
+			memcpy(&cloud_location.wifi_access_points.ap_info,
+			       &msg->module.location.data.cloud_location
+					.wifi_access_points.ap_info,
+			       sizeof(cloud_location.wifi_access_points.ap_info));
+
+			cloud_location.wifi_access_points.cnt =
+				msg->module.location.data.cloud_location.wifi_access_points.cnt;
+		}
+#endif
+		cloud_location.ts = msg->module.location.data.cloud_location.timestamp;
+		cloud_location.queued = true;
 
 		requested_data_status_set(APP_DATA_LOCATION);
 	}

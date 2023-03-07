@@ -88,9 +88,14 @@ config TFM_EXPERIMENTAL
 
 config TFM_PARTITION_INITIAL_ATTESTATION
 	bool
+	default y if !TFM_PROFILE_TYPE_MINIMAL
 	help
 	   We select "implementation ID" because it is a mandatory claim
 	   in the IAT.
+
+config TFM_QCBOR_PATH
+	string
+	default "$(ZEPHYR_TRUSTED_FIRMWARE_M_MODULE_DIR)/../qcbor"
 
 if TFM_PARTITION_CRYPTO
 
@@ -122,7 +127,6 @@ config TFM_CRYPTO_CONC_OPER_NUM
 config TFM_CRYPTO_IOVEC_BUFFER_SIZE
 	int
 	prompt "TF-M Crypto - PSA FF IO vector buffer size" if !TFM_PROFILE_TYPE_MINIMAL
-	depends on !TFM_LIBRARY
 	default 1024 if TFM_PROFILE_TYPE_MINIMAL
 	default 16384 if TFM_REGRESSION_S || TFM_REGRESSION_NS
 	default 5120
@@ -140,6 +144,14 @@ config TFM_CRYPTO_PARTITION_STACK_SIZE
 	default 0x2000
 	help
 	  The stack size of the Crypto Secure Partition
+
+config TFM_CRYPTO_NV_SEED
+	# Hidden option to set value based on TF-M minimal profile
+	bool
+	default y if !TFM_PROFILE_TYPE_MINIMAL
+	help
+	  Prompt-less configuration controlling NV Seed support.
+	  Not set when TFM_PROFILE_TYPE_MINIMAL is used
 
 endif # TFM_PARTITION_CRYPTO
 
@@ -202,6 +214,13 @@ config TFM_ALLOW_NON_SECURE_RESET
 	  to issue a system reset of the chip without going through a secure
 	  service.
 
+config TFM_S_CODE_VECTOR_TABLE_SIZE
+	hex
+	default 0x144 if SOC_NRF9160
+	default 0x154 if SOC_NRF5340_CPUAPP
+	default 0xffffffff # Invalid value to discover missing SOC support.
+	help
+	  The TF-M interrupt vector table size.
 
 config BOOTLOADER_MCUBOOT
 	bool
@@ -247,11 +266,12 @@ config PM_PARTITION_SIZE_TFM
 	hex
 	prompt  "Memory reserved for TFM" if !TFM_PROFILE_TYPE_MINIMAL
 	default 0x10000 if TFM_PROFILE_TYPE_MINIMAL && TFM_CMAKE_BUILD_TYPE_DEBUG
-	default 0xC000 if TFM_PROFILE_TYPE_MINIMAL && SOC_NRF9160 && BOOTLOADER_MCUBOOT && !SECURE_BOOT
+	default 0x7E00 if TFM_PROFILE_TYPE_MINIMAL && BOOTLOADER_MCUBOOT
 	default 0x8000 if TFM_PROFILE_TYPE_MINIMAL
 	# NCSDK-13503: Temporarily bump size while regressions are being fixed
 	default 0x60000 if TFM_REGRESSION_S
 	default 0x50000 if TFM_CMAKE_BUILD_TYPE_DEBUG
+	default 0x3FE00 if BOOTLOADER_MCUBOOT
 	default 0x40000
 	help
 	  Memory set aside for the TFM partition. This size is fixed if

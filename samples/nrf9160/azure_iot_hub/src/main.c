@@ -12,10 +12,13 @@
 #include <dk_buttons_and_leds.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
+#include <zephyr/logging/log.h>
 
 #if IS_ENABLED(CONFIG_LTE_LINK_CONTROL)
 #include <modem/lte_lc.h>
 #endif
+
+LOG_MODULE_REGISTER(azure_iot_hub_sample, CONFIG_AZURE_IOT_HUB_SAMPLE_LOG_LEVEL);
 
 /* Interval [s] between sending events to the IoT hub. The value can be changed
  * by setting a new desired value for property 'telemetryInterval' in the
@@ -59,7 +62,7 @@ static int event_interval_get(char *buf)
 
 	root_obj = cJSON_Parse(buf);
 	if (root_obj == NULL) {
-		printk("Could not parse properties object\n");
+		LOG_ERR("Could not parse properties object");
 		return -1;
 	}
 
@@ -80,7 +83,7 @@ static int event_interval_get(char *buf)
 	event_interval_obj = cJSON_GetObjectItem(desired_obj,
 						 "telemetryInterval");
 	if (event_interval_obj == NULL) {
-		printk("No 'telemetryInterval' object in the device twin\n");
+		LOG_INF("No 'telemetryInterval' object in the device twin");
 		goto clean_exit;
 	}
 
@@ -89,7 +92,7 @@ static int event_interval_get(char *buf)
 	} else if (cJSON_IsNumber(event_interval_obj)) {
 		new_interval = event_interval_obj->valueint;
 	} else {
-		printk("Invalid telemetry interval format received\n");
+		LOG_WRN("Invalid telemetry interval format received");
 		goto clean_exit;
 	}
 
@@ -115,7 +118,7 @@ static void on_evt_twin_desired(char *buf, size_t len)
 {
 	if (k_sem_take(&recv_buf_sem, K_NO_WAIT) == 0) {
 		if (len > sizeof(recv_buf) - 1) {
-			printk("Incoming data too big for buffer");
+			LOG_ERR("Incoming data too big for buffer");
 			return;
 		}
 
@@ -123,7 +126,7 @@ static void on_evt_twin_desired(char *buf, size_t len)
 		recv_buf[len] = '\0';
 		k_work_submit_to_queue(&application_work_q, &twin_report_work);
 	} else {
-		printk("Recv buffer is busy, data was not copied\n");
+		LOG_WRN("Recv buffer is busy, data was not copied");
 	}
 }
 
@@ -132,8 +135,8 @@ static void on_evt_direct_method(struct azure_iot_hub_method *method)
 	size_t request_id_len = MIN(sizeof(method_data.request_id) - 1, method->request_id.size);
 	size_t name_len = MIN(sizeof(method_data.name) - 1, method->name.size);
 
-	printk("Method name: %.*s\n", method->name.size, method->name.ptr);
-	printk("Payload: %.*s\n", method->payload.size, method->payload.ptr);
+	LOG_INF("Method name: %.*s", method->name.size, method->name.ptr);
+	LOG_INF("Payload: %.*s", method->payload.size, method->payload.ptr);
 
 	memcpy(method_data.request_id, method->request_id.ptr, request_id_len);
 
@@ -152,21 +155,21 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 {
 	switch (evt->type) {
 	case AZURE_IOT_HUB_EVT_CONNECTING:
-		printk("AZURE_IOT_HUB_EVT_CONNECTING\n");
+		LOG_INF("AZURE_IOT_HUB_EVT_CONNECTING");
 		break;
 	case AZURE_IOT_HUB_EVT_CONNECTED:
-		printk("AZURE_IOT_HUB_EVT_CONNECTED\n");
+		LOG_INF("AZURE_IOT_HUB_EVT_CONNECTED");
 		break;
 	case AZURE_IOT_HUB_EVT_CONNECTION_FAILED:
-		printk("AZURE_IOT_HUB_EVT_CONNECTION_FAILED\n");
-		printk("Error code received from IoT Hub: %d\n",
-		       evt->data.err);
+		LOG_INF("AZURE_IOT_HUB_EVT_CONNECTION_FAILED");
+		LOG_INF("Error code received from IoT Hub: %d",
+			evt->data.err);
 		break;
 	case AZURE_IOT_HUB_EVT_DISCONNECTED:
-		printk("AZURE_IOT_HUB_EVT_DISCONNECTED\n");
+		LOG_INF("AZURE_IOT_HUB_EVT_DISCONNECTED");
 		break;
 	case AZURE_IOT_HUB_EVT_READY:
-		printk("AZURE_IOT_HUB_EVT_READY\n");
+		LOG_INF("AZURE_IOT_HUB_EVT_READY");
 
 		/* The AZURE_IOT_HUB_EVT_READY event indicates that the
 		 * IoT hub connection is established and interaction with the
@@ -179,40 +182,40 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 					    &send_event_work, K_NO_WAIT);
 		break;
 	case AZURE_IOT_HUB_EVT_DATA_RECEIVED:
-		printk("AZURE_IOT_HUB_EVT_DATA_RECEIVED\n");
-		printk("Received payload: %.*s\n",
+		LOG_INF("AZURE_IOT_HUB_EVT_DATA_RECEIVED");
+		LOG_INF("Received payload: %.*s",
 			evt->data.msg.payload.size, evt->data.msg.payload.ptr);
 		break;
 	case AZURE_IOT_HUB_EVT_TWIN_RECEIVED:
-		printk("AZURE_IOT_HUB_EVT_TWIN_RECEIVED\n");
+		LOG_INF("AZURE_IOT_HUB_EVT_TWIN_RECEIVED");
 		event_interval_apply(event_interval_get(evt->data.msg.payload.ptr));
 		break;
 	case AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED:
-		printk("AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED\n");
+		LOG_INF("AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED");
 		on_evt_twin_desired(evt->data.msg.payload.ptr, evt->data.msg.payload.size);
 		break;
 	case AZURE_IOT_HUB_EVT_DIRECT_METHOD:
-		printk("AZURE_IOT_HUB_EVT_DIRECT_METHOD\n");
+		LOG_INF("AZURE_IOT_HUB_EVT_DIRECT_METHOD");
 		on_evt_direct_method(&evt->data.method);
 		break;
 	case AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS:
-		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: %.*s\n",
-		       evt->data.result.request_id.size, evt->data.result.request_id.ptr);
+		LOG_INF("AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: %.*s",
+			evt->data.result.request_id.size, evt->data.result.request_id.ptr);
 		break;
 	case AZURE_IOT_HUB_EVT_TWIN_RESULT_FAIL:
-		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_FAIL, ID %.*s, status %d\n",
+		LOG_INF("AZURE_IOT_HUB_EVT_TWIN_RESULT_FAIL, ID %.*s, status %d",
 			evt->data.result.request_id.size,
 			evt->data.result.request_id.ptr,
 			evt->data.result.status);
 		break;
 	case AZURE_IOT_HUB_EVT_PUBACK:
-		printk("AZURE_IOT_HUB_EVT_PUBACK\n");
+		LOG_INF("AZURE_IOT_HUB_EVT_PUBACK");
 		break;
 	case AZURE_IOT_HUB_EVT_ERROR:
-		printk("AZURE_IOT_HUB_EVT_ERROR\n");
+		LOG_INF("AZURE_IOT_HUB_EVT_ERROR");
 		break;
 	default:
-		printk("Unknown Azure IoT Hub event type: %d\n", evt->type);
+		LOG_ERR("Unknown Azure IoT Hub event type: %d", evt->type);
 		break;
 	}
 }
@@ -232,29 +235,29 @@ static void send_event(struct k_work *work)
 		       "{\"temperature\":%d.%d,\"timestamp\":%d}",
 		       25, k_uptime_get_32() % 10, k_uptime_get_32());
 	if ((len < 0) || (len > sizeof(buf))) {
-		printk("Failed to populate event buffer\n");
+		LOG_ERR("Failed to populate event buffer");
 		goto exit;
 	}
 
 	msg.payload.size = len;
 
-	printk("Sending event:\n%s\n", buf);
+	LOG_INF("Sending event:%s", buf);
 
 	err = azure_iot_hub_send(&msg);
 	if (err) {
-		printk("Failed to send event\n");
+		LOG_ERR("Failed to send event");
 		goto exit;
 	}
 
-	printk("Event was successfully sent\n");
+	LOG_INF("Event was successfully sent");
 exit:
 	if (atomic_get(&event_interval) <= 0) {
-		printk("The event reporting stops, interval is set to %ld\n",
+		LOG_ERR("The event reporting stops, interval is set to %ld",
 		       atomic_get(&event_interval));
 		return;
 	}
 
-	printk("Next event will be sent in %ld seconds\n", event_interval);
+	LOG_INF("Next event will be sent in %ld seconds", event_interval);
 	k_work_reschedule_for_queue(&application_work_q, &send_event_work,
 				    K_SECONDS(event_interval));
 }
@@ -277,23 +280,23 @@ static void direct_method_handler(struct k_work *work)
 	bool led_state = strncmp(method_data.payload, "0", 1) ? 1 : 0;
 
 	if (strcmp(method_data.name, "led") != 0) {
-		printk("Unknown direct method\n");
+		LOG_INF("Unknown direct method");
 		return;
 	}
 
 #if defined(CONFIG_DK_LIBRARY)
 	err = dk_set_led(DK_LED1, led_state);
 	if (err) {
-		printk("Failed to set LED, error: %d\n", err);
+		LOG_ERR("Failed to set LED, error: %d", err);
 		return;
 	}
 #else
-	printk("No hardware interface to set LED state to %d\n", led_state);
+	LOG_INF("No hardware interface to set LED state to %d", led_state);
 #endif
 
 	err = azure_iot_hub_method_respond(&result);
 	if (err) {
-		printk("Failed to send direct method response\n");
+		LOG_ERR("Failed to send direct method response");
 	}
 }
 
@@ -317,7 +320,7 @@ static void twin_report_work_fn(struct k_work *work)
 	len = snprintk(buf, sizeof(buf),
 		       "{\"telemetryInterval\":%d}", new_interval);
 	if (len <= 0) {
-		printk("Failed to create twin report\n");
+		LOG_ERR("Failed to create twin report");
 		return;
 	}
 
@@ -325,7 +328,7 @@ static void twin_report_work_fn(struct k_work *work)
 
 	err = azure_iot_hub_send(&data);
 	if (err) {
-		printk("Failed to send twin report");
+		LOG_ERR("Failed to send twin report");
 		return;
 	}
 
@@ -336,7 +339,7 @@ static void twin_report_work_fn(struct k_work *work)
 	 * successfully reported or not.
 	 */
 	event_interval_apply(new_interval);
-	printk("New telemetry interval has been applied: %d\n",  new_interval);
+	LOG_INF("New telemetry interval has been applied: %d",  new_interval);
 }
 
 #if IS_ENABLED(CONFIG_LTE_LINK_CONTROL)
@@ -355,20 +358,20 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 
 			connected = false;
 
-			printk("LTE network is disconnected.\n");
-			printk("Subsequent sending of data may block or fail.\n");
+			LOG_INF("LTE network is disconnected.");
+			LOG_INF("Subsequent sending of data may block or fail.");
 			break;
 		}
 
-		printk("Network registration status: %s\n",
-		       evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
-		       "Connected - home network" : "Connected - roaming");
+		LOG_INF("Network registration status: %s",
+			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
+			"Connected - home network" : "Connected - roaming");
 		k_sem_give(&network_connected_sem);
 
 		connected = true;
 		break;
 	case LTE_LC_EVT_PSM_UPDATE:
-		printk("PSM parameter update: TAU: %d, Active time: %d\n",
+		LOG_INF("PSM parameter update: TAU: %d, Active time: %d",
 		       evt->psm_cfg.tau, evt->psm_cfg.active_time);
 		break;
 	case LTE_LC_EVT_EDRX_UPDATE: {
@@ -379,18 +382,18 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 			       "eDRX parameter update: eDRX: %f, PTW: %f",
 			       evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
 		if (len > 0) {
-			printk("%s\n", log_buf);
+			LOG_INF("%s", log_buf);
 		}
 		break;
 	}
 	case LTE_LC_EVT_RRC_UPDATE:
-		printk("RRC mode: %s\n",
-		       evt->rrc_mode == LTE_LC_RRC_MODE_CONNECTED ?
-		       "Connected" : "Idle");
+		LOG_INF("RRC mode: %s",
+			evt->rrc_mode == LTE_LC_RRC_MODE_CONNECTED ?
+			"Connected" : "Idle");
 		break;
 	case LTE_LC_EVT_CELL_UPDATE:
-		printk("LTE cell changed: Cell ID: %d, Tracking area: %d\n",
-		       evt->cell.id, evt->cell.tac);
+		LOG_INF("LTE cell changed: Cell ID: %d, Tracking area: %d",
+			evt->cell.id, evt->cell.tac);
 		break;
 	default:
 		break;
@@ -405,8 +408,7 @@ static void modem_configure(void)
 		int err = lte_lc_init_and_connect_async(lte_handler);
 
 		if (err) {
-			printk("Modem could not be configured, error: %d\n",
-				err);
+			LOG_INF("Modem could not be configured, error: %d", err);
 			return;
 		}
 	}
@@ -430,27 +432,27 @@ static void dps_handler(enum azure_iot_hub_dps_reg_status status)
 {
 	switch (status) {
 	case AZURE_IOT_HUB_DPS_REG_STATUS_NOT_STARTED:
-		printk("DPS registration status: AZURE_IOT_HUB_DPS_REG_STATUS_NOT_STARTED\n");
+		LOG_INF("DPS registration status: AZURE_IOT_HUB_DPS_REG_STATUS_NOT_STARTED");
 		break;
 	case AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNING:
-		printk("DPS registration status: AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNING\n");
+		LOG_INF("DPS registration status: AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNING");
 		break;
 	case AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNED:
-		printk("DPS registration status: AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNED\n");
+		LOG_INF("DPS registration status: AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNED");
 
 		dps_was_successful = true;
 
 		k_sem_give(&dps_done_sem);
 		break;
 	case AZURE_IOT_HUB_DPS_REG_STATUS_FAILED:
-		printk("DPS registration status: AZURE_IOT_HUB_DPS_REG_STATUS_FAILED\n");
+		LOG_INF("DPS registration status: AZURE_IOT_HUB_DPS_REG_STATUS_FAILED");
 
 		dps_was_successful = false;
 
 		k_sem_give(&dps_done_sem);
 		break;
 	default:
-		printk("Unhandled DPS status: %d\n", status);
+		LOG_WRN("Unhandled DPS status: %d", status);
 		break;
 	}
 }
@@ -471,17 +473,17 @@ static int dps_run(struct azure_iot_hub_buf *hostname, struct azure_iot_hub_buf 
 		/* Default ID scope provided by Kconfig is used, so we will not change that. */
 	};
 
-	printk("Starting DPS\n");
+	LOG_INF("Starting DPS");
 
 	err = azure_iot_hub_dps_init(&dps_cfg);
 	if (err) {
-		printk("azure_iot_hub_dps_init failed, error: %d\n", err);
+		LOG_ERR("azure_iot_hub_dps_init failed, error: %d", err);
 		return err;
 	}
 
 	err = azure_iot_hub_dps_start();
 	if (err == 0) {
-		printk("The DPS process has started, timeout is set to %d seconds\n",
+		LOG_INF("The DPS process has started, timeout is set to %d seconds",
 			CONFIG_AZURE_IOT_HUB_DPS_TIMEOUT_SEC);
 
 		/* If DPS was started successfully, we wait for the semaphore that is given when the
@@ -496,25 +498,25 @@ static int dps_run(struct azure_iot_hub_buf *hostname, struct azure_iot_hub_buf 
 
 		/* The device was assigned, continue to retrieve the hostname. */
 	} else if (err == -EALREADY) {
-		printk("Already assigned to an IoT hub, skipping DPS\n");
+		LOG_INF("Already assigned to an IoT hub, skipping DPS");
 	} else {
-		printk("DPS failed to start, error: %d\n", err);
+		LOG_ERR("DPS failed to start, error: %d", err);
 		return err;
 	}
 
 	err = azure_iot_hub_dps_hostname_get(hostname);
 	if (err) {
-		printk("Failed to get hostname, error: %d\n", err);
+		LOG_ERR("Failed to get hostname, error: %d", err);
 		return err;
 	}
 
 	err = azure_iot_hub_dps_device_id_get(device_id);
 	if (err) {
-		printk("Failed to get device ID, error: %d\n", err);
+		LOG_ERR("Failed to get device ID, error: %d", err);
 		return err;
 	}
 
-	printk("Device ID \"%.*s\" assigned to IoT hub with hostname \"%.*s\"\n",
+	LOG_INF("Device ID \"%.*s\" assigned to IoT hub with hostname \"%.*s\"",
 		device_id->size, device_id->ptr,
 		hostname->size, hostname->ptr);
 
@@ -539,7 +541,7 @@ void main(void)
 		.use_dps = true,
 	};
 
-	printk("Azure IoT Hub sample started\n");
+	LOG_INF("Azure IoT Hub sample started");
 
 #if IS_ENABLED(CONFIG_DK_LIBRARY)
 	dk_leds_init();
@@ -549,36 +551,36 @@ void main(void)
 	cJSON_Init();
 
 #if IS_ENABLED(CONFIG_LTE_LINK_CONTROL)
-	printk("Connecting to LTE network\n");
+	LOG_INF("Connecting to LTE network");
 	modem_configure();
 	k_sem_take(&network_connected_sem, K_FOREVER);
-	printk("Connected to LTE network\n");
+	LOG_INF("Connected to LTE network");
 #endif
 
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
 	/* Using the device ID as DPS registration ID. */
 	err = dps_run(&cfg.hostname, &cfg.device_id);
 	if (err) {
-		printk("Failed to run DPS, error: %d\n, terminating connection attempt", err);
+		LOG_ERR("Failed to run DPS, error: %d, terminating connection attempt", err);
 		return;
 	}
 #endif
 
 	err = azure_iot_hub_init(azure_event_handler);
 	if (err) {
-		printk("Azure IoT Hub could not be initialized, error: %d\n", err);
+		LOG_ERR("Azure IoT Hub could not be initialized, error: %d", err);
 		return;
 	}
 
-	printk("Azure IoT Hub library initialized\n");
+	LOG_INF("Azure IoT Hub library initialized");
 
 	err = azure_iot_hub_connect(&cfg);
 	if (err < 0) {
-		printk("azure_iot_hub_connect failed: %d\n", err);
+		LOG_ERR("azure_iot_hub_connect failed: %d", err);
 		return;
 	}
 
-	printk("Connection request sent to IoT Hub\n");
+	LOG_INF("Connection request sent to IoT Hub");
 
 	/* After the connection to the IoT hub has been established, the
 	 * Azure IoT Hub library will generate events when data is received.

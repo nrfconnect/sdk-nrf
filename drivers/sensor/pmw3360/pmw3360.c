@@ -441,7 +441,7 @@ static int update_cpi(const struct device *dev, uint32_t cpi)
 	/* Convert CPI to register value */
 	uint8_t value = (cpi / 100) - 1;
 
-	LOG_INF("Setting CPI to %u (reg value 0x%x)", cpi, value);
+	LOG_DBG("Setting CPI to %u (reg value 0x%x)", cpi, value);
 
 	int err = reg_write(dev, PMW3360_REG_CONFIG1, value);
 	if (err) {
@@ -504,7 +504,7 @@ static int update_downshift_time(const struct device *dev, uint8_t reg_addr,
 	/* Convert time to register value */
 	uint8_t value = time / mintime;
 
-	LOG_INF("Set downshift time to %u ms (reg value 0x%x)", time, value);
+	LOG_DBG("Set downshift time to %u ms (reg value 0x%x)", time, value);
 
 	int err = reg_write(dev, reg_addr, value);
 	if (err) {
@@ -530,7 +530,7 @@ static int update_sample_time(const struct device *dev,
 		return -EINVAL;
 	}
 
-	LOG_INF("Set sample time to %u ms", sample_time);
+	LOG_DBG("Set sample time to %u ms", sample_time);
 
 	/* The sample time is (reg_value + 1) ms. */
 	sample_time--;
@@ -562,7 +562,7 @@ static int toggle_rest_modes(const struct device *dev, uint8_t reg_addr,
 
 	WRITE_BIT(value, PMW3360_REST_EN_POS, enable);
 
-	LOG_INF("%sable rest modes", (enable) ? ("En") : ("Dis"));
+	LOG_DBG("%sable rest modes", (enable) ? ("En") : ("Dis"));
 	err = reg_write(dev, reg_addr, value);
 
 	if (err) {
@@ -826,7 +826,7 @@ static int pmw3360_init(const struct device *dev)
 	data->dev = dev;
 	k_work_init(&data->trigger_handler_work, trigger_handler);
 
-	if (!spi_is_ready(&config->bus)) {
+	if (!spi_is_ready_dt(&config->bus)) {
 		LOG_ERR("SPI device not ready");
 		return -ENODEV;
 	}

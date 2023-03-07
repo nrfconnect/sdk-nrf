@@ -7,7 +7,7 @@ Wi-Fi: Station
    :local:
    :depth: 2
 
-The Station sample demonstrates how to connect the Wi-Fi station to a specified access point using Dynamic Host Configuration Protocol (DHCP).
+The Station sample demonstrates how to connect the Wi-Fi® station to a specified access point using Dynamic Host Configuration Protocol (DHCP).
 
 Requirements
 ************
@@ -22,6 +22,43 @@ Overview
 This sample can perform Wi-Fi operations such as connect and disconnect in the 2.4GHz and 5GHz bands depending on the capabilities of an access point.
 
 Using this sample, the development kit can connect to the specified access point in :abbr:`STA (Station)` mode.
+
+User interface
+**************
+The sample adds LED support to map with connection and disconnection events.
+
+LED 1:
+   Starts blinking when the sample is connected to the access point.
+
+   Stops blinking when the sample is disconnected from the access point.
+
+Quad Serial Peripheral Interface (QSPI) encryption
+**************************************************
+
+This sample demonstrates QSPI encryption API usage.
+The key can be set by the :kconfig:option:`CONFIG_NRF700X_QSPI_ENCRYPTION_KEY` Kconfig option.
+
+If encryption of the QSPI traffic is required for the production devices, then matching keys must be programmed in both the nRF7002 OTP and non-volatile storage associated with the host.
+The key from non-volatile storage must be set as the encryption key using the APIs.
+
+Power management
+****************
+
+This sample also enables Zephyr's power management policy by default, which puts the nRF5340 :term:`System on Chip (SoC)` into low-power mode whenever it is idle.
+See :ref:`zephyr:pm-guide` in the Zephyr documentation for more information on power management.
+
+IP addressing
+*************
+The sample uses DHCP to obtain an IP address for the Wi-Fi interface. It starts with a default static IP address to handle networks without DHCP servers, or if the DHCP server is not available.
+Successful DHCP handshake will override the default static IP configuration.
+
+The following static configuration is by default and can be changed in the ``prj.conf`` file:
+
+.. code-block:: console
+
+  CONFIG_NET_CONFIG_MY_IPV4_ADDR="192.168.1.98"
+  CONFIG_NET_CONFIG_MY_IPV4_NETMASK="255.255.255.0"
+  CONFIG_NET_CONFIG_MY_IPV4_GW="192.168.1.1"
 
 Building and running
 ********************
@@ -64,26 +101,122 @@ Testing
 
    .. code-block:: console
 
-      <inf> sta: Connection requested
-      <inf> sta: Connected
-      Status: successful
-      ==================
-        State: COMPLETED
-        Interface Mode: STATION
-        Link Mode: WIFI 6 (802.11ax/HE)
-        SSID: NORDIC-GUEST
-        BSSID: F0:1D:2D:72:EB:EF
-        Band: 5GHz
-        Channel: 116
-        Security: WPA2-PSK
-        MFP: Optional
-        RSSI: -55
-      <inf> sta: IP address: 192.168.48.41
-      <inf> sta: Disconnect requested
-      <inf> sta: Disconnection request done (0)
-      Status: successful
-      ==================
-        State: DISCONNECTED
+    [00:00:02.016,235] <inf> sta: Connection requested
+    [00:00:02.316,314] <inf> sta: ==================
+    [00:00:02.316,314] <inf> sta: State: SCANNING
+    [00:00:02.616,424] <inf> sta: ==================
+    [00:00:02.616,424] <inf> sta: State: SCANNING
+    [00:00:02.916,534] <inf> sta: ==================
+    [00:00:02.916,534] <inf> sta: State: SCANNING
+    [00:00:03.216,613] <inf> sta: ==================
+    [00:00:03.216,613] <inf> sta: State: SCANNING
+    [00:00:03.516,723] <inf> sta: ==================
+    [00:00:03.516,723] <inf> sta: State: SCANNING
+    [00:00:03.816,802] <inf> sta: ==================
+    [00:00:03.816,802] <inf> sta: State: SCANNING
+    [00:00:04.116,882] <inf> sta: ==================
+    [00:00:04.116,882] <inf> sta: State: SCANNING
+    [00:00:04.416,961] <inf> sta: ==================
+    [00:00:04.416,961] <inf> sta: State: SCANNING
+    [00:00:04.717,071] <inf> sta: ==================
+    [00:00:04.717,071] <inf> sta: State: SCANNING
+    [00:00:05.017,150] <inf> sta: ==================
+    [00:00:05.017,150] <inf> sta: State: SCANNING
+    [00:00:05.317,230] <inf> sta: ==================
+    [00:00:05.317,230] <inf> sta: State: SCANNING
+    [00:00:05.617,309] <inf> sta: ==================
+    [00:00:05.617,309] <inf> sta: State: SCANNING
+    [00:00:05.917,419] <inf> sta: ==================
+    [00:00:05.917,419] <inf> sta: State: SCANNING
+    [00:00:06.217,529] <inf> sta: ==================
+    [00:00:06.217,529] <inf> sta: State: SCANNING
+    [00:00:06.517,639] <inf> sta: ==================
+    [00:00:06.517,639] <inf> sta: State: SCANNING
+    [00:00:06.817,749] <inf> sta: ==================
+    [00:00:06.817,749] <inf> sta: State: SCANNING
+    [00:00:07.117,858] <inf> sta: ==================
+    [00:00:07.117,858] <inf> sta: State: SCANNING
+    [00:00:07.336,730] <inf> wpa_supp: wlan0: SME: Trying to authenticate with aa:bb:cc:dd:ee:ff (SSID='<MySSID>' freq=5785 MHz)
+    [00:00:07.353,027] <inf> wifi_nrf: wifi_nrf_wpa_supp_authenticate:Authentication request sent successfully
+
+    [00:00:07.417,938] <inf> sta: ==================
+    [00:00:07.417,938] <inf> sta: State: AUTHENTICATING
+    [00:00:07.606,628] <inf> wpa_supp: wlan0: Trying to associate with aa:bb:cc:dd:ee:ff (SSID='<MySSID>' freq=5785 MHz)
+    [00:00:07.609,680] <inf> wifi_nrf: wifi_nrf_wpa_supp_associate: Association request sent successfully
+
+    [00:00:07.621,978] <inf> wpa_supp: wpa_drv_zep_get_ssid: SSID size: 5
+
+    [00:00:07.622,070] <inf> wpa_supp: wlan0: Associated with aa:bb:cc:dd:ee:ff
+    [00:00:07.622,192] <inf> wpa_supp: wlan0: CTRL-EVENT-CONNECTED - Connection to aa:bb:cc:dd:ee:ff completed [id=0 id_str=]
+    [00:00:07.622,192] <inf> sta: Connected
+    [00:00:07.623,779] <inf> wpa_supp: wlan0: CTRL-EVENT-SUBNET-STATUS-UPDATE status=0
+    [00:00:07.648,406] <inf> net_dhcpv4: Received: 192.168.119.6
+    [00:00:07.648,468] <inf> net_config: IPv4 address: 192.168.119.6
+    [00:00:07.648,498] <inf> net_config: Lease time: 3599 seconds
+    [00:00:07.648,498] <inf> net_config: Subnet: 255.255.255.0
+    [00:00:07.648,529] <inf> net_config: Router: 192.168.119.147
+    [00:00:07.648,559] <inf> sta: DHCP IP address: 192.168.119.6
+    [00:00:07.720,153] <inf> sta: ==================
+    [00:00:07.720,153] <inf> sta: State: COMPLETED
+    [00:00:07.720,153] <inf> sta: Interface Mode: STATION
+    [00:00:07.720,184] <inf> sta: Link Mode: WIFI 6 (802.11ax/HE)
+    [00:00:07.720,184] <inf> sta: SSID: <MySSID>
+    [00:00:07.720,214] <inf> sta: BSSID: aa:bb:cc:dd:ee:ff
+    [00:00:07.720,214] <inf> sta: Band: 5GHz
+    [00:00:07.720,214] <inf> sta: Channel: 157
+    [00:00:07.720,245] <inf> sta: Security: OPEN
+    [00:00:07.720,245] <inf> sta: MFP: UNKNOWN
+    [00:00:07.720,245] <inf> sta: RSSI: -57
+    [00:00:07.720,245] <inf> sta: Static IP address:
+
+Power management testing
+************************
+
+This sample can be used to measure current consumption of both the nRF5340 SoC and nRF7002 device independently by using two separate Power Profiler Kit II's (PPK2's).
+The nRF5340 SoC is connected to the first PPK2 and the nRF7002 DK is connected to the second PPK2.
+
+Hardware modifications
+======================
+
+To measure the current consumption of the nRF5340 SoC in the nRF7002 DK, complete the following steps:
+
+ * Remove jumper on **P22** (VDD jumper).
+ * Cut solder bridge **SB16**.
+ * Make a short on solder bridge **SB17**.
+ * Connect **GND** on PPK2 kit to **GND** on the nRF7002 DK.
+
+   You can use **P4** pin **7** mentioned as **GND** for ground.
+   Note that this connection requires a berg pin connector.
+
+ * Connect the **Vout** on PPK2 to **P22** pin **1** on the nRF7002 DK.
+
+To measure the current consumption of the nRF7002 device in the nRF7002 DK, complete the following steps:
+
+ * Remove jumper on **P23** (VBAT jumper).
+ * Connect **GND** on PPK2 kit to **GND** on the nRF7002 DK.
+
+   You can use **P21** pin **1** mentioned as **-** (**MINUS**) for ground.
+
+ * Connect the **Vout** on PPK2 to **P23** pin **1** on the nRF7002 DK.
+
+The following diagram illustrates a typical configuration for measuring current on the nRF7002 DK for both the nRF5340 SoC and the nRF7002 device:
+
+   .. figure:: ../../../doc/nrf/images/nrf7002_nrf5340_current_measurements.svg
+      :alt: Typical configuration for measuring current on the nRF7002 DK for both the nRF5340 SoC and the nRF7002 device.
+
+      Typical configuration for measuring current on the nRF7002 DK for both the nRF5340 SoC and the nRF7002 device.
+
+PPK2 usage and measurement
+==========================
+
+To measure the current consumption of the nRF5340 SoC and the nRF7002 device, complete the following steps:
+
+* Configure PPK2 connected to the nRF5340 SoC as a source meter with 1.8 volts.
+* Configure PPK2 connected to the nRF7002 device as a source meter with 3.6 volts.
+
+See :ref:`app_power_opt` for more information on power management testing and usage of the PPK2.
+
+The average current consumption in an idle case can be around ~1-2 mA in the nRF5340 SoC and ~20 µA in the nRF7002 device.
 
 Dependencies
 ************

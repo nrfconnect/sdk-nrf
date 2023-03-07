@@ -7,11 +7,14 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <modem/modem_info.h>
+#include <lwm2m_object.h>
 #include <net/lwm2m_client_utils.h>
 #include <net/lwm2m_client_utils_location.h>
 
 #include "mosh_print.h"
 #include "cloud_lwm2m.h"
+
+BUILD_ASSERT(sizeof(CONFIG_MOSH_LWM2M_PSK) > 1, "LwM2M pre-shared key (PSK) must be configured");
 
 /* Device RIDs */
 #define MANUFACTURER_RID 0
@@ -61,61 +64,58 @@ static int usb_ma = 900;
 
 static bool connected;
 static bool no_serv_suspended;
+static bool update_session_lifetime;
 
 static void cloud_lwm2m_rd_client_stop(void);
 
 static int cloud_lwm2m_init_device(char *serial_num)
 {
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, MANUFACTURER_RID),
-				  APP_MANUFACTURER, sizeof(APP_MANUFACTURER),
-				  sizeof(APP_MANUFACTURER), LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, MODEL_NUMBER_RID),
-				  CLIENT_MODEL_NUMBER, sizeof(CLIENT_MODEL_NUMBER),
-				  sizeof(CLIENT_MODEL_NUMBER), LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, SERIAL_NUMBER_RID),
-				  serial_num, strlen(serial_num), strlen(serial_num),
-				  LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, UTC_OFFSET_RID),
-				  utc_offset, sizeof(utc_offset), sizeof(utc_offset), 0);
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, TIMEZONE_RID),
-				  timezone, sizeof(timezone), sizeof(timezone), 0);
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, DEVICE_TYPE_RID),
-				  APP_DEVICE_TYPE, sizeof(APP_DEVICE_TYPE),
-				  sizeof(APP_DEVICE_TYPE), LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, HARDWARE_VERSION_RID),
-				  CLIENT_HW_VER, sizeof(CLIENT_HW_VER), sizeof(CLIENT_HW_VER),
-				  LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, SOFTWARE_VERSION_RID),
-				  CLIENT_SW_VER, sizeof(CLIENT_SW_VER), sizeof(CLIENT_SW_VER),
-				  LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, BATTERY_STATUS_RID),
-				  &bat_status, sizeof(bat_status), sizeof(bat_status), 0);
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, MEMORY_TOTAL_RID),
-				  &mem_total, sizeof(mem_total), sizeof(mem_total), 0);
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MANUFACTURER_RID),
+			  APP_MANUFACTURER, sizeof(APP_MANUFACTURER),
+			  sizeof(APP_MANUFACTURER), LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MODEL_NUMBER_RID),
+			  CLIENT_MODEL_NUMBER, sizeof(CLIENT_MODEL_NUMBER),
+			  sizeof(CLIENT_MODEL_NUMBER), LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, SERIAL_NUMBER_RID),
+			  serial_num, strlen(serial_num), strlen(serial_num),
+			  LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, UTC_OFFSET_RID),
+			  utc_offset, sizeof(utc_offset), sizeof(utc_offset), 0);
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, TIMEZONE_RID),
+			  timezone, sizeof(timezone), sizeof(timezone), 0);
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, DEVICE_TYPE_RID),
+			  APP_DEVICE_TYPE, sizeof(APP_DEVICE_TYPE),
+			  sizeof(APP_DEVICE_TYPE), LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, HARDWARE_VERSION_RID),
+			  CLIENT_HW_VER, sizeof(CLIENT_HW_VER), sizeof(CLIENT_HW_VER),
+			  LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, SOFTWARE_VERSION_RID),
+			  CLIENT_SW_VER, sizeof(CLIENT_SW_VER), sizeof(CLIENT_SW_VER),
+			  LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, BATTERY_STATUS_RID),
+			  &bat_status, sizeof(bat_status), sizeof(bat_status), 0);
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MEMORY_TOTAL_RID),
+			  &mem_total, sizeof(mem_total), sizeof(mem_total), 0);
 
 	/* Add power source resource instances. */
-	lwm2m_engine_create_res_inst(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_RID, 0));
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_RID, 0),
-				  &bat_idx, sizeof(bat_idx), sizeof(bat_idx), 0);
-	lwm2m_engine_create_res_inst(
-		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_VOLTAGE_RID, 0));
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_VOLTAGE_RID, 0),
-				  &bat_mv, sizeof(bat_mv), sizeof(bat_mv), 0);
-	lwm2m_engine_create_res_inst(
-		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_CURRENT_RID, 0));
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_CURRENT_RID, 0),
-				  &bat_ma, sizeof(bat_ma), sizeof(bat_ma), 0);
-	lwm2m_engine_create_res_inst(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_RID, 1));
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_RID, 1),
-				  &usb_idx, sizeof(usb_idx), sizeof(usb_idx), 0);
-	lwm2m_engine_create_res_inst(
-		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_VOLTAGE_RID, 1));
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_VOLTAGE_RID, 1),
-				  &usb_mv, sizeof(usb_mv), sizeof(usb_mv), 0);
-	lwm2m_engine_create_res_inst(
-		LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_CURRENT_RID, 1));
-	lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_CURRENT_RID, 1),
-				  &usb_ma, sizeof(usb_ma), sizeof(usb_ma), 0);
+	lwm2m_create_res_inst(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_RID, 0));
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_RID, 0),
+			  &bat_idx, sizeof(bat_idx), sizeof(bat_idx), 0);
+	lwm2m_create_res_inst(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_VOLTAGE_RID, 0));
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_VOLTAGE_RID, 0),
+			  &bat_mv, sizeof(bat_mv), sizeof(bat_mv), 0);
+	lwm2m_create_res_inst(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_CURRENT_RID, 0));
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_CURRENT_RID, 0),
+			  &bat_ma, sizeof(bat_ma), sizeof(bat_ma), 0);
+	lwm2m_create_res_inst(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_RID, 1));
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_RID, 1),
+			  &usb_idx, sizeof(usb_idx), sizeof(usb_idx), 0);
+	lwm2m_create_res_inst(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_VOLTAGE_RID, 1));
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_VOLTAGE_RID, 1),
+			  &usb_mv, sizeof(usb_mv), sizeof(usb_mv), 0);
+	lwm2m_create_res_inst(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_CURRENT_RID, 1));
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_CURRENT_RID, 1),
+			  &usb_ma, sizeof(usb_ma), sizeof(usb_ma), 0);
 
 	return 0;
 }
@@ -195,6 +195,15 @@ static int cloud_lwm2m_init(const struct device *unused)
 	return 0;
 }
 
+static void cloud_lwm2m_rd_client_update_lifetime(int srv_obj_inst)
+{
+	lwm2m_set_u32(&LWM2M_OBJ(1, srv_obj_inst, 1), CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME);
+	mosh_print("LwM2M: Set session lifetime to default value %d",
+		   CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME);
+
+	update_session_lifetime = false;
+}
+
 static void cloud_lwm2m_rd_client_event_cb(struct lwm2m_ctx *client_ctx,
 					   enum lwm2m_rd_client_event client_event)
 {
@@ -210,6 +219,11 @@ static void cloud_lwm2m_rd_client_event_cb(struct lwm2m_ctx *client_ctx,
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_COMPLETE:
 		mosh_print("LwM2M: Bootstrap registration complete");
+		connected = false;
+		/* After bootstrapping the session lifetime needs to be set to the configured
+		 * default, otherwise the default value from the server is taken into use.
+		 */
+		update_session_lifetime = true;
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_TRANSFER_COMPLETE:
@@ -225,6 +239,10 @@ static void cloud_lwm2m_rd_client_event_cb(struct lwm2m_ctx *client_ctx,
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_COMPLETE:
 		mosh_print("LwM2M: Registration complete");
 		connected = true;
+		/* Check if session lifetime needs to be updated. */
+		if (update_session_lifetime) {
+			cloud_lwm2m_rd_client_update_lifetime(client.srv_obj_inst);
+		}
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REG_TIMEOUT:
@@ -241,7 +259,6 @@ static void cloud_lwm2m_rd_client_event_cb(struct lwm2m_ctx *client_ctx,
 	case LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE:
 		mosh_print("LwM2M: Deregister failure!");
 		connected = false;
-		cloud_lwm2m_rd_client_stop();
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_DISCONNECT:
@@ -265,11 +282,20 @@ static void cloud_lwm2m_rd_client_event_cb(struct lwm2m_ctx *client_ctx,
 	}
 }
 
-static void cloud_lwm2m_rd_client_stop(void)
+static void cloud_lwm2m_rd_client_stop_work_fn(struct k_work *work)
 {
+	ARG_UNUSED(work);
+
 	mosh_print("LwM2M: Stopping LwM2M client");
 
 	lwm2m_rd_client_stop(&client, cloud_lwm2m_rd_client_event_cb, false);
+}
+
+static K_WORK_DEFINE(cloud_lwm2m_rd_client_stop_work, cloud_lwm2m_rd_client_stop_work_fn);
+
+static void cloud_lwm2m_rd_client_stop(void)
+{
+	k_work_submit(&cloud_lwm2m_rd_client_stop_work);
 }
 
 struct lwm2m_ctx *cloud_lwm2m_client_ctx_get(void)

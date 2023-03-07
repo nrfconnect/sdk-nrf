@@ -10,6 +10,7 @@
 #include <pm_config.h>
 #include <zephyr/dfu/mcuboot.h>
 #include <zephyr/net/socket.h>
+#include <zephyr/sys/crc.h>
 #include <zephyr/net/tls_credentials.h>
 #include <zephyr/net/http/parser_url.h>
 #include <net/download_client.h>
@@ -26,6 +27,7 @@ LOG_MODULE_REGISTER(dfu, CONFIG_SLM_LOG_LEVEL);
 #define SCHEMA_HTTP	"http"
 #define SCHEMA_HTTPS	"https"
 #define URI_HOST_MAX	64
+#define PERCENTAGE_STEP 5
 
 enum slm_dfu_operation {
 	SLM_DFU_CANCEL,
@@ -57,7 +59,7 @@ static K_SEM_DEFINE(sem_init_packet, 0, 1);
 #endif
 static uint32_t file_image_size;
 static uint32_t file_download_size;
-static K_SEM_DEFINE(sem_file_image, 0, 1);
+static uint32_t crc_32;
 
 static char hostname[URI_HOST_MAX];
 static char filepath[SLM_MAX_URL];
@@ -74,7 +76,6 @@ void exit_dfumode(void);
 
 /* global variable defined in different resources */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 extern struct k_work_q slm_work_q;
 
 static void dfu_wk(struct k_work *work)
@@ -85,14 +86,13 @@ static void dfu_wk(struct k_work *work)
 	ARG_UNUSED(work);
 
 	enter_dfumode();
-	rsp_buf[0] = '\0';
 
 #if defined(CONFIG_SLM_NRF52_DFU_LEGACY)
 	dfu_step = DFU_MODE_CHECK;
 	if (!dfu_host_bl_mode_check()) {
 		ret = -ENOEXEC;
 		LOG_ERR("bootloader mode check fails");
-		sprintf(rsp_buf, "\r\n#XDFURUN: %d,-1\r\n", dfu_step);
+		rsp_send("\r\n#XDFURUN: %d,-1\r\n", dfu_step);
 		goto done;
 	}
 #endif
@@ -101,7 +101,7 @@ static void dfu_wk(struct k_work *work)
 	ret = dfu_host_setup(mtu, pause);
 	if (ret) {
 		LOG_ERR("#XDFU: DFU initialize fails");
-		sprintf(rsp_buf, "\r\n#XDFURUN: %d,-1\r\n", dfu_step);
+		rsp_send("\r\n#XDFURUN: %d,-1\r\n", dfu_step);
 		goto done;
 	}
 
@@ -110,7 +110,7 @@ static void dfu_wk(struct k_work *work)
 	ret = dfu_host_send_ip(init_packet, init_packet_size);
 	if (ret) {
 		LOG_ERR("DFU transfer init packet fails: %d\r\n", ret);
-		sprintf(rsp_buf, "\r\n#XDFURUN: %d,%d\r\n", dfu_step, ret);
+		rsp_send("\r\n#XDFURUN: %d,%d\r\n", dfu_step, ret);
 		goto done;
 	}
 #endif
@@ -119,7 +119,7 @@ static void dfu_wk(struct k_work *work)
 	ret = dfu_host_send_fw((const uint8_t *)file_image, file_image_size);
 	if (ret) {
 		LOG_ERR("\r\n#XDFU: DFU transfer file image fails: %d\r\n", ret);
-		sprintf(rsp_buf, "\r\n#XDFURUN: %d,%d\r\n", dfu_step, ret);
+		rsp_send("\r\n#XDFURUN: %d,%d\r\n", dfu_step, ret);
 		goto done;
 	}
 
@@ -128,9 +128,6 @@ static void dfu_wk(struct k_work *work)
 
 done:
 	exit_dfumode();
-	if (ret) {
-		rsp_send(rsp_buf, strlen(rsp_buf));
-	}
 }
 
 static int do_dfu_erase(void)
@@ -164,7 +161,7 @@ static int download_client_callback(const struct download_client_evt *event)
 			err = download_client_file_size_get(&dlc, &file_image_size);
 			if (err != 0) {
 				LOG_ERR("download_client_file_size_get err: %d", err);
-				k_sem_give(&sem_file_image);
+				rsp_send("\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
 				return err;
 			}
 #if defined(CONFIG_SLM_NRF52_DFU_LEGACY)
@@ -182,13 +179,16 @@ static int download_client_callback(const struct download_client_evt *event)
 				LOG_ERR("dfu_target_init error %d", err);
 				(void)download_client_disconnect(&dlc);
 				first_fragment = true;
-				k_sem_give(&sem_file_image);
+				rsp_send("\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
 				return err;
 			}
 			first_fragment = false;
 			file_download_size = event->fragment.len;
+			crc_32 = crc32_ieee(event->fragment.buf, event->fragment.len);
 		} else {
 			file_download_size += event->fragment.len;
+			crc_32 = crc32_ieee_update(crc_32, event->fragment.buf,
+						   event->fragment.len);
 		}
 
 		err = dfu_target_nrf52_write(event->fragment.buf, event->fragment.len);
@@ -201,14 +201,17 @@ static int download_client_callback(const struct download_client_evt *event)
 			}
 			first_fragment = true;
 			(void)download_client_disconnect(&dlc);
-			k_sem_give(&sem_file_image);
+			rsp_send("\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
 			return err;
 		}
 
 		if (!first_fragment) {
-			sprintf(rsp_buf, "\r\n#XDFUGET: %d,%d\r\n", dfu_step,
-				(file_download_size * 100) / file_image_size);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			uint32_t percentage = 0;
+
+			percentage = (file_download_size * 100) / file_image_size;
+			if ((percentage % PERCENTAGE_STEP) == 0) {
+				rsp_send("\r\n#XDFUGET: %d,%d\r\n", dfu_step, percentage);
+			}
 		}
 		break;
 	}
@@ -234,11 +237,9 @@ static int download_client_callback(const struct download_client_evt *event)
 			k_sem_give(&sem_init_packet);
 		} else {
 			LOG_INF("File Image downloaded");
-			k_sem_give(&sem_file_image);
 		}
 #else
 		LOG_INF("File Image downloaded");
-		k_sem_give(&sem_file_image);
 #endif
 		break;
 
@@ -264,11 +265,11 @@ static int download_client_callback(const struct download_client_evt *event)
 				}
 			}
 			first_fragment = true;
+#if defined(CONFIG_SLM_NRF52_DFU_LEGACY)
 			if (dfu_step == DFU_INIT_PACKET_DOWNLOAD) {
 				k_sem_give(&sem_init_packet);
-			} else {
-				k_sem_give(&sem_file_image);
 			}
+#endif
 			/* Return non-zero to tell download_client to stop */
 			return event->error;
 		}
@@ -460,8 +461,7 @@ int handle_at_dfu_get(enum at_cmd_type cmd_type)
 			dfu_step = DFU_INIT_PACKET_DOWNLOAD;
 			err = do_dfu_download(host, ip_file, sec_tag);
 			if (err) {
-				sprintf(rsp_buf, "\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
-				rsp_send(rsp_buf, strlen(rsp_buf));
+				rsp_send("\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
 				return err;
 			}
 			k_sem_take(&sem_init_packet, K_FOREVER);
@@ -470,18 +470,8 @@ int handle_at_dfu_get(enum at_cmd_type cmd_type)
 			dfu_step = DFU_FILE_IMAGE_DOWNLOAD;
 			file_image_size = 0;
 			file_download_size = 0;
+			crc_32 = 0;
 			err = do_dfu_download(host, fw_file, sec_tag);
-			if (err) {
-				sprintf(rsp_buf, "\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
-				rsp_send(rsp_buf, strlen(rsp_buf));
-				return err;
-			}
-			k_sem_take(&sem_file_image, K_FOREVER);
-			if (file_image_size > 0 && file_image_size != file_download_size) {
-				err = -EAGAIN;
-				sprintf(rsp_buf, "\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
-				rsp_send(rsp_buf, strlen(rsp_buf));
-			}
 		} else if (op == SLM_DFU_ERASE) {
 			err = do_dfu_erase();
 		} else {
@@ -489,10 +479,8 @@ int handle_at_dfu_get(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf,
-			"\r\n#XDFUGET=(%d,%d,%d),<host>,<image_1>,<image_2>,<sec_tag>\r\n",
+		rsp_send("\r\n#XDFUGET=(%d,%d,%d),<host>,<image_1>,<image_2>,<sec_tag>\r\n",
 			SLM_DFU_CANCEL, SLM_DFU_DOWNLOAD, SLM_DFU_ERASE);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 	default:
@@ -513,8 +501,8 @@ int handle_at_dfu_size(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		sprintf(rsp_buf, "\r\n#XDFUSIZE: %d,%d\r\n", file_image_size, file_download_size);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XDFUSIZE: %d,%d,%d\r\n", file_image_size, file_download_size,
+			 crc_32);
 		err = 0;
 		break;
 	default:
@@ -563,8 +551,7 @@ int handle_at_dfu_run(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XDFURUN=<start_delay>,<mtu>,<pause>\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send("\r\n#XDFURUN=<start_delay>,<mtu>,<pause>\r\n");
 		err = 0;
 		break;
 	default:

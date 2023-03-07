@@ -13,8 +13,8 @@
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app/util/af.h>
 #include <platform/CHIPDeviceLayer.h>
-#include <zephyr/logging/log.h>
 #include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
 
@@ -51,9 +51,19 @@ void WindowCovering::DriveCurrentLiftPosition(intptr_t)
 	VerifyOrReturn(Attributes::TargetPositionLiftPercent100ths::Get(Endpoint(), target) ==
 		       EMBER_ZCL_STATUS_SUCCESS);
 
-	UpdateOperationalStatus(MoveType::LIFT, ComputeOperationalState(target, current));
+	OperationalState state = ComputeOperationalState(target, current);
+	UpdateOperationalStatus(MoveType::LIFT, state);
 
-	positionToSet.SetNonNull(CalculateSingleStep(MoveType::LIFT));
+	chip::Percent100ths position = CalculateNextPosition(MoveType::LIFT);
+
+	if (state == OperationalState::MovingUpOrOpen) {
+		positionToSet.SetNonNull(position > target.Value() ? position : target.Value());
+	} else if (state == OperationalState::MovingDownOrClose) {
+		positionToSet.SetNonNull(position < target.Value() ? position : target.Value());
+	} else {
+		positionToSet.SetNonNull(current.Value());
+	}
+
 	LiftPositionSet(Endpoint(), positionToSet);
 
 	/* assume single move completed */
@@ -71,7 +81,7 @@ void WindowCovering::DriveCurrentLiftPosition(intptr_t)
 	}
 }
 
-chip::Percent100ths WindowCovering::CalculateSingleStep(MoveType aMoveType)
+chip::Percent100ths WindowCovering::CalculateNextPosition(MoveType aMoveType)
 {
 	EmberAfStatus status{};
 	chip::Percent100ths percent100ths{};
@@ -136,9 +146,19 @@ void WindowCovering::DriveCurrentTiltPosition(intptr_t)
 	VerifyOrReturn(Attributes::TargetPositionTiltPercent100ths::Get(Endpoint(), target) ==
 		       EMBER_ZCL_STATUS_SUCCESS);
 
-	UpdateOperationalStatus(MoveType::TILT, ComputeOperationalState(target, current));
+	OperationalState state = ComputeOperationalState(target, current);
+	UpdateOperationalStatus(MoveType::TILT, state);
 
-	positionToSet.SetNonNull(CalculateSingleStep(MoveType::TILT));
+	chip::Percent100ths position = CalculateNextPosition(MoveType::TILT);
+
+	if (state == OperationalState::MovingUpOrOpen) {
+		positionToSet.SetNonNull(position > target.Value() ? position : target.Value());
+	} else if (state == OperationalState::MovingDownOrClose) {
+		positionToSet.SetNonNull(position < target.Value() ? position : target.Value());
+	} else {
+		positionToSet.SetNonNull(current.Value());
+	}
+
 	TiltPositionSet(Endpoint(), positionToSet);
 
 	/* assume single move completed */
@@ -179,7 +199,7 @@ void WindowCovering::StartMove(MoveType aMoveType)
 void WindowCovering::SetSingleStepTarget(OperationalState aDirection)
 {
 	UpdateOperationalStatus(mCurrentUIMoveType, aDirection);
-	SetTargetPosition(aDirection, CalculateSingleStep(mCurrentUIMoveType));
+	SetTargetPosition(aDirection, CalculateNextPosition(mCurrentUIMoveType));
 }
 
 void WindowCovering::UpdateOperationalStatus(MoveType aMoveType, OperationalState aDirection)

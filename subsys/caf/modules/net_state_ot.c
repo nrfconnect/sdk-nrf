@@ -144,11 +144,11 @@ static void set_net_state(enum net_state state)
 	send_net_state_event(state);
 }
 
-static void on_thread_state_changed(uint32_t flags, void *context)
+static void on_thread_state_changed(otChangedFlags flags, struct openthread_context *ot_context,
+				    void *user_data)
 {
 	static bool has_role;
 
-	struct openthread_context *ot_context = context;
 	bool has_neighbors = check_neighbors(ot_context->instance);
 	bool route_available = check_routes(ot_context->instance);
 
@@ -187,10 +187,13 @@ static void on_thread_state_changed(uint32_t flags, void *context)
 		set_net_state(NET_STATE_DISCONNECTED);
 	}
 }
+static struct openthread_state_changed_cb ot_state_chaged_cb = {
+	.state_changed_cb = on_thread_state_changed
+};
 
 static void connect_ot(void)
 {
-	openthread_set_state_changed_cb(on_thread_state_changed);
+	openthread_state_changed_cb_register(openthread_get_default_context(), &ot_state_chaged_cb);
 	openthread_start(openthread_get_default_context());
 
 	LOG_INF("OT connection requested");

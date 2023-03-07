@@ -25,9 +25,7 @@ config THREAD_NAME
 	bool
 	default y
 
-# Avoid multi-build system build network core firmware
 config NCS_INCLUDE_RPMSG_CHILD_IMAGE
-	bool
 	default n
 
 # Workaround to not use fatal_error.c in NCS. Note that the system may still
@@ -61,8 +59,31 @@ config NFCT_PINS_AS_GPIOS
 	bool
 	default y
 
-# I2S
+config SENSOR
+	bool
+	default y
+
+config CONTIN_ARRAY
+	bool
+	default y
+
 config NRFX_I2S
+	bool
+	default y
+
+config PCM_MIX
+	bool
+	default y
+
+config TONE
+	bool
+	default y
+
+config PSCM
+	bool
+	default y
+
+config DATA_FIFO
 	bool
 	default y
 

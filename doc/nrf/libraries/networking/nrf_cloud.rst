@@ -139,7 +139,7 @@ Following are the supported FOTA types:
 
 * ``"APP"`` - Updates the application.
 * ``"BOOT"`` - Updates the :ref:`upgradable_bootloader`.
-* ``"MDM_FULL"`` - :ref:`Full modem FOTA <full_dfu>` updates the entire modem firmware image. Full modem updates require |external_flash_size| of available space. For the nRF9160, a full modem firmware image is approximately 2 MB. Consider the power and network costs before deploying full modem FOTA updates.
+* ``"MDM_FULL"`` - :ref:`Full modem FOTA <nrf_modem_bootloader>` updates the entire modem firmware image. Full modem updates require |external_flash_size| of available space. For the nRF9160, a full modem firmware image is approximately 2 MB. Consider the power and network costs before deploying full modem FOTA updates.
 * ``"MODEM"`` - :ref:`Delta modem FOTA <nrf_modem_delta_dfu>` applies incremental changes between specific versions of the modem firmware. Delta modem updates are much smaller in size and do not require external memory.
 
 For example, a device that supports all the FOTA types writes the following data into the device shadow:
@@ -159,7 +159,7 @@ For example, a device that supports all the FOTA types writes the following data
                ]
    }}}}}
 
-You can initiate FOTA updates through `nRF Cloud`_ or by using the `nRF Cloud Device API`_.
+You can initiate FOTA updates through `nRF Cloud`_ or by using the `nRF Cloud REST API (v1)`_.
 When the device receives FOTA update information from nRF Cloud, the nRF Cloud library sends the :c:enumerator:`NRF_CLOUD_EVT_FOTA_START` event to the application.
 The FOTA update is in progress until the application receives either the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` or :c:enumerator:`NRF_CLOUD_EVT_FOTA_ERROR` event.
 When receiving the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event, the application must perform any necessary cleanup and reboot the device to complete the update.
@@ -219,7 +219,7 @@ Location services
 *****************
 
 `nRF Cloud`_ offers location services that allow you to obtain the location of your device.
-The following enhancements to this library can be used to interact with `nRF Cloud Location Services`_:
+The following enhancements to this library can be used to interact with `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_:
 
 * Assisted GPS - :ref:`lib_nrf_cloud_agps`
 * Predicted GPS - :ref:`lib_nrf_cloud_pgps`

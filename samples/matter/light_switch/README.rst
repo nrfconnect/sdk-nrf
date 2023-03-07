@@ -9,16 +9,18 @@ Matter: Light switch
    :depth: 2
 
 This light switch sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a switch device that binds with lighting devices and changes the state of their LEDs.
+You can use this sample as a reference for creating your own application.
+
 When configured together with the :ref:`Matter light bulb <matter_light_bulb_sample>` sample (or other lighting sample) and when using a Matter controller, the light switch can control one light bulb directly or a group of light bulbs remotely over a Matter network built on top of a low-power, 802.15.4 Thread, or on top of a Wi-Fi network.
 Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol can be supported for a specific light switch device.
-In case of Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
-You can use this sample as a reference for creating your own application.
+Depending on the network you choose:
+
+* In case of Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
+* In case of Wi-Fi, this device works in the :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
+  This means that the device sleeps most of the time and wakes up on each Delivery Traffic Indication Message (DTIM) interval to poll for pending messages.
 
 Requirements
 ************
-
-.. note::
-    |matter_wifi_revb_ncs220_test_note|
 
 The sample supports the following development kits:
 
@@ -30,7 +32,7 @@ To commission the device and run all required commands, you need also a :ref:`Ma
 By default, this sample is configured to use the CHIP Tool as Matter controller.
 See the :doc:`matter:chip_tool_guide` page in the Matter documentation for the CHIP Tool's setup information.
 
-If you decide to use :ref:`matter_light_switch_sample_remote_control_cli`, you also need a USB cable for the serial connection.
+If you decide to use :ref:`matter_light_switch_sample_ui_matter_cli`, you also need a USB cable for the serial connection.
 
 .. note::
     |matter_gn_required_note|
@@ -114,28 +116,6 @@ FEM support
 
 .. include:: /includes/sample_fem_support.txt
 
-.. _matter_light_switch_sample_remote_control_cli:
-
-Matter CLI support
-==================
-
-The Matter CLI allows to run commands through the serial interface using the USB cable connected to the USB port on Nordic Semiconductor's development kit.
-
-To enable the Matter CLI, you must build the light switch application with the additional option ``-DCONFIG_CHIP_LIB_SHELL=y``.
-Use the following command pattern, with ``<build-target>`` replaced with the build target name of Nordic Semiconductor's development kit you are using (see `Requirements`_):
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b <build-target> -- -DCONFIG_CHIP_LIB_SHELL=y
-
-For example:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b nrf52840dk_nrf52840_cpuapp -- -DCONFIG_CHIP_LIB_SHELL=y
-
 Device Firmware Upgrade support
 ===============================
 
@@ -196,14 +176,14 @@ Button 4:
     :end-before: matter_door_lock_sample_jlink_end
 
 NFC port with antenna attached:
-   Optionally used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
+   Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
 
 .. _matter_light_switch_sample_ui_matter_cli:
 
 Matter CLI commands
 ===================
 
-If you build the application with the :ref:`matter_light_switch_sample_remote_control_cli`, you can use a series of commands to control the light switch device.
+If you build the application using the ``debug`` or ``no_dfu`` build type, you can use a series of commands to control the light switch device.
 These commands can be sent to one device (unicast) or a group of devices (groupcast).
 
 Unicast commands
@@ -287,14 +267,14 @@ Before you start testing the application, you can select one of the `Matter ligh
 Selecting a build type in |VSC|
 -------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_vsc_start
    :end-before: build_types_selection_vsc_end
 
 Selecting a build type from command line
 ----------------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_cmd_start
    :end-before: For example, you can replace the
 
@@ -342,7 +322,7 @@ After building this and the :ref:`Matter Light Bulb <matter_light_bulb_sample>` 
 #. If devices were not erased during the programming, press and hold **Button 1** on each device until the factory reset takes place.
 #. On each device, press **Button 4** to start the Bluetooth LE advertising.
 #. Commission devices to the Matter network.
-   See :ref:`matter_light_switch_sample_remote_control_commissioning` for more information.
+   See `Commissioning the device`_ for more information.
    During the commissioning process, write down the values for the light switch node ID and the light bulb node ID (or IDs, if you are using more than one light bulb).
    These IDs are going to be used in the next steps (*<light_switch_node_ID>* and *<light_bulb_node_ID>*, respectively).
 #. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the light bulb device.
@@ -393,7 +373,7 @@ Testing with bound light bulbs devices
 
 .. matter_light_switch_sample_testing_start
 
-After :ref:`preparing devices for testing <matter_light_switch_sample_prepare_for_testing>`, you can test the communication of  a single light bulb or a group of light bulbs with the light switch, but not both a single device and a group at the same time.
+After preparing devices for testing, you can test the communication either of a single light bulb or of a group of light bulbs with the light switch (but not both a single device and a group at the same time).
 
 Complete the following steps:
 
@@ -458,9 +438,28 @@ Press the following button to enable the Bluetooth LE advertising:
 * On nRF52840 DK, nRF5340 DK, and nRF21540 DK: Press **Button 4**.
 * On nRF7002 DK: Press **Button 2**.
 
-When you start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
-The data payload includes the device discriminator and setup PIN code.
-It is encoded within a QR code printed to the UART console and can be shared using an NFC tag.
+Onboarding information
+----------------------
+
+When you start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
+The onboarding information representation depends on your commissioner setup.
+
+For this sample, you can use one of the following :ref:`onboarding information formats <ug_matter_network_topologies_commissioning_onboarding_formats>` to provide the commissioner with the data payload that includes the device discriminator and the setup PIN code:
+
+  .. list-table:: Light switch sample onboarding information
+     :header-rows: 1
+
+     * - QR Code
+       - QR Code Payload
+       - Manual pairing code
+     * - Scan the following QR code with the app for your ecosystem:
+
+         .. figure:: ../../../doc/nrf/images/matter_qr_code_light_switch.png
+            :width: 200px
+            :alt: QR code for commissioning the light switch device
+
+       - MT:4CT9142C00KA0648G00
+       - 34970112332
 
 Upgrading the device firmware
 =============================

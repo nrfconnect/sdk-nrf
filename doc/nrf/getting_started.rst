@@ -22,10 +22,10 @@ For more information about the extension, see the `nRF Connect for Visual Studio
    :maxdepth: 2
    :caption: Subpages:
 
-   gs_recommended_versions
-   gs_assistant
-   gs_installing
-   gs_programming
-   gs_testing
-   gs_modifying
-   gs_updating
+   getting_started/recommended_versions
+   getting_started/assistant
+   getting_started/installing
+   getting_started/programming
+   getting_started/testing
+   getting_started/modifying
+   getting_started/updating

@@ -10,8 +10,14 @@
 #include "bolt_lock_manager.h"
 #include "led_util.h"
 
-#ifdef CONFIG_NET_L2_OPENTHREAD
-#include "thread_util.h"
+#ifdef CONFIG_THREAD_WIFI_SWITCHING
+#include "software_images_swapper.h"
+#endif
+
+#ifdef CONFIG_THREAD_WIFI_SWITCHING_CLI_SUPPORT
+#include <lib/shell/Engine.h>
+using chip::Shell::Engine;
+using chip::Shell::shell_command_t;
 #endif
 
 #include <platform/CHIPDeviceLayer.h>
@@ -41,8 +47,12 @@
 #endif
 
 #include <dk_buttons_and_leds.h>
-#include <zephyr/logging/log.h>
 #include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
+
+#ifdef CONFIG_THREAD_WIFI_SWITCHING
+#include <pm_config.h>
+#endif
 
 LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
 
@@ -63,6 +73,11 @@ constexpr uint32_t kAdvertisingTriggerTimeout = 3000;
 
 K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), kAppEventQueueSize, alignof(AppEvent));
 k_timer sFunctionTimer;
+
+#ifdef CONFIG_THREAD_WIFI_SWITCHING
+k_timer sSwitchImagesTimer;
+constexpr uint32_t kSwitchImagesTimeout = 10000;
+#endif
 
 Identify sIdentify = { kLockEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
 		       EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_VISIBLE_LED };
@@ -137,13 +152,6 @@ CHIP_ERROR AppTask::Init()
 		return err;
 	}
 
-#ifdef CONFIG_OPENTHREAD_DEFAULT_TX_POWER
-	err = SetDefaultThreadOutputPower();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("Cannot set default Thread output power");
-		return err;
-	}
-#endif /* CONFIG_OPENTHREAD_DEFAULT_TX_POWER */
 #elif defined(CONFIG_CHIP_WIFI)
 	sWiFiCommissioningInstance.Init();
 #else
@@ -171,9 +179,13 @@ CHIP_ERROR AppTask::Init()
 	k_timer_init(&sFunctionTimer, &AppTask::FunctionTimerTimeoutCallback, nullptr);
 	k_timer_user_data_set(&sFunctionTimer, this);
 
+#ifdef CONFIG_THREAD_WIFI_SWITCHING
+	k_timer_init(&sSwitchImagesTimer, &AppTask::SwitchImagesTimerTimeoutCallback, nullptr);
+#endif
+
 #ifdef CONFIG_MCUMGR_SMP_BT
 	/* Initialize DFU over SMP */
-	GetDFUOverSMP().Init(RequestSMPAdvertisingStart);
+	GetDFUOverSMP().Init();
 	GetDFUOverSMP().ConfirmNewImage();
 #endif
 
@@ -209,6 +221,10 @@ CHIP_ERROR AppTask::Init()
 		LOG_ERR("PlatformMgr().StartEventLoopTask() failed");
 		return err;
 	}
+
+#ifdef CONFIG_THREAD_WIFI_SWITCHING_CLI_SUPPORT
+	RegisterSwitchCliCommand();
+#endif
 
 	return CHIP_NO_ERROR;
 }
@@ -274,6 +290,65 @@ void AppTask::LockActionEventHandler(const AppEvent &event)
 	}
 }
 
+#ifdef CONFIG_THREAD_WIFI_SWITCHING
+void AppTask::SwitchImagesDone()
+{
+	/* Wipe out whole settings as they will not apply to the new application image. */
+	chip::Server::GetInstance().ScheduleFactoryReset();
+}
+
+void AppTask::SwitchImagesEventHandler(const AppEvent &)
+{
+	LOG_INF("Switching application from " CONFIG_APPLICATION_LABEL " to " CONFIG_APPLICATION_OTHER_LABEL);
+
+#define CONCAT3(a, b, c) UTIL_CAT(UTIL_CAT(a, b), c)
+	SoftwareImagesSwapper::ImageLocation source = {
+		.app_address = CONCAT3(PM_APP_, CONFIG_APPLICATION_OTHER_IDX, _CORE_APP_ADDRESS),
+		.app_size = CONCAT3(PM_APP_, CONFIG_APPLICATION_OTHER_IDX, _CORE_APP_SIZE),
+		.net_address = CONCAT3(PM_APP_, CONFIG_APPLICATION_OTHER_IDX, _CORE_NET_ADDRESS),
+		.net_size = CONCAT3(PM_APP_, CONFIG_APPLICATION_OTHER_IDX, _CORE_NET_SIZE),
+	};
+#undef CONCAT3
+
+	SoftwareImagesSwapper::Instance().Swap(source, AppTask::SwitchImagesDone);
+}
+
+void AppTask::SwitchImagesTimerTimeoutCallback(k_timer *timer)
+{
+	if (!timer) {
+		return;
+	}
+
+	Instance().mSwitchImagesTimerActive = false;
+
+	AppEvent event;
+	event.Type = AppEventType::Timer;
+	event.Handler = SwitchImagesEventHandler;
+	PostEvent(event);
+}
+
+void AppTask::SwitchImagesTriggerHandler(const AppEvent &event)
+{
+	if (event.ButtonEvent.PinNo != THREAD_WIFI_SWITCH_BUTTON) {
+		return;
+	}
+
+	if (event.ButtonEvent.Action == static_cast<uint8_t>(AppEventType::ButtonPushed) &&
+	    !Instance().mSwitchImagesTimerActive) {
+		k_timer_start(&sSwitchImagesTimer, K_MSEC(kSwitchImagesTimeout), K_NO_WAIT);
+		Instance().mSwitchImagesTimerActive = true;
+		LOG_INF("Keep button pressed for %u ms to switch application from " CONFIG_APPLICATION_LABEL
+			" to " CONFIG_APPLICATION_OTHER_LABEL,
+			kSwitchImagesTimeout);
+	} else if (Instance().mSwitchImagesTimerActive) {
+		k_timer_stop(&sSwitchImagesTimer);
+		Instance().mSwitchImagesTimerActive = false;
+		LOG_INF("Switching application from " CONFIG_APPLICATION_LABEL " to " CONFIG_APPLICATION_OTHER_LABEL
+			" cancelled");
+	}
+}
+#endif
+
 void AppTask::ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged)
 {
 	AppEvent button_event;
@@ -295,6 +370,17 @@ void AppTask::ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged)
 		button_event.Handler = LockActionEventHandler;
 		PostEvent(button_event);
 	}
+
+#ifdef CONFIG_THREAD_WIFI_SWITCHING
+	if (THREAD_WIFI_SWITCH_BUTTON_MASK & hasChanged) {
+		button_event.ButtonEvent.PinNo = THREAD_WIFI_SWITCH_BUTTON;
+		button_event.ButtonEvent.Action = static_cast<uint8_t>((THREAD_WIFI_SWITCH_BUTTON_MASK & buttonState) ?
+									       AppEventType::ButtonPushed :
+									       AppEventType::ButtonReleased);
+		button_event.Handler = SwitchImagesTriggerHandler;
+		PostEvent(button_event);
+	}
+#endif
 
 	if (BLE_ADVERTISEMENT_START_BUTTON_MASK & buttonState & hasChanged) {
 		button_event.ButtonEvent.PinNo = BLE_ADVERTISEMENT_START_BUTTON;
@@ -366,16 +452,6 @@ void AppTask::FunctionTimerEventHandler(const AppEvent &event)
 #endif
 	}
 }
-
-#ifdef CONFIG_MCUMGR_SMP_BT
-void AppTask::RequestSMPAdvertisingStart(void)
-{
-	AppEvent event;
-	event.Type = AppEventType::StartSMPAdvertising;
-	event.Handler = [](const AppEvent &) { GetDFUOverSMP().StartBLEAdvertising(); };
-	PostEvent(event);
-}
-#endif
 
 void AppTask::FunctionHandler(const AppEvent &event)
 {
@@ -600,3 +676,16 @@ void AppTask::UpdateClusterState(BoltLockManager::State state, BoltLockManager::
 		}
 	});
 }
+
+#ifdef CONFIG_THREAD_WIFI_SWITCHING_CLI_SUPPORT
+void AppTask::RegisterSwitchCliCommand()
+{
+	static const shell_command_t sSwitchCommand = { [](int, char **) {
+							       AppTask::Instance().SwitchImagesEventHandler(AppEvent{});
+							       return CHIP_NO_ERROR;
+						       },
+							"switch_images",
+							"Switch between Thread and Wi-Fi application variants" };
+	Engine::Root().RegisterCommands(&sSwitchCommand, 1);
+}
+#endif

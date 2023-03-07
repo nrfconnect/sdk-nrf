@@ -177,8 +177,14 @@ static int get_msg(struct bt_mesh_light_xyl_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(msg, opcode, BT_MESH_LIGHT_XYL_MSG_LEN_GET);
 	bt_mesh_model_msg_init(&msg, opcode);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL, ret_opcode, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = ret_opcode,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_xyl_get(struct bt_mesh_light_xyl_cli *cli,
@@ -205,9 +211,14 @@ int bt_mesh_light_xyl_set(struct bt_mesh_light_xyl_cli *cli,
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_XYL_OP_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_XYL_OP_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_xyl_set_unack(struct bt_mesh_light_xyl_cli *cli,
@@ -225,7 +236,7 @@ int bt_mesh_light_xyl_set_unack(struct bt_mesh_light_xyl_cli *cli,
 		model_transition_buf_add(&msg, set->transition);
 	}
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_light_xyl_target_get(struct bt_mesh_light_xyl_cli *cli,
@@ -256,9 +267,14 @@ int bt_mesh_light_xyl_default_set(struct bt_mesh_light_xyl_cli *cli,
 	net_buf_simple_add_le16(&msg, set->xy.x);
 	net_buf_simple_add_le16(&msg, set->xy.y);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_XYL_OP_DEFAULT_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_XYL_OP_DEFAULT_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_xyl_default_set_unack(struct bt_mesh_light_xyl_cli *cli,
@@ -272,7 +288,7 @@ int bt_mesh_light_xyl_default_set_unack(struct bt_mesh_light_xyl_cli *cli,
 	net_buf_simple_add_le16(&msg, set->xy.x);
 	net_buf_simple_add_le16(&msg, set->xy.y);
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_light_xyl_range_get(struct bt_mesh_light_xyl_cli *cli,
@@ -300,9 +316,14 @@ int bt_mesh_light_xyl_range_set(struct bt_mesh_light_xyl_cli *cli,
 	net_buf_simple_add_le16(&msg, set->min.y);
 	net_buf_simple_add_le16(&msg, set->max.y);
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHT_XYL_OP_RANGE_STATUS, rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_LIGHT_XYL_OP_RANGE_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }
 
 int bt_mesh_light_xyl_range_set_unack(struct bt_mesh_light_xyl_cli *cli,
@@ -321,5 +342,5 @@ int bt_mesh_light_xyl_range_set_unack(struct bt_mesh_light_xyl_cli *cli,
 	net_buf_simple_add_le16(&msg, set->min.y);
 	net_buf_simple_add_le16(&msg, set->max.y);
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }

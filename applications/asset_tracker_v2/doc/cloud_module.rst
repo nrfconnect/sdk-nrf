@@ -85,7 +85,7 @@ When the cloud module is configured to communicate with `AWS IoT Core`_, `Azure 
 This enables the cloud service to fetch A-GPS and P-GPS data directly from `nRF Cloud`_ using REST calls and relay this data to the nRF9160 SiP using the pre-established cloud connection.
 By reusing the pre-established connection, the application saves overhead related to maintaining multiple connections at the same time.
 When configuring the application to communicate with nRF Cloud, A-GPS and P-GPS data are received directly from the service, and not by proxy.
-For more information, see `nRF Cloud Location Services`_.
+For more information, see `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_.
 
 FOTA
 ====
@@ -95,7 +95,7 @@ This enables the cloud to issue FOTA updates and update the application and mode
 For additional documentation on the various FOTA implementations, refer to the respective client library documentation linked to in :ref:`Integration layers <integration_layers>`.
 
 Full modem FOTA updates are only supported by nRF Cloud.
-This application implements full modem FOTA only for the nRF9160 development kit version 1.0.1 and higher.
+This application implements full modem FOTA only for the nRF9160 development kit version 0.14.0 and higher.
 To enable full modem FOTA, add the ``-DOVERLAY_CONFIG=overlay-full_modem_fota.conf`` parameter to your build command.
 
 Also, specify your development kit version by appending it to the board name.
@@ -176,12 +176,14 @@ Configurations for Azure IoT Hub library
 To enable communication with Azure IoT Hub, set the following options in the :file:`overlay-azure.conf` file:
 
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE`
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_SEC_TAG`
+* :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`
 * :kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG`
 
 If not using the default DPS (Device Provisioning Service) host, ensure that the hostname option is correctly set using the following Kconfig option:
 
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME`
+
+.. _assettracker_v2_cloudmodule_lwm2m:
 
 Configurations for LwM2M integration layer
 ------------------------------------------

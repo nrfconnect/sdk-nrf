@@ -27,20 +27,20 @@ Configuration
 Complete the following steps to configure the module:
 
 1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-   During this configuration, you must enable the :kconfig:option:`CONFIG_BT_PERIPHERAL` Kconfig option for every nRF Desktop peripheral.
-   When this option is enabled, the :ref:`CONFIG_DESKTOP_HID_PERIPHERAL <config_desktop_app_options>` is set to ``y``, which enables the following two additional options, among others:
+   Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` options are enabled.
+   The HID Service application module is enabled by the :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option, which is implied by :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` together with other GATT Services that are required for a HID device.
+#. The :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option selects the following Kconfig options:
 
-   * :kconfig:option:`CONFIG_BT_HIDS` - This is required because the HID Service module is based on the :ref:`hids_readme` implementation of the GATT Service.
-   * :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` - This enables the ``hids`` application module.
+   * The :kconfig:option:`CONFIG_BT_HIDS` option that automatically enables the :ref:`hids_readme`.
+   * The :kconfig:option:`CONFIG_BT_CONN_CTX` option that automatically enables the :ref:`bt_conn_ctx_readme`, which is required by the |GATT_HID|.
 
-   This step also enables the |GATT_HID|.
-#. Enable the :ref:`bt_conn_ctx_readme` (:kconfig:option:`CONFIG_BT_CONN_CTX`).
-   This is required by the |GATT_HID|.
-#. Configure the :ref:`hids_readme`.
-   See its documentation for configuration details.
+#. The nRF Desktop application modifies the defaults of Kconfig option values, defined by the :ref:`hids_readme`, to tailor the default configuration to application needs.
+   The configuration is tailored for either nRF Desktop mouse (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_MOUSE <config_desktop_app_options>`) or nRF Desktop keyboard (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`).
+   For more details, see the :file:`src/modules/Kconfig.hids` file.
 
    .. tip::
-     If the HID report configuration is identical to the configuration used for one of the existing devices, you can use the same |GATT_HID| configuration.
+     If the HID report configuration is identical to the default configuration of either nRF Desktop mouse or keyboard, you do not need to modify the |GATT_HID| configuration.
+     Otherwise, see :ref:`hids_readme` documentation for configuration details.
 
 The HID Service application module forwards the information about the enabled HID notifications to other application modules using ``hid_report_subscription_event``.
 These notifications are enabled by the connected Bluetooth® Central.
@@ -52,27 +52,27 @@ Sending the first HID report to the connected Bluetooth peer is delayed by this 
 .. note::
    The nRF Desktop centrals perform the GATT service discovery and reenable the HID notifications on every reconnection.
    A HID report that is received before the subscription is reenabled will be dropped before it reaches the application.
-   The :ref:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY <config_desktop_app_options>` is used for keyboard reference design (nRF52832 Desktop Keyboard) to make sure that the input will not be lost on reconnection with the nRF Desktop dongle.
+   The :ref:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY <config_desktop_app_options>` option is set to 500 ms for nRF Desktop keyboards (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`) to make sure that the input is not lost on reconnection with the nRF Desktop dongle.
 
 Implementation details
 **********************
 
 The HID Service application module initializes and configures the |GATT_HID|.
 The application module registers the HID report map and every HID report that was enabled in the application configuration.
-Detailed information about HID-related configuration in nRF Desktop is available in the :ref:`nrf_desktop_hid_state` documentation.
+For detailed information about the HID-related configuration in the nRF Desktop, see the :ref:`nrf_desktop_hid_configuration` documentation.
 
 Sending HID input reports
 =========================
 
-After subscriptions are enabled in |HID_state|, the |HID_state| sends the HID input reports as ``hid_report_event``.
+After subscriptions are enabled in |hid_state|, the |hid_state| sends the HID input reports as ``hid_report_event``.
 The HID Service application module sends the report over Bluetooth LE and submits the ``hid_report_sent_event`` to inform that the given HID input report was sent.
 
 HID keyboard LED output report
 ==============================
 
-The module can receive an HID output report setting state of the keyboard LEDs, e.g. state of the Caps Lock.
+The module can receive an HID output report setting state of the keyboard LEDs, for example, state of the Caps Lock.
 The report is received from the Bluetooth connected host.
-The module forwards the report using ``hid_report_event``, that is handled either by |HID_state| (for peripheral) or :ref:`nrf_desktop_hid_forward` (for central).
+The module forwards the report using ``hid_report_event`` that is handled by |hid_state|.
 
 Right now, the only board that displays information received in the HID output report using hardware LEDs is the :ref:`nrf52840dk_nrf52840 <nrf52840dk_nrf52840>` in ``keyboard`` build type configuration.
 The keyboard reference design (nrf52kbd_nrf52832) has only one LED that is used to display the Bluetooth LE peer state.
@@ -104,7 +104,3 @@ Transport for configuration channel
 
 The HID Service application module works as a transport for the :ref:`nrf_desktop_config_channel` and exchanges the |conf_channel| HID reports over Bluetooth LE.
 The module communicates with the |conf_channel| listeners using ``config_event``.
-
-.. |GATT_HID| replace:: GATT HID Service
-.. |HID_state| replace:: HID state module
-.. |conf_channel| replace:: Configuration channel

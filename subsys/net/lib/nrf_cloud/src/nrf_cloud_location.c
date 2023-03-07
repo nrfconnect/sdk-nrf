@@ -7,7 +7,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/net/socket.h>
-#include <nrf_socket.h>
 #include <zephyr/logging/log.h>
 #include <net/nrf_cloud_location.h>
 
@@ -68,7 +67,7 @@ int nrf_cloud_location_request_json_get(const struct lte_lc_cells_info *const ce
 	}
 
 	if (cells_inf) {
-		err = nrf_cloud_format_cell_pos_req_json(cells_inf, 1, data_obj);
+		err = nrf_cloud_format_cell_pos_req_json(cells_inf, data_obj);
 		if (err) {
 			LOG_ERR("Failed to add cell info to location request, error: %d", err);
 			goto cleanup;

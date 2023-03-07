@@ -153,7 +153,8 @@ def hex2int(x):
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Append Zigbee OTA header to BIN file',
-        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False)
 
     parser.add_argument('--application', required=True,
                         help='The application firmware file.')

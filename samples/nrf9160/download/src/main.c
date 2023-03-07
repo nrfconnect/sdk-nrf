@@ -157,9 +157,13 @@ static int callback(const struct download_client_evt *event)
 
 	case DOWNLOAD_CLIENT_EVT_ERROR:
 		printk("Error %d during download\n", event->error);
-		lte_lc_power_off();
-		/* Stop download */
-		return -1;
+		if (event->error == -ECONNRESET) {
+			/* With ECONNRESET, allow library to attempt a reconnect by returning 0 */
+		} else {
+			lte_lc_power_off();
+			/* Stop download */
+			return -1;
+		}
 	}
 
 	return 0;

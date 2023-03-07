@@ -1949,7 +1949,8 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             = "CONFIG_SYS_CLOCK_EXISTS=y" \
+PREDEFINED             =  __DOXYGEN__ \
+                         "CONFIG_SYS_CLOCK_EXISTS=y" \
                          "CONFIG_THREAD_MONITOR=y" \
                          "CONFIG_THREAD_CUSTOM_DATA=y" \
                          "CONFIG_ERRNO=y" \
@@ -2005,7 +2006,8 @@ PREDEFINED             = "CONFIG_SYS_CLOCK_EXISTS=y" \
                          "CONFIG_NRF_MODEM=y" \
                          "CONFIG_ZIGBEE_ROLE_END_DEVICE=y" \
                          "CONFIG_ZIGBEE_FACTORY_RESET=y" \
-                         "CONFIG_NRF_CLOUD_GATEWAY=y"
+                         "CONFIG_NRF_CLOUD_GATEWAY=y" \
+                         "CONFIG_BT_CENTRAL"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

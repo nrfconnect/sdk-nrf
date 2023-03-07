@@ -6,7 +6,18 @@
 
 # nRF Desktop specific configuration overlay for CAF BLE advertising module.
 
-if CAF_BLE_ADV
+config DESKTOP_BLE_ADV
+	bool "Bluetooth LE advertising module (CAF)"
+	depends on DESKTOP_BT_PERIPHERAL
+	select CAF_BLE_ADV
+	help
+	  nRF Desktop uses Bluetooth LE advertising module from Common
+	  Application Framework (CAF).
+
+	  By default, nRF Desktop application does not use direct advertising,
+	  but uses fast advertising and enables filter accept list.
+
+if DESKTOP_BLE_ADV
 
 config CAF_BLE_ADV_DIRECT_ADV
 	default n
@@ -23,4 +34,34 @@ config CAF_BLE_ADV_FILTER_ACCEPT_LIST
 	help
 	  By default, nRF Desktop peripherals enable filter accept list.
 
-endif # CAF_BLE_ADV
+config BT_ADV_PROV_FLAGS
+	default y
+
+config BT_ADV_PROV_GAP_APPEARANCE
+	default y
+
+config BT_ADV_PROV_DEVICE_NAME
+	default y
+
+config BT_ADV_PROV_SWIFT_PAIR
+	default y
+
+config BT_ADV_PROV_FAST_PAIR
+	default y if BT_FAST_PAIR
+
+config BT_ADV_PROV_FAST_PAIR_SHOW_UI_PAIRING
+	depends on BT_ADV_PROV_FAST_PAIR
+	default n
+	help
+	  nRF Desktop peripheral supports one bond per local identity. Disable
+	  the UI indication during Fast Pair not discoverable advertising to
+	  prevent bonding failures.
+
+config BT_ADV_PROV_TX_POWER
+	default y
+
+config DESKTOP_ADV_PROV_UUID16_ALL
+	depends on (DESKTOP_HIDS_ENABLE || DESKTOP_BAS_ENABLE)
+	default y
+
+endif # DESKTOP_BLE_ADV

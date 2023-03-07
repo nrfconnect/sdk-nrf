@@ -11,12 +11,12 @@
 
 #include <net/azure_iot_hub.h>
 #include <net/azure_iot_hub_dps.h>
+#include <net/mqtt_helper.h>
 
 #include <azure/az_core.h>
 #include <azure/az_iot.h>
 
 #include "azure_iot_hub_dps_private.h"
-#include "azure_iot_hub_mqtt.h"
 
 #include <zephyr/logging/log.h>
 
@@ -708,7 +708,7 @@ AZ_DPS_STATIC int provisioning_client_init(struct mqtt_helper_conn_params *conn_
 	return 0;
 }
 
-AZ_DPS_STATIC void on_publish(struct azure_iot_hub_buf topic, struct azure_iot_hub_buf payload)
+AZ_DPS_STATIC void on_publish(struct mqtt_helper_buf topic, struct mqtt_helper_buf payload)
 {
 	az_span topic_span = az_span_create(topic.ptr, topic.size);
 	az_span payload_span = az_span_create(payload.ptr, payload.size);
@@ -833,7 +833,6 @@ int azure_iot_hub_dps_start(void)
 	char user_name_buf[CONFIG_AZURE_IOT_HUB_DPS_USER_NAME_BUFFER_SIZE];
 	static bool initial_load_done;
 	struct mqtt_helper_conn_params conn_params = {
-		.port = CONFIG_AZURE_IOT_HUB_PORT,
 		.hostname = {
 			.ptr = CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME,
 			.size = sizeof(CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME) - 1,

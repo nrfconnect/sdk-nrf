@@ -11,7 +11,7 @@
 
 #include <net/azure_iot_hub.h>
 
-#include "cmock_azure_iot_hub_mqtt.h"
+#include "cmock_mqtt_helper.h"
 
 #define TEST_DEVICE_ID			"run-time-test-device-id"
 #define TEST_DEVICE_ID_LEN		(sizeof(TEST_DEVICE_ID) - 1)
@@ -83,24 +83,9 @@ extern int unity_main(void);
 extern void iot_hub_state_set(enum iot_hub_state state);
 extern enum iot_hub_state iot_hub_state;
 
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
 void setUp(void)
 {
-	cmock_azure_iot_hub_mqtt_Init();
-
 	iot_hub_state = STATE_UNINIT;
-}
-
-void tearDown(void)
-{
-	cmock_azure_iot_hub_mqtt_Verify();
-}
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
 }
 
 /* Stubs */
@@ -111,7 +96,6 @@ static int mqtt_helper_connect_run_time_stub(struct mqtt_helper_conn_params *con
 	/* Verify that the incoming connection parameters are as expected when run-time provided
 	 * values are used.
 	 */
-	TEST_ASSERT_EQUAL(CONFIG_AZURE_IOT_HUB_PORT, conn_params->port);
 	TEST_ASSERT_EQUAL_STRING_LEN(TEST_HOSTNAME,
 				     conn_params->hostname.ptr,
 				     TEST_HOSTNAME_LEN);
@@ -131,7 +115,6 @@ static int mqtt_helper_connect_kconfig_stub(struct mqtt_helper_conn_params *conn
 	/* Verify that the incoming connection parameters are as expected when Kconfig values are
 	 * used.
 	 */
-	TEST_ASSERT_EQUAL(CONFIG_AZURE_IOT_HUB_PORT, conn_params->port);
 	TEST_ASSERT_EQUAL_STRING_LEN(CONFIG_AZURE_IOT_HUB_HOSTNAME,
 				     conn_params->hostname.ptr,
 				     sizeof(CONFIG_AZURE_IOT_HUB_HOSTNAME) - 1);

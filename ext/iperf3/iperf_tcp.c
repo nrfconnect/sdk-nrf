@@ -142,7 +142,8 @@ iperf_tcp_send(struct iperf_stream *sp)
 
 #else
 	    /* 64bit variable printing is not working */
-        printf("sent %d bytes of %d, total %d\n", r, sp->settings->blksize, (uint32_t)sp->result->bytes_sent);
+        iperf_printf(sp->test, "sent %d bytes of %d, total %d\n",
+                        r, sp->settings->blksize, (uint32_t)sp->result->bytes_sent);
 #endif        
     }
     return r;

@@ -61,8 +61,17 @@ private:
 
 	static void LockStateChanged(BoltLockManager::State state, BoltLockManager::OperationSource source);
 
-#ifdef CONFIG_MCUMGR_SMP_BT
-	static void RequestSMPAdvertisingStart(void);
+#ifdef CONFIG_THREAD_WIFI_SWITCHING
+	static void SwitchImagesDone();
+	static void SwitchImagesTriggerHandler(const AppEvent &event);
+	static void SwitchImagesTimerTimeoutCallback(k_timer *timer);
+	static void SwitchImagesEventHandler(const AppEvent &event);
+
+	bool mSwitchImagesTimerActive = false;
+#endif
+
+#ifdef CONFIG_THREAD_WIFI_SWITCHING_CLI_SUPPORT
+	static void RegisterSwitchCliCommand();
 #endif
 
 	FunctionEvent mFunction = FunctionEvent::NoneSelected;

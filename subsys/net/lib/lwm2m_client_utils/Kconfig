@@ -78,20 +78,13 @@ config LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
 	select LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT if (!LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT && !ZTEST)
 	select DFU_TARGET
 	select BOOTLOADER_MCUBOOT if !ZTEST
-	select IMG_MANAGER
-	select IMG_ERASE_PROGRESSIVELY
-	select FLASH
-	select MPU_ALLOW_FLASH_WRITE
+	select IMG_MANAGER if !ZTEST
+	select IMG_ERASE_PROGRESSIVELY if !ZTEST
+	select FLASH if !ZTEST
+	select MPU_ALLOW_FLASH_WRITE if !ZTEST
 	select FOTA_DOWNLOAD_PROGRESS_EVT if FOTA_DOWNLOAD
 
 if LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
-
-config LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_REBOOT
-	bool "Reboot after image has been applied"
-	default y
-	help
-	  Reboot after the FOTA image has been applied.
-	  If this option is disabled it is the application's responsibility to reboot the device.
 
 config LWM2M_CLIENT_UTILS_MCUBOOT_FLASH_BUF_SIZE
 	int "Size of buffer used for flash write operations during MCUboot updates"
@@ -133,9 +126,6 @@ config LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
 	bool
 
 if LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
-
-config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS
-	bool "Use events to send lwm2m-messages to lwm2m-server to request assistance"
 
 config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL
 	bool "Use location based on current cell and possibly neighboring cells"
@@ -209,6 +199,13 @@ config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
 	  and provides information about neighbouring cells. It is used to assist
 	  with the device location services.
 
+config LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT
+	bool "Visible Wi-Fi AP object support (ID 33627)"
+	help
+	  This object is used in combination with Ground Fix object (ID 33626)
+	  and provides information about nearby Wi-Fi access points. It is used to
+	  assist with the device location services.
+
 config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_INSTANCE_COUNT
 	int "Maximum # of signal measurement objects"
 	default 3
@@ -217,6 +214,15 @@ config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_INSTANCE_COUNT
 config LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER
 	bool "Use a listener to populate signal measurement objects"
 	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_INSTANCE_COUNT
+	int "Maximum # of visible Wi-Fi access point objects"
+	default 5
+	depends on LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_WIFI_AP_SCANNER
+	bool "Use a scanner to populate visible Wi-Fi AP objects"
+	depends on LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT
 
 endif # LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
 

@@ -11,9 +11,9 @@
 #include "light_ctl_internal.h"
 #include "model_utils.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_light_temp_srv
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_light_temp_srv);
 
 struct settings_data {
 	struct bt_mesh_light_temp dflt;
@@ -523,5 +523,5 @@ int bt_mesh_light_temp_srv_pub(struct bt_mesh_light_temp_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_TEMP_STATUS,
 				 BT_MESH_LIGHT_CTL_MSG_MAXLEN_TEMP_STATUS);
 	encode_status(&msg, status);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

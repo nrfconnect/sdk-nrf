@@ -76,7 +76,61 @@ The synchronization will be performed cyclically.
 Based on the ``SCAN_RSP`` response, the device recognizes peers that support the distance measurement functionality within its coverage.
 The addresses of these devices are stored in a list.
 When a device does not respond within a certain period of time, it is removed from the list.
-Also the last measurement results with the peers are stored in this list.
+Also, the last measurement results with the peers are stored in this list.
+
+For the nRF5340, the ranging procedure is performed on the network core, while the calculation takes place on the application core.
+The distance calculation uses a floating-point unit (FPU).
+
+.. _ble_nrf_dm_power:
+
+Power consumption
+*****************
+
+Power consumption and the number of measurements performed in a given time depend on the following factors:
+
+* Advertiser settings.
+* Scanner settings.
+* Extended size of measurement window by ``extra_window_time_us`` in the :c:struct:`dm_request` structure.
+
+The shorter the advertising interval, the higher the frequency at which the broadcaster sends out advertising packages.
+This leads to a higher probability of synchronization and to a higher number of measurements taken at a given time.
+It also decreases the latency for the first measurement when the device is turned on or comes in reach.
+However, the higher number of packets transmitted also results in higher power consumption.
+
+The scan interval and scan window parameters determine how often and how long the scanning device will listen for packets.
+Like the short advertising interval, these values also have an impact on power consumption and the ranging frequency of devices.
+
+After the first measurement, the :kconfig:option:`CONFIG_DM_MIN_TIME_BETWEEN_TIMESLOTS_US` and the :kconfig:option:`CONFIG_DM_TIMESLOT_QUEUE_COUNT_SAME_PEER` Kconfig options define how often the same device is measured again.
+The Kconfig options :kconfig:option:`CONFIG_DM_TIMESLOT_QUEUE_COUNT_SAME_PEER` and :kconfig:option:`CONFIG_DM_TIMESLOT_QUEUE_LENGTH` define how many measurements are scheduled.
+The more measurements are scheduled, the more of them take place, which increases power consumption but gives more frequent rangings.
+If the :kconfig:option:`CONFIG_DM_TIMESLOT_RESCHEDULE` Kconfig option is disabled, the next timeslot for measurement execution will be allocated after the measurement request is added using the :c:func:`dm_request_add` function.
+
+Extending the measurement window increases the probability of measurement success for coarse synchronization.
+However, it affects the turn-on time of the radio and thus, power consumption.
+
+At the application runtime, the additional delay of measurement execution is configured using the ``start_delay_us`` parameter of the :c:struct:`dm_request` structure.
+This option helps in adjusting the synchronization.
+The :kconfig:option:`CONFIG_DM_INITIATOR_DELAY_US` Kconfig option defines the initiator delay.
+Increasing the values of these parameters increases the latency and power consumption.
+
+High-precision calculation
+**************************
+
+The sample supports distance estimation using a more compute-intensive high-precision algorithm.
+The :kconfig:option:`CONFIG_DM_HIGH_PRECISION_CALC` Kconfig option enables high-precision calculations.
+High-precision calculation has an impact on MCPD ranging mode only.
+Due to its limited memory, the nRF52 Development Kit (nrf52dk_nrf52832) does not support high-precision calculations.
+
+.. _ble_nrf_dm_calibr:
+
+Zero-distance calibration
+*************************
+
+The measured values of distance measurement include an offset.
+The offset value may depend on the design of the radio circuit, the antenna used, or the PCB layout.
+When using a library and a sample, you need to compensate the zero-distance offset and perform the calibration manually.
+To determine the offset value, place the devices at a reference distance of 60 cm from each other and collect a batch of measurement data.
+The difference between the average measurement value and the actual distance can be used as an estimate of the offset.
 
 User interface
 **************

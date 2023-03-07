@@ -45,7 +45,7 @@ SSED device type
 
 The SSED device type was created for the window covering devices to optimize the power usage of the device and communication pattern with the parent.
 
-.. include:: ../../../doc/nrf/ug_thread_commissioning.rst
+.. include:: /protocols/thread/overview/commissioning.rst
    :start-after: thread_ssed_description_start
    :end-before: thread_ssed_description_end
 
@@ -142,7 +142,7 @@ Button 4:
     :end-before: matter_door_lock_sample_jlink_end
 
 NFC port with antenna attached:
-    Optionally used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_window_cover_sample_remote_control_commissioning>`.
+    Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_window_cover_sample_remote_control_commissioning>`.
 
 Building and running
 ********************
@@ -159,14 +159,14 @@ Before you start testing the application, you can select one of the `Matter wind
 Selecting a build type in |VSC|
 -------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_vsc_start
    :end-before: build_types_selection_vsc_end
 
 Selecting a build type from command line
 ----------------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_cmd_start
    :end-before: For example, you can replace the
 
@@ -230,9 +230,28 @@ Commissioning the device
 Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
 Press **Button 4** to enable the Bluetooth LE advertising.
 
-When you start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
-The data payload includes the device discriminator and setup PIN code.
-It is encoded within a QR code printed to the UART console and can be shared using an NFC tag.
+Onboarding information
+++++++++++++++++++++++
+
+When you start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
+The onboarding information representation depends on your commissioner setup.
+
+For this sample, you can use one of the following :ref:`onboarding information formats <ug_matter_network_topologies_commissioning_onboarding_formats>` to provide the commissioner with the data payload that includes the device discriminator and the setup PIN code:
+
+  .. list-table:: Window covering sample onboarding information
+     :header-rows: 1
+
+     * - QR Code
+       - QR Code Payload
+       - Manual pairing code
+     * - Scan the following QR code with the app for your ecosystem:
+
+         .. figure:: ../../../doc/nrf/images/matter_qr_code_window_covering.png
+            :width: 200px
+            :alt: QR code for commissioning the window covering device
+
+       - MT:SAGA442C00KA0648G00
+       - 34970112332
 
 Upgrading the device firmware
 =============================

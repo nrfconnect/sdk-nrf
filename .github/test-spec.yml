@@ -24,6 +24,21 @@
   - "scripts/requirements*.txt"
   - "scripts/tools-versions-darwin.txt"
 
+"CI-iot-serial-lte-modem-test":
+  - "applications/serial_lte_modem/**/*"
+  - "lib/at_cmd_parser/**/*"
+  - "lib/at_monitor/**/*"
+  - "lib/date_time/**/*"
+  - "lib/modem_info/**/*"
+  - "lib/modem_jwt/**/*"
+  - "lib/nrf_modem_lib/**/*"
+  - "lib/sms/**/*"
+  - "subsys/dfu/dfu_target/**/*"
+  - "subsys/net/lib/download_client/**/*"
+  - "subsys/net/lib/fota_download/**/*"
+  - "subsys/net/lib/ftp_client/**/*"
+  - "subsys/net/lib/nrf_cloud/**/*"
+
 "CI-iot-zephyr-lwm2m-test":
   - "lib/nrf_modem_lib/**/*"
   - "lib/at_monitor/**/*"
@@ -38,11 +53,14 @@
   - "subsys/dfu/dfu_target/**/*"
   - "subsys/dfu/fmfu_fdev/**/*"
   - "subsys/fw_info/**/*"
+  - "samples/nrf9160/lwm2m_client/**/*"
 
 "CI-audio-test":
   - "applications/nrf5340_audio/**/*"
   - "boards/arm/nrf5340_audio_dk_nrf5340/**/*"
   - "tests/nrf5340_audio/**/*"
+  - "tests/lib/contin_array/**/*"
+  - "tests/lib/pcm_mix/**/*"
 
 "CI-iot-samples-test":
   - "include/modem/at_monitor.h"
@@ -68,22 +86,6 @@
   - "samples/nrf9160/sms/**/*"
   - "subsys/net/lib/download_client/**/*"
 
-"CI-iot-lwm2m-client-test":
-  - "lib/nrf_modem_lib/**/*"
-  - "lib/at_monitor/**/*"
-  - "lib/at_cmd_parser/**/*"
-  - "lib/lte_link_control/**/*"
-  - "lib/modem_info/**/*"
-  - "lib/modem_key_mgmt/**/*"
-  - "lib/date_time/**/*"
-  - "subsys/net/lib/download_client/**/*"
-  - "subsys/net/lib/fota_download/**/*"
-  - "subsys/net/lib/lwm2m_client_utils/**/*"
-  - "subsys/dfu/dfu_target/**/*"
-  - "subsys/dfu/fmfu_fdev/**/*"
-  - "subsys/fw_info/**/*"
-  - "samples/nrf9160/lwm2m_client/**/*"
-
 "CI-iot-libraries-test":
   - "include/modem/at_monitor.h"
   - "include/modem/lte_lc*.h"
@@ -107,7 +109,6 @@
   - "include/fprotect.h"
   - "include/fw_info.*"
   - "include/mgmt/*"
-  - "include/spm.h"
   - "include/dfu/**/*"
   - "include/net/**/*"
   - "cmake/*"
@@ -126,13 +127,10 @@
   - "subsys/fw_info/**/*"
   - "subsys/mgmt/**/*"
   - "subsys/pcd/*"
-  - "subsys/spm/*"
   - "subsys/net/lib/*fota*/**/*"
   - "subsys/net/lib/download_client/**/*"
   - "tests/subsys/bootloader/**/*"
   - "tests/subsys/dfu/**/*"
-  - "tests/subsys/fw_info/**/*"
-  - "tests/subsys/net/**/*"
 
 "CI-all-test":
   - "**/*partition_manager*/**/*"
@@ -148,7 +146,6 @@
   - "subsys/bootloader/**/*"
   - "subsys/partition_manager/**/*"
   - "tests/modules/tfm"
-  - "tests/subsys/spm/secure_services/**/*"
   - "tests/tfm/**/*"
 
 "CI-ble-test":
@@ -391,7 +388,8 @@
   - "include/net/multicell_location.h"
   - "include/net/nrf_cloud.h"
   - "include/net/nrf_cloud_agps.h"
-  - "include/net/nrf_cloud_cell_pos.h"
+  - "include/net/nrf_cloud_location.h"
+  - "include/net/nrf_cloud_os.h"
   - "include/net/nrf_cloud_pgps.h"
   - "include/net/nrf_cloud_rest.h"
   - "include/net/rest_client.h"
@@ -430,7 +428,8 @@
   - "include/net/multicell_location.h"
   - "include/net/nrf_cloud.h"
   - "include/net/nrf_cloud_agps.h"
-  - "include/net/nrf_cloud_cell_pos.h"
+  - "include/net/nrf_cloud_location.h"
+  - "include/net/nrf_cloud_os.h"
   - "include/net/nrf_cloud_pgps.h"
   - "include/net/nrf_cloud_rest.h"
   - "include/net/rest_client.h"
@@ -454,3 +453,8 @@
 "CI-wifi":
   - "drivers/wifi/**/*"
   - "samples/wifi/**/*"
+
+"CI-cloud-test":
+  - "include/net/nrf_cloud*"
+  - "samples/nrf9160/nrf_cloud_*/**/*"
+  - "subsys/net/lib/nrf_cloud/**/*"

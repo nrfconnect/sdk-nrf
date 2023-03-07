@@ -49,30 +49,46 @@ int nrf_cloud_fota_fmfu_dev_set(const struct dfu_target_fmfu_fdev *const fmfu_de
 	if (fmfu_dev_set) {
 		LOG_DBG("Full modem FOTA flash device already set");
 		return 1;
-	} else if (!fmfu_dev_inf) {
-		return -EINVAL;
-	} else if (!fmfu_dev_inf->dev) {
-		LOG_ERR("Flash device is NULL");
-		return -ENODEV;
-	} else if (!device_is_ready(fmfu_dev_inf->dev)) {
-		LOG_ERR("Flash device is not ready");
-		return -EBUSY;
+	}
+
+	if (!IS_ENABLED(CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION)) {
+		if (!fmfu_dev_inf) {
+			return -EINVAL;
+		}
+
+		if (!fmfu_dev_inf->dev) {
+			LOG_ERR("Flash device is NULL");
+			return -ENODEV;
+		}
+
+		if (!device_is_ready(fmfu_dev_inf->dev)) {
+			LOG_ERR("Flash device is not ready");
+			return -EBUSY;
+		}
 	}
 
 	int ret;
 	const struct dfu_target_full_modem_params params = {
 		.buf = fmfu_buf,
 		.len = sizeof(fmfu_buf),
-		.dev = (struct dfu_target_fmfu_fdev *)fmfu_dev_inf
+		/* If a partition is used, the flash device info is not needed */
+		.dev = (IS_ENABLED(CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION) ?
+		       NULL : (struct dfu_target_fmfu_fdev *)fmfu_dev_inf)
 	};
 
 	ret = dfu_target_full_modem_cfg(&params);
 	if (ret) {
 		LOG_ERR("Failed to initialize full modem FOTA: %d", ret);
-	} else {
-		fmfu_dev = *fmfu_dev_inf;
-		fmfu_dev_set = true;
+		return ret;
 	}
+
+	ret = dfu_target_full_modem_fdev_get(&fmfu_dev);
+	if (ret) {
+		LOG_ERR("Failed to get flash device info: %d", ret);
+		return ret;
+	}
+
+	fmfu_dev_set = true;
 
 	return ret;
 }
@@ -92,14 +108,14 @@ int nrf_cloud_fota_fmfu_apply(void)
 		return err;
 	}
 
-	err = nrf_modem_lib_init(FULL_DFU_MODE);
+	err = nrf_modem_lib_init(BOOTLOADER_MODE);
 	if (err != 0) {
-		LOG_ERR("nrf_modem_lib_init(FULL_DFU_MODE) failed: %d", err);
+		LOG_ERR("nrf_modem_lib_init(BOOTLOADER_MODE) failed: %d", err);
 		(void)nrf_modem_lib_init(NORMAL_MODE);
 		return err;
 	}
 
-	err = fmfu_fdev_load(fmfu_buf, sizeof(fmfu_buf), fmfu_dev.dev, 0);
+	err = fmfu_fdev_load(fmfu_buf, sizeof(fmfu_buf), fmfu_dev.dev, fmfu_dev.offset);
 	if (err != 0) {
 		LOG_ERR("Failed to apply full modem update, error: %d", err);
 		(void)nrf_modem_lib_init(NORMAL_MODE);
@@ -176,14 +192,18 @@ static enum nrf_cloud_fota_validate_status modem_delta_fota_validate_get(void)
 {
 #if defined(CONFIG_NRF_MODEM_LIB)
 	switch (modem_lib_init_result) {
-	case MODEM_DFU_RESULT_OK:
+	case NRF_MODEM_DFU_RESULT_OK:
 		LOG_INF("Modem FOTA update confirmed");
 		return NRF_CLOUD_FOTA_VALIDATE_PASS;
-	case MODEM_DFU_RESULT_INTERNAL_ERROR:
-	case MODEM_DFU_RESULT_UUID_ERROR:
-	case MODEM_DFU_RESULT_AUTH_ERROR:
-	case MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
+	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
+	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
+	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
 		LOG_ERR("Modem FOTA error: %d", modem_lib_init_result);
+		return NRF_CLOUD_FOTA_VALIDATE_FAIL;
+	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
+		LOG_ERR("Modem FOTA cancelled: %d", modem_lib_init_result);
+		LOG_ERR("Please reboot once you have sufficient power for the DFU");
 		return NRF_CLOUD_FOTA_VALIDATE_FAIL;
 	default:
 		LOG_INF("Modem FOTA result unknown: %d", modem_lib_init_result);
@@ -226,7 +246,7 @@ int nrf_cloud_bootloader_fota_slot_set(struct nrf_cloud_settings_fota_job * cons
 	/* Only set the slot flag once for bootloader updates */
 	if (job->type == NRF_CLOUD_FOTA_BOOTLOADER &&
 	    !(job->bl_flags & NRF_CLOUD_FOTA_BL_STATUS_S0_FLAG_SET)) {
-		bool s0_active;
+		bool s0_active = false;
 
 #if defined(CONFIG_FOTA_DOWNLOAD)
 		err = fota_download_s0_active_get(&s0_active);

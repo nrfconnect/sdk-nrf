@@ -11,9 +11,10 @@
 #include "light_ctl_internal.h"
 #include "lightness_internal.h"
 #include "model_utils.h"
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_light_ctl_srv
-#include "common/log.h"
+
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_light_ctl_srv);
 
 static void ctl_encode_status(struct net_buf_simple *buf,
 			      struct bt_mesh_light_ctl_status *status)
@@ -433,7 +434,7 @@ static int bt_mesh_light_ctl_srv_start(struct bt_mesh_model *model)
 
 	if (!srv->temp_srv.model ||
 	    (srv->model->elem_idx > srv->temp_srv.model->elem_idx)) {
-		BT_ERR("Light CTL srv[%d]: Temp. srv not properly initialized",
+		LOG_ERR("Light CTL srv[%d]: Temp. srv not properly initialized",
 		       srv->model->elem_idx);
 		return -EINVAL;
 	}
@@ -492,7 +493,7 @@ int bt_mesh_light_ctl_pub(struct bt_mesh_light_ctl_srv *srv,
 				 BT_MESH_LIGHT_CTL_MSG_MAXLEN_STATUS);
 
 	ctl_encode_status(&msg, status);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }
 
 int bt_mesh_light_ctl_range_pub(struct bt_mesh_light_ctl_srv *srv,
@@ -502,7 +503,7 @@ int bt_mesh_light_ctl_range_pub(struct bt_mesh_light_ctl_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_TEMP_RANGE_STATUS,
 				 BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_STATUS);
 	range_encode_status(&msg, srv, status);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }
 
 int bt_mesh_light_ctl_default_pub(struct bt_mesh_light_ctl_srv *srv,
@@ -511,5 +512,5 @@ int bt_mesh_light_ctl_default_pub(struct bt_mesh_light_ctl_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_CTL_DEFAULT_STATUS,
 				 BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG);
 	default_encode_status(&msg, srv);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

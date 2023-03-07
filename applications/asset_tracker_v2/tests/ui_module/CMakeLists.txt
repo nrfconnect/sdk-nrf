@@ -40,6 +40,7 @@ target_compile_definitions(app PRIVATE
 	-DCONFIG_MODEM_APN_LEN_MAX=1
 	-DCONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX=1
 	-DCONFIG_CLOUD_CODEC_LWM2M_PATH_ENTRY_SIZE_MAX=1
+	-DCONFIG_LTE_NEIGHBOR_CELLS_MAX=10
 )
 
 # Include ui_module_test.h that re-defines SYS_INIT() for unit testing purposes.

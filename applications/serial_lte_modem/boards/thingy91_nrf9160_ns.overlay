@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/ {
+	chosen {
+		ncs,slm-uart = &uart0;
+	};
+};
+
 &uart2 {
 	status="disabled";
 };

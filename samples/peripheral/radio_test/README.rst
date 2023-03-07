@@ -1,13 +1,13 @@
 .. _radio_test:
 
-Radio test
-##########
+Radio test (short-range)
+########################
 
 .. contents::
    :local:
    :depth: 2
 
-The Radio test sample demonstrates how to configure the radio in a specific mode and then test its performance.
+The Radio test sample demonstrates how to configure the 2.4 GHz short-range radio (Bluetooth® LE, IEEE 802.15.4 and proprietary) in a specific mode and then test its performance.
 The sample provides a set of predefined commands that allow you to configure the radio in three modes:
 
 * Constant RX or TX carrier
@@ -155,7 +155,7 @@ The behavior of the commands vary depending on the hardware configuration and Kc
   * For these commands, the radio peripheral and FEM gain is calculated and set automatically to meet your requirements.
   * If an exact output power value cannot be set, a lower value is used.
 
-* Radio Test with front-end module support and manual Tx output power control (the kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is disabled):
+* Radio Test with front-end module support and manual Tx output power control (the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is disabled):
 
   * The ``output_power`` command sets the SoC output command with a subcommands set.
   * The ``fem`` command with the ``tx_gain`` subcommand sets the front-end module gain to an arbitrary value for given front-end module.

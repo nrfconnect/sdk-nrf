@@ -8,4 +8,7 @@ config TEST_LPUART_TIMEOUT
 	int "Test timeout (seconds)"
 	default 1
 
+config TEST_LPUART_LOOPBACK
+	bool "Loopback"
+
 source "Kconfig.zephyr"

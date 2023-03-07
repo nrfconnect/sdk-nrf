@@ -8,6 +8,23 @@
 #include <cJSON.h>
 
 /**
+ * @brief nRF Cloud device message handler.
+ *
+ * @param[in] dev_msg The received device message as a NULL-terminated string
+ */
+typedef void (*dev_msg_handler_cb_t)(const char * const dev_msg);
+
+/**
+ * @brief Register a device message handler to receive general device messages from nRF Cloud
+ *
+ * The callback will be called directly from the connection nRF Cloud connection poll thread,
+ * so it will block receipt of data from nRF Cloud until complete. Avoid lengthy operations.
+ *
+ * @param handler_cb - The callback to handle device messages
+ */
+void register_general_dev_msg_handler(dev_msg_handler_cb_t handler_cb);
+
+/**
  * @brief Check whether we are currently connected to nRF Cloud.
  *
  * @return bool - Whether we are currently connected to nRF Cloud.

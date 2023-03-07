@@ -8,10 +8,10 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <modem/location.h>
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
 #include <net/nrf_cloud_agps.h>
 #endif
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif
 
@@ -19,17 +19,72 @@
 
 LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
 
+/* Verify method configurations */
+
 BUILD_ASSERT(
 	IS_ENABLED(CONFIG_LOCATION_METHOD_GNSS) ||
 	IS_ENABLED(CONFIG_LOCATION_METHOD_CELLULAR) ||
 	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI),
 	"At least one location method must be enabled");
 
+#if !defined(CONFIG_LOCATION_METHOD_GNSS)
+BUILD_ASSERT(
+	!IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_FIRST_GNSS),
+	"CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_FIRST_GNSS must be disabled when "
+	"CONFIG_LOCATION_METHOD_GNSS is disabled");
+BUILD_ASSERT(
+	!IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_SECOND_GNSS),
+	"CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_SECOND_GNSS must be disabled when "
+	"CONFIG_LOCATION_METHOD_GNSS is disabled");
+BUILD_ASSERT(
+	!IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_THIRD_GNSS),
+	"CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_THIRD_GNSS must be disabled when "
+	"CONFIG_LOCATION_METHOD_GNSS is disabled");
+#endif
+
+#if !defined(CONFIG_LOCATION_METHOD_CELLULAR)
+BUILD_ASSERT(
+	!IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_FIRST_CELLULAR),
+	"CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_FIRST_CELLULAR must be disabled when "
+	"CONFIG_LOCATION_METHOD_CELLULAR is disabled");
+BUILD_ASSERT(
+	!IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_SECOND_CELLULAR),
+	"CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_SECOND_CELLULAR must be disabled when "
+	"CONFIG_LOCATION_METHOD_CELLULAR is disabled");
+BUILD_ASSERT(
+	!IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_THIRD_CELLULAR),
+	"CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_THIRD_CELLULAR must be disabled when "
+	"CONFIG_LOCATION_METHOD_CELLULAR is disabled");
+#endif
+
+#if !defined(CONFIG_LOCATION_METHOD_WIFI)
+BUILD_ASSERT(
+	!IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_FIRST_WIFI),
+	"CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_FIRST_WIFI must be disabled when "
+	"CONFIG_LOCATION_METHOD_WIFI is disabled");
+BUILD_ASSERT(
+	!IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_SECOND_WIFI),
+	"CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_SECOND_WIFI must be disabled when "
+	"CONFIG_LOCATION_METHOD_WIFI is disabled");
+BUILD_ASSERT(
+	!IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_THIRD_WIFI),
+	"CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_THIRD_WIFI must be disabled when "
+	"CONFIG_LOCATION_METHOD_WIFI is disabled");
+#endif
+
+#if defined(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_SECOND_NONE)
+BUILD_ASSERT(
+	IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_THIRD_NONE),
+	"CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_THIRD_NONE must be enabled when "
+	"CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_SECOND_NONE is enabled");
+#endif
+
 static bool initialized;
 
 static const char LOCATION_METHOD_CELLULAR_STR[] = "Cellular";
 static const char LOCATION_METHOD_GNSS_STR[] = "GNSS";
 static const char LOCATION_METHOD_WIFI_STR[] = "Wi-Fi";
+static const char LOCATION_METHOD_INTERNAL_WIFI_CELLULAR_STR[] = "Wi-Fi + Cellular";
 static const char LOCATION_METHOD_UNKNOWN_STR[] = "Unknown";
 
 int location_init(location_event_handler_t handler)
@@ -61,17 +116,6 @@ int location_request(const struct location_config *config)
 {
 	int err;
 	struct location_config default_config = { 0 };
-	enum location_method methods[] = {
-#if defined(CONFIG_LOCATION_METHOD_GNSS)
-		LOCATION_METHOD_GNSS,
-#endif
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
-		LOCATION_METHOD_WIFI,
-#endif
-#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
-		LOCATION_METHOD_CELLULAR,
-#endif
-		};
 
 	if (!initialized) {
 		LOG_ERR("Location library not initialized when calling %s", __func__);
@@ -81,7 +125,7 @@ int location_request(const struct location_config *config)
 	/* Go to default config handling if no config given or if no methods given */
 	if (config == NULL || config->methods_count == 0) {
 
-		location_config_defaults_set(&default_config, ARRAY_SIZE(methods), methods);
+		location_config_defaults_set(&default_config, 0, NULL);
 
 		if (config != NULL) {
 			/* Top level configs are given and must be taken from given config */
@@ -128,17 +172,32 @@ static void location_config_method_defaults_set(
 
 	method->method = method_type;
 	if (method_type == LOCATION_METHOD_GNSS) {
-		method->gnss.timeout = 120 * MSEC_PER_SEC;
-		method->gnss.accuracy = LOCATION_ACCURACY_NORMAL;
-		method->gnss.num_consecutive_fixes = 3;
-		method->gnss.visibility_detection = false;
-		method->gnss.priority_mode = false;
+#if defined(CONFIG_LOCATION_METHOD_GNSS)
+		method->gnss.timeout = CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_TIMEOUT;
+
+		if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_LOW)) {
+			method->gnss.accuracy = LOCATION_ACCURACY_LOW;
+		} else if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_HIGH)) {
+			method->gnss.accuracy = LOCATION_ACCURACY_HIGH;
+		} else { /* IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_NORMAL) */
+			method->gnss.accuracy = LOCATION_ACCURACY_NORMAL;
+		}
+
+		method->gnss.num_consecutive_fixes =
+			CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_NUM_CONSECUTIVE_FIXES;
+		method->gnss.visibility_detection =
+			IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_VISIBILITY_DETECTION);
+		method->gnss.priority_mode =
+			IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_PRIORITY_MODE);
+#endif
 	} else if (method_type == LOCATION_METHOD_CELLULAR) {
-		method->cellular.timeout = 30 * MSEC_PER_SEC;
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
+		method->cellular.timeout = CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT;
 		method->cellular.service = LOCATION_SERVICE_ANY;
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
+#endif
 	} else if (method_type == LOCATION_METHOD_WIFI) {
-		method->wifi.timeout = 30 * MSEC_PER_SEC;
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+		method->wifi.timeout = CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT;
 		method->wifi.service = LOCATION_SERVICE_ANY;
 #endif
 	}
@@ -149,6 +208,8 @@ void location_config_defaults_set(
 	uint8_t methods_count,
 	enum location_method *method_types)
 {
+	enum location_method method_types_tmp[CONFIG_LOCATION_METHODS_LIST_SIZE];
+
 	if (config == NULL) {
 		LOG_ERR("Configuration must not be NULL");
 		return;
@@ -161,9 +222,49 @@ void location_config_defaults_set(
 	}
 
 	memset(config, 0, sizeof(struct location_config));
-	config->methods_count = methods_count;
-	config->timeout = 300 * MSEC_PER_SEC; /* 5 minutes */
+	config->interval = CONFIG_LOCATION_REQUEST_DEFAULT_INTERVAL;
+	config->timeout = CONFIG_LOCATION_REQUEST_DEFAULT_TIMEOUT;
 	config->mode = LOCATION_REQ_MODE_FALLBACK;
+
+	/* Handle Kconfig's for method priorities */
+	if (method_types == NULL) {
+		methods_count = 0;
+		if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_FIRST_GNSS)) {
+			method_types_tmp[0] = LOCATION_METHOD_GNSS;
+			methods_count++;
+		} else if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_FIRST_WIFI)) {
+			method_types_tmp[0] = LOCATION_METHOD_WIFI;
+			methods_count++;
+		} else { /* IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_FIRST_CELLULAR) */
+			method_types_tmp[0] = LOCATION_METHOD_CELLULAR;
+			methods_count++;
+		}
+
+		if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_SECOND_GNSS)) {
+			method_types_tmp[1] = LOCATION_METHOD_GNSS;
+			methods_count++;
+		} else if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_SECOND_WIFI)) {
+			method_types_tmp[1] = LOCATION_METHOD_WIFI;
+			methods_count++;
+		} else if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_SECOND_CELLULAR)) {
+			method_types_tmp[1] = LOCATION_METHOD_CELLULAR;
+			methods_count++;
+		}
+
+		if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_THIRD_GNSS)) {
+			method_types_tmp[2] = LOCATION_METHOD_GNSS;
+			methods_count++;
+		} else if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_THIRD_WIFI)) {
+			method_types_tmp[2] = LOCATION_METHOD_WIFI;
+			methods_count++;
+		} else if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_THIRD_CELLULAR)) {
+			method_types_tmp[2] = LOCATION_METHOD_CELLULAR;
+			methods_count++;
+		}
+		method_types = method_types_tmp;
+	}
+	config->methods_count = methods_count;
+
 	for (int i = 0; i < methods_count; i++) {
 		location_config_method_defaults_set(&config->methods[i], method_types[i]);
 	}
@@ -182,13 +283,19 @@ const char *location_method_str(enum location_method method)
 		return LOCATION_METHOD_WIFI_STR;
 
 	default:
+		/* Wi-Fi + Cellular method cannot be checked in switch-case because
+		 * it's not defined in the enum
+		 */
+		if (method == LOCATION_METHOD_INTERNAL_WIFI_CELLULAR) {
+			return LOCATION_METHOD_INTERNAL_WIFI_CELLULAR_STR;
+		}
 		return LOCATION_METHOD_UNKNOWN_STR;
 	}
 }
 
 int location_agps_data_process(const char *buf, size_t buf_len)
 {
-#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
 	if (!buf) {
 		LOG_ERR("A-GPS data buffer cannot be a NULL pointer.");
 		return -EINVAL;
@@ -204,7 +311,7 @@ int location_agps_data_process(const char *buf, size_t buf_len)
 
 int location_pgps_data_process(const char *buf, size_t buf_len)
 {
-#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 	int err;
 
 	if (!buf) {
@@ -229,11 +336,12 @@ int location_pgps_data_process(const char *buf, size_t buf_len)
 	return -ENOTSUP;
 }
 
-void location_cellular_ext_result_set(
-	enum location_cellular_ext_result result,
+void location_cloud_location_ext_result_set(
+	enum location_ext_result result,
 	struct location_data *location)
 {
-#if defined(CONFIG_LOCATION_METHOD_CELLULAR_EXTERNAL)
-	location_core_cellular_ext_result_set(result, location);
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) &&\
+	(defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI))
+	location_core_cloud_location_ext_result_set(result, location);
 #endif
 }

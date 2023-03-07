@@ -1,11 +1,17 @@
 /*
- * Copyright (c) 2012-2014 Wind River Systems, Inc.
+ * Copyright (c) 2022 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/** @file
+ * @brief WiFi shell sample main function
  */
 
 #include <zephyr/sys/printk.h>
 #include <nrfx_clock.h>
+#include <zephyr/device.h>
+#include <zephyr/net/net_config.h>
 
 void main(void)
 {
@@ -15,4 +21,16 @@ void main(void)
 			       NRF_CLOCK_HFCLK_DIV_1);
 #endif
 	printk("Starting %s with CPU frequency: %d MHz\n", CONFIG_BOARD, SystemCoreClock/MHZ(1));
+
+#ifdef CONFIG_NET_CONFIG_SETTINGS
+	/* Without this, DHCPv4 starts on first interface and if that is not Wi-Fi or
+	 * only supports IPv6, then its an issue. (E.g., OpenThread)
+	 *
+	 * So, we start DHCPv4 on Wi-Fi interface always, independent of the ordering.
+	 */
+	/* TODO: Replace device name with DTS settings later */
+	const struct device *dev = device_get_binding("wlan0");
+
+	net_config_init_app(dev, "Initializing network");
+#endif
 }

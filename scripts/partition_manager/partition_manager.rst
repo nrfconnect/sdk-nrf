@@ -205,27 +205,27 @@ The following 2 examples are equivalent:
 
    .. _partition_manager_span_ex1:
 
-   * In the following example, the mcuboot and spm configurations result in this partition order: ``mcuboot``, ``spm``, ``app``.
-     Therefore, the foo partition configuration is invalid, because ``spm`` must be placed between ``mcuboot`` and ``app``, but is not in the span list.
+   * In the following example, the mcuboot and tfm configurations result in this partition order: ``mcuboot``, ``tfm``, ``app``.
+     Therefore, the foo partition configuration is invalid, because ``tfm`` must be placed between ``mcuboot`` and ``app``, but is not in the span list.
 
      .. code-block:: yaml
         :caption: Span property example 1 (invalid)
 
         mcuboot:
            placement:
-              before: [spm, app]
+              before: [tfm, app]
 
-        spm:
+        tfm:
            placement:
               before: [app]
 
         foo:
            span: [mcuboot, app]
 
-   * In the following example, these mcuboot, spm, and app configurations have two possible orders:
+   * In the following example, these mcuboot, tfm, and app configurations have two possible orders:
 
-     * Order 1: mcuboot, spm, app
-     * Order 2: mcuboot, app, spm
+     * Order 1: mcuboot, tfm, app
+     * Order 2: mcuboot, app, tfm
 
      In the absence of additional configuration, the Partition Manager may choose either order.
      However, since a span configuring the foo partition is present, the Partition Manager should choose order 2, since it is the only order that results in a valid configuration for the foo partition.
@@ -236,7 +236,7 @@ The following 2 examples are equivalent:
         mcuboot:
            placement:
 
-        spm:
+        tfm:
            placement:
               after: [mcuboot]
 
@@ -248,10 +248,10 @@ The following 2 examples are equivalent:
            span: [mcuboot, app]
 
 
-   * In the following example, these mcuboot, spm, and app configurations have two possible orders:
+   * In the following example, these mcuboot, tfm, and app configurations have two possible orders:
 
-     * Order 1: mcuboot, spm, app
-     * Order 2: mcuboot, app, spm
+     * Order 1: mcuboot, tfm, app
+     * Order 2: mcuboot, app, tfm
 
      However, the overall configuration is unsatisfiable: foo requires order 2, while bar requires order 1.
 
@@ -261,7 +261,7 @@ The following 2 examples are equivalent:
         mcuboot:
            placement:
 
-        spm:
+        tfm:
            placement:
               after: [mcuboot]
 
@@ -273,7 +273,7 @@ The following 2 examples are equivalent:
            span: [mcuboot, app]
 
         bar:
-           span: [mcuboot, spm]
+           span: [mcuboot, tfm]
 
 .. _partition_manager_inside:
 
@@ -407,7 +407,7 @@ The information extracted from devicetree is the alignment value for some partit
        align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
 
    app_image:
-     span: [tfm, spm, app]
+     span: [tfm, app]
 
    s0_image:
      # S0 spans over the image booted by B0
@@ -543,7 +543,7 @@ To let partition manager know which Kconfig option ensures the existence of the 
 For partitions in the internal flash memory, ``DEFAULT_DRIVER_KCONFIG`` within :file:`partition_manager.cmake` is set automatically to :kconfig:option:`CONFIG_SOC_FLASH_NRF`, so that all the partitions placed in the internal flash are always available at runtime.
 For external regions, ``DEFAULT_DRIVER_KCONFIG`` within :file:`partition_manager.cmake` must be set to :kconfig:option:`CONFIG_PM_EXTERNAL_FLASH_HAS_DRIVER`.
 Out-of-tree drivers can select this value to attest that they provide support for the external flash.
-This is an hidden option and can be selected only by an external driver or a Kconfig option.
+This is a hidden option and can be selected only by an external driver or a Kconfig option.
 
 This option is automatically set when :kconfig:option:`CONFIG_NRF_QSPI_NOR` or :kconfig:option:`CONFIG_SPI_NOR` are enabled.
 If the application provides the driver in an unusual way, this option can be overridden by setting :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` in the application configuration.
@@ -559,7 +559,7 @@ As partition manager does not know if partitions are used at runtime, consider t
 .. note::
 
    When using an application configured with an MCUboot child image, both images use the same partition manager configuration, which means that the app and MCUboot have exactly the same partition maps.
-   The accessibility at runtime of flash partitions depend on the configurations of both the application and MCUboot and the values they give to the ``DEFAULT_DRIVER_KCONFIG`` option of the partition manager region specification.
+   The accessibility at runtime of flash partitions depends on the configurations of both the application and MCUboot and the values they give to the ``DEFAULT_DRIVER_KCONFIG`` option of the partition manager region specification.
 
 Build system
 ************

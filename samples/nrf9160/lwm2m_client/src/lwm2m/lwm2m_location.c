@@ -13,11 +13,6 @@
 #include "gnss_pvt_event.h"
 #include "lwm2m_app_utils.h"
 
-#define MODULE lwm2m_app_loc
-
-#include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
-
 static time_t gnss_mktime(struct nrf_modem_gnss_datetime *date)
 {
 	struct tm tm = {
@@ -43,19 +38,13 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		double radius = event->pvt.accuracy;
 		time_t timestamp = gnss_mktime(&event->pvt.datetime);
 
-		lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LATITUDE_RID),
-				       &latitude);
-		lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LONGITUDE_RID),
-				       &longitude);
-		lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, ALTITUDE_RID),
-				       &altitude);
-		lwm2m_engine_set_float(
-			LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_RADIUS_RID), &radius);
-		lwm2m_engine_set_float(
-			LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_SPEED_RID), &speed);
-		lwm2m_engine_set_time(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0,
-						LOCATION_TIMESTAMP_RID),
-				     timestamp);
+		lwm2m_set_f64(&LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LATITUDE_RID), latitude);
+		lwm2m_set_f64(&LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LONGITUDE_RID), longitude);
+		lwm2m_set_f64(&LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, ALTITUDE_RID), altitude);
+		lwm2m_set_f64(&LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_RADIUS_RID), radius);
+		lwm2m_set_f64(&LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_SPEED_RID), speed);
+		lwm2m_set_time(&LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_TIMESTAMP_RID),
+			       timestamp);
 
 		return true;
 	}
@@ -63,5 +52,5 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	return false;
 }
 
-APP_EVENT_LISTENER(MODULE, app_event_handler);
-APP_EVENT_SUBSCRIBE(MODULE, gnss_pvt_event);
+APP_EVENT_LISTENER(location, app_event_handler);
+APP_EVENT_SUBSCRIBE(location, gnss_pvt_event);

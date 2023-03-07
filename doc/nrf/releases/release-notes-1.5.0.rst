@@ -85,7 +85,7 @@ nRF9160
 
   * :ref:`lwm2m_client` sample - Added handling of network failures. The sample now tries to reconnect to the LTE network when a failure is reported.
   * :ref:`nrf_coap_client_sample` sample - Updated the default server URL to ``californium.eclipseprojects.io``.
-  * :ref:`mqtt_simple_sample` sample - Updated the default server URL to ``mqtt.eclipseprojects.io``.
+  * nRF9160: Simple MQTT sample - Updated the default server URL to ``mqtt.eclipseprojects.io``.
   * Extracted the certificate, button, and LED handling functionality from :ref:`http_application_update_sample` sample to :file:`samples/nrf9160/http_update/common`, to share them with :ref:`http_modem_delta_update_sample` sample.
   * Moved the :ref:`http_application_update_sample` sample from :file:`samples/nrf9160/http_application_update/` to :file:`samples/nrf9160/http_update/application_update`.
   * :ref:`lib_download_client` library:
@@ -152,7 +152,7 @@ nRF5340 SoC
 
 
   * :ref:`esb_readme` subsystem - Added support for nRF5340 (CPUNET) in the ESB subsystem.
-  * :ref:`lib_spm` subsystem - Added support for nRF5340 peripherals in non-secure applications.
+  * Secure Partition Manager (SPM) subsystem - Added support for nRF5340 peripherals in non-secure applications.
   * :ref:`ble_samples` - Added configuration overlays for child image to the required Bluetooth LE samples so that no Kconfig updates in the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample are needed by default.
   * :ref:`nrf5340_empty_app_core` sample - Disabled the kernel memory pool option :kconfig:option:`CONFIG_KERNEL_MEM_POOL` to reduce the memory footprint.
   * ``bl_boot`` library - Disabled clock interrupts before booting the application. This change fixes an issue where the :ref:`bootloader` sample would not be able to boot a Zephyr application on the nRF5340 SoC.
@@ -1017,7 +1017,7 @@ Applications and samples
 * Updated the configuration sections of the following samples:
 
   * :ref:`download_sample`
-  * :ref:`mqtt_simple_sample`
+  * nRF9160: Simple MQTT
   * Bluetooth: Peripheral Alexa Gadgets
 * :ref:`bootloader` - Added information on bootloader overlays and building the sample from SEGGER Embedded Studio and command line.
 * Added information about FEM support to the :ref:`radio_test` and :ref:`direct_test_mode` samples.
@@ -1038,7 +1038,7 @@ nrfxlib
 * :ref:`nrf_modem`:
 
   * :ref:`architecture` - Added information on shared memory configuration.
-  * :ref:`tls_dtls_configuration` - Added information on supported cipher suites.
+  * ``tls_dtls_configuration`` - Added information on supported cipher suites.
   * :ref:`nrf_modem_ug_porting` - Added information about the modem functions.
 * :ref:`mpsl` - Added :ref:`mpsl_fem`.
 * :ref:`nrf_802154_sl` - Added.

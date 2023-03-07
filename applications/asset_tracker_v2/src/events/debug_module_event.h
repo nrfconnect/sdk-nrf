@@ -21,7 +21,7 @@ extern "C" {
 #endif
 
 enum debug_module_event_type {
-	/** Event carrying memfault data that should be forwarded via the configured cloud
+	/** Event carrying Memfault data that should be forwarded via the configured cloud
 	 *  backend to Memfault cloud. Only sent if
 	 *  CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT is enabled.
 	 *  Payload is of type @ref debug_module_memfault_data.
@@ -30,16 +30,17 @@ enum debug_module_event_type {
 	 */
 	DEBUG_EVT_MEMFAULT_DATA_READY,
 
-	/** Event sent after boot when building for QEMU x86. This event acts as a placeholder for
+	/** Event sent after boot when building for PC. This event acts as a placeholder for
 	 *  MODEM_EVT_INITIALIZED which is not sent due to the modem module being disabled for
-	 *  QEMU x86 builds.
+	 *  PC builds.
 	 */
-	DEBUG_EVT_QEMU_X86_INITIALIZED,
+	DEBUG_EVT_EMULATOR_INITIALIZED,
 
-	/** Event sent when the application is built for QEMU x86.
-	 *  When built for QEMU x86 it is assumed that the application is connected to the network.
+	/** Event sent when the application is built for PC.
+	 *  When built for PC it is assumed that the application
+	 *  is connected to the network.
 	 */
-	DEBUG_EVT_QEMU_X86_NETWORK_CONNECTED,
+	DEBUG_EVT_EMULATOR_NETWORK_CONNECTED,
 
 	/** An irrecoverable error has occurred in the debug module. Error details are
 	 *  attached in the event structure.

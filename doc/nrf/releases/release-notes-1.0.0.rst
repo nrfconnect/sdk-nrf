@@ -109,7 +109,7 @@ nRF9160
 
   * The orientation detector now supports interrupt handling.
 
-* nRF Connect SDK now uses upstream CoAP implementation. The :ref:`mqtt_simple_sample` sample was rewritten to use the upstream library, and the downstream CoAP was removed.
+* nRF Connect SDK now uses upstream CoAP implementation. The nRF9160: Simple MQTT sample was rewritten to use the upstream library, and the downstream CoAP was removed.
 * The :ref:`http_application_update_sample` sample has been updated to use the :ref:`lib_fota_download` library.
 
 BSD library
@@ -130,7 +130,7 @@ Secure Partition Manager (SPM) library
     * :file:`secure_services.c` resides in secure firmware (SPM).
     * :file:`secure_services.h` declares functions that can be called from non-secure firmware.
 
-  * :ref:`lib_spm` now exposes secure entry functions by default.
+  * Secure Partition Manager (SPM) now exposes secure entry functions by default.
   * Added reboot as a secure service. The reboot secure service is called when the non-secure firmware calls ``sys_reboot()``.
 
 * PWM0-3 added as non-secure.
@@ -211,7 +211,7 @@ Documentation
   * nRF9160:
 
     * nRF9160: Secure Services
-    * :ref:`secure_partition_manager`
+    * Secure Partition Manager
     * nRF9160: AWS FOTA
     * :ref:`lte_sensor_gateway`
 
@@ -230,12 +230,12 @@ Documentation
 
   * nRF9160:
 
-    * :ref:`lib_spm`
+    * Secure Partition Manager (SPM)
     * ``at_cmd`` library
     * :ref:`lib_download_client`
     * :ref:`lib_aws_fota`
     * :ref:`lib_fota_download`
-    * :ref:`lib_secure_services`
+    * Secure Services
 
   * Bluetooth Low Energy:
 

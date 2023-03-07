@@ -45,9 +45,9 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
 	     IS_ENABLED(CONFIG_LWM2M_INTEGRATION),
 	     "A cloud transport service must be enabled");
 
-#if defined(CONFIG_BOARD_QEMU_X86)
+#if defined(CONFIG_BOARD_QEMU_X86) || defined(CONFIG_BOARD_NATIVE_POSIX)
 BUILD_ASSERT(IS_ENABLED(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM),
-	     "Passing IMEI as cloud client ID is not supported when building for QEMU x86. "
+	     "Passing IMEI as cloud client ID is not supported when building for PC builds. "
 	     "This is because IMEI is retrieved from the modem and not available when running "
 	     "Zephyr's native TCP/IP stack.");
 #endif
@@ -100,9 +100,17 @@ static int connect_retries;
 static struct cloud_data_cfg copy_cfg;
 const k_tid_t cloud_module_thread;
 
-/* Register message IDs that are used with the QoS library. */
-QOS_MESSAGE_TYPES_REGISTER(GENERIC, BATCH, UI, NEIGHBOR_CELLS, AGPS_REQUEST,
-			   PGPS_REQUEST, CONFIG, MEMFAULT);
+/* Message IDs that are used with the QoS library. */
+enum {
+	GENERIC = 0,
+	BATCH,
+	UI,
+	CLOUD_LOCATION,
+	AGPS_REQUEST,
+	PGPS_REQUEST,
+	CONFIG,
+	MEMFAULT,
+};
 
 /* Cloud module message queue. */
 #define CLOUD_QUEUE_ENTRY_COUNT		20
@@ -608,7 +616,7 @@ static int setup(void)
 static void on_state_init(struct cloud_msg_data *msg)
 {
 	if ((IS_EVENT(msg, modem, MODEM_EVT_INITIALIZED)) ||
-	    (IS_EVENT(msg, debug, DEBUG_EVT_QEMU_X86_INITIALIZED))) {
+	    (IS_EVENT(msg, debug, DEBUG_EVT_EMULATOR_INITIALIZED))) {
 		int err;
 
 		state_set(STATE_LTE_DISCONNECTED);
@@ -645,7 +653,7 @@ static void on_state_lte_connected(struct cloud_msg_data *msg)
 static void on_state_lte_disconnected(struct cloud_msg_data *msg)
 {
 	if ((IS_EVENT(msg, modem, MODEM_EVT_LTE_CONNECTED)) ||
-	    (IS_EVENT(msg, debug, DEBUG_EVT_QEMU_X86_NETWORK_CONNECTED))) {
+	    (IS_EVENT(msg, debug, DEBUG_EVT_EMULATOR_NETWORK_CONNECTED))) {
 		state_set(STATE_LTE_CONNECTED);
 
 		/* LTE is now connected, cloud connection can be attempted */
@@ -715,7 +723,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 
 		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
 
-			char *paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
+			struct lwm2m_obj_path paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
 
 			__ASSERT(ARRAY_SIZE(paths) ==
 				 ARRAY_SIZE(msg->module.data.data.buffer.paths),
@@ -765,7 +773,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 
 		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
 
-			char *paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
+			struct lwm2m_obj_path paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
 
 			__ASSERT(ARRAY_SIZE(paths) ==
 				 ARRAY_SIZE(msg->module.data.data.buffer.paths),
@@ -794,12 +802,12 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 				true);
 	}
 
-	if (IS_EVENT(msg, data, DATA_EVT_NEIGHBOR_CELLS_DATA_SEND)) {
+	if (IS_EVENT(msg, data, DATA_EVT_CLOUD_LOCATION_DATA_SEND)) {
 
 		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
-			err = cloud_wrap_neighbor_cells_send(NULL, 0, true, 0);
+			err = cloud_wrap_cloud_location_send(NULL, 0, true, 0);
 			if (err) {
-				LOG_ERR("cloud_wrap_neighbor_cells_send, err: %d", err);
+				LOG_ERR("cloud_wrap_cloud_location_send, err: %d", err);
 			}
 
 			return;
@@ -807,7 +815,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 
 		add_qos_message(msg->module.data.data.buffer.buf,
 				msg->module.data.data.buffer.len,
-				NEIGHBOR_CELLS,
+				CLOUD_LOCATION,
 				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
 				true);
 	}
@@ -855,13 +863,13 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 				LOG_WRN("cloud_wrap_ui_send, err: %d", err);
 			}
 			break;
-		case NEIGHBOR_CELLS:
-			err = cloud_wrap_neighbor_cells_send(message->buf,
-							     message->len,
-							     ack,
-							     msg->module.cloud.data.message.id);
+		case CLOUD_LOCATION:
+			err = cloud_wrap_cloud_location_send(message->buf,
+							message->len,
+							ack,
+							msg->module.cloud.data.message.id);
 			if (err) {
-				LOG_WRN("cloud_wrap_neighbor_cells_send, err: %d", err);
+				LOG_WRN("cloud_wrap_cloud_location_send, err: %d", err);
 			}
 			break;
 		case AGPS_REQUEST:

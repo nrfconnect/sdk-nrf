@@ -28,9 +28,9 @@ config NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
 
 config NCS_INCLUDE_RPMSG_CHILD_IMAGE
 	bool "Include RPMsg sample on netcore"
-	depends on SOC_NRF5340_CPUAPP && (BT_RPMSG || NRF_802154_SER_HOST || BT_RPC)
+	depends on SOC_NRF5340_CPUAPP && (BT_RPMSG || NRF_802154_SER_HOST || BT_RPC || NRF700X_RADIO_TEST)
 	select PARTITION_MANAGER_ENABLED
-	default y if BT_RPMSG || NRF_802154_SER_HOST || BT_RPC
+	default y if BT_RPMSG || NRF_802154_SER_HOST || BT_RPC || NRF700X_RADIO_TEST
 	help
 	  Enabling this setting will include a network stack to run on the
 	  network core and communicate over RPMsg with the application core.
@@ -45,6 +45,7 @@ config NCS_INCLUDE_RPMSG_CHILD_IMAGE
 	  - HCI RPMsg: When only Bluetooth is enabled
 	  - nRF IEEE 802.15.4 Serialization RPMsg: When only nRF IEEE 802.15.4 Serialization host is enabled.
 	  - nRF RPC Host: When Bluetooth and Bluetooth serialization over RPC are enabled.
+	  - nRF BLE radio test: When both Wi-Fi and BLE radio test are enabled for testing SR co-existence.
 
 config NCS_SAMPLE_REMOTE_SHELL_CHILD_IMAGE
 	bool "Add remote_shell sample as a child image"
@@ -59,33 +60,50 @@ if NCS_INCLUDE_RPMSG_CHILD_IMAGE
 
 config NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE
 	bool
-	depends on BT_RPMSG && NRF_802154_SER_HOST && !BT_RPC
+	depends on BT_RPMSG && NRF_802154_SER_HOST && !BT_RPC && !NRF700X_RADIO_TEST
 	default y
 	help
 	  multiprotocol_rpmsg sample as a child image (network core).
 
 config NCS_SAMPLE_HCI_RPMSG_CHILD_IMAGE
 	bool
-	depends on BT_RPMSG && !NRF_802154_SER_HOST && !BT_RPC
+	depends on BT_RPMSG && !NRF_802154_SER_HOST && !BT_RPC && !NRF700X_RADIO_TEST
 	default y
 	help
 	  hci_rpmsg sample as a child image (network core).
 
 config NCS_SAMPLE_802154_RPMSG_CHILD_IMAGE
 	bool
-	depends on NRF_802154_SER_HOST && !BT_RPMSG && !BT_RPC
+	depends on NRF_802154_SER_HOST && !BT_RPMSG && !BT_RPC && !NRF700X_RADIO_TEST
 	default y
 	help
 	  802154_rpmsg sample as a child image (network core).
 
 config NCS_SAMPLE_RPC_HOST_CHILD_IMAGE
 	bool
-	depends on BT_RPC
+	depends on BT_RPC && !NRF700X_RADIO_TEST
 	default y
 	help
 	  rpc_host sample as a child image (network core).
 
+config NCS_SAMPLE_PERIPHERAL_RADIO_TEST_CHILD_IMAGE
+	bool "Add peripheral radio_test sample as a child image"
+	depends on NRF700X_RADIO_TEST && BOARD_ENABLE_CPUNET
+	default y
+	select PARTITION_MANAGER_ENABLED
+	help
+	  Add peripheral radio_test as a child image (network core).
+	  Used by samples that run on the application core only.
+
 endif # NCS_INCLUDE_RPMSG_CHILD_IMAGE
+
+config NCS_SAMPLE_EMPTY_NET_CORE_CHILD_IMAGE
+	bool
+	depends on SOC_NRF5340_CPUAPP && BOARD_ENABLE_CPUNET
+	depends on NRF53_UPGRADE_NETWORK_CORE && !NCS_INCLUDE_RPMSG_CHILD_IMAGE
+	default y
+	help
+	  nRF5340 empty network core sample as a child image (network core).
 
 endif # SOC_SERIES_NRF53X
 
@@ -111,3 +129,5 @@ config NCS_MCUBOOT_IN_BUILD
 	  Helper option used to communicate to child images that MCUboot is included in the build.
 
 endmenu
+
+rsource "common/Kconfig"

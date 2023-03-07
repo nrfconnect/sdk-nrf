@@ -37,9 +37,9 @@ static bool ca_cleared;
 static bool key_cleared;
 static bool keys_exist;
 
-static int lwm2m_engine_get_res_buf_custom_fake(const char *pathstr, void **buffer_ptr,
-						uint16_t *buffer_len, uint16_t *data_len,
-						uint8_t *data_flags)
+static int lwm2m_get_res_buf_custom_fake(const struct lwm2m_obj_path *path,
+					 void **buffer_ptr, uint16_t *buffer_len,
+					 uint16_t *data_len, uint8_t *data_flags)
 {
 	if (buffer_ptr)
 		*buffer_ptr = my_buf;
@@ -63,7 +63,7 @@ static void setup(void)
 	my_data_len = 0;
 	keys_exist = false;
 
-	lwm2m_engine_get_res_buf_fake.custom_fake = lwm2m_engine_get_res_buf_custom_fake;
+	lwm2m_get_res_buf_fake.custom_fake = lwm2m_get_res_buf_custom_fake;
 }
 
 static int modem_key_mgmt_exists_custom_fake(nrf_sec_tag_t sec_tag,
@@ -73,21 +73,22 @@ static int modem_key_mgmt_exists_custom_fake(nrf_sec_tag_t sec_tag,
 	return 0;
 }
 
-static int lwm2m_engine_set_opaque_custom_fake_PSK(const char *path, const char *data, uint16_t len)
+static int lwm2m_set_opaque_custom_fake_PSK(const struct lwm2m_obj_path *path, const char *data,
+					    uint16_t len)
 {
-	if (strcmp(path, "0/0/0") == 0) {
+	if (path->obj_id == 0 && path->obj_inst_id == 0 && path->res_id == 0) {
 		/* URI */
 		zassert_equal(strncmp(data, CONFIG_LWM2M_CLIENT_UTILS_SERVER, len), 0, "Wrong URI");
 
-	} else if (strcmp(path, "0/0/2") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 0 && path->res_id == 2) {
 		/* MODE */
 		zassert_equal(*(uint8_t *)data, 0, "Wrong security type");
 
-	} else if (strcmp(path, "0/0/3") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 0 && path->res_id == 3) {
 		/*  ID */
 		zassert_equal(strncmp(data, MY_ID, len), 0, "Wrong ID");
 
-	} else if (strcmp(path, "0/0/5") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 0 && path->res_id == 5) {
 		/* PSK */
 		zassert_equal(memcmp(data, my_psk_bin, len), 0, "Wrong PSK");
 	} else {
@@ -96,26 +97,26 @@ static int lwm2m_engine_set_opaque_custom_fake_PSK(const char *path, const char 
 	return 0;
 }
 
-static int lwm2m_engine_set_opaque_custom_fake_CERT(const char *path, const char *data,
-						    uint16_t len)
+static int lwm2m_set_opaque_custom_fake_CERT(const struct lwm2m_obj_path *path, const char *data,
+					     uint16_t len)
 {
-	if (strcmp(path, "0/0/0") == 0) {
+	if (path->obj_id == 0 && path->obj_inst_id == 0 && path->res_id == 0) {
 		/* URI */
 		zassert_equal(strncmp(data, CONFIG_LWM2M_CLIENT_UTILS_SERVER, len), 0, "Wrong URI");
 
-	} else if (strcmp(path, "0/0/2") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 0 && path->res_id == 2) {
 		/* MODE */
 		zassert_equal(*(uint8_t *)data, 2, "Wrong security type");
 
-	} else if (strcmp(path, "0/0/3") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 0 && path->res_id == 3) {
 		/*  certificate */
 		zassert_equal(strncmp(data, MY_CERTIFICATE, len), 0, "Wrong certificate");
 
-	} else if (strcmp(path, "0/0/4") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 0 && path->res_id == 4) {
 		/* CA chain */
 		zassert_equal(strncmp(data, MY_ROOT_CA, len), 0, "Wrong CA certificate");
 
-	} else if (strcmp(path, "0/0/5") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 0 && path->res_id == 5) {
 		/* private key */
 		zassert_equal(strncmp(data, MY_PRIVATE_KEY, len), 0, "Wrong private key");
 	} else {
@@ -127,24 +128,25 @@ static int lwm2m_engine_set_opaque_custom_fake_CERT(const char *path, const char
 /* This stub should end up being called only if given resource is cleared.
  * or if default instance sets the server URI
  */
-static int lwm2m_engine_set_res_data_len_custom_fake_CERT(const char *path, uint16_t len)
+static int lwm2m_set_res_data_len_custom_fake_CERT(const struct lwm2m_obj_path *path,
+						   uint16_t len)
 {
-	if (strcmp(path, "0/0/0") == 0) {
+	if (path->obj_id == 0 && path->obj_inst_id == 0 && path->res_id == 0) {
 		/* URI */
 		zassert_equal(len, sizeof(CONFIG_LWM2M_CLIENT_UTILS_SERVER), "Wrong URI");
 		return 0;
 	}
 
 	zassert_equal(len, 0, "Len should be zero");
-	if (strcmp(path, "0/0/3") == 0) {
+	if (path->obj_id == 0 && path->obj_inst_id == 0 && path->res_id == 3) {
 		/*  certificate */
 		certificate_cleared = true;
 
-	} else if (strcmp(path, "0/0/4") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 0 && path->res_id == 4) {
 		/* CA chain */
 		ca_cleared = true;
 
-	} else if (strcmp(path, "0/0/5") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 0 && path->res_id == 5) {
 		/* private key */
 		key_cleared = true;
 	} else {
@@ -153,37 +155,44 @@ static int lwm2m_engine_set_res_data_len_custom_fake_CERT(const char *path, uint
 	return 0;
 }
 
-static int get_mode_PSK(const char *path, uint8_t *mode)
+static int get_mode_PSK(const struct lwm2m_obj_path *path, uint8_t *mode)
 {
-	zassert_equal(strcmp(path, "0/1/2"), 0, "wrong path for mode %s", path);
+	if (path->obj_id != 0 || path->obj_inst_id != 1 || path->res_id != 2) {
+		zassert_unreachable("wrong path for mode %d/%d/%d", path->obj_id, path->obj_inst_id,
+				    path->res_id);
+	}
 	*mode = 0;
 	return 0;
 }
 
-static int get_mode_CERT(const char *path, uint8_t *mode)
+static int get_mode_CERT(const struct lwm2m_obj_path *path, uint8_t *mode)
 {
-	zassert_equal(strcmp(path, "0/1/2"), 0, "wrong path for mode");
+	if (path->obj_id != 0 || path->obj_inst_id != 1 || path->res_id != 2) {
+		zassert_unreachable("wrong path for mode %d/%d/%d", path->obj_id, path->obj_inst_id,
+				    path->res_id);
+	}
 	*mode = 2;
 	return 0;
 }
 
 /* Return PSK for sec obj 1, certificate for sec obj 2 */
-static int get_mode_both(const char *path, uint8_t *mode)
+static int get_mode_both(const struct lwm2m_obj_path *path, uint8_t *mode)
 {
-	if (strcmp(path, "0/1/2") == 0) {
+	if (path->obj_id == 0 && path->obj_inst_id == 1 && path->res_id == 2) {
 		*mode = 0;
-	} else if (strcmp(path, "0/2/2") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 2 && path->res_id == 2) {
 		*mode = 2;
 	} else {
-		zassert_unreachable("Requesting mode for unknown sec obj %s", path);
+		zassert_unreachable("Requesting mode for unknown sec obj %d/%d/%d", path->obj_id,
+				    path->obj_inst_id, path->res_id);
 	}
 	return 0;
 }
 
-static int get_psk_buf(const char *path, void **buffer_ptr, uint16_t *buffer_len,
+static int get_psk_buf(const struct lwm2m_obj_path *path, void **buffer_ptr, uint16_t *buffer_len,
 		       uint16_t *data_len, uint8_t *data_flags)
 {
-	if (strcmp(path, "0/1/5") == 0) {
+	if (path->obj_id == 0 && path->obj_inst_id == 1 && path->res_id == 5) {
 		/* PSK */
 		if (buffer_ptr)
 			*buffer_ptr = my_psk_bin;
@@ -192,7 +201,7 @@ static int get_psk_buf(const char *path, void **buffer_ptr, uint16_t *buffer_len
 		if (data_len)
 			*data_len = sizeof(my_psk_bin);
 		return 0;
-	} else if (strcmp(path, "0/1/3") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 1 && path->res_id == 3) {
 		if (buffer_ptr)
 			*buffer_ptr = MY_ID;
 		if (buffer_len)
@@ -205,10 +214,10 @@ static int get_psk_buf(const char *path, void **buffer_ptr, uint16_t *buffer_len
 	return -EINVAL;
 }
 
-static int get_cert_buf(const char *path, void **buffer_ptr, uint16_t *buffer_len,
+static int get_cert_buf(const struct lwm2m_obj_path *path, void **buffer_ptr, uint16_t *buffer_len,
 			uint16_t *data_len, uint8_t *data_flags)
 {
-	if (strcmp(path, "0/2/3") == 0) {
+	if (path->obj_id == 0 && path->obj_inst_id == 2 && path->res_id == 3) {
 		if (buffer_ptr)
 			*buffer_ptr = MY_CERTIFICATE;
 		if (buffer_len)
@@ -216,7 +225,7 @@ static int get_cert_buf(const char *path, void **buffer_ptr, uint16_t *buffer_le
 		if (data_len)
 			*data_len = sizeof(MY_CERTIFICATE);
 		return 0;
-	} else if (strcmp(path, "0/2/4") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 2 && path->res_id == 4) {
 		if (buffer_ptr)
 			*buffer_ptr = MY_ROOT_CA;
 		if (buffer_len)
@@ -224,7 +233,7 @@ static int get_cert_buf(const char *path, void **buffer_ptr, uint16_t *buffer_le
 		if (data_len)
 			*data_len = sizeof(MY_ROOT_CA);
 		return 0;
-	} else if (strcmp(path, "0/2/5") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 2 && path->res_id == 5) {
 		if (buffer_ptr)
 			*buffer_ptr = MY_PRIVATE_KEY;
 		if (buffer_len)
@@ -234,27 +243,28 @@ static int get_cert_buf(const char *path, void **buffer_ptr, uint16_t *buffer_le
 		return 0;
 	}
 
-	zassert_unreachable("Requesting unknown data (%s)", path);
+	zassert_unreachable("Requesting unknown data (%d/%d/%d)", path->obj_id, path->obj_inst_id,
+			    path->res_id);
 	return -EINVAL;
 }
 
-static int get_cert_wrapper(const char *path, void **buffer_ptr, uint16_t *buffer_len,
-		       uint16_t *data_len, uint8_t *data_flags)
+static int get_cert_wrapper(const struct lwm2m_obj_path *path, void **buffer_ptr,
+			    uint16_t *buffer_len, uint16_t *data_len, uint8_t *data_flags)
 {
-	if (strncmp(path, "0/1", 3) == 0)
+	if (path->obj_id == 0 && path->obj_inst_id == 1)
 		return get_psk_buf(path, buffer_ptr, buffer_len, data_len, data_flags);
 	else
 		return get_cert_buf(path, buffer_ptr, buffer_len, data_len, data_flags);
 }
 
-static int get_uri_wrapper(const char *path, void **buffer_ptr, uint16_t *buffer_len,
-			   uint16_t *data_len, uint8_t *data_flags)
+static int get_uri_wrapper(const struct lwm2m_obj_path *path, void **buffer_ptr,
+			   uint16_t *buffer_len, uint16_t *data_len, uint8_t *data_flags)
 {
-	if (strncmp(path, "0/1", 3) == 0)
+	if (path->obj_id == 0 && path->obj_inst_id == 1)
 		return get_psk_buf(path, buffer_ptr, buffer_len, data_len, data_flags);
 	else
-		return lwm2m_engine_get_res_buf_custom_fake(path, buffer_ptr, buffer_len, data_len,
-							    data_flags);
+		return lwm2m_get_res_buf_custom_fake(path, buffer_ptr, buffer_len, data_len,
+						     data_flags);
 }
 
 static int write_to_modem(nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type cred_type,
@@ -286,10 +296,10 @@ static int write_to_modem(nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type c
 	return 0;
 }
 
-static int get_empty_CERT_buf(const char *path, void **buffer_ptr, uint16_t *buffer_len,
-			      uint16_t *data_len, uint8_t *data_flags)
+static int get_empty_CERT_buf(const struct lwm2m_obj_path *path, void **buffer_ptr,
+			      uint16_t *buffer_len, uint16_t *data_len, uint8_t *data_flags)
 {
-	if (strcmp(path, "0/1/5") == 0) {
+	if (path->obj_id == 0 && path->obj_inst_id == 1 && path->res_id == 5) {
 		/* PSK */
 		if (buffer_ptr)
 			*buffer_ptr = "";
@@ -298,7 +308,7 @@ static int get_empty_CERT_buf(const char *path, void **buffer_ptr, uint16_t *buf
 		if (data_len)
 			*data_len = 0;
 		return 0;
-	} else if (strcmp(path, "0/1/3") == 0) {
+	} else if (path->obj_id == 0 && path->obj_inst_id == 1 && path->res_id == 3) {
 		if (buffer_ptr)
 			*buffer_ptr = "";
 		if (buffer_len)
@@ -381,8 +391,8 @@ ZTEST(lwm2m_client_utils_security, test_init_get_buf_fails)
 
 	setup();
 
-	lwm2m_engine_get_res_buf_fake.custom_fake = NULL;
-	lwm2m_engine_get_res_buf_fake.return_val = -4;
+	lwm2m_get_res_buf_fake.custom_fake = NULL;
+	lwm2m_get_res_buf_fake.return_val = -4;
 	rc = lwm2m_init_security(&ctx, MY_ENDPOINT, NULL);
 	zassert_equal(rc, -4, "wrong return value");
 }
@@ -394,26 +404,21 @@ ZTEST(lwm2m_client_utils_security, test_init)
 
 	setup();
 
-	lwm2m_engine_get_res_buf_fake.custom_fake = lwm2m_engine_get_res_buf_custom_fake;
+	lwm2m_get_res_buf_fake.custom_fake = lwm2m_get_res_buf_custom_fake;
 	rc = lwm2m_init_security(&ctx, MY_ENDPOINT, NULL);
 	zassert_equal(rc, 0, "wrong return value");
 	zassert_equal(ctx.tls_tag, 100, "Bootstrap TLS tag not selected");
-	zassert_equal(lwm2m_engine_delete_obj_inst_fake.call_count, 1,
+	zassert_equal(lwm2m_delete_object_inst_fake.call_count, 1,
 		      "Default server object not deleted");
-	zassert_equal(strcmp(lwm2m_engine_delete_obj_inst_fake.arg0_val, "1/0"), 0,
-		      "Default server object not deleted");
-	zassert_equal(lwm2m_engine_register_create_callback_fake.call_count, 2,
+	zassert_equal(lwm2m_register_create_callback_fake.call_count, 2,
 		      "Callbacks not registered");
-	zassert_equal(lwm2m_engine_register_delete_callback_fake.call_count, 2,
+	zassert_equal(lwm2m_register_delete_callback_fake.call_count, 2,
 		      "Callbacks not registered");
 	zassert_equal(settings_subsys_init_fake.call_count, 1, "Settings subsys not initialized");
-	zassert_equal(lwm2m_engine_set_res_data_len_fake.call_count, 3, "Buffer size not set");
-	zassert_equal(strcmp(lwm2m_engine_set_res_data_len_fake.arg0_history[0], "0/0/0"), 0,
-		      "wrong path");
+	zassert_equal(lwm2m_set_res_data_len_fake.call_count, 3, "Buffer size not set");
 
 	/* check that bootstrap mode is set */
-	zassert_equal(strcmp(lwm2m_engine_set_u8_fake.arg0_val, "0/0/1"), 0, "wrong path");
-	zassert_equal(lwm2m_engine_set_u8_fake.arg1_val, 1, "Bootstrap mode not set");
+	zassert_equal(lwm2m_set_u8_fake.arg1_val, 1, "Bootstrap mode not set");
 }
 
 ZTEST(lwm2m_client_utils_security, test_need_bootstrap)
@@ -435,7 +440,7 @@ ZTEST(lwm2m_client_utils_security, test_lwm2m_security_set_psk)
 
 	setup();
 
-	lwm2m_engine_set_opaque_fake.custom_fake = lwm2m_engine_set_opaque_custom_fake_PSK;
+	lwm2m_set_opaque_fake.custom_fake = lwm2m_set_opaque_custom_fake_PSK;
 
 	rc = lwm2m_security_set_psk(0, MY_PSK, sizeof(MY_PSK), true, MY_ID);
 	zassert_equal(rc, 0, "wrong return value");
@@ -447,9 +452,9 @@ ZTEST(lwm2m_client_utils_security, test_lwm2m_security_set_certificate)
 
 	setup();
 
-	lwm2m_engine_set_opaque_fake.custom_fake = lwm2m_engine_set_opaque_custom_fake_CERT;
-	lwm2m_engine_set_res_data_len_fake.custom_fake =
-		lwm2m_engine_set_res_data_len_custom_fake_CERT;
+	lwm2m_set_opaque_fake.custom_fake = lwm2m_set_opaque_custom_fake_CERT;
+	lwm2m_set_res_data_len_fake.custom_fake =
+		lwm2m_set_res_data_len_custom_fake_CERT;
 
 	rc = lwm2m_security_set_certificate(0, MY_CERTIFICATE, sizeof(MY_CERTIFICATE),
 					    MY_PRIVATE_KEY, sizeof(MY_PRIVATE_KEY), MY_ROOT_CA,
@@ -467,9 +472,9 @@ ZTEST(lwm2m_client_utils_security, test_lwm2m_security_set_certificate_provision
 
 	setup();
 
-	lwm2m_engine_set_opaque_fake.custom_fake = lwm2m_engine_set_opaque_custom_fake_CERT;
-	lwm2m_engine_set_res_data_len_fake.custom_fake =
-		lwm2m_engine_set_res_data_len_custom_fake_CERT;
+	lwm2m_set_opaque_fake.custom_fake = lwm2m_set_opaque_custom_fake_CERT;
+	lwm2m_set_res_data_len_fake.custom_fake =
+		lwm2m_set_res_data_len_custom_fake_CERT;
 
 	rc = lwm2m_security_set_certificate(0, NULL, 0, NULL, 0, NULL, 0);
 	zassert_equal(rc, 0, "wrong return value");
@@ -492,8 +497,8 @@ ZTEST(lwm2m_client_utils_security, test_load_credentials_PSK)
 
 	zassert_not_null(ctx.load_credentials, "load_credentials callback not set");
 
-	lwm2m_engine_get_u8_fake.custom_fake = get_mode_PSK;
-	lwm2m_engine_get_res_buf_fake.custom_fake = get_psk_buf;
+	lwm2m_get_u8_fake.custom_fake = get_mode_PSK;
+	lwm2m_get_res_buf_fake.custom_fake = get_psk_buf;
 	modem_key_mgmt_write_fake.custom_fake = write_to_modem;
 	modem_key_mgmt_exists_fake.custom_fake = modem_key_mgmt_exists_custom_fake;
 	ctx.bootstrap_mode = false;
@@ -519,8 +524,8 @@ ZTEST(lwm2m_client_utils_security, test_load_credentials_CERT_provisioned)
 
 	zassert_not_null(ctx.load_credentials, "load_credentials callback not set");
 
-	lwm2m_engine_get_u8_fake.custom_fake = get_mode_CERT;
-	lwm2m_engine_get_res_buf_fake.custom_fake = get_empty_CERT_buf;
+	lwm2m_get_u8_fake.custom_fake = get_mode_CERT;
+	lwm2m_get_res_buf_fake.custom_fake = get_empty_CERT_buf;
 	modem_key_mgmt_exists_fake.custom_fake = modem_X509_exists;
 	rc = ctx.load_credentials(&ctx);
 	zassert_equal(rc, 0, "wrong return value");
@@ -542,29 +547,6 @@ static int copy_settings_hanler(struct settings_handler *cf)
 	handler = cf;
 	return 0;
 }
-static int str_to_pk_obj(const char *pathstr, struct lwm2m_obj_path *path, char delim)
-{
-	struct lwm2m_obj_path obj = {
-		.level = 3,
-		.obj_id = 0,
-		.obj_inst_id = 1,
-		.res_id = 3,
-	};
-	*path = obj;
-	return 0;
-}
-
-static int str_to_bs_obj(const char *pathstr, struct lwm2m_obj_path *path, char delim)
-{
-	struct lwm2m_obj_path obj = {
-		.level = 3,
-		.obj_id = 0,
-		.obj_inst_id = 2,
-		.res_id = 1,
-	};
-	*path = obj;
-	return 0;
-}
 
 static struct lwm2m_engine_obj_inst *get_pk_obj(const struct lwm2m_obj_path *path)
 {
@@ -579,9 +561,12 @@ static ssize_t read_cb(void *cb_arg, void *data, size_t len)
 	return len;
 }
 
-static int get_bs_flag(const char *path, bool *value)
+static int get_bs_flag(const struct lwm2m_obj_path *path, bool *value)
 {
-	zassert_equal(strcmp(path, "0/2/1"), 0, "Wrong path");
+	if (path->obj_id != 0 || path->obj_inst_id != 2 || path->res_id != 1) {
+		zassert_unreachable("Wrong path %d/%d/%d", path->obj_id, path->obj_inst_id,
+				    path->res_id);
+	}
 	*value = true;
 	return 0;
 }
@@ -592,9 +577,8 @@ ZTEST(lwm2m_client_utils_security, test_load_from_flash)
 
 	setup();
 	settings_register_fake.custom_fake = copy_settings_hanler;
-	lwm2m_string_to_path_fake.custom_fake = str_to_pk_obj;
 	lwm2m_engine_get_obj_inst_fake.custom_fake = get_pk_obj;
-	lwm2m_engine_get_res_buf_fake.custom_fake = lwm2m_engine_get_res_buf_custom_fake;
+	lwm2m_get_res_buf_fake.custom_fake = lwm2m_get_res_buf_custom_fake;
 	modem_key_mgmt_exists_fake.custom_fake = modem_key_mgmt_exists_custom_fake;
 
 	rc = lwm2m_init_security(&ctx, MY_ENDPOINT, NULL);
@@ -620,7 +604,7 @@ static int test_bs_loading(const char *subtree)
 
 	handler->h_set("0/2/1", sizeof(flag), read_cb, &flag);
 
-	zassert_equal(lwm2m_engine_get_bool_fake.call_count, 1, "Did not read the flag");
+	zassert_equal(lwm2m_get_bool_fake.call_count, 1, "Did not read the flag");
 	return 0;
 }
 
@@ -630,20 +614,17 @@ ZTEST(lwm2m_client_utils_security, test_load_boostrap_from_flash)
 
 	setup();
 	settings_register_fake.custom_fake = copy_settings_hanler;
-	lwm2m_string_to_path_fake.custom_fake = str_to_bs_obj;
 	lwm2m_engine_get_obj_inst_fake.custom_fake = get_pk_obj;
-	lwm2m_engine_get_res_buf_fake.custom_fake = lwm2m_engine_get_res_buf_custom_fake;
-	lwm2m_engine_get_bool_fake.custom_fake = get_bs_flag;
+	lwm2m_get_res_buf_fake.custom_fake = lwm2m_get_res_buf_custom_fake;
+	lwm2m_get_bool_fake.custom_fake = get_bs_flag;
 
 	settings_load_subtree_fake.custom_fake = test_bs_loading;
 
 	rc = lwm2m_init_security(&ctx, MY_ENDPOINT, NULL);
 	zassert_equal(rc, 0, "wrong return value");
 
-	zassert_equal(lwm2m_engine_delete_obj_inst_fake.call_count, 2,
+	zassert_equal(lwm2m_delete_object_inst_fake.call_count, 2,
 		      "Did not delete extra security&server instances");
-	zassert_equal(strcmp(lwm2m_engine_delete_obj_inst_fake.arg0_val, "0/0"), 0,
-		      "Did not delete default instance");
 }
 
 /*
@@ -660,9 +641,9 @@ static int copy_sec_cb(uint16_t obj_id, lwm2m_engine_user_cb_t cb)
 }
 
 static lwm2m_engine_set_data_cb_t set_uri_cb;
-static int copy_uri_write_cb(const char *path, lwm2m_engine_set_data_cb_t cb)
+static int copy_uri_write_cb(const struct lwm2m_obj_path *path, lwm2m_engine_set_data_cb_t cb)
 {
-	if (strcmp(path, "0/1/0") == 0) {
+	if (path->obj_id == 0 && path->obj_inst_id == 1 && path->res_id == 0) {
 		set_uri_cb = cb;
 	}
 	return 0;
@@ -684,14 +665,14 @@ ZTEST(lwm2m_client_utils_security, test_store_to_flash)
 
 	setup();
 
-	lwm2m_engine_register_create_callback_fake.custom_fake = copy_sec_cb;
+	lwm2m_register_create_callback_fake.custom_fake = copy_sec_cb;
 	settings_save_one_fake.custom_fake = check_server_addr;
 
 	rc = lwm2m_init_security(&ctx, MY_ENDPOINT, NULL);
 	zassert_equal(rc, 0, "wrong return value");
 	zassert_not_null(sec_cb, "Did not set callback");
 
-	lwm2m_engine_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
+	lwm2m_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
 	rc = sec_cb(1);
 	zassert_equal(rc, 0, "wrong return value");
 	zassert_not_null(set_uri_cb, "Did not set callback");
@@ -710,7 +691,7 @@ ZTEST(lwm2m_client_utils_security, test_remove_from_flash)
 
 	setup();
 
-	lwm2m_engine_register_delete_callback_fake.custom_fake = copy_sec_cb;
+	lwm2m_register_delete_callback_fake.custom_fake = copy_sec_cb;
 
 	rc = lwm2m_init_security(&ctx, MY_ENDPOINT, NULL);
 	zassert_equal(rc, 0, "wrong return value");
@@ -734,15 +715,15 @@ ZTEST(lwm2m_client_utils_security, test_bs_X509)
 
 	setup();
 	keys_exist = true;
-	lwm2m_engine_register_create_callback_fake.custom_fake = copy_sec_cb;
-	lwm2m_engine_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
-	lwm2m_engine_get_u8_fake.custom_fake = get_mode_both;
+	lwm2m_register_create_callback_fake.custom_fake = copy_sec_cb;
+	lwm2m_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
+	lwm2m_get_u8_fake.custom_fake = get_mode_both;
 	modem_key_mgmt_write_fake.custom_fake = write_to_modem;
 	modem_key_mgmt_exists_fake.custom_fake = modem_key_mgmt_exists_custom_fake;
-	lwm2m_engine_get_res_buf_fake.custom_fake = lwm2m_engine_get_res_buf_custom_fake;
+	lwm2m_get_res_buf_fake.custom_fake = lwm2m_get_res_buf_custom_fake;
 
 	rc = lwm2m_init_security(&ctx, MY_ENDPOINT, NULL);
-	lwm2m_engine_get_res_buf_fake.custom_fake = get_cert_wrapper;
+	lwm2m_get_res_buf_fake.custom_fake = get_cert_wrapper;
 	zassert_equal(rc, 0, "wrong return value");
 
 	rc = sec_cb(1);
@@ -769,15 +750,15 @@ ZTEST(lwm2m_client_utils_security, test_bs_URI)
 
 	setup();
 	keys_exist = true;
-	lwm2m_engine_register_create_callback_fake.custom_fake = copy_sec_cb;
-	lwm2m_engine_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
-	lwm2m_engine_get_u8_fake.custom_fake = get_mode_both;
+	lwm2m_register_create_callback_fake.custom_fake = copy_sec_cb;
+	lwm2m_register_post_write_callback_fake.custom_fake = copy_uri_write_cb;
+	lwm2m_get_u8_fake.custom_fake = get_mode_both;
 	modem_key_mgmt_write_fake.custom_fake = write_to_modem;
 	modem_key_mgmt_exists_fake.custom_fake = modem_key_mgmt_exists_custom_fake;
-	lwm2m_engine_get_res_buf_fake.custom_fake = lwm2m_engine_get_res_buf_custom_fake;
+	lwm2m_get_res_buf_fake.custom_fake = lwm2m_get_res_buf_custom_fake;
 
 	rc = lwm2m_init_security(&ctx, MY_ENDPOINT, NULL);
-	lwm2m_engine_get_res_buf_fake.custom_fake = get_uri_wrapper;
+	lwm2m_get_res_buf_fake.custom_fake = get_uri_wrapper;
 	zassert_equal(rc, 0, "wrong return value");
 
 	rc = sec_cb(1);

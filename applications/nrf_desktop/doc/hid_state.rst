@@ -29,8 +29,9 @@ Module events
 Configuration
 *************
 
-The |hid_state| is enabled by selecting :ref:`CONFIG_DESKTOP_HID_STATE_ENABLE <config_desktop_app_options>`.
-This module is optional and turned off by default.
+The |hid_state| is enabled by the :ref:`CONFIG_DESKTOP_HID_STATE_ENABLE <config_desktop_app_options>` option which is implied by the :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` option.
+An nRF Desktop peripheral uses the |hid_state| to generate HID reports based on the user input.
+For details related to HID configuration in the nRF Desktop, see the :ref:`nrf_desktop_hid_configuration` documentation.
 
 To send boot reports, enable the respective Kconfig option:
 
@@ -218,7 +219,6 @@ Discarding events
         * The associated key is not pressed anymore.
         * Every key that was pressed after the associated key had been pressed is also released.
 
-
 If there is no space to store the input event in the queue and no old event can be discarded, the entire content of the queue is dropped to ensure the sanity.
 
 Once connection is established, the elements of the queue are replayed one after the other to the host, in a sequence of consecutive HID reports.
@@ -272,5 +272,3 @@ When the |hid_state| receives a :c:struct:`hid_report_event` that contains an HI
 By default, nRF Desktop supports only HID keyboard LED output report.
 The nRF Desktop peripheral displays the state of the keyboard LEDs that was specified by the HID subscriber that subscribed for keyboard key HID input report.
 When the subscriber is changed or it updates the state of the keyboard LEDs, the |hid_state| sends :c:struct:`leds_event` to update the state of the hardware LEDs.
-
-.. |hid_state| replace:: HID state module

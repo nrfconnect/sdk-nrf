@@ -60,7 +60,33 @@ config CLOUD_CODEC_MANUFACTURER
 	string "Manufacturer name"
 	default "Nordic Semiconductor ASA"
 
-endif
+config CLOUD_CODEC_LWM2M_THINGY91_SENSORS
+	bool "Enable support for Thingy:91 sensors"
+	default y if BOARD_THINGY91_NRF9160_NS
+	select LWM2M_IPSO_PRESSURE_SENSOR
+	select LWM2M_IPSO_HUMIDITY_SENSOR
+	select LWM2M_IPSO_TEMP_SENSOR
+
+# Set object v1.1 object versions for sensor objects.
+if LWM2M_IPSO_PRESSURE_SENSOR
+choice LWM2M_IPSO_PRESSURE_SENSOR_VERSION
+	default LWM2M_IPSO_PRESSURE_SENSOR_VERSION_1_1
+endchoice
+endif # LWM2M_IPSO_PRESSURE_SENSOR
+
+if LWM2M_IPSO_HUMIDITY_SENSOR
+choice LWM2M_IPSO_HUMIDITY_SENSOR_VERSION
+	default LWM2M_IPSO_HUMIDITY_SENSOR_VERSION_1_1
+endchoice
+endif # LWM2M_IPSO_HUMIDITY_SENSOR
+
+if LWM2M_IPSO_TEMP_SENSOR
+choice LWM2M_IPSO_TEMP_SENSOR_VERSION
+	default LWM2M_IPSO_TEMP_SENSOR_VERSION_1_1
+endchoice
+endif # LWM2M_IPSO_TEMP_SENSOR
+
+endif # CLOUD_CODEC_LWM2M
 
 module = CLOUD_CODEC
 module-str = Cloud codec

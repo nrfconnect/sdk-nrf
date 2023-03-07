@@ -2,13 +2,13 @@ sample:
   name: Matter Weather Station
   description: Matter Weather Station application
 tests:
+  # Excluded in quarantine.yaml to limit resources usage in integration builds
   applications.matter_weather_station.debug:
     build_only: true
     platform_allow: thingy53_nrf5340_cpuapp
     platform_exclude: thingy53_nrf5340_cpuapp_ns
     integration_platforms:
       - thingy53_nrf5340_cpuapp
-    tags: ci_build
   applications.matter_weather_station.release:
     build_only: true
     extra_args: CONF_FILE=prj_release.conf
@@ -16,7 +16,7 @@ tests:
     platform_exclude: thingy53_nrf5340_cpuapp_ns
     integration_platforms:
       - thingy53_nrf5340_cpuapp
-    tags: ci_build
+  # ---------------
   applications.matter_weather_station.factory_data:
     build_only: true
     extra_args: CONF_FILE=prj_factory_data.conf
@@ -24,4 +24,3 @@ tests:
     platform_exclude: thingy53_nrf5340_cpuapp_ns
     integration_platforms:
       - thingy53_nrf5340_cpuapp
-    tags: ci_build

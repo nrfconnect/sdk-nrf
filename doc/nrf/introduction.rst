@@ -7,34 +7,74 @@ Introduction
    :local:
    :depth: 2
 
-The |NCS| is a scalable and unified software development kit for building low-power wireless applications based on the Nordic Semiconductor nRF52, nRF53, and nRF91 Series wireless devices.
+The |NCS| is a scalable and unified software development kit for building low-power wireless applications based on the Nordic Semiconductor nRF52, nRF53, nRF70, and nRF91 Series wireless devices.
 It offers an extensible framework for building size-optimized software for memory-constrained devices as well as powerful and complex software for more advanced devices and applications.
 
-It integrates the Zephyr™ real-time operating system (RTOS) and a wide range of complete applications, samples, and protocol stacks such as Bluetooth® Low Energy, Bluetooth mesh, Matter, Thread/Zigbee and LTE-M/NB-IoT/GPS, TCP/IP.
-It also includes middleware such as CoAP, MQTT, LwM2M, various libraries, hardware drivers, Trusted Firmware-M for security, and a secure bootloader (MCUBoot).
-
+It integrates the Zephyr™ real-time operating system (RTOS) and a wide range of complete applications, samples, and protocol stacks such as Bluetooth® Low Energy, Bluetooth mesh, Matter, Thread/Zigbee, Wi-Fi®, and LTE-M/NB-IoT/GPS, TCP/IP.
+It also includes middleware such as CoAP, MQTT, LwM2M, various libraries, hardware drivers, Trusted Firmware-M for security, and a secure bootloader (MCUboot).
 
 Repositories
 ************
 
 The |NCS| is a combination of software developed by Nordic Semiconductor and open source projects, hosted as `Git`_ repositories in the `nrfconnect GitHub organization`_.
 
-The ``sdk-nrf`` repository contains the SDK manifest file that manages the repositories as one :ref:`code base <dm_code_base>` with the :ref:`ncs_west_intro` tool.
+The ``sdk-nrf`` repository is the manifest repository.
+It contains the SDK's `west manifest file`_ that lists all the SDK's repositories and their revisions.
+This :ref:`code base <dm_code_base>` is managed with the :ref:`ncs_west_intro` tool.
 
 Some notable repositories include:
 
-* `sdk-nrf`_ repository - contains applications, samples, libraries, and drivers that are specifically targeted at Nordic Semiconductor devices.
-* `sdk-nrfxlib`_ repository - contains closed-source libraries and modules in binary format.
+* `sdk-nrf`_ repository - Contains applications, samples, libraries, and drivers that are specifically targeted at Nordic Semiconductor devices.
+* `sdk-nrfxlib`_ repository - Contains closed-source libraries and modules in binary format.
   See the :doc:`nrfxlib documentation <nrfxlib:README>`.
-* `sdk-zephyr`_ repository - contains a fork of the `Zephyr`_ project, which provides samples, libraries, and drivers for a wide variety of devices, including Nordic Semiconductor devices.
-  See the :doc:`documentation <zephyr:index>` in Nordic Semiconductor’s Zephyr fork.
-* `sdk-mcuboot`_ repository - contains a fork of the `MCUboot`_ project, which provides a secure bootloader application.
-  You can find the fork in :file:`bootloader/mcuboot` after obtaining the |NCS| source code.
-  See the :doc:`documentation <mcuboot:index-ncs>` in Nordic Semiconductor’s MCUboot fork.
+* `sdk-zephyr`_ repository - Contains a fork of the `Zephyr`_ project, which provides samples, libraries, and drivers for a wide variety of devices, including Nordic Semiconductor devices.
+  See the :doc:`documentation <zephyr:index>` in Nordic Semiconductor's Zephyr fork.
 
+  .. note::
+
+     The `sdk-zephyr`_ repository is a :term:`soft fork` that Nordic Semiconductor maintains.
+     It is not the same as Zephyr SDK, which is a set of :ref:`installation tools <gs_installing_toolchain>` used while installing the |NCS|.
+
+* `sdk-mcuboot`_ repository - Contains a fork of the `MCUboot`_ project, which provides a secure bootloader application.
+  You can find the fork in :file:`bootloader/mcuboot` after obtaining the |NCS| source code.
+  See the :doc:`documentation <mcuboot:index-ncs>` in Nordic Semiconductor's MCUboot fork.
+
+All repositories with the prefix ``sdk`` contain the |NCS| firmware and code.
 Every |NCS| release consists of a combination of all included repositories at different revisions.
 See the :ref:`repos_and_revs` section for a comprehensive list of repositories and their current revisions.
 The revision of each of those repositories is determined by the current revision of the main (manifest) repository ``sdk-nrf``.
+
+.. _intro_vers_revs:
+
+Versions and revisions
+**********************
+
+The |NCS| uses a versioning scheme similar to `Semantic versioning`_, but with important semantic differences.
+Every release of the |NCS| is identified with a version string, in the format ``MAJOR.MINOR.PATCH``.
+The version numbers are incremented based on the following criteria:
+
+* The ``MAJOR`` version number is increased seldom, whenever a release is deemed to be introducing a large number of substantial changes across the board.
+* The ``MINOR`` version number is increased every time a major release is cut.
+  Minor releases are the default types of an |NCS| release.
+  They introduce new functionality and may break APIs.
+* The ``PATCH`` version number is increased whenever a minor or bugfix release is cut.
+  Patch releases only address functional issues but do not introduce new functionality.
+
+In between releases, |NCS| is not static.
+Instead, it changes its revision every time a Git commit is merged into the `sdk-nrf`_ repository.
+The revision of the SDK is considered to be equivalent to the repository revision of ``sdk-nrf``, because it is the :ref:`manifest repository <zephyr:west-manifests>`.
+This means that, by virtue of containing the `west manifest file`_, its revision uniquely identifies the revisions of all other repositories included in the SDK.
+
+A special value of ``99`` for the ``PATCH`` version number indicates that the version string does not belong to a release, but rather a point in between two major releases.
+For example, ``2.2.99`` indicates that this particular revision of the |NCS| is somewhere between versions ``2.2.0`` and ``2.3.0``.
+
+.. include:: developing/code_base.rst
+   :start-after: dev_tag_definition_start
+   :end-before: dev_tag_definition_end
+
+Revisions can either be Git SHAs or tags, depending on whether the current revision is associated with a release (in which case it is a tag) or is just any revision in between releases.
+
+For a more formal description of versions and revisions, see :ref:`dm-revisions`.
 
 Tools and configuration
 ***********************
@@ -94,6 +134,16 @@ It also makes it fairly simple to add and remove modules.
 See :ref:`getting_started` for information about how to install the |NCS| and about the first steps.
 See :ref:`dev-model` for more information about the |NCS| code base and how to manage it.
 
+Applications
+************
+
+To start developing your application you need to understand a few fundamental concepts.
+Follow the :ref:`Zephyr guide to Application Development <zephyr:application>` and browse through the included :ref:`reference applications <applications>` in the |NCS| to get familiar with the basics.
+
+You also need to decide how to structure your application.
+You can choose from a few alternative :ref:`user workflows <dm_user_workflows>`, but having the :ref:`application as the manifest repository <dm_workflow_4>` is recommended.
+An `ncs-example-application`_ repository is provided to serve as a reference or starting point.
+
 Licenses
 ********
 
@@ -118,7 +168,7 @@ See the :ref:`west_sbom` documentation for more information.
 Documentation pages
 *******************
 
-.. include:: doc_structure.rst
+.. include:: documentation/structure.rst
    :start-after: doc_structure_start
    :end-before: doc_structure_end
 
@@ -139,4 +189,4 @@ For more information about the documentation conventions and templates, see :ref
 The following table lists all the repositories (and their respective revisions) that are included as part of |NCS| |version| release:
 
 .. manifest-revisions-table::
-   :show-first: zephyr, nrfxlib, mcuboot, trusted-firmware-m, find-my, homekit, matter, nrf-802154, tfm-mcuboot, mbedtls-nrf, memfault-firmware-sdk
+   :show-first: zephyr, nrfxlib, mcuboot, trusted-firmware-m, find-my, homekit, matter, nrf-802154, mbedtls, memfault-firmware-sdk

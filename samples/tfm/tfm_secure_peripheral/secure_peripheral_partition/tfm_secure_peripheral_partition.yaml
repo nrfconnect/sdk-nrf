@@ -24,7 +24,7 @@
     "non_secure_clients": true,
     "stateless_handle": "auto",
     "version": 1,
-    "version_policy": "STRICT"
+    "version_policy": "STRICT",
    },
    {
     "name": "TFM_SPP_SEND",
@@ -35,7 +35,7 @@
     "non_secure_clients": true,
     "stateless_handle": "auto",
     "version": 1,
-    "version_policy": "STRICT"
+    "version_policy": "STRICT",
    },
   ],
 

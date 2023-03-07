@@ -263,7 +263,7 @@ Syntax
    #XTCPSEND=<data>
 
 * The ``<data>`` parameter is a string that contains the data to be sent.
-  The maximum size of the data is 1252 bytes.
+  The maximum size of the data is 1024 bytes.
   When the parameter is not specified, SLM enters ``slm_data_mode``.
 
 Response syntax
@@ -609,7 +609,7 @@ Syntax
    #XUDPSEND=<data>
 
 * The ``<data>`` parameter is a string that contains the data to be sent.
-  The maximum size of the data is 1252 bytes.
+  The maximum size of the data is 1024 bytes.
   When the parameter is not specified, SLM enters ``slm_data_mode``.
 
 Response syntax

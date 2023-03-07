@@ -7,7 +7,7 @@ Radio test subcommands
    :local:
    :depth: 2
 
-``wifi_radio_test`` is the Wi-Fi radio test command and it supports the following subcommands.
+``wifi_radio_test`` is the Wi-Fi® radio test command and it supports the following subcommands.
 
 .. _wifi_radio_test_subcmds:
 
@@ -19,93 +19,218 @@ Wi-Fi radio test subcommands
 
    * - Subcommand
      - Argument
+     - Default value
+     - Type
      - Description
+   * - set_defaults
+     - N/A
+     - N/A
+     - Configuration
+     - Reset all configuration parameters to their default values.
    * - phy_calib_rxdc
      - | 0 - Disable
        | 1 - Enable
+     - 1
+     - Configuration
      - Enable/Disable RX DC calibration.
    * - phy_calib_txdc
      - | 0 - Disable
        | 1 - Enable
+     - 1
+     - Configuration
      - Enable/Disable TX DC calibration.
    * - phy_calib_txpow
      - | 0 - Disable
        | 1 - Enable
+     - 0
+     - Configuration
      - Enable/Disable TX power calibration.
    * - phy_calib_rxiq
      - | 0 - Disable
        | 1 - Enable
+     - 1
+     - Configuration
      - Enable/Disable RX IQ calibration.
    * - phy_calib_txiq
      - | 0 - Disable
        | 1 - Enable
+     - 1
+     - Configuration
      - Enable/Disable TX IQ calibration.
    * - he_ltf
      - | 0 - 1x HE LTF
        | 1 - 2x HE LTF
-       | 2 - 3x HE LTF
+       | 2 - 4x HE LTF
+     - 2
+     - Configuration
      - Configure HE long training field (LTF) value while transmitting the packet.
    * - he_gi
      - | 0 - 0.8 us
        | 1 - 1.6 us
        | 2 - 3.2 us
+     - 2
+     - Configuration
      - Configure HE guard interval (GI) while transmitting the packet.
-   * - rf_params
-     - Hex value string
-     - Hexadecimal value string for RF related parameters. See :ref:`wifi_radio_test_rf_params` for the description.
    * - tx_pkt_tput_mode
      - | 0 - Legacy
        | 1 - HT mode
        | 2 - VHT mode
        | 3 - HE (SU) mode
        | 4 - HE (ERSU) mode
+       | 5 - HE (TB) mode
+     - 0
+     - Configuration
      - Throughput mode to be used for transmitting the packet.
    * - tx_pkt_sgi
      - | 0 - Disable
        | 1 - Enable
+     - 0
+     - Configuration
      - Enable/Disable Short guard interval (GI) while transmitting the packet.
    * - tx_pkt_preamble
      - | 0 - Short Preamble
        | 1 - Long Preamble
        | 2 - Mixed Preamble
+     - 1
+     - Configuration
      - Type of preamble to be used for each packet. Short/Long Preamble are applicable only when tx_pkt_tput_mode is set to Legacy and Mixed Preamble is applicable only when tx_pkt_tput_mode is set to HT/VHT.
    * - tx_pkt_mcs
      - | -1 - Not being used
        | <val> - MCS index to be used
+     - -1
+     - Configuration
      - MCS index at which TX packet will be transmitted. Mutually exclusive with tx_pkt_rate.
    * - tx_pkt_rate
      - | -1 - Not being used
        | <val> - Legacy rate to be used (1, 2, 5.5, 11, 6, 9, 12, 18, 24, 36, 48, 54)
+     - 6
+     - Configuration
      - Legacy rate at which packets will be transmitted. Mutually exclusive with tx_pkt_mcs.
    * - tx_pkt_gap
-     - <val> - (Min: 200, Max: 200000, Default: 200)
+     - <val> - (Min: 200, Max: 200000)
+     - 200
+     - Configuration
      - Interval between TX packets in microseconds.
-   * - chnl_primary
-     - <val> - Primary channel number (Default: 1)
-     - Configures the Primary channel to be used.
    * - tx_pkt_num
      - | -1 - Transmit infinite packets
        | <val> - Number of packets to transmit
-     - Number of packets to transmit before stopping. Applicable only when tx_mode is set to Regular Tx.
+     - -1
+     - Configuration
+     - Number of packets to transmit before stopping.
    * - tx_pkt_len
-     - <val> - Desired packet length (Default: 1400)
+     - <val> - Desired packet length
+     - 1400
+     - Configuration
      - Packet data length to be used for the TX stream.
    * - tx_power
-     - <val> - Transmit power in dBm.
+     - <val> - Transmit power in dBm (Min: 0, Max: 24)
+     - 0
+     - Configuration
      - Transmit power for frame transmission.
+   * - ru_tone
+     - <val> – Desired resource unit (RU) size (26, 52, 106 or 242).
+     - 26
+     - Configuration
+     - Configure the resource unit (RU) size.
+   * - ru_index
+     - | <val> – Valid values:
+       | For 26 ru_tone: 1 to 9
+       | For 52 ru_tone: 1 to 4
+       | For 106 ru_tone: 1 to 2
+       | For 242 ru_tone: 1
+     - 1
+     - Configuration
+     - Configure the location of resource unit (RU) in 20 MHz spectrum.
+   * - rx_capture_length
+     - | <val> (Min: 0, Max: 16384)
+     - 0
+     - Configuration
+     - Number of RX samples to be captured.
+   * - rx_lna_gain
+     - | 0 = 24 dB
+       | 1 = 18 dB
+       | 2 = 12 dB
+       | 3 = 0 dB
+       | 4 = -12 dB
+     - 0
+     - Configuration
+     - LNA gain to be configured.
+   * - rx_bb_gain
+     - | <val>
+       | 5 bit value. Supports 64 dB range in steps of 2 dB
+     - 0
+     - Configuration
+     - Baseband gain to be configured.
+   * - tx_tone_freq
+     - | <val> (Min: -10, Max: 10)
+     - 0
+     - Configuration
+     - Transmit tone frequency in the range of -10 MHz to 10 MHz.
+   * - dpd
+     - | 0 - DPD bypass
+       | 1 - Enable DPD
+     - 0
+     - Configuration
+     - Enable or bypass DPD.
+   * - set_xo_val
+     - | <val> - XO value (Min:0, Max: 127)
+     - 42 or value programmed in OTP
+     - Configuration
+     - Set XO value.
+   * - show_config
+     - N/A
+     - N/A
+     - Configuration
+     - Display the current configuration values.
+   * - init
+     - <val> - Primary channel number
+     - 1
+     - Action
+     - Initialize the radio to a default state with the configured channel. This will also reset all other configuration parameters to their default values.
    * - tx
      - | 0 - Disable
        | 1 - Enable
+     - 0
+     - Action
      - Enable/Disable packet transmission. Transmits configured number of packets (tx_pkt_num) of packet length (tx_pkt_len).
    * - rx
      - | 0 - Disable
        | 1 - Enable
+     - 0
+     - Action
      - Enable/Disable packet reception.
-   * - show_config
+   * - rx_cap
+     - | 0 = ADC capture
+       | 1 = Static packet capture
+       | 2 = Dynamic packet capture
      - N/A
-     - Display the current configuration values.
+     - Action
+     - Capture RX ADC samples, static or dynamic packets.
+   * - tx_tone
+     - | 0: Disable tone
+       | 1: Enable tone
+     - 0
+     - Action
+     - Enable/Disable transmit tone.
+   * - get_temperature
+     - | No arguments required
+     - N/A
+     - Action
+     - Get temperature.
+   * - get_rf_rssi
+     - | No arguments required
+     - N/A
+     - Action
+     - Get RF RSSI.
+   * - compute_optimal_xo_val
+     - N/A
+     - N/A
+     - Action
+     - Compute optimal XO value. Note: This is still experimental and to be used at own risk.
    * - get_stats
      - N/A
+     - N/A
+     - Action
      - Display statistics.
 
 
@@ -129,81 +254,3 @@ Wi-Fi radio test statistics
      - Number of DSSS frames whose CRC32 check passed.
    * - dsss_crc32_fail_cnt
      - Number of DSSS frames whose CRC32 check failed.
-
-
-.. _wifi_radio_test_rf_params:
-
-RF parameters
-*************
-
-.. list-table:: RF parameters
-   :header-rows: 1
-
-   * - Byte(s)
-     - Type
-     - Units
-     - Description
-   * - 0 - 5
-     - NA
-     - NA
-     - Reserved.
-   * - 6
-     - Unsigned
-     - NA
-     - XO adjustment.
-   * - 7 - 10
-     - Signed
-     - 0.25 dB
-     - Power detector adjustment for MCS7 for channel 7, 36, 100 and 165.
-   * - 11 - 14
-     - Signed
-     - 0.25 dB
-     - Power detector adjustment for MCS0 for channel 7, 36, 100 and 165.
-   * - 15
-     - Signed
-     - 0.25 dBm
-     - Max output power for 11b for channel 7.
-   * - 16 - 17
-     - Signed
-     - 0.25 dBm
-     - Max output power for MCS7 and MCS0 for channel 7.
-   * - 18 - 20
-     - Signed
-     - 0.25 dBm
-     - Max output power for MCS7 for channel 36, 100 and 165.
-   * - 21 - 23
-     - Signed
-     - 0.25 dBm
-     - Max output power for MCS0 for channel 36, 100 and 165.
-   * - 24 - 27
-     - Signed
-     - 0.25 dBm
-     - Rx-Gain offset for channel 7, 36, 100 and 165.
-   * - 28
-     - Signed
-     - degree Celsius
-     - Maximum chip temperature.
-   * - 29
-     - Signed
-     - degree Celsius
-     - Minimum chip temperature.
-   * - 30
-     - Signed
-     - 0.25 dB
-     - TX Power backoff at high temperature (+80 degree Celsius) in 2.4G.
-   * - 31
-     - Signed
-     - 0.25 dB
-     - TX Power backoff at low temperature (-20 degree Celsius) in 2.4G.
-   * - 32
-     - Signed
-     - 0.25 dB
-     - TX Power backoff at high temperature (+80 degree Celsius) in 5G.
-   * - 33
-     - Signed
-     - 0.25 dB
-     - TX Power backoff at low temperature (-20 degree Celsius) in 5G.
-   * - 34 - 41
-     - Signed
-     - 0.25 dBm
-     - Voltage related power backoff.

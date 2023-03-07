@@ -16,6 +16,7 @@
 	};
 	nrf21540-gpio-if {
 	    gpios = <&gpio1 7 0>,
+		<&gpio1 6 0>,
 		<&gpio1 5 0>,
 		<&gpio1 11 0>,
 		<&gpio1 4 0>;

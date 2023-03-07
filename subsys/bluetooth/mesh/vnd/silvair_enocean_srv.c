@@ -198,7 +198,7 @@ static void status_pub(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		net_buf_simple_add_mem(&buf, addr, 6);
 	}
 
-	(void)model_send(model, ctx, &buf);
+	(void)bt_mesh_msg_send(model, ctx, &buf);
 }
 
 static void timeout(struct k_work *work)

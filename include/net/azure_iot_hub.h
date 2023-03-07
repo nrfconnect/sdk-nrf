@@ -205,11 +205,8 @@ struct azure_iot_hub_topic_data {
 	/** Topic type. */
 	enum azure_iot_hub_topic_type type;
 
-	/** Pointer to topic name. */
-	char *ptr;
-
-	/** Size of topic name. */
-	size_t size;
+	/** Topic name ptr and size. */
+	struct azure_iot_hub_buf name;
 
 	/* Array of property bags. */
 	struct azure_iot_hub_property *properties;

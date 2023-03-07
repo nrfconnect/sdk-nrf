@@ -23,6 +23,18 @@ The library wrapper eases the task of initializing the Modem library by automati
 :ref:`partition_manager` is the component that reserves the RAM memory for the shared memory regions used by the Modem library.
 For more information, see :ref:`partition_mgr_integration`.
 
+The library wrapper can initialize the Modem library during system initialization using :c:macro:`SYS_INIT`.
+The :kconfig:option:`CONFIG_NRF_MODEM_LIB_SYS_INIT` Kconfig option can be used to control this setting.
+Some libraries in |NCS|, such as the :ref:`lte_lc_readme` have similar configuration options to initialize during system initialization and these options depend on the configuration option of the integration layer.
+If your application performs an update of the nRF9160 modem firmware, you can disable this functionality to have full control on the initialization of the library.
+
+:kconfig:option:`CONFIG_NRF_MODEM_LIB_LOG_FW_VERSION_UUID` can be enabled for printing logs of both FW version and UUID at the end of the library initialization step.
+
+When using the Modem library in |NCS|, the library must be initialized and shutdown using the :c:func:`nrf_modem_lib_init` and :c:func:`nrf_modem_lib_shutdown` function calls, respectively.
+
+Callbacks
+=========
+
 The library wrapper also provides callbacks for the initialization and shutdown operations.
 The application can set up a callback for :c:func:`nrf_modem_lib_init` function using the :c:macro:`NRF_MODEM_LIB_ON_INIT` macro, and a callback for :c:func:`nrf_modem_lib_shutdown` function using the :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` macro.
 These compile-time callbacks allow any part of the application to perform any setup steps that require the modem to be in a certain state.
@@ -35,19 +47,6 @@ The callback context is provided to these callbacks.
 Callbacks for the macro :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` must have the signature ``void callback_name(void *ctx)``, where ``ctx`` is the context passed to the macro.
 See the :ref:`modem_callbacks_sample` sample for more information.
 
-The library wrapper can also initialize the Modem library during system initialization using :c:macro:`SYS_INIT`.
-The :kconfig:option:`CONFIG_NRF_MODEM_LIB_SYS_INIT` Kconfig option can be used to control the initialization.
-Some libraries in |NCS|, such as the :ref:`lte_lc_readme` have similar configuration options to initialize during system initialization and these options depend on the configuration option of the integration layer.
-If your application performs an update of the nRF9160 modem firmware, you must disable this functionality to have full control on the initialization of the library.
-
-The library wrapper also coordinates the shutdown operation among different parts of the application that use the Modem library.
-This is done by the :c:func:`nrf_modem_lib_shutdown` function call, by waking the sleeping threads when the modem is being shut down.
-
-When :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig option is enabled, the modem traces are enabled in the modem and are forwarded to the `Modem trace module`_.
-
-When using the Modem library in |NCS|, the library must be initialized and shutdown using the :c:func:`nrf_modem_lib_init` and :c:func:`nrf_modem_lib_shutdown` function calls, respectively.
-
-:kconfig:option:`CONFIG_NRF_MODEM_LIB_LOG_FW_VERSION_UUID` can be enabled for printing logs of both FW version and UUID at the end of the library initialization step.
 
 Socket offloading
 *****************
@@ -61,7 +60,7 @@ Modem library socket API sets errnos as defined in :file:`nrf_errno.h`.
 The socket offloading support in the integration layer in |NCS| converts those errnos to the errnos that adhere to the selected C library implementation.
 
 The socket offloading functionality is enabled by default.
-To disable the functionality, set the :kconfig:option:`CONFIG_NET_SOCKETS_OFFLOAD` Kconfig option to ``n`` in your project configuration.
+To disable the functionality, disable the :kconfig:option:`CONFIG_NET_SOCKETS_OFFLOAD` Kconfig option in your project configuration.
 If you disable the socket offloading functionality, the socket calls will no longer be offloaded to the nRF9160 modem firmware.
 Instead, the calls will be relayed to the native Zephyr TCP/IP implementation.
 This can be useful to switch between an emulator and a real device while running networking code on these devices.
@@ -70,7 +69,7 @@ Note that the even if the socket offloading is disabled, Modem library's own soc
 OS abstraction layer
 ********************
 
-For functioning, the Modem library requires the implementation of an OS abstraction layer, which is an interface over the operating system functionalities such as interrupt setup, threads, and heap.
+The Modem library requires the implementation of an OS abstraction layer, which is an interface over the operating system functionalities such as interrupt setup, threads, and heap.
 The integration layer provides an implementation of the OS abstraction layer using |NCS| components.
 The OS abstraction layer is implemented in the :file:`nrfxlib/nrf_modem/include/nrf_modem_os.c`.
 
@@ -82,19 +81,22 @@ In this case, the characteristics of the allocations made by these functions dep
 
 Modem trace module
 ******************
-The modem trace module is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib_trace.c`.
-To enable the module and start tracing, set the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig option to ``y`` in your project configuration.
-The module implements a thread that initializes, deinitializes, and forwards modem traces to a backend that can be selected by enabling any one of the following Kconfig options:
+To enable the tracing functionality, enable the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig in your project configuration.
+The module is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib_trace.c` and consists of a thread that initializes, deinitializes, and forwards modem traces to a backend that can be selected by enabling any one of the following Kconfig options:
 
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` to send modem traces over UARTE1
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT` to send modem traces over SEGGER RTT
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH` to write modem traces to external flash
 
 To reduce the amount of trace data sent from the modem, a different trace level can be selected.
 Complete the following steps to configure the modem trace level at compile time:
 
-#. Set :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE` to ``y`` in your project configuration.
+#. Enable the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE` option in your project configuration.
 #. Enable any one of the following Kconfig options by setting it to ``y`` in your project configuration:
 
+.. _trace_level_options:
+
+   * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OFF`
    * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_FULL`
    * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP`
    * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY`
@@ -103,16 +105,26 @@ Complete the following steps to configure the modem trace level at compile time:
 The application can use the :c:func:`nrf_modem_lib_trace_level_set` function to set the desired trace level.
 Passing ``NRF_MODEM_LIB_TRACE_LEVEL_OFF`` to the :c:func:`nrf_modem_lib_trace_level_set` function disables trace output.
 
+.. note::
+   The modem stores the current trace level on passing the ``AT+CFUN=0`` command.
+   If the trace level stored in the modem is ``NRF_MODEM_LIB_TRACE_LEVEL_OFF``, the application must enable traces in the modem using the :c:func:`nrf_modem_lib_trace_level_set` function or by enabling any of the :ref:`aforementioned Kconfig options <trace_level_options>`.
+
 During tracing, the integration layer ensures that modem traces are always flushed before the Modem library is re-initialized (including when the modem has crashed).
 The application can synchronize with the flushing of modem traces by calling the :c:func:`nrf_modem_lib_trace_processing_done_wait` function.
 
-To enable the measurement of the modem trace backend bitrate, set the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE` Kconfig option to ``y`` in your project configuration.
+For trace backends that support storing of trace data, the application can be notified using the :c:func:`nrf_modem_lib_trace_callback` function if the trace storage becomes full.
+The :c:func:`nrf_modem_lib_trace_callback` must be defined in the application if the :kconfig:option:`CONFIG_NRF_MODEM_TRACE_FLASH_NOSPACE_SIGNAL` Kconfig option is enabled.
+In this case, the application is responsible for reading the trace data with the :c:func:`nrf_modem_lib_trace_read` function if required, before clearing the trace backend storage by calling the :c:func:`nrf_modem_lib_trace_clear` function.
+It is not necessary to turn off modem tracing.
+However, it is expected that the modem will drop traces when the backend becomes full.
+
+To enable the measurement of the modem trace backend bitrate, enable the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE` Kconfig in your project configuration.
 After enabling this Kconfig option, the application can use the :c:func:`nrf_modem_lib_trace_backend_bitrate_get` function to retrieve the rolling average bitrate of the modem trace backend, measured over the period defined by the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_PERIOD_MS` Kconfig option.
-To enable logging of the modem trace backend bitrate, set the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG` Kconfig option to ``y``.
+To enable logging of the modem trace backend bitrate, enable the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG` Kconfig.
 The logging happens at an interval set by the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG_PERIOD_MS` Kconfig option.
 If the difference in the values of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_PERIOD_MS` Kconfig option and the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG_PERIOD_MS` Kconfig option is very high, you can sometimes observe high variation in measurements due to the short period over which the rolling average is calculated.
 
-To enable logging of the modem trace bitrate, set the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BITRATE_LOG` Kconfig option to ``y``.
+To enable logging of the modem trace bitrate, enable the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BITRATE_LOG` Kconfig.
 
 .. _adding_custom_modem_trace_backends:
 
@@ -133,28 +145,64 @@ Complete the following steps to add a custom trace backend:
 
    .. code-block:: c
 
-      /* my_trace_medium.c */
+      /* my_trace_backend.c */
 
-      #include <modem/trace_medium.h>
+      #include <modem/trace_backend.h>
 
-      int trace_medium_init(void)
+      int trace_backend_init(void)
       {
-           /* initialize transport medium here */
+           /* initialize transport backend here */
            return 0;
       }
 
-      int trace_medium_deinit(void)
+      int trace_backend_deinit(void)
       {
            /* optional deinitialization code here */
            return 0;
       }
 
-      int trace_medium_write(const void *data, size_t len)
+      int trace_backend_write(const void *data, size_t len)
       {
-           /* forward data over custom transport here */
-           /* return number of bytes written or negative error code on failure */
+           /* forward or store trace data here */
+           /* return the number of bytes written or stored, or a negative error code on failure */
            return 0;
       }
+
+      size_t trace_backend_data_size(void)
+      {
+         /* If trace data is stored when calling trace_backend_write
+          * this function returns the size of the stored trace data.
+          *
+          * If not applicable for the trace backend, set to NULL in the trace_backend struct.
+          */
+      }
+
+      int trace_backend_read(uint8_t *buf, size_t len)
+      {
+         /* If trace data is stored when calling trace_backend_write
+          * this function allows the application to read back the trace data.
+          *
+          * If not applicable for the trace backend, set to NULL in the trace_backend struct.
+          */
+      }
+
+      int trace_backend_clear(void)
+      {
+         /* This function allows the backend to clear all stored traces in the backend. For instance
+          * this can be erasing a flash partition to prepare for writing new data.
+          *
+          * If not applicable for the trace backend, set to NULL in the trace_backend struct.
+          */
+      }
+
+      struct nrf_modem_lib_trace_backend trace_backend = {
+         .init = trace_backend_init,
+         .deinit = trace_backend_deinit,
+         .write = trace_backend_write,
+         .data_size = trace_backend_data_size, /* Set to NULL if not applicable. */
+         .read = trace_backend_read, /* Set to NULL if not applicable. */
+         .clear = trace_backend_clear, /* Set to NULL if not applicable. */
+      };
 
 #. Create or modify a :file:`Kconfig` file to extend the choice :kconfig:option:`NRF_MODEM_LIB_TRACE_BACKEND` with another option.
 
@@ -251,25 +299,22 @@ Other configurations set in the devicetree, such as the current speed, are overw
 Modem fault handling
 ********************
 If a fault occurs in the modem, the application is notified through the fault handler function that is registered with the Modem library during initialization.
-This enables the application to read the fault reason (in some cases the modem's program counter) and take appropriate action.
+This lets the application read the fault reason (in some cases the modem's program counter) and take the appropriate action.
 
-On initialization, the Modem library integration layer registers the :c:func:`nrf_modem_fault_handler` function through the Modem library initialization parameters.
-The behavior of the :c:func:`nrf_modem_fault_handler` function is controlled with the :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT` Kconfig option.
-The Modem library integration layer provides the following three options for :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT` Kconfig option:
+On initialization (using :c:func:`nrf_modem_lib_init`), the Modem library integration layer registers the :c:func:`nrf_modem_fault_handler` function through the Modem library initialization parameters.
+The behavior of the :c:func:`nrf_modem_fault_handler` function is controlled with the three following Kconfig options:
 
-* :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_DO_NOTHING` - This is the default Kconfig option that lets the fault handler log the Modem fault and return.
-* :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM`- This Kconfig option schedules a workqueue task to reinitialize the modem and Modem library.
-* :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC`- This Kconfig option results in a call to the :c:func:`nrf_modem_fault_handler` function that is defined in the application, outside of the Modem library integration layer.
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_DO_NOTHING` - This option lets the fault handler log the Modem fault and return (default).
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM` - This option lets the fault handler schedule a workqueue task to reinitialize the modem and Modem library.
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC` - This option lets the fault handler function :c:func:`nrf_modem_fault_handler` be defined by the application, outside of the Modem library integration layer.
 
 Implementing a custom fault handler
 ===================================
 
-If you want to implement a custom fault handler, consider the following points:
+If you want to implement a custom fault handler, enable the :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC` Kconfig option and provide an implementation of the :c:func:`nrf_modem_fault_handler` function, considering the following points:
 
-* The fault handler is called in an interrupt context and must be as short as possible.
-* Reinitialization of the Modem library must be done outside of the fault handler.
-* If the modem trace is enabled, the modem sends a coredump through the trace backend on modem failure.
-  To ensure correct trace output, the modem must not be reinitialized before all trace data is handled.
+* The fault handler is called in an interrupt context.
+* Re-initialization of the Modem library must be done outside of the fault handler.
 
 .. _partition_mgr_integration:
 
@@ -303,21 +348,22 @@ This value is automatically passed by the integration layer to the library durin
 
 When the application is built using CMake, the :ref:`partition_manager` automatically reads the Kconfig options of the integration layer.
 Partition manager decides about the placement of the regions in RAM and reserves memory according to the given size.
-As a result, the Partition manager generates the following parameters:
+As a result, the Partition manager generates the following definitions:
 
 * ``PM_NRF_MODEM_LIB_CTRL_ADDRESS`` - Address of the Control region
 * ``PM_NRF_MODEM_LIB_TX_ADDRESS`` - Address of the TX region
 * ``PM_NRF_MODEM_LIB_RX_ADDRESS`` - Address of the RX region
 * ``PM_NRF_MODEM_LIB_TRACE_ADDRESS`` - Address of the Trace region
-
-Partition manager also generates the following additional parameters:
-
 * ``PM_NRF_MODEM_LIB_CTRL_SIZE`` - Size of the Control region
 * ``PM_NRF_MODEM_LIB_TX_SIZE`` - Size of the TX region
 * ``PM_NRF_MODEM_LIB_RX_SIZE`` - Size of the RX region
 * ``PM_NRF_MODEM_LIB_TRACE_SIZE`` - Size of the Trace region
 
-These parameters will have identical values as the ``CONFIG_NRF_MODEM_LIB_SHMEM_*_SIZE`` configuration options.
+These definitions will have identical values as the ``CONFIG_NRF_MODEM_LIB_SHMEM_*_SIZE`` configuration options.
+
+.. important::
+   The heap implementation used for allocations on the TX region has an overhead of up to 128 bytes.
+   Adjust the size of the TX region accordingly, so that its size is 128 bytes larger than the largest allocation you expect to happen (longest AT command, largest payload passed to :c:func:`nrf_send`) in your application.
 
 When the Modem library is initialized by the integration layer in |NCS|, the integration layer automatically passes the boundaries of each shared memory region to the Modem library during the :c:func:`nrf_modem_lib_init` call.
 

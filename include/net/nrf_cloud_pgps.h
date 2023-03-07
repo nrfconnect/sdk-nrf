@@ -276,7 +276,11 @@ int nrf_cloud_pgps_process_update(uint8_t *buf, size_t len);
 
 /** @brief Call this function regardless of whether the download succeeded or failed.
  *
- * Not needed for custom download transports.
+ * The library calls this automatically for HTTP(S) transports.
+ *
+ * For custom transports, the application must call this for transport error, error from
+ * a call to nrf_cloud_pgps_process_update(), as well as successful completion. Further,
+ * when an error occurs, the application must terminate the transfer.
  *
  * @retval 0 No failure.
  * @return a negative value indicates an error.

@@ -7,7 +7,7 @@
 # nRF Desktop specific configuration overlay for CAF settings loader module.
 
 config DESKTOP_SETTINGS_LOADER
-	bool
+	bool "Settings loader module (CAF)"
 	select CAF_SETTINGS_LOADER
 	select SETTINGS
 	imply NVS
@@ -15,15 +15,26 @@ config DESKTOP_SETTINGS_LOADER
 	imply FLASH_MAP
 	imply FLASH_PAGE_LAYOUT
 	help
-	  Enable settings handling using CAF settings loader module. By default
-	  settings use non-volatile storage backend and the settings partition
-	  is located in internal FLASH.
+	  nRF Desktop uses settings loader module from Common Application
+	  Framework (CAF).
+
+	  By default, nRF Desktop application uses non-volatile storage backend
+	  and the settings partition is located in internal FLASH.
 
 if DESKTOP_SETTINGS_LOADER
 
 choice SETTINGS_BACKEND
 	default SETTINGS_NVS
+	help
+	  By default, nRF Desktop application uses non-volatile storage
+	  settings backend.
 endchoice
+
+config NVS_LOG_LEVEL
+	default 2
+	help
+	  The nRF Desktop shows only warning and error logs related to the NVS.
+	  This is done to avoid flooding logs.
 
 config SETTINGS_DYNAMIC_HANDLERS
 	default n

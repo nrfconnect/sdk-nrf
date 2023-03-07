@@ -10,7 +10,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/net/lwm2m.h>
-#include <lwm2m_resource_ids.h>
 #include <modem/lte_lc.h>
 #include <net/lwm2m_client_utils.h>
 
@@ -183,7 +182,6 @@ static uint8_t edrx_nbs1;
 static uint8_t active_psm_modes;
 #if defined(CONFIG_LWM2M_CELL_CONN_OBJ_VERSION_1_1)
 static uint8_t supported_psm_modes = PSM_AND_EDRX_MODE;
-static char rai_param[2] = CONFIG_LTE_RAI_REQ_VALUE;
 static uint8_t rai_usage;
 #endif
 static struct k_work radio_period_work;
@@ -194,17 +192,29 @@ static enum lte_lc_lte_mode lte_mode = LTE_LC_LTE_MODE_NONE;
 
 static void radio_period_update(struct k_work *work)
 {
+	int err;
+
 	LOG_DBG("Set radio online");
 	disable_radio_period_tmp = 0;
-	lwm2m_engine_set_u16("10/0/1", disable_radio_period_tmp);
-	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
+	lwm2m_set_u16(&LWM2M_OBJ(10, 0, 1), disable_radio_period_tmp);
+
+	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
+	if (err) {
+		LOG_ERR("Unable to set modem online, error %d", err);
+	}
 }
 
 static void set_radio_offline(struct k_work *work)
 {
+	int err;
+
 	k_sleep(K_MSEC(200));
 	LOG_DBG("Set radio offline");
-	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+
+	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+	if (err) {
+		LOG_ERR("Unable to set modem offline, error %d", err);
+	}
 }
 
 static void radio_period_timer_fn(struct k_timer *dummy)
@@ -456,12 +466,10 @@ static uint8_t get_rai_kconfig(void)
 {
 	uint8_t ret = 0;
 
-	if (rai_param[0] == '4') {
-		ret = 2; /* no response, set 2nd LSB */
-	} else if (rai_param[0] == '3') {
-		ret = 6; /* one response, set 2nd and 3rd LSB */
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
+		ret = 2; /* RAI used when transmitting last message. No response required */
 	} else {
-		ret = 1;
+		ret = 1; /* RAI not used */
 	}
 
 	return ret;
@@ -471,21 +479,22 @@ static int rai_update_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_ins
 			 uint16_t data_len, bool last_block, size_t total_size)
 {
 	int err = 0;
-	bool rai_enabled = false;
 
 	LOG_DBG("RAI value: %d", *data);
 
 	switch (*data & 7U) {
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_RAI)
 	case 1:
+		err = lwm2m_rai_req(LWM2M_RAI_MODE_DISABLED);
 		break;
 	case 2:
-		rai_enabled = true;
-		err = lte_lc_rai_param_set("4");
+		err = lwm2m_rai_req(LWM2M_RAI_MODE_ENABLED);
 		break;
+#endif
 	case 6:
-		rai_enabled = true;
-		err = lte_lc_rai_param_set("3");
-		break;
+		LOG_WRN("Unsupported RAI mode");
+		return -ENOTSUP;
+		;
 	default:
 		LOG_ERR("Invalid RAI param");
 		return -EINVAL;
@@ -493,13 +502,7 @@ static int rai_update_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_ins
 	}
 
 	if (err) {
-		LOG_ERR("RAI set error %d", err);
-		return err;
-	}
-
-	err = lte_lc_rai_req(rai_enabled);
-	if (err) {
-		LOG_ERR("RAI req error %d", err);
+		LOG_ERR("RAI request error %d", err);
 		return err;
 	}
 
@@ -646,43 +649,46 @@ int lwm2m_init_cellular_connectivity_object(void)
 	uint8_t data_flags;
 
 	/* create object */
-	lwm2m_engine_create_obj_inst(LWM2M_PATH(10, 0));
-	lwm2m_engine_set_res_buf("10/0/0", smsc_addr, sizeof(smsc_addr), sizeof(smsc_addr),
-				 LWM2M_RES_DATA_FLAG_RW);
+	lwm2m_create_object_inst(&LWM2M_OBJ(10, 0));
+	lwm2m_set_res_buf(&LWM2M_OBJ(10, 0, 0), smsc_addr, sizeof(smsc_addr), sizeof(smsc_addr),
+			  LWM2M_RES_DATA_FLAG_RW);
 
-	lwm2m_engine_set_res_buf("10/0/1", &disable_radio_period, sizeof(disable_radio_period),
-				 sizeof(disable_radio_period), LWM2M_RES_DATA_FLAG_RW);
-	lwm2m_engine_register_post_write_callback("10/0/1", disable_radio_period_cb);
+	lwm2m_set_res_buf(&LWM2M_OBJ(10, 0, 1), &disable_radio_period, sizeof(disable_radio_period),
+			  sizeof(disable_radio_period), LWM2M_RES_DATA_FLAG_RW);
+	lwm2m_register_post_write_callback(&LWM2M_OBJ(10, 0, 1), disable_radio_period_cb);
 
-	lwm2m_engine_set_res_buf("10/0/4", &tau, sizeof(tau), sizeof(tau), LWM2M_RES_DATA_FLAG_RW);
-	lwm2m_engine_register_post_write_callback("10/0/4", psm_time_cb);
-	lwm2m_engine_set_res_buf("10/0/5", &active_time, sizeof(active_time), sizeof(active_time),
-				 LWM2M_RES_DATA_FLAG_RW);
-	lwm2m_engine_register_post_write_callback("10/0/5", active_time_cb);
+	lwm2m_set_res_buf(&LWM2M_OBJ(10, 0, 4), &tau, sizeof(tau), sizeof(tau),
+			  LWM2M_RES_DATA_FLAG_RW);
+	lwm2m_register_post_write_callback(&LWM2M_OBJ(10, 0, 4), psm_time_cb);
+	lwm2m_set_res_buf(&LWM2M_OBJ(10, 0, 5), &active_time, sizeof(active_time),
+			  sizeof(active_time), LWM2M_RES_DATA_FLAG_RW);
+	lwm2m_register_post_write_callback(&LWM2M_OBJ(10, 0, 5), active_time_cb);
 
 	edrx_wbs1 = get_edrx_kconfig(LTE_LC_LTE_MODE_LTEM);
-	lwm2m_engine_set_res_buf("10/0/8", &edrx_wbs1, sizeof(edrx_wbs1), sizeof(edrx_wbs1),
-				 LWM2M_RES_DATA_FLAG_RW);
-	lwm2m_engine_register_post_write_callback("10/0/8", edrx_update_cb);
+	lwm2m_set_res_buf(&LWM2M_OBJ(10, 0, 8), &edrx_wbs1, sizeof(edrx_wbs1),
+			  sizeof(edrx_wbs1), LWM2M_RES_DATA_FLAG_RW);
+	lwm2m_register_post_write_callback(&LWM2M_OBJ(10, 0, 8), edrx_update_cb);
 	edrx_nbs1 = get_edrx_kconfig(LTE_LC_LTE_MODE_NBIOT);
-	lwm2m_engine_set_res_buf("10/0/9", &edrx_nbs1, sizeof(edrx_nbs1), sizeof(edrx_nbs1),
-				 LWM2M_RES_DATA_FLAG_RW);
-	lwm2m_engine_register_post_write_callback("10/0/9", edrx_update_cb);
+	lwm2m_set_res_buf(&LWM2M_OBJ(10, 0, 9), &edrx_nbs1, sizeof(edrx_nbs1), sizeof(edrx_nbs1),
+			  LWM2M_RES_DATA_FLAG_RW);
+	lwm2m_register_post_write_callback(&LWM2M_OBJ(10, 0, 9), edrx_update_cb);
 #if defined(CONFIG_LWM2M_CELL_CONN_OBJ_VERSION_1_1)
-	lwm2m_engine_set_res_buf("10/0/12", &supported_psm_modes, sizeof(supported_psm_modes),
-				 sizeof(supported_psm_modes), LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_res_buf("10/0/13", &active_psm_modes, sizeof(active_psm_modes),
-				 sizeof(active_psm_modes), LWM2M_RES_DATA_FLAG_RW);
-	lwm2m_engine_register_post_write_callback("10/0/13", active_psm_update_cb);
+	lwm2m_set_res_buf(&LWM2M_OBJ(10, 0, 12), &supported_psm_modes, sizeof(supported_psm_modes),
+			  sizeof(supported_psm_modes), LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_set_res_buf(&LWM2M_OBJ(10, 0, 13), &active_psm_modes, sizeof(active_psm_modes),
+			  sizeof(active_psm_modes), LWM2M_RES_DATA_FLAG_RW);
+	lwm2m_register_post_write_callback(&LWM2M_OBJ(10, 0, 13), active_psm_update_cb);
 	rai_usage = get_rai_kconfig();
-	lwm2m_engine_set_res_buf("10/0/14", &rai_usage, sizeof(rai_usage), sizeof(rai_usage),
-				 LWM2M_RES_DATA_FLAG_RW);
-	lwm2m_engine_register_post_write_callback("10/0/14", rai_update_cb);
+	lwm2m_set_res_buf(&LWM2M_OBJ(10, 0, 14), &rai_usage, sizeof(rai_usage), sizeof(rai_usage),
+			  LWM2M_RES_DATA_FLAG_RW);
+	lwm2m_register_post_write_callback(&LWM2M_OBJ(10, 0, 14), rai_update_cb);
 #endif
-	lwm2m_engine_create_res_inst("10/0/11/0");
-	lwm2m_engine_get_res_buf("10/0/11/0", (void **)&apn_profile0, NULL, &data_len, &data_flags);
-	lwm2m_engine_create_res_inst("10/0/11/1");
-	lwm2m_engine_get_res_buf("10/0/11/1", (void **)&apn_profile1, NULL, &data_len, &data_flags);
+	lwm2m_create_res_inst(&LWM2M_OBJ(10, 0, 11, 0));
+	lwm2m_get_res_buf(&LWM2M_OBJ(10, 0, 11, 0), (void **)&apn_profile0, NULL, &data_len,
+			  &data_flags);
+	lwm2m_create_res_inst(&LWM2M_OBJ(10, 0, 11, 1));
+	lwm2m_get_res_buf(&LWM2M_OBJ(10, 0, 11, 1), (void **)&apn_profile1, NULL, &data_len,
+			  &data_flags);
 
 	k_work_init(&radio_period_work, radio_period_update);
 	k_work_init(&offline_work, set_radio_offline);

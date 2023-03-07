@@ -12,7 +12,7 @@
 #include "accelerometer.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(accelerometer, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_DECLARE(app_sensors, CONFIG_APP_LOG_LEVEL);
 
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(sensor_sim), okay)
 #define ACCEL_NODE DT_NODELABEL(sensor_sim)

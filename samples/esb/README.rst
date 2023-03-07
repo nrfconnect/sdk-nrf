@@ -60,6 +60,11 @@ The Receiver sample can be found under :file:`samples/esb/prx` in the |NCS| fold
 
 See :ref:`gs_programming` for information about how to build and program the application.
 
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
+
 Testing
 =======
 
@@ -80,13 +85,13 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
+* :file:`include/zephyr/types.h`
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
-  * ``include/irq.h``
+  * :file:`include/kernel.h`
+  * :file:`include/irq.h`
 
 * :ref:`zephyr:api_peripherals`:
 
-   * ``incude/gpio.h``
+   * :file:`incude/gpio.h`

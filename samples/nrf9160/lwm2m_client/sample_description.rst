@@ -25,7 +25,8 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-Additionally, the sample requires an activated SIM card, and an LwM2M server such as `Leshan Demo Server`_ or `Coiote Device Management`_ server.
+Additionally, the sample requires an activated SIM card, and an LwM2M server such as `Leshan Demo Server`_ or AVSystem's `Coiote Device Management`_ server.
+To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 
 Overview
 ********
@@ -163,12 +164,6 @@ You need to provide the following information to the LwM2M server before you can
 
 See :ref:`server setup <server_setup_lwm2m_client>` for instructions on providing the information to the server.
 
-Sensor simulation
-=================
-
-If a sensor simulator is defined in Devicetree with the ``sensor_sim`` node label, it will be used over real devices.
-This is useful, for example, on the nRF9160 DK, where only simulated sensor data is available, as it does not have any of the external sensors needed for actual measurements.
-
 .. _notifications_lwm2m:
 
 Notifications
@@ -185,22 +180,20 @@ For more information, see :ref:`notifications_setup_lwm2m`.
 Sensor Module
 =============
 
-The sample has a sensor module which, if enabled, reads the selected sensors, and updates the client's resource values if it detects a sufficiently large change in one of the values.
-The threshold for a sufficiently large change can be configured.
-For example, a change in temperature of one degree Celsius.
-
+The sample has a sensor module which, if enabled, reads the selected sensors and updates the client's LwM2M resource values.
 Each sensor can be enabled separately.
-The sampling period and change threshold of a sensor can also be configured independently of all the other sensors.
 
 The sensor module is intended to be used together with notifications.
-If notifications are enabled for a Sensor Value resource, and the corresponding sensor is enabled in the sensor module, a notification will be sent only when that value changes significantly (as specified by the change threshold).
-Thus, the bandwidth usage can be significantly limited, while simultaneously registering important changes in sensor values.
+If notifications are enabled for a Sensor Value resource and the corresponding sensor is enabled in the sensor module, a notification will be sent when the value changes.
+The frequency of notification packets is configured by LwM2M attributes set by the server.
 
 See :ref:`sensor_module_options` for information on enabling and configuring the sensor module.
 
-.. note::
+Sensor simulation
+=================
 
-   When you track several resources and enable sensor module for several sensors , socket errors such as ``net_lwm2m_engine: Poll reported a socket error, 08`` and ``net_lwm2m_rd_client: RD Client socket error: 5`` might occur.
+If a sensor simulator is defined in devicetree with the ``sensor_sim`` node label, it will be used over real devices.
+This is useful, for example, on the nRF9160 DK, where only simulated sensor data is available, as it does not have any of the external sensors needed for actual measurements.
 
 Configuration
 *************
@@ -223,13 +216,6 @@ Before building and running the sample, complete the following steps:
 .. _server_setup_lwm2m_client:
 
 .. include:: /includes/lwm2m_common_server_setup.txt
-
-
-.. note::
-
-   The **Client Configuration** page of the LwM2M Bootstrap server and the **Registered Clients** page of the LwM2M server display only a limited number of devices by default.
-   You can increase the number of displayed devices from the drop-down menu associated with **Rows per page**.
-   In both cases, the menu is displayed at the bottom-right corner of the **Client Configuration** pages.
 
 .. _server_addr_PSK:
 
@@ -287,6 +273,32 @@ Following are the instructions for enabling notifications in the Leshan Demo ser
 
       #. Click :guilabel:`Limit data usage` to configure how often notifications are sent.
 
+Avoiding re-writing credentials to modem
+----------------------------------------
+
+Every time the sample starts, it provisions the keys to the modem and this is only needed once.
+To speed up the start up, you can prevent the provisioning by completing the following steps:
+
+.. tabs::
+
+   .. group-tab:: Using |VSC|
+
+      a. In |VSC|, select `Add an existing application <Migrating IDE_>`_ and select the sample folder.
+      #. Under **Actions**, click :guilabel:`Kconfig`.
+      #. Click :guilabel:`Application sample`.
+      #. Under **LwM2M objects**, remove the key value next to :guilabel:`LwM2M pre-shared key for communication`.
+      #. Save and close the configuration.
+
+   .. group-tab:: Using :file:`src/prj.conf`
+
+      a. Open :file:`src/prj.conf`.
+      #. Set :kconfig:option:`CONFIG_APP_LWM2M_PSK` to an empty string.
+
+You can also edit this configuration using menuconfig.
+For more information, see |config|.
+
+For the changes to be added, rebuild the sample.
+
 Configuration options
 =====================
 
@@ -299,6 +311,7 @@ Server options
 
 CONFIG_APP_LWM2M_PSK - Configuration for Pre-Shared Key
    The sample configuration sets the hexadecimal representation of the PSK used when registering the device with the server.
+   To prevent provisioning of the key to the modem, set this option to an empty string.
 
 .. _CONFIG_APP_ENDPOINT_PREFIX:
 
@@ -361,9 +374,35 @@ CONFIG_SENSOR_MODULE - Configuration for periodic sensor reading
 CONFIG_SENSOR_MODULE_TEMP - Configuration to enable Temperature sensor
    This configuration option enables the Temperature sensor in the Sensor Module.
 
-.. note::
+.. _CONFIG_SENSOR_MODULE_ACCEL:
 
-   You can use the configuration options for different sensor types by modifying the configuration options accordingly.
+CONFIG_SENSOR_MODULE_ACCEL - Configuration to enable accelerometer
+   This configuration option enables the accelerometer.
+
+.. _CONFIG_SENSOR_MODULE_PRESS:
+
+CONFIG_SENSOR_MODULE_PRESS - Configuration for pressure reading
+   This configuration option enables the reading of pressure values.
+
+.. _CONFIG_SENSOR_MODULE_HUMID:
+
+CONFIG_SENSOR_MODULE_HUMID - Configuration for humidity reading
+   This configuration option enables the reading of humidity values.
+
+.. _CONFIG_SENSOR_MODULE_GAS_RES:
+
+CONFIG_SENSOR_MODULE_GAS_RES - Configuration for gas resistance reading
+   This configuration option enables the reading of gas resistance values.
+
+.. _CONFIG_SENSOR_MODULE_LIGHT:
+
+CONFIG_SENSOR_MODULE_LIGHT - Configuration for light reading
+   This configuration option enables the reading of light values.
+
+.. _CONFIG_SENSOR_MODULE_COLOR:
+
+CONFIG_SENSOR_MODULE_COLOR - Cpnfiguration for color
+   This configuration option enables the reading of color values.
 
 Additional configuration
 ========================
@@ -387,11 +426,22 @@ Check and configure the following LwM2M options that are used by the sample:
 * :kconfig:option:`CONFIG_LWM2M_IPSO_TEMP_SENSOR_VERSION_1_1` - Sets the IPSO Temperature sensor object version to 1.1.
   You can use this configuration option for other IPSO objects also by modifying the option accordingly. See the `LwM2M Object and Resource Registry`_ for a list of objects and their available versions.
 * :kconfig:option:`CONFIG_LWM2M_SHELL` - Enables the Zephyr shell and all LwM2M specific commands.
+* :kconfig:option:`CONFIG_LWM2M_TLS_SESSION_CACHING` - Enables TLS session caching to prevent a full TLS handshake for every send.
+* :kconfig:option:`CONFIG_LWM2M_RD_CLIENT_SUSPEND_SOCKET_AT_IDLE` - Enables the skipping of socket close at RX off idle state, which optimizes power consumption.
+* :kconfig:option:`CONFIG_LWM2M_QUEUE_MODE_UPTIME` - Specifies time (in seconds) the device must stay online after sending a message to the server.
+* :kconfig:option:`CONFIG_LWM2M_SECONDS_TO_UPDATE_EARLY` - Specifies time in seconds before the registration timeout, when the LWM2M registration update is sent by the engine.
+* :kconfig:option:`CONFIG_LTE_PSM_REQ_RPTAU` - Sets the :term:`Power saving mode (PSM)` for requested periodic TAU. Data format is described in `3GPP TS 24.008 Ch. 10.5.7.4a`_.
+* :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT` - Sets the :term:`Power saving mode (PSM)` for requested active time. Data format is described in `3GPP TS 24.008 Ch. 10.5.7.3`_.
+* :kconfig:option:`CONFIG_LTE_EDRX_REQ` - Enables request for use of Extended DRX (eDRX).
+* :kconfig:option:`CONFIG_LTE_EDRX_REQ_VALUE_LTE_M` - Sets the eDRX value to request when LTE-M is used. The format is half a byte in a four-bit format. The eDRX value refers to bit 4 to 1 of octet 3 of the Extended DRX parameters information element. See `3GPP TS 24.008, subclause 10.5.5.32`_.
+* :kconfig:option:`CONFIG_LTE_EDRX_REQ_VALUE_NBIOT` - Sets the eDRX value to request when NB-IoT is used. The format is half a byte in a four-bit format. The eDRX value refers to bit 4 to 1 of octet 3 of the Extended DRX parameters information element. See `3GPP TS 24.008, subclause 10.5.5.32`_.
+* :kconfig:option:`CONFIG_LTE_PTW_VALUE_LTE_M` - Sets the Paging Time Window value to be requested when enabling eDRX. The value will apply to LTE-M. The format is a string with half a byte in 4-bit format, corresponding to bits 8 to 5 in octet 3 of eDRX information element according to `3GPP TS 24.008, subclause 10.5.5.32`_.
+* :kconfig:option:`CONFIG_LTE_PTW_VALUE_NBIOT` - Sets the Paging Time Window value to be requested when enabling eDRX. The value applies to NB-IoT. The format is a string with half a byte in 4-bit format, corresponding to bits 8 to 5 in octet 3 of eDRX information element according to `3GPP TS 24.008, subclause 10.5.5.32`_.
+* :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS` - Enables notifications before Tracking Area Update (TAU). Notification triggers LWM2M registration update and TAU will be sent together with the user data. This decreases power consumption.
 
 .. note::
-   Changing lifetime might not work correctly if you set it to a value beyond 60 seconds.
-   It might cause resending message error and eventually timeout.
-   This is an issue specific for IPV4 when NAT is in use.
+   The nRF9160 modem negotiates PSM and eDRX modes with the network it is trying to connect.
+   The network can either accept the values, assign different values or reject them.
 
 For Thingy:91, configure the ADXL362 accelerometer sensor range by choosing one of the following options (default value is |plusminus| 2 g):
 
@@ -416,7 +466,6 @@ Check and configure the following library options that are used by the sample:
   Used with nRF Cloud to request assistance data for the GNSS module.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS` - nRF Cloud provides A-GPS assistance data and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS` - nRF Cloud provides P-GPS predictions and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
-* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS` - Disable this option if you provide your own method of sending the assistance requests to the LwM2M server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER` - Disable this option if you provide your own method of populating the LwM2M objects (ID 10256) containing the cell neighborhood information.
 
 
@@ -428,7 +477,6 @@ The sample provides predefined configuration files for typical use cases.
 The following files are available:
 
 * :file:`prj.conf` - Standard default configuration file.
-* :file:`overlay-queue.conf` - Enables LwM2M Queue Mode support.
 * :file:`overlay-leshan-bootstrap.conf` - Enables LwM2M bootstrap support with Leshan demo server.
 * :file:`overlay-avsystem.conf` - Uses `Coiote Device Management`_ server.
 * :file:`overlay-avsystem-bootstrap.conf` - Uses Coiote in bootstrap mode.
@@ -465,14 +513,22 @@ After building and running the sample, you can locate your device in the server:
 
 You can also optionally enable notifications for the resources so that the server actively monitors the resources.
 
-Queue Mode support
-==================
+Queue Mode
+==========
 
-To use the LwM2M Client with LwM2M Queue Mode support, build it with the ``-DOVERLAY_CONFIG=overlay-queue.conf`` option:
+The sample uses LwM2M queue mode by default.
+In this mode, the device need not actively listen for incoming packets and the client can reduce power consumption by being in the sleep state for longer duration.
 
-.. code-block:: console
-
-   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-queue.conf
+Queue mode is suitable for LTE connection where devices are not continuously reachable from the network.
+Both network and the modem try to release any resources as soon as possible.
+In LTE, the Radio Resource Control (RRC) protocol sometimes causes the close of idle connections as early as 10 seconds of idle time.
+This depends on the network operator.
+Another network dependent feature is the NAT timeout.
+Some networks drop unused UDP mappings after 30 seconds even if the RFC recommendation is 2 minutes.
+Therefore, after a short sleeping period, the device would not be addressable from the network as the mapping would not exist.
+Hence, by default, after contacting the LwM2M server, the device is configured to listen for 10 seconds after receiving the last packet.
+After that idle period, the device enables eDRX and PSM power saving modes if those are supported by the network.
+The device wakes up from sleep mode when it needs to send data.
 
 Bootstrap support
 =================

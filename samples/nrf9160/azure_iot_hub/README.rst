@@ -129,31 +129,30 @@ When the sample runs, the device boots, and the sample displays the following ou
 .. code-block:: console
 
 	*** Booting Zephyr OS build v2.3.0-rc1-ncs1-1453-gf41496cd30d5  ***
-	Azure IoT Hub sample started
-	Connecting to LTE network
-	Connected to LTE network
-	AZURE_IOT_HUB_EVT_CONNECTING
-	AZURE_IOT_HUB_EVT_CONNECTED
-	AZURE_IOT_HUB_EVT_READY
-	AZURE_IOT_HUB_EVT_TWIN_RECEIVED
-	No 'telemetryInterval' object in the device twin
-	Sending event:
-	{"temperature":25.9,"timestamp":16849}
-	Event was successfully sent
-	Next event will be sent in 20 seconds
+	<inf> azure_iot_hub_sample: Azure IoT Hub sample started
+	<inf> azure_iot_hub_sample: Connecting to LTE network
+	<inf> azure_iot_hub_sample: Connected to LTE network
+	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_CONNECTING
+	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_CONNECTED
+	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_READY
+	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_RECEIVED
+	<inf> azure_iot_hub_sample: Sending event:
+	<inf> azure_iot_hub_sample: {"temperature":25.9,"timestamp":16849}
+	<inf> azure_iot_hub_sample: Event was successfully sent
+	<inf> azure_iot_hub_sample: Next event will be sent in 60 seconds
 
 
 If a new telemetry interval is set in the device twin, the console output is like this:
 
 .. code-block:: console
 
-	AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED
-	New telemetry interval has been applied: 60
-	AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: 42740
-	Sending event:
-	{"temperature":25.5,"timestamp":47585}
-	Event was successfully sent
-	Next event will be sent in 60 seconds
+	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED
+	<inf> azure_iot_hub_sample: New telemetry interval has been applied: 60
+	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: 42740
+	<inf> azure_iot_hub_sample: Sending event:
+	<inf> azure_iot_hub_sample: {"temperature":25.5,"timestamp":47585}
+	<inf> azure_iot_hub_sample: Event was successfully sent
+	<inf> azure_iot_hub_sample: Next event will be sent in 60 seconds
 
 
 Dependencies

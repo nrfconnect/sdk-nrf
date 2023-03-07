@@ -14,7 +14,8 @@ from intelhex import IntelHex
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Hash data from file.',
-        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False)
 
     parser.add_argument('--infile', '-i', '--in', '-in', required=True,
                         help='Hash the contents of the specified file. If a *.hex file is given, the contents will '

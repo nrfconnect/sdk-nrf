@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# nRF Desktop specific configuration overlay for CAF BLE state module.
+
+config DESKTOP_BLE_STATE
+	bool "Bluetooth LE state module (CAF)"
+	select CAF_BLE_STATE
+	help
+	  nRF Desktop uses Bluetooth LE state module from Common Application
+	  Framework (CAF).

@@ -10,8 +10,6 @@
 #include "led_util.h"
 #include "window_covering.h"
 
-#include "thread_util.h"
-
 #include <app-common/zap-generated/attribute-id.h>
 #include <app-common/zap-generated/attribute-type.h>
 #include <app-common/zap-generated/cluster-id.h>
@@ -114,14 +112,6 @@ CHIP_ERROR AppTask::Init()
 		return err;
 	}
 
-#ifdef CONFIG_OPENTHREAD_DEFAULT_TX_POWER
-	err = SetDefaultThreadOutputPower();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("Cannot set default Thread output power");
-		return err;
-	}
-#endif
-
 	/* Initialize LEDs */
 	LEDWidget::InitGpio();
 	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
@@ -145,7 +135,7 @@ CHIP_ERROR AppTask::Init()
 
 #ifdef CONFIG_MCUMGR_SMP_BT
 	/* Initialize DFU over SMP */
-	GetDFUOverSMP().Init(RequestSMPAdvertisingStart);
+	GetDFUOverSMP().Init();
 	GetDFUOverSMP().ConfirmNewImage();
 #endif
 
@@ -258,16 +248,6 @@ void AppTask::ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged)
 		PostEvent(event);
 	}
 }
-
-#ifdef CONFIG_MCUMGR_SMP_BT
-void AppTask::RequestSMPAdvertisingStart(void)
-{
-	AppEvent event;
-	event.Type = AppEventType::StartSMPAdvertising;
-	event.Handler = [](const AppEvent &) { GetDFUOverSMP().StartBLEAdvertising(); };
-	PostEvent(event);
-}
-#endif
 
 void AppTask::FunctionTimerTimeoutCallback(k_timer *timer)
 {

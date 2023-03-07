@@ -16,6 +16,7 @@
 #include <zephyr/pm/device.h>
 #include <string.h>
 #include <zephyr/init.h>
+#include <pm_config.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
@@ -25,29 +26,18 @@
 
 LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 
-#if defined(CONFIG_SLM_CONNECT_UART_0)
-#define UART_NODE DT_NODELABEL(uart0)
-#elif defined(CONFIG_SLM_CONNECT_UART_2)
-#define UART_NODE DT_NODELABEL(uart2)
-#else
-#error "Unknown Inter-Connect UART"
-#endif
-
 #define OK_STR		"\r\nOK\r\n"
 #define ERROR_STR	"\r\nERROR\r\n"
 #define FATAL_STR	"FATAL ERROR\r\n"
 #define SLM_SYNC_STR	"Ready\r\n"
-
-/** The maximum allowed length of an AT command passed through the SLM.
- *  The space is allocated statically. */
-#define AT_MAX_CMD_LEN          4096
+#define CRLF_STR	"\r\n"
 
 #define UART_RX_BUF_NUM         2
 #define UART_RX_LEN             256
 #define UART_RX_TIMEOUT_US      2000
 #define UART_ERROR_DELAY_MS     500
 #define UART_RX_MARGIN_MS       10
-#define UART_TX_DATA_SIZE	1024
+#define UART_DATA_SIZE		4096
 
 #define HEXDUMP_DATAMODE_MAX    16
 
@@ -57,18 +47,31 @@ static enum slm_operation_modes {
 	SLM_DFU_MODE          /* nRF52 DFU controller */
 } slm_operation_mode;
 
-static const struct device *const uart_dev = DEVICE_DT_GET(UART_NODE);
-static uint8_t at_buf[AT_MAX_CMD_LEN];
+/* list supported UART instances and get HWFC property from DTS */
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(uart0), okay)
+static const struct device *const uart0_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
+static bool hw_flow_control = DT_NODE_HAS_PROP(DT_NODELABEL(uart0), hw-flow-control);
+static const struct device *const uart2_dev;	/* disabled or not used, set NULL */
+#elif DT_NODE_HAS_STATUS(DT_NODELABEL(uart2), okay)
+static const struct device *const uart2_dev = DEVICE_DT_GET(DT_NODELABEL(uart2));
+static bool hw_flow_control = DT_NODE_HAS_PROP(DT_NODELABEL(uart2), hw-flow-control);
+static const struct device *const uart0_dev;	/* disabled, set NULL */
+#else
+static const struct device *const uart0_dev;	/* disabled, set NULL */
+static const struct device *const uart2_dev;	/* disabled, set NULL */
+static bool hw_flow_control;			/* set false */
+#endif
+static const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_uart));
+uint8_t at_buf[SLM_AT_MAX_CMD_LEN];
+static char rsp_buf[SLM_AT_MAX_RSP_LEN];
 static uint16_t at_buf_len;
 static bool at_buf_overflow;
-static struct ring_buf data_rb;
 static bool datamode_rx_disabled;
 static slm_datamode_handler_t datamode_handler;
 static struct k_work raw_send_work;
 static struct k_work cmd_send_work;
-static struct k_work datamode_quit_work;
 
-RING_BUF_DECLARE(delayed_rb, UART_TX_DATA_SIZE);
+RING_BUF_DECLARE(data_rb, UART_DATA_SIZE);
 static struct k_work delayed_send_work;
 
 static uint8_t uart_rx_buf[UART_RX_BUF_NUM][UART_RX_LEN];
@@ -77,7 +80,8 @@ static uint8_t *uart_tx_buf;
 static bool uart_recovery_pending;
 static struct k_work_delayable uart_recovery_work;
 
-static K_SEM_DEFINE(tx_done, 0, 1);
+K_SEM_DEFINE(tx_done, 0, 1);
+K_SEM_DEFINE(rsp_sent, 0, 1);
 
 /* global functions defined in different files */
 int slm_at_parse(const char *at_cmd);
@@ -88,7 +92,7 @@ int indicate_start(void);
 
 /* global variable used across different files */
 struct at_param_list at_param_list;           /* For AT parser */
-char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];    /* SLM URC and socket data */
+uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];       /* For socket data */
 uint16_t datamode_time_limit;                 /* Send trigger by time in data mode */
 
 /* global variable defined in different files */
@@ -98,25 +102,24 @@ extern struct uart_config slm_uart;
 static int uart_send(const uint8_t *buffer, size_t len)
 {
 	int ret;
-	enum pm_device_state state = PM_DEVICE_STATE_OFF;
-
-	pm_device_state_get(uart_dev, &state);
-	if (state != PM_DEVICE_STATE_ACTIVE) {
-		(void)indicate_start();
-		return -EAGAIN;
-	}
 
 	k_sem_take(&tx_done, K_FOREVER);
 
-	uart_tx_buf = k_malloc(len);
-	if (uart_tx_buf == NULL) {
-		LOG_WRN("No ram buffer");
-		k_sem_give(&tx_done);
-		return -ENOMEM;
+	/* EasyDMA requires SRAM address */
+	if ((uint32_t)buffer < PM_SRAM_NONSECURE_ADDRESS ||
+	    (uint32_t)buffer > PM_SRAM_NONSECURE_END_ADDRESS) {
+		uart_tx_buf = k_malloc(len);
+		if (uart_tx_buf == NULL) {
+			LOG_WRN("No ram buffer");
+			k_sem_give(&tx_done);
+			return -ENOMEM;
+		}
+		memcpy(uart_tx_buf, buffer, len);
+		ret = uart_tx(uart_dev, uart_tx_buf, len, SYS_FOREVER_US);
+	} else {
+		uart_tx_buf = NULL; /* if NULL, no operation by k_free() */
+		ret = uart_tx(uart_dev, buffer, len, SYS_FOREVER_US);
 	}
-
-	memcpy(uart_tx_buf, buffer, len);
-	ret = uart_tx(uart_dev, uart_tx_buf, len, SYS_FOREVER_US);
 	if (ret) {
 		LOG_WRN("uart_tx failed: %d", ret);
 		k_free(uart_tx_buf);
@@ -126,26 +129,58 @@ static int uart_send(const uint8_t *buffer, size_t len)
 	return ret;
 }
 
-void rsp_send(const char *str, size_t len)
+void rsp_send_ok(void)
 {
-	if (len == 0 || slm_operation_mode == SLM_DFU_MODE) {
+	if (slm_operation_mode == SLM_DFU_MODE) {
+		return;
+	}
+	(void)uart_send(OK_STR, sizeof(OK_STR) - 1);
+}
+
+void rsp_send_error(void)
+{
+	if (slm_operation_mode == SLM_DFU_MODE) {
+		return;
+	}
+	(void)uart_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+}
+
+void rsp_send(const char *fmt, ...)
+{
+	if (slm_operation_mode == SLM_DFU_MODE) {
 		return;
 	}
 
-	LOG_HEXDUMP_DBG(str, len, "TX");
-	if (uart_send(str, len) < 0) {
-		ring_buf_put(&delayed_rb, str, len);
+	k_sem_take(&rsp_sent, K_FOREVER);
+
+	va_list arg_ptr;
+
+	va_start(arg_ptr, fmt);
+	vsnprintf(rsp_buf, sizeof(rsp_buf), fmt, arg_ptr);
+	va_end(arg_ptr);
+
+	LOG_HEXDUMP_DBG(rsp_buf, strlen(rsp_buf), "TX");
+	if (uart_send(rsp_buf, strlen(rsp_buf)) < 0) {
+		k_sem_give(&rsp_sent);
 	}
 }
 
 void data_send(const uint8_t *data, size_t len)
 {
+	enum pm_device_state state = PM_DEVICE_STATE_OFF;
+
 	if (slm_operation_mode == SLM_DFU_MODE) {
 		return;
 	}
+
 	LOG_HEXDUMP_DBG(data, MIN(len, HEXDUMP_DATAMODE_MAX), "TX-DATA");
-	if (uart_send(data, len) < 0) {
-		ring_buf_put(&delayed_rb, data, len);
+
+	pm_device_state_get(uart_dev, &state);
+	if (state != PM_DEVICE_STATE_ACTIVE) {
+		ring_buf_put(&data_rb, data, len);
+		(void)indicate_start();
+	} else {
+		(void)uart_send(data, len);
 	}
 }
 
@@ -156,7 +191,7 @@ static int uart_receive(void)
 	ret = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_US);
 	if (ret && ret != -EBUSY) {
 		LOG_ERR("UART RX failed: %d", ret);
-		rsp_send(FATAL_STR, sizeof(FATAL_STR) - 1);
+		(void)uart_send(FATAL_STR, sizeof(FATAL_STR) - 1);
 		return ret;
 	}
 	next_buf = uart_rx_buf[1];
@@ -182,7 +217,12 @@ int enter_datamode(slm_datamode_handler_t handler)
 		return -EINVAL;
 	}
 
-	ring_buf_init(&data_rb, sizeof(at_buf), at_buf);
+	/* reset UART for data mode */
+	uart_rx_disable(uart_dev);
+	k_sleep(K_MSEC(10));
+	(void)uart_receive();
+
+	ring_buf_reset(&data_rb);
 	datamode_handler = handler;
 	slm_operation_mode = SLM_DATA_MODE;
 	if (datamode_time_limit == 0) {
@@ -207,17 +247,20 @@ bool in_datamode(void)
 bool exit_datamode(int result)
 {
 	if (slm_operation_mode == SLM_DATA_MODE) {
-		ring_buf_reset(&data_rb);
-		/* reset UART to restore command mode */
+		if (datamode_handler) {
+			(void)datamode_handler(DATAMODE_EXIT, NULL, 0);
+		} else {
+			LOG_WRN("missing datamode handler");
+		}
+		datamode_handler = NULL;
+
+		/* reset UART for command mode */
 		uart_rx_disable(uart_dev);
 		k_sleep(K_MSEC(10));
 		(void)uart_receive();
 
-		sprintf(rsp_buf, "\r\n#XDATAMODE: %d\r\n", result);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-
+		rsp_send("\r\n#XDATAMODE: %d\r\n", result);
 		slm_operation_mode = SLM_AT_COMMAND_MODE;
-		datamode_handler = NULL;
 		LOG_INF("Exit datamode");
 		return true;
 	}
@@ -246,10 +289,10 @@ static void delayed_send(struct k_work *work)
 
 	/* NOTE ring_buf_get_claim() might not return full size */
 	do {
-		size_send = ring_buf_get_claim(&delayed_rb, &data, UART_TX_DATA_SIZE);
+		size_send = ring_buf_get_claim(&data_rb, &data, UART_DATA_SIZE);
 		if (data != NULL && size_send > 0) {
 			(void)uart_send(data, size_send);
-			(void)ring_buf_get_finish(&delayed_rb, size_send);
+			(void)ring_buf_get_finish(&data_rb, size_send);
 		} else {
 			break;
 		}
@@ -274,7 +317,8 @@ int poweron_uart(void)
 	}
 
 	k_sem_give(&tx_done);
-	uart_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
+	k_sem_give(&rsp_sent);
+	(void)uart_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
 	k_work_submit(&delayed_send_work);
 
 	return 0;
@@ -292,13 +336,10 @@ int slm_uart_configure(void)
 		LOG_ERR("uart_configure: %d", err);
 		return err;
 	}
-#if defined(CONFIG_SLM_UART_HWFC_RUNTIME)
-	uint32_t RTS_PIN;
-	uint32_t CTS_PIN;
-/* Set HWFC dynamically */
-	#if defined(CONFIG_SLM_CONNECT_UART_0)
-		RTS_PIN = nrf_uarte_rts_pin_get(NRF_UARTE0);
-		CTS_PIN = nrf_uarte_cts_pin_get(NRF_UARTE0);
+	/* Set HWFC dynamically */
+	if (uart_dev == uart0_dev && hw_flow_control) {
+		uint32_t RTS_PIN = nrf_uarte_rts_pin_get(NRF_UARTE0);
+		uint32_t CTS_PIN = nrf_uarte_cts_pin_get(NRF_UARTE0);
 
 		if (slm_uart.flow_ctrl == UART_CFG_FLOW_CTRL_RTS_CTS) {
 			nrf_uarte_hwfc_pins_set(NRF_UARTE0,
@@ -308,10 +349,9 @@ int slm_uart_configure(void)
 			nrf_gpio_pin_clear(RTS_PIN);
 			nrf_gpio_cfg_output(RTS_PIN);
 		}
-	#endif
-	#if defined(CONFIG_SLM_CONNECT_UART_2)
-		RTS_PIN = nrf_uarte_rts_pin_get(NRF_UARTE2);
-		CTS_PIN = nrf_uarte_cts_pin_get(NRF_UARTE2);
+	} else if (uart_dev == uart2_dev && hw_flow_control) {
+		uint32_t RTS_PIN = nrf_uarte_rts_pin_get(NRF_UARTE2);
+		uint32_t CTS_PIN = nrf_uarte_cts_pin_get(NRF_UARTE2);
 
 		if (slm_uart.flow_ctrl == UART_CFG_FLOW_CTRL_RTS_CTS) {
 			nrf_uarte_hwfc_pins_set(NRF_UARTE2,
@@ -321,8 +361,8 @@ int slm_uart_configure(void)
 			nrf_gpio_pin_clear(RTS_PIN);
 			nrf_gpio_cfg_output(RTS_PIN);
 		}
-	#endif
-#endif
+	}
+
 	return err;
 }
 
@@ -352,12 +392,20 @@ bool verify_datamode_control(uint16_t time_limit, uint16_t *min_time_limit)
 
 AT_MONITOR(at_notify, ANY, notification_handler);
 
-static void notification_handler(const char *response)
+static void notification_handler(const char *notification)
 {
+	enum pm_device_state state = PM_DEVICE_STATE_OFF;
+
 	if (slm_operation_mode == SLM_AT_COMMAND_MODE) {
-		/* Forward the data over UART */
-		rsp_send("\r\n", 2);
-		rsp_send(response, strlen(response));
+		pm_device_state_get(uart_dev, &state);
+		if (state != PM_DEVICE_STATE_ACTIVE) {
+			ring_buf_put(&data_rb, CRLF_STR, strlen(CRLF_STR));
+			ring_buf_put(&data_rb, notification, strlen(notification));
+			(void)indicate_start();
+		} else {
+			(void)uart_send(CRLF_STR, strlen(CRLF_STR));
+			(void)uart_send(notification, strlen(notification));
+		}
 	}
 }
 
@@ -505,8 +553,7 @@ static void raw_send(struct k_work *work)
 					datamode_off_pending = true;
 				}
 				if (size_send == 0) {
-					k_work_submit(&datamode_quit_work);
-					LOG_INF("datamode off pending");
+					(void)exit_datamode(0);
 					return;
 				}
 			}
@@ -534,17 +581,13 @@ static void raw_send(struct k_work *work)
 
 			if (datamode_off_pending) {
 #if defined(CONFIG_SLM_DATAMODE_URC)
-				sprintf(rsp_buf, "\r\n#XDATAMODE: %d\r\n",
-					size_finish - quit_str_len);
-				rsp_send(rsp_buf, strlen(rsp_buf));
+				rsp_send("\r\n#XDATAMODE: %d\r\n", size_finish - quit_str_len);
 #endif
-				k_work_submit(&datamode_quit_work);
-				LOG_INF("datamode off pending");
+				(void)exit_datamode(0);
 				return;
 			}
 #if defined(CONFIG_SLM_DATAMODE_URC)
-			sprintf(rsp_buf, "\r\n#XDATAMODE: %d\r\n", size_finish);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send("\r\n#XDATAMODE: %d\r\n", size_finish);
 #endif
 		} else {
 			break;
@@ -571,19 +614,6 @@ static void inactivity_timer_handler(struct k_timer *timer)
 }
 
 K_TIMER_DEFINE(inactivity_timer, inactivity_timer_handler, NULL);
-
-static void datamode_quit(struct k_work *work)
-{
-	ARG_UNUSED(work);
-
-	/* quit datamode */
-	if (datamode_handler) {
-		(void)datamode_handler(DATAMODE_EXIT, NULL, 0);
-	} else {
-		LOG_WRN("missing datamode handler");
-	}
-	(void)exit_datamode(0);
-}
 
 static int raw_rx_handler(const uint8_t *data, int datalen)
 {
@@ -706,8 +736,10 @@ static void format_final_result(char *buf)
 	static const char error_str[] = "ERROR\r\n";
 	static const char cme_error_str[] = "+CME ERROR:";
 	static const char cms_error_str[] = "+CMS ERROR:";
-	static const char crlf_str[] = "\r\n";
 	char *result = NULL, *temp;
+
+	/* insert <CR><LF> before information response*/
+	memcpy((void *)buf, CRLF_STR, strlen(CRLF_STR));
 
 	/* find the last occurrence of final result string */
 	result = strstr(buf, ok_str);
@@ -760,9 +792,9 @@ static void format_final_result(char *buf)
 
 final_result:
 	/* insert CRLF before final result if there is information response before it */
-	if (result != buf) {
-		memmove((void *)(result + strlen(crlf_str)), (void *)result, strlen(result) + 1);
-		memcpy((void *)result, (void *)crlf_str, strlen(crlf_str));
+	if (result != buf + strlen(CRLF_STR)) {
+		memmove((void *)(result + strlen(CRLF_STR)), (void *)result, strlen(result) + 1);
+		memcpy((void *)result, CRLF_STR, strlen(CRLF_STR));
 	}
 }
 
@@ -773,7 +805,7 @@ static void cmd_send(struct k_work *work)
 	ARG_UNUSED(work);
 
 	if (at_buf_overflow) {
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		rsp_send_error();
 		goto done;
 	}
 
@@ -781,24 +813,25 @@ static void cmd_send(struct k_work *work)
 
 	if (cmd_grammar_check(at_buf, at_buf_len) != 0) {
 		LOG_ERR("AT command invalid");
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		rsp_send_error();
 		goto done;
 	}
 
 	err = slm_at_parse(at_buf);
 	if (err == 0) {
-		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		rsp_send_ok();
 		goto done;
 	} else if (err != -ENOENT) {
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		rsp_send_error();
 		goto done;
 	}
 
-	/* Send to modem */
-	err = nrf_modem_at_cmd(at_buf, sizeof(at_buf), "%s", at_buf);
+	/* Send to modem, reserve space for CRLF in response buffer */
+	err = nrf_modem_at_cmd((void *)(at_buf + strlen(CRLF_STR)),
+				sizeof(at_buf) - strlen(CRLF_STR), "%s", at_buf);
 	if (err < 0) {
 		LOG_ERR("AT command failed: %d", err);
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		rsp_send_error();
 		goto done;
 	} else if (err > 0) {
 		LOG_ERR("AT command error, type: %d", nrf_modem_at_err_type(err));
@@ -807,10 +840,9 @@ static void cmd_send(struct k_work *work)
 	/** Format as TS 27.007 command V1 with verbose response format,
 	 *  based on current return of API nrf_modem_at_cmd() and MFWv1.3.x
 	 */
-	if (strlen(at_buf) > 0) {
-		rsp_send("\r\n", 2);		/* insert <CR><LF> before information response*/
-		format_final_result(at_buf);	/* insert <CR><LF> before final result */
-		rsp_send(at_buf, strlen(at_buf));
+	if (strlen(at_buf) > strlen(CRLF_STR)) {
+		format_final_result(at_buf);
+		(void)uart_send(at_buf, strlen(at_buf));
 	}
 
 done:
@@ -902,10 +934,12 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 	case UART_TX_DONE:
 		k_free(uart_tx_buf);
 		k_sem_give(&tx_done);
+		k_sem_give(&rsp_sent);
 		break;
 	case UART_TX_ABORTED:
 		k_free(uart_tx_buf);
 		k_sem_give(&tx_done);
+		k_sem_give(&rsp_sent);
 		LOG_INF("TX_ABORTED");
 		break;
 	case UART_RX_RDY:
@@ -956,7 +990,7 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 			k_work_submit(&raw_send_work);
 		}
 		if (enable_rx_retry && !uart_recovery_pending) {
-			k_work_schedule(&uart_recovery_work, K_MSEC(UART_ERROR_DELAY_MS));
+			k_work_schedule(&uart_recovery_work, K_MSEC(UART_RX_MARGIN_MS));
 			enable_rx_retry = false;
 			uart_recovery_pending = true;
 		}
@@ -990,14 +1024,20 @@ int slm_at_host_init(void)
 		}
 	} else {
 		/* else re-config UART based on setting page */
-		LOG_DBG("UART baud: %d d/p/s-bits: %d/%d/%d HWFC: %d",
-			slm_uart.baudrate, slm_uart.data_bits, slm_uart.parity,
-			slm_uart.stop_bits, slm_uart.flow_ctrl);
 		err = slm_uart_configure();
 		if (err != 0) {
 			LOG_ERR("Fail to set uart baudrate: %d", err);
 			return err;
 		}
+	}
+	if (uart_dev == uart0_dev) {
+		LOG_INF("UART0 baud: %d d/p/s-bits: %d/%d/%d HWFC: %d",
+			slm_uart.baudrate, slm_uart.data_bits, slm_uart.parity,
+			slm_uart.stop_bits, slm_uart.flow_ctrl);
+	} else if (uart_dev == uart2_dev) {
+		LOG_INF("UART2 baud: %d d/p/s-bits: %d/%d/%d HWFC: %d",
+			slm_uart.baudrate, slm_uart.data_bits, slm_uart.parity,
+			slm_uart.stop_bits, slm_uart.flow_ctrl);
 	}
 	/* Wait for the UART line to become valid */
 	start_time = k_uptime_get_32();
@@ -1041,11 +1081,11 @@ int slm_at_host_init(void)
 
 	k_work_init(&raw_send_work, raw_send);
 	k_work_init(&cmd_send_work, cmd_send);
-	k_work_init(&datamode_quit_work, datamode_quit);
 	k_work_init(&delayed_send_work, delayed_send);
 	k_work_init_delayable(&uart_recovery_work, uart_recovery);
 	k_sem_give(&tx_done);
-	rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
+	k_sem_give(&rsp_sent);
+	(void)uart_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
 	slm_fota_post_process();
 
 	slm_operation_mode = SLM_AT_COMMAND_MODE;

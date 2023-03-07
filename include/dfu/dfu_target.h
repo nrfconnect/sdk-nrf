@@ -71,7 +71,7 @@ struct dfu_target {
  * @param[in] len The length of the provided buffer.
  *
  * @return Identifier for a supported image type or DFU_TARGET_IMAGE_TYPE_NONE if
- *         image type is not regognized.
+ *         image type is not recognized.
  **/
 enum dfu_target_image_type dfu_target_img_type(const void *const buf, size_t len);
 
@@ -112,7 +112,7 @@ int dfu_target_offset_get(size_t *offset);
 /**
  * @brief Write the given buffer to the initialized DFU target.
  *
- * @param[in] buf A buffer of bytes which contains part of an binary firmware
+ * @param[in] buf A buffer of bytes which contains part of a binary firmware
  *		  image.
  * @param[in] len The length of the provided buffer.
  *
@@ -137,7 +137,7 @@ int dfu_target_done(bool successful);
  * @brief Release the resources that were needed for the current DFU
  *	  target if any and resets the current DFU target.
  *
- * @return 0 for an successful deinitialization and reset or a negative error
+ * @return 0 for a successful deinitialization and reset or a negative error
  *	   code indicating reason of failure.
  **/
 int dfu_target_reset(void);

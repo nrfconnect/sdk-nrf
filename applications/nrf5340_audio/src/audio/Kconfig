@@ -17,10 +17,10 @@ choice AUDIO_FRAME_DURATION
 	  have a frame duration of 10 ms since USB sends 1ms at a time.
 
 config AUDIO_FRAME_DURATION_7_5_MS
-	bool "Frame duration 7.5 ms"
+	bool "7.5 ms"
 
 config AUDIO_FRAME_DURATION_10_MS
-	bool "Frame duration 10 ms"
+	bool "10 ms"
 endchoice
 
 config AUDIO_FRAME_DURATION_US
@@ -32,22 +32,26 @@ config AUDIO_FRAME_DURATION_US
 
 choice AUDIO_SAMPLE_RATE
 	prompt "Audio sample rate"
-	default AUDIO_SAMPLE_RATE_48000_HZ if BT_AUDIO_BROADCAST_RECOMMENDED || BT_AUDIO_UNICAST_RECOMMENDED
 	default AUDIO_SAMPLE_RATE_16000_HZ if BT_AUDIO_BROADCAST_16_2_1 || BT_AUDIO_BROADCAST_16_2_2 || BT_AUDIO_UNICAST_16_2_1
 	default AUDIO_SAMPLE_RATE_24000_HZ if BT_AUDIO_BROADCAST_24_2_1 || BT_AUDIO_BROADCAST_24_2_2 || BT_AUDIO_UNICAST_24_2_1
+	default AUDIO_SAMPLE_RATE_48000_HZ
 	help
 	  This will be selected based on the BAP settings.
 
 config AUDIO_SAMPLE_RATE_16000_HZ
 	bool "16 kHz"
-	depends on AUDIO_SOURCE_I2S
+	help
+	  Sample rate of 16kHz is currently only valid for I2S/line-in.
 
 config AUDIO_SAMPLE_RATE_24000_HZ
 	bool "24 kHz"
-	depends on AUDIO_SOURCE_I2S
+	help
+	  Sample rate of 24kHz is currently only valid for I2S/line-in.
 
 config AUDIO_SAMPLE_RATE_48000_HZ
 	bool "48 kHz"
+	help
+	  Sample rate of 48kHz is valid for both I2S/line-in and USB.
 endchoice
 
 config AUDIO_SAMPLE_RATE_HZ
@@ -124,10 +128,19 @@ config AUDIO_HEADSET_CHANNEL_COMPILE_TIME
 endchoice
 
 config AUDIO_TEST_TONE
-	bool "Testing audio chain using a test tone"
+	bool "Test tone instead of doing user defined action"
 	default y
 	help
-	  Use button 4 to set the test tone.
+	  Use button 4 to set a test tone
+	  instead of doing a user defined action.
+	  The test tone is generated on the device itself.
+
+config AUDIO_MUTE
+	bool "Mute instead of doing user defined action"
+	default y
+	help
+	  Use button 5 to mute audio instead of
+	  doing a user defined action.
 
 if AUDIO_HEADSET_CHANNEL_COMPILE_TIME
 
@@ -168,12 +181,6 @@ config SW_CODEC_PLC_DISABLED
 menu "LC3"
 visible if SW_CODEC_LC3
 
-config LC3_BITRATE
-	int "Bitrate for LC3"
-	default 96000 if BT_AUDIO_BROADCAST_RECOMMENDED || BT_AUDIO_UNICAST_RECOMMENDED
-	default 32000 if BT_AUDIO_BROADCAST_16_2_1 || BT_AUDIO_BROADCAST_16_2_2 || BT_AUDIO_UNICAST_16_2_1
-	default 48000 if BT_AUDIO_BROADCAST_24_2_1 || BT_AUDIO_BROADCAST_24_2_2 || BT_AUDIO_UNICAST_24_2_1
-
 config LC3_BITRATE_MAX
 	int "Max bitrate for LC3"
 	default 124000
@@ -181,6 +188,11 @@ config LC3_BITRATE_MAX
 config LC3_BITRATE_MIN
 	int "Min bitrate for LC3"
 	default 32000
+
+config LC3_BITRATE
+	int
+	range LC3_BITRATE_MIN LC3_BITRATE_MAX
+	default 96000
 
 osource "../nrfxlib/lc3/Kconfig"
 
@@ -217,6 +229,15 @@ config WALKIE_TALKIE_DEMO
 	help
 	  The walkie talkie demo will set up a bidirectional stream using PDM
 	  microphones on each side.
+
+config MONO_TO_ALL_RECEIVERS
+	bool "Send mono (first/left channel) to all receivers"
+	default y if BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT = 1
+	default y if BT_AUDIO_BROADCAST_SRC_STREAM_COUNT = 1
+	default n
+	help
+	  With this flag set, the gateway will encode and send the same (first/left)
+	  channel on all ISO channels.
 
 endmenu # Stream
 

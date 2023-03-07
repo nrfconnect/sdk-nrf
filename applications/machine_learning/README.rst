@@ -67,7 +67,7 @@ The labels that are assigned by the machine learning model are specific to the g
 
 By default, the application uses pretrained machine leaning models deployed in `Edge Impulse studio`_:
 
-* Thingy:53 uses the `NCS hardware accelerometer machine learning model`_.
+* Thingy:53 uses the `nRF Connect SDK hardware accelerometer machine learning model`_.
   The model uses the data from the built-in accelerometer to recognize the following gestures:
 
   * ``idle`` - The device is placed on a flat surface.
@@ -76,7 +76,7 @@ By default, the application uses pretrained machine leaning models deployed in `
   * ``tap`` - The device is tapped while placed on a flat surface.
 
   Unknown gestures, such as shaking the device, are recognized as anomaly.
-* Both the nRF52840 Development Kit and nRF5340 Development Kit use the `NCS simulated sensor machine learning model`_.
+* Both the nRF52840 Development Kit and nRF5340 Development Kit use the `nRF Connect SDK simulated sensor machine learning model`_.
   The model uses simulated sensor data to recognize the following simulated wave types:
 
   * ``sine``
@@ -193,7 +193,7 @@ Other build types are covered by dedicated files with the build type added as a 
 For example, the ``release`` build type file name is :file:`prj_release.conf`.
 If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_overview_start
    :end-before: build_types_overview_end
 
@@ -367,14 +367,14 @@ Before you start testing the application, you can select one of the :ref:`nrf_ma
 Selecting a build type in |VSC|
 -------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_vsc_start
    :end-before: build_types_selection_vsc_end
 
 Selecting a build type from command line
 ----------------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_cmd_start
    :end-before: build_types_selection_cmd_end
 
@@ -493,7 +493,7 @@ To start forwarding data to Edge Impulse studio:
    a. Select the :guilabel:`Data acquisition` tab.
    #. In the **Record new data** panel, set the desired values and click :guilabel:`Start sampling`.
 
-      .. figure:: ../../doc/nrf/images/ei_data_acquisition.png
+      .. figure:: /images/ei_data_acquisition.png
          :scale: 50%
          :alt: Sampling under Data acquisition in Edge Impulse studio
 
@@ -502,7 +502,7 @@ To start forwarding data to Edge Impulse studio:
    #. Observe the received sample data on the raw data graph under the panel.
       The observed signal depends on the acceleration readouts.
 
-      .. figure:: ../../doc/nrf/images/ei_start_sampling.png
+      .. figure:: /images/ei_start_sampling.png
          :scale: 50%
          :alt: Sampling example
 
@@ -554,8 +554,6 @@ The nRF Machine Learning application also uses the following dedicated applicati
 ``ml_runner``
   The module uses :ref:`ei_wrapper` API to control running the machine learning model.
   It provides the prediction results using :c:struct:`ml_result_event`.
-  The module runs the machine learning model and provides results only if there is an active subscriber.
-  An application module can inform that it is actively listening for results using :c:struct:`ml_result_signin_event`.
 
 ``ml_app_mode``
   The module controls Application mode. It switches between running the machine learning model and forwarding the data.

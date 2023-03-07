@@ -1,17 +1,7 @@
 #
-#    Copyright (c) 2022 Project CHIP Authors
+# Copyright (c) 2022 Nordic Semiconductor
 #
-#    Licensed under the Apache License, Version 2.0 (the "License");
-#    you may not use this file except in compliance with the License.
-#    You may obtain a copy of the License at
-#
-#        http://www.apache.org/licenses/LICENSE-2.0
-#
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS,
-#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#    See the License for the specific language governing permissions and
-#    limitations under the License.
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 mainmenu "Matter nRF Connect Light Switch Example Application"
 
@@ -35,29 +25,22 @@ choice OPENTHREAD_DEVICE_TYPE
 endchoice
 
 config CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT
-	bool
 	default y
+
+# Reduce Thread TX output power to 0 dBm for SED device
+config OPENTHREAD_DEFAULT_TX_POWER
+	int
+	default 0
 
 endif # NET_L2_OPENTHREAD
 
-if MPSL_FEM
+if CHIP_WIFI
 
-config OPENTHREAD_DEFAULT_TX_POWER
-	int "Set the default 802.15.4 output power (dBm) for device with FEM"
-	range -40 20
-	default 20
-	help
-	  Use this setting to set the default Thread (802.15.4) output power for device that
-	  uses FEM. This value has a unit in dBm and represents the Tx power at Antenna port of FEM device.
+config NRF_WIFI_LOW_POWER
+	default y
 
-# override FEM GAIN to 20 dB as a default
-# see subsys/mpsl/fem/Kconfig
-# Leave MPSL_FEM_NRF21540_TX_GAIN_DB unchanged when OPENTHREAD_DEFAULT_TX_POWER=0
-# to set the output power to a similar value as for nRF52840DK.
-config MPSL_FEM_NRF21540_TX_GAIN_DB
-	default 20 if OPENTHREAD_DEFAULT_TX_POWER != 0
+endif # CHIP_WIFI
 
-endif # MPSL_FEM
 
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.defaults"

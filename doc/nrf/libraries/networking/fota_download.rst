@@ -51,7 +51,7 @@ To do this, provide two paths in the ``file`` argument, separated by a space cha
 * The first entry must point to the second-stage upgradable bootloader variant linked against the S0 partition.
 * The second entry must point to the second-stage upgradable bootloader variant linked against the S1 partition.
 
-When an upgradeable bootloader, like MCUboot, is included in the project, the FOTA download library uses the :ref:`lib_secure_services` library to detect the active second-stage upgradable bootloader partition (S0 or S1).
+When an upgradeable bootloader, like MCUboot, is included in the project, the FOTA download library uses :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` to detect the active second-stage upgradable bootloader partition (S0 or S1).
 If the ``file`` argument contains a space character, it is internally updated to contain only the entry that corresponds to the non-active slot.
 This updated path is then used to download the image.
 A device reset triggers the second-stage upgradable bootloader to copy the image from the update bank to the non-active slot.

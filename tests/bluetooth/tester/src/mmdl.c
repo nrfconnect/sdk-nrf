@@ -18,9 +18,9 @@
 #include <lightness_internal.h>
 #include <light_ctrl_internal.h>
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG)
-#define LOG_MODULE_NAME bttester_mmdl
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bttester_mmdl);
 
 #include "model_handler.h"
 #include "bttester.h"
@@ -2163,7 +2163,7 @@ fail:
 static void time_get(uint8_t *data, uint16_t len)
 {
 	struct net_buf_simple *buf =
-		NET_BUF_SIMPLE(BT_MESH_TIME_MSG_LEN_TIME_STATUS);
+		NET_BUF_SIMPLE(BT_MESH_TIME_MSG_MAXLEN_TIME_STATUS);
 	struct bt_mesh_time_status status;
 	struct model_data *model_bound;
 	struct bt_mesh_msg_ctx ctx = {
@@ -2206,7 +2206,7 @@ static void time_set(uint8_t *data, uint16_t len)
 {
 	struct net_buf_simple *buf = NET_BUF_SIMPLE(0);
 	struct net_buf_simple *buf_rsp =
-		NET_BUF_SIMPLE(BT_MESH_TIME_MSG_LEN_TIME_STATUS);
+		NET_BUF_SIMPLE(BT_MESH_TIME_MSG_MAXLEN_TIME_STATUS);
 	struct bt_mesh_time_status set;
 	struct bt_mesh_time_status status;
 	struct model_data *model_bound;

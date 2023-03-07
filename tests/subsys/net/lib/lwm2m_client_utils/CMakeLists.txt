@@ -9,7 +9,11 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(lwm2m_client_unittest)
 
 FILE(GLOB app_sources src/*.c)
-target_sources(app PRIVATE ${app_sources})
+target_sources(app
+  PRIVATE
+    ${app_sources}
+    $ENV{ZEPHYR_BASE}/subsys/net/lib/lwm2m/lwm2m_util.c
+)
 
 set(options
   -DCONFIG_LWM2M_ENGINE_MAX_PENDING=5
@@ -22,12 +26,12 @@ set(options
   -DCONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP
   -DCONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER
   -DCONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
+  -DCONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
   -DCONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS
   -DCONFIG_LTE_PSM_REQ_RPTAU="10101010"
   -DCONFIG_LTE_PSM_REQ_RAT="00001111"
   -DCONFIG_LTE_EDRX_REQ_VALUE_LTE_M="0001"
   -DCONFIG_LTE_PTW_VALUE_LTE_M="0000"
-  -DCONFIG_LTE_RAI_REQ_VALUE="4"
   -DCONFIG_DOWNLOAD_CLIENT_BUF_SIZE=2048
   -DCONFIG_DOWNLOAD_CLIENT_STACK_SIZE=4096
   -DCONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT
@@ -36,6 +40,9 @@ set(options
   -DCONFIG_LWM2M_CLIENT_UTILS_MCUBOOT_FLASH_BUF_SIZE=512
   -DCONFIG_LTE_PTW_VALUE_NBIOT="0000"
   -DCONFIG_LTE_EDRX_REQ_VALUE_NBIOT="0010"
+  -DCONFIG_NET_MGMT_EVENT_INFO
+  -DCONFIG_NET_MGMT_EVENT
+  -DCONFIG_LWM2M_CLIENT_UTILS_RAI
 )
 
 target_compile_options(app
@@ -50,6 +57,8 @@ target_compile_options(..__nrf__subsys__net__lib__lwm2m_client_utils
 set(includes
 "$ENV{ZEPHYR_BASE}/subsys/net/lib/lwm2m/"
 "$ENV{ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/"
+"$ENV{ZEPHYR_BASE}/../modules/lib/cjson/"
+"$ENV{ZEPHYR_BASE}/../nrf/subsys/net/lib/nrf_cloud/include/"
 "src/"
 )
 

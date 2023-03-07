@@ -14,7 +14,7 @@
 #include <azure/az_core.h>
 #include <azure/az_iot.h>
 
-#include "azure_iot_hub_mqtt.h"
+#include <net/mqtt_helper.h>
 
 #if defined(CONFIG_AZURE_FOTA)
 #include <net/azure_fota.h>
@@ -82,6 +82,12 @@ static const char *state_name_get(enum iot_hub_state state)
 AZ_HUB_STATIC void iot_hub_state_set(enum iot_hub_state new_state)
 {
 	bool notify_error = false;
+
+	if (iot_hub_state == new_state) {
+		LOG_DBG("Skipping transition to the same state (%s)",
+			state_name_get(iot_hub_state));
+		return;
+	}
 
 	/* Check for legal state transitions. */
 	switch (iot_hub_state) {
@@ -199,8 +205,8 @@ static void device_twin_result_process(az_iot_hub_client_twin_response *twin_msg
 				       struct azure_iot_hub_buf payload)
 {
 	struct azure_iot_hub_evt evt = {
-		.topic.ptr = topic.ptr,
-		.topic.size = topic.size,
+		.topic.name.ptr = topic.ptr,
+		.topic.name.size = topic.size,
 		.data.msg.payload = payload,
 	};
 
@@ -276,14 +282,15 @@ static void device_twin_request(void)
 
 /* Returns true if the direct method was processed and no error occurred. */
 static bool direct_method_process(az_iot_hub_client_method_request *method_request,
-				  struct azure_iot_hub_buf topic,
-				  struct azure_iot_hub_buf payload)
+				  struct mqtt_helper_buf topic,
+				  struct mqtt_helper_buf payload)
 {
 	struct azure_iot_hub_evt evt = {
 		.type = AZURE_IOT_HUB_EVT_DIRECT_METHOD,
-		.topic.ptr = topic.ptr,
-		.topic.size = topic.size,
-		.data.method.payload = payload,
+		.topic.name.ptr = topic.ptr,
+		.topic.name.size = topic.size,
+		.data.method.payload.ptr = payload.ptr,
+		.data.method.payload.size = payload.size,
 	};
 
 	if (az_span_size(method_request->name) == 0) {
@@ -312,14 +319,15 @@ static bool direct_method_process(az_iot_hub_client_method_request *method_reque
 	return true;
 }
 
-AZ_HUB_STATIC void on_publish(struct azure_iot_hub_buf topic, struct azure_iot_hub_buf payload)
+AZ_HUB_STATIC void on_publish(struct mqtt_helper_buf topic, struct mqtt_helper_buf payload)
 {
 	struct azure_iot_hub_property properties[CONFIG_AZURE_IOT_HUB_MSG_PROPERTY_RECV_MAX_COUNT];
 	struct azure_iot_hub_evt evt = {
 		.type = AZURE_IOT_HUB_EVT_DATA_RECEIVED,
-		.data.msg.payload = payload,
-		.topic.ptr = topic.ptr,
-		.topic.size = topic.size,
+		.data.msg.payload.ptr = payload.ptr,
+		.data.msg.payload.size = payload.size,
+		.topic.name.ptr = topic.ptr,
+		.topic.name.size = topic.size,
 		.topic.properties = properties,
 	};
 	az_span topic_span = az_span_create(topic.ptr, topic.size);
@@ -439,7 +447,7 @@ AZ_HUB_STATIC void on_publish(struct azure_iot_hub_buf topic, struct azure_iot_h
 		return;
 	case AZURE_IOT_HUB_TOPIC_TWIN_REQUEST_RESULT:
 		LOG_DBG("Device twin data received");
-		device_twin_result_process(&twin_msg, topic, payload);
+		device_twin_result_process(&twin_msg, evt.topic.name, evt.data.msg.payload);
 		return;
 	default:
 		/* Should not be reachable */
@@ -716,9 +724,10 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 	az_span hostname_span;
 	az_span device_id_span;
 	struct mqtt_helper_conn_params conn_params = {
-		.port = CONFIG_AZURE_IOT_HUB_PORT,
-		.hostname = config ? config->hostname : (struct azure_iot_hub_buf){0},
-		.device_id = config ? config->device_id : (struct azure_iot_hub_buf){0},
+		.hostname.ptr = config ? config->hostname.ptr : NULL,
+		.hostname.size = config ? config->hostname.size : 0,
+		.device_id.ptr = config ? config->device_id.ptr : NULL,
+		.device_id.size = config ? config->device_id.size : 0,
 		.user_name = {
 			.ptr = user_name_buf,
 		},
@@ -750,11 +759,11 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 	}
 
 	/* Use static IP if that is configured */
-	if (sizeof(CONFIG_AZURE_IOT_HUB_STATIC_IP_ADDRESS) > 1) {
-		LOG_DBG("Using static IP address: %s", CONFIG_AZURE_IOT_HUB_STATIC_IP_ADDRESS);
+	if (sizeof(CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS) > 1) {
+		LOG_DBG("Using static IP address: %s", CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS);
 
-		conn_params.hostname.ptr = CONFIG_AZURE_IOT_HUB_STATIC_IP_ADDRESS;
-		conn_params.hostname.size = sizeof(CONFIG_AZURE_IOT_HUB_STATIC_IP_ADDRESS) - 1;
+		conn_params.hostname.ptr = CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS;
+		conn_params.hostname.size = sizeof(CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS) - 1;
 	} else if ((conn_params.hostname.size == 0) && !IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)) {
 		/* Set hostname to Kconfig value if it was not provided and DPS is not enabled. */
 		LOG_DBG("No hostname provided, using Kconfig value: %s",
@@ -782,11 +791,20 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 	if (config && config->use_dps) {
 		struct azure_iot_hub_dps_config dps_cfg = {
 			.handler = dps_handler,
-			.reg_id = conn_params.device_id,
+			.reg_id.ptr = conn_params.device_id.ptr,
+			.reg_id.size = conn_params.device_id.size,
 			.id_scope = {
 				.ptr = CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE,
 				.size = sizeof(CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE) - 1,
 			},
+		};
+		struct azure_iot_hub_buf hostname = {
+			.ptr = conn_params.hostname.ptr,
+			.size = conn_params.hostname.size,
+		};
+		struct azure_iot_hub_buf device_id = {
+			.ptr = conn_params.device_id.ptr,
+			.size = conn_params.device_id.size,
 		};
 
 		LOG_DBG("Starting DPS, timeout is %d seconds",
@@ -817,22 +835,28 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 			goto exit;
 		}
 
-		err = azure_iot_hub_dps_hostname_get(&conn_params.hostname);
+		err = azure_iot_hub_dps_hostname_get(&hostname);
 		if (err) {
 			LOG_ERR("Failed to get the stored hostname from DPS, error: %d", err);
 			err = -EFAULT;
 			goto exit;
 		}
 
+		conn_params.hostname.ptr = hostname.ptr;
+		conn_params.hostname.size = hostname.size;
+
 		LOG_DBG("Using the assigned hub (size: %d): %s",
 			conn_params.hostname.size, conn_params.hostname.ptr);
 
-		err = azure_iot_hub_dps_device_id_get(&conn_params.device_id);
+		err = azure_iot_hub_dps_device_id_get(&device_id);
 		if (err) {
 			LOG_ERR("Failed to get the stored device ID from DPS, error: %d", err);
 			err = -EFAULT;
 			goto exit;
 		}
+
+		conn_params.device_id.ptr = device_id.ptr;
+		conn_params.device_id.size = device_id.size;
 
 		LOG_DBG("Using the assigned device ID: %.*s",
 			conn_params.device_id.size,

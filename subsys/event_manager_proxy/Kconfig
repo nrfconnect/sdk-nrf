@@ -26,7 +26,7 @@ config EVENT_MANAGER_PROXY_CH_COUNT
 
 config EVENT_MANAGER_PROXY_BIND_TIMEOUT_MS
 	int "Timeout while waiting for the endpoint to bind in ms"
-	range 1 1000
+	range 1 5000
 	default 100
 	help
 	  Miliseconds to wait for endpoint binding.

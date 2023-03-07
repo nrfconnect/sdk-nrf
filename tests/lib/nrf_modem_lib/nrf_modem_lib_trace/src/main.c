@@ -10,10 +10,11 @@
 #include <zephyr/logging/log.h>
 #include <syscalls/rand32.h>
 #include <modem/nrf_modem_lib.h>
+#include <modem/trace_backend.h>
 
 #include "nrf_modem_lib_trace.h"
 
-#include "cmock_trace_backend.h"
+#include "cmock_trace_backend_mock.h"
 #include "cmock_nrf_modem.h"
 #include "cmock_nrf_modem_trace.h"
 #include "cmock_nrf_modem_os.h"
@@ -22,8 +23,7 @@ LOG_MODULE_REGISTER(trace_test, CONFIG_NRF_MODEM_LIB_TRACE_TEST_LOG_LEVEL);
 
 extern int unity_main(void);
 
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
+extern struct nrf_modem_lib_trace_backend trace_backend;
 
 static void clear_rw_frags(void);
 
@@ -51,12 +51,16 @@ static int trace_backend_write_cmock_num_calls;
 static void nrf_modem_at_printf_ExpectTraceLevelAndReturn(
 	const char *fmt, const enum nrf_modem_lib_trace_level trace_level, int retval);
 
+static int callback_evt;
+
+/* This is the override for the _weak callback. */
+void nrf_modem_lib_trace_callback(enum nrf_modem_lib_trace_event evt)
+{
+	callback_evt = evt;
+}
+
 void setUp(void)
 {
-	cmock_nrf_modem_Init();
-	cmock_nrf_modem_trace_Init();
-	cmock_trace_backend_Init();
-
 	nrf_modem_trace_get_error = 0;
 	nrf_modem_trace_get_cmock_num_calls = 0;
 	trace_backend_write_error = 0;
@@ -66,13 +70,6 @@ void setUp(void)
 		"AT%%XMODEMTRACE=1,%d", NRF_MODEM_LIB_TRACE_LEVEL_FULL, 0);
 
 	clear_rw_frags();
-}
-
-void tearDown(void)
-{
-	cmock_nrf_modem_Verify();
-	cmock_nrf_modem_trace_Verify();
-	cmock_trace_backend_Verify();
 }
 
 static void NRF_MODEM_LIB_ON_INIT_callback(void)
@@ -210,11 +207,6 @@ int trace_backend_deinit_stub(int cmock_num_calls)
 	k_sem_give(&backend_deinit_sem);
 
 	return 0;
-}
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
 }
 
 void test_trace_thread_handler_get_single(void)
@@ -391,6 +383,88 @@ void test_nrf_modem_lib_trace_level_set_efault(void)
 
 	ret = nrf_modem_lib_trace_level_set(wrong_level);
 	TEST_ASSERT_EQUAL(-ENOEXEC, ret);
+}
+
+void test_nrf_modem_lib_trace_enospc(void)
+{
+	int ret;
+	struct nrf_modem_trace_data header = { 0 };
+	struct nrf_modem_trace_data *header_write;
+
+	__cmock_trace_backend_init_ExpectAndReturn(nrf_modem_trace_processed, 0);
+	__cmock_nrf_modem_trace_get_Stub(nrf_modem_trace_get_stub);
+	__cmock_trace_backend_write_Stub(trace_backend_write_stub);
+	__cmock_trace_backend_deinit_Stub(trace_backend_deinit_stub);
+
+	NRF_MODEM_LIB_ON_INIT_callback();
+
+	trace_backend_write_error = -ENOSPC;
+
+	generate_trace_frag(&header);
+
+	k_fifo_alloc_put(&get_fifo, &header);
+
+	ret = nrf_modem_lib_trace_processing_done_wait(K_FOREVER);
+	TEST_ASSERT_EQUAL(-ENOSPC, ret);
+
+	TEST_ASSERT_EQUAL(NRF_MODEM_LIB_TRACE_EVT_FULL, callback_evt);
+
+	/* Clear space, make sure default handler is called */
+	__cmock_trace_backend_clear_ExpectAndReturn(0);
+	ret = nrf_modem_lib_trace_clear();
+	TEST_ASSERT_EQUAL(0, ret);
+
+	ret = nrf_modem_lib_trace_processing_done_wait(K_FOREVER);
+	TEST_ASSERT_EQUAL(-ENOSPC, ret);
+
+	TEST_ASSERT_EQUAL(NRF_MODEM_LIB_TRACE_EVT_FULL, callback_evt);
+
+	/* Clear error and space, make sure we can continue to write. */
+	trace_backend_write_error = 0;
+
+	__cmock_trace_backend_clear_ExpectAndReturn(0);
+	ret = nrf_modem_lib_trace_clear();
+	TEST_ASSERT_EQUAL(0, ret);
+
+	header_write = k_fifo_get(&write_fifo, K_FOREVER);
+	TEST_ASSERT_EQUAL_PTR(header.data, header_write->data);
+	TEST_ASSERT_EQUAL_size_t(header.len, header_write->len);
+}
+
+void test_nrf_modem_lib_trace_data_size(void)
+{
+	int ret;
+
+	__cmock_trace_backend_data_size_ExpectAndReturn(1234);
+
+	ret = nrf_modem_lib_trace_data_size();
+	TEST_ASSERT_EQUAL(1234, ret);
+}
+
+void test_nrf_modem_lib_trace_enotsup(void)
+{
+	int ret;
+	char buf[10];
+	struct nrf_modem_lib_trace_backend trace_backend_orig;
+
+	trace_backend_orig.read = trace_backend.read;
+	trace_backend_orig.data_size = trace_backend.data_size;
+	trace_backend_orig.clear = trace_backend.clear;
+
+	trace_backend.read = NULL;
+	trace_backend.data_size = NULL;
+	trace_backend.clear = NULL;
+
+	ret = nrf_modem_lib_trace_read(buf, 10);
+	TEST_ASSERT_EQUAL(-ENOTSUP, ret);
+
+	ret = nrf_modem_lib_trace_data_size();
+	TEST_ASSERT_EQUAL(-ENOTSUP, ret);
+
+	ret = nrf_modem_lib_trace_clear();
+	TEST_ASSERT_EQUAL(-ENOTSUP, ret);
+
+	trace_backend = trace_backend_orig;
 }
 
 void main(void)

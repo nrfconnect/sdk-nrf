@@ -72,7 +72,7 @@ def header_prepare(in_file, out_file, out_wrap_file):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument("-i", "--input", type=str,
                         help="input header file", required=True)
     parser.add_argument("-o", "--output", type=str,

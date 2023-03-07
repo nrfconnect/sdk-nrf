@@ -30,7 +30,8 @@ Overview
 ********
 
 This sample can be used to control the state of light sources.
-In addition to generic on and off functions, it allows changing the light level (brightness) of a LED light.
+In addition to generic on and off functions, it allows changing the light level (brightness) of an LED light.
+It also allows the LED light to react to supported sensor messages.
 
 The sample instantiates the :ref:`bt_mesh_lightness_srv_readme` model and the :ref:`bt_mesh_light_ctrl_srv_readme` model.
 As both Light Lightness Server and the Light LC Server extend the Generic OnOff Server, the two models need to be instantiated on separate elements.
@@ -122,6 +123,10 @@ Configuration
 
 |nrf5340_mesh_sample_note|
 
+The Kconfig option :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC` is set by default as it is necessary for the :ref:`bt_mesh_light_ctrl_srv_readme` model according to the `Bluetooth mesh model specification`_.
+The option enables a separate module called illuminance regulator.
+For more information about the module, see the documentation on :ref:`bt_mesh_light_ctrl_reg_readme` and :ref:`bt_mesh_light_ctrl_reg_spec_readme`.
+
 Source file setup
 =================
 
@@ -130,8 +135,6 @@ This sample is split into the following source files:
 * A :file:`main.c` file to handle initialization.
 * A file for handling mesh models, :file:`model_handler.c`.
 * A file for handling PWM driven control of the dimmable LED, :file:`lc_pwm_led.c`.
-* A :file:`thingy53.c` file, used to handle preinitialization of the :ref:`zephyr:thingy53_nrf5340` board.
-  It is only compiled when the sample is built for the :ref:`zephyr:thingy53_nrf5340` board.
 
 FEM support
 ===========

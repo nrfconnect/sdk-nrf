@@ -107,7 +107,7 @@ void wifi_nrf_wpa_supp_event_proc_scan_start(void *if_priv)
 
 	vif_ctx_zep = if_priv;
 
-	if (vif_ctx_zep->supp_callbk_fns.scan_start) {
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.scan_start) {
 		vif_ctx_zep->supp_callbk_fns.scan_start(vif_ctx_zep->supp_drv_if_ctx);
 	}
 }
@@ -130,7 +130,12 @@ void wifi_nrf_wpa_supp_event_proc_scan_done(void *if_priv,
 	info->aborted = aborted;
 	info->external_scan = 0;
 	info->nl_scan_event = 1;
-	vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx, &event);
+
+	if (vif_ctx_zep->supp_drv_if_ctx &&
+		vif_ctx_zep->supp_callbk_fns.scan_done) {
+		vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx,
+			&event);
+	}
 }
 
 void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
@@ -149,23 +154,13 @@ void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
 	vif_ctx_zep = if_priv;
 
 	if (scan_res->valid_fields & NRF_WIFI_EVENT_NEW_SCAN_RESULTS_IES_VALID) {
-#ifdef CONFIG_NRF700X_REV_A
-		ie = scan_res->ies.ie;
-		ie_len = scan_res->ies.ie_len;
-#else /* CONFIG_NRF700X_REV_A */
 		ie = scan_res->ies;
 		ie_len = scan_res->ies_len;
-#endif /* CONFIG_NRF700X_REV_A */
 	}
 
 	if (scan_res->valid_fields & NRF_WIFI_EVENT_NEW_SCAN_RESULTS_BEACON_IES_VALID) {
-#ifdef CONFIG_NRF700X_REV_A
-		beacon_ie = scan_res->beacon_ies.ie;
-		beacon_ie_len = scan_res->beacon_ies.ie_len;
-#else /* CONFIG_NRF700X_REV_A */
 		beacon_ie = scan_res->ies + scan_res->ies_len;
 		beacon_ie_len = scan_res->beacon_ies_len;
-#endif /* CONFIG_NRF700X_REV_A */
 	}
 
 	r = k_calloc(sizeof(*r) + ie_len + beacon_ie_len, sizeof(char));
@@ -240,7 +235,9 @@ void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
 		}
 	}
 
-	vif_ctx_zep->supp_callbk_fns.scan_res(vif_ctx_zep->supp_drv_if_ctx, r, more_res);
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.scan_res) {
+		vif_ctx_zep->supp_callbk_fns.scan_res(vif_ctx_zep->supp_drv_if_ctx, r, more_res);
+	}
 
 	if (!more_res) {
 		vif_ctx_zep->scan_in_progress = false;
@@ -291,7 +288,9 @@ void wifi_nrf_wpa_supp_event_proc_auth_resp(void *if_priv,
 		event.auth.ies_len = (frame_len - 24 - sizeof(mgmt->u.auth));
 	}
 
-	vif_ctx_zep->supp_callbk_fns.auth_resp(vif_ctx_zep->supp_drv_if_ctx, &event);
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.auth_resp) {
+		vif_ctx_zep->supp_callbk_fns.auth_resp(vif_ctx_zep->supp_drv_if_ctx, &event);
+	}
 }
 
 void wifi_nrf_wpa_supp_event_proc_assoc_resp(void *if_priv,
@@ -349,7 +348,11 @@ void wifi_nrf_wpa_supp_event_proc_assoc_resp(void *if_priv,
 
 	}
 
-	vif_ctx_zep->supp_callbk_fns.assoc_resp(vif_ctx_zep->supp_drv_if_ctx, &event, status);
+	if (vif_ctx_zep->supp_drv_if_ctx &&
+		vif_ctx_zep->supp_callbk_fns.assoc_resp) {
+		vif_ctx_zep->supp_callbk_fns.assoc_resp(vif_ctx_zep->supp_drv_if_ctx,
+			&event, status);
+	}
 }
 
 void wifi_nrf_wpa_supp_event_proc_deauth(void *if_priv,
@@ -382,7 +385,10 @@ void wifi_nrf_wpa_supp_event_proc_deauth(void *if_priv,
 		event.deauth_info.ie_len = (frame + frame_len - mgmt->u.deauth.variable);
 	}
 
-	return vif_ctx_zep->supp_callbk_fns.deauth(vif_ctx_zep->supp_drv_if_ctx, &event);
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.deauth) {
+		vif_ctx_zep->supp_callbk_fns.deauth(vif_ctx_zep->supp_drv_if_ctx,
+			&event, mgmt);
+	}
 }
 
 void wifi_nrf_wpa_supp_event_proc_disassoc(void *if_priv,
@@ -415,7 +421,9 @@ void wifi_nrf_wpa_supp_event_proc_disassoc(void *if_priv,
 		event.disassoc_info.ie_len = (frame + frame_len - mgmt->u.disassoc.variable);
 	}
 
-	return vif_ctx_zep->supp_callbk_fns.disassoc(vif_ctx_zep->supp_drv_if_ctx, &event);
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.disassoc)	{
+		vif_ctx_zep->supp_callbk_fns.disassoc(vif_ctx_zep->supp_drv_if_ctx, &event);
+	}
 }
 
 void *wifi_nrf_wpa_supp_dev_init(void *supp_drv_if_ctx, const char *iface_name,
@@ -458,9 +466,10 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct nrf_wifi_umac_scan_info scan_info;
+	struct nrf_wifi_umac_scan_info *scan_info = NULL;
 	int indx = 0;
 	int ret = -1;
+	int num_freqs = 0;
 
 	if (!if_priv || !params) {
 		LOG_ERR("%s: Invalid params\n", __func__);
@@ -476,36 +485,52 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 		goto out;
 	}
 
-	memset(&scan_info, 0x0, sizeof(scan_info));
+	if (params->freqs) {
+		for (indx = 0; params->freqs[indx]; indx++)
+			num_freqs++;
+	}
+
+	scan_info = k_calloc(sizeof(*scan_info) + (num_freqs * sizeof(struct nrf_wifi_channel)),
+			     sizeof(char));
+
+	memset(scan_info, 0x0, sizeof(*scan_info));
+
+	if (params->freqs) {
+		for (indx = 0; params->freqs[indx]; indx++) {
+			scan_info->scan_params.channels[indx].center_frequency =
+				params->freqs[indx];
+		}
+		scan_info->scan_params.num_scan_channels = indx;
+	}
 
 	if (params->filter_ssids) {
-		scan_info.scan_params.num_scan_ssids = params->num_filter_ssids;
+		scan_info->scan_params.num_scan_ssids = params->num_filter_ssids;
 
 		for (indx = 0; indx < params->num_filter_ssids; indx++) {
-			memcpy(scan_info.scan_params.scan_ssids[indx].nrf_wifi_ssid,
+			memcpy(scan_info->scan_params.scan_ssids[indx].nrf_wifi_ssid,
 			       params->filter_ssids[indx].ssid,
 			       params->filter_ssids[indx].ssid_len);
 
-			scan_info.scan_params.scan_ssids[indx].nrf_wifi_ssid_len =
+			scan_info->scan_params.scan_ssids[indx].nrf_wifi_ssid_len =
 				params->filter_ssids[indx].ssid_len;
 		}
 	}
 
 
-	scan_info.scan_mode = 0;
-	scan_info.scan_reason = SCAN_CONNECT;
+	scan_info->scan_mode = 0;
+	scan_info->scan_reason = SCAN_CONNECT;
 
 	/* Copy extra_ies */
 	if (params->extra_ies_len && params->extra_ies_len <= NRF_WIFI_MAX_IE_LEN) {
-		memcpy(scan_info.scan_params.ie.ie, params->extra_ies, params->extra_ies_len);
-		scan_info.scan_params.ie.ie_len = params->extra_ies_len;
+		memcpy(scan_info->scan_params.ie.ie, params->extra_ies, params->extra_ies_len);
+		scan_info->scan_params.ie.ie_len = params->extra_ies_len;
 	} else if (params->extra_ies_len) {
 		LOG_ERR("%s: extra_ies_len %d is greater than max IE len %d\n",
 			__func__, params->extra_ies_len, NRF_WIFI_MAX_IE_LEN);
 		goto out;
 	}
 
-	status = wifi_nrf_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &scan_info);
+	status = wifi_nrf_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, scan_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: Scan trigger failed\n", __func__);
@@ -517,6 +542,8 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 
 	ret = 0;
 out:
+	if (scan_info)
+		k_free(scan_info);
 	return ret;
 }
 
@@ -751,6 +778,11 @@ int wifi_nrf_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 		vif_ctx_zep->assoc_freq = 0;
 	}
 
+	if (params->prev_bssid) {
+		assoc_info.prev_bssid_flag = 1;
+		memcpy(assoc_info.prev_bssid, params->prev_bssid, ETH_ALEN);
+	}
+
 	if (params->ssid) {
 		assoc_info.ssid.nrf_wifi_ssid_len = params->ssid_len;
 
@@ -908,13 +940,16 @@ int wifi_nrf_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_umac_chg_sta_info chg_sta_info;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	enum wifi_nrf_status ret = WIFI_NRF_STATUS_FAIL;
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
-	os_memset(&chg_sta_info, 0x0, sizeof(chg_sta_info));
+	memset(&chg_sta_info, 0x0, sizeof(chg_sta_info));
 
-	os_memcpy(chg_sta_info.mac_addr, bssid, ETH_ALEN);
+	memcpy(chg_sta_info.mac_addr, bssid, ETH_ALEN);
+
+	vif_ctx_zep->authorized = authorized;
 
 	if (authorized) {
 		/* BIT(NL80211_STA_FLAG_AUTHORIZED) */
@@ -923,7 +958,14 @@ int wifi_nrf_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 		chg_sta_info.sta_flags2.nrf_wifi_set = 1 << 1;
 	}
 
-	return wifi_nrf_fmac_chg_sta(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &chg_sta_info);
+	ret = wifi_nrf_fmac_chg_sta(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &chg_sta_info);
+
+	if (ret != WIFI_NRF_STATUS_SUCCESS) {
+		LOG_ERR("%s: wifi_nrf_fmac_chg_sta failed\n", __func__);
+		return -1;
+	}
+
+	return 0;
 }
 
 int wifi_nrf_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, unsigned char *bssid)
@@ -1037,6 +1079,7 @@ void wifi_nrf_wpa_supp_event_mgmt_tx_status(void *if_priv,
 		unsigned int event_len)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	bool acked = false;
 
 	if (!if_priv) {
 		LOG_ERR("%s: Missing interface context\n", __func__);
@@ -1050,10 +1093,15 @@ void wifi_nrf_wpa_supp_event_mgmt_tx_status(void *if_priv,
 		return;
 	}
 
-	vif_ctx_zep->supp_callbk_fns.mgmt_tx_status(vif_ctx_zep->supp_drv_if_ctx,
-			mlme_event->frame.frame,
-			mlme_event->frame.frame_len,
-			mlme_event->nrf_wifi_flags & NRF_WIFI_EVENT_MLME_ACK ? true : false);
+	acked = mlme_event->nrf_wifi_flags & NRF_WIFI_EVENT_MLME_ACK ? true : false;
+
+	if (vif_ctx_zep->supp_drv_if_ctx &&
+		vif_ctx_zep->supp_callbk_fns.mgmt_tx_status) {
+		vif_ctx_zep->supp_callbk_fns.mgmt_tx_status(vif_ctx_zep->supp_drv_if_ctx,
+				mlme_event->frame.frame,
+				mlme_event->frame.frame_len,
+				acked);
+	}
 }
 
 void wifi_nrf_wpa_supp_event_proc_unprot_mgmt(void *if_priv,
@@ -1087,12 +1135,16 @@ void wifi_nrf_wpa_supp_event_proc_unprot_mgmt(void *if_priv,
 
 	if (cmd_evnt == NRF_WIFI_UMAC_EVENT_UNPROT_DEAUTHENTICATE) {
 		event.unprot_deauth.reason_code = le_to_host16(mgmt->u.deauth.reason_code);
-		return vif_ctx_zep->supp_callbk_fns.unprot_deauth(vif_ctx_zep->supp_drv_if_ctx,
-								  &event);
+		if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.unprot_deauth)	{
+			vif_ctx_zep->supp_callbk_fns.unprot_deauth(vif_ctx_zep->supp_drv_if_ctx,
+									  &event);
+		}
 	} else if (cmd_evnt == NRF_WIFI_UMAC_EVENT_UNPROT_DISASSOCIATE) {
 		event.unprot_disassoc.reason_code = le_to_host16(mgmt->u.deauth.reason_code);
-		return vif_ctx_zep->supp_callbk_fns.unprot_disassoc(vif_ctx_zep->supp_drv_if_ctx,
-								    &event);
+		if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.unprot_disassoc) {
+			vif_ctx_zep->supp_callbk_fns.unprot_disassoc(vif_ctx_zep->supp_drv_if_ctx,
+										&event);
+		}
 	}
 }
 
@@ -1247,6 +1299,41 @@ enum wifi_nrf_status wifi_nrf_parse_sband(
 	return WLAN_STATUS_SUCCESS;
 }
 
+void *wifi_nrf_memdup(const void *src, size_t len)
+{
+	void *r = malloc(len);
+
+	if (r && src) {
+		memcpy(r, src, len);
+	}
+	return r;
+}
+
+static void wifi_nrf_wiphy_info_extended_capab_cfg(struct wifi_nrf_ext_capa *capa,
+						   struct nrf_wifi_event_get_wiphy *wiphy_info)
+{
+	unsigned int len;
+
+	capa->iftype = NRF_WIFI_IFTYPE_STATION;
+
+	len = wiphy_info->extended_capabilities_len;
+
+	capa->ext_capa = wifi_nrf_memdup(&wiphy_info->extended_capabilities[0], len);
+
+	if (!capa->ext_capa)
+		return;
+
+	capa->ext_capa_len = len;
+
+	len = wiphy_info->extended_capabilities_len;
+
+	capa->ext_capa_mask =
+	wifi_nrf_memdup(&wiphy_info->extended_capabilities_mask[0], len);
+
+	if (!capa->ext_capa_mask)
+		return;
+}
+
 void wifi_nrf_wpa_supp_event_get_wiphy(void *if_priv,
 		struct nrf_wifi_event_get_wiphy *wiphy_info,
 		unsigned int event_len)
@@ -1269,11 +1356,40 @@ void wifi_nrf_wpa_supp_event_get_wiphy(void *if_priv,
 		if (wifi_nrf_parse_sband(&wiphy_info->sband[i], &band) != WLAN_STATUS_SUCCESS) {
 			break;
 		}
-		vif_ctx_zep->supp_callbk_fns.get_wiphy_res(vif_ctx_zep->supp_drv_if_ctx,
-							   &band);
+		if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.get_wiphy_res) {
+			vif_ctx_zep->supp_callbk_fns.get_wiphy_res(vif_ctx_zep->supp_drv_if_ctx,
+									&band);
+		}
 	}
 
-	vif_ctx_zep->supp_callbk_fns.get_wiphy_res(vif_ctx_zep->supp_drv_if_ctx, NULL);
+	if ((wiphy_info->params_valid & NRF_WIFI_GET_WIPHY_VALID_EXTENDED_CAPABILITIES) &&
+	    rpu_ctx_zep->extended_capa == NULL) {
+
+		rpu_ctx_zep->extended_capa = malloc(wiphy_info->extended_capabilities_len);
+
+		if (rpu_ctx_zep->extended_capa) {
+			memcpy(rpu_ctx_zep->extended_capa, wiphy_info->extended_capabilities,
+			       wiphy_info->extended_capabilities_len);
+		}
+
+		rpu_ctx_zep->extended_capa_mask = malloc(wiphy_info->extended_capabilities_len);
+
+		if (rpu_ctx_zep->extended_capa_mask) {
+			memcpy(rpu_ctx_zep->extended_capa_mask,
+			       wiphy_info->extended_capabilities_mask,
+			       wiphy_info->extended_capabilities_len);
+		} else {
+			free(rpu_ctx_zep->extended_capa);
+			rpu_ctx_zep->extended_capa = NULL;
+			rpu_ctx_zep->extended_capa_len = 0;
+		}
+	}
+
+	wifi_nrf_wiphy_info_extended_capab_cfg(&vif_ctx_zep->iface_ext_capa, wiphy_info);
+
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.get_wiphy_res) {
+		vif_ctx_zep->supp_callbk_fns.get_wiphy_res(vif_ctx_zep->supp_drv_if_ctx, NULL);
+	}
 }
 
 int wifi_nrf_supp_get_wiphy(void *if_priv)
@@ -1321,7 +1437,7 @@ int wifi_nrf_supp_register_frame(void *if_priv,
 
 	frame_info.frame_type = type;
 	frame_info.frame_match.frame_match_len = match_len;
-	os_memcpy(frame_info.frame_match.frame_match, match, match_len);
+	memcpy(frame_info.frame_match.frame_match, match, match_len);
 
 	status = wifi_nrf_fmac_register_frame(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
 			&frame_info);
@@ -1352,9 +1468,73 @@ void wifi_nrf_wpa_supp_event_mgmt_rx_callbk_fn(void *if_priv,
 		return;
 	}
 
-	vif_ctx_zep->supp_callbk_fns.mgmt_rx(vif_ctx_zep->supp_drv_if_ctx,
-			mlme_event->frame.frame,
-			mlme_event->frame.frame_len,
-			mlme_event->frequency,
-			mlme_event->rx_signal_dbm);
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.mgmt_rx) {
+		vif_ctx_zep->supp_callbk_fns.mgmt_rx(vif_ctx_zep->supp_drv_if_ctx,
+				mlme_event->frame.frame,
+				mlme_event->frame.frame_len,
+				mlme_event->frequency,
+				mlme_event->rx_signal_dbm);
+	}
+}
+
+int wifi_nrf_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_SUCCESS;
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+
+	if (!if_priv || !capa) {
+		LOG_ERR("%s: Invalid parameters\n", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	/* TODO: Get these from RPU*/
+	memset(capa, 0, sizeof(*capa));
+	/* Use SME */
+	capa->flags = 0;
+	capa->flags |= WPA_DRIVER_FLAGS_SME;
+	capa->flags |= WPA_DRIVER_FLAGS_SAE;
+	capa->flags |= WPA_DRIVER_FLAGS_SET_KEYS_AFTER_ASSOC_DONE;
+	capa->rrm_flags |= WPA_DRIVER_FLAGS_SUPPORT_RRM;
+	capa->rrm_flags |= WPA_DRIVER_FLAGS_SUPPORT_BEACON_REPORT;
+
+	capa->enc |= WPA_DRIVER_CAPA_ENC_WEP40 |
+			WPA_DRIVER_CAPA_ENC_WEP104 |
+			WPA_DRIVER_CAPA_ENC_TKIP |
+			WPA_DRIVER_CAPA_ENC_CCMP |
+			WPA_DRIVER_CAPA_ENC_CCMP |
+			WPA_DRIVER_CAPA_ENC_CCMP_256 |
+			WPA_DRIVER_CAPA_ENC_GCMP_256;
+
+	if (rpu_ctx_zep->extended_capa && rpu_ctx_zep->extended_capa_mask) {
+		capa->extended_capa = rpu_ctx_zep->extended_capa;
+		capa->extended_capa_mask = rpu_ctx_zep->extended_capa_mask;
+		capa->extended_capa_len = rpu_ctx_zep->extended_capa_len;
+
+		capa->extended_capa = vif_ctx_zep->iface_ext_capa.ext_capa;
+		capa->extended_capa_mask = vif_ctx_zep->iface_ext_capa.ext_capa_mask;
+		capa->extended_capa_len = vif_ctx_zep->iface_ext_capa.ext_capa_len;
+	}
+out:
+	return status;
+}
+
+
+void wifi_nrf_wpa_supp_event_mac_chgd(void *if_priv)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	if (!if_priv) {
+		LOG_ERR("%s: Invalid parameters\n", __func__);
+		return;
+	}
+
+	vif_ctx_zep = if_priv;
+
+	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.mac_changed) {
+		vif_ctx_zep->supp_callbk_fns.mac_changed(vif_ctx_zep->supp_drv_if_ctx);
+	}
 }

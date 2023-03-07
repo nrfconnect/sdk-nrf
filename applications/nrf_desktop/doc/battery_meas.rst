@@ -63,5 +63,3 @@ This read sequence is repeated periodically.
 When the system goes to the low-power state, the work is canceled.
 
 During the first voltage readout, the Analog to Digital Converter is automatically calibrated to increase the measurement accuracy.
-
-.. |battery_meas| replace:: Battery measurement module

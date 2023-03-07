@@ -371,7 +371,8 @@ class Memfault(BLEMemfault):
 def parse_args():
     """ Parse command line arguments. """
 
-    parser = argparse.ArgumentParser(description='Memfault BLE gateway')
+    parser = argparse.ArgumentParser(description='Memfault BLE gateway',
+                                     allow_abbrev=False)
     parser.add_argument('--snr', type=str, required=True, help='Segger chip ID')
     parser.add_argument('--com', type=str, required=True,
                         help='COM port name. For example COM0 or /dev/ttyACM0')

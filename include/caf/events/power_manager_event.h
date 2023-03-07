@@ -42,7 +42,10 @@ enum power_manager_level {
 	/**
 	 * @brief Number of supported levels
 	 */
-	POWER_MANAGER_LEVEL_MAX
+	POWER_MANAGER_LEVEL_MAX,
+
+	/** Unused in code, required for inter-core compatibility. */
+	APP_EM_ENFORCE_ENUM_SIZE(POWER_MANAGER_LEVEL)
 };
 
 

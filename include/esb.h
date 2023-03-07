@@ -40,7 +40,7 @@ extern "C" {
 		.event_handler = 0,					       \
 		.bitrate = ESB_BITRATE_2MBPS,				       \
 		.crc = ESB_CRC_16BIT,					       \
-		.tx_output_power = ESB_TX_POWER_0DBM,			       \
+		.tx_output_power = 0,			                       \
 		.retransmit_delay = 600,				       \
 		.retransmit_count = 3,					       \
 		.tx_mode = ESB_TXMODE_AUTO,				       \
@@ -59,7 +59,7 @@ extern "C" {
 		.event_handler = 0,					       \
 		.bitrate = ESB_BITRATE_2MBPS,				       \
 		.crc = ESB_CRC_8BIT,					       \
-		.tx_output_power = ESB_TX_POWER_0DBM,			       \
+		.tx_output_power = 0,			                       \
 		.retransmit_delay = 600,				       \
 		.retransmit_count = 3,					       \
 		.tx_mode = ESB_TXMODE_AUTO,				       \
@@ -218,7 +218,7 @@ struct esb_config {
 	/* General RF parameters */
 	enum esb_bitrate bitrate;		/**< Bitrate mode. */
 	enum esb_crc crc;			/**< CRC mode. */
-	enum esb_tx_power tx_output_power;	/**< Radio TX power. */
+	int8_t tx_output_power;	                /**< Radio TX power. */
 
 	uint16_t retransmit_delay; /**< The delay between each retransmission of
 				  *  unacknowledged packets.
@@ -432,12 +432,13 @@ int esb_get_rf_channel(uint32_t *channel);
 
 /** @brief Set the radio output power.
  *
- *  @param[in] tx_output_power	Output power.
+ *  @param[in] tx_output_power	Output power in dBm. The @ref esb_tx_power values can be used
+ *                              to provide backward compatibility.
  *
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int esb_set_tx_power(enum esb_tx_power tx_output_power);
+int esb_set_tx_power(int8_t tx_output_power);
 
 /** @brief Set the packet retransmit delay.
  *

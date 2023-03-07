@@ -13,13 +13,22 @@ The library supports the following technologies:
 * TLS secured MQTT transmission protocol
 * Firmware-Over-The-Air (FOTA)
 
-To connect to AWS IoT, the following steps must be completed:
+To connect to AWS IoT, complete the following steps:
 
-1. :ref:`creating_a_thing_in_AWS_IoT`
+1. :ref:`setup_aws_and_permissions`
+#. :ref:`creating_a_thing_in_AWS_IoT`
 #. :ref:`flash_certi_device`
 #. :ref:`Configuring the application <configuring>`
 
 See `AWS IoT Developer Guide`_ for general information about the Amazon Web Services IoT service.
+
+.. _setup_aws_and_permissions:
+
+Set up your AWS account and permissions
+***************************************
+
+To connect to AWS IoT, you need to set up an AWS account with the appropriate permissions.
+Complete the steps documented in `Set up your AWS account`_.
 
 .. _creating_a_thing_in_AWS_IoT:
 
@@ -50,6 +59,12 @@ To create a Thing for your device:
              }
           ]
        }
+
+.. note::
+   The policy example is only intended for development environments.
+   All devices in your production fleet must have credentials with privileges that authorize only intended actions on specific resources.
+   The specific permission policies can vary depending on the use case and should meet business and security requirements.
+   For more information, refer to the example policies listed in `AWS IoT Core policy examples`_ and `Security best practices in AWS IoT Core`_.
 
 #. Click :guilabel:`Create`.
 #. Go to :guilabel:`Manage` > :guilabel:`All devices`> :guilabel:`Things` and select :guilabel:`Create things`.
@@ -127,6 +142,12 @@ Other options:
 .. note::
    If you are using a longer device ID that is either set by the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` or passed in during initialization, it might be required to increase the value of the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN` for proper initialization of the library.
 
+Usage
+*****
+
+The :ref:`aws_iot` sample showcases the use of this library and can be used to verify a connection to AWS IoT.
+To configure and run the sample, complete the steps described in :ref:`setup_awsiot` and :ref:`aws_iot_sample_building_and_running`.
+
 Initializing the library
 ========================
 
@@ -154,6 +175,78 @@ To subscribe to non-AWS specific topics, complete the following steps:
 * Specify the number of additional topics that needs to be subscribed to, by setting the :kconfig:option:`CONFIG_AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT` option.
 * Pass a list containing application specific topics in the :c:func:`aws_iot_subscription_topics_add` function, after the :c:func:`aws_iot_init` function call and before the :c:func:`aws_iot_connect` function call.
 
+The following code example shows how to subscribe to non-AWS specific topics:
+
+.. code-block:: c
+
+	#define CUSTOM_TOPIC_1	"my-custom-topic/example"
+	#define CUSTOM_TOPIC_2	"my-custom-topic/example2"
+
+	const struct aws_iot_topic_data topics_list[2] = {
+		[0].str = CUSTOM_TOPIC_1,
+		[0].len = strlen(CUSTOM_TOPIC_1),
+		[1].str = CUSTOM_TOPIC_2,
+		[1].len = strlen(CUSTOM_TOPIC_2)
+	};
+
+	err = aws_iot_subscription_topics_add(topics_list, ARRAY_SIZE(topics_list));
+	if (err) {
+		LOG_ERR("aws_iot_subscription_topics_add, error: %d", err);
+		return err;
+	}
+
+	err = aws_iot_init(NULL, aws_iot_event_handler);
+	if (err) {
+		LOG_ERR("AWS IoT library could not be initialized, error: %d", err);
+		return err;
+	}
+
+Publishing to non-AWS specific topics
+=====================================
+
+To publish to a non-AWS specific topic, complete the following steps:
+
+* Populate a :c:struct:`aws_iot_topic_data` with the custom topics that you want to publish to.
+  It is not necessary to set the topic type when populating the :c:struct:`aws_iot_topic_data` structure.
+  This type is reserved for AWS IoT shadow topics.
+* Pass in the entry that corresponds to the topic that the payload is to be published to in the message structure :c:struct:`aws_iot_data`.
+  This structure is then passed into the :c:func:`aws_iot_send` function.
+
+The following code example shows how to publish to non-AWS specific topics:
+
+.. code-block:: c
+
+	#define MY_CUSTOM_TOPIC_1 "my-custom-topic/example"
+	#define MY_CUSTOM_TOPIC_1_IDX 0
+
+	static struct aws_iot_topic_data pub_topics[1] = {
+		[MY_CUSTOM_TOPIC_1_IDX].str = MY_CUSTOM_TOPIC_1,
+		[MY_CUSTOM_TOPIC_1_IDX].len = strlen(MY_CUSTOM_TOPIC_1),
+	};
+
+	struct aws_iot_data msg = {
+		/* Pointer to payload */
+		.ptr = buf,
+
+		/* Length of payload */
+		.len = len,
+
+		 /* Message ID , if not set it will be provided by the AWS IoT library */
+		.message_id = id,
+
+		/* Quality of Service level */
+		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+
+		/* "my-custom-topic/example" */
+		.topic = pub_topics[MY_CUSTOM_TOPIC_1_IDX]
+	};
+
+	err = aws_iot_send(&msg);
+	if (err) {
+		LOG_ERR("aws_iot_send, error: %d", err);
+		return err;
+	}
+
 Setting client ID at run-time
 =============================
 
@@ -168,6 +261,16 @@ Setting the AWS host name at runtime
 The AWS IoT library also supports passing the endpoint address at runtime by setting the :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_APP` option.
 If this option is set, the ``host_name`` and ``host_name_len`` must be set in the :c:struct:`aws_iot_config` structure before it is passed into the :c:func:`aws_iot_init` function.
 The length of your AWS host name (:kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`) must be shorter than the default value of :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_MAX_LEN`, for proper initialization of the library.
+
+Testing and debugging
+=====================
+
+If you have issues with the library or sample, refer to :ref:`gs_testing`.
+
+Troubleshooting
+===============
+
+For issues related to the library and |NCS| in general, refer to :ref:`known_issues`.
 
 AWS FOTA
 ========

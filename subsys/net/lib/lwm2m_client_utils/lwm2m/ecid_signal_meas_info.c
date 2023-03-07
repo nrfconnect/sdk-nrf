@@ -90,42 +90,42 @@ int lwm2m_signal_meas_info_index_to_inst_id(int index)
 static void update_signal_meas_object(const struct lte_lc_ncell *const cell, uint16_t index)
 {
 	int obj_inst_id;
-	char path[sizeof("10256/65535/0")];
+	struct lwm2m_obj_path path;
 
 	obj_inst_id = lwm2m_signal_meas_info_index_to_inst_id(index);
+	path = LWM2M_OBJ(10256, obj_inst_id, SIGNAL_MEAS_INFO_PHYS_CELL_ID);
 
-	snprintk(path, sizeof(path), "10256/%" PRIu16 "/0", obj_inst_id);
-	lwm2m_engine_set_s32(path, cell->phys_cell_id);
+	lwm2m_set_s32(&path, cell->phys_cell_id);
 	/* We don't set the resource 1 as the lte_lc_ncell struct doesn't
 	 * contain MCC and MNC for calculating ECGI
 	 */
-	snprintk(path, sizeof(path), "10256/%" PRIu16 "/2", obj_inst_id);
-	lwm2m_engine_set_s32(path, cell->earfcn);
-	snprintk(path, sizeof(path), "10256/%" PRIu16 "/3", obj_inst_id);
-	lwm2m_engine_set_s32(path, RSRP_IDX_TO_DBM(cell->rsrp));
-	snprintk(path, sizeof(path), "10256/%" PRIu16 "/4", obj_inst_id);
-	lwm2m_engine_set_s32(path, RSRQ_IDX_TO_DB(cell->rsrq));
-	snprintk(path, sizeof(path), "10256/%" PRIu16 "/5", obj_inst_id);
-	lwm2m_engine_set_s32(path, cell->time_diff);
+	path.res_id = SIGNAL_MEAS_INFO_ARFCN_EUTRA;
+	lwm2m_set_s32(&path, cell->earfcn);
+	path.res_id = SIGNAL_MEAS_INFO_RSRP_RESULT;
+	lwm2m_set_s32(&path, RSRP_IDX_TO_DBM(cell->rsrp));
+	path.res_id = SIGNAL_MEAS_INFO_RSRQ_RESULT;
+	lwm2m_set_s32(&path, RSRQ_IDX_TO_DB(cell->rsrq));
+	path.res_id = SIGNAL_MEAS_INFO_UE_RXTX_TIMEDIFF;
+	lwm2m_set_s32(&path, cell->time_diff);
 }
 
 static void reset_signal_meas_object(uint16_t index)
 {
 	int obj_inst_id;
-	char path[sizeof("10256/65535/0")];
+	struct lwm2m_obj_path path;
 
 	obj_inst_id = lwm2m_signal_meas_info_index_to_inst_id(index);
+	path = LWM2M_OBJ(10256, obj_inst_id, SIGNAL_MEAS_INFO_PHYS_CELL_ID);
 
-	snprintk(path, sizeof(path), "10256/%" PRIu16 "/0", obj_inst_id);
-	lwm2m_engine_set_s32(path, 0);
-	snprintk(path, sizeof(path), "10256/%" PRIu16 "/2", obj_inst_id);
-	lwm2m_engine_set_s32(path, 0);
-	snprintk(path, sizeof(path), "10256/%" PRIu16 "/3", obj_inst_id);
-	lwm2m_engine_set_s32(path, 0);
-	snprintk(path, sizeof(path), "10256/%" PRIu16 "/4", obj_inst_id);
-	lwm2m_engine_set_s32(path, 0);
-	snprintk(path, sizeof(path), "10256/%" PRIu16 "/5", obj_inst_id);
-	lwm2m_engine_set_s32(path, 0);
+	lwm2m_set_s32(&path, 0);
+	path.res_id = SIGNAL_MEAS_INFO_ARFCN_EUTRA;
+	lwm2m_set_s32(&path, 0);
+	path.res_id = SIGNAL_MEAS_INFO_RSRP_RESULT;
+	lwm2m_set_s32(&path, 0);
+	path.res_id = SIGNAL_MEAS_INFO_RSRQ_RESULT;
+	lwm2m_set_s32(&path, 0);
+	path.res_id = SIGNAL_MEAS_INFO_UE_RXTX_TIMEDIFF;
+	lwm2m_set_s32(&path, 0);
 }
 
 int lwm2m_update_signal_meas_objects(const struct lte_lc_cells_info *const cells)
@@ -136,11 +136,6 @@ int lwm2m_update_signal_meas_objects(const struct lte_lc_cells_info *const cells
 	if (cells == NULL) {
 		LOG_ERR("Invalid pointer");
 		return -EINVAL;
-	}
-
-	if (cells->ncells_count == 0) {
-		LOG_DBG("No neighbouring cells found");
-		return -ENODATA;
 	}
 
 	LOG_INF("Updating information for %d neighbouring cells", cells->ncells_count);
@@ -199,7 +194,7 @@ static struct lwm2m_engine_obj_inst *signal_meas_info_create(uint16_t obj_inst_i
 	INIT_OBJ_RES_DATA(SIGNAL_MEAS_INFO_RSRP_RESULT, res[index], i, res_inst[index], j,
 			  &rsrp_result[index], sizeof(*rsrp_result));
 	INIT_OBJ_RES_DATA(SIGNAL_MEAS_INFO_RSRQ_RESULT, res[index], i, res_inst[index], j,
-			  &rsrq_result[index], sizeof(rsrq_result));
+			  &rsrq_result[index], sizeof(*rsrq_result));
 	INIT_OBJ_RES_DATA(SIGNAL_MEAS_INFO_UE_RXTX_TIMEDIFF, res[index], i, res_inst[index], j,
 			  &ue_rxtx_timediff[index], sizeof(*ue_rxtx_timediff));
 
@@ -236,4 +231,4 @@ static int lwm2m_signal_meas_info_init(const struct device *dev)
 	return 0;
 }
 
-SYS_INIT(lwm2m_signal_meas_info_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+SYS_INIT(lwm2m_signal_meas_info_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

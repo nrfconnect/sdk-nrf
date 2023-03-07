@@ -180,7 +180,7 @@ nRF9160: Asset Tracker v2
     * :ref:`asset_tracker_v2_cloud_module`
     * :ref:`api_cloud_wrapper`
     * :ref:`asset_tracker_v2_data_module`
-    * GNSS module (removed in NCS 2.2.0)
+    * GNSS module
     * :ref:`asset_tracker_v2_modem_module`
     * :ref:`api_modules_common`
     * :ref:`asset_tracker_v2_sensor_module`
@@ -373,7 +373,7 @@ nRF9160 samples
 
     * Added support for triggering neighbor cell measurements.
 
-  * :ref:`secure_partition_manager` sample:
+  * Secure Partition Manager sample:
 
     * Updated the sample by reducing the amount of RAM reserved in the default configuration of the sample for nRF9160, freeing up 32 Kb of RAM for the application.
 
@@ -396,7 +396,7 @@ Other samples
 
     * Added support for front-end module devices that support 2-pin PA/LNA interface with additional support for the Skyworks SKY66114-11 and the Skyworks SKY66403-11. See the section Skyworks front-end module in the sample documentation for more information.
 
-  * :ref:`secure_partition_manager` sample:
+  * Secure Partition Manager sample:
 
     * Fixed:
 
@@ -868,7 +868,7 @@ In addition to documentation related to the changes listed above, the following 
     * Added:
 
       * New subpage :ref:`app_optimize` and moved the optimization sections under it.
-      * New subpage :ref:`ext_components` and moved the sections for using external components or modules under it.
+      * New subpage "Using external components" and moved the sections for using external components or modules under it.
 
   * The contents of the :ref:`ug_radio_fem` section:
 
@@ -877,5 +877,3 @@ In addition to documentation related to the changes listed above, the following 
      * :ref:`ug_radio_fem_nrf21540_spi_gpio`.
      * :ref:`ug_radio_fem_direct_support`.
      * More information about supported protocols and hardware.
-
-.. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.

@@ -12,12 +12,25 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(ble, CONFIG_BLE_LOG_LEVEL);
 
-enum ble_hci_vs_max_tx_power {
-	BLE_HCI_VSC_MAX_TX_PWR_0dBm = 0,
-	BLE_HCI_VSC_MAX_TX_PWR_3dBm = 3,
-};
+int ble_hci_vsc_nrf21540_pins_set(struct ble_hci_vs_cp_nrf21540_pins *nrf21540_pins)
+{
+	int ret;
+	struct net_buf *buf = NULL;
 
-int ble_hci_vsc_set_radio_high_pwr_mode(bool high_power_mode)
+	buf = bt_hci_cmd_create(HCI_OPCODE_VS_CONFIG_FEM_PIN, sizeof(*nrf21540_pins));
+	if (!buf) {
+		LOG_ERR("Unable to allocate command buffer");
+		return -ENOMEM;
+	}
+
+	net_buf_add_mem(buf, nrf21540_pins, sizeof(*nrf21540_pins));
+
+	ret = bt_hci_cmd_send(HCI_OPCODE_VS_CONFIG_FEM_PIN, buf);
+
+	return ret;
+}
+
+int ble_hci_vsc_radio_high_pwr_mode_set(enum ble_hci_vs_max_tx_power max_tx_power)
 {
 	int ret;
 	struct ble_hci_vs_cp_set_radio_fe_cfg *cp;
@@ -29,14 +42,9 @@ int ble_hci_vsc_set_radio_high_pwr_mode(bool high_power_mode)
 		LOG_ERR("Unable to allocate command buffer");
 		return -ENOMEM;
 	}
+
 	cp = net_buf_add(buf, sizeof(*cp));
-	if (high_power_mode) {
-		LOG_DBG("Enable VREGRADIO.VREQH");
-		cp->max_tx_power = BLE_HCI_VSC_MAX_TX_PWR_3dBm;
-	} else {
-		LOG_DBG("Disable VREGRADIO.VREQH");
-		cp->max_tx_power = BLE_HCI_VSC_MAX_TX_PWR_0dBm;
-	}
+	cp->max_tx_power = max_tx_power;
 	cp->ant_id = 0;
 
 	ret = bt_hci_cmd_send_sync(HCI_OPCODE_VS_SET_RADIO_FE_CFG, buf, &rsp);
@@ -48,10 +56,11 @@ int ble_hci_vsc_set_radio_high_pwr_mode(bool high_power_mode)
 	rp = (void *)rsp->data;
 	ret = rp->status;
 	net_buf_unref(rsp);
+
 	return ret;
 }
 
-int ble_hci_vsc_set_bd_addr(uint8_t *bd_addr)
+int ble_hci_vsc_bd_addr_set(uint8_t *bd_addr)
 {
 	int ret;
 	struct ble_hci_vs_cp_set_bd_addr *cp;
@@ -69,7 +78,7 @@ int ble_hci_vsc_set_bd_addr(uint8_t *bd_addr)
 	return ret;
 }
 
-int ble_hci_vsc_set_op_flag(uint32_t flag_bit, uint8_t setting)
+int ble_hci_vsc_op_flag_set(uint32_t flag_bit, uint8_t setting)
 {
 	int ret;
 	struct ble_hci_vs_cp_set_op_flag *cp;
@@ -98,7 +107,7 @@ int ble_hci_vsc_set_op_flag(uint32_t flag_bit, uint8_t setting)
 	return ret;
 }
 
-int ble_hci_vsc_set_adv_tx_pwr(enum ble_hci_vs_tx_power tx_power)
+int ble_hci_vsc_adv_tx_pwr_set(enum ble_hci_vs_tx_power tx_power)
 {
 	int ret;
 	struct ble_hci_vs_cp_set_adv_tx_pwr *cp;
@@ -126,7 +135,7 @@ int ble_hci_vsc_set_adv_tx_pwr(enum ble_hci_vs_tx_power tx_power)
 	return ret;
 }
 
-int ble_hci_vsc_set_conn_tx_pwr(uint16_t conn_handle, enum ble_hci_vs_tx_power tx_power)
+int ble_hci_vsc_conn_tx_pwr_set(uint16_t conn_handle, enum ble_hci_vs_tx_power tx_power)
 {
 	int ret;
 	struct ble_hci_vs_cp_set_conn_tx_pwr *cp;
@@ -155,7 +164,7 @@ int ble_hci_vsc_set_conn_tx_pwr(uint16_t conn_handle, enum ble_hci_vs_tx_power t
 	return ret;
 }
 
-int ble_hci_vsc_set_pri_ext_adv_max_tx_pwr(enum ble_hci_vs_tx_power tx_power)
+int ble_hci_vsc_pri_ext_adv_max_tx_pwr_set(enum ble_hci_vs_tx_power tx_power)
 {
 	int ret;
 	struct ble_hci_vs_cp_set_adv_tx_pwr *cp;
@@ -182,7 +191,7 @@ int ble_hci_vsc_set_pri_ext_adv_max_tx_pwr(enum ble_hci_vs_tx_power tx_power)
 	return ret;
 }
 
-int ble_hci_vsc_map_led_pin(enum ble_hci_vs_led_function_id id,
+int ble_hci_vsc_led_pin_map(enum ble_hci_vs_led_function_id id,
 			    enum ble_hci_vs_led_function_mode mode, uint16_t pin)
 {
 	int ret;

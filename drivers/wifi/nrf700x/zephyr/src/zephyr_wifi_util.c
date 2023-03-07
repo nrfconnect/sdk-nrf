@@ -10,13 +10,50 @@
 #include <stdlib.h>
 #include "host_rpu_umac_if.h"
 #include "fmac_api.h"
-#include "zephyr_util.h"
 #include "zephyr_fmac_main.h"
 #include "zephyr_wifi_util.h"
 
 extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 struct wifi_nrf_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 
+static struct wifi_nrf_vif_ctx_zep *net_if_get_vif_ctx(const struct shell *shell,
+						       int indx)
+{
+	struct net_if *iface = NULL;
+	const struct device *dev;
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	iface = net_if_get_by_index(indx);
+
+	if (!iface) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "No such interface in index %d\n",
+			      indx);
+		goto err;
+	}
+
+	dev = net_if_get_device(iface);
+
+	if (!dev) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "No such device\n");
+		goto err;
+	}
+
+	vif_ctx_zep = dev->data;
+
+	if (!vif_ctx_zep) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "No such vif interface in index %d\n",
+			      indx);
+		goto err;
+	}
+err:
+	return vif_ctx_zep;
+}
 
 int nrf_wifi_util_conf_init(struct rpu_conf_params *conf_params)
 {
@@ -193,6 +230,37 @@ static int nrf_wifi_util_set_uapsd_queue(const struct shell *shell,
 }
 
 
+static int nrf_wifi_util_set_passive_scan(const struct shell *shell,
+					  size_t argc,
+					  const char *argv[])
+{
+	char *ptr = NULL;
+	unsigned long val = 0;
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	vif_ctx_zep = net_if_get_vif_ctx(shell, atoi(argv[1]));
+
+	if (!vif_ctx_zep) {
+		return -ENOEXEC;
+	}
+
+	val = strtoul(argv[2], &ptr, 10);
+
+	if (val > 1) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid value(%lu).\n",
+			      val);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	vif_ctx_zep->passive_scan = val;
+
+	return 0;
+}
+
+
 static int nrf_wifi_util_show_cfg(const struct shell *shell,
 				  size_t argc,
 				  const char *argv[])
@@ -232,9 +300,73 @@ static int nrf_wifi_util_show_cfg(const struct shell *shell,
 		      SHELL_INFO,
 		      "uapsd_queue = %d\n",
 		      conf_params->uapsd_queue);
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "passive_scan = %d\n",
+		      (&ctx->vif_ctx_zep[0])->passive_scan);
 	return 0;
 }
 
+static int nrf_wifi_util_tx_stats(const struct shell *shell,
+				  size_t argc,
+				  const char *argv[])
+{
+	int vif_index = -1;
+	int queue_index = -1;
+	/* TODO: Get this from shell when AP mode is supported */
+	int peer_index = 0;
+	int max_vif_index = MAX(MAX_NUM_APS, MAX_NUM_STAS);
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	void *queue = NULL;
+	unsigned int tx_pending_pkts = 0;
+
+	vif_index = atoi(argv[1]);
+	if ((vif_index < 0) || (vif_index >= max_vif_index)) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid vif index(%d).\n",
+			      vif_index);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	queue_index = atoi(argv[2]);
+	if ((queue_index < 0) || (queue_index >= WIFI_NRF_FMAC_AC_MAX)) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid queue(%d).\n",
+			      queue_index);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	fmac_dev_ctx = ctx->rpu_ctx;
+	queue = fmac_dev_ctx->tx_config.data_pending_txq[peer_index][queue_index];
+
+	tx_pending_pkts = wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv, queue);
+
+	shell_fprintf(shell,
+		SHELL_INFO,
+		"************* Tx Stats: vif(%d) queue(%d) ***********\n",
+		vif_index,
+		queue_index);
+
+	shell_fprintf(shell,
+		SHELL_INFO,
+		"tx_pending_pkts = %d\n",
+		tx_pending_pkts);
+
+	for (int i = 0; i < WIFI_NRF_FMAC_AC_MAX ; i++) {
+		shell_fprintf(
+			shell,
+			SHELL_INFO,
+			"Outstanding tokens: ac: %d -> %d\n",
+			i,
+			fmac_dev_ctx->tx_config.outstanding_descs[i]);
+	}
+
+	return 0;
+}
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf_wifi_util_subcmds,
@@ -278,6 +410,21 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "Display the current configuration values",
 		      nrf_wifi_util_show_cfg,
 		      1,
+		      0),
+	SHELL_CMD_ARG(passive_scan,
+		      NULL,
+		      "<intf indx> <0 - Passive scan off>\n"
+		      "<intf indx> <1 - Passive scan on>\n",
+		      nrf_wifi_util_set_passive_scan,
+		      3,
+		      0),
+	SHELL_CMD_ARG(tx_stats,
+		      NULL,
+		      "Displays transmit statistics\n"
+			  "vif_index: 0 - 1\n"
+			  "queue: 0 - 4\n",
+		      nrf_wifi_util_tx_stats,
+		      3,
 		      0),
 	SHELL_SUBCMD_SET_END);
 

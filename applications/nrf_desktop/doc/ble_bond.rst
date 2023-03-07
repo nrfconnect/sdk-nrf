@@ -7,7 +7,7 @@ Bluetooth LE bond module
    :local:
    :depth: 2
 
-Use the |ble_bond| to manage the Bluetooth peers and bonds.
+Use the Bluetooth® LE bond module to manage the Bluetooth peers and bonds.
 The module controls the following operations:
 
 * Switching between peers (only for nRF Desktop peripheral).
@@ -227,6 +227,8 @@ The dongle is the nRF Desktop central.
 If the dongle peer is enabled, the nRF Desktop peripheral uses one of the local identities for the Bluetooth connection with the dongle.
 This local identity is meant to be paired with the dongle during the production process.
 
+You can use the :ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO <config_desktop_app_options>` option to indicate the dongle peer identity with the :c:struct:`ble_dongle_peer_event` event.
+
 The dongle peer is selected using the :ref:`nrf_desktop_selector`.
 You must also define the following parameters of the selector used to switch between dongle peer and other Bluetooth LE peers:
 
@@ -295,5 +297,3 @@ The module uses Zephyr's :ref:`zephyr:settings_api` subsystem to store the follo
 
 * Currently selected peer (application local identity)
 * Mapping between the application local identities and the Bluetooth local identities
-
-.. |ble_bond| replace:: Bluetooth® LE bond module

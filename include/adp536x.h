@@ -49,6 +49,18 @@
 #define ADP536X_OC_CHG_THRESHOLD_300mA	0x06
 #define ADP536X_OC_CHG_THRESHOLD_400mA	0x07
 
+/** Fuel gauge state */
+enum adp536x_fg_enabled {
+	ADP566X_FG_DISABLED = 0,        /**< Disable fuel gauge */
+	ADP566X_FG_ENABLED = 1          /**< Enable fuel gauge */
+};
+
+/** Fuel gauge mode */
+enum adp536x_fg_mode {
+	ADP566X_FG_MODE_ACTIVE = 0,     /** Fuel gauge is in active mode */
+	ADP566X_FG_MODE_SLEEP = 1       /** Fuel gauge is in sleep mode */
+};
+
 /**
  * @brief Initialize ADP536X.
  *
@@ -195,6 +207,34 @@ int adp536x_oc_chg_current_set(uint8_t value);
  *           Otherwise, a (negative) error code is returned.
  */
 int adp536x_buck_discharge_set(bool enable);
+
+/**
+ * @brief Set Fuel Gauge operating mode
+ *
+ * @param[in] en Enable or disable the fuel gauge.
+ * @param[in] mode Active or sleep mode.
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int adp536x_fg_set_mode(enum adp536x_fg_enabled en, enum adp536x_fg_mode mode);
+
+/**
+ * @brief Read battery state of charge
+ *
+ * @param[out] percentage Percentage of battery remaining
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int adp536x_fg_soc(uint8_t *percentage);
+
+/**
+ * @brief Read battery voltage
+ *
+ * @param[out] millivolts Battery voltage in millivolts
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int adp536x_fg_volts(uint16_t *millivolts);
 
 /** @} */
 

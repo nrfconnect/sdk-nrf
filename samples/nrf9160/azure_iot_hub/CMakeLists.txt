@@ -17,5 +17,5 @@ target_sources(app PRIVATE src/main.c)
 zephyr_include_directories(src)
 
 # Make folder containing certificates global so that it can be located by
-# the Azure IoT Hub library.
-zephyr_include_directories_ifdef(CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES certs)
+# the MQTT helper library.
+zephyr_include_directories_ifdef(CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES certs)

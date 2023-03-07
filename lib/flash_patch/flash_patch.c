@@ -38,5 +38,5 @@ static int disable_flash_patch(const struct device *dev)
 	return 0;
 }
 
-SYS_INIT(disable_flash_patch, POST_KERNEL, CONFIG_APPLICATION_INIT_PRIORITY);
+SYS_INIT(disable_flash_patch, PRE_KERNEL_1, 0);
 #endif

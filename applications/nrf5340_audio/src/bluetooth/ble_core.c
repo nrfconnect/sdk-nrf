@@ -86,7 +86,7 @@ static void mac_print(void)
 
 static int ble_core_le_lost_notify_enable(void)
 {
-	return ble_hci_vsc_set_op_flag(BLE_HCI_VSC_OP_ISO_LOST_NOTIFY, 1);
+	return ble_hci_vsc_op_flag_set(BLE_HCI_VSC_OP_ISO_LOST_NOTIFY, 1);
 }
 
 /* Callback called by the Bluetooth stack in Zephyr when Bluetooth is ready */
@@ -110,6 +110,44 @@ static void on_bt_ready(int err)
 
 	ble_core_le_lost_notify_enable();
 
+#if (CONFIG_NRF_21540_ACTIVE)
+
+	/* Indexes for the pins gotten from nrf21540_ek_fwd.overlay */
+	uint8_t tx_pin = NRF_DT_GPIOS_TO_PSEL_BY_IDX(DT_PATH(nrf_gpio_forwarder, nrf21540_gpio_if),
+						     gpios, 0);
+	uint8_t rx_pin = NRF_DT_GPIOS_TO_PSEL_BY_IDX(DT_PATH(nrf_gpio_forwarder, nrf21540_gpio_if),
+						     gpios, 1);
+	uint8_t pdn_pin = NRF_DT_GPIOS_TO_PSEL_BY_IDX(DT_PATH(nrf_gpio_forwarder, nrf21540_gpio_if),
+						      gpios, 2);
+	uint8_t ant_pin = NRF_DT_GPIOS_TO_PSEL_BY_IDX(DT_PATH(nrf_gpio_forwarder, nrf21540_gpio_if),
+						      gpios, 3);
+	uint8_t mode_pin = NRF_DT_GPIOS_TO_PSEL_BY_IDX(
+		DT_PATH(nrf_gpio_forwarder, nrf21540_gpio_if), gpios, 4);
+
+	struct ble_hci_vs_cp_nrf21540_pins nrf21540_pins = {
+		.mode = mode_pin,
+		.txen = tx_pin,
+		.rxen = rx_pin,
+		.antsel = ant_pin,
+		.pdn = pdn_pin,
+		/* Set CS pin to ffff since we are not using the SPI */
+		.csn = 0xffff
+	};
+
+	ret = ble_hci_vsc_nrf21540_pins_set(&nrf21540_pins);
+	ERR_CHK(ret);
+
+	ret = ble_hci_vsc_radio_high_pwr_mode_set(
+		MAX(CONFIG_NRF_21540_MAIN_DBM, CONFIG_NRF_21540_PRI_ADV_DBM));
+	ERR_CHK(ret);
+
+	ret = ble_hci_vsc_adv_tx_pwr_set(CONFIG_NRF_21540_MAIN_DBM);
+	ERR_CHK(ret);
+
+	ret = ble_hci_vsc_pri_ext_adv_max_tx_pwr_set(CONFIG_NRF_21540_PRI_ADV_DBM);
+	ERR_CHK(ret);
+#endif /* (CONFIG_NRF_21540_ACTIVE) */
+
 	m_ready_callback();
 }
 
@@ -117,16 +155,16 @@ static int controller_leds_mapping(void)
 {
 	int ret;
 
-	ret = ble_hci_vsc_map_led_pin(PAL_LED_ID_CPU_ACTIVE,
-			DT_GPIO_FLAGS_BY_IDX(DT_NODELABEL(rgb2_green), gpios, 0),
-			DT_GPIO_PIN_BY_IDX(DT_NODELABEL(rgb2_green), gpios, 0));
+	ret = ble_hci_vsc_led_pin_map(PAL_LED_ID_CPU_ACTIVE,
+				      DT_GPIO_FLAGS_BY_IDX(DT_NODELABEL(rgb2_green), gpios, 0),
+				      DT_GPIO_PIN_BY_IDX(DT_NODELABEL(rgb2_green), gpios, 0));
 	if (ret) {
 		return ret;
 	}
 
-	ret = ble_hci_vsc_map_led_pin(PAL_LED_ID_ERROR,
-			DT_GPIO_FLAGS_BY_IDX(DT_NODELABEL(rgb2_red), gpios, 0),
-			DT_GPIO_PIN_BY_IDX(DT_NODELABEL(rgb2_red), gpios, 0));
+	ret = ble_hci_vsc_led_pin_map(PAL_LED_ID_ERROR,
+				      DT_GPIO_FLAGS_BY_IDX(DT_NODELABEL(rgb2_red), gpios, 0),
+				      DT_GPIO_PIN_BY_IDX(DT_NODELABEL(rgb2_red), gpios, 0));
 	if (ret) {
 		return ret;
 	}
@@ -174,7 +212,7 @@ int net_core_ctrl_version_get(uint16_t *ctrl_version)
 
 int ble_core_le_pwr_ctrl_disable(void)
 {
-	return ble_hci_vsc_set_op_flag(BLE_HCI_VSC_OP_DIS_POWER_MONITOR, 1);
+	return ble_hci_vsc_op_flag_set(BLE_HCI_VSC_OP_DIS_POWER_MONITOR, 1);
 }
 
 int ble_core_init(ble_core_ready_t ready_callback)

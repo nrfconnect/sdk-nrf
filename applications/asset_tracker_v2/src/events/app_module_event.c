@@ -56,13 +56,29 @@ static char *get_evt_type_str(enum app_module_event_type type)
 static void log_event(const struct app_event_header *aeh)
 {
 	const struct app_module_event *event = cast_app_module_event(aeh);
-	char data_types[50] = "\0";
+	char data_types[60] = "\0";
 
 	if (event->type == APP_EVT_ERROR) {
 		APP_EVENT_MANAGER_LOG(aeh, "%s - Error code %d",
 				get_evt_type_str(event->type), event->data.err);
 	} else if (event->type == APP_EVT_DATA_GET) {
 		for (int i = 0; i < event->count; i++) {
+			/* data_types should contain space for the stringified type and a null
+			 * character.
+			 */
+			size_t max_append_len = sizeof(data_types) - strlen(data_types) - 1;
+
+			if (i < event->count - 1) {
+				/* For every type except the last one, we also need space
+				 * for a comma and a space character.
+				 */
+				max_append_len -= 2;
+			}
+
+			if (strlen(type2str(event->data_list[i])) > max_append_len) {
+				return;
+			}
+
 			strcat(data_types, type2str(event->data_list[i]));
 
 			if (i == event->count - 1) {

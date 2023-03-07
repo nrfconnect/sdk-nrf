@@ -10,10 +10,6 @@
 #include "led_util.h"
 #include "light_switch.h"
 
-#ifdef CONFIG_NET_L2_OPENTHREAD
-#include "thread_util.h"
-#endif
-
 #include <platform/CHIPDeviceLayer.h>
 
 #include "board_util.h"
@@ -138,13 +134,6 @@ CHIP_ERROR AppTask::Init()
 		return err;
 	}
 
-#ifdef CONFIG_OPENTHREAD_DEFAULT_TX_POWER
-	err = SetDefaultThreadOutputPower();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("Cannot set default Thread output power");
-		return err;
-	}
-#endif /* CONFIG_OPENTHREAD_DEFAULT_TX_POWER */
 #elif defined(CONFIG_CHIP_WIFI)
 	sWiFiCommissioningInstance.Init();
 #else
@@ -179,7 +168,7 @@ CHIP_ERROR AppTask::Init()
 
 #ifdef CONFIG_MCUMGR_SMP_BT
 	/* Initialize DFU over SMP */
-	GetDFUOverSMP().Init(RequestSMPAdvertisingStart);
+	GetDFUOverSMP().Init();
 	GetDFUOverSMP().ConfirmNewImage();
 #endif
 
@@ -584,16 +573,6 @@ void AppTask::FunctionTimerTimeoutCallback(k_timer *timer)
 		PostEvent(event);
 	}
 }
-
-#ifdef CONFIG_MCUMGR_SMP_BT
-void AppTask::RequestSMPAdvertisingStart(void)
-{
-	AppEvent event;
-	event.Type = AppEventType::StartSMPAdvertising;
-	event.Handler = [](const AppEvent &) { GetDFUOverSMP().StartBLEAdvertising(); };
-	PostEvent(event);
-}
-#endif
 
 void AppTask::PostEvent(const AppEvent &event)
 {

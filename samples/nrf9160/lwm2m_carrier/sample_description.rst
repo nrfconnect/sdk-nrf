@@ -33,7 +33,8 @@ Some of the configurations of the library must be changed according to your spec
 For example, at some point during certification, you might have to connect to one or more of an operator's test (certification) servers, by overwriting the library's automatic URI and PSK selection.
 When :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` is empty, the library connects to live (production) servers.
 
-The sections below explain how you can configure the library in different ways to connect to Leshan and Coiote LwM2M servers.
+The sections below explain how you can configure the library in different ways to connect to Leshan and AVSystem's Coiote LwM2M servers.
+To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 Configuring your application to connect to other servers (such as your operator's test servers) might look different, depending on the operator's device management framework.
 
 Configuration
@@ -99,7 +100,7 @@ The sample provides predefined configuration files for typical use cases.
 The following files are available:
 
 * :file:`prj.conf` - Standard default configuration file.
-* :file:`overlay-shell.conf` - Enables the :ref:`lwm2m_shell` and :ref:`lib_at_shell`.
+* :file:`overlay-shell.conf` - Enables the :ref:`lwm2m_carrier_shell` and :ref:`lib_at_shell`.
 
 The sample can either be configured by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
 
@@ -159,7 +160,7 @@ If you connected to the carrier (test) servers or live (production) servers, rea
 Testing with the LwM2M shell
 ----------------------------
 
-See :ref:`lwm2m_shell` for more information about the LwM2M carrier shell and shell commands.
+See :ref:`lwm2m_carrier_shell` for more information about the LwM2M carrier shell and shell commands.
 To test with the sample, complete the following steps:
 
 1. Make sure the sample was built with the shell overlay as described in :ref:`lwm2m_carrier_shell_overlay`.
@@ -171,27 +172,35 @@ To test with the sample, complete the following steps:
       .. code-block:: console
 
          $ at AT+CFUN=4
-         $ OK
-         $ at AT+CMNG=0,450,3,\"000102030405060708090a0b0c0d0e0f\"
-         $ OK
+         OK
+         $ at AT%CMNG=0,450,3,\"000102030405060708090a0b0c0d0e0f\"
+         OK
          $ at AT+CFUN=1
-         $ OK
+         OK
 
    #. Set the URI and security tag (containing the PSK that was stored):
 
       .. code-block:: console
 
          $ carrier_config server uri coaps://leshan.eclipseprojects.io:5784
-         $
+         Set server URI: coaps://leshan.eclipseprojects.io:5784
          $ carrier_config server sec_tag 450
-         $
-         $ carrier_config
+         Set security tag: 450
 
-   #. Save the settings. Resetting the device will load them.
+   #. Apply the server config.
+      After rebooting, the sample loads these settings (instead of using the static Kconfigs).
 
       .. code-block:: console
 
-         $ Enable custom server settings  Yes
+         $ carrier_config server enable
+         Enabled custom server config
+
+   #. Finally, as described in ref:`lwm2m_carrier_shell`, set ``auto_startup`` (or else the sample will wait indefinitely for you to configure all the settings).
+
+      .. code-block:: console
+
+         $ carrier_config auto_startup y
+         Set auto startup: Yes
 
    Once the device is registered to a device management server, you can experiment by setting some of the resources.
    For example, you can set the Location object (``/6``) resources for Latitude (``/6/0/0``) and Longitude (``/6/0/1``):

@@ -208,6 +208,28 @@ When the ``<signify>`` parameter is not specified, it does not signify the locat
    The application signifies the location info to nRF Cloud in a best-effort way.
    The minimal report interval is 5 seconds.
 
+.. note::
+   The application supports nRF Cloud cloud2device appId ``MODEM`` to send AT command from cloud:
+
+   * cloud2device schema::
+
+       {"appId":"MODEM", "messageType":"CMD", "data":"<AT_command>"}.
+
+   * device2cloud schema::
+
+       {"appId":"MODEM", "messageType":"RSP", "data":"<AT_response>"}.
+
+   The application executes the AT command in a best-effort way.
+
+.. note::
+   The application supports nRF Cloud cloud2device appId ``DEVICE`` to gracefully disconnect from cloud:
+
+   * cloud2device schema::
+
+       {"appId":"DEVICE", "messageType":"DISCON"}.
+
+   There is no response sending to nRF Cloud for this appId.
+
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -29,19 +29,20 @@ Configuration
 Complete the following steps to configure the module:
 
 1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-#. Make sure that the :ref:`CONFIG_DESKTOP_HID_STATE_ENABLE <config_desktop_app_options>` option is disabled.
-   The nRF Desktop central does not generate its own HID input reports.
-   It only forwards HID input reports that it receives from the peripherals connected over Bluetooth.
-#. Enable and configure the :ref:`hogp_readme` (:kconfig:option:`CONFIG_BT_HOGP`).
+   Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` are enabled.
+   The HID forward application module is enabled by the :ref:`CONFIG_DESKTOP_HID_FORWARD_ENABLE <config_desktop_app_options>` option which is implied by the :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` option together with other application modules.
+   These modules are required for HID dongle that forwards the data from HID peripherals connected over Bluetooth.
+#. The :ref:`CONFIG_DESKTOP_HID_FORWARD_ENABLE <config_desktop_app_options>` option selects :kconfig:option:`CONFIG_BT_HOGP` to automatically enable the :ref:`hogp_readme`.
+   An nRF Desktop dongle does not generate its own HID input reports.
+   The dongle uses |hid_forward| to forward the HID reports.
+   The reports are received by the HID service client from the peripherals connected over Bluetooth.
 
    .. note::
-       Make sure to define the maximum number of supported HID reports (:kconfig:option:`CONFIG_BT_HOGP_REPORTS_MAX`).
+       The maximum number of supported HID reports (:kconfig:option:`CONFIG_BT_HOGP_REPORTS_MAX`) is set by default for the nRF Desktop dongle, which supports two peripherals with an average of six HID reports each.
+       Make sure to align this configuration value for other use cases, for example, if the dongle supports more peripherals.
 
-#. Make sure to enable the :kconfig:option:`CONFIG_BT_CENTRAL` Kconfig option.
-#. Enable |hid_forward| using the :ref:`CONFIG_DESKTOP_HID_FORWARD_ENABLE <config_desktop_app_options>` option.
-   This option is available only if you enable both options from the previous steps.
-   The module is used on Bluetooth Central to forward the HID reports that are received by the HID service client.
-#. Depending on your hardware, enable one of the following options:
+#. nRF Desktop dongle can forward either mouse or keyboard boot reports.
+   The forwarded boot report type is specified using the following Kconfig options:
 
    * :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>` - This option enables forwarding keyboard boot reports.
    * :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE <config_desktop_app_options>` - This option enables forwarding mouse boot reports.
@@ -145,5 +146,3 @@ The peripheral uses :ref:`nrf_desktop_dev_descr` to provide the HW ID to the nRF
 The |hid_forward| only forwards the configuration channel requests that come from the USB connected host, it does not generate its own requests.
 
 For more details, see :ref:`nrf_desktop_config_channel` documentation.
-
-.. |hid_forward| replace:: HID forward module

@@ -18,9 +18,6 @@ See the :ref:`ug_matter_creating_accessory` page for an overview of the process 
 Requirements
 ************
 
-.. note::
-    |matter_wifi_revb_ncs220_test_note|
-
 The sample supports the following development kits:
 
 .. table-from-sample-yaml::
@@ -55,7 +52,7 @@ By default, the Matter accessory device has IPv6 networking disabled.
 You must pair the device with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread or a Wi-Fi network.
 You can enable the controller after :ref:`building and running the sample <matter_template_network_testing>`.
 
-To pair the device, the controller must get the commissioning information from the Matter accessory device and provision the device into the network.
+To pair the device, the controller must get the :ref:`matter_template_network_mode_onboarding` from the Matter accessory device and commission the device into the network.
 
 Commissioning in Matter
 -----------------------
@@ -66,9 +63,30 @@ When the procedure has completed, the device is equipped with all information ne
 During the last part of the commissioning procedure (the provisioning operation), the Matter controller sends the Thread or Wi-Fi network credentials to the Matter accessory device.
 As a result, the device can join the IPv6 network and communicate with other devices in the network.
 
-To start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
-The data payload includes the device discriminator and setup PIN code.
-The payload is encoded within a QR code, printed to the UART console.
+.. _matter_template_network_mode_onboarding:
+
+Onboarding information
+++++++++++++++++++++++
+
+When you start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
+The onboarding information representation depends on your commissioner setup.
+
+For this sample, you can use one of the following :ref:`onboarding information formats <ug_matter_network_topologies_commissioning_onboarding_formats>` to provide the commissioner with the data payload that includes the device discriminator and the setup PIN code:
+
+  .. list-table:: Template sample onboarding information
+     :header-rows: 1
+
+     * - QR Code
+       - QR Code Payload
+       - Manual pairing code
+     * - Scan the following QR code with the app for your ecosystem:
+
+         .. figure:: ../../../doc/nrf/images/matter_qr_code_template_sample.png
+            :width: 200px
+            :alt: QR code for commissioning the template device
+
+       - MT:Y.K9042C00KA0648G00
+       - 34970112332
 
 Configuration
 *************
@@ -124,14 +142,14 @@ Before you start testing the application, you can select one of the `Matter temp
 Selecting a build type in |VSC|
 -------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_vsc_start
    :end-before: build_types_selection_vsc_end
 
 Selecting a build type from command line
 ----------------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_cmd_start
    :end-before: For example, you can replace the
 
@@ -158,9 +176,6 @@ Testing
 When you have built the sample and programmed it to your development kit, it automatically starts the Bluetooth LE advertising and the **LED1** starts flashing (Short Flash On).
 At this point, you can press **Button 1** for six seconds to initiate the factory reset of the device.
 
-.. note::
-    If you are new to Matter, commission the Matter device using the Mobile Controller for Android (CHIP Tool for Android) when :ref:`setting up the Matter development environment <ug_matter_configuring_mobile>`.
-
 .. _matter_template_network_testing:
 
 Testing in a network
@@ -178,6 +193,7 @@ To test the sample in a Matter-enabled Thread network, complete the following st
    * Only if you are configuring Matter over Thread: Configure the Thread Border Router.
    * Build and install the Matter controller.
    * Commission the device.
+     You can use the :ref:`matter_template_network_mode_onboarding` listed earlier on this page.
    * Send Matter commands.
 
    At the end of this procedure, **LED 1** of the Matter device programmed with the sample starts flashing in the Short Flash Off state.

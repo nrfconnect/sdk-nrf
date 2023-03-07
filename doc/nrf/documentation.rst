@@ -13,8 +13,8 @@ The documentation follows specific conventions and templates proper to the |NCS|
    :maxdepth: 2
    :caption: Subpages:
 
-   doc_structure
-   doc_build
-   doc_styleguide
-   doc_templates
-   doc_build_process
+   documentation/structure
+   documentation/build
+   documentation/styleguide
+   documentation/templates
+   documentation/build_process

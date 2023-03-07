@@ -29,8 +29,7 @@ LOG_MODULE_REGISTER(coap_client, CONFIG_COAP_CLIENT_LOG_LEVEL);
 #define COMMAND_REQUEST_MULTICAST 'm'
 #define COMMAND_REQUEST_PROVISIONING 'p'
 
-static void on_nus_received(struct bt_conn *conn, const uint8_t *const data,
-			    uint16_t len)
+static void on_nus_received(struct bt_conn *conn, const uint8_t *const data, uint16_t len)
 {
 	LOG_INF("Received data: %c", data[0]);
 
@@ -157,6 +156,5 @@ void main(void)
 
 #endif /* CONFIG_BT_NUS */
 
-	coap_client_utils_init(on_ot_connect, on_ot_disconnect,
-			       on_mtd_mode_toggle);
+	coap_client_utils_init(on_ot_connect, on_ot_disconnect, on_mtd_mode_toggle);
 }

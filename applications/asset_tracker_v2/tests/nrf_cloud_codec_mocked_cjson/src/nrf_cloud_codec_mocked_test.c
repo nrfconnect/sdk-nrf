@@ -21,30 +21,11 @@ static int ret;
 
 void setUp(void)
 {
-	cmock_cJSON_to_mock_Init();
-	cmock_date_time_Init();
-	cmock_json_helpers_Init();
-
 	__cmock_cJSON_Init_Ignore();
 	ret = cloud_codec_init(NULL, NULL);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	memset(&codec, 0, sizeof(codec));
-}
-
-void tearDown(void)
-{
-	cmock_cJSON_to_mock_Verify();
-	cmock_date_time_Verify();
-	cmock_json_helpers_Verify();
-}
-
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
 }
 
 /**

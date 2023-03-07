@@ -9,6 +9,11 @@
 
 #include "data_fifo.h"
 
+#if (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ)
+/* Only 48kHz is supported when using USB */
+#error USB only supports 48kHz
+#endif /* (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ) */
+
 /**
  * @brief Set fifo buffers to be used by USB module and start sending/receiving data
  *

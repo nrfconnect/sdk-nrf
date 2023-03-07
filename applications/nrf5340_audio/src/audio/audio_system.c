@@ -53,7 +53,7 @@ static void audio_gateway_configure(void)
 
 #if (CONFIG_STREAM_BIDIRECTIONAL)
 	sw_codec_cfg.decoder.enabled = true;
-	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
+	sw_codec_cfg.decoder.num_ch = SW_CODEC_MONO;
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
 
 	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
@@ -62,7 +62,12 @@ static void audio_gateway_configure(void)
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
 
-	sw_codec_cfg.encoder.channel_mode = SW_CODEC_STEREO;
+	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
+		sw_codec_cfg.encoder.num_ch = SW_CODEC_MONO;
+	} else {
+		sw_codec_cfg.encoder.num_ch = SW_CODEC_STEREO;
+	}
+
 	sw_codec_cfg.encoder.enabled = true;
 }
 
@@ -76,7 +81,7 @@ static void audio_headset_configure(void)
 
 #if (CONFIG_STREAM_BIDIRECTIONAL)
 	sw_codec_cfg.encoder.enabled = true;
-	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
+	sw_codec_cfg.encoder.num_ch = SW_CODEC_MONO;
 
 	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
 		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_BITRATE;
@@ -85,7 +90,7 @@ static void audio_headset_configure(void)
 	}
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
 
-	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
+	sw_codec_cfg.decoder.num_ch = SW_CODEC_MONO;
 	sw_codec_cfg.decoder.enabled = true;
 }
 
@@ -157,8 +162,8 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		}
 
 		if (sw_codec_cfg.encoder.enabled) {
-			/* Send encoded data over IPM */
-			streamctrl_encoded_data_send(encoded_data, encoded_data_size);
+			streamctrl_encoded_data_send(encoded_data, encoded_data_size,
+						     sw_codec_cfg.encoder.num_ch);
 		}
 		STACK_USAGE_PRINT("encoder_thread", &encoder_thread_data);
 	}

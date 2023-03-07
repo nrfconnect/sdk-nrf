@@ -14,7 +14,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
-#ifdef CONFIG_NRFX_QSPI
+#ifdef CONFIG_NRF700X_ON_QSPI
 #include <nrfx_qspi.h>
 #endif
 
@@ -23,7 +23,7 @@
 #define RPU_READY_BIT BIT(2) /* RPU IS READY - RO*/
 
 struct qspi_config {
-#ifdef CONFIG_NRFX_QSPI
+#ifdef CONFIG_NRF700X_ON_QSPI
 	nrf_qspi_addrmode_t addrmode;
 	nrf_qspi_readoc_t readoc;
 	nrf_qspi_writeoc_t writeoc;
@@ -39,9 +39,9 @@ struct qspi_config {
 	struct k_sem lock;
 	unsigned int addrmask;
 	unsigned char qspi_slave_latency;
-#ifdef CONFIG_NRFX_QSPI
+#ifdef CONFIG_NRF700X_ON_QSPI
 	nrf_qspi_encryption_t p_cfg;
-#endif /*CONFIG_NRFX_QSPI*/
+#endif /*CONFIG_NRF700X_ON_QSPI*/
 	int test_hlread;
 	char *test_name;
 	int test_start;
@@ -103,4 +103,14 @@ int func_rpu_sleep(void);
 int func_rpu_wake(void);
 int func_rpu_sleep_status(void);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
+
+#define QSPI_KEY_LEN_BYTES 16
+
+/*! \brief Enable encryption
+ *
+ *  \param key Pointer to the 128-bit key
+ *  \return 0 on success, negative errno code on failure.
+ */
+int qspi_enable_encryption(uint8_t *key);
+
 #endif /* __QSPI_IF_H__ */

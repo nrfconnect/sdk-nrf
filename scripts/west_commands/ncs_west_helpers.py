@@ -9,26 +9,27 @@
 # Portions were copied from:
 # https://github.com/foundriesio/zephyr_tools/.
 
-from collections import OrderedDict
-import os
+from __future__ import annotations
+
+import collections
+from dataclasses import dataclass
 from pathlib import Path
+import subprocess
 import sys
 import textwrap
+from typing import Union, Iterable
 
 try:
     import editdistance
-    import pygit2
+    import pygit2  # type: ignore
 except ImportError:
     sys.exit("Can't import extra dependencies needed for NCS west extensions.\n"
              "Please install packages in nrf/scripts/requirements-extra.txt "
              "with pip3.")
 from west import log
 
-# The parent scripts/ directory contains the pygit2_helpers module.
-sys.path.append(os.fspath(Path(__file__).parent.parent))
-
-from pygit2_helpers import shortlog_is_revert, shortlog_has_sauce, \
-    shortlog_no_sauce, commit_reverts_what, commit_shortlog
+from pygit2_helpers import title_is_revert, title_has_sauce, \
+    title_no_sauce, commit_reverts_what, commit_title
 
 __all__ = ['InvalidRepositoryError', 'UnknownCommitsError', 'RepoAnalyzer']
 
@@ -46,39 +47,69 @@ class UnknownCommitsError(RuntimeError):
 # Repository analysis
 #
 
+@dataclass
+class Repository:
+    '''Representation for a git repository on a local file system,
+    and associated metadata that we want to include in an analysis.
+
+    This is not the same thing as a pygit2.Repository.'''
+
+    name: str
+    path: str
+    abspath: str
+    url: str
+    sha: str
+
+def _run_git(repo: Repository, command: list[str],
+             check=True) -> subprocess.CompletedProcess:
+    return subprocess.run(['git'] + command,
+                          capture_output=True,
+                          text=True,
+                          cwd=repo.abspath,
+                          check=check)
+
 class RepoAnalyzer:
     '''Utility class for analyzing a repository, especially
     upstream/downstream differences.'''
 
-    def __init__(self, downstream_project, upstream_project,
-                 downstream_ref, upstream_ref,
-                 downstream_domain='@nordicsemi.no', downstream_sauce='nrf',
-                 edit_dist_threshold=3, include_mergeups=False):
-        # - downstream and upstream west.manifest.Project instances
-        # - revisions within them to analyze
-        # - corresponding pygit2.Repository instance
-        self._dp = downstream_project
-        self._dr = downstream_ref
-        self._up = upstream_project
-        self._ur = upstream_ref
-        assert self._dp.path == self._up.path
-        self._repo = _load_repo(self._dp.abspath)
+    def __init__(self,
+                 downstream_repo: Repository,
+                 upstream_repo: Repository,
+                 downstream_domain: Union[str, tuple[str]] = '@nordicsemi.no',
+                 downstream_sauce: str = 'nrf',
+                 edit_dist_threshold: int = 3,
+                 include_mergeups: bool = False):
+        '''
+        :param downstream_project: project loaded from downstream manifest
+        :param upstream_project: project loaded from upstream manifest
+        :param downstream_ref: downstream revision to analyze against
+        :param upstream_ref: upstream revision to analyze against
+        :param downstream_domain: email domains from downstream committers
 
-        # string identifying a downstream sauce tag;
-        # if your sauce tags look like [xyz <tag>], use "xyz". this can
-        # also be a tuple of strings to find multiple sources of sauce.
-        self._downstream_sauce = _parse_sauce(downstream_sauce)
-        # domain name (like "@example.com") used by downstream committers;
-        # this can also be a tuple of domains.
-        self._downstream_domain = downstream_domain
+        :param downstream_sauce: string or strings identifying
+                                 downstream sauce tags: if your
+                                 sauce tags look like [xyz <tag>], use
+                                 "xyz". If they look like [xyz <tag>]
+                                 or [abc <tag>], use ['xyz', 'abc']
 
-        # commit shortlog edit distance to use when fuzzy-matching
-        # upstream and downstream patches
-        self._edit_dist_threshold = edit_dist_threshold
+        :param edit_dist_threshold: commit title edit distance to use when
+                                    fuzzy-matching upstream and downstream
+                                    patches
 
-        # whether or not to include mergeup commits as downstream outstanding
-        # patches
-        self._include_mergeups = include_mergeups
+        :param include_mergeups: include mergeup commits as downstream
+                                 outstanding patches
+        '''
+
+        self.downstream_repo: Repository = downstream_repo
+        self.upstream_repo: Repository = upstream_repo
+        assert Path(self.downstream_repo.path).resolve() == \
+            Path(self.upstream_repo.path).resolve()
+        self._pygit2_repo: pygit2.Repository = \
+            _load_repo(self.downstream_repo.abspath)
+        self._downstream_sauce: list[str] = _to_list(downstream_sauce)
+        self._downstream_domain: list[str] = _to_list(downstream_domain)
+        self._edit_dist_threshold: int = edit_dist_threshold
+        self._include_mergeups: bool = include_mergeups
 
     #
     # Main API, which is property based.
@@ -122,63 +153,61 @@ class RepoAnalyzer:
 
     The map's keys are downstream pygit2 objects. Its values are lists
     of pygit2 commit objects that are merged upstream and have similar
-    shortlogs by edit distance to each key.'''
+    titles by edit distance to each key.'''
 
     #
     # Internal helpers
     #
 
-    def _new_upstream_only_commits(self):
+    def _new_upstream_only_commits(self) -> list[pygit2.Commit]:
         '''Commits in `upstream_ref` history since merge base with
         `downstream_ref`'''
+        downstream_sha = self.downstream_repo.sha
+        upstream_sha = self.upstream_repo.sha
         try:
-            doid = self._repo.revparse_single(self._dr + '^{commit}').oid
-        except KeyError:
-            raise UnknownCommitsError(self._downstream_ref)
-        try:
-            uoid = self._repo.revparse_single(self._ur + '^{commit}').oid
-        except KeyError:
-            raise UnknownCommitsError(self._upstream_ref)
-
-        try:
-            merge_base = self._repo.merge_base(doid, uoid)
+            merge_base = self._pygit2_repo.merge_base(downstream_sha,
+                                                      upstream_sha)
         except ValueError:
-            log.wrn("can't get merge base;",
-                    "downstream SHA: {}, upstream SHA: {}".
-                    format(doid, uoid))
+            log.wrn("can't get merge base; "
+                    f"downstream SHA: {downstream_sha}, "
+                    f"upstream SHA: {upstream_sha}")
             raise
 
         sort = pygit2.GIT_SORT_TOPOLOGICAL | pygit2.GIT_SORT_REVERSE
-        walker = self._repo.walk(uoid, sort)
+        walker = self._pygit2_repo.walk(upstream_sha, sort)
         walker.hide(merge_base)
         return list(walker)
 
-    def _downstream_outstanding_commits(self):
+    def _downstream_outstanding_commits(self) -> list[pygit2.Commit]:
         # Compute a list of commit objects for outstanding
         # downstream patches.
 
         # Convert downstream and upstream revisions to SHAs.
-        dsha = self._dp.sha(self._dr)
-        usha = self._up.sha(self._ur)
+        downstream_sha = self.downstream_repo.sha
+        upstream_sha = self.upstream_repo.sha
 
         # First, get a list of all downstream OOT patches. Note:
         # pygit2 doesn't seem to have any ready-made rev-list
-        # equivalent, so call out to Project.git() to get the commit
+        # equivalent, so call out to git to get the commit
         # SHAs, then wrap them with pygit2 objects.
-        cp = self._dp.git('rev-list --reverse {} ^{}'.format(dsha, usha),
-                          capture_stdout=True)
+        cp = _run_git(self.downstream_repo,
+                      ['rev-list',
+                       '--reverse',
+                       downstream_sha,
+                       f'^{upstream_sha}'])
         if not cp.stdout.strip():
             return []
-        commit_shas = cp.stdout.decode('utf-8').strip().splitlines()
-        all_downstream_oot = [self._repo.revparse_single(c)
-                              for c in commit_shas]
+        commit_shas = cp.stdout.strip().splitlines()
+        all_downstream_oot: list[pygit2.Commit] = [
+            self._pygit2_repo.revparse_single(c)
+            for c in commit_shas]
 
         # Now filter out reverted patches and mergeups from the
         # complete list of OOT patches.
-        downstream_out = OrderedDict()
+        downstream_out: dict[str, pygit2.Commit] = {}
         for c in all_downstream_oot:
-            sha, sl = str(c.oid), commit_shortlog(c)
-            is_revert = shortlog_is_revert(sl)  # this is just a heuristic
+            sha, sl = str(c.oid), commit_title(c)
+            is_revert = title_is_revert(sl)  # this is just a heuristic
 
             if len(c.parents) > 1:
                 if not self._include_mergeups:
@@ -190,7 +219,7 @@ class RepoAnalyzer:
                     is_revert = False  # a merge is never a revert
 
             if is_revert:
-                # If a shortlog marks a revert, delete the original commit
+                # If a title marks a revert, delete the original commit
                 # from downstream_out, if it can be found.
                 try:
                     rsha = commit_reverts_what(c)
@@ -202,19 +231,15 @@ class RepoAnalyzer:
                         format(str(sha), textwrap.indent(c.message, '\t')))
                     rsha = None
 
-                # Temporary workaround for three commits that are known
+                # Temporary workaround for any commit(s) that are known
                 # to specify incorrect SHAs of the commits they revert.
-                if self._dp.name == 'zephyr':
-                    if rsha == '54b057b603cf0e12f4128d33580523bd4cff1226':
-                        rsha = 'f252fac960bf2806bf66815f292b5586c38b9f34'
-                    elif rsha == 'dd18789b095584bca8e297cba79b775cea101c2b':
-                        rsha = 'dabe1c9d30037b63755dd13fefd8d042043bf520'
-                    elif rsha == 'd692aec3d12c73b895fc296966e031e426120e8a':
-                        rsha = '3aed7234e9bcfbc09178e3917073789d5cc7ea94'
+                if self.downstream_repo.name == 'trusted-firmware-m':
+                    if rsha == '74ebcb636cb39b498a2ac05f7587f8ee9158bba9':
+                        rsha = 'af7b2f48e88bd3f260347138f87e5c4f7819b273'
 
                 if rsha in downstream_out:
                     log.dbg('** commit {} ("{}") was reverted in {}'.
-                            format(rsha, commit_shortlog(downstream_out[rsha]),
+                            format(rsha, commit_title(downstream_out[rsha]),
                                    sha), level=log.VERBOSE_VERY)
                     del downstream_out[rsha]
                     continue
@@ -223,9 +248,10 @@ class RepoAnalyzer:
                     # (It might not be in all_downstream_oot if e.g.
                     # downstream reverts an upstream patch as a hotfix, and we
                     # shouldn't warn about that.)
-                    is_ancestor = self._dp.git(
-                        'merge-base --is-ancestor {} {}'.format(rsha, dsha),
-                        capture_stdout=True).returncode == 0
+                    is_ancestor = _run_git(
+                        self.downstream_repo,
+                        ['merge-base', '--is-ancestor', rsha, downstream_sha],
+                        check=False).returncode == 0
                     if not is_ancestor:
                         log.wrn(('commit {} ("{}") reverts {}, '
                                  "which isn't in downstream history").
@@ -235,9 +261,10 @@ class RepoAnalyzer:
             # incorrect sauce tag. (Again, downstream might carry reverts
             # of upstream patches as hotfixes, which we shouldn't
             # warn about.)
-            if (not shortlog_has_sauce(sl, self._downstream_sauce) and
+            if (not title_has_sauce(sl, self._downstream_sauce) and
                     not is_revert):
-                log.wrn(f'{self._dp.name}: bad or missing sauce tag: {sha} ("{sl}")')
+                log.wrn(f'{self.downstream_repo.name}: bad or missing sauce tag: '
+                        f'{sha} ("{sl}")')
 
             downstream_out[sha] = c
             log.dbg('** added oot patch: {} ("{}")'.format(sha, sl),
@@ -245,74 +272,67 @@ class RepoAnalyzer:
 
         return list(downstream_out.values())
 
-    def _likely_merged_commits(self):
+    def _likely_merged_commits(self) -> dict[pygit2.Commit,
+                                             list[pygit2.Commit]]:
         # Compute patches which are downstream and probably were
-        # merged upstream, using the following heuristics:
+        # merged upstream, by looking for downstream patches with
+        # small title edit distances from upstream patches.
         #
-        # 1. downstream patches with small shortlog edit distances
-        #    from upstream patches
+        # Using edit distance catches patches with typos in the titles
+        # that reviewers asked to be fixed.
         #
-        # 2. downstream patches with shortlogs that are prefixes of
-        #    upstream patches
-        #
-        # Heuristic #1 catches patches with typos in the shortlogs
-        # that reviewers asked to be fixed, etc. E.g. upstream
-        # shortlog
+        # For example, we want this upstream title:
         #
         #    Bluetoth: do foo
         #
-        # matches downstream shortlog
+        # to be matched with this downstream title:
         #
         #    [nrf fromlist] Bluetooth: do foo
         #
-        # Heuristic #2 catches situations where we had to shorten our
-        # downstream shortlog to fit the "[nrf xyz]" sauce tag at the
-        # beginning and still fit within CI's shortlog length
-        # restrictions. E.g. upstream shortlog
-        #
-        #    subsys: do a thing that is very useful for everyone
-        #
-        # matches downstream shortlog
-        #
-        #    [nrf fromlist] subsys: do a thing that is very
+        # assuming both commits have the same author.
         #
         # The return value is a map from pygit2 commit objects for
         # downstream patches, to a list of pygit2 commit objects that
-        # are upstream patches which have similar shortlogs and the
-        # same authors.
+        # are upstream patches which have similar titles and the same
+        # authors.
 
-        likely_merged = OrderedDict()
-        for dc in self.downstream_outstanding:
-            sl = commit_shortlog(dc)
+        email2title_commit = collections.defaultdict(list)
+        for upstream_commit in self.upstream_new:
+            email = upstream_commit.author.email
+            email2title_commit[email].append(
+                (commit_title(upstream_commit), upstream_commit))
 
-            def ed(upstream_commit):
-                return editdistance.eval(
-                    shortlog_no_sauce(sl, self._downstream_sauce),
-                    commit_shortlog(upstream_commit))
+        likely_merged = {}
+        for downstream_commit in self.downstream_outstanding:
+            downstream_email = downstream_commit.author.email
+
+            def is_match(upstream_title):
+                edit_dist = editdistance.eval(
+                    title_no_sauce(commit_title(downstream_commit)),
+                    upstream_title)
+                return edit_dist < self._edit_dist_threshold
 
             matches = [
-                uc for uc in self.upstream_new if
-                # Heuristic #1:
-                ed(uc) < self._edit_dist_threshold or
-                # Heuristic #2:
-                commit_shortlog(uc).startswith(sl)
+                upstream_commit for upstream_title, upstream_commit in
+                email2title_commit[downstream_email] if
+                is_match(upstream_title)
             ]
 
             if len(matches) != 0:
-                likely_merged[dc] = matches
+                likely_merged[downstream_commit] = matches
 
         return likely_merged
 
-def _parse_sauce(sauce):
+def _to_list(arg: Union[str, Iterable[str]]) -> list[str]:
     # Returns sauce as an immutable object (by copying a sequence
     # into a tuple if sauce is not a string)
 
-    if isinstance(sauce, str):
-        return sauce
-    else:
-        return tuple(sauce)
+    if isinstance(arg, str):
+        return [arg]
 
-def _load_repo(path):
+    return list(arg)
+
+def _load_repo(path: str) -> pygit2.Repository:
     try:
         return pygit2.Repository(path)
     except KeyError:

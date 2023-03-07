@@ -9,8 +9,6 @@
 #include <mgmt/fmfu_mgmt_stat.h>
 #include <modem/modem_info.h>
 #include <modem/nrf_modem_lib.h>
-#include "os_mgmt/os_mgmt.h"
-#include "img_mgmt/img_mgmt.h"
 #include <zephyr/dfu/mcuboot.h>
 
 void main(void)
@@ -34,13 +32,9 @@ void main(void)
 	/* Shutdown modem to prepare for DFU */
 	nrf_modem_lib_shutdown();
 
-	nrf_modem_lib_init(FULL_DFU_MODE);
+	nrf_modem_lib_init(BOOTLOADER_MODE);
 	/* Register SMP Communication stats */
 	fmfu_mgmt_stat_init();
-	/* Registers the OS management command handler group */
-	os_mgmt_register_group();
-	/* Registers the image management command handler group */
-	img_mgmt_register_group();
 	/* Initialize MCUMgr handlers for full modem update */
 	err = fmfu_mgmt_init();
 	if (err) {

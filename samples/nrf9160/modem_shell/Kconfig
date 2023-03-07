@@ -68,6 +68,7 @@ config MOSH_LOCATION
 	bool "Location"
 	default y
 	select LOCATION
+	select NRF_CLOUD_LOCATION if MOSH_CLOUD_MQTT && (LOCATION_METHOD_CELLULAR || LOCATION_METHOD_WIFI)
 	help
 	  Tool for location queries via location library.
 
@@ -95,7 +96,6 @@ config MOSH_CLOUD_REST
 config MOSH_CLOUD_MQTT
 	bool "MQTT connection to nRFCloud"
 	select NRF_CLOUD_MQTT
-	select NRF_CLOUD_LOCATION if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	help
 	  MQTT connection to nRFCloud.
 
@@ -198,7 +198,6 @@ if MOSH_CLOUD_LWM2M
 
 config MOSH_LWM2M_PSK
 	string "LwM2M pre-shared key for communication"
-	default "000102030405060708090a0b0c0d0e0f"
 	help
 	  Pre-shared key must be identical to the PSK registered with the device on the LwM2M server.
 	  Use the hexadecimal representation.
@@ -208,6 +207,13 @@ config MOSH_LWM2M_ENDPOINT_PREFIX
 	default "urn:imei:"
 	help
 	  Sets the prefix of the endpoint name used when connecting to the LwM2M server.
+
+# Make AVSystem the default LwM2M server.
+config LWM2M_CLIENT_UTILS_SERVER
+	string "LwM2M server address"
+	default "coaps://eu.iot.avsystem.cloud:5684"
+	help
+	  Kconfig redefinition, please see the help text of the original definition.
 
 endif # MOSH_CLOUD_LWM2M
 

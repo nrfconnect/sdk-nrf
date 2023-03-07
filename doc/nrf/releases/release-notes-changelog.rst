@@ -1,6 +1,6 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.2.99
+Changelog for |NCS| v2.3.99
 ###########################
 
 .. contents::
@@ -23,12 +23,17 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v2.2.0`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v2.3.0`_ for the list of issues valid for the latest release.
 
 Changelog
 *********
 
 The following sections provide detailed lists of changes by component.
+
+IDE and tool support
+====================
+
+|no_changes_yet_note|
 
 MCUboot
 =======
@@ -47,6 +52,16 @@ RF Front-End Modules
 
 Build system
 ------------
+
+|no_changes_yet_note|
+
+Working with nRF52 Series
+=========================
+
+|no_changes_yet_note|
+
+Working with nRF53 Series
+=========================
 
 |no_changes_yet_note|
 
@@ -69,20 +84,18 @@ Bluetooth mesh
 Matter
 ------
 
-* Added:
-
-  * Support for Wi-Fi Network Diagnostic Cluster (which counts the number of packets received and transmitted on the Wi-Fi interface).
+|no_changes_yet_note|
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
 Matter fork
 +++++++++++
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``bc6b43882a56ddb3e94d3e64956bd5f3292b4058``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``1.0.0.2`` tag.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-* |no_changes_yet_note|
+|no_changes_yet_note|
 
 Thread
 ------
@@ -98,8 +111,8 @@ Zigbee
 
 See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 
-ESB
----
+Enhanced ShockBurst (ESB)
+-------------------------
 
 |no_changes_yet_note|
 
@@ -121,19 +134,32 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
 
 nRF9160: Serial LTE modem
 -------------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
 
 nRF5340 Audio
 -------------
 
-* Updated:
+|no_changes_yet_note|
 
-  * Power module has been re-factored so that it uses upstream Zephyr INA23X sensor driver.
+nRF Machine Learning (Edge Impulse)
+-----------------------------------
+
+|no_changes_yet_note|
+
+nRF Desktop
+-----------
+
+* The :ref:`nrf_desktop_dfu` automatically enables 8-bit write block size emulation (:kconfig:option:`CONFIG_SOC_FLASH_NRF_EMULATE_ONE_BYTE_WRITE_ACCESS`) to ensure that update images with sizes unaligned to word size can be successfully stored in the internal FLASH.
+  The feature is not enabled if the MCUboot bootloader is used and the secondary slot is placed in an external FLASH (when :kconfig:option:`CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY` is enabled).
 
 Samples
 =======
@@ -141,17 +167,9 @@ Samples
 Bluetooth samples
 -----------------
 
-* :ref:`peripheral_uart` sample:
+* Removed:
 
-  * Changed:
-
-    * Fixed a possible memory leak in the :c:func:`uart_init` function.
-
-* :ref:`peripheral_hids_keyboard` sample:
-
-  * Changed:
-
-    * Fixed a possible out-of-bounds memory access issue in the :c:func:`hid_kbd_state_key_set` and :c:func:`hid_kbd_state_key_clear` functions.
+  * The Bluetooth 3-wire coex sample because of the removal of the 3-wire implementation.
 
 Bluetooth mesh samples
 ----------------------
@@ -161,12 +179,17 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
-|no_changes_yet_note|
+* :ref:`modem_shell_application` sample:
+
+  * Updated:
+
+    * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
+      Remove the inclusion of the file :file:`nrf_cloud_codec.h`.
 
 Peripheral samples
 ------------------
 
-* Added support for nrf7002 board for :ref:`radio_test`.
+|no_changes_yet_note|
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
@@ -176,13 +199,7 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-* Changed:
-
-  * Overlay structure changed:
-    * ``overlay-rtt.conf`` removed from all samples.
-    * ``overlay-log.conf`` now uses RTT backend by default.
-    * Logs removed from default configuration (moved to ``overlay-logging.conf``)
-    * Asserts removed from default configuration (moved to ``overlay-debug.conf``)
+|no_changes_yet_note|
 
 Matter samples
 --------------
@@ -224,7 +241,7 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-* |no_changes_yet_note|
+|no_changes_yet_note|
 
 Libraries
 =========
@@ -239,13 +256,10 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-* :ref:`mds_readme`:
+* :ref:`bt_fast_pair_readme`:
 
-  * Fixed URI generation in the :c:func:`data_uri_read` function.
-
-* :ref:`ble_rpc` library:
-
-  * Fixed a possible memory leak in the :c:func:`bt_gatt_indicate_rpc_handler` function.
+  * Added the :c:func:`bt_fast_pair_info_cb_register` function and the :c:struct:`bt_fast_pair_info_cb` structure to register Fast Pair information callbacks.
+    The :c:member:`bt_fast_pair_info_cb.account_key_written` callback can be used to notify the application about the Account Key writes.
 
 Bootloader libraries
 --------------------
@@ -260,16 +274,11 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-* :ref:`lib_fota_download` library:
-
-  * Fixed a bug were the :c:func:`download_client_callback` function was continuing to read the offset value even if :c:func:`dfu_target_offset_get` returned an error.
-  * Fixed a bug where the cleanup of the downloading state was not happening when an error event was raised.
-
 * :ref:`lib_nrf_cloud` library:
 
-  * Updated:
+  * Added:
 
-    * The MQTT disconnect event is now handled by the FOTA module, allowing for updates to be completed while disconnected and reported properly when reconnected.
+    * A public header file :file:`nrf_cloud_defs.h` that contains common defines for interacting with nRF Cloud and the :ref:`lib_nrf_cloud` library.
 
 Libraries for NFC
 -----------------
@@ -311,9 +320,7 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-* :ref:`west_sbom`:
-
-  * Output now contains source repository and version information for each file.
+|no_changes_yet_note|
 
 MCUboot
 =======
@@ -324,14 +331,14 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-* |no_changes_yet_note|
+* Added support for the downgrade prevention feature using hardware security counters (:kconfig:option:`MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`).
 
 Zephyr
 ======
 
-.. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each NCS release.
+.. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each nRF Connect SDK release.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``cd16a8388f71a6cce0cea871f75f6d4ac8f56da9``, with some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``e1e06d05fa8d1b6ac1b0dffb1712e94e308861f8``, with some |NCS| specific additions.
 
 For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into nRF Connect SDK since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
@@ -371,5 +378,3 @@ Documentation
 =============
 
 |no_changes_yet_note|
-
-.. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.

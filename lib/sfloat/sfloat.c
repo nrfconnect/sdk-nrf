@@ -29,6 +29,10 @@
 #define SFLOAT_EXP_BIT_POS (12)
 /* Exponent mask in the SFLOAT encoding. */
 #define SFLOAT_EXP_MASK (0xF000)
+/* Value of the exponent that is in SFLOAT special values. */
+#define SFLOAT_SPECIAL_EXP 0
+/* Minimum value of mantissa in SFLOAT special values. */
+#define SFLOAT_SPECIAL_MANTISSA_MIN 2046
 
 /* Size in bits of the float sign encoding. */
 #define FLOAT_SIGN_BIT_SIZE 1
@@ -46,6 +50,8 @@
 
 /* Helper macro for getting absolute value. */
 #define ABS(a) ((a < 0) ? (-a) : (a))
+/* Helper macro for dividing two integers with rounding upwards (ceiling). */
+#define DIV_AND_CEIL(a, b) (((a) + ((b) - 1)) / (b))
 
 /* Float type should use binary32 notation from the IEEE 754-2008 specification. */
 BUILD_ASSERT(sizeof(float) == sizeof(uint32_t));
@@ -138,6 +144,12 @@ static struct sfloat_desc sfloat_desc_from_float(float float_num)
 	} else {
 		sfloat.exponent = ((uint8_t) -exp) & 0x0F;
 		sfloat.exponent = (~sfloat.exponent & 0x0F) + 1;
+	}
+
+	/* Make sure that special sfloat values are not returned */
+	if ((sfloat.exponent == SFLOAT_SPECIAL_EXP) && (mantissa >= SFLOAT_SPECIAL_MANTISSA_MIN)) {
+		sfloat.exponent++;
+		mantissa = DIV_AND_CEIL(SFLOAT_SPECIAL_MANTISSA_MIN, 10);
 	}
 
 	sfloat.mantissa = mantissa & SFLOAT_MANTISSA_MASK;

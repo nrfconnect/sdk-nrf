@@ -301,7 +301,7 @@ Zigbee
   * Fixed the KRKNWK-10490 known issue that would cause a deadlock in the NCP frame fragmentation logic.
   * Fixed the KRKNWK-6071 known issue with inaccurate ZBOSS alarms.
   * Fixed the KRKNWK-5535 known issue where the device would assert if flooded with multiple Network Address requests.
-  * Fixed an issue where the NCS would assert in the host application when the host started just after SoC's SysReset.
+  * Fixed an issue where the |NCS| would assert in the host application when the host started just after SoC's SysReset.
 
 Other samples
 -------------
@@ -325,7 +325,7 @@ Common Application Framework (CAF)
 
 * Added :ref:`caf_net_state`.
 * Added :ref:`caf_power_manager`.
-* Updated :ref:`caf_sensor_sampler` with a limit to the number of ``sensor_event`` events that it submits.
+* Updated :ref:`caf_sensor_manager` with a limit to the number of ``sensor_event`` events that it submits.
 
 Edge Impulse
 ------------
@@ -599,7 +599,7 @@ nrfxlib
 * :ref:`nrf_modem` section pages:
 
   * :ref:`nrfxlib:nrf_modem_api` - Updated with new API sections.
-  * :ref:`full_dfu` - Updated with major changes.
+  * :ref:`nrfxlib:nrf_modem_bootloader` - Updated with major changes.
   * Renamed the "AT commands" page to ``AT socket``.
   * :ref:`nrfxlib:nrf_modem_at` - Page added.
   * :ref:`nrfxlib:nrf_modem_delta_dfu` - Page added.

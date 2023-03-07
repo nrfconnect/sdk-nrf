@@ -41,7 +41,7 @@ Changes
   This is intended to provide convenient access to the API for development and debugging.
 
   * Enabled or disabled by using :kconfig:option:`CONFIG_LWM2M_CARRIER_SHELL` and :kconfig:option:`CONFIG_LWM2M_CARRIER_SETTINGS`.
-  * For examples of using the shell, see the :ref:`lwm2m_carrier` sample documentation and the :ref:`lwm2m_shell` section in the library documentation.
+  * For examples of using the shell, see the :ref:`lwm2m_carrier` sample documentation and the :ref:`lwm2m_carrier_shell` section in the library documentation.
 
 * Added a new ``__weak`` function :c:func:`lwm2m_carrier_custom_init`.
 

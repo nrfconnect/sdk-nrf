@@ -17,15 +17,13 @@ config LOCATION_METHOD_GNSS
 
 config LOCATION_METHOD_CELLULAR
 	bool "Allow cellular positioning to be used for obtaining the location"
-	select MULTICELL_LOCATION if !LOCATION_METHOD_CELLULAR_EXTERNAL
-	depends on LTE_LINK_CONTROL
+	select CJSON_LIB if !LOCATION_SERVICE_EXTERNAL
 	default y
 
 config LOCATION_METHOD_WIFI
 	bool "Allow Wi-Fi positioning to be used for obtaining the location"
 	depends on WIFI
-	select REST_CLIENT
-	select CJSON_LIB
+	select CJSON_LIB if !LOCATION_SERVICE_EXTERNAL
 	select NET_MGMT
 	select NET_MGMT_EVENT
 	select NET_MGMT_EVENT_INFO
@@ -45,20 +43,6 @@ config LOCATION_WORKQUEUE_STACK_SIZE
 	default 4096
 
 if LOCATION_METHOD_GNSS
-
-config LOCATION_METHOD_GNSS_AGPS_EXTERNAL
-	bool "Requesting A-GPS data is handled by the application outside of Location library"
-	depends on NRF_CLOUD_AGPS
-	help
-	  Allow application to download the A-GPS data and merely feed it to Location library for
-	  processing.
-
-config LOCATION_METHOD_GNSS_PGPS_EXTERNAL
-	bool "Requesting P-GPS data is handled by the application outside of Location library"
-	depends on NRF_CLOUD_PGPS
-	help
-	  Allow application to download the P-GPS data and merely feed it to Location library for
-	  processing.
 
 config LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_EXEC_TIME
 	int "GNSS execution time for obstructed visibility detection"
@@ -81,30 +65,7 @@ config LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_SAT_LIMIT
 
 endif # LOCATION_METHOD_GNSS
 
-if LOCATION_METHOD_CELLULAR
-
-config LOCATION_METHOD_CELLULAR_EXTERNAL
-	bool "Resolution to neighbor cell information is handled by the application outside of Location library"
-	help
-	  Allow application to request resolution to neighbor cell information and
-	  respond the outcome to the Location library.
-
-endif # LOCATION_METHOD_CELLULAR
-
 if LOCATION_METHOD_WIFI
-
-config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
-	bool "nRF Cloud location service"
-	default y
-	depends on NRF_CLOUD_REST || NRF_CLOUD_MQTT
-	select NRF_CLOUD_LOCATION if NRF_CLOUD_MQTT
-	help
-	  Use nRF Cloud location service.
-
-config LOCATION_METHOD_WIFI_SERVICE_HERE
-	bool "Wi-Fi positioning using HERE service"
-	help
-	  Use HERE location service.
 
 config LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT
 	int "Max number of Wi-Fi scanning results"
@@ -113,44 +74,221 @@ config LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT
 	  Maximum number of Wi-Fi scanning results to use when creating HTTP request.
 	  Increasing the max number will increase the library's RAM usage.
 
-config LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE
+endif # LOCATION_METHOD_WIFI
+
+# Cellular and Wi-Fi service configurations
+
+if LOCATION_METHOD_CELLULAR || LOCATION_METHOD_WIFI
+
+config LOCATION_SERVICE_CLOUD_RECV_BUF_SIZE
 	int "Receive buffer size"
-	default 1024
+	default 512
 	help
-	  Size of the buffer used to store the response from the Wi-Fi positioning
-	  service.
+	  Size of the buffer used to store the response from the location service.
 
-if LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
-
-config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_HOSTNAME
-	string "nRF Cloud REST API hostname"
-	default NRF_CLOUD_REST_HOST_NAME
+config LOCATION_SERVICE_HERE
+	bool "HERE location service"
 	help
-	  Server hostname to use when connecting to the nRF Cloud location service.
+	  Use HERE location service.
 
-endif # LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
-
-if LOCATION_METHOD_WIFI_SERVICE_HERE
-
-config LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME
-	string "HERE server hostname"
-	default "positioning.hereapi.com"
+config LOCATION_SERVICE_NRF_CLOUD
+	bool "nRF Cloud location service"
+	default y if !LOCATION_SERVICE_EXTERNAL
+	depends on NRF_CLOUD_REST || NRF_CLOUD_MQTT
+	select NRF_CLOUD_LOCATION if NRF_CLOUD_MQTT
+	select NRF_CLOUD_REST_AUTOGEN_JWT if NRF_CLOUD_REST
 	help
-	  Server hostname to use when connecting to the HERE location service.
+	  Use nRF Cloud location service.
 
-config LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY
+if LOCATION_SERVICE_HERE
+
+config LOCATION_REST_CLIENT
+	bool
+	default y
+	select REST_CLIENT
+	help
+	  Use the REST client library for cellular service. This is
+	  separated here from other dependencies to allow disabling of
+	  REST client library in tests for mocking purposes.
+
+config LOCATION_MODEM_KEY_MGMT
+	bool
+	default y
+	select MODEM_KEY_MGMT
+	help
+	  Use the Modem key management library for cellular service. This is
+	  separated here from other dependencies to allow disabling of
+	  Modem key management library in tests for mocking purposes.
+
+config LOCATION_SERVICE_HERE_API_KEY
 	string "HERE API key"
 	help
 	  HERE API key used for authentication.
 
-config LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG
-	int "Security tag for TLS certificates"
+config LOCATION_SERVICE_HERE_HOSTNAME
+	string "Server hostname for HERE"
+	default "positioning.hereapi.com"
+	help
+	  Server hostname to use when connecting to the HERE location service.
+
+config LOCATION_SERVICE_HERE_TLS_SEC_TAG
+	int "Security tag for HERE TLS certificates"
 	default 175
 	help
 	  Security tag where the required TLS certificates for the HERE location
-	  service are stored.
+	  service are stored. This sec tag will also be used to provision CA
+	  certificates.
 
-endif # LOCATION_METHOD_WIFI_SERVICE_HERE
+endif # LOCATION_SERVICE_HERE
+
+endif # LOCATION_METHOD_CELLULAR || LOCATION_METHOD_WIFI
+
+config LOCATION_SERVICE_EXTERNAL
+	bool "Requesting A-GPS, P-GPS, LTE neighbor cell and Wi-Fi access point data is handled by the application outside of Location library"
+	help
+	  Allow application to download the A-GPS and P-GPS data and merely feed it to
+	  Location library for processing.
+	  Also, allow application to send cellular neighbor cell and Wi-Fi access point information
+	  to a cloud service and respond to the Location library with the outcome.
+
+# Configurations for location_request() default values
+
+choice LOCATION_REQUEST_DEFAULT_METHOD_FIRST
+	prompt "Default first priority method"
+	default LOCATION_REQUEST_DEFAULT_METHOD_FIRST_GNSS if LOCATION_METHOD_GNSS
+	default LOCATION_REQUEST_DEFAULT_METHOD_FIRST_WIFI if LOCATION_METHOD_WIFI
+	default LOCATION_REQUEST_DEFAULT_METHOD_FIRST_CELLULAR if LOCATION_METHOD_CELLULAR
+	help
+	  Default first priority method used in location_config_defaults_set() function
+	  within location_config structure if method_types member is NULL.
+
+	config LOCATION_REQUEST_DEFAULT_METHOD_FIRST_GNSS
+		bool "GNSS positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_FIRST_WIFI
+		bool "Wi-Fi positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_FIRST_CELLULAR
+		bool "Cellular positioning"
+
+endchoice
+
+choice LOCATION_REQUEST_DEFAULT_METHOD_SECOND
+	prompt "Default second priority method"
+	default LOCATION_REQUEST_DEFAULT_METHOD_SECOND_WIFI if LOCATION_METHOD_WIFI && !LOCATION_REQUEST_DEFAULT_METHOD_FIRST_WIFI
+	default LOCATION_REQUEST_DEFAULT_METHOD_SECOND_CELLULAR if LOCATION_METHOD_CELLULAR && !LOCATION_REQUEST_DEFAULT_METHOD_FIRST_CELLULAR
+	default LOCATION_REQUEST_DEFAULT_METHOD_SECOND_NONE
+	help
+	  Default second priority method used in location_config_defaults_set() function
+	  within location_config structure if method_types member is NULL.
+
+	config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_GNSS
+		bool "GNSS positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_WIFI
+		bool "Wi-Fi positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_CELLULAR
+		bool "Cellular positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_NONE
+		bool "No second priority method"
+
+endchoice
+
+choice LOCATION_REQUEST_DEFAULT_METHOD_THIRD
+	prompt "Default third priority method"
+	default LOCATION_REQUEST_DEFAULT_METHOD_THIRD_CELLULAR if LOCATION_METHOD_CELLULAR && !LOCATION_REQUEST_DEFAULT_METHOD_FIRST_CELLULAR && !LOCATION_REQUEST_DEFAULT_METHOD_SECOND_CELLULAR
+	default LOCATION_REQUEST_DEFAULT_METHOD_THIRD_NONE
+	help
+	  Default third priority method used in location_config_defaults_set() function
+	  within location_config structure if method_types member is NULL.
+
+	config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_GNSS
+		bool "GNSS positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_WIFI
+		bool "Wi-Fi positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_CELLULAR
+		bool "Cellular positioning"
+	config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_NONE
+		bool "No third priority method"
+endchoice
+
+config LOCATION_REQUEST_DEFAULT_INTERVAL
+	int "Default interval in seconds"
+	default 0
+	help
+	  Default value used in location_config_defaults_set() function for interval
+	  member within location_config structure.
+
+config LOCATION_REQUEST_DEFAULT_TIMEOUT
+	int "Default timeout in milliseconds"
+	default 300000
+	help
+	  Default value used in location_config_defaults_set() function for timeout
+	  member within location_config structure.
+
+if LOCATION_METHOD_GNSS
+
+config LOCATION_REQUEST_DEFAULT_GNSS_TIMEOUT
+	int "Default GNSS timeout in milliseconds"
+	default 120000
+	help
+	  Default value used in location_config_defaults_set() function for timeout
+	  member within location_gnss_config structure.
+
+choice LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY
+	prompt "Default GNSS accuracy level"
+	default LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_NORMAL
+	help
+	  Default value used in location_config_defaults_set() function for accuracy
+	  member within location_gnss_config structure.
+
+	config LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_LOW
+		bool "GNSS low accuracy"
+	config LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_NORMAL
+		bool "GNSS normal accuracy"
+	config LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_HIGH
+		bool "GNSS high accuracy"
+
+endchoice
+
+config LOCATION_REQUEST_DEFAULT_GNSS_NUM_CONSECUTIVE_FIXES
+	int "Default number of consecutive fixes in high accuracy mode"
+	default 3
+	range 2 256
+	help
+	  Default value used in location_config_defaults_set() function for num_consecutive_fixes
+	  member within location_gnss_config structure.
+
+config LOCATION_REQUEST_DEFAULT_GNSS_VISIBILITY_DETECTION
+	bool "Default GNSS visibility detection"
+	help
+	  Default value used in location_config_defaults_set() function for visibility_detection
+	  member within location_gnss_config structure.
+
+config LOCATION_REQUEST_DEFAULT_GNSS_PRIORITY_MODE
+	bool "Default GNSS priority mode"
+	help
+	  Default value used in location_config_defaults_set() function for priority_mode
+	  member within location_gnss_config structure.
+
+endif # LOCATION_METHOD_GNSS
+
+if LOCATION_METHOD_CELLULAR
+
+config LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT
+	int "Default cellular timeout in milliseconds"
+	default 30000
+	help
+	  Default value used in location_config_defaults_set() function for timeout
+	  member within location_cellular_config structure.
+
+endif # LOCATION_METHOD_CELLULAR
+
+if LOCATION_METHOD_WIFI
+
+config LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT
+	int "Default Wi-Fi timeout in milliseconds"
+	default 30000
+	help
+	  Default value used in location_config_defaults_set() function for timeout
+	  member within location_wifi_config structure.
 
 endif # LOCATION_METHOD_WIFI
 

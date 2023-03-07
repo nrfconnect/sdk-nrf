@@ -16,6 +16,9 @@ extern "C" {
 
 /** @defgroup multicell_location Multicell location
  * @{
+ * @brief Library for performing multicell location requests towards the cloud.
+ *
+ * @deprecated After nRF Connect SDK v2.2.0.
  */
 
 struct multicell_location {
@@ -71,7 +74,7 @@ struct multicell_location_params {
  * @retval -ENOMEM Out of memory.
  * @retval -ENOMSG Parsing response from the location service failed.
  */
-int multicell_location_get(const struct multicell_location_params *params,
+__deprecated int multicell_location_get(const struct multicell_location_params *params,
 			   struct multicell_location *location);
 
 /**
@@ -91,7 +94,7 @@ int multicell_location_get(const struct multicell_location_params *params,
  *
  * @return 0 on success, or negative error code on failure.
  */
-int multicell_location_provision_certificate(bool overwrite);
+__deprecated int multicell_location_provision_certificate(bool overwrite);
 
 /** @} */
 

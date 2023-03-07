@@ -9,15 +9,17 @@
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/audio/pacs.h>
-#include <zephyr/bluetooth/audio/csis.h>
+#include <zephyr/bluetooth/audio/csip.h>
 #include <zephyr/bluetooth/audio/cap.h>
 #include <../subsys/bluetooth/audio/endpoint.h>
 
 #include "macros_common.h"
 #include "ctrl_events.h"
 #include "ble_audio_services.h"
+#include "ble_hci_vsc.h"
 #include "audio_datapath.h"
 #include "channel_assignment.h"
 
@@ -40,60 +42,63 @@ LOG_MODULE_REGISTER(cis_headset, CONFIG_BLE_LOG_LEVEL);
 #define NET_BUF_POOL_PTR_ITERATE(i, ...) IDENTITY(&iso_tx_pool_##i)
 LISTIFY(CONFIG_BT_ASCS_ASE_SRC_COUNT, NET_BUF_POOL_ITERATE, (;))
 
+static atomic_t iso_tx_pool_alloc;
 /* clang-format off */
 static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ASCS_ASE_SRC_COUNT,
 						       NET_BUF_POOL_PTR_ITERATE, (,)) };
 /* clang-format on */
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 
-enum csis_set_rank { CSIS_HL_RANK = 1, CSIS_HR_RANK = 2, CSIS_SET_SIZE = 2 };
+#define CSIP_SET_SIZE 2
+enum csip_set_rank { CSIP_HL_RANK = 1, CSIP_HR_RANK = 2 };
 
-static struct bt_csis *csis;
+static struct bt_csip_set_member_svc_inst *csip;
 static struct bt_le_ext_adv *adv_ext;
 /* Advertising data for peer connection */
-static uint8_t csis_rsi[BT_CSIS_RSI_SIZE];
+static uint8_t csip_rsi[BT_CSIP_RSI_SIZE];
 
 static const struct bt_data ad_peer[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_ASCS_VAL)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_PACS_VAL)),
-	BT_CSIS_DATA_RSI(csis_rsi)
+	BT_CSIP_DATA_RSI(csip_rsi)
 };
 
 /* Callback for locking state change from server side */
-static void csis_lock_changed_cb(struct bt_conn *conn, struct bt_csis *csis, bool locked)
+static void csip_lock_changed_cb(struct bt_conn *conn, struct bt_csip_set_member_svc_inst *csip,
+				 bool locked)
 {
 	LOG_DBG("Client %p %s the lock", (void *)conn, locked ? "locked" : "released");
 }
 
 /* Callback for SIRK read request from peer side */
-static uint8_t sirk_read_req_cb(struct bt_conn *conn, struct bt_csis *csis)
+static uint8_t sirk_read_req_cb(struct bt_conn *conn, struct bt_csip_set_member_svc_inst *csip)
 {
 	/* Accept the request to read the SIRK, but return encrypted SIRK instead of plaintext */
-	return BT_CSIS_READ_SIRK_REQ_RSP_ACCEPT_ENC;
+	return BT_CSIP_READ_SIRK_REQ_RSP_ACCEPT_ENC;
 }
 
-static struct bt_csis_cb csis_callbacks = {
-	.lock_changed = csis_lock_changed_cb,
+static struct bt_csip_set_member_cb csip_callbacks = {
+	.lock_changed = csip_lock_changed_cb,
 	.sirk_read_req = sirk_read_req_cb,
 };
-struct bt_csis_register_param csis_param = {
-	.set_size = CSIS_SET_SIZE,
+struct bt_csip_set_member_register_param csip_param = {
+	.set_size = CSIP_SET_SIZE,
 	.lockable = true,
-#if !CONFIG_BT_CSIS_TEST_SAMPLE_DATA
-	/* CSIS SIRK for demo is used, must be changed before production */
+#if !CONFIG_BT_CSIP_SET_MEMBER_TEST_SAMPLE_DATA
+	/* CSIP SIRK for demo is used, must be changed before production */
 	.set_sirk = { 'N', 'R', 'F', '5', '3', '4', '0', '_', 'T', 'W', 'S', '_', 'D', 'E', 'M',
 		      'O' },
 #else
-#warning "CSIS test sample data is used, must be changed before production"
+#warning "CSIP test sample data is used, must be changed before production"
 #endif
-	.cb = &csis_callbacks,
+	.cb = &csip_callbacks,
 };
 
 static le_audio_receive_cb receive_cb;
 
 static struct bt_codec lc3_codec = BT_CODEC_LC3(
-	BT_CODEC_LC3_FREQ_48KHZ, (BT_CODEC_LC3_DURATION_10 | BT_CODEC_LC3_DURATION_PREFER_10),
+	BT_AUDIO_CODEC_CAPABILIY_FREQ, (BT_CODEC_LC3_DURATION_10 | BT_CODEC_LC3_DURATION_PREFER_10),
 	CHANNEL_COUNT_1, LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
 	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, BT_AUDIO_CONTEXT_TYPE_MEDIA);
 
@@ -126,6 +131,8 @@ static struct bt_audio_stream
 	audio_streams[CONFIG_BT_ASCS_ASE_SNK_COUNT + CONFIG_BT_ASCS_ASE_SRC_COUNT];
 
 #if CONFIG_STREAM_BIDIRECTIONAL
+BUILD_ASSERT(CONFIG_BT_ASCS_ASE_SRC_COUNT <= 1,
+	     "CIS headset only supports one source stream for now");
 static struct bt_audio_source {
 	struct bt_audio_stream *stream;
 	uint32_t seq_num;
@@ -155,7 +162,7 @@ static void print_codec(const struct bt_codec *codec)
 		uint32_t bitrate =
 			octets_per_sdu * 8 * (1000000 / bt_codec_cfg_get_frame_duration_us(codec));
 
-		LOG_INF("\tOctets per frame: %d (%d kbps)", octets_per_sdu, bitrate);
+		LOG_INF("\tOctets per frame: %d (%d bps)", octets_per_sdu, bitrate);
 		LOG_INF("\tFrames per SDU: %d", bt_codec_cfg_get_frame_blocks_per_sdu(codec, true));
 	} else {
 		LOG_WRN("Codec is not LC3, codec_id: 0x%2x", codec->id);
@@ -195,7 +202,7 @@ static void advertising_process(struct k_work *work)
 	} else
 #endif /* CONFIG_BT_BONDABLE */
 	{
-		ret = bt_csis_generate_rsi(csis, csis_rsi);
+		ret = bt_csip_set_member_generate_rsi(csip, csip_rsi);
 		if (ret) {
 			LOG_ERR("Failed to generate RSI (ret %d)", ret);
 			return;
@@ -255,10 +262,6 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_audio_ep *ep, enu
 {
 	int ret;
 
-#if CONFIG_STREAM_BIDIRECTIONAL
-	static size_t configured_source_stream_count;
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
-
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		struct bt_audio_stream *audio_stream = &audio_streams[i];
 
@@ -286,7 +289,9 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_audio_ep *ep, enu
 			else if (dir == BT_AUDIO_DIR_SOURCE) {
 				LOG_DBG("BT_AUDIO_DIR_SOURCE");
 				print_codec(codec);
-				sources[configured_source_stream_count++].stream = audio_stream;
+
+				/* CIS headset only supports one source stream for now */
+				sources[0].stream = audio_stream;
 			}
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 			else {
@@ -296,6 +301,12 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_audio_ep *ep, enu
 
 			*stream = audio_stream;
 			*pref = qos_pref;
+			if (IS_ENABLED(CONFIG_BT_MCC)) {
+				ret = ble_mcs_discover(conn);
+				if (ret) {
+					LOG_ERR("Failed to start discovery of MCS: %d", ret);
+				}
+			}
 
 			return 0;
 		}
@@ -352,7 +363,13 @@ static int lc3_metadata_cb(struct bt_audio_stream *stream, const struct bt_codec
 
 static int lc3_disable_cb(struct bt_audio_stream *stream)
 {
+	int ret;
+
 	LOG_DBG("Disable: stream %p", (void *)stream);
+
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
+	ERR_CHK(ret);
+
 	return 0;
 }
 
@@ -370,7 +387,13 @@ static int lc3_stop_cb(struct bt_audio_stream *stream)
 
 static int lc3_release_cb(struct bt_audio_stream *stream)
 {
+	int ret;
+
 	LOG_DBG("Release: stream %p", (void *)stream);
+
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
+	ERR_CHK(ret);
+
 	return 0;
 }
 
@@ -385,6 +408,13 @@ static const struct bt_audio_unicast_server_cb unicast_server_cb = {
 	.stop = lc3_stop_cb,
 	.release = lc3_release_cb,
 };
+
+static void stream_sent_cb(struct bt_audio_stream *stream)
+{
+#if CONFIG_STREAM_BIDIRECTIONAL
+	atomic_dec(&iso_tx_pool_alloc);
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+}
 
 static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_recv_info *info,
 			   struct net_buf *buf)
@@ -401,7 +431,7 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 		bad_frame = true;
 	}
 
-	receive_cb(buf->data, buf->len, bad_frame, info->ts);
+	receive_cb(buf->data, buf->len, bad_frame, info->ts, channel);
 
 	recv_cnt++;
 	if ((recv_cnt % 1000U) == 0U) {
@@ -409,12 +439,19 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 	}
 }
 
+static void stream_start_cb(struct bt_audio_stream *stream)
+{
+	LOG_INF("Stream started");
+}
+
 static void stream_stop_cb(struct bt_audio_stream *stream)
 {
 	int ret;
 
 	LOG_INF("Stream stopped");
-
+#if CONFIG_STREAM_BIDIRECTIONAL
+	atomic_clear(&iso_tx_pool_alloc);
+#endif /* CONFIG_STREAM_BIDIRECTIONAL */
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
 }
@@ -429,8 +466,25 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	}
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
 	LOG_INF("Connected: %s", addr);
+
+#if (CONFIG_NRF_21540_ACTIVE)
+	int ret;
+	uint16_t conn_handle;
+
+	ret = bt_hci_get_conn_handle(conn, &conn_handle);
+	if (ret) {
+		LOG_ERR("Unable to get conn handle");
+	} else {
+		ret = ble_hci_vsc_conn_tx_pwr_set(conn_handle, CONFIG_NRF_21540_MAIN_DBM);
+		if (ret) {
+			LOG_ERR("Failed to set TX power for conn");
+		} else {
+			LOG_INF("\tTX power set to %d dBm", CONFIG_NRF_21540_MAIN_DBM);
+		}
+	}
+#endif /* (CONFIG_NRF_21540_ACTIVE) */
+
 	default_conn = bt_conn_ref(conn);
 }
 
@@ -465,12 +519,6 @@ static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum 
 		}
 	} else {
 		LOG_DBG("Security changed: level %d", level);
-#if (CONFIG_BT_MCC)
-		ret = ble_mcs_discover(default_conn);
-		if (ret) {
-			LOG_ERR("Failed to start discovery of MCS: %d", ret);
-		}
-#endif /* CONFIG_BT_MCC */
 	}
 }
 
@@ -481,6 +529,8 @@ static struct bt_conn_cb conn_callbacks = {
 };
 
 static struct bt_audio_stream_ops stream_ops = { .recv = stream_recv_cb,
+						 .sent = stream_sent_cb,
+						 .started = stream_start_cb,
 						 .stopped = stream_stop_cb };
 
 static int initialize(le_audio_receive_cb recv_cb)
@@ -491,21 +541,21 @@ static int initialize(le_audio_receive_cb recv_cb)
 	if (!initialized) {
 		bt_audio_unicast_server_register_cb(&unicast_server_cb);
 		bt_conn_cb_register(&conn_callbacks);
-#if (CONFIG_BT_VCS)
+#if (CONFIG_BT_VCP_VOL_REND)
 		ret = ble_vcs_server_init();
 		if (ret) {
 			LOG_ERR("VCS server init failed");
 			return ret;
 		}
-#endif /* (CONFIG_BT_VCS) */
+#endif /* (CONFIG_BT_VCP_VOL_REND) */
 
-#if (CONFIG_BT_MCC)
-		ret = ble_mcs_client_init();
-		if (ret) {
-			LOG_ERR("MCS client init failed");
-			return ret;
+		if (IS_ENABLED(CONFIG_BT_MCC)) {
+			ret = ble_mcs_client_init();
+			if (ret) {
+				LOG_ERR("MCS client init failed");
+				return ret;
+			}
 		}
-#endif /* CONFIG_BT_MCC */
 
 		receive_cb = recv_cb;
 		channel_assignment_get(&channel);
@@ -518,21 +568,24 @@ static int initialize(le_audio_receive_cb recv_cb)
 			}
 		}
 		if (channel == AUDIO_CH_L) {
-			csis_param.rank = CSIS_HL_RANK;
+			csip_param.rank = CSIP_HL_RANK;
 			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_LEFT);
 			if (ret) {
 				LOG_ERR("Location set failed");
 				return ret;
 			}
 
-		} else {
-			csis_param.rank = CSIS_HR_RANK;
+		} else if (channel == AUDIO_CH_R) {
+			csip_param.rank = CSIP_HR_RANK;
 			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
 						   BT_AUDIO_LOCATION_FRONT_RIGHT);
 			if (ret) {
 				LOG_ERR("Location set failed");
 				return ret;
 			}
+		} else {
+			LOG_ERR("Channel not supported");
+			return -ECANCELED;
 		}
 #if CONFIG_STREAM_BIDIRECTIONAL
 		ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK,
@@ -553,10 +606,23 @@ static int initialize(le_audio_receive_cb recv_cb)
 			return ret;
 		}
 
-		ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE, BT_AUDIO_LOCATION_FRONT_LEFT);
-		if (ret) {
-			LOG_ERR("Location set failed");
-			return ret;
+		if (channel == AUDIO_CH_L) {
+			ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE,
+						   BT_AUDIO_LOCATION_FRONT_LEFT);
+			if (ret) {
+				LOG_ERR("Location set failed");
+				return ret;
+			}
+		} else if (channel == AUDIO_CH_R) {
+			ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE,
+						   BT_AUDIO_LOCATION_FRONT_RIGHT);
+			if (ret) {
+				LOG_ERR("Location set failed");
+				return ret;
+			}
+		} else {
+			LOG_ERR("Channel not supported");
+			return -ECANCELED;
 		}
 #else
 		ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK,
@@ -571,7 +637,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 			bt_audio_stream_cb_register(&audio_streams[i], &stream_ops);
 		}
 
-		ret = bt_cap_acceptor_register(&csis_param, &csis);
+		ret = bt_cap_acceptor_register(&csip_param, &csip);
 		if (ret) {
 			LOG_ERR("Failed to register CAP acceptor");
 			return ret;
@@ -590,7 +656,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 	return 0;
 }
 
-int le_audio_user_defined_button_press(void)
+int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
 {
 	return 0;
 }
@@ -650,31 +716,60 @@ int le_audio_play_pause(void)
 	return ble_mcs_play_pause(default_conn);
 }
 
-int le_audio_send(uint8_t const *const data, size_t size)
+int le_audio_send(struct encoded_audio enc_audio)
 {
 #if CONFIG_STREAM_BIDIRECTIONAL
 	int ret;
 	struct net_buf *buf;
+	static bool hci_wrn_printed;
 
+	if (enc_audio.num_ch != 1) {
+		LOG_ERR("Num encoded channels must be 1");
+		return -EINVAL;
+	}
+
+	/* CIS headset only supports one source stream for now */
 	if (sources[0].stream->ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
 		LOG_DBG("Return channel not connected");
 		return 0;
 	}
 
+	/* net_buf_alloc allocates buffers for APP->NET transfer over HCI RPMsg,
+	 * but when these buffers are released it is not guaranteed that the
+	 * data has actually been sent. The data might be queued on the NET core,
+	 * and this can cause delays in the audio.
+	 * When stream_sent_cb() is called the data has been sent.
+	 * Data will be discarded if allocation becomes too high, to avoid audio delays.
+	 * If the NET and APP core operates in clock sync, discarding should not occur.
+	 */
+	if (atomic_get(&iso_tx_pool_alloc) >= HCI_ISO_BUF_ALLOC_PER_CHAN) {
+		if (!hci_wrn_printed) {
+			LOG_WRN("HCI ISO TX overrun");
+			hci_wrn_printed = true;
+		}
+
+		return -ENOMEM;
+	}
+
+	hci_wrn_printed = false;
+
 	buf = net_buf_alloc(iso_tx_pools[0], K_NO_WAIT);
 	if (buf == NULL) {
+		/* This should never occur because of the iso_tx_pool_alloc check above */
 		LOG_WRN("Out of TX buffers");
 		return -ENOMEM;
 	}
 
 	net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
-	net_buf_add_mem(buf, data, size);
+	net_buf_add_mem(buf, enc_audio.data, enc_audio.size);
 
+	atomic_inc(&iso_tx_pool_alloc);
 	ret = bt_audio_stream_send(sources[0].stream, buf, sources[0].seq_num++,
 				   BT_ISO_TIMESTAMP_NONE);
 	if (ret < 0) {
 		LOG_WRN("Failed to send audio data: %d", ret);
 		net_buf_unref(buf);
+		atomic_dec(&iso_tx_pool_alloc);
 	}
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
 

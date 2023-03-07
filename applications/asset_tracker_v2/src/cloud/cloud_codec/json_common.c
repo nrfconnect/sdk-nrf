@@ -144,7 +144,6 @@ int json_common_modem_dynamic_data_add(cJSON *parent,
 	int err;
 	uint32_t mccmnc;
 	char *end_ptr;
-	bool values_added = false;
 
 	if (!data->queued) {
 		return -ENODATA;
@@ -164,85 +163,57 @@ int json_common_modem_dynamic_data_add(cJSON *parent,
 		goto exit;
 	}
 
-	if (data->band_fresh) {
-		err = json_add_number(modem_val_obj, MODEM_CURRENT_BAND, data->band);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(modem_val_obj, MODEM_CURRENT_BAND, data->band);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->nw_mode_fresh) {
-		err = json_add_str(modem_val_obj, MODEM_NETWORK_MODE,
-				   (data->nw_mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" :
-				   (data->nw_mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" : "Unknown");
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_str(modem_val_obj, MODEM_NETWORK_MODE,
+			   (data->nw_mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" :
+			   (data->nw_mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" : "Unknown");
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->rsrp_fresh) {
-		err = json_add_number(modem_val_obj, MODEM_RSRP, data->rsrp);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(modem_val_obj, MODEM_RSRP, data->rsrp);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->area_code_fresh) {
-		err = json_add_number(modem_val_obj, MODEM_AREA_CODE, data->area);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(modem_val_obj, MODEM_AREA_CODE, data->area);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->mccmnc_fresh) {
-		/* Convert mccmnc to unsigned long integer. */
-		errno = 0;
-		mccmnc = strtoul(data->mccmnc, &end_ptr, 10);
+	/* Convert mccmnc to unsigned long integer. */
+	errno = 0;
+	mccmnc = strtoul(data->mccmnc, &end_ptr, 10);
 
-		if ((errno == ERANGE) || (*end_ptr != '\0')) {
-			LOG_ERR("MCCMNC string could not be converted.");
-			err = -ENOTEMPTY;
-			goto exit;
-		}
-
-		err = json_add_number(modem_val_obj, MODEM_MCCMNC, mccmnc);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	if ((errno == ERANGE) || (*end_ptr != '\0')) {
+		LOG_ERR("MCCMNC string could not be converted.");
+		err = -ENOTEMPTY;
+		goto exit;
 	}
 
-	if (data->cell_id_fresh) {
-		err = json_add_number(modem_val_obj, MODEM_CELL_ID, data->cell);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(modem_val_obj, MODEM_MCCMNC, mccmnc);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->ip_address_fresh) {
-		err = json_add_str(modem_val_obj, MODEM_IP_ADDRESS, data->ip);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(modem_val_obj, MODEM_CELL_ID, data->cell);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (!values_added) {
-		err = -ENODATA;
-		data->queued = false;
-		LOG_WRN("No valid dynamic modem data values present, entry unqueued");
+	err = json_add_str(modem_val_obj, MODEM_IP_ADDRESS, data->ip);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
 	}
 
@@ -1008,6 +979,18 @@ int json_common_config_add(cJSON *parent, struct cloud_data_cfg *data, const cha
 		json_add_obj_array(nod_list, ncell_str);
 	}
 
+	if (data->no_data.wifi) {
+		cJSON *wifi_str = cJSON_CreateString(CONFIG_NO_DATA_LIST_WIFI);
+
+		if (wifi_str == NULL) {
+			cJSON_Delete(nod_list);
+			err = -ENOMEM;
+			goto exit;
+		}
+
+		json_add_obj_array(nod_list, wifi_str);
+	}
+
 	/* If there are no flag set in the no_data structure, an empty array is encoded. */
 	json_add_obj(config_obj, CONFIG_NO_DATA_LIST, nod_list);
 	json_add_obj(parent, object_label, config_obj);
@@ -1067,6 +1050,7 @@ void json_common_config_get(cJSON *parent, struct cloud_data_cfg *data)
 		cJSON *item;
 		bool gnss_found = false;
 		bool ncell_found = false;
+		bool wifi_found = false;
 
 		for (int i = 0; i < cJSON_GetArraySize(nod_list); i++) {
 			item = cJSON_GetArrayItem(nod_list, i);
@@ -1078,6 +1062,10 @@ void json_common_config_get(cJSON *parent, struct cloud_data_cfg *data)
 			if (strcmp(item->valuestring, CONFIG_NO_DATA_LIST_NEIGHBOR_CELL) == 0) {
 				ncell_found = true;
 			}
+
+			if (strcmp(item->valuestring, CONFIG_NO_DATA_LIST_WIFI) == 0) {
+				wifi_found = true;
+			}
 		}
 
 		/* If a supported entry is present in the no data list we set the corresponding flag
@@ -1085,6 +1073,7 @@ void json_common_config_get(cJSON *parent, struct cloud_data_cfg *data)
 		 */
 		data->no_data.gnss = gnss_found;
 		data->no_data.neighbor_cell = ncell_found;
+		data->no_data.wifi = wifi_found;
 	}
 }
 

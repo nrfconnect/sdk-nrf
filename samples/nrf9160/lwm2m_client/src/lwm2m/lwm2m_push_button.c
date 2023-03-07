@@ -12,10 +12,8 @@
 #include "ui_input_event.h"
 #include "lwm2m_app_utils.h"
 
-#define MODULE app_lwm2m_push_button
-
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_DECLARE(app_lwm2m, CONFIG_APP_LOG_LEVEL);
 
 #define BUTTON1_OBJ_INST_ID 0
 #define BUTTON1_APP_NAME "Push button 1"
@@ -31,16 +29,16 @@ int lwm2m_init_push_button(void)
 	ui_input_init();
 
 	/* create button1 object */
-	lwm2m_engine_create_obj_inst(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID));
+	lwm2m_create_object_inst(&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID));
 
-	lwm2m_engine_set_res_buf(
-		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, APPLICATION_TYPE_RID),
+	lwm2m_set_res_buf(
+		&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, APPLICATION_TYPE_RID),
 		BUTTON1_APP_NAME, sizeof(BUTTON1_APP_NAME), sizeof(BUTTON1_APP_NAME),
 		LWM2M_RES_DATA_FLAG_RO);
 
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_PUSH_BUTTON_VERSION_1_1)) {
-		lwm2m_engine_set_res_buf(
-			LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, TIMESTAMP_RID),
+		lwm2m_set_res_buf(
+			&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, TIMESTAMP_RID),
 			&lwm2m_timestamp[BUTTON1_OBJ_INST_ID],
 			sizeof(lwm2m_timestamp[BUTTON1_OBJ_INST_ID]),
 			sizeof(lwm2m_timestamp[BUTTON1_OBJ_INST_ID]),
@@ -49,21 +47,21 @@ int lwm2m_init_push_button(void)
 
 	if (CONFIG_LWM2M_IPSO_PUSH_BUTTON_INSTANCE_COUNT == 2) {
 		/* create button2 object */
-		lwm2m_engine_create_obj_inst(
-			LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON2_OBJ_INST_ID));
+		lwm2m_create_object_inst(&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID,
+					 BUTTON2_OBJ_INST_ID));
 
-		lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
-						     BUTTON2_OBJ_INST_ID, APPLICATION_TYPE_RID),
-					  BUTTON2_APP_NAME, sizeof(BUTTON2_APP_NAME),
-					  sizeof(BUTTON2_APP_NAME), LWM2M_RES_DATA_FLAG_RO);
+		lwm2m_set_res_buf(&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID,
+					     BUTTON2_OBJ_INST_ID, APPLICATION_TYPE_RID),
+				  BUTTON2_APP_NAME, sizeof(BUTTON2_APP_NAME),
+				  sizeof(BUTTON2_APP_NAME), LWM2M_RES_DATA_FLAG_RO);
 
 		if (IS_ENABLED(CONFIG_LWM2M_IPSO_PUSH_BUTTON_VERSION_1_1)) {
-			lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
-							     BUTTON2_OBJ_INST_ID, TIMESTAMP_RID),
-						  &lwm2m_timestamp[BUTTON2_OBJ_INST_ID],
-						  sizeof(lwm2m_timestamp[BUTTON2_OBJ_INST_ID]),
-						  sizeof(lwm2m_timestamp[BUTTON2_OBJ_INST_ID]),
-						  LWM2M_RES_DATA_FLAG_RW);
+			lwm2m_set_res_buf(&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID,
+						     BUTTON2_OBJ_INST_ID, TIMESTAMP_RID),
+					  &lwm2m_timestamp[BUTTON2_OBJ_INST_ID],
+					  sizeof(lwm2m_timestamp[BUTTON2_OBJ_INST_ID]),
+					  sizeof(lwm2m_timestamp[BUTTON2_OBJ_INST_ID]),
+					  LWM2M_RES_DATA_FLAG_RW);
 		}
 	}
 
@@ -81,10 +79,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		switch (event->device_number) {
 		case 1:
-			lwm2m_engine_set_bool(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
-							 BUTTON1_OBJ_INST_ID,
-							 DIGITAL_INPUT_STATE_RID),
-					      event->state);
+			lwm2m_set_bool(&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID,
+						  BUTTON1_OBJ_INST_ID,
+						  DIGITAL_INPUT_STATE_RID),
+				       event->state);
 
 			if (event->state) {
 				if (IS_ENABLED(CONFIG_LWM2M_IPSO_PUSH_BUTTON_VERSION_1_1)) {
@@ -95,10 +93,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			break;
 
 		case 2:
-			lwm2m_engine_set_bool(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
-							 BUTTON2_OBJ_INST_ID,
-							 DIGITAL_INPUT_STATE_RID),
-					      event->state);
+			lwm2m_set_bool(&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID,
+						  BUTTON2_OBJ_INST_ID,
+						  DIGITAL_INPUT_STATE_RID),
+				       event->state);
 
 			if (event->state) {
 				if (IS_ENABLED(CONFIG_LWM2M_IPSO_PUSH_BUTTON_VERSION_1_1)) {
@@ -119,5 +117,5 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	return false;
 }
 
-APP_EVENT_LISTENER(MODULE, app_event_handler);
-APP_EVENT_SUBSCRIBE(MODULE, ui_input_event);
+APP_EVENT_LISTENER(button, app_event_handler);
+APP_EVENT_SUBSCRIBE(button, ui_input_event);

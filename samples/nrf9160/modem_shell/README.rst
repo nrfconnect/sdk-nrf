@@ -418,6 +418,12 @@ You can use the Location tool for retrieving device's location with different me
 See :ref:`lib_location` library for information on the configuration of different location methods and services.
 Some default configurations are available to facilitate trials.
 
+This sample is using cloud service for positioning through the :ref:`lib_location` library by default.
+However, an application can also handle the cloud communication for the location services by itself.
+To enable cloud communication, use the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option and
+a separate configuration (:file:`overlay-cloud_mqtt.conf`) to enable nRF Cloud service over MQTT for retrieving location data.
+Use the ``cloud`` command to establish the MQTT connection before ``location`` commands.
+
 Examples
 --------
 
@@ -446,6 +452,87 @@ Examples
   .. code-block:: console
 
      location cancel
+
+
+----
+
+Modem traces
+============
+
+MoSh command: ``modem_trace``
+
+You can use the modem trace commands to control the trace functionality in the modem.
+See :ref:`modem_trace_module` for more information on how to configure modem tracing and the built-in trace backends available.
+
+You need a trace backend that can store modem traces if you want to upload modem traces to the cloud.
+The flash backend can store modem traces to the external flash on the nRF9160 DK and can be retrieved for uploading.
+
+To enable modem traces with a flash backend, use the :file:`overlay-modem-trace.conf` configuration file.
+This also requires a device tree overlay for the external flash (:file:`nrf9160dk_ext_flash.overlay`).
+
+Send to Memfault
+----------------
+
+To register an account and obtain the project key, refer to the :ref:`using_memfault` section of the :ref:`ug_memfault` guide.
+The Memfault overlay config (:file:`overlay-memfault.conf`) includes the most common configuration options for using the Memfault with modem traces.
+
+After a modem trace session, prepare sending the trace data to Memfault using ``modem_trace send memfault``.
+This informs the `Memfault-SDK`_ about a Custom Data Recording (CDR) that will be sent as part of the next data transfer to Memfault.
+To trigger sending immediately, it's possible to use the Memfault shell command ``mflt post_chunks``.
+
+Follow these steps to download the modem trace data:
+
+   a. In a web browser, navigate to `Memfault`_.
+   #. Log in to your account and select the project you created earlier.
+   #. Navigate to :guilabel:`Fleet` > :guilabel:`Devices` in the left side menu.
+   #. Select the **device** that sent a modem trace.
+   #. Navigate to the :guilabel:`Timeline` tab.
+   #. Find the CDR in the timeline and click on it.
+   #. Select :guilabel:`Download` from the pop-up window.
+
+See the following figure, which shows how to download the modem trace data in the `Memfault`_:
+
+.. figure:: /images/modem_shell_trace_download.png
+   :alt: Modem trace download
+
+   Modem trace download
+
+.. note::
+   The conversion of modem trace file to a Wireshark-compatible format will be available in one of the future releases of the Trace Collector tool.
+
+To build the MoSh sample with the nRF9160 DK and modem traces with a flash backend, see :ref:`modem_shell_trace_support`.
+
+Examples
+--------
+
+* Modem trace everything (LTE, IP and GNSS):
+
+  .. code-block:: console
+
+     modem_trace start full
+     <test using gnss-, lte-, or ip-commands>
+     modem_trace stop
+
+* Read out the size of stored modem traces:
+
+  .. code-block:: console
+
+     modem_trace size
+
+* Delete all stored modem traces:
+
+  .. code-block:: console
+
+     modem_trace clear
+
+* Send modem traces to Memfault:
+  (This will free up the stored traces as they are sent)
+
+  .. code-block:: console
+
+     modem_trace send memfault
+     mflt post_chunks
+
 
 ----
 
@@ -518,12 +605,12 @@ The MoSh command is simple but you need to have a normal dial-up setup in your P
 
 .. note::
 
-   On Windows, dial-up connection is not functional when using Segger virtual UART ports.
+   On Windows, dial-up connection is not functional when using SEGGER virtual UART ports.
    PPP has been used successfully with FTDI UART port though.
    Refer to `nRF9160 Hardware Verification Guidelines - UART interface`_.
 
    PPP has been successfully used running Ubuntu Linux in a virtualization environment hosted by Windows.
-   In the hosted virtual Linux environment, using PPP is possible also with plain Segger UART ports.
+   In the hosted virtual Linux environment, using PPP is possible also with plain SEGGER UART ports.
 
 Examples
 --------
@@ -591,6 +678,44 @@ Examples
      startup_cmd --mem1 "location get --mode all --method cellular --method gnss --gnss_cloud_pvt --interval 15"
 
 ----
+
+.. _pipelining_commands:
+
+Running commands in different threads and pipelining commands
+=============================================================
+
+MoSh command: ``th``
+
+You can run ``iperf3`` and ``ping`` in separate threads either in the background or in the foreground.
+Subcommand ``pipeline`` allows running any commands sequentially in the foreground.
+
+Examples
+--------
+
+* Start iperf test in the background.
+  Meanwhile, start ping in the foreground.
+  Print the output buffer of iperf thread once done:
+
+  .. code-block:: console
+
+     th startbg iperf3 --client 111.222.111.222 --port 10000 -l 3540 --time 30 -V -R
+     th startfg ping -d 8.8.8.8
+     th results 1
+
+* Establish MQTT connection to nRF Cloud, wait 10 seconds for the connection establishment, and request current location:
+
+  .. code-block:: console
+
+     th pipeline "cloud connect" "sleep 10" "location get"
+
+----
+
+Sleep
+=====
+
+When pipelining commands using ``th pipeline``, you can use the ``sleep`` command to pause the execution for a given period to allow previous command to return before executing next one.
+See :ref:`pipelining_commands` for usage.
+
 
 Cloud
 =====
@@ -669,6 +794,27 @@ Disable UARTs for power measurement purposes.
   .. code-block:: console
 
      uart during_sleep disable
+
+----
+
+Heap usage statistics
+=====================
+
+You can use the ``heap`` command to print kernel and system heap usage statistics.
+
+  .. code-block:: console
+
+     mosh:~$ heap
+     kernel heap statistics:
+     free:             7804
+     allocated:         272
+     max. allocated:   1056
+
+     system heap statistics:
+     max. size:       81400
+     size:              248
+     free:              160
+     allocated:          88
 
 Configuration
 *************
@@ -1045,6 +1191,25 @@ For example:
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-cloud_mqtt.conf
 
+Location service handled in application
+=======================================
+
+This sample is using cloud service for positioning through the :ref:`lib_location` library by default.
+To build the sample with location cloud services handled in the MoSh,
+use the ``-DOVERLAY_CONFIG="overlay-cloud_mqtt.conf"`` and ``-DCONFIG_LOCATION_SERVICE_EXTERNAL=y`` options.
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG="overlay-cloud_mqtt.conf" -DCONFIG_LOCATION_SERVICE_EXTERNAL=y
+
+To add P-GPS on top of that, use the ``-DOVERLAY_CONFIG="overlay-cloud_mqtt.conf;overlay-pgps.conf"``, ``-DCONFIG_LOCATION_SERVICE_EXTERNAL=y`` and ``-DCONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y`` options.
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG="overlay-cloud_mqtt.conf;overlay-pgps.conf" -DCONFIG_LOCATION_SERVICE_EXTERNAL=y -DCONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
+
 Remote control using nRF Cloud over MQTT
 ========================================
 
@@ -1140,13 +1305,18 @@ LwM2M support
 
 Before building and running the sample, select the LwM2M server for testing.
 Follow the instructions in :ref:`server_setup_lwm2m_client` to set up the server and register your device to the server.
+With the default LwM2M configuration, the device connects directly to the device management server without bootstrap support.
+You can change the LwM2M server address by setting the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SERVER` Kconfig option.
 
 Location assistance uses a proprietary mechanism to fetch location assistance data from nRF Cloud by proxying it through the LwM2M server.
 As of now, you can only use AVSystem's Coiote LwM2M server for the location assistance data from nRF Cloud.
+To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 
-To build the MoSh sample with LwM2M support, use the ``-DOVERLAY_CONFIG=overlay-lwm2m.conf`` option and set the used Pre-Shared-Key (PSK) using :kconfig:option:`CONFIG_MOSH_LWM2M_PSK` Kconfig option.
-You can change the LwM2M server address by setting :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SERVER`.
-To enable P-GPS support, use the optional overlay files :file:`overlay-lwm2m_pgps.conf` and :file:`overlay-pgps.conf`.
+You can build the MoSh sample with different LwM2M configurations:
+
+  * To build the MoSh sample with the default LwM2M configuration, use the ``-DOVERLAY_CONFIG=overlay-lwm2m.conf`` option and set the used Pre-Shared-Key (PSK) using :kconfig:option:`CONFIG_MOSH_LWM2M_PSK` Kconfig option.
+  * To enable bootstrapping, use the optional overlay file :file:`overlay-lwm2m_bootstrap.conf`.
+  * To enable P-GPS support, use the optional overlay files :file:`overlay-lwm2m_pgps.conf` and :file:`overlay-pgps.conf`.
 
 To build the sample with LwM2M support, use the following command:
 
@@ -1154,11 +1324,11 @@ To build the sample with LwM2M support, use the following command:
 
    west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-lwm2m.conf -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
 
-To enable also P-GPS, use the following command:
+To also enable P-GPS, use the following command:
 
 .. code-block:: console
 
-   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-lwm2m.conf overlay-lwm2m_pgps.conf overlay-pgps.conf" -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
+   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-lwm2m.conf;overlay-lwm2m_pgps.conf;overlay-pgps.conf" -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
 
 Use the following command to establish connection to the LwM2M server:
 
@@ -1177,6 +1347,19 @@ Use the following command to disconnect from the LwM2M server:
    LwM2M: Disconnected
 
 When connected, the ``location`` and ``gnss`` commands use the LwM2M cloud connection for fetching GNSS assistance data and for cellular positioning.
+
+.. _modem_shell_trace_support:
+
+nRF9160 DK and modem trace support
+==================================
+
+To build the MoSh sample with nRF9160 DK and modem traces with flash backend, use the ``-DDTC_OVERLAY_FILE=nrf9160dk_ext_flash.overlay`` and  ``-DOVERLAY_CONFIG="overlay-modem-trace.conf;overlay-memfault.conf"`` options.
+
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-modem-trace.conf;overlay-memfault.conf" -DDTC_OVERLAY_FILE=nrf9160dk_ext_flash.overlay
 
 References
 **********

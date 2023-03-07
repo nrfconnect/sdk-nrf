@@ -18,6 +18,9 @@ To use the module, you must enable the following Kconfig options:
 * :kconfig:option:`CONFIG_CAF_BLE_SMP` - This option enables |smp| over Bluetooth LE.
 * :kconfig:option:`CONFIG_MCUMGR_CMD_IMG_MGMT` - This option enables MCUmgr image management handlers, which are required for the DFU process.
   For details, see :ref:`zephyr:device_mgmt` in the Zephyr documentation.
+* :kconfig:option:`CONFIG_MCUMGR_MGMT_NOTIFICATION_HOOKS` - This option enables MCUmgr notification hook support, which allows this module to listen for a MCUmgr event.
+  For details, see :ref:`zephyr:mcumgr_callbacks` in the Zephyr documentation.
+* :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_UPLOAD_CHECK_HOOK` - This option enables MCUmgr upload check hook, which sends image upload requests to the registered callbacks.
 * :kconfig:option:`CONFIG_MCUMGR_SMP_BT` - This option enables support for the SMP commands over Bluetooth.
 * :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` - This option enables the MCUboot bootloader.
   The DFU over Simple Management Protocol in Zephyr is supported only with the MCUboot bootloader.
@@ -35,12 +38,10 @@ The |smp| supports registering OS management handlers automatically, which you c
 Implementation details
 **********************
 
-During the initialization, the module registers the SMP Bluetooth service, which allows to perform DFU over Bluetooth LE.
-
-The module registers the :c:func:`upload_confirm` callback that is used to submit ``ble_smp_transfer_event``.
+The module registers the :c:func:`upload_confirm_cb` callback that is used to submit ``ble_smp_transfer_event``.
 The module registers itself as the final subscriber of the event to track the number of submitted events.
-If an ``ble_smp_transfer_event`` was already submitted, but was not yet processed, the module desists from submitting subsequent event.
-After the previously submitted event is processed, the module submits a subsequent event when :c:func:`upload_confirm` callback is called.
+If a ``ble_smp_transfer_event`` was already submitted, but was not yet processed, the module desists from submitting subsequent event.
+After the previously submitted event is processed, the module submits a subsequent event when :c:func:`upload_confirm_cb` callback is called.
 
 The application user must not perform more than one firmware upgrade at a time.
 The modification of the data by multiple application modules can result in a broken image that is going to be rejected by the bootloader.
@@ -53,5 +54,3 @@ After pressing the button, you can select the :file:`*.bin` file that is to be u
 
 .. note::
   The SMP firmware update file is generated as :file:`zephyr/app_update.bin` in the build directory when building your application for configuration with the |smp| enabled.
-
-.. |smp| replace:: simple management protocol module

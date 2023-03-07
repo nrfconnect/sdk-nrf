@@ -21,6 +21,7 @@
 #include <soc.h>
 #include <nrfx_qspi.h>
 #include <hal/nrf_clock.h>
+#include <hal/nrf_gpio.h>
 
 #include "spi_nor.h"
 #include "qspi_if.h"
@@ -43,17 +44,8 @@ BUILD_ASSERT(INST_0_SCK_FREQUENCY >= (NRF_QSPI_BASE_CLOCK_FREQ / 16), "Unsupport
 #define INST_0_QER                                                                                 \
 	_CONCAT(JESD216_DW15_QER_, DT_ENUM_TOKEN(DT_DRV_INST(0), quad_enable_requirements))
 
-#if NRF52_ERRATA_122_PRESENT
-#include <hal/nrf_gpio.h>
-static int anomaly_122_init(const struct device *dev);
-static void anomaly_122_uninit(const struct device *dev);
-
-#define ANOMALY_122_INIT(dev) anomaly_122_init(dev)
-#define ANOMALY_122_UNINIT(dev) anomaly_122_uninit(dev)
-#else
-#define ANOMALY_122_INIT(dev) 0
-#define ANOMALY_122_UNINIT(dev)
-#endif
+static int qspi_device_init(const struct device *dev);
+static void qspi_device_uninit(const struct device *dev);
 
 #define QSPI_SCK_DELAY 0
 #define WORD_SIZE 4
@@ -99,10 +91,8 @@ struct qspi_nor_data {
 	struct k_sem sem;
 	/* The semaphore to indicate that transfer has completed. */
 	struct k_sem sync;
-#if NRF52_ERRATA_122_PRESENT
 	/* The semaphore to control driver init/uninit. */
 	struct k_sem count;
-#endif
 #else /* CONFIG_MULTITHREADING */
 	/* A flag that signals completed transfer when threads are
 	 * not enabled.
@@ -111,17 +101,25 @@ struct qspi_nor_data {
 #endif /* CONFIG_MULTITHREADING */
 };
 
-static inline int qspi_freq_to_sckfreq(int freq)
+static inline int qspi_freq_mhz_to_sckfreq(int freq_m)
 {
+	if (freq_m > (NRF_QSPI_BASE_CLOCK_FREQ / MHZ(1))) {
+		return NRF_QSPI_FREQ_DIV1;
+	}
 #if defined(CONFIG_SOC_SERIES_NRF53X)
 	/* QSPIM (6-96MHz) : 192MHz / (2*(SCKFREQ + 1)) */
-	return ((192 / freq) / 2) - 1;
+	return ((192 / freq_m) / 2) - 1;
 #else
 	/* QSPIM (2-32MHz): 32 MHz / (SCKFREQ + 1) */
-	return (32 / freq) - 1;
+	return (32 / freq_m) - 1;
 #endif
 }
 
+static inline int qspi_dts_freq_to_sckfreq(void)
+{
+	/* DTS frequency is in HZ */
+	return qspi_freq_mhz_to_sckfreq(INST_0_SCK_FREQUENCY / MHZ(1));
+}
 
 static inline int qspi_get_mode(bool cpol, bool cpha)
 {
@@ -249,9 +247,7 @@ static struct qspi_nor_data qspi_nor_memory_data = {
 	.trans = Z_SEM_INITIALIZER(qspi_nor_memory_data.trans, 1, 1),
 	.sem = Z_SEM_INITIALIZER(qspi_nor_memory_data.sem, 1, 1),
 	.sync = Z_SEM_INITIALIZER(qspi_nor_memory_data.sync, 0, 1),
-#if NRF52_ERRATA_122_PRESENT
 	.count = Z_SEM_INITIALIZER(qspi_nor_memory_data.count, 0, K_SEM_MAX_LIMIT),
-#endif
 #endif /* CONFIG_MULTITHREADING */
 };
 
@@ -388,22 +384,22 @@ static void qspi_handler(nrfx_qspi_evt_t event, void *p_context)
 		_qspi_complete(dev_data);
 }
 
-#if NRF52_ERRATA_122_PRESENT
 static bool qspi_initialized;
 
-static int anomaly_122_init(const struct device *dev)
+static int qspi_device_init(const struct device *dev)
 {
 	struct qspi_nor_data *dev_data = get_dev_data(dev);
 	nrfx_err_t res;
 	int ret = 0;
 
-	if (!nrf52_errata_122())
+	if (!IS_ENABLED(CONFIG_NRF700X_QSPI_LOW_POWER)) {
 		return 0;
+	}
 
 	qspi_lock(dev);
 
-	/* In multithreading, driver can call anomaly_122_init more than once
-	 * before calling anomaly_122_uninit. Keepping count, so QSPI is
+	/* In multithreading, driver can call qspi_device_init more than once
+	 * before calling qspi_device_uninit. Keepping count, so QSPI is
 	 * uninitialized only at the last call (count == 0).
 	 */
 #ifdef CONFIG_MULTITHREADING
@@ -413,6 +409,7 @@ static int anomaly_122_init(const struct device *dev)
 	if (!qspi_initialized) {
 		res = nrfx_qspi_init(&QSPIconfig, qspi_handler, dev_data);
 		ret = qspi_get_zephyr_ret_code(res);
+		NRF_QSPI->IFTIMING |= qspi_config->RDC4IO;
 		qspi_initialized = (ret == 0);
 	}
 
@@ -421,12 +418,13 @@ static int anomaly_122_init(const struct device *dev)
 	return ret;
 }
 
-static void anomaly_122_uninit(const struct device *dev)
+static void qspi_device_uninit(const struct device *dev)
 {
 	bool last = true;
 
-	if (!nrf52_errata_122())
+	if (!IS_ENABLED(CONFIG_NRF700X_QSPI_LOW_POWER)) {
 		return;
+	}
 
 	qspi_lock(dev);
 
@@ -445,17 +443,19 @@ static void anomaly_122_uninit(const struct device *dev)
 			else
 				k_busy_wait(50000);
 		}
+
+		nrfx_qspi_uninit();
+
 #ifndef CONFIG_PINCTRL
 		nrf_gpio_cfg_output(QSPI_PROP_AT(csn_pins, 0));
 		nrf_gpio_pin_set(QSPI_PROP_AT(csn_pins, 0));
 #endif
-		nrfx_qspi_uninit();
+
 		qspi_initialized = false;
 	}
 
 	qspi_unlock(dev);
 }
-#endif /* NRF52_ERRATA_122_PRESENT */
 
 /* QSPI send custom command.
  *
@@ -582,9 +582,7 @@ static inline void qspi_fill_init_struct(nrfx_qspi_config_t *initstruct)
 	initstruct->prot_if.dpmconfig = false;
 
 	/* Configure physical interface */
-	initstruct->phy_if.sck_freq = (INST_0_SCK_FREQUENCY > NRF_QSPI_BASE_CLOCK_FREQ) ?
-					      NRF_QSPI_FREQ_DIV1 :
-					      (NRF_QSPI_BASE_CLOCK_FREQ / INST_0_SCK_FREQUENCY) - 1;
+	initstruct->phy_if.sck_freq = qspi_dts_freq_to_sckfreq();
 	/* Using MHZ fails checkpatch constant check */
 	if (INST_0_SCK_FREQUENCY >= 16000000) {
 		qspi_config->qspi_slave_latency = 1;
@@ -748,7 +746,7 @@ static int qspi_nor_read(const struct device *dev, int addr, void *dest, size_t 
 	if (!size)
 		return 0;
 
-	int rc = ANOMALY_122_INIT(dev);
+	int rc = qspi_device_init(dev);
 
 	if (rc != 0)
 		goto out;
@@ -762,7 +760,7 @@ static int qspi_nor_read(const struct device *dev, int addr, void *dest, size_t 
 	rc = qspi_get_zephyr_ret_code(res);
 
 out:
-	ANOMALY_122_UNINIT(dev);
+	qspi_device_uninit(dev);
 	return rc;
 }
 
@@ -803,7 +801,7 @@ static int qspi_nor_write(const struct device *dev, int addr, const void *src, s
 
 	nrfx_err_t res = NRFX_SUCCESS;
 
-	int rc = ANOMALY_122_INIT(dev);
+	int rc = qspi_device_init(dev);
 
 	if (rc != 0)
 		goto out;
@@ -825,7 +823,7 @@ static int qspi_nor_write(const struct device *dev, int addr, const void *src, s
 
 	rc = qspi_get_zephyr_ret_code(res);
 out:
-	ANOMALY_122_UNINIT(dev);
+	qspi_device_uninit(dev);
 	return rc;
 }
 
@@ -843,7 +841,7 @@ static int qspi_nor_configure(const struct device *dev)
 	if (ret != 0)
 		return ret;
 
-	ANOMALY_122_UNINIT(dev);
+	qspi_device_uninit(dev);
 
 	return 0;
 }
@@ -887,12 +885,12 @@ static int qspi_cmd_encryption(const struct device *dev, nrf_qspi_encryption_t *
 		.tx_buf = &tx_buf,
 	};
 
-	int ret = ANOMALY_122_INIT(dev);
+	int ret = qspi_device_init(dev);
 
 	if (ret == 0)
 		ret = qspi_send_cmd(dev, &cmd, false);
 
-	ANOMALY_122_UNINIT(dev);
+	qspi_device_uninit(dev);
 
 	if (ret < 0)
 		LOG_DBG("cmd_encryption failed %d\n", ret);
@@ -915,9 +913,11 @@ int qspi_RDSR2(const struct device *dev, uint8_t *rdsr2)
 		.rx_buf = &sr_buf,
 	};
 
+	ret = qspi_device_init(dev);
+
 	ret = qspi_send_cmd(dev, &cmd, false);
 
-	ANOMALY_122_UNINIT(dev);
+	qspi_device_uninit(dev);
 
 	LOG_DBG("RDSR2 = 0x%x\n", sr);
 
@@ -931,7 +931,7 @@ int qspi_RDSR2(const struct device *dev, uint8_t *rdsr2)
 int qspi_validate_rpu_wake_writecmd(const struct device *dev)
 {
 	int ret = 0;
-	uint8_t rdsr2;
+	uint8_t rdsr2 = 0;
 
 	for (int ii = 0; ii < 1; ii++) {
 		ret = qspi_RDSR2(dev, &rdsr2);
@@ -958,11 +958,11 @@ int qspi_RDSR1(const struct device *dev, uint8_t *rdsr1)
 		.rx_buf = &sr_buf,
 	};
 
-	ret = ANOMALY_122_INIT(dev);
+	ret = qspi_device_init(dev);
 
 	ret = qspi_send_cmd(dev, &cmd, false);
 
-	ANOMALY_122_UNINIT(dev);
+	qspi_device_uninit(dev);
 
 	LOG_DBG("RDSR2 = 0x%x\n", sr);
 
@@ -992,7 +992,8 @@ int qspi_wait_while_rpu_awake(const struct device *dev)
 
 	/* Configure DTS settings */
 	if (val & RPU_AWAKE_BIT) {
-		nrf_qspi_ifconfig1_set(NRF_QSPI, &QSPIconfig.phy_if);
+		/* Restore QSPI clock frequency from DTS */
+		QSPIconfig.phy_if.sck_freq = qspi_dts_freq_to_sckfreq();
 	}
 
 	return val;
@@ -1016,12 +1017,12 @@ int qspi_wait_while_firmware_awake(const struct device *dev)
 	for (int ii = 0; ii < 10; ii++) {
 		int ret;
 
-		ret = ANOMALY_122_INIT(dev);
+		ret = qspi_device_init(dev);
 
 		if (ret == 0)
 			ret = qspi_send_cmd(dev, &cmd, false);
 
-		ANOMALY_122_UNINIT(dev);
+		qspi_device_uninit(dev);
 
 		if ((ret < 0) || (sr != 0x6)) {
 			LOG_DBG("ret val = 0x%x\t RDSR1 = 0x%x\n", ret, sr);
@@ -1046,12 +1047,12 @@ int qspi_WRSR2(const struct device *dev, uint8_t data)
 		.op_code = 0x3f,
 		.tx_buf = &tx_buf,
 	};
-	int ret = ANOMALY_122_INIT(dev);
+	int ret = qspi_device_init(dev);
 
 	if (ret == 0)
 		ret = qspi_send_cmd(dev, &cmd, false);
 
-	ANOMALY_122_UNINIT(dev);
+	qspi_device_uninit(dev);
 
 	if (ret < 0)
 		LOG_ERR("cmd_wakeup RPU failed %d\n", ret);
@@ -1062,14 +1063,9 @@ int qspi_WRSR2(const struct device *dev, uint8_t data)
 int qspi_cmd_wakeup_rpu(const struct device *dev, uint8_t data)
 {
 	int ret;
-	/* Use lowest 8MHz for waking up RPU */
-	const nrf_qspi_phy_conf_t qspi_phy_8mhz = {
-		.sck_freq = qspi_freq_to_sckfreq(8),
-		.sck_delay = QSPI_SCK_DELAY,
-		.spi_mode = NRF_QSPI_MODE_0
-	};
 
-	nrf_qspi_ifconfig1_set(NRF_QSPI, &qspi_phy_8mhz);
+	/* Waking RPU works reliably only with lowest frequency (8MHz) */
+	QSPIconfig.phy_if.sck_freq = qspi_freq_mhz_to_sckfreq(8);
 
 	ret = qspi_WRSR2(dev, data);
 
@@ -1100,19 +1096,6 @@ int qspi_init(struct qspi_config *config)
 
 	k_sem_init(&qspi_config->lock, 1, 1);
 
-#if defined(CONFIG_SOC_SERIES_NRF53X)
-	/* once encryption is enabled, do not reinit until bitfile re-load */
-	if (!config->enc_enabled) {
-		if (config->encryption)
-			nrfx_qspi_dma_encrypt(&config->p_cfg);
-
-		if (config->CMD_CNONCE)
-			qspi_cmd_encryption(&qspi_perip, &config->p_cfg);
-
-		if (config->encryption)
-			config->enc_enabled = true;
-	}
-#endif
 	LOG_INF("QSPI freq = %d MHz\n", INST_0_SCK_FREQUENCY/MHZ(1));
 	LOG_INF("QSPI latency = %d\n", qspi_config->qspi_slave_latency);
 	return rc;
@@ -1245,17 +1228,49 @@ int qspi_cmd_sleep_rpu(const struct device *dev)
 		.tx_buf = &tx_buf,
 	};
 
-	int ret = ANOMALY_122_INIT(dev);
+	int ret = qspi_device_init(dev);
 
 	if (ret == 0) {
 		ret = qspi_send_cmd(dev, &cmd, false);
 	}
 
-	ANOMALY_122_UNINIT(dev);
+	qspi_device_uninit(dev);
 
 	if (ret < 0) {
 		LOG_ERR("cmd_wakeup RPU failed: %d\n", ret);
 	}
 
 	return ret;
+}
+
+/* Encryption public API */
+
+int qspi_enable_encryption(uint8_t *key)
+{
+#if defined(CONFIG_SOC_SERIES_NRF53X)
+	int err = 0;
+
+	if (qspi_config->encryption)
+		return -EALREADY;
+
+	memcpy(qspi_config->p_cfg.key, key, 16);
+
+	err = nrfx_qspi_dma_encrypt(&qspi_config->p_cfg);
+	if (err != NRFX_SUCCESS) {
+		LOG_ERR("nrfx_qspi_dma_encrypt failed: %d\n", err);
+		return -EIO;
+	}
+
+	err = qspi_cmd_encryption(&qspi_perip, &qspi_config->p_cfg);
+	if (err != 0) {
+		LOG_ERR("qspi_cmd_encryption failed: %d\n", err);
+		return -EIO;
+	}
+
+	qspi_config->encryption = true;
+
+	return 0;
+#else
+	return -ENOTSUP;
+#endif
 }

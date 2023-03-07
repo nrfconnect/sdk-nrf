@@ -31,7 +31,8 @@ Following are the cloud services that are supported by the application:
 * `AWS IoT Core`_
 * `Azure IoT Hub`_
 * `nRF Cloud`_
-* `LwM2M`_ v1.1 compliant service (for example, `Coiote Device Management`_, `Leshan LwM2M server <Leshan homepage_>`_).
+* `LwM2M`_ v1.1 compliant service (for example, AVSystem's `Coiote Device Management`_, `Leshan LwM2M server <Leshan homepage_>`_).
+  To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 
 To run the application on a development kit and connect to a cloud service, you must complete the following steps:
 
@@ -103,6 +104,7 @@ Following are the available configuration files:
 
 * :file:`prj.conf` - Configuration file common for ``thingy91_nrf9160_ns`` and ``nrf9160dk_nrf9160_ns`` build targets.
 * :file:`prj_qemu_x86.conf` - Configuration file common for ``qemu_x86`` build target.
+* :file:`prj_native_posix.conf` - Configuration file common for ``native_posix`` build target.
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file specific for Thingy:91. This file is automatically merged with the :file:`prj.conf` file when you build for the ``thingy91_nrf9160_ns`` build target.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for nRF9160 DK. This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
 * :file:`boards/<BOARD>/led_state_def.h` - Header file that describes the LED behavior of the CAF LEDs module.
@@ -113,10 +115,16 @@ Overlay configurations files that enable specific features:
 * :file:`overlay-azure.conf` - Configuration file that enables communication with Azure IoT Hub.
 * :file:`overlay-lwm2m.conf` - Configuration file that enables communication with AVSystem's Coiote IoT Device Management.
 * :file:`overlay-pgps.conf` - Configuration file that enables P-GPS.
+* :file:`overlay-nrf7002ek-wifi-scan-only.conf` - Configuration file that enables Wi-Fi scanning with nRF7002 EK.
 * :file:`overlay-low-power.conf` - Configuration file that achieves the lowest power consumption by disabling features that consume extra power, such as LED control and logging.
 * :file:`overlay-debug.conf` - Configuration file that adds additional verbose logging capabilities and enables the debug module.
 * :file:`overlay-memfault.conf` - Configuration file that enables `Memfault`_.
 * :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support. See :ref:`atv2_lwm2m_carrier_support` for more information.
+* :file:`overlay-full_modem_fota.conf` - Configuration file that enables full modem FOTA.
+
+Custom DTC overlay file for enabling a specific feature:
+
+* :file:`nrf9160dk_with_nrf7002ek.overlay` - Configuration file that enables Wi-Fi scanning with nRF7002 EK.
 
 Multiple overlay files can be included to enable multiple features at the same time.
 
@@ -125,8 +133,9 @@ Multiple overlay files can be included to enable multiple features at the same t
    Generally, Kconfig overlays have an ``overlay-`` prefix and a :file:`.conf` extension.
    Board-specific configuration files are placed in the :file:`boards` folder and are named as :file:`<BOARD>.conf`.
    DTS overlay files are named the same as the build target and use the file extension :file:`.overlay`.
-   They are placed in the :file:`boards` folder.
-   When the DTS overlay filename matches the build target, the overlay is automatically chosen and applied by the build system.
+   When they are placed in the :file:`boards` folder and the DTS overlay filename matches the build target,
+   the build system automatically selects and applies the overlay.
+   You can give the custom DTS overlay files as a compiler option ``-DDTC_OVERLAY_FILE=<dtc_filename>.overlay``.
 
 Optional library configurations
 ===============================

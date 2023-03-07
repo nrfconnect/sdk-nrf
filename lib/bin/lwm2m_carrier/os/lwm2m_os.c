@@ -12,7 +12,6 @@
 #include <zephyr/kernel.h>
 #include <string.h>
 #include <nrf_modem.h>
-#include <modem/lte_lc.h>
 #include <modem/pdn.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/sms.h>
@@ -376,19 +375,23 @@ int lwm2m_os_nrf_modem_init(void)
 	switch (nrf_err) {
 	case 0:
 		break;
-	case MODEM_DFU_RESULT_OK:
+	case NRF_MODEM_DFU_RESULT_OK:
 		LOG_INF("Modem firmware update successful.");
 		LOG_INF("Modem will run the new firmware after reboot.");
 		break;
-	case MODEM_DFU_RESULT_UUID_ERROR:
-	case MODEM_DFU_RESULT_AUTH_ERROR:
+	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
+	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
 		LOG_ERR("Modem firmware update failed.");
 		LOG_ERR("Modem will run non-updated firmware on reboot.");
 		break;
-	case MODEM_DFU_RESULT_HARDWARE_ERROR:
-	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
 		LOG_ERR("Modem firmware update failed.");
 		LOG_ERR("Fatal error.");
+		break;
+	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
+		LOG_ERR("Modem firmware update cancelled.");
+		LOG_ERR("Please reboot once you have sufficient power for the DFU.");
 		break;
 	default:
 		LOG_ERR("Could not initialize modem library.");
@@ -564,6 +567,9 @@ int lwm2m_os_download_file_size_get(size_t *size)
 	return download_client_file_size_get(&http_downloader, size);
 }
 
+#if defined(CONFIG_LTE_LINK_CONTROL)
+#include <modem/lte_lc.h>
+
 /* LTE LC module abstractions. */
 
 size_t lwm2m_os_lte_modes_get(int32_t *modes)
@@ -615,6 +621,70 @@ void lwm2m_os_lte_mode_request(int32_t prefer)
 
 	(void)lte_lc_system_mode_set(mode, preference);
 }
+#else
+#include <nrf_modem_at.h>
+
+size_t lwm2m_os_lte_modes_get(int32_t *modes)
+{
+	int err, ltem_mode, nbiot_mode, gps_mode, preference;
+
+	/* It's expected to have all 4 arguments matched */
+	err = nrf_modem_at_scanf("AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d",
+				 &ltem_mode, &nbiot_mode, &gps_mode, &preference);
+	if (err != 4) {
+		LOG_ERR("Failed to get system mode, error: %d", err);
+		return 0;
+	}
+
+	if (ltem_mode && nbiot_mode) {
+		modes[0] = LWM2M_OS_LTE_MODE_CAT_M1;
+		modes[1] = LWM2M_OS_LTE_MODE_CAT_NB1;
+		return 2;
+	} else if (ltem_mode) {
+		modes[0] = LWM2M_OS_LTE_MODE_CAT_M1;
+		return 1;
+	} else if (nbiot_mode) {
+		modes[0] = LWM2M_OS_LTE_MODE_CAT_NB1;
+		return 1;
+	}
+
+	return 0;
+}
+
+void lwm2m_os_lte_mode_request(int32_t prefer)
+{
+	int err, ltem_mode, nbiot_mode, gps_mode, preference;
+	static int application_preference;
+
+	/* It's expected to have all 4 arguments matched */
+	err = nrf_modem_at_scanf("AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d",
+				 &ltem_mode, &nbiot_mode, &gps_mode, &preference);
+	if (err != 4) {
+		LOG_ERR("Failed to get system mode, error: %d", err);
+		return;
+	}
+
+	switch (prefer) {
+	case LWM2M_OS_LTE_MODE_CAT_M1:
+		application_preference = preference;
+		preference = 1;
+		break;
+	case LWM2M_OS_LTE_MODE_CAT_NB1:
+		application_preference = preference;
+		preference = 2;
+		break;
+	case LWM2M_OS_LTE_MODE_NONE:
+		preference = application_preference;
+		break;
+	}
+
+	err = nrf_modem_at_printf("AT%%XSYSTEMMODE=%d,%d,%d,%d",
+				  ltem_mode, nbiot_mode, gps_mode, preference);
+	if (err) {
+		LOG_ERR("Could not send AT command, error: %d", err);
+	}
+}
+#endif
 
 /* PDN abstractions */
 

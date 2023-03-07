@@ -11,7 +11,7 @@
 # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/west/index.html
 
 manifest:
-  version: "0.12"
+  version: "0.13"
 
   # "remotes" is a list of locations where git repositories are cloned
   # and fetched from.
@@ -43,6 +43,9 @@ manifest:
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
+  #
+  # For 'userdata' fields in the projects area, please refer to:
+  # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/dm_code_base.html
   projects:
 
     # The Zephyr RTOS fork in the NCS, along with the subset of its
@@ -52,7 +55,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 707ff27ecaad44b00cc015bcf0c46db700a4267f
+      revision: e414f084261667ff274f6e617064a8b2823edd3d
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -72,9 +75,8 @@ manifest:
           - cmsis
           - edtt
           - fatfs
-          - fff
           - hal_nordic
-          - hal_st # required for ST sensors (unrealted to STM32 MCUs)
+          - hal_st # required for ST sensors (unrelated to STM32 MCUs)
           - hal_wurthelektronik
           - liblc3
           - libmetal
@@ -82,7 +84,6 @@ manifest:
           - loramac-node
           - lvgl
           - lz4
-          - mbedtls
           - mipi-sys-t
           - nanopb
           - net-tools
@@ -102,33 +103,39 @@ manifest:
     #
     # Some of these are also Zephyr modules which have NCS-specific
     # changes.
-    - name: sdk-hostap
+    - name: hostap
+      repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: 903c774b73802123e165dc001368406642d47972
+      revision: 73de50a279b35adf345eae35231813d0945991fd
+      userdata:
+        ncs:
+          upstream-url: https://w1.fi/cgit/hostap/
+          upstream-sha: e792f38db8471f35ee94f109a4093dece8f78c6a
+          compare-by-default: false
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 20f8d86f787331daa6812a32f12077189cebd31f
+      revision: v1.9.99-ncs4
       path: bootloader/mcuboot
-    - name: mbedtls-nrf
-      path: mbedtls
+    - name: qcbor
+      url: https://github.com/laurencelundblade/QCBOR.git
+      revision: b0e7033268e88c9f27146fa9a1415ef4c19ebaff
+      path: modules/tee/tf-m/qcbor
+    - name: mbedtls
+      path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.1.0-ncs2
+      revision: de1b3f57a54364e1e415f1e650585e7396e9527b
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: v2.2.0
+      revision: a2f5dcfb7521f080ba418a28e12dda56aeefeba9
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 2b98fc3dfb1f6fb415e62f77812e61306ca93692
-    - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
-      repo-path: sdk-mcuboot
-      path: modules/tee/tfm-mcuboot
-      revision: v1.7.2-ncs3
+      revision: fb18cfa42495acab64c7a50738100a4c308cd350
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 336ab07c7426ea66a9a97b0eaa053835ddf4993f
+      revision: v2.3.0
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -138,30 +145,64 @@ manifest:
           path: third_party/nlunit-test/repo
         - name: pigweed
           path: third_party/pigweed/repo
+      userdata:
+        ncs:
+          upstream-url: https://github.com/project-chip/connectedhomeip
+          upstream-sha: 4088a77f557e8571a39338fad51a1d8eb0131d79
+          compare-by-default: false
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v2.2.0
+      revision: v2.3.0
       groups:
         - nrf-802154
     - name: cjson
       repo-path: sdk-cjson
       path: modules/lib/cjson
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
+      userdata:
+        ncs:
+          upstream-url: https://github.com/DaveGamble/cJSON
+          upstream-sha: d2735278ed1c2e4556f53a7a782063b31331dbf7
+          compare-by-default: false
     - name: homekit
       repo-path: sdk-homekit
-      revision: v2.2.0
+      revision: 4a941dc22638852f841aa9644aaeb72f9c95cfea
       groups:
         - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: v2.2.0
+      revision: 45fa0f0b86750e45f96e02bc38adf7450d3b28c6
       groups:
         - find-my
     - name: azure-sdk-for-c
       repo-path: azure-sdk-for-c
       path: modules/lib/azure-sdk-for-c
       revision: 308c171cb4b5eed266649012a68406487ec81fb2
+      userdata:
+        ncs:
+          upstream-url: https://github.com/Azure/azure-sdk-for-c
+          upstream-sha: adc56bc6138a28b5490bce339a31a2581a072092
+          compare-by-default: false
+    - name: cirrus
+      repo-path: sdk-mcu-drivers
+      path: modules/hal/cirrus-logic
+      revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
+      userdata:
+        ncs:
+          upstream-url: https://github.com/CirrusLogic/mcu-drivers
+          upstream-sha: 1be6ca7253133a21a1e9fe0fbb4656e17d63a936
+          compare-by-default: false
+    - name: openthread
+      repo-path: sdk-openthread
+      path: modules/lib/openthread
+      revision: 0a79c30a202cf0c96d2ce5e37ee01a0546ed40c5
+      userdata:
+        ncs:
+          upstream-url: https://github.com/openthread/openthread
+          upstream-sha: 55074652907295709f9f3361244a6e76f732bcba
+          compare-by-default: false
+
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
@@ -170,19 +211,11 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.35.0
+      revision: 0.37.2
       remote: memfault
-    - name: cirrus
-      repo-path: sdk-mcu-drivers
-      path: modules/hal/cirrus-logic
-      revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
-    - name: openthread
-      repo-path: sdk-openthread
-      path: modules/lib/openthread
-      revision: 48c0582e4e0abbdfa6470de90cad5a2e07e1a3b5
     - name: ant
       repo-path: sdk-ant
-      revision: 8f6e2b0470d11b5c1a97c92df35eb1350e84c5f8
+      revision: 7df46a12ace258473c1f2b3b98de690b5799ac64
       remote: ant-nrfconnect
       groups:
         - ant

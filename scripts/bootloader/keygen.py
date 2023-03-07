@@ -30,7 +30,8 @@ def generate_legal_key():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Generate PEM file.',
-        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False)
 
     priv_pub_group = parser.add_mutually_exclusive_group(required=True)
     priv_pub_group.add_argument('--private', required=False, action='store_true',

@@ -111,8 +111,12 @@ int bt_mesh_battery_cli_get(struct bt_mesh_battery_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_BATTERY_OP_GET,
 				 BT_MESH_BATTERY_MSG_LEN_GET);
 	bt_mesh_model_msg_init(&msg, BT_MESH_BATTERY_OP_GET);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_BATTERY_OP_STATUS,
+		.user_data = rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
 
-	return model_ackd_send(cli->model, ctx, &msg,
-			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_BATTERY_OP_STATUS, rsp);
+	return bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 }

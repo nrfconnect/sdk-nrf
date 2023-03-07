@@ -3,14 +3,6 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-/*
- * The RST file for this library can be found in
- * doc/nrf/libraries/bluetooth_services/mesh/time.rst.
- * Rendered documentation is available at
- * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/bluetooth_services/mesh/time.html.
- */
-
 /**
  * @file
  * @defgroup bt_mesh_time Time Models
@@ -110,7 +102,8 @@ struct bt_mesh_time_tai_utc_delta_status {
 
 #define BT_MESH_TIME_MSG_LEN_GET 0
 #define BT_MESH_TIME_MSG_LEN_TIME_SET 10
-#define BT_MESH_TIME_MSG_LEN_TIME_STATUS 10
+#define BT_MESH_TIME_MSG_MINLEN_TIME_STATUS 5
+#define BT_MESH_TIME_MSG_MAXLEN_TIME_STATUS 10
 #define BT_MESH_TIME_MSG_LEN_TIME_ROLE_SET 1
 #define BT_MESH_TIME_MSG_LEN_TIME_ROLE_STATUS 1
 #define BT_MESH_TIME_MSG_LEN_TIME_ZONE_SET 6

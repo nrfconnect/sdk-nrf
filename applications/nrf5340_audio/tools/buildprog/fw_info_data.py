@@ -58,7 +58,8 @@ def inject_fw_info(input_file, offset, output_hex, magic_value, fw_version, fw_v
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Inject fw info metadata at specified offset. Generate HEX file',
-        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False)
 
     parser.add_argument('-i', '--input', required=True, type=argparse.FileType('r', encoding='UTF-8'),
                         help='Input hex file.')

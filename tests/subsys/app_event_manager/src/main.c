@@ -178,6 +178,11 @@ static void test_event_size_disabled(void)
 	app_event_manager_free(ev_s1);
 }
 
+static void test_name_style_events_sorting(void)
+{
+	test_start(TEST_NAME_STYLE_SORTING);
+}
+
 void test_main(void)
 {
 	ztest_test_suite(app_event_manager_tests,
@@ -191,7 +196,8 @@ void test_main(void)
 			 ztest_unit_test(test_event_size_static),
 			 ztest_unit_test(test_event_size_dynamic),
 			 ztest_unit_test(test_event_size_dynamic_with_data),
-			 ztest_unit_test(test_event_size_disabled)
+			 ztest_unit_test(test_event_size_disabled),
+			 ztest_unit_test(test_name_style_events_sorting)
 			 );
 
 	ztest_run_test_suite(app_event_manager_tests);
@@ -215,4 +221,4 @@ static bool app_event_handler(const struct app_event_header *aeh)
 }
 
 APP_EVENT_LISTENER(test_main, app_event_handler);
-APP_EVENT_SUBSCRIBE(test_main, test_end_event);
+APP_EVENT_SUBSCRIBE_FINAL(test_main, test_end_event);

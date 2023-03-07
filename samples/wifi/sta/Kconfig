@@ -8,6 +8,10 @@ source "Kconfig.zephyr"
 
 menu "Nordic Sta sample"
 
+config CONNECTION_IDLE_TIMEOUT
+	int "Time to be waited for a station to connect"
+	default 30
+
 config STA_SAMPLE_SSID
 	string "SSID"
 	help
@@ -42,4 +46,10 @@ config STA_SAMPLE_PASSWORD
 	string "Passphrase (WPA2) or password (WPA3)"
 	help
 	  Specify the Password to connect
+
+config NRF700X_QSPI_ENCRYPTION_KEY
+	string "16 bytes QSPI encryption key, only for testing purposes"
+	depends on BOARD_NRF7002DK_NRF5340
+	help
+	  Specify the QSPI encryption key
 endmenu

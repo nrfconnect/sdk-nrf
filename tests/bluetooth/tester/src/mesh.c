@@ -16,9 +16,9 @@
 #include <zephyr/sys/byteorder.h>
 #include <app_keys.h>
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG)
-#define LOG_MODULE_NAME bttester_mesh
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bttester_mesh);
 
 #include "model_handler.h"
 #include "bttester.h"

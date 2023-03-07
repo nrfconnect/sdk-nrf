@@ -44,7 +44,8 @@
 static inline bool is_notification(char chr)
 {
 	if ((chr == AT_STANDARD_NOTIFICATION_PREFIX) ||
-	    (chr == AT_PROP_NOTIFICATION_PREFX)) {
+	    (chr == AT_PROP_NOTIFICATION_PREFX) ||
+	    (chr == AT_CUSTOM_COMMAND_PREFX)) {
 		return true;
 	}
 

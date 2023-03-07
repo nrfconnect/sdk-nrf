@@ -262,7 +262,7 @@ int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power, uint16_
 	int32_t err;
 	mpsl_tx_power_split_t power_split = { 0 };
 
-	output_power = mpsl_fem_tx_power_split(power, &power_split, freq_mhz);
+	output_power = mpsl_fem_tx_power_split(power, &power_split, freq_mhz, false);
 
 	*radio_tx_power = power_split.radio_tx_power;
 
@@ -274,6 +274,15 @@ int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power, uint16_
 	}
 
 	return output_power;
+}
+
+uint32_t fem_default_tx_gain_get(void)
+{
+	if (fem_api->tx_default_gain_get) {
+		return fem_api->tx_default_gain_get();
+	}
+
+	return 0;
 }
 
 int fem_init(NRF_TIMER_Type *timer_instance, uint8_t compare_channel_mask)

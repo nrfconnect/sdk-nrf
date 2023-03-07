@@ -89,6 +89,9 @@ struct bt_ddfs_features {
 struct bt_ddfs_dm_config {
 	/** Ranging mode */
 	enum bt_ddfs_dm_ranging_mode mode;
+
+	/** High-precision calculations enabled */
+	bool high_precision;
 };
 
 /** @brief Pointers to the callback functions for service events. */
@@ -159,6 +162,11 @@ struct bt_ddfs_distance_measurement {
 
 			/** Best effort distance estimate */
 			uint16_t best;
+
+#ifdef CONFIG_DM_HIGH_PRECISION_CALC
+			/* MCPD: Distance estimate based on advanced algorithms */
+			uint16_t high_precision;
+#endif
 		} mcpd;
 		struct _rtt {
 			/** RTT: Distance estimate based on RTT measurement */

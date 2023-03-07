@@ -7,7 +7,7 @@ Bluetooth LE connection parameters module
    :local:
    :depth: 2
 
-Use the |ble_conn_params| to:
+Use the Bluetooth® LE connection parameters module for the following purposes:
 
 * Update the connection parameters after the peripheral discovery.
 * React on connection parameter update requests from the connected peripherals.
@@ -27,18 +27,20 @@ Configuration
 *************
 
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-The module is automatically enabled for every nRF Desktop central device (:kconfig:option:`CONFIG_BT_CENTRAL`).
+Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` options are enabled.
+The |ble_conn_params| is enabled by the :ref:`CONFIG_DESKTOP_BLE_CONN_PARAMS_ENABLE <config_desktop_app_options>` option.
+The option is implied by :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` together with other features used by an HID dongle that forwards the HID reports received over Bluetooth LE.
 
-Enable :kconfig:option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` to manage Bluetooth connections' parameters reacting on the USB state change.
-The connection intervals for all of the Bluetooth connected peripherals are set to :kconfig:option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE` (100 ms by default) while USB is suspended.
+Enable :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI <config_desktop_app_options>` to manage Bluetooth connections' parameters reacting on the USB state change.
+The connection intervals for all of the Bluetooth connected peripherals are set to :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE <config_desktop_app_options>` (100 ms by default) while USB is suspended.
 The connections' peripheral latencies are set to 0.
 The connection parameter change is reverted when USB is active.
-The :kconfig:option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` is enabled by default.
+The :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI <config_desktop_app_options>` is enabled by default.
 
 Implementation details
 **********************
 
-The |ble_conn_params| receives the peripheral's connection parameters update request as ``ble_peer_conn_params_event``.
+The |ble_conn_params| receives the peripheral's connection parameters update request as :c:struct:`ble_peer_conn_params_event`.
 The module updates only the connection latency.
 The connection interval and supervision timeout are not changed according to the peripheral's request.
 
@@ -65,5 +67,3 @@ After the :ref:`nrf_desktop_ble_discovery` completes the peripheral discovery, t
     This is the shortest interval allowed by the standard Bluetooth.
   * **10 ms** otherwise.
     This is required to avoid Bluetooth Link Layer scheduling conflicts that could lead to HID report rate drop.
-
-.. |ble_conn_params| replace:: Bluetooth® LE connection parameters module

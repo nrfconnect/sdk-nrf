@@ -138,7 +138,8 @@ def parse_args() -> argparse.Namespace:
         with larger commit ranges. To save and restore results from earlier
         runs, use the --sqlite-db option. This avoids requesting information
         from the GitHub API server that is already available locally.
-        ''')
+        ''',
+        allow_abbrev=False)
 
     parser.add_argument('gh_repo',
                         help='''repository in <organization>/<repo> format,

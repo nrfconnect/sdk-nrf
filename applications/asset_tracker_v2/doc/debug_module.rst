@@ -22,9 +22,6 @@ This section documents the various features implemented by the module.
 Memfault
 ========
 
-Memfault SDK provides the functionality to collect information from devices in the form of coredumps, error traces, metrics, logs and more.
-Information that is collected from the device can be sent to Memfault's cloud solution for further analysis.
-
 The debug module uses `Memfault SDK`_ to track |NCS| specific metrics such as LTE and stack metrics.
 In addition, the following types of custom Memfault metrics are defined and tracked when compiling in the debug module:
 
@@ -36,7 +33,19 @@ The debug module also implements `Memfault SDK`_ software watchdog, which is des
 This enables the application to be able to collect coredump data before a reboot occurs.
 
 To enable Memfault, you must include the :file:`../overlay-memfault.conf` when building the application.
-To get started with Memfault, see :ref:`using_memfault`.
+To get started with Memfault integration in |NCS|, see :ref:`ug_memfault`.
+
+.. _asset_tracker_v2_ext_transport:
+
+Custom transport
+----------------
+
+The data that is collected from the device can be routed through a custom transport to the Memfault cloud instead of using Memfault's own HTTPS transport.
+To do this, enable the :ref:`CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT <CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT>` Kconfig option.
+If this option is enabled, the debug module forwards the captured Memfault data through the :c:enumerator:`DEBUG_EVT_MEMFAULT_DATA_READY` event.
+If the :ref:`CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT <CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT>` Kconfig option is disabled, the debug module uses the `Memfault firmware SDK's <Memfault firmware SDK_>`_ own internal HTTP transport.
+Transporting Memfault data through a pre-established transport can save overhead related to maintaining multiple connections at the same time.
+Currently, only the AWS IoT configuration supports this configuration.
 
 Configuration options
 *********************
@@ -75,7 +84,7 @@ To enable storing to flash, configure the following options:
  * :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` - To enable storing to flash.
  * :kconfig:option:`CONFIG_PM_PARTITION_SIZE_MEMFAULT_STORAGE` - To set the size of the coredumps storage flash partition.
 
-For extended documentation regarding |NCS| Memfault integration, see :ref:`mod_memfault` module.
+For extended documentation regarding |NCS| Memfault integration, see :ref:`ug_memfault` documentation.
 
 Module states
 *************

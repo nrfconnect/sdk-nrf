@@ -61,20 +61,6 @@ static struct lwm2m_engine_obj_inst inst[MAX_INSTANCE_COUNT];
 static struct lwm2m_engine_res res[MAX_INSTANCE_COUNT][VISIBLE_WIFI_AP_MAX_ID];
 static struct lwm2m_engine_res_inst res_inst[MAX_INSTANCE_COUNT][RESOURCE_INSTANCE_COUNT];
 
-int lwm2m_visible_wifi_ap_index_to_inst_id(int index)
-{
-	if (index >= MAX_INSTANCE_COUNT) {
-		return -EINVAL;
-	}
-
-	/* not instantiated */
-	if (!inst[index].obj) {
-		return -ENOENT;
-	}
-
-	return inst[index].obj_inst_id;
-}
-
 static struct lwm2m_engine_obj_inst *visible_wifi_ap_create(uint16_t obj_inst_id)
 {
 	int index, i = 0, j = 0;

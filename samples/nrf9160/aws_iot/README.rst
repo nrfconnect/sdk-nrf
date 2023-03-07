@@ -89,6 +89,8 @@ CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS
    In certain LTE networks, the NAT timeout can be considerably lower than 1200 seconds.
    As a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, set the option :kconfig:option:`CONFIG_MQTT_KEEPALIVE` to the lowest timeout limit (Maximum allowed MQTT keepalive and NAT timeout).
 
+.. _aws_iot_sample_building_and_running:
+
 Building and running
 ********************
 
@@ -120,19 +122,19 @@ When the sample runs, the device boots, and the sample displays the following ou
 .. code-block:: console
 
         *** Booting Zephyr OS build v2.3.0-rc1-ncs1-snapshot1-6-gad0444b058ef  ***
-        AWS IoT sample started, version: v1.0.0
-        LTE cell changed: Cell ID: 33703711, Tracking area: 2305
-        PSM parameter update: TAU: -1, Active time: -1
-        RRC mode: Connected
-        Network registration status: Connected - roaming
-        PSM parameter update: TAU: 3600, Active time: 60
-        RRC mode: Idle
-        AWS_IOT_EVT_CONNECTING
-        RRC mode: Connected
-        RRC mode: Idle
-        RRC mode: Connected
-        AWS_IOT_EVT_CONNECTED
-        Publishing: {
+        <inf> aws_iot_sample: AWS IoT sample started, version: v1.0.0
+        <inf> aws_iot_sample: LTE cell changed: Cell ID: 33703711, Tracking area: 2305
+        <inf> aws_iot_sample: PSM parameter update: TAU: -1, Active time: -1
+        <inf> aws_iot_sample: RRC mode: Connected
+        <inf> aws_iot_sample: Network registration status: Connected - roaming
+        <inf> aws_iot_sample: PSM parameter update: TAU: 3600, Active time: 60
+        <inf> aws_iot_sample: RRC mode: Idle
+        <inf> aws_iot_sample: AWS_IOT_EVT_CONNECTING
+        <inf> aws_iot_sample: RRC mode: Connected
+        <inf> aws_iot_sample: RRC mode: Idle
+        <inf> aws_iot_sample: RRC mode: Connected
+        <inf> aws_iot_sample: AWS_IOT_EVT_CONNECTED
+        <inf> aws_iot_sample: Publishing: {
         "state":    {
                 "reported":    {
                 "app_version":    "v1.0.0",
@@ -141,10 +143,10 @@ When the sample runs, the device boots, and the sample displays the following ou
                 }
         }
         } to AWS IoT broker
-        AWS_IOT_EVT_READY
-        RRC mode: Idle
-        LTE cell changed: Cell ID: 34237195, Tracking area: 2305
-        Publishing: {
+        <inf> aws_iot_sample: AWS_IOT_EVT_READY
+        <inf> aws_iot_sample: RRC mode: Idle
+        <inf> aws_iot_sample: LTE cell changed: Cell ID: 34237195, Tracking area: 2305
+        <inf> aws_iot_sample: Publishing: {
         "state":    {
                 "reported":    {
                 "batv":    4308,
@@ -152,12 +154,12 @@ When the sample runs, the device boots, and the sample displays the following ou
                 }
         }
         } to AWS IoT broker
-        Next data publication in 60 seconds
-        RRC mode: Connected
-        RRC mode: Idle
-        LTE cell changed: Cell ID: 33703711, Tracking area: 2305
-        RRC mode: Connected
-        Publishing: {
+        <inf> aws_iot_sample: Next data publication in 60 seconds
+        <inf> aws_iot_sample: RRC mode: Connected
+        <inf> aws_iot_sample: RRC mode: Idle
+        <inf> aws_iot_sample: LTE cell changed: Cell ID: 33703711, Tracking area: 2305
+        <inf> aws_iot_sample: RRC mode: Connected
+        <inf> aws_iot_sample: Publishing: {
         "state":    {
                 "reported":    {
                 "batv":    4308,
@@ -165,7 +167,21 @@ When the sample runs, the device boots, and the sample displays the following ou
                 }
         }
         } to AWS IoT broker
-        Next data publication in 60 seconds
+        <inf> aws_iot_sample: Next data publication in 60 seconds
+
+To observe incoming messages in the AWS IoT console, navigate to the AWS IoT Core service and
+click :guilabel:`MQTT test client`.
+To observe messages that are sent from the device, subscribe to the **$aws/things/<client_id>/shadow/update** shadow topic or the wild card token **#**.
+
+.. figure:: /images/aws_mqtt_test_client.PNG
+   :alt: AWS IoT Core MQTT test client
+
+   AWS IoT Core MQTT test client
+
+Testing and debugging
+=====================
+
+If you have issues with the sample, refer to :ref:`gs_testing`.
 
 Dependencies
 ************

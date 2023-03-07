@@ -6,12 +6,13 @@
 #include <unity.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <cmock_modules_common.h>
-#include <cmock_app_event_manager.h>
-#include <cmock_app_event_manager_priv.h>
-#include <cmock_location.h>
-#include <cmock_lte_lc.h>
-#include <cmock_nrf_modem_gnss.h>
+
+#include "cmock_modules_common.h"
+#include "cmock_app_event_manager.h"
+#include "cmock_app_event_manager_priv.h"
+#include "cmock_location.h"
+#include "cmock_lte_lc.h"
+#include "cmock_nrf_modem_gnss.h"
 
 #include "app_module_event.h"
 #include "location_module_event.h"
@@ -75,23 +76,8 @@ struct event_type __event_type_modem_module_event;
  */
 extern int unity_main(void);
 
-
-/* Suite teardown finalizes with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
-}
-
-
 void setUp(void)
 {
-	cmock_modules_common_Init();
-	cmock_app_event_manager_Init();
-	cmock_location_Init();
-	cmock_nrf_modem_gnss_Init();
-
 	location_module_event_count = 0;
 	expected_location_module_event_count = 0;
 	memset(&expected_location_module_events, 0, sizeof(expected_location_module_events));
@@ -104,11 +90,6 @@ void tearDown(void)
 		k_sem_take(&location_module_event_sem, K_SECONDS(1));
 	}
 	TEST_ASSERT_EQUAL(expected_location_module_event_count, location_module_event_count);
-
-	cmock_modules_common_Verify();
-	cmock_app_event_manager_Verify();
-	cmock_location_Verify();
-	cmock_nrf_modem_gnss_Verify();
 }
 
 static void validate_location_module_evt(struct app_event_header *aeh, int no_of_calls)
@@ -147,65 +128,68 @@ static void validate_location_module_evt(struct app_event_header *aeh, int no_of
 
 		/* Ignore search_time and timestamp verification as those values might change */
 		break;
-	case LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY: {
-		struct location_module_neighbor_cells *expected_ncells =
-			&expected_location_module_events[index].data.neighbor_cells;
-		struct location_module_neighbor_cells *received_ncells =
-			&event->data.neighbor_cells;
+	case LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY: {
+		struct location_module_cloud_location *expected_cloud_loc =
+			&expected_location_module_events[index].data.cloud_location;
+		struct location_module_cloud_location *received_cloud_loc =
+			&event->data.cloud_location;
 
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.mcc,
-			received_ncells->cell_data.current_cell.mcc);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.mcc,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.mcc);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.mnc,
-			received_ncells->cell_data.current_cell.mnc);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.mnc,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.mnc);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.id,
-			received_ncells->cell_data.current_cell.id);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.id,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.id);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.tac,
-			received_ncells->cell_data.current_cell.tac);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.tac,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.tac);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.earfcn,
-			received_ncells->cell_data.current_cell.earfcn);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.earfcn,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.earfcn);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.timing_advance,
-			received_ncells->cell_data.current_cell.timing_advance);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.timing_advance,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.timing_advance);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.timing_advance_meas_time,
-			received_ncells->cell_data.current_cell.timing_advance_meas_time);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell
+				.timing_advance_meas_time,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell
+				.timing_advance_meas_time);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.measurement_time,
-			received_ncells->cell_data.current_cell.measurement_time);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.measurement_time,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.measurement_time);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.phys_cell_id,
-			received_ncells->cell_data.current_cell.phys_cell_id);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.phys_cell_id,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.phys_cell_id);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.rsrp,
-			received_ncells->cell_data.current_cell.rsrp);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.rsrp,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.rsrp);
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.current_cell.rsrq,
-			received_ncells->cell_data.current_cell.rsrq);
+			expected_cloud_loc->neighbor_cells.cell_data.current_cell.rsrq,
+			received_cloud_loc->neighbor_cells.cell_data.current_cell.rsrq);
 
 		TEST_ASSERT_EQUAL(
-			expected_ncells->cell_data.ncells_count,
-			received_ncells->cell_data.ncells_count);
-		for (int i = 0; i < received_ncells->cell_data.ncells_count; i++) {
+			expected_cloud_loc->neighbor_cells.cell_data.ncells_count,
+			received_cloud_loc->neighbor_cells.cell_data.ncells_count);
+		for (int i = 0; i < received_cloud_loc->neighbor_cells.cell_data.ncells_count;
+		     i++) {
 			TEST_ASSERT_EQUAL(
-				expected_ncells->neighbor_cells[i].earfcn,
-				received_ncells->neighbor_cells[i].earfcn);
+				expected_cloud_loc->neighbor_cells.neighbor_cells[i].earfcn,
+				received_cloud_loc->neighbor_cells.neighbor_cells[i].earfcn);
 			TEST_ASSERT_EQUAL(
-				expected_ncells->neighbor_cells[i].time_diff,
-				received_ncells->neighbor_cells[i].time_diff);
+				expected_cloud_loc->neighbor_cells.neighbor_cells[i].time_diff,
+				received_cloud_loc->neighbor_cells.neighbor_cells[i].time_diff);
 			TEST_ASSERT_EQUAL(
-				expected_ncells->neighbor_cells[i].phys_cell_id,
-				received_ncells->neighbor_cells[i].phys_cell_id);
+				expected_cloud_loc->neighbor_cells.neighbor_cells[i].phys_cell_id,
+				received_cloud_loc->neighbor_cells.neighbor_cells[i].phys_cell_id);
 			TEST_ASSERT_EQUAL(
-				expected_ncells->neighbor_cells[i].rsrp,
-				received_ncells->neighbor_cells[i].rsrp);
+				expected_cloud_loc->neighbor_cells.neighbor_cells[i].rsrp,
+				received_cloud_loc->neighbor_cells.neighbor_cells[i].rsrp);
 			TEST_ASSERT_EQUAL(
-				expected_ncells->neighbor_cells[i].rsrq,
-				received_ncells->neighbor_cells[i].rsrq);
+				expected_cloud_loc->neighbor_cells.neighbor_cells[i].rsrq,
+				received_cloud_loc->neighbor_cells.neighbor_cells[i].rsrq);
 		}
 		break;
 	}
@@ -320,22 +304,8 @@ static void setup_location_module_in_active_state(void)
 	/* Set callback to validate location module events. */
 	__cmock__event_submit_Stub(&validate_location_module_evt);
 
-	/* Set default location configuration. */
-	enum location_method methods[] = { LOCATION_METHOD_GNSS, LOCATION_METHOD_CELLULAR };
-
-	struct location_config config_defaults = {
-		.methods_count = 2,
-		.interval = 0,
-		.timeout = 300000,
-		.mode = LOCATION_REQ_MODE_FALLBACK,
-		.methods = {
-			{.method = LOCATION_METHOD_GNSS, .gnss.timeout = 90000},
-			{.method = LOCATION_METHOD_CELLULAR, .cellular.timeout = 11000}
-		}
-	};
-	__cmock_location_config_defaults_set_Expect(NULL, 2, methods);
+	__cmock_location_config_defaults_set_Expect(NULL, 0, NULL);
 	__cmock_location_config_defaults_set_IgnoreArg_config();
-	__cmock_location_config_defaults_set_ReturnThruPtr_config(&config_defaults);
 
 	/* Location configuration modified by location module for location request. */
 	struct location_config config_location_request = {
@@ -453,13 +423,13 @@ void test_location_cellular(void)
 	expected_location_module_event_count = 3;
 	expected_location_module_events[0].type = LOCATION_MODULE_EVT_ACTIVE;
 
-	expected_location_module_events[1].type = LOCATION_MODULE_EVT_NEIGHBOR_CELLS_DATA_READY;
-	expected_location_module_events[1].data.neighbor_cells.cell_data = lte_cells;
-	expected_location_module_events[1].data.neighbor_cells.neighbor_cells[0] =
+	expected_location_module_events[1].type = LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY;
+	expected_location_module_events[1].data.cloud_location.neighbor_cells.cell_data = lte_cells;
+	expected_location_module_events[1].data.cloud_location.neighbor_cells.neighbor_cells[0] =
 		neighbor_cells[0];
-	expected_location_module_events[1].data.neighbor_cells.neighbor_cells[1] =
+	expected_location_module_events[1].data.cloud_location.neighbor_cells.neighbor_cells[1] =
 		neighbor_cells[1];
-	expected_location_module_events[1].data.neighbor_cells.timestamp = 123456789;
+	expected_location_module_events[1].data.cloud_location.neighbor_cells.timestamp = 123456789;
 
 	expected_location_module_events[2].type = LOCATION_MODULE_EVT_INACTIVE;
 
@@ -469,12 +439,12 @@ void test_location_cellular(void)
 	/* Location module indicates that it has handled neighbor cells
 	 * but the location is undefined.
 	 */
-	__cmock_location_cellular_ext_result_set_Expect(LOCATION_CELLULAR_EXT_RESULT_UNKNOWN, NULL);
+	__cmock_location_cloud_location_ext_result_set_Expect(LOCATION_EXT_RESULT_UNKNOWN, NULL);
 
 	/* Location request is responded with location library events. */
 	struct location_event_data event_data_cellular = {
-		.id = LOCATION_EVT_CELLULAR_EXT_REQUEST,
-		.cellular_request = lte_cells
+		.id = LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST,
+		.cloud_location_request.cell_data = &lte_cells
 	};
 	location_event_handler(&event_data_cellular);
 
@@ -531,6 +501,7 @@ void test_location_fail_init(void)
 {
 	setup_location_module_in_init_state();
 
+	__cmock__event_submit_Stub(&validate_location_module_evt);
 	__cmock_location_init_ExpectAndReturn(&location_event_handler, -EINVAL);
 
 	/* Set expected GNSS module events. */

@@ -67,7 +67,8 @@ def append_validation_data(signature, input_file, public_key, offset, output_hex
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Append validation metadata at specified offset. Generate HEX and BIN file',
-        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False)
 
     parser.add_argument('-i', '--input', required=True, type=argparse.FileType('r', encoding='UTF-8'),
                         help='Input hex file.')

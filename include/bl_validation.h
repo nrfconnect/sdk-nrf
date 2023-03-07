@@ -65,25 +65,32 @@ struct bl_validate_fw_ext_api {
 	bl_validate_firmware_t bl_validate_firmware;
 };
 
-/** Write version and slot to monotonic counter.
+/** Write 15 bit version and 1 bit slot to a 16 bit monotonic counter.
  *
- * @details The version is left-shifted 1 bit, and the slot is place as the LSB.
- *
- * @param[in]  version  Firmware version.
+ * @param[in]  version  Firmware version. Can be any unsigned 15 bit value.
  * @param[in]  slot     Slot where firmware is located. Must be 0 or 1.
  *
  * @return See @ref set_monotonic_counter.
  */
 int set_monotonic_version(uint16_t version, uint16_t slot);
 
-
-/** Read version and slot from monotonic counter.
+/** Write the stored 15-bit version to the 16-bit output parameter 'version_out'.
  *
- * @param[out]  slot_out  Slot where firmware is located. Can be NULL.
+ * @param[out]  version_out  Firmware version. Can be any unsigned 15-bit value.
  *
- * @return Firmware version
+ * @retval 0       Success
+ * @retval -EINVAL Error during reading the version or version is NULL.
  */
-uint16_t get_monotonic_version(uint16_t *slot_out);
+int get_monotonic_version(uint16_t *version_out);
+
+/** Write the stored slot to the output parameter 'slot_out'.
+ *
+ * @param[out]  slot_out  Slot where firmware is located. Can be 0 or 1.
+ *
+ * @retval 0       Success
+ * @retval -EINVAL Error during reading the version or version is NULL.
+ */
+int get_monotonic_slot(uint16_t *slot_out);
 
   /** @} */
 

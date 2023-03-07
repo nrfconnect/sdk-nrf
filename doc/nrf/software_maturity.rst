@@ -77,6 +77,8 @@ See the following table for more details:
      - Incomplete verification
      - Not applicable.
 
+.. _api_deprecation:
+
 API deprecation
 ***************
 
@@ -123,7 +125,7 @@ The following table indicates the software maturity levels of the support for th
 
           * Basic Audio Profile (BAP) broadcast, one BIG with two BIS streams.
           * Audio input: USB or I2S (Line in or using Pulse Density Modulation).
-          * Configuration: 48 kHz, 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
+          * Configuration: 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
 
         - Experimental
       * - **Broadcast sink**
@@ -134,22 +136,19 @@ The following table indicates the software maturity levels of the support for th
 
           * BAP broadcast, one BIG, one of the two BIS streams (selectable).
           * Audio output: I2S/Analog headset output.
-          * Configuration: 48 kHz, 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
+          * Configuration: 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
 
         - Experimental
       * - **Unicast client**
         - BAP unicast, one Connected Isochronous Group (CIG) with two Connected Isochronous Streams (CIS).
 
           Transmitting unidirectional or transceiving bidirectional audio using CIG and CIS.
-
-          Play and pause emulated by disabling and enabling stream, respectively.
         - The following limitations apply:
 
           * BAP unicast, one CIG with two CIS.
-          * Bidirectional mode only supports connecting to *one* unicast server.
           * Audio input: USB or I2S (Line in or using Pulse Density Modulation).
           * Audio output: USB or I2S/Analog headset output.
-          * Configuration: 48 kHz, 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
+          * Configuration: 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
 
         - Experimental
       * - **Unicast server**
@@ -157,15 +156,13 @@ The following table indicates the software maturity levels of the support for th
 
           Receiving unidirectional or transceiving bidirectional audio using CIG and CIS.
 
-          To emulate play and pause, the available context type for media is added or removed. This enables and disables streaming, respectively.
-
           Coordinated Set Identification Service (CSIS) is implemented on the server side.
         - The following limitations apply:
 
           * BAP unicast, one CIG, one of the two CIS streams (selectable).
           * Audio output: I2S/Analog headset output.
           * Audio input: PDM microphone over I2S.
-          * Configuration: 48 kHz, 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
+          * Configuration: 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
 
         - Experimental
 
@@ -213,6 +210,15 @@ The following table indicates the software maturity levels of the support for ea
 .. toggle::
 
   .. sml-table:: zigbee
+
+Wi-Fi feature support
+**********************
+
+The following table indicates the software maturity levels of the support for each Wi-Fi feature:
+
+.. toggle::
+
+  .. sml-table:: wifi
 
 Security Feature Support
 ************************

@@ -7,6 +7,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/random/rand32.h>
 
+#include <math.h>
+
 #include "peer.h"
 #include "pwm_led.h"
 #include "service.h"
@@ -74,10 +76,22 @@ static struct peer_entry *mcpd_min_peer_result(struct peer_entry *a, struct peer
 		return a;
 	}
 
-	if (a->result.dist_estimates.mcpd.best > b->result.dist_estimates.mcpd.best) {
+#ifdef CONFIG_DM_HIGH_PRECISION_CALC
+	float dist_a = !isnan(a->result.dist_estimates.mcpd.high_precision) ?
+		  a->result.dist_estimates.mcpd.high_precision : a->result.dist_estimates.mcpd.best;
+	float dist_b = !isnan(b->result.dist_estimates.mcpd.high_precision) ?
+		  b->result.dist_estimates.mcpd.high_precision : b->result.dist_estimates.mcpd.best;
+
+	if (dist_a < dist_b) {
 		return a;
 	}
 	return b;
+#else
+	if (a->result.dist_estimates.mcpd.best < b->result.dist_estimates.mcpd.best) {
+		return a;
+	}
+	return b;
+#endif
 }
 
 static struct peer_entry *peer_find_closest(void)
@@ -134,7 +148,12 @@ static void led_notification(const struct peer_entry *peer)
 	if (peer->result.ranging_mode == DM_RANGING_MODE_RTT) {
 		res = peer->result.dist_estimates.rtt.rtt;
 	} else {
+#ifdef CONFIG_DM_HIGH_PRECISION_CALC
+		res = peer->result.dist_estimates.mcpd.high_precision;
+		res = isnan(res) ? peer->result.dist_estimates.mcpd.best : res;
+#else
 		res = peer->result.dist_estimates.mcpd.best;
+#endif
 	}
 
 	res = (res < 0 ? 0 : res) * 10;
@@ -164,11 +183,21 @@ static void print_result(struct dm_result *result)
 	if (result->ranging_mode == DM_RANGING_MODE_RTT) {
 		printk("rtt: rtt=%.2f\n", result->dist_estimates.rtt.rtt);
 	} else {
+#ifdef CONFIG_DM_HIGH_PRECISION_CALC
+		printk("mcpd: high_precision=%.2f ifft=%.2f phase_slope=%.2f "
+			"rssi_openspace=%.2f best=%.2f\n",
+			result->dist_estimates.mcpd.high_precision,
+			result->dist_estimates.mcpd.ifft,
+			result->dist_estimates.mcpd.phase_slope,
+			result->dist_estimates.mcpd.rssi_openspace,
+			result->dist_estimates.mcpd.best);
+#else
 		printk("mcpd: ifft=%.2f phase_slope=%.2f rssi_openspace=%.2f best=%.2f\n",
 			result->dist_estimates.mcpd.ifft,
 			result->dist_estimates.mcpd.phase_slope,
 			result->dist_estimates.mcpd.rssi_openspace,
 			result->dist_estimates.mcpd.best);
+#endif
 	}
 }
 

@@ -9,16 +9,22 @@ Matter: Door lock
    :depth: 2
 
 This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a door lock device with one basic bolt.
-This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread or Wi-Fi network.
-Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol can be supported for a specific lock device.
-In case of Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
 You can use this sample as a reference for creating your application.
+
+This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread or Wi-Fi network.
+Support for both Thread and Wi-Fi depends on the hardware platform.
+The door lock sample can be configured to use only one transport protocol, for example Thread or Wi-Fi, or can use the :ref:`switchable Matter over Wi-Fi and Matter over Thread <matter_lock_sample_wifi_thread_switching>` architecture, where the application is able to load and run on boot an image with either the Thread or the Wi-Fi support.
+
+Depending on the network you choose:
+
+* In case of Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
+* In case of Wi-Fi, this device works in the :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
+  This means that the device sleeps most of the time and wakes up on each Delivery Traffic Indication Message (DTIM) interval to poll for pending messages.
+
+The same distinction applies in the :ref:`matter_lock_sample_wifi_thread_switching` scenario, depending on the network you have switched to.
 
 Requirements
 ************
-
-.. note::
-    |matter_wifi_revb_ncs220_test_note|
 
 The sample supports the following development kits:
 
@@ -37,6 +43,7 @@ The development kits for this sample offer the following IPv6 network support fo
 
 * Matter over Thread is supported for ``nrf52840dk_nrf52840``, ``nrf5340dk_nrf5340_cpuapp``, and ``nrf21540dk_nrf52840``.
 * Matter over Wi-Fi is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached or for ``nrf7002dk_nrf5340_cpuapp``.
+* :ref:`Switching of Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached, using the ``thread_wifi_switched`` build type.
 
 Overview
 ********
@@ -59,10 +66,35 @@ Remote testing in a network
 By default, the Matter accessory device has IPv6 networking disabled.
 You must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread or Wi-Fi network.
 You have to make the device discoverable manually (for security reasons).
-The controller must get the commissioning information from the Matter accessory device and provision the device into the network.
+The controller must get the `Onboarding information`_ from the Matter accessory device and provision the device into the network.
 For details, see the `Commissioning the device`_ section.
 
 .. matter_door_lock_sample_remote_testing_end
+
+.. _matter_lock_sample_wifi_thread_switching:
+
+Thread and Wi-Fi switching
+==========================
+
+When built using the ``thread_wifi_switched`` build type and programmed to the nRF5340 DK with the nRF7002 EK shield attached, the door lock sample supports a feature that allows you to :ref:`dynamically switch between Matter over Thread and Matter over Wi-Fi <ug_matter_overview_architecture_integration_designs_switchable>` on the device boot.
+Due to internal flash size limitations, only one transport protocol can be used at a time.
+
+.. matter_door_lock_sample_thread_wifi_switch_desc_start
+
+The application is built in two variants: the first one is the application working with Matter over Thread and the second one is the application working with Matter over Wi-Fi.
+You can configure which transport is selected on the device boot as the default one.
+Both application variants are programmed into separate partitions of the external flash.
+The application runs from the internal flash memory, using one of the variants from the external flash.
+You can trigger the switch from one variant to another using the **Button 3** on the nRF5340 DK.
+The device is rebooted into the MCUboot bootloader, which replaces the current variant by swapping the application variant in the internal flash.
+
+.. note::
+   Because the external flash is used for both the DFU and the switching feature, this implementation has higher memory size requirements and you need an external flash with at least 6 MB of memory.
+
+.. matter_door_lock_sample_thread_wifi_switch_desc_end
+
+See `Matter door lock build types`_, `Selecting a build type`_, and :ref:`matter_lock_sample_switching_thread_wifi` for more information about how to configure and test this feature with this sample.
+The Thread and Wi-Fi switching also supports :ref:`dedicated Device Firmware Upgrades <matter_lock_sample_switching_thread_wifi_dfu>`.
 
 Configuration
 *************
@@ -82,7 +114,7 @@ Other build types are covered by dedicated files with the build type added as a 
 For example, the ``release`` build type file name is :file:`prj_release.conf`.
 If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_overview_start
    :end-before: build_types_overview_end
 
@@ -91,6 +123,7 @@ This sample supports the following build types, depending on the selected board:
 
 * ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
 * ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
+* ``thread_wifi_switched`` -- Debug version of the application with the ability to :ref:`switch between Thread and Wi-Fi network support <matter_lock_sample_wifi_thread_switching>` in the field - can be used for the nRF5340 DK with the nRF7002 EK shield attached.
 * ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used for the nRF52840 DK, nRF5340 DK, nRF7002 DK, and nRF21540 DK.
 
 .. note::
@@ -191,6 +224,10 @@ Button 2:
       * If pressed for less than three seconds, it changes the lock state to the opposite one.
       * If pressed for more than three seconds, it starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
 
+Button 3:
+    * On the nRF5340 DK when using the ``thread_wifi_switched`` build type: If pressed for more than ten seconds, it switches the running application from Thread or Wi-Fi to the other and factory resets the device.
+    * On other platform or build type: Not available.
+
 .. matter_door_lock_sample_button4_start
 
 Button 4:
@@ -209,7 +246,7 @@ SEGGER J-Link USB port:
 .. matter_door_lock_sample_jlink_end
 
 NFC port with antenna attached:
-    Optionally used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_lock_sample_remote_control>`.
+    Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_lock_sample_remote_control>`.
 
 Building and running
 ********************
@@ -228,14 +265,14 @@ Before you start testing the application, you can select one of the `Matter door
 Selecting a build type in |VSC|
 -------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_vsc_start
    :end-before: build_types_selection_vsc_end
 
 Selecting a build type from command line
 ----------------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_cmd_start
    :end-before: For example, you can replace the
 
@@ -319,10 +356,127 @@ If you are new to Matter, the recommended approach is to use :ref:`CHIP Tool for
 
 .. matter_door_lock_sample_commissioning_end
 
+Onboarding information
+++++++++++++++++++++++
+
+When you start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
+The onboarding information representation depends on your commissioner setup.
+
+For this sample, you can use one of the following :ref:`onboarding information formats <ug_matter_network_topologies_commissioning_onboarding_formats>` to provide the commissioner with the data payload that includes the device discriminator and the setup PIN code:
+
+  .. list-table:: Door lock sample onboarding information
+     :header-rows: 1
+
+     * - QR Code
+       - QR Code Payload
+       - Manual pairing code
+     * - Scan the following QR code with the app for your ecosystem:
+
+         .. figure:: ../../../doc/nrf/images/matter_qr_code_door_lock.png
+            :width: 200px
+            :alt: QR code for commissioning the light bulb device
+
+       - MT:8IXS142C00KA0648G00
+       - 34970112332
+
 Upgrading the device firmware
 =============================
 
 To upgrade the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial of the Matter documentation.
+
+.. _matter_lock_sample_switching_thread_wifi:
+
+Testing switching between Thread and Wi-Fi
+==========================================
+
+.. note::
+   You can only test :ref:`matter_lock_sample_wifi_thread_switching` on the nRF5340 DK with the nRF7002 EK shield attached, using the ``thread_wifi_switched`` build type.
+
+To test this feature, complete the following steps:
+
+#. Build the door lock application for Matter over Thread:
+
+   .. code-block:: console
+
+      west build -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -Dhci_rpmsg_SHIELD=nrf7002_ek_coex -DCONFIG_CHIP_WIFI=n
+
+#. Program the application to the kit using the following command:
+
+   .. code-block:: console
+
+      west flash --erase
+
+#. Erase the entire content of the external flash using the following command:
+
+   .. code-block:: console
+
+      nrfjprog --qspieraseall
+
+#. Program the application to a partition of the external flash using the following command:
+
+   .. code-block:: console
+
+      west build -t flash-external
+
+#. Build the door lock application for Matter over Wi-Fi:
+
+   .. code-block:: console
+
+      west build -b nrf5340dk_nrf5340_cpuapp -p always -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -Dhci_rpmsg_SHIELD=nrf7002_ek_coex
+
+#. Program the application to another partition of the external flash using the following command:
+
+   .. code-block:: console
+
+      west build -t flash-external
+
+#. |connect_terminal_ANSI|
+#. Press **Button 3** for more than ten seconds to trigger switching to the Matter over Wi-Fi variant of the application.
+#. Observe logs showing the progress of the operation until the device shuts down.
+#. Wait until the device boots again.
+#. Find the following log message which indicates that the expected variant of the application is running:
+
+   .. code-block:: console
+
+      D: 823 [DL]WiFiManager has been initialized
+
+.. _matter_lock_sample_switching_thread_wifi_dfu:
+
+Device Firmware Upgrade over Matter for Thread/Wi-Fi switchable application
+---------------------------------------------------------------------------
+
+To upgrade the device firmware when using the ``thread_wifi_switched`` build type, complete the steps from the *Device Firmware Upgrade over Matter* section in the :doc:`matter:nrfconnect_examples_software_update` tutorial of the Matter documentation.
+
+Because the application supports switching between Thread and Wi-Fi, you need to make sure that the Matter OTA image file served by the OTA Provider includes two application variants: for Matter over Thread and for Matter over Wi-Fi, respectively.
+
+To make sure that both application variants are included in the OTA image file, use the dedicated the :file:`combine_ota_images.py` script.
+The script takes the Matter OTA image files generated for both variants and combines them in one file.
+It also assumes that both input images were created with the same *vendor_id*, *product_id*, *version*, *version_string*, *min_version*, *max_version*, and *release_notes*.
+
+Complete the following steps to generate the Matter OTA combined image file:
+
+#. Build the door lock application for Matter over Thread by running the following command:
+
+   .. code-block:: console
+
+      west build -b nrf5340dk_nrf5340_cpuapp -d build_thread -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -Dhci_rpmsg_SHIELD=nrf7002_ek_coex -DCONFIG_CHIP_WIFI=n
+
+   This command creates the *build_thread* directory, where the Matter over Thread application is stored.
+#. Build the door lock application for Matter over Wi-Fi by running the following command:
+
+   .. code-block:: console
+
+      west build -b nrf5340dk_nrf5340_cpuapp -d build_wifi -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002_ek -Dhci_rpmsg_SHIELD=nrf7002_ek_coex
+
+   This command creates the *build_wifi* directory, where the Matter over Wi-Fi application is stored.
+#. Combine Matter OTA image files generated for both variants by running the ``combine_ota_images.py`` script in the sample directory by running the following command (with ``<output_directory>`` changed to the directory name of your choice):
+
+   .. code-block:: console
+
+      src/combine_ota_images.py build_thread/zephyr/matter.ota build_wifi/zephyr/matter.ota <output_directory>/combined_matter.ota
+
+.. note::
+    Keep the order in which the files are passed to the script, given that the Thread variant image file must be passed in front of the Wi-Fi variant image.
 
 Dependencies
 ************

@@ -14,15 +14,6 @@ menuconfig MODEM_MODULE
 
 if MODEM_MODULE
 
-config MODEM_SEND_ALL_SAMPLED_DATA
-	bool "Include all sampled data upon a sample request"
-	default y if LWM2M_INTEGRATION
-	help
-	  If this option is disabled the modem module will only include data values that have
-	  changed from the last sample request. Currently this option is only supported for
-	  dynamic modem data. This is to save costs related to data transfers and to lower the
-	  device's overall current consumption due to less CPU and radio-activity.
-
 config MODEM_THREAD_STACK_SIZE
 	int "Modem module thread stack size"
 	default 2048

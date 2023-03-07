@@ -182,7 +182,7 @@ Updated libraries
 
   * Dropped the nRF Connect SDK copy of the MQTT library and adopted Zephyr's :ref:`zephyr:mqtt_socket_interface` library instead.
 
-* :ref:`lib_spm`:
+* Secure Partition Manager (SPM):
 
   * Added a new non-secure-callable function :c:func:`spm_firmware_info`.
 
@@ -470,7 +470,7 @@ Documentation
     * :ref:`nfc_t4t_apdu_readme`
     * :ref:`nfc_t4t_isodep_readme`
     * :ref:`nrf_profiler`
-    * :ref:`lib_secure_services`
+    * Secure Services
 
 
 * Added or updated the following documentation:
@@ -567,7 +567,7 @@ NFC
 Build system
 ============
 
-* It is not possible to build and program :ref:`secure_partition_manager` and the application individually.
+* It is not possible to build and program Secure Partition Manager and the application individually.
 
 nrfxlib
 =======

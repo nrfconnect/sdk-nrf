@@ -53,11 +53,14 @@ config NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY
 	bool "IP only"
 config NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY
 	bool "Coredump only"
+config NRF_MODEM_LIB_TRACE_LEVEL_OFF
+	bool "Off"
 
 endchoice
 
 config NRF_MODEM_LIB_TRACE_LEVEL
 	int
+	default 0 if NRF_MODEM_LIB_TRACE_LEVEL_OFF
 	default 1 if NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY
 	default 2 if NRF_MODEM_LIB_TRACE_LEVEL_FULL
 	default 4 if NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY
@@ -97,7 +100,7 @@ endif # NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
 endif # NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
 
 config NRF_MODEM_LIB_TRACE_BITRATE_LOG
-	depends on LOG
+	depends on NRF_MODEM_LIB_LOG_LEVEL_INF || NRF_MODEM_LIB_LOG_LEVEL_DBG
 	bool "Log trace bitrate"
 
 if NRF_MODEM_LIB_TRACE_BITRATE_LOG
@@ -166,19 +169,21 @@ config NRF_MODEM_LIB_SHMEM_CTRL_SIZE
 config NRF_MODEM_LIB_SHMEM_TX_SIZE
 	int "TX region size"
 	range 1024 32768
-	default 8192
+	# Set default to 8k plus Zephyr heap overhead (128 bytes)
+	default 8320
 	help
-	  Size of the shared memory region owned by the application. This area holds all outgoing data
-	  from the application to the modem, e.g. buffers passed to `send()`. Its size affects directly
-	  the largest payload that can be sent at once, and the largest AT command that can be sent.
+	  Size of the shared memory region owned by the application. This area holds all outgoing
+	  data from the application to the modem, e.g. buffers passed to `send()`, AT commands.
+	  The size must be a multiple of four to keep the memory partitions word-aligned.
 
 config NRF_MODEM_LIB_SHMEM_RX_SIZE
 	int "RX region size"
-	range 1544 32768
+	range 2488 32768
 	default 8192
 	help
 	  Size of the shared memory region owned by the modem.
 	  This area holds all incoming data from the modem, plus the modem's own control structures.
+	  The size must be a multiple of four to keep the memory partitions word-aligned.
 
 config NRF_MODEM_LIB_SHMEM_TRACE_SIZE_OVERRIDE
 	bool "Custom trace region size"

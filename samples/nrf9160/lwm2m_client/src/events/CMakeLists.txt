@@ -7,6 +7,6 @@
 zephyr_include_directories(include)
 
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/gnss_pvt_event.c)
-target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sensor_event.c)
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ui_input_event.c)
-target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/accel_event.c)
+target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/location_events.c)
+target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/location_event_handler.c)

@@ -12,9 +12,6 @@ zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT lwm2m/
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT lwm2m/lwm2m_security.c)
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
 			     lwm2m/ecid_signal_meas_info.c)
-zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS
-			     location/location_events.c
-			     location/location_event_handler.c)
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
 			     lwm2m/lwm2m_cellconn_obj.c)
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT
@@ -27,4 +24,6 @@ zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_RAI
 			     lwm2m/lwm2m_rai.c)
 zephyr_library_sources(lwm2m/lwm2m_lte_notification.c)
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT lwm2m/lwm2m_adv_firmware.c)
+zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_WIFI_AP_SCANNER location/location_wifi_ap_scanner.c)
+zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT lwm2m/visible_wifi_ap.c)
 zephyr_include_directories(lwm2m/include)

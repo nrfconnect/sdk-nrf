@@ -10,6 +10,8 @@
 
 #include "trace_backend.h"
 
+extern struct nrf_modem_lib_trace_backend trace_backend;
+
 #include "cmock_SEGGER_RTT.h"
 
 #define BACKEND_RTT_BUF_SIZE CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT_BUF_SIZE
@@ -21,20 +23,7 @@ static int callback(size_t len)
 
 extern int unity_main(void);
 
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
-
 static int trace_rtt_channel;
-
-void setUp(void)
-{
-	cmock_SEGGER_RTT_Init();
-}
-
-void tearDown(void)
-{
-	cmock_SEGGER_RTT_Verify();
-}
 
 static int rtt_allocupbuffer_callback(const char *sName, void *pBuffer, unsigned int BufferSize,
 				      unsigned int Flags, int no_of_calls)
@@ -49,11 +38,6 @@ static int rtt_allocupbuffer_callback(const char *sName, void *pBuffer, unsigned
 	return trace_rtt_channel;
 }
 
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
-}
-
 void test_trace_backend_init_rtt(void)
 {
 	int ret;
@@ -63,7 +47,7 @@ void test_trace_backend_init_rtt(void)
 	__cmock_SEGGER_RTT_AllocUpBuffer_ExpectAnyArgsAndReturn(trace_rtt_channel);
 	__cmock_SEGGER_RTT_AllocUpBuffer_AddCallback(&rtt_allocupbuffer_callback);
 
-	ret = trace_backend_init(callback);
+	ret = trace_backend.init(callback);
 
 	TEST_ASSERT_EQUAL(0, ret);
 }
@@ -75,7 +59,7 @@ void test_trace_backend_init_rtt_ebusy(void)
 	/* Simulate failure by returning negative RTT channel. */
 	__cmock_SEGGER_RTT_AllocUpBuffer_ExpectAnyArgsAndReturn(-1);
 
-	ret = trace_backend_init(callback);
+	ret = trace_backend.init(callback);
 	TEST_ASSERT_EQUAL(-EBUSY, ret);
 }
 
@@ -83,7 +67,7 @@ void test_trace_backend_init_rtt_efault(void)
 {
 	int ret;
 
-	ret = trace_backend_init(NULL);
+	ret = trace_backend.init(NULL);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
 
@@ -107,7 +91,7 @@ void test_trace_backend_write_rtt(void)
 		trace_rtt_channel, &sample_trace_data[BACKEND_RTT_BUF_SIZE], remaining, remaining);
 
 	/* Simulate the reception of modem trace and expect the RTT API to be called. */
-	trace_backend_write(sample_trace_data, sizeof(sample_trace_data));
+	trace_backend.write(sample_trace_data, sizeof(sample_trace_data));
 }
 
 void main(void)

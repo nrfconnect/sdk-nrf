@@ -19,10 +19,6 @@
 #include "hci_internal.h"
 #include "ecdh.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
-#define LOG_MODULE_NAME sdc_hci_internal
-#include "common/log.h"
-
 #define CMD_COMPLETE_MIN_SIZE (BT_HCI_EVT_HDR_SIZE \
 				+ sizeof(struct bt_hci_evt_cmd_complete) \
 				+ sizeof(struct bt_hci_evt_cc_status))
@@ -46,7 +42,9 @@ static bool command_generates_command_complete_event(uint16_t hci_opcode)
 	case SDC_HCI_OPCODE_CMD_LE_READ_REMOTE_FEATURES:
 	case SDC_HCI_OPCODE_CMD_LE_ENABLE_ENCRYPTION:
 	case SDC_HCI_OPCODE_CMD_LE_EXT_CREATE_CONN:
+	case SDC_HCI_OPCODE_CMD_LE_EXT_CREATE_CONN_V2:
 	case SDC_HCI_OPCODE_CMD_LE_PERIODIC_ADV_CREATE_SYNC:
+	case SDC_HCI_OPCODE_CMD_LE_REQUEST_PEER_SCA:
 	case SDC_HCI_OPCODE_CMD_LE_READ_REMOTE_TRANSMIT_POWER_LEVEL:
 	case SDC_HCI_OPCODE_CMD_VS_CONN_UPDATE:
 	case SDC_HCI_OPCODE_CMD_VS_WRITE_REMOTE_TX_POWER:
@@ -111,6 +109,10 @@ static bool is_host_using_legacy_and_extended_commands(uint16_t hci_opcode)
 	case SDC_HCI_OPCODE_CMD_LE_CLEAR_PERIODIC_ADV_LIST:
 	case SDC_HCI_OPCODE_CMD_LE_READ_PERIODIC_ADV_LIST_SIZE:
 #endif
+#if defined(CONFIG_BT_PER_ADV_SYNC_TRANSFER_RECEIVER)
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_SYNC_TRANSFER_PARAMS:
+	case SDC_HCI_OPCODE_CMD_LE_SET_DEFAULT_PERIODIC_ADV_SYNC_TRANSFER_PARAMS:
+#endif /* CONFIG_BT_PER_ADV_SYNC_TRANSFER_RECEIVER */
 		if (type_of_adv_cmd_used_since_reset == ADV_COMMAND_TYPE_NONE) {
 			type_of_adv_cmd_used_since_reset = ADV_COMMAND_TYPE_EXTENDED;
 			return false;
@@ -330,6 +332,11 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_set_periodic_advertising_data = 1;
 	cmds->hci_le_set_periodic_advertising_enable = 1;
 #endif /* CONFIG_BT_PER_ADV*/
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
+	cmds->hci_le_set_periodic_advertising_subevent_data = 1;
+	cmds->hci_le_extended_create_connection_v2 = 1;
+	cmds->hci_le_set_periodic_advertising_parameters_v2 = 1;
+#endif /* CONFIG_BT_CTLR_SDC_PAWR_ADV */
 #endif /* CONFIG_BT_BROADCASTER */
 
 #if defined(CONFIG_BT_OBSERVER)
@@ -354,6 +361,11 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #if defined(CONFIG_BT_CTLR_SYNC_TRANSFER_SENDER)
 	cmds->hci_le_periodic_advertising_sync_transfer = 1;
 	cmds->hci_le_periodic_advertising_set_info_transfer = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_SYNC_TRANSFER_RECEIVER)
+	cmds->hci_le_set_periodic_advertising_sync_transfer_parameters = 1;
+	cmds->hci_le_set_default_periodic_advertising_sync_transfer_parameters = 1;
 #endif
 
 	cmds->hci_le_read_transmit_power = 1;
@@ -387,6 +399,10 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_enhanced_read_transmit_power_level = 1;
 	cmds->hci_le_read_remote_transmit_power_level = 1;
 	cmds->hci_le_set_transmit_power_reporting_enable = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_SCA_UPDATE)
+	cmds->hci_le_request_peer_sca = 1;
 #endif
 
 #if (defined(CONFIG_BT_HCI_RAW) && defined(CONFIG_BT_TINYCRYPT_ECC)) || defined(CONFIG_BT_CTLR_ECDH)
@@ -441,63 +457,74 @@ static void supported_features(sdc_hci_ip_lmp_features_t *features)
 	features->le_supported = 1;
 }
 
-static void le_supported_features(sdc_hci_le_le_features_t *features)
+static void le_supported_features(sdc_hci_cmd_le_read_local_supported_features_return_t *features)
 {
 	memset(features, 0, sizeof(*features));
 
-	features->le_encryption = 1;
-	features->extended_reject_indication = 1;
-	features->slave_initiated_features_exchange = 1;
-	features->le_ping = 1;
+	features->params.le_encryption = 1;
+	features->params.extended_reject_indication = 1;
+	features->params.slave_initiated_features_exchange = 1;
+	features->params.le_ping = 1;
 
 #ifdef CONFIG_BT_CTLR_DATA_LENGTH
-	features->le_data_packet_length_extension = 1;
+	features->params.le_data_packet_length_extension = 1;
 #endif
 
 #ifdef CONFIG_BT_CTLR_PRIVACY
-	features->ll_privacy = 1;
+	features->params.ll_privacy = 1;
 #endif
 
 #ifdef CONFIG_BT_CTLR_EXT_SCAN_FP
-	features->extended_scanner_filter_policies = 1;
+	features->params.extended_scanner_filter_policies = 1;
 #endif
 
 #ifdef CONFIG_BT_CTLR_PHY_2M
-	features->le_2m_phy = 1;
+	features->params.le_2m_phy = 1;
 #endif
 
 #ifdef CONFIG_BT_CTLR_PHY_CODED
-	features->le_coded_phy = 1;
+	features->params.le_coded_phy = 1;
 #endif
 
 #ifdef CONFIG_BT_CTLR_ADV_EXT
-	features->le_extended_advertising = 1;
+	features->params.le_extended_advertising = 1;
 #endif
 
 #if defined(CONFIG_BT_CTLR_ADV_PERIODIC) || defined(CONFIG_BT_CTLR_SYNC_PERIODIC)
-	features->le_periodic_advertising = 1;
+	features->params.le_periodic_advertising = 1;
 #ifdef CONFIG_BT_CTLR_SYNC_TRANSFER_SENDER
-	features->periodic_advertising_sync_transfer_sender = 1;
+	features->params.periodic_advertising_sync_transfer_sender = 1;
+#endif
+#ifdef CONFIG_BT_CTLR_SYNC_TRANSFER_RECEIVER
+	features->params.periodic_advertising_sync_transfer_recipient = 1;
 #endif
 #endif
 
 #if defined(CONFIG_BT_CTLR_DF_ADV_CTE_TX)
-	features->connectionless_cte_transmitter = 1;
+	features->params.connectionless_cte_transmitter = 1;
 #endif
 
-	features->channel_selection_algorithm_2 = 1;
+	features->params.channel_selection_algorithm_2 = 1;
 
 #if defined(CONFIG_BT_CTLR_LE_POWER_CONTROL)
-	features->le_power_control_request = 1;
-	features->le_power_change_indication = 1;
+	features->params.le_power_control_request = 1;
+	features->params.le_power_change_indication = 1;
 #endif
 
 #if defined(CONFIG_BT_CTLR_ADV_PERIODIC_ADI_SUPPORT)
-	features->periodic_advertising_adi_support = 1;
+	features->params.periodic_advertising_adi_support = 1;
 #endif
 
 #if defined(CONFIG_BT_CTLR_DF_CONN_CTE_RSP)
-	features->connection_cte_response = 1;
+	features->params.connection_cte_response = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_SCA_UPDATE)
+	features->params.sleep_clock_accuracy_updates = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
+	features->params.periodic_advertising_with_responses_advertiser = 1;
 #endif
 }
 
@@ -1042,6 +1069,36 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 								     (void *)event_out_params);
 #endif
 
+#if defined(CONFIG_BT_CTLR_SYNC_TRANSFER_RECEIVER)
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_SYNC_TRANSFER_PARAMS:
+		*param_length_out +=
+			sizeof(sdc_hci_cmd_le_set_periodic_adv_sync_transfer_params_return_t);
+		return sdc_hci_cmd_le_set_periodic_adv_sync_transfer_params(
+			(void *)cmd_params, (void *)event_out_params);
+
+	case SDC_HCI_OPCODE_CMD_LE_SET_DEFAULT_PERIODIC_ADV_SYNC_TRANSFER_PARAMS:
+		return sdc_hci_cmd_le_set_default_periodic_adv_sync_transfer_params(
+			(void *)cmd_params);
+#endif
+
+#if defined(CONFIG_BT_CTLR_SCA_UPDATE)
+	case SDC_HCI_OPCODE_CMD_LE_REQUEST_PEER_SCA:
+		return sdc_hci_cmd_le_request_peer_sca((void *)cmd_params);
+#endif
+
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
+	case SDC_HCI_OPCODE_CMD_LE_EXT_CREATE_CONN_V2:
+		return sdc_hci_cmd_le_ext_create_conn_v2((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_PARAMS_V2:
+		*param_length_out += sizeof(sdc_hci_cmd_le_set_periodic_adv_params_v2_return_t);
+		return sdc_hci_cmd_le_set_periodic_adv_params_v2((void *)cmd_params,
+								 (void *)event_out_params);
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_SUBEVENT_DATA:
+		*param_length_out += sizeof(sdc_hci_cmd_le_set_periodic_adv_subevent_data_return_t);
+		return sdc_hci_cmd_le_set_periodic_adv_subevent_data((void *)cmd_params,
+								     (void *)event_out_params);
+#endif
+
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
 	}
@@ -1107,12 +1164,6 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_vs_qos_conn_event_report_enable((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_VS_EVENT_LENGTH_SET:
 		return sdc_hci_cmd_vs_event_length_set((void *)cmd_params);
-#ifdef CONFIG_MPSL_CX_BT_3WIRE
-	case SDC_HCI_OPCODE_CMD_VS_COEX_PRIORITY_CONFIG:
-		return sdc_hci_cmd_vs_coex_priority_config((void *)cmd_params);
-	case SDC_HCI_OPCODE_CMD_VS_COEX_SCAN_MODE_CONFIG:
-		return sdc_hci_cmd_vs_coex_scan_mode_config((void *)cmd_params);
-#endif	/* CONFIG_MPSL_CX_BT_3WIRE */
 #ifdef CONFIG_BT_PERIPHERAL
 	case SDC_HCI_OPCODE_CMD_VS_PERIPHERAL_LATENCY_MODE_SET:
 		return sdc_hci_cmd_vs_peripheral_latency_mode_set((void *)cmd_params);

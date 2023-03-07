@@ -8,6 +8,8 @@ menuconfig ESB
 	bool "Enhanced ShockBurst"
 	select NRFX_PPI if HAS_HW_NRF_PPI
 	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	select MPSL
+	select MPSL_FEM_ONLY if !ESB_DYNAMIC_INTERRUPTS
 	default n
 	help
 	  Enable ESB functionality.
@@ -107,3 +109,7 @@ config ESB_DYNAMIC_INTERRUPTS
 	  and RADIO_IRQn handlers during runtime when ESB is uninitialized.
 
 endif # NRF_ENHANCED_SHOCKBURST
+
+module=ESB
+module-str=ESB
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

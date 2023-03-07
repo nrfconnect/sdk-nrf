@@ -20,60 +20,53 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_DATA_AGGREGATOR_LOG_LEVEL);
 
 #define DT_DRV_COMPAT caf_aggregator
 
-#define __DEFINE_DATA(i, agg_id, size)							\
-	static uint8_t agg_ ## agg_id ## _buff_ ## i ## _data[size] __aligned(4)
+/* The name of the structure array that describes the aggregator buffers */
+#define __AGG_BUFFS_NAME(agg_node) DT_CAT3(agg_, agg_node, _buffs)
 
-#if (DT_INST_NODE_HAS_PROP(agg_id, memory_region))
+/* This macros are used only if no memory region is used and the aggregator buffers are created
+ * in BSS.
+ */
+#define __DATA_BUFF_NAME(agg_node, n) DT_CAT5(agg_, agg_node,  _buff_,  n,  _data)
+#define __DEFINE_DATA(n, agg_node, size)                         \
+	static struct sensor_value __DATA_BUFF_NAME(agg_node, n) \
+		[ceiling_fraction(size, sizeof(struct sensor_value))]
+/* End of BSS version only macros. */
 
-#define __INITIALIZE_BUF(i, agg_id)							\
-	{										\
-		(uint8_t *) DT_REG_ADDR(DT_INST_PHANDLE(agg_id, memory_region)) +	\
-		i * DT_INST_PROP(agg_id, buf_data_length)				\
-	},
+#define __INITIALIZE_BUFF(n, agg_node)                                                        \
+	COND_CODE_1(DT_NODE_HAS_PROP(agg_node, memory_region),                                \
+		({(struct sensor_value *) (DT_REG_ADDR(DT_PHANDLE(agg_node, memory_region)) + \
+			n * (DT_PROP(agg_node, buf_data_length)))}),                          \
+		({__DATA_BUFF_NAME(agg_node, n)})                                             \
+	)
 
+#define __XDEFINE_BUF_DATA(agg_node)                                                    \
+	COND_CODE_0(DT_NODE_HAS_PROP(agg_node, memory_region),                          \
+		(LISTIFY(DT_PROP(agg_node, buf_count), __DEFINE_DATA, (;),              \
+			agg_node, DT_PROP(agg_node, buf_data_length));),                \
+		()                                                                      \
+	)                                                                               \
+	static struct aggregator_buffer __AGG_BUFFS_NAME(agg_node)[] = {                \
+		LISTIFY(DT_PROP(agg_node, buf_count), __INITIALIZE_BUFF, (,), agg_node) \
+	};                                                                              \
+	BUILD_ASSERT((DT_PROP(agg_node, buf_data_length) %                              \
+		(DT_PROP(agg_node, sample_size) * sizeof(struct sensor_value))) == 0,   \
+		"Wrong sensor data or buffer size in " DT_NODE_FULL_NAME(agg_node));
 
+#define __DEFINE_BUF_DATA(i) __XDEFINE_BUF_DATA(DT_DRV_INST(i))
 
-/* buf_len has to be equal to n*sensor_data_size. */
-#define __DEFINE_BUF_DATA(i)									\
-	static struct aggregator_buffer agg_ ## i ## _bufs[] = {				\
-		UTIL_LISTIFY(DT_INST_PROP(i, buf_count), __INITIALIZE_BUF, i)			\
-	};											\
-	BUILD_ASSERT((DT_INST_PROP(i, buf_data_length) % DT_INST_PROP(i, sensor_data_size)) == 0,\
-		"Wrong sensor data or buffer size");
+#define __DEFINE_AGGREGATOR(i)                               \
+	[i].sensor_descr = DT_INST_PROP(i, sensor_descr),    \
+	[i].values_in_sample = DT_INST_PROP(i, sample_size), \
+	[i].buf_count = DT_INST_PROP(i, buf_count),          \
+	[i].buf_len = DT_INST_PROP(i, buf_data_length),      \
+	[i].agg_buffers = __AGG_BUFFS_NAME(DT_DRV_INST(i)),  \
+	[i].active_buf  = __AGG_BUFFS_NAME(DT_DRV_INST(i)),
 
-#else
-#define __INITIALIZE_BUF(i, agg_id)							\
-	{(uint8_t *) &agg_ ## agg_id ## _buff_ ## i ## _data}
-
-/* buf_len has to be equal to n*sensor_data_size. */
-#define __DEFINE_BUF_DATA(i)									\
-	LISTIFY(DT_INST_PROP(i, buf_count), __DEFINE_DATA, (;), i,				\
-		DT_INST_PROP(i, buf_data_length));						\
-	static struct aggregator_buffer agg_ ## i ## _bufs[] = {				\
-		LISTIFY(DT_INST_PROP(i, buf_count), __INITIALIZE_BUF, (,), i)			\
-	};											\
-	BUILD_ASSERT((DT_INST_PROP(i, buf_data_length) % DT_INST_PROP(i, sensor_data_size)) == 0,\
-		"Wrong sensor data or buffer size");
-
-#endif
-
-#define __DEFINE_AGGREGATOR(i)								\
-	[i].sensor_descr = DT_INST_PROP(i, sensor_descr),				\
-	[i].sensor_data_size = DT_INST_PROP(i, sensor_data_size),			\
-	[i].buf_count = DT_INST_PROP(i, buf_count),					\
-	[i].buf_len = DT_INST_PROP(i, buf_data_length),					\
-	[i].agg_buffers = (struct aggregator_buffer *) &agg_ ## i ## _bufs,		\
-	[i].active_buf = (struct aggregator_buffer *) &agg_ ## i ## _bufs,
-
-#define __DEFINE_AGG							\
-	static struct aggregator aggregators[] = {			\
-		DT_INST_FOREACH_STATUS_OKAY(__DEFINE_AGGREGATOR)	\
-	}
 
 struct aggregator_buffer {
-	uint8_t *data;		/* Dynamic data. */
-	bool busy;		/* Buffer status. */
-	uint8_t sample_cnt;	/* Number of samples already saved in the buffer. */
+	struct sensor_value *samples;	/* Dynamic data. */
+	bool busy;			/* Buffer status. */
+	uint8_t sample_cnt;		/* Number of samples already saved in the buffer. */
 };
 
 struct aggregator {
@@ -81,7 +74,7 @@ struct aggregator {
 	struct aggregator_buffer *agg_buffers;	/* Buffers. */
 	struct aggregator_buffer *active_buf;	/* Active buffer to which data will be placed. */
 	enum sensor_state sensor_state;		/* Sensors state. */
-	const uint8_t sensor_data_size;		/* Size of sensor data in bytes. */
+	const uint8_t values_in_sample;		/* Number of sensor values in a sample. */
 	const uint8_t buf_count;		/* Number of buffers. */
 	const uint8_t buf_len;			/* Size of buffor data in bytes. */
 };
@@ -128,8 +121,8 @@ static void send_buffer(struct aggregator *agg, struct aggregator_buffer *ab)
 {
 	ab->busy = true;
 	struct sensor_data_aggregator_event *event = new_sensor_data_aggregator_event();
-
-	event->buf = ab->data;
+	event->values_in_sample = agg->values_in_sample;
+	event->samples = ab->samples;
 	event->sample_cnt = ab->sample_cnt;
 	event->sensor_state = agg->sensor_state;
 	event->sensor_descr = agg->sensor_descr;
@@ -138,26 +131,28 @@ static void send_buffer(struct aggregator *agg, struct aggregator_buffer *ab)
 
 static int enqueue_sample(struct aggregator *agg, struct sensor_event *event)
 {
-	if (event->dyndata.size != agg->sensor_data_size) {
+	size_t chunk_bytes = agg->values_in_sample * sizeof(struct sensor_value);
+
+	if ((event->dyndata.size) != chunk_bytes) {
 		return -EBADMSG;
 	}
 	if (!agg->active_buf) {
 		return -ENOMEM;
 	}
+
 	struct aggregator_buffer *ab = agg->active_buf;
+	size_t pos_values = ab->sample_cnt * agg->values_in_sample;
+	size_t avail_bytes = agg->buf_len - pos_values * sizeof(struct sensor_value);
 
-	size_t pos = ab->sample_cnt * agg->sensor_data_size;
-	size_t avail = agg->buf_len - pos;
-
-	if (avail < agg->sensor_data_size) {
+	if (avail_bytes < chunk_bytes) {
 		__ASSERT_NO_MSG(false);
 		return -ENOMEM;
 	}
-	memcpy(&ab->data[pos], event->dyndata.data, event->dyndata.size);
+	memcpy(&ab->samples[pos_values], (uint8_t *)event->dyndata.data, chunk_bytes);
 	ab->sample_cnt++;
-	avail -= event->dyndata.size;
+	avail_bytes -= chunk_bytes;
 
-	if (avail < agg->sensor_data_size) {
+	if (avail_bytes < chunk_bytes) {
 		send_buffer(agg, ab);
 		agg->active_buf = get_free_buffer(agg);
 	}
@@ -192,7 +187,7 @@ static bool event_handler(const struct app_event_header *aeh)
 		__ASSERT_NO_MSG(agg);
 
 		for (size_t i = 0; i < agg->buf_count; i++) {
-			if (agg->agg_buffers[i].data == event->buf) {
+			if (agg->agg_buffers[i].samples == event->samples) {
 				release_buffer(agg, &agg->agg_buffers[i]);
 				break;
 			}

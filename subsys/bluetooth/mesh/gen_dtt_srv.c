@@ -186,5 +186,5 @@ int bt_mesh_dtt_srv_pub(struct bt_mesh_dtt_srv *srv,
 				 BT_MESH_DTT_MSG_LEN_STATUS);
 	encode_status(&msg, srv->transition_time);
 
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

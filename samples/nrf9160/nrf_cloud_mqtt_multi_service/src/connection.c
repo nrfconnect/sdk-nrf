@@ -12,11 +12,11 @@
 #include <date_time.h>
 #include <zephyr/logging/log.h>
 #include <cJSON.h>
-#include "fota_support.h"
-
-#include "location_tracking.h"
 
 #include "connection.h"
+
+#include "fota_support.h"
+#include "location_tracking.h"
 #include "led_control.h"
 
 LOG_MODULE_REGISTER(connection, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
@@ -55,6 +55,7 @@ K_MSGQ_DEFINE(device_message_queue, sizeof(char *), CONFIG_MAX_OUTGOING_MESSAGES
  */
 static int send_failure_count;
 
+static dev_msg_handler_cb_t general_dev_msg_handler;
 /**
  * @brief Notify that LTE connection has been established.
  */
@@ -172,6 +173,15 @@ static bool await_cloud_ready(k_timeout_t timeout, bool timeout_on_disconnection
 			    false, timeout) == CLOUD_READY;
 }
 
+/*
+ * This is really a convenience callback to help keep this sample clean and modular. You could
+ * implement device message handling directly in the cloud_event_handler if desired.
+ */
+void register_general_dev_msg_handler(dev_msg_handler_cb_t handler_cb)
+{
+	general_dev_msg_handler = handler_cb;
+}
+
 bool await_connection(k_timeout_t timeout)
 {
 	return await_lte_connection(timeout) && await_cloud_ready(timeout, false);
@@ -274,6 +284,20 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 	case NRF_CLOUD_EVT_RX_DATA_GENERAL:
 		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_GENERAL");
 		LOG_DBG("%d bytes received from cloud", nrf_cloud_evt->data.len);
+
+		/* Pass the device message along to the application, if it is listening */
+		if (general_dev_msg_handler) {
+			/* To keep the sample simple, we invoke the callback directly.
+			 * If you want to do complex operations in this callback without blocking
+			 * receipt of data from nRF Cloud, you should set up a work queue and pass
+			 * messages to it either here, or from inside the callback.
+			 *
+			 * The data passed in needs to be null-terminated, but the nrf_cloud library
+			 * always appends a trailing 0 to nrf_cloud_evt->data.ptr, so it will be.
+			 */
+			general_dev_msg_handler(nrf_cloud_evt->data.ptr);
+		}
+
 		break;
 	case NRF_CLOUD_EVT_RX_DATA_SHADOW:
 		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_SHADOW");
@@ -632,7 +656,8 @@ static int connect_cloud(void)
 	}
 
 	LOG_INF("Connected to nRF Cloud");
-	return 0;
+
+	return err;
 }
 
 /**
@@ -655,7 +680,7 @@ static int setup_modem(void)
 		if (ret < 0) {
 			LOG_ERR("Modem library initialization failed, error: %d", ret);
 			return ret;
-		} else if (ret == MODEM_DFU_RESULT_OK) {
+		} else if (ret == NRF_MODEM_DFU_RESULT_OK) {
 			LOG_DBG("Modem library initialized after "
 				"successful modem firmware update.");
 		} else if (ret > 0) {
@@ -683,7 +708,8 @@ static int setup_cloud(void)
 	/* Initialize nrf_cloud library. */
 	struct nrf_cloud_init_param params = {
 		.event_handler = cloud_event_handler,
-		.fmfu_dev_inf = get_full_modem_fota_fdev()
+		.fmfu_dev_inf = get_full_modem_fota_fdev(),
+		.application_version = CONFIG_APP_VERSION
 	};
 
 	int err = nrf_cloud_init(&params);

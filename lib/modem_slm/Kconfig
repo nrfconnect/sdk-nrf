@@ -1,0 +1,69 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig MODEM_SLM
+	depends on SERIAL
+	depends on UART_ASYNC_API
+	depends on RING_BUFFER
+	select EXPERIMENTAL
+	bool "Modem SLM Library for MCU [EXPERIMENTAL]"
+
+if MODEM_SLM
+
+config MODEM_SLM_DMA_MAXLEN
+	int "Buffer size for UART RX EasyDMA"
+	range 256 2048
+	default 1024
+	help
+	  The maximum number of bytes in receive buffer.
+
+config MODEM_SLM_SHELL
+	bool "SLM Shell"
+	depends on SHELL
+	help
+	  Adds AT command capability to shell. The shell command is "slm"
+
+choice
+	prompt "AT command terminator"
+	default MODEM_SLM_CR_LF_TERMINATION
+	help
+		Sets the termination ending from the serial terminal
+		Levels are:
+		-  CR Termination
+		-  LF Termination
+		-  CR+LF Termination
+
+	config MODEM_SLM_CR_TERMINATION
+		bool "CR Termination"
+	config MODEM_SLM_LF_TERMINATION
+		bool "LF Termination"
+	config MODEM_SLM_CR_LF_TERMINATION
+		bool "CR+LF Termination"
+endchoice
+
+config MODEM_SLM_WAKEUP_PIN
+	int "Wakeup pin"
+	default -1
+	help
+	  Interface GPIO to wake up nRF9160 from sleep or exit SLM idle
+
+config MODEM_SLM_WAKEUP_TIME
+	int "wakeup period"
+	default 100
+	help
+	  GPIO active time in milliseconds. This setting specify the period length for the pin to be active
+
+config MODEM_SLM_INDICATE_PIN
+	int "Indicate pin"
+	default -1
+	help
+	  Interface GPIO pin used by SLM to indicate that data is available or an unexpected reset has occurred
+
+module = MODEM_SLM
+module-str = Modem SLM
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # MODEM_SLM

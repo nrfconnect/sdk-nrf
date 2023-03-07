@@ -1,0 +1,9 @@
+#include <autoconf.h>
+
+fmfu_storage:
+  placement: {before: [end]}
+#ifdef CONFIG_SPI_NOR
+  align: CONFIG_SPI_NOR_FLASH_LAYOUT_PAGE_SIZE
+#endif
+  region: external_flash
+  size: CONFIG_DFU_TARGET_FULL_MODEM_EXT_FLASH_SIZE

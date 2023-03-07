@@ -352,7 +352,7 @@ static bool is_cloud_related_event(struct ui_msg_data *msg)
 	    (IS_EVENT(msg, cloud, CLOUD_EVT_CONNECTED)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_DATA_SEND_BATCH)) ||
-	    (IS_EVENT(msg, data, DATA_EVT_NEIGHBOR_CELLS_DATA_SEND))) {
+	    (IS_EVENT(msg, data, DATA_EVT_CLOUD_LOCATION_DATA_SEND))) {
 		return true;
 	}
 

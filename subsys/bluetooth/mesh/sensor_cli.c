@@ -12,9 +12,9 @@
 #include "mesh/net.h"
 #include "mesh/transport.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_sensor_cli
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_sensor_cli);
 
 struct list_rsp {
 	struct bt_mesh_sensor_info *sensors;
@@ -135,7 +135,7 @@ static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 		type = bt_mesh_sensor_type_get(id);
 		if (!type) {
 			if (buf->len < length) {
-				BT_WARN("Invalid length for 0x%04x: %u", id,
+				LOG_WRN("Invalid length for 0x%04x: %u", id,
 					length);
 				return -EMSGSIZE;
 			}
@@ -147,7 +147,7 @@ static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 		uint8_t expected_len = sensor_value_len(type);
 
 		if (length != expected_len) {
-			BT_WARN("Invalid length for 0x%04x: %u (expected %u)",
+			LOG_WRN("Invalid length for 0x%04x: %u (expected %u)",
 				id, length, expected_len);
 			return -EMSGSIZE;
 		}
@@ -156,7 +156,7 @@ static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 
 		err = sensor_value_decode(buf, type, value);
 		if (err) {
-			BT_ERR("Invalid format, err=%d", err);
+			LOG_ERR("Invalid format, err=%d", err);
 			return err; /* Invalid format, should ignore message */
 		}
 
@@ -201,7 +201,7 @@ static int parse_series_entry(const struct bt_mesh_sensor_type *type,
 	}
 
 	if (buf->len == 0) {
-		BT_WARN("The requested column didn't exist: %s",
+		LOG_WRN("The requested column didn't exist: %s",
 			bt_mesh_sensor_ch_str(&entry->column.start));
 		return -ENOENT;
 	}
@@ -317,7 +317,7 @@ static int handle_series_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 
 		err = parse_series_entry(type, col_format, buf, &entry);
 		if (err) {
-			BT_ERR("Failed parsing column %u (err: %d)", i, err);
+			LOG_ERR("Failed parsing column %u (err: %d)", i, err);
 			return err;
 		}
 
@@ -354,7 +354,7 @@ static int handle_cadence_status(struct bt_mesh_model *model, struct bt_mesh_msg
 	}
 
 	if (buf->len == 0 || type->channel_count != 1) {
-		BT_WARN("Type 0x%04x doesn't support cadence", id);
+		LOG_WRN("Type 0x%04x doesn't support cadence", id);
 		err = -ENOTSUP;
 		goto yield_ack;
 	}
@@ -577,8 +577,14 @@ int bt_mesh_sensor_cli_desc_all_get(struct bt_mesh_sensor_cli *cli,
 		.count = count ? *count : 0,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, sensors ? &cli->ack_ctx : NULL,
-			      BT_MESH_SENSOR_OP_DESCRIPTOR_STATUS, &list_rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_SENSOR_OP_DESCRIPTOR_STATUS,
+		.user_data = &list_rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &msg, sensors ? &rsp_ctx : NULL);
 	if (count && !err) {
 		*count = list_rsp.count;
 	}
@@ -607,8 +613,14 @@ int bt_mesh_sensor_cli_desc_get(struct bt_mesh_sensor_cli *cli,
 		.count = 1,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
-			      BT_MESH_SENSOR_OP_DESCRIPTOR_STATUS, &list_rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_SENSOR_OP_DESCRIPTOR_STATUS,
+		.user_data = &list_rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 	if (!rsp || err) {
 		return err;
 	}
@@ -643,8 +655,14 @@ int bt_mesh_sensor_cli_cadence_get(struct bt_mesh_sensor_cli *cli,
 		.cadence = rsp,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_SENSOR_OP_CADENCE_STATUS, &rsp_data);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_SENSOR_OP_CADENCE_STATUS,
+		.user_data = &rsp_data,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 	if (!rsp || err) {
 		return err;
 	}
@@ -688,8 +706,14 @@ int bt_mesh_sensor_cli_cadence_set(
 		return err;
 	}
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
-			      BT_MESH_SENSOR_OP_CADENCE_STATUS, &rsp_data);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_SENSOR_OP_CADENCE_STATUS,
+		.user_data = &rsp_data,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 	if (!rsp || err) {
 		return err;
 	}
@@ -729,7 +753,7 @@ int bt_mesh_sensor_cli_cadence_set_unack(
 		return err;
 	}
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_sensor_cli_settings_get(struct bt_mesh_sensor_cli *cli,
@@ -751,8 +775,14 @@ int bt_mesh_sensor_cli_settings_get(struct bt_mesh_sensor_cli *cli,
 		.count = count ? *count : 0,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, ids ? &cli->ack_ctx : NULL,
-			      BT_MESH_SENSOR_OP_SETTINGS_STATUS, &rsp);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_SENSOR_OP_SETTINGS_STATUS,
+		.user_data = &rsp,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &msg, ids ? &rsp_ctx : NULL);
 	if (!count || err) {
 		return err;
 	}
@@ -783,8 +813,14 @@ int bt_mesh_sensor_cli_setting_get(struct bt_mesh_sensor_cli *cli,
 		.setting = rsp,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
-			      BT_MESH_SENSOR_OP_SETTING_STATUS, &rsp_data);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_SENSOR_OP_SETTING_STATUS,
+		.user_data = &rsp_data,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 	if (!rsp || err) {
 		return err;
 	}
@@ -822,8 +858,14 @@ int bt_mesh_sensor_cli_setting_set(struct bt_mesh_sensor_cli *cli,
 		.setting = rsp,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_SENSOR_OP_SETTING_STATUS, &rsp_data);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_SENSOR_OP_SETTING_STATUS,
+		.user_data = &rsp_data,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 	if (!rsp || err) {
 		return err;
 	}
@@ -858,7 +900,7 @@ int bt_mesh_sensor_cli_setting_set_unack(
 		return err;
 	}
 
-	return model_send(cli->model, ctx, &msg);
+	return bt_mesh_msg_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_sensor_cli_all_get(struct bt_mesh_sensor_cli *cli,
@@ -879,8 +921,14 @@ int bt_mesh_sensor_cli_all_get(struct bt_mesh_sensor_cli *cli,
 		memset(sensors, 0, sizeof(*sensors) * (*count));
 	}
 
-	err = model_ackd_send(cli->model, ctx, &msg, sensors ? &cli->ack_ctx : NULL,
-			      BT_MESH_SENSOR_OP_STATUS, &rsp_data);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_SENSOR_OP_STATUS,
+		.user_data = &rsp_data,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &msg, sensors ? &rsp_ctx : NULL);
 	if (!count || err) {
 		return err;
 	}
@@ -912,8 +960,14 @@ int bt_mesh_sensor_cli_get(struct bt_mesh_sensor_cli *cli,
 	struct sensor_data_list_rsp rsp_data = { .count = 1,
 						 .sensors = &sensor_data };
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
-			      BT_MESH_SENSOR_OP_STATUS, &rsp_data);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_SENSOR_OP_STATUS,
+		.user_data = &rsp_data,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 	if (!rsp || err) {
 		return err;
 	}
@@ -958,8 +1012,14 @@ int bt_mesh_sensor_cli_series_entry_get(
 		.col = column,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
-			      BT_MESH_SENSOR_OP_COLUMN_STATUS, &rsp_data);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_SENSOR_OP_COLUMN_STATUS,
+		.user_data = &rsp_data,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 	if (!rsp || err) {
 		return err;
 	}
@@ -1012,8 +1072,14 @@ int bt_mesh_sensor_cli_series_entries_get(
 		.count = count ? *count : 0,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_SENSOR_OP_SERIES_STATUS, &rsp_data);
+	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
+		.ack = &cli->ack_ctx,
+		.op = BT_MESH_SENSOR_OP_SERIES_STATUS,
+		.user_data = &rsp_data,
+		.timeout = model_ackd_timeout_get(cli->model, ctx),
+	};
+
+	err = bt_mesh_msg_ackd_send(cli->model, ctx, &msg, rsp ? &rsp_ctx : NULL);
 	if (!count || err) {
 		return err;
 	}

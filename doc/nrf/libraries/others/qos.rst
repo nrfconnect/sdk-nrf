@@ -50,8 +50,11 @@ The following code block displays how the library can be initialized and a singl
 
 .. code-block:: c
 
-   /* Register message types that can be used to route data. */
-   QOS_MESSAGE_TYPES_REGISTER(SENSOR_DATA, DIAGNOSTIC_DATA);
+   /* Define message types that can be used to route data. */
+   enum {
+      SENSOR_DATA,
+      DIAGNOSTIC_DATA
+   };
 
    /* Event handler used to receive notifications from the library. */
    static void qos_event_handler(const struct qos_evt *evt)
@@ -105,7 +108,6 @@ To remove a message from the pending list, call :c:func:`qos_message_remove` wit
 
 Messages added to the library can be associated with specific message types.
 These message types can be used to route messages after they have been notified in the library callback handler.
-Message types can be generated using the :c:macro:`QOS_MESSAGE_TYPES_REGISTER` macro.
 For messages that require acknowledgment, message transport libraries often need a message ID.
 The application can use the :c:func:`qos_message_id_get_next` function to generate the Message IDs.
 

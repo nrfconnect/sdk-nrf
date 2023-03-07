@@ -4,50 +4,47 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#define DATA_GNSS_LONGITUDE "lng"
-#define DATA_GNSS_LATITUDE  "lat"
-#define DATA_GNSS_ALTITUDE  "alt"
-#define DATA_GNSS_SPEED	   "spd"
-#define DATA_GNSS_HEADING   "hdg"
-#define DATA_GNSS_ACCURACY  "acc"
+#include <net/nrf_cloud_defs.h>
 
-#define DATA_MODEM_DYNAMIC  "networkInfo"
-#define DATA_MODEM_STATIC   "deviceInfo"
-#define DATA_CONFIG	    "config"
-#define DATA_VERSION	    "version"
-#define DATA_IMPACT         "impact"
+#define DATA_GNSS_LONGITUDE	NRF_CLOUD_JSON_GNSS_PVT_KEY_LON
+#define DATA_GNSS_LATITUDE	NRF_CLOUD_JSON_GNSS_PVT_KEY_LAT
+#define DATA_GNSS_ALTITUDE	NRF_CLOUD_JSON_GNSS_PVT_KEY_ALTITUDE
+#define DATA_GNSS_SPEED		NRF_CLOUD_JSON_GNSS_PVT_KEY_SPEED
+#define DATA_GNSS_HEADING	NRF_CLOUD_JSON_GNSS_PVT_KEY_HEADING
+#define DATA_GNSS_ACCURACY	NRF_CLOUD_JSON_GNSS_PVT_KEY_ACCURACY
 
-#define DATA_GROUP     "messageType"
-#define DATA_ID	       "appId"
-#define DATA_TYPE      "data"
-#define DATA_TIMESTAMP "ts"
+#define DATA_MODEM_DYNAMIC	NRF_CLOUD_DEVICE_JSON_KEY_NET_INF
+#define DATA_MODEM_STATIC	NRF_CLOUD_DEVICE_JSON_KEY_DEV_INF
+#define DATA_CONFIG		NRF_CLOUD_JSON_KEY_CFG
+#define DATA_VERSION		"version"
+#define DATA_IMPACT		"impact"
 
-#define MESSAGE_TYPE_DATA "DATA"
+#define DATA_GROUP		NRF_CLOUD_JSON_MSG_TYPE_KEY
+#define DATA_ID			NRF_CLOUD_JSON_APPID_KEY
+#define DATA_TYPE		NRF_CLOUD_JSON_DATA_KEY
+#define DATA_TIMESTAMP		NRF_CLOUD_MSG_TIMESTAMP_KEY
 
-#define APP_ID_BUTTON	   "BUTTON"
-#define APP_ID_VOLTAGE	   "VOLTAGE"
-#define APP_ID_DEVICE      "DEVICE"
-#define APP_ID_GNSS	   "GNSS"
-#define APP_ID_HUMIDITY	   "HUMID"
-#define APP_ID_AIR_PRESS   "AIR_PRESS"
-#define APP_ID_AIR_QUAL    "AIR_QUAL"
-#define APP_ID_TEMPERATURE "TEMP"
-#define APP_ID_RSRP	   "RSRP"
-#define APP_ID_CELL_POS    "CELL_POS"
-#define APP_ID_IMPACT      "IMPACT"
+#define MESSAGE_TYPE_DATA	NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA
+
+#define APP_ID_BUTTON		NRF_CLOUD_JSON_APPID_VAL_BTN
+#define APP_ID_VOLTAGE		"VOLTAGE"
+#define APP_ID_DEVICE		NRF_CLOUD_JSON_APPID_VAL_DEVICE
+#define APP_ID_GNSS		NRF_CLOUD_JSON_APPID_VAL_GNSS
+#define APP_ID_HUMIDITY		NRF_CLOUD_JSON_APPID_VAL_HUMID
+#define APP_ID_AIR_PRESS	NRF_CLOUD_JSON_APPID_VAL_AIR_PRESS
+#define APP_ID_AIR_QUAL		NRF_CLOUD_JSON_APPID_VAL_AIR_QUAL
+#define APP_ID_TEMPERATURE	NRF_CLOUD_JSON_APPID_VAL_TEMP
+#define APP_ID_RSRP		NRF_CLOUD_JSON_APPID_VAL_RSRP
+#define APP_ID_CELL_POS		NRF_CLOUD_JSON_APPID_VAL_LOCATION
+#define APP_ID_IMPACT		"IMPACT"
 
 #define MODEM_CURRENT_BAND     "currentBand"
 #define MODEM_NETWORK_MODE     "networkMode"
-#define MODEM_ICCID	       "iccid"
-#define MODEM_FIRMWARE_VERSION "modemFirmware"
-#define MODEM_BOARD	       "board"
-#define MODEM_APP_VERSION      "appVersion"
 #define MODEM_RSRP	       "rsrp"
 #define MODEM_AREA_CODE	       "areaCode"
 #define MODEM_MCCMNC	       "mccmnc"
 #define MODEM_CELL_ID	       "cellID"
 #define MODEM_IP_ADDRESS       "ipAddress"
-#define MODEM_IMEI             "imei"
 
 #define CONFIG_DEVICE_MODE		  "activeMode"
 #define CONFIG_ACTIVE_TIMEOUT		  "activeWaitTime"
@@ -60,7 +57,8 @@
 #define CONFIG_NO_DATA_LIST		  "nod"
 #define CONFIG_NO_DATA_LIST_GNSS	  "gnss"
 #define CONFIG_NO_DATA_LIST_NEIGHBOR_CELL "ncell"
+#define CONFIG_NO_DATA_LIST_WIFI	  "wifi"
 
-#define OBJECT_CONFIG	"config"
-#define OBJECT_REPORTED	"reported"
-#define OBJECT_STATE	"state"
+#define OBJECT_CONFIG	NRF_CLOUD_JSON_KEY_CFG
+#define OBJECT_REPORTED	NRF_CLOUD_JSON_KEY_REP
+#define OBJECT_STATE	NRF_CLOUD_JSON_KEY_STATE

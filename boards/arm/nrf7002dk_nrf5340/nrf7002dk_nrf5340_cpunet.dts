@@ -19,6 +19,7 @@
 		zephyr,bt-mon-uart = &uart0;
 		zephyr,bt-c2h-uart = &uart0;
 		zephyr,bt-hci-rpmsg-ipc = &ipc0;
+		nordic,802154-spinel-ipc = &ipc0;
 		zephyr,sram = &sram1;
 		zephyr,flash = &flash1;
 		zephyr,code-partition = &slot0_partition;
@@ -82,7 +83,7 @@
 		compatible = "nordic,nrf700x-coex";
 		req-gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>;
 		status0-gpios = <&gpio0 30 GPIO_ACTIVE_HIGH>;
-		grant-gpios = <&gpio0 24 GPIO_ACTIVE_HIGH>;
+		grant-gpios = <&gpio0 24 (GPIO_PULL_DOWN | GPIO_ACTIVE_LOW)>;
 		swctrl1-gpios = <&gpio0 29 GPIO_ACTIVE_HIGH>;
 	};
 

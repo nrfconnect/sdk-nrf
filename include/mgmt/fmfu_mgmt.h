@@ -28,7 +28,7 @@ extern "C" {
  *  update command handler group.
  *
  * The modem library must be initialized in DFU mode before calling this
- * function - nrf_modem_lib_init(FULL_DFU_MODE).
+ * function - nrf_modem_lib_init(BOOTLOADER_MODE).
  *
  * @retval 0 on success, negative integer on failure.
  */

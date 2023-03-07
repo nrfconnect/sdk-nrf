@@ -11,6 +11,10 @@
 #include "ble.h"
 #endif
 
+#if defined(CONFIG_CLI_SAMPLE_LOW_POWER)
+#include "low_power.h"
+#endif
+
 #include <zephyr/drivers/uart.h>
 #include <zephyr/usb/usb_device.h>
 
@@ -66,8 +70,11 @@ void main(void)
 
 	LOG_INF(WELLCOME_TEXT);
 
-#if CONFIG_BT
+#if defined(CONFIG_BT)
 	ble_enable();
 #endif
 
+#if defined(CONFIG_CLI_SAMPLE_LOW_POWER)
+	low_power_enable();
+#endif
 }

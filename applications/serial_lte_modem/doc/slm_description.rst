@@ -58,26 +58,6 @@ CONFIG_SLM_EXTERNAL_XTAL - Use external XTAL for UARTE
    This option configures the application to use an external XTAL for UARTE.
    See the `nRF9160 Product Specification`_ (section 6.19 UARTE) for more information.
 
-.. _CONFIG_SLM_UART_HWFC_RUNTIME:
-
-CONFIG_SLM_UART_HWFC_RUNTIME - Support of UART HWFC runtime configuration
-   This option let the application configure HWFC during runtime rather than while compiling by using ``#XSLMUART``.
-   This option is automatically selected when the **hw-flow-control** is defined in the DTS overlay.
-
-.. _CONFIG_SLM_CONNECT_UART_0:
-
-CONFIG_SLM_CONNECT_UART_0 - UART 0
-   This option selects UART 0 for the UART connection.
-   Select this option if you want to test the application with a PC.
-
-   This option is automatically selected when the build target is ``thingy91_nrf9160_ns``.
-
-.. _CONFIG_SLM_CONNECT_UART_2:
-
-CONFIG_SLM_CONNECT_UART_2 - UART 2
-   This option selects UART 2 for the UART connection.
-   Select this option if you want to test the application with an external CPU.
-
 .. _CONFIG_SLM_START_SLEEP:
 
 CONFIG_SLM_START_SLEEP - Enter sleep on startup
@@ -92,8 +72,8 @@ CONFIG_SLM_WAKEUP_PIN - Interface GPIO to exit from sleep or idle
 
    * On the nRF9160 DK:
 
-     * **P0.6** (Button 1 on the nRF9160 DK) is used when :ref:`CONFIG_SLM_CONNECT_UART_0 <CONFIG_SLM_CONNECT_UART_0>` is selected.
-     * **P0.31** is used when :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` is selected.
+     * **P0.6** (Button 1 on the nRF9160 DK) is used when UART_0 is used.
+     * **P0.31** is used when UART_1 is used.
 
    * On Thingy:91, **P0.26** (Multi-function button on Thingy:91) is used.
 
@@ -107,8 +87,8 @@ CONFIG_SLM_INDICATE_PIN - Interface GPIO to indicate data available or unsolicit
    This option specifies which interface GPIO to use for indicating data available or unsolicited event notifications from the modem.
    On the nRF9160 DK, it is set by default as follows:
 
-   * **P0.2** (LED 1 on the nRF9160 DK) is used when :ref:`CONFIG_SLM_CONNECT_UART_0 <CONFIG_SLM_CONNECT_UART_0>` is selected.
-   * **P0.30** is used when :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` is selected.
+   * **P0.2** (LED 1 on the nRF9160 DK) is used when UART_0 is selected.
+   * **P0.30** is used when UART_2 is selected.
 
    It is not defined when the target is Thingy:91.
 
@@ -186,6 +166,11 @@ CONFIG_SLM_CELL_POS - nRF Cloud cellular positioning support in SLM
 
 CONFIG_SLM_FTPC - FTP client support in SLM
    This option enables additional AT commands for using the FTP client service.
+
+.. _CONFIG_SLM_TFTPC:
+
+CONFIG_SLM_TFTPC - TFTP client support in SLM
+   This option enables additional AT commands for using the TFTP client service.
 
 .. _CONFIG_SLM_MQTTC:
 
@@ -272,6 +257,9 @@ The following configuration files are provided:
   You can include it by adding ``-DOVERLAY_CONFIG=overlay-secure_bootloader`` to your build command.
   See :ref:`cmake_options`.
 
+* :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support.
+  See :ref:`slm_carrier_library_support` for more information on how to connect to an operator's device management platform.
+
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for the nRF9160 DK.
   This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
 
@@ -342,7 +330,7 @@ To connect to the nRF9160 DK with a PC
 
 .. slm_connecting_9160dk_pc_instr_start
 
-1. Verify that :ref:`CONFIG_SLM_CONNECT_UART_0 <CONFIG_SLM_CONNECT_UART_0>` is defined in the application.
+1. Verify that ``UART_0`` is selected in the application.
    It is defined in the default configuration.
 
 2. Use LTE Link Monitor to connect to the development kit.
@@ -386,36 +374,49 @@ Connecting with an external MCU
    This section does not apply to Thingy:91 as it does not have UART2.
 
 If you run your user application on an external MCU (for example, an nRF52 Series development kit), you can control the modem on nRF9160 directly from the application.
-See the `nRF52 client for Serial LTE Modem application`_ repository for a sample implementation of such an application.
+See the :ref:`slm_shell_sample` for a sample implementation of such an application.
 
 To connect with an external MCU using UART_2, change the configuration files for the default board as follows:
 
 * In the :file:`nrf9160dk_nrf9160_ns.conf` file::
 
-   # Use UART_0 (when working with PC terminal)
-   # unmask the following config
-   #CONFIG_SLM_CONNECT_UART_0=y
-   #CONFIG_UART_0_NRF_HW_ASYNC_TIMER=2
-   #CONFIG_UART_0_NRF_HW_ASYNC=y
-   #CONFIG_SLM_WAKEUP_PIN=6
-   #CONFIG_SLM_INDICATE_PIN=2
+     # Use UART_0 (when working with PC terminal)
+     # unmask the following config
+     #CONFIG_UART_0_NRF_HW_ASYNC_TIMER=2
+     #CONFIG_UART_0_NRF_HW_ASYNC=y
+     #CONFIG_SLM_WAKEUP_PIN=6
+     #CONFIG_SLM_INDICATE_PIN=2
 
-   # Use UART_2 (when working with external MCU)
-   # unmask the following config
-   CONFIG_SLM_CONNECT_UART_2=y
-   CONFIG_UART_2_NRF_HW_ASYNC_TIMER=2
-   CONFIG_UART_2_NRF_HW_ASYNC=y
-   CONFIG_SLM_WAKEUP_PIN=31
-   CONFIG_SLM_INDICATE_PIN=30
+     # Use UART_2 (when working with external MCU)
+     # unmask the following config
+     CONFIG_UART_2_NRF_HW_ASYNC_TIMER=2
+     CONFIG_UART_2_NRF_HW_ASYNC=y
+     CONFIG_SLM_WAKEUP_PIN=31
+     CONFIG_SLM_INDICATE_PIN=30
 
 
 * In the :file:`nrf9160dk_nrf9160_ns.overlay` file::
 
-   &uart0 {
-      status = "disabled";
+     / {
+         chosen {
+                  ncs,slm-uart = &uart2;
+                }
+       };
 
-   &uart2 {
-      status = "okay";
+     &uart0 {
+        status = "disabled";
+     };
+
+     &uart2 {
+        compatible = "nordic,nrf-uarte";
+        current-speed = <115200>;
+        status = "okay";
+        hw-flow-control;
+
+        pinctrl-0 = <&uart2_default_alt>;
+        pinctrl-1 = <&uart2_sleep_alt>;
+        pinctrl-names = "default", "sleep";
+     };
 
 
 The following table shows how to connect an nRF52 Series development kit to the nRF9160 DK to be able to communicate through UART:
@@ -439,7 +440,7 @@ The following table shows how to connect an nRF52 Series development kit to the 
    * - GPIO IN P0.26
      - GPIO OUT P0.30
 
-Use the following UART instances:
+Use the following UART devices:
 
 * nRF52840 or nRF52832 - UART0
 * nRF9160 - UART2
@@ -503,6 +504,19 @@ If you have an nRF52 Series DK running a client application, you can also use th
 #. Send AT commands and observe the responses from the development kit.
 
    See :ref:`slm_testing` for typical test cases.
+
+.. _slm_carrier_library_support:
+
+Using the LwM2M carrier library
+===============================
+
+.. |application_sample_name| replace:: Serial LTE Modem application
+
+.. include:: /includes/lwm2m_carrier_library.txt
+
+The certificate provisioning can also be done directly in the Serial LTE Modem application by using the same AT commands as described for the :ref:`at_client_sample` sample.
+
+Enabling the LwM2M carrier library will disable this application's support for GNSS in order to have enough space in flash.
 
 Dependencies
 ************

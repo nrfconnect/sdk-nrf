@@ -66,7 +66,7 @@ To do this, the device must be made discoverable over Bluetooth LE.
 The Bluetooth LE advertising starts automatically upon the device startup, but only for a predefined period of time (15 minutes by default).
 If the Bluetooth LE advertising times out, you can re-enable it manually using **Button (SW3)**.
 
-Additionally, the controller must get the commissioning information from the Matter accessory device and provision the device into the network.
+Additionally, the controller must get the onboarding information from the Matter accessory device and provision the device into the network.
 For details, see the `Testing`_ section.
 
 .. _matter_weather_station_app_build_types:
@@ -82,7 +82,7 @@ Other build types are covered by dedicated files with the build type added as a 
 For example, the ``release`` build type file name is :file:`prj_release.conf`.
 If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_overview_start
    :end-before: build_types_overview_end
 
@@ -131,7 +131,7 @@ USB port:
     See the `Selecting a build type`_ section to learn how to select the debug configuration.
 
 NFC port with antenna attached:
-    Used for obtaining the commissioning information from the Matter accessory device to start the commissioning procedure.
+    Used for obtaining the `Onboarding information`_ from the Matter accessory device to start the commissioning procedure.
 
 Configuration
 *************
@@ -153,14 +153,14 @@ Before you start testing the application, you can select one of the :ref:`matter
 Selecting a build type in |VSC|
 -------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_vsc_start
    :end-before: build_types_selection_vsc_end
 
 Selecting a build type from command line
 ----------------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_cmd_start
    :end-before: For example, you can replace the
 
@@ -214,55 +214,109 @@ After programming the application, perform the following steps to test the Matte
 1. Turn on the Thingy:53.
    The application starts in an unprovisioned state.
    The advertising over Bluetooth LE and DFU start automatically, and **LED (LD1)** starts blinking blue (short flash on).
-#. Commission the device into a Thread network by following the steps in :ref:`ug_matter_configuring_mobile`.
+#. Commission the device into a Thread network by following the steps in :ref:`ug_matter_gs_testing_thread_separate_otbr_linux_macos`.
    During the commissioning procedure, **LED (LD1)** of the Matter device starts blinking blue (rapid even flashing).
    This indicates that the device is connected over Bluetooth LE, but does not yet have full Thread network connectivity.
 
    .. note::
-        To start commissioning, the controller must get the commissioning information from the Matter accessory device.
-        The data payload, which includes the device discriminator and setup PIN code, is encoded and shared using an NFC tag.
-        When using the debug configuration, you can also get this type of information from the USB interface logs.
+        To start commissioning, the controller must get the `Onboarding information`_ from the Matter accessory device.
 
    Once the commissioning is complete and the device has full Thread connectivity, **LED (LD1)** starts blinking purple (short flash on).
-#. Read sensor measurements in CHIP Tool for Android:
+#. Request to read sensor measurements in CHIP Tool for Linux or macOS:
 
-   a. In the CHIP Tool for Android application main menu, tap the :guilabel:`SENSOR CLUSTERS` button to open the sensor measurements section.
-      This section contains text boxes to enter **Device ID** and **Endpoint ID**, a drop-down menu with available measurements and two buttons, :guilabel:`READ` and :guilabel:`WATCH`.
+   a. Choose one of the following measurement type and invoke the command using CHIP Tool for Linux or macOS (Fill the **Device ID** argument with the same as was used to commissioning):
 
-      .. figure:: /images/chiptool_sensor_cluster.gif
-         :alt: Sensor cluster section selection
+      * To read temperature:
 
-         Sensor cluster section selection
+         .. code-block:: console
 
-      On this image, **Device ID** has the value ``5`` and **Endpoint ID** has the value ``1``.
-   #. Select one of the available measurement types from the drop-down menu.
-   #. Enter one of the following values for **Endpoint ID**, depending on the selected measurement type:
+            chip-tool temperaturemeasurement read measured-value <Device ID> 1
 
-      * 1 - Temperature measurement
-      * 2 - Relative humidity measurement
-      * 3 - Air pressure measurement
+      * To read relative humidity:
 
-   #. Tap the :guilabel:`READ` button to read and display the single measurement value.
+         .. code-block:: console
 
-      .. figure:: /images/chiptool_temperature_read.gif
-         :alt: Single temperature measurement read
+            chip-tool relativehumiditymeasurement read measured-value <Device ID> 2
 
-         Single temperature measurement read
+      * To read air pressure:
 
-   #. Tap the :guilabel:`WATCH` button to start watching measurement changes in a continuous way and display values on a chart.
+         .. code-block:: console
 
-      .. figure:: /images/chiptool_temperature_watch.gif
-         :alt: Continuous temperature measurement watch
+            chip-tool pressuremeasurement read measured-value <Device ID> 3
 
-         Continuous temperature measurement watch
+   #. After invoking the chosen command, search the CHIP Tool for Linux or macOS console logs and look for the measurement value:
 
-      The vertical axis represents the measurement values and the horizontal axis represents the current time.
-   #. To change the displayed measurement, select a different measurement type from the drop-down list and enter the corresponding **Endpoint ID** value.
+      * Example of the temperature measurement value log:
 
-      .. figure:: /images/chiptool_relative_humidity.gif
-         :alt: Relative humidity measurement type selection
+         .. code-block:: console
 
-         Relative humidity measurement type selection
+            [1675846190.922905][72877:72879] CHIP:TOO: Endpoint: 1 Cluster: 0x0000_0402 Attribute 0x0000_0000 DataVersion: 1236968801
+            [1675846190.922946][72877:72879] CHIP:TOO:   MeasuredValue: 2348
+
+         This means that the current temperature value is equal to 23.48°C.
+
+      * Example of the relative humidity measurement value log:
+
+         .. code-block:: console
+
+            [1675849697.750923][164859:164861] CHIP:TOO: Endpoint: 2 Cluster: 0x0000_0405 Attribute 0x0000_0000 DataVersion: 385127250
+            [1675849697.750953][164859:164861] CHIP:TOO:   measured value: 2526
+
+         This means that the current relative humidity value is equal to 25.26%.
+
+      * Example of the air pressure measurement value log:
+
+         .. code-block:: console
+
+            [1675849714.536985][164896:164898] CHIP:TOO: Endpoint: 3 Cluster: 0x0000_0403 Attribute 0x0000_0000 DataVersion: 3096547
+            [1675849714.537008][164896:164898] CHIP:TOO:   MeasuredValue: 1015
+
+         This means that the current current air pressure value is equal to 1015 hPa.
+
+Onboarding information
+----------------------
+
+When you start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
+The onboarding information representation depends on your commissioner setup.
+
+For this application, the data payload, which includes the device discriminator and setup PIN code, is encoded and shared using an NFC tag.
+When using the debug configuration, you can also get this type of information from the USB interface logs.
+
+Alternatively, depending on your build type, you can also use one of the following :ref:`onboarding information formats <ug_matter_network_topologies_commissioning_onboarding_formats>` to provide the commissioner with the data required:
+
+* For the debug and release build types:
+
+  .. list-table:: Weather station application onboarding information for the debug build type
+     :header-rows: 1
+
+     * - QR Code
+       - QR Code Payload
+       - Manual pairing code
+     * - Scan the following QR code with the app for your ecosystem:
+
+         .. figure:: /images/matter_qr_code_weather_station_default.png
+            :width: 200px
+            :alt: QR code for commissioning the weather station device (debug build type)
+
+       - MT:M1TJ342C00KA0648G00
+       - 34970112332
+
+* For the factory data build type:
+
+  .. list-table:: Weather station application onboarding information for the factory data build type
+     :header-rows: 1
+
+     * - QR Code
+       - QR Code Payload
+       - Manual pairing code
+     * - Scan the following QR code with the app for your ecosystem:
+
+         .. figure:: /images/matter_qr_code_weather_station_factory_data.png
+            :width: 200px
+            :alt: QR code for commissioning the weather station device (factory data build type)
+
+       - MT:KAYA36PF1509673GE10
+       - 14575339844
 
 .. _matter_weather_station_app_dfu:
 

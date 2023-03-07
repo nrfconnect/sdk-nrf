@@ -11,7 +11,8 @@
 #include <zephyr/device.h>
 #include <modem/sms.h>
 #include <modem/at_monitor.h>
-#include <cmock_nrf_modem_at.h>
+
+#include "cmock_nrf_modem_at.h"
 
 
 static struct sms_data test_sms_data = {0};
@@ -46,15 +47,11 @@ void setUp(void)
 	test_handle = 0;
 	sms_callback_called_occurred = false;
 	sms_callback_called_expected = false;
-
-	cmock_nrf_modem_at_Init();
 }
 
 void tearDown(void)
 {
 	TEST_ASSERT_EQUAL(sms_callback_called_expected, sms_callback_called_occurred);
-
-	cmock_nrf_modem_at_Verify();
 }
 
 static void sms_reg_helper(void)

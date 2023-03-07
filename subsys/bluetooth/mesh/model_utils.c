@@ -7,9 +7,9 @@
 #include "model_utils.h"
 #include "mesh/mesh.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_mod
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_mod);
 
 /** Unknown encoded transition time value */
 #define TRANSITION_TIME_UNKNOWN (0x3F)
@@ -102,47 +102,13 @@ int32_t model_delay_decode(uint8_t encoded_delay)
 	return encoded_delay * DELAY_TIME_STEP_MS;
 }
 
-int model_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-	       struct net_buf_simple *buf)
+int32_t model_ackd_timeout_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx)
 {
-	if (!ctx && !model->pub) {
-		return -ENOTSUP;
-	}
+	uint8_t ttl = (ctx ? ctx->send_ttl : model->pub->ttl);
+	int32_t time = (CONFIG_BT_MESH_MOD_ACKD_TIMEOUT_BASE +
+		ttl * CONFIG_BT_MESH_MOD_ACKD_TIMEOUT_PER_HOP);
 
-	if (ctx) {
-		return bt_mesh_model_send(model, ctx, buf, NULL, 0);
-	}
-
-	net_buf_simple_reset(model->pub->msg);
-	net_buf_simple_add_mem(model->pub->msg, buf->data, buf->len);
-
-	return bt_mesh_model_publish(model);
-}
-
-int model_ackd_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		    struct net_buf_simple *buf,
-		    struct bt_mesh_msg_ack_ctx *ack, uint32_t rsp_op,
-		    void *user_data)
-{
-	if (ack &&
-	    bt_mesh_msg_ack_ctx_prepare(ack, rsp_op, ctx ? ctx->addr : model->pub->addr,
-					user_data) != 0) {
-		return -EALREADY;
-	}
-
-	int retval = model_send(model, ctx, buf);
-
-	if (ack) {
-		if (retval == 0) {
-			uint8_t ttl = (ctx ? ctx->send_ttl : model->pub->ttl);
-			int32_t time = (CONFIG_BT_MESH_MOD_ACKD_TIMEOUT_BASE +
-				ttl * CONFIG_BT_MESH_MOD_ACKD_TIMEOUT_PER_HOP);
-			return bt_mesh_msg_ack_ctx_wait(ack, K_MSEC(time));
-		}
-
-		bt_mesh_msg_ack_ctx_clear(ack);
-	}
-	return retval;
+	return time;
 }
 
 bool bt_mesh_model_pub_is_unicast(const struct bt_mesh_model *model)

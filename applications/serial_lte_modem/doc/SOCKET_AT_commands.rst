@@ -618,7 +618,7 @@ Syntax
   * ``2`` - ``TLS_HOSTNAME``.
     ``<value>`` is a string.
   * ``4`` - ``TLS_CIPHERSUITE_USED`` (get-only).
-    It accepts the IANA assigned ciphersuite identifier of the chosen ciphersuite.
+    It accepts the IANA assigned cipher suite identifier of the chosen cipher suite.
   * ``5`` - ``TLS_PEER_VERIFY``.
     ``<value>`` is an integer and can be either ``0`` or ``1``.
   * ``12`` - ``TLS_SESSION_CACHE``.
@@ -924,7 +924,7 @@ Syntax
    #XSEND[=<data>]
 
 * The ``<data>`` parameter is a string that contains the data to be sent.
-  The maximum size of the data is 1252 bytes.
+  The maximum size of the data is 1024 bytes.
   When the parameter is not specified, SLM enters ``slm_data_mode``.
 
 Response syntax
@@ -1038,7 +1038,7 @@ Syntax
 * The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
   It represents the port of the UDP service on remote peer.
 * The ``<data>`` parameter is a string that contains the data to be sent.
-  Its maximum size is 1252 bytes.
+  Its maximum size is 1024 bytes.
   When the parameter is not specified, SLM enters ``slm_data_mode``.
 
 Response syntax

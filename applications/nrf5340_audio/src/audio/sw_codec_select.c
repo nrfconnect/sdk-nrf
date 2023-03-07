@@ -50,7 +50,7 @@ int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, siz
 			return ret;
 		}
 
-		switch (m_config.encoder.channel_mode) {
+		switch (m_config.encoder.num_ch) {
 		case SW_CODEC_MONO: {
 			ret = sw_codec_lc3_enc_run(pcm_data_mono[m_config.encoder.audio_ch],
 						   pcm_block_size_mono, LC3_USE_BITRATE_FROM_INIT,
@@ -82,7 +82,7 @@ int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, siz
 			break;
 		}
 		default:
-			LOG_ERR("Unsupported channel mode: %d", m_config.encoder.channel_mode);
+			LOG_ERR("Unsupported number of channels: %d", m_config.encoder.num_ch);
 			return -ENODEV;
 		}
 
@@ -121,7 +121,7 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 		/* Typically used for right channel if stereo signal */
 		char pcm_data_mono_right[PCM_NUM_BYTES_MONO] = { 0 };
 
-		switch (m_config.decoder.channel_mode) {
+		switch (m_config.decoder.num_ch) {
 		case SW_CODEC_MONO: {
 			if (bad_frame && IS_ENABLED(CONFIG_SW_CODEC_OVERRIDE_PLC)) {
 				memset(pcm_data_mono, 0, PCM_NUM_BYTES_MONO);
@@ -182,7 +182,7 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 			break;
 		}
 		default:
-			LOG_ERR("Unsupported channel mode: %d", m_config.encoder.channel_mode);
+			LOG_ERR("Unsupported number of channels: %d", m_config.encoder.num_ch);
 			return -ENODEV;
 		}
 
@@ -266,12 +266,12 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			LOG_DBG("Encode: %dHz %dbits %dus %dbps %d channel(s)",
 				CONFIG_AUDIO_SAMPLE_RATE_HZ, CONFIG_AUDIO_BIT_DEPTH_BITS,
 				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.encoder.bitrate,
-				sw_codec_cfg.encoder.channel_mode);
+				sw_codec_cfg.encoder.num_ch);
 
 			ret = sw_codec_lc3_enc_init(
 				CONFIG_AUDIO_SAMPLE_RATE_HZ, CONFIG_AUDIO_BIT_DEPTH_BITS,
 				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.encoder.bitrate,
-				sw_codec_cfg.encoder.channel_mode, &pcm_bytes_req_enc);
+				sw_codec_cfg.encoder.num_ch, &pcm_bytes_req_enc);
 
 			if (ret) {
 				return ret;
@@ -286,12 +286,12 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 
 			LOG_DBG("Decode: %dHz %dbits %dus %d channel(s)",
 				CONFIG_AUDIO_SAMPLE_RATE_HZ, CONFIG_AUDIO_BIT_DEPTH_BITS,
-				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.decoder.channel_mode);
+				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.decoder.num_ch);
 
 			ret = sw_codec_lc3_dec_init(CONFIG_AUDIO_SAMPLE_RATE_HZ,
 						    CONFIG_AUDIO_BIT_DEPTH_BITS,
 						    CONFIG_AUDIO_FRAME_DURATION_US,
-						    sw_codec_cfg.decoder.channel_mode);
+						    sw_codec_cfg.decoder.num_ch);
 
 			if (ret) {
 				return ret;

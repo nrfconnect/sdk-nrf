@@ -13,9 +13,6 @@
 #include <modem/nrf_modem_lib.h>
 #endif /* CONFIG_NRF_MODEM_LIB */
 #include <zephyr/sys/reboot.h>
-#if defined(CONFIG_LWM2M_INTEGRATION)
-#include <net/lwm2m_client_utils.h>
-#endif /* CONFIG_LWM2M_INTEGRATION */
 #include <net/nrf_cloud.h>
 
 /* Module name is used by the Application Event Manager macros in this file */
@@ -204,16 +201,20 @@ static void handle_nrf_modem_lib_init_ret(void)
 	case 0:
 		/* Initialization successful, no action required. */
 		return;
-	case MODEM_DFU_RESULT_OK:
+	case NRF_MODEM_DFU_RESULT_OK:
 		LOG_DBG("MODEM UPDATE OK. Will run new modem firmware after reboot");
 		break;
-	case MODEM_DFU_RESULT_UUID_ERROR:
-	case MODEM_DFU_RESULT_AUTH_ERROR:
+	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
+	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
 		LOG_ERR("MODEM UPDATE ERROR %d. Will run old firmware", ret);
 		break;
-	case MODEM_DFU_RESULT_HARDWARE_ERROR:
-	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
 		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failure", ret);
+		break;
+	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
+		LOG_ERR("MODEM UPDATE CANCELLED %d.", ret);
+		LOG_ERR("Please reboot once you have sufficient power for the DFU");
 		break;
 	default:
 		/* All non-zero return codes other than DFU result codes are
@@ -226,8 +227,6 @@ static void handle_nrf_modem_lib_init_ret(void)
 #if defined(CONFIG_NRF_CLOUD_FOTA)
 	/* Ignore return value, rebooting below */
 	(void)nrf_cloud_fota_pending_job_validate(NULL);
-#elif defined(CONFIG_LWM2M_INTEGRATION)
-	lwm2m_verify_modem_fw_update();
 #endif
 	LOG_DBG("Rebooting...");
 	LOG_PANIC();
@@ -391,7 +390,7 @@ static void data_get(void)
 		app_module_event->data_list[count++] = APP_DATA_MODEM_STATIC;
 	}
 
-	if (!app_cfg.no_data.neighbor_cell || !app_cfg.no_data.gnss) {
+	if (!app_cfg.no_data.neighbor_cell || !app_cfg.no_data.gnss || !app_cfg.no_data.wifi) {
 		app_module_event->data_list[count++] = APP_DATA_LOCATION;
 
 		/* Set application module timeout when location sampling is requested.

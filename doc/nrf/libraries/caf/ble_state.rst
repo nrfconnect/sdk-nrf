@@ -7,7 +7,7 @@ CAF: Bluetooth LE state module
    :local:
    :depth: 2
 
-The |ble_state| is a core Bluetooth module in :ref:`lib_caf` (CAF).
+The Bluetooth® LE state module is a core Bluetooth module in :ref:`lib_caf` (CAF).
 When enabled for an application, the |ble_state| is responsible for the following actions:
 
 * Enabling Bluetooth (:c:func:`bt_enable`)
@@ -93,5 +93,3 @@ If Nordic Semiconductor's SoftDevice Bluetooth LE Link Layer is selected (:kconf
 If the SoftDevice Link Layer is selected, the |ble_state| also sets the TX power for connections.
 The TX power is set according to Zephyr's Kconfig options related to selecting the default TX power.
 This is necessary because the mentioned Kconfig options are not automatically applied by the Bluetooth stack if the SoftDevice Link Layer is selected.
-
-.. |ble_state| replace:: Bluetooth® LE state module

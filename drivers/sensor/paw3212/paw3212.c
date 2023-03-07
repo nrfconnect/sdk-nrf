@@ -287,7 +287,7 @@ static int update_cpi(const struct device *dev, uint32_t cpi)
 
 	uint8_t regval = cpi / PAW3212_CPI_STEP;
 
-	LOG_INF("Set CPI: %u (requested: %u, reg:0x%" PRIx8 ")",
+	LOG_DBG("Set CPI: %u (requested: %u, reg:0x%" PRIx8 ")",
 		regval * PAW3212_CPI_STEP, cpi, regval);
 
 	err = reg_write(dev, PAW3212_REG_WRITE_PROTECT, PAW3212_WPMAGIC);
@@ -343,7 +343,7 @@ static int update_sleep_timeout(const struct device *dev, uint8_t reg_addr,
 		return -EINVAL;
 	}
 
-	LOG_INF("Set sleep%d timeout: %u (requested: %u, reg:0x%" PRIx8 ")",
+	LOG_DBG("Set sleep%d timeout: %u (requested: %u, reg:0x%" PRIx8 ")",
 		reg_addr - PAW3212_REG_SLEEP1 + 1,
 		(etm + 1) * timeout_step_ms,
 		timeout_ms,
@@ -418,7 +418,7 @@ static int update_sample_time(const struct device *dev, uint8_t reg_addr,
 
 	uint8_t reg_freq = (sample_time_ms - sample_time_min) / sample_time_step;
 
-	LOG_INF("Set sleep%d sample time: %u (requested: %u, reg:0x%" PRIx8 ")",
+	LOG_DBG("Set sleep%d sample time: %u (requested: %u, reg:0x%" PRIx8 ")",
 		reg_addr - PAW3212_REG_SLEEP1 + 1,
 		(reg_freq * sample_time_step) + sample_time_min,
 		sample_time_ms,
@@ -471,7 +471,7 @@ static int toggle_sleep_modes(const struct device *dev, uint8_t reg_addr1,
 
 	uint8_t regval;
 
-	LOG_INF("%sable sleep", (enable) ? ("En") : ("Dis"));
+	LOG_DBG("%sable sleep", (enable) ? ("En") : ("Dis"));
 
 	/* Sleep 1 and Sleep 2 */
 	err = reg_read(dev, reg_addr1, &regval);
@@ -598,7 +598,7 @@ static int paw3212_async_init_verify_id(const struct device *dev)
 		return err;
 	}
 
-	LOG_INF("Product ID: 0x%" PRIx8, product_id);
+	LOG_DBG("Product ID: 0x%" PRIx8, product_id);
 	if (product_id != PAW3212_PRODUCT_ID) {
 		LOG_ERR("Invalid product ID (0x%" PRIx8")!", product_id);
 		return -EIO;
@@ -707,7 +707,7 @@ static int paw3212_init(const struct device *dev)
 	k_work_init(&data->trigger_handler_work, trigger_handler);
 	data->dev = dev;
 
-	if (!spi_is_ready(&config->bus)) {
+	if (!spi_is_ready_dt(&config->bus)) {
 		return -ENODEV;
 	}
 

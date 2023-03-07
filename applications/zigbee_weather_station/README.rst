@@ -33,7 +33,7 @@ If you have an nRF5340 DK that has an onboard J-Link programmer, you can also us
 If the Thingy:53 device is programmed with a Thingy:53-compatible sample or application, you can also update the firmware using MCUboot's serial recovery or DFU over Bluetooth LE.
 See :ref:`thingy53_app_guide` for details.
 
-For capturing packets while testing, you can use `nRF Sniffer for 802.15.4`_ with `Wireshark configured for Zigbee <Configuring Wireshark for Zigbee>`_.
+For capturing packets while testing, you can use `nRF Sniffer for 802.15.4`_ with `Wireshark configured for Zigbee <Configuring Wireshark for Zigbee_>`_.
 
 Overview
 ********
@@ -56,7 +56,7 @@ Other build types are covered by dedicated files with the build type added as a 
 For example, the ``release`` build type file name is :file:`prj_release.conf`.
 If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_overview_start
    :end-before: build_types_overview_end
 
@@ -185,14 +185,14 @@ Before you start testing the application, you can select one of the :ref:`zigbee
 Selecting a build type in |VSC|
 -------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_vsc_start
    :end-before: build_types_selection_vsc_end
 
 Selecting a build type from command line
 ----------------------------------------
 
-.. include:: /gs_modifying.rst
+.. include:: /getting_started/modifying.rst
    :start-after: build_types_selection_cmd_start
    :end-before: For example, you can replace the
 

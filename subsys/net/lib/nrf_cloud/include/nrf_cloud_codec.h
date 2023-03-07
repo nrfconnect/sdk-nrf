@@ -10,7 +10,9 @@
 #include <stdbool.h>
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
+#include <net/nrf_cloud_defs.h>
 #include <net/nrf_cloud.h>
+#include <net/nrf_cloud_alerts.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif
@@ -25,116 +27,6 @@
 extern "C" {
 #endif
 
-/* nRF Cloud appID values */
-#define NRF_CLOUD_JSON_APPID_KEY		"appId"
-#define NRF_CLOUD_JSON_APPID_VAL_AGPS		"AGPS"
-#define NRF_CLOUD_JSON_APPID_VAL_PGPS		"PGPS"
-#define NRF_CLOUD_JSON_APPID_VAL_GNSS		"GNSS"
-#define NRF_CLOUD_JSON_APPID_VAL_LOCATION	"GROUND_FIX"
-#define NRF_CLOUD_JSON_APPID_VAL_DEVICE		"DEVICE"
-#define NRF_CLOUD_JSON_APPID_VAL_FLIP		"FLIP"
-#define NRF_CLOUD_JSON_APPID_VAL_BTN		"BUTTON"
-#define NRF_CLOUD_JSON_APPID_VAL_TEMP		"TEMP"
-#define NRF_CLOUD_JSON_APPID_VAL_HUMID		"HUMID"
-#define NRF_CLOUD_JSON_APPID_VAL_AIR_PRESS	"AIR_PRESS"
-#define NRF_CLOUD_JSON_APPID_VAL_AIR_QUAL	"AIR_QUAL"
-#define NRF_CLOUD_JSON_APPID_VAL_RSRP		"RSRP"
-#define NRF_CLOUD_JSON_APPID_VAL_LIGHT		"LIGHT"
-
-#define NRF_CLOUD_JSON_MSG_TYPE_KEY		"messageType"
-#define NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA	"DATA"
-#define NRF_CLOUD_JSON_MSG_TYPE_VAL_DISCONNECT	"DISCON"
-#define NRF_CLOUD_JSON_MSG_MAX_LEN_DISCONNECT	200
-
-#define NRF_CLOUD_JSON_DATA_KEY			"data"
-#define NRF_CLOUD_JSON_ERR_KEY			"err"
-
-#define NRF_CLOUD_JSON_FULFILL_KEY		"fulfilledWith"
-
-#define NRF_CLOUD_JSON_FILTERED_KEY		"filtered"
-#define NRF_CLOUD_JSON_ELEVATION_MASK_KEY	"mask"
-
-#define NRF_CLOUD_BULK_MSG_TOPIC		"/bulk"
-
-/* Modem info key text */
-#define NRF_CLOUD_JSON_MCC_KEY			"mcc"
-#define NRF_CLOUD_JSON_MNC_KEY			"mnc"
-#define NRF_CLOUD_JSON_AREA_CODE_KEY		"tac"
-#define NRF_CLOUD_JSON_CELL_ID_KEY		"eci"
-#define NRF_CLOUD_JSON_PHYCID_KEY		"phycid"
-#define NRF_CLOUD_JSON_RSRP_KEY			"rsrp"
-
-/* Cellular positioning */
-#define NRF_CLOUD_CELL_POS_JSON_KEY_LTE		"lte"
-#define NRF_CLOUD_CELL_POS_JSON_KEY_ECI		NRF_CLOUD_JSON_CELL_ID_KEY
-#define NRF_CLOUD_CELL_POS_JSON_KEY_MCC		NRF_CLOUD_JSON_MCC_KEY
-#define NRF_CLOUD_CELL_POS_JSON_KEY_MNC		NRF_CLOUD_JSON_MNC_KEY
-#define NRF_CLOUD_CELL_POS_JSON_KEY_TAC		NRF_CLOUD_JSON_AREA_CODE_KEY
-#define NRF_CLOUD_CELL_POS_JSON_KEY_AGE		"age"
-#define NRF_CLOUD_CELL_POS_JSON_KEY_T_ADV	"adv"
-#define NRF_CLOUD_CELL_POS_JSON_KEY_EARFCN	"earfcn"
-#define NRF_CLOUD_CELL_POS_JSON_KEY_PCI		"pci"
-#define NRF_CLOUD_CELL_POS_JSON_KEY_NBORS	"nmr"
-#define NRF_CLOUD_CELL_POS_JSON_KEY_RSRP	NRF_CLOUD_JSON_RSRP_KEY
-#define NRF_CLOUD_CELL_POS_JSON_KEY_RSRQ	"rsrq"
-
-/* Location */
-#define NRF_CLOUD_LOCATION_KEY_DOREPLY		"doReply"
-#define NRF_CLOUD_LOCATION_JSON_KEY_WIFI	"wifi"
-#define NRF_CLOUD_LOCATION_JSON_KEY_APS		"accessPoints"
-#define NRF_CLOUD_LOCATION_JSON_KEY_WIFI_MAC	"macAddress"
-#define NRF_CLOUD_LOCATION_JSON_KEY_WIFI_CH	"channel"
-#define NRF_CLOUD_LOCATION_JSON_KEY_WIFI_RSSI	"signalStrength"
-#define NRF_CLOUD_LOCATION_JSON_KEY_WIFI_SSID	"ssid"
-#define NRF_CLOUD_LOCATION_JSON_KEY_LAT		"lat"
-#define NRF_CLOUD_LOCATION_JSON_KEY_LON		"lon"
-#define NRF_CLOUD_LOCATION_JSON_KEY_UNCERT	"uncertainty"
-#define NRF_CLOUD_LOCATION_TYPE_VAL_MCELL	"MCELL"
-#define NRF_CLOUD_LOCATION_TYPE_VAL_SCELL	"SCELL"
-#define NRF_CLOUD_LOCATION_TYPE_VAL_WIFI	"WIFI"
-
-/* P-GPS */
-#define NRF_CLOUD_JSON_PGPS_PRED_COUNT		"predictionCount"
-#define NRF_CLOUD_JSON_PGPS_INT_MIN		"predictionIntervalMinutes"
-#define NRF_CLOUD_JSON_PGPS_GPS_DAY		"startGpsDay"
-#define NRF_CLOUD_JSON_PGPS_GPS_TIME		"startGpsTimeOfDaySeconds"
-#define NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST	0
-#define NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH	1
-#define NRF_CLOUD_PGPS_RCV_REST_HOST		"host"
-#define NRF_CLOUD_PGPS_RCV_REST_PATH		"path"
-
-#define NRF_CLOUD_MSG_TIMESTAMP_KEY		"ts"
-
-/* FOTA */
-#define NRF_CLOUD_FOTA_TYPE_MODEM_DELTA		"MODEM"
-#define NRF_CLOUD_FOTA_TYPE_MODEM_FULL		"MDM_FULL"
-#define NRF_CLOUD_FOTA_TYPE_BOOT		"BOOT"
-#define NRF_CLOUD_FOTA_TYPE_APP			"APP"
-#define NRF_CLOUD_FOTA_REST_KEY_JOB_DOC		"jobDocument"
-#define NRF_CLOUD_FOTA_REST_KEY_JOB_ID		"jobId"
-#define NRF_CLOUD_FOTA_REST_KEY_PATH		"path"
-#define NRF_CLOUD_FOTA_REST_KEY_HOST		"host"
-#define NRF_CLOUD_FOTA_REST_KEY_TYPE		"firmwareType"
-#define NRF_CLOUD_FOTA_REST_KEY_SIZE		"fileSize"
-#define NRF_CLOUD_FOTA_REST_KEY_VER		"version"
-
-/* REST */
-#define NRF_CLOUD_REST_ERROR_CODE_KEY		"code"
-#define NRF_CLOUD_REST_ERROR_MSG_KEY		"message"
-
-/* GNSS - PVT */
-#define NRF_CLOUD_JSON_GNSS_PVT_KEY_LAT		"lat"
-#define NRF_CLOUD_JSON_GNSS_PVT_KEY_LON		"lng"
-#define NRF_CLOUD_JSON_GNSS_PVT_KEY_ACCURACY	"acc"
-#define NRF_CLOUD_JSON_GNSS_PVT_KEY_ALTITUDE	"alt"
-#define NRF_CLOUD_JSON_GNSS_PVT_KEY_SPEED	"spd"
-#define NRF_CLOUD_JSON_GNSS_PVT_KEY_HEADING	"hdg"
-
-/* DEVICE */
-#define NRF_CLOUD_DEVICE_JSON_KEY_NET_INF	"networkInfo"
-#define NRF_CLOUD_DEVICE_JSON_KEY_SIM_INF	"simInfo"
-#define NRF_CLOUD_DEVICE_JSON_KEY_DEV_INF	"deviceInfo"
-
 enum nrf_cloud_rcv_topic {
 	NRF_CLOUD_RCV_TOPIC_GENERAL,
 	NRF_CLOUD_RCV_TOPIC_AGPS,
@@ -146,6 +38,14 @@ enum nrf_cloud_rcv_topic {
 
 /** @brief Initialize the codec used encoding the data to the cloud. */
 int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks);
+
+/** @brief Encode an alert and update the output struct with pointer
+ *  to data and its length.  Caller must free the pointer when done,
+ *  but only if it is not NULL; when CONFIG_NRF_CLOUD_ALERTS is disabled,
+ *  this function returns 0, and sets output->ptr = NULL and output->len = 0.
+ */
+int nrf_cloud_encode_alert(const struct nrf_cloud_alert_info *alert,
+			   struct nrf_cloud_data *output);
 
 /** @brief Encode the sensor data based on the indicated type. */
 int nrf_cloud_encode_sensor_data(const struct nrf_cloud_sensor_data *input,
@@ -175,15 +75,34 @@ int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
 				     struct nrf_cloud_data *const output,
 				     bool *const has_config);
 
-/** @brief Encode the device status data into a JSON formatted buffer.
+/** @brief Parse input for control section, and return contents and status of it. */
+int nrf_cloud_decode_control(struct nrf_cloud_data const *const input,
+			     enum nrf_cloud_ctrl_status *status,
+			     struct nrf_cloud_ctrl_data *data);
+
+/** @brief Encode response that we have accepted a shadow delta. */
+int nrf_cloud_encode_control_response(struct nrf_cloud_ctrl_data const *const data,
+				      struct nrf_cloud_data *const output);
+
+/** @brief Encode the device status data into a JSON formatted buffer to be saved to
+ * the device shadow.
  * The include_state flag controls if the "state" JSON key is included in the output.
  * When calling this function to encode data for use with the UpdateDeviceState nRF Cloud
  * REST endpoint, the "state" key should not be included.
+ * The user is responsible for freeing the memory by calling @ref nrf_cloud_device_status_free.
  */
-int nrf_cloud_device_status_encode(const struct nrf_cloud_device_status * const dev_status,
-				   struct nrf_cloud_data * const output, const bool include_state);
+int nrf_cloud_device_status_shadow_encode(const struct nrf_cloud_device_status * const dev_status,
+					  struct nrf_cloud_data * const output,
+					  const bool include_state);
 
-/** @brief Free memory allocated by @ref nrf_cloud_device_status_encode. */
+/** @brief Encode the device status data as an nRF Cloud device message in the provided
+ * cJSON object.
+ */
+int nrf_cloud_device_status_msg_encode(const struct nrf_cloud_device_status *const dev_status,
+				       const int64_t timestamp,
+				       cJSON * const msg_obj_out);
+
+/** @brief Free memory allocated by @ref nrf_cloud_device_status_shadow_encode */
 void nrf_cloud_device_status_free(struct nrf_cloud_data *status);
 
 /** @brief Free memory allocated by @ref nrf_cloud_rest_fota_execution_parse */
@@ -209,7 +128,7 @@ int nrf_cloud_json_add_modem_info(cJSON * const data_obj);
  * using the provided cell info
  */
 int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf,
-				       size_t inf_cnt, cJSON * const req_obj_out);
+				       cJSON * const req_obj_out);
 
 /** @brief Obtain the necessary network info from the modem and build a
  * [single-cell] cellular positioning request in the provided cJSON object.
@@ -281,6 +200,11 @@ bool nrf_cloud_set_wildcard_c2d_topic(char *const topic, size_t topic_len);
 
 /** @brief Decode a dc receive topic string into an enum value */
 enum nrf_cloud_rcv_topic nrf_cloud_decode_dc_rx_topic(const char * const topic);
+
+/** @brief Set the application version that is reported to nRF Cloud if
+ * CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS is enabled.
+ */
+void nrf_cloud_set_app_version(const char * const app_ver);
 
 #ifdef CONFIG_NRF_CLOUD_GATEWAY
 typedef int (*gateway_state_handler_t)(void *root_obj);

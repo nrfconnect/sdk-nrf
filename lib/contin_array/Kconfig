@@ -1,0 +1,19 @@
+# Continuous Array creator
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CONTIN_ARRAY
+	bool "Continuous array library"
+	help
+		Enable continuous array library
+
+if CONTIN_ARRAY
+
+module = CONTIN_ARRAY
+module-str = Continuous array
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif #CONTIN_ARRAY

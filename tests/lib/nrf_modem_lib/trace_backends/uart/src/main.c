@@ -16,8 +16,7 @@
 
 extern int unity_main(void);
 
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
-extern int generic_suiteTearDown(int num_failures);
+extern struct nrf_modem_lib_trace_backend trace_backend;
 
 static const nrfx_uarte_t *p_uarte_inst_in_use;
 /* Variable to store the event_handler registered by the modem_trace module.*/
@@ -34,17 +33,8 @@ void nrfx_isr(const void *irq_handler)
 	TEST_ASSERT(false);
 }
 
-void setUp(void)
-{
-	cmock_nrfx_uarte_Init();
-	cmock_pinctrl_Init();
-}
-
 void tearDown(void)
 {
-	cmock_nrfx_uarte_Verify();
-	cmock_pinctrl_Verify();
-
 	p_uarte_inst_in_use = NULL;
 	uarte_callback = NULL;
 }
@@ -116,17 +106,12 @@ static void trace_test_thread(void)
 		k_sem_take(&receive_traces_sem, K_FOREVER);
 		is_waiting_on_traces = false;
 
-		trace_backend_write(trace_data, trace_data_len);
+		trace_backend.write(trace_data, trace_data_len);
 	}
 }
 
 K_THREAD_DEFINE(trace_test_thread_id, TRACE_TEST_THREAD_STACK_SIZE, trace_test_thread,
 		NULL, NULL, NULL, TRACE_THREAD_PRIORITY, 0, 0);
-
-int test_suiteTearDown(int num_failures)
-{
-	return generic_suiteTearDown(num_failures);
-}
 
 /* Test that uart trace backend returns zero when NRFX UART Init succeeds. */
 void test_trace_backend_init_uart(void)
@@ -138,7 +123,7 @@ void test_trace_backend_init_uart(void)
 	__cmock_nrfx_uarte_init_ExpectAnyArgsAndReturn(NRFX_SUCCESS);
 	__cmock_nrfx_uarte_init_AddCallback(&nrfx_uarte_init_callback);
 
-	ret = trace_backend_init(empty_callback);
+	ret = trace_backend.init(empty_callback);
 
 	TEST_ASSERT_EQUAL(0, ret);
 }
@@ -153,7 +138,7 @@ void test_trace_backend_init_uart_ebusy(void)
 	__cmock_pinctrl_configure_pins_ExpectAnyArgsAndReturn(0);
 	__cmock_nrfx_uarte_init_ExpectAnyArgsAndReturn(NRFX_ERROR_BUSY);
 
-	ret = trace_backend_init(empty_callback);
+	ret = trace_backend.init(empty_callback);
 
 	TEST_ASSERT_EQUAL(-EBUSY, ret);
 }
@@ -169,7 +154,7 @@ void test_trace_backend_deinit_uart(void)
 	__cmock_pinctrl_lookup_state_ExpectAnyArgsAndReturn(0);
 	__cmock_pinctrl_configure_pins_ExpectAnyArgsAndReturn(0);
 
-	ret = trace_backend_deinit();
+	ret = trace_backend.deinit();
 
 	TEST_ASSERT_EQUAL(0, ret);
 }

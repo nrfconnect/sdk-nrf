@@ -74,10 +74,13 @@ static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t s
 void audio_i2s_set_next_buf(const uint8_t *tx_buf, uint32_t *rx_buf)
 {
 	__ASSERT_NO_MSG(state == AUDIO_I2S_STATE_STARTED);
-	__ASSERT_NO_MSG(rx_buf != NULL);
-#if (CONFIG_STREAM_BIDIRECTIONAL || (CONFIG_AUDIO_DEV == HEADSET))
-	__ASSERT_NO_MSG(tx_buf != NULL);
-#endif /* (CONFIG_STREAM_BIDIRECTIONAL || (CONFIG_AUDIO_DEV == HEADSET)) */
+	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == GATEWAY)) {
+		__ASSERT_NO_MSG(rx_buf != NULL);
+	}
+
+	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == HEADSET)) {
+		__ASSERT_NO_MSG(tx_buf != NULL);
+	}
 
 	const nrfx_i2s_buffers_t i2s_buf = { .p_rx_buffer = rx_buf,
 					     .p_tx_buffer = (uint32_t *)tx_buf };
@@ -91,10 +94,13 @@ void audio_i2s_set_next_buf(const uint8_t *tx_buf, uint32_t *rx_buf)
 void audio_i2s_start(const uint8_t *tx_buf, uint32_t *rx_buf)
 {
 	__ASSERT_NO_MSG(state == AUDIO_I2S_STATE_IDLE);
-	__ASSERT_NO_MSG(rx_buf != NULL);
-#if (CONFIG_STREAM_BIDIRECTIONAL || (CONFIG_AUDIO_DEV == HEADSET))
-	__ASSERT_NO_MSG(tx_buf != NULL);
-#endif /* (CONFIG_STREAM_BIDIRECTIONAL || (CONFIG_AUDIO_DEV == HEADSET)) */
+	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == GATEWAY)) {
+		__ASSERT_NO_MSG(rx_buf != NULL);
+	}
+
+	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == HEADSET)) {
+		__ASSERT_NO_MSG(tx_buf != NULL);
+	}
 
 	const nrfx_i2s_buffers_t i2s_buf = { .p_rx_buffer = rx_buf,
 					     .p_tx_buffer = (uint32_t *)tx_buf };

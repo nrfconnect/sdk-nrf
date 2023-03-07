@@ -28,13 +28,13 @@ Implementation
 ==============
 
 The location library has a compact API and a location core that handles the functionality that is independent of the location method, such as fallback to the next preferred method and timeouts.
-Each location method has its own implementation for the location retrieval:
+The supported location methods are as follows:
 
 * GNSS positioning
 
   * :ref:`gnss_interface` for getting the location.
   * A-GPS and P-GPS are managed with :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps`.
-  * The application may also use some other source for the data and use :c:func:`location_agps_data_process` to pass the data to the location library.
+  * The application may also use some other source for the data and use :c:func:`location_agps_data_process` and :c:func:`location_pgps_data_process` to pass the data to the location library.
   * The data format of A-GPS or P-GPS must be as received from :ref:`lib_nrf_cloud_agps`.
   * The data transport method for :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` can be configured to be either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
 
@@ -48,22 +48,26 @@ Each location method has its own implementation for the location retrieval:
 * Cellular positioning
 
   * :ref:`lte_lc_readme` for getting visible cellular base stations.
-  * :ref:`lib_multicell_location` for sending cell information to the selected location service and getting the calculated location back to the device.
-
-    * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
-    * The services available are `nRF Cloud Location Services`_ and `HERE Positioning`_.
-    * The data transport method for the service is mainly REST. However, either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`) can be configured for `nRF Cloud Location Services`_.
+  * The ``cloud location`` method handles sending cell information to the selected location service and getting the calculated location back to the device.
 
 * Wi-Fi positioning
 
   * Zephyr's Network Management API :ref:`zephyr:net_mgmt_interface` for getting the visible Wi-Fi access points.
-  * Sending access point information to the selected location service and getting the calculated location back to the device:
+  * The ``cloud location`` method handles sending access point information to the selected location service and getting the calculated location back to the device.
 
-    * The location library has an implementation for the Wi-Fi location services.
-    * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
-    * The services available are `nRF Cloud Location Services`_ and `HERE Positioning`_.
-    * The data transport method for the `nRF Cloud Location Services`_ can be configured to either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
-    * The only data transport method with `HERE Positioning`_ service is REST.
+The ``cloud location`` method handles the location methods (cellular and Wi-Fi positioning)
+that scan for technology-specific information and sends it over to the cloud service for location resolution.
+
+The default priority order of location methods is GNSS positioning, Wi-Fi positioning and Cellular positioning.
+If any of these methods are disabled, the method is simply omitted from the list.
+
+Here are details related to the services handling cell information for cellular positioning, or access point information for Wi-Fi positioning:
+
+  * Services can be handled by the application by enabling the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option, in which case rest of the service configurations are ignored.
+  * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
+  * The services available are `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ and `HERE Positioning`_.
+  * The data transport method for the `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ can be configured to either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
+  * The only data transport method with `HERE Positioning`_ service is REST.
 
 Requirements
 ************
@@ -80,7 +84,7 @@ Location service accounts
 
 To use the location services that provide A-GPS or P-GPS, cellular or Wi-Fi positioning data, see the respective documentation for setting up your account and getting the required credentials for authentication:
 
-* `nRF Cloud Location Services`_
+* `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_
 * `HERE Positioning`_
 
 You can configure the required credentials for the location services using Kconfig options.
@@ -127,11 +131,13 @@ Configure the following options to enable location methods of your choice:
 
 The following options control the use of GNSS assistance data:
 
-* :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL` - Enables A-GPS data retrieval from an external source, implemented separately by the application. If enabled, the library triggers a :c:enum:`LOCATION_EVT_GNSS_ASSISTANCE_REQUEST` event when assistance is needed. Once the application has obtained the assistance data, it should call the :c:func:`location_agps_data_process` function to feed it into the library.
-* :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL` - Enables P-GPS data retrieval from an external source, implemented separately by the application. If enabled, the library triggers a :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` event when assistance is needed. Once the application has obtained the assistance data, it should call the :c:func:`location_pgps_data_process` function to feed it into the library.
+* :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` - Enables A-GPS and P-GPS data retrieval from an external source, implemented separately by the application.
+  If enabled, the library triggers a :c:enum:`LOCATION_EVT_GNSS_ASSISTANCE_REQUEST` or :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` event when assistance is needed.
+  Once the application has obtained the assistance data, it should call the :c:func:`location_agps_data_process` or the :c:func:`location_pgps_data_process` function to feed it into the library.
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGPS` - Enables A-GPS data retrieval from `nRF Cloud`_.
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` - Enables P-GPS data retrieval from `nRF Cloud`_.
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED` - Reduces assistance size by only downloading ephemerides for visible satellites.
+  See :ref:`agps_filtered_ephemerides` for more details.
 
 The following option is useful when setting :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED`:
 
@@ -141,23 +147,34 @@ The following options control the transport method used with `nRF Cloud`_:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_REST` - Uses REST APIs to communicate with `nRF Cloud`_ if :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is not set.
 * :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` - Uses MQTT transport to communicate with `nRF Cloud`_.
-* :kconfig:option:`CONFIG_REST_CLIENT` - Enable :ref:`lib_rest_client` library.
 
-Both cellular and Wi-Fi location services are selected using the runtime configuration but the available services must be configured first.
-For cellular location services, use at least one of the following sets of options and configure corresponding authentication parameters (for more details and configuration options, see :ref:`lib_multicell_location`):
+Both cellular and Wi-Fi location services are handled externally by the application or selected using the runtime configuration, in which case you must first configure the available services.
+Use at least one of the following sets of options:
 
-* :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
-* :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
+* :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL`
+* :kconfig:option:`CONFIG_LOCATION_SERVICE_NRF_CLOUD`
+* :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE` and :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_API_KEY`
 
-For Wi-Fi location services, use at least one of the following sets of options and configure the corresponding authentication parameters:
+The following options are related to the HERE service and can usually have the default values:
 
-* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD`
-* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE` and :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY`
+* :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_HOSTNAME`
+* :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG`
 
-The following options are related to the Wi-Fi service and can usually have the default values:
+The following options control the default location request configurations and are applied
+when :c:func:`location_config_defaults_set` function is called:
 
-* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME`
-* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_FIRST` - Choice symbol for first priority location method.
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_SECOND` - Choice symbol for second priority location method.
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_THIRD` - Choice symbol for third priority location method.
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_INTERVAL`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_TIMEOUT`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_TIMEOUT`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_NUM_CONSECUTIVE_FIXES`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_VISIBILITY_DETECTION`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_PRIORITY_MODE`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT`
 
 Usage
 *****
@@ -170,13 +187,62 @@ To use the Location library, perform the following steps:
 #. Set any required non-default values to the structures.
 #. Call the :c:func:`location_request` function with the configuration.
 
+You can use the :c:func:`location_request` function in different ways, as in the following examples.
+
+Use default values for location configuration:
+
+.. code-block:: c
+
+   int err;
+
+   err = location_request(NULL);
+
+Use GNSS and cellular and set custom timeout values for them:
+
+.. code-block:: c
+
+   int err;
+   struct location_config config;
+   enum location_method methods[] = {LOCATION_METHOD_GNSS, LOCATION_METHOD_CELLULAR};
+
+   location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
+
+   /* Now you have default values set and here you can modify the parameters you want */
+   config.timeout = 180 * MSEC_PER_SEC;
+   config.methods[0].gnss.timeout = 90 * MSEC_PER_SEC;
+   config.methods[1].cellular.timeout = 15 * MSEC_PER_SEC;
+
+   err = location_request(&config);
+
+Use method priority list defined by Kconfig options and set custom timeout values for entire :c:func:`location_request` operation and cellular positioning:
+
+.. code-block:: c
+
+   int err;
+   struct location_config config;
+
+   location_config_defaults_set(&config, 0, NULL);
+
+   /* Now you have default values set and you can modify the parameters you want but you
+    * need to iterate through the method list as the order is defined by Kconfig options.
+    */
+   for (int i = 0; i < config.methods_count; i++) {
+       if (config.methods[i].method == LOCATION_METHOD_GNSS) {
+           config.methods[i].cellular.timeout = 15 * MSEC_PER_SEC;
+       }
+   }
+
+   err = location_request(&config);
+
 Samples using the library
 *************************
 
-The following |NCS| samples use this library:
+The following |NCS| applications and samples use this library:
 
+* :ref:`asset_tracker_v2`
 * :ref:`location_sample`
 * :ref:`modem_shell_application`
+* :ref:`nrf_cloud_mqtt_multi_service`
 
 Limitations
 ***********
@@ -192,7 +258,6 @@ This library uses the following |NCS| libraries:
 
 * :ref:`nrf_modem_lib_readme`
 * :ref:`lte_lc_readme`
-* :ref:`lib_multicell_location`
 * :ref:`lib_rest_client`
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_agps`

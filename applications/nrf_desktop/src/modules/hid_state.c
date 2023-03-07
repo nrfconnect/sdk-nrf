@@ -1619,7 +1619,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 				cast_hid_report_subscription_event(aeh));
 	}
 
-	if (is_ble_peer_event(aeh)) {
+	if (IS_ENABLED(CONFIG_CAF_BLE_COMMON_EVENTS) && is_ble_peer_event(aeh)) {
 		return handle_ble_peer_event(cast_ble_peer_event(aeh));
 	}
 
@@ -1639,7 +1639,9 @@ static bool app_event_handler(const struct app_event_header *aeh)
 }
 
 APP_EVENT_LISTENER(MODULE, app_event_handler);
+#ifdef CONFIG_CAF_BLE_COMMON_EVENTS
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+#endif /* CONFIG_CAF_BLE_COMMON_EVENTS */
 APP_EVENT_SUBSCRIBE(MODULE, usb_hid_event);
 #ifdef CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);

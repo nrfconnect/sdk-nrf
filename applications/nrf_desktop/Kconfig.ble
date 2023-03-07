@@ -9,8 +9,8 @@ menu "Bluetooth LE configuration"
 config DESKTOP_BT
 	bool "Support for Bluetooth connectivity"
 	default y
-	select CAF_BLE_STATE
-	select DESKTOP_BLE_BOND_ENABLE
+	imply DESKTOP_BLE_STATE
+	imply DESKTOP_BLE_BOND_ENABLE
 	select BT
 	select BT_SETTINGS
 	select BT_SIGNING
@@ -27,13 +27,27 @@ if DESKTOP_BT
 config DESKTOP_BT_PERIPHERAL
 	bool
 	default y if DESKTOP_ROLE_HID_PERIPHERAL
-	select CAF_BLE_ADV
+	imply DESKTOP_BLE_ADV
+	imply DESKTOP_BLE_LATENCY_ENABLE
+	imply DESKTOP_BAS_ENABLE
+	imply DESKTOP_HIDS_ENABLE
+	imply BT_DIS
+	imply DESKTOP_DEV_DESCR_ENABLE
 	select BT_PERIPHERAL
 	help
 	  HID peripherals are configured to use the GAP Peripheral role as
 	  required in the HID over GATT profile specification for the HID
 	  Device. This specification defines how to implement the HID Device
 	  using Bluetooth connectivity.
+
+	  The nRF Desktop peripheral enables CAF Bluetooth LE advertising
+	  module, Bluetooth LE latency module and GATT Services required for a
+	  HID Device (HID Service, Battery Service and Device Information
+	  Service).
+
+	  Additionally, the nRF Desktop peripheral enables device description
+	  module. The module implements a custom GATT Service which is required
+	  to connect with nRF Desktop dongles.
 
 if DESKTOP_BT_PERIPHERAL
 
@@ -104,19 +118,104 @@ config BT_CONN_PARAM_UPDATE_TIMEOUT
 	  nRF Desktop peripherals update connection parameters earlier to lower
 	  HID data latency.
 
-endif
+config BT_GATT_CHRC_POOL_SIZE
+	default 7 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		      !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 8 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		      DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 11 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 12 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	help
+	  The maximum number of GATT characteristic descriptors in GATT pool is
+	  set assuming that nRF Desktop peripheral uses default configuration
+	  specified for the selected peripheral type.
+
+	  By default, the GATT pool is used only by GATT HID Service. Make sure
+	  to update the pool size if your configuration uses more descriptors.
+
+config BT_GATT_UUID16_POOL_SIZE
+	default 10 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		      !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 12 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		      DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 17 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 19 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	help
+	  The maximum number of GATT 16-bit UUID descriptors in GATT pool is set
+	  assuming that nRF Desktop peripheral uses default configuration
+	  specified for the selected peripheral type.
+
+	  By default, the GATT pool is used only by GATT HID Service. Make sure
+	  to update the pool size if your configuration uses more descriptors.
+
+if BT_DIS
+
+config BT_DIS_MANUF
+	default DESKTOP_DEVICE_MANUFACTURER
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the Bluetooth DIS configuration.
+
+config BT_DIS_MODEL
+	default DESKTOP_DEVICE_PRODUCT
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the Bluetooth DIS configuration.
+
+config BT_DIS_PNP
+	default y
+	help
+	  The PnP ID characteristic is required for a HID Device.
+
+config BT_DIS_PNP_VID_SRC
+	default 2
+	help
+	  By default, nRF Desktop relies on Vendor ID of Nordic Semiconductor
+	  ASA assigned by the USB IF.
+
+config BT_DIS_PNP_VID
+	default DESKTOP_DEVICE_VID
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the Bluetooth DIS configuration.
+
+config BT_DIS_PNP_PID
+	default DESKTOP_DEVICE_PID
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the Bluetooth DIS configuration.
+
+config BT_DIS_PNP_VER
+	default 0x0100
+	help
+	  nRF Desktop by default defines product version representing major
+	  version number of 1, minor version number of 0 and sub-minor version
+	  number of 0.
+
+endif # BT_DIS
+
+endif # DESKTOP_BT_PERIPHERAL
 
 config DESKTOP_BT_CENTRAL
 	bool
 	default y if DESKTOP_ROLE_HID_DONGLE
-	select DESKTOP_BLE_SCAN_ENABLE
-	select DESKTOP_BLE_DISCOVERY_ENABLE
+	imply DESKTOP_HID_FORWARD_ENABLE
+	imply DESKTOP_BLE_CONN_PARAMS_ENABLE
+	imply DESKTOP_BLE_SCAN_ENABLE
+	imply DESKTOP_BLE_DISCOVERY_ENABLE
 	select BT_CENTRAL
 	help
 	  nRF Desktop dongles are configured to use the GAP Central role as
 	  required in the HID over GATT profile specification for the Report
 	  and Boot Host. This specification defines how to implement the Host
 	  using Bluetooth connectivity.
+
+	  Application modules that control Bluetooth LE scanning, discovery and
+	  connection parameters are automatically enabled.
 
 if DESKTOP_BT_CENTRAL
 
@@ -126,6 +225,13 @@ config BT_GATT_CLIENT
 	  nRF Desktop dongles are configured to use the GATT Client role as
 	  required in the HID over GATT profile specification for the Report
 	  and Boot Host.
+
+config BT_GATT_SERVICE_CHANGED
+	default n
+	help
+	  GATT Service Changed support is not needed for nRF Desktop dongles.
+	  The dongles do not change their GATT Services, they work mainly as
+	  GATT Clients and receive HID reports from BLE connected peripherals.
 
 config BT_MAX_CONN
 	default DESKTOP_HID_DONGLE_CONN_COUNT
@@ -139,7 +245,7 @@ config BT_MAX_PAIRED
 	  Change the default value for the maximum number of paired devices
 	  to be compatible with the dongle bond count.
 
-endif
+endif # DESKTOP_BT_CENTRAL
 
 if BT_CTLR
 
@@ -163,7 +269,24 @@ config BT_CTLR_CONN_PARAM_REQ
 	  nRF Desktop devices disable support for the Connection Parameter
 	  Request feature as it is not needed.
 
-endif
+endif # BT_CTLR
+
+config BT_DEVICE_NAME
+	default DESKTOP_DEVICE_PRODUCT
+	help
+	  By default, nRF Desktop devices use their product name as Bluetooth
+	  device name.
+
+config BT_DEVICE_APPEARANCE
+	default 962 if DESKTOP_PERIPHERAL_TYPE_MOUSE
+	default 961 if DESKTOP_PERIPHERAL_TYPE_KEYBOARD
+	default 961 if DESKTOP_ROLE_HID_DONGLE
+	default 960
+	help
+	  By default, nRF Desktop mice use Bluetooth appearance of mouse,
+	  nRF Desktop keyboards and dongles use Bluetooth appearance of
+	  keyboard. Other nRF Desktop devices use Bluetooth appearance of
+	  generic human interface device.
 
 config BT_SETTINGS_CCC_STORE_ON_WRITE
 	default y
@@ -180,6 +303,6 @@ config BT_SETTINGS_CCC_LAZY_LOADING
 	  descriptor to speed up reconnections and reduce delay for the
 	  first HID report.
 
-endif
+endif # DESKTOP_BT
 
 endmenu

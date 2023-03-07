@@ -28,6 +28,15 @@ extern "C" {
  * @brief API of the SMS nRF Modem library wrapper module.
  */
 
+
+/** @brief Modem library mode */
+enum nrf_modem_mode {
+	/** Normal operation mode */
+	NORMAL_MODE,
+	/** Bootloader (full DFU) mode */
+	BOOTLOADER_MODE,
+};
+
 /**
  * @brief Initialize the Modem library.
  *
@@ -165,6 +174,8 @@ struct nrf_modem_lib_diag_stats {
  * @brief Retrieve heap runtime statistics.
  *
  * Retrieve runtime statistics for the shared memory and library heaps.
+ *
+ * @return int Zero on success, non-zero otherwise.
  */
 int nrf_modem_lib_diag_stats_get(struct nrf_modem_lib_diag_stats *stats);
 

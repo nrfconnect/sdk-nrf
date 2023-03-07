@@ -181,18 +181,6 @@ struct modem_module_dynamic_modem_data {
 	char mccmnc[7];
 	uint8_t band;
 	enum lte_lc_lte_mode nw_mode;
-
-	/* Flags to signify if the corresponding data value has been updated and is considered
-	 * fresh.
-	 */
-	bool area_code_fresh	: 1;
-	bool cell_id_fresh	: 1;
-	bool rsrp_fresh		: 1;
-	bool ip_address_fresh	: 1;
-	bool mccmnc_fresh	: 1;
-	bool band_fresh		: 1;
-	bool nw_mode_fresh	: 1;
-	bool apn_fresh		: 1;
 };
 
 struct modem_module_battery_data {

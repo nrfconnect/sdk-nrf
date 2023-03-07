@@ -18,7 +18,6 @@ set(partition_includes
 set(board_includes
   board
   ${CMAKE_BINARY_DIR}/../zephyr/misc/generated/syscalls_links/include
-  ${ZEPHYR_BASE}/include/zephyr
   ${ZEPHYR_BASE}/include
   )
 
@@ -42,7 +41,8 @@ target_include_directories(platform_s
 target_sources(platform_s
   PRIVATE
   common/tfm_hal_platform.c
-  common/attest_hal.c
+  $<$<BOOL:${TFM_PARTITION_INITIAL_ATTESTATION}>:${CMAKE_CURRENT_SOURCE_DIR}/common/attest_hal.c>
+  common/assert.c
   $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_OTP}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_otp.c>
   )
 
@@ -71,19 +71,36 @@ target_sources(platform_ns
   $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_UART_STDOUT}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_uart_stdout.c>
   )
 
-if (${TFM_PARTITION_CRYPTO}
-      AND (NOT ${CRYPTO_KEY_DERIVATION_MODULE_DISABLED})
-      AND (NOT ${PLATFORM_DEFAULT_CRYPTO_KEYS}))
-  target_sources(platform_s
-    PRIVATE
-      ${NRF_DIR}/lib/hw_unique_key/hw_unique_key.c
-      ${NRF_DIR}/lib/hw_unique_key/hw_unique_key_kmu.c
-      ${CMAKE_CURRENT_LIST_DIR}/common/crypto_keys.c
-  )
+if (${TFM_PARTITION_CRYPTO} AND (NOT ${PLATFORM_DEFAULT_CRYPTO_KEYS}))
+  if (${CRYPTO_KEY_DERIVATION_MODULE_DISABLED})
+    target_sources(platform_crypto_keys
+      PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/common/dummy_crypto_keys.c
+    )
+  else ()
+    target_sources(platform_crypto_keys
+      PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/common/crypto_keys.c
+    )
+
+    target_sources(platform_s
+      PRIVATE
+        ${NRF_DIR}/lib/hw_unique_key/hw_unique_key.c
+        ${NRF_DIR}/lib/hw_unique_key/hw_unique_key_kmu.c
+    )
+  endif()
+
+  target_link_libraries(platform_crypto_keys PUBLIC platform_s)
 endif()
 
 if (${TFM_PARTITION_CRYPTO})
   target_link_libraries(platform_s PRIVATE platform_cc3xx)
+
+  # NCSDK-19561 cc3xx libraries requires heap.
+  target_compile_definitions(platform_region_defs
+    INTERFACE
+        ENABLE_HEAP
+  )
 
   # Needed in order to get crypto partition modules flags
   target_link_libraries(platform_s PRIVATE tfm_psa_rot_partition_crypto)

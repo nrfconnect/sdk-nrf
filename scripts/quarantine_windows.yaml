@@ -15,6 +15,7 @@
     - sample.app_event_manager_shell.native_posix
     - sample.caf_sensor_manager.correctness_test
     - sample.edge_impulse.wrapper
+    - sample.net.mqtt.native_posix.tls
   platforms:
     - native_posix
     - qemu_cortex_m3
@@ -32,19 +33,3 @@
   platforms:
     - all
   comment: "ruby package not available in Windows toolchain"
-
-- scenarios:
-    - samples.bluetooth.alexa_gadget
-    - sample.nrf7002.provisioning
-  platforms:
-    - all
-  comment: "nanopb package not available in Windows toolchain"
-
-- scenarios:
-    - applications.nrf5340_audio.gateway_dfu_external
-    - applications.nrf5340_audio.gateway_dfu_internal
-    - applications.nrf5340_audio.headset_dfu_external
-    - applications.nrf5340_audio.headset_dfu_internal
-  platforms:
-    - all
-  comment: "skip until fix sdk-nrf/pull/9898 is merged"

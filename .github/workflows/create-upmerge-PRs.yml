@@ -33,7 +33,7 @@ jobs:
           west init -l nrf
           west update zephyr
           git config --global user.email "noreply@nordicsemi.no"
-          git config --global user.name "NordicBuilder"
+          git config --global user.name "Nordic Builder"
           echo "SDK_ZEPHYR=$(west list zephyr -f {url} | awk -F// '{print $NF}')" >> $GITHUB_ENV
 
       - name: Try closing existing auto-upmerge PRs
@@ -51,7 +51,7 @@ jobs:
           west ncs-upmerger zephyr
           git push origin upmerge_local:auto-upmerge/$GITHUB_RUN_ID -u
 
-          UPSTREAMHASH=$(git rev-parse --short upstream/$PR_TARGET_BRANCH)
+          UPSTREAMHASH=$(git rev-parse --short upstream/main)
           ZEPHYR_PR_URL=$(gh pr create --base $PR_TARGET_BRANCH --title "[nrf mergeup] Merge upstream automatically up to commit $UPSTREAMHASH" --body "Automatic upmerge action" --repo $SDK_ZEPHYR --label "auto-upmerge")
           echo "ZEPHYR_PR_URL=$ZEPHYR_PR_URL" >> $GITHUB_ENV
           echo "Created PR: $ZEPHYR_PR_URL"
@@ -65,7 +65,7 @@ jobs:
           sed -i "s/revision: $OLD_REV/revision: $NEW_REV/" west.yml
           git commit -a -m "manifest: Update sdk-zephyr revision (automatic Zephyr upmerge)" -m "Automatically created by Github Action" --signoff
           git push origin upmerge_local:auto-upmerge/$GITHUB_RUN_ID -u
-          gh pr create --base main --title "manifest: Update sdk-zephyr revision (automatic upmerge)" --body "Automatic upmerge action" --label "CI-all-test" --label "auto-upmerge"
+          gh pr create --base $PR_TARGET_BRANCH --title "manifest: Update sdk-zephyr revision (automatic upmerge)" --body "Automatic upmerge action" --label "CI-all-test" --label "auto-upmerge"
 
   failure-notifier:
     runs-on: ubuntu-latest

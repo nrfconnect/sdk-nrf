@@ -95,6 +95,12 @@
   font-size: smaller;
   color: #e97c25;
   margin: 0px 5px;
+  white-space: nowrap;
+}
+
+.versiontag-list {
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
 
 #known-issues dl dt {

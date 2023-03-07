@@ -19,7 +19,7 @@ The sample supports the following development kits:
 .. include:: /includes/tfm.txt
 
 .. note::
-   Full modem FOTA requires development kit version 1.0.1 or higher.
+   Full modem FOTA requires development kit version 0.14.0 or higher.
 
 The sample requires an `nRF Cloud`_ account.
 
@@ -46,11 +46,6 @@ This will bypass the wait time specified by the :ref:`CONFIG_REST_FOTA_JOB_CHECK
 
 If you have the option :ref:`CONFIG_REST_FOTA_DO_JITP <CONFIG_REST_FOTA_DO_JITP>` enabled and you press the button configured by the :ref:`CONFIG_REST_FOTA_BUTTON_EVT_NUM <CONFIG_REST_FOTA_BUTTON_EVT_NUM>` option when prompted at startup, it will request just-in-time provisioning (JITP) through REST with nRF Cloud.
 This is useful when initially provisioning and associating a device on nRF Cloud.
-You only need to do this once for each device.
-
-When you start up your device and have not requested JITP, the sample will ask if FOTA should be enabled in the device's shadow.
-Press the button configured by :ref:`CONFIG_REST_FOTA_BUTTON_EVT_NUM <CONFIG_REST_FOTA_BUTTON_EVT_NUM>` to perform the shadow update.
-Depending on how you provisioned your device with nRF Cloud, this step might not be needed.
 You only need to do this once for each device.
 
 If you have enabled the :ref:`CONFIG_REST_FOTA_ENABLE_LED <CONFIG_REST_FOTA_ENABLE_LED>` option, an LED configured by the :ref:`CONFIG_REST_FOTA_LED_NUM <CONFIG_REST_FOTA_LED_NUM>` option indicates the state of the connection to the LTE network.
@@ -111,6 +106,9 @@ To create a FOTA test version of this sample, add the following parameter to you
 To enable full modem FOTA, add the following parameter to your build command:
 
 ``-DOVERLAY_CONFIG=overlay_full_modem_fota.conf``
+
+Also, specify your development kit version by appending it to the board name.
+For example, if your development kit version is 1.0.1, use the board name ``nrf9160dk_nrf9160_ns@1_0_1`` in your build command.
 
 Dependencies
 ************

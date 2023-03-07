@@ -36,7 +36,6 @@ enum slm_cmng_type {
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 
 /**@brief handle AT#XCMNG commands
  *  AT#XCMNG=<opcode>[,<sec_tag>[,<type>[,<content>]]]
@@ -49,7 +48,7 @@ int handle_at_xcmng(enum at_cmd_type cmd_type)
 	uint16_t op, type;
 	nrf_sec_tag_t sec_tag;
 	uint8_t *content;
-	size_t len = SLM_AT_CMD_RESPONSE_MAX_LEN;
+	size_t len = SLM_AT_MAX_RSP_LEN;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
@@ -96,7 +95,7 @@ int handle_at_xcmng(enum at_cmd_type cmd_type)
 				LOG_ERR("Parameter missed");
 				return -EINVAL;
 			}
-			content = k_malloc(SLM_AT_CMD_RESPONSE_MAX_LEN);
+			content = k_malloc(SLM_AT_MAX_RSP_LEN);
 			err = util_string_get(&at_param_list, 4, content,
 						   &len);
 			if (err != 0) {
@@ -120,7 +119,7 @@ int handle_at_xcmng(enum at_cmd_type cmd_type)
 				LOG_ERR("Not support READ for type: %d", type);
 				return -EPERM;
 			}
-			content = k_malloc(SLM_AT_CMD_RESPONSE_MAX_LEN);
+			content = k_malloc(SLM_AT_MAX_RSP_LEN);
 			err = modem_key_mgmt_read(
 				slm_tls_map_sectag(sec_tag, type),
 				0, content, &len);
@@ -129,9 +128,8 @@ int handle_at_xcmng(enum at_cmd_type cmd_type)
 					err);
 			} else {
 				*(content + len) = '\0';
-				sprintf(rsp_buf, "%%CMNG: %d,%d,\"\","
+				rsp_send("%%CMNG: %d,%d,\"\","
 					"\"%s\"\r\n", sec_tag, type, content);
-				rsp_send(rsp_buf, strlen(rsp_buf));
 			}
 			k_free(content);
 		} else if (op == AT_CMNG_OP_DELETE) {

@@ -12,8 +12,8 @@ zephyr_library_sources_ifdef(CONFIG_MPSL_FEM_API_AVAILABLE api_init/mpsl_fem_api
 
 if (CONFIG_MPSL_FEM_NCS_SUPPORTED_FEM_USED)
 
-    zephyr_library_include_directories(common/include)
-    zephyr_library_sources(common/mpsl_fem_utils.c)
+    zephyr_library_include_directories_ifdef(CONFIG_MPSL_FEM common/include)
+    zephyr_library_sources_ifdef(CONFIG_MPSL_FEM common/mpsl_fem_utils.c)
 
     zephyr_library_sources_ifdef(CONFIG_MPSL_FEM_NRF21540_GPIO nrf21540_gpio/mpsl_fem_nrf21540_gpio.c)
 

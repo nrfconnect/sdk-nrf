@@ -128,17 +128,17 @@ static int ipc_init(const struct device *dev)
 	ARG_UNUSED(dev);
 
 	int err;
-	const struct device *ipc0_instance;
+	const struct device *ipc_instance;
 
-	ipc0_instance = DEVICE_DT_GET(DT_NODELABEL(ipc0));
+	ipc_instance = DEVICE_DT_GET(DT_NODELABEL(ipc1));
 
-	err = ipc_service_open_instance(ipc0_instance);
+	err = ipc_service_open_instance(ipc_instance);
 	if ((err < 0) && (err != -EALREADY)) {
 		LOG_ERR("IPC service instance initialization failed with err: %d", err);
 		return err;
 	}
 
-	err = ipc_service_register_endpoint(ipc0_instance, &ep, &ep_cfg);
+	err = ipc_service_register_endpoint(ipc_instance, &ep, &ep_cfg);
 	if (err < 0) {
 		LOG_ERR("Registering endpoint failed with err: %d", err);
 		return err;

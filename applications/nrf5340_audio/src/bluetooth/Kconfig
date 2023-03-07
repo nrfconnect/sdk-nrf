@@ -9,15 +9,15 @@ rsource "Kconfig.defaults"
 menu "Bluetooth"
 
 config BLE_ACL_CONN_INTERVAL
-	int "BLE ACL Connection Interval (x*1.25ms)"
+	int "Bluetooth LE ACL Connection Interval (x*1.25ms)"
 	default 80
 
 config BLE_ACL_SLAVE_LATENCY
-	int "BLE Slave Latency"
+	int "Bluetooth LE Slave Latency"
 	default 0
 
 config BLE_ACL_SUP_TIMEOUT
-	int "BLE Supervision Timeout (x*10ms)"
+	int "Bluetooth LE Supervision Timeout (x*10ms)"
 	default 400
 
 config BLE_LE_POWER_CONTROL_ENABLED
@@ -29,10 +29,10 @@ config BLE_LE_POWER_CONTROL_ENABLED
 	  communication.
 
 choice	BLE_CONN_TX_POWER
-	prompt "Default TX power for BLE connections"
+	prompt "Default TX power for Bluetooth LE connections"
 	default BLE_CONN_TX_POWER_0DBM
 	help
-	  Set the default TX power for BLE connections.
+	  Set the default TX power for Bluetooth LE connections.
 
 config BLE_CONN_TX_POWER_0DBM
 	bool "0dBm"
@@ -92,10 +92,10 @@ config BLE_CONN_TX_POWER_DBM
 	default -40 if BLE_CONN_TX_POWER_NEG_40DBM
 
 choice	BLE_ADV_TX_POWER
-	prompt "Default TX power for BLE advertising"
+	prompt "Default TX power for Bluetooth LE advertising"
 	default BLE_ADV_TX_POWER_0DBM
 	help
-	  Set the default TX power for BLE advertising
+	  Set the default TX power for Bluetooth LE advertising.
 
 config BLE_ADV_TX_POWER_0DBM
 	bool "0dBm"
@@ -154,6 +154,70 @@ config BLE_ADV_TX_POWER_DBM
 	default -20 if BLE_ADV_TX_POWER_NEG_20DBM
 	default -40 if BLE_ADV_TX_POWER_NEG_40DBM
 
+config NRF_21540_ACTIVE
+	def_bool $(shields_list_contains,nrf21540_ek_fwd)
+	select EXPERIMENTAL
+	help
+	  The front end module can help boost the TX power as high as 20 dBm.
+	  Usually set through buildprog, if not set there, remember to add
+	  -DSHIELD=nrf21540_ek_fwd when building app core to include the shield
+	  overlay file.
+
+config NRF_21540_MAIN_DBM
+	int
+	default 0 if NRF_21540_MAIN_TX_POWER_0DBM
+	default 10 if NRF_21540_MAIN_TX_POWER_10DBM
+	default 20 if NRF_21540_MAIN_TX_POWER_20DBM
+
+choice NRF_21540_MAIN_TX_POWER
+	prompt "TX power for the secondary channels"
+	default NRF_21540_MAIN_TX_POWER_10DBM
+	help
+	  Set the TX power for the secondary Bluetooth LE channels (0-36).
+	  Please check your local regulations for max output power. If the
+	  nRF21540 is used with the nRF5340 Audio DK the actual output power
+	  will be about 25% lower due to the VDD being 1.8V instead of the
+	  nominal 3.3V.
+
+config NRF_21540_MAIN_TX_POWER_0DBM
+	bool "0dBm"
+
+config NRF_21540_MAIN_TX_POWER_10DBM
+	bool "+10dBm"
+
+config NRF_21540_MAIN_TX_POWER_20DBM
+	bool "+20dBm"
+
+endchoice
+
+config NRF_21540_PRI_ADV_DBM
+	int
+	default 0 if NRF_21540_PRI_ADV_TX_POWER_0DBM
+	default 10 if NRF_21540_PRI_ADV_TX_POWER_10DBM
+	default 20 if NRF_21540_PRI_ADV_TX_POWER_20DBM
+
+choice NRF_21540_PRI_ADV_TX_POWER
+	prompt "TX power for the primary advertising channels"
+	default NRF_21540_PRI_ADV_TX_POWER_10DBM
+	help
+	  Set the TX power for the primary Bluetooth LE advertising channels
+	  (37, 38, 39).
+	  Please check your local regulations for max output power. If the
+	  nRF21540 is used with the nRF5340 Audio DK the actual output power
+	  will be about 25% lower due to the VDD being 1.8V instead of the
+	  nominal 3.3V.
+
+config NRF_21540_PRI_ADV_TX_POWER_0DBM
+	bool "0dBm"
+
+config NRF_21540_PRI_ADV_TX_POWER_10DBM
+	bool "+10dBm"
+
+config NRF_21540_PRI_ADV_TX_POWER_20DBM
+	bool "+20dBm"
+
+endchoice
+
 config BLE_ISO_TEST_PATTERN
 	bool "Transmit a test pattern to measure link performance"
 	default n
@@ -163,83 +227,207 @@ config BLE_ISO_TEST_PATTERN
 	  Note that enabling this feature will disable the audio stream.
 
 config BLE_ISO_RX_STATS_S
-	int "Interval in seconds to print BLE ISO RX stats. 0 to deactivate"
+	int "Interval in seconds to print Bluetooth LE ISO RX stats. 0 to deactivate"
 	default 0
 
 choice BT_AUDIO_UNICAST_BAP_CONFIGURATION
 	prompt "Unicast codec configuration"
 	depends on TRANSPORT_CIS
-	default BT_AUDIO_UNICAST_RECOMMENDED
+	default BT_AUDIO_UNICAST_CONFIGURABLE
 	help
 	  Select the unicast codec configuration as given in
-	  Table 5.2 of BAP Specification, USB only supports BT_AUDIO_UNICAST_RECOMMENDED
+	  Table 5.2 of BAP Specification.
+	  USB only supports 48 kHz samplig rate.
 
-config BT_AUDIO_UNICAST_RECOMMENDED
-	bool "Recommended unicast codec capability"
+config BT_AUDIO_UNICAST_CONFIGURABLE
+	bool "Configurable unicast settings"
 	depends on TRANSPORT_CIS
 	help
-	  Recommended unicast settings for the nRF5340_audio application
-	  48kHz, 96kbps, 2 retransmits, 20ms transport latency, and 10ms presentation delay
+	  Configurable option that doesn't follow any preset. Allows for more flexibility.
 
 config BT_AUDIO_UNICAST_16_2_1
 	bool "16_2_1"
 	depends on TRANSPORT_CIS
 	help
 	  Unicast mandatory codec capability 16_2_1
-	  16kHz, 32kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay
+	  16kHz, 32kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
 
 config BT_AUDIO_UNICAST_24_2_1
 	bool "24_2_1"
 	depends on TRANSPORT_CIS
 	help
 	  Unicast codec capability 24_2_1
-	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay
+	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
 endchoice
 
 choice BT_AUDIO_BROADCAST_BAP_CONFIGURATION
 	prompt "Broadcast codec configuration"
 	depends on TRANSPORT_BIS
-	default BT_AUDIO_BROADCAST_RECOMMENDED
+	default BT_AUDIO_BROADCAST_CONFIGURABLE
 	help
 	  Select the broadcast codec configuration as given
-	  in Table 6.4 of the BAP specification. USB only supports BT_AUDIO_BROADCAST_RECOMMENDED
+	  in Table 6.4 of the BAP specification.
+	  USB only supports 48 kHz samplig rate.
 
-config BT_AUDIO_BROADCAST_RECOMMENDED
-	bool "Recommended Broadcast codec capability"
+config BT_AUDIO_BROADCAST_CONFIGURABLE
+	bool "Configurable broadcast settings"
 	depends on TRANSPORT_BIS
 	help
-	  Recommended broadcast settings for the nRF5340_audio application
-	  48kHz, 96kbps, 4 retransmits, 20ms transport latency, and 10ms presentation delay
+	  Configurable option that doesn't follow any preset. Allows for more flexibility.
 
 config BT_AUDIO_BROADCAST_16_2_1
 	bool "16_2_1"
 	depends on TRANSPORT_BIS
 	help
 	  Broadcast mandatory codec capability 16_2_1
-	  16kHz, 32kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay
+	  16kHz, 32kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
 
 config BT_AUDIO_BROADCAST_24_2_1
 	bool "24_2_1"
 	depends on TRANSPORT_BIS
 	help
 	  Broadcast codec capability 24_2_1
-	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay
+	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
 
 config BT_AUDIO_BROADCAST_16_2_2
 	bool "16_2_2"
 	depends on TRANSPORT_BIS
 	help
 	  Broadcast mandatory codec capability 16_2_2
-	  16kHz, 32kbps, 4 retransmits, 60ms transport latency, and 40ms presentation delay
+	  16kHz, 32kbps, 4 retransmits, 60ms transport latency, and 40ms presentation delay.
 
 config BT_AUDIO_BROADCAST_24_2_2
 	bool "24_2_2"
 	depends on TRANSPORT_BIS
 	help
 	  Broadcast codec capability 24_2_2
-	  24kHz, 48kbps, 4 retransmits, 60ms transport latency, and 40ms presentation delay
+	  24kHz, 48kbps, 4 retransmits, 60ms transport latency, and 40ms presentation delay.
 endchoice
 
+config BT_AUDIO_BROADCAST_NAME
+	string "Broadcast name"
+	depends on TRANSPORT_BIS
+	default "NRF5340_BROADCASTER"
+	help
+	  Name of the broadcast; not the same as BT_DEVICE_NAME.
+
+config BT_AUDIO_BROADCAST_NAME_ALT
+	string "Alternative broadcast name"
+	depends on TRANSPORT_BIS
+	default "NRF5340_BROADCASTER_ALT"
+	help
+	  Alternative name of the broadcast.
+
+config BT_AUDIO_USE_BROADCAST_NAME_ALT
+	bool "Use the alternative broadcast name"
+	default n
+	depends on TRANSPORT_BIS
+	help
+	  Use the alternative broadcast name.
+
+config BT_AUDIO_BROADCAST_ENCRYPTED
+	bool "Encrypted broadcast"
+	depends on TRANSPORT_BIS
+	default n
+	help
+	  Encrypt the broadcast to limit the connection possibilities.
+
+config BT_AUDIO_BROADCAST_ENCRYPTION_KEY
+	string "Broadcast encryption key"
+	depends on TRANSPORT_BIS
+	default "NRF5340_BIS_DEMO"
+	help
+	  Key to use for encryption and decryption; max 16 characters.
+	  Encryption keys larger than 16 characters will be cropped to 16.
+
+config BT_AUDIO_USE_BROADCAST_ID_RANDOM
+	bool "Use a random broadcast ID"
+	depends on TRANSPORT_BIS
+	default y
+	help
+	  Use a randomly generated broadcast ID.
+
+config BT_AUDIO_BROADCAST_ID_FIXED
+	hex "Fixed broadcast ID"
+	depends on TRANSPORT_BIS
+	default 0x123456
+	help
+	  Fixed broadcast ID; 3 octets. Will only be used if BT_AUDIO_USE_BROADCAST_ID_RANDOM=n.
+	  Should only be used for debugging.
+
+config BT_AUDIO_BROADCAST_IMMEDIATE_FLAG
+	bool "Immediate rendering flag"
+	depends on TRANSPORT_BIS
+	default n
+	help
+	  Set the immediate rendering flag.
+
+config BT_AUDIO_PACKING_INTERLEAVED
+	bool "Interleaved packing"
+	depends on TRANSPORT_BIS
+	default n
+	help
+	  ISO channels can either be interleaved or sequentially packed; sequential is the default one.
+
+config AURACAST
+	bool "Enable Auracast"
+	depends on TRANSPORT_BIS
+	default y
+	help
+	  When Auracast is enabled a Public Broadcast Announcement will be included when advertising.
+
+menu "QoS"
+
+config BT_AUDIO_PRESENTATION_DELAY_US
+	int "Presentation delay"
+	default 10000
+	help
+	  Presentation delay for the ISO link.
+
+config BT_AUDIO_MAX_TRANSPORT_LATENCY_MS
+	int "Max transport latency"
+	range 5 4000
+	default 20
+	help
+	  Max transport latency for the ISO link.
+
+config BT_AUDIO_RETRANSMITS
+	int "Number of retransmits"
+	range 0 30
+	default 2
+	help
+	  Number of retransmits for the ISO link. 2 retransmits means a total
+	  of 3 packets sent per stream.
+
+config BT_AUDIO_BITRATE_UNICAST_SINK
+	int "ISO stream bitrate"
+	depends on TRANSPORT_CIS
+	default 64000 if BT_AUDIO_UNICAST_CONFIGURABLE && STREAM_BIDIRECTIONAL
+	default 96000 if BT_AUDIO_UNICAST_CONFIGURABLE
+	default 32000 if BT_AUDIO_UNICAST_16_2_1
+	default 48000 if BT_AUDIO_UNICAST_24_2_1
+	help
+	  Bitrate for the unicast sink ISO stream.
+
+config BT_AUDIO_BITRATE_UNICAST_SRC
+	int "ISO stream bitrate"
+	depends on TRANSPORT_CIS
+	default 32000 if BT_AUDIO_UNICAST_16_2_1
+	default 48000 if BT_AUDIO_UNICAST_24_2_1
+	default 64000
+	help
+	  Bitrate for the unicast source ISO stream.
+
+config BT_AUDIO_BITRATE_BROADCAST_SRC
+	int "ISO stream bitrate"
+	depends on TRANSPORT_BIS
+	default 96000 if BT_AUDIO_BROADCAST_CONFIGURABLE
+	default 32000 if BT_AUDIO_BROADCAST_16_2_1 || BT_AUDIO_BROADCAST_16_2_2
+	default 48000 if BT_AUDIO_BROADCAST_24_2_1 || BT_AUDIO_BROADCAST_24_2_2
+	help
+	  Bitrate for the broadcast source ISO stream.
+
+endmenu # QoS
 #----------------------------------------------------------------------------#
 menu "Log levels"
 

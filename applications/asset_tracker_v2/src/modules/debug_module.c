@@ -310,7 +310,7 @@ static void memfault_handle_event(struct debug_msg_data *msg)
 	 */
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_DATA_SEND_BATCH)) ||
-	    (IS_EVENT(msg, data, DATA_EVT_NEIGHBOR_CELLS_DATA_SEND)) ||
+	    (IS_EVENT(msg, data, DATA_EVT_CLOUD_LOCATION_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND))) {
 		/* Limit how often non-coredump memfault data (events and metrics) are sent
 		 * to memfault. Updates can never occur more often than the interval set by
@@ -375,11 +375,11 @@ static void message_handler(struct debug_msg_data *msg)
 		}
 
 		/* Notify the rest of the application that it is connected to network
-		 * when building for QEMU x86.
+		 * when building for PC.
 		 */
-		if (IS_ENABLED(CONFIG_BOARD_QEMU_X86)) {
-			{ SEND_EVENT(debug, DEBUG_EVT_QEMU_X86_INITIALIZED); }
-			SEND_EVENT(debug, DEBUG_EVT_QEMU_X86_NETWORK_CONNECTED);
+		if (IS_ENABLED(CONFIG_BOARD_QEMU_X86) || IS_ENABLED(CONFIG_BOARD_NATIVE_POSIX)) {
+			{ SEND_EVENT(debug, DEBUG_EVT_EMULATOR_INITIALIZED); }
+			SEND_EVENT(debug, DEBUG_EVT_EMULATOR_NETWORK_CONNECTED);
 		}
 	}
 

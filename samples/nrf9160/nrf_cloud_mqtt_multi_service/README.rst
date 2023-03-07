@@ -8,7 +8,7 @@ nRF9160: nRF Cloud MQTT multi-service
    :depth: 2
 
 This sample is a minimal, error tolerant, integrated demonstration of the :ref:`lib_nrf_cloud`, :ref:`lib_location`, and :ref:`lib_at_host` libraries.
-It demonstrates how you can use these libraries together to support Firmware-Over-The-Air (FOTA), location services, modem AT commands over UART, and periodic sensor samples in your `nRF Cloud`_-enabled application.
+It demonstrates how you can use these libraries together to support Firmware-Over-The-Air (FOTA), Location Services, periodic sensor samples, and more in your `nRF Cloud`_-enabled application.
 It also demonstrates how to implement error tolerance in your cellular applications without relying on reboot loops.
 
 .. _nrf_cloud_mqtt_multi_service_requirements:
@@ -29,9 +29,10 @@ Features
 
 This sample implements or demonstrates the following features:
 
-* Error-tolerant use of the `nRF Cloud MQTT API`_ using the :ref:`nrf_modem <nrfxlib:nrf_modem>` and :ref:`nrf_cloud <lib_nrf_cloud>` libraries.
+* Error-tolerant use of the `nRF Cloud MQTT API`_ using the :ref:`nrf_modem` and :ref:`lib_nrf_cloud` library.
 * Support for `Firmware-Over-The-Air (FOTA) update service <nRF Cloud Getting Started FOTA documentation_>`_ using the `nRF Cloud`_ portal.
 * Support for `modem AT commands <AT Commands Reference Guide_>`_ over UART using the :ref:`lib_at_host` library.
+* Support for remote execution of modem AT commands using application-specific device messages.
 * Periodic cellular, Wi-Fi, and GNSS location tracking using the :ref:`lib_location` library.
 * Periodic temperature sensor sampling on your `Nordic Thingy:91`_, or fake temperature  measurements on your `Nordic nRF9160 DK`_.
 * Transmission of sensor and GNSS location samples to the nRF Cloud portal as `nRF Cloud device messages <nRF Cloud Device Messages_>`_.
@@ -112,6 +113,7 @@ It performs the following major tasks:
 * Periodically samples temperature data (using the :file:`src/temperature.c` file).
 * Constructs timestamped sensor sample and location `device messages <nRF Cloud Device Messages_>`_ using `cJSON`_.
 * Sends sensor sample and location device messages to the :ref:`nrf_cloud_mqtt_multi_service_device_message_queue`.
+* Checks for and executes :ref:`remote modem AT command requests <nrf_cloud_mqtt_multi_service_remote_at>`.
 
 .. note::
    Periodic location tracking is handled by the :ref:`lib_location` library once it has been requested, whereas temperature samples are individually requested by the Main Application Loop.
@@ -132,7 +134,7 @@ Reboot after download completion is handled by the :file:`src/fota_support.c` fi
 In a real-world setting, these two behaviors could be directly implemented in the :file:`src/connection.c` file.
 In this sample, they are separated for clarity.
 
-This sample supports full modem FOTA for the nRF9160 development kit version 1.0.1 and higher.
+This sample supports full modem FOTA for the nRF9160 development kit version 0.14.0 and higher.
 To enable full modem FOTA, add the following parameter to your build command:
 
 ``-DOVERLAY_CONFIG=overlay_full_modem_fota.conf``
@@ -140,6 +142,13 @@ To enable full modem FOTA, add the following parameter to your build command:
 Also, specify your development kit version by appending it to the board name. For example, if your development kit version is 1.0.1, use the following board name in your build command:
 
 ``nrf9160dk_nrf9160_ns@1_0_1``
+
+This sample also supports placement of the MCUboot secondary partition in external flash for the nRF9160 development kit version 0.14.0 and higher.
+To enable this, add the following parameter to your build command:
+
+``-DOVERLAY_CONFIG=overlay_mcuboot_ext_flash.conf``
+
+Then specify your development kit version as described earlier.
 
 .. _nrf_cloud_mqtt_multi_service_temperature_sensing:
 
@@ -174,14 +183,13 @@ The GNSS and cellular location tracking methods are enabled by default and will 
 
 .. _nrf_cloud_mqtt_multi_service_wifi_location_tracking:
 
-The Wi-Fi location tracking method is not enabled by default and requires the nRF7002 wifi companion chip.
+The Wi-Fi location tracking method is not enabled by default and requires the nRF7002 Wi-Fi companion chip.
 
 When enabled, this location method scans the MAC addresses of nearby access points and submits them to nRF Cloud to obtain a location estimate.
 
 See :ref:`nrf_cloud_mqtt_multi_service_building_wifi` for details on how to enable Wi-Fi location tracking.
 
-This sample supports placing P-GPS data in external flash for the nRF9160 development kit version 1.0.1 and later.
-Currently, you cannot combine this with full modem FOTA.
+This sample supports placing P-GPS data in external flash for the nRF9160 development kit version 0.14.0 and later.
 To enable this, add the following parameter to your build command:
 
 ``-DOVERLAY_CONFIG=overlay_pgps_ext_flash.conf``
@@ -190,6 +198,35 @@ Also, specify your development kit version by appending it to the board name.
 For example, if your development kit version is 1.0.1, use the following board name in your build command:
 
 ``nrf9160dk_nrf9160_ns@1_0_1``
+
+.. _nrf_cloud_mqtt_multi_service_remote_at:
+
+Remote execution of modem AT commands
+=====================================
+
+If the :ref:`CONFIG_AT_CMD_REQUESTS <CONFIG_AT_CMD_REQUESTS>` Kconfig option is enabled, you can remotely execute modem AT commands on your device by sending a device message with appId ``MODEM``, messageType ``CMD``, and the data key set to the command you would like to execute.
+
+The application executes the command stored in the data key, and responds with a device message containing either an error code or the response from the modem to the AT command.
+
+For example, if you send the following device message to a device running this sample with :ref:`CONFIG_AT_CMD_REQUESTS <CONFIG_AT_CMD_REQUESTS>` enabled:
+
+.. code-block:: json
+
+   {"appId":"MODEM", "messageType":"CMD", "data":"AT+CGMR"}
+
+It executes the modem AT command ``AT+CGMR`` and sends a device message similar to the following back to nRF Cloud:
+
+.. code-block:: json
+
+   {
+      "appId": "MODEM",
+      "messageType": "DATA",
+      "ts": 1669244834095,
+      "data": "mfw_nrf9160_1.3.2\r\nOK"
+   }
+
+
+To do this in the nRF Cloud portal, write `{"appId":"MODEM", "messageType":"CMD", "data":"AT+CGMR"}` into the **Send a message** box of the **Terminal** card and click :guilabel:`Send`.
 
 .. _nrf_cloud_mqtt_multi_service_led_status_indication:
 
@@ -293,7 +330,7 @@ Enable :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` to use an external a
 Customizing LED status indication
 =================================
 
-To disable LED status indication (other than the selected idle behavior) after a connection to nrf Cloud has been established at least once, disable :ref:`CONFIG_LED_VERBOSE_INDICATION <CONFIG_LED_VERBOSE_INDICATION>`.
+To disable LED status indication (other than the selected idle behavior) after a connection to nRF Cloud has been established at least once, disable :ref:`CONFIG_LED_VERBOSE_INDICATION <CONFIG_LED_VERBOSE_INDICATION>`.
 
 To turn the LED off while the sample is idle (rather than show an idle pattern), disable :ref:`CONFIG_LED_CONTINUOUS_INDICATION <CONFIG_LED_CONTINUOUS_INDICATION>`.
 
@@ -517,6 +554,19 @@ CONFIG_LED_CONTINUOUS_INDICATION - Continuous LED status indication
 
 CONFIG_TEST_COUNTER - Enable test counter
    Enables the test counter.
+
+.. _CONFIG_AT_CMD_REQUESTS:
+
+CONFIG_AT_CMD_REQUESTS - Enable AT command requests
+   Allow remote execution of modem AT commands, requested using application-specific device messages.
+   See :ref:`nrf_cloud_mqtt_multi_service_remote_at` for details.
+
+.. _CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH:
+
+CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH - Length of AT command request response buffer (bytes)
+   Sets the size of the buffer for storing responses to modem AT commands before they are forwarded to the cloud.
+   Modem responses longer than this length will be replaced with an error code message (-NRF_E2BIG).
+   Cannot be less than 40 bytes.
 
 .. _nrf_cloud_mqtt_multi_service_building_and_running:
 

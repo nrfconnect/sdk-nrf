@@ -47,7 +47,6 @@ target_sources(app PRIVATE
     src/zap-generated/callback-stub.cpp
     ${COMMON_ROOT}/src/led_widget.cpp
     ${COMMON_ROOT}/src/pwm_device.cpp
-    ${COMMON_ROOT}/src/thread_util.cpp
 )
 
 if(CONFIG_CHIP_OTA_REQUESTOR OR CONFIG_MCUMGR_SMP_BT)
@@ -60,6 +59,7 @@ endif()
 
 chip_configure_data_model(app
     INCLUDE_SERVER
+    BYPASS_IDL
     ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/window-app.zap
 )
 # NORDIC SDK APP END

@@ -12,9 +12,9 @@
 #include "light_hsl_internal.h"
 #include "model_utils.h"
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_light_hue_srv
-#include "common/log.h"
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(bt_mesh_light_hue_srv);
 
 #define LVL_TO_HUE(_lvl) ((_lvl) + 32768)
 #define HUE_TO_LVL(_hue) ((_hue) - 32768)
@@ -472,5 +472,5 @@ int bt_mesh_light_hue_srv_pub(struct bt_mesh_light_hue_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_HUE_OP_STATUS,
 				 BT_MESH_LIGHT_HSL_MSG_MAXLEN_HUE_STATUS);
 	encode_status(&msg, status);
-	return model_send(srv->model, ctx, &msg);
+	return bt_mesh_msg_send(srv->model, ctx, &msg);
 }

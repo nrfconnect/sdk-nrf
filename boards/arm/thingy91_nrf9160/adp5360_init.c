@@ -85,6 +85,12 @@ static int power_mgmt_init(void)
 		return err;
 	}
 
+	err = adp536x_fg_set_mode(ADP566X_FG_ENABLED, ADP566X_FG_MODE_SLEEP);
+	if (err) {
+		LOG_ERR("Could not enable fuel gauge: %d", err);
+		return err;
+	}
+
 	return 0;
 }
 

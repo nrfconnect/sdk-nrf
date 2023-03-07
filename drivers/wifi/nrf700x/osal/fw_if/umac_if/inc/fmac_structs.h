@@ -59,9 +59,6 @@ struct wifi_nrf_fmac_priv {
  * @stats_req: Flag indicating whether a request for statistics has been sent
  *             to the RPU.
  * @fw_stats: Firmware statistics.
- * @umac_ver: UMAC version information.
- * @lmac_ver: LMAC version information.
- * @base_mac_addr: The base mac address for the RPU device.
  *
  * This structure maintains the context information necessary for the
  * a single instance of an FullMAC based RPU.
@@ -70,13 +67,14 @@ struct wifi_nrf_fmac_dev_ctx {
 	struct wifi_nrf_fmac_priv *fpriv;
 	void *os_dev_ctx;
 	void *hal_dev_ctx;
-	bool stats_req;
 	struct rpu_fw_stats *fw_stats;
-	unsigned int umac_ver;
-	unsigned int lmac_ver;
-	unsigned char base_mac_addr[NRF_WIFI_ETH_ADDR_LEN];
-	bool init_done;
-	bool deinit_done;
+	bool stats_req;
+	bool fw_boot_done;
+	bool fw_init_done;
+	bool fw_deinit_done;
+	enum nrf_wifi_rf_test rf_test_type;
+	void *rf_test_cap_data;
+	unsigned int rf_test_cap_sz;
 };
 
 #else /* CONFIG_NRF700X_RADIO_TEST */
@@ -102,33 +100,48 @@ enum wifi_nrf_fmac_ac {
 
 
 /**
- * enum wifi_nrf_fmac_if_state - The operational state of an interface.
- * @WIFI_NRF_FMAC_IF_STATE_INVALID: Invalid value. Used for error checks.
- * @WIFI_NRF_FMAC_IF_STATE_UP: The interface is operational.
- * @WIFI_NRF_FMAC_IF_STATE_DOWN: The interface is non-operational.
+ * enum wifi_nrf_fmac_if_op_state - The operational state of an interface.
+ * @WIFI_NRF_FMAC_IF_OP_STATE_DOWN: The interface is non-operational.
+ * @WIFI_NRF_FMAC_IF_OP_STATE_UP: The interface is operational.
+ * @WIFI_NRF_FMAC_IF_OP_STATE_INVALID: Invalid value. Used for error checks.
  *
  * This enum lists the possible operational states of an interface.
  */
-enum wifi_nrf_fmac_if_state {
-	WIFI_NRF_FMAC_IF_STATE_INVALID,
-	WIFI_NRF_FMAC_IF_STATE_UP,
-	WIFI_NRF_FMAC_IF_STATE_DOWN
+enum wifi_nrf_fmac_if_op_state {
+	WIFI_NRF_FMAC_IF_OP_STATE_DOWN,
+	WIFI_NRF_FMAC_IF_OP_STATE_UP,
+	WIFI_NRF_FMAC_IF_OP_STATE_INVALID
+};
+
+
+/**
+ * enum wifi_nrf_fmac_if_carr_state - The carrier state of an interface.
+ * @WIFI_NRF_FMAC_IF_CARR_STATE_OFF: The interface carrier is off.
+ * @WIFI_NRF_FMAC_IF_CARR_STATE_ON: The interface carrier is on.
+ * @WIFI_NRF_FMAC_IF_CARR_STATE_INVALID: Invalid value. Used for error checks.
+ *
+ * This enum lists the possible operational states of an interface.
+ */
+enum wifi_nrf_fmac_if_carr_state {
+	WIFI_NRF_FMAC_IF_CARR_STATE_OFF,
+	WIFI_NRF_FMAC_IF_CARR_STATE_ON,
+	WIFI_NRF_FMAC_IF_CARR_STATE_INVALID
 };
 
 
 /**
  * struct wifi_nrf_fmac_callbk_fns - Callback functions to be invoked by UMAC
  *				     IF layer when a paticular event occurs.
- * @if_state_chg_callbk_fn: Callback function to be called when an interface
- *                          state changes.
+ * @if_assoc_callbk_fn: Callback function to be called when an interface association
+ *                      state changes.
  * @rx_frm_callbk_fn: Callback function to be called when a frame is received.
  *
  * This structure contains function pointers to all the callback functions that
  * the UMAC IF layer needs to invoked for various events.
  */
 struct wifi_nrf_fmac_callbk_fns {
-	enum wifi_nrf_status (*if_state_chg_callbk_fn)(void *os_vif_ctx,
-						       enum wifi_nrf_fmac_if_state if_state);
+	enum wifi_nrf_status (*if_carr_state_chg_callbk_fn)(void *os_vif_ctx,
+							    enum wifi_nrf_fmac_if_carr_state cs);
 
 	void (*rx_frm_callbk_fn)(void *os_vif_ctx,
 				 void *frm);
@@ -234,6 +247,18 @@ struct wifi_nrf_fmac_callbk_fns {
 	void (*event_get_wiphy)(void *if_priv,
 		struct nrf_wifi_event_get_wiphy *get_wiphy,
 		unsigned int event_len);
+
+	void (*twt_sleep_callbk_fn)(void *if_priv,
+		struct nrf_wifi_umac_event_twt_sleep *twt_sleep_event_info,
+		unsigned int event_len);
+
+	void (*event_get_reg)(void *if_priv,
+		struct nrf_wifi_reg *get_reg,
+		unsigned int event_len);
+
+	void (*event_get_ps_info)(void *if_priv,
+		struct nrf_wifi_umac_event_power_save_info *get_ps_config,
+		unsigned int event_len);
 };
 
 
@@ -261,7 +286,10 @@ struct wifi_nrf_fmac_buf_map_info {
 struct rpu_host_stats {
 	unsigned long long total_tx_pkts;
 	unsigned long long total_tx_done_pkts;
+	unsigned long long total_tx_drop_pkts;
+
 	unsigned long long total_rx_pkts;
+	unsigned long long total_rx_drop_pkts;
 };
 
 
@@ -378,6 +406,19 @@ struct wifi_nrf_fmac_priv {
 	unsigned int num_rx_bufs;
 
 	struct wifi_nrf_fmac_callbk_fns callbk_fns;
+
+};
+
+/**
+ * enum wifi_nrf_fmac_twt_state - The TWT state of device.
+ * @WIFI_NRF_FMAC_TWT_STATE_SLEEP: The RPU in TWT sleep state
+ * @WIFI_NRF_FMAC_TWT_STATE_AWAKE: The RPU in TWT awake state
+ *
+ * This enum lists the possible RPU TWT operational states.
+ */
+enum wifi_nrf_fmac_twt_state {
+	WIFI_NRF_FMAC_TWT_STATE_SLEEP,
+	WIFI_NRF_FMAC_TWT_STATE_AWAKE
 };
 
 
@@ -404,9 +445,9 @@ struct wifi_nrf_fmac_priv {
  * @fw_stats: Firmware statistics.
  * @umac_ver: UMAC version information.
  * @lmac_ver: LMAC version information.
- * @base_mac_addr: The base mac address for the RPU device.
  * @num_sta: Present number of STAs created on the device.
  * @num_ap: Present number of APs created on the device.
+ * @twt_sleep_status: Current RPU TWT sleep status.
  *
  * This structure maintains the context information necessary for the
  * a single instance of an FullMAC based RPU.
@@ -422,13 +463,14 @@ struct wifi_nrf_fmac_dev_ctx {
 	struct rpu_host_stats host_stats;
 	unsigned char num_sta;
 	unsigned char num_ap;
-	bool stats_req;
 	struct rpu_fw_stats *fw_stats;
-	unsigned int umac_ver;
-	unsigned int lmac_ver;
-	unsigned char base_mac_addr[NRF_WIFI_ETH_ADDR_LEN];
-	bool init_done;
-	bool deinit_done;
+	bool stats_req;
+	bool fw_boot_done;
+	bool fw_init_done;
+	bool fw_deinit_done;
+	bool alpha2_valid;
+	unsigned char alpha2[3];
+	enum wifi_nrf_fmac_twt_state twt_sleep_status;
 };
 
 
@@ -460,33 +502,6 @@ struct wifi_nrf_fmac_vif_ctx {
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 
-/**
- * struct wifi_nrf_fmac_init_dev_params - Structure to hold parameters for
- *                                        initializing the RPU.
- * @base_mac_addr: The base mac address for the RPU.
- * @def_vif_idx: Index for the default VIF.
- * @rf_params: RF parameters (if any) to be passed to the RPU.
- * @rf_params_valid: Flag to indicate to the RPU that the data in the
- *                   @rf_params is valid.
- * @sleep_type: Type of RPU sleep.
- * @phy_calib: PHY calibration flags to be passed to the RPU.
- *
- * This structure holds the parameters for initializing the RPU.
- */
-struct wifi_nrf_fmac_init_dev_params {
-#ifndef CONFIG_NRF700X_RADIO_TEST
-	unsigned char base_mac_addr[NRF_WIFI_ETH_ADDR_LEN];
-	unsigned char def_vif_idx;
-	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
-	bool rf_params_valid;
-#endif /* !CONFIG_NRF700X_RADIO_TEST */
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
-	int sleep_type;
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
-	unsigned int phy_calib;
-};
-
-
 struct wifi_nrf_fw_info {
 	const void *data;
 	unsigned int size;
@@ -512,5 +527,11 @@ struct wifi_nrf_fmac_fw_info {
 	struct wifi_nrf_fw_info lmac_patch_sec;
 	struct wifi_nrf_fw_info umac_patch_pri;
 	struct wifi_nrf_fw_info umac_patch_sec;
+};
+
+
+struct wifi_nrf_fmac_otp_info {
+	struct host_rpu_umac_info info;
+	unsigned int flags;
 };
 #endif /* __FMAC_STRUCTS_H__ */

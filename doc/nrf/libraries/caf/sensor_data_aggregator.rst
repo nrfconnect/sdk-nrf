@@ -31,8 +31,8 @@ To use the module, you must complete the following steps:
       agg0: agg0 {
               compatible = "caf,aggregator";
               sensor_descr = "accel_sim_xyz";
-              buf_data_length = <120>;
-              sensor_data_size = <12>;
+              buf_data_length = <240>;
+              sample_size = <3>;
               status = "okay";
       };
 
@@ -40,7 +40,7 @@ To use the module, you must complete the following steps:
              compatible = "caf,aggregator";
              sensor_descr = "void_test_sensor";
              buf_data_length = <80>;
-             sensor_data_size = <8>;
+             sample_size = <1>;
              status = "okay";
       };
 
@@ -48,13 +48,13 @@ Two aggregators are defined here and each one is responsible to handle data of t
 The aggregator is defined as a separate node in the devicetree and consists of the following parameters:
 
 * ``compatible`` - This is DTS binding and should be set to ``caf,aggregator``.
-* ``sensor_descr`` - This parameter represents the description of the sensor and should be the same as the description in the :ref:`caf_sensor_sampler`.
+* ``sensor_descr`` - This parameter represents the description of the sensor and should be the same as the description in the :ref:`caf_sensor_manager`.
 * ``buf_data_length`` - This parameter represents the length of the buffer in bytes.
   Its default value is ``120``.
-  The value should be set as a multiple of sensor sample size.
-* ``sensor_data_size`` - This parameter represents the sensor sample size and is set in bytes.
-  Its default value is ``4``.
-* ``buf_coun`` - This parameter represents the number of buffers in the aggregator.
+  You should set the value as a multiple of sensor sample size times the size of :c:struct:`sensor_value` (``i*sample_size*sizeof(struct sensor_value)``).
+* ``sample_size`` - This parameter represents the sensor sample size and is expressed in ``sensor_value`` per sample.
+  Its default value is ``1``.
+* ``buf_count`` - This parameter represents the number of buffers in the aggregator.
   Its default value is ``2``.
 * ``status`` - This parameter represents the node status and should be set to ``okay``.
 
@@ -77,5 +77,3 @@ After receiving :c:struct:`sensor_data_aggregator_release_buffer_event`, the |se
 
 Several buffers can be reduced to one, in case of a situation where the sampling period is greater than the time needed to send and process :c:struct:`sensor_data_aggregator_event`.
 In the situation when sampling is much faster than the time needed to send and process :c:struct:`sensor_data_aggregator_event`, the number of buffers should be increased.
-
-.. |sensor_data_aggregator| replace:: sensor data aggregator module
