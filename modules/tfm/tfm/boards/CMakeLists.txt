@@ -32,6 +32,7 @@ target_compile_definitions(platform_s
 
 target_include_directories(platform_s
   PUBLIC
+  include
   ${partition_includes}
   ${board_includes}
   services/include
