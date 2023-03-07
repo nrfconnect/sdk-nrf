@@ -3108,6 +3108,11 @@ NCSDK-19858: :ref:`at_monitor_readme` library and :ref:`nrf_cloud_mqtt_multi_ser
   Occasionally, the :ref:`at_monitor_readme` library heap becomes overrun, presumably due to one of the registered AT event listeners becoming stalled.
   This has only been observed with the :ref:`nrf_cloud_mqtt_multi_service` sample.
 
+.. rst-class:: v2-3-0 v2-2-0
+
+NCSDK-20095: Build warning in the RF test samples when the minimal pinout generic/Skyworks FEM is used
+  The :ref:`radio_test` and :ref:`direct_test_mode` samples build with a warning about generic/Skyworks FEM in minimal pinout configuration.
+
 Zephyr
 ******
 

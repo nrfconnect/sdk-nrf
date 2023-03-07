@@ -207,6 +207,10 @@ Bluetooth samples
 
   * The :kconfig:option:`CONFIG_BT_SMP` Kconfig option is included when ``CONFIG_BT_HIDS_SECURITY_ENABLED`` is selected.
 
+* :ref:`direct_test_mode` sample:
+
+  * Removed a compilation warning when used with minimal pinout Skyworks FEM.
+
 Bluetooth mesh samples
 ----------------------
 
