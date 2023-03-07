@@ -13,7 +13,7 @@ This sample enables an external MCU to send modem or SLM proprietary AT commands
 Requirements
 ************
 
-SLM application should be configured to use UART_2 on nRF9160 side.
+The SLM application should be configured to use UART_2 on the nRF9160 side with no hardware flow control.
 
 The sample supports the following development kits:
 
@@ -40,6 +40,10 @@ The following table shows how to connect PCA10056 UART_1 to nRF9160 UART_2 for c
    * - GPIO GND
      - GPIO GND
 
+.. note::
+   The GPIO output level on the nRF9160 side must be 3 V to work with the nRF52 series DK.
+   You can set the VDD voltage with the **VDD IO** switch (**SW9**).
+
 The following table shows how to connect PCA10095 UART_2 to nRF9160 UART_2 for communication through UART:
 
 .. list-table::
@@ -60,7 +64,31 @@ The following table shows how to connect PCA10095 UART_2 to nRF9160 UART_2 for c
      - GPIO GND
 
 .. note::
-   SW9 on nRF9160 DK (VDD IO) should be set to 3V to work with the nRF52 and nRF53 series DK.
+   The GPIO output level on the nRF9160 side must be 3 V to work with the nRF53 series DK.
+   You can set the VDD voltage with the **VDD IO** switch (**SW9**).
+
+The following table shows how to connect PCA10143 UART_2 to nRF9160 UART_2 for communication through UART:
+
+.. list-table::
+   :align: center
+   :header-rows: 1
+
+   * - nRF7002 DK
+     - nRF9160 DK
+   * - UART TX P1.04
+     - UART RX P0.11
+   * - UART RX P1.05
+     - UART TX P0.10
+   * - GPIO OUT P0.31
+     - GPIO IN P0.31
+   * - GPIO IN P0.30 (optional)
+     - GPIO OUT P0.30 (optional)
+   * - GPIO GND
+     - GPIO GND
+
+.. note::
+   The GPIO output level on the nRF9160 side must be 1.8 V to work with the nRF70 series DK.
+   You can set the VDD voltage with the **VDD IO** switch (**SW9**).
 
 References
 **********
