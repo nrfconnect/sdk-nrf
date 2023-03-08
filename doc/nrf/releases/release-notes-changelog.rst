@@ -336,6 +336,6 @@ cJSON
 Documentation
 =============
 
-* Updated :ref:`ug_matter_gs_adding_cluster` documentation with new code snippets to align it with the source code of refactored Matter template sample.
+* |no_changes_yet_note|
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
