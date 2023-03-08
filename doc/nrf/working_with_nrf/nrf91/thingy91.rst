@@ -198,7 +198,7 @@ Complete the following steps after installing the |nRFVSC|:
 .. prog_extdebugprobe_end
 ..
 
-   e. In |VSC|, click the :guilabel:`Flash` option in the **Actions View**.
+   e. In |nRFVSC|, click the :guilabel:`Flash` option in the **Actions View**.
 
       If you have multiple boards connected, you are prompted to pick a device at the top of the screen.
 
