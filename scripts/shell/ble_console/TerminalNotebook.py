@@ -5,10 +5,10 @@ import re
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk  # pylint: disable=no-name-in-module
 
 gi.require_version('Vte', '2.91')
-from gi.repository import Vte
+from gi.repository import Vte  # pylint: disable=no-name-in-module
 
 COLOR_TERMINAL_ACTIVE = Gdk.RGBA(0.0/256, 0.0/256, 0.0/256, 0.8)
 COLOR_TERMINAL_INACTIVE = Gdk.RGBA(200.0/256, 200.0/256, 200.0/256, 0.8)
@@ -79,7 +79,7 @@ class TerminalNotebook(object):
             if self.device_terminal_dict[device] == terminal:
                 label_text = self.labels[device].get_text()
 
-                if state == False :
+                if not state:
                     terminal.set_color_background(COLOR_TERMINAL_INACTIVE)
                     self.display_message_method("Lost connection with " + device)
                     # Strikethrough name of inactive device

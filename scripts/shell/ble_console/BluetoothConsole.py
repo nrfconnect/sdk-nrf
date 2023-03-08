@@ -9,7 +9,7 @@ import os
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib  # pylint: disable=no-name-in-module
 
 from dbus import DBusException
 from TerminalNotebook import TerminalNotebook
@@ -81,8 +81,8 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
         self.window.show_all()
         self.display_message("Welcome to Bluetooth Console by Nordic Semiconductor\r\nSelect device from context menu to connect", 8000)
 
-    """Signal from BlueZ"""
     def bt_read_event(self, *args, **kwargs):
+    """Signal from BlueZ"""
         if len(args) >= 2:
             if (args[0] == READ_CHARACTERISTIC) and ('Value' in args[1]):
                 array = args[1]["Value"]
