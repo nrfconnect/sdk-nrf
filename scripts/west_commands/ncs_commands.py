@@ -726,5 +726,6 @@ _BLOCKED_PROJECTS: set[Path] = set(
      'modules/hal/ti',
      'modules/hal/xtensa',
      'modules/lib/tflite-micro',
+     'modules/lib/thrift',
      'modules/tee/tf-a/trusted-firmware-a',
      ])
