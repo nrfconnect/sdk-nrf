@@ -62,7 +62,6 @@ zephyr_library_sources(
 	${COMMON_SRC_BASE}/drivers/drivers.c
 	${COMMON_SRC_BASE}/l2_packet/l2_packet_zephyr.c
 	${COMMON_SRC_BASE}/drivers/driver_zephyr.c
-	${COMMON_SRC_BASE}/utils/base64.c
 	${COMMON_SRC_BASE}/utils/common.c
 	${COMMON_SRC_BASE}/utils/wpabuf.c
 	${COMMON_SRC_BASE}/utils/bitfield.c
