@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef __ZEPHYR_KERNEL_H
-#define __ZEPHYR_KERNEL_H
+#ifndef __ZEPHYR_SYS_PRINTK_H
+#define __ZEPHYR_SYS_PRINTK_H
 
 /* Compatebility header for using Zephyr API in TF-M.
  *
@@ -15,8 +15,8 @@
  * The functionality will be forwarded to TF-M equivalent of the Zephyr API.
  */
 
-#include <zephyr/sys/printk.h>
+#include "tfm_sp_log.h"
 
-#define k_panic() tfm_core_panic()
+#define printk(fmt, ...) printf(fmt, ##__VA_ARGS__)
 
-#endif /* __ZEPHYR_KERNEL_H */
+#endif /* __ZEPHYR_SYS_PRINTK_H */
