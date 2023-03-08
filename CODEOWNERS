@@ -182,6 +182,9 @@ Kconfig*                                  @tejlmand
 /scripts/requirements-*.txt               @tejlmand @grho @shanthanordic @ihansse
 /scripts/west_commands/sbom/              @doki-nordic @maje-emb
 /scripts/bootloader/                      @hakonfam @sigvartmh
+/scripts/ncs-docker-version.txt           @nrfconnect/ncs-ci
+/scripts/print_docker_image.sh            @nrfconnect/ncs-ci
+/scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
 /subsys/bluetooth/                        @alwa-nordic @carlescufi @KAGA164
