@@ -160,6 +160,13 @@ if (CONFIG_NFCT_PINS_AS_GPIOS)
   )
 endif()
 
+if (CONFIG_NRF_TRACE_PORT)
+  set_property(TARGET zephyr_property_target
+  APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DCONFIG_NRF_TRACE_PORT=${CONFIG_NRF_TRACE_PORT}
+  )
+endif()
+
 set_property(TARGET zephyr_property_target
   APPEND PROPERTY TFM_CMAKE_OPTIONS
     # Pass Zephyr Python to TF-M so both uses identical Python.
