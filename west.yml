@@ -55,7 +55,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: f8f113382356934cb6d1ef4cdad95a843f922085
+      revision: pull/1096/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -106,7 +106,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: 6d949b2b1f95d53bc91f798ace564587e0408bd1
+      revision: pull/75/head
       userdata:
         ncs:
           upstream-url: https://w1.fi/cgit/hostap/
@@ -114,7 +114,7 @@ manifest:
           compare-by-default: false
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v1.9.99-ncs4
+      revision: c78d59dbe8ec48cfbdff9a0bfc12f25b90c73d2f
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR.git
@@ -135,7 +135,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 1c60ae5551383b16488fddff02ae42dc3e3bb05e
+      revision: pull/234/head
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -167,12 +167,12 @@ manifest:
           compare-by-default: false
     - name: homekit
       repo-path: sdk-homekit
-      revision: ee0815092c43700454ff26d77740747eb300e270
+      revision: pull/457/head
       groups:
         - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 92054fe0ba2155e1ad9be2bd2d7c89296399873d
+      revision: pull/134/head
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -211,7 +211,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.37.2
+      revision: 0.42.0
       remote: memfault
     - name: ant
       repo-path: sdk-ant
