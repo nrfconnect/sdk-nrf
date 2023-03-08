@@ -9,6 +9,7 @@
 #include <nrf_cc3xx_platform_ctr_drbg.h>
 #include <hw_unique_key.h>
 #include "hw_unique_key_internal.h"
+#include <zephyr/kernel.h>
 #include <zephyr/sys/util.h>
 
 
@@ -23,28 +24,27 @@ void hw_unique_key_write_random(void)
 	nrf_cc3xx_platform_ctr_drbg_context_t ctx = {0};
 
 	if (hw_unique_key_are_any_written()) {
-		HUK_PRINT("One or more keys already set. Cannot overwrite\n\r");
-		HUK_PANIC();
+		printk("One or more keys already set. Cannot overwrite\r\n");
+		k_panic();
 	}
 
 	err = nrf_cc3xx_platform_ctr_drbg_init(&ctx, pers_str, sizeof(pers_str) - 1);
-
 	if (err != 0) {
-		HUK_PRINT_VAL("The RNG setup failed with error code: ", err);
-		HUK_PANIC();
+		printk("The RNG setup failed with error code: %d\r\n", err);
+		k_panic();
 	}
 
 	err = nrf_cc3xx_platform_ctr_drbg_get(&ctx, rand_bytes, sizeof(rand_bytes), &olen);
-
 	err2 = nrf_cc3xx_platform_ctr_drbg_free(&ctx);
 
 	if (err != 0 || olen != sizeof(rand_bytes)) {
-		HUK_PRINT_VAL("The RNG call failed with error code: ", err);
-		HUK_PANIC();
+		printk("The RNG call failed with error code: %d or wrong size %d\r\n", err, olen);
+		k_panic();
 	}
 
 	if (err2 != 0) {
-		HUK_PRINT_VAL("Could not free nrf_cc3xx_platform_ctr_drbg context: ", err2);
+		printk("Could not free nrf_cc3xx_platform_ctr_drbg context: %d\r\n", err2);
+		k_panic();
 	}
 
 	for (int i = 0; i < ARRAY_SIZE(huk_slots); i++) {
@@ -54,14 +54,14 @@ void hw_unique_key_write_random(void)
 	memset(rand_bytes, 0, sizeof(rand_bytes));
 
 	if (memcmp(rand_bytes, zeros, sizeof(rand_bytes)) != 0) {
-		HUK_PRINT("The key bytes weren't correctly deleted from RAM.\n\r");
-		HUK_PANIC();
+		printk("The key bytes weren't correctly deleted from RAM.\r\n");
+		k_panic();
 	}
 
 	for (int i = 0; i < ARRAY_SIZE(huk_slots); i++) {
 		if (!hw_unique_key_is_written(huk_slots[i])) {
-			HUK_PRINT("One or more keys not set correctly.\n\r");
-			HUK_PANIC();
+			printk("One or more keys not set correctly\r\n");
+			k_panic();
 		}
 	}
 }
