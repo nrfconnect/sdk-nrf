@@ -10,6 +10,8 @@
 - scenarios:
     - applications.asset_tracker_v2.aws
     - applications.asset_tracker_v2.azure
+    - applications.asset_tracker_v2.cloud.cloud_codec.json_common.azure
+    - applications.asset_tracker_v2.cloud.cloud_codec.json_common.aws
     - applications.asset_tracker_v2.debug
     - applications.asset_tracker_v2.nrf_cloud
     - sample.app_event_manager
