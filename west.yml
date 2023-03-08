@@ -55,7 +55,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: f8f113382356934cb6d1ef4cdad95a843f922085
+      revision: 1e1697d881a988aa4bc8fad4a1eb52d14ce7025b
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -106,7 +106,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: a7c991e1c10b0d42bdb73bea95d1b45b87b7adbd
+      revision: a0d06f6e2e9d3dcaa7e23c6dc29cbc33436a02cd
       userdata:
         ncs:
           upstream-url: https://w1.fi/cgit/hostap/
@@ -114,7 +114,7 @@ manifest:
           compare-by-default: false
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v1.9.99-ncs4
+      revision: c78d59dbe8ec48cfbdff9a0bfc12f25b90c73d2f
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR.git
@@ -135,7 +135,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 1c60ae5551383b16488fddff02ae42dc3e3bb05e
+      revision: e2e2e5d3a085698fdf7a7ba3634c9041a98ff814
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -167,12 +167,12 @@ manifest:
           compare-by-default: false
     - name: homekit
       repo-path: sdk-homekit
-      revision: ee0815092c43700454ff26d77740747eb300e270
+      revision: 7d3f3a3e098d64fbf804fc1edfd033ded56d161d
       groups:
         - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 66c20c4ab87023d205444162a62971bb3f3ff786
+      revision: 4c63d9da7a6fbe2e82a3c9e5e8e6099a9c29359b
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -211,7 +211,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.37.2
+      revision: 0.42.1
       remote: memfault
     - name: ant
       repo-path: sdk-ant
