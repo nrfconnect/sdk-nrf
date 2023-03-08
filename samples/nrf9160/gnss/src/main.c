@@ -238,13 +238,14 @@ static void agps_data_get_work_fn(struct k_work *item)
 	int err;
 
 #if defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_SUPL)
-	/* SUPL doesn't usually provide satellite real time integrity information. If GNSS asks
-	 * only for satellite integrity, the request should be ignored.
+	/* SUPL doesn't usually provide NeQuick ionospheric corrections and satellite real time
+	 * integrity information. If GNSS asks only for those, the request should be ignored.
 	 */
 	if (last_agps.sv_mask_ephe == 0 &&
 	    last_agps.sv_mask_alm == 0 &&
-	    last_agps.data_flags == NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
-		LOG_INF("Ignoring assistance request for only satellite integrity");
+	    (last_agps.data_flags & ~(NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST |
+				      NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST)) == 0) {
+		LOG_INF("Ignoring assistance request for only NeQuick and/or integrity");
 		return;
 	}
 #endif /* CONFIG_GNSS_SAMPLE_ASSISTANCE_SUPL */
