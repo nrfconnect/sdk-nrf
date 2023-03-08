@@ -22,3 +22,4 @@ set(TFM_DUMMY_PROVISIONING              OFF         CACHE BOOL      "Provision w
 set(PLATFORM_DEFAULT_PROVISIONING       OFF         CACHE BOOL      "Use default provisioning implementation")
 set(NRF_PROVISIONING                    OFF         CACHE BOOL      "Use Nordic provisioning implementation")
 set(CONFIG_NFCT_PINS_AS_GPIOS           OFF         CACHE BOOL      "Use NFCT pins as GPIOs.")
+set(CONFIG_NRF_TRACE_PORT               OFF         CACHE BOOL      "Enable trace port.")
