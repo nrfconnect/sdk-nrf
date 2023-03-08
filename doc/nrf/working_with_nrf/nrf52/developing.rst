@@ -243,7 +243,7 @@ Complete the following steps after installing the |nRFVSC|:
 
    **LED1** starts blinking.
 
-#. In |VSC|, click the :guilabel:`Flash` option in the :guilabel:`Actions View`.
+#. In |nRFVSC|, click the :guilabel:`Flash` option in the :guilabel:`Actions View`.
 
    If you have multiple boards connected, you are prompted to pick a device at the top of the screen.
 
