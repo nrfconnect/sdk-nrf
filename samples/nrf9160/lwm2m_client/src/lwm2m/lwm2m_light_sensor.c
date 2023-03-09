@@ -7,8 +7,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
-#include <stdio.h>
-
 #include "light_sensor.h"
 #include "lwm2m_app_utils.h"
 

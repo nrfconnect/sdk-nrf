@@ -7,9 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
-#include <math.h>
 #include <zephyr/devicetree.h>
-
 #include "accelerometer.h"
 #include "lwm2m_app_utils.h"
 
