@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#define DT_DRV_COMPAT cirrus_cs47l63
+
 #include "cs47l63_comm.h"
 
 #include <zephyr/kernel.h>
@@ -26,15 +28,16 @@ LOG_MODULE_REGISTER(CS47L63, CONFIG_CS47L63_LOG_LEVEL);
 #define CS47L63_PROCESS_THREAD_DELAY_MS 10
 
 static const struct gpio_dt_spec hw_codec_gpio =
-	GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_gpio_in), gpios);
+	GPIO_DT_INST_SPEC_GET(0, gpio9_gpios);
 static const struct gpio_dt_spec hw_codec_irq =
-	GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_irq_in), gpios);
+	GPIO_DT_INST_SPEC_GET(0, irq);
 static const struct gpio_dt_spec hw_codec_reset =
-	GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_reset_out), gpios);
+	GPIO_DT_INST_SPEC_GET(0, reset_gpios);
 
-const static struct device *cirrus_dev = DEVICE_DT_GET(DT_BUS(DT_NODELABEL(cs47l63)));
 const static struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 
+static const struct spi_dt_spec spi = SPI_DT_SPEC_INST_GET(
+	0, SPI_OP_MODE_MASTER | SPI_TRANSFER_MSB | SPI_WORD_SET(8) | SPI_LINES_SINGLE, 0);
 static bsp_callback_t bsp_callback;
 static void *bsp_callback_arg;
 
@@ -44,22 +47,6 @@ static struct k_thread cs47l63_data;
 static K_THREAD_STACK_DEFINE(cs47l63_stack, CONFIG_CS47L63_STACK_SIZE);
 
 static K_SEM_DEFINE(sem_cs47l63, 0, 1);
-
-/* Free the CS pin and release the SPI device after a transaction */
-#define SPI_OPER_POST_FREE                                                                         \
-	(SPI_OP_MODE_MASTER | SPI_TRANSFER_MSB | SPI_WORD_SET(8) | SPI_LINES_SINGLE)
-
-/* Hold the CS pin and do not release the SPI device after a transaction */
-#define SPI_OPER_POST_HOLD                                                                         \
-	(SPI_OP_MODE_MASTER | SPI_TRANSFER_MSB | SPI_HOLD_ON_CS | SPI_LOCK_ON | SPI_WORD_SET(8) |  \
-	 SPI_LINES_SINGLE)
-
-#define SPI_FREQUENCY 8000000
-
-static struct spi_config config = { .frequency = SPI_FREQUENCY,
-				    .operation = SPI_OPER_POST_FREE,
-				    .slave = 0,
-				    .cs = SPI_CS_CONTROL_PTR_DT(DT_NODELABEL(cs47l63), 0) };
 
 static struct k_mutex cirrus_reg_oper_mutex;
 
@@ -130,11 +117,6 @@ static uint32_t cs47l63_comm_reg_read(uint32_t bsp_dev_id, uint8_t *addr_buffer,
 				      uint32_t addr_length, uint8_t *data_buffer,
 				      uint32_t data_length, uint32_t pad_len)
 {
-	if (!cirrus_dev) {
-		LOG_ERR("SPI driver was not found!");
-		return BSP_STATUS_FAIL;
-	}
-
 	if (pad_len != PAD_LEN) {
 		LOG_ERR("Trying to pad more than 4 bytes: %d", pad_len);
 		return BSP_STATUS_FAIL;
@@ -157,9 +139,8 @@ static uint32_t cs47l63_comm_reg_read(uint32_t bsp_dev_id, uint8_t *addr_buffer,
 		return BSP_STATUS_FAIL;
 	}
 
-	config.operation = SPI_OPER_POST_FREE;
 
-	ret = spi_transceive(cirrus_dev, &config, &rx, &rx);
+	ret = spi_transceive_dt(&spi, &rx, &rx);
 	if (ret) {
 		LOG_ERR("Failed transceive operation: %d", ret);
 		return BSP_STATUS_FAIL;
@@ -177,11 +158,6 @@ static uint32_t cs47l63_comm_reg_write(uint32_t bsp_dev_id, uint8_t *addr_buffer
 				       uint32_t addr_length, uint8_t *data_buffer,
 				       uint32_t data_length, uint32_t pad_len)
 {
-	if (!cirrus_dev) {
-		LOG_ERR("SPI driver was not found!");
-		return BSP_STATUS_FAIL;
-	}
-
 	if (pad_len != PAD_LEN) {
 		LOG_ERR("Trying to pad more than 4 bytes: %d", pad_len);
 		return BSP_STATUS_FAIL;
@@ -204,9 +180,8 @@ static uint32_t cs47l63_comm_reg_write(uint32_t bsp_dev_id, uint8_t *addr_buffer
 		return BSP_STATUS_FAIL;
 	}
 
-	config.operation = SPI_OPER_POST_FREE;
 
-	ret = spi_write(cirrus_dev, &config, &tx);
+	ret = spi_write_dt(&spi, &tx);
 	if (ret) {
 		LOG_ERR("SPI failed to write: %d", ret);
 		return BSP_STATUS_FAIL;
@@ -223,11 +198,6 @@ static uint32_t cs47l63_comm_reg_write(uint32_t bsp_dev_id, uint8_t *addr_buffer
 static uint32_t cs47l63_comm_gpio_set(uint32_t gpio_id, uint8_t gpio_state)
 {
 	int ret;
-
-	if (!gpio_dev) {
-		LOG_ERR("Failed to get gpio_dev");
-		return BSP_STATUS_FAIL;
-	}
 
 	ret = gpio_pin_set_raw(gpio_dev, gpio_id, gpio_state);
 
@@ -366,17 +336,12 @@ int cs47l63_comm_init(cs47l63_t *cs47l63_driver)
 
 	k_mutex_init(&cirrus_reg_oper_mutex);
 
-	if (!device_is_ready(cirrus_dev)) {
+	if (!spi_is_ready_dt(&spi)) {
 		LOG_ERR("CS47L63 is not ready!");
 		return -ENXIO;
 	}
 
-	if (!device_is_ready(config.cs->gpio.port)) {
-		LOG_ERR("CS GPIO is not ready!");
-		return -ENXIO;
-	}
-
-	if (!device_is_ready(hw_codec_gpio.port)) {
+	if (!gpio_is_ready(&hw_codec_gpio)) {
 		LOG_ERR("GPIO is not ready!");
 		return -ENXIO;
 	}
@@ -386,7 +351,7 @@ int cs47l63_comm_init(cs47l63_t *cs47l63_driver)
 		return ret;
 	}
 
-	if (!device_is_ready(hw_codec_irq.port)) {
+	if (!gpio_is_ready(&hw_codec_irq)) {
 		LOG_ERR("GPIO is not ready!");
 		return -ENXIO;
 	}
@@ -396,7 +361,7 @@ int cs47l63_comm_init(cs47l63_t *cs47l63_driver)
 		return ret;
 	}
 
-	if (!device_is_ready(hw_codec_reset.port)) {
+	if (!gpio_is_ready(&hw_codec_reset)) {
 		LOG_ERR("GPIO is not ready!");
 		return -ENXIO;
 	}
