@@ -12,6 +12,7 @@ rsource "Kconfig.ml_app_mode"
 rsource "Kconfig.ml_runner"
 rsource "Kconfig.usb_state"
 rsource "Kconfig.sensor_sim_ctrl"
+rsource "Kconfig.ei_result_nsms"
 
 config APP_SENSOR_SLEEP_TO
 	int "Sensor default time in seconds before sensor goes to sleep"
