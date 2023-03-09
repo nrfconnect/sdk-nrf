@@ -133,6 +133,7 @@ void mosh_fprintf_valist(enum mosh_print_level print_level, const char *fmt, va_
 			.type = NRF_CLOUD_DEVICE_INFO,
 			.data.ptr = mosh_print_buf,
 			.data.len = strlen(mosh_print_buf),
+			.ts_ms = NRF_CLOUD_NO_TIMESTAMP
 		};
 
 		nrf_cloud_sensor_data_stream(&mosh_cloud_print);

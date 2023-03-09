@@ -99,6 +99,7 @@ const struct nrf_cloud_sensor_data sensor_param = {
 	.type = 0U,
 	.data = cloud_data,
 	.tag = 20000U,
+	.ts_ms = NRF_CLOUD_NO_TIMESTAMP
 };
 
 /* Helper function to successfully init the cloud */

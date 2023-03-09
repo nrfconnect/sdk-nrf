@@ -551,7 +551,6 @@ struct nrf_cloud_gnss_nmea {
 	const char *sentence;
 };
 
-#define NRF_CLOUD_NO_TIMESTAMP -1
 /** @brief GNSS data to be sent to nRF Cloud as a device message */
 struct nrf_cloud_gnss_data {
 	/** The type of GNSS data below. */

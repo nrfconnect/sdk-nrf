@@ -36,10 +36,12 @@ void send_aggregated_data(struct k_work *work)
 	static struct nrf_cloud_sensor_data gnss_cloud_data = {
 		.type = NRF_CLOUD_SENSOR_GNSS,
 		.data.ptr = gps_data_buffer,
+		.ts_ms = NRF_CLOUD_NO_TIMESTAMP
 	};
 
 	static struct nrf_cloud_sensor_data flip_cloud_data = {
 		.type = NRF_CLOUD_SENSOR_FLIP,
+		.ts_ms = NRF_CLOUD_NO_TIMESTAMP
 	};
 
 	struct sensor_data aggregator_data;
