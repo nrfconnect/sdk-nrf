@@ -6,7 +6,7 @@
 
 #include "dfu_over_smp.h"
 
-#if !defined(CONFIG_MCUMGR_SMP_BT) || !defined(CONFIG_MCUMGR_CMD_IMG_MGMT) || !defined(CONFIG_MCUMGR_CMD_OS_MGMT)
+#if !defined(CONFIG_MCUMGR_TRANSPORT_BT) || !defined(CONFIG_MCUMGR_GRP_IMG) || !defined(CONFIG_MCUMGR_GRP_OS)
 #error "DFUOverSMP requires MCUMGR module configs enabled"
 #endif
 
