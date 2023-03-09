@@ -289,6 +289,9 @@ int nrf_cloud_sensor_data_encode(const struct nrf_cloud_sensor_data *sensor,
 	ret += json_add_str_cs(root_obj, NRF_CLOUD_JSON_DATA_KEY, sensor->data.ptr);
 	ret += json_add_str_cs(root_obj, NRF_CLOUD_JSON_MSG_TYPE_KEY,
 			       NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
+	if (sensor->ts_ms != NRF_CLOUD_NO_TIMESTAMP) {
+		ret += json_add_num_cs(root_obj, NRF_CLOUD_MSG_TIMESTAMP_KEY, sensor->ts_ms);
+	}
 
 	if (ret != 0) {
 		cJSON_Delete(root_obj);
@@ -2509,7 +2512,7 @@ int nrf_cloud_gnss_msg_json_encode(const struct nrf_cloud_gnss_data * const gnss
 	    json_add_str_cs(gnss_msg_obj,
 			    NRF_CLOUD_JSON_MSG_TYPE_KEY,
 			    NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA) ||
-	    ((gnss->ts_ms > NRF_CLOUD_NO_TIMESTAMP) &&
+	    ((gnss->ts_ms != NRF_CLOUD_NO_TIMESTAMP) &&
 	     json_add_num_cs(gnss_msg_obj, NRF_CLOUD_MSG_TIMESTAMP_KEY, gnss->ts_ms))) {
 		ret = -ENOMEM;
 		goto cleanup;
