@@ -708,7 +708,7 @@ static int do_carrier_portfolio(void)
 		}
 	}
 
-	if (slm_util_cmd_casecmp(operation, "READ")) {
+	if (slm_util_cmd_casecmp(operation, "READ") && (param_count > 4)) {
 		ret = lwm2m_carrier_identity_read(instance_id, identity_type, buffer, &buf_len);
 		if (ret) {
 			return ret;
@@ -717,7 +717,7 @@ static int do_carrier_portfolio(void)
 		rsp_send("\r\n#XCARRIER: %s\r\n", buffer);
 
 		return 0;
-	} else if (slm_util_cmd_casecmp(operation, "WRITE")) {
+	} else if (slm_util_cmd_casecmp(operation, "WRITE") && (param_count > 4)) {
 		size = sizeof(buffer);
 
 		ret = util_string_get(&at_param_list, 5, buffer, &size);
