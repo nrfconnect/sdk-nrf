@@ -50,23 +50,23 @@ config MCUMGR
 	bool
 	default y
 
-config MCUMGR_CMD_OS_MGMT
+config MCUMGR_GRP_OS
 	bool
 	default y
 
-config OS_MGMT_TASKSTAT
+config MCUMGR_GRP_OS_TASKSTAT
 	bool
 	default y
 
-config MCUMGR_CMD_STAT_MGMT
+config MCUMGR_GRP_STAT
 	bool
 	default y
 
-config MCUMGR_CMD_IMG_MGMT
+config MCUMGR_GRP_IMG
 	bool
 	default y
 
-config MCUMGR_BUF_SIZE
+config MCUMGR_TRANSPORT_NETBUF_SIZE
 	int
 	default 1024
 
@@ -74,11 +74,11 @@ config MCUMGR_BUF_SIZE
 config BT_PERIPHERAL
 	default y
 
-config MCUMGR_SMP_BT
+config MCUMGR_TRANSPORT_BT
 	bool
 	default y
 
-config MCUMGR_SMP_BT_AUTHEN
+config MCUMGR_TRANSPORT_BT_AUTHEN
 	bool
 	default n
 
@@ -90,7 +90,7 @@ config BT_BUF_ACL_TX_SIZE
 	int
 	default 502
 
-config MCUMGR_BUF_COUNT
+config MCUMGR_TRANSPORT_NETBUF_COUNT
 	int
 	default 6
 
@@ -166,11 +166,11 @@ config SPI_NOR_FLASH_LAYOUT_PAGE_SIZE
 	default 4096
 
 # Enable custom SMP request to erase settings partition.
-config MCUMGR_GRP_ZEPHYR_BASIC
+config MCUMGR_GRP_ZBASIC
 	bool
 	default y
 
-config MCUMGR_GRP_BASIC_CMD_STORAGE_ERASE
+config MCUMGR_GRP_ZBASIC_STORAGE_ERASE
 	bool
 	default y
 

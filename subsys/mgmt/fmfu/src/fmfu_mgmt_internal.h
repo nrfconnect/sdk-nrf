@@ -20,8 +20,8 @@ extern "C" {
  * of the RX buffer.
  */
 #define SMP_PACKET_MTU\
-	(CONFIG_MCUMGR_BUF_SIZE - \
-	((CONFIG_UART_MCUMGR_RX_BUF_SIZE/CONFIG_MCUMGR_BUF_SIZE) + 1) * 4)
+	(CONFIG_MCUMGR_TRANSPORT_NETBUF_SIZE - \
+	((CONFIG_UART_MCUMGR_RX_BUF_SIZE/CONFIG_MCUMGR_TRANSPORT_NETBUF_SIZE) + 1) * 4)
 /*
  * Define the buffer sizes used for full modem update SMP server
  * SMP uart buffer is the same as the buffer configured as the RX buffer for

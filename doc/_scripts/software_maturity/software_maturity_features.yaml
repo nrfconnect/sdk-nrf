@@ -40,7 +40,7 @@ features:
     Matter commissioning over IP: CHIP
     Matter commissioning over Bluetooth LE with QR code onboarding: CHIP && BT
     Matter commissioning over Bluetooth LE with NFC onboarding: CHIP && BT && CHIP_NFC_COMMISSIONING
-    Matter - OTA DFU over Bluetooth LE: CHIP && BT && MCUMGR_SMP_BT
+    Matter - OTA DFU over Bluetooth LE: CHIP && BT && MCUMGR_TRANSPORT_BT
     OTA DFU over Matter: CHIP && CHIP_OTA_REQUESTOR
     Matter Sleepy End Device: CHIP && CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT && NET_L2_OPENTHREAD && OPENTHREAD_MTD_SED
   homekit:
