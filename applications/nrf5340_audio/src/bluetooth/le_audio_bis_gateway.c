@@ -14,7 +14,6 @@
 
 #include "macros_common.h"
 #include "ctrl_events.h"
-#include "audio_datapath.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bis_gateway, CONFIG_BLE_LOG_LEVEL);
@@ -50,6 +49,8 @@ static bool delete_broadcast_src;
 static uint32_t seq_num[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
 
 static struct bt_le_ext_adv *adv;
+
+static le_audio_timestamp_cb timestamp_cb;
 
 static bool is_iso_buffer_full(uint8_t idx)
 {
@@ -265,7 +266,7 @@ static int adv_create(void)
 	return 0;
 }
 
-static int initialize(void)
+static int initialize(le_audio_timestamp_cb timestmp_cb)
 {
 	int ret;
 	static bool initialized;
@@ -280,6 +281,13 @@ static int initialize(void)
 		LOG_WRN("Already initialized");
 		return -EALREADY;
 	}
+
+	if (timestmp_cb == NULL) {
+		LOG_ERR("Timestamp callback is NULL");
+		return -EINVAL;
+	}
+
+	timestamp_cb = timestmp_cb;
 
 	(void)memset(audio_streams, 0, sizeof(audio_streams));
 
@@ -340,6 +348,7 @@ static int initialize(void)
 	}
 
 	initialized = true;
+
 	return 0;
 }
 
@@ -348,10 +357,10 @@ int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
 	return 0;
 }
 
-int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
+int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay)
 {
-	LOG_WRN("Not possible to get config on broadcast source");
-	return -ENXIO;
+	LOG_WRN("Getting config from gateway is not yet supported");
+	return -ENOTSUP;
 }
 
 int le_audio_volume_up(void)
@@ -463,7 +472,6 @@ int le_audio_send(struct encoded_audio enc_audio)
 		}
 	}
 
-#if (CONFIG_AUDIO_SOURCE_I2S)
 	struct bt_iso_tx_info tx_info = { 0 };
 
 	ret = bt_iso_chan_get_tx_sync(&audio_streams[0].ep->iso->chan, &tx_info);
@@ -471,14 +479,13 @@ int le_audio_send(struct encoded_audio enc_audio)
 	if (ret) {
 		LOG_DBG("Error getting ISO TX anchor point: %d", ret);
 	} else {
-		audio_datapath_sdu_ref_update(tx_info.ts);
+		timestamp_cb(tx_info.ts, false);
 	}
-#endif
 
 	return 0;
 }
 
-int le_audio_enable(le_audio_receive_cb recv_cb)
+int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_cb)
 {
 	int ret;
 
@@ -486,7 +493,7 @@ int le_audio_enable(le_audio_receive_cb recv_cb)
 
 	LOG_INF("Starting broadcast gateway %s", CONFIG_BT_AUDIO_BROADCAST_NAME);
 
-	ret = initialize();
+	ret = initialize(timestmp_cb);
 	if (ret) {
 		LOG_ERR("Failed to initialize");
 		return ret;
