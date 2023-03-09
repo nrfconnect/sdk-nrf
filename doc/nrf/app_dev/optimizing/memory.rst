@@ -17,6 +17,7 @@ General recommendations
 To reduce the memory footprint, ensure that your application uses the minimum required resources and tune the |NCS| configuration parameters.
 Complete the following actions to optimize your application:
 
+* Use the `Memory report`_ feature in the |nRFVSC| to check the size and percentage of memory that each symbol uses on your device for RAM, ROM, and partitions (when applicable).
 * Follow the guides for :ref:`optimizing Zephyr <zephyr:optimizations>`.
   Also see the implementation of the :ref:`zephyr:minimal_sample` sample.
 * Analyze stack usage in each thread of your application by using the :ref:`zephyr:thread_analyzer`.
