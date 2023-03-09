@@ -145,8 +145,15 @@ static int disable_interrupts_nolock(struct selector *selector)
 static void selector_isr(const struct device *dev, struct gpio_callback *cb,
 			 uint32_t pins_mask)
 {
-	uint8_t port = dev - gpio_dev[0];
 	struct selector *sel;
+	size_t port;
+
+	for (port = 0; port < ARRAY_SIZE(gpio_dev); port++) {
+		if (dev == gpio_dev[port]) {
+			break;
+		}
+	}
+	__ASSERT_NO_MSG(port != ARRAY_SIZE(gpio_dev));
 
 	sel = CONTAINER_OF((uint8_t *)cb - port * sizeof(sel->gpio_cb[0]),
 			   struct selector,
