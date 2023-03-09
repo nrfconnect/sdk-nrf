@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config ML_APP_EI_RESULT_NSMS
+	bool "Enable ML result via NSMS"
+	default y
+	depends on BT_GAP_AUTO_UPDATE_CONN_PARAMS
+	select BT_NSMS
+	help
+	  Enable instance of Nordic Status Message Service carrying result
+	  of gesture recognition.
+
+choice
+	prompt "Security level"
+	default ML_APP_EI_RESULT_SECURITY_LEVEL_NONE
+	depends on ML_APP_EI_RESULT_NSMS
+	help
+	  Sets security level used by NSMS instance:
+		NONE		- access without any restrictions,
+		ENCRYPTION	- enables encryption,
+		AUTHENTICATION	- enables encryption and authentication. This will fail
+				  if devices are lacking capabilities to display/enter
+				  passkey.
+
+config ML_APP_EI_RESULT_SECURITY_LEVEL_NONE
+	bool "None"
+
+config ML_APP_EI_RESULT_SECURITY_LEVEL_ENCRYPT
+	bool "Encryption"
+
+config ML_APP_EI_RESULT_SECURITY_LEVEL_AUTHEN
+	bool "Authentication"
+	depends on BT_SMP
+	depends on BT_SETTINGS
+	depends on FLASH
+	depends on FLASH_PAGE_LAYOUT
+	depends on FLASH_MAP
+	depends on NVS
+	depends on SETTINGS
+
+endchoice
+
+config ML_APP_EI_RESULT_SECURITY_LEVEL
+	int
+	range 0 2
+	depends on ML_APP_EI_RESULT_NSMS
+	default 0 if ML_APP_EI_RESULT_SECURITY_LEVEL_NONE
+	default 1 if ML_APP_EI_RESULT_SECURITY_LEVEL_ENCRYPT
+	default 2 if ML_APP_EI_RESULT_SECURITY_LEVEL_AUTHEN
