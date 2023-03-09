@@ -84,8 +84,8 @@
 .. ### Zigbee & ZBOSS shortcuts
 
 .. |zigbee_version| replace:: Zigbee 3.0
-.. |zboss_version| replace:: 3.11.2.0
-.. |zigbee_ncp_package_version| replace:: 2.2.0
+.. |zboss_version| replace:: 3.11.2.1
+.. |zigbee_ncp_package_version| replace:: 2.2.1
 .. |zigbee_description| replace:: Zigbee is a portable, low-power software networking protocol that provides connectivity over an 802.15.4-based mesh network.
 .. |enable_zigbee_before_testing| replace:: Make sure to configure the Zigbee stack before building and testing this sample.
    See :ref:`ug_zigbee_configuring` for more information.
