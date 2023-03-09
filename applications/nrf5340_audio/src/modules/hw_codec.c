@@ -24,12 +24,7 @@
 LOG_MODULE_REGISTER(hw_codec, CONFIG_MODULE_HW_CODEC_LOG_LEVEL);
 
 #define VOLUME_ADJUST_STEP_DB 3
-#define HW_CODEC_SELECT_DELAY_MS 2
 #define BASE_10 10
-
-static cs47l63_t cs47l63_driver;
-static const struct gpio_dt_spec hw_codec_sel =
-	GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_sel_out), gpios);
 
 /**@brief Write to multiple registers in CS47L63
  */
@@ -54,27 +49,6 @@ static int cs47l63_comm_reg_conf_write(const uint32_t config[][2], uint32_t num_
 			}
 		}
 	}
-
-	return 0;
-}
-
-/**@brief Select the on-board HW codec
- */
-static int hw_codec_on_board_set(void)
-{
-	int ret;
-
-	if (!device_is_ready(hw_codec_sel.port)) {
-		return -ENXIO;
-	}
-
-	ret = gpio_pin_configure_dt(&hw_codec_sel, GPIO_OUTPUT_LOW);
-	if (ret) {
-		return ret;
-	}
-
-	/* Allow for switches to flip when selecting on board hw_codec */
-	k_msleep(HW_CODEC_SELECT_DELAY_MS);
 
 	return 0;
 }
@@ -109,7 +83,8 @@ int hw_codec_volume_adjust(int8_t adjustment_db)
 
 	if (adjustment_db == 0) {
 		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1,
-				(prev_volume_reg_val | CS47L63_OUT_VU) & ~CS47L63_OUT1L_MUTE);
+					(prev_volume_reg_val | CS47L63_OUT_VU) &
+						~CS47L63_OUT1L_MUTE);
 		return ret;
 	}
 
@@ -134,11 +109,11 @@ int hw_codec_volume_adjust(int8_t adjustment_db)
 	} else if (new_volume_reg_val > MAX_VOLUME_REG_VAL) {
 		LOG_WRN("Volume at MAX (0dB)");
 		new_volume_reg_val = MAX_VOLUME_REG_VAL;
-
 	}
 
 	ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1,
-		((uint32_t)new_volume_reg_val | CS47L63_OUT_VU) & ~CS47L63_OUT1L_MUTE);
+				((uint32_t)new_volume_reg_val | CS47L63_OUT_VU) &
+					~CS47L63_OUT1L_MUTE);
 
 	if (ret) {
 		return ret;
@@ -299,12 +274,6 @@ int hw_codec_soft_reset(void)
 int hw_codec_init(void)
 {
 	int ret;
-
-	/* Set to internal/on board codec */
-	ret = hw_codec_on_board_set();
-	if (ret) {
-		return ret;
-	}
 
 	ret = cs47l63_comm_init(&cs47l63_driver);
 	if (ret) {
