@@ -106,10 +106,11 @@ config DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS
 
 config DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_BUTTON
 	bool "Allow erasing dongle peer using button"
+	depends on DESKTOP_BLE_PEER_ERASE
 
 config DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_CONF_CHANNEL
 	bool "Allow erasing dongle peer using config channel"
-	depends on  DESKTOP_CONFIG_CHANNEL_ENABLE
+	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
 
 config DESKTOP_BLE_DONGLE_PEER_ID_INFO
 	bool "Enable the Dongle Peer ID information event"
