@@ -15,6 +15,12 @@ config BT_ATT_ENFORCE_FLOW
 config BT_HCI_VS_EXT
 	default n
 
+config BT_HCI_VS
+	default y if BT
+
+config BT_ECC
+	default y if BT
+
 config BT_EXT_ADV
 	default y
 
