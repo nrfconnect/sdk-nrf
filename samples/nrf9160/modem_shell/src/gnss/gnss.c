@@ -10,6 +10,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
 #include <assert.h>
+#include <nrf_errno.h>
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
 
@@ -133,8 +134,33 @@ static uint8_t pvt_output_level = 2;
 static uint8_t nmea_output_level;
 static uint8_t event_output_level;
 
+static const char *gnss_err_to_str(int err)
+{
+	switch (err) {
+	case -NRF_EPERM:
+		return "Modem library not initialized";
+	case -NRF_ENOMEM:
+		return "not enough shared memory";
+	case -NRF_EACCES:
+		return "GNSS not enabled in system or functional mode";
+	case -NRF_EINVAL:
+		return "wrong state or invalid data";
+	case -NRF_ENOMSG:
+		return "no data to read for selected data type";
+	case -NRF_EOPNOTSUPP:
+		return "operation not supported by modem firmware";
+	case -NRF_ESHUTDOWN:
+		return "modem was shut down";
+	case -NRF_EMSGSIZE:
+		return "supplied buffer too small";
+	default:
+		return "unknown err value";
+	}
+}
+
 static int get_event_data(void **dest, uint8_t type, size_t len)
 {
+	int err;
 	void *data;
 
 	data = k_malloc(len);
@@ -142,8 +168,10 @@ static int get_event_data(void **dest, uint8_t type, size_t len)
 		return -1;
 	}
 
-	if (nrf_modem_gnss_read(data, len, type) != 0) {
-		printk("Failed to read event data, type %d\n", type);
+	err = nrf_modem_gnss_read(data, len, type);
+	if (err) {
+		printk("Failed to read event data, type: %d, error: %d (%s)\n",
+		       type, err, gnss_err_to_str(err));
 		k_free(data);
 		return -1;
 	}
@@ -705,8 +733,8 @@ static int inject_agps_data(void *agps,
 	get_agps_data_type_string(type_string, type);
 
 	if (err) {
-		mosh_error("GNSS: Failed to send A-GPS data, type: %s (err: %d)",
-			   type_string, errno);
+		mosh_error("GNSS: Failed to inject A-GPS data, type: %s, error: %d (%s)",
+			   type_string, err, gnss_err_to_str(err));
 		return err;
 	}
 
@@ -725,7 +753,7 @@ static void start_gnss_work_fn(struct k_work *item)
 	err = nrf_modem_gnss_start();
 
 	if (err) {
-		mosh_error("GNSS: Failed to start GNSS");
+		mosh_error("GNSS: Failed to start GNSS, error: %d (%s)", err, gnss_err_to_str(err));
 	} else {
 		if (event_output_level > 0) {
 			mosh_print("GNSS: Search started");
@@ -747,7 +775,7 @@ static void stop_gnss_work_fn(struct k_work *item)
 
 	err = nrf_modem_gnss_stop();
 	if (err) {
-		mosh_error("GNSS: Failed to stop GNSS");
+		mosh_error("GNSS: Failed to stop GNSS, error: %d (%s)", err, gnss_err_to_str(err));
 	}
 }
 
@@ -763,7 +791,7 @@ static void handle_timeout_work_fn(struct k_work *item)
 
 	err = nrf_modem_gnss_stop();
 	if (err) {
-		mosh_error("GNSS: Failed to stop GNSS");
+		mosh_error("GNSS: Failed to stop GNSS, error: %d (%s)", err, gnss_err_to_str(err));
 	}
 }
 
@@ -961,7 +989,7 @@ int gnss_start(void)
 
 	err = nrf_modem_gnss_start();
 	if (err) {
-		mosh_error("GNSS: Failed to start GNSS");
+		mosh_error("GNSS: Failed to start GNSS, error: %d (%s)", err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -982,7 +1010,7 @@ int gnss_stop(void)
 
 	err = nrf_modem_gnss_stop();
 	if (err) {
-		mosh_error("GNSS: Failed to stop GNSS");
+		mosh_error("GNSS: Failed to stop GNSS, error: %d (%s)", err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1023,7 +1051,8 @@ int gnss_delete_data(enum gnss_data_delete data)
 
 	err = nrf_modem_gnss_nv_data_delete(delete_mask);
 	if (err) {
-		mosh_error("GNSS: Failed to delete NV data");
+		mosh_error("GNSS: Failed to delete NV data, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1039,13 +1068,15 @@ int gnss_set_continuous_mode(void)
 
 	err = nrf_modem_gnss_fix_interval_set(1);
 	if (err) {
-		mosh_error("GNSS: Failed to set fix interval");
+		mosh_error("GNSS: Failed to set fix interval, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 		return err;
 	}
 
 	err = nrf_modem_gnss_fix_retry_set(0);
 	if (err) {
-		mosh_error("GNSS: Failed to set fix retry");
+		mosh_error("GNSS: Failed to set fix retry, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1061,13 +1092,15 @@ int gnss_set_single_fix_mode(uint16_t fix_retry)
 
 	err = nrf_modem_gnss_fix_interval_set(0);
 	if (err) {
-		mosh_error("GNSS: Failed to set fix interval");
+		mosh_error("GNSS: Failed to set fix interval, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 		return err;
 	}
 
 	err = nrf_modem_gnss_fix_retry_set(fix_retry);
 	if (err) {
-		mosh_error("GNSS: Failed to set fix retry");
+		mosh_error("GNSS: Failed to set fix retry, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1088,13 +1121,15 @@ int gnss_set_periodic_fix_mode(uint32_t fix_interval, uint16_t fix_retry)
 	 */
 	err = nrf_modem_gnss_fix_interval_set(1);
 	if (err) {
-		mosh_error("GNSS: Failed to set fix interval");
+		mosh_error("GNSS: Failed to set fix interval, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 		return err;
 	}
 
 	err = nrf_modem_gnss_fix_retry_set(0);
 	if (err) {
-		mosh_error("GNSS: Failed to set fix retry");
+		mosh_error("GNSS: Failed to set fix retry, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1110,13 +1145,15 @@ int gnss_set_periodic_fix_mode_gnss(uint16_t fix_interval, uint16_t fix_retry)
 
 	err = nrf_modem_gnss_fix_interval_set(fix_interval);
 	if (err) {
-		mosh_error("GNSS: Failed to set fix interval");
+		mosh_error("GNSS: Failed to set fix interval, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 		return err;
 	}
 
 	err = nrf_modem_gnss_fix_retry_set(fix_retry);
 	if (err) {
-		mosh_error("GNSS: Failed to set fix retry");
+		mosh_error("GNSS: Failed to set fix retry, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1128,7 +1165,8 @@ int gnss_set_system_mask(uint8_t system_mask)
 
 	err = nrf_modem_gnss_system_mask_set(system_mask);
 	if (err) {
-		mosh_error("GNSS: Failed to set system mask");
+		mosh_error("GNSS: Failed to set system mask, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1155,13 +1193,14 @@ int gnss_set_duty_cycling_policy(enum gnss_duty_cycling_policy policy)
 		break;
 
 	default:
-		mosh_error("GNSS: Invalid duty cycling policy");
+		mosh_error("GNSS: Invalid duty cycling policy value %d", policy);
 		return -1;
 	}
 
 	err = nrf_modem_gnss_power_mode_set(power_mode);
 	if (err) {
-		mosh_error("GNSS: Failed to set duty cycling policy");
+		mosh_error("GNSS: Failed to set duty cycling policy, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1175,7 +1214,8 @@ int gnss_set_elevation_threshold(uint8_t elevation)
 
 	err = nrf_modem_gnss_elevation_threshold_set(elevation);
 	if (err) {
-		mosh_error("GNSS: Failed to set elevation threshold");
+		mosh_error("GNSS: Failed to set elevation threshold, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	} else {
 		gnss_elevation = elevation;
 	}
@@ -1211,7 +1251,8 @@ int gnss_set_use_case(bool low_accuracy_enabled, bool scheduled_downloads_disabl
 
 	err = nrf_modem_gnss_use_case_set(use_case);
 	if (err) {
-		mosh_error("GNSS: Failed to set use case, check modem FW version");
+		mosh_error("GNSS: Failed to set use case, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1225,7 +1266,8 @@ int gnss_set_nmea_mask(uint16_t nmea_mask)
 
 	err = nrf_modem_gnss_nmea_mask_set(nmea_mask);
 	if (err) {
-		mosh_error("GNSS: Failed to set NMEA mask");
+		mosh_error("GNSS: Failed to set NMEA mask, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	} else {
 		nmea_mask_set = true;
 	}
@@ -1246,7 +1288,8 @@ int gnss_set_priority_time_windows(bool value)
 	}
 
 	if (err) {
-		mosh_error("GNSS: Failed to set priority time windows");
+		mosh_error("GNSS: Failed to set priority time windows, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1279,7 +1322,8 @@ int gnss_set_dynamics_mode(enum gnss_dynamics_mode mode)
 
 	err = nrf_modem_gnss_dyn_mode_change(dynamics_mode);
 	if (err) {
-		mosh_error("GNSS: Failed to change dynamics mode");
+		mosh_error("GNSS: Failed to change dynamics mode, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1308,7 +1352,8 @@ int gnss_set_qzss_nmea_mode(enum gnss_qzss_nmea_mode mode)
 
 	err = nrf_modem_gnss_qzss_nmea_mode_set(nmea_mode);
 	if (err) {
-		mosh_error("GNSS: Failed to set QZSS NMEA mode");
+		mosh_error("GNSS: Failed to set QZSS NMEA mode, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1322,7 +1367,8 @@ int gnss_set_qzss_mask(uint16_t mask)
 
 	err = nrf_modem_gnss_qzss_prn_mask_set(mask);
 	if (err) {
-		mosh_error("GNSS: Failed to set QZSS PRN mask");
+		mosh_error("GNSS: Failed to set QZSS PRN mask, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1352,7 +1398,8 @@ int gnss_set_1pps_mode(const struct gnss_1pps_mode *config)
 	}
 
 	if (err) {
-		mosh_error("GNSS: Failed to set 1PPS mode");
+		mosh_error("GNSS: Failed to set 1PPS mode, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1381,7 +1428,8 @@ int gnss_set_timing_source(enum gnss_timing_source source)
 
 	err = nrf_modem_gnss_timing_source_set(timing_source);
 	if (err) {
-		mosh_error("GNSS: Failed to set timing source");
+		mosh_error("GNSS: Failed to set timing source, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 	}
 
 	return err;
@@ -1509,10 +1557,12 @@ int gnss_get_agps_expiry(void)
 
 	err = nrf_modem_gnss_agps_expiry_get(&agps_expiry);
 	if (err) {
-		mosh_error("GNSS: Failed to query A-GPS data expiry, error: %d", err);
+		mosh_error("GNSS: Failed to query A-GPS data expiry, error: %d (%s)",
+			   err, gnss_err_to_str(err));
 		return err;
 	}
 
+	mosh_print("Data flags: 0x%x", agps_expiry.data_flags);
 	mosh_print("Time valid: %s",
 		   agps_expiry.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST ?
 			"false" : "true");
