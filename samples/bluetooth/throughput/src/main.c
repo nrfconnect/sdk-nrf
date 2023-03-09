@@ -603,7 +603,7 @@ int test_run(const struct shell *shell,
 			memcpy(str_buf, img_ptr, str_len);
 			str_buf[str_len] = '\0';
 			img_ptr += str_len;
-			printk("%s", str_buf);
+			shell_fprintf(shell, SHELL_NORMAL, "%s", str_buf);
 
 			data += 495;
 		}
