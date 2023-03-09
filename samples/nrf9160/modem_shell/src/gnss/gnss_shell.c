@@ -15,8 +15,6 @@
 
 #define AGPS_CMD_LINE_INJECT_MAX_LENGTH MIN(3500, CONFIG_SHELL_CMD_BUFF_SIZE)
 
-static bool gnss_running;
-
 static int print_help(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 1;
@@ -38,40 +36,12 @@ static int cmd_gnss(const struct shell *shell, size_t argc, char **argv)
 
 static int cmd_gnss_start(const struct shell *shell, size_t argc, char **argv)
 {
-	int err;
-
-	if (gnss_running) {
-		mosh_error("start: GNSS already running");
-		return -ENOEXEC;
-	}
-
-	err = gnss_start();
-	if (!err) {
-		gnss_running = true;
-	} else {
-		mosh_error("start: starting GNSS failed, err %d", err);
-	}
-
-	return err;
+	return gnss_start() == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_stop(const struct shell *shell, size_t argc, char **argv)
 {
-	int err;
-
-	if (!gnss_running) {
-		mosh_error("stop: GNSS not running");
-		return -ENOEXEC;
-	}
-
-	err = gnss_stop();
-	if (!err) {
-		gnss_running = false;
-	} else {
-		mosh_error("stop: stopping GNSS failed, err %d", err);
-	}
-
-	return err;
+	return gnss_stop() == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_delete(const struct shell *shell, size_t argc, char **argv)
@@ -81,32 +51,17 @@ static int cmd_gnss_delete(const struct shell *shell, size_t argc, char **argv)
 
 static int cmd_gnss_delete_ephe(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_delete_data(GNSS_DATA_DELETE_EPHEMERIDES);
+	return gnss_delete_data(GNSS_DATA_DELETE_EPHEMERIDES) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_delete_all(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_delete_data(GNSS_DATA_DELETE_ALL);
+	return gnss_delete_data(GNSS_DATA_DELETE_ALL) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_delete_tcxo(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_delete_data(GNSS_DATA_DELETE_TCXO);
+	return gnss_delete_data(GNSS_DATA_DELETE_TCXO) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_mode(const struct shell *shell, size_t argc, char **argv)
@@ -116,21 +71,11 @@ static int cmd_gnss_mode(const struct shell *shell, size_t argc, char **argv)
 
 static int cmd_gnss_mode_cont(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_continuous_mode();
+	return gnss_set_continuous_mode() == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_mode_single(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
 	int timeout;
 
 	timeout = atoi(argv[1]);
@@ -139,16 +84,11 @@ static int cmd_gnss_mode_single(const struct shell *shell, size_t argc, char **a
 		return -EINVAL;
 	}
 
-	return gnss_set_single_fix_mode(timeout);
+	return gnss_set_single_fix_mode(timeout) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_mode_periodic(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
 	int interval;
 	int timeout;
 
@@ -168,16 +108,11 @@ static int cmd_gnss_mode_periodic(const struct shell *shell, size_t argc, char *
 		return -EINVAL;
 	}
 
-	return gnss_set_periodic_fix_mode(interval, timeout);
+	return gnss_set_periodic_fix_mode(interval, timeout) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_mode_periodic_gnss(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
 	int interval;
 	int timeout;
 
@@ -197,7 +132,7 @@ static int cmd_gnss_mode_periodic_gnss(const struct shell *shell, size_t argc, c
 		return -EINVAL;
 	}
 
-	return gnss_set_periodic_fix_mode_gnss(interval, timeout);
+	return gnss_set_periodic_fix_mode_gnss(interval, timeout) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_dynamics(const struct shell *shell, size_t argc, char **argv)
@@ -207,42 +142,22 @@ static int cmd_gnss_dynamics(const struct shell *shell, size_t argc, char **argv
 
 static int cmd_gnss_dynamics_general(const struct shell *shell, size_t argc, char **argv)
 {
-	if (!gnss_running) {
-		mosh_error("%s: start GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_dynamics_mode(GNSS_DYNAMICS_MODE_GENERAL);
+	return gnss_set_dynamics_mode(GNSS_DYNAMICS_MODE_GENERAL) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_dynamics_stationary(const struct shell *shell, size_t argc, char **argv)
 {
-	if (!gnss_running) {
-		mosh_error("%s: start GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_dynamics_mode(GNSS_DYNAMICS_MODE_STATIONARY);
+	return gnss_set_dynamics_mode(GNSS_DYNAMICS_MODE_STATIONARY) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_dynamics_pedestrian(const struct shell *shell, size_t argc, char **argv)
 {
-	if (!gnss_running) {
-		mosh_error("%s: start GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_dynamics_mode(GNSS_DYNAMICS_MODE_PEDESTRIAN);
+	return gnss_set_dynamics_mode(GNSS_DYNAMICS_MODE_PEDESTRIAN) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_dynamics_automotive(const struct shell *shell, size_t argc, char **argv)
 {
-	if (!gnss_running) {
-		mosh_error("%s: start GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_dynamics_mode(GNSS_DYNAMICS_MODE_AUTOMOTIVE);
+	return gnss_set_dynamics_mode(GNSS_DYNAMICS_MODE_AUTOMOTIVE) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_config(const struct shell *shell, size_t argc, char **argv)
@@ -253,11 +168,6 @@ static int cmd_gnss_config(const struct shell *shell, size_t argc, char **argv)
 
 static int cmd_gnss_config_system(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
 	int value;
 	uint8_t system_mask;
 
@@ -269,16 +179,11 @@ static int cmd_gnss_config_system(const struct shell *shell, size_t argc, char *
 		system_mask |= 0x4;
 	}
 
-	return gnss_set_system_mask(system_mask);
+	return gnss_set_system_mask(system_mask) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_config_elevation(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
 	int elevation;
 
 	if (argc != 2) {
@@ -292,21 +197,16 @@ static int cmd_gnss_config_elevation(const struct shell *shell, size_t argc, cha
 
 	elevation = atoi(argv[1]);
 
-	if (elevation < 0 || elevation > 90) {
+	if (elevation < 0 || elevation > UINT8_MAX) {
 		mosh_error("elevation: invalid elevation value %d", elevation);
 		return -EINVAL;
 	}
 
-	return gnss_set_elevation_threshold(elevation);
+	return gnss_set_elevation_threshold(elevation) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_config_use_case(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
 	uint8_t value;
 	bool low_accuracy_enabled = false;
 	bool scheduled_downloads_disabled = false;
@@ -321,16 +221,12 @@ static int cmd_gnss_config_use_case(const struct shell *shell, size_t argc, char
 		scheduled_downloads_disabled = true;
 	}
 
-	return gnss_set_use_case(low_accuracy_enabled, scheduled_downloads_disabled);
+	return gnss_set_use_case(low_accuracy_enabled, scheduled_downloads_disabled) == 0 ?
+		0 : -ENOEXEC;
 }
 
 static int cmd_gnss_config_nmea(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
 	uint8_t value;
 	uint16_t nmea_mask;
 	uint16_t nmea_mask_bit;
@@ -345,7 +241,7 @@ static int cmd_gnss_config_nmea(const struct shell *shell, size_t argc, char **a
 		nmea_mask_bit = nmea_mask_bit << 1;
 	}
 
-	return gnss_set_nmea_mask(nmea_mask);
+	return gnss_set_nmea_mask(nmea_mask) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_config_powersave(const struct shell *shell, size_t argc, char **argv)
@@ -355,32 +251,17 @@ static int cmd_gnss_config_powersave(const struct shell *shell, size_t argc, cha
 
 static int cmd_gnss_config_powersave_off(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_duty_cycling_policy(GNSS_DUTY_CYCLING_DISABLED);
+	return gnss_set_duty_cycling_policy(GNSS_DUTY_CYCLING_DISABLED) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_config_powersave_perf(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_duty_cycling_policy(GNSS_DUTY_CYCLING_PERFORMANCE);
+	return gnss_set_duty_cycling_policy(GNSS_DUTY_CYCLING_PERFORMANCE) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_config_powersave_power(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_duty_cycling_policy(GNSS_DUTY_CYCLING_POWER);
+	return gnss_set_duty_cycling_policy(GNSS_DUTY_CYCLING_POWER) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_config_qzss(const struct shell *shell, size_t argc, char **argv)
@@ -395,31 +276,16 @@ static int cmd_gnss_config_qzss_nmea(const struct shell *shell, size_t argc, cha
 
 static int cmd_gnss_config_qzss_nmea_standard(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_qzss_nmea_mode(GNSS_QZSS_NMEA_MODE_STANDARD);
+	return gnss_set_qzss_nmea_mode(GNSS_QZSS_NMEA_MODE_STANDARD) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_config_qzss_nmea_custom(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_qzss_nmea_mode(GNSS_QZSS_NMEA_MODE_CUSTOM);
+	return gnss_set_qzss_nmea_mode(GNSS_QZSS_NMEA_MODE_CUSTOM) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_config_qzss_mask(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
 	int value;
 	uint16_t qzss_mask;
 	uint16_t qzss_mask_bit;
@@ -434,7 +300,7 @@ static int cmd_gnss_config_qzss_mask(const struct shell *shell, size_t argc, cha
 		qzss_mask_bit = qzss_mask_bit << 1;
 	}
 
-	return gnss_set_qzss_mask(qzss_mask);
+	return gnss_set_qzss_mask(qzss_mask) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_config_timing(const struct shell *shell, size_t argc, char **argv)
@@ -444,22 +310,12 @@ static int cmd_gnss_config_timing(const struct shell *shell, size_t argc, char *
 
 static int cmd_gnss_config_timing_rtc(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_timing_source(GNSS_TIMING_SOURCE_RTC);
+	return gnss_set_timing_source(GNSS_TIMING_SOURCE_RTC) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_config_timing_tcxo(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_timing_source(GNSS_TIMING_SOURCE_TCXO);
+	return gnss_set_timing_source(GNSS_TIMING_SOURCE_TCXO) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_priority(const struct shell *shell, size_t argc, char **argv)
@@ -469,22 +325,12 @@ static int cmd_gnss_priority(const struct shell *shell, size_t argc, char **argv
 
 static int cmd_gnss_priority_enable(const struct shell *shell, size_t argc, char **argv)
 {
-	if (!gnss_running) {
-		mosh_error("%s: start GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_priority_time_windows(true);
+	return gnss_set_priority_time_windows(true) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_priority_disable(const struct shell *shell, size_t argc, char **argv)
 {
-	if (!gnss_running) {
-		mosh_error("%s: start GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
-	return gnss_set_priority_time_windows(false);
+	return gnss_set_priority_time_windows(false) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_agps_automatic(const struct shell *shell, size_t argc, char **argv)
@@ -494,12 +340,12 @@ static int cmd_gnss_agps_automatic(const struct shell *shell, size_t argc, char 
 
 static int cmd_gnss_agps_automatic_enable(const struct shell *shell, size_t argc, char **argv)
 {
-	return gnss_set_agps_automatic(true);
+	return gnss_set_agps_automatic(true) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_agps_automatic_disable(const struct shell *shell, size_t argc, char **argv)
 {
-	return gnss_set_agps_automatic(false);
+	return gnss_set_agps_automatic(false) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_agps_filtered(const struct shell *shell, size_t argc, char **argv)
@@ -509,12 +355,12 @@ static int cmd_gnss_agps_filtered(const struct shell *shell, size_t argc, char *
 
 static int cmd_gnss_agps_filtered_enable(const struct shell *shell, size_t argc, char **argv)
 {
-	return gnss_set_agps_filtered_ephemerides(true);
+	return gnss_set_agps_filtered_ephemerides(true) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_agps_filtered_disable(const struct shell *shell, size_t argc, char **argv)
 {
-	return gnss_set_agps_filtered_ephemerides(false);
+	return gnss_set_agps_filtered_ephemerides(false) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_agps(const struct shell *shell, size_t argc, char **argv)
@@ -528,7 +374,9 @@ static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **a
 
 	if (argc == 1) {
 		/* Fetch assistance data from nRF cloud or from SUPL server and inject */
-		ret = gnss_inject_agps_data();
+		if (gnss_inject_agps_data() != 0) {
+			ret = -ENOEXEC;
+		}
 	} else if (argc == 2) {
 		/* Assistance data provided as command line argument */
 #if defined(CONFIG_NRF_CLOUD_AGPS)
@@ -539,7 +387,7 @@ static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **a
 
 			if (buf == NULL) {
 				mosh_error("Cannot allocate memory for the assistance data");
-				return -ENOMEM;
+				return -ENOEXEC;
 			}
 			bin_array_length = hex2bin(argv[1],
 						   strlen(argv[1]),
@@ -548,7 +396,9 @@ static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **a
 
 			if (bin_array_length) {
 				mosh_print("Injecting %d bytes", bin_array_length);
-				ret = nrf_cloud_agps_process(buf, bin_array_length);
+				if (nrf_cloud_agps_process(buf, bin_array_length) != 0) {
+					ret = -EINVAL;
+				}
 			} else {
 				mosh_error("Assistance data not in valid hexadecimal format");
 				ret = -EINVAL;
@@ -563,7 +413,7 @@ static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **a
 #else
 		mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGPS to enable the processing of "
 			   "A-GPS data");
-		ret = -EOPNOTSUPP;
+		ret = -ENOEXEC;
 #endif
 	}
 	return ret;
@@ -571,19 +421,13 @@ static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **a
 
 static int cmd_gnss_agps_expiry(const struct shell *shell, size_t argc, char **argv)
 {
-	return gnss_get_agps_expiry();
+	return gnss_get_agps_expiry() == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_agps_ref_altitude(const struct shell *shell, size_t argc, char **argv)
 {
 	int altitude = 0;
-	int err = 0;
 	struct nrf_modem_gnss_agps_data_location location = { 0 };
-
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
 
 	if (argc != 2) {
 		mosh_error("ref_altitude: wrong parameter count");
@@ -596,7 +440,7 @@ static int cmd_gnss_agps_ref_altitude(const struct shell *shell, size_t argc, ch
 
 	altitude = atoi(argv[1]);
 
-	if (altitude < -32767 || altitude > 32767) {
+	if (altitude < INT16_MIN || altitude > INT16_MAX) {
 		mosh_error("ref_altitude: invalid altitude value %d", altitude);
 		return -EINVAL;
 	}
@@ -617,12 +461,10 @@ static int cmd_gnss_agps_ref_altitude(const struct shell *shell, size_t argc, ch
 	 */
 	location.unc_altitude = 0;
 
-	err = nrf_modem_gnss_agps_write(&location, sizeof(location), NRF_MODEM_GNSS_AGPS_LOCATION);
-	if (err) {
-		mosh_error("Failed to set reference altitude, error: %d", err);
-	}
-
-	return err;
+	return nrf_modem_gnss_agps_write(
+		&location,
+		sizeof(location),
+		NRF_MODEM_GNSS_AGPS_LOCATION) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_pgps(const struct shell *shell, size_t argc, char **argv)
@@ -632,7 +474,7 @@ static int cmd_gnss_pgps(const struct shell *shell, size_t argc, char **argv)
 
 static int cmd_gnss_pgps_enable(const struct shell *shell, size_t argc, char **argv)
 {
-	return gnss_enable_pgps();
+	return gnss_enable_pgps() == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_agps_filter(const struct shell *shell, size_t argc, char **argv)
@@ -671,7 +513,7 @@ static int cmd_gnss_agps_filter(const struct shell *shell, size_t argc, char **a
 
 	return gnss_set_agps_data_enabled(ephe_enabled, alm_enabled, utc_enabled,
 					  klob_enabled, neq_enabled, time_enabled,
-					  pos_enabled, int_enabled);
+					  pos_enabled, int_enabled) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_1pps(const struct shell *shell, size_t argc, char **argv)
@@ -681,38 +523,29 @@ static int cmd_gnss_1pps(const struct shell *shell, size_t argc, char **argv)
 
 static int cmd_gnss_1pps_enable(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
 	int interval;
 	int pulse_width;
 
 	interval = atoi(argv[1]);
-	if (interval < 0 || interval > 1800) {
-		mosh_error(
-			"start: invalid interval value %d, the value must be 0...1800",
-			interval);
+	if (interval < 0 || interval > UINT16_MAX) {
+		mosh_error("start: invalid interval value %d", interval);
 		return -EINVAL;
 	}
 
 	pulse_width = atoi(argv[2]);
-	if (pulse_width < 1 || pulse_width > 500) {
-		mosh_error(
-			"start: invalid pulse width value %d, the value must be 1...500",
-			interval);
+	if (pulse_width < 0 || pulse_width > UINT16_MAX) {
+		mosh_error("start: invalid pulse width value %d", pulse_width);
 		return -EINVAL;
 	}
 
-	struct gnss_1pps_mode mode = { 0 };
+	struct gnss_1pps_mode mode = {
+		.enable = true,
+		.pulse_interval = interval,
+		.pulse_width = pulse_width,
+		.apply_start_time = false
+	};
 
-	mode.enable = true;
-	mode.pulse_interval = interval;
-	mode.pulse_width = pulse_width;
-	mode.apply_start_time = false;
-
-	return gnss_set_1pps_mode(&mode);
+	return gnss_set_1pps_mode(&mode) == 0 ? 0 : -ENOEXEC;
 }
 
 /* Parses a date string in format "dd.mm.yyyy" */
@@ -843,68 +676,50 @@ static int parse_time_string(char *time_string, uint8_t *hour, uint8_t *minute, 
 
 static int cmd_gnss_1pps_enable_at(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
-
 	int interval;
 	int pulse_width;
 
 	interval = atoi(argv[1]);
-	if (interval < 0 || interval > 1800) {
-		mosh_error(
-			"start_at: invalid interval value %d, the value must be 0...1800",
-			interval);
+	if (interval < 0 || interval > UINT16_MAX) {
+		mosh_error("start_at: invalid interval value %d", interval);
 		return -EINVAL;
 	}
 
 	pulse_width = atoi(argv[2]);
-	if (pulse_width < 1 || pulse_width > 500) {
-		mosh_error(
-			"start_at: invalid pulse width value %d, the value must be 1...500",
-			interval);
+	if (pulse_width < 0 || pulse_width > UINT16_MAX) {
+		mosh_error("start_at: invalid pulse width value %d", pulse_width);
 		return -EINVAL;
 	}
 
-	struct gnss_1pps_mode mode = { 0 };
-
-	mode.enable = true;
-	mode.pulse_interval = interval;
-	mode.pulse_width = pulse_width;
-	mode.apply_start_time = true;
+	struct gnss_1pps_mode mode = {
+		.enable = true,
+		.pulse_interval = interval,
+		.pulse_width = pulse_width,
+		.apply_start_time = true
+	};
 
 	/* Parse date */
 	if (parse_date_string(argv[3], &mode.year, &mode.month, &mode.day) != 0) {
-		mosh_error(
-			"start_at: invalid date string %s",
-			argv[3]);
+		mosh_error("start_at: invalid date string %s", argv[3]);
 		return -EINVAL;
 	}
 
 	/* Parse time */
 	if (parse_time_string(argv[4], &mode.hour, &mode.minute, &mode.second) != 0) {
-		mosh_error(
-			"start_at: invalid time string %s",
-			argv[4]);
+		mosh_error("start_at: invalid time string %s", argv[4]);
 		return -EINVAL;
 	}
 
-	return gnss_set_1pps_mode(&mode);
+	return gnss_set_1pps_mode(&mode) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_1pps_disable(const struct shell *shell, size_t argc, char **argv)
 {
-	if (gnss_running) {
-		mosh_error("%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
-	}
+	struct gnss_1pps_mode mode = {
+		.enable = false
+	};
 
-	struct gnss_1pps_mode mode = { 0 };
-
-	mode.enable = false;
-
-	return gnss_set_1pps_mode(&mode);
+	return gnss_set_1pps_mode(&mode) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_output(const struct shell *shell, size_t argc, char **argv)
