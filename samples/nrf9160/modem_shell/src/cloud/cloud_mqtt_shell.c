@@ -149,42 +149,26 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 	const int reconnection_delay = 10;
 
 	switch (evt->type) {
-	case NRF_CLOUD_EVT_TRANSPORT_CONNECTING:
-		mosh_print("NRF_CLOUD_EVT_TRANSPORT_CONNECTING");
-		break;
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
-		mosh_print("NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
+		break;
+	case NRF_CLOUD_EVT_TRANSPORT_CONNECTING:
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_TRANSPORT_CONNECTING");
+		break;
+	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
+		mosh_warn("Add the device to nRF Cloud and reconnect");
+		break;
+	case NRF_CLOUD_EVT_USER_ASSOCIATED:
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_USER_ASSOCIATED");
 		break;
 	case NRF_CLOUD_EVT_READY:
-		mosh_print("NRF_CLOUD_EVT_READY: Connection to nRF Cloud established");
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_READY");
+		mosh_print("Connection to nRF Cloud established");
 		k_work_submit_to_queue(&mosh_common_work_q, &shadow_update_work);
 		break;
-	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
-		mosh_print("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED: Connection to nRF Cloud "
-			   "disconnected");
-		if (!nfsm_get_disconnect_requested()) {
-			mosh_print("Reconnecting in %d seconds...", reconnection_delay);
-			k_work_reschedule_for_queue(&mosh_common_work_q, &cloud_reconnect_work,
-						    K_SECONDS(reconnection_delay));
-		}
-		break;
-	case NRF_CLOUD_EVT_ERROR:
-		mosh_print("NRF_CLOUD_EVT_ERROR: %d", evt->status);
-		break;
-	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
-		mosh_print("NRF_CLOUD_EVT_SENSOR_DATA_ACK");
-		break;
-	case NRF_CLOUD_EVT_FOTA_START:
-		mosh_print("NRF_CLOUD_EVT_FOTA_START");
-		break;
-	case NRF_CLOUD_EVT_FOTA_DONE:
-		mosh_print("NRF_CLOUD_EVT_FOTA_DONE");
-		break;
-	case NRF_CLOUD_EVT_FOTA_ERROR:
-		mosh_print("NRF_CLOUD_EVT_FOTA_ERROR");
-		break;
 	case NRF_CLOUD_EVT_RX_DATA_GENERAL:
-		mosh_print("NRF_CLOUD_EVT_RX_DATA_GENERAL");
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_RX_DATA_GENERAL");
 		if (((char *)evt->data.ptr)[0] == '{') {
 			/* Check if it's a MoSh command sent from the cloud */
 			if (cloud_shell_parse_mosh_cmd(evt->data.ptr)) {
@@ -193,21 +177,44 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 			}
 		}
 		break;
-	case NRF_CLOUD_EVT_RX_DATA_SHADOW:
-		mosh_print("NRF_CLOUD_EVT_RX_DATA_SHADOW");
-		break;
 	case NRF_CLOUD_EVT_RX_DATA_LOCATION:
-		mosh_print("NRF_CLOUD_EVT_RX_DATA_LOCATION");
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_RX_DATA_LOCATION");
 		break;
-	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
-		mosh_print("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
-		mosh_warn("Add the device to nRF Cloud and reconnect");
-		break;
-	case NRF_CLOUD_EVT_USER_ASSOCIATED:
-		mosh_print("NRF_CLOUD_EVT_USER_ASSOCIATED");
+	case NRF_CLOUD_EVT_RX_DATA_SHADOW:
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_RX_DATA_SHADOW");
 		break;
 	case NRF_CLOUD_EVT_PINGRESP:
-		mosh_print("NRF_CLOUD_EVT_PINGRESP");
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_PINGRESP");
+		break;
+	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_SENSOR_DATA_ACK");
+		break;
+	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED, status: %d",
+			   evt->status);
+		mosh_print("Connection to nRF Cloud disconnected");
+		if (!nfsm_get_disconnect_requested()) {
+			mosh_print("Reconnecting in %d seconds...", reconnection_delay);
+			k_work_reschedule_for_queue(&mosh_common_work_q, &cloud_reconnect_work,
+						    K_SECONDS(reconnection_delay));
+		}
+		break;
+	case NRF_CLOUD_EVT_FOTA_START:
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_FOTA_START");
+		break;
+	case NRF_CLOUD_EVT_FOTA_DONE:
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_FOTA_DONE");
+		break;
+	case NRF_CLOUD_EVT_FOTA_ERROR:
+		mosh_error("nRF Cloud event: NRF_CLOUD_EVT_FOTA_ERROR");
+		break;
+	case NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR:
+		mosh_error("nRF Cloud event: NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR, status: %d",
+			   evt->status);
+		mosh_error("Connecting to nRF Cloud failed");
+		break;
+	case NRF_CLOUD_EVT_ERROR:
+		mosh_print("nRF Cloud event: NRF_CLOUD_EVT_ERROR, status: %d", evt->status);
 		break;
 	default:
 		mosh_error("Unknown nRF Cloud event type: %d", evt->type);
