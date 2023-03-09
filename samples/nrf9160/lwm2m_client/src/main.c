@@ -10,8 +10,6 @@
 #include <stdio.h>
 #include <zephyr/net/lwm2m.h>
 #include <modem/nrf_modem_lib.h>
-#include <zephyr/settings/settings.h>
-
 #include <net/lwm2m_client_utils.h>
 #include <app_event_manager.h>
 #include <net/lwm2m_client_utils_location.h>
@@ -28,7 +26,6 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #include "lwm2m_app_utils.h"
 #include "sensor_module.h"
 #include "gnss_module.h"
-#include "lwm2m_engine.h"
 #include "location_events.h"
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE)
