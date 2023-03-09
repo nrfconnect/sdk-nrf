@@ -105,6 +105,7 @@
 
 enum le_audio_evt_type {
 	LE_AUDIO_EVT_CONFIG_RECEIVED,
+	LE_AUDIO_EVT_PRES_DELAY_SET,
 	LE_AUDIO_EVT_STREAMING,
 	LE_AUDIO_EVT_NOT_STREAMING,
 	LE_AUDIO_EVT_NUM_EVTS
@@ -125,6 +126,16 @@ struct le_audio_evt {
  */
 typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool bad_frame,
 				    uint32_t sdu_ref, enum audio_channel channel_index);
+
+/**
+ * @brief Callback for using the timestamp of the previously sent audio packet
+ *
+ * @note  Can be used for drift calculation/compensation
+ *
+ * @param timestamp     The timestamp
+ * @param adjust        Indicate if the sdu_ref should be used to adjust timing
+ */
+typedef void (*le_audio_timestamp_cb)(uint32_t timestamp, bool adjust);
 
 enum le_audio_user_defined_action {
 	LE_AUDIO_USER_DEFINED_ACTION_1,
@@ -155,14 +166,16 @@ int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
 /**
  * @brief Get configuration for audio stream
  *
- * @param bitrate	Pointer to bitrate used
- * @param sampling_rate	Pointer to sampling rate used
+ * @param bitrate	Pointer to bitrate used, can be NULL
+ * @param sampling_rate	Pointer to sampling rate used, can be NULL
+ * @param pres_delay	Pointer to presentation delay used, can be NULL
  *
  * @return	0 for success,
  *		-ENXIO if the feature is disabled,
+ *		-ENOTSUP if the feature is not supported,
  *		error otherwise
  */
-int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate);
+int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay);
 
 /**
  * @brief	Increase volume by one step
@@ -214,10 +227,11 @@ int le_audio_send(struct encoded_audio enc_audio);
  * @brief Enable Bluetooth LE Audio
  *
  * @param recv_cb	Callback for receiving Bluetooth LE Audio data
+ * @param timestamp_cb	Callback for using timestamp
  *
  * @return		0 for success, error otherwise
  */
-int le_audio_enable(le_audio_receive_cb recv_cb);
+int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestamp_cb);
 
 /**
  * @brief Disable Bluetooth LE Audio

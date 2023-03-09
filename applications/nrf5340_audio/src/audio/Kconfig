@@ -103,6 +103,21 @@ config AUDIO_BIT_DEPTH_OCTETS
 	help
 	  Bit depth of one sample in storage given in octets.
 
+config AUDIO_MIN_PRES_DLY_US
+	int "The minimum presentation delay"
+	default 4000
+	help
+	  The minimum allowable presentation delay in microseconds.
+	  This needs to allow time for decoding and internal routing.
+	  For 48kHz sampling rate and 96kbps bitrate this is about 4000 us.
+
+config AUDIO_MAX_PRES_DLY_US
+	int "The maximum presentation delay"
+	default 60000
+	help
+	  The maximum allowable presentation delay in microseconds.
+	  Increasing this will also increase the FIFO buffers to allow buffering.
+
 choice AUDIO_SOURCE_GATEWAY
 	prompt "Audio source for gateway"
 	default AUDIO_SOURCE_I2S if WALKIE_TALKIE_DEMO

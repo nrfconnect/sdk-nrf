@@ -14,7 +14,6 @@
 
 #include "macros_common.h"
 #include "ctrl_events.h"
-#include "audio_datapath.h"
 #include "ble_hci_vsc.h"
 #include "ble_audio_services.h"
 #include "channel_assignment.h"
@@ -89,6 +88,7 @@ BUILD_ASSERT(ARRAY_SIZE(headsets) >= CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SRC_COUN
 	     "We need to have at least one headset device per ASE SOURCE");
 
 static le_audio_receive_cb receive_cb;
+static le_audio_timestamp_cb timestamp_cb;
 
 static struct bt_audio_unicast_group *unicast_group;
 
@@ -1288,7 +1288,7 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct le_aud
 	return 0;
 }
 
-static int initialize(le_audio_receive_cb recv_cb)
+static int initialize(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_cb)
 {
 	int ret;
 	static bool initialized;
@@ -1303,6 +1303,19 @@ static int initialize(le_audio_receive_cb recv_cb)
 		LOG_WRN("Already initialized");
 		return -EALREADY;
 	}
+
+	if (recv_cb == NULL) {
+		LOG_ERR("Receieve callback is NULL");
+		return -EINVAL;
+	}
+
+	if (timestmp_cb == NULL) {
+		LOG_ERR("Timestamp callback is NULL");
+		return -EINVAL;
+	}
+
+	receive_cb = recv_cb;
+	timestamp_cb = timestmp_cb;
 
 	for (int i = 0; i < ARRAY_SIZE(headsets); i++) {
 		headsets[i].sink_stream.ops = &stream_ops;
@@ -1387,8 +1400,6 @@ static int initialize(le_audio_receive_cb recv_cb)
 	}
 #endif /* CONFIG_BT_MCS */
 
-	receive_cb = recv_cb;
-
 	bt_conn_cb_register(&conn_callbacks);
 
 	initialized = true;
@@ -1401,9 +1412,10 @@ int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
 	return 0;
 }
 
-int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
+int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay)
 {
-	return 0;
+	LOG_WRN("Getting config from gateway is not yet supported");
+	return -ENOTSUP;
 }
 
 int le_audio_volume_up(void)
@@ -1497,10 +1509,9 @@ int le_audio_send(struct encoded_audio enc_audio)
 	}
 
 	if (tx_info.ts != 0 && !ret) {
-#if ((CONFIG_AUDIO_SOURCE_I2S) && !(CONFIG_STREAM_BIDIRECTIONAL))
-		audio_datapath_sdu_ref_update(tx_info.ts);
-#endif /* ((CONFIG_AUDIO_SOURCE_I2S) && !(CONFIG_STREAM_BIDIRECTIONAL)) */
-		audio_datapath_just_in_time_check_and_adjust(tx_info.ts);
+		if (!IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+			timestamp_cb(tx_info.ts, true);
+		}
 	}
 
 	ret = iso_stream_send(enc_audio.data, data_size_pr_stream, headsets[AUDIO_CH_L]);
@@ -1521,11 +1532,11 @@ int le_audio_send(struct encoded_audio enc_audio)
 	return 0;
 }
 
-int le_audio_enable(le_audio_receive_cb recv_cb)
+int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_cb)
 {
 	int ret;
 
-	ret = initialize(recv_cb);
+	ret = initialize(recv_cb, timestmp_cb);
 	if (ret) {
 		return ret;
 	}

@@ -723,26 +723,17 @@ static void audio_datapath_i2s_stop(void)
 	alt_buffer_free_both();
 }
 
-int audio_datapath_pres_delay_us_set(uint32_t delay_us)
-{
-	if (!IN_RANGE(delay_us, CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US)) {
-		LOG_WRN("Presentation delay not supported: %d", delay_us);
-		return -EINVAL;
-	}
-
-	ctrl_blk.pres_comp.pres_delay_us = delay_us;
-
-	LOG_DBG("Presentation delay set to %d us", delay_us);
-
-	return 0;
-}
-
-void audio_datapath_pres_delay_us_get(uint32_t *delay_us)
-{
-	*delay_us = ctrl_blk.pres_comp.pres_delay_us;
-}
-
-void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
+/**
+ * @brief Adjust timing to make sure audio data is sent just in time for BLE event
+ *
+ * @note  The time from last anchor point is checked and then blocks of 1ms
+ *        can be dropped to allow the sending of encoded data to be sent just
+ *        before the connection interval opens up. This is done to reduce overall
+ *        latency.
+ *
+ * @param[in]  sdu_ref_us  The SDU reference, in µs, to the previous sent packet
+ */
+static void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
 {
 	static int32_t count;
 	int ret;
@@ -767,12 +758,37 @@ void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
 	}
 }
 
-void audio_datapath_sdu_ref_update(uint32_t sdu_ref_us)
+int audio_datapath_pres_delay_us_set(uint32_t delay_us)
 {
-	if (ctrl_blk.stream_started) {
-		ctrl_blk.previous_sdu_ref_us = sdu_ref_us;
-	} else {
-		LOG_WRN("Stream not startet - Can not update sdu_ref_us");
+	if (!IN_RANGE(delay_us, CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US)) {
+		LOG_WRN("Presentation delay not supported: %d", delay_us);
+		return -EINVAL;
+	}
+
+	ctrl_blk.pres_comp.pres_delay_us = delay_us;
+
+	LOG_DBG("Presentation delay set to %d us", delay_us);
+
+	return 0;
+}
+
+void audio_datapath_pres_delay_us_get(uint32_t *delay_us)
+{
+	*delay_us = ctrl_blk.pres_comp.pres_delay_us;
+}
+
+void audio_datapath_sdu_ref_update(uint32_t sdu_ref_us, bool adjust)
+{
+	if (IS_ENABLED(CONFIG_AUDIO_SOURCE_I2S)) {
+		if (ctrl_blk.stream_started) {
+			ctrl_blk.previous_sdu_ref_us = sdu_ref_us;
+
+			if (adjust) {
+				audio_datapath_just_in_time_check_and_adjust(sdu_ref_us);
+			}
+		} else {
+			LOG_WRN("Stream not startet - Can not update sdu_ref_us");
+		}
 	}
 }
 

@@ -70,6 +70,7 @@ static struct bt_codec codec_capabilities =
 	BT_CODEC_LC3_CONFIG_48_4(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
 
 static le_audio_receive_cb receive_cb;
+
 static bool init_routine_completed;
 static bool playing_state = true;
 
@@ -304,12 +305,12 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 		}
 	}
 
-	/* Set the initial active stream based on the defined channel of the device */
-	channel_assignment_get((enum audio_channel *)&active_stream_index);
-	active_stream.stream = &audio_streams[active_stream_index];
-	active_stream.codec = &audio_codec_info[active_stream_index];
-
 	if (suitable_stream_found) {
+		/* Set the initial active stream based on the defined channel of the device */
+		channel_assignment_get((enum audio_channel *)&active_stream_index);
+		active_stream.stream = &audio_streams[active_stream_index];
+		active_stream.codec = &audio_codec_info[active_stream_index];
+
 		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_CONFIG_RECEIVED);
 		ERR_CHK(ret);
 
@@ -361,42 +362,53 @@ static struct bt_pacs_cap capabilities = {
 	.codec = &codec_capabilities,
 };
 
-static void initialize(le_audio_receive_cb recv_cb)
+static int initialize(le_audio_receive_cb recv_cb)
 {
 	int ret;
 	static bool initialized;
 	enum audio_channel channel;
 
-	if (!initialized) {
-		receive_cb = recv_cb;
-
-		channel_assignment_get(&channel);
-
-		if (channel == AUDIO_CH_L) {
-			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_LEFT);
-		} else {
-			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
-						   BT_AUDIO_LOCATION_FRONT_RIGHT);
-		}
-		if (ret) {
-			LOG_ERR("Location set failed");
-		}
-
-		ret = bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &capabilities);
-		if (ret) {
-			LOG_ERR("Capability register failed (ret %d)", ret);
-			ERR_CHK(ret);
-		}
-
-		bt_audio_broadcast_sink_register_cb(&broadcast_sink_cbs);
-
-		for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
-			audio_streams_p[i] = &audio_streams[i];
-			audio_streams[i].ops = &stream_ops;
-		}
-
-		initialized = true;
+	if (initialized) {
+		LOG_WRN("Already initialized");
+		return -EALREADY;
 	}
+
+	if (recv_cb == NULL) {
+		LOG_ERR("Receieve callback is NULL");
+		return -EINVAL;
+	}
+
+	receive_cb = recv_cb;
+
+	channel_assignment_get(&channel);
+
+	if (channel == AUDIO_CH_L) {
+		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_LEFT);
+	} else {
+		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_RIGHT);
+	}
+
+	if (ret) {
+		LOG_ERR("Location set failed");
+		return ret;
+	}
+
+	ret = bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &capabilities);
+	if (ret) {
+		LOG_ERR("Capability register failed (ret %d)", ret);
+		return ret;
+	}
+
+	bt_audio_broadcast_sink_register_cb(&broadcast_sink_cbs);
+
+	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+		audio_streams_p[i] = &audio_streams[i];
+		audio_streams[i].ops = &stream_ops;
+	}
+
+	initialized = true;
+
+	return 0;
 }
 
 static int bis_headset_cleanup(bool from_sync_lost_cb)
@@ -506,14 +518,33 @@ int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
 	return ret;
 }
 
-int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
+int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay)
 {
 	if (active_stream.codec == NULL) {
-		return -ECANCELED;
+		LOG_WRN("No active stream to get config from");
+		return -ENXIO;
 	}
 
-	*sampling_rate = active_stream.codec->frequency;
-	*bitrate = active_stream.codec->bitrate;
+	if (bitrate == NULL && sampling_rate == NULL && pres_delay == NULL) {
+		LOG_ERR("No valid pointers received");
+		return -ENXIO;
+	}
+
+	if (sampling_rate != NULL) {
+		*sampling_rate = active_stream.codec->frequency;
+	}
+
+	if (bitrate != NULL) {
+		*bitrate = active_stream.codec->bitrate;
+	}
+
+	if (pres_delay != NULL) {
+		if (active_stream.stream == NULL) {
+			LOG_WRN("No active stream");
+			return -ENXIO;
+		}
+		*pres_delay = active_stream.stream->qos->pd;
+	}
 
 	return 0;
 }
@@ -570,11 +601,17 @@ int le_audio_send(struct encoded_audio enc_audio)
 	return -ENXIO;
 }
 
-int le_audio_enable(le_audio_receive_cb recv_cb)
+int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_cb)
 {
 	int ret;
 
-	initialize(recv_cb);
+	ARG_UNUSED(timestmp_cb);
+
+	ret = initialize(recv_cb);
+	if (ret) {
+		LOG_ERR("Failed to initialize");
+		return ret;
+	}
 
 	ret = bis_headset_cleanup(false);
 	if (ret) {
