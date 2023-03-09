@@ -18,6 +18,7 @@
 #include <zephyr/net/wifi.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <net/wifi_credentials.h>
+#include <net/wifi_mgmt_ext.h>
 
 #include <bluetooth/services/wifi_provisioning.h>
 
@@ -241,20 +242,10 @@ static void update_dev_name(struct net_linkaddr *mac_addr)
 	byte_to_hex(&device_name[6], mac_addr->addr[5], 'A');
 }
 
-static void get_wifi_credential(void *cb_arg, const char *ssid, size_t ssid_len)
-{
-	struct wifi_credentials_personal config;
-
-	wifi_credentials_get_by_ssid_personal_struct(ssid, ssid_len, &config);
-	memcpy((struct wifi_credentials_personal *)cb_arg, &config, sizeof(config));
-}
-
 void main(void)
 {
 	int rc;
-	struct wifi_credentials_personal config = { 0 };
 	struct net_if *iface = net_if_get_default();
-	struct wifi_connect_req_params cnx_params = { 0 };
 	struct net_linkaddr *mac_addr = net_if_get_link_addr(iface);
 	char device_name_str[sizeof(device_name) + 1];
 	/* Sleep 1 seconds to allow initialization of wifi driver. */
@@ -310,35 +301,6 @@ void main(void)
 				K_SECONDS(ADV_DATA_UPDATE_INTERVAL));
 #endif /* CONFIG_WIFI_PROV_ADV_DATA_UPDATE */
 
-	/* Search for stored wifi credential and apply */
-	wifi_credentials_for_each_ssid(get_wifi_credential, &config);
-	if (config.header.ssid_len > 0) {
-		printk("Configuration found. Try to apply.\n");
-
-		cnx_params.ssid = config.header.ssid;
-		cnx_params.ssid_length = config.header.ssid_len;
-		cnx_params.security = config.header.type;
-
-		cnx_params.psk = NULL;
-		cnx_params.psk_length = 0;
-		cnx_params.sae_password = NULL;
-		cnx_params.sae_password_length = 0;
-
-		if (config.header.type != WIFI_SECURITY_TYPE_NONE) {
-			cnx_params.psk = config.password;
-			cnx_params.psk_length = config.password_len;
-		}
-
-		cnx_params.channel = WIFI_CHANNEL_ANY;
-		cnx_params.band = config.header.flags & WIFI_CREDENTIALS_FLAG_5GHz ?
-				WIFI_FREQ_BAND_5_GHZ : WIFI_FREQ_BAND_2_4_GHZ;
-		cnx_params.mfp = WIFI_MFP_OPTIONAL;
-		rc = net_mgmt(NET_REQUEST_WIFI_CONNECT, iface,
-			&cnx_params, sizeof(struct wifi_connect_req_params));
-		if (rc < 0) {
-			printk("Cannot apply saved Wi-Fi configuration, err = %d.\n", rc);
-		} else {
-			printk("Configuration applied.\n");
-		}
-	}
+	/* Apply stored wifi credential */
+	net_mgmt(NET_REQUEST_WIFI_CONNECT_STORED, iface, NULL, 0);
 }
