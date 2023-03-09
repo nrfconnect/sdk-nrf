@@ -187,7 +187,8 @@ static void indicate_stop(void)
 #endif
 }
 
-static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_cb, uint32_t pins)
+static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_callback,
+			 uint32_t pins)
 {
 	int err;
 
@@ -211,7 +212,7 @@ static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_cb
 	}
 
 	gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN, GPIO_INT_DISABLE);
-	gpio_remove_callback(gpio_dev, gpio_cb);
+	gpio_remove_callback(gpio_dev, gpio_callback);
 }
 
 void enter_idle(void)
@@ -356,7 +357,7 @@ void handle_mcuboot_swap_ret(void)
 		} else {
 			fota_status = FOTA_STATUS_OK;
 			fota_info = 0;
-		} break;
+		}
 		break;
 	/** Swap failed because image to be run is not valid */
 	case BOOT_SWAP_TYPE_FAIL:
