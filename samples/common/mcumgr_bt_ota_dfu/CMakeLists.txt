@@ -33,22 +33,22 @@ if (CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_VALIDATION)
   endif()
 
   if (CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU)
-    if (CONFIG_MCUMGR_SMP_REASSEMBLY_BT)
-      if (NOT (CONFIG_MCUMGR_BUF_SIZE EQUAL 2475))
+    if (CONFIG_MCUMGR_TRANSPORT_BT_REASSEMBLY)
+      if (NOT (CONFIG_MCUMGR_TRANSPORT_NETBUF_SIZE EQUAL 2475))
         message(WARNING "MCUmgr Bluetooth OTA DFU: suboptimal configuration "
           "of the MCUmgr buffer with the Reassembly feature support. Consider using"
           "the optimal value defined in the ${CMAKE_CURRENT_LIST_DIR}/Kconfig "
-          "file for the CONFIG_MCUMGR_BUF_SIZE option")
+          "file for the CONFIG_MCUMGR_TRANSPORT_NETBUF_SIZE option")
       endif()
-      if (NOT CONFIG_OS_MGMT_MCUMGR_PARAMS)
+      if (NOT CONFIG_MCUMGR_GRP_OS_MCUMGR_PARAMS)
         message(WARNING "MCUmgr Bluetooth OTA DFU: suboptimal configuration "
           "of the MCUmgr library with the Reassembly feature support. Consider "
-          "enabling the CONFIG_OS_MGMT_MCUMGR_PARAMS option")
+          "enabling the CONFIG_MCUMGR_GRP_OS_MCUMGR_PARAMS option")
       endif()
     else()
       message(WARNING "MCUmgr Bluetooth OTA DFU: suboptimal configuration "
         "of the MCUmgr library without the Reassembly feature support. Consider "
-        "enabling this feature using the CONFIG_MCUMGR_SMP_REASSEMBLY_BT option")
+        "enabling this feature using the CONFIG_MCUMGR_TRANSPORT_BT_REASSEMBLY option")
     endif()
   endif()
 
