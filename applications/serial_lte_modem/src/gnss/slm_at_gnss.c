@@ -890,21 +890,20 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 	switch (evt->type) {
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTING:
 		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECTING");
-		if (evt->status != NRF_CLOUD_CONNECT_RES_SUCCESS) {
-			LOG_ERR("Failed to connect to nRF Cloud, status: %d",
-				(enum nrf_cloud_connect_result)evt->status);
-		}
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
 		LOG_INF("NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
+		break;
+	case NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR:
+		LOG_ERR("NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR");
+		LOG_ERR("Failed to connect to nRF Cloud, status: %d", evt->status);
 		break;
 	case NRF_CLOUD_EVT_READY:
 		LOG_INF("NRF_CLOUD_EVT_READY");
 		on_cloud_evt_ready();
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
-		LOG_INF("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED: status %d",
-			(enum nrf_cloud_disconnect_status)evt->status);
+		LOG_INF("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED: status %d", evt->status);
 		on_cloud_evt_disconnected();
 		break;
 	case NRF_CLOUD_EVT_ERROR:
