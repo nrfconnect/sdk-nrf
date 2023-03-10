@@ -175,6 +175,9 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
 		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
 		break;
+	case NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR:
+		LOG_ERR("NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR: %d", evt->status);
+		break;
 	case NRF_CLOUD_EVT_READY:
 		LOG_DBG("NRF_CLOUD_EVT_READY");
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_CONNECTED;
