@@ -46,6 +46,7 @@ static struct bt_uuid *uuid128 = BT_UUID_THROUGHPUT;
 static struct bt_gatt_exchange_params exchange_params;
 static struct bt_le_conn_param *conn_param =
 	BT_LE_CONN_PARAM(INTERVAL_MIN, INTERVAL_MAX, 0, 400);
+static bool connection_params_set;
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -290,6 +291,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 	printk("Disconnected (reason 0x%02x)\n", reason);
 
+	connection_params_set = false;
 	test_ready = false;
 	if (default_conn) {
 		bt_conn_unref(default_conn);
@@ -572,9 +574,13 @@ int test_run(const struct shell *shell,
 
 	shell_print(shell, "\n==== Starting throughput test ====");
 
-	err = connection_configuration_set(shell, conn_param, phy, data_len);
-	if (err) {
-		return err;
+	/* Some values can only be set once per connection */
+	if (!connection_params_set) {
+		err = connection_configuration_set(shell, conn_param, phy, data_len);
+		if (err) {
+			return err;
+		}
+		connection_params_set = true;
 	}
 
 	/* Make sure that all BLE procedures are finished. */
