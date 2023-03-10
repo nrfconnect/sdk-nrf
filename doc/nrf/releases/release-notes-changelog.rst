@@ -297,6 +297,10 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
+* :ref:`bt_le_adv_prov_readme` library:
+
+  * Added API to enable or disable the Swift Pair provider (:c:func:`bt_le_adv_prov_swift_pair_enable`).
+
 * :ref:`bt_fast_pair_readme`:
 
   * Added the :c:func:`bt_fast_pair_info_cb_register` function and the :c:struct:`bt_fast_pair_info_cb` structure to register Fast Pair information callbacks.

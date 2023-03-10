@@ -118,3 +118,13 @@ Fast Pair provider API
 .. doxygengroup:: bt_le_adv_prov_fast_pair
    :project: nrf
    :members:
+
+Swift Pair provider API
+=======================
+
+| Header file: :file:`include/bluetooth/adv_prov/swift_pair.h`
+| Source files: :file:`subsys/bluetooth/adv_prov/providers/swift_pair.c`
+
+.. doxygengroup:: bt_le_adv_prov_swift_pair
+   :project: nrf
+   :members:
