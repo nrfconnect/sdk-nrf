@@ -5,6 +5,7 @@
  */
 
 #include <bluetooth/adv_prov.h>
+#include <bluetooth/adv_prov/fast_pair.h>
 #include <bluetooth/services/fast_pair.h>
 
 #include <zephyr/logging/log.h>
