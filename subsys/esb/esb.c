@@ -150,8 +150,12 @@ struct esb_radio_fixed_pdu {
 /* Dynamic length radio PDU header definition. */
 struct esb_radio_dynamic_pdu {
 	/* Payload length. */
+#if CONFIG_ESB_MAX_PAYLOAD_LENGTH > 63
+	uint8_t length;
+#else
 	uint8_t length:6;
 	uint8_t rfu0:2;
+#endif /* CONFIG_ESB_MAX_PAYLOAD_LENGTH > 63 */
 
 	/* Disable acknowledge. */
 	uint8_t no_ack:1;
