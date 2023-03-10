@@ -63,21 +63,6 @@ Wi-Fi radio FICR subcommands
      - arg
      - arg is 7-bit unsigned XO value. Bits [31:7] unused. Adjusts capacitor bank, 0 : Lowest capacitance (Highest frequency), 127 : Highest capacitance (Lowest frequency).
    * - otp_write_params
-     - CALIB_PWR2G
-     - 0x13C
-     - arg
-     - arg is 32-bit value specifying maximum output power for DSSS, MCS0, MCS7 (DSSS in bits[7:0] - unsigned). Measured in channel 7. Bits [31:24] unused.
-   * - otp_write_params
-     - CALIB_PWR5GM7
-     - 0x140
-     - arg
-     - arg is 32-bit value specifying maximum output power for MCS7 in channel 36, 100, 165 (channel 36 in bits[7:0] - unsigned). Bits [31:24] unused.
-   * - otp_write_params
-     - CALIB_PWR5GM0
-     - 0x144
-     - arg
-     - arg is 32-bit value specifying maximum output power for MCS0 in channel 36, 100, 165 (channel 36 in bits[7:0] - unsigned). Bits [31:24] unused.
-   * - otp_write_params
      - REGION_DEFAULTS
      - 0x154
      - arg
@@ -90,9 +75,9 @@ Wi-Fi radio FICR subcommands
        | bit 3  : CALIB_XO
        | bit 4  : Reserved
        | bit 5  : Reserved
-       | bit 6  : CALIB_PWR2G
-       | bit 7  : CALIB_PWR5GM7
-       | bit 8  : CALIB_PWR5GM0
+       | bit 6  : Reserved
+       | bit 7  : Reserved
+       | bit 8  : Reserved
        | bit 9  : Reserved
        | bit 10 : Reserved
        | bit 11 : Reserved
