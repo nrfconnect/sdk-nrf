@@ -1,7 +1,7 @@
 """
-Copyright (c) 2022 Nordic Semiconductor ASA
+Copyright (c) 2023 Nordic Semiconductor ASA
 
-SPDX-License-Identifier: Apache-2.0
+SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 This extension provides a directive ``sml-table`` that will produce a table
 of generated content on software maturity levels. This information is
@@ -21,12 +21,81 @@ All possible feature categories are listed in
 ``software_maturity_features.yaml``. To add a new category or a feature
 to a category, add them to this file.
 
+Options
+*******
+:remove-columns: string of SoCs separated by whitespace.
+    Columns titled with the given values will be removed from the
+    generated table.
+    Example:
+        :remove-columns: nRF52811 nRF52820 nRF52833
+
+
+:remove-rows: list of features.
+    Rows titled with the given feature (case sensitive) will be removed from
+    the generated table.
+    Example:
+        :remove-rows: ["Zigbee (Sleepy) End Device", "Zigbee Coordinator"]
+
+:add-columns: list of tuples on the form (title, default-value).
+    Adds additional columns to the table with the given title and all
+    values set to the default value. Values can be override with the
+    :insert-value: option.
+    Example:
+        :add-columns: [("nRF9998", "Experimental"), ("nRF0001", "-")]
+
+:add-rows: list of tuples on the form (title, default-value).
+    Adds additional rows to the table with the given title and all
+    values set to the default value. Values can be override with the
+    :insert-value: option.
+    Example:
+        :add-rows: [("My Feature", "Experimental"), ("My other feature", "-")]
+
+:insert-value: list of tuples on the form (row-title, column-title, new-value)
+    Overrides the value of an entry in the table with the given value.
+    Example:
+    :insert-values:
+        [
+            (
+                "OTA dfu over Zigbee",
+                "NRF52820",
+                "Supported"
+            ),
+            (
+                "Zigbee (Sleepy) End Device",
+                "nRF52811",
+                "Experimental"
+            )
+        ]
+
 Example of use
 **************
 .. sml-table:: bluetooth
+
+or
+
+.. sml-table:: zigbee
+  :remove-columns: nRF52810 nrf52832 nrf9999
+  :remove-rows: ["Zigbee Coordinator + Bluetooth LE multiprotocol",
+    "Zigbee Router + Bluetooth LE multiprotocol"]
+  :add-columns: [("nRF9998", "Experimental"), ("nRF0001", "-")]
+  :add-rows: [("My Feature", "Experimental"), ("My other feature", "-")]
+  :insert-values:
+    [
+      (
+        "OTA dfu over Zigbee",
+        "NRF52820",
+        "Supported"
+      ),
+      (
+        "Zigbee (Sleepy) End Device",
+        "nRF52811",
+        "Experimental"
+      )
+    ]
 """
 
 from docutils import nodes
+from docutils.parsers.rst import directives
 from sphinx.util.docutils import SphinxDirective
 from sphinx.application import Sphinx
 from azure.storage.blob import ContainerClient
@@ -34,7 +103,7 @@ from sphinx.util import logging
 import requests
 import yaml
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 AZ_CONN_STR_PUBLIC = ";".join(
     (
@@ -56,6 +125,15 @@ class SoftwareMaturityTable(SphinxDirective):
 
     has_content = True
     required_arguments = 1
+    optional_arguments = 5
+
+    option_spec = {
+        "remove-columns": directives.unchanged,
+        "remove-rows": eval,
+        "add-columns": eval,
+        "add-rows": eval,
+        "insert-values": eval,
+    }
 
     def run(self):
         # Table information is stored in self.env.sml_table
@@ -67,15 +145,41 @@ class SoftwareMaturityTable(SphinxDirective):
         table_type = self.arguments[0]
         table_info = self.env.sml_table
 
+        default_values = {}
+
         if table_type != "top_level" and table_type not in table_info["features"]:
             logger.error(f"No information present for requested feature '{table_type}'")
             return []
 
         all_socs = table_info["all_socs"]
+        if "remove-columns" in self.options:
+            for column in self.options["remove-columns"].split():
+                column = column.lower()
+                if column in all_socs:
+                    all_socs.remove(column)
+
+        if "remove-rows" in self.options:
+            self.options["remove-rows"] = list(
+                map(str.lower, self.options["remove-rows"])
+            )
+
+        if "add-columns" in self.options:
+            for soc, default_value in self.options["add-columns"]:
+                soc = soc.lower()
+                if soc not in all_socs:
+                    all_socs.append(soc)
+                default_values[soc] = default_value
+
         if table_type == "top_level":
             features = table_info["top_level"]
         else:
             features = table_info["features"][table_type]
+
+        if "add-rows" in self.options:
+            for feature, default_value in self.options["add-rows"]:
+                if feature not in features:
+                    maturity_list = {"Experimental":[], "Supported":[], default_value:all_socs}
+                    features[feature] = maturity_list
 
         # Create a matrix-like table
         table = nodes.table()
@@ -102,21 +206,42 @@ class SoftwareMaturityTable(SphinxDirective):
         rows = []
         feature_prefix = table_type + "_"
         for feature, maturity_list in features.items():
-            # First column displays the feature
+            feature = feature.lstrip(feature_prefix)
+            if (
+                "remove-rows" in self.options
+                and feature.lower() in self.options["remove-rows"]
+            ):
+                continue
+
             row = nodes.row()
             rows.append(row)
+
+            # First column displays the feature
             entry = nodes.entry()
-            entry += nodes.strong(text=feature.lstrip(feature_prefix))
+            entry += nodes.strong(text=feature)
             row += entry
 
             for soc in all_socs:
                 entry = nodes.entry()
                 if soc in maturity_list["Experimental"]:
-                    entry += nodes.Text("Experimental")
+                    text = nodes.Text("Experimental")
                 elif soc in maturity_list["Supported"]:
-                    entry += nodes.Text("Supported")
+                    text = nodes.Text("Supported")
+                elif soc in default_values:
+                    text = nodes.Text(default_values[soc])
                 else:
-                    entry += nodes.Text("-")
+                    text = nodes.Text("-")
+
+                if "insert-values" in self.options:
+                    for in_feature, in_soc, val in self.options["insert-values"]:
+                        if (
+                            in_feature.lower() == feature.lower()
+                            and in_soc.lower() == soc.lower()
+                        ):
+                            text = nodes.Text(val)
+                            break
+
+                entry += text
                 row += entry
 
         tbody = nodes.tbody()
@@ -172,7 +297,7 @@ def setup(app: Sphinx):
     app.connect("builder-inited", download_sml_table)
 
     return {
-        "version": "0.1",
+        "version": __version__,
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }
