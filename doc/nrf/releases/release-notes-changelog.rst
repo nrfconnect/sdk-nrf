@@ -121,7 +121,8 @@ See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 Enhanced ShockBurst (ESB)
 -------------------------
 
-|no_changes_yet_note|
+* Added support for bigger payload size.
+  ESB supports a payload with a size of 64 bytes or more.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------

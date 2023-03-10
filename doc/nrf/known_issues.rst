@@ -2067,6 +2067,14 @@ FW upgrade is broken for multi-image builds
 
   **Workaround:** Build MCUboot and the application separately.
 
+Enhanced ShockBurst (ESB)
+=========================
+
+.. rst-class:: v2-3-0 v2-2-0
+
+NCSDK-20092: ESB does not send packet longer than 63 bytes
+  ESB does not support sending packets longer than 63 bytes, but has no such hardware limitation.
+
 NFC
 ===
 
@@ -2105,6 +2113,16 @@ Sample incompatibility with the nRF5340 PDK
 Unstable NFC tag samples
   NFC tag samples are unstable when exhaustively tested (performing many repeated read and/or write operations).
   NFC tag data might be corrupted.
+
+nRF Profiler
+============
+
+.. rst-class:: v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+NCSDK-18398: Build fails if shell is enabled
+   Enabling the Zephyr's :ref:`zephyr:shell_api` module together with :ref:`nrf_profiler` results in a build failure because of the bug in the :file:`CMakeLists.txt` file.
+
+   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``fdac428e902ebd96885160dd3ae5d08d21642926``).
 
 Secure Partition Manager (SPM)
 ==============================
@@ -2153,16 +2171,6 @@ CIA-248: Samples with default SPM config fails to build for ``thingy91_nrf9160_n
    All samples using the default SPM config fails to build for the ``thingy91_nrf9160_ns``  build target if the sample is not set up with MCUboot.
 
    **Workaround:** Use the main branch.
-
-nRF Profiler
-============
-
-.. rst-class:: v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
-
-NCSDK-18398: Build fails if shell is enabled
-   Enabling the Zephyr's :ref:`zephyr:shell_api` module together with :ref:`nrf_profiler` results in a build failure because of the bug in the :file:`CMakeLists.txt` file.
-
-   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``fdac428e902ebd96885160dd3ae5d08d21642926``).
 
 MCUboot
 *******
