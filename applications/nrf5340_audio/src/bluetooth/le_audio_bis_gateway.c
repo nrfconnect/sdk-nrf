@@ -8,9 +8,10 @@
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/audio/audio.h>
+#include <zephyr/bluetooth/audio/bap_lc3_preset.h>
 /* TODO: Remove when a get_info function is implemented in host */
-#include <../subsys/bluetooth/audio/endpoint.h>
-#include <../subsys/bluetooth/audio/audio_iso.h>
+#include <../subsys/bluetooth/audio/bap_endpoint.h>
+#include <../subsys/bluetooth/audio/bap_iso.h>
 
 #include "macros_common.h"
 #include "ctrl_events.h"
@@ -18,7 +19,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bis_gateway, CONFIG_BLE_LOG_LEVEL);
 
-BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 2,
+BUILD_ASSERT(CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT <= 2,
 	     "A maximum of two audio streams are currently supported");
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
@@ -31,22 +32,22 @@ BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 2,
 	NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool_##i, HCI_ISO_BUF_ALLOC_PER_CHAN,                     \
 				  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU), 8, NULL);
 #define NET_BUF_POOL_PTR_ITERATE(i, ...) IDENTITY(&iso_tx_pool_##i)
-LISTIFY(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT, NET_BUF_POOL_ITERATE, (;))
+LISTIFY(CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT, NET_BUF_POOL_ITERATE, (;))
 
 /* clang-format off */
-static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT,
+static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT,
 						       NET_BUF_POOL_PTR_ITERATE, (,)) };
 /* clang-format on */
 
-static struct bt_audio_broadcast_source *broadcast_source;
+static struct bt_bap_broadcast_source *broadcast_source;
 
-static struct bt_audio_stream audio_streams[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
+static struct bt_bap_stream audio_streams[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
 
-static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_NRF5340_AUDIO;
+static struct bt_bap_lc3_preset lc3_preset = BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO;
 
-static atomic_t iso_tx_pool_alloc[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
+static atomic_t iso_tx_pool_alloc[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
 static bool delete_broadcast_src;
-static uint32_t seq_num[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
+static uint32_t seq_num[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
 
 static struct bt_le_ext_adv *adv;
 
@@ -70,7 +71,7 @@ static bool is_iso_buffer_full(uint8_t idx)
 	return false;
 }
 
-static int get_stream_index(struct bt_audio_stream *stream, uint8_t *index)
+static int get_stream_index(struct bt_bap_stream *stream, uint8_t *index)
 {
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		if (&audio_streams[i] == stream) {
@@ -84,7 +85,7 @@ static int get_stream_index(struct bt_audio_stream *stream, uint8_t *index)
 	return -EINVAL;
 }
 
-static void stream_sent_cb(struct bt_audio_stream *stream)
+static void stream_sent_cb(struct bt_bap_stream *stream)
 {
 	static uint32_t sent_cnt[ARRAY_SIZE(audio_streams)];
 	uint8_t index = 0;
@@ -104,7 +105,7 @@ static void stream_sent_cb(struct bt_audio_stream *stream)
 	}
 }
 
-static void stream_started_cb(struct bt_audio_stream *stream)
+static void stream_started_cb(struct bt_bap_stream *stream)
 {
 	int ret;
 	uint8_t index = 0;
@@ -118,17 +119,17 @@ static void stream_started_cb(struct bt_audio_stream *stream)
 	LOG_INF("Broadcast source %p started", (void *)stream);
 }
 
-static void stream_stopped_cb(struct bt_audio_stream *stream)
+static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
 	int ret;
 
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
 
-	LOG_INF("Broadcast source %p stopped", (void *)stream);
+	LOG_INF("Broadcast source %p stopped. Reason: %d", (void *)stream, reason);
 
 	if (delete_broadcast_src && broadcast_source != NULL) {
-		ret = bt_audio_broadcast_source_delete(broadcast_source);
+		ret = bt_bap_broadcast_source_delete(broadcast_source);
 		if (ret) {
 			LOG_ERR("Unable to delete broadcast source %p", (void *)stream);
 			delete_broadcast_src = false;
@@ -143,9 +144,9 @@ static void stream_stopped_cb(struct bt_audio_stream *stream)
 	}
 }
 
-static struct bt_audio_stream_ops stream_ops = { .sent = stream_sent_cb,
-						 .started = stream_started_cb,
-						 .stopped = stream_stopped_cb };
+static struct bt_bap_stream_ops stream_ops = { .sent = stream_sent_cb,
+					       .started = stream_started_cb,
+					       .stopped = stream_stopped_cb };
 
 #if (CONFIG_AURACAST)
 static void public_broadcast_features_set(uint8_t *features)
@@ -207,7 +208,7 @@ static int adv_create(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_ID_RANDOM)) {
-		ret = bt_audio_broadcast_source_get_id(broadcast_source, &broadcast_id);
+		ret = bt_bap_broadcast_source_get_id(broadcast_source, &broadcast_id);
 		if (ret) {
 			LOG_ERR("Unable to get broadcast ID: %d", ret);
 			return ret;
@@ -247,7 +248,7 @@ static int adv_create(void)
 	}
 
 	/* Setup periodic advertising data */
-	ret = bt_audio_broadcast_source_get_base(broadcast_source, &base_buf);
+	ret = bt_bap_broadcast_source_get_base(broadcast_source, &base_buf);
 	if (ret) {
 		LOG_ERR("Failed to get encoded BASE: %d", ret);
 		return ret;
@@ -272,10 +273,10 @@ static int initialize(le_audio_timestamp_cb timestmp_cb)
 	static bool initialized;
 	struct bt_codec_data bis_codec_data =
 		BT_CODEC_DATA(BT_CODEC_CONFIG_LC3_FREQ, BT_AUDIO_CODEC_CONFIG_FREQ);
-	struct bt_audio_broadcast_source_stream_param stream_params[ARRAY_SIZE(audio_streams)];
-	struct bt_audio_broadcast_source_subgroup_param
-		subgroup_params[CONFIG_BT_AUDIO_BROADCAST_SRC_SUBGROUP_COUNT];
-	struct bt_audio_broadcast_source_create_param create_param;
+	struct bt_bap_broadcast_source_stream_param stream_params[ARRAY_SIZE(audio_streams)];
+	struct bt_bap_broadcast_source_subgroup_param
+		subgroup_params[CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT];
+	struct bt_bap_broadcast_source_create_param create_param;
 
 	if (initialized) {
 		LOG_WRN("Already initialized");
@@ -293,7 +294,7 @@ static int initialize(le_audio_timestamp_cb timestmp_cb)
 
 	for (size_t i = 0; i < ARRAY_SIZE(stream_params); i++) {
 		stream_params[i].stream = &audio_streams[i];
-		bt_audio_stream_cb_register(stream_params[i].stream, &stream_ops);
+		bt_bap_stream_cb_register(stream_params[i].stream, &stream_ops);
 		stream_params[i].data_count = 1U;
 		stream_params[i].data = &bis_codec_data;
 	}
@@ -332,7 +333,7 @@ static int initialize(le_audio_timestamp_cb timestmp_cb)
 
 	LOG_DBG("Creating broadcast source");
 
-	ret = bt_audio_broadcast_source_create(&create_param, &broadcast_source);
+	ret = bt_bap_broadcast_source_create(&create_param, &broadcast_source);
 
 	if (ret) {
 		LOG_ERR("Failed to create broadcast source, ret: %d", ret);
@@ -393,13 +394,13 @@ int le_audio_play_pause(void)
 		return -ECANCELED;
 	}
 
-	if (audio_streams[0].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
-		ret = bt_audio_broadcast_source_stop(broadcast_source);
+	if (audio_streams[0].ep->status.state == BT_BAP_EP_STATE_STREAMING) {
+		ret = bt_bap_broadcast_source_stop(broadcast_source);
 		if (ret) {
 			LOG_WRN("Failed to stop broadcast, ret: %d", ret);
 		}
 	} else {
-		ret = bt_audio_broadcast_source_start(broadcast_source, adv);
+		ret = bt_bap_broadcast_source_start(broadcast_source, adv);
 		if (ret) {
 			LOG_WRN("Failed to start broadcast, ret: %d", ret);
 		}
@@ -411,7 +412,7 @@ int le_audio_play_pause(void)
 int le_audio_send(struct encoded_audio enc_audio)
 {
 	int ret;
-	static bool wrn_printed[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
+	static bool wrn_printed[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
 	struct net_buf *buf;
 	size_t num_streams = ARRAY_SIZE(audio_streams);
 	size_t data_size_pr_stream;
@@ -419,7 +420,7 @@ int le_audio_send(struct encoded_audio enc_audio)
 	if ((enc_audio.num_ch == 1) || (enc_audio.num_ch == num_streams)) {
 		data_size_pr_stream = enc_audio.size / enc_audio.num_ch;
 	} else {
-		LOG_ERR("Num encoded channels must be 1 or equal to num streams");
+		LOG_ERR("Num enc channels is %d Must be 1 or num streams", enc_audio.num_ch);
 		return -EINVAL;
 	}
 
@@ -429,7 +430,7 @@ int le_audio_send(struct encoded_audio enc_audio)
 	}
 
 	for (int i = 0; i < num_streams; i++) {
-		if (audio_streams[i].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+		if (audio_streams[i].ep->status.state != BT_BAP_EP_STATE_STREAMING) {
 			LOG_DBG("Stream %d not in streaming state", i);
 			continue;
 		}
@@ -462,8 +463,8 @@ int le_audio_send(struct encoded_audio enc_audio)
 
 		atomic_inc(&iso_tx_pool_alloc[i]);
 
-		ret = bt_audio_stream_send(&audio_streams[i], buf, seq_num[i]++,
-					   BT_ISO_TIMESTAMP_NONE);
+		ret = bt_bap_stream_send(&audio_streams[i], buf, seq_num[i]++,
+					 BT_ISO_TIMESTAMP_NONE);
 		if (ret < 0) {
 			LOG_WRN("Failed to send audio data: %d", ret);
 			net_buf_unref(buf);
@@ -515,7 +516,7 @@ int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_
 
 	LOG_DBG("Starting broadcast source");
 
-	ret = bt_audio_broadcast_source_start(broadcast_source, adv);
+	ret = bt_bap_broadcast_source_start(broadcast_source, adv);
 	if (ret) {
 		return ret;
 	}
@@ -529,16 +530,16 @@ int le_audio_disable(void)
 {
 	int ret;
 
-	if (audio_streams[0].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
+	if (audio_streams[0].ep->status.state == BT_BAP_EP_STATE_STREAMING) {
 		/* Deleting broadcast source in stream_stopped_cb() */
 		delete_broadcast_src = true;
 
-		ret = bt_audio_broadcast_source_stop(broadcast_source);
+		ret = bt_bap_broadcast_source_stop(broadcast_source);
 		if (ret) {
 			return ret;
 		}
 	} else if (broadcast_source != NULL) {
-		ret = bt_audio_broadcast_source_delete(broadcast_source);
+		ret = bt_bap_broadcast_source_delete(broadcast_source);
 		if (ret) {
 			return ret;
 		}
