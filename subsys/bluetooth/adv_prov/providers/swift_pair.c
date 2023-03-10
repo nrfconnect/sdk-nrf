@@ -5,9 +5,17 @@
  */
 
 #include <bluetooth/adv_prov.h>
+#include <bluetooth/adv_prov/swift_pair.h>
 
 #define GRACE_PERIOD_S	CONFIG_BT_ADV_PROV_SWIFT_PAIR_COOL_DOWN_DURATION
 
+static bool enabled = true;
+
+
+void bt_le_adv_prov_swift_pair_enable(bool enable)
+{
+	enabled = enable;
+}
 
 static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *state,
 		    struct bt_le_adv_prov_feedback *fb)
@@ -18,6 +26,10 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 		0x00,		/* Microsoft Beacon Sub Scenario */
 		0x80		/* Reserved RSSI Byte */
 	};
+
+	if (!enabled) {
+		return -ENOENT;
+	}
 
 	if (state->in_grace_period || (!state->pairing_mode)) {
 		return -ENOENT;
