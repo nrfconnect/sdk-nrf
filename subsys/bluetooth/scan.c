@@ -128,7 +128,7 @@ struct bt_scan_uuid_filter {
 };
 
 struct bt_scan_appearance_filter {
-	/* Apperances that the main application will scan for,
+	/* Appearances that the main application will scan for,
 	 * and that will be advertised by the peripherals.
 	 */
 	uint16_t appearance[CONFIG_BT_SCAN_APPEARANCE_CNT];
@@ -149,7 +149,7 @@ struct bt_scan_manufacturer_data_filter {
 		 */
 		uint8_t data[CONFIG_BT_SCAN_MANUFACTURER_DATA_MAX_LEN];
 
-		/* Length of the manufacturere data that the main application
+		/* Length of the manufacturer data that the main application
 		 * will scan for.
 		 */
 		uint8_t data_len;
@@ -476,28 +476,28 @@ static void scan_connect_with_target(struct bt_scan_control *control,
 				     const bt_addr_le_t *addr)
 {
 	int err;
+	struct bt_conn *conn;
+	struct bt_conn_le_create_param *create_conn_param;
 
 	/* Return if the automatic connection is disabled. */
 	if (!bt_scan.connect_if_match) {
 		return;
 	}
 
-	/* Establish connection. */
-	struct bt_conn *conn;
-
 	/* Stop scanning. */
 	bt_scan_stop();
 
-	err = bt_conn_le_create(addr,
-			       BT_CONN_LE_CREATE_CONN,
-			       &bt_scan.conn_param, &conn);
+	/* If the advertisement was coded, then connect using the coded PHY. */
+	create_conn_param = BT_CONN_LE_CREATE_CONN;
+	if (control->device_info.recv_info->primary_phy == BT_GAP_LE_PHY_CODED) {
+		create_conn_param->options = (BT_CONN_LE_OPT_CODED | BT_CONN_LE_OPT_NO_1M);
+	}
+	err = bt_conn_le_create(addr, create_conn_param, &bt_scan.conn_param, &conn);
 
 	LOG_DBG("Connecting (%d)", err);
 
 	if (err) {
-		/* If an error occurred, send an event to
-		 * the all interested.
-		 */
+		/* If an error occurred, send an event to all interested. */
 		notify_connecting_error(&control->device_info);
 	} else {
 		notify_connecting(&control->device_info, conn);
@@ -1510,7 +1510,7 @@ static void scan_recv(const struct bt_le_scan_recv_info *info,
 	check_addr(&scan_control, info->addr);
 
 	/* Save advertising buffer state to transfer it
-	 * data to application if futher processing is needed.
+	 * data to application if further processing is needed.
 	 */
 	net_buf_simple_save(ad, &state);
 	bt_data_parse(ad, adv_data_found, (void *)&scan_control);
