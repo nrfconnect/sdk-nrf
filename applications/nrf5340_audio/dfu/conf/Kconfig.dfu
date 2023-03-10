@@ -45,6 +45,10 @@ config THREAD_NAME
 	bool
 	default y
 
+config ZCBOR
+	bool
+	default y
+
 # DFU
 config MCUMGR
 	bool
@@ -115,6 +119,10 @@ config STATS
 	default y
 
 config STATS_NAMES
+	bool
+	default y
+
+config MCUBOOT_BOOTUTIL_LIB
 	bool
 	default y
 

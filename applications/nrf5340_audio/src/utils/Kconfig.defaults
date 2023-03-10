@@ -6,5 +6,4 @@
 
 # Channel assignment writes to UICR
 config NRFX_NVMC
-	bool
 	default y
