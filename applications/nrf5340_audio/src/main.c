@@ -187,7 +187,11 @@ void main(void)
 	ERR_CHK(ret);
 
 	if (board_rev.mask & BOARD_VERSION_VALID_MSK_SD_CARD) {
-		ret = sd_card_init();
+		/* ret = sd_card_init();
+		 * SD init is temporarily disabled due to
+		 * a breaking change in upstream Zephyr. This will likely be
+		 * resolved by https://github.com/zephyrproject-rtos/zephyr/pull/56030
+		 */
 		if (ret != -ENODEV) {
 			ERR_CHK(ret);
 		}
