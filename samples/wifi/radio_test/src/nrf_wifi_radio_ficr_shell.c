@@ -62,24 +62,6 @@ static void disp_fields_status(const struct shell *shell, unsigned int flags)
 	} else {
 		shell_fprintf(shell, SHELL_INFO, "CALIB_XO is programmed in OTP\n");
 	}
-
-	if (flags & (~CALIB_PWR2G_FLAG_MASK)) {
-		shell_fprintf(shell, SHELL_INFO, "CALIB_PWR2G is not programmed in OTP\n");
-	} else {
-		shell_fprintf(shell, SHELL_INFO, "CALIB_PWR2G is programmed in OTP\n");
-	}
-
-	if (flags & (~CALIB_PWR5GM7_FLAG_MASK)) {
-		shell_fprintf(shell, SHELL_INFO, "CALIB_PWR5GM7 is not programmed in OTP\n");
-	} else {
-		shell_fprintf(shell, SHELL_INFO, "CALIB_PWR5GM7 is programmed in OTP\n");
-	}
-
-	if (flags & (~CALIB_PWR5GM0_FLAG_MASK)) {
-		shell_fprintf(shell, SHELL_INFO, "CALIB_PWR5GM0 is not programmed in OTP\n");
-	} else {
-		shell_fprintf(shell, SHELL_INFO, "CALIB_PWR5GM0 is programmed in OTP\n");
-	}
 }
 
 
@@ -145,16 +127,7 @@ static int nrf_wifi_radio_test_otp_read_params(const struct shell *shell,
 		(uint8_t)(val[MAC1_ADDR] >> 16), (uint8_t)(val[MAC1_ADDR] >> 24),
 		(uint8_t)(val[MAC1_ADDR + 1]), (uint8_t)(val[MAC1_ADDR + 1] >> 8));
 	shell_fprintf(shell, SHELL_INFO, "\n");
-
 	shell_fprintf(shell, SHELL_INFO, "CALIB_XO = 0x%02x\n", val[CALIB_XO] & 0xFF);
-	shell_fprintf(shell, SHELL_INFO, "\n");
-	shell_fprintf(shell, SHELL_INFO, "CALIB_PWR2G = 0x%08x\n", val[CALIB_PWR2G]);
-	shell_fprintf(shell, SHELL_INFO, "\n");
-	shell_fprintf(shell, SHELL_INFO, "CALIB_PWR5GM7 = 0x%08x\n",
-		val[CALIB_PWR5GM7]);
-	shell_fprintf(shell, SHELL_INFO, "\n");
-	shell_fprintf(shell, SHELL_INFO, "CALIB_PWR5GM0 = 0x%08x\n",
-		val[CALIB_PWR5GM0]);
 	shell_fprintf(shell, SHELL_INFO, "\n");
 	shell_fprintf(shell, SHELL_INFO, "REGION_DEFAULTS = 0x%08x\n",
 		val[REGION_DEFAULTS]);
@@ -233,9 +206,6 @@ static int nrf_wifi_radio_test_otp_write_params(const struct shell *shell,
 		write_otp_memory(field, &write_val[0]);
 		break;
 	case CALIB_XO:
-	case CALIB_PWR2G:
-	case CALIB_PWR5GM7:
-	case CALIB_PWR5GM0:
 	case REGION_DEFAULTS:
 		if (argc != 3) {
 			shell_fprintf(shell, SHELL_ERROR,
