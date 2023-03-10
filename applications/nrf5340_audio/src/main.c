@@ -194,8 +194,8 @@ void main(void)
 	}
 
 #if defined(CONFIG_AUDIO_DFU_ENABLE)
-	/* Check DFU BTN before Initialize BLE */
-	dfu_entry_check();
+	/* Check DFU BTN before initialize BLE */
+	dfu_entry_check((void *)ble_core_init);
 #endif
 
 	/* Initialize BLE, with callback for when BLE is ready */
