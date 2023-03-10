@@ -121,7 +121,7 @@ const uint32_t asp1_enable[][2] = {
 	{ CS47L63_GPIO4_CTRL1, 0xE1000000 },
 	{ CS47L63_GPIO5_CTRL1, 0x61000001 },
 
- /* Set correct sample rate */
+/* Set correct sample rate */
 #if CONFIG_AUDIO_SAMPLE_RATE_16000_HZ
 	{ CS47L63_SAMPLE_RATE1, 0x000000012 },
 #elif CONFIG_AUDIO_SAMPLE_RATE_24000_HZ
@@ -130,9 +130,9 @@ const uint32_t asp1_enable[][2] = {
 	{ CS47L63_SAMPLE_RATE1, 0x000000003 },
 #endif
 	/* Disable unused sample rates */
-	{CS47L63_SAMPLE_RATE2, 0},
-	{CS47L63_SAMPLE_RATE3, 0},
-	{CS47L63_SAMPLE_RATE4, 0},
+	{ CS47L63_SAMPLE_RATE2, 0 },
+	{ CS47L63_SAMPLE_RATE3, 0 },
+	{ CS47L63_SAMPLE_RATE4, 0 },
 
 	/* Set ASP1 in slave mode and 16 bit per channel */
 	{ CS47L63_ASP1_CONTROL2, 0x10100200 },

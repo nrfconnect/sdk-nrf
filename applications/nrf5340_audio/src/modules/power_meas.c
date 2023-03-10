@@ -21,10 +21,10 @@ struct power_rail_config {
 };
 
 static const struct power_rail_config rail_config[POWER_RAIL_NUM] = {
-	{"VBAT", DEVICE_DT_GET(DT_NODELABEL(vbat_sensor))},
-	{"VDD1_CODEC", DEVICE_DT_GET(DT_NODELABEL(vdd1_codec_sensor))},
-	{"VDD2_CODEC", DEVICE_DT_GET(DT_NODELABEL(vdd2_codec_sensor))},
-	{"VDD2_NRF", DEVICE_DT_GET(DT_NODELABEL(vdd2_nrf_sensor))},
+	{ "VBAT", DEVICE_DT_GET(DT_NODELABEL(vbat_sensor)) },
+	{ "VDD1_CODEC", DEVICE_DT_GET(DT_NODELABEL(vdd1_codec_sensor)) },
+	{ "VDD2_CODEC", DEVICE_DT_GET(DT_NODELABEL(vdd2_codec_sensor)) },
+	{ "VDD2_NRF", DEVICE_DT_GET(DT_NODELABEL(vdd2_nrf_sensor)) },
 };
 static bool rail_enabled[POWER_RAIL_NUM];
 
@@ -66,8 +66,7 @@ static int read_and_log(const struct power_rail_config *config)
 		return ret;
 	}
 
-	LOG_INF("%-10s:\t%.3fV, %06.3fmA, %06.3fmW", config->name,
-		sensor_value_to_double(&voltage),
+	LOG_INF("%-10s:\t%.3fV, %06.3fmA, %06.3fmW", config->name, sensor_value_to_double(&voltage),
 		sensor_value_to_double(&current) * 1000.0f,
 		sensor_value_to_double(&power) * 1000.0f);
 
@@ -110,8 +109,7 @@ static int power_meas_init(const struct device *dev)
 	/* check if all sensors are ready */
 	for (size_t i = 0U; i < POWER_RAIL_NUM; i++) {
 		if (!device_is_ready(rail_config[i].sensor)) {
-			LOG_ERR("INA231 device not ready: %s\n",
-				rail_config->name);
+			LOG_ERR("INA231 device not ready: %s\n", rail_config->name);
 			return -ENODEV;
 		}
 	}
@@ -126,17 +124,14 @@ static int power_meas_init(const struct device *dev)
 	}
 
 	/* start measurement thread */
-	(void)k_thread_create(&meas_thread, meas_stack,
-			      CONFIG_POWER_MEAS_STACK_SIZE,
+	(void)k_thread_create(&meas_thread, meas_stack, CONFIG_POWER_MEAS_STACK_SIZE,
 			      meas_thread_fn, NULL, NULL, NULL,
-			      K_PRIO_PREEMPT(CONFIG_POWER_MEAS_THREAD_PRIO),
-			      0, K_NO_WAIT);
+			      K_PRIO_PREEMPT(CONFIG_POWER_MEAS_THREAD_PRIO), 0, K_NO_WAIT);
 
 	return 0;
 }
 
 SYS_INIT(power_meas_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
-
 
 static int cmd_info(const struct shell *shell, size_t argc, char **argv)
 {
@@ -156,8 +151,7 @@ static int cmd_config(const struct shell *shell, size_t argc, const char **argv)
 	bool enable;
 
 	if (argc != 3) {
-		shell_error(shell,
-			    "Usage: power config RAIL|all enable|disable");
+		shell_error(shell, "Usage: power config RAIL|all enable|disable");
 		return -EINVAL;
 	}
 
@@ -168,8 +162,7 @@ static int cmd_config(const struct shell *shell, size_t argc, const char **argv)
 			rail_enabled[i] = enable;
 		}
 
-		shell_print(shell, "All rails %s",
-			    enable ? "enabled" : "disabled");
+		shell_print(shell, "All rails %s", enable ? "enabled" : "disabled");
 	} else {
 		size_t i;
 
@@ -193,8 +186,7 @@ static int cmd_config(const struct shell *shell, size_t argc, const char **argv)
 	return 0;
 }
 
-static int cmd_meas_start(const struct shell *shell, size_t argc,
-			  const char **argv)
+static int cmd_meas_start(const struct shell *shell, size_t argc, const char **argv)
 {
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
@@ -212,8 +204,7 @@ static int cmd_meas_start(const struct shell *shell, size_t argc,
 	return 0;
 }
 
-static int cmd_meas_stop(const struct shell *shell, size_t argc,
-			 const char **argv)
+static int cmd_meas_stop(const struct shell *shell, size_t argc, const char **argv)
 {
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
@@ -226,17 +217,10 @@ static int cmd_meas_stop(const struct shell *shell, size_t argc,
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	power_meas_cmd,
-	SHELL_COND_CMD(CONFIG_SHELL, info, NULL, "Show power rails info",
-		       cmd_info),
-	SHELL_COND_CMD(CONFIG_SHELL, config, NULL, "Configure power rails",
-		       cmd_config),
-	SHELL_COND_CMD(CONFIG_SHELL, start, NULL, "Start measurements",
-		       cmd_meas_start),
-	SHELL_COND_CMD(CONFIG_SHELL, stop, NULL, "Stop measurements",
-		       cmd_meas_stop),
-	SHELL_SUBCMD_SET_END
-);
+	power_meas_cmd, SHELL_COND_CMD(CONFIG_SHELL, info, NULL, "Show power rails info", cmd_info),
+	SHELL_COND_CMD(CONFIG_SHELL, config, NULL, "Configure power rails", cmd_config),
+	SHELL_COND_CMD(CONFIG_SHELL, start, NULL, "Start measurements", cmd_meas_start),
+	SHELL_COND_CMD(CONFIG_SHELL, stop, NULL, "Stop measurements", cmd_meas_stop),
+	SHELL_SUBCMD_SET_END);
 
-SHELL_CMD_REGISTER(power, &power_meas_cmd, "Configure power measurements",
-		   NULL);
+SHELL_CMD_REGISTER(power, &power_meas_cmd, "Configure power measurements", NULL);

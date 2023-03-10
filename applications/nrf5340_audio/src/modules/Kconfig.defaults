@@ -10,48 +10,34 @@ if AUDIO_DEV = 2
 if AUDIO_SOURCE_USB
 
 config USB_DEVICE_STACK
-	bool
 	default y
 
 # Net buf options needed for USB stack
 config NET_BUF
-	bool
 	default y
 
-# Size of 1ms of stereo audio in bytes (48kHz, 16 bit)
-config NET_BUF_USER_DATA_SIZE
-	int
-	default 192
-
 config USB_DEVICE_AUDIO
-	bool
 	default y
 
 ## TODO: Nordic VID, change accordingly
 config USB_DEVICE_VID
-	hex
 	default 0x1915
 
 ## TODO: Change for final product
 config USB_DEVICE_PID
-	hex
 	default 0x530A
 
 config USB_DEVICE_PRODUCT
-	string
 	default "nRF5340 USB Audio"
 
 config USB_DEVICE_MANUFACTURER
-	string
 	default "Nordic Semiconductor AS"
 
 ## Avoid redundant warnings for endpoint setting in USB stack
 config USB_DRIVER_LOG_LEVEL
-	int
 	default 1
 
 config USB_DEVICE_LOG_LEVEL
-	int
 	default 1
 
 endif # AUDIO_SOURCE_USB

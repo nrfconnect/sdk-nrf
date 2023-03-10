@@ -6,22 +6,18 @@
 
 # Audio sync timer
 config NRFX_TIMER1
-	bool
 	default y
 
 # Audio sync timer
 config NRFX_DPPI
-	bool
 	default y
 
 # Required for calculating test tones
 config CMSIS_DSP
-	bool
 	default y
 
 # Required for calculating test tones
 config CMSIS_DSP_FASTMATH
-	bool
 	default y
 
 # HEADSET
@@ -30,17 +26,14 @@ if AUDIO_DEV = 1
 if TRANSPORT_CIS # Depends on TRANSPORT_CIS
 
 config LC3_BITRATE
-	int
 	default BT_AUDIO_BITRATE_UNICAST_SRC
 
 endif # TRANSPORT_CIS
 
 config LC3_ENC_CHAN_MAX
-	int
 	default 1
 
 config LC3_DEC_CHAN_MAX
-	int
 	default 1
 
 if TRANSPORT_BIS # Depends on TRANSPORT_BIS
@@ -61,7 +54,6 @@ if AUDIO_DEV = 2
 if TRANSPORT_CIS # Depends on TRANSPORT_CIS
 
 config LC3_BITRATE
-	int
 	default BT_AUDIO_BITRATE_UNICAST_SINK
 
 endif # TRANSPORT_CIS
@@ -69,17 +61,14 @@ endif # TRANSPORT_CIS
 if TRANSPORT_BIS # Depends on TRANSPORT_BIS
 
 config LC3_BITRATE
-	int
 	default BT_AUDIO_BITRATE_BROADCAST_SRC
 
 endif # TRANSPORT_BIS
 
 config LC3_ENC_CHAN_MAX
-	int
 	default 2
 
 config LC3_DEC_CHAN_MAX
-	int
 	default 1
 
 endif # AUDIO_DEV = 2 (GATEWAY)

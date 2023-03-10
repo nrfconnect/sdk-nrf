@@ -45,8 +45,8 @@ config AUDIO_MAX_PRES_DLY_US
 
 choice AUDIO_SAMPLE_RATE
 	prompt "Audio sample rate"
-	default AUDIO_SAMPLE_RATE_16000_HZ if BT_AUDIO_BROADCAST_16_2_1 || BT_AUDIO_BROADCAST_16_2_2 || BT_AUDIO_UNICAST_16_2_1
-	default AUDIO_SAMPLE_RATE_24000_HZ if BT_AUDIO_BROADCAST_24_2_1 || BT_AUDIO_BROADCAST_24_2_2 || BT_AUDIO_UNICAST_24_2_1
+	default AUDIO_SAMPLE_RATE_16000_HZ if BT_BAP_BROADCAST_16_2_1 || BT_BAP_BROADCAST_16_2_2 || BT_BAP_UNICAST_16_2_1
+	default AUDIO_SAMPLE_RATE_24000_HZ if BT_BAP_BROADCAST_24_2_1 || BT_BAP_BROADCAST_24_2_2 || BT_BAP_UNICAST_24_2_1
 	default AUDIO_SAMPLE_RATE_48000_HZ
 	help
 	  This will be selected based on the BAP settings.
@@ -260,8 +260,8 @@ config WALKIE_TALKIE_DEMO
 
 config MONO_TO_ALL_RECEIVERS
 	bool "Send mono (first/left channel) to all receivers"
-	default y if BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT = 1
-	default y if BT_AUDIO_BROADCAST_SRC_STREAM_COUNT = 1
+	default y if BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT = 1
+	default y if BT_BAP_BROADCAST_SRC_STREAM_COUNT = 1
 	default n
 	help
 	  With this flag set, the gateway will encode and send the same (first/left)
