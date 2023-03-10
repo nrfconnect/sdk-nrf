@@ -728,10 +728,7 @@ static uint8_t method_gnss_tracked_satellites_nonzero_cn0(
 	uint8_t tracked = 0;
 
 	for (uint32_t i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; i++) {
-		if (pvt_data->sv[i].sv == 0) {
-			break;
-		}
-		if (pvt_data->sv[i].cn0 == 0) {
+		if ((pvt_data->sv[i].sv == 0) || (pvt_data->sv[i].cn0 == 0)) {
 			break;
 		}
 
@@ -769,7 +766,6 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 {
 	struct nrf_modem_gnss_pvt_data_frame pvt_data;
 	static struct location_data location_result = { 0 };
-	uint8_t satellites_tracked;
 	uint8_t satellites_tracked_nonzero_cn0;
 
 	if (!running) {
@@ -785,13 +781,12 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 
 	/* Only satellites with a reasonable C/N0 count towards the obstructed visibility limit */
 	satellites_tracked_nonzero_cn0 = method_gnss_tracked_satellites_nonzero_cn0(&pvt_data);
-	satellites_tracked = method_gnss_tracked_satellites(&pvt_data);
 
 	method_gnss_print_pvt(&pvt_data);
 
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
 	location_data_details_gnss.pvt_data = pvt_data;
-	location_data_details_gnss.satellites_tracked = satellites_tracked;
+	location_data_details_gnss.satellites_tracked = method_gnss_tracked_satellites(&pvt_data);
 #endif
 
 	/* Store fix data only if we get a valid fix. Thus, the last valid data is always kept
