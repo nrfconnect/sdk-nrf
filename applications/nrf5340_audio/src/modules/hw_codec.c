@@ -26,6 +26,8 @@ LOG_MODULE_REGISTER(hw_codec, CONFIG_MODULE_HW_CODEC_LOG_LEVEL);
 #define VOLUME_ADJUST_STEP_DB 3
 #define BASE_10 10
 
+static cs47l63_t cs47l63_driver;
+
 /**@brief Write to multiple registers in CS47L63
  */
 static int cs47l63_comm_reg_conf_write(const uint32_t config[][2], uint32_t num_of_regs)
