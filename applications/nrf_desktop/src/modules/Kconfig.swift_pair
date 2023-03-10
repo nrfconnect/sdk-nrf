@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_SWIFT_PAIR
+	bool "Swift Pair module"
+	depends on BT_ADV_PROV_SWIFT_PAIR
+	depends on CAF_BLE_COMMON_EVENTS
+	depends on DESKTOP_BLE_DONGLE_PEER_ENABLE
+	select DESKTOP_BLE_DONGLE_PEER_ID_INFO
+	default y
+	help
+	  Enable a small application module that controls enabling or disabling
+	  Swift Pair advertising payload.
+
+if DESKTOP_SWIFT_PAIR
+
+config DESKTOP_SWIFT_PAIR_ADV_DONGLE_PEER
+	bool "Enable Swift Pair advertising payload for dongle peer"
+	default y if BT_FAST_PAIR
+	help
+	  Enable Swift Pair advertising payload for the dongle peer.
+
+	  In configurations that support Fast Pair, the dongle peer is used to
+	  connect with all of the Bluetooth Centrals that are not Fast Pair
+	  Seekers. The general Bluetooth peer is intended to be used with Fast
+	  Pair Seekers.
+
+config DESKTOP_SWIFT_PAIR_ADV_GENERAL_PEER
+	bool "Enable Swift Pair advertising payload for general Bluetooth peers"
+	default y if !BT_FAST_PAIR
+	help
+	  Enable Swift Pair advertising payload for general Bluetooth peers.
+
+	  In configurations that do not support Fast Pair, the dongle peer is
+	  used only for connection with nRF Desktop dongle. The general
+	  Bluetooth peers are used to connect with other Bluetooth Centrals.
+
+module = DESKTOP_SWIFT_PAIR
+module-str = nRF Desktop Swift Pair
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_SWIFT_PAIR

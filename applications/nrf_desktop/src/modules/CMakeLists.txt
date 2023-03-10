@@ -31,6 +31,9 @@ target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_FAST_PAIR
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/fast_pair.c)
 
+target_sources_ifdef(CONFIG_DESKTOP_SWIFT_PAIR
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/swift_pair.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_HID_FORWARD_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_forward.c)
 

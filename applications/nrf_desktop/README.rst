@@ -529,6 +529,7 @@ The peripheral supports one wireless connection at a time, but it can be bonded 
 
 .. note::
    To simplify pairing the nRF Desktop peripherals with Windows 10 hosts, the peripherals include `Swift Pair`_ payload in the Bluetooth LE advertising data.
+   By default, the Swift Pair payload is included for all of the Bluetooth local identities, apart from the dedicated local identity used for connection with an nRF Desktop dongle.
 
    Some of the nRF Desktop configurations also include `Fast Pair`_ payload in the Bluetooth LE advertising data to simplify pairing the nRF Desktop peripherals with Android hosts.
    These configurations apply further modifications that are needed to improve the user experience.
@@ -1667,6 +1668,8 @@ The nRF Desktop peripheral that integrates Fast Pair behaves as follows:
   * The dongle peer does not use the Fast Pair advertising payload.
   * The bond erase operation is enabled for the dongle peer.
     This will let you change the bonded Bluetooth Central.
+  * If the dongle peer (:ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE <config_desktop_app_options>`) is enabled, the `Swift Pair`_ payload is, by default, included only for the mentioned peer.
+    In the Fast Pair configurations, the dongle peer is intended to be used for all of the peers that are not Fast Pair Seekers.
   * If the used Bluetooth local identity has no bonds, the device advertises in pairing mode, and the Fast Pair discoverable advertising is used.
     This allows to pair with the nRF Desktop device using both Fast Pair and normal Bluetooth pairing flows.
     This advertising payload is also used during the erase advertising.
@@ -2065,6 +2068,7 @@ These are valid for events that have many listeners or sources, and are gathered
    doc/selector.rst
    doc/smp.rst
    doc/settings_loader.rst
+   doc/swift_pair_app.rst
    doc/usb_state_pm.rst
    doc/usb_state.rst
    doc/watchdog.rst
