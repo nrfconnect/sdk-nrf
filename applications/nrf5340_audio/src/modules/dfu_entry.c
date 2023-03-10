@@ -6,14 +6,15 @@
 
 /* Override compiler definition to use size-bounded string copying and concatenation function */
 #define _BSD_SOURCE
-#include "string.h"
+#include "dfu_entry.h"
+
 #include <zephyr/kernel.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/settings/settings.h>
 
+#include "string.h"
 #include "button_assignments.h"
-#include "ble_core.h"
 #include "button_handler.h"
 #include "macros_common.h"
 #include "channel_assignment.h"
@@ -98,7 +99,7 @@ static void on_ble_core_ready_dfu_entry(void)
 	smp_adv();
 }
 
-void dfu_entry_check(void)
+void dfu_entry_check(ble_init_func ble_init)
 {
 	int ret;
 	bool pressed;
@@ -110,7 +111,7 @@ void dfu_entry_check(void)
 
 	if (pressed) {
 		LOG_INF("Enter SMP_SVR service only status");
-		ret = ble_core_init(on_ble_core_ready_dfu_entry);
+		ret = ble_init(on_ble_core_ready_dfu_entry);
 		ERR_CHK(ret);
 
 		while (1) {

@@ -209,7 +209,7 @@ static void available_contexts_cb(struct bt_conn *conn, enum bt_audio_context sn
 	LOG_DBG("conn: %s, snk ctx %d src ctx %d\n", addr, snk_ctx, src_ctx);
 }
 
-const struct bt_audio_unicast_client_cb unicast_client_cbs = {
+static const struct bt_audio_unicast_client_cb unicast_client_cbs = {
 	.location = unicast_client_location_cb,
 	.available_contexts = available_contexts_cb,
 };
