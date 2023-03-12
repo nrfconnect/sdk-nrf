@@ -1,0 +1,13 @@
+# Nordic Semiconductor nRF53 MCU line
+
+# Copyright (c) 2019 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+if SOC_SERIES_NRF70X
+
+source "soc/arm/nordic_nrf/nrf70/Kconfig.defconfig.nrf70*"
+
+config SOC_SERIES
+	default "nrf70"
+
+endif # SOC_SERIES_NRF70X

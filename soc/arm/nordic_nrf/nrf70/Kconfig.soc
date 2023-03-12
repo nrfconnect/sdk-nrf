@@ -1,0 +1,32 @@
+# Nordic Semiconductor nRF53 MCU line
+
+# Copyright (c) 2019 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+if SOC_SERIES_NRF70X
+config SOC_NRF7002_CPUAPP
+	bool
+	select SOC_NRF5340_CPUAPP_QKAA
+	select CPU_HAS_NRF_IDAU
+	select CPU_HAS_FPU
+	select ARMV8_M_DSP
+
+config SOC_NRF7002_CPUNET
+	bool
+	select SOC_NRF5340_CPUNET_QKAA
+	select HAS_NO_PM
+
+choice
+	prompt "nRF70x MCU Selection"
+
+config SOC_NRF7002_CPUAPP_QKAA
+	bool "NRF7002_CPUAPP_QKAA"
+	select SOC_NRF7002_CPUAPP
+
+config SOC_NRF7002_CPUNET_QKAA
+	bool "NRF7002_CPUNET_QKAA"
+	select SOC_NRF7002_CPUNET
+
+endchoice
+
+endif # SOC_SERIES_NRF70X

@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+orsource "./soc/Kconfig"
+orsource "./soc/$(ARCH)/*/Kconfig.defconfig"
 # Usually BOARD_DIR is an absolute path and sourced through '<ZEPHYR_ROOT>/boards/Kconfig'.
 # But for compliance and doc generation it's a glob and this line ensures that
 # boards in sdk-nrf are sourced properly in those occasions.

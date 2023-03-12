@@ -3,7 +3,7 @@
 # Copyright (c) 2022 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-if SOC_NRF5340_CPUAPP_QKAA
+if SOC_NRF7002_CPUAPP_QKAA
 
 config BOARD_NRF7002DK_NRF5340_CPUAPP
 	bool "nRF7002 DK nRF5340 Application MCU"
@@ -15,4 +15,4 @@ endif # SOC_NRF5340_CPUAPP_QKAA
 
 config BOARD_NRF7002DK_NRF5340_CPUNET
 	bool "nRF7002 DK NRF5340 Network MCU"
-	depends on SOC_NRF5340_CPUNET_QKAA
+	depends on SOC_NRF7002_CPUNET_QKAA

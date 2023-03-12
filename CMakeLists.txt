@@ -17,6 +17,12 @@ include(cmake/multi_image.cmake)
 
 zephyr_include_directories(include)
 
+message(SOC_DIR=${SOC_DIR})
+if(EXISTS ${SOC_DIR}/${ARCH}/CMakeLists.txt)
+  add_subdirectory(soc/${ARCH})
+else()
+  add_subdirectory(soc/${ARCH}/${SOC_PATH})
+endif()
 add_subdirectory(ext)
 add_subdirectory(lib)
 add_subdirectory(samples)
