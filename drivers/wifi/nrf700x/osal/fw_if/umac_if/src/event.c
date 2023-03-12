@@ -758,9 +758,19 @@ static enum wifi_nrf_status umac_process_sys_events(struct wifi_nrf_fmac_dev_ctx
 		status = umac_event_rf_test_process(fmac_dev_ctx,
 						    sys_head);
 		break;
+	case NRF_WIFI_EVENT_RADIOCMD_STATUS:
+		struct nrf_wifi_umac_event_err_status *umac_status =
+			((struct nrf_wifi_umac_event_err_status *)sys_head);
+		fmac_dev_ctx->radio_cmd_status = umac_status->status;
+		fmac_dev_ctx->radio_cmd_done = true;
+		status = WIFI_NRF_STATUS_SUCCESS;
+		break;
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 	default:
-		status = WIFI_NRF_STATUS_FAIL;
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unknown event recd: %d\n",
+				      __func__,
+				      ((struct nrf_wifi_sys_head *)sys_head)->cmd_event);
 		break;
 	}
 
