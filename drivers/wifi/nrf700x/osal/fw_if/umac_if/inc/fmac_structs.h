@@ -75,6 +75,10 @@ struct wifi_nrf_fmac_dev_ctx {
 	enum nrf_wifi_rf_test rf_test_type;
 	void *rf_test_cap_data;
 	unsigned int rf_test_cap_sz;
+#ifdef CONFIG_NRF700X_RADIO_TEST
+	bool radio_cmd_done;
+	enum nrf_wifi_radio_test_err_status radio_cmd_status;
+#endif /* CONFIG_NRF700X_RADIO_TEST */
 };
 
 #else /* CONFIG_NRF700X_RADIO_TEST */
