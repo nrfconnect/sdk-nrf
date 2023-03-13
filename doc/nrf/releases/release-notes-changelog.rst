@@ -247,6 +247,16 @@ nRF9160 samples
 
     * Increased the MCUboot partition size to the minimum necessary to allow bootloader FOTA.
 
+* :ref:`nrf_cloud_rest_device_message` sample:
+
+  * Added:
+
+    * Overlays to use RTT instead of UART for testing purposes.
+
+  * Updated:
+
+    * The Hello World message sent to nRF Cloud now contains a timestamp (message ID).
+
 Peripheral samples
 ------------------
 
