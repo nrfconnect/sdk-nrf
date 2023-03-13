@@ -193,6 +193,8 @@ The following table indicates the software maturity levels of the support for ea
 
   .. sml-table:: thread
 
+.. _software_maturity_protocol_matter:
+
 Matter features support
 ***********************
 
