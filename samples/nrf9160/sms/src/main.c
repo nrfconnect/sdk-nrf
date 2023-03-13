@@ -8,6 +8,7 @@
 #include <zephyr/kernel.h>
 #include <string.h>
 #include <modem/sms.h>
+#include <modem/nrf_modem_lib.h>
 
 
 static void sms_callback(struct sms_data *const data, void *context)
@@ -57,6 +58,12 @@ void main(void)
 	int ret = 0;
 
 	printk("\nSMS sample starting\n");
+
+	ret = nrf_modem_lib_init();
+	if (ret) {
+		printk("Modem library initialization failed, error: %d\n", ret);
+		return;
+	}
 
 	handle = sms_register_listener(sms_callback, NULL);
 	if (handle) {

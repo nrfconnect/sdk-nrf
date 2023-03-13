@@ -451,6 +451,8 @@ Modem libraries
     * The Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_IPC_PRIO_OVERRIDE` is now deprecated.
     * The :c:func:`nrf_modem_lib_init` function is now initializing the Modem library in normal operating mode only and the ``mode`` parameter is removed from the input parameters.
       Use the :c:func:`nrf_modem_lib_bootloader_init` function to initialize the Modem library in bootloader mode.
+    * The Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_SYS_INIT` is now deprecated.
+      The application initializes the modem library using the :c:func:`nrf_modem_lib_init` function instead.
 
   * Removed:
 

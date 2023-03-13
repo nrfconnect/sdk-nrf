@@ -181,6 +181,12 @@ void main(void)
 
 	printk("HTTPS client sample started\n\r");
 
+	err = nrf_modem_lib_init();
+	if (err) {
+		printk("Modem library initialization failed, error: %d\n", err);
+		return;
+	}
+
 	/* Setup a callback for the default PDP context (zero).
 	 * Do this before switching to function mode 1 (CFUN=1)
 	 * to receive the first activation event.

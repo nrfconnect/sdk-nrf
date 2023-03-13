@@ -149,16 +149,6 @@ void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
 	__ASSERT(false, "Modem crash detected, halting application execution");
 }
 
-NRF_MODEM_LIB_ON_INIT(modem_shell_init_hook, on_modem_lib_init, NULL);
-
-/* Initialized to value different than success (0) */
-static int modem_lib_init_result = -1;
-
-static void on_modem_lib_init(int ret, void *ctx)
-{
-	modem_lib_init_result = ret;
-}
-
 static void mosh_print_version_info(void)
 {
 #if defined(APP_VERSION)
@@ -225,14 +215,6 @@ void main(void)
 
 	mosh_print_version_info();
 
-#if !defined(CONFIG_LWM2M_CARRIER) && !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
-	/* Manually initialize modem library when CONFIG_NRF_MODEM_LIB_SYS_INIT is disabled.
-	 * This is necessary for the modem trace flash backend. Which depend on the flash device
-	 * to be initialized before initializing the nRF modem library.
-	 */
-	nrf_modem_lib_init();
-#endif
-
 #if defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_MQTT)
 #if defined(CONFIG_MOSH_IPERF3)
 	/* Due to iperf3, we cannot let nrf cloud lib to initialize cJSON lib to be
@@ -264,8 +246,7 @@ void main(void)
 		&cfg);
 
 #if !defined(CONFIG_LWM2M_CARRIER)
-	/* Get Modem library initialization return value. */
-	err = modem_lib_init_result;
+	err = nrf_modem_lib_init();
 	switch (err) {
 	case 0:
 		/* Modem library was initialized successfully. */
@@ -293,7 +274,7 @@ void main(void)
 		break;
 	default:
 		/* Modem library initialization failed. */
-		printk("Could not initialize modemlib.\n");
+		printk("Could not initialize nrf_modem_lib, err %d.\n", err);
 		printk("Fatal error.\n");
 		return;
 	}

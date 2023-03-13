@@ -13,6 +13,7 @@
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
 #include <modem/lte_lc.h>
+#include <modem/nrf_modem_lib.h>
 #include <date_time.h>
 
 LOG_MODULE_REGISTER(gnss_sample, CONFIG_GNSS_SAMPLE_LOG_LEVEL);
@@ -617,10 +618,17 @@ static void print_fix_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 
 int main(void)
 {
+	int err;
 	uint8_t cnt = 0;
 	struct nrf_modem_gnss_nmea_data_frame *nmea_data;
 
 	LOG_INF("Starting GNSS sample");
+
+	err = nrf_modem_lib_init();
+	if (err) {
+		LOG_ERR("Modem library initialization failed, error: %d", err);
+		return err;
+	}
 
 	/* Initialize reference coordinates (if used). */
 	if (sizeof(CONFIG_GNSS_SAMPLE_REFERENCE_LATITUDE) > 1 &&

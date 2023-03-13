@@ -137,6 +137,12 @@ void main(void)
 
 	printk("AT Monitor sample started\n");
 
+	err = nrf_modem_lib_init();
+	if (err) {
+		printk("Modem library initialization failed, error: %d\n", err);
+		return;
+	}
+
 	printk("Subscribing to notifications\n");
 	err = nrf_modem_at_printf("AT+CEREG=1");
 	if (err) {

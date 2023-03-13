@@ -24,8 +24,14 @@ void main(void)
 
 	printk("Modem trace backend sample started\n");
 
-	printk("Connecting to network\n");
+	printk("Initializing modem library\n");
+	err = nrf_modem_lib_init();
+	if (err) {
+		printk("Modem library initialization failed, error: %d\n", err);
+		return;
+	}
 
+	printk("Connecting to network\n");
 	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
 	if (err) {
 		printk("Failed to change LTE mode, err %d\n", err);

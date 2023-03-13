@@ -587,13 +587,11 @@ void main(void)
 
 	LOG_INF(APP_BANNER);
 
-#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
 	ret = nrf_modem_lib_init();
 	if (ret < 0) {
 		LOG_ERR("Unable to init modem library (%d)", ret);
 		return;
 	}
-#endif
 
 	ret = app_event_manager_init();
 	if (ret) {

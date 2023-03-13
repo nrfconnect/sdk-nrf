@@ -10,6 +10,7 @@
 #include <zephyr/net/socket.h>
 #include <zephyr/net/tls_credentials.h>
 #include <modem/lte_lc.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/modem_key_mgmt.h>
 
 #define HTTPS_PORT 443
@@ -147,6 +148,12 @@ void main(void)
 	nrf_sec_cipher_t ciphersuite_list[] = { 0 };
 
 	printk("TLS Ciphersuites sample started\n\r");
+
+	err = nrf_modem_lib_init();
+	if (err) {
+		printk("Modem library initialization failed, error: %d\n", err);
+		return;
+	}
 
 	/* Provision certificates before connecting to the LTE network */
 	err = cert_provision();

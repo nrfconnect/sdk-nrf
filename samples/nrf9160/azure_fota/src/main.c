@@ -30,16 +30,6 @@ static struct k_work_delayable reboot_work;
 BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 			 "This sample does not support auto init and connect");
 
-NRF_MODEM_LIB_ON_INIT(azure_fota_init_hook, on_modem_lib_init, NULL);
-
-/* Initialized to value different than success (0) */
-static int modem_lib_init_result = -1;
-
-static void on_modem_lib_init(int ret, void *ctx)
-{
-	modem_lib_init_result = ret;
-}
-
 static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 {
 	switch (evt->type) {
@@ -207,7 +197,9 @@ void main(void)
 	LOG_INF("Azure FOTA sample started");
 	LOG_INF("This may take a while if a modem firmware update is pending");
 
-	switch (modem_lib_init_result) {
+	err = nrf_modem_lib_init();
+
+	switch (err) {
 	case NRF_MODEM_DFU_RESULT_OK:
 		LOG_INF("Modem firmware update successful!");
 		LOG_INF("Modem will run the new firmware after reboot");

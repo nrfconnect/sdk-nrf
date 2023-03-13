@@ -482,6 +482,9 @@ static void modem_configure(void)
 {
 	int err;
 
+	err = nrf_modem_lib_init();
+	__ASSERT(err == 0, "Modem library could not be initialized, err %d.", err);
+
 	display_state = LEDS_LTE_CONNECTING;
 
 	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
@@ -582,7 +585,7 @@ void main(void)
 	ble_init();
 
 	work_init();
-	cloud_init();
 	modem_configure();
+	cloud_init();
 	cloud_connect(NULL);
 }

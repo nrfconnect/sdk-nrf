@@ -670,28 +670,27 @@ static int connect_cloud(void)
  */
 static int setup_modem(void)
 {
-	/* Initialize the modem library if required */
-	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
-		/*
-		 * If there is a pending modem delta firmware update stored, nrf_modem_lib_init will
-		 * attempt to install it before initializing the modem library, and return a
-		 * positive value to indicate that this occurred. This code can be used to
-		 * determine whether the update was successful.
-		 */
-		int ret = nrf_modem_lib_init();
+	int ret;
 
-		if (ret < 0) {
-			LOG_ERR("Modem library initialization failed, error: %d", ret);
-			return ret;
-		} else if (ret == NRF_MODEM_DFU_RESULT_OK) {
-			LOG_DBG("Modem library initialized after "
-				"successful modem firmware update.");
-		} else if (ret > 0) {
-			LOG_ERR("Modem library initialized after "
-				"failed modem firmware update, error: %d", ret);
-		} else {
-			LOG_DBG("Modem library initialized.");
-		}
+	/*
+	 * If there is a pending modem delta firmware update stored, nrf_modem_lib_init will
+	 * attempt to install it before initializing the modem library, and return a
+	 * positive value to indicate that this occurred. This code can be used to
+	 * determine whether the update was successful.
+	 */
+	ret = nrf_modem_lib_init();
+
+	if (ret < 0) {
+		LOG_ERR("Modem library initialization failed, error: %d", ret);
+		return ret;
+	} else if (ret == NRF_MODEM_DFU_RESULT_OK) {
+		LOG_DBG("Modem library initialized after "
+			"successful modem firmware update.");
+	} else if (ret > 0) {
+		LOG_ERR("Modem library initialized after "
+			"failed modem firmware update, error: %d", ret);
+	} else {
+		LOG_DBG("Modem library initialized.");
 	}
 
 	/* Register to be notified when the modem has figured out the current time. */
