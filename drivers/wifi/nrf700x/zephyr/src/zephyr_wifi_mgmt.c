@@ -347,6 +347,31 @@ out:
 	return ret;
 }
 
+void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
+					     struct nrf_wifi_umac_event_power_save_info *ps_info,
+					     unsigned int event_len)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	if (!vif_ctx || !ps_info) {
+		return;
+	}
+
+	vif_ctx_zep = vif_ctx;
+
+	vif_ctx_zep->ps_info->mode = ps_info->ps_mode;
+	vif_ctx_zep->ps_info->enabled = ps_info->enabled;
+	vif_ctx_zep->ps_info->num_twt_flows = ps_info->num_twt_flows;
+
+	for (int i = 0; i < ps_info->num_twt_flows; i++) {
+		memcpy(&vif_ctx_zep->ps_info->twt_flows[i],
+		       &ps_info->twt_flow_info[i],
+		       sizeof(struct wifi_twt_flow_info));
+	}
+
+	vif_ctx_zep->ps_config_info_evnt = true;
+}
+
 int wifi_nrf_set_twt(const struct device *dev,
 		     struct wifi_twt_params *twt_params)
 {
