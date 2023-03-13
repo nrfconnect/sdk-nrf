@@ -123,7 +123,11 @@ static struct {
 	} in;
 
 	struct {
+#if CONFIG_AUDIO_BIT_DEPTH_16
 		int16_t __aligned(sizeof(uint32_t)) fifo[MAX_FIFO_SIZE];
+#elif CONFIG_AUDIO_BIT_DEPTH_32
+		int32_t __aligned(sizeof(uint32_t)) fifo[MAX_FIFO_SIZE];
+#endif
 		uint16_t prod_blk_idx; /* Output producer audio block index */
 		uint16_t cons_blk_idx; /* Output consumer audio block index */
 		uint32_t prod_blk_ts[FIFO_NUM_BLKS];
@@ -588,7 +592,7 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts, uint32_t *r
 				}
 
 				tx_buf = (uint8_t *)&ctrl_blk.out
-						 .fifo[next_out_blk_idx * BLK_MONO_SIZE_OCTETS];
+						 .fifo[next_out_blk_idx * BLK_STEREO_NUM_SAMPS];
 
 			} else {
 				if (stream_state_get() == STATE_STREAMING) {
@@ -860,9 +864,15 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 	uint32_t out_blk_idx = ctrl_blk.out.prod_blk_idx;
 
 	for (uint32_t i = 0; i < NUM_BLKS_IN_FRAME; i++) {
+#if CONFIG_AUDIO_BIT_DEPTH_16
 		memcpy(&ctrl_blk.out.fifo[out_blk_idx * BLK_STEREO_NUM_SAMPS],
 		       &((int16_t *)ctrl_blk.decoded_data)[i * BLK_STEREO_NUM_SAMPS],
 		       BLK_STEREO_SIZE_OCTETS);
+#elif CONFIG_AUDIO_BIT_DEPTH_32
+		memcpy(&ctrl_blk.out.fifo[out_blk_idx * BLK_STEREO_NUM_SAMPS],
+		       &((int32_t *)ctrl_blk.decoded_data)[i * BLK_STEREO_NUM_SAMPS],
+		       BLK_STEREO_SIZE_OCTETS);
+#endif
 
 		/* Record producer block start reference */
 		ctrl_blk.out.prod_blk_ts[out_blk_idx] = recv_frame_ts_us + (i * BLK_PERIOD_US);
