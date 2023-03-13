@@ -14,6 +14,8 @@
 #include <net/nrf_cloud_alerts.h>
 #include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
+#include <date_time.h>
+#include <zephyr/random/rand32.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_rest_device_message,
 		    CONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL);
@@ -22,6 +24,12 @@ LOG_MODULE_REGISTER(nrf_cloud_rest_device_message,
 #define LTE_LED_NUM		CONFIG_REST_DEVICE_MESSAGE_LTE_LED_NUM
 #define SEND_LED_NUM		CONFIG_REST_DEVICE_MESSAGE_SEND_LED_NUM
 #define JITP_REQ_WAIT_SEC	10
+
+/* This does not match a predefined schema, but it is not a problem. */
+#define SAMPLE_MSG_FMT		"{\"sample_message\":"\
+			"\"Hello World, from the REST Device Message Sample! "\
+			"Message ID: %lld\"}"
+#define SAMPLE_MSG_BUF_SIZE (sizeof(SAMPLE_MSG_FMT) + 19)
 
 /* Semaphore to indicate a button has been pressed */
 static K_SEM_DEFINE(button_press_sem, 0, 1);
@@ -140,7 +148,7 @@ static int do_jitp(void)
 
 	LOG_INF("Performing JITP...");
 
-	/* Turn the SEND LED, indicating in-progress JITP*/
+	/* Turn the SEND LED, indicating in-progress JITP */
 	set_led(SEND_LED_NUM, 1);
 
 	ret = nrf_cloud_rest_jitp(CONFIG_NRF_CLOUD_SEC_TAG);
@@ -344,6 +352,36 @@ static int setup(void)
 	return 0;
 }
 
+int send_hello_world_msg(void)
+{
+	int err;
+	int64_t time_now;
+	char buf[SAMPLE_MSG_BUF_SIZE];
+
+	/* Get the current timestamp */
+	err = date_time_now(&time_now);
+	if (err) {
+		LOG_ERR("Failed to get timestamp, using random number");
+		sys_rand_get(&time_now, sizeof(time_now));
+	}
+
+	/* Send off a hello world message! */
+	err = snprintk(buf, SAMPLE_MSG_BUF_SIZE, SAMPLE_MSG_FMT, time_now);
+	if (err < 0 || err > SAMPLE_MSG_BUF_SIZE) {
+		LOG_ERR("Failed to create Hello World message.");
+		return err;
+	}
+
+	err = send_message(buf);
+	if (err) {
+		LOG_ERR("Failed to send Hello World message");
+	} else {
+		LOG_INF("Sent Hello World message with ID: %lld", time_now);
+	}
+
+	return err;
+}
+
 void main(void)
 {
 	int err;
@@ -362,10 +400,7 @@ void main(void)
 					ALERT_TYPE_DEVICE_NOW_ONLINE, 0, NULL);
 	rest_ctx.keep_alive = false;
 
-	/* Send off a hello world message! */
-	/* This does not match a predefined schema. But that's not a problem! */
-	err = send_message("{\"sample_message\":"
-					    "\"Hello World, from the REST Device Message Sample!\"}");
+	err = send_hello_world_msg();
 	if (err) {
 		LOG_ERR("Hello World failed, stopping.");
 		return;
