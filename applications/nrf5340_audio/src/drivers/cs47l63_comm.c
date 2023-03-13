@@ -14,7 +14,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 
-#include "macros_common.h"
 #include "bsp_driver_if.h"
 #include "cs47l63.h"
 
@@ -72,44 +71,54 @@ static void notification_callback(uint32_t event_flags, void *arg)
 /* Locks the mutex and holds the CS pin
  * for consecutive transactions
  */
-static void spi_mutex_lock(void)
+static int spi_mutex_lock(void)
 {
 	int ret;
 
 	ret = k_mutex_lock(&cirrus_reg_oper_mutex, K_FOREVER);
-	ERR_CHK(ret);
+	if (ret) {
+		LOG_ERR("Failed to lock mutex: %d", ret);
+		return ret;
+	}
 
 	/* If operation mode set to HOLD or the SPI_LOCK_ON is set when
 	 * taking the mutex something is wrong
 	 */
 	if ((config.operation & SPI_HOLD_ON_CS) || (config.operation & SPI_LOCK_ON)) {
-		ERR_CHK_MSG(-EPERM,
-			    "SPI_HOLD_ON_CS and SPI_LOCK_ON must be freed before releasing mutex");
+		LOG_ERR("SPI_HOLD_ON_CS and SPI_LOCK_ON must be freed before releasing mutex");
+		return -EPERM;
 	}
+
+	return 0;
 }
 
 /* Unlocks mutex and CS pin */
-static void spi_mutex_unlock(void)
+static int spi_mutex_unlock(void)
 {
+	int ret;
 	/* If operation mode still set to HOLD or
 	 * the SPI_LOCK_ON is still set when releasing the mutex
 	 * something is wrong
 	 */
 	if ((config.operation & SPI_HOLD_ON_CS) || (config.operation & SPI_LOCK_ON)) {
-		ERR_CHK_MSG(-EPERM,
-			    "SPI_HOLD_ON_CS and SPI_LOCK_ON must be freed before releasing mutex");
+		LOG_ERR("SPI_HOLD_ON_CS and SPI_LOCK_ON must be freed before releasing mutex");
+		return -EPERM;
 	}
 
-	k_mutex_unlock(&cirrus_reg_oper_mutex);
+	ret = k_mutex_unlock(&cirrus_reg_oper_mutex);
+	if (ret) {
+		LOG_ERR("Failed to unlock mutex: %d", ret);
+		return ret;
+	}
+
+	return 0;
 }
 
 /* Pin interrupt handler for CS47L63 */
 static void cs47l63_comm_pin_int_handler(const struct device *gpio_port, struct gpio_callback *cb,
 					 uint32_t pins)
 {
-	if (bsp_callback == NULL) {
-		ERR_CHK_MSG(-ENODEV, "No callback registered");
-	}
+	__ASSERT(bsp_callback != NULL, "No callback registered");
 
 	if (pins == BIT(hw_codec_irq.pin)) {
 		bsp_callback(BSP_STATUS_OK, bsp_callback_arg);
@@ -143,13 +152,23 @@ static uint32_t cs47l63_comm_reg_read(uint32_t bsp_dev_id, uint8_t *addr_buffer,
 	rx.buffers = rx_buf;
 	rx.count = ARRAY_SIZE(rx_buf);
 
-	spi_mutex_lock();
+	ret = spi_mutex_lock();
+	if (ret) {
+		return BSP_STATUS_FAIL;
+	}
+
 	config.operation = SPI_OPER_POST_FREE;
 
 	ret = spi_transceive(cirrus_dev, &config, &rx, &rx);
-	ERR_CHK(ret);
+	if (ret) {
+		LOG_ERR("Failed transceive operation: %d", ret);
+		return BSP_STATUS_FAIL;
+	}
 
-	spi_mutex_unlock();
+	ret = spi_mutex_unlock();
+	if (ret) {
+		return BSP_STATUS_FAIL;
+	}
 
 	return BSP_STATUS_OK;
 }
@@ -180,7 +199,11 @@ static uint32_t cs47l63_comm_reg_write(uint32_t bsp_dev_id, uint8_t *addr_buffer
 	tx.buffers = tx_buf;
 	tx.count = ARRAY_SIZE(tx_buf);
 
-	spi_mutex_lock();
+	ret = spi_mutex_lock();
+	if (ret) {
+		return BSP_STATUS_FAIL;
+	}
+
 	config.operation = SPI_OPER_POST_FREE;
 
 	ret = spi_write(cirrus_dev, &config, &tx);
@@ -189,7 +212,10 @@ static uint32_t cs47l63_comm_reg_write(uint32_t bsp_dev_id, uint8_t *addr_buffer
 		return BSP_STATUS_FAIL;
 	}
 
-	spi_mutex_unlock();
+	ret = spi_mutex_unlock();
+	if (ret) {
+		return BSP_STATUS_FAIL;
+	}
 
 	return BSP_STATUS_OK;
 }
