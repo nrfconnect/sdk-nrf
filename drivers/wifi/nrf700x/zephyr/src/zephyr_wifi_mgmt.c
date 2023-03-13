@@ -612,7 +612,7 @@ int wifi_nrf_set_twt(const struct device *dev,
 	}
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_scan failed\n", __func__);
+		LOG_ERR("%s: wifi_nrf_set_twt failed\n", __func__);
 		goto out;
 	}
 
