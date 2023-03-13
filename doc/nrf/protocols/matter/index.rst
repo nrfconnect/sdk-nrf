@@ -19,7 +19,7 @@ Matter over Thread support is in the :ref:`production state <software_maturity>`
 
 The |NCS| allows you to develop applications that are compatible with Matter.
 See :ref:`matter_samples` for the list of available samples or :ref:`Matter Weather Station <matter_weather_station_app>` for specific Matter application.
-If you are new to Matter, you can follow along with the video tutorials on Nordic Semiconductor's YouTube channel, for example `Developing Matter products with nRF Connect SDK`_.
+If you are new to Matter, you can follow along with the video tutorials on Nordic Semiconductor's YouTube channel, for example `Developing Matter 1.0 products with nRF Connect SDK`_.
 
 .. note::
     |matter_gn_required_note|

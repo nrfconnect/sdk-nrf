@@ -9,17 +9,12 @@ Matter overview
 
 |matter_intro|
 
-Watch the following webinar for a brief introduction to Matter.
+Watch the following video for a brief introduction to Matter.
 
 .. raw:: html
 
    <h1 align="center">
-   <iframe id="Matter_Introduction_TechWebinar"
-           title="NordicTech Webinar: Introduction to Matter"
-           width="700"
-           height="393"
-           src="https://webinars.nordicsemi.com/v.ihtml/player.html?source=embed&photo%5fid=70782494">
-   </iframe>
+   <iframe width="560" height="315" src="https://www.youtube.com/embed/v_285vCHifw" title="Introduction to Matter" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
    </h1>
 
 The following are some of the key features of Matter:
