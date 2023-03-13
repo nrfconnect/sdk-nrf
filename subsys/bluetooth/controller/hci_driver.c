@@ -841,7 +841,7 @@ static int configure_memory_usage(void)
 	cfg.periodic_sync_rsp_tx_buffer_cfg.count =
 		CONFIG_BT_CTLR_SDC_PERIODIC_SYNC_RSP_TX_BUFFER_COUNT;
 	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-					  SDC_CFG_TYPE_PERIODIC_SYNC_TX_BUFFER_CFG, &cfg);
+					  SDC_CFG_TYPE_PERIODIC_SYNC_RSP_TX_BUFFER_CFG, &cfg);
 	if (required_memory < 0) {
 		return required_memory;
 	}
