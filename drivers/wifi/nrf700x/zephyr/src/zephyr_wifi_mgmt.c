@@ -368,6 +368,123 @@ static uint32_t wifi_nrf_twt_float_to_ms(struct twt_interval_float twt_interval_
 	return floor(ldexp(twt_interval_float.mantissa, twt_interval_float.exponent) / 1000);
 }
 
+static unsigned char twt_wifi_mgmt_to_rpu_neg_type(enum wifi_twt_negotiation_type neg_type)
+{
+	unsigned char rpu_neg_type = 0;
+
+	switch (neg_type) {
+	case WIFI_TWT_INDIVIDUAL:
+		rpu_neg_type = NRF_WIFI_TWT_NEGOTIATION_TYPE_INDIVIDUAL;
+		break;
+	case WIFI_TWT_BROADCAST:
+		rpu_neg_type = NRF_WIFI_TWT_NEGOTIATION_TYPE_BROADCAST;
+		break;
+	default:
+		LOG_ERR("%s: Invalid negotiation type: %d\n",
+			__func__, neg_type);
+		break;
+	}
+
+	return rpu_neg_type;
+}
+
+static enum wifi_twt_negotiation_type twt_rpu_to_wifi_mgmt_neg_type(unsigned char neg_type)
+{
+	enum wifi_twt_negotiation_type wifi_neg_type = WIFI_TWT_INDIVIDUAL;
+
+	switch (neg_type) {
+	case NRF_WIFI_TWT_NEGOTIATION_TYPE_INDIVIDUAL:
+		wifi_neg_type = WIFI_TWT_INDIVIDUAL;
+		break;
+	case NRF_WIFI_TWT_NEGOTIATION_TYPE_BROADCAST:
+		wifi_neg_type = WIFI_TWT_BROADCAST;
+		break;
+	default:
+		LOG_ERR("%s: Invalid negotiation type: %d\n",
+			__func__, neg_type);
+		break;
+	}
+
+	return wifi_neg_type;
+}
+
+/* Though setup_cmd enums have 1-1 mapping but due to data type different need these */
+static enum wifi_twt_setup_cmd twt_rpu_to_wifi_mgmt_setup_cmd(signed int setup_cmd)
+{
+	enum wifi_twt_setup_cmd wifi_setup_cmd = WIFI_TWT_SETUP_CMD_REQUEST;
+
+	switch (setup_cmd) {
+	case NRF_WIFI_REQUEST_TWT:
+		wifi_setup_cmd = WIFI_TWT_SETUP_CMD_REQUEST;
+		break;
+	case NRF_WIFI_SUGGEST_TWT:
+		wifi_setup_cmd = WIFI_TWT_SETUP_CMD_SUGGEST;
+		break;
+	case NRF_WIFI_DEMAND_TWT:
+		wifi_setup_cmd = WIFI_TWT_SETUP_CMD_DEMAND;
+		break;
+	case NRF_WIFI_GROUPING_TWT:
+		wifi_setup_cmd = WIFI_TWT_SETUP_CMD_GROUPING;
+		break;
+	case NRF_WIFI_ACCEPT_TWT:
+		wifi_setup_cmd = WIFI_TWT_SETUP_CMD_ACCEPT;
+		break;
+	case NRF_WIFI_ALTERNATE_TWT:
+		wifi_setup_cmd = WIFI_TWT_SETUP_CMD_ALTERNATE;
+		break;
+	case NRF_WIFI_DICTATE_TWT:
+		wifi_setup_cmd = WIFI_TWT_SETUP_CMD_DICTATE;
+		break;
+	case NRF_WIFI_REJECT_TWT:
+		wifi_setup_cmd = WIFI_TWT_SETUP_CMD_REJECT;
+		break;
+	default:
+		LOG_ERR("%s: Invalid setup command: %d\n",
+			__func__, setup_cmd);
+		break;
+	}
+
+	return wifi_setup_cmd;
+}
+
+static signed int twt_wifi_mgmt_to_rpu_setup_cmd(enum wifi_twt_setup_cmd setup_cmd)
+{
+	signed int rpu_setup_cmd = NRF_WIFI_REQUEST_TWT;
+
+	switch (setup_cmd) {
+	case WIFI_TWT_SETUP_CMD_REQUEST:
+		rpu_setup_cmd = NRF_WIFI_REQUEST_TWT;
+		break;
+	case WIFI_TWT_SETUP_CMD_SUGGEST:
+		rpu_setup_cmd = NRF_WIFI_SUGGEST_TWT;
+		break;
+	case WIFI_TWT_SETUP_CMD_DEMAND:
+		rpu_setup_cmd = NRF_WIFI_DEMAND_TWT;
+		break;
+	case WIFI_TWT_SETUP_CMD_GROUPING:
+		rpu_setup_cmd = NRF_WIFI_GROUPING_TWT;
+		break;
+	case WIFI_TWT_SETUP_CMD_ACCEPT:
+		rpu_setup_cmd = NRF_WIFI_ACCEPT_TWT;
+		break;
+	case WIFI_TWT_SETUP_CMD_ALTERNATE:
+		rpu_setup_cmd = NRF_WIFI_ALTERNATE_TWT;
+		break;
+	case WIFI_TWT_SETUP_CMD_DICTATE:
+		rpu_setup_cmd = NRF_WIFI_DICTATE_TWT;
+		break;
+	case WIFI_TWT_SETUP_CMD_REJECT:
+		rpu_setup_cmd = NRF_WIFI_REJECT_TWT;
+		break;
+	default:
+		LOG_ERR("%s: Invalid setup command: %d\n",
+			__func__, setup_cmd);
+		break;
+	}
+
+	return rpu_setup_cmd;
+}
+
 void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 					     struct nrf_wifi_umac_event_power_save_info *ps_info,
 					     unsigned int event_len)
@@ -392,11 +509,10 @@ void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 		memset(twt_zep, 0, sizeof(struct wifi_twt_flow_info));
 
 		twt_zep->flow_id = twt_rpu->twt_flow_id;
-		twt_zep->implicit = twt_rpu->is_implicit;
-		twt_zep->trigger = twt_rpu->ap_trigger_frame;
-		twt_zep->announce = twt_rpu->twt_flow_type;
-		twt_zep->implicit = twt_rpu->is_implicit;
-		twt_zep->negotiation_type = twt_rpu->neg_type;
+		twt_zep->implicit = twt_rpu->is_implicit ? 1 : 0;
+		twt_zep->trigger = twt_rpu->ap_trigger_frame ? 1 : 0;
+		twt_zep->announce = twt_rpu->twt_flow_type == NRF_WIFI_TWT_FLOW_TYPE_ANNOUNCED;
+		twt_zep->negotiation_type = twt_rpu_to_wifi_mgmt_neg_type(twt_rpu->neg_type);
 		twt_zep->dialog_token = twt_rpu->dialog_token;
 		twt_interval_float.mantissa = twt_rpu->twt_target_wake_interval_mantissa;
 		twt_interval_float.exponent = twt_rpu->twt_target_wake_interval_exponent;
@@ -407,6 +523,7 @@ void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 	vif_ctx_zep->ps_config_info_evnt = true;
 }
 
+
 int wifi_nrf_set_twt(const struct device *dev,
 		     struct wifi_twt_params *twt_params)
 {
@@ -414,8 +531,6 @@ int wifi_nrf_set_twt(const struct device *dev,
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_umac_config_twt_info twt_info = {0};
-	double mantissa = 0;
-	int exponent;
 	int ret = -1;
 
 	if (!dev || !twt_params) {
@@ -442,11 +557,16 @@ int wifi_nrf_set_twt(const struct device *dev,
 			wifi_nrf_twt_ms_to_float(twt_params->setup.twt_interval_ms);
 
 		twt_info.twt_flow_id = twt_params->flow_id;
-		twt_info.neg_type = twt_params->negotiation_type;
-		twt_info.setup_cmd = twt_params->setup_cmd;
+		twt_info.neg_type = twt_wifi_mgmt_to_rpu_neg_type(twt_params->negotiation_type);
+		twt_info.setup_cmd = twt_wifi_mgmt_to_rpu_setup_cmd(twt_params->setup_cmd);
 		twt_info.ap_trigger_frame = twt_params->setup.trigger;
 		twt_info.is_implicit = twt_params->setup.implicit;
-		twt_info.twt_flow_type = twt_params->setup.announce;
+		if (twt_params->setup.announce) {
+			twt_info.twt_flow_type = NRF_WIFI_TWT_FLOW_TYPE_ANNOUNCED;
+		} else {
+			twt_info.twt_flow_type = NRF_WIFI_TWT_FLOW_TYPE_UNANNOUNCED;
+		}
+
 		/* Interval values are passed as ms to UMAC */
 		twt_info.nominal_min_twt_wake_duration =
 				twt_params->setup.twt_wake_interval_ms;
@@ -508,9 +628,6 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_twt_params twt_params;
-	double target_wake_time_ms = 0;
-	double mantissa = 0;
-	int exponent = 0;
 	struct twt_interval_float twt_interval_float;
 
 	if (!vif_ctx || !twt_setup_info) {
@@ -523,11 +640,12 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 	twt_params.flow_id = twt_setup_info->info.twt_flow_id;
 	/* Store the negotiated flow id and pass it to user. */
 	vif_ctx_zep->neg_twt_flow_id = twt_setup_info->info.twt_flow_id;
-	twt_params.negotiation_type = twt_setup_info->info.neg_type;
-	twt_params.setup_cmd = twt_setup_info->info.setup_cmd;
-	twt_params.setup.trigger = twt_setup_info->info.ap_trigger_frame;
-	twt_params.setup.implicit = twt_setup_info->info.is_implicit;
-	twt_params.setup.announce = twt_setup_info->info.twt_flow_type;
+	twt_params.negotiation_type = twt_rpu_to_wifi_mgmt_neg_type(twt_setup_info->info.neg_type);
+	twt_params.setup_cmd = twt_rpu_to_wifi_mgmt_setup_cmd(twt_setup_info->info.setup_cmd);
+	twt_params.setup.trigger = twt_setup_info->info.ap_trigger_frame ? 1 : 0;
+	twt_params.setup.implicit = twt_setup_info->info.is_implicit ? 1 : 0;
+	twt_params.setup.announce =
+		twt_setup_info->info.twt_flow_type == NRF_WIFI_TWT_FLOW_TYPE_ANNOUNCED;
 	/* Interval values are passed as us to UMAC */
 	twt_params.setup.twt_wake_interval_ms =
 			twt_setup_info->info.nominal_min_twt_wake_duration;
