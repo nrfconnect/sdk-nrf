@@ -84,7 +84,11 @@ Bluetooth mesh
 Matter
 ------
 
-|no_changes_yet_note|
+* Added the Matter Nordic UART Service (NUS) feature to the :ref:`matter_lock_sample`.
+  This feature allows using Nordic UART Service to control the device remotely through Bluetooth LE and adding custom text commands to a Matter sample.
+  The Matter NUS implementation allows controlling the device regardless of whether the device is connected to a Matter network or not.
+  The feature is dedicated for the nRF5340 and the nRF52840 DKs.
+* Updated the :ref:`ug_matter` protocol page with a table that lists compatibility versions for the |NCS|, the Matter SDK, and the Matter specification.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
@@ -92,13 +96,6 @@ Matter fork
 +++++++++++
 
 The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``SVE RC2`` tag.
-
-  * Added:
-
-    * The Matter Nordic UART Service (NUS) feature to the :ref:`matter_lock_sample`.
-      This feature allows using Nordic UART Service to control the device remotely through Bluetooth LE and adding custom text commands to a Matter sample.
-      The Matter NUS implementation allows controlling the device regardless of whether the device is connected to a Matter network or not.
-      The feature is dedicated for the nRF5340 and the nRF52840 DKs.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 

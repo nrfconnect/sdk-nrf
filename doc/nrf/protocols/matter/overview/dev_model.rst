@@ -29,6 +29,19 @@ The fork is maintained and verified as a part of the nRF Connect SDK release pro
 
 For more information about Matter architecture and Matter in the |NCS|, read :ref:`ug_matter_overview_architecture_integration`.
 
+.. _ug_matter_overview_dev_model_support:
+
+Supported Matter versions in the |NCS|
+======================================
+
+The following table lists Matter versions supported in the |NCS|, with a brief overview of changes and the release date.
+
++-----------------+----------------------------------------------+---------------------+
+| Matter version  | Overview of changes                          | Release date        |
++=================+==============================================+=====================+
+| 1.0.0           | Initial version of the Matter specification. | November 2, 2022    |
++-----------------+----------------------------------------------+---------------------+
+
 .. _ug_matter_overview_dev_model_ecosystems:
 
 Compatibility with commercial ecosystems
