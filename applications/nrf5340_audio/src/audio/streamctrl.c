@@ -6,14 +6,15 @@
 
 #include "streamctrl.h"
 
-#include <zephyr/kernel.h>
 #include <stddef.h>
 #include <string.h>
 #include <errno.h>
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/device.h>
 #include <zephyr/debug/stack.h>
 
+#include "nrf5340_audio_common.h"
 #include "ctrl_events.h"
 #include "led.h"
 #include "button_assignments.h"
@@ -24,7 +25,6 @@
 #include "board.h"
 #include "le_audio.h"
 #include "audio_datapath.h"
-#include "audio_sync_timer.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(streamctrl, CONFIG_STREAMCTRL_LOG_LEVEL);
@@ -107,7 +107,8 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 				     uint32_t sdu_ref, enum audio_channel channel_index)
 {
 	/* Capture timestamp of when audio frame is received */
-	uint32_t recv_frame_ts = audio_sync_timer_curr_time_get();
+	uint32_t recv_frame_ts = nrfx_timer_capture(&audio_sync_timer_instance,
+						    AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL);
 
 	/* Since the audio datapath thread is preemptive, no actions on the
 	 * FIFO can happen whilst in this handler.

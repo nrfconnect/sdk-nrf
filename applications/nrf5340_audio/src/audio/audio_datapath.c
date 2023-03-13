@@ -6,19 +6,19 @@
 
 #include "audio_datapath.h"
 
-#include <zephyr/kernel.h>
-#include <nrfx_clock.h>
-#include <zephyr/shell/shell.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <zephyr/kernel.h>
+#include <zephyr/shell/shell.h>
+#include <nrfx_clock.h>
 
+#include "nrf5340_audio_common.h"
 #include "macros_common.h"
 #include "board.h"
 #include "led.h"
 #include "audio_i2s.h"
 #include "sw_codec_select.h"
-#include "audio_sync_timer.h"
 #include "audio_system.h"
 #include "tone.h"
 #include "contin_array.h"
@@ -747,7 +747,8 @@ void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
 	static int32_t count;
 	int ret;
 
-	uint32_t curr_frame_ts = audio_sync_timer_curr_time_get();
+	uint32_t curr_frame_ts = nrfx_timer_capture(&audio_sync_timer_instance,
+						    AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL);
 	int diff = curr_frame_ts - sdu_ref_us;
 
 	if (count++ % 100 == 0) {

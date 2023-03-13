@@ -62,6 +62,7 @@ target_sources(app PRIVATE
 
 # Include application events and configuration headers
 zephyr_library_include_directories(
+    include
     src/audio
     src/bluetooth
     src/drivers

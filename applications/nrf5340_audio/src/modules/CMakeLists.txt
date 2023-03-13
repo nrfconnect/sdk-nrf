@@ -7,6 +7,7 @@
 target_sources(app PRIVATE
 	       ${CMAKE_CURRENT_SOURCE_DIR}/audio_i2s.c
 	       ${CMAKE_CURRENT_SOURCE_DIR}/audio_usb.c
+	       ${CMAKE_CURRENT_SOURCE_DIR}/audio_sync_timer.c
 	       ${CMAKE_CURRENT_SOURCE_DIR}/button_handler.c
 	       ${CMAKE_CURRENT_SOURCE_DIR}/hw_codec.c
 	       ${CMAKE_CURRENT_SOURCE_DIR}/led.c
