@@ -567,7 +567,6 @@ int wifi_nrf_set_twt(const struct device *dev,
 			twt_info.twt_flow_type = NRF_WIFI_TWT_FLOW_TYPE_UNANNOUNCED;
 		}
 
-		/* Interval values are passed as ms to UMAC */
 		twt_info.nominal_min_twt_wake_duration =
 				twt_params->setup.twt_wake_interval_ms;
 		twt_info.twt_target_wake_interval_mantissa = twt_interval_float.mantissa;
@@ -646,7 +645,6 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 	twt_params.setup.implicit = twt_setup_info->info.is_implicit ? 1 : 0;
 	twt_params.setup.announce =
 		twt_setup_info->info.twt_flow_type == NRF_WIFI_TWT_FLOW_TYPE_ANNOUNCED;
-	/* Interval values are passed as us to UMAC */
 	twt_params.setup.twt_wake_interval_ms =
 			twt_setup_info->info.nominal_min_twt_wake_duration;
 	twt_interval_float.mantissa = twt_setup_info->info.twt_target_wake_interval_mantissa;
