@@ -9,6 +9,7 @@
 #include <nrf_modem_at.h>
 #include <modem/lte_lc.h>
 #include <modem/location.h>
+#include <modem/nrf_modem_lib.h>
 #include <date_time.h>
 
 static K_SEM_DEFINE(location_event, 0, 1);
@@ -239,6 +240,12 @@ int main(void)
 	int err;
 
 	printk("Location sample started\n\n");
+
+	err = nrf_modem_lib_init();
+	if (err) {
+		printk("Modem library initialization failed, error: %d\n", err);
+		return err;
+	}
 
 	if (IS_ENABLED(CONFIG_DATE_TIME)) {
 		/* Registering early for date_time event handler to avoid missing

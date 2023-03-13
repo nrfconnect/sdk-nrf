@@ -175,6 +175,12 @@ void main(void)
 
 	printk("Download client sample started\n");
 
+	err = nrf_modem_lib_init();
+	if (err) {
+		printk("Modem library initialization failed, error: %d\n", err);
+		return;
+	}
+
 #if CONFIG_SAMPLE_SECURE_SOCKET
 	/* Provision certificates before connecting to the network */
 	err = cert_provision();

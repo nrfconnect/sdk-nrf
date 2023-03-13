@@ -56,17 +56,6 @@ static struct nrf_cloud_rest_context rest_ctx = {
 /* Flag to indicate if the user requested JITP to be performed */
 static bool jitp_requested;
 
-NRF_MODEM_LIB_ON_INIT(nrf_cloud_rest_device_message_init_hook,
-		      on_modem_lib_init, NULL);
-
-/* Initialized to value different than success (0) */
-static int modem_lib_init_result = -1;
-
-static void on_modem_lib_init(int ret, void *ctx)
-{
-	modem_lib_init_result = ret;
-}
-
 static int set_led(const int led, const int state)
 {
 	int err = dk_set_led(led, state);
@@ -308,11 +297,9 @@ static int init(void)
 	}
 
 	/* Init modem */
-	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
-		modem_lib_init_result = nrf_modem_lib_init();
-	}
-	if (modem_lib_init_result) {
-		LOG_ERR("Failed to initialize modem library: 0x%X", modem_lib_init_result);
+	err = nrf_modem_lib_init();
+	if (err) {
+		LOG_ERR("Failed to initialize modem library: 0x%X", err);
 		return -EFAULT;
 	}
 

@@ -24,5 +24,6 @@ static void cereg_mon(const char *notif)
 void main(void)
 {
 	LOG_INF("SLM Shell starts on %s", CONFIG_BOARD);
+
 	(void)modem_slm_init(NULL);
 }

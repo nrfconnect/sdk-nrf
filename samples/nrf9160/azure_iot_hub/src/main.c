@@ -18,6 +18,10 @@
 #include <hw_id.h>
 #endif
 
+#if IS_ENABLED(CONFIG_NRF_MODEM_LIB)
+#include <modem/nrf_modem_lib.h>
+#endif
+
 #if IS_ENABLED(CONFIG_LTE_LINK_CONTROL)
 #include <modem/lte_lc.h>
 #endif
@@ -559,6 +563,14 @@ void main(void)
 
 	LOG_INF("Azure IoT Hub sample started");
 	LOG_INF("Device ID: %s", device_id);
+
+#if IS_ENABLED(CONFIG_NRF_MODEM_LIB)
+	err = nrf_modem_lib_init();
+	if (err) {
+		LOG_ERR("Modem library initialization failed, error: %d", err);
+		return;
+	}
+#endif
 
 #if IS_ENABLED(CONFIG_DK_LIBRARY)
 	dk_leds_init();

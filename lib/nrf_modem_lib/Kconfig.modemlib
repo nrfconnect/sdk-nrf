@@ -11,12 +11,14 @@ config HEAP_MEM_POOL_SIZE
 	default 512
 
 config NRF_MODEM_LIB_SYS_INIT
-	bool "Initialize during SYS_INIT"
-	default y
+	bool "Initialize during SYS_INIT [DEPRECATED]"
+	select DEPRECATED
 	help
 	  Initialize the Modem library automatically during the SYS_INIT sequence.
 	  Please note that initialization is synchronous and can take up to one
 	  minute in case the modem firmware is updated.
+	  This Kconfig option is deprecated. The application should instead use the
+	  nrf_modem_lib_init() function to initialize the modem library.
 
 menu "Memory configuration"
 

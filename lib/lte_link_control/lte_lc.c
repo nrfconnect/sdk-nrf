@@ -18,6 +18,7 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 #include <modem/at_monitor.h>
+#include <modem/nrf_modem_lib.h>
 #include <zephyr/logging/log.h>
 
 #include "lte_lc_helpers.h"
@@ -1817,8 +1818,3 @@ int lte_lc_factory_reset(enum lte_lc_factory_reset_type type)
 {
 	return nrf_modem_at_printf("AT%%XFACTORYRESET=%d", type) ? -EFAULT : 0;
 }
-
-#if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
-SYS_INIT(init_and_connect,
-		  APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
-#endif /* CONFIG_LTE_AUTO_INIT_AND_CONNECT */

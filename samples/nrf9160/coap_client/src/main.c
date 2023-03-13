@@ -11,6 +11,7 @@
 #include <zephyr/net/coap.h>
 #include <zephyr/net/socket.h>
 #include <modem/lte_lc.h>
+#include <modem/nrf_modem_lib.h>
 #include <zephyr/random/rand32.h>
 
 #define APP_COAP_SEND_INTERVAL_MS 5000
@@ -229,6 +230,12 @@ void main(void)
 	int err, received;
 
 	printk("The nRF CoAP client sample started\n");
+
+	err = nrf_modem_lib_init();
+	if (err) {
+		printk("Modem library initialization failed, error: %d\n", err);
+		return;
+	}
 
 	modem_configure();
 

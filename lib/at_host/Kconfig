@@ -6,7 +6,7 @@
 
 menuconfig AT_HOST_LIBRARY
 	bool "AT Host Library for nrf91"
-	depends on NRF_MODEM_LIB_SYS_INIT
+	depends on NRF_MODEM_LIB
 	select AT_MONITOR
 
 if AT_HOST_LIBRARY

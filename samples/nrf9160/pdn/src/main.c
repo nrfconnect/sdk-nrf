@@ -10,6 +10,7 @@
 #include <zephyr/net/net_ip.h>
 #include <modem/pdn.h>
 #include <modem/lte_lc.h>
+#include <modem/nrf_modem_lib.h>
 #include <nrf_modem_at.h>
 #include <nrf_socket.h>
 
@@ -99,6 +100,12 @@ void main(void)
 	char apn[32];
 
 	printk("PDN sample started\n");
+
+	err = nrf_modem_lib_init();
+	if (err) {
+		printk("Modem library initialization failed, error: %d\n", err);
+		return;
+	}
 
 	/* Setup a callback for the default PDP context (zero).
 	 * Do this before switching to function mode 1 (CFUN=1)

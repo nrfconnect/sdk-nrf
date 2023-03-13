@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <modem/lte_lc.h>
+#include <modem/nrf_modem_lib.h>
 #include <zephyr/net/socket.h>
 #include <dk_buttons_and_leds.h>
 
@@ -76,11 +77,17 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 static void modem_configure(void)
 {
 #if defined(CONFIG_NRF_MODEM_LIB)
+	int err;
+
+	err = nrf_modem_lib_init();
+	if (err) {
+		LOG_ERR("Modem library could not be initialized, err %d.", err);
+		return;
+	}
+
 	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
 		k_sem_give(&lte_connected);
 	} else {
-		int err;
-
 		err = lte_lc_init_and_connect_async(lte_handler);
 		if (err) {
 			LOG_ERR("Modem could not be configured, error: %d", err);

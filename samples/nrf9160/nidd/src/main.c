@@ -9,6 +9,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
 #include <modem/lte_lc.h>
+#include <modem/nrf_modem_lib.h>
 #include <nrf_modem_at.h>
 
 K_SEM_DEFINE(lte_connected, 0, 1);
@@ -46,10 +47,17 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 
 static void modem_init(void)
 {
-	int err = lte_lc_init();
+	int err;
 
+	err = nrf_modem_lib_init();
 	if (err) {
-		printk("Modem initialization failed, error: %d\n", err);
+		printk("Modem library initialization failed, error: %d\n", err);
+		return;
+	}
+
+	err = lte_lc_init();
+	if (err) {
+		printk("Modem LTE connection initialization failed, error: %d\n", err);
 		return;
 	}
 

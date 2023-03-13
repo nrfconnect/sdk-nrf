@@ -12,6 +12,7 @@
 #include <nrf_modem.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/pdn.h>
 
 #define MODULE modem_module
@@ -79,6 +80,14 @@ const k_tid_t module_thread;
 
 K_MSGQ_DEFINE(msgq_modem, sizeof(struct modem_msg_data),
 	      MODEM_QUEUE_ENTRY_COUNT, MODEM_QUEUE_BYTE_ALIGNMENT);
+
+K_SEM_DEFINE(nrf_modem_initialized, 0, 1);
+NRF_MODEM_LIB_ON_INIT(asset_tracker_init_hook, on_modem_lib_init, NULL);
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	k_sem_give(&nrf_modem_initialized);
+}
 
 static struct module_data self = {
 	.name = "modem",
@@ -938,6 +947,8 @@ static void module_thread_fn(void)
 		LOG_ERR("Failed starting module, error: %d", err);
 		SEND_ERROR(modem, MODEM_EVT_ERROR, err);
 	}
+
+	k_sem_take(&nrf_modem_initialized, K_FOREVER);
 
 	if (IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
 		state_set(STATE_INIT);

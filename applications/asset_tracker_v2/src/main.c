@@ -9,9 +9,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <app_event_manager.h>
-#if defined(CONFIG_NRF_MODEM_LIB)
 #include <modem/nrf_modem_lib.h>
-#endif /* CONFIG_NRF_MODEM_LIB */
 #include <zephyr/sys/reboot.h>
 #include <net/nrf_cloud.h>
 
@@ -120,18 +118,6 @@ static struct module_data self = {
 	.supports_shutdown = true,
 };
 
-#if defined(CONFIG_NRF_MODEM_LIB)
-NRF_MODEM_LIB_ON_INIT(asset_tracker_init_hook, on_modem_lib_init, NULL);
-
-/* Initialized to value different than success (0) */
-static int modem_lib_init_result = -1;
-
-static void on_modem_lib_init(int ret, void *ctx)
-{
-	modem_lib_init_result = ret;
-}
-#endif /* CONFIG_NRF_MODEM_LIB */
-
 /* Convenience functions used in internal state handling. */
 static char *state2str(enum state_type new_state)
 {
@@ -187,14 +173,14 @@ static void sub_state_set(enum sub_state_type new_state)
 	sub_state = new_state;
 }
 
+#if defined(CONFIG_NRF_MODEM_LIB)
 /* Check the return code from nRF modem library initialization to ensure that
  * the modem is rebooted if a modem firmware update is ready to be applied or
  * an error condition occurred during firmware update or library initialization.
  */
-static void handle_nrf_modem_lib_init_ret(void)
+static void modem_init(void)
 {
-#if defined(CONFIG_NRF_MODEM_LIB)
-	int ret = modem_lib_init_result;
+	int ret = nrf_modem_lib_init();
 
 	/* Handle return values relating to modem firmware update */
 	switch (ret) {
@@ -231,8 +217,8 @@ static void handle_nrf_modem_lib_init_ret(void)
 	LOG_DBG("Rebooting...");
 	LOG_PANIC();
 	sys_reboot(SYS_REBOOT_COLD);
-#endif /* CONFIG_NRF_MODEM_LIB */
 }
+#endif /* CONFIG_NRF_MODEM_LIB */
 
 /* Application Event Manager handler. Puts event data into messages and adds them to the
  * application message queue.
@@ -519,10 +505,6 @@ void main(void)
 	int err;
 	struct app_msg_data msg = { 0 };
 
-	if (!IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
-		handle_nrf_modem_lib_init_ret();
-	}
-
 	if (app_event_manager_init()) {
 		/* Without the Application Event Manager, the application will not work
 		 * as intended. A reboot is required in an attempt to recover.
@@ -533,6 +515,15 @@ void main(void)
 	} else {
 		module_set_state(MODULE_STATE_READY);
 		SEND_EVENT(app, APP_EVT_START);
+
+#if defined(CONFIG_NRF_MODEM_LIB)
+		/* The carrier library will initialize the modem if enabled, if not,
+		 * we initialize the modem in here, before the rest of the application is started.
+		 */
+		if (!IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
+			modem_init();
+		}
+#endif
 	}
 
 	self.thread_id = k_current_get();

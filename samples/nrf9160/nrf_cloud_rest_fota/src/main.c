@@ -84,17 +84,6 @@ static char rx_buf[REST_RX_BUF_SZ];
 /* Buffer used for JSON Web Tokens (JWTs) */
 static char jwt[JWT_BUF_SZ];
 
-NRF_MODEM_LIB_ON_INIT(nrf_cloud_rest_fota_init_hook,
-		      on_modem_lib_init, NULL);
-
-/* Initialized to value different than success (0) */
-static int modem_lib_init_result = -1;
-
-static void on_modem_lib_init(int ret, void *ctx)
-{
-	modem_lib_init_result = ret;
-}
-
 /* nRF Cloud REST context */
 static struct nrf_cloud_rest_context rest_ctx = {
 	.connect_socket = -1,
@@ -452,15 +441,13 @@ int init(void)
 	full_modem_fota_initd = true;
 #endif
 
-	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
-		modem_lib_init_result = nrf_modem_lib_init();
-	}
+	err = nrf_modem_lib_init();
 
 	/* This function may perform a reboot if a FOTA update is in progress */
 	process_pending_job();
 
-	if (modem_lib_init_result) {
-		LOG_ERR("Failed to initialize modem library: 0x%X", modem_lib_init_result);
+	if (err) {
+		LOG_ERR("Failed to initialize modem library: 0x%X", err);
 		return -EFAULT;
 	}
 
