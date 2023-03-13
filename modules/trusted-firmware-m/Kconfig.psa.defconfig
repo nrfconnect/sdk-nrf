@@ -67,7 +67,7 @@ config PSA_WANT_ALG_RIPEMD160
 	default n
 config PSA_WANT_ALG_MD5
 	bool
-	default y
+	default n
 config PSA_WANT_ALG_ECB_NO_PADDING
 	bool
 	default y
@@ -79,7 +79,7 @@ config PSA_WANT_ALG_CBC_PKCS7
 	default y
 config PSA_WANT_ALG_CFB
 	bool
-	default y
+	default n
 config PSA_WANT_ALG_CTR
 	bool
 	default y
