@@ -347,6 +347,27 @@ out:
 	return ret;
 }
 
+/* TWT interval conversion helpers: User <-> Protocol */
+static struct twt_interval_float wifi_nrf_twt_ms_to_float(uint32_t twt_interval_ms)
+{
+	double mantissa = 0;
+	int exponent = 0;
+	struct twt_interval_float twt_interval_float;
+
+	mantissa = frexp(twt_interval_ms, &exponent);
+	/* Ceiling and conversion to milli seconds */
+	twt_interval_float.mantissa = ceil(mantissa * 1000);
+	twt_interval_float.exponent = exponent;
+
+	return twt_interval_float;
+}
+
+static uint32_t wifi_nrf_twt_float_to_ms(struct twt_interval_float twt_interval_float)
+{
+	/* Conversion to milli-seconds */
+	return floor(ldexp(twt_interval_float.mantissa, twt_interval_float.exponent) / 1000);
+}
+
 void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 					     struct nrf_wifi_umac_event_power_save_info *ps_info,
 					     unsigned int event_len)
@@ -364,9 +385,23 @@ void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 	vif_ctx_zep->ps_info->num_twt_flows = ps_info->num_twt_flows;
 
 	for (int i = 0; i < ps_info->num_twt_flows; i++) {
-		memcpy(&vif_ctx_zep->ps_info->twt_flows[i],
-		       &ps_info->twt_flow_info[i],
-		       sizeof(struct wifi_twt_flow_info));
+		struct twt_interval_float twt_interval_float;
+		struct wifi_twt_flow_info *twt_zep = &vif_ctx_zep->ps_info->twt_flows[i];
+		struct nrf_wifi_umac_config_twt_info *twt_rpu = &ps_info->twt_flow_info[i];
+
+		memset(twt_zep, 0, sizeof(struct wifi_twt_flow_info));
+
+		twt_zep->flow_id = twt_rpu->twt_flow_id;
+		twt_zep->implicit = twt_rpu->is_implicit;
+		twt_zep->trigger = twt_rpu->ap_trigger_frame;
+		twt_zep->announce = twt_rpu->twt_flow_type;
+		twt_zep->implicit = twt_rpu->is_implicit;
+		twt_zep->negotiation_type = twt_rpu->neg_type;
+		twt_zep->dialog_token = twt_rpu->dialog_token;
+		twt_interval_float.mantissa = twt_rpu->twt_target_wake_interval_mantissa;
+		twt_interval_float.exponent = twt_rpu->twt_target_wake_interval_exponent;
+		twt_zep->twt_interval_ms = wifi_nrf_twt_float_to_ms(twt_interval_float);
+		twt_zep->twt_wake_interval_ms = twt_rpu->nominal_min_twt_wake_duration;
 	}
 
 	vif_ctx_zep->ps_config_info_evnt = true;
@@ -403,6 +438,9 @@ int wifi_nrf_set_twt(const struct device *dev,
 
 	switch (twt_params->operation) {
 	case WIFI_TWT_SETUP:
+		struct twt_interval_float twt_interval_float =
+			wifi_nrf_twt_ms_to_float(twt_params->setup.twt_interval_ms);
+
 		twt_info.twt_flow_id = twt_params->flow_id;
 		twt_info.neg_type = twt_params->negotiation_type;
 		twt_info.setup_cmd = twt_params->setup_cmd;
@@ -412,11 +450,9 @@ int wifi_nrf_set_twt(const struct device *dev,
 		/* Interval values are passed as ms to UMAC */
 		twt_info.nominal_min_twt_wake_duration =
 				twt_params->setup.twt_wake_interval_ms;
+		twt_info.twt_target_wake_interval_mantissa = twt_interval_float.mantissa;
+		twt_info.twt_target_wake_interval_exponent = twt_interval_float.exponent;
 
-		mantissa = frexp(twt_params->setup.twt_interval_ms, &exponent);
-		/* Ceiling and conversion to milli seconds */
-		twt_info.twt_target_wake_interval_mantissa = ceil(mantissa * 1000);
-		twt_info.twt_target_wake_interval_exponent = exponent;
 		twt_info.dialog_token = twt_params->dialog_token;
 
 		status = wifi_nrf_fmac_twt_setup(rpu_ctx_zep->rpu_ctx,
@@ -466,7 +502,6 @@ out:
 	return ret;
 }
 
-
 void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 				       struct nrf_wifi_umac_cmd_config_twt *twt_setup_info,
 				       unsigned int event_len)
@@ -476,6 +511,7 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 	double target_wake_time_ms = 0;
 	double mantissa = 0;
 	int exponent = 0;
+	struct twt_interval_float twt_interval_float;
 
 	if (!vif_ctx || !twt_setup_info) {
 		return;
@@ -495,11 +531,9 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 	/* Interval values are passed as us to UMAC */
 	twt_params.setup.twt_wake_interval_ms =
 			twt_setup_info->info.nominal_min_twt_wake_duration;
-
-	exponent = twt_setup_info->info.twt_target_wake_interval_exponent;
-	mantissa = (twt_setup_info->info.twt_target_wake_interval_mantissa / 1000);
-	target_wake_time_ms = ldexp(mantissa, exponent);
-	twt_params.setup.twt_interval_ms = (target_wake_time_ms);
+	twt_interval_float.mantissa = twt_setup_info->info.twt_target_wake_interval_mantissa;
+	twt_interval_float.exponent = twt_setup_info->info.twt_target_wake_interval_exponent;
+	twt_params.setup.twt_interval_ms = wifi_nrf_twt_float_to_ms(twt_interval_float);
 	twt_params.dialog_token = twt_setup_info->info.dialog_token;
 
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
