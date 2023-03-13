@@ -15,6 +15,24 @@
 
 static char response[64];
 
+static void *suite_setup(void)
+{
+	int err;
+
+	err = nrf_modem_lib_init(NORMAL_MODE);
+	zassert_ok(err, "Failed to initialize");
+
+	return NULL;
+}
+
+static void suite_teardown(void *f)
+{
+	int err;
+
+	err = nrf_modem_lib_shutdown();
+	zassert_ok(err, NULL);
+}
+
 /* AT filter function declarations. */
 static int at_cmd_callback_cmd1(char *buf, size_t len, char *at_cmd)
 {
@@ -37,7 +55,7 @@ static int at_cmd_callback_cmd2(char *buf, size_t len, char *at_cmd)
 AT_CUSTOM_CMD(CMD1, "AT+CMD1", at_cmd_callback_cmd1);
 AT_CUSTOM_CMD(CMD2, "AT+CMD2", at_cmd_callback_cmd2);
 
-static void test_at_custom_cmd_response(void)
+ZTEST(at_cmd_filter, test_at_custom_cmd_response)
 {
 	int err;
 
@@ -51,7 +69,7 @@ static void test_at_custom_cmd_response(void)
 			strlen("\r\n+CPMS: \"TA\",0,3,\"TA\",0,3"), NULL);
 }
 
-static void test_at_custom_cmd_buffer_size(void)
+ZTEST(at_cmd_filter, test_at_custom_cmd_buffer_size)
 {
 	int err;
 
@@ -59,7 +77,7 @@ static void test_at_custom_cmd_buffer_size(void)
 	zassert_equal(-NRF_E2BIG, err, "nrf_modem_at_cmd failed, error: %d", err);
 }
 
-static void test_at_custom_cmd_command_fault_on_NULL_buffer(void)
+ZTEST(at_cmd_filter, test_at_custom_cmd_command_fault_on_NULL_buffer)
 {
 	int err;
 
@@ -67,13 +85,4 @@ static void test_at_custom_cmd_command_fault_on_NULL_buffer(void)
 	zassert_equal(-NRF_EFAULT, err, "nrf_modem_at_cmd failed, error: %d", err);
 }
 
-void test_main(void)
-{
-	ztest_test_suite(at_cmd_filter,
-		ztest_unit_test(test_at_custom_cmd_response),
-		ztest_unit_test(test_at_custom_cmd_buffer_size),
-		ztest_unit_test(test_at_custom_cmd_command_fault_on_NULL_buffer)
-	);
-
-	ztest_run_test_suite(at_cmd_filter);
-}
+ZTEST_SUITE(at_cmd_filter, NULL, suite_setup, NULL, NULL, suite_teardown);
