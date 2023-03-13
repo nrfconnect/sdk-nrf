@@ -191,6 +191,7 @@ enum nrf_wifi_sys_commands {
 	NRF_WIFI_CMD_HE_GI_LTF_CONFIG,
 	NRF_WIFI_CMD_UMAC_INT_STATS,
 	NRF_WIFI_CMD_RADIO_TEST_INIT,
+	NRF_WIFI_CMD_RT_REQ_SET_REG,
 };
 
 /**
@@ -564,6 +565,24 @@ struct nrf_wifi_sys_params {
 } __NRF_WIFI_PKD;
 
 /**
+ * struct nrf_wifi_cmd_radiotest_req_set_reg - command for setting regulatory
+ * @sys_head: UMAC header, See &struct nrf_wifi_sys_head
+ * @nrf_wifi_alpha: regulatory country code.
+ *
+ */
+#define NRF_WIFI_CMD_RT_REQ_SET_REG_ALPHA_VALID (1 << 0)
+
+struct nrf_wifi_radiotest_req_set_reg {
+		unsigned int valid_fields;
+		unsigned char nrf_wifi_alpha[3];
+} __NRF_WIFI_PKD;
+
+struct nrf_wifi_cmd_radiotest_req_set_reg {
+	struct nrf_wifi_sys_head sys_head;
+	struct nrf_wifi_radiotest_req_set_reg set_reg_info;
+} __NRF_WIFI_PKD;
+
+/**
  * struct nrf_wifi_cmd_sys_init - Initialize UMAC
  * @sys_head: umac header, see &nrf_wifi_sys_head
  * @wdev_id : id of the interface.
@@ -581,6 +600,8 @@ struct nrf_wifi_cmd_sys_init {
 	struct rx_buf_pool_params rx_buf_pools[MAX_NUM_OF_RX_QUEUES];
 	struct nrf_wifi_data_config_params data_config_params;
 	struct temp_vbat_config temp_vbat_config_params;
+	unsigned char checksum_enable;
+	struct nrf_wifi_radiotest_req_set_reg set_reg_info;
 } __NRF_WIFI_PKD;
 
 /**
@@ -692,6 +713,7 @@ struct rpu_conf_params {
 	unsigned char lna_gain;
 	unsigned char bb_gain;
 	unsigned short int capture_length;
+	unsigned char bypass_regulatory;
 } __NRF_WIFI_PKD;
 
 /**
@@ -878,7 +900,7 @@ struct nrf_wifi_umac_event_stats {
  *
  */
 enum nrf_wifi_radio_test_err_status {
-		NRF_WIFI_UMAC_CMD_SUCCESS,
+		NRF_WIFI_UMAC_CMD_SUCCESS = 1,
 		NRF_WIFI_UMAC_INVALID_CHNL
 };
 
