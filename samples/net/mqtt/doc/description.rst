@@ -22,10 +22,11 @@ Overview
 *********
 
 The sample connects to either LTE or Wi-Fi, depending on the board for which the sample is compiled.
-Subsequently, the sample connects to a configured MQTT server (default is `test.mosquitto.org`_), where it publishes messages to the topic ``my/publish/topic``.
+Subsequently, the sample connects to a configured MQTT server (default is `test.mosquitto.org`_), where it publishes messages to the topic ``<clientID>/my/publish/topic``.
 You can also trigger message publication by pressing any of the buttons on the board.
 
-The sample also subscribes to the topic ``my/subscribe/topic``, and receives any message published to that topic.
+The sample also subscribes to the topic ``<clientID>/my/subscribe/topic``, and receives any message published to that topic.
+
 The sample supports Transport Layer Security (TLS) and it can be enabled through overlay configuration files included in the sample.
 
 .. note::
@@ -72,13 +73,13 @@ CONFIG_MQTT_SAMPLE_TRANSPORT_CLIENT_ID - MQTT client ID
 
 CONFIG_MQTT_SAMPLE_TRANSPORT_PUBLISH_TOPIC - MQTT publish topic
 	This configuration option sets the topic to which the sample publishes messages.
-	Default is ``my/publish/topic``.
+	Default is ``<clientID>/my/publish/topic``.
 
 .. _CONFIG_MQTT_SAMPLE_TRANSPORT_SUBSCRIBE_TOPIC:
 
 CONFIG_MQTT_SAMPLE_TRANSPORT_SUBSCRIBE_TOPIC - MQTT subscribe topic
 	This configuration option sets the topic to which the sample subscribes.
-	Default is ``my/subscribe/topic``.
+	Default is ``<clientID>/my/subscribe/topic``.
 
 Wi-Fi options
 -------------
@@ -172,12 +173,12 @@ The following serial UART output is displayed in the terminal emulator using a W
       [00:00:18.009,981] <inf> transport: Client ID: F4CE37111350
       [00:00:18.013,519] <inf> transport: Port: 8883
       [00:00:18.018,341] <inf> transport: TLS: Yes
-      [00:00:18.078,521] <inf> transport: Subscribed to topic my/subscribe/topic
-      [00:01:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 61458" on topic: "my/publish/topic"
-      [00:02:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 121458" on topic: "my/publish/topic"
-      [00:03:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 181458" on topic: "my/publish/topic"
-      [00:04:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 241458" on topic: "my/publish/topic"
-      [00:05:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 301459" on topic: "my/publish/topic"
+      [00:00:18.078,521] <inf> transport: Subscribed to topic F4CE37111350/my/subscribe/topic
+      [00:01:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 61458" on topic: "F4CE37111350/my/publish/topic"
+      [00:02:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 121458" on topic: "F4CE37111350/my/publish/topic"
+      [00:03:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 181458" on topic: "F4CE37111350/my/publish/topic"
+      [00:04:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 241458" on topic: "F4CE37111350/my/publish/topic"
+      [00:05:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 301459" on topic: "F4CE37111350/my/publish/topic"
 
 .. _mqtt_sample_output_IPv6:
 
@@ -207,29 +208,29 @@ The sample output showing IPv6, following the same instructions but for a differ
       [00:00:14.370,849] <inf> transport: Client ID: 350457791735879
       [00:00:14.370,880] <inf> transport: Port: 8883
       [00:00:14.370,880] <inf> transport: TLS: Yes
-      [00:00:14.370,910] <dbg> mqtt_helper: mqtt_helper_subscribe: Subscribing to: my/subscribe/topic
+      [00:00:14.370,910] <dbg> mqtt_helper: mqtt_helper_subscribe: Subscribing to: F4CE37111350/my/subscribe/topic
       [00:00:14.494,354] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
       [00:00:15.136,047] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_SUBACK: id = 2469 result = 0
-      [00:00:15.136,077] <inf> transport: Subscribed to topic my/subscribe/topic
+      [00:00:15.136,077] <inf> transport: Subscribed to topic F4CE37111350/my/subscribe/topic
       [00:00:15.136,108] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
       [00:00:15.136,260] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_PUBLISH, message ID: 52428, len = 850
-      [00:00:15.136,444] <inf> transport: Received payload: $ on topic: my/subscribe/topic
+      [00:00:15.136,444] <inf> transport: Received payload: $ on topic: F4CE37111350/my/subscribe/topic
       [00:00:15.136,444] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
       [00:00:44.495,147] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
       [00:00:45.478,210] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_PINGRESP
       [00:00:45.478,210] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
-      [00:01:00.492,370] <dbg> mqtt_helper: mqtt_helper_publish: Publishing to topic: my/publish/topic
-      [00:01:00.493,133] <inf> transport: Published message: "Hello MQTT! Current uptime is: 60492" on topic: "my/publish/topic"
+      [00:01:00.492,370] <dbg> mqtt_helper: mqtt_helper_publish: Publishing to topic: F4CE37111350/my/publish/topic
+      [00:01:00.493,133] <inf> transport: Published message: "Hello MQTT! Current uptime is: 60492" on topic: "F4CE37111350/my/publish/topic"
       [00:01:01.270,690] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_PUBACK: id = 60492 result = 0
       [00:01:01.270,690] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
       [00:01:05.093,719] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_PUBLISH, message ID: 52428, len = 32
-      [00:01:05.093,872] <inf> transport: Received payload: Test message from mosquitto_pub! on topic: my/subscribe/topic
+      [00:01:05.093,872] <inf> transport: Received payload: Test message from mosquitto_pub! on topic: F4CE37111350/my/subscribe/topic
       [00:01:05.093,872] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
       [00:01:30.503,021] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
       [00:01:31.494,537] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_PINGRESP
       [00:01:31.494,567] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
-      [00:02:00.492,462] <dbg> mqtt_helper: mqtt_helper_publish: Publishing to topic: my/publish/topic
-      [00:02:00.501,678] <inf> transport: Published message: "Hello MQTT! Current uptime is: 120492" on topic: "my/publish/topic"
+      [00:02:00.492,462] <dbg> mqtt_helper: mqtt_helper_publish: Publishing to topic: F4CE37111350/my/publish/topic
+      [00:02:00.501,678] <inf> transport: Published message: "Hello MQTT! Current uptime is: 120492" on topic: "F4CE37111350/my/publish/topic"
       [00:02:00.503,692] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
       [00:02:01.577,453] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_PUBACK: id = 54956 result = 0
       [00:02:01.577,484] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0

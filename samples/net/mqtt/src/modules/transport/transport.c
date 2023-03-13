@@ -46,6 +46,9 @@ enum module_state { MQTT_CONNECTED, MQTT_DISCONNECTED };
 /* MQTT client ID buffer */
 static char client_id[CONFIG_MQTT_SAMPLE_TRANSPORT_CLIENT_ID_BUFFER_SIZE];
 
+static uint8_t pub_topic[sizeof(client_id) + sizeof(CONFIG_MQTT_SAMPLE_TRANSPORT_PUBLISH_TOPIC)];
+static uint8_t sub_topic[sizeof(client_id) + sizeof(CONFIG_MQTT_SAMPLE_TRANSPORT_SUBSCRIBE_TOPIC)];
+
 /* User defined state object.
  * Used to transfer data between state changes.
  */
@@ -92,7 +95,7 @@ static void on_mqtt_publish(struct mqtt_helper_buf topic, struct mqtt_helper_buf
 static void on_mqtt_suback(uint16_t message_id, int result)
 {
 	if ((message_id == SUBSCRIBE_TOPIC_ID) && (result == 0)) {
-		LOG_INF("Subscribed to topic %s", CONFIG_MQTT_SAMPLE_TRANSPORT_SUBSCRIBE_TOPIC);
+		LOG_INF("Subscribed to topic %s", sub_topic);
 	} else if (result) {
 		LOG_ERR("Topic subscription failed, error: %d", result);
 	} else {
@@ -101,16 +104,40 @@ static void on_mqtt_suback(uint16_t message_id, int result)
 }
 
 /* Local convenience functions */
+
+/* Function that prefixes topics with the Client ID. */
+static int topics_prefix(void)
+{
+	int len;
+
+	len = snprintk(pub_topic, sizeof(pub_topic), "%s/%s", client_id,
+		       CONFIG_MQTT_SAMPLE_TRANSPORT_PUBLISH_TOPIC);
+	if ((len < 0) || (len >= sizeof(pub_topic))) {
+		LOG_ERR("Publish topic buffer too small");
+		return -EMSGSIZE;
+	}
+
+	len = snprintk(sub_topic, sizeof(sub_topic), "%s/%s", client_id,
+		       CONFIG_MQTT_SAMPLE_TRANSPORT_SUBSCRIBE_TOPIC);
+	if ((len < 0) || (len >= sizeof(sub_topic))) {
+		LOG_ERR("Subscribe topic buffer too small");
+		return -EMSGSIZE;
+	}
+
+	return 0;
+}
+
 static void publish(struct payload *payload)
 {
 	int err;
+
 	struct mqtt_publish_param param = {
 		.message.payload.data = payload->string,
 		.message.payload.len = strlen(payload->string),
 		.message.topic.qos = MQTT_QOS_1_AT_LEAST_ONCE,
 		.message_id = k_uptime_get_32(),
-		.message.topic.topic.utf8 = CONFIG_MQTT_SAMPLE_TRANSPORT_PUBLISH_TOPIC,
-		.message.topic.topic.size = strlen(CONFIG_MQTT_SAMPLE_TRANSPORT_PUBLISH_TOPIC),
+		.message.topic.topic.utf8 = pub_topic,
+		.message.topic.topic.size = strlen(pub_topic),
 	};
 
 	err = mqtt_helper_publish(&param);
@@ -128,10 +155,11 @@ static void publish(struct payload *payload)
 static void subscribe(void)
 {
 	int err;
+
 	struct mqtt_topic topics[] = {
 		{
-			.topic.utf8 = CONFIG_MQTT_SAMPLE_TRANSPORT_SUBSCRIBE_TOPIC,
-			.topic.size = strlen(CONFIG_MQTT_SAMPLE_TRANSPORT_SUBSCRIBE_TOPIC),
+			.topic.utf8 = sub_topic,
+			.topic.size = strlen(sub_topic),
 		},
 	};
 	struct mqtt_subscription_list list = {
@@ -139,6 +167,10 @@ static void subscribe(void)
 		.list_count = ARRAY_SIZE(topics),
 		.message_id = SUBSCRIBE_TOPIC_ID,
 	};
+
+	for (size_t i = 0; i < list.list_count; i++) {
+		LOG_INF("Subscribing to: %s", (char *)list.list[i].topic.utf8);
+	}
 
 	err = mqtt_helper_subscribe(&list);
 	if (err) {
@@ -287,6 +319,13 @@ static void transport_task(void)
 	err = client_id_get(client_id, sizeof(client_id));
 	if (err) {
 		LOG_ERR("client_id_get, error: %d", err);
+		SEND_FATAL_ERROR();
+		return;
+	}
+
+	err = topics_prefix();
+	if (err) {
+		LOG_ERR("topics_prefix, error: %d", err);
 		SEND_FATAL_ERROR();
 		return;
 	}
