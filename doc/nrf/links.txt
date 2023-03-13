@@ -992,7 +992,7 @@
 
 .. _`Memfault Diagnostic GATT Service`: https://memfault.notion.site/Memfault-Diagnostic-GATT-Service-MDS-ffd5a430062649cd9bf6edbf64e2563b
 
-.. _`Developing Matter products with nRF Connect SDK`: https://www.youtube.com/watch?v=kdMJQFDRoss
+.. _`Developing Matter 1.0 products with nRF Connect SDK`: https://www.youtube.com/watch?v=9Ar13rMxGIk
 
 .. _`iBasis IoT network coverage`: https://ibasis.com/solutions/iot-connectivity/network-coverage/
 

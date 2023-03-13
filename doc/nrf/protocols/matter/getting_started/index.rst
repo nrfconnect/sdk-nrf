@@ -7,7 +7,15 @@ Getting started with Matter
    :local:
    :depth: 2
 
-Read pages in this section to start working with Matter using Nordic Semiconductor's SoCs and tools in both the |NCS| and Zephyr.
+Read pages in this section and watch the video to start working with Matter using Nordic Semiconductor's SoCs and tools in both the |NCS| and Zephyr.
+
+The following video showcases several aspects of the Matter setup, discussed in detail on the following pages.
+
+.. raw:: html
+
+   <h1 align="center">
+   <iframe width="560" height="315" src="https://www.youtube.com/embed/9Ar13rMxGIk" title="Getting started with Matter" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+   </h1>
 
 The pages will guide you through the following getting started process:
 
