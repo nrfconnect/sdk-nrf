@@ -5,14 +5,14 @@
 
 #ifndef _CONNECTION_H_
 #define _CONNECTION_H_
-#include <cJSON.h>
+#include <net/nrf_cloud.h>
 
 /**
  * @brief nRF Cloud device message handler.
  *
  * @param[in] dev_msg The received device message as a NULL-terminated string
  */
-typedef void (*dev_msg_handler_cb_t)(const char * const dev_msg);
+typedef void (*dev_msg_handler_cb_t)(const struct nrf_cloud_data *const dev_msg);
 
 /**
  * @brief Register a device message handler to receive general device messages from nRF Cloud
@@ -90,19 +90,12 @@ bool await_date_time_known(k_timeout_t timeout);
 int consume_device_message(void);
 
 /**
- * @brief Schedule a (null-terminated) string to be sent as a device message payload. Message will
- *	  be held asynchronously until a valid nRF Cloud connection is established. The entire
- *	  message is copied to the heap, so the original string passed need not be held onto.
- * @return int - 0 on success, -ENOMEM if the outgoing message queue is full.
- */
-int send_device_message(const char *const msg);
-
-/**
- * @brief Schedule a cJSON object to be sent as a device message payload. Message will
+ * @brief Schedule a cloud object to be sent as a device message payload. Message will
  *	  be held asynchronously until a valid nRF Cloud connection is established.
+ *	  Caller is no longer responsible for device message memory after function returns.
  * @return int - 0 on success, otherwise negative error.
  */
-int send_device_message_cJSON(cJSON *msg_obj);
+int send_device_message(struct nrf_cloud_obj *const msg_obj);
 
 /**
  * @brief The message queue thread function.

@@ -9,9 +9,9 @@
 #include <modem/lte_lc.h>
 #include <zephyr/net/socket.h>
 #include <net/nrf_cloud.h>
+#include <net/nrf_cloud_codec.h>
 #include <date_time.h>
 #include <zephyr/logging/log.h>
-#include <cJSON.h>
 
 #include "connection.h"
 
@@ -47,7 +47,10 @@ static K_EVENT_DEFINE(cloud_connection_events);
 static K_EVENT_DEFINE(datetime_connection_events);
 
 /* Message Queue for enqueing outgoing messages during offline periods. */
-K_MSGQ_DEFINE(device_message_queue, sizeof(char *), CONFIG_MAX_OUTGOING_MESSAGES, sizeof(char *));
+K_MSGQ_DEFINE(device_message_queue,
+	      sizeof(struct nrf_cloud_obj *),
+	      CONFIG_MAX_OUTGOING_MESSAGES,
+	      sizeof(struct nrf_cloud_obj *));
 
 /* Tracks the number of consecutive message-send failures. A total count greater than
  * CONFIG_MAX_CONSECUTIVE_SEND_FAILURES will trigger a connection reset and cooldown.
@@ -294,11 +297,8 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 			 * If you want to do complex operations in this callback without blocking
 			 * receipt of data from nRF Cloud, you should set up a work queue and pass
 			 * messages to it either here, or from inside the callback.
-			 *
-			 * The data passed in needs to be null-terminated, but the nrf_cloud library
-			 * always appends a trailing 0 to nrf_cloud_evt->data.ptr, so it will be.
 			 */
-			general_dev_msg_handler(nrf_cloud_evt->data.ptr);
+			general_dev_msg_handler(&nrf_cloud_evt->data);
 		}
 
 		break;
@@ -472,16 +472,66 @@ static void update_shadow(void)
 		LOG_ERR("Failed to update device shadow, error: %d", err);
 	}
 }
+static struct nrf_cloud_obj *allocate_dev_msg_for_queue(struct nrf_cloud_obj *msg_to_copy)
+{
+	struct nrf_cloud_obj *new_msg = k_malloc(sizeof(struct nrf_cloud_obj));
+
+	if (new_msg && msg_to_copy) {
+		*new_msg = *msg_to_copy;
+	}
+
+	return new_msg;
+}
+
+static int enqueue_device_message(struct nrf_cloud_obj *const msg_obj, const bool create_copy)
+{
+	if (!msg_obj) {
+		return -EINVAL;
+	}
+
+	struct nrf_cloud_obj *q_msg = msg_obj;
+
+	if (create_copy) {
+		/* Allocate a new nrf_cloud_obj structure for the message queue.
+		 * Copy the contents of msg_obj, which contains a pointer to the
+		 * original message data, into the new structure.
+		 */
+		q_msg = allocate_dev_msg_for_queue(msg_obj);
+		if (!q_msg) {
+			return -ENOMEM;
+		}
+	}
+
+	/* Attempt to append data onto message queue. */
+	LOG_DBG("Adding device message to queue");
+	if (k_msgq_put(&device_message_queue, &q_msg, K_NO_WAIT)) {
+		LOG_ERR("Device message rejected, outgoing message queue is full");
+		if (create_copy) {
+			k_free(q_msg);
+		}
+		return -ENOMEM;
+	}
+
+	return 0;
+}
+
+static void free_queued_dev_msg_message(struct nrf_cloud_obj *msg_obj)
+{
+	/* Free the memory pointed to by the msg_obj struct */
+	nrf_cloud_obj_free(msg_obj);
+	/* Free the msg_obj struct itself */
+	k_free(msg_obj);
+}
 
 int consume_device_message(void)
 {
-	char *msg;
+	struct nrf_cloud_obj *queued_msg;
 	int ret;
 
 	LOG_DBG("Consuming an enqueued device message");
 
 	/* Wait until a message is available to send. */
-	ret = k_msgq_get(&device_message_queue, &msg, K_FOREVER);
+	ret = k_msgq_get(&device_message_queue, &queued_msg, K_FOREVER);
 	if (ret) {
 		LOG_ERR("Failed to retrieve item from outgoing message queue, error: %d", ret);
 		return -ret;
@@ -501,20 +551,28 @@ int consume_device_message(void)
 	LOG_DBG("Attempting to transmit enqueued device message");
 
 	struct nrf_cloud_tx_data mqtt_msg = {
-		.data.ptr = msg,
-		.data.len = strlen(msg),
 		.qos = MQTT_QOS_1_AT_LEAST_ONCE,
 		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
+		.obj = queued_msg
 	};
 
+	/* Send message */
 	ret = nrf_cloud_send(&mqtt_msg);
+
 	if (ret) {
 		LOG_ERR("Transmission of enqueued device message failed, nrf_cloud_send "
 			"gave error: %d. The message will be re-enqueued and tried again "
 			"later.", ret);
 
-		/* Re-enqueue the message for later retry (creating a new copy of it in heap). */
-		send_device_message(msg);
+		/* Re-enqueue the message for later retry.
+		 * No need to create a copy since we already copied the
+		 * message object struct when it was first enqueued.
+		 */
+		ret = enqueue_device_message(queued_msg, false);
+		if (ret) {
+			LOG_ERR("Could not re-enqueue message, discarding.");
+			free_queued_dev_msg_message(queued_msg);
+		}
 
 		/* Increment the failure counter. */
 		send_failure_count += 1;
@@ -530,6 +588,9 @@ int consume_device_message(void)
 			k_sleep(K_SECONDS(CONFIG_CONSECUTIVE_SEND_FAILURE_COOLDOWN_SECONDS));
 		}
 	} else {
+		/* Clean up the message receive from the queue */
+		free_queued_dev_msg_message(queued_msg);
+
 		LOG_DBG("Enqueued device message consumed successfully");
 
 		/* Either overwrite the existing pattern with a short success pattern, or just
@@ -545,57 +606,24 @@ int consume_device_message(void)
 		send_failure_count = 0;
 	}
 
-	/* Clean up. */
-	k_free(msg);
-
 	return ret;
 }
 
-int send_device_message(const char *const msg)
+int send_device_message(struct nrf_cloud_obj *const msg_obj)
 {
-	/* Copy message data onto the heap (will be freed by the message consumer when done). */
-	size_t len = strlen(msg) + 1;
-	char *msg_buf = k_malloc(len);
+	/* Enqueue the message, creating a copy to be managed by the queue. */
+	int ret = enqueue_device_message(msg_obj, true);
 
-	if (!msg_buf) {
-		LOG_ERR("Could not alloc memory for new device message");
-		return -ENOMEM;
-	}
-	strncpy(msg_buf, msg, len);
-	LOG_DBG("Enqueued message: %s", msg_buf);
-
-	/* Attempt to append data onto message queue. */
-	if (k_msgq_put(&device_message_queue, &msg_buf, K_NO_WAIT)) {
-		LOG_ERR("Device message rejected, outgoing message queue is full");
-		k_free(msg_buf);
-		return -ENOMEM;
+	if (ret) {
+		LOG_ERR("Cannot add message to queue");
+		nrf_cloud_obj_free(msg_obj);
+	} else {
+		/* The message data now belongs to the queue.
+		 * Reset the provided object so it cannot be modified.
+		 */
+		nrf_cloud_obj_reset(msg_obj);
 	}
 
-	return 0;
-}
-
-int send_device_message_cJSON(cJSON *msg_obj)
-{
-	int ret = 0;
-	char *msg = NULL;
-
-	if (!msg_obj) {
-		LOG_ERR("Cannot send NULL device message object");
-		return -EINVAL;
-	}
-
-	/* Convert message object to a string. */
-	msg = cJSON_PrintUnformatted(msg_obj);
-	if (msg == NULL) {
-		LOG_ERR("Failed to convert cJSON device message object to string");
-		return -ENOMEM;
-	}
-
-	/* Send the string as a device message. */
-	ret = send_device_message(msg);
-
-	/* Clean up */
-	k_free(msg);
 	return ret;
 }
 

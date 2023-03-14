@@ -220,6 +220,7 @@ nRF9160 samples
 
   * Added documentation for using the :ref:`lib_nrf_cloud_alert` and :ref:`lib_nrf_cloud_log` libraries.
   * Changed the :file:`overlay_nrfcloud_logging.conf` file to enable JSON logs by default.
+  * The :c:struct:`nrf_cloud_obj` structure and associated functions are now used to encode and decode nRF Cloud data.
 
 * :ref:`http_application_update_sample` sample:
 

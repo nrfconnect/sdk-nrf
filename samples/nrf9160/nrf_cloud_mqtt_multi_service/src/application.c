@@ -13,10 +13,8 @@
 #include <net/nrf_cloud_log.h>
 #include <net/nrf_cloud_alert.h>
 #include <date_time.h>
-#include <cJSON.h>
 #include <stdio.h>
 
-#include "nrf_cloud_codec_internal.h"
 #include "application.h"
 #include "temperature.h"
 #include "connection.h"
@@ -44,46 +42,50 @@ BUILD_ASSERT(CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH >= AT_CMD_REQUEST_ERR_
 static char at_req_resp_buf[CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH];
 
 /**
- * @brief Construct a device message cJSON object with automatically generated timestamp
+ * @brief Construct a device message object with automatically generated timestamp
  *
- * The resultant cJSON object will be conformal to the General Message Schema described in the
+ * The resultant JSON object will be conformal to the General Message Schema described in the
  * application-protocols repo:
  *
  * https://github.com/nRFCloud/application-protocols
  *
+ * @param msg - The object to contain the message
  * @param appid - The appId for the device message
  * @param msg_type - The messageType for the device message
- * @return cJSON* - the timestamped data device message object if successful, NULL otherwise.
+ * @return int - 0 on success, negative error code otherwise.
  */
-static cJSON *create_timestamped_device_message(const char *const appid, const char *const msg_type)
+static int create_timestamped_device_message(struct nrf_cloud_obj *const msg,
+					     const char *const appid,
+					     const char *const msg_type)
 {
-	cJSON *msg_obj = NULL;
+	int err;
 	int64_t timestamp;
 
 	/* Acquire timestamp */
-	if (date_time_now(&timestamp)) {
-		LOG_ERR("Failed to create timestamp for data message "
-			"with appid %s", appid);
-		return NULL;
+	err = date_time_now(&timestamp);
+	if (err) {
+		LOG_ERR("Failed to obtain current time, error %d", err);
+		return -ETIME;
 	}
 
-	/* Create container object */
-	msg_obj = json_create_req_obj(appid, msg_type);
-	if (msg_obj == NULL) {
-		LOG_ERR("Failed to create container object for timestamped data message "
-			"with appid %s and message type %s", appid, msg_type);
-		return NULL;
-	}
-
-	/* Add timestamp to container object */
-	if (!cJSON_AddNumberToObject(msg_obj, NRF_CLOUD_MSG_TIMESTAMP_KEY, (double)timestamp)) {
-		LOG_ERR("Failed to add timestamp to data message with appid %s and message type %s",
+	/* Create message object */
+	err = nrf_cloud_obj_msg_init(msg, appid, msg_type);
+	if (err) {
+		LOG_ERR("Failed to initialize message with appid %s and msg type %s",
 			appid, msg_type);
-		cJSON_Delete(msg_obj);
-		return NULL;
+		return err;
 	}
 
-	return msg_obj;
+	/* Add timestamp to message object */
+	err = nrf_cloud_obj_ts_add(msg, timestamp);
+	if (err) {
+		LOG_ERR("Failed to add timestamp to data message with appid %s and msg type %s",
+			appid, msg_type);
+		nrf_cloud_obj_free(msg);
+		return err;
+	}
+
+	return 0;
 }
 
 /**
@@ -95,34 +97,28 @@ static cJSON *create_timestamped_device_message(const char *const appid, const c
  */
 static int send_sensor_sample(const char *const sensor, double value)
 {
-	int ret = 0;
+	int ret;
+
+	NRF_CLOUD_OBJ_JSON_DEFINE(msg_obj);
 
 	/* Create a timestamped message container object for the sensor sample. */
-	cJSON *msg_obj = create_timestamped_device_message(
-		sensor, NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA
-	);
-
-	if (msg_obj == NULL) {
-		ret = -EINVAL;
-		goto cleanup;
+	ret = create_timestamped_device_message(&msg_obj, sensor,
+						NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
+	if (ret) {
+		return -EINVAL;
 	}
 
 	/* Populate the container object with the sensor value. */
-	if (cJSON_AddNumberToObject(msg_obj, NRF_CLOUD_JSON_DATA_KEY, value) == NULL) {
-		ret = -ENOMEM;
+	ret = nrf_cloud_obj_num_add(&msg_obj, NRF_CLOUD_JSON_DATA_KEY, value, false);
+	if (ret) {
 		LOG_ERR("Failed to append value to %s sample container object ",
 			sensor);
-		goto cleanup;
+		nrf_cloud_obj_free(&msg_obj);
+		return -ENOMEM;
 	}
 
 	/* Send the sensor sample container object as a device message. */
-	ret = send_device_message_cJSON(msg_obj);
-
-cleanup:
-	if (msg_obj) {
-		cJSON_Delete(msg_obj);
-	}
-	return ret;
+	return send_device_message(&msg_obj);
 }
 
 /**
@@ -150,22 +146,17 @@ static int send_gnss(const struct location_event_data * const loc_gnss)
 			.has_heading	= 0
 		}
 	};
-
-	cJSON *msg_obj = cJSON_CreateObject();
+	NRF_CLOUD_OBJ_JSON_DEFINE(msg_obj);
 
 	/* Add the timestamp */
 	(void)date_time_now(&gnss_pvt.ts_ms);
 
 	/* Encode the location data into a device message */
-	ret = nrf_cloud_gnss_msg_json_encode(&gnss_pvt, msg_obj);
+	ret = nrf_cloud_obj_gnss_msg_create(&msg_obj, &gnss_pvt);
 
 	if (ret == 0) {
 		/* Send the location message */
-		ret = send_device_message_cJSON(msg_obj);
-	}
-
-	if (msg_obj) {
-		cJSON_Delete(msg_obj);
+		ret = send_device_message(&msg_obj);
 	}
 
 	return ret;
@@ -207,34 +198,29 @@ static void on_location_update(const struct location_event_data * const location
  *
  * @param msg - The device message to check.
  */
-static void handle_at_cmd_requests(const char *const msg)
+static void handle_at_cmd_requests(const struct nrf_cloud_data *const dev_msg)
 {
-	/* Attempt to parse the message as if it is JSON */
-	struct cJSON *msg_obj = cJSON_Parse(msg);
+	char *cmd;
+	struct nrf_cloud_obj msg_obj;
+	int err = nrf_cloud_obj_input_decode(&msg_obj, dev_msg);
 
-	if (!msg_obj) {
+	if (err) {
 		/* The message isn't JSON or otherwise couldn't be parsed. */
 		LOG_DBG("A general topic device message of length %d could not be parsed.",
-			msg ? strlen(msg) : 0);
+			dev_msg->len);
 		return;
 	}
 
-	/* Check that we are actually dealing with an AT command request */
-	char *msg_appid =
-		cJSON_GetStringValue(cJSON_GetObjectItem(msg_obj, NRF_CLOUD_JSON_APPID_KEY));
-	char *msg_type =
-		cJSON_GetStringValue(cJSON_GetObjectItem(msg_obj, NRF_CLOUD_JSON_MSG_TYPE_KEY));
-	if (!msg_appid || !msg_type ||
-	    (strcmp(msg_appid, NRF_CLOUD_JSON_APPID_VAL_MODEM)  != 0) ||
-	    (strcmp(msg_type,  NRF_CLOUD_JSON_MSG_TYPE_VAL_CMD) != 0)) {
+	/* Confirm app ID and message type */
+	err = nrf_cloud_obj_msg_check(&msg_obj, NRF_CLOUD_JSON_APPID_VAL_MODEM,
+				      NRF_CLOUD_JSON_MSG_TYPE_VAL_CMD);
+	if (err) {
 		goto cleanup;
 	}
 
-	/* If it is, extract the command string */
-	char *cmd =
-		cJSON_GetStringValue(cJSON_GetObjectItem(msg_obj, NRF_CLOUD_JSON_DATA_KEY));
-
-	if (!cmd) {
+	/* Get the command string */
+	err = nrf_cloud_obj_str_get(&msg_obj, NRF_CLOUD_JSON_DATA_KEY, &cmd);
+	if (err) {
 		/* Missing or invalid command value will be treated as a blank command */
 		cmd = "";
 	}
@@ -249,7 +235,7 @@ static void handle_at_cmd_requests(const char *const msg)
 	 * We subtract 1 from the passed-in response buffer length to ensure that the response is
 	 * always null-terminated, even when the response is longer than the response buffer size.
 	 */
-	int err = nrf_modem_at_cmd(at_req_resp_buf, sizeof(at_req_resp_buf) - 1, "%s", cmd);
+	err = nrf_modem_at_cmd(at_req_resp_buf, sizeof(at_req_resp_buf) - 1, "%s", cmd);
 
 	LOG_DBG("Modem AT command response (%d, %d): %s",
 		nrf_modem_at_err_type(err), nrf_modem_at_err(err), at_req_resp_buf);
@@ -267,32 +253,39 @@ static void handle_at_cmd_requests(const char *const msg)
 		LOG_ERR("%s", at_req_resp_buf);
 	}
 
-	/* Free the old container object and create a new one to contain our response */
-	cJSON_Delete(msg_obj);
-	msg_obj = create_timestamped_device_message(
-		NRF_CLOUD_JSON_APPID_VAL_MODEM,
-		NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA
-	);
+	/* To re-use msg_obj for the response message we must first free its memory and
+	 * reset its state.
+	 * The cmd string will no longer be valid after msg_obj is freed.
+	 */
+	cmd = NULL;
+	/* Free the object's allocated memory */
+	(void)nrf_cloud_obj_free(&msg_obj);
+	/* Reset the object's state */
+	(void)nrf_cloud_obj_reset(&msg_obj);
 
-	if (!msg_obj) {
+	err = create_timestamped_device_message(&msg_obj, NRF_CLOUD_JSON_APPID_VAL_MODEM,
+						NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
+	if (err) {
 		return;
 	}
 
 	/* Populate response with command result */
-	if (!cJSON_AddStringToObject(msg_obj, NRF_CLOUD_JSON_DATA_KEY, at_req_resp_buf)) {
+	err = nrf_cloud_obj_str_add(&msg_obj, NRF_CLOUD_JSON_DATA_KEY, at_req_resp_buf, false);
+	if (err) {
 		LOG_ERR("Failed to populate AT CMD response with modem response data");
 		goto cleanup;
 	}
 
 	/* Send the response */
-	err = send_device_message_cJSON(msg_obj);
-
+	err = send_device_message(&msg_obj);
 	if (err) {
 		LOG_ERR("Failed to send AT CMD request response, error: %d", err);
 	}
 
+	return;
+
 cleanup:
-	cJSON_Delete(msg_obj);
+	(void)nrf_cloud_obj_free(&msg_obj);
 }
 
 /** @brief Check whether temperature is acceptable.
