@@ -918,7 +918,7 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 		return -EINVAL;
 	}
 
-	err = nrf_cloud_parse_pgps_response(buf, &pgps_dl);
+	err = nrf_cloud_pgps_response_decode(buf, &pgps_dl);
 	if (err) {
 		return err;
 	}
