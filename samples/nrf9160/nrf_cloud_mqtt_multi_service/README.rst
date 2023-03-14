@@ -38,7 +38,7 @@ This sample implements or demonstrates the following features:
 * Periodic cellular, Wi-Fi, and GNSS location tracking using the :ref:`lib_location` library.
 * Periodic temperature sensor sampling on your `Nordic Thingy:91`_, or fake temperature  measurements on your `Nordic nRF9160 DK`_.
 * Transmission of sensor and GNSS location samples to the nRF Cloud portal as `nRF Cloud device messages <nRF Cloud Device Messages_>`_.
-* Construction of valid `nRF Cloud device messages <nRF Cloud Device Messages_>`_ using `cJSON`_.
+* Construction of valid `nRF Cloud device messages <nRF Cloud Device Messages_>`_.
 * Minimal LED status indication using the `Zephyr LED API`_.
 
 .. _nrf_cloud_mqtt_multi_service_structure_and_theory_of_operation:
@@ -113,7 +113,7 @@ It performs the following major tasks:
 
 * Establishes periodic position tracking (which the :ref:`lib_location` library performs).
 * Periodically samples temperature data (using the :file:`src/temperature.c` file).
-* Constructs timestamped sensor sample and location `device messages <nRF Cloud Device Messages_>`_ using `cJSON`_.
+* Constructs timestamped sensor sample and location `device messages <nRF Cloud Device Messages_>`_.
 * Sends sensor sample and location device messages to the :ref:`nrf_cloud_mqtt_multi_service_device_message_queue`.
 * Checks for and executes :ref:`remote modem AT command requests <nrf_cloud_mqtt_multi_service_remote_at>`.
 
@@ -285,7 +285,7 @@ This plot is useful for tracking, visualizing, and debugging connection loss, re
 Device message formatting
 =========================
 
-This sample constructs JSON-based `device messages <nRF Cloud Device Messages_>`_ using `cJSON`_.
+This sample constructs JSON-based `device messages <nRF Cloud Device Messages_>`_ using.
 
 While any valid JSON string can be sent as a device message, and accepted and stored by `nRF Cloud`_, there are some pre-designed message structures, known as schemas.
 The nRF Cloud portal knows how to interpret these schemas.
