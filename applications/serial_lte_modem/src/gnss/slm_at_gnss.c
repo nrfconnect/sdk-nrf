@@ -895,8 +895,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 		LOG_INF("NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR:
-		LOG_ERR("NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR");
-		LOG_ERR("Failed to connect to nRF Cloud, status: %d", evt->status);
+		LOG_ERR("NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR: status %d", evt->status);
 		break;
 	case NRF_CLOUD_EVT_READY:
 		LOG_INF("NRF_CLOUD_EVT_READY");
@@ -907,7 +906,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 		on_cloud_evt_disconnected();
 		break;
 	case NRF_CLOUD_EVT_ERROR:
-		LOG_ERR("NRF_CLOUD_EVT_ERROR: %d", evt->status);
+		LOG_ERR("NRF_CLOUD_EVT_ERROR: status %d", evt->status);
 		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		LOG_DBG("NRF_CLOUD_EVT_SENSOR_DATA_ACK");
