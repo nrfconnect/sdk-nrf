@@ -34,7 +34,8 @@ static int handle_action_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 				struct net_buf_simple *buf)
 {
 	struct bt_mesh_scheduler_cli *cli = model->user_data;
-	struct bt_mesh_schedule_entry action = {0};
+	struct bt_mesh_schedule_entry action_data = {0};
+	struct bt_mesh_schedule_entry *action = NULL;
 	struct bt_mesh_schedule_entry *rsp;
 	uint8_t idx;
 
@@ -44,7 +45,8 @@ static int handle_action_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 	}
 
 	if (buf->len == BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS) {
-		scheduler_action_unpack(buf, &idx, &action);
+		scheduler_action_unpack(buf, &idx, &action_data);
+		action = &action_data;
 	} else {
 		idx = net_buf_simple_pull_u8(buf);
 	}
@@ -52,15 +54,13 @@ static int handle_action_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_SCHEDULER_OP_ACTION_STATUS,
 				      ctx->addr, (void **)&rsp) &&
 	    cli->ack_idx == idx) {
-		*rsp = action;
+		*rsp = action_data;
 		cli->ack_idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
 		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->action_status_handler) {
-		cli->action_status_handler(cli, ctx, idx,
-			buf->len == BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS ?
-				&action : NULL);
+		cli->action_status_handler(cli, ctx, idx, action);
 	}
 
 	return 0;
