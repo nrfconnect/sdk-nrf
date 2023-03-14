@@ -1,7 +1,7 @@
 .. _matter_index:
 
-Matter fork documentation
-#########################
+Matter documentation
+####################
 
 This documentation set includes a selection of pages available in the `Matter <https://github.com/nrfconnect/sdk-connectedhomeip>`_ repository fork, and focuses on the nRF Connect platform in Matter.
 

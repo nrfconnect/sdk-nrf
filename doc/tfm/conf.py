@@ -55,8 +55,13 @@ html_last_updated_fmt = None
 html_show_sourcelink = True
 html_show_sphinx = False
 html_show_copyright = False
+html_title = "Trusted Firmware-M documentation (nRF Connect SDK)"
 
-html_theme_options = {"docset": "tfm", "docsets": utils.ALL_DOCSETS}
+html_theme_options = {
+    "docset": "tfm",
+    "docsets": utils.ALL_DOCSETS,
+    "subtitle": "nRF Connect SDK",
+}
 
 # Options for autosectionlabel -------------------------------------------------
 

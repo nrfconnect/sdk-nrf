@@ -40,8 +40,13 @@ html_static_path = [str(NRF_BASE / "doc" / "_static")]
 html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
+html_title = "Matter documentation (nRF Connect SDK)"
 
-html_theme_options = {"docset": "matter", "docsets": utils.ALL_DOCSETS}
+html_theme_options = {
+    "docset": "matter",
+    "docsets": utils.ALL_DOCSETS,
+    "subtitle": "nRF Connect SDK",
+}
 
 # Options for external_content -------------------------------------------------
 

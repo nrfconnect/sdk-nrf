@@ -1,7 +1,7 @@
 .. _mcuboot_wrapper:
 
-MCUboot documentation in the nRF Connect SDK
-############################################
+MCUboot documentation
+#####################
 
 This documentation is based on the official `MCUboot <https://mcuboot.com>`_ documentation, but focuses on the use of MCUboot in the nRF Connect SDK.
 
