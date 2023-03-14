@@ -264,7 +264,7 @@ static int do_rest_client_request(struct nrf_cloud_rest_context *const rest_ctx,
 	rest_ctx->nrf_err = NRF_CLOUD_ERROR_NONE;
 	if ((ret == 0) && (rest_ctx->status >= NRF_CLOUD_HTTP_STATUS__ERROR_BEGIN) &&
 	    rest_ctx->response && rest_ctx->response_len) {
-		(void)nrf_cloud_parse_rest_error(rest_ctx->response, &rest_ctx->nrf_err);
+		(void)nrf_cloud_rest_error_decode(rest_ctx->response, &rest_ctx->nrf_err);
 
 		if ((rest_ctx->nrf_err != NRF_CLOUD_ERROR_NONE) &&
 		    (rest_ctx->nrf_err != NRF_CLOUD_ERROR_NOT_FOUND_NO_ERROR)) {
@@ -571,7 +571,7 @@ int nrf_cloud_rest_fota_job_get(struct nrf_cloud_rest_context *const rest_ctx,
 	job->type = NRF_CLOUD_FOTA_TYPE__INVALID;
 
 	if (rest_ctx->status == NRF_CLOUD_HTTP_STATUS_OK) {
-		ret = nrf_cloud_rest_fota_execution_parse(rest_ctx->response, job);
+		ret = nrf_cloud_rest_fota_execution_decode(rest_ctx->response, job);
 		if (ret) {
 			LOG_ERR("Failed to parse job execution response, error: %d", ret);
 		}
@@ -647,7 +647,7 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 	}
 
 	if (result) {
-		ret = nrf_cloud_parse_location_response(rest_ctx->response, result);
+		ret = nrf_cloud_location_response_decode(rest_ctx->response, result);
 		if (ret != 0) {
 			if (ret > 0) {
 				ret = -EBADMSG;

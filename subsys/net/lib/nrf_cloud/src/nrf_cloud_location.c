@@ -104,7 +104,7 @@ int nrf_cloud_location_process(const char *buf, struct nrf_cloud_location_result
 		return -EINVAL;
 	}
 
-	err = nrf_cloud_parse_location_response(buf, result);
+	err = nrf_cloud_location_response_decode(buf, result);
 	if (err == -EFAULT) {
 		LOG_ERR("nRF Cloud location error: %d", result->err);
 	} else if (err < 0) {

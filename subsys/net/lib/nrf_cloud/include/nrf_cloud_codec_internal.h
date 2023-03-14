@@ -56,11 +56,11 @@ int nrf_cloud_encode_shadow_data(const struct nrf_cloud_sensor_data *sensor,
 				 struct nrf_cloud_data *output);
 
 /** @brief Encode the user association data based on the indicated type. */
-int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *payload,
+int nrf_cloud_requested_state_decode(const struct nrf_cloud_data *payload,
 				     enum nfsm_state *requested_state);
 
 /** @brief Decode data endpoint information. */
-int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
+int nrf_cloud_data_endpoint_decode(const struct nrf_cloud_data *input,
 				   struct nrf_cloud_data *tx_endpoint,
 				   struct nrf_cloud_data *rx_endpoint,
 				   struct nrf_cloud_data *bulk_endpoint,
@@ -76,9 +76,9 @@ int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
 				     bool *const has_config);
 
 /** @brief Parse input for control section, and return contents and status of it. */
-int nrf_cloud_decode_control(struct nrf_cloud_data const *const input,
-			     enum nrf_cloud_ctrl_status *status,
-			     struct nrf_cloud_ctrl_data *data);
+int nrf_cloud_shadow_control_decode(struct nrf_cloud_data const *const input,
+				    enum nrf_cloud_ctrl_status *status,
+				    struct nrf_cloud_ctrl_data *data);
 
 /** @brief Encode response that we have accepted a shadow delta. */
 int nrf_cloud_encode_control_response(struct nrf_cloud_ctrl_data const *const data,
@@ -105,20 +105,20 @@ int nrf_cloud_device_status_msg_encode(const struct nrf_cloud_device_status *con
 /** @brief Free memory allocated by @ref nrf_cloud_device_status_shadow_encode */
 void nrf_cloud_device_status_free(struct nrf_cloud_data *status);
 
-/** @brief Free memory allocated by @ref nrf_cloud_rest_fota_execution_parse */
+/** @brief Free memory allocated by @ref nrf_cloud_rest_fota_execution_decode */
 void nrf_cloud_fota_job_free(struct nrf_cloud_fota_job_info *const job);
 
 /** @brief Parse the response from a FOTA execution request REST call.
  * If successful, memory will be allocated for the data in @ref nrf_cloud_fota_job_info.
  * The user is responsible for freeing the memory by calling @ref nrf_cloud_fota_job_free.
  */
-int nrf_cloud_rest_fota_execution_parse(const char *const response,
+int nrf_cloud_rest_fota_execution_decode(const char *const response,
 					struct nrf_cloud_fota_job_info *const job);
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 /** @brief Parse the PGPS response (REST and MQTT) from nRF Cloud */
-int nrf_cloud_parse_pgps_response(const char *const response,
-				  struct nrf_cloud_pgps_result *const result);
+int nrf_cloud_pgps_response_decode(const char *const response,
+				   struct nrf_cloud_pgps_result *const result);
 #endif
 
 /** @brief Add common [network] modem info to the provided cJSON object */
@@ -153,11 +153,11 @@ int nrf_cloud_format_wifi_req_json(struct wifi_scan_info const *const wifi,
 int nrf_cloud_get_single_cell_modem_info(struct lte_lc_cell *const cell_inf);
 
 /** @brief Parse the location response (REST and MQTT) from nRF Cloud. */
-int nrf_cloud_parse_location_response(const char *const buf,
+int nrf_cloud_location_response_decode(const char *const buf,
 				      struct nrf_cloud_location_result *result);
 
 /** @brief Check whether the provided MQTT payload is an nRF Cloud disconnection request */
-bool nrf_cloud_detect_disconnection_request(const char *const buf);
+bool nrf_cloud_disconnection_request_decode(const char *const buf);
 
 /** @brief Obtain a pointer to the string at the specified index in the cJSON array.
  * No memory is allocated, pointer is valid as long as the cJSON array is valid.
@@ -181,7 +181,7 @@ int json_send_to_cloud(cJSON * const request);
 cJSON *json_create_req_obj(const char *const app_id, const char *const msg_type);
 
 /** @brief Parse received REST data for an nRF Cloud error code */
-int nrf_cloud_parse_rest_error(const char *const buf, enum nrf_cloud_error *const err);
+int nrf_cloud_rest_error_decode(const char *const buf, enum nrf_cloud_error *const err);
 
 /** @brief Encode PVT data to be sent to nRF Cloud */
 int nrf_cloud_pvt_data_encode(const struct nrf_cloud_gnss_pvt * const pvt,
@@ -199,7 +199,7 @@ int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	*
 bool nrf_cloud_set_wildcard_c2d_topic(char *const topic, size_t topic_len);
 
 /** @brief Decode a dc receive topic string into an enum value */
-enum nrf_cloud_rcv_topic nrf_cloud_decode_dc_rx_topic(const char * const topic);
+enum nrf_cloud_rcv_topic nrf_cloud_dc_rx_topic_decode(const char * const topic);
 
 /** @brief Set the application version that is reported to nRF Cloud if
  * CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS is enabled.

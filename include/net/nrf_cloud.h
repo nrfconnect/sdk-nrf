@@ -883,10 +883,10 @@ int nrf_cloud_bootloader_fota_slot_set(struct nrf_cloud_settings_fota_job * cons
  * @retval -ENODATA JSON data was not found.
  * @return A negative value indicates an error.
  */
-int nrf_cloud_handle_error_message(const char *const buf,
-				   const char *const app_id,
-				   const char *const msg_type,
-				   enum nrf_cloud_error *const err);
+int nrf_cloud_error_msg_decode(const char *const buf,
+			       const char *const app_id,
+			       const char *const msg_type,
+			       enum nrf_cloud_error *const err);
 
 /**
  * @brief Function to retrieve the FOTA type of a pending FOTA job. A value of

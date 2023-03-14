@@ -265,7 +265,7 @@ static int handle_device_control_update(const struct nct_evt *const evt,
 #endif /* CONFIG_NRF_CLOUD_ALERTS */
 	ctrl_data.log_level = nrf_cloud_log_control_get();
 
-	err = nrf_cloud_decode_control(&evt->param.cc->data, &status, &ctrl_data);
+	err = nrf_cloud_shadow_control_decode(&evt->param.cc->data, &status, &ctrl_data);
 	if (err) {
 		return (err == -ESRCH) ? 0 : err;
 	}
@@ -452,9 +452,9 @@ static int handle_pin_complete(const struct nct_evt *nct_evt)
 	struct nrf_cloud_data bulk;
 	struct nrf_cloud_data endpoint;
 
-	err = nrf_cloud_decode_data_endpoint(payload, &tx, &rx, &bulk, &endpoint);
+	err = nrf_cloud_data_endpoint_decode(payload, &tx, &rx, &bulk, &endpoint);
 	if (err) {
-		LOG_ERR("nrf_cloud_decode_data_endpoint failed %d", err);
+		LOG_ERR("nrf_cloud_data_endpoint_decode failed %d", err);
 		return err;
 	}
 
@@ -495,12 +495,12 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 		nfsm_set_current_state_and_notify(current_state, &cloud_evt);
 	}
 
-	err = nrf_cloud_decode_requested_state(payload, &new_state);
+	err = nrf_cloud_requested_state_decode(payload, &new_state);
 
 	if (err) {
 #ifndef CONFIG_NRF_CLOUD_GATEWAY
 		if (!config_found && !control_found) {
-			LOG_ERR("nrf_cloud_decode_requested_state Failed %d",
+			LOG_ERR("nrf_cloud_requested_state_decode Failed %d",
 				err);
 			return err;
 		}
@@ -710,7 +710,7 @@ static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 		.topic = nct_evt->param.dc->topic,
 	};
 
-	switch (nrf_cloud_decode_dc_rx_topic(cloud_evt.topic.ptr)) {
+	switch (nrf_cloud_dc_rx_topic_decode(cloud_evt.topic.ptr)) {
 	case NRF_CLOUD_RCV_TOPIC_AGPS:
 		agps_process(cloud_evt.data.ptr, cloud_evt.data.len);
 		return 0;
@@ -731,7 +731,7 @@ static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 	case NRF_CLOUD_RCV_TOPIC_GENERAL:
 	default:
 		cloud_evt.type = NRF_CLOUD_EVT_RX_DATA_GENERAL;
-		discon_req = nrf_cloud_detect_disconnection_request(cloud_evt.data.ptr);
+		discon_req = nrf_cloud_disconnection_request_decode(cloud_evt.data.ptr);
 		break;
 	}
 

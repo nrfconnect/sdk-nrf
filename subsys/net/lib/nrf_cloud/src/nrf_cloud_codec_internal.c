@@ -312,7 +312,7 @@ void nrf_cloud_register_gateway_state_handler(gateway_state_handler_t handler)
 }
 #endif
 
-int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
+int nrf_cloud_requested_state_decode(const struct nrf_cloud_data *input,
 				     enum nfsm_state *requested_state)
 {
 	__ASSERT_NO_MSG(requested_state != NULL);
@@ -467,9 +467,9 @@ int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
 	return 0;
 }
 
-int nrf_cloud_decode_control(struct nrf_cloud_data const *const input,
-			     enum nrf_cloud_ctrl_status *status,
-			     struct nrf_cloud_ctrl_data *data)
+int nrf_cloud_shadow_control_decode(struct nrf_cloud_data const *const input,
+				    enum nrf_cloud_ctrl_status *status,
+				    struct nrf_cloud_ctrl_data *data)
 {
 	__ASSERT_NO_MSG(input != NULL);
 	__ASSERT_NO_MSG(status != NULL);
@@ -719,7 +719,7 @@ int nrf_cloud_encode_state(uint32_t reported_state, const bool update_desired_to
  *
  * @retval 0 or an error code indicating reason for failure
  */
-int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
+int nrf_cloud_data_endpoint_decode(const struct nrf_cloud_data *input,
 				   struct nrf_cloud_data *tx_endpoint,
 				   struct nrf_cloud_data *rx_endpoint,
 				   struct nrf_cloud_data *bulk_endpoint,
@@ -836,7 +836,7 @@ bool nrf_cloud_set_wildcard_c2d_topic(char *const topic, size_t topic_len)
 	return false;
 }
 
-enum nrf_cloud_rcv_topic nrf_cloud_decode_dc_rx_topic(const char * const topic)
+enum nrf_cloud_rcv_topic nrf_cloud_dc_rx_topic_decode(const char * const topic)
 {
 	if (!topic) {
 		return NRF_CLOUD_RCV_TOPIC_UNKNOWN;
@@ -1666,7 +1666,7 @@ void nrf_cloud_fota_job_free(struct nrf_cloud_fota_job_info *const job)
 	}
 }
 
-int nrf_cloud_rest_fota_execution_parse(const char *const response,
+int nrf_cloud_rest_fota_execution_decode(const char *const response,
 	struct nrf_cloud_fota_job_info *const job)
 {
 	if (!response || !job) {
@@ -1752,7 +1752,7 @@ err_cleanup:
 }
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-int nrf_cloud_parse_pgps_response(const char *const response,
+int nrf_cloud_pgps_response_decode(const char *const response,
 	struct nrf_cloud_pgps_result *const result)
 {
 	if (!response || !result ||
@@ -1785,7 +1785,7 @@ int nrf_cloud_parse_pgps_response(const char *const response,
 		enum nrf_cloud_error nrf_err;
 
 		/* Check for a potential P-GPS JSON error message from nRF Cloud */
-		err = nrf_cloud_handle_error_message(response, NRF_CLOUD_JSON_APPID_VAL_PGPS,
+		err = nrf_cloud_error_msg_decode(response, NRF_CLOUD_JSON_APPID_VAL_PGPS,
 						     NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA, &nrf_err);
 		if (!err) {
 			LOG_ERR("nRF Cloud returned P-GPS error: %d", nrf_err);
@@ -2208,10 +2208,10 @@ static int nrf_cloud_parse_location_json(const cJSON *const loc_obj,
 	return 0;
 }
 
-int nrf_cloud_handle_error_message(const char *const buf,
-				   const char *const app_id,
-				   const char *const msg_type,
-				   enum nrf_cloud_error * const err)
+int nrf_cloud_error_msg_decode(const char *const buf,
+			       const char *const app_id,
+			       const char *const msg_type,
+			       enum nrf_cloud_error * const err)
 {
 	if (!buf || !err) {
 		return -EINVAL;
@@ -2250,8 +2250,8 @@ clean_up:
 	return ret;
 }
 
-int nrf_cloud_parse_location_response(const char *const buf,
-					struct nrf_cloud_location_result *result)
+int nrf_cloud_location_response_decode(const char *const buf,
+				       struct nrf_cloud_location_result *result)
 {
 	int ret;
 	cJSON *loc_obj;
@@ -2329,7 +2329,7 @@ cleanup:
 	return ret;
 }
 
-int nrf_cloud_parse_rest_error(const char *const buf, enum nrf_cloud_error *const err)
+int nrf_cloud_rest_error_decode(const char *const buf, enum nrf_cloud_error *const err)
 {
 	int ret = -ENOMSG;
 	cJSON *root_obj;
@@ -2373,7 +2373,7 @@ cleanup:
 	return ret;
 }
 
-bool nrf_cloud_detect_disconnection_request(const char *const buf)
+bool nrf_cloud_disconnection_request_decode(const char *const buf)
 {
 	if (buf == NULL) {
 		return false;
