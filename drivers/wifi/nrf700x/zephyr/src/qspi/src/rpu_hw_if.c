@@ -181,9 +181,11 @@ int rpu_gpio_config(void)
 int rpu_pwron(void)
 {
 	gpio_pin_set_dt(&bucken_spec, 1);
-	k_msleep(SLEEP_TIME_MS);
+	/* Settling time is 50us (H0) or 100us (L0) */
+	k_msleep(1);
 	gpio_pin_set_dt(&iovdd_ctrl_spec, 1);
-	k_msleep(SLEEP_TIME_MS);
+	/* Settling time for iovdd switch (TCK106AG): ~600us */
+	k_msleep(1);
 	LOG_DBG("BUCKEN=1, IOVDD=1...\n");
 
 	return 0;
