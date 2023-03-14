@@ -66,16 +66,24 @@ ssize_t bt_nsms_status_read(struct bt_conn *conn,
 			    struct bt_gatt_attr const *attr,
 			    void *buf, uint16_t len, uint16_t offset);
 
+#define BT_NSMS_SECURITY_LEVEL_NONE	0
+#define BT_NSMS_SECURITY_LEVEL_ENCRYPT	1
+#define BT_NSMS_SECURITY_LEVEL_AUTHEN	2
 
-#define _BT_NSMS_CH_READ_PERM(_authen) ((_authen) ?                   \
-					 (BT_GATT_PERM_READ_AUTHEN) : \
-					 (BT_GATT_PERM_READ)          \
-				       )
-
-#define _BT_NSMS_CH_WRITE_PERM(_authen) ((_authen) ?                    \
-					  (BT_GATT_PERM_WRITE_AUTHEN) : \
-					  (BT_GATT_PERM_WRITE)          \
+#define _BT_NSMS_CH_READ_PERM(_slevel) ((_slevel == BT_NSMS_SECURITY_LEVEL_AUTHEN) ?  \
+					(BT_GATT_PERM_READ_AUTHEN) : \
+					(_slevel == BT_NSMS_SECURITY_LEVEL_ENCRYPT) ? \
+					(BT_GATT_PERM_READ_ENCRYPT) : \
+					(BT_GATT_PERM_READ) \
 					)
+
+#define _BT_NSMS_CH_WRITE_PERM(_slevel) ((_slevel == BT_NSMS_SECURITY_LEVEL_AUTHEN) ? \
+					(BT_GATT_PERM_WRITE_AUTHEN) : \
+					(_slevel == BT_NSMS_SECURITY_LEVEL_ENCRYPT) ? \
+					(BT_GATT_PERM_WRITE_ENCRYPT) : \
+					(BT_GATT_PERM_WRITE) \
+					)
+
 /* @note:
  * The macro is required to provide proper arguments expansion as we are using name concatenation.
  * This allow proper double argument expansion.
@@ -91,11 +99,14 @@ ssize_t bt_nsms_status_read(struct bt_conn *conn,
  *
  * @param _nsms        Name of Status Message Service instance.
  * @param _name        NULL terminated string used as a CUD for Status Message Characteristic.
- * @param _authen      Require authentication to read the characteristic.
+ * @param _slevel      Security level to use the characteristic.
+ *			- BT_NSMS_SECURITY_LEVEL_AUTHEN			- requires authentication
+ *			- BT_NSMS_SECURITY_LEVEL_ENCRYPT		- encryption is sufficient
+ *			- BT_NSMS_SECURITY_LEVEL_NONE and other values	- none
  * @param _status_init Initial message.
  * @param _len_max     Maximal size of the message. The size of the message buffer.
  */
-#define BT_NSMS_DEF(_nsms, _name, _authen, _status_init, _len_max)                      \
+#define BT_NSMS_DEF(_nsms, _name, _slevel, _status_init, _len_max)                      \
 	static K_MUTEX_DEFINE(CONCAT(_nsms, _status_mtx));                              \
 	static char CONCAT(_nsms, _status_buf)[_len_max] = _status_init;                \
 	static const struct bt_nsms_status_str CONCAT(_nsms, _status_str) = {           \
@@ -107,13 +118,13 @@ ssize_t bt_nsms_status_read(struct bt_conn *conn,
 		BT_GATT_PRIMARY_SERVICE(BT_UUID_NSMS_SERVICE),                          \
 			BT_GATT_CHARACTERISTIC(BT_UUID_NSMS_STATUS,                     \
 					       BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY, \
-					       _BT_NSMS_CH_READ_PERM(_authen),          \
+					       _BT_NSMS_CH_READ_PERM(_slevel),          \
 					       bt_nsms_status_read,                     \
 					       NULL,                                    \
 					       (void *)&CONCAT(_nsms, _status_str)),    \
-			BT_GATT_CCC(NULL, _BT_NSMS_CH_READ_PERM(_authen) |              \
-					  _BT_NSMS_CH_WRITE_PERM(_authen)),             \
-			BT_GATT_CUD(_name, _BT_NSMS_CH_READ_PERM(_authen)),             \
+			BT_GATT_CCC(NULL, _BT_NSMS_CH_READ_PERM(_slevel) |              \
+					  _BT_NSMS_CH_WRITE_PERM(_slevel)),             \
+			BT_GATT_CUD(_name, _BT_NSMS_CH_READ_PERM(_slevel)),             \
 	);                                                                              \
 	static const struct bt_nsms _nsms = {                                           \
 		.status_attr = &CONCAT(_nsms, _svc).attrs[2],                           \
