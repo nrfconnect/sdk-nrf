@@ -392,21 +392,6 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-static void modem_configure(void)
-{
-	int err;
-
-	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
-		/* Do nothing, modem is already configured and LTE connected. */
-	} else {
-		err = lte_lc_init_and_connect_async(lte_handler);
-		if (err) {
-			LOG_ERR("Modem could not be configured, error: %d", err);
-			return;
-		}
-	}
-}
-
 static void nrf_modem_lib_dfu_handler(int err)
 {
 	switch (err) {
@@ -487,6 +472,8 @@ void main(void)
 
 	LOG_INF("The AWS IoT sample started, version: %s", CONFIG_AWS_IOT_SAMPLE_APP_VERSION);
 
+	cJSON_Init();
+
 #if defined(CONFIG_NRF_MODEM_LIB)
 	err = nrf_modem_lib_init();
 	if (err) {
@@ -531,7 +518,11 @@ void main(void)
 
 	work_init();
 #if defined(CONFIG_NRF_MODEM_LIB)
-	modem_configure();
+	err = lte_lc_init_and_connect_async(lte_handler);
+	if (err) {
+		LOG_ERR("Modem could not be configured, error: %d", err);
+		return;
+	}
 
 	err = modem_info_init();
 	if (err) {

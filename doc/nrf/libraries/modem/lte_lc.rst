@@ -98,10 +98,6 @@ The following list mentions some of the information that can be extracted from t
    Some of the functionalities might not be compatible with certain modem firmware versions.
    To check if a desired feature is compatible with a certain modem firmware version, see nRF9160 `AT Commands Reference Guide`_.
 
-The library supports an auto initialization and connection feature that enables the library to initialize and connect to LTE prior to the start of the application.
-To enable this feature, set the configuration option :kconfig:option:`CONFIG_LTE_AUTO_INIT_AND_CONNECT` to ``y``.
-If you enable this option, you need not run additional library APIs.
-
 Enabling power-saving features
 ==============================
 

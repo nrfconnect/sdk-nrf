@@ -410,15 +410,11 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 
 static void modem_configure(void)
 {
-	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
-		/* Do nothing, modem is already configured and LTE connected. */
-	} else {
-		int err = lte_lc_init_and_connect_async(lte_handler);
+	int err = lte_lc_init_and_connect_async(lte_handler);
 
-		if (err) {
-			LOG_INF("Modem could not be configured, error: %d", err);
-			return;
-		}
+	if (err) {
+		LOG_INF("Modem could not be configured, error: %d", err);
+		return;
 	}
 }
 #endif /* CONFIG_LTE_LINK_CONTROL*/

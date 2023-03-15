@@ -12,12 +12,15 @@ menuconfig LTE_LINK_CONTROL
 if LTE_LINK_CONTROL
 
 config LTE_AUTO_INIT_AND_CONNECT
-	bool "Auto Initialize and Connect for the LTE link"
+	select DEPRECATED
+	bool "Auto Initialize and Connect for the LTE link [DEPRECATED]"
 	default y if NRF_MODEM_LIB_SYS_INIT
 	help
 		Turn on to make the LTE Link Controller to
 		automatically initialize and connect the modem
-		before the application starts
+		before the application starts.
+		This Kconfig option is deprecated. Instead, the application should call
+		lte_lc_init() and lte_lc_connect().
 
 config LTE_SHELL
 	bool "Enable LTE shell commands"

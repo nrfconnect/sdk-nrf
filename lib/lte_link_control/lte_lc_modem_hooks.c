@@ -61,15 +61,9 @@ static void on_modem_init(int err, void *ctx)
 #endif
 
 #if IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
-	err = lte_lc_init();
+	err = lte_lc_init_and_connect();
 	if (err) {
-		LOG_ERR("Lte_lc failed to initialize, err %d", err);
-		return;
-	}
-
-	err = lte_lc_connect();
-	if (err) {
-		LOG_ERR("Lte_lc failed to connect, err %d", err);
+		LOG_ERR("Lte_lc failed to initialize and connect, err %d", err);
 		return;
 	}
 #endif

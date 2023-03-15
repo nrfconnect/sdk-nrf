@@ -85,19 +85,15 @@ static void modem_configure(void)
 		return;
 	}
 
-	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
-		k_sem_give(&lte_connected);
-	} else {
-		err = lte_lc_init_and_connect_async(lte_handler);
-		if (err) {
-			LOG_ERR("Modem could not be configured, error: %d", err);
-			return;
-		}
-
-		/* Check LTE events of type LTE_LC_EVT_NW_REG_STATUS in
-		 * lte_handler() to determine when the LTE link is up.
-		 */
+	err = lte_lc_init_and_connect_async(lte_handler);
+	if (err) {
+		LOG_ERR("Modem could not be configured, error: %d", err);
+		return;
 	}
+
+	/* Check LTE events of type LTE_LC_EVT_NW_REG_STATUS in
+	 * lte_handler() to determine when the LTE link is up.
+	 */
 #endif
 }
 
