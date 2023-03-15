@@ -4369,3 +4369,43 @@ enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(struct wifi_nrf_fmac_dev_ctx *f
 out:
 	return status;
 }
+
+
+#ifdef CONFIG_NRF700X_UTIL
+enum wifi_nrf_status wifi_nrf_fmac_set_tx_rate(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					       unsigned char rate_flag,
+					       int data_rate)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct host_rpu_msg *umac_cmd = NULL;
+	struct nrf_wifi_cmd_fix_tx_rate *umac_cmd_data = NULL;
+	int len = 0;
+
+	len = sizeof(*umac_cmd_data);
+
+	umac_cmd = umac_cmd_alloc(fmac_dev_ctx,
+				  NRF_WIFI_HOST_RPU_MSG_TYPE_SYSTEM,
+				  len);
+
+	if (!umac_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: umac_cmd_alloc failed\n",
+				      __func__);
+		goto out;
+	}
+
+	umac_cmd_data = (struct nrf_wifi_cmd_fix_tx_rate *)(umac_cmd->msg);
+
+	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_TX_FIX_DATA_RATE;
+	umac_cmd_data->sys_head.len = len;
+
+	umac_cmd_data->rate_flags = rate_flag;
+	umac_cmd_data->fixed_rate = data_rate;
+
+	status = wifi_nrf_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
+					    umac_cmd,
+					    (sizeof(*umac_cmd) + len));
+out:
+	return status;
+}
+#endif /* CONFIG_NRF700X_UTIL */
