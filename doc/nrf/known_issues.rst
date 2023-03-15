@@ -1257,6 +1257,14 @@ NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth® L
 
   **Workaround:** Use BlueZ in version 5.56 or higher.
 
+.. rst-class:: v2-3-0 v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+NCSDK-20366: Possible bus fault in :ref:`nrf_desktop_selector` while toggling a hardware selector
+  The GPIO port index calculation in the GPIO interrupt handling function assumes that GPIO devices in Zephyr are placed in memory next to each other with order matching GPIO port indexes, which might not be true.
+  Using an invalid port index in the function leads to undefined behavior.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``6179413498d1ae1c9c79255aeca2739d108e482d``).
+
 .. rst-class:: v2-2-0
 
 NCSDK-19970: MCUboot bootloader fails to swap images on nRF52840 DK that uses external flash
