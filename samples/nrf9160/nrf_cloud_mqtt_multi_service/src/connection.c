@@ -736,11 +736,6 @@ static int setup_lte(void)
 	int err;
 
 	/* Perform Configuration */
-	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
-		/* Do nothing, modem is already configured and LTE connected. */
-		return 0;
-	}
-
 	if (IS_ENABLED(CONFIG_POWER_SAVING_MODE_ENABLE)) {
 		/* Requesting PSM before connecting allows the modem to inform
 		 * the network about our wish for certain PSM configuration

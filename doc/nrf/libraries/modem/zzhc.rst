@@ -75,11 +75,3 @@ You can configure the thread behavior using the following Kconfig options:
 
 * To adjust the stack size for the thread, change :kconfig:option:`CONFIG_ZZHC_STACK_SIZE`.
 * To adjust the thread priority, change :kconfig:option:`CONFIG_ZZHC_THREAD_PRIO`.
-
-Allowing for automatic registration to LTE-M or NB-IoT on boot
---------------------------------------------------------------
-
-To allow for automatic registration to LTE-M or NB-IoT network on boot, set the following Kconfig options in :file:`prj.conf`:
-
-* ``CONFIG_LTE_LINK_CONTROL=y``
-* ``CONFIG_LTE_AUTO_INIT_AND_CONNECT=y``

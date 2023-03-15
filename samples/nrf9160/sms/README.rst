@@ -53,7 +53,6 @@ Check and configure the following mandatory library options that are used by the
 Check and configure the following optional library options that are used by the sample:
 
 * :kconfig:option:`CONFIG_SMS_SUBSCRIBERS_MAX_CNT`
-* :kconfig:option:`CONFIG_LTE_AUTO_INIT_AND_CONNECT`
 * :kconfig:option:`CONFIG_LOG`
 * :kconfig:option:`CONFIG_ASSERT`
 * :kconfig:option:`CONFIG_ASSERT_VERBOSE`

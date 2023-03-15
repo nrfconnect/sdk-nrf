@@ -9,6 +9,7 @@
 #include <string.h>
 #include <modem/sms.h>
 #include <modem/nrf_modem_lib.h>
+#include <modem/lte_lc.h>
 
 
 static void sms_callback(struct sms_data *const data, void *context)
@@ -62,6 +63,12 @@ void main(void)
 	ret = nrf_modem_lib_init();
 	if (ret) {
 		printk("Modem library initialization failed, error: %d\n", ret);
+		return;
+	}
+
+	ret = lte_lc_init_and_connect();
+	if (ret) {
+		printk("Lte_lc failed to initialize and connect, err %d", ret);
 		return;
 	}
 

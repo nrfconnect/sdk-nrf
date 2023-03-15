@@ -144,14 +144,10 @@ static void modem_init(void)
 		return;
 	}
 
-	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
-		/* Do nothing, modem is already configured and LTE connected. */
-	} else {
-		err = lte_lc_init();
-		if (err) {
-			printk("Modem LTE connection initialization failed, error: %d\n", err);
-			return;
-		}
+	err = lte_lc_init();
+	if (err) {
+		printk("Modem LTE connection initialization failed, error: %d\n", err);
+		return;
 	}
 }
 
@@ -159,15 +155,11 @@ static void modem_connect(void)
 {
 	int err;
 
-	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
-		/* Do nothing, modem is already configured and LTE connected. */
-	} else {
-		err = lte_lc_connect_async(lte_handler);
-		if (err) {
-			printk("Connecting to LTE network failed, error: %d\n",
-			       err);
-			return;
-		}
+	err = lte_lc_connect_async(lte_handler);
+	if (err) {
+		printk("Connecting to LTE network failed, error: %d\n",
+			err);
+		return;
 	}
 }
 #endif

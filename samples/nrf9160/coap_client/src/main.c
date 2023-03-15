@@ -174,18 +174,14 @@ static int client_get_send(void)
 static void modem_configure(void)
 {
 #if defined(CONFIG_LTE_LINK_CONTROL)
-	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
-		/* Do nothing, modem is already turned on
-		 * and connected.
-		 */
-	} else {
-		int err;
 
-		printk("LTE Link Connecting ...\n");
-		err = lte_lc_init_and_connect();
-		__ASSERT(err == 0, "LTE link could not be established.");
-		printk("LTE Link Connected!\n");
-	}
+	int err;
+
+	printk("LTE Link Connecting ...\n");
+	err = lte_lc_init_and_connect();
+	__ASSERT(err == 0, "LTE link could not be established.");
+	printk("LTE Link Connected!\n");
+
 #endif /* defined(CONFIG_LTE_LINK_CONTROL) */
 }
 
