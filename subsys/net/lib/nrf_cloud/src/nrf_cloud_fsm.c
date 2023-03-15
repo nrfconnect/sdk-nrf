@@ -164,9 +164,9 @@ static int state_ua_pin_wait(void)
 	};
 
 	/* Publish report to the cloud on current status. */
-	err = nrf_cloud_encode_state(STATE_UA_PIN_WAIT, false, &msg.data);
+	err = nrf_cloud_state_encode(STATE_UA_PIN_WAIT, false, &msg.data);
 	if (err) {
-		LOG_ERR("nrf_cloud_encode_state failed %d", err);
+		LOG_ERR("nrf_cloud_state_encode failed %d", err);
 		return err;
 	}
 
@@ -205,10 +205,10 @@ static int handle_device_config_update(const struct nct_evt *const evt,
 		return -ENOENT;
 	}
 
-	err = nrf_cloud_encode_config_response(&evt->param.cc->data, &msg.data,
+	err = nrf_cloud_shadow_config_response_encode(&evt->param.cc->data, &msg.data,
 					       config_found);
 	if ((err) && (err != -ESRCH)) {
-		LOG_ERR("nrf_cloud_encode_config_response failed %d", err);
+		LOG_ERR("nrf_cloud_shadow_config_response_encode failed %d", err);
 		return err;
 	}
 
@@ -285,9 +285,9 @@ static int handle_device_control_update(const struct nct_evt *const evt,
 			.message_id = NCT_MSG_ID_STATE_REPORT,
 		};
 
-		err = nrf_cloud_encode_control_response(&ctrl_data, &msg.data);
+		err = nrf_cloud_shadow_control_response_encode(&ctrl_data, &msg.data);
 		if (err) {
-			LOG_ERR("nrf_cloud_encode_control_response failed %d", err);
+			LOG_ERR("nrf_cloud_shadow_control_response_encode failed %d", err);
 			return err;
 		}
 
@@ -312,9 +312,9 @@ static int state_ua_pin_complete(void)
 		.message_id = NCT_MSG_ID_PAIR_STATUS_REPORT,
 	};
 
-	err = nrf_cloud_encode_state(STATE_UA_PIN_COMPLETE, c2d_topic_modified, &msg.data);
+	err = nrf_cloud_state_encode(STATE_UA_PIN_COMPLETE, c2d_topic_modified, &msg.data);
 	if (err) {
-		LOG_ERR("nrf_cloud_encode_state failed %d", err);
+		LOG_ERR("nrf_cloud_state_encode failed %d", err);
 		return err;
 	}
 

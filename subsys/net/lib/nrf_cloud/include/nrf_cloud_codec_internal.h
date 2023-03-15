@@ -44,15 +44,15 @@ int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks);
  *  but only if it is not NULL; when CONFIG_NRF_CLOUD_ALERTS is disabled,
  *  this function returns 0, and sets output->ptr = NULL and output->len = 0.
  */
-int nrf_cloud_encode_alert(const struct nrf_cloud_alert_info *alert,
+int nrf_cloud_alert_encode(const struct nrf_cloud_alert_info *alert,
 			   struct nrf_cloud_data *output);
 
 /** @brief Encode the sensor data based on the indicated type. */
-int nrf_cloud_encode_sensor_data(const struct nrf_cloud_sensor_data *input,
+int nrf_cloud_sensor_data_encode(const struct nrf_cloud_sensor_data *input,
 				 struct nrf_cloud_data *output);
 
 /** @brief Encode the sensor data to be sent to the device shadow. */
-int nrf_cloud_encode_shadow_data(const struct nrf_cloud_sensor_data *sensor,
+int nrf_cloud_shadow_data_encode(const struct nrf_cloud_sensor_data *sensor,
 				 struct nrf_cloud_data *output);
 
 /** @brief Encode the user association data based on the indicated type. */
@@ -67,13 +67,13 @@ int nrf_cloud_data_endpoint_decode(const struct nrf_cloud_data *input,
 				   struct nrf_cloud_data *m_endpoint);
 
 /** @brief Encode state information. */
-int nrf_cloud_encode_state(uint32_t reported_state, const bool update_desired_topic,
+int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_topic,
 			   struct nrf_cloud_data *output);
 
 /** @brief Search input for config and encode response if necessary. */
-int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
-				     struct nrf_cloud_data *const output,
-				     bool *const has_config);
+int nrf_cloud_shadow_config_response_encode(struct nrf_cloud_data const *const input,
+					    struct nrf_cloud_data *const output,
+					    bool *const has_config);
 
 /** @brief Parse input for control section, and return contents and status of it. */
 int nrf_cloud_shadow_control_decode(struct nrf_cloud_data const *const input,
@@ -81,8 +81,8 @@ int nrf_cloud_shadow_control_decode(struct nrf_cloud_data const *const input,
 				    struct nrf_cloud_ctrl_data *data);
 
 /** @brief Encode response that we have accepted a shadow delta. */
-int nrf_cloud_encode_control_response(struct nrf_cloud_ctrl_data const *const data,
-				      struct nrf_cloud_data *const output);
+int nrf_cloud_shadow_control_response_encode(struct nrf_cloud_ctrl_data const *const data,
+					     struct nrf_cloud_data *const output);
 
 /** @brief Encode the device status data into a JSON formatted buffer to be saved to
  * the device shadow.
@@ -91,18 +91,18 @@ int nrf_cloud_encode_control_response(struct nrf_cloud_ctrl_data const *const da
  * REST endpoint, the "state" key should not be included.
  * The user is responsible for freeing the memory by calling @ref nrf_cloud_device_status_free.
  */
-int nrf_cloud_device_status_shadow_encode(const struct nrf_cloud_device_status * const dev_status,
-					  struct nrf_cloud_data * const output,
-					  const bool include_state);
+int nrf_cloud_shadow_dev_status_encode(const struct nrf_cloud_device_status * const dev_status,
+				       struct nrf_cloud_data * const output,
+				       const bool include_state);
 
 /** @brief Encode the device status data as an nRF Cloud device message in the provided
  * cJSON object.
  */
-int nrf_cloud_device_status_msg_encode(const struct nrf_cloud_device_status *const dev_status,
+int nrf_cloud_dev_status_json_encode(const struct nrf_cloud_device_status *const dev_status,
 				       const int64_t timestamp,
 				       cJSON * const msg_obj_out);
 
-/** @brief Free memory allocated by @ref nrf_cloud_device_status_shadow_encode */
+/** @brief Free memory allocated by @ref nrf_cloud_shadow_dev_status_encode */
 void nrf_cloud_device_status_free(struct nrf_cloud_data *status);
 
 /** @brief Free memory allocated by @ref nrf_cloud_rest_fota_execution_decode */
@@ -122,31 +122,26 @@ int nrf_cloud_pgps_response_decode(const char *const response,
 #endif
 
 /** @brief Add common [network] modem info to the provided cJSON object */
-int nrf_cloud_json_add_modem_info(cJSON * const data_obj);
+int nrf_cloud_network_info_json_encode(cJSON * const data_obj);
 
 /** @brief Build a cellular positioning request in the provided cJSON object
  * using the provided cell info
  */
-int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf,
+int nrf_cloud_cell_pos_req_json_encode(struct lte_lc_cells_info const *const inf,
 				       cJSON * const req_obj_out);
-
-/** @brief Obtain the necessary network info from the modem and build a
- * [single-cell] cellular positioning request in the provided cJSON object.
- */
-int nrf_cloud_format_single_cell_pos_req_json(cJSON * const req_obj_out);
 
 /** @brief Build a location request string using the provided info.
  * If successful, memory will be allocated for the output string and the user is
  * responsible for freeing it using @ref cJSON_free.
  */
-int nrf_cloud_format_location_req(struct lte_lc_cells_info const *const cell_info,
-				  struct wifi_scan_info const *const wifi_info,
-				  char **string_out);
+int nrf_cloud_location_req_json_encode(struct lte_lc_cells_info const *const cell_info,
+				       struct wifi_scan_info const *const wifi_info,
+				       char **string_out);
 
 /** @brief Build a WiFi positioning request in the provided cJSON object
  * using the provided WiFi info
  */
-int nrf_cloud_format_wifi_req_json(struct wifi_scan_info const *const wifi,
+int nrf_cloud_wifi_req_json_encode(struct wifi_scan_info const *const wifi,
 				   cJSON *const req_obj_out);
 
 /** @brief Get the required information from the modem for a single-cell location request. */

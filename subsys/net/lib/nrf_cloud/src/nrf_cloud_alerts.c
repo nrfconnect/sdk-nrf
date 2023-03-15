@@ -43,7 +43,7 @@ static int alert_prepare(struct nrf_cloud_data *output,
 		alert.type, alert.value, alert.description ? alert.description : "",
 		alert.ts_ms, alert.sequence);
 
-	return nrf_cloud_encode_alert(&alert, output);
+	return nrf_cloud_alert_encode(&alert, output);
 }
 #endif /* CONFIG_NRF_CLOUD_ALERTS */
 
