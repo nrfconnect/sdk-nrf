@@ -25,14 +25,14 @@ mcuboot_primary_app:
   region: flash_primary
   size: 0xdfe00
   span: *id002
-settings_storage:
+factory_data:
   address: 0xf0000
   region: flash_primary
-  size: 0xf000
-factory_data:
-  address: 0xff000
+  size: 0x4000
+settings_storage:
+  address: 0xf4000
   region: flash_primary
-  size: 0x1000
+  size: 0xc000
 mcuboot_primary_1:
   address: 0x0
   size: 0x40000
