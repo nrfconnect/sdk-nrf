@@ -7,6 +7,7 @@
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_mem.h"
 #include "nrf_cloud_fsm.h"
+#include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_location.h>
 #include <net/nrf_cloud_alerts.h>
 #include <stdbool.h>

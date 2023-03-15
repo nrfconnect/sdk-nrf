@@ -9,6 +9,7 @@
 #include <nrf_modem_at.h>
 #include <nrf_errno.h>
 #include <net/nrf_cloud.h>
+#include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_alerts.h>
 #include <date_time.h>
 #include <cJSON.h>

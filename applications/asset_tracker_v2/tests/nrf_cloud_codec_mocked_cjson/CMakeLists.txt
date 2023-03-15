@@ -18,6 +18,7 @@ test_runner_generate(src/nrf_cloud_codec_mocked_test.c)
 cmock_handle(${ASSET_TRACKER_V2_DIR}/src/cloud/cloud_codec/json_helpers.h)
 cmock_handle(${NRF_DIR}/include/date_time.h)
 cmock_handle(${NRF_DIR}/include/net/nrf_cloud.h)
+cmock_handle(${NRF_DIR}/include/net/nrf_cloud_codec.h)
 cmock_handle(src/cJSON_to_mock.h)
 
 # add test file
