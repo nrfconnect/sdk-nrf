@@ -228,6 +228,7 @@ static const struct rpu_addr_map RPU_ADDR_MAP_MCU[] = {
 #define CALIB_TXPOWBACKOFFV 84
 #define REGION_DEFAULTS 85
 #define OTP_MAX_WORD_LEN 128
+#define QSPI_KEY_LENGTH_BYTES 16
 
 /* Size of OTP fields in bytes */
 #define OTP_SZ_CALIB_XO 1

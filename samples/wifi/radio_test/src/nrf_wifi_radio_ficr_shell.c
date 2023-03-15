@@ -144,6 +144,7 @@ static int nrf_wifi_radio_test_otp_write_params(const struct shell *shell,
 	unsigned int write_val[20];
 	unsigned int val[OTP_MAX_WORD_LEN];
 	unsigned int ret, err;
+	int status = 0;
 
 	if (argc < 2) {
 		shell_fprintf(shell, SHELL_ERROR, "invalid # of args : %d\n", argc);
@@ -203,7 +204,7 @@ static int nrf_wifi_radio_test_otp_write_params(const struct shell *shell,
 			return -ENOEXEC;
 		}
 
-		write_otp_memory(field, &write_val[0]);
+		status = write_otp_memory(field, &write_val[0]);
 		break;
 	case CALIB_XO:
 	case REGION_DEFAULTS:
@@ -213,7 +214,7 @@ static int nrf_wifi_radio_test_otp_write_params(const struct shell *shell,
 			return -ENOEXEC;
 		}
 		write_val[0]  = strtoul(argv[2], NULL, 0);
-		write_otp_memory(field, &write_val[0]);
+		status = write_otp_memory(field, &write_val[0]);
 		break;
 	case QSPI_KEY:
 		if (argc != 6) {
@@ -226,14 +227,16 @@ static int nrf_wifi_radio_test_otp_write_params(const struct shell *shell,
 		write_val[2]  = strtoul(argv[4], NULL, 0);
 		write_val[3]  = strtoul(argv[5], NULL, 0);
 		/* All consecutive 4 words of the qspi keys are written now */
-		write_otp_memory(QSPI_KEY, &write_val[0]);
+		status = write_otp_memory(QSPI_KEY, &write_val[0]);
 		break;
 	default:
 		shell_fprintf(shell, SHELL_ERROR, "unsupported field %d\n", field);
 		return -ENOEXEC;
 	}
 
-	shell_fprintf(shell, SHELL_INFO, "Finished Writing OTP params\n");
+	if (!status) {
+		shell_fprintf(shell, SHELL_INFO, "Finished Writing OTP params\n");
+	}
 
 	return 0;
 }
