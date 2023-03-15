@@ -86,7 +86,7 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c, const struct mqt
 		evt->param.publish.message.topic.topic.size);
 	data_send("\r\n", 2);
 	do {
-		ret = mqtt_read_publish_payload(c, data_buf, sizeof(data_buf));
+		ret = mqtt_read_publish_payload_blocking(c, data_buf, sizeof(data_buf));
 		if (ret > 0) {
 			data_send(data_buf, ret);
 			size_read += ret;

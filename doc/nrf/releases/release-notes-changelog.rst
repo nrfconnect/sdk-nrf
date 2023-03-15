@@ -154,6 +154,10 @@ nRF9160: Serial LTE modem
 
   * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
 
+* Fixed:
+
+  * A bug in receiving large MQTT Publish message.
+
 nRF5340 Audio
 -------------
 
