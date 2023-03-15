@@ -221,7 +221,7 @@ Testing
               ofdm_crc32_pass_cnt=0
               ofdm_crc32_fail_cnt=0
               dsss_crc32_pass_cnt=1000
-              ofdm_crc32_fail_cnt=0
+              dsss_crc32_fail_cnt=0
 
            The sample below shows the output obtained after feeding 1000 OFDM packets:
 
@@ -232,7 +232,7 @@ Testing
               ofdm_crc32_pass_cnt=1000
               ofdm_crc32_fail_cnt=0
               dsss_crc32_pass_cnt=0
-              ofdm_crc32_fail_cnt=0
+              dsss_crc32_fail_cnt=0
 
 
          * To transmit a continuous tone with the following configuration:
