@@ -51,14 +51,23 @@ The nRF Connect platform in Matter uses Zephyr's :ref:`zephyr:settings_api` API 
 This requires that you define the ``settings_storage`` partition in the flash.
 The recommended minimum size of the partition is 16 kB, but you can reserve even more space if your application uses the storage extensively.
 
-As you can see in the listing above, Matter samples in the |NCS| reserve exactly 16 kB for the ``settings_storage`` partition.
+As you can see in :ref:`ug_matter_hw_requirements_layouts`, Matter samples in the |NCS| reserve exactly 16 kB for the ``settings_storage`` partition.
 
 Factory data partition
 ======================
 
 If you make a real Matter product, you also need the ``factory_data`` partition to store the factory data.
 The factory data contains a set of immutable device identifiers, certificates and cryptographic keys, programmed onto a device at the time of the device fabrication.
-For that partition one flash page of 4kB should be enough in most use cases.
+For that partition one flash page of 4 kB should be enough in most use cases.
+
+By default, the ``factory_data`` partition is write-protected with the :ref:`fprotect_readme` driver (``fprotect``).
+The hardware limitations require that the write-protected areas are aligned to :kconfig:option:`CONFIG_FPROTECT_BLOCK_SIZE`.
+For this reason, to effectively implement ``fprotect``, make sure that the :ref:`partition layout of the application <ug_matter_hw_requirements_layouts>` meets the following requirements:
+
+* The ``factory_data`` partition is placed right after the ``app`` partition in the address space (that is, the ``factory_data`` partition offset must be equal to the last address of the ``app`` partition).
+* The ``settings_storage`` partition size must be a multiple of :kconfig:option:`CONFIG_FPROTECT_BLOCK_SIZE`, which may differ depending on the SoC in use.
+
+In case your memory map does not follow these requirements, you can still use the factory data implementation without the write protection by setting the :kconfig:option:`CHIP_FACTORY_DATA_WRITE_PROTECT` to ``n``, although this is not recommended.
 
 See the :ref:`ug_matter_device_attestation_device_data_generating` section on the Device Attestation page for more information about the factory data in Matter.
 

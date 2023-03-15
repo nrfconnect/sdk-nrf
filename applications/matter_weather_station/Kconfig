@@ -13,16 +13,6 @@ config AVERAGE_CURRENT_CONSUMPTION
 	  The predicted average current consumption of the Matter weather station
 	  device, used to estimate the remaining battery time.
 
-if CHIP_FACTORY_DATA
-
-# Overwrite the Fprotect block size to fit the size of the factory data partition.
-# See lib/fprotect/Kconfig to get full description of this config.
-config FPROTECT_BLOCK_SIZE
-	hex
-	default 0x1000
-
-endif
-
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.defaults"
 source "Kconfig.zephyr"
