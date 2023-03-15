@@ -16,6 +16,7 @@
 #endif
 #include <modem/nrf_modem_lib.h>
 #include <modem/modem_key_mgmt.h>
+#include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_rest.h>
 #include <net/rest_client.h>
 #include <zephyr/logging/log.h>

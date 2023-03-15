@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <date_time.h>
+#include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_location.h>
 #include <cloud_codec.h>
 

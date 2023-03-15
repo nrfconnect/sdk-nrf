@@ -10,6 +10,7 @@
 #include <date_time.h>
 #include <nrf_modem_gnss.h>
 #include <net/nrf_cloud.h>
+#include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
 #include <net/nrf_cloud_location.h>
