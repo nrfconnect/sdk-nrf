@@ -14,6 +14,10 @@
 #include <cJSON_os.h>
 #include <zephyr/logging/log.h>
 
+#if IS_ENABLED(CONFIG_DEVICE_ID_USE_UUID)
+#include <hw_id.h>
+#endif
+
 #if IS_ENABLED(CONFIG_LTE_LINK_CONTROL)
 #include <modem/lte_lc.h>
 #endif
@@ -413,7 +417,7 @@ static void modem_configure(void)
 		}
 	}
 }
-#endif
+#endif /* CONFIG_LTE_LINK_CONTROL*/
 
 static void work_init(void)
 {
@@ -522,21 +526,35 @@ static int dps_run(struct azure_iot_hub_buf *hostname, struct azure_iot_hub_buf 
 
 	return 0;
 }
-#endif /* CONFIG_AZURE_IOT_HUB_DPS && !CONFIG_AZURE_IOT_HUB_DPS_AUTO */
+#endif /* CONFIG_AZURE_IOT_HUB_DPS */
 
 void main(void)
 {
 	int err;
+
+#if IS_ENABLED(CONFIG_DEVICE_ID_USE_UUID)
+	char device_id[128];
+
+	err = hw_id_get(device_id, ARRAY_SIZE(device_id));
+	if (err) {
+		LOG_ERR("Failed to retrieve device ID");
+		return;
+	}
+#else
 	char device_id[128] = CONFIG_AZURE_IOT_HUB_DEVICE_ID;
+#endif
+
+	LOG_INF("Device ID: %s", device_id);
+
 	char hostname[128] = CONFIG_AZURE_IOT_HUB_HOSTNAME;
 	struct azure_iot_hub_config cfg = {
 		.device_id = {
 			.ptr = device_id,
-			.size = sizeof(CONFIG_AZURE_IOT_HUB_DEVICE_ID) - 1,
+			.size = strlen(device_id),
 		},
 		.hostname = {
 			.ptr = hostname,
-			.size = sizeof(CONFIG_AZURE_IOT_HUB_HOSTNAME) - 1,
+			.size = strlen(hostname),
 		},
 		.use_dps = true,
 	};
