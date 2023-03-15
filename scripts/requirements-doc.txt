@@ -1,7 +1,7 @@
 recommonmark==0.6.0
 CommonMark>=0.9.1
 sphinxcontrib-mscgen>=0.6
-sphinx-ncs-theme>=1.0.3,<1.1
+git+https://github.com/nrfconnect/doc-sphinx-ncs-theme@refs/pull/21/head#egg=sphinx-ncs-theme
 m2r2>=0.3.2
 sphinxcontrib-plantuml
 pygit2

@@ -50,6 +50,6 @@
 .. |recommonmark_ver| replace:: @RECOMMONMARK_VERSION@
 .. |sphinx_ver| replace:: @SPHINX_VERSION@
 .. |sphinx-tabs_ver| replace:: @SPHINX-TABS_VERSION@
-.. |sphinx-ncs-theme_ver| replace:: @SPHINX-NCS-THEME_VERSION@
+.. |sphinx-ncs-theme_ver| replace:: NONE
 .. |sphinxcontrib-mscgen_ver| replace:: @SPHINXCONTRIB-MSCGEN_VERSION@
 .. |sphinxcontrib-svg2pdfconverter_ver| replace:: @SPHINXCONTRIB-SVG2PDFCONVERTER_VERSION@
