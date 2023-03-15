@@ -1360,4 +1360,10 @@ enum wifi_nrf_status wifi_nrf_fmac_get_reg(struct wifi_nrf_fmac_dev_ctx *fmac_de
  */
 enum wifi_nrf_status wifi_nrf_fmac_get_power_save_info(void *fmac_dev_ctx,
 						       unsigned char if_idx);
+
+#ifdef CONFIG_NRF700X_UTIL
+enum wifi_nrf_status wifi_nrf_fmac_set_tx_rate(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					       unsigned char rate_flag,
+					       int data_rate);
+#endif /* CONFIG_NRF700X_UTIL */
 #endif /* __FMAC_API_H__ */

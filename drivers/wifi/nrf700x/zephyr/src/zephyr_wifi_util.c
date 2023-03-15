@@ -16,6 +16,54 @@
 extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 struct wifi_nrf_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 
+static bool check_valid_data_rate(const struct shell *shell,
+				  unsigned char rate_flag,
+				  unsigned int data_rate)
+{
+	bool ret = false;
+
+	switch (rate_flag) {
+	case RPU_TPUT_MODE_LEGACY:
+		if ((data_rate == 1) ||
+		    (data_rate == 2) ||
+		    (data_rate == 55) ||
+		    (data_rate == 11) ||
+		    (data_rate == 6) ||
+		    (data_rate == 9) ||
+		    (data_rate == 12) ||
+		    (data_rate == 18) ||
+		    (data_rate == 24) ||
+		    (data_rate == 36) ||
+		    (data_rate == 48) ||
+		    (data_rate == 54)) {
+			ret = true;
+		}
+		break;
+	case RPU_TPUT_MODE_HT:
+	case RPU_TPUT_MODE_HE_SU:
+	case RPU_TPUT_MODE_VHT:
+		if ((data_rate >= 0) && (data_rate <= 7)) {
+			ret = true;
+		}
+		break;
+	case RPU_TPUT_MODE_HE_ER_SU:
+		if (data_rate >= 0 && data_rate <= 2) {
+			ret = true;
+		}
+		break;
+	default:
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "%s: Invalid rate_flag %d\n",
+			      __func__,
+			      rate_flag);
+		break;
+	}
+
+	return ret;
+}
+
+
 static struct wifi_nrf_vif_ctx_zep *net_if_get_vif_ctx(const struct shell *shell,
 						       int indx)
 {
@@ -54,6 +102,7 @@ static struct wifi_nrf_vif_ctx_zep *net_if_get_vif_ctx(const struct shell *shell
 err:
 	return vif_ctx_zep;
 }
+
 
 int nrf_wifi_util_conf_init(struct rpu_conf_params *conf_params)
 {
@@ -300,10 +349,17 @@ static int nrf_wifi_util_show_cfg(const struct shell *shell,
 		      SHELL_INFO,
 		      "uapsd_queue = %d\n",
 		      conf_params->uapsd_queue);
+
 	shell_fprintf(shell,
 		      SHELL_INFO,
 		      "passive_scan = %d\n",
 		      (&ctx->vif_ctx_zep[0])->passive_scan);
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "rate_flag = %d,  rate_val = %d\n",
+		      ctx->conf_params.tx_pkt_tput_mode,
+		      ctx->conf_params.tx_pkt_rate);
 	return 0;
 }
 
@@ -368,6 +424,73 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 	return 0;
 }
 
+
+static int nrf_wifi_util_tx_rate(const struct shell *shell,
+				 size_t argc,
+				 const char *argv[])
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	char *ptr = NULL;
+	long rate_flag = -1;
+	long data_rate = -1;
+
+	rate_flag = strtol(argv[1], &ptr, 10);
+
+	if (rate_flag >= RPU_TPUT_MODE_MAX) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid value %ld for rate_flags\n",
+			      rate_flag);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+
+	if (rate_flag == RPU_TPUT_MODE_HE_TB) {
+		data_rate = -1;
+	} else {
+		if (argc < 3) {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "rate_val needed for rate_flag = %ld\n",
+				      rate_flag);
+			shell_help(shell);
+			return -ENOEXEC;
+		}
+
+		data_rate = strtol(argv[2], &ptr, 10);
+
+		if (!(check_valid_data_rate(shell,
+					    rate_flag,
+					    data_rate))) {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "Invalid data_rate %ld for rate_flag %ld\n",
+				      data_rate,
+				      rate_flag);
+			return -ENOEXEC;
+		}
+
+	}
+
+	status = wifi_nrf_fmac_set_tx_rate(ctx->rpu_ctx,
+					   rate_flag,
+					   data_rate);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Programming tx_rate failed\n");
+		return -ENOEXEC;
+	}
+
+	ctx->conf_params.tx_pkt_tput_mode = rate_flag;
+	ctx->conf_params.tx_pkt_rate = data_rate;
+
+	return 0;
+}
+
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf_wifi_util_subcmds,
 	SHELL_CMD_ARG(he_ltf,
@@ -426,6 +549,24 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_tx_stats,
 		      3,
 		      0),
+	SHELL_CMD_ARG(tx_rate,
+		      NULL,
+		      "Sets TX data rate to either a fixed value or AUTO\n"
+		      "Parameters:\n"
+		      "    <rate_flag> : The TX data rate type to be set, where:\n"
+		      "        0 - LEGACY\n"
+		      "        1 - HT\n"
+		      "        2 - VHT\n"
+		      "        3 - HE_SU\n"
+		      "        4 - HE_ER_SU\n"
+		      "        5 - AUTO\n"
+		      "    <rate_val> : The TX data rate value to be set, valid values are:\n"
+		      "        Legacy : <1, 2, 55, 11, 6, 9, 12, 18, 24, 36, 48, 54>\n"
+		      "        Non-legacy: <MCS index value between 0 - 7>\n"
+		      "        AUTO: <No value needed>\n",
+		      nrf_wifi_util_tx_rate,
+		      2,
+		      1),
 	SHELL_SUBCMD_SET_END);
 
 
