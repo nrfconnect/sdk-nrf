@@ -180,11 +180,27 @@ static int otp_rd_voltage_1V8(void)
 	return 0;
 }
 
+static int update_mac_addr(unsigned int index, unsigned int *write_val)
+{
+	int ret = 0;
+
+	for (int i = 0; i < 2; i++) {
+		ret = write_otp_location(MAC0_ADDR + 2 * index + i, write_val[i]);
+		if (ret == -ENOEXEC) {
+			LOG_ERR("FICR: Failed to update MAC ADDR%d\n", index);
+			break;
+		}
+		LOG_INF("mac addr %d : Reg%d (0x%x) = 0x%04x\n",
+					index, (i+1), (MAC0_ADDR + i) << 2, write_val[i]);
+	}
+	return ret;
+}
 
 int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 {
-	int err;
+	int err = 0;
 	int	mask_val;
+	int ret = 0;
 
 	err = poll_otp_ready();
 	if (err) {
@@ -224,140 +240,57 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 		break;
 	case QSPI_KEY:
 		mask_val = QSPI_KEY_FLAG_MASK;
-		write_otp_location(QSPI_KEY, write_val[0]);
-		write_otp_location(QSPI_KEY+1, write_val[1]);
-		write_otp_location(QSPI_KEY+2, write_val[2]);
-		write_otp_location(QSPI_KEY+3, write_val[3]);
+		for (int i = 0; i < QSPI_KEY_LENGTH_BYTES / 4; i++) {
+			ret = write_otp_location(QSPI_KEY + i, write_val[i]);
+			if (ret == -ENOEXEC) {
+				LOG_ERR("FICR: Failed to write QSPI key offset-%d\n", QSPI_KEY + i);
+				goto _exit_otp_write;
+			}
+			LOG_INF("Written QSPI_KEY0 (0x%x) : 0x%04x\n",
+						(QSPI_KEY + i) << 2, write_val[i]);
+		}
 		write_otp_location(REGION_DEFAULTS, mask_val);
-
-		LOG_INF("Written QSPI_KEY0 (0x%x) : 0x%04x\n",
-						(QSPI_KEY+0) << 2, write_val[0]);
-		LOG_INF("Written QSPI_KEY1 (0x%x) : 0x%04x\n",
-						(QSPI_KEY+1) << 2, write_val[1]);
-		LOG_INF("Written QSPI_KEY2 (0x%x) : 0x%04x\n",
-						(QSPI_KEY+2) << 2, write_val[2]);
-		LOG_INF("Written QSPI_KEY3 (0x%x) : 0x%04x\n",
-						(QSPI_KEY+3) << 2, write_val[3]);
 		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
 						(REGION_DEFAULTS) << 2, mask_val);
 		break;
 	case MAC0_ADDR:
 		mask_val = MAC0_ADDR_FLAG_MASK;
-		write_otp_location(MAC0_ADDR, write_val[0]);
-		write_otp_location(MAC0_ADDR+1, write_val[1]);
-		write_otp_location(REGION_DEFAULTS, mask_val);
+		ret = update_mac_addr(0, write_val);
+		if (ret == -ENOEXEC) {
+			goto _exit_otp_write;
+		}
 
+		write_otp_location(REGION_DEFAULTS, mask_val);
 		LOG_INF("Written MAC address 0\n");
-		LOG_INF("mac addr 0 : Reg1 (0x%x) = 0x%04x\n",
-						(MAC0_ADDR) << 2, write_val[0]);
-		LOG_INF("mac addr 0 : Reg2 (0x%x) = 0x%04x\n",
-						(MAC0_ADDR+1) << 2, write_val[1]);
 		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
 						(REGION_DEFAULTS) << 2, mask_val);
 		break;
 	case MAC1_ADDR:
 		mask_val = MAC1_ADDR_FLAG_MASK;
-		write_otp_location(MAC1_ADDR, write_val[0]);
-		write_otp_location(MAC1_ADDR+1, write_val[1]);
+		ret = update_mac_addr(1, write_val);
+		if (ret == -ENOEXEC) {
+			goto _exit_otp_write;
+		}
 		write_otp_location(REGION_DEFAULTS, mask_val);
-
 		LOG_INF("Written MAC address 1\n");
-		LOG_INF("mac addr 0 : Reg1 (0x%x) = 0x%04x\n",
-						(MAC1_ADDR) << 2, write_val[0]);
-		LOG_INF("mac addr 0 : Reg2 (0x%x) = 0x%04x\n",
-						(MAC1_ADDR+1) << 2, write_val[1]);
 		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
 						(REGION_DEFAULTS) << 2, mask_val);
 		break;
 	case CALIB_XO:
 		mask_val = CALIB_XO_FLAG_MASK;
-		write_otp_location(CALIB_XO, write_val[0]);
-		write_otp_location(REGION_DEFAULTS, mask_val);
+		ret = write_otp_location(CALIB_XO, write_val[0]);
 
-		LOG_INF("Written CALIB_XO (0x%x) to 0x%04x\n",
+		if (ret == -ENOEXEC) {
+			LOG_ERR("XO_Update Exception\n");
+			goto _exit_otp_write;
+		} else {
+			write_otp_location(REGION_DEFAULTS, mask_val);
+
+			LOG_INF("Written CALIB_XO (0x%x) to 0x%04x\n",
 						CALIB_XO << 2, write_val[0]);
-		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
+			LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
 						(REGION_DEFAULTS) << 2, mask_val);
-		break;
-	case CALIB_PDADJM7:
-		mask_val = CALIB_PDADJM7_FLAG_MASK;
-		write_otp_location(CALIB_PDADJM7, write_val[0]);
-		write_otp_location(REGION_DEFAULTS, mask_val);
-
-		LOG_INF("Written CALIB_PDADJM7 (0x%x) to 0x%04x\n",
-						CALIB_PDADJM7 << 2, write_val[0]);
-		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
-						(REGION_DEFAULTS) << 2, mask_val);
-		break;
-	case CALIB_PDADJM0:
-		mask_val = CALIB_PDADJM0_FLAG_MASK;
-		write_otp_location(CALIB_PDADJM0, write_val[0]);
-		write_otp_location(REGION_DEFAULTS, mask_val);
-
-		LOG_INF("Written CALIB_PDADJM0 (0x%x) to 0x%04x\n",
-						CALIB_PDADJM0 << 2, write_val[0]);
-		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
-						(REGION_DEFAULTS) << 2, mask_val);
-		break;
-	case CALIB_PWR2G:
-		mask_val = CALIB_PWR2G_FLAG_MASK;
-		write_otp_location(CALIB_PWR2G, write_val[0]);
-		write_otp_location(REGION_DEFAULTS, mask_val);
-
-		LOG_INF("Written CALIB_PWR2G (0x%x) to 0x%04x\n",
-						CALIB_PWR2G << 2, write_val[0]);
-		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
-						(REGION_DEFAULTS) << 2, mask_val);
-		break;
-	case CALIB_PWR5GM7:
-		mask_val = CALIB_PWR5GM7_FLAG_MASK;
-		write_otp_location(CALIB_PWR5GM7, write_val[0]);
-		write_otp_location(REGION_DEFAULTS, mask_val);
-
-		LOG_INF("Written CALIB_PWR5GM7 (0x%x) to 0x%04x\n",
-						CALIB_PWR5GM7 << 2, write_val[0]);
-		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
-						(REGION_DEFAULTS) << 2, mask_val);
-		break;
-	case CALIB_PWR5GM0:
-		mask_val = CALIB_PWR5GM0_FLAG_MASK;
-		write_otp_location(CALIB_PWR5GM0, write_val[0]);
-		write_otp_location(REGION_DEFAULTS, mask_val);
-
-		LOG_INF("Written CALIB_PWR5GM0 (0x%x) to 0x%04x\n",
-						CALIB_PWR5GM0 << 2, write_val[0]);
-		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
-						(REGION_DEFAULTS) << 2, mask_val);
-		break;
-	case CALIB_RXGNOFF:
-		mask_val = CALIB_RXGNOFF_FLAG_MASK;
-		write_otp_location(CALIB_RXGNOFF, write_val[0]);
-		write_otp_location(REGION_DEFAULTS, mask_val);
-
-		LOG_INF("Written CALIB_RXGNOFF (0x%x) to 0x%04x\n",
-						CALIB_RXGNOFF << 2, write_val[0]);
-		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
-						(REGION_DEFAULTS) << 2, mask_val);
-		break;
-	case CALIB_TXPOWBACKOFFT:
-		mask_val = CALIB_TXPOWBACKOFFT_FLAG_MASK;
-		write_otp_location(CALIB_TXPOWBACKOFFT, write_val[0]);
-		write_otp_location(REGION_DEFAULTS, mask_val);
-
-		LOG_INF("Written CALIB_TXPOWBACKOFFT (0x%x) to 0x%04x\n",
-						CALIB_TXPOWBACKOFFT << 2, write_val[0]);
-		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
-						(REGION_DEFAULTS) << 2, mask_val);
-		break;
-	case CALIB_TXPOWBACKOFFV:
-		mask_val = CALIB_TXPOWBACKOFFV_FLAG_MASK;
-		write_otp_location(CALIB_TXPOWBACKOFFV, write_val[0]);
-		write_otp_location(REGION_DEFAULTS, mask_val);
-
-		LOG_INF("Written CALIB_TXPOWBACKOFFV (0x%x) to 0x%04x\n",
-						CALIB_TXPOWBACKOFFV << 2, write_val[0]);
-		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
-						(REGION_DEFAULTS) << 2, mask_val);
+		}
 		break;
 	case REGION_DEFAULTS:
 		write_otp_location(REGION_DEFAULTS, write_val[0]);
@@ -369,6 +302,7 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 		LOG_ERR("unknown field received: %d\n", otp_addr);
 
 	}
+	return ret;
 
 _exit_otp_write:
 	err  = req_otp_standby_mode();
