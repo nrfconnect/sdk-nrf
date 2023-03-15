@@ -189,7 +189,7 @@ int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 #endif
 
 	/* Add modem info and A-GPS types to the data object */
-	err = nrf_cloud_json_add_modem_info(data_obj);
+	err = nrf_cloud_network_info_json_encode(data_obj);
 	if (err) {
 		LOG_ERR("Failed to add modem info to A-GPS request: %d", err);
 		goto cleanup;

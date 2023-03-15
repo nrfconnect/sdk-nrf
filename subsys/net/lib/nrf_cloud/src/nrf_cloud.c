@@ -279,7 +279,7 @@ int nrf_cloud_shadow_device_status_update(const struct nrf_cloud_device_status *
 		return -EACCES;
 	}
 
-	err = nrf_cloud_device_status_shadow_encode(dev_status, &tx_data.data, true);
+	err = nrf_cloud_shadow_dev_status_encode(dev_status, &tx_data.data, true);
 	if (err) {
 		return err;
 	}
@@ -304,7 +304,7 @@ int nrf_cloud_sensor_data_send(const struct nrf_cloud_sensor_data *param)
 		return -EINVAL;
 	}
 
-	err = nrf_cloud_encode_sensor_data(param, &sensor_data.data);
+	err = nrf_cloud_sensor_data_encode(param, &sensor_data.data);
 	if (err) {
 		return err;
 	}
@@ -334,7 +334,7 @@ int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param)
 		return -EINVAL;
 	}
 
-	err = nrf_cloud_encode_sensor_data(param, &sensor_data.data);
+	err = nrf_cloud_sensor_data_encode(param, &sensor_data.data);
 	if (err) {
 		return err;
 	}

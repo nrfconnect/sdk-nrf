@@ -67,7 +67,7 @@ int nrf_cloud_location_request_json_get(const struct lte_lc_cells_info *const ce
 	}
 
 	if (cells_inf) {
-		err = nrf_cloud_format_cell_pos_req_json(cells_inf, data_obj);
+		err = nrf_cloud_cell_pos_req_json_encode(cells_inf, data_obj);
 		if (err) {
 			LOG_ERR("Failed to add cell info to location request, error: %d", err);
 			goto cleanup;
@@ -75,7 +75,7 @@ int nrf_cloud_location_request_json_get(const struct lte_lc_cells_info *const ce
 	}
 
 	if (wifi_inf) {
-		err = nrf_cloud_format_wifi_req_json(wifi_inf, data_obj);
+		err = nrf_cloud_wifi_req_json_encode(wifi_inf, data_obj);
 		if (err) {
 			LOG_ERR("Failed to add WiFi info to location request, error: %d", err);
 			goto cleanup;

@@ -368,7 +368,7 @@ int nrf_cloud_rest_shadow_device_status_update(struct nrf_cloud_rest_context *co
 
 	(void)nrf_cloud_codec_init(NULL);
 
-	ret = nrf_cloud_device_status_shadow_encode(dev_status, &data_out, false);
+	ret = nrf_cloud_shadow_dev_status_encode(dev_status, &data_out, false);
 	if (ret) {
 		LOG_ERR("Failed to encode device status, error: %d", ret);
 		return ret;
@@ -631,7 +631,7 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 	req.header_fields = (const char **)headers;
 
 	/* Get payload */
-	ret = nrf_cloud_format_location_req(request->cell_info, request->wifi_info, &payload);
+	ret = nrf_cloud_location_req_json_encode(request->cell_info, request->wifi_info, &payload);
 	if (ret) {
 		LOG_ERR("Failed to generate location request, err: %d", ret);
 		goto clean_up;
@@ -1457,7 +1457,7 @@ int nrf_cloud_rest_device_status_message_send(struct nrf_cloud_rest_context *con
 		goto clean_up;
 	}
 
-	err = nrf_cloud_device_status_msg_encode(dev_status, timestamp_ms, msg_obj);
+	err = nrf_cloud_dev_status_json_encode(dev_status, timestamp_ms, msg_obj);
 	if (err) {
 		goto clean_up;
 	}
