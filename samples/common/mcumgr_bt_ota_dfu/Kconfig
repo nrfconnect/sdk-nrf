@@ -9,6 +9,9 @@ DT_CHOSEN_EXT_FLASH:= nordic,pm-ext-flash
 config NCS_SAMPLE_MCUMGR_BT_OTA_DFU
 	bool "MCUmgr OTA DFU over Bluetooth"
 	select MCUMGR
+	select NET_BUF
+	select ZCBOR
+	select CRC
 	select MCUMGR_TRANSPORT_BT
 	imply MCUMGR_TRANSPORT_BT_CONN_PARAM_CONTROL
 	imply MCUMGR_GRP_IMG
