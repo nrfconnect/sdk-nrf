@@ -1008,6 +1008,13 @@ KRKNWK-6073: Potential delay during FOTA
 Matter
 ======
 
+.. rst-class:: v2-3-0 v2-2-0
+
+KRKNWK-16575: Applications with factory data support do not boot up properly on nRF5340
+  When the Matter sample is built for ``nrf5340dk_nrf5340_cpuapp`` build target with the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option set to ``y`` the application returns prematurely the error code 200016 because the factory data partition is not aligned with the :kconfig:option:`CONFIG_FPROTECT_BLOCK_SIZE` Kconfig option.
+
+  **Workaround:** Manually cherry-pick and apply commit from the main branch (commit hash: ``ec9ad82637b0383ebf91eb1155813450ad9fcffb``).
+
 .. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1
 
 KRKNWK-15846: Android CHIP Tool crashes when subscribing in the :guilabel:`LIGHT ON/OFF & LEVEL CLUSTER`
