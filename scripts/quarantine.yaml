@@ -25,6 +25,9 @@
     - sample.matter.lock.release
     - sample.matter.lock.smp_dfu
     - sample.matter.lock.no_dfu
+    - sample.matter.lock.release.ffs
+    - sample.matter.lock.debug.ffs
+    - sample.matter.lock.release.smp_dfu_ffs
     - sample.matter.light_bulb.debug
     - sample.matter.light_bulb.release
     - sample.matter.light_bulb.smp_dfu
