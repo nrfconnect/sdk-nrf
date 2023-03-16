@@ -639,13 +639,16 @@ static void irq_work_handler(struct k_work *work)
 	}
 }
 
+
+extern struct k_work_q zep_wifi_intr_q;
+
 static void zep_shim_irq_handler(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
 	struct zep_shim_intr_priv *intr_priv = NULL;
 
 	intr_priv = (struct zep_shim_intr_priv *)cb;
 
-	k_work_schedule_for_queue(&zep_wifi_drv_q, &intr_priv->work, K_NO_WAIT);
+	k_work_schedule_for_queue(&zep_wifi_intr_q, &intr_priv->work, K_NO_WAIT);
 }
 
 static enum wifi_nrf_status zep_shim_bus_qspi_intr_reg(void *os_dev_ctx, void *callbk_data,
