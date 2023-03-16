@@ -38,6 +38,7 @@ intelhex==2.3.0
 intervaltree==3.1.0
 isort==5.7.0
 Jinja2==2.11.3
+jsonschema==4.4.0
 junit2html==30.0.4
 junitparser==2.8.0
 lazy-object-proxy==1.4.3
