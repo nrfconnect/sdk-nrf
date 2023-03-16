@@ -52,6 +52,12 @@ static struct bt_le_conn_param *conn_param =
 	BT_LE_CONN_PARAM(INTERVAL_MIN, INTERVAL_MAX, 0, 400);
 static bool connection_params_set;
 
+#if defined(CONFIG_BT_EXT_ADV)
+static bool adv_set_created;
+static bool adv_coded;
+static struct bt_le_ext_adv *adv;
+#endif
+
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL,
@@ -213,7 +219,9 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 
 	printk("Connected as %s\n",
 	       info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
-	printk("Conn. interval is %u units\n", info.le.interval);
+	printk("Connection interval is %u units\n", info.le.interval);
+	printk("Connection TX PHY %s and RX PHY %s\n", phy2str(info.le.phy->tx_phy),
+	       phy2str(info.le.phy->rx_phy));
 
 	if (info.role == BT_CONN_ROLE_CENTRAL) {
 		err = bt_gatt_dm_start(default_conn,
@@ -232,9 +240,10 @@ static void scan_init(void)
 	int err;
 	struct bt_le_scan_param scan_param = {
 		.type = BT_LE_SCAN_TYPE_PASSIVE,
-		.options = BT_LE_SCAN_OPT_FILTER_DUPLICATE,
-		.interval = 0x0010,
-		.window = 0x0010,
+		.options = BT_LE_SCAN_OPT_FILTER_DUPLICATE |
+			   ((IS_ENABLED(CONFIG_BT_EXT_ADV) ? BT_LE_SCAN_OPT_CODED : 0)),
+		.interval = BT_GAP_SCAN_FAST_INTERVAL,
+		.window = BT_GAP_SCAN_FAST_WINDOW,
 	};
 
 	struct bt_scan_init_param scan_init = {
@@ -270,7 +279,7 @@ static void scan_start(void)
 	}
 }
 
-static void adv_start(void)
+static void adv_start_legacy(void)
 {
 	struct bt_le_adv_param *adv_param =
 		BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE |
@@ -285,6 +294,66 @@ static void adv_start(void)
 	if (err) {
 		printk("Failed to start advertiser (%d)\n", err);
 		return;
+	}
+}
+
+#if defined(CONFIG_BT_EXT_ADV)
+static int adv_create_coded(void)
+{
+	int err;
+	struct bt_le_adv_param param =
+		BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONNECTABLE |
+				     BT_LE_ADV_OPT_EXT_ADV |
+				     BT_LE_ADV_OPT_CODED,
+				     BT_GAP_ADV_FAST_INT_MIN_2,
+				     BT_GAP_ADV_FAST_INT_MAX_2,
+				     NULL);
+
+	err = bt_le_ext_adv_create(&param, NULL, &adv);
+	if (err) {
+		printk("Failed to create advertiser set (err %d)\n", err);
+		return err;
+	}
+
+	printk("Created adv: %p\n", adv);
+
+	err = bt_le_ext_adv_set_data(adv, ad, ARRAY_SIZE(ad), NULL, 0);
+	if (err) {
+		printk("Failed to set advertising data (err %d)\n", err);
+		return err;
+	}
+
+	adv_set_created = true;
+
+	return 0;
+}
+
+static void adv_start_coded(void)
+{
+	int err;
+
+	err = bt_le_ext_adv_start(adv, NULL);
+	if (err) {
+		printk("Failed to start advertising set (err %d)\n", err);
+		return;
+	}
+
+	printk("Advertiser %p set started\n", adv);
+}
+#endif
+
+static void adv_start(void)
+{
+#if defined(CONFIG_BT_EXT_ADV)
+	if (adv_coded) {
+		if (!adv_set_created) {
+			adv_create_coded();
+		}
+		adv_start_coded();
+	} else
+#endif
+	{
+		adv_start_legacy();
 	}
 }
 
@@ -475,12 +544,18 @@ static struct button_handler button = {
 };
 #endif
 
-void select_role(bool is_central)
+void select_role(bool is_central, bool coded)
 {
 	if (role_selected) {
-		printk("\nCannot change role after it was selected once.\n");
+		printk("\nCannot change role after it was selected.\n");
 		return;
-	} else if (is_central) {
+	}
+
+#if defined(CONFIG_BT_EXT_ADV)
+	adv_coded = coded;
+#endif
+
+	if (is_central) {
 		printk("\nCentral. Starting scanning\n");
 		role_central = true;
 		scan_start();
@@ -513,9 +588,9 @@ static void button_handler_cb(uint32_t button_state, uint32_t has_changed)
 	ARG_UNUSED(has_changed);
 
 	if (button_state & DK_BTN1_MSK) {
-		select_role(true);
+		select_role(true, false);
 	} else if (button_state & DK_BTN2_MSK) {
-		select_role(false);
+		select_role(false, false);
 	}
 }
 
@@ -555,17 +630,20 @@ static int connection_configuration_set(const struct shell *shell,
 		"'run' command shall be executed only on the central board");
 	}
 
-	err = bt_conn_le_phy_update(default_conn, phy);
-	if (err) {
-		shell_error(shell, "PHY update failed: %d\n", err);
-		return err;
-	}
+	/* Only change PHY if the user requests it. */
+	if (phy) {
+		err = bt_conn_le_phy_update(default_conn, phy);
+		if (err) {
+			shell_error(shell, "PHY update failed: %d\n", err);
+			return err;
+		}
 
-	shell_print(shell, "PHY update pending");
-	err = k_sem_take(&throughput_sem, THROUGHPUT_CONFIG_TIMEOUT);
-	if (err) {
-		shell_error(shell, "PHY update timeout");
-		return err;
+		shell_print(shell, "PHY update pending");
+		err = k_sem_take(&throughput_sem, THROUGHPUT_CONFIG_TIMEOUT);
+		if (err) {
+			shell_error(shell, "PHY update timeout");
+			return err;
+		}
 	}
 
 	if (info.le.data_len->tx_max_len != data_len->tx_max_len) {
@@ -755,11 +833,12 @@ void main(void)
 	printk("\n");
 #if defined(CONFIG_DK_LIBRARY)
 	printk("Press button 1 or type \"central\" on the central board.\n");
-	printk("Press button 2 or type \"peripheral\" on the peripheral board.\n");
+	printk("Press button 2 or type \"peripheral\" or \"peripheral_coded\" "
+	       "on the peripheral board.\n");
 	buttons_init();
 #else
 	printk("Type \"central\" on the central board.\n");
-	printk("Type \"peripheral\" on the peripheral board.\n");
+	printk("Type \"peripheral\" or \"peripheral_coded\" on the peripheral board.\n");
 #endif
 
 }

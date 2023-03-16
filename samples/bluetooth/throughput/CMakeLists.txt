@@ -10,6 +10,8 @@ set(DTC_OVERLAY_FILE "dts.overlay")
 
 if(BOARD STREQUAL bl5340pa_dvk_cpuapp)
     set(hci_rpmsg_OVERLAY_CONFIG ${CMAKE_SOURCE_DIR}/child_image/hci_rpmsg.bl5340pa.conf)
+elseif(BOARD STREQUAL nrf5340dk_nrf5340_cpuapp AND hci_rpmsg_SHIELD STREQUAL nrf21540_ek)
+    set(hci_rpmsg_OVERLAY_CONFIG ${CMAKE_SOURCE_DIR}/child_image/hci_rpmsg.nrf5340_nrf21540.conf)
 endif()
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})

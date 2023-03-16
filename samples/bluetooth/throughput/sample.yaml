@@ -12,3 +12,8 @@ tests:
     platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
       nrf5340dk_nrf5340_cpuapp_ns bl5340_dvk_cpuapp bl5340pa_dvk_cpuapp
     tags: bluetooth ci_build
+  sample.bluetooth.throughput.fem_shield:
+    build_only: true
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    extra_args: SHIELD=nrf21540_ek_fwd hci_rpmsg_SHIELD=nrf21540_ek
+    tags: bluetooth fem

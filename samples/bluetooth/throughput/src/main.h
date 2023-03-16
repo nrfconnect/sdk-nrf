@@ -14,7 +14,7 @@
  *
  * @param shell       Shell instance where output will be printed.
  * @param conn_param  Connection parameters.
- * @param phy         Phy parameters.
+ * @param phy         Phy parameters (if non-null).
  * @param data_len    Maximum transmission payload.
  */
 int test_run(const struct shell *shell,
@@ -26,8 +26,9 @@ int test_run(const struct shell *shell,
  * @brief Set the board into a specific role.
  *
  * @param is_central true for central role, false for peripheral role.
+ * @param coded true to advertises using coded PHY
  */
-void select_role(bool is_central);
+void select_role(bool is_central, bool coded);
 
 enum {
 	PRINT_TYPE_NONE = 0,

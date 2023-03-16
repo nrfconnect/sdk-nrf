@@ -25,11 +25,13 @@
 static struct test_params {
 	struct bt_le_conn_param *conn_param;
 	struct bt_conn_le_phy_param *phy;
+	bool phy_request;
 	struct bt_conn_le_data_len_param *data_len;
 } test_params = {
 	.conn_param = BT_LE_CONN_PARAM(INTERVAL_MIN, INTERVAL_MAX, CONN_LATENCY,
 				       SUPERVISION_TIMEOUT),
 	.phy = BT_CONN_LE_PHY_PARAM_2M,
+	.phy_request = false,
 	.data_len = BT_LE_DATA_LEN_PARAM_MAX
 };
 
@@ -89,6 +91,7 @@ static int cmd_phy_1m(const struct shell *shell, size_t argc,
 	test_params.phy->options = BT_CONN_LE_PHY_OPT_NONE;
 	test_params.phy->pref_rx_phy = BT_GAP_LE_PHY_1M;
 	test_params.phy->pref_tx_phy = BT_GAP_LE_PHY_1M;
+	test_params.phy_request = true;
 
 	shell_print(shell, "PHY set to: %s", phy_str(test_params.phy));
 
@@ -101,6 +104,7 @@ static int cmd_phy_2m(const struct shell *shell, size_t argc,
 	test_params.phy->options = BT_CONN_LE_PHY_OPT_NONE;
 	test_params.phy->pref_rx_phy = BT_GAP_LE_PHY_2M;
 	test_params.phy->pref_tx_phy = BT_GAP_LE_PHY_2M;
+	test_params.phy_request = true;
 
 	shell_print(shell, "PHY set to: %s", phy_str(test_params.phy));
 
@@ -114,6 +118,7 @@ static int cmd_phy_coded_s2(const struct shell *shell, size_t argc,
 	test_params.phy->options = BT_CONN_LE_PHY_OPT_CODED_S2;
 	test_params.phy->pref_rx_phy = BT_GAP_LE_PHY_CODED;
 	test_params.phy->pref_tx_phy = BT_GAP_LE_PHY_CODED;
+	test_params.phy_request = true;
 
 	shell_print(shell, "PHY set to: %s", phy_str(test_params.phy));
 
@@ -130,6 +135,7 @@ static int cmd_phy_coded_s8(const struct shell *shell, size_t argc,
 	test_params.phy->options = BT_CONN_LE_PHY_OPT_CODED_S8;
 	test_params.phy->pref_rx_phy = BT_GAP_LE_PHY_CODED;
 	test_params.phy->pref_tx_phy = BT_GAP_LE_PHY_CODED;
+	test_params.phy_request = true;
 
 	shell_print(shell, "PHY set to: %s",
 		    phy_str(test_params.phy));
@@ -276,25 +282,37 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_config,
 static int test_run_cmd(const struct shell *shell, size_t argc,
 			char **argv)
 {
-	return test_run(shell, test_params.conn_param, test_params.phy,
-			test_params.data_len);
+	return test_run(shell, test_params.conn_param,
+			test_params.phy_request ? test_params.phy : NULL, test_params.data_len);
 }
 
 static int test_central_cmd(const struct shell *shell, size_t argc,
 			    char **argv)
 {
-	select_role(true);
+	select_role(true, false);
 	return 0;
 }
 
 static int test_peripheral_cmd(const struct shell *shell, size_t argc,
 			       char **argv)
 {
-	select_role(false);
+	select_role(false, false);
 	return 0;
 }
+
+#if defined(CONFIG_BT_EXT_ADV)
+static int test_peripheral_coded_cmd(const struct shell *shell, size_t argc, char **argv)
+{
+	select_role(false, true);
+	return 0;
+}
+#endif
 
 SHELL_CMD_REGISTER(config, &sub_config, "Configure the example", default_cmd);
 SHELL_CMD_REGISTER(run, NULL, "Run the test", test_run_cmd);
 SHELL_CMD_REGISTER(central, NULL, "Select central role", test_central_cmd);
 SHELL_CMD_REGISTER(peripheral, NULL, "Select peripheral role", test_peripheral_cmd);
+#if defined(CONFIG_BT_EXT_ADV)
+SHELL_CMD_REGISTER(peripheral_coded, NULL, "Select peripheral role and advertise using coded PHY",
+		   test_peripheral_coded_cmd);
+#endif
