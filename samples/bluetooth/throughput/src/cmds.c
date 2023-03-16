@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Nordic Semiconductor ASA
+ * Copyright (c) 2020-2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -76,7 +76,7 @@ static int default_cmd(const struct shell *shell, size_t argc,
 	}
 
 	if (argc == 2) {
-		shell_error(shell, "Uknown argument: %s", argv[1]);
+		shell_error(shell, "Unknown argument: %s", argv[1]);
 		return -EINVAL;
 	}
 
@@ -226,6 +226,26 @@ static int print_cmd(const struct shell *shell, size_t argc,
 	return 0;
 }
 
+static int print_type_cmd(const struct shell *shell, size_t argc, char **argv)
+{
+	int type;
+
+	if (argc == 1) {
+		shell_help(shell);
+		return SHELL_CMD_HELP_PRINTED;
+	}
+
+	if (argc > 2) {
+		shell_error(shell, "%s: bad parameters count", argv[0]);
+		return -EINVAL;
+	}
+
+	type = (int)strtol(argv[1], NULL, 10);
+	select_print_type(shell, type);
+
+	return 0;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(phy_sub,
 	SHELL_CMD(1M, NULL, "Set preferred PHY to 1Mbps", cmd_phy_1m),
 	SHELL_CMD(2M, NULL, "Set preferred PHY to 2Mbps", cmd_phy_2m),
@@ -247,6 +267,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_config,
 		  conn_interval_cmd),
 	SHELL_CMD(phy, &phy_sub, "Configure connection interval", default_cmd),
 	SHELL_CMD(print, NULL, "Print current configuration", print_cmd),
+	SHELL_CMD(print_type, NULL, "Print type configuration\n"
+		  "0 - nothing, 1 - graphics, 2 - RSSI, ", print_type_cmd),
 	SHELL_SUBCMD_SET_END
 );
 

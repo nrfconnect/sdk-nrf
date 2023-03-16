@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2022-2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #ifndef THROUGHPUT_MAIN_H_
 #define THROUGHPUT_MAIN_H_
+
+#include <zephyr/shell/shell.h>
 
 /**
  * @brief Run the test
@@ -26,5 +28,16 @@ int test_run(const struct shell *shell,
  * @param is_central true for central role, false for peripheral role.
  */
 void select_role(bool is_central);
+
+enum {
+	PRINT_TYPE_NONE = 0,
+	PRINT_TYPE_GRAPHICS,
+	PRINT_TYPE_RSSI,
+};
+
+/**
+ * @brief Select what is printed during test
+ */
+void select_print_type(const struct shell *shell, int type);
 
 #endif /* THROUGHPUT_MAIN_H_ */

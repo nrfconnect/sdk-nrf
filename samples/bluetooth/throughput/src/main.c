@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/console/console.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/sys/byteorder.h>
 #include <string.h>
 #include <stdlib.h>
 #include <zephyr/types.h>
@@ -34,10 +35,13 @@
 
 #define THROUGHPUT_CONFIG_TIMEOUT K_SECONDS(20)
 
+#define MIN_RSSI -128
+
 static K_SEM_DEFINE(throughput_sem, 0, 1);
 
 static bool role_selected;
 static bool role_central;
+static int print_type = PRINT_TYPE_GRAPHICS;
 static volatile bool data_length_req;
 static volatile bool test_ready;
 static struct bt_conn *default_conn;
@@ -356,6 +360,50 @@ static void le_data_length_updated(struct bt_conn *conn,
 	k_sem_give(&throughput_sem);
 }
 
+static int8_t read_conn_rssi(void)
+{
+	struct net_buf *buf, *rsp = NULL;
+	struct bt_hci_cp_read_rssi *cp;
+	struct bt_hci_rp_read_rssi *rp;
+	int8_t rssi = MIN_RSSI;
+	uint16_t conn_handle;
+	uint8_t reason;
+	int err;
+
+	if (default_conn == NULL) {
+		return rssi;
+	}
+
+	buf = bt_hci_cmd_create(BT_HCI_OP_READ_RSSI, sizeof(*cp));
+	if (!buf) {
+		printk("Unable to allocate command buffer\n");
+		return rssi;
+	}
+
+	err = bt_hci_get_conn_handle(default_conn, &conn_handle);
+	if (err) {
+		printk("Unable to get conn handle\n");
+		return rssi;
+	}
+
+	cp = net_buf_add(buf, sizeof(*cp));
+	cp->handle = sys_cpu_to_le16(conn_handle);
+
+	err = bt_hci_cmd_send_sync(BT_HCI_OP_READ_RSSI, buf, &rsp);
+	if (err) {
+		reason = rsp ? ((struct bt_hci_rp_read_rssi *)rsp->data)->status : 0;
+		printk("Read RSSI err: %d reason 0x%02x\n", err, reason);
+		return rssi;
+	}
+
+	rp = (void *)rsp->data;
+	rssi = rp->rssi;
+
+	net_buf_unref(rsp);
+
+	return rssi;
+}
+
 static uint8_t throughput_read(const struct bt_throughput_metrics *met)
 {
 	printk("[peer] received %u bytes (%u KB)"
@@ -381,7 +429,29 @@ static void throughput_received(const struct bt_throughput_metrics *met)
 
 	if ((met->write_len / 1024) != kb) {
 		kb = (met->write_len / 1024);
-		printk("=");
+		if (print_type == PRINT_TYPE_GRAPHICS) {
+			printk("=");
+		} else if (print_type == PRINT_TYPE_RSSI) {
+			printk("%d\n", read_conn_rssi());
+		}
+	}
+}
+
+void select_print_type(const struct shell *shell, int type)
+{
+	switch (type) {
+	case PRINT_TYPE_GRAPHICS:
+		print_type = type;
+		shell_print(shell, "Print graphics");
+		break;
+	case PRINT_TYPE_RSSI:
+		print_type = type;
+		shell_print(shell, "Print RSSI (can affect throughput)");
+		break;
+	default:
+		print_type = PRINT_TYPE_NONE;
+		shell_print(shell, "Printing disabled");
+		break;
 	}
 }
 
@@ -604,13 +674,16 @@ int test_run(const struct shell *shell,
 				break;
 			}
 
-			/* print graphics */
+			/* The image size controls how much data is sent. */
 			str_len = (*img_ptr == '\x1b') ? 6 : 1;
 			memcpy(str_buf, img_ptr, str_len);
 			str_buf[str_len] = '\0';
 			img_ptr += str_len;
-			shell_fprintf(shell, SHELL_NORMAL, "%s", str_buf);
-
+			if (print_type == PRINT_TYPE_GRAPHICS) {
+				shell_fprintf(shell, SHELL_NORMAL, "%s", str_buf);
+			} else if (print_type == PRINT_TYPE_RSSI) {
+				shell_fprintf(shell, SHELL_NORMAL, "%d\n", read_conn_rssi());
+			}
 			data += 495;
 		}
 	} else {
