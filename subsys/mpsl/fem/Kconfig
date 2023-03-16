@@ -60,6 +60,7 @@ choice MPSL_FEM_CHOICE
 config MPSL_FEM_NRF21540_GPIO
 	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT
 	select NRFX_GPIOTE
+	select GPIO if ($(dt_node_has_prop,nrf_radio_fem,mode_gpios) || $(dt_node_has_prop,nrf_radio_fem,ant_sel_gpios))
 	select NRFX_PPI if SOC_SERIES_NRF52X
 	select NRFX_DPPI if SOC_SERIES_NRF53X
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
@@ -70,6 +71,7 @@ config MPSL_FEM_NRF21540_GPIO
 config MPSL_FEM_NRF21540_GPIO_SPI
 	depends on MPSL_FEM_NRF21540_GPIO_SPI_SUPPORT
 	select NRFX_GPIOTE
+	select GPIO if ($(dt_node_has_prop,nrf_radio_fem,mode_gpios) || $(dt_node_has_prop,nrf_radio_fem,ant_sel_gpios))
 	select NRFX_PPI if SOC_SERIES_NRF52X
 	select NRFX_DPPI if SOC_SERIES_NRF53X
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
