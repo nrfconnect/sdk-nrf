@@ -18,6 +18,12 @@ config CONNECTION_RETRY_TIMEOUT_SECONDS
 	int "Number of seconds between each AWS IoT connection retry"
 	default 30
 
+config AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID
+	bool "Use HW ID as device ID"
+	select HW_ID_LIBRARY
+	help
+	  Use the devices's hardware ID as device ID when connecting to AWS IOT
+
 module = AWS_IOT_SAMPLE
 module-str = AWS IoT sample
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
