@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2018-2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -36,6 +36,8 @@
 
 static K_SEM_DEFINE(throughput_sem, 0, 1);
 
+static bool role_selected;
+static bool role_central;
 static volatile bool data_length_req;
 static volatile bool test_ready;
 static struct bt_conn *default_conn;
@@ -60,7 +62,10 @@ static const char img[] =
 #include "img.file"
 ;
 
+#if defined(CONFIG_DK_LIBRARY)
 static void button_handler_cb(uint32_t button_state, uint32_t has_changed);
+static void remove_button_handlers(void);
+#endif
 
 static const char *phy2str(uint8_t phy)
 {
@@ -392,20 +397,20 @@ static const struct bt_throughput_cb throughput_cb = {
 	.data_send = throughput_send
 };
 
+#if defined(CONFIG_DK_LIBRARY)
 static struct button_handler button = {
 	.cb = button_handler_cb,
 };
+#endif
 
 void select_role(bool is_central)
 {
-	int err;
-	static bool role_selected;
-
 	if (role_selected) {
 		printk("\nCannot change role after it was selected once.\n");
 		return;
 	} else if (is_central) {
 		printk("\nCentral. Starting scanning\n");
+		role_central = true;
 		scan_start();
 	} else {
 		printk("\nPeripheral. Starting advertising\n");
@@ -414,7 +419,17 @@ void select_role(bool is_central)
 
 	role_selected = true;
 
-	/* The role has been selected, button are not needed any more. */
+#if defined(CONFIG_DK_LIBRARY)
+	/* The role has been selected, buttons are not needed any more. */
+	remove_button_handlers();
+#endif
+}
+
+#if defined(CONFIG_DK_LIBRARY)
+static void remove_button_handlers(void)
+{
+	int err;
+
 	err = dk_button_handler_remove(&button);
 	if (err) {
 		printk("Button disable error: %d\n", err);
@@ -442,11 +457,12 @@ static void buttons_init(void)
 		return;
 	}
 
-	/* Add dynamic buttons handler. Buttons should be activated only when
-	 * during the board role choosing.
+	/* Add dynamic buttons handler. Buttons should be activated only
+	 * when choosing the board role.
 	 */
 	dk_button_handler_add(&button);
 }
+#endif
 
 static int connection_configuration_set(const struct shell *shell,
 			const struct bt_le_conn_param *conn_param,
@@ -543,6 +559,11 @@ int test_run(const struct shell *shell,
 		return -EFAULT;
 	}
 
+	if (role_selected && role_central) {
+		shell_error(shell,
+		"'run' command shall be executed only on the central board");
+	}
+
 	if (!test_ready) {
 		shell_error(shell, "Device is not ready."
 			"Please wait for the service discovery and MTU exchange end");
@@ -634,7 +655,7 @@ void main(void)
 {
 	int err;
 
-	printk("Starting Bluetooth Throughput example\n");
+	printk("Starting Bluetooth Throughput example on %s\n", CONFIG_BOARD);
 
 	err = bt_enable(NULL);
 	if (err) {
@@ -653,8 +674,13 @@ void main(void)
 	}
 
 	printk("\n");
+#if defined(CONFIG_DK_LIBRARY)
 	printk("Press button 1 or type \"central\" on the central board.\n");
 	printk("Press button 2 or type \"peripheral\" on the peripheral board.\n");
-
 	buttons_init();
+#else
+	printk("Type \"central\" on the central board.\n");
+	printk("Type \"peripheral\" on the peripheral board.\n");
+#endif
+
 }
