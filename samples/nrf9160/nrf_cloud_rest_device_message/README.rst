@@ -8,6 +8,11 @@ nRF9160: nRF Cloud REST Device Message
    :depth: 2
 
 The REST Device Message sample demonstrates how to use the `nRF Cloud REST API`_ to send `Device Messages <nRF Cloud Device Messages_>`_ using the ``SendDeviceMessage`` REST endpoint.
+Every button press will send a message to nRF Cloud.
+
+It also demonstrates use of the :ref:`lib_nrf_cloud_alert` alert library and the :ref:`lib_nrf_cloud_log` library.
+The sample sents an alert when the device first comes online.
+The sample sends a log message indicating what the sample version is, as well as when the button is pressed.
 
 Requirements
 ************
@@ -98,6 +103,25 @@ Building and running
 
 The configuration file for this sample is located in :file:`samples/nrf9160/nrf_cloud_rest_device_message`.
 See :ref:`configure_application` for information on how to configure the parameters.
+To enable `Zephyr Logging`_ to nRF Cloud using the :ref:`lib_nrf_cloud_log` library, add the following parameter to your build command:
+
+``-DOVERLAY_CONFIG=overlay_nrfcloud_logging.conf``
+
+This overlay allows the sample and various subsystems that have logging enabled to send their logs to nRF Cloud.
+Set the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL` option to the log level of messages to send to nRF Cloud, such as 4 for debug log messages.
+Set the :kconfig:option:`CONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL_DBG` option so that log messages are generated on each button press.
+
+Press button 1 to cause a message to be sent to nRF Cloud:
+
+   .. parsed-literal::
+      :class: highlight
+
+      {
+        "appId": "BUTTON",
+        "messageType": "DATA",
+        "data": "1",
+        "timestamp": "4/19/2023 12:34:21 PM"
+      }
 
 Querying Device Messages over REST API
 **************************************
@@ -111,6 +135,8 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_rest`
+* :ref:`lib_nrf_cloud_alert`
+* :ref:`lib_nrf_cloud_log`
 * :ref:`lib_modem_jwt`
 * :ref:`lte_lc_readme`
 * :ref:`dk_buttons_and_leds_readme`

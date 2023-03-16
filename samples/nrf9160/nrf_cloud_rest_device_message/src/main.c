@@ -11,7 +11,8 @@
 #include <zephyr/settings/settings.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
-#include <net/nrf_cloud_alerts.h>
+#include <net/nrf_cloud_log.h>
+#include <net/nrf_cloud_alert.h>
 #include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
 #include <date_time.h>
@@ -26,7 +27,8 @@ LOG_MODULE_REGISTER(nrf_cloud_rest_device_message,
 #define JITP_REQ_WAIT_SEC	10
 
 /* This does not match a predefined schema, but it is not a problem. */
-#define SAMPLE_MSG_FMT		"{\"sample_message\":"\
+#define SAMPLE_SIGNON_FMT "nRF Cloud REST Device Message Sample, version: %s"
+#define SAMPLE_MSG_FMT	"{\"sample_message\":"\
 			"\"Hello World, from the REST Device Message Sample! "\
 			"Message ID: %lld\"}"
 #define SAMPLE_MSG_BUF_SIZE (sizeof(SAMPLE_MSG_FMT) + 19)
@@ -123,12 +125,18 @@ static int send_message(const char *const msg)
 
 static void send_message_on_button(void)
 {
+	static unsigned int count;
+
 	/* Wait for a button press */
 	(void)k_sem_take(&button_press_sem, K_FOREVER);
 
 	/* Send off a JSON message about the button press */
 	/* This matches the nRF Cloud-defined schema for a "BUTTON" device message */
+	rest_ctx.keep_alive = true;
 	(void)send_message("{\"appId\":\"BUTTON\", \"messageType\":\"DATA\", \"data\":\"1\"}");
+	rest_ctx.keep_alive = false;
+	(void)nrf_cloud_rest_log_send(&rest_ctx, device_id, LOG_LEVEL_DBG,
+				      "Button pressed %u times", ++count);
 }
 
 static int do_jitp(void)
@@ -248,6 +256,12 @@ static int setup_connection(void)
 
 	/* Wait until we know what time it is (necessary for JSON Web Token generation) */
 	modem_time_wait();
+
+	nrf_cloud_log_init();
+#if defined(CONFIG_NRF_CLOUD_LOG_BACKEND)
+	nrf_cloud_log_rest_context_set(&rest_ctx, device_id);
+#endif
+	nrf_cloud_log_enable(nrf_cloud_log_control_get() != LOG_LEVEL_NONE);
 
 	/* Perform JITP if enabled and requested */
 	if (IS_ENABLED(CONFIG_REST_DEVICE_MESSAGE_DO_JITP) && jitp_requested) {
@@ -373,7 +387,7 @@ int main(void)
 {
 	int err;
 
-	LOG_INF("nRF Cloud REST Device Message Sample, version: %s",
+	LOG_INF(SAMPLE_SIGNON_FMT,
 		CONFIG_REST_DEVICE_MESSAGE_SAMPLE_VERSION);
 
 	err = setup();
@@ -385,6 +399,14 @@ int main(void)
 	rest_ctx.keep_alive = true;
 	(void)nrf_cloud_rest_alert_send(&rest_ctx, device_id,
 					ALERT_TYPE_DEVICE_NOW_ONLINE, 0, NULL);
+
+	err = nrf_cloud_rest_log_send(&rest_ctx, device_id, LOG_LEVEL_INF,
+				      SAMPLE_SIGNON_FMT,
+				      CONFIG_REST_DEVICE_MESSAGE_SAMPLE_VERSION);
+
+	if (err) {
+		LOG_ERR("Error sending direct log to cloud: %d", err);
+	}
 	rest_ctx.keep_alive = false;
 
 	err = send_hello_world_msg();
