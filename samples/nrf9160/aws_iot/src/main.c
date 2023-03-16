@@ -20,6 +20,10 @@
 #include <cJSON.h>
 #include <cJSON_os.h>
 #include <zephyr/logging/log.h>
+#if defined(CONFIG_AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID)
+#include <hw_id.h>
+#endif
+
 
 LOG_MODULE_REGISTER(aws_iot_sample, CONFIG_AWS_IOT_SAMPLE_LOG_LEVEL);
 
@@ -501,7 +505,26 @@ void main(void)
 	nrf_modem_lib_dfu_handler();
 #endif
 
+#if defined(CONFIG_AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID)
+	char device_id[HW_ID_LEN] = { 0 };
+
+	err = hw_id_get(device_id, ARRAY_SIZE(device_id));
+	if (err) {
+		LOG_ERR("Failed to retrieve device ID, error: %d", err);
+		return;
+	}
+
+	struct aws_iot_config config = {
+	    .client_id = device_id,
+	    .client_id_len = strlen(device_id)
+	};
+
+	LOG_INF("Device id: %s", device_id);
+
+	err = aws_iot_init(&config, aws_iot_event_handler);
+#else
 	err = aws_iot_init(NULL, aws_iot_event_handler);
+#endif
 	if (err) {
 		LOG_ERR("AWS IoT library could not be initialized, error: %d", err);
 	}

@@ -82,6 +82,11 @@ CONFIG_PUBLICATION_INTERVAL_SECONDS
 CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS
    Configures the number of seconds between each AWS IoT connection retry.
 
+.. _CONFIG_AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID:
+
+CONFIG_AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID
+   Configures the sample to use HWID as Device ID.
+
 .. note::
 
    The sample sets the option :kconfig:option:`CONFIG_MQTT_KEEPALIVE` to the maximum allowed value, 1200 seconds (20 minutes) as specified by AWS IoT Core.
