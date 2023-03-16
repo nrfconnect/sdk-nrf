@@ -1,0 +1,7 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+[*.{c,conf,cpp,dts,overlay,h,ld,py,rst,txt,yaml,yml}, Kconfig*, defconfig*, README]
+insert_final_newline = true
