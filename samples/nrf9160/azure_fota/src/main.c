@@ -16,6 +16,10 @@
 #include <zephyr/random/rand32.h>
 #include <zephyr/logging/log.h>
 
+#if IS_ENABLED(CONFIG_AZURE_FOTA_SAMPLE_DEVICE_ID_USE_HW_ID)
+#include <hw_id.h>
+#endif
+
 LOG_MODULE_REGISTER(azure_fota_sample, CONFIG_AZURE_FOTA_SAMPLE_LOG_LEVEL);
 
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
@@ -244,8 +248,25 @@ void main(void)
 	modem_configure();
 	k_sem_take(&network_connected_sem, K_FOREVER);
 
-	static struct azure_iot_hub_config config = {
+#if IS_ENABLED(CONFIG_AZURE_FOTA_SAMPLE_DEVICE_ID_USE_HW_ID)
+	char device_id[HW_ID_LEN];
+
+	err = hw_id_get(device_id, ARRAY_SIZE(device_id));
+	if (err) {
+		LOG_ERR("Failed to retrieve device ID");
+		return;
+	}
+#endif
+
+	struct azure_iot_hub_config config = {
 		.use_dps = IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS),
+#if IS_ENABLED(CONFIG_AZURE_FOTA_SAMPLE_DEVICE_ID_USE_HW_ID)
+		.device_id = {
+			.ptr = device_id,
+			.size = strlen(device_id),
+		},
+#endif
+
 	};
 
 	err = azure_iot_hub_connect(&config);
