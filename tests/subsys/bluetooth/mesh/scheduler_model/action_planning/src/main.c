@@ -332,7 +332,7 @@ int _bt_mesh_time_srv_update_handler(struct bt_mesh_model *model)
 }
 /* Redefined mocks */
 
-static void setup(void)
+static void tc_setup(void *f)
 {
 	mod_elem_idx_prep();
 
@@ -357,7 +357,7 @@ static void setup(void)
 	_bt_mesh_scheduler_srv_cb.init(sched_mod_elem4);
 }
 
-static void teardown(void)
+static void tc_teardown(void *f)
 {
 	if (fired_tm) {
 		free(fired_tm);
@@ -395,7 +395,7 @@ static void measurement_start(int64_t expected_time, int fire_cnt)
 		"Scheduled action isn't fired in time.");
 }
 
-static void test_first_sched_turn_on(void)
+ZTEST(scheduler_action_planning, test_first_sched_turn_on)
 {
 	/** Send a TURN_ON action to the sched srv in
 	 * element 1 of the mocked composition data.
@@ -441,7 +441,7 @@ static void test_first_sched_turn_on(void)
 	expected_tm_check(fired_tm, expected, 1);
 }
 
-static void test_second_sched_turn_off(void)
+ZTEST(scheduler_action_planning, test_second_sched_turn_off)
 {
 	/** Send a TURN_OFF action to the sched srv in
 	 * element 4 of the mocked composition data.
@@ -483,7 +483,7 @@ static void test_second_sched_turn_off(void)
 	expected_tm_check(fired_tm, expected, 1);
 }
 
-static void test_first_sched_scene_recall(void)
+ZTEST(scheduler_action_planning, test_first_sched_scene_recall)
 {
 	/** Send a SCENE_RECALL action to the sched srv in
 	 * element 1 of the mocked composition data.
@@ -544,7 +544,7 @@ static void test_first_sched_scene_recall(void)
 	expected_tm_check(fired_tm, expected, 3);
 }
 
-static void test_second_sched_scene_recall(void)
+ZTEST(scheduler_action_planning, test_second_sched_scene_recall)
 {
 	/** Send a SCENE_RECALL action to the sched srv in
 	 * element 4 of the mocked composition data.
@@ -596,7 +596,7 @@ static void test_second_sched_scene_recall(void)
 	expected_tm_check(fired_tm, expected, 2);
 }
 
-static void test_second_sched_turn_off_recurring(void)
+ZTEST(scheduler_action_planning, test_second_sched_turn_off_recurring)
 {
 	/** Send a recurring TURN_OFF action to the sched
 	 * srv in element 4 of the mocked composition data.
@@ -650,15 +650,4 @@ static void test_second_sched_turn_off_recurring(void)
 	expected_tm_check(fired_tm, expected, 8);
 }
 
-void test_main(void)
-{
-	ztest_test_suite(scheduler_test_action_planning,
-		ztest_unit_test_setup_teardown(test_first_sched_turn_on, setup, teardown),
-		ztest_unit_test_setup_teardown(test_second_sched_turn_off, setup, teardown),
-		ztest_unit_test_setup_teardown(test_first_sched_scene_recall, setup, teardown),
-		ztest_unit_test_setup_teardown(test_second_sched_scene_recall, setup, teardown),
-		ztest_unit_test_setup_teardown(test_second_sched_turn_off_recurring, setup,
-					       teardown));
-
-	ztest_run_test_suite(scheduler_test_action_planning);
-}
+ZTEST_SUITE(scheduler_action_planning, NULL, NULL, tc_setup, tc_teardown, NULL);
