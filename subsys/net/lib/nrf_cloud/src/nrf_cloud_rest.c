@@ -79,8 +79,6 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 #define API_DEVICES_BASE		"/devices"
 #define API_DEVICES_STATE_TEMPLATE	API_VER API_DEVICES_BASE "/%s/state"
 #define API_DEVICES_MSGS_TEMPLATE	API_VER API_DEVICES_BASE "/%s/messages"
-#define API_DEVICES_MSGS_MSG_KEY	"message"
-#define API_DEVICES_MSGS_TOPIC_KEY	"topic"
 #define API_DEVICES_MSGS_D2C_TPC_TMPLT	"d/%s/d2c%s"
 #define API_DEVICES_MSGS_BULK		NRF_CLOUD_BULK_MSG_TOPIC
 
@@ -1148,7 +1146,7 @@ int nrf_cloud_rest_send_device_message(struct nrf_cloud_rest_context *const rest
 
 	root_obj = cJSON_CreateObject();
 
-	if (cJSON_AddRawToObjectCS(root_obj, API_DEVICES_MSGS_MSG_KEY, json_msg) == NULL) {
+	if (cJSON_AddRawToObjectCS(root_obj, NRF_CLOUD_REST_MSG_KEY, json_msg) == NULL) {
 		ret = -ENOMEM;
 		goto clean_up;
 	}
@@ -1173,7 +1171,7 @@ int nrf_cloud_rest_send_device_message(struct nrf_cloud_rest_context *const rest
 		}
 	}
 
-	if (cJSON_AddStringToObjectCS(root_obj, API_DEVICES_MSGS_TOPIC_KEY,
+	if (cJSON_AddStringToObjectCS(root_obj, NRF_CLOUD_REST_TOPIC_KEY,
 				      (d2c ? d2c : topic)) == NULL) {
 		ret = -ENOMEM;
 		goto clean_up;
