@@ -166,7 +166,7 @@ int bt_mesh_scheduler_cli_action_set(struct bt_mesh_scheduler_cli *cli,
 			BT_MESH_SCHEDULER_MSG_LEN_ACTION_SET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_SCHEDULER_OP_ACTION_SET);
 
-	if (entry == NULL || idx >= BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT) {
+	if (!scheduler_action_valid(entry, idx)) {
 		return -EINVAL;
 	}
 
@@ -184,15 +184,14 @@ int bt_mesh_scheduler_cli_action_set(struct bt_mesh_scheduler_cli *cli,
 }
 
 int bt_mesh_scheduler_cli_action_set_unack(struct bt_mesh_scheduler_cli *cli,
-				struct bt_mesh_msg_ctx *ctx,
-				uint8_t idx,
-				const struct bt_mesh_schedule_entry *entry)
+					   struct bt_mesh_msg_ctx *ctx, uint8_t idx,
+					   const struct bt_mesh_schedule_entry *entry)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_SCHEDULER_OP_ACTION_SET_UNACK,
-			BT_MESH_SCHEDULER_MSG_LEN_ACTION_SET);
+				 BT_MESH_SCHEDULER_MSG_LEN_ACTION_SET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_SCHEDULER_OP_ACTION_SET_UNACK);
 
-	if (entry == NULL || idx >= BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT) {
+	if (!scheduler_action_valid(entry, idx)) {
 		return -EINVAL;
 	}
 

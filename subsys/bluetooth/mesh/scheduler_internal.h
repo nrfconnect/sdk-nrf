@@ -18,6 +18,25 @@
 extern "C" {
 #endif
 
+#define MAX_DAY 0x1F
+
+static inline bool scheduler_action_valid(const struct bt_mesh_schedule_entry *entry, uint8_t idx)
+{
+	if (entry == NULL ||
+	    entry->year > BT_MESH_SCHEDULER_ANY_YEAR ||
+	    entry->day > MAX_DAY ||
+	    entry->hour > BT_MESH_SCHEDULER_ONCE_A_DAY ||
+	    entry->minute > BT_MESH_SCHEDULER_ONCE_AN_HOUR ||
+	    entry->second > BT_MESH_SCHEDULER_ONCE_A_MINUTE ||
+	    (entry->action > BT_MESH_SCHEDULER_SCENE_RECALL &&
+	     entry->action != BT_MESH_SCHEDULER_NO_ACTIONS) ||
+	    idx >= BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT) {
+		return false;
+	}
+
+	return true;
+}
+
 static inline void scheduler_action_unpack(struct net_buf_simple *buf,
 					uint8_t *idx,
 					struct bt_mesh_schedule_entry *entry)
