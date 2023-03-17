@@ -66,6 +66,16 @@ struct nrf_cloud_bin_hdr {
 	uint32_t sequence;
 } __packed;
 
+/** @brief Structure to receive dynamically allocated strings containing
+ *  details for FOTA job update.
+ */
+struct nrf_cloud_fota_job_update {
+	/** REST path or CoAP resource */
+	char *url;
+	/** Update message to send to the url */
+	char *payload;
+};
+
 /** @brief Initialize the codec used encoding the data to the cloud. */
 int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks);
 
@@ -150,6 +160,16 @@ void nrf_cloud_device_status_free(struct nrf_cloud_data *status);
  * @ref nrf_cloud_fota_job_decode
  */
 void nrf_cloud_fota_job_free(struct nrf_cloud_fota_job_info *const job);
+
+/** @brief Free memory allocated by @ref nrf_cloud_fota_job_update_create */
+void nrf_cloud_fota_job_update_free(struct nrf_cloud_fota_job_update *update);
+
+/** @brief Create an nF Cloud REST or CoAP FOTA job update url and payload. */
+int nrf_cloud_fota_job_update_create(const char *const device_id,
+				     const char *const job_id,
+				     const enum nrf_cloud_fota_status status,
+				     const char * const details,
+				     struct nrf_cloud_fota_job_update *update);
 
 /** @brief Create an nRF Cloud MQTT FOTA job update payload which is to be sent
  * on the FOTA jobs update topic.
@@ -340,6 +360,9 @@ void nrf_cloud_register_gateway_state_handler(gateway_state_handler_t handler);
 /** @brief Encode a log output buffer for transport to the cloud */
 int nrf_cloud_log_json_encode(struct nrf_cloud_log_context *ctx, uint8_t *buf, size_t size,
 			 struct nrf_cloud_data *output);
+
+/** @brief Return the appId string equivalent to the specified sensor type, otherwise NULL. */
+const char *nrf_cloud_sensor_app_id_lookup(enum nrf_cloud_sensor type);
 
 #ifdef __cplusplus
 }

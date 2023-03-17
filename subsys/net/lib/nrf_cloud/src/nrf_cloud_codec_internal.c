@@ -69,6 +69,35 @@ static const char *const sensor_type_str[] = {
 /* Max length of a NRF_CLOUD_JSON_MSG_TYPE_VAL_DISCONNECT message */
 #define NRF_CLOUD_JSON_MSG_MAX_LEN_DISCONNECT	200
 
+#if defined(CONFIG_NRF_CLOUD_REST)
+#define API_VER				"/v1"
+#define API_FOTA_JOB_EXEC		"/fota-job-executions"
+#define API_UPDATE_FOTA_URL_TEMPLATE	(API_VER API_FOTA_JOB_EXEC "/%s/%s")
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+#define API_FOTA_JOB_EXEC		"fota/exec"
+#define API_UPDATE_FOTA_URL_TEMPLATE	(API_FOTA_JOB_EXEC "/%s")
+#else
+#define API_FOTA_JOB_EXEC		""
+#define API_UPDATE_FOTA_URL_TEMPLATE	""
+#endif
+
+#define API_UPDATE_FOTA_BODY_TEMPLATE	"{\"status\":\"%s\"}"
+#define API_UPDATE_FOTA_DETAILS_TMPLT	"{\"status\":\"%s\", \"details\":\"%s\"}"
+
+/* Mapping of enum to strings for Job Execution Status. */
+static const char *const job_status_strings[] = {
+	[NRF_CLOUD_FOTA_QUEUED]      = "QUEUED",
+	[NRF_CLOUD_FOTA_IN_PROGRESS] = "IN_PROGRESS",
+	[NRF_CLOUD_FOTA_FAILED]      = "FAILED",
+	[NRF_CLOUD_FOTA_SUCCEEDED]   = "SUCCEEDED",
+	[NRF_CLOUD_FOTA_TIMED_OUT]   = "TIMED_OUT",
+	[NRF_CLOUD_FOTA_REJECTED]    = "REJECTED",
+	[NRF_CLOUD_FOTA_CANCELED]    = "CANCELLED",
+	[NRF_CLOUD_FOTA_DOWNLOADING] = "DOWNLOADING",
+};
+#define JOB_STATUS_STRING_COUNT (sizeof(job_status_strings) / \
+				 sizeof(*job_status_strings))
+
 int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks)
 {
 	if (!initialized) {
@@ -89,6 +118,14 @@ int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks)
 		initialized = true;
 	}
 	return 0;
+}
+
+const char *nrf_cloud_sensor_app_id_lookup(enum nrf_cloud_sensor type)
+{
+	if ((type >= 0) && (type < SENSOR_TYPE_ARRAY_SIZE)) {
+		return sensor_type_str[type];
+	}
+	return NULL;
 }
 
 /* remove static to eliminate warning if not using CONFIG_NRF_CLOUD_MQTT */
@@ -968,7 +1005,7 @@ int nrf_cloud_encode_message(const char *app_id, double value, const char *str_v
 	NRF_CLOUD_OBJ_JSON_DEFINE(msg_obj);
 
 	/* Init the root object and add a topic string if provided */
-	if (nrf_cloud_obj_init(&root_obj)){
+	if (nrf_cloud_obj_init(&root_obj)) {
 		return -ENOMEM;
 	}
 
@@ -1640,19 +1677,19 @@ int nrf_cloud_shadow_dev_status_encode(const struct nrf_cloud_device_status *con
 
 	int err = 0;
 	cJSON *state_obj = NULL;
-	cJSON *reported_obj = NULL;
+	cJSON *parent_obj = NULL;
 	cJSON *root_obj = cJSON_CreateObject();
 
 	if (!include_reported) {
-		reported_obj = root_obj;
+		parent_obj = root_obj;
 	} else if (include_state) {
 		state_obj = cJSON_AddObjectToObjectCS(root_obj, NRF_CLOUD_JSON_KEY_STATE);
-		reported_obj = cJSON_AddObjectToObjectCS(state_obj, NRF_CLOUD_JSON_KEY_REP);
+		parent_obj = cJSON_AddObjectToObjectCS(state_obj, NRF_CLOUD_JSON_KEY_REP);
 	} else {
-		reported_obj = cJSON_AddObjectToObjectCS(root_obj, NRF_CLOUD_JSON_KEY_REP);
+		parent_obj = cJSON_AddObjectToObjectCS(root_obj, NRF_CLOUD_JSON_KEY_REP);
 	}
 
-	cJSON *device_obj = cJSON_AddObjectToObjectCS(reported_obj, NRF_CLOUD_JSON_KEY_DEVICE);
+	cJSON *device_obj = cJSON_AddObjectToObjectCS(parent_obj, NRF_CLOUD_JSON_KEY_DEVICE);
 
 	if (device_obj == NULL) {
 		err = -ENOMEM;
@@ -1783,6 +1820,91 @@ enum rcv_item_idx {
 	RCV_ITEM_IDX_FILE_PATH,
 	RCV_ITEM_IDX__SIZE,
 };
+
+void nrf_cloud_fota_job_update_free(struct nrf_cloud_fota_job_update *update)
+{
+	if (!update) {
+		return;
+	}
+
+	nrf_cloud_free(update->payload);
+	update->payload = NULL;
+
+	nrf_cloud_free(update->url);
+	update->url = NULL;
+}
+
+int nrf_cloud_fota_job_update_create(const char *const device_id,
+				     const char *const job_id,
+				     const enum nrf_cloud_fota_status status,
+				     const char * const details,
+				     struct nrf_cloud_fota_job_update *update)
+{
+	__ASSERT_NO_MSG(job_id != NULL);
+	__ASSERT_NO_MSG(status < JOB_STATUS_STRING_COUNT);
+	__ASSERT_NO_MSG(update != NULL);
+	int ret;
+	size_t buff_sz;
+
+	update->payload = NULL;
+
+	/* Format API URL with device and job ID */
+	buff_sz = sizeof(API_UPDATE_FOTA_URL_TEMPLATE) +
+#if defined(CONFIG_NRF_CLOUD_REST)
+		  strlen(device_id) +
+#endif
+		  strlen(job_id);
+	update->url = nrf_cloud_malloc(buff_sz);
+	if (!update->url) {
+		ret = -ENOMEM;
+		goto clean_up;
+	}
+
+	ret = snprintk(update->url, buff_sz, API_UPDATE_FOTA_URL_TEMPLATE,
+#if defined(CONFIG_NRF_CLOUD_REST)
+		       device_id, /* CoAP does not need this parameter */
+#endif
+		       job_id);
+	if ((ret < 0) || (ret >= buff_sz)) {
+		LOG_ERR("Could not format URL");
+		ret = -ETXTBSY;
+		goto clean_up;
+	}
+
+	/* Format payload */
+	if (details) {
+		buff_sz = sizeof(API_UPDATE_FOTA_DETAILS_TMPLT) +
+			  strlen(job_status_strings[status]) +
+			  strlen(details);
+	} else {
+		buff_sz = sizeof(API_UPDATE_FOTA_BODY_TEMPLATE) +
+			  strlen(job_status_strings[status]);
+	}
+
+	update->payload = nrf_cloud_malloc(buff_sz);
+	if (!update->payload) {
+		ret = -ENOMEM;
+		goto clean_up;
+	}
+
+	if (details) {
+		ret = snprintk(update->payload, buff_sz, API_UPDATE_FOTA_DETAILS_TMPLT,
+			       job_status_strings[status], details);
+	} else {
+		ret = snprintk(update->payload, buff_sz, API_UPDATE_FOTA_BODY_TEMPLATE,
+			       job_status_strings[status]);
+	}
+	if ((ret < 0) || (ret >= buff_sz)) {
+		LOG_ERR("Could not format payload");
+		ret = -ETXTBSY;
+		goto clean_up;
+	}
+	return 0;
+
+clean_up:
+	nrf_cloud_fota_job_update_free(update);
+	return ret;
+}
 
 int nrf_cloud_fota_job_decode(struct nrf_cloud_fota_job_info *const job_info,
 			      bt_addr_t *const ble_id,

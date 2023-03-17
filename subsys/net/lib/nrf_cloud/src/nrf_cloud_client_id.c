@@ -55,9 +55,9 @@ int nrf_cloud_client_id_get(char *id_buf, size_t id_len)
 	ret = -ENODEV;
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_REST)
+#if defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_COAP)
 	if (ret != 0) {
-		/* For REST, the client ID is generated on demand. */
+		/* For REST and CoAP, the client ID is generated on demand. */
 		ret = nrf_cloud_configured_client_id_get(id_buf, id_len);
 	}
 #endif
