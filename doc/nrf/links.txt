@@ -149,10 +149,6 @@
 
 .. _`pc-ble-driver-py`: https://github.com/NordicSemiconductor/pc-ble-driver-py
 
-.. _`Threads`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/kernel/services/threads/index.html#threads
-
-.. _`Network Traffic Generator`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/connectivity/networking/api/zperf.html#zperf-network-traffic-generator
-
 .. _`commit #d55314`: https://github.com/nrfconnect/sdk-nrf/commit/d553142f4f37bc324da9869e4837cdd9105e25ab
 
 .. ### Source: github.io
@@ -323,6 +319,10 @@
 .. _`CONFIG_BT_CTLR_TX_PWR_MINUS`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_MINUS
 .. _`CONFIG_BT_CTLR_TX_PWR_PLUS`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_PLUS
 
+.. _`Threads`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/kernel/services/threads/index.html#threads
+
+.. _`Network Traffic Generator`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/connectivity/networking/api/zperf.html#zperf-network-traffic-generator
+
 .. ### Source: www.nordicsemi.com
 
 .. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
@@ -365,7 +365,10 @@
 .. _`iBasis network coverage spreadsheet`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/3rd-party/iBasis-simplified-coverage-map-for-web.pdf?la=en&hash=CA7DBF400243D8A7A7BDA94873B50E73C26B4FAC
 
 .. _`Contact Us`: https://www.nordicsemi.com/About-us/Contact-Us
+
 .. _`Nordic Semiconductor Wi-Fi products`: https://www.nordicsemi.com/Products/WiFi
+
+.. _`Nordic third-party modules`: https://www.nordicsemi.com/Nordic-Partners/3rd-party-modules
 
 .. #### Source: www.nordicsemi.com/Events/
 
@@ -539,6 +542,8 @@
 .. _`access port protection mechanism`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf52840%2Fdif.html&anchor=concept_udr_mns_1s
 
 .. _`Electrical specification for nRF7002`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf7002%2Fchapters%2Felspec%2Fdoc%2Felectrical_specification.html
+
+.. _`Wi-Fi Alliance Certification for nRF70 Series`: https://infocenter.nordicsemi.com/pdf/nwp_045.pdf
 
 .. ### Source: academy.nordicsemi.com
 
@@ -989,11 +994,44 @@
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
 .. _`IDAU`: https://developer.arm.com/docs/100690/latest/attribution-units-sau-and-idau
 
-.. ### Source: MQTT
+.. ### Source: etsi.org
+
+.. _`3GPP TS 24.008, subclause 10.5.5.32`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=622
+.. _`3GPP TS 24.008 Ch. 10.5.7.3`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=667
+.. _`3GPP TS 24.008 Ch. 10.5.7.4a`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=668
+.. _`LTE Positioning Protocol (LPP)`: https://www.etsi.org/deliver/etsi_ts/136300_136399/136355/11.01.00_60/ts_136355v110100p.pdf#page=12
+
+.. ### Source: spdx.dev
+
+.. _`SPDX tool`: https://spdx.dev/
+.. _`SPDX identifier`: https://spdx.dev/ids/
+.. _`SPDX License List`: https://spdx.org/licenses/
+
+.. ### Source: wi-fi.org
+
+.. _`Wi-Fi Alliance`: https://www.wi-fi.org/
+.. _`Join Wi-Fi Alliance`: https://www.wi-fi.org/membership
+.. _`Wi-Fi Certification`: https://www.wi-fi.org/certification
+
+.. ### Source: avsystem.com & avsystem.cloud
+
+.. _`Coiote Device Management`: https://www.avsystem.com/products/coiote-iot-device-management-platform/
+.. _`Coiote Device Management server`: https://eu.iot.avsystem.cloud/
+.. _`nRF Cloud integration with Coiote Device Management`: https://iotdevzone.avsystem.com/docs/Cloud_integrations/nRF_Cloud_Location_services/Configure_nRF_Cloud_integration/
+.. _`Viewing device location in Coiote Device Management`: https://iotdevzone.avsystem.com/docs/Cloud_integrations/nRF_Cloud_Location_services/Configure_nRF_Cloud_integration/#view-device-location-in-coiote-dm
+.. _`Setting observations for an object`: https://iotdevzone.avsystem.com/docs/Coiote_IoT_DM/Quick_Start/Visualize_device_data/#set-observation-and-add-widget
+.. _`nRF9160 Anjay integration`: https://iotdevzone.avsystem.com/docs/LwM2M_Client/Nordic/nRF9160/
+.. _`Thingy:91 integration`: https://iotdevzone.avsystem.com/docs/LwM2M_Client/Nordic/Thingy91/#thingy91
+
+.. ### Source: mosquitto
+
+.. _`Mosquitto`: https://mosquitto.org/
+.. _`mosquitto.org server CA`: https://test.mosquitto.org/ssl/mosquitto.org.crt
+.. _`test.mosquitto.org`: https://test.mosquitto.org
+
+.. ### Source: other (2 links or less from the same URL)
 
 .. _`MQTT getting started`: https://mqtt.org/getting-started/
-
-.. ### Source: other
 
 .. _`Memfault Diagnostic GATT Service`: https://memfault.notion.site/Memfault-Diagnostic-GATT-Service-MDS-ffd5a430062649cd9bf6edbf64e2563b
 
@@ -1029,10 +1067,6 @@
 .. _`Klobuchar Ionospheric Model`: https://gssc.esa.int/navipedia/index.php/Klobuchar_Ionospheric_Model
 
 .. _`Azure Portal`: https://portal.azure.com/
-
-.. _`Mosquitto`: https://mosquitto.org/
-.. _`mosquitto.org server CA`: https://test.mosquitto.org/ssl/mosquitto.org.crt
-.. _`test.mosquitto.org`: https://test.mosquitto.org
 
 .. _`VSMQTT`: https://marketplace.visualstudio.com/items?itemName=rpdswtk.vsmqtt
 
@@ -1099,7 +1133,6 @@
 .. _`DigiCert Global Root G2`: https://cacerts.digicert.com/DigiCertGlobalG2TLSRSASHA2562020CA1.crt.pem
 
 .. _`SKY66112-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66112-11
-
 .. _`SKY66114-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66114-11
 
 .. _`Matter`: https://buildwithmatter.com/
@@ -1112,7 +1145,6 @@
 .. _`Leshan Demo Server web UI`:
 .. _`public Leshan Demo Server`: https://leshan.eclipseprojects.io
 .. _`Leshan homepage`: https://www.eclipse.org/leshan/
-
 .. _`public Leshan Bootstrap Server Demo`: https://leshan.eclipseprojects.io/bs
 
 .. _`Silvair EnOcean Switch Mesh Proxy Server`: https://silvair.com/resources/product-documents/
@@ -1125,19 +1157,7 @@
 
 .. _`HERE Positioning`: https://www.here.com/platform/positioning
 
-.. _`SPDX tool`: https://spdx.dev/
-.. _`SPDX identifier`: https://spdx.dev/ids/
-.. _`SPDX License List`: https://spdx.org/licenses/
-
 .. _`dfu-util tool`: http://dfu-util.sourceforge.net/
-
-.. _`Coiote Device Management`: https://www.avsystem.com/products/coiote-iot-device-management-platform/
-.. _`Coiote Device Management server`: https://eu.iot.avsystem.cloud/
-.. _`nRF Cloud integration with Coiote Device Management`: https://iotdevzone.avsystem.com/docs/Cloud_integrations/nRF_Cloud_Location_services/Configure_nRF_Cloud_integration/
-.. _`Viewing device location in Coiote Device Management`: https://iotdevzone.avsystem.com/docs/Cloud_integrations/nRF_Cloud_Location_services/Configure_nRF_Cloud_integration/#view-device-location-in-coiote-dm
-.. _`Setting observations for an object`: https://iotdevzone.avsystem.com/docs/Coiote_IoT_DM/Quick_Start/Visualize_device_data/#set-observation-and-add-widget
-.. _`nRF9160 Anjay integration`: https://iotdevzone.avsystem.com/docs/LwM2M_Client/Nordic/nRF9160/
-.. _`Thingy:91 integration`: https://iotdevzone.avsystem.com/docs/LwM2M_Client/Nordic/Thingy91/#thingy91
 
 .. _`Termite`: https://www.compuphase.com/software_termite.htm
 
@@ -1149,16 +1169,6 @@
 
 .. _`WPA Supplicant`: https://w1.fi/wpa_supplicant/
 
-.. _`Wi-Fi Alliance`: https://www.wi-fi.org/
-
 .. _`IEEE 802.11 Working Group`: https://www.ieee802.org/11/
 
 .. _`Samsung SmartThings integration with Matter`: https://support.smartthings.com/hc/en-us/articles/11219700390804-SmartThings-x-Matter-Integration-
-
-
-.. ### Source: etsi.org
-
-.. _`3GPP TS 24.008, subclause 10.5.5.32`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=622
-.. _`3GPP TS 24.008 Ch. 10.5.7.3`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=667
-.. _`3GPP TS 24.008 Ch. 10.5.7.4a`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=668
-.. _`LTE Positioning Protocol (LPP)`: https://www.etsi.org/deliver/etsi_ts/136300_136399/136355/11.01.00_60/ts_136355v110100p.pdf#page=12
