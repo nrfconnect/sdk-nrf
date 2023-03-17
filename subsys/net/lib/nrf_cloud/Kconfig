@@ -23,13 +23,15 @@ rsource "Kconfig.nrf_cloud_alert"
 
 rsource "Kconfig.nrf_cloud_log"
 
+rsource "Kconfig.nrf_cloud_coap"
+
 config NRF_CLOUD_GATEWAY
 	bool "nRF Cloud Gateway"
 	help
 	  Enables functionality in this device to be compatible with
 	  nRF Cloud LTE gateway support.
 
-if NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_PGPS || MODEM_JWT
+if NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_PGPS || MODEM_JWT || NRF_CLOUD_COAP
 
 config NRF_CLOUD_HOST_NAME
 	string "nRF Cloud server hostname"

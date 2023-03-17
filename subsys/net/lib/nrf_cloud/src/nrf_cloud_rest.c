@@ -66,9 +66,6 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 
 #define API_FOTA_JOB_EXEC		"/fota-job-executions"
 #define API_GET_FOTA_URL_TEMPLATE	(API_VER API_FOTA_JOB_EXEC "/%s/current")
-#define API_UPDATE_FOTA_URL_TEMPLATE	(API_VER API_FOTA_JOB_EXEC "/%s/%s")
-#define API_UPDATE_FOTA_BODY_TEMPLATE	"{\"status\":\"%s\"}"
-#define API_UPDATE_FOTA_DETAILS_TMPLT	"{\"status\":\"%s\", \"details\":\"%s\"}"
 
 #define API_LOCATION			"/location"
 #define API_GET_LOCATION		API_VER API_LOCATION "/ground-fix"
@@ -90,20 +87,6 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 #define JITP_CONNECTION_HDR	"Connection: close" CRLF
 #define JITP_HTTP_TIMEOUT_MS	(15000)
 #define JITP_RX_BUF_SZ		(400)
-
-/* Mapping of enum to strings for Job Execution Status. */
-static const char *const job_status_strings[] = {
-	[NRF_CLOUD_FOTA_QUEUED]      = "QUEUED",
-	[NRF_CLOUD_FOTA_IN_PROGRESS] = "IN_PROGRESS",
-	[NRF_CLOUD_FOTA_FAILED]      = "FAILED",
-	[NRF_CLOUD_FOTA_SUCCEEDED]   = "SUCCEEDED",
-	[NRF_CLOUD_FOTA_TIMED_OUT]   = "TIMED_OUT",
-	[NRF_CLOUD_FOTA_REJECTED]    = "REJECTED",
-	[NRF_CLOUD_FOTA_CANCELED]    = "CANCELLED",
-	[NRF_CLOUD_FOTA_DOWNLOADING] = "DOWNLOADING",
-};
-#define JOB_STATUS_STRING_COUNT (sizeof(job_status_strings) / \
-				 sizeof(*job_status_strings))
 
 /* Generate an authorization header value string in the form:
  * "Authorization: Bearer JWT \r\n"
@@ -378,37 +361,15 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 	__ASSERT_NO_MSG(rest_ctx != NULL);
 	__ASSERT_NO_MSG(device_id != NULL);
 	__ASSERT_NO_MSG(job_id != NULL);
-	__ASSERT_NO_MSG(status < JOB_STATUS_STRING_COUNT);
 
 	int ret;
-	size_t buff_sz;
 	char *auth_hdr = NULL;
-	char *url = NULL;
-	char *payload = NULL;
 	struct rest_client_req_context req;
 	struct rest_client_resp_context resp;
+	struct nrf_cloud_fota_job_update update;
 
 	memset(&resp, 0, sizeof(resp));
 	init_rest_client_request(rest_ctx, &req, HTTP_PATCH);
-
-	/* Format API URL with device and job ID */
-	buff_sz = sizeof(API_UPDATE_FOTA_URL_TEMPLATE) +
-		  strlen(device_id) +
-		  strlen(job_id);
-	url = nrf_cloud_malloc(buff_sz);
-	if (!url) {
-		ret = -ENOMEM;
-		goto clean_up;
-	}
-	req.url = url;
-
-	ret = snprintk(url, buff_sz, API_UPDATE_FOTA_URL_TEMPLATE,
-		       device_id, job_id);
-	if ((ret < 0) || (ret >= buff_sz)) {
-		LOG_ERR("Could not format URL");
-		ret = -ETXTBSY;
-		goto clean_up;
-	}
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
@@ -423,45 +384,23 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 		NULL
 	};
 
+	ret = nrf_cloud_fota_job_update_create(device_id, job_id, status, details, &update);
+	if (ret) {
+		LOG_ERR("Error creating FOTA job update structure: %d", ret);
+		goto clean_up;
+	}
+
 	req.header_fields = (const char **)headers;
-
-	/* Format payload */
-	if (details) {
-		buff_sz = sizeof(API_UPDATE_FOTA_DETAILS_TMPLT) +
-			  strlen(job_status_strings[status]) +
-			  strlen(details);
-	} else {
-		buff_sz = sizeof(API_UPDATE_FOTA_BODY_TEMPLATE) +
-			  strlen(job_status_strings[status]);
-	}
-
-	payload = nrf_cloud_malloc(buff_sz);
-	if (!payload) {
-		ret = -ENOMEM;
-		goto clean_up;
-	}
-
-	if (details) {
-		ret = snprintk(payload, buff_sz, API_UPDATE_FOTA_DETAILS_TMPLT,
-			       job_status_strings[status], details);
-	} else {
-		ret = snprintk(payload, buff_sz, API_UPDATE_FOTA_BODY_TEMPLATE,
-			       job_status_strings[status]);
-	}
-	if ((ret < 0) || (ret >= buff_sz)) {
-		LOG_ERR("Could not format payload");
-		ret = -ETXTBSY;
-		goto clean_up;
-	}
-	req.body = payload;
+	req.url = update.url;
+	req.body = update.payload;
 
 	/* Make REST call */
 	ret = do_rest_client_request(rest_ctx, &req, &resp, true, false);
 
+	nrf_cloud_fota_job_update_free(&update);
+
 clean_up:
-	nrf_cloud_free(url);
 	nrf_cloud_free(auth_hdr);
-	nrf_cloud_free(payload);
 
 	close_connection(rest_ctx);
 
