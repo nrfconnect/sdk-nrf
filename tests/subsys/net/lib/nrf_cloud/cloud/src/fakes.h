@@ -33,8 +33,10 @@ FAKE_VALUE_FUNC(int, nct_dc_send, const struct nct_dc_data *);
 FAKE_VALUE_FUNC(int, nct_dc_stream, const struct nct_dc_data *);
 FAKE_VALUE_FUNC(int, nct_dc_bulk_send, const struct nct_dc_data *, enum mqtt_qos);
 FAKE_VALUE_FUNC(int, nrf_cloud_shadow_dev_status_encode,
+
 				const struct nrf_cloud_device_status *,
 				struct nrf_cloud_data *, const bool);
+FAKE_VALUE_FUNC(int, nct_dc_bin_send, const struct nct_dc_data *, enum mqtt_qos);
 FAKE_VOID_FUNC(nrf_cloud_device_status_free, struct nrf_cloud_data *);
 FAKE_VALUE_FUNC(int, nrf_cloud_sensor_data_encode, const struct nrf_cloud_sensor_data *,
 				struct nrf_cloud_data *);
@@ -217,6 +219,20 @@ int fake_nct_dc_stream__fails(const struct nct_dc_data *data)
 }
 
 int fake_nct_dc_bulk_send__succeeds(const struct nct_dc_data *data, enum mqtt_qos qos)
+{
+	ARG_UNUSED(data);
+	ARG_UNUSED(qos);
+	return 0;
+}
+
+int fake_nct_dc_bin_send__fails(const struct nct_dc_data *data, enum mqtt_qos qos)
+{
+	ARG_UNUSED(data);
+	ARG_UNUSED(qos);
+	return -EINVAL;
+}
+
+int fake_nct_dc_bin_send__succeeds(const struct nct_dc_data *data, enum mqtt_qos qos)
 {
 	ARG_UNUSED(data);
 	ARG_UNUSED(qos);
