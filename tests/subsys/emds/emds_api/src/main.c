@@ -17,7 +17,6 @@
 #include <mpsl.h>
 #endif
 
-
 enum test_states {
 	EMDS_TS_EMPTY_FLASH,
 	EMDS_TS_STORE_DATA,
@@ -87,7 +86,7 @@ static void app_store_cb(void)
 
 /** End Mocks **************************************/
 
-static void test_init(void)
+static void init(void)
 {
 	int err;
 
@@ -104,7 +103,7 @@ static void test_init(void)
 	zassert_equal(emds_init(NULL), -EALREADY, "Initialization did not fail");
 }
 
-static void test_add_d_entries(void)
+static void add_d_entries(void)
 {
 	int err;
 	uint32_t store_expected = NRFX_CEIL_DIV(sizeof(s_data), 4) * 4 + 8;
@@ -124,7 +123,7 @@ static void test_add_d_entries(void)
 	zassert_equal(store_used, store_expected, "Wrong storage size");
 }
 
-static void test_load_empty_flash(void)
+static void load_empty_flash(void)
 {
 	uint8_t test_d_data[sizeof(d_data)] = { 0xAC };
 	uint8_t test_s_data[sizeof(s_data)] = { 0xAC };
@@ -140,7 +139,7 @@ static void test_load_empty_flash(void)
 			  "Data has changed");
 }
 
-static void test_load_flash(void)
+static void load_flash(void)
 {
 	memset(d_data, 0, sizeof(d_data));
 	memset(s_data, 0, sizeof(s_data));
@@ -153,7 +152,7 @@ static void test_load_flash(void)
 			  "Data has changed");
 }
 
-static void test_prepare(void)
+static void prepare(void)
 {
 	zassert_equal(emds_store(), -ECANCELED, "Prepare must be done before store");
 
@@ -164,7 +163,7 @@ static void test_prepare(void)
 	zassert_true(emds_is_ready(), "EMDS should be ready");
 }
 
-static void test_store(void)
+static void store(void)
 {
 	zassert_true(emds_is_ready(), "Store should be ready to execute");
 
@@ -195,7 +194,7 @@ static void test_store(void)
 	       store_time_us, estimate_store_time_us);
 }
 
-static void test_clear(void)
+static void clear(void)
 {
 	zassert_equal(emds_clear(), 0, "Clear failed");
 }
@@ -269,39 +268,63 @@ struct settings_handler emds_test_conf = {
 };
 #endif
 
-ztest_register_test_suite(_setup, pragma_always,
-			  ztest_unit_test(test_init),
-			  ztest_unit_test(test_add_d_entries));
-ztest_register_test_suite(empty_flash, pragma_empty_flash,
-			  ztest_unit_test(test_load_empty_flash),
-			  ztest_unit_test(test_prepare),
-			  ztest_unit_test(test_store),
-			  ztest_unit_test(test_load_flash));
-ztest_register_test_suite(store_data, pragma_store_data,
-			  ztest_unit_test(test_load_flash),
-			  ztest_unit_test(test_prepare),
-			  ztest_unit_test(test_store),
-			  ztest_unit_test(test_load_flash));
-ztest_register_test_suite(clear_flash, pragma_clear_flash,
-			  ztest_unit_test(test_load_flash),
-			  ztest_unit_test(test_prepare),
-			  ztest_unit_test(test_store),
-			  ztest_unit_test(test_clear),
-			  ztest_unit_test(test_load_empty_flash));
-ztest_register_test_suite(no_store, pragma_no_store,
-			  ztest_unit_test(test_load_flash),
-			  ztest_unit_test(test_prepare),
-			  ztest_unit_test(test_load_empty_flash));
-ztest_register_test_suite(several_store, pragma_several_store,
-			  ztest_unit_test(test_load_flash),
-			  ztest_unit_test(test_prepare),
-			  ztest_unit_test(test_load_empty_flash),
-			  ztest_unit_test(test_store),
-			  ztest_unit_test(test_load_flash),
-			  ztest_unit_test(test_prepare),
-			  ztest_unit_test(test_load_empty_flash),
-			  ztest_unit_test(test_store),
-			  ztest_unit_test(test_load_flash));
+ZTEST(_setup, test_setup)
+{
+	init();
+	add_d_entries();
+}
+
+ZTEST(empty_flash, test_empty_flash)
+{
+	load_empty_flash();
+	prepare();
+	store();
+	load_flash();
+}
+
+ZTEST(store_data, test_store_data)
+{
+	load_flash();
+	prepare();
+	store();
+	load_flash();
+}
+
+ZTEST(clear_flash, test_clear_flash)
+{
+	load_flash();
+	prepare();
+	store();
+	clear();
+	load_empty_flash();
+}
+
+ZTEST(no_store, test_no_store)
+{
+	load_flash();
+	prepare();
+	load_empty_flash();
+}
+
+ZTEST(several_store, test_several_store)
+{
+	load_flash();
+	prepare();
+	load_empty_flash();
+	store();
+	load_flash();
+	prepare();
+	load_empty_flash();
+	store();
+	load_flash();
+}
+
+ZTEST_SUITE(_setup, pragma_always, NULL, NULL, NULL, NULL);
+ZTEST_SUITE(empty_flash, pragma_empty_flash, NULL, NULL, NULL, NULL);
+ZTEST_SUITE(store_data, pragma_store_data, NULL, NULL, NULL, NULL);
+ZTEST_SUITE(clear_flash, pragma_clear_flash, NULL, NULL, NULL, NULL);
+ZTEST_SUITE(no_store, pragma_no_store, NULL, NULL, NULL, NULL);
+ZTEST_SUITE(several_store, pragma_several_store, NULL, NULL, NULL, NULL);
 
 void test_main(void)
 {
@@ -322,7 +345,7 @@ void test_main(void)
 	printk("********** Test run: %s (%d) **********\n",
 		print_state(run_state), iteration);
 
-	ztest_run_registered_test_suites(&run_state);
+	ztest_run_all(&run_state);
 
 #if CONFIG_SETTINGS
 	iteration++;
