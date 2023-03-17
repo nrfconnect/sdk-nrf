@@ -448,7 +448,7 @@ static void check_button_sequence(bool press1, bool *press2, bool release)
 	}
 }
 
-static void test_state_machine(void)
+ZTEST(silvair_enocean_state_machine_ts, test_state_machine)
 {
 	bt_addr_le_copy(&srv.addr, &mock_enocean_device.addr);
 
@@ -463,7 +463,7 @@ static void test_state_machine(void)
 	}
 }
 
-static void test_auto_commission(void)
+ZTEST(silvair_enocean_auto_commission_ts, test_auto_commission)
 {
 	zassert_true(commisioning_enabled, "Commissioning not enabled");
 	zassert_not_null(enocean_cbs->commissioned, "Commisioned cb is null");
@@ -520,7 +520,7 @@ static void test_auto_commission(void)
 		      "Existing addr overwritten");
 }
 
-static void test_storage(void)
+ZTEST(silvair_enocean_storage_ts, test_storage)
 {
 	int err;
 
@@ -578,7 +578,7 @@ static void test_storage(void)
 #define OP_SET 0x1
 #define OP_DELETE 0x2
 
-static void test_messages(void)
+ZTEST(silvair_enocean_messages_ts, test_messages)
 {
 	static uint8_t key[] = {
 		0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
@@ -671,7 +671,7 @@ static void test_messages(void)
 	zassert_true(commisioning_enabled, "Commissioning not enabled");
 }
 
-static void setup(void)
+static void setup(void *f)
 {
 	zassert_not_null(_bt_mesh_silvair_enocean_srv_cb.init,
 			 "Init cb is null");
@@ -691,7 +691,7 @@ static void setup(void)
 				      sizeof(srv.buttons[0].lvl.pub_data));
 }
 
-static void teardown(void)
+static void teardown(void *f)
 {
 	zassert_not_null(_bt_mesh_silvair_enocean_srv_cb.reset,
 			 "Reset cb is null");
@@ -701,36 +701,22 @@ static void teardown(void)
 	zassert_false(commisioning_enabled, "Commisioning not disabled");
 }
 
-static void teardown_expect_flash_clear(void)
+static void teardown_expect_flash_clear(void *f)
 {
 	ztest_expect_data(bt_mesh_model_data_store, data, NULL);
 	ztest_expect_value(bt_mesh_model_data_store, data_len, 0);
-	teardown();
+	teardown(f);
 }
 
-static void teardown_expect_clear_and_decommission(void)
+static void teardown_expect_clear_and_decommission(void *f)
 {
 	ztest_expect_value(bt_enocean_decommission, device, &mock_enocean_device);
-	teardown_expect_flash_clear();
+	teardown_expect_flash_clear(f);
 }
 
-void test_main(void)
-{
-	ztest_test_suite(
-		silvair_enocean_test,
-		ztest_unit_test_setup_teardown(test_messages,
-					       setup, teardown),
-		ztest_unit_test_setup_teardown(
-			test_state_machine,
-			setup,
-			teardown_expect_clear_and_decommission),
-		ztest_unit_test_setup_teardown(test_auto_commission,
-					       setup,
-					       teardown_expect_flash_clear),
-		ztest_unit_test_setup_teardown(test_storage,
-					       unit_test_noop,
-					       teardown_expect_flash_clear)
-			 );
-
-	ztest_run_test_suite(silvair_enocean_test);
-}
+ZTEST_SUITE(silvair_enocean_messages_ts, NULL, NULL, setup, teardown, NULL);
+ZTEST_SUITE(silvair_enocean_state_machine_ts, NULL, NULL, setup,
+	    teardown_expect_clear_and_decommission, NULL);
+ZTEST_SUITE(silvair_enocean_auto_commission_ts, NULL, NULL, setup, teardown_expect_flash_clear,
+	    NULL);
+ZTEST_SUITE(silvair_enocean_storage_ts, NULL, NULL, NULL, teardown_expect_flash_clear, NULL);
