@@ -20,7 +20,6 @@
 #include "zephyr/logging/log.h"
 LOG_MODULE_REGISTER(bt_mesh_scheduler_srv);
 
-#define MAX_DAY        0x1F
 #define JANUARY           0
 #define DECEMBER         11
 
@@ -623,19 +622,11 @@ static int action_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 {
 	struct bt_mesh_scheduler_srv *srv = model->user_data;
 	uint8_t idx;
-	struct bt_mesh_schedule_entry tmp;
+	struct bt_mesh_schedule_entry tmp = { 0 };
 
 	scheduler_action_unpack(buf, &idx, &tmp);
 
-	/* check against prohibited values */
-	if (tmp.year > BT_MESH_SCHEDULER_ANY_YEAR ||
-	    tmp.day > MAX_DAY ||
-	    tmp.hour > BT_MESH_SCHEDULER_ONCE_A_DAY ||
-	    tmp.minute > BT_MESH_SCHEDULER_ONCE_AN_HOUR ||
-	    tmp.second > BT_MESH_SCHEDULER_ONCE_A_MINUTE ||
-	    (tmp.action > BT_MESH_SCHEDULER_SCENE_RECALL &&
-			    tmp.action != BT_MESH_SCHEDULER_NO_ACTIONS) ||
-	    idx >= BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT) {
+	if (!scheduler_action_valid(&tmp, idx)) {
 		return -EINVAL;
 	}
 
