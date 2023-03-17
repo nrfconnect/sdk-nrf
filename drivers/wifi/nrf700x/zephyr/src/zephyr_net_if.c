@@ -41,6 +41,8 @@ void wifi_nrf_if_rx_frm(void *os_vif_ctx, void *frm)
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 	struct rpu_host_stats *host_stats = &fmac_dev_ctx->host_stats;
 
+	host_stats->total_rx_pkts++;
+
 	pkt = net_pkt_from_nbuf(iface, frm);
 	if (!pkt) {
 		LOG_DBG("Failed to allocate net_pkt");
