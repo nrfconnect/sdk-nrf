@@ -144,7 +144,7 @@ struct tm *bt_mesh_time_srv_localtime(struct bt_mesh_time_srv *srv,
 }
 /* redefined mocks */
 
-static void setup(void)
+static void tc_setup(void *f)
 {
 	/* 1st of Jan 2010 */
 	start_tm.tm_year = 110;
@@ -165,7 +165,7 @@ static void setup(void)
 	_bt_mesh_scheduler_srv_cb.init(&mock_sched_model);
 }
 
-static void teardown(void)
+static void tc_teardown(void *f)
 {
 	if (fired_tm) {
 		free(fired_tm);
@@ -200,7 +200,7 @@ static void measurement_start(int64_t expected_time, int fire_cnt)
 		"Scheduled action isn't fired in time.");
 }
 
-static void test_exact_time_simple(void)
+ZTEST(scheduler_timing, test_exact_time_simple)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = 10,
@@ -225,7 +225,7 @@ static void test_exact_time_simple(void)
 	expected_tm_check(fired_tm, &expected, 1);
 }
 
-static void test_exact_time_second_ovflw(void)
+ZTEST(scheduler_timing, test_exact_time_second_ovflw)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = 10,
@@ -254,7 +254,7 @@ static void test_exact_time_second_ovflw(void)
 	expected_tm_check(fired_tm, &expected, 1);
 }
 
-static void test_every_15_seconds(void)
+ZTEST(scheduler_timing, test_every_15_seconds)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = BT_MESH_SCHEDULER_ANY_YEAR,
@@ -282,7 +282,7 @@ static void test_every_15_seconds(void)
 	expected_tm_check(fired_tm, expected, 4);
 }
 
-static void test_every_20_seconds(void)
+ZTEST(scheduler_timing, test_every_20_seconds)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = BT_MESH_SCHEDULER_ANY_YEAR,
@@ -309,7 +309,7 @@ static void test_every_20_seconds(void)
 	expected_tm_check(fired_tm, expected, 3);
 }
 
-static void test_once_a_minute(void)
+ZTEST(scheduler_timing, test_once_a_minute)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = BT_MESH_SCHEDULER_ANY_YEAR,
@@ -338,7 +338,7 @@ static void test_once_a_minute(void)
 	expected_tm_check(fired_tm, expected, 3);
 }
 
-static void test_any_second(void)
+ZTEST(scheduler_timing, test_any_second)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = BT_MESH_SCHEDULER_ANY_YEAR,
@@ -365,7 +365,7 @@ static void test_any_second(void)
 	expected_tm_check(fired_tm, expected, 3);
 }
 
-static void test_exact_time_minute_ovflw(void)
+ZTEST(scheduler_timing, test_exact_time_minute_ovflw)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = 10,
@@ -393,7 +393,7 @@ static void test_exact_time_minute_ovflw(void)
 	expected_tm_check(fired_tm, &expected, 1);
 }
 
-static void test_every_15_minutes(void)
+ZTEST(scheduler_timing, test_every_15_minutes)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = BT_MESH_SCHEDULER_ANY_YEAR,
@@ -421,7 +421,7 @@ static void test_every_15_minutes(void)
 	expected_tm_check(fired_tm, expected, 4);
 }
 
-static void test_every_20_minutes(void)
+ZTEST(scheduler_timing, test_every_20_minutes)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = BT_MESH_SCHEDULER_ANY_YEAR,
@@ -448,7 +448,7 @@ static void test_every_20_minutes(void)
 	expected_tm_check(fired_tm, expected, 3);
 }
 
-static void test_once_an_hour(void)
+ZTEST(scheduler_timing, test_once_an_hour)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = BT_MESH_SCHEDULER_ANY_YEAR,
@@ -477,7 +477,7 @@ static void test_once_an_hour(void)
 	expected_tm_check(fired_tm, expected, 3);
 }
 
-static void test_any_minute(void)
+ZTEST(scheduler_timing, test_any_minute)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = BT_MESH_SCHEDULER_ANY_YEAR,
@@ -504,7 +504,7 @@ static void test_any_minute(void)
 	expected_tm_check(fired_tm, expected, 3);
 }
 
-static void test_exact_time_hour_ovflw(void)
+ZTEST(scheduler_timing, test_exact_time_hour_ovflw)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = 10,
@@ -532,7 +532,7 @@ static void test_exact_time_hour_ovflw(void)
 	expected_tm_check(fired_tm, &expected, 1);
 }
 
-static void test_once_a_day(void)
+ZTEST(scheduler_timing, test_once_a_day)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = BT_MESH_SCHEDULER_ANY_YEAR,
@@ -561,7 +561,7 @@ static void test_once_a_day(void)
 	expected_tm_check(fired_tm, expected, 3);
 }
 
-static void test_any_hour_day_ovflw(void)
+ZTEST(scheduler_timing, test_any_hour_day_ovflw)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = BT_MESH_SCHEDULER_ANY_YEAR,
@@ -590,7 +590,7 @@ static void test_any_hour_day_ovflw(void)
 	expected_tm_check(fired_tm, expected, 3);
 }
 
-static void test_any_hour_month_ovflw(void)
+ZTEST(scheduler_timing, test_any_hour_month_ovflw)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = BT_MESH_SCHEDULER_ANY_YEAR,
@@ -620,7 +620,7 @@ static void test_any_hour_month_ovflw(void)
 	expected_tm_check(fired_tm, expected, 3);
 }
 
-static void test_exact_time_day_ovflw(void)
+ZTEST(scheduler_timing, test_exact_time_day_ovflw)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = 10,
@@ -647,7 +647,7 @@ static void test_exact_time_day_ovflw(void)
 	expected_tm_check(fired_tm, &expected, 1);
 }
 
-static void test_any_day_week_gap(void)
+ZTEST(scheduler_timing, test_any_day_week_gap)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = 10,
@@ -678,7 +678,7 @@ static void test_any_day_week_gap(void)
 	expected_tm_check(fired_tm, expected, 4);
 }
 
-static void test_any_day_week_gap_ovflw(void)
+ZTEST(scheduler_timing, test_any_day_week_gap_ovflw)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = 10,
@@ -707,7 +707,7 @@ static void test_any_day_week_gap_ovflw(void)
 	expected_tm_check(fired_tm, expected, 2);
 }
 
-static void test_any_day_week_gap_ovflw_next_month(void)
+ZTEST(scheduler_timing, test_any_day_week_gap_ovflw_next_month)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = 10,
@@ -735,7 +735,7 @@ static void test_any_day_week_gap_ovflw_next_month(void)
 	expected_tm_check(fired_tm, &expected, 1);
 }
 
-static void test_any_day_month_gap(void)
+ZTEST(scheduler_timing, test_any_day_month_gap)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = 10,
@@ -762,7 +762,7 @@ static void test_any_day_month_gap(void)
 	expected_tm_check(fired_tm, &expected, 1);
 }
 
-static void test_month_ovflw(void)
+ZTEST(scheduler_timing, test_month_ovflw)
 {
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = BT_MESH_SCHEDULER_ANY_YEAR,
@@ -791,7 +791,7 @@ static void test_month_ovflw(void)
 	expected_tm_check(fired_tm, &expected, 1);
 }
 
-static void test_exact_time_general_ovflw(void)
+ZTEST(scheduler_timing, test_exact_time_general_ovflw)
 { /* happy new year */
 	const struct bt_mesh_schedule_entry test_action = {
 			.year = BT_MESH_SCHEDULER_ANY_YEAR,
@@ -823,33 +823,4 @@ static void test_exact_time_general_ovflw(void)
 	expected_tm_check(fired_tm, &expected, 1);
 }
 
-void test_main(void)
-{
-	ztest_test_suite(scheduler_test,
-		ztest_unit_test_setup_teardown(test_exact_time_simple, setup, teardown),
-		ztest_unit_test_setup_teardown(test_exact_time_second_ovflw, setup, teardown),
-		ztest_unit_test_setup_teardown(test_every_15_seconds, setup, teardown),
-		ztest_unit_test_setup_teardown(test_every_20_seconds, setup, teardown),
-		ztest_unit_test_setup_teardown(test_once_a_minute, setup, teardown),
-		ztest_unit_test_setup_teardown(test_any_second, setup, teardown),
-		ztest_unit_test_setup_teardown(test_exact_time_minute_ovflw, setup, teardown),
-		ztest_unit_test_setup_teardown(test_every_15_minutes, setup, teardown),
-		ztest_unit_test_setup_teardown(test_every_20_minutes, setup, teardown),
-		ztest_unit_test_setup_teardown(test_once_an_hour, setup, teardown),
-		ztest_unit_test_setup_teardown(test_any_minute, setup, teardown),
-		ztest_unit_test_setup_teardown(test_exact_time_hour_ovflw, setup, teardown),
-		ztest_unit_test_setup_teardown(test_once_a_day, setup, teardown),
-		ztest_unit_test_setup_teardown(test_any_hour_day_ovflw, setup, teardown),
-		ztest_unit_test_setup_teardown(test_any_hour_month_ovflw, setup, teardown),
-		ztest_unit_test_setup_teardown(test_exact_time_day_ovflw, setup, teardown),
-		ztest_unit_test_setup_teardown(test_any_day_week_gap, setup, teardown),
-		ztest_unit_test_setup_teardown(test_any_day_week_gap_ovflw, setup, teardown),
-		ztest_unit_test_setup_teardown(test_any_day_week_gap_ovflw_next_month,
-				setup, teardown),
-		ztest_unit_test_setup_teardown(test_any_day_month_gap, setup, teardown),
-		ztest_unit_test_setup_teardown(test_month_ovflw, setup, teardown),
-		ztest_unit_test_setup_teardown(test_exact_time_general_ovflw, setup, teardown)
-		);
-
-	ztest_run_test_suite(scheduler_test);
-}
+ZTEST_SUITE(scheduler_timing, NULL, NULL, tc_setup, tc_teardown, NULL);
