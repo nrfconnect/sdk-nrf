@@ -120,6 +120,8 @@
 /* REST */
 #define NRF_CLOUD_REST_ERROR_CODE_KEY		"code"
 #define NRF_CLOUD_REST_ERROR_MSG_KEY		"message"
+#define NRF_CLOUD_REST_TOPIC_KEY		"topic"
+#define NRF_CLOUD_REST_MSG_KEY			"message"
 
 /* GNSS - PVT */
 #define NRF_CLOUD_JSON_GNSS_PVT_KEY_LAT		"lat"
