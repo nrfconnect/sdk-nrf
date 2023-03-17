@@ -14,4 +14,9 @@ module = AZURE_FOTA_SAMPLE
 module-str = Azure FOTA sample
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
+config DEVICE_ID_USE_UUID
+	bool "Use modem UUID as device ID"
+	help
+		Use the devices's modem UUID as device ID when connecting to Azure IOT hub
+
 endmenu
