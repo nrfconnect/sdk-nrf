@@ -186,6 +186,8 @@ These technologies come with their own certification processes governed by diffe
 
 .. ug_matter_certification_sdo_end
 
+.. _ug_matter_device_certification_reqs_mot:
+
 Matter over Thread certification requirements
 =============================================
 
@@ -194,17 +196,63 @@ The following table lists Matter over Thread certification requirements for when
 +-------------------------------+---------------------------+-----------------------------+----------------------------------------+
 | Technology certification      | Stage for certification   | SDO to join                 | Minimum SDO membership level required  |
 +===============================+===========================+=============================+========================================+
+| Matter Certification          | Production                | `Join CSA`_                 | Adopter                                |
++-------------------------------+---------------------------+-----------------------------+----------------------------------------+
 | Bluetooth QDID                | Production                | `Join Bluetooth SIG`_       | Adopter                                |
 +-------------------------------+---------------------------+-----------------------------+----------------------------------------+
 | Thread Group Certification    | Production                | `Join Thread Group`_        | Implementer                            |
 +-------------------------------+---------------------------+-----------------------------+----------------------------------------+
 
-Bluetooth and Thread certifications can be inherited from Nordic Semiconductor (see the following section).
+Bluetooth and Thread certifications can be inherited from Nordic Semiconductor (see the :ref:`ug_matter_device_certification_reqs_dependent` section below).
+
+.. _ug_matter_device_certification_reqs_mowifi:
+
+Matter over Wi-Fi certification requirements
+============================================
+
+The following table lists Matter over Wi-Fi certification requirements for when a product moves to production.
+
++-------------------------------+---------------------------+-----------------------------+----------------------------------------+
+| Technology certification      | Stage for certification   | SDO to join                 | Minimum SDO membership level required  |
++===============================+===========================+=============================+========================================+
+| Matter Certification          | Production                | `Join CSA`_                 | Adopter                                |
++-------------------------------+---------------------------+-----------------------------+----------------------------------------+
+| Bluetooth QDID                | Production                | `Join Bluetooth SIG`_       | Adopter                                |
++-------------------------------+---------------------------+-----------------------------+----------------------------------------+
+| Wi-Fi Alliance Certification  | Production                | `Join Wi-Fi Alliance`_      | Implementer                            |
++-------------------------------+---------------------------+-----------------------------+----------------------------------------+
+
+Bluetooth certification can be inherited from Nordic Semiconductor (see the :ref:`ug_matter_device_certification_reqs_dependent` section below).
+:ref:`Wi-Fi certification <ug_wifi_certification>` is not yet available for inheritance from Nordic Semiconductor.
+
+.. _ug_matter_device_certification_reqs_dual:
+
+Certification requirements for dual protocol scenarios
+======================================================
+
+The following table lists certification requirements for products that offer :ref:`both Thread and Wi-Fi protocol support with Matter <ug_matter_overview_architecture_integration_designs_switchable>`.
+
++-------------------------------+---------------------------+-----------------------------+----------------------------------------+
+| Technology certification      | Stage for certification   | SDO to join                 | Minimum SDO membership level required  |
++===============================+===========================+=============================+========================================+
+| Matter Certification          | Production                | `Join CSA`_                 | Adopter                                |
++-------------------------------+---------------------------+-----------------------------+----------------------------------------+
+| Bluetooth QDID                | Production                | `Join Bluetooth SIG`_       | Adopter                                |
++-------------------------------+---------------------------+-----------------------------+----------------------------------------+
+| Thread Group Certification    | Production                | `Join Thread Group`_        | Implementer                            |
++-------------------------------+---------------------------+-----------------------------+----------------------------------------+
+| Wi-Fi Alliance Certification  | Production                | `Join Wi-Fi Alliance`_      | Implementer                            |
++-------------------------------+---------------------------+-----------------------------+----------------------------------------+
+
+Bluetooth and Thread certifications can be inherited from Nordic Semiconductor (see the :ref:`ug_matter_device_certification_reqs_dependent` section below).
+:ref:`Wi-Fi certification <ug_wifi_certification>` is not yet available for inheritance from Nordic Semiconductor.
+
+.. _ug_matter_device_certification_reqs_dependent:
 
 Matter dependent certification inheritance
 ==========================================
 
-If your product uses qualified Bluetooth stack and certified Thread libraries provided as part of the |NCS|, you can *inherit* certification from Nordic Semiconductor, provided that you do not introduce any changes to these stacks.
+If your product uses qualified Bluetooth stack or certified Thread libraries (or both) provided as part of the |NCS|, you can *inherit* certification from Nordic Semiconductor, provided that you do not introduce any changes to these stacks.
 In practice, this means reusing Nordic Semiconductor's certification identifiers, which were obtained as a result of the official certification procedures.
 
 .. note::
