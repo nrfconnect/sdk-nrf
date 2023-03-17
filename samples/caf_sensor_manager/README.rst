@@ -8,6 +8,7 @@ CAF: Sensor manager
    :depth: 2
 
 The sensor manager sample demonstrates the functionality of the :ref:`caf_sensor_manager`.
+It uses the :ref:`sensor_stub`, the sensor manager module, the :ref:`caf_sensor_data_aggregator`, and the workload simulator module to automatically sample and gather data and then receive and process it in packages.
 
 Requirements
 ************
@@ -30,6 +31,24 @@ This module handles the data received from the :ref:`caf_sensor_data_aggregator`
 
 If you are running this sample on an SoC with multiple cores, the workload simulator module (``workload_sim``) is placed on the second core.
 All communication between the cores is done using :ref:`event_manager_proxy` and Zephyr subsystem :file:`include/ipc/ipc_service.h`.
+
+Configuration
+*************
+
+|config|
+
+Single-core configuration
+=========================
+
+For the MCU with multiple cores, the default configuration uses one core to simulate the sensor and the other core to process the sensor.
+These multicore MCUs can support a single-core configuration, where the sensor is simulated and processed on a single, selected core.
+The configuration is placed in the :file:`boards/<board>_singlecore.conf` file.
+
+To use this configuration, specify the ``-DOVERLAY_CONFIG=boards/<board>_singlecore.conf`` parameter along with the build command when building the sample:
+
+.. code-block:: console
+
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=boards/nrf5340dk_nrf5340_cpuapp_nrf5340_singlecore.conf
 
 Building and running
 ********************
