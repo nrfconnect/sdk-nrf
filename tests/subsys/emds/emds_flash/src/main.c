@@ -145,7 +145,7 @@ end:
 
 }
 
-static int fs_init(void)
+static void *fs_init(void)
 {
 	int rc;
 	uint32_t sector_cnt = 1;
@@ -154,23 +154,14 @@ static int fs_init(void)
 	uint16_t cnt = 0;
 
 	rc = flash_area_open(FIXED_PARTITION_ID(emds_storage), &m_fa);
-	if (rc) {
-		return rc;
-	}
+	__ASSERT(rc == 0, "Failed opening flash area (err:%d)", rc);
 
 	rc = flash_area_get_sectors(FIXED_PARTITION_ID(emds_storage), &sector_cnt,
 				    &hw_flash_sector);
 
-	if (rc == -ENODEV) {
-		return rc;
-	} else if (rc != 0 && rc != -ENOMEM) {
-		__ASSERT(0, "Failed when getting sector information");
-	}
-
-
-	if (hw_flash_sector.fs_size > UINT16_MAX) {
-		return -EDOM;
-	}
+	__ASSERT(rc == 0, "Failed when getting sector information (err:%d", rc);
+	__ASSERT(hw_flash_sector.fs_size <= UINT16_MAX, "fs_size (%u) exceeds UINT16_MAX",
+		 hw_flash_sector.fs_size);
 
 	emds_flash_size += hw_flash_sector.fs_size;
 	if (emds_flash_size <= m_fa->fa_size) {
@@ -189,7 +180,7 @@ static int fs_init(void)
 	m_test_fd.ate_idx_start = m_fa->fa_off + hw_flash_sector.fs_size - sizeof(struct test_ate);
 	m_test_fd.data_wra_offset = 0;
 
-	return 0;
+	return NULL;
 }
 
 static int flash_clear(void)
@@ -254,7 +245,7 @@ static void device_reset(void)
 
 /** End Local functions *******************************************************/
 
-static void test_initialize(void)
+ZTEST(emds_flash_tests, test_initialize)
 {
 	/* Check that device inits on first attempt, and rejects init on consecutive attempts */
 	flash_clear();
@@ -264,7 +255,7 @@ static void test_initialize(void)
 	zassert_true(emds_flash_init(&ctx), "Should not init more than once");
 }
 
-static void test_rd_wr_simple(void)
+ZTEST(emds_flash_tests, test_rd_wr_simple)
 {
 	/* Init the device, performs prepare and does a write and read.
 	 * Verifies that entry is valid
@@ -282,7 +273,7 @@ static void test_rd_wr_simple(void)
 	zassert_false(memcmp(data_out, data_in, sizeof(data_out)), "Retrived wrong value");
 }
 
-static void test_flash_recovery(void)
+ZTEST(emds_flash_tests, test_flash_recovery)
 {
 	char data_in1[9] = "Deadbeef";
 	char data_in2[8] = "Beafded";
@@ -403,7 +394,7 @@ static void test_flash_recovery(void)
 	zassert_false(memcmp(data_in3, data_out, sizeof(data_in3)), "Not same data");
 }
 
-static void test_flash_recovery_corner_case(void)
+ZTEST(emds_flash_tests, test_flash_recovery_corner_case)
 {
 	flash_clear();
 	device_reset();
@@ -417,7 +408,7 @@ static void test_flash_recovery_corner_case(void)
 }
 
 
-static void test_invalidate_on_prepare(void)
+ZTEST(emds_flash_tests, test_invalidate_on_prepare)
 {
 	char data_in[9] = "Deadbeef";
 	char data_out[9] = {0};
@@ -467,7 +458,7 @@ static void test_invalidate_on_prepare(void)
 	zassert_false(ctx.force_erase, "Force erase should be false");
 }
 
-static void test_clear_on_strange_flash(void)
+ZTEST(emds_flash_tests, test_clear_on_strange_flash)
 {
 	flash_clear();
 	device_reset();
@@ -486,7 +477,7 @@ static void test_clear_on_strange_flash(void)
 	zassert_false(flash_cmp_const(m_test_fd.offset, 0xff, m_test_fd.size), "Flash not cleared");
 }
 
-static void test_permission(void)
+ZTEST(emds_flash_tests, test_permission)
 {
 	char data_in[8] = "Deadbeef";
 	char data_out[8] = {0};
@@ -516,7 +507,7 @@ static void test_permission(void)
 
 }
 
-static void test_overflow(void)
+ZTEST(emds_flash_tests, test_overflow)
 {
 	char data_in[8] = "Deadbee";
 	char data_out[8] = {0};
@@ -568,7 +559,7 @@ static void test_overflow(void)
 }
 
 
-static void test_prepare_overflow(void)
+ZTEST(emds_flash_tests, test_prepare_overflow)
 {
 	flash_clear();
 	device_reset();
@@ -579,7 +570,7 @@ static void test_prepare_overflow(void)
 	zassert_false(emds_flash_prepare(&ctx, m_test_fd.size - 24), "Prepare failed");
 }
 
-static void test_full_corrupt_recovery(void)
+ZTEST(emds_flash_tests, test_full_corrupt_recovery)
 {
 	flash_clear();
 	device_reset();
@@ -598,7 +589,7 @@ static void test_full_corrupt_recovery(void)
 	device_reset();
 }
 
-static void test_corrupted_data(void)
+ZTEST(emds_flash_tests, test_corrupted_data)
 {
 	char corrupt[4] = {0};
 	char data_in[8] = "Deadbee";
@@ -628,7 +619,7 @@ static void test_corrupted_data(void)
 				     "Should not be able to read");
 }
 
-static void test_write_speed(void)
+ZTEST(emds_flash_tests, test_write_speed)
 {
 	char data_in[4] = "bee";
 	uint8_t data_in_big[1024];
@@ -670,24 +661,4 @@ static void test_write_speed(void)
 	zassert_true(store_time_us < 13000, "Storing 1024 bytes took to long time");
 }
 
-void test_main(void)
-{
-	fs_init();
-
-	ztest_test_suite(emds_flash_tests,
-			 ztest_unit_test(test_initialize),
-			 ztest_unit_test(test_rd_wr_simple),
-			 ztest_unit_test(test_flash_recovery),
-			 ztest_unit_test(test_flash_recovery_corner_case),
-			 ztest_unit_test(test_invalidate_on_prepare),
-			 ztest_unit_test(test_permission),
-			 ztest_unit_test(test_clear_on_strange_flash),
-			 ztest_unit_test(test_prepare_overflow),
-			 ztest_unit_test(test_full_corrupt_recovery),
-			 ztest_unit_test(test_overflow),
-			 ztest_unit_test(test_corrupted_data),
-			 ztest_unit_test(test_write_speed)
-			 );
-
-	ztest_run_test_suite(emds_flash_tests);
-}
+ZTEST_SUITE(emds_flash_tests, NULL, fs_init, NULL, NULL, NULL);
