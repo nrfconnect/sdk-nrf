@@ -956,6 +956,59 @@ int nrf_cloud_pvt_data_encode(const struct nrf_cloud_gnss_pvt * const pvt,
 	return 0;
 }
 
+int nrf_cloud_encode_message(const char *app_id, double value, const char *str_val,
+			     const char *topic, int64_t ts, struct nrf_cloud_data *output)
+{
+	int ret = 0;
+
+	__ASSERT_NO_MSG(app_id != NULL);
+	__ASSERT_NO_MSG(output != NULL);
+
+	NRF_CLOUD_OBJ_JSON_DEFINE(root_obj);
+	NRF_CLOUD_OBJ_JSON_DEFINE(msg_obj);
+
+	/* Init the root object and add a topic string if provided */
+	if (nrf_cloud_obj_init(&root_obj)){
+		return -ENOMEM;
+	}
+
+	if (topic != NULL) {
+		ret = nrf_cloud_obj_str_add(&root_obj, NRF_CLOUD_REST_TOPIC_KEY, topic, false);
+	}
+
+	/* Init the DATA message with provided app ID */
+	ret += nrf_cloud_obj_msg_init(&msg_obj, app_id, NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
+
+	ret += nrf_cloud_obj_ts_add(&msg_obj, ts);
+
+	if (str_val != NULL) {
+		ret += nrf_cloud_obj_str_add(&msg_obj, NRF_CLOUD_JSON_DATA_KEY, str_val, false);
+	} else {
+		ret += nrf_cloud_obj_num_add(&msg_obj, NRF_CLOUD_JSON_DATA_KEY, value, false);
+	}
+
+	/* Add the message to the root object */
+	ret += nrf_cloud_obj_object_add(&root_obj, NRF_CLOUD_REST_MSG_KEY, &msg_obj, false);
+	if (ret) {
+		ret = -ENOMEM;
+		goto cleanup;
+	}
+
+	/* msg_obj now belongs to root_obj */
+	nrf_cloud_obj_reset(&msg_obj);
+
+	/* Encode the root object for the cloud */
+	ret = nrf_cloud_obj_cloud_encode(&root_obj);
+	if (ret == 0) {
+		*output = root_obj.encoded_data;
+	}
+
+cleanup:
+	nrf_cloud_obj_free(&root_obj);
+	nrf_cloud_obj_free(&msg_obj);
+	return ret;
+}
+
 static int nrf_cloud_encode_service_info_fota(const struct nrf_cloud_svc_info_fota *const fota,
 					      cJSON *const svc_inf_obj)
 {

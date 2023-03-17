@@ -81,6 +81,13 @@ int nrf_cloud_alert_encode(const struct nrf_cloud_alert_info *alert,
 int nrf_cloud_sensor_data_encode(const struct nrf_cloud_sensor_data *input,
 				 struct nrf_cloud_data *output);
 
+/** @brief Encode general message of either a given numeric value or, if not NULL,
+ *  a string value.  If topic is present, that topic will be used.
+ */
+int nrf_cloud_encode_message(const char *app_id, double value, const char *str_val,
+			     const char *topic, int64_t ts,
+			     struct nrf_cloud_data *output);
+
 /** @brief Encode the sensor data to be sent to the device shadow. */
 int nrf_cloud_shadow_data_encode(const struct nrf_cloud_sensor_data *sensor,
 				 struct nrf_cloud_data *output);
