@@ -1,0 +1,56 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_CLOUD_COAP
+	bool "nRF Cloud COAP"
+	select CJSON_LIB
+	select ZCBOR
+	select COAP
+	select COAP_EXTENDED_OPTIONS_LEN
+	select COAP_CLIENT
+	select EXPERIMENTAL
+
+if NRF_CLOUD_COAP
+
+config NRF_CLOUD_COAP_SERVER_HOSTNAME
+	string "CoAP server hostname"
+	default "coap.nrfcloud.com"
+
+config NRF_CLOUD_COAP_SEC_TAG
+	int "Security tag for credentials"
+	default NRF_CLOUD_SEC_TAG
+
+config NRF_CLOUD_COAP_SERVER_PORT
+	int "CoAP server port"
+	default 5684
+
+config NON_RESP_RETRIES
+	int "Number of times to retry waiting for a response to a NON request"
+	default 0
+	help
+	  Non confirmable requests are usually used to send data to the cloud
+	  for which it is OK if it is sometimes lost. A value of 0 means it is
+	  acceptable if no response is received from the cloud. Non-zero values
+	  result in up to this number of retransmissions of the request followed
+	  by waits for a response.
+
+if WIFI
+
+config NRF_CLOUD_COAP_SEND_SSIDS
+	bool "Include access point SSIDs with scan results"
+	default n
+	help
+	  The nRF Cloud Wi-Fi location service does not require the human-
+	  readable SSIDs in order to determine the device location. It does
+	  require the access point MAC addresses. By not including SSIDs
+	  the amount of data sent to the cloud is greatly reduced.
+
+endif
+
+module = NRF_CLOUD_COAP
+module-str = nRF Cloud COAP
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_CLOUD_COAP

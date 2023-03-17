@@ -1,0 +1,39 @@
+;
+; Copyright (c) 2023 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;
+
+; ************
+; AGPS Request
+; ************
+
+type = rtAssistance/custom
+
+agps_req = {
+	? types => [1*10 int],
+	eci => uint,
+	? filtered => bool,
+	? mask => uint,
+	mcc => uint,
+	mnc => uint,
+	? requestType => type,
+	? rsrp => int,
+	tac => uint
+}
+
+types = 1
+eci = 2
+filtered = 3
+mask = 4
+mcc = 5
+mnc = 6
+requestType = 7
+rsrp = 8
+tac = 9
+rtAssistance = 10
+custom = 11
+
+; ***********************
+; AGPS Response is binary
+; ***********************
