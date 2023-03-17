@@ -208,6 +208,7 @@ static void run_before(void *fixture)
 	RESET_FAKE(nct_dc_send);
 	RESET_FAKE(nct_dc_bulk_send);
 	RESET_FAKE(nrf_cloud_shadow_dev_status_encode);
+	RESET_FAKE(nct_dc_bin_send);
 	RESET_FAKE(nrf_cloud_device_status_free);
 	RESET_FAKE(nrf_cloud_sensor_data_encode);
 	RESET_FAKE(nrf_cloud_os_mem_hooks_init);
@@ -756,6 +757,7 @@ ZTEST(nrf_cloud_test, test_shadow_device_status_update_not_dc_connected)
 	nct_dc_stream_fake.custom_fake = fake_nct_dc_stream__succeeds;
 	nct_dc_send_fake.custom_fake = fake_nct_dc_send__succeeds;
 	nct_dc_bulk_send_fake.custom_fake = fake_nct_dc_bulk_send__succeeds;
+	nct_dc_bin_send_fake.custom_fake = fake_nct_dc_bin_send__succeeds;
 	/* Custom fakes for shadow device status update */
 	nrf_cloud_shadow_dev_status_encode_fake.custom_fake =
 		fake_device_status_shadow_encode__succeeds;
@@ -796,6 +798,7 @@ ZTEST(nrf_cloud_test, test_shadow_device_status_update_status_encode_failed)
 	nct_dc_stream_fake.custom_fake = fake_nct_dc_stream__succeeds;
 	nct_dc_send_fake.custom_fake = fake_nct_dc_send__succeeds;
 	nct_dc_bulk_send_fake.custom_fake = fake_nct_dc_bulk_send__succeeds;
+	nct_dc_bin_send_fake.custom_fake = fake_nct_dc_bin_send__succeeds;
 	/* Custom fakes for shadow device status update */
 	nrf_cloud_shadow_dev_status_encode_fake.custom_fake =
 		fake_device_status_shadow_encode__fails;
@@ -830,6 +833,7 @@ ZTEST(nrf_cloud_test, test_shadow_device_status_update_cloud_send_failed)
 	nct_dc_stream_fake.custom_fake = fake_nct_dc_stream__succeeds;
 	nct_dc_send_fake.custom_fake = fake_nct_dc_send__succeeds;
 	nct_dc_bulk_send_fake.custom_fake = fake_nct_dc_bulk_send__succeeds;
+	nct_dc_bin_send_fake.custom_fake = fake_nct_dc_bin_send__succeeds;
 	/* Custom fakes for shadow device status update */
 	nrf_cloud_shadow_dev_status_encode_fake.custom_fake =
 		fake_device_status_shadow_encode__succeeds;
@@ -864,6 +868,7 @@ ZTEST(nrf_cloud_test, test_shadow_device_status_update_success)
 	nct_dc_stream_fake.custom_fake = fake_nct_dc_stream__succeeds;
 	nct_dc_send_fake.custom_fake = fake_nct_dc_send__succeeds;
 	nct_dc_bulk_send_fake.custom_fake = fake_nct_dc_bulk_send__succeeds;
+	nct_dc_bin_send_fake.custom_fake = fake_nct_dc_bin_send__succeeds;
 	/* Custom fakes for shadow device status update */
 	nrf_cloud_shadow_dev_status_encode_fake.custom_fake =
 		fake_device_status_shadow_encode__succeeds;
@@ -1395,6 +1400,62 @@ ZTEST(nrf_cloud_test, test_cloud_send_topic_bulk_success)
 	};
 
 	int ret = nrf_cloud_send(&tx_bulk_qos0);
+
+	zassert_ok(ret, "return should be 0 when success");
+}
+
+/* Verify that nrf_cloud_send will fail if the cloud
+ * is in dc_connected state with the topic_type is
+ * equal topic_bulk and nct_dc_bin_send fails
+ */
+ZTEST(nrf_cloud_test, test_cloud_send_topic_bin_dc_bin_send_failed)
+{
+	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the idle state (uninitialized) at the start of test");
+
+	/* Init the cloud successfully */
+	init_cloud_success();
+
+	/* Connect to the cloud successfully with dc_connect */
+	connect_cloud_dc_success();
+
+	nct_dc_bin_send_fake.custom_fake = fake_nct_dc_bin_send__fails;
+
+	/* Message data */
+	struct nrf_cloud_tx_data tx_bin_qos0 = {
+		.topic_type = NRF_CLOUD_TOPIC_BIN,
+		.qos = MQTT_QOS_0_AT_MOST_ONCE
+	};
+
+	int ret = nrf_cloud_send(&tx_bin_qos0);
+
+	zassert_not_equal(0, ret, "return should not be 0 when nct_dc_bin_send failed");
+}
+
+/* Verify that nrf_cloud_send will succeed if the cloud
+ * is in dc_connected state with the topic_type is equal
+ * topic_bulk and nct_dc_bin_send succeeds
+ */
+ZTEST(nrf_cloud_test, test_cloud_send_topic_bin_success)
+{
+	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
+		"nrf_cloud lib should be in the idle state (uninitialized) at the start of test");
+
+	/* Init the cloud successfully */
+	init_cloud_success();
+
+	/* Connect to the cloud successfully with dc_connect */
+	connect_cloud_dc_success();
+
+	nct_dc_bin_send_fake.custom_fake = fake_nct_dc_bin_send__succeeds;
+
+	/* Message data */
+	struct nrf_cloud_tx_data tx_bin_qos0 = {
+		.topic_type = NRF_CLOUD_TOPIC_BIN,
+		.qos = MQTT_QOS_0_AT_MOST_ONCE
+	};
+
+	int ret = nrf_cloud_send(&tx_bin_qos0);
 
 	zassert_ok(ret, "return should be 0 when success");
 }
