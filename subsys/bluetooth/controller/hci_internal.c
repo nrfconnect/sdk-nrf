@@ -1202,6 +1202,11 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_VS_WRITE_REMOTE_TX_POWER:
 		return sdc_hci_cmd_vs_write_remote_tx_power((void *)cmd_params);
 #endif
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
+	case SDC_HCI_OPCODE_CMD_VS_ENABLE_PERIODIC_ADV_WITH_RESPONSES_FAILURE_REPORTING:
+		return sdc_hci_cmd_vs_enable_periodic_adv_with_responses_failure_reporting(
+			(void*)cmd_params);
+#endif
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
 	}
