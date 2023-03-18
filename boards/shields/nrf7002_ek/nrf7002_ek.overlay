@@ -15,8 +15,8 @@
 		reg = <0>;
 		spi-max-frequency = <DT_FREQ_M(8)>;
 
-		iovdd-ctrl-gpios = <&arduino_header 6 GPIO_ACTIVE_HIGH>;    /* D0 */
-		bucken-gpios = <&arduino_header 7 GPIO_ACTIVE_HIGH>;        /* D1 */
+		iovdd-ctrl-gpios = <&arduino_header 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;    /* D0 */
+		bucken-gpios = <&arduino_header 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;        /* D1 */
 		host-irq-gpios = <&arduino_header 13 GPIO_ACTIVE_HIGH>;     /* D7 */
 	};
 };
