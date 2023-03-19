@@ -362,7 +362,7 @@ int tx_curr_peer_opp_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	return peer_id;
 }
 
-int _tx_pending_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+size_t _tx_pending_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			unsigned int desc,
 			unsigned int ac)
 {
@@ -693,7 +693,7 @@ enum wifi_nrf_status tx_pending_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_c
 		goto out;
 	}
 
-	if (_tx_pending_process(fmac_dev_ctx, desc, ac) > 0) {
+	if (_tx_pending_process(fmac_dev_ctx, desc, ac)) {
 		status = tx_cmd_init(fmac_dev_ctx,
 				     fmac_dev_ctx->tx_config.pkt_info_p[desc].pkt,
 				     desc,
