@@ -754,7 +754,7 @@ enum wifi_nrf_status tx_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				unsigned int ac,
 				unsigned int peer_id)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum wifi_nrf_status status;
 	struct wifi_nrf_fmac_priv *fpriv = NULL;
 	void *pend_pkt_q = NULL;
 	void *first_nwb = NULL;
@@ -818,12 +818,12 @@ enum wifi_nrf_status tx_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						 pend_pkt_q) < max_cmds) {
 				goto out;
 			}
-
 		}
-			goto out;
+		goto out;
 	}
+	return WIFI_NRF_STATUS_SUCCESS;
 out:
-	return status;
+	return WIFI_NRF_STATUS_FAIL;
 }
 
 
