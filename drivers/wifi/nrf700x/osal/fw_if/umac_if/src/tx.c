@@ -819,7 +819,6 @@ enum wifi_nrf_status tx_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				goto out;
 			}
 		}
-		goto out;
 	}
 	return WIFI_NRF_STATUS_SUCCESS;
 out:
