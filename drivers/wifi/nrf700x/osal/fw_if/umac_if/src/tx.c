@@ -517,7 +517,7 @@ out:
 }
 
 
-int tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum wifi_nrf_status tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		   struct host_rpu_msg *umac_cmd,
 		   int desc,
 		   void *txq,
@@ -545,7 +545,7 @@ int tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				      "%s: txq_len = %d\n",
 				      __func__,
 				      txq_len);
-		return -1;
+		goto err;
 	}
 
 	nwb = wifi_nrf_utils_list_peek(fmac_dev_ctx->fpriv->opriv,
@@ -604,7 +604,7 @@ int tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: build_mac80211_hdr failed\n",
 				      __func__);
-		return -1;
+		goto err;
 	}
 
 	fmac_dev_ctx->host_stats.total_tx_pkts += config->num_tx_pkts;
@@ -630,7 +630,9 @@ int tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		config->mac_hdr_info.eosp = 0;
 	}
 
-	return 0;
+	return WIFI_NRF_STATUS_SUCCESS;
+err:
+	return WIFI_NRF_STATUS_FAIL;
 }
 
 
