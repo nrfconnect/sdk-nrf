@@ -974,6 +974,7 @@ int wifi_nrf_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	enum wifi_nrf_status ret = WIFI_NRF_STATUS_FAIL;
+	int sem_ret;
 
 	if (!if_priv || !si || !bssid) {
 		LOG_ERR("%s: Invalid params\n", __func__);
@@ -991,7 +992,12 @@ int wifi_nrf_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 		goto out;
 	}
 
-	k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
+	sem_ret = k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
+	if (sem_ret) {
+		LOG_ERR("%s: Failed to get station info, ret = %d\n", __func__, sem_ret);
+		ret = WIFI_NRF_STATUS_FAIL;
+		goto out;
+	}
 
 	ret = wifi_nrf_fmac_get_interface(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
 	if (ret != WIFI_NRF_STATUS_SUCCESS) {
@@ -999,9 +1005,15 @@ int wifi_nrf_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 		goto out;
 	}
 
-	k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
+	sem_ret = k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
+	if (sem_ret) {
+		LOG_ERR("%s: Failed to get interface info, ret = %d\n", __func__, sem_ret);
+		ret = WIFI_NRF_STATUS_FAIL;
+		goto out;
+	}
 	vif_ctx_zep->signal_info->frequency = vif_ctx_zep->assoc_freq;
 out:
+	vif_ctx_zep->signal_info = NULL;
 	return ret;
 }
 
@@ -1019,6 +1031,12 @@ void wifi_nrf_wpa_supp_event_proc_get_sta(void *if_priv,
 	}
 	vif_ctx_zep = if_priv;
 	signal_info = vif_ctx_zep->signal_info;
+
+	/* Semaphore timedout */
+	if (!signal_info) {
+		LOG_DBG("%s: Get station Semaphore timedout\n", __func__);
+		return;
+	}
 
 	if (info->sta_info.valid_fields & NRF_WIFI_STA_INFO_SIGNAL_VALID) {
 		signal_info->current_signal = info->sta_info.signal;
@@ -1065,6 +1083,12 @@ void wifi_nrf_wpa_supp_event_proc_get_if(void *if_priv,
 
 	vif_ctx_zep = if_priv;
 	signal_info = vif_ctx_zep->signal_info;
+
+	/* Semaphore timedout */
+	if (!signal_info) {
+		LOG_DBG("%s: Get interface Semaphore timedout\n", __func__);
+		return;
+	}
 
 	chan_def_info = (struct nrf_wifi_chan_definition *)(&info->chan_def);
 	signal_info->chanwidth = drv2supp_chan_width(chan_def_info->width);
