@@ -66,3 +66,10 @@ tests:
       - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf7002dk_nrf5340_cpuapp
     tags: ci_build
+  sample.nrf7002_ns.shell:
+    build_only: true
+    extra_args: OVERLAY_CONFIG=overlay-tfm.conf
+    integration_platforms:
+      - nrf7002dk_nrf5340_cpuapp_ns
+    platform_allow: nrf7002dk_nrf5340_cpuapp_ns
+    tags: ci_build
