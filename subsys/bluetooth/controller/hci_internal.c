@@ -405,11 +405,6 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_set_transmit_power_reporting_enable = 1;
 #endif
 
-#if defined(CONFIG_BT_CTLR_LE_POWER_CONTROL) || defined(CONFIG_BT_CTLR_ADV_EXT)
-	cmds->hci_le_read_rf_path_compensation = 1;
-	cmds->hci_le_write_rf_path_compensation = 1;
-#endif
-
 #if defined(CONFIG_BT_CTLR_SCA_UPDATE)
 	cmds->hci_le_request_peer_sca = 1;
 #endif
