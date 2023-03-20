@@ -12,6 +12,13 @@ config BT_HIDS_SECURITY_ENABLED
 	bool "Enable security"
 	default y
 	select BT_SMP
+	select BT_SETTINGS
+	select FLASH
+	select FLASH_PAGE_LAYOUT
+	select FLASH_MAP
+	select NVS
+	select SETTINGS
+	select CONFIG_BT_HIDS_DEFAULT_PERM_RW_ENCRYPT
 	help
 	  "Enable BLE security for the HIDS service"
 
@@ -19,5 +26,6 @@ config BT_DIRECTED_ADVERTISING
 	bool "Enable directed advertising"
 	default y
 	select BT_PRIVACY
+	depends on BT_HIDS_SECURITY_ENABLED
 
 endmenu
