@@ -1,0 +1,19 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Enable high drive mode for the SPI3 pins to get a square signal at 8 MHz */
+&spi3_default {
+	group1 {
+		nordic,drive-mode = <NRF_DRIVE_H0H1>;
+	};
+};
+
+/ {
+	/* Configure partition manager to use mx25r64 as the external flash */
+	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
+};
