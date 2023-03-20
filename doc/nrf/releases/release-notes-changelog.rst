@@ -264,6 +264,10 @@ nRF9160 samples
 
 * :ref:`lwm2m_client` sample:
 
+  * Added:
+
+    * Integration of the connection pre-evaluation functionality using the :ref:`lib_lwm2m_client_utils` library.
+
   * Updated:
 
     * The sample now integrates the :ref:`lib_lwm2m_client_utils` FOTA callback functionality.
@@ -444,6 +448,10 @@ Libraries for networking
       Removed the following values: ``NRF_CLOUD_REST_PGPS_REQ_NO_COUNT``, ``NRF_CLOUD_REST_PGPS_REQ_NO_INTERVAL``, ``NRF_CLOUD_REST_PGPS_REQ_NO_GPS_DAY``, and ``NRF_CLOUD_REST_PGPS_REQ_NO_GPS_TOD``.
 
 * :ref:`lib_lwm2m_client_utils` library:
+
+  * Added:
+
+    * Support for the connection pre-evaluation feature using the Kconfig option :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LTE_CONNEVAL`.
 
   * Updated:
 
