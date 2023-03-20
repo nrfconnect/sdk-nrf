@@ -17,6 +17,13 @@ tests:
       - nrf52840dk_nrf52840
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
     tags: ci_build
+  sample.nrf7002_eks_cpunet.shell:
+    build_only: true
+    extra_args: SHIELD=nrf7002_ek CONFIG_BOARD_ENABLE_CPUNET=y
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
   sample.nrf7002.shell.zperf:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-zperf.conf
