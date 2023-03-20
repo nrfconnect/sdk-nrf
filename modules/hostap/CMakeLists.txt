@@ -39,6 +39,7 @@ zephyr_library_compile_definitions(
 	CONFIG_NO_RANDOM_POOL
 	CONFIG_MBO
 	CONFIG_WNM
+	CONFIG_SUITEB192
 	)
 
 zephyr_library_include_directories(
