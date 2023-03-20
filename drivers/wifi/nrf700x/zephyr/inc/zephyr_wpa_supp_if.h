@@ -13,7 +13,7 @@
 #define __ZEPHYR_WPA_SUPP_IF_H__
 
 
-#define RPU_RESP_EVENT_TIMEOUT  1000
+#define RPU_RESP_EVENT_TIMEOUT  5000
 #ifdef CONFIG_WPA_SUPP
 #include <drivers/driver_zephyr.h>
 
