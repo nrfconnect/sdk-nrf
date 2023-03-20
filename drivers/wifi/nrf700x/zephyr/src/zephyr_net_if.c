@@ -104,7 +104,14 @@ static bool is_eapol(struct net_pkt *pkt)
 
 enum ethernet_hw_caps wifi_nrf_if_caps_get(const struct device *dev)
 {
-	return (ETHERNET_LINK_10BASE_T | ETHERNET_LINK_100BASE_T | ETHERNET_LINK_1000BASE_T);
+	enum ethernet_hw_caps caps = (ETHERNET_LINK_10BASE_T |
+			ETHERNET_LINK_100BASE_T | ETHERNET_LINK_1000BASE_T);
+
+#ifdef CONFIG_NRF700X_TCP_IP_CHECKSUM_OFFLOAD
+	caps |= ETHERNET_HW_TX_CHKSUM_OFFLOAD |
+		ETHERNET_HW_RX_CHKSUM_OFFLOAD;
+#endif /* CONFIG_NRF700X_TCP_IP_CHECKSUM_OFFLOAD */
+	return caps;
 }
 
 int wifi_nrf_if_send(const struct device *dev,
