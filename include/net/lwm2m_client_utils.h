@@ -343,6 +343,10 @@ void lwm2m_utils_disable_conneval(void);
 /**
  * @brief Start connection pre-evaluation.
  *
+ * This function should be called from an event handler registered to lwm2m_rd_client_start().
+ * This evaluation may block or alter the ongoing event to prevent LwM2M engine from initiating
+ * transfers when network conditions are poor.
+ *
  * @param client Pointer to LwM2M context
  * @param client_event pointer to LwM2M RD client events
  *

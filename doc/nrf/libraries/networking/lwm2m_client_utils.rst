@@ -62,6 +62,15 @@ The :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_RAI` Kconfig option enables :term
 When AS RAI is configured, the device might indicate that no further data is expected in the near future and the connection can be released.
 AS RAI was introduced in the 3GPP Release 14 and needs to be supported by the network.
 
+The :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LTE_CONNEVAL` Kconfig option enables the connection pre-evaluation feature that requests information about a cell that is likely to be used for data transmission.
+Based on the received estimation of the energy efficiency, the application can decide when the actual data transmission is started.
+The application sets the maximum delay for data transmission, the threshold for energy consumption, and the poll period for evaluation.
+If the estimated energy usage is above the configured threshold value, the connection pre-evaluation pauses the LwM2M engine and waits for a better signal state that meets the energy efficiency threshold, then resumes data transmission.
+But if this waiting period is longer than the maximum delay set for the data transmission, the connection pre-evaluation resumes the LwM2M engine.
+
+.. note::
+   Connection pre-evaluation consumes a small amount of energy every time it requests information about a cell.
+
 Defining custom objects
 =======================
 
