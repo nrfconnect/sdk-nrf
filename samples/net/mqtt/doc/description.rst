@@ -129,6 +129,12 @@ For example, when building with the command line, the following commands can be 
 
      west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-tls-nrf9160.conf
 
+Or for the Thingy:91 with TLS and ``mqtt_helper`` debug enabled (shown in the following :ref:`sample output <mqtt_sample_output_IPv6>`):
+
+  .. code-block:: console
+
+     west build -b thingy91_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-tls-nrf9160.conf -DCONFIG_MQTT_HELPER_LOG_LEVEL_DBG=y
+
 Building and running
 ********************
 
@@ -154,7 +160,7 @@ Testing
 Sample output
 =============
 
-The following serial UART output is displayed in the terminal emulator:
+The following serial UART output is displayed in the terminal emulator using a Wi-Fi connection, with the TLS overlay:
 
 .. code-block:: console
 
@@ -172,6 +178,61 @@ The following serial UART output is displayed in the terminal emulator:
       [00:03:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 181458" on topic: "my/publish/topic"
       [00:04:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 241458" on topic: "my/publish/topic"
       [00:05:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 301459" on topic: "my/publish/topic"
+
+.. _mqtt_sample_output_IPv6:
+
+The sample output showing IPv6, following the same instructions but for a different build configuration, using LTE on the Thingy:91, with the TLS overlay, and debug logging enabled for the :ref:`lib_mqtt_helper` library:
+
+.. code-block:: console
+
+      *** Booting Zephyr OS build v3.2.99-ncs2-34-gf8f113382356 ***
+      [00:00:00.492,218] <dbg> mqtt_helper: mqtt_helper_poll_loop: Waiting for connection_poll_sem
+      [00:00:00.500,518] <inf> network: Connecting to LTE...
+      [00:00:02.212,677] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_UNINIT --> MQTT_STATE_DISCONNECTED
+      [00:00:04.702,178] <inf> network: PDN connection activated
+      [00:00:09.703,033] <dbg> mqtt_helper: broker_init: Resolving IP address for test.mosquitto.org
+      [00:00:10.541,839] <dbg> mqtt_helper: broker_init: IPv6 Address found 2001:41d0:1:925e::1 (AF_INET6)
+      [00:00:10.541,900] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_DISCONNECTED --> MQTT_STATE_TRANSPORT_CONNECTING
+      [00:00:13.747,406] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_TRANSPORT_CONNECTING --> MQTT_STATE_TRANSPORT_CONNECTED
+      [00:00:13.747,467] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_TRANSPORT_CONNECTED --> MQTT_STATE_CONNECTING
+      [00:00:13.747,497] <dbg> mqtt_helper: client_connect: Using send socket timeout of 60 seconds
+      [00:00:13.747,497] <dbg> mqtt_helper: mqtt_helper_connect: MQTT connection request sent
+      [00:00:13.747,558] <dbg> mqtt_helper: mqtt_helper_poll_loop: Took connection_poll_sem
+      [00:00:13.747,558] <dbg> mqtt_helper: mqtt_helper_poll_loop: Starting to poll on socket, fd: 0
+      [00:00:13.747,589] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
+      [00:00:14.370,727] <dbg> mqtt_helper: mqtt_evt_handler: MQTT mqtt_client connected
+      [00:00:14.370,788] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_CONNECTING --> MQTT_STATE_CONNECTED
+      [00:00:14.370,788] <inf> transport: Connected to MQTT broker
+      [00:00:14.370,819] <inf> transport: Hostname: test.mosquitto.org
+      [00:00:14.370,849] <inf> transport: Client ID: 350457791735879
+      [00:00:14.370,880] <inf> transport: Port: 8883
+      [00:00:14.370,880] <inf> transport: TLS: Yes
+      [00:00:14.370,910] <dbg> mqtt_helper: mqtt_helper_subscribe: Subscribing to: my/subscribe/topic
+      [00:00:14.494,354] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
+      [00:00:15.136,047] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_SUBACK: id = 2469 result = 0
+      [00:00:15.136,077] <inf> transport: Subscribed to topic my/subscribe/topic
+      [00:00:15.136,108] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
+      [00:00:15.136,260] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_PUBLISH, message ID: 52428, len = 850
+      [00:00:15.136,444] <inf> transport: Received payload: $ on topic: my/subscribe/topic
+      [00:00:15.136,444] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
+      [00:00:44.495,147] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
+      [00:00:45.478,210] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_PINGRESP
+      [00:00:45.478,210] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
+      [00:01:00.492,370] <dbg> mqtt_helper: mqtt_helper_publish: Publishing to topic: my/publish/topic
+      [00:01:00.493,133] <inf> transport: Published message: "Hello MQTT! Current uptime is: 60492" on topic: "my/publish/topic"
+      [00:01:01.270,690] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_PUBACK: id = 60492 result = 0
+      [00:01:01.270,690] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
+      [00:01:05.093,719] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_PUBLISH, message ID: 52428, len = 32
+      [00:01:05.093,872] <inf> transport: Received payload: Test message from mosquitto_pub! on topic: my/subscribe/topic
+      [00:01:05.093,872] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
+      [00:01:30.503,021] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
+      [00:01:31.494,537] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_PINGRESP
+      [00:01:31.494,567] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
+      [00:02:00.492,462] <dbg> mqtt_helper: mqtt_helper_publish: Publishing to topic: my/publish/topic
+      [00:02:00.501,678] <inf> transport: Published message: "Hello MQTT! Current uptime is: 120492" on topic: "my/publish/topic"
+      [00:02:00.503,692] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
+      [00:02:01.577,453] <dbg> mqtt_helper: mqtt_evt_handler: MQTT_EVT_PUBACK: id = 54956 result = 0
+      [00:02:01.577,484] <dbg> mqtt_helper: mqtt_helper_poll_loop: Polling on socket fd: 0
 
 Reconnection logic
 ------------------
