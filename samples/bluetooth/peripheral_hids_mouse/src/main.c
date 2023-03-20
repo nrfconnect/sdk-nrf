@@ -678,17 +678,19 @@ void button_changed(uint32_t button_state, uint32_t has_changed)
 
 	memset(&pos, 0, sizeof(struct mouse_pos));
 
-	if (k_msgq_num_used_get(&mitm_queue)) {
-		if (buttons & KEY_PAIRING_ACCEPT) {
-			num_comp_reply(true);
+	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_ENABLED)) {
+		if (k_msgq_num_used_get(&mitm_queue)) {
+			if (buttons & KEY_PAIRING_ACCEPT) {
+				num_comp_reply(true);
 
-			return;
-		}
+				return;
+			}
 
-		if (buttons & KEY_PAIRING_REJECT) {
-			num_comp_reply(false);
+			if (buttons & KEY_PAIRING_REJECT) {
+				num_comp_reply(false);
 
-			return;
+				return;
+			}
 		}
 	}
 
@@ -785,8 +787,10 @@ void main(void)
 	hid_init();
 
 	k_work_init(&hids_work, mouse_handler);
-	k_work_init(&pairing_work, pairing_process);
 	k_work_init(&adv_work, advertising_process);
+	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_ENABLED)) {
+		k_work_init(&pairing_work, pairing_process);
+	}
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();

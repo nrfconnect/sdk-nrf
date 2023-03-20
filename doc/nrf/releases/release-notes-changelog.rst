@@ -203,6 +203,10 @@ Bluetooth samples
 
   * The Bluetooth 3-wire coex sample because of the removal of the 3-wire implementation.
 
+* :ref:`peripheral_hids_mouse` sample:
+
+  * The :kconfig:option:`CONFIG_BT_SMP` Kconfig option is included when ``CONFIG_BT_HIDS_SECURITY_ENABLED`` is selected.
+
 Bluetooth mesh samples
 ----------------------
 
