@@ -48,7 +48,9 @@ static struct k_mutex button_handler_mut;
 
 static int callback_ctrl(bool enable)
 {
-	gpio_flags_t flags = enable ? GPIO_INT_LEVEL_ACTIVE : GPIO_INT_DISABLE;
+	gpio_flags_t flags = enable ?
+		(GPIO_INT_EDGE | GPIO_INT_HIGH_1 | GPIO_INT_LOW_0 | GPIO_INT_ENABLE) :
+		GPIO_INT_DISABLE;
 	int err = 0;
 
 	/* This must be done with irqs disabled to avoid pin callback
@@ -56,6 +58,9 @@ static int callback_ctrl(bool enable)
 	 */
 	for (size_t i = 0; (i < ARRAY_SIZE(buttons)) && !err; i++) {
 		err = gpio_pin_interrupt_configure_dt(&buttons[i], flags);
+		if (err) {
+			LOG_ERR("GPIO IRQ config failed, err: %d", err);
+		}
 	}
 
 	return err;
@@ -99,9 +104,20 @@ static void button_handlers_call(uint32_t button_state, uint32_t has_changed)
 
 static void buttons_scan_fn(struct k_work *work)
 {
+	int err;
 	static uint32_t last_button_scan;
 	static bool initial_run = true;
+	static bool irq_enabled;
 	uint32_t button_scan;
+
+	if (irq_enabled) {
+		/* Disable GPIO interrupt */
+		err = callback_ctrl(false);
+		if (err) {
+			LOG_ERR("Cannot disable callbacks");
+		}
+		irq_enabled = false;
+	}
 
 	button_scan = get_buttons();
 	atomic_set(&my_buttons, (atomic_val_t)button_scan);
@@ -121,7 +137,6 @@ static void buttons_scan_fn(struct k_work *work)
 	if (button_scan != 0) {
 		k_work_reschedule(&buttons_scan,
 		  K_MSEC(CONFIG_DK_LIBRARY_BUTTON_SCAN_INTERVAL));
-
 	} else {
 		/* If no button is pressed module can switch to callbacks */
 		int err = 0;
@@ -132,10 +147,11 @@ static void buttons_scan_fn(struct k_work *work)
 		case STATE_SCANNING:
 			state = STATE_WAITING;
 			err = callback_ctrl(true);
+			irq_enabled = true;
 			break;
 
 		default:
-			__ASSERT_NO_MSG(false);
+			/* Do nothing */
 			break;
 		}
 
@@ -167,13 +183,6 @@ static void button_pressed(const struct device *gpio_dev, struct gpio_callback *
 {
 	k_spinlock_key_t key = k_spin_lock(&lock);
 
-	/* Disable GPIO interrupt */
-	int err = callback_ctrl(false);
-
-	if (err) {
-		LOG_ERR("Cannot disable callbacks");
-	}
-
 	switch (state) {
 	case STATE_WAITING:
 		state = STATE_SCANNING;
@@ -182,8 +191,7 @@ static void button_pressed(const struct device *gpio_dev, struct gpio_callback *
 
 	case STATE_SCANNING:
 	default:
-		/* Invalid state */
-		__ASSERT_NO_MSG(false);
+		/* Do nothing */
 		break;
 	}
 

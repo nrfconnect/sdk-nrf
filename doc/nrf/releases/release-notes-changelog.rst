@@ -455,7 +455,9 @@ Libraries for NFC
 Other libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`dk_buttons_and_leds_readme` library:
+
+  * The library now supports using the GPIO expander for the buttons, switches, and LEDs on the nRF9160 DK.
 
 Common Application Framework (CAF)
 ----------------------------------
