@@ -696,7 +696,9 @@ Glossary
       This reliability comes at the cost of control packets overhead of the protocol itself, making it unsuitable for bandwidth-constrained applications.
 
    Toolchain
-      A set of development tools.
+      A set of development tools: compiler, assembler, and linker.
+      The Zephyr SDK includes this set plus a couple more Zephyr-specific tools.
+      The |NCS| toolchain is based on the Zephyr SDK and then adds on top of it a :ref:`set of tools and modules specific to the |NCS| <gs_recommended_versions>` that are required to build |NCS| samples and applications.
 
    Transmit Data (TXD)
       A signal line in a serial interface that transmits data to another device.

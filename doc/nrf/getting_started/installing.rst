@@ -16,11 +16,12 @@ For instructions on automatic installation, see the :ref:`gs_assistant` page.
 
 To manually install the |NCS|, you must first install all the required tools and clone the |NCS| repositories.
 
+The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds on top of it tools and modules required to build |NCS| samples and applications.
 If you already have your system set up to work with Zephyr OS, based on Zephyr's :ref:`zephyr:getting_started`, it means you have most of the requirements for the |NCS| installed.
-The only requirement that is not covered by the installation steps in Zephyr is the :ref:`GN tool <gs_installing_gn>`.
-This tool is needed only for :ref:`ug_matter` applications.
+However, you still need to install a set of additional tools, including Python dependencies and the |nRFVSC|.
+You might also need the :ref:`GN tool <gs_installing_gn>` if you are insterested in creating :ref:`ug_matter` applications.
 
-Before you start setting up the toolchain, install available updates for your operating system.
+Before you start setting up the |NCS| toolchain, install available updates for your operating system.
 See :ref:`gs_recommended_versions` for information on the supported operating systems and Zephyr features.
 
 .. _gs_installing_tools:
@@ -389,16 +390,16 @@ Use the following commands to install the requirements for each repository.
 
 .. rst-class:: numbered-step
 
-Install a Toolchain
-*******************
-
-A toolchain provides a compiler, assembler, linker, and other programs required to build Zephyr applications.
+Install the Zephyr SDK
+**********************
 
 The Zephyr Software Development Kit (SDK) contains toolchains for each of Zephyr's supported architectures.
-It also includes additional host tools, such as custom QEMU and OpenOCD builds.
+Each toolchain provides a compiler, assembler, linker, and some, but not all, of the rest of the programs required to build Zephyr applications.
+The Zephyr SDK also includes additional host tools, such as custom QEMU and OpenOCD builds.
+It is at the base of the |NCS| :term:`toolchain`, which adds on top of it several tools and modules of its own.
 
 .. note::
-   When updating Zephyr SDK, :ref:`verify the Zephyr SDK variables <zephyr:toolchain_zephyr_sdk_update>`.
+   When updating the Zephyr SDK, :ref:`verify the Zephyr SDK variables <zephyr:toolchain_zephyr_sdk_update>`.
    Make sure that the ``zephyr`` toolchain is selected, not ``gnuarmemb``.
 
 .. tabs::

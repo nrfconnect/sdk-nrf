@@ -20,7 +20,7 @@ However, there are some Zephyr features that are currently only available on Lin
 
    .. _gs_update_os:
 
-   Before you start setting up the toolchain, install available updates for your operating system.
+   Before you start setting up the |NCS| toolchain, install available updates for your operating system.
 
 .. _gs_supported_OS:
 
@@ -93,8 +93,13 @@ Not applicable
 .. note::
    The |NCS| tools are not supported by the older versions of the operating system.
 
+|NCS| toolchain
+***************
+
+The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds on top of it tools and modules required to build |NCS| samples and applications.
+
 Required tools
-**************
+==============
 
 The following table shows the tools that are required for working with |NCS| v\ |version|.
 It lists the versions that are used for testing and installed when using the :ref:`Toolchain Manager <gs_app_tcm>`, as described in :ref:`gs_assistant`.
@@ -176,9 +181,8 @@ Other versions might also work, but are not verified.
          * - West
            - |west_recommended_ver_darwin|
 
-
 Required Python dependencies
-****************************
+============================
 
 The following table shows the Python packages that are required for working with |NCS| v\ |version|.
 If no version is specified, the default version provided with pip is recommended.
@@ -188,7 +192,7 @@ The :ref:`Toolchain Manager <gs_app_tcm>` will install all Python dependencies i
 If you install manually, see :ref:`additional_deps` for instructions on how to install the Python dependencies and :ref:`gs_updating` for information about how to keep them updated.
 
 Building and running applications, samples, and tests
-=====================================================
+-----------------------------------------------------
 
 .. list-table::
    :header-rows: 1
@@ -229,7 +233,7 @@ Building and running applications, samples, and tests
 .. _python_req_documentation:
 
 Building documentation
-======================
+----------------------
 
 .. list-table::
    :header-rows: 1
