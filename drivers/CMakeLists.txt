@@ -15,3 +15,5 @@ add_subdirectory(hw_cc310)
 add_subdirectory(entropy)
 add_subdirectory(serial)
 add_subdirectory_ifdef(CONFIG_WIFI wifi)
+
+add_subdirectory(lcz_fem)

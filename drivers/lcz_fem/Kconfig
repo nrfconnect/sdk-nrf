@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2023 Laird Connectivity
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+DT_COMPAT_LCZ_FEM := lairdconnect,nrf21540-lcz-fem
+DT_NODELABEL_LCZ_FEM := $(dt_nodelabel_path,lcz_fem)
+
+config LCZ_FEM
+	depends on MPSL_FEM
+	def_bool $(dt_has_compat,$(DT_COMPAT_LCZ_FEM))
+	help
+	  This driver works alongside the Nordic MSPL FEM driver.
+	  The driver sets the appropriate power levels for internal or
+	  external antenna variants and for the region of use.
+	  The driver controls the GPIO for the unused SPI signals and
+	  antenna select.  Antenna select and chip select cannot
+	  be static because of FEM errata.
+
+if LCZ_FEM
+
+module = LCZ_FEM
+module-str = LCZ_FEM
+source "subsys/logging/Kconfig.template.log_config"
+
+config LCZ_FEM_INTERNAL_ANTENNA
+	bool "Select internal antenna"
+	default $(dt_node_bool_prop,$(DT_NODELABEL_LCZ_FEM),internal-antenna)
+
+config LCZ_FEM_REGION
+	int
+	range 0 1
+	default $(dt_node_int_prop_int,$(DT_NODELABEL_LCZ_FEM),power-table)
+
+config LCZ_FEM_LOG_POWER_ADJUST_TABLE
+	bool "Print power adjustment table"
+	depends on LOG
+	help
+	  Resolution of soc may be limited
+
+endif
