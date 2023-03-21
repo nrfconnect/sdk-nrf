@@ -7,7 +7,7 @@
 #include "test_decode.h"
 #include "zcbor_encode.h"
 
-static void test_decode(void)
+ZTEST(lib_zcbor_test1, test_decode)
 {
 	uint8_t payload[32] = {0};
 	uint32_t payload_len;
@@ -42,11 +42,4 @@ static void test_decode(void)
 	zassert_mem_equal(test._Test_name_tstr[1].value, "Bar", test._Test_name_tstr[1].len, NULL);
 }
 
-void test_main(void)
-{
-	ztest_test_suite(lib_zcbor_test1,
-	     ztest_unit_test(test_decode)
-	 );
-
-	ztest_run_test_suite(lib_zcbor_test1);
-}
+ZTEST_SUITE(lib_zcbor_test1, NULL, NULL, NULL, NULL, NULL);
