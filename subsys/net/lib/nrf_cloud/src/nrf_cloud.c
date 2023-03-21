@@ -10,7 +10,7 @@
 #endif
 #include <net/nrf_cloud.h>
 #include <zephyr/net/mqtt.h>
-#include "nrf_cloud_codec.h"
+#include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_fota.h"

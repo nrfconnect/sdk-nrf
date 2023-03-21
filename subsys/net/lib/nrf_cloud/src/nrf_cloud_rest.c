@@ -22,7 +22,7 @@
 #include <cJSON.h>
 
 #include "nrf_cloud_mem.h"
-#include "nrf_cloud_codec.h"
+#include "nrf_cloud_codec_internal.h"
 
 LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 

@@ -14,7 +14,7 @@
 #include <cJSON.h>
 #include <stdio.h>
 
-#include "nrf_cloud_codec.h"
+#include "nrf_cloud_codec_internal.h"
 #include "application.h"
 #include "temperature.h"
 #include "connection.h"
