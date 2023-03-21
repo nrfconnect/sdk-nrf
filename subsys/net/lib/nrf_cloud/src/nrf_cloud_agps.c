@@ -514,7 +514,8 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 }
 
 static size_t get_next_agps_element(struct nrf_cloud_apgs_element *element,
-				    const char *buf)
+				    const char *buf,
+				    size_t buf_len)
 {
 	static uint16_t elements_left_to_process;
 	static enum nrf_cloud_agps_type element_type;
@@ -525,6 +526,12 @@ static size_t get_next_agps_element(struct nrf_cloud_apgs_element *element,
 	 * each element.
 	 */
 	if (elements_left_to_process == 0) {
+		/* Check that there's enough data for type and count. */
+		if (buf_len < NRF_CLOUD_AGPS_BIN_TYPE_SIZE + NRF_CLOUD_AGPS_BIN_COUNT_SIZE) {
+			LOG_ERR("Unexpected end of data");
+			return 0;
+		}
+
 		element->type =
 			(enum nrf_cloud_agps_type)buf[NRF_CLOUD_AGPS_BIN_TYPE_OFFSET];
 		element_type = element->type;
@@ -586,6 +593,13 @@ static size_t get_next_agps_element(struct nrf_cloud_apgs_element *element,
 		return 0;
 	}
 
+	/* Check that there's enough data for the element. */
+	if (buf_len < len) {
+		LOG_ERR("Unexpected end of data");
+		elements_left_to_process = 0;
+		return 0;
+	}
+
 	return len;
 }
 
@@ -640,7 +654,7 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len)
 
 	while (parsed_len < buf_len) {
 		size_t element_size =
-			get_next_agps_element(&element, &buf[parsed_len]);
+			get_next_agps_element(&element, &buf[parsed_len], buf_len - parsed_len);
 
 		if (element_size == 0) {
 			LOG_DBG("Parsing finished\n");
