@@ -38,7 +38,7 @@ static uint8_t expected_key[16] = {
 #endif
 
 
-static void test_hw_unique_key_tfm1(void)
+ZTEST(test_hw_unique_key_tfm, test_hw_unique_key_tfm1)
 {
 #ifdef CONFIG_SOC_NRF5340_CPUAPP
 	uint8_t out_key[32];
@@ -91,10 +91,4 @@ static void test_hw_unique_key_tfm1(void)
 	zassert_mem_equal(expected_key, out_key, sizeof(expected_key), NULL);
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_hw_unique_key_tfm,
-			ztest_unit_test(test_hw_unique_key_tfm1)
-			);
-	ztest_run_test_suite(test_hw_unique_key_tfm);
-}
+ZTEST_SUITE(test_hw_unique_key_tfm, NULL, NULL, NULL, NULL, NULL);
