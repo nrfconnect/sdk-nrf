@@ -148,14 +148,15 @@ size_t fp_crypto_account_key_filter_size(size_t n);
  * @param[in] account_key_list Pointer to array of Account Keys. Array length has to be at least
  *			       equal to number of Account Keys.
  * @param[in] n Number of account keys (n >= 1).
- * @param[in] salt Random byte - Salt.
+ * @param[in] salt Random 2-byte value - Salt. The Salt is concatenated with Account Keys in
+ *		   big-endian format.
  * @param[in] battery_info Battery info or NULL if there is no battery info. Length of battery info
  *			   must be equal to @ref FP_CRYPTO_BATTERY_INFO_LEN.
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
 int fp_crypto_account_key_filter(uint8_t *out, const struct fp_account_key *account_key_list,
-				 size_t n, uint8_t salt, const uint8_t *battery_info);
+				 size_t n, uint16_t salt, const uint8_t *battery_info);
 
 /** Encode data to Additional Data packet.
  *

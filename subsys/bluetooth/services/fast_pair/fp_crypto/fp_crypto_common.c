@@ -94,7 +94,7 @@ size_t fp_crypto_account_key_filter_size(size_t n)
 }
 
 int fp_crypto_account_key_filter(uint8_t *out, const struct fp_account_key *account_key_list,
-				 size_t n, uint8_t salt, const uint8_t *battery_info)
+				 size_t n, uint16_t salt, const uint8_t *battery_info)
 {
 	size_t s = fp_crypto_account_key_filter_size(n);
 	uint8_t v[FP_ACCOUNT_KEY_LEN + sizeof(salt) + FP_CRYPTO_BATTERY_INFO_LEN];
@@ -110,8 +110,8 @@ int fp_crypto_account_key_filter(uint8_t *out, const struct fp_account_key *acco
 		memcpy(v, account_key_list[i].key, FP_ACCOUNT_KEY_LEN);
 		pos += FP_ACCOUNT_KEY_LEN;
 
-		v[pos] = salt;
-		pos++;
+		sys_put_be16(salt, &v[pos]);
+		pos += sizeof(salt);
 
 		if (battery_info) {
 			memcpy(&v[pos], battery_info, FP_CRYPTO_BATTERY_INFO_LEN);
