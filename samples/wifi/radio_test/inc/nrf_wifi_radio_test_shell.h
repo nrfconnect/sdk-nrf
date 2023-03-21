@@ -18,6 +18,8 @@
 #include <fmac_structs.h>
 #include "rpu_hw_if.h"
 
+#define MAX_TX_POWER 127
+
 struct nrf_wifi_ctx_zep {
 	struct wifi_nrf_fmac_priv *fmac_priv;
 	struct rpu_conf_params conf_params;
