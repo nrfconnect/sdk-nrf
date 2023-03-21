@@ -196,7 +196,7 @@ class SoftwareMaturityTable(SphinxDirective):
         row += nodes.entry()
 
         for soc in all_socs:
-            soc = soc.replace("nrf", "nRF")
+            soc = soc.upper().replace("NRF", "nRF")
             entry = nodes.entry()
             entry += nodes.paragraph(text=soc)
             row += entry
