@@ -6,7 +6,7 @@
 #include <zephyr/ztest.h>
 #include <zcbor_encode.h>
 
-static void test_raw_encode(void)
+ZTEST(lib_zcbor_test3, test_raw_encode)
 {
 	uint8_t payload[32] = {0};
 	uint8_t time[] = {1, 2, 3, 4, 5, 6, 7, 8};
@@ -26,11 +26,4 @@ static void test_raw_encode(void)
 	zassert_true(res, "Encoding should have been successful\n");
 }
 
-void test_main(void)
-{
-	ztest_test_suite(lib_zcbor_test3,
-	     ztest_unit_test(test_raw_encode)
-	 );
-
-	ztest_run_test_suite(lib_zcbor_test3);
-}
+ZTEST_SUITE(lib_zcbor_test3, NULL, NULL, NULL, NULL, NULL);
