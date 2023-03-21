@@ -213,6 +213,9 @@ Samples
 Bluetooth samples
 -----------------
 
+* :ref:`peripheral_hids_keyboard` and :ref:`peripheral_hids_mouse` samples register HID Service before Bluetooth is enabled (before calling the :c:func:`bt_enable` function).
+  The :c:func:`bt_gatt_service_register` function can no longer be called after enabling Bluetooth and before loading settings.
+
 * Removed:
 
   * The Bluetooth 3-wire coex sample because of the removal of the 3-wire implementation.
