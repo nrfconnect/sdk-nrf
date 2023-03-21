@@ -28,7 +28,7 @@ const struct fw_info dummy_s1 = {
 static uint8_t fw_info_find_buf[0x1000 + sizeof(dummy_s1)];
 
 
-void test_fw_info_invalidate(void)
+ZTEST(test_fw_info, test_fw_info_invalidate)
 {
 	const struct fw_info *target = (const struct fw_info *)(S1_ADDRESS);
 	const uint32_t zero = 0;
@@ -60,7 +60,7 @@ void test_fw_info_invalidate(void)
 }
 
 
-void test_fw_info_find(void)
+ZTEST(test_fw_info, test_fw_info_find)
 {
 	for (uint32_t i = 0; i < FW_INFO_OFFSET_COUNT; i++) {
 		const struct fw_info *fwinfo_res;
@@ -75,11 +75,4 @@ void test_fw_info_find(void)
 	}
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_fw_info,
-			 ztest_unit_test(test_fw_info_invalidate),
-			 ztest_unit_test(test_fw_info_find)
-	);
-	ztest_run_test_suite(test_fw_info);
-}
+ZTEST_SUITE(test_fw_info, NULL, NULL, NULL, NULL, NULL);
