@@ -952,6 +952,8 @@ void main(void)
 		return;
 	}
 
+	hid_init();
+
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
@@ -959,8 +961,6 @@ void main(void)
 	}
 
 	printk("Bluetooth initialized\n");
-
-	hid_init();
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
