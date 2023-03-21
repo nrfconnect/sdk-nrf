@@ -1,7 +1,12 @@
+#!/usr/bin/env python3
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
 from intelhex import IntelHex as ih
 from struct import pack
 from subprocess import run
-from tempfile import NamedTemporaryFile as tempf
 from argparse import ArgumentParser
 
 key_nrf53 = [
@@ -31,9 +36,14 @@ def write_kmu(key, perm, target_addr, slot, snr):
     ih_nrf.frombytes(key, offset = keyslot_offset)
 
     run(["nrfjprog", "--snr", snr, "--memwr", str(select_offset), "--val", str(slot+1)]).check_returncode()
-    with tempf(suffix = ".hex", buffering = 0) as f:
-        ih_nrf.tofile(f.name, "hex")
-        run(["nrfjprog", "--snr", snr, "--program", f.name]).check_returncode()
+
+    run(["nrfjprog", "--snr", snr, "--memwr", str(target_addr_offset), "--val", str(target_addr)]).check_returncode()
+    # The KMU slots are 128 bits and we need to write them in words since the --program argument
+    # does not work for the KMU region with the nrfjprog
+    for word_offset in range(0,16,4):
+        run(["nrfjprog", "--snr", snr,
+             "--memwr", str(keyslot_offset + word_offset),
+             "--val", str(int.from_bytes(key[word_offset:word_offset+4], 'little'))]).check_returncode()
 
     run(["nrfjprog", "--snr", snr, "--memwr", str(perm_offset), "--val", str(perm)]).check_returncode()
     run(["nrfjprog", "--snr", snr, "--memwr", str(select_offset), "--val", str(0)]).check_returncode()
