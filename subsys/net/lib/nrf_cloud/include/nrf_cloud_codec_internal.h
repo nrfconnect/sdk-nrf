@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef NRF_CLOUD_CODEC_H__
-#define NRF_CLOUD_CODEC_H__
+#ifndef NRF_CLOUD_CODEC_INTERNAL_H__
+#define NRF_CLOUD_CODEC_INTERNAL_H__
 
 #include <stdbool.h>
 #include <modem/modem_info.h>
@@ -222,4 +222,4 @@ void nrf_cloud_register_gateway_state_handler(gateway_state_handler_t handler);
 }
 #endif
 
-#endif /* NRF_CLOUD_CODEC_H__ */
+#endif /* NRF_CLOUD_CODEC_INTERNAL_H__ */

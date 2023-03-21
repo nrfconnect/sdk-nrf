@@ -44,7 +44,7 @@ if (CONFIG_NRF_CLOUD_MQTT OR CONFIG_NRF_CLOUD_FOTA OR CONFIG_NRF_MODEM_LIB)
 			${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_mem.c
 			${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_fota.c
 			${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_fota_common.c
-			${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_codec.c
+			${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_codec_internal.c
 			${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_fsm.c
 			${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_transport.c
 			DIRECTORY ${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/

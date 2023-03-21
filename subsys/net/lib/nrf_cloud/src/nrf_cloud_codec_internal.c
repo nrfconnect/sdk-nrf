@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "nrf_cloud_codec.h"
+#include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_mem.h"
 #include "nrf_cloud_fsm.h"
 #include <net/nrf_cloud_location.h>
@@ -21,7 +21,7 @@
 #include <modem/modem_info.h>
 #include "cJSON_os.h"
 
-LOG_MODULE_REGISTER(nrf_cloud_codec, CONFIG_NRF_CLOUD_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_cloud_codec_internal, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
 bool initialized;
 static const char *application_version;

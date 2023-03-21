@@ -343,6 +343,11 @@ Libraries for networking
     * A new event :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR` to indicate an error while the transport connection is being established when the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabled.
       Earlier this was indicated with a second :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECTING` event with an error status.
 
+    * Updated:
+
+    * The :c:func:`nrf_cloud_device_status_msg_encode` function now includes the service info when encoding the device status.
+    * Renamed files :file:`nrf_cloud_codec.h` and :file:`nrf_cloud_codec.c` to :file:`nrf_cloud_codec_internal.h` and :file:`nrf_cloud_codec_internal.c` respectively.
+
 * :ref:`lib_lwm2m_client_utils` library:
 
   * Updated:
@@ -352,10 +357,6 @@ Libraries for networking
   * Removed:
 
     * The old API ``lwm2m_firmware_get_update_state_cb()``.
-
-  * Updated:
-
-    * The :c:func:`nrf_cloud_device_status_msg_encode` function now includes the service info when encoding the device status.
 
 Libraries for NFC
 -----------------

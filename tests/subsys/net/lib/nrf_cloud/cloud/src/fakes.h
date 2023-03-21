@@ -5,7 +5,7 @@
  */
 
 #include <nrf_cloud_transport.h>
-#include <nrf_cloud_codec.h>
+#include <nrf_cloud_codec_internal.h>
 #include <nrf_cloud_mem.h>
 #include <zephyr/fff.h>
 #include <zephyr/ztest.h>

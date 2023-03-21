@@ -11,7 +11,7 @@
 #include <net/nrf_cloud_location.h>
 
 #include "nrf_cloud_fsm.h"
-#include "nrf_cloud_codec.h"
+#include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_transport.h"
 
 LOG_MODULE_REGISTER(nrf_cloud_location, CONFIG_NRF_CLOUD_LOG_LEVEL);

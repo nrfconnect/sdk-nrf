@@ -10,7 +10,7 @@
 #include <date_time.h>
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_mem.h"
-#include "nrf_cloud_codec.h"
+#include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_transport.h"
 #include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_alerts.h>

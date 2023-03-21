@@ -27,7 +27,7 @@ LOG_MODULE_REGISTER(nrf_cloud_pgps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_pgps_schema_v1.h"
 #include "nrf_cloud_pgps_utils.h"
-#include "nrf_cloud_codec.h"
+#include "nrf_cloud_codec_internal.h"
 
 #define FORCE_HTTP_DL			0 /* set to 1 to force HTTP instead of HTTPS */
 #define PGPS_DEBUG			0 /* set to 1 for extra logging */
