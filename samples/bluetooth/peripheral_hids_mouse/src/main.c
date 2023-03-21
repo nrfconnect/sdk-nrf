@@ -775,6 +775,9 @@ void main(void)
 		}
 	}
 
+	/* DIS initialized at system boot with SYS_INIT macro. */
+	hid_init();
+
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
@@ -782,9 +785,6 @@ void main(void)
 	}
 
 	printk("Bluetooth initialized\n");
-
-	/* DIS initialized at system boot with SYS_INIT macro. */
-	hid_init();
 
 	k_work_init(&hids_work, mouse_handler);
 	k_work_init(&adv_work, advertising_process);
