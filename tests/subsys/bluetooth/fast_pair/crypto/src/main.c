@@ -184,14 +184,14 @@ static void test_aes_key_from_ecdh_shared_secret(void)
 
 static void test_bloom_filter(void)
 {
-	static const uint8_t salt = 0xC7;
+	static const uint16_t salt = 0xC7C8;
 
 	static const struct fp_account_key first_account_key_list[] = {
 		{ .key = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0xAA, 0xBB,
 			  0xCC, 0xDD, 0xEE, 0xFF} }
 		};
 
-	static const uint8_t first_bloom_filter[] = {0x0A, 0x42, 0x88, 0x10};
+	static const uint8_t first_bloom_filter[] = {0x02, 0x0C, 0x80, 0x2A};
 
 	uint8_t first_result_buf[sizeof(first_bloom_filter)];
 
@@ -207,7 +207,7 @@ static void test_bloom_filter(void)
 
 	static const uint8_t battery_info[] = {0b00110011, 0b01000000, 0b01000000, 0b01000000};
 
-	static const uint8_t first_bloom_filter_with_battery_info[] = {0x4A, 0x00, 0xF0, 0x00};
+	static const uint8_t first_bloom_filter_with_battery_info[] = {0x01, 0x01, 0x46, 0x0A};
 
 	zassert_equal(sizeof(first_result_buf), sizeof(first_bloom_filter_with_battery_info),
 		      "Invalid size of expected result.");
@@ -226,7 +226,7 @@ static void test_bloom_filter(void)
 			  0x77, 0x77, 0x88, 0x88} }
 		};
 
-	static const uint8_t second_bloom_filter[] = {0x2F, 0xBA, 0x06, 0x42, 0x00};
+	static const uint8_t second_bloom_filter[] = {0x84, 0x4A, 0x62, 0x20, 0x8B};
 
 	uint8_t second_result_buf[sizeof(second_bloom_filter)];
 
@@ -239,8 +239,8 @@ static void test_bloom_filter(void)
 	zassert_mem_equal(second_result_buf, second_bloom_filter, sizeof(second_bloom_filter),
 			  "Invalid resulting filter.");
 
-	static const uint8_t second_bloom_filter_with_battery_info[] = {0x10, 0x22, 0x56, 0xC0,
-									0x4D};
+	static const uint8_t second_bloom_filter_with_battery_info[] = {0x46, 0x15, 0x24, 0xD0,
+									0x08};
 
 	zassert_equal(sizeof(second_result_buf), sizeof(second_bloom_filter_with_battery_info),
 		      "Invalid size of expected result.");
