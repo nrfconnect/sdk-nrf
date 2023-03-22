@@ -10,6 +10,10 @@
 			pwms = <&pwm0 1 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
 		};
 	};
+
+	chosen {
+		ncs,zigbee-timer = &timer2;
+	};
 };
 
 &pwm0 {
@@ -33,4 +37,8 @@
 		};
 	};
 
+};
+
+&timer2 {
+	status = "okay";
 };
