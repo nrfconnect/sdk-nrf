@@ -19,6 +19,7 @@
 #include <stdbool.h>
 #include <zephyr/sys/__assert.h>
 
+#define SDC_USE_NEW_MEM_API
 #include <sdc.h>
 #include <sdc_soc.h>
 #include <sdc_hci.h>
@@ -82,11 +83,14 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #endif
 
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
+#define PERIODIC_ADV_RSP_ENABLE_FAILURE_REPORTING \
+		IS_ENABLED(CONFIG_BT_CTLR_SDC_PERIODIC_ADV_RSP_RX_FAILURE_REPORTING)
 #define SDC_PERIODIC_ADV_RSP_MEM_SIZE \
 	(CONFIG_BT_CTLR_SDC_PAWR_ADV_COUNT * \
 	 SDC_MEM_PER_PERIODIC_ADV_RSP_SET(CONFIG_BT_CTLR_SDC_PERIODIC_ADV_RSP_TX_BUFFER_COUNT, \
-					  CONFIG_BT_CTLR_SDC_PERIODIC_ADV_RSP_RX_BUFFER_COUNT, \
-					  CONFIG_BT_CTLR_SDC_PERIODIC_ADV_RSP_TX_MAX_DATA_SIZE))
+				CONFIG_BT_CTLR_SDC_PERIODIC_ADV_RSP_RX_BUFFER_COUNT, \
+				CONFIG_BT_CTLR_SDC_PERIODIC_ADV_RSP_TX_MAX_DATA_SIZE, \
+				PERIODIC_ADV_RSP_ENABLE_FAILURE_REPORTING))
 #else
 #define SDC_PERIODIC_ADV_RSP_MEM_SIZE 0
 #endif
@@ -832,6 +836,16 @@ static int configure_memory_usage(void)
 
 	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
 				      SDC_CFG_TYPE_PERIODIC_ADV_RSP_BUFFER_CFG, &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+
+	cfg.periodic_adv_rsp_failure_reporting_cfg =
+		PERIODIC_ADV_RSP_ENABLE_FAILURE_REPORTING ? 1 : 0;
+
+	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+		SDC_CFG_TYPE_PERIODIC_ADV_RSP_FAILURE_REPORTING_CFG, &cfg);
+
 	if (required_memory < 0) {
 		return required_memory;
 	}
