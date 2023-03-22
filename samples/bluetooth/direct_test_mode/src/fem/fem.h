@@ -161,6 +161,47 @@ uint32_t fem_radio_rx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode);
  */
 int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power, uint16_t freq_mhz);
 
+/**@brief Check a real Tx output power, for the SoC with the front-end module for given parameters.
+ *
+ * Check if the requested output power can be achieved. This function returns the exact value or
+ * if this value is not available for given frequency, the closest greater or lower value to the
+ * requested output power.
+ *
+ * @param[in] power Tx power level to check.
+ * @param[in] freq_mhz Frequency in MHz. The output power check is valid only for this frequency.
+ * @param[in] tx_power_ceiling Flag to get the ceiling or floor of the requested transmit power
+ *                             level.
+ *
+ * @return The real Tx output power in dBm, which can be achieved for the given frequency. It might
+ *         be different than @p power and depending on @p tx_power_ceiling it can be greater or
+ *         lower than the requested one.
+ */
+int8_t fem_tx_output_power_check(int8_t power, uint16_t freq_mhz, bool tx_power_ceiling);
+
+/**@brief Get the minimum Tx output power for the SoC with the front-end module.
+ *
+ * @param[in] freq_mHz Frequency in MHz. The minimum output power is valid only for this frequency.
+ *
+ * @return The minimum output power in dBm.
+ */
+static inline int8_t fem_tx_output_power_min_get(uint16_t freq_mhz)
+{
+	/* Using INT8_MIN returns the minimum supported Tx output power value. */
+	return fem_tx_output_power_check(INT8_MIN, freq_mhz, false);
+}
+
+/**@brief Get the maximum Tx output power for the SoC with the front-end module.
+ *
+ * @param[in] freq_mHz Frequency in MHz. The maximum output power is valid only for this frequency.
+ *
+ * @return The maximum output power in dBm.
+ */
+static inline int8_t fem_tx_output_power_max_get(uint16_t freq_mhz)
+{
+	/* Using INT8_MAX returns the maximum supported Tx output power value. */
+	return fem_tx_output_power_check(INT8_MAX, freq_mhz, true);
+}
+
 /** @brief Get the front-end module default Tx gain.
  *
  * @return The front-end module default Tx gain value.

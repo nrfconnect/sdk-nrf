@@ -18,6 +18,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
+#include <zephyr/sys/__assert.h>
 
 #include <hal/nrf_egu.h>
 #include <hal/nrf_nvmc.h>
@@ -688,9 +689,103 @@ static int gppi_init(void)
 	return 0;
 }
 
+#if CONFIG_DTM_POWER_CONTROL_AUTOMATIC
+static int8_t dtm_radio_min_power_get(uint16_t frequency)
+{
+	return fem_tx_output_power_min_get(frequency);
+}
+
+static int8_t dtm_radio_max_power_get(uint16_t frequency)
+{
+	return fem_tx_output_power_max_get(frequency);
+}
+
+static int8_t dtm_radio_nearest_power_get(int8_t tx_power, uint16_t frequency)
+{
+	int8_t tx_power_floor = fem_tx_output_power_check(tx_power, frequency, false);
+	int8_t tx_power_ceiling = fem_tx_output_power_check(tx_power, frequency, true);
+	int8_t output_power;
+
+	output_power = (abs(tx_power_floor - tx_power) > abs(tx_power_ceiling - tx_power)) ?
+		       tx_power_ceiling : tx_power_floor;
+
+	return output_power;
+}
+
+#else
+static int8_t dtm_radio_min_power_get(uint16_t frequency)
+{
+	ARG_UNUSED(frequency);
+
+	return dtm_hw_radio_min_power_get();
+}
+
+static int8_t dtm_radio_max_power_get(uint16_t frequency)
+{
+	ARG_UNUSED(frequency);
+
+	return dtm_hw_radio_max_power_get();
+}
+
+static int8_t dtm_radio_nearest_power_get(int8_t tx_power, uint16_t frequency)
+{
+	int8_t output_power = INT8_MAX;
+	const size_t size = dtm_hw_radio_power_array_size_get();
+	const uint32_t *power = dtm_hw_radio_power_array_get();
+
+	ARG_UNUSED(frequency);
+
+	for (size_t i = 1; i < size; i++) {
+		if (((int8_t) power[i]) > tx_power) {
+			int8_t diff = abs((int8_t) power[i] - tx_power);
+
+			if (diff <  abs((int8_t) power[i - 1] - tx_power)) {
+				output_power = power[i];
+			} else {
+				output_power = power[i - 1];
+			}
+
+			break;
+		}
+	}
+
+	__ASSERT_NO_MSG(output_power != INT8_MAX);
+
+	return output_power;
+}
+#endif /* CONFIG_DTM_POWER_CONTROL_AUTOMATIC */
+
+static uint16_t radio_frequency_get(uint8_t channel)
+{
+	static const uint16_t base_frequency = 2402;
+
+	__ASSERT_NO_MSG(channel <= PHYS_CH_MAX);
+
+	/* Actual frequency (MHz): 2402 + 2N */
+	return (channel << 1) + base_frequency;
+}
+
 static void radio_tx_power_set(uint8_t channel, int8_t tx_power)
 {
 	int8_t radio_power = tx_power;
+
+#if CONFIG_FEM
+	uint16_t frequency;
+
+	if (IS_ENABLED(CONFIG_DTM_POWER_CONTROL_AUTOMATIC)) {
+		frequency = radio_frequency_get(channel);
+
+		/* Adjust output power to nearest possible value for the given frequency.
+		 * Due to limitations of the DTM specification output power level set command check
+		 * Tx output power level for channel 0. That is why output Tx power needs to be
+		 * aligned for final transmission channel.
+		 */
+		tx_power = dtm_radio_nearest_power_get(tx_power, frequency);
+		(void)fem_tx_output_power_prepare(tx_power, &radio_power, frequency);
+	}
+#else
+	ARG_UNUSED(channel);
+#endif /* CONFIG_FEM */
 
 #ifdef NRF53_SERIES
 	bool high_voltage_enable = false;
@@ -730,7 +825,8 @@ static int radio_init(void)
 {
 	nrf_radio_packet_conf_t packet_conf;
 
-	if (!dtm_hw_radio_validate(dtm_inst.txpower, dtm_inst.radio_mode)) {
+	if ((!dtm_hw_radio_validate(dtm_inst.txpower, dtm_inst.radio_mode)) &&
+	    (!IS_ENABLED(CONFIG_DTM_POWER_CONTROL_AUTOMATIC))) {
 		printk("Incorrect settings for radio mode and TX power\n");
 
 		dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
@@ -826,10 +922,18 @@ int dtm_init(void)
 	}
 #endif /* CONFIG_FEM */
 
+#if CONFIG_DTM_POWER_CONTROL_AUTOMATIC
+	/* When front-end module is used, set output power to the front-end module
+	 * default gain.
+	 */
+	dtm_inst.txpower = fem_default_tx_gain_get();
+#endif /* CONFIG_DTM_POWER_CONTROL_AUTOMATIC */
+
 	/** Connect radio interrupts. */
 	IRQ_CONNECT(RADIO_IRQn, CONFIG_DTM_RADIO_IRQ_PRIORITY, radio_handler,
 		    NULL, 0);
 	irq_enable(RADIO_IRQn);
+
 
 	err = radio_init();
 	if (err) {
@@ -1138,7 +1242,7 @@ static void radio_prepare(bool rx)
 #endif /* DIRECTION_FINDING_SUPPORTED */
 
 	/* Actual frequency (MHz): 2402 + 2N */
-	nrf_radio_frequency_set(NRF_RADIO, (dtm_inst.phys_ch << 1) + 2402);
+	nrf_radio_frequency_set(NRF_RADIO, radio_frequency_get(dtm_inst.phys_ch));
 
 	/* Setting packet pointer will start the radio */
 	nrf_radio_packetptr_set(NRF_RADIO, dtm_inst.current_pdu);
@@ -1215,6 +1319,7 @@ static void radio_prepare(bool rx)
 	}
 }
 
+#if !CONFIG_DTM_POWER_CONTROL_AUTOMATIC
 static bool dtm_set_txpower(uint32_t new_tx_power)
 {
 	/* radio->TXPOWER register is 32 bits, low octet a tx power value,
@@ -1244,6 +1349,7 @@ static bool dtm_set_txpower(uint32_t new_tx_power)
 
 	return true;
 }
+#endif /* !CONFIG_DTM_POWER_CONTROL_AUTOMATIC */
 
 static enum dtm_err_code  dtm_vendor_specific_pkt(uint32_t vendor_cmd,
 						  uint32_t vendor_option)
@@ -1267,7 +1373,8 @@ static enum dtm_err_code  dtm_vendor_specific_pkt(uint32_t vendor_cmd,
 				     NRF_RADIO_SHORT_READY_START_MASK);
 
 #if CONFIG_FEM
-		if (dtm_inst.fem.gain != FEM_USE_DEFAULT_GAIN) {
+		if ((dtm_inst.fem.gain != FEM_USE_DEFAULT_GAIN) &&
+		    (!IS_ENABLED(CONFIG_DTM_POWER_CONTROL_AUTOMATIC))) {
 			if (fem_tx_gain_set(dtm_inst.fem.gain) != 0) {
 				dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
 				return DTM_ERROR_ILLEGAL_CONFIGURATION;
@@ -1284,12 +1391,14 @@ static enum dtm_err_code  dtm_vendor_specific_pkt(uint32_t vendor_cmd,
 		dtm_inst.state = STATE_CARRIER_TEST;
 		break;
 
+#if !CONFIG_DTM_POWER_CONTROL_AUTOMATIC
 	case SET_TX_POWER:
 		if (!dtm_set_txpower(vendor_option)) {
 			dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
 			return DTM_ERROR_ILLEGAL_CONFIGURATION;
 		}
 		break;
+#endif /* !CONFIG_DTM_POWER_CONTROL_AUTOMATIC */
 
 #if CONFIG_FEM
 	case FEM_ANTENNA_SELECT:
@@ -1300,10 +1409,12 @@ static enum dtm_err_code  dtm_vendor_specific_pkt(uint32_t vendor_cmd,
 
 		break;
 
+#if !CONFIG_DTM_POWER_CONTROL_AUTOMATIC
 	case FEM_GAIN_SET:
 		dtm_inst.fem.gain = vendor_option;
 
 		break;
+#endif /* !CONFIG_DTM_POWER_CONTROL_AUTOMATIC */
 
 	case FEM_RAMP_UP_SET:
 		dtm_inst.fem.vendor_ramp_up_time = vendor_option;
@@ -1708,92 +1819,43 @@ static uint32_t constant_tone_setup(uint8_t cte_info)
 
 static uint32_t transmit_power_set(int8_t parameter)
 {
-	size_t size = dtm_hw_radio_power_array_size_get();
-	const uint32_t *power = dtm_hw_radio_power_array_get();
+	static const uint8_t channel;
 
-	if (parameter == LE_TRANSMIT_POWER_LVL_SET_MIN) {
-		dtm_inst.txpower = dtm_hw_radio_min_power_get();
-		dtm_inst.event =
-			((dtm_inst.txpower <<
-			  LE_TRANSMIT_POWER_RESPONSE_LVL_POS) &
-			 LE_TRANSMIT_POWER_RESPONSE_LVL_MASK) |
-			LE_TRANSMIT_POWER_MIN_LVL_BIT;
+	uint32_t dtm_err = DTM_SUCCESS;
+	const uint16_t frequency = radio_frequency_get(channel);
+	const int8_t tx_power_min = dtm_radio_min_power_get(frequency);
+	const int8_t tx_power_max = dtm_radio_max_power_get(frequency);
 
-		return DTM_SUCCESS;
-	}
+	if ((parameter == LE_TRANSMIT_POWER_LVL_SET_MIN) ||
+	    (parameter <= tx_power_min)) {
+		dtm_inst.txpower = tx_power_min;
+		dtm_inst.event = LE_TRANSMIT_POWER_MIN_LVL_BIT;
+	} else if ((parameter == LE_TRANSMIT_POWER_LVL_SET_MAX) ||
+		   (parameter >= tx_power_max))  {
+		dtm_inst.txpower = tx_power_max;
+		dtm_inst.event = LE_TRANSMIT_POWER_MAX_LVL_BIT;
+	} else if ((parameter < LE_TRANSMIT_POWER_LVL_MIN) ||
+		   (parameter > LE_TRANSMIT_POWER_LVL_MAX)) {
+		dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
 
-	if (parameter == LE_TRANSMIT_POWER_LVL_SET_MAX) {
-		dtm_inst.txpower = dtm_hw_radio_max_power_get();
-		dtm_inst.event =
-			((dtm_inst.txpower <<
-			  LE_TRANSMIT_POWER_RESPONSE_LVL_POS) &
-			 LE_TRANSMIT_POWER_RESPONSE_LVL_MASK) |
-			LE_TRANSMIT_POWER_MAX_LVL_BIT;
-
-		return DTM_SUCCESS;
-	}
-
-	if ((parameter < LE_TRANSMIT_POWER_LVL_MIN) ||
-	    (parameter > LE_TRANSMIT_POWER_LVL_MAX)) {
-		dtm_inst.event =
-			((dtm_inst.txpower <<
-			  LE_TRANSMIT_POWER_RESPONSE_LVL_POS) &
-			 LE_TRANSMIT_POWER_RESPONSE_LVL_MASK) |
-			LE_TEST_STATUS_EVENT_ERROR;
-
-		if (dtm_inst.txpower == dtm_hw_radio_min_power_get()) {
+		if (dtm_inst.txpower == tx_power_min) {
 			dtm_inst.event |= LE_TRANSMIT_POWER_MIN_LVL_BIT;
-		} else if (dtm_inst.txpower == dtm_hw_radio_max_power_get()) {
+		} else if (dtm_inst.txpower == tx_power_max) {
 			dtm_inst.event |= LE_TRANSMIT_POWER_MAX_LVL_BIT;
 		} else {
 			/* Do nothing. */
 		}
 
-		return DTM_ERROR_ILLEGAL_CONFIGURATION;
+		dtm_err = DTM_ERROR_ILLEGAL_CONFIGURATION;
+	} else {
+		/* Look for the nearest tansmit power level and set it. */
+		dtm_inst.txpower = dtm_radio_nearest_power_get(parameter, frequency);
 	}
 
-	if (parameter <= ((int8_t) dtm_hw_radio_min_power_get())) {
-		dtm_inst.txpower = dtm_hw_radio_min_power_get();
-		dtm_inst.event =
-			((dtm_inst.txpower <<
-			  LE_TRANSMIT_POWER_RESPONSE_LVL_POS) &
-			 LE_TRANSMIT_POWER_RESPONSE_LVL_MASK) |
-			LE_TRANSMIT_POWER_MIN_LVL_BIT;
+	dtm_inst.event |= (dtm_inst.txpower << LE_TRANSMIT_POWER_RESPONSE_LVL_POS) &
+			  LE_TRANSMIT_POWER_RESPONSE_LVL_MASK;
 
-		return DTM_SUCCESS;
-	}
-
-	if (parameter >= ((int8_t) dtm_hw_radio_max_power_get())) {
-		dtm_inst.txpower = dtm_hw_radio_max_power_get();
-		dtm_inst.event =
-			((dtm_inst.txpower <<
-			  LE_TRANSMIT_POWER_RESPONSE_LVL_POS) &
-			 LE_TRANSMIT_POWER_RESPONSE_LVL_MASK) |
-			LE_TRANSMIT_POWER_MAX_LVL_BIT;
-
-		return DTM_SUCCESS;
-	}
-
-	/* Look for the nearest tansmit power level and set it. */
-	for (size_t i = 1; i < size; i++) {
-		if (((int8_t) power[i]) > parameter) {
-			int8_t diff = abs((int8_t) power[i] - parameter);
-
-			if (diff <  abs((int8_t) power[i - 1] - parameter)) {
-				dtm_inst.txpower = power[i];
-			} else {
-				dtm_inst.txpower = power[i - 1];
-			}
-
-			break;
-		}
-	}
-
-	dtm_inst.event =
-		(dtm_inst.txpower << LE_TRANSMIT_POWER_RESPONSE_LVL_POS) &
-		LE_TRANSMIT_POWER_RESPONSE_LVL_MASK;
-
-	return DTM_SUCCESS;
+	return dtm_err;
 }
 
 static enum dtm_err_code on_test_setup_cmd(enum dtm_ctrl_code control,
@@ -2008,7 +2070,8 @@ static enum dtm_err_code on_test_transmit_cmd(uint32_t length, uint32_t freq)
 			NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK, false);
 
 #if CONFIG_FEM
-	if (dtm_inst.fem.gain != FEM_USE_DEFAULT_GAIN) {
+	if ((dtm_inst.fem.gain != FEM_USE_DEFAULT_GAIN) &&
+	    (!IS_ENABLED(CONFIG_DTM_POWER_CONTROL_AUTOMATIC))) {
 		if (fem_tx_gain_set(dtm_inst.fem.gain) != 0) {
 			dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
 			return DTM_ERROR_ILLEGAL_CONFIGURATION;
