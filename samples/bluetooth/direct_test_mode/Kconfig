@@ -42,5 +42,15 @@ config DTM_USB
 	  Use USB instead of UART as the DTM interface. For nRF5340 the USB from application core
 	  is used as communication interface.
 
+config DTM_POWER_CONTROL_AUTOMATIC
+	bool "Automatic power control"
+	depends on FEM
+	default y
+	help
+	  Set the SoC output power and the front-end module gain to achieve the Tx output power
+	  requested by user. If the exact value cannot be achieved, power is set to the closest
+	  possible value. If this option is disabled, user can set the SoC output power and the
+	  front-end module gain with the separate vendor specific commands.
+
 rsource "src/fem/Kconfig"
 source "Kconfig.zephyr"

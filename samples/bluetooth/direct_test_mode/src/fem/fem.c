@@ -277,6 +277,13 @@ int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power, uint16_
 	return output_power;
 }
 
+int8_t fem_tx_output_power_check(int8_t power, uint16_t freq_mhz, bool tx_power_ceiling)
+{
+	mpsl_tx_power_split_t power_split = { 0 };
+
+	return mpsl_fem_tx_power_split(power, &power_split, freq_mhz, tx_power_ceiling);
+}
+
 uint32_t fem_default_tx_gain_get(void)
 {
 	if (fem_api->tx_default_gain_get) {
