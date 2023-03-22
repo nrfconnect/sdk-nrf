@@ -106,6 +106,37 @@ The DTM sample supports all four PHYs specified in DTM, but not all devices supp
    * - LE Coded S=2
      - Yes
 
+Tx output power
+===============
+
+This sample has several ways to set the device output power.
+The behavior of the commands vary depending on the hardware configuration and Kconfig options as follows:
+
+* DTM without front-end module support:
+
+   * The official ``0x09`` DTM command sets the SoC Tx output power closest to the requested one when the exact power level is not supported.
+   * The ``SET_TX_POWER`` vendor-specific command sets the SoC Tx output power.
+     You must use only the Tx power values supported by your SoC.
+     See the actual values in the SoC Product Specification.
+
+* DTM with front-end module support:
+
+   * The official ``0x09`` DTM command when the :kconfig:option:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC` Kconfig option is enabled, which is a default state.
+     This command takes into account the SoC output power and the front-end module gain to set total output power.
+
+     .. note::
+        The returned output power using this command is valid only for channel 0.
+        If you perform the test on a different channel than the real output power measured by your tester device, it can be equal or less than the returned one.
+        This is because the DTM specification has a limitation when it assumes that output power is the same for all channels.
+        That is why the chosen output power might not be available for the given channel.
+
+   * When the :kconfig:option:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC` Kconfig option is disabled, the official ``0x09`` DTM command sets only the SoC output power.
+     These commands behave in the same way for the DTM without front-end module support.
+     Additionally, you can use following vendor-specific commands:
+
+      * The ``SET_TX_POWER`` command sets the SoC Tx output power.
+      * The ``FEM_GAIN_SET`` command sets the front-end module gain.
+
 Bluetooth Direction Finding support
 ===================================
 
@@ -256,6 +287,15 @@ Vendor specific commands can be divided into different categories as follows:
 
   If you have changed the default parameters of the front-end module, you can restore them.
   You can either send the ``FEM_DEFAULT_PARAMS_SET`` command or power cycle the front-end module.
+
+.. note::
+  When you build the DTM sample with support for front-end modules and the :kconfig:option:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC` Kconfig option is enabled, the following vendor-specific command are not available:
+
+      * ``SET_TX_POWER``
+      * ``FEM_GAIN_SET``
+
+   You can disable the :kconfig:option:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC` Kconfig option if you want to set the SoC output power and the front-end module gain by separate commands.
+   The official DTM command ``0x09`` for setting power level takes into account the SoC output power and the front-end module gain to set the total requested output power.
 
 The DTM-to-Serial adaptation layer
 ==================================
