@@ -317,6 +317,7 @@ To clone the repositories, complete the following steps:
       west update
 
    Depending on your connection, this might take some time.
+   See :ref:`gs_git_auth` if you are asked for your GitHub username and password.
 #. Export a :ref:`Zephyr CMake package <zephyr:cmake_pkg>`.
    This allows CMake to automatically load the boilerplate code required for building |NCS| applications::
 
@@ -464,7 +465,7 @@ Define the required environment variables as follows, depending on your operatin
 
       Navigate to the :file:`ncs` folder and enter the following command: ``zephyr\zephyr-env.cmd``
 
-      If you need to define additional environment variables, create the file :file:`%userprofile%\zephyrrc.cmd` and add the variables there.
+      If you need to define additional environment variables, create the file :file:`%userprofile%\\zephyrrc.cmd` and add the variables there.
       This file is loaded automatically when you run the above command.
       See :ref:`zephyr:env_vars_zephyrrc` for more information.
 

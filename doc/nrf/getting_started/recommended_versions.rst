@@ -176,6 +176,42 @@ Other versions might also work, but are not verified.
          * - West
            - |west_recommended_ver_darwin|
 
+.. _gs_git_auth:
+
+Git authentication
+******************
+
+During the process of :ref:`getting the |NCS| code <cloning_the_repositories>`,
+in some cases running ``west update`` might require :ref:`west <zephyr:west>` to
+fetch from private repositories on GitHub. Because the `west manifest file`_
+uses ``https://`` URLs instead of ``ssh://``, you may be prompted to type your
+GitHub username and Personal Access Token multiple times; GitHub has a
+comprehensive `documentation page
+<https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github>`_
+on the subject.
+In many cases (including Windows) the Git installation includes `Git Credential Manager
+<https://github.com/git-ecosystem/git-credential-manager>`_, which will handle
+GitHub authentication.
+
+However, if you would are already using `SSH-based authentication
+<https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent>`_,
+you can reuse your SSH setup by adding the following to your
+:file:`~/.gitconfig` (or :file:`%userprofile%\\.gitconfig` on Windows):
+
+.. code-block:: console
+
+   [url "ssh://git@github.com"]
+           insteadOf = https://github.com
+
+This will rewrite the URLs on-the-fly so that Git uses ``ssh://`` for all
+network operations with GitHub.
+
+Another option instead is to create a :file:`~/.git-credentials`
+(or :file:`%userprofile%\\.git-credentials` on Windows) and add this line to it:
+
+.. code-block:: console
+
+   https://<GitHub username>:<Personal Access Token>@github.com
 
 Required Python dependencies
 ****************************
