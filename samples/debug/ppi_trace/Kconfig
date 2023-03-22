@@ -49,18 +49,6 @@ config PPI_TRACE_PIN_RADIO_ACTIVE
 
 endif # USE_BLUETOOTH_RADIO_EVENTS
 
-config USE_RTC2
-	bool
-	default y
-	depends on HAS_HW_NRF_RTC2
-	select COUNTER_RTC2
-
-config USE_RTC0
-	bool
-	default y
-	depends on !HAS_HW_NRF_RTC2
-	select COUNTER_RTC0
-
 endmenu
 
 source "Kconfig.zephyr"
