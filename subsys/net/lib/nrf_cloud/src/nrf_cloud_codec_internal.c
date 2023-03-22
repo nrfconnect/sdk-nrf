@@ -2444,8 +2444,6 @@ int nrf_cloud_gnss_msg_json_encode(const struct nrf_cloud_gnss_data * const gnss
 	}
 
 	int ret;
-	cJSON *data_obj = NULL;
-	const char *nmea = NULL;
 
 	/* Add the app ID, message type, and timestamp */
 	if (json_add_str_cs(gnss_msg_obj,
@@ -2464,7 +2462,9 @@ int nrf_cloud_gnss_msg_json_encode(const struct nrf_cloud_gnss_data * const gnss
 	switch (gnss->type) {
 	case NRF_CLOUD_GNSS_TYPE_MODEM_PVT:
 	case NRF_CLOUD_GNSS_TYPE_PVT:
-		data_obj = cJSON_CreateObject();
+	{
+		cJSON * const data_obj =
+			cJSON_AddObjectToObject(gnss_msg_obj, NRF_CLOUD_JSON_DATA_KEY);
 
 		/* Add PVT to the data object */
 		if (gnss->type == NRF_CLOUD_GNSS_TYPE_PVT) {
@@ -2481,17 +2481,13 @@ int nrf_cloud_gnss_msg_json_encode(const struct nrf_cloud_gnss_data * const gnss
 			goto cleanup;
 		}
 
-		/* Add the data object to the message */
-		if (json_add_obj_cs(gnss_msg_obj, NRF_CLOUD_JSON_DATA_KEY, data_obj)) {
-			ret = ENOMEM;
-			goto cleanup;
-		}
-		/* data_obj now belongs to gnss_msg_obj */
-
 		break;
-
+	}
 	case NRF_CLOUD_GNSS_TYPE_MODEM_NMEA:
 	case NRF_CLOUD_GNSS_TYPE_NMEA:
+	{
+		const char *nmea = NULL;
+
 		if (gnss->type == NRF_CLOUD_GNSS_TYPE_MODEM_NMEA) {
 #if defined(CONFIG_NRF_MODEM)
 			if (gnss->mdm_nmea) {
@@ -2517,7 +2513,9 @@ int nrf_cloud_gnss_msg_json_encode(const struct nrf_cloud_gnss_data * const gnss
 			ret = -ENOMEM;
 			goto cleanup;
 		}
+
 		break;
+	}
 	default:
 		ret = -EPROTO;
 		goto cleanup;
@@ -2529,18 +2527,13 @@ cleanup:
 	/* On failure, remove any items added to the provided object */
 	cJSON_DeleteItemFromObject(gnss_msg_obj, NRF_CLOUD_JSON_APPID_KEY);
 	cJSON_DeleteItemFromObject(gnss_msg_obj, NRF_CLOUD_JSON_MSG_TYPE_KEY);
-	cJSON_DeleteItemFromObject(gnss_msg_obj, NRF_CLOUD_JSON_DATA_KEY);
 	cJSON_DeleteItemFromObject(gnss_msg_obj, NRF_CLOUD_MSG_TIMESTAMP_KEY);
-	/* Cleanup data_obj if it wasn't added to gnss_msg_obj */
-	if (data_obj) {
-		cJSON_Delete(data_obj);
-	}
+	cJSON_DeleteItemFromObject(gnss_msg_obj, NRF_CLOUD_JSON_DATA_KEY);
 
 	return ret;
 }
 
-int nrf_cloud_alert_encode(const struct nrf_cloud_alert_info *alert,
-			   struct nrf_cloud_data *output)
+int nrf_cloud_alert_encode(const struct nrf_cloud_alert_info *alert, struct nrf_cloud_data *output)
 {
 #if defined(CONFIG_NRF_CLOUD_ALERTS)
 	int ret;
@@ -2592,4 +2585,68 @@ int nrf_cloud_alert_encode(const struct nrf_cloud_alert_info *alert,
 	output->len = 0;
 #endif /* CONFIG_NRF_CLOUD_ALERTS */
 	return 0;
+}
+
+int nrf_cloud_location_request_msg_json_encode(const struct lte_lc_cells_info * const cells_inf,
+					       const struct wifi_scan_info * const wifi_inf,
+					       const bool request_loc, cJSON * const loc_req_obj)
+{
+	if (!loc_req_obj || (!cells_inf && !wifi_inf)) {
+		return -EINVAL;
+	} else if (!cells_inf && (wifi_inf->cnt < NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN)) {
+		return -EDOM;
+	}
+
+	int err = 0;
+	cJSON *data_obj = NULL;
+
+	/* Add the app ID, message type, and timestamp */
+	if (json_add_str_cs(loc_req_obj,
+			    NRF_CLOUD_JSON_APPID_KEY,
+			    NRF_CLOUD_JSON_APPID_VAL_LOCATION) ||
+	    json_add_str_cs(loc_req_obj,
+			    NRF_CLOUD_JSON_MSG_TYPE_KEY,
+			    NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA)) {
+		err = -ENOMEM;
+		goto cleanup;
+	}
+
+	data_obj = cJSON_AddObjectToObject(loc_req_obj, NRF_CLOUD_JSON_DATA_KEY);
+	if (!data_obj) {
+		err = -ENOMEM;
+		goto cleanup;
+	}
+
+	if (cells_inf) {
+		err = nrf_cloud_cell_pos_req_json_encode(cells_inf, data_obj);
+		if (err) {
+			LOG_ERR("Failed to add cell info to location request, error: %d", err);
+			goto cleanup;
+		}
+	}
+
+	if (wifi_inf) {
+		err = nrf_cloud_wifi_req_json_encode(wifi_inf, data_obj);
+		if (err) {
+			LOG_ERR("Failed to add WiFi info to location request, error: %d", err);
+			goto cleanup;
+		}
+	}
+
+	/* By default, nRF Cloud will send the location to the device */
+	if (!request_loc &&
+	    !cJSON_AddNumberToObjectCS(data_obj, NRF_CLOUD_LOCATION_KEY_DOREPLY, 0)) {
+		err = -ENOMEM;
+		goto cleanup;
+	}
+
+	return 0;
+
+cleanup:
+	/* On failure, remove any items added to the provided object */
+	cJSON_DeleteItemFromObject(loc_req_obj, NRF_CLOUD_JSON_APPID_KEY);
+	cJSON_DeleteItemFromObject(loc_req_obj, NRF_CLOUD_JSON_MSG_TYPE_KEY);
+	cJSON_DeleteItemFromObject(loc_req_obj, NRF_CLOUD_JSON_DATA_KEY);
+
+	return err;
 }
