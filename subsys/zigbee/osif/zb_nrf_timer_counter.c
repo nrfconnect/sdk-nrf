@@ -27,7 +27,7 @@ typedef struct {
 } zb_timer_t;
 
 static zb_timer_t zb_timer = {
-	.device = DEVICE_DT_GET(DT_NODELABEL(timer2)),
+	.device = DEVICE_DT_GET(DT_CHOSEN(ncs_zigbee_timer)),
 	.is_init = ZB_FALSE,
 	.is_running = ATOMIC_INIT(0)
 };
