@@ -161,6 +161,7 @@ nRF9160: Asset Tracker v2
 
   * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
   * The application now integrates the :ref:`lib_lwm2m_client_utils` FOTA callback functionality.
+  * The application now uses the function :c:func:`nrf_cloud_location_request_msg_json_encode` to create an nRF Cloud location request message.
 
 nRF9160: Serial LTE modem
 -------------------------
@@ -400,6 +401,8 @@ Libraries for networking
     * The :c:func:`nrf_cloud_device_status_msg_encode` function now includes the service info when encoding the device status.
     * Renamed files :file:`nrf_cloud_codec.h` and :file:`nrf_cloud_codec.c` to :file:`nrf_cloud_codec_internal.h` and :file:`nrf_cloud_codec_internal.c` respectively.
     * Standarized encode and decode function names in the codec.
+    * Moved the :c:func:`nrf_cloud_location_request_json_get` function from the :file:`nrf_cloud_location.h` file to :file:`nrf_cloud_codec.h`.
+      The function is now renamed to :c:func:`nrf_cloud_location_request_msg_json_encode`.
 
 * :ref:`lib_lwm2m_client_utils` library:
 

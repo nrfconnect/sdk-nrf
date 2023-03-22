@@ -15,7 +15,6 @@
 #include <modem/lte_lc.h>
 #include <net/nrf_cloud.h>
 #include <net/wifi_location_common.h>
-#include <cJSON.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -108,23 +107,6 @@ int nrf_cloud_location_request(const struct lte_lc_cells_info *const cells_inf,
 			       const struct wifi_scan_info *const wifi_inf,
 			       const bool request_loc, nrf_cloud_location_response_t cb);
 #endif /* CONFIG_NRF_CLOUD_MQTT */
-
-/** @brief Get the reference to a cJSON object containing a location request.
- *
- * @param cells_inf Cell info; can be NULL if Wi-Fi info is provided.
- * @param wifi_inf Wi-Fi info; can be NULL if cell info is provided.
- * @param request_loc If true, cloud will send location to the device.
- *                    If false, cloud will not send location to the device.
- * @param req_obj_out The reference to the generated cJSON object.
- *
- * @retval 0 If successful.
- * @retval -EDOM The number of access points in the Wi-Fi-only request was smaller than
- *               the minimum required value NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN.
- * @return A negative value indicates an error.
- */
-int nrf_cloud_location_request_json_get(const struct lte_lc_cells_info *const cells_inf,
-					const struct wifi_scan_info *const wifi_inf,
-					const bool request_loc, cJSON **req_obj_out);
 
 /** @brief Process location data received from nRF Cloud over MQTT or REST.
  *

@@ -9,6 +9,7 @@
 #include <zephyr/net/socket.h>
 #include <zephyr/logging/log.h>
 #include <net/nrf_cloud_location.h>
+#include <net/nrf_cloud_codec.h>
 
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_codec_internal.h"
@@ -25,10 +26,10 @@ int nrf_cloud_location_request(const struct lte_lc_cells_info *const cells_inf,
 	}
 
 	int err = 0;
-	cJSON *location_req_obj = NULL;
+	cJSON *location_req_obj = cJSON_CreateObject();
 
-	err = nrf_cloud_location_request_json_get(cells_inf, wifi_inf,
-						  request_loc, &location_req_obj);
+	err = nrf_cloud_location_request_msg_json_encode(cells_inf, wifi_inf,
+							 request_loc, location_req_obj);
 	if (!err) {
 		if (request_loc) {
 			nfsm_set_location_response_cb(cb);
@@ -44,56 +45,6 @@ int nrf_cloud_location_request(const struct lte_lc_cells_info *const cells_inf,
 int nrf_cloud_location_scell_data_get(struct lte_lc_cell *const cell_inf)
 {
 	return nrf_cloud_get_single_cell_modem_info(cell_inf);
-}
-
-int nrf_cloud_location_request_json_get(const struct lte_lc_cells_info *const cells_inf,
-					const struct wifi_scan_info *const wifi_inf,
-					const bool request_loc, cJSON **req_obj_out)
-{
-	if (!req_obj_out || (!cells_inf && !wifi_inf)) {
-		return -EINVAL;
-	} else if (!cells_inf && (wifi_inf->cnt < NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN)) {
-		return -EDOM;
-	}
-
-	int err = 0;
-	*req_obj_out = json_create_req_obj(NRF_CLOUD_JSON_APPID_VAL_LOCATION,
-					   NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
-	cJSON *data_obj = cJSON_AddObjectToObject(*req_obj_out, NRF_CLOUD_JSON_DATA_KEY);
-
-	if (!data_obj) {
-		err = -ENOMEM;
-		goto cleanup;
-	}
-
-	if (cells_inf) {
-		err = nrf_cloud_cell_pos_req_json_encode(cells_inf, data_obj);
-		if (err) {
-			LOG_ERR("Failed to add cell info to location request, error: %d", err);
-			goto cleanup;
-		}
-	}
-
-	if (wifi_inf) {
-		err = nrf_cloud_wifi_req_json_encode(wifi_inf, data_obj);
-		if (err) {
-			LOG_ERR("Failed to add WiFi info to location request, error: %d", err);
-			goto cleanup;
-		}
-	}
-
-	/* By default, nRF Cloud will send the location to the device */
-	if (!request_loc &&
-	    !cJSON_AddNumberToObjectCS(data_obj, NRF_CLOUD_LOCATION_KEY_DOREPLY, 0)) {
-		err = -ENOMEM;
-		goto cleanup;
-	}
-
-	return 0;
-
-cleanup:
-	cJSON_Delete(*req_obj_out);
-	return err;
 }
 
 int nrf_cloud_location_process(const char *buf, struct nrf_cloud_location_result *result)

@@ -728,7 +728,8 @@ int cloud_codec_encode_cloud_location(
 		return -ENODATA;
 	}
 
-	err = nrf_cloud_location_request_json_get(
+	root_obj = cJSON_CreateObject();
+	err = nrf_cloud_location_request_msg_json_encode(
 		cloud_location->neighbor_cells_valid ? &cell_info : NULL,
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 		cloud_location->wifi_access_points_valid ? &wifi_info : NULL,
@@ -736,9 +737,10 @@ int cloud_codec_encode_cloud_location(
 		NULL,
 #endif
 		true,
-		&root_obj);
+		root_obj);
 	if (err) {
-		LOG_ERR("nrf_cloud_location_request_json_get, error: %d", err);
+		LOG_ERR("nrf_cloud_location_request_msg_json_encode, error: %d", err);
+		cJSON_Delete(root_obj);
 		return -ENOMEM;
 	}
 
