@@ -23,6 +23,9 @@ config MBEDTLS_SHA1_C
 config MBEDTLS_SHA512_C
 	default n
 
+config MBEDTLS_MD_C
+	default n if !MBEDTLS_LEGACY_CRYPTO_C
+
 config MBEDTLS_TLS_LIBRARY
 	default n
 
