@@ -545,6 +545,8 @@
 
 .. _`Wi-Fi Alliance Certification for nRF70 Series`: https://infocenter.nordicsemi.com/pdf/nwp_045.pdf
 
+.. _`Errata 254`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52840_Rev3%2FERR%2FnRF52840%2FRev3%2Flatest%2Fconfig_840_254.html
+
 .. ### Source: academy.nordicsemi.com
 
 .. _`DevAcademy`:

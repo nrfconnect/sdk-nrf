@@ -13,6 +13,7 @@
 
 #include <zephyr/sys/printk.h>
 
+#include <mpsl_fem_config_common.h>
 #include <mpsl_fem_protocol_api.h>
 
 #include "fem.h"
@@ -319,3 +320,41 @@ int fem_init(NRF_TIMER_Type *timer_instance, uint8_t compare_channel_mask)
 
 	return 0;
 }
+
+#if defined(NRF52840_XXAA) || defined(NRF52833_XXAA)
+void fem_errata_254(nrf_radio_mode_t mode)
+{
+	static uint8_t old_mode = NRF_RADIO_MODE_NRF_1MBIT;
+
+	if (*(volatile uint32_t *) 0x10000330UL != 0xFFFFFFFFUL) {
+		*(volatile uint32_t *) 0x4000174CUL = *(volatile uint32_t *) 0x10000330UL;
+	}
+
+	if (mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
+		if (*(volatile uint32_t *) 0x10000334UL != 0xFFFFFFFFUL) {
+			*(volatile uint32_t *) 0x40001584UL = *(volatile uint32_t *) 0x10000334UL;
+		}
+		if (*(volatile uint32_t *) 0x10000338UL != 0xFFFFFFFFUL) {
+			*(volatile uint32_t *) 0x40001588UL = *(volatile uint32_t *) 0x10000338UL;
+		}
+	}
+
+	if ((mode != NRF_RADIO_MODE_IEEE802154_250KBIT) && (mode != old_mode)) {
+		if (*(volatile uint32_t *) 0x10000334UL != 0xFFFFFFFFUL) {
+			*(volatile uint32_t *) 0x40001584UL =
+			((*(volatile uint32_t *) 0x40001584UL) & 0xBFFFFFFUL) | 0x00010000UL;
+		}
+		if (*(volatile uint32_t *) 0x10000338UL != 0xFFFFFFFFUL) {
+			*(volatile uint32_t *) 0x40001588UL =
+			((*(volatile uint32_t *) 0x40001588UL) & 0xBFFFFFFUL);
+		}
+	}
+
+	old_mode = mode;
+}
+#else
+void fem_errata_254(nrf_radio_mode_t mode)
+{
+
+}
+#endif /* defined(NRF52840_XXAA) || defined(NRF52833_XXAA) */
