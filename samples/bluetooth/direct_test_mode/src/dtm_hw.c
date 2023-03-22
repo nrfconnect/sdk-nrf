@@ -38,6 +38,9 @@ const uint32_t nrf_power_value[] = {
 	RADIO_TXPOWER_TXPOWER_Neg1dBm,
 #endif /* defined (RADIO_TXPOWER_TXPOWER_Neg1dBm) */
 	RADIO_TXPOWER_TXPOWER_0dBm,
+#if defined(RADIO_TXPOWER_TXPOWER_Pos1dBm)
+	RADIO_TXPOWER_TXPOWER_Pos1dBm,
+#endif /* RADIO_TXPOWER_TXPOWER_Pos1dBm */
 #if defined(RADIO_TXPOWER_TXPOWER_Pos2dBm)
 	RADIO_TXPOWER_TXPOWER_Pos2dBm,
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos2dBm) */
