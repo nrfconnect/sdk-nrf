@@ -1377,6 +1377,15 @@ NCSDK-14117: Build fails for nRF52840DK in the ``prj_b0_wwcb`` configuration
 nRF5340 Audio
 =============
 
+.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+OCT-2501: Charging over seven hours results in error
+  Since the nRF5340 Audio DK uses a large battery, the nPM1100 can go into error when charging time surpasses 7 hours.
+  This is because of a protection timeout on the PMIC.
+  The charging is stopped when this error occurs.
+
+  **Workaround:** To start the charging again, turn the nRF5340 Audio DK off and then on again.
+
 .. rst-class:: v2-3-0
 
 OCT-2472: Headset fault upon gateway reset in the bidirectional stream mode

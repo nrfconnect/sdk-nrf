@@ -419,78 +419,80 @@ LEDs
 
 To indicate the tasks performed, the application uses the LED behavior described in the following table:
 
-+--------------------------+-----------------------------------------------------------------------------------------------------+
-| LED                      |Indication                                                                                           |
-+==========================+=====================================================================================================+
-| **LED1**                 | Off - No Bluetooth connection.                                                                      |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Blinking blue - Depending on the device and the mode:                                               |
-|                          |                                                                                                     |
-|                          | * Headset: Kits have started streaming audio (BIS and CIS modes).                                   |
-|                          | * Gateway: Kit has connected to a headset (CIS mode) or has started broadcasting audio (BIS mode).  |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Solid blue - Headset, depending on the mode:                                                        |
-|                          | Kits have connected to the gateway (CIS mode) or found a broadcasting stream (BIS mode).            |
-+--------------------------+-----------------------------------------------------------------------------------------------------+
-| **LED2**                 | Off - Sync not achieved.                                                                            |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Solid green - Sync achieved (both drift and presentation compensation are in the ``LOCKED`` state). |
-+--------------------------+-----------------------------------------------------------------------------------------------------+
-| **LED3**                 | Blinking green - The nRF5340 Audio DK application core is running.                                  |
-+--------------------------+-----------------------------------------------------------------------------------------------------+
-| **CODEC**                | Off - No configuration loaded to the onboard hardware codec.                                        |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Solid green - Hardware codec configuration loaded.                                                  |
-+--------------------------+-----------------------------------------------------------------------------------------------------+
-| **RGB1**                 | Solid green - The device is programmed as the gateway.                                              |
-| (bottom side LEDs around +-----------------------------------------------------------------------------------------------------+
-| the center opening)      | Solid blue - The device is programmed as the left headset.                                          |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Solid magenta - The device is programmed as the right headset.                                      |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Solid yellow - The device is programmed with factory firmware.                                      |
-|                          | It must be re-programmed as gateway or headset.                                                     |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Solid red (debug mode) - Fault in the application core has occurred.                                |
-|                          | See UART log for details and use the **RESET** button to reset the device.                          |
-|                          | In the release mode, the device resets automatically with no indication on LED or UART.             |
-+--------------------------+-----------------------------------------------------------------------------------------------------+
-| **RGB 2**                | Controlled by the Bluetooth LE Controller on the network core.                                      |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Blinking green - Ongoing CPU activity.                                                              |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Solid red - Error.                                                                                  |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Solid white (all colors on) - The **RGB 2** LED is not initialized by the Bluetooth LE Controller.  |
-+--------------------------+-----------------------------------------------------------------------------------------------------+
-| **ERR**                  | PMIC error or a charging error (or both).                                                           |
-+--------------------------+-----------------------------------------------------------------------------------------------------+
-| **CHG**                  | Off - Charge completed or no battery connected.                                                     |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Solid yellow - Charging in progress.                                                                |
-+--------------------------+-----------------------------------------------------------------------------------------------------+
-| **OB/EXT**               | Off - No 3.3 V power available.                                                                     |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Solid green - On-board hardware codec selected.                                                     |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Solid yellow - External hardware codec selected.                                                    |
-|                          | This LED turns solid yellow also when the devices are reset, for the time then pins are floating.   |
-+--------------------------+-----------------------------------------------------------------------------------------------------+
-| **FTDI SPI**             | Off - No data is written to the hardware codec using SPI.                                           |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Yellow - The same SPI is used for both the hardware codec and the SD card.                          |
-|                          | When this LED is yellow, the shared SPI is used by the FTDI to write data to the hardware codec.    |
-+--------------------------+-----------------------------------------------------------------------------------------------------+
-| **IFMCU**                | Off - No PC connection available.                                                                   |
-| (bottom side)            +-----------------------------------------------------------------------------------------------------+
-|                          | Solid green - Connected to PC.                                                                      |
-|                          +-----------------------------------------------------------------------------------------------------+
-|                          | Rapid green flash - USB enumeration failed.                                                         |
-+--------------------------+-----------------------------------------------------------------------------------------------------+
-| **HUB**                  | Off - No PC connection available.                                                                   |
-| (bottom side)            +-----------------------------------------------------------------------------------------------------+
-|                          | Green - Standard USB hub operation.                                                                 |
-+--------------------------+-----------------------------------------------------------------------------------------------------+
++--------------------------+-----------------------------------------------------------------------------------------------------------+
+| LED                      |Indication                                                                                                 |
++==========================+===========================================================================================================+
+| **LED1**                 | Off - No Bluetooth connection.                                                                            |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Blinking blue - Depending on the device and the mode:                                                     |
+|                          |                                                                                                           |
+|                          | * Headset: Kits have started streaming audio (BIS and CIS modes).                                         |
+|                          | * Gateway: Kit has connected to a headset (CIS mode) or has started broadcasting audio (BIS mode).        |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Solid blue - Headset, depending on the mode:                                                              |
+|                          | Kits have connected to the gateway (CIS mode) or found a broadcasting stream (BIS mode).                  |
++--------------------------+-----------------------------------------------------------------------------------------------------------+
+| **LED2**                 | Off - Sync not achieved.                                                                                  |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Solid green - Sync achieved (both drift and presentation compensation are in the ``LOCKED`` state).       |
++--------------------------+-----------------------------------------------------------------------------------------------------------+
+| **LED3**                 | Blinking green - The nRF5340 Audio DK application core is running.                                        |
++--------------------------+-----------------------------------------------------------------------------------------------------------+
+| **CODEC**                | Off - No configuration loaded to the onboard hardware codec.                                              |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Solid green - Hardware codec configuration loaded.                                                        |
++--------------------------+-----------------------------------------------------------------------------------------------------------+
+| **RGB1**                 | Solid green - The device is programmed as the gateway.                                                    |
+| (bottom side LEDs around +-----------------------------------------------------------------------------------------------------------+
+| the center opening)      | Solid blue - The device is programmed as the left headset.                                                |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Solid magenta - The device is programmed as the right headset.                                            |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Solid yellow - The device is programmed with factory firmware.                                            |
+|                          | It must be re-programmed as gateway or headset.                                                           |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Solid red (debug mode) - Fault in the application core has occurred.                                      |
+|                          | See UART log for details and use the **RESET** button to reset the device.                                |
+|                          | In the release mode, the device resets automatically with no indication on LED or UART.                   |
++--------------------------+-----------------------------------------------------------------------------------------------------------+
+| **RGB 2**                | Controlled by the Bluetooth LE Controller on the network core.                                            |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Blinking green - Ongoing CPU activity.                                                                    |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Solid red - Error.                                                                                        |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Solid white (all colors on) - The **RGB 2** LED is not initialized by the Bluetooth LE Controller.        |
++--------------------------+-----------------------------------------------------------------------------------------------------------+
+| **ERR**                  | PMIC error or a charging error (or both).                                                                 |
+|                          | Also turns on when charging the battery exceeds seven hours, since the PMIC has a protection timeout,     |
+|                          | which stops the charging.                                                                                 |
++--------------------------+-----------------------------------------------------------------------------------------------------------+
+| **CHG**                  | Off - Charge completed or no battery connected.                                                           |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Solid yellow - Charging in progress.                                                                      |
++--------------------------+-----------------------------------------------------------------------------------------------------------+
+| **OB/EXT**               | Off - No 3.3 V power available.                                                                           |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Solid green - On-board hardware codec selected.                                                           |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Solid yellow - External hardware codec selected.                                                          |
+|                          | This LED turns solid yellow also when the devices are reset, for the time then pins are floating.         |
++--------------------------+-----------------------------------------------------------------------------------------------------------+
+| **FTDI SPI**             | Off - No data is written to the hardware codec using SPI.                                                 |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Yellow - The same SPI is used for both the hardware codec and the SD card.                                |
+|                          | When this LED is yellow, the shared SPI is used by the FTDI to write data to the hardware codec.          |
++--------------------------+-----------------------------------------------------------------------------------------------------------+
+| **IFMCU**                | Off - No PC connection available.                                                                         |
+| (bottom side)            +-----------------------------------------------------------------------------------------------------------+
+|                          | Solid green - Connected to PC.                                                                            |
+|                          +-----------------------------------------------------------------------------------------------------------+
+|                          | Rapid green flash - USB enumeration failed.                                                               |
++--------------------------+-----------------------------------------------------------------------------------------------------------+
+| **HUB**                  | Off - No PC connection available.                                                                         |
+| (bottom side)            +-----------------------------------------------------------------------------------------------------------+
+|                          | Green - Standard USB hub operation.                                                                       |
++--------------------------+-----------------------------------------------------------------------------------------------------------+
 
 .. _nrf53_audio_app_configuration:
 
