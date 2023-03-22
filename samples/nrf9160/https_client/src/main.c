@@ -17,9 +17,9 @@
 
 #define HTTPS_HOSTNAME "example.com"
 
-#define HTTP_HEAD                                                              \
-	"HEAD / HTTP/1.1\r\n"                                                  \
-	"Host: " HTTPS_HOSTNAME ":443\r\n"                                     \
+#define HTTP_HEAD                                                                                  \
+	"HEAD / HTTP/1.1\r\n"                                                                      \
+	"Host: " HTTPS_HOSTNAME ":443\r\n"                                                         \
 	"Connection: close\r\n\r\n"
 
 #define HTTP_HEAD_LEN (sizeof(HTTP_HEAD) - 1)
@@ -34,7 +34,7 @@ static char recv_buf[RECV_BUF_SIZE];
 
 /* Certificate for `example.com` */
 static const char cert[] = {
-	#include "../cert/DigiCertGlobalRootCA.pem"
+#include "../cert/DigiCertGlobalRootCA.pem"
 };
 
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
@@ -58,9 +58,8 @@ int cert_provision(void)
 	}
 
 	if (exists) {
-		mismatch = modem_key_mgmt_cmp(TLS_SEC_TAG,
-					      MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-					      cert, strlen(cert));
+		mismatch = modem_key_mgmt_cmp(TLS_SEC_TAG, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert,
+					      strlen(cert));
 		if (!mismatch) {
 			printk("Certificate match\n");
 			return 0;
@@ -76,9 +75,8 @@ int cert_provision(void)
 	printk("Provisioning certificate\n");
 
 	/*  Provision certificate to the modem */
-	err = modem_key_mgmt_write(TLS_SEC_TAG,
-				   MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-				   cert, sizeof(cert) - 1);
+	err = modem_key_mgmt_write(TLS_SEC_TAG, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert,
+				   sizeof(cert) - 1);
 	if (err) {
 		printk("Failed to provision certificate, err %d\n", err);
 		return err;
@@ -123,8 +121,7 @@ int tls_setup(int fd)
 	/* Associate the socket with the security tag
 	 * we have provisioned the certificate with.
 	 */
-	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, tls_sec_tag,
-			 sizeof(tls_sec_tag));
+	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, tls_sec_tag, sizeof(tls_sec_tag));
 	if (err) {
 		printk("Failed to setup TLS sec tag, err %d\n", errno);
 		return err;
