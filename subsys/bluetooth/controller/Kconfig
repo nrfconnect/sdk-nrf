@@ -344,6 +344,11 @@ config BT_CTLR_SDC_PERIODIC_ADV_RSP_RX_BUFFER_COUNT
 	  until the host is able to pull the periodic advertising response reports.
 
 	  A value of 0 will disable reception of subevent responses.
+
+config BT_CTLR_SDC_PERIODIC_ADV_RSP_RX_FAILURE_REPORTING
+	bool "Response reports for when the PAwR advertiser fails to receive responses"
+	help
+	  Enables generating reports for failing to receive responses.
 endif
 
 
