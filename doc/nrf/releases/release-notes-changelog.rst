@@ -260,7 +260,9 @@ nRF9160 samples
 Peripheral samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`radio_test` sample:
+
+  * Added a workaround for the hardware `Errata 254`_ of the nRF52840 and nRF52833 chips.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
