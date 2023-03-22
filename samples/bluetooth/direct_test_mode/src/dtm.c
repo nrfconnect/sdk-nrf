@@ -22,6 +22,11 @@
 #include <hal/nrf_egu.h>
 #include <hal/nrf_nvmc.h>
 #include <hal/nrf_radio.h>
+
+#ifdef NRF53_SERIES
+#include <hal/nrf_vreqctrl.h>
+#endif /* NRF53_SERIES */
+
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
 #include <nrf_erratas.h>
@@ -683,6 +688,24 @@ static int gppi_init(void)
 	return 0;
 }
 
+static void radio_tx_power_set(uint8_t channel, int8_t tx_power)
+{
+	int8_t radio_power = tx_power;
+
+#ifdef NRF53_SERIES
+	bool high_voltage_enable = false;
+
+	if (radio_power > 0) {
+		high_voltage_enable = true;
+		radio_power -= RADIO_TXPOWER_TXPOWER_Pos3dBm;
+	}
+
+	nrf_vreqctrl_radio_high_voltage_set(NRF_VREQCTRL, high_voltage_enable);
+#endif /* NRF53_SERIES */
+
+	nrf_radio_txpower_set(NRF_RADIO, (nrf_radio_txpower_t)radio_power);
+}
+
 static void radio_reset(void)
 {
 	nrf_radio_shorts_set(NRF_RADIO, 0);
@@ -717,7 +740,7 @@ static int radio_init(void)
 	/* Turn off radio before configuring it */
 	radio_reset();
 
-	nrf_radio_txpower_set(NRF_RADIO, dtm_inst.txpower);
+	radio_tx_power_set(dtm_inst.phys_ch, dtm_inst.txpower);
 	nrf_radio_mode_set(NRF_RADIO, dtm_inst.radio_mode);
 
 	/* Set the access address, address0/prefix0 used for both Rx and Tx
@@ -1175,7 +1198,7 @@ static void radio_prepare(bool rx)
 
 		radio_start(rx, false);
 	} else { /* tx */
-		nrf_radio_txpower_set(NRF_RADIO, dtm_inst.txpower);
+		radio_tx_power_set(dtm_inst.phys_ch, dtm_inst.txpower);
 
 #ifdef NRF52840_XXAA
 		/* Stop the timer used by anomaly 172 */
