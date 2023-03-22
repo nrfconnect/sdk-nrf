@@ -48,3 +48,10 @@
   platforms:
     - all
   comment: "Disable building selected Matter samples to limit resources usage"
+
+- scenarios:
+    - applications.asset_tracker_v2.nrf7002ek_wifi-debug
+    - applications.asset_tracker_v2.nrf7002ek_wifi-release
+  platforms:
+    - all
+  comment: "Temporary disable till the issue is fixed"
