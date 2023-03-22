@@ -13,13 +13,13 @@
 #include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
 
-#define HTTPS_PORT 443
+#define HTTPS_PORT "443"
 
 #define HTTPS_HOSTNAME "example.com"
 
 #define HTTP_HEAD                                                                                  \
 	"HEAD / HTTP/1.1\r\n"                                                                      \
-	"Host: " HTTPS_HOSTNAME ":443\r\n"                                                         \
+	"Host: " HTTPS_HOSTNAME ":" HTTPS_PORT "\r\n"                                              \
 	"Connection: close\r\n\r\n"
 
 #define HTTP_HEAD_LEN (sizeof(HTTP_HEAD) - 1)
@@ -144,9 +144,10 @@ void main(void)
 	size_t off;
 	struct addrinfo *res;
 	struct addrinfo hints = {
-		.ai_family = AF_INET,
+		.ai_flags = AI_NUMERICSERV, /* Let getaddrinfo() set port */
 		.ai_socktype = SOCK_STREAM,
 	};
+	char peer_addr[INET6_ADDRSTRLEN];
 
 	printk("HTTPS client sample started\n\r");
 
@@ -166,18 +167,21 @@ void main(void)
 	}
 	printk("OK\n");
 
-	err = getaddrinfo(HTTPS_HOSTNAME, NULL, &hints, &res);
+	printk("Looking up %s\n", HTTPS_HOSTNAME);
+	err = getaddrinfo(HTTPS_HOSTNAME, HTTPS_PORT, &hints, &res);
 	if (err) {
 		printk("getaddrinfo() failed, err %d\n", errno);
 		return;
 	}
 
-	((struct sockaddr_in *)res->ai_addr)->sin_port = htons(HTTPS_PORT);
+	inet_ntop(res->ai_family, &((struct sockaddr_in *)(res->ai_addr))->sin_addr, peer_addr,
+		  INET6_ADDRSTRLEN);
+	printk("Resolved %s (%s)\n", peer_addr, net_family2str(res->ai_family));
 
 	if (IS_ENABLED(CONFIG_SAMPLE_TFM_MBEDTLS)) {
-		fd = socket(AF_INET, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
+		fd = socket(res->ai_family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
 	} else {
-		fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_2);
+		fd = socket(res->ai_family, SOCK_STREAM, IPPROTO_TLS_1_2);
 	}
 	if (fd == -1) {
 		printk("Failed to open socket!\n");
@@ -190,8 +194,9 @@ void main(void)
 		goto clean_up;
 	}
 
-	printk("Connecting to %s\n", HTTPS_HOSTNAME);
-	err = connect(fd, res->ai_addr, sizeof(struct sockaddr_in));
+	printk("Connecting to %s:%d\n", HTTPS_HOSTNAME,
+	       ntohs(((struct sockaddr_in *)(res->ai_addr))->sin_port));
+	err = connect(fd, res->ai_addr, res->ai_addrlen);
 	if (err) {
 		printk("connect() failed, err: %d\n", errno);
 		goto clean_up;
