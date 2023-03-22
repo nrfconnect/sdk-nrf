@@ -18,6 +18,10 @@ config APP_REMOTE_BOARD
 	string "The name of the board to be used by remote image"
 	depends on APP_INCLUDE_REMOTE_IMAGE
 
+# Disabling adding an empty net core image as we provide our own in this sample.
+config NCS_SAMPLE_EMPTY_NET_CORE_CHILD_IMAGE
+	bool "Add empty netcore child image"
+	default n
 endmenu
 
 menu "Zephyr Kernel"
