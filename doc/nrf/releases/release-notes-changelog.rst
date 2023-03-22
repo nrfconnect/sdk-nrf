@@ -256,6 +256,12 @@ nRF9160 samples
     * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
       Remove the inclusion of the file :file:`nrf_cloud_codec.h`.
 
+* :ref:`https_client` sample:
+
+  * Added:
+
+    * Add IPv6 support and wait for PDN to fully activate (including IPv6, if available) before looking up address.
+
 * :ref:`slm_shell_sample` sample:
 
   * Added:

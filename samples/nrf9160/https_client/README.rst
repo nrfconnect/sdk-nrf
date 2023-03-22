@@ -61,6 +61,14 @@ To build the sample with Mbed TLS and TF-M, add the following to your west build
 
    -DOVERLAY_CONFIG=overlay-tfm_mbedtls.conf
 
+The default packet data network (PDN) configuration is dual stack, which will use an IPv6 address if available (and IPv4 if not).
+
+For testing IPv4 only, you might need to configure the packet data network settings, adding the following to your build command:
+
+.. code-block:: none
+
+   -DOVERLAY_CONFIG=overlay-pdn_ipv4.conf
+
 Testing
 =======
 
@@ -73,20 +81,66 @@ After programming the sample to your development kit, test it by performing the 
 Sample output
 =============
 
-The sample shows the following output:
+Output for the default configuration (dual stack, IPV4V6) where the carrier does not support IPv6:
+
+.. code-block:: console
+
+   HTTPS client sample started
+   Certificate match
+   Waiting for network.. PDP context 0 activated
+   OK
+   Waiting for IPv6..
+   IPv6 not available
+   Looking up example.com
+   Resolved 93.184.216.34 (AF_INET)
+   Connecting to example.com:443
+   Sent 61 bytes
+   Received 347 bytes
+
+   >        HTTP/1.1 200 OK
+
+   Finished, closing socket.
+   PDP context 0 deactivated
+
+Output for the default configuration, where the carrier does support IPv6:
 
 .. code-block:: console
 
    HTTPS client sample started
    Provisioning certificate
-   Waiting for network.. OK
-   Connecting to example.com
-   Sent 64 bytes
-   Received 903 bytes
+   Waiting for network.. PDP context 0 activated
+   OK
+   Waiting for IPv6..
+   PDP context 0 IPv6 up
+   Looking up example.com
+   Resolved 2606:2800:220:1:248:1893:25c8:1946 (AF_INET6)
+   Connecting to example.com:443
+   Sent 61 bytes
+   Received 347 bytes
 
    >        HTTP/1.1 200 OK
 
    Finished, closing socket.
+   PDP context 0 deactivated
+
+Output where you override the default packet data network (PDN) configuration to IPv4 only, via the `overlay-pdn_ipv4.conf` overlay:
+
+.. code-block:: console
+
+   HTTPS client sample started
+   Certificate match
+   Waiting for network.. PDP context 0 activated
+   OK
+   Looking up example.com
+   Resolved 93.184.216.34 (AF_INET)
+   Connecting to example.com:443
+   Sent 61 bytes
+   Received 347 bytes
+
+   >        HTTP/1.1 200 OK
+
+   Finished, closing socket.
+   PDP context 0 deactivated
 
 Dependencies
 ************
@@ -95,6 +149,7 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`modem_key_mgmt`
 * :ref:`lte_lc_readme`
+* :ref:`pdn_readme`
 
 It uses the following `sdk-nrfxlib`_ library:
 
