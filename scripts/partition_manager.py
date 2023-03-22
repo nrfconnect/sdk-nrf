@@ -826,7 +826,7 @@ def verify_static_conf_simple(size, start, placement_strategy, static_conf):
         return
 
     if placement_strategy == START_TO_END:
-        start_end_correct = gaps[0][0] == start + size
+        start_end_correct = gaps[0][1] == start + size
     else:
         start_end_correct = gaps[0][0] == start
 
@@ -1440,6 +1440,21 @@ def test():
     assert test_config['app']['size'] == 600
     assert 'spm' in test_config
     assert test_config['spm']['address'] == 0
+
+    # Verify that mixing one static partition and a dynamic in a START_TO_END region configuration is allowed
+    static_config = {'secondary': {'size': 200, 'address': 2000, 'region': 'extflash'}}
+    td = {'b': {'size': 100, 'region': 'extflash'}}
+    test_region = {'name': 'extflash',
+                   'size': 1000,
+                   'base_address': 2000,
+                   'placement_strategy': START_TO_END,
+                   'device': 'some-driver-device'}
+    get_region_config(td, test_region, static_config)
+    assert td['secondary']['address'] == 2000
+    assert td['secondary']['size'] == 200
+    assert td['b']['address'] == 2200
+    assert td['extflash']['address'] == 2300
+    assert td['extflash']['size'] == 700
 
     # Test a single partition with alignment where the address is smaller than the alignment value.
     td = {'without_alignment': {'placement': {'before': 'with_alignment'}, 'size': 100},

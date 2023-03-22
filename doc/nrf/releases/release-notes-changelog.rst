@@ -441,7 +441,9 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-|no_changes_yet_note|
+* :ref:`partition_manager`:
+
+  * Fixed an issue that prevented an empty gap after static partitions for a region with START_TO_END strategy.
 
 MCUboot
 =======
