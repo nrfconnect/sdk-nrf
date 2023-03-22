@@ -360,15 +360,18 @@ config ZIGBEE_TC_REJOIN_ENABLED
 	bool "Enables Trust Center Rejoin"
 	default y
 
+DT_CHOSEN_NCS_ZIGBEE_TIMER := ncs,zigbee-timer
+
 choice
 	prompt "ZBOSS time source"
-	default ZIGBEE_TIME_COUNTER if ZIGBEE_LIBRARY_PRODUCTION
+	default ZIGBEE_TIME_COUNTER if ZIGBEE_LIBRARY_PRODUCTION && \
+		$(dt_chosen_enabled,$(DT_CHOSEN_NCS_ZIGBEE_TIMER))
 	default ZIGBEE_TIME_KTIMER if ZIGBEE_LIBRARY_DEVELOPMENT
 
 config ZIGBEE_TIME_COUNTER
 	bool "Dedicated timer-based counter"
+	depends on $(dt_chosen_enabled,$(DT_CHOSEN_NCS_ZIGBEE_TIMER))
 	imply COUNTER
-	imply COUNTER_TIMER2
 
 config ZIGBEE_TIME_KTIMER
 	bool "Kernel (system) time"
