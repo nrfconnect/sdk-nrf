@@ -73,6 +73,16 @@ static inline bool app_event_get_type_flag(const struct event_type *et,
 	return (et->flags & BIT(flag)) != 0;
 }
 
+/**
+ * @brief Get the event ID
+ *
+ * Macro that creates event id pointer from the event name.
+ *
+ * @param ename The name of the event
+ * @return Event id pointer to struct event_type type
+ */
+#define APP_EVENT_ID(ename) _EVENT_ID(ename)
+
 /** @brief Create an event listener object.
  *
  * @param lname   Module name.
