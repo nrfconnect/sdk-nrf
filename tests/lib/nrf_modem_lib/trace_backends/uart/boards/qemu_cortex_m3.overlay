@@ -7,6 +7,9 @@
 			reg = <0x4000d000 0x4c>;
 			clocks = <&sysclk>;
 			interrupts = <6 1>;
+			pinctrl-0 = <&uart1_default>;
+			pinctrl-1 = <&uart1_sleep>;
+			pinctrl-names = "default", "sleep";
 			status = "okay";
 		};
 	};
