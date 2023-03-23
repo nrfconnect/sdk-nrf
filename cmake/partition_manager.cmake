@@ -652,7 +652,8 @@ to the external flash")
   if (PM_DOMAINS)
     # For convenience, generate global hex file containing all domains' hex
     # files.
-    set(final_merged ${ZEPHYR_BINARY_DIR}/merged_domains.hex)
+    set(merged_domains  merged_domains)
+    set(final_merged ${ZEPHYR_BINARY_DIR}/${merged_domains}.hex)
 
     # Add command to merge files.
     add_custom_command(
@@ -684,21 +685,20 @@ endif()
 # set that variable. Hence we must operate on the 'yaml_contents' property,
 # which is evaluated in a generator expression.
 
-if (final_merged)
+if (merged_domains)
   # Multiple domains are included in the build, point to the result of
   # merging the merged hex file for all domains.
-  set(merged_hex_to_flash ${final_merged})
+  set(merged_hex_to_flash ${merged_domains}.hex)
 else()
-  set(merged_hex_to_flash ${PROJECT_BINARY_DIR}/${merged}.hex)
+  set(merged_hex_to_flash ${merged}.hex)
 endif()
 
 get_target_property(runners_content runners_yaml_props_target yaml_contents)
 
 string(REGEX REPLACE "hex_file:[^\n]*"
-  "hex_file: ${merged_hex_to_flash}" new  ${runners_content})
+  "hex_file: ${merged_hex_to_flash}" runners_content_updated_hex_file ${runners_content})
 
 set_property(
   TARGET         runners_yaml_props_target
-  PROPERTY       yaml_contents
-  ${new}
+  PROPERTY       yaml_contents ${runners_content_updated_hex_file}
   )
