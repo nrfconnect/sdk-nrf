@@ -109,23 +109,23 @@ choice GAZELL_TIMER
 
 config GAZELL_TIMER0
 	bool "TIMER0"
-	depends on !$(dt_nodelabel_enabled,timer0)
+	depends on $(dt_nodelabel_has_compat,timer0,$(DT_COMPAT_NORDIC_NRF_TIMER))
 
 config GAZELL_TIMER1
 	bool "TIMER1"
-	depends on !$(dt_nodelabel_enabled,timer1)
+	depends on $(dt_nodelabel_has_compat,timer1,$(DT_COMPAT_NORDIC_NRF_TIMER))
 
 config GAZELL_TIMER2
 	bool "TIMER2"
-	depends on !$(dt_nodelabel_enabled,timer2)
+	depends on $(dt_nodelabel_has_compat,timer2,$(DT_COMPAT_NORDIC_NRF_TIMER))
 
 config GAZELL_TIMER3
 	bool "TIMER3"
-	depends on !$(dt_nodelabel_enabled,timer3)
+	depends on $(dt_nodelabel_has_compat,timer3,$(DT_COMPAT_NORDIC_NRF_TIMER))
 
 config GAZELL_TIMER4
 	bool "TIMER4"
-	depends on !$(dt_nodelabel_enabled,timer4)
+	depends on $(dt_nodelabel_has_compat,timer4,$(DT_COMPAT_NORDIC_NRF_TIMER))
 
 endchoice
 
