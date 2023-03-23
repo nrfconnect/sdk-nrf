@@ -536,6 +536,10 @@ Other libraries
 
   * The library now supports using the GPIO expander for the buttons, switches, and LEDs on the nRF9160 DK.
 
+* :ref:`app_event_manager` library:
+
+  * Added :c:macro:`APP_EVENT_ID` macro.
+
 Common Application Framework (CAF)
 ----------------------------------
 
