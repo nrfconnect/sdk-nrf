@@ -540,6 +540,10 @@ Other libraries
 
   * Added :c:macro:`APP_EVENT_ID` macro.
 
+* :ref:`event_manager_proxy` library:
+
+  * Removed the ``remote_event_name`` argument from the :c:func:`event_manager_proxy_subscribe` function.
+
 Common Application Framework (CAF)
 ----------------------------------
 
