@@ -91,7 +91,7 @@ static void on_modem_failure_shutdown(struct k_work *work)
 
 static void on_modem_failure_reinit(struct k_work *work)
 {
-	int ret = nrf_modem_lib_init(NORMAL_MODE);
+	int ret = nrf_modem_lib_init();
 
 	ARG_UNUSED(work);
 	rsp_send("\r\n#XMODEM: INIT,%d\r\n", ret);

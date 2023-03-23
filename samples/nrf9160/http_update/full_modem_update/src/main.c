@@ -65,9 +65,9 @@ static void apply_fmfu_from_ext_flash(bool valid_init)
 		}
 	}
 
-	err = nrf_modem_lib_init(BOOTLOADER_MODE);
+	err = nrf_modem_lib_bootloader_init();
 	if (err != 0) {
-		printk("nrf_modem_lib_init(BOOTLOADER_MODE) failed: %d\n", err);
+		printk("nrf_modem_lib_bootloader_init() failed: %d\n", err);
 		return;
 	}
 
@@ -83,7 +83,7 @@ static void apply_fmfu_from_ext_flash(bool valid_init)
 		return;
 	}
 
-	err = nrf_modem_lib_init(NORMAL_MODE);
+	err = nrf_modem_lib_init();
 	if (err != 0) {
 		printk("nrf_modem_lib_init() failed: %d\n", err);
 		return;
@@ -204,7 +204,7 @@ void main(void)
 		return;
 	}
 
-	err = nrf_modem_lib_init(NORMAL_MODE);
+	err = nrf_modem_lib_init();
 	if (err) {
 		printk("Failed to initialize modem lib, err: %d\n", err);
 		printk("This could indicate that an earlier update failed\n");

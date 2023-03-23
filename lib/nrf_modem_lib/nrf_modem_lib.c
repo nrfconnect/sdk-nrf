@@ -32,8 +32,6 @@ BUILD_ASSERT(IPC_IRQn == NRF_MODEM_IPC_IRQ, "NRF_MODEM_IPC_IRQ mismatch");
  */
 #define NRF_MODEM_LIB_SHMEM_TX_HEAP_OVERHEAD_SIZE 128
 
-static enum nrf_modem_mode init_mode;
-
 static const struct nrf_modem_init_params init_params = {
 	.ipc_irq_prio = CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO,
 	.shmem.ctrl = {
@@ -141,14 +139,14 @@ static int _nrf_modem_lib_init(const struct device *unused)
 	return rc;
 }
 
-int nrf_modem_lib_init(enum nrf_modem_mode mode)
+int nrf_modem_lib_init(void)
 {
-	init_mode = mode;
-	if (mode == NORMAL_MODE) {
-		return _nrf_modem_lib_init(NULL);
-	} else {
-		return nrf_modem_bootloader_init(&bootloader_init_params);
-	}
+	return _nrf_modem_lib_init(NULL);
+}
+
+int nrf_modem_lib_bootloader_init(void)
+{
+	return nrf_modem_bootloader_init(&bootloader_init_params);
 }
 
 int nrf_modem_lib_shutdown(void)

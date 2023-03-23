@@ -678,7 +678,7 @@ static int setup_modem(void)
 		 * positive value to indicate that this occurred. This code can be used to
 		 * determine whether the update was successful.
 		 */
-		int ret = nrf_modem_lib_init(NORMAL_MODE);
+		int ret = nrf_modem_lib_init();
 
 		if (ret < 0) {
 			LOG_ERR("Modem library initialization failed, error: %d", ret);

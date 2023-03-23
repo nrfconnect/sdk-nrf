@@ -108,17 +108,17 @@ int nrf_cloud_fota_fmfu_apply(void)
 		return err;
 	}
 
-	err = nrf_modem_lib_init(BOOTLOADER_MODE);
+	err = nrf_modem_lib_bootloader_init();
 	if (err != 0) {
-		LOG_ERR("nrf_modem_lib_init(BOOTLOADER_MODE) failed: %d", err);
-		(void)nrf_modem_lib_init(NORMAL_MODE);
+		LOG_ERR("nrf_modem_lib_bootloader_init() failed: %d", err);
+		(void)nrf_modem_lib_init();
 		return err;
 	}
 
 	err = fmfu_fdev_load(fmfu_buf, sizeof(fmfu_buf), fmfu_dev.dev, fmfu_dev.offset);
 	if (err != 0) {
 		LOG_ERR("Failed to apply full modem update, error: %d", err);
-		(void)nrf_modem_lib_init(NORMAL_MODE);
+		(void)nrf_modem_lib_init();
 		return err;
 	}
 

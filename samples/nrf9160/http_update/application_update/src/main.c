@@ -179,7 +179,7 @@ void main(void)
 	printk("Using version %d\n", CONFIG_APPLICATION_VERSION);
 
 #if !defined(CONFIG_LWM2M_CARRIER)
-	err = nrf_modem_lib_init(NORMAL_MODE);
+	err = nrf_modem_lib_init();
 	if (err) {
 		printk("Failed to initialize modem library!");
 		return;

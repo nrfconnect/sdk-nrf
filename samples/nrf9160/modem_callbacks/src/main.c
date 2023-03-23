@@ -37,7 +37,7 @@ void main(void)
 	printk("Modem callbacks sample started\n");
 
 	printk("Initializing modem library\n");
-	err = nrf_modem_lib_init(NORMAL_MODE);
+	err = nrf_modem_lib_init();
 	if (err) {
 		printk("Modem initialization failed, err %d\n", err);
 		return;
