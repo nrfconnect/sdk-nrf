@@ -399,6 +399,10 @@ Modem libraries
     * The deprecated function ``nrf_modem_lib_shutdown_wait``.
     * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_TRACE_ENABLED``.
 
+* :ref:`pdn_readme` library:
+
+  * Updated the library to use ePCO mode if the Kconfig option :kconfig:option:`CONFIG_PDN_LEGACY_PCO` is not enabled.
+
 Libraries for networking
 ------------------------
 

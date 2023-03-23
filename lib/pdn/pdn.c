@@ -174,7 +174,13 @@ static void on_modem_init(int ret, void *ctx)
 		LOG_ERR("Failed to set legacy PCO mode, err %d", err);
 		return;
 	}
-#endif
+#else
+	err = nrf_modem_at_printf("AT%%XEPCO=1");
+	if (err) {
+		LOG_ERR("Failed to set ePCO mode, err %d", err);
+		return;
+	}
+#endif /* CONFIG_PDN_LEGACY_PCO */
 
 #if defined(CONFIG_PDN_DEFAULTS_OVERRIDE)
 	err = pdn_ctx_configure(0, CONFIG_PDN_DEFAULT_APN,
