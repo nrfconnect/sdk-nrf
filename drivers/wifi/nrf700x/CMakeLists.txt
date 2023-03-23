@@ -71,7 +71,7 @@ zephyr_library_sources_ifdef(CONFIG_WPA_SUPP
 	osal/fw_if/umac_if/src/fmac_util.c
 )
 
-zephyr_library_sources_ifdef(NRF700X_AP_MODE
+zephyr_library_sources_ifdef(CONFIG_NRF700X_AP_MODE
 	osal/fw_if/umac_if/src/fmac_ap.c
 )
 
