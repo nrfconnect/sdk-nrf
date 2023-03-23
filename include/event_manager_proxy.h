@@ -32,7 +32,7 @@
  * @return See @ref event_manager_proxy_subscribe.
  */
 #define EVENT_MANAGER_PROXY_SUBSCRIBE(instance, ename) \
-	event_manager_proxy_subscribe((instance), _EVENT_ID(ename), STRINGIFY(ename))
+	event_manager_proxy_subscribe((instance), APP_EVENT_ID(ename))
 
 /**
  * @brief Add remote core communication channel.
@@ -69,7 +69,6 @@ int event_manager_proxy_add_remote(const struct device *instance);
  *
  * @param instance Remote IPC instance.
  * @param local_event_id The id of the event we wish to receive for the event on the remote core.
- * @param remote_event_name The name of the event to register.
  *
  * @retval 0 On success.
  * @retval -EACCES Function called after @ref event_manager_proxy_start.
@@ -79,8 +78,7 @@ int event_manager_proxy_add_remote(const struct device *instance);
  */
 int event_manager_proxy_subscribe(
 	const struct device *instance,
-	const struct event_type *local_event_id,
-	const char *remote_event_name);
+	const struct event_type *local_event_id);
 
 /**
  * @brief Start events transfer.

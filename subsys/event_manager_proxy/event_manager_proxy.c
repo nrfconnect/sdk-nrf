@@ -417,13 +417,13 @@ static int send_subscribe_command_to_remote(struct emp_ipc_data *ipc,
 }
 
 int event_manager_proxy_subscribe(const struct device *instance,
-		const struct event_type *local_event_id, const char *remote_event_name)
+				  const struct event_type *local_event_id)
 {
 	__ASSERT_NO_MSG(!emp_started);
 
 	struct emp_ipc_data *ipc = find_ipc_by_instance(instance);
 
-	return send_subscribe_command_to_remote(ipc, local_event_id, remote_event_name);
+	return send_subscribe_command_to_remote(ipc, local_event_id, local_event_id->name);
 }
 
 static int send_start_command_to_remote(struct emp_ipc_data *ipc)

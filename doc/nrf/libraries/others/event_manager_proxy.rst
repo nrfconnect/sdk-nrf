@@ -119,10 +119,11 @@ Subscribing to remote events
 ============================
 
 A core that wishes to listen to events from the remote core sends ``SUBSCRIBE`` command to that core during the initialization process.
-The ``SUBSCRIBE`` command uses :c:func:`event_manager_proxy_subscribe` function, which passes following arguments:
+The ``SUBSCRIBE`` command is sent using the :c:func:`event_manager_proxy_subscribe` function, which passes the following arguments:
 
-* ``local_event_id`` - This argument represents the local core ID that wishes to receive when the event is post-processed on the remote core.
-* ``remote_event_name`` - This argument represents the name of the event to be searched for.
+* ``ipc`` - This argument is an IPC instance that identifies the communication channel between the cores.
+* ``local_event_id`` - This argument represents the local core ID that is received when the event is post-processed on the remote core.
+  It is also used to get the event name to match the same event on the remote core.
 
 The remote core during the command processing searches for an event with the given name and registers the given event ID in an array of events.
 The created array of events directly reflects the array of event types.
