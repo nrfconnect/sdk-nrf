@@ -106,6 +106,9 @@ config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
 	  chosen Zephyr flash devicetree node to ensure that swapping can be
 	  performed.
 
+config GETOPT
+	default n
+
 rsource "samples/Kconfig"
 rsource "subsys/Kconfig"
 rsource "modules/Kconfig"
