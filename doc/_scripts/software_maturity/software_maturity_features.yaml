@@ -7,6 +7,12 @@ top_table:
   Matter: CHIP
   Wi-Fi: WIFI && WIFI_NRF700X
 features:
+  bluetooth:
+    Bluetooth LE peripheral/central: BT_CTLR && (BT_CENTRAL || BT_PERIPHERAL)
+    LLPM: BT_CTLR_SDC_LLPM
+    LE coded PHY: BT_CTLR_PHY_CODED_SUPPORT
+    Bluetooth Mesh: BT_MESH
+    Connectionless CTE Advertising: BT_CTLR_DF_CTE_TX
   zigbee:
     Zigbee (Sleepy) End Device: ZIGBEE_ROLE_END_DEVICE
     Zigbee Router: CONFIG_ZIGBEE_ROLE_ROUTER
