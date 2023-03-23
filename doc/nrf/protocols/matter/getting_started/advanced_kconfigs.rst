@@ -24,6 +24,17 @@ You can configure the Matter protocol to use NFC tag for commissioning, instead 
 
 To enable NFC for commissioning and share the onboarding payload in an NFC tag, set the :kconfig:option:`CONFIG_CHIP_NFC_COMMISSIONING` Kconfig option.
 
+.. _ug_matter_configuring_optional_persistent_subscriptions:
+
+Persistent subscriptions
+========================
+
+You can configure the Matter protocol to keep Matter subscriptions on the publisher node.
+This allows the device to save information about subscriptions and use it to re-establish the subscriptions immediately when coming back online after being offline for a longer time, for example due to a power outage.
+This is a much faster way than waiting for the subscriber node to notice that the publisher node is again available in the network.
+
+To enable persistent subscriptions, set the :kconfig:option:`CONFIG_CHIP_PERSISTENT_SUBSCRIPTIONS` Kconfig option.
+
 .. _ug_matter_configuring_optional_log:
 
 Logging configuration
