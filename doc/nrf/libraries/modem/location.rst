@@ -148,7 +148,7 @@ The following options control the sensitivity of obstructed visibility detection
 * :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_EXEC_TIME` - Cut-off time for stopping GNSS.
 * :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_SAT_LIMIT` - Minimum number of satellites that must be found to continue the search beyond :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_EXEC_TIME`.
 
-These options set the threshold for how many satellites need to be found in how long a time period in order to conclude that the device is indoors.
+These options set the threshold for how many satellites need to be found in how long a time period in order to conclude that the device is likely not indoors.
 Configuring the obstructed visibility detection is always a tradeoff between power consumption and the accuracy of detection.
 
 The following options control the transport method used with `nRF Cloud`_:
