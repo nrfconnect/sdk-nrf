@@ -81,7 +81,7 @@ static void restart_on_fault(void *p1, void *p2, void *p3)
 		 */
 		k_yield();
 
-		(void)nrf_modem_lib_init(NORMAL_MODE);
+		(void)nrf_modem_lib_init();
 	}
 }
 

@@ -114,7 +114,7 @@ void main(void)
 		LOG_ERR("uart1 device not found/ready!");
 	}
 
-	nrf_modem_lib_init(NORMAL_MODE);
+	nrf_modem_lib_init();
 
 	err = nrf_modem_lib_trace_level_set(NRF_MODEM_LIB_TRACE_LEVEL_FULL);
 	if (err) {

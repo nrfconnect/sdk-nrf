@@ -453,7 +453,7 @@ int init(void)
 #endif
 
 	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
-		modem_lib_init_result = nrf_modem_lib_init(NORMAL_MODE);
+		modem_lib_init_result = nrf_modem_lib_init();
 	}
 
 	/* This function may perform a reboot if a FOTA update is in progress */

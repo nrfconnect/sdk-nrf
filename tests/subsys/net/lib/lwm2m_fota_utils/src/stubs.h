@@ -58,7 +58,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lte_lc_lte_mode_get, enum lte_lc_lte_mode *);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_rsrp_register, rsrp_cb_t);
 DECLARE_FAKE_VALUE_FUNC(int, dfu_target_mcuboot_set_buf, uint8_t *, size_t);
 DECLARE_FAKE_VALUE_FUNC(int, nrf_modem_lib_shutdown);
-DECLARE_FAKE_VALUE_FUNC(int, nrf_modem_lib_init, enum nrf_modem_mode);
+DECLARE_FAKE_VALUE_FUNC(int, nrf_modem_lib_init);
 DECLARE_FAKE_VALUE_FUNC(int, fota_download_init, fota_download_callback_t);
 DECLARE_FAKE_VALUE_FUNC(int, fota_download_start_with_image_type, const char *, const char *, int,
 			uint8_t, size_t, const enum dfu_target_image_type);

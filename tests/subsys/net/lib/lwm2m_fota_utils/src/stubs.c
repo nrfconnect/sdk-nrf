@@ -61,7 +61,7 @@ DEFINE_FAKE_VALUE_FUNC(int, modem_info_rsrp_register, rsrp_cb_t);
 DEFINE_FAKE_VOID_FUNC(engine_trigger_update, bool);
 DEFINE_FAKE_VALUE_FUNC(int, dfu_target_mcuboot_set_buf, uint8_t *, size_t);
 DEFINE_FAKE_VALUE_FUNC(int, nrf_modem_lib_shutdown);
-DEFINE_FAKE_VALUE_FUNC(int, nrf_modem_lib_init, enum nrf_modem_mode);
+DEFINE_FAKE_VALUE_FUNC(int, nrf_modem_lib_init);
 DEFINE_FAKE_VALUE_FUNC(int, fota_download_init, fota_download_callback_t);
 DEFINE_FAKE_VALUE_FUNC(int, fota_download_start_with_image_type, const char *, const char *, int,
 		       uint8_t, size_t, const enum dfu_target_image_type);

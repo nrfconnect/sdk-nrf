@@ -96,7 +96,7 @@ void main(void)
 
 	printk("Initializing modem library\n");
 #if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
-	err = nrf_modem_lib_init(NORMAL_MODE);
+	err = nrf_modem_lib_init();
 #else
 	/* If nrf_modem_lib is initialized on post-kernel we should
 	 * fetch the returned error code instead of nrf_modem_lib_init

@@ -230,7 +230,7 @@ void main(void)
 	 * This is necessary for the modem trace flash backend. Which depend on the flash device
 	 * to be initialized before initializing the nRF modem library.
 	 */
-	nrf_modem_lib_init(NORMAL_MODE);
+	nrf_modem_lib_init();
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_MQTT)

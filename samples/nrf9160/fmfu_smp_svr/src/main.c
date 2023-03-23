@@ -13,7 +13,7 @@
 
 void main(void)
 {
-	int err = nrf_modem_lib_init(NORMAL_MODE);
+	int err = nrf_modem_lib_init();
 
 	if (err == 0) {
 		char modem_version[MODEM_INFO_MAX_RESPONSE_SIZE];
@@ -32,7 +32,7 @@ void main(void)
 	/* Shutdown modem to prepare for DFU */
 	nrf_modem_lib_shutdown();
 
-	nrf_modem_lib_init(BOOTLOADER_MODE);
+	nrf_modem_lib_bootloader_init();
 	/* Register SMP Communication stats */
 	fmfu_mgmt_stat_init();
 	/* Initialize MCUMgr handlers for full modem update */

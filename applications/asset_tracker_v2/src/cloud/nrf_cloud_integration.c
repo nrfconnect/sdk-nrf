@@ -83,7 +83,7 @@ static int fmfu_and_modem_init(const struct device *dev)
 	}
 
 	/* Ignore the result, it will be checked later */
-	(void)nrf_modem_lib_init(NORMAL_MODE);
+	(void)nrf_modem_lib_init();
 
 	return 0;
 }

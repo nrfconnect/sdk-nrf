@@ -27,8 +27,8 @@ extern "C" {
 /** @brief Setup and register the command handler for full modem
  *  update command handler group.
  *
- * The modem library must be initialized in DFU mode before calling this
- * function - nrf_modem_lib_init(BOOTLOADER_MODE).
+ * The modem library must be initialized in bootloader mode before calling this
+ * function - nrf_modem_lib_bootloader_init().
  *
  * @retval 0 on success, negative integer on failure.
  */
