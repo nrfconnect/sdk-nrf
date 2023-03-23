@@ -581,16 +581,25 @@ void main(void)
 		settings_load();
 	}
 
-	int (*module_init[])(void) = {uart_init, scan_init, nus_client_init};
-	for (size_t i = 0; i < ARRAY_SIZE(module_init); i++) {
-		err = (*module_init[i])();
-		if (err) {
-			return;
-		}
+	err = uart_init();
+	if (err != 0) {
+		LOG_ERR("uart_init failed (err %d)", err);
+		return;
+	}
+
+	err = scan_init();
+	if (err != 0) {
+		LOG_ERR("scan_init failed (err %d)", err);
+		return;
+	}
+
+	err = nus_client_init();
+	if (err != 0) {
+		LOG_ERR("nus_client_init failed (err %d)", err);
+		return;
 	}
 
 	printk("Starting Bluetooth Central UART example\n");
-
 
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
