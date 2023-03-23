@@ -32,27 +32,26 @@ The supported location methods are as follows:
 
 * GNSS positioning
 
-  * :ref:`gnss_interface` for getting the location.
+  * Uses :ref:`gnss_interface` for getting the location.
   * A-GPS and P-GPS are managed with :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps`.
   * The application may also use some other source for the data and use :c:func:`location_agps_data_process` and :c:func:`location_pgps_data_process` to pass the data to the location library.
   * The data format of A-GPS or P-GPS must be as received from :ref:`lib_nrf_cloud_agps`.
   * The data transport method for :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` can be configured to be either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
-
     If different transport is desired for different location methods, (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) and (:kconfig:option:`CONFIG_NRF_CLOUD_REST`) can be enabled simultaneously. In such a case, MQTT takes
     precedence as the transport method of GNSS assistance data.
   * Note that acquiring GNSS fix only starts when LTE connection, more specifically Radio Resource Control (RRC) connection, is idle.
-
     Also, if A-GPS is not used and Power Saving Mode (PSM) is enabled, Location library will wait for the modem to enter PSM.
   * Selectable location accuracy (low/normal/high).
+  * Obstructed visibility detection enables a fast fallback to another positioning method if the device is detected to be indoors.
 
 * Cellular positioning
 
-  * :ref:`lte_lc_readme` for getting visible cellular base stations.
+  * Uses :ref:`lte_lc_readme` for getting a list of nearby cellular base stations.
   * The ``cloud location`` method handles sending cell information to the selected location service and getting the calculated location back to the device.
 
 * Wi-Fi positioning
 
-  * Zephyr's Network Management API :ref:`zephyr:net_mgmt_interface` for getting the visible Wi-Fi access points.
+  * Uses Zephyr's Network Management API :ref:`zephyr:net_mgmt_interface` for getting a list of nearby Wi-Fi access points.
   * The ``cloud location`` method handles sending access point information to the selected location service and getting the calculated location back to the device.
 
 The ``cloud location`` method handles the location methods (cellular and Wi-Fi positioning)
@@ -142,6 +141,15 @@ The following options control the use of GNSS assistance data:
 The following option is useful when setting :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED`:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK` - Sets elevation threshold angle.
+
+The obstructed visibility feature is based on the fact that the number of satellites found indoors or in other environments with limited sky-view is severely decreased.
+The following options control the sensitivity of obstructed visibility detection:
+
+* :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_EXEC_TIME` - Cut-off time for stopping GNSS.
+* :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_SAT_LIMIT` - Minimum number of satellites that must be found to continue the search beyond :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_EXEC_TIME`.
+
+These options set the threshold for how many satellites need to be found in how long a time period in order to conclude that the device is indoors.
+Configuring the obstructed visibility detection is always a tradeoff between power consumption and the accuracy of detection.
 
 The following options control the transport method used with `nRF Cloud`_:
 
