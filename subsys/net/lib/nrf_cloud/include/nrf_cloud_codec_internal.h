@@ -16,12 +16,16 @@
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGPS)
 #include <net/nrf_cloud_agps.h>
+#endif
+#if defined(CONFIG_NRF_MODEM)
+#include <nrf_modem_gnss.h>
 #endif
 #include <net/nrf_cloud_location.h>
 #include "cJSON.h"
 #include "nrf_cloud_fsm.h"
+#include "nrf_cloud_agps_schema_v1.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -121,8 +125,12 @@ int nrf_cloud_pgps_response_decode(const char *const response,
 				   struct nrf_cloud_pgps_result *const result);
 #endif
 
-/** @brief Add common [network] modem info to the provided cJSON object */
-int nrf_cloud_network_info_json_encode(cJSON * const data_obj);
+/** @brief Add cellular network info to the provided cJSON object.
+ * If the cell_inf parameter is NULL, the codec will obtain the current network
+ * info from the modem.
+ */
+int nrf_cloud_cell_info_json_encode(cJSON * const data_obj,
+				    const struct lte_lc_cell *const cell_inf);
 
 /** @brief Build a cellular positioning request in the provided cJSON object
  * using the provided cell info
@@ -200,6 +208,19 @@ enum nrf_cloud_rcv_topic nrf_cloud_dc_rx_topic_decode(const char * const topic);
  * CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS is enabled.
  */
 void nrf_cloud_set_app_version(const char * const app_ver);
+
+/** @brief Encode the data payload of an nRF Cloud A-GPS request into the provided object */
+int nrf_cloud_agps_req_data_json_encode(const enum nrf_cloud_agps_type * const types,
+					const size_t type_count,
+					const struct lte_lc_cell * const cell_inf,
+					const bool filtered_ephem, const uint8_t mask_angle,
+					cJSON * const data_obj_out);
+
+/** @brief Encode an A-GPS request device message to be sent to nRF Cloud */
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agps_data_frame * const request,
+				   cJSON * const agps_req_obj_out);
+#endif
 
 #ifdef CONFIG_NRF_CLOUD_GATEWAY
 typedef int (*gateway_state_handler_t)(void *root_obj);

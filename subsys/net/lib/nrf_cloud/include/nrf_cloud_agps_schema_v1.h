@@ -27,6 +27,7 @@ extern "C" {
 #define NRF_CLOUD_AGPS_MAX_SV_TOW			(32U)
 
 enum nrf_cloud_agps_type {
+	NRF_CLOUD_AGPS__TYPE_INVALID			= 0,
 	NRF_CLOUD_AGPS_UTC_PARAMETERS			= 1,
 	NRF_CLOUD_AGPS_EPHEMERIDES			= 2,
 	NRF_CLOUD_AGPS_ALMANAC				= 3,
