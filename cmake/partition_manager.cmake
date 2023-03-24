@@ -74,6 +74,22 @@ if (NOT static_configuration AND CONFIG_PM_IMAGE_NOT_BUILT_FROM_SOURCE)
     place the image correctly in flash.")
 endif()
 
+if (NOT static_configuration AND
+  (CONFIG_BOOTLOADER_MCUBOOT OR CONFIG_SECURE_BOOT))
+      message(WARNING "
+        ---------------------------------------------------------------------
+        --- WARNING: Using a bootloader without pm_static.yml.            ---
+        --- There are cases where a deployed product can consist of       ---
+        --- multiple images, and only a subset of these images can be     ---
+        --- upgraded through a firmware update mechanism. In such cases,  ---
+        --- the upgradable images must have partitions that are static    ---
+        --- and are matching the partition map used by the bootloader     ---
+        --- programmed onto the device.                                   ---
+        ---------------------------------------------------------------------
+        \n"
+      )
+endif()
+
 
 # Check if current image is the dynamic partition in its domain.
 # I.E. it is the only partition without a statically configured size in this
