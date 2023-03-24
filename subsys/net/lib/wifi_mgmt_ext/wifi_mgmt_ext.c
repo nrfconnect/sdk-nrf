@@ -28,7 +28,7 @@ static inline const char *wpa_supp_security_txt(enum wifi_security_type security
 {
 	switch (security) {
 	case WIFI_SECURITY_TYPE_NONE:
-		return "OPEN";
+		return "NONE";
 	case WIFI_SECURITY_TYPE_PSK:
 		return "WPA-PSK";
 	case WIFI_SECURITY_TYPE_PSK_SHA256:
