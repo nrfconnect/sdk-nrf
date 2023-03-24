@@ -1,0 +1,7 @@
+config PRINT_CONN_INTERVAL
+	int "Print pr X connection interval"
+	default 100
+	help
+		For each set interval, a summary will be printed and a LED toggled.
+
+source "Kconfig.zephyr"

@@ -4,6 +4,7 @@
 #include <zephyr/bluetooth/iso.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/shell/shell.h>
+#include <zephyr/drivers/gpio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <getopt.h>
@@ -16,6 +17,8 @@ LOG_MODULE_REGISTER(broadcast_src, 3);
 
 K_THREAD_STACK_DEFINE(broadcaster_thread_stack, 4096);
 static struct k_thread broadcaster_thread;
+
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 
 #define BUF_ALLOC_TIMEOUT (10) /* milliseconds */
 #define BIG_SDU_INTERVAL_US (10000)
@@ -136,8 +139,13 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 		iso_send_count++;
 		seq_num++;
 
-		if ((iso_send_count % 100) == 0) {
+		if ((iso_send_count % CONFIG_PRINT_CONN_INTERVAL) == 0) {
 			LOG_INF("Sending value %u", iso_send_count);
+			if ((iso_send_count/CONFIG_PRINT_CONN_INTERVAL) % 2 == 0) {
+				ret = gpio_pin_set_dt(&led, 1);
+			} else {
+				ret = gpio_pin_set_dt(&led, 0);
+			}
 		}
 	}
 }
@@ -355,7 +363,17 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 
 int iso_broadcaster_init(void)
 {
+	int ret;
 	running = false;
+
+	if (!gpio_is_ready_dt(&led)) {
+		return -EBUSY;
+	}
+
+	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	if (ret < 0) {
+		return ret;
+	}
 
 	k_thread_create(&broadcaster_thread, broadcaster_thread_stack,
 			K_THREAD_STACK_SIZEOF(broadcaster_thread_stack), broadcaster_t, NULL, NULL,

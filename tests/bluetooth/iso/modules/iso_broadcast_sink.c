@@ -14,7 +14,7 @@
 #include <zephyr/shell/shell.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(broadcast_sink, 4);
+LOG_MODULE_REGISTER(broadcast_sink, 3);
 
 #define TIMEOUT_SYNC_CREATE K_SECONDS(10)
 #define NAME_LEN 30
@@ -28,6 +28,8 @@ LOG_MODULE_REGISTER(broadcast_sink, 4);
 #define BIS_ISO_CHAN_COUNT 1
 K_THREAD_STACK_DEFINE(broadcaster_sink_thread_stack, 4096);
 static struct k_thread broadcaster_thread;
+
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 
 static bool per_adv_found;
 static bool per_adv_lost;
@@ -86,9 +88,9 @@ static void scan_recv(const struct bt_le_scan_recv_info *info, struct net_buf_si
 	bt_data_parse(buf, data_cb, name);
 
 	bt_addr_le_to_str(info->addr, le_addr, sizeof(le_addr));
-	printk("[DEVICE]: %s, AD evt type %u, Tx Pwr: %i, RSSI %i %s "
+	LOG_DBG("[DEVICE]: %s, AD evt type %u, Tx Pwr: %i, RSSI %i %s "
 		   "C:%u S:%u D:%u SR:%u E:%u Prim: %s, Secn: %s, "
-		   "Interval: 0x%04x (%u us), SID: %u\n",
+		   "Interval: 0x%04x (%u us), SID: %u",
 		   le_addr, info->adv_type, info->tx_power, info->rssi, name,
 		   (info->adv_props & BT_GAP_ADV_PROP_CONNECTABLE) != 0,
 		   (info->adv_props & BT_GAP_ADV_PROP_SCANNABLE) != 0,
@@ -120,8 +122,8 @@ static void sync_cb(struct bt_le_per_adv_sync *sync, struct bt_le_per_adv_sync_s
 
 	bt_addr_le_to_str(info->addr, le_addr, sizeof(le_addr));
 
-	printk("PER_ADV_SYNC[%u]: [DEVICE]: %s synced, "
-		   "Interval 0x%04x (%u ms), PHY %s\n",
+	LOG_DBG("PER_ADV_SYNC[%u]: [DEVICE]: %s synced, "
+		   "Interval 0x%04x (%u ms), PHY %s",
 		   bt_le_per_adv_sync_get_index(sync), le_addr, info->interval,
 		    info->interval * 5 / 4,
 		   phy2str(info->phy));
@@ -136,7 +138,7 @@ static void term_cb(struct bt_le_per_adv_sync *sync,
 
 	bt_addr_le_to_str(info->addr, le_addr, sizeof(le_addr));
 
-	printk("PER_ADV_SYNC[%u]: [DEVICE]: %s sync terminated\n",
+	LOG_INF("PER_ADV_SYNC[%u]: [DEVICE]: %s sync terminated",
 		   bt_le_per_adv_sync_get_index(sync), le_addr);
 
 	per_adv_lost = true;
@@ -152,8 +154,8 @@ static void recv_cb(struct bt_le_per_adv_sync *sync,
 	bt_addr_le_to_str(info->addr, le_addr, sizeof(le_addr));
 	bin2hex(buf->data, buf->len, data_str, sizeof(data_str));
 
-	printk("PER_ADV_SYNC[%u]: [DEVICE]: %s, tx_power %i, "
-		   "RSSI %i, CTE %u, data length %u, data: %s\n",
+	LOG_INF("PER_ADV_SYNC[%u]: [DEVICE]: %s, tx_power %i, "
+		   "RSSI %i, CTE %u, data length %u, data: %s",
 		   bt_le_per_adv_sync_get_index(sync), le_addr, info->tx_power, info->rssi,
 		   info->cte_type, buf->len, data_str);
 }
@@ -164,11 +166,11 @@ static void biginfo_cb(struct bt_le_per_adv_sync *sync, const struct bt_iso_bigi
 
 	bt_addr_le_to_str(biginfo->addr, le_addr, sizeof(le_addr));
 
-	printk("BIG INFO[%u]: [DEVICE]: %s, sid 0x%02x, "
+	LOG_DBG("BIG INFO[%u]: [DEVICE]: %s, sid 0x%02x, "
 		   "num_bis %u, nse %u, interval 0x%04x (%u ms), "
 		   "bn %u, pto %u, irc %u, max_pdu %u, "
 		   "sdu_interval %u us, max_sdu %u, phy %s, "
-		   "%s framing, %sencrypted\n",
+		   "%s framing, %sencrypted",
 		   bt_le_per_adv_sync_get_index(sync), le_addr, biginfo->sid, biginfo->num_bis,
 		   biginfo->sub_evt_count, biginfo->iso_interval, (biginfo->iso_interval * 5 / 4),
 		   biginfo->burst_number, biginfo->offset, biginfo->rep_count, biginfo->max_pdu,
@@ -188,19 +190,23 @@ static struct bt_le_per_adv_sync_cb sync_callbacks = {
 static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *info,
 			 struct net_buf *buf)
 {
-	uint32_t count = 0; /* only valid if the data is a counter */
+	int ret = 0;
+	uint32_t count = 0;
 	static uint32_t last_count;
 	static uint32_t counts_fail;
 	static uint32_t counts_success;
 
-	if (buf->len == sizeof(count)) {
-		count = sys_get_le32(buf->data);
+	if (buf->len != sizeof(count)) {
+		LOG_ERR("buf len is not equal to sizeof(uint32_t)");
+		return;
 	}
+	count = sys_get_le32(buf->data);
 
 	if (!(info->flags & BT_ISO_FLAGS_VALID)) {
 		LOG_ERR("bad frame");
 	}
 
+	/* Wrapping not considered. Overflow will take over a year.*/
 	if (last_count) {
 		if (count != (last_count + 1)) {
 			counts_fail++;
@@ -211,21 +217,30 @@ static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *in
 
 	last_count = count;
 
-	if ((count % 100) == 0) {
-		printk("RX. Count: %d, Failed: %d, Success: %d", count, counts_fail,
+	if ((count % CONFIG_PRINT_CONN_INTERVAL) == 0) {
+		LOG_INF("RX. Count: %d, Failed: %d, Success: %d", count, counts_fail,
 			   counts_success);
+
+		if ((count/CONFIG_PRINT_CONN_INTERVAL) % 2 == 0) {
+			ret = gpio_pin_set_dt(&led, 1);
+		} else {
+			ret = gpio_pin_set_dt(&led, 0);
+		}
+		if (ret) {
+			LOG_ERR("Unable to set LED");
+		}
 	}
 }
 
 static void iso_connected(struct bt_iso_chan *chan)
 {
-	printk("ISO Channel %p connected\n", chan);
+	LOG_INF("ISO Channel %p connected", chan);
 	k_sem_give(&sem_big_sync);
 }
 
 static void iso_disconnected(struct bt_iso_chan *chan, uint8_t reason)
 {
-	printk("ISO Channel %p disconnected with reason 0x%02x\n", chan, reason);
+	LOG_INF("ISO Channel %p disconnected with reason 0x%02x", chan, reason);
 
 	if (reason != BT_HCI_ERR_OP_CANCELLED_BY_HOST) {
 		k_sem_give(&sem_big_sync_lost);
@@ -292,30 +307,30 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 	while (1) {
 		per_adv_lost = false;
 
-		printk("Start scanning...");
+		LOG_INF("Start scanning...");
 		err = bt_le_scan_start(BT_LE_SCAN_CUSTOM, NULL);
 		if (err) {
-			printk("failed (err %d)\n", err);
+			LOG_INF("failed (err %d)", err);
 			return;
 		}
 
-		printk("Waiting for periodic advertising...\n");
+		LOG_INF("Waiting for periodic advertising...");
 		per_adv_found = false;
 		err = k_sem_take(&sem_per_adv, K_FOREVER);
 		if (err) {
-			printk("failed (err %d)\n", err);
+			LOG_INF("failed (err %d)", err);
 			return;
 		}
-		printk("Found periodic advertising.\n");
+		LOG_INF("Found periodic advertising.");
 
-		printk("Stop scanning...");
+		LOG_INF("Stop scanning...");
 		err = bt_le_scan_stop();
 		if (err) {
-			printk("failed (err %d)\n", err);
+			LOG_INF("failed (err %d)", err);
 			return;
 		}
 
-		printk("Creating Periodic Advertising Sync...");
+		LOG_INF("Creating Periodic Advertising Sync...");
 		bt_addr_le_copy(&sync_create_param.addr, &per_addr);
 		sync_create_param.options = 0;
 		sync_create_param.sid = per_sid;
@@ -326,86 +341,86 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 		sem_timeout_us = per_interval_us * PA_RETRY_COUNT;
 		err = bt_le_per_adv_sync_create(&sync_create_param, &sync);
 		if (err) {
-			printk("failed (err %d)\n", err);
+			LOG_INF("failed (err %d)", err);
 			return;
 		}
 
-		printk("Waiting for periodic sync...\n");
+		LOG_INF("Waiting for periodic sync...");
 		err = k_sem_take(&sem_per_sync, K_USEC(sem_timeout_us));
 		if (err) {
-			printk("failed (err %d)\n", err);
+			LOG_INF("failed (err %d)", err);
 
-			printk("Deleting Periodic Advertising Sync...");
+			LOG_INF("Deleting Periodic Advertising Sync...");
 			err = bt_le_per_adv_sync_delete(sync);
 			if (err) {
-				printk("failed (err %d)\n", err);
+				LOG_INF("failed (err %d)", err);
 				return;
 			}
 			continue;
 		}
-		printk("Periodic sync established.\n");
+		LOG_INF("Periodic sync established.");
 
-		printk("Waiting for BIG info...\n");
+		LOG_INF("Waiting for BIG info...");
 		err = k_sem_take(&sem_per_big_info, K_USEC(sem_timeout_us));
 		if (err) {
-			printk("failed (err %d)\n", err);
+			LOG_INF("failed (err %d)", err);
 
 			if (per_adv_lost) {
 				continue;
 			}
 
-			printk("Deleting Periodic Advertising Sync...");
+			LOG_INF("Deleting Periodic Advertising Sync...");
 			err = bt_le_per_adv_sync_delete(sync);
 			if (err) {
-				printk("failed (err %d)\n", err);
+				LOG_INF("failed (err %d)", err);
 				return;
 			}
 			continue;
 		}
-		printk("Periodic sync established.\n");
+		LOG_INF("Periodic sync established.");
 
 big_sync_create:
-		printk("Create BIG Sync...\n");
+		LOG_INF("Create BIG Sync...");
 		err = bt_iso_big_sync(sync, &big_sync_param, &big);
 		if (err) {
-			printk("failed (err %d)\n", err);
+			LOG_INF("failed (err %d)", err);
 			return;
 		}
-		printk("success.\n");
+		LOG_INF("success.");
 
 		for (uint8_t chan = 0U; chan < BIS_ISO_CHAN_COUNT; chan++) {
-			printk("Waiting for BIG sync chan %u...\n", chan);
+			LOG_INF("Waiting for BIG sync chan %u...", chan);
 			err = k_sem_take(&sem_big_sync, TIMEOUT_SYNC_CREATE);
 			if (err) {
 				break;
 			}
-			printk("BIG sync chan %u successful.\n", chan);
+			LOG_INF("BIG sync chan %u successful.", chan);
 		}
 		if (err) {
-			printk("failed (err %d)\n", err);
+			LOG_INF("failed (err %d)", err);
 
-			printk("BIG Sync Terminate...");
+			LOG_INF("BIG Sync Terminate...");
 			err = bt_iso_big_terminate(big);
 			if (err) {
-				printk("failed (err %d)\n", err);
+				LOG_INF("failed (err %d)", err);
 				return;
 			}
-			printk("done.\n");
+			LOG_INF("done.");
 
 			goto per_sync_lost_check;
 		}
-		printk("BIG sync established.\n");
+		LOG_INF("BIG sync established.");
 
 		for (uint8_t chan = 0U; chan < BIS_ISO_CHAN_COUNT; chan++) {
-			printk("Waiting for BIG sync lost chan %u...\n", chan);
+			LOG_INF("Waiting for BIG sync lost chan %u...", chan);
 			err = k_sem_take(&sem_big_sync_lost, K_FOREVER);
 			if (err) {
-				printk("failed (err %d)\n", err);
+				LOG_INF("failed (err %d)", err);
 				return;
 			}
-			printk("BIG sync lost chan %u.\n", chan);
+			LOG_INF("BIG sync lost chan %u.", chan);
 		}
-		printk("BIG sync lost.\n");
+		LOG_INF("BIG sync lost.");
 
 per_sync_lost_check:
 		err = k_sem_take(&sem_per_sync_lost, K_NO_WAIT);
@@ -413,13 +428,23 @@ per_sync_lost_check:
 			/* Periodic Sync active, go back to creating BIG Sync */
 			goto big_sync_create;
 		}
-		printk("Periodic sync lost.\n");
+		LOG_INF("Periodic sync lost.");
 	}
 }
 
 int iso_broadcast_sink_init(void)
 {
+	int ret;
 	running = false;
+
+	if (!gpio_is_ready_dt(&led)) {
+		return -EBUSY;
+	}
+
+	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	if (ret < 0) {
+		return ret;
+	}
 
 	k_thread_create(&broadcaster_thread, broadcaster_sink_thread_stack,
 			K_THREAD_STACK_SIZEOF(broadcaster_sink_thread_stack), broadcaster_t, NULL,
