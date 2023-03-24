@@ -435,7 +435,7 @@ static void stream_sent_cb(struct bt_audio_stream *stream)
 static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_recv_info *info,
 			   struct net_buf *buf)
 {
-	static uint32_t recv_cnt;
+	static uint32_t recv_cnt, data_size_mismatch_cnt;
 	bool bad_frame = false;
 
 	if (receive_cb == NULL) {
@@ -445,6 +445,18 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 
 	if (!(info->flags & BT_ISO_FLAGS_VALID)) {
 		bad_frame = true;
+	}
+
+	uint32_t octets_per_frame = bt_codec_cfg_get_octets_per_frame(stream->codec);
+
+	if (buf->len != octets_per_frame) {
+		data_size_mismatch_cnt++;
+		if ((data_size_mismatch_cnt % 500) == 1) {
+			LOG_DBG("Data size mismatch, received: %d, codec: %d, total: %d", buf->len,
+				octets_per_frame, data_size_mismatch_cnt);
+		}
+
+		return;
 	}
 
 	receive_cb(buf->data, buf->len, bad_frame, info->ts, channel);
