@@ -10,6 +10,7 @@ endchoice
 rsource "uart/Kconfig"
 rsource "flash/Kconfig"
 rsource "rtt/Kconfig"
+rsource "ram/Kconfig"
 
 module = MODEM_TRACE_BACKEND
 module-str = Modem trace backend
