@@ -4,7 +4,7 @@ Protocols
 #########
 
 The following user guides describe the supported protocols.
-They introduce you to concepts that are important to work with the protocol and guide you through developing your application. For Wi-Fi coexistence, see the :ref:`Adding Wi-Fi Coexistence support to short-range radio applications <ug_radio_coex>` page.
+They introduce you to concepts that are important to work with the protocol and guide you through developing your application. 
 
 .. toctree::
    :maxdepth: 1
@@ -18,5 +18,7 @@ They introduce you to concepts that are important to work with the protocol and 
    protocols/multiprotocol/index
    protocols/nfc/index
    protocols/thread/index
-   protocols/wifi/index
    protocols/zigbee/index
+   protocols/wifi/index
+
+For Wi-Fi coexistence with short range protocols (Bluetooth LE, Thread etc.), see the :ref:`Adding Wi-Fi Coexistence support to short-range radio applications <ug_radio_coex>` page.
