@@ -633,7 +633,8 @@ int wifi_nrf_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
 	zstats->pkts.tx = stats.host.total_tx_pkts;
 	zstats->pkts.rx = stats.host.total_rx_pkts;
 	zstats->errors.tx = stats.host.total_tx_drop_pkts;
-	zstats->errors.rx = stats.host.total_rx_drop_pkts;
+	zstats->errors.rx = stats.host.total_rx_drop_pkts +
+			stats.fw.umac.interface_data_stats.rx_checksum_error_count;
 	zstats->bytes.received = stats.fw.umac.interface_data_stats.rx_bytes;
 	zstats->bytes.sent = stats.fw.umac.interface_data_stats.tx_bytes;
 	zstats->sta_mgmt.beacons_rx = stats.fw.umac.interface_data_stats.rx_beacon_success_count;
