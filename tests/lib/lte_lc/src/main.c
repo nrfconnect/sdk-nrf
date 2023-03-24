@@ -496,10 +496,18 @@ void test_parse_mdmev(void)
 	const char *overheated = "%MDMEV: ME OVERHEATED\r\n";
 	const char *status_3 = "%MDMEV: SEARCH STATUS 3\r\n";
 	const char *light_search_long = "%MDMEV: SEARCH STATUS 1 and then some\r\n";
+	const char *no_imei = "%MDMEV: NO IMEI\r\n";
+	const char *ce_level_0 = "%MDMEV: PRACH CE-LEVEL 0\r\n";
+	const char *ce_level_1 = "%MDMEV: PRACH CE-LEVEL 1\r\n";
+	const char *ce_level_2 = "%MDMEV: PRACH CE-LEVEL 2\r\n";
+	const char *ce_level_3 = "%MDMEV: PRACH CE-LEVEL 3\r\n";
+	const char *ce_level_invalid = "%MDMEV: PRACH CE-LEVEL 4\r\n";
+	const char *ce_level_long = "%MDMEV: PRACH CE-LEVEL 0 and then some\r\n";
 
 	err = parse_mdmev(light_search, &modem_evt);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE, modem_evt);
+
 	err = parse_mdmev(search, &modem_evt);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_SEARCH_DONE, modem_evt);
@@ -532,6 +540,32 @@ void test_parse_mdmev(void)
 	TEST_ASSERT_EQUAL(-EIO, err);
 
 	err = parse_mdmev("%MDMEV: ", &modem_evt);
+	TEST_ASSERT_EQUAL(-ENODATA, err);
+
+	err = parse_mdmev(no_imei, &modem_evt);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_NO_IMEI, modem_evt);
+
+	err = parse_mdmev(ce_level_0, &modem_evt);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_CE_LEVEL_0, modem_evt);
+
+	err = parse_mdmev(ce_level_1, &modem_evt);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_CE_LEVEL_1, modem_evt);
+
+	err = parse_mdmev(ce_level_2, &modem_evt);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_CE_LEVEL_2, modem_evt);
+
+	err = parse_mdmev(ce_level_3, &modem_evt);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_CE_LEVEL_3, modem_evt);
+
+	err = parse_mdmev(ce_level_invalid, &modem_evt);
+	TEST_ASSERT_EQUAL(-ENODATA, err);
+
+	err = parse_mdmev(ce_level_long, &modem_evt);
 	TEST_ASSERT_EQUAL(-ENODATA, err);
 }
 

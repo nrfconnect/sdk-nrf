@@ -504,6 +504,33 @@ enum lte_lc_modem_evt {
 
 	/** The device is overheated and the modem is therefore deactivated. */
 	LTE_LC_MODEM_EVT_OVERHEATED,
+
+	/** The modem does not have an IMEI */
+	LTE_LC_MODEM_EVT_NO_IMEI,
+
+	/** Selected CE level in RACH procedure is 0, see 3GPP TS 36.331 for details.
+	 *
+	 *  @note This event is supported for modem firmware versions >= 2.0.0.
+	 */
+	LTE_LC_MODEM_EVT_CE_LEVEL_0,
+
+	/** Selected CE level in RACH procedure is 1, see 3GPP TS 36.331 for details.
+	 *
+	 *  @note This event is supported for modem firmware versions >= 2.0.0.
+	 */
+	LTE_LC_MODEM_EVT_CE_LEVEL_1,
+
+	/** Selected CE level in RACH procedure is 2, see 3GPP TS 36.331 for details.
+	 *
+	 *  @note This event is supported for modem firmware versions >= 2.0.0.
+	 */
+	LTE_LC_MODEM_EVT_CE_LEVEL_2,
+
+	/** Selected CE level in RACH procedure is 3, see 3GPP TS 36.331 for details.
+	 *
+	 *  @note This event is supported for modem firmware versions >= 2.0.0.
+	 */
+	LTE_LC_MODEM_EVT_CE_LEVEL_3,
 };
 
 /** @brief Type of factory reset to perform. */

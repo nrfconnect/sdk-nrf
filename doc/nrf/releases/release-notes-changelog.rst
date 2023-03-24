@@ -528,6 +528,7 @@ Modem libraries
       Modem firmware version v1.3.4 or newer is required to receive these events.
     * The Kconfig option :kconfig:option:`CONFIG_LTE_AUTO_INIT_AND_CONNECT` is now deprecated.
       The application calls the :c:func:`lte_lc_init_and_connect` function instead.
+    * New events added to enumeration :c:enum:`lte_lc_modem_evt` for RACH CE levels and missing IMEI.
 
 Libraries for networking
 ------------------------

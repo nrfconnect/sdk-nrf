@@ -141,7 +141,8 @@
 #define AT_CONEVAL_DL_PATHLOSS_INDEX		17
 
 /* MDMEV command parameters */
-#define AT_MDMEV_ENABLE				"AT%%MDMEV=1"
+#define AT_MDMEV_ENABLE_1			"AT%%MDMEV=1"
+#define AT_MDMEV_ENABLE_2			"AT%%MDMEV=2"
 #define AT_MDMEV_DISABLE			"AT%%MDMEV=0"
 #define AT_MDMEV_RESPONSE_PREFIX		"%MDMEV: "
 #define AT_MDMEV_OVERHEATED			"ME OVERHEATED\r\n"
@@ -149,6 +150,11 @@
 #define AT_MDMEV_SEARCH_STATUS_1		"SEARCH STATUS 1\r\n"
 #define AT_MDMEV_SEARCH_STATUS_2		"SEARCH STATUS 2\r\n"
 #define AT_MDMEV_RESET_LOOP			"RESET LOOP\r\n"
+#define AT_MDMEV_NO_IMEI			"NO IMEI\r\n"
+#define AT_MDMEV_CE_LEVEL_0			"PRACH CE-LEVEL 0\r\n"
+#define AT_MDMEV_CE_LEVEL_1			"PRACH CE-LEVEL 1\r\n"
+#define AT_MDMEV_CE_LEVEL_2			"PRACH CE-LEVEL 2\r\n"
+#define AT_MDMEV_CE_LEVEL_3			"PRACH CE-LEVEL 3\r\n"
 
 /* @brief Helper function to check if a response is what was expected.
  *
