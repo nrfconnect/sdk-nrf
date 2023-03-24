@@ -203,18 +203,6 @@ arduino_i2c: &i2c1 {
 	};
 };
 
-&timer0 {
-	status = "okay";
-};
-
-&timer1 {
-	status = "okay";
-};
-
-&timer2 {
-	status = "okay";
-};
-
 arduino_serial: &uart1 {
 	compatible = "nordic,nrf-uarte";
 	current-speed = <115200>;
