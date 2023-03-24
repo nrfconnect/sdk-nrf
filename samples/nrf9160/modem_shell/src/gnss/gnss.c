@@ -127,7 +127,7 @@ struct event_item {
 	void    *data;
 };
 
-K_MSGQ_DEFINE(event_msgq, sizeof(struct event_item), 10, 4);
+K_MSGQ_DEFINE(gnss_event_msgq, sizeof(struct event_item), 10, 4);
 
 /* Output configuration */
 static uint8_t pvt_output_level = 2;
@@ -229,7 +229,7 @@ static void gnss_event_handler(int event_id)
 		return;
 	}
 
-	err = k_msgq_put(&event_msgq, &event, K_NO_WAIT);
+	err = k_msgq_put(&gnss_event_msgq, &event, K_NO_WAIT);
 	if (err) {
 		/* Failed to put event into queue */
 		k_free(event.data);
@@ -377,7 +377,7 @@ static void data_handler_thread_fn(void)
 	struct event_item event;
 
 	while (true) {
-		k_msgq_get(&event_msgq, &event, K_FOREVER);
+		k_msgq_get(&gnss_event_msgq, &event, K_FOREVER);
 
 		switch (event.id) {
 		case NRF_MODEM_GNSS_EVT_PVT:
