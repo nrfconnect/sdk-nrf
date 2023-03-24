@@ -12,16 +12,29 @@ common:
       - "\\*\\*\\*\\*\\* PSA Architecture Test Suite - Version .* \\*\\*\\*\\*\\*"
       - "TOTAL FAILED *: 0"
 tests:
-  tfm.psa_test_protected_storage:
+  tfm.psa_test_protected_storage_lvl1:
+    extra_args: "CONFIG_TFM_PSA_TEST_PROTECTED_STORAGE=y CONFIG_TFM_ISOLATION_LEVEL=1"
+    timeout: 120
+  tfm.psa_test_protected_storage_lvl2:
     extra_args: "CONFIG_TFM_PSA_TEST_PROTECTED_STORAGE=y"
     timeout: 120
-  tfm.psa_test_internal_trusted_storage:
+  tfm.psa_test_internal_trusted_storage_lvl1:
+    extra_args: "CONFIG_TFM_PSA_TEST_INTERNAL_TRUSTED_STORAGE=y CONFIG_TFM_ISOLATION_LEVEL=1"
+  tfm.psa_test_internal_trusted_storage_lvl2:
     extra_args: "CONFIG_TFM_PSA_TEST_INTERNAL_TRUSTED_STORAGE=y"
-  tfm.psa_test_storage:
+  tfm.psa_test_storage_lvl1:
+    extra_args: "CONFIG_TFM_PSA_TEST_STORAGE=y CONFIG_TFM_ISOLATION_LEVEL=1"
+    timeout: 130
+  tfm.psa_test_storage_lvl2:
     extra_args: "CONFIG_TFM_PSA_TEST_STORAGE=y"
     timeout: 130
-  tfm.psa_test_crypto:
+  tfm.psa_test_crypto_lvl1:
+    extra_args: "CONFIG_TFM_PSA_TEST_CRYPTO=y CONFIG_TFM_ISOLATION_LEVEL=1"
     timeout: 120
+  tfm.psa_test_crypto_lvl2:
     extra_args: "CONFIG_TFM_PSA_TEST_CRYPTO=y"
-  tfm.psa_test_initial_attestation:
+    timeout: 120
+  tfm.psa_test_initial_attestation_lvl1:
+    extra_args: "CONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y CONFIG_TFM_ISOLATION_LEVEL=1"
+  tfm.psa_test_initial_attestation_lvl2:
     extra_args: "CONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y"
