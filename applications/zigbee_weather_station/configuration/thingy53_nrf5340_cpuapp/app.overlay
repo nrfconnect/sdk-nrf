@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/ {
+	chosen {
+		ncs,zigbee-timer = &timer2;
+	};
+};
+
 &i2c1 {
 	status = "okay";
 
@@ -12,6 +18,10 @@
 		reg = <0x76>;
 		status = "okay";
 	};
+};
+
+&timer2 {
+	status = "okay";
 };
 
 /* Disable unused peripherals to reduce power consumption */
