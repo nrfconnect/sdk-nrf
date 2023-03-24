@@ -742,11 +742,17 @@ void test_lte_lc_modem_events_enable(void)
 {
 	int ret;
 
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%MDMEV=2", EXIT_SUCCESS);
+	ret = lte_lc_modem_events_enable();
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%MDMEV=2", EXIT_FAILURE);
 	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%MDMEV=1", EXIT_SUCCESS);
 	ret = lte_lc_modem_events_enable();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%MDMEV=1", -NRF_ENOMEM);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%MDMEV=2", EXIT_FAILURE);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%MDMEV=1", -ENOMEM);
 	ret = lte_lc_modem_events_enable();
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }

@@ -97,6 +97,21 @@ void link_shell_print_modem_domain_event(enum lte_lc_modem_evt modem_evt)
 	case LTE_LC_MODEM_EVT_OVERHEATED:
 		mosh_print("Modem domain event: Overheated");
 		break;
+	case LTE_LC_MODEM_EVT_NO_IMEI:
+		mosh_print("Modem domain event: No IMEI");
+		break;
+	case LTE_LC_MODEM_EVT_CE_LEVEL_0:
+		mosh_print("Modem domain event: CE-level 0");
+		break;
+	case LTE_LC_MODEM_EVT_CE_LEVEL_1:
+		mosh_print("Modem domain event: CE-level 1");
+		break;
+	case LTE_LC_MODEM_EVT_CE_LEVEL_2:
+		mosh_print("Modem domain event: CE-level 2");
+		break;
+	case LTE_LC_MODEM_EVT_CE_LEVEL_3:
+		mosh_print("Modem domain event: CE-level 3");
+		break;
 	}
 }
 

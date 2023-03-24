@@ -1612,7 +1612,17 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params)
 
 int lte_lc_modem_events_enable(void)
 {
-	return nrf_modem_at_printf(AT_MDMEV_ENABLE) ? -EFAULT : 0;
+	/* First try to enable both warning and informational type events, which is only supported
+	 * by modem firmware versions >= 2.0.0.
+	 * If that fails, try to enable the legacy set of events.
+	 */
+	if (nrf_modem_at_printf(AT_MDMEV_ENABLE_2)) {
+		if (nrf_modem_at_printf(AT_MDMEV_ENABLE_1)) {
+			return -EFAULT;
+		}
+	}
+
+	return 0;
 }
 
 int lte_lc_modem_events_disable(void)
