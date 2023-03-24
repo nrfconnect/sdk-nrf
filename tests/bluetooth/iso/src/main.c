@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: Apache-2.0
  */
 #include <zephyr/bluetooth/bluetooth.h>
 
-#include "iso_bis_broadcaster.h"
+#include "iso_broadcast_src.h"
 #include "iso_broadcast_sink.h"
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, 3);

@@ -10,7 +10,7 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#include "iso_bis_broadcaster.h"
+#include "iso_broadcast_src.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(broadcast_src, 3);
