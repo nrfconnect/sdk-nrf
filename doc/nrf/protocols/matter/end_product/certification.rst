@@ -161,6 +161,8 @@ Processing
 During this stage of the certification process, CSA verifies the submission for relevant criteria, including relevant documentation, membership in CSA, completion of testing, and payment of applicable fees.
 The duration of this step depends on the complexity of your application and the length of the review queue.
 
+.. _ug_matter_device_certification_results:
+
 Certification
 =============
 

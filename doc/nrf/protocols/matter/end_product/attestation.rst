@@ -11,6 +11,8 @@ Device Attestation (DA) is a process of verifying if a Matter device is certifie
 The goal is to ensure no counterfeit devices join the Matter network and that the device being checked is genuine.
 The Device Attestation process is based on the chain-of-trust concept and is mandatory for all Matter devices.
 
+.. _ug_matter_device_attestation_commissioning_info:
+
 Device Attestation within commissioning
 ***************************************
 
@@ -20,6 +22,10 @@ To do this, the commissioner first establishes an encrypted session with the com
 It then proceeds to verify the device certificates.
 
 To read more about Matter commissioning, see :ref:`ug_matter_network_topologies_commissioning`.
+
+.. note::
+   The :ref:`matter_samples` in the |NCS| include temporary Device Attestation with data for testing purposes.
+   This data must be regenerated when :ref:`ug_matter_device_attestation_testing_da` of the Matter end product.
 
 .. _ug_matter_device_attestation_cert:
 
@@ -76,31 +82,37 @@ To read more about DCL and how to use it, see the :ref:`ug_matter_device_dcl` pa
 Providing device with Device Attestation data
 *********************************************
 
-To pass the Device Attestation procedure, a Matter device that wants to join a Matter fabric must include a set of information required for the Device Attestation procedure.
-This needs to be provided by the manufacturer.
+To pass the Device Attestation procedure, a Matter device that wants to join a Matter fabric must include two sets of information required for the Device Attestation procedure: factory data and Certification Declaration.
+Both need to be provided by the manufacturer.
 
 Getting preliminary Device Attestation data
 ===========================================
 
-To generate the required data, the manufacturer needs to get the following information from CSA:
+The manufacturer needs to get the following information from CSA:
 
-* Vendor ID (VID) - A unique 16-bit number that identifies the manufacturer.
+* Vendor ID (VID) - a unique 16-bit number that identifies the manufacturer.
   This can be obtained from CSA when the manufacturer becomes one of `Connectivity Standards Alliance members`_.
-* Certification Declaration (CD) - A cryptographic document created by the CSA for each device type, used to confirm that a given type of device was certified.
+* Certification Declaration (CD) - |matter_cd_definition|.
+  Until you obtain the CD from CSA, you can use a generic CD for testing purposes during the commissioning.
 
-Once the manufacturer obtains this information, it uses it to generate the factory data or provides the information directly to the device (Certificate Declaration).
-The manufacturer also needs to assign a unique 16-bit Product ID (PID) number to identify its product.
+After the manufacturer obtains Certification Declaration, it can be provided to the device with the new firmware version, for example using the Device Firmware Upgrade functionality or directly in the manufacturing process.
+On the other hand, VID is one of the data elements used for :ref:`ug_matter_device_attestation_device_data_generating`.
+
+Alongside VID, the manufacturer also needs to assign a unique 16-bit Product ID (PID) number to identify its product.
+Finally, the factory data must include PAI and DAC certificates, and the private key for DAC, which the manufacturer must generate beforehand.
 
 .. figure:: images/matter_device_attestation_manufacturer_info.svg
    :alt: Simplified view of Device Attestation information from manufacturer
 
    Simplified view of Device Attestation information from manufacturer
 
-The factory data must include PAI and DAC certificates, and the private key for DAC.
-To generate these certificates for the factory data, the manufacturer can use one of the following options.
+Generating certificates
+-----------------------
+
+To generate the certificates for the factory data, the manufacturer can use one of the following options.
 
 Generating DAC with PKI provider (option 1)
--------------------------------------------
++++++++++++++++++++++++++++++++++++++++++++
 
 The manufacturer can request PAI and DAC from one of the PKI providers who are `Connectivity Standards Alliance members`_.
 This way, the manufacturer does not have to set up its own Certification Authority chain and can use a trusted source of certification that complies with the PKI certification policy.
@@ -108,7 +120,7 @@ The PKI provider's PAA certificate does not contain any specific VID, which lets
 The manufacturer's PAI certificate generated from the PKI provider's PAA certificate has the VID of the manufacturer and can be used to issue and sign DAC.
 
 Generating DAC using own PKI (option 2)
----------------------------------------
++++++++++++++++++++++++++++++++++++++++
 
 The manufacturer can set up its own :ref:`ug_matter_device_attestation_cert_pki` to generate PAI and DAC certificates using its own existing PKI.
 The rules for setting own PKI are outlined in the `Matter Certification Policy`_ document (authorized access required).
@@ -119,7 +131,7 @@ Setting up own PKI lets the manufacturer obtain the following certificates:
 * Own PAI - Provided that the manufacturer has sufficient and secure supply chain logistics that can provide DACs to a large number of devices, as each device has a unique DAC.
 
 Generating DAC with platform vendor (option 3)
-----------------------------------------------
+++++++++++++++++++++++++++++++++++++++++++++++
 
 This solution lets the device manufacturer develop products with SoCs that come with baked-in DACs.
 In such case, the VID and the PID of the manufacturer will differ from the VID and the PID of the DAC.
@@ -133,7 +145,7 @@ The Certification Declaration will specify the DAC owner in the ``dac_origin_vid
 Generating factory data
 =======================
 
-After the manufacturer obtains VID, PID, CD, PAI, and DAC, it can gather them in the factory data that is written to the device during the manufacturing process.
+After the manufacturer obtains VID, PID, PAI, and DAC, it can gather them in the factory data that is written to the device during the manufacturing process.
 The device stores the factory data in the factory data partition, separately from the firmware.
 This is because the factory data is different for each device instance, while the firmware stays the same for the entire device line.
 Using a separate partition lets the manufacturer to apply write protection on device boot.
@@ -159,6 +171,7 @@ Device Attestation Certificate
   A Device Attestation Certificate (DAC) is used for the Device Attestation process and to perform commissioning into a fabric.
   The DAC is a DER-encoded X.509v3-compliant certificate, as defined in RFC 5280.
   It is created using the Product Attestation Intermediate certificate and contains information about Vendor ID and Product ID for the given device.
+  It is provided in the factory data.
 
 Private key that matches DAC
   A private key associated with the DAC, unique to the device.
@@ -166,19 +179,22 @@ Private key that matches DAC
 
 Product Attestation Intermediate certificate
   A Product Attestation Intermediate (PAI) certificate is a type of document issued by the Product Attestation Authority (PAA).
-  It is used to create the DAC of the device and is provided with the factory data.
+  It is used to create the DAC of the device and is provided in the factory data.
 
 Verifier
-  The Verifier itself is not a part of the DAC.
+  The Verifier itself is not a part of the DAC, although it is included in the factory data.
   See `Requirements for secured communication`_.
 
 Certification Declaration
-  A cryptographic document created by the CSA for each device type, used to confirm that a given type of device was certified.
+  This is |matter_cd_definition|.
   It contains a series of information required for Device Attestation, including Vendor ID, Certificate ID, certification type, optional information related to DAC, and other.
   CD is included in the attestation information packet send by the commissionee during the `Device Attestation procedure`_.
 
   .. note::
-      CD information is not located in the factory data, but in the application itself.
+      The CD information is not located in the factory data, but in the application itself.
+      This is because CD changes after the recertification of the new software version.
+      The new CD is applied to the device when you perform a device software update.
+      For this reason, you can :ref:`configure CD in firmware and modify it after the certification is done <ug_matter_device_configuring_cd>`.
 
 These are the elements that are checked and validated by the commissioner at the start of the commissioning procedure.
 
@@ -216,10 +232,15 @@ The commissioner can then proceed to the next stage of :ref:`ug_matter_network_t
    The DAC is never removed from the device and stays on the device for later use, for example for commissioning onto a new network.
    It can be overwritten only with the change of the factory data.
 
+.. _ug_matter_device_attestation_testing_da:
+
 Testing Device Attestation during development
 *********************************************
 
-If you want to test Device Attestation during development, you can generate the factory data for integration testing.
-Read the detailed :doc:`matter:nrfconnect_factory_data_configuration` guide in the Matter documentation for more information.
+The :ref:`matter_samples` in the |NCS| include temporary Device Attestation with data for testing purposes.
+If you want to test Device Attestation during development of your product without using the data from the samples, you can generate your own data:
 
-The factory data created for integration testing is not to be included in final end products.
+* Factory data - Read the detailed :doc:`matter:nrfconnect_factory_data_configuration` guide in the Matter documentation for more information.
+* Certification Declaration only - Read :ref:`ug_matter_device_configuring_cd_generating_steps` for more information.
+
+The data created for integration testing is not to be included in final end products.
