@@ -190,7 +190,7 @@ nRF5340 Audio
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-|no_changes_yet_note|
+* Updated the machine learning models (:kconfig:option:`CONFIG_EDGE_IMPULSE_URI`) used by the application to ensure compatibility with the new Zephyr version.
 
 nRF Desktop
 -----------
