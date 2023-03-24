@@ -424,6 +424,10 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		state_trigger_and_unlock(NETWORK_ERROR);
 		break;
 
+	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE:
+		LOG_DBG("Registration update started");
+		break;
+
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_COMPLETE:
 		LOG_DBG("Registration update complete");
 		state_trigger_and_unlock(CONNECTED);
