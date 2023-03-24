@@ -251,6 +251,10 @@ static void cloud_lwm2m_rd_client_event_cb(struct lwm2m_ctx *client_ctx,
 		cloud_lwm2m_rd_client_stop();
 		break;
 
+	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE:
+		mosh_print("LwM2M: Registration update started");
+		break;
+
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_COMPLETE:
 		mosh_print("LwM2M: Registration update complete");
 		connected = true;
