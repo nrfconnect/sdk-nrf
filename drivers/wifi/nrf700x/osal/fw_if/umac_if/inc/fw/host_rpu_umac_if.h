@@ -2886,7 +2886,7 @@ struct umac_display_results {
 	unsigned short beacon_interval;
 	unsigned short capability;
 	struct nrf_wifi_signal signal;
-	unsigned char reserved1;
+	unsigned char twt_support;
 	unsigned char reserved2;
 	unsigned char reserved3;
 	unsigned char reserved4;
