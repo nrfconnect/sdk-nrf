@@ -274,6 +274,8 @@ enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	conf_params->tx_pkt_nss = 1;
 	conf_params->tx_pkt_gap_us = 200;
 
+	conf_params->tx_power = MAX_TX_PWR_SYS_TEST;
+
 	conf_params->chan.primary_num = 1;
 	conf_params->tx_mode = 1;
 	conf_params->tx_pkt_num = -1;
@@ -743,6 +745,40 @@ static int nrf_wifi_radio_test_set_tx_pkt_num(const struct shell *shell,
 	return 0;
 }
 
+void nrf_wifi_radio_test_get_max_tx_power_params(void)
+{
+	/*Max TX power is represented in 0.25dB resolution
+	 *So,multiply 4 to MAX_TX_PWR_RADIO_TEST and
+	 *configure the RF params corresponding to Max TX power
+	 */
+	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR2G] =
+	(MAX_TX_PWR_RADIO_TEST << 2);
+
+	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR2GM0M7] =
+	(MAX_TX_PWR_RADIO_TEST << 2);
+
+	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR2GM0M7+1] =
+	(MAX_TX_PWR_RADIO_TEST << 2);
+
+	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM7] =
+	(MAX_TX_PWR_RADIO_TEST << 2);
+
+	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM7+1] =
+	(MAX_TX_PWR_RADIO_TEST << 2);
+
+	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM7+2] =
+	(MAX_TX_PWR_RADIO_TEST << 2);
+
+	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM0] =
+	(MAX_TX_PWR_RADIO_TEST << 2);
+
+	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM0+1] =
+	(MAX_TX_PWR_RADIO_TEST << 2);
+
+	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM0+2] =
+	(MAX_TX_PWR_RADIO_TEST << 2);
+
+}
 
 static int nrf_wifi_radio_test_set_tx_pkt_len(const struct shell *shell,
 					      size_t argc,
@@ -832,10 +868,10 @@ static int nrf_wifi_radio_test_set_tx_power(const struct shell *shell,
 
 	val = strtoul(argv[1], &ptr, 10);
 
-	if (val > 24) {
+	if (((val > MAX_TX_PWR_RADIO_TEST) && (val != MAX_TX_PWR_SYS_TEST))) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "'tx_power' cannot be more than 24 dBm\n");
+			      "Invalid TX power setting\n");
 		return -ENOEXEC;
 	}
 
@@ -1188,6 +1224,17 @@ static int nrf_wifi_radio_test_set_tx(const struct shell *shell,
 				      SHELL_ERROR,
 				      "Invalid channel settings\n");
 			return -ENOEXEC;
+		}
+
+		/*Max TX power values differ based on the test being performed.
+		 *For TX EVM Vs Power, Max TX power required is
+		 *"MAX_TX_PWR_RADIO_TEST" (24dB) whereas for testing the
+		 *Max TX power for which both EVM and spectrum mask are passing
+		 *for specific band and MCS/rate, TX power values will be read from
+		 *RF params string
+		 */
+		if (ctx->conf_params.tx_power != MAX_TX_PWR_SYS_TEST) {
+			nrf_wifi_radio_test_get_max_tx_power_params();
 		}
 	}
 
