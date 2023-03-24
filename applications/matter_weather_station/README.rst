@@ -318,6 +318,8 @@ Alternatively, depending on your build type, you can also use one of the followi
        - MT:KAYA36PF1509673GE10
        - 14575339844
 
+|matter_cd_info_note_for_samples|
+
 .. _matter_weather_station_app_dfu:
 
 Updating the device firmware

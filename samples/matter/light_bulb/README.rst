@@ -321,6 +321,8 @@ For this sample, you can use one of the following :ref:`onboarding information f
        - MT:6FCJ142C00KA0648G00
        - 34970112332
 
+|matter_cd_info_note_for_samples|
+
 Upgrading the device firmware
 =============================
 

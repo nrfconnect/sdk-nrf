@@ -90,7 +90,8 @@ Matter
   * The Matter Nordic UART Service (NUS) feature to the :ref:`matter_lock_sample`.
     This feature allows using Nordic UART Service to control the device remotely through Bluetooth LE and adding custom text commands to a Matter sample.
     The Matter NUS implementation allows controlling the device regardless of whether the device is connected to a Matter network or not.
-    The feature is dedicated for the nRF5340 and the nRF52840 DKs.
+    The feature is dedicated for the Matter over Thread solution.
+  * Documentation page about :ref:`ug_matter_device_configuring_cd`.
 
 * Updated:
 
