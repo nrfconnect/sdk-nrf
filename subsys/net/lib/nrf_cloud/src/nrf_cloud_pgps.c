@@ -1187,9 +1187,9 @@ static int open_flash(void)
 		name = prediction_flash_area->fa_dev->name;
 	}
 
-	LOG_DBG("Opened flash_area: fa_id:%u, fa_device_id:%u, "
+	LOG_DBG("Opened flash_area: fa_id:%u, "
 		"fa_off:%ld, fa_size:%zu, prediction_flash_area device name:%s",
-		prediction_flash_area->fa_id, prediction_flash_area->fa_device_id,
+		prediction_flash_area->fa_id,
 		prediction_flash_area->fa_off, prediction_flash_area->fa_size, name);
 	return err;
 }
