@@ -679,7 +679,7 @@ def load_reqs(input_config):
                 if loaded_reqs is None:
                     continue
                 for key in loaded_reqs.keys():
-                    if key in reqs.keys() and loaded_reqs[key] != reqs[key]:
+                    if key in reqs and loaded_reqs[key] != reqs[key]:
                         raise PartitionError(
                             f"Conflicting configuration found for '{f.name}'"
                             f" value for key '{key}' differs. val1: "
@@ -1642,7 +1642,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
-    assert 'should_not_exist' not in td.keys()
+    assert 'should_not_exist' not in td
 
     # Verify that if a partition X uses 'share_size' with a non-existing partition, but has set a default size,
     # then partition X is created with the default size.
