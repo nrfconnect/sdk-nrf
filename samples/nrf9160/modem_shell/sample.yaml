@@ -158,6 +158,15 @@ tests:
     extra_configs:
      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="0123456789abcdef0123456789abcdef"
     tags: ci_build
+  sample.nrf9160.modem_shell.memfault_modem_trace_ram:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    extra_args: OVERLAY_CONFIG="overlay-modem-trace-ram.conf;overlay-memfault.conf"
+    extra_configs:
+     - CONFIG_MEMFAULT_NCS_PROJECT_KEY="0123456789abcdef0123456789abcdef"
+    tags: ci_build
 
   # Configurations for different location method combinations
   sample.nrf9160.modem_shell.location_gnss_wifi_no_cellular:
