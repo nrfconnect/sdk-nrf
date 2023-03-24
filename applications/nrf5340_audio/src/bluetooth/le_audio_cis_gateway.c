@@ -556,6 +556,7 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 	int ret;
 	bool bad_frame = false;
 	uint8_t channel_index;
+	static uint32_t data_size_mismatch_cnt;
 
 	if (receive_cb == NULL) {
 		LOG_ERR("The RX callback has not been set");
@@ -569,6 +570,18 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 	ret = channel_index_get(stream->conn, &channel_index);
 	if (ret) {
 		LOG_ERR("Channel index not found");
+		return;
+	}
+
+	uint32_t octets_per_frame = bt_codec_cfg_get_octets_per_frame(stream->codec);
+
+	if (buf->len != octets_per_frame) {
+		data_size_mismatch_cnt++;
+		if ((data_size_mismatch_cnt % 500) == 1) {
+			LOG_DBG("Data size mismatch, received: %d, codec: %d, total: %d", buf->len,
+				octets_per_frame, data_size_mismatch_cnt);
+		}
+
 		return;
 	}
 
