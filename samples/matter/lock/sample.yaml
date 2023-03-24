@@ -94,5 +94,4 @@ tests:
       CONFIG_CHIP_FACTORY_DATA_MERGE_WITH_FIRMWARE=y CONFIG_CHIP_FACTORY_DATA_USE_DEFAULT_CERTS=y
     integration_platforms:
       - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
