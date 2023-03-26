@@ -1183,6 +1183,7 @@ int wifi_nrf_nl80211_send_mlme(void *if_priv, const u8 *data,
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_umac_mgmt_tx_info *mgmt_tx_info = NULL;
+	unsigned int timeout = 0;
 
 	if (!if_priv) {
 		LOG_ERR("%s: Missing interface context\n", __func__);
@@ -1227,6 +1228,7 @@ int wifi_nrf_nl80211_send_mlme(void *if_priv, const u8 *data,
 
 	/* Going to RPU */
 	mgmt_tx_info->host_cookie = cookie;
+	vif_ctx_zep->cookie_resp_received = false;
 
 	status = wifi_nrf_fmac_mgmt_tx(rpu_ctx_zep->rpu_ctx,
 			vif_ctx_zep->vif_idx,
@@ -1235,6 +1237,24 @@ int wifi_nrf_nl80211_send_mlme(void *if_priv, const u8 *data,
 	if (status == WIFI_NRF_STATUS_FAIL) {
 		LOG_ERR("%s: nrf_wifi_fmac_mgmt_tx failed\n", __func__);
 		goto out;
+	}
+
+	/* Both are needed as we use this to send_action where noack is hardcoded
+	 * to 0 always.
+	 */
+	if (wait_time || !noack) {
+		while (!vif_ctx_zep->cookie_resp_received &&
+			timeout++ < wait_time) {
+			k_sleep(K_MSEC(1));
+		}
+
+		if (!vif_ctx_zep->cookie_resp_received) {
+			LOG_ERR("%s: cookie response not received (%dms)\n", __func__,
+				timeout);
+			status = WIFI_NRF_STATUS_FAIL;
+			goto out;
+		}
+		status = WIFI_NRF_STATUS_SUCCESS;
 	}
 
 out:

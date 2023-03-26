@@ -170,6 +170,40 @@ void wifi_nrf_event_get_reg_zep(void *vif_ctx,
 	fmac_dev_ctx->alpha2_valid = true;
 }
 
+void wifi_nrf_event_proc_cookie_rsp(void *vif_ctx,
+				    struct nrf_wifi_umac_event_cookie_rsp *cookie_rsp_event,
+				    unsigned int event_len)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	vif_ctx_zep = vif_ctx;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		return;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+
+	LOG_DBG("%s: cookie_rsp_event->cookie = %llx\n", __func__, cookie_rsp_event->cookie);
+	LOG_DBG("%s: host_cookie = %llx\n", __func__, cookie_rsp_event->host_cookie);
+	LOG_DBG("%s: mac_addr = %x:%x:%x:%x:%x:%x\n", __func__,
+		cookie_rsp_event->mac_addr[0],
+		cookie_rsp_event->mac_addr[1],
+		cookie_rsp_event->mac_addr[2],
+		cookie_rsp_event->mac_addr[3],
+		cookie_rsp_event->mac_addr[4],
+		cookie_rsp_event->mac_addr[5]);
+
+	vif_ctx_zep->cookie_resp_received = true;
+	/* TODO: When supp_callbk_fns.mgmt_tx_status is implemented, add logic
+	 * here to use the cookie and host_cookie to map requests to responses.
+	 */
+}
+
 int wifi_nrf_reg_domain(const struct device *dev, struct wifi_reg_domain *reg_domain)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
@@ -335,6 +369,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	callbk_fns.twt_sleep_callbk_fn = wifi_nrf_event_proc_twt_sleep_zep;
 	callbk_fns.event_get_reg = wifi_nrf_event_get_reg_zep;
 	callbk_fns.event_get_ps_info = wifi_nrf_event_proc_get_power_save_info;
+	callbk_fns.cookie_rsp_callbk_fn = wifi_nrf_event_proc_cookie_rsp;
 #ifdef CONFIG_WPA_SUPP
 	callbk_fns.scan_res_callbk_fn = wifi_nrf_wpa_supp_event_proc_scan_res;
 	callbk_fns.auth_resp_callbk_fn = wifi_nrf_wpa_supp_event_proc_auth_resp;
