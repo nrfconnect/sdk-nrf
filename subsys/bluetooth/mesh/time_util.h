@@ -36,7 +36,7 @@ static inline bool is_leap_year(uint32_t year)
 }
 
 void tai_to_ts(const struct bt_mesh_time_tai *tai, struct tm *timeptr);
-int ts_to_tai(struct bt_mesh_time_tai *tai, struct tm *timeptr);
+int ts_to_tai(struct bt_mesh_time_tai *tai, const struct tm *timeptr);
 
 #ifdef __cplusplus
 }
