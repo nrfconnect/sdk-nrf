@@ -18,8 +18,8 @@
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
-K_THREAD_STACK_DEFINE(wq_stack_area, 1024);
-struct k_work_q zep_wifi_drv_q;
+K_THREAD_STACK_DEFINE(bh_wq_stack_area, 1024);
+struct k_work_q zep_wifi_bh_q;
 
 K_THREAD_STACK_DEFINE(irq_wq_stack_area, 1024);
 struct k_work_q zep_wifi_intr_q;
@@ -64,9 +64,9 @@ static int workqueue_init(const struct device *unused)
 {
 	(void)unused;
 
-	k_work_queue_init(&zep_wifi_drv_q);
+	k_work_queue_init(&zep_wifi_bh_q);
 
-	k_work_queue_start(&zep_wifi_drv_q,
+	k_work_queue_start(&zep_wifi_bh_q,
 						bh_wq_stack_area,
 						K_THREAD_STACK_SIZEOF(bh_wq_stack_area),
 						CONFIG_NRF700X_BH_WQ_PRIORITY,
@@ -76,7 +76,7 @@ static int workqueue_init(const struct device *unused)
 
 	k_work_queue_start(&zep_wifi_intr_q,
 						irq_wq_stack_area,
-						K_THREAD_STACK_SIZEOF(irq_stack_area),
+						K_THREAD_STACK_SIZEOF(irq_wq_stack_area),
 						CONFIG_NRF700X_IRQ_WQ_PRIORITY,
 						NULL);
 
@@ -94,7 +94,7 @@ void work_init(struct zep_work_item *item, void (*callback)(unsigned long),
 
 void work_schedule(struct zep_work_item *item)
 {
-	k_work_submit_to_queue(&zep_wifi_drv_q, &item->work);
+	k_work_submit_to_queue(&zep_wifi_bh_q, &item->work);
 }
 
 void work_kill(struct zep_work_item *item)
