@@ -1,0 +1,65 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.rst'
+      - '**/*.txt'
+  schedule:
+    - cron: '18 3 * * 3'
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    container: nordicplayground/nrfconnect-sdk:main
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v2
+      with:
+        path: ncs/nrf
+        fetch-depth: 0
+
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: 'c'
+
+    # Install more dependencies that are not part of the docker image but are needed by the workflow
+    - name: Install more deps
+      shell: bash
+      run: |
+        apt install -y gcc-multilib
+
+    # The docker image comes pre-initialized with west dependencies. We want to do west update ourselves to to be sure that we get the latest changes in all repos.
+    # The docker image is built nightly. So it may contain slightly out of date repos.
+    # Hence we remove the .west folder and do a re-init
+    - name: West init and update
+      shell: bash
+      run: |
+        rm -rf /workdir/.west/
+        west init -l ncs/nrf
+        cd ncs
+        west update --narrow -o=--depth=1
+
+    - name: Build with twister
+      shell: bash
+      run: |
+        source ncs/zephyr/zephyr-env.sh
+        echo "Run, Build Application using script"
+        ncs/zephyr/scripts/twister -b -v -i -T ncs/nrf/ -p native_posix --quarantine-list ncs/nrf/scripts/quarantine_downstream.yaml
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+      with:
+        category: "/language:c"
