@@ -14,6 +14,17 @@
 #include "link_shell_print.h"
 #include "mosh_print.h"
 
+const char *link_shell_print_sleep_time_to_string(uint64_t sleep_time, char *out_str_buff)
+{
+	if (sleep_time == -1) {
+		strcpy(out_str_buff, "infinite");
+	} else {
+		sprintf(out_str_buff, "%.2f seconds", sleep_time / 1000.0);
+	}
+
+	return out_str_buff;
+}
+
 const char *
 link_shell_print_sleep_type_to_string(enum lte_lc_modem_sleep_type sleep_type, char *out_str_buff)
 {
@@ -32,8 +43,8 @@ link_shell_print_sleep_type_to_string(enum lte_lc_modem_sleep_type sleep_type, c
 void link_shell_print_modem_sleep_notif(const struct lte_lc_evt *const evt)
 {
 	struct lte_lc_modem_sleep modem_sleep = evt->modem_sleep;
-	char snum[64] = { 0 };
-	float time_in_secs = modem_sleep.time / 1000;
+	char stime[32] = { 0 };
+	char stype[64] = { 0 };
 
 	switch (evt->type) {
 	case LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING:
@@ -43,16 +54,15 @@ void link_shell_print_modem_sleep_notif(const struct lte_lc_evt *const evt)
 		 *  until modem exits sleep.
 		 */
 		mosh_print(
-			"Modem sleep exit pre-warning: time: %.2f seconds, type: %s",
-			time_in_secs,
-			link_shell_print_sleep_type_to_string(modem_sleep.type, snum));
+			"Modem sleep exit pre-warning: Time: %s, Type: %s",
+			link_shell_print_sleep_time_to_string(modem_sleep.time, stime),
+			link_shell_print_sleep_type_to_string(modem_sleep.type, stype));
 		break;
 	case LTE_LC_EVT_MODEM_SLEEP_EXIT:
 		/** This event will be received when the modem exits sleep. */
 		mosh_print(
-			"Modem sleep exit: time: %.2f seconds, type: %s",
-			time_in_secs,
-			link_shell_print_sleep_type_to_string(modem_sleep.type, snum));
+			"Modem sleep exit: Type: %s",
+			link_shell_print_sleep_type_to_string(modem_sleep.type, stype));
 		break;
 	case LTE_LC_EVT_MODEM_SLEEP_ENTER:
 		/** This event will be received when the modem enters sleep.
@@ -60,9 +70,9 @@ void link_shell_print_modem_sleep_notif(const struct lte_lc_evt *const evt)
 		 *  the duration of the sleep.
 		 */
 		mosh_print(
-			"Modem sleep enter: time: %.2f seconds, type: %s",
-			time_in_secs,
-			link_shell_print_sleep_type_to_string(modem_sleep.type, snum));
+			"Modem sleep enter: Time: %s, Type: %s",
+			link_shell_print_sleep_time_to_string(modem_sleep.time, stime),
+			link_shell_print_sleep_type_to_string(modem_sleep.type, stype));
 		break;
 	default:
 		mosh_print("Unknown type of modem sleep event %d", evt->type);
