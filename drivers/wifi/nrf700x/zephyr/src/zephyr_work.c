@@ -16,7 +16,6 @@
 
 #include "zephyr_work.h"
 
-#define PRIORITY 0
 #define CONFIG_NRF700X_WORKQ_MAX_ITEMS 10
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
@@ -70,9 +69,9 @@ static int workqueue_init(const struct device *unused)
 	k_work_queue_init(&zep_wifi_drv_q);
 
 	k_work_queue_start(&zep_wifi_drv_q,
-						wq_stack_area,
-						K_THREAD_STACK_SIZEOF(wq_stack_area),
-						PRIORITY,
+						bh_wq_stack_area,
+						K_THREAD_STACK_SIZEOF(bh_wq_stack_area),
+						CONFIG_NRF700X_BH_WQ_PRIORITY,
 						NULL);
 
 	k_work_queue_init(&zep_wifi_intr_q);
@@ -80,7 +79,7 @@ static int workqueue_init(const struct device *unused)
 	k_work_queue_start(&zep_wifi_intr_q,
 						irq_wq_stack_area,
 						K_THREAD_STACK_SIZEOF(irq_stack_area),
-						PRIORITY,
+						CONFIG_NRF700X_IRQ_WQ_PRIORITY,
 						NULL);
 
 	return 0;
