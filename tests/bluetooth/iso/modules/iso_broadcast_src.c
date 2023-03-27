@@ -13,7 +13,7 @@
 #include "iso_broadcast_src.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(broadcast_src, 3);
+LOG_MODULE_REGISTER(broadcast_src, CONFIG_ISO_TEST_LOG_LEVEL);
 
 K_THREAD_STACK_DEFINE(broadcaster_thread_stack, 4096);
 static struct k_thread broadcaster_thread;
@@ -23,12 +23,11 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 #define BUF_ALLOC_TIMEOUT (10) /* milliseconds */
 #define BIG_SDU_INTERVAL_US (10000)
 
-#define BIS_ISO_CHAN_COUNT_MAX 6
-NET_BUF_POOL_FIXED_DEFINE(bis_tx_pool, BIS_ISO_CHAN_COUNT_MAX,
+NET_BUF_POOL_FIXED_DEFINE(bis_tx_pool, CONFIG_BIS_ISO_CHAN_COUNT_MAX,
 			  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU), 8, NULL);
 
-static K_SEM_DEFINE(sem_big_cmplt, 0, BIS_ISO_CHAN_COUNT_MAX);
-static K_SEM_DEFINE(sem_big_term, 0, BIS_ISO_CHAN_COUNT_MAX);
+static K_SEM_DEFINE(sem_big_cmplt, 0, CONFIG_BIS_ISO_CHAN_COUNT_MAX);
+static K_SEM_DEFINE(sem_big_term, 0, CONFIG_BIS_ISO_CHAN_COUNT_MAX);
 
 static uint16_t seq_num;
 static bool running;
@@ -200,6 +199,11 @@ int iso_broadcaster_start(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
 
+	err = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	if (err < 0) {
+		return err;
+	}
+
 	/* Create a non-connectable non-scannable advertising set */
 	err = bt_le_ext_adv_create(BT_LE_EXT_ADV_NCONN_NAME, NULL, &adv);
 	if (err) {
@@ -302,7 +306,6 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 {
 	int result = argument_check(shell, argv[2]);
 
-	shell_print(shell, "%s %s %s", argv[0], argv[1], argv[2]);
 	if (result < 0) {
 		return result;
 	}
@@ -374,11 +377,6 @@ int iso_broadcaster_init(void)
 
 	if (!gpio_is_ready_dt(&led)) {
 		return -EBUSY;
-	}
-
-	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
-	if (ret < 0) {
-		return ret;
 	}
 
 	k_thread_create(&broadcaster_thread, broadcaster_thread_stack,

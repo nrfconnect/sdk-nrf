@@ -12,9 +12,13 @@
 #include <zephyr/bluetooth/iso.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/shell/shell.h>
+#include <getopt.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <unistd.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(broadcast_sink, 3);
+LOG_MODULE_REGISTER(broadcast_sink, CONFIG_ISO_TEST_LOG_LEVEL);
 
 #define TIMEOUT_SYNC_CREATE K_SECONDS(10)
 #define NAME_LEN 30
@@ -25,11 +29,10 @@ LOG_MODULE_REGISTER(broadcast_sink, 3);
 
 #define PA_RETRY_COUNT 6
 
-#define BIS_ISO_CHAN_COUNT 1
 K_THREAD_STACK_DEFINE(broadcaster_sink_thread_stack, 4096);
 static struct k_thread broadcaster_thread;
 
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led2), gpios);
 
 static bool per_adv_found;
 static bool per_adv_lost;
@@ -42,8 +45,8 @@ static K_SEM_DEFINE(sem_per_adv, 0, 1);
 static K_SEM_DEFINE(sem_per_sync, 0, 1);
 static K_SEM_DEFINE(sem_per_sync_lost, 0, 1);
 static K_SEM_DEFINE(sem_per_big_info, 0, 1);
-static K_SEM_DEFINE(sem_big_sync, 0, BIS_ISO_CHAN_COUNT);
-static K_SEM_DEFINE(sem_big_sync_lost, 0, BIS_ISO_CHAN_COUNT);
+static K_SEM_DEFINE(sem_big_sync, 0, CONFIG_BIS_ISO_CHAN_COUNT_MAX);
+static K_SEM_DEFINE(sem_big_sync_lost, 0, CONFIG_BIS_ISO_CHAN_COUNT_MAX);
 
 static bool data_cb(struct bt_data *data, void *user_data)
 {
@@ -251,7 +254,7 @@ static struct bt_iso_chan_ops iso_ops = {
 	.disconnected = iso_disconnected,
 };
 
-static struct bt_iso_chan_io_qos iso_rx_qos[BIS_ISO_CHAN_COUNT];
+static struct bt_iso_chan_io_qos iso_rx_qos[CONFIG_BIS_ISO_CHAN_COUNT_MAX];
 
 static struct bt_iso_chan_qos bis_iso_qos[] = {
 	{
@@ -280,8 +283,8 @@ static struct bt_iso_chan *bis[] = {
 
 static struct bt_iso_big_sync_param big_sync_param = {
 	.bis_channels = bis,
-	.num_bis = BIS_ISO_CHAN_COUNT,
-	.bis_bitfield = (BIT_MASK(BIS_ISO_CHAN_COUNT) << 1),
+	.num_bis = 1,
+	.bis_bitfield = (BIT_MASK(1) << 1),
 	.mse = 1,
 	.sync_timeout = 100, /* in 10 ms units */
 };
@@ -386,7 +389,7 @@ big_sync_create:
 		}
 		LOG_INF("success.");
 
-		for (uint8_t chan = 0U; chan < BIS_ISO_CHAN_COUNT; chan++) {
+		for (uint8_t chan = 0U; chan < big_sync_param.num_bis; chan++) {
 			LOG_INF("Waiting for BIG sync chan %u...", chan);
 			err = k_sem_take(&sem_big_sync, TIMEOUT_SYNC_CREATE);
 			if (err) {
@@ -409,7 +412,7 @@ big_sync_create:
 		}
 		LOG_INF("BIG sync established.");
 
-		for (uint8_t chan = 0U; chan < BIS_ISO_CHAN_COUNT; chan++) {
+		for (uint8_t chan = 0U; chan < big_sync_param.num_bis; chan++) {
 			LOG_INF("Waiting for BIG sync lost chan %u...", chan);
 			err = k_sem_take(&sem_big_sync_lost, K_FOREVER);
 			if (err) {
@@ -432,16 +435,10 @@ per_sync_lost_check:
 
 int iso_broadcast_sink_init(void)
 {
-	int ret;
 	running = false;
 
 	if (!gpio_is_ready_dt(&led)) {
 		return -EBUSY;
-	}
-
-	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
-	if (ret < 0) {
-		return ret;
 	}
 
 	k_thread_create(&broadcaster_thread, broadcaster_sink_thread_stack,
@@ -453,13 +450,86 @@ int iso_broadcast_sink_init(void)
 
 int iso_broadcast_sink_start(const struct shell *shell, size_t argc, char **argv)
 {
+	int ret;
+
+	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	if (ret < 0) {
+		return ret;
+	}
+
 	running = true;
 	return 0;
 }
 
+static int argument_check(const struct shell *shell, uint8_t const *const input)
+{
+	char *end;
+	int arg_val = strtol(input, &end, 10);
+
+	if (*end != '\0' || (uint8_t *)end == input || (arg_val == 0 && !isdigit(input[0])) ||
+	    arg_val < 0) {
+		shell_error(shell, "Argument must be a positive integer %s", input);
+		return -EINVAL;
+	}
+
+	if (running) {
+		shell_error(shell, "Arguments can not be changed while running");
+		return -EACCES;
+	}
+
+	return arg_val;
+}
+
+static struct option long_options[] = {
+					{ "num_bis:", required_argument, NULL, 'n' },
+					{ 0, 0, 0, 0 } };
+
+static const char short_options[] = "n:";
+
+static int set_param(const struct shell *shell, size_t argc, char **argv)
+{
+	int result = argument_check(shell, argv[2]);
+
+	if (result < 0) {
+		return result;
+	}
+
+	if (running) {
+		shell_error(shell, "Change sink parameters before starting");
+		return -EPERM;
+	}
+
+	int long_index = 0;
+	int opt;
+
+	optreset = 1;
+	optind = 1;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+		switch (opt) {
+		case 'n':
+			big_sync_param.num_bis = result;
+			big_sync_param.bis_bitfield = (BIT_MASK(result) << 1);
+			shell_print(shell, "num_bis: %d", big_sync_param.num_bis);
+			break;
+		case ':':
+			shell_error(shell, "Missing option parameter");
+			break;
+		case '?':
+			shell_error(shell, "Unknown option");
+			break;
+		default:
+			shell_error(shell, "Invalid option");
+			break;
+		}
+	}
+
+	return 0;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(broadcast_sink_cmd,
-	SHELL_CMD(start, NULL, "Start ISO broadcast sink.",
-	iso_broadcast_sink_start),
+	SHELL_CMD(start, NULL, "Start ISO broadcast sink.", iso_broadcast_sink_start),
+	SHELL_CMD_ARG(set, NULL, "set", set_param, 3, 0),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(brcast_sink, &broadcast_sink_cmd, "ISO Broadcast sink commands", NULL);
