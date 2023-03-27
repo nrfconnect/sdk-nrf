@@ -251,7 +251,7 @@ static struct qspi_nor_data qspi_nor_memory_data = {
 #endif /* CONFIG_MULTITHREADING */
 };
 
-NRF_DT_CHECK_PIN_ASSIGNMENTS(QSPI_NODE, 1, sck_pin, csn_pins, io_pins);
+NRF_DT_CHECK_NODE_HAS_PINCTRL_SLEEP(QSPI_NODE);
 
 IF_ENABLED(CONFIG_PINCTRL, (PINCTRL_DT_DEFINE(QSPI_NODE)));
 
