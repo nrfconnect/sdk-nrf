@@ -116,4 +116,11 @@ config NRF700X_SCAN_LIMIT
 	int "Maximum number of scan results returned to application. Use negative values for unlimited scan results."
 	default -1
 
+config NRF700X_IRQ_WQ_PRIORITY
+	int "Priority of the workqueue for handling IRQs"
+	default 0
+
+config NRF700X_BH_WQ_PRIORITY
+	int "Priority of the workqueue for handling bottom half"
+	default 0
 endif
