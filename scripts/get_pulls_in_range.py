@@ -17,7 +17,8 @@ from typing import Dict, List, NamedTuple, Optional, Union
 import pygit2
 import github
 
-from pygit2_helpers import zephyr_commit_area, commit_shortlog
+sys.path.append(os.path.join(os.path.dirname(__file__), 'west_commands'))
+from pygit2_helpers import zephyr_commit_area, commit_title
 
 # A container for pull request information.
 class pr_info(NamedTuple):
@@ -307,11 +308,11 @@ def get_result_from_network(commit: pygit2.Commit,
 
     # Print sign of life.
     if gh_pr:
-        print(f'\t{sha[:10]} {commit_shortlog(commit)}\n'
+        print(f'\t{sha[:10]} {commit_title(commit)}\n'
               f'\t           PR #{gh_pr.number:5}: {gh_pr.title}',
               file=sys.stderr)
     else:
-        print(f'\t{sha[:10]} {commit_shortlog(commit)}\n'
+        print(f'\t{sha[:10]} {commit_title(commit)}\n'
               f'\t           Not merged via pull request',
               file=sys.stderr)
 
@@ -419,7 +420,7 @@ def main():
     if no_pr_commits:
         print('\nCommits not merged via pull request:\n')
         for commit in no_pr_commits:
-            print(f'- {commit.oid} {commit_shortlog(commit)}')
+            print(f'- {commit.oid} {commit_title(commit)}')
 
 if __name__ == '__main__':
     try:
