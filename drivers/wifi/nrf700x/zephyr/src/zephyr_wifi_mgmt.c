@@ -617,6 +617,10 @@ int wifi_nrf_set_twt(const struct device *dev,
 
 	switch (twt_params->operation) {
 	case WIFI_TWT_SETUP:
+		if (vif_ctx_zep->twt_in_progress) {
+			return WIFI_TWT_FAIL_OPERATION_IN_PROGRESS;
+		}
+
 		struct twt_interval_float twt_interval_float =
 			wifi_nrf_twt_us_to_float(twt_params->setup.twt_interval);
 
@@ -641,6 +645,11 @@ int wifi_nrf_set_twt(const struct device *dev,
 		status = wifi_nrf_fmac_twt_setup(rpu_ctx_zep->rpu_ctx,
 					   vif_ctx_zep->vif_idx,
 					   &twt_info);
+
+		if (status == WIFI_NRF_STATUS_SUCCESS) {
+			vif_ctx_zep->twt_in_progress = true;
+		}
+
 		break;
 	case WIFI_TWT_TEARDOWN:
 		twt_info.twt_flow_id = twt_params->flow_id;
@@ -665,6 +674,7 @@ int wifi_nrf_set_twt(const struct device *dev,
 
 		if (status == WIFI_NRF_STATUS_SUCCESS) {
 			vif_ctx_zep->neg_twt_flow_id = 0XFF;
+			vif_ctx_zep->twt_in_progress = false;
 		}
 
 		break;
@@ -717,6 +727,11 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 	twt_params.dialog_token = twt_setup_info->info.dialog_token;
 	twt_params.resp_status = twt_setup_info->info.twt_resp_status;
 
+	if ((twt_setup_info->info.twt_resp_status == 0) ||
+	    (twt_setup_info->info.neg_type != NRF_WIFI_ACCEPT_TWT)) {
+		vif_ctx_zep->twt_in_progress = false;
+	}
+
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
 }
 
@@ -738,6 +753,7 @@ void wifi_nrf_event_proc_twt_teardown_zep(void *vif_ctx,
 	twt_params.flow_id = twt_teardown_info->info.twt_flow_id;
 	/* TODO: ADD reason code in the twt_params structure */
 	vif_ctx_zep->neg_twt_flow_id = 0XFF;
+	vif_ctx_zep->twt_in_progress = false;
 
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
 }

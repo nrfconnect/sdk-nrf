@@ -76,6 +76,7 @@ struct wifi_nrf_vif_ctx_zep {
 		unsigned int ext_capa_len;
 	} iface_ext_capa;
 	bool cookie_resp_received;
+	bool twt_in_progress;
 };
 
 struct wifi_nrf_vif_ctx_map {
