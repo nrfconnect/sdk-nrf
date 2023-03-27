@@ -16,8 +16,6 @@
 
 #include "zephyr_work.h"
 
-#define CONFIG_NRF700X_WORKQ_MAX_ITEMS 10
-
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 K_THREAD_STACK_DEFINE(wq_stack_area, 1024);
