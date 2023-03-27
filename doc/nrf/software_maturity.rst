@@ -175,6 +175,15 @@ The following table indicates the software maturity levels of the support for ea
 
 .. sml-table:: top_level
 
+Bluetooth features support
+**************************
+
+The following table indicates the software maturity levels of the support for each Bluetooth feature:
+
+.. toggle::
+
+  .. sml-table:: bluetooth
+
 HomeKit features support
 ************************
 
