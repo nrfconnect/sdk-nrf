@@ -1,7 +1,7 @@
 .. _central_and_peripheral_hrs:
 
 Bluetooth: Central and Peripheral HRS
-#####################################
+######################################
 
 .. contents::
    :local:
