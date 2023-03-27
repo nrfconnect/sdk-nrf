@@ -35,6 +35,17 @@ static const struct bt_mesh_schedule_entry valid_entry = {
 	.scene_number = 1,
 };
 
+static const struct tm start_tm = {
+	/* 1st of Jan 2010 */
+	.tm_year = 110,
+	.tm_mon = 0,
+	.tm_mday = 1,
+	.tm_wday = 5,
+	.tm_hour = 0,
+	.tm_min = 0,
+	.tm_sec = 0,
+};
+
 struct bt_mesh_msg_ctx test_ctx = {
 	.addr = 1,
 };
@@ -176,6 +187,8 @@ struct tm *bt_mesh_time_srv_localtime(struct bt_mesh_time_srv *srv, int64_t upti
 {
 	static struct tm timeptr;
 	struct bt_mesh_time_tai tai;
+
+	zassert_ok(ts_to_tai(&tai, &start_tm), "cannot convert tai time");
 	int64_t tmp = tai_to_ms(&tai);
 
 	tmp += uptime;
@@ -191,16 +204,6 @@ void bt_mesh_model_msg_init(struct net_buf_simple *msg, uint32_t opcode)
 
 int64_t bt_mesh_time_srv_mktime(struct bt_mesh_time_srv *srv, struct tm *timeptr)
 {
-	static const struct tm start_tm = {
-		/* 1st of Jan 2010 */
-		.tm_year = 110,
-		.tm_mon = 0, .tm_mday = 1,
-		.tm_wday = 5,
-		.tm_hour = 0,
-		.tm_min = 0,
-		.tm_sec = 0,
-	};
-
 	return (timeutil_timegm64(timeptr) - timeutil_timegm64(&start_tm)) * 1000;
 }
 
