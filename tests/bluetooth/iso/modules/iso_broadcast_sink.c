@@ -138,7 +138,7 @@ static void term_cb(struct bt_le_per_adv_sync *sync,
 
 	bt_addr_le_to_str(info->addr, le_addr, sizeof(le_addr));
 
-	LOG_INF("PER_ADV_SYNC[%u]: [DEVICE]: %s sync terminated",
+	LOG_DBG("PER_ADV_SYNC[%u]: [DEVICE]: %s sync terminated",
 		   bt_le_per_adv_sync_get_index(sync), le_addr);
 
 	per_adv_lost = true;
@@ -154,7 +154,7 @@ static void recv_cb(struct bt_le_per_adv_sync *sync,
 	bt_addr_le_to_str(info->addr, le_addr, sizeof(le_addr));
 	bin2hex(buf->data, buf->len, data_str, sizeof(data_str));
 
-	LOG_INF("PER_ADV_SYNC[%u]: [DEVICE]: %s, tx_power %i, "
+	LOG_DBG("PER_ADV_SYNC[%u]: [DEVICE]: %s, tx_power %i, "
 		   "RSSI %i, CTE %u, data length %u, data: %s",
 		   bt_le_per_adv_sync_get_index(sync), le_addr, info->tx_power, info->rssi,
 		   info->cte_type, buf->len, data_str);
@@ -196,11 +196,9 @@ static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *in
 	static uint32_t counts_fail;
 	static uint32_t counts_success;
 
-	if (buf->len != sizeof(count)) {
-		LOG_ERR("buf len is not equal to sizeof(uint32_t)");
-		return;
+	if (buf->len == sizeof(count)) {
+		count = sys_get_le32(buf->data);
 	}
-	count = sys_get_le32(buf->data);
 
 	if (!(info->flags & BT_ISO_FLAGS_VALID)) {
 		LOG_ERR("bad frame");
@@ -310,7 +308,7 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 		LOG_INF("Start scanning...");
 		err = bt_le_scan_start(BT_LE_SCAN_CUSTOM, NULL);
 		if (err) {
-			LOG_INF("failed (err %d)", err);
+			LOG_ERR("failed (err %d)", err);
 			return;
 		}
 
@@ -318,7 +316,7 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 		per_adv_found = false;
 		err = k_sem_take(&sem_per_adv, K_FOREVER);
 		if (err) {
-			LOG_INF("failed (err %d)", err);
+			LOG_ERR("failed (err %d)", err);
 			return;
 		}
 		LOG_INF("Found periodic advertising.");
@@ -326,7 +324,7 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 		LOG_INF("Stop scanning...");
 		err = bt_le_scan_stop();
 		if (err) {
-			LOG_INF("failed (err %d)", err);
+			LOG_ERR("failed (err %d)", err);
 			return;
 		}
 

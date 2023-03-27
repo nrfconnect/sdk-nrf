@@ -23,12 +23,12 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 #define BUF_ALLOC_TIMEOUT (10) /* milliseconds */
 #define BIG_SDU_INTERVAL_US (10000)
 
-#define BIS_ISO_CHAN_COUNT 1
-NET_BUF_POOL_FIXED_DEFINE(bis_tx_pool, BIS_ISO_CHAN_COUNT,
+#define BIS_ISO_CHAN_COUNT_MAX 6
+NET_BUF_POOL_FIXED_DEFINE(bis_tx_pool, BIS_ISO_CHAN_COUNT_MAX,
 			  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU), 8, NULL);
 
-static K_SEM_DEFINE(sem_big_cmplt, 0, BIS_ISO_CHAN_COUNT);
-static K_SEM_DEFINE(sem_big_term, 0, BIS_ISO_CHAN_COUNT);
+static K_SEM_DEFINE(sem_big_cmplt, 0, BIS_ISO_CHAN_COUNT_MAX);
+static K_SEM_DEFINE(sem_big_term, 0, BIS_ISO_CHAN_COUNT_MAX);
 
 static uint16_t seq_num;
 static bool running;
@@ -80,7 +80,7 @@ static struct bt_iso_chan *bis[] = {
 };
 
 static struct bt_iso_big_create_param big_create_param = {
-	.num_bis = BIS_ISO_CHAN_COUNT,
+	.num_bis = 1,
 	.bis_channels = bis,
 	.interval = BIG_SDU_INTERVAL_US, /* in microseconds */
 	.latency = 10, /* in milliseconds */
@@ -113,7 +113,7 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 			continue;
 		}
 
-		for (uint8_t chan = 0U; chan < BIS_ISO_CHAN_COUNT; chan++) {
+		for (uint8_t chan = 0U; chan < broadcast_params.num_bis; chan++) {
 			struct net_buf *buf;
 
 			buf = net_buf_alloc(&bis_tx_pool, K_MSEC(BUF_ALLOC_TIMEOUT));
@@ -163,7 +163,7 @@ int iso_broadcaster_stop(const struct shell *shell, size_t argc, char **argv)
 		return err;
 	}
 
-	for (uint8_t chan = 0U; chan < BIS_ISO_CHAN_COUNT; chan++) {
+	for (uint8_t chan = 0U; chan < broadcast_params.num_bis; chan++) {
 		LOG_INF("Waiting for BIG terminate complete"
 			" chan %u...",
 			chan);
@@ -237,7 +237,7 @@ int iso_broadcaster_start(const struct shell *shell, size_t argc, char **argv)
 		return err;
 	}
 
-	for (uint8_t chan = 0U; chan < BIS_ISO_CHAN_COUNT; chan++) {
+	for (uint8_t chan = 0U; chan < broadcast_params.num_bis; chan++) {
 		LOG_INF("Waiting for BIG complete chan %u...", chan);
 		err = k_sem_take(&sem_big_cmplt, K_FOREVER);
 		if (err) {
@@ -307,8 +307,14 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 		return result;
 	}
 
+	if (running) {
+		shell_error(shell, "Stop src before changing parameters");
+		return -EPERM;
+	}
+
 	int long_index = 0;
 	int opt;
+
 	optreset = 1;
 	optind = 1;
 
