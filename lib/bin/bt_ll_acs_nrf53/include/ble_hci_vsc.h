@@ -16,7 +16,7 @@
 
 #include <zephyr/kernel.h>
 
-#define HCI_OPCODE_VS_SET_PRI_EXT_ADV_MAX_TX_PWR BT_OP(BT_OGF_VS, 0x000)
+#define HCI_OPCODE_VS_SET_PRI_ADV_CHAN_MAX_TX_PWR BT_OP(BT_OGF_VS, 0x000)
 #define HCI_OPCODE_VS_SET_LED_PIN_MAP BT_OP(BT_OGF_VS, 0x001)
 #define HCI_OPCODE_VS_CONFIG_FEM_PIN BT_OP(BT_OGF_VS, 0x002)
 #define HCI_OPCODE_VS_SET_RADIO_FE_CFG BT_OP(BT_OGF_VS, 0x3A3)
@@ -145,6 +145,7 @@ int ble_hci_vsc_radio_high_pwr_mode_set(enum ble_hci_vs_max_tx_power max_tx_powe
 
 /**
  * @brief Set Bluetooth MAC device address.
+ *
  * @param bd_addr	Bluetooth MAC device address.
  *
  * @note	This can be used to set a public address for the device.
@@ -157,6 +158,7 @@ int ble_hci_vsc_bd_addr_set(uint8_t *bd_addr);
 
 /**
  * @brief Set the controller operation mode flag.
+ *
  * @param flag_bit	The target bit in operation mode flag.
  * @param setting	The setting of the bit.
  *
@@ -166,8 +168,14 @@ int ble_hci_vsc_op_flag_set(uint32_t flag_bit, uint8_t setting);
 
 /**
  * @brief Set the advertising TX power.
+ *
  * @param tx_power TX power setting for the advertising.
  *                 Check ble_hci_vs_tx_power for possible settings.
+ *
+ * @note	If extended advertising is used, the TX power for
+ *		both the primary and secondary advertisement channels
+ *		is changed. In other words, the TX power for all
+ *		Bluetooth Low Energy channels is changed.
  *
  * @return 0 for success, error otherwise.
  */
@@ -175,9 +183,13 @@ int ble_hci_vsc_adv_tx_pwr_set(enum ble_hci_vs_tx_power tx_power);
 
 /**
  * @brief Set TX power for specific connection.
+ *
  * @param conn_handle Specific connection handle for the TX power setting.
  * @param tx_power TX power setting for the specific connection handle.
  *                 Check ble_hci_vs_tx_power for possible settings.
+ *
+ * @note	The TX power for the primary advertisement channels
+ *		(37, 38 and 39) will not be affected.
  *
  * @return 0 for success, error otherwise.
  */
@@ -185,15 +197,17 @@ int ble_hci_vsc_conn_tx_pwr_set(uint16_t conn_handle, enum ble_hci_vs_tx_power t
 
 /**
  * @brief Set the maximum transmit power on primary advertising channels.
- * @param tx_power TX power setting for the primary advertising channels
- *                 in advertising extension, which are BLE channel 37, 38 and 39.
+ *
+ * @param tx_power TX power setting for the primary advertising channels.
  *                 Please check ble_hci_vs_tx_power for possible settings.
  *                 Set to BLE_HCI_VSC_PRI_EXT_ADV_MAX_TX_PWR_DISABLE (-127) for
  *                 disabling this feature.
  *
+ * @note	BLE channels 37, 38 and 39 are the primary advertising channels.
+ *
  * @return 0 for success, error otherwise.
  */
-int ble_hci_vsc_pri_ext_adv_max_tx_pwr_set(enum ble_hci_vs_tx_power tx_power);
+int ble_hci_vsc_pri_adv_chan_max_tx_pwr_set(enum ble_hci_vs_tx_power tx_power);
 
 /**
  * @brief Map LED pin to a specific controller function.

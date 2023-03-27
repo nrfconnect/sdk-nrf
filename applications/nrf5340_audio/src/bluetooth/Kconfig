@@ -207,12 +207,6 @@ config NRF_21540_ACTIVE
 	  -DSHIELD=nrf21540_ek_fwd when building app core to include the shield
 	  overlay file.
 
-config NRF_21540_MAIN_DBM
-	int
-	default 0 if NRF_21540_MAIN_TX_POWER_0DBM
-	default 10 if NRF_21540_MAIN_TX_POWER_10DBM
-	default 20 if NRF_21540_MAIN_TX_POWER_20DBM
-
 choice NRF_21540_MAIN_TX_POWER
 	prompt "TX power for the secondary channels"
 	default NRF_21540_MAIN_TX_POWER_10DBM
@@ -234,11 +228,11 @@ config NRF_21540_MAIN_TX_POWER_20DBM
 
 endchoice
 
-config NRF_21540_PRI_ADV_DBM
+config NRF_21540_MAIN_DBM
 	int
-	default 0 if NRF_21540_PRI_ADV_TX_POWER_0DBM
-	default 10 if NRF_21540_PRI_ADV_TX_POWER_10DBM
-	default 20 if NRF_21540_PRI_ADV_TX_POWER_20DBM
+	default 0 if NRF_21540_MAIN_TX_POWER_0DBM
+	default 10 if NRF_21540_MAIN_TX_POWER_10DBM
+	default 20 if NRF_21540_MAIN_TX_POWER_20DBM
 
 choice NRF_21540_PRI_ADV_TX_POWER
 	prompt "TX power for the primary advertising channels"
@@ -261,6 +255,12 @@ config NRF_21540_PRI_ADV_TX_POWER_20DBM
 	bool "+20dBm"
 
 endchoice
+
+config NRF_21540_PRI_ADV_DBM
+	int
+	default 0 if NRF_21540_PRI_ADV_TX_POWER_0DBM
+	default 10 if NRF_21540_PRI_ADV_TX_POWER_10DBM
+	default 20 if NRF_21540_PRI_ADV_TX_POWER_20DBM
 
 config BLE_ISO_TEST_PATTERN
 	bool "Transmit a test pattern to measure link performance"
