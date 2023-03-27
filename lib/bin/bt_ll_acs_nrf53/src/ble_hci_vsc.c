@@ -164,14 +164,14 @@ int ble_hci_vsc_conn_tx_pwr_set(uint16_t conn_handle, enum ble_hci_vs_tx_power t
 	return ret;
 }
 
-int ble_hci_vsc_pri_ext_adv_max_tx_pwr_set(enum ble_hci_vs_tx_power tx_power)
+int ble_hci_vsc_pri_adv_chan_max_tx_pwr_set(enum ble_hci_vs_tx_power tx_power)
 {
 	int ret;
 	struct ble_hci_vs_cp_set_adv_tx_pwr *cp;
 	struct ble_hci_vs_rp_status *rp;
 	struct net_buf *buf, *rsp = NULL;
 
-	buf = bt_hci_cmd_create(HCI_OPCODE_VS_SET_PRI_EXT_ADV_MAX_TX_PWR, sizeof(*cp));
+	buf = bt_hci_cmd_create(HCI_OPCODE_VS_SET_PRI_ADV_CHAN_MAX_TX_PWR, sizeof(*cp));
 	if (!buf) {
 		LOG_ERR("Unable to allocate command buffer");
 		return -ENOMEM;
@@ -179,9 +179,9 @@ int ble_hci_vsc_pri_ext_adv_max_tx_pwr_set(enum ble_hci_vs_tx_power tx_power)
 	cp = net_buf_add(buf, sizeof(*cp));
 	cp->tx_power = tx_power;
 
-	ret = bt_hci_cmd_send_sync(HCI_OPCODE_VS_SET_PRI_EXT_ADV_MAX_TX_PWR, buf, &rsp);
+	ret = bt_hci_cmd_send_sync(HCI_OPCODE_VS_SET_PRI_ADV_CHAN_MAX_TX_PWR, buf, &rsp);
 	if (ret) {
-		LOG_ERR("Error for HCI VS command HCI_OPCODE_VS_SET_PRI_EXT_ADV_MAX_TX_PWR");
+		LOG_ERR("Error for HCI VS command HCI_OPCODE_VS_SET_PRI_ADV_CHAN_MAX_TX_PWR");
 		return ret;
 	}
 

@@ -111,7 +111,6 @@ static void on_bt_ready(int err)
 	ble_core_le_lost_notify_enable();
 
 #if (CONFIG_NRF_21540_ACTIVE)
-
 	/* Indexes for the pins gotten from nrf21540_ek_fwd.overlay */
 	uint8_t tx_pin = NRF_DT_GPIOS_TO_PSEL_BY_IDX(DT_PATH(nrf_gpio_forwarder, nrf21540_gpio_if),
 						     gpios, 0);
@@ -144,7 +143,20 @@ static void on_bt_ready(int err)
 	ret = ble_hci_vsc_adv_tx_pwr_set(CONFIG_NRF_21540_MAIN_DBM);
 	ERR_CHK(ret);
 
-	ret = ble_hci_vsc_pri_ext_adv_max_tx_pwr_set(CONFIG_NRF_21540_PRI_ADV_DBM);
+	LOG_DBG("TX power set to %d", CONFIG_NRF_21540_MAIN_DBM);
+
+	ret = ble_hci_vsc_pri_adv_chan_max_tx_pwr_set(CONFIG_NRF_21540_PRI_ADV_DBM);
+	ERR_CHK(ret);
+
+	LOG_DBG("Primary advertising TX power set to %d", CONFIG_NRF_21540_PRI_ADV_DBM);
+#else
+	ret = ble_hci_vsc_adv_tx_pwr_set(CONFIG_BLE_ADV_TX_POWER_DBM);
+	ERR_CHK(ret);
+
+	LOG_DBG("TX power set to %d", CONFIG_BLE_ADV_TX_POWER_DBM);
+
+	/* Disabled by default, only used if another TX power for primary adv channels is needed */
+	ret = ble_hci_vsc_pri_adv_chan_max_tx_pwr_set(BLE_HCI_VSC_PRI_EXT_ADV_MAX_TX_PWR_DISABLE);
 	ERR_CHK(ret);
 #endif /* (CONFIG_NRF_21540_ACTIVE) */
 
