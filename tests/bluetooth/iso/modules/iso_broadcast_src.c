@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 #include <zephyr/kernel.h>
 #include <zephyr/bluetooth/bluetooth.h>
@@ -370,7 +375,7 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-int iso_broadcaster_init(void)
+int iso_broadcast_src_init(void)
 {
 	int ret;
 	running = false;

@@ -20,6 +20,14 @@ struct broadcaster_params {
 	uint8_t framing;
 };
 
-int iso_broadcaster_init(void);
+
+/** @brief Initialize the ISO broadcast source.
+ *
+ * @note This code is intended for CI testing and is based on a Zephyr sample.
+ * Please see Zephyr ISO samples for a more implementation friendly starting point.
+ *
+ * @retval 0 The initialization was successful.
+ */
+int iso_broadcast_src_init(void);
 
 #endif

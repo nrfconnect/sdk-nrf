@@ -5,7 +5,7 @@ config PRINT_CONN_INTERVAL
 		For each set interval, a summary will be printed and a LED toggled.
 
 config ISO_TEST_LOG_LEVEL
-	int "Default log level for iso test module"
+	int "Default log level for ISO test module"
 	default 3
 
 config BIS_ISO_CHAN_COUNT_MAX
