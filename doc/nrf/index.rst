@@ -20,7 +20,7 @@ A "99" at the end of the version number of this documentation indicates continuo
    dev_model
    app_dev
    security
-   ecosystem_integration
+   integrations
    nrf91
    nrf70
    nrf53

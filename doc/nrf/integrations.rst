@@ -1,16 +1,18 @@
-.. _ecosystem_integration:
+.. _integrations:
 
-Ecosystems integration
-######################
+Integrations
+############
 
-The following user guides describe the integration of various ecosystems and tools with |NCS|.
-The |NCS| is also integrated with the following ecosystems that are documented in private repositories:
+An |NCS| integration allows for using third-party and Nordic products within the |NCS|.
+Integrations of the following third-party products are documented in their private repositories:
 
 * Apple Homekit
 * Apple Find My
 * ANT
 
 In the case of HomeKit and Find My, MFi licensees can get access to the repository by issuing a Nordic `DevZone`_ private ticket.
+
+The following user guides describe available integrations:
 
 .. toctree::
    :maxdepth: 1

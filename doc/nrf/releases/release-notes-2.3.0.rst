@@ -1016,7 +1016,7 @@ Documentation
 * Added:
 
   * A page about :ref:`ug_matter_device_security` in the Matter protocol section.
-  * Template for the :ref:`Ecosystem integration <Ecosystem_integration>` user guides.
+  * Template for the :ref:`Integration <integration_template>` user guides.
   * A page on :ref:`ug_avsystem`.
   * The :ref:`ug_nrf70_developing` user guide.
   * A page on :ref:`ug_nrf70_features`.
