@@ -191,6 +191,8 @@ nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
 * Updated the machine learning models (:kconfig:option:`CONFIG_EDGE_IMPULSE_URI`) used by the application to ensure compatibility with the new Zephyr version.
+* Simplified the over-the-air (OTA) device firmware update (DFU) configuration of nRF53 DK .
+  The configuration relies on the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option.
 
 nRF Desktop
 -----------
