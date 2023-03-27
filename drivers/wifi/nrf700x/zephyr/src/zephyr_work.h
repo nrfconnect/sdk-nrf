@@ -12,7 +12,7 @@
 #ifndef __WORK_H__
 #define __WORK_H__
 
-extern struct k_work_q zep_wifi_drv_q;
+extern struct k_work_q zep_wifi_bh_q;
 struct zep_work_item {
 	bool in_use;
 	struct k_work work;
