@@ -40,6 +40,7 @@ struct active_audio_stream {
 	struct bt_audio_stream *stream;
 	struct audio_codec_info *codec;
 	uint8_t brdcast_src_name_idx;
+	uint8_t brdcast_src_id_idx;
 };
 
 struct bt_name {
@@ -49,6 +50,9 @@ struct bt_name {
 
 static const char *const brdcast_src_names[] = { CONFIG_BT_AUDIO_BROADCAST_NAME,
 						 CONFIG_BT_AUDIO_BROADCAST_NAME_ALT };
+
+static const uint32_t brdcast_src_ids[] = { 0xABCD22, 0xABCD33, 0xABCD44,
+					    0xABCD55, 0xABCD66, 0xABCD77 };
 
 static struct bt_audio_broadcast_sink *broadcast_sink;
 
@@ -191,17 +195,23 @@ static struct bt_audio_stream_ops stream_ops = { .started = stream_started_cb,
 static bool scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf_simple *ad,
 			 uint32_t broadcast_id)
 {
-	char name[MAX(sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME),
-		      sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME_ALT))] = { '\0' };
-	struct bt_name bis_name = { &name[0], ARRAY_SIZE(name) };
+	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_CONNECT_BY_NAME)) {
+		char name[MAX(sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME),
+			      sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME_ALT))] = { '\0' };
+		struct bt_name bis_name = { &name[0], ARRAY_SIZE(name) };
 
-	bt_data_parse(ad, adv_data_parse, (void *)&bis_name);
+		bt_data_parse(ad, adv_data_parse, (void *)&bis_name);
+		uint8_t active_idx = active_stream.brdcast_src_name_idx;
 
-	if (strlen(bis_name.name) ==
-	    strlen(brdcast_src_names[active_stream.brdcast_src_name_idx])) {
-		if (strncmp(bis_name.name, brdcast_src_names[active_stream.brdcast_src_name_idx],
-			    strlen(brdcast_src_names[active_stream.brdcast_src_name_idx])) == 0) {
-			LOG_INF("Broadcast source %s found", bis_name.name);
+		if (strlen(bis_name.name) == strlen(brdcast_src_names[active_idx])) {
+			if (strncmp(bis_name.name, brdcast_src_names[active_idx],
+				    strlen(brdcast_src_names[active_idx])) == 0) {
+				LOG_INF("Broadcast source %s found", bis_name.name);
+				return true;
+			}
+		}
+	} else if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_CONNECT_BY_ID)) {
+		if (broadcast_id == brdcast_src_ids[active_stream.brdcast_src_id_idx]) {
 			return true;
 		}
 	}
@@ -462,8 +472,6 @@ static int change_active_brdcast_src(void)
 {
 	int ret;
 
-	LOG_INF("Change broadcast source");
-
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
 
@@ -473,12 +481,21 @@ static int change_active_brdcast_src(void)
 		return ret;
 	}
 
-	/* Wrap broadcaster names */
-	if (++active_stream.brdcast_src_name_idx >= ARRAY_SIZE(brdcast_src_names)) {
-		active_stream.brdcast_src_name_idx = 0;
-	}
+	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_CONNECT_BY_NAME)) {
+		/* Wrap broadcaster names */
+		if (++active_stream.brdcast_src_name_idx >= ARRAY_SIZE(brdcast_src_names)) {
+			active_stream.brdcast_src_name_idx = 0;
+		}
 
-	LOG_DBG("Switching to %s", brdcast_src_names[active_stream.brdcast_src_name_idx]);
+		LOG_INF("Switching to %s", brdcast_src_names[active_stream.brdcast_src_name_idx]);
+	} else if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_CONNECT_BY_ID)) {
+		/* Wrap broadcaster IDs */
+		if (++active_stream.brdcast_src_id_idx >= ARRAY_SIZE(brdcast_src_ids)) {
+			active_stream.brdcast_src_id_idx = 0;
+		}
+
+		LOG_INF("Switching to 0x%04x", brdcast_src_ids[active_stream.brdcast_src_id_idx]);
+	}
 
 	ret = bt_audio_broadcast_sink_scan_start(BT_LE_SCAN_PASSIVE);
 	if (ret) {
@@ -583,6 +600,12 @@ int le_audio_enable(le_audio_receive_cb recv_cb)
 	}
 
 	LOG_INF("Scanning for broadcast sources");
+
+	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_CONNECT_BY_NAME)) {
+		LOG_INF("Scanning for %s", brdcast_src_names[active_stream.brdcast_src_name_idx]);
+	} else if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_CONNECT_BY_ID)) {
+		LOG_INF("Scanning for 0x%04x", brdcast_src_ids[active_stream.brdcast_src_id_idx]);
+	}
 
 	ret = bt_audio_broadcast_sink_scan_start(BT_LE_SCAN_PASSIVE);
 	if (ret) {

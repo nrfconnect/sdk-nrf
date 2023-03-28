@@ -62,7 +62,11 @@ static void audio_gateway_configure(void)
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
 
+#if (CONFIG_AUDIO_DEV == 1)
+	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
+#elif (CONFIG_AUDIO_DEV == 2)
 	sw_codec_cfg.encoder.channel_mode = CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT;
+#endif
 	sw_codec_cfg.encoder.enabled = true;
 }
 

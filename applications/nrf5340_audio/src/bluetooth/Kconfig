@@ -404,6 +404,27 @@ config BT_AUDIO_BROADCAST_ID_FIXED
 	  Fixed broadcast ID; 3 octets. Will only be used if BT_AUDIO_USE_BROADCAST_ID_RANDOM=n.
 	  Should only be used for debugging.
 
+choice BT_AUDIO_BROADCAST_CONNECT_BY
+	prompt "Method to find broadcast source"
+	depends on TRANSPORT_BIS
+	default BT_AUDIO_BROADCAST_CONNECT_BY_ID
+	help
+	  Select the broadcast source to sync to based on either name or ID
+
+config BT_AUDIO_BROADCAST_CONNECT_BY_ID
+	bool "Connect by ID"
+	depends on TRANSPORT_BIS
+	help
+	  Search for broadcast source based on the Broadcast ID
+
+config BT_AUDIO_BROADCAST_CONNECT_BY_NAME
+	bool "Connect by name"
+	depends on TRANSPORT_BIS
+	help
+	  Search for broadcast source based on the Broadcast name
+
+endchoice
+
 config BT_AUDIO_BROADCAST_INTERLEAVED
 	bool "Interleaved packing"
 	default n

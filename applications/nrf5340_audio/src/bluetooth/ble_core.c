@@ -30,7 +30,10 @@ static void net_core_timeout_handler(struct k_timer *timer_id);
 static void net_core_watchdog_handler(struct k_timer *timer_id);
 
 static struct k_work net_core_ctrl_version_get_work;
+
+#if (CONFIG_NRF_21540_ACTIVE)
 static const struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
+#endif
 
 K_TIMER_DEFINE(net_core_timeout_alarm_timer, net_core_timeout_handler, NULL);
 K_TIMER_DEFINE(net_core_watchdog_timer, net_core_watchdog_handler, NULL);
