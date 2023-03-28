@@ -103,7 +103,7 @@ Testing
               tx_pkt_preamble = 1
               tx_pkt_mcs = 0
               tx_pkt_rate = 6
-              tx_pkt_gap = 200
+              tx_pkt_gap = 0
               phy_calib_rxdc = 1
               phy_calib_txdc = 1
               phy_calib_txpow = 0
@@ -123,6 +123,7 @@ Testing
               rx_lna_gain = 0
               rx_capture_length = 0
               wlan_ant_switch_ctrl = 0
+              tx_pkt_cw = 15
 
 
          * To run a continuous Orthogonal frequency-division multiplexing (OFDM) TX traffic sequence with the following configuration:
