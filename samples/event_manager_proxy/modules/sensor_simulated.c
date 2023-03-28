@@ -13,7 +13,7 @@
 
 #define SENSOR_SIMULATED_THREAD_STACK_SIZE 800
 #define SENSOR_SIMULATED_THREAD_PRIORITY 1
-#define SENSOR_SIMULATED_THREAD_SLEEP 500
+#define SENSOR_SIMULATED_THREAD_SLEEP CONFIG_APP_MODULE_SENSOR_SIMULATED_INTERVAL
 #define MODULE sensor_sim
 
 static K_THREAD_STACK_DEFINE(sensor_simulated_thread_stack,
@@ -42,7 +42,7 @@ static void measure(void)
 	APP_EVENT_SUBMIT(event);
 }
 
-static void sensor_simulated_thread_fn(void)
+static void sensor_simulated_thread_fn(void *p1, void *p2, void *p3)
 {
 	while (true) {
 		measure();
@@ -55,7 +55,7 @@ static void init(void)
 	k_thread_create(&sensor_simulated_thread,
 			sensor_simulated_thread_stack,
 			SENSOR_SIMULATED_THREAD_STACK_SIZE,
-			(k_thread_entry_t)sensor_simulated_thread_fn,
+			sensor_simulated_thread_fn,
 			NULL, NULL, NULL,
 			SENSOR_SIMULATED_THREAD_PRIORITY,
 			0, K_NO_WAIT);
