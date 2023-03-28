@@ -66,8 +66,7 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-In the current sample version, you must separately build and program the firmware for the host and the remote.
-For example, you can do this from the command line using west by completing the following steps:
+Complete the following steps to program the sample:
 
 1. Go to the sample directory.
 #. Open the command line terminal.
@@ -75,9 +74,9 @@ For example, you can do this from the command line using west by completing the 
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp .
+      west build -b nrf5340dk_nrf5340_cpuapp
 
-#. Program the host core:
+#. Program both the cores:
 
    .. code-block:: console
 
