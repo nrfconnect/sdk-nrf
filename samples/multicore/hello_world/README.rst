@@ -1,13 +1,14 @@
-.. _nrf5340_multicore:
+.. _multicore_hello_world:
 
-nRF5340: Multicore application
-###############################
+Multicore Hello World application
+#################################
 
 .. contents::
    :local:
    :depth: 2
 
-You can use this sample to see how to build an application on the network core as a child image from the sample source files.
+The sample demonstrates how to build the Hello World application for the multicore SoC.
+The sample adds a remote image as a child image from the sample source files.
 
 Requirements
 ************
@@ -19,7 +20,7 @@ The sample supports the following development kits:
 Overview
 ********
 
-The sample demonstrates how to build a multicore application with the :c:macro:`add_child_image` CMake macro.
+The sample demonstrates how to build a multicore Hello World application with the :c:macro:`add_child_image` CMake macro.
 For general information about multi-image builds, see :ref:`ug_multi_image`.
 When building any multi-image application, the build system in the |NCS| adds the child images based on the options selected for the parent image.
 This sample shows how to inform the build system about dedicated sources for the child image (in the :file:`zephyr` and :file:`aci` directories).
@@ -30,11 +31,11 @@ The sample comes with the following additional files:
 * :file:`Kconfig` - Custom file that allows to add child image only for the application core.
   Additionally, it enables options required by the multi-image build.
 
-Both the application and network cores use the same :file:`main.c` that prints the name of the DK on which the application is programmed.
+Both the application and remote cores use the same :file:`main.c` that prints the name of the DK on which the application is programmed.
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/nrf5340/multicore`
+.. |sample path| replace:: :file:`samples/multicore/hello_world`
 
 .. include:: /includes/build_and_run.txt
 
@@ -43,20 +44,23 @@ Testing
 
 After programming the sample to your development kit, complete the following steps to test it:
 
-1. |connect_terminal|
-#. Reset the kit.
-#. Observe the console output for both cores:
+.. tabs::
+   .. tab:: nRF5340
 
-   * For the application core, the output is similar to the following one:
+      1. |connect_terminal|
+      #. Reset the kit.
+      #. Observe the console output for both cores:
 
-      .. code-block:: console
+         * For the application core, the output should be as follows:
 
-         *** Booting Zephyr OS build v2.7.99-ncs1-2193-gd359a86abf14  ***
-         Hello world from nrf5340dk_nrf5340_cpuapp
+            .. code-block:: console
 
-   * For the network core, the output is similar to the following one:
+               *** Booting Zephyr OS build v2.7.99-ncs1-2193-gd359a86abf14  ***
+               Hello world from nrf5340dk_nrf5340_cpuapp
 
-      .. code-block:: console
+         * For the network core, the output should be as follows:
 
-         *** Booting Zephyr OS build v2.7.99-ncs1-2193-gd359a86abf14  ***
-         Hello world from nrf5340dk_nrf5340_cpunet
+            .. code-block:: console
+
+               *** Booting Zephyr OS build v2.7.99-ncs1-2193-gd359a86abf14  ***
+               Hello world from nrf5340dk_nrf5340_cpunet

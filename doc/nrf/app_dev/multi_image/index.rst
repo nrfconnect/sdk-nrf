@@ -152,7 +152,7 @@ In some scenarios, this is not possible without modifying the |NCS| build code, 
 To avoid this issue, use the *Modules* mechanism provided by the Zephyr build system.
 The following example shows how to add the required module from a top-level sample :file:`CMakeLists.txt`.
 
-.. literalinclude:: ../../../../samples/nrf5340/multicore/CMakeLists.txt
+.. literalinclude:: ../../../../samples/multicore/hello_world/CMakeLists.txt
     :language: cmake
     :start-at: cmake_minimum_required
     :end-at: target_sources
@@ -161,12 +161,12 @@ A :file:`zephyr/module.yml` file is needed at the base of the added module.
 The following example specifies only the path to the :file:`CMakeLists.txt` of the new module.
 See :ref:`modules` for more details.
 
-.. literalinclude:: ../../../../samples/nrf5340/multicore/zephyr/module.yml
+.. literalinclude:: ../../../../samples/multicore/hello_world/zephyr/module.yml
     :language: yaml
 
 The :file:`CMakeLists.txt` located in the directory pointed to by :file:`zephyr/module.yml` will be invoked when ``add_child_image`` can be invoked.
 
-.. literalinclude:: ../../../../samples/nrf5340/multicore/aci/CMakeLists.txt
+.. literalinclude:: ../../../../samples/multicore/hello_world/aci/CMakeLists.txt
     :language: cmake
     :start-at: add_child_image
     :end-before: endif()
