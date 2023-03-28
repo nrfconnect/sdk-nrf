@@ -74,7 +74,7 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 Bluetooth LE
 ------------
 
-* Updated the :ref:`software_maturity` page with details about Bluetooth feature support.
+|no_changes_yet_note|
 
 Bluetooth mesh
 --------------
@@ -500,4 +500,4 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Updated the :ref:`software_maturity` page with details about Bluetooth feature support.
