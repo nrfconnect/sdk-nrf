@@ -131,7 +131,6 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 		/* Proceed */
 		break;
 	case AUDIO_CH_R:
-
 		packet_count_r++;
 		if ((packet_count_r % 1000) == 0) {
 			LOG_DBG("Packets received from right channel: %d", packet_count_r);
@@ -364,6 +363,7 @@ static void button_evt_handler(struct button_evt event)
 static void le_audio_evt_handler(enum le_audio_evt_type event)
 {
 	int ret;
+	uint32_t pres_delay;
 
 	LOG_DBG("Received event = %d, current state = %d", event, strm_state);
 	switch (event) {
@@ -414,7 +414,6 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 		break;
 
 	case LE_AUDIO_EVT_PRES_DELAY_SET:
-		uint32_t pres_delay;
 
 		ret = le_audio_config_get(NULL, NULL, &pres_delay);
 		if (ret) {

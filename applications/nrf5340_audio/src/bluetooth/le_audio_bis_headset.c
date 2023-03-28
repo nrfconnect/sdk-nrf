@@ -499,7 +499,7 @@ static int change_active_brdcast_src(void)
 	LOG_INF("Switching to %s", brdcast_src_names[active_stream.brdcast_src_name_idx]);
 
 	LOG_DBG("Restarting scanning for broadcast sources");
-	ret = bt_bap_broadcast_sink_scan_start(BT_LE_SCAN_PASSIVE);
+	ret = bt_bap_broadcast_sink_scan_start(NRF5340_AUDIO_GATEWAY_SCAN_PARAMS);
 	if (ret && ret != -EALREADY) {
 		LOG_ERR("Unable to start scanning for broadcast sources");
 		return ret;
@@ -632,7 +632,7 @@ int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_
 
 	LOG_INF("Scanning for broadcast sources");
 
-	ret = bt_bap_broadcast_sink_scan_start(BT_LE_SCAN_PASSIVE);
+	ret = bt_bap_broadcast_sink_scan_start(NRF5340_AUDIO_GATEWAY_SCAN_PARAMS);
 	if (ret) {
 		return ret;
 	}
