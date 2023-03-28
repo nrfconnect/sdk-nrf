@@ -11,9 +11,10 @@ endmenu
 menu "Event manager proxy sample application settings"
 
 config APP_INCLUDE_REMOTE_IMAGE
-	bool "Inclute remote image as sub image"
-	default y
-	select PARTITION_MANAGER_ENABLED
+	bool "Include remote image as sub image"
+	depends on SOC_NRF5340_CPUAPP
+	default y if (BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP_NS)
+	select PARTITION_MANAGER_ENABLED if SOC_NRF5340_CPUAPP
 
 config APP_REMOTE_BOARD
 	string "The name of the CORE to be used by remote image"
