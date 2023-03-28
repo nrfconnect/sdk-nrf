@@ -272,7 +272,7 @@ enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	}
 
 	conf_params->tx_pkt_nss = 1;
-	conf_params->tx_pkt_gap_us = 200;
+	conf_params->tx_pkt_gap_us = 0;
 
 	conf_params->tx_power = MAX_TX_PWR_SYS_TEST;
 
@@ -287,6 +287,7 @@ enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	conf_params->aux_adc_input_chain_id = 1;
 	conf_params->ru_tone = 26;
 	conf_params->ru_index = 1;
+	conf_params->tx_pkt_cw = 15;
 	conf_params->phy_calib = NRF_WIFI_DEF_PHY_CALIB;
 out:
 	return status;
@@ -699,7 +700,7 @@ static int nrf_wifi_radio_test_set_tx_pkt_gap(const struct shell *shell,
 
 	val = strtoul(argv[1], &ptr, 10);
 
-	if ((val < 200) || (val > 200000)) {
+	if (val > 200000) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "Invalid value %lu\n",
@@ -1192,6 +1193,41 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 	return 0;
 }
 
+static int nrf_wifi_radio_test_set_tx_pkt_cw(const struct shell *shell,
+					      size_t argc,
+					      const char *argv[])
+{
+	char *ptr = NULL;
+	long val = 0;
+
+	val = strtol(argv[1], &ptr, 10);
+
+	if (!((val == 0) ||
+		  (val == 3) ||
+		  (val == 7) ||
+		  (val == 15) ||
+		  (val == 31) ||
+		  (val == 63) ||
+		  (val == 127) ||
+		  (val == 255) ||
+		  (val == 511) ||
+		  (val == 1023))) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid value %lu\n",
+			      val);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	if (!check_test_in_prog(shell)) {
+		return -ENOEXEC;
+	}
+
+	ctx->conf_params.tx_pkt_cw = val;
+
+	return 0;
+}
 
 static int nrf_wifi_radio_test_set_tx(const struct shell *shell,
 				      size_t argc,
@@ -1846,6 +1882,10 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      SHELL_INFO,
 		      "wlan_ant_switch_ctrl = %d\n",
 		      conf_params->wlan_ant_switch_ctrl);
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "tx_pkt_cw = %d\n",
+		      conf_params->tx_pkt_cw);
 
 	return 0;
 }
@@ -2214,6 +2254,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      NULL,
 		      "Configure WLAN antenna switch (0-separate/1-shared)",
 		      nrf_wifi_radio_test_wlan_switch_ctrl,
+		      2,
+		      0),
+	SHELL_CMD_ARG(tx_pkt_cw,
+		      NULL,
+		      "<val> - Contention window value to be configured (0, 3, 7, 15, 31, 63, 127, 255, 511, 1023)",
+		      nrf_wifi_radio_test_set_tx_pkt_cw,
 		      2,
 		      0),
 	SHELL_SUBCMD_SET_END);

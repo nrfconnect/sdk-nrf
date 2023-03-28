@@ -107,8 +107,8 @@ Wi-Fi radio test subcommands
      - Configuration
      - Legacy rate at which packets will be transmitted. Mutually exclusive with tx_pkt_mcs.
    * - tx_pkt_gap
-     - <val> - (Min: 200, Max: 200000)
-     - 200
+     - <val> - (Min: 0, Max: 200000)
+     - 0
      - Configuration
      - Interval between TX packets in microseconds.
    * - tx_pkt_num
@@ -232,6 +232,11 @@ Wi-Fi radio test subcommands
      - N/A
      - Action
      - Display statistics.
+   * - tx_pkt_cw
+     - <val> - Contention window value to be used (0, 3, 7, 15, 31, 63, 127, 255, 511, 1023).
+     - 15
+     - Configuration
+     - Contention window for transmitted packets.
 
 
 .. _wifi_radio_test_stats:
