@@ -57,7 +57,7 @@ jobs:
         shell: bash
         run: |
           source ncs/zephyr/zephyr-env.sh
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister -b -C -v -i -T ncs/nrf/ -p native_posix --quarantine-list ncs/nrf/scripts/quarantine.yaml --coverage-tool gcovr
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister -b -C -v -i -T ncs/nrf/ -p native_posix --quarantine-list ncs/nrf/scripts/quarantine_downstream.yaml --coverage-tool gcovr
 
       - name: Run native_posix tests
         shell: bash

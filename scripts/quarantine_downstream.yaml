@@ -1,0 +1,59 @@
+# The configurations resulting as a product of scenarios and platforms
+# will be skipped if quarantine is used. More details here:
+# https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
+# To have an empty list use:
+# - scenarios:
+#    - None
+#  platforms:
+#    - all
+
+- scenarios:
+    - sample.tfm.psa_test_crypto
+    - sample.tfm.psa_test_initial_attestation
+    - sample.tfm.psa_test_internal_trusted_storage
+    - sample.tfm.psa_test_protected_storage
+    - sample.tfm.psa_test_storage
+    - sample.tfm.regression_ipc_lvl1
+    - sample.tfm.regression_ipc_lvl2
+    - sample.tfm.regression_lib_mode
+  platforms:
+    - all
+  comment: "Disable zephyr Regression and PSA Arch tests, we maintain copies of these in sdk-nrf"
+
+- scenarios:
+    - sample.matter.lock.debug
+    - sample.matter.lock.release
+    - sample.matter.lock.smp_dfu
+    - sample.matter.lock.no_dfu
+    - sample.matter.lock.release.ffs
+    - sample.matter.lock.debug.ffs
+    - sample.matter.lock.release.smp_dfu_ffs
+    - sample.matter.light_bulb.debug
+    - sample.matter.light_bulb.release
+    - sample.matter.light_bulb.smp_dfu
+    - sample.matter.light_bulb.ffs
+    - sample.matter.light_bulb.no_dfu
+    - applications.matter_weather_station.debug
+    - applications.matter_weather_station.release
+    - sample.matter.light_switch.debug
+    - sample.matter.light_switch.release
+    - sample.matter.light_switch.smp_dfu
+    - sample.matter.light_switch.no_dfu
+    - sample.matter.template.debug
+    - sample.matter.template.release
+    - sample.matter.template.no_dfu
+    - sample.matter.window_cover.debug
+    - sample.matter.window_cover.release
+    - sample.matter.window_cover.smp_dfu
+  platforms:
+    - all
+  comment: "Disable building selected Matter samples to limit resources usage"
+
+- scenarios:
+    - applications.asset_tracker_v2.nrf7002ek_wifi-debug
+    - applications.asset_tracker_v2.nrf7002ek_wifi-release
+    - asset_tracker_v2.lwm2m_codec
+    - bluetooth.mesh.scheduler_model.message_validity
+  platforms:
+    - all
+  comment: "Temporary disable till the issue is fixed"
