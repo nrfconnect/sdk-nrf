@@ -421,6 +421,7 @@ Libraries for networking
     * A new event :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR` to indicate an error while the transport connection is being established when the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabled.
       Earlier this was indicated with a second :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECTING` event with an error status.
     * A public header file :file:`nrf_cloud_codec.h` that contains encoding and decoding functions for nRF Cloud data.
+    * Defines to enable parameters to be omitted from a P-GPS request.
 
   * Removed:
 

@@ -222,6 +222,16 @@ int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agps_data_frame *
 				   cJSON * const agps_req_obj_out);
 #endif
 
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+/** @brief Encode the data payload of an nRF Cloud P-GPS request into the provided object */
+int nrf_cloud_pgps_req_data_json_encode(const struct gps_pgps_request * const request,
+					cJSON * const data_obj_out);
+
+/** @brief Encode an P-GPS request device message to be sent to nRF Cloud */
+int nrf_cloud_pgps_req_json_encode(const struct gps_pgps_request * const request,
+				   cJSON * const pgps_req_obj_out);
+#endif
+
 #ifdef CONFIG_NRF_CLOUD_GATEWAY
 typedef int (*gateway_state_handler_t)(void *root_obj);
 

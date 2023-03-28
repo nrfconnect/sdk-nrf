@@ -66,6 +66,15 @@ struct nrf_cloud_pgps_prediction {
 	uint32_t sentinel;
 } __packed;
 
+/** Omit the prediction count from P-GPS request */
+#define NRF_CLOUD_PGPS_REQ_NO_COUNT	0
+/** Omit the prediction validity period from P-GPS request */
+#define NRF_CLOUD_PGPS_REQ_NO_INTERVAL	0
+/** Omit the GPS day from P-GPS request */
+#define NRF_CLOUD_PGPS_REQ_NO_GPS_DAY	0
+/** Omit the GPS time of day from P-GPS request */
+#define NRF_CLOUD_PGPS_REQ_NO_GPS_TOD	(-1)
+
 /** @brief P-GPS request type */
 struct gps_pgps_request {
 	/** Number of predictions desired. */

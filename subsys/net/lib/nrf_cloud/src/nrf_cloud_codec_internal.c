@@ -2854,3 +2854,88 @@ cleanup:
 	return err;
 }
 #endif /* CONFIG_NRF_CLOUD_AGPS */
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+int nrf_cloud_pgps_req_data_json_encode(const struct gps_pgps_request * const request,
+					cJSON * const data_obj_out)
+{
+	if (!request || !data_obj_out) {
+		return -EINVAL;
+	}
+
+	if ((request->prediction_count != NRF_CLOUD_PGPS_REQ_NO_COUNT) &&
+	    json_add_num_cs(data_obj_out, NRF_CLOUD_JSON_PGPS_PRED_COUNT,
+			    request->prediction_count)) {
+		goto cleanup;
+	}
+
+	if ((request->prediction_period_min != NRF_CLOUD_PGPS_REQ_NO_INTERVAL) &&
+	    json_add_num_cs(data_obj_out, NRF_CLOUD_JSON_PGPS_INT_MIN,
+			    request->prediction_period_min)) {
+		goto cleanup;
+	}
+
+	if ((request->gps_day != NRF_CLOUD_PGPS_REQ_NO_GPS_DAY) &&
+	    json_add_num_cs(data_obj_out, NRF_CLOUD_JSON_PGPS_GPS_DAY,
+			    request->gps_day)) {
+		goto cleanup;
+	}
+
+	if ((request->gps_time_of_day != NRF_CLOUD_PGPS_REQ_NO_GPS_TOD) &&
+	    json_add_num_cs(data_obj_out, NRF_CLOUD_JSON_PGPS_GPS_TIME,
+			    request->gps_time_of_day)) {
+		goto cleanup;
+	}
+
+	return 0;
+
+cleanup:
+	/* On failure, remove any items added to the provided object */
+	cJSON_DeleteItemFromObject(data_obj_out, NRF_CLOUD_JSON_PGPS_PRED_COUNT);
+	cJSON_DeleteItemFromObject(data_obj_out, NRF_CLOUD_JSON_PGPS_INT_MIN);
+	cJSON_DeleteItemFromObject(data_obj_out, NRF_CLOUD_JSON_PGPS_GPS_DAY);
+	cJSON_DeleteItemFromObject(data_obj_out, NRF_CLOUD_JSON_PGPS_GPS_TIME);
+
+	return -ENOMEM;
+}
+
+int nrf_cloud_pgps_req_json_encode(const struct gps_pgps_request * const request,
+				   cJSON * const pgps_req_obj_out)
+{
+	if (!pgps_req_obj_out || !request) {
+		return -EINVAL;
+	}
+
+	cJSON *data_obj;
+
+	/* Create request JSON containing a data object */
+	if (json_add_str_cs(pgps_req_obj_out,
+			    NRF_CLOUD_JSON_APPID_KEY,
+			    NRF_CLOUD_JSON_APPID_VAL_PGPS) ||
+	    json_add_str_cs(pgps_req_obj_out,
+			    NRF_CLOUD_JSON_MSG_TYPE_KEY,
+			    NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA)) {
+		goto cleanup;
+	}
+
+	data_obj = cJSON_AddObjectToObject(pgps_req_obj_out, NRF_CLOUD_JSON_DATA_KEY);
+	if (!data_obj) {
+		goto cleanup;
+	}
+
+	/* Add request data */
+	if (nrf_cloud_pgps_req_data_json_encode(request, data_obj)) {
+		goto cleanup;
+	}
+
+	return 0;
+
+cleanup:
+	/* On failure, remove any items added to the provided object */
+	cJSON_DeleteItemFromObject(pgps_req_obj_out, NRF_CLOUD_JSON_APPID_KEY);
+	cJSON_DeleteItemFromObject(pgps_req_obj_out, NRF_CLOUD_JSON_MSG_TYPE_KEY);
+	cJSON_DeleteItemFromObject(pgps_req_obj_out, NRF_CLOUD_JSON_DATA_KEY);
+
+	return -ENOMEM;
+}
+#endif
