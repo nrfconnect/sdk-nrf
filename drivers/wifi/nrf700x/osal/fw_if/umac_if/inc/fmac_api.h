@@ -1414,4 +1414,19 @@ enum wifi_nrf_status wifi_nrf_fmac_get_host_rpu_ps_ctrl_state(void *fmac_dev_ctx
 enum wifi_nrf_status wifi_nrf_fmac_set_listen_interval(void *fmac_dev_ctx,
 						       unsigned char if_idx,
 						       unsigned short listen_interval);
+
+/**
+ * @brief Configure WLAN PS wakeup mode to DTIM interval or listen interval.
+ * @param[in] fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
+ * @param[in] if_idx Index of the interface on which power management is to be set.
+ * @param[in] ps_wakeup_mode Enable listen interval based ps(default dtim based)
+ *
+ * @details This function is used to configure PS wakeup mode, either DTIM Interval
+ *	    or Listen interval based. Default is DTIM interval based mode.
+ *
+ * @return #wifi_nrf_status
+ */
+enum wifi_nrf_status wifi_nrf_fmac_set_ps_wakeup_mode(void *fmac_dev_ctx,
+						      unsigned char if_idx,
+						      bool ps_wakeup_mode);
 #endif /* __FMAC_API_H__ */

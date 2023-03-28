@@ -3212,6 +3212,11 @@ struct nrf_wifi_umac_cmd_config_extended_ps {
 #define NRF_WIFI_MAX_TWT_FLOWS 8
 #define NRF_WIFI_PS_MODE_LEGACY 0
 #define NRF_WIFI_PS_MODE_WMM 1
+/* As per hardware design for power efficiency
+ * minimum listen interval period should be
+ * 3 DTIM period.
+ */
+#define NRF_WIFI_LISTEN_INTERVAL_MIN 3
 
 struct nrf_wifi_umac_event_power_save_info {
 	struct nrf_wifi_umac_hdr umac_hdr;
