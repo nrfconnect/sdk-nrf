@@ -4402,3 +4402,41 @@ out:
 	return status;
 }
 #endif /* CONFIG_NRF700X_UTIL */
+
+
+enum wifi_nrf_status wifi_nrf_fmac_set_listen_interval(void *dev_ctx,
+						       unsigned char if_idx,
+						       unsigned short listen_interval)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_umac_cmd_set_listen_interval *set_listen_interval_cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	fmac_dev_ctx = dev_ctx;
+
+	set_listen_interval_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+					      sizeof(*set_listen_interval_cmd));
+
+	if (!set_listen_interval_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n", __func__);
+		goto out;
+	}
+
+	set_listen_interval_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_SET_LISTEN_INTERVAL;
+	set_listen_interval_cmd->umac_hdr.ids.wdev_id = if_idx;
+	set_listen_interval_cmd->umac_hdr.ids.valid_fields |=
+		NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+	set_listen_interval_cmd->listen_interval = listen_interval;
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      set_listen_interval_cmd,
+			      sizeof(*set_listen_interval_cmd));
+out:
+	if (set_listen_interval_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       set_listen_interval_cmd);
+	}
+
+	return status;
+}

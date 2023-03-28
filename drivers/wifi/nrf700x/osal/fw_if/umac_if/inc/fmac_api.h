@@ -1400,4 +1400,18 @@ enum wifi_nrf_status wifi_nrf_fmac_get_host_rpu_ps_ctrl_state(void *fmac_dev_ctx
 							      int *rpu_ps_ctrl_state);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 #endif
+
+/**
+ * @brief Configure WLAN listen interval.
+ * @param[in] fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
+ * @params[in] if_idx Index of the interface on which power management is to be set.
+ * @params[in] listen_intvl listen interval to be configured.
+ *
+ * @details This function is used to send a command to RPU to configure listen interval.
+ *
+ * @return #wifi_nrf_status
+ */
+enum wifi_nrf_status wifi_nrf_fmac_set_listen_interval(void *fmac_dev_ctx,
+						       unsigned char if_idx,
+						       unsigned short listen_interval);
 #endif /* __FMAC_API_H__ */
