@@ -12,7 +12,9 @@
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_agps.h>
+#if defined(CONFIG_SLM_PGPS)
 #include <net/nrf_cloud_pgps.h>
+#endif
 #include <net/nrf_cloud_location.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
@@ -48,7 +50,9 @@ enum slm_gnss_operation {
 
 static struct k_work cloud_cmd;
 static struct k_work agps_req;
+#if defined(CONFIG_SLM_PGPS)
 static struct k_work pgps_req;
+#endif
 static struct k_work fix_rep;
 static struct k_work cell_pos_req;
 static struct k_work wifi_pos_req;
@@ -228,6 +232,7 @@ static void agps_req_wk(struct k_work *work)
 	LOG_INF("A-GPS requested");
 }
 
+#if defined(CONFIG_SLM_PGPS)
 static void pgps_req_wk(struct k_work *work)
 {
 	int err;
@@ -242,6 +247,7 @@ static void pgps_req_wk(struct k_work *work)
 		LOG_INF("P-GPS requested");
 	}
 }
+#endif
 
 AT_MONITOR(ncell_meas, "NCELLMEAS", ncell_meas_mon, PAUSED);
 
@@ -449,6 +455,7 @@ static void wifi_pos_req_wk(struct k_work *work)
 	}
 }
 
+#if defined(CONFIG_SLM_PGPS)
 static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 {
 	int err;
@@ -499,6 +506,7 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 		break;
 	}
 }
+#endif
 
 static void on_gnss_evt_nmea(void)
 {
@@ -652,6 +660,7 @@ static void fix_rep_wk(struct k_work *work)
 	}
 
 update_pgps:
+#if defined(CONFIG_SLM_PGPS)
 	if (run_type == RUN_TYPE_PGPS) {
 		struct tm gps_time = {
 			.tm_year = pvt.datetime.year - 1900,
@@ -667,6 +676,8 @@ update_pgps:
 		/* help nrf_cloud_pgps as most recent known location */
 		nrf_cloud_pgps_set_location(pvt.latitude, pvt.longitude);
 	}
+#endif
+	return;
 }
 
 static void on_gnss_evt_fix(void)
@@ -685,9 +696,11 @@ static void on_gnss_evt_agps_req(void)
 {
 	if (run_type == RUN_TYPE_AGPS) {
 		k_work_submit_to_queue(&slm_work_q, &agps_req);
+#if defined(CONFIG_SLM_PGPS)
 	} else if (run_type == RUN_TYPE_PGPS) {
 		/* Check whether prediction data available or not */
 		k_work_submit_to_queue(&slm_work_q, &pgps_req);
+#endif
 	}
 }
 
@@ -1219,6 +1232,7 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 	return err;
 }
 
+#if defined(CONFIG_SLM_PGPS)
 /**@brief handle AT#XPGPS commands
  *  AT#XPGPS=<op>[,<interval>[,<timeout>]]
  *  AT#XPGPS?
@@ -1303,6 +1317,7 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 
 	return err;
 }
+#endif
 
 /**@brief handle AT#XGPSDEL commands
  *  AT#XGPSDEL=<mask>
@@ -1507,7 +1522,9 @@ int slm_at_gnss_init(void)
 
 	k_work_init(&cloud_cmd, cloud_cmd_wk);
 	k_work_init(&agps_req, agps_req_wk);
+#if defined(CONFIG_SLM_PGPS)
 	k_work_init(&pgps_req, pgps_req_wk);
+#endif
 	k_work_init(&cell_pos_req, cell_pos_req_wk);
 	k_work_init(&wifi_pos_req, wifi_pos_req_wk);
 	k_work_init(&fix_rep, fix_rep_wk);
