@@ -108,11 +108,20 @@ NRF_RPC_CBOR_EVT_DECODER(bt_rpc_grp, bt_ready_cb_t_callback, BT_READY_CB_T_CALLB
 int bt_enable(bt_ready_cb_t cb)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	int result;
+	int result = 0;
 	size_t buffer_size_max = 5;
 	static atomic_t init;
 
 	validate_config();
+
+	if (IS_ENABLED(CONFIG_BT_CONN)) {
+		bt_rpc_conn_init();
+		result = bt_rpc_gatt_init();
+	}
+
+	if (result) {
+		return result;
+	}
 
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
@@ -128,14 +137,6 @@ int bt_enable(bt_ready_cb_t cb)
 		return result;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_CONN)) {
-		bt_rpc_conn_init();
-		result = bt_rpc_gatt_init();
-	}
-
-	if (result) {
-		return result;
-	}
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		int network_load = 1;
