@@ -1030,16 +1030,25 @@ static void ad_parse(struct net_buf_simple *p_ad, const bt_addr_le_t *addr)
 static void on_device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
 			    struct net_buf_simple *p_ad)
 {
-	/* Direct advertising has no payload, so no need to parse */
-	if (type == BT_GAP_ADV_TYPE_ADV_DIRECT_IND) {
+	switch (type) {
+	case BT_GAP_ADV_TYPE_ADV_DIRECT_IND:
+		/* Direct advertising has no payload, so no need to parse */
 		if (bonded_num) {
 			bt_foreach_bond(BT_ID_DEFAULT, bond_connect, (void *)addr);
 		}
-		return;
-	} else if ((type == BT_GAP_ADV_TYPE_ADV_IND || type == BT_GAP_ADV_TYPE_EXT_ADV) &&
-		   (bonded_num < CONFIG_BT_MAX_PAIRED)) {
+		break;
+	case BT_GAP_ADV_TYPE_ADV_IND:
+		 /* Fall through */
+	case BT_GAP_ADV_TYPE_EXT_ADV:
+		 /* Fall through */
+	case BT_GAP_ADV_TYPE_SCAN_RSP:
 		/* Note: May lead to connection creation */
-		ad_parse(p_ad, addr);
+		if (bonded_num < CONFIG_BT_MAX_PAIRED) {
+			ad_parse(p_ad, addr);
+		}
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1053,7 +1062,8 @@ static void ble_acl_start_scan(void)
 	int scan_window =
 		bt_codec_cfg_get_frame_duration_us(&lc3_preset_sink.codec) / 1000 / 0.625 * 2;
 	struct bt_le_scan_param *scan_param =
-		BT_LE_SCAN_PARAM(BT_LE_SCAN_TYPE_PASSIVE, BT_LE_SCAN_OPT_FILTER_DUPLICATE,
+		BT_LE_SCAN_PARAM(NRF5340_AUDIO_GATEWAY_SCAN_TYPE,
+				 BT_LE_SCAN_OPT_FILTER_DUPLICATE,
 				 scan_interval, scan_window);
 
 	/* Reset number of bonds found */

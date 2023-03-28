@@ -52,6 +52,18 @@ config BLE_ACL_EXT_ADV_INT_MAX
 	  Maximum hexadecimal value for the interval of extended advertisements.
 	  For ms, multiply the provided value by 0.625.
 
+choice NRF5340_AUDIO_GATEWAY_SCAN_MODE
+	prompt "Select Scan Mode to find Unicast Headset"
+	default SCAN_MODE_PASSIVE
+
+config SCAN_MODE_PASSIVE
+	bool "Passive Scan"
+
+config SCAN_MODE_ACTIVE
+	bool "Active Scan"
+
+endchoice
+
 config BLE_LE_POWER_CONTROL_ENABLED
 	bool "Enable Bluetooth LE power control feature"
 	default n
