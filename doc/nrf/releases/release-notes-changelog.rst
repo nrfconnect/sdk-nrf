@@ -434,6 +434,12 @@ Libraries for networking
     * Moved the :c:func:`nrf_cloud_location_request_json_get` function from the :file:`nrf_cloud_location.h` file to :file:`nrf_cloud_codec.h`.
       The function is now renamed to :c:func:`nrf_cloud_location_request_msg_json_encode`.
 
+* :ref:`lib_nrf_cloud_rest` library:
+
+  * Updated:
+
+    * The mask angle parameter can now be omitted from an A-GPS REST request by using the value ``NRF_CLOUD_AGPS_MASK_ANGLE_NONE``.
+
 * :ref:`lib_lwm2m_client_utils` library:
 
   * Updated:
