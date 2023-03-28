@@ -9,7 +9,14 @@ cmake_minimum_required(VERSION 3.20.0)
 if(CONF_FILE)
   if(${CONF_FILE} MATCHES "prj_(.*).conf")
     set(CONF_FILE_BUILD_TYPE ${CMAKE_MATCH_1})
-    set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/boards/${BOARD}_${CONF_FILE_BUILD_TYPE}.overlay")
+
+    # At this stage, any revision attached to the board will not be available
+    # as BOARD_REVISION, just "@<revision>" in the board name. We clean up the
+    # path to reflect what the associated overlay/fragment paths are supposed to
+    # look like in sample/boards.
+    string(REPLACE "@" "_" SAMPLE_BOARD "${BOARD}")
+
+    set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/boards/${SAMPLE_BOARD}_${CONF_FILE_BUILD_TYPE}.overlay")
   endif()
 endif()
 
