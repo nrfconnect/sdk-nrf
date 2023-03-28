@@ -84,7 +84,7 @@ tests:
     platform_allow: nrf5340dk_nrf5340_cpuapp
   sample.matter.lock.nus:
     build_only: true
-    extra_args: CONFIG_CHIP_NUS=y
+    extra_args: CONFIG_CHIP_NUS=y CONFIG_BT_FIXED_PASSKEY=y CONFIG_CHIP_NUS_FIXED_PASSKEY=112233
     integration_platforms:
       - nrf52840dk_nrf52840
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
