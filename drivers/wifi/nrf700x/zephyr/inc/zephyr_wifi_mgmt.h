@@ -62,4 +62,7 @@ void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 
 int wifi_nrf_set_power_save_timeout(const struct device *dev,
 				    struct wifi_ps_timeout_params *ps_timeout);
+
+int wifi_nrf_set_listen_interval(const struct device *dev,
+				 struct wifi_listen_interval_params *params);
 #endif /*  __ZEPHYR_DISP_SCAN_H__ */
