@@ -16,6 +16,15 @@ config APP_MODULE_SENSOR_SIMULATED_ENABLE
 	select APP_CONTROL_EVENT
 	select APP_MEASUREMENT_EVENT
 
+if APP_MODULE_SENSOR_SIMULATED_ENABLE
+
+config APP_MODULE_SENSOR_SIMULATED_INTERVAL
+	int "Time interval between simulated sensor values"
+	default 500
+	help
+	  Time in miliseconds between generated sensor value events.
+endif
+
 config APP_MODULE_STATS_ENABLE
 	bool "Enable statistic application module"
 	select APP_CONTROL_EVENT
