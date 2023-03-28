@@ -8,7 +8,8 @@
 config WPA_SUPP
 	bool "WPA supplicant support"
 	depends on  NET_SOCKETS
-	depends on  NET_SOCKETS_POSIX_NAMES || POSIX_API
+	# Need full POSIX from libc, Zephyr's POSIX support is only partial
+	depends on !POSIX_API
 	select NET_SOCKETS_PACKET
 	select NET_SOCKETPAIR
 	select NET_L2_WIFI_MGMT
