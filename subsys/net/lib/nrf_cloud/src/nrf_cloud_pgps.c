@@ -1062,7 +1062,7 @@ int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 			/* send time */
 			err = nrf_cloud_agps_process((const char *)&sys_time,
 						     sizeof(sys_time) -
-						     sizeof(sys_time.time.sv_tow));
+						     sizeof(sys_time.time.sv_tow) + 4);
 			if (err) {
 				LOG_ERR("Error injecting P-GPS sys_time (%u, %u): %d",
 					sys_time.time.date_day, sys_time.time.time_full_s,
