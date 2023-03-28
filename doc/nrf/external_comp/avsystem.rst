@@ -180,6 +180,7 @@ The following application uses the AVSystem integration in |NCS|:
 
 The following samples use the AVSystem integration in |NCS|:
 
+* :ref:`anjay_lwm2m_client`
 * :ref:`lwm2m_client`
 * :ref:`lwm2m_carrier`
 * :ref:`modem_shell_application`

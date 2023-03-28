@@ -1,0 +1,12 @@
+menu "anjay-zephyr-client-app"
+
+config ANJAY_CLIENT_BUILD_MCUBOOT_AUTOMATICALLY
+	bool "Build MCUboot as part of the main build process"
+	depends on BOOTLOADER_MCUBOOT
+	depends on !PARTITION_MANAGER_ENABLED
+	select MCUBOOT_GENERATE_CONFIRMED_IMAGE
+	default y
+
+endmenu
+
+source "Kconfig.zephyr"

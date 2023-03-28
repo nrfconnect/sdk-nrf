@@ -1,0 +1,11 @@
+sample:
+  name: Anjay LwM2M client
+tests:
+  sample.anjay_lwm2m_client:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
+      - nrf52840dk_nrf52840
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns nrf52840dk_nrf52840
+    tags: ci_build

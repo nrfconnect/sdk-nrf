@@ -1,0 +1,17 @@
+/ {
+    aliases {
+        temperature = &bme680;
+        humidity = &bme680;
+        accelerometer = &adxl362;
+        barometer = &bme680;
+        push-button-0 = &button0;
+    };
+};
+
+&i2c2 {
+    bme680: bme680@76 {};
+};
+
+&spi3 {
+    adxl362: adxl362@0 {};
+};

@@ -1,0 +1,9 @@
+/ {
+    aliases {
+        push-button-0 = &button0;
+        push-button-1 = &button1;
+        push-button-2 = &button2;
+        push-button-3 = &button3;
+        status-led = &led0;
+    };
+};

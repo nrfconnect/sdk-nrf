@@ -33,6 +33,8 @@ manifest:
       url-base: https://github.com/memfault
     - name: ant-nrfconnect
       url-base: https://github.com/ant-nrfconnect
+    - name: anjay
+      url-base: https://github.com/AVSystem
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -219,6 +221,11 @@ manifest:
       remote: ant-nrfconnect
       groups:
         - ant
+    - name: Anjay-zephyr
+      submodules: true
+      remote: anjay
+      revision: 3.3.0
+      path: modules/lib/anjay
 
   # West-related configuration for the nrf repository.
   self:
