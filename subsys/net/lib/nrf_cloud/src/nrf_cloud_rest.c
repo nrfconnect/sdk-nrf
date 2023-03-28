@@ -18,6 +18,7 @@
 #include <modem/modem_key_mgmt.h>
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_rest.h>
+#include <net/nrf_cloud_agps.h>
 #include <net/rest_client.h>
 #include <zephyr/logging/log.h>
 #include <cJSON.h>
@@ -802,8 +803,8 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	struct rest_client_req_context req;
 	struct rest_client_resp_context resp;
 	static int64_t last_request_timestamp;
-	bool filtered;
-	uint8_t mask_angle;
+	bool filtered = false;
+	uint8_t mask_angle = NRF_CLOUD_AGPS_MASK_ANGLE_NONE;
 
 	memset(&resp, 0, sizeof(resp));
 	init_rest_client_request(rest_ctx, &req, HTTP_GET);
@@ -814,12 +815,9 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 #elif defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
 	filtered = CONFIG_NRF_CLOUD_AGPS_FILTERED;
 	mask_angle = CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK;
-#else
-	filtered = false;
-	mask_angle = 0;
 #endif
 
-	if (filtered && (mask_angle > 90)) {
+	if (filtered && (mask_angle != NRF_CLOUD_AGPS_MASK_ANGLE_NONE) && (mask_angle > 90)) {
 		LOG_ERR("Mask angle %u out of range (must be <= 90)", mask_angle);
 		ret = -EINVAL;
 		goto clean_up;
@@ -907,14 +905,17 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		}
 		pos += ret;
 		remain -= ret;
-		ret = snprintk(&url[pos], remain, AGPS_ELEVATION_MASK, mask_angle);
-		if ((ret < 0) || (ret >= remain)) {
-			LOG_ERR("Could not format URL: mask angle");
-			ret = -ETXTBSY;
-			goto clean_up;
+
+		if (mask_angle != NRF_CLOUD_AGPS_MASK_ANGLE_NONE) {
+			ret = snprintk(&url[pos], remain, AGPS_ELEVATION_MASK, mask_angle);
+			if ((ret < 0) || (ret >= remain)) {
+				LOG_ERR("Could not format URL: mask angle");
+				ret = -ETXTBSY;
+				goto clean_up;
+			}
+			pos += ret;
+			remain -= ret;
 		}
-		pos += ret;
-		remain -= ret;
 	}
 
 	if (req_type) {

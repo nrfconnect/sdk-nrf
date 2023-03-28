@@ -138,7 +138,8 @@ struct nrf_cloud_rest_agps_request {
 	bool filtered;
 	/** Constrain the set of ephemerides to only those currently
 	 *  visible at or above the specified elevation threshold
-	 *  angle in degrees. Range is 0 to 90.
+	 *  angle in degrees. Range is 0 to 90.  Set to
+	 *  NRF_CLOUD_AGPS_MASK_ANGLE_NONE to exclude from request.
 	 */
 	uint8_t mask_angle;
 };
