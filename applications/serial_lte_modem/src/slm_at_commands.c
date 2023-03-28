@@ -422,7 +422,9 @@ int handle_at_fota(enum at_cmd_type cmd_type);
 int handle_at_gps(enum at_cmd_type cmd_type);
 int handle_at_nrf_cloud(enum at_cmd_type cmd_type);
 int handle_at_agps(enum at_cmd_type cmd_type);
+#if defined(CONFIG_SLM_PGPS)
 int handle_at_pgps(enum at_cmd_type cmd_type);
+#endif
 int handle_at_gps_delete(enum at_cmd_type cmd_type);
 int handle_at_cellpos(enum at_cmd_type cmd_type);
 int handle_at_wifipos(enum at_cmd_type cmd_type);
