@@ -717,6 +717,7 @@ struct rpu_conf_params {
 	unsigned char bb_gain;
 	unsigned short int capture_length;
 	unsigned char bypass_regulatory;
+	unsigned int tx_pkt_cw;
 } __NRF_WIFI_PKD;
 
 /**
