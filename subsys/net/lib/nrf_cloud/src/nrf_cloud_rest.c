@@ -90,11 +90,7 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
  */
 #define AGPS_CUSTOM_TYPE_STR_SZ		(AGPS_CUSTOM_TYPE_CNT * 2)
 
-#define API_GET_PGPS_BASE		API_VER "/location/pgps?"
-#define PGPS_REQ_PREDICT_CNT		"&" NRF_CLOUD_JSON_PGPS_PRED_COUNT "=%u"
-#define PGPS_REQ_PREDICT_INT_MIN	"&" NRF_CLOUD_JSON_PGPS_INT_MIN "=%u"
-#define PGPS_REQ_START_GPS_DAY		"&" NRF_CLOUD_JSON_PGPS_GPS_DAY "=%u"
-#define PGPS_REQ_START_GPS_TOD_S	"&" NRF_CLOUD_JSON_PGPS_GPS_TIME "=%u"
+#define API_GET_PGPS_BASE		API_VER "/location/pgps"
 
 #define API_DEVICES_BASE		"/devices"
 #define API_DEVICES_STATE_TEMPLATE	API_VER API_DEVICES_BASE "/%s/state"
@@ -1066,6 +1062,7 @@ clean_up:
 	return ret;
 }
 
+#if defined(CONFIG_NRF_CLOUD_PGPS)
 int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 				 struct nrf_cloud_rest_pgps_request const *const request)
 {
@@ -1073,113 +1070,58 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	__ASSERT_NO_MSG(request != NULL);
 
 	int ret;
+
 	size_t url_sz;
-	size_t remain;
-	size_t pos;
 	char *auth_hdr = NULL;
 	char *url = NULL;
+	cJSON *data_obj;
 	struct rest_client_req_context req;
 	struct rest_client_resp_context resp;
 
 	memset(&resp, 0, sizeof(resp));
 	init_rest_client_request(rest_ctx, &req, HTTP_GET);
 
-	/* Determine size of URL buffer and allocate */
-	url_sz = sizeof(API_GET_PGPS_BASE);
-
-	if (request->pgps_req) {
-		if (request->pgps_req->prediction_count !=
-		NRF_CLOUD_REST_PGPS_REQ_NO_COUNT) {
-			url_sz += sizeof(PGPS_REQ_PREDICT_CNT) +
-				  UINT32_MAX_STR_SZ;
-		}
-		if (request->pgps_req->prediction_period_min !=
-		    NRF_CLOUD_REST_PGPS_REQ_NO_INTERVAL) {
-			url_sz += sizeof(PGPS_REQ_PREDICT_INT_MIN) +
-				  UINT32_MAX_STR_SZ;
-		}
-		if (request->pgps_req->gps_day !=
-		    NRF_CLOUD_REST_PGPS_REQ_NO_GPS_DAY) {
-			url_sz += sizeof(PGPS_REQ_START_GPS_DAY) +
-				  UINT32_MAX_STR_SZ;
-		}
-		if (request->pgps_req->gps_time_of_day !=
-		    NRF_CLOUD_REST_PGPS_REQ_NO_GPS_TOD) {
-			url_sz += sizeof(PGPS_REQ_START_GPS_TOD_S) +
-				  UINT32_MAX_STR_SZ;
-		}
+	/* Encode the request data as JSON */
+	data_obj = cJSON_CreateObject();
+	ret = nrf_cloud_pgps_req_data_json_encode(request->pgps_req, data_obj);
+	if (ret) {
+		goto clean_up;
 	}
 
+	/* Create a parameterized URL from the JSON data to use for the GET request.
+	 * The HTTP request body is not used in GET requests.
+	 * Use the rx_buf temporarily.
+	 */
+	ret = nrf_cloud_json_to_url_params_convert(rest_ctx->rx_buf, rest_ctx->rx_buf_len,
+						   data_obj);
+
+	/* Cleanup JSON obj */
+	cJSON_Delete(data_obj);
+	data_obj = NULL;
+
+	if (ret) {
+		LOG_ERR("Could not create P-GPS request URL");
+		goto clean_up;
+	}
+
+	url_sz = sizeof(API_GET_PGPS_BASE) + strlen(rest_ctx->rx_buf);
 	url = nrf_cloud_malloc(url_sz);
 	if (!url) {
 		ret = -ENOMEM;
 		goto clean_up;
 	}
-	req.url = url;
 
-	/* Format API URL */
-	ret = snprintk(url, url_sz, API_GET_PGPS_BASE);
-	if ((ret < 0) || (ret >= url_sz)) {
+	ret = snprintk(url, url_sz, "%s%s", API_GET_PGPS_BASE, rest_ctx->rx_buf);
+	if (ret < 0 || ret >= url_sz) {
 		LOG_ERR("Could not format URL");
 		ret = -ETXTBSY;
 		goto clean_up;
 	}
-	pos = ret;
-	remain = url_sz - ret;
 
-	if (request->pgps_req) {
-		if (request->pgps_req->prediction_count !=
-		    NRF_CLOUD_REST_PGPS_REQ_NO_COUNT) {
-			ret = snprintk(&url[pos], remain, PGPS_REQ_PREDICT_CNT,
-				request->pgps_req->prediction_count);
-			if ((ret < 0) || (ret >= remain)) {
-				LOG_ERR("Could not format URL: prediction count");
-				ret = -ETXTBSY;
-				goto clean_up;
-			}
-			pos += ret;
-			remain -= ret;
-		}
+	/* Set the URL */
+	req.url = url;
 
-		if (request->pgps_req->prediction_period_min !=
-		    NRF_CLOUD_REST_PGPS_REQ_NO_INTERVAL) {
-			ret = snprintk(&url[pos], remain, PGPS_REQ_PREDICT_INT_MIN,
-				       request->pgps_req->prediction_period_min);
-			if ((ret < 0) || (ret >= remain)) {
-				LOG_ERR("Could not format URL: prediction interval");
-				ret = -ETXTBSY;
-				goto clean_up;
-			}
-			pos += ret;
-			remain -= ret;
-		}
-
-		if (request->pgps_req->gps_day !=
-		    NRF_CLOUD_REST_PGPS_REQ_NO_GPS_DAY) {
-			ret = snprintk(&url[pos], remain, PGPS_REQ_START_GPS_DAY,
-				       request->pgps_req->gps_day);
-			if ((ret < 0) || (ret >= remain)) {
-				LOG_ERR("Could not format URL: GPS day");
-				ret = -ETXTBSY;
-				goto clean_up;
-			}
-			pos += ret;
-			remain -= ret;
-		}
-
-		if (request->pgps_req->gps_time_of_day !=
-		    NRF_CLOUD_REST_PGPS_REQ_NO_GPS_TOD) {
-			ret = snprintk(&url[pos], remain, PGPS_REQ_START_GPS_TOD_S,
-				       request->pgps_req->gps_time_of_day);
-			if ((ret < 0) || (ret >= remain)) {
-				LOG_ERR("Could not format URL: GPS time");
-				ret = -ETXTBSY;
-				goto clean_up;
-			}
-			pos += ret;
-			remain -= ret;
-		}
-	}
+	LOG_DBG("URL: %s", url);
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
@@ -1206,11 +1148,16 @@ clean_up:
 	if (auth_hdr) {
 		nrf_cloud_free(auth_hdr);
 	}
+	if (req.body) {
+		cJSON_free((void *)req.body);
+	}
+	cJSON_Delete(data_obj);
 
 	close_connection(rest_ctx);
 
 	return ret;
 }
+#endif /* CONFIG_NRF_CLOUD_PGPS */
 
 int nrf_cloud_rest_disconnect(struct nrf_cloud_rest_context *const rest_ctx)
 {
@@ -1465,8 +1412,14 @@ int nrf_cloud_rest_device_status_message_send(struct nrf_cloud_rest_context *con
 	}
 
 	json_msg = cJSON_PrintUnformatted(msg_obj);
+
 	cJSON_Delete(msg_obj);
 	msg_obj = NULL;
+
+	if (!json_msg) {
+		err = -ENOMEM;
+		goto clean_up;
+	}
 
 	err = nrf_cloud_rest_send_device_message(rest_ctx, device_id, json_msg, false, NULL);
 

@@ -440,6 +440,8 @@ Libraries for networking
   * Updated:
 
     * The mask angle parameter can now be omitted from an A-GPS REST request by using the value ``NRF_CLOUD_AGPS_MASK_ANGLE_NONE``.
+    * Use defines from the :file:`nrf_cloud_pgps.h` file for omitting parameters from a P-GPS request.
+      Removed the following values: ``NRF_CLOUD_REST_PGPS_REQ_NO_COUNT``, ``NRF_CLOUD_REST_PGPS_REQ_NO_INTERVAL``, ``NRF_CLOUD_REST_PGPS_REQ_NO_GPS_DAY``, and ``NRF_CLOUD_REST_PGPS_REQ_NO_GPS_TOD``.
 
 * :ref:`lib_lwm2m_client_utils` library:
 

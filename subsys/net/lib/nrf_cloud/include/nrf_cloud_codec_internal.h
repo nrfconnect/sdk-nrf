@@ -232,6 +232,13 @@ int nrf_cloud_pgps_req_json_encode(const struct gps_pgps_request * const request
 				   cJSON * const pgps_req_obj_out);
 #endif
 
+/** @brief Convert a JSON payload to a parameterized URL for REST. Converts only objects at
+ * the root level. Converts only integers and integer arrays, strings, and boolean values.
+ * String values are assumed to be URL-compatible.
+ */
+int nrf_cloud_json_to_url_params_convert(char * const buf, const size_t buf_size,
+					 const cJSON * const obj);
+
 #ifdef CONFIG_NRF_CLOUD_GATEWAY
 typedef int (*gateway_state_handler_t)(void *root_obj);
 

@@ -2939,3 +2939,90 @@ cleanup:
 	return -ENOMEM;
 }
 #endif
+
+int nrf_cloud_json_to_url_params_convert(char *const buf, const size_t buf_size,
+					 const cJSON *const obj)
+{
+	if (!obj || !buf || !buf_size) {
+		return -EINVAL;
+	}
+
+	int ret = 0;
+	size_t pos = 0;
+	size_t remain = buf_size;
+	cJSON *child = NULL;
+
+	cJSON_ArrayForEach(child, obj) {
+		char prefix = ((pos == 0) ? '?' : '&');
+
+		/* Only handle bool, number (int), string, and (int) array types */
+		if (cJSON_IsBool(child)) {
+			ret = snprintk(&buf[pos], remain, "%c%s=%s", prefix, child->string,
+				       cJSON_IsTrue(child) ? "true" : "false");
+		} else if (cJSON_IsNumber(child)) {
+			ret = snprintk(&buf[pos], remain, "%c%s=%d", prefix, child->string,
+				       child->valueint);
+		} else if (cJSON_IsString(child)) {
+			/* Assume that the string is URL-compatible */
+			ret = snprintk(&buf[pos], remain, "%c%s=%s", prefix, child->string,
+				       child->valuestring);
+		} else if (cJSON_IsArray(child)) {
+			int cnt = 0;
+			cJSON *array_item = NULL;
+
+			cJSON_ArrayForEach(array_item, child) {
+				if (!cJSON_IsNumber(array_item)) {
+					return -ENOTSUP;
+				}
+
+				if (cnt == 0) {
+					/* On the first item, add the key string */
+					ret = snprintk(&buf[pos], remain, "%c%s=",
+						       prefix, child->string);
+				} else {
+					/* For additional items, add a comma */
+					ret = snprintk(&buf[pos], remain, "%c", ',');
+				}
+
+				if ((ret > 0) && (ret < remain)) {
+					remain -= ret;
+					pos += ret;
+				} else {
+					return -E2BIG;
+				}
+
+				/* Add the integer value */
+				ret = snprintk(&buf[pos], remain, "%d", array_item->valueint);
+
+				if ((ret > 0) && (ret < remain)) {
+					remain -= ret;
+					pos += ret;
+					++cnt;
+				} else {
+					return -E2BIG;
+				}
+			}
+
+			/* Check next child item, pos and remain values already updated */
+			continue;
+		} else {
+			return -ENOTSUP;
+		}
+
+		if ((ret > 0) && (ret < remain)) {
+			remain -= ret;
+			pos += ret;
+		} else if (ret == 0) {
+			return -EIO;
+		} else {
+			return -E2BIG;
+		}
+	}
+
+	/* Return an error if no data was added */
+	if (remain == buf_size) {
+		return -ENOMSG;
+	}
+
+	return 0;
+}
