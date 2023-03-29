@@ -12,6 +12,11 @@
 #include <memfault/core/trace_event.h>
 #include <memfault/ports/watchdog.h>
 #include <memfault/panics/coredump.h>
+#include <memfault/core/custom_data_recording.h>
+#endif
+
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RAM)
+#include <modem/nrf_modem_lib_trace.h>
 #endif
 
 #define MODULE debug_module
@@ -32,6 +37,71 @@
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DEBUG_MODULE_LOG_LEVEL);
+
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RAM) && defined(CONFIG_MEMFAULT)
+
+static const char *const mimetypes[] = { MEMFAULT_CDR_BINARY };
+
+static sMemfaultCdrMetadata trace_recording_metadata = {
+	.start_time.type = kMemfaultCurrentTimeType_Unknown,
+	.mimetypes = (const char **) mimetypes,
+	.num_mimetypes = 1,
+	.data_size_bytes = 0,
+	.collection_reason = "modem traces",
+};
+
+static bool has_modem_traces;
+
+static bool has_cdr_cb(sMemfaultCdrMetadata *metadata)
+{
+	if (!has_modem_traces) {
+		return false;
+	}
+
+	*metadata = trace_recording_metadata;
+
+	return true;
+}
+
+static bool read_data_cb(uint32_t offset, void *data, size_t data_len)
+{
+	int err = nrf_modem_lib_trace_read(data, data_len);
+
+	if (err < 0) {
+		LOG_ERR("Error reading modem traces: %d", err);
+		return false;
+	}
+
+	return true;
+}
+
+static void mark_cdr_read_cb(void)
+{
+	has_modem_traces = false;
+}
+
+static sMemfaultCdrSourceImpl s_my_custom_data_recording_source = {
+	.has_cdr_cb = has_cdr_cb,
+	.read_data_cb = read_data_cb,
+	.mark_cdr_read_cb = mark_cdr_read_cb,
+};
+
+void modem_trace_memfault_send(void)
+{
+	static bool memfault_cdr_source_registered;
+	size_t size = nrf_modem_lib_trace_data_size();
+
+	if (!memfault_cdr_source_registered) {
+		memfault_cdr_register_source(&s_my_custom_data_recording_source);
+		memfault_cdr_source_registered = true;
+	}
+
+	trace_recording_metadata.duration_ms = 0;
+	trace_recording_metadata.data_size_bytes = size;
+	has_modem_traces = true;
+}
+#endif
+
 
 struct debug_msg_data {
 	union {
@@ -60,6 +130,8 @@ static K_SEM_DEFINE(mflt_internal_send_sem, 0, 1);
 
 static void memfault_internal_send(void)
 {
+	int err;
+
 entry:
 	k_sem_take(&mflt_internal_send_sem, K_FOREVER);
 
@@ -70,6 +142,17 @@ entry:
 			LOG_DBG("No coredump available.");
 			goto entry;
 		}
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RAM)
+		err = nrf_modem_lib_trace_level_set(NRF_MODEM_LIB_TRACE_LEVEL_OFF);
+		if (err) {
+			LOG_ERR("Failed to turn off modem traces");
+		}
+		/* Changing the trace level to off will produce some traces, so sleep long enough to
+		 * receive those as well.
+		 */
+		k_sleep(K_SECONDS(1));
+		modem_trace_memfault_send();
+#endif
 	}
 
 	/* If dispatching Memfault data over an external transport is not enabled,
@@ -107,6 +190,13 @@ entry:
 		len = sizeof(data);
 	}
 #endif
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RAM)
+	err = nrf_modem_lib_trace_level_set(CONFIG_NRF_MODEM_LIB_TRACE_LEVEL);
+	if (err) {
+		LOG_ERR("Failed to start tracing, err %d", err);
+	}
+#endif
+
 	goto entry;
 }
 
