@@ -1131,6 +1131,14 @@ KRKNWK-9214: Pigweed submodule might not be accessible from some regions
 HomeKit
 =======
 
+.. rst-class:: v2-3-0 v2-2-0
+
+KRKNWK-16503: OTA DFU using the iOS Home app (over UARP) does not work on the nRF5340 SoC
+  Application core cannot be upgraded due to a problem with uploading images for two cores.
+  Uploading the network core image overrides an already uploaded application core image.
+
+  **Workaround:** Manually cherry-pick and apply commit from the main branch (commit hash: ``09874a36edf21ced7d3c9356de07df6f0ff3d457``).
+
 .. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
 KRKNWK-13010: Dropping from Thread to Bluetooth LE takes too long
