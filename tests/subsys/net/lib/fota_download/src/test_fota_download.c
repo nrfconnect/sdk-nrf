@@ -94,6 +94,11 @@ int download_client_init(struct download_client *client,
 	return 0;
 }
 
+enum dfu_target_image_type dfu_target_smp_img_type_check(const void *const buf, size_t len)
+{
+	return DFU_TARGET_IMAGE_TYPE_SMP;
+}
+
 int download_client_get(struct download_client *client, const char *host,
 			const struct download_client_cfg *config, const char *file, size_t from)
 {
