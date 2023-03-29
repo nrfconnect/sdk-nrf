@@ -273,6 +273,8 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 	sleep_type = SLEEP_DISABLE;
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
+	unsigned int umac_ver = 0;
+	unsigned int lmac_ver = 0;
 
 	rpu_ctx_zep = &drv_priv_zep->rpu_ctx_zep;
 
@@ -309,6 +311,21 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 		LOG_ERR("%s: wifi_nrf_fmac_fw_load failed\n", __func__);
 		goto out;
 	}
+
+	status = wifi_nrf_fmac_ver_get(rpu_ctx,
+				       &umac_ver,
+				       &lmac_ver);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		LOG_ERR("%s: FW version read failed\n", __func__);
+		goto out;
+	}
+
+	LOG_INF("Firmware (v%d:%d:%d:%d) booted successfully\n",
+		NRF_WIFI_UMAC_VER(umac_ver),
+		NRF_WIFI_UMAC_VER_MAJ(umac_ver),
+		NRF_WIFI_UMAC_VER_MIN(umac_ver),
+		NRF_WIFI_UMAC_VER_EXTRA(umac_ver));
 
 	status = wifi_nrf_fmac_dev_init(rpu_ctx_zep->rpu_ctx,
 #ifndef CONFIG_NRF700X_RADIO_TEST
