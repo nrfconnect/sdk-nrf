@@ -169,10 +169,6 @@ config NET_PKT_TIMESTAMP
 	bool
 	default y
 
-config OPENTHREAD_MAC_SOFTWARE_TX_SECURITY_ENABLE
-	bool
-	default n
-
 # CSL Transmitter configuration
 config OPENTHREAD_PLATFORM_CSL_UNCERT
 	int
