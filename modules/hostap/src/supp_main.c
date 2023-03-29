@@ -382,9 +382,6 @@ static void z_wpas_start(void)
 	os_memset(&params, 0, sizeof(params));
 	params.wpa_debug_level = CONFIG_WPA_SUPP_DEBUG_LEVEL;
 
-	wpa_printf(MSG_INFO, "%s: %d Starting wpa_supplicant thread with debug level: %d\n",
-		  __func__, __LINE__, params.wpa_debug_level);
-
 	exitcode = 0;
 	global = wpa_supplicant_init(&params);
 	if (global == NULL) {
