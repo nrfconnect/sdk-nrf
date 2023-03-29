@@ -11,6 +11,8 @@
 extern "C" {
 #endif
 
+#include <net/fota_download.h>
+
 /**
  * @brief Find correct MCUBoot update resource locator entry in space separated string.
  *
@@ -30,6 +32,82 @@ extern "C" {
  */
 int fota_download_parse_dual_resource_locator(char *const file, bool s0_active,
 					     const char **selected_path);
+
+
+/**@brief Initialize internal FOTA download utils.
+ *
+ * @param client_callback Callback for monitoring download state.
+ * @param smp_image_type Use true for DFU SMP target otherwise use false.
+
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fota_download_util_client_init(fota_download_callback_t client_callback, bool smp_image_type);
+
+/**@brief Initialize DFU stream targets.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fota_download_util_stream_init(void);
+
+/**@brief Pre-initialize for selected DFU target
+ *
+ * @param dfu_target_type DFU target
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fota_download_util_dfu_target_init(enum dfu_target_image_type dfu_target_type);
+
+/**@brief Start downloading the image for selected DFU type and download URL.
+ *
+ * @param download_uri Download URI string.
+ * @param dfu_target_type DFU target type for new image
+ * @param sec_tag Used security tag for HTTPs or CoAPs
+ * @param client_callback Callback for monitoring download state
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fota_download_util_download_start(const char *download_uri,
+				      enum dfu_target_image_type dfu_target_type, int sec_tag,
+				      fota_download_callback_t client_callback);
+
+/**@brief Cancel active download process.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fota_download_util_download_cancel(void);
+
+/**@brief Schedule image update for next reset.
+ *
+ * @param dfu_target_type DFU target
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fota_download_util_image_schedule(enum dfu_target_image_type dfu_target_type);
+
+/**@brief Reset DFU target FOTA state
+ *
+ * @param dfu_target_type DFU target
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fota_download_util_image_reset(enum dfu_target_image_type dfu_target_type);
+
+/**@brief Activate secondary image slot.
+ *
+ * @param dfu_target_type DFU target
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fota_download_util_apply_update(enum dfu_target_image_type dfu_target_type);
 
 #ifdef __cplusplus
 }

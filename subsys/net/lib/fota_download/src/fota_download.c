@@ -23,8 +23,6 @@
 #include <dfu/dfu_target_mcuboot.h>
 #endif
 
-#define MAX_RESOURCE_LOCATOR_LEN 500
-
 LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
 static fota_download_callback_t callback;
@@ -33,6 +31,8 @@ static const char *dl_file;
 static uint32_t dl_host_hash;
 static uint32_t dl_file_hash;
 static struct download_client dlc;
+/** SMP MCUBoot image type */
+static bool use_smp_dfu_target;
 static struct k_work_delayable  dlc_with_offset_work;
 static int socket_retries_left;
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
@@ -50,6 +50,7 @@ enum flags_t {
 };
 static atomic_t flags;
 static enum fota_download_error_cause error_state = FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR;
+static bool initialized;
 
 static void send_evt(enum fota_download_evt_id id)
 {
@@ -134,8 +135,14 @@ static int download_client_callback(const struct download_client_evt *event)
 				set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL);
 				goto error_and_close;
 			}
-			img_type = dfu_target_img_type(event->fragment.buf,
-							event->fragment.len);
+			if (use_smp_dfu_target) {
+				/* Validate SMP target type */
+				img_type = dfu_target_smp_img_type_check(event->fragment.buf,
+									 event->fragment.len);
+			} else {
+				img_type = dfu_target_img_type(event->fragment.buf,
+							       event->fragment.len);
+			}
 
 			if (img_type == DFU_TARGET_IMAGE_TYPE_NONE) {
 				LOG_ERR("Unknown image type");
@@ -474,8 +481,8 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	 */
 	const char *update;
 	bool s0_active;
-	/* I need modifiable copy of the filename so I can split it */
-	static char file_buf[MAX_RESOURCE_LOCATOR_LEN];
+	/* Need a modifiable copy of the filename for splitting  */
+	static char file_buf[CONFIG_FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH];
 
 	strncpy(file_buf, file, sizeof(file_buf) - 1);
 	file_buf[sizeof(file_buf) - 1] = '\0';
@@ -513,36 +520,15 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	return 0;
 }
 
-int fota_download_init(fota_download_callback_t client_callback)
+static int fota_download_object_init(void)
 {
 	int err;
-	static bool initialized;
-
-	if (client_callback == NULL) {
-		return -EINVAL;
-	}
-
-	callback = client_callback;
-
-	if (initialized) {
-		return 0;
-	}
 
 #ifdef CONFIG_FOTA_DOWNLOAD_NATIVE_TLS
 	/* Enable native TLS for the download client socket
 	 * if configured.
 	 */
 	dlc.set_native_tls = CONFIG_FOTA_DOWNLOAD_NATIVE_TLS;
-#endif
-
-#ifdef CONFIG_DFU_TARGET_MCUBOOT
-	/* Set the required buffer for MCUboot targets */
-	err = dfu_target_mcuboot_set_buf(mcuboot_buf, sizeof(mcuboot_buf));
-	if (err) {
-		LOG_ERR("%s failed to set MCUboot flash buffer %d",
-			__func__, err);
-		return err;
-	}
 #endif
 
 	k_work_init_delayable(&dlc_with_offset_work, download_with_offset);
@@ -554,6 +540,56 @@ int fota_download_init(fota_download_callback_t client_callback)
 
 	initialized = true;
 	return 0;
+}
+
+int fota_download_util_client_init(fota_download_callback_t client_callback, bool smp_image_type)
+{
+	int err;
+
+	if (client_callback == NULL) {
+		return -EINVAL;
+	}
+
+	callback = client_callback;
+	err = fota_download_util_stream_init();
+	if (err) {
+		LOG_ERR("%s failed to init stream %d", __func__, err);
+		return err;
+	}
+	use_smp_dfu_target = smp_image_type;
+
+	if (initialized) {
+		return 0;
+	}
+
+	return fota_download_object_init();
+}
+
+int fota_download_init(fota_download_callback_t client_callback)
+{
+	if (client_callback == NULL) {
+		return -EINVAL;
+	}
+
+	callback = client_callback;
+
+#ifdef CONFIG_DFU_TARGET_MCUBOOT
+	int err;
+
+	/* Set the required buffer for MCUboot targets */
+	err = dfu_target_mcuboot_set_buf(mcuboot_buf, sizeof(mcuboot_buf));
+	if (err) {
+		LOG_ERR("%s failed to set MCUboot flash buffer %d", __func__, err);
+		return err;
+	}
+#endif
+
+	use_smp_dfu_target = false;
+	if (initialized) {
+		return 0;
+	}
+
+	return fota_download_object_init();
 }
 
 int fota_download_cancel(void)
