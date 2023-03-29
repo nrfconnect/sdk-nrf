@@ -55,24 +55,14 @@ struct firmware_object {
 };
 
 static struct firmware_object test_object[2];
-static uint8_t *stream_buf;
-static size_t stream_buf_len;
 static fota_download_callback_t firmware_fota_download_cb;
 
 static struct settings_handler *handler;
 static int fota_download_ret_val;
-static int boot_img_num;
+static bool boot_scheduled;
 static bool target_reset_done;
-static bool target_done_result;
 static size_t target_offset;
 static struct lwm2m_fota_event fota_event;
-
-static int dfu_target_mcuboot_set_buf_stub(uint8_t *buf, size_t len)
-{
-	stream_buf = buf;
-	stream_buf_len = len;
-	return 0;
-}
 
 static struct lwm2m_engine_res *lwm2m_resource_get(uint16_t obj_inst_id, uint16_t resource_id)
 {
@@ -226,21 +216,34 @@ static int fota_download_init_stub(fota_download_callback_t client_callback)
 	return fota_download_ret_val;
 }
 
-static int target_schedule_update_stub(int img_num)
+static void fota_cb_simulate_event(enum fota_download_evt_id id)
 {
-	boot_img_num = img_num;
+	struct fota_download_evt evt;
+
+	if (firmware_fota_download_cb) {
+		evt.id = id;
+		firmware_fota_download_cb(&evt);
+	}
+}
+
+static int fota_download_util_download_start_stub(const char *download_uri,
+						    enum dfu_target_image_type dfu_target_type,
+						    int sec_tag,
+						    fota_download_callback_t client_callback)
+{
+	firmware_fota_download_cb = client_callback;
+	return fota_download_ret_val;
+}
+
+int fota_download_util_image_schedule_stub(enum dfu_target_image_type dfu_target_type)
+{
+	boot_scheduled = true;
 	return 0;
 }
 
-static int target_reset_stub(void)
+static int fota_download_util_image_reset_stub(enum dfu_target_image_type dfu_target_type)
 {
 	target_reset_done = true;
-	return 0;
-}
-
-static int target_done_stub(bool successful)
-{
-	target_done_result = successful;
 	return 0;
 }
 
@@ -267,17 +270,15 @@ static void setup_tear_up(void *fixie)
 	fota_download_start_with_image_type_fake.return_val = 0;
 	fota_download_target_fake.return_val = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
 	fota_download_init_fake.custom_fake = fota_download_init_stub;
+	fota_download_util_download_start_fake.custom_fake =
+		fota_download_util_download_start_stub;
 	settings_subsys_init_fake.return_val = 0;
 	settings_register_fake.custom_fake = copy_settings_hanler;
 	settings_save_one_fake.custom_fake = check_stored_settings;
 	target_offset = 0;
-	dfu_target_mcuboot_set_buf_fake.custom_fake = dfu_target_mcuboot_set_buf_stub;
-	dfu_target_mcuboot_schedule_update_fake.custom_fake = target_schedule_update_stub;
-	dfu_target_modem_delta_schedule_update_fake.custom_fake = target_schedule_update_stub;
-	dfu_target_mcuboot_reset_fake.custom_fake = target_reset_stub;
-	dfu_target_modem_delta_reset_fake.custom_fake = target_reset_stub;
-	dfu_target_mcuboot_done_fake.custom_fake = target_done_stub;
-	dfu_target_modem_delta_done_fake.custom_fake = target_done_stub;
+	fota_download_util_image_schedule_fake.custom_fake =
+		fota_download_util_image_schedule_stub;
+	fota_download_util_image_reset_fake.custom_fake = fota_download_util_image_reset_stub;
 	dfu_target_mcuboot_offset_get_fake.custom_fake = target_offset_get_stub;
 	dfu_target_modem_delta_offset_get_fake.custom_fake = target_offset_get_stub;
 }
@@ -314,7 +315,6 @@ static void init_firmware_success(void)
 	settings_register_fake.custom_fake = copy_settings_hanler;
 	rc = lwm2m_init_firmware_cb(lwm2m_firmware_event);
 	zassert_equal(rc, 0, "wrong return value");
-	zassert_not_null(stream_buf, "MCUboot is NULL");
 	zassert_not_null(handler, "Did not set handler");
 	zassert_not_null(handler->h_set, "Did not set handler");
 }
@@ -328,8 +328,6 @@ static void *init_firmware(void)
 	handler = NULL;
 
 	settings_register_fake.custom_fake = NULL;
-	stream_buf = NULL;
-	stream_buf_len = 0;
 	settings_subsys_init_fake.return_val = -1;
 	rc = lwm2m_init_firmware();
 	zassert_equal(rc, -1, "wrong return value");
@@ -404,7 +402,7 @@ static void do_firmware_update(uint8_t instance)
 {
 	int rc;
 
-	boot_img_num = -1;
+	boot_scheduled = false;
 	rc = lwm2m_firmware_update(instance, NULL, 0);
 	if (rc) {
 		printf("Firmware update fail %d", rc);
@@ -466,14 +464,14 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_pull)
 	char test_broken_url2[] = "https:/test_server.com/test.bin";
 
 	/* Test Pull start fail by EBUSY*/
-	fota_download_ret_val = -1;
+	fota_download_ret_val = -EBUSY;
 	prepare_firmware_pull(app_instance, DFU_TARGET_IMAGE_TYPE_MCUBOOT);
 	result = get_app_result();
 	printf("Result %d\r\n", result);
 	zassert_equal(result, RESULT_NO_STORAGE, "wrong result value");
-	fota_download_ret_val = 0;
 
 	/* Test Pull start fail by EINVAL*/
+	fota_download_ret_val = -EINVAL;
 	write_fota_dynamic_url(app_instance, test_broken_url, sizeof(test_broken_url));
 	result = get_app_result();
 	printf("Result %d\r\n", result);
@@ -485,7 +483,9 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_pull)
 	zassert_equal(result, RESULT_INVALID_URI, "wrong result value");
 
 	fota_download_start_with_image_type_fake.return_val = -1;
+	fota_download_ret_val = 0;
 	prepare_firmware_pull(app_instance, DFU_TARGET_IMAGE_TYPE_MCUBOOT);
+	fota_cb_simulate_event(FOTA_DOWNLOAD_EVT_CANCELLED);
 	result = get_app_result();
 	printf("Result %d\r\n", result);
 	zassert_equal(result, RESULT_CONNECTION_LOST, "wrong result value");
@@ -619,7 +619,7 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_update)
 
 	do_firmware_update(app_instance);
 	state = get_app_state();
-	zassert_equal(boot_img_num, 0, "wrong img num");
+	zassert_equal(boot_scheduled, true, "Not scheduled");
 	zassert_equal(state, STATE_UPDATING, "wrong result value");
 
 	boot_is_img_confirmed_fake.return_val = false;
@@ -642,11 +642,12 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_update)
 	zassert_equal(state, STATE_DOWNLOADED, "wrong result value");
 
 	lwm2m_firmware_emulate_modem_lib_init(NRF_MODEM_DFU_RESULT_AUTH_ERROR);
+	fota_download_util_apply_update_fake.return_val = -1;
 	do_firmware_update(modem_instance);
 	result = get_modem_result();
 	state = get_app_state();
-	printf("Result %d img num %d", result, boot_img_num);
-	zassert_equal(boot_img_num, 0, "wrong img num");
+	printf("Result %d sheduledm %d", result, boot_scheduled);
+	zassert_equal(boot_scheduled, true, "Not scheduled");
 	zassert_equal(result, RESULT_UPDATE_FAILED, "wrong img num");
 	zassert_equal(state, STATE_IDLE, "wrong result value");
 
@@ -663,9 +664,10 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_update)
 	zassert_equal(state, STATE_DOWNLOADED, "wrong result value");
 
 	lwm2m_firmware_emulate_modem_lib_init(NRF_MODEM_DFU_RESULT_OK);
+	fota_download_util_apply_update_fake.return_val = 0;
 	do_firmware_update(modem_instance);
 	result = get_modem_result();
-	zassert_equal(boot_img_num, 0, "wrong img num");
+	zassert_equal(boot_scheduled, true, "Not scheduled");
 	zassert_equal(result, RESULT_SUCCESS, "wrong img num");
 
 	prepare_firmware_pull(modem_instance, DFU_TARGET_IMAGE_TYPE_FULL_MODEM);
@@ -709,13 +711,11 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_push_update)
 	zassert_equal(state, STATE_DOWNLOADING, "wrong result value");
 
 	target_offset = 32;
-	target_done_result = false;
 	rc = post_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_ID, test_dummy_data, 32, true,
 				    64);
 	state = get_app_state();
 	zassert_equal(rc, 0, "wrong return value");
 	zassert_equal(state, STATE_DOWNLOADED, "wrong result value");
-	zassert_equal(target_done_result, true, "wrong return value");
 
 	test_cancel_and_clear_state(app_instance);
 
@@ -725,13 +725,11 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_push_update)
 	zassert_equal(state, STATE_DOWNLOADING, "wrong result value");
 	zassert_equal(rc, 0, "wrong return value");
 	target_offset = 32;
-	target_done_result = false;
 	rc = post_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_ID, test_dummy_data, 32, true,
 				    0);
 	state = get_app_state();
 	zassert_equal(rc, 0, "wrong return value");
 	zassert_equal(state, STATE_DOWNLOADED, "wrong result value");
-	zassert_equal(target_done_result, true, "wrong return value");
 }
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
