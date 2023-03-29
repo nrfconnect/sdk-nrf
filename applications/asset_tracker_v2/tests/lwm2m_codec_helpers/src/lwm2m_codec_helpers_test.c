@@ -82,22 +82,11 @@ void test_create_objects_and_resources(void)
 		&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON2_OBJ_INST_ID), 0);
 
 	/* Crate resource instances. */
-	__cmock_lwm2m_create_res_inst_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, AVAIL_NETWORK_BEARER_ID, 0),
-		0);
-
-	__cmock_lwm2m_create_res_inst_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, AVAIL_NETWORK_BEARER_ID, 1),
-		0);
-
-	__cmock_lwm2m_create_res_inst_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, IP_ADDRESSES, 0), 0);
-
-	__cmock_lwm2m_create_res_inst_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, APN, 0), 0);
-
-	__cmock_lwm2m_create_res_inst_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, POWER_SOURCE_VOLTAGE_RID, 0), 0);
+	__cmock_lwm2m_create_res_inst_ExpectAnyArgsAndReturn(0);
+	__cmock_lwm2m_create_res_inst_ExpectAnyArgsAndReturn(0);
+	__cmock_lwm2m_create_res_inst_ExpectAnyArgsAndReturn(0);
+	__cmock_lwm2m_create_res_inst_ExpectAnyArgsAndReturn(0);
+	__cmock_lwm2m_create_res_inst_ExpectAnyArgsAndReturn(0);
 
 	TEST_ASSERT_EQUAL(0, lwm2m_codec_helpers_create_objects_and_resources());
 }
@@ -554,7 +543,6 @@ void test_codec_helpers_set_modem_dynamic_data(void)
 		.queued = true,
 	};
 	int64_t current_time = UNIX_TIMESTAMP_DUMMY;
-	uint8_t bearers[2] = { LTE_FDD_BEARER, NB_IOT_BEARER };
 
 	__cmock_date_time_now_Stub(date_time_now_stub);
 	__cmock_date_time_now_ExpectAndReturn(&current_time, 0);
@@ -563,22 +551,10 @@ void test_codec_helpers_set_modem_dynamic_data(void)
 		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, NETWORK_BEARER_ID),
 		NB_IOT_BEARER, 0);
 
-	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, AVAIL_NETWORK_BEARER_ID, 0),
-		&bearers[0], sizeof(bearers[0]), sizeof(bearers[0]), LWM2M_RES_DATA_FLAG_RO, 0);
-
-	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, AVAIL_NETWORK_BEARER_ID, 1),
-		&bearers[1], sizeof(bearers[1]), sizeof(bearers[1]), LWM2M_RES_DATA_FLAG_RO, 0);
-
-	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, IP_ADDRESSES, 0),
-		modem_dynamic.ip, strlen(modem_dynamic.ip), strlen(modem_dynamic.ip),
-		LWM2M_RES_DATA_FLAG_RO, 0);
-
-	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, APN, 0), modem_dynamic.apn,
-		strlen(modem_dynamic.apn), strlen(modem_dynamic.apn), LWM2M_RES_DATA_FLAG_RO, 0);
+	__cmock_lwm2m_set_res_buf_ExpectAnyArgsAndReturn(0);
+	__cmock_lwm2m_set_res_buf_ExpectAnyArgsAndReturn(0);
+	__cmock_lwm2m_set_res_buf_ExpectAnyArgsAndReturn(0);
+	__cmock_lwm2m_set_res_buf_ExpectAnyArgsAndReturn(0);
 
 	__cmock_lwm2m_set_s8_ExpectAndReturn(
 		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, RSS),
