@@ -156,7 +156,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf9160/                         @rlubos @lemrey
 /samples/nrf9160/azure_*                  @jtguggedal @simensrostad @coderbyheart
 /samples/nrf9160/location/                @trantanen @hiltunent @jhirsi @tokangas
-/samples/nrf9160/lwm2m_client/            @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen @VeijoPesonen
+/samples/nrf9160/lwm2m_client/            @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
 /samples/nrf9160/modem_shell/             @trantanen @hiltunent @jhirsi @tokangas
 /samples/nrf9160/nidd/                    @stig-bjorlykke
 /samples/nrf9160/nrf_cloud_*              @plskeggs @jayteemo @glarsennordic
@@ -217,7 +217,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/lib/azure_*                   @jtguggedal @simensrostad @coderbyheart
 /subsys/net/lib/ftp_client/               @junqingzou
 /subsys/net/lib/icalendar_parser/         @lats1980
-/subsys/net/lib/lwm2m_client_utils/       @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen @VeijoPesonen
+/subsys/net/lib/lwm2m_client_utils/       @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
 /subsys/net/lib/nrf_cloud/                @plskeggs @jayteemo @glarsennordic
 /subsys/net/lib/zzhc/                     @junqingzou
 /subsys/net/lib/wifi_credentials/         @maxd-nordic
@@ -278,7 +278,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/net/lib/aws_*/              @simensrostad
 /tests/subsys/net/lib/azure_iot_hub/      @jtguggedal
 /tests/subsys/net/lib/fota_download/      @hakonfam @sigvartmh
-/tests/subsys/net/lib/lwm2m_*/            @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen @VeijoPesonen
+/tests/subsys/net/lib/lwm2m_*/            @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
 /tests/subsys/net/lib/nrf_cloud/          @tony-le-24
 /tests/subsys/net/lib/wifi_credentials*/  @maxd-nordic
 /tests/subsys/net/lib/mqtt_helper/        @simensrostad @jtguggedal
