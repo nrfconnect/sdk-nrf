@@ -18,10 +18,10 @@
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
-K_THREAD_STACK_DEFINE(bh_wq_stack_area, 1024);
+K_THREAD_STACK_DEFINE(bh_wq_stack_area, CONFIG_NRF700X_BH_WQ_STACK_SIZE);
 struct k_work_q zep_wifi_bh_q;
 
-K_THREAD_STACK_DEFINE(irq_wq_stack_area, 1024);
+K_THREAD_STACK_DEFINE(irq_wq_stack_area, CONFIG_NRF700X_IRQ_WQ_STACK_SIZE);
 struct k_work_q zep_wifi_intr_q;
 
 struct zep_work_item zep_work_item[CONFIG_NRF700X_WORKQ_MAX_ITEMS];
