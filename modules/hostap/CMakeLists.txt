@@ -42,6 +42,10 @@ zephyr_library_compile_definitions(
 	CONFIG_SUITEB192
 	)
 
+zephyr_library_compile_definitions_ifndef(CONFIG_WPA_SUPP_CRYPTO
+	CONFIG_NO_PBKDF2
+)
+
 zephyr_library_include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/src
 	${HOSTAP_BASE}/
@@ -158,6 +162,7 @@ zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_AP
 
 zephyr_library_sources_ifndef(CONFIG_WPA_SUPP_CRYPTO
 	${COMMON_SRC_BASE}/crypto/crypto_none.c
+	${COMMON_SRC_BASE}/crypto/tls_none.c
 )
 
 zephyr_library_compile_definitions_ifndef(CONFIG_WPA_SUPP_CRYPTO
