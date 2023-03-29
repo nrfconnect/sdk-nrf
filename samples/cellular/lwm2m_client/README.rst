@@ -18,4 +18,5 @@ See the subpages for detailed documentation on the sample and its features.
 
    sample_description.rst
    fota.rst
+   fota_external_mcu.rst
    provisioning.rst
