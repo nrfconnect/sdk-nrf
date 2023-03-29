@@ -38,7 +38,7 @@ set(options
   -DCONFIG_LWM2M_FIRMWARE_UPDATE_PULL_SUPPORT
   -DCONFIG_DFU_TARGET_MCUBOOT=y
   -DCONFIG_DFU_TARGET_MODEM_DELTA=y
-  -DCONFIG_LWM2M_CLIENT_UTILS_MCUBOOT_FLASH_BUF_SIZE=512
+  -DCONFIG_FOTA_DOWNLOAD_MCUBOOT_FLASH_BUF_SZ=512
 )
 
 target_compile_options(app
@@ -58,6 +58,7 @@ target_compile_options(..__nrf__subsys__dfu__dfu_target
 set(includes
 "$ENV{ZEPHYR_BASE}/subsys/net/lib/lwm2m/"
 "$ENV{ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/"
+"$ENV{ZEPHYR_BASE}/../nrf/subsys/net/lib/fota_download/include/"
 "src/"
 )
 

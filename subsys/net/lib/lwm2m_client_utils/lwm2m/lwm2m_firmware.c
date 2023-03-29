@@ -7,7 +7,6 @@
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <nrf_modem.h>
-#include <zephyr/drivers/flash.h>
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_stream.h>
 #include <dfu/dfu_target_mcuboot.h>
@@ -17,18 +16,12 @@
 #include <modem/nrf_modem_lib.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/fota_download.h>
+#include <fota_download_util.h>
 #include <lwm2m_util.h>
 #include <net/lwm2m_client_utils.h>
 #include <zephyr/settings/settings.h>
 /* Firmware update needs access to internal functions as well */
 #include <lwm2m_engine.h>
-
-#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
-#include <dfu/dfu_target_full_modem.h>
-#include <nrf_modem_bootloader.h>
-#include <dfu/fmfu_fdev.h>
-#include <string.h>
-#endif
 
 #include <modem/modem_info.h>
 #include <ncs_version.h>
@@ -44,7 +37,7 @@ LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 #define FOTA_PULL_SUPPORTED_COUNT 4
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
-#define FOTA_INSTANCE_COUNT 2
+#define FOTA_INSTANCE_COUNT CONFIG_LWM2M_CLIENT_UTILS_ADV_FOTA_INSTANCE_COUNT
 #define ENABLED_LWM2M_FIRMWARE_OBJECT LWM2M_OBJECT_ADV_FIRMWARE_ID
 #else
 #define FOTA_INSTANCE_COUNT 1
@@ -54,7 +47,7 @@ static struct lwm2m_engine_res_inst pull_protocol_buff[FOTA_PULL_SUPPORTED_COUNT
 /* FOTA resource LWM2M_FOTA_UPDATE_PROTO_SUPPORT_ID  definition */
 #define FOTA_PULL_COAP 0
 #define FOTA_PULL_COAPS 1
-/* Only supported when Server root certicate SEC tag is available*/
+/* Only supported when Server root certicate SEC tag is available */
 #define FOTA_PULL_HTTP 2
 #define FOTA_PULL_HTTPS 3
 
@@ -66,60 +59,70 @@ static uint8_t pull_protocol_support[FOTA_PULL_SUPPORTED_COUNT] = { FOTA_PULL_CO
 								    FOTA_PULL_COAPS,
 								    FOTA_PULL_HTTPS };
 
-#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
-static uint8_t apply_fmfu_from_ext_flash(void);
-static int full_modem_stream_params_init(void);
-static int configure_full_modem_update(void);
-static uint8_t fmfu_buf[1024];
-static const struct device *flash_dev = DEVICE_DT_GET_ONE(jedec_spi_nor);
+#ifdef CONFIG_DFU_TARGET_SMP
+/** Internal thread ID. */
+static k_tid_t tid;
+/** Internal Update thread. */
+static struct k_thread thread;
+/** Ensure that thread is ready for download */
+static K_SEM_DEFINE(update_mutex, 0, 1);
+/* Internal thread stack. */
+static K_THREAD_STACK_MEMBER(thread_stack,
+			     CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_THREAD_STACK_SIZE);
 #endif
 
-#ifdef CONFIG_DFU_TARGET_MCUBOOT
-static uint8_t mcuboot_buf[CONFIG_LWM2M_CLIENT_UTILS_MCUBOOT_FLASH_BUF_SIZE] __aligned(4);
-#endif
 #define UNUSED_OBJ_ID 0xffff
 #define PENDING_DELAY K_MSEC(10)
 static uint16_t ongoing_obj_id;
-static char *fota_path;
-static char *fota_host;
-static int fota_sec_tag;
 static uint8_t percent_downloaded;
 static uint32_t bytes_downloaded;
 static int application_obj_id;
 static int modem_obj_id;
+static int smp_obj_id;
 static int target_image_type[FOTA_INSTANCE_COUNT];
 
 static void dfu_target_cb(enum dfu_target_evt_id evt);
-static void start_fota_download(struct k_work *work);
 static void start_pending_fota_download(struct k_work *work);
-static void firmware_update_check_linked_instances(int instance_id);
+static bool firmware_update_check_linked_instances(int instance_id);
 static int target_image_type_get(uint16_t instance);
 static uint8_t get_state(uint16_t id);
 static void set_result(uint16_t id, uint8_t result);
-static K_WORK_DEFINE(download_work, start_fota_download);
 static K_WORK_DELAYABLE_DEFINE(pending_download_work, start_pending_fota_download);
 static struct update_data {
 	struct k_work_delayable work;
-	enum {APP, MODEM_DELTA, MODEM_FULL} type;
+	enum {APP, MODEM_DELTA, MODEM_FULL, SMP} type;
 	uint16_t object_instance;
 	bool update_accepted;
 } update_data;
 
 void client_acknowledge(void);
 
-NRF_MODEM_LIB_ON_INIT(lwm2m_firmware_init_hook,
-		      on_modem_lib_init, NULL);
 
+
+#ifdef CONFIG_ZTEST
 /* Initialized to value different than success (0) */
 static int modem_lib_init_result = -1;
 
-#ifdef CONFIG_ZTEST
 /* Only for unit test for emulate modem lib init hook */
 void lwm2m_firmware_emulate_modem_lib_init(int modem_init_ret_val)
 {
 	modem_lib_init_result = modem_init_ret_val;
 }
 #endif
+
+static void apply_firmware_update(enum dfu_target_image_type type, uint16_t instance_id)
+{
+	uint8_t result;
+
+	if (fota_download_util_apply_update(type) == 0) {
+		result = RESULT_SUCCESS;
+		ongoing_obj_id = UNUSED_OBJ_ID;
+	} else {
+		result = RESULT_UPDATE_FAILED;
+	}
+
+	set_result(instance_id, result);
+}
 
 static int fota_event_download_start(uint16_t obj_inst_id)
 {
@@ -211,11 +214,6 @@ static int firmware_request_linked_update(int instance_id)
 
 #endif
 	return postpone_update;
-}
-
-static void on_modem_lib_init(int ret, void *ctx)
-{
-	modem_lib_init_result = ret;
 }
 
 static int *target_image_type_buffer_get(uint16_t instance)
@@ -401,56 +399,13 @@ static void set_result(uint16_t id, uint8_t result)
 	lwm2m_registry_unlock();
 }
 
-static int firmware_target_prepare(int dfu_image_type)
-{
-	int ret;
-
-	switch (dfu_image_type) {
-	case DFU_TARGET_IMAGE_TYPE_MCUBOOT:
-		/* Set the required buffer for MCUboot targets */
-		ret = dfu_target_mcuboot_set_buf(mcuboot_buf, sizeof(mcuboot_buf));
-		break;
-
-	case DFU_TARGET_IMAGE_TYPE_MODEM_DELTA:
-		ret = 0;
-		break;
-#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
-	case DFU_TARGET_IMAGE_TYPE_FULL_MODEM:
-		ret = configure_full_modem_update();
-		break;
-#endif
-	default:
-		LOG_ERR("Unsupported Image type %d", dfu_image_type);
-		ret = -EACCES;
-		break;
-	}
-	return ret;
-}
-
-static int firmware_target_pre_init(int dfu_image_type)
-{
-	int ret;
-
-	ret = firmware_target_prepare(dfu_image_type);
-	if (ret) {
-		return ret;
-	}
-
-	return dfu_target_init(dfu_image_type, 0, 2048, dfu_target_cb);
-}
-
 static int firmware_target_reset(uint16_t obj_inst_id)
 {
-	int ret;
 	int dfu_image_type;
 
 	dfu_image_type = target_image_type_get(obj_inst_id);
-	ret = firmware_target_pre_init(dfu_image_type);
-	if (ret) {
-		return ret;
-	}
 
-	return dfu_target_reset();
+	return fota_download_util_image_reset(dfu_image_type);
 }
 
 static int set_firmware_update_type(int dfu_image_type)
@@ -470,6 +425,9 @@ static int set_firmware_update_type(int dfu_image_type)
 		update_data.type = MODEM_FULL;
 		break;
 #endif
+	case DFU_TARGET_IMAGE_TYPE_SMP:
+		update_data.type = SMP;
+		break;
 	default:
 		ret = -EACCES;
 		break;
@@ -477,108 +435,35 @@ static int set_firmware_update_type(int dfu_image_type)
 	return ret;
 }
 
-static int firmware_target_schedule_update(int obj_inst_id, int dfu_image_type)
+static void update_process(void)
 {
-	int ret;
+	uint16_t instance_id = update_data.object_instance;
+	bool reset_needed = false;
+	bool reset_needed_by_linked = false;
 
-	if (IS_ENABLED(CONFIG_FOTA_CLIENT_AUTOSCHEDULE_UPDATE)) {
-		/* target is already sheduled */
-		return 0;
+	lwm2m_registry_lock();
+	if (update_data.type == MODEM_DELTA) {
+		apply_firmware_update(DFU_TARGET_IMAGE_TYPE_MODEM_DELTA, instance_id);
+		reset_needed = true;
+	} else if (update_data.type == MODEM_FULL) {
+		apply_firmware_update(DFU_TARGET_IMAGE_TYPE_FULL_MODEM, instance_id);
+		reset_needed = true;
+	} else if (update_data.type == APP) {
+		reset_needed = true;
+	} else if (update_data.type == SMP) {
+		apply_firmware_update(DFU_TARGET_IMAGE_TYPE_SMP, instance_id);
 	}
 
-	ret = firmware_target_pre_init(dfu_image_type);
-	if (ret) {
-		return ret;
+	reset_needed_by_linked = firmware_update_check_linked_instances(instance_id);
+	lwm2m_registry_unlock();
+	if (reset_needed || reset_needed_by_linked) {
+		reboot_work_handler();
 	}
-	return dfu_target_schedule_update(0);
-}
-
-#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
-static uint8_t apply_fmfu_from_ext_flash(void)
-{
-	int ret;
-
-	LOG_INF("Applying full modem firmware update from external flash\n");
-
-	ret = nrf_modem_lib_shutdown();
-	if (ret != 0) {
-		LOG_ERR("nrf_modem_lib_shutdown() failed: %d\n", ret);
-		return RESULT_UPDATE_FAILED;
-	}
-
-	ret = nrf_modem_lib_bootloader_init();
-	if (ret != 0) {
-		LOG_ERR("nrf_modem_lib_bootloader_init() failed: %d\n", ret);
-		return RESULT_UPDATE_FAILED;
-	}
-
-	ret = fmfu_fdev_load(fmfu_buf, sizeof(fmfu_buf), flash_dev, 0);
-	if (ret != 0) {
-		LOG_ERR("fmfu_fdev_load failed: %d\n", ret);
-		return RESULT_UPDATE_FAILED;
-	}
-	LOG_INF("Modem firmware update completed\n");
-	return RESULT_SUCCESS;
-}
-
-static int full_modem_stream_params_init(void)
-{
-	int ret = 0;
-
-	const struct dfu_target_full_modem_params params = {
-		.buf = fmfu_buf,
-		.len = sizeof(fmfu_buf),
-		.dev = &(struct dfu_target_fmfu_fdev){ .dev = flash_dev, .offset = 0, .size = 0 }
-	};
-
-	ret = dfu_target_full_modem_cfg(&params);
-	if (ret != 0 && ret != -EALREADY) {
-		LOG_ERR("dfu_target_full_modem_cfg failed: %d\n", ret);
-	} else {
-		ret = 0;
-	}
-
-	return ret;
-}
-
-static int configure_full_modem_update(void)
-{
-	if (!device_is_ready(flash_dev)) {
-		LOG_ERR("Flash device not ready: %s\n", flash_dev->name);
-	}
-
-	return full_modem_stream_params_init();
-}
-#endif
-
-static uint8_t apply_firmware_delta_modem_update(void)
-{
-	int ret;
-	uint8_t result;
-
-	lte_lc_deinit();
-	nrf_modem_lib_shutdown();
-	ret = nrf_modem_lib_init();
-
-	ret = modem_lib_init_result;
-	switch (ret) {
-	case NRF_MODEM_DFU_RESULT_OK:
-		LOG_INF("MODEM UPDATE OK. Will run new firmware");
-		result = RESULT_SUCCESS;
-		break;
-	default:
-		LOG_INF("MODEM UPDATE fail %d", ret);
-		result = RESULT_UPDATE_FAILED;
-		break;
-	}
-
-	return result;
 }
 
 static void update_work_handler(struct k_work *work)
 {
 	int postpone_update;
-	uint8_t result;
 	uint16_t instance_id = update_data.object_instance;
 
 	if (instance_id == UNUSED_OBJ_ID) {
@@ -606,33 +491,18 @@ static void update_work_handler(struct k_work *work)
 			return;
 		}
 	}
-
-	lwm2m_registry_lock();
-	if (update_data.type == MODEM_DELTA) {
-		result = apply_firmware_delta_modem_update();
-		if (result == RESULT_SUCCESS) {
-			ongoing_obj_id = UNUSED_OBJ_ID;
-		}
-		set_result(instance_id, result);
-	} else if (update_data.type == MODEM_FULL) {
-#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
-		result = apply_fmfu_from_ext_flash();
-		if (result == RESULT_SUCCESS) {
-			ongoing_obj_id = UNUSED_OBJ_ID;
-		}
-		/* Set result */
-		set_result(instance_id, result);
+#if defined(CONFIG_DFU_TARGET_SMP)
+	/* Wakeup Thread */
+	k_sem_give(&update_mutex);
+#else
+	update_process();
 #endif
-	}
-
-	firmware_update_check_linked_instances(instance_id);
-	lwm2m_registry_unlock();
-	reboot_work_handler();
 }
 
 static int firmware_instance_schedule(uint16_t obj_inst_id)
 {
 	int dfu_image_type;
+	int ret;
 
 	dfu_image_type = target_image_type_get(obj_inst_id);
 
@@ -641,8 +511,10 @@ static int firmware_instance_schedule(uint16_t obj_inst_id)
 		return -EACCES;
 	}
 
-	if (firmware_target_schedule_update(obj_inst_id, dfu_image_type)) {
-		LOG_ERR("DFU shedule fail");
+	ret = fota_download_util_image_schedule(dfu_image_type);
+
+	if (ret) {
+		LOG_ERR("DFU shedule fail err:%d", ret);
 		return -EACCES;
 	}
 
@@ -718,11 +590,6 @@ static void init_firmware_variables(void)
 {
 	int ret;
 
-	if (fota_host) {
-		k_free(fota_host);
-		fota_host = NULL;
-	}
-	fota_path = NULL;
 	percent_downloaded = 0;
 	bytes_downloaded = 0;
 	ongoing_obj_id = UNUSED_OBJ_ID;
@@ -752,7 +619,7 @@ static int firmware_update_state(uint16_t obj_inst_id, uint16_t res_id, uint16_t
 		/* Cancel Only object is same than ongoing update */
 		if (obj_inst_id == ongoing_obj_id) {
 			ongoing_obj_id = UNUSED_OBJ_ID;
-			fota_download_cancel();
+			fota_download_util_download_cancel();
 			ret = firmware_target_reset(obj_inst_id);
 			if (ret < 0) {
 				LOG_ERR("Failed to reset DFU target, err: %d", ret);
@@ -810,7 +677,7 @@ static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uin
 			goto cleanup;
 		}
 		LOG_INF("Image type %d", image_type);
-		ret = firmware_target_prepare(image_type);
+		ret = fota_download_util_dfu_target_init(image_type);
 		if (ret) {
 			goto cleanup;
 		}
@@ -968,80 +835,25 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 	}
 }
 
-static void start_fota_download(struct k_work *work)
+static int init_start_download(char *uri, uint16_t obj_instance)
 {
-	int ret;
+	int sec_tag;
 	enum dfu_target_image_type type;
 
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)) {
 		if (ongoing_obj_id == modem_obj_id) {
 			type = DFU_TARGET_IMAGE_TYPE_ANY_MODEM;
-		} else {
+		} else if (ongoing_obj_id == application_obj_id) {
 			type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
+		} else {
+			type = DFU_TARGET_IMAGE_TYPE_SMP;
 		}
 	} else {
 		type = DFU_TARGET_IMAGE_TYPE_ANY;
 	}
+	sec_tag = CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG;
 
-	ret = fota_download_start_with_image_type(fota_host, fota_path, fota_sec_tag, 0, 0, type);
-	if (ret) {
-		LOG_ERR("fota_download_start() failed, return code %d", ret);
-		set_result(ongoing_obj_id, RESULT_CONNECTION_LOST);
-	}
-
-	return;
-}
-
-static int init_start_download(char *uri)
-{
-	int ret;
-
-	ret = fota_download_init(fota_download_callback);
-	if (ret != 0) {
-		LOG_ERR("fota_download_init() returned %d", ret);
-		return -EBUSY;
-	}
-
-	bool is_tls = strncmp(uri, "https://", 8) == 0 || strncmp(uri, "coaps://", 8) == 0;
-	if (is_tls) {
-		fota_sec_tag = CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG;
-	} else {
-		fota_sec_tag = -1;
-	}
-
-	/* Find the end of protocol marker https:// or coap:// */
-	char *s = strstr(uri, "://");
-
-	if (!s) {
-		LOG_ERR("Host not found");
-		return -EINVAL;
-	}
-	s += strlen("://");
-
-	/* Find the end of host name, which is start of path */
-	char *e = strchr(s, '/');
-
-	if (!e) {
-		LOG_ERR("Path not found");
-		return -EINVAL;
-	}
-
-	/* Path can point to a string, which is kept in LwM2M engine's memory */
-	fota_path = e + 1; /* Skip the '/' from path */
-	int len = e - uri;
-
-	/* For host, I need to allocate space, as I need to copy the substring */
-	fota_host = k_malloc(len + 1);
-	if (!fota_host) {
-		LOG_ERR("Failed to allocate memory");
-		return -ENOMEM;
-	}
-	strncpy(fota_host, uri, len);
-	fota_host[len] = 0;
-
-	k_work_submit(&download_work);
-
-	return 0;
+	return fota_download_util_download_start(uri, type, sec_tag, fota_download_callback);
 }
 
 static void lwm2m_start_download_image(uint8_t *data, uint16_t obj_instance)
@@ -1052,7 +864,7 @@ static void lwm2m_start_download_image(uint8_t *data, uint16_t obj_instance)
 	ongoing_obj_id = obj_instance;
 	/* Clear stored Image type */
 	target_image_type_store(obj_instance, DFU_TARGET_IMAGE_TYPE_NONE);
-	ret = init_start_download(package_uri);
+	ret = init_start_download(package_uri, obj_instance);
 	switch (ret) {
 	case 0:
 		/* OK */
@@ -1240,8 +1052,9 @@ static void lwm2m_firmware_register_write_callbacks(int instance_id)
 	lwm2m_register_post_write_callback(&path, firmware_update_result);
 }
 
-static void firmware_update_check_linked_instances(int instance_id)
+static bool firmware_update_check_linked_instances(int instance_id)
 {
+	bool updated = false;
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	/* TODO: When Advanced Firmware object supports more than two
 	 * resources, this needs to be changed so that it checks all linked
@@ -1249,44 +1062,46 @@ static void firmware_update_check_linked_instances(int instance_id)
 	 */
 	struct lwm2m_obj_path path;
 	struct lwm2m_objlnk object_link;
-	uint8_t result;
 
-	path = LWM2M_OBJ(ENABLED_LWM2M_FIRMWARE_OBJECT, instance_id,
-			 LWM2M_ADV_FOTA_LINKED_INSTANCES_ID, 0);
+	for (int i = 0; i < FOTA_INSTANCE_COUNT; i++) {
+		path = LWM2M_OBJ(ENABLED_LWM2M_FIRMWARE_OBJECT, instance_id,
+				 LWM2M_ADV_FOTA_LINKED_INSTANCES_ID, i);
 
-	if (lwm2m_get_objlnk(&path, &object_link)) {
-		return;
-	}
-
-	if (object_link.obj_id != LWM2M_OBJECT_ADV_FIRMWARE_ID) {
-		return;
-	}
-
-	if (get_state(object_link.obj_inst) == STATE_DOWNLOADED) {
-		LOG_INF("Updating linked instance %d", object_link.obj_inst);
-		ongoing_obj_id = object_link.obj_inst;
-		set_state(object_link.obj_inst, STATE_UPDATING);
-		firmware_instance_schedule(object_link.obj_inst);
-		if (update_data.type == MODEM_DELTA) {
-			result = apply_firmware_delta_modem_update();
-			if (result == RESULT_SUCCESS) {
-				ongoing_obj_id = UNUSED_OBJ_ID;
-			}
-			set_result(modem_obj_id, result);
-		} else if (update_data.type == MODEM_FULL) {
-#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
-			result = apply_fmfu_from_ext_flash();
-			if (result == RESULT_SUCCESS) {
-				ongoing_obj_id = UNUSED_OBJ_ID;
-			}
-			/* Set result */
-			set_result(modem_obj_id, result);
-#endif
+		if (lwm2m_get_objlnk(&path, &object_link)) {
+			break;
 		}
+
+		if (object_link.obj_id != LWM2M_OBJECT_ADV_FIRMWARE_ID) {
+			break;
+		}
+
+		if (get_state(object_link.obj_inst) == STATE_DOWNLOADED) {
+			LOG_INF("Updating linked instance %d", object_link.obj_inst);
+			ongoing_obj_id = object_link.obj_inst;
+			set_state(object_link.obj_inst, STATE_UPDATING);
+			if (firmware_instance_schedule(object_link.obj_inst) == 0) {
+				if (update_data.type == MODEM_DELTA) {
+					apply_firmware_update(DFU_TARGET_IMAGE_TYPE_MODEM_DELTA,
+							      modem_obj_id);
+					updated = true;
+				} else if (update_data.type == MODEM_FULL) {
+					apply_firmware_update(DFU_TARGET_IMAGE_TYPE_FULL_MODEM,
+							      modem_obj_id);
+					updated = true;
+				} else if (update_data.type == APP) {
+					updated = true;
+				} else if (update_data.type == SMP) {
+					apply_firmware_update(DFU_TARGET_IMAGE_TYPE_SMP,
+							      smp_obj_id);
+				}
+			}
+		}
+		/* Remove link */
+		lwm2m_delete_res_inst(&path);
 	}
-	/* Remove link */
-	lwm2m_delete_res_inst(&path);
+
 #endif
+	return updated;
 }
 
 
@@ -1314,6 +1129,15 @@ static void firmware_object_state_check(void)
 		ongoing_obj_id = modem_obj_id;
 		set_result(modem_obj_id, RESULT_UPDATE_FAILED);
 	}
+#if defined(CONFIG_DFU_TARGET_SMP)
+	app_state = get_state(smp_obj_id);
+	if (app_state == STATE_DOWNLOADING) {
+		ongoing_obj_id = smp_obj_id;
+		/* reset to state idle and result default */
+		/* Init DFU state */
+		set_result(smp_obj_id, RESULT_DEFAULT);
+	}
+#endif
 #else
 	uint8_t object_state;
 	int dfu_image_type;
@@ -1355,6 +1179,23 @@ static void lwm2m_adv_firmware_versions_set(void)
 	lwm2m_set_string(&path, buf);
 }
 #endif
+#ifdef CONFIG_DFU_TARGET_SMP
+void update_thread(void *client, void *a, void *b)
+{
+	while (1) {
+		/* Wait Semaphore for update process */
+		k_sem_take(&update_mutex, K_FOREVER);
+		update_process();
+	}
+}
+#endif
+
+static void lwm2m_firmware_object_setup_init(int object_instance)
+{
+	lwm2m_firmware_load_from_settings(object_instance);
+	lwm2m_firware_pull_protocol_support_resource_init(object_instance);
+	lwm2m_firmware_register_write_callbacks(object_instance);
+}
 
 int lwm2m_init_firmware_cb(lwm2m_firmware_event_cb_t cb)
 {
@@ -1381,42 +1222,39 @@ int lwm2m_init_firmware_cb(lwm2m_firmware_event_cb_t cb)
 	update_data.update_accepted = false;
 	ongoing_obj_id = UNUSED_OBJ_ID;
 	firmware_fota_event_cb = cb;
+#ifdef CONFIG_DFU_TARGET_SMP
+	tid = k_thread_create(&thread, thread_stack, K_THREAD_STACK_SIZEOF(thread_stack),
+			      update_thread, NULL, NULL, NULL, K_LOWEST_APPLICATION_THREAD_PRIO, 0,
+			      K_NO_WAIT);
+
+	k_thread_name_set(tid, "Upload");
+#endif
 
 	/* Init stream targets */
-#ifdef CONFIG_DFU_TARGET_MCUBOOT
-	/* Set the required buffer for MCUboot targets */
-	ret = dfu_target_mcuboot_set_buf(mcuboot_buf, sizeof(mcuboot_buf));
+	ret = fota_download_util_stream_init();
 	if (ret) {
-		LOG_ERR("Failed to set MCUboot flash buffer %d", ret);
+		LOG_ERR("Failed to init DFU streams %d", ret);
 	}
-#endif
 
-#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
-	ret = full_modem_stream_params_init();
-	if (ret) {
-		LOG_ERR("Failed to init Full modem Stream Target %d", ret);
-	}
-#endif
-
-	/* setup data buffer for block-wise transfer */
+	smp_obj_id = -1;
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	application_obj_id = lwm2m_adv_firmware_create_inst(
 		"application", firmware_block_received_cb, firmware_update_cb);
-	lwm2m_firmware_load_from_settings(application_obj_id);
-	lwm2m_firware_pull_protocol_support_resource_init(application_obj_id);
-	lwm2m_firmware_register_write_callbacks(application_obj_id);
+	lwm2m_firmware_object_setup_init(application_obj_id);
 
 	modem_obj_id = lwm2m_adv_firmware_create_inst(
 		"modem:" CONFIG_SOC, firmware_block_received_cb, firmware_update_cb);
-	lwm2m_firmware_load_from_settings(modem_obj_id);
-	lwm2m_firware_pull_protocol_support_resource_init(modem_obj_id);
-	lwm2m_firmware_register_write_callbacks(modem_obj_id);
+	lwm2m_firmware_object_setup_init(modem_obj_id);
 	lwm2m_adv_firmware_versions_set();
+#if defined(CONFIG_DFU_TARGET_SMP)
+	smp_obj_id = lwm2m_adv_firmware_create_inst("smp", firmware_block_received_cb,
+						    firmware_update_cb);
+	lwm2m_firmware_object_setup_init(smp_obj_id);
+#endif
+
 #else
 	application_obj_id = modem_obj_id = 0;
-	lwm2m_firmware_load_from_settings(application_obj_id);
-	lwm2m_firware_pull_protocol_support_resource_init(application_obj_id);
-	lwm2m_firmware_register_write_callbacks(application_obj_id);
+	lwm2m_firmware_object_setup_init(0);
 	lwm2m_firmware_set_update_cb(firmware_update_cb);
 	lwm2m_firmware_set_write_cb(firmware_block_received_cb);
 #endif

@@ -25,7 +25,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define FIRMWARE_VERSION_MAJOR 1
 #define FIRMWARE_VERSION_MINOR 0
 
-#define MAX_INSTANCE_COUNT 2
+#define MAX_INSTANCE_COUNT CONFIG_LWM2M_CLIENT_UTILS_ADV_FOTA_INSTANCE_COUNT
 
 /* Firmware resource IDs */
 #define FIRMWARE_PACKAGE_ID			0
@@ -69,8 +69,8 @@ static uint8_t delivery_method[MAX_INSTANCE_COUNT];
 static time_t last_change[MAX_INSTANCE_COUNT];
 static char package_uri[MAX_INSTANCE_COUNT][PACKAGE_URI_LEN];
 static char component_version[MAX_INSTANCE_COUNT][PACKAGE_URI_LEN];
-static struct lwm2m_objlnk linked_instances[MAX_INSTANCE_COUNT * (MAX_INSTANCE_COUNT - 1)];
-static struct lwm2m_objlnk conflict_instances[MAX_INSTANCE_COUNT * (MAX_INSTANCE_COUNT - 1)];
+static struct lwm2m_objlnk linked_instances[MAX_INSTANCE_COUNT * LINKED_INSTANCES_LEN];
+static struct lwm2m_objlnk conflict_instances[MAX_INSTANCE_COUNT * LINKED_INSTANCES_LEN];
 
 /* A varying number of firmware object instances exists */
 static struct lwm2m_engine_obj firmware;
