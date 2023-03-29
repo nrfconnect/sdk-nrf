@@ -24,6 +24,9 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 #include "zephyr_net_if.h"
 
 
+extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
+static struct wifi_nrf_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
+
 extern char *net_sprint_ll_addr_buf(const uint8_t *ll, uint8_t ll_len,
 				    char *buf, int buflen);
 
@@ -157,7 +160,6 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 				   struct net_if *iface)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
 	const struct device *dev = NULL;
 	struct net_eth_addr mac_addr;
 	struct nrf_wifi_umac_mcast_cfg *mcast_info = NULL;
@@ -171,8 +173,12 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 		return;
 	}
 
-	vif_ctx_zep = dev->data;
-	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	for (int i = 0; i < ARRAY_SIZE(rpu_ctx->vif_ctx_zep); i++) {
+		if (rpu_ctx->vif_ctx_zep[i].zep_net_if_ctx == iface) {
+			vif_ctx_zep = &rpu_ctx->vif_ctx_zep[i];
+			break;
+		}
+	}
 
 	mcast_info = k_calloc(sizeof(*mcast_info), sizeof(char));
 
@@ -220,7 +226,7 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 	       &mac_addr,
 	       NRF_WIFI_ETH_ADDR_LEN);
 
-	status = wifi_nrf_fmac_set_mcast_addr(rpu_ctx_zep->rpu_ctx,
+	status = wifi_nrf_fmac_set_mcast_addr(rpu_ctx->rpu_ctx,
 					      vif_ctx_zep->vif_idx,
 					      mcast_info);
 
