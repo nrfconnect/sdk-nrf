@@ -159,7 +159,9 @@ enum nrf_wifi_umac_commands {
 	NRF_WIFI_UMAC_CMD_CHANGE_MACADDR,
 	NRF_WIFI_UMAC_CMD_SET_POWER_SAVE_TIMEOUT,
 	NRF_WIFI_UMAC_CMD_GET_CONNECTION_INFO,
-	NRF_WIFI_UMAC_CMD_GET_POWER_SAVE_INFO
+	NRF_WIFI_UMAC_CMD_GET_POWER_SAVE_INFO,
+	NRF_WIFI_UMAC_CMD_SET_LISTEN_INTERVAL,
+	NRF_WIFI_UMAC_CMD_CONFIG_EXTENDED_PS
 };
 
 
@@ -3197,6 +3199,16 @@ struct nrf_wifi_umac_cmd_get_power_save_info {
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
+struct nrf_wifi_umac_cmd_set_listen_interval {
+	struct nrf_wifi_umac_hdr umac_hdr;
+	unsigned short listen_interval;
+} __NRF_WIFI_PKD;
+
+struct nrf_wifi_umac_cmd_config_extended_ps {
+	struct nrf_wifi_umac_hdr umac_hdr;
+	unsigned char enable_extended_ps; /*1= enable 0=disable*/
+} __NRF_WIFI_PKD;
+
 #define NRF_WIFI_MAX_TWT_FLOWS 8
 #define NRF_WIFI_PS_MODE_LEGACY 0
 #define NRF_WIFI_PS_MODE_WMM 1
@@ -3507,7 +3519,7 @@ struct nrf_wifi_reg {
 #define MAX_NUM_REG_RULES 32
 	unsigned int num_reg_rules;
 	struct nrf_wifi_reg_rules nrf_wifi_reg_rules[MAX_NUM_REG_RULES];
-	unsigned char nrf_wifi_alpha2[3];
+	unsigned char nrf_wifi_alpha2[NRF_WIFI_COUNTRY_CODE_LEN];
 } __NRF_WIFI_PKD;
 
 /* NL80211_CMD_REQ_SET_REG */
@@ -3521,7 +3533,7 @@ struct nrf_wifi_cmd_req_set_reg {
 #define NRF_WIFI_CMD_REQ_SET_REG_USER_REG_FORCE (1 << 2)
 	unsigned int valid_fields;
 	unsigned int nrf_wifi_user_reg_hint_type;
-	unsigned char nrf_wifi_alpha2[3];
+	unsigned char nrf_wifi_alpha2[NRF_WIFI_COUNTRY_CODE_LEN];
 } __NRF_WIFI_PKD;
 
 struct nrf_wifi_event_send_beacon_hint {
@@ -3538,7 +3550,7 @@ struct nrf_wifi_event_regulatory_change {
 	unsigned short nrf_wifi_flags;
 	signed int intr;
 	signed char regulatory_type;
-	unsigned char nrf_wifi_alpha2[2];
+	unsigned char nrf_wifi_alpha2[NRF_WIFI_COUNTRY_CODE_LEN];
 
 } __NRF_WIFI_PKD;
 
