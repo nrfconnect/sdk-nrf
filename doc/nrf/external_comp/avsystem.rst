@@ -71,6 +71,8 @@ To integrate AVSystem into |NCS|, after completing the prerequisites, complete t
 1. Adding your device to Coiote Device Management server.
 #. Configuring your application to use AVSystem's Coiote Device Management platform.
 
+.. _add_device_coiote:
+
 .. rst-class:: numbered-step
 
 Adding your device to Coiote Device Management server

@@ -199,6 +199,7 @@ Configuration
 *************
 
 |config|
+You can configure the sample either by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
 
 Setup
 =====
@@ -285,7 +286,7 @@ To speed up the start up, you can prevent the provisioning by completing the fol
 #. Under **LwM2M objects**, remove the key value next to :guilabel:`LwM2M pre-shared key for communication`.
 #. Save and close the configuration.
 
-The provisioning can also be prevented by setting the :kconfig:option:`CONFIG_APP_LWM2M_PSK` Kocnfig option to an empty string in the :file:`prj.conf` file.
+The provisioning can also be prevented by setting the :kconfig:option:`CONFIG_APP_LWM2M_PSK` Kconfig option to an empty string in the :file:`prj.conf` file.
 You can also edit this configuration using menuconfig.
 |config|
 
@@ -393,7 +394,7 @@ CONFIG_SENSOR_MODULE_LIGHT - Configuration for light reading
 
 .. _CONFIG_SENSOR_MODULE_COLOR:
 
-CONFIG_SENSOR_MODULE_COLOR - Cpnfiguration for color
+CONFIG_SENSOR_MODULE_COLOR - Configuration for color
    This configuration option enables the reading of color values.
 
 Additional configuration
@@ -489,7 +490,28 @@ Moreover, the sample also provides the following files for LwM2M 1.1 features:
 
 For further information about the test cases, see `Enabler Test Specification (Interoperability) for Lightweight M2M`_.
 
-You can configure the sample either by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
+Configuration for external FOTA
+-------------------------------
+
+The sample supports UART2 connection on the nRF9160 SoC to onboard the nRF52840 SoC with or without MCUboot recovery mode.
+The nRF9160 SoC needs to enable UART2 on the devicetree using the following configuration files and recovery mode overlay files:
+
+* :file:`overlay-mcumgr_client.conf` - Defines the configuration for external FOTA client.
+  This requires an additional devicetree overlay file :file:`nrf9160dk_mcumgr_client_uart2.overlay`.
+* :file:`overlay-mcumgr_reset.conf` - Enables MCUboot recovery mode.
+  This requires an additional devicetree overlay file :file:`nrf9160dk_recovery.overlay`.
+
+.. _overlay_advanced_fw_object:
+
+To enable the experimental Advanced Firmware Update object for the external FOTA, use the following overlay configuration files:
+
+* :file:`overlay-adv-firmware.conf` - Enables the experimental Advanced Firmware Update object.
+* :file:`overlay-lwm2m-1.1.conf` - Enables the LwM2M version 1.1.
+
+You also need one of the following `Coiote Device Management`_ server configurations:
+
+* :file:`overlay-avsystem.conf` - For the `Coiote Device Management`_ server.
+* :file:`overlay-avsystem-bootstrap.conf` - For Coiote in bootstrap mode.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
@@ -555,6 +577,42 @@ See :ref:`cmake_options` for instructions on how to add this option.
 Keep in mind that the used bootstrap URI is set in the aforementioned configuration file.
 In bootstrap mode, application does not overwrite the PSK key from the modem so :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` is not used.
 Please refer to :ref:`lwm2m_client_provisioning` for instructions how to provision bootstrap keys.
+
+MCUboot recovery mode with bootstrap
+====================================
+
+To build for MCUboot recovery mode with bootstrap, use the following command:
+
+.. code-block:: console
+
+   west build  --pristine -b nrf9160dk_nrf9160_ns --  -DOVERLAY_CONFIG="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem-bootstrap.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf; overlay-mcumgr_reset.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay;nrf9160dk_recovery.overlay"
+
+MCUboot recovery mode without bootstrap
+=======================================
+
+To build for MCUboot recovery mode without bootstrap, use the following command:
+
+.. code-block:: console
+
+   west build  --pristine -b nrf9160dk_nrf9160_ns --  -DOVERLAY_CONFIG="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf; overlay-mcumgr_reset.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay;nrf9160dk_recovery.overlay"
+
+MCUmgr client with bootstrap
+============================
+
+To build for MCUmgr client with bootstrap, use the following command:
+
+.. code-block:: console
+
+   west build  --pristine -b nrf9160dk_nrf9160_ns --  -DOVERLAY_CONFIG="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem-bootstrap.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"
+
+MCUmgr client without bootstrap
+===============================
+
+To build for MCUmgr client without bootstrap, use the following command:
+
+.. code-block:: console
+
+   west build  --pristine -b nrf9160dk_nrf9160_ns --  -DOVERLAY_CONFIG="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"
 
 Testing
 =======

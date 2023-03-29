@@ -427,6 +427,8 @@ Cellular samples (renamed from nRF9160 samples)
 
     * An overlay for using DTLS Connection Identifier.
       This significantly reduces the DTLS handshake overhead when doing the LwM2M Update operation.
+    * Support for Hosting MCUmgr client for external MCU.
+      Including a new overlay file for enabling this and devicetree overlay files for UART2 and MCUboot recovery mode.
 
   * Updated:
 
@@ -753,6 +755,9 @@ Libraries for networking
 
     * Support for using pre-provisioned X.509 certificates.
     * Support for using DTLS Connection Identifier
+    * Support for MCUmgr SMP client to perform a FOTA on an external SoC.
+    * Advanced LwM2M FOTA support for an external MCU with DFU SMP target.
+    * FOTA download Utils API integrated to the library.
 
   * Updated:
 
@@ -788,9 +793,8 @@ Libraries for networking
 
 * :ref:`lib_fota_download` library:
 
-  * Updated:
-
-    * The library now verifies whether the download started with the same URI and resumes the interrupted download.
+  * Added support for DFU SMP target with new Utils API that in turn supports downloading, scheduling and activating images in all FOTA DFU targets.
+  * Updated the library, which now verifies whether the download started with the same URI and resumes the interrupted download.
 
 * :ref:`lib_nrf_cloud_alert` library:
 

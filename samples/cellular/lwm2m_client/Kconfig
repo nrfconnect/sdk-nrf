@@ -9,7 +9,7 @@ menu "Application sample"
 rsource "src/ui/Kconfig"
 rsource "src/modules/Kconfig"
 rsource "src/lwm2m/Kconfig"
-
+rsource "src/fota_external/Kconfig"
 menu "LwM2M objects"
 config APP_PUSH_BUTTON
 	bool "Enable button(s)"

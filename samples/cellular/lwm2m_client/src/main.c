@@ -28,6 +28,10 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #include "gnss_module.h"
 #include "location_events.h"
 
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
+#include "fota_app_external.h"
+
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE)
 #include "ui_input.h"
 #include "ui_input_event.h"
@@ -73,6 +77,7 @@ static bool update_session_lifetime = true;
 static bool ready_for_firmware_update;
 
 static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event client_event);
+static void state_trigger_and_unlock(enum client_state new_state);
 
 void client_acknowledge(void)
 {
@@ -227,7 +232,7 @@ static int lwm2m_firmware_event_cb(struct lwm2m_fota_event *event)
 		break;
 	/** FOTA update new image */
 	case LWM2M_FOTA_UPDATE_IMAGE_REQ:
-		if (!ready_for_firmware_update) {
+		if (!ready_for_firmware_update && event->update_req.obj_inst_id < 2) {
 			state_trigger_and_unlock(UPDATE_FIRMWARE);
 			/* Postpone request by 2 seconds */
 			return 2;
@@ -593,6 +598,14 @@ int main(void)
 	if (ret < 0) {
 		LOG_ERR("Unable to init modem library (%d)", ret);
 		return 0;
+	}
+
+	if (IS_ENABLED(CONFIG_APP_SMP_CLIENT_FOTA_EXTERNAL)) {
+		ret = fota_external_init();
+		if (ret < 0) {
+			LOG_ERR("Unable to init Fota external client (%d)", ret);
+			return 0;
+		}
 	}
 
 	ret = app_event_manager_init();
