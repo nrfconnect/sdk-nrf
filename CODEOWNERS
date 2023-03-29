@@ -65,7 +65,7 @@ Kconfig*                                  @tejlmand
 /drivers/sensor/bh1749/                   @gregersrygg
 /drivers/sensor/paw3212/                  @anangl @pdunaj @MarekPieta
 /drivers/sensor/pmw3360/                  @anangl @pdunaj @MarekPieta
-/drivers/wifi/nrf700x/                    @krish2718 @sachinthegreen @sr1dh48r @rlubos
+/drivers/wifi/nrf700x/                    @krish2718 @sachinthegreen @rado17 @rlubos
 /drivers/wifi/nrf700x/osal/fw_if/umac_if/inc/fw/  @udaynordic @srkanordic
 /drivers/wifi/nrf700x/osal/hw_if/hal/inc/fw/  @udaynordic @srkanordic
 /dts/                                     @mbolivar-nordic @anangl
@@ -174,7 +174,7 @@ Kconfig*                                  @tejlmand
 /samples/wifi/provisioning/               @wentong-li @bama-nordic
 /samples/wifi/radio_test/                 @bama-nordic @sachinthegreen
 /samples/wifi/scan/                       @D-Triveni @bama-nordic
-/samples/wifi/shell/                      @krish2718 @sachinthegreen @sr1dh48r @rlubos
+/samples/wifi/shell/                      @krish2718 @sachinthegreen @rado17 @rlubos
 /samples/wifi/sta/                        @D-Triveni @bama-nordic
 /samples/wifi/sr_coex/                    @muraliThokala @bama-nordic
 /scripts/                                 @mbolivar-nordic @tejlmand @nrfconnect/ncs-test-leads
