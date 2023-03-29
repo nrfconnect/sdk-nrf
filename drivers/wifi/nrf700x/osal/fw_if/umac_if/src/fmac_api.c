@@ -619,9 +619,9 @@ enum wifi_nrf_status wifi_nrf_fmac_fw_load(struct wifi_nrf_fmac_dev_ctx *fmac_de
 					      __func__);
 			goto out;
 		} else {
-			wifi_nrf_osal_log_info(fmac_dev_ctx->fpriv->opriv,
-					       "%s: LMAC patches loaded\n",
-					       __func__);
+			wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
+					      "%s: LMAC patches loaded\n",
+					      __func__);
 		}
 
 		status = wifi_nrf_hal_fw_patch_boot(fmac_dev_ctx->hal_dev_ctx,
@@ -644,9 +644,9 @@ enum wifi_nrf_status wifi_nrf_fmac_fw_load(struct wifi_nrf_fmac_dev_ctx *fmac_de
 					      __func__);
 			goto out;
 		} else {
-			wifi_nrf_osal_log_info(fmac_dev_ctx->fpriv->opriv,
-					       "%s: LMAC boot check passed\n",
-					       __func__);
+			wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
+					      "%s: LMAC boot check passed\n",
+					      __func__);
 		}
 	} else {
 		status = wifi_nrf_hal_fw_patch_boot(fmac_dev_ctx->hal_dev_ctx,
@@ -669,9 +669,9 @@ enum wifi_nrf_status wifi_nrf_fmac_fw_load(struct wifi_nrf_fmac_dev_ctx *fmac_de
 					      __func__);
 			goto out;
 		} else {
-			wifi_nrf_osal_log_info(fmac_dev_ctx->fpriv->opriv,
-					       "%s: LMAC boot check passed\n",
-					       __func__);
+			wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
+					      "%s: LMAC boot check passed\n",
+					      __func__);
 		}
 	}
 
@@ -702,9 +702,9 @@ enum wifi_nrf_status wifi_nrf_fmac_fw_load(struct wifi_nrf_fmac_dev_ctx *fmac_de
 					      __func__);
 			goto out;
 		} else {
-			wifi_nrf_osal_log_info(fmac_dev_ctx->fpriv->opriv,
-					       "%s: UMAC patches loaded\n",
-					       __func__);
+			wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
+					      "%s: UMAC patches loaded\n",
+					      __func__);
 		}
 
 		status = wifi_nrf_hal_fw_patch_boot(fmac_dev_ctx->hal_dev_ctx,
@@ -727,9 +727,9 @@ enum wifi_nrf_status wifi_nrf_fmac_fw_load(struct wifi_nrf_fmac_dev_ctx *fmac_de
 					      __func__);
 			goto out;
 		} else {
-			wifi_nrf_osal_log_info(fmac_dev_ctx->fpriv->opriv,
-					       "%s: UMAC boot check passed\n",
-					       __func__);
+			wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
+					      "%s: UMAC boot check passed\n",
+					      __func__);
 		}
 	} else {
 		status = wifi_nrf_hal_fw_patch_boot(fmac_dev_ctx->hal_dev_ctx,
@@ -752,9 +752,9 @@ enum wifi_nrf_status wifi_nrf_fmac_fw_load(struct wifi_nrf_fmac_dev_ctx *fmac_de
 					      __func__);
 			goto out;
 		} else {
-			wifi_nrf_osal_log_info(fmac_dev_ctx->fpriv->opriv,
-					       "%s: UMAC boot check passed\n",
-					       __func__);
+			wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
+					      "%s: UMAC boot check passed\n",
+					      __func__);
 		}
 	}
 

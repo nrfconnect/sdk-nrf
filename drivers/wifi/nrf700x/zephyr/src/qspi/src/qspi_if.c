@@ -1096,8 +1096,6 @@ int qspi_init(struct qspi_config *config)
 
 	k_sem_init(&qspi_config->lock, 1, 1);
 
-	LOG_INF("QSPI freq = %d MHz\n", INST_0_SCK_FREQUENCY/MHZ(1));
-	LOG_INF("QSPI latency = %d\n", qspi_config->qspi_slave_latency);
 	return rc;
 }
 
