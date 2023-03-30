@@ -38,19 +38,11 @@ ZAP tool
 
 ZCL Advanced Platform, in short ZAP tool, is a third-party tool that is a generic node.js-based templating engine for applications and libraries based on Zigbee Cluster Library.
 
-Installation
-============
-
-The tool is provided with the Matter repository in the |NCS| and does not require a separate installation, but you must make sure that you have installed ZAP tool prerequisites, as mentioned in the Quick instructions section in the :file:`README.md` file in the official `ZCL Advanced Platform`_ repository.
-
-Usage
-=====
-
 You can use the ZAP tool for the following Matter use cases:
 
-* Enabling and disabling clusters, cluster commands, attributes, and events
-* Configuring attributes' default values
-* Configuring attributes' properties, such as storage type (RAM storage, non-volatile storage, application-managed)
+* Enabling and disabling clusters, cluster commands, attributes, and events.
+* Configuring attributes' default values.
+* Configuring attributes' properties, such as storage type (RAM storage, non-volatile storage, application-managed).
 
 All the relevant data for these use cases is stored in the ZAP file of your Matter application, which you can edit using the ZAP tool GUI.
 A ZAP file is a JSON file that contains the data model configuration of clusters, commands, and attributes that are enabled for a given application.
@@ -59,6 +51,108 @@ In the |NCS|, the ZAP file is provided in the :file:`src` directory for each :re
 
 For an example of how to use the ZAP tool to edit a ZAP file, see the :ref:`ug_matter_creating_accessory_edit_zap` in the :ref:`ug_matter_creating_accessory` user guide.
 For more information about the ZAP tool, see the official `ZCL Advanced Platform`_ documentation.
+
+.. _ug_matter_tools_installing_zap:
+
+Installing the ZAP tool
+=======================
+
+To install the ZAP tool using the recommended method, complete the following steps:
+
+1. Download the ZAP package containing pre-compiled executables and libraries and extract it:
+
+   a. Open your installation directory for the |NCS| in a command line.
+   #. Navigate to :file:`modules/lib/matter`.
+   #. Run the helper script to download and extract the ZAP package:
+
+      .. parsed-literal::
+         :class: highlight
+
+         python scripts/setup/nrfconnect/get_zap.py -l *location_path* -o
+
+      In this command:
+
+      *  *location_path* corresponds to the directory where the ZAP tool package is to be extracted.
+      *  The `-o` argument in the command is used to allow overwriting files, if they already exist in the given location.
+         Otherwise the script will display prompt during download and ask for user consent to overwrite the files directly.
+
+#. Verify the ZAP tool version by comparing the script output with the following possible cases:
+
+   * Case 1: If your currently installed ZAP version matches the recommended one, you will see a message similar to the following one:
+
+     .. code-block::
+
+        Your currently installed ZAP tool version: 2022.12.20 matches the recommended one.
+
+     This means that your ZAP version is correct and the tool executable can be accessed from the operating system environment, so you can skip the following step about adding the ZAP tool to the system :envvar:`PATH` environment variable.
+
+   * Case 2: If your currently installed ZAP version does not match the recommended one or no ZAP version is installed on your device, you will see a message similar to the following one:
+
+     .. code-block::
+
+        Your currently installed ZAP tool version 2022.12.19 does not match the recommended one: 2022.12.20.
+
+     Alternatively, this message can look like the following one:
+
+     .. code-block::
+
+        No ZAP tool version was found installed on this device.
+
+     In this case, the package download process will start automatically:
+
+     .. parsed-literal::
+        :class: highlight
+
+        Trying to download ZAP tool package matching your system and recommended version.
+        100% [......................................................................] 150136551 / 150136551
+        ZAP tool package was downloaded and extracted in the given location.
+
+        #######################################################################################
+        # Please add the following location to the system PATH: *package_extraction_location* #
+        #######################################################################################
+
+     .. note::
+         The *package_extraction_location* in the example output will be replaced by the *location_path* from the previous step, where you extracted the package.
+
+#. Add the *location_path* ZAP package (or *package_extraction_location*) to the system :envvar:`PATH` environment variables.
+   This is not needed if your currently installed ZAP version matches the recommended one (case 1 from the previous step).
+
+   .. tabs::
+
+      .. group-tab:: Linux
+
+         For example, if you are using bash, run the following commands:
+
+         .. parsed-literal::
+            :class: highlight
+
+            echo 'export PATH=package_extraction_location:"$PATH"' >> ${HOME}/.bashrc
+            source ${HOME}/.bashrc
+
+      .. group-tab:: Windows
+
+         For the detailed instructions for adding :envvar:`PATH` environment variables on Windows, see :ref:`zephyr:env_vars`.
+
+      .. group-tab:: macOS
+
+         For example, if you are using bash, run the following commands:
+
+         .. parsed-literal::
+            :class: highlight
+
+            echo 'export PATH=package_extraction_location:"$PATH"' >> ${HOME}/.bash_profile
+            source ${HOME}/.bash_profile
+   ..
+
+Alternative installation methods
+================================
+
+You can also install the ZAP tool using one of the following methods:
+
+* Download the ZAP tool package in a compatible version manually from the Assets section in `ZCL Advanced Platform releases`_.
+* Configure the tool and manually compile it using the instructions in the official `ZCL Advanced Platform`_ documentation.
+
+Both these methods still require adding the ZAP tool location to the system :envvar:`PATH` environment variables, as detailed in the step 3 above.
 
 Matter over Thread tools
 ************************
