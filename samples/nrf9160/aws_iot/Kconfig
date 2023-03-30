@@ -6,15 +6,15 @@
 
 menu "AWS IoT Sample Settings"
 
-config APP_VERSION
+config AWS_IOT_SAMPLE_APP_VERSION
 	string "Application version"
 	default "v1.0.0"
 
-config PUBLICATION_INTERVAL_SECONDS
+config AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS
 	int "Interval in seconds that the sample will publish data"
 	default 60
 
-config CONNECTION_RETRY_TIMEOUT_SECONDS
+config AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS
 	int "Number of seconds between each AWS IoT connection retry"
 	default 30
 
