@@ -25,6 +25,7 @@ Those samples are a good starting point for understanding how to put together yo
    samples/bl
    samples/crypto
    samples/edge
+   samples/esb
    samples/gazell
    samples/matter
    samples/nfc

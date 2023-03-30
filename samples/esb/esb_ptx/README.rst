@@ -1,13 +1,34 @@
-.. _esb_prx_ptx:
+.. _esb_ptx:
 
-Enhanced ShockBurst: Transmitter/Receiver
-#########################################
+Enhanced ShockBurst: Transmitter
+################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Enhanced ShockBurst Transmitter/Receiver sample shows the basic steps that are needed to transmit and receive packets using :ref:`ug_esb`.
+This sample shows the Enhanced ShockBurst Transmitter application.
+It includes the basic steps that are needed to transmit and receive packets using :ref:`ug_esb`.
+Follow the instructions and use the files from this page, and the :ref:`esb_prx` sample.
+
+Requirements
+************
+
+.. note::
+   Follow the steps from and include the :ref:`esb_prx` sample with this sample.
+
+.. esb_ptx_sample_requirements_start
+
+The sample supports the following development kits:
+
+.. table-from-sample-yaml::
+
+You can use any two of the development kits listed above and mix different development kits.
+
+.. esb_ptx_sample_requirements_end
+
+
+.. esb_ptx_sample_remaining_start
 
 Overview
 ********
@@ -30,20 +51,6 @@ Receiver
 The Receiver example listens for packets and sends an ACK when a packet is received.
 If packets are successfully received from the transmitter, the LED pattern will change every time a packet is received.
 
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-sample-yaml::
-
-You can use any two of the development kits listed above and mix different development kits.
-
-Configuration
-*************
-
-|config|
-
 User interface
 ***************
 
@@ -52,11 +59,16 @@ LED 1-4:
    The first four packets turn on LED 1, 2, 3, and 4.
    The next four packets turn them off again in the same order.
 
+Configuration
+*************
+
+|config|
+
 Building and running
 ********************
 
-The Transmitter sample can be found under :file:`samples/esb/ptx` in the |NCS| folder structure.
-The Receiver sample can be found under :file:`samples/esb/prx` in the |NCS| folder structure.
+The Transmitter sample can be found under :file:`samples/esb/esb_ptx` in the |NCS| folder structure.
+The Receiver sample can be found under :file:`samples/esb/esb_prx` in the |NCS| folder structure.
 
 See :ref:`gs_programming` for information about how to build and program the application.
 
@@ -72,8 +84,7 @@ After programming the Transmitter sample on one of the development kits and the 
 
 1. Power on both kits.
 #. Observe that the LEDs change synchronously on both kits.
-#. Optionally, connect to the kits with a terminal emulator (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+#. (Optional.) |connect_terminal|
 #. Observe the logging output for both kits.
 
 Dependencies
@@ -85,13 +96,15 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
+* ``include/zephyr/types.h``
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
-  * :file:`include/irq.h`
+  * ``include/kernel.h``
+  * ``include/irq.h``
 
 * :ref:`zephyr:api_peripherals`:
 
    * :file:`incude/gpio.h`
+
+.. esb_ptx_sample_remaining_end
