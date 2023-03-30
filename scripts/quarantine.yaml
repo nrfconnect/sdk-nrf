@@ -72,3 +72,18 @@
   platforms:
     - all
   comment: "ANT samples fail to build because the ANT repository redefines IS_POWER_OF_TWO macro"
+
+- scenarios:
+    - sample.matter.lock.smp_dfu_ffs
+    - sample.matter.light_switch.debug.nrf7002dk
+    - sample.matter.template.debug.nrf7002dk
+  platforms:
+    - nrf7002dk_nrf5340_cpuapp
+  comment: "Temporary disable Matter on nrf7002dk_nrf5340_cpuapp"
+
+- scenarios:
+    - sample.matter.light_bulb.debug.nrf7002_ek
+    - sample.matter.lock.switchable_wifi.nrf7002_ek
+  platforms:
+    - all
+  comment: "Temporary disable Matter on nrf7002ek"
