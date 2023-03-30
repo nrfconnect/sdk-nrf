@@ -67,19 +67,19 @@ Configuration options
 The application-specific configurations used in the sample are listed below.
 They are located in :file:`samples/nrf9160/aws_iot/Kconfig`.
 
-.. _CONFIG_APP_VERSION:
+.. _CONFIG_AWS_IOT_SAMPLE_APP_VERSION:
 
-CONFIG_APP_VERSION
+CONFIG_AWS_IOT_SAMPLE_APP_VERSION
    Publishes the application version number to the AWS IoT message broker.
 
-.. _CONFIG_PUBLICATION_INTERVAL_SECONDS:
+.. _CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS:
 
-CONFIG_PUBLICATION_INTERVAL_SECONDS
+CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS
    Configures the time interval between each publishing of the message.
 
-.. _CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS:
+.. _CONFIG_AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS:
 
-CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS
+CONFIG_AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS
    Configures the number of seconds between each AWS IoT connection retry.
 
 .. _CONFIG_AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID:

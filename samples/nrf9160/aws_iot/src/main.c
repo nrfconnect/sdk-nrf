@@ -119,7 +119,7 @@ static int shadow_update(bool version_number_include)
 	}
 
 	if (version_number_include) {
-		err = json_add_str(reported_obj, "app_version", CONFIG_APP_VERSION);
+		err = json_add_str(reported_obj, "app_version", CONFIG_AWS_IOT_SAMPLE_APP_VERSION);
 	} else {
 		err = 0;
 	}
@@ -177,9 +177,11 @@ static void connect_work_fn(struct k_work *work)
 		LOG_ERR("aws_iot_connect, error: %d", err);
 	}
 
-	LOG_INF("Next connection retry in %d seconds", CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS);
+	LOG_INF("Next connection retry in %d seconds",
+		CONFIG_AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS);
 
-	k_work_schedule(&connect_work, K_SECONDS(CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS));
+	k_work_schedule(&connect_work,
+			K_SECONDS(CONFIG_AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS));
 }
 
 static void shadow_update_work_fn(struct k_work *work)
@@ -195,9 +197,11 @@ static void shadow_update_work_fn(struct k_work *work)
 		LOG_ERR("shadow_update, error: %d", err);
 	}
 
-	LOG_INF("Next data publication in %d seconds", CONFIG_PUBLICATION_INTERVAL_SECONDS);
+	LOG_INF("Next data publication in %d seconds",
+		CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS);
 
-	k_work_schedule(&shadow_update_work, K_SECONDS(CONFIG_PUBLICATION_INTERVAL_SECONDS));
+	k_work_schedule(&shadow_update_work,
+			K_SECONDS(CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS));
 }
 
 static void shadow_update_version_work_fn(struct k_work *work)
@@ -273,7 +277,7 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 		/** Start sequential shadow data updates.
 		 */
 		k_work_schedule(&shadow_update_work,
-				K_SECONDS(CONFIG_PUBLICATION_INTERVAL_SECONDS));
+				K_SECONDS(CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS));
 
 #if defined(CONFIG_NRF_MODEM_LIB)
 		int err = lte_lc_psm_req(true);
@@ -497,7 +501,7 @@ void main(void)
 {
 	int err;
 
-	LOG_INF("The AWS IoT sample started, version: %s", CONFIG_APP_VERSION);
+	LOG_INF("The AWS IoT sample started, version: %s", CONFIG_AWS_IOT_SAMPLE_APP_VERSION);
 
 	cJSON_Init();
 
