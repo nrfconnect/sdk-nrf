@@ -10,7 +10,7 @@ on:
       - '**/*.rst'
       - '**/*.txt'
   schedule:
-    - cron: '18 3 * * 3'
+    - cron: '0 0 * * *'
 
 jobs:
   analyze:
