@@ -27,6 +27,10 @@ if WIFI_NRF700X
 config NRF700X_TCP_IP_CHECKSUM_OFFLOAD
 	bool "Enable TCP/IP checksum offload"
 
+config NRF700X_REG_DOMAIN
+	string "The ISO/IEC alpha2 country code for the country in which this device is currently operating."
+	default "00(World Regulatory)"
+
 # Making calls to RPU from net_mgmt callbacks.
 #
 # If WPA supplicant is enabled, then don't override as it has higher
