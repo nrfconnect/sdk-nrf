@@ -62,10 +62,17 @@ For that partition one flash page of 4 kB should be enough in most use cases.
 
 By default, the ``factory_data`` partition is write-protected with the :ref:`fprotect_readme` driver (``fprotect``).
 The hardware limitations require that the write-protected areas are aligned to :kconfig:option:`CONFIG_FPROTECT_BLOCK_SIZE`.
-For this reason, to effectively implement ``fprotect``, make sure that the :ref:`partition layout of the application <ug_matter_hw_requirements_layouts>` meets the following requirements:
+For this reason, to effectively implement ``fprotect``, make sure that the partition layout of the application meets the following requirements:
 
 * The ``factory_data`` partition is placed right after the ``app`` partition in the address space (that is, the ``factory_data`` partition offset must be equal to the last address of the ``app`` partition).
-* The ``settings_storage`` partition size must be a multiple of :kconfig:option:`CONFIG_FPROTECT_BLOCK_SIZE`, which may differ depending on the SoC in use.
+* The ``settings_storage`` partition size is a multiple of :kconfig:option:`CONFIG_FPROTECT_BLOCK_SIZE`, which may differ depending on the SoC in use.
+
+See the following figure and check the :ref:`ug_matter_hw_requirements_layouts` to make sure your implementation is correct.
+
+.. figure:: images/matter_memory_map_factory_data.svg
+   :alt: Factory data partition implementation criteria for fprotect
+
+   Factory data partition implementation criteria for fprotect
 
 In case your memory map does not follow these requirements, you can still use the factory data implementation without the write protection by setting the :kconfig:option:`CHIP_FACTORY_DATA_WRITE_PROTECT` to ``n``, although this is not recommended.
 
