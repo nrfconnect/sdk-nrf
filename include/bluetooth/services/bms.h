@@ -22,29 +22,29 @@ extern "C" {
 
 /** @brief BMS Control Point operation codes (LE transport). */
 enum bt_bms_op {
-	/* Initiates the procedure to delete the bond of
-	 * the requesting device.
+	/** Initiates the procedure to delete the bond of
+	 *  the requesting device.
 	 */
 	BT_BMS_OP_DEL_REQ_BOND = 0x03,
 
-	/* Initiates the procedure to delete all bonds on the device. */
+	/** Initiates the procedure to delete all bonds on the device. */
 	BT_BMS_OP_DEL_ALL_BONDS = 0x06,
 
-	/* Initiates the procedure to delete all bonds except for the one of
-	 * the requesting device.
+	/** Initiates the procedure to delete all bonds except for the one of
+	 *  the requesting device.
 	 */
 	BT_BMS_OP_DEL_REST_BONDS = 0x09,
 };
 
 /** @brief BMS authorization callback parameters. */
 struct bt_bms_authorize_params {
-	/* Operation code. */
+	/** Operation code. */
 	enum bt_bms_op op_code;
 
-	/* Authorization Code. */
+	/** Authorization Code. */
 	const uint8_t *code;
 
-	/* Length of Authorization Code. */
+	/** Length of Authorization Code. */
 	uint16_t code_len;
 };
 
@@ -68,34 +68,34 @@ struct bt_bms_cb {
 
 /** @brief Bitmask of supported features. */
 struct bt_bms_feature {
-	/* Support the feature. */
+	/** Support the feature. */
 	uint8_t supported : 1;
 
-	/* Enable authorization. */
+	/** Enable authorization. */
 	uint8_t authorize : 1;
 };
 
 /** @brief Bitmask set of supported features. */
 struct bt_bms_features {
-	/* Support the operation to delete all bonds. */
+	/** Support the operation to delete all bonds. */
 	struct bt_bms_feature delete_all;
 
-	/* Support the operation to delete the bonds of
-	 * the requesting device.
+	/** Support the operation to delete the bonds of
+	 *  the requesting device.
 	 */
 	struct bt_bms_feature delete_requesting;
 
-	/* Support the operation to delete all bonds except for the bond of
-	 * the requesting device.
+	/** Support the operation to delete all bonds except for the bond of
+	 *  the requesting device.
 	 */
 	struct bt_bms_feature delete_rest;
 };
 
 /** @brief BMS initialization parameters. */
 struct bt_bms_init_params {
-	/* Callbacks. */
+	/** Callbacks. */
 	struct bt_bms_cb *cbs;
-	/* Features. */
+	/** Features. */
 	struct bt_bms_features features;
 };
 
