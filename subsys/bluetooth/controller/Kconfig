@@ -23,7 +23,9 @@ config BT_LL_SOFTDEVICE
 	select BT_CTLR_DATA_LEN_UPDATE_SUPPORT
 	select BT_CTLR_ADV_EXT_SUPPORT
 	select BT_CTLR_ADV_PERIODIC_SUPPORT
+	select BT_CTLR_ADV_PERIODIC_RSP_SUPPORT
 	select BT_CTLR_SYNC_PERIODIC_SUPPORT
+	select BT_CTLR_SYNC_PERIODIC_RSP_SUPPORT
 	select BT_CTLR_SYNC_TRANSFER_SENDER_SUPPORT
 	select BT_CTLR_SYNC_TRANSFER_RECEIVER_SUPPORT
 	select BT_CTLR_SCA_UPDATE_SUPPORT
@@ -309,6 +311,7 @@ config BT_CTLR_SDC_PAWR_ADV
 	select EXPERIMENTAL
 	depends on BT_PER_ADV
 	depends on BT_CTLR_SYNC_TRANSFER_SENDER
+	default y if BT_PER_ADV_RSP
 	help
 	  Enable support for Periodic Advertising with Responses - Advertiser.
 
@@ -364,6 +367,7 @@ config BT_CTLR_SDC_PAWR_SYNC
 	depends on BT_CTLR_SYNC_PERIODIC
 	depends on BT_CTLR_SYNC_TRANSFER_SENDER
 	depends on BT_CTLR_SYNC_TRANSFER_RECEIVER
+	default y if BT_PER_ADV_SYNC_RSP
 	help
 	  Enable support for Periodic Advertising with Responses - Scanner.
 
