@@ -88,7 +88,10 @@ Matter
   This feature allows using Nordic UART Service to control the device remotely through Bluetooth LE and adding custom text commands to a Matter sample.
   The Matter NUS implementation allows controlling the device regardless of whether the device is connected to a Matter network or not.
   The feature is dedicated for the nRF5340 and the nRF52840 DKs.
-* Updated the :ref:`ug_matter` protocol page with a table that lists compatibility versions for the |NCS|, the Matter SDK, and the Matter specification.
+* Updated:
+
+  * The :ref:`ug_matter` protocol page with a table that lists compatibility versions for the |NCS|, the Matter SDK, and the Matter specification.
+  * The :ref:`ug_matter_tools` page with installation instructions for the ZAP tool, moved from the :ref:`ug_matter_creating_accessory` page.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
