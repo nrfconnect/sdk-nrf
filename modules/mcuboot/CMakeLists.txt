@@ -241,6 +241,14 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     set(imgtool_security_counter --security-counter ${CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE})
   endif()
 
+  # Don't delete RAM-backed coredumps
+  if (CONFIG_MEMFAULT_RAM_BACKED_COREDUMP)
+    add_overlay_config(
+      mcuboot
+      ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/memfault_ram_backend.conf
+    )
+  endif()
+
   add_child_image(
     NAME mcuboot
     SOURCE_DIR ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr
