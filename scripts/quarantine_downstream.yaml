@@ -53,7 +53,6 @@
     - applications.asset_tracker_v2.nrf7002ek_wifi-debug
     - applications.asset_tracker_v2.nrf7002ek_wifi-release
     - asset_tracker_v2.lwm2m_codec
-    - bluetooth.mesh.scheduler_model.message_validity
   platforms:
     - all
   comment: "Temporary disable till the issue is fixed"
