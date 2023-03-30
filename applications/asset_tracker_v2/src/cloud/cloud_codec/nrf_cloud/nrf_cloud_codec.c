@@ -740,8 +740,7 @@ int cloud_codec_encode_cloud_location(
 		root_obj);
 	if (err) {
 		LOG_ERR("nrf_cloud_location_request_msg_json_encode, error: %d", err);
-		cJSON_Delete(root_obj);
-		return -ENOMEM;
+		goto exit;
 	}
 
 	buffer = cJSON_PrintUnformatted(root_obj);
@@ -760,7 +759,9 @@ int cloud_codec_encode_cloud_location(
 	output->len = strlen(buffer);
 
 exit:
-	cloud_location->queued = false;
+	if (!err) {
+		cloud_location->queued = false;
+	}
 	cJSON_Delete(root_obj);
 	return err;
 #endif /* CONFIG_NRF_CLOUD_LOCATION */
