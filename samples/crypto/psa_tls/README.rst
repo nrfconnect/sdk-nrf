@@ -222,7 +222,7 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`zephyr:logging_api`:
 
-  * :file:`include/logging/log.h``
+  * :file:`include/logging/log.h`
 
 * :ref:`zephyr:bsd_sockets_interface`:
 
