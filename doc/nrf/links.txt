@@ -547,6 +547,8 @@
 
 .. _`Errata 254`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52840_Rev3%2FERR%2FnRF52840%2FRev3%2Flatest%2Fconfig_840_254.html
 
+.. _`Errata 117`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF5340_Rev1%2FERR%2FnRF5340%2FRev1%2Flatest%2Fanomaly_340_117.html
+
 .. ### Source: academy.nordicsemi.com
 
 .. _`DevAcademy`:
