@@ -801,16 +801,7 @@ int download_client_get(struct download_client *client, const char *host,
 	}
 
 	return rc;
-}
 
-void download_client_pause(struct download_client *client)
-{
-	k_thread_suspend(client->tid);
-}
-
-void download_client_resume(struct download_client *client)
-{
-	k_thread_resume(client->tid);
 }
 
 int download_client_file_size_get(struct download_client *client, size_t *size)
