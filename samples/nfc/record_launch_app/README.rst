@@ -70,12 +70,12 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the Type 2 Tag library from `sdk-nrfxlib`_:
 
-:ref:`nrfxlib:type_2_tag`
+* :ref:`nrfxlib:type_2_tag`
 
 The sample uses the following Zephyr libraries:
 
-* ``include/zephyr.h``
-* ``include/power/reboot.h``
+* :file:`include/zephyr.h`
+* :file:`include/power/reboot.h`
 
 The sample also uses the following secure firmware component:
 
