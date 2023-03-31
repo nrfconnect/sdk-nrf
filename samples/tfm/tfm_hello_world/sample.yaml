@@ -28,6 +28,11 @@ tests:
     tags: tfm ci_build
     extra_args: CONFIG_BOOTLOADER_MCUBOOT=y CONFIG_SECURE_BOOT=y
 
+  sample.tfm.hello_world.bootloaders_debug:
+    build_only: true
+    tags: tfm ci_build
+    extra_args: CONFIG_BOOTLOADER_MCUBOOT=y CONFIG_SECURE_BOOT=y CONFIG_DEBUG_OPTIMIZATIONS=y
+
   sample.tfm.hello_world.full:
     tags: tfm ci_build
     extra_args: CONFIG_TFM_PROFILE_TYPE_NOT_SET=y CONFIG_NRF_SECURITY=y
