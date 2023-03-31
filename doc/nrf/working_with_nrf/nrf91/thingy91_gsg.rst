@@ -543,15 +543,15 @@ Connecting to nRF Cloud
    After a few moments, the nRF Cloud user association process starts.
    This is indicated by white double pulse blinking of the Thingy:91's RGB LED as indicated in :ref:`Operating states <led_indication>`.
 
-#. In the Add LTE Device window from Step 4, enter your device ID and ownership code.
+#. In the Add LTE Device view from Step 4, enter your device ID and ownership code (**PIN/HWID**).
 
    .. figure:: images/nrfcloud_add_lte_device.png
-      :alt: nRF Cloud - Add LTE Device window
+      :alt: nRF Cloud - Add LTE Device view
 
-      nRF Cloud - Add LTE Device window
+      nRF Cloud - Add LTE Device view
 
    * **Device ID**: The device ID is composed of *nrf-* and the 15-digit :term:`International Mobile (Station) Equipment Identity (IMEI)` number that is printed on the label of your Thingy:91. It is case sensitive, so make sure all the letters are lower-case.
-   * **Ownership code**: The ownership code is the PIN or the hardware ID of your Thingy:91, and it is found on the label of your Thingy:91.
+   * **PIN/HWID**: The ownership code is the PIN or the hardware ID of your Thingy:91, and it is found on the label of your Thingy:91.
 
    .. figure:: images/thingy91_pin_imei.svg
       :alt: PIN and IMEI on Thingy:91
@@ -568,7 +568,7 @@ Connecting to nRF Cloud
       Therefore, do not share it with anyone.
 
 
-#. Click :guilabel:`Add Device`.
+#. Click the :guilabel:`Add Device` button.
 
    The message "Device added to account. Waiting for it to connect..." appears.
 
