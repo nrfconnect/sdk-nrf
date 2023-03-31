@@ -68,11 +68,11 @@ To install the ZAP tool using the recommended method, complete the following ste
       .. parsed-literal::
          :class: highlight
 
-         python scripts/setup/nrfconnect/get_zap.py -l *location_path* -o
+         python scripts/setup/nrfconnect/get_zap.py -l *zap_location* -o
 
       In this command:
 
-      *  *location_path* corresponds to the directory where the ZAP tool package is to be extracted.
+      *  *zap_location* corresponds to the directory where the ZAP tool package is to be extracted.
       *  The `-o` argument in the command is used to allow overwriting files, if they already exist in the given location.
          Otherwise the script will display prompt during download and ask for user consent to overwrite the files directly.
 
@@ -107,40 +107,70 @@ To install the ZAP tool using the recommended method, complete the following ste
         100% [......................................................................] 150136551 / 150136551
         ZAP tool package was downloaded and extracted in the given location.
 
-        #######################################################################################
-        # Please add the following location to the system PATH: *package_extraction_location* #
-        #######################################################################################
+     Depending on your operating system, the download will conclude with the following message, with updated *zap_cli_location* and *zap_location* paths, which you will need in the following step:
 
-     .. note::
-         The *package_extraction_location* in the example output will be replaced by the *location_path* from the previous step, where you extracted the package.
+     .. tabs::
 
-#. Add the *location_path* ZAP package (or *package_extraction_location*) to the system :envvar:`PATH` environment variables.
+        .. group-tab:: Windows
+
+           .. parsed-literal::
+              :class: highlight
+
+              #######################################################################################
+              # Please add the following location(s) to the system PATH:                            #
+              # *zap_location*                                                                      #
+              #######################################################################################
+
+        .. group-tab:: Linux
+
+           .. parsed-literal::
+              :class: highlight
+
+              #######################################################################################
+              # Please add the following location(s) to the system PATH:                            #
+              # *zap_location*                                                                      #
+              ######################################################################################
+
+        .. group-tab:: macOS
+
+           .. parsed-literal::
+              :class: highlight
+
+              #######################################################################################
+              # Please add the following location(s) to the system PATH:                            #
+              # *zap_cli_location*                                                                  #
+              # *zap_location*                                                                      #
+              #######################################################################################
+     ..
+
+#. Add the ZAP packages location to the system :envvar:`PATH` environment variables.
    This is not needed if your currently installed ZAP version matches the recommended one (case 1 from the previous step).
 
    .. tabs::
-
-      .. group-tab:: Linux
-
-         For example, if you are using bash, run the following commands:
-
-         .. parsed-literal::
-            :class: highlight
-
-            echo 'export PATH=package_extraction_location:"$PATH"' >> ${HOME}/.bashrc
-            source ${HOME}/.bashrc
 
       .. group-tab:: Windows
 
          For the detailed instructions for adding :envvar:`PATH` environment variables on Windows, see :ref:`zephyr:env_vars`.
 
-      .. group-tab:: macOS
+      .. group-tab:: Linux
 
-         For example, if you are using bash, run the following commands:
+         For example, if you are using bash, run the following commands, with *zap_location* updated with your path:
 
          .. parsed-literal::
             :class: highlight
 
-            echo 'export PATH=package_extraction_location:"$PATH"' >> ${HOME}/.bash_profile
+            echo 'export PATH=zap_location:"$PATH"' >> ${HOME}/.bashrc
+            source ${HOME}/.bashrc
+
+      .. group-tab:: macOS
+
+         For example, if you are using bash, run the following commands, with *zap_cli_location* and *zap_location* updated with your paths:
+
+         .. parsed-literal::
+            :class: highlight
+
+            echo 'export PATH=zap_cli_location:"$PATH"' >> ${HOME}/.bash_profile
+            echo 'export PATH=zap_location:"$PATH"' >> ${HOME}/.bash_profile
             source ${HOME}/.bash_profile
    ..
 
