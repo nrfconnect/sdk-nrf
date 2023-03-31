@@ -210,6 +210,8 @@
   - "samples/nrf9160/udp/**/*"
   - "samples/nrf9160/aws_iot/**/*"
   - "samples/nrf9160/azure_iot_hub/**/*"
+  - "modules/tfm/**/*"
+  - "modules/mcuboot/**/*"
 
 "CI-apps-test":
   - "applications/machine_learning/**/*"
