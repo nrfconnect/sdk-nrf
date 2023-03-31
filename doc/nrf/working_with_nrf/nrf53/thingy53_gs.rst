@@ -15,6 +15,8 @@ If you have already set up your Nordic Thingy:53 and want to learn more, see the
 * :ref:`ug_thingy53` for more advanced topics related to the Nordic Thingy:53.
 * The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
 
+If you want to go through an online training course to familiarize yourself with Bluetooth Low Energy and the development of Bluetooth LE applications, enroll in the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
+
 .. _thingy53_gs_requirements:
 
 Minimum requirements
