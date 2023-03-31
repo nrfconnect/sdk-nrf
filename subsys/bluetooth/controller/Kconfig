@@ -42,7 +42,6 @@ menu "SoftDevice Controller"
 
 choice BT_LL_SOFTDEVICE_BUILD_TYPE
 	prompt "SoftDevice Controller build type"
-	default BT_LL_SOFTDEVICE_BUILD_TYPE_LIB
 
 config BT_LL_SOFTDEVICE_BUILD_TYPE_LIB
 	bool "Use library"
