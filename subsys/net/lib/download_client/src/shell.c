@@ -118,32 +118,6 @@ static int cmd_dc_set_host(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-static int cmd_dc_pause(const struct shell *shell, size_t argc, char **argv)
-{
-	if (argc != 1) {
-		shell_warn(shell, "usage: dc pause");
-		return 0;
-	}
-
-	download_client_pause(&downloader);
-	shell_print(shell, "Paused");
-
-	return 0;
-}
-
-static int cmd_dc_resume(const struct shell *shell, size_t argc, char **argv)
-{
-	if (argc != 1) {
-		shell_warn(shell, "usage: dc resume");
-		return 0;
-	}
-
-	download_client_resume(&downloader);
-	shell_print(shell, "Resuming");
-
-	return 0;
-}
-
 static int cmd_dc_download(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
@@ -208,8 +182,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_dc,
 	SHELL_CMD(disconnect, NULL, "Disconnect from a host",
 		  cmd_dc_disconnect),
 	SHELL_CMD(download, NULL, "Download a file", cmd_dc_download),
-	SHELL_CMD(pause, NULL, "Pause download", cmd_dc_pause),
-	SHELL_CMD(resume, NULL, "Resume download", cmd_dc_resume),
 	SHELL_CMD(get, NULL, "Download", cmd_dc_get),
 	SHELL_SUBCMD_SET_END
 );

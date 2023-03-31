@@ -251,21 +251,6 @@ __deprecated int download_client_connect(struct download_client *client, const c
  */
 int download_client_start(struct download_client *client, const char *file,
 			  size_t from);
-
-/**
- * @brief Pause the download.
- *
- * @param[in] client	Client instance.
- */
-void download_client_pause(struct download_client *client);
-
-/**
- * @brief Resume the download.
- *
- * @param[in] client	Client instance.
- */
-void download_client_resume(struct download_client *client);
-
 /**
  * @brief Retrieve the size of the file being downloaded, in bytes.
  *
@@ -291,7 +276,7 @@ int download_client_disconnect(struct download_client *client);
  * @brief Download a file asynchronously.
  *
  * This initiates an asynchronous connect-download-disconnect sequence to the target
- * host. When only one file is required form a target server, it can be used instead of
+ * host. When only one file is required from a target server, it can be used instead of
  * separate calls to download_client_set_host(), download_client_start()
  * and download_client_disconnect().
  *
