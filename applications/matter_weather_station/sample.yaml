@@ -19,7 +19,7 @@ tests:
   # ---------------
   applications.matter_weather_station.factory_data:
     build_only: true
-    extra_args: CONF_FILE=prj_factory_data.conf
+    extra_args: OVERLAY_CONFIG=overlay-factory_data.conf
     platform_allow: thingy53_nrf5340_cpuapp
     platform_exclude: thingy53_nrf5340_cpuapp_ns
     integration_platforms:
