@@ -554,6 +554,7 @@
 
 .. _`nRF Connect SDK Fundamentals course`: https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/
 .. _`Cellular IoT Fundamentals course`: https://academy.nordicsemi.com/courses/cellular-iot-fundamentals/
+.. _`Bluetooth LE Fundamentals course`: https://academy.nordicsemi.com/courses/bluetooth-low-energy-fundamentals/
 
 .. ### Source: devzone.nordicsemi.com
 
