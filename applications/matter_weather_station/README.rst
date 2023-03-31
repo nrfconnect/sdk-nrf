@@ -190,14 +190,19 @@ You can generate new factory data set when building for the target board by invo
 .. parsed-literal::
    :class: highlight
 
-   west build -b thingy53_nrf5340_cpuapp -- -DCONF_FILE=prj_factory_data.conf -DOVERLAY_CONFIG="../../overlay-factory_data_build.conf"
+   west build -b thingy53_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-factory_data.conf
 
+This command builds the application with default certificates.
 After building the target, the generated :file:`factory_data.hex` file will be merged with the application target HEX file, so you can use the regular command to flash it to the device:
 
 .. parsed-literal::
    :class: highlight
 
    west flash --erase
+
+If you want to use Vendor ID, Product ID or other data that is not reserved for tests, you need custom test certificates.
+To build with custom certificates, you need to use the chip-cert tool.
+Follow the first step of the :ref:`ug_matter_device_configuring_cd_generating_steps` instruction and add the chip-cert tool to PATH when built.
 
 Testing
 =======
