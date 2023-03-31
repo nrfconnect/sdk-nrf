@@ -248,11 +248,11 @@ You must activate your SIM card and add the |DK| to your nRF Cloud account.
 
 .. note::
 
-   If you activated your iBasis SIM card before, click :guilabel:`Skip this step` in Step 4 instead of filling in the information.
+   If you activated your iBasis SIM card before, click the :guilabel:`Skip SIM setup` in Step 4 instead of filling in the information.
 
-   If you are using a SIM card from another provider, make sure you activate it through your network operator, then click :guilabel:`Skip this step` in Step 4 instead of filling in the information.
+   If you are using a SIM card from another provider, make sure you activate it through your network operator, then click :guilabel:`Skip SIM setup` in Step 4 instead of filling in the information.
 
-To activate the iBasis Subscriber Identity Module (SIM) card that comes shipped with the |DK| and add the |DK| to nRF Cloud, complete the following steps:
+To activate the iBasis SIM card that comes shipped with the |DK| and add the |DK| to nRF Cloud, complete the following steps:
 
 1. Log in to the `nRF Cloud`_ portal.
 #. Click the :guilabel:`+` icon in the top left corner.
@@ -262,22 +262,22 @@ To activate the iBasis Subscriber Identity Module (SIM) card that comes shipped 
 
       nRF Cloud - Plus icon
 
-   The Add New window appears.
+   The :guilabel:`Add New` menu opens.
 
    .. figure:: images/nrfcloud_add_lte_device1.png
-      :alt: nRF Cloud - Add New window
+      :alt: nRF Cloud - Add New menu
 
-      nRF Cloud - Add New window
+      nRF Cloud - Add New menu
 
-#. In the **Add New** window, click :guilabel:`LTE Device`.
-   The **Activate SIM Card** window appears.
+#. In the :guilabel:`Add New` menu, click :guilabel:`LTE Device`.
+   The **Add LTE Device** page opens in the **Verify SIM Info** view.
 
    .. figure:: images/nrfcloud_activating_sim.png
-      :alt: nRF Cloud - Activate SIM Card window
+      :alt: nRF Cloud - Add LTE Device page, Verify SIM Info view
 
-      nRF Cloud - Activate SIM Card window
+      nRF Cloud - Add LTE Device page, Verify SIM Info view
 
-#. Complete the following steps in the **Activate SIM Card** window to activate your iBasis SIM card:
+#. Complete the following steps in the **Activate SIM Card** view to activate your iBasis SIM card:
 
    a. Enter the 18-digit :term:`Integrated Circuit Card Identifier (ICCID)` or the 19-digit :term:`eUICC Identifier (EID)` in the **SIM ICCID/EID** text box.
 
@@ -291,7 +291,7 @@ To activate the iBasis Subscriber Identity Module (SIM) card that comes shipped 
    #. Accept the Terms and the Privacy Policy.
    #. Click the :guilabel:`Activate SIM` button.
 
-   After the SIM card is activated, you are redirected to the Add LTE Device window.
+   After the SIM card is activated, you are taken to the **Add LTE Device** view.
    Leave the browser window open and continue with the next step before you enter the information on this window.
 
 .. nrf_cloud_connection_end
@@ -303,16 +303,17 @@ To activate the iBasis Subscriber Identity Module (SIM) card that comes shipped 
    At this stage, the device is provisioned on nRF Cloud, but not yet associated with your nRF Cloud account.
    When the DK has connected, the **LED3** double pulse blinks to indicate that user association is required and you can move to the next step.
 
-#. In the Add LTE Device window from Step 4, enter your device ID and ownership code.
+#. In the **Add LTE Device** view from Step 4, enter your device ID and ownership code (**PIN/HWID**).
 
    .. figure:: images/nrfcloud_add_lte_device.png
-      :alt: nRF Cloud - Add LTE Device window
+      :alt: nRF Cloud - Add LTE Device view
 
-      nRF Cloud - Add LTE Device window
+      nRF Cloud - Add LTE Device view
 
    * **Device ID:** The device ID is composed of *nrf-* and the 15-digit :term:`International Mobile (Station) Equipment Identity (IMEI)` number that is printed on the label of your nRF9160 DK.
      For example, *nrf-123456789012345*.
-   * **Ownership code:** The ownership code is the PIN or the hardware ID of your DK, and it is found on the label of your nRF9160 DK.
+   * **PIN/HWID:** The ownership code is the PIN or the hardware ID of your DK, and it is found on the label of your nRF9160 DK.
+     This is not the PIN code for your SIM card.
 
      If the label contains a PIN in addition to the IMEI number, enter this pin.
      If it does not contain a PIN, enter the Hardware ID (HWID) HEX code, with or without colons.
@@ -323,7 +324,7 @@ To activate the iBasis Subscriber Identity Module (SIM) card that comes shipped 
         The ownership code serves as a password and proves that you own the specific nRF9160 DK.
         Therefore, do not share it with anyone.
 
-#. Click :guilabel:`Add Device` and wait for the device to reconnect to nRF Cloud.
+#. Click the :guilabel:`Add Device` button and wait for the device to reconnect to nRF Cloud.
    It is normal for the device to disconnect and reconnect multiple times during device provisioning.
 
 The nRF9160 DK is now added to your nRF Cloud account.
