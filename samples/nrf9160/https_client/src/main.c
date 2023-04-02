@@ -10,6 +10,7 @@
 #include <zephyr/net/socket.h>
 #include <modem/nrf_modem_lib.h>
 #include <zephyr/net/tls_credentials.h>
+#include <modem/pdn.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
 
@@ -28,9 +29,11 @@
 
 #define RECV_BUF_SIZE 2048
 #define TLS_SEC_TAG 42
+#define PDN_IPV6_WAIT_MS 1000
 
 static const char send_buf[] = HTTP_HEAD;
 static char recv_buf[RECV_BUF_SIZE];
+static K_SEM_DEFINE(pdn_ipv6_up_sem, 0, 1);
 
 /* Certificate for `example.com` */
 static const char cert[] = {
@@ -83,6 +86,33 @@ int cert_provision(void)
 	}
 
 	return 0;
+}
+
+void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
+{
+	switch (event) {
+	case PDN_EVENT_CNEC_ESM:
+		printk("PDP context %d error, %s\n", cid, pdn_esm_strerror(reason));
+		break;
+	case PDN_EVENT_ACTIVATED:
+		printk("PDP context %d activated\n", cid);
+		break;
+	case PDN_EVENT_DEACTIVATED:
+		printk("PDP context %d deactivated\n", cid);
+		break;
+#if !IS_ENABLED(CONFIG_PDN_DEFAULT_FAM_IPV4)
+	case PDN_EVENT_IPV6_UP:
+		printk("PDP context %d IPv6 up\n", cid);
+		k_sem_give(&pdn_ipv6_up_sem);
+		break;
+	case PDN_EVENT_IPV6_DOWN:
+		printk("PDP context %d IPv6 down\n", cid);
+		break;
+#endif
+	default:
+		printk("PDP context %d, unknown event %d\n", cid, event);
+		break;
+	}
 }
 
 /* Setup TLS options on a given socket */
@@ -151,6 +181,16 @@ void main(void)
 
 	printk("HTTPS client sample started\n\r");
 
+	/* Setup a callback for the default PDP context (zero).
+	 * Do this before switching to function mode 1 (CFUN=1)
+	 * to receive the first activation event.
+	 */
+	err = pdn_default_ctx_cb_reg(pdn_event_handler);
+	if (err) {
+		printk("pdn_default_ctx_cb_reg() failed, err %d\n", err);
+		return;
+	}
+
 #if !defined(CONFIG_SAMPLE_TFM_MBEDTLS)
 	/* Provision certificates before connecting to the LTE network */
 	err = cert_provision();
@@ -166,6 +206,15 @@ void main(void)
 		return;
 	}
 	printk("OK\n");
+
+  /* No point in waiting if override configured for IPv4 only */
+#if !IS_ENABLED(CONFIG_PDN_DEFAULT_FAM_IPV4)
+	printk("Waiting for IPv6..\n");
+	err = k_sem_take(&pdn_ipv6_up_sem, K_MSEC(PDN_IPV6_WAIT_MS));
+	if (err) {
+		printk("IPv6 not available\n");
+	}
+#endif
 
 	printk("Looking up %s\n", HTTPS_HOSTNAME);
 	err = getaddrinfo(HTTPS_HOSTNAME, HTTPS_PORT, &hints, &res);
