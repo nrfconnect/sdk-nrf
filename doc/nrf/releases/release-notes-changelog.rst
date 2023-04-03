@@ -477,6 +477,11 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
   * Fixed an issue that prevented an empty gap after static partitions for a region with START_TO_END strategy.
 
+* :ref:`nrf_desktop_config_channel_script`:
+
+  * Added support for the device information (``devinfo``) option fetching.
+    The option provides device's Vendor ID, Product ID and generation.
+
 MCUboot
 =======
 

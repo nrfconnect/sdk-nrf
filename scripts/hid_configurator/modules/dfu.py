@@ -106,6 +106,23 @@ class FwInfo:
                                                  self.ver_rev, self.ver_build_nr)
 
 
+class DevInfo:
+    def __init__(self, fetched_data):
+        fmt = '<HH'
+        assert struct.calcsize(fmt) < len(fetched_data)
+        self.vid, self.pid = struct.unpack(fmt, fetched_data[:struct.calcsize(fmt)])
+
+        # The remaining data represents device generation
+        generation = fetched_data[struct.calcsize(fmt):]
+        self.generation = generation.decode('utf-8').replace(chr(0x00), '')
+
+    def __str__(self):
+        return ('Device info\n'
+                '  Vendor ID: {}\n'
+                '  Product ID: {}\n'
+                '  Generation: {}').format(hex(self.vid), hex(self.pid), self.generation)
+
+
 def b0_get_fwinfo_offset(dfu_bin):
     UPDATE_IMAGE_MAGIC_COMMON = 0x281ee6de
     UPDATE_IMAGE_MAGIC_FWINFO = 0x8fcebb4c
@@ -366,7 +383,7 @@ class DfuImage:
 def fwinfo(dev):
     dfu_module_name = dev.get_complete_module_name('dfu')
     if dfu_module_name:
-        success, fetched_data = dev.config_get(dfu_module_name , 'fwinfo')
+        success, fetched_data = dev.config_get(dfu_module_name, 'fwinfo')
     else:
         print('Module DFU not found')
         return None
@@ -376,6 +393,18 @@ def fwinfo(dev):
         return fw_info
     else:
         return None
+
+
+def devinfo(dev):
+    dev_info = None
+    dfu_module_name = dev.get_complete_module_name('dfu')
+
+    if dfu_module_name:
+        success, fetched_data = dev.config_get(dfu_module_name, 'devinfo')
+        if success and fetched_data:
+            dev_info = DevInfo(fetched_data)
+
+    return dev_info
 
 
 def fwreboot(dev):
