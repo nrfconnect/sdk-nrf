@@ -13,7 +13,7 @@ from NrfHidManager import NrfHidManager
 from modules.module_config import MODULE_CONFIG
 from modules.config import change_config, fetch_config
 from modules.dfu import DfuImage
-from modules.dfu import fwinfo, fwreboot, dfu_transfer
+from modules.dfu import fwinfo, devinfo, fwreboot, dfu_transfer
 from modules.led_stream import send_continuous_led_stream
 try:
     from modules.music_led_stream import send_music_led_stream
@@ -157,6 +157,15 @@ def perform_fwinfo(dev, args):
         print('FW info request failed')
 
 
+def perform_devinfo(dev, args):
+    info = devinfo(dev)
+
+    if info is not None:
+        print(info)
+    else:
+        print('Device information request failed')
+
+
 def perform_fwreboot(dev, args):
     success, rebooted = fwreboot(dev)
 
@@ -201,6 +210,7 @@ def parse_arguments():
                             action='store_true')
 
     sp_commands.add_parser('fwinfo', help='Obtain information about FW image')
+    sp_commands.add_parser('devinfo', help='Obtain identification information about device')
     sp_commands.add_parser('fwreboot', help='Request FW reboot')
 
     parser_stream = sp_commands.add_parser('led_stream',
@@ -277,6 +287,7 @@ configurator.ALLOWED_COMMANDS = {
     'show' : perform_show,
     'dfu' : perform_dfu,
     'fwinfo' : perform_fwinfo,
+    'devinfo' : perform_devinfo,
     'fwreboot' : perform_fwreboot,
     'config' : perform_config,
     'led_stream' : perform_led_stream

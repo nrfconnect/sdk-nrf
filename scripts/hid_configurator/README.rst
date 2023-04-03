@@ -17,6 +17,7 @@ It can be used for the following purposes:
 * `Performing DFU`_
 * `Rebooting the device`_
 * `Getting information about the firmware version`_
+* `Getting identification information about the device`_
 * `Playing LED stream`_
 
 Overview
@@ -267,6 +268,23 @@ To obtain information about the firmware running on the device, run the followin
 
 .. note::
   Only devices with :ref:`nrf_desktop_dfu` support the ``fwinfo`` command.
+
+Getting identification information about the device
+===================================================
+
+To obtain information about the device's Vendor ID, Product ID, and generation, run the following command:
+
+.. parsed-literal::
+    :class: highlight
+
+    python3 configurator_cli.py DEVICE devinfo
+
+.. note::
+  Only devices with the :ref:`nrf_desktop_dfu` support the ``devinfo`` command.
+
+The command can be used to obtain Vendor ID and Product ID of devices connected through an nRF Desktop dongle.
+The generation is a string that allows to distinguish configurations that use the same board and bootloader, but are not interoperable.
+For more information about implementation in firmware, see nRF Desktop's :ref:`nrf_desktop_dfu`.
 
 Playing LED stream
 ==================
