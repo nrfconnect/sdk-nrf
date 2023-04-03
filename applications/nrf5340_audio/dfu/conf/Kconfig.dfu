@@ -74,11 +74,15 @@ config MCUMGR_TRANSPORT_NETBUF_SIZE
 	int
 	default 1024
 
-config ZCBOR
+config IMG_MANAGER
 	bool
 	default y
 
-config IMG_MANAGER
+config FLASH
+	bool
+	default y
+
+config FLASH_MAP
 	bool
 	default y
 
@@ -119,10 +123,6 @@ config STATS
 	default y
 
 config STATS_NAMES
-	bool
-	default y
-
-config MCUBOOT_BOOTUTIL_LIB
 	bool
 	default y
 
