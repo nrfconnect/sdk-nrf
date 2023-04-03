@@ -5,13 +5,13 @@
  */
 
  &zephyr_udc0 {
-	cdc_acm_uart0: cdc_acm_uart0 {
+	cdc_acm_uart: cdc_acm_uart {
 		compatible = "zephyr,cdc-acm-uart";
 	};
 };
 
  / {
 	chosen {
-		zephyr,shell-uart = &cdc_acm_uart0;
+		zephyr,shell-uart = &cdc_acm_uart;
 	};
 };
