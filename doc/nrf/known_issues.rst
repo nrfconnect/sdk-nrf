@@ -3013,6 +3013,14 @@ tx_buffer_length set incorrectly
 Trusted Firmware-M (TF-M)
 *************************
 
+.. rst-class:: v2-3-0
+
+NCSDK-20864: TF-M unaligned partitions when MCUboot padding and debug optimizations are enabled
+  When building TF-M using the :ref:`partition_manager` with the MCUboot bootloader enabled (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`), with either :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` or :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_DEBUG` also enabled, the resulting partitions are not aligned with :kconfig:option:`CONFIG_NRF_SPU_FLASH_REGION_SIZE` as required by the :ref:`ug_tfm_partition_alignment_requirements`.
+  This will cause the build to fail.
+
+  **Workaround:** Disable the :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` and :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_DEBUG` options, or subtract 0x200 from the current value of the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM` option, to comply with the :ref:`ug_tfm_partition_alignment_requirements`.
+
 .. rst-class:: v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
 NCSDK-17501: Partition Manager: Ignored alignment for partitions
