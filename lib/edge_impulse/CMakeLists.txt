@@ -101,6 +101,7 @@ target_include_directories(edge_impulse INTERFACE
 target_link_libraries(edge_impulse INTERFACE ${EDGE_IMPULSE_LIBRARY})
 
 add_dependencies(edge_impulse
+                 zephyr_interface
                  edge_impulse_project
                  edge_impulse_project_download
 )
