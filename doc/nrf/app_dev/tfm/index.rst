@@ -149,6 +149,74 @@ Nordic platforms support only the GCC toolchain for building TF-M.
 Enabling Floating point support in TF-M is currently not supported.
 Enabling Floating point Hard ABI (:kconfig:option:`CONFIG_FP_HARDABI`) in the application is currently not supported.
 
+.. _ug_tfm_partition_alignment_requirements:
+
+TF-M partition alignment requirements
+*************************************
+
+TF-M requires that secure and non-secure partition addresses must be aligned to the NRF_SPU flash region size :kconfig:option:`CONFIG_NRF_SPU_FLASH_REGION_SIZE`.
+|NCS| ensures that they in fact are aligned and comply with the TF-M requirements.
+
+TF-M requires this alignment because it uses the SPU to enforce the security policy between the partitions.
+When the :ref:`partition_manager` is enabled, it will take into consideration the alignment requirements.
+But when the static partitions are used, the user is responsible for following the alignment requirements.
+
+If you are experiencing any partition alignment issues when using the Partition Manager, check the :ref:`known_issues` page on the main branch.
+
+The partitions which need to be aligned to the SPU flash region size are partitions ``tfm_nonsecure`` and ``nonsecure_storage``.
+Both the partition start address and the partition size need to be aligned with the NRF_SPU flash region size:kconfig:option:`CONFIG_NRF_SPU_FLASH_REGION_SIZE`.
+
+Note that the ``tfm_nonsecure`` partition is placed after the ``tfm_secure`` partition, thus the end address of the ``tfm_secure`` partition is the same as the start address of the ``tfm_nonsecure`` partition.
+As a result, altering the size of the ``tfm_secure`` partition affects the start address of the ``tfm_nonsecure`` partition.
+
+The following static partition snippet shows a non-aligned configuration for nRF5340 which has a SPU flash region size :kconfig:option:`CONFIG_NRF_SPU_FLASH_REGION_SIZE` of 0x4000.
+
+.. code-block:: console
+
+    tfm_secure:
+      address: 0x4000
+      size: 0x4200
+      span: [mcuboot_pad, tfm]
+    mcuboot_pad:
+      address: 0x4000
+      size: 0x200
+    tfm:
+      address: 0x4200
+      size: 0x4000
+    tfm_nonsecure:
+      address: 0x8200
+      size: 0x4000
+      span: [app]
+    app:
+      address: 0x8200
+      size: 0x4000
+
+In the above example, the ``tfm_nonsecure`` partition starts at address 0x8200, which is not aligned with the SPU requirement of 0x4000.
+Since ``tfm_secure`` spans the ``mcuboot_pad`` and ``tfm`` partitions we can decrease the size of any of them by 0x200 to fix the alignment issue.
+We will decrease the size of the (optional) ``mcuboot_pad`` partition and thus the size of the ``tfm_secure`` partition as follows:
+
+.. code-block:: console
+
+    tfm_secure:
+      address: 0x4000
+      size: 0x4000
+      span: [mcuboot_pad, tfm]
+    mcuboot_pad:
+      address: 0x4000
+      size: 0x0
+    tfm:
+      address: 0x4000
+      size: 0x4000
+    tfm_nonsecure:
+      address: 0x8000
+      size: 0x4000
+      span: [app]
+    app:
+      address: 0x8000
+      size: 0x4000
+
+
+
 .. _ug_tfm_migrate:
 
 Migrating from Secure Partition Manager to Trusted Firmware-M
