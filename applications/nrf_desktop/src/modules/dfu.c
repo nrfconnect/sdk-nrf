@@ -91,6 +91,7 @@ enum dfu_opt {
 	DFU_OPT_REBOOT,
 	DFU_OPT_FWINFO,
 	DFU_OPT_VARIANT,
+	DFU_OPT_DEVINFO,
 
 	DFU_OPT_COUNT
 };
@@ -101,7 +102,8 @@ const static char * const opt_descr[] = {
 	[DFU_OPT_SYNC] = "sync",
 	[DFU_OPT_REBOOT] = "reboot",
 	[DFU_OPT_FWINFO] = "fwinfo",
-	[DFU_OPT_VARIANT] = OPT_DESCR_MODULE_VARIANT
+	[DFU_OPT_VARIANT] = OPT_DESCR_MODULE_VARIANT,
+	[DFU_OPT_DEVINFO] = "devinfo"
 };
 
 static uint8_t dfu_slot_id(void)
@@ -504,6 +506,33 @@ static void handle_dfu_bootloader_variant(uint8_t *data, size_t *size)
 	strcpy((char *)data, BOOTLOADER_NAME);
 }
 
+static void handle_dfu_devinfo(uint8_t *data, size_t *size)
+{
+	LOG_INF("Device information requested");
+	const uint16_t vid = CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_VID;
+	const uint16_t pid = CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_PID;
+	const char *generation = CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_GENERATION;
+	size_t pos = 0;
+
+	BUILD_ASSERT(sizeof(CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_GENERATION) > 1,
+		     "CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_GENERATION cannot be an empty string");
+	BUILD_ASSERT((sizeof(vid) + sizeof(pid) +
+		      sizeof(CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_GENERATION)) <=
+		     CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE,
+		     "CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_GENERATION is too long");
+
+	sys_put_le16(vid, &data[pos]);
+	pos += sizeof(vid);
+
+	sys_put_le16(pid, &data[pos]);
+	pos += sizeof(pid);
+
+	strcpy(&data[pos], generation);
+	pos += strlen(generation);
+
+	*size = pos;
+}
+
 static void handle_reboot_request(uint8_t *data, size_t *size)
 {
 	LOG_INF("System reboot requested");
@@ -669,6 +698,10 @@ static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 
 	case DFU_OPT_VARIANT:
 		handle_dfu_bootloader_variant(data, size);
+		break;
+
+	case DFU_OPT_DEVINFO:
+		handle_dfu_devinfo(data, size);
 		break;
 
 	default:

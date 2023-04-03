@@ -48,6 +48,21 @@ If the buffer is small, the host must perform the DFU progress synchronization m
    For this reason, make sure that you use configuration with two image partitions.
    For more information on configuring the memory layout in the application, see the :ref:`nrf_desktop_flash_memory_layout` documentation.
 
+Device identification information
+=================================
+
+The DFU module provides the following information about the device through the :ref:`nrf_desktop_config_channel`:
+
+* Vendor ID (:ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_VID <config_desktop_app_options>`)
+* Product ID (:ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_PID <config_desktop_app_options>`)
+* Generation (:ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_GENERATION <config_desktop_app_options>`)
+
+These values are fetched using the :ref:`devinfo <dfu_devinfo>` configuration channel option.
+
+.. note::
+   By default, the reported Vendor ID, Product ID, and generation are aligned with the values defined globally for the nRF Desktop application.
+   The default values of Kconfig options used by the DFU module are based on respectively :ref:`CONFIG_DESKTOP_DEVICE_VID <config_desktop_app_options>`, :ref:`CONFIG_DESKTOP_DEVICE_PID <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_DEVICE_GENERATION <config_desktop_app_options>`.
+
 Implementation details
 **********************
 
@@ -73,6 +88,7 @@ The module provides a simple protocol that allows the update tool on the host to
 The following :ref:`nrf_desktop_config_channel` options are available to perform the firmware update:
 
 * :ref:`fwinfo <dfu_fwinfo>` - Passes the information about the currently executed image from the device to the host.
+* :ref:`devinfo <dfu_devinfo>` - Passes the identification information about the device from the device to the host.
 * :ref:`reboot <dfu_reboot>` - Reboots the device.
 * :ref:`start <dfu_start>` - Starts the new update image transmission.
 * :ref:`data <dfu_data>` - Passes a chunk of the update image data from the host to the device.
@@ -86,6 +102,16 @@ fwinfo
 
    * Version and length of the image.
    * Partition ID of the image, used to specify the image placement on the flash.
+
+.. _dfu_devinfo:
+
+devinfo
+   Perform the fetch operation on this option to get the following information about the device:
+
+   * Vendor ID and Product ID
+   * Generation
+
+The device generation allows to distinguish configurations that use the same board and bootloader, but are not interoperable.
 
 .. _dfu_reboot:
 
