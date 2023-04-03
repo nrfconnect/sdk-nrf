@@ -117,6 +117,11 @@ config TFM_UART0_CTS_PIN
 	  Note: The non-secure image is only ever used when running the
 	        TF-M regression tests.
 
+config TFM_UART0_HWFC_ENABLED
+	bool "UART0 hardware flow control"
+	help
+	  Enable hardware flow control on UART0 in the TFM build system.
+
 config TFM_UART1_TXD_PIN
 	int "UART1 TXD pin"
 	depends on TFM_SECURE_UART1
@@ -136,6 +141,29 @@ config TFM_UART1_RXD_PIN
 	help
 	  The GPIO pin the TFM build system will use for UART1 RXD pin.
 	  UART1 is used by TF-M as the log output for the secure image.
+
+config TFM_UART1_RTS_PIN
+	int "UART1 RTS pin"
+	default 14 if BOARD_NRF9160DK_NRF9160_NS
+	default 5 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
+	default 4294967295 # 0xffffffff i.e. disconnected
+	help
+	  The GPIO pin the TFM build system will use for UART1 RTS pin.
+	  UART1 is used by TF-M as the log output for the secure image.
+
+config TFM_UART1_CTS_PIN
+	int "UART1 CTS pin"
+	default 15 if BOARD_NRF9160DK_NRF9160_NS
+	default 6 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
+	default 4294967295 # 0xffffffff i.e. disconnected
+	help
+	  The GPIO pin the TFM build system will use for UART1 CTS pin.
+	  UART1 is used by TF-M as the log output for the secure image.
+
+config TFM_UART1_HWFC_ENABLED
+	bool "UART1 hardware flow control"
+	help
+	  Enable hardware flow control on UART1 in the TFM build system.
 
 endmenu
 
