@@ -191,13 +191,13 @@ static int uart_receive(void)
 {
 	int ret;
 
+	next_buf = uart_rx_buf[1];
 	ret = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_US);
 	if (ret && ret != -EBUSY) {
 		LOG_ERR("UART RX failed: %d", ret);
 		(void)uart_send(FATAL_STR, sizeof(FATAL_STR) - 1);
 		return ret;
 	}
-	next_buf = uart_rx_buf[1];
 	at_buf_overflow = false;
 	at_buf_len = 0;
 
