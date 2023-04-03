@@ -78,6 +78,37 @@ config DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE
 	  The host must perform progress synchronization at least
 	  every synchronization buffer bytes count.
 
+config DESKTOP_CONFIG_CHANNEL_DFU_VID
+	hex "Configuration channel Vendor ID"
+	range 0 0XFFFF
+	default DESKTOP_DEVICE_VID
+	help
+	  Configuration channel allows devices to report their Vendor ID. The
+	  Vendor ID is reported together with Product ID and device generation.
+
+	  The information is useful if nRF Desktop peripheral is connected
+	  through nRF Desktop dongle and host computer has no direct access to
+	  the VID and PID.
+
+config DESKTOP_CONFIG_CHANNEL_DFU_PID
+	hex "Configuration channel Product ID"
+	range 0 0XFFFF
+	default DESKTOP_DEVICE_PID
+	help
+	  Configuration channel allows devices to report their Product ID. The
+	  Product ID is reported together with Vendor ID and device generation.
+
+	  The information is useful if nRF Desktop peripheral is connected
+	  through nRF Desktop dongle and host computer has no direct access to
+	  the VID and PID.
+
+config DESKTOP_CONFIG_CHANNEL_DFU_GENERATION
+	string "Device generation"
+	default DESKTOP_DEVICE_GENERATION
+	help
+	  Configuration channel allows devices to report their generation. The
+	  generation is reported together with Vendor ID and Product ID.
+
 module = DESKTOP_CONFIG_CHANNEL_DFU
 module-str = Config channel DFU
 source "subsys/logging/Kconfig.template.log_config"

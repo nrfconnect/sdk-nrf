@@ -204,18 +204,27 @@ config DESKTOP_DEVICE_VID
 	range 0 0XFFFF
 	default 0x1915
 	help
-	  Device Vendor ID used for both GATT Device Information Service and
-	  USB device. By default, Vendor ID of Nordic Semiconductor ASA is used.
+	  Device Vendor ID used for GATT Device Information Service, USB device
+	  and configuration channel. By default, Vendor ID of Nordic
+	  Semiconductor ASA is used.
 
 config DESKTOP_DEVICE_PID
 	hex "Product ID"
 	range 0 0XFFFF
 	default 0
 	help
-	  Device Product ID used for both GATT Device Information Service and
-	  USB device. Product ID is used to distinguish products made by the
-	  given vendor. Value must be configured in the application
+	  Device Product ID used for GATT Device Information Service, USB device
+	  and configuration channel. Product ID is used to distinguish products
+	  made by the given vendor. Value must be configured in the application
 	  configuration.
+
+config DESKTOP_DEVICE_GENERATION
+	string "Device generation"
+	default "default"
+	help
+	  The Kconfig option is used to specify device generation. The option
+	  allows to distinguish configurations that use the same board and
+	  bootloader, but are not interoperable.
 
 endmenu
 

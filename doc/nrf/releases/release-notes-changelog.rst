@@ -197,7 +197,13 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
-* Added the :ref:`nrf_desktop_swift_pair_app`. The module is used to enable or disable the Swift Pair Bluetooth advertising payload depending on the selected Bluetooth peer (used local identity).
+Added:
+
+* The :ref:`nrf_desktop_swift_pair_app`. The module is used to enable or disable the Swift Pair Bluetooth advertising payload depending on the selected Bluetooth peer (used local identity).
+* An application-specific string representing device generation (:ref:`CONFIG_DESKTOP_DEVICE_GENERATION <config_desktop_app_options>`).
+  The generation allows to distinguish configurations that use the same board and bootloader, but are not interoperable.
+  The value can be read through the :ref:`nrf_desktop_config_channel`.
+  On the firmware side, fetching the values is handled by the :ref:`nrf_desktop_dfu`.
 
 * Updated:
 

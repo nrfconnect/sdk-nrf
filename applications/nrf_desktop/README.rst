@@ -1001,6 +1001,11 @@ These Kconfig options determine the default values of device identifiers used fo
 * :ref:`nrf_desktop_usb_state_identifiers`
 * BLE GATT Device Information Service (:kconfig:option:`CONFIG_BT_DIS`) that is required for :ref:`nrf_desktop_bluetooth_guide_peripheral`
 
+.. note::
+   Apart from the mentioned common device identifiers, the nRF Desktop application defines an application-specific string representing device generation (:ref:`CONFIG_DESKTOP_DEVICE_GENERATION <config_desktop_app_options>`).
+   The generation allows to distinguish configurations that use the same board and bootloader, but are not interoperable.
+   The value can be read through the :ref:`nrf_desktop_config_channel`.
+
 Debug configuration
 -------------------
 
