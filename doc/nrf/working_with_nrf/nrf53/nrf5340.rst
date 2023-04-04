@@ -390,8 +390,6 @@ The steps differ depending on whether you work with |VSC| or on the command line
 Using |VSC|
 ===========
 
-|vsc_extension_instructions|
-
 You can build and program separate images or combined images using the |nRFVSC|.
 
 Separate images

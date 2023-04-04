@@ -66,16 +66,6 @@ For example, to turn off optimizations, select :kconfig:option:`CONFIG_NO_OPTIMI
 
 Compiler options not controlled by the Zephyr build system can be controlled through the :kconfig:option:`CONFIG_COMPILER_OPT` Kconfig option.
 
-|VSC| compiler settings
-=======================
-
-.. modify_vsc_compiler_options_start
-
-The |nRFVSC| lets you build and program with custom options.
-For more information, read about the advanced `Custom launch and debug configurations`_ and `Application-specific flash options`_ in the extension documentation.
-
-.. modify_vsc_compiler_options_end
-
 .. _configure_application:
 
 Configuring your application
@@ -206,6 +196,8 @@ Changing the software configuration
 You can change the software-related configuration temporarily or permanently.
 The temporary build files are deleted when you clean the build directory with the ``pristine`` target (see Zephyr's :ref:`zephyr:application_rebuild` for more information).
 
+.. _configuration_temporary_change:
+
 Temporary changes
 -----------------
 
@@ -225,6 +217,9 @@ The documentation for each :ref:`configuration option <configuration_options>` l
       To locate a specific configuration option, use the **Search modules** field.
       Read the `Configuring with nRF Kconfig`_ page in the |nRFVSC| documentation for more information.
 
+      Alternatively, you can configure your application in the |nRFVSC| using menuconfig.
+      Open the **More actions..** menu next to `Kconfig action in the Actions View`_ to start menuconfig in the extension.
+
    .. group-tab:: Command line
 
       To quickly test different configuration options, or to build your application in different variants, you can update the :file:`.config` file in the build directory.
@@ -234,11 +229,17 @@ The documentation for each :ref:`configuration option <configuration_options>` l
          While it is possible to edit the :file:`.config` file directly, you should use the nRF Kconfig GUI in the |nRFVSC| or a tool like menuconfig or guiconfig to update it.
          These tools present all available options and allow you to select the ones that you need.
 
-   .. group-tab:: menuconfig
+      Alternatively, you can configure your application using menuconfig.
+      For this purpose, run the following command when :ref:`gs_programming_cmd`.
+
+      .. code-block:: console
+
+         west build -t menuconfig
 
       See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run menuconfig or guiconfig.
       To locate a specific configuration option, use the **Jump to** field.
 
+.. _configuration_permanent_change:
 
 Permanent changes
 -----------------
