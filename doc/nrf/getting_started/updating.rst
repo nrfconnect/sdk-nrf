@@ -1,4 +1,5 @@
 .. _gs_updating:
+.. _repo_move:
 
 Updating repositories and tools
 ###############################
@@ -151,82 +152,7 @@ To update west to the latest available version in the PyPi repository, run the f
          pip3 install -U west
 ..
 
-.. _repo_move:
-
-Pointing the repositories to the right remotes after they were moved
-********************************************************************
-
-Before the |NCS| version 1.3.0, the Git repositories were moved from the NordicPlayground GitHub organization to the nrfconnect organization.
-They were also renamed, replacing the ``fw-nrfconnect-`` prefix with ``sdk-``.
-
-The full list of repositories with their old and new URLs is in the following table:
-
-.. list-table::
-   :header-rows: 1
-
-   * - Old URL
-     - New URL
-     - File system path
-
-   * - https:\ //github.com/NordicPlayground/fw-nrfconnect-nrf
-     - https://github.com/nrfconnect/sdk-nrf
-     - :file:`ncs/nrf`
-
-   * - https:\ //github.com/NordicPlayground/fw-nrfconnect-zephyr
-     - https://github.com/nrfconnect/sdk-zephyr
-     - :file:`ncs/zephyr`
-
-   * - https:\ //github.com/NordicPlayground/fw-nrfconnect-mcuboot
-     - https://github.com/nrfconnect/sdk-mcuboot
-     - :file:`ncs/bootloader/mcuboot`
-
-   * - https:\ //github.com/NordicPlayground/fw-nrfconnect-mcumgr
-     - https://github.com/nrfconnect/sdk-mcumgr
-     - :file:`ncs/modules/lib/mcumgr`
-
-   * - https:\ //github.com/NordicPlayground/nrfxlib
-     - https://github.com/nrfconnect/sdk-nrfxlib
-     - :file:`ncs/nrfxlib`
 
 
-If you cloned the repositories before the move, your local repositories and forks of the |NCS| repositories are automatically be redirected to the new ones.
-However, you should point them directly to their new locations as described in this section.
-
-To change the remotes, complete the following steps:
-
-1. Rename any personal forks that you have of the |NCS| repositories to their new names:
-
-   a. Visit your personal fork in a browser.
-      For example, to rename the fw-nrfconnect-nrf repository, access your fork on GitHub (``https://github.com/<username>/fw-nrfconnect-nrf``, where *<username>* is your GitHub account name).
-   #. Switch to the :guilabel:`Settings` tab and edit the name in the **Repository name** field to ``sdk-nrf``.
-
-#. Rename the remotes:
-
-   a. Go to your local copy of each of the repositories listed in the preceding table.
-   #. Enter the following command:
-
-      .. parsed-literal::
-        :class: highlight
-
-        git remote set-url *remote_name* *new_url*
-
-      In this command, replace *remote_name* with the name of your remote (for example, ``origin`` for your fork or ``ncs`` for the upstream repository) and *new_url* with the URL of your fork or the new URL from the preceding table.
-      If you are not sure about the remotes that are configured in your local repository, enter ``git remote -v`` to see your remotes.
-
-For example, to point your existing fw-nrfconnect-nrf clone to its new URL, enter the following command:
-
-.. code-block::
-
-   cd ncs/nrf
-   git remote set-url origin https://github.com/nrfconnect/sdk-nrf
-
-Similarly, to point your existing fw-nrfconnect-zephyr clone to the new URL, enter the following command:
-
-.. code-block::
-
-   cd  ncs/zephyr
-   git remote set-url ncs https://github.com/nrfconnect/sdk-zephyr
-
-For more information about remotes and how to handle them, see :ref:`dm-wf-fork`.
 
 .. |method_note| replace:: Use the method corresponding to the way you installed the |NCS|, as described in the following sections.

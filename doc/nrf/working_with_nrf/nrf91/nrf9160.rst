@@ -207,9 +207,7 @@ Likewise, in Step 7, choose the :file:`.hex` file for the application you are pr
 Building and programming using |VSC|
 ====================================
 
-|vsc_extension_instructions|
-
-Complete the following steps after installing the |nRFVSC|:
+Complete the following steps to build and program using the |nRFVSC|:
 
 .. |sample_path_vsc| replace:: :file:`ncs/nrf/applications/asset_tracker_v2`
 

@@ -229,9 +229,7 @@ In Step 5, choose the :file:`.hex` file for the application you are programming.
 Building and programming using |VSC|
 ====================================
 
-|vsc_extension_instructions|
-
-Complete the following steps after installing the |nRFVSC|:
+Complete the following steps to build and program using the |nRFVSC|:
 
 .. |sample_path_vsc| replace:: :file:`nrf/applications/nrf_desktop`
 

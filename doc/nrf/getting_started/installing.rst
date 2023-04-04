@@ -7,19 +7,22 @@ Installing manually
    :local:
    :depth: 2
 
-The recommended way to get started with the |NCS| is to use nRF Connect for Desktop.
-For instructions on automatic installation, see the :ref:`gs_assistant` page.
-
-.. note::
-   If you use nRF Connect for Desktop to install the |NCS|, you can skip this section of the documentation.
-   However, if you prefer to install the toolchain manually, follow the instructions in this documentation.
+The recommended way to get started with the |NCS| is to install using nRF Connect for Desktop, which is described on the :ref:`gs_assistant` page.
+However, if you prefer to install the toolchain manually, follow the instructions described below.
 
 To manually install the |NCS|, you must first install all the required tools and clone the |NCS| repositories.
 
 The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds on top of it tools and modules required to build |NCS| samples and applications.
 If you already have your system set up to work with Zephyr OS, based on Zephyr's :ref:`zephyr:getting_started`, it means you have most of the requirements for the |NCS| installed.
-However, you still need to install a set of additional tools, including Python dependencies and the |nRFVSC|.
-You might also need the :ref:`GN tool <gs_installing_gn>` if you are insterested in creating :ref:`ug_matter` applications.
+However, you still need to install a set of additional tools, including Python dependencies and the |nRFVSC| (the default IDE for the |NCS|).
+You might also need the :ref:`GN tool <gs_installing_gn>` if you are interested in creating :ref:`ug_matter` applications.
+
+.. _gs_installing_update_os:
+
+.. rst-class:: numbered-step
+
+Update your operating system
+****************************
 
 Before you start setting up the |NCS| toolchain, install available updates for your operating system.
 See :ref:`gs_recommended_versions` for information on the supported operating systems and Zephyr features.
@@ -277,7 +280,7 @@ To clone the repositories, complete the following steps:
 
    * To work with a specific release, the identifier is the corresponding tag (for example, |release_tt|).
      You can find the tag in the :ref:`release_notes` of the release.
-   * To work with a development tag, the identifier is the corresponding tag (for example, ``v1.2.99-dev1``)
+   * To work with a :ref:`development tag <intro_vers_revs>`, the identifier is the corresponding tag (for example, ``v1.2.99-dev1``)
    * To work with a branch, the identifier is the branch name (for example, ``main`` to work with the latest state of development).
    * To work with a specific state, the identifier is the SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``).
 
@@ -300,7 +303,7 @@ To clone the repositories, complete the following steps:
    .. note::
 
       If you get an error message when running west, :ref:`update west <west_update>` to the latest version.
-      See :ref:`zephyr:west-troubleshooting` if you need more information.
+      See :ref:`zephyr:west-troubleshooting` in the Zephyr documentation for more information.
 
       .. west-error-end
 
@@ -323,7 +326,9 @@ To clone the repositories, complete the following steps:
 
       west zephyr-export
 
-Your directory structure now looks similar to this::
+Your directory structure now looks similar to this:
+
+.. code-block::
 
    ncs
     |___ .west
@@ -334,8 +339,8 @@ Your directory structure now looks similar to this::
     |___ zephyr
     |___ ...
 
-
-Note that there are additional folders, and that the structure might change.
+This is a simplified structure preview.
+There are additional folders, and the structure might change over time.
 The full set of repositories and folders is defined in the manifest file.
 
 .. _additional_deps:
@@ -433,19 +438,13 @@ It is at the base of the |NCS| :term:`toolchain`, which adds on top of it severa
 Install |nRFVSC|
 ****************
 
-You can install the |nRFVSC| to open and compile projects in the |NCS|.
+To open and compile projects in the |NCS|, install and use the recommended |nRFVSC|.
 
 .. _installing_vsc:
 
-|vsc_extension_instructions|
-
-.. vsc_mig_note_start
-
-.. note::
-
-   If you are building the application or sample using SEGGER Embedded Studio IDE or on the command line and want to migrate to |VSC|, use the `Open an existing application <Migrating IDE_>`_ option in the |nRFVSC| to migrate your application.
-
-.. vsc_mig_note_end
+|vsc_extension_description|
+For installation and migration instructions, see `How to install the extension`_.
+For other instructions related to the |nRFVSC|, see the `nRF Connect for Visual Studio Code`_ documentation site.
 
 .. _build_environment_cli:
 

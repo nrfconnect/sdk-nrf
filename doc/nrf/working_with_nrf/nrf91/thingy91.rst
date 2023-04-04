@@ -170,9 +170,7 @@ It is recommended to use an external debug probe to program the Thingy:91.
 Building and programming using |VSC|
 ====================================
 
-|vsc_extension_instructions|
-
-Complete the following steps after installing the |nRFVSC|:
+Complete the following steps to build and program using the |nRFVSC|:
 
 .. |sample_path_vsc| replace:: :file:`ncs/nrf/applications/asset_tracker_v2`
 

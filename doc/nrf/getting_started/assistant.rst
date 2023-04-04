@@ -74,6 +74,8 @@ There are two ways you can build an application:
 * Using |VSC| and the |nRFVSC|
 * Using command line
 
+|vsc_extension_description|
+
 .. _gs_app_installing_choose_building_method_vsc:
 
 Installing |nRFVSC|

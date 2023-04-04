@@ -21,14 +21,11 @@ For example, see :ref:`ug_nrf5340_building` in the :ref:`ug_nrf5340` user guide 
 Building with |VSC|
 *******************
 
-|vsc_extension_instructions|
-
-For instructions specifically for building, see `How to build an application`_.
+For instructions about building with the |nRFVSC|, see `How to build an application`_.
 If you want to build and program with custom options, read about the advanced `Custom launch and debug configurations`_ and `Application-specific flash options`_.
 
-.. include:: installing.rst
-   :start-after: vsc_mig_note_start
-   :end-before: vsc_mig_note_end
+.. note::
+   |ncs_oot_sample_note|
 
 |output_files_note|
 
@@ -49,12 +46,12 @@ After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <g
          The Toolchain Manager dropdown menu options
 
 #.    Go to the specific application directory.
-      For example, to build the :ref:`at_client_sample` sample, run the following command to navigate to its directory:
+
+      For example, if you want to build the :ref:`at_client_sample` sample, run the following command to navigate to its directory:
 
       .. code-block:: console
 
          cd nrf/samples/nrf9160/at_client
-
 
 #.    Build the application using the west command.
       The build target is specified by the parameter *build_target* in the west command as follows:
@@ -64,36 +61,8 @@ After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <g
 
          west build -b *build_target*
 
-      Some applications contain configuration overlay files that enable specific features.
-      These can be added to the ``west build`` command as follows:
-
-      .. parsed-literal::
-         :class: highlight
-
-         west build -b *build_target* -- -DOVERLAY_CONFIG="overlay-feature1.conf;overlay-feature2.conf"
-
-      .. note::
-
-         You can run the west command with optional parameters:
-
-          * *directory_name* - To build from a directory other than the application directory, use *directory_name* to specify the application directory.
-
-          * *build_target@board_revision* - To get extra devicetree overlays with new features available for a board version.
-            The *board_revision* is printed on the label of your DK, just below the PCA number.
-            For example, if you run the west build command with an additional parameter ``@1.0.0`` for nRF9160 build target, it adds the external flash on the nRF9160 DK that was available since board version 0.14.0.
-
-         For more information on other optional build parameters, run the ``west build -h`` help text command.
-
       See :ref:`gs_programming_board_names` for more information on the supported boards and build targets.
-      To reuse an existing build directory for building another application for another board or build target, pass ``-p=auto`` to ``west build``.
-
-      If you want to configure your application, run the following west command:
-
-      .. code-block:: console
-
-         west build -t menuconfig
-
-      See :ref:`configure_application` for additional information about configuring an application.
+      The board targets supported for a given application are always listed in its requirements section.
 
       After running the ``west build`` command, the build files can be found in :file:`build/zephyr`.
       |output_files_note|
@@ -133,5 +102,29 @@ After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <g
       The ``west flash`` command automatically resets the kit and starts the application.
 
 For more information on building and programming using the command line, see the Zephyr documentation on :ref:`zephyr:west-build-flash-debug`.
+
+Optional build parameters
+=========================
+
+You can customize the basic ``west build`` command in a variety of ways.
+Here are some of the possible options you can use:
+
+* Some applications contain configuration overlay files that enable specific features.
+  These can be added to the ``west build`` command as follows:
+
+  .. parsed-literal::
+     :class: highlight
+
+     west build -b *build_target* -- -DOVERLAY_CONFIG="overlay-feature1.conf;overlay-feature2.conf"
+
+  See :ref:`configuration_permanent_change` and Zephyr's :ref:`zephyr:west-building-cmake-args` for more information.
+* You can include the *directory_name* parameter to build from a directory other than the application directory.
+* You can use the *build_target@board_revision* parameter to get extra devicetree overlays with new features available for a board version.
+  The *board_revision* is printed on the label of your DK, just below the PCA number.
+  For example, if you run the west build command with an additional parameter ``@1.0.0`` for nRF9160 build target, it adds the external flash on the nRF9160 DK that was available since board version 0.14.0.
+* You can :ref:`start menuconfig with the west command <configuration_temporary_change>` to configure your application.
+* You can reuse an existing build directory for building another application for another board or build target by passing ``-p=auto`` to ``west build``.
+
+For more information on other optional build parameters, run the ``west build -h`` help text command.
 
 .. |output_files_note| replace:: For more information about files generated as output of the build process, see :ref:`app_build_output_files`.

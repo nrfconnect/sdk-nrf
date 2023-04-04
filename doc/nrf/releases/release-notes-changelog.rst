@@ -722,4 +722,8 @@ Updated:
 
 Moved:
 
- *   * The :ref:`mod_memfault` library documentation from :ref:`lib_others` to :ref:`lib_debug`.
+  * The :ref:`mod_memfault` library documentation from :ref:`lib_others` to :ref:`lib_debug`.
+
+Removed:
+
+  * The section "Pointing the repositories to the right remotes after they were moved" from the :ref:`gs_updating` page.

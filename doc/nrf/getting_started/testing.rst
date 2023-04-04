@@ -19,15 +19,8 @@ See the user interface section of the application's documentation for descriptio
 How to connect with |nRFVSC|
 ****************************
 
-The |nRFVSC| is a complete IDE for developing applications for nRF91, nRF53 and nRF52 Series devices.
-The extension pack includes an integrated serial port and RTT terminal, which you can use to connect to your board.
-For detailed instructions, see the `How to connect to the terminal`_ section on the `nRF Connect for Visual Studio Code`_ documentation site.
-
-.. note::
-
-   .. include:: modifying.rst
-      :start-after: modify_vsc_compiler_options_start
-      :end-before: modify_vsc_compiler_options_end
+The |nRFVSC| includes an integrated serial port and RTT terminal, which you can use to connect to your board.
+For detailed instructions, see `How to connect to the terminal`_ on the `nRF Connect for Visual Studio Code`_ documentation site.
 
 .. _putty:
 
@@ -135,7 +128,7 @@ When debugging the network core, the application core debug session runs in the 
 
 Complete the following steps to start debugging the network core:
 
-1. Set up sessions for the application core and network core as mentioned in the `Debugging applications for a multi-core System on Chip`_ section in the |nRFVSC| documentation.
+1. Set up sessions for the application core and network core as mentioned in the `How to debug applications for a multi-core System on Chip`_ section in the |nRFVSC| documentation.
 #. Select the appropriate CPU for debugging in each session, corresponding to the application core and the network core of your SoC, respectively.
 #. Once both sessions are established, execute the code on the application core.
 
@@ -143,6 +136,8 @@ Complete the following steps to start debugging the network core:
 #. Start code execution on the network core in the other debug session.
 
 If you want to reset the network core while debugging, make sure to first reset the application core and execute the code.
+
+For more information about debugging in the |nRFVSC|, for example testing and debugging with custom options, see the `Debugging overview`_ and other guides in the debugging section of the extension documentation.
 
 .. _gs_debugging_spe_nspe:
 
@@ -214,7 +209,7 @@ One of such modules is for example Zephyr's :ref:`zephyr:thread_analyzer`.
 Debug tools
 ===========
 
-The main recommended tool for debugging in the |NCS| is `nRF Debug <Debugging applications for a multi-core System on Chip_>`_ of the |nRFVSC|.
+The main recommended tool for debugging in the |NCS| is `nRF Debug <Debugging overview_>`_ of the |nRFVSC|.
 The tool uses `Microsoft's debug adaptor`_ and integrates custom debugging features specific for the |NCS|.
 
 * When working with the |nRFVSC|, use nRF Debug after adding the required Kconfig options to the :file:`prj.conf` file.

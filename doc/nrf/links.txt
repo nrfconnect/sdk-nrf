@@ -176,18 +176,21 @@
 .. _`How to work with Devicetree Visual Editor`: https://nrfconnect.github.io/vscode-nrf-connect/guides/work_with_devicetree_editor.html
 .. _`Devicetree support overview`: https://nrfconnect.github.io/vscode-nrf-connect/guides/ncs_configure_app.html#devicetree-overview
 .. _`Devicetree language support`: https://nrfconnect.github.io/vscode-nrf-connect/guides/ncs_configure_app.html#devicetree-language-support
-.. _`Installing using Visual Studio Code`:
+.. _`How to install the extension`:
 .. _`Installing on Linux`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/install.html
 .. _`How to build an application`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/build_app_ncs.html
 .. _`Migrating IDE`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_welcome.html#open-an-existing-application
 .. _`How to debug an application`:
 .. _`How to connect to the terminal`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/quick_debug.html
-.. _`Debugging applications for a multi-core System on Chip`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_use.html#how-to-debug-applications-for-a-multi-core-system-on-chip
+.. _`Debugging overview`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_concepts.html
+.. _`How to debug`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_use.html
+.. _`How to debug applications for a multi-core System on Chip`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_use.html#how-to-debug-applications-for-a-multi-core-system-on-chip
 .. _`west module management`: https://nrfconnect.github.io/vscode-nrf-connect/guides/west_module_management.html
 .. _`Custom launch and debug configurations`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_advanced.html#custom-launch-and-debug-configurations
 .. _`Application-specific flash options`: https://nrfconnect.github.io/vscode-nrf-connect/guides/bd_work_with_boards.html#how-to-flash-boards
 .. _`How to work with build configurations`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_config.html
 .. _`Memory report`: https://nrfconnect.github.io/vscode-nrf-connect/guides/memory_overview.html
+.. _`Kconfig action in the Actions View`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_actions.html
 
 .. _`SPAKE2+ Python Tool page`: https://project-chip.github.io/connectedhomeip-doc/scripts/tools/spake2p/README.html
 
