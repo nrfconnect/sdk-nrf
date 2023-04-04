@@ -18,5 +18,7 @@ They introduce you to concepts that are important to work with the protocol and 
    protocols/multiprotocol/index
    protocols/nfc/index
    protocols/thread/index
-   protocols/wifi/index
    protocols/zigbee/index
+   protocols/wifi/index
+
+For details on Wi-Fi coexistence with short range protocols (like Bluetooth LE or Thread), see the :ref:`ug_radio_coex` page.
