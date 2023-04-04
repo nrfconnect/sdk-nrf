@@ -209,7 +209,9 @@ CHIP_ERROR AppTask::Init()
 	}
 	GetNUSService().RegisterCommand("Lock", sizeof("Lock"), NUSLockCallback, nullptr);
 	GetNUSService().RegisterCommand("Unlock", sizeof("Unlock"), NUSUnlockCallback, nullptr);
-	GetNUSService().StartServer();
+	if(!GetNUSService().StartServer()){
+		LOG_ERR("GetNUSService().StartServer() failed");
+	}
 #endif
 
 	/* Initialize lock manager */
@@ -636,22 +638,28 @@ void AppTask::LockStateChanged(BoltLockManager::State state, BoltLockManager::Op
 	case BoltLockManager::State::kLockingInitiated:
 		LOG_INF("Lock action initiated");
 		sLockLED.Blink(50, 50);
+#ifdef CONFIG_CHIP_NUS
+		GetNUSService().SendData("locking", sizeof("locking"));
+#endif
 		break;
 	case BoltLockManager::State::kLockingCompleted:
 		LOG_INF("Lock action completed");
 		sLockLED.Set(true);
 #ifdef CONFIG_CHIP_NUS
-		GetNUSService().SendData("Locked", sizeof("Locked"));
+		GetNUSService().SendData("locked", sizeof("locked"));
 #endif
 		break;
 	case BoltLockManager::State::kUnlockingInitiated:
 		LOG_INF("Unlock action initiated");
 		sLockLED.Blink(50, 50);
+#ifdef CONFIG_CHIP_NUS
+		GetNUSService().SendData("unlocking", sizeof("unlocking"));
+#endif
 		break;
 	case BoltLockManager::State::kUnlockingCompleted:
 		LOG_INF("Unlock action completed");
 #ifdef CONFIG_CHIP_NUS
-		GetNUSService().SendData("Unlocked", sizeof("Unlocked"));
+		GetNUSService().SendData("unlocked", sizeof("unlocked"));
 #endif
 		sLockLED.Set(false);
 		break;
@@ -726,7 +734,7 @@ void AppTask::RegisterSwitchCliCommand()
 #ifdef CONFIG_CHIP_NUS
 void AppTask::NUSLockCallback(void *context)
 {
-	LOG_INF("Received LOCK command from NUS");
+	LOG_DBG("Received LOCK command from NUS");
 	if (BoltLockMgr().mState == BoltLockManager::State::kLockingCompleted ||
 	    BoltLockMgr().mState == BoltLockManager::State::kLockingInitiated) {
 		LOG_INF("Device is already locked");
@@ -740,7 +748,7 @@ void AppTask::NUSLockCallback(void *context)
 
 void AppTask::NUSUnlockCallback(void *context)
 {
-	LOG_INF("Received LOCK command from NUS");
+	LOG_DBG("Received UNLOCK command from NUS");
 	if (BoltLockMgr().mState == BoltLockManager::State::kUnlockingCompleted ||
 	    BoltLockMgr().mState == BoltLockManager::State::kUnlockingInitiated) {
 		LOG_INF("Device is already unlocked");

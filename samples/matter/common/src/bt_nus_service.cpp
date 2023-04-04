@@ -60,30 +60,42 @@ bool NUSService::Init(uint8_t priority, uint16_t minInterval, uint16_t maxInterv
 
 	mAdvertisingRequest.onStarted = [](int rc) {
 		if (rc == 0) {
-			LOG_INF("NUS BLE advertising started");
+			GetNUSService().mIsStarted = true;
+			LOG_DBG("NUS BLE advertising started");
 		} else {
 			LOG_ERR("Failed to start NUS BLE advertising: %d", rc);
 		}
 	};
-	mAdvertisingRequest.onStopped = []() { LOG_DBG("NUS BLE advertising stopped"); };
+	mAdvertisingRequest.onStopped = []() {
+		bt_conn_auth_info_cb_unregister(&sConnAuthInfoCallbacks);
+		bt_conn_auth_cb_register(nullptr);
+		bt_nus_init(nullptr);
 
-	settings_load();
+		GetNUSService().mIsStarted = false;
+		LOG_DBG("NUS BLE advertising stopped");
+	};
+
 #if defined(CONFIG_BT_FIXED_PASSKEY)
-	VerifyOrReturnError(bt_passkey_set(CONFIG_CHIP_NUS_FIXED_PASSKEY) == 0, false);
+	if (bt_passkey_set(CONFIG_CHIP_NUS_FIXED_PASSKEY) != 0)
+		return false;
 #endif
-	VerifyOrReturnError(bt_conn_auth_cb_register(&sConnAuthCallbacks) == 0, false);
-	VerifyOrReturnError(bt_conn_auth_info_cb_register(&sConnAuthInfoCallbacks) == 0, false);
-	VerifyOrReturnError(bt_nus_init(&sNusCallbacks) == 0, false);
 
 	return true;
 }
 
-void NUSService::StartServer()
+bool NUSService::StartServer()
 {
 	if (mIsStarted) {
 		LOG_WRN("NUS service was already started");
-		return;
+		return false;
 	}
+
+	if (bt_conn_auth_cb_register(&sConnAuthCallbacks) != 0)
+		return false;
+	if (bt_conn_auth_info_cb_register(&sConnAuthInfoCallbacks) != 0)
+		return false;
+	if (bt_nus_init(&sNusCallbacks) != 0)
+		return false;
 
 	PlatformMgr().LockChipStack();
 	CHIP_ERROR ret = BLEAdvertisingArbiter::InsertRequest(mAdvertisingRequest);
@@ -91,36 +103,41 @@ void NUSService::StartServer()
 
 	if (CHIP_NO_ERROR != ret) {
 		LOG_ERR("Could not start NUS service");
-		return;
+		return false;
 	}
-	mIsStarted = true;
-	LOG_INF("NUS service started");
+
+	return true;
 }
 
 void NUSService::StopServer()
 {
-	VerifyOrReturn(mIsStarted);
+	if (!mIsStarted)
+		return;
 
 	PlatformMgr().LockChipStack();
 	BLEAdvertisingArbiter::CancelRequest(mAdvertisingRequest);
 	PlatformMgr().UnlockChipStack();
-
-	mIsStarted = false;
-	LOG_INF("NUS service stopped");
 }
 
 void NUSService::RxCallback(bt_conn *conn, const uint8_t *const data, uint16_t len)
 {
-	VerifyOrReturn(bt_conn_get_security(GetNUSService().mBTConnection) >= BT_SECURITY_L2);
+	if (bt_conn_get_security(GetNUSService().mBTConnection) < BT_SECURITY_L2) {
+		LOG_ERR("Received NUS command, but security requirements are not met.");
+		return;
+	}
+
 	LOG_DBG("NUS received: %d bytes", len);
 	GetNUSService().DispatchCommand(reinterpret_cast<const char *>(data), len);
 }
 
 bool NUSService::RegisterCommand(const char *const name, size_t length, CommandCallback callback, void *context)
 {
-	VerifyOrReturnError(name, false);
-	VerifyOrReturnError(mCommandsCounter < CONFIG_CHIP_NUS_MAX_COMMANDS, false);
-	VerifyOrReturnError(length < CONFIG_CHIP_NUS_MAX_COMMAND_LEN, false);
+	if (!name)
+		return false;
+	if (mCommandsCounter > CONFIG_CHIP_NUS_MAX_COMMANDS)
+		return false;
+	if (length > CONFIG_CHIP_NUS_MAX_COMMAND_LEN)
+		return false;
 
 	Command newCommand{};
 	memcpy(newCommand.command, name, length);
@@ -148,35 +165,42 @@ void NUSService::DispatchCommand(const char *const data, uint16_t len)
 
 bool NUSService::SendData(const char *const data, size_t length)
 {
-	VerifyOrReturnError(mIsStarted && mBTConnection, false);
-	VerifyOrReturnError(mBTConnection, false);
-	VerifyOrReturnError(bt_conn_get_security(mBTConnection) >= BT_SECURITY_L2, false);
-	VerifyOrReturnError(bt_nus_send(mBTConnection, reinterpret_cast<const uint8_t *const>(data), length) == 0,
-			    false);
+	if (!mIsStarted || !mBTConnection)
+		return false;
+	if (bt_conn_get_security(mBTConnection) < BT_SECURITY_L2)
+		return false;
+	if (bt_nus_send(mBTConnection, reinterpret_cast<const uint8_t *const>(data), length) != 0)
+		return false;
+
 	return true;
 }
 
 void NUSService::Connected(bt_conn *conn, uint8_t err)
 {
-	if (err || !conn) {
-		LOG_ERR("NUS Connection failed (err %u)", err);
-		return;
+	if (GetNUSService().mIsStarted) {
+		if (err || !conn) {
+			LOG_ERR("NUS Connection failed (err %u)", err);
+			return;
+		}
+
+		GetNUSService().mBTConnection = conn;
+		bt_conn_set_security(conn, BT_SECURITY_L3);
+
+		LOG_DBG("NUS BT Connected to %s", LogAddress(conn));
 	}
-
-	GetNUSService().mBTConnection = conn;
-	bt_conn_set_security(conn, BT_SECURITY_L3);
-
-	LOG_INF("NUS BT Connected to %s", LogAddress(conn));
 }
 
 void NUSService::Disconnected(bt_conn *conn, uint8_t reason)
 {
-	LOG_INF("NUS BT Disconnected from %s (reason %u)", LogAddress(conn), reason);
+	LOG_DBG("NUS BT Disconnected from %s (reason %u)", LogAddress(conn), reason);
 	GetNUSService().mBTConnection = nullptr;
 }
 
 void NUSService::SecurityChanged(bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
+	if (!GetNUSService().mIsStarted)
+		return;
+
 	if (!err) {
 		LOG_DBG("NUS BT Security changed: %s level %u", LogAddress(conn), level);
 	} else {
@@ -198,11 +222,17 @@ void NUSService::AuthCancel(bt_conn *conn)
 
 void NUSService::PairingComplete(bt_conn *conn, bool bonded)
 {
+	if (!GetNUSService().mIsStarted)
+		return;
+
 	LOG_DBG("NUS BT Pairing completed: %s, bonded: %d", LogAddress(conn), bonded);
 }
 
 void NUSService::PairingFailed(bt_conn *conn, enum bt_security_err reason)
 {
+	if (!GetNUSService().mIsStarted)
+		return;
+
 	LOG_ERR("NUS BT Pairing failed to %s : reason %d", LogAddress(conn), static_cast<uint8_t>(reason));
 }
 

@@ -221,6 +221,10 @@ Enabling Matter Bluetooth LE with Nordic UART Service
 
 You can enable the :ref:`matter_lock_sample_ble_nus` feature by setting the :kconfig:option:`CONFIG_CHIP_NUS` Kconfig option to ``y``.
 
+.. note::
+   This sample supports one Bluetooth LE connection at a time.
+   Matter commissioning, DFU, and NUS over Bluetooth LE must be run separately.
+
 The door lock's Bluetooth LE service extension with NUS requires a secure connection with a smartphone, which is established using a security PIN code.
 The PIN code is different depending on the build type:
 
@@ -397,6 +401,9 @@ Remote control allows you to control the Matter door lock device from a Thread o
 
 Commissioning the device
 ------------------------
+
+.. note::
+   Before starting the commissioning to Matter procedure, ensure that there is no other Bluetooth LE connection established with the device.
 
 .. matter_door_lock_sample_commissioning_start
 
@@ -580,6 +587,9 @@ To test the :ref:`matter_lock_sample_ble_nus` feature, complete the following st
 #. Tap on the generated macros and observe the **LED 2** on the DK.
 
 The Bluetooth LE connection between a phone and the DK will be suspended when the commissioning to the Matter network is in progress or there is an active session of SMP DFU.
+
+To read the current door lock state from the device, read the Bluetooth LE RX characteristic.
+The new lock state is updated after changing the state from any of the following sources: NUS, buttons, Matter stack.
 
 Dependencies
 ************
