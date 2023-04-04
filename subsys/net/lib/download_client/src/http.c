@@ -57,6 +57,8 @@ int http_get_request_send(struct download_client *client)
 	__ASSERT_NO_MSG(client->host);
 	__ASSERT_NO_MSG(client->file);
 
+	client->http.has_header = false;
+
 	err = url_parse_host(client->host, host, sizeof(host));
 	if (err) {
 		return err;
@@ -85,14 +87,17 @@ int http_get_request_send(struct download_client *client)
 		len = snprintf(client->buf,
 			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
 			HTTP_GET_RANGE, file, host, client->progress, off);
+		client->http.ranged = true;
 	} else if (client->progress) {
 		len = snprintf(client->buf,
 			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
 			HTTP_GET_OFFSET, file, host, client->progress);
+		client->http.ranged = false;
 	} else {
 		len = snprintf(client->buf,
 			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
 			HTTP_GET, file, host);
+		client->http.ranged = false;
 	}
 
 	if (len < 0 || len > CONFIG_DOWNLOAD_CLIENT_BUF_SIZE) {
@@ -123,12 +128,8 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 	char *p;
 	char *q;
 	unsigned int http_status;
-	const bool using_range_requests =
-		(client->proto == IPPROTO_TLS_1_2 ||
-		 IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS) ||
-		 client->progress);
 
-	const unsigned int expected_status = using_range_requests ? 206 : 200;
+	const unsigned int expected_status = (client->http.ranged || client->progress) ? 206 : 200;
 
 	p = strnstr(client->buf, "\r\n\r\n", sizeof(client->buf));
 	if (!p || p > client->buf + client->offset) {
@@ -183,7 +184,7 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 	 * and via "Content-Range" in case of HTTPS with range requests.
 	 */
 	if (client->file_size == 0) {
-		if (using_range_requests) {
+		if (client->http.ranged) {
 			p = strnstr(client->buf, "content-range", sizeof(client->buf));
 			if (!p) {
 				LOG_ERR("Server did not send "
@@ -281,12 +282,20 @@ int http_parse(struct download_client *client, size_t len)
 	client->progress += MIN(client->offset, len);
 
 	/* Have we received a whole fragment or the whole file? */
-	if (client->progress != client->file_size &&
-	    client->offset < (client->config.frag_size_override != 0 ?
-			      client->config.frag_size_override :
-			      CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE)) {
-		return 1;
+	if (client->progress != client->file_size) {
+		if (client->http.ranged) {
+			if (client->offset < (client->config.frag_size_override != 0 ?
+						      client->config.frag_size_override :
+						      CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE)) {
+				/* Ranged query: read until a full fragment */
+				return 1;
+			}
+		} else {
+			/* Non-ranged query: just keep on reading, ignore fragment size */
+			return 1;
+		}
 	}
 
+	/* Either we have a full file, or we need to request a next fragment */
 	return 0;
 }

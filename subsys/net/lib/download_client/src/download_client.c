@@ -41,6 +41,69 @@ int coap_initiate_retransmission(struct download_client *dl);
 int coap_parse(struct download_client *client, size_t len);
 int coap_request_send(struct download_client *client);
 
+static int handle_disconnect(struct download_client *client);
+
+static bool is_idle(struct download_client *client)
+{
+	bool ret;
+
+	k_mutex_lock(&client->mutex, K_FOREVER);
+	ret = client->state == DOWNLOAD_CLIENT_IDLE;
+	k_mutex_unlock(&client->mutex);
+	return ret;
+}
+
+static bool is_connecting(struct download_client *client)
+{
+	bool ret;
+
+	k_mutex_lock(&client->mutex, K_FOREVER);
+	ret = client->state == DOWNLOAD_CLIENT_CONNECTING;
+	k_mutex_unlock(&client->mutex);
+	return ret;
+}
+
+static bool is_downloading(struct download_client *client)
+{
+	bool ret;
+
+	k_mutex_lock(&client->mutex, K_FOREVER);
+	ret = client->state == DOWNLOAD_CLIENT_DOWNLOADING;
+	k_mutex_unlock(&client->mutex);
+	return ret;
+}
+
+static bool is_closing(struct download_client *client)
+{
+	bool ret;
+
+	k_mutex_lock(&client->mutex, K_FOREVER);
+	ret = client->state == DOWNLOAD_CLIENT_CLOSING;
+	k_mutex_unlock(&client->mutex);
+	return ret;
+}
+
+static bool is_finished(struct download_client *client)
+{
+	bool ret;
+
+	k_mutex_lock(&client->mutex, K_FOREVER);
+	ret = client->state == DOWNLOAD_CLIENT_FINNISHED;
+	k_mutex_unlock(&client->mutex);
+	return ret;
+}
+
+static void set_state(struct download_client *client, int state)
+{
+	k_mutex_lock(&client->mutex, K_FOREVER);
+	/* Prevent moving back to CLOSING from IDLE */
+	if ((state != DOWNLOAD_CLIENT_CLOSING) || (client->state != DOWNLOAD_CLIENT_IDLE)) {
+		client->state = state;
+	}
+	k_mutex_unlock(&client->mutex);
+	LOG_DBG("state = %d", state);
+}
+
 static const char *str_family(int family)
 {
 	switch (family) {
@@ -335,14 +398,13 @@ static int client_connect(struct download_client *dl)
 	err = connect(dl->fd, &dl->remote_addr, addrlen);
 	if (err) {
 		err = -errno;
-		LOG_ERR("Unable to connect, errno %d", errno);
+		LOG_ERR("Unable to connect, errno %d", -err);
 	}
 
 cleanup:
 	if (err) {
 		/* Unable to connect, close socket */
-		close(dl->fd);
-		dl->fd = -1;
+		download_client_disconnect(dl);
 	}
 
 	return err;
@@ -374,6 +436,9 @@ int socket_send(const struct download_client *client, size_t len, int timeout)
 
 static int request_send(struct download_client *dl)
 {
+	if (dl->fd < 0) {
+		return -1;
+	}
 	switch (dl->proto) {
 	case IPPROTO_TCP:
 	case IPPROTO_TLS_1_2:
@@ -388,7 +453,7 @@ static int request_send(struct download_client *dl)
 	return 0;
 }
 
-static int fragment_evt_send(const struct download_client *client)
+static int fragment_evt_send(struct download_client *client)
 {
 	__ASSERT(client->offset <= CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
 		 "Buffer overflow!");
@@ -400,6 +465,8 @@ static int fragment_evt_send(const struct download_client *client)
 			.len = client->offset,
 		}
 	};
+
+	client->offset = 0;
 
 	return client->callback(&evt);
 }
@@ -422,13 +489,14 @@ static int reconnect(struct download_client *dl)
 	int err;
 
 	LOG_INF("Reconnecting..");
-	err = close(dl->fd);
-	if (err) {
-		LOG_DBG("disconnect failed, %d", err);
-		return err;
+	if (dl->fd >= 0) {
+		err = close(dl->fd);
+		if (err) {
+			LOG_DBG("disconnect failed, %d", err);
+			return err;
+		}
+		dl->fd = -1;
 	}
-	dl->fd = -1;
-
 	err = client_connect(dl);
 
 	return err;
@@ -487,203 +555,276 @@ static int request_resend(struct download_client *dl)
 	return 0;
 }
 
-void download_thread(void *client, void *a, void *b)
+/**
+ * @brief Handle socket errors.
+ *
+ * @param dl
+ * @return negative value to stop the handler loop, zero to rettry the query.
+ */
+static int handle_socket_error(struct download_client *dl, ssize_t len)
 {
-	int rc = 0;
-	int error_cause;
-	ssize_t len;
-	struct download_client *const dl = client;
+	int rc;
 
-wait_for_download:
-	k_sem_take(&dl->wait_for_download, K_FOREVER);
-
-	if (dl->fd == -1 && dl->host != NULL) {
-		rc = client_connect(dl);
-
-		if (rc == 0) {
-			if (IS_ENABLED(CONFIG_COAP) &&
-			    (dl->proto == IPPROTO_UDP || dl->proto == IPPROTO_DTLS_1_2)) {
-				coap_block_init(client, dl->progress);
-			}
-			rc = request_send(dl);
-		}
-		if (rc) {
-			error_evt_send(dl, -rc);
-		}
+	if (dl->fd == -1) {
+		/* download was aborted */
+		return -1;
 	}
 
-	while (dl->fd != -1) {
-		__ASSERT(dl->offset < sizeof(dl->buf), "Buffer overflow");
-
-		if (sizeof(dl->buf) - dl->offset == 0) {
-			LOG_ERR("Could not fit HTTP header from server (> %d)",
-				sizeof(dl->buf));
-			error_evt_send(dl, E2BIG);
-			break;
-		}
-
-		LOG_DBG("Receiving up to %d bytes at %p...", (sizeof(dl->buf) - dl->offset),
-			(void *)(dl->buf + dl->offset));
-
-		len = socket_recv(dl);
-
-		if ((len == 0) || (len == -1)) {
-			/* We just had an unexpected socket error or closure */
-
-			if (dl->fd == -1) {
-				/* download was aborted */
-				break;
-			}
-
-			/* If there is a partial data payload in our buffer,
-			 * and it has been accounted in our progress, we have
-			 * to hand it to the application before discarding it.
-			 */
-			if ((dl->offset > 0) && (dl->http.has_header)) {
-				rc = fragment_evt_send(dl);
-				if (rc) {
-					/* Restart and suspend */
-					LOG_INF("Fragment refused, download stopped.");
-					break;
-				}
-			}
-
-			error_cause = ECONNRESET;
-
-			if (len == -1) {
-				if ((errno == ETIMEDOUT) || (errno == EWOULDBLOCK) ||
-				    (errno == EAGAIN)) {
-					rc = request_resend(dl);
-					if (rc == -1) {
-						break;
-					} else if (rc == 1) {
-						goto send_again;
-					}
-					error_cause = ETIMEDOUT;
-				}
-				LOG_ERR("Error in recv(), errno %d", errno);
-			}
-
-			if (len == 0) {
-				LOG_WRN("Peer closed connection!");
-			}
-
-			/* Notify the application of the error via en event.
-			 * Attempt to reconnect and resume the download
-			 * if the application returns Zero via the event.
-			 */
-			rc = error_evt_send(dl, error_cause);
-			if (rc) {
-				/* Restart and suspend */
-				break;
-			}
-
-			rc = reconnect(dl);
-			if (rc) {
-				error_evt_send(dl, EHOSTDOWN);
-				break;
-			}
-
-			goto send_again;
-		}
-
-		LOG_DBG("Read %d bytes from socket", len);
-
-		if (dl->proto == IPPROTO_TCP || dl->proto == IPPROTO_TLS_1_2) {
-			rc = http_parse(client, len);
-			if (rc > 0) {
-				/* Wait for more data (fragment/header) */
-				continue;
-			}
-		} else if (IS_ENABLED(CONFIG_COAP)) {
-			rc = coap_parse(client, (size_t)len);
-			if (rc == 1) {
-				/* Duplicate packet received */
-				continue;
-			}
-		}
-
-		if (rc < 0) {
-			/* Something was wrong with the packet
-			 * Restart and suspend
-			 */
-			error_evt_send(dl, EBADMSG);
-			break;
-		}
-
-		if (dl->file_size) {
-			LOG_INF("Downloaded %u/%u bytes (%d%%)",
-				dl->progress, dl->file_size,
-				(dl->progress * 100) / dl->file_size);
-		} else {
-			LOG_INF("Downloaded %u bytes", dl->progress);
-		}
-
-		/* Send fragment to application.
-		 * If the application callback returns non-zero, stop.
-		 */
+	/* If there is a partial data payload in our buffer,
+	 * and it has been accounted in our progress, we have
+	 * to hand it to the application before discarding it.
+	 */
+	if ((dl->offset > 0) && (dl->http.has_header)) {
 		rc = fragment_evt_send(dl);
 		if (rc) {
 			/* Restart and suspend */
 			LOG_INF("Fragment refused, download stopped.");
-			break;
+			return -1;
+		}
+	}
+
+	rc = ECONNRESET;
+
+	if (len == -1) {
+		if ((errno == ETIMEDOUT) || (errno == EWOULDBLOCK) ||
+			(errno == EAGAIN)) {
+			k_mutex_lock(&dl->mutex, K_FOREVER);
+			rc = request_resend(dl);
+			k_mutex_unlock(&dl->mutex);
+			if (rc == -1) {
+				return -1;
+			} else if (rc == 1) {
+				return 0;
+			}
+			rc = ETIMEDOUT;
+		}
+		LOG_ERR("Error in recv(), errno %d", errno);
+	}
+
+	if (len == 0) {
+		LOG_WRN("Peer closed connection!");
+	}
+
+	/* Notify the application of the error via en event.
+	 * Attempt to reconnect and resume the download
+	 * if the application returns Zero via the event.
+	 */
+	rc = error_evt_send(dl, rc);
+	if (rc) {
+		/* Restart and suspend */
+		return -1;
+	}
+
+	k_mutex_lock(&dl->mutex, K_FOREVER);
+	rc = reconnect(dl);
+	k_mutex_unlock(&dl->mutex);
+	if (rc) {
+		error_evt_send(dl, EHOSTDOWN);
+		return -1;
+	}
+
+	return 0;
+}
+
+/* Return:
+ * 1 wait for more data,
+ * -1 to stop
+ * 0 to send a next request
+ */
+static int handle_received(struct download_client *dl, ssize_t len)
+{
+	int rc;
+
+	LOG_DBG("Read %d bytes from socket", len);
+
+	if (dl->proto == IPPROTO_TCP || dl->proto == IPPROTO_TLS_1_2) {
+		rc = http_parse(dl, len);
+		if (rc > 0 &&
+		    (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS) || !dl->http.has_header)) {
+			/* Wait for more data (fragment/header).
+			 * Unranged reguest (normal GET) should start forwarding the data
+			 * once HTTP headers are received. Ranged-GET should receive full
+			 * buffer(fragment) before sending an event.
+			 */
+			return 1;
+		}
+	} else if (IS_ENABLED(CONFIG_COAP)) {
+		rc = coap_parse(dl, (size_t)len);
+		if (rc == 1) {
+			/* Duplicate packet received */
+			return 1;
+		}
+	} else {
+		/* Unknown protocol */
+		rc = -1;
+	}
+
+	if (rc < 0) {
+		/* Something was wrong with the packet
+		 * Restart and suspend
+		 */
+		error_evt_send(dl, EBADMSG);
+		return -1;
+	}
+
+	if (dl->file_size) {
+		LOG_INF("Downloaded %u/%u bytes (%d%%)", dl->progress, dl->file_size,
+			(dl->progress * 100) / dl->file_size);
+	} else {
+		LOG_INF("Downloaded %u bytes", dl->progress);
+	}
+
+	/* Send fragment to application.
+	 * If the application callback returns non-zero, stop.
+	 */
+	if (fragment_evt_send(dl)) {
+		/* Restart and suspend */
+		LOG_INF("Fragment refused, download stopped.");
+		rc = -1;
+	}
+
+	if (dl->progress == dl->file_size) {
+		LOG_INF("Download complete");
+		const struct download_client_evt evt = {
+			.id = DOWNLOAD_CLIENT_EVT_DONE,
+		};
+		dl->callback(&evt);
+		/* Restart and suspend */
+		rc = -1;
+	} else if ((dl->proto == IPPROTO_TCP || dl->proto == IPPROTO_TLS_1_2) &&
+		   IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
+		/* Request a next range */
+		rc = 0;
+	}
+
+	/* Attempt to reconnect if the connection was closed */
+	if (dl->http.connection_close && rc >= 0) {
+		dl->http.connection_close = false;
+		k_mutex_lock(&dl->mutex, K_FOREVER);
+		rc = reconnect(dl);
+		k_mutex_unlock(&dl->mutex);
+		if (rc) {
+			error_evt_send(dl, EHOSTDOWN);
+			rc = -1;
+		}
+	}
+	return rc;
+}
+
+void download_thread(void *client, void *a, void *b)
+{
+	int rc;
+	ssize_t len;
+	struct download_client *const dl = client;
+	bool send_request;
+
+	while (true) {
+		rc = 0;
+
+		/* Wait for action */
+		k_sem_take(&dl->wait_for_download, K_FOREVER);
+
+		/* Connect to the target host */
+		k_mutex_lock(&dl->mutex, K_FOREVER);
+		if (dl->fd == -1 && dl->host != NULL) {
+			rc = client_connect(dl);
+		}
+		k_mutex_unlock(&dl->mutex);
+
+		if (rc) {
+			error_evt_send(dl, -rc);
+			continue;
 		}
 
-		if (dl->progress == dl->file_size) {
-			LOG_INF("Download complete");
-			const struct download_client_evt evt = {
-				.id = DOWNLOAD_CLIENT_EVT_DONE,
-			};
-			dl->callback(&evt);
-			/* Restart and suspend */
-			break;
+		/* Initialize CoAP */
+		k_mutex_lock(&dl->mutex, K_FOREVER);
+		if (IS_ENABLED(CONFIG_COAP) &&
+			(dl->proto == IPPROTO_UDP || dl->proto == IPPROTO_DTLS_1_2)) {
+			coap_block_init(client, dl->progress);
 		}
+		k_mutex_unlock(&dl->mutex);
 
-		/* Attempt to reconnect if the connection was closed */
-		if (dl->http.connection_close) {
-			dl->http.connection_close = false;
-			reconnect(dl);
-		}
+		len = 0;
+		send_request = true;
 
-send_again:
-		dl->offset = 0;
-		/* Request next fragment, if necessary (HTTPS/CoAP) */
-		if (dl->proto != IPPROTO_TCP || len == 0
-		   || IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
-			dl->http.has_header = false;
-
-			rc = request_send(dl);
-			if (rc) {
-				if (dl->fd == -1) {
-					/* download was aborted */
-					break;
-				}
-
-				rc = error_evt_send(dl, ECONNRESET);
+		/* Request loop */
+		while (true) {
+			if (send_request) {
+				/* Request next fragment */
+				k_mutex_lock(&dl->mutex, K_FOREVER);
+				dl->offset = 0;
+				rc = request_send(dl);
+				k_mutex_unlock(&dl->mutex);
+				send_request = false;
 				if (rc) {
-					/* Restart and suspend */
-					break;
-				}
+					if (rc == -1) {
+						/* download was aborted */
+						break;
+					}
 
-				rc = reconnect(dl);
+					rc = error_evt_send(dl, ECONNRESET);
+					if (rc) {
+						/* Restart and suspend */
+						break;
+					}
+
+					rc = reconnect(dl);
+					if (rc) {
+						error_evt_send(dl, EHOSTDOWN);
+						break;
+					}
+					/* Send request again */
+					send_request = true;
+					continue;
+				}
+			}
+
+			__ASSERT(dl->offset < sizeof(dl->buf), "Buffer overflow");
+
+			if (sizeof(dl->buf) - dl->offset == 0) {
+				LOG_ERR("Could not fit HTTP header from server (> %d)",
+					sizeof(dl->buf));
+				error_evt_send(dl, E2BIG);
+				break;
+			}
+
+			LOG_DBG("Receiving up to %d bytes at %p...", (sizeof(dl->buf) - dl->offset),
+				(void *)(dl->buf + dl->offset));
+
+			k_mutex_lock(&dl->mutex, K_FOREVER);
+			len = socket_recv(dl);
+			k_mutex_unlock(&dl->mutex);
+
+			if ((len == 0) || (len == -1)) {
+				/* We just had an unexpected socket error or closure */
+				rc = handle_socket_error(dl, len);
 				if (rc) {
-					error_evt_send(dl, EHOSTDOWN);
 					break;
 				}
+				/* Send request again */
+				send_request = true;
 
-				goto send_again;
+			} else {
+				rc = handle_received(dl, len);
+				if (rc < 0) {
+					break;
+				} else if (rc == 0) {
+					/* Send request again */
+					send_request = true;
+				}
 			}
 		}
-	}
 
-	dl->file = NULL;
-	if (dl->close_when_done && dl->fd != -1) {
-		download_client_disconnect(dl);
-		LOG_DBG("Connection closed automatically");
-	}
+		k_mutex_lock(&dl->mutex, K_FOREVER);
+		dl->file = NULL;
+		if (dl->close_when_done && dl->fd != -1) {
+			download_client_disconnect(dl);
+			LOG_DBG("Connection closed automatically");
+		}
+		k_mutex_unlock(&dl->mutex);
 
-	/* Do not let the thread return, since it can't be restarted */
-	goto wait_for_download;
+		/* Do not let the thread return, since it can't be restarted */
+	}
 }
 
 int download_client_init(struct download_client *const client,
@@ -697,6 +838,9 @@ int download_client_init(struct download_client *const client,
 	client->fd = -1;
 	client->callback = callback;
 	k_sem_init(&client->wait_for_download, 0, 1);
+	k_mutex_init(&client->mutex);
+
+	k_mutex_lock(&client->mutex, K_FOREVER);
 
 	/* The thread is spawned now, but it will suspend itself;
 	 * it is resumed when the download is started via the API.
@@ -709,6 +853,8 @@ int download_client_init(struct download_client *const client,
 
 	k_thread_name_set(client->tid, "download_client");
 
+	k_mutex_unlock(&client->mutex);
+
 	return 0;
 }
 
@@ -719,19 +865,23 @@ int download_client_set_host(struct download_client *client, const char *host,
 		return -EINVAL;
 	}
 
-	if (client->fd != -1) {
-		/* Already connected */
-		return -EALREADY;
-	}
-
 	if (config->frag_size_override > CONFIG_DOWNLOAD_CLIENT_BUF_SIZE) {
 		LOG_ERR("The configured fragment size is larger than buffer");
 		return -E2BIG;
 	}
 
+	k_mutex_lock(&client->mutex, K_FOREVER);
+
+	if (client->fd != -1) {
+		k_mutex_unlock(&client->mutex);
+		/* Already connected */
+		return -EALREADY;
+	}
+
 	client->config = *config;
 	client->host = host;
 	client->close_when_done = false;
+	k_mutex_unlock(&client->mutex);
 	return 0;
 }
 
@@ -745,14 +895,23 @@ int download_client_disconnect(struct download_client *const client)
 {
 	int err;
 
-	if (client == NULL || client->fd < 0) {
+	if (client == NULL) {
+		return -EINVAL;
+	}
+
+	k_mutex_lock(&client->mutex, K_FOREVER);
+
+	if (client->fd < 0) {
+		k_mutex_unlock(&client->mutex);
 		return -EINVAL;
 	}
 
 	err = close(client->fd);
 	if (err) {
-		LOG_ERR("Failed to close socket, errno %d", errno);
-		return -errno;
+		err = errno;
+		k_mutex_unlock(&client->mutex);
+		LOG_ERR("Failed to close socket, errno %d", err);
+		return -err;
 	}
 
 	client->fd = -1;
@@ -760,17 +919,26 @@ int download_client_disconnect(struct download_client *const client)
 	client->host = NULL;
 	client->file = NULL;
 
+	k_mutex_unlock(&client->mutex);
 	return 0;
 }
 
 int download_client_start(struct download_client *client, const char *file,
 			  size_t from)
 {
-	if (client == NULL || client->host == NULL) {
+	if (client == NULL) {
 		return -EINVAL;
 	}
 
-	if (client->file) {
+	k_mutex_lock(&client->mutex, K_FOREVER);
+
+	if (client->host == NULL) {
+		k_mutex_unlock(&client->mutex);
+		return -EINVAL;
+	}
+
+	if (!is_idle(client) && !is_finished(client)) {
+		k_mutex_unlock(&client->mutex);
 		return -EALREADY;
 	}
 
@@ -780,11 +948,12 @@ int download_client_start(struct download_client *client, const char *file,
 	client->offset = 0;
 	client->http.has_header = false;
 
+	k_mutex_unlock(&client->mutex);
+
 	LOG_INF("Downloading: %s [%u]", client->file, client->progress);
 
 	/* Let the thread run */
 	k_sem_give(&client->wait_for_download);
-
 	return 0;
 }
 
@@ -793,6 +962,12 @@ int download_client_get(struct download_client *client, const char *host,
 {
 	int rc;
 
+	if (client == NULL) {
+		return -EINVAL;
+	}
+
+	k_mutex_lock(&client->mutex, K_FOREVER);
+
 	rc = download_client_set_host(client, host, config);
 
 	if (rc == 0) {
@@ -800,8 +975,9 @@ int download_client_get(struct download_client *client, const char *host,
 		rc = download_client_start(client, file, from);
 	}
 
-	return rc;
+	k_mutex_unlock(&client->mutex);
 
+	return rc;
 }
 
 int download_client_file_size_get(struct download_client *client, size_t *size)
@@ -810,7 +986,9 @@ int download_client_file_size_get(struct download_client *client, size_t *size)
 		return -EINVAL;
 	}
 
+	k_mutex_lock(&client->mutex, K_FOREVER);
 	*size = client->file_size;
+	k_mutex_unlock(&client->mutex);
 
 	return 0;
 }

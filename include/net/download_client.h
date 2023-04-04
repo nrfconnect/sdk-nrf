@@ -127,6 +127,9 @@ typedef int (*download_client_callback_t)(
  * @brief Download client instance.
  */
 struct download_client {
+	/** Protect shared variables. */
+	struct k_mutex mutex;
+
 	/** Socket descriptor. */
 	int fd;
 
@@ -160,6 +163,8 @@ struct download_client {
 		bool has_header;
 		/** The server has closed the connection. */
 		bool connection_close;
+		/** Is using ranged query. */
+		bool ranged;
 	} http;
 
 	struct {
@@ -176,6 +181,7 @@ struct download_client {
 	struct k_thread thread;
 	/** Ensure that thread is ready for download */
 	struct k_sem wait_for_download;
+
 	/* Internal thread stack. */
 	K_THREAD_STACK_MEMBER(thread_stack,
 			      CONFIG_DOWNLOAD_CLIENT_STACK_SIZE);
@@ -265,6 +271,9 @@ int download_client_file_size_get(struct download_client *client, size_t *size);
 
 /**
  * @brief Disconnect from the server.
+ *
+ * Request client to disconnect from the server. This does not block.
+ * When client has been disconnected, it sends @ref DOWNLOAD_CLIENT_EVT_CLOSED event.
  *
  * @param[in] client	Client instance.
  *
