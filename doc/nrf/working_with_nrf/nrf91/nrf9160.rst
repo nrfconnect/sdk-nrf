@@ -113,18 +113,17 @@ Complete the following steps to provision the certificate:
 #. If you have already inserted the SIM card into your DK, remove it before you continue.
 #. Connect the DK to the computer with a micro-USB cable, and turn it on.
 #. Click :guilabel:`Select device` and select the DK from the drop-down list.
-   You can identify the nRF9160 DK by the fact that it has three COM ports.
 
    .. figure:: images/ltelinkmonitor_selectdevice.png
-      :alt: LTE Link Monitor - COM ports
+      :alt: LTE Link Monitor - Select the nRF9160 DK
 
-      LTE Link Monitor - COM ports
+      LTE Link Monitor - Select the nRF9160 DK
 
-   If the three COM ports are not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
+   If the DK is not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
 
    The drop-down text changes to the type of the selected device, with the SEGGER ID below the name.
 
-#. Click :guilabel:`TERMINAL` in the navigation bar to switch to the terminal view.
+#. Click :guilabel:`TERMINAL` in the navigation bar to switch to the terminal view if it is not already selected.
 
    .. figure:: images/ltelinkmonitor_navigationterminal.png
       :alt: LTE Link Monitor - Terminal
