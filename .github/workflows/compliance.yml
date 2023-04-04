@@ -30,6 +30,8 @@ jobs:
         pip3 install -U pip
         pip3 install -U setuptools
         pip3 install -U wheel
+        # TODO: add yamllint to scripts/requirements-fixed.txt
+        pip3 install -U yamllint
         grep -E "python-magic|junitparser|lxml|gitlint|pylint|pykwalify" scripts/requirements-fixed.txt | xargs pip3 install -U
         grep -E "west" scripts/requirements-fixed.txt | xargs pip3 install -U
         pip3 show -f west
@@ -80,7 +82,7 @@ jobs:
 
     - name: upload-results
       uses: actions/upload-artifact@v3
-      continue-on-error: True
+      continue-on-error: true
       if: contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
       with:
         name: compliance.xml
