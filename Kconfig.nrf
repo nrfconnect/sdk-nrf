@@ -29,10 +29,10 @@ choice MBEDTLS_IMPLEMENTATION
 	default MBEDTLS_LIBRARY_NRF_SECURITY
 
 config MBEDTLS_LIBRARY_NRF_SECURITY
-	bool "Use mbed TLS library from Nordic provided security backend"
+	bool "Use Mbed TLS library from Nordic provided security backend"
 	depends on NORDIC_SECURITY_BACKEND || NRF_SECURITY
 	help
-	  Use external, out-of-tree prebuilt mbedTLS library. For advanced
+	  Use external, out-of-tree prebuilt Mbed TLS library. For advanced
 	  users only.
 
 endchoice
