@@ -36,7 +36,7 @@ public:
 	 * Register Nordic UART Service that supports controlling lock and unlock operations
 	 * using Bluetooth LE commands. The Nordic UART Service may begin immediately.
 	 */
-	void StartServer();
+	bool StartServer();
 
 	/**
 	 * @brief Stop the Nordic UART Service server
