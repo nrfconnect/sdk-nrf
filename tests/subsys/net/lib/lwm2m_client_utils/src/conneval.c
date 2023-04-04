@@ -55,8 +55,18 @@ static int at_params_int_get_custom_fake_error(const struct at_param_list *list,
 {
 	if (counter_int <= 1) {
 		*value = 1;
+	} else {
+		*value = 0;
 	}
 	counter_int++;
+
+	return 0;
+}
+
+static int at_params_int_get_custom_fake_ok(const struct at_param_list *list, size_t index,
+					    int32_t *value)
+{
+	*value = 0;
 
 	return 0;
 }
@@ -65,9 +75,9 @@ int at_params_unsigned_short_get_changing_energy(const struct at_param_list *lis
 						 uint16_t *value)
 {
 	if (counter_short > 2) {
-		*value = 7;
+		*value = LTE_LC_ENERGY_CONSUMPTION_NORMAL;
 	} else {
-		*value = 6;
+		*value = LTE_LC_ENERGY_CONSUMPTION_INCREASED;
 	}
 	counter_short++;
 
@@ -77,14 +87,22 @@ int at_params_unsigned_short_get_changing_energy(const struct at_param_list *lis
 int at_params_unsigned_short_get_normal_energy(const struct at_param_list *list, size_t index,
 					       uint16_t *value)
 {
-	*value = 7;
+	*value = LTE_LC_ENERGY_CONSUMPTION_NORMAL;
 
 	return 0;
 }
 
-ZTEST_SUITE(lwm2m_client_utils_coneval, NULL, NULL, setup, NULL, NULL);
+int at_params_unsigned_short_get_increased_energy(const struct at_param_list *list, size_t index,
+						  uint16_t *value)
+{
+	*value = LTE_LC_ENERGY_CONSUMPTION_INCREASED;
 
-ZTEST(lwm2m_client_utils_coneval, test_enable)
+	return 0;
+}
+
+ZTEST_SUITE(lwm2m_client_utils_conneval, NULL, NULL, setup, NULL, NULL);
+
+ZTEST(lwm2m_client_utils_conneval, test_enable)
 {
 	int rc;
 
@@ -95,7 +113,7 @@ ZTEST(lwm2m_client_utils_coneval, test_enable)
 	zassert_equal(rc, 0, "Wrong return value");
 }
 
-ZTEST(lwm2m_client_utils_coneval, test_disable)
+ZTEST(lwm2m_client_utils_conneval, test_disable)
 {
 	int rc;
 	struct lwm2m_ctx ctx;
@@ -114,7 +132,7 @@ ZTEST(lwm2m_client_utils_coneval, test_disable)
 		      "Incorrect number of lte_lc_conn_eval_params_get() calls");
 }
 
-ZTEST(lwm2m_client_utils_coneval, test_normal)
+ZTEST(lwm2m_client_utils_conneval, test_normal)
 {
 	int rc;
 	struct lwm2m_ctx ctx;
@@ -132,7 +150,7 @@ ZTEST(lwm2m_client_utils_coneval, test_normal)
 		      "Incorrect number of lte_lc_conn_eval_params_get() calls");
 }
 
-ZTEST(lwm2m_client_utils_coneval, test_max_delay)
+ZTEST(lwm2m_client_utils_conneval, test_max_delay)
 {
 	int rc;
 	struct lwm2m_ctx ctx;
@@ -142,6 +160,9 @@ ZTEST(lwm2m_client_utils_coneval, test_max_delay)
 	zassert_equal(rc, 0, "Wrong return value");
 
 	lte_lc_conn_eval_params_get_fake.custom_fake = energy_increased;
+	at_params_int_get_fake.custom_fake = at_params_int_get_custom_fake_ok;
+	at_params_unsigned_short_get_fake.custom_fake =
+		at_params_unsigned_short_get_increased_energy;
 	client_event = LWM2M_RD_CLIENT_EVENT_REG_UPDATE;
 
 	rc = lwm2m_utils_conneval(&ctx, &client_event);
@@ -157,7 +178,7 @@ ZTEST(lwm2m_client_utils_coneval, test_max_delay)
 		      "Incorrect number of nrf_modem_at_cmd_async() calls");
 }
 
-ZTEST(lwm2m_client_utils_coneval, test_energy_change)
+ZTEST(lwm2m_client_utils_conneval, test_energy_change)
 {
 	int rc;
 	struct lwm2m_ctx ctx;
@@ -167,6 +188,7 @@ ZTEST(lwm2m_client_utils_coneval, test_energy_change)
 	zassert_equal(rc, 0, "Wrong return value");
 
 	lte_lc_conn_eval_params_get_fake.custom_fake = energy_increased;
+	at_params_int_get_fake.custom_fake = at_params_int_get_custom_fake_ok;
 	at_params_unsigned_short_get_fake.custom_fake =
 		at_params_unsigned_short_get_changing_energy;
 	client_event = LWM2M_RD_CLIENT_EVENT_REG_UPDATE;
@@ -185,7 +207,7 @@ ZTEST(lwm2m_client_utils_coneval, test_energy_change)
 		      "Incorrect number of nrf_modem_at_cmd_async() calls");
 }
 
-ZTEST(lwm2m_client_utils_coneval, test_evaluation_failed)
+ZTEST(lwm2m_client_utils_conneval, test_evaluation_failed)
 {
 	int rc;
 	struct lwm2m_ctx ctx;
@@ -215,7 +237,7 @@ ZTEST(lwm2m_client_utils_coneval, test_evaluation_failed)
 		      "Incorrect number of at_params_unsigned_short_get() calls");
 }
 
-ZTEST(lwm2m_client_utils_coneval, test_incorrect_event)
+ZTEST(lwm2m_client_utils_conneval, test_incorrect_event)
 {
 	int rc;
 	struct lwm2m_ctx ctx;
@@ -233,7 +255,7 @@ ZTEST(lwm2m_client_utils_coneval, test_incorrect_event)
 		      "Incorrect number of lte_lc_conn_eval_params_get() calls");
 }
 
-ZTEST(lwm2m_client_utils_coneval, test_conn_eval_params_get_fail)
+ZTEST(lwm2m_client_utils_conneval, test_conn_eval_params_get_fail)
 {
 	int rc;
 	struct lwm2m_ctx ctx;

@@ -25,6 +25,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define AT_CONEVAL_ENERGY_ESTIMATE_INDEX 3
 
 static struct k_work conneval_work;
+static struct k_work conneval_estimate_work;
 static struct k_work_delayable conneval_work_delayable;
 
 static struct lte_lc_conn_eval_params params;
@@ -33,26 +34,13 @@ static uint64_t maximum_delay; /* [s] */
 static uint64_t poll_period; /* [ms] */
 static bool initialized;
 static uint64_t pause_start_time; /* [ms] */
-static bool new_evaluation;
+static bool engine_paused;
 static struct at_param_list at_list;
 
 static void pause_engine_work(struct k_work *work)
 {
 	lwm2m_engine_pause();
-}
-
-static void conneval_cb(const char *resp)
-{
-	int ret;
-
-	LOG_DBG("Conneval response: %s", resp);
-
-	ret = at_parser_max_params_from_str(resp, NULL, &at_list, AT_CONEVAL_PARAMS_MAX);
-	if (ret) {
-		LOG_ERR("AT parser error : %d", ret);
-		return;
-	}
-	new_evaluation = true;
+	engine_paused = true;
 }
 
 static int read_energy_estimate(uint16_t *energy_estimate)
@@ -80,22 +68,53 @@ static int read_energy_estimate(uint16_t *energy_estimate)
 	return 0;
 }
 
-static void conneval_update_work(struct k_work *work)
+static void conneval_cb(const char *resp)
+{
+	int ret;
+
+	LOG_DBG("Conneval response: %s", resp);
+
+	ret = at_parser_max_params_from_str(resp, NULL, &at_list, AT_CONEVAL_PARAMS_MAX);
+	if (ret) {
+		LOG_ERR("AT parser error : %d", ret);
+		return;
+	}
+	ret = k_work_submit(&conneval_estimate_work);
+	if (ret < 0) {
+		LOG_ERR("Work item was not submitted to system queue, error %d", ret);
+	}
+}
+
+static void estimate_work(struct k_work *work)
 {
 	int ret;
 	uint16_t estimate = 0;
 
-	if (new_evaluation) {
-		new_evaluation = false;
-		ret = read_energy_estimate(&estimate);
-		if (ret) {
-			LOG_WRN("Read energy estimate error : %d", ret);
-		}
+	ret = read_energy_estimate(&estimate);
+	if (ret) {
+		LOG_WRN("Read energy estimate error : %d", ret);
 	}
 
 	if ((estimate >= energy_estimate) ||
 	    ((k_uptime_get() - pause_start_time) / 1000 >= maximum_delay)) {
 		lwm2m_engine_resume();
+		engine_paused = false;
+	}
+}
+
+static void conneval_update_work(struct k_work *work)
+{
+	int ret;
+	uint16_t estimate = 0;
+
+	if (!engine_paused) {
+		return;
+	}
+
+	if ((estimate >= energy_estimate) ||
+	    ((k_uptime_get() - pause_start_time) / 1000 >= maximum_delay)) {
+		lwm2m_engine_resume();
+		engine_paused = false;
 		return;
 	}
 
@@ -108,6 +127,7 @@ static void conneval_update_work(struct k_work *work)
 	if (ret < 0) {
 		LOG_ERR("Work item was not submitted to system queue, error %d", ret);
 		lwm2m_engine_resume();
+		engine_paused = false;
 	}
 }
 
@@ -126,6 +146,7 @@ int lwm2m_utils_enable_conneval(enum lte_lc_energy_estimate min_energy_estimate,
 	if (!initialized) {
 		k_work_init_delayable(&conneval_work_delayable, conneval_update_work);
 		k_work_init(&conneval_work, pause_engine_work);
+		k_work_init(&conneval_estimate_work, estimate_work);
 		at_params_list_init(&at_list, AT_CONEVAL_PARAMS_MAX);
 		initialized = true;
 	}
@@ -145,6 +166,10 @@ void lwm2m_utils_disable_conneval(void)
 int lwm2m_utils_conneval(struct lwm2m_ctx *client, enum lwm2m_rd_client_event *client_event)
 {
 	int ret;
+
+	if (!client || !client_event) {
+		return -EINVAL;
+	}
 
 	if (maximum_delay && *client_event == LWM2M_RD_CLIENT_EVENT_REG_UPDATE) {
 		ret = lte_lc_conn_eval_params_get(&params);
