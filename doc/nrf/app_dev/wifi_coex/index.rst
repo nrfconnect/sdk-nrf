@@ -33,8 +33,8 @@ The library provides multiprotocol support, but you can also use it in applicati
 
 Currently, the following protocols use the Wi-Fi Coexistence support provided by MPSL:
 
-   * :ref:`ug_thread`
-   * :ref:`ug_zigbee`
+   * :ref:`Bluetooth LE <ug_ble_controller>` if implementation used is :ref:`SoftDevice Controller <nrfxlib:softdevice_controller>`
+   * Protocols based on :ref:`nrfxlib:nrf_802154` such as :ref:`ug_thread` and :ref:`ug_zigbee`.
 
 .. _ug_radio_cx_requirements:
 
