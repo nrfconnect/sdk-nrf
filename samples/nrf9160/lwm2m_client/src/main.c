@@ -449,7 +449,6 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		if (client_state != UPDATE_FIRMWARE) {
 			state_set_and_unlock(START);
 		}
-
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_QUEUE_MODE_RX_OFF:
@@ -469,11 +468,6 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		LOG_ERR("LwM2M engine reported a network error.");
 		reconnect = true;
 		state_trigger_and_unlock(NETWORK_ERROR);
-		break;
-
-	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE:
-		LOG_DBG("LwM2M engine update registration");
-		k_mutex_unlock(&lte_mutex);
 		break;
 	}
 }
