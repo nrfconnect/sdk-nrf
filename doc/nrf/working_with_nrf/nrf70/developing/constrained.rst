@@ -68,8 +68,9 @@ The nRF700x driver provides the following software configurations to fine-tune m
 |                                                  |                              |                                                                                   |                                        | if the pipeline is not saturated. But to saturate the pipeline, a greater number of networking stack buffers, |
 |                                                  |                              |                                                                                   |                                        | or queue depth, is required.                                                                                  |
 +--------------------------------------------------+------------------------------+-----------------------------------------------------------------------------------+----------------------------------------+---------------------------------------------------------------------------------------------------------------+
-| :kconfig:option:`CONFIG_NRF700X_RX_NUM_BUFS`     | ``1`` to ``16``              | Number of RX buffers                                                              | Memory savings                         | This specifies the number of RX buffers that can be used by the nRF700x driver.                               |
-|                                                  |                              |                                                                                   |                                        | The number of buffers must be enough to keep up with the RX traffic, otherwise packets might be dropped.      |
+| :kconfig:option:`CONFIG_NRF700X_RX_NUM_BUFS`     | ``1`` to ``Unlimited``       | Number of RX buffers                                                              | Memory savings                         | This specifies the number of RX buffers that can be used by the nRF700x driver.                               |
+|                                                  | (based on available memory   |
+|                                                  |     in nRF700x)              |                                                                                   |                                        | The number of buffers must be enough to keep up with the RX traffic, otherwise packets might be dropped.      |
 +--------------------------------------------------+------------------------------+-----------------------------------------------------------------------------------+----------------------------------------+---------------------------------------------------------------------------------------------------------------+
 | :kconfig:option:`CONFIG_NRF700X_TX_MAX_DATA_SIZE`| ``64`` to ``1600``           | Maximum TX data size                                                              | Memory savings                         | This specifies the maximum size of Wi-Fi protocol frames that can be transmitted.                             |
 |                                                  |                              |                                                                                   |                                        | Large frame sizes imply more memory usage but can efficiently utilize the bandwidth.                          |
@@ -118,7 +119,7 @@ The nRF700x driver can be used in the following profiles (not an exhaustive list
    * - :abbr:`STA (Station)` mode
      - High performance :abbr:`STA (Station)` mode
      - ``CONFIG_NRF700X_MAX_TX_TOKENS=12``
-       ``CONFIG_NRF700X_RX_NUM_BUFS=64``
+       ``CONFIG_NRF700X_RX_NUM_BUFS=63``
        ``CONFIG_NRF700X_TX_MAX_DATA_SIZE=1600``
        ``CONFIG_NRF700X_RX_MAX_DATA_SIZE=1600``
      - High data rate IoT devices
@@ -132,7 +133,7 @@ The nRF700x driver can be used in the following profiles (not an exhaustive list
    * - :abbr:`STA (Station)` mode
      - RX prioritized :abbr:`STA (Station)` mode
      - ``CONFIG_NRF700X_MAX_TX_TOKENS=5``
-       ``CONFIG_NRF700X_RX_NUM_BUFS=64``
+       ``CONFIG_NRF700X_RX_NUM_BUFS=63``
        ``CONFIG_NRF700X_TX_MAX_DATA_SIZE=512``
        ``CONFIG_NRF700X_RX_MAX_DATA_SIZE=1600``
      - Display devices streaming data
