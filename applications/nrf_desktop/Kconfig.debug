@@ -30,12 +30,6 @@ choice LOG_MODE
 
 endchoice
 
-config LOG_DEFAULT_LEVEL
-	default 2
-	help
-	  nRF Desktop Logging configuration sets the Warning level as a default
-	  logging level for modules that do not specify their own logging level.
-
 config LOG_MODE_OVERFLOW
 	default y
 	help
