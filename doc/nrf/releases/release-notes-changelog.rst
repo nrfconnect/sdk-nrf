@@ -317,6 +317,14 @@ Thread samples
 Matter samples
 --------------
 
+.. note::
+   All Matter samples in the |NCS| v2.4.0 have been reconfigured to use 32 k settings partition size instead of 16 k size.
+   It means that performing Device Firmware Upgrade (DFU) from the older firmware versions using default 16 k settings size to the new firmware version using default 32 k settings size will not be possible.
+   Trying to perform such upgrade between applications using not-compatible settings size will fail and additionally it will lead to the settings partition corruption and necessity to factory reset the Matter device.
+   You can still perform DFU from the older firmware version to the firmware based on |NCS| v2.4.0, but you will have to change the default settings size from 32 k to the value used in older version (e.g. 16 k).
+
+* Changed settings partition size from 16 k to 32 k.
+
 * :ref:`matter_lock_sample`:
 
     * Added the Matter Nordic UART Service (NUS) feature, which allows controlling the door lock device remotely through Bluetooth LE using two simple commands: ``Lock`` and ``Unlock``.
