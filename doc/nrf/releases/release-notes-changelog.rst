@@ -274,7 +274,10 @@ Peripheral samples
 
 * :ref:`radio_test` sample:
 
-  * Added a workaround for the hardware `Errata 254`_ of the nRF52840 and nRF52833 chips.
+  * Added a workaround for the hardware `Errata 254`_ of the nRF52840 chip.
+  * Added a workaround for the hardware `Errata 255`_ of the nRF52833 chip.
+  * Added a workaround for the hardware `Errata 256`_ of the nRF52820 chip.
+  * Added a workaround for the hardware `Errata 257`_ of the nRF52811 chip.
   * Added a workaround for the hardware `Errata 117`_ of the nRF5340 chip.
 
 Trusted Firmware-M (TF-M) samples

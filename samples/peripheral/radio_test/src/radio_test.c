@@ -203,7 +203,7 @@ static int fem_configure(bool rx, nrf_radio_mode_t mode,
 		printk("Failed to configure PA.\n");
 	}
 
-	fem_errata_254(mode);
+	fem_errata_25X(mode);
 
 	return err;
 }

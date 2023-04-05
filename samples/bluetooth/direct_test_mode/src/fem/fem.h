@@ -208,13 +208,13 @@ static inline int8_t fem_tx_output_power_max_get(uint16_t freq_mhz)
  */
 uint32_t fem_default_tx_gain_get(void);
 
-/** @brief Apply the workaround for the Errata 254 when appropriate.
+/** @brief Apply the workaround for the Errata 254, 255, 256, 257 when appropriate.
  *
  * This workaround is applied only if used with the correct hardware configuration.
  *
  * @param[in] mode Radio mode.
  */
-void fem_errata_254(nrf_radio_mode_t mode);
+void fem_errata_25X(nrf_radio_mode_t mode);
 
 #ifdef __cplusplus
 }
