@@ -114,17 +114,6 @@ config NCS_SAMPLE_PROVISIONING_NET_CORE_CHILD_IMAGE
 
 endif # SOC_SERIES_NRF53X
 
-if LOG
-
-# LOG_DEFAULT_LEVEL is declared in Zephyr,
-# we declare it here for a second time, to set a different default.
-# Omit the `prompt` to prevent it from appearing twice in two diffent places.
-
-config LOG_DEFAULT_LEVEL
-	default 1 if NCS_SAMPLES_DEFAULTS
-
-endif # LOG
-
 menu "Image build variants"
 
 # These are set by CMake, and they need a prompt.
