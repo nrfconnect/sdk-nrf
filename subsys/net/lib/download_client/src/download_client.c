@@ -966,6 +966,10 @@ int download_client_get(struct download_client *client, const char *host,
 		return -EINVAL;
 	}
 
+	if (file == NULL) {
+		file = host;
+	}
+
 	k_mutex_lock(&client->mutex, K_FOREVER);
 
 	rc = download_client_set_host(client, host, config);

@@ -144,16 +144,24 @@ static int cmd_dc_get(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
 	size_t from = 0;
+	char *f = file;
 
-	if (argc < 3) {
-		shell_warn(shell, "usage: dc get <url> <file> [offset]");
+	if (argc < 2) {
+		shell_warn(shell, "usage: dc get <url> [<file>|NULL] [offset]");
 		return -EINVAL;
 	}
 
 	shell_instance = shell;
 
 	memcpy(host, argv[1], MIN(strlen(argv[1]) + 1, sizeof(host)));
-	memcpy(file, argv[2], MIN(strlen(argv[2]) + 1, sizeof(file)));
+	if (argc > 2) {
+		memcpy(file, argv[2], MIN(strlen(argv[2]) + 1, sizeof(file)));
+		if (strstr(file, "NULL")) {
+			f = NULL;
+		}
+	} else {
+		f = NULL;
+	}
 
 	if (argc > 3) {
 		errno = 0;
@@ -164,7 +172,8 @@ static int cmd_dc_get(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
-	err = download_client_get(&downloader, host, &config, file, from);
+
+	err = download_client_get(&downloader, host, &config, f, from);
 
 	if (err) {
 		shell_warn(shell, "download_client_get() failed, err %d",

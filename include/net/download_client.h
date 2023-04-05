@@ -296,11 +296,11 @@ int download_client_disconnect(struct download_client *client);
  * through @ref DOWNLOAD_CLIENT_EVT_FRAGMENT events.
  *
  * @param[in] client	Client instance.
- * @param[in] host	Name of the host to connect to, null-terminated.
- *			Can include scheme and port number, defaults to
+ * @param[in] host	URI of the host to connect to.
+ *			Can include scheme, port number and full file path, defaults to
  *			HTTP or HTTPS if no scheme is provided.
  * @param[in] config	Configuration options.
- * @param[in] file	File to download, null-terminated.
+ * @param[in] file	File to download or NULL if path is already provided in host parameter.
  * @param[in] from	Offset from where to resume the download,
  *			or zero to download from the beginning.
  *
