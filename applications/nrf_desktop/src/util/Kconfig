@@ -21,4 +21,18 @@ config DESKTOP_ADV_PROV_UUID16_ALL
 	  Adds all UUID16 to the advertising payload if used Bluetooth local
 	  identity has no bond.
 
+config DESKTOP_DFU_LOCK
+	bool "DFU lock module"
+	help
+	  Enable nRF Desktop DFU lock module for synchronizing multiple DFU
+	  methods.
+
+if DESKTOP_DFU_LOCK
+
+module = DESKTOP_DFU_LOCK
+module-str = DFU Lock
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
 endmenu
