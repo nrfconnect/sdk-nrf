@@ -44,14 +44,21 @@ Instead, you should use the :ref:`external flash <ug_bootloader_external_flash>`
    Remember to enable a proper flash driver when putting the secondary slot in the external flash.
    For example, if you develop your application on a Nordic Semiconductor's development kit that includes a QSPI NOR flash module, you can do this by setting the :kconfig:option:`CONFIG_NORDIC_QSPI_NOR` Kconfig option.
 
+.. note::
+   You should select the partition sizes wisely, as some of them like settings and factory data partitions are not modified during Device Firmware Upgrade (DFU) process.
+   It means that performing Device Firmware Upgrade (DFU) from the one firmware version to another using different parition sizes may not be possible, so you won't be able to change the partition sizes without re-programming the device.
+   Trying to perform DFU between applications using not-compatible partition sizes may result in different behavior depending on which partitions will overlap to anothers.
+   In some cases it may result in specific partition parts corruption and in the other ones it may lead to firmware upgrade failure.
+
+
 Settings partition
 ==================
 
 The nRF Connect platform in Matter uses Zephyr's :ref:`zephyr:settings_api` API to provide the storage capabilities to the Matter stack.
 This requires that you define the ``settings_storage`` partition in the flash.
-The recommended minimum size of the partition is 16 kB, but you can reserve even more space if your application uses the storage extensively.
+The recommended minimum size of the partition is 32 kB, but you can reserve even more space if your application uses the storage extensively.
 
-As you can see in :ref:`ug_matter_hw_requirements_layouts`, Matter samples in the |NCS| reserve exactly 16 kB for the ``settings_storage`` partition.
+As you can see in :ref:`ug_matter_hw_requirements_layouts`, Matter samples in the |NCS| reserve exactly 32 kB for the ``settings_storage`` partition.
 
 Factory data partition
 ======================
