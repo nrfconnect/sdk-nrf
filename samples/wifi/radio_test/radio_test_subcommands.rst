@@ -237,6 +237,19 @@ Wi-Fi radio test subcommands
      - 15
      - Configuration
      - Contention window for transmitted packets.
+   * - reg_domain
+     - <country code> – Desired country code(for example: NO, US, GB, IN).
+     - 00 (World regulatory)
+     - Action
+     - Configure WLAN regulatory domain country code.
+   * - bypass_reg_domain
+     - | 0: Use reg_domain
+       | 1: Do not use reg_domain
+     - 0
+     - Configuration
+     - Configure WLAN to bypass current regulatory domain in TX test.
+
+
 
 
 .. _wifi_radio_test_stats:

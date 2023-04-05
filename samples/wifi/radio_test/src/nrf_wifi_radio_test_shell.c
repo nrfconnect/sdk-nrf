@@ -289,6 +289,7 @@ enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	conf_params->ru_index = 1;
 	conf_params->tx_pkt_cw = 15;
 	conf_params->phy_calib = NRF_WIFI_DEF_PHY_CALIB;
+	memcpy(conf_params->country_code, "00", 3);
 out:
 	return status;
 }
@@ -1887,6 +1888,16 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      "tx_pkt_cw = %d\n",
 		      conf_params->tx_pkt_cw);
 
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "reg_domain = %c%c\n",
+		      conf_params->country_code[0],
+		      conf_params->country_code[1]);
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "bypass_reg_domain = %d\n",
+		      conf_params->bypass_regulatory);
 	return 0;
 }
 
@@ -1989,6 +2000,83 @@ static int nrf_wifi_radio_test_wlan_switch_ctrl(const struct shell *shell,
 
 	return 0;
 }
+
+
+static int nrf_wifi_radio_test_set_reg_domain(const struct shell *shell,
+					      size_t argc,
+					      const char *argv[])
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	int ret = -ENOEXEC;
+	struct wifi_nrf_fmac_reg_info reg_domain_info = {0};
+
+	if (strlen(argv[1]) != 2) {
+		shell_fprintf(shell, SHELL_WARNING,
+			"Invalid reg domain: Length should be two letters/digits\n");
+			goto out;
+	}
+
+	/* Two letter country code with special case of 00 for WORLD */
+	if (((argv[1][0] < 'A' || argv[1][0] > 'Z') ||
+	     (argv[1][1] < 'A' || argv[1][1] > 'Z')) &&
+	     (argv[1][0] != '0' || argv[1][1] != '0')) {
+		shell_fprintf(shell, SHELL_WARNING, "Invalid reg domain %c%c\n", argv[1][0],
+			      argv[2][1]);
+		goto out;
+	}
+
+	ctx->conf_params.country_code[0] = argv[1][0];
+	ctx->conf_params.country_code[1] = argv[1][1];
+
+	if (!check_test_in_prog(shell)) {
+		goto out;
+	}
+
+	memcpy(reg_domain_info.alpha2, ctx->conf_params.country_code,
+			NRF_WIFI_COUNTRY_CODE_LEN);
+
+	status = wifi_nrf_fmac_set_reg(ctx->rpu_ctx, &reg_domain_info);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Regulatory programming failed\n");
+		goto out;
+	}
+
+	ret = 0;
+out:
+	return ret;
+}
+
+
+static int nrf_wifi_radio_test_set_bypass_reg(const struct shell *shell,
+					      size_t argc,
+					      const char *argv[])
+{
+	char *ptr = NULL;
+	unsigned long val = 0;
+
+	val = strtoul(argv[1], &ptr, 10);
+
+	if (val > 1) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid value %lu\n",
+			      val);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	if (!check_test_in_prog(shell)) {
+		return -ENOEXEC;
+	}
+
+	ctx->conf_params.bypass_regulatory = val;
+
+	return 0;
+}
+
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf_wifi_radio_test_subcmds,
@@ -2260,6 +2348,22 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      NULL,
 		      "<val> - Contention window value to be configured (0, 3, 7, 15, 31, 63, 127, 255, 511, 1023)",
 		      nrf_wifi_radio_test_set_tx_pkt_cw,
+		      2,
+		      0),
+	SHELL_CMD_ARG(reg_domain,
+		      NULL,
+		      "Configure WLAN regulatory domain country code",
+		      nrf_wifi_radio_test_set_reg_domain,
+		      2,
+		      0),
+	SHELL_CMD_ARG(bypass_reg_domain,
+		      NULL,
+		      "Configure WLAN to bypass regulatory\n"
+		      "0 - TX power of the channel will be set to "
+			   "minimum between user configured TX power & "
+			   "maximum TX power of channel in the configured regulatory domain.\n"
+		      "1 - Configured TX power value will be used for the channel.				",
+		      nrf_wifi_radio_test_set_bypass_reg,
 		      2,
 		      0),
 	SHELL_SUBCMD_SET_END);

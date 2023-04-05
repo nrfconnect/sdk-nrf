@@ -1316,7 +1316,7 @@ enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(struct wifi_nrf_fmac_dev_ctx *f
 						 unsigned char *rf_params);
 
 struct wifi_nrf_fmac_reg_info {
-	unsigned char alpha2[3];
+	unsigned char alpha2[NRF_WIFI_COUNTRY_CODE_LEN];
 	bool force;
 };
 
