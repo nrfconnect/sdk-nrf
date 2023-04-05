@@ -547,6 +547,12 @@
 
 .. _`Errata 254`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52840_Rev3%2FERR%2FnRF52840%2FRev3%2Flatest%2Fconfig_840_254.html
 
+.. _`Errata 255`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52833_Rev2%2FERR%2FnRF52833%2FRev2%2Flatest%2Fconfig_833_255.html
+
+.. _`Errata 256`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52820_Rev3%2FERR%2FnRF52820%2FRev3%2Flatest%2Fconfig_820_256.html
+
+.. _`Errata 257`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52811_Rev2%2FERR%2FnRF52811%2FRev2%2Flatest%2Fconfig_811_257.html
+
 .. _`Errata 117`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF5340_Rev1%2FERR%2FnRF5340%2FRev1%2Flatest%2Fanomaly_340_117.html
 
 .. ### Source: academy.nordicsemi.com
