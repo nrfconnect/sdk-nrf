@@ -70,7 +70,7 @@ static bool event_handler(const struct app_event_header *aeh)
 	if (is_test_start_event(aeh)) {
 		struct test_start_event *st = cast_test_start_event(aeh);
 
-		if (st->test_id == TEST_EVENT_MANAGER) {
+		if (st->test_id == TEST_SENSOR_INIT) {
 			zassert_ok(init(), "Error when initializing sensor");
 			struct test_end_event *et = new_test_end_event();
 

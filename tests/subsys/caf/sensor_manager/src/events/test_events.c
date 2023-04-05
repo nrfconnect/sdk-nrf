@@ -15,3 +15,8 @@ APP_EVENT_TYPE_DEFINE(test_end_event,
 		  NULL,
 		  NULL,
 		  APP_EVENT_FLAGS_CREATE());
+
+APP_EVENT_TYPE_DEFINE(test_initialization_done_event,
+		  NULL,
+		  NULL,
+		  APP_EVENT_FLAGS_CREATE());
