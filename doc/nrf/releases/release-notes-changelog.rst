@@ -371,7 +371,7 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-|no_changes_yet_note|
+* Added :ref:`nrf700x_wifi`.
 
 Libraries
 =========
