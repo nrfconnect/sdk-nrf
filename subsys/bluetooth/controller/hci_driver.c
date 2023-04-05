@@ -19,7 +19,6 @@
 #include <stdbool.h>
 #include <zephyr/sys/__assert.h>
 
-#define SDC_USE_NEW_MEM_API
 #include <sdc.h>
 #include <sdc_soc.h>
 #include <sdc_hci.h>
