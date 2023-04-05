@@ -160,6 +160,11 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	umac_cmd_data->temp_vbat_config_params.vth_very_low = NRF_WIFI_VBAT_VERYLOW;
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
+	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+					umac_cmd_data->country_code,
+					CONFIG_NRF700X_REG_DOMAIN,
+					NRF_WIFI_COUNTRY_CODE_LEN);
+
 	status = wifi_nrf_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
 					    umac_cmd,
 					    (sizeof(*umac_cmd) + len));
