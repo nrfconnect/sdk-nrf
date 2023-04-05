@@ -16,9 +16,10 @@ static enum test_id cur_test_id;
 static K_SEM_DEFINE(test_end_sem, 0, 1);
 
 
-void test_init(void)
+static void *test_init(void)
 {
 	zassert_ok(app_event_manager_init(), "Error when initializing");
+	return NULL;
 }
 
 static void test_start(enum test_id test_id)
@@ -35,12 +36,12 @@ static void test_start(enum test_id test_id)
 	zassert_ok(err, "Test execution hanged");
 }
 
-static void test_event_manager(void)
+ZTEST(caf_sensor_aggregator_tests, test_event_manager)
 {
 	test_start(TEST_EVENT_MANAGER);
 }
 
-static void test_basic(void)
+ZTEST(caf_sensor_aggregator_tests, test_basic)
 {
 	cur_test_id = TEST_BASIC;
 	struct test_start_event *ts = new_test_start_event();
@@ -68,7 +69,7 @@ static void test_basic(void)
 	zassert_ok(err, "Test execution hanged");
 }
 
-static void test_order(void)
+ZTEST(caf_sensor_aggregator_tests, test_order)
 {
 	cur_test_id = TEST_ORDER;
 	struct test_start_event *ts = new_test_start_event();
@@ -95,23 +96,9 @@ static void test_order(void)
 	zassert_ok(err, "Test execution hanged");
 }
 
-static void test_status(void)
+ZTEST(caf_sensor_aggregator_tests, test_status)
 {
 	test_start(TEST_STATUS);
-}
-
-void test_main(void)
-{
-	ztest_test_suite(caf_sensor_aggregator_tests,
-			 ztest_unit_test(test_init),
-			 ztest_unit_test(test_event_manager),
-			 ztest_unit_test(test_basic),
-			 ztest_unit_test(test_order),
-			 ztest_unit_test(test_status)
-
-			 );
-
-	ztest_run_test_suite(caf_sensor_aggregator_tests);
 }
 
 static bool app_event_handler(const struct app_event_header *aeh)
@@ -130,6 +117,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	zassert_unreachable("Wrong event type received");
 	return false;
 }
+
+ZTEST_SUITE(caf_sensor_aggregator_tests, NULL, test_init, NULL, NULL, NULL);
 
 APP_EVENT_LISTENER(test_main, app_event_handler);
 APP_EVENT_SUBSCRIBE(test_main, test_end_event);
