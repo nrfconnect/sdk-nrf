@@ -20,19 +20,14 @@ LOG_MODULE_REGISTER(MODULE);
 
 #define PRE_CHANGE_SAMPLING_PERIOD 20
 #define SAMPLING_PERIOD 40
+#define SAMPLING_PERIOD_LONG 33000
 
 static enum test_id cur_test_id;
 static K_SEM_DEFINE(test_end_sem, 0, 1);
+static K_SEM_DEFINE(test_init_sem, 0, 1);
 int64_t first_event_uptime;
 uint8_t sensors_tested;
 uint8_t sensors_tested_mask;
-
-
-void test_init(void)
-{
-	zassert_ok(app_event_manager_init(), "Error when initializing");
-	module_set_state(MODULE_STATE_READY);
-}
 
 static void test_start(enum test_id test_id)
 {
@@ -48,60 +43,83 @@ static void test_start(enum test_id test_id)
 	zassert_ok(err, "Test execution hanged");
 }
 
-static void test_event_manager(void)
+static void *test_init(void)
 {
-	test_start(TEST_EVENT_MANAGER);
+	zassert_ok(app_event_manager_init(), "Error when initializing");
+	module_set_state(MODULE_STATE_READY);
+	test_start(TEST_SENSOR_INIT);
+	return NULL;
 }
 
-static void test_basic(void)
+static void test_before(void *f)
+{
+	struct set_sensor_period_event *event_sensor1 = new_set_sensor_period_event();
+	struct set_sensor_period_event *event_sensor2 = new_set_sensor_period_event();
+	struct set_sensor_period_event *event_sensor3 = new_set_sensor_period_event();
+	struct test_initialization_done_event *event_init_done =
+						new_test_initialization_done_event();
+
+	event_sensor1->sampling_period = PRE_CHANGE_SAMPLING_PERIOD;
+	event_sensor1->descr = "Simulated sensor 1";
+	APP_EVENT_SUBMIT(event_sensor1);
+
+	event_sensor2->sampling_period = SAMPLING_PERIOD_LONG;
+	event_sensor2->descr = "Simulated sensor 2";
+	APP_EVENT_SUBMIT(event_sensor2);
+
+	event_sensor3->sampling_period = SAMPLING_PERIOD_LONG;
+	event_sensor3->descr = "Simulated sensor 3";
+	APP_EVENT_SUBMIT(event_sensor3);
+
+	APP_EVENT_SUBMIT(event_init_done);
+
+	int err = k_sem_take(&test_init_sem, K_SECONDS(30));
+
+	zassert_ok(err, "Test execution hanged");
+}
+
+ZTEST(caf_sensor_manager_tests, test_basic)
 {
 	test_start(TEST_BASIC);
 }
 
-static void test_change_period_pre(void)
+ZTEST(caf_sensor_manager_tests, test_change_period_pre)
 {
 	test_start(TEST_CHANGE_PERIOD_PRE);
+}
 
+ZTEST(caf_sensor_manager_tests, test_change_period_post)
+{
 	struct set_sensor_period_event *event = new_set_sensor_period_event();
 
 	event->sampling_period = SAMPLING_PERIOD;
 	event->descr = "Simulated sensor 1";
 	APP_EVENT_SUBMIT(event);
-}
 
-static void test_change_period_post(void)
-{
 	test_start(TEST_CHANGE_PERIOD_POST);
-
-	struct set_sensor_period_event *event = new_set_sensor_period_event();
-
-	event->sampling_period = SAMPLING_PERIOD;
-	event->descr = "Simulated sensor 2";
-	APP_EVENT_SUBMIT(event);
-
-	event = new_set_sensor_period_event();
-	event->sampling_period = SAMPLING_PERIOD;
-	event->descr = "Simulated sensor 3";
-	APP_EVENT_SUBMIT(event);
 }
 
-static void test_multiple_sensors(void)
+ZTEST(caf_sensor_manager_tests, test_multiple_sensors)
 {
+	struct set_sensor_period_event *event_sensor1 = new_set_sensor_period_event();
+	struct set_sensor_period_event *event_sensor2 = new_set_sensor_period_event();
+	struct set_sensor_period_event *event_sensor3 = new_set_sensor_period_event();
+
+	event_sensor1->sampling_period = SAMPLING_PERIOD;
+	event_sensor1->descr = "Simulated sensor 1";
+	APP_EVENT_SUBMIT(event_sensor1);
+
+	event_sensor2->sampling_period = SAMPLING_PERIOD;
+	event_sensor2->descr = "Simulated sensor 2";
+	APP_EVENT_SUBMIT(event_sensor2);
+
+	event_sensor3->sampling_period = SAMPLING_PERIOD;
+	event_sensor3->descr = "Simulated sensor 3";
+	APP_EVENT_SUBMIT(event_sensor3);
+
+
+
 	test_start(TEST_MULTIPLE_SENSORS);
-}
-
-void test_main(void)
-{
-	ztest_test_suite(caf_sensor_aggregator_tests,
-			 ztest_unit_test(test_init),
-			 ztest_unit_test(test_event_manager),
-			 ztest_unit_test(test_basic),
-			 ztest_unit_test(test_change_period_pre),
-			 ztest_unit_test(test_change_period_post),
-			 ztest_unit_test(test_multiple_sensors)
-			 );
-
-	ztest_run_test_suite(caf_sensor_aggregator_tests);
 }
 
 static bool app_event_handler(const struct app_event_header *aeh)
@@ -207,10 +225,18 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
+	if (is_test_initialization_done_event(aeh)) {
+		k_sem_give(&test_init_sem);
+
+		return false;
+	}
 	zassert_unreachable("Wrong event type received");
 	return false;
 }
 
+ZTEST_SUITE(caf_sensor_manager_tests, NULL, test_init, test_before, NULL, NULL);
+
 APP_EVENT_LISTENER(test_main, app_event_handler);
 APP_EVENT_SUBSCRIBE(test_main, test_end_event);
 APP_EVENT_SUBSCRIBE(test_main, sensor_event);
+APP_EVENT_SUBSCRIBE(test_main, test_initialization_done_event);
