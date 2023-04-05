@@ -86,6 +86,13 @@ The nRF700x driver provides the following software configurations to fine-tune m
        More tokens imply more concurrent transmit opportunities for RPU but can lead to poor aggregation performance
        if the pipeline is not saturated. But to saturate the pipeline, a greater number of networking stack buffers,
        or queue depth, is required.
+   * - :kconfig:option:`CONFIG_NRF700X_MAX_TX_AGGREGATION`
+     - ``1`` to ``Unlimited`` (based on available memory in nRF700x)
+     - Maximum number of frames that are coalesced into a single Wi-Fi frame (e.g., MPDU's in an A-MPDU, or MSDU's in an A-MSDU).
+       The coalescing greatly improves the throughput for small frames or under high traffic load.
+     - Performance tuning and Memory savings
+     - This specifies the maximum number of frames that can be coalesced into a single Wi-Fi frame.
+       More frames imply more coalescing opportunities but can add latency to the TX path as we wait for more frames to arrive.
    * - :kconfig:option:`CONFIG_NRF700X_RX_NUM_BUFS`
      - ``1`` to ``Unlimited`` (based on available memory in nRF700x)
      - Number of RX buffers
@@ -138,6 +145,7 @@ The nRF700x driver can be used in the following profiles (not an exhaustive list
    * - :abbr:`STA (Station)` mode
      - Memory optimized :abbr:`STA (Station)` mode
      - ``CONFIG_NRF700X_MAX_TX_TOKENS=5``
+       ``CONFIG_NRF700X_MAX_TX_AGGREGATION=1``
        ``CONFIG_NRF700X_RX_NUM_BUFS=4``
        ``CONFIG_NRF700X_TX_MAX_DATA_SIZE=512``
        ``CONFIG_NRF700X_RX_MAX_DATA_SIZE=512``
@@ -145,6 +153,7 @@ The nRF700x driver can be used in the following profiles (not an exhaustive list
    * - :abbr:`STA (Station)` mode
      - High performance :abbr:`STA (Station)` mode
      - ``CONFIG_NRF700X_MAX_TX_TOKENS=12``
+       ``CONFIG_NRF700X_MAX_TX_AGGREGATION=1``
        ``CONFIG_NRF700X_RX_NUM_BUFS=63``
        ``CONFIG_NRF700X_TX_MAX_DATA_SIZE=1600``
        ``CONFIG_NRF700X_RX_MAX_DATA_SIZE=1600``
@@ -152,6 +161,7 @@ The nRF700x driver can be used in the following profiles (not an exhaustive list
    * - :abbr:`STA (Station)` mode
      - TX prioritized :abbr:`STA (Station)` mode
      - ``CONFIG_NRF700X_MAX_TX_TOKENS=12``
+       ``CONFIG_NRF700X_MAX_TX_AGGREGATION=9``
        ``CONFIG_NRF700X_RX_NUM_BUFS=4``
        ``CONFIG_NRF700X_TX_MAX_DATA_SIZE=1600``
        ``CONFIG_NRF700X_RX_MAX_DATA_SIZE=512``
