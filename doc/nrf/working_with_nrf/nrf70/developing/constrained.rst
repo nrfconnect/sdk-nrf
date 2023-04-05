@@ -118,6 +118,41 @@ The configuration options must be used in conjunction with the Zephyr networking
 These options form a staged pipeline all the way to the nRF7002 chip, any change in one stage of the pipeline will impact the performance and memory usage of the next stage.
 For example, solving bottleneck in one stage of the pipeline might lead to a bottleneck in the next stage.
 
+nRF700X packet memory
+*********************
+The nRF700x chipset has a special memory called the packet memory to store the Wi-Fi protocol frames for both TX and RX.
+The various configuration options that control the size of the packet memory are listed below:
+
+* :kconfig:option:`CONFIG_NRF700X_TX_MAX_DATA_SIZE`
+* :kconfig:option:`CONFIG_NRF700X_RX_MAX_DATA_SIZE`
+* :kconfig:option:`CONFIG_NRF700X_MAX_TX_TOKENS`
+* :kconfig:option:`CONFIG_NRF700X_MAX_TX_AGGREGATION`
+* :kconfig:option:`CONFIG_NRF700X_RX_NUM_BUFS`
+
+The packet memory is divided into two parts, one for TX and one for RX. The size of the TX packet memory is calculated as follows:
+
+.. code-block:: none
+
+   (CONFIG_NRF700X_TX_MAX_DATA_SIZE + 52 ) * CONFIG_NRF700X_MAX_TX_TOKENS * CONFIG_NRF700X_MAX_TX_AGGREGATION
+
+The size of the RX packet memory is calculated as follows:
+
+.. code-block:: none
+
+   CONFIG_NRF700X_RX_MAX_DATA_SIZE * CONFIG_NRF700X_RX_NUM_BUFS
+
+The total packet memory size is calculated as follows:
+
+.. code-block:: none
+
+   (CONFIG_NRF700X_TX_MAX_DATA_SIZE + 52 ) * CONFIG_NRF700X_MAX_TX_TOKENS * CONFIG_NRF700X_MAX_TX_AGGREGATION +
+   CONFIG_NRF700X_RX_MAX_DATA_SIZE * CONFIG_NRF700X_RX_NUM_BUFS
+
+There is a build time check to ensure that the total packet memory size does not exceed the available packet memory size in the nRF7002 chip.
+
+.. note::
+   The ``52`` bytes in the above equations are the overhead bytes required by the nRF7002 chip to store the headers and footers of the Wi-Fi protocol frames.
+
 Usage profiles
 **************
 
