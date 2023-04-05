@@ -229,7 +229,6 @@ int wifi_nrf_reg_domain(const struct device *dev, struct wifi_reg_domain *reg_do
 
 	if (reg_domain->oper == WIFI_MGMT_SET) {
 		memcpy(reg_domain_info.alpha2, reg_domain->country_code, WIFI_COUNTRY_CODE_LEN);
-		reg_domain_info.alpha2[WIFI_COUNTRY_CODE_LEN] = '\0';
 
 		reg_domain_info.force = reg_domain->force;
 

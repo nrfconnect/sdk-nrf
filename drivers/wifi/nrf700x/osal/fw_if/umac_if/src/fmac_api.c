@@ -1395,7 +1395,6 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_compute_xo(struct wifi_nrf_fmac_dev_c
 out:
 	return status;
 }
-
 #else /* CONFIG_NRF700X_RADIO_TEST */
 
 enum wifi_nrf_status wifi_nrf_fmac_scan(void *dev_ctx,
@@ -3914,57 +3913,6 @@ out:
 	return status;
 }
 
-enum wifi_nrf_status wifi_nrf_fmac_set_reg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					   struct wifi_nrf_fmac_reg_info *reg_info)
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct nrf_wifi_cmd_req_set_reg *set_reg_cmd = NULL;
-
-	if (!fmac_dev_ctx || !reg_info) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Invalid parameters\n",
-				      __func__);
-		goto out;
-	}
-
-	set_reg_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
-					       sizeof(*set_reg_cmd));
-
-	if (!set_reg_cmd) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Unable to allocate memory\n",
-				      __func__);
-		goto out;
-	}
-
-	set_reg_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_REQ_SET_REG;
-	set_reg_cmd->umac_hdr.ids.valid_fields = 0;
-
-	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
-						  set_reg_cmd->nrf_wifi_alpha2,
-						  reg_info->alpha2,
-						  sizeof(set_reg_cmd->nrf_wifi_alpha2));
-	set_reg_cmd->nrf_wifi_alpha2[sizeof(set_reg_cmd->nrf_wifi_alpha2) - 1] = '\0';
-
-	set_reg_cmd->valid_fields = NRF_WIFI_CMD_REQ_SET_REG_ALPHA2_VALID;
-
-	/* New feature in rev B patch */
-	if (reg_info->force) {
-		set_reg_cmd->valid_fields |= NRF_WIFI_CMD_REQ_SET_REG_USER_REG_FORCE;
-	}
-
-	status = umac_cmd_cfg(fmac_dev_ctx,
-			      set_reg_cmd,
-			      sizeof(*set_reg_cmd));
-out:
-	if (set_reg_cmd) {
-		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
-				       set_reg_cmd);
-	}
-
-	return status;
-}
-
 enum wifi_nrf_status wifi_nrf_fmac_get_reg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					   struct wifi_nrf_fmac_reg_info *reg_info)
 {
@@ -4020,8 +3968,6 @@ enum wifi_nrf_status wifi_nrf_fmac_get_reg(struct wifi_nrf_fmac_dev_ctx *fmac_de
 		   reg_info->alpha2,
 	       fmac_dev_ctx->alpha2,
 	       sizeof(reg_info->alpha2));
-
-	reg_info->alpha2[sizeof(reg_info->alpha2) - 1] = '\0';
 
 	return WIFI_NRF_STATUS_SUCCESS;
 err:
@@ -4305,6 +4251,55 @@ out:
 }
 
 
+enum wifi_nrf_status wifi_nrf_fmac_set_reg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					   struct wifi_nrf_fmac_reg_info *reg_info)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_cmd_req_set_reg *set_reg_cmd = NULL;
+
+	if (!fmac_dev_ctx || !reg_info) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Invalid parameters\n",
+				      __func__);
+		goto out;
+	}
+
+	set_reg_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+					       sizeof(*set_reg_cmd));
+
+	if (!set_reg_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+
+	set_reg_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_REQ_SET_REG;
+	set_reg_cmd->umac_hdr.ids.valid_fields = 0;
+
+	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+			      set_reg_cmd->nrf_wifi_alpha2,
+			      reg_info->alpha2,
+			      NRF_WIFI_COUNTRY_CODE_LEN);
+
+	set_reg_cmd->valid_fields = NRF_WIFI_CMD_REQ_SET_REG_ALPHA2_VALID;
+
+	/* New feature in rev B patch */
+	if (reg_info->force) {
+		set_reg_cmd->valid_fields |= NRF_WIFI_CMD_REQ_SET_REG_USER_REG_FORCE;
+	}
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      set_reg_cmd,
+			      sizeof(*set_reg_cmd));
+out:
+	if (set_reg_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       set_reg_cmd);
+	}
+
+	return status;
+}
 #ifdef CONFIG_NRF700X_UTIL
 enum wifi_nrf_status wifi_nrf_fmac_set_tx_rate(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					       unsigned char rate_flag,
