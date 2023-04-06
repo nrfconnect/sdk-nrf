@@ -1166,6 +1166,10 @@ void wifi_nrf_fmac_dev_rem(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
  * @rf_params_usr: RF parameters (if any) to be passed to the RPU.
  * @sleep_type: Type of RPU sleep.
  * @phy_calib: PHY calibration flags to be passed to the RPU.
+ * @ant_gain_2g: Antenna gain value for 2.4 GHz band.
+ * @ant_gain_5g_band1: Antenna gain value for 5 GHz band (5150 MHz - 5350 MHz).
+ * @ant_gain_5g_band2: Antenna gain value for 5 GHz band (5470 MHz - 5730 MHz).
+ * @ant_gain_5g_band3: Antenna gain value for 5 GHz band (5730 MHz - 5895 MHz).
  *
  * This function initializes the firmware of an RPU instance.
  *
@@ -1180,7 +1184,11 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_d
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 					    int sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-					    unsigned int phy_calib);
+					    unsigned int phy_calib,
+					    unsigned char ant_gain_2g,
+					    unsigned char ant_gain_5g_band1,
+					    unsigned char ant_gain_5g_band2,
+					    unsigned char ant_gain_5g_band3);
 
 
 /**

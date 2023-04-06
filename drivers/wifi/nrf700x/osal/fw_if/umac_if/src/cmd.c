@@ -89,7 +89,11 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 				   int sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-				   unsigned int phy_calib)
+				   unsigned int phy_calib,
+				   unsigned char ant_gain_2g,
+				   unsigned char ant_gain_5g_band1,
+				   unsigned char ant_gain_5g_band2,
+				   unsigned char ant_gain_5g_band3)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct host_rpu_msg *umac_cmd = NULL;
@@ -159,6 +163,11 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	umac_cmd_data->temp_vbat_config_params.temp_threshold = NRF_WIFI_TEMP_CALIB_THRESHOLD;
 	umac_cmd_data->temp_vbat_config_params.vth_very_low = NRF_WIFI_VBAT_VERYLOW;
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
+
+	umac_cmd_data->ant_gain_2g = ant_gain_2g;
+	umac_cmd_data->ant_gain_5g_band1 = ant_gain_5g_band1;
+	umac_cmd_data->ant_gain_5g_band2 = ant_gain_5g_band2;
+	umac_cmd_data->ant_gain_5g_band3 = ant_gain_5g_band3;
 
 	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 					umac_cmd_data->country_code,
