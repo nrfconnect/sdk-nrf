@@ -72,25 +72,8 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 
 #define API_LOCATION			"/location"
 #define API_GET_LOCATION_TEMPLATE	API_VER API_LOCATION "/ground-fix"
-#define API_GET_AGPS_BASE		API_VER API_LOCATION "/agps?"
-#define AGPS_FILTERED			"filtered=true"
-#define AGPS_ELEVATION_MASK		"&mask=%u"
-#define AGPS_REQ_TYPE			"&requestType=%s"
-#define NET_INFO_PRINT_SZ		(3 + 3 + 5 + UINT32_MAX_STR_SZ)
-#define AGPS_NET_INFO			"&mcc=%u&mnc=%u&tac=%u&eci=%u"
-#define AGPS_CUSTOM_TYPE		"&customTypes=%s"
-#define AGPS_REQ_TYPE_STR_CUSTOM	"custom"
-#define AGPS_REQ_TYPE_STR_LOC		"rtLocation"
-#define AGPS_REQ_TYPE_STR_ASSIST	"rtAssistance"
-
-#define AGPS_CUSTOM_TYPE_CNT		9
-/* Custom type format is a comma separated list of
- * @ref enum nrf_cloud_agps_type digits
- * digits.
- */
-#define AGPS_CUSTOM_TYPE_STR_SZ		(AGPS_CUSTOM_TYPE_CNT * 2)
-
-#define API_GET_PGPS_BASE		API_VER "/location/pgps"
+#define API_GET_AGPS_BASE		API_VER API_LOCATION "/agps"
+#define API_GET_PGPS_BASE		API_VER API_LOCATION "/pgps"
 
 #define API_DEVICES_BASE		"/devices"
 #define API_DEVICES_STATE_TEMPLATE	API_VER API_DEVICES_BASE "/%s/state"
@@ -122,13 +105,6 @@ static const char *const job_status_strings[] = {
 };
 #define JOB_STATUS_STRING_COUNT (sizeof(job_status_strings) / \
 				 sizeof(*job_status_strings))
-
-/* Mapping of enum to strings for AGPS request type. */
-static const char *const agps_req_type_strings[] = {
-	[NRF_CLOUD_REST_AGPS_REQ_ASSISTANCE]	= AGPS_REQ_TYPE_STR_ASSIST,
-	[NRF_CLOUD_REST_AGPS_REQ_LOCATION]	= AGPS_REQ_TYPE_STR_LOC,
-	[NRF_CLOUD_REST_AGPS_REQ_CUSTOM]	= AGPS_REQ_TYPE_STR_CUSTOM,
-};
 
 /* Generate an authorization header value string in the form:
  * "Authorization: Bearer JWT \r\n"
@@ -674,66 +650,7 @@ clean_up:
 	return ret;
 }
 
-/* AGPS_TYPE_PRINT macro assumes single digit values, check for the rare case that the
- * enum is modified.
- */
-BUILD_ASSERT((NRF_CLOUD_AGPS_UTC_PARAMETERS <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (NRF_CLOUD_AGPS_EPHEMERIDES <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (NRF_CLOUD_AGPS_ALMANAC <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (NRF_CLOUD_AGPS_NEQUICK_CORRECTION <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (NRF_CLOUD_AGPS_INTEGRITY <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (NRF_CLOUD_AGPS_LOCATION <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (NRF_CLOUD_AGPS_GPS_TOWS <= AGPS_CUSTOM_TYPE_CNT),
-	     "A-GPS enumeration values have changed, update format_agps_custom_types_str()");
-
-/* Macro to print the comma separated list of custom types */
-#define AGPS_TYPE_PRINT(buf, type)		\
-	if (pos != 0) {				\
-		buf[pos++] = ',';		\
-	}					\
-	buf[pos++] = (char)('0' + type)
-
-static int format_agps_custom_types_str(struct nrf_modem_gnss_agps_data_frame const *const req,
-	char *const types_buf)
-{
-	__ASSERT_NO_MSG(req != NULL);
-	__ASSERT_NO_MSG(types_buf != NULL);
-
-	int pos = 0;
-
-	if (req->data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
-		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_UTC_PARAMETERS);
-	}
-	if (req->sv_mask_ephe) {
-		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_EPHEMERIDES);
-	}
-	if (req->sv_mask_alm) {
-		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_ALMANAC);
-	}
-	if (req->data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
-		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION);
-	}
-	if (req->data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) {
-		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_NEQUICK_CORRECTION);
-	}
-	if (req->data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
-		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_GPS_TOWS);
-		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK);
-	}
-	if (req->data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
-		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_LOCATION);
-	}
-	if (req->data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
-		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_INTEGRITY);
-	}
-
-	types_buf[pos] = '\0';
-
-	return pos ? 0 : -EBADF;
-}
-
+#if defined(CONFIG_NRF_CLOUD_AGPS)
 static int get_content_range_total_bytes(char *const buf)
 {
 	char *end;
@@ -787,16 +704,17 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	__ASSERT_NO_MSG(request != NULL);
 
 	int ret;
-	size_t total_bytes;
-	size_t rcvd_bytes;
+	int type_count = 0;
 	size_t url_sz;
-	size_t remain;
-	size_t pos;
-	size_t frag_size;
+	size_t total_bytes = 0;
+	size_t rcvd_bytes = 0;
+	size_t remain = 0;
+	size_t pos = 0;
+	size_t frag_size = (rest_ctx->fragment_size ? rest_ctx->fragment_size : RANGE_MAX_BYTES);
 	char *auth_hdr = NULL;
 	char *url = NULL;
-	char const *req_type = NULL;
-	char custom_types[AGPS_CUSTOM_TYPE_STR_SZ];
+	cJSON *agps_obj;
+	enum nrf_cloud_agps_type types[NRF_CLOUD_AGPS__LAST];
 	char range_hdr[HDR_RANGE_BYTES_SZ];
 	struct rest_client_req_context req;
 	struct rest_client_resp_context resp;
@@ -847,113 +765,73 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		goto clean_up;
 	}
 
-	/* Determine size of URL buffer and allocate */
-	url_sz = sizeof(API_GET_AGPS_BASE);
-	if (request->net_info) {
-		url_sz += strlen(AGPS_NET_INFO) + NET_INFO_PRINT_SZ;
-	}
-	if (filtered) {
-		url_sz += strlen(AGPS_FILTERED) + strlen(AGPS_ELEVATION_MASK);
-	}
+	/* Get the A-GPS type array */
 	switch (request->type) {
 	case NRF_CLOUD_REST_AGPS_REQ_CUSTOM:
-		ret = format_agps_custom_types_str(request->agps_req, custom_types);
-		if (ret) {
-			LOG_ERR("No A-GPS types requested");
-			goto clean_up;
-		}
-		url_sz += strlen(AGPS_CUSTOM_TYPE) + strlen(custom_types);
-		/* Fall-through */
+		type_count = nrf_cloud_agps_type_array_get(request->agps_req,
+							   types, ARRAY_SIZE(types));
+		break;
 	case NRF_CLOUD_REST_AGPS_REQ_LOCATION:
-	case NRF_CLOUD_REST_AGPS_REQ_ASSISTANCE:
-		req_type = agps_req_type_strings[request->type];
-		url_sz += strlen(AGPS_REQ_TYPE) + strlen(req_type);
+		type_count = 1;
+		types[0] = NRF_CLOUD_AGPS_LOCATION;
 		break;
-	case NRF_CLOUD_REST_AGPS_REQ_UNSPECIFIED:
+	case NRF_CLOUD_REST_AGPS_REQ_ASSISTANCE: {
+		struct nrf_modem_gnss_agps_data_frame assist;
+		/* Set all request flags */
+		memset(&assist, 0xFF, sizeof(assist));
+		type_count = nrf_cloud_agps_type_array_get(&assist, types, ARRAY_SIZE(types));
 		break;
-
+	}
 	default:
-		ret = -EINVAL;
+		break;
+	}
+
+	if (type_count <= 0) {
+		LOG_ERR("No A-GPS request data found for type: %u", request->type);
+		ret = -ENOENT;
 		goto clean_up;
 	}
 
+	agps_obj = cJSON_CreateObject();
+	ret = nrf_cloud_agps_req_data_json_encode(types, type_count,
+						  &request->net_info->current_cell, false,
+						  filtered, mask_angle,
+						  agps_obj);
+
+	/* Create a parameterized URL from the JSON data to use for the GET request.
+	 * The HTTP request body is not used in GET requests.
+	 * Use the rx_buf temporarily.
+	 */
+	ret = nrf_cloud_json_to_url_params_convert(rest_ctx->rx_buf, rest_ctx->rx_buf_len,
+						   agps_obj);
+
+	/* Cleanup JSON obj */
+	cJSON_Delete(agps_obj);
+	agps_obj = NULL;
+
+	if (ret) {
+		LOG_ERR("Could not create A-GPS request URL");
+		goto clean_up;
+	}
+
+	url_sz = sizeof(API_GET_AGPS_BASE) + strlen(rest_ctx->rx_buf);
 	url = nrf_cloud_malloc(url_sz);
 	if (!url) {
 		ret = -ENOMEM;
 		goto clean_up;
 	}
-	req.url = url;
 
-	/* Format API URL */
-	ret = snprintk(url, url_sz, API_GET_AGPS_BASE);
-	if ((ret < 0) || (ret >= url_sz)) {
-		LOG_ERR("Could not format URL: device id");
+	ret = snprintk(url, url_sz, "%s%s", API_GET_AGPS_BASE, rest_ctx->rx_buf);
+	if (ret < 0 || ret >= url_sz) {
+		LOG_ERR("Could not format URL");
 		ret = -ETXTBSY;
 		goto clean_up;
 	}
-	pos = ret;
-	remain = url_sz - ret;
 
-	if (filtered) {
-		ret = snprintk(&url[pos], remain, AGPS_FILTERED);
-		if ((ret < 0) || (ret >= remain)) {
-			LOG_ERR("Could not format URL: filtered");
-			ret = -ETXTBSY;
-			goto clean_up;
-		}
-		pos += ret;
-		remain -= ret;
+	/* Set the URL */
+	req.url = url;
 
-		if (mask_angle != NRF_CLOUD_AGPS_MASK_ANGLE_NONE) {
-			ret = snprintk(&url[pos], remain, AGPS_ELEVATION_MASK, mask_angle);
-			if ((ret < 0) || (ret >= remain)) {
-				LOG_ERR("Could not format URL: mask angle");
-				ret = -ETXTBSY;
-				goto clean_up;
-			}
-			pos += ret;
-			remain -= ret;
-		}
-	}
-
-	if (req_type) {
-		ret = snprintk(&url[pos], remain, AGPS_REQ_TYPE, req_type);
-		if ((ret < 0) || (ret >= remain)) {
-			LOG_ERR("Could not format URL: request type");
-			ret = -ETXTBSY;
-			goto clean_up;
-		}
-		pos += ret;
-		remain -= ret;
-	}
-
-	if (request->type == NRF_CLOUD_REST_AGPS_REQ_CUSTOM) {
-		ret = snprintk(&url[pos], remain, AGPS_CUSTOM_TYPE, custom_types);
-		if ((ret < 0) || (ret >= remain)) {
-			LOG_ERR("Could not format URL: custom types");
-			ret = -ETXTBSY;
-			goto clean_up;
-		}
-		pos += ret;
-		remain -= ret;
-	}
-
-	if (request->net_info) {
-		ret = snprintk(&url[pos], remain, AGPS_NET_INFO,
-			       request->net_info->current_cell.mcc,
-			       request->net_info->current_cell.mnc,
-			       request->net_info->current_cell.tac,
-			       request->net_info->current_cell.id);
-		if ((ret < 0) || (ret >= remain)) {
-			LOG_ERR("Could not format URL: network info");
-			ret = -ETXTBSY;
-			goto clean_up;
-		}
-		pos += ret;
-		remain -= ret;
-	}
-
-	LOG_DBG("req url:%s", url);
+	LOG_DBG("URL: %s", url);
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
@@ -971,13 +849,6 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	};
 
 	req.header_fields = (const char **)headers;
-
-	pos = 0;
-	remain = 0;
-	rcvd_bytes = 0;
-	total_bytes = 0;
-	frag_size = rest_ctx->fragment_size ?
-		    rest_ctx->fragment_size : RANGE_MAX_BYTES;
 
 	/* Do as many REST calls as needed to receive entire payload */
 	do {
@@ -1063,6 +934,7 @@ clean_up:
 
 	return ret;
 }
+#endif /* CONFIG_NRF_CLOUD_AGPS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,

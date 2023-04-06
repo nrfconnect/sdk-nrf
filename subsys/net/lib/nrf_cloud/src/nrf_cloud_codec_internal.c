@@ -2815,6 +2815,7 @@ int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agps_data_frame * 
 int nrf_cloud_agps_req_data_json_encode(const enum nrf_cloud_agps_type * const types,
 					const size_t type_count,
 					const struct lte_lc_cell * const cell_inf,
+					const bool fetch_cell_inf,
 					const bool filtered_ephem, const uint8_t mask_angle,
 					cJSON * const data_obj_out)
 {
@@ -2835,11 +2836,13 @@ int nrf_cloud_agps_req_data_json_encode(const enum nrf_cloud_agps_type * const t
 			mask_angle);
 	}
 
-	/* Add the cell info */
-	err = nrf_cloud_cell_info_json_encode(data_obj_out, cell_inf);
-	if (err) {
-		LOG_ERR("Failed to add cellular network info to A-GPS request: %d", err);
-		goto cleanup;
+	/* Add the cell info if provided or fetch flag set */
+	if (cell_inf || fetch_cell_inf) {
+		err = nrf_cloud_cell_info_json_encode(data_obj_out, cell_inf);
+		if (err) {
+			LOG_ERR("Failed to add cellular network info to A-GPS request: %d", err);
+			goto cleanup;
+		}
 	}
 
 	/* Add the requested types */
@@ -2901,7 +2904,7 @@ int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agps_data_frame *
 #endif
 
 	/* Populate the request payload */
-	err = nrf_cloud_agps_req_data_json_encode(types, type_count, NULL,
+	err = nrf_cloud_agps_req_data_json_encode(types, type_count, NULL, true,
 						  IS_ENABLED(CONFIG_NRF_CLOUD_AGPS_FILTERED),
 						  mask_angle, data_obj);
 	if (!err) {
