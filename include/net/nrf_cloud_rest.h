@@ -44,10 +44,12 @@ enum nrf_cloud_http_status {
 
 /** @brief nRF Cloud AGPS REST request types */
 enum nrf_cloud_rest_agps_req_type {
+	/** Request all assistance data */
 	NRF_CLOUD_REST_AGPS_REQ_ASSISTANCE,
+	/** Request only location (NRF_CLOUD_AGPS_LOCATION) */
 	NRF_CLOUD_REST_AGPS_REQ_LOCATION,
-	NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
-	NRF_CLOUD_REST_AGPS_REQ_UNSPECIFIED,
+	/** Request the data specified by nrf_modem_gnss_agps_data_frame */
+	NRF_CLOUD_REST_AGPS_REQ_CUSTOM
 };
 
 #define NRF_CLOUD_REST_TIMEOUT_NONE		(SYS_FOREVER_MS)
@@ -124,7 +126,7 @@ struct nrf_cloud_rest_location_request {
 /** @brief Data required for nRF Cloud Assisted GPS (A-GPS) request */
 struct nrf_cloud_rest_agps_request {
 	enum nrf_cloud_rest_agps_req_type type;
-	/** Required for custom request type */
+	/** Required for custom request type (NRF_CLOUD_REST_AGPS_REQ_CUSTOM) */
 	struct nrf_modem_gnss_agps_data_frame *agps_req;
 	/** Optional; provide network info or set to NULL. The cloud cannot
 	 * provide location assistance data if network info is NULL.
@@ -179,6 +181,7 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 	struct nrf_cloud_rest_location_request const *const request,
 	struct nrf_cloud_location_result *const result);
 
+#if defined(CONFIG_NRF_CLOUD_AGPS)
 /**
  * @brief nRF Cloud Assisted GPS (A-GPS) data request.
  *
@@ -197,6 +200,8 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
  *           Otherwise, a (negative) error code is returned:
  *           - -EINVAL will be returned, and an error message printed, if invalid parameters
  *		are given.
+ *           - -ENOENT will be returned if there was no A-GPS data requested for the specified
+ *		request type.
  *           - -ENOBUFS will be returned, and an error message printed, if there is not enough
  *             buffer space to store retrieved AGPS data.
  *           - See @verbatim embed:rst:inline :ref:`nrf_cloud_rest_failure` @endverbatim for all
@@ -206,6 +211,7 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	struct nrf_cloud_rest_agps_request const *const request,
 	struct nrf_cloud_rest_agps_result *const result);
+#endif /* CONFIG_NRF_CLOUD_AGPS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 /**

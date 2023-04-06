@@ -234,10 +234,16 @@ enum nrf_cloud_rcv_topic nrf_cloud_dc_rx_topic_decode(const char * const topic);
  */
 void nrf_cloud_set_app_version(const char * const app_ver);
 
+/** @brief Build A-GPS type array based on request.
+ */
+int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agps_data_frame * const request,
+				  enum nrf_cloud_agps_type *array, const size_t array_size);
+
 /** @brief Encode the data payload of an nRF Cloud A-GPS request into the provided object */
 int nrf_cloud_agps_req_data_json_encode(const enum nrf_cloud_agps_type * const types,
 					const size_t type_count,
 					const struct lte_lc_cell * const cell_inf,
+					const bool fetch_cell_inf,
 					const bool filtered_ephem, const uint8_t mask_angle,
 					cJSON * const data_obj_out);
 
