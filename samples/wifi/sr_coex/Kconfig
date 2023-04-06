@@ -80,7 +80,7 @@ config STA_SAMPLE_PASSWORD
 
 config NET_CONFIG_PEER_IPV4_ADDR
 	string "Peer IPv4 address"
-	default "192.168.1.202"
+	default "192.168.1.253"
 
 config NET_CONFIG_PEER_IPV4_PORT
 	int "Peer IPv4 port"
