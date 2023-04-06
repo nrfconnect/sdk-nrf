@@ -1,0 +1,17 @@
+# Copyright (c) 2023 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+sample:
+  name: nPM1300 fuel gauge
+
+common:
+  integration_platforms:
+    - nrf52dk_nrf52832
+  tags: pmic
+
+tests:
+  samples.compile:
+    platform_allow: nrf52dk_nrf52832
+    harness: shield
+    tags: shield
+    extra_args: SHIELD=npm1300_ek
+    depends_on: arduino_i2c
