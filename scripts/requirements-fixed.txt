@@ -14,7 +14,7 @@ breathe==4.26.1
 canopen==1.2.0
 cbor==1.0.0
 cbor2==5.4.3
-certifi==2020.12.5
+certifi==2022.12.7
 cffi==1.14.4
 chardet==4.0.0
 click==7.1.2
