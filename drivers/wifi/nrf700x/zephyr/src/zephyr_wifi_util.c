@@ -516,6 +516,41 @@ static int nrf_wifi_util_show_host_rpu_ps_ctrl_state(const struct shell *shell,
 }
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
+
+static int nrf_wifi_util_show_fw_ver(const struct shell *shell,
+				  size_t argc,
+				  const char *argv[])
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	unsigned int umac_ver, lmac_ver;
+
+	fmac_dev_ctx = ctx->rpu_ctx;
+
+	status = wifi_nrf_fmac_ver_get(fmac_dev_ctx, &umac_ver, &lmac_ver);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+		 SHELL_INFO,
+		 "Failed to get firmware version\n");
+		return -ENOEXEC;
+	}
+
+	shell_fprintf(shell, SHELL_INFO,
+		 "UMAC version: %d.%d.%d.%d\nLMAC version: %d.%d.%d.%d\n",
+		  NRF_WIFI_UMAC_VER(umac_ver),
+		  NRF_WIFI_UMAC_VER_MAJ(umac_ver),
+		  NRF_WIFI_UMAC_VER_MIN(umac_ver),
+		  NRF_WIFI_UMAC_VER_EXTRA(umac_ver),
+		  NRF_WIFI_LMAC_VER(lmac_ver),
+		  NRF_WIFI_LMAC_VER_MAJ(lmac_ver),
+		  NRF_WIFI_LMAC_VER_MIN(lmac_ver),
+		  NRF_WIFI_LMAC_VER_EXTRA(lmac_ver));
+
+	return status;
+}
+
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf_wifi_util_subcmds,
 	SHELL_CMD_ARG(he_ltf,
@@ -600,6 +635,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      1,
 		      0),
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
+	SHELL_CMD_ARG(show_fw_ver,
+		      NULL,
+		      "Display the firmware version",
+		      nrf_wifi_util_show_fw_ver,
+		      1,
+		      0),
 	SHELL_SUBCMD_SET_END);
 
 
