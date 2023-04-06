@@ -56,7 +56,7 @@ class DFUInfo:
         return self.sync_buffer_size
 
     def is_started(self):
-        return (self.dfu_state == self._DFU_STATE_ACTIVE) or (self.dfu_state == self._DFU_STATE_STORING)
+        return self.dfu_state in (self._DFU_STATE_ACTIVE, self._DFU_STATE_STORING)
 
     def is_storing(self):
         return self.dfu_state == self._DFU_STATE_STORING
