@@ -208,7 +208,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 2c8a0af24433dd802414ae1832a3f3e5948514b7
+      revision: 4cba902db117910de22680a396b5d1c05154c12b
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread
