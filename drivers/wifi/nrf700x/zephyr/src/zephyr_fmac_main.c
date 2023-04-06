@@ -315,7 +315,11 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 					sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-					NRF_WIFI_DEF_PHY_CALIB);
+					NRF_WIFI_DEF_PHY_CALIB,
+					CONFIG_NRF700X_ANT_GAIN_2G,
+					CONFIG_NRF700X_ANT_GAIN_5G_BAND1,
+					CONFIG_NRF700X_ANT_GAIN_5G_BAND2,
+					CONFIG_NRF700X_ANT_GAIN_5G_BAND3);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: wifi_nrf_fmac_dev_init failed\n", __func__);

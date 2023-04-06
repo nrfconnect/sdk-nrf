@@ -599,12 +599,9 @@ Testing
 
             Bypass regulatory domain is false by default.
 
-            If ``bypass_reg_domain`` is ``0``, then TX power of the channel will be configured to
-            the minimum value of the user configured TX power value and maximum power supported in the
-            configured regulatory domain.
+            If ``bypass_reg_domain`` is ``0``, then TX power of the channel will be configured to the minimum value of the user configured TX power value and maximum power supported in the configured regulatory domain.
 
-            If ``bypass_reg_domain`` is ``1``, then user configured TX power value will be set
-            overriding current configured regulatory domain max TX power for the channel.
+            If ``bypass_reg_domain`` is ``1``, then user configured TX power value will be set overriding current configured regulatory domain max TX power for the channel.
 
          See :ref:`wifi_radio_ficr_prog_subcmds` for a list of available subcommands.
 

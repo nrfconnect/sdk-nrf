@@ -166,7 +166,11 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 						  int sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-						  unsigned int phy_calib)
+						  unsigned int phy_calib,
+						  unsigned char ant_gain_2g,
+						  unsigned char ant_gain_5g_band1,
+						  unsigned char ant_gain_5g_band2,
+						  unsigned char ant_gain_5g_band3)
 {
 	unsigned long start_time_us = 0;
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
@@ -205,7 +209,11 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 			       sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-			       phy_calib);
+			       phy_calib,
+			       ant_gain_2g,
+			       ant_gain_5g_band1,
+			       ant_gain_5g_band2,
+			       ant_gain_5g_band3);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
@@ -347,7 +355,11 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_d
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 					    int sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-					    unsigned int phy_calib)
+					    unsigned int phy_calib,
+					    unsigned char ant_gain_2g,
+					    unsigned char ant_gain_5g_band1,
+					    unsigned char ant_gain_5g_band2,
+					    unsigned char ant_gain_5g_band3)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 #ifndef CONFIG_NRF700X_RADIO_TEST
@@ -428,7 +440,11 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_d
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 				       sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-				       phy_calib);
+				       phy_calib,
+				       ant_gain_2g,
+				       ant_gain_5g_band1,
+				       ant_gain_5g_band2,
+				       ant_gain_5g_band3);
 
 	if (status == WIFI_NRF_STATUS_FAIL) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
