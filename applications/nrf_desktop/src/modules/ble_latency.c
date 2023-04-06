@@ -276,7 +276,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_CAF_BLE_SMP) &&
+	if (IS_ENABLED(CONFIG_CAF_BLE_SMP_TRANSFER_EVENTS) &&
 	    is_ble_smp_transfer_event(aeh)) {
 		use_low_latency();
 
@@ -320,7 +320,7 @@ APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
-#if CONFIG_CAF_BLE_SMP
+#if CONFIG_CAF_BLE_SMP_TRANSFER_EVENTS
 APP_EVENT_SUBSCRIBE(MODULE, ble_smp_transfer_event);
 #endif
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
