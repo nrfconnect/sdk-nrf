@@ -172,7 +172,6 @@ zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_CRYPTO
 	${COMMON_SRC_BASE}/common/wpa_common.c
 	${COMMON_SRC_BASE}/rsn_supp/wpa.c
 	${COMMON_SRC_BASE}/rsn_supp/preauth.c
-	${COMMON_SRC_BASE}/rsn_supp/pmksa_cache.c
 	${COMMON_SRC_BASE}/rsn_supp/wpa_ie.c
 
 	${COMMON_SRC_BASE}/crypto/crypto_mbedtls-bignum.c
@@ -331,6 +330,10 @@ zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_EAPOL
 	${COMMON_SRC_BASE}/eap_peer/eap.c
 	${COMMON_SRC_BASE}/eap_peer/eap_methods.c
 	${COMMON_SRC_BASE}/eap_common/eap_common.c
+	${COMMON_SRC_BASE}/rsn_supp/pmksa_cache.c
 )
 
+zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_EAPOL
+	IEEE8021X_EAPOL
+)
 endif()

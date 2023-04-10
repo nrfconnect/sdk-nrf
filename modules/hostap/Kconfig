@@ -60,7 +60,7 @@ config WPA_SUPP_CRYPTO_ENTERPRISE
 config WPA_SUPP_WPA3
 	bool "WPA3 support"
 	select WPA_SUPP_CRYPTO
-	default n
+	default y
 
 config WPA_SUPP_AP
 	bool "AP mode support"
@@ -76,7 +76,6 @@ config WPA_SUPP_P2P
 
 config WPA_SUPP_EAPOL
 	bool "Enable EAPoL supplicant"
-	default y if WPA_SUPP_WPA3 || WPA_SUPP_P2P || WPA_SUPP_CRYPTO_ENTERPRISE
 
 config WPA_CLI
 	bool "CLI support for wpa_supplicant"
