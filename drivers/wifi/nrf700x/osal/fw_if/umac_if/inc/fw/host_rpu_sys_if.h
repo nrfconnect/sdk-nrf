@@ -589,6 +589,10 @@ struct nrf_wifi_cmd_sys_init {
 	struct temp_vbat_config temp_vbat_config_params;
 	unsigned char tcp_ip_checksum_offload;
 	unsigned char country_code[NRF_WIFI_COUNTRY_CODE_LEN];
+	unsigned char ant_gain_2g;
+	unsigned char ant_gain_5g_band1;
+	unsigned char ant_gain_5g_band2;
+	unsigned char ant_gain_5g_band3;
 } __NRF_WIFI_PKD;
 
 /**
