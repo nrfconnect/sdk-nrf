@@ -239,10 +239,6 @@ zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_WPS
 	${COMMON_SRC_BASE}/wps/wps_dev_attr.c
 	${COMMON_SRC_BASE}/wps/wps_enrollee.c
 	${COMMON_SRC_BASE}/wps/wps_registrar.c
-	${COMMON_SRC_BASE}/eapol_supp/eapol_supp_sm.c
-	${COMMON_SRC_BASE}/eap_peer/eap.c
-	${COMMON_SRC_BASE}/eap_peer/eap_methods.c
-	${COMMON_SRC_BASE}/eap_common/eap_common.c
 	${COMMON_SRC_BASE}/crypto/dh_groups.c
 	${COMMON_SRC_BASE}/crypto/dh_group5.c
 )
@@ -256,17 +252,12 @@ zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_P2P
 zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_WPS
 	CONFIG_WPS
 	CONFIG_EAP_WSC
-	CONFIG_IEEE8021X_EAPOL
 )
 
 zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_CRYPTO_ENTERPRISE
 	${COMMON_SRC_BASE}/eap_peer/eap_tls.c
 	${COMMON_SRC_BASE}/eap_peer/eap_tls_common.c
 
-	${COMMON_SRC_BASE}/eapol_supp/eapol_supp_sm.c
-	${COMMON_SRC_BASE}/eap_peer/eap.c
-	${COMMON_SRC_BASE}/eap_peer/eap_methods.c
-	${COMMON_SRC_BASE}/eap_common/eap_common.c
 
 	${COMMON_SRC_BASE}/eap_peer/eap_peap.c
 	${COMMON_SRC_BASE}/eap_common/eap_peap_common.c
@@ -334,4 +325,12 @@ zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_CRYPTO_ENTERPRISE
 	CONFIG_EAP_EKE
 	CONFIG_EAP_IKEv2
 )
+
+zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_EAPOL
+	${COMMON_SRC_BASE}/eapol_supp/eapol_supp_sm.c
+	${COMMON_SRC_BASE}/eap_peer/eap.c
+	${COMMON_SRC_BASE}/eap_peer/eap_methods.c
+	${COMMON_SRC_BASE}/eap_common/eap_common.c
+)
+
 endif()
