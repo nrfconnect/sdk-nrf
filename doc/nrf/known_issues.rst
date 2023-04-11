@@ -5,7 +5,7 @@ Known issues
 
 .. contents::
    :local:
-   :depth: 2
+   :depth: 3
 
 Known issues listed on this page *and* tagged with the :ref:`latest official release version <release_notes>` are valid for the current state of development.
 Use the drop-down filter to see known issues for previous releases and check if they are still valid.
@@ -75,131 +75,30 @@ Use the drop-down filter to see known issues for previous releases and check if 
      **Workaround:** The last paragraph contains the workaround.
      The workaround is optional.
 
-nRF9160
-*******
+.. STRUCTURE
 
-Asset tracker
-=============
+   Known issues are grouped by Hardware and Software.
+   This split was introduced in v2.3.99.
 
-.. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+   Hardware is split by DK or nRF Series.
+   Hardware lists issues whose cause can be pinpointed to hardware.
 
-NCSDK-6898: Setting :kconfig:option:`CONFIG_SECURE_BOOT` does not work
-  The immutable bootloader is not able to find the required metadata in the MCUboot image.
-  See the related NCSDK-6898 known issue in `Build system`_ for more details.
+   Software is split into Applications, Samples, Protocols, Subsystems.
+   Software lists issues whose cause is not related to hardware AND can be pinpointed to configuration.
 
-  **Workaround:** Set :kconfig:option:`CONFIG_FW_INFO` in MCUboot.
-
-.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
-
-External antenna performance setting
-  The preprogrammed Asset Tracker does not come with the best external antenna performance.
-
-  **Workaround:** If you are using nRF9160 DK v0.15.0 or higher and Thingy:91 v1.4.0 or higher, set :kconfig:option:`CONFIG_NRF9160_GPS_ANTENNA_EXTERNAL` to ``y``.
-  Alternatively, for nRF9160 DK v0.15.0, you can set the :kconfig:option:`CONFIG_NRF9160_GPS_COEX0_STRING` option to ``AT%XCOEX0`` when building the preprogrammed Asset Tracker to achieve the best external antenna performance.
-
-.. rst-class:: v1-3-2 v1-3-1 v1-3-0
-
-NCSDK-5574: Warnings during FOTA
-   The nRF9160: Asset Tracker application prints warnings and error messages during successful FOTA.
-
-.. rst-class:: v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
-
-NCSDK-6689: High current consumption in Asset Tracker
-  The nRF9160: Asset Tracker might show up to 2.5 mA current consumption in idle mode with :kconfig:option:`CONFIG_POWER_OPTIMIZATION_ENABLE` set to ``y``.
-
-.. rst-class:: v1-0-0 v0-4-0 v0-3-0
-
-Sending data before connecting to nRF Cloud
-  The nRF9160: Asset Tracker application does not wait for connection to nRF Cloud before trying to send data.
-  This causes the application to crash if the user toggles one of the switches before the kit is connected to the cloud.
-
-.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
-
-IRIS-2676: Missing support for FOTA on nRF Cloud
-  The nRF9160: Asset Tracker application does not support the nRF Cloud FOTA_v2 protocol.
-
-  **Workaround:** The implementation for supporting the nRF Cloud FOTA_v2 can be found in the following commits:
-
-					* cef289b559b92186cc54f0257b8c9adc0997f334
-					* 156d4cf3a568869adca445d43a786d819ae10250
-					* f520159f0415f011ae66efb816384a8f7bade83d
-
-Asset Tracker v2
-================
-
-.. rst-class:: v2-2-0
-
-CIA-845: The application cannot be built with :file:`overlay-carrier.conf` (carrier library) enabled for Nordic Thingy:91
-  Building with :ref:`liblwm2m_carrier_readme` library enabled for Nordic Thingy:91 will result in a ``FLASH`` overflow and a build error.
-
-.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
-
-CIA-463: Wrong network mode parameter reported to cloud
-  The network mode string present in ``deviceInfo`` (nRF Cloud) and ``dev`` (Azure IoT Hub and AWS IoT) JSON objects that is reported to cloud might contain wrong network modes.
-  The network mode string contains the network modes that the modem is configured to use, not what the modem actually connects to the LTE network with.
-
-.. rst-class:: v1-9-2 v1-9-1 v1-9-0
-
-NCSDK-14235: Timestamps that are sent in cloud messages drift over time
-  Due to a bug in the :ref:`lib_date_time` library, timestamps that are sent to cloud drift because they are calculated incorrectly.
-
-.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-0
-
-CIA-604: ATv2 cannot be built for the ``thingy91_nrf9160_ns`` build target with ``SECURE_BOOT`` enabled
-  Due to the use of static partitions with the Thingy:91, there is insufficient room in the flash memory to enable both the primary and secondary bootloaders.
-
-.. rst-class:: v2-0-2 v2-0-1 v2-0-0
-
-CIA-661: Asset Tracker v2 application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with modem traces or Memfault enabled
-  The :ref:`asset_tracker_v2` application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` for modem traces or :file:`overlay-memfault.conf` for Memfault due to memory constraints.
-
-  **Workaround:** Use one of the following workarounds for modem traces:
-
-  * Use Secure Partition Manager instead of TF-M by setting ``CONFIG_SPM`` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
-  * Reduce the value of :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_TRACE_SIZE` to 8 Kb, however, this might lead to loss of modem traces.
-
-  For Memfault, use Secure Partition Manager instead of TF-M by setting ``CONFIG_SPM`` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
-
-.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
-
-CIA-890: The application cannot be built with :file:`overlay-debug.conf` and :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` set to ``y``
-  Due to insufficient flash space for the application when it is not optimized, the :ref:`asset_tracker_v2` application cannot be built with :file:`overlay-debug.conf` and :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` set to ``y``.
-
-  **Workaround:** To free up flash space when debugging locally, comment out the following Kconfig options in the :file:`prj.conf` file:
-
-  * :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`
-  * :kconfig:option:`CONFIG_IMG_MANAGER`
-  * :kconfig:option:`CONFIG_MCUBOOT_IMG_MANAGER`
-  * :kconfig:option:`CONFIG_IMG_ERASE_PROGRESSIVELY`
-  * :kconfig:option:`CONFIG_BUILD_S1_VARIANT`
-
-  This removes the partitions for the MCUboot bootloader, the secondary bootloader, and the secondary application image slot.
-  Any functionality depending on those will not work with this configuration.
-
-  Alternatively, disable logging for non-relevant modules or libraries in the :file:`overlay-debug.conf` file until the image fits in flash.
-
-Serial LTE Modem
-================
-
-.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
-
-NCSDK-13895: Build failure for target Thingy:91 with secure_bootloader overlay
-  Building the application for Thingy:91 fails if secure_bootloader overlay is included.
-
-.. rst-class:: v2-3-0
-
-NCSDK-20047: SLM logging over RTT is not available
-  There is a conflict with MCUboot RTT logging.
-  In order to save power, SLM configures MCUboot to use RTT instead of UART for logging.
-  SLM itself uses RTT for logging as well.
-  With a recent change, MCUboot exclusively takes control of the RTT logging, which causes the conflict.
-
-  **Workaround:** Remove ``CONFIG_USE_SEGGER_RTT=y`` and ``CONFIG_RTT_CONSOLE=y`` from :file:`child_image\mcuboot.conf`.
-
+.. _known_issues_hw:
 .. _known_issues_other:
 
-Other issues
+Hardware issues
+***************
+
+This section lists issues whose cause can be pinpointed to hardware, grouped by nRF Series.
+For issues affecting software components without any relation to hardware, see :ref:`known_issues_sw`.
+
+nRF91 Series
 ============
+
+The issues in this section are related to :ref:`nRF91 Series hardware <ug_nrf91>`.
 
 .. rst-class:: v2-3-0
 
@@ -437,19 +336,26 @@ NCSDK-18376: P-GPS in external flash fails to inject first prediction during loa
   When using external flash with P-GPS, stored predictions cannot be reliably read to satisfy the modem's need for ephemeris data when actively downloading and storing predictions to the same external flash.
   Once the download is complete, the predictions can be reliably read.
 
-nRF7002
-*******
+nRF70 Series
+============
+
+The issues in this section are related to :ref:`nRF70 Series hardware <ug_nrf70>`.
 
 .. rst-class:: v2-3-0
 
 SHEL-1352: Incorrect base address used in the OTP TX trim coefficients
   Incorrect base address used for TX trim coefficients in the One-Time Programmable (OTP) memory results in transmit power deviating by +/- 2 dB from the target value.
 
-nRF5
-****
+
+nRF53 Series
+============
+
+The issues in this section are related to :ref:`nRF53 Series hardware <ug_nrf53>`.
 
 nRF5340
-=======
+-------
+
+The issues in this section are related to :ref:`nRF5340 <ug_nrf5340>`.
 
 .. rst-class:: v2-2-0
 
@@ -513,7 +419,9 @@ FOTA does not work
   FOTA with the :ref:`zephyr:smp_svr_sample` does not work.
 
 Nordic Thingy:53
-================
+----------------
+
+The issues in this section are related to :ref:`Nordic Thingy:53 <ug_thingy53>`.
 
 .. rst-class:: v2-2-0
 
@@ -524,8 +432,10 @@ NCSDK-18263: |NCS| samples may fail to boot on Thingy:53
   **Workaround:** Revert the ``9a8680372fdb6e09f3d6537c8c6751dd5c50bf86`` commit in the sdk-zephyr repository and revert the ``1f9765df5acbb36afff0ce40c94ba65d44d19d70`` commit in sdk-nrf.
   During conflict resolution, make sure to update the :file:`west.yml` file in the sdk-nrf to point to the reverting commit in sdk-zephyr.
 
-nRF52820
+nRF52833
 ========
+
+The issues in this section are related to nRF52833.
 
 .. rst-class:: v1-3-2 v1-3-1 v1-3-0
 
@@ -543,8 +453,317 @@ Missing :file:`CMakeLists.txt`
   You can `download this file <nRF52820 CMakeLists.txt_>`_ from the upstream Zephyr repository.
   After you add it, the file is automatically included by the build system.
 
+.. _known_issues_sw:
+
+Software issues
+***************
+
+This section lists issues whose cause cannot be pinpointed strictly to hardware, or whose cause is related to both software and hardware.
+For issues related strictly to hardware, see :ref:`known_issues_hw`.
+
+Protocols
+=========
+
+The issues in this section are related to :ref:`protocols`.
+
+Bluetooth® LE
+-------------
+
+The issues in this section are related to :ref:`ug_ble_controller`.
+
+.. _ncsdk_19865:
+
+.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
+
+NCSDK-19865: GATT Robust Caching issues for bonded peers
+  The Client Supported Features value written by a bonded peer may not be stored in the non-volatile memory.
+  Change awareness of the bonded peer is lost on reboot.
+  After reboot, each bonded peer is initially marked as change-unaware.
+
+  **Workaround:** Disable the GATT Caching feature (:kconfig:option:`CONFIG_BT_GATT_CACHING`).
+  Make sure that Bluetooth bonds are removed together with disabling GATT Caching if the functionality is disabled during a firmware upgrade.
+
+.. rst-class:: v2-0-2
+
+DRGN-17695: The BT RX thread stack might overflow if the :kconfig:option:`CONFIG_BT_SMP` is enabled
+  When performing SMP pairing MPU FAULTs might be triggered because the stack is not large enough.
+
+  **Workaround:** Increase the stack size manually in the project configuration file (:file:`prj.conf`) using :kconfig:option:`CONFIG_BT_RX_STACK_SIZE`.
+
+.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+NCSDK-13459: Uninitialized size in hids_boot_kb_outp_report_read
+  When reading from the boot keyboard output report characteristic, the :ref:`hids_readme` calls the registered callback with uninitialized report size.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``f18250dad6cbd9778de7af4b8a774b58e55fe720``).
+
+.. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+NCSDK-9106: Bluetooth® ECC thread stack size too small
+  The Bluetooth ECC thread used during the pairing procedure with LE Secure Connections might overflow when an interrupt is triggered when the stack usage is at its maximum.
+
+  **Workaround:** Increase the ECC stack size by setting ``CONFIG_BT_HCI_ECC_STACK_SIZE`` to ``1140``.
+
+.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0
+
+DRGN-15435: GATT notifications and Writes Without Response might be sent out of order
+  GATT notifications and Writes Without Response might be sent out of order when not using a complete callback.
+
+  **Workaround:** Always set a callback for notifications and Writes Without Response.
+
+.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+DRGN-15448: Incomplete bond overwrite during pairing procedure when peer is not using the IRK stored in the bond
+  When pairing with a peer that has deleted its bond information and is using a new IRK to establish the connection, the existing bond is not overwritten during the pairing procedure.
+  This can lead to MIC errors during reconnection if the old LTK is used instead.
+
+.. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+NCSDK-8224: Callbacks for "security changed" and "pairing failed" are not always called
+  The pairing failed and security changed callbacks are not called when the connection is disconnected during the pairing procedure or the required security is not met.
+
+  **Workaround:** Application should use the disconnected callback to handle pairing failed.
+
+.. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+NCSDK-8223: GATT requests might deadlock RX thread
+  GATT requests might deadlock the RX thread when all TX buffers are taken by GATT requests and the RX thread tries to allocate a TX buffer for a response.
+  This causes a deadlock because only the RX thread releases the TX buffers for the GATT requests.
+  The deadlock is resolved by a 30 second timeout, but the ATT bearer cannot transmit without reconnecting.
+
+  **Workaround:** Set :kconfig:option:`CONFIG_BT_L2CAP_TX_BUF_COUNT` >= ``CONFIG_BT_ATT_TX_MAX`` + 2.
+
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+NCSDK-6845: Pairing failure with simultaneous pairing on multiple connections
+  When using LE Secure Connections pairing, the pairing fails with simultaneous pairing on multiple connections.
+  The failure reason is unspecified.
+
+  **Workaround:** Retry the pairing on the connections that failed one by one after the pairing procedure has finished.
+
+.. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0
+
+NCSDK-6844: Security procedure failure can terminate GATT client request
+  A security procedure terminates the GATT client request that is currently in progress, unless the request was the reason to initiate the security procedure.
+  If a new GATT client request is queued at this time, this might potentially cause a GATT transaction violation and fail as well.
+
+  **Workaround:** Do not initiate a security procedure in parallel with GATT client requests.
+
+.. rst-class:: v1-3-0
+
+NCSDK-5711: High-throughput transmission can deadlock the receive thread
+  High-throughput transmission can deadlock the receive thread if the connection is suddenly disconnected.
+
+.. rst-class:: v1-2-1 v1-2-0
+
+Only secure applications can use Bluetooth® LE
+  Bluetooth LE cannot be used in a non-secure application, for example, an application built for the ``nrf5340_dk_nrf5340_cpuappns`` build target.
+
+  **Workaround:** Use the ``nrf5340_dk_nrf5340_cpuapp`` build target instead.
+
+.. rst-class:: v1-2-1 v1-2-0 v1-1-0
+
+:kconfig:option:`CONFIG_BT_SMP` alignment requirement
+  When running the :ref:`bluetooth_central_dfu_smp` sample, the :kconfig:option:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:ref:`zephyr:smp_svr_sample`).
+  However, security is not enabled by default in the Zephyr sample.
+
+
+Bluetooth mesh
+--------------
+
+The issues in this section are related to the :ref:`ug_bt_mesh` protocol.
+
+.. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
+
+NCSDK-16800: RPL is not cleared on IV index recovery
+  After recovering the IV index, a node doesn't clear the replay protection list, which leads to incorrect triggering of the replay attack protection mechanism.
+
+  **Workaround:** Call ``bt_mesh_rpl_reset`` twice after the IV index recovery is done.
+
+.. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
+
+NCSDK-16798: Friend Subscription List might have duplicate entries
+  If a Low Power node loses a Friend Subscription List Add Confirm message, it repeats the request.
+  The Friend does not check both the transaction number and the presence of the addresses in the subscription list.
+  This causes a situation where the Friend fills the subscription list with duplicate addresses.
+
+.. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+NCSDK-16782: The extended advertiser might not work with Bluetooth mesh
+  Using the extended advertiser instead of the legacy advertiser can lead to getting composition data while provisioning to fail.
+  This problem might manifest in the sample :ref:`bluetooth_ble_peripheral_lbs_coex`, as it is using the extended advertiser.
+
+.. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0
+
+NCSDK-16579: Advertising Node Identity and Network ID might not work with the extended advertiser
+  Advertising Node Identity and Network ID do not work with the extended advertising API when the :kconfig:option:`CONFIG_BT_MESH_ADV_EXT_GATT_SEPARATE` option is enabled.
+
+  **Workaround:** Don't enable the :kconfig:option:`CONFIG_BT_MESH_ADV_EXT_GATT_SEPARATE` option.
+
+.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
+
+NCSDK-14399: Legacy advertiser can occasionally do more message retransmissions than requested
+  When using the legacy advertiser, the stack sleeps for at least 50 ms after starting advertising a message, which might result in more messages to be advertised than requested.
+
+.. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
+
+NCSDK-16061: IV update procedure fails on the device
+  Bluetooth® mesh device does not undergo IV update and fails to participate in the procedure initiated by any other node unless it is rebooted after the provisioning.
+
+  **Workaround:** Reboot the device after provisioning.
+
+.. rst-class:: v1-6-1 v1-6-0
+
+NCSDK-10200: The device stops sending Secure Network Beacons after re-provisioning
+  Bluetooth® mesh stops sending Secure Network Beacons if the device is re-provisioned after reset through Config Node Reset message or ``bt_mesh_reset()`` call.
+
+  **Workaround:** Reboot the device after re-provisioning.
+
+.. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+
+NCSDK-5580: nRF5340 only supports SoftDevice Controller
+  On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth® mesh.
+
+Enhanced ShockBurst (ESB)
+-------------------------
+
+The issues in this section are related to the :ref:`ug_esb` protocol.
+
+.. rst-class:: v2-3-0 v2-2-0
+
+NCSDK-20092: ESB does not send packet longer than 63 bytes
+  ESB does not support sending packets longer than 63 bytes, but has no such hardware limitation.
+
+
+Matter
+------
+
+The issues in this section are related to the :ref:`ug_matter` protocol.
+
+.. rst-class:: v2-3-0 v2-2-0
+
+KRKNWK-16575: Applications with factory data support do not boot up properly on nRF5340
+  When the Matter sample is built for ``nrf5340dk_nrf5340_cpuapp`` build target with the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option set to ``y`` the application returns prematurely the error code 200016 because the factory data partition is not aligned with the :kconfig:option:`CONFIG_FPROTECT_BLOCK_SIZE` Kconfig option.
+
+  **Workaround:** Manually cherry-pick and apply commit from the main branch (commit hash: ``ec9ad82637b0383ebf91eb1155813450ad9fcffb``).
+
+.. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1
+
+KRKNWK-15846: Android CHIP Tool crashes when subscribing in the :guilabel:`LIGHT ON/OFF & LEVEL CLUSTER`
+  The Android CHIP Tool crashes when attempting to start the subscription after typing minimum and maximum subscription interval values.
+  Also, the Subscription window in the :guilabel:`LIGHT ON/OFF & LEVEL CLUSTER` contains faulty GUI layout (overlapping captions) used when passing minimum and maximum subscription interval values.
+  This affects the Android CHIP Tool revision used for the |NCS| v2.2.0, v2.1.1, and v2.1.2 releases.
+
+  .. note::
+      The support for the Android CHIP Tool is removed as of the |NCS| v2.3.0 for Matter in the |NCS|. Use CHIP Tool for Linux or macOS instead, as described in :ref:`ug_matter_gs_testing`.
+
+.. rst-class:: v2-2-0 v2-1-2 v2-1-1
+
+KRKNWK-15913: Factory data set parsing issues
+  The ``user`` field in the factory data set is not properly parsed. The field should be of the ``MAP`` type instead of the ``BSTR`` type.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix to ``sdk-connectedhomeip`` (commit hash: ``3875c6f78c77212a3f62a5c825ff9b4e5054bbb4``).
+
+.. rst-class:: v2-1-2 v2-1-1
+
+KRKNWK-15749: Invalid ZAP Tool revision used
+  The ZAP Tool revision used for the |NCS| v2.1.1 and v2.1.2 releases is not compatible with the :file:`zap` files that define the Data Model in |NCS| Matter samples.
+  This results in the ZAP Tool not being able to parse :file:`zap` files from Matter samples.
+
+  **Workaround:** Check out the proper ZAP Tool revision with the following commands, where *<NCS_root_directory>* is the path to your |NCS| installation:
+
+    .. code-block::
+
+       cd <NCS_root_directory>/modules/lib/matter/
+       git -C third_party/zap/repo/ checkout -f 2ae226
+       git add third_party/zap/repo/
+
+.. rst-class:: v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0
+
+KRKNWK-14473: Unreliable communication with the window covering sample
+  The :ref:`window covering sample <matter_window_covering_sample>` might rarely become unresponsive for a couple of seconds after commissioning to the Matter network.
+
+  **Workaround:** Switch from SSED to SED role.
+
+.. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0
+
+KRKNWK-15088: Android CHIP Tool shuts down on changing the sensor type
+  When you change the current sensor type after activating the monitoring of another sensor type, the application shuts down.
+
+  **Workaround:** Restart the application and select the desired sensor type again.
+
+  .. note::
+      The support for the Android CHIP Tool is removed as of the |NCS| v2.3.0 for Matter in the |NCS|. Use CHIP Tool for Linux or macOS instead, as described in :ref:`ug_matter_gs_testing`.
+
+.. rst-class:: v2-0-2
+
+KRKNWK-14748: Matter command times out when a Matter device becomes a Thread router
+  When a Full Thread Device becomes a router, it will ignore incoming packets for a short period of time, typically between 1-2 seconds.
+  This might disrupt the communication over Matter and lead to transaction timeouts.
+
+  In more recent versions of Matter, this problem has been eliminated by enhancing Matter's Message Reliability Protocol.
+  This fix will be included in the future versions of the |NCS|.
+
+.. rst-class:: v2-0-2 v2-0-1 v2-0-0
+
+KRKNWK-14206: CHIP Tool for Android might crash when using Cluster Interactive Tool screen
+  Cluster Interaction Tool screen crashes when trying to send a command that takes an optional argument.
+
+.. rst-class:: v2-0-2 v2-0-1 v2-0-0
+
+KRKNWK-14180: The QSPI sleep mode is not handled efficiently in Matter samples on the nRF53 SoC
+  QSPI is active during every Bluetooth LE connection in the Matter samples that are programmed on the nRF53 SoC.
+  This results in higher power consumption, for example during commissioning into the Matter network.
+
+.. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
+
+KRKNWK-11225: CHIP Tool for Android cannot communicate with a Matter device after the device reboots
+  CHIP Tool for Android does not implement any mechanism to recover a secure session to a Matter device after the device has rebooted and lost the session.
+  As a result, the device can no longer decrypt and process messages sent by CHIP Tool for Android as the controller keeps using stale cryptographic keys.
+
+  **Workaround:** Do not reboot the device after commissioning it with CHIP Tool for Android.
+
+  .. note::
+      The support for the Android CHIP Tool is removed as of the |NCS| v2.3.0 for Matter in the |NCS|. Use CHIP Tool for Linux or macOS instead, as described in :ref:`ug_matter_gs_testing`.
+
+.. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+KRKNWK-10589: CHIP Tool for Android crashes when commissioning a Matter device
+  In random circumstances, CHIP Tool for Android crashes when trying to connect to a Matter device over Bluetooth® LE.
+
+  **Workaround:** Restart the application and try to commission the Matter device again.
+  If the problem persists, clear the application data and try again.
+
+.. rst-class:: v1-9-2 v1-9-1 v1-9-0
+
+KRKNWK-12950: CHIP Tool for Android opens the commissioning window using an incorrect PIN code
+  CHIP Tool for Android uses a random code instead of a user-provided PIN code to open the commissioning window on a Matter device.
+
+.. rst-class:: v1-6-1 v1-6-0
+
+KRKNWK-10387: Matter service is needlessly advertised over Bluetooth® LE during DFU
+  The Matter samples can be configured to include the support for Device Firmware Upgrade (DFU) over Bluetooth LE.
+  When the DFU procedure is started, the Matter Bluetooth LE service is needlessly advertised, revealing the device identifiers such as Vendor and Product IDs.
+  The service is meant to be advertised only during the device commissioning.
+
+.. rst-class:: v1-5-2 v1-5-1 v1-5-0
+
+KRKNWK-9214: Pigweed submodule might not be accessible from some regions
+  The ``west update`` command might generate log notifications about the failure to access the pigweed submodule.
+  As a result, the Matter samples will not build.
+
+  **Workaround:** Execute the following commands in the root folder:
+
+    .. code-block::
+
+       git -C modules/lib/matter submodule set-url third_party/pigweed/repo https://github.com/google/pigweed.git
+       git -C modules/lib/matter submodule sync third_party/pigweed/repo
+       west update
+
 Thread
-======
+------
+
+The issues in this section are related to the :ref:`ug_thread` protocol.
 
 .. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1
 
@@ -681,8 +900,11 @@ KRKNWK-6358: CoAP client sample provisioning issues
 KRKNWK-6408: ``diag`` command not supported
   The ``diag`` command is not yet supported by Thread in the |NCS|.
 
+
 Zigbee
-======
+------
+
+The issues in this section are related to the :ref:`ug_zigbee` protocol.
 
 .. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
@@ -1005,131 +1227,11 @@ KRKNWK-7836: Coordinator asserting when flooded with ZDO commands
 KRKNWK-6073: Potential delay during FOTA
   There might be a noticeable delay (~220 ms) between calling the ZBOSS API and on-the-air activity.
 
-Matter
-======
-
-.. rst-class:: v2-3-0 v2-2-0
-
-KRKNWK-16575: Applications with factory data support do not boot up properly on nRF5340
-  When the Matter sample is built for ``nrf5340dk_nrf5340_cpuapp`` build target with the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option set to ``y`` the application returns prematurely the error code 200016 because the factory data partition is not aligned with the :kconfig:option:`CONFIG_FPROTECT_BLOCK_SIZE` Kconfig option.
-
-  **Workaround:** Manually cherry-pick and apply commit from the main branch (commit hash: ``ec9ad82637b0383ebf91eb1155813450ad9fcffb``).
-
-.. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1
-
-KRKNWK-15846: Android CHIP Tool crashes when subscribing in the :guilabel:`LIGHT ON/OFF & LEVEL CLUSTER`
-  The Android CHIP Tool crashes when attempting to start the subscription after typing minimum and maximum subscription interval values.
-  Also, the Subscription window in the :guilabel:`LIGHT ON/OFF & LEVEL CLUSTER` contains faulty GUI layout (overlapping captions) used when passing minimum and maximum subscription interval values.
-  This affects the Android CHIP Tool revision used for the |NCS| v2.2.0, v2.1.1, and v2.1.2 releases.
-
-  .. note::
-      The support for the Android CHIP Tool is removed as of the |NCS| v2.3.0 for Matter in the |NCS|. Use CHIP Tool for Linux or macOS instead, as described in :ref:`ug_matter_gs_testing`.
-
-.. rst-class:: v2-2-0 v2-1-2 v2-1-1
-
-KRKNWK-15913: Factory data set parsing issues
-  The ``user`` field in the factory data set is not properly parsed. The field should be of the ``MAP`` type instead of the ``BSTR`` type.
-
-  **Workaround:** Manually cherry-pick and apply commit with fix to ``sdk-connectedhomeip`` (commit hash: ``3875c6f78c77212a3f62a5c825ff9b4e5054bbb4``).
-
-.. rst-class:: v2-1-2 v2-1-1
-
-KRKNWK-15749: Invalid ZAP Tool revision used
-  The ZAP Tool revision used for the |NCS| v2.1.1 and v2.1.2 releases is not compatible with the :file:`zap` files that define the Data Model in |NCS| Matter samples.
-  This results in the ZAP Tool not being able to parse :file:`zap` files from Matter samples.
-
-  **Workaround:** Check out the proper ZAP Tool revision with the following commands, where *<NCS_root_directory>* is the path to your |NCS| installation:
-
-    .. code-block::
-
-       cd <NCS_root_directory>/modules/lib/matter/
-       git -C third_party/zap/repo/ checkout -f 2ae226
-       git add third_party/zap/repo/
-
-.. rst-class:: v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0
-
-KRKNWK-14473: Unreliable communication with the window covering sample
-  The :ref:`window covering sample <matter_window_covering_sample>` might rarely become unresponsive for a couple of seconds after commissioning to the Matter network.
-
-  **Workaround:** Switch from SSED to SED role.
-
-.. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0
-
-KRKNWK-15088: Android CHIP Tool shuts down on changing the sensor type
-  When you change the current sensor type after activating the monitoring of another sensor type, the application shuts down.
-
-  **Workaround:** Restart the application and select the desired sensor type again.
-
-  .. note::
-      The support for the Android CHIP Tool is removed as of the |NCS| v2.3.0 for Matter in the |NCS|. Use CHIP Tool for Linux or macOS instead, as described in :ref:`ug_matter_gs_testing`.
-
-.. rst-class:: v2-0-2
-
-KRKNWK-14748: Matter command times out when a Matter device becomes a Thread router
-  When a Full Thread Device becomes a router, it will ignore incoming packets for a short period of time, typically between 1-2 seconds.
-  This might disrupt the communication over Matter and lead to transaction timeouts.
-
-  In more recent versions of Matter, this problem has been eliminated by enhancing Matter's Message Reliability Protocol.
-  This fix will be included in the future versions of the |NCS|.
-
-.. rst-class:: v2-0-2 v2-0-1 v2-0-0
-
-KRKNWK-14206: CHIP Tool for Android might crash when using Cluster Interactive Tool screen
-  Cluster Interaction Tool screen crashes when trying to send a command that takes an optional argument.
-
-.. rst-class:: v2-0-2 v2-0-1 v2-0-0
-
-KRKNWK-14180: The QSPI sleep mode is not handled efficiently in Matter samples on the nRF53 SoC
-  QSPI is active during every Bluetooth LE connection in the Matter samples that are programmed on the nRF53 SoC.
-  This results in higher power consumption, for example during commissioning into the Matter network.
-
-.. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
-
-KRKNWK-11225: CHIP Tool for Android cannot communicate with a Matter device after the device reboots
-  CHIP Tool for Android does not implement any mechanism to recover a secure session to a Matter device after the device has rebooted and lost the session.
-  As a result, the device can no longer decrypt and process messages sent by CHIP Tool for Android as the controller keeps using stale cryptographic keys.
-
-  **Workaround:** Do not reboot the device after commissioning it with CHIP Tool for Android.
-
-  .. note::
-      The support for the Android CHIP Tool is removed as of the |NCS| v2.3.0 for Matter in the |NCS|. Use CHIP Tool for Linux or macOS instead, as described in :ref:`ug_matter_gs_testing`.
-
-.. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
-
-KRKNWK-10589: CHIP Tool for Android crashes when commissioning a Matter device
-  In random circumstances, CHIP Tool for Android crashes when trying to connect to a Matter device over Bluetooth® LE.
-
-  **Workaround:** Restart the application and try to commission the Matter device again.
-  If the problem persists, clear the application data and try again.
-
-.. rst-class:: v1-9-2 v1-9-1 v1-9-0
-
-KRKNWK-12950: CHIP Tool for Android opens the commissioning window using an incorrect PIN code
-  CHIP Tool for Android uses a random code instead of a user-provided PIN code to open the commissioning window on a Matter device.
-
-.. rst-class:: v1-6-1 v1-6-0
-
-KRKNWK-10387: Matter service is needlessly advertised over Bluetooth® LE during DFU
-  The Matter samples can be configured to include the support for Device Firmware Upgrade (DFU) over Bluetooth LE.
-  When the DFU procedure is started, the Matter Bluetooth LE service is needlessly advertised, revealing the device identifiers such as Vendor and Product IDs.
-  The service is meant to be advertised only during the device commissioning.
-
-.. rst-class:: v1-5-2 v1-5-1 v1-5-0
-
-KRKNWK-9214: Pigweed submodule might not be accessible from some regions
-  The ``west update`` command might generate log notifications about the failure to access the pigweed submodule.
-  As a result, the Matter samples will not build.
-
-  **Workaround:** Execute the following commands in the root folder:
-
-    .. code-block::
-
-       git -C modules/lib/matter submodule set-url third_party/pigweed/repo https://github.com/google/pigweed.git
-       git -C modules/lib/matter submodule sync third_party/pigweed/repo
-       west update
 
 HomeKit
-=======
+-------
+
+The issues in this section are related to the HomeKit protocol.
 
 .. rst-class:: v2-3-0 v2-2-0
 
@@ -1261,8 +1363,140 @@ KRKNWK-11666: CLI command ``hap services`` returns incorrect results
 KRKNWK-11365: HAP tool's ``provision`` command freezes
   This issue happens on macOS when an EUI argument is not passed in attempt to read EUI from a connected board.
 
+Applications
+============
+
+The issues in this section are related to :ref:`applications`.
+
+nRF9160: Asset Tracker v2
+-------------------------
+
+The issues in this section are related to the :ref:`asset_tracker_v2` application.
+
+.. rst-class:: v2-2-0
+
+CIA-845: The application cannot be built with :file:`overlay-carrier.conf` (carrier library) enabled for Nordic Thingy:91
+  Building with :ref:`liblwm2m_carrier_readme` library enabled for Nordic Thingy:91 will result in a ``FLASH`` overflow and a build error.
+
+.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+CIA-463: Wrong network mode parameter reported to cloud
+  The network mode string present in ``deviceInfo`` (nRF Cloud) and ``dev`` (Azure IoT Hub and AWS IoT) JSON objects that is reported to cloud might contain wrong network modes.
+  The network mode string contains the network modes that the modem is configured to use, not what the modem actually connects to the LTE network with.
+
+.. rst-class:: v1-9-2 v1-9-1 v1-9-0
+
+NCSDK-14235: Timestamps that are sent in cloud messages drift over time
+  Due to a bug in the :ref:`lib_date_time` library, timestamps that are sent to cloud drift because they are calculated incorrectly.
+
+.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-0
+
+CIA-604: ATv2 cannot be built for the ``thingy91_nrf9160_ns`` build target with ``SECURE_BOOT`` enabled
+  Due to the use of static partitions with the Thingy:91, there is insufficient room in the flash memory to enable both the primary and secondary bootloaders.
+
+.. rst-class:: v2-0-2 v2-0-1 v2-0-0
+
+CIA-661: Asset Tracker v2 application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with modem traces or Memfault enabled
+  The :ref:`asset_tracker_v2` application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` for modem traces or :file:`overlay-memfault.conf` for Memfault due to memory constraints.
+
+  **Workaround:** Use one of the following workarounds for modem traces:
+
+  * Use Secure Partition Manager instead of TF-M by setting ``CONFIG_SPM`` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
+  * Reduce the value of :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_TRACE_SIZE` to 8 Kb, however, this might lead to loss of modem traces.
+
+  For Memfault, use Secure Partition Manager instead of TF-M by setting ``CONFIG_SPM`` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
+
+.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+CIA-890: The application cannot be built with :file:`overlay-debug.conf` and :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` set to ``y``
+  Due to insufficient flash space for the application when it is not optimized, the :ref:`asset_tracker_v2` application cannot be built with :file:`overlay-debug.conf` and :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` set to ``y``.
+
+  **Workaround:** To free up flash space when debugging locally, comment out the following Kconfig options in the :file:`prj.conf` file:
+
+  * :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`
+  * :kconfig:option:`CONFIG_IMG_MANAGER`
+  * :kconfig:option:`CONFIG_MCUBOOT_IMG_MANAGER`
+  * :kconfig:option:`CONFIG_IMG_ERASE_PROGRESSIVELY`
+  * :kconfig:option:`CONFIG_BUILD_S1_VARIANT`
+
+  This removes the partitions for the MCUboot bootloader, the secondary bootloader, and the secondary application image slot.
+  Any functionality depending on those will not work with this configuration.
+
+  Alternatively, disable logging for non-relevant modules or libraries in the :file:`overlay-debug.conf` file until the image fits in flash.
+
+nRF9160: Asset tracker
+----------------------
+
+The issues in this section are related to the nRF9160: Asset tracker application.
+This application was removed in :ref:`nRF Connect SDK v1.9.0 <ncs_release_notes_190>` and replaced by :ref:`asset_tracker_v2`.
+
+.. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+
+NCSDK-6898: Setting :kconfig:option:`CONFIG_SECURE_BOOT` does not work
+  The immutable bootloader is not able to find the required metadata in the MCUboot image.
+  See the related NCSDK-6898 known issue in `Build system`_ for more details.
+
+  **Workaround:** Set :kconfig:option:`CONFIG_FW_INFO` in MCUboot.
+
+.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+
+External antenna performance setting
+  The preprogrammed Asset Tracker does not come with the best external antenna performance.
+
+  **Workaround:** If you are using nRF9160 DK v0.15.0 or higher and Thingy:91 v1.4.0 or higher, set :kconfig:option:`CONFIG_NRF9160_GPS_ANTENNA_EXTERNAL` to ``y``.
+  Alternatively, for nRF9160 DK v0.15.0, you can set the :kconfig:option:`CONFIG_NRF9160_GPS_COEX0_STRING` option to ``AT%XCOEX0`` when building the preprogrammed Asset Tracker to achieve the best external antenna performance.
+
+.. rst-class:: v1-3-2 v1-3-1 v1-3-0
+
+NCSDK-5574: Warnings during FOTA
+   The nRF9160: Asset Tracker application prints warnings and error messages during successful FOTA.
+
+.. rst-class:: v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
+
+NCSDK-6689: High current consumption in Asset Tracker
+  The nRF9160: Asset Tracker might show up to 2.5 mA current consumption in idle mode with :kconfig:option:`CONFIG_POWER_OPTIMIZATION_ENABLE` set to ``y``.
+
+.. rst-class:: v1-0-0 v0-4-0 v0-3-0
+
+Sending data before connecting to nRF Cloud
+  The nRF9160: Asset Tracker application does not wait for connection to nRF Cloud before trying to send data.
+  This causes the application to crash if the user toggles one of the switches before the kit is connected to the cloud.
+
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
+
+IRIS-2676: Missing support for FOTA on nRF Cloud
+  The nRF9160: Asset Tracker application does not support the nRF Cloud FOTA_v2 protocol.
+
+  **Workaround:** The implementation for supporting the nRF Cloud FOTA_v2 can be found in the following commits:
+
+					* cef289b559b92186cc54f0257b8c9adc0997f334
+					* 156d4cf3a568869adca445d43a786d819ae10250
+					* f520159f0415f011ae66efb816384a8f7bade83d
+
+nRF9160: Serial LTE Modem
+-------------------------
+
+The issues in this section are related to the :ref:`serial_lte_modem` application.
+
+.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
+
+NCSDK-13895: Build failure for target Thingy:91 with secure_bootloader overlay
+  Building the application for Thingy:91 fails if secure_bootloader overlay is included.
+
+.. rst-class:: v2-3-0
+
+NCSDK-20047: SLM logging over RTT is not available
+  There is a conflict with MCUboot RTT logging.
+  In order to save power, SLM configures MCUboot to use RTT instead of UART for logging.
+  SLM itself uses RTT for logging as well.
+  With a recent change, MCUboot exclusively takes control of the RTT logging, which causes the conflict.
+
+  **Workaround:** Remove ``CONFIG_USE_SEGGER_RTT=y`` and ``CONFIG_RTT_CONSOLE=y`` from :file:`child_image\mcuboot.conf`.
+
 nRF Desktop
-===========
+-----------
+
+The issues in this section are related to the :ref:`nrf_desktop` application.
 
 .. note::
     nRF Desktop is also affected by the Bluetooth LE issue :ref:`NCSDK-19865 <ncsdk_19865>`.
@@ -1380,10 +1614,17 @@ NCSDK-14117: Build fails for nRF52840DK in the ``prj_b0_wwcb`` configuration
 
   **Workaround:** Manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``cf4c465aceeb00d83a4f50edf67ce8c26427ac52``).
 
+.. rst-class:: v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+Reconnection issues on some operating systems
+  On some operating systems, the :ref:`nrf_desktop` application is unable to reconnect to a Bluetooth host.
+
 .. _known_issues_nrf5340audio:
 
 nRF5340 Audio
-=============
+-------------
+
+The issues in this section are related to the :ref:`nrf53_audio_app` application.
 
 .. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
@@ -1422,7 +1663,7 @@ OCT-2347: Stream reestablishment issues in CIS
   In the CIS mode, if a stream is running and the headset is reset, the gateway cannot reestablish the stream properly.
 
 Controller subsystem for nRF5340 Audio
---------------------------------------
+++++++++++++++++++++++++++++++++++++++
 
 The following known issues apply to the LE Audio subsystem (NET core controller) for nRF5340 used in the nRF5340 Audio application.
 
@@ -1469,9 +1710,10 @@ OCX-168: Issues with reestablishing streams
 
    **Workaround:** Set retransmits (RTN) to a lower value to reduce the resynchronization time.
 
-
 nRF Machine Learning
-====================
+--------------------
+
+The issues in this section are related to the :ref:`nrf_machine_learning_app` application.
 
 .. rst-class:: v2-2-0
 
@@ -1498,19 +1740,251 @@ NCSDK-16644: :ref:`nrf_machine_learning_app` does not go to sleep and does not w
 
   **Workaround:** Manually cherry-pick and apply two commits with the fix from the ``main`` branch (commit hashes: ``7381bfcb9c23cd6f78e6ef7fd3ff82b700f81b0f``, ``7e8c23a6632632f0cee885abe955e37a6942911d``).
 
-Pelion
-======
+Samples
+=======
 
-.. rst-class:: v1-6-1 v1-6-0
+The issues in this section are related to :ref:`samples`.
 
-NCSDK-10196: DFU fails for some configurations with the quick session resume feature enabled
-  Enabling :kconfig:option:`CONFIG_PELION_QUICK_SESSION_RESUME` together with the OpenThread network backend leads to the quick session resume failure during the DFU packet exchange.
-  This is valid for the :ref:`nRF52840 DK <ug_nrf52>` and the :ref:`nRF5340 DK <ug_nrf5340>`.
+Bluetooth samples
+-----------------
 
-  **Workaround:** Use the quick session resume feature only for configurations with the cellular network backend.
+.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
+
+NCSDK-19942: HID samples do not work with Android 13
+  The :ref:`peripheral_hids_keyboard` and :ref:`peripheral_hids_mouse` samples enter a connection-disconnection loop when you try to connect to them from a device that is running Android 13.
+
+.. rst-class:: v2-3-0 v2-2-0
+
+NCSDK-18518: Cannot build peripheral UART and peripheral LBS samples for the nRF52810 and nRF52811 devices with the Zephyr Bluetooth LE Controller
+  The :ref:`peripheral_uart` and :ref:`peripheral_lbs` samples fail to build for the nRF52810 and nRF52811 devices when the :kconfig:option:`CONFIG_BT_LL_CHOICE` Kconfig option is set to :kconfig:option:`CONFIG_BT_LL_SW_SPLIT`.
+
+  **Workaround:** Use the SoftDevice Controller: set the :kconfig:option:`CONFIG_BT_LL_CHOICE` Kconfig option to :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE`.
+
+.. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+NCSDK-19727: Cannot build the :ref:`peripheral_hids_mouse` sample with security disabled
+  Build fails when the :kconfig:option:`CONFIG_BT_HIDS_SECURITY_ENABLED` Kconfig option is disabled.
+
+  **Workaround:** Build the sample with its default configuration, that is, enable the :kconfig:option:`CONFIG_BT_HIDS_SECURITY_ENABLED` Kconfig option.
+
+.. rst-class:: v2-0-2 v2-0-1 v2-0-0
+
+NCSDK-15527: Advertising in the :ref:`peripheral_hr_coded` sample and scanning in the :ref:`bluetooth_central_hr_coded` sample cannot be started when using the SW Split Link Layer
+  The :kconfig:option:`CONFIG_BT_CTLR_ADV_EXT` option required by these samples is disabled by default in the SW Split Link Layer.
+
+  **Workaround:** Enable the :kconfig:option:`CONFIG_BT_CTLR_ADV_EXT` option in the project configuration file (:file:`prj.conf`).
+
+.. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0
+
+NCSDK-15229: Incorrect peer's throughput calculation in the :ref:`ble_throughput` sample
+  The peer's measured throughput is understated because it includes a delay, during which there is no data transfer.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``05871f9b9c2aebf0a3c188a61b3788baea783180``).
+
+.. rst-class:: v2-0-2 v2-0-1 v2-0-0
+
+NCSDK-16060: :ref:`peripheral_lbs` sample build fails when the :kconfig:option:`CONFIG_BT_LBS_SECURITY_ENABLED` option is disabled
+  Build failure is caused by the undefined ``conn_auth_info_callbacks`` structure.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``32c827b20f3c5ab85a359e572d366da310fe2767``).
+
+.. rst-class:: v2-0-2 v2-0-1 v2-0-0
+
+NCSDK-15724: Bluetooth's Peripheral UART sample fails to start on Thingy:53
+  Enabling USB by the :ref:`Peripheral UART's <peripheral_uart>` main function ends with error because the USB was already enabled by the Thingy:53-specific code.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``b834ff8860f3a30fe19c99dbf4c0c99b0b017245``).
+
+.. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+NCSDK-9820: Notification mismatch in :ref:`peripheral_lbs`
+  When testing the :ref:`peripheral_lbs` sample, if you press and release **Button 1** while holding one of the other buttons, the notification for button release is the same as for the button press.
+
+.. rst-class:: v1-8-0
+
+NCSDK-12886: Peripheral UART sample building issue with nRF52811
+  The :ref:`peripheral_uart` sample built for nRF52811 asserts on the nRF52840 DK in rev. 2.1.0 (build target: ``nrf52840dk_nrf52811``).
+
+.. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+NCSDK-8321: NUS shell transport sample does not display the initial shell prompt
+  NUS shell transport sample does not display the initial shell prompt ``uart:~$`` on the remote terminal.
+  Also, few logs with sending errors are displayed on the terminal connected directly to the DK.
+  This issue is caused by the shell being enabled before turning on the notifications for the NUS service by the remote peer.
+
+  **Workaround:** Enable the shell after turning on the NUS notifications or block it until turning on the notifications.
+
+.. rst-class:: v1-2-1 v1-2-0
+
+Peripheral HIDS keyboard sample cannot be used with nRF Bluetooth® LE Controller
+  The :ref:`peripheral_hids_keyboard` sample cannot be used with the :ref:`nrfxlib:softdevice_controller` because the NFC subsystem does not work with the controller library.
+  The library uses the MPSL Clock driver, which does not provide an API for asynchronous clock operation.
+  NFC requires this API to work correctly.
+
+.. rst-class:: v1-2-1 v1-2-0
+
+Peripheral HIDS mouse sample advertising issues
+  When the :ref:`peripheral_hids_mouse` sample is used with the Zephyr Bluetooth® LE Controller, directed advertising does not time out and the regular advertising cannot be started.
+
+.. rst-class:: v1-2-1 v1-2-0
+
+Central HIDS sample issues with directed advertising
+  The :ref:`bluetooth_central_hids` sample cannot connect to a peripheral that uses directed advertising.
+
+.. rst-class:: v1-1-0
+
+Unstable samples
+  Bluetooth® Low Energy peripheral samples are unstable in some conditions (when pairing and bonding are performed and then disconnections/re-connections happen).
+
+.. rst-class:: v1-1-0 v1-0-0
+
+:ref:`central_uart` cannot handle long strings
+  A too long 212-byte string cannot be handled when entered to the console to send to :ref:`peripheral_uart`.
+
+.. rst-class:: v1-0-0
+
+:ref:`bluetooth_central_hids` loses UART connectivity
+  After programming a HEX file to the nrf52_pca10040 board, UART connectivity is lost when using the Bluetooth® LE Controller.
+  The board must be reset to get UART output.
+
+.. rst-class:: v1-1-0 v1-0-0
+
+Samples crashing on nRF51 when using GPIO
+  On nRF51 devices, Bluetooth® LE samples that use GPIO might crash when buttons are pressed frequently.
+  In such case, the GPIO ISR introduces latency that violates real-time requirements of the Radio ISR.
+  nRF51 is more sensitive to this issue than nRF52 (faster core).
+
+.. rst-class:: v0-4-0
+
+GATT Discovery Manager missing support
+  The :ref:`gatt_dm_readme` is not supported on nRF51 devices.
+
+.. rst-class:: v0-4-0
+
+Samples do not work with SD Controller v0.1.0
+  Bluetooth® LE samples cannot be built with the :ref:`nrfxlib:softdevice_controller` v0.1.0.
+
+.. rst-class:: v0-3-0
+
+Peripheral UART string size issue
+  :ref:`peripheral_uart` cannot handle the corner case that a user attempts to send a string of more than 211 bytes.
+
+.. rst-class:: v1-0-0 v0-4-0 v0-3-0
+
+LED Button Service reporting issue
+  :ref:`peripheral_lbs` does not report the Button 1 state correctly.
+
+.. rst-class:: v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
+
+MITM protection missing for central samples
+  The central samples (:ref:`central_uart`, :ref:`bluetooth_central_hids`) do not support any pairing methods with MITM protection.
+
+.. rst-class:: v0-3-0
+
+Reconnection issues after bonding
+  The peripheral samples (:ref:`peripheral_uart`, :ref:`peripheral_lbs`, :ref:`peripheral_hids_mouse`) have reconnection issues after performing bonding (LE Secure Connection pairing enable) with nRF Connect for Desktop.
+  These issues result in disconnection.
+
+.. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+NCSDK-17883: Cannot build peripheral UART sample with security (:kconfig:option:`CONFIG_BT_NUS_SECURITY_ENABLED`) disabled
+  The :ref:`peripheral_uart` sample fails to build when the :kconfig:option:`BT_NUS_SECURITY_ENABLED` Kconfig option is disabled.
+
+  **Workaround:** In :file:`main.c` file, search for the ``#else`` entry of the ``#if defined(CONFIG_BT_NUS_SECURITY_ENABLED)`` item and add an empty declaration of the ``conn_auth_info_callbacks`` structure, just after the similar empty definition of ``conn_auth_callbacks``.
+
+.. rst-class:: v1-9-0
+
+Antenna switching does not work on targets ``nrf5340dk_nrf5340_cpuapp`` and ``nrf5340dk_nrf5340__cpuapp_ns``
+  Antenna switching does not work when :ref:`direction finding sample <ble_samples>` applications are built for ``nrf5340dk_nrf5340_cpuapp`` and ``nrf5340dk_nrf5340_cpuapp_ns`` targets.
+  That is caused by GPIO pins that are responsible for access to antenna switches, not being assigned to network core.
+
+NFC samples
+-----------
+
+The issues in this section are related to :ref:`nfc_samples`.
+
+.. rst-class:: v2-2-0
+
+NCSDK-19168: The :ref:`peripheral_nfc_pairing` and :ref:`central_nfc_pairing` samples cannot pair using OOB data.
+  The :ref:`nfc_ndef_ch_rec_parser_readme` library parses AC records in an invalid way.
+  As a result, the samples cannot parse OOB data for pairing.
+
+  **Workaround:** Revert the :file:`subsys/nfc/ndef/ch_record_parser.c` file to the state from the :ref:`ncs_release_notes_210`.
+
+  .. code-block::
+
+     cd <NCS_root_directory>
+     git checkout v2.1.0 -- subsys/nfc/ndef/ch_record_parser.c
+
+.. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+NCSDK-19347: NFC Reader samples return false errors with value ``1``.
+  The :c:func:`nfc_t4t_isodep_transmit` function of the :ref:`nfc_t4t_isodep_readme` library can return ``1`` as error code even if a delayed operation has been scheduled correctly and should return ``0``.
+  This happens when the ISO-DEP frame is sent for the first time.
+  In samples, this error is propagated from the higher level :c:func:`nfc_t4t_hl_procedure_ndef_tag_app_select` function.
+  The :ref:`tnep_poller_readme` library operations can call the application error callback with error code ``1``, meaning that a delayed operation has been scheduled successfully.
+
+  **Workaround:** Ignore the :ref:`tnep_poller_readme` error callback with error value ``1``.
+  Treat the return value ``1`` of the functions :c:func:`nfc_t4t_isodep_transmit` and :c:func:`nfc_t4t_hl_procedure_ndef_tag_app_select` as success.
+
+.. rst-class:: v1-2-1 v1-2-0
+
+Sample incompatibility with the nRF5340 PDK
+  The :ref:`nfc_tnep_poller` and :ref:`nfc_tag_reader` samples cannot be run on the nRF5340 PDK.
+  There is an incorrect number of pins defined in the MDK files, and the pins required for :ref:`st25r3911b_nfc_readme` cannot be configured properly.
+
+.. rst-class:: v1-2-1 v1-2-0 v1-1-0
+
+Unstable NFC tag samples
+  NFC tag samples are unstable when exhaustively tested (performing many repeated read and/or write operations).
+  NFC tag data might be corrupted.
+
+Other samples
+-------------
+
+.. rst-class:: v2-3-0
+
+NCSDK-20046: IPC service sample does not work with ``nrf5340dk_nrf5340_cpuapp``
+  The :ref:`ipc_service_sample` sample does not work with the ``nrf5340dk_nrf5340_cpuapp`` :ref:`build target <app_boards_names_zephyr>` due to a misconfiguration.
+  The application core does not log anything, while the network core seems to work and bond, but cannot transfer data.
+  When using UART, there is no output visible.
+
+.. rst-class:: v2-2-0
+
+NCSDK-18847: :ref:`radio_test` sample does not build with support for Skyworks front-end module
+  When building a sample with support for a front-end module different from nRF21540, the sample uses a non-existing configuration to initialize TX power data.
+  This causes a compilation error because the source file containing code for a generic front-end module is not included in the build.
+
+  **Workaround:** Do not use the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option and replace ``CONFIG_GENERIC_FEM`` with ``CONFIG_MPSL_FEM_SIMPLE_GPIO`` in the :file:`CMakeLists.txt` file of the sample.
+
+.. rst-class:: v2-3-0
+
+NCSDK-19858: :ref:`at_monitor_readme` library and :ref:`nrf_cloud_mqtt_multi_service` sample heap overrun
+  Occasionally, the :ref:`at_monitor_readme` library heap becomes overrun, presumably due to one of the registered AT event listeners becoming stalled.
+  This has only been observed with the :ref:`nrf_cloud_mqtt_multi_service` sample.
+
+.. rst-class:: v2-3-0 v2-2-0
+
+NCSDK-20095: Build warning in the RF test samples when the minimal pinout generic/Skyworks FEM is used
+  The :ref:`radio_test` and :ref:`direct_test_mode` samples build with a warning about generic/Skyworks FEM in minimal pinout configuration.
+
+.. rst-class:: v1-5-2 v1-5-1 v1-5-0
+
+NCSDK-7173: nRF5340 network core bootloader cannot be built stand-alone
+  The :ref:`nc_bootloader` sample does not compile when built stand-alone.
+  It compiles without problems when included as a child image.
+
+  **Workaround:** Include the :ref:`nc_bootloader` sample as child image instead of compiling it stand-alone.
+
+Libraries
+=========
+
+The issues in this section are related to :ref:`libraries`.
 
 Common Application Framework (CAF)
-==================================
+----------------------------------
+
+The issues in this section are related to :ref:`lib_caf`.
 
 .. rst-class:: v1-8-0
 
@@ -1578,368 +2052,75 @@ NCSIDB-925: Event subscribers in the :ref:`app_event_manager` may overlap when u
   Make sure that the event name does not start the same way as another event.
   For example, creating the following events: ``rx_event`` and ``rx_event_error_event`` would still cause the issue.
 
-Subsystems
-**********
+nRF Profiler
+------------
 
-Bluetooth® LE
-=============
+The issues in this section are related to :ref:`nrf_profiler`.
 
-.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
+.. rst-class:: v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
-NCSDK-19942: HID samples do not work with Android 13
-  The :ref:`peripheral_hids_keyboard` and :ref:`peripheral_hids_mouse` samples enter a connection-disconnection loop when you try to connect to them from a device that is running Android 13.
+NCSDK-18398: Build fails if shell is enabled
+   Enabling the Zephyr's :ref:`zephyr:shell_api` module together with :ref:`nrf_profiler` results in a build failure because of the bug in the :file:`CMakeLists.txt` file.
 
-.. _ncsdk_19865:
+   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``fdac428e902ebd96885160dd3ae5d08d21642926``).
 
-.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
+Secure Partition Manager (SPM)
+------------------------------
 
-NCSDK-19865: GATT Robust Caching issues for bonded peers
-  The Client Supported Features value written by a bonded peer may not be stored in the non-volatile memory.
-  Change awareness of the bonded peer is lost on reboot.
-  After reboot, each bonded peer is initially marked as change-unaware.
+.. note::
+    The Secure Partition Manager (SPM) is deprecated as of |NCS| v2.1.0 and removed after |NCS| v2.2.0. It is replaced by :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
 
-  **Workaround:** Disable the GATT Caching feature (:kconfig:option:`CONFIG_BT_GATT_CACHING`).
-  Make sure that Bluetooth bonds are removed together with disabling GATT Caching if the functionality is disabled during a firmware upgrade.
+.. rst-class:: v2-2-0
 
-.. rst-class:: v2-3-0 v2-2-0
+NCSDK-19156: Building SPM for other boards than ``nrf5340dk_nrf5340_cpuapp`` and ``nrf9160dk_nrf9160`` fails with compilation error in cortex_m_systick.c
+  This happens because the :kconfig:option:`CONFIG_CORTEX_M_SYSTICK` configuration option is enabled while the systick node is disabled in the devicetree.
 
-NCSDK-18518: Cannot build peripheral UART and peripheral LBS samples for the nRF52810 and nRF52811 devices with the Zephyr Bluetooth LE Controller
-  The :ref:`peripheral_uart` and :ref:`peripheral_lbs` samples fail to build for the nRF52810 and nRF52811 devices when the :kconfig:option:`CONFIG_BT_LL_CHOICE` Kconfig option is set to :kconfig:option:`CONFIG_BT_LL_SW_SPLIT`.
+  **Workaround:** Enable the systick node in a DTS overlay file for the SPM build by completing the following steps:
 
-  **Workaround:** Use the SoftDevice Controller: set the :kconfig:option:`CONFIG_BT_LL_CHOICE` Kconfig option to :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE`.
+  1. Create an overlay file :file:`systick_enabled.overlay` with the following content:
 
-.. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+     .. code-block::
 
-NCSDK-19727: Cannot build the :ref:`peripheral_hids_mouse` sample with security disabled.
-  Build fails when the :kconfig:option:`CONFIG_BT_HIDS_SECURITY_ENABLED` Kconfig option is disabled.
+        &systick {
+          status = "okay";
+        };
 
-  **Workaround:** Build the sample with its default configuration, that is, enable the :kconfig:option:`CONFIG_BT_HIDS_SECURITY_ENABLED` Kconfig option.
+  #. Add the overlay file as a build argument to SPM:
 
-.. rst-class:: v2-0-2
+     .. parsed-literal::
+       :class: highlight
 
-DRGN-17695: The BT RX thread stack might overflow if the :kconfig:option:`CONFIG_BT_SMP` is enabled
-  When performing SMP pairing MPU FAULTs might be triggered because the stack is not large enough.
+       west build -- -Dspm_DTC_OVERLAY_FILE=systick_enabled.overlay
 
-  **Workaround:** Increase the stack size manually in the project configuration file (:file:`prj.conf`) using :kconfig:option:`CONFIG_BT_RX_STACK_SIZE`.
+.. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
-.. rst-class:: v2-0-2 v2-0-1 v2-0-0
+NCSIDB-114: Default logging causes crash
+  Enabling default logging in the Secure Partition Manager sample makes it crash if the sample logs any data after the application has booted (for example, during a SecureFault, or in a secure service).
+  At that point, RTC1 and UARTE0 are non-secure.
 
-NCSDK-15527: Advertising in the :ref:`peripheral_hr_coded` sample and scanning in the :ref:`bluetooth_central_hr_coded` sample cannot be started when using the SW Split Link Layer
-  The :kconfig:option:`CONFIG_BT_CTLR_ADV_EXT` option required by these samples is disabled by default in the SW Split Link Layer.
+  **Workaround:** Do not enable logging and add a breakpoint in the fault handling, or try a different logging backend.
 
-  **Workaround:** Enable the :kconfig:option:`CONFIG_BT_CTLR_ADV_EXT` option in the project configuration file (:file:`prj.conf`).
+.. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
-.. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0
-
-NCSDK-15229: Incorrect peer's throughput calculation in the :ref:`ble_throughput` sample
-  The peer's measured throughput is understated because it includes a delay, during which there is no data transfer.
-
-  **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``05871f9b9c2aebf0a3c188a61b3788baea783180``).
-
-.. rst-class:: v2-0-2 v2-0-1 v2-0-0
-
-NCSDK-16060: :ref:`peripheral_lbs` sample build fails when the :kconfig:option:`CONFIG_BT_LBS_SECURITY_ENABLED` option is disabled
-  Build failure is caused by the undefined ``conn_auth_info_callbacks`` structure.
-
-  **Workaround:** Manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``32c827b20f3c5ab85a359e572d366da310fe2767``).
-
-.. rst-class:: v2-0-2 v2-0-1 v2-0-0
-
-NCSDK-15724: Bluetooth's Peripheral UART sample fails to start on Thingy:53
-  Enabling USB by the :ref:`Peripheral UART's <peripheral_uart>` main function ends with error because the USB was already enabled by the Thingy:53-specific code.
-
-  **Workaround:** Manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``b834ff8860f3a30fe19c99dbf4c0c99b0b017245``).
-
-.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-NCSDK-13459: Uninitialized size in hids_boot_kb_outp_report_read
-  When reading from the boot keyboard output report characteristic, the :ref:`hids_readme` calls the registered callback with uninitialized report size.
-
-  **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``f18250dad6cbd9778de7af4b8a774b58e55fe720``).
-
-.. rst-class:: v1-8-0
-
-NCSDK-12886: Peripheral UART sample building issue with nRF52811
-  The :ref:`peripheral_uart` sample built for nRF52811 asserts on the nRF52840 DK in rev. 2.1.0 (build target: ``nrf52840dk_nrf52811``).
-
-.. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-NCSDK-9820: Notification mismatch in :ref:`peripheral_lbs`
-  When testing the :ref:`peripheral_lbs` sample, if you press and release **Button 1** while holding one of the other buttons, the notification for button release is the same as for the button press.
-
-.. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-NCSDK-9106: Bluetooth® ECC thread stack size too small
-  The Bluetooth ECC thread used during the pairing procedure with LE Secure Connections might overflow when an interrupt is triggered when the stack usage is at its maximum.
-
-  **Workaround:** Increase the ECC stack size by setting ``CONFIG_BT_HCI_ECC_STACK_SIZE`` to ``1140``.
-
-.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0
-
-DRGN-15435: GATT notifications and Writes Without Response might be sent out of order
-  GATT notifications and Writes Without Response might be sent out of order when not using a complete callback.
-
-  **Workaround:** Always set a callback for notifications and Writes Without Response.
-
-.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-DRGN-15448: Incomplete bond overwrite during pairing procedure when peer is not using the IRK stored in the bond
-  When pairing with a peer that has deleted its bond information and is using a new IRK to establish the connection, the existing bond is not overwritten during the pairing procedure.
-  This can lead to MIC errors during reconnection if the old LTK is used instead.
-
-.. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-NCSDK-8321: NUS shell transport sample does not display the initial shell prompt
-  NUS shell transport sample does not display the initial shell prompt ``uart:~$`` on the remote terminal.
-  Also, few logs with sending errors are displayed on the terminal connected directly to the DK.
-  This issue is caused by the shell being enabled before turning on the notifications for the NUS service by the remote peer.
-
-  **Workaround:** Enable the shell after turning on the NUS notifications or block it until turning on the notifications.
-
-.. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-NCSDK-8224: Callbacks for "security changed" and "pairing failed" are not always called
-  The pairing failed and security changed callbacks are not called when the connection is disconnected during the pairing procedure or the required security is not met.
-
-  **Workaround:** Application should use the disconnected callback to handle pairing failed.
-
-.. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-NCSDK-8223: GATT requests might deadlock RX thread
-  GATT requests might deadlock the RX thread when all TX buffers are taken by GATT requests and the RX thread tries to allocate a TX buffer for a response.
-  This causes a deadlock because only the RX thread releases the TX buffers for the GATT requests.
-  The deadlock is resolved by a 30 second timeout, but the ATT bearer cannot transmit without reconnecting.
-
-  **Workaround:** Set :kconfig:option:`CONFIG_BT_L2CAP_TX_BUF_COUNT` >= ``CONFIG_BT_ATT_TX_MAX`` + 2.
-
-.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-NCSDK-6845: Pairing failure with simultaneous pairing on multiple connections
-  When using LE Secure Connections pairing, the pairing fails with simultaneous pairing on multiple connections.
-  The failure reason is unspecified.
-
-  **Workaround:** Retry the pairing on the connections that failed one by one after the pairing procedure has finished.
-
-.. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0
-
-NCSDK-6844: Security procedure failure can terminate GATT client request
-  A security procedure terminates the GATT client request that is currently in progress, unless the request was the reason to initiate the security procedure.
-  If a new GATT client request is queued at this time, this might potentially cause a GATT transaction violation and fail as well.
-
-  **Workaround:** Do not initiate a security procedure in parallel with GATT client requests.
-
-.. rst-class:: v1-3-0
-
-NCSDK-5711: High-throughput transmission can deadlock the receive thread
-  High-throughput transmission can deadlock the receive thread if the connection is suddenly disconnected.
-
-.. rst-class:: v1-2-1 v1-2-0
-
-Only secure applications can use Bluetooth® LE
-  Bluetooth LE cannot be used in a non-secure application, for example, an application built for the ``nrf5340_dk_nrf5340_cpuappns`` build target.
-
-  **Workaround:** Use the ``nrf5340_dk_nrf5340_cpuapp`` build target instead.
-
-.. rst-class:: v1-2-1 v1-2-0
-
-Peripheral HIDS keyboard sample cannot be used with nRF Bluetooth® LE Controller
-  The :ref:`peripheral_hids_keyboard` sample cannot be used with the :ref:`nrfxlib:softdevice_controller` because the NFC subsystem does not work with the controller library.
-  The library uses the MPSL Clock driver, which does not provide an API for asynchronous clock operation.
-  NFC requires this API to work correctly.
-
-.. rst-class:: v1-2-1 v1-2-0
-
-Peripheral HIDS mouse sample advertising issues
-  When the :ref:`peripheral_hids_mouse` sample is used with the Zephyr Bluetooth® LE Controller, directed advertising does not time out and the regular advertising cannot be started.
-
-.. rst-class:: v1-2-1 v1-2-0
-
-Central HIDS sample issues with directed advertising
-  The :ref:`bluetooth_central_hids` sample cannot connect to a peripheral that uses directed advertising.
-
-.. rst-class:: v1-1-0
-
-Unstable samples
-  Bluetooth® Low Energy peripheral samples are unstable in some conditions (when pairing and bonding are performed and then disconnections/re-connections happen).
-
-.. rst-class:: v1-2-1 v1-2-0 v1-1-0
-
-:kconfig:option:`CONFIG_BT_SMP` alignment requirement
-  When running the :ref:`bluetooth_central_dfu_smp` sample, the :kconfig:option:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:ref:`zephyr:smp_svr_sample`).
-  However, security is not enabled by default in the Zephyr sample.
-
-.. rst-class:: v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-Reconnection issues on some operating systems
-  On some operating systems, the :ref:`nrf_desktop` application is unable to reconnect to a host.
-
-.. rst-class:: v1-1-0 v1-0-0
-
-:ref:`central_uart` cannot handle long strings
-  A too long 212-byte string cannot be handled when entered to the console to send to :ref:`peripheral_uart`.
-
-.. rst-class:: v1-0-0
-
-:ref:`bluetooth_central_hids` loses UART connectivity
-  After programming a HEX file to the nrf52_pca10040 board, UART connectivity is lost when using the Bluetooth® LE Controller.
-  The board must be reset to get UART output.
-
-.. rst-class:: v1-1-0 v1-0-0
-
-Samples crashing on nRF51 when using GPIO
-  On nRF51 devices, Bluetooth® LE samples that use GPIO might crash when buttons are pressed frequently.
-  In such case, the GPIO ISR introduces latency that violates real-time requirements of the Radio ISR.
-  nRF51 is more sensitive to this issue than nRF52 (faster core).
-
-.. rst-class:: v0-4-0
-
-GATT Discovery Manager missing support
-  The :ref:`gatt_dm_readme` is not supported on nRF51 devices.
-
-.. rst-class:: v0-4-0
-
-Samples do not work with SD Controller v0.1.0
-  Bluetooth® LE samples cannot be built with the :ref:`nrfxlib:softdevice_controller` v0.1.0.
-
-.. rst-class:: v1-0-0 v0-4-0 v0-3-0
-
-LED Button Service reporting issue
-  :ref:`peripheral_lbs` does not report the Button 1 state correctly.
-
-.. rst-class:: v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
-
-MITM protection missing for central samples
-  The central samples (:ref:`central_uart`, :ref:`bluetooth_central_hids`) do not support any pairing methods with MITM protection.
-
-.. rst-class:: v0-3-0
-
-Peripheral UART string size issue
-  :ref:`peripheral_uart` cannot handle the corner case that a user attempts to send a string of more than 211 bytes.
-
-.. rst-class:: v0-3-0
-
-Reconnection issues after bonding
-  The peripheral samples (:ref:`peripheral_uart`, :ref:`peripheral_lbs`, :ref:`peripheral_hids_mouse`) have reconnection issues after performing bonding (LE Secure Connection pairing enable) with nRF Connect for Desktop.
-  These issues result in disconnection.
-
-.. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
-
-NCSDK-17883: Cannot build peripheral UART sample with security (:kconfig:option:`CONFIG_BT_NUS_SECURITY_ENABLED`) disabled
-  The :ref:`peripheral_uart` sample fails to build when the :kconfig:option:`BT_NUS_SECURITY_ENABLED` Kconfig option is disabled.
-
-  **Workaround:** In :file:`main.c` file, search for the ``#else`` entry of the ``#if defined(CONFIG_BT_NUS_SECURITY_ENABLED)`` item and add an empty declaration of the ``conn_auth_info_callbacks`` structure, just after the similar empty definition of ``conn_auth_callbacks``.
-
-Bluetooth mesh
-==============
-
-.. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
-
-NCSDK-16800: RPL is not cleared on IV index recovery
-  After recovering the IV index, a node doesn't clear the replay protection list, which leads to incorrect triggering of the replay attack protection mechanism.
-
-  **Workaround:** Call ``bt_mesh_rpl_reset`` twice after the IV index recovery is done.
-
-.. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
-
-NCSDK-16798: Friend Subscription List might have duplicate entries
-  If a Low Power node loses a Friend Subscription List Add Confirm message, it repeats the request.
-  The Friend does not check both the transaction number and the presence of the addresses in the subscription list.
-  This causes a situation where the Friend fills the subscription list with duplicate addresses.
-
-.. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
-
-NCSDK-16782: The extended advertiser might not work with Bluetooth mesh
-  Using the extended advertiser instead of the legacy advertiser can lead to getting composition data while provisioning to fail.
-  This problem might manifest in the sample :ref:`bluetooth_ble_peripheral_lbs_coex`, as it is using the extended advertiser.
-
-.. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0
-
-NCSDK-16579: Advertising Node Identity and Network ID might not work with the extended advertiser
-  Advertising Node Identity and Network ID do not work with the extended advertising API when the :kconfig:option:`CONFIG_BT_MESH_ADV_EXT_GATT_SEPARATE` option is enabled.
-
-  **Workaround:** Don't enable the :kconfig:option:`CONFIG_BT_MESH_ADV_EXT_GATT_SEPARATE` option.
-
-.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
-
-NCSDK-14399: Legacy advertiser can occasionally do more message retransmissions than requested
-  When using the legacy advertiser, the stack sleeps for at least 50 ms after starting advertising a message, which might result in more messages to be advertised than requested.
-
-.. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
-
-NCSDK-16061: IV update procedure fails on the device
-  Bluetooth® mesh device does not undergo IV update and fails to participate in the procedure initiated by any other node unless it is rebooted after the provisioning.
-
-  **Workaround:** Reboot the device after provisioning.
-
-.. rst-class:: v1-6-1 v1-6-0
-
-NCSDK-10200: The device stops sending Secure Network Beacons after re-provisioning
-  Bluetooth® mesh stops sending Secure Network Beacons if the device is re-provisioned after reset through Config Node Reset message or ``bt_mesh_reset()`` call.
-
-  **Workaround:** Reboot the device after re-provisioning.
-
-.. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
-
-NCSDK-5580: nRF5340 only supports SoftDevice Controller
-  On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth® mesh.
-
-Bluetooth direction finding
-===========================
-
-.. rst-class:: v1-9.0
-
-Antenna switching does not work on targets ``nrf5340dk_nrf5340_cpuapp`` and ``nrf5340dk_nrf5340__cpuapp_ns``
-  Antenna switching does not work when direction finding sample applications are built for ``nrf5340dk_nrf5340_cpuapp`` and ``nrf5340dk_nrf5340_cpuapp_ns`` targets. That is caused by GPIO pins that are responsible for access to antenna switches, not being assigned to network core.
-
-
-Bootloader
-==========
+NCSDK-8232: Secure Partition Manager and application building together
+  It is not possible to build and program Secure Partition Manager and the application individually.
 
 .. rst-class:: v1-5-2 v1-5-1 v1-5-0
 
-NCSDK-7173: nRF5340 network core bootloader cannot be built stand-alone
-  The :ref:`nc_bootloader` sample does not compile when built stand-alone.
-  It compiles without problems when included as a child image.
+CIA-248: Samples with default SPM config fails to build for ``thingy91_nrf9160_ns``
+   All samples using the default SPM config fails to build for the ``thingy91_nrf9160_ns``  build target if the sample is not set up with MCUboot.
 
-  **Workaround:** Include the :ref:`nc_bootloader` sample as child image instead of compiling it stand-alone.
+   **Workaround:** Use the main branch.
 
-.. rst-class:: v1-1-0
+Subsystems
+==========
 
-Public keys revocation
-  Public keys are not revoked when subsequent keys are used.
-
-.. rst-class:: v1-1-0
-
-Incompatibility with nRF51
-  The bootloader does not work properly on nRF51.
-
-.. rst-class:: v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
-
-Immutable bootloader not supported in SES
-  Building and programming the immutable bootloader (see :ref:`ug_bootloader`) is not supported in SEGGER Embedded Studio.
-
-.. rst-class:: v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
-
-Immutable bootloader board restrictions
-  The immutable bootloader can only be used with the following boards:
-
-  * ``nrf52840_pca10056``
-  * ``nrf9160_pca10090``
-
-.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
-
-nRF Secure Immutable Bootloader and netboot can overwrite non-OTP provisioning data
-  In architectures that do not have OTP regions, b0 and b0n images incorrectly linked to the size of their container can overwrite provisioning partition data from their image sizes.
-  Issue related to NCSDK-7982.
-
-.. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
-
-The combination of nRF Secure Immutable Bootloader and MCUboot fails to upgrade both the application and MCUboot
-  Due to a change in dependency handling in MCUboot, MCUboot does not read any update as a valid update.
-  Issue related to NCSDK-8681.
+The issues in this section are related to different subsystems.
 
 Build system
-============
+------------
+
+The issues in this section are related to :ref:`app_build_system`.
 
 .. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
@@ -2024,8 +2205,50 @@ NCSDK-7982: Partition manager: Incorrect partition size linkage from name confli
 
   **Workaround:** Rename the container partitions in the :file:`pm.yml` and :file:`pm_static.yml` files to something that does not match the child images' names, and rename the child images' main image partition to its name in :file:`CMakeLists.txt`.
 
+Bootloader
+----------
+
+The issues in this section are related to :ref:`Bootloaders <app_bootloaders>`.
+
+.. rst-class:: v1-1-0
+
+Public keys revocation
+  Public keys are not revoked when subsequent keys are used.
+
+.. rst-class:: v1-1-0
+
+Incompatibility with nRF51
+  The bootloader does not work properly on nRF51.
+
+.. rst-class:: v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
+
+Immutable bootloader not supported in SES
+  Building and programming the immutable bootloader (see :ref:`ug_bootloader`) is not supported in SEGGER Embedded Studio.
+
+.. rst-class:: v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
+
+Immutable bootloader board restrictions
+  The immutable bootloader can only be used with the following boards:
+
+  * ``nrf52840_pca10056``
+  * ``nrf9160_pca10090``
+
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+nRF Secure Immutable Bootloader and netboot can overwrite non-OTP provisioning data
+  In architectures that do not have OTP regions, b0 and b0n images incorrectly linked to the size of their container can overwrite provisioning partition data from their image sizes.
+  Issue related to NCSDK-7982.
+
+.. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+
+The combination of nRF Secure Immutable Bootloader and MCUboot fails to upgrade both the application and MCUboot
+  Due to a change in dependency handling in MCUboot, MCUboot does not read any update as a valid update.
+  Issue related to NCSDK-8681.
+
 DFU and FOTA
-============
+------------
+
+The issues in this section are related to :ref:`Device Firmware Updates <app_bootloaders>`.
 
 .. rst-class:: v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0
 
@@ -2102,113 +2325,29 @@ FW upgrade is broken for multi-image builds
 
   **Workaround:** Build MCUboot and the application separately.
 
-Enhanced ShockBurst (ESB)
-=========================
-
-.. rst-class:: v2-3-0 v2-2-0
-
-NCSDK-20092: ESB does not send packet longer than 63 bytes
-  ESB does not support sending packets longer than 63 bytes, but has no such hardware limitation.
-
-NFC
-===
-
-.. rst-class:: v2-2-0
-
-NCSDK-19168: The :ref:`peripheral_nfc_pairing` and :ref:`central_nfc_pairing` samples cannot pair using OOB data.
-  The :ref:`nfc_ndef_ch_rec_parser_readme` library parses AC records in an invalid way.
-  As a result, the samples cannot parse OOB data for pairing.
-
-  **Workaround:** Revert the :file:`subsys/nfc/ndef/ch_record_parser.c` file to the state from the :ref:`ncs_release_notes_210`.
-
-  .. code-block::
-
-     cd <NCS_root_directory>
-     git checkout v2.1.0 -- subsys/nfc/ndef/ch_record_parser.c
-
-.. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
-
-NCSDK-19347: NFC Reader samples return false errors with value ``1``.
-  The :c:func:`nfc_t4t_isodep_transmit` function of the :ref:`nfc_t4t_isodep_readme` library can return ``1`` as error code even if a delayed operation has been scheduled correctly and should return ``0``.
-  This happens when the ISO-DEP frame is sent for the first time.
-  In samples, this error is propagated from the higher level :c:func:`nfc_t4t_hl_procedure_ndef_tag_app_select` function.
-  The :ref:`tnep_poller_readme` library operations can call the application error callback with error code ``1``, meaning that a delayed operation has been scheduled successfully.
-
-  **Workaround:** Ignore the :ref:`tnep_poller_readme` error callback with error value ``1``.
-  Treat the return value ``1`` of the functions :c:func:`nfc_t4t_isodep_transmit` and :c:func:`nfc_t4t_hl_procedure_ndef_tag_app_select` as success.
-
-.. rst-class:: v1-2-1 v1-2-0
-
-Sample incompatibility with the nRF5340 PDK
-  The :ref:`nfc_tnep_poller` and :ref:`nfc_tag_reader` samples cannot be run on the nRF5340 PDK.
-  There is an incorrect number of pins defined in the MDK files, and the pins required for :ref:`st25r3911b_nfc_readme` cannot be configured properly.
-
-.. rst-class:: v1-2-1 v1-2-0 v1-1-0
-
-Unstable NFC tag samples
-  NFC tag samples are unstable when exhaustively tested (performing many repeated read and/or write operations).
-  NFC tag data might be corrupted.
-
-nRF Profiler
+Integrations
 ============
 
-.. rst-class:: v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+The issues in this section are related to :ref:`ecosystem_integration`.
 
-NCSDK-18398: Build fails if shell is enabled
-   Enabling the Zephyr's :ref:`zephyr:shell_api` module together with :ref:`nrf_profiler` results in a build failure because of the bug in the :file:`CMakeLists.txt` file.
+Pelion
+------
 
-   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``fdac428e902ebd96885160dd3ae5d08d21642926``).
+The issues in this section are related to Pelion Device Management integration.
+The support for Pelion Device Management and the related library and application were removed in :ref:`nRF Connect SDK v1.9.0 <ncs_release_notes_190>`.
 
-Secure Partition Manager (SPM)
-==============================
+.. rst-class:: v1-6-1 v1-6-0
 
-.. note::
-    The Secure Partition Manager (SPM) is deprecated as of |NCS| v2.1.0 and removed after |NCS| v2.2.0. It is replaced by :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
+NCSDK-10196: DFU fails for some configurations with the quick session resume feature enabled
+  Enabling :kconfig:option:`CONFIG_PELION_QUICK_SESSION_RESUME` together with the OpenThread network backend leads to the quick session resume failure during the DFU packet exchange.
+  This is valid for the :ref:`nRF52840 DK <ug_nrf52>` and the :ref:`nRF5340 DK <ug_nrf5340>`.
 
-.. rst-class:: v2-2-0
-
-NCSDK-19156: Building SPM for other boards than ``nrf5340dk_nrf5340_cpuapp`` and ``nrf9160dk_nrf9160`` fails with compilation error in cortex_m_systick.c
-  This happens because the :kconfig:option:`CONFIG_CORTEX_M_SYSTICK` configuration option is enabled while the systick node is disabled in the devicetree.
-
-  **Workaround** Enable the systick node in a DTS overlay file for the SPM build by completing the following steps:
-
-  1. Create an overlay file :file:`systick_enabled.overlay` with the following content:
-
-     .. code-block::
-
-        &systick {
-          status = "okay";
-        };
-
-  #. Add the overlay file as a build argument to SPM:
-
-     .. parsed-literal::
-       :class: highlight
-
-       west build -- -Dspm_DTC_OVERLAY_FILE=systick_enabled.overlay
-
-.. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
-
-NCSIDB-114: Default logging causes crash
-  Enabling default logging in the Secure Partition Manager sample makes it crash if the sample logs any data after the application has booted (for example, during a SecureFault, or in a secure service).
-  At that point, RTC1 and UARTE0 are non-secure.
-
-  **Workaround:** Do not enable logging and add a breakpoint in the fault handling, or try a different logging backend.
-
-.. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
-
-NCSDK-8232: Secure Partition Manager and application building together
-  It is not possible to build and program Secure Partition Manager and the application individually.
-
-.. rst-class:: v1-5-2 v1-5-1 v1-5-0
-
-CIA-248: Samples with default SPM config fails to build for ``thingy91_nrf9160_ns``
-   All samples using the default SPM config fails to build for the ``thingy91_nrf9160_ns``  build target if the sample is not set up with MCUboot.
-
-   **Workaround:** Use the main branch.
+  **Workaround:** Use the quick session resume feature only for configurations with the cellular network backend.
 
 MCUboot
-*******
+=======
+
+The issues in this section are related to :ref:`MCUboot <mcuboot_wrapper>`.
 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
@@ -2223,10 +2362,14 @@ Recovery with the USB does not work
   The MCUboot recovery feature using the USB interface does not work.
 
 nrfxlib
-*******
+=======
+
+The issues in this section are related to components provided in :ref:`nrfxlib`.
 
 Crypto
-======
+------
+
+The issues in this section are related to :ref:`nrfxlib:crypto`.
 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
@@ -2298,7 +2441,7 @@ Glue layer symbol renaming issue
   Therefore, the behavior is undefined when selecting multiple back-ends for the same algorithm (for example, AES).
 
 GNSS sockets
-============
+------------
 
 .. rst-class:: v1-0-0 v0-4-0
 
@@ -2322,8 +2465,10 @@ Closing sockets
   Moreover, closing a socket does not properly clean up all memory resources.
   If a socket is opened and closed multiple times, this might starve the system.
 
-Modem Library
-=============
+Modem library
+-------------
+
+The issues in this section are related to :ref:`nrfxlib:nrf_modem`.
 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
@@ -2336,7 +2481,9 @@ NCSDK-13360: The :c:func:`nrf_recv` function crashes if closed by another thread
   When calling the :c:func:`nrf_recv` function, closing the socket from another thread while it is receiving data causes a crash.
 
 Multiprotocol Service Layer (MPSL)
-==================================
+----------------------------------
+
+The issues in this section are related to :ref:`nrfxlib:mpsl`.
 
 .. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0
 
@@ -2428,8 +2575,9 @@ DRGN-11059: Front-end module API not implemented for SoftDevice Controller
   It is only available for 802.15.4.
 
 802.15.4 Radio driver
-=====================
+---------------------
 
+The issues in this section are related to :ref:`nrfxlib:nrf_802154`.
 In addition to the known issues listed here, see also :ref:`802.15.4 Radio driver limitations <nrf_802154_limitations>` for permanent limitations.
 
 .. rst-class:: v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0
@@ -2463,8 +2611,9 @@ KRKNWK-6255: RSSI parameter adjustment is not applied
   **Workaround:** To apply RSSI parameter adjustments, cherry-pick the commits in `hal_nordic PR #88 <https://github.com/zephyrproject-rtos/hal_nordic/pull/88>`_, `sdk-nrfxlib PR #381 <https://github.com/nrfconnect/sdk-nrfxlib/pull/381>`_, and `sdk-zephyr PR #430 <https://github.com/nrfconnect/sdk-zephyr/pull/430>`_.
 
 SoftDevice Controller
-=====================
+---------------------
 
+The issues in this section are related to :ref:`nrfxlib:softdevice_controller`.
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
 .. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
@@ -2922,10 +3071,12 @@ Timeout without sending packet
   A directed advertiser might time out without sending a packet on air.
 
 nrfx
-****
+====
+
+The issues in this section are related to drivers provided in nrfx.
 
 MDK
-===
+---
 
 .. rst-class:: v1-2-1 v1-2-0
 
@@ -2933,7 +3084,7 @@ Incorrect pin definition for nRF5340
   For nRF5340, the pins **P1.12** to **P1.15** are unavailable due to an incorrect pin number definition in the MDK.
 
 nrfx_saadc driver
-=================
+-----------------
 
 .. rst-class:: v1-1-0 v1-0-0 v0-4-0
 
@@ -2942,7 +3093,7 @@ Samples might be swapped
   This can happen when the sample task is connected using PPI and setting buffers and sampling are not synchronized.
 
 nrfx_uarte driver
-=================
+-----------------
 
 .. rst-class:: v1-1-0 v1-0-0 v0-4-0
 
@@ -2950,7 +3101,7 @@ RX and TX not disabled in uninit
   The driver does not disable RX and TX in uninit, which can cause higher power consumption.
 
 nrfx_uart driver
-================
+----------------
 
 .. rst-class:: v1-0-0 v0-4-0
 
@@ -2960,7 +3111,9 @@ tx_buffer_length set incorrectly
 .. _known_issue_tfm:
 
 Trusted Firmware-M (TF-M)
-*************************
+=========================
+
+The issues in this section are related to the TF-M implementation in the |NCS|.
 
 .. rst-class:: v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
@@ -3101,37 +3254,10 @@ NCSDK-14015: Execution halts during boot
 NCSDK-13949: TF-M Secure Image copies FICR to RAM on nRF9160
   TF-M Secure Image copies the FICR to RAM address between ``0x2003E000`` and ``0x2003F000`` during boot on nRF9160.
 
-Samples
-*******
-
-.. rst-class:: v2-3-0
-
-NCSDK-20046: IPC service sample does not work with ``nrf5340dk_nrf5340_cpuapp``
-  The :ref:`ipc_service_sample` sample does not work with the ``nrf5340dk_nrf5340_cpuapp`` :ref:`build target <app_boards_names_zephyr>` due to a misconfiguration.
-  The application core does not log anything, while the network core seems to work and bond, but cannot transfer data.
-  When using UART, there is no output visible.
-
-.. rst-class:: v2-2-0
-
-NCSDK-18847: :ref:`radio_test` sample does not build with support for Skyworks front-end module
-  When building a sample with support for a front-end module different from nRF21540, the sample uses a non-existing configuration to initialize TX power data.
-  This causes a compilation error because the source file containing code for a generic front-end module is not included in the build.
-
-  **Workaround:** Do not use the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option and replace ``CONFIG_GENERIC_FEM`` with ``CONFIG_MPSL_FEM_SIMPLE_GPIO`` in the :file:`CMakeLists.txt` file of the sample.
-
-.. rst-class:: v2-3-0
-
-NCSDK-19858: :ref:`at_monitor_readme` library and :ref:`nrf_cloud_mqtt_multi_service` sample heap overrun
-  Occasionally, the :ref:`at_monitor_readme` library heap becomes overrun, presumably due to one of the registered AT event listeners becoming stalled.
-  This has only been observed with the :ref:`nrf_cloud_mqtt_multi_service` sample.
-
-.. rst-class:: v2-3-0 v2-2-0
-
-NCSDK-20095: Build warning in the RF test samples when the minimal pinout generic/Skyworks FEM is used
-  The :ref:`radio_test` and :ref:`direct_test_mode` samples build with a warning about generic/Skyworks FEM in minimal pinout configuration.
-
 Zephyr
-******
+======
+
+The issues in this section are related to the Zephyr downstream in the |NCS|.
 
 .. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0
 

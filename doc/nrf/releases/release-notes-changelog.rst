@@ -520,5 +520,8 @@ Documentation
 =============
 
 Updated:
+
+  * The structure of sections on the :ref:`known_issues` page.
+    Known issues were moved around, but no changes were made to their description.
   * The :ref:`software_maturity` page with details about Bluetooth feature support.
   * The :ref:`ug_nrf5340_gs`, :ref:`ug_thingy53_gs`, :ref:`ug_nrf52_gs`, and :ref:`ug_ble_controller` pages with a link to the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
