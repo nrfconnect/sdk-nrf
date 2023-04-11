@@ -217,6 +217,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/                              @rlubos
 /subsys/net/lib/mqtt_helper/              @simensrostad @jtguggedal
 /subsys/net/lib/azure_*                   @jtguggedal @simensrostad @coderbyheart
+/subsys/net/lib/aws_*                     @jtguggedal @simensrostad @coderbyheart
 /subsys/net/lib/ftp_client/               @junqingzou
 /subsys/net/lib/icalendar_parser/         @lats1980
 /subsys/net/lib/lwm2m_client_utils/       @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
