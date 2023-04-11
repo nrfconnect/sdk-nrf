@@ -35,23 +35,8 @@
 #include "zephyr/logging/log.h"
 LOG_MODULE_REGISTER(bt_sdc_hci_driver);
 
-#if defined(CONFIG_BT_CONN)
-/* It should not be possible to set CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT larger than
- * CONFIG_BT_MAX_CONN. Kconfig should make sure of that, this assert is to
- * verify that assumption.
- */
-BUILD_ASSERT(CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT <= CONFIG_BT_MAX_CONN);
-
-#define SDC_CENTRAL_COUNT (CONFIG_BT_MAX_CONN - CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT)
-
-#else
-
-#define SDC_CENTRAL_COUNT 0
-
-#endif /* CONFIG_BT_CONN */
-
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_CENTRAL) ||
-			 (SDC_CENTRAL_COUNT > 0));
+			 (CONFIG_BT_CTLR_SDC_CENTRAL_COUNT > 0));
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 			 (CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT > 0));
@@ -156,7 +141,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #define SDC_EXTRA_MEMORY CONFIG_BT_SDC_ADDITIONAL_MEMORY
 
 #define MEMPOOL_SIZE ((PERIPHERAL_COUNT * PERIPHERAL_MEM_SIZE) + \
-		      (SDC_CENTRAL_COUNT * CENTRAL_MEM_SIZE) + \
+		      (CONFIG_BT_CTLR_SDC_CENTRAL_COUNT * CENTRAL_MEM_SIZE) + \
 		      (SDC_ADV_SET_MEM_SIZE) + \
 		      (SDC_PERIODIC_ADV_MEM_SIZE) + \
 		      (SDC_PERIODIC_ADV_RSP_MEM_SIZE) + \
@@ -691,7 +676,7 @@ static int configure_memory_usage(void)
 	sdc_cfg_t cfg;
 
 #if !defined(CONFIG_BT_LL_SOFTDEVICE_PERIPHERAL)
-	cfg.central_count.count = SDC_CENTRAL_COUNT;
+	cfg.central_count.count = CONFIG_BT_CTLR_SDC_CENTRAL_COUNT;
 
 	/* NOTE: sdc_cfg_set() returns a negative errno on error. */
 	required_memory =

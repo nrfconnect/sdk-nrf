@@ -8,15 +8,6 @@ menu "Bluetooth Low Energy"
 
 if BT
 
-# BT_MAX_CONN is declared in Zephyr, here we add the range and default for
-# BT_LL_SOFTDEVICE which is tested with 20 connections.
-# When both connection roles are enabled there has to be one for each role.
-config BT_MAX_CONN
-	int
-	range 2 20 if BT_LL_SOFTDEVICE && BT_CENTRAL && BT_PERIPHERAL
-	range 1 20 if BT_LL_SOFTDEVICE
-	default 2 if BT_LL_SOFTDEVICE && BT_CENTRAL && BT_PERIPHERAL
-
 if BT_CTLR
 rsource "controller/Kconfig"
 endif
