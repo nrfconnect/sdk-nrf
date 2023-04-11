@@ -144,12 +144,6 @@ void nrf_cloud_fota_job_free(struct nrf_cloud_fota_job_info *const job);
 int nrf_cloud_rest_fota_execution_decode(const char *const response,
 					struct nrf_cloud_fota_job_info *const job);
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-/** @brief Parse the PGPS response (REST and MQTT) from nRF Cloud */
-int nrf_cloud_pgps_response_decode(const char *const response,
-				   struct nrf_cloud_pgps_result *const result);
-#endif
-
 /** @brief Add cellular network info to the provided cJSON object.
  * If the cell_inf parameter is NULL, the codec will obtain the current network
  * info from the modem.
@@ -215,12 +209,6 @@ int nrf_cloud_rest_error_decode(const char *const buf, enum nrf_cloud_error *con
 int nrf_cloud_pvt_data_encode(const struct nrf_cloud_gnss_pvt * const pvt,
 			      cJSON * const pvt_data_obj);
 
-#if defined(CONFIG_NRF_MODEM)
-/** @brief Encode a modem PVT data frame to be sent to nRF Cloud */
-int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	* const mdm_pvt,
-				    cJSON * const pvt_data_obj);
-#endif
-
 /** @brief Replace legacy c2d topic with wilcard topic string.
  * Return true, if the topic was modified; otherwise false.
  */
@@ -234,11 +222,6 @@ enum nrf_cloud_rcv_topic nrf_cloud_dc_rx_topic_decode(const char * const topic);
  */
 void nrf_cloud_set_app_version(const char * const app_ver);
 
-/** @brief Build A-GPS type array based on request.
- */
-int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agps_data_frame * const request,
-				  enum nrf_cloud_agps_type *array, const size_t array_size);
-
 /** @brief Encode the data payload of an nRF Cloud A-GPS request into the provided object */
 int nrf_cloud_agps_req_data_json_encode(const enum nrf_cloud_agps_type * const types,
 					const size_t type_count,
@@ -247,13 +230,28 @@ int nrf_cloud_agps_req_data_json_encode(const enum nrf_cloud_agps_type * const t
 					const bool filtered_ephem, const uint8_t mask_angle,
 					cJSON * const data_obj_out);
 
-/** @brief Encode an A-GPS request device message to be sent to nRF Cloud */
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agps_data_frame * const request,
-				   cJSON * const agps_req_obj_out);
+#if defined(CONFIG_NRF_MODEM)
+/** @brief Encode a modem PVT data frame to be sent to nRF Cloud */
+int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	* const mdm_pvt,
+				    cJSON * const pvt_data_obj);
 #endif
 
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+/** @brief Build A-GPS type array based on request.
+ */
+int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agps_data_frame * const request,
+				  enum nrf_cloud_agps_type *array, const size_t array_size);
+
+/** @brief Encode an A-GPS request device message to be sent to nRF Cloud */
+int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agps_data_frame * const request,
+				   cJSON * const agps_req_obj_out);
+#endif /* CONFIG_NRF_CLOUD_AGPS */
+
 #if defined(CONFIG_NRF_CLOUD_PGPS)
+/** @brief Parse the PGPS response (REST and MQTT) from nRF Cloud */
+int nrf_cloud_pgps_response_decode(const char *const response,
+				   struct nrf_cloud_pgps_result *const result);
+
 /** @brief Encode the data payload of an nRF Cloud P-GPS request into the provided object */
 int nrf_cloud_pgps_req_data_json_encode(const struct gps_pgps_request * const request,
 					cJSON * const data_obj_out);

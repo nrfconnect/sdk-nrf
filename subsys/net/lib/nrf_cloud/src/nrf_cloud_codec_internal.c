@@ -1791,78 +1791,6 @@ err_cleanup:
 	return ret;
 }
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-int nrf_cloud_pgps_response_decode(const char *const response,
-	struct nrf_cloud_pgps_result *const result)
-{
-	if (!response || !result ||
-	    !result->host || !result->host_sz ||
-	    !result->path || !result->path_sz) {
-		return -EINVAL;
-	}
-
-	char *host_ptr = NULL;
-	char *path_ptr = NULL;
-	int err = 0;
-	cJSON *rsp_obj = cJSON_Parse(response);
-
-	if (!rsp_obj) {
-		LOG_ERR("P-GPS response does not contain valid JSON");
-		err = -EBADMSG;
-		goto cleanup;
-	}
-
-	/* MQTT response is an array, REST is key/value map */
-	if (cJSON_IsArray(rsp_obj)) {
-		if (get_string_from_array(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST, &host_ptr) ||
-		    get_string_from_array(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH, &path_ptr)) {
-			LOG_ERR("Invalid P-GPS array response format");
-			err = -EPROTO;
-			goto cleanup;
-		}
-	} else if (get_string_from_obj(rsp_obj, NRF_CLOUD_PGPS_RCV_REST_HOST, &host_ptr) ||
-		   get_string_from_obj(rsp_obj, NRF_CLOUD_PGPS_RCV_REST_PATH, &path_ptr)) {
-		enum nrf_cloud_error nrf_err;
-
-		/* Check for a potential P-GPS JSON error message from nRF Cloud */
-		err = nrf_cloud_error_msg_decode(response, NRF_CLOUD_JSON_APPID_VAL_PGPS,
-						     NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA, &nrf_err);
-		if (!err) {
-			LOG_ERR("nRF Cloud returned P-GPS error: %d", nrf_err);
-			err = -EFAULT;
-		} else {
-			LOG_ERR("Invalid P-GPS response format");
-			err = -EPROTO;
-		}
-
-		goto cleanup;
-	}
-
-	if (!host_ptr || !path_ptr) {
-		err = -ENOSTR;
-		goto cleanup;
-	}
-
-	if ((result->host_sz <= strlen(host_ptr)) ||
-	    (result->path_sz <= strlen(path_ptr))) {
-		err = -ENOBUFS;
-		goto cleanup;
-	}
-
-	strncpy(result->host, host_ptr, result->host_sz);
-	LOG_DBG("host: %s", result->host);
-
-	strncpy(result->path, path_ptr, result->path_sz);
-	LOG_DBG("path: %s", result->path);
-
-cleanup:
-	if (rsp_obj) {
-		cJSON_Delete(rsp_obj);
-	}
-	return err;
-}
-#endif /* CONFIG_NRF_CLOUD_PGPS */
-
 int get_string_from_array(const cJSON *const array, const int index,
 			  char **string_out)
 {
@@ -2449,30 +2377,6 @@ bool nrf_cloud_disconnection_request_decode(const char *const buf)
 	return ret;
 }
 
-#if defined(CONFIG_NRF_MODEM)
-int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	* const mdm_pvt,
-				    cJSON * const pvt_data_obj)
-{
-	if (!mdm_pvt || !pvt_data_obj) {
-		return -EINVAL;
-	}
-
-	struct nrf_cloud_gnss_pvt pvt = {
-		.lon =		mdm_pvt->longitude,
-		.lat =		mdm_pvt->latitude,
-		.accuracy =	mdm_pvt->accuracy,
-		.alt =		mdm_pvt->altitude,
-		.has_alt =	1,
-		.speed =	mdm_pvt->speed,
-		.has_speed =	1,
-		.heading =	mdm_pvt->heading,
-		.has_heading =	1
-	};
-
-	return nrf_cloud_pvt_data_encode(&pvt, pvt_data_obj);
-}
-#endif
-
 int nrf_cloud_pvt_data_encode(const struct nrf_cloud_gnss_pvt * const pvt,
 			      cJSON * const pvt_data_obj)
 {
@@ -2754,64 +2658,6 @@ static int agps_types_array_json_encode(cJSON * const obj,
 	return err;
 }
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agps_data_frame * const request,
-				  enum nrf_cloud_agps_type *array, const size_t array_size)
-{
-	if (!request || !array || !array_size) {
-		return -EINVAL;
-	}
-	if (array_size < NRF_CLOUD_AGPS__LAST) {
-		LOG_ERR("Array size (%d) too small, must be >= %d",
-			array_size, NRF_CLOUD_AGPS__LAST);
-		return -ERANGE;
-	}
-
-	int cnt = 0;
-
-	memset((void *)array, NRF_CLOUD_AGPS__TYPE_INVALID, array_size * sizeof(*array));
-
-	if (request->data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
-		array[cnt++] = NRF_CLOUD_AGPS_UTC_PARAMETERS;
-	}
-
-	if (request->sv_mask_ephe) {
-		array[cnt++] = NRF_CLOUD_AGPS_EPHEMERIDES;
-	}
-
-	if (request->sv_mask_alm) {
-		array[cnt++] = NRF_CLOUD_AGPS_ALMANAC;
-	}
-
-	if (request->data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
-		array[cnt++] = NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION;
-	}
-
-	if (request->data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) {
-		array[cnt++] = NRF_CLOUD_AGPS_NEQUICK_CORRECTION;
-	}
-
-	if (request->data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
-		array[cnt++] = NRF_CLOUD_AGPS_GPS_TOWS;
-		array[cnt++] = NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK;
-	}
-
-	if (request->data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
-		array[cnt++] = NRF_CLOUD_AGPS_LOCATION;
-	}
-
-	if (request->data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
-		array[cnt++] = NRF_CLOUD_AGPS_INTEGRITY;
-	}
-
-	if (cnt == 0) {
-		return -ENODATA;
-	}
-
-	return cnt;
-}
-#endif /* CONFIG_NRF_CLOUD_AGPS */
-
 int nrf_cloud_agps_req_data_json_encode(const enum nrf_cloud_agps_type * const types,
 					const size_t type_count,
 					const struct lte_lc_cell * const cell_inf,
@@ -2860,6 +2706,30 @@ cleanup:
 	cJSON_DeleteItemFromObject(data_obj_out, NRF_CLOUD_JSON_KEY_ELEVATION_MASK);
 	return err;
 }
+
+#if defined(CONFIG_NRF_MODEM)
+int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	* const mdm_pvt,
+				    cJSON * const pvt_data_obj)
+{
+	if (!mdm_pvt || !pvt_data_obj) {
+		return -EINVAL;
+	}
+
+	struct nrf_cloud_gnss_pvt pvt = {
+		.lon =		mdm_pvt->longitude,
+		.lat =		mdm_pvt->latitude,
+		.accuracy =	mdm_pvt->accuracy,
+		.alt =		mdm_pvt->altitude,
+		.has_alt =	1,
+		.speed =	mdm_pvt->speed,
+		.has_speed =	1,
+		.heading =	mdm_pvt->heading,
+		.has_heading =	1
+	};
+
+	return nrf_cloud_pvt_data_encode(&pvt, pvt_data_obj);
+}
+#endif /* CONFIG_NRF_MODEM */
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agps_data_frame * const request,
@@ -2919,9 +2789,135 @@ cleanup:
 
 	return err;
 }
+
+int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agps_data_frame * const request,
+				  enum nrf_cloud_agps_type *array, const size_t array_size)
+{
+	if (!request || !array || !array_size) {
+		return -EINVAL;
+	}
+	if (array_size < NRF_CLOUD_AGPS__LAST) {
+		LOG_ERR("Array size (%d) too small, must be >= %d",
+			array_size, NRF_CLOUD_AGPS__LAST);
+		return -ERANGE;
+	}
+
+	int cnt = 0;
+
+	memset((void *)array, NRF_CLOUD_AGPS__TYPE_INVALID, array_size * sizeof(*array));
+
+	if (request->data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
+		array[cnt++] = NRF_CLOUD_AGPS_UTC_PARAMETERS;
+	}
+
+	if (request->sv_mask_ephe) {
+		array[cnt++] = NRF_CLOUD_AGPS_EPHEMERIDES;
+	}
+
+	if (request->sv_mask_alm) {
+		array[cnt++] = NRF_CLOUD_AGPS_ALMANAC;
+	}
+
+	if (request->data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
+		array[cnt++] = NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION;
+	}
+
+	if (request->data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) {
+		array[cnt++] = NRF_CLOUD_AGPS_NEQUICK_CORRECTION;
+	}
+
+	if (request->data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
+		array[cnt++] = NRF_CLOUD_AGPS_GPS_TOWS;
+		array[cnt++] = NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK;
+	}
+
+	if (request->data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
+		array[cnt++] = NRF_CLOUD_AGPS_LOCATION;
+	}
+
+	if (request->data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
+		array[cnt++] = NRF_CLOUD_AGPS_INTEGRITY;
+	}
+
+	if (cnt == 0) {
+		return -ENODATA;
+	}
+
+	return cnt;
+}
 #endif /* CONFIG_NRF_CLOUD_AGPS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
+int nrf_cloud_pgps_response_decode(const char *const response,
+	struct nrf_cloud_pgps_result *const result)
+{
+	if (!response || !result ||
+	    !result->host || !result->host_sz ||
+	    !result->path || !result->path_sz) {
+		return -EINVAL;
+	}
+
+	char *host_ptr = NULL;
+	char *path_ptr = NULL;
+	int err = 0;
+	cJSON *rsp_obj = cJSON_Parse(response);
+
+	if (!rsp_obj) {
+		LOG_ERR("P-GPS response does not contain valid JSON");
+		err = -EBADMSG;
+		goto cleanup;
+	}
+
+	/* MQTT response is an array, REST is key/value map */
+	if (cJSON_IsArray(rsp_obj)) {
+		if (get_string_from_array(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST, &host_ptr) ||
+		    get_string_from_array(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH, &path_ptr)) {
+			LOG_ERR("Invalid P-GPS array response format");
+			err = -EPROTO;
+			goto cleanup;
+		}
+	} else if (get_string_from_obj(rsp_obj, NRF_CLOUD_PGPS_RCV_REST_HOST, &host_ptr) ||
+		   get_string_from_obj(rsp_obj, NRF_CLOUD_PGPS_RCV_REST_PATH, &path_ptr)) {
+		enum nrf_cloud_error nrf_err;
+
+		/* Check for a potential P-GPS JSON error message from nRF Cloud */
+		err = nrf_cloud_error_msg_decode(response, NRF_CLOUD_JSON_APPID_VAL_PGPS,
+						     NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA, &nrf_err);
+		if (!err) {
+			LOG_ERR("nRF Cloud returned P-GPS error: %d", nrf_err);
+			err = -EFAULT;
+		} else {
+			LOG_ERR("Invalid P-GPS response format");
+			err = -EPROTO;
+		}
+
+		goto cleanup;
+	}
+
+	if (!host_ptr || !path_ptr) {
+		err = -ENOSTR;
+		goto cleanup;
+	}
+
+	if ((result->host_sz <= strlen(host_ptr)) ||
+	    (result->path_sz <= strlen(path_ptr))) {
+		err = -ENOBUFS;
+		goto cleanup;
+	}
+
+	strncpy(result->host, host_ptr, result->host_sz);
+	LOG_DBG("host: %s", result->host);
+
+	strncpy(result->path, path_ptr, result->path_sz);
+	LOG_DBG("path: %s", result->path);
+
+cleanup:
+	if (rsp_obj) {
+		cJSON_Delete(rsp_obj);
+	}
+	return err;
+}
+
 int nrf_cloud_pgps_req_data_json_encode(const struct gps_pgps_request * const request,
 					cJSON * const data_obj_out)
 {
