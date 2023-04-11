@@ -97,7 +97,7 @@ Wi-Fi radio test subcommands
    * - tx_pkt_mcs
      - | -1 - Not being used
        | <val> - MCS index to be used
-     - -1
+     - 0
      - Configuration
      - MCS index at which TX packet will be transmitted. Mutually exclusive with tx_pkt_rate.
    * - tx_pkt_rate
