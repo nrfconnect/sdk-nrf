@@ -180,9 +180,9 @@ table_from_sample_yaml_board_reference = "/includes/sample_board_rows.txt"
 # Options for ncs_tool_versions ------------------------------------------------
 
 ncs_tool_versions_host_deps = [
-    NRF_BASE / "scripts" / "tools-versions-win10.txt",
-    NRF_BASE / "scripts" / "tools-versions-linux.txt",
-    NRF_BASE / "scripts" / "tools-versions-darwin.txt",
+    NRF_BASE / "scripts" / "tools-versions-win10.yml",
+    NRF_BASE / "scripts" / "tools-versions-linux.yml",
+    NRF_BASE / "scripts" / "tools-versions-darwin.yml",
 ]
 ncs_tool_versions_python_deps = [
     ZEPHYR_BASE / "scripts" / "requirements-base.txt",
