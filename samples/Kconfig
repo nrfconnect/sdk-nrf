@@ -105,6 +105,13 @@ config NCS_SAMPLE_EMPTY_NET_CORE_CHILD_IMAGE
 	help
 	  nRF5340 empty network core sample as a child image (network core).
 
+config NCS_SAMPLE_PROVISIONING_NET_CORE_CHILD_IMAGE
+	bool "Add provisioning_image_netcore sample as a child image"
+	depends on SOC_NRF5340_CPUAPP && BOARD_ENABLE_CPUNET
+	depends on !NCS_INCLUDE_RPMSG_CHILD_IMAGE
+	help
+	  nRF5340 network core provisioning image as a child image.
+
 endif # SOC_SERIES_NRF53X
 
 if LOG
