@@ -43,6 +43,15 @@ if (CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE)
     )
 endif()
 
+if (CONFIG_NCS_SAMPLE_PROVISIONING_NET_CORE_CHILD_IMAGE)
+  add_child_image(
+    NAME "provisioning_net_core"
+    SOURCE_DIR "${NRF_DIR}/samples/tfm/provisioning_image_net_core"
+    DOMAIN "CPUNET"
+    BOARD ${CONFIG_DOMAIN_CPUNET_BOARD}
+    )
+endif()
+
 if (CONFIG_NCS_SAMPLE_REMOTE_SHELL_CHILD_IMAGE)
   add_child_image(
     NAME "remote_shell"
