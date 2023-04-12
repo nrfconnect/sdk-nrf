@@ -335,6 +335,13 @@ NFC samples
 
 |no_changes_yet_note|
 
+Multicore samples
+-----------------
+
+* :ref:`multicore_hello_world` sample:
+
+  * Added :ref:`zephyr:sysbuild` support to the sample.
+
 nRF5340 samples
 ---------------
 
