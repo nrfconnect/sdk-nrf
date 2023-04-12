@@ -29,6 +29,8 @@ manifest:
       url-base: https://github.com/ARMmbed
     - name: nordicsemi
       url-base: https://github.com/NordicSemiconductor
+    - name: dragoon
+      url-base: https://projecttools.nordicsemi.no/bitbucket/scm/drgn
     - name: memfault
       url-base: https://github.com/memfault
     - name: ant-nrfconnect
@@ -39,7 +41,7 @@ manifest:
   defaults:
     remote: ncs
 
-  group-filter: [-homekit, -nrf-802154, -find-my, -ant]
+  group-filter: [-homekit, -nrf-802154, -dragoon, -find-my, -ant]
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -156,6 +158,14 @@ manifest:
       revision: 2e0320844049e041de9d5769d810c5a15b10842a
       groups:
         - nrf-802154
+    - name: dragoon
+      # Only for internal Nordic development
+      repo-path: dragoon.git
+      remote: dragoon
+      revision: b093384fc4663a2da582811314e13db2a52c81ac
+      submodules: true
+      groups:
+        - dragoon
     - name: cjson
       repo-path: sdk-cjson
       path: modules/lib/cjson
