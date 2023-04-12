@@ -60,11 +60,11 @@ To create a Thing for your device:
           ]
        }
 
-.. note::
-   The policy example is only intended for development environments.
-   All devices in your production fleet must have credentials with privileges that authorize only intended actions on specific resources.
-   The specific permission policies can vary depending on the use case and should meet business and security requirements.
-   For more information, refer to the example policies listed in `AWS IoT Core policy examples`_ and `Security best practices in AWS IoT Core`_.
+   .. note::
+      The policy example is only intended for development environments.
+      All devices in your production fleet must have credentials with privileges that authorize only intended actions on specific resources.
+      The specific permission policies can vary depending on the use case and should meet business and security requirements.
+      For more information, refer to the example policies listed in `AWS IoT Core policy examples`_ and `Security best practices in AWS IoT Core`_.
 
 #. Click :guilabel:`Create`.
 #. Go to :guilabel:`Manage` > :guilabel:`All devices`> :guilabel:`Things` and select :guilabel:`Create things`.
@@ -76,6 +76,7 @@ To create a Thing for your device:
 
       If you are working with an application, that automatically sets the client ID to the IMEI of the device at run-time, you must locate the IMEI of the device and use that as the *Thing name*.
       If you choose a different name, make sure to :ref:`configure a custom client ID <configuring>` before building.
+
 #. Accept the defaults and continue to the next step.
 #. Select :guilabel:`Auto-generate a new certificate` to generate new certificates.
 #. Select the policy that you created in a previous step.
