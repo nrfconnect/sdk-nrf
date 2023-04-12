@@ -291,6 +291,10 @@ static int write_resource_to_settings(int inst, int res, uint8_t *data, uint16_t
 {
 	char path[sizeof(LWM2M_FIRM_PREFIX "/65535/0/10")];
 
+	if ((inst < 0 || inst > 9) || (res < 0 || res > 99)) {
+		return -EINVAL;
+	}
+
 	snprintk(path, sizeof(path), LWM2M_FIRM_PREFIX "/%d/%d/%d", ENABLED_LWM2M_FIRMWARE_OBJECT,
 		 inst, res);
 	if (settings_save_one(path, data, data_len)) {
