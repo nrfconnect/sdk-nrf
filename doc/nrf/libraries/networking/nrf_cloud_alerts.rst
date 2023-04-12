@@ -69,11 +69,11 @@ To use this library, complete the following steps:
 #. Define a local variable of type :c:struct:`nrf_cloud_alert_info`.
 #. Initialize the structure members:
 
-  * :c:member:`type` - A value of the :c:enum:`nrf_cloud_alert_type` enum.
-  * :c:member:`value` - Use 0 if not otherwise needed.
-  * :c:member:`description` -Use NULL to suppress transmission of this field.
+   * :c:member:`type` - A value of the :c:enum:`nrf_cloud_alert_type` enum.
+   * :c:member:`value` - Use ``0`` if not otherwise needed.
+   * :c:member:`description` - Use NULL to suppress transmission of this field.
 
-#. Call either :c:func:`nrf_cloud_alert_send` when connected to nRF Cloud using MQTT or :c:func:`nrf_cloud_rest_alert_send` when using REST.
+#. Call the :c:func:`nrf_cloud_alert_send` function when connected to nRF Cloud using MQTT or :c:func:`nrf_cloud_rest_alert_send` when using REST.
 
 Samples using the library
 *************************
