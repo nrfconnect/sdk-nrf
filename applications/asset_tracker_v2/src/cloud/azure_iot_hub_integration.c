@@ -16,7 +16,7 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 
 #if !defined(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM)
-#define CLIENT_ID_LEN 15
+#define CLIENT_ID_LEN HW_ID_LEN
 #else
 #define CLIENT_ID_LEN (sizeof(CONFIG_CLOUD_CLIENT_ID) - 1)
 #endif
@@ -134,9 +134,7 @@ static struct azure_iot_hub_property prop_bag_ground_fix[] = {
 
 static char client_id_buf[CLIENT_ID_LEN + 1];
 static struct azure_iot_hub_config config = {
-	.use_dps = IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS),
-	.device_id.ptr = client_id_buf,
-	.device_id.size = sizeof(client_id_buf) - 1,
+	.use_dps = IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
 };
 
 static cloud_wrap_evt_handler_t wrapper_evt_handler;
@@ -328,6 +326,9 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 #else
 	snprintk(client_id_buf, sizeof(client_id_buf), "%s", CONFIG_CLOUD_CLIENT_ID);
 #endif
+
+	config.device_id.ptr = client_id_buf;
+	config.device_id.size = strlen(client_id_buf);
 
 	err = azure_iot_hub_init(azure_iot_hub_event_handler);
 	if (err) {
