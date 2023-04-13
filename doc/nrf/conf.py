@@ -43,7 +43,6 @@ extensions = [
     "zephyr.html_redirects",
     "zephyr.warnings_filter",
     "zephyr.kconfig",
-    "ncs_cache",
     "zephyr.external_content",
     "zephyr.doxyrunner",
     "zephyr.link-roles",
@@ -185,13 +184,6 @@ options_from_kconfig_zephyr_dir = ZEPHYR_BASE
 # Options for manifest_revisions_table -----------------------------------------
 
 manifest_revisions_table_manifest = NRF_BASE / "west.yml"
-
-# Options for ncs_cache --------------------------------------------------------
-
-ncs_cache_docset = "nrf"
-ncs_cache_build_dir = utils.get_builddir()
-ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
-ncs_cache_manifest = NRF_BASE / "west.yml"
 
 # Options for sphinx_notfound_page ---------------------------------------------
 

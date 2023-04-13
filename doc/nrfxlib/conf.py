@@ -39,7 +39,6 @@ extensions = [
     "inventory_builder",
     "zephyr.kconfig",
     "zephyr.warnings_filter",
-    "ncs_cache",
     "zephyr.external_content",
     "zephyr.doxyrunner",
 ]
@@ -117,13 +116,6 @@ breathe_separate_member_pages = True
 # Options for external_content -------------------------------------------------
 
 external_content_contents = [(NRFXLIB_BASE, "**/*.rst"), (NRFXLIB_BASE, "**/doc/")]
-
-# Options for ncs_cache --------------------------------------------------------
-
-ncs_cache_docset = "nrfxlib"
-ncs_cache_build_dir = utils.get_builddir()
-ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
-ncs_cache_manifest = NRF_BASE / "west.yml"
 
 
 def setup(app):
