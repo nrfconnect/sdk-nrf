@@ -64,7 +64,7 @@ The module starts the peripheral device discovery when it receives :c:struct:`bl
 
 The peripheral discovery consists of the following steps:
 
-a. Reading device description.
+1. Reading device description.
    The central checks if the connected peripheral supports the LLPM (Low Latency Packet Mode).
    The device description is a GATT Characteristic that is specific for nRF Desktop peripherals and is implemented by :ref:`nrf_desktop_dev_descr`.
 #. Reading Hardware ID (HW ID).

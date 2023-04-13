@@ -7,7 +7,7 @@ Device Firmware Upgrade module
    :local:
    :depth: 2
 
-Use the DFU module to:
+Use the DFU module to perform the following:
 
 * Obtain the update image from :ref:`nrf_desktop_config_channel` and store it in the appropriate flash memory partition.
 * Erase the flash memory partition in the background before storing the update image.

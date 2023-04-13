@@ -86,7 +86,7 @@ Implementation details
 
 The module uses MCUmgr's image notification callbacks for the following purposes:
 
-* To periodically submit an :c:struct:`ble_smp_transfer_event` while image upload over Bluetooth LE is in progress.
+* To periodically submit a :c:struct:`ble_smp_transfer_event` while image upload over Bluetooth LE is in progress.
   The module registers itself as the final subscriber of the event to track the number of submitted events.
   If a :c:struct:`ble_smp_transfer_event` was already submitted, but was not yet processed, the module desists from submitting subsequent events.
 * To reject image upload or system reboot request if :ref:`nrf_desktop_dfu_lock` is already taken by another DFU transport.

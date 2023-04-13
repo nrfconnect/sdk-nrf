@@ -47,7 +47,7 @@ You must be aware of these additions when you start writing your own application
      warning: Experimental symbol BT_EXT_ADV is enabled.
 
   For more information, see :ref:`software_maturity`.
-* The |NCS| provides an additional :file:`boilerplate.cmake` that is automatically included when using the Zephyr CMake package in the :file:`CMakeLists.txt` file of your application::
+* The |NCS| provides an additional :file:`boilerplate.cmake` file that is automatically included when using the Zephyr CMake package in the :file:`CMakeLists.txt` file of your application::
 
     find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
@@ -181,7 +181,7 @@ MCUboot output build files
 |                                                                  | * The MCUboot-compatible update image for one or more cores when MCUboot is not in the Direct-XIP mode and a manifest describing its contents (all related :file:`*.bin` files and a :file:`manifest.json` file).                                                  |
 |                                                                  | * The MCUboot-compatible update image for the primary and secondary slots when MCUboot is in the Direct-XIP mode and manifest describing its contents (all related :file:`*.bin` files and a :file:`manifest.json` file).                                          |
 +------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| :file:`dfu_mcuboot.zip`                                          | Contains two versions of MCUBoot linked against different address spaces corresponding to slot0 (s0) and slot1 (s1) and a manifest JSON file describing their MCUBoot version number (``MCUBOOT_IMAGE_VERSION``), NSIB version number (``FW_INFO``), board type.   |
+| :file:`dfu_mcuboot.zip`                                          | Contains two versions of MCUboot linked against different address spaces corresponding to slot0 (s0) and slot1 (s1) and a manifest JSON file describing their MCUboot version number (``MCUBOOT_IMAGE_VERSION``), NSIB version number (``FW_INFO``), board type.   |
 |                                                                  | This file can be used by FOTA servers (for example, nRF Cloud) to serve both s0 and s1 to the device.                                                                                                                                                              |
 |                                                                  | The device can then select the firmware file for the slot that is currently not in use.                                                                                                                                                                            |
 +------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+

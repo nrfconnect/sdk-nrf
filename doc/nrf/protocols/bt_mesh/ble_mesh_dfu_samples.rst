@@ -182,7 +182,7 @@ The format of metadata is defined in the :c:struct:`bt_mesh_dfu_metadata` struct
 For the complete list of commands, see :ref:`zephyr:bluetooth_mesh_shell_dfu_metadata`.
 
 To start composing metadata, issue the ``mesh models dfu metadata comp-add`` shell command that encodes a Composition Data header.
-For example, for a Target node with with product ID 0x0059, zero company and version IDs, 10 entries in the replay list, and with Relay, Proxy and Friend features enabled, the command will be the following::
+For example, for a Target node with product ID 0x0059, zero company and version IDs, 10 entries in the replay list, and with Relay, Proxy and Friend features enabled, the command will be the following::
 
   mesh models dfu metadata comp-add 0x59 0 0 10 7
 

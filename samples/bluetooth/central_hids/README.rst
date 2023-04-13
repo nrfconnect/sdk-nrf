@@ -19,7 +19,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-The sample also requires a HIDS device to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` or :ref:`peripheral_hids_keyboard` sample, or a computer with a Bluetooth® Low Energy dongle and `nRF Connect for Desktop`_).
+The sample also requires a HIDS device to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` sample or :ref:`peripheral_hids_keyboard` sample, or a computer with a Bluetooth® Low Energy dongle and `nRF Connect for Desktop`_).
 
 Overview
 ********
@@ -73,7 +73,7 @@ Testing with another development kit
 1. |connect_terminal_specific|
 #. Reset the kit.
 #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample and reset it.
-#. When connected, press Button 1 on both devices to confirm the passkey value used for bonding, or press **Button 2** to reject it.
+#. When connected, press **Button 1** on both devices to confirm the passkey value used for bonding, or press **Button 2** to reject it.
 #. Wait until the HIDS keyboard is detected by the central.
    All detected descriptors are listed.
    In the terminal window, check for information similar to the following::

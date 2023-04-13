@@ -80,7 +80,7 @@ See the :ref:`nRF_asset_tracker` section for more details.
 Carrier library support
 ***********************
 
-See the section :ref:`using_the_lwm2m_carrier_library` for steps on how to connect to a operator's device management platform, necessary in some LTE networks.
+See the section :ref:`using_the_lwm2m_carrier_library` for steps on how to connect to an operator's device management platform, necessary in some LTE networks.
 
 .. _atv2_application_configuration:
 

@@ -94,9 +94,7 @@ There are three ways to define this storage location:
   * :kconfig:option:`CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION`
 
   Also, specify your development kit version by appending it to the board name.
-  For example, if your development kit version is 1.0.1, use the following board name in your build command:
-
-  ``nrf9160dk_nrf9160_ns@1_0_1``
+  For example, if your development kit version is 1.0.1, use the board name ``nrf9160dk_nrf9160_ns@1_0_1`` in your build command.
 
   .. note::
      If you fail to specify the version, the build system selects a baseline board version which does not include external flash.

@@ -160,7 +160,7 @@ The combination of channel bandwidth, the MIMO order, the modulation scheme, and
 The range of supported rates is vast, ranging from 86 Mbps for a single antenna 20 MHz solution up to 9.6 Gbps for a 160 MHz eight antennas solution.
 
 Wi-Fi has traditionally been single user (SU) based, which means that during any particular on-air packet transmission, the communication is between two users (excluding broadcast/multicast scenarios where the same information is delivered to multiple users).
-With the advent of Wi-Fi 6 (and to some extent Wi-Fi 5), multi user (MU) support has been introduced.
+With the advent of Wi-Fi 6 (and to some extent Wi-Fi 5), multiuser (MU) support has been introduced.
 Through both MIMO and Orthogonal Frequency Division Multiple Access (OFDMA) techniques (and even a combination of both), it is now possible to send unique information to multiple users in the same on-air packet transmission, both in the downlink and uplink direction.
 
 .. _ug_wifi_certification:

@@ -414,7 +414,7 @@ Complete the following steps to build and program a multi-image build to the nRF
 
 .. include:: ../../includes/vsc_build_and_run.txt
 
-#. Program the sample or application:
+3. Program the sample or application:
 
    a. Connect the nRF5340 development kit to your PC using a USB cable.
    #. Make sure that the nRF5340 DK and the external debug probe are powered on.

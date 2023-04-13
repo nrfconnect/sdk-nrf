@@ -122,7 +122,7 @@ The Spinel protocol can be configured as a logging backend using the following K
 
 To communicate with the RCP using the Spinel protocol and gather logs, you can use the :ref:`ug_thread_tools_ot_apps`.
 
-This tools accept the ``-d<DEBUG_LEVEL>`` and ``--debug=<DEBUG_LEVEL>`` arguments, which can be used to display logging messages.
+These tools accept the ``-d<DEBUG_LEVEL>`` and ``--debug=<DEBUG_LEVEL>`` arguments, which can be used to display logging messages.
 
 .. _ug_logging_backends_shell:
 

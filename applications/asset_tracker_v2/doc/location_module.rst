@@ -35,17 +35,18 @@ The default configuration for the location request is set as follows:
 
 The location module receives configuration updates as payload in the following two events:
 
-* ``DATA_EVT_CONFIG_INIT`` - The event contains the value configured at build time or received from cloud and stored to flash.
+* :c:enum:`DATA_EVT_CONFIG_INIT` - The event contains the value configured at build time or received from cloud and stored to flash.
   The event is distributed from the data module as part of the application initialization.
-* ``DATA_EVT_CONFIG_READY`` - The event is received when the data module has processed an incoming message from cloud with a configuration update.
+* :c:enum:`DATA_EVT_CONFIG_READY` - The event is received when the data module has processed an incoming message from cloud with a configuration update.
 
 The module sends the following events based on the outcome of the location request:
-* ``LOCATION_MODULE_EVT_GNSS_DATA_READY``: GNSS position has been acquired
-* ``LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY``: neighbor cell measurements or Wi-Fi access points (or both) have been obtained
-* ``LOCATION_MODULE_EVT_DATA_NOT_READY``: Location request failed
-* ``LOCATION_MODULE_EVT_TIMEOUT``: Timeout occurred
-* ``LOCATION_MODULE_EVT_AGPS_NEEDED``: A-GPS request should be sent to cloud
-* ``LOCATION_MODULE_EVT_PGPS_NEEDED``: P-GPS request should be sent to cloud
+
+* :c:enum:`LOCATION_MODULE_EVT_GNSS_DATA_READY`: GNSS position has been acquired
+* :c:enum:`LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY`: Neighbor cell measurements or Wi-Fi access points (or both) have been obtained
+* :c:enum:`LOCATION_MODULE_EVT_DATA_NOT_READY`: Location request failed
+* :c:enum:`LOCATION_MODULE_EVT_TIMEOUT`: Timeout occurred
+* :c:enum:`LOCATION_MODULE_EVT_AGPS_NEEDED`: A-GPS request should be sent to cloud
+* :c:enum:`LOCATION_MODULE_EVT_PGPS_NEEDED`: P-GPS request should be sent to cloud
 
 GNSS LNA configuration
 ======================
@@ -59,7 +60,7 @@ GPS assistance data
 ===================
 
 The location module receives requests for GPS assistance data from the :ref:`lib_location` library.
-When the module receives an A-GPS request, it distributes it to the other modules as a ``LOCATION_MODULE_EVT_AGPS_NEEDED`` event that contains information about the type of assistance data needed.
+When the module receives an A-GPS request, it distributes it to the other modules as a :c:enum:`LOCATION_MODULE_EVT_AGPS_NEEDED` event that contains information about the type of assistance data needed.
 Providing the requested A-GPS data typically reduces significantly the time it takes to acquire a GNSS fix.
 
 Wi-Fi positioning
@@ -98,7 +99,7 @@ In this sense, it differs from many other modules.
 All incoming events from other modules are handled in the context of the Application Event Manager callback, because they all complete fast enough to not require a separate thread.
 
 The :ref:`lib_location` library handles cellular and Wi-Fi positioning together when the location request method list has them next to each other.
-This means that LTE neighbor cell measurements and Wi-Fi scanning results are combined into the same ``LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST`` event.
+This means that LTE neighbor cell measurements and Wi-Fi scanning results are combined into the same :c:enum:`LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST` event.
 The location module responds to the :ref:`lib_location` library with unknown location resolution, because it does not request the location back from cloud service.
 
 Configuration options

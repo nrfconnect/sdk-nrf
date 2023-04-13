@@ -16,7 +16,7 @@ Adding MCUboot to application
 *****************************
 
 Read :ref:`ug_bootloader_adding_immutable_mcuboot` to learn how to add MCUboot to an |NCS| application.
-Some Matter samples include Device Firmware Update (DFU) support out of the box, as listed in the :ref:`sample feature matrix table <matter_samples>`.
+Some Matter samples include :term:`Device Firmware Update (DFU)` support out of the box, as listed in the :ref:`sample feature matrix table <matter_samples>`.
 
 MCUboot minimal configuration
 *****************************
@@ -37,7 +37,7 @@ This is needed for the bootloader to know where the current and the new firmware
 
 Consider the following when defining partitions for your end product:
 
-* There are multiple ways to define parititions using Partition Manager.
+* There are multiple ways to define partitions using Partition Manager.
   For example, each :ref:`Matter sample <matter_samples>` provides a :file:`pm_static_dfu.yml` file (one for each configuration) that statically defines the partition layout.
   See :ref:`ug_matter_hw_requirements_layouts` to confirm the reference partition layout for each supported platform.
 * Given the size of the Matter stack, it will usually not be possible to fit both the primary and the secondary slot in the internal flash in order to store the current and the new firmware image, respectively.
@@ -82,7 +82,7 @@ See the following figure and check the :ref:`ug_matter_hw_requirements_layouts` 
 
    Factory data partition implementation criteria for fprotect
 
-In case your memory map does not follow these requirements, you can still use the factory data implementation without the write protection by setting the :kconfig:option:`CHIP_FACTORY_DATA_WRITE_PROTECT` to ``n``, although this is not recommended.
+In case your memory map does not follow these requirements, you can still use the factory data implementation without the write protection by setting the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_WRITE_PROTECT` to ``n``, although this is not recommended.
 
 See the :ref:`ug_matter_device_attestation_device_data_generating` section on the Device Attestation page for more information about the factory data in Matter.
 

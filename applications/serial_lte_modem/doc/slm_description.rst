@@ -298,7 +298,7 @@ The configuration options that are required to enable the native TLS socket are 
 
 .. note::
 
-   The following limitations exist for native TLS sockets:
+   Native TLS sockets have the following limitations:
 
    * PSK, PSK identity, and PSK public key are currently not supported.
    * The DTLS server is currently not supported.

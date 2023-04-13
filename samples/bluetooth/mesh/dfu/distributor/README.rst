@@ -190,5 +190,5 @@ Logging
 =======
 
 In this sample, the UART console is occupied by the shell module.
-Therefore, it uses Segger RTT as a logging backend.
-For the convenience, ``printk`` is also duplicated to Segger RTT.
+Therefore, it uses SEGGER RTT as a logging backend.
+For the convenience, ``printk`` is also duplicated to SEGGER RTT.

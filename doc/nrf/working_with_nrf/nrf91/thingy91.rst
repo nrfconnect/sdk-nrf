@@ -178,7 +178,7 @@ Complete the following steps to build and program using the |nRFVSC|:
 
 .. include:: ../../includes/vsc_build_and_run.txt
 
-#. Program the application:
+3. Program the application:
 
 .. prog_extdebugprobe_start
 ..

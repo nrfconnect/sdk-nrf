@@ -20,7 +20,7 @@ The :c:member:`dfu_lock_owner.owner_changed` callback is used to indicate the ch
 The previous owner can use this callback for tracking the DFU flash status and the need to erase it before subsequent DFU attempts.
 
 .. note::
-    The nRF Desktop DFU transports must voluntary take lock before accessing flash and release it after they stop using it.
+    The nRF Desktop DFU transports must voluntarily take lock before accessing flash and release it after they stop using it.
     The DFU lock utility does not provide any protection against the DFU transport module that writes to flash memory without taking a lock.
 
 Configuration

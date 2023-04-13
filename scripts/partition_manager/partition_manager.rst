@@ -180,7 +180,7 @@ The following example shows a partition that *spans*, or contains, ``partition_1
 
    If the value is a string, it is interpreted as a list with one item:
 
-The following 2 examples are equivalent:
+The following two examples are equivalent:
 
    .. code-block:: yaml
 
@@ -201,7 +201,7 @@ The following 2 examples are equivalent:
       Different versions of the Partition Manager script may produce different partition orders for such configurations, or fail to find a solution even if one is possible.
       The Partition Manager always detects unsatisfiable configurations (no false positives), but it might fail on some valid inputs (false negatives).
 
-   Here are 3 examples of valid and invalid configurations:
+   Here are three examples of valid and invalid configurations:
 
    .. _partition_manager_span_ex1:
 
@@ -318,7 +318,7 @@ RAM partition configuration
    A RAM partition is specified by having the partition name end with ``_sram``.
    If a partition name is composed of an image name plus the ``_sram`` ending, it is used as a permanent image RAM partition for the image.
 
-The following 2 examples are equivalent:
+The following two examples are equivalent:
 
    .. code-block:: yaml
       :caption: RAM partition configuration, without the ``_sram`` ending
@@ -344,7 +344,7 @@ All occurrences of a partition name can be replaced by a dict with the key ``one
 This dict is resolved to the first existing partition in the ``one_of`` value.
 The value of the ``one_of`` key must be a list of placeholder or image partitions, and it cannot be a span.
 
-See the following 2 examples, they are equivalent:
+See the following two examples, they are equivalent:
 
    .. code-block:: yaml
       :caption: Example of using a ``one_of`` dict
@@ -545,14 +545,14 @@ For external regions, ``DEFAULT_DRIVER_KCONFIG`` within :file:`partition_manager
 Out-of-tree drivers can select this value to attest that they provide support for the external flash.
 This is a hidden option and can be selected only by an external driver or a Kconfig option.
 
-This option is automatically set when :kconfig:option:`CONFIG_NRF_QSPI_NOR` or :kconfig:option:`CONFIG_SPI_NOR` are enabled.
+This option is automatically set when :kconfig:option:`CONFIG_NRF_QSPI_NOR` or :kconfig:option:`CONFIG_SPI_NOR` is enabled.
 If the application provides the driver in an unusual way, this option can be overridden by setting :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` in the application configuration.
 
 As partition manager does not know if partitions are used at runtime, consider the following:
 
   * Enabling Kconfig options that affect ``DEFAULT_DRIVER_KCONFIG`` will add a partition map entry for the partition depending on it, whether it is used at runtime or not.
   * Not enabling the Kconfig options that affect ``DEFAULT_DRIVER_KCONFIG`` will not add partition map entry for partition depending on it, whether it is used at runtime or not.
-  * Enabling Kconfig options that affects ``DEFAULT_DRIVER_KCONFIG`` can cause linker errors when the option has no effect on including a driver into compilation.
+  * Enabling Kconfig options that affect ``DEFAULT_DRIVER_KCONFIG`` can cause linker errors when the option has no effect on including a driver into compilation.
     In this case, partition manager adds a partition map entry that has a pointer to the flash device it is supposed to be placed on, but due to misconfiguration the driver is actually not compiled in.
     This situation can also be caused by setting the :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK`, as partition manager will just assume that the driver is provided by the application.
 

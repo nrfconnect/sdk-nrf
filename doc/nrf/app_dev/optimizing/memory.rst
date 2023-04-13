@@ -179,7 +179,7 @@ Besides applying `General recommendations`_, you can also complete the following
 * Use :file:`prj_release.conf` for building the application.
   The release configuration has a smaller memory footprint than the default, debug-enabled :file:`prj.conf`.
 * If the logs in your application do not use the default log level, you can change the default log level of Zephyr modules from ``info`` to ``warning`` by setting :kconfig:option:`CONFIG_LOG_DEFAULT_LEVEL` to ``2``.
-* Change the log level of the Matter logs from ``debug`` to ``info`` by setting :kconfig:option:`CONFIG_MATTER_LOG_LEVEL_INFO` to ``y``.
+* Change the log level of the Matter logs from ``debug`` to ``info`` by setting :kconfig:option:`CONFIG_MATTER_LOG_LEVEL_INF` to ``y``.
 * Reduce the verbosity of assert messages by setting :kconfig:option:`CONFIG_ASSERT_VERBOSE` to ``n``.
 * Check `Thread`_ memory footprint optimization actions, as the Matter application layer uses OpenThread.
 

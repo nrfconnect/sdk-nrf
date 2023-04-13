@@ -19,7 +19,7 @@ The secure boot utilizes signature validation and security hardware features to 
 There are two available bootloaders in |NCS|:
 
 * :ref:`nRF Secure Immutable Bootloader (NSIB) <bootloader>`, enabled by the configuration option :kconfig:option:`CONFIG_SECURE_BOOT`.
-* A customized version of `sdk-mcuboot`_, enabled by the configuration option :kconfig:option:`CONFING_BOOTLOADER_MCUBOOT`.
+* A customized version of `sdk-mcuboot`_, enabled by the configuration option :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`.
 
 When enabling the NSIB, the MCUboot can serve as an upgradable second-stage bootloader.
 For more information about the bootloaders, see :ref:`app_bootloaders`.

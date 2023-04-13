@@ -153,11 +153,11 @@ After booting, the sample confirms the image so the old image does not get rever
 When the sample is used as a new firmware, independently of the provisioning state, it sets the Firmware Update Server model to Idle state after booting.
 If the device stays provisioned, it lets the Distributor successfully finalize the firmware distribution process.
 If the device is unprovisioned, it has no effect on the DFU Server.
-The firmware distribution process then succeedes on the Distributor side, if the Target node doesn't respond to the Distributor after programming the new firmware.
+The firmware distribution process then succeeds on the Distributor side, if the Target node doesn't respond to the Distributor after programming the new firmware.
 
 For more information about the firmware distribution process, see :ref:`zephyr:bluetooth_mesh_dfu`.
 
 Logging
 =======
 
-In this sample, UART and Segger RTT are available as logging backends.
+In this sample, UART and SEGGER RTT are available as logging backends.

@@ -22,7 +22,7 @@ Moreover, take into account the following considerations:
 
 * The sample was compiled using:
 
-  * The default :file:`prj.conf` and the corresponding :kconfig:option:`OPENTHREAD_NORDIC_LIBRARY`, :kconfig:option:`OPENTHREAD_THREAD_VERSION` choices.
+  * The default :file:`prj.conf` and the corresponding :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY`, :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION` choices.
   * The :kconfig:option:`CONFIG_ASSERT` Kconfig option set to ``n``.
 
 * Values for the :ref:`Thread CLI sample <ot_cli_sample>`, which works with all OpenThread calls, are the highest possible for the OpenThread stack using the master image library configuration.

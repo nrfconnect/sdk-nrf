@@ -415,7 +415,7 @@ This list can be set using the ``AT%XCOUNTRYDATA`` command.
 Abort network search early
 ==========================
 
-For weak radio conditions, the application can subscribe to ``LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE`` events.
+For weak radio conditions, the application can subscribe to :c:enum:`LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE` events.
 These occur when the modem finishes an initial search without connecting to a network.
 If the connection can wait some more time, the application can decide to abort the search and try again later.
 Without intervention, the modem continues with a more thorough search.
@@ -451,7 +451,7 @@ Synchronizing application with modem sleep
 
 Depending on network configuration, the modem wakes up at certain intervals.
 For example, it will have to do a Tracking Area Update (TAU) periodically to avoid reconnecting to the network.
-It is possible to subscribe to ``LTE_LC_EVT_TAU_PRE_WARNING`` or ``LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING`` events and then send application data whenever the modem wakes up.
+It is possible to subscribe to :c:enum:`LTE_LC_EVT_TAU_PRE_WARNING` or :c:enum:`LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING` events and then send application data whenever the modem wakes up.
 Use the pre-warning notifications to avoid having to wake up twice.
 
 Release Assistance Indication (RAI)

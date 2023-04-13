@@ -237,7 +237,7 @@ Complete the following steps to build and program using the |nRFVSC|:
 
 .. include:: ../../includes/vsc_build_and_run.txt
 
-#. Connect the nRF52 Series DK to the computer with a micro-USB cable, and then turn on the DK.
+3. Connect the nRF52 Series DK to the computer with a micro-USB cable, and then turn on the DK.
 
    **LED1** starts blinking.
 

@@ -505,14 +505,14 @@ Selecting the BIS mode
 ======================
 
 The CIS mode is the default operating mode for the application.
-You can switch to the BIS mode by adding the :kconfig:option:`CONFIG_TRANSPORT_BIS` Kconfig option set to ``y`` to the :file:`prj.conf` file for the debug version and the :file:`prj_release.conf` file for the release version.
+To switch to the BIS mode, set the :ref:`CONFIG_TRANSPORT_BIS <config_nrf53_audio_app_options>` Kconfig option to ``y`` in the :file:`prj.conf` file for the debug version and in the :file:`prj_release.conf` file for the release version.
 
 Enabling the BIS mode with two gateways
 ---------------------------------------
 
 In addition to the standard BIS mode with one gateway, you can also add a second gateway device that the BIS headsets can receive audio stream from.
-To configure the second gateway, add both the :kconfig:option:`CONFIG_TRANSPORT_BIS` and the :kconfig:option:`CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT` Kconfig options set to ``y`` to the :file:`prj.conf` file for the debug version and to the :file:`prj_release.conf` file for the release version.
-You can provide an alternative name to the second gateway using the :kconfig:option:`CONFIG_BT_AUDIO_BROADCAST_NAME_ALT` or use the default alternative name.
+To configure the second gateway, add both the :ref:`CONFIG_TRANSPORT_BIS <config_nrf53_audio_app_options>` and the :ref:`CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT <config_nrf53_audio_app_options>` Kconfig options set to ``y`` to the :file:`prj.conf` file for the debug version and to the :file:`prj_release.conf` file for the release version.
+You can provide an alternative name to the second gateway using the :ref:`CONFIG_BT_AUDIO_BROADCAST_NAME_ALT <config_nrf53_audio_app_options>` or use the default alternative name.
 
 You build each BIS gateway separately using the normal procedures from :ref:`nrf53_audio_app_building`.
 After building the first gateway, configure the required Kconfig options for the second gateway and build the second gateway firmware.
@@ -524,7 +524,7 @@ Selecting the CIS bidirectional communication
 =============================================
 
 The CIS unidirectional mode is the default operating mode for the application.
-You can switch to the bidirectional mode by adding the :kconfig:option:`CONFIG_STREAM_BIDIRECTIONAL` Kconfig option set to ``y``  to the :file:`prj.conf` file (for the debug version) or to the :file:`prj_release.conf` file (for the release version).
+To switch to the bidirectional mode, set the :ref:`CONFIG_STREAM_BIDIRECTIONAL <config_nrf53_audio_app_options>` Kconfig option to ``y``  in the :file:`prj.conf` file (for the debug version) or in the :file:`prj_release.conf` file (for the release version).
 
 .. _nrf53_audio_app_configuration_enable_walkie_talkie:
 
@@ -533,7 +533,7 @@ Enabling the walkie-talkie demo
 
 The walkie-talkie demo uses one or two bidirectional streams from the gateway to one or two headsets.
 The PDM microphone is used as input on both the gateway and headset device.
-You can switch to using the walkie-talkie by adding the :kconfig:option:`CONFIG_WALKIE_TALKIE_DEMO` Kconfig option set to ``y``  to the :file:`prj.conf` file (for the debug version) or to the :file:`prj_release.conf` file (for the release version).
+To switch to using the walkie-talkie, set the :ref:`CONFIG_WALKIE_TALKIE_DEMO <config_nrf53_audio_app_options>` Kconfig option to ``y``  in the :file:`prj.conf` file (for the debug version) or in the :file:`prj_release.conf` file (for the release version).
 
 .. _nrf53_audio_app_configuration_select_i2s:
 
@@ -543,7 +543,7 @@ Selecting the I2S serial
 In the default configuration, the gateway application uses the USB serial port as the audio source.
 The :ref:`nrf53_audio_app_building` and :ref:`nrf53_audio_app_testing` steps also refer to using the USB serial connection.
 
-You can switch to using the I2S serial connection by adding the ``CONFIG_AUDIO_SOURCE_I2S`` Kconfig option set to ``y``  to the :file:`prj.conf` file for the debug version and the :file:`prj_release.conf` file for the release version.
+To switch to using the I2S serial connection, set the :ref:`CONFIG_AUDIO_SOURCE_I2S <config_nrf53_audio_app_options>` Kconfig option to ``y`` in the :file:`prj.conf` file for the debug version and in the :file:`prj_release.conf` file for the release version.
 
 When testing the application, an additional audio jack cable is required to use I2S.
 Use this cable to connect the audio source (PC) to the analog **LINE IN** on the development kit.
@@ -673,7 +673,7 @@ You can add support for the nRF21540 front-end module (FEM) to this application 
 
      west build -b nrf5340_audio_dk_nrf5340_cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DSHIELD=nrf21540_ek_fwd -DCONF_FILE=prj_release.conf
 
-You can use the :kconfig:option:`CONFIG_NRF_21540_MAIN_TX_POWER` and :kconfig:option:`CONFIG_NRF_21540_PRI_ADV_TX_POWER` to set the TX power output.
+To set the TX power output, use the :ref:`CONFIG_NRF_21540_MAIN_TX_POWER <config_nrf53_audio_app_options>` and :ref:`CONFIG_NRF_21540_PRI_ADV_TX_POWER <config_nrf53_audio_app_options>` Kconfig options.
 
 See :ref:`ug_radio_fem` for more information about FEM in the |NCS|.
 
@@ -1181,6 +1181,8 @@ The application also depends on the following Zephyr libraries:
   * :file:`include/bluetooth/gatt.h`
   * :file:`include/bluetooth/hci.h`
   * :file:`include/bluetooth/uuid.h`
+
+.. _config_nrf53_audio_app_options:
 
 Application configuration options
 *********************************

@@ -126,15 +126,15 @@ To add a specific overlay configuration file to the build, add the ``-- -DOVERLA
 See :ref:`cmake_options` for instructions on how to add this option to your build.
 For example, when building with the command line, the following commands can be used for the nRF9160 DK:
 
-  .. code-block:: console
+.. code-block:: console
 
-     west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-tls-nrf9160.conf
+   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-tls-nrf9160.conf
 
-Or for the Thingy:91 with TLS and ``mqtt_helper`` debug enabled (shown in the following :ref:`sample output <mqtt_sample_output_IPv6>`):
+For Thingy:91, with TLS and debug logging enabled for the :ref:`lib_mqtt_helper` library (for more information, see the related :ref:`sample output <mqtt_sample_output_IPv6>`):
 
-  .. code-block:: console
+.. code-block:: console
 
-     west build -b thingy91_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-tls-nrf9160.conf -DCONFIG_MQTT_HELPER_LOG_LEVEL_DBG=y
+   west build -b thingy91_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-tls-nrf9160.conf -DCONFIG_MQTT_HELPER_LOG_LEVEL_DBG=y
 
 Building and running
 ********************
@@ -182,7 +182,7 @@ The following serial UART output is displayed in the terminal emulator using a W
 
 .. _mqtt_sample_output_IPv6:
 
-The sample output showing IPv6, following the same instructions but for a different build configuration, using LTE on the Thingy:91, with the TLS overlay, and debug logging enabled for the :ref:`lib_mqtt_helper` library:
+The sample output showing IPv6, but for a different build configuration using LTE on the Thingy:91 with the TLS overlay, and debug logging enabled for the :ref:`lib_mqtt_helper` library:
 
 .. code-block:: console
 

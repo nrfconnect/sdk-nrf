@@ -57,7 +57,7 @@ Values are provided in kilobytes (KB).
       The following table lists memory requirements for samples running on the :ref:`nRF52840 DK <gs_programming_board_names>` (:ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`).
 
       +------------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
-      | Sample                                                           |   MCUBoot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM (incl. static HEAP) |
+      | Sample                                                           |   MCUboot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM (incl. static HEAP) |
       +==================================================================+===============+===================+================+============+=============+=================================+
       | :ref:`Light Bulb <matter_light_bulb_sample>` (Debug)             |            28 |               896 |              4 |         32 |         960 |                             231 |
       +------------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
