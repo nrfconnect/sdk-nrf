@@ -1,6 +1,6 @@
 name: Zephyr upmerge
 
-#on:
+# on:
 #  schedule:
 #    - cron: "0 0 * * *"
 on: workflow_dispatch
@@ -74,19 +74,19 @@ jobs:
     env:
       MESSAGE: "<strong>Zephyr auto-upmerge workflow has failed.</strong><br> Please check action output for details: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
     steps:
-    - name: Add summary (steps to reproduce)
-      run: |
-        echo "### :boom:Automatic zephyr upmerge action has failed :boom:" >> $GITHUB_STEP_SUMMARY
-        echo "#### In case of e.g. merge conflict you can reproduce it locally with the following steps:" >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`sh" >> $GITHUB_STEP_SUMMARY
-        echo "west init -l nrf" >> $GITHUB_STEP_SUMMARY
-        echo "west update zephyr" >> $GITHUB_STEP_SUMMARY
-        echo "cd zephyr" >> $GITHUB_STEP_SUMMARY
-        echo "git remote add -f upstream https://github.com/zephyrproject-rtos/zephyr" >> $GITHUB_STEP_SUMMARY
-        echo "west ncs-upmerger zephyr" >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-        echo "Solve merge-conflict locally and submit sdk-zephyr and sdk-nrf PRs" >> $GITHUB_STEP_SUMMARY
+      - name: Add summary (steps to reproduce)
+        run: |
+          echo "### :boom:Automatic zephyr upmerge action has failed :boom:" >> $GITHUB_STEP_SUMMARY
+          echo "#### In case of e.g. merge conflict you can reproduce it locally with the following steps:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`sh" >> $GITHUB_STEP_SUMMARY
+          echo "west init -l nrf" >> $GITHUB_STEP_SUMMARY
+          echo "west update zephyr" >> $GITHUB_STEP_SUMMARY
+          echo "cd zephyr" >> $GITHUB_STEP_SUMMARY
+          echo "git remote add -f upstream https://github.com/zephyrproject-rtos/zephyr" >> $GITHUB_STEP_SUMMARY
+          echo "west ncs-upmerger zephyr" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "Solve merge-conflict locally and submit sdk-zephyr and sdk-nrf PRs" >> $GITHUB_STEP_SUMMARY
 
-    - name: Send MS Teams notification
-      run: |
-        curl -s ${{ secrets.CONNECTOR_TEAMS_NCS_UPMERGE }} -X POST -H 'Content-type: application/json' --data '{"text": "'"$MESSAGE"'"}'
+      - name: Send MS Teams notification
+        run: |
+          curl -s ${{ secrets.CONNECTOR_TEAMS_NCS_UPMERGE }} -X POST -H 'Content-type: application/json' --data '{"text": "'"$MESSAGE"'"}'
