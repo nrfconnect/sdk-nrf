@@ -4,22 +4,11 @@ manifest:
   version: 1.0
 
 automations:
-  estimated_time_to_review:
+  sensitive_file_review:
+    # For all files listed in the sensitive custom expression.
     if:
       - true
     run:
-      - action: add-label@v1
+      - action: add-reviewers@v1
         args:
-          label: "{{ calc.etr }} min review"
-          color: {{ 'E94637' if (calc.etr >= 20) else ('FBBD10' if (calc.etr >= 5) else '36A853') }}
-  git_blame:
-    if:
-      - true
-    run:
-      - action: add-comment@v1
-        args:
-          comment: |
-            {{ repo | explainRankByGitBlame(gt=25) }}
-
-calc:
-  etr: {{ branch | estimatedReviewTime }}
+          reviewers: [blp-test-dev/release]
