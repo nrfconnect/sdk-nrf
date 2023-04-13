@@ -14,23 +14,22 @@ It handles the entire process from onboarding till decommissioning of devices.
 The AVSystem integration with |NCS| ensures secure and power efficient device management solutions using Nordic Semiconductor's cellular devices.
 The integration of `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ with AVSystem enables the use of positioning services.
 
-Partner overview
+Product overview
 ****************
 
-AVSystem provides the following features as a solution partner for Nordic Semiconductor's cellular devices:
+As part of the integration, |NCS| uses AVSystem's `Coiote IoT Device Management <Coiote Device Management_>`_ platform for the management of Nordic Semiconductor's cellular devices.
+AVSystem's Coiote IoT Device Management provides the following features:
 
 * Optimal device provisioning and device monitoring mechanisms
 * OTA updates
 * Reliable device-to-cloud communication
-* Security
 * Remote diagnostics
-* Power saving
 
-The use of LwM2M protocol ensures additional benefits such as optimization of resource usage and power saving in devices.
+Additionally, since LwM2M protocol is used, the integration also has additional benefits like optimization of resource usage and power saving in devices.
 It uses standardized LwM2M objects and allows the use of custom objects also.
 
-Prerequisites
-*************
+Integration prerequisites
+*************************
 
 Before you start the |NCS| integration with AVSystem's Coiote IoT Device Management, make sure that the following prerequisites are completed:
 
@@ -63,14 +62,14 @@ Following are the components that are required for the integration with |NCS|:
 
 * `nRF Cloud`_ - Optional component if location services need to be used.
 
-Integration overview
-********************
+
+Integration steps
+*****************
 
 To integrate AVSystem into |NCS|, after completing the prerequisites, complete the following steps:
 
 1. Adding your device to Coiote Device Management server.
 #. Configuring your application to use AVSystem's Coiote Device Management platform.
-#. Optional integration of nRF Cloud with AVSystem for utilizing location services.
 
 .. rst-class:: numbered-step
 
@@ -90,7 +89,7 @@ Configuring your application to use Coiote Device Management platform
 
 For the device-server integration, you must select an appropriate sample or application that supports LwM2M-based interaction with AVSystem.
 It is then built and flashed onto the device with the appropriate configurations.
-See :ref:`avsystem_supported_applciations` for a list of supported samples and applications.
+See :ref:`avsystem_supported_applications` for a list of supported samples and applications.
 To integrate your device with AVSystem's device management platform, complete the following steps.
 
 a. |connect_kit|
@@ -168,7 +167,7 @@ After building the sample, complete the steps in `Setting observations for an ob
 
 After you flash the sample, Location object under **Data model** in the Coiote Device Management UI will be updated with values after the fix is obtained.
 
-.. _avsystem_supported_applciations:
+.. _avsystem_supported_applications:
 
 Applications and samples
 ************************
