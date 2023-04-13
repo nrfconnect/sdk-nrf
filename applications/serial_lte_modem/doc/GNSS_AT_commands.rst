@@ -379,7 +379,7 @@ It accepts the following integer values:
 * ``0`` - Single-fix navigation mode.
 * ``1`` - Continuous navigation mode.
   The fix interval is set to 1 second
-* Ranging from ``10`` to ``1800`` - Periodic navigation mode.
+* Ranging from ``10`` to ``65535`` - Periodic navigation mode.
   The fix interval is set to the specified value.
 
 In periodic navigation mode, the ``<timeout>`` parameter controls the maximum time in seconds that the GNSS receiver is allowed to run while trying to produce a valid PVT estimate.
@@ -550,7 +550,7 @@ The ``<interval>`` parameter represents the GNSS fix interval in seconds.
 It must be set when starting the GNSS.
 It accepts the following integer values:
 
-* Ranging from ``10`` to ``1800`` - Periodic navigation mode.
+* Ranging from ``10`` to ``65535`` - Periodic navigation mode.
   The fix interval is set to the specified value.
 
 In periodic navigation mode, the ``<timeout>`` parameter controls the maximum time in seconds that the GNSS receiver is allowed to run while trying to produce a valid PVT estimate.
@@ -683,10 +683,14 @@ Delete GNSS data
 The ``#XGPSDEL`` command deletes GNSS data from non-volatile memory.
 This command should be issued when GNSS is activated but not started yet.
 
+.. note::
+   This is considered a debug feature, and is not supposed to be used in production code.
+
 Set command
 -----------
 
 The set command allows you to delete old GNSS data.
+The usage of the command does not trigger A-GPS request event. The execution of the command may delay the full functionality of A-GPS and P-GPS until the next periodic A-GPS request has been received.
 
 Syntax
 ~~~~~~
