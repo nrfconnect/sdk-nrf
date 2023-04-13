@@ -34,10 +34,7 @@ locals().update(conf)
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
-extensions = [
-    "sphinx.ext.intersphinx",
-    "ncs_cache",
-] + extensions
+extensions = ["sphinx.ext.intersphinx"] + extensions
 
 # Options for HTML output ------------------------------------------------------
 
@@ -77,13 +74,6 @@ warnings_filter_silent = True
 # -- Options for zephyr.kconfig ------------------------------------------------
 
 kconfig_generate_db = False
-
-# Options for ncs_cache --------------------------------------------------------
-
-ncs_cache_docset = "zephyr"
-ncs_cache_build_dir = utils.get_builddir()
-ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
-ncs_cache_manifest = NRF_BASE / "west.yml"
 
 # pylint: enable=undefined-variable,used-before-assignment
 

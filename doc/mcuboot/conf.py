@@ -33,7 +33,6 @@ extensions = [
     "zephyr.kconfig",
     "sphinx.ext.intersphinx",
     "recommonmark",
-    "ncs_cache",
     "zephyr.external_content"
 ]
 source_suffix = [".rst", ".md"]
@@ -87,13 +86,6 @@ external_content_contents = [
     (MCUBOOT_BASE / "docs", "signed_images.md"),
     (MCUBOOT_BASE / "docs", "SubmittingPatches.md"),
 ]
-
-# Options for ncs_cache --------------------------------------------------------
-
-ncs_cache_docset = "mcuboot"
-ncs_cache_build_dir = utils.get_builddir()
-ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
-ncs_cache_manifest = NRF_BASE / "west.yml"
 
 
 def setup(app):

@@ -32,7 +32,7 @@ locals().update(conf)
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
-extensions.extend(["ncs_cache", "zephyr.external_content", "zephyr.doxyrunner"])
+extensions.extend(["zephyr.external_content", "zephyr.doxyrunner"])
 
 # Options for HTML output ------------------------------------------------------
 
@@ -64,13 +64,6 @@ external_content_directives = directives
 external_content_contents = [
     (NRFX_BASE / "doc" / "sphinx", "**/*.rst"),
 ]
-
-# Options for ncs_cache --------------------------------------------------------
-
-ncs_cache_docset = "nrfx"
-ncs_cache_build_dir = utils.get_builddir()
-ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
-ncs_cache_manifest = NRF_BASE / "west.yml"
 
 # pylint: enable=undefined-variable
 

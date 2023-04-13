@@ -35,7 +35,6 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinxcontrib.plantuml",
     "sphinx_tabs.tabs",
-    "ncs_cache",
     "zephyr.external_content",
 ]
 source_suffix = [".rst", ".md"]
@@ -75,13 +74,6 @@ external_content_contents = [
     (TFM_BASE, "platform/**/*"),
     (TFM_BASE, "tools/**/*"),
 ]
-
-# Options for ncs_cache --------------------------------------------------------
-
-ncs_cache_docset = "tfm"
-ncs_cache_build_dir = utils.get_builddir()
-ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
-ncs_cache_manifest = NRF_BASE / "west.yml"
 
 
 def setup(app):
