@@ -76,8 +76,7 @@ static void slm_data_wk(struct k_work *work)
 		size_send = ring_buf_get_claim(&slm_data_rb, &data, SLM_AT_CMD_RESPONSE_MAX_LEN);
 		if (data != NULL && size_send > 0) {
 #if defined(CONFIG_MODEM_SLM_SHELL)
-			*(data + size_send) = '\0';
-			shell_print(global_shell, "%s", (char *)data);
+			shell_print(global_shell, "%.*s", size_send, (char *)data);
 #endif
 			if (data_handler) {
 				data_handler(data, size_send);
@@ -93,13 +92,13 @@ static void uart_recovery_wk(struct k_work *work)
 {
 	ARG_UNUSED(work);
 
+	next_buf = uart_rx_buf[1];
 	int err = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]),
 				 UART_RX_TIMEOUT_US);
 
 	if (err && err != -EBUSY) {
 		LOG_ERR("UART recovery failed: %d", err);
 	} else {
-		next_buf = uart_rx_buf[1];
 		LOG_DBG("UART recovered");
 	}
 	uart_recovery_pending = false;
@@ -270,11 +269,10 @@ static int uart_init(const struct device *uart_dev)
 	/* Enable TX */
 	k_sem_give(&tx_done);
 	/* Enable RX */
+	next_buf = uart_rx_buf[1];
 	err = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_US);
 	if (err && err != -EBUSY) {
 		LOG_ERR("UART RX failed: %d", err);
-	} else {
-		next_buf = uart_rx_buf[1];
 	}
 
 	return err;
@@ -437,11 +435,10 @@ void modem_slm_reset_uart(void)
 	uart_rx_disable(uart_dev);
 	k_sleep(K_MSEC(10));
 
+	next_buf = uart_rx_buf[1];
 	err = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_US);
 	if (err && err != -EBUSY) {
 		LOG_ERR("UART RX failed: %d", err);
-	} else {
-		next_buf = uart_rx_buf[1];
 	}
 }
 
