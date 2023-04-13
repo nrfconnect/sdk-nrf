@@ -99,8 +99,7 @@ To connect to Azure IoT Hub without using DPS, complete the following minimum re
    If the ``device_id.size`` buffer size is zero, the compile-time option :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID`` is used.
 #. Make sure that the device is already registered with your Azure IoT Hub, or follow the instructions in `Registering the device with Azure IoT Hub`_.
 #. Set the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` option to the security tag used in :ref:`azure_iot_hub_flash_certs`.
-
-   Optionally, set the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` option if multiple server certificates are provisioned.
+   Optionally, set the :kconfig:option:`CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG` option if multiple server certificates are provisioned.
 
 
 .. _dps_config:
@@ -122,7 +121,7 @@ To connect to Azure IoT Hub using DPS, complete the following steps:
 
    You can also set the registration ID at run time.
 #. Set :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` to the security tag used while :ref:`azure_iot_hub_flash_certs`.
-   Optionally, set the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` option if multiple server certificates are provisioned.
+   Optionally, set the :kconfig:option:`CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG` option if multiple server certificates are provisioned.
 
 
 Application integration
