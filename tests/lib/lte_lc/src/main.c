@@ -16,13 +16,20 @@ static void test_parse_edrx(void)
 {
 	int err;
 	struct lte_lc_edrx_cfg cfg;
-	char *at_response_none = "+CEDRXP: 1,\"1000\",\"0101\",\"1011\"";
+	char *at_response_none = "+CEDRXP: 0";
+	char *at_response_fail = "+CEDRXP: 1,\"1000\",\"0101\",\"1011\"";
 	char *at_response_ltem = "+CEDRXP: 4,\"1000\",\"0101\",\"1011\"";
 	char *at_response_ltem_2 = "+CEDRXP: 4,\"1000\",\"0010\",\"1110\"";
 	char *at_response_nbiot = "+CEDRXP: 5,\"1000\",\"1101\",\"0111\"";
 	char *at_response_nbiot_2 = "+CEDRXP: 5,\"1000\",\"1101\",\"0101\"";
 
 	err = parse_edrx(at_response_none, &cfg);
+	zassert_equal(0, err, "parse_edrx failed, error: %d", err);
+	zassert_equal(cfg.edrx, 0, "Wrong eDRX value");
+	zassert_equal(cfg.ptw, 0, "Wrong PTW value");
+	zassert_equal(cfg.mode, LTE_LC_LTE_MODE_NONE, "Wrong LTE mode");
+
+	err = parse_edrx(at_response_fail, &cfg);
 	zassert_not_equal(0, err, "parse_edrx should have failed");
 
 	err = parse_edrx(at_response_ltem, &cfg);
