@@ -50,7 +50,7 @@ enum lte_lc_system_mode {
 };
 
 /** LTE mode. The values for LTE-M and NB-IoT correspond to the values for the
- *  AcT field in an AT+CEREG response.
+ *  access technology field in AT responses.
  */
 enum lte_lc_lte_mode {
 	LTE_LC_LTE_MODE_NONE	= 0,
@@ -245,7 +245,9 @@ struct lte_lc_psm_cfg {
 };
 
 struct lte_lc_edrx_cfg {
-	/* LTE mode for which the configuration is valid. */
+	/* LTE mode for which the configuration is valid.
+	 * If the mode is LTE_LC_LTE_MODE_NONE, eDRX is not used by the current cell.
+	 */
 	enum lte_lc_lte_mode mode;
 	/* eDRX interval value [s] */
 	float edrx;

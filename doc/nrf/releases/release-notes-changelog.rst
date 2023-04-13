@@ -441,6 +441,12 @@ Modem libraries
 
   * Updated the library to use ePCO mode if the Kconfig option :kconfig:option:`CONFIG_PDN_LEGACY_PCO` is not enabled.
 
+* :ref:`lte_lc_readme` library:
+
+  * Updated the library to handle notifications from the modem when eDRX is not used by the current cell.
+    The application now receives an :c:enum:`LTE_LC_EVT_EDRX_UPDATE` event with the network mode set to :c:enum:`LTE_LC_LTE_MODE_NONE` in these cases.
+    Modem firmware version v1.3.4 or newer is required to receive these events.
+
 Libraries for networking
 ------------------------
 
