@@ -223,7 +223,7 @@ These inputs are not synchronized with the HID report transmission to the host.
 When the mouse is constantly in use, the motion module is kept in the fetching state.
 In this state, the nRF Desktop mouse forwards the data from the motion sensor to the host in the following way:
 
-a. USB state (or Bluetooth HIDS) sends a HID mouse report to the host and submits ``hid_report_sent_event``.
+1. USB state (or Bluetooth HIDS) sends a HID mouse report to the host and submits ``hid_report_sent_event``.
 #. The event triggers sampling of the motion sensor.
 #. A dedicated thread is used to fetch the sample from the sensor.
 #. After the sample is fetched, the thread forwards it to the :ref:`nrf_desktop_hid_state` as ``motion_event``.
@@ -1821,7 +1821,7 @@ Configuring the MCUboot bootloader
 
 To enable the MCUboot bootloader, select the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option in the application configuration.
 
-The MCuboot private key path (:kconfig:option:`CONFIG_BOOT_SIGNATURE_KEY_FILE`) must be set only in the MCUboot bootloader configuration file.
+The MCUboot private key path (:kconfig:option:`CONFIG_BOOT_SIGNATURE_KEY_FILE`) must be set only in the MCUboot bootloader configuration file.
 The key is used both by the build system (to sign the application update images) and by the bootloader (to verify the application signature using public key derived from the selected private key).
 
 The MCUboot bootloader configuration depends on the selected way of performing image upgrade.

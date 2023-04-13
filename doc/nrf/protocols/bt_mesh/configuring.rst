@@ -75,7 +75,7 @@ The provided values are meant as suggestions only, and should be individually ad
 Logging
 -------
 
-* :kconfig:option:`CONFIG_NCS_SAMPLE_DEFAULTS` - Enables the Zephyr system logger with minimal logging implementation.
+* :kconfig:option:`CONFIG_NCS_SAMPLES_DEFAULTS` - Enables the Zephyr system logger with minimal logging implementation.
   This is enabled by default for all samples in |NCS|.
   For more information, see :ref:`ug_logging_zephyr`.
 * :kconfig:option:`CONFIG_LOG_MODE_DEFERRED` - Enables deferred logging.

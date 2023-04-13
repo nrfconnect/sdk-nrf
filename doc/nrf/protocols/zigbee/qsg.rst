@@ -148,7 +148,7 @@ To program the samples, complete the following steps:
 
 .. include:: ../../includes/vsc_build_and_run.txt
 
-#. Program the application to the board:
+3. Program the application to the board:
 
    a. Connect your development kit using the serial port.
    #. In the :guilabel:`Connected Devices View`, click :guilabel:`Refresh Connected Devices`.

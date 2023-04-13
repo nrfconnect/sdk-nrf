@@ -115,7 +115,7 @@ The *DT property* is the name of the devicetree node property that configures th
 Enabling nRF700x Wi-Fi coexistence
 ----------------------------------
 
-To enable Wi-Fi coexistence on the nRF700x, do the following:
+To enable Wi-Fi coexistence on the nRF700x, complete the following steps:
 
 1. Add the following node to the devicetree source file:
 
@@ -131,7 +131,7 @@ To enable Wi-Fi coexistence on the nRF700x, do the following:
          };
       };
 
-#. Optionally replace the node name ``nrf7002-coex`` with a custom one.
+#. Optionally, replace the node name ``nrf7002-coex`` with a custom one.
 #. Replace the pin numbers provided for each of the required properties:
 
    * ``req-gpios`` - GPIO characteristic of the device that controls the ``COEX_REQ`` signal of the nRF700x.
@@ -147,8 +147,8 @@ To enable Wi-Fi coexistence on the nRF700x, do the following:
    The first element ``&gpio0`` indicates the GPIO port (``port 0`` has been selected in the example shown).
    The second element is the pin number on that port.
 
-#. On the nRF5340, you must also apply the same devicetree node mentioned in step 1 to the network core.
-   To do so, apply the overlay to the correct network-core child image by creating an overlay file named :file:`child_image/*childImageName*.overlay` in your application directory, for example :file:`child_image/multiprotocol_rpmsg.overlay`.
+#. On the nRF5340, apply the same devicetree node mentioned in Step 1 to the network core.
+   Apply the overlay to the correct network-core child image by creating an overlay file named :file:`child_image/*childImageName*.overlay` in your application directory, for example :file:`child_image/multiprotocol_rpmsg.overlay`.
 
    The ``*childImageName*`` string must assume one of the following values:
 
@@ -210,27 +210,29 @@ To enable the generic three-wire coexistence, do the following:
          };
       };
 
-#. Optionally replace the node name ``radio_coex_three_wire`` with a custom one.
+#. Optionally, replace the node name ``radio_coex_three_wire`` with a custom one.
 #. Replace the pin numbers provided for each of the required properties:
 
    * ``req-gpios`` - GPIO characteristic of the device that controls the ``REQUEST`` signal of the PTA.
    * ``pri-dir-gpios`` - GPIO characteristic of the device that controls the ``PRIORITY`` signal of the PTA.
    * ``grant-gpios`` - GPIO characteristic of the device that controls the ``GRANT`` signal of the PTA (RF medium access granted).
-     Note that ``GPIO_PULL_UP`` is added to avoid a floating input pin and is required on some boards only.
-     If the target board is designed to avoid this signal being left floating, you can remove ``GPIO_PULL_UP`` to save power.
+
+     .. note::
+        ``GPIO_PULL_UP`` is added to avoid a floating input pin and is required on some boards only.
+        If the target board is designed to avoid this signal being left floating, you can remove ``GPIO_PULL_UP`` to save power.
 
    The ``phandle-array`` type is used, as it is commonly used in Zephyr's devicetree to describe GPIO signals.
    The first element ``&gpio0`` indicates the GPIO port (``port 0`` has been selected in the example shown).
    The second element is the pin number on that port.
 
-#. On the nRF5340, you must also apply the same devicetree node mentioned in step 1 to the network core.
-   To do so, apply the overlay to the correct network-core child image by creating an overlay file named :file:`child_image/*childImageName*.overlay` in your application directory, for example :file:`child_image/multiprotocol_rpmsg.overlay`.
+#. On the nRF5340, apply the same devicetree node mentioned in Step 1 to the network core.
+   Apply the overlay to the correct network-core child image by creating an overlay file named :file:`child_image/*childImageName*.overlay` in your application directory, for example :file:`child_image/multiprotocol_rpmsg.overlay`.
 
    The ``*childImageName*`` string must assume one of the following values:
 
-   *  ``multiprotocol_rpmsg`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
-   *  ``802154_rpmsg`` for applications having support for 802.15.4, but not for Bluetooth.
-   *  ``hci_rpmsg`` for application having support for Bluetooth, but not for 802.15.4.
+   * ``multiprotocol_rpmsg`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
+   * ``802154_rpmsg`` for applications having support for 802.15.4, but not for Bluetooth.
+   * ``hci_rpmsg`` for application having support for Bluetooth, but not for 802.15.4.
 
 #. Enable the following Kconfig options:
 

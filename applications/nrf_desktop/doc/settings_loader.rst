@@ -33,7 +33,7 @@ For details on the default configuration alignment, see the following sections.
 Settings backend
 ================
 
-By default, nRF Desktop devices use non-volatile storage settings backend (:kconfig:option:`CONFIG_SETTINGS_BACKEND_NVS`).
+By default, nRF Desktop devices use non-volatile storage settings backend (:kconfig:option:`CONFIG_SETTINGS_NVS`).
 The storage partition is located in the internal flash.
 
 Settings load in a separate thread

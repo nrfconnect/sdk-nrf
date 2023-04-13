@@ -62,7 +62,7 @@ Selecting the :ref:`CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE <config_desktop_app_opt
 Simulated movement data
 =======================
 
-Selecting the :kconfig:option:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE` option adds the :file:`src/hw_interface/motion_simulated.c` file to the compilation.
+Selecting the :ref:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE <config_desktop_app_options>` option adds the :file:`src/hw_interface/motion_simulated.c` file to the compilation.
 
 If the shell is available (the :kconfig:option:`CONFIG_SHELL` option is set), the motion module registers a shell module ``motion_sim`` and links to it two commands: ``start`` and ``stop``.
 If the shell is not available, motion generation starts automatically when the device is connected to USB or Bluetooth®.

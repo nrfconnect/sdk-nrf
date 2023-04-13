@@ -100,7 +100,7 @@ Complete the following steps to build and program using the |nRFVSC|:
 
 .. include:: ../../includes/vsc_build_and_run.txt
 
-#. Program the sample or application:
+3. Program the sample or application:
 
    a. Connect the Nordic Thingy:53 to the debug out port on a 10-pin external debug probe, for example nRF5340 DK, using a 10-pin JTAG cable.
    #. Connect the external debug probe to the PC using a USB cable.

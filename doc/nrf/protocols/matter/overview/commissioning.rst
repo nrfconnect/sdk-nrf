@@ -36,9 +36,9 @@ Onboarding information formats
 
 The data payload can be encoded in one of the following ways, either included on-device or in the packaging for the end products (or both):
 
-* Manual Pairing Code - which provides the onboarding information as a sequence of digits that can be used with most Matter commissioners.
-* QR Code - which you can scan using the appropriate mobile application for your ecosystem.
-* QR Code Payload - which is a alphanumeric code that you can use in command-line tools.
+* Manual Pairing Code, which provides the onboarding information as a sequence of digits that can be used with most Matter commissioners.
+* QR Code, which you can scan using the appropriate mobile application for your ecosystem.
+* QR Code Payload, which is an alphanumeric code that you can use in command-line tools.
   For testing purposes, it can be printed to the UART console or be shared using an NFC tag.
   This code is represented visually by the QR Code.
 

@@ -136,5 +136,4 @@ To enable support for P-GPS, add the parameter ``-DOVERLAY_CONFIG=overlay-pgps.c
    To ensure that the resulting binary can be deployed using FOTA, you must make sure that the new partition layout is compatible with layout of the old image.
    See :ref:`static partitioning <ug_pm_static_providing>` for more details.
 
-.. note::
    |gps_tradeoffs|

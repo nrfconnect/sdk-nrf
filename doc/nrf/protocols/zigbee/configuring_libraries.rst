@@ -28,7 +28,7 @@ The :ref:`lib_zigbee_application_utilities` library provides a set of components
 
 To enable and use this library, set the :kconfig:option:`CONFIG_ZIGBEE_APP_UTILS` Kconfig option.
 
-For additional logs for this library, configure the :kconfig:option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
+For additional logs for this library, configure the :kconfig:option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL_CHOICE` Kconfig option.
 See :ref:`zigbee_ug_logging_logger_options` for more information.
 
 Default signal handler
@@ -156,7 +156,7 @@ The Zigbee endpoint logger library provides an endpoint handler for parsing and 
 To enable the endpoint logger library in your application, complete the following steps:
 
 1. Enable the library by setting the :kconfig:option:`CONFIG_ZIGBEE_LOGGER_EP` Kconfig option.
-2. Define the logging level for the library by setting the :kconfig:option:`CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL` Kconfig option.
+2. Define the logging level for the library by setting the :kconfig:option:`CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL_CHOICE` Kconfig option.
    See :ref:`zigbee_ug_logging_logger_options` for more information.
 3. Include the required header file :file:`include/zigbee/zigbee_logger_eprxzcl.h` into your project.
 4. Register :c:func:`zigbee_logger_eprxzcl_ep_handler` as handler for the given *your_ep_number* endpoint using :c:macro:`ZB_AF_SET_ENDPOINT_HANDLER`, after the device context is registered with :c:macro:`ZB_AF_REGISTER_DEVICE_CTX`, but before starting the Zigbee stack:
@@ -209,7 +209,7 @@ To extend a sample with the Zigbee shell command support, set the following Kcon
   The endpoint must be present at the device and you must not register an endpoint handler for this endpoint.
 * :kconfig:option:`CONFIG_ZIGBEE_SHELL_DEBUG_CMD` - This option enables commands useful for testing and debugging.
   This option also enables logging of the incoming ZCL frames.
-  Logging of the incoming ZCL frames uses the logging level set in :kconfig:option:`CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL`.
+  Logging of the incoming ZCL frames uses the logging level set in :kconfig:option:`CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL_CHOICE`.
 
   .. note::
      Using debug commands can make the device unstable.

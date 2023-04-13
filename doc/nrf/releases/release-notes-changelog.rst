@@ -146,7 +146,7 @@ Enhanced ShockBurst (ESB)
 
   * Support for bigger payload size.
     ESB supports a payload with a size of 64 bytes or more.
-  * The `use_fast_ramp_up` feature that reduces radio ramp-up delay from 130 µs to 40 µs.
+  * The ``use_fast_ramp_up`` feature that reduces radio ramp-up delay from 130 µs to 40 µs.
   * The :kconfig:option:`CONFIG_ESB_NEVER_DISABLE_TX` Kconfig option as an experimental feature that enables the radio peripheral to remain in TXIDLE state instead of TXDISABLE when transmission is pending.
 
 * Updated:
@@ -321,7 +321,9 @@ Bluetooth mesh samples
   See `Bluetooth mesh`_ for more information.
 * Removed the :file:`hci_rpmsg.conf` file from all samples that support nRF5340 DK or Thingy:53.
   This configuration is moved to the :file:`ncs/nrf/subsys/bluetooth/mesh/hci_rpmsg_child_image_overlay.conf` file.
-* :ref:`bluetooth_mesh_light_lc` sample is updated to demonstrate the use of sensor server to report additional useful information about the device.
+* :ref:`bluetooth_mesh_light_lc` sample:
+
+   * Updated the sample to demonstrate the use of sensor server to report additional useful information about the device.
 
 * :ref:`bluetooth_mesh_sensor_server` and :ref:`bluetooth_mesh_sensor_client` samples:
 

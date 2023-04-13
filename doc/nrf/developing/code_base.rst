@@ -153,10 +153,10 @@ The short logs for these downstream patches contain ``[nrf xyz]`` at the beginni
 This makes their different purposes downstream clearer, and makes them easier to search for and see in ``git log``.
 The current values of ``[nrf xyz]`` are:
 
-* ``[nrf mergeup]``: periodic merges of the upstream tree
-* ``[nrf fromlist]``: patches which have upstream pull requests, including any later revisions
-* ``[nrf noup]``: patches which are specific to the |NCS|
-* ``[nrf fromtree]``: patches which have been cherry-picked from an upstream tree
+* ``[nrf mergeup]``- Periodic merges of the upstream tree
+* ``[nrf fromlist]``- Patches which have upstream pull requests, including any later revisions
+* ``[nrf noup]``- Patches which are specific to the |NCS|
+* ``[nrf fromtree]``- Patches which have been cherry-picked from an upstream tree
 
 .. note::
     The downstream project history is periodically rewritten.
@@ -170,8 +170,7 @@ The empty diff means you can always use:
 * ``git rebase --onto`` or ``git cherry-pick`` to reapply any of your own patches cleanly before and after the history rewrite
 * ``git cherry`` to list any additional patches you may have applied to these projects to rewrite history as needed
 
-Additionally, both the old and new histories are committed sequentially into the ``revision`` fields for these projects in the :file:`nrf/west.yml` west
-manifest file.
+Additionally, both the old and new histories are committed sequentially into the ``revision`` fields for these projects in the :file:`nrf/west.yml` west manifest file.
 This means you can always combine ``git bisect`` in the ``nrf`` repository with ``west update`` at each bisection point to diagnose regressions and the rest.
 
 .. _dm-oss-userdata:
@@ -179,14 +178,12 @@ This means you can always combine ``git bisect`` in the ``nrf`` repository with 
 Userdata associated with OSS repositories
 *****************************************
 
-The west manifest file :file:`nrf/west.yml` contains ``userdata`` values for
-some OSS repository projects.
+The west manifest file :file:`nrf/west.yml` contains ``userdata`` values for some OSS repository projects.
 
-This section documents these values and their purpose. However, they are mainly
-meant for internal use and are safe to ignore.
+This section documents these values and their purpose.
+However, they are mainly meant for internal use and are safe to ignore.
 
-See :ref:`zephyr:west-project-userdata` for general information about the west
-``userdata`` feature.
+See :ref:`zephyr:west-project-userdata` for general information about the west ``userdata`` feature.
 
 In the |NCS|, each ``userdata`` value has this format:
 
@@ -197,16 +194,12 @@ In the |NCS|, each ``userdata`` value has this format:
      upstream-sha: GIT_SHA
      compare-by-default: <true|false>
 
-These fields are used to track some extra OSS repository metadata. The metadata
-is present for projects which are not included in the |NCS| directly from the
-Zephyr project's manifest in :file:`zephyr/west.yml`. Repository maintainers
-use this metadata while synchronizing the |NCS| fork of each repository with
-its upstream repository.
+These fields are used to track some extra OSS repository metadata.
+The metadata is present for projects which are not included in the |NCS| directly from the Zephyr project's manifest in :file:`zephyr/west.yml`.
+Repository maintainers use this metadata while synchronizing the |NCS| fork of each repository with its upstream repository.
 
 The meaning of each ``userdata`` field is:
 
-- ``upstream-url``: Git URL that the project is synchronized against
-- ``upstream-sha``: most recent Git SHA in the ``upstream-url``
-  repository which is included in the |NCS| fork of the repository
-- ``compare-by-default``: if ``true``, internal |NCS| synchronization tooling
-  will include information related to this repository by default
+* ``upstream-url`` - Git URL that the project is synchronized against
+* ``upstream-sha`` - Most recent Git SHA in the ``upstream-url`` repository which is included in the |NCS| fork of the repository
+* ``compare-by-default`` - If ``true``, internal |NCS| synchronization tooling will include information related to this repository by default

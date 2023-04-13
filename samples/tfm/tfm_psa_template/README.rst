@@ -130,7 +130,7 @@ Generate security keys if needed:
     python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k /home/user/ncs/_keys/mcuboot_priv.pem
     python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k /home/user/ncs/_keys/nsib_priv.pem
 
-Update the ``child_image/mcuboot/prj.conf`` file to set the private signing key for MCUBoot:
+Update the :file:`child_image/mcuboot/prj.conf` file to set the private signing key for MCUboot:
 
 .. code-block:: console
 

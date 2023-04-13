@@ -155,7 +155,7 @@ But when the static partitions are used, the user is responsible for following t
 If you are experiencing any partition alignment issues when using the Partition Manager, check the :ref:`known_issues` page on the main branch.
 
 The partitions which need to be aligned to the SPU flash region size are partitions ``tfm_nonsecure`` and ``nonsecure_storage``.
-Both the partition start address and the partition size need to be aligned with the NRF_SPU flash region size:kconfig:option:`CONFIG_NRF_SPU_FLASH_REGION_SIZE`.
+Both the partition start address and the partition size need to be aligned with the NRF_SPU flash region size :kconfig:option:`CONFIG_NRF_SPU_FLASH_REGION_SIZE`.
 
 Note that the ``tfm_nonsecure`` partition is placed after the ``tfm_secure`` partition, thus the end address of the ``tfm_secure`` partition is the same as the start address of the ``tfm_nonsecure`` partition.
 As a result, altering the size of the ``tfm_secure`` partition affects the start address of the ``tfm_nonsecure`` partition.

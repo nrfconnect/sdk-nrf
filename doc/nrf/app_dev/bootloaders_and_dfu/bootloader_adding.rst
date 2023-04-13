@@ -214,7 +214,7 @@ See the description of :kconfig:option:`CONFIG_SB_SIGNING_COMMAND` for which arg
 Adding MCUboot as an immutable bootloader
 =========================================
 
-To build :doc:`mcuboot:index-ncs` with a Zephyr or |NCS| sample, enable the ``CONFIG_BOOTLOADER_MCUBOOT`` in the application's :file:`prj.conf` file, an associated Kconfig fragment, or using the command line:
+To build :doc:`mcuboot:index-ncs` with a Zephyr or |NCS| sample, enable the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` in the application's :file:`prj.conf` file, an associated Kconfig fragment, or using the command line:
 
 .. code-block:: console
 
@@ -228,7 +228,7 @@ Like other child images, you can assign :ref:`image-specific configurations <ug_
 Adding a custom signature key file
 ----------------------------------
 
-To pass the signature key file into the MCUboot image, set its ``CONFIG_BOOT_SIGNATURE_KEY_FILE`` option to the selected private key file.
+To pass the signature key file into the MCUboot image, set its :kconfig:option:`CONFIG_BOOT_SIGNATURE_KEY_FILE` option to the selected private key file.
 You can set the option in :file:`bootloader/mcuboot/boot/zephyr/prj.conf`, an associated Kconfig fragment, or using the command line:
 
 .. tabs::
@@ -287,7 +287,7 @@ Adding MCUboot as an upgradable bootloader
 ==========================================
 
 To use MCUboot as an upgradable bootloader, the application must already use the |NSIB| as the immutable bootloader.
-MCUboot is added to its boot chain by including the ``CONFIG_BOOTLOADER_MCUBOOT`` option with either the build command or in the application's :file:`prj.conf` file:
+MCUboot is added to its boot chain by including the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option with either the build command or in the application's :file:`prj.conf` file:
 
 .. code-block::
 
@@ -328,7 +328,7 @@ The process to use specific signature keys with MCUboot used as the upgradable b
 Generating pre-signed variants
 ------------------------------
 
-Enable the :kconfig:option:`CONFIG_BUILD_S1_VARIANT` option when building the upgradable bootloader to automatically generate :ref:`pre-signed variants <upgradable_bootloader_presigned_variants>` of the image for both slots:
+Enable the :kconfig:option:`CONFIG_BUILD_S1_VARIANT` Kconfig option when building the upgradable bootloader to automatically generate :ref:`pre-signed variants <upgradable_bootloader_presigned_variants>` of the image for both slots:
 
 .. code-block::
 
@@ -342,5 +342,5 @@ This is a necessary step for creating application update images for use with :re
 The S1 variant is built as a separate child image called ``s1_image``.
 For this reason, any modifications to the configuration of the S1 variant must be done to the ``s1_image`` child image.
 By default, this child image is an exact duplicate of the original image, with the exception of its placement in memory.
-The only configuration option that must be modified is the version set in ``CONFIG_FW_INFO_FIRMWARE_VERSION``.
-To make ``s1_image`` bootable with |NSIB|, the value of ``CONFIG_FW_INFO_FIRMWARE_VERSION`` for ``s1_image`` must be bigger than the one for original image.
+You only have to modify the version set in the :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` Kconfig option.
+To make ``s1_image`` bootable with |NSIB|, the value of :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` for ``s1_image`` must be bigger than the one for original image.
