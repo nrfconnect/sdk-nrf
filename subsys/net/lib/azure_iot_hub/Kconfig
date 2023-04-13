@@ -47,7 +47,7 @@ config AZURE_IOT_HUB_DPS
 
 config AZURE_IOT_HUB_USER_NAME_BUF_SIZE
 	int "User name max length"
-	default 128
+	default 160
 	help
 	  Maximum length of the user name.
 
