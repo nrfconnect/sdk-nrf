@@ -73,25 +73,16 @@ jobs:
           cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="-W"
           ninja -C doc/_build
 
-      - name: Build cache
+      - name: Prepare archive
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
         working-directory: ncs/nrf
         run: |
-            python3 doc/_scripts/cache_create.py -b doc/_build -o cache
-
-      - name: Prepare extra cache files
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
-        working-directory: ncs/nrf/cache
-        run: |
-          mkdir extra && cd extra
-
-          # Keep root HTML files
-          cp ../../doc/_build/html/index.html .
-          cp ../../doc/_build/html/versions.json .
+          MONITOR="monitor_${{ github.run_id }}.txt"
+          ARCHIVE="doc_build_${{ github.run_id }}.zip"
 
           # Create documentation upload files
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "publish2 dev PR-${{ github.event.number }} __FILE__" > monitor.txt
+            echo "publish2 dev PR-${{ github.event.number }} ${ARCHIVE}" > "${MONITOR}"
             echo "${{ github.event.number }}" > pr.txt
           else
             VERSION_REGEX="^v([0-9a-z\.\-]+)$"
@@ -103,12 +94,19 @@ jobs:
               echo "Not a release or latest, skipping publish"
               exit 0
             fi
-            echo "publish2 main ${VERSION} __FILE__" > monitor.txt
+            echo "publish2 main ${VERSION} ${ARCHIVE}" > "${MONITOR}"
           fi
 
-      - name: Archive cache
+          # compress
+          cd doc/_build/html
+          zip -rq "${ARCHIVE}" .
+          mv "${ARCHIVE}" ../../../
+
+      - name: Store
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
         uses: actions/upload-artifact@v2
         with:
-          name: cache
-          path: ncs/nrf/cache
+          name: docs
+          path: |
+            ncs/nrf/*.zip
+            ncs/nrf/pr.txt
