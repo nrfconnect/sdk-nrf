@@ -18,7 +18,6 @@ The following user guides describe available integrations:
    :maxdepth: 1
    :caption: Subpages:
 
-   external_comp/bt_coex
    external_comp/bt_fast_pair
    external_comp/edge_impulse
    external_comp/memfault

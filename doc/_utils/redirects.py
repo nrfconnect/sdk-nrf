@@ -46,7 +46,6 @@ NRF = [
     ("doc_structure", "documentation/structure"),
     ("doc_styleguide", "documentation/styleguide"),
     ("doc_templates", "documentation/templates"),
-    ("ug_bt_coex", "external_comp/bt_coex"),
     ("ug_bt_fast_pair", "external_comp/bt_fast_pair"),
     ("ug_edge_impulse", "external_comp/edge_impulse"),
     ("ug_memfault", "external_comp/memfault"),
