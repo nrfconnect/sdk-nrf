@@ -477,11 +477,13 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 		/* read out previous NRF_MODEM_GNSS_EVT_AGPS_REQ */
 		err = read_agps_req(&req);
 		if (err) {
+			/* Ephemerides assistance only */
+			LOG_INF("Failed to read A-GPS request: %d", err);
+			LOG_INF("Use ephemerides assistance only");
+			err = nrf_cloud_pgps_inject(event->prediction, NULL);
+		} else {
 			/* All assistance elements as requested */
 			err = nrf_cloud_pgps_inject(event->prediction, &req);
-		} else {
-			/* ephemerides assistance only */
-			err = nrf_cloud_pgps_inject(event->prediction, NULL);
 		}
 		if (err) {
 			LOG_ERR("Unable to send prediction to modem: %d", err);
