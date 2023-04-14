@@ -1167,6 +1167,7 @@ The application also depends on the following Zephyr libraries:
 
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:kernel_api`
+* :ref:`zephyr:zbus`
 * :ref:`zephyr:api_peripherals`:
 
    * :ref:`zephyr:usb_api`

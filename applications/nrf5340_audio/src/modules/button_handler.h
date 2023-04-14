@@ -10,26 +10,6 @@
 #include <stdint.h>
 #include <zephyr/drivers/gpio.h>
 
-/** @brief Button ID
- *
- * The pin number of the button
- */
-typedef uint32_t button_pin_t;
-
-/** Button actions
- */
-enum button_action {
-	BUTTON_PRESS,
-	BUTTON_ACTION_NUM,
-};
-
-/** Button event
- */
-struct button_evt {
-	button_pin_t button_pin;
-	enum button_action button_action;
-};
-
 struct btn_config {
 	const char *btn_name;
 	uint8_t btn_pin;

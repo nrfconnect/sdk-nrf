@@ -30,17 +30,6 @@ uint8_t stream_state_get(void);
  */
 void streamctrl_encoded_data_send(void const *const data, size_t size, uint8_t num_ch);
 
-/** @brief Drives streamctrl state machine
- *
- * This function drives the streamctrl state machine.
- * The function will read and handle events coming in to the streamctrl
- * module, and configure/run the rest of the system accordingly.
- *
- * Run this function repeatedly, e.g. in an eternal loop, to keep the
- * system running.
- */
-void streamctrl_event_handler(void);
-
 /** @brief Init internal functionality and start streamctrl
  *
  *  @return 0 if successful.

@@ -11,12 +11,13 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/shell/shell.h>
+#include <zephyr/zbus/zbus.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
 
 #include "macros_common.h"
-#include "ctrl_events.h"
+#include "nrf5340_audio_common.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(button_handler, CONFIG_MODULE_BUTTON_HANDLER_LOG_LEVEL);
@@ -24,6 +25,9 @@ LOG_MODULE_REGISTER(button_handler, CONFIG_MODULE_BUTTON_HANDLER_LOG_LEVEL);
 /* How many buttons does the module support. Increase at memory cost */
 #define BUTTONS_MAX 5
 #define BASE_10 10
+
+/* Only allow one button msg at a time, as a mean of debounce */
+K_MSGQ_DEFINE(button_queue, sizeof(struct button_msg), 1, 4);
 
 static bool debounce_is_ongoing;
 static struct gpio_callback btn_callback[BUTTONS_MAX];
@@ -114,14 +118,35 @@ static int pin_msk_to_pin(uint32_t pin_msk, uint32_t *pin_out)
 	return 0;
 }
 
+ZBUS_CHAN_DEFINE(button_chan, struct button_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
+		 ZBUS_MSG_INIT(0));
+
+static void button_publish_thread(void)
+{
+	int ret;
+	struct button_msg msg;
+
+	while (1) {
+		k_msgq_get(&button_queue, &msg, K_FOREVER);
+
+		ret = zbus_chan_pub(&button_chan, &msg, K_NO_WAIT);
+		if (ret) {
+			LOG_ERR("Failed to publish button msg, ret: %d", ret);
+		}
+	}
+}
+
+K_THREAD_DEFINE(button_publish_thread_id, CONFIG_BUTTON_PUBLISH_STACK_SIZE, button_publish_thread,
+		NULL, NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_PUBLISH_THREAD_PRIO), 0, 0);
+
 /*  ISR triggered by GPIO when assigned button(s) are pushed */
 static void button_isr(const struct device *port, struct gpio_callback *cb, uint32_t pin_msk)
 {
 	int ret;
-	struct event_t event;
+	struct button_msg msg;
 
 	if (debounce_is_ongoing) {
-		LOG_WRN("Btn debounce in action");
+		LOG_DBG("Btn debounce in action");
 		return;
 	}
 
@@ -137,21 +162,16 @@ static void button_isr(const struct device *port, struct gpio_callback *cb, uint
 	LOG_DBG("Pushed button idx: %d pin: %d name: %s", btn_idx, btn_pin,
 		btn_cfg[btn_idx].btn_name);
 
-	event.button_activity.button_pin = btn_pin;
-	event.button_activity.button_action = BUTTON_PRESS;
-	event.event_source = EVT_SRC_BUTTON;
+	msg.button_pin = btn_pin;
+	msg.button_action = BUTTON_PRESS;
 
-	/* To avoid filling up the event queue with button presses,
-	 * we only allow button events if all other events have been processed
-	 */
-	if (ctrl_events_queue_empty()) {
-		ret = ctrl_events_put(&event);
-		ERR_CHK(ret);
-		debounce_is_ongoing = true;
-		k_timer_start(&button_debounce_timer, K_MSEC(CONFIG_BUTTON_DEBOUNCE_MS), K_NO_WAIT);
-	} else {
-		LOG_WRN("Event queue is not empty, try again later");
+	ret = k_msgq_put(&button_queue, (void *)&msg, K_NO_WAIT);
+	if (ret == -EAGAIN) {
+		LOG_WRN("Btn msg queue full");
 	}
+
+	debounce_is_ongoing = true;
+	k_timer_start(&button_debounce_timer, K_MSEC(CONFIG_BUTTON_DEBOUNCE_MS), K_NO_WAIT);
 }
 
 int button_pressed(gpio_pin_t button_pin, bool *button_pressed)
@@ -238,7 +258,7 @@ static int cmd_push_btn(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 	uint8_t btn_idx;
-	struct event_t event;
+	struct button_msg msg;
 
 	/* First argument is function, second is button idx */
 	if (argc != 2) {
@@ -258,18 +278,13 @@ static int cmd_push_btn(const struct shell *shell, size_t argc, char **argv)
 		return -EINVAL;
 	}
 
-	event.button_activity.button_pin = btn_cfg[btn_idx].btn_pin;
-	event.button_activity.button_action = BUTTON_PRESS;
-	event.event_source = EVT_SRC_BUTTON;
+	msg.button_pin = btn_cfg[btn_idx].btn_pin;
+	msg.button_action = BUTTON_PRESS;
 
-	ret = ctrl_events_put(&event);
-
-	if (ret == -ENOMSG) {
-		LOG_WRN("Event queue is full, ignoring button press");
-		ret = 0;
+	ret = zbus_chan_pub(&button_chan, &msg, K_NO_WAIT);
+	if (ret) {
+		LOG_ERR("Failed to publish button msg, ret: %d", ret);
 	}
-
-	ERR_CHK(ret);
 
 	shell_print(shell, "Pushed button idx: %d pin: %d : %s", btn_idx, btn_cfg[btn_idx].btn_pin,
 		    btn_cfg[btn_idx].btn_name);

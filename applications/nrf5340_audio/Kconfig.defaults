@@ -5,24 +5,19 @@
 #
 
 config REBOOT
-	bool
 	default y
 
 config MAIN_THREAD_PRIORITY
-	int
 	default 10
 
 config MAIN_STACK_SIZE
-	int
-	default 3616
+	default 1400
 
 config SYSTEM_WORKQUEUE_STACK_SIZE
-	int
-	default 4096
+	default 1200
 
 # As long as thread names are used, config must be set to "y"
 config THREAD_NAME
-	bool
 	default y
 
 config NCS_INCLUDE_RPMSG_CHILD_IMAGE
@@ -31,73 +26,62 @@ config NCS_INCLUDE_RPMSG_CHILD_IMAGE
 # Workaround to not use fatal_error.c in NCS. Note that the system may still
 # reset on error depending on the build configuraion
 config RESET_ON_FATAL_ERROR
-	bool
 	default n
 
 # Default Config for Debug and Release build
 config HW_CODEC_CIRRUS_LOGIC
-	bool
 	default y
 
 config BT
-	bool
 	default y
 
 config BOARD_ENABLE_DCDC_APP
-	bool
 	default y
 
 config BOARD_ENABLE_DCDC_NET
-	bool
 	default y
 
 config BOARD_ENABLE_CPUNET
-	bool
 	default y
 
 config NFCT_PINS_AS_GPIOS
-	bool
 	default y
 
+config ZBUS
+	default y
+
+config ZBUS_RUNTIME_OBSERVERS_POOL_SIZE
+	default 2
+
 config SENSOR
-	bool
 	default y
 
 config REGULATOR
-	bool
 	default y
 
 config CONTIN_ARRAY
-	bool
 	default y
 
 config NRFX_I2S
-	bool
 	default y
 
 config PCM_MIX
-	bool
 	default y
 
 config TONE
-	bool
 	default y
 
 config PSCM
-	bool
 	default y
 
 config DATA_FIFO
-	bool
 	default y
 
 # Enable NRFX_CLOCK for ACLK control
 config NRFX_CLOCK
-	bool
 	default y
 
 config I2C
-	bool
 	default y
 
 choice LIBC_IMPLEMENTATION
@@ -111,49 +95,39 @@ endchoice
 # across context switches to allow multiple threads to perform concurrent
 # floating point operations.
 config FPU
-	bool
 	default y
 
 config FPU_SHARING
-	bool
 	default y
 
 # Enable SDHC interface
 config DISK_DRIVERS
-	bool
 	default y
 
 config DISK_DRIVER_SDMMC
-	bool
 	default y
 
 # Enable SPI interface
 config SPI
-	bool
 	default y
 
 # Enable ADC for board version readback
 config ADC
-	bool
 	default y
 
 # Allocate buffer on RAM for transferring chunck of data
 # from Flash to SPI
 config SPI_NRFX_RAM_BUFFER_SIZE
-	int
 	default 8
 
 # Config the file system
 config FILE_SYSTEM
-	bool
 	default y
 
 config FAT_FILESYSTEM_ELM
-	bool
 	default y
 
 config FS_FATFS_LFN
-	bool
 	default y
 choice FS_FATFS_LFN_MODE
 	# Using stack for LFN work queue
@@ -162,14 +136,11 @@ endchoice
 
 # exFAT enabled to support longer file names and higher transfer speed
 config FS_FATFS_EXFAT
-	bool
 	default y
 
 # Set the maximum file name length to 255
 config FS_FATFS_MAX_LFN
-	int
 	default 255
 
 config BT_LL_ACS_NRF53
-	bool
 	default y

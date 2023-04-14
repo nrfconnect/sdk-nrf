@@ -14,4 +14,28 @@
 
 extern const nrfx_timer_t audio_sync_timer_instance;
 
+/***** Messages for Z-Bus ******/
+
+enum button_action {
+	BUTTON_PRESS,
+	BUTTON_ACTION_NUM,
+};
+
+struct button_msg {
+	uint32_t button_pin;
+	enum button_action button_action;
+};
+
+enum le_audio_evt_type {
+	LE_AUDIO_EVT_CONFIG_RECEIVED,
+	LE_AUDIO_EVT_PRES_DELAY_SET,
+	LE_AUDIO_EVT_STREAMING,
+	LE_AUDIO_EVT_NOT_STREAMING,
+	LE_AUDIO_EVT_NUM_EVTS
+};
+
+struct le_audio_msg {
+	enum le_audio_evt_type event;
+};
+
 #endif /* _NRF5340_AUDIO_COMMON_H_ */

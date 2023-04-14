@@ -93,7 +93,14 @@ config POWER_MEAS_THREAD_PRIO
 	int "Priority for power measurement thread"
 	default 6
 	help
-	  This is a preemptible thread
+	  This is a preemptible thread.
+
+config BUTTON_PUBLISH_THREAD_PRIO
+	int "Priority for button publish thread"
+	default 5
+	help
+	  This is a preemptible thread.
+	  This thread will publish button events to zbus.
 
 endmenu # Thread priorities
 
@@ -103,6 +110,10 @@ menu "Stack sizes"
 config POWER_MEAS_STACK_SIZE
 	int "Stack size for power measurement thread"
 	default 1152
+
+config BUTTON_PUBLISH_STACK_SIZE
+	int "Stack size for button publish thread"
+	default 300
 
 endmenu # Stack sizes
 endmenu # Modules
