@@ -38,8 +38,6 @@ jobs:
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-doc-pip
-  # Doxygen >= 1.8.18 is required. This can be removed once ubuntu-latest ships
-  # a compatible version. More details: https://github.com/doxygen/doxygen/issues/7411.
       - name: Install packages
         run: |
           sudo apt update
