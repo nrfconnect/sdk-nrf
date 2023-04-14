@@ -975,7 +975,8 @@ static void bt_set_oob_data_flag_rpc_handler(const struct nrf_rpc_group *group,
 		goto decoding_error;
 	}
 
-	bt_set_oob_data_flag(enable);
+	bt_le_oob_set_sc_flag(enable);
+	bt_le_oob_set_legacy_flag(enable);
 
 	ser_rsp_send_void(group);
 
