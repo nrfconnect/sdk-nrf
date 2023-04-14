@@ -34,7 +34,7 @@ Using OpenSSL to generate keys
 It supports many different types of keys, but not all of them are supported by |NSIB| and MCUboot.
 To see a complete list of the key types supported by OpenSSL, call ``openssl help`` and ``openssl <key type> -help`` from a terminal.
 
-For a complete list of the key types supported by each bootloader, see the table below:
+For a complete list of the key types supported by each bootloader, see the following table:
 
 .. list-table::
    :header-rows: 1
@@ -46,7 +46,7 @@ For a complete list of the key types supported by each bootloader, see the table
    * - MCUboot
      - RSA-2048, RSA-3072, ECDSA-P256, ED25519
 
-See below for examples of using OpenSSL to create some commonly used key types:
+Examples of using OpenSSL to create some commonly used key types:
 
 .. tabs::
 
@@ -77,7 +77,7 @@ Using Imgtool to generate keys
 It is also available as a PyPI package that you can install using ``pip``.
 However, when working within the |NCS| framework, it is recommended to use the script that is included in the fork of MCUboot used by the |NCS|.
 
-See below for examples of imgtool used to create some commonly used key types:
+Examples of imgtool used to create some commonly used key types:
 
 .. tabs::
 
@@ -104,7 +104,7 @@ The |NCS| includes an internal script to interact with private and public keys w
 This script is maintained by the |NCS| team and uses the ``ecdsa`` package available from PyPI.
 It is only valid for use with ECDSA keys.
 
-See below for an example of this internal Python script used to generate keys.
+An example of this internal Python script used to generate keys.
 
 .. code-block:: console
 
@@ -213,16 +213,16 @@ You can add this feature to your own project and check its functionality as foll
       *** Booting Zephyr OS build ...  ***
       ...
 
-You can test that the bootloader no longer boots images signed with the earlier keys by uploading an image signed with one of them.
+To test that the bootloader no longer boots images signed with the earlier keys, upload an image signed with one of them.
 
-1. To do this, recompile the application with the following options:
+1. Recompile the application with the following options:
 
    .. code-block:: console
 
       CONFIG_SB_SIGNING_KEY_FILE="/path/to/priv_b.pem"
       CONFIG_FW_INFO_FIRMWARE_VERSION=3
 
-#. To facilitate testing, you can use nrfjprog to program this image directly into a slot:
+#. To facilitate testing, use nrfjprog to program this image directly into a slot:
 
    .. code-block:: console
 
@@ -295,9 +295,9 @@ Software-based downgrade prevention
 The |NCS| supports MCUboot's software-based downgrade prevention for application images, using semantic versioning.
 This feature offers protection against any outdated firmware that is uploaded to a device.
 
-You can enable this feature by setting the configuration options ``CONFIG_MCUBOOT_DOWNGRADE_PREVENTION`` and ``CONFIG_BOOT_UPGRADE_ONLY`` for the MCUboot image.
+To enable this feature, set the configuration options ``CONFIG_MCUBOOT_DOWNGRADE_PREVENTION`` and ``CONFIG_BOOT_UPGRADE_ONLY`` for the MCUboot image.
 
-To assign a semantic version number to your application, pass the version string into the ``CONFIG_MCUBOOT_IMAGE_VERSION`` option for the application:
+To assign a semantic version number to your application, pass the version string into the :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` option for the application:
 
 .. code-block:: console
 
