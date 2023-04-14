@@ -1008,6 +1008,34 @@ KRKNWK-6073: Potential delay during FOTA
 Matter
 ======
 
+.. rst-class:: v2-3-0
+
+KRKNWK-16728: Sleepy device may consume much power when commissioned to a commercial ecosystem
+  The controllers in the commercial ecosystem fabric establish a subscription to a Matter device's attributes.
+  The controller requests using some subscription intervals, and the Matter device may negotiate other values, but by default it just accepts the requested ones.
+  In some cases, the selected intervals can be small, and the Matter device will have to report status very often, which results in high power consumption.
+
+  **Workaround:** Implement ``OnSubscriptionRequested`` method in your application to set values of subscription report intervals that are appropriate for your use case.
+  This is an example of how your implementation could look:
+
+  .. code-block::
+
+     #include <app/ReadHandler.h>
+
+     class SubscriptionApplicationCallback : public chip::app::ReadHandler::ApplicationCallback
+     {
+        CHIP_ERROR OnSubscriptionRequested(chip::app::ReadHandler & aReadHandler,
+                                           chip::Transport::SecureSession & aSecureSession) override;
+     };
+
+     CHIP_ERROR SubscriptionApplicationCallback::OnSubscriptionRequested(chip::app::ReadHandler & aReadHandler,
+                                                          chip::Transport::SecureSession & aSecureSession)
+     {
+        /* Set the interval in seconds appropriate for your application use case, e.g. 15 seconds. */
+        uint32_t exampleMaxInterval = 15;
+        return aReadHandler.SetReportingIntervals(exampleMaxInterval);
+     }
+
 .. rst-class:: v2-3-0 v2-2-0
 
 KRKNWK-16575: Applications with factory data support do not boot up properly on nRF5340

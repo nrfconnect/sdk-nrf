@@ -111,6 +111,7 @@ The following list summarizes the most important changes inherited from the upst
   You can now use the factory data script to generate a manual pairing code and a QR Code that are required to commission a Matter-enabled device over Bluetooth LE.
   Generated onboarding codes should be put on the device's package or on the device itself.
   For details, see the Generating onboarding codes section on the :doc:`matter:nrfconnect_factory_data_configuration` page in the Matter documentation.
+* Introduced ``SLEEPY_ACTIVE_THRESHOLD`` parameter that makes the Matter sleepy device stay awake for a specified amount of time after network activity.
 
 Thread
 ------

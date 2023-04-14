@@ -93,6 +93,9 @@ config NRF_WIFI_LOW_POWER
 
 endif # CHIP_WIFI
 
+config CHIP_ICD_SUBSCRIPTION_HANDLING
+	default y
+
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.defaults"
 source "Kconfig.zephyr"
