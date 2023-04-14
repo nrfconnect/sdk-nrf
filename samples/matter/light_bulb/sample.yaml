@@ -3,13 +3,6 @@ sample:
   name: Matter Light Bulb
 tests:
   # Excluded in quarantine.yaml to limit resources usage in integration builds
-  sample.matter.light_bulb.debug:
-    build_only: true
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf7002dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
   sample.matter.light_bulb.release:
     build_only: true
     extra_args: CONF_FILE=prj_release.conf
@@ -27,7 +20,8 @@ tests:
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
   sample.matter.light_bulb.ffs:
     build_only: true
-    extra_args: CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE=y CONFIG_CHIP_ROTATING_DEVICE_ID=y CONFIG_CHIP_DEVICE_TYPE=257
+    extra_args: CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE=y CONFIG_CHIP_ROTATING_DEVICE_ID=y
+      CONFIG_CHIP_DEVICE_TYPE=257
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
@@ -37,14 +31,15 @@ tests:
     extra_args: CONF_FILE=prj_no_dfu.conf
     integration_platforms:
       - nrf21540dk_nrf52840
-    platform_allow: nrf52840dk_nrf52840 nrf21540dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf21540dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+      nrf7002dk_nrf5340_cpuapp
   # ---------------
-  sample.matter.light_bulb.debug.nrf5340dk:
+  sample.matter.light_bulb.debug:
     build_only: true
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
-  sample.matter.light_bulb.debug.nrf7002_ek:
+  sample.matter.light_bulb.nrf7002_ek:
     build_only: true
     extra_args: SHIELD=nrf7002_ek hci_rpmsg_SHIELD=nrf7002_ek_coex
     integration_platforms:
