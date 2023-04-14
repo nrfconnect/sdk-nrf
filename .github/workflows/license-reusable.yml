@@ -124,7 +124,7 @@ jobs:
 
     - name: Upload results
       uses: actions/upload-artifact@v2
-      continue-on-error: True
+      continue-on-error: true
       if: always() && contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
       with:
         name: licenses.xml
