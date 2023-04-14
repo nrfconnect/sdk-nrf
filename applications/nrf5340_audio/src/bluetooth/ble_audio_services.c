@@ -166,7 +166,7 @@ static void vcs_discover_cb_handler(struct bt_vcp_vol_ctlr *vcs, int err, uint8_
 	if (err) {
 		LOG_ERR("VCS discover finished callback error: %d", err);
 	} else {
-		LOG_DBG("VCS discover finished");
+		LOG_INF("VCS discover finished");
 	}
 }
 
@@ -197,7 +197,7 @@ static void mcc_discover_mcs_cb(struct bt_conn *conn, int err)
 	}
 
 	mcp_mcs_disc_status[idx] = FINISHED;
-	LOG_DBG("Discovery of MCS finished");
+	LOG_INF("Discovery of MCS finished");
 	ret = ble_mcs_state_update(conn);
 	if (ret < 0 && ret != -EBUSY) {
 		LOG_WRN("Failed to update media state: %d", ret);
@@ -558,7 +558,7 @@ int ble_mcs_state_update(struct bt_conn *conn)
 	uint8_t idx = bt_conn_index(conn);
 
 	if (mcp_mcs_disc_status[idx] != FINISHED) {
-		LOG_ERR("MCS discovery has not finished");
+		LOG_WRN("MCS discovery has not finished");
 		return -EBUSY;
 	}
 
@@ -569,6 +569,13 @@ int ble_mcs_play_pause(struct bt_conn *conn)
 {
 	int ret = 0;
 	struct mpl_cmd cmd;
+
+	uint8_t idx = bt_conn_index(conn);
+
+	if (mcp_mcs_disc_status[idx] != FINISHED) {
+		LOG_WRN("MCS discovery has not finished");
+		return -EBUSY;
+	}
 
 	if (media_player_state == BT_MCS_MEDIA_STATE_PLAYING) {
 		cmd.opcode = BT_MCS_OPC_PAUSE;
