@@ -157,6 +157,15 @@ config AWS_IOT_CONNECTION_POLL_THREAD
 	bool "Enable polling on MQTT socket in AWS IoT backend"
 	default y
 
+if AWS_IOT_CONNECTION_POLL_THREAD
+
+config AWS_IOT_POLL_THREAD_STACK_SIZE
+	int "stack size of the AWS IoT poll thread"
+	default 4096 if BOARD_QEMU_X86
+	default 3072
+
+endif
+
 module=AWS_IOT
 module-dep=LOG
 module-str=AWS IoT
