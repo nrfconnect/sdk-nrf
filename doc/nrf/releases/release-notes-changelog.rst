@@ -87,7 +87,7 @@ Matter
 * Added:
 
   * Support for the :ref:`ug_matter_configuring_optional_persistent_subscriptions` feature.
-  * The Matter Nordic UART Service (NUS) feature to the :ref:`matter_lock_sample`.
+  * The Matter Nordic UART Service (NUS) feature to the :ref:`matter_lock_sample` sample.
     This feature allows using Nordic UART Service to control the device remotely through Bluetooth LE and adding custom text commands to a Matter sample.
     The Matter NUS implementation allows controlling the device regardless of whether the device is connected to a Matter network or not.
     The feature is dedicated for the Matter over Thread solution.
@@ -126,11 +126,10 @@ See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 Enhanced ShockBurst (ESB)
 -------------------------
 
-* Added support for bigger payload size.
-  ESB supports a payload with a size of 64 bytes or more.
-
 * Added:
 
+  * Support for bigger payload size.
+    ESB supports a payload with a size of 64 bytes or more.
   * The `use_fast_ramp_up` feature that reduces radio ramp-up delay from 130 µs to 40 µs.
   * The :kconfig:option:`CONFIG_ESB_NEVER_DISABLE_TX` Kconfig option as an experimental feature that enables the radio peripheral to remain in TXIDLE state instead of TXDISABLE when transmission is pending.
 
@@ -158,33 +157,26 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
+* Added the integration of the :ref:`lib_lwm2m_client_utils` FOTA callback functionality.
+
 * Updated:
 
-  * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
-  * The application now integrates the :ref:`lib_lwm2m_client_utils` FOTA callback functionality.
   * The application now uses the function :c:func:`nrf_cloud_location_request_msg_json_encode` to create an nRF Cloud location request message.
+  * The application now uses defines from the :ref:`lib_nrf_cloud` library for string values related to nRF Cloud.
 
 nRF9160: Serial LTE modem
 -------------------------
 
-* Added:
-
-  * AT command ``#XWIFIPOS`` to get Wi-Fi location from nRF Cloud.
-
-* Updated:
-
-  * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
-
-* Fixed:
-
-  * A bug in receiving large MQTT Publish message.
+* Added AT command ``#XWIFIPOS`` to get Wi-Fi location from nRF Cloud.
+* Updated the application to use defines from the :ref:`lib_nrf_cloud` library for string values related to nRF Cloud.
+* Fixed a bug in receiving a large MQTT Publish message.
 
 nRF5340 Audio
 -------------
 
 * Moved the LE Audio controller for the network core to the standalone :ref:`lib_bt_ll_acs_nrf53_readme` library.
 
-* Added  Kconfig options for setting periodic and extended advertising intervals..
+* Added Kconfig options for setting periodic and extended advertising intervals.
   Search :ref:`Kconfig Reference <kconfig-search>` for ``BLE_ACL_PER_ADV_INT_`` and ``BLE_ACL_EXT_ADV_INT_`` to list all of them.
 
 nRF Machine Learning (Edge Impulse)
@@ -197,18 +189,19 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
-Added:
+* Added:
 
-* The :ref:`nrf_desktop_swift_pair_app`. The module is used to enable or disable the Swift Pair Bluetooth advertising payload depending on the selected Bluetooth peer (used local identity).
-* An application-specific string representing device generation (:ref:`CONFIG_DESKTOP_DEVICE_GENERATION <config_desktop_app_options>`).
-  The generation allows to distinguish configurations that use the same board and bootloader, but are not interoperable.
-  The value can be read through the :ref:`nrf_desktop_config_channel`.
-  On the firmware side, fetching the values is handled by the :ref:`nrf_desktop_dfu`.
+  * The :ref:`nrf_desktop_swift_pair_app`.
+    The module is used to enable or disable the Swift Pair Bluetooth advertising payload depending on the selected Bluetooth peer (used local identity).
+  * An application-specific string representing device generation (:ref:`CONFIG_DESKTOP_DEVICE_GENERATION <config_desktop_app_options>`).
+    The generation allows to distinguish configurations that use the same board and bootloader, but are not interoperable.
+    The value can be read through the :ref:`nrf_desktop_config_channel`.
+    On the firmware side, fetching the values is handled by the :ref:`nrf_desktop_dfu`.
 
 * Updated:
 
-  * The :ref:`nrf_desktop_dfu` automatically enables 8-bit write block size emulation (:kconfig:option:`CONFIG_SOC_FLASH_NRF_EMULATE_ONE_BYTE_WRITE_ACCESS`) to ensure that update images with sizes unaligned to word size can be successfully stored in the internal FLASH.
-    The feature is not enabled if the MCUboot bootloader is used and the secondary slot is placed in an external FLASH (when :kconfig:option:`CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY` is enabled).
+  * The :ref:`nrf_desktop_dfu` automatically enables 8-bit write block size emulation (:kconfig:option:`CONFIG_SOC_FLASH_NRF_EMULATE_ONE_BYTE_WRITE_ACCESS`) to ensure that update images with sizes not aligned to word size can be successfully stored in the internal flash.
+    The feature is not enabled if the MCUboot bootloader is used and the secondary slot is placed in an external flash (when :kconfig:option:`CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY` is enabled).
   * The :ref:`nrf_desktop_ble_latency` uses low latency for the active Bluetooth connection in case of the SMP transfer event and regardless of the event submitter module.
     Previously, the module lowered the connection latency only for SMP events submitted by the :ref:`caf_ble_smp`.
   * In the Fast Pair configurations, the bond erase operation is enabled for the dongle peer, which will let you change the bonded Bluetooth Central.
@@ -224,9 +217,7 @@ Bluetooth samples
 * :ref:`peripheral_hids_keyboard` and :ref:`peripheral_hids_mouse` samples register HID Service before Bluetooth is enabled (before calling the :c:func:`bt_enable` function).
   The :c:func:`bt_gatt_service_register` function can no longer be called after enabling Bluetooth and before loading settings.
 
-* Removed:
-
-  * The Bluetooth 3-wire coex sample because of the removal of the 3-wire implementation.
+* Removed the Bluetooth: External radio coexistence using 3-wire interface sample because of the removal of the 3-wire implementation.
 
 * :ref:`peripheral_hids_mouse` sample:
 
@@ -235,11 +226,14 @@ Bluetooth samples
 
 * :ref:`direct_test_mode` sample:
 
+  * Added:
+
+    * Support for the :ref:`nrfxlib:mpsl_fem` Tx power split feature.
+      The DTM command ``0x09`` for setting the transmitter power level takes into account the front-end module gain when this sample is built with support for front-end modules.
+      The vendor-specific commands for setting the SoC output power and the front-end module gain are not available when the :kconfig:option:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC` Kconfig option is enabled.
+    * Support for +1 dBm, +2 dBm, and +3 dBm output power on the nRF5340 DK.
+
   * Removed a compilation warning when used with minimal pinout Skyworks FEM.
-  * Added support for the :ref:`nrfxlib:mpsl_fem` Tx power split feature.
-    The DTM command ``0x09`` for setting the transmitter power level takes into account the front-end module gain when this sample is built with support for front-end modules.
-    The vendor-specific commands for setting the SoC output power and the front-end module gain are not available when the :kconfig:option:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC` Kconfig option is enabled.
-  * Added support for +1 dBm, +2 dBm, and +3 dBm output power on the nRF5340 DK.
 
 Bluetooth mesh samples
 ----------------------
@@ -251,28 +245,23 @@ nRF9160 samples
 
 * :ref:`modem_shell_application` sample:
 
-  * Updated:
-
-    * Use defines from the :ref:`lib_nrf_cloud` library for nRF Cloud related string values.
-      Remove the inclusion of the file :file:`nrf_cloud_codec.h`.
+  * Updated the sample to use defines from the :ref:`lib_nrf_cloud` library for string values related to nRF Cloud.
+    Removed the inclusion of the file :file:`nrf_cloud_codec.h`.
 
 * :ref:`https_client` sample:
 
-  * Added:
-
-    * Add IPv6 support and wait for PDN to fully activate (including IPv6, if available) before looking up address.
+  * Added IPv6 support and wait time for PDN to fully activate (including IPv6, if available) before looking up the address.
 
 * :ref:`slm_shell_sample` sample:
 
-  * Added:
-
-    * Support for the nRF7002 DK PCA10143.
+  * Added support for the nRF7002 DK PCA10143.
 
 * :ref:`lwm2m_client` sample:
 
   * Updated:
 
     * The sample now integrates the :ref:`lib_lwm2m_client_utils` FOTA callback functionality.
+
 * :ref:`pdn_sample` sample:
 
   * Updated the sample to show how to get interface address information using the :c:func:`nrf_getifaddrs` function.
@@ -292,17 +281,6 @@ nRF9160 samples
   * Updated:
 
     * The Hello World message sent to nRF Cloud now contains a timestamp (message ID).
-
-Peripheral samples
-------------------
-
-* :ref:`radio_test` sample:
-
-  * Added a workaround for the hardware `Errata 254`_ of the nRF52840 chip.
-  * Added a workaround for the hardware `Errata 255`_ of the nRF52833 chip.
-  * Added a workaround for the hardware `Errata 256`_ of the nRF52820 chip.
-  * Added a workaround for the hardware `Errata 257`_ of the nRF52811 chip.
-  * Added a workaround for the hardware `Errata 117`_ of the nRF5340 chip.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
@@ -325,10 +303,10 @@ Matter samples
 
 * Changed settings partition size from 16 k to 32 k.
 
-* :ref:`matter_lock_sample`:
+* :ref:`matter_lock_sample` sample:
 
-    * Added the Matter Nordic UART Service (NUS) feature, which allows controlling the door lock device remotely through Bluetooth LE using two simple commands: ``Lock`` and ``Unlock``.
-      This feature is dedicated for the nRF52840 and the nRF5340 DKs.
+  * Added the Matter Nordic UART Service (NUS) feature, which allows controlling the door lock device remotely through Bluetooth LE using two simple commands: ``Lock`` and ``Unlock``.
+    This feature is dedicated for the nRF52840 and the nRF5340 DKs.
 
 NFC samples
 -----------
@@ -362,6 +340,16 @@ Other samples
 
   * Updated the machine learning model (:kconfig:option:`CONFIG_EDGE_IMPULSE_URI`) to ensure compatibility with the new Zephyr version.
 
+* :ref:`radio_test` sample:
+
+  * Added:
+
+    * A workaround for the hardware `Errata 254`_ of the nRF52840 chip.
+    * A workaround for the hardware `Errata 255`_ of the nRF52833 chip.
+    * A workaround for the hardware `Errata 256`_ of the nRF52820 chip.
+    * A workaround for the hardware `Errata 257`_ of the nRF52811 chip.
+    * A workaround for the hardware `Errata 117`_ of the nRF5340 chip.
+
 Drivers
 =======
 
@@ -386,7 +374,7 @@ Bluetooth libraries and services
 
   * Added API to enable or disable the Swift Pair provider (:c:func:`bt_le_adv_prov_swift_pair_enable`).
 
-* :ref:`bt_fast_pair_readme`:
+* :ref:`bt_fast_pair_readme` library:
 
   * Added the :c:func:`bt_fast_pair_info_cb_register` function and the :c:struct:`bt_fast_pair_info_cb` structure to register Fast Pair information callbacks.
     The :c:member:`bt_fast_pair_info_cb.account_key_written` callback can be used to notify the application about the Account Key writes.
@@ -402,10 +390,8 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme` library:
 
-  * Added:
-
-    * The function :c:func:`nrf_modem_lib_fault_strerror` to retrieve a statically allocated textual description of a given modem fault.
-      The function can be enabled using the new Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_FAULT_STRERROR`.
+  * Added the function :c:func:`nrf_modem_lib_fault_strerror` to retrieve a statically allocated textual description of a given modem fault.
+    The function can be enabled using the new Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_FAULT_STRERROR`.
 
   * Updated:
 
@@ -434,15 +420,13 @@ Libraries for networking
     * A public header file :file:`nrf_cloud_codec.h` that contains encoding and decoding functions for nRF Cloud data.
     * Defines to enable parameters to be omitted from a P-GPS request.
 
-  * Removed:
-
-    * Unused internal codec function ``nrf_cloud_format_single_cell_pos_req_json()``.
+  * Removed unused internal codec function ``nrf_cloud_format_single_cell_pos_req_json()``.
 
   * Updated:
 
     * The :c:func:`nrf_cloud_device_status_msg_encode` function now includes the service info when encoding the device status.
     * Renamed files :file:`nrf_cloud_codec.h` and :file:`nrf_cloud_codec.c` to :file:`nrf_cloud_codec_internal.h` and :file:`nrf_cloud_codec_internal.c` respectively.
-    * Standarized encode and decode function names in the codec.
+    * Standardized encode and decode function names in the codec.
     * Moved the :c:func:`nrf_cloud_location_request_json_get` function from the :file:`nrf_cloud_location.h` file to :file:`nrf_cloud_codec.h`.
       The function is now renamed to :c:func:`nrf_cloud_location_request_msg_json_encode`.
 
@@ -460,9 +444,7 @@ Libraries for networking
 
     * :file:`lwm2m_client_utils.h` includes new API for FOTA to register application callback to receive state changes and requests for the update process.
 
-  * Removed:
-
-    * The old API ``lwm2m_firmware_get_update_state_cb()``.
+  * Removed the old API ``lwm2m_firmware_get_update_state_cb()``.
 
 Libraries for NFC
 -----------------
@@ -506,7 +488,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
 * :ref:`partition_manager`:
 
-  * Fixed an issue that prevented an empty gap after static partitions for a region with START_TO_END strategy.
+  * Fixed an issue that prevents an empty gap after a static partition for a region with the ``START_TO_END`` strategy.
 
 * :ref:`nrf_desktop_config_channel_script`:
 
@@ -522,7 +504,7 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-* Added support for the downgrade prevention feature using hardware security counters (:kconfig:option:`MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`).
+* Added support for the downgrade prevention feature using hardware security counters (:kconfig:option:`CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`).
 
 Zephyr
 ======
