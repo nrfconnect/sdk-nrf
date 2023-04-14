@@ -4,7 +4,7 @@ sample:
     name: AES CCM example
 tests:
     sample.aes_ccm:
-        tags: introduction psa cc3xx
+        tags: introduction psa cc3xx cc3xx_oberon
         platform_allow: nrf5340dk_nrf5340_cpuapp_ns nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160_ns nrf9160dk_nrf9160 nrf52840dk_nrf52840
         harness: console
         harness_config:
