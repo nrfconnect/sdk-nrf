@@ -176,6 +176,11 @@ static void on_modem_init(int ret, void *ctx)
 	int err;
 	(void) err;
 
+	if (ret != 0) {
+		/* Return if modem initialization failed */
+		return;
+	}
+
 #if defined(CONFIG_PDN_LEGACY_PCO)
 	err = nrf_modem_at_printf("AT%%XEPCO=0");
 	if (err) {
