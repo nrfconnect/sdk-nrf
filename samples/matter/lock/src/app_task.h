@@ -20,6 +20,10 @@
 #include "dfu_over_smp.h"
 #endif
 
+#ifdef CONFIG_CHIP_ICD_SUBSCRIPTION_HANDLING
+#include "icd_util.h"
+#endif
+
 struct k_timer;
 struct Identify;
 
@@ -71,8 +75,8 @@ private:
 #endif
 
 #ifdef CONFIG_CHIP_NUS
-	static void NUSLockCallback(void* context);
-	static void NUSUnlockCallback(void* context);
+	static void NUSLockCallback(void *context);
+	static void NUSUnlockCallback(void *context);
 #endif
 
 #ifdef CONFIG_THREAD_WIFI_SWITCHING_CLI_SUPPORT

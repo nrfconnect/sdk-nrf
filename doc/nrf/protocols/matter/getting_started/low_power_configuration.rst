@@ -76,6 +76,45 @@ For more information about the Wi-Fi power save mechanism, see the :ref:`Wi-Fi M
 
 To enable the Wi-Fi power save mode, set the :kconfig:option:`CONFIG_NRF_WIFI_LOW_POWER` Kconfig option to ``y``.
 
+Optimize subscription report intervals
+**************************************
+
+The majority of Matter controllers establishes :ref:`subscriptions <ug_matter_overview_int_model>` to some attributes of the Matter accessory in order to receive periodic data reports.
+The node that initiates subscription (subscriber) recommends using data report interval within the requested min-max range.
+The node that receives the subscription request (publisher) may accept or modify the maximum interval value.
+
+The default implementation assumes that the publisher node accepts the requested intervals, which may result in sending data reports very often and consuming significant amounts of power.
+You can use one of the following ways to modify this behavior and select the optimal timings for your specific use case:
+
+* Enable the nRF platform's implementation of the subscription request handling and specify the preferred data report interval value.
+  The implementation looks at the value requested by the initiator and the value preferred by the publisher and selects the higher of the two.
+  To enable it, complete the following steps:
+
+  1. Set the :kconfig:option:`CONFIG_CHIP_ICD_SUBSCRIPTION_HANDLING` Kconfig option to ``y``.
+  2. Set the :kconfig:option:`CONFIG_CHIP_MAX_PREFERRED_SUBSCRIPTION_REPORT_INTERVAL` Kconfig option to the preferred value of the maximum data report interval in seconds.
+
+* Provide your own policy and implementation of the subscription request handling.
+  To do this, implement the ``OnSubscriptionRequested`` method in your application to set values of subscription report intervals that are appropriate for your use case.
+  See the following code snippet for an example of how this implementation could look:
+
+  .. code-block::
+
+     #include <app/ReadHandler.h>
+
+     class SubscriptionApplicationCallback : public chip::app::ReadHandler::ApplicationCallback
+     {
+        CHIP_ERROR OnSubscriptionRequested(chip::app::ReadHandler & aReadHandler,
+                                           chip::Transport::SecureSession & aSecureSession) override;
+     };
+
+     CHIP_ERROR SubscriptionApplicationCallback::OnSubscriptionRequested(chip::app::ReadHandler & aReadHandler,
+                                                          chip::Transport::SecureSession & aSecureSession)
+     {
+        /* Set the interval in seconds appropriate for your application use case, e.g. 15 seconds. */
+        uint32_t exampleMaxInterval = 15;
+        return aReadHandler.SetReportingIntervals(exampleMaxInterval);
+     }
+
 Disable serial logging
 **********************
 
