@@ -95,7 +95,7 @@ jobs:
         else
             west init -m ${{ inputs.nrf_repo }} --mr ${{ inputs.nrf_rev }}
         fi
-        west update zephyr
+        west update -n zephyr bsim
         west zephyr-export
         echo "ZEPHYR_BASE=$(pwd)/zephyr" >> $GITHUB_ENV
         # debug
