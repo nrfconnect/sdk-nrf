@@ -426,6 +426,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE:
 		LOG_DBG("Registration update started");
+		k_mutex_unlock(&lte_mutex);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_COMPLETE:
