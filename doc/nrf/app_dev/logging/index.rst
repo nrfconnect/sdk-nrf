@@ -84,7 +84,7 @@ UART
 The UART interface can be configured as a logging backend using the following Kconfig options:
 
 * :kconfig:option:`CONFIG_LOG_BACKEND_UART` - This option enables the UART logging backend.
-* :kconfig:option:`CONFIG_LOG_BACKEND_UART_SYST_ENABLE` - This option is used to output logs in system format.
+* :kconfig:option:`CONFIG_LOG_BACKEND_UART_OUTPUT_SYST` - This option is used to output logs in system format.
 
 For information about how to see UART output, see :ref:`putty`.
 
@@ -101,7 +101,7 @@ SEGGER's J-Link RTT backend logging can be handled with the following Kconfig op
 * :kconfig:option:`CONFIG_LOG_BACKEND_RTT_OUTPUT_BUFFER_SIZE` - This option defines the size of the buffer used for storing data prepared for sending.
 * :kconfig:option:`CONFIG_LOG_BACKEND_RTT_RETRY_CNT` - This option defines the number of retries before a message is dropped.
 * :kconfig:option:`CONFIG_LOG_BACKEND_RTT_RETRY_DELAY_MS` - This option defines the time interval between transmission retries.
-* :kconfig:option:`CONFIG_LOG_BACKEND_RTT_SYST_ENABLE` - This option is used to output logs in the system format.
+* :kconfig:option:`CONFIG_LOG_BACKEND_RTT_OUTPUT_SYST` - This option is used to output logs in the system format.
 * :kconfig:option:`CONFIG_LOG_BACKEND_RTT_MESSAGE_SIZE` - This option defines the maximum message size.
 * :kconfig:option:`CONFIG_LOG_BACKEND_RTT_BUFFER` - This option selects the index of the buffer used for logger output.
 * :kconfig:option:`CONFIG_LOG_BACKEND_RTT_BUFFER_SIZE` - This option defines the size of the buffer used for logger output.
