@@ -35,13 +35,15 @@ manifest:
       url-base: https://github.com/memfault
     - name: ant-nrfconnect
       url-base: https://github.com/ant-nrfconnect
+    - name: babblesim
+      url-base: https://github.com/BabbleSim
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
   defaults:
     remote: ncs
 
-  group-filter: [-homekit, -nrf-802154, -dragoon, -find-my, -ant]
+  group-filter: [-homekit, -nrf-802154, -dragoon, -find-my, -ant, -babblesim]
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -229,6 +231,13 @@ manifest:
       remote: ant-nrfconnect
       groups:
         - ant
+    - name: bsim
+      repo-path: bsim_west
+      remote: babblesim
+      revision: 908ffde6298a937c6549dbfa843a62caab26bfc5
+      import:
+        path-prefix: tools
+
 
   # West-related configuration for the nrf repository.
   self:
