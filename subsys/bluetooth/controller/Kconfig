@@ -382,8 +382,8 @@ config BT_CTLR_SDC_PAWR_SYNC
 if BT_CTLR_SDC_PAWR_SYNC
 config BT_CTLR_SDC_PERIODIC_SYNC_RSP_TX_BUFFER_COUNT
 	int "BT_CTLR_SDC_PERIODIC_SYNC_RSP_TX_BUFFER_COUNT"
-	range 0 255
-	default 0
+	range 1 255
+	default 1
 	help
 	  Maximum number of response data packets that can be buffered at a time.
 	  Increasing this will make it possible to prepare multiple responses ahead of time.
