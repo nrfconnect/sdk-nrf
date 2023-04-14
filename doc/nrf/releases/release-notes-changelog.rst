@@ -197,6 +197,8 @@ nRF Desktop
     The generation allows to distinguish configurations that use the same board and bootloader, but are not interoperable.
     The value can be read through the :ref:`nrf_desktop_config_channel`.
     On the firmware side, fetching the values is handled by the :ref:`nrf_desktop_dfu`.
+  * Unpairing old peers right after a successful erase advertising procedure.
+    This prevents blocking the bond slots until the subsequent erase advertising procedure is triggered.
 
 * Updated:
 
