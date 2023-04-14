@@ -278,6 +278,13 @@ static void swap_bt_stack_peer_id(void)
 		module_set_state(MODULE_STATE_ERROR);
 		return;
 	}
+
+	err = bt_unpair(bt_stack_id_lut[TEMP_PEER_ID], NULL);
+	if (err) {
+		LOG_ERR("Cannot unpair for temporary peer Bluetooth identity: %" PRIu8,
+			bt_stack_id_lut[TEMP_PEER_ID]);
+		module_set_state(MODULE_STATE_ERROR);
+	}
 }
 
 static int remove_peers(uint8_t identity)
@@ -778,6 +785,19 @@ static int init(void)
 		storage_data_overwrite();
 		bt_stack_id_lut_valid = true;
 		cur_peer_id_valid = true;
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BT_PERIPHERAL)) {
+		/* Ensure that there are no peers bonded to temporary peer Bluetooth identity.
+		 * A bonded peer may not be properly removed e.g. in case of spurious power down.
+		 */
+		int err = bt_unpair(bt_stack_id_lut[TEMP_PEER_ID], NULL);
+
+		if (err) {
+			LOG_ERR("Cannot unpair for temporary peer Bluetooth identity: %" PRIu8,
+				bt_stack_id_lut[TEMP_PEER_ID]);
+			module_set_state(MODULE_STATE_ERROR);
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO)) {
