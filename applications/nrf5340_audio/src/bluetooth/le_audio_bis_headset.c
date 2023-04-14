@@ -6,6 +6,7 @@
 
 #include "le_audio.h"
 
+#include <zephyr/zbus/zbus.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/audio/pacs.h>
@@ -14,7 +15,7 @@
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
 
 #include "macros_common.h"
-#include "ctrl_events.h"
+#include "nrf5340_audio_common.h"
 #include "hw_codec.h"
 #include "channel_assignment.h"
 
@@ -23,6 +24,9 @@ LOG_MODULE_REGISTER(bis_headset, CONFIG_BLE_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_BT_BAP_BROADCAST_SNK_STREAM_COUNT <= 2,
 	     "A maximum of two broadcast streams are currently supported");
+
+ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
+		 ZBUS_MSG_INIT(0));
 
 struct audio_codec_info {
 	uint8_t id;
@@ -75,6 +79,17 @@ static bool init_routine_completed;
 static bool playing_state = true;
 
 static int bis_headset_cleanup(bool from_sync_lost_cb);
+
+static void le_audio_event_publish(enum le_audio_evt_type event)
+{
+	int ret;
+	struct le_audio_msg msg;
+
+	msg.event = event;
+
+	ret = zbus_chan_pub(&le_audio_chan, &msg, K_NO_WAIT);
+	ERR_CHK(ret);
+}
 
 static void print_codec(const struct audio_codec_info *codec)
 {
@@ -143,20 +158,14 @@ static bool adv_data_parse(struct bt_data *data, void *user_data)
 
 static void stream_started_cb(struct bt_bap_stream *stream)
 {
-	int ret;
-
-	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
-	ERR_CHK(ret);
+	le_audio_event_publish(LE_AUDIO_EVT_STREAMING);
 
 	LOG_INF("Stream index %d started", active_stream_index);
 }
 
 static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
-	int ret;
-
-	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
-	ERR_CHK(ret);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
 
 	LOG_INF("Stream index %d stopped. Reason: %d", active_stream_index, reason);
 }
@@ -273,7 +282,6 @@ static void pa_sync_lost_cb(struct bt_bap_broadcast_sink *sink)
 
 static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap_base *base)
 {
-	int ret;
 	bool suitable_stream_found = false;
 
 	if (init_routine_completed) {
@@ -323,8 +331,7 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 		active_stream.stream = &audio_streams[active_stream_index];
 		active_stream.codec = &audio_codec_info[active_stream_index];
 
-		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_CONFIG_RECEIVED);
-		ERR_CHK(ret);
+		le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED);
 
 		LOG_DBG("Channel %s active",
 			((active_stream_index == AUDIO_CH_L) ? CH_L_TAG : CH_R_TAG));

@@ -66,7 +66,6 @@ zephyr_library_include_directories(
     src/audio
     src/bluetooth
     src/drivers
-    src/events
     src/modules
     src/utils
     src/utils/macros
@@ -79,7 +78,6 @@ zephyr_library_include_directories(app PRIVATE
 add_subdirectory(src/audio)
 add_subdirectory(src/bluetooth)
 add_subdirectory(src/drivers)
-add_subdirectory(src/events)
 add_subdirectory(src/modules)
 add_subdirectory(src/utils)
 

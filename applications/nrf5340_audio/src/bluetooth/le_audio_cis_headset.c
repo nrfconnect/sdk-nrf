@@ -6,6 +6,7 @@
 
 #include "le_audio.h"
 
+#include <zephyr/zbus/zbus.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/hci.h>
@@ -18,13 +19,16 @@
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
 
 #include "macros_common.h"
-#include "ctrl_events.h"
+#include "nrf5340_audio_common.h"
 #include "ble_audio_services.h"
 #include "ble_hci_vsc.h"
 #include "channel_assignment.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(cis_headset, CONFIG_BLE_LOG_LEVEL);
+
+ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
+		 ZBUS_MSG_INIT(0));
 
 #define CHANNEL_COUNT_1 BIT(0)
 #define BLE_ISO_LATENCY_MS 10
@@ -66,6 +70,17 @@ static const struct bt_data ad_peer[] = {
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_PACS_VAL)),
 	BT_CSIP_DATA_RSI(csip_rsi)
 };
+
+static void le_audio_event_publish(enum le_audio_evt_type event)
+{
+	int ret;
+	struct le_audio_msg msg;
+
+	msg.event = event;
+
+	ret = zbus_chan_pub(&le_audio_chan, &msg, K_NO_WAIT);
+	ERR_CHK(ret);
+}
 
 /* Callback for locking state change from server side */
 static void csip_lock_changed_cb(struct bt_conn *conn, struct bt_csip_set_member_svc_inst *csip,
@@ -271,8 +286,6 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 			 const struct bt_codec *codec, struct bt_bap_stream **stream,
 			 struct bt_codec_qos_pref *const pref)
 {
-	int ret;
-
 	LOG_DBG("LC3 configure call-back");
 
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
@@ -295,8 +308,7 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 			if (dir == BT_AUDIO_DIR_SINK) {
 				LOG_DBG("BT_AUDIO_DIR_SINK");
 				print_codec(codec, dir);
-				ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_CONFIG_RECEIVED);
-				ERR_CHK(ret);
+				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED);
 			}
 #if CONFIG_STREAM_BIDIRECTIONAL
 			else if (dir == BT_AUDIO_DIR_SOURCE) {
@@ -332,14 +344,11 @@ static int lc3_reconfig_cb(struct bt_bap_stream *stream, enum bt_audio_dir dir,
 
 static int lc3_qos_cb(struct bt_bap_stream *stream, const struct bt_codec_qos *qos)
 {
-	int ret;
-
-	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_PRES_DELAY_SET);
-	ERR_CHK(ret);
+	le_audio_event_publish(LE_AUDIO_EVT_PRES_DELAY_SET);
 
 	LOG_DBG("QoS: stream %p qos %p", (void *)stream, (void *)qos);
 
-	return ret;
+	return 0;
 }
 
 static int lc3_enable_cb(struct bt_bap_stream *stream, const struct bt_codec_data *meta,
@@ -377,36 +386,27 @@ static int lc3_metadata_cb(struct bt_bap_stream *stream, const struct bt_codec_d
 
 static int lc3_disable_cb(struct bt_bap_stream *stream)
 {
-	int ret;
-
 	LOG_DBG("Disable: stream %p", (void *)stream);
 
-	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
-	ERR_CHK(ret);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
 
 	return 0;
 }
 
 static int lc3_stop_cb(struct bt_bap_stream *stream)
 {
-	int ret;
-
 	LOG_DBG("Stop: stream %p", (void *)stream);
 
-	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
-	ERR_CHK(ret);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
 
 	return 0;
 }
 
 static int lc3_release_cb(struct bt_bap_stream *stream)
 {
-	int ret;
-
 	LOG_DBG("Release: stream %p", (void *)stream);
 
-	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
-	ERR_CHK(ret);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
 
 	return 0;
 }
@@ -467,12 +467,9 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 
 static void stream_start_cb(struct bt_bap_stream *stream)
 {
-	int ret;
-
 	LOG_INF("Stream %p started", stream);
 
-	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
-	ERR_CHK(ret);
+	le_audio_event_publish(LE_AUDIO_EVT_STREAMING);
 }
 
 static void stream_released_cb(struct bt_bap_stream *stream)
@@ -497,16 +494,12 @@ static void stream_enabled_cb(struct bt_bap_stream *stream)
 
 static void stream_stop_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
-	int ret;
+	LOG_DBG("Stream %p stopped. Reason: %d", stream, reason);
 
-	LOG_INF("Stream stopped. Reason: %d", reason);
 #if CONFIG_STREAM_BIDIRECTIONAL
 	atomic_clear(&iso_tx_pool_alloc);
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
-	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
-	ERR_CHK(ret);
-
-	LOG_INF("Stream %p stopped", stream);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
 }
 
 static void connected_cb(struct bt_conn *conn, uint8_t err)

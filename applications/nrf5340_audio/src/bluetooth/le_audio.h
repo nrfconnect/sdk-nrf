@@ -126,18 +126,6 @@
 #endif /* CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE */
 #endif /* CONFIG_TRANSPORT_BIS */
 
-enum le_audio_evt_type {
-	LE_AUDIO_EVT_CONFIG_RECEIVED,
-	LE_AUDIO_EVT_PRES_DELAY_SET,
-	LE_AUDIO_EVT_STREAMING,
-	LE_AUDIO_EVT_NOT_STREAMING,
-	LE_AUDIO_EVT_NUM_EVTS
-};
-
-struct le_audio_evt {
-	enum le_audio_evt_type le_audio_evt_type;
-};
-
 /**
  * @brief Callback for receiving Bluetooth LE Audio data
  *

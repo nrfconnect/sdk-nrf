@@ -6,6 +6,7 @@
 
 #include "le_audio.h"
 
+#include <zephyr/zbus/zbus.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/hci.h>
@@ -17,13 +18,16 @@
 #include <../subsys/bluetooth/audio/bap_iso.h>
 
 #include "macros_common.h"
-#include "ctrl_events.h"
+#include "nrf5340_audio_common.h"
 #include "ble_hci_vsc.h"
 #include "ble_audio_services.h"
 #include "channel_assignment.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(cis_gateway, CONFIG_BLE_LOG_LEVEL);
+
+ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
+		 ZBUS_MSG_INIT(0));
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 #define CIS_CONN_RETRY_TIMES 5
@@ -112,6 +116,17 @@ static struct bt_bap_unicast_client_discover_params audio_source_discover_param[
 
 static int discover_source(struct bt_conn *conn);
 #endif /* CONFIG_STREAM_BIDIRECTIONAL */
+
+static void le_audio_event_publish(enum le_audio_evt_type event)
+{
+	int ret;
+	struct le_audio_msg msg;
+
+	msg.event = event;
+
+	ret = zbus_chan_pub(&le_audio_chan, &msg, K_NO_WAIT);
+	ERR_CHK(ret);
+}
 
 /**
  * @brief  Get the common presentation delay for all headsets.
@@ -495,7 +510,6 @@ static void stream_enabled_cb(struct bt_bap_stream *stream)
 
 static void stream_started_cb(struct bt_bap_stream *stream)
 {
-	int ret;
 	uint8_t channel_index;
 
 	/* Reset sequence number for the stream */
@@ -505,8 +519,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 
 	LOG_INF("Stream %p started", (void *)stream);
 
-	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
-	ERR_CHK(ret);
+	le_audio_event_publish(LE_AUDIO_EVT_STREAMING);
 }
 
 static void stream_metadata_updated_cb(struct bt_bap_stream *stream)
@@ -536,20 +549,17 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 
 	if (!ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_BAP_EP_STATE_STREAMING) &&
 	    !ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
-		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
-		ERR_CHK(ret);
+		le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
 	}
 }
 
 static void stream_released_cb(struct bt_bap_stream *stream)
 {
-	int ret;
 	LOG_DBG("Audio Stream %p released", (void *)stream);
 
 	if (!ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_BAP_EP_STATE_STREAMING) &&
 	    !ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
-		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
-		ERR_CHK(ret);
+		le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
 	}
 }
 
@@ -1304,8 +1314,7 @@ static void le_audio_play_pause_cb(bool play)
 			}
 		}
 	} else {
-		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
-		ERR_CHK(ret);
+		le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
 
 		if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep,
 				   BT_BAP_EP_STATE_STREAMING)) {

@@ -6,6 +6,7 @@
 
 #include "le_audio.h"
 
+#include <zephyr/zbus/zbus.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/audio/bap_lc3_preset.h>
@@ -14,13 +15,16 @@
 #include <../subsys/bluetooth/audio/bap_iso.h>
 
 #include "macros_common.h"
-#include "ctrl_events.h"
+#include "nrf5340_audio_common.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bis_gateway, CONFIG_BLE_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT <= 2,
 	     "A maximum of two audio streams are currently supported");
+
+ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
+		 ZBUS_MSG_INIT(0));
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 #define STANDARD_QUALITY_16KHZ 16000
@@ -52,6 +56,17 @@ static uint32_t seq_num[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
 static struct bt_le_ext_adv *adv;
 
 static le_audio_timestamp_cb timestamp_cb;
+
+static void le_audio_event_publish(enum le_audio_evt_type event)
+{
+	int ret;
+	struct le_audio_msg msg;
+
+	msg.event = event;
+
+	ret = zbus_chan_pub(&le_audio_chan, &msg, K_NO_WAIT);
+	ERR_CHK(ret);
+}
 
 static bool is_iso_buffer_full(uint8_t idx)
 {
@@ -107,14 +122,12 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 
 static void stream_started_cb(struct bt_bap_stream *stream)
 {
-	int ret;
 	uint8_t index = 0;
 
 	get_stream_index(stream, &index);
 	seq_num[index] = 0;
 
-	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
-	ERR_CHK(ret);
+	le_audio_event_publish(LE_AUDIO_EVT_STREAMING);
 
 	LOG_INF("Broadcast source %p started", (void *)stream);
 }
@@ -123,8 +136,7 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
 	int ret;
 
-	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
-	ERR_CHK(ret);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
 
 	LOG_INF("Broadcast source %p stopped. Reason: %d", (void *)stream, reason);
 
