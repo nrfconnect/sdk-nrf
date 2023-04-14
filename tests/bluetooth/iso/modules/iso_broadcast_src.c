@@ -36,6 +36,7 @@ static K_SEM_DEFINE(sem_big_term, 0, CONFIG_BIS_ISO_CHAN_COUNT_MAX);
 
 static uint16_t seq_num;
 static bool running;
+K_SEM_DEFINE(tx_sent, 0, 1);
 
 static void iso_connected(struct bt_iso_chan *chan)
 {
@@ -52,9 +53,15 @@ static void iso_disconnected(struct bt_iso_chan *chan, uint8_t reason)
 	k_sem_give(&sem_big_term);
 }
 
+static void iso_sent(struct bt_iso_chan *chan)
+{
+	k_sem_give(&tx_sent);
+}
+
 static struct bt_iso_chan_ops iso_ops = {
 	.connected = iso_connected,
 	.disconnected = iso_disconnected,
+	.sent = iso_sent,
 };
 
 static struct bt_iso_chan_io_qos iso_tx_qos = {
@@ -108,13 +115,23 @@ struct broadcaster_params broadcast_params = { .sdu_size = 10,
 
 static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 {
+	static uint8_t initial_send = 2;
+
 	while (1) {
 		int ret;
 
 		k_sleep(K_USEC(big_create_param.interval));
 		if (!running) {
 			k_msleep(100);
+			initial_send = 2;
 			continue;
+		}
+
+		if (!initial_send) {
+			ret = k_sem_take(&tx_sent, K_USEC(big_create_param.interval * 2));
+			if (ret) {
+				LOG_ERR("Sent semaphore timed out");
+			}
 		}
 
 		for (uint8_t chan = 0U; chan < broadcast_params.num_bis; chan++) {
@@ -122,9 +139,7 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 
 			buf = net_buf_alloc(&bis_tx_pool, K_MSEC(BUF_ALLOC_TIMEOUT));
 			if (!buf) {
-				LOG_ERR("Data buffer allocate timeout on channel"
-					" %u",
-					chan);
+				LOG_ERR("Data buffer allocate timeout on channel %u", chan);
 			}
 
 			net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
@@ -142,10 +157,13 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 
 		iso_send_count++;
 		seq_num++;
+		if (initial_send) {
+			initial_send--;
+		}
 
 		if ((iso_send_count % CONFIG_PRINT_CONN_INTERVAL) == 0) {
 			LOG_INF("Sending value %u", iso_send_count);
-			if ((iso_send_count/CONFIG_PRINT_CONN_INTERVAL) % 2 == 0) {
+			if ((iso_send_count / CONFIG_PRINT_CONN_INTERVAL) % 2 == 0) {
 				ret = gpio_pin_set_dt(&led, 1);
 			} else {
 				ret = gpio_pin_set_dt(&led, 0);
@@ -268,7 +286,8 @@ int broadcaster_print_cfg(const struct shell *shell, size_t argc, char **argv)
 
 	shell_print(
 		shell,
-		">sdu_size %d\n phy %d\n rtn %d\n num_bis %d\n sdu_interval_us %d\n latency_ms %d\n packing %d\n framing %d",
+		"sdu_size %d\n phy %d\n rtn %d\n num_bis %d\n sdu_interval_us %d\n" \
+		"latency_ms %d\n packing %d\n framing %d",
 		broadcast_params.sdu_size, broadcast_params.phy, broadcast_params.rtn,
 		broadcast_params.num_bis, broadcast_params.sdu_interval_us,
 		broadcast_params.latency_ms, broadcast_params.packing, broadcast_params.framing);
@@ -364,10 +383,10 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 			shell_error(shell, "Missing option parameter");
 			break;
 		case '?':
-			shell_error(shell, "Unknown option");
+			shell_error(shell, "Unknown option: %c", opt);
 			break;
 		default:
-			shell_error(shell, "Invalid option");
+			shell_error(shell, "Invalid option: %c", opt);
 			break;
 		}
 	}
@@ -377,7 +396,6 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 
 int iso_broadcast_src_init(void)
 {
-	int ret;
 	running = false;
 
 	if (!gpio_is_ready_dt(&led)) {

@@ -92,17 +92,16 @@ static void scan_recv(const struct bt_le_scan_recv_info *info, struct net_buf_si
 
 	bt_addr_le_to_str(info->addr, le_addr, sizeof(le_addr));
 	LOG_DBG("[DEVICE]: %s, AD evt type %u, Tx Pwr: %i, RSSI %i %s "
-		   "C:%u S:%u D:%u SR:%u E:%u Prim: %s, Secn: %s, "
-		   "Interval: 0x%04x (%u us), SID: %u",
-		   le_addr, info->adv_type, info->tx_power, info->rssi, name,
-		   (info->adv_props & BT_GAP_ADV_PROP_CONNECTABLE) != 0,
-		   (info->adv_props & BT_GAP_ADV_PROP_SCANNABLE) != 0,
-		   (info->adv_props & BT_GAP_ADV_PROP_DIRECTED) != 0,
-		   (info->adv_props & BT_GAP_ADV_PROP_SCAN_RESPONSE) != 0,
-		   (info->adv_props & BT_GAP_ADV_PROP_EXT_ADV) != 0, phy2str(info->primary_phy),
-		   phy2str(info->secondary_phy), info->interval,
-		   BT_CONN_INTERVAL_TO_US(info->interval),
-		   info->sid);
+		"C:%u S:%u D:%u SR:%u E:%u Prim: %s, Secn: %s, "
+		"Interval: 0x%04x (%u us), SID: %u",
+		le_addr, info->adv_type, info->tx_power, info->rssi, name,
+		(info->adv_props & BT_GAP_ADV_PROP_CONNECTABLE) != 0,
+		(info->adv_props & BT_GAP_ADV_PROP_SCANNABLE) != 0,
+		(info->adv_props & BT_GAP_ADV_PROP_DIRECTED) != 0,
+		(info->adv_props & BT_GAP_ADV_PROP_SCAN_RESPONSE) != 0,
+		(info->adv_props & BT_GAP_ADV_PROP_EXT_ADV) != 0, phy2str(info->primary_phy),
+		phy2str(info->secondary_phy), info->interval,
+		BT_CONN_INTERVAL_TO_US(info->interval), info->sid);
 
 	if (!per_adv_found && info->interval) {
 		per_adv_found = true;
@@ -126,30 +125,29 @@ static void sync_cb(struct bt_le_per_adv_sync *sync, struct bt_le_per_adv_sync_s
 	bt_addr_le_to_str(info->addr, le_addr, sizeof(le_addr));
 
 	LOG_DBG("PER_ADV_SYNC[%u]: [DEVICE]: %s synced, "
-		   "Interval 0x%04x (%u ms), PHY %s",
-		   bt_le_per_adv_sync_get_index(sync), le_addr, info->interval,
-		    info->interval * 5 / 4,
-		   phy2str(info->phy));
+		"Interval 0x%04x (%u ms), PHY %s",
+		bt_le_per_adv_sync_get_index(sync), le_addr, info->interval, info->interval * 5 / 4,
+		phy2str(info->phy));
 
 	k_sem_give(&sem_per_sync);
 }
 
 static void term_cb(struct bt_le_per_adv_sync *sync,
-			const struct bt_le_per_adv_sync_term_info *info)
+		    const struct bt_le_per_adv_sync_term_info *info)
 {
 	char le_addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(info->addr, le_addr, sizeof(le_addr));
 
 	LOG_DBG("PER_ADV_SYNC[%u]: [DEVICE]: %s sync terminated",
-		   bt_le_per_adv_sync_get_index(sync), le_addr);
+		bt_le_per_adv_sync_get_index(sync), le_addr);
 
 	per_adv_lost = true;
 	k_sem_give(&sem_per_sync_lost);
 }
 
 static void recv_cb(struct bt_le_per_adv_sync *sync,
-			const struct bt_le_per_adv_sync_recv_info *info, struct net_buf_simple *buf)
+		    const struct bt_le_per_adv_sync_recv_info *info, struct net_buf_simple *buf)
 {
 	char le_addr[BT_ADDR_LE_STR_LEN];
 	char data_str[129];
@@ -158,9 +156,9 @@ static void recv_cb(struct bt_le_per_adv_sync *sync,
 	bin2hex(buf->data, buf->len, data_str, sizeof(data_str));
 
 	LOG_DBG("PER_ADV_SYNC[%u]: [DEVICE]: %s, tx_power %i, "
-		   "RSSI %i, CTE %u, data length %u, data: %s",
-		   bt_le_per_adv_sync_get_index(sync), le_addr, info->tx_power, info->rssi,
-		   info->cte_type, buf->len, data_str);
+		"RSSI %i, CTE %u, data length %u, data: %s",
+		bt_le_per_adv_sync_get_index(sync), le_addr, info->tx_power, info->rssi,
+		info->cte_type, buf->len, data_str);
 }
 
 static void biginfo_cb(struct bt_le_per_adv_sync *sync, const struct bt_iso_biginfo *biginfo)
@@ -170,15 +168,15 @@ static void biginfo_cb(struct bt_le_per_adv_sync *sync, const struct bt_iso_bigi
 	bt_addr_le_to_str(biginfo->addr, le_addr, sizeof(le_addr));
 
 	LOG_DBG("BIG INFO[%u]: [DEVICE]: %s, sid 0x%02x, "
-		   "num_bis %u, nse %u, interval 0x%04x (%u ms), "
-		   "bn %u, pto %u, irc %u, max_pdu %u, "
-		   "sdu_interval %u us, max_sdu %u, phy %s, "
-		   "%s framing, %sencrypted",
-		   bt_le_per_adv_sync_get_index(sync), le_addr, biginfo->sid, biginfo->num_bis,
-		   biginfo->sub_evt_count, biginfo->iso_interval, (biginfo->iso_interval * 5 / 4),
-		   biginfo->burst_number, biginfo->offset, biginfo->rep_count, biginfo->max_pdu,
-		   biginfo->sdu_interval, biginfo->max_sdu, phy2str(biginfo->phy),
-		   biginfo->framing ? "with" : "without", biginfo->encryption ? "" : "not ");
+		"num_bis %u, nse %u, interval 0x%04x (%u ms), "
+		"bn %u, pto %u, irc %u, max_pdu %u, "
+		"sdu_interval %u us, max_sdu %u, phy %s, "
+		"%s framing, %sencrypted",
+		bt_le_per_adv_sync_get_index(sync), le_addr, biginfo->sid, biginfo->num_bis,
+		biginfo->sub_evt_count, biginfo->iso_interval, (biginfo->iso_interval * 5 / 4),
+		biginfo->burst_number, biginfo->offset, biginfo->rep_count, biginfo->max_pdu,
+		biginfo->sdu_interval, biginfo->max_sdu, phy2str(biginfo->phy),
+		biginfo->framing ? "with" : "without", biginfo->encryption ? "" : "not ");
 
 	k_sem_give(&sem_per_big_info);
 }
@@ -191,7 +189,7 @@ static struct bt_le_per_adv_sync_cb sync_callbacks = {
 };
 
 static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *info,
-			 struct net_buf *buf)
+		     struct net_buf *buf)
 {
 	int ret = 0;
 	uint32_t count = 0;
@@ -220,9 +218,9 @@ static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *in
 
 	if ((count % CONFIG_PRINT_CONN_INTERVAL) == 0) {
 		LOG_INF("RX. Count: %d, Failed: %d, Success: %d", count, counts_fail,
-			   counts_success);
+			counts_success);
 
-		if ((count/CONFIG_PRINT_CONN_INTERVAL) % 2 == 0) {
+		if ((count / CONFIG_PRINT_CONN_INTERVAL) % 2 == 0) {
 			ret = gpio_pin_set_dt(&led, 1);
 		} else {
 			ret = gpio_pin_set_dt(&led, 0);
@@ -480,8 +478,7 @@ static int argument_check(const struct shell *shell, uint8_t const *const input)
 	return arg_val;
 }
 
-static struct option long_options[] = {
-					{ "num_bis:", required_argument, NULL, 'n' },
+static struct option long_options[] = { { "num_bis:", required_argument, NULL, 'n' },
 					{ 0, 0, 0, 0 } };
 
 static const char short_options[] = "n:";
@@ -528,8 +525,9 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(broadcast_sink_cmd,
-	SHELL_CMD(start, NULL, "Start ISO broadcast sink.", iso_broadcast_sink_start),
-	SHELL_CMD_ARG(set, NULL, "set", set_param, 3, 0),
-	SHELL_SUBCMD_SET_END);
+			       SHELL_CMD(start, NULL, "Start ISO broadcast sink.",
+					 iso_broadcast_sink_start),
+			       SHELL_CMD_ARG(set, NULL, "set", set_param, 3, 0),
+			       SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(brcast_sink, &broadcast_sink_cmd, "ISO Broadcast sink commands", NULL);

@@ -10,7 +10,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, 3);
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -21,9 +21,9 @@ void main(void)
 		LOG_ERR("Bluetooth init failed (err %d)", err);
 	}
 
-	err = iso_broadcaster_init();
+	err = iso_broadcast_src_init();
 	if (err) {
-		LOG_ERR("iso_broadcaster_init failed (err %d)", err);
+		LOG_ERR("iso_broadcast_src_init failed (err %d)", err);
 	}
 
 	err = iso_broadcast_sink_init();
@@ -31,9 +31,5 @@ void main(void)
 		LOG_ERR("iso_broadcaster_sink_init failed (err %d)", err);
 	}
 
-	while (true) {
-		k_msleep(1000);
-	}
+	return 0;
 }
-
-
