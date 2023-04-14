@@ -3,19 +3,13 @@ sample:
   name: Matter Light Switch
 tests:
   # Excluded in quarantine.yaml to limit resources usage in integration builds
-  sample.matter.light_switch.debug:
-    build_only: true
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
   sample.matter.light_switch.release:
     build_only: true
     extra_args: CONF_FILE=prj_release.conf
     integration_platforms:
-    - nrf52840dk_nrf52840
-    - nrf5340dk_nrf5340_cpuapp
-    - nrf7002dk_nrf5340_cpuapp
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
   sample.matter.light_switch.smp_dfu:
     build_only: true
@@ -29,15 +23,12 @@ tests:
     extra_args: CONF_FILE=prj_no_dfu.conf
     integration_platforms:
       - nrf21540dk_nrf52840
-    platform_allow: nrf52840dk_nrf52840 nrf21540dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf21540dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+      nrf7002dk_nrf5340_cpuapp
   # ---------------
-  sample.matter.light_switch.debug.nrf5340dk:
+  sample.matter.light_switch.debug:
     build_only: true
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
-  sample.matter.light_switch.debug.nrf7002dk:
-    build_only: true
-    integration_platforms:
       - nrf7002dk_nrf5340_cpuapp
-    platform_allow: nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
