@@ -25,9 +25,6 @@ LOG_MODULE_REGISTER(slm_gnss, CONFIG_SLM_LOG_LEVEL);
 #define SERVICE_INFO_GNSS \
 	"{\"state\":{\"reported\":{\"device\": {\"serviceInfo\":{\"ui\":[\"GNSS\"]}}}}}"
 
-#define MODEM_AT_RSP \
-	"{\"appId\":\"MODEM\", \"messageType\":\"RSP\", \"data\":\"%s\"}"
-
 #define LOCATION_REPORT_MS 5000
 
 /**@brief GNSS operations. */
@@ -538,12 +535,11 @@ static void on_gnss_evt_pvt(void)
 	}
 }
 
-static int do_cloud_send_msg(const char *message, int len)
+static int do_cloud_send_obj(struct nrf_cloud_obj *const obj)
 {
 	int err;
 	struct nrf_cloud_tx_data msg = {
-		.data.ptr = message,
-		.data.len = len,
+		.obj = obj,
 		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
 		.qos = MQTT_QOS_0_AT_MOST_ONCE
 	};
@@ -553,6 +549,8 @@ static int do_cloud_send_msg(const char *message, int len)
 		LOG_ERR("nrf_cloud_send failed, error: %d", err);
 	}
 
+	(void)nrf_cloud_obj_free(obj);
+
 	return err;
 }
 
@@ -560,13 +558,12 @@ static void send_location(struct nrf_modem_gnss_nmea_data_frame * const nmea_dat
 {
 	static int64_t last_ts_ms = NRF_CLOUD_NO_TIMESTAMP;
 	int err;
-	char *json_msg = NULL;
-	cJSON *msg_obj = NULL;
 	struct nrf_cloud_gnss_data gnss = {
 		.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
 		.type = NRF_CLOUD_GNSS_TYPE_MODEM_NMEA,
 		.mdm_nmea = nmea_data
 	};
+	NRF_CLOUD_OBJ_JSON_DEFINE(msg_obj);
 
 	/* On failure, NRF_CLOUD_NO_TIMESTAMP is used and the timestamp is omitted */
 	(void)date_time_now(&gnss.ts_ms);
@@ -579,28 +576,10 @@ static void send_location(struct nrf_modem_gnss_nmea_data_frame * const nmea_dat
 		return;
 	}
 
-	msg_obj = cJSON_CreateObject();
-	if (!msg_obj) {
-		return;
-	}
-
-	err = nrf_cloud_gnss_msg_json_encode(&gnss, msg_obj);
-	if (err) {
-		goto clean_up;
-	}
-
-	json_msg = cJSON_PrintUnformatted(msg_obj);
-	if (!json_msg) {
-		err = -ENOMEM;
-		goto clean_up;
-	}
-
-	err = do_cloud_send_msg(json_msg, strlen(json_msg));
-
-clean_up:
-	cJSON_Delete(msg_obj);
-	if (json_msg) {
-		cJSON_free((void *)json_msg);
+	/* Encode the location data into a device message */
+	err = nrf_cloud_obj_gnss_msg_create(&msg_obj, &gnss);
+	if (!err) {
+		err = do_cloud_send_obj(&msg_obj);
 	}
 
 	if (err) {
@@ -820,7 +799,7 @@ static void on_cloud_evt_location_data_received(const struct nrf_cloud_data *con
 static void cloud_cmd_wk(struct k_work *work)
 {
 	int ret;
-	char *cmd_rsp;
+	NRF_CLOUD_OBJ_JSON_DEFINE(cmd_rsp_obj);
 
 	ARG_UNUSED(work);
 
@@ -839,83 +818,65 @@ static void cloud_cmd_wk(struct k_work *work)
 			at_buf[i] = '\'';
 		}
 	}
-	/* format JSON reply */
-	cmd_rsp = k_malloc(strlen(at_buf) + sizeof(MODEM_AT_RSP));
-	if (cmd_rsp == NULL) {
-		LOG_WRN("Unable to allocate buffer");
+
+	ret = nrf_cloud_obj_msg_init(&cmd_rsp_obj, NRF_CLOUD_JSON_APPID_VAL_MODEM, "RSP");
+	if (ret) {
+		LOG_WRN("Unable initialize AT response message");
 		return;
 	}
-	sprintf(cmd_rsp, MODEM_AT_RSP, at_buf);
+
+	ret = nrf_cloud_obj_str_add(&cmd_rsp_obj, NRF_CLOUD_JSON_DATA_KEY, at_buf, false);
+	if (ret) {
+		LOG_WRN("Unable to format AT response message");
+		(void)nrf_cloud_obj_free(&cmd_rsp_obj);
+		return;
+	}
+
 	/* Send AT response to cloud */
-	ret = do_cloud_send_msg(cmd_rsp, strlen(cmd_rsp));
+	ret = do_cloud_send_obj(&cmd_rsp_obj);
 	if (ret) {
 		LOG_ERR("Send AT response to cloud error: %d", ret);
 	}
-	k_free(cmd_rsp);
 }
 
-static bool handle_cloud_cmd(const char *buf_in)
+static bool handle_cloud_cmd(const struct nrf_cloud_data *const data)
 {
-	const cJSON *app_id = NULL;
-	const cJSON *msg_type = NULL;
+	struct nrf_cloud_obj input_obj;
+	char *at_cmd;
 	bool ret = false;
+	int err = nrf_cloud_obj_input_decode(&input_obj, data);
 
-	cJSON *cloud_cmd_json = cJSON_Parse(buf_in);
-
-	if (cloud_cmd_json == NULL) {
-		const char *error_ptr = cJSON_GetErrorPtr();
-
-		if (error_ptr != NULL) {
-			LOG_ERR("JSON parsing error before: %s", error_ptr);
-		}
-		goto end;
+	if (err) {
+		LOG_ERR("Unable to decode data from nRF Cloud, error: %d", err);
+		return false;
 	}
 
-	app_id = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, NRF_CLOUD_JSON_APPID_KEY);
-	if (cJSON_GetStringValue(app_id) == NULL) {
-		goto end;
-	}
-
-	/* Format expected from nrf cloud:
-	 * {"appId":"MODEM", "messageType":"CMD", "data":"<AT command>"}
-	 */
-	if (strcmp(app_id->valuestring, NRF_CLOUD_JSON_APPID_VAL_MODEM) == 0) {
-		msg_type = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json,
-							    NRF_CLOUD_JSON_MSG_TYPE_KEY);
-		if (cJSON_GetStringValue(msg_type) != NULL) {
-			if (strcmp(msg_type->valuestring, NRF_CLOUD_JSON_MSG_TYPE_VAL_CMD) != 0) {
-				goto end;
-			}
-		}
-
-		const cJSON *at_cmd = NULL;
-
-		/* The value of attribute "data" contains the actual command */
-		at_cmd = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, NRF_CLOUD_JSON_DATA_KEY);
-		if (cJSON_GetStringValue(at_cmd) != NULL) {
-			LOG_INF("MODEM CMD %s", at_cmd->valuestring);
-			strcpy(at_buf, at_cmd->valuestring);
+	/* Check for a modem AT command message */
+	err = nrf_cloud_obj_msg_check(&input_obj,
+				      NRF_CLOUD_JSON_APPID_VAL_MODEM,
+				      NRF_CLOUD_JSON_MSG_TYPE_VAL_CMD);
+	if (!err) {
+		err = nrf_cloud_obj_str_get(&input_obj, NRF_CLOUD_JSON_DATA_KEY, &at_cmd);
+		if (!err) {
+			LOG_INF("MODEM CMD %s", at_cmd);
+			strcpy(at_buf, at_cmd);
 			k_work_submit_to_queue(&slm_work_q, &cloud_cmd);
 			ret = true;
 		}
-	/* Format expected from nrf cloud:
-	 * {"appId":"DEVICE", "messageType":"DISCON"}
-	 */
-	} else if (strcmp(app_id->valuestring, NRF_CLOUD_JSON_APPID_VAL_DEVICE) == 0) {
-		msg_type = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json,
-							    NRF_CLOUD_JSON_MSG_TYPE_KEY);
-		if (cJSON_GetStringValue(msg_type) != NULL) {
-			if (strcmp(msg_type->valuestring,
-			    NRF_CLOUD_JSON_MSG_TYPE_VAL_DISCONNECT) == 0) {
-				LOG_INF("DEVICE DISCON");
-				/* No action required, handled in lib_nrf_cloud */
-				ret = true;
-			}
-		}
+		goto end;
 	}
 
+	/* Check for a disconnect message */
+	err = nrf_cloud_obj_msg_check(&input_obj,
+				      NRF_CLOUD_JSON_APPID_VAL_DEVICE,
+				      NRF_CLOUD_JSON_MSG_TYPE_VAL_DISCONNECT);
+	if (!err) {
+		LOG_INF("DEVICE DISCON");
+		/* No action required, handled in lib_nrf_cloud */
+		ret = true;
+	}
 end:
-	cJSON_Delete(cloud_cmd_json);
+	(void)nrf_cloud_obj_free(&input_obj);
 	return ret;
 }
 
@@ -924,7 +885,7 @@ static void on_cloud_evt_data_received(const struct nrf_cloud_data *const data)
 	if (nrf_cloud_ready) {
 		if (((char *)data->ptr)[0] == '{') {
 			/* Check if it's a cloud command sent from the cloud */
-			if (handle_cloud_cmd(data->ptr)) {
+			if (handle_cloud_cmd(data)) {
 				return;
 			}
 		}
@@ -1005,7 +966,9 @@ static int nrf_cloud_datamode_callback(uint8_t op, const uint8_t *data, int len)
 	int ret = 0;
 
 	if (op == DATAMODE_SEND) {
-		ret = do_cloud_send_msg(data, len);
+		NRF_CLOUD_OBJ_PRE_ENC_DEFINE(obj, data, len);
+
+		ret = do_cloud_send_obj(&obj);
 		LOG_INF("datamode send: %d", ret);
 		if (ret < 0) {
 			(void)exit_datamode(ret);
