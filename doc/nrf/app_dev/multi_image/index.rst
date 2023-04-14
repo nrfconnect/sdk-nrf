@@ -152,25 +152,36 @@ In some scenarios, this is not possible without modifying the |NCS| build code, 
 To avoid this issue, use the *Modules* mechanism provided by the Zephyr build system.
 The following example shows how to add the required module from a top-level sample :file:`CMakeLists.txt`.
 
-.. literalinclude:: ../../../../samples/multicore/hello_world/CMakeLists.txt
-    :language: cmake
-    :start-at: cmake_minimum_required
-    :end-at: target_sources
+.. code-block:: cmake
+
+   cmake_minimum_required(VERSION 3.20.0)
+
+   set(ZEPHYR_EXTRA_MODULES ${CMAKE_CURRENT_LIST_DIR})
+
+   find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+   project(app)
+
+   target_sources(app PRIVATE src/main.c)
 
 A :file:`zephyr/module.yml` file is needed at the base of the added module.
 The following example specifies only the path to the :file:`CMakeLists.txt` of the new module.
 See :ref:`modules` for more details.
 
-.. literalinclude:: ../../../../samples/multicore/hello_world/zephyr/module.yml
-    :language: yaml
+.. code-block::
+
+   build:
+      cmake: aci
 
 The :file:`CMakeLists.txt` located in the directory pointed to by :file:`zephyr/module.yml` will be invoked when ``add_child_image`` can be invoked.
 
-.. literalinclude:: ../../../../samples/multicore/hello_world/aci/CMakeLists.txt
-    :language: cmake
-    :start-at: add_child_image
-    :end-before: endif()
+.. code-block:: cmake
 
+   add_child_image(
+      NAME remote
+      SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../remote
+      DOMAIN remote
+      BOARD ${CONFIG_APP_REMOTE_BOARD}
+   )
 
 Adding configuration options
 ============================
