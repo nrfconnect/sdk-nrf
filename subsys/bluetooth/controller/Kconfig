@@ -48,17 +48,6 @@ config BT_LL_SOFTDEVICE_BUILD_TYPE_LIB
 
 endchoice
 
-# BT_MAX_CONN is declared in Zephyr, here we add the range and default for
-# BT_LL_SOFTDEVICE which is tested with 20 connections.
-#
-# If both connection roles are to be used simultaneously, then BT_MAX_CONN
-# should be equal to CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT +
-# CONFIG_BT_CTLR_SDC_CENTRAL_COUNT.
-config BT_MAX_CONN
-	int
-	range 1 20
-	default 2 if BT_CENTRAL && BT_PERIPHERAL
-
 config BT_CTLR_SDC_BSIM_BUILD
 	bool
 	default y if SOC_SERIES_BSIM_NRFXX
@@ -112,16 +101,6 @@ config BT_CTLR_SDC_LLPM
 	  Low Latency Packet Mode (LLPM) is a Nordic proprietary addition
 	  which lets the application use connection intervals down to 1 ms.
 
-config BT_CTLR_SDC_CENTRAL_COUNT
-	int "Number of concurrent central roles"
-	default BT_MAX_CONN if (BT_CENTRAL && !BT_PERIPHERAL)
-	default 1 if BT_CENTRAL
-	default 0
-	range 0 BT_MAX_CONN
-	help
-	  Number of concurrent central roles defines how many simultaneous
-	  connections can be created with the device working as a central.
-
 config BT_CTLR_SDC_PERIPHERAL_COUNT
 	int "Number of concurrent peripheral roles"
 	default BT_MAX_CONN if (BT_PERIPHERAL && !BT_CENTRAL)
@@ -131,6 +110,8 @@ config BT_CTLR_SDC_PERIPHERAL_COUNT
 	help
 	  Number of concurrent peripheral roles defines how many simultaneous
 	  connections can be created with the device working as a peripheral.
+	  NOTE: the number of central roles is defined as
+	  BT_MAX_CONN - BT_CTLR_SDC_PERIPHERAL_COUNT
 
 config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	int "Default max connection event length [us]"
