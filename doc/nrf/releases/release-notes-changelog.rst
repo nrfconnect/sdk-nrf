@@ -295,13 +295,12 @@ Thread samples
 Matter samples
 --------------
 
-.. note::
-   All Matter samples in the |NCS| v2.4.0 have been reconfigured to use 32 k settings partition size instead of 16 k size.
-   It means that performing Device Firmware Upgrade (DFU) from the older firmware versions using default 16 k settings size to the new firmware version using default 32 k settings size will not be possible.
-   Trying to perform such upgrade between applications using not-compatible settings size will fail and additionally it will lead to the settings partition corruption and necessity to factory reset the Matter device.
-   You can still perform DFU from the older firmware version to the firmware based on |NCS| v2.4.0, but you will have to change the default settings size from 32 k to the value used in older version (e.g. 16 k).
+* Updated the default settings partition size for all Matter samples from 16 kB to 32 kB.
 
-* Changed settings partition size from 16 k to 32 k.
+  .. caution::
+      This change can affect the Device Firmware Update (DFU) from the older firmware versions that were using the 16-kB settings size.
+      Read more about this in the :ref:`ug_matter_device_bootloader_partition_layout` section of the Matter documentation.
+      You can still perform DFU from the older firmware version to the latest firmware version, but you will have to change the default settings size from 32 kB to the value used in the older version.
 
 * :ref:`matter_lock_sample` sample:
 
