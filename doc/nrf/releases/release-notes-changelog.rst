@@ -268,6 +268,7 @@ Bluetooth mesh samples
   See `Bluetooth mesh`_ for more information.
 * Removed the :file:`hci_rpmsg.conf` file from all samples that support nRF5340 DK or Thingy:53.
   This configuration is moved to the :file:`ncs/nrf/subsys/bluetooth/mesh/hci_rpmsg_child_image_overlay.conf` file.
+* :ref:`bluetooth_mesh_light_lc` sample is updated to demonstrate the use of sensor server to report additional useful information about the device.
 
 nRF9160 samples
 ---------------
