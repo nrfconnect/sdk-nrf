@@ -107,4 +107,5 @@ jobs:
           name: docs
           path: |
             ncs/nrf/*.zip
+            ncs/nrf/monitor*.txt
             ncs/nrf/pr.txt

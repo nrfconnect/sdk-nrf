@@ -30,7 +30,7 @@ jobs:
           mkdir -p ~/.ssh && \
             ssh-keyscan -p 2222 transfer.nordicsemi.no >> ~/.ssh/known_hosts
           # upload files
-          for file in docs/*.zip; do
+          for file in docs/*.zip docs/monitor*.txt; do
             echo "put ${file}" | \
               sshpass -e sftp -P 2222 -o BatchMode=no -b - $SSHUSER@transfer.nordicsemi.no
           done
