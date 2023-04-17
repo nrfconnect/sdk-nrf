@@ -14,15 +14,17 @@
 
 void log_memory_protection_of_mpu(void)
 {
-	MPU_Type *mpu = (MPU_Type *)MPU_BASE;
 	SPMLOG_DBGMSG("\nARM MPU configuration\r\n");
-	SPMLOG_DBGMSGVAL("CTRL", mpu->CTRL);
+	SPMLOG_DBGMSGVAL("CTRL", MPU->CTRL);
 
-	for (int i = 0; i < MPU_ARMV8M_NUM_REGIONS; i++) {
-		mpu->RNR = i;
+	uint32_t num_regions =
+		((MPU->TYPE & MPU_TYPE_DREGION_Msk) >> MPU_TYPE_DREGION_Pos);
+
+	for (uint32_t i = 0; i < num_regions; i++) {
+		MPU->RNR = i;
 		SPMLOG_DBGMSGVAL("RNR", i);
-		uint32_t rbar = mpu->RBAR;
-		uint32_t rlar = mpu->RLAR;
+		uint32_t rbar = MPU->RBAR;
+		uint32_t rlar = MPU->RLAR;
 		uint32_t en = (rlar & MPU_RLAR_EN_Msk) >> MPU_RLAR_EN_Pos;
 
 		SPMLOG_DBGMSGVAL("  EN", en);
