@@ -64,7 +64,7 @@ config PSA_WANT_ALG_SHA_512
 	default y
 config PSA_WANT_ALG_RIPEMD160
 	bool
-	default y
+	default n
 config PSA_WANT_ALG_MD5
 	bool
 	default y
