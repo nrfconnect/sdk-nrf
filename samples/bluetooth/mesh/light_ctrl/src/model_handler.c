@@ -159,6 +159,52 @@ static struct lightness_ctx my_ctx = {
 
 };
 
+static int dummy_energy_use;
+
+static int energy_use_get(struct bt_mesh_sensor_srv *srv,
+			 struct bt_mesh_sensor *sensor,
+			 struct bt_mesh_msg_ctx *ctx,
+			 struct sensor_value *rsp)
+{
+	/* Report energy usage as dummy value, and increase it by one every time
+	 * a get callback is triggered. The logic and hardware for mesuring
+	 * the actual energy usage of the device should be implemented here.
+	 */
+	rsp[0].val1 = dummy_energy_use;
+	rsp[0].val2 = 0;
+
+	dummy_energy_use++;
+
+	return 0;
+}
+
+static const struct bt_mesh_sensor_descriptor energy_use_desc = {
+	.tolerance = {
+		.negative = {
+			.val1 = 0,
+		},
+		.positive = {
+			.val1 = 0,
+		}
+	},
+	.sampling_type = BT_MESH_SENSOR_SAMPLING_UNSPECIFIED,
+	.period = 0,
+	.update_interval = 0,
+};
+
+static struct bt_mesh_sensor energy_use = {
+	.type = &bt_mesh_sensor_precise_tot_dev_energy_use,
+	.get = energy_use_get,
+	.descriptor = &energy_use_desc,
+};
+
+static struct bt_mesh_sensor *const sensors[] = {
+	&energy_use,
+};
+
+static struct bt_mesh_sensor_srv sensor_srv =
+	BT_MESH_SENSOR_SRV_INIT(sensors, ARRAY_SIZE(sensors));
+
 static struct bt_mesh_scene_srv scene_srv;
 
 static struct bt_mesh_light_ctrl_srv light_ctrl_srv =
@@ -171,7 +217,8 @@ static struct bt_mesh_elem elements[] = {
 			     BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
 			     BT_MESH_MODEL_LIGHTNESS_SRV(
 					 &my_ctx.lightness_srv),
-			     BT_MESH_MODEL_SCENE_SRV(&scene_srv)),
+			     BT_MESH_MODEL_SCENE_SRV(&scene_srv),
+			     BT_MESH_MODEL_SENSOR_SRV(&sensor_srv)),
 		     BT_MESH_MODEL_NONE),
 	BT_MESH_ELEM(2,
 		     BT_MESH_MODEL_LIST(
