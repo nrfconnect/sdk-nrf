@@ -13,7 +13,6 @@ if BT
 # When both connection roles are enabled there has to be one for each role.
 config BT_MAX_CONN
 	int
-	range 2 20 if BT_LL_SOFTDEVICE && BT_CENTRAL && BT_PERIPHERAL
 	range 1 20 if BT_LL_SOFTDEVICE
 	default 2 if BT_LL_SOFTDEVICE && BT_CENTRAL && BT_PERIPHERAL
 

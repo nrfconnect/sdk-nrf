@@ -35,20 +35,21 @@
 #include "zephyr/logging/log.h"
 LOG_MODULE_REGISTER(bt_sdc_hci_driver);
 
-#if defined(CONFIG_BT_CONN)
-/* It should not be possible to set CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT larger than
- * CONFIG_BT_MAX_CONN. Kconfig should make sure of that, this assert is to
- * verify that assumption.
- */
-BUILD_ASSERT(CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT <= CONFIG_BT_MAX_CONN);
+#if defined(CONFIG_BT_CONN) && defined(CONFIG_BT_CENTRAL)
 
+#if CONFIG_BT_MAX_CONN > 1
 #define SDC_CENTRAL_COUNT (CONFIG_BT_MAX_CONN - CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT)
+#else
+/* Allow the case where BT_MAX_CONN, central and peripheral counts are 1. This
+ * way we avoid wasting memory in the host if the device will only use one role
+ * at a time.
+ */
+#define SDC_CENTRAL_COUNT 1
+#endif	/* CONFIG_BT_MAX_CONN > 1 */
 
 #else
-
 #define SDC_CENTRAL_COUNT 0
-
-#endif /* CONFIG_BT_CONN */
+#endif /* defined(CONFIG_BT_CONN) && defined(CONFIG_BT_CENTRAL) */
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_CENTRAL) ||
 			 (SDC_CENTRAL_COUNT > 0));
