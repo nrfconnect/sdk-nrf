@@ -244,6 +244,10 @@ nRF9160 samples
 
   * Updated the sample to print its version when started.
 
+* :ref:`modem_shell_application` sample:
+
+  * The sample now uses the :ref:`lib_nrf_cloud` library function :c:func:`nrf_cloud_obj_pgps_request_create` to create a P-GPS request.
+
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 

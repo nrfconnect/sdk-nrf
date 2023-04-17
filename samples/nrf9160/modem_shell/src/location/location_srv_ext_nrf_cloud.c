@@ -9,6 +9,7 @@
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
 #include <net/nrf_cloud_location.h>
+#include <net/nrf_cloud_codec.h>
 #include <modem/location.h>
 
 #include "mosh_print.h"
@@ -38,81 +39,16 @@ void location_srv_ext_agps_handle(const struct nrf_modem_gnss_agps_data_frame *a
 void location_srv_ext_pgps_handle(const struct gps_pgps_request *pgps_req)
 {
 	int err = 0;
-	cJSON *data_obj;
-	cJSON *pgps_req_obj;
-	cJSON *ret;
-	cJSON *appid_key;
-	cJSON *msg_type_key;
-	char *msg_string = NULL;
+	NRF_CLOUD_OBJ_JSON_DEFINE(pgps_obj);
 
-	/* Encode P-GPS request */
-	pgps_req_obj = cJSON_CreateObject();
-	if (pgps_req_obj == NULL) {
-		err = -ENOMEM;
-		goto cleanup;
-	}
-
-	appid_key = cJSON_AddStringToObjectCS(pgps_req_obj, NRF_CLOUD_JSON_APPID_KEY,
-					      NRF_CLOUD_JSON_APPID_VAL_PGPS);
-	if (appid_key == NULL) {
-		mosh_error("Failed to add application id to P-GPS request");
-		err = -ENOMEM;
-		goto cleanup;
-	}
-	msg_type_key = cJSON_AddStringToObjectCS(pgps_req_obj, NRF_CLOUD_JSON_MSG_TYPE_KEY,
-						 NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
-	if (msg_type_key == NULL) {
-		mosh_error("Failed to add message type to P-GPS request");
-		err = -ENOMEM;
-		goto cleanup;
-	}
-
-	data_obj = cJSON_AddObjectToObject(pgps_req_obj, NRF_CLOUD_JSON_DATA_KEY);
-	if (data_obj == NULL) {
-		mosh_error("Failed to add pred count to P-GPS request");
-		err = -ENOMEM;
-		goto cleanup;
-	}
-
-	ret = cJSON_AddNumberToObject(data_obj, NRF_CLOUD_JSON_PGPS_PRED_COUNT,
-				      pgps_req->prediction_count);
-	if (ret == NULL) {
-		mosh_error("Failed to add pred count to P-GPS request");
-		err = -ENOMEM;
-		goto cleanup;
-	}
-	ret = cJSON_AddNumberToObject(data_obj, NRF_CLOUD_JSON_PGPS_INT_MIN,
-				      pgps_req->prediction_period_min);
-	if (ret == NULL) {
-		mosh_error("Failed to add pred int min to P-GPS request");
-		err = -ENOMEM;
-		goto cleanup;
-	}
-	ret = cJSON_AddNumberToObject(data_obj, NRF_CLOUD_JSON_PGPS_GPS_DAY,
-				      pgps_req->gps_day);
-	if (ret == NULL) {
-		mosh_error("Failed to add GPS day to P-GPS request");
-		err = -ENOMEM;
-		goto cleanup;
-	}
-	ret = cJSON_AddNumberToObject(data_obj, NRF_CLOUD_JSON_PGPS_GPS_TIME,
-				      pgps_req->gps_time_of_day);
-	if (ret == NULL) {
-		mosh_error("Failed to add GPS time to P-GPS request");
-		err = -ENOMEM;
-		goto cleanup;
-	}
-
-	/* Convert CJSON object to string and send to nRF Cloud */
-	msg_string = cJSON_PrintUnformatted(pgps_req_obj);
-	if (msg_string == NULL) {
-		mosh_error("Could not allocate memory for request message");
+	err = nrf_cloud_obj_pgps_request_create(&pgps_obj, pgps_req);
+	if (err) {
+		mosh_error("Could not create P-GPS request message, error: %d", err);
 		goto cleanup;
 	}
 
 	struct nrf_cloud_tx_data mqtt_msg = {
-		.data.ptr = msg_string,
-		.data.len = strlen(msg_string),
+		.obj = &pgps_obj,
 		.qos = MQTT_QOS_1_AT_LEAST_ONCE,
 		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
 	};
@@ -123,8 +59,7 @@ void location_srv_ext_pgps_handle(const struct gps_pgps_request *pgps_req)
 	}
 
 cleanup:
-	cJSON_Delete(pgps_req_obj);
-	cJSON_free(msg_string);
+	(void)nrf_cloud_obj_free(&pgps_obj);
 
 	if (err) {
 		mosh_error("nRF Cloud P-GPS request failed, error: %d", err);
