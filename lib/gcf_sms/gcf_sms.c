@@ -464,10 +464,8 @@ static int at_cmd_callback_cmgf(char *buf, size_t len, char *at_cmd)
 }
 
 /* Initialize the library. */
-int gcf_sms_init(const struct device *unused)
+int gcf_sms_init(void)
 {
-	(void)unused;
-
 	for (int i = 0; i < SMS_BUFFER_ARRAY_SIZE; i++) {
 		sms_buffers_clear_index(i);
 	}

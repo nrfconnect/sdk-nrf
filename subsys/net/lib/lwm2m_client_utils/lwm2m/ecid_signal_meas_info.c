@@ -204,7 +204,7 @@ static struct lwm2m_engine_obj_inst *signal_meas_info_create(uint16_t obj_inst_i
 	return &inst[index];
 }
 
-static int lwm2m_signal_meas_info_init(const struct device *dev)
+static int lwm2m_signal_meas_info_init(void)
 {
 	int ret = 0;
 

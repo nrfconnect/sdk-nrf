@@ -87,9 +87,8 @@ static void err_handler(const struct nrf_rpc_err_report *report)
 	k_oops();
 }
 
-static int serialization_init(const struct device *dev)
+static int serialization_init(void)
 {
-	ARG_UNUSED(dev);
 
 	return nrf_rpc_init(err_handler);
 }

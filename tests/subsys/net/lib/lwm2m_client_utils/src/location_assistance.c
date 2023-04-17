@@ -47,7 +47,7 @@ static struct nrf_modem_gnss_agps_data_frame agps_req = {
 
 static struct lwm2m_ctx client_ctx;
 
-static int suite_setup(const struct device *dev)
+static int suite_setup(void)
 {
 	lwm2m_register_obj_fake.custom_fake = fake_lwm2m_register_obj;
 

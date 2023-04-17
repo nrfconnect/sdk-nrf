@@ -123,9 +123,8 @@ static struct ipc_ept_cfg ep_cfg = {
 	},
 };
 
-static int ipc_init(const struct device *dev)
+static int ipc_init(void)
 {
-	ARG_UNUSED(dev);
 
 	int err;
 	const struct device *ipc_instance;

@@ -60,10 +60,8 @@ struct zep_work_item *work_alloc(void)
 	return &zep_work_item[free_work_index];
 }
 
-static int workqueue_init(const struct device *unused)
+static int workqueue_init(void)
 {
-	(void)unused;
-
 	k_work_queue_init(&zep_wifi_bh_q);
 
 	k_work_queue_start(&zep_wifi_bh_q,

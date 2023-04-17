@@ -176,9 +176,8 @@ static const mpsl_cx_interface_t m_mpsl_cx_methods = {
 	.p_register_callback   = register_callback,
 };
 
-static int mpsl_cx_init(const struct device *dev)
+static int mpsl_cx_init(void)
 {
-	ARG_UNUSED(dev);
 
 	int32_t ret;
 
@@ -219,7 +218,7 @@ static int mpsl_cx_init(const struct device *dev)
 SYS_INIT(mpsl_cx_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
 
 #else // !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
-static int mpsl_cx_init(const struct device *dev)
+static int mpsl_cx_init(void)
 {
 #if DT_NODE_HAS_PROP(CX_NODE, req_gpios)
 	uint8_t req_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, req_gpios);

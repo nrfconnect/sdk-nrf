@@ -662,9 +662,8 @@ SHELL_CMD_REGISTER(wifi_util,
 		   NULL);
 
 
-static int nrf_wifi_util_init(const struct device *unused)
+static int nrf_wifi_util_init(void)
 {
-	ARG_UNUSED(unused);
 
 	if (nrf_wifi_util_conf_init(&ctx->conf_params) < 0)
 		return -1;

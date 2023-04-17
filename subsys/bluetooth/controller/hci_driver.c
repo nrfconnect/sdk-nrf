@@ -1033,9 +1033,8 @@ void bt_ctlr_set_public_addr(const uint8_t *addr)
 	(void)sdc_hci_cmd_vs_zephyr_write_bd_addr(bd_addr);
 }
 
-static int hci_driver_init(const struct device *unused)
+static int hci_driver_init(void)
 {
-	ARG_UNUSED(unused);
 	int err = 0;
 
 	bt_hci_driver_register(&drv);

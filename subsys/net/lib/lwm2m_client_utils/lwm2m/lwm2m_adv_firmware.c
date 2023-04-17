@@ -559,7 +559,7 @@ fail:
 	return ret;
 }
 
-static int lwm2m_adv_firmware_init(const struct device *dev)
+static int lwm2m_adv_firmware_init(void)
 {
 	/* Set default values */
 	firmware.obj_id = LWM2M_OBJECT_ADV_FIRMWARE_ID;

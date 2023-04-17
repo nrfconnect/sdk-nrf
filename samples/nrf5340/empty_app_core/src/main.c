@@ -49,9 +49,8 @@ void main(void)
  * that the network core is not started yet. More pins can be added if the
  * network core needs them.
  */
-static int network_gpio_allow(const struct device *dev)
+static int network_gpio_allow(void)
 {
-	ARG_UNUSED(dev);
 
 	/* When the use of the low frequency crystal oscillator (LFXO) is
 	 * enabled, do not modify the configuration of the pins P0.00 (XL1)

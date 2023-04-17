@@ -170,9 +170,8 @@ static const struct shell_transport_api shell_ipc_transport_api = {
 	.read = read,
 };
 
-static int enable_shell_ipc(const struct device *arg)
+static int enable_shell_ipc(void)
 {
-	ARG_UNUSED(arg);
 
 	const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_shell_ipc));
 	bool log_backend = CONFIG_SHELL_IPC_INIT_LOG_LEVEL > 0;

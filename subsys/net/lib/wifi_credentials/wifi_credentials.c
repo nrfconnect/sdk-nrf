@@ -67,9 +67,8 @@ static inline ssize_t lookup_unused_idx(void)
 	return -1;
 }
 
-static int init(const struct device *dev)
+static int init(void)
 {
-	ARG_UNUSED(dev);
 
 	int ret;
 

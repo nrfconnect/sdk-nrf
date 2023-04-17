@@ -539,7 +539,7 @@ static void on_cfun(enum lte_lc_func_mode mode, void *ctx)
 }
 #endif /* CONFIG_LTE_LINK_CONTROL */
 
-static int pdn_sys_init(const struct device *unused)
+static int pdn_sys_init(void)
 {
 	pdn_act_notif.cid = CID_UNASSIGNED;
 

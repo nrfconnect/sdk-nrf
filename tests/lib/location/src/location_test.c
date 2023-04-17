@@ -943,7 +943,7 @@ void test_location_cellular_periodic(void)
 }
 
 /* This is needed because AT Monitor library is initialized in SYS_INIT. */
-static int location_test_sys_init(const struct device *unused)
+static int location_test_sys_init(void)
 {
 	__cmock_nrf_modem_at_notif_handler_set_ExpectAnyArgsAndReturn(0);
 

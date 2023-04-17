@@ -103,7 +103,7 @@ static void at_monitor_task(struct k_work *work)
 	}
 }
 
-static int at_monitor_sys_init(const struct device *unused)
+static int at_monitor_sys_init(void)
 {
 	int err;
 

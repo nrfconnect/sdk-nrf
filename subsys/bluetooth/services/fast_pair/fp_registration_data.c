@@ -111,9 +111,8 @@ static int validate_fp_hash(const uint8_t *prov_data, const uint8_t *hash)
 	return err;
 }
 
-static int fp_registration_data_validate(const struct device *unused)
+static int fp_registration_data_validate(void)
 {
-	ARG_UNUSED(unused);
 
 	int err;
 	uint8_t data[FP_DATA_SIZE];

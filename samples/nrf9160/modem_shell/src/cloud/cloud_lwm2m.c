@@ -154,7 +154,7 @@ static void cloud_lwm2m_lte_lc_evt_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-static int cloud_lwm2m_init(const struct device *unused)
+static int cloud_lwm2m_init(void)
 {
 	int ret;
 

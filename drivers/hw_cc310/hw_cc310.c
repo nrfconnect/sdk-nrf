@@ -17,9 +17,8 @@
 
 #if CONFIG_HW_CC3XX
 
-static int hw_cc3xx_init_internal(const struct device *dev)
+static int hw_cc3xx_init_internal(void)
 {
-	ARG_UNUSED(dev);
 
 	int res;
 
@@ -33,7 +32,7 @@ static int hw_cc3xx_init_internal(const struct device *dev)
 	return res;
 }
 
-static int hw_cc3xx_init(const struct device *dev)
+static int hw_cc3xx_init(void)
 {
 	int res;
 
@@ -44,7 +43,7 @@ static int hw_cc3xx_init(const struct device *dev)
 	nrf_cc3xx_platform_mutex_init();
 
 	/* Enable the hardware */
-	res = hw_cc3xx_init_internal(dev);
+	res = hw_cc3xx_init_internal();
 	return res;
 }
 

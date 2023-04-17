@@ -132,11 +132,10 @@ static int device_info_init(void)
 }
 #endif /* CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI */
 
-static int init(const struct device *unused)
+static int init(void)
 {
 	int err = 0;
 
-	ARG_UNUSED(unused);
 
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES)) {
 		err = memfault_zephyr_port_install_root_certs();
@@ -196,7 +195,7 @@ static void on_modem_lib_init(int ret, void *ctx)
 		return;
 	}
 
-	init(NULL);
+	init();
 }
 
 #else

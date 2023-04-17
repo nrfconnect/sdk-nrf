@@ -8,9 +8,8 @@
 #include <hal/nrf_power.h>
 #include <hal/nrf_nvmc.h>
 
-static int board_nrf52833dongle_nrf52833_init(const struct device *dev)
+static int board_nrf52833dongle_nrf52833_init(void)
 {
-	ARG_UNUSED(dev);
 
 	/* If the nrf52833dongle_nrf52833 board is powered from USB
 	 * (high voltage mode), GPIO output voltage is set to 1.8 volts by

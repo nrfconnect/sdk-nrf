@@ -103,7 +103,7 @@ static struct lwm2m_engine_obj_inst *object_create(uint16_t obj_inst_id)
 	return &inst;
 }
 
-static int object_init(const struct device *dev)
+static int object_init(void)
 {
 	struct lwm2m_engine_obj_inst *obj_inst = NULL;
 	int ret = 0;

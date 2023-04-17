@@ -113,7 +113,7 @@ static const struct fem_interface_api nrf21540_api = {
 	.antenna_select = nrf21540_antenna_select
 };
 
-static int nrf21540_setup(const struct device *dev)
+static int nrf21540_setup(void)
 {
 	int err;
 

@@ -191,7 +191,7 @@ static const struct fem_interface_api generic_fem_api = {
 	.tx_default_gain_get = tx_default_gain_get,
 };
 
-static int generic_fem_setup(const struct device *dev)
+static int generic_fem_setup(void)
 {
 	int err;
 

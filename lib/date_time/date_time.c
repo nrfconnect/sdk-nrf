@@ -158,7 +158,7 @@ int date_time_timestamp_clear(int64_t *unix_timestamp)
 	return 0;
 }
 
-static int date_time_init(const struct device *unused)
+static int date_time_init(void)
 {
 	date_time_core_init();
 

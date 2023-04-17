@@ -306,9 +306,8 @@ static int fem_nrf21540_gpio_spi_configure(void)
 	return err;
 }
 
-static int mpsl_fem_init(const struct device *dev)
+static int mpsl_fem_init(void)
 {
-	ARG_UNUSED(dev);
 
 	mpsl_fem_device_config_254_apply_set(IS_ENABLED(CONFIG_MPSL_FEM_DEVICE_CONFIG_254));
 

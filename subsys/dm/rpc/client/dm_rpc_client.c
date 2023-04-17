@@ -164,9 +164,8 @@ static void data_handler(struct k_work *work)
 	ipc_service_send(&ep, &cmd, sizeof(cmd));
 }
 
-static int ipc_init(const struct device *dev)
+static int ipc_init(void)
 {
-	ARG_UNUSED(dev);
 
 	int err;
 	const struct device *ipc_instance;

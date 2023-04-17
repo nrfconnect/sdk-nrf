@@ -50,7 +50,7 @@ void tearDown(void)
 }
 
 /* This is needed because AT Monitor library is initialized in SYS_INIT. */
-static int sys_init_helper(const struct device *unused)
+static int sys_init_helper(void)
 {
 	__cmock_nrf_modem_at_notif_handler_set_ExpectAnyArgsAndReturn(0);
 

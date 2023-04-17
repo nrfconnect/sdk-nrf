@@ -57,12 +57,11 @@ static struct dfu_target_fmfu_fdev ext_flash_dev = {
 	.dev = DEVICE_DT_GET_ONE(jedec_spi_nor)
 };
 
-static int fmfu_and_modem_init(const struct device *dev)
+static int fmfu_and_modem_init(void)
 {
 	enum nrf_cloud_fota_type fota_type = NRF_CLOUD_FOTA_TYPE__INVALID;
 	int ret;
 
-	ARG_UNUSED(dev);
 
 	/* Check if a full modem FOTA job is pending */
 	ret = nrf_cloud_fota_pending_job_type_get(&fota_type);

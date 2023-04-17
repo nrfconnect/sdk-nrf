@@ -88,9 +88,8 @@ static int mpsl_cx_bt_interface_1wire_config_set(void)
 	return err;
 }
 
-static int mpsl_cx_init(const struct device *dev)
+static int mpsl_cx_init(void)
 {
-	ARG_UNUSED(dev);
 
 	return mpsl_cx_bt_interface_1wire_config_set();
 }
