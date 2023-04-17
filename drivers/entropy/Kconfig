@@ -6,7 +6,7 @@
 
 config ENTROPY_CC3XX
 	bool "Arm CC3XX RNG driver for Nordic devices"
-	depends on (CRYPTOCELL_USABLE && !BUILD_WITH_TFM)
+	depends on HAS_HW_NRF_CC3XX && !BUILD_WITH_TFM
 	depends on ENTROPY_GENERATOR
 	select ENTROPY_HAS_DRIVER
 	default y
