@@ -26,19 +26,19 @@ int nrf_cloud_location_request(const struct lte_lc_cells_info *const cells_inf,
 	}
 
 	int err = 0;
-	cJSON *location_req_obj = cJSON_CreateObject();
+	NRF_CLOUD_OBJ_JSON_DEFINE(location_req_obj);
 
-	err = nrf_cloud_location_request_msg_json_encode(cells_inf, wifi_inf,
-							 request_loc, location_req_obj);
+	err = nrf_cloud_obj_location_request_create(&location_req_obj, cells_inf, wifi_inf,
+						    request_loc);
 	if (!err) {
 		if (request_loc) {
 			nfsm_set_location_response_cb(cb);
 		}
 
-		err = json_send_to_cloud(location_req_obj);
+		err = json_send_to_cloud(location_req_obj.json);
 	}
 
-	cJSON_Delete(location_req_obj);
+	(void)nrf_cloud_obj_free(&location_req_obj);
 	return err;
 }
 
