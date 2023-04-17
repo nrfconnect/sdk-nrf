@@ -448,7 +448,7 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 
 	uint32_t octets_per_frame = bt_codec_cfg_get_octets_per_frame(stream->codec);
 
-	if (buf->len != octets_per_frame) {
+	if (buf->len != octets_per_frame && bad_frame != true) {
 		data_size_mismatch_cnt++;
 		if ((data_size_mismatch_cnt % 500) == 1) {
 			LOG_DBG("Data size mismatch, received: %d, codec: %d, total: %d", buf->len,
