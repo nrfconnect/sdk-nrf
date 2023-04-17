@@ -255,10 +255,6 @@ int nrf_cloud_pgps_response_decode(const char *const response,
 /** @brief Encode the data payload of an nRF Cloud P-GPS request into the provided object */
 int nrf_cloud_pgps_req_data_json_encode(const struct gps_pgps_request * const request,
 					cJSON * const data_obj_out);
-
-/** @brief Encode an P-GPS request device message to be sent to nRF Cloud */
-int nrf_cloud_pgps_req_json_encode(const struct gps_pgps_request * const request,
-				   cJSON * const pgps_req_obj_out);
 #endif
 
 /** @brief Convert a JSON payload to a parameterized URL for REST. Converts only objects at

@@ -2992,47 +2992,7 @@ cleanup:
 
 	return -ENOMEM;
 }
-
-int nrf_cloud_pgps_req_json_encode(const struct gps_pgps_request * const request,
-				   cJSON * const pgps_req_obj_out)
-{
-	if (!pgps_req_obj_out || !request) {
-		return -EINVAL;
-	}
-
-	cJSON *data_obj;
-
-	/* Create request JSON containing a data object */
-	if (json_add_str_cs(pgps_req_obj_out,
-			    NRF_CLOUD_JSON_APPID_KEY,
-			    NRF_CLOUD_JSON_APPID_VAL_PGPS) ||
-	    json_add_str_cs(pgps_req_obj_out,
-			    NRF_CLOUD_JSON_MSG_TYPE_KEY,
-			    NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA)) {
-		goto cleanup;
-	}
-
-	data_obj = cJSON_AddObjectToObject(pgps_req_obj_out, NRF_CLOUD_JSON_DATA_KEY);
-	if (!data_obj) {
-		goto cleanup;
-	}
-
-	/* Add request data */
-	if (nrf_cloud_pgps_req_data_json_encode(request, data_obj)) {
-		goto cleanup;
-	}
-
-	return 0;
-
-cleanup:
-	/* On failure, remove any items added to the provided object */
-	cJSON_DeleteItemFromObject(pgps_req_obj_out, NRF_CLOUD_JSON_APPID_KEY);
-	cJSON_DeleteItemFromObject(pgps_req_obj_out, NRF_CLOUD_JSON_MSG_TYPE_KEY);
-	cJSON_DeleteItemFromObject(pgps_req_obj_out, NRF_CLOUD_JSON_DATA_KEY);
-
-	return -ENOMEM;
-}
-#endif
+#endif /* CONFIG_NRF_CLOUD_PGPS */
 
 int nrf_cloud_json_to_url_params_convert(char *const buf, const size_t buf_size,
 					 const cJSON *const obj)
