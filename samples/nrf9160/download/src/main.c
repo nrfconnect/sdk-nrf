@@ -164,6 +164,10 @@ static int callback(const struct download_client_evt *event)
 			/* Stop download */
 			return -1;
 		}
+		break;
+	case DOWNLOAD_CLIENT_EVT_CLOSED:
+		printk("Socket closed\n");
+		break;
 	}
 
 	return 0;

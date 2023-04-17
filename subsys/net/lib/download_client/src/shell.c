@@ -53,6 +53,9 @@ static int callback(const struct download_client_evt *event)
 			    event->error);
 		downloaded = 0;
 		break;
+	case DOWNLOAD_CLIENT_EVT_CLOSED:
+		shell_print(shell_instance, "socket closed");
+		break;
 	}
 	return 0;
 }
