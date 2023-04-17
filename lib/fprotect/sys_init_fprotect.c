@@ -19,9 +19,8 @@ BUILD_ASSERT(PM_SIZE % CONFIG_FPROTECT_BLOCK_SIZE == 0,
 	     "Unable to protect app image since its size does not align with "
 	     "the locking granularity of fprotect.");
 
-static int fprotect_self(const struct device *dev)
+static int fprotect_self(void)
 {
-	ARG_UNUSED(dev);
 
 	int err;
 

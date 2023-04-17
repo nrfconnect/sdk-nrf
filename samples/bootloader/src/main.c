@@ -21,10 +21,8 @@
 
 #define HUK_FLAG_OFFSET 0xFFC /* When this word is set, expect HUK to be written. */
 
-int load_huk(const struct device *unused)
+int load_huk(void)
 {
-	(void)unused;
-
 	if (!hw_unique_key_is_written(HUK_KEYSLOT_KDR)) {
 		uint32_t huk_flag_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS + HUK_FLAG_OFFSET;
 

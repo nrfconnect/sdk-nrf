@@ -17,10 +17,8 @@
 
 LOG_MODULE_REGISTER(at_custom_cmd, CONFIG_AT_CUSTOM_CMD_LOG_LEVEL);
 
-static int at_custom_cmd_sys_init(const struct device *unused)
+static int at_custom_cmd_sys_init(void)
 {
-	(void)unused;
-
 	int err;
 	extern struct nrf_modem_at_cmd_filter _nrf_modem_at_cmd_filter_list_start[];
 	int num_items = 0;

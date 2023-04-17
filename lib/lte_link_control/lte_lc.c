@@ -719,7 +719,7 @@ exit:
 	return err;
 }
 
-static int init_and_connect(const struct device *unused)
+static int init_and_connect(void)
 {
 	int err;
 
@@ -772,9 +772,7 @@ int lte_lc_connect(void)
 
 int lte_lc_init_and_connect(void)
 {
-	const struct device *x = 0;
-
-	return init_and_connect(x);
+	return init_and_connect();
 }
 
 int lte_lc_connect_async(lte_lc_evt_handler_t handler)

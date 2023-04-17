@@ -105,7 +105,7 @@ static void log_fw_version_uuid(void)
 	}
 }
 
-static int _nrf_modem_lib_init(const struct device *unused)
+static int _nrf_modem_lib_init(void)
 {
 	int rc;
 
@@ -141,7 +141,7 @@ static int _nrf_modem_lib_init(const struct device *unused)
 
 int nrf_modem_lib_init(void)
 {
-	return _nrf_modem_lib_init(NULL);
+	return _nrf_modem_lib_init();
 }
 
 int nrf_modem_lib_bootloader_init(void)

@@ -116,9 +116,8 @@ static int fem_simple_gpio_configure(void)
 	return mpsl_fem_simple_gpio_interface_config_set(&cfg);
 }
 
-static int mpsl_fem_init(const struct device *dev)
+static int mpsl_fem_init(void)
 {
-	ARG_UNUSED(dev);
 
 #if IS_ENABLED(CONFIG_MPSL_FEM_POWER_MODEL)
 	int err;
@@ -140,9 +139,8 @@ SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
 
 #else /* !defined(CONFIG_MPSL_FEM_PIN_FORWARDER) */
 
-static int mpsl_fem_host_init(const struct device *dev)
+static int mpsl_fem_host_init(void)
 {
-	ARG_UNUSED(dev);
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
 	uint8_t ctx_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), ctx_gpios);

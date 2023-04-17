@@ -102,9 +102,8 @@ static void meas_thread_fn(void *dummy1, void *dummy2, void *dummy3)
 	}
 }
 
-static int power_meas_init(const struct device *dev)
+static int power_meas_init(void)
 {
-	ARG_UNUSED(dev);
 
 	/* check if all sensors are ready */
 	for (size_t i = 0U; i < POWER_RAIL_NUM; i++) {

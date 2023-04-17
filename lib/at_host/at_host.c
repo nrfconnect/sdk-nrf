@@ -222,12 +222,11 @@ static int at_uart_init(const struct device *uart_dev)
 	return err;
 }
 
-static int at_host_init(const struct device *arg)
+static int at_host_init(void)
 {
 	int err;
 	enum term_modes mode = CONFIG_AT_HOST_TERMINATION;
 
-	ARG_UNUSED(arg);
 
 	/* Choosing the termination mode */
 	if (mode < MODE_COUNT) {

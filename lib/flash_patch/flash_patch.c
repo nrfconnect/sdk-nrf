@@ -9,10 +9,8 @@
 #include <zephyr/init.h>
 
 #ifdef CONFIG_DISABLE_FLASH_PATCH
-static int disable_flash_patch(const struct device *dev)
+static int disable_flash_patch(void)
 {
-	(void)dev;
-
 	/* Check if register has been written. */
 	if ((NRF_UICR->DEBUGCTRL & UICR_DEBUGCTRL_CPUFPBEN_Msk) != 0x0) {
 		/* Enable flash write. */

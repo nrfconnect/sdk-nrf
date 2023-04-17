@@ -150,7 +150,7 @@ static struct lwm2m_engine_obj_inst *cellconn_create(uint16_t obj_inst_id)
 	return &inst;
 }
 
-static int lwm2m_cellconn_init(const struct device *dev)
+static int lwm2m_cellconn_init(void)
 {
 	cellconn.obj_id = LWM2M_OBJECT_CELLULAR_CONNECTIVITY_ID;
 	cellconn.version_major = CELLCONN_VERSION_MAJOR;

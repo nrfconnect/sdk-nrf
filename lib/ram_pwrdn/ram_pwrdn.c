@@ -217,9 +217,8 @@ static void libc_heap_resize_cb(uintptr_t heap_id, void *old_heap_end, void *new
 
 static HEAP_LISTENER_RESIZE_DEFINE(heap_listener, HEAP_ID_LIBC, libc_heap_resize_cb);
 
-static int ram_power_init(const struct device *unused)
+static int ram_power_init(void)
 {
-	ARG_UNUSED(unused);
 
 	power_down_unused_ram();
 	heap_listener_register(&heap_listener);

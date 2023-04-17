@@ -235,9 +235,8 @@ static int32_t mpsl_lib_init_internal(void)
 	return 0;
 }
 
-static int mpsl_lib_init_sys(const struct device *dev)
+static int mpsl_lib_init_sys(void)
 {
-	ARG_UNUSED(dev);
 	int err = 0;
 
 	err = mpsl_lib_init_internal();
@@ -275,9 +274,8 @@ static int mpsl_lib_init_sys(const struct device *dev)
 	return 0;
 }
 
-static int mpsl_low_prio_init(const struct device *dev)
+static int mpsl_low_prio_init(void)
 {
-	ARG_UNUSED(dev);
 
 	k_work_queue_start(&mpsl_work_q, mpsl_work_stack,
 			   K_THREAD_STACK_SIZEOF(mpsl_work_stack),

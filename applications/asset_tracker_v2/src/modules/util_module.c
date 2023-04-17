@@ -222,9 +222,8 @@ static void reboot_ack_check(uint32_t module_id)
 	}
 }
 
-static int setup(const struct device *dev)
+static int setup(void)
 {
-	ARG_UNUSED(dev);
 
 #if defined(CONFIG_WATCHDOG_APPLICATION)
 	int err = watchdog_init_and_start();

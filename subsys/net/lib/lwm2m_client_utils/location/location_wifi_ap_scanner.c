@@ -111,7 +111,7 @@ int lwm2m_wifi_request_scan(void)
 	return ret;
 }
 
-static int lwm2m_wifi_scan_init(const struct device *dev)
+static int lwm2m_wifi_scan_init(void)
 {
 	const struct device *wifi_dev;
 

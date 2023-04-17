@@ -330,9 +330,8 @@ static void led_pattern_update_work_fn(struct k_work *work)
 	}
 }
 
-static int setup(const struct device *dev)
+static int setup(void)
 {
-	ARG_UNUSED(dev);
 
 	int err;
 

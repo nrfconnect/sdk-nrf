@@ -404,10 +404,8 @@ void nrf_modem_os_logdump(int level, const char *str, const void *data, size_t l
 }
 
 /* On application initialization */
-static int on_init(const struct device *dev)
+static int on_init(void)
 {
-	(void) dev;
-
 	/* The list of sleeping threads should only be initialized once at the application
 	 * initialization. This is because we want to keep the list intact regardless of modem
 	 * reinitialization to wake sleeping threads on modem initialization.

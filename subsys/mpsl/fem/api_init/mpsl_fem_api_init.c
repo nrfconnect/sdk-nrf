@@ -7,9 +7,8 @@
 #include <mpsl_fem_init.h>
 #include <zephyr/device.h>
 
-static int mpsl_fem_api_init(const struct device *dev)
+static int mpsl_fem_api_init(void)
 {
-	ARG_UNUSED(dev);
 
 	mpsl_fem_init();
 

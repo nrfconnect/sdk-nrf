@@ -442,9 +442,8 @@ static void timeout_fn(struct k_work *w)
 	key_timeout(proc);
 }
 
-static int fp_keys_init(const struct device *unused)
+static int fp_keys_init(void)
 {
-	ARG_UNUSED(unused);
 
 	for (size_t i = 0; i < ARRAY_SIZE(fp_procedures); i++) {
 		struct fp_procedure *proc = &fp_procedures[i];

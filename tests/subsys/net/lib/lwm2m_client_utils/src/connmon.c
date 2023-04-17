@@ -128,7 +128,7 @@ ZTEST(lwm2m_client_utils_connmon, test_modem_info_init_fail)
 	setup();
 
 	modem_info_init_fake.return_val = -1;
-	rc = lwm2m_init_connmon(NULL);
+	rc = lwm2m_init_connmon();
 	zassert_equal(modem_info_init_fake.call_count, 1, "Modem info init not called");
 	zassert_equal(rc, modem_info_init_fake.return_val, "wrong return value");
 }
@@ -140,7 +140,7 @@ ZTEST(lwm2m_client_utils_connmon, test_modem_info_params_init_fail)
 	setup();
 
 	modem_info_params_init_fake.return_val = -2;
-	rc = lwm2m_init_connmon(NULL);
+	rc = lwm2m_init_connmon();
 	zassert_equal(modem_info_params_init_fake.call_count, 1, "Info params init not called");
 	zassert_equal(rc, modem_info_params_init_fake.return_val, "wrong return value");
 }
@@ -149,7 +149,7 @@ ZTEST(lwm2m_client_utils_connmon, test_init)
 {
 	setup();
 
-	lwm2m_init_connmon(NULL);
+	lwm2m_init_connmon();
 	zassert_equal(lte_lc_register_handler_fake.call_count, 1);
 }
 
@@ -165,7 +165,7 @@ ZTEST(lwm2m_client_utils_connmon, test_connected)
 	lwm2m_set_s8_fake.custom_fake = set_s8_custom_fake;
 	modem_info_params_get_fake.custom_fake = copy_modem_info;
 	modem_info_rsrp_register_fake.custom_fake = copy_rsrp_handler;
-	lwm2m_init_connmon(NULL);
+	lwm2m_init_connmon();
 	evt.type = LTE_LC_EVT_NW_REG_STATUS;
 	evt.nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
 	handler(&evt);
@@ -191,7 +191,7 @@ ZTEST(lwm2m_client_utils_connmon, test_update_disconnected)
 	lte_lc_register_handler_fake.custom_fake = copy_event_handler;
 	lwm2m_set_string_fake.custom_fake = set_string_custom_fake;
 	modem_info_params_get_fake.custom_fake = copy_modem_info;
-	lwm2m_init_connmon(NULL);
+	lwm2m_init_connmon();
 	evt.type = LTE_LC_EVT_CELL_UPDATE;
 	handler(&evt);
 	k_sleep(K_MSEC(100));
@@ -208,7 +208,7 @@ ZTEST(lwm2m_client_utils_connmon, test_update)
 	lte_lc_register_handler_fake.custom_fake = copy_event_handler;
 	lwm2m_set_string_fake.custom_fake = set_string_custom_fake;
 	modem_info_params_get_fake.custom_fake = copy_modem_info;
-	lwm2m_init_connmon(NULL);
+	lwm2m_init_connmon();
 	evt.type = LTE_LC_EVT_NW_REG_STATUS;
 	evt.nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
 	handler(&evt);
@@ -237,7 +237,7 @@ ZTEST(lwm2m_client_utils_connmon, test_lte_mode_update)
 
 	lte_lc_register_handler_fake.custom_fake = copy_event_handler;
 	lwm2m_set_u8_fake.custom_fake = set_u8_custom_fake;
-	lwm2m_init_connmon(NULL);
+	lwm2m_init_connmon();
 	evt.type = LTE_LC_EVT_LTE_MODE_UPDATE;
 	evt.lte_mode = lte_mode;
 	handler(&evt);

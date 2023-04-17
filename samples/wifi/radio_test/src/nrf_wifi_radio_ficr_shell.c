@@ -271,9 +271,8 @@ SHELL_CMD_REGISTER(wifi_radio_ficr_prog,
 		   NULL);
 
 
-static int nrf_wifi_radio_otp_shell_init(const struct device *unused)
+static int nrf_wifi_radio_otp_shell_init(void)
 {
-	ARG_UNUSED(unused);
 
 	return 0;
 }

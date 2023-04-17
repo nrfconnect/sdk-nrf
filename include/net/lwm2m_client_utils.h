@@ -265,7 +265,7 @@ int lwm2m_init_image(void);
  *
  * @return Zero if success, negative error code otherwise.
  */
-int lwm2m_init_connmon(const struct device *dev);
+int lwm2m_init_connmon(void);
 #endif
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT)

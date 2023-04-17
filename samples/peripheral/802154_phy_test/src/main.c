@@ -27,22 +27,20 @@ void ptt_do_reset_ext(void)
 	NVIC_SystemReset();
 }
 
-static int rf_setup(const struct device *dev)
+static int rf_setup(void)
 {
 	LOG_INF("RF setup started");
 
-	ARG_UNUSED(dev);
 
 	rf_init();
 
 	return 0;
 }
 
-static int setup(const struct device *dev)
+static int setup(void)
 {
 	LOG_INF("Setup started");
 
-	ARG_UNUSED(dev);
 
 	periph_init();
 

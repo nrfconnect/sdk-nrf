@@ -40,9 +40,8 @@ static void ccaed_threshold_configure(void)
 	nrf_802154_cca_cfg_set(&cca_cfg);
 }
 
-static int nrf_802154_configure(const struct device *dev)
+static int nrf_802154_configure(void)
 {
-	ARG_UNUSED(dev);
 
 	ccaed_threshold_configure();
 

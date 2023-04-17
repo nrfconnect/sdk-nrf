@@ -194,7 +194,7 @@ static void connmon_lte_notify_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-int lwm2m_init_connmon(const struct device *dev)
+int lwm2m_init_connmon(void)
 {
 	int ret;
 

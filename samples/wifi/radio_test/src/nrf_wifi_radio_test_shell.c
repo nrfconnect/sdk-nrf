@@ -2375,10 +2375,9 @@ SHELL_CMD_REGISTER(wifi_radio_test,
 		   NULL);
 
 
-static int nrf_wifi_radio_test_shell_init(const struct device *unused)
+static int nrf_wifi_radio_test_shell_init(void)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	ARG_UNUSED(unused);
 
 	status = nrf_wifi_radio_test_conf_init(&ctx->conf_params);
 

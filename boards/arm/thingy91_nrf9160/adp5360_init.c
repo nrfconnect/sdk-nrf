@@ -94,7 +94,7 @@ static int power_mgmt_init(void)
 	return 0;
 }
 
-static int thingy91_board_init(const struct device *dev)
+static int thingy91_board_init(void)
 {
 	int err;
 

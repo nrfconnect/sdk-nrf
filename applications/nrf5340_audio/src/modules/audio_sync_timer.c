@@ -51,11 +51,10 @@ static void event_handler(nrf_timer_event_t event_type, void *ctx)
  *
  * @return 0 if successful, error otherwise
  */
-static int audio_sync_timer_init(const struct device *unused)
+static int audio_sync_timer_init(void)
 {
 	nrfx_err_t ret;
 
-	ARG_UNUSED(unused);
 
 	ret = nrfx_timer_init(&audio_sync_timer_instance, &cfg, event_handler);
 	if (ret - NRFX_ERROR_BASE_NUM) {

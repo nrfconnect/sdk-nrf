@@ -168,10 +168,8 @@ EXT_API(EXT_API_PROVIDE, struct ext_api_provide_ext_api,
 };
 #endif
 
-static int check_ext_api_requests(const struct device *dev)
+static int check_ext_api_requests(void)
 {
-	(void)dev;
-
 	const struct fw_info_ext_api_request *ext_api_req =
 			skip_ext_apis(&m_firmware_info);
 

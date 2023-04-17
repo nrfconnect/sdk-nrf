@@ -143,9 +143,8 @@ static struct settings_store settings_mock_store = {
 	.cs_itf = &settings_mock_itf
 };
 
-int settings_mock_init(const struct device *unused)
+int settings_mock_init(void)
 {
-	ARG_UNUSED(unused);
 	sys_slist_init(&settings_list);
 
 	settings_dst_register(&settings_mock_store);

@@ -16,6 +16,6 @@
 /* Suppress linker that warns that setup() is not used. This is because the function is run
  * at SYS_INIT, which is now redefined.
  */
-static int setup(const struct device *dev) __attribute__((unused));
+static int setup(void) __attribute__((unused));
 
 #endif /* UI_MODULE_TEST */

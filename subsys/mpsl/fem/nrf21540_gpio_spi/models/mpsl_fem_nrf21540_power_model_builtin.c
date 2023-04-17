@@ -43,7 +43,7 @@ static void model_update_timeout(struct k_timer *dummy)
 
 K_TIMER_DEFINE(model_update_timer, model_update_timeout, NULL);
 
-static int model_periodic_update_start(const struct device *unused)
+static int model_periodic_update_start(void)
 {
 	/* Perform initial model update */
 	k_work_submit(&model_update_work);
