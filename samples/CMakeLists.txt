@@ -126,6 +126,16 @@ if (CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE OR CONFIG_NCS_SAMPLE_EMPTY_NET_CORE_CHI
       )
     endif()
 
+    if (CONFIG_BT_MESH)
+      # Inject this configuration from the parent image to enable
+      # the necessary amount of advertising sets in the Bluetooth controller
+      # on the network core required by the Bluetooth mesh.
+      add_overlay_config(
+        ${CHILD_IMAGE_NAME}
+        "${NRF_DIR}/subsys/bluetooth/mesh/hci_rpmsg_child_image_overlay.conf"
+      )
+    endif()
+
     add_child_image(
       NAME ${CHILD_IMAGE_NAME}
       SOURCE_DIR ${CHILD_IMAGE_PATH}
