@@ -177,10 +177,12 @@ Values are provided in kilobytes (KB).
 Reference Matter memory layouts
 *******************************
 
-The following sections show how the :ref:`Matter stack architecture in the nRF Connect SDK <ug_matter_overview_architecture_integration_stack>` translates to actual memory maps for each of the available :ref:`ug_matter_overview_architecture_integration_designs`.
+The following tabs show how the :ref:`Matter stack architecture in the nRF Connect SDK <ug_matter_overview_architecture_integration_stack>` translates to actual memory maps for each of the available :ref:`ug_matter_overview_architecture_integration_designs`.
 The memory values match `RAM and flash memory requirements`_ listed above.
 
-The following tabs show the memory maps for the development kits supported by the Matter protocol, including two memory maps for the :ref:`matter_weather_station_app`, which uses Nordic Thingy:53.
+Each tab shows the memory maps for the development kits supported by the Matter protocol, including two memory maps for the :ref:`matter_weather_station_app`, which uses Nordic Thingy:53.
+
+For more information about configuration of memory layouts in Matter, see :ref:`ug_matter_device_bootloader_partition_layout`.
 
 .. tabs::
 
@@ -524,3 +526,9 @@ You can generate :ref:`Partition Manager's ASCII representation <pm_partition_re
 .. code-block:: console
 
    west build -b <build_target> -t partition_manager_report
+
+For example, for the ``nrf7002dk_nrf5340_cpuapp`` build target, the command is as follows:
+
+.. code-block:: console
+
+   west build -b nrf7002dk_nrf5340_cpuapp -t partition_manager_report
