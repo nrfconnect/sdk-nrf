@@ -92,7 +92,7 @@ config MBEDTLS_CCM_ALT
 config MBEDTLS_GCM_ALT
 	bool
 	depends on CC312_BACKEND || \
-		   (PSA_CRYPTO_DRIVER_CC3XX && CRYPTOCELL_CC312_USABLE)
+		   (PSA_CRYPTO_DRIVER_CC3XX && HAS_HW_NRF_CC312)
 	default y
 
 config MBEDTLS_CHACHA20_ALT
@@ -220,12 +220,12 @@ config NRF_SECURITY_ADVANCED
 config CC310_ONLY_PSA_ENABLED
 	bool
 	default y
-	depends on CRYPTOCELL_CC310_USABLE && !PSA_CRYPTO_DRIVER_OBERON
+	depends on HAS_HW_NRF_CC310 && !PSA_CRYPTO_DRIVER_OBERON
 
 config CC312_ONLY_PSA_ENABLED
 	bool
 	default y
-	depends on CRYPTOCELL_CC312_USABLE && !PSA_CRYPTO_DRIVER_OBERON
+	depends on HAS_HW_NRF_CC312 && !PSA_CRYPTO_DRIVER_OBERON
 
 config CC310_ONLY_ENABLED
 	bool
@@ -284,7 +284,7 @@ if MBEDTLS_LEGACY_CRYPTO_C
 
 config CC310_BACKEND
 	bool
-	depends on CRYPTOCELL_CC310_USABLE && !BUILD_WITH_TFM && \
+	depends on HAS_HW_NRF_CC310 && !BUILD_WITH_TFM && \
 		   (PSA_CRYPTO_DRIVER_CC3XX || CC3XX_BACKEND)
 	default y
 	help
@@ -292,7 +292,7 @@ config CC310_BACKEND
 
 config CC312_BACKEND
 	bool
-	depends on CRYPTOCELL_CC312_USABLE && !BUILD_WITH_TFM && \
+	depends on HAS_HW_NRF_CC312 && !BUILD_WITH_TFM && \
 		   (PSA_CRYPTO_DRIVER_CC3XX || CC3XX_BACKEND)
 	default y
 	help
@@ -306,7 +306,7 @@ config OBERON_BACKEND_FORCED
 
 config CC3XX_BACKEND
 	bool
-	depends on CRYPTOCELL_USABLE && !OBERON_BACKEND_FORCED
+	depends on HAS_HW_NRF_CC3XX && !OBERON_BACKEND_FORCED
 	prompt "Configuration to enable CryptoCell CC3XX for legacy mbed TLS APIs"
 	help
 	  This configuration enables legacy mbed TLS APIs using cc3xx.
@@ -327,14 +327,14 @@ config MBEDTLS_CTR_DRBG_C
 	bool
 	prompt "PRNG using CTR_DRBG"
 	select MBEDTLS_AES_C
-	default y if !CRYPTOCELL_USABLE
+	default y if !HAS_HW_NRF_CC3XX
 	help
 	  This setting will enable CTR_DRBG APIs in mbed TLS.
 	  Corresponds to MBEDTLS_CTR_DRBG_C setting in mbed TLS config file.
 
 config MBEDTLS_CTR_DRBG_USE_128_BIT_KEY
 	bool
-	default y if CRYPTOCELL_CC310_USABLE
+	default y if HAS_HW_NRF_CC310
 	help
 	  Use 128 bit AES instead of 256 bit for CTR_DRBG.
 
@@ -355,7 +355,7 @@ config MBEDTLS_ENTROPY_C
 	bool
 	prompt "Entropy gathering"
 	depends on !MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
-	default y if !CRYPTOCELL_USABLE
+	default y if !HAS_HW_NRF_CC3XX
 	help
 	  Enable this setting to build entropy APIs usable to gather entropy
 	  form external sources. Only in use for devices that doesn't have

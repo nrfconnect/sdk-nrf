@@ -17,6 +17,7 @@ config PSA_CRYPTO_DRIVER_OBERON
 config PSA_CRYPTO_DRIVER_CC3XX
 	prompt "CryptoCell PSA driver"
 	bool
+	depends on HAS_HW_NRF_CC3XX
 	help
 	  This configuration enables the usage of CryptoCell for the supported operations.
 	  Disabling this option will result in all crypto operations being handled by
@@ -128,14 +129,12 @@ config PSA_USE_CC3XX_CTR_DRBG_DRIVER
 	bool
 	default y
 	depends on PSA_USE_CTR_DRBG_DRIVER
-	depends on CRYPTOCELL_USABLE
 	depends on BUILD_WITH_TFM || NRF_CC3XX_PLATFORM
 
 config PSA_USE_CC3XX_HMAC_DRBG_DRIVER
 	bool
 	default y
 	depends on PSA_USE_HMAC_DRBG_DRIVER
-	depends on CRYPTOCELL_USABLE
 	depends on BUILD_WITH_TFM || NRF_CC3XX_PLATFORM
 
 endmenu
