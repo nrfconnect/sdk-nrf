@@ -1,0 +1,20 @@
+This sample can be found under |sample path| in the |NCS| folder structure.
+
+To build the sample, you need to add the ``--sysbuild`` argument to the ``west build`` command to build and flash all the cores:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *build_target* --sysbuild
+
+This way, code for all the cores will be compiled, and the ``west flash`` command will program them.
+
+The ``west flash`` command flashes all the cores by default.
+If you want to flash only one core, you have to add the ``--domain`` argument:
+
+.. code-block:: console
+
+   west flash --domain hello_world
+
+To build the sample with |VSC|, follow the steps listed on the `How to build an application`_ page in the |nRFVSC| documentation.
+See :ref:`gs_programming` for other building and programming scenarios and :ref:`gs_testing` for general information about testing and debugging in the |NCS|.

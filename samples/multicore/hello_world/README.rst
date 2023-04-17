@@ -20,16 +20,15 @@ The sample supports the following development kits:
 Overview
 ********
 
-The sample demonstrates how to build a multicore Hello World application with the :c:macro:`add_child_image` CMake macro.
-For general information about multi-image builds, see :ref:`ug_multi_image`.
-When building any multi-image application, the build system in the |NCS| adds the child images based on the options selected for the parent image.
-This sample shows how to inform the build system about dedicated sources for the child image (in the :file:`zephyr` and :file:`aci` directories).
+The sample demonstrates how to build a multicore Hello World application with the :ref:`zephyr:sysbuild`.
+When building with Zephyr Sysbuild, the build system adds child images based on the options selected in the project's additional configuration and build files.
+This sample shows how to inform the build system about dedicated sources for additional images.
 The sample comes with the following additional files:
 
-* :file:`aci/CMakeLists.txt` - This file is used to add the child image and contains the :c:macro:`add_child_image` macro.
-* :file:`zephyr/module.yml` - This file contains information about the location of the :file:`CMakeLists.txt` file that invokes :c:macro:`add_child_image` that is required for the build system.
-* :file:`Kconfig` - Custom file that allows to add child image only for the application core.
-  Additionally, it enables options required by the multi-image build.
+* :file:`Kconfig.sysbuild` - This file is used to add Sysbuild configuration that is passed to all the images.
+  ``SB_CONFIG`` is the prefix for sysbuild’s Kconfig options.
+* :file:`sysbuild.cmake` - The CMake file adds additional images using the :c:macro:`ExternalZephyrProject_Add` macro.
+  You can also add the dependencies for the images if required.
 
 Both the application and remote cores use the same :file:`main.c` that prints the name of the DK on which the application is programmed.
 
@@ -37,7 +36,7 @@ Building and running
 ********************
 .. |sample path| replace:: :file:`samples/multicore/hello_world`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_sb.txt
 
 Testing
 =======
