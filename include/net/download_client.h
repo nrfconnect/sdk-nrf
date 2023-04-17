@@ -64,6 +64,8 @@ enum download_client_evt_id {
 	DOWNLOAD_CLIENT_EVT_ERROR,
 	/** Download complete. */
 	DOWNLOAD_CLIENT_EVT_DONE,
+	/** Connection have been closed. Client is now idle, ready for next download */
+	DOWNLOAD_CLIENT_EVT_CLOSED,
 };
 
 struct download_fragment {
@@ -194,6 +196,14 @@ struct download_client {
 
 	/** Close the socket when finished. */
 	bool close_when_done;
+
+	enum {
+		DOWNLOAD_CLIENT_IDLE,
+		DOWNLOAD_CLIENT_CONNECTING,
+		DOWNLOAD_CLIENT_DOWNLOADING,
+		DOWNLOAD_CLIENT_FINNISHED,
+		DOWNLOAD_CLIENT_CLOSING
+	} state;
 };
 
 /**
@@ -270,7 +280,10 @@ int download_client_start(struct download_client *client, const char *file,
 int download_client_file_size_get(struct download_client *client, size_t *size);
 
 /**
- * @brief Disconnect from the server.
+ * @brief Initiate disconnection.
+ *
+ * Request client to disconnect from the server. This does not block.
+ * When client have been disconnected, it send @ref DOWNLOAD_CLIENT_EVT_CLOSED event.
  *
  * Request client to disconnect from the server. This does not block.
  * When client has been disconnected, it sends @ref DOWNLOAD_CLIENT_EVT_CLOSED event.
@@ -288,6 +301,9 @@ int download_client_disconnect(struct download_client *client);
  * host. When only one file is required from a target server, it can be used instead of
  * separate calls to download_client_set_host(), download_client_start()
  * and download_client_disconnect().
+ *
+ * Downloads are handled one at a time. If previous download is not finnished
+ * this returns -EALREADY.
  *
  * The download is carried out in fragments of up to
  * @kconfig{CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE} bytes for HTTP, or
