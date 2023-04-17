@@ -10,7 +10,11 @@ menu "Bluetooth"
 
 config BLE_ACL_CONN_INTERVAL
 	int "Bluetooth LE ACL Connection Interval (x*1.25ms)"
-	default 80
+	default 32
+	help
+	  When the LE Audio Controller Subsystem for nRF53 is used, this
+	  interval should be a multiple of the ISO interval and maximum 4x
+	  larger than the lowest interval.
 
 config BLE_ACL_SLAVE_LATENCY
 	int "Bluetooth LE Slave Latency"
@@ -18,7 +22,7 @@ config BLE_ACL_SLAVE_LATENCY
 
 config BLE_ACL_SUP_TIMEOUT
 	int "Bluetooth LE Supervision Timeout (x*10ms)"
-	default 400
+	default 100
 
 config BLE_ACL_PER_ADV_INT_MIN
 	hex "Minimum periodic advertising interval"
@@ -39,17 +43,25 @@ config BLE_ACL_PER_ADV_INT_MAX
 config BLE_ACL_EXT_ADV_INT_MIN
 	hex "Minimum extended advertising interval"
 	range 0x0030 0x0780
+	default 0x30 if TRANSPORT_BIS
 	default 0x00A0
 	help
 	  Minimum hexadecimal value for the interval of extended advertisements.
+	  When the LE Audio Controller Subsystem for nRF53 is used, this interval
+	  should be a multiple of the ISO interval and maximum 4x larger than the
+	  lowest interval if using BIS.
 	  For ms, multiply the provided value by 0.625.
 
 config BLE_ACL_EXT_ADV_INT_MAX
 	hex "Maximum extended advertising interval"
 	range 0x0030 0x0780
+	default 0x40 if TRANSPORT_BIS
 	default 0x00F0
 	help
 	  Maximum hexadecimal value for the interval of extended advertisements.
+	  When the LE Audio Controller Subsystem for nRF53 is used, this interval
+	  should be a multiple of the ISO interval and maximum 4x larger than the
+	  lowest interval if using BIS.
 	  For ms, multiply the provided value by 0.625.
 
 choice NRF5340_AUDIO_GATEWAY_SCAN_MODE
