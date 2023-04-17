@@ -791,3 +791,65 @@ cleanup:
 	(void)nrf_cloud_obj_free(obj);
 	return err;
 }
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+int nrf_cloud_obj_pgps_request_create(struct nrf_cloud_obj *const obj,
+					  const struct gps_pgps_request * const request)
+{
+	if (!request || !obj) {
+		return -EINVAL;
+	}
+	if (!NRF_CLOUD_OBJ_TYPE_VALID(obj)) {
+		return -EBADF;
+	}
+
+	int err;
+
+	NRF_CLOUD_OBJ_DEFINE(data_obj, obj->type);
+
+	/* Add the app ID, message type */
+	err = nrf_cloud_obj_msg_init(obj, NRF_CLOUD_JSON_APPID_VAL_PGPS,
+				     NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
+	if (err) {
+		goto cleanup;
+	}
+
+	err = nrf_cloud_obj_init(&data_obj);
+	if (err) {
+		goto cleanup;
+	}
+
+	switch (obj->type) {
+	case NRF_CLOUD_OBJ_TYPE_JSON:
+	{
+		/* Encode the P-GPS data */
+		err =  nrf_cloud_pgps_req_data_json_encode(request, data_obj.json);
+		if (err) {
+			LOG_ERR("Failed to encode P-GPS request data, error: %d", err);
+			goto cleanup;
+		}
+
+		/* Add data object to the P-GPS request object */
+		err = nrf_cloud_obj_object_add(obj, NRF_CLOUD_JSON_DATA_KEY, &data_obj, false);
+		if (err) {
+			goto cleanup;
+		}
+
+		/* The data object now belongs to the P-GPS request object */
+		data_obj.json = NULL;
+
+		break;
+	}
+	default:
+		err = -ENOTSUP;
+		goto cleanup;
+	}
+
+	return 0;
+
+cleanup:
+	(void)nrf_cloud_obj_free(&data_obj);
+	(void)nrf_cloud_obj_free(obj);
+	return err;
+}
+#endif

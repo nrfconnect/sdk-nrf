@@ -8,6 +8,9 @@
 #define NRF_CLOUD_CODEC_H__
 
 #include <net/nrf_cloud.h>
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+#include <net/nrf_cloud_pgps.h>
+#endif
 #if defined(CONFIG_NRF_MODEM)
 #include <nrf_modem_gnss.h>
 #endif /* CONFIG_NRF_MODEM */
@@ -521,6 +524,27 @@ int nrf_cloud_obj_pvt_add(struct nrf_cloud_obj *const obj,
 int nrf_cloud_obj_modem_pvt_add(struct nrf_cloud_obj *const obj,
 				const struct nrf_modem_gnss_pvt_data_frame * const mdm_pvt);
 #endif /* CONFIG_NRF_MODEM */
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+/**
+ * @brief Create an nRF Cloud P-GPS request device message object.
+ *
+ * @details If successful, memory is allocated for the provided object.
+ *          The @ref nrf_cloud_obj_free function should be called when finished with the object.
+ *
+ * @param[out] obj Uninitialzed object to contain the P-GPS request message.
+ * @param[in] request P-GPS request data.
+ *
+ * @retval -EINVAL Invalid parameter.
+ * @retval -EBADF Invalid object type.
+ * @retval -ENOTEMPTY Object already initialized.
+ * @retval -ENOMEM Out of memory.
+ * @retval -ENOTSUP Action not supported for the object's type.
+ * @retval 0 Success; GNSS message created.
+ */
+int nrf_cloud_obj_pgps_request_create(struct nrf_cloud_obj *const obj,
+				      const struct gps_pgps_request * const request);
+#endif
 
 /**
  * @brief Create an nRF Cloud GNSS device message using the provided GNSS data.

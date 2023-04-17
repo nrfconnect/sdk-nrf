@@ -15,6 +15,7 @@
 #include <date_time.h>
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
+#include <net/nrf_cloud_codec.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <pm_config.h>
 #include <flash_map_pm.h>
@@ -781,12 +782,12 @@ static int pgps_request(const struct gps_pgps_request *request)
 
 	return 0;
 #elif defined(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT)
-	cJSON *pgps_req_obj = cJSON_CreateObject();
-	int err = nrf_cloud_pgps_req_json_encode(request, pgps_req_obj);
+	NRF_CLOUD_OBJ_JSON_DEFINE(pgps_req_obj);
+	int err = nrf_cloud_obj_pgps_request_create(&pgps_req_obj, request);
 
 	if (!err) {
 		/* @TODO: if device is offline, we need to defer this to later */
-		err = json_send_to_cloud(pgps_req_obj);
+		err = json_send_to_cloud(pgps_req_obj.json);
 	} else {
 		LOG_ERR("Failed to create P-GPS request: %d", err);
 	}
@@ -796,7 +797,8 @@ static int pgps_request(const struct gps_pgps_request *request)
 		state = PGPS_REQUESTING;
 	}
 
-	cJSON_Delete(pgps_req_obj);
+	(void)nrf_cloud_obj_free(&pgps_req_obj);
+
 	return err;
 #endif /* defined(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT) */
 }

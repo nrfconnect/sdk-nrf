@@ -320,6 +320,7 @@ Libraries for networking
   * Added:
 
     * :c:struct:`nrf_cloud_obj` structure and functions for encoding and decoding nRF Cloud data.
+    * :c:func:`nrf_cloud_obj_pgps_request_create` function that creates a P-GPS request for nRF Cloud.
 
 Libraries for NFC
 -----------------
