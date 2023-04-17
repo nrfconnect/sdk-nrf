@@ -559,26 +559,6 @@ int nrf_cloud_gnss_msg_json_encode(const struct nrf_cloud_gnss_data * const gnss
 				   cJSON * const gnss_msg_obj);
 
 /**
- * @brief Create an nRF Cloud location request device message using the provided
- *        cellular and/or Wi-Fi data.
- *
- * @param cells_inf Cell info; can be NULL if Wi-Fi info is provided.
- * @param wifi_inf Wi-Fi info; can be NULL if cell info is provided.
- * @param request_loc If true, cloud will send location to the device.
- *                    If false, cloud will not send location to the device.
- * @param loc_req_obj cJSON object to which the location request message will be added.
- *
- * @retval 0 If successful.
- * @retval -EDOM The number of access points in the Wi-Fi-only request was smaller than
- *               the minimum required value NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN.
- * @return A negative value indicates an error.
- */
-int nrf_cloud_location_request_msg_json_encode(const struct lte_lc_cells_info * const cells_inf,
-					       const struct wifi_scan_info * const wifi_inf,
-					       const bool request_loc,
-					       cJSON * const loc_req_obj);
-
-/**
  * @brief Add service info into the provided cJSON object.
  *
  * @param[in]     svc_inf     Service info to add.
