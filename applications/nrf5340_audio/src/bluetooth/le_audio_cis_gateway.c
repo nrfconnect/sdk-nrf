@@ -296,9 +296,10 @@ static void unicast_client_location_cb(struct bt_conn *conn, enum bt_audio_dir d
 	int ret;
 
 	if (dir == BT_AUDIO_DIR_SINK) {
-		if (loc == BT_AUDIO_LOCATION_FRONT_LEFT) {
+		if (loc & BT_AUDIO_LOCATION_FRONT_LEFT || loc & BT_AUDIO_LOCATION_SIDE_LEFT) {
 			headsets[AUDIO_CH_L].headset_conn = conn;
-		} else if (loc == BT_AUDIO_LOCATION_FRONT_RIGHT) {
+		} else if (loc & BT_AUDIO_LOCATION_FRONT_RIGHT ||
+			   loc & BT_AUDIO_LOCATION_SIDE_RIGHT) {
 			headsets[AUDIO_CH_R].headset_conn = conn;
 		} else {
 			LOG_ERR("Channel location not supported");
@@ -656,6 +657,27 @@ static void work_stream_start(struct k_work *work)
 	}
 }
 
+/**
+ * @brief Set the allocation to a preset codec configuration.
+ *
+ * @param codec The preset codec configuration.
+ * @param loc   Location bitmask setting.
+ *
+ */
+static void bt_codec_allocation_set(struct bt_codec *codec, enum bt_audio_location loc)
+{
+	for (size_t i = 0; i < codec->data_count; i++) {
+		if (codec->data[i].data.type == BT_CODEC_CONFIG_LC3_CHAN_ALLOC) {
+			codec->data[i].value[0] = loc & 0xff;
+			codec->data[i].value[1] = (loc >> 8) & 0xFFU;
+			codec->data[i].value[2] = (loc >> 16) & 0xFFU;
+			codec->data[i].value[3] = (loc >> 24) & 0xFFU;
+			codec->data[i].data.data = codec->data[i].value;
+			return;
+		}
+	}
+}
+
 static int temp_cap_index_get(struct bt_conn *conn, uint8_t *index)
 {
 	if (conn == NULL) {
@@ -799,6 +821,16 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 
 	if (valid_codec_cap_check(headsets[channel_index].sink_codec_cap,
 				  ARRAY_SIZE(headsets[channel_index].sink_codec_cap))) {
+		if (conn == headsets[AUDIO_CH_L].headset_conn) {
+			bt_codec_allocation_set(&lc3_preset_sink.codec,
+						BT_AUDIO_LOCATION_FRONT_LEFT);
+		} else if (conn == headsets[AUDIO_CH_R].headset_conn) {
+			bt_codec_allocation_set(&lc3_preset_sink.codec,
+						BT_AUDIO_LOCATION_FRONT_RIGHT);
+		} else {
+			LOG_ERR("Unknown connection, cannot set allocation");
+		}
+
 		ret = bt_bap_stream_config(conn, &headsets[channel_index].sink_stream,
 					   headsets[channel_index].sink_ep, &lc3_preset_sink.codec);
 		if (ret) {
@@ -905,6 +937,16 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 
 	if (valid_codec_cap_check(headsets[channel_index].source_codec_cap,
 				  ARRAY_SIZE(headsets[channel_index].source_codec_cap))) {
+		if (conn == headsets[AUDIO_CH_L].headset_conn) {
+			bt_codec_allocation_set(&lc3_preset_source.codec,
+						BT_AUDIO_LOCATION_FRONT_LEFT);
+		} else if (conn == headsets[AUDIO_CH_R].headset_conn) {
+			bt_codec_allocation_set(&lc3_preset_source.codec,
+						BT_AUDIO_LOCATION_FRONT_RIGHT);
+		} else {
+			LOG_ERR("Unknown connection, cannot set allocation");
+		}
+
 		ret = bt_bap_stream_config(conn, &headsets[channel_index].source_stream,
 					   headsets[channel_index].source_ep,
 					   &lc3_preset_source.codec);
@@ -1038,9 +1080,9 @@ static void on_device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
 		}
 		break;
 	case BT_GAP_ADV_TYPE_ADV_IND:
-		 /* Fall through */
+		/* Fall through */
 	case BT_GAP_ADV_TYPE_EXT_ADV:
-		 /* Fall through */
+		/* Fall through */
 	case BT_GAP_ADV_TYPE_SCAN_RSP:
 		/* Note: May lead to connection creation */
 		if (bonded_num < CONFIG_BT_MAX_PAIRED) {
@@ -1062,8 +1104,7 @@ static void ble_acl_start_scan(void)
 	int scan_window =
 		bt_codec_cfg_get_frame_duration_us(&lc3_preset_sink.codec) / 1000 / 0.625 * 2;
 	struct bt_le_scan_param *scan_param =
-		BT_LE_SCAN_PARAM(NRF5340_AUDIO_GATEWAY_SCAN_TYPE,
-				 BT_LE_SCAN_OPT_FILTER_DUPLICATE,
+		BT_LE_SCAN_PARAM(NRF5340_AUDIO_GATEWAY_SCAN_TYPE, BT_LE_SCAN_OPT_FILTER_DUPLICATE,
 				 scan_interval, scan_window);
 
 	/* Reset number of bonds found */
