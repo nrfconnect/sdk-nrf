@@ -11,7 +11,7 @@
 #include <modem/nrf_modem_lib.h>
 #include <zephyr/dfu/mcuboot.h>
 
-void main(void)
+int main(void)
 {
 	int err = nrf_modem_lib_init();
 
@@ -46,4 +46,6 @@ void main(void)
 	} else {
 		printk("Current image not confirmed yet\n\r");
 	}
+
+	return 0;
 }

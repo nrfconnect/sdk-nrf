@@ -11,7 +11,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #endif /* defined(CONFIG_BT) */
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -27,8 +27,10 @@ void main(void)
 	err = hw_id_get(buf, ARRAY_SIZE(buf));
 	if (err) {
 		printk("hw_id_get failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("hw_id: %s\n", buf);
+
+	return 0;
 }

@@ -166,7 +166,7 @@ static void notify_work_handler(struct k_work *work)
 	k_work_reschedule(k_work_delayable_from_work(work), K_MSEC(NOTIFY_INTERVAL));
 }
 
-void main(void)
+int main(void)
 {
 	uint32_t led_status = 0;
 	int err;
@@ -176,13 +176,13 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		printk("LEDs init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Bluetooth initialized\n");
@@ -190,7 +190,7 @@ void main(void)
 	err = create_advertising_coded();
 	if (err) {
 		printk("Advertising failed to create (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	k_work_submit(&start_advertising_worker);

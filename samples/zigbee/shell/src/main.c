@@ -233,7 +233,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	LOG_INF("Starting Zigbee shell application");
 
@@ -249,4 +249,6 @@ void main(void)
 	ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(APP_ZIGBEE_ENDPOINT, identify_cb);
 
 	LOG_INF("Zigbee shell application started");
+
+	return 0;
 }

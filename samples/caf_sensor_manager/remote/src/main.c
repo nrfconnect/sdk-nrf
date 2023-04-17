@@ -15,7 +15,7 @@
 
 LOG_MODULE_REGISTER(MODULE);
 
-void main(void)
+int main(void)
 {
 	int ret;
 
@@ -25,7 +25,7 @@ void main(void)
 	if (ret) {
 		LOG_ERR("Event Manager not initialized, err: %d", ret);
 		__ASSERT_NO_MSG(false);
-		return;
+		return 0;
 	}
 	LOG_INF("Event manager initialized");
 
@@ -33,8 +33,10 @@ void main(void)
 	if (ret) {
 		LOG_ERR("Event Manager Proxy not initialized, err: %d", ret);
 		__ASSERT_NO_MSG(false);
-		return;
+		return 0;
 	}
 
 	module_set_state(MODULE_STATE_READY);
+
+	return 0;
 }

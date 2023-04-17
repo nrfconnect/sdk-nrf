@@ -16,7 +16,9 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #include "bttester.h"
 
-void main(void)
+int main(void)
 {
 	tester_init();
+
+	return 0;
 }

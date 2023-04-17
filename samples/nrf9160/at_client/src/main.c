@@ -23,7 +23,7 @@ void enable_xtal(void)
 	(void)onoff_request(clk_mgr, &cli);
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -32,8 +32,10 @@ void main(void)
 	err = nrf_modem_lib_init();
 	if (err) {
 		printk("Modem library initialization failed, error: %d\n", err);
-		return;
+		return 0;
 	}
 	enable_xtal();
 	printk("Ready\n");
+
+	return 0;
 }

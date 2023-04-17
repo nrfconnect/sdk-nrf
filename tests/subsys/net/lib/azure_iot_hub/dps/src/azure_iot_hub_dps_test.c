@@ -46,6 +46,10 @@
 						"/api-version=2019-03-31"
 #define TEST_EXPECTED_USER_NAME_DEFAULT_LEN	(sizeof(TEST_EXPECTED_USER_NAME_DEFAULT) - 1)
 
+/* It is required to be added to each test. That is because unity's
+ * main may return nonzero, while zephyr's main currently must
+ * return 0 in all cases (other values are reserved).
+ */
 extern int unity_main(void);
 
 /* Pull in variables and functions from the DPS library. */
@@ -468,7 +472,9 @@ void test_on_publish_invalid_payload(void)
 	TEST_ASSERT_EQUAL(0, k_sem_take(&reg_failed_sem, K_SECONDS(2)));
 }
 
-void main(void)
+int main(void)
 {
 	(void)unity_main();
+
+	return 0;
 }

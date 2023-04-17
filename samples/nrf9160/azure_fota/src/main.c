@@ -190,7 +190,7 @@ static void modem_configure(void)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -222,7 +222,7 @@ void main(void)
 	case -1:
 		LOG_INF("Could not initialize modem library");
 		LOG_INF("Fatal error.");
-		return;
+		return 0;
 	default:
 		break;
 	}
@@ -233,7 +233,7 @@ void main(void)
 	if (err) {
 		LOG_ERR("Azure IoT Hub could not be initialized, error: %d",
 		       err);
-		return;
+		return 0;
 	}
 
 	LOG_INF("Connecting to LTE network");
@@ -246,7 +246,7 @@ void main(void)
 	err = hw_id_get(device_id, ARRAY_SIZE(device_id));
 	if (err) {
 		LOG_ERR("Failed to retrieve device ID");
-		return;
+		return 0;
 	}
 #endif
 
@@ -264,7 +264,7 @@ void main(void)
 	err = azure_iot_hub_connect(&config);
 	if (err < 0) {
 		LOG_ERR("azure_iot_hub_connect failed: %d", err);
-		return;
+		return 0;
 	}
 
 	k_sem_take(&cloud_connected_sem, K_FOREVER);
@@ -273,4 +273,6 @@ void main(void)
 	 * image as working so that we will not revert upon reboot.
 	 */
 	boot_write_img_confirmed();
+
+	return 0;
 }

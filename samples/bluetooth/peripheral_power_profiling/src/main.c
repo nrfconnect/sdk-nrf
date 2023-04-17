@@ -652,7 +652,7 @@ static const struct bt_le_ext_adv_cb adv_callbacks = {
 	.sent = advertising_terminated
 };
 
-void main(void)
+int main(void)
 {
 	int err;
 	uint32_t blink_status = 0;
@@ -664,7 +664,7 @@ void main(void)
 	err = dk_buttons_init(button_handler);
 	if (err) {
 		printk("Failed to initialize buttons (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	/* Read the button state after booting to check if advertising start is needed. */
@@ -673,7 +673,7 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		printk("LEDs init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	reset_reason_print();
@@ -681,51 +681,51 @@ void main(void)
 	err = pwr_service_cb_register(&pwr_service_callback, NULL);
 	if (err) {
 		printk("Failed to register PWR service callback (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		err = settings_load();
 		if (err) {
 			printk("Failed to load settings (err %d)\n", err);
-			return;
+			return 0;
 		}
 	}
 
 	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 	if (err) {
 		printk("Failed to register authorization info callbacks (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		printk("Failed to register authorization callbacks (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_le_ext_adv_create(connectable_ad_params, &adv_callbacks, &adv_set);
 	if (err) {
 		printk("Failed to create advertising set (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = pairing_key_generate();
 	if (err) {
 		printk("Failed to generate pairing keys (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = nfc_init();
 	if (err) {
 		printk("Failed to initialize NFC (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	button_handler(button_state, has_changed);

@@ -136,13 +136,13 @@ static void setup_grant_pin(void)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	printk("Starting Radio Coex Demo 1wire on board %s\n", CONFIG_BOARD);
 
 	if (bt_enable(NULL)) {
 		printk("Bluetooth init failed");
-		return;
+		return 0;
 	}
 	printk("Bluetooth initialized\n");
 
@@ -151,7 +151,7 @@ void main(void)
 
 	if (bt_le_adv_start(BT_LE_ADV_NCONN, ad, ARRAY_SIZE(ad), NULL, 0)) {
 		printk("Advertising failed to start");
-		return;
+		return 0;
 	}
 	printk("Advertising started\n");
 

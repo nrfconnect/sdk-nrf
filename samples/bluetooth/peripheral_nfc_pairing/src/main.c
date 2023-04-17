@@ -707,7 +707,7 @@ void button_changed(uint32_t button_state, uint32_t has_changed)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -717,7 +717,7 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		printk("Cannot init LEDs!\n");
-		return;
+		return 0;
 	}
 
 	/* Configure buttons */
@@ -729,19 +729,19 @@ void main(void)
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		printk("Failed to register authorization callbacks.\n");
-		return;
+		return 0;
 	}
 
 	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 	if (err) {
 		printk("Failed to register authorization info callbacks.\n");
-		return;
+		return 0;
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Bluetooth initialized\n");
@@ -752,7 +752,7 @@ void main(void)
 
 	err = paring_key_generate();
 	if (err) {
-		return;
+		return 0;
 	}
 
 	k_work_init(&adv_work, adv_handler);

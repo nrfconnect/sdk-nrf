@@ -16,14 +16,14 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 
-void main(void)
+int main(void)
 {
 	int err;
 	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
 
 	if (!device_is_ready(fdev)) {
 		printk("Flash device not ready\n");
-		return;
+		return 0;
 	}
 
 	/* The flash is locked at flash page granularity */
@@ -86,8 +86,9 @@ void main(void)
 	}
 
 	bl_boot(fw_info_find(s0_addr));
-	return;
+	return 0;
 
 failure:
 	pcd_fw_copy_invalidate();
+	return 0;
 }

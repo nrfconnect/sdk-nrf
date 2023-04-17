@@ -119,7 +119,7 @@ static void async(const struct device *lpuart)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	const struct device *lpuart = DEVICE_DT_GET(DT_NODELABEL(lpuart));
 
@@ -130,4 +130,6 @@ void main(void)
 	} else {
 		async(lpuart);
 	}
+
+	return 0;
 }

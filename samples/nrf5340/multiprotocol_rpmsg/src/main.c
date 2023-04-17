@@ -216,7 +216,7 @@ static struct ipc_ept_cfg hci_ept_cfg = {
 	},
 };
 
-void main(void)
+int main(void)
 {
 	int err;
 	const struct device *hci_ipc_instance = DEVICE_DT_GET(DT_NODELABEL(ipc0));

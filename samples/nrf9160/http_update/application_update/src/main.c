@@ -171,7 +171,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 }
 #endif /* CONFIG_LWM2M_CARRIER */
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -182,7 +182,7 @@ void main(void)
 	err = nrf_modem_lib_init();
 	if (err) {
 		printk("Failed to initialize modem library!");
-		return;
+		return 0;
 	}
 #endif
 	/* This is needed so that MCUBoot won't revert the update */
@@ -191,7 +191,7 @@ void main(void)
 	err = fota_download_init(fota_dl_handler);
 	if (err != 0) {
 		printk("fota_download_init() failed, err %d\n", err);
-		return;
+		return 0;
 	}
 
 	err = update_sample_init(&(struct update_sample_init_params){
@@ -201,8 +201,10 @@ void main(void)
 				});
 	if (err != 0) {
 		printk("update_sample_init() failed, err %d\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Press Button 1 or enter 'download' to download firmware update\n");
+
+	return 0;
 }

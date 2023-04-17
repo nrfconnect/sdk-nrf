@@ -100,7 +100,7 @@ static int wifi_scan(void)
 	return 0;
 }
 
-void main(void)
+int main(void)
 {
 	scan_result = 0U;
 
@@ -119,4 +119,6 @@ void main(void)
 	LOG_INF("Starting %s with CPU frequency: %d MHz", CONFIG_BOARD, SystemCoreClock / MHZ(1));
 
 	wifi_scan();
+
+	return 0;
 }

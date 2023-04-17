@@ -11,7 +11,9 @@
 /* Run the PSA test suite */
 void psa_test(void);
 
-void main(void)
+int main(void)
 {
 	psa_test();
+
+	return 0;
 }

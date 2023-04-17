@@ -582,7 +582,7 @@ void button_changed(uint32_t button_state, uint32_t has_changed)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -597,7 +597,7 @@ void main(void)
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Bluetooth initialized\n");
@@ -611,18 +611,18 @@ void main(void)
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		printk("Failed to register authorization callbacks.\n");
-		return;
+		return 0;
 	}
 
 	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 	if (err) {
 		printk("Failed to register authorization info callbacks.\n");
-		return;
+		return 0;
 	}
 
 	err = paring_key_generate();
 	if (err) {
-		return;
+		return 0;
 	}
 
 	err = nfc_tnep_ch_service_init(&ch_cb);
@@ -642,7 +642,7 @@ void main(void)
 		k_poll(events, ARRAY_SIZE(events), K_FOREVER);
 		err = nfc_poller_process();
 		if (err) {
-			return;
+			return 0;
 		}
 		paring_key_process();
 	}

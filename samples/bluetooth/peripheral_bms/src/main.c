@@ -173,7 +173,7 @@ static int bms_init(void)
 	return bt_bms_init(&init_params);
 }
 
-void main(void)
+int main(void)
 {
 	int blink_status = 0;
 	int err;
@@ -183,25 +183,25 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		printk("LEDs init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		printk("Failed to register authorization callbacks.\n");
-		return;
+		return 0;
 	}
 
 	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 	if (err) {
 		printk("Failed to register authorization info callbacks.\n");
-		return;
+		return 0;
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Bluetooth initialized\n");
@@ -213,14 +213,14 @@ void main(void)
 	err = bms_init();
 	if (err) {
 		printk("Failed to init BMS (err:%d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
 			      sd, ARRAY_SIZE(sd));
 	if (err) {
 		printk("Advertising failed to start (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Advertising successfully started\n");

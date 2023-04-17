@@ -369,7 +369,7 @@ int send_hello_world_msg(void)
 	return err;
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -379,7 +379,7 @@ void main(void)
 	err = setup();
 	if (err) {
 		LOG_ERR("Setup failed, stopping.");
-		return;
+		return 0;
 	}
 
 	rest_ctx.keep_alive = true;
@@ -390,7 +390,7 @@ void main(void)
 	err = send_hello_world_msg();
 	if (err) {
 		LOG_ERR("Hello World failed, stopping.");
-		return;
+		return 0;
 	}
 
 	while (1) {

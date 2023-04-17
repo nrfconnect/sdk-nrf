@@ -425,7 +425,7 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 }
 
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -436,7 +436,7 @@ void main(void)
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Bluetooth initialized\n");
@@ -446,14 +446,15 @@ void main(void)
 	err = dk_buttons_init(button_handler);
 	if (err) {
 		printk("Failed to initialize buttons (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
 		printk("Scanning failed to start (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Scanning successfully started\n");
+	return 0;
 }

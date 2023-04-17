@@ -184,7 +184,7 @@ static int connectable_adv_create(void)
 	return err;
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 	int blink_status = 0;
@@ -194,27 +194,27 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		printk("LEDs init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Bluetooth initialized\n");
 
 	err = non_connectable_adv_create();
 	if (err) {
-		return;
+		return 0;
 	}
 
 	printk("Non-connectable advertising started\n");
 
 	err = connectable_adv_create();
 	if (err) {
-		return;
+		return 0;
 	}
 
 	printk("Connectable advertising started\n");

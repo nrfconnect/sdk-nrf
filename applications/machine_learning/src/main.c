@@ -13,11 +13,12 @@
 LOG_MODULE_REGISTER(MODULE);
 
 
-void main(void)
+int main(void)
 {
 	if (app_event_manager_init()) {
 		LOG_ERR("Application Event Manager initialization failed");
 	} else {
 		module_set_state(MODULE_STATE_READY);
 	}
+	return 0;
 }

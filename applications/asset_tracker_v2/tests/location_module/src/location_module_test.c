@@ -71,8 +71,9 @@ struct event_type __event_type_modem_module_event;
 
 /* Dummy functions and objects - End.  */
 
-/* The following is required because unity is using a different main signature
- * (returns int) and zephyr expects main to not return value.
+/* It is required to be added to each test. That is because unity's
+ * main may return nonzero, while zephyr's main currently must
+ * return 0 in all cases (other values are reserved).
  */
 extern int unity_main(void);
 
@@ -522,7 +523,8 @@ void test_location_fail_init(void)
 	TEST_ASSERT_EQUAL(0, ret);
 }
 
-void main(void)
+int main(void)
 {
 	(void)unity_main();
+	return 0;
 }

@@ -722,7 +722,7 @@ static struct nus_entry commands[] = {
 
 #endif /* CONFIG_BT_NUS */
 
-void main(void)
+int main(void)
 {
 	LOG_INF("Starting ZBOSS Light Switch example");
 

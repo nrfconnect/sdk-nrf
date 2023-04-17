@@ -406,9 +406,15 @@ void test_modem_info_get_rsrp_success(void)
 	TEST_ASSERT_EQUAL(1, nrf_modem_at_scanf_fake.call_count);
 }
 
+/* It is required to be added to each test. That is because unity's
+ * main may return nonzero, while zephyr's main currently must
+ * return 0 in all cases (other values are reserved).
+ */
 extern int unity_main(void);
 
-void main(void)
+int main(void)
 {
 	(void)unity_main();
+
+	return 0;
 }

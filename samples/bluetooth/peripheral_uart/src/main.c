@@ -570,7 +570,7 @@ static void configure_gpio(void)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int blink_status = 0;
 	int err = 0;
@@ -586,13 +586,13 @@ void main(void)
 		err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 		if (err) {
 			printk("Failed to register authorization callbacks.\n");
-			return;
+			return 0;
 		}
 
 		err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 		if (err) {
 			printk("Failed to register authorization info callbacks.\n");
-			return;
+			return 0;
 		}
 	}
 
@@ -612,14 +612,14 @@ void main(void)
 	err = bt_nus_init(&nus_cb);
 	if (err) {
 		LOG_ERR("Failed to initialize UART service (err: %d)", err);
-		return;
+		return 0;
 	}
 
 	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd,
 			      ARRAY_SIZE(sd));
 	if (err) {
 		LOG_ERR("Advertising failed to start (err %d)", err);
-		return;
+		return 0;
 	}
 
 	for (;;) {

@@ -118,7 +118,7 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_failed = pairing_failed
 };
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -128,35 +128,36 @@ void main(void)
 		err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 		if (err) {
 			printk("Failed to register authorization callbacks.\n");
-			return;
+			return 0;
 		}
 
 		err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 		if (err) {
 			printk("Failed to register authorization info callbacks.\n");
-			return;
+			return 0;
 		}
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("BLE enable failed (err: %d)", err);
-		return;
+		return 0;
 	}
 
 	err = shell_bt_nus_init();
 	if (err) {
 		LOG_ERR("Failed to initialize BT NUS shell (err: %d)", err);
-		return;
+		return 0;
 	}
 
 	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd,
 			      ARRAY_SIZE(sd));
 	if (err) {
 		LOG_ERR("Advertising failed to start (err %d)", err);
-		return;
+		return 0;
 	}
 
 	LOG_INF("Bluetooth ready. Advertising started.");
 
+	return 0;
 }

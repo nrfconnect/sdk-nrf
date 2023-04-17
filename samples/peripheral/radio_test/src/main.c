@@ -40,9 +40,11 @@ static void clock_init(void)
 	printk("Clock has started\n");
 }
 
-void main(void)
+int main(void)
 {
 	printk("Starting Radio Test example\n");
 
 	clock_init();
+
+	return 0;
 }

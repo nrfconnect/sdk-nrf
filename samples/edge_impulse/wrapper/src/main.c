@@ -66,24 +66,24 @@ static void result_ready_cb(int err)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int err = ei_wrapper_init(result_ready_cb);
 
 	if (err) {
 		printk("Edge Impulse wrapper failed to initialize (err: %d)\n",
 		       err);
-		return;
+		return 0;
 	};
 
 	if (ARRAY_SIZE(input_data) < ei_wrapper_get_window_size()) {
 		printk("Not enough input data\n");
-		return;
+		return 0;
 	}
 
 	if (ARRAY_SIZE(input_data) % ei_wrapper_get_frame_size() != 0) {
 		printk("Improper number of input samples\n");
-		return;
+		return 0;
 	}
 
 	printk("Machine learning model sampling frequency: %zu\n",
@@ -102,7 +102,7 @@ void main(void)
 	if (err) {
 		printk("Cannot provide input data (err: %d)\n", err);
 		printk("Increase CONFIG_EI_WRAPPER_DATA_BUF_SIZE\n");
-		return;
+		return 0;
 	}
 	cnt += ei_wrapper_get_window_size();
 
@@ -127,10 +127,12 @@ void main(void)
 		if (err) {
 			printk("Cannot provide input data (err: %d)\n", err);
 			printk("Increase CONFIG_EI_WRAPPER_DATA_BUF_SIZE\n");
-			return;
+			return 0;
 		}
 		cnt += ei_wrapper_get_frame_size();
 
 		k_sleep(K_MSEC(FRAME_ADD_INTERVAL_MS));
 	}
+
+	return 0;
 }

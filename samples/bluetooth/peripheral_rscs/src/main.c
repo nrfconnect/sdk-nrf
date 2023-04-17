@@ -222,7 +222,7 @@ static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_RSCS_VAL))
 };
 
-void main(void)
+int main(void)
 {
 	int err;
 	uint32_t blink_status = 0;
@@ -232,27 +232,27 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		printk("LEDs init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	if (IS_ENABLED(CONFIG_BT_RSCS_SECURITY_ENABLED)) {
 		err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 		if (err) {
 			printk("Failed to register authorization callbacks.\n");
-			return;
+			return 0;
 		}
 
 		err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 		if (err) {
 			printk("Failed to register authorization info callbacks.\n");
-			return;
+			return 0;
 		}
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Bluetooth initialized\n");
@@ -282,13 +282,13 @@ void main(void)
 	err = bt_rscs_init(&rscs_init);
 	if (err) {
 		printk("Failed to init RSCS (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_le_adv_start(BT_LE_ADV_CONN_NAME, ad, ARRAY_SIZE(ad), NULL, 0);
 	if (err) {
 		printk("Advertising failed to start (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Advertising successfully started\n");

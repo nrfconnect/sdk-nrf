@@ -103,7 +103,7 @@ static void cgms_session_state_changed(const bool state)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 	const uint8_t measurement_interval = 1; /* time in minutes. */
@@ -123,7 +123,7 @@ void main(void)
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Bluetooth initialized\n");
@@ -145,13 +145,13 @@ void main(void)
 	err = bt_cgms_init(&params);
 	if (err) {
 		printk("Error occurred when initializing cgm service (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_le_adv_start(BT_LE_ADV_CONN_NAME, ad, ARRAY_SIZE(ad), NULL, 0);
 	if (err) {
 		printk("Advertising failed to start (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Advertising successfully started\n");

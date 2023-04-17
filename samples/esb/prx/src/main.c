@@ -175,7 +175,7 @@ int esb_initialize(void)
 	return 0;
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -183,18 +183,18 @@ void main(void)
 
 	err = clocks_start();
 	if (err) {
-		return;
+		return 0;
 	}
 
 	err = leds_init();
 	if (err) {
-		return;
+		return 0;
 	}
 
 	err = esb_initialize();
 	if (err) {
 		LOG_ERR("ESB initialization failed, err %d", err);
-		return;
+		return 0;
 	}
 
 	LOG_INF("Initialization complete");
@@ -202,7 +202,7 @@ void main(void)
 	err = esb_write_payload(&tx_payload);
 	if (err) {
 		LOG_ERR("Write payload, err %d", err);
-		return;
+		return 0;
 	}
 
 	LOG_INF("Setting up for packet receiption");
@@ -210,9 +210,9 @@ void main(void)
 	err = esb_start_rx();
 	if (err) {
 		LOG_ERR("RX setup failed, err %d", err);
-		return;
+		return 0;
 	}
 
 	/* return to idle thread */
-	return;
+	return 0;
 }

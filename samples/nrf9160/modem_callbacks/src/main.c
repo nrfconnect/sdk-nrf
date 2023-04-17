@@ -30,7 +30,7 @@ static void on_cfun(enum lte_lc_func_mode mode, void *ctx)
 	printk("> Functional mode has changed to %d\n", mode);
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -40,7 +40,7 @@ void main(void)
 	err = nrf_modem_lib_init();
 	if (err) {
 		printk("Modem initialization failed, err %d\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Changing functional mode\n");
@@ -53,8 +53,10 @@ void main(void)
 	err = nrf_modem_lib_shutdown();
 	if (err) {
 		printk("Shutting down modem failed, err %d\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Bye\n");
+
+	return 0;
 }

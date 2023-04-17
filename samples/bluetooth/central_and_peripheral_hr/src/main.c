@@ -371,7 +371,7 @@ static void hrs_notify_thread(void)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 	int blink_status = 0;
@@ -381,24 +381,24 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		printk("LEDs init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_conn_auth_cb_register(&auth_callbacks);
 	if (err) {
 		printk("Failed to register authorization callbacks.\n");
-		return;
+		return 0;
 	}
 
 	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 	if (err) {
 		printk("Failed to register authorization info callbacks.\n");
-		return;
+		return 0;
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
-		return;
+		return 0;
 	}
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
@@ -408,14 +408,14 @@ void main(void)
 	err = bt_hrs_client_init(&hrs_c);
 	if (err) {
 		printk("Heart Rate Service client failed to init (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	scan_init();
 
 	err = scan_start();
 	if (err) {
-		return;
+		return 0;
 	}
 
 	printk("Scanning started\n");
@@ -424,7 +424,7 @@ void main(void)
 			      sd, ARRAY_SIZE(sd));
 	if (err) {
 		printk("Advertising failed to start (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Advertising started\n");

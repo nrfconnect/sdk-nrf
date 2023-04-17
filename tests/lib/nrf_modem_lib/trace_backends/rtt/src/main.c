@@ -21,6 +21,10 @@ static int callback(size_t len)
 	return 0;
 }
 
+/* It is required to be added to each test. That is because unity's
+ * main may return nonzero, while zephyr's main currently must
+ * return 0 in all cases (other values are reserved).
+ */
 extern int unity_main(void);
 
 static int trace_rtt_channel;
@@ -94,7 +98,9 @@ void test_trace_backend_write_rtt(void)
 	trace_backend.write(sample_trace_data, sizeof(sample_trace_data));
 }
 
-void main(void)
+int main(void)
 {
 	(void)unity_main();
+
+	return 0;
 }

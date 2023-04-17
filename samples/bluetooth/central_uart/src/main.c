@@ -554,26 +554,26 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_failed = pairing_failed
 };
 
-void main(void)
+int main(void)
 {
 	int err;
 
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		LOG_ERR("Failed to register authorization callbacks.");
-		return;
+		return 0;
 	}
 
 	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 	if (err) {
 		printk("Failed to register authorization info callbacks.\n");
-		return;
+		return 0;
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)", err);
-		return;
+		return 0;
 	}
 	LOG_INF("Bluetooth initialized");
 
@@ -584,19 +584,19 @@ void main(void)
 	err = uart_init();
 	if (err != 0) {
 		LOG_ERR("uart_init failed (err %d)", err);
-		return;
+		return 0;
 	}
 
 	err = scan_init();
 	if (err != 0) {
 		LOG_ERR("scan_init failed (err %d)", err);
-		return;
+		return 0;
 	}
 
 	err = nus_client_init();
 	if (err != 0) {
 		LOG_ERR("nus_client_init failed (err %d)", err);
-		return;
+		return 0;
 	}
 
 	printk("Starting Bluetooth Central UART example\n");
@@ -604,7 +604,7 @@ void main(void)
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
 		LOG_ERR("Scanning failed to start (err %d)", err);
-		return;
+		return 0;
 	}
 
 	LOG_INF("Scanning successfully started");

@@ -119,7 +119,7 @@ static void bt_ready(int err)
 	model_handler_start();
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -129,4 +129,6 @@ void main(void)
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 	}
+
+	return 0;
 }

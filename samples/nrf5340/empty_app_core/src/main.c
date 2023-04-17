@@ -36,11 +36,13 @@ void disable_ram_and_wfi(register volatile uint32_t *reg_begin,
 	} while (1);
 }
 
-void main(void)
+int main(void)
 {
 	/* Power off RAM and suspend CPU */
 	disable_ram_and_wfi(&NRF_VMC->RAM[0].POWER,
 			    &NRF_VMC->RAM[ARRAY_SIZE(NRF_VMC->RAM) - 1].POWER);
+
+	return 0;
 }
 
 /** @brief Allow access to specific GPIOs for the network core.

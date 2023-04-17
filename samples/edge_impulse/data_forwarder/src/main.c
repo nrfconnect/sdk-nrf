@@ -106,10 +106,10 @@ static int provide_sensor_data(void)
 	return err;
 }
 
-void main(void)
+int main(void)
 {
 	if (init()) {
-		return;
+		return 0;
 	}
 	printk("Initialized\n");
 
@@ -131,4 +131,6 @@ void main(void)
 		k_sleep(K_MSEC(next_timeout - uptime));
 		next_timeout += SAMPLE_PERIOD_MS;
 	}
+
+	return 0;
 }

@@ -630,7 +630,7 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.le_data_len_updated = le_data_length_updated
 };
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -639,7 +639,7 @@ void main(void)
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Bluetooth initialized\n");
@@ -649,7 +649,7 @@ void main(void)
 	err = bt_throughput_init(&throughput, &throughput_cb);
 	if (err) {
 		printk("Throughput service initialization failed.\n");
-		return;
+		return 0;
 	}
 
 	printk("\n");
@@ -657,4 +657,6 @@ void main(void)
 	printk("Press button 2 or type \"peripheral\" on the peripheral board.\n");
 
 	buttons_init();
+
+	return 0;
 }

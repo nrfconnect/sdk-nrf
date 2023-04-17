@@ -6,7 +6,7 @@
 
 #include <zephyr/kernel.h>
 
-void main(void)
+int main(void)
 {
-	; /* Dummy application. Unused main */
+	return 0; /* Dummy application. Unused main */
 }

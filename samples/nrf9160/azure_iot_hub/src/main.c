@@ -528,7 +528,7 @@ static int dps_run(struct azure_iot_hub_buf *hostname, struct azure_iot_hub_buf 
 }
 #endif /* CONFIG_AZURE_IOT_HUB_DPS */
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -538,7 +538,7 @@ void main(void)
 	err = hw_id_get(device_id, ARRAY_SIZE(device_id));
 	if (err) {
 		LOG_ERR("Failed to retrieve device ID");
-		return;
+		return 0;
 	}
 #else
 	char device_id[128] = CONFIG_AZURE_IOT_HUB_DEVICE_ID;
@@ -564,7 +564,7 @@ void main(void)
 	err = nrf_modem_lib_init();
 	if (err) {
 		LOG_ERR("Modem library initialization failed, error: %d", err);
-		return;
+		return 0;
 	}
 #endif
 
@@ -587,14 +587,14 @@ void main(void)
 	err = dps_run(&cfg.hostname, &cfg.device_id);
 	if (err) {
 		LOG_ERR("Failed to run DPS, error: %d, terminating connection attempt", err);
-		return;
+		return 0;
 	}
 #endif
 
 	err = azure_iot_hub_init(azure_event_handler);
 	if (err) {
 		LOG_ERR("Azure IoT Hub could not be initialized, error: %d", err);
-		return;
+		return 0;
 	}
 
 	LOG_INF("Azure IoT Hub library initialized");
@@ -602,7 +602,7 @@ void main(void)
 	err = azure_iot_hub_connect(&cfg);
 	if (err < 0) {
 		LOG_ERR("azure_iot_hub_connect failed: %d", err);
-		return;
+		return 0;
 	}
 
 	LOG_INF("Connection request sent to IoT Hub");
@@ -612,4 +612,5 @@ void main(void)
 	 * See azure_event_handler() for which actions will be taken on the
 	 * various events.
 	 */
+	return 0;
 }

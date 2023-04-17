@@ -10,7 +10,7 @@
 
 #include "dtm.h"
 
-void main(void)
+int main(void)
 {
 	int err;
 	const struct device *uart = DEVICE_DT_GET(DT_CHOSEN(ncs_dtm_uart));

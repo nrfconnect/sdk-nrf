@@ -107,9 +107,15 @@ void test_modem_jwt_get_uuids(void)
 	TEST_ASSERT_EQUAL_STRING("f72d9789-2e73-4780-9248-b3952f89b872", mfw.str);
 }
 
+/* It is required to be added to each test. That is because unity's
+ * main may return nonzero, while zephyr's main currently must
+ * return 0 in all cases (other values are reserved).
+ */
 extern int unity_main(void);
 
-void main(void)
+int main(void)
 {
 	(void)unity_main();
+
+	return 0;
 }

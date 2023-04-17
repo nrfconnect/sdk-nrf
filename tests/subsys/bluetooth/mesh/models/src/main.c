@@ -113,7 +113,9 @@ static const struct bt_mesh_comp comp = {
 	.elem_count = ARRAY_SIZE(elems),
 };
 
-void main(void)
+int main(void)
 {
 	bt_mesh_init(NULL, &comp);
+
+	return 0;
 }

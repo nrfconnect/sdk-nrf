@@ -51,7 +51,7 @@ static struct k_work gzll_work;
 static void gzll_rx_result_handler(struct gzll_rx_result *rx_result);
 static void gzll_work_handler(struct k_work *work);
 
-void main(void)
+int main(void)
 {
 	int err;
 	bool result_value;
@@ -61,27 +61,27 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		LOG_ERR("Cannot initialize LEDs (err: %d)", err);
-		return;
+		return 0;
 	}
 
 	err = dk_buttons_init(NULL);
 	if (err) {
 		LOG_ERR("Cannot initialize buttons (err: %d)", err);
-		return;
+		return 0;
 	}
 
 	/* Initialize Gazell Link Layer glue */
 	result_value = gzll_glue_init();
 	if (!result_value) {
 		LOG_ERR("Cannot initialize GZLL glue code");
-		return;
+		return 0;
 	}
 
 	/* Initialize the Gazell Link Layer */
 	result_value = nrf_gzll_init(NRF_GZLL_MODE_HOST);
 	if (!result_value) {
 		LOG_ERR("Cannot initialize GZLL");
-		return;
+		return 0;
 	}
 
 #ifdef CONFIG_GZLL_TX_STATISTICS
@@ -89,7 +89,7 @@ void main(void)
 	result_value = nrf_gzll_tx_statistics_enable(&statistics);
 	if (!result_value) {
 		LOG_ERR("Cannot enable GZLL TX statistics");
-		return;
+		return 0;
 	}
 #endif
 
@@ -97,13 +97,13 @@ void main(void)
 	result_value = nrf_gzll_add_packet_to_tx_fifo(PIPE_NUMBER, ack_payload, TX_PAYLOAD_LENGTH);
 	if (!result_value) {
 		LOG_ERR("Cannot add packet to GZLL TX FIFO");
-		return;
+		return 0;
 	}
 
 	result_value = nrf_gzll_enable();
 	if (!result_value) {
 		LOG_ERR("Cannot enable GZLL");
-		return;
+		return 0;
 	}
 
 	LOG_INF("Gzll ack payload host example started.");

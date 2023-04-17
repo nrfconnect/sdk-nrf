@@ -99,7 +99,7 @@ void nrf_modem_lib_trace_callback(enum nrf_modem_lib_trace_event evt)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -126,7 +126,7 @@ void main(void)
 	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
 	if (err) {
 		LOG_ERR("Failed to change LTE mode, err %d\n", err);
-		return;
+		return 0;
 	}
 
 	/* Leave the modem on for 10 seconds */
@@ -135,7 +135,7 @@ void main(void)
 	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_POWER_OFF);
 	if (err) {
 		LOG_ERR("Failed to change LTE mode, err %d\n", err);
-		return;
+		return 0;
 	}
 
 	/* Give the modem some time to turn off and receive traces */
@@ -155,4 +155,6 @@ void main(void)
 
 	LOG_INF("Press button 1 to print traces to UART");
 	LOG_INF("Press button 2 to restart application (warm boot)");
+
+	return 0;
 }

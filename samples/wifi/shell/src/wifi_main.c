@@ -13,7 +13,7 @@
 #include <zephyr/device.h>
 #include <zephyr/net/net_config.h>
 
-void main(void)
+int main(void)
 {
 #ifdef CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT
 	/* For now hardcode to 128MHz */
@@ -33,4 +33,6 @@ void main(void)
 
 	net_config_init_app(dev, "Initializing network");
 #endif
+
+	return 0;
 }

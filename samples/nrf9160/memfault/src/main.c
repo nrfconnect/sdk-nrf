@@ -181,7 +181,7 @@ static void handle_lte_connection_started(void)
 	memfault_zephyr_port_post_data();
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 

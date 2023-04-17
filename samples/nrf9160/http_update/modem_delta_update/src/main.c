@@ -77,7 +77,7 @@ static int num_leds(void)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -111,7 +111,7 @@ void main(void)
 	case -1:
 		printk("Could not initialize momdem library.\n");
 		printk("Fatal error.\n");
-		return;
+		return 0;
 	default:
 		break;
 	}
@@ -120,7 +120,7 @@ void main(void)
 	err = fota_download_init(fota_dl_handler);
 	if (err != 0) {
 		printk("fota_download_init() failed, err %d\n", err);
-		return;
+		return 0;
 	}
 
 	err = update_sample_init(&(struct update_sample_init_params){
@@ -130,10 +130,12 @@ void main(void)
 				});
 	if (err != 0) {
 		printk("update_sample_init() failed, err %d\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Current modem firmware version: %s\n", version);
 
 	printk("Press Button 1 for enter 'download' to download modem delta update\n");
+
+	return 0;
 }

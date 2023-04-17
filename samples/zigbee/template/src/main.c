@@ -222,7 +222,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	LOG_INF("Starting Zigbee application template example");
 
@@ -242,4 +242,6 @@ void main(void)
 	zigbee_enable();
 
 	LOG_INF("Zigbee application template started");
+
+	return 0;
 }

@@ -39,7 +39,7 @@ static void gzp_tx_result_checker(bool success,
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 	bool result_value;
@@ -53,7 +53,7 @@ void main(void)
 	err = dk_buttons_init(NULL);
 	if (err) {
 		LOG_ERR("Cannot initialize buttons (err: %d)", err);
-		return;
+		return 0;
 	}
 
 	settings_subsys_init();
@@ -62,14 +62,14 @@ void main(void)
 	result_value = gzll_glue_init();
 	if (!result_value) {
 		LOG_ERR("Cannot initialize GZLL glue code");
-		return;
+		return 0;
 	}
 
 	/* Initialize the Gazell Link Layer */
 	result_value = nrf_gzll_init(NRF_GZLL_MODE_DEVICE);
 	if (!result_value) {
 		LOG_ERR("Cannot initialize GZLL");
-		return;
+		return 0;
 	}
 
 	nrf_gzll_set_max_tx_attempts(MAX_TX_ATTEMPTS);
@@ -77,7 +77,7 @@ void main(void)
 	result_value = nrf_gzll_set_timeslot_period(NRF_GZLLDE_RXPERIOD_DIV_2);
 	if (!result_value) {
 		LOG_ERR("Cannot set GZLL timeslot period");
-		return;
+		return 0;
 	}
 
 	/* Erase pairing data. This sample is intended to demonstrate pairing after every reset. */
@@ -91,7 +91,7 @@ void main(void)
 	result_value = nrf_gzll_enable();
 	if (!result_value) {
 		LOG_ERR("Cannot enable GZLL");
-		return;
+		return 0;
 	}
 
 	LOG_INF("Gazell dynamic pairing example started. Device mode.");

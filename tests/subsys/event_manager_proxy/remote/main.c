@@ -23,7 +23,7 @@ static enum test_id cur_test_id;
 static unsigned int cur_test_pos;
 
 
-void main(void)
+int main(void)
 {
 	printk("Event Manager Proxy test remote_core started\n");
 
@@ -34,7 +34,7 @@ void main(void)
 	if (ret) {
 		LOG_ERR("Event Manager not initialized, err: %d", ret);
 		__ASSERT_NO_MSG(false);
-		return;
+		return 0;
 	}
 	LOG_INF("Event manager initialized");
 
@@ -42,7 +42,7 @@ void main(void)
 	if (ret) {
 		LOG_ERR("Cannot add remote: %d", ret);
 		__ASSERT_NO_MSG(false);
-		return;
+		return 0;
 	}
 	LOG_INF("Event proxy remote added");
 
@@ -58,13 +58,15 @@ void main(void)
 	if (ret) {
 		LOG_ERR("Cannot start event manager proxy: %d", ret);
 		__ASSERT_NO_MSG(false);
-		return;
+		return 0;
 	}
 
 	/* We do not have to wait for remotes here as we do not send any event that
 	 * would be fatal when missed.
 	 */
 	LOG_INF("Initialization finished successfully");
+
+	return 0;
 }
 
 static void proxy_direct_submit_pong_event(void)

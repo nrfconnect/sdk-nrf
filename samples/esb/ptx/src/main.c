@@ -181,7 +181,7 @@ static void leds_update(uint8_t value)
 	(void)gpio_port_set_masked_raw(leds[0].port, mask, val);
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -189,18 +189,18 @@ void main(void)
 
 	err = clocks_start();
 	if (err) {
-		return;
+		return 0;
 	}
 
 	err = leds_init();
 	if (err) {
-		return;
+		return 0;
 	}
 
 	err = esb_initialize();
 	if (err) {
 		LOG_ERR("ESB initialization failed, err %d", err);
-		return;
+		return 0;
 	}
 
 	LOG_INF("Initialization complete");
