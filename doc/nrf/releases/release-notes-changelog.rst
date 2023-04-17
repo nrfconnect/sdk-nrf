@@ -194,11 +194,10 @@ nRF5340 Audio
 -------------
 
 * Moved the LE Audio controller for the network core to the standalone :ref:`lib_bt_ll_acs_nrf53_readme` library.
-
 * Added Kconfig options for setting periodic and extended advertising intervals.
   Search :ref:`Kconfig Reference <kconfig-search>` for ``BLE_ACL_PER_ADV_INT_`` and ``BLE_ACL_EXT_ADV_INT_`` to list all of them.
-
 * Implemented :ref:`zephyr:zbus` for handling events from buttons and LE Audio.
+* Reduced supervision timeout to reduce reconnection times for CIS.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
