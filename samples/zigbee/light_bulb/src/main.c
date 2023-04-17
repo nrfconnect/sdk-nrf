@@ -519,7 +519,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int blink_status = 0;
 	int err;

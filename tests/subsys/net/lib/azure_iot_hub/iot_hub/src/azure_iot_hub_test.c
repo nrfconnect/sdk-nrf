@@ -79,6 +79,10 @@ enum iot_hub_state {
 };
 
 /* Pull in variables and functions from the Azure IoT Hub library. */
+/* It is required to be added to each test. That is because unity's
+ * main may return nonzero, while zephyr's main currently must
+ * return 0 in all cases (other values are reserved).
+ */
 extern int unity_main(void);
 extern void iot_hub_state_set(enum iot_hub_state state);
 extern enum iot_hub_state iot_hub_state;
@@ -640,7 +644,9 @@ void test_azure_iot_hub_method_respond_mqtt_fail(void)
 	TEST_ASSERT_EQUAL(-ENXIO, azure_iot_hub_method_respond(&result));
 }
 
-void main(void)
+int main(void)
 {
 	(void)unity_main();
+
+	return 0;
 }

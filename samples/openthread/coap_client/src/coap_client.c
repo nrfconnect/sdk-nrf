@@ -120,7 +120,7 @@ static void on_button_changed(uint32_t button_state, uint32_t has_changed)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int ret;
 
@@ -133,13 +133,13 @@ void main(void)
 	ret = dk_buttons_init(on_button_changed);
 	if (ret) {
 		LOG_ERR("Cannot init buttons (error: %d)", ret);
-		return;
+		return 0;
 	}
 
 	ret = dk_leds_init();
 	if (ret) {
 		LOG_ERR("Cannot init leds, (error: %d)", ret);
-		return;
+		return 0;
 	}
 
 #if CONFIG_BT_NUS
@@ -151,10 +151,12 @@ void main(void)
 	ret = ble_utils_init(&nus_clbs, on_ble_connect, on_ble_disconnect);
 	if (ret) {
 		LOG_ERR("Cannot init BLE utilities");
-		return;
+		return 0;
 	}
 
 #endif /* CONFIG_BT_NUS */
 
 	coap_client_utils_init(on_ot_connect, on_ot_disconnect, on_mtd_mode_toggle);
+
+	return 0;
 }

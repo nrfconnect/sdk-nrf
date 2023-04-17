@@ -38,6 +38,10 @@ extern struct mqtt_client mqtt_client;
 extern enum mqtt_state mqtt_state;
 extern struct k_sem connection_poll_sem;
 extern k_tid_t mqtt_helper_thread;
+/* It is required to be added to each test. That is because unity's
+ * main may return nonzero, while zephyr's main currently must
+ * return 0 in all cases (other values are reserved).
+ */
 extern int unity_main(void);
 extern enum mqtt_state mqtt_state_get(void);
 extern void mqtt_state_set(enum mqtt_state state);
@@ -595,7 +599,9 @@ void test_mqtt_helper_poll_loop_pollerr(void)
 	mqtt_helper_poll_loop();
 }
 
-void main(void)
+int main(void)
 {
 	(void)unity_main();
+
+	return 0;
 }

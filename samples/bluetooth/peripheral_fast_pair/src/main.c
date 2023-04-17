@@ -357,7 +357,7 @@ static void fp_account_key_written(struct bt_conn *conn)
 	LOG_INF("Fast Pair Account Key has been written");
 }
 
-void main(void)
+int main(void)
 {
 	bool run_led_on = true;
 	int err;
@@ -376,31 +376,31 @@ void main(void)
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		LOG_ERR("Registering authentication callbacks failed (err %d)", err);
-		return;
+		return 0;
 	}
 
 	err = bt_conn_auth_info_cb_register(&auth_info_cb);
 	if (err) {
 		LOG_ERR("Registering authentication info callbacks failed (err %d)", err);
-		return;
+		return 0;
 	}
 
 	err = bt_fast_pair_info_cb_register(&fp_info_callbacks);
 	if (err) {
 		LOG_ERR("Registering Fast Pair info callbacks failed (err %d)", err);
-		return;
+		return 0;
 	}
 
 	err = hids_helper_init();
 	if (err) {
 		LOG_ERR("HIDS init failed (err %d)", err);
-		return;
+		return 0;
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)", err);
-		return;
+		return 0;
 	}
 
 	LOG_INF("Bluetooth initialized");
@@ -408,7 +408,7 @@ void main(void)
 	err = settings_load();
 	if (err) {
 		LOG_ERR("Settings load failed (err: %d)", err);
-		return;
+		return 0;
 	}
 
 	LOG_INF("Settings loaded");
@@ -416,19 +416,19 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		LOG_ERR("LEDs init failed (err %d)", err);
-		return;
+		return 0;
 	}
 
 	err = battery_module_init();
 	if (err) {
 		LOG_ERR("Battery module init failed (err %d)", err);
-		return;
+		return 0;
 	}
 
 	err = bt_le_adv_prov_fast_pair_set_battery_mode(BT_FAST_PAIR_ADV_BATTERY_MODE_SHOW_UI_IND);
 	if (err) {
 		LOG_ERR("Setting advertising battery mode failed (err %d)", err);
-		return;
+		return 0;
 	}
 
 	k_work_init(&bt_adv_restart, bt_adv_restart_fn);
@@ -445,7 +445,7 @@ void main(void)
 	err = dk_buttons_init(button_changed);
 	if (err) {
 		LOG_ERR("Buttons init failed (err %d)", err);
-		return;
+		return 0;
 	}
 
 	for (;;) {

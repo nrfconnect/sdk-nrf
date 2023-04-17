@@ -359,7 +359,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	#ifdef CONFIG_USB_DEVICE_STACK
 	wait_for_console();
@@ -389,4 +389,6 @@ void main(void)
 
 	/* Start Zigbee stack */
 	zigbee_enable();
+
+	return 0;
 }

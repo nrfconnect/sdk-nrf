@@ -64,7 +64,7 @@ The following block of code shows how the link controller API can be used to est
    	}
    }
 
-   void main(void)
+   int main(void)
    {
    	int err;
 
@@ -73,7 +73,7 @@ The following block of code shows how the link controller API can be used to est
    	err = lte_lc_init_and_connect_async(lte_handler);
    	if (err) {
    		printk("lte_lc_init_and_connect_async, error: %d\n", err);
-   		return;
+   		return 0;
    	}
 
    	k_sem_take(&lte_connected, K_FOREVER);
@@ -108,32 +108,32 @@ For an example implementation, see the following code:
 
    /* ... */
 
-   void main(void)
+   int main(void)
    {
 	int err;
 
 	err = lte_lc_init();
 	if (err) {
 		printk("lte_lc_init, error: %d\n", err);
-		return;
+		return 0;
 	}
 
 	err = lte_lc_psm_req(true);
 	if (err) {
 		printk("lte_lc_psm_req, error: %d\n", err);
-		return;
+		return 0;
 	}
 
 	err = lte_lc_edrx_req(true);
 	if (err) {
 		printk("lte_lc_edrx_req, error: %d\n", err);
-		return;
+		return 0;
 	}
 
 	err = lte_lc_connect_async(lte_handler);
 	if (err) {
 		printk("Connecting to LTE network failed, error: %d\n", err);
-		return;
+		return 0;
 	}
 
 	/* ... */
@@ -173,7 +173,7 @@ The following code block shows a basic implementation of :c:func:`lte_lc_conn_ev
 
    ...
 
-   void main(void)
+   int main(void)
    {
    	int err;
 
@@ -182,7 +182,7 @@ The following code block shows a basic implementation of :c:func:`lte_lc_conn_ev
    	err = lte_lc_init_and_connect_async(lte_handler);
    	if (err) {
    		printk("lte_lc_init_and_connect_async, error: %d\n", err);
-   		return;
+   		return 0;
    	}
 
    	k_sem_take(&lte_connected, K_FOREVER);
@@ -192,7 +192,7 @@ The following code block shows a basic implementation of :c:func:`lte_lc_conn_ev
 	err = lte_lc_conn_eval_params_get(&params);
 	if (err) {
 		printk("lte_lc_conn_eval_params_get, error: %d\n", err);
-		return;
+		return 0;
 	}
 
 	/* Handle connection evaluation parameters... */
@@ -247,10 +247,11 @@ The following code snippet shows how to use :c:macro:`LTE_LC_ON_CFUN` macro:
       printk("Functional mode changed to %d\n", mode);
   }
 
-  void main(void)
+  int main(void)
   {
       /* change functional mode using the Link Controller API */
       lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
+      return 0;
   }
 
 API documentation

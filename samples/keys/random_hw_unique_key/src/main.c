@@ -10,9 +10,11 @@
 #include <stdio.h>
 #include <hw_unique_key.h>
 
-void main(void)
+int main(void)
 {
 	printk("Writing random keys to KMU.\n\r");
 	hw_unique_key_write_random();
 	printk("Success!\n\r");
+
+	return 0;
 }

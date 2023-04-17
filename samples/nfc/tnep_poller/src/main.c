@@ -652,7 +652,7 @@ static struct nfc_tnep_poller_cb tnep_cb = {
 	.error = tnep_error
 };
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -666,7 +666,7 @@ void main(void)
 	err = nfc_tnep_poller_init(&tnep_tx_buf);
 	if (err) {
 		printk("NFC TNEP Protocol initialization err: %d\n", err);
-		return;
+		return 0;
 	}
 
 	err = nfc_t4t_isodep_init(tx_data, sizeof(tx_data),
@@ -675,19 +675,19 @@ void main(void)
 	if (err) {
 		printk("NFC T4T ISO-DEP Protocol initialization failed err: %d.\n",
 		       err);
-		return;
+		return 0;
 	}
 
 	err = st25r3911b_nfca_init(events, ARRAY_SIZE(events), &cb);
 	if (err) {
 		printk("NFCA initialization failed err: %d.\n", err);
-		return;
+		return 0;
 	}
 
 	err = st25r3911b_nfca_field_on();
 	if (err) {
 		printk("Field on error %d.", err);
-		return;
+		return 0;
 	}
 
 	while (true) {
@@ -695,7 +695,7 @@ void main(void)
 		err = st25r3911b_nfca_process();
 		if (err) {
 			printk("NFC-A process failed, err: %d.\n", err);
-			return;
+			return 0;
 		}
 	}
 }

@@ -580,7 +580,7 @@ static void suspend_lwm2m_engine(void)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int ret;
 	uint32_t bootstrap_flags = 0;
@@ -590,20 +590,20 @@ void main(void)
 	ret = nrf_modem_lib_init();
 	if (ret < 0) {
 		LOG_ERR("Unable to init modem library (%d)", ret);
-		return;
+		return 0;
 	}
 
 	ret = app_event_manager_init();
 	if (ret) {
 		LOG_ERR("Unable to init Application Event Manager (%d)", ret);
-		return;
+		return 0;
 	}
 
 	LOG_INF("Initializing modem.");
 	ret = lte_lc_init();
 	if (ret < 0) {
 		LOG_ERR("Unable to init modem (%d)", ret);
-		return;
+		return 0;
 	}
 
 	lte_lc_register_handler(lte_notify_handler);
@@ -611,14 +611,14 @@ void main(void)
 	ret = modem_info_init();
 	if (ret < 0) {
 		LOG_ERR("Unable to init modem_info (%d)", ret);
-		return;
+		return 0;
 	}
 
 	/* query IMEI */
 	ret = modem_info_string_get(MODEM_INFO_IMEI, imei_buf, sizeof(imei_buf));
 	if (ret < 0) {
 		LOG_ERR("Unable to get IMEI");
-		return;
+		return 0;
 	}
 
 	/* use IMEI as unique endpoint name */
@@ -630,14 +630,14 @@ void main(void)
 	ret = lwm2m_setup();
 	if (ret < 0) {
 		LOG_ERR("Failed to setup LWM2M fields (%d)", ret);
-		return;
+		return 0;
 	}
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	ret = lwm2m_init_image();
 	if (ret < 0) {
 		LOG_ERR("Failed to setup image properties (%d)", ret);
-		return;
+		return 0;
 	}
 #endif
 
@@ -771,4 +771,6 @@ void main(void)
 		/* Wait for statmachine update event */
 		k_sem_take(&state_mutex, K_FOREVER);
 	}
+
+	return 0;
 }

@@ -12,7 +12,7 @@
 
 LOG_MODULE_REGISTER(MODULE);
 
-void main(void)
+int main(void)
 {
 	if (app_event_manager_init()) {
 		LOG_ERR("Application Event Manager not initialized");
@@ -21,4 +21,5 @@ void main(void)
 
 		APP_EVENT_SUBMIT(event);
 	}
+	return 0;
 }

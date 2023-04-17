@@ -30,7 +30,7 @@ LOG_MODULE_REGISTER(cli_sample, CONFIG_OT_COMMAND_LINE_INTERFACE_LOG_LEVEL);
 	"documentation at:\n\r" \
 	"https://github.com/openthread/openthread/blob/master/src/cli/README.md\n\r"
 
-void main(void)
+int main(void)
 {
 #if DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_shell_uart), zephyr_cdc_acm_uart)
 	int ret;
@@ -40,13 +40,13 @@ void main(void)
 	ret = usb_enable(NULL);
 	if (ret != 0) {
 		LOG_ERR("Failed to enable USB");
-		return;
+		return 0;
 	}
 
 	dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_shell_uart));
 	if (dev == NULL) {
 		LOG_ERR("Failed to find specific UART device");
-		return;
+		return 0;
 	}
 
 	LOG_INF("Waiting for host to be ready to communicate");
@@ -77,4 +77,6 @@ void main(void)
 #if defined(CONFIG_CLI_SAMPLE_LOW_POWER)
 	low_power_enable();
 #endif
+
+	return 0;
 }

@@ -274,7 +274,7 @@ static void bas_work_handler(struct k_work *work)
 	k_work_reschedule((struct k_work_delayable *)work, K_SECONDS(1));
 }
 
-void main(void)
+int main(void)
 {
 	uint32_t blink_status = 0;
 	int err;
@@ -284,37 +284,37 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		printk("LEDs init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = dk_buttons_init(button_handler);
 	if (err) {
 		printk("Failed to initialize buttons (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_mds_cb_register(&mds_cb);
 	if (err) {
 		printk("Memfault Diagnostic service callback registration failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		printk("Failed to register authorization callbacks (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 	if (err) {
 		printk("Failed to register authorization info callbacks (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Bluetooth initialized\n");
@@ -323,7 +323,7 @@ void main(void)
 		err = settings_load();
 		if (err) {
 			printk("Failed to load settings (err %d)\n", err);
-			return;
+			return 0;
 		}
 	}
 
@@ -331,7 +331,7 @@ void main(void)
 			      sd, ARRAY_SIZE(sd));
 	if (err) {
 		printk("Advertising failed to start (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Advertising successfully started\n");

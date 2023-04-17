@@ -6,7 +6,9 @@
 
 #include <zephyr/sys/printk.h>
 
-void main(void)
+int main(void)
 {
 	printk("Starting nRF RPC bluetooth host\n");
+
+	return 0;
 }

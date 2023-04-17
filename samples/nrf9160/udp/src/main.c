@@ -208,7 +208,7 @@ error:
 	return err;
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -238,14 +238,16 @@ void main(void)
 	err = server_init();
 	if (err) {
 		printk("Not able to initialize UDP server connection\n");
-		return;
+		return 0;
 	}
 
 	err = server_connect();
 	if (err) {
 		printk("Not able to connect to UDP server\n");
-		return;
+		return 0;
 	}
 
 	k_work_schedule(&server_transmission_work, K_NO_WAIT);
+
+	return 0;
 }

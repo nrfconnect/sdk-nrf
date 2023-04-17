@@ -280,7 +280,7 @@ int bytes_from_str(const char *str, uint8_t *bytes, size_t bytes_len)
 	return 0;
 }
 
-void main(void)
+int main(void)
 {
 	int i;
 	memset(&context, 0, sizeof(context));
@@ -309,7 +309,7 @@ void main(void)
 		ret = bytes_from_str(CONFIG_NRF700X_QSPI_ENCRYPTION_KEY, key, sizeof(key));
 		if (ret) {
 			LOG_ERR("Failed to parse encryption key: %d\n", ret);
-			return;
+			return 0;
 		}
 
 		LOG_DBG("QSPI Encryption key: ");
@@ -321,7 +321,7 @@ void main(void)
 		ret = qspi_enable_encryption(key);
 		if (ret) {
 			LOG_ERR("Failed to enable encryption: %d\n", ret);
-			return;
+			return 0;
 		}
 		LOG_INF("QSPI Encryption enabled");
 	} else {
@@ -350,4 +350,6 @@ void main(void)
 			LOG_ERR("Connection Timed Out");
 		}
 	}
+
+	return 0;
 }

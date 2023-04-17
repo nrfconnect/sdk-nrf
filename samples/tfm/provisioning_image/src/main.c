@@ -25,7 +25,7 @@ void provision_implementation_id(void)
 		num_words_to_write);
 }
 
-void main(void)
+int main(void)
 {
 	enum lcs lcs;
 	int err;
@@ -33,12 +33,12 @@ void main(void)
 	err = read_life_cycle_state(&lcs);
 	if (err != 0) {
 		LOG_INF("Failure: Cannot read PSA lifecycle state. Exiting!");
-		return;
+		return 0;
 	}
 
 	if (lcs != BL_STORAGE_LCS_ASSEMBLY) {
 		LOG_INF("Failure: Lifecycle state is not ASSEMBLY as expected. Exiting!");
-		return;
+		return 0;
 	}
 
 	LOG_INF("Successfully verified PSA lifecycle state ASSEMBLY!");
@@ -46,19 +46,19 @@ void main(void)
 	err = update_life_cycle_state(BL_STORAGE_LCS_PROVISIONING);
 	if (err != 0) {
 		LOG_INF("Failure: Cannot set PSA lifecycle state PROVISIONING. Exiting!");
-		return;
+		return 0;
 	}
 
 	err = read_life_cycle_state(&lcs);
 	if (err != 0) {
 		LOG_INF("Failure: Cannot read PSA lifecycle state. Exiting!");
-		return;
+		return 0;
 	}
 
 	if (lcs != BL_STORAGE_LCS_PROVISIONING) {
 		LOG_INF("Lifecycle state was %d", lcs);
 		LOG_INF("Failure: Lifecycle state is not PROVISION as expected. Exiting!");
-		return;
+		return 0;
 	}
 
 	LOG_INF("Successfully switched to PSA lifecycle state PROVISIONING!");
@@ -68,7 +68,7 @@ void main(void)
 
 	if (identity_key_is_written()) {
 		LOG_INF("Failure: Identity key slot already written. Exiting!");
-		return;
+		return 0;
 	}
 
 	LOG_INF("Writing the identity key to KMU");
@@ -81,10 +81,12 @@ void main(void)
 
 	if (!identity_key_is_written()) {
 		LOG_INF("Failure: Identity key is not written! Exiting!");
-		return;
+		return 0;
 	}
 
 	provision_implementation_id();
 
 	LOG_INF("Success!");
+
+	return 0;
 }

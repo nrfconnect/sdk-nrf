@@ -63,7 +63,7 @@ static void print_hex_number(uint8_t *num, size_t len)
 	printk("\n");
 }
 
-void main(void)
+int main(void)
 {
 	char hello_string[sizeof(HELLO_PATTERN) + sizeof(CONFIG_BOARD)];
 	size_t len;
@@ -149,4 +149,6 @@ void main(void)
 #endif /* defined(CONFIG_TFM_PARTITION_PLATFORM) */
 
 	printk("Finished\n");
+
+	return 0;
 }

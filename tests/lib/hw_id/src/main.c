@@ -125,10 +125,16 @@ void test_too_small(void)
 	TEST_ASSERT_EQUAL(0, strcmp("", buf));
 }
 
+/* It is required to be added to each test. That is because unity's
+ * main may return nonzero, while zephyr's main currently must
+ * return 0 in all cases (other values are reserved).
+ */
 extern int unity_main(void);
 
-void main(void)
+int main(void)
 {
 	/* use the runner from test_runner_generate() */
 	(void)unity_main();
+
+	return 0;
 }

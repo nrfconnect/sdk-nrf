@@ -420,7 +420,7 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.le_param_updated = le_param_updated,
 };
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -429,7 +429,7 @@ void main(void)
 	uint32_t dtr = 0;
 
 	if (usb_enable(NULL)) {
-		return;
+		return 0;
 	}
 
 	/* Poll if the DTR flag was set, optional */
@@ -446,7 +446,7 @@ void main(void)
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Bluetooth initialized\n");
@@ -454,18 +454,18 @@ void main(void)
 	err = bt_latency_init(&latency, NULL);
 	if (err) {
 		printk("Latency service initialization failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_latency_client_init(&latency_client, &latency_client_cb);
 	if (err) {
 		printk("Latency client initialization failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	if (enable_llpm_mode()) {
 		printk("Enable LLPM mode failed.\n");
-		return;
+		return 0;
 	}
 
 	while (true) {
@@ -491,7 +491,7 @@ void main(void)
 
 	if (enable_qos_conn_evt_report()) {
 		printk("Enable LLPM QoS failed.\n");
-		return;
+		return 0;
 	}
 
 	for (;;) {

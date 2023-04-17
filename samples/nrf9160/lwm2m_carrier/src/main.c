@@ -159,7 +159,8 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 }
 #endif /* CONFIG_LWM2M_CARRIER */
 
-void main(void)
+int main(void)
 {
 	printk("LWM2M Carrier library sample.\n");
+	return 0;
 }

@@ -55,7 +55,7 @@ static void register_nrf_profiler_events(void)
 						     data_types, 5);
 }
 
-void main(void)
+int main(void)
 {
 	if (nrf_profiler_init()) {
 		printk("Profiler failed to initialize\n");
@@ -89,7 +89,7 @@ void main(void)
 
 		if ((err < 0) || (err >= sizeof(string))) {
 			printk("snprintf error: %d\n", err);
-			return;
+			return 0;
 		}
 
 		profile_no_data_event();

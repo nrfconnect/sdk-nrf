@@ -15,7 +15,8 @@ LOG_MODULE_REGISTER(coprocessor_sample, CONFIG_OT_COPROCESSOR_LOG_LEVEL);
 	"OpenThread Coprocessor application is now running on NCS.\n\r"        \
 	"=========================================================\n\r"
 
-void main(void)
+int main(void)
 {
 	LOG_INF(WELCOME_TEXT);
+	return 0;
 }

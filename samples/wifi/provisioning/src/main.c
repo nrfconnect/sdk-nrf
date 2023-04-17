@@ -242,7 +242,7 @@ static void update_dev_name(struct net_linkaddr *mac_addr)
 	byte_to_hex(&device_name[6], mac_addr->addr[5], 'A');
 }
 
-void main(void)
+int main(void)
 {
 	int rc;
 	struct net_if *iface = net_if_get_default();
@@ -257,7 +257,7 @@ void main(void)
 	rc = bt_enable(NULL);
 	if (rc) {
 		printk("Bluetooth init failed (err %d).\n", rc);
-		return;
+		return 0;
 	}
 
 	printk("Bluetooth initialized.\n");
@@ -267,7 +267,7 @@ void main(void)
 		printk("Wi-Fi provisioning service starts successfully.\n");
 	} else {
 		printk("Error occurs when initializing Wi-Fi provisioning service.\n");
-		return;
+		return 0;
 	}
 
 	/* Prepare advertisement data */
@@ -283,7 +283,7 @@ void main(void)
 		ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (rc) {
 		printk("BT Advertising failed to start (err %d)\n", rc);
-		return;
+		return 0;
 	}
 	printk("BT Advertising successfully started.\n");
 
@@ -303,4 +303,6 @@ void main(void)
 
 	/* Apply stored wifi credential */
 	net_mgmt(NET_REQUEST_WIFI_CONNECT_STORED, iface, NULL, 0);
+
+	return 0;
 }

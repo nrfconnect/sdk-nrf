@@ -682,7 +682,7 @@ static const struct nfc_t4t_hl_procedure_cb t4t_hl_procedure_cb = {
 	.ndef_read = t4t_hl_ndef_read
 };
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -697,19 +697,19 @@ void main(void)
 	if (err) {
 		printk("NFC T4T ISO-DEP Protocol initialization failed err: %d.\n",
 		       err);
-		return;
+		return 0;
 	}
 
 	err = st25r3911b_nfca_init(events, ARRAY_SIZE(events), &cb);
 	if (err) {
 		printk("NFCA initialization failed err: %d.\n", err);
-		return;
+		return 0;
 	}
 
 	err = st25r3911b_nfca_field_on();
 	if (err) {
 		printk("Field on error %d.", err);
-		return;
+		return 0;
 	}
 
 	while (true) {
@@ -717,7 +717,7 @@ void main(void)
 		err = st25r3911b_nfca_process();
 		if (err) {
 			printk("NFC-A process failed, err: %d.\n", err);
-			return;
+			return 0;
 		}
 	}
 }

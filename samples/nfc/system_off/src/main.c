@@ -202,12 +202,12 @@ static void print_reset_reason(void)
 }
 
 
-void main(void)
+int main(void)
 {
 	/* Configure LED-pins */
 	if (dk_leds_init() < 0) {
 		printk("Cannot init LEDs!\n");
-		return;
+		return 0;
 	}
 	dk_set_led_on(SYSTEM_ON_LED);
 
@@ -221,11 +221,12 @@ void main(void)
 	/* Start NFC */
 	if (start_nfc() < 0) {
 		printk("ERROR: NFC configuration failed\n");
-		return;
+		return 0;
 	}
 
 	/* Prevent deep sleep (system off) from being entered */
 	pm_policy_state_lock_get(PM_STATE_SOFT_OFF, PM_ALL_SUBSTATES);
 
 	/* Exit main function - the rest will be done by the callbacks */
+	return 0;
 }

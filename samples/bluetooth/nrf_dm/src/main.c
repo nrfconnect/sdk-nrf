@@ -297,7 +297,7 @@ static struct dm_cb dm_cb = {
 	.data_ready = data_ready,
 };
 
-void main(void)
+int main(void)
 {
 	int err;
 	uint32_t blink_status = 0;
@@ -308,13 +308,13 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		printk("LEDs init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = peer_init();
 	if (err) {
 		printk("Peer init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	init_param.cb = &dm_cb;
@@ -322,25 +322,25 @@ void main(void)
 	err = dm_init(&init_param);
 	if (err) {
 		printk("Distance measurement init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = service_ddfs_init();
 	if (err) {
 		printk("DDF Service init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	err = bt_sync_init();
 	if (err) {
 		printk("Synchronisation init failed (err %d)\n", err);
-		return;
+		return 0;
 	}
 
 	for (;;) {

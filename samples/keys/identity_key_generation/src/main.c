@@ -14,14 +14,14 @@
 
 LOG_MODULE_REGISTER(identity_key_generation, LOG_LEVEL_DBG);
 
-void main(void)
+int main(void)
 {
 	LOG_INF("Generating random HUK keys (including MKEK)");
 	hw_unique_key_write_random();
 
 	if (identity_key_is_written()) {
 		LOG_INF("Failure: Identity key slot already written. Exiting!");
-		return;
+		return 0;
 	}
 
 	LOG_INF("Writing the identity key to KMU");
@@ -34,8 +34,10 @@ void main(void)
 
 	if (!identity_key_is_written()) {
 		LOG_INF("Failure: Identity key is not written! Exiting!");
-		return;
+		return 0;
 	}
 
 	LOG_INF("Success!");
+
+	return 0;
 }

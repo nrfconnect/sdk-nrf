@@ -33,6 +33,10 @@
 /* Mon Dec 05 2022 09:38:04 */
 #define UNIX_TIMESTAMP_DUMMY 1670233084418
 
+/* It is required to be added to each test. That is because unity's
+ * main may return nonzero, while zephyr's main currently must
+ * return 0 in all cases (other values are reserved).
+ */
 extern int unity_main(void);
 
 /* Used to verify that the uut properly sets the value that is returned by date_time_now() to
@@ -853,7 +857,8 @@ void test_codec_helpers_object_path_list_generate_too_many_paths(void)
 									    ARRAY_SIZE(path_list)));
 }
 
-void main(void)
+int main(void)
 {
 	(void)unity_main();
+	return 0;
 }

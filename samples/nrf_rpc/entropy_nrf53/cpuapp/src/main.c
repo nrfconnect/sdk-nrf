@@ -30,7 +30,7 @@ static void result_callback(int result, uint8_t *buffer, size_t length)
 	printk("\n");
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -39,7 +39,7 @@ void main(void)
 	err = entropy_remote_init();
 	if (err) {
 		printk("Remote entropy driver initialization failed\n");
-		return;
+		return 0;
 	}
 
 	printk("Remote init send\n");

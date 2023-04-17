@@ -280,7 +280,7 @@ static void mpsl_nonpreemptible_thread(void)
 	}
 }
 
-void main(void)
+int main(void)
 {
 
 	int err = console_init();

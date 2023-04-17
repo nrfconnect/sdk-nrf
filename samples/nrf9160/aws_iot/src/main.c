@@ -466,7 +466,7 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -478,7 +478,7 @@ void main(void)
 	err = nrf_modem_lib_init();
 	if (err) {
 		LOG_ERR("Modem library initialization failed, error: %d", err);
-		return;
+		return 0;
 	}
 
 	nrf_modem_lib_dfu_handler(err);
@@ -490,7 +490,7 @@ void main(void)
 	err = hw_id_get(device_id, ARRAY_SIZE(device_id));
 	if (err) {
 		LOG_ERR("Failed to retrieve device ID, error: %d", err);
-		return;
+		return 0;
 	}
 
 	struct aws_iot_config config = {
@@ -521,7 +521,7 @@ void main(void)
 	err = lte_lc_init_and_connect_async(lte_handler);
 	if (err) {
 		LOG_ERR("Modem could not be configured, error: %d", err);
-		return;
+		return 0;
 	}
 
 	err = modem_info_init();
@@ -540,4 +540,6 @@ void main(void)
 	/* Postpone connecting to AWS IoT until date time has been obtained. */
 	k_sem_take(&date_time_obtained, K_FOREVER);
 	k_work_schedule(&connect_work, K_NO_WAIT);
+
+	return 0;
 }

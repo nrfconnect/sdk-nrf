@@ -6,8 +6,10 @@
 
 #include <zephyr/kernel.h>
 
-void main(void)
+int main(void)
 {
 	printk("Should not be printed, expected TF-M's NS application to be run instead.\n");
 	k_panic();
+
+	return 0;		/* unreachable */
 }

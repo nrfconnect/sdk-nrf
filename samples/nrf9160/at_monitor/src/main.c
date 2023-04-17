@@ -131,7 +131,7 @@ static void psm_read(void)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -140,27 +140,27 @@ void main(void)
 	err = nrf_modem_lib_init();
 	if (err) {
 		printk("Modem library initialization failed, error: %d\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Subscribing to notifications\n");
 	err = nrf_modem_at_printf("AT+CEREG=1");
 	if (err) {
 		printk("AT+CEREG failed\n");
-		return;
+		return 0;
 	}
 
 	err = nrf_modem_at_printf("AT%%CESQ=1");
 	if (err) {
 		printk("AT+CESQ failed\n");
-		return;
+		return 0;
 	}
 
 	printk("Connecting to network\n");
 	err = nrf_modem_at_printf("AT+CFUN=1");
 	if (err) {
 		printk("AT+CFUN failed\n");
-		return;
+		return 0;
 	}
 
 	/* Let's monitor link quality while attempting to register to network */
@@ -189,7 +189,7 @@ void main(void)
 	err = psm_control(ENABLE);
 	if (err) {
 		printk("Could not enable power saving mode\n");
-		return;
+		return 0;
 	}
 
 	psm_read();
@@ -197,7 +197,7 @@ void main(void)
 	err = nrf_modem_at_cmd(response, sizeof(response), "AT+CEREG?");
 	if (err) {
 		printk("Failed to read CEREG, err %d\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Modem response:\n%s", response);
@@ -206,8 +206,9 @@ void main(void)
 	err = nrf_modem_at_printf("AT+CFUN=0");
 	if (err) {
 		printk("AT+CFUN failed\n");
-		return;
+		return 0;
 	}
 	nrf_modem_lib_shutdown();
 	printk("Bye\n");
+	return 0;
 }

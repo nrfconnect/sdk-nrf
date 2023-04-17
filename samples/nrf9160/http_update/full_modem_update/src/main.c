@@ -193,7 +193,7 @@ static int shell_flash(const struct shell *shell, size_t argc, char **argv)
 
 SHELL_CMD_REGISTER(flash, NULL, "For rebooting device", shell_flash);
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -201,7 +201,7 @@ void main(void)
 
 	if (!device_is_ready(flash_dev)) {
 		printk("Flash device %s not ready\n", flash_dev->name);
-		return;
+		return 0;
 	}
 
 	err = nrf_modem_lib_init();
@@ -217,13 +217,13 @@ void main(void)
 	err = button_init();
 	if (err != 0) {
 		printk("button_init() failed: %d\n", err);
-		return;
+		return 0;
 	}
 
 	err = fota_download_init(fota_dl_handler);
 	if (err != 0) {
 		printk("fota_download_init() failed, err %d\n", err);
-		return;
+		return 0;
 	}
 
 	const struct dfu_target_full_modem_params params = {
@@ -237,13 +237,13 @@ void main(void)
 	err = dfu_target_full_modem_cfg(&params);
 	if (err != 0) {
 		printk("dfu_target_full_modem_cfg failed: %d\n", err);
-		return;
+		return 0;
 	}
 
 	err = modem_info_init();
 	if (err != 0) {
 		printk("modem_info_init failed: %d\n", err);
-		return;
+		return 0;
 	}
 
 	modem_info_string_get(MODEM_INFO_FW_VERSION, modem_version,
@@ -257,9 +257,11 @@ void main(void)
 				});
 	if (err != 0) {
 		printk("update_sample_init() failed, err %d\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Press Button 1 or enter 'download' to download firmware update\n");
 	printk("Press Button 2 or enter 'flash' to apply modem firmware update from flash\n");
+
+	return 0;
 }

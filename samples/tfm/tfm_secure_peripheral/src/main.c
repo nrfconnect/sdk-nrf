@@ -52,7 +52,7 @@ static void send(struct k_work *work)
 	k_work_schedule(&send_work, K_SECONDS(20));
 }
 
-void main(void)
+int main(void)
 {
 	IRQ_CONNECT(EGU0_IRQn, EGU_INT_PRIO, egu0_handler, NULL, 0);
 	nrf_egu_int_enable(NRF_EGU0, NRF_EGU_INT_TRIGGERED0);
@@ -62,4 +62,6 @@ void main(void)
 	k_work_init_delayable(&send_work, send);
 
 	k_work_schedule(&send_work, K_NO_WAIT);
+
+	return 0;
 }

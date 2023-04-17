@@ -31,7 +31,7 @@ static void led_output(uint8_t value)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	/* Debug helper variables */
 	uint32_t length;
@@ -47,27 +47,27 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		LOG_ERR("Cannot initialize LEDs (err: %d)", err);
-		return;
+		return 0;
 	}
 
 	/* Initialize Gazell Link Layer glue */
 	result_value = gzll_glue_init();
 	if (!result_value) {
 		LOG_ERR("Cannot initialize GZLL glue code");
-		return;
+		return 0;
 	}
 
 	/* Initialize the Gazell Link Layer */
 	result_value = nrf_gzll_init(NRF_GZLL_MODE_HOST);
 	if (!result_value) {
 		LOG_ERR("Cannot initialize GZLL");
-		return;
+		return 0;
 	}
 
 	result_value = nrf_gzll_set_timeslot_period(NRF_GZLLDE_RXPERIOD_DIV_2);
 	if (!result_value) {
 		LOG_ERR("Cannot set GZLL timeslot period");
-		return;
+		return 0;
 	}
 
 	/* Initialize the Gazell Pairing Library */
@@ -77,7 +77,7 @@ void main(void)
 						     (1 << UNENCRYPTED_DATA_PIPE));
 	if (!result_value) {
 		LOG_ERR("Cannot set GZLL RX pipes");
-		return;
+		return 0;
 	}
 
 	gzp_pairing_enable(true);
@@ -85,7 +85,7 @@ void main(void)
 	result_value = nrf_gzll_enable();
 	if (!result_value) {
 		LOG_ERR("Cannot enable GZLL");
-		return;
+		return 0;
 	}
 
 	LOG_INF("Gazell dynamic pairing example started. Host mode.");

@@ -14,7 +14,7 @@ LOG_MODULE_REGISTER(MODULE);
 
 #define INIT_VALUE1 3
 
-void main(void)
+int main(void)
 {
 	if (app_event_manager_init()) {
 		LOG_ERR("Application Event Manager not initialized");
@@ -24,4 +24,5 @@ void main(void)
 		event->init_value1 = INIT_VALUE1;
 		APP_EVENT_SUBMIT(event);
 	}
+	return 0;
 }

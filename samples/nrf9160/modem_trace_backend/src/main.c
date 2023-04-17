@@ -18,7 +18,7 @@ static void on_cfun(enum lte_lc_func_mode mode, void *context)
 	printk("LTE mode changed to %d\n", mode);
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -28,14 +28,14 @@ void main(void)
 	err = nrf_modem_lib_init();
 	if (err) {
 		printk("Modem library initialization failed, error: %d\n", err);
-		return;
+		return 0;
 	}
 
 	printk("Connecting to network\n");
 	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
 	if (err) {
 		printk("Failed to change LTE mode, err %d\n", err);
-		return;
+		return 0;
 	}
 
 	k_sleep(K_SECONDS(5));
@@ -43,10 +43,12 @@ void main(void)
 	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_POWER_OFF);
 	if (err) {
 		printk("Failed to change LTE mode, err %d\n", err);
-		return;
+		return 0;
 	}
 
 	nrf_modem_lib_shutdown();
 
 	printk("Bye\n");
+
+	return 0;
 }

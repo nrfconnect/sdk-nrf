@@ -727,7 +727,7 @@ static void error_reboot(void)
 	sys_reboot(SYS_REBOOT_COLD);
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -737,12 +737,12 @@ void main(void)
 	err = init();
 	if (err) {
 		LOG_ERR("Initialization failed");
-		return;
+		return 0;
 	}
 
 	err = connect_to_network();
 	if (err) {
-		return;
+		return 0;
 	}
 
 	/* Now that the device is connected to the network, get the modem info */

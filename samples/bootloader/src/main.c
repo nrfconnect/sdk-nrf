@@ -107,13 +107,13 @@ static void validate_and_boot(const struct fw_info *fw_info, uint16_t slot)
 #define BOOT_SLOT_0 0
 #define BOOT_SLOT_1 1
 
-void main(void)
+int main(void)
 {
 	int err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
 
 	if (err) {
 		printk("Failed to protect B0 flash, cancel startup.\n\r");
-		return;
+		return 0;
 	}
 
 	uint32_t s0_addr = s0_address_read();
@@ -130,5 +130,5 @@ void main(void)
 	}
 
 	printk("No bootable image found. Aborting boot.\n\r");
-	return;
+	return 0;
 }

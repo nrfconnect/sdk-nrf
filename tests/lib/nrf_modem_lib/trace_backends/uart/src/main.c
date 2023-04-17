@@ -14,6 +14,10 @@
 #include "cmock_nrfx_uarte.h"
 #include "cmock_pinctrl.h"
 
+/* It is required to be added to each test. That is because unity's
+ * main may return nonzero, while zephyr's main currently must
+ * return 0 in all cases (other values are reserved).
+ */
 extern int unity_main(void);
 
 extern struct nrf_modem_lib_trace_backend trace_backend;
@@ -290,7 +294,9 @@ void test_trace_backend_write_uart_nrfx_uarte_evt_error(void)
 	TEST_ASSERT_EQUAL(true, is_waiting_on_traces);
 }
 
-void main(void)
+int main(void)
 {
 	(void)unity_main();
+
+	return 0;
 }

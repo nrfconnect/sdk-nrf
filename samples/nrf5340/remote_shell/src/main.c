@@ -128,7 +128,7 @@ static void uart_irq_handler(const struct device *dev, void *user_data)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 	const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(ncs_remote_shell_uart));
@@ -136,14 +136,14 @@ void main(void)
 
 	if (!device_is_ready(dev)) {
 		LOG_ERR("Device not ready");
-		return;
+		return 0;
 	}
 
 	if (IS_ENABLED(CONFIG_USB_DEVICE_STACK)) {
 		err = usb_enable(NULL);
 		if (err != 0) {
 			LOG_ERR("Failed to enable USB, err %d", err);
-			return;
+			return 0;
 		}
 	}
 
@@ -184,7 +184,7 @@ void main(void)
 	err = shell_ipc_host_init(ipc_host_receive, (void *)dev);
 	if (err) {
 		LOG_ERR("Shell IPC host initialization failed, err %d", err);
-		return;
+		return 0;
 	}
 
 	for (;;) {

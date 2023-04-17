@@ -149,7 +149,7 @@ static void get_attestation_token(void)
 	}
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 

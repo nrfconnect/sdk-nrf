@@ -43,7 +43,8 @@ K_THREAD_DEFINE(con_thread, CONFIG_CONNECTION_THREAD_STACK_SIZE, connection_mana
  * but for illustrative purposes we don't use it. main_application() could be called directly
  * from this function, rather than given its own dedicated thread.
  */
-void main(void)
+int main(void)
 {
 	LOG_INF("nRF Cloud MQTT multi-service sample has started.");
+	return 0;
 }
