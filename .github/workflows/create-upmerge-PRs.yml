@@ -31,7 +31,7 @@ jobs:
         working-directory: ncs
         run: |
           west init -l nrf
-          west update zephyr
+          west update zephyr bsim
           git config --global user.email "noreply@nordicsemi.no"
           git config --global user.name "Nordic Builder"
           echo "SDK_ZEPHYR=$(west list zephyr -f {url} | awk -F// '{print $NF}')" >> $GITHUB_ENV
