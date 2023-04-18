@@ -75,7 +75,7 @@ static bool get_first_down_section(struct bank_section *out)
 
 /* ===== Test cases ===== */
 
-static void test_heap_resize(void)
+ZTEST(ram_pwrdn, test_heap_resize)
 {
 	const size_t buffer_size = 20480; // 20KiB
 
@@ -107,7 +107,7 @@ static void test_heap_resize(void)
 		     "Enabled RAM limit not moved backward after malloc");
 }
 
-static void test_manual_power_control(void)
+ZTEST(ram_pwrdn, test_manual_power_control)
 {
 	const uintptr_t RAM_START_ADDR = 0x20000000UL;
 	const uintptr_t RAM_END_ADDR = 0x20040000UL;
@@ -173,9 +173,4 @@ static void test_manual_power_control(void)
 		     "Disabling sections on two banks (disabled too much)");
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_ram_pwrdn, ztest_unit_test(test_heap_resize),
-			 ztest_unit_test(test_manual_power_control));
-	ztest_run_test_suite(test_ram_pwrdn);
-}
+ZTEST_SUITE(ram_pwrdn, NULL, NULL, NULL, NULL, NULL);
