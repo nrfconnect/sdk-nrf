@@ -202,14 +202,12 @@ static int trace_fragment_write(struct nrf_modem_trace_data *frag)
 
 		PERF_END(ret);
 
+		__ASSERT(ret != 0, "Trace backend wrote 0 bytes");
+
 		if (ret < 0) {
 			LOG_ERR("trace_backend.write failed with err: %d", ret);
 
 			return ret;
-		}
-
-		if (ret == 0) {
-			LOG_WRN("trace_backend wrote 0 bytes.");
 		}
 
 		remaining -= ret;
