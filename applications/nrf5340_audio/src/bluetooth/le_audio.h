@@ -50,8 +50,8 @@
 #define BT_AUDIO_CODEC_CAPABILIY_FREQ BT_CODEC_LC3_FREQ_16KHZ
 #endif /* (CONFIG_AUDIO_SAMPLE_RATE_48000_HZ) */
 
-#define BT_AUDIO_LC3_PRESET_CONFIGURABLE(_loc, _stream_context, _bitrate)                          \
-	BT_AUDIO_LC3_PRESET(                                                                       \
+#define BT_BAP_LC3_PRESET_CONFIGURABLE(_loc, _stream_context, _bitrate)                            \
+	BT_BAP_LC3_PRESET(                                                                         \
 		BT_CODEC_LC3_CONFIG(BT_AUDIO_CODEC_CONFIG_FREQ, BT_CODEC_CONFIG_LC3_DURATION_10,   \
 				    _loc, LE_AUDIO_SDU_SIZE_OCTETS(_bitrate), 1, _stream_context), \
 		BT_CODEC_LC3_QOS_10_UNFRAMED(LE_AUDIO_SDU_SIZE_OCTETS(_bitrate),                   \
@@ -62,14 +62,14 @@
 #if CONFIG_TRANSPORT_CIS
 #if CONFIG_BT_BAP_UNICAST_CONFIGURABLE
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                             \
-	BT_AUDIO_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
-					 BT_AUDIO_CONTEXT_TYPE_MEDIA,                              \
-					 CONFIG_BT_AUDIO_BITRATE_UNICAST_SINK)
+	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+				       BT_AUDIO_CONTEXT_TYPE_MEDIA,	                         \
+				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SINK)
 
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                           \
-	BT_AUDIO_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
-					 BT_AUDIO_CONTEXT_TYPE_MEDIA,                              \
-					 CONFIG_BT_AUDIO_BITRATE_UNICAST_SRC)
+	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+				       BT_AUDIO_CONTEXT_TYPE_MEDIA,	                         \
+				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SRC)
 
 #elif CONFIG_BT_BAP_UNICAST_16_2_1
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                             \
@@ -97,9 +97,9 @@
 #if CONFIG_TRANSPORT_BIS
 #if CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                \
-	BT_AUDIO_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
-					 BT_AUDIO_CONTEXT_TYPE_MEDIA,                              \
-					 CONFIG_BT_AUDIO_BITRATE_BROADCAST_SRC)
+	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+				       BT_AUDIO_CONTEXT_TYPE_MEDIA,	                         \
+				       CONFIG_BT_AUDIO_BITRATE_BROADCAST_SRC)
 
 #elif CONFIG_BT_BAP_BROADCAST_16_2_1
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                \
