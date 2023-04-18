@@ -284,7 +284,7 @@ static int send_event_to_remote(struct emp_ipc_data *ipc, const struct app_event
 	}
 
 	size_t size = app_event_manager_event_size(eh);
-	uint32_t buffer[ceiling_fraction(size, sizeof(uint32_t))];
+	uint32_t buffer[DIV_ROUND_UP(size, sizeof(uint32_t))];
 	struct app_event_header *remote_eh = (struct app_event_header *)buffer;
 
 	memcpy(buffer, eh, sizeof(buffer));
@@ -400,7 +400,7 @@ static int send_subscribe_command_to_remote(struct emp_ipc_data *ipc,
 	/* Preparing and sending the command */
 	struct emp_cmd_subscribe *cmd;
 	size_t size = sizeof(*cmd) + strlen(remote_event_name) + 1;
-	uint32_t buffer[ceiling_fraction(size, sizeof(uint32_t))];
+	uint32_t buffer[DIV_ROUND_UP(size, sizeof(uint32_t))];
 
 	cmd = (struct emp_cmd_subscribe *)buffer;
 	cmd->code = EMP_CMD_SUBSCRIBE;

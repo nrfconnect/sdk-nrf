@@ -286,7 +286,7 @@ static int module_init(void)
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
 		static const uint8_t mask[] = REPORT_MASK_MOUSE;
 		BUILD_ASSERT((sizeof(mask) == 0) ||
-			     (sizeof(mask) == ceiling_fraction(REPORT_SIZE_MOUSE, 8)));
+			     (sizeof(mask) == DIV_ROUND_UP(REPORT_SIZE_MOUSE, 8)));
 		BUILD_ASSERT(REPORT_ID_MOUSE < ARRAY_SIZE(report_index));
 
 		input_report[ir_pos].id       = REPORT_ID_MOUSE;
@@ -301,7 +301,7 @@ static int module_init(void)
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
 		static const uint8_t mask[] = REPORT_MASK_KEYBOARD_KEYS;
 		BUILD_ASSERT((sizeof(mask) == 0) ||
-			     (sizeof(mask) == ceiling_fraction(REPORT_SIZE_KEYBOARD_KEYS, 8)));
+			     (sizeof(mask) == DIV_ROUND_UP(REPORT_SIZE_KEYBOARD_KEYS, 8)));
 		BUILD_ASSERT(REPORT_ID_KEYBOARD_KEYS < ARRAY_SIZE(report_index));
 
 		input_report[ir_pos].id       = REPORT_ID_KEYBOARD_KEYS;
@@ -316,7 +316,7 @@ static int module_init(void)
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT)) {
 		static const uint8_t mask[] = REPORT_MASK_SYSTEM_CTRL;
 		BUILD_ASSERT((sizeof(mask) == 0) ||
-			     (sizeof(mask) == ceiling_fraction(REPORT_SIZE_SYSTEM_CTRL, 8)));
+			     (sizeof(mask) == DIV_ROUND_UP(REPORT_SIZE_SYSTEM_CTRL, 8)));
 		BUILD_ASSERT(REPORT_ID_SYSTEM_CTRL < ARRAY_SIZE(report_index));
 
 		input_report[ir_pos].id       = REPORT_ID_SYSTEM_CTRL;
@@ -331,7 +331,7 @@ static int module_init(void)
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT)) {
 		static const uint8_t mask[] = REPORT_MASK_CONSUMER_CTRL;
 		BUILD_ASSERT((sizeof(mask) == 0) ||
-			     (sizeof(mask) == ceiling_fraction(REPORT_SIZE_CONSUMER_CTRL, 8)));
+			     (sizeof(mask) == DIV_ROUND_UP(REPORT_SIZE_CONSUMER_CTRL, 8)));
 		BUILD_ASSERT(REPORT_ID_CONSUMER_CTRL < ARRAY_SIZE(report_index));
 
 		input_report[ir_pos].id       = REPORT_ID_CONSUMER_CTRL;

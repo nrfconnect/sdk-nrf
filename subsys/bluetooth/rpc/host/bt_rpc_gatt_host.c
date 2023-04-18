@@ -79,7 +79,7 @@ static struct bt_uuid const * const uuid_cep = BT_UUID_GATT_CEP;
 static struct bt_uuid const * const uuid_cud = BT_UUID_GATT_CUD;
 static struct bt_uuid const * const uuid_cpf = BT_UUID_GATT_CPF;
 
-static uint32_t gatt_buffer_data[ceiling_fraction(CONFIG_BT_RPC_GATT_BUFFER_SIZE,
+static uint32_t gatt_buffer_data[DIV_ROUND_UP(CONFIG_BT_RPC_GATT_BUFFER_SIZE,
 						  sizeof(uint32_t))];
 static struct net_buf_simple gatt_buffer = {
 	.data = (uint8_t *)gatt_buffer_data,

@@ -93,7 +93,7 @@ static inline uint16_t actual_to_linear(uint16_t actual)
 	/* Conversion:
 	 * linear = CEIL(65535 * (actual * actual) / (65535 * 65535)))
 	 */
-	return ceiling_fraction((uint32_t)actual * (uint32_t)actual, 65535UL);
+	return DIV_ROUND_UP((uint32_t)actual * (uint32_t)actual, 65535UL);
 }
 
 /** @brief Convert light from the specified representation to the configured.

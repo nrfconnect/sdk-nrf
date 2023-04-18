@@ -29,7 +29,7 @@ LOG_MODULE_REGISTER(nfc_tnep_poller, CONFIG_NFC_TNEP_POLLER_LOG_LEVEL);
  * Exchange Protocol 1.0 4.1.6
  */
 #define NFC_TNEP_MIN_WAIT_TIME(_time) \
-	(1 << (((ceiling_fraction((_time), 4)) - 1)))
+	(1 << (((DIV_ROUND_UP((_time), 4)) - 1)))
 
 enum tnep_poller_state {
 	TNEP_POLLER_STATE_IDLE,
