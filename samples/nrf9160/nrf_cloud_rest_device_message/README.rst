@@ -8,11 +8,11 @@ nRF9160: nRF Cloud REST Device Message
    :depth: 2
 
 The REST Device Message sample demonstrates how to use the `nRF Cloud REST API`_ to send `Device Messages <nRF Cloud Device Messages_>`_ using the ``SendDeviceMessage`` REST endpoint.
-Every button press will send a message to nRF Cloud.
+Every button press sends a message to nRF Cloud.
 
-It also demonstrates use of the :ref:`lib_nrf_cloud_alert` alert library and the :ref:`lib_nrf_cloud_log` library.
-The sample sents an alert when the device first comes online.
-The sample sends a log message indicating what the sample version is, as well as when the button is pressed.
+It also demonstrates use of the :ref:`lib_nrf_cloud_alert` and the :ref:`lib_nrf_cloud_log` libraries.
+The sample sends an alert when the device first comes online.
+It also sends a log message indicating the sample version, as well as when the button is pressed.
 
 Requirements
 ************
@@ -108,10 +108,10 @@ To enable `Zephyr Logging`_ to nRF Cloud using the :ref:`lib_nrf_cloud_log` libr
 ``-DOVERLAY_CONFIG=overlay_nrfcloud_logging.conf``
 
 This overlay allows the sample and various subsystems that have logging enabled to send their logs to nRF Cloud.
-Set the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL` option to the log level of messages to send to nRF Cloud, such as 4 for debug log messages.
+Set the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL` option to the log level of messages to send to nRF Cloud, such as ``4`` for debug log messages.
 Set the :kconfig:option:`CONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL_DBG` option so that log messages are generated on each button press.
 
-Press button 1 to cause a message to be sent to nRF Cloud:
+Press **Button 1** to have a message sent to nRF Cloud:
 
    .. parsed-literal::
       :class: highlight
