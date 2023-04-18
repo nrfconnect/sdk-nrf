@@ -15,32 +15,6 @@ if DM_MODULE
 
 menu "nRF DM (Distance Measurement)"
 
-choice DM_TIMER
-	default DM_TIMER2
-	prompt "Timer to use for the nrf_dm library."
-
-config DM_TIMER0
-	depends on HAS_HW_NRF_TIMER0
-	bool "TIMER0"
-
-config DM_TIMER1
-	depends on HAS_HW_NRF_TIMER1
-	bool "TIMER1"
-
-config DM_TIMER2
-	depends on HAS_HW_NRF_TIMER2
-	bool "TIMER2"
-
-config DM_TIMER3
-	depends on HAS_HW_NRF_TIMER3
-	bool "TIMER3"
-
-config DM_TIMER4
-	depends on HAS_HW_NRF_TIMER4
-	bool "TIMER4"
-
-endchoice
-
 config DM_HIGH_PRECISION_CALC
 	# Due to memory limitations, functionality is not provided for nrf52832.
 	depends on !SOC_NRF52832

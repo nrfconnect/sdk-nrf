@@ -5,6 +5,11 @@
  */
 
 / {
+	/* The timer instance to use. */
+	chosen {
+		ncs,dm-timer = &timer2;
+	};
+
 	/* The selected pins will be used by Distance Measurement module for debug purposes. */
 	dm_gpio {
 		compatible = "gpio-leds";
