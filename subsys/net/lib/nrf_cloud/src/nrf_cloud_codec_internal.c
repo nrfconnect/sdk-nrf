@@ -1095,7 +1095,7 @@ static int cell_info_json_encode(cJSON *const obj, const struct lte_lc_cell *con
 	__ASSERT_NO_MSG(cell_inf != NULL);
 
 	if (json_add_num_cs(obj, NRF_CLOUD_JSON_MCC_KEY, cell_inf->mcc) ||
-	    json_add_num_cs(obj, NRF_CLOUD_JSON_MNC_KEY, cell_inf->mcc) ||
+	    json_add_num_cs(obj, NRF_CLOUD_JSON_MNC_KEY, cell_inf->mnc) ||
 	    json_add_num_cs(obj, NRF_CLOUD_JSON_AREA_CODE_KEY, cell_inf->tac) ||
 	    json_add_num_cs(obj, NRF_CLOUD_JSON_CELL_ID_KEY, cell_inf->id) ||
 	    json_add_num_cs(obj, NRF_CLOUD_JSON_RSRP_KEY, RSRP_IDX_TO_DBM(cell_inf->rsrp))) {
