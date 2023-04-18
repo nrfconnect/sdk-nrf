@@ -53,16 +53,24 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
  #include <fw_info.h>
  #define IMAGE0_ID		PM_S0_IMAGE_ID
  #define IMAGE0_ADDRESS		PM_S0_IMAGE_ADDRESS
+ #define IMAGE0_SIZE		PM_S0_IMAGE_SIZE
  #define IMAGE1_ID		PM_S1_IMAGE_ID
  #define IMAGE1_ADDRESS		PM_S1_IMAGE_ADDRESS
+ #define IMAGE1_SIZE		PM_S1_IMAGE_SIZE
  #define BOOTLOADER_NAME	"B0"
 #elif CONFIG_BOOTLOADER_MCUBOOT
  #include <zephyr/dfu/mcuboot.h>
  #define IMAGE0_ID		PM_MCUBOOT_PRIMARY_ID
  #define IMAGE0_ADDRESS		PM_MCUBOOT_PRIMARY_ADDRESS
+ #define IMAGE0_SIZE		PM_MCUBOOT_PRIMARY_SIZE
  #define IMAGE1_ID		PM_MCUBOOT_SECONDARY_ID
  #define IMAGE1_ADDRESS		PM_MCUBOOT_SECONDARY_ADDRESS
- #define BOOTLOADER_NAME	"MCUBOOT"
+ #define IMAGE1_SIZE		PM_MCUBOOT_SECONDARY_SIZE
+ #if CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
+   #define BOOTLOADER_NAME	"MCUBOOT+XIP"
+ #else
+   #define BOOTLOADER_NAME	"MCUBOOT"
+ #endif
 #else
  #error Bootloader not supported.
 #endif
@@ -108,17 +116,18 @@ const static char * const opt_descr[] = {
 
 static uint8_t dfu_slot_id(void)
 {
-#if CONFIG_BOOTLOADER_MCUBOOT
-	/* MCUBoot always puts new image in the secondary slot. */
-	return IMAGE1_ID;
-#else
-	BUILD_ASSERT(IMAGE0_ADDRESS < IMAGE1_ADDRESS);
-	if ((uint32_t)(uintptr_t)dfu_slot_id < IMAGE1_ADDRESS) {
-		return IMAGE1_ID;
-	}
+	/* Assuming that image 0 slot is always located in internal FLASH. */
+	uint32_t cur_fun_addr = (uintptr_t)dfu_slot_id;
 
-	return IMAGE0_ID;
-#endif
+	/* Return slot ID that is currently not in use. */
+	if ((cur_fun_addr >= IMAGE0_ADDRESS) &&
+	    (cur_fun_addr < (IMAGE0_ADDRESS + IMAGE0_SIZE))) {
+		return IMAGE1_ID;
+	} else {
+		__ASSERT_NO_MSG((cur_fun_addr >= IMAGE1_ADDRESS) &&
+				(cur_fun_addr < (IMAGE1_ADDRESS + IMAGE1_SIZE)));
+		return IMAGE0_ID;
+	}
 }
 
 static bool is_page_clean(const struct flash_area *fa, off_t off, size_t len)
@@ -247,7 +256,7 @@ static void complete_dfu_data_store(void)
 
 	if (cur_offset == img_length) {
 		LOG_INF("DFU image written");
-#ifdef CONFIG_BOOTLOADER_MCUBOOT
+#if CONFIG_BOOTLOADER_MCUBOOT && !CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
 		int err = boot_request_upgrade(false);
 		if (err) {
 			LOG_ERR("Cannot request the image upgrade (err:%d)", err);
@@ -733,7 +742,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-#if CONFIG_BOOTLOADER_MCUBOOT
+#if CONFIG_BOOTLOADER_MCUBOOT && !CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
 			int err = boot_write_img_confirmed();
 
 			if (err) {
