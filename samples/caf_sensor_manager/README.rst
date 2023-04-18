@@ -21,7 +21,7 @@ Overview
 ********
 
 The sample provides stub input data using :ref:`sensor_stub`.
-The input data simulates acceleration along the X, Y, and Z axes.
+The input data simulates acceleration in X, Y, and Z axes.
 Whenever new data is generated, the :ref:`caf_sensor_manager` generates the appropriate :c:struct:`sensor_event` instances that include the generated data.
 
 The data from the events is then passed to the :ref:`caf_sensor_data_aggregator`.
@@ -41,10 +41,10 @@ Single-core configuration
 =========================
 
 For the MCU with multiple cores, the default configuration uses one core to simulate the sensor and the other core to process the sensor.
-These multicore MCUs can support a single-core configuration, where the sensor is simulated and processed on a single, selected core.
+The multicore MCUs can also support a single-core configuration, where the sensor is simulated and processed on a single, selected core.
 The configuration is placed in the :file:`boards/<board>_singlecore.conf` file.
 
-To use this configuration, specify the ``-DOVERLAY_CONFIG=boards/<board>_singlecore.conf`` parameter along with the build command when building the sample:
+To use this configuration, run the following command:
 
 .. code-block:: console
 
@@ -53,9 +53,28 @@ To use this configuration, specify the ``-DOVERLAY_CONFIG=boards/<board>_singlec
 Building and running
 ********************
 
+For the MCU with multiple cores, the default configuration ensures that all the required cores are built.
+You can build and flash all the required images by completing the following steps for all the required cores.
+
 .. |sample path| replace:: :file:`samples/caf_sensor_manager`
 
 .. include:: /includes/build_and_run.txt
+
+Complete the following steps to program the sample:
+
+      1. Go to the sample directory.
+      #. Open the command line terminal.
+      #. Run the following command to build the application code for the host and the remote:
+
+         .. code-block:: console
+
+            west build -b nrf5340dk_nrf5340_cpuapp
+
+      #. Program both the cores:
+
+         .. code-block:: console
+
+            west flash
 
 Testing
 =======
