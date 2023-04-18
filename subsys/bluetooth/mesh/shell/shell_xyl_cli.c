@@ -264,25 +264,25 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	xyl_cmds, SHELL_CMD_ARG(get, NULL, NULL, cmd_xyl_get, 1, 0),
-	SHELL_CMD_ARG(set, NULL, "<light> <x> <y> [transition_time(ms) [delay(ms)]]", cmd_xyl_set,
+	SHELL_CMD_ARG(set, NULL, "<Light> <X> <Y> [TransTime(ms) [Delay(ms)]]", cmd_xyl_set,
 		      4, 2),
-	SHELL_CMD_ARG(set-unack, NULL, "<light> <x> <y> [transition_time(ms) [delay(ms)]]",
+	SHELL_CMD_ARG(set-unack, NULL, "<Light> <X> <Y> [TransTime(ms) [Delay(ms)]]",
 		      cmd_xyl_set_unack, 4, 2),
 	SHELL_CMD_ARG(target-get, NULL, NULL, cmd_xyl_target_get, 1, 0),
 	SHELL_CMD_ARG(default-get, NULL, NULL, cmd_xyl_default_get, 1, 0),
-	SHELL_CMD_ARG(default-set, NULL, "<light> <x> <y>", cmd_xyl_default_set, 4, 0),
-	SHELL_CMD_ARG(default-set-unack, NULL, "<light> <x> <y>", cmd_xyl_default_set_unack,
+	SHELL_CMD_ARG(default-set, NULL, "<Light> <X> <Y>", cmd_xyl_default_set, 4, 0),
+	SHELL_CMD_ARG(default-set-unack, NULL, "<Light> <X> <Y>", cmd_xyl_default_set_unack,
 		      4, 0),
 	SHELL_CMD_ARG(range-get, NULL, NULL, cmd_xyl_range_get, 1, 0),
-	SHELL_CMD_ARG(range-set, NULL, "<x_min> <y_min> <x_max> <y_max>", cmd_xyl_range_set, 5,
+	SHELL_CMD_ARG(range-set, NULL, "<XMin> <YMin> <XMax> <YMax>", cmd_xyl_range_set, 5,
 		      0),
-	SHELL_CMD_ARG(range-set-unack, NULL, "<x_min> <y_min> <x_max> <y_max>",
+	SHELL_CMD_ARG(range-set-unack, NULL, "<XMin> <YMin> <XMax> <YMax>",
 		      cmd_xyl_range_set_unack, 5, 0),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);

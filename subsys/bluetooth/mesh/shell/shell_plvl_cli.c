@@ -238,22 +238,22 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	plvl_cmds, SHELL_CMD_ARG(get, NULL, NULL, cmd_power_get, 1, 0),
-	SHELL_CMD_ARG(set, NULL, "<lvl> [transition_time(ms) [delay(ms)]]", cmd_power_set,
+	SHELL_CMD_ARG(set, NULL, "<Lvl> [TransTime(ms) [Delay(ms)]]", cmd_power_set,
 		      2, 2),
-	SHELL_CMD_ARG(set-unack, NULL, "<lvl> [transition_time(ms) [delay(ms)]]",
+	SHELL_CMD_ARG(set-unack, NULL, "<Lvl> [TransTime(ms) [Delay(ms)]]",
 		      cmd_power_set_unack, 2, 2),
 	SHELL_CMD_ARG(range-get, NULL, NULL, cmd_range_get, 1, 0),
-	SHELL_CMD_ARG(range-set, NULL, "<min> <max>", cmd_range_set, 3, 0),
-	SHELL_CMD_ARG(range-set-unack, NULL, "<min> <max>", cmd_range_set_unack, 3, 0),
+	SHELL_CMD_ARG(range-set, NULL, "<Min> <Max>", cmd_range_set, 3, 0),
+	SHELL_CMD_ARG(range-set-unack, NULL, "<Min> <Max>", cmd_range_set_unack, 3, 0),
 	SHELL_CMD_ARG(default-get, NULL, NULL, cmd_default_get, 1, 0),
-	SHELL_CMD_ARG(default-set, NULL, "<lvl>", cmd_default_set, 2, 0),
-	SHELL_CMD_ARG(default-set-unack, NULL, "<lvl>", cmd_default_set_unack, 2, 0),
+	SHELL_CMD_ARG(default-set, NULL, "<Lvl>", cmd_default_set, 2, 0),
+	SHELL_CMD_ARG(default-set-unack, NULL, "<Lvl>", cmd_default_set_unack, 2, 0),
 	SHELL_CMD_ARG(last-get, NULL, NULL, cmd_last_get, 1, 0),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);

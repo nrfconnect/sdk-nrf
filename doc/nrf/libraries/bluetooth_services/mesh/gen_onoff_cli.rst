@@ -33,32 +33,32 @@ mesh models onoff instance get-all
 	Print all instances of the Generic OnOff Client model on the device.
 
 
-mesh models onoff instance set <elem_idx>
+mesh models onoff instance set <ElemIdx>
 	Select the Generic OnOff Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
 
-	* ``elem_idx`` - Element index where the model instance is found.
+	* ``ElemIdx`` - Element index where the model instance is found.
 
 
 mesh models onoff get
 	Get the OnOff state value of the bound server.
 
 
-mesh models onoff set <onoff> [transition_time(ms) [delay(ms)]]
+mesh models onoff set <OnOff> [TransTime(ms) [Delay(ms)]]
 	Set the OnOff state value of the server and wait for a response.
 
-	* ``onoff`` - OnOff state value to set. Use *on*, *enable*, or any non-zero value to enable the state.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``OnOff`` - OnOff state value to set. Use *on*, *enable*, or any non-zero value to enable the state.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models onoff set-unack <onoff> [transition_time(ms) [delay(ms)]]
+mesh models onoff set-unack <onOff> [TransTime(ms) [Delay(ms)]]
 	Set the OnOff state value of the server without requesting a response.
 
-	* ``onoff`` - OnOff state value to set. Use *on*, *enable*, or any non-zero value to enable the state.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``OnOff`` - OnOff state value to set. Use *on*, *enable*, or any non-zero value to enable the state.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
 API documentation

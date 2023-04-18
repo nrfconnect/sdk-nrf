@@ -35,104 +35,104 @@ mesh models ctrl instance get-all
 	Print all instances of the Light LC Client model on the device.
 
 
-mesh models ctrl instance set <elem_idx>
+mesh models ctrl instance set <ElemIdx>
 	Select the Light LC Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
 
-	* ``elem_idx`` - Element index where the model instance is found.
+	* ``ElemIdx`` - Element index where the model instance is found.
 
 
 mesh models ctrl mode-get
 	Get the Light Lightness Control Server's current Mode.
 
 
-mesh models ctrl mode-set <enable | disable>
+mesh models ctrl mode-set <Enable(off, on)>
 	Set the Light Lightness Control Server's current Mode and wait for a response.
 
-	* ``enable | disable`` - Mode to set.
+	* ``Enable`` - Mode to set.
 
 
-mesh models ctrl mode-set-unack <enable | disable>
+mesh models ctrl mode-set-unack <Enable(off, on)>
 	Set the Light Lightness Control Server's current Mode without requesting a response.
 
-	* ``enable | disable`` - Mode to set.
+	* ``Enable`` - Mode to set.
 
 
 mesh models ctrl occupancy-get
 	Get the Light Lightness Control Server's current Occupancy Mode.
 
 
-mesh models ctrl occupancy-set <enable | disable>
+mesh models ctrl occupancy-set <Enable(off, on)>
 	Set the Light Lightness Control Server's current Occupancy Mode and wait for a response.
 
-	* ``enable | disable`` - Occupancy Mode to set.
+	* ``Enable`` - Occupancy Mode to set.
 
 
-mesh models ctrl occupancy-set-unack <enable | disable>
+mesh models ctrl occupancy-set-unack <Enable(off, on)>
 	Set the Light Lightness Control Server's current Occupancy Mode without requesting a response.
 
-	* ``enable | disable`` - Occupancy Mode to set.
+	* ``Enable`` - Occupancy Mode to set.
 
 
 mesh models ctrl light-onoff-get
 	Get the Light Lightness Control Server's current OnOff state.
 
 
-mesh models ctrl light-onoff-set <onoff> [transition_time(ms) [delay(ms)]]
+mesh models ctrl light-onoff-set <OnOff> [TransTime(ms) [Delay(ms)]]
 	Tell the Light Lightness Control Server to turn the light on or off, and wait for a response.
 
-	* ``onoff`` - OnOff state value to set. Use *on*, *enable*, or any non-zero value to enable the state.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``OnOff`` - OnOff state value to set. Use *on*, *enable*, or any non-zero value to enable the state.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models ctrl light-onoff-set-unack <onoff> [transition_time(ms) [delay(ms)]]
+mesh models ctrl light-onoff-set-unack <OnOff> [TransTime(ms) [Delay(ms)]]
 	Tell the Light Lightness Control Server to turn the light on or off without requesting a response.
 
-	* ``onoff`` - OnOff state value to set. Use *on*, *enable*, or any non-zero value to enable the state.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``OnOff`` - OnOff state value to set. Use *on*, *enable*, or any non-zero value to enable the state.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models ctrl prop-get <id>
+mesh models ctrl prop-get <ID>
 	Get a property value of the Light Lightness Control Server.
 
-	* ``id`` - ID of the property to get. See :c:enum:`bt_mesh_light_ctrl_prop` for a list of supported properties.
+	* ``ID`` - ID of the property to get. See :c:enum:`bt_mesh_light_ctrl_prop` for a list of supported properties.
 
 
-mesh models ctrl prop-set <id> <value>
+mesh models ctrl prop-set <ID> <Val>
 	Set a property value of the Light Lightness Control Server and wait for a response.
 
-	* ``id`` - ID of the property to set. See :c:enum:`bt_mesh_light_ctrl_prop` for a list of supported properties.
-	* ``value`` - The new value of the property.
+	* ``ID`` - ID of the property to set. See :c:enum:`bt_mesh_light_ctrl_prop` for a list of supported properties.
+	* ``Val`` - The new value of the property.
 
 
-mesh models ctrl prop-set-unack <id> <value>
+mesh models ctrl prop-set-unack <ID> <Val>
 	Set a property value of the Light Lightness Control Server without requesting a response.
 
-	* ``id`` - ID of the property to set. See :c:enum:`bt_mesh_light_ctrl_prop` for a list of supported properties.
-	* ``value`` - The new value of the property.
+	* ``ID`` - ID of the property to set. See :c:enum:`bt_mesh_light_ctrl_prop` for a list of supported properties.
+	* ``Val`` - The new value of the property.
 
 
-mesh models ctrl coeff-get <id>
+mesh models ctrl coeff-get <ID>
 	Get a Regulator Coefficient value of the Light Lightness Control Server.
 
-	* ``id`` - ID of the coefficient to get. See :c:enum:`bt_mesh_light_ctrl_coeff` for a list of supported coefficients.
+	* ``ID`` - ID of the coefficient to get. See :c:enum:`bt_mesh_light_ctrl_coeff` for a list of supported coefficients.
 
 
-mesh models ctrl coeff-set <id> <value>
+mesh models ctrl coeff-set <ID> <Val>
 	Set a Regulator Coefficient value of the Light Lightness Control Server and wait for a response.
 
-	* ``id`` - ID of the coefficient to set. See :c:enum:`bt_mesh_light_ctrl_coeff` for a list of supported coefficients.
-	* ``value`` - New coefficient value.
+	* ``ID`` - ID of the coefficient to set. See :c:enum:`bt_mesh_light_ctrl_coeff` for a list of supported coefficients.
+	* ``Val`` - New coefficient value.
 
 
-mesh models ctrl coeff-set-unack <id> <value>
+mesh models ctrl coeff-set-unack <ID> <Val>
 	Set a Regulator Coefficient value of the Light Lightness Control Server without requesting a response.
 
-	* ``id`` - ID of the coefficient to set. See :c:enum:`bt_mesh_light_ctrl_coeff` for a list of supported coefficients.
-	* ``value`` - New coefficient value.
+	* ``ID`` - ID of the coefficient to set. See :c:enum:`bt_mesh_light_ctrl_coeff` for a list of supported coefficients.
+	* ``Val`` - New coefficient value.
 
 
 API documentation

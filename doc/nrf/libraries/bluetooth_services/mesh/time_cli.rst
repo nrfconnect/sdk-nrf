@@ -36,59 +36,59 @@ mesh models time instance get-all
 	Print all instances of the Time Client model on the device.
 
 
-mesh models time instance set <elem_idx>
+mesh models time instance set <ElemIdx>
 	Select the Time Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
 
-	* ``elem_idx`` - Element index where the model instance is found.
+	* ``ElemIdx`` - Element index where the model instance is found.
 
 
 mesh models time time-get
 	Get the current Time Status of a Time Server.
 
 
-mesh models time time-set <sec> <subsec> <uncertainty> <tai_utc_delta> <time_zone_offset> <is_authority>
+mesh models time time-set <Sec> <Subsec> <Uncertainty> <TaiUtcDlt> <TimeZoneOffset> <IsAuthority>
 	Set the Time Status of a Time Server and wait for a response.
 
-	* ``sec`` - The current TAI time in seconds.
-	* ``subsec`` - The sub-seconds time in units of 1/256th second.
-	* ``uncertainty`` - Accumulated uncertainty of the mesh Timestamp in milliseconds.
-	* ``tai_utc_delta`` - Current TAI-UTC Delta (leap seconds).
-	* ``time_zone_offset`` - Current zone offset in 15-minute increments.
-	* ``is_authority`` - Reliable TAI source flag.
+	* ``Sec`` - The current TAI time in seconds.
+	* ``Subsec`` - The sub-seconds time in units of 1/256th second.
+	* ``Uncertainty`` - Accumulated uncertainty of the mesh Timestamp in milliseconds.
+	* ``TaiUtcDlt`` - Current TAI-UTC Delta (leap seconds).
+	* ``TimeZoneOffset`` - Current zone offset in 15-minute increments.
+	* ``IsAuthority`` - Reliable TAI source flag.
 
 
 mesh models time zone-get
 	Get the Time Zone status of a Time Server.
 
 
-mesh models time zone-set <new_offset> <timestamp>
+mesh models time zone-set <NewOffset> <Timestamp>
 	Schedule a Time Zone change for the Time Server and wait for a response.
 
-	* ``new_offset`` - New zone offset in 15-minute increments.
-	* ``timestamp`` - TAI update point for Time Zone Offset.
+	* ``NewOffset`` - New zone offset in 15-minute increments.
+	* ``Timestamp`` - TAI update point for Time Zone Offset.
 
 
 mesh models time tai-utc-delta-get
 	Get the UTC Delta status of a Time Server.
 
 
-mesh models time tai-utc-delta-set <delta_new> <timestamp>
+mesh models time tai-utc-delta-set <DltNew> <Timestamp>
 	Schedule a UTC Delta change for the Timer Server and wait for a response.
 
-	* ``delta_new`` - New TAI-UTC Delta (leap seconds).
-	* ``timestamp`` - TAI update point for TAI-UTC Delta.
+	* ``DltNew`` - New TAI-UTC Delta (leap seconds).
+	* ``Timestamp`` - TAI update point for TAI-UTC Delta.
 
 
 mesh models time role-get
 	Get the Time Role state of a Time Server.
 
 
-mesh models time role-set <role>
+mesh models time role-set <Role>
 	Set the Time Role state of a Time Server and wait for a response.
 
-	* ``role`` - Time Role to set. Allowed values:
+	* ``Role`` - Time Role to set. Allowed values:
 		* ``0`` - The element does not participate in propagation of time information.
 		* ``1`` - The element publishes Time Status messages but does not process received Time Status messages.
 		* ``2`` - The element both publishes and processes received Time Status messages.

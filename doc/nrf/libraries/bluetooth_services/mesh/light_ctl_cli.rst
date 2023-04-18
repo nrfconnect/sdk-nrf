@@ -40,96 +40,96 @@ mesh models ctl instance get-all
 	Print all instances of the Light CTL Client model on the device.
 
 
-mesh models ctl instance set <elem_idx>
+mesh models ctl instance set <ElemIdx>
 	Select the Light CTL Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
 
-	* ``elem_idx`` - Element index where the model instance is found.
+	* ``ElemIdx`` - Element index where the model instance is found.
 
 
 mesh models ctl get
 	Get the current Light CTL state value.
 
 
-mesh models ctl set <light> <temp> <delta> [transition_time(ms) [delay(ms)]]
+mesh models ctl set <Light> <Temp> <Dlt> [TransTime(ms) [Delay(ms)]]
 	Set the Light CTL state value and wait for a response.
 
-	* ``light`` - Light level to set.
-	* ``temp`` - Light temperature value to set.
-	* ``delta`` - Delta UV value to set.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``Light`` - Light level to set.
+	* ``Temp`` - Light temperature value to set.
+	* ``Dlt`` - Delta UV value to set.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models ctl set-unack <light> <temp> <delta> [transition_time(ms) [delay(ms)]]
+mesh models ctl set-unack <Light> <Temp> <Dlt> [TransTime(ms) [Delay(ms)]]
 	Set the Light CTL state value without waiting for a response.
 
-	* ``light`` - Light level value to set.
-	* ``temp`` - Light temperature value to set.
-	* ``delta`` - Delta UV value to set.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``Light`` - Light level value to set.
+	* ``Temp`` - Light temperature value to set.
+	* ``Dlt`` - Delta UV value to set.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
 mesh models ctl temp-get
 	Get the current Light CTL Temperature state value.
 
 
-mesh models ctl temp-set <light> <temp> <delta> [transition_time(ms) [delay(ms)]]
+mesh models ctl temp-set <Light> <Temp> <Dlt> [TransTime(ms) [Delay(ms)]]
 	Set the Light CTL Temperature state value and wait for a response.
 
-	* ``temp`` - Light temperature value to set.
-	* ``delta`` - Delta UV value to set.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``Temp`` - Light temperature value to set.
+	* ``Dlt`` - Delta UV value to set.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models ctl temp-set-unack <light> <temp> <delta> [transition_time(ms) [delay(ms)]]
+mesh models ctl temp-set-unack <Light> <Temp> <Dlt> [TransTime(ms) [Delay(ms)]]
 	Set the Light CTL Temperature state value.
 
-	* ``temp`` - Light temperature value to set.
-	* ``delta`` - Delta UV value to set.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``Temp`` - Light temperature value to set.
+	* ``Dlt`` - Delta UV value to set.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
 mesh models ctl default-get
 	Get the current Light CTL Default state value.
 
 
-mesh models ctl default-set <light> <temp> <delta>
+mesh models ctl default-set <Light> <Temp> <Dlt>
 	Set the Light CTL Default state value and wait for a response.
 
-	* ``light`` - Light level value to set.
-	* ``temp`` - Light temperature value to set.
-	* ``delta`` - Delta UV value to set.
+	* ``Light`` - Light level value to set.
+	* ``Temp`` - Light temperature value to set.
+	* ``Dlt`` - Delta UV value to set.
 
 
-mesh models ctl default-set-unack <light> <temp> <delta>
+mesh models ctl default-set-unack <Light> <Temp> <Dlt>
 	Set the default CTL value of the server without requesting a response.
 
-	* ``light`` - Light level value to set.
-	* ``temp`` - Light temperature value to set.
-	* ``delta`` - Delta UV value to set.
+	* ``Light`` - Light level value to set.
+	* ``Temp`` - Light temperature value to set.
+	* ``Dlt`` - Delta UV value to set.
 
 
 mesh models ctl temp-range-get
 	Get the current Light CTL Temperature Range state value.
 
 
-mesh models ctl temp-range-set <min> <max>
+mesh models ctl temp-range-set <Min> <Max>
 	Set the Light CTL Temperature Range state value and wait for a response.
 
-	* ``min`` - Minimum allowed light temperature value.
-	* ``max`` - Maximum allowed light temperature value.
+	* ``Min`` - Minimum allowed light temperature value.
+	* ``Max`` - Maximum allowed light temperature value.
 
 
-mesh models ctl temp-range-set-unack <min> <max>
+mesh models ctl temp-range-set-unack <Min> <Max>
 	Set the Light CTL Temperature Range state value.
 
-	* ``min`` - Minimum allowed light temperature value.
-	* ``max`` - Maximum allowed light temperature value.
+	* ``Min`` - Minimum allowed light temperature value.
+	* ``Max`` - Maximum allowed light temperature value.
 
 
 API documentation

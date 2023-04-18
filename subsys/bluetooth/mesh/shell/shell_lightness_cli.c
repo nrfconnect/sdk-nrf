@@ -238,14 +238,14 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 #if (IS_ENABLED(CONFIG_BT_MESH_LIGHTNESS_LINEAR))
-static const char set_help[] = "<lightness_linear> [transition_time(ms) [delay(ms)]]";
+static const char set_help[] = "<Linear> [TransTime(ms) [Delay(ms)]]";
 #else
-static const char set_help[] = "<lightness_actual> [transition_time(ms) [delay(ms)]]";
+static const char set_help[] = "<Actual> [TransTime(ms) [Delay(ms)]]";
 #endif
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
@@ -254,11 +254,11 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(set-unack, NULL, set_help,
 		      cmd_light_set_unack, 2, 2),
 	SHELL_CMD_ARG(range-get, NULL, NULL, cmd_range_get, 1, 0),
-	SHELL_CMD_ARG(range-set, NULL, "<min> <max>", cmd_range_set, 3, 0),
-	SHELL_CMD_ARG(range-set-unack, NULL, "<min> <max>", cmd_range_set_unack, 3, 0),
+	SHELL_CMD_ARG(range-set, NULL, "<Min> <Max>", cmd_range_set, 3, 0),
+	SHELL_CMD_ARG(range-set-unack, NULL, "<Min> <Max>", cmd_range_set_unack, 3, 0),
 	SHELL_CMD_ARG(default-get, NULL, NULL, cmd_default_get, 1, 0),
-	SHELL_CMD_ARG(default-set, NULL, "<lvl>", cmd_default_set, 2, 0),
-	SHELL_CMD_ARG(default-set-unack, NULL, "<lvl>", cmd_default_set_unack, 2, 0),
+	SHELL_CMD_ARG(default-set, NULL, "<Lvl>", cmd_default_set, 2, 0),
+	SHELL_CMD_ARG(default-set-unack, NULL, "<Lvl>", cmd_default_set_unack, 2, 0),
 	SHELL_CMD_ARG(last-get, NULL, NULL, cmd_last_get, 1, 0),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);

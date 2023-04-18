@@ -213,19 +213,19 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	scene_cmds, SHELL_CMD_ARG(get, NULL, NULL, cmd_get, 1, 0),
 	SHELL_CMD_ARG(register-get, NULL, NULL, cmd_register_get, 1, 0),
-	SHELL_CMD_ARG(store, NULL, "<scene>", cmd_store, 2, 0),
-	SHELL_CMD_ARG(store-unack, NULL, "<scene>", cmd_store_unack, 2, 0),
-	SHELL_CMD_ARG(delete, NULL, "<scene>", cmd_delete, 2, 0),
-	SHELL_CMD_ARG(delete-unack, NULL, "<scene>", cmd_delete_unack, 2, 0),
-	SHELL_CMD_ARG(recall, NULL, "<scene> [transition_time(ms) [delay(ms)]]", cmd_recall, 2, 2),
-	SHELL_CMD_ARG(recall-unack, NULL, "<scene> [transition_time(ms) [delay(ms)]]",
+	SHELL_CMD_ARG(store, NULL, "<Scene>", cmd_store, 2, 0),
+	SHELL_CMD_ARG(store-unack, NULL, "<Scene>", cmd_store_unack, 2, 0),
+	SHELL_CMD_ARG(delete, NULL, "<Scene>", cmd_delete, 2, 0),
+	SHELL_CMD_ARG(delete-unack, NULL, "<Scene>", cmd_delete_unack, 2, 0),
+	SHELL_CMD_ARG(recall, NULL, "<Scene> [TransTime(ms) [Delay(ms)]]", cmd_recall, 2, 2),
+	SHELL_CMD_ARG(recall-unack, NULL, "<Scene> [TransTime(ms) [Delay(ms)]]",
 		      cmd_recall_unack, 2, 2),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);

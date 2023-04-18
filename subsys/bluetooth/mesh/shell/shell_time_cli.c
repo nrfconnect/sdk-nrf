@@ -233,23 +233,23 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	time_cmds, SHELL_CMD_ARG(time-get, NULL, NULL, cmd_time_get, 1, 0),
 	SHELL_CMD_ARG(time-set, NULL,
-		      "<sec> <subsec> <uncertainty> <tai_utc_delta> "
-		      "<time_zone_offset> <is_authority>",
+		      "<Sec> <Subsec> <Uncertainty> <TaiUtcDlt> "
+		      "<TimeZoneOffset> <IsAuthority>",
 		      cmd_time_set, 7, 0),
 	SHELL_CMD_ARG(zone-get, NULL, NULL, cmd_zone_get, 1, 0),
-	SHELL_CMD_ARG(zone-set, NULL, "<new_offset> <timestamp>", cmd_zone_set, 3, 0),
+	SHELL_CMD_ARG(zone-set, NULL, "<NewOffset> <Timestamp>", cmd_zone_set, 3, 0),
 	SHELL_CMD_ARG(tai-utc-delta-get, NULL, NULL, cmd_tai_utc_delta_get, 1, 0),
-	SHELL_CMD_ARG(tai-utc-delta-set, NULL, "<delta_new> <timestamp>",
+	SHELL_CMD_ARG(tai-utc-delta-set, NULL, "<DltNew> <Timestamp>",
 		      cmd_tai_utc_delta_set, 3, 0),
 	SHELL_CMD_ARG(role-get, NULL, NULL, cmd_role_get, 1, 0),
-	SHELL_CMD_ARG(role-set, NULL, "<role>", cmd_role_set, 2, 0),
+	SHELL_CMD_ARG(role-set, NULL, "<Role>", cmd_role_set, 2, 0),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);
 

@@ -93,14 +93,14 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	ponoff_cmds, SHELL_CMD_ARG(get, NULL, NULL, cmd_on_power_up_get, 1, 0),
-	SHELL_CMD_ARG(set, NULL, "<pow_up_state>", cmd_on_power_up_set, 2, 0),
-	SHELL_CMD_ARG(set-unack, NULL, "<pow_up_state>", cmd_on_power_up_set_unack, 2, 0),
+	SHELL_CMD_ARG(set, NULL, "<PowUpState>", cmd_on_power_up_set, 2, 0),
+	SHELL_CMD_ARG(set-unack, NULL, "<PowUpState>", cmd_on_power_up_set_unack, 2, 0),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);
 

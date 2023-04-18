@@ -36,36 +36,36 @@ mesh models xyl instance get-all
 	Print all instances of the Light xyL Client model on the device.
 
 
-mesh models xyl instance set <elem_idx>
+mesh models xyl instance set <ElemIdx>
 	Select the Light xyL Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
 
-	* ``elem_idx`` - Element index where the model instance is found.
+	* ``ElemIdx`` - Element index where the model instance is found.
 
 
 mesh models xyl get
 	Get the Light xyL state value of the bound server.
 
 
-mesh models xyl set <light> <x> <y> [transition_time(ms) [delay(ms)]]
+mesh models xyl set <Light> <X> <Y> [TransTime(ms) [Delay(ms)]]
 	Set the Light xyL state value and wait for a response.
 
-	* ``light`` - Lightness level to set.
-	* ``x`` - x level to set.
-	* ``y`` - y level to set.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``Light`` - Lightness level to set.
+	* ``X`` - x level to set.
+	* ``Y`` - y level to set.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models xyl set-unack <light> <x> <y> [transition_time(ms) [delay(ms)]]
+mesh models xyl set-unack <Light> <X> <Y> [TransTime(ms) [Delay(ms)]]
 	Set the Light xyL state value without requesting a response.
 
-	* ``light`` - Lightness level to set.
-	* ``x`` - x level to set.
-	* ``y`` - y level to set.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``Light`` - Lightness level to set.
+	* ``X`` - x level to set.
+	* ``Y`` - y level to set.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
 mesh models xyl target-get
@@ -76,42 +76,42 @@ mesh models xyl default-get
 	Get the default xyL value of the bound server.
 
 
-mesh models xyl default-set <light> <x> <y>
+mesh models xyl default-set <Light> <X> <Y>
 	Set the default xyL value of the server and wait for a response.
 
-	* ``light`` - Default lightness level to be set.
-	* ``x`` - Default x level to be set.
-	* ``y`` - Default y level to be set.
+	* ``Light`` - Default lightness level to be set.
+	* ``X`` - Default x level to be set.
+	* ``Y`` - Default y level to be set.
 
 
-mesh models xyl default-set-unack <light> <x> <y>
+mesh models xyl default-set-unack <Light> <X> <Y>
 	Set the Default xyL state value of the server without requesting a response.
 
-	* ``light`` - Default lightness level to be set.
-	* ``x`` - Default x level to be set.
-	* ``y`` - Default y level to be set.
+	* ``Light`` - Default lightness level to be set.
+	* ``X`` - Default x level to be set.
+	* ``Y`` - Default y level to be set.
 
 
 mesh models xyl range-get
 	Get the Light xyL Range state value of the bound server.
 
 
-mesh models xyl range-set <x_min> <y_min> <x_max> <y_max>
+mesh models xyl range-set <XMin> <YMin> <XMax> <YMax>
 	Set the Light xyL Range state value and wait for a response.
 
-	* ``x_min`` - Minimum allowed x value.
-	* ``y_min`` - Minimum allowed y value.
-	* ``x_max`` - Maximum allowed x value.
-	* ``y_max`` - Maximum allowed y value.
+	* ``XMin`` - Minimum allowed x value.
+	* ``YMin`` - Minimum allowed y value.
+	* ``XMax`` - Maximum allowed x value.
+	* ``YMax`` - Maximum allowed y value.
 
 
-mesh models xyl range-set-unack <x_min> <y_min> <x_max> <y_max>
+mesh models xyl range-set-unack <XMin> <YMin> <XMax> <YMax>
 	Set the Light xyL Range state value without requesting a response.
 
-	* ``x_min`` - Minimum allowed x value.
-	* ``y_min`` - Minimum allowed y value.
-	* ``x_max`` - Maximum allowed x value.
-	* ``y_max`` - Maximum allowed y value.
+	* ``XMin`` - Minimum allowed x value.
+	* ``YMin`` - Minimum allowed y value.
+	* ``XMax`` - Maximum allowed x value.
+	* ``YMax`` - Maximum allowed y value.
 
 
 API documentation
