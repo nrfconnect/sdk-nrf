@@ -411,9 +411,13 @@ static void radio_disable(void)
 #endif /* CONFIG_FEM */
 }
 
-#if NRF53_ERRATA_117_ENABLE_WORKAROUND
+#if NRF53_ERRATA_117_PRESENT
 static void errata_117(nrf_radio_mode_t mode)
 {
+	if (!nrf53_errata_117()) {
+		return;
+	}
+
 	if ((mode == NRF_RADIO_MODE_NRF_2MBIT) ||
 	    (mode == NRF_RADIO_MODE_BLE_2MBIT) ||
 	    (mode == NRF_RADIO_MODE_IEEE802154_250KBIT)) {
@@ -422,16 +426,16 @@ static void errata_117(nrf_radio_mode_t mode)
 		*((volatile uint32_t *)0x41008588) = *((volatile uint32_t *)0x01FF0080);
 	}
 }
-#endif /* NRF53_ERRATA_117_ENABLE_WORKAROUND */
+#else
+static void errata_117(nrf_radio_mode_t mode)
+{
+	ARG_UNUSED(mode);
+}
+#endif /* NRF53_ERRATA_117_PRESENT */
 
 static void radio_mode_set(NRF_RADIO_Type *reg, nrf_radio_mode_t mode)
 {
-#if NRF53_ERRATA_117_ENABLE_WORKAROUND
-	if (nrf53_errata_117()) {
-		errata_117(mode);
-	}
-#endif /* NRF53_ERRATA_117_ENABLE_WORKAROUND */
-
+	errata_117(mode);
 	nrf_radio_mode_set(reg, mode);
 }
 

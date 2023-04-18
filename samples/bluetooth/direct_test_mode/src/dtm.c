@@ -67,7 +67,7 @@
 						 _irq_handler)
 /* Note that the timer instance 2 is used in the FEM driver. */
 
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 /* Timer used for the workaround for errata 172 on affected nRF5 devices. */
 #define ANOMALY_172_TIMER_INSTANCE     3
 #define ANOMALY_172_TIMER_IRQ          NRFX_CONCAT_3(TIMER,		    \
@@ -76,7 +76,7 @@
 #define ANOMALY_172_TIMER_IRQ_HANDLER  NRFX_CONCAT_3(nrfx_timer_,	    \
 						ANOMALY_172_TIMER_INSTANCE, \
 						_irq_handler)
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
 
 /* Helper macro for labeling timer instances. */
 #define NRFX_TIMER_CONFIG_LABEL(_num) NRFX_CONCAT_3(CONFIG_, NRFX_TIMER, _num)
@@ -85,10 +85,10 @@ BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(DEFAULT_TIMER_INSTANCE) == 1,
 	     "Core DTM timer needs additional KConfig configuration");
 BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(WAIT_TIMER_INSTANCE) == 1,
 	     "Wait DTM timer needs additional KConfig configuration");
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(ANOMALY_172_TIMER_INSTANCE) == 1,
 	     "Anomaly DTM timer needs additional KConfig configuration");
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
 
 #define DTM_EGU       NRF_EGU0
 #define DTM_EGU_EVENT NRF_EGU_EVENT_TRIGGERED0
@@ -361,13 +361,13 @@ static struct dtm_instance {
 	/* Semaphore for synchronizing UART poll cycle wait time.*/
 	struct k_sem wait_sem;
 
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 	/* Timer to be used to handle Anomaly 172. */
 	const nrfx_timer_t anomaly_timer;
 
 	/* Enable or disable the workaround for Errata 172. */
 	bool anomaly_172_wa_enabled;
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
 
 	/* Enable or disable strict mode to workaround Errata 172. */
 	bool strict_mode;
@@ -393,9 +393,9 @@ static struct dtm_instance {
 	.timer = NRFX_TIMER_INSTANCE(DEFAULT_TIMER_INSTANCE),
 	.wait_timer = NRFX_TIMER_INSTANCE(WAIT_TIMER_INSTANCE),
 	.wait_sem = Z_SEM_INITIALIZER(dtm_inst.wait_sem, 0, 1),
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 	.anomaly_timer = NRFX_TIMER_INSTANCE(ANOMALY_172_TIMER_INSTANCE),
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
 	.radio_mode = NRF_RADIO_MODE_BLE_1MBIT,
 	.txpower = NRF_RADIO_TXPOWER_0DBM,
 	.fem.gain = FEM_USE_DEFAULT_GAIN,
@@ -557,9 +557,9 @@ static void radio_cte_prepare(bool rx)
 }
 #endif /* DIRECTION_FINDING_SUPPORTED */
 
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 static void anomaly_timer_handler(nrf_timer_event_t event_type, void *context);
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
 
 static void wait_timer_handler(nrf_timer_event_t event_type, void *context);
 static void dtm_timer_handler(nrf_timer_event_t event_type, void *context);
@@ -644,7 +644,7 @@ static int wait_timer_init(void)
 	return 0;
 }
 
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 static int anomaly_timer_init(void)
 {
 	nrfx_err_t err;
@@ -674,7 +674,7 @@ static int anomaly_timer_init(void)
 
 	return 0;
 }
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
 
 static int gppi_init(void)
 {
@@ -899,7 +899,7 @@ int dtm_init(void)
 		return err;
 	}
 
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 	/* Enable the timer used by nRF52840 anomaly 172 if running on an
 	 * affected device.
 	 */
@@ -907,7 +907,7 @@ int dtm_init(void)
 	if (err) {
 		return err;
 	}
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
 
 	err = gppi_init();
 	if (err) {
@@ -1059,29 +1059,7 @@ static bool check_pdu(const struct dtm_pdu *pdu)
 	return true;
 }
 
-#if NRF53_ERRATA_117_ENABLE_WORKAROUND
-/* Workaround for Errata 117 "RADIO: Changing MODE requires additional
- * configuration" found at the Errata document for your device located at
- * https://infocenter.nordicsemi.com/index.jsp
- */
-static void errata_117_handle(bool enable)
-{
-	if (enable) {
-		*((volatile uint32_t *)0x41008588) = *((volatile uint32_t *)0x01FF0084);
-	} else {
-		*((volatile uint32_t *)0x41008588) = *((volatile uint32_t *)0x01FF0080);
-	}
-}
-
-#else
-
-static void errata_117_handle(bool enable)
-{
-
-}
-#endif /* NRF53_ERRATA_117_ENABLE_WORKAROUND */
-
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 /* Radio configuration used as a workaround for nRF52840 anomaly 172 */
 static void anomaly_172_radio_operation(void)
 {
@@ -1132,7 +1110,58 @@ static void anomaly_172_strict_mode_set(bool enable)
 
 	dtm_inst.strict_mode = enable;
 }
-#endif
+
+static void errata_172_handle(bool enable)
+{
+	if (!nrf52_errata_172()) {
+		return;
+	}
+
+	if (enable) {
+		if ((*(volatile uint32_t *)0x40001788) == 0) {
+			dtm_inst.anomaly_172_wa_enabled = true;
+		}
+	} else {
+		anomaly_172_strict_mode_set(false);
+		nrfx_timer_disable(&dtm_inst.anomaly_timer);
+		dtm_inst.anomaly_172_wa_enabled = false;
+	}
+}
+#else
+static void errata_172_handle(bool enable)
+{
+	ARG_UNUSED(enable);
+}
+#endif /* NRF52_ERRATA_172_PRESENT */
+
+static void errata_117_handle(bool enable)
+{
+	if (!nrf52_errata_117()) {
+		return;
+	}
+
+	if (enable) {
+		*((volatile uint32_t *)0x41008588) = *((volatile uint32_t *)0x01FF0084);
+	} else {
+		*((volatile uint32_t *)0x41008588) = *((volatile uint32_t *)0x01FF0080);
+	}
+}
+
+static void errata_191_handle(bool enable)
+{
+	if (!nrf52_errata_191()) {
+		return;
+	}
+
+	if (enable) {
+		*(volatile uint32_t *)0x40001740 =
+			((*((volatile uint32_t *)0x40001740)) & 0x7FFF00FF) |
+			0x80000000 | (((uint32_t)(196)) << 8);
+	} else {
+		*(volatile uint32_t *)0x40001740 =
+			((*((volatile uint32_t *)0x40001740)) & 0x7FFFFFFF);
+	}
+}
 
 static void radio_ppi_clear(void)
 {
@@ -1203,9 +1232,9 @@ static void dtm_test_done(void)
 
 	nrfx_timer_clear(&dtm_inst.timer);
 
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 	nrfx_timer_disable(&dtm_inst.anomaly_timer);
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
 
 	radio_reset();
 
@@ -1283,12 +1312,12 @@ static void radio_prepare(bool rx)
 			NRF_RADIO_INT_END_MASK);
 
 	if (rx) {
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 		/* Enable strict mode for anomaly 172 */
 		if (dtm_inst.anomaly_172_wa_enabled) {
 			anomaly_172_strict_mode_set(true);
 		}
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
 
 		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
 
@@ -1304,7 +1333,7 @@ static void radio_prepare(bool rx)
 	} else { /* tx */
 		radio_tx_power_set(dtm_inst.phys_ch, dtm_inst.txpower);
 
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 		/* Stop the timer used by anomaly 172 */
 		if (dtm_inst.anomaly_172_wa_enabled) {
 			nrfx_timer_disable(&dtm_inst.anomaly_timer);
@@ -1315,7 +1344,7 @@ static void radio_prepare(bool rx)
 			nrf_timer_event_clear(dtm_inst.anomaly_timer.p_reg,
 					      NRF_TIMER_EVENT_COMPARE1);
 		}
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
 	}
 }
 
@@ -1550,18 +1579,9 @@ static enum dtm_err_code phy_set(uint8_t phy)
 		dtm_inst.radio_mode = NRF_RADIO_MODE_BLE_1MBIT;
 		dtm_inst.packet_hdr_plen =
 			NRF_RADIO_PREAMBLE_LENGTH_8BIT;
-#ifdef NRF52840_XXAA
-		/* Workaround for Errata 191 "Radio: High packet error rate in BLE Long Range mode"
-		 * found at the Errata document for your device located at https://infocenter.nordicsemi.com/index.jsp
-		 */
-		*(volatile uint32_t *) 0x40001740 = ((*((volatile uint32_t *) 0x40001740)) & 0x7FFFFFFF);
 
-		/* Disable the workaround anomaly 172 */
-		anomaly_172_strict_mode_set(false);
-		nrfx_timer_disable(&dtm_inst.anomaly_timer);
-		dtm_inst.anomaly_172_wa_enabled = false;
-#endif /* NRF52840_XXAA */
-
+		errata_191_handle(false);
+		errata_172_handle(false);
 		errata_117_handle(false);
 
 		return radio_init();
@@ -1571,18 +1591,8 @@ static enum dtm_err_code phy_set(uint8_t phy)
 		dtm_inst.packet_hdr_plen =
 			NRF_RADIO_PREAMBLE_LENGTH_16BIT;
 
-#ifdef NRF52840_XXAA
-		/* Workaround for Errata 191 "Radio: High packet error rate in BLE Long Range mode"
-		 * found at the Errata document for your device located at https://infocenter.nordicsemi.com/index.jsp
-		 */
-		*(volatile uint32_t *) 0x40001740 = ((*((volatile uint32_t *) 0x40001740)) & 0x7FFFFFFF);
-
-		/* Disable the workaround anomaly 172 */
-		anomaly_172_strict_mode_set(false);
-		nrfx_timer_disable(&dtm_inst.anomaly_timer);
-		dtm_inst.anomaly_172_wa_enabled = false;
-#endif /* NRF52840_XXAA */
-
+		errata_191_handle(false);
+		errata_172_handle(false);
 		errata_117_handle(true);
 
 		return radio_init();
@@ -1593,19 +1603,9 @@ static enum dtm_err_code phy_set(uint8_t phy)
 			NRF_RADIO_MODE_BLE_LR125KBIT;
 		dtm_inst.packet_hdr_plen =
 			NRF_RADIO_PREAMBLE_LENGTH_LONG_RANGE;
-#ifdef NRF52840_XXAA
-		/* Workaround for Errata 191 "Radio: High packet error rate in BLE Long Range mode"
-		 * found at the Errata document for your device located at https://infocenter.nordicsemi.com/index.jsp
-		 */
-		*(volatile uint32_t *) 0x40001740 = ((*((volatile uint32_t *) 0x40001740)) & 0x7FFF00FF) |
-		0x80000000 | (((uint32_t) (196)) << 8);
 
-		/* Enable the workaround for anomaly 172. */
-		if ((*(volatile uint32_t *) 0x40001788) == 0) {
-			dtm_inst.anomaly_172_wa_enabled = true;
-		}
-#endif /* NRF52840_XXAA */
-
+		errata_191_handle(true);
+		errata_172_handle(true);
 		errata_117_handle(false);
 
 		return radio_init();
@@ -1621,19 +1621,8 @@ static enum dtm_err_code phy_set(uint8_t phy)
 		dtm_inst.packet_hdr_plen =
 			NRF_RADIO_PREAMBLE_LENGTH_LONG_RANGE;
 
-#ifdef NRF52840_XXAA
-		/* Workaround for Errata 191 "Radio: High packet error rate in BLE Long Range mode"
-		 * found at the Errata document for your device located at https://infocenter.nordicsemi.com/index.jsp
-		 */
-		*(volatile uint32_t *) 0x40001740 = ((*((volatile uint32_t *) 0x40001740)) & 0x7FFF00FF) |
-		0x80000000 | (((uint32_t) (196)) << 8);
-
-		/* Enable the workaround for anomaly 172. */
-		if ((*(volatile uint32_t *) 0x40001788) == 0) {
-			dtm_inst.anomaly_172_wa_enabled = true;
-		}
-#endif /* NRF52840_XXAA */
-
+		errata_191_handle(true);
+		errata_172_handle(true);
 		errata_117_handle(false);
 
 		return radio_init();
@@ -1883,18 +1872,8 @@ static enum dtm_err_code on_test_setup_cmd(enum dtm_ctrl_code control,
 		memset(&dtm_inst.cte_info, 0, sizeof(dtm_inst.cte_info));
 #endif /* DIRECTION_FINDING_SUPPORTED */
 
-#ifdef NRF52840_XXAA
-		/* Workaround for Errata 191 "Radio: High packet error rate in BLE Long Range mode"
-		 * found at the Errata document for your device located at https://infocenter.nordicsemi.com/index.jsp
-		 */
-		*(volatile uint32_t *) 0x40001740 = ((*((volatile uint32_t *) 0x40001740)) & 0x7FFFFFFF);
-
-		/* Disable the workaround anomaly 172 */
-		anomaly_172_strict_mode_set(false);
-		nrfx_timer_disable(&dtm_inst.anomaly_timer);
-		dtm_inst.anomaly_172_wa_enabled = false;
-#endif
-
+		errata_191_handle(false);
+		errata_172_handle(false);
 		errata_117_handle(false);
 
 		radio_init();
@@ -2227,7 +2206,7 @@ static void on_radio_end_event(void)
 
 	radio_start(true, false);
 
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 	if (dtm_inst.anomaly_172_wa_enabled) {
 		nrfx_timer_compare(&dtm_inst.anomaly_timer,
 			NRF_TIMER_CC_CHANNEL0,
@@ -2248,7 +2227,7 @@ static void on_radio_end_event(void)
 		nrfx_timer_clear(&dtm_inst.anomaly_timer);
 		nrfx_timer_enable(&dtm_inst.anomaly_timer);
 	}
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
 
 	if (nrf_radio_crc_status_check(NRF_RADIO) &&
 	    check_pdu(received_pdu)) {
@@ -2270,12 +2249,12 @@ static void radio_handler(const void *context)
 {
 	if (nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS)) {
 		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS);
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 		if (dtm_inst.state == STATE_RECEIVER_TEST &&
 		    dtm_inst.anomaly_172_wa_enabled) {
 			nrfx_timer_disable(&dtm_inst.anomaly_timer);
 		}
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
 	}
 
 	if (nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_END)) {
@@ -2289,7 +2268,7 @@ static void radio_handler(const void *context)
 	if (nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_READY)) {
 		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_READY);
 
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 		if (dtm_inst.state == STATE_RECEIVER_TEST &&
 		    dtm_inst.anomaly_172_wa_enabled) {
 			nrfx_timer_clear(&dtm_inst.anomaly_timer);
@@ -2297,7 +2276,7 @@ static void radio_handler(const void *context)
 				nrfx_timer_enable(&dtm_inst.anomaly_timer);
 			}
 		}
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
 	}
 }
 
@@ -2314,7 +2293,7 @@ static void wait_timer_handler(nrf_timer_event_t event_type, void *context)
 	k_sem_give(&dtm_inst.wait_sem);
 }
 
-#ifdef NRF52840_XXAA
+#if NRF52_ERRATA_172_PRESENT
 static void anomaly_timer_handler(nrf_timer_event_t event_type, void *context)
 {
 	switch (event_type) {
@@ -2394,4 +2373,4 @@ static void anomaly_timer_handler(nrf_timer_event_t event_type, void *context)
 		break;
 	}
 }
-#endif
+#endif /* NRF52_ERRATA_172_PRESENT */
