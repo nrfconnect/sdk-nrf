@@ -78,6 +78,21 @@ config DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE
 	  The host must perform progress synchronization at least
 	  every synchronization buffer bytes count.
 
+config DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
+	bool "Device uses MCUboot bootloader in direct-xip mode"
+	depends on BOOTLOADER_MCUBOOT
+	default y if BOOT_BUILD_DIRECT_XIP_VARIANT
+	help
+	  The option informs the DFU module that the MCUboot bootloader supports
+	  direct-xip mode. In this mode, the image is booted directly from the
+	  secondary slot instead of moving it to the primary slot. The module by
+	  default assumes that MCUboot with direct-xip is used when direct-xip
+	  variant image is built.
+
+	  The DFU module assumes that MCUboot direct-xip bootloader simply boots
+	  the image with a higher version. The module does not mark the newly
+	  uploaded image as pending nor confirm it after a successful boot.
+
 config DESKTOP_CONFIG_CHANNEL_DFU_VID
 	hex "Configuration channel Vendor ID"
 	range 0 0XFFFF
