@@ -44,15 +44,15 @@ mesh models dm instance set <elem_idx>
 
    * ``elem_idx`` - Element index where the model instance is found.
 
-mesh models dm cfg [<ttl> <timeout> <delay>]
+mesh models dm cfg [<ttl> <timeout(100ms steps)> <delay(µs)>]
    If no parameters are provided, get the current configuration state parameters of the server and wait for a response.
    If parameters are provided, set the configuration state parameters of the server and wait for a response.
 
    * ``ttl`` - Default time to live for sync messages on the target server.
    * ``timeout`` - Default timeout for distance measurement procedure on the target server in 100 ms per step.
-   * ``delay`` - Default reflector start delay for the server.
+   * ``delay`` - Default reflector start delay for the server in microseconds.
 
-mesh models dm start <mode> <addr> [<reuse-transaction> [<ttl> <timeout> <delay>]]
+mesh models dm start <mode> <addr> [<reuse-transaction> [<ttl> <timeout(100ms steps)> <delay (µs)>]]
    Start a distance measurement procedure.
 
    * ``mode`` - Mode used for ranging.
@@ -60,7 +60,7 @@ mesh models dm start <mode> <addr> [<reuse-transaction> [<ttl> <timeout> <delay>
    * ``reuse-transaction`` - Flag indicating if the previous transaction should be used.
    * ``ttl`` - Time to live for the sync message.
    * ``timeout`` - Timeout for distance measurement procedure in 100 ms per step.
-   * ``delay`` - Reflector start delay.
+   * ``delay`` - Reflector start delay in microseconds.
 
 mesh models dm result-get <entry_cnt>
    Get the last distance measurement results from the server. The returned results will start with the most recent measurement.

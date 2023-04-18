@@ -185,10 +185,13 @@ SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	dm_cmds, SHELL_CMD_ARG(cfg, NULL, "[<ttl> <timeout> <delay>]", cmd_cfg, 1, 3),
-	SHELL_CMD_ARG(start, NULL, "<mode> <addr> [<reuse-transaction> [<ttl> <timeout> <delay>]]",
-		      cmd_dm_start, 3, 4),
-	SHELL_CMD_ARG(result-get, NULL, "<entry_cnt>", cmd_result_get, 2, 0),
+	dm_cmds,
+	SHELL_CMD_ARG(cfg, NULL, "[<ttl> <timeout(100ms steps)> <delay(µs)>]", cmd_cfg, 1, 3),
+	SHELL_CMD_ARG(
+		start, NULL,
+		"<mode> <addr> [<reuse-transaction> [<ttl> <timeout(100ms steps)> <delay(µs)>]]",
+		cmd_dm_start, 3, 4),
+	SHELL_CMD_ARG(result - get, NULL, "<entry_cnt>", cmd_result_get, 2, 0),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);
 
