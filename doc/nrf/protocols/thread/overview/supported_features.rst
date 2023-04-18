@@ -49,6 +49,8 @@ For more information about this Thread version, see the official `Thread 1.2 in 
 .. note::
     See :ref:`thread_ug_thread_specification_options` for the list of 1.2 features that are currently available in |NCS|.
 
+.. _thread_ug_supported_features_csl:
+
 Coordinated Sampled Listening (CSL)
 ===================================
 
