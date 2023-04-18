@@ -59,19 +59,8 @@ endif
 
 endif
 
-config BT_ENOCEAN_DEBUG
-	bool "Enable debug logs"
-	depends on BT_DEBUG
-	help
-	  Use this option to enable debug logs for the Bluetooth
-	  Enocean functionality.
-
-if BT_ENOCEAN_DEBUG
-
 module = BT_ENOCEAN
 module-str = EnOcean library
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
-
-endif
 
 endif
