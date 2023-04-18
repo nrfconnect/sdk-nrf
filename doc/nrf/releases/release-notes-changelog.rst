@@ -309,11 +309,18 @@ nRF9160 samples
 
     * Increased the MCUboot partition size to the minimum necessary to allow bootloader FOTA.
 
+  * Added:
+
+    * Sending of log messages directly to nRF Cloud.
+    * Overlay to enable `Zephyr Logging`_ backend for full logging to nRF Cloud.
+
 * :ref:`nrf_cloud_rest_device_message` sample:
 
   * Added:
 
     * Overlays to use RTT instead of UART for testing purposes.
+    * Sending of log messages directly to nRF Cloud.
+    * Overlay to enable `Zephyr Logging`_ backend for full logging to nRF Cloud.
 
   * Updated:
 
@@ -481,6 +488,8 @@ Modem libraries
 
 Libraries for networking
 ------------------------
+
+* Added the :ref:`lib_nrf_cloud_log` library for logging to nRF Cloud.
 
 * :ref:`lib_nrf_cloud` library:
 
