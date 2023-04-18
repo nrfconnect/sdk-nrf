@@ -237,11 +237,11 @@ static int minute_handler(struct tm *sched_time, struct tm *current_local,
 	bool minute_ovflw = false;
 
 	if (entry->minute == BT_MESH_SCHEDULER_EVERY_15_MINUTES) {
-		info->start_minute = 15 * ceiling_fraction(current_local->tm_min + 1, 15);
+		info->start_minute = 15 * DIV_ROUND_UP(current_local->tm_min + 1, 15);
 		minute_ovflw = info->start_minute == 60;
 		sched_time->tm_min = minute_ovflw ? 0 : info->start_minute;
 	} else if (entry->minute == BT_MESH_SCHEDULER_EVERY_20_MINUTES) {
-		info->start_minute = 20 * ceiling_fraction(current_local->tm_min + 1, 20);
+		info->start_minute = 20 * DIV_ROUND_UP(current_local->tm_min + 1, 20);
 		minute_ovflw = info->start_minute == 60;
 		sched_time->tm_min = minute_ovflw ? 0 : info->start_minute;
 	} else if (entry->minute == BT_MESH_SCHEDULER_ONCE_AN_HOUR) {
@@ -273,11 +273,11 @@ static int second_handler(struct tm *sched_time, struct tm *current_local,
 	bool second_ovflw = false;
 
 	if (entry->second == BT_MESH_SCHEDULER_EVERY_15_SECONDS) {
-		info->start_second = 15 * ceiling_fraction(current_local->tm_sec + 1, 15);
+		info->start_second = 15 * DIV_ROUND_UP(current_local->tm_sec + 1, 15);
 		second_ovflw = info->start_second == 60;
 		sched_time->tm_sec = second_ovflw ? 0 : info->start_second;
 	} else if (entry->second == BT_MESH_SCHEDULER_EVERY_20_SECONDS) {
-		info->start_second = 20 * ceiling_fraction(current_local->tm_sec + 1, 20);
+		info->start_second = 20 * DIV_ROUND_UP(current_local->tm_sec + 1, 20);
 		second_ovflw = info->start_second == 60;
 		sched_time->tm_sec = second_ovflw ? 0 : info->start_second;
 	} else if (entry->second == BT_MESH_SCHEDULER_ONCE_A_MINUTE) {

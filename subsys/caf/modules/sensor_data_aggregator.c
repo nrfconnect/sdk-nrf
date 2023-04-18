@@ -29,7 +29,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_DATA_AGGREGATOR_LOG_LEVEL);
 #define __DATA_BUFF_NAME(agg_node, n) DT_CAT5(agg_, agg_node,  _buff_,  n,  _data)
 #define __DEFINE_DATA(n, agg_node, size)                         \
 	static struct sensor_value __DATA_BUFF_NAME(agg_node, n) \
-		[ceiling_fraction(size, sizeof(struct sensor_value))]
+		[DIV_ROUND_UP(size, sizeof(struct sensor_value))]
 /* End of BSS version only macros. */
 
 #define __INITIALIZE_BUFF(n, agg_node)                                                        \

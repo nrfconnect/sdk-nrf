@@ -22,7 +22,7 @@
 #include <errno.h>
 
  /* The number of CONFIG registers present in the chip. */
-#define BPROT_CONFIGS_NUM ceiling_fraction(BPROT_REGIONS_NUM, BITS_PER_LONG)
+#define BPROT_CONFIGS_NUM DIV_ROUND_UP(BPROT_REGIONS_NUM, BITS_PER_LONG)
 #if defined(CONFIG_SB_BPROT_IN_DEBUG)
 #define ENABLE_IN_DEBUG true
 #else

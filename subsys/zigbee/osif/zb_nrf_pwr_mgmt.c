@@ -74,7 +74,7 @@ __weak zb_uint32_t zb_osif_sleep(zb_uint32_t sleep_tmo)
 	 * in the time unit conversion.
 	 */
 	time_slept_ms = ZB_TIME_BEACON_INTERVAL_TO_MSEC(
-		ceiling_fraction(time_slept_us, ZB_BEACON_INTERVAL_USEC));
+		DIV_ROUND_UP(time_slept_us, ZB_BEACON_INTERVAL_USEC));
 
 	/* Unlock timer value updates. */
 	ZVUNUSED(atomic_set((atomic_t *)&is_sleeping, 0));

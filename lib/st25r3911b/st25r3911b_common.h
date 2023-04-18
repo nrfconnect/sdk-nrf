@@ -65,13 +65,13 @@ enum st25r3911b_leds {
  *  using the following formula: <tt>register value * 64fc</tt>
  */
 #define ST25R3911B_FC_TO_64FC(_fc) \
-	ceiling_fraction((_fc), NFC_1FC_IN_64FC)
+	DIV_ROUND_UP((_fc), NFC_1FC_IN_64FC)
 
 /** Conversion fc to 4096/fc. The timer register can be set
  *  using the following formula: <tt>register value * 4096fc</tt>
  */
 #define ST25R3911B_FC_TO_4096FC(_fc) \
-	ceiling_fraction((_fc), NFC_1FC_IN_4096FC)
+	DIV_ROUND_UP((_fc), NFC_1FC_IN_4096FC)
 
 /** @brief Initialize the NFC reader.
  *

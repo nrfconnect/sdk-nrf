@@ -111,7 +111,7 @@ static void reset_sensor_sleep_cnt(const struct sm_sensor_config *sc,
 	unsigned int timeout = sc->trigger->activation.timeout_ms;
 	unsigned int period = sc->sampling_period_ms;
 
-	sd->sleep_cntd = ceiling_fraction(timeout, period);
+	sd->sleep_cntd = DIV_ROUND_UP(timeout, period);
 }
 
 static bool process_sensor_trigger_values(const struct sm_sensor_config *sc, struct sensor_data *sd,

@@ -861,7 +861,7 @@ static uint16_t min_int_get(const struct bt_mesh_sensor *sensor,
 	uint32_t pub_int = (base_period >> period_div);
 	uint32_t min_int = (1 << sensor->state.min_int);
 
-	return ceiling_fraction(min_int, pub_int);
+	return DIV_ROUND_UP(min_int, pub_int);
 }
 
 /** @brief Conditionally add a sensor value to a publication.
