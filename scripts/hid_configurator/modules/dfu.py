@@ -201,7 +201,7 @@ def b0_get_dfu_image_bootloader_var():
     return 'B0'
 
 
-def mcuboot_is_dfu_file_correct(dfu_bin):
+def mcuboot_common_is_dfu_file_correct(dfu_bin):
     res, _, _ = imgtool.image.Image.verify(dfu_bin, None)
 
     if res != imgtool.image.VerifyResult.OK:
@@ -211,11 +211,7 @@ def mcuboot_is_dfu_file_correct(dfu_bin):
     return True
 
 
-def mcuboot_get_dfu_image_name(dfu_slot_id):
-    return 'app_update.bin'
-
-
-def mcuboot_get_dfu_image_version(dfu_bin):
+def mcuboot_common_get_dfu_image_version(dfu_bin):
     res, ver, _ = imgtool.image.Image.verify(dfu_bin, None)
 
     if res != imgtool.image.VerifyResult.OK:
@@ -225,8 +221,25 @@ def mcuboot_get_dfu_image_version(dfu_bin):
     return ver
 
 
+def mcuboot_get_dfu_image_name(dfu_slot_id):
+    return 'app_update.bin'
+
+
 def mcuboot_get_dfu_image_bootloader_var():
     return 'MCUBOOT'
+
+
+def mcuboot_xip_get_dfu_image_name(dfu_slot_id):
+    assert dfu_slot_id in (0, 1)
+
+    if dfu_slot_id == 0:
+        return 'app_update.bin'
+    else:
+        return 'mcuboot_secondary_app_update.bin'
+
+
+def mcuboot_xip_get_dfu_image_bootloader_var():
+    return 'MCUBOOT+XIP'
 
 
 B0_API = {
@@ -237,14 +250,22 @@ B0_API = {
 }
 
 MCUBOOT_API = {
-    'get_dfu_image_version' : mcuboot_get_dfu_image_version,
+    'get_dfu_image_version' : mcuboot_common_get_dfu_image_version,
     'get_dfu_image_bootloader_var' : mcuboot_get_dfu_image_bootloader_var,
     'get_dfu_image_name' : mcuboot_get_dfu_image_name,
-    'is_dfu_file_correct' : mcuboot_is_dfu_file_correct,
+    'is_dfu_file_correct' : mcuboot_common_is_dfu_file_correct,
+}
+
+MCUBOOT_XIP_API = {
+    'get_dfu_image_version' : mcuboot_common_get_dfu_image_version,
+    'get_dfu_image_bootloader_var' : mcuboot_xip_get_dfu_image_bootloader_var,
+    'get_dfu_image_name' : mcuboot_xip_get_dfu_image_name,
+    'is_dfu_file_correct' : mcuboot_common_is_dfu_file_correct,
 }
 
 BOOTLOADER_APIS = {
     'MCUBOOT' : MCUBOOT_API,
+    'MCUBOOT+XIP' : MCUBOOT_XIP_API,
     'B0' : B0_API,
 }
 
@@ -272,8 +293,8 @@ class DfuImage:
         try:
             with open(os.path.join(self.temp_dir.name, DfuImage.MANIFEST_FILE)) as f:
                 manifest_str = f.read()
-                self.bootloader_api = DfuImage._get_bootloader_api(manifest_str)
                 self.manifest = json.loads(manifest_str)
+                self.bootloader_api = DfuImage._get_bootloader_api(self.manifest)
         except Exception:
             self.bootloader_api = None
             self.manifest = None
@@ -292,16 +313,23 @@ class DfuImage:
                                                                      self.bootloader_api)
 
     @staticmethod
-    def _get_bootloader_api(manifest_str):
+    def _get_bootloader_api(manifest_json):
         bootloader_name = None
-        for b in BOOTLOADER_APIS:
-            if b in manifest_str:
-                if bootloader_name is None:
-                    bootloader_name = b
-                else:
-                    # There can be update only for one bootloader in the package.
-                    assert False
-                    return None
+
+        for f in manifest_json["files"]:
+            VERSION_PREFIX = "version_"
+
+            version_keys = tuple(filter(lambda x: x.startswith(VERSION_PREFIX), f.keys()))
+            if len(version_keys) != 1:
+                print("Invalid DFU zip manifest: improper version definition count")
+                return None
+
+            temp_bootloader_name = version_keys[0][len(VERSION_PREFIX):]
+            if (bootloader_name is not None) and (temp_bootloader_name != bootloader_name):
+                print("Invalid DFU zip manifest: update images for multiple bootloaders")
+                return None
+
+            bootloader_name = temp_bootloader_name
 
         if bootloader_name is not None:
             print('Update file is for {} bootloader'.format(bootloader_name))
