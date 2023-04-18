@@ -943,6 +943,7 @@ int audio_datapath_init(void)
 {
 	memset(&ctrl_blk, 0, sizeof(ctrl_blk));
 	audio_i2s_blk_comp_cb_register(audio_datapath_i2s_blk_complete);
+	audio_i2s_init();
 	ctrl_blk.datapath_initialized = true;
 	ctrl_blk.drift_comp.hfclkaudio_comp_enabled = true;
 	ctrl_blk.pres_comp.pres_delay_us = CONFIG_BT_AUDIO_PRESENTATION_DELAY_US;
