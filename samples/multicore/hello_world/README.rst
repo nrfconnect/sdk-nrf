@@ -43,9 +43,6 @@ Testing
 
 After programming the sample to your development kit, complete the following steps to test it:
 
-.. tabs::
-   .. tab:: nRF5340
-
       1. |connect_terminal|
       #. Reset the kit.
       #. Observe the console output for both cores:
