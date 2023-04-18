@@ -81,6 +81,8 @@
 .. _`nRF52820 CMakeLists.txt`: https://github.com/zephyrproject-rtos/zephyr/blob/main/boards/arm/nrf52833dk_nrf52820/CMakeLists.txt
 
 .. _`OpenThread CLI Reference`: https://github.com/openthread/openthread/blob/main/src/cli/README.md
+.. _`OpenThread CLI Reference - csl command`: https://github.com/openthread/openthread/blob/main/src/cli/README.md#csl
+.. _`OpenThread CLI Reference - pollperiod command`: https://github.com/openthread/openthread/blob/main/src/cli/README.md#pollperiod
 .. _`Commissioner CLI commands`: https://github.com/openthread/openthread/blob/main/src/cli/README_COMMISSIONER.md
 .. _`Joiner CLI commands`: https://github.com/openthread/openthread/blob/main/src/cli/README_JOINER.md
 
@@ -830,6 +832,10 @@
 .. _`OpenThread Daemon`: https://openthread.io/platforms/co-processor/ot-daemon
 
 .. _`OpenThread CoAP API`: https://openthread.io/reference/group/api-coap
+
+.. _`IPv6 multicast addressing`: https://openthread.io/guides/thread-primer/ipv6-addressing#multicast
+
+.. _`Joining an existing Thread network`: https://openthread.io/guides/thread-primer/network-discovery#join_an_existing_network
 
 .. ### Source: threadgroup.*
 

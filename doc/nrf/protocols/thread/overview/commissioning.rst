@@ -78,26 +78,7 @@ Minimal Thread Device (MTD)
    A SSED is an enhanced SED.
    It transmits less data than SED and relies on receiving messages from its parent only in specified time intervals.
 
-For more information, see `Device Types on OpenThread portal`_.
-
-SED vs SSED activity
---------------------
-
-.. thread_ssed_description_start
-
-A Thread Synchronized Sleepy End Device (SSED) is synchronized with its parent router and uses the radio only at scheduled intervals, by using the Coordinated Sampled Listening (CSL) feature introduced as one of `Thread 1.2 Base Features`_.
-During those intervals, the device waits for the router to send it any data related to the desired device activity.
-The SSED does require sending packets occasionally to keep synchronization with the router.
-However, unlike a regular SED, an SSED does not actively communicate with the router by polling and goes into the idle mode in-between the scheduled activity periods.
-If there is no application-related traffic for a longer period of time, the SSED sends a data poll request packet to synchronize with the parent.
-Overall, the SSED features further reduce energy consumption of the device and generate less data traffic compared to a standard Thread SED.
-
-.. figure:: images/thread_sed_ssed_comparison.svg
-   :alt: Comparison of Thread SED and Thread SSED radio activity
-
-   Comparison of Thread SED and Thread SSED radio activity
-
-.. thread_ssed_description_end
+For more information, see the :ref:`thread_device_types` page.
 
 .. _thread_ot_commissioning_types:
 

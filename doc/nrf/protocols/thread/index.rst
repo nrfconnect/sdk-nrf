@@ -31,3 +31,5 @@ You can find more information about Thread on the `Thread Group`_ pages.
    prebuilt_libs
    tools
    certification
+   device_types
+   sed_ssed

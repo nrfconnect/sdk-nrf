@@ -492,4 +492,7 @@ cJSON
 Documentation
 =============
 
-* Added a page on :ref:`ug_wireless_coexistence` in :ref:`protocols`.
+Added:
+
+* A page on :ref:`ug_wireless_coexistence` in :ref:`protocols`.
+* Pages on :ref:`thread_device_types` and :ref:`thread_sed_ssed` to the :ref:`ug_thread` documentation.
