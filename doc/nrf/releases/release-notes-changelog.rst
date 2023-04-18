@@ -253,6 +253,8 @@ Bluetooth samples
       The vendor-specific commands for setting the SoC output power and the front-end module gain are not available when the :kconfig:option:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC` Kconfig option is enabled.
     * Support for +1 dBm, +2 dBm, and +3 dBm output power on the nRF5340 DK.
 
+  * Changed the handling of the hardware erratas.
+
   * Removed a compilation warning when used with minimal pinout Skyworks FEM.
 
 * :ref:`peripheral_uart` sample:
