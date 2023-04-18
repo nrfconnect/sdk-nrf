@@ -164,7 +164,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sched_cmds, SHELL_CMD_ARG(get, NULL, NULL, cmd_ge
 			       SHELL_CMD_ARG(action-ctx-set, NULL,
 					     "<year> <month> <day> <hour> "
 					     "<minute> <second> <day_of_week> <action> "
-					     "<transition_time> <scene_number>",
+					     "<transition_time(ms)> <scene_number>",
 					     cmd_action_ctx_set, 11, 0),
 			       SHELL_CMD_ARG(action-set, NULL, "<idx>", cmd_action_set, 2, 0),
 			       SHELL_CMD_ARG(action-set-unack, NULL, "<idx>",

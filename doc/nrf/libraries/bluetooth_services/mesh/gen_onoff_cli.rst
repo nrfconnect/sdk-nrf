@@ -45,20 +45,20 @@ mesh models onoff get
 	Get the OnOff state value of the bound server.
 
 
-mesh models onoff set <onoff> [transition_time_ms [delay_ms]]
+mesh models onoff set <onoff> [transition_time(ms) [delay(ms)]]
 	Set the OnOff state value of the server and wait for a response.
 
 	* ``onoff`` - OnOff state value to set. Use *on*, *enable*, or any non-zero value to enable the state.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models onoff set-unack <onoff> [transition_time_ms [delay_ms]]
+mesh models onoff set-unack <onoff> [transition_time(ms) [delay(ms)]]
 	Set the OnOff state value of the server without requesting a response.
 
 	* ``onoff`` - OnOff state value to set. Use *on*, *enable*, or any non-zero value to enable the state.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
 API documentation

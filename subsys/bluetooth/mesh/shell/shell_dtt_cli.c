@@ -99,8 +99,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	dtt_cmds, SHELL_CMD_ARG(get, NULL, NULL, cmd_dtt_get, 1, 0),
-	SHELL_CMD_ARG(set, NULL, "<transition_time_ms>", cmd_dtt_set, 2, 0),
-	SHELL_CMD_ARG(set-unack, NULL, "<transition_time_ms>", cmd_dtt_set_unack, 2, 0),
+	SHELL_CMD_ARG(set, NULL, "<transition_time(ms)>", cmd_dtt_set, 2, 0),
+	SHELL_CMD_ARG(set-unack, NULL, "<transition_time(ms)>", cmd_dtt_set_unack, 2, 0),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);
 

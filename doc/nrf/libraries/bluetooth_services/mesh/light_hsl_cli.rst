@@ -47,24 +47,24 @@ mesh models hsl get
 	Get the Light HSL state value of the bound server.
 
 
-mesh models hsl set <light> <hue> <saturation> [transition_time_ms [delay_ms]]
+mesh models hsl set <light> <hue> <saturation> [transition_time(ms) [delay(ms)]]
 	Set the Light HSL state value and wait for a response.
 
 	* ``light`` - Lightness level to set.
 	* ``hue`` - Hue level to set.
 	* ``saturation`` - Saturation level to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models hsl set-unack <light> <hue> <saturation> [transition_time_ms [delay_ms]]
+mesh models hsl set-unack <light> <hue> <saturation> [transition_time(ms) [delay(ms)]]
 	Set the Light HSL state value without requesting for a response.
 
 	* ``light`` - Lightness level to set.
 	* ``hue`` - Hue level to set.
 	* ``saturation`` - Saturation level to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
 mesh models hsl target-get
@@ -117,40 +117,40 @@ mesh models hsl hue-get
 	Get the Light Hue state value of the bound server.
 
 
-mesh models hsl hue-set <lvl> [transition_time_ms [delay_ms]]
+mesh models hsl hue-set <lvl> [transition_time(ms) [delay(ms)]]
 	Set the Light Hue state value and wait for a response.
 
 	* ``lvl`` - Hue level to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models hsl hue-set-unack <lvl> [transition_time_ms [delay_ms]]
+mesh models hsl hue-set-unack <lvl> [transition_time(ms) [delay(ms)]]
 	Set the Light Hue state value without requesting a response.
 
 	* ``lvl`` - Hue level to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
 mesh models hsl saturation-get
 	Get the Light Saturation state value of the bound server.
 
 
-mesh models hsl saturation-set <lvl> [transition_time_ms [delay_ms]]
+mesh models hsl saturation-set <lvl> [transition_time(ms) [delay(ms)]]
 	Set the Light Saturation state value and wait for a response.
 
 	* ``lvl`` - Saturation level to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models hsl saturation-set-unack <lvl> [transition_time_ms [delay_ms]]
+mesh models hsl saturation-set-unack <lvl> [transition_time(ms) [delay(ms)]]
 	Set the Light Saturation state value without requesting a response.
 
 	* ``lvl`` - Saturation level to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
 API documentation

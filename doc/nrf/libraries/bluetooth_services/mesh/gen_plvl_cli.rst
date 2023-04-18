@@ -48,20 +48,20 @@ mesh models plvl get
 	Get the Power Level of the bound server.
 
 
-mesh models plvl set <lvl> [transition_time_ms [delay_ms]]
+mesh models plvl set <lvl> [transition_time(ms) [delay(ms)]]
 	Set the Power Level of the server and wait for a response.
 
 	* ``lvl`` - Power Level value to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models plvl set-unack <lvl> [transition_time_ms [delay_ms]]
+mesh models plvl set-unack <lvl> [transition_time(ms) [delay(ms)]]
 	Set the Power Level of the server without requesting a response.
 
 	* ``lvl`` - Power Level value to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
 mesh models plvl range-get

@@ -48,20 +48,20 @@ mesh models lightness get
 	Get the Light Level value of the bound server.
 
 
-mesh models lightness set <lightness_actual>|<lightness_linear> [transition_time_ms [delay_ms]]
+mesh models lightness set <lightness_actual>|<lightness_linear> [transition_time(ms) [delay(ms)]]
 	Set the Light Level value and wait for a response.
 
 	* ``lightness_actual|lightness_linear`` - The Light Level value to be set. By default, the *Actual* representation of the value is used. If :kconfig:option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR` is enabled, the *Linear* representation of the value is used.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models lightness set-unack <lightness_actual>|<lightness_linear> [transition_time_ms [delay_ms]]
+mesh models lightness set-unack <lightness_actual>|<lightness_linear> [transition_time(ms) [delay(ms)]]
 	Set the Light Level value without requesting a response.
 
 	* ``lightness_actual|lightness_linear`` - The Light Level value to be set. By default, the *Actual* representation of the value is used. If :kconfig:option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR` is enabled, the *Linear* representation of the value is used.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
 mesh models lightness range-get

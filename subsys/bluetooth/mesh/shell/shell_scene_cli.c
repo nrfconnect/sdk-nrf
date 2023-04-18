@@ -224,8 +224,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(store-unack, NULL, "<scene>", cmd_store_unack, 2, 0),
 	SHELL_CMD_ARG(delete, NULL, "<scene>", cmd_delete, 2, 0),
 	SHELL_CMD_ARG(delete-unack, NULL, "<scene>", cmd_delete_unack, 2, 0),
-	SHELL_CMD_ARG(recall, NULL, "<scene> [transition_time_ms [delay_ms]]", cmd_recall, 2, 2),
-	SHELL_CMD_ARG(recall-unack, NULL, "<scene> [transition_time_ms [delay_ms]]",
+	SHELL_CMD_ARG(recall, NULL, "<scene> [transition_time(ms) [delay(ms)]]", cmd_recall, 2, 2),
+	SHELL_CMD_ARG(recall-unack, NULL, "<scene> [transition_time(ms) [delay(ms)]]",
 		      cmd_recall_unack, 2, 2),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);

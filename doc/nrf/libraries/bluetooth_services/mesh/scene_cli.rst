@@ -76,20 +76,20 @@ mesh models scene delete-unack <scene>
 	* ``scene`` - Scene number to delete.
 
 
-mesh models scene recall <scene> [transition_time_ms [delay_ms]]
+mesh models scene recall <scene> [transition_time(ms) [delay(ms)]]
 	Recall the given scene and wait for a response.
 
 	* ``scene`` - Scene number to recall.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models scene recall-unack <scene> [transition_time_ms [delay_ms]]
+mesh models scene recall-unack <scene> [transition_time(ms) [delay(ms)]]
 	Recall the given scene without requesting a response.
 
 	* ``scene`` - Scene number to recall.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
 API documentation

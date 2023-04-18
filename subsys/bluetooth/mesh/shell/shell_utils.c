@@ -264,6 +264,13 @@ int shell_vnd_model_instances_get_all(const struct shell *shell, uint16_t mod_id
 
 int shell_model_cmds_help(const struct shell *shell, size_t argc, char **argv)
 {
+	shell_print(
+		shell,
+		"\nFor a detailed description of the commands and arguments in this shell module, "
+		"please visit:\ndeveloper.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries"
+		"/bluetooth_services/mesh/models.html.\nFrom there you can navigate to the specific"
+		" model type.\n");
+
 	if (argc == 1) {
 		shell_help(shell);
 		return 1;

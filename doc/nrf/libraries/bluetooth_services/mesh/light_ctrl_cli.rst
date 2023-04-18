@@ -79,20 +79,20 @@ mesh models ctrl light-onoff-get
 	Get the Light Lightness Control Server's current OnOff state.
 
 
-mesh models ctrl light-onoff-set <onoff> [transition_time_ms [delay_ms]]
+mesh models ctrl light-onoff-set <onoff> [transition_time(ms) [delay(ms)]]
 	Tell the Light Lightness Control Server to turn the light on or off, and wait for a response.
 
 	* ``onoff`` - OnOff state value to set. Use *on*, *enable*, or any non-zero value to enable the state.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models ctrl light-onoff-set-unack <onoff> [transition_time_ms [delay_ms]]
+mesh models ctrl light-onoff-set-unack <onoff> [transition_time(ms) [delay(ms)]]
 	Tell the Light Lightness Control Server to turn the light on or off without requesting a response.
 
 	* ``onoff`` - OnOff state value to set. Use *on*, *enable*, or any non-zero value to enable the state.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
 mesh models ctrl prop-get <id>
