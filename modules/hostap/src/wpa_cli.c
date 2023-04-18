@@ -36,15 +36,3 @@ SHELL_CMD_REGISTER(wpa_cli,
 		   NULL,
 		   "wpa_cli commands (only for internal use)",
 		   cmd_wpa_cli);
-
-
-static int wpa_cli_init(const struct device *unused)
-{
-	ARG_UNUSED(unused);
-
-	return 0;
-}
-
-SYS_INIT(wpa_cli_init,
-	 APPLICATION,
-	 CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
