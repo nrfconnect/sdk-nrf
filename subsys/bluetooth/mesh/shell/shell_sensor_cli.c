@@ -491,31 +491,31 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sensor_cmds,
-	SHELL_CMD_ARG(desc-get, NULL, "[sensor_id]", cmd_desc_get, 1, 1),
-	SHELL_CMD_ARG(cadence-get, NULL, "<sensor_id>", cmd_cadence_get, 2, 0),
-	SHELL_CMD_ARG(cadence-set, NULL, "<sensor_id> <fast_period_div> <min_int> <delta_type> "
-		      "<delta_up> <delta_down> <cadence_inside> <range_low> <range_high>",
+	SHELL_CMD_ARG(desc-get, NULL, "[SensorID]", cmd_desc_get, 1, 1),
+	SHELL_CMD_ARG(cadence-get, NULL, "<SensorID>", cmd_cadence_get, 2, 0),
+	SHELL_CMD_ARG(cadence-set, NULL, "<SensorID> <FastPerDiv> <MinInt> <DltType> "
+		      "<DltUp> <DltDown> <CadInside> <RngLow> <RngHigh>",
 		      cmd_cadence_set, 10, 0),
-	SHELL_CMD_ARG(cadence-set-unack, NULL, "<sensor_id> <fast_period_div> <min_int> "
-		      "<delta_type> <delta_up> <delta_down> <cadence_inside> <range_low> "
-		      "<range_high>", cmd_cadence_set_unack, 10, 0),
-	SHELL_CMD_ARG(settings-get, NULL, "<sensor_id>", cmd_settings_get, 2, 0),
-	SHELL_CMD_ARG(setting-get, NULL, "<sensor_id> <setting_id>", cmd_setting_get,
+	SHELL_CMD_ARG(cadence-set-unack, NULL, "<SensorID> <FastPerDiv> <MinInt> "
+		      "<DltType> <DltUp> <DltDown> <CadInside> <RngLow> "
+		      "<RngHigh>", cmd_cadence_set_unack, 10, 0),
+	SHELL_CMD_ARG(settings-get, NULL, "<SensorID>", cmd_settings_get, 2, 0),
+	SHELL_CMD_ARG(setting-get, NULL, "<SensorID> <SettingID>", cmd_setting_get,
 		      3, 0),
-	SHELL_CMD_ARG(setting-set, NULL, "<sensor_id> <setting_id> <value>",
+	SHELL_CMD_ARG(setting-set, NULL, "<SensorID> <SettingID> <Value>",
 		      cmd_setting_set, 4, 0),
-	SHELL_CMD_ARG(setting-set-unack, NULL, "<sensor_id> <setting_id> <value>",
+	SHELL_CMD_ARG(setting-set-unack, NULL, "<SensorID> <SettingID> <Value>",
 		      cmd_setting_set_unack, 4, 0),
-	SHELL_CMD_ARG(get, NULL, "[sensor_id]", cmd_get, 1, 1),
-	SHELL_CMD_ARG(series-entry-get, NULL, "<sensor_id> <column>",
+	SHELL_CMD_ARG(get, NULL, "[SensorID]", cmd_get, 1, 1),
+	SHELL_CMD_ARG(series-entry-get, NULL, "<SensorID> <Column>",
 		      cmd_series_entry_get, 3, 0),
-	SHELL_CMD_ARG(series-entries-get, NULL, "<sensor_id> [range_start range_end]",
+	SHELL_CMD_ARG(series-entries-get, NULL, "<SensorID> [<RngStart> <RngEnd>]",
 		      cmd_series_entries_get, 2, 2),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);

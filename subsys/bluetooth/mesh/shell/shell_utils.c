@@ -266,10 +266,8 @@ int shell_model_cmds_help(const struct shell *shell, size_t argc, char **argv)
 {
 	shell_print(
 		shell,
-		"\nFor a detailed description of the commands and arguments in this shell module, "
-		"please visit:\ndeveloper.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries"
-		"/bluetooth_services/mesh/models.html.\nFrom there you can navigate to the specific"
-		" model type.\n");
+		"\nFor a detailed description of the commands and arguments in this shell module,\n"
+		"please refer to the nRF Connect SDK documentation online.\n");
 
 	if (argc == 1) {
 		shell_help(shell);

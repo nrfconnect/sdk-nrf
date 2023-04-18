@@ -36,66 +36,66 @@ mesh models lightness instance get-all
 	Print all instances of the Light Lightness Client model on the device.
 
 
-mesh models lightness instance set <elem_idx>
+mesh models lightness instance set <ElemIdx>
 	Select the Light Lightness Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
 
-	* ``elem_idx`` - Element index where the model instance is found.
+	* ``ElemIdx`` - Element index where the model instance is found.
 
 
 mesh models lightness get
 	Get the Light Level value of the bound server.
 
 
-mesh models lightness set <lightness_actual>|<lightness_linear> [transition_time(ms) [delay(ms)]]
+mesh models lightness set <Actual>|<Linear> [TransTime(ms) [Delay(ms)]]
 	Set the Light Level value and wait for a response.
 
-	* ``lightness_actual|lightness_linear`` - The Light Level value to be set. By default, the *Actual* representation of the value is used. If :kconfig:option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR` is enabled, the *Linear* representation of the value is used.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``Actual|Linear`` - The Light Level value to be set. By default, the *Actual* representation of the value is used. If :kconfig:option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR` is enabled, the *Linear* representation of the value is used.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models lightness set-unack <lightness_actual>|<lightness_linear> [transition_time(ms) [delay(ms)]]
+mesh models lightness set-unack <Actual>|<Linear> [TransTime(ms) [Delay(ms)]]
 	Set the Light Level value without requesting a response.
 
-	* ``lightness_actual|lightness_linear`` - The Light Level value to be set. By default, the *Actual* representation of the value is used. If :kconfig:option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR` is enabled, the *Linear* representation of the value is used.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``Actual|Linear`` - The Light Level value to be set. By default, the *Actual* representation of the value is used. If :kconfig:option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR` is enabled, the *Linear* representation of the value is used.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
 mesh models lightness range-get
 	Get the Light Range state value of the bound server.
 
 
-mesh models lightness range-set <min> <max>
+mesh models lightness range-set <Min> <Max>
 	Set the Light Range state value and wait for a response.
 
-	* ``min`` - Minimum allowed Light Level value.
-	* ``max`` - Maximum allowed Light Level value.
+	* ``Min`` - Minimum allowed Light Level value.
+	* ``Max`` - Maximum allowed Light Level value.
 
 
-mesh models lightness range-set-unack <min> <max>
+mesh models lightness range-set-unack <Min> <Max>
 	Set the Light Range state value without requesting a response.
 
-	* ``min`` - Minimum allowed Light Level value.
-	* ``max`` - Maximum allowed Light Level value.
+	* ``Min`` - Minimum allowed Light Level value.
+	* ``Max`` - Maximum allowed Light Level value.
 
 
 mesh models lightness default-get
 	Get the Default Light state value of the bound server.
 
 
-mesh models lightness default-set <lvl>
+mesh models lightness default-set <Lvl>
 	Set the Default Light state value of the server and wait for a response.
 
-	* ``lvl`` - The Default Light state value to be set.
+	* ``Lvl`` - The Default Light state value to be set.
 
 
-mesh models lightness default-set-unack <lvl>
+mesh models lightness default-set-unack <Lvl>
 	Set the Default Light state value of the server without requesting a response.
 
-	* ``lvl`` - The Default Light state value to be set.
+	* ``Lvl`` - The Default Light state value to be set.
 
 
 mesh models lightness last-get

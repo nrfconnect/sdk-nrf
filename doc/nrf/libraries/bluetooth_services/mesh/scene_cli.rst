@@ -36,12 +36,12 @@ mesh models scene instance get-all
 	Print all instances of the Scene Client model on the device.
 
 
-mesh models scene instance set <elem_idx>
+mesh models scene instance set <ElemIdx>
 	Select the Scene Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
 
-	* ``elem_idx`` - Element index where the model instance is found.
+	* ``ElemIdx`` - Element index where the model instance is found.
 
 
 mesh models scene get
@@ -52,44 +52,44 @@ mesh models scene register-get
 	Get the full scene register of the Scene Server.
 
 
-mesh models scene store <scene>
+mesh models scene store <Scene>
 	Store the current state as a scene and wait for a response.
 
-	* ``store`` - Scene number to store.
+	* ``Scene`` - Scene number to store.
 
 
-mesh models scene store-unack <scene>
+mesh models scene store-unack <Scene>
 	Store the current state as a scene without requesting a response.
 
-	* ``store`` - Scene number to store.
+	* ``Scene`` - Scene number to store.
 
 
-mesh models scene delete <scene>
+mesh models scene delete <Scene>
 	Delete the given scene and wait for a response.
 
-	* ``store`` - Scene number to delete.
+	* ``Scene`` - Scene number to delete.
 
 
-mesh models scene delete-unack <scene>
+mesh models scene delete-unack <Scene>
 	Delete the given scene without requesting a response.
 
-	* ``scene`` - Scene number to delete.
+	* ``Scene`` - Scene number to delete.
 
 
-mesh models scene recall <scene> [transition_time(ms) [delay(ms)]]
+mesh models scene recall <Scene> [TransTime(ms) [Delay(ms)]]
 	Recall the given scene and wait for a response.
 
-	* ``scene`` - Scene number to recall.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``Scene`` - Scene number to recall.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models scene recall-unack <scene> [transition_time(ms) [delay(ms)]]
+mesh models scene recall-unack <Scene> [TransTime(ms) [Delay(ms)]]
 	Recall the given scene without requesting a response.
 
-	* ``scene`` - Scene number to recall.
-	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay`` - If present, defines the delay in the message in milliseconds.
+	* ``Scene`` - Scene number to recall.
+	* ``TransTime`` - If present, defines the transition time in the message in milliseconds.
+	* ``Delay`` - If present, defines the delay in the message in milliseconds.
 
 
 API documentation

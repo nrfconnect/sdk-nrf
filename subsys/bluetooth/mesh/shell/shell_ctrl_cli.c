@@ -356,30 +356,30 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	lc_cmds, SHELL_CMD_ARG(mode-get, NULL, NULL, cmd_mode_get, 1, 0),
-	SHELL_CMD_ARG(mode-set, NULL, "<enable | disable>", cmd_mode_set, 2, 0),
-	SHELL_CMD_ARG(mode-set-unack, NULL, "<enable | disable>", cmd_mode_set_unack, 2, 0),
+	SHELL_CMD_ARG(mode-set, NULL, "Enable(off, on)", cmd_mode_set, 2, 0),
+	SHELL_CMD_ARG(mode-set-unack, NULL, "Enable(off, on)", cmd_mode_set_unack, 2, 0),
 	SHELL_CMD_ARG(occupancy-enabled-get, NULL, NULL, cmd_occupancy_enabled_get, 1, 0),
-	SHELL_CMD_ARG(occupancy-enabled-set, NULL, "<enable | disable>",
+	SHELL_CMD_ARG(occupancy-enabled-set, NULL, "Enable(off, on)",
 		      cmd_occupancy_enabled_set, 2, 0),
-	SHELL_CMD_ARG(occupancy-enabled-set-unack, NULL, "<enable | disable>",
+	SHELL_CMD_ARG(occupancy-enabled-set-unack, NULL, "Enable(off, on)",
 		      cmd_occupancy_enabled_set_unack, 2, 0),
 	SHELL_CMD_ARG(light-onoff-get, NULL, NULL, cmd_light_onoff_get, 1, 0),
-	SHELL_CMD_ARG(light-onoff-set, NULL, "<onoff> [transition_time(ms) [delay(ms)]]",
+	SHELL_CMD_ARG(light-onoff-set, NULL, "<OnOff> [TransTime(ms) [Delay(ms)]]",
 		      cmd_light_onoff_set, 2, 2),
-	SHELL_CMD_ARG(light-onoff-set-unack, NULL, "<onoff> [transition_time(ms) [delay(ms)]]",
+	SHELL_CMD_ARG(light-onoff-set-unack, NULL, "<OnOff> [TransTime(ms) [Delay(ms)]]",
 		      cmd_light_onoff_set_unack, 2, 2),
-	SHELL_CMD_ARG(prop-get, NULL, "<id>", cmd_prop_get, 2, 0),
-	SHELL_CMD_ARG(prop-set, NULL, "<id> <value>", cmd_prop_set, 3, 0),
-	SHELL_CMD_ARG(prop-set-unack, NULL, "<id> <value>", cmd_prop_set_unack, 3, 0),
-	SHELL_CMD_ARG(coeff-get, NULL, "<id>", cmd_coeff_get, 2, 0),
-	SHELL_CMD_ARG(coeff-set, NULL, "<id> <value>", cmd_coeff_set, 3, 0),
-	SHELL_CMD_ARG(coeff-set-unack, NULL, "<id> <value>", cmd_coeff_set_unack, 3, 0),
+	SHELL_CMD_ARG(prop-get, NULL, "<ID>", cmd_prop_get, 2, 0),
+	SHELL_CMD_ARG(prop-set, NULL, "<ID> <Val>", cmd_prop_set, 3, 0),
+	SHELL_CMD_ARG(prop-set-unack, NULL, "<ID> <Val>", cmd_prop_set_unack, 3, 0),
+	SHELL_CMD_ARG(coeff-get, NULL, "<ID>", cmd_coeff_get, 2, 0),
+	SHELL_CMD_ARG(coeff-set, NULL, "<ID> <Val>", cmd_coeff_set, 3, 0),
+	SHELL_CMD_ARG(coeff-set-unack, NULL, "<ID> <Val>", cmd_coeff_set_unack, 3, 0),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);
 

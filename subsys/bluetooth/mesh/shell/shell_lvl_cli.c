@@ -188,27 +188,27 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	lvl_cmds, SHELL_CMD_ARG(get, NULL, NULL, cmd_lvl_get, 1, 0),
-	SHELL_CMD_ARG(set, NULL, "<lvl> [transition_time(ms) [delay(ms)]]",
+	SHELL_CMD_ARG(set, NULL, "<Lvl> [TransTime(ms) [Delay(ms)]]",
 		      cmd_lvl_set, 2, 2),
 	SHELL_CMD_ARG(set-unack, NULL,
-		      "<lvl> [transition_time(ms) [delay(ms)]]",
+		      "<Lvl> [TransTime(ms) [Delay(ms)]]",
 		      cmd_lvl_set_unack, 2, 2),
 	SHELL_CMD_ARG(delta-set, NULL,
-		      "<delta> [transition_time(ms) [delay(ms)]]]", cmd_delta_set,
+		      "<Dlt> [TransTime(ms) [Delay(ms)]]]", cmd_delta_set,
 		      2, 2),
 	SHELL_CMD_ARG(delta-set-unack, NULL,
-		      "<delta> [transition_time(ms) [delay(ms)]]",
+		      "<Dlt> [TransTime(ms) [Delay(ms)]]",
 		      cmd_delta_set_unack, 2, 2),
-	SHELL_CMD_ARG(move-set, NULL, "<delta> [transition_time(ms) [delay(ms)]]",
+	SHELL_CMD_ARG(move-set, NULL, "<Dlt> [TransTime(ms) [Delay(ms)]]",
 		      cmd_move_set, 2, 2),
 	SHELL_CMD_ARG(move-set-unack, NULL,
-		      "<delta> [transition_time(ms) [delay(ms)]]",
+		      "<Dlt> [TransTime(ms) [Delay(ms)]]",
 		      cmd_move_set_unack, 2, 2),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);

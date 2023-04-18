@@ -155,19 +155,19 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sched_cmds, SHELL_CMD_ARG(get, NULL, NULL, cmd_get, 1, 0),
-			       SHELL_CMD_ARG(action-get, NULL, "<idx>", cmd_action_get, 2, 0),
+			       SHELL_CMD_ARG(action-get, NULL, "<Idx>", cmd_action_get, 2, 0),
 			       SHELL_CMD_ARG(action-ctx-set, NULL,
-					     "<year> <month> <day> <hour> "
-					     "<minute> <second> <day_of_week> <action> "
-					     "<transition_time(ms)> <scene_number>",
+					     "<Year> <Month> <Day> <Hour> "
+					     "<Minute> <Second> <DayOfWeek> <Action> "
+					     "<TransTime(ms)> <SceneNumber>",
 					     cmd_action_ctx_set, 11, 0),
-			       SHELL_CMD_ARG(action-set, NULL, "<idx>", cmd_action_set, 2, 0),
-			       SHELL_CMD_ARG(action-set-unack, NULL, "<idx>",
+			       SHELL_CMD_ARG(action-set, NULL, "<Idx>", cmd_action_set, 2, 0),
+			       SHELL_CMD_ARG(action-set-unack, NULL, "<Idx>",
 					     cmd_action_set_unack, 2, 0),
 			       SHELL_CMD(instance, &instance_cmds, "Instance commands",
 					 shell_model_cmds_help),

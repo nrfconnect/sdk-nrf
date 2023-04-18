@@ -179,24 +179,24 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	loc_cmds, SHELL_CMD_ARG(global-get, NULL, NULL, cmd_loc_global_get, 1, 0),
-	SHELL_CMD_ARG(global-set, NULL, "<latitude> <longitude> <altitude>", cmd_loc_global_set,
+	SHELL_CMD_ARG(global-set, NULL, "<Lat> <Long> <Alt>", cmd_loc_global_set,
 		      4, 0),
-	SHELL_CMD_ARG(global-set-unack, NULL, "<latitude> <longitude> <altitude>",
+	SHELL_CMD_ARG(global-set-unack, NULL, "<Lat> <Long> <Alt>",
 		      cmd_loc_global_set_unack, 4, 0),
 	SHELL_CMD_ARG(local-get, NULL, NULL, cmd_loc_local_get, 1, 0),
 	SHELL_CMD_ARG(local-set, NULL,
-		      "<north> <east> <altitude> <floor> "
-		      "[time_delta(ms) [precision_mm [is_mobile]]]",
+		      "<North> <East> <Alt> <Floor> "
+		      "[TimeDlt(ms) [Prec(mm) [IsMobile]]]",
 		      cmd_loc_local_set, 5, 3),
 	SHELL_CMD_ARG(local-set-unack, NULL,
-		      "<north> <east> <altitude> <floor> "
-		      "[time_delta(ms) [precision_mm [is_mobile]]]",
+		      "<North> <East> <Alt> <Floor> "
+		      "[TimeDlt(ms) [Prec(mm) [IsMobile]]]",
 		      cmd_loc_local_set_unack, 5, 3),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);

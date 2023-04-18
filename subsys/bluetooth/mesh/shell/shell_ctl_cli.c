@@ -316,28 +316,28 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	ctl_cmds, SHELL_CMD_ARG(get, NULL, NULL, cmd_ctl_get, 1, 0),
-	SHELL_CMD_ARG(set, NULL, "<light> <temp> <delta> [transition_time(ms) [delay(ms)]]",
+	SHELL_CMD_ARG(set, NULL, "<Light> <Temp> <Dlt> [TransTime(ms) [Delay(ms)]]",
 		      cmd_ctl_set, 4, 2),
-	SHELL_CMD_ARG(set-unack, NULL, "<light> <temp> <delta> [transition_time(ms) [delay(ms)]]",
+	SHELL_CMD_ARG(set-unack, NULL, "<Light> <Temp> <Dlt> [TransTime(ms) [Delay(ms)]]",
 		      cmd_ctl_set_unack, 4, 2),
 	SHELL_CMD_ARG(temp-get, NULL, NULL, cmd_temp_get, 1, 0),
-	SHELL_CMD_ARG(temp-set, NULL, "<temp> <delta> [transition_time(ms) [delay(ms)]]",
+	SHELL_CMD_ARG(temp-set, NULL, "<Temp> <Dlt> [TransTime(ms) [Delay(ms)]]",
 		      cmd_temp_set, 3, 2),
-	SHELL_CMD_ARG(temp-set-unack, NULL, "<temp> <delta> [transition_time(ms) [delay(ms)]]",
+	SHELL_CMD_ARG(temp-set-unack, NULL, "<Temp> <Dlt> [TransTime(ms) [Delay(ms)]]",
 		      cmd_temp_set_unack, 3, 2),
 	SHELL_CMD_ARG(default-get, NULL, NULL, cmd_ctl_default_get, 1, 0),
-	SHELL_CMD_ARG(default-set, NULL, "<light> <temp> <delta>", cmd_ctl_default_set, 4, 0),
-	SHELL_CMD_ARG(default-set-unack, NULL, "<light> <temp> <delta>",
+	SHELL_CMD_ARG(default-set, NULL, "<Light> <Temp> <Dlt>", cmd_ctl_default_set, 4, 0),
+	SHELL_CMD_ARG(default-set-unack, NULL, "<Light> <Temp> <Dlt>",
 		      cmd_ctl_default_set_unack, 4, 0),
 	SHELL_CMD_ARG(temp-range-get, NULL, NULL, cmd_temp_range_get, 1, 0),
-	SHELL_CMD_ARG(temp-range-set, NULL, "<min> <max>", cmd_temp_range_set, 3, 0),
-	SHELL_CMD_ARG(temp-range-set-unack, NULL, "<min> <max>", cmd_temp_range_set_unack,
+	SHELL_CMD_ARG(temp-range-set, NULL, "<Min> <Max>", cmd_temp_range_set, 3, 0),
+	SHELL_CMD_ARG(temp-range-set-unack, NULL, "<Min> <Max>", cmd_temp_range_set_unack,
 		      3, 0),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);

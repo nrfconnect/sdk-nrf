@@ -266,27 +266,27 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	prop_cmds,
-	SHELL_CMD_ARG(cli-props-get, NULL, "<id>", cmd_prop_client_props_get, 2, 0),
-	SHELL_CMD_ARG(props-get, NULL, "<kind>", cmd_prop_props_get, 2, 0),
-	SHELL_CMD_ARG(prop-get, NULL, "<kind> <id>", cmd_prop_prop_get, 3, 0),
-	SHELL_CMD_ARG(user-prop-set, NULL, "<id> <hex_str_val>",
+	SHELL_CMD_ARG(cli-props-get, NULL, "<ID>", cmd_prop_client_props_get, 2, 0),
+	SHELL_CMD_ARG(props-get, NULL, "<Kind>", cmd_prop_props_get, 2, 0),
+	SHELL_CMD_ARG(prop-get, NULL, "<Kind> <ID>", cmd_prop_prop_get, 3, 0),
+	SHELL_CMD_ARG(user-prop-set, NULL, "<ID> <HexStrVal>",
 		      cmd_prop_user_prop_set, 3, (CONFIG_BT_MESH_PROP_MAXSIZE - 1)),
-	SHELL_CMD_ARG(user-prop-set-unack, NULL, "<id> <hex_str_val>",
+	SHELL_CMD_ARG(user-prop-set-unack, NULL, "<ID> <HexStrVal>",
 		      cmd_prop_user_prop_set_unack, 3, (CONFIG_BT_MESH_PROP_MAXSIZE - 1)),
 	SHELL_CMD_ARG(admin-prop-set, NULL,
-		      "<id> <access> <hex_str_val>",
+		      "<ID> <Access> <HexStrVal>",
 		      cmd_prop_admin_prop_set, 4, (CONFIG_BT_MESH_PROP_MAXSIZE - 1)),
 	SHELL_CMD_ARG(admin-prop-set-unack, NULL,
-		      "<id> <access> <hex_str_val>",
+		      "<ID> <Access> <HexStrVal>",
 		      cmd_prop_admin_prop_set_unack, 4, (CONFIG_BT_MESH_PROP_MAXSIZE - 1)),
-	SHELL_CMD_ARG(mfr-prop-set, NULL, "<id> <access>", cmd_prop_mfr_prop_set, 3, 0),
-	SHELL_CMD_ARG(mfr-prop-set-unack, NULL, "<id> <access>",
+	SHELL_CMD_ARG(mfr-prop-set, NULL, "<ID> <Access>", cmd_prop_mfr_prop_set, 3, 0),
+	SHELL_CMD_ARG(mfr-prop-set-unack, NULL, "<ID> <Access>",
 		      cmd_prop_mfr_prop_set_unack, 3, 0),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);

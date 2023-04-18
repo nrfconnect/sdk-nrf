@@ -35,28 +35,28 @@ mesh models dtt instance get-all
 	Print all instances of the Generic Default Transition Time Client model on the device.
 
 
-mesh models dtt instance set <elem_idx>
+mesh models dtt instance set <ElemIdx>
 	Select the Generic Default Transition Time Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
 
-	* ``elem_idx`` - Element index where the model instance is found.
+	* ``ElemIdx`` - Element index where the model instance is found.
 
 
 mesh models dtt get
 	Get the Default Transition Time of the bound server.
 
 
-mesh models dtt set <transition_time(ms)>
+mesh models dtt set <TransTime(ms)>
 	Set the Default Transition Time of the server and wait for a response.
 
-	* ``transition_time`` - Default transition time in milliseconds.
+	* ``TransTime`` - Default transition time in milliseconds.
 
 
-mesh models dtt set-unack <transition_time(ms)>
+mesh models dtt set-unack <TransTime(ms)>
 	Set the Default Transition Time of the server without requesting a response.
 
-	* ``transition_time`` - Default transition time in milliseconds.
+	* ``TransTime`` - Default transition time in milliseconds.
 
 
 API documentation

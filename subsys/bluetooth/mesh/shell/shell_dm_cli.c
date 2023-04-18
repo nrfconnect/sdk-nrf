@@ -180,18 +180,18 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
-			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
+			       SHELL_CMD_ARG(set, NULL, "<ElemIdx> ", cmd_instance_set, 2, 0),
 			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	dm_cmds,
-	SHELL_CMD_ARG(cfg, NULL, "[<ttl> <timeout(100ms steps)> <delay(µs)>]", cmd_cfg, 1, 3),
+	SHELL_CMD_ARG(cfg, NULL, "[<TTL> <Timeout(100ms steps)> <Delay(us)>]", cmd_cfg, 1, 3),
 	SHELL_CMD_ARG(
 		start, NULL,
-		"<mode> <addr> [<reuse-transaction> [<ttl> <timeout(100ms steps)> <delay(µs)>]]",
+		"<Mode> <Addr> [<ReuseTransaction> [<TTL> <Timeout(100ms steps)> <Delay(us)>]]",
 		cmd_dm_start, 3, 4),
-	SHELL_CMD_ARG(result - get, NULL, "<entry_cnt>", cmd_result_get, 2, 0),
+	SHELL_CMD_ARG(result - get, NULL, "<EntryCnt>", cmd_result_get, 2, 0),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);
 

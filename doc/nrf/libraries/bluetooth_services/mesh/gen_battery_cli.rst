@@ -33,12 +33,12 @@ mesh models battery instance get-all
 	Print all instances of the Generic Battery Client model on the device.
 
 
-mesh models battery instance set <elem_idx>
+mesh models battery instance set <ElemIdx>
 	Select the Generic Battery Client model instantiated on the specified element ID.
 	This instance will be used in message sending.
 	If no model instance is selected, the first model instance found on the device will be used by default.
 
-	* ``elem_idx`` - Element index where the model instance is found.
+	* ``ElemIdx`` - Element index where the model instance is found.
 
 
 mesh models battery get
