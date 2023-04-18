@@ -9,7 +9,9 @@
 #include <nrf_rpc_errno.h>
 #include <nrf_rpc/nrf_rpc_ipc.h>
 
+#if CONFIG_OPENAMP
 #include <openamp/rpmsg.h>
+#endif /* CONFIG_OPENAMP */
 #include <zephyr/ipc/ipc_service.h>
 
 #include <zephyr/logging/log.h>
@@ -55,6 +57,7 @@ static int translate_error(int ll_err)
 	case -EBADMSG:
 		return -NRF_EBADMSG;
 
+#if CONFIG_OPENAMP
 	case RPMSG_ERR_BUFF_SIZE:
 	case RPMSG_ERR_NO_MEM:
 	case RPMSG_ERR_NO_BUFF:
@@ -65,6 +68,7 @@ static int translate_error(int ll_err)
 	case RPMSG_ERR_INIT:
 	case RPMSG_ERR_ADDR:
 		return -NRF_EIO;
+#endif /* CONFIG_OPENAMP */
 
 	default:
 		if (ll_err < 0) {
