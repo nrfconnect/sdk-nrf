@@ -18,6 +18,10 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
+
+#include <zephyr/toolchain.h>
+
 /**
  * @typedef fp_storage_manager_module_reset_perform
  * Callback used to perform a reset of the Fast Pair storage module.
