@@ -63,6 +63,7 @@ Building FOTA images
 ********************
 
 The |NCS| build system places output images in the :file:`<build folder>/zephyr` folder.
+These images are then used for updates from a cloud served (for example, nRF Cloud).
 
 If :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` is set, the build system creates the :file:`dfu_application.zip` file containing files :file:`app_update.bin` and :file:`manifest.json`.
 If you have also set the options :kconfig:option:`CONFIG_IMG_MANAGER` and :kconfig:option:`CONFIG_MCUBOOT_IMG_MANAGER`, the application will be able to process FOTA updates.
@@ -167,7 +168,7 @@ MCUboot output build files
 | :file:`dfu_application.zip`                                      | Contains both the MCUboot-compatible update image for one or more cores and a manifest describing its contents (:file:`app_update.bin` and a :file:`manifest.json` file).                                                                                          |
 +------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | :file:`dfu_mcuboot.zip`                                          | Contains two versions of MCUBoot linked against different address spaces corresponding to slot0 (s0) and slot1 (s1) and a manifest JSON file describing their MCUBoot version number (``MCUBOOT_IMAGE_VERSION``), NSIB version number (``FW_INFO``), board type.   |
-|                                                                  | This file can be used by FOTA servers to serve both s0 and s1 to the device.                                                                                                                                                                                       |
+|                                                                  | This file can be used by FOTA servers (for example, nRF Cloud) to serve both s0 and s1 to the device.                                                                                                                                                              |
 |                                                                  | The device can then select the firmware file for the slot that is currently not in use.                                                                                                                                                                            |
 +------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | :file:`app_update.bin`                                           | Signed variant of the firmware in binary format (as opposed to HEX).                                                                                                                                                                                               |
