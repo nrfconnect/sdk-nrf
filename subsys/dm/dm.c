@@ -37,20 +37,11 @@
 
 LOG_MODULE_REGISTER(nrf_dm, CONFIG_DM_MODULE_LOG_LEVEL);
 
-#ifdef CONFIG_DM_TIMER0
-#define DM_TIMER NRF_TIMER0
-#endif
-#ifdef CONFIG_DM_TIMER1
-#define DM_TIMER NRF_TIMER1
-#endif
-#ifdef CONFIG_DM_TIMER2
+#if DT_HAS_CHOSEN(ncs_dm_timer)
+#define DM_TIMER ((NRF_TIMER_Type *)DT_REG_ADDR(DT_CHOSEN(ncs_dm_timer)))
+#else
+#warning "The ncs,dm-timer chosen node is not set; defaulting to TIMER2"
 #define DM_TIMER NRF_TIMER2
-#endif
-#ifdef CONFIG_DM_TIMER3
-#define DM_TIMER NRF_TIMER3
-#endif
-#ifdef CONFIG_DM_TIMER4
-#define DM_TIMER NRF_TIMER4
 #endif
 
 #define PPI_CH_COUNT                 2

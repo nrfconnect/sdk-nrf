@@ -36,10 +36,21 @@ Configuration
 
 To use the Distance Measurement module, complete the following steps:
 
-1. Enable the :kconfig:option:`CONFIG_NRF_DM` Kconfig option.
+1. Enable the :kconfig:option:`CONFIG_DM_MODULE` Kconfig option.
+#. Set the ``ncs,dm-timer`` :ref:`chosen node <zephyr:dt-alias-chosen>` to the TIMER peripheral you wish this module to use.
 #. Include :file:`dm.h` in your :file:`main.c` file.
 #. Call :c:func:`dm_init()` to initialize the module.
 #. Call :c:func:`dm_request_add()` to perform the measurement.
+
+For example, to use the ``TIMER2`` peripheral, set ``ncs,dm-timer`` as follows in a devicetree overlay:
+
+.. code-block:: DTS
+
+   / {
+           chosen {
+                   ncs,dm-timer = &timer2;
+           };
+   };
 
 After synchronizing, the nodes that perform the measurement with each other will issue the measurement request.
 The callback function :c:func:`data_ready` is called when the measurement data is available.
