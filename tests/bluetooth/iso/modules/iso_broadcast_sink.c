@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include <getopt.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <unistd.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/gpio.h>
@@ -12,10 +16,6 @@
 #include <zephyr/bluetooth/iso.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/shell/shell.h>
-#include <getopt.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <unistd.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(broadcast_sink, CONFIG_ISO_TEST_LOG_LEVEL);
@@ -30,7 +30,7 @@ LOG_MODULE_REGISTER(broadcast_sink, CONFIG_ISO_TEST_LOG_LEVEL);
 #define PA_RETRY_COUNT 6
 
 K_THREAD_STACK_DEFINE(broadcaster_sink_thread_stack, 4096);
-static struct k_thread broadcaster_thread;
+static struct k_thread broadcaster_sink_thread;
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led2), gpios);
 
@@ -50,8 +50,8 @@ static K_SEM_DEFINE(sem_big_sync_lost, 0, CONFIG_BIS_ISO_CHAN_COUNT_MAX);
 
 static bool data_cb(struct bt_data *data, void *user_data)
 {
-	char *name = user_data;
 	uint8_t len;
+	char *name = user_data;
 
 	switch (data->type) {
 	case BT_DATA_NAME_SHORTENED:
@@ -253,26 +253,8 @@ static struct bt_iso_chan_ops iso_ops = {
 };
 
 static struct bt_iso_chan_io_qos iso_rx_qos[CONFIG_BIS_ISO_CHAN_COUNT_MAX];
-
-static struct bt_iso_chan_qos bis_iso_qos[] = {
-	{
-		.rx = &iso_rx_qos[0],
-	},
-	{
-		.rx = &iso_rx_qos[1],
-	},
-};
-
-static struct bt_iso_chan bis_iso_chan[] = {
-	{
-		.ops = &iso_ops,
-		.qos = &bis_iso_qos[0],
-	},
-	{
-		.ops = &iso_ops,
-		.qos = &bis_iso_qos[1],
-	},
-};
+static struct bt_iso_chan_qos bis_iso_qos[CONFIG_BIS_ISO_CHAN_COUNT_MAX];
+static struct bt_iso_chan bis_iso_chan[CONFIG_BIS_ISO_CHAN_COUNT_MAX];
 
 static struct bt_iso_chan *bis[] = {
 	&bis_iso_chan[0],
@@ -287,13 +269,13 @@ static struct bt_iso_big_sync_param big_sync_param = {
 	.sync_timeout = 100, /* in 10 ms units */
 };
 
-static void broadcaster_t(void *arg1, void *arg2, void *arg3)
+static void broadcaster_sink_trd(void)
 {
+	int err;
 	struct bt_le_per_adv_sync_param sync_create_param;
 	struct bt_le_per_adv_sync *sync;
 	struct bt_iso_big *big;
 	uint32_t sem_timeout_us;
-	int err;
 
 	while (!running) {
 		k_msleep(100);
@@ -337,22 +319,23 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 		/* Multiple PA interval with retry count and convert to unit of 10 ms */
 		sync_create_param.timeout =
 			(per_interval_us * PA_RETRY_COUNT) / (10 * USEC_PER_MSEC);
+
 		sem_timeout_us = per_interval_us * PA_RETRY_COUNT;
 		err = bt_le_per_adv_sync_create(&sync_create_param, &sync);
 		if (err) {
-			LOG_INF("failed (err %d)", err);
+			LOG_ERR("failed (err %d)", err);
 			return;
 		}
 
 		LOG_INF("Waiting for periodic sync...");
 		err = k_sem_take(&sem_per_sync, K_USEC(sem_timeout_us));
 		if (err) {
-			LOG_INF("failed (err %d)", err);
+			LOG_ERR("failed (err %d)", err);
 
 			LOG_INF("Deleting Periodic Advertising Sync...");
 			err = bt_le_per_adv_sync_delete(sync);
 			if (err) {
-				LOG_INF("failed (err %d)", err);
+				LOG_ERR("failed (err %d)", err);
 				return;
 			}
 			continue;
@@ -362,7 +345,7 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 		LOG_INF("Waiting for BIG info...");
 		err = k_sem_take(&sem_per_big_info, K_USEC(sem_timeout_us));
 		if (err) {
-			LOG_INF("failed (err %d)", err);
+			LOG_ERR("failed (err %d)", err);
 
 			if (per_adv_lost) {
 				continue;
@@ -371,7 +354,7 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 			LOG_INF("Deleting Periodic Advertising Sync...");
 			err = bt_le_per_adv_sync_delete(sync);
 			if (err) {
-				LOG_INF("failed (err %d)", err);
+				LOG_ERR("failed (err %d)", err);
 				return;
 			}
 			continue;
@@ -382,7 +365,7 @@ big_sync_create:
 		LOG_INF("Create BIG Sync...");
 		err = bt_iso_big_sync(sync, &big_sync_param, &big);
 		if (err) {
-			LOG_INF("failed (err %d)", err);
+			LOG_ERR("failed (err %d)", err);
 			return;
 		}
 		LOG_INF("success.");
@@ -396,7 +379,7 @@ big_sync_create:
 			LOG_INF("BIG sync chan %u successful.", chan);
 		}
 		if (err) {
-			LOG_INF("failed (err %d)", err);
+			LOG_ERR("failed (err %d)", err);
 
 			LOG_INF("BIG Sync Terminate...");
 			err = bt_iso_big_terminate(big);
@@ -414,7 +397,7 @@ big_sync_create:
 			LOG_INF("Waiting for BIG sync lost chan %u...", chan);
 			err = k_sem_take(&sem_big_sync_lost, K_FOREVER);
 			if (err) {
-				LOG_INF("failed (err %d)", err);
+				LOG_ERR("failed (err %d)", err);
 				return;
 			}
 			LOG_INF("BIG sync lost chan %u.", chan);
@@ -439,9 +422,16 @@ int iso_broadcast_sink_init(void)
 		return -EBUSY;
 	}
 
-	k_thread_create(&broadcaster_thread, broadcaster_sink_thread_stack,
-			K_THREAD_STACK_SIZEOF(broadcaster_sink_thread_stack), broadcaster_t, NULL,
-			NULL, NULL, 5, K_USER, K_NO_WAIT);
+	for (int i = 0; i < CONFIG_BIS_ISO_CHAN_COUNT_MAX; i++) {
+		bis_iso_qos[i].rx = &iso_rx_qos[i];
+		bis_iso_chan[i].ops = &iso_ops;
+		bis_iso_chan[i].qos = &bis_iso_qos[i];
+	}
+
+	k_thread_create(&broadcaster_sink_thread, broadcaster_sink_thread_stack,
+			K_THREAD_STACK_SIZEOF(broadcaster_sink_thread_stack),
+			(k_thread_entry_t)broadcaster_sink_trd, NULL, NULL, NULL, 5, K_USER,
+			K_NO_WAIT);
 
 	return 0;
 }
@@ -485,6 +475,8 @@ static const char short_options[] = "n:";
 
 static int set_param(const struct shell *shell, size_t argc, char **argv)
 {
+	int long_index = 0;
+	int opt;
 	int result = argument_check(shell, argv[2]);
 
 	if (result < 0) {
@@ -495,9 +487,6 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 		shell_error(shell, "Change sink parameters before starting");
 		return -EPERM;
 	}
-
-	int long_index = 0;
-	int opt;
 
 	optreset = 1;
 	optind = 1;

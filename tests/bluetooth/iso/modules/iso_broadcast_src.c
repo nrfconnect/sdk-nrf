@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include <stdlib.h>
+#include <ctype.h>
+#include <getopt.h>
+#include <unistd.h>
 #include <zephyr/kernel.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/iso.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/drivers/gpio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <getopt.h>
-#include <unistd.h>
 
 #include "iso_broadcast_src.h"
 
@@ -25,7 +25,7 @@ static struct k_thread broadcaster_thread;
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 
-#define BUF_ALLOC_TIMEOUT (10) /* milliseconds */
+#define BUF_ALLOC_TIMEOUT_MS (10)
 #define BIG_SDU_INTERVAL_US (10000)
 
 NET_BUF_POOL_FIXED_DEFINE(bis_tx_pool, CONFIG_BIS_ISO_CHAN_COUNT_MAX,
@@ -36,7 +36,18 @@ static K_SEM_DEFINE(sem_big_term, 0, CONFIG_BIS_ISO_CHAN_COUNT_MAX);
 
 static uint16_t seq_num;
 static bool running;
-K_SEM_DEFINE(tx_sent, 0, 1);
+static K_SEM_DEFINE(tx_sent, 0, 1);
+
+struct broadcaster_params {
+	uint16_t sdu_size;
+	uint8_t phy;
+	uint8_t rtn;
+	uint8_t num_bis;
+	uint32_t sdu_interval_us;
+	uint16_t latency_ms;
+	uint8_t packing;
+	uint8_t framing;
+};
 
 static void iso_connected(struct bt_iso_chan *chan)
 {
@@ -137,7 +148,7 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 		for (uint8_t chan = 0U; chan < broadcast_params.num_bis; chan++) {
 			struct net_buf *buf;
 
-			buf = net_buf_alloc(&bis_tx_pool, K_MSEC(BUF_ALLOC_TIMEOUT));
+			buf = net_buf_alloc(&bis_tx_pool, K_MSEC(BUF_ALLOC_TIMEOUT_MS));
 			if (!buf) {
 				LOG_ERR("Data buffer allocate timeout on channel %u", chan);
 			}
@@ -218,7 +229,7 @@ int iso_broadcaster_stop(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-int iso_broadcaster_start(const struct shell *shell, size_t argc, char **argv)
+int iso_broadcast_src_start(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
 
@@ -314,6 +325,21 @@ static int argument_check(const struct shell *shell, uint8_t const *const input)
 	return arg_val;
 }
 
+int iso_broadcast_src_init(void)
+{
+	running = false;
+
+	if (!gpio_is_ready_dt(&led)) {
+		return -EBUSY;
+	}
+
+	k_thread_create(&broadcaster_thread, broadcaster_thread_stack,
+			K_THREAD_STACK_SIZEOF(broadcaster_thread_stack), broadcaster_t, NULL, NULL,
+			NULL, 5, K_USER, K_NO_WAIT);
+
+	return 0;
+}
+
 static struct option long_options[] = { { "sdu_size", required_argument, NULL, 's' },
 					{ "phy", required_argument, NULL, 'p' },
 					{ "rtn", required_argument, NULL, 'r' },
@@ -394,23 +420,8 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-int iso_broadcast_src_init(void)
-{
-	running = false;
-
-	if (!gpio_is_ready_dt(&led)) {
-		return -EBUSY;
-	}
-
-	k_thread_create(&broadcaster_thread, broadcaster_thread_stack,
-			K_THREAD_STACK_SIZEOF(broadcaster_thread_stack), broadcaster_t, NULL, NULL,
-			NULL, 5, K_USER, K_NO_WAIT);
-
-	return 0;
-}
-
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	broadcaster_cmd, SHELL_CMD(start, NULL, "Start ISO broadcaster.", iso_broadcaster_start),
+	broadcaster_cmd, SHELL_CMD(start, NULL, "Start ISO broadcaster.", iso_broadcast_src_start),
 	SHELL_CMD(stop, NULL, "Stop ISO broadcaster.", iso_broadcaster_stop),
 	SHELL_CMD(cfg, NULL, "Print config.", broadcaster_print_cfg),
 	SHELL_CMD_ARG(set, NULL, "set", set_param, 3, 0), SHELL_SUBCMD_SET_END);

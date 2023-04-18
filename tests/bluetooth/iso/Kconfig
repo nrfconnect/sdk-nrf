@@ -12,7 +12,7 @@ config BIS_ISO_CHAN_COUNT_MAX
 	int "Max number of ISO channels"
 	default 6
 	help
-		Not all channels must be used. Increasing will use more ROM.
+		It is not necessary to use all channels. Increasing will use more ROM.
 
 
 source "Kconfig.zephyr"
