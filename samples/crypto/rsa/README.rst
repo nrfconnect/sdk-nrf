@@ -52,8 +52,4 @@ After programming the sample to your development kit, complete the following ste
 
 1. |connect_terminal|
 #. Compile and program the application.
-#. Observe the logs from the application using an RTT Viewer or a terminal emulator.
-
-.. note::
-   By default, the sample is configured to use both RTT and UART for logging.
-   If you are using RTT, skip the first step of the testing procedure.
+#. Observe the logs from the application using a terminal emulator.
