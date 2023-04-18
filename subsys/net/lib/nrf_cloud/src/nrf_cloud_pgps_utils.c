@@ -47,6 +47,7 @@ static struct nrf_cloud_pgps_header saved_header;
 static K_SEM_DEFINE(dl_active, 1, 1);
 
 static struct download_client dlc;
+static int sec_tag_list[1];
 static int socket_retries_left;
 static npgps_buffer_handler_t buffer_handler;
 static npgps_eot_handler_t eot_handler;
@@ -470,11 +471,16 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 	socket_retries_left = SOCKET_RETRIES;
 
 	struct download_client_cfg config = {
-		.sec_tag = sec_tag,
 		.pdn_id = pdn_id,
 		.frag_size_override = fragment_size,
 		.set_tls_hostname = (sec_tag != -1),
 	};
+
+	if (sec_tag != -1) {
+		sec_tag_list[0] = sec_tag;
+		config.sec_tag_list = sec_tag_list;
+		config.sec_tag_count = 1;
+	}
 
 	err = download_client_get(&dlc, host, &config, file, 0);
 	if (err != 0) {

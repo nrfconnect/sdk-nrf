@@ -414,10 +414,10 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	int sec_tag, uint8_t pdn_id, size_t fragment_size,
 	const enum dfu_target_image_type expected_type)
 {
+	static int sec_tag_list[1];
 	int err = -1;
 
 	struct download_client_cfg config = {
-		.sec_tag = sec_tag,
 		.pdn_id = pdn_id,
 		.frag_size_override = fragment_size,
 	};
@@ -445,6 +445,12 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 
 	if (sec_tag != -1 && !is_ip_address(host)) {
 		config.set_tls_hostname = true;
+	}
+
+	if (sec_tag != -1) {
+		sec_tag_list[0] = sec_tag;
+		config.sec_tag_list = sec_tag_list;
+		config.sec_tag_count = 1;
 	}
 
 	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;

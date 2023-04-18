@@ -165,11 +165,10 @@ static int set_snd_socket_timeout(int fd, int timeout_ms)
 	return 0;
 }
 
-static int socket_sectag_set(int fd, int sec_tag)
+static int socket_sectag_set(int fd, const int * const sec_tag_list, uint8_t sec_tag_count)
 {
 	int err;
 	int verify;
-	sec_tag_t sec_tag_list[] = { sec_tag };
 
 	enum {
 		NONE = 0,
@@ -185,11 +184,11 @@ static int socket_sectag_set(int fd, int sec_tag)
 		return -errno;
 	}
 
-	LOG_INF("Setting up TLS credentials, tag %d", sec_tag);
+	LOG_INF("Setting up TLS credentials, sec tag count %u", sec_tag_count);
 	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
-			 sizeof(sec_tag_t) * ARRAY_SIZE(sec_tag_list));
+			 sizeof(sec_tag_t) * sec_tag_count);
 	if (err) {
-		LOG_ERR("Failed to setup socket security tag, errno %d", errno);
+		LOG_ERR("Failed to setup socket security tag list, errno %d", errno);
 		return -errno;
 	}
 
@@ -298,7 +297,7 @@ static int client_connect(struct download_client *dl)
 	if (err) {
 		LOG_DBG("Protocol not specified, defaulting to HTTP(S)");
 		type = SOCK_STREAM;
-		if (dl->config.sec_tag != -1) {
+		if (dl->config.sec_tag_list && (dl->config.sec_tag_count > 0)) {
 			dl->proto = IPPROTO_TLS_1_2;
 		} else {
 			dl->proto = IPPROTO_TCP;
@@ -312,13 +311,14 @@ static int client_connect(struct download_client *dl)
 	}
 
 	if (dl->proto == IPPROTO_TLS_1_2 || dl->proto == IPPROTO_DTLS_1_2) {
-		if (dl->config.sec_tag == -1) {
+		if (dl->config.sec_tag_list == NULL || dl->config.sec_tag_count == 0) {
 			LOG_WRN("No security tag provided for TLS/DTLS");
 			return -EINVAL;
 		}
 	}
 
-	if (dl->config.sec_tag == -1 && dl->config.set_tls_hostname) {
+	if ((dl->config.sec_tag_list == NULL || dl->config.sec_tag_count == 0) &&
+	    dl->config.set_tls_hostname) {
 		LOG_WRN("set_tls_hostname flag is set for non-TLS connection");
 		return -EINVAL;
 	}
@@ -377,8 +377,8 @@ static int client_connect(struct download_client *dl)
 	}
 
 	if ((dl->proto == IPPROTO_TLS_1_2 || dl->proto == IPPROTO_DTLS_1_2)
-	     && (dl->config.sec_tag != -1)) {
-		err = socket_sectag_set(dl->fd, dl->config.sec_tag);
+	     && (dl->config.sec_tag_list != NULL) && (dl->config.sec_tag_count > 0)) {
+		err = socket_sectag_set(dl->fd, dl->config.sec_tag_list, dl->config.sec_tag_count);
 		if (err) {
 			goto cleanup;
 		}

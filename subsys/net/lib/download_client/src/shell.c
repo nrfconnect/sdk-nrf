@@ -16,9 +16,10 @@ LOG_MODULE_DECLARE(download_client);
 static char host[CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE];
 static char file[CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE];
 
+static int sec_tag_list[1];
 static struct download_client downloader;
 static struct download_client_cfg config = {
-	.sec_tag = -1,
+	.sec_tag_list = sec_tag_list,
 };
 
 static const struct shell *shell_instance;
@@ -93,9 +94,10 @@ static int cmd_dc_config_sec_tag(const struct shell *shell, size_t argc,
 		return -EINVAL;
 	}
 
-	config.sec_tag = atoi(argv[1]);
+	sec_tag_list[0] = atoi(argv[1]);
+	config.sec_tag_count = 1;
 
-	shell_print(shell, "Security tag set: %d\n", config.sec_tag);
+	shell_print(shell, "Security tag set: %d\n", config.sec_tag_list[0]);
 	return 0;
 }
 

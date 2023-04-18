@@ -92,10 +92,14 @@ struct download_client_evt {
  * @brief Download client configuration options.
  */
 struct download_client_cfg {
-	/** TLS security tag.
-	 *  Pass -1 to disable TLS.
+	/** TLS security tag list.
+	 *  Pass NULL to disable TLS.
 	 */
-	int sec_tag;
+	const int *sec_tag_list;
+	/** Number of TLS security tags in list.
+	 *  Set to 0 to disable TLS.
+	 */
+	uint8_t sec_tag_count;
 	/**
 	 * PDN ID to be used for the download.
 	 * Zero is the default PDN.

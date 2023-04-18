@@ -22,15 +22,15 @@
 static const char cert[] = {
 	#include CONFIG_SAMPLE_CERT_FILE
 };
+static int sec_tag_list[] = { SEC_TAG };
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
 #endif
 
 static struct download_client downloader;
 static struct download_client_cfg config = {
 #if CONFIG_SAMPLE_SECURE_SOCKET
-	.sec_tag = SEC_TAG,
-#else
-	.sec_tag = -1,
+	.sec_tag_list = sec_tag_list,
+	.sec_tag_count = ARRAY_SIZE(sec_tag_list),
 #endif
 };
 
