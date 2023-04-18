@@ -59,7 +59,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 74c7bca86e6a7d590333681eef90e159d79bcfe8
+      revision: b54c8baeeafb3d6e9eef6092c5d88a6771548460
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -110,7 +110,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: ff98ecf541f1e43a9e89e4d47f24e7c59c65f5fe
+      revision: ec4a32a3a7037603aa87dd5b31622141ceddf32b
       userdata:
         ncs:
           upstream-url: https://w1.fi/cgit/hostap/
@@ -118,7 +118,7 @@ manifest:
           compare-by-default: false
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: c78d59dbe8ec48cfbdff9a0bfc12f25b90c73d2f
+      revision: 3b7c7fb9ac786bf4d06aac5a19b5e6153a802584
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR.git
@@ -131,7 +131,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 9cb73143fb543d3eefeeb356ae335a7e4c756512
+      revision: 2fa09cf5566a3ec04de696b9e967aaa8bd370f86
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -139,7 +139,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 032a0a95c5b6c761b35cd73e98e41f56f59fa5f0
+      revision: 0809166d47b61feb205acecb100cf5be7558b9e1
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -179,7 +179,7 @@ manifest:
           compare-by-default: false
     - name: homekit
       repo-path: sdk-homekit
-      revision: 7d3f3a3e098d64fbf804fc1edfd033ded56d161d
+      revision: 286b97f3a7514bc4924818611475ae5be0496ed1
       groups:
         - homekit
     - name: find-my
@@ -223,7 +223,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.42.1
+      revision: 0.43.1
       remote: memfault
     - name: ant
       repo-path: sdk-ant
