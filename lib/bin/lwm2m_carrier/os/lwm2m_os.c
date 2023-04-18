@@ -504,13 +504,19 @@ void lwm2m_os_sms_client_deregister(int handle)
 
 static struct download_client http_downloader;
 static lwm2m_os_download_callback_t lwm2m_os_lib_callback;
+static int sec_tag_list[1];
 
 int lwm2m_os_download_connect(const char *host, const struct lwm2m_os_download_cfg *cfg)
 {
 	struct download_client_cfg config = {
-		.sec_tag = cfg->sec_tag,
 		.pdn_id = cfg->pdn_id,
 	};
+
+	if (cfg->sec_tag != -1) {
+		sec_tag_list[0] = cfg->sec_tag;
+		config.sec_tag_list = sec_tag_list;
+		config.sec_tag_count = 1;
+	}
 
 	return download_client_set_host(&http_downloader, host, &config);
 }

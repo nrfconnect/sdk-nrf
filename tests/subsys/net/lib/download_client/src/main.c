@@ -64,7 +64,6 @@ static bool wait_for_event(enum download_client_evt_id event, uint8_t seconds)
 }
 
 static struct download_client_cfg config = {
-	.sec_tag = -1,
 	.pdn_id = 0,
 	.frag_size_override = 0,
 };

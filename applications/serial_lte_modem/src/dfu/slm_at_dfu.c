@@ -64,6 +64,7 @@ static uint32_t crc_32;
 static char hostname[URI_HOST_MAX];
 static char filepath[SLM_MAX_URL];
 static struct download_client dlc;
+static int sec_tag_list[1];
 static int socket_retries_left;
 static bool first_fragment;
 static uint16_t mtu;
@@ -308,13 +309,18 @@ static  int dfu_download_start(const char *host, const char *file, int sec_tag,
 	int err = -1;
 
 	struct download_client_cfg config = {
-		.sec_tag = sec_tag,
 		.frag_size_override = fragment_size,
 		.set_tls_hostname = (sec_tag != -1),
 	};
 
 	if (host == NULL || file == NULL) {
 		return -EINVAL;
+	}
+
+	if (sec_tag != -1) {
+		sec_tag_list[0] = sec_tag;
+		config.sec_tag_list = sec_tag_list;
+		config.sec_tag_count = 1;
 	}
 
 	socket_retries_left = CONFIG_SLM_DFU_SOCKET_RETRIES;

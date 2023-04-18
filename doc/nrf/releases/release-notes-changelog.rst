@@ -546,7 +546,8 @@ Libraries for networking
 
   * Refactored the :c:func:`download_client_connect` function to :c:func:`download_client_set_host` and made it non-blocking.
   * Added the :c:func:`download_client_get` function that combines the functionality of functions :c:func:`download_client_set_host`, :c:func:`download_client_start`, and :c:func:`download_client_disconnect`.
-  * Removed functions :c:func:`donwload_client_pause` and :c:func:`donwload_client_resume`.
+  * Changed configuration from one security tag to a list of security tags.
+  * Removed functions :c:func:`download_client_pause` and :c:func:`download_client_resume`.
 
 * :ref:`lib_lwm2m_location_assistance` library:
 
