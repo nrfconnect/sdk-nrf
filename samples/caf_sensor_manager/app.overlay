@@ -9,7 +9,7 @@
 		compatible = "caf,aggregator";
 		sensor_descr = "accel_sim_xyz";
 		buf_data_length = <240>;
-		sample_size= <3>;
+		sample_size = <3>;
 		status = "okay";
 	};
 };
