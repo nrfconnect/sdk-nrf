@@ -52,46 +52,46 @@ mesh models ctl get
 	Get the current Light CTL state value.
 
 
-mesh models ctl set <light> <temp> <delta> [transition_time_ms [delay_ms]]
+mesh models ctl set <light> <temp> <delta> [transition_time(ms) [delay(ms)]]
 	Set the Light CTL state value and wait for a response.
 
 	* ``light`` - Light level to set.
 	* ``temp`` - Light temperature value to set.
 	* ``delta`` - Delta UV value to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models ctl set-unack <light> <temp> <delta> [transition_time_ms [delay_ms]]
+mesh models ctl set-unack <light> <temp> <delta> [transition_time(ms) [delay(ms)]]
 	Set the Light CTL state value without waiting for a response.
 
 	* ``light`` - Light level value to set.
 	* ``temp`` - Light temperature value to set.
 	* ``delta`` - Delta UV value to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
 mesh models ctl temp-get
 	Get the current Light CTL Temperature state value.
 
 
-mesh models ctl temp-set <light> <temp> <delta> [transition_time_ms [delay_ms]]
+mesh models ctl temp-set <light> <temp> <delta> [transition_time(ms) [delay(ms)]]
 	Set the Light CTL Temperature state value and wait for a response.
 
 	* ``temp`` - Light temperature value to set.
 	* ``delta`` - Delta UV value to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models ctl temp-set-unack <light> <temp> <delta> [transition_time_ms [delay_ms]]
+mesh models ctl temp-set-unack <light> <temp> <delta> [transition_time(ms) [delay(ms)]]
 	Set the Light CTL Temperature state value.
 
 	* ``temp`` - Light temperature value to set.
 	* ``delta`` - Delta UV value to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
 mesh models ctl default-get

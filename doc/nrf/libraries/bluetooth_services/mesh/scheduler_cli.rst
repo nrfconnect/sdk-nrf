@@ -93,7 +93,7 @@ mesh models sched action-get <idx>
 	* ``idx`` - Index of the Schedule Register entry to get.
 
 
-mesh models sched action-ctx-set <year> <month> <day> <hour> <minute> <second> <day_of_week> <action> <transition_time> <scene_number>
+mesh models sched action-ctx-set <year> <month> <day> <hour> <minute> <second> <day_of_week> <action> <transition_time(ms)> <scene_number>
 	Set the appropriate Scheduler Action.
 	Used in combination with ``mesh models sched action-set`` or ``mesh models sched action-set-unack``.
 

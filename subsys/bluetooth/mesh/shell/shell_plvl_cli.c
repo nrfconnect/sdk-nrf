@@ -244,9 +244,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	plvl_cmds, SHELL_CMD_ARG(get, NULL, NULL, cmd_power_get, 1, 0),
-	SHELL_CMD_ARG(set, NULL, "<lvl> [transition_time_ms [delay_ms]]", cmd_power_set,
+	SHELL_CMD_ARG(set, NULL, "<lvl> [transition_time(ms) [delay(ms)]]", cmd_power_set,
 		      2, 2),
-	SHELL_CMD_ARG(set-unack, NULL, "<lvl> [transition_time_ms [delay_ms]]",
+	SHELL_CMD_ARG(set-unack, NULL, "<lvl> [transition_time(ms) [delay(ms)]]",
 		      cmd_power_set_unack, 2, 2),
 	SHELL_CMD_ARG(range-get, NULL, NULL, cmd_range_get, 1, 0),
 	SHELL_CMD_ARG(range-set, NULL, "<min> <max>", cmd_range_set, 3, 0),

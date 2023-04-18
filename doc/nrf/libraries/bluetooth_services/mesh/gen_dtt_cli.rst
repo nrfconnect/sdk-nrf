@@ -47,16 +47,16 @@ mesh models dtt get
 	Get the Default Transition Time of the bound server.
 
 
-mesh models dtt set <transition_time_ms>
+mesh models dtt set <transition_time(ms)>
 	Set the Default Transition Time of the server and wait for a response.
 
-	* ``transition_time_ms`` - Default transition time in milliseconds.
+	* ``transition_time`` - Default transition time in milliseconds.
 
 
-mesh models dtt set-unack <transition_time_ms>
+mesh models dtt set-unack <transition_time(ms)>
 	Set the Default Transition Time of the server without requesting a response.
 
-	* ``transition_time_ms`` - Default transition time in milliseconds.
+	* ``transition_time`` - Default transition time in milliseconds.
 
 
 API documentation

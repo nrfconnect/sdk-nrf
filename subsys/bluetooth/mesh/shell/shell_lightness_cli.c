@@ -243,9 +243,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
 			       SHELL_SUBCMD_SET_END);
 
 #if (IS_ENABLED(CONFIG_BT_MESH_LIGHTNESS_LINEAR))
-static const char set_help[] = "<lightness_linear> [transition_time_ms [delay_ms]]";
+static const char set_help[] = "<lightness_linear> [transition_time(ms) [delay(ms)]]";
 #else
-static const char set_help[] = "<lightness_actual> [transition_time_ms [delay_ms]]";
+static const char set_help[] = "<lightness_actual> [transition_time(ms) [delay(ms)]]";
 #endif
 
 SHELL_STATIC_SUBCMD_SET_CREATE(

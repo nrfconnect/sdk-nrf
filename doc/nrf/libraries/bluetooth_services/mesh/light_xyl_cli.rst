@@ -48,24 +48,24 @@ mesh models xyl get
 	Get the Light xyL state value of the bound server.
 
 
-mesh models xyl set <light> <x> <y> [transition_time_ms [delay_ms]]
+mesh models xyl set <light> <x> <y> [transition_time(ms) [delay(ms)]]
 	Set the Light xyL state value and wait for a response.
 
 	* ``light`` - Lightness level to set.
 	* ``x`` - x level to set.
 	* ``y`` - y level to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models xyl set-unack <light> <x> <y> [transition_time_ms [delay_ms]]
+mesh models xyl set-unack <light> <x> <y> [transition_time(ms) [delay(ms)]]
 	Set the Light xyL state value without requesting a response.
 
 	* ``light`` - Lightness level to set.
 	* ``x`` - x level to set.
 	* ``y`` - y level to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
 mesh models xyl target-get

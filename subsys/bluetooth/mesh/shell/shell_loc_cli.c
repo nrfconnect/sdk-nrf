@@ -192,11 +192,11 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(local-get, NULL, NULL, cmd_loc_local_get, 1, 0),
 	SHELL_CMD_ARG(local-set, NULL,
 		      "<north> <east> <altitude> <floor> "
-		      "[time_delta [precision_mm [is_mobile]]]",
+		      "[time_delta(ms) [precision_mm [is_mobile]]]",
 		      cmd_loc_local_set, 5, 3),
 	SHELL_CMD_ARG(local-set-unack, NULL,
 		      "<north> <east> <altitude> <floor> "
-		      "[time_delta [precision_mm [is_mobile]]]",
+		      "[time_delta(ms) [precision_mm [is_mobile]]]",
 		      cmd_loc_local_set_unack, 5, 3),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
 	SHELL_SUBCMD_SET_END);

@@ -68,7 +68,7 @@ mesh models loc local-get
 	Get the current local location value of the Generic Location state.
 
 
-mesh models loc local-set <north> <east> <altitude> <floor> [time_delta [precision_mm [is_mobile]]]
+mesh models loc local-set <north> <east> <altitude> <floor> [time_delta(ms) [precision_mm [is_mobile]]]
 	Set the local location value of the Generic Location state and wait for a response.
 
 	* ``north`` - Local north position in decimeters.
@@ -80,7 +80,7 @@ mesh models loc local-set <north> <east> <altitude> <floor> [time_delta [precisi
 	* ``is_mobile`` - If present, defines whether the device is movable.
 
 
-mesh models loc local-set-unack <north> <east> <altitude> <floor> [time_delta [precision_mm [is_mobile]]]
+mesh models loc local-set-unack <north> <east> <altitude> <floor> [time_delta(ms) [precision_mm [is_mobile]]]
 	Set the local location value of the Generic Location state without requesting a response.
 
 	* ``north`` - Local north position in decimeters.

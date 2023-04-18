@@ -45,52 +45,52 @@ mesh models lvl get
 	Get the current Generic Level state value.
 
 
-mesh models lvl set <lvl> [transition_time_ms [delay_ms]]
+mesh models lvl set <lvl> [transition_time(ms) [delay(ms)]]
 	Set the Generic Level state value and wait for a response.
 
 	* ``lvl`` - Level state value to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models lvl set-unack <lvl> [transition_time_ms [delay_ms]]
+mesh models lvl set-unack <lvl> [transition_time(ms) [delay(ms)]]
 	Set the Generic Level state value without requesting a response.
 
 	* ``level`` - Level state value to set.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models lvl delta-set <delta> [transition_time_ms [delay_ms]]
+mesh models lvl delta-set <delta> [transition_time(ms) [delay(ms)]]
 	Trigger a differential level state change for the server and wait for a response.
 
 	* ``delta`` - Translation from the original value.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models lvl delta-set-unack <delta> [transition_time_ms [delay_ms]]
+mesh models lvl delta-set-unack <delta> [transition_time(ms) [delay(ms)]]
 	Trigger a differential level state change for the server without requesting a response.
 
 	* ``delta`` - Translation from the original value.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models lvl move-set <delta> [transition_time_ms [delay_ms]]
+mesh models lvl move-set <delta> [transition_time(ms) [delay(ms)]]
 	Trigger a continuous level change for the server and wait for a response.
 
 	* ``delta`` - Translation to make for every transition step.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
-mesh models lvl move-set-unack <delta> [transition_time_ms [delay_ms]]
+mesh models lvl move-set-unack <delta> [transition_time(ms) [delay(ms)]]
 	Trigger a continuous level change for the server without requesting a response.
 
 	* ``delta`` - Translation to make for every transition step.
-	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
-	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
+	* ``transition_time`` - If present, defines the transition time in the message in milliseconds.
+	* ``delay`` - If present, defines the delay in the message in milliseconds.
 
 
 API documentation

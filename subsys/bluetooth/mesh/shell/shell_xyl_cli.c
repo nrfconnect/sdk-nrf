@@ -270,9 +270,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	xyl_cmds, SHELL_CMD_ARG(get, NULL, NULL, cmd_xyl_get, 1, 0),
-	SHELL_CMD_ARG(set, NULL, "<light> <x> <y> [transition_time_ms [delay_ms]]", cmd_xyl_set,
+	SHELL_CMD_ARG(set, NULL, "<light> <x> <y> [transition_time(ms) [delay(ms)]]", cmd_xyl_set,
 		      4, 2),
-	SHELL_CMD_ARG(set-unack, NULL, "<light> <x> <y> [transition_time_ms [delay_ms]]",
+	SHELL_CMD_ARG(set-unack, NULL, "<light> <x> <y> [transition_time(ms) [delay(ms)]]",
 		      cmd_xyl_set_unack, 4, 2),
 	SHELL_CMD_ARG(target-get, NULL, NULL, cmd_xyl_target_get, 1, 0),
 	SHELL_CMD_ARG(default-get, NULL, NULL, cmd_xyl_default_get, 1, 0),
