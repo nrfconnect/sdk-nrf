@@ -562,6 +562,7 @@ nRF9160 samples
       Removed the inclusion of the file :file:`nrf_cloud_codec.h`.
     * Modem FOTA now updates the firmware without rebooting the application.
     * External flash is now enabled in the nRF9160 DK devicetree overlays for v0.14.0 or later versions, as it is now disabled in the Zephyr board definition.
+    * Renamed :file:`overlay-modem-trace.conf` to :file:`overlay-modem-trace-flash.conf`.
 
 * :ref:`https_client` sample:
 

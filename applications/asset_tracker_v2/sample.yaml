@@ -61,7 +61,7 @@ tests:
     extra_configs:
       - CONFIG_AWS_IOT_BROKER_HOST_NAME="example-hostname.aws.com"
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="PROJECTKEY"
-    extra_args:
+    extra_args: >
       OVERLAY_CONFIG="overlay-aws.conf;overlay-pgps.conf;overlay-debug.conf;overlay-memfault.conf"
     tags: ci_build
   applications.asset_tracker_v2.azure:
@@ -163,7 +163,10 @@ tests:
       - thingy91_nrf9160_ns
     extra_configs:
       - CONFIG_NRF_MODEM_LIB_TRACE=y
-    extra_args: OVERLAY_CONFIG="overlay-lwm2m.conf;overlay-debug.conf"
+      - CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR=y
+    extra_args: >
+      OVERLAY_CONFIG="overlay-lwm2m.conf;overlay-debug.conf"
+      DTC_OVERLAY_FILE="modem-trace-uart.overlay"
     tags: ci_build
   applications.asset_tracker_v2.lwm2m.memfault:
     build_only: true

@@ -1,71 +1,56 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2022-2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/drivers/pinctrl.h>
+#include <zephyr/drivers/uart.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <modem/trace_backend.h>
-#include <nrfx_uarte.h>
 
 LOG_MODULE_REGISTER(modem_trace_backend, CONFIG_MODEM_TRACE_BACKEND_LOG_LEVEL);
 
-#define UART1_NL DT_NODELABEL(uart1)
-PINCTRL_DT_DEFINE(UART1_NL);
-static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
+#define UART_DEVICE_NODE DT_CHOSEN(nordic_modem_trace_uart)
+#define TRACE_UART_BAUD_REQUIRED 1000000
 
-/* Maximum time to wait for a UART transfer to complete before giving up. */
-#define UART_TX_WAIT_TIME_MS 100
-#define UNUSED_FLAGS 0
+static const struct device *const uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
 
-/* Semaphore used to check if the last UART transfer was completed. */
-static K_SEM_DEFINE(tx_sem, 1, 1);
+/* Maximum time to wait for a UART transfer to complete before aborting. */
+#define UART_TX_WAIT_TIME_MS 1000
+/* Maximum UART transfer attempts. */
+#define UART_TX_RETRIES 5
 
+/* Semaphores used to synchronize UART transfers. */
+static K_SEM_DEFINE(tx_sem, 0, 1);
+static K_SEM_DEFINE(tx_done_sem, 0, 1);
+/* Number of bytes that were transferred successfully in last transmission. */
+static int tx_bytes;
+
+/* Callback to notify the trace library when trace data is processed. */
 static trace_backend_processed_cb trace_processed_callback;
 
-static void uarte_callback(nrfx_uarte_event_t const *event, void *p_context)
+static void uart_callback(const struct device *dev, struct uart_event *evt, void *user_data)
 {
-	__ASSERT(k_sem_count_get(&tx_sem) == 0,
-			"UART TX semaphore not in use");
+	ARG_UNUSED(dev);
+	ARG_UNUSED(user_data);
 
-	if (event->type == NRFX_UARTE_EVT_ERROR) {
-		LOG_ERR("uarte error 0x%04x", event->data.error.error_mask);
-
-		k_sem_give(&tx_sem);
+	switch (evt->type) {
+	case UART_TX_DONE:
+	case UART_TX_ABORTED:
+		tx_bytes = evt->data.tx.len;
+		k_sem_give(&tx_done_sem);
+		break;
+	default:
+		LOG_DBG("Unhandled UART event: %d", evt->type);
+		break;
 	}
-
-	if (event->type == NRFX_UARTE_EVT_TX_DONE) {
-		k_sem_give(&tx_sem);
-	}
-}
-
-static void wait_for_tx_done(void)
-{
-	/* Attempt to take the TX semaphore to stop the thread execution until
-	 * UART is done sending. Immediately give the semaphore when it becomes
-	 * available.
-	 */
-	if (k_sem_take(&tx_sem, K_MSEC(UART_TX_WAIT_TIME_MS)) != 0) {
-		LOG_WRN("UARTE TX not available");
-	}
-
-	k_sem_give(&tx_sem);
 }
 
 int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 {
 	int err;
-	const nrfx_uarte_config_t config = {
-		.skip_gpio_cfg = true,
-		.skip_psel_cfg = true,
-		.hal_cfg.hwfc = NRF_UARTE_HWFC_DISABLED,
-		.hal_cfg.parity = NRF_UARTE_PARITY_EXCLUDED,
-		.baudrate = NRF_UARTE_BAUDRATE_1000000,
-		.interrupt_priority = DT_IRQ(UART1_NL, priority),
-		.p_context = NULL,
-	};
+	struct uart_config uart_cfg;
 
 	if (trace_processed_cb == NULL) {
 		return -EFAULT;
@@ -73,70 +58,107 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 
 	trace_processed_callback = trace_processed_cb;
 
-	err = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(UART1_NL), PINCTRL_STATE_DEFAULT);
-	__ASSERT_NO_MSG(err == 0);
-
-	IRQ_CONNECT(DT_IRQN(UART1_NL), DT_IRQ(UART1_NL, priority), nrfx_isr,
-		    &nrfx_uarte_1_irq_handler, UNUSED_FLAGS);
-
-	err = nrfx_uarte_init(&uarte_inst, &config, &uarte_callback);
-	if (err != NRFX_SUCCESS && err != NRFX_ERROR_INVALID_STATE) {
-		return -EBUSY;
+	if (!device_is_ready(uart_dev)) {
+		printk("UART device not found!");
+		return -ENODEV;
 	}
+
+	err = uart_config_get(uart_dev, &uart_cfg);
+	if (err) {
+		LOG_ERR("UART_config_get failed: %d", err);
+		return err;
+	}
+
+	if (uart_cfg.baudrate != TRACE_UART_BAUD_REQUIRED) {
+		LOG_ERR("Trace UART baudrate is %d but %d is required",
+			uart_cfg.baudrate, TRACE_UART_BAUD_REQUIRED);
+		return -ENOTSUP;
+	}
+
+	err = uart_err_check(uart_dev);
+	if (err) {
+		LOG_ERR("UART check failed: %d", err);
+		return -EIO;
+	}
+
+	err = uart_callback_set(uart_dev, uart_callback, NULL);
+	if (err) {
+		LOG_ERR("Cannot set callback: %d", err);
+		return -EFAULT;
+	}
+
+	k_sem_give(&tx_sem);
 
 	return 0;
 }
 
 int trace_backend_deinit(void)
 {
-	nrfx_uarte_uninit(&uarte_inst);
+	return 0;
+}
 
-#if CONFIG_PM_DEVICE
+/* Returns the number of bytes written, or negative error. */
+static int uart_send(const uint8_t *data, size_t len)
+{
 	int err;
 
-	err = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(UART1_NL), PINCTRL_STATE_SLEEP);
-	__ASSERT_NO_MSG(err == 0);
-#endif /* CONFIG_PM_DEVICE */
+	for (int i = 0; i < UART_TX_RETRIES; i++) {
+		err = uart_tx(uart_dev, data, len,
+			UART_TX_WAIT_TIME_MS * USEC_PER_MSEC);
+		if (err) {
+			LOG_ERR("uart error: %d", err);
+			return err;
+		}
+
+		k_sem_take(&tx_done_sem, K_FOREVER);
+
+		if (tx_bytes) {
+			return tx_bytes;
+		}
+	}
 
 	return 0;
 }
 
 int trace_backend_write(const void *data, size_t len)
 {
-	nrfx_err_t err;
+	int err;
+	int ret;
 
 	/* Split RAM buffer into smaller chunks to be transferred using DMA. */
 	uint8_t *buf = (uint8_t *)data;
 	const size_t MAX_BUF_LEN = (1 << UARTE1_EASYDMA_MAXCNT_SIZE) - 1;
 	size_t remaining_bytes = len;
 
+	k_sem_take(&tx_sem, K_FOREVER);
+
 	while (remaining_bytes) {
 		size_t transfer_len = MIN(remaining_bytes, MAX_BUF_LEN);
 		size_t idx = len - remaining_bytes;
 
-		if (k_sem_take(&tx_sem, K_MSEC(UART_TX_WAIT_TIME_MS)) != 0) {
-			LOG_WRN("UARTE TX not available!");
+		ret = uart_send(&buf[idx], transfer_len);
+		if (ret < 0) {
+			goto out;
+		} else if (ret == 0) {
 			break;
 		}
 
-		err = nrfx_uarte_tx(&uarte_inst, &buf[idx], transfer_len);
-		if (err != NRFX_SUCCESS) {
-			LOG_ERR("nrfx_uarte_tx error: %d", err);
-			k_sem_give(&tx_sem);
-			break;
+		transfer_len = ret;
+
+		/* Notify that we have processed the trace data, so that the memory can be freed. */
+		err = trace_processed_callback(transfer_len);
+		if (err) {
+			ret = err;
+			goto out;
 		}
 
 		remaining_bytes -= transfer_len;
 	}
 
-	wait_for_tx_done();
-
-	err = trace_processed_callback(len);
-	if (err) {
-		return err;
-	}
-
-	return len;
+	ret = len - remaining_bytes;
+out:
+	k_sem_give(&tx_sem);
+	return ret;
 }
 
 struct nrf_modem_lib_trace_backend trace_backend = {

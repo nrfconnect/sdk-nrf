@@ -89,7 +89,7 @@ Modem trace module
 To enable the tracing functionality, enable the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig in your project configuration.
 The module is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib_trace.c` and consists of a thread that initializes, deinitializes, and forwards modem traces to a backend that can be selected by enabling any one of the following Kconfig options:
 
-* :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` to send modem traces over UARTE1
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` to send modem traces over UART
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT` to send modem traces over SEGGER RTT
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH` to write modem traces to external flash
 
@@ -165,6 +165,80 @@ High-performance mode is a feature in the flash device that allows it to write a
 See the :ref:`external flash <nrf9160_external_flash>` documentation for more details.
 The trace backend needs to handle trace data at ~1 Mbps to avoid filling up the buffer in the modem.
 If the modem buffer is full, the modem drops modem traces until the buffer has space available again.
+
+.. _modem_trace_backend_uart_nrf9160dk:
+
+Sending traces over UART on the nRF9160DK
+=========================================
+
+When sending modem traces over UART1 on the nRF9160DK, configuration must be added for the UART device in the devicetree.
+This is done by adding the following code snippet to the board devicetree or overlay file.
+
+.. code-block:: dts
+
+   &uart1 {
+      status = "okay";
+      current-speed = <1000000>;
+   };
+
+   / {
+      chosen {
+         nordic,modem-trace-uart = &uart1;
+      };
+   };
+
+This is in addition to selecting the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART`, :kconfig:option:`CONFIG_UART_ASYNC_API` and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
+
+.. _modem_trace_backend_uart_custom_board:
+
+Sending traces over UART on a custom board
+==========================================
+
+When sending modem traces over UART on a custom board, configuration must be added for the UART device in the devicetree.
+This is done by adding the following code snippet to the board devicetree or overlay file, where the pin numbers (``0``, ``1``, ``14``, and ``15``) must be updated to match your board.
+The snippet uses UART1. However, any free UART instance can be selected.
+
+.. code-block:: dts
+
+   &pinctrl {
+      uart1_default: uart1_default {
+         group1 {
+            psels = <NRF_PSEL(UART_TX, 0, 1)>,
+               <NRF_PSEL(UART_RTS, 0, 14)>;
+         };
+         group2 {
+            psels = <NRF_PSEL(UART_RX, 0, 0)>,
+               <NRF_PSEL(UART_CTS, 0, 15)>;
+            bias-pull-up;
+         };
+      };
+
+      uart1_sleep: uart1_sleep {
+         group1 {
+            psels = <NRF_PSEL(UART_TX, 0, 1)>,
+               <NRF_PSEL(UART_RX, 0, 0)>,
+               <NRF_PSEL(UART_RTS, 0, 14)>,
+               <NRF_PSEL(UART_CTS, 0, 15)>;
+            low-power-enable;
+         };
+      };
+   };
+
+   &uart1 {
+      status = "okay";
+      current-speed = <1000000>;
+      pinctrl-0 = <&uart1_default>;
+      pinctrl-1 = <&uart1_sleep>;
+      pinctrl-names = "default", "sleep";
+   };
+
+   / {
+      chosen {
+         nordic,modem-trace-uart = &uart1;
+      };
+   };
+
+This is in addition to selecting the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART`, :kconfig:option:`CONFIG_UART_ASYNC_API` and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
 
 .. _adding_custom_modem_trace_backends:
 
@@ -286,55 +360,6 @@ Complete the following steps to add a custom trace backend:
 
       CONFIG_NRF_MODEM_LIB_TRACE=y
       CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_MY_TRACE_BACKEND=y
-
-.. _modem_trace_backend_uart_custom_board:
-
-Sending traces over UART1 on a custom board
-===========================================
-
-When sending modem traces over UART1 on a custom board, configuration must be added for the UART1 device in the devicetree.
-This is done by adding the following code snippet to the board devicetree or overlay file, where the pin numbers (``0``, ``1``, ``14``, and ``15``) must be updated to match your board.
-
-.. code-block:: dts
-
-   &pinctrl {
-      uart1_default: uart1_default {
-         group1 {
-            psels = <NRF_PSEL(UART_TX, 0, 1)>,
-               <NRF_PSEL(UART_RTS, 0, 14)>;
-         };
-         group2 {
-            psels = <NRF_PSEL(UART_RX, 0, 0)>,
-               <NRF_PSEL(UART_CTS, 0, 15)>;
-            bias-pull-up;
-         };
-      };
-
-      uart1_sleep: uart1_sleep {
-         group1 {
-            psels = <NRF_PSEL(UART_TX, 0, 1)>,
-               <NRF_PSEL(UART_RX, 0, 0)>,
-               <NRF_PSEL(UART_RTS, 0, 14)>,
-               <NRF_PSEL(UART_CTS, 0, 15)>;
-            low-power-enable;
-         };
-      };
-   };
-
-   &uart1 {
-      ...
-      pinctrl-0 = <&uart1_default>;
-      pinctrl-1 = <&uart1_sleep>;
-      pinctrl-names = "default", "sleep";
-      ...
-   };
-
-The UART trace backends allow the pins and UART1 interrupt priority to be set using the devicetree.
-Other configurations set in the devicetree, such as the current speed, are overwritten by the UART trace backends.
-
-.. note::
-
-   When one of the UART trace backends is enabled by either the Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` or :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_SYNC`, it initializes the UART1 driver, regardless of its status in the devicetree.
 
 Modem fault handling
 ********************
