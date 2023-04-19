@@ -8,6 +8,39 @@ if BT_MESH
 
 menu "Bluetooth mesh"
 
+if BT_MESH_ADV_EXT
+
+# Set the optimal advertiser configuration to improve performance of the Relay, GATT and Friend
+# features.
+#
+# <num of adv sets> = 1 (local msgs) + 2 (relay msgs) + 1 (GATT advs) + 1 (Friend msgs)
+config BT_EXT_ADV_MAX_ADV_SET
+	default 5
+
+config BT_MESH_RELAY_ADV_SETS
+	depends on BT_MESH_RELAY
+	default 2
+
+config BT_MESH_ADV_EXT_GATT_SEPARATE
+	depends on BT_MESH_GATT_SERVER
+	default y
+
+config BT_MESH_ADV_EXT_FRIEND_SEPARATE
+	depends on BT_MESH_FRIEND
+	default y
+
+if BT_MESH_RELAY
+
+config BT_MESH_RELAY_RETRANSMIT_COUNT
+	default 0
+
+config BT_MESH_RELAY_BUF_COUNT
+	default 10
+
+endif # BT_MESH_RELAY
+
+endif
+
 rsource "Kconfig.models"
 rsource "Kconfig.dk_prov"
 rsource "shell/Kconfig"
