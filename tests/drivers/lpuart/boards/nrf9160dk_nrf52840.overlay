@@ -49,7 +49,7 @@
 };
 
 &timer3 {
-	status = "ok";
+	status = "okay";
 	interrupts = <26 0>;
 };
 
