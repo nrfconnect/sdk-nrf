@@ -18,7 +18,6 @@ target_sources(app
   ${NRF_DIR}/subsys/bluetooth/mesh/light_ctrl_reg_spec.c
   ${NRF_DIR}/subsys/bluetooth/mesh/sensor_types.c
   ${NRF_DIR}/subsys/bluetooth/mesh/sensor.c
-  ${ZEPHYR_BASE}/subsys/net/buf.c
   )
 
 target_include_directories(app

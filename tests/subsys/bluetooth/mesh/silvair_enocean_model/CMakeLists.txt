@@ -15,7 +15,6 @@ target_sources(app
     PRIVATE
     ${ZEPHYR_BASE}/../zephyr/subsys/bluetooth/common/addr.c
     ${ZEPHYR_BASE}/../nrf/subsys/bluetooth/mesh/vnd/silvair_enocean_srv.c
-    ${ZEPHYR_BASE}/subsys/net/buf.c
     )
 
 target_include_directories(app
