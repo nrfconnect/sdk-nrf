@@ -1271,6 +1271,9 @@ enum wifi_nrf_status wifi_nrf_parse_sband(
 {
 	int count;
 
+	if (event && (event->nrf_wifi_n_bitrates == 0 || event->nrf_wifi_n_channels == 0)) {
+		return WIFI_NRF_STATUS_FAIL;
+	}
 	memset(band, 0, sizeof(*band));
 
 	band->wpa_supp_n_channels = event->nrf_wifi_n_channels;
@@ -1398,7 +1401,7 @@ void wifi_nrf_wpa_supp_event_get_wiphy(void *if_priv,
 
 	for (int i = 0; i < NRF_WIFI_EVENT_GET_WIPHY_NUM_BANDS; i++) {
 		if (wifi_nrf_parse_sband(&wiphy_info->sband[i], &band) != WLAN_STATUS_SUCCESS) {
-			break;
+			continue;
 		}
 		if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.get_wiphy_res) {
 			vif_ctx_zep->supp_callbk_fns.get_wiphy_res(vif_ctx_zep->supp_drv_if_ctx,
