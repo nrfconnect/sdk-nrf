@@ -298,8 +298,8 @@ int broadcaster_print_cfg(const struct shell *shell, size_t argc, char **argv)
 
 	shell_print(
 		shell,
-		"sdu_size %d\n phy %d\n rtn %d\n num_bis %d\n sdu_interval_us %d\n" \
-		"latency_ms %d\n packing %d\n framing %d",
+		"sdu_size %d\nphy %d\nrtn %d\nnum_bis %d\nsdu_interval_us %d\n"
+		"latency_ms %d\npacking %d\nframing %d",
 		broadcast_params.sdu_size, broadcast_params.phy, broadcast_params.rtn,
 		broadcast_params.num_bis, broadcast_params.sdu_interval_us,
 		broadcast_params.latency_ms, broadcast_params.packing, broadcast_params.framing);
