@@ -348,13 +348,13 @@ out:
 }
 
 /* TWT interval conversion helpers: User <-> Protocol */
-static struct twt_interval_float wifi_nrf_twt_ms_to_float(uint32_t twt_interval_ms)
+static struct twt_interval_float wifi_nrf_twt_ms_to_float(uint32_t twt_interval)
 {
 	double mantissa = 0;
 	int exponent = 0;
 	struct twt_interval_float twt_interval_float;
 
-	mantissa = frexp(twt_interval_ms, &exponent);
+	mantissa = frexp(twt_interval, &exponent);
 	/* Ceiling and conversion to milli seconds */
 	twt_interval_float.mantissa = ceil(mantissa * 1000);
 	twt_interval_float.exponent = exponent;
@@ -516,8 +516,8 @@ void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 		twt_zep->dialog_token = twt_rpu->dialog_token;
 		twt_interval_float.mantissa = twt_rpu->twt_target_wake_interval_mantissa;
 		twt_interval_float.exponent = twt_rpu->twt_target_wake_interval_exponent;
-		twt_zep->twt_interval_ms = wifi_nrf_twt_float_to_ms(twt_interval_float);
-		twt_zep->twt_wake_interval_ms = twt_rpu->nominal_min_twt_wake_duration;
+		twt_zep->twt_interval = wifi_nrf_twt_float_to_ms(twt_interval_float);
+		twt_zep->twt_wake_interval = twt_rpu->nominal_min_twt_wake_duration;
 	}
 
 	vif_ctx_zep->ps_config_info_evnt = true;
@@ -554,7 +554,7 @@ int wifi_nrf_set_twt(const struct device *dev,
 	switch (twt_params->operation) {
 	case WIFI_TWT_SETUP:
 		struct twt_interval_float twt_interval_float =
-			wifi_nrf_twt_ms_to_float(twt_params->setup.twt_interval_ms);
+			wifi_nrf_twt_ms_to_float(twt_params->setup.twt_interval);
 
 		twt_info.twt_flow_id = twt_params->flow_id;
 		twt_info.neg_type = twt_wifi_mgmt_to_rpu_neg_type(twt_params->negotiation_type);
@@ -568,7 +568,7 @@ int wifi_nrf_set_twt(const struct device *dev,
 		}
 
 		twt_info.nominal_min_twt_wake_duration =
-				twt_params->setup.twt_wake_interval_ms;
+				twt_params->setup.twt_wake_interval;
 		twt_info.twt_target_wake_interval_mantissa = twt_interval_float.mantissa;
 		twt_info.twt_target_wake_interval_exponent = twt_interval_float.exponent;
 
@@ -645,11 +645,11 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 	twt_params.setup.implicit = twt_setup_info->info.is_implicit ? 1 : 0;
 	twt_params.setup.announce =
 		twt_setup_info->info.twt_flow_type == NRF_WIFI_TWT_FLOW_TYPE_ANNOUNCED;
-	twt_params.setup.twt_wake_interval_ms =
+	twt_params.setup.twt_wake_interval =
 			twt_setup_info->info.nominal_min_twt_wake_duration;
 	twt_interval_float.mantissa = twt_setup_info->info.twt_target_wake_interval_mantissa;
 	twt_interval_float.exponent = twt_setup_info->info.twt_target_wake_interval_exponent;
-	twt_params.setup.twt_interval_ms = wifi_nrf_twt_float_to_ms(twt_interval_float);
+	twt_params.setup.twt_interval = wifi_nrf_twt_float_to_ms(twt_interval_float);
 	twt_params.dialog_token = twt_setup_info->info.dialog_token;
 	twt_params.resp_status = twt_setup_info->info.twt_resp_status;
 
