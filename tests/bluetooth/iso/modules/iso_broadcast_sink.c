@@ -40,7 +40,6 @@ static bool per_adv_lost;
 static bt_addr_le_t per_addr;
 static uint8_t per_sid;
 static uint32_t per_interval_us;
-static bool running;
 
 static K_SEM_DEFINE(sem_per_adv, 0, 1);
 static K_SEM_DEFINE(sem_per_sync, 0, 1);
@@ -48,6 +47,7 @@ static K_SEM_DEFINE(sem_per_sync_lost, 0, 1);
 static K_SEM_DEFINE(sem_per_big_info, 0, 1);
 static K_SEM_DEFINE(sem_big_sync, 0, CONFIG_BIS_ISO_CHAN_COUNT_MAX);
 static K_SEM_DEFINE(sem_big_sync_lost, 0, CONFIG_BIS_ISO_CHAN_COUNT_MAX);
+static K_SEM_DEFINE(sem_running, 0, 1);
 
 static bool data_cb(struct bt_data *data, void *user_data)
 {
@@ -256,11 +256,7 @@ static struct bt_iso_chan_ops iso_ops = {
 static struct bt_iso_chan_io_qos iso_rx_qos[CONFIG_BIS_ISO_CHAN_COUNT_MAX];
 static struct bt_iso_chan_qos bis_iso_qos[CONFIG_BIS_ISO_CHAN_COUNT_MAX];
 static struct bt_iso_chan bis_iso_chan[CONFIG_BIS_ISO_CHAN_COUNT_MAX];
-
-static struct bt_iso_chan *bis[] = {
-	&bis_iso_chan[0],
-	&bis_iso_chan[1],
-};
+static struct bt_iso_chan *bis[CONFIG_BIS_ISO_CHAN_COUNT_MAX];
 
 static struct bt_iso_big_sync_param big_sync_param = {
 	.bis_channels = bis,
@@ -272,16 +268,13 @@ static struct bt_iso_big_sync_param big_sync_param = {
 
 static void broadcaster_sink_trd(void)
 {
-	int err;
+	int ret;
 	struct bt_le_per_adv_sync_param sync_create_param;
 	struct bt_le_per_adv_sync *sync;
 	struct bt_iso_big *big;
-	uint32_t sem_timeout_us;
+	uint32_t sem_retry_timeout_ms;
 
-	while (!running) {
-		k_msleep(100);
-		continue;
-	}
+	k_sem_take(&sem_running, K_FOREVER);
 
 	bt_le_scan_cb_register(&scan_callbacks);
 	bt_le_per_adv_sync_cb_register(&sync_callbacks);
@@ -290,25 +283,25 @@ static void broadcaster_sink_trd(void)
 		per_adv_lost = false;
 
 		LOG_INF("Start scanning...");
-		err = bt_le_scan_start(BT_LE_SCAN_CUSTOM, NULL);
-		if (err) {
-			LOG_ERR("failed (err %d)", err);
+		ret = bt_le_scan_start(BT_LE_SCAN_CUSTOM, NULL);
+		if (ret) {
+			LOG_ERR("failed (ret %d)", ret);
 			return;
 		}
 
 		LOG_INF("Waiting for periodic advertising...");
 		per_adv_found = false;
-		err = k_sem_take(&sem_per_adv, K_FOREVER);
-		if (err) {
-			LOG_ERR("failed (err %d)", err);
+		ret = k_sem_take(&sem_per_adv, K_FOREVER);
+		if (ret) {
+			LOG_ERR("failed (ret %d)", ret);
 			return;
 		}
 		LOG_INF("Found periodic advertising.");
 
 		LOG_INF("Stop scanning...");
-		err = bt_le_scan_stop();
-		if (err) {
-			LOG_ERR("failed (err %d)", err);
+		ret = bt_le_scan_stop();
+		if (ret) {
+			LOG_ERR("failed (ret %d)", ret);
 			return;
 		}
 
@@ -321,22 +314,22 @@ static void broadcaster_sink_trd(void)
 		sync_create_param.timeout =
 			(per_interval_us * PA_RETRY_COUNT) / (10 * USEC_PER_MSEC);
 
-		sem_timeout_us = per_interval_us * PA_RETRY_COUNT;
-		err = bt_le_per_adv_sync_create(&sync_create_param, &sync);
-		if (err) {
-			LOG_ERR("failed (err %d)", err);
+		sem_retry_timeout_ms = per_interval_us * PA_RETRY_COUNT;
+		ret = bt_le_per_adv_sync_create(&sync_create_param, &sync);
+		if (ret) {
+			LOG_ERR("failed (ret %d)", ret);
 			return;
 		}
 
 		LOG_INF("Waiting for periodic sync...");
-		err = k_sem_take(&sem_per_sync, K_USEC(sem_timeout_us));
-		if (err) {
-			LOG_ERR("failed (err %d)", err);
+		ret = k_sem_take(&sem_per_sync, K_USEC(sem_retry_timeout_ms));
+		if (ret) {
+			LOG_ERR("failed (ret %d)", ret);
 
 			LOG_INF("Deleting Periodic Advertising Sync...");
-			err = bt_le_per_adv_sync_delete(sync);
-			if (err) {
-				LOG_ERR("failed (err %d)", err);
+			ret = bt_le_per_adv_sync_delete(sync);
+			if (ret) {
+				LOG_ERR("failed (ret %d)", ret);
 				return;
 			}
 			continue;
@@ -344,18 +337,18 @@ static void broadcaster_sink_trd(void)
 		LOG_INF("Periodic sync established.");
 
 		LOG_INF("Waiting for BIG info...");
-		err = k_sem_take(&sem_per_big_info, K_USEC(sem_timeout_us));
-		if (err) {
-			LOG_ERR("failed (err %d)", err);
+		ret = k_sem_take(&sem_per_big_info, K_USEC(sem_retry_timeout_ms));
+		if (ret) {
+			LOG_ERR("failed (ret %d)", ret);
 
 			if (per_adv_lost) {
 				continue;
 			}
 
 			LOG_INF("Deleting Periodic Advertising Sync...");
-			err = bt_le_per_adv_sync_delete(sync);
-			if (err) {
-				LOG_ERR("failed (err %d)", err);
+			ret = bt_le_per_adv_sync_delete(sync);
+			if (ret) {
+				LOG_ERR("failed (ret %d)", ret);
 				return;
 			}
 			continue;
@@ -364,28 +357,28 @@ static void broadcaster_sink_trd(void)
 
 big_sync_create:
 		LOG_INF("Create BIG Sync...");
-		err = bt_iso_big_sync(sync, &big_sync_param, &big);
-		if (err) {
-			LOG_ERR("failed (err %d)", err);
+		ret = bt_iso_big_sync(sync, &big_sync_param, &big);
+		if (ret) {
+			LOG_ERR("failed (ret %d)", ret);
 			return;
 		}
 		LOG_INF("success.");
 
 		for (uint8_t chan = 0U; chan < big_sync_param.num_bis; chan++) {
 			LOG_INF("Waiting for BIG sync chan %u...", chan);
-			err = k_sem_take(&sem_big_sync, TIMEOUT_SYNC_CREATE);
-			if (err) {
+			ret = k_sem_take(&sem_big_sync, TIMEOUT_SYNC_CREATE);
+			if (ret) {
 				break;
 			}
 			LOG_INF("BIG sync chan %u successful.", chan);
 		}
-		if (err) {
-			LOG_ERR("failed (err %d)", err);
+		if (ret) {
+			LOG_ERR("failed (ret %d)", ret);
 
 			LOG_INF("BIG Sync Terminate...");
-			err = bt_iso_big_terminate(big);
-			if (err) {
-				LOG_INF("failed (err %d)", err);
+			ret = bt_iso_big_terminate(big);
+			if (ret) {
+				LOG_ERR("failed (ret %d)", ret);
 				return;
 			}
 			LOG_INF("done.");
@@ -396,9 +389,9 @@ big_sync_create:
 
 		for (uint8_t chan = 0U; chan < big_sync_param.num_bis; chan++) {
 			LOG_INF("Waiting for BIG sync lost chan %u...", chan);
-			err = k_sem_take(&sem_big_sync_lost, K_FOREVER);
-			if (err) {
-				LOG_ERR("failed (err %d)", err);
+			ret = k_sem_take(&sem_big_sync_lost, K_FOREVER);
+			if (ret) {
+				LOG_ERR("failed (ret %d)", ret);
 				return;
 			}
 			LOG_INF("BIG sync lost chan %u.", chan);
@@ -406,8 +399,8 @@ big_sync_create:
 		LOG_INF("BIG sync lost.");
 
 per_sync_lost_check:
-		err = k_sem_take(&sem_per_sync_lost, K_NO_WAIT);
-		if (err) {
+		ret = k_sem_take(&sem_per_sync_lost, K_NO_WAIT);
+		if (ret) {
 			/* Periodic Sync active, go back to creating BIG Sync */
 			goto big_sync_create;
 		}
@@ -424,14 +417,13 @@ int iso_broadcast_sink_start(const struct shell *shell, size_t argc, char **argv
 		return ret;
 	}
 
-	running = true;
+	k_sem_give(&sem_running);
 	return 0;
 }
 
 int iso_broadcast_sink_init(void)
 {
 	int ret;
-	running = false;
 
 	if (!gpio_is_ready_dt(&led)) {
 		return -EBUSY;
@@ -446,6 +438,7 @@ int iso_broadcast_sink_init(void)
 		bis_iso_qos[i].rx = &iso_rx_qos[i];
 		bis_iso_chan[i].ops = &iso_ops;
 		bis_iso_chan[i].qos = &bis_iso_qos[i];
+		bis[i] = &bis_iso_chan[i];
 	}
 
 	k_thread_create(&broadcaster_sink_thread, broadcaster_sink_thread_stack,
@@ -467,7 +460,7 @@ static int argument_check(const struct shell *shell, uint8_t const *const input)
 		return -EINVAL;
 	}
 
-	if (running) {
+	if (k_sem_count_get(&sem_running) == 0) {
 		shell_error(shell, "Arguments can not be changed while running");
 		return -EACCES;
 	}
@@ -490,7 +483,7 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 		return result;
 	}
 
-	if (running) {
+	if (k_sem_count_get(&sem_running) == 0) {
 		shell_error(shell, "Change sink parameters before starting");
 		return -EPERM;
 	}

@@ -14,7 +14,7 @@ int main(void)
 {
 	int err;
 
-	LOG_INF("Starting ISO Broadcast Demo");
+	LOG_INF("Starting ISO tester");
 
 	err = bt_enable(NULL);
 	if (err) {

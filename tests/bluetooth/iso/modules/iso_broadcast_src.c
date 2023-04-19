@@ -186,45 +186,45 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 
 int iso_broadcaster_stop(const struct shell *shell, size_t argc, char **argv)
 {
-	int err;
+	int ret;
 
 	running = false;
 
 	LOG_INF("BIG Terminate");
-	err = bt_iso_big_terminate(big);
-	if (err) {
-		LOG_ERR("failed (err %d)", err);
-		return err;
+	ret = bt_iso_big_terminate(big);
+	if (ret) {
+		LOG_ERR("failed (ret %d)", ret);
+		return ret;
 	}
 
 	for (uint8_t chan = 0U; chan < broadcast_params.num_bis; chan++) {
 		LOG_INF("Waiting for BIG terminate complete"
 			" chan %u...",
 			chan);
-		err = k_sem_take(&sem_big_term, K_MSEC(100));
-		if (err) {
-			LOG_ERR("failed (err %d)", err);
-			return err;
+		ret = k_sem_take(&sem_big_term, K_MSEC(100));
+		if (ret) {
+			LOG_ERR("failed (ret %d)", ret);
+			return ret;
 		}
 		LOG_INF("BIG terminate complete chan %u.", chan);
 	}
 
-	err = bt_le_ext_adv_stop(adv);
-	if (err) {
-		LOG_ERR("failed (err %d)", err);
-		return err;
+	ret = bt_le_ext_adv_stop(adv);
+	if (ret) {
+		LOG_ERR("failed (ret %d)", ret);
+		return ret;
 	}
 
-	err = bt_le_per_adv_stop(adv);
-	if (err) {
-		LOG_ERR("failed (err %d)", err);
-		return err;
+	ret = bt_le_per_adv_stop(adv);
+	if (ret) {
+		LOG_ERR("failed (ret %d)", ret);
+		return ret;
 	}
 
-	err = bt_le_ext_adv_delete(adv);
-	if (err) {
-		LOG_ERR("Failed to delete advertising set (err %d)\n", err);
-		return err;
+	ret = bt_le_ext_adv_delete(adv);
+	if (ret) {
+		LOG_ERR("Failed to delete advertising set (ret %d)\n", ret);
+		return ret;
 	}
 
 	return 0;
@@ -232,56 +232,56 @@ int iso_broadcaster_stop(const struct shell *shell, size_t argc, char **argv)
 
 int iso_broadcast_src_start(const struct shell *shell, size_t argc, char **argv)
 {
-	int err;
+	int ret;
 
-	err = gpio_pin_set_dt(&led, 1);
-	if (err) {
-		return err;
+	ret = gpio_pin_set_dt(&led, 1);
+	if (ret) {
+		return ret;
 	}
 
 	/* Create a non-connectable non-scannable advertising set */
-	err = bt_le_ext_adv_create(BT_LE_EXT_ADV_NCONN_NAME, NULL, &adv);
-	if (err) {
-		LOG_ERR("Failed to create advertising set (err %d)", err);
-		return err;
+	ret = bt_le_ext_adv_create(BT_LE_EXT_ADV_NCONN_NAME, NULL, &adv);
+	if (ret) {
+		LOG_ERR("Failed to create advertising set (ret %d)", ret);
+		return ret;
 	}
 
 	/* Set periodic advertising parameters */
-	err = bt_le_per_adv_set_param(adv, BT_LE_PER_ADV_DEFAULT);
-	if (err) {
+	ret = bt_le_per_adv_set_param(adv, BT_LE_PER_ADV_DEFAULT);
+	if (ret) {
 		LOG_ERR("Failed to set periodic advertising parameters"
-			" (err %d)",
-			err);
-		return err;
+			" (ret %d)",
+			ret);
+		return ret;
 	}
 
 	/* Enable Periodic Advertising */
-	err = bt_le_per_adv_start(adv);
-	if (err) {
-		LOG_ERR("Failed to enable periodic advertising (err %d)", err);
-		return err;
+	ret = bt_le_per_adv_start(adv);
+	if (ret) {
+		LOG_ERR("Failed to enable periodic advertising (ret %d)", ret);
+		return ret;
 	}
 
 	/* Start extended advertising */
-	err = bt_le_ext_adv_start(adv, BT_LE_EXT_ADV_START_DEFAULT);
-	if (err) {
-		LOG_ERR("Failed to start extended advertising (err %d)", err);
-		return err;
+	ret = bt_le_ext_adv_start(adv, BT_LE_EXT_ADV_START_DEFAULT);
+	if (ret) {
+		LOG_ERR("Failed to start extended advertising (ret %d)", ret);
+		return ret;
 	}
 
 	/* Create BIG */
-	err = bt_iso_big_create(adv, &big_create_param, &big);
-	if (err) {
-		LOG_ERR("Failed to create BIG (err %d)", err);
-		return err;
+	ret = bt_iso_big_create(adv, &big_create_param, &big);
+	if (ret) {
+		LOG_ERR("Failed to create BIG (ret %d)", ret);
+		return ret;
 	}
 
 	for (uint8_t chan = 0U; chan < broadcast_params.num_bis; chan++) {
 		LOG_INF("Waiting for BIG complete chan %u...", chan);
-		err = k_sem_take(&sem_big_cmplt, K_FOREVER);
-		if (err) {
-			LOG_ERR("failed (err %d)", err);
-			return err;
+		ret = k_sem_take(&sem_big_cmplt, K_FOREVER);
+		if (ret) {
+			LOG_ERR("failed (ret %d)", ret);
+			return ret;
 		}
 		LOG_INF("BIG create complete chan %u.", chan);
 	}
@@ -329,6 +329,7 @@ static int argument_check(const struct shell *shell, uint8_t const *const input)
 int iso_broadcast_src_init(void)
 {
 	int ret;
+
 	running = false;
 
 	if (!gpio_is_ready_dt(&led)) {
@@ -385,10 +386,12 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case 'p':
 			broadcast_params.phy = result;
+			iso_tx_qos.phy = broadcast_params.phy;
 			broadcaster_print_cfg(shell, 0, NULL);
 			break;
 		case 'r':
 			broadcast_params.rtn = result;
+			iso_tx_qos.rtn = broadcast_params.rtn;
 			broadcaster_print_cfg(shell, 0, NULL);
 			break;
 		case 'n':
