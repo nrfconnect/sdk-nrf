@@ -383,6 +383,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	callbk_fns.unprot_mlme_mgmt_rx_callbk_fn = wifi_nrf_wpa_supp_event_proc_unprot_mgmt;
 	callbk_fns.event_get_wiphy = wifi_nrf_wpa_supp_event_get_wiphy;
 	callbk_fns.mgmt_rx_callbk_fn = wifi_nrf_wpa_supp_event_mgmt_rx_callbk_fn;
+	callbk_fns.get_conn_info_callbk_fn = wifi_nrf_supp_event_proc_get_conn_info;
 #endif /* CONFIG_WPA_SUPP */
 
 	rpu_drv_priv_zep.fmac_priv = wifi_nrf_fmac_init(&data_config,
@@ -466,6 +467,7 @@ static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 	.get_wiphy = wifi_nrf_supp_get_wiphy,
 	.register_frame = wifi_nrf_supp_register_frame,
 	.get_capa = wifi_nrf_supp_get_capa,
+	.get_conn_info = wifi_nrf_supp_get_conn_info,
 };
 #endif /* CONFIG_WPA_SUPP */
 #endif /* !CONFIG_NRF700X_RADIO_TEST */

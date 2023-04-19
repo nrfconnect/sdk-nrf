@@ -48,6 +48,7 @@ struct wifi_nrf_vif_ctx_zep {
 	enum wifi_nrf_fmac_if_op_state if_op_state;
 	enum wifi_nrf_fmac_if_carr_state if_carr_state;
 	struct wpa_signal_info *signal_info;
+	struct wpa_conn_info *conn_info;
 #ifdef CONFIG_WPA_SUPP
 	struct zep_wpa_supp_dev_callbk_fns supp_callbk_fns;
 #endif /* CONFIG_WPA_SUPP */
