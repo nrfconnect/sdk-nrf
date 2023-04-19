@@ -79,7 +79,10 @@ Bluetooth LE
 Bluetooth mesh
 --------------
 
-|no_changes_yet_note|
+* Updated the default configuration of advertising sets used by the Bluetooth mesh subsystem to improve performance of the Relay, GATT and Friend features.
+  This configuration is specified in the :file:`ncs/nrf/subsys/bluetooth/mesh/Kconfig` file.
+
+See `Bluetooth mesh samples`_ for the list of changes in the Bluetooth mesh samples.
 
 Matter
 ------
@@ -259,7 +262,10 @@ Bluetooth samples
 Bluetooth mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* Updated the configuration of advertising sets in all samples to match the new default values.
+  See `Bluetooth mesh`_ for more information.
+* Removed the :file:`hci_rpmsg.conf` file from all samples that support nRF5340 DK or Thingy:53.
+  This configuration is moved to the :file:`ncs/nrf/subsys/bluetooth/mesh/hci_rpmsg_child_image_overlay.conf` file.
 
 nRF9160 samples
 ---------------
