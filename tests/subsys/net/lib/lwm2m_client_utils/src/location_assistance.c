@@ -71,7 +71,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_agps_send)
 
 	rc = location_assistance_agps_request_send(&client_ctx, true);
 	zassert_equal(rc, 0, "Error %d", rc);
-	zassert_equal(lwm2m_send_fake.call_count, 1, "Request not sent");
+	zassert_equal(lwm2m_send_cb_fake.call_count, 1, "Request not sent");
 
 	gnss_obj->resources[GNSS_ASSIST_ASSIST_DATA].post_write_cb(0, GNSS_ASSIST_ASSIST_DATA, 0,
 								   buf, 8, true, 8);
@@ -91,7 +91,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_pgps_send)
 
 	rc = location_assistance_pgps_request_send(&client_ctx, true);
 	zassert_equal(rc, 0, "Error %d", rc);
-	zassert_equal(lwm2m_send_fake.call_count, 1, "Request not sent");
+	zassert_equal(lwm2m_send_cb_fake.call_count, 1, "Request not sent");
 
 	gnss_obj->resources[GNSS_ASSIST_ASSIST_DATA].post_write_cb(0, GNSS_ASSIST_ASSIST_DATA, 0,
 								   buf, 8, true, 8);
@@ -114,7 +114,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_simultaneous_send)
 
 	rc = location_assistance_agps_request_send(&client_ctx, true);
 	zassert_equal(rc, 0, "Error %d", rc);
-	zassert_equal(lwm2m_send_fake.call_count, 1, "Request not sent");
+	zassert_equal(lwm2m_send_cb_fake.call_count, 1, "Request not sent");
 
 	rc = location_assistance_pgps_request_send(&client_ctx, true);
 	zassert_equal(rc, -EAGAIN, "Error %d", rc);
@@ -126,7 +126,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_simultaneous_send)
 
 	rc = location_assistance_pgps_request_send(&client_ctx, true);
 	zassert_equal(rc, 0, "Error %d", rc);
-	zassert_equal(lwm2m_send_fake.call_count, 2, "Request not sent");
+	zassert_equal(lwm2m_send_cb_fake.call_count, 2, "Request not sent");
 
 	gnss_obj->resources[GNSS_ASSIST_ASSIST_DATA].post_write_cb(0, GNSS_ASSIST_ASSIST_DATA, 0,
 								   buf, 8, true, 8);
@@ -143,7 +143,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_ground_fix_send)
 	rc = location_assistance_ground_fix_request_send(&client_ctx, true);
 
 	zassert_equal(rc, 0, "Error %d", rc);
-	zassert_equal(lwm2m_send_fake.call_count, 1, "Request not sent");
+	zassert_equal(lwm2m_send_cb_fake.call_count, 1, "Request not sent");
 }
 
 ZTEST(lwm2m_client_utils_location_assistance, test_temporary_failure)
@@ -164,7 +164,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_temporary_failure)
 
 	rc = location_assistance_agps_request_send(&client_ctx, true);
 	zassert_equal(rc, 0, "Error %d", rc);
-	zassert_equal(lwm2m_send_fake.call_count, 1, "Request not sent");
+	zassert_equal(lwm2m_send_cb_fake.call_count, 1, "Request not sent");
 
 	gnss_obj->resources[GNSS_ASSIST_RESULT_CODE].post_write_cb(0, GNSS_ASSIST_RESULT_CODE, 0,
 								   resbuf, 4, true, 4);
@@ -197,7 +197,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_zzzpermanent_failure)
 
 	rc = location_assistance_agps_request_send(&client_ctx, true);
 	zassert_equal(rc, 0, "Error %d", rc);
-	zassert_equal(lwm2m_send_fake.call_count, 1, "Request not sent");
+	zassert_equal(lwm2m_send_cb_fake.call_count, 1, "Request not sent");
 
 	gnss_obj->resources[GNSS_ASSIST_RESULT_CODE].post_write_cb(0, GNSS_ASSIST_RESULT_CODE, 0,
 								   resbuf, 4, true, 4);

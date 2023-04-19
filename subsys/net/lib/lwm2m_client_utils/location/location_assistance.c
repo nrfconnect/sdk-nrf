@@ -222,7 +222,7 @@ static int do_agps_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 	};
 
 	/* Send Request to server */
-	return lwm2m_send(ctx, send_path, path_count, confirmable);
+	return lwm2m_send_cb(ctx, send_path, path_count, NULL);
 }
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
@@ -273,7 +273,7 @@ static int do_ground_fix_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 	};
 
 	/* Send Request to server */
-	return lwm2m_send(ctx, send_path, path_count, confirmable);
+	return lwm2m_send_cb(ctx, send_path, path_count, NULL);
 }
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)
@@ -312,7 +312,7 @@ static int do_pgps_request_send(struct lwm2m_ctx *ctx, bool confirmable)
 	};
 
 	/* Send Request to server */
-	return lwm2m_send(ctx, send_path, path_count, confirmable);
+	return lwm2m_send_cb(ctx, send_path, path_count, NULL);
 }
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)

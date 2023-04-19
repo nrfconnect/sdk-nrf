@@ -464,13 +464,14 @@ int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id,
 {
 	ARG_UNUSED(buf);
 	ARG_UNUSED(len);
+	ARG_UNUSED(ack);
 	ARG_UNUSED(id);
 
 	int err;
 
-	err = lwm2m_send(&client, path_list, len, ack);
+	err = lwm2m_send_cb(&client, path_list, len, NULL);
 	if (err) {
-		LOG_ERR("lwm2m_send, error: %d", err);
+		LOG_ERR("lwm2m_send_cb, error: %d", err);
 		return err;
 	}
 
@@ -487,13 +488,14 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id,
 {
 	ARG_UNUSED(buf);
 	ARG_UNUSED(len);
+	ARG_UNUSED(ack);
 	ARG_UNUSED(id);
 
 	int err;
 
-	err = lwm2m_send(&client, path_list, len, ack);
+	err = lwm2m_send_cb(&client, path_list, len, NULL);
 	if (err) {
-		LOG_ERR("lwm2m_send, error: %d", err);
+		LOG_ERR("lwm2m_send_cb, error: %d", err);
 		return err;
 	}
 

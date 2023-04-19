@@ -184,7 +184,7 @@ void send_periodically_work_handler(struct k_work *work)
 	};
 
 	/* lwm2m send post to server */
-	ret = lwm2m_send(&client, send_path, 4, true);
+	ret = lwm2m_send_cb(&client, send_path, 4, NULL);
 	if (ret) {
 		if (ret == EPERM) {
 			LOG_INF("Server Mute send block send operation");
