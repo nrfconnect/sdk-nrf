@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <unistd.h>
+
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/gpio.h>
@@ -414,12 +415,31 @@ per_sync_lost_check:
 	}
 }
 
+int iso_broadcast_sink_start(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+
+	ret = gpio_pin_set_dt(&led, 1);
+	if (ret) {
+		return ret;
+	}
+
+	running = true;
+	return 0;
+}
+
 int iso_broadcast_sink_init(void)
 {
+	int ret;
 	running = false;
 
 	if (!gpio_is_ready_dt(&led)) {
 		return -EBUSY;
+	}
+
+	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
+	if (ret) {
+		return ret;
 	}
 
 	for (int i = 0; i < CONFIG_BIS_ISO_CHAN_COUNT_MAX; i++) {
@@ -433,19 +453,6 @@ int iso_broadcast_sink_init(void)
 			(k_thread_entry_t)broadcaster_sink_trd, NULL, NULL, NULL, 5, K_USER,
 			K_NO_WAIT);
 
-	return 0;
-}
-
-int iso_broadcast_sink_start(const struct shell *shell, size_t argc, char **argv)
-{
-	int ret;
-
-	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
-	if (ret < 0) {
-		return ret;
-	}
-
-	running = true;
 	return 0;
 }
 

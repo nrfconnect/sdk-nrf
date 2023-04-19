@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <getopt.h>
 #include <unistd.h>
+
 #include <zephyr/kernel.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/iso.h>
@@ -233,8 +234,8 @@ int iso_broadcast_src_start(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
 
-	err = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
-	if (err < 0) {
+	err = gpio_pin_set_dt(&led, 1);
+	if (err) {
 		return err;
 	}
 
@@ -327,10 +328,16 @@ static int argument_check(const struct shell *shell, uint8_t const *const input)
 
 int iso_broadcast_src_init(void)
 {
+	int ret;
 	running = false;
 
 	if (!gpio_is_ready_dt(&led)) {
 		return -EBUSY;
+	}
+
+	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
+	if (ret) {
+		return ret;
 	}
 
 	k_thread_create(&broadcaster_thread, broadcaster_thread_stack,
@@ -355,6 +362,8 @@ static const char short_options[] = "s:p:r:n:S:l:P:f:";
 static int set_param(const struct shell *shell, size_t argc, char **argv)
 {
 	int result = argument_check(shell, argv[2]);
+	int long_index = 0;
+	int opt;
 
 	if (result < 0) {
 		return result;
@@ -364,9 +373,6 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 		shell_error(shell, "Stop src before changing parameters");
 		return -EPERM;
 	}
-
-	int long_index = 0;
-	int opt;
 
 	optreset = 1;
 	optind = 1;
