@@ -690,7 +690,8 @@ Set command
 -----------
 
 The set command allows you to delete old GNSS data.
-The usage of the command does not trigger A-GPS request event. The execution of the command may delay the full functionality of A-GPS and P-GPS until the next periodic A-GPS request has been received.
+Using this command does not trigger A-GPS request event.
+The execution of the command may delay the full functionality of A-GPS and P-GPS until the next periodic A-GPS request has been received.
 
 Syntax
 ~~~~~~
