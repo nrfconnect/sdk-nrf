@@ -19,7 +19,6 @@ config BT_GATT_DM_MAX_ATTRS
 
 config BT_GATT_DM_DATA_PRINT
 	bool "Enable functions for printing discovery related data"
-	depends on BT_DEBUG
 	help
 	  Enable functions for printing discovery related data
 
