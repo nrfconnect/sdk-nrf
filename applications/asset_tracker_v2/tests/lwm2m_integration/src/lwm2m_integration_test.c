@@ -182,7 +182,7 @@ void test_lwm2m_integration_data_send(void)
 		LWM2M_OBJ(4, 0, 7),
 	};
 
-	__cmock_lwm2m_send_ExpectAndReturn(&client, paths, PATH_LEN, true, 0);
+	__cmock_lwm2m_send_cb_ExpectAndReturn(&client, paths, PATH_LEN, NULL, 0);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_data_send(NULL, PATH_LEN, true, 0, paths));
 }
@@ -198,7 +198,7 @@ void test_lwm2m_integration_ui_send(void)
 		LWM2M_OBJ(4, 0, 7),
 	};
 
-	__cmock_lwm2m_send_ExpectAndReturn(&client, paths, PATH_LEN, true, 0);
+	__cmock_lwm2m_send_cb_ExpectAndReturn(&client, paths, PATH_LEN, NULL, 0);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_ui_send(NULL, PATH_LEN, true, 0, paths));
 }

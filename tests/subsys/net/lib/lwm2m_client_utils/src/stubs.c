@@ -32,8 +32,8 @@ DEFINE_FAKE_VALUE_FUNC(int, lwm2m_get_bool, const struct lwm2m_obj_path *, bool 
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_set_opaque, const struct lwm2m_obj_path *, const char *,
 		       uint16_t);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_set_string, const struct lwm2m_obj_path *, const char*);
-DEFINE_FAKE_VALUE_FUNC(int, lwm2m_send, struct lwm2m_ctx *,
-		       const struct lwm2m_obj_path *, uint8_t, bool);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_send_cb, struct lwm2m_ctx *,
+		       const struct lwm2m_obj_path *, uint8_t, lwm2m_send_cb_t);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_delete_object_inst, const struct lwm2m_obj_path *);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_register_delete_callback, uint16_t,
 		       lwm2m_engine_user_cb_t);

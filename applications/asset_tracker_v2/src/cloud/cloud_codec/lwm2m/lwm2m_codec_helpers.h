@@ -148,7 +148,7 @@ int lwm2m_codec_helpers_set_neighbor_cell_data(struct cloud_data_neighbor_cells 
 
 /** @brief Generate path lists with reference to objects.
  *	   This function outputs a list of paths that can be used to reference objects that should
- *	   be updated (sent to server) when calling the lwm2m_send() function.
+ *	   be updated (sent to server) when calling the lwm2m_send_cb() function.
  *
  *  @param[out] output Pointer to structure into which the input path list will be added.
  *  @param[in]  path List that contains LwM2M paths that will be
