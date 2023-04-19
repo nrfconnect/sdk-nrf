@@ -206,7 +206,6 @@ static int trace_fragment_write(struct nrf_modem_trace_data *frag)
 
 		if (ret < 0) {
 			LOG_ERR("trace_backend.write failed with err: %d", ret);
-
 			return ret;
 		}
 

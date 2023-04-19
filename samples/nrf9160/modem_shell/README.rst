@@ -469,7 +469,7 @@ See :ref:`modem_trace_module` for more information on how to configure modem tra
 You need a trace backend that can store modem traces if you want to upload modem traces to the cloud.
 The flash backend can store modem traces to the external flash on the nRF9160 DK and can be retrieved for uploading.
 
-To enable modem traces with a flash backend, use the :file:`overlay-modem-trace.conf` configuration file.
+To enable modem traces with a flash backend, use the :file:`overlay-modem-trace-flash.conf` configuration file.
 This also requires a device tree overlay for the external flash (:file:`nrf9160dk_ext_flash.overlay`).
 
 Send to Memfault
@@ -1355,13 +1355,13 @@ When connected, the ``location`` and ``gnss`` commands use the LwM2M cloud conne
 nRF9160 DK and modem trace support
 ==================================
 
-To build the MoSh sample with nRF9160 DK and modem traces with flash backend, use the ``-DDTC_OVERLAY_FILE=nrf9160dk_ext_flash.overlay`` and  ``-DOVERLAY_CONFIG="overlay-modem-trace.conf;overlay-memfault.conf"`` options.
+To build the MoSh sample with nRF9160 DK and modem traces with flash backend, use the ``-DDTC_OVERLAY_FILE=nrf9160dk_ext_flash.overlay`` and  ``-DOVERLAY_CONFIG="overlay-modem-trace-flash.conf;overlay-memfault.conf"`` options.
 
 For example:
 
 .. code-block:: console
 
-   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-modem-trace.conf;overlay-memfault.conf" -DDTC_OVERLAY_FILE=nrf9160dk_ext_flash.overlay
+   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-modem-trace-flash.conf;overlay-memfault.conf" -DDTC_OVERLAY_FILE=nrf9160dk_ext_flash.overlay
 
 References
 **********
