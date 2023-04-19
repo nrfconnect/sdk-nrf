@@ -108,3 +108,20 @@
   platforms:
     - thingy53_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.ant_advanced_burst
+    - sample.ant_background_scanning
+    - sample.ant_broadcast_rx
+    - sample.ant_broadcast_tx
+    - sample.bpwr_rx
+    - sample.bpwr_tx
+    - sample.bsc_rx
+    - sample.bsc_tx
+    - sample.hrm_rx
+    - sample.hrm_tx
+    - sample.ble_ant_app_hrm
+    - sample.ant_rpc
+  platforms:
+    - all
+  comment: "ANT samples fail to build; need to change main()'s signature to int main(void)"
