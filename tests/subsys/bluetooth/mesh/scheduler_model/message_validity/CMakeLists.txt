@@ -22,7 +22,6 @@ target_sources(app PRIVATE
   ${NRF_DIR}/subsys/bluetooth/mesh/scheduler_cli.c
   ${NRF_DIR}/subsys/bluetooth/mesh/time_util.c
   ${NRF_DIR}/subsys/bluetooth/mesh/model_utils.c
-  ${ZEPHYR_BASE}/subsys/net/buf.c
   ../common/sched_test.c
   )
 
