@@ -105,7 +105,7 @@ Supported CLI commands
        | <negotiation_type: 0 - Individual, 1 - Broadcast, 2 - Wake TBTT>
        | <setup_cmd: 0 - Request, 1 - Suggest, 2 - Demand>
        | <dialog_token> <flow_id> <responder> <trigger> <implicit>
-       | <announce> <twt_wake_interval_ms> <twt_interval_ms>
+       | <announce> <twt_wake_interval> <twt_interval>
        |
        | teardown - Teardown a TWT flow:
        | <negotiation_type: 0 - Individual, 1 - Broadcast, 2 - Wake TBTT>
