@@ -3928,6 +3928,40 @@ out:
 		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
 				       set_mcast_cmd);
 	}
+	return status;
+}
+
+
+enum wifi_nrf_status wifi_nrf_fmac_get_conn_info(void *dev_ctx,
+						 unsigned char if_idx)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct nrf_wifi_umac_cmd_conn_info *cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	fmac_dev_ctx = dev_ctx;
+
+	cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+				       sizeof(*cmd));
+
+	if (!cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+	cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_GET_CONNECTION_INFO;
+	cmd->umac_hdr.ids.wdev_id = if_idx;
+	cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      cmd,
+			      sizeof(*cmd));
+out:
+	if (cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       cmd);
+	}
 
 	return status;
 }

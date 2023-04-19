@@ -1584,4 +1584,62 @@ void wifi_nrf_wpa_supp_event_mac_chgd(void *if_priv)
 	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.mac_changed) {
 		vif_ctx_zep->supp_callbk_fns.mac_changed(vif_ctx_zep->supp_drv_if_ctx);
 	}
+
+}
+
+
+int wifi_nrf_supp_get_conn_info(void *if_priv, struct wpa_conn_info *info)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	enum wifi_nrf_status ret = WIFI_NRF_STATUS_FAIL;
+	int sem_ret;
+
+	if (!if_priv || !info) {
+		LOG_ERR("%s: Invalid params\n", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+
+	vif_ctx_zep->conn_info = info;
+	ret = wifi_nrf_fmac_get_conn_info(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
+	if (ret != WIFI_NRF_STATUS_SUCCESS) {
+		LOG_ERR("%s: Failed to get beacon info\n", __func__);
+		goto out;
+	}
+
+	sem_ret = k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
+	if (sem_ret) {
+		LOG_ERR("%s: Failed to get station info, ret = %d\n", __func__, sem_ret);
+		ret = WIFI_NRF_STATUS_FAIL;
+		goto out;
+	}
+
+out:
+	return ret;
+}
+
+
+void wifi_nrf_supp_event_proc_get_conn_info(void *if_priv,
+					   struct nrf_wifi_umac_event_conn_info *info,
+					   unsigned int event_len)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wpa_conn_info *conn_info = NULL;
+
+	if (!if_priv || !info) {
+		LOG_ERR("%s: Invalid params\n", __func__);
+		k_sem_give(&wait_for_event_sem);
+		return;
+	}
+	vif_ctx_zep = if_priv;
+	conn_info = vif_ctx_zep->conn_info;
+
+	conn_info->beacon_interval = info->beacon_interval;
+	conn_info->dtim_period = info->dtim_interval;
+	k_sem_give(&wait_for_event_sem);
 }

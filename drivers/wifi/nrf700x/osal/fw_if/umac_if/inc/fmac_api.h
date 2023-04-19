@@ -1115,6 +1115,21 @@ enum wifi_nrf_status wifi_nrf_fmac_twt_setup(void *fmac_dev_ctx,
 enum wifi_nrf_status wifi_nrf_fmac_twt_teardown(void *fmac_dev_ctx,
 						unsigned char if_idx,
 						struct nrf_wifi_umac_config_twt_info *twt_info);
+
+/**
+ * wifi_nrf_fmac_get_conn_info() - Get connection info from RPU
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @if_idx: Index of the interface.
+ *
+ * This function is used to send a command
+ * to RPU to fetch the connection information.
+ *
+ * Returns: Status
+ *              Pass: %WIFI_NRF_STATUS_SUCCESS
+ *              Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_get_conn_info(void *fmac_dev_ctx,
+						unsigned char if_idx);
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 
