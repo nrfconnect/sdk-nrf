@@ -59,13 +59,13 @@ struct fp_storage_manager_module {
  * @param _module_reset_prepare_fn	Function used to inform the storage module that the reset
  *					operation is due to begin.
  */
-#define FP_STORAGE_MANAGER_MODULE_REGISTER(_name, _module_reset_perform_fn,	\
-					   _module_reset_prepare_fn)		\
-	BUILD_ASSERT(_module_reset_perform_fn != NULL);				\
-	BUILD_ASSERT(_module_reset_prepare_fn != NULL);				\
-	STRUCT_SECTION_ITERABLE(fp_storage_manager_module, _name) = {		\
-		.module_reset_perform = _module_reset_perform_fn,		\
-		.module_reset_prepare = _module_reset_prepare_fn,		\
+#define FP_STORAGE_MANAGER_MODULE_REGISTER(_name, _module_reset_perform_fn,		\
+					   _module_reset_prepare_fn)			\
+	BUILD_ASSERT(_module_reset_perform_fn != NULL);					\
+	BUILD_ASSERT(_module_reset_prepare_fn != NULL);					\
+	static const STRUCT_SECTION_ITERABLE(fp_storage_manager_module, _name) = {	\
+		.module_reset_perform = _module_reset_perform_fn,			\
+		.module_reset_prepare = _module_reset_prepare_fn,			\
 	}
 
 #ifdef __cplusplus
