@@ -109,23 +109,23 @@ choice GAZELL_TIMER
 
 config GAZELL_TIMER0
 	bool "TIMER0"
-	depends on HAS_HW_NRF_TIMER0
+	depends on !$(dt_nodelabel_enabled,timer0)
 
 config GAZELL_TIMER1
 	bool "TIMER1"
-	depends on HAS_HW_NRF_TIMER1
+	depends on !$(dt_nodelabel_enabled,timer1)
 
 config GAZELL_TIMER2
 	bool "TIMER2"
-	depends on HAS_HW_NRF_TIMER2
+	depends on !$(dt_nodelabel_enabled,timer2)
 
 config GAZELL_TIMER3
 	bool "TIMER3"
-	depends on HAS_HW_NRF_TIMER3
+	depends on !$(dt_nodelabel_enabled,timer3)
 
 config GAZELL_TIMER4
 	bool "TIMER4"
-	depends on HAS_HW_NRF_TIMER4
+	depends on !$(dt_nodelabel_enabled,timer4)
 
 endchoice
 
