@@ -13,11 +13,7 @@
 #include <modem/at_params.h>
 #include <../lib/at_cmd_parser/at_utils.h>
 
-char *notification_str1 = "+CEREG:";
-char *notification_str2 = "%CEREG:";
-char *string_return     = "mfw_nrf9160_0.7.0-23.prealpha";
-
-static void test_notification_detection(void)
+ZTEST(at_utils, test_notification_detection)
 {
 	for (char c = 0; c < 127; ++c) {
 		if ((c == '%') || (c == '+') || (c == '#')) {
@@ -36,7 +32,7 @@ static void test_notification_detection(void)
 		     "Notification char was not detected");
 }
 
-static void test_command_detection(void)
+ZTEST(at_utils, test_command_detection)
 {
 	zassert_true(is_command("AT"), "Command was not detected");
 	zassert_true(is_command("AT\r"), "Command was not detected");
@@ -52,7 +48,7 @@ static void test_command_detection(void)
 	zassert_false(is_command("AT$"), "Should fail, invalid string");
 }
 
-static void test_valid_notification_char_detection(void)
+ZTEST(at_utils, test_valid_notification_char_detection)
 {
 	for (char c = 0; c < 127; ++c) {
 		if (((c >= 'A') && (c <= 'Z')) || (c == '_')) {
@@ -81,7 +77,7 @@ static void test_valid_notification_char_detection(void)
 	}
 }
 
-static void test_string_termination(void)
+ZTEST(at_utils, test_string_termination)
 {
 	for (char c = 1; c < 127; ++c) {
 		zassert_false(is_terminated(c), "String termination detected");
@@ -91,7 +87,7 @@ static void test_string_termination(void)
 		     "String termination was not detected");
 }
 
-static void test_string_separator(void)
+ZTEST(at_utils, test_string_separator)
 {
 	for (char c = 0; c < 127; ++c) {
 		if ((c == ':') || (c == ',') || (c == '=')) {
@@ -106,7 +102,7 @@ static void test_string_separator(void)
 	zassert_true(is_separator(','), "Separator not detected");
 }
 
-static void test_lfcr(void)
+ZTEST(at_utils, test_lfcr)
 {
 	for (char c = 0; c < 127; ++c) {
 		if ((c == '\r') || (c == '\n')) {
@@ -120,7 +116,7 @@ static void test_lfcr(void)
 	zassert_true(is_lfcr('\r'), "LFCR was not detected");
 }
 
-static void test_dblquote(void)
+ZTEST(at_utils, test_dblquote)
 {
 	for (char c = 0; c < 127; ++c) {
 		if (c == '"') {
@@ -133,7 +129,7 @@ static void test_dblquote(void)
 	zassert_true(is_dblquote('"'), "Double quote char was not detected");
 }
 
-static void test_array_detection(void)
+ZTEST(at_utils, test_array_detection)
 {
 	for (char c = 0; c < 127; ++c) {
 		if ((c == '(') || (c == ')')) {
@@ -148,7 +144,7 @@ static void test_array_detection(void)
 	zassert_true(is_array_stop(')'), "Array stop char was not detected");
 }
 
-static void test_number_detection(void)
+ZTEST(at_utils, test_number_detection)
 {
 	for (char c = 0; c < 127; ++c) {
 		if ((c >= '0') && (c <= '9')) {
@@ -170,7 +166,7 @@ static void test_number_detection(void)
 	zassert_true(is_number('-'), "Number was not detected");
 }
 
-static void test_is_clac(void)
+ZTEST(at_utils, test_is_clac)
 {
 	char str[5] = "AT+ ";
 
@@ -183,20 +179,4 @@ static void test_is_clac(void)
 	zassert_false(is_clac(str), "AT%X was detected");
 }
 
-void test_main(void)
-{
-	ztest_test_suite(at_utils,
-			ztest_unit_test(test_notification_detection),
-			ztest_unit_test(test_command_detection),
-			ztest_unit_test(test_valid_notification_char_detection),
-			ztest_unit_test(test_string_termination),
-			ztest_unit_test(test_string_separator),
-			ztest_unit_test(test_lfcr),
-			ztest_unit_test(test_dblquote),
-			ztest_unit_test(test_array_detection),
-			ztest_unit_test(test_number_detection),
-			ztest_unit_test(test_is_clac)
-			);
-
-	ztest_run_test_suite(at_utils);
-}
+ZTEST_SUITE(at_utils, NULL, NULL, NULL, NULL, NULL);
