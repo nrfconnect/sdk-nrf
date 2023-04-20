@@ -16,7 +16,21 @@
 
 static struct at_param_list test_list;
 
-static void test_init_free_params_list(void)
+static void test_params_before(void *fixture)
+{
+	ARG_UNUSED(fixture);
+
+	at_params_list_init(&test_list, TEST_PARAMS);
+}
+
+static void test_params_after(void *fixture)
+{
+	ARG_UNUSED(fixture);
+
+	at_params_list_free(&test_list);
+}
+
+ZTEST(at_params_noinit, test_init_free_params_list)
 {
 	zassert_equal(-EINVAL, at_params_list_init(NULL, TEST_PARAMS),
 		      "Init function initializes with NULL parameter");
@@ -34,12 +48,7 @@ static void test_init_free_params_list(void)
 			  "Params is not NULL after free");
 }
 
-static void test_params_put_get_int_setup(void)
-{
-	at_params_list_init(&test_list, TEST_PARAMS);
-}
-
-static void test_params_put_get_int(void)
+ZTEST(at_params, test_params_put_get_int)
 {
 	int16_t tmp_short = 0;
 	uint16_t tmp_ushort = 0;
@@ -175,22 +184,13 @@ static void test_params_put_get_int(void)
 	zassert_equal(-4294967296, tmp_int64, "at_params_int64_get should get -4294967296");
 }
 
-static void test_params_put_get_int_teardown(void)
-{
-	at_params_list_free(&test_list);
-}
-
-static void test_params_put_get_string_setup(void)
-{
-	at_params_list_init(&test_list, TEST_PARAMS);
-	at_params_int_put(&test_list, 0, 1);
-}
-
-static void test_params_put_get_string(void)
+ZTEST(at_params, test_params_put_get_string)
 {
 	const char test_str[] = "Test, 1, 2, 3";
 	char test_buf[32];
 	size_t test_buf_len = sizeof(test_buf);
+
+	at_params_int_put(&test_list, 0, 1);
 
 	zassert_equal(-EINVAL, at_params_string_put(NULL, 1,
 					test_str, sizeof(test_str)),
@@ -237,22 +237,13 @@ static void test_params_put_get_string(void)
 		      "test_str and test_buf should be equal");
 }
 
-static void test_params_put_get_string_teardown(void)
-{
-	at_params_list_free(&test_list);
-}
-
-static void test_params_put_get_array_setup(void)
-{
-	at_params_list_init(&test_list, TEST_PARAMS);
-	at_params_int_put(&test_list, 0, 1);
-}
-
-static void test_params_put_get_array(void)
+ZTEST(at_params, test_params_put_get_array)
 {
 	const uint32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
 	uint32_t       test_buf[32];
 	size_t      test_buf_len = sizeof(test_buf);
+
+	at_params_int_put(&test_list, 0, 1);
 
 	zassert_equal(-EINVAL, at_params_array_put(NULL, 1,
 					test_array, sizeof(test_array)),
@@ -299,24 +290,15 @@ static void test_params_put_get_array(void)
 		      "test_array and test_buf should be equal");
 }
 
-static void test_params_put_get_array_teardown(void)
-{
-	at_params_list_free(&test_list);
-}
-
-static void test_params_get_type_setup(void)
+ZTEST(at_params, test_params_get_type)
 {
 	const char    test_str[] = "Test, 1, 2, 3";
 	const uint32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
 
-	at_params_list_init(&test_list, TEST_PARAMS);
 	at_params_int_put(&test_list, 1, 1);
 	at_params_string_put(&test_list, 2, test_str, sizeof(test_str));
 	at_params_array_put(&test_list, 3, test_array, sizeof(test_array));
-}
 
-static void test_params_get_type(void)
-{
 	zassert_equal(AT_PARAM_TYPE_INVALID, at_params_type_get(NULL, 0),
 		      "Get type should return AT_PARAM_TYPE_INVALID");
 
@@ -333,17 +315,7 @@ static void test_params_get_type(void)
 		      "Get type should return AT_PARAM_TYPE_ARRAY");
 }
 
-static void test_params_get_type_teardown(void)
-{
-	at_params_list_free(&test_list);
-}
-
-static void test_params_put_empty_setup(void)
-{
-	at_params_list_init(&test_list, TEST_PARAMS);
-}
-
-static void test_params_put_empty(void)
+ZTEST(at_params, test_params_put_empty)
 {
 	enum at_param_type test_type;
 
@@ -361,17 +333,7 @@ static void test_params_put_empty(void)
 		      "test_type should equal to AT_PARAM_TYPE_EMPTY");
 }
 
-static void test_params_put_empty_teardown(void)
-{
-	at_params_list_free(&test_list);
-}
-
-static void test_params_get_count_setup(void)
-{
-	at_params_list_init(&test_list, TEST_PARAMS);
-}
-
-static void test_params_get_count(void)
+ZTEST(at_params, test_params_get_count)
 {
 	const char test_str[]    = "Hello World!";
 	const uint32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
@@ -400,17 +362,7 @@ static void test_params_get_count(void)
 		      "Get count should return 4");
 }
 
-static void test_params_get_count_teardown(void)
-{
-	at_params_list_free(&test_list);
-}
-
-static void test_params_get_size_setup(void)
-{
-	at_params_list_init(&test_list, TEST_PARAMS);
-}
-
-static void test_params_get_size(void)
+ZTEST(at_params, test_params_get_size)
 {
 	size_t len;
 	const char test_str[]    = "Hello World!";
@@ -451,17 +403,7 @@ static void test_params_get_size(void)
 		      "Get size should return 0");
 }
 
-static void test_params_get_size_teardown(void)
-{
-	at_params_list_free(&test_list);
-}
-
-static void test_params_list_management_setup(void)
-{
-	at_params_list_init(&test_list, TEST_PARAMS);
-}
-
-static void test_params_list_management(void)
+ZTEST(at_params, test_params_list_management)
 {
 	int   ret;
 	uint32_t tmp_int;
@@ -500,48 +442,5 @@ static void test_params_list_management(void)
 		      "Params int get should return -EINVAL");
 }
 
-static void test_params_list_management_teardown(void)
-{
-	at_params_list_free(&test_list);
-}
-
-void test_main(void)
-{
-	ztest_test_suite(at_params,
-			 ztest_unit_test(test_init_free_params_list),
-			 ztest_unit_test_setup_teardown(
-					test_params_put_get_int,
-					test_params_put_get_int_setup,
-					test_params_put_get_int_teardown),
-			 ztest_unit_test_setup_teardown(
-					test_params_put_get_string,
-					test_params_put_get_string_setup,
-					test_params_put_get_string_teardown),
-			 ztest_unit_test_setup_teardown(
-					test_params_put_get_array,
-					test_params_put_get_array_setup,
-					test_params_put_get_array_teardown),
-			 ztest_unit_test_setup_teardown(
-					test_params_get_type,
-					test_params_get_type_setup,
-					test_params_get_type_teardown),
-			 ztest_unit_test_setup_teardown(
-					test_params_put_empty,
-					test_params_put_empty_setup,
-					test_params_put_empty_teardown),
-			 ztest_unit_test_setup_teardown(
-					test_params_get_count,
-					test_params_get_count_setup,
-					test_params_get_count_teardown),
-			 ztest_unit_test_setup_teardown(
-					test_params_get_size,
-					test_params_get_size_setup,
-					test_params_get_size_teardown),
-			 ztest_unit_test_setup_teardown(
-					test_params_list_management,
-					test_params_list_management_setup,
-					test_params_list_management_teardown)
-			);
-
-	ztest_run_test_suite(at_params);
-}
+ZTEST_SUITE(at_params_noinit, NULL, NULL, NULL, NULL, NULL);
+ZTEST_SUITE(at_params, NULL, NULL, test_params_before, test_params_after, NULL);
