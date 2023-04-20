@@ -127,6 +127,7 @@ config DOWNLOAD_CLIENT_COAP_MAX_RETRANSMIT_REQUEST_COUNT
 
 config DOWNLOAD_CLIENT_RANGE_REQUESTS
 	bool "Always use HTTP Range requests"
+	default y
 	help
 	  Always use HTTP Range requests when downloading (RFC 7233).
 	  This option can be useful to limit the amount of incoming data from the server
