@@ -28,15 +28,6 @@ extern "C" {
  * @brief Modem library wrapper.
  */
 
-
-/** @brief Modem library mode */
-enum nrf_modem_mode {
-	/** Normal operation mode */
-	NORMAL_MODE,
-	/** Bootloader (full DFU) mode */
-	BOOTLOADER_MODE,
-};
-
 /**
  * @brief Initialize the Modem library and turn on the modem.
  *
