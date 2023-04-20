@@ -15,7 +15,7 @@
 
 NRFX_STATIC_ASSERT(true);
 
-static void test_build(void)
+ZTEST(test_nrfx_integration, test_build)
 {
 	IRQn_Type dummy_irq_number = (IRQn_Type)0;
 	nrfx_atomic_t dummy_atomic_object;
@@ -50,11 +50,4 @@ static void test_build(void)
 			 NRFX_EGUS_USED | NRFX_TIMERS_USED;
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_nrfx_integration,
-		ztest_unit_test(test_build)
-	);
-
-	ztest_run_test_suite(test_nrfx_integration);
-}
+ZTEST_SUITE(test_nrfx_integration, NULL, NULL, NULL, NULL, NULL);
