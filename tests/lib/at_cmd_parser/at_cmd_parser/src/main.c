@@ -23,19 +23,23 @@
 #define EMPTYPARAMLINE_PARAM_COUNT  6
 #define CERTIFICATE_PARAM_COUNT     5
 
-const char *singleline[] = { "+CEREG: 2,\"76C1\",\"0102DA04\", 7\r\n+CME ERROR: 10\r\n",
-			     "+CEREG: 2,\"76C1\",\"0102DA04\", 7\r\nOK\r\n",
-			     "+CEREG: 2,\"76C1\",\"0102DA04\", 7\r\n" };
-const char *multiline[] = { "+CGEQOSRDP: 0,0,,\r\n"
-			    "+CGEQOSRDP: 1,2,,\r\n"
-			    "+CGEQOSRDP: 2,4,,,1,65280000\r\n",
-			    "+CGEQOSRDP: 0,0,,\r\n"
-			    "+CGEQOSRDP: 1,2,,\r\n"
-			    "+CGEQOSRDP: 2,4,,,1,65280000\r\nOK\r\n"
-			    "+CGEQOSRDP: 0,0,,\r\n"
-			    "+CGEQOSRDP: 1,2,,\r\n"
-			    "+CGEQOSRDP: 2,4,,,1,65280000\r\nERROR\r\n" };
-const char *pduline[] = {
+static const char * const singleline[] = {
+	"+CEREG: 2,\"76C1\",\"0102DA04\", 7\r\n+CME ERROR: 10\r\n",
+	"+CEREG: 2,\"76C1\",\"0102DA04\", 7\r\nOK\r\n",
+	"+CEREG: 2,\"76C1\",\"0102DA04\", 7\r\n"
+};
+static const char * const multiline[] = {
+	"+CGEQOSRDP: 0,0,,\r\n"
+	"+CGEQOSRDP: 1,2,,\r\n"
+	"+CGEQOSRDP: 2,4,,,1,65280000\r\n",
+	"+CGEQOSRDP: 0,0,,\r\n"
+	"+CGEQOSRDP: 1,2,,\r\n"
+	"+CGEQOSRDP: 2,4,,,1,65280000\r\nOK\r\n"
+	"+CGEQOSRDP: 0,0,,\r\n"
+	"+CGEQOSRDP: 1,2,,\r\n"
+	"+CGEQOSRDP: 2,4,,,1,65280000\r\nERROR\r\n"
+};
+static const char * const pduline[] = {
 	"+CMT: \"12345678\", 24\r\n"
 	"06917429000171040A91747966543100009160402143708006C8329BFD0601\r\n+CME ERROR: 123\r\n",
 	"+CMT: \"12345678\", 24\r\n"
@@ -47,30 +51,43 @@ const char *pduline[] = {
 	"\r\n+CMT: \"12345678\", 24\r\n"
 	"06917429000171040A91747966543100009160402143708006C8329BFD0601\r\n"
 };
-const char *singleparamline[] = {
+static const char * const singleparamline[] = {
 	"mfw_nrf9160_0.7.0-23.prealpha\r\n+CMS ERROR: 123\r\n",
 	"mfw_nrf9160_0.7.0-23.prealpha\r\nOK\r\n",
 	"mfw_nrf9160_0.7.0-23.prealpha\r\n"
 };
-const char *emptyparamline[] = { "+CPSMS: 1,,,\"10101111\",\"01101100\"\r\n",
-				 "+CPSMS: 1,,,\"10101111\",\"01101100\"\r\nOK\r\n",
-				 "+CPSMS: 1,,,\"10101111\",\"01101100\"\r\n+CME ERROR: 123\r\n" };
-const char *certificate = "%CMNG: 12345678, 0, \"978C...02C4\","
-			  "\"-----BEGIN CERTIFICATE-----"
-			  "MIIBc464..."
-			  "...bW9aAa4"
-			  "-----END CERTIFICATE-----\"\r\nERROR\r\n";
+static const char * const emptyparamline[] = {
+	"+CPSMS: 1,,,\"10101111\",\"01101100\"\r\n",
+	"+CPSMS: 1,,,\"10101111\",\"01101100\"\r\nOK\r\n",
+	"+CPSMS: 1,,,\"10101111\",\"01101100\"\r\n+CME ERROR: 123\r\n"
+};
+static const char * const certificate =
+	"%CMNG: 12345678, 0, \"978C...02C4\","
+	"\"-----BEGIN CERTIFICATE-----"
+	"MIIBc464..."
+	"...bW9aAa4"
+	"-----END CERTIFICATE-----\"\r\nERROR\r\n";
 
 static struct at_param_list test_list;
 static struct at_param_list test_list2;
 
-static void test_params_fail_on_invalid_input_setup(void)
+static void test_params_before(void *fixture)
 {
+	ARG_UNUSED(fixture);
+
 	at_params_list_init(&test_list, TEST_PARAMS);
 	at_params_list_init(&test_list2, TEST_PARAMS2);
 }
 
-static void test_params_fail_on_invalid_input(void)
+static void test_params_after(void *fixture)
+{
+	ARG_UNUSED(fixture);
+
+	at_params_list_free(&test_list2);
+	at_params_list_free(&test_list);
+}
+
+ZTEST(at_cmd_parser, test_params_fail_on_invalid_input)
 {
 	int ret;
 	static struct at_param_list uninitialized;
@@ -125,19 +142,7 @@ static void test_params_fail_on_invalid_input(void)
 	}
 }
 
-static void test_params_fail_on_invalid_input_teardown(void)
-{
-	at_params_list_free(&test_list2);
-	at_params_list_free(&test_list);
-}
-
-
-static void test_params_string_parsing_setup(void)
-{
-	at_params_list_init(&test_list2, TEST_PARAMS2);
-}
-
-static void test_params_string_parsing(void)
+ZTEST(at_cmd_parser, test_params_string_parsing)
 {
 	int ret;
 	char *remainder = NULL;
@@ -274,17 +279,7 @@ static void test_params_string_parsing(void)
 		      "equal to FOOBAR");
 }
 
-static void test_params_string_parsing_teardown(void)
-{
-	at_params_list_free(&test_list2);
-}
-
-static void test_params_empty_params_setup(void)
-{
-	at_params_list_init(&test_list2, TEST_PARAMS2);
-}
-
-static void test_params_empty_params(void)
+ZTEST(at_cmd_parser, test_params_empty_params)
 {
 	const char *str1 = "+TEST: 1,\r\n";
 	const char *str2 = "+TEST: ,1\r\n";
@@ -352,17 +347,7 @@ static void test_params_empty_params(void)
 	}
 }
 
-static void test_params_empty_params_teardown(void)
-{
-	at_params_list_free(&test_list2);
-}
-
-static void test_testcases_setup(void)
-{
-	at_params_list_init(&test_list2, TEST_PARAMS2);
-}
-
-static void test_testcases(void)
+ZTEST(at_cmd_parser, test_testcases)
 {
 	int ret;
 	char *remainding;
@@ -530,17 +515,7 @@ static void test_testcases(void)
 		     "Param type at index 4 should be a string");
 }
 
-static void test_testcases_teardown(void)
-{
-	at_params_list_free(&test_list2);
-}
-
-static void test_at_cmd_set_setup(void)
-{
-	at_params_list_init(&test_list2, TEST_PARAMS2);
-}
-
-static void test_at_cmd_set(void)
+ZTEST(at_cmd_parser, test_at_cmd_set)
 {
 	int ret;
 	char tmpbuf[64];
@@ -703,17 +678,7 @@ static void test_at_cmd_set(void)
 		      "The string in tmpbuf should equal to clac_str");
 }
 
-static void test_at_cmd_set_teardown(void)
-{
-	at_params_list_free(&test_list2);
-}
-
-static void test_at_cmd_read_setup(void)
-{
-	at_params_list_init(&test_list2, TEST_PARAMS2);
-}
-
-static void test_at_cmd_read(void)
+ZTEST(at_cmd_parser, test_at_cmd_read)
 {
 	int ret;
 	char tmpbuf[32];
@@ -741,17 +706,7 @@ static void test_at_cmd_read(void)
 		      "The string in tmpbuf should equal to AT+CFUN");
 }
 
-static void test_at_cmd_read_teardown(void)
-{
-	at_params_list_free(&test_list2);
-}
-
-static void test_at_cmd_test_setup(void)
-{
-	at_params_list_init(&test_list2, TEST_PARAMS2);
-}
-
-static void test_at_cmd_test(void)
+ZTEST(at_cmd_parser, test_at_cmd_test)
 {
 	int ret;
 	char tmpbuf[32];
@@ -779,43 +734,4 @@ static void test_at_cmd_test(void)
 		      "The string in tmpbuf should equal to AT+CFUN");
 }
 
-static void test_at_cmd_test_teardown(void)
-{
-	at_params_list_free(&test_list2);
-}
-
-void test_main(void)
-{
-	ztest_test_suite(at_cmd_parser,
-			 ztest_unit_test_setup_teardown(
-				test_params_fail_on_invalid_input,
-				test_params_fail_on_invalid_input_setup,
-				test_params_fail_on_invalid_input_teardown),
-			 ztest_unit_test_setup_teardown(
-				test_params_string_parsing,
-				test_params_string_parsing_setup,
-				test_params_string_parsing_teardown),
-			 ztest_unit_test_setup_teardown(
-				test_params_empty_params,
-				test_params_empty_params_setup,
-				test_params_empty_params_teardown),
-			 ztest_unit_test_setup_teardown(
-				test_testcases,
-				test_testcases_setup,
-				test_testcases_teardown),
-			 ztest_unit_test_setup_teardown(
-				test_at_cmd_set,
-				test_at_cmd_set_setup,
-				test_at_cmd_set_teardown),
-			 ztest_unit_test_setup_teardown(
-				test_at_cmd_read,
-				test_at_cmd_read_setup,
-				test_at_cmd_read_teardown),
-			 ztest_unit_test_setup_teardown(
-				test_at_cmd_test,
-				test_at_cmd_test_setup,
-				test_at_cmd_test_teardown)
-			);
-
-	ztest_run_test_suite(at_cmd_parser);
-}
+ZTEST_SUITE(at_cmd_parser, NULL, NULL, test_params_before, test_params_after, NULL);
