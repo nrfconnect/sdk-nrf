@@ -123,7 +123,7 @@ config NRF700X_RX_NUM_BUFS
 
 config NRF700X_MAX_TX_AGGREGATION
 	int "Maximum number of TX packets to aggregate"
-	default 15
+	default 12
 
 config NRF700X_MAX_TX_TOKENS
 	int "Maximum number of TX tokens"
