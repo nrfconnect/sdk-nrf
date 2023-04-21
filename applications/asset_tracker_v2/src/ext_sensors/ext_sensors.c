@@ -81,7 +81,21 @@ static struct env_sensor accel_sensor_lp = {
 	.dev = DEVICE_DT_GET(DT_ALIAS(accelerometer)),
 };
 
+static struct sensor_trigger adxl362_sensor_trigger_motion = {
+		.chan = SENSOR_CHAN_ACCEL_XYZ,
+		.type = SENSOR_TRIG_MOTION
+};
+
+static struct sensor_trigger adxl362_sensor_trigger_stationary = {
+		.chan = SENSOR_CHAN_ACCEL_XYZ,
+		.type = SENSOR_TRIG_STATIONARY
+};
+
 #if defined(CONFIG_EXTERNAL_SENSORS_IMPACT_DETECTION)
+static struct sensor_trigger adxl372_sensor_trigger = {
+	.chan = SENSOR_CHAN_ACCEL_XYZ,
+	.type = SENSOR_TRIG_THRESHOLD
+};
 /** Sensor struct for the high-G accelerometer */
 static struct env_sensor accel_sensor_hg = {
 	.channel = SENSOR_CHAN_ACCEL_XYZ,
@@ -128,7 +142,7 @@ static void accelerometer_trigger_handler(const struct device *dev,
 
 		break;
 	default:
-		LOG_ERR("Unknown trigger");
+		LOG_ERR("Unknown trigger: %d", trig->type);
 	}
 }
 
@@ -221,13 +235,8 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 		evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ERROR;
 		evt_handler(&evt);
 	} else {
-		struct sensor_trigger trig = {
-			.chan = SENSOR_CHAN_ACCEL_XYZ,
-			.type = SENSOR_TRIG_THRESHOLD
-		};
-
 		int err = sensor_trigger_set(accel_sensor_hg.dev,
-					     &trig, impact_trigger_handler);
+					     &adxl372_sensor_trigger, impact_trigger_handler);
 		if (err) {
 			LOG_ERR("Could not set trigger for device %s, error: %d",
 				accel_sensor_hg.dev->name, err);
@@ -436,20 +445,15 @@ int ext_sensors_inactivity_timeout_set(double inact_time)
 int ext_sensors_accelerometer_trigger_callback_set(bool enable)
 {
 	int err;
-	struct sensor_trigger trig = {
-		.chan = SENSOR_CHAN_ACCEL_XYZ,
-		.type = SENSOR_TRIG_MOTION
-	};
 	struct ext_sensor_evt evt = {0};
 
 	sensor_trigger_handler_t handler = enable ? accelerometer_trigger_handler : NULL;
 
-	err = sensor_trigger_set(accel_sensor_lp.dev, &trig, handler);
+	err = sensor_trigger_set(accel_sensor_lp.dev, &adxl362_sensor_trigger_motion, handler);
 	if (err) {
 		goto error;
 	}
-	trig.type = SENSOR_TRIG_STATIONARY;
-	err = sensor_trigger_set(accel_sensor_lp.dev, &trig, handler);
+	err = sensor_trigger_set(accel_sensor_lp.dev, &adxl362_sensor_trigger_stationary, handler);
 	if (err) {
 		goto error;
 	}
