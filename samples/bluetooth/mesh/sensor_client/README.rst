@@ -39,6 +39,7 @@ The following Bluetooth mesh sensor types are used in this sample:
 * :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` - Periodically requested by the client.
 * :c:var:`bt_mesh_sensor_presence_detected` - Published when a button is pressed on the server.
 * :c:var:`bt_mesh_sensor_time_since_presence_detected` - Periodically requested by the client and published by the server according to its publishing period.
+* :c:var:`bt_mesh_sensor_motion_threshold` - Used as a setting for the :c:var:`bt_mesh_sensor_presence_detected` sensor type to set the time (0-10 seconds) before the presence is detected.
 
 
 Provisioning
@@ -91,6 +92,9 @@ Button 2:
 
 Button 3:
    Sends a get message for a descriptor, requesting information about the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
+
+Button 4:
+   Sends a set message for a sensor setting, switching between the ranges specified in the :c:var:`presence_motion_threshold` variable.
 
 Terminal:
    All sensor values gathered from the server are printed over UART.

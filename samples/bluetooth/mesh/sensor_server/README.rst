@@ -45,6 +45,7 @@ The following Bluetooth mesh sensor types are used in this sample:
 * :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` - Periodically requested by the client.
 * :c:var:`bt_mesh_sensor_presence_detected` - Published when a button is pressed on the server.
 * :c:var:`bt_mesh_sensor_time_since_presence_detected` - Periodically requested by the client and published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`).
+* :c:var:`bt_mesh_sensor_motion_threshold` - Used as a setting for the :c:var:`bt_mesh_sensor_presence_detected` sensor type to set the time (0-10 seconds) before the presence is detected.
 
 Moreover, the on-chip ``TEMP_NRF5`` temperature sensor is used for the nRF52 series, and the ``BME680`` temperature sensor for Thingy:53.
 
@@ -98,8 +99,11 @@ Buttons:
    Can be used to input the OOB authentication value during provisioning.
    All buttons have the same functionality during the provisioning procedure.
 
+Once the provisioning procedure has completed, the buttons will have the following functionality:
+
 Button 1:
-   Simulates presence detected (after the provisioning procedure is finished).
+   Simulates presence detected. The time the button need to be pressed, before the presence is detected, depends on the motion threshold. The motion threshold has five steps from 0% (representing 0 seconds) to 100% (representing 10 seconds) separated by 25%.
+
 
 Configuration
 *************

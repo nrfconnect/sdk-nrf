@@ -45,8 +45,10 @@ static struct bt_mesh_sensor_column temp_range = {
 static const struct device *dev = DEVICE_DT_GET(SENSOR_NODE);
 static uint32_t tot_temp_samps;
 static uint32_t col_samps[ARRAY_SIZE(columns)];
+static struct sensor_value pres_mot_thres = { .val1 = 25, .val2 = 0 };
 
-static int32_t prev_pres;
+static int32_t pres_detect;
+static uint32_t prev_detect;
 
 static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
 			 struct bt_mesh_sensor *sensor,
@@ -207,8 +209,92 @@ static struct bt_mesh_sensor rel_chip_temp_runtime = {
 		},
 };
 
+static void presence_motion_threshold_get(struct bt_mesh_sensor_srv *srv,
+	struct bt_mesh_sensor *sensor,
+	const struct bt_mesh_sensor_setting *setting,
+	struct bt_mesh_msg_ctx *ctx,
+	struct sensor_value *rsp)
+{
+	rsp[0] = pres_mot_thres;
+	printk("Presence motion threshold: %u [%d ms]\n", rsp[0].val1, 100 * rsp[0].val1);
+}
+
+static int presence_motion_threshold_set(struct bt_mesh_sensor_srv *srv,
+	struct bt_mesh_sensor *sensor,
+	const struct bt_mesh_sensor_setting *setting,
+	struct bt_mesh_msg_ctx *ctx,
+	const struct sensor_value *value)
+{
+	pres_mot_thres = value[0];
+	printk("Presence motion threshold: %u [%d ms]\n", value[0].val1, 100 * value[0].val1);
+
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		int err;
+
+		err = settings_save_one("presence/motion_threshold",
+					&pres_mot_thres, sizeof(pres_mot_thres));
+		if (err) {
+			printk("Error storing setting (%d)\n", err);
+		} else {
+			printk("Stored setting\n");
+		}
+	}
+	return 0;
+}
+
+static struct bt_mesh_sensor_setting presence_motion_threshold_setting[] = { {
+	.type = &bt_mesh_sensor_motion_threshold,
+	.get = presence_motion_threshold_get,
+	.set = presence_motion_threshold_set,
+} };
+
+static int presence_motion_threshold_settings_restore(const char *name,
+	size_t len,
+	settings_read_cb read_cb,
+	void *cb_arg)
+{
+	const char *next;
+	int rc;
+
+	if (!(settings_name_steq(name, "motion_threshold", &next) && !next)) {
+		return -ENOENT;
+	}
+
+	if (len != sizeof(pres_mot_thres)) {
+		return -EINVAL;
+	}
+
+	rc = read_cb(cb_arg, &pres_mot_thres, sizeof(pres_mot_thres));
+	if (rc < 0) {
+		return rc;
+	}
+
+	printk("Restored presence motion threshold setting\n");
+	return 0;
+}
+
+struct settings_handler presence_motion_threshold_conf = {
+	.name = "presence",
+	.h_set = presence_motion_threshold_settings_restore
+};
+
+static int presence_detected_get(struct bt_mesh_sensor_srv *srv,
+				 struct bt_mesh_sensor *sensor,
+				 struct bt_mesh_msg_ctx *ctx,
+				 struct sensor_value *rsp)
+{
+	rsp->val1 = pres_detect;
+
+	return 0;
+};
+
 static struct bt_mesh_sensor presence_sensor = {
 	.type = &bt_mesh_sensor_presence_detected,
+	.get = presence_detected_get,
+	.settings = {
+		.list = (const struct bt_mesh_sensor_setting *)&presence_motion_threshold_setting,
+		.count = ARRAY_SIZE(presence_motion_threshold_setting),
+	},
 };
 
 static int time_since_presence_detected_get(struct bt_mesh_sensor_srv *srv,
@@ -216,10 +302,15 @@ static int time_since_presence_detected_get(struct bt_mesh_sensor_srv *srv,
 					struct bt_mesh_msg_ctx *ctx,
 					struct sensor_value *rsp)
 {
-	if (prev_pres) {
-		rsp->val1 = (k_uptime_get_32() - prev_pres) / MSEC_PER_SEC;
-	} else {
+	if (pres_detect) {
 		rsp->val1 = 0;
+	} else if (prev_detect) {
+		rsp->val1 = (k_uptime_get_32() - prev_detect) / MSEC_PER_SEC;
+	} else {
+		/* Before first detection, the time since last detection is unknown. Returning
+		 * unknown value until a detection is done. Value is defined in specification.
+		 */
+		rsp->val1 = 0xFFFF;
 	}
 
 	return 0;
@@ -240,9 +331,9 @@ static struct bt_mesh_sensor *const sensors[] = {
 static struct bt_mesh_sensor_srv sensor_srv =
 	BT_MESH_SENSOR_SRV_INIT(sensors, ARRAY_SIZE(sensors));
 
-static struct k_work_delayable end_of_presence_work;
+static struct k_work_delayable presence_detected_work;
 
-static void end_of_presence(struct k_work *work)
+static void presence_detected(struct k_work *work)
 {
 	int err;
 
@@ -250,7 +341,7 @@ static void end_of_presence(struct k_work *work)
 	 * .val1 can only be '0' or '1'
 	 */
 	struct sensor_value val = {
-		.val1 = 0,
+		.val1 = 1,
 	};
 
 	err = bt_mesh_sensor_srv_pub(&sensor_srv, NULL, &presence_sensor, &val);
@@ -258,6 +349,8 @@ static void end_of_presence(struct k_work *work)
 	if (err) {
 		printk("Error publishing end of presence (%d)\n", err);
 	}
+
+	pres_detect = 1;
 }
 
 static void button_handler_cb(uint32_t pressed, uint32_t changed)
@@ -266,26 +359,33 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 		return;
 	}
 
-	if (pressed & BIT(0)) {
-		int err;
+	if (pressed & changed & BIT(0)) {
+		k_work_reschedule(&presence_detected_work, K_MSEC(100 * pres_mot_thres.val1));
+	}
 
-		/* This sensor value must be boolean -
-		 * .val1 can only be '0' or '1'
-		 */
-		struct sensor_value val = {
-			.val1 = 1,
-		};
+	if ((!pressed) & changed & BIT(0)) {
+		if (!pres_detect) {
+			k_work_cancel_delayable(&presence_detected_work);
+		} else {
+			int err;
 
-		err = bt_mesh_sensor_srv_pub(&sensor_srv, NULL,
-					     &presence_sensor, &val);
+			/* This sensor value must be boolean -
+			 * .val1 can only be '0' or '1'
+			 */
+			struct sensor_value val = {
+				.val1 = 0,
+			};
 
-		if (err) {
-			printk("Error publishing presence (%d)\n", err);
+			err = bt_mesh_sensor_srv_pub(&sensor_srv, NULL,
+						&presence_sensor, &val);
+
+			if (err) {
+				printk("Error publishing presence (%d)\n", err);
+			}
+
+			pres_detect = 0;
+			prev_detect = k_uptime_get_32();
 		}
-
-		prev_pres = k_uptime_get_32();
-
-		k_work_reschedule(&end_of_presence_work, K_MSEC(2000));
 	}
 }
 
@@ -366,7 +466,7 @@ static const struct bt_mesh_comp comp = {
 const struct bt_mesh_comp *model_handler_init(void)
 {
 	k_work_init_delayable(&attention_blink_work, attention_blink);
-	k_work_init_delayable(&end_of_presence_work, end_of_presence);
+	k_work_init_delayable(&presence_detected_work, presence_detected);
 
 	if (!device_is_ready(dev)) {
 		printk("Temperature sensor not ready\n");
@@ -379,6 +479,7 @@ const struct bt_mesh_comp *model_handler_init(void)
 	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
 		settings_subsys_init();
 		settings_register(&temp_range_conf);
+		settings_register(&presence_motion_threshold_conf);
 	}
 
 	return &comp;
