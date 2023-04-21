@@ -2495,6 +2495,12 @@ SoftDevice Controller
 
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v2-3-0
+
+DRGN-18651: Scanner may fail to deliver advertising reports
+  There is a chance of failure if an advertising report is received just before the scanner times out or is disabled.
+  This can lead to the scanner not delivering any further advertising reports when re-enabled.
+
 .. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
 DRGN-18261: SoftDevice Controller wrongly uses non-zero randomness for the first advertising event
