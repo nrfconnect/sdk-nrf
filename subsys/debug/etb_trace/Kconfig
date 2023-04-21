@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config ETB_TRACE
+	bool "Enable ETB trace [EXPERIMENTAL]"
+	depends on SOC_SERIES_NRF91X
+	select EXPERIMENTAL
+	help
+	  Enable tracing using Coresight modules such as ETM, ITM and storing of traces to ETB.
+
+if ETB_TRACE
+
+config ETB_TRACE_SYS_INIT
+	bool "Initialize automatically"
+	default y
+
+config ETB_TRACE_LOW_POWER
+	bool "Low power ETB trace"
+	select ARM_ON_ENTER_CPU_IDLE_HOOK
+	help
+	  Tracing requires the debug system in the SoC to be enabled, which increases overall
+	  power consumption by several mA.
+	  Enabling this option will reduce the power consumption by disabling tracing when the
+	  CPU is about to go to idle for a period longer than
+	  CONFIG_ETB_TRACE_LOW_POWER_MIN_IDLE_TIME_MS.
+	  Enabling this option will introduce latency to the system, as it will run code both
+	  when entering and exiting idle, including when entering ISRs.
+	  It may also have other unknown side effects to the system behavior.
+
+config ETB_TRACE_LOW_POWER_MIN_IDLE_TIME_MS
+	int "Minimum idle time"
+	default 1000
+	depends on ETB_TRACE_LOW_POWER
+
+endif # ETB_TRACE

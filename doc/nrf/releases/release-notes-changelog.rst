@@ -479,6 +479,11 @@ Bootloader libraries
 
 |no_changes_yet_note|
 
+Debug libraries
+---------------
+
+* Added the :ref:`etb_trace` library for instruction traces.
+
 Modem libraries
 ---------------
 
