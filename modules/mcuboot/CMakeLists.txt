@@ -489,13 +489,29 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         )
     else()
       # No network core update
-      set(generate_bin_files
-        ${PROJECT_BINARY_DIR}/${app_core_binary_name}
-        )
-      set(generate_script_params
-        "load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
-        "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
-        )
+      if(CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT)
+        set(secondary_app_core_binary_name mcuboot_secondary_app_update.bin)
+        set(generate_bin_files
+          ${PROJECT_BINARY_DIR}/${app_core_binary_name}
+          ${PROJECT_BINARY_DIR}/${secondary_app_core_binary_name}
+          )
+        set(generate_script_params
+          "${app_core_binary_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_APP_ADDRESS>"
+          "${app_core_binary_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMAGE_VERSION}"
+          "${app_core_binary_name}slot=0"
+          "${secondary_app_core_binary_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_SECONDARY_APP_ADDRESS>"
+          "${secondary_app_core_binary_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMAGE_VERSION}"
+          "${secondary_app_core_binary_name}slot=1"
+          )
+      else()
+        set(generate_bin_files
+          ${PROJECT_BINARY_DIR}/${app_core_binary_name}
+          )
+        set(generate_script_params
+          "load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
+          "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
+          )
+      endif()
     endif()
 
     generate_dfu_zip(

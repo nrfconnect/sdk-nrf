@@ -573,7 +573,11 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-* Added support for the downgrade prevention feature using hardware security counters (:kconfig:option:`CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`).
+* Added:
+
+  * Support for the downgrade prevention feature using hardware security counters (:kconfig:option:`CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`).
+  * Generation of a new variant of the :file:`dfu_application.zip` when the :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT` Kconfig option is enabled.
+    Mentioned archive now contains images for both slots, primary and secondary.
 
 Zephyr
 ======
