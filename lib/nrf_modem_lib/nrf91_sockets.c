@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include <zephyr/init.h>
 #include <zephyr/net/socket_offload.h>
+#include <zephyr/net/offloaded_netdev.h>
 #include <nrf_socket.h>
 #include <nrf_errno.h>
 #include <nrf_gai_errors.h>
@@ -1049,7 +1050,7 @@ NET_SOCKET_REGISTER(nrf91_socket, NRF91_SOCKET_PRIORITY, AF_UNSPEC,
 
 /* Create a network interface for nRF91 */
 
-static int nrf91_nrf_modem_lib_socket_offload_init(const struct device *arg)
+static int nrf91_socket_offload_init(const struct device *arg)
 {
 	ARG_UNUSED(arg);
 
@@ -1065,28 +1066,38 @@ static const struct socket_dns_offload nrf91_socket_dns_offload_ops = {
 	.freeaddrinfo = nrf91_socket_offload_freeaddrinfo,
 };
 
-static struct nrf91_socket_iface_data {
+static struct nrf91_iface_data {
 	struct net_if *iface;
-} nrf91_socket_iface_data;
+} nrf91_iface_data;
 
-static void nrf91_socket_iface_init(struct net_if *iface)
+static void nrf91_iface_api_init(struct net_if *iface)
 {
-	nrf91_socket_iface_data.iface = iface;
+	nrf91_iface_data.iface = iface;
 
 	iface->if_dev->socket_offload = nrf91_socket_create;
 
 	socket_offload_dns_register(&nrf91_socket_dns_offload_ops);
 }
 
-static struct net_if_api nrf91_if_api = {
-	.init = nrf91_socket_iface_init,
+static int nrf91_iface_enable(const struct net_if *iface, bool enabled)
+{
+	/* Enables or disable the device (in response to admin state change) */
+	ARG_UNUSED(iface);
+	ARG_UNUSED(enabled);
+
+	return 0;
+}
+
+static struct offloaded_if_api nrf91_iface_offload_api = {
+	.iface_api.init = nrf91_iface_api_init,
+	.enable = nrf91_iface_enable,
 };
 
 /* TODO Get the actual MTU for the nRF91 LTE link. */
 NET_DEVICE_OFFLOAD_INIT(nrf91_socket, "nrf91_socket",
-			nrf91_nrf_modem_lib_socket_offload_init,
+			nrf91_socket_offload_init,
 			NULL,
-			&nrf91_socket_iface_data, NULL,
-			0, &nrf91_if_api, 1280);
+			&nrf91_iface_data, NULL,
+			0, &nrf91_iface_offload_api, 1280);
 
 #endif
