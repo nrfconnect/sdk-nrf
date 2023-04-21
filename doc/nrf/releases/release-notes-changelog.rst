@@ -597,6 +597,9 @@ The following list summarizes both the main changes inherited from upstream MCUb
   * Support for the downgrade prevention feature using hardware security counters (:kconfig:option:`CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`).
   * Generation of a new variant of the :file:`dfu_application.zip` when the :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT` Kconfig option is enabled.
     Mentioned archive now contains images for both slots, primary and secondary.
+  * Encoding of the image start address into the header when the :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT` Kconfig option is enabled.
+    The encoding is done using the ``--rom-fixed`` argument of the :file:`imgtool.py` script.
+    If the currently running application also has the :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT` Kconfig option enabled, the MCUmgr will reject application image updates signed without the start address.
 
 Zephyr
 ======
