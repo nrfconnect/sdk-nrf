@@ -314,6 +314,10 @@ nRF9160 samples
 
     * The Hello World message sent to nRF Cloud now contains a timestamp (message ID).
 
+* :ref:`memfault_sample` sample:
+
+  * Added Kconfig fragment overlay to enable ETB trace.
+
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
