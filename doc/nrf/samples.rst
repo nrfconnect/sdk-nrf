@@ -27,6 +27,7 @@ Those samples are a good starting point for understanding how to put together yo
    samples/edge
    samples/gazell
    samples/matter
+   samples/net
    samples/nfc
    samples/nrf5340
    samples/nrf9160

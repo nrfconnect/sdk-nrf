@@ -9,4 +9,3 @@ Wi-Fi samples
    :glob:
 
    ../../../samples/wifi/*/README
-    ../../../samples/net/*/README
