@@ -356,7 +356,7 @@ nRF9160 samples
   * Moved from :file:`nrf9160/memfault` to :file:`debug/memfault`.
     The documentation is now found in the :ref:`debug_samples` section.
   * Added support for the nRF7002 DK.
-
+  * Added a Kconfig fragment to enable ETB trace.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------

@@ -1026,7 +1026,7 @@
 .. _`ARM Flash Patch and Breakpoint Unit`: https://developer.arm.com/documentation/100166/0001/Debug/Flash-Patch-and-Breakpoint-Unit--FPB-
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
 .. _`IDAU`: https://developer.arm.com/docs/100690/latest/attribution-units-sau-and-idau
-.. _`ARM Coresight`: https://developer.arm.com/documentation/100536/0302
+.. _`ARM CoreSight`: https://developer.arm.com/documentation/100536/0302
 
 .. ### Source: etsi.org
 
