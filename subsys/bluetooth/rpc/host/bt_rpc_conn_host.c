@@ -964,7 +964,7 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_set_bondable, BT_SET_BONDABLE_RPC_CMD,
 			 bt_set_bondable_rpc_handler, NULL);
 
 
-static void bt_set_oob_data_flag_rpc_handler(const struct nrf_rpc_group *group,
+static void bt_le_oob_set_legacy_flag_rpc_handler(const struct nrf_rpc_group *group,
 					     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	bool enable;
@@ -975,17 +975,42 @@ static void bt_set_oob_data_flag_rpc_handler(const struct nrf_rpc_group *group,
 		goto decoding_error;
 	}
 
-	bt_set_oob_data_flag(enable);
+	bt_le_oob_set_legacy_flag(enable);
 
 	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
-	report_decoding_error(BT_SET_OOB_DATA_FLAG_RPC_CMD, handler_data);
+	report_decoding_error(BT_LE_OOB_SET_LEGACY_FLAG_RPC_CMD, handler_data);
 }
 
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_set_oob_data_flag, BT_SET_OOB_DATA_FLAG_RPC_CMD,
-			 bt_set_oob_data_flag_rpc_handler, NULL);
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_oob_set_legacy_flag, BT_LE_OOB_SET_LEGACY_FLAG_RPC_CMD,
+			 bt_le_oob_set_legacy_flag_rpc_handler, NULL);
+
+
+static void bt_le_oob_set_sc_flag_rpc_handler(const struct nrf_rpc_group *group,
+					     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	bool enable;
+
+	enable = ser_decode_bool(ctx);
+
+	if (!ser_decoding_done_and_check(group, ctx)) {
+		goto decoding_error;
+	}
+
+	bt_le_oob_set_sc_flag(enable);
+
+	ser_rsp_send_void(group);
+
+	return;
+decoding_error:
+	report_decoding_error(BT_LE_OOB_SET_SC_FLAG_RPC_CMD, handler_data);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_oob_set_sc_flag, BT_LE_OOB_SET_SC_FLAG_RPC_CMD,
+			 bt_le_oob_set_sc_flag_rpc_handler, NULL);
+
 
 #if !defined(CONFIG_BT_SMP_SC_PAIR_ONLY)
 static void bt_le_oob_set_legacy_tk_rpc_handler(const struct nrf_rpc_group *group,

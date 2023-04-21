@@ -1175,7 +1175,7 @@ void bt_set_bondable(bool enable)
 				&ctx, ser_rsp_decode_void, NULL);
 }
 
-void bt_set_oob_data_flag(bool enable)
+void bt_le_oob_set_legacy_flag(bool enable)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t buffer_size_max = 1;
@@ -1184,7 +1184,20 @@ void bt_set_oob_data_flag(bool enable)
 
 	ser_encode_bool(&ctx, enable);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_SET_OOB_DATA_FLAG_RPC_CMD,
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_OOB_SET_LEGACY_FLAG_RPC_CMD,
+				&ctx, ser_rsp_decode_void, NULL);
+}
+
+void bt_le_oob_set_sc_flag(bool enable)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t buffer_size_max = 1;
+
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
+
+	ser_encode_bool(&ctx, enable);
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_OOB_SET_SC_FLAG_RPC_CMD,
 				&ctx, ser_rsp_decode_void, NULL);
 }
 
