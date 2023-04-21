@@ -6,7 +6,8 @@
 
 menu "Debug"
 
-rsource "ppi_trace/Kconfig"
 rsource "cpu_load/Kconfig"
+rsource "etb_trace/Kconfig"
+rsource "ppi_trace/Kconfig"
 
 endmenu

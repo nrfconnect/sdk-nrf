@@ -402,6 +402,8 @@ Libraries
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
 
+* Added :ref:`etb_trace` library for instruction traces.
+
 Binary libraries
 ----------------
 
