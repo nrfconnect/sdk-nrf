@@ -26,4 +26,8 @@ zephyr_library_sources_ifdef(
         CONFIG_MEMFAULT_NCS_BT_METRICS
         memfault_bt_metrics.c)
 
+zephyr_library_sources_ifdef(
+        CONFIG_MEMFAULT_NCS_ETB_CAPTURE
+        memfault_etb_trace_capture.c)
+
 zephyr_include_directories(config)
