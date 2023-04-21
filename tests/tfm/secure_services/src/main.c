@@ -11,6 +11,8 @@
 
  #include <hal/nrf_gpio.h>
 
+ZTEST_SUITE(test_secure_service, NULL, NULL, NULL, NULL, NULL);
+
 static bool is_secure(intptr_t ptr)
 {
 	/* We can not use 'arm_cmse_addr_is_secure here since this firmware
@@ -25,7 +27,7 @@ static bool is_secure(intptr_t ptr)
 	return ptr < PM_ADDRESS;
 }
 
-void test_tfm_read_service(void)
+ZTEST(test_secure_service, test_tfm_read_service)
 {
 	const uint32_t ficr_info_start = NRF_FICR_S_BASE + offsetof(NRF_FICR_Type, INFO);
 	const uint32_t ficr_info_end   = ficr_info_start + sizeof(FICR_INFO_Type);
@@ -99,7 +101,7 @@ void test_tfm_read_service(void)
 #endif /* defined(FICR_NFC_TAGHEADER0_MFGID_Msk) */
 }
 
-void test_tfm_gpio_service(void)
+ZTEST(test_secure_service, test_tfm_gpio_service)
 {
 	uint32_t err = UINT32_MAX;
 	enum tfm_platform_err_t plt_err;
@@ -126,13 +128,4 @@ void test_tfm_gpio_service(void)
 	zassert_equal(plt_err, TFM_PLATFORM_ERR_NOT_SUPPORTED,
 		      "Not supported GPIO mcu select operation returned an unexpected error");
 #endif
-}
-
-void test_main(void)
-{
-	ztest_test_suite(test_secure_service,
-		ztest_unit_test(test_tfm_read_service),
-		ztest_unit_test(test_tfm_gpio_service)
-	);
-	ztest_run_test_suite(test_secure_service);
 }
