@@ -277,6 +277,10 @@ Bluetooth mesh samples
   This configuration is moved to the :file:`ncs/nrf/subsys/bluetooth/mesh/hci_rpmsg_child_image_overlay.conf` file.
 * :ref:`bluetooth_mesh_light_lc` sample is updated to demonstrate the use of sensor server to report additional useful information about the device.
 
+* :ref:`bluetooth_mesh_sensor_server` and :ref:`bluetooth_mesh_sensor_client` samples:
+
+  * Added support for motion threshold as a setting for the presence detection.
+
 nRF9160 samples
 ---------------
 
