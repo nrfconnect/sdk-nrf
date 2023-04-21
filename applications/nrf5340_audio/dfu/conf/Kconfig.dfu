@@ -31,7 +31,7 @@ config AUDIO_DFU_ENABLE
 	default y
 	select EXPERIMENTAL
 	help
-		To show warning message of EXPERIMENTAL feature DFU
+	  To show warning message of EXPERIMENTAL feature DFU
 
 config BOOTLOADER_MCUBOOT
 	bool
