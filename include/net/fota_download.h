@@ -29,6 +29,9 @@ extern "C" {
 
 /**
  * @brief FOTA download event IDs.
+ *
+ * After FINISHED, ERROR or CANCELLED event, the FOTA client is ready to
+ * accept new request.
  */
 enum fota_download_evt_id {
 	/** FOTA download progress report. */
@@ -127,6 +130,9 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
  *
  * When the download is complete, the secondary slot of MCUboot is tagged as having
  * valid firmware inside it. The completion is reported through an event.
+ *
+ * URI parameters (host and file) are not copied, so pointers must stay valid
+ * until download is finished.
  *
  * @param host Name of host to start downloading from. Can include scheme
  *             and port number, for example https://google.com:443
