@@ -9,5 +9,4 @@ nRF9160 samples
    :glob:
 
    ../../../samples/nrf9160/*/README
-   ../../../samples/net/*/README
    ../../../samples/nrf9160/http_update/*/README
