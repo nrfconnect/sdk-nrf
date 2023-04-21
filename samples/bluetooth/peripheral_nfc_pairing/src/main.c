@@ -323,7 +323,8 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 	printk("Pairing completed: %s, bonded: %d\n", addr, bonded);
 
 	k_poll_signal_raise(&pair_signal, 0);
-	bt_set_oob_data_flag(false);
+	bt_le_oob_set_sc_flag(false);
+	bt_le_oob_set_legacy_flag(false);
 }
 
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
@@ -335,14 +336,15 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
 
 	k_poll_signal_raise(&pair_signal, 0);
-	bt_set_oob_data_flag(false);
+	bt_le_oob_set_sc_flag(false);
+	bt_le_oob_set_legacy_flag(false);
 }
 
 static enum bt_security_err pairing_accept(struct bt_conn *conn,
 				const struct bt_conn_pairing_feat *const feat)
 {
 	if (feat->oob_data_flag && (!(feat->auth_req & AUTH_SC_FLAG))) {
-		bt_set_oob_data_flag(true);
+		bt_le_oob_set_legacy_flag(true);
 	}
 
 	return BT_SECURITY_ERR_SUCCESS;
@@ -529,17 +531,14 @@ static int oob_le_data_handle(const struct nfc_ndef_record_desc *rec,
 		return -EINVAL;
 	}
 
-	if (oob->le_sc_data || oob->tk_value) {
-		bt_set_oob_data_flag(true);
-	}
-
 	if (oob->le_sc_data) {
-
+		bt_le_oob_set_sc_flag(true);
 		oob_remote.le_sc_data = *oob->le_sc_data;
 		bt_addr_le_copy(&oob_remote.addr, oob->addr);
 	}
 
 	if (oob->tk_value) {
+		bt_le_oob_set_legacy_flag(true);
 		memcpy(remote_tk_value, oob->tk_value, sizeof(remote_tk_value));
 		use_remote_tk = request;
 	}
