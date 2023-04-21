@@ -34,6 +34,7 @@ static bool fail_on_connect;
 static bool fail_on_start;
 static bool download_with_offset_success;
 static download_client_callback_t download_client_event_handler;
+K_SEM_DEFINE(stop_sem, 0, 1);
 
 int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_callback_t cb)
 {
@@ -70,11 +71,6 @@ int dfu_target_done(bool successful)
 	return 0;
 }
 
-int download_client_disconnect(struct download_client *client)
-{
-	return 0;
-}
-
 int dfu_target_reset(void)
 {
 	return 0;
@@ -82,23 +78,6 @@ int dfu_target_reset(void)
 
 int dfu_target_schedule_update(int img_num)
 {
-	return 0;
-}
-
-int download_client_start(struct download_client *client, const char *file,
-			  size_t from)
-{
-	download_client_start_file = file;
-
-	if (fail_on_start == true) {
-		return -1;
-	}
-
-	if (from == ARBITRARY_IMAGE_OFFSET) {
-		download_with_offset_success = true;
-		k_sem_give(&download_with_offset_sem);
-	}
-
 	return 0;
 }
 
@@ -112,18 +91,6 @@ int download_client_init(struct download_client *client,
 {
 	download_client_event_handler = callback;
 	client->fd = -1;
-	return 0;
-}
-
-int download_client_set_host(struct download_client *client, const char *host,
-			    const struct download_client_cfg *config)
-{
-	if (fail_on_connect == true) {
-		return -1;
-	}
-	/* Mark connection */
-	client->fd = 1;
-
 	return 0;
 }
 
@@ -149,6 +116,20 @@ int download_client_get(struct download_client *client, const char *host,
 
 	return 0;
 }
+
+int download_client_disconnect(struct download_client *client)
+{
+	const struct download_client_evt evt = {
+		.id = DOWNLOAD_CLIENT_EVT_CLOSED,
+	};
+	if (client->fd == -1) {
+		return -EINVAL;
+	}
+	client->fd = -1;
+	download_client_event_handler(&evt);
+	return 0;
+}
+
 
 int z_impl_zsock_inet_pton(sa_family_t family, const char *src, void *dst)
 {
@@ -240,7 +221,7 @@ void client_callback(const struct fota_download_evt *evt)
 	switch (evt->id) {
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		if (fail_on_offset_get == true) {
-			zassert_equal(evt->cause, FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED, NULL);
+			zassert_equal(evt->cause, FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL, NULL);
 			fail_on_offset_get = false;
 			k_sem_give(&download_with_offset_sem);
 		}
@@ -254,6 +235,12 @@ void client_callback(const struct fota_download_evt *evt)
 			fail_on_start = false;
 			k_sem_give(&download_with_offset_sem);
 		}
+		k_sem_give(&stop_sem);
+		break;
+
+	case FOTA_DOWNLOAD_EVT_CANCELLED:
+	case FOTA_DOWNLOAD_EVT_FINISHED:
+		k_sem_give(&stop_sem);
 		break;
 
 	default:
@@ -277,6 +264,8 @@ static void init(void)
 	fail_on_start = false;
 	download_client_start_file = NULL;
 	spm_s0_active_retval = false;
+
+	k_sem_reset(&stop_sem);
 
 	err = fota_download_init(client_callback);
 	zassert_equal(err, 0, NULL);
@@ -312,6 +301,8 @@ static void test_fota_download_start_generic(const char * const resource_locator
 	/* Verify that the download can be canceled with no isse */
 	err = fota_download_cancel();
 	zassert_equal(err, 0, NULL);
+
+	k_sem_take(&stop_sem, K_FOREVER);
 }
 
 
@@ -372,6 +363,7 @@ ZTEST(fota_download_tests, test_download_with_offset)
 	fail_on_offset_get = true;
 	k_sem_take(&download_with_offset_sem, K_SECONDS(2));
 	zassert_false(fail_on_offset_get, NULL);
+	k_sem_take(&stop_sem, K_FOREVER);
 
 	/* Expect the fota_download_cancel to fail as the download_with_offset() failed. */
 	err = fota_download_cancel();
