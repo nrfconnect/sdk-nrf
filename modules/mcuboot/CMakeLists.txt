@@ -52,9 +52,10 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     # SIGNED_BIN_FILE_OUT - (optional) Signed bin output image
     # SIGNED_HEX_TEST_FILE_OUT - (optional) Signed hex output test image including IMAGE_MAGIC
     # IMAGE_DEPENDENCIES - (optional) Dependencies between signed image and other images
+    # ROM_FIXED - (optional) Start address of image
     # DEPENDS - (optional) One or more dependencies for signing the hex image
     set(oneValueArgs SIGNED_BIN_FILE_IN SIGNED_HEX_FILE_NAME_PREFIX SLOT_SIZE SIGNED_HEX_FILE_OUT)
-    set(oneValueOptionalArgs SIGNED_BIN_FILE_OUT SIGNED_HEX_TEST_FILE_OUT START_ADDRESS_OFFSET IMAGE_DEPENDENCIES)
+    set(oneValueOptionalArgs SIGNED_BIN_FILE_OUT SIGNED_HEX_TEST_FILE_OUT START_ADDRESS_OFFSET IMAGE_DEPENDENCIES ROM_FIXED)
     set(multiValueArgs DEPENDS)
     cmake_parse_arguments(SIGN_ARG "" "${oneValueArgs};${oneValueOptionalArgs}" "${multiValueArgs}" ${ARGN})
     check_arguments_required_all(sign SIGN_ARG ${oneValueArgs})
@@ -69,6 +70,10 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     endif()
     if(DEFINED SIGN_ARG_SIGNED_HEX_TEST_FILE_OUT)
       set(${SIGN_ARG_SIGNED_HEX_TEST_FILE_OUT} ${test_update_hex} PARENT_SCOPE)
+    endif()
+
+    if(DEFINED SIGN_ARG_ROM_FIXED)
+      set(SIGN_ARG_ROM_FIXED --rom-fixed ${SIGN_ARG_ROM_FIXED})
     endif()
 
     # Ensure that it is possible to move the secondary slot to the memory
@@ -127,6 +132,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       # IMAGE_MAGIC into the image trailer.
       ${sign_cmd}
       ${sign_dependencies}
+      ${SIGN_ARG_ROM_FIXED}
       --slot-size ${SIGN_ARG_SLOT_SIZE}
       ${SIGN_ARG_SIGNED_BIN_FILE_IN}
       ${signed_hex}
@@ -154,6 +160,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       # Sign the binary version of the input hex file.
       ${sign_cmd}
       ${sign_dependencies}
+      ${SIGN_ARG_ROM_FIXED}
       --slot-size ${SIGN_ARG_SLOT_SIZE}
       ${to_sign_bin}
       ${update_bin}
@@ -174,6 +181,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       # it needs to be moved.
       ${sign_cmd}
       ${sign_dependencies}
+      ${SIGN_ARG_ROM_FIXED}
       --slot-size ${SIGN_ARG_SLOT_SIZE}
       --pad # Adds IMAGE_MAGIC to end of slot.
       ${SIGN_ARG_SIGNED_BIN_FILE_IN}
@@ -357,6 +365,12 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       set(sign_dependencies IMAGE_DEPENDENCIES "(${NETWORK_IMAGE_PAIR_IDX},${CONFIG_MCUBOOT_IMAGE_VERSION})")
     endif()
 
+    if (CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT)
+      set(rom_fixed ROM_FIXED $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_ADDRESS>)
+    else()
+      set(rom_fixed)
+    endif()
+
     sign(
       SIGNED_BIN_FILE_IN ${app_to_sign_hex}
       SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/app
@@ -366,6 +380,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       SIGNED_BIN_FILE_OUT app_signed_bin
       SIGNED_HEX_TEST_FILE_OUT app_signed_test_hex
       ${sign_dependencies}
+      ${rom_fixed}
       DEPENDS ${app_sign_depends}
       )
 
@@ -386,6 +401,8 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       get_shared(mcuboot_secondary_app_bin_dir IMAGE mcuboot_secondary_app PROPERTY ZEPHYR_BINARY_DIR)
       set(mcuboot_secondary_app_hex ${mcuboot_secondary_app_bin_dir}/zephyr.hex)
 
+      set(rom_fixed ROM_FIXED $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_SECONDARY_ADDRESS>)
+
       sign(
         SIGNED_BIN_FILE_IN ${mcuboot_secondary_app_hex}
         SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/mcuboot_secondary_app
@@ -393,6 +410,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         SIGNED_HEX_FILE_OUT mcuboot_secondary_app_signed_hex
         SIGNED_BIN_FILE_OUT mcuboot_secondary_app_signed_bin
         SIGNED_HEX_TEST_FILE_OUT mcuboot_secondary_app_signed_test_hex
+        ${rom_fixed}
         DEPENDS mcuboot_secondary_app_subimage ${mcuboot_secondary_app_bin_dir}/zephyr.hex
         )
 
