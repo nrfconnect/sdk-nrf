@@ -67,23 +67,23 @@ choice
 	default CPU_LOAD_TIMER_2
 
 config CPU_LOAD_TIMER_0
-	depends on HAS_HW_NRF_TIMER0
+	depends on $(dt_nodelabel_has_compat,timer0,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 0"
 	select NRFX_TIMER0
 config CPU_LOAD_TIMER_1
-	depends on HAS_HW_NRF_TIMER1
+	depends on $(dt_nodelabel_has_compat,timer1,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 1"
 	select NRFX_TIMER1
 config CPU_LOAD_TIMER_2
-	depends on HAS_HW_NRF_TIMER2
+	depends on $(dt_nodelabel_has_compat,timer2,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 2"
 	select NRFX_TIMER2
 config CPU_LOAD_TIMER_3
-	depends on HAS_HW_NRF_TIMER3
+	depends on $(dt_nodelabel_has_compat,timer3,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 3"
 	select NRFX_TIMER3
 config CPU_LOAD_TIMER_4
-	depends on HAS_HW_NRF_TIMER4
+	depends on $(dt_nodelabel_has_compat,timer4,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 4"
 	select NRFX_TIMER4
 
