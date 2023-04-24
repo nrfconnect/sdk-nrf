@@ -95,10 +95,10 @@ Hardware issues
 This section lists issues whose cause can be pinpointed to hardware, grouped by nRF Series.
 For issues affecting software components without any relation to hardware, see :ref:`known_issues_sw`.
 
-nRF91 Series
-============
+Platform-agnostic issues
+========================
 
-The issues in this section are related to :ref:`nRF91 Series hardware <ug_nrf91>`.
+The hardware issues in this section are related to all series of hardware products from Nordic Semiconductor.
 
 .. rst-class:: v2-3-0
 
@@ -108,6 +108,11 @@ CIA-892: Assert or crash when printing long strings with the ``%s`` qualifier
   Given that the default value of the :kconfig:option:`CONFIG_LOG_PRINTK` Kconfig option has been changed from ``n`` to ``y`` in the |NCS| v2.3.0 release, the :c:func:`printk` function may also cause this issue, unless the application disables this option.
 
   **Workaround:** To fix the issue, cherry-pick commits from the upstream `Zephyr PR #54901 <https://github.com/zephyrproject-rtos/zephyr/pull/54901>`_.
+
+nRF91 Series
+============
+
+The issues in this section are related to :ref:`nRF91 Series hardware <ug_nrf91>`.
 
 .. rst-class:: v2-3-0 v2-2-0
 
@@ -432,8 +437,13 @@ NCSDK-18263: |NCS| samples may fail to boot on Thingy:53
   **Workaround:** Revert the ``9a8680372fdb6e09f3d6537c8c6751dd5c50bf86`` commit in the sdk-zephyr repository and revert the ``1f9765df5acbb36afff0ce40c94ba65d44d19d70`` commit in sdk-nrf.
   During conflict resolution, make sure to update the :file:`west.yml` file in the sdk-nrf to point to the reverting commit in sdk-zephyr.
 
+nRF52 Series
+============
+
+The issues in this section are related to :ref:`nRF52 Series hardware <ug_nrf52>`.
+
 nRF52833
-========
+--------
 
 The issues in this section are related to nRF52833.
 
@@ -2325,25 +2335,6 @@ FW upgrade is broken for multi-image builds
 
   **Workaround:** Build MCUboot and the application separately.
 
-Integrations
-============
-
-The issues in this section are related to :ref:`ecosystem_integration`.
-
-Pelion
-------
-
-The issues in this section are related to Pelion Device Management integration.
-The support for Pelion Device Management and the related library and application were removed in :ref:`nRF Connect SDK v1.9.0 <ncs_release_notes_190>`.
-
-.. rst-class:: v1-6-1 v1-6-0
-
-NCSDK-10196: DFU fails for some configurations with the quick session resume feature enabled
-  Enabling :kconfig:option:`CONFIG_PELION_QUICK_SESSION_RESUME` together with the OpenThread network backend leads to the quick session resume failure during the DFU packet exchange.
-  This is valid for the :ref:`nRF52840 DK <ug_nrf52>` and the :ref:`nRF5340 DK <ug_nrf5340>`.
-
-  **Workaround:** Use the quick session resume feature only for configurations with the cellular network backend.
-
 MCUboot
 =======
 
@@ -3108,6 +3099,25 @@ nrfx_uart driver
 tx_buffer_length set incorrectly
   The nrfx_uart driver might incorrectly set the internal tx_buffer_length variable when high optimization level is set during compilation.
 
+Integrations
+============
+
+The issues in this section are related to :ref:`ecosystem_integration`.
+
+Pelion
+------
+
+The issues in this section are related to Pelion Device Management integration.
+The support for Pelion Device Management and the related library and application were removed in :ref:`nRF Connect SDK v1.9.0 <ncs_release_notes_190>`.
+
+.. rst-class:: v1-6-1 v1-6-0
+
+NCSDK-10196: DFU fails for some configurations with the quick session resume feature enabled
+  Enabling :kconfig:option:`CONFIG_PELION_QUICK_SESSION_RESUME` together with the OpenThread network backend leads to the quick session resume failure during the DFU packet exchange.
+  This is valid for the :ref:`nRF52840 DK <ug_nrf52>` and the :ref:`nRF5340 DK <ug_nrf5340>`.
+
+  **Workaround:** Use the quick session resume feature only for configurations with the cellular network backend.
+
 .. _known_issue_tfm:
 
 Trusted Firmware-M (TF-M)
@@ -3329,12 +3339,17 @@ NCSDK-6832: SMP Server sample fails upon initialization
 
   **Workaround:** Set :kconfig:option:`CONFIG_MAIN_STACK_SIZE` to ``2048``.
 
+|NCS| IDE
+*********
+
+|VSC| is the default IDE for the |NCS|.
+See the `nRF Connect for Visual Studio Code`_ documentation page for more information.
+
 SEGGER Embedded Studio Nordic Edition
-*************************************
+=====================================
 
 .. note::
     SEGGER Embedded Studio Nordic Edition support has been deprecated with the |NCS| v2.0.0 release.
-    |VSC| is now the default IDE for the |NCS|.
     Use the `Open an existing application <Migrating IDE_>`_ option in the |nRFVSC| to migrate your application.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
