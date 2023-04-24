@@ -21,12 +21,15 @@ config MPSL_CX_NRF700X_SUPPORT
 config MPSL_CX
 	bool "Radio Coexistence interface support"
 	depends on MPSL_CX_ANY_SUPPORT
+	depends on !(BT_CTLR_PHY_CODED && MPSL_FEM && SOC_SERIES_NRF53X)
 	help
 	  Controls if Radio Coexistence interface is to be configured and enabled
 	  when MPSL is initialized.
 
 	  Radio Coexistence interface connects nRF5 radio protocols with external
 	  Packet Traffic Arbiter (PTA) which denies or grants access to RF.
+
+	  This is not supported with Coded Phy and FEM on the nRF5340 SoC.
 
 config MPSL_CX_PIN_FORWARDER
 	bool
