@@ -117,21 +117,21 @@ Other versions might also work, but are not verified.
          * - Tool
            - Toolchain Manager version
          * - Zephyr SDK
-           - |zephyr_sdk_recommended_ver_win10|
+           - :ncs-tool-version:`ZEPHYR_SDK_VERSION_WIN10`
          * - CMake
-           - |cmake_recommended_ver_win10|
+           - :ncs-tool-version:`CMAKE_VERSION_WIN10`
          * - dtc
-           - |dtc_recommended_ver_win10|
+           - :ncs-tool-version:`DTC_VERSION_WIN10`
          * - Git
-           - |git_recommended_ver_win10|
+           - :ncs-tool-version:`GIT_VERSION_WIN10`
          * - gperf
-           - |gperf_recommended_ver_win10|
+           - :ncs-tool-version:`GPERF_VERSION_WIN10`
          * - ninja
-           - |ninja_recommended_ver_win10|
+           - :ncs-tool-version:`NINJA_VERSION_WIN10`
          * - Python
-           - |python_recommended_ver_win10|
+           - :ncs-tool-version:`PYTHON_VERSION_WIN10`
          * - West
-           - |west_recommended_ver_win10|
+           - :ncs-tool-version:`WEST_VERSION_WIN10`
 
    .. group-tab:: Linux
 
@@ -141,21 +141,21 @@ Other versions might also work, but are not verified.
          * - Tool
            - Toolchain Manager version
          * - Zephyr SDK
-           - |zephyr_sdk_recommended_ver_linux|
+           - :ncs-tool-version:`ZEPHYR_SDK_VERSION_LINUX`
          * - CMake
-           - |cmake_recommended_ver_linux|
+           - :ncs-tool-version:`CMAKE_VERSION_LINUX`
          * - dtc
-           - |dtc_recommended_ver_linux|
+           - :ncs-tool-version:`DTC_VERSION_LINUX`
          * - Git
-           - |git_recommended_ver_linux|
+           - :ncs-tool-version:`GIT_VERSION_LINUX`
          * - gperf
-           - |gperf_recommended_ver_linux|
+           - :ncs-tool-version:`GPERF_VERSION_LINUX`
          * - ninja
-           - |ninja_recommended_ver_linux|
+           - :ncs-tool-version:`NINJA_VERSION_LINUX`
          * - Python
-           - |python_recommended_ver_linux|
+           - :ncs-tool-version:`PYTHON_VERSION_LINUX`
          * - West
-           - |west_recommended_ver_linux|
+           - :ncs-tool-version:`WEST_VERSION_LINUX`
 
    .. group-tab:: macOS
 
@@ -165,21 +165,21 @@ Other versions might also work, but are not verified.
          * - Tool
            - Toolchain Manager version
          * - Zephyr SDK
-           - |zephyr_sdk_recommended_ver_darwin|
+           - :ncs-tool-version:`ZEPHYR_SDK_VERSION_DARWIN`
          * - CMake
-           - |cmake_recommended_ver_darwin|
+           - :ncs-tool-version:`CMAKE_VERSION_DARWIN`
          * - dtc
-           - |dtc_recommended_ver_darwin|
+           - :ncs-tool-version:`DTC_VERSION_DARWIN`
          * - Git
-           - |git_recommended_ver_darwin|
+           - :ncs-tool-version:`GIT_VERSION_DARWIN`
          * - gperf
-           - |gperf_recommended_ver_darwin|
+           - :ncs-tool-version:`GPERF_VERSION_DARWIN`
          * - ninja
-           - |ninja_recommended_ver_darwin|
+           - :ncs-tool-version:`NINJA_VERSION_DARWIN`
          * - Python
-           - |python_recommended_ver_darwin|
+           - :ncs-tool-version:`PYTHON_VERSION_DARWIN`
          * - West
-           - |west_recommended_ver_darwin|
+           - :ncs-tool-version:`WEST_VERSION_DARWIN`
 
 Required Python dependencies
 ============================
@@ -200,35 +200,35 @@ Building and running applications, samples, and tests
    * - Package
      - Version
    * - anytree
-     - |anytree_ver|
+     - :ncs-tool-version:`ANYTREE_VERSION`
    * - canopen
-     - |canopen_ver|
+     - :ncs-tool-version:`CANOPEN_VERSION`
    * - cbor2
-     - |cbor2_ver|
+     - :ncs-tool-version:`CBOR2_VERSION`
    * - click
-     - |click_ver|
+     - :ncs-tool-version:`CLICK_VERSION`
    * - cryptography
-     - |cryptography_ver|
+     - :ncs-tool-version:`CRYPTOGRAPHY_VERSION`
    * - ecdsa
-     - |ecdsa_ver|
+     - :ncs-tool-version:`ECDSA_VERSION`
    * - imagesize
-     - |imagesize_ver|
+     - :ncs-tool-version:`IMAGESIZE_VERSION`
    * - intelhex
-     - |intelhex_ver|
+     - :ncs-tool-version:`INTELHEX_VERSION`
    * - packaging
-     - |packaging_ver|
+     - :ncs-tool-version:`PACKAGING_VERSION`
    * - progress
-     - |progress_ver|
+     - :ncs-tool-version:`PROGRESS_VERSION`
    * - pyelftools
-     - |pyelftools_ver|
+     - :ncs-tool-version:`PYELFTOOLS_VERSION`
    * - pylint
-     - |pylint_ver|
+     - :ncs-tool-version:`PYLINT_VERSION`
    * - PyYAML
-     - |PyYAML_ver|
+     - :ncs-tool-version:`PYYAML_VERSION`
    * - west
-     - |west_ver|
+     - :ncs-tool-version:`WEST_VERSION`
    * - windows-curses (only Windows)
-     - |windows-curses_ver|
+     - :ncs-tool-version:`WINDOWS_CURSES_VERSION`
 
 .. _python_req_documentation:
 
@@ -241,16 +241,16 @@ Building documentation
    * - Package
      - Version
    * - recommonmark
-     - |recommonmark_ver|
+     - :ncs-tool-version:`RECOMMONMARK_VERSION`
    * - sphinxcontrib-mscgen
-     - |sphinxcontrib-mscgen_ver|
+     - :ncs-tool-version:`SPHINXCONTRIB_MSCGEN_VERSION`
    * - breathe
-     - |breathe_ver|
+     - :ncs-tool-version:`BREATHE_VERSION`
    * - sphinx
-     - |sphinx_ver|
+     - :ncs-tool-version:`SPHINX_VERSION`
    * - sphinx-ncs-theme
-     - |sphinx-ncs-theme_ver|
+     - :ncs-tool-version:`SPHINX_NCS_THEME_VERSION`
    * - sphinx-tabs
-     - |sphinx-tabs_ver|
+     - :ncs-tool-version:`SPHINX_TABS_VERSION`
    * - sphinxcontrib-svg2pdfconverter
-     - |sphinxcontrib-svg2pdfconverter_ver|
+     - :ncs-tool-version:`SPHINXCONTRIB_SVG2PDFCONVERTER_VERSION`

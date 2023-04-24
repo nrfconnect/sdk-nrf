@@ -210,49 +210,7 @@ add_dependencies(zephyr-all zephyr-devicetree)
 #-------------------------------------------------------------------------------
 # docset: nrf
 
-set(tools_version_files
-    ${NRF_BASE}/scripts/tools-versions-darwin.txt
-    ${NRF_BASE}/scripts/tools-versions-win10.txt
-    ${NRF_BASE}/scripts/tools-versions-linux.txt
-)
-
-set(pip_requirements_files
-    ${ZEPHYR_BASE}/scripts/requirements-base.txt
-    ${ZEPHYR_BASE}/scripts/requirements-doc.txt
-    ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/requirements.txt
-    ${NRF_BASE}/scripts/requirements-base.txt
-    ${NRF_BASE}/scripts/requirements-doc.txt
-    ${NRF_BASE}/scripts/requirements-build.txt
-)
-
-string(REPLACE ";" "\\;" tools_files_escaped "${tools_version_files}")
-string(REPLACE ";" "\\;" pip_files_escaped "${pip_requirements_files}")
-
-set(NRF_DOC_DIR ${NRF_BASE}/doc/nrf)
-
-add_custom_command(
-  OUTPUT ${NRF_BINARY_DIR}/src/versions.txt
-  COMMAND ${CMAKE_COMMAND}
-    -DTOOLS_VERSION_FILES="${tools_files_escaped}"
-    -DPIP_REQUIREMENTS_FILES="${pip_files_escaped}"
-    -DVERSION_IN=${NRF_DOC_DIR}/versions.txt.in
-    -DVERSION_OUT=${NRF_BINARY_DIR}/src/versions.txt
-    -P ${NRF_BASE}/doc/update_versions.cmake
-  DEPENDS
-    ${NRF_DOC_DIR}/versions.txt.in
-    ${tools_version_files}
-    ${pip_requirements_files}
-)
-
-add_custom_target(
-  nrf-versions
-  DEPENDS
-    ${NRF_BINARY_DIR}/src/versions.txt
-)
-
 add_docset(nrf)
-add_dependencies(nrf nrf-versions)
-add_dependencies(nrf-all nrf-versions)
 
 #-------------------------------------------------------------------------------
 # docset: mcuboot
