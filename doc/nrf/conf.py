@@ -20,6 +20,7 @@ import redirects
 import utils
 
 ZEPHYR_BASE = utils.get_projdir("zephyr")
+MCUBOOT_BASE = utils.get_projdir("mcuboot")
 
 # General configuration --------------------------------------------------------
 
@@ -51,6 +52,7 @@ extensions = [
     "sphinx_togglebutton",
     "sphinx_copybutton",
     "notfound.extension",
+    "ncs_tool_versions",
 ]
 
 linkcheck_ignore = [
@@ -175,6 +177,22 @@ external_content_keep = ["versions.txt"]
 
 table_from_rows_base_dir = NRF_BASE
 table_from_sample_yaml_board_reference = "/includes/sample_board_rows.txt"
+
+# Options for ncs_tool_versions ------------------------------------------------
+
+ncs_tool_versions_host_deps = [
+    NRF_BASE / "scripts" / "tools-versions-win10.txt",
+    NRF_BASE / "scripts" / "tools-versions-linux.txt",
+    NRF_BASE / "scripts" / "tools-versions-darwin.txt",
+]
+ncs_tool_versions_python_deps = [
+    ZEPHYR_BASE / "scripts" / "requirements-base.txt",
+    ZEPHYR_BASE / "scripts" / "requirements-doc.txt",
+    MCUBOOT_BASE / "scripts" / "requirements.txt",
+    NRF_BASE / "scripts" / "requirements-base.txt",
+    NRF_BASE / "scripts" / "requirements-doc.txt",
+    NRF_BASE / "scripts" / "requirements-build.txt",
+]
 
 # Options for options_from_kconfig ---------------------------------------------
 
