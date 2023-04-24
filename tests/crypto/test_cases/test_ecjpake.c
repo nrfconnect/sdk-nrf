@@ -4,7 +4,7 @@
  *
  * Methodology and test vectors for ECJPAKE taken from mbed TLS.
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <stdio.h>
