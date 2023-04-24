@@ -533,8 +533,7 @@ int ble_mcs_discover(struct bt_conn *conn)
 	int ret;
 	uint8_t idx = bt_conn_index(conn);
 
-	if (mcp_mcs_disc_status[idx] == FINISHED ||
-		mcp_mcs_disc_status[idx] == IN_PROGRESS) {
+	if (mcp_mcs_disc_status[idx] == FINISHED || mcp_mcs_disc_status[idx] == IN_PROGRESS) {
 		return -EALREADY;
 	}
 
@@ -570,11 +569,13 @@ int ble_mcs_play_pause(struct bt_conn *conn)
 	int ret = 0;
 	struct mpl_cmd cmd;
 
-	uint8_t idx = bt_conn_index(conn);
+	if (conn != NULL) {
+		uint8_t idx = bt_conn_index(conn);
 
-	if (mcp_mcs_disc_status[idx] != FINISHED) {
-		LOG_WRN("MCS discovery has not finished");
-		return -EBUSY;
+		if (mcp_mcs_disc_status[idx] != FINISHED) {
+			LOG_WRN("MCS discovery has not finished");
+			return -EBUSY;
+		}
 	}
 
 	if (media_player_state == BT_MCS_MEDIA_STATE_PLAYING) {

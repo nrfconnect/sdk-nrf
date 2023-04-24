@@ -111,11 +111,11 @@ static bool ble_acl_gateway_all_links_connected(void);
 
 static struct bt_bap_unicast_client_discover_params audio_sink_discover_param[CONFIG_BT_MAX_CONN];
 
-#if CONFIG_STREAM_BIDIRECTIONAL
+#if (CONFIG_BT_AUDIO_RX)
 static struct bt_bap_unicast_client_discover_params audio_source_discover_param[CONFIG_BT_MAX_CONN];
 
 static int discover_source(struct bt_conn *conn);
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+#endif /* (CONFIG_BT_AUDIO_RX) */
 
 static void le_audio_event_publish(enum le_audio_evt_type event)
 {
@@ -563,6 +563,7 @@ static void stream_released_cb(struct bt_bap_stream *stream)
 	}
 }
 
+#if (CONFIG_BT_AUDIO_RX)
 static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_recv_info *info,
 			   struct net_buf *buf)
 {
@@ -600,9 +601,9 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 
 	receive_cb(buf->data, buf->len, bad_frame, info->ts, channel_index);
 }
+#endif /* (CONFIG_BT_AUDIO_RX) */
 
 static struct bt_bap_stream_ops stream_ops = {
-	.sent = stream_sent_cb,
 	.configured = stream_configured_cb,
 	.qos_set = stream_qos_set_cb,
 	.enabled = stream_enabled_cb,
@@ -611,7 +612,12 @@ static struct bt_bap_stream_ops stream_ops = {
 	.disabled = stream_disabled_cb,
 	.stopped = stream_stopped_cb,
 	.released = stream_released_cb,
+#if (CONFIG_BT_AUDIO_RX)
 	.recv = stream_recv_cb,
+#endif /* (CONFIG_BT_AUDIO_RX) */
+#if (CONFIG_BT_AUDIO_TX)
+	.sent = stream_sent_cb,
+#endif /* (CONFIG_BT_AUDIO_TX) */
 };
 
 static void work_stream_start(struct k_work *work)
@@ -855,15 +861,15 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 	memset(temp_cap[temp_cap_index].codec, 0, sizeof(temp_cap[temp_cap_index].codec));
 	temp_cap[temp_cap_index].conn = NULL;
 
-#if CONFIG_STREAM_BIDIRECTIONAL
+#if (CONFIG_BT_AUDIO_RX)
 	ret = discover_source(conn);
 	if (ret) {
 		LOG_WRN("Failed to discover source: %d", ret);
 	}
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+#endif /* (CONFIG_BT_AUDIO_RX) */
 }
 
-#if CONFIG_STREAM_BIDIRECTIONAL
+#if (CONFIG_BT_AUDIO_RX)
 static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, struct bt_bap_ep *ep,
 			       struct bt_bap_unicast_client_discover_params *params)
 {
@@ -972,7 +978,7 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 	memset(temp_cap[temp_cap_index].codec, 0, sizeof(temp_cap[temp_cap_index].codec));
 	temp_cap[temp_cap_index].conn = NULL;
 }
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+#endif /* (CONFIG_BT_AUDIO_RX) */
 
 static bool ble_acl_gateway_all_links_connected(void)
 {
@@ -1231,7 +1237,7 @@ static int discover_sink(struct bt_conn *conn)
 	return ret;
 }
 
-#if CONFIG_STREAM_BIDIRECTIONAL
+#if (CONFIG_BT_AUDIO_RX)
 static int discover_source(struct bt_conn *conn)
 {
 	int ret = 0;
@@ -1249,7 +1255,7 @@ static int discover_source(struct bt_conn *conn)
 
 	return ret;
 }
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+#endif /* (CONFIG_BT_AUDIO_RX) */
 
 static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
@@ -1464,11 +1470,11 @@ static int initialize(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestm
 	for (int i = 0; i < ARRAY_SIZE(pair_params); i++) {
 		pair_params[i].tx_param = &stream_params[stream_iterator];
 		stream_iterator++;
-#if CONFIG_STREAM_BIDIRECTIONAL
+#if (CONFIG_BT_AUDIO_RX)
 		pair_params[i].rx_param = &stream_params[stream_iterator];
 #else
 		pair_params[i].rx_param = NULL;
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+#endif /* (CONFIG_BT_AUDIO_RX) */
 		stream_iterator++;
 	}
 

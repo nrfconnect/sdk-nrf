@@ -156,9 +156,13 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 	}
 }
 
-static struct bt_bap_stream_ops stream_ops = { .sent = stream_sent_cb,
-					       .started = stream_started_cb,
-					       .stopped = stream_stopped_cb };
+static struct bt_bap_stream_ops stream_ops = {
+	.started = stream_started_cb,
+	.stopped = stream_stopped_cb,
+#if (CONFIG_BT_AUDIO_TX)
+	.sent = stream_sent_cb,
+#endif /* (CONFIG_BT_AUDIO_TX) */
+};
 
 #if (CONFIG_AURACAST)
 static void public_broadcast_features_set(uint8_t *features)

@@ -78,7 +78,7 @@ static le_audio_receive_cb receive_cb;
 static bool init_routine_completed;
 static bool playing_state = true;
 
-static int bis_headset_cleanup(bool from_sync_lost_cb);
+static int bis_headset_cleanup(void);
 
 static void le_audio_event_publish(enum le_audio_evt_type event)
 {
@@ -185,13 +185,11 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 		bad_frame = true;
 	}
 
-	uint32_t octets_per_sdu = bt_codec_cfg_get_octets_per_frame(stream->codec);
-
-	if (buf->len != octets_per_sdu && bad_frame != true) {
+	if (buf->len != active_stream.codec->octets_per_sdu && bad_frame != true) {
 		data_size_mismatch_cnt++;
 		if ((data_size_mismatch_cnt % 500) == 1) {
 			LOG_DBG("Data size mismatch, received: %d, codec: %d, total: %d", buf->len,
-				octets_per_sdu, data_size_mismatch_cnt);
+				active_stream.codec->octets_per_sdu, data_size_mismatch_cnt);
 		}
 
 		return;
@@ -206,9 +204,13 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 	}
 }
 
-static struct bt_bap_stream_ops stream_ops = { .started = stream_started_cb,
-					       .stopped = stream_stopped_cb,
-					       .recv = stream_recv_cb };
+static struct bt_bap_stream_ops stream_ops = {
+	.started = stream_started_cb,
+	.stopped = stream_stopped_cb,
+#if (CONFIG_BT_AUDIO_RX)
+	.recv = stream_recv_cb,
+#endif /* (CONFIG_BT_AUDIO_RX) */
+};
 
 static bool scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf_simple *ad,
 			 uint32_t broadcast_id)
@@ -264,9 +266,13 @@ static void pa_sync_lost_cb(struct bt_bap_broadcast_sink *sink)
 		return;
 	}
 
+	if (!init_routine_completed) {
+		return;
+	}
+
 	LOG_DBG("Sink disconnected");
 
-	ret = bis_headset_cleanup(true);
+	ret = bis_headset_cleanup();
 	if (ret) {
 		LOG_ERR("Error cleaning up");
 		return;
@@ -352,7 +358,7 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, bool encrypted)
 	strncpy(bis_encryption_key, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY, 16);
 #endif /* (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED) */
 
-	if (active_stream.stream->ep->status.state == BT_BAP_EP_STATE_STREAMING || !playing_state) {
+	if (!playing_state) {
 		LOG_DBG("Syncable received, but either in paused_state or already in a stream");
 		return;
 	}
@@ -361,6 +367,8 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, bool encrypted)
 
 	ret = bt_bap_broadcast_sink_sync(broadcast_sink, bis_index_bitfields[active_stream_index],
 					 audio_streams_p, bis_encryption_key);
+
+	active_stream.stream = audio_streams_p[active_stream_index];
 	if (ret) {
 		LOG_WRN("Unable to sync to broadcast source, ret: %d", ret);
 		return;
@@ -429,23 +437,19 @@ static int initialize(le_audio_receive_cb recv_cb)
 	return 0;
 }
 
-static int bis_headset_cleanup(bool from_sync_lost_cb)
+static int bis_headset_cleanup(void)
 {
 	int ret;
 
+	init_routine_completed = false;
+
 	ret = bt_bap_broadcast_sink_scan_stop();
 	if (ret && ret != -EALREADY) {
+		LOG_WRN("Failed to stop sink scan, ret: %d", ret);
 		return ret;
 	}
 
 	if (broadcast_sink != NULL) {
-		if (!from_sync_lost_cb) {
-			ret = bt_bap_broadcast_sink_stop(broadcast_sink);
-			if (ret && ret != -EALREADY) {
-				return ret;
-			}
-		}
-
 		ret = bt_bap_broadcast_sink_delete(broadcast_sink);
 		if (ret && ret != -EALREADY) {
 			return ret;
@@ -453,8 +457,6 @@ static int bis_headset_cleanup(bool from_sync_lost_cb)
 
 		broadcast_sink = NULL;
 	}
-
-	init_routine_completed = false;
 
 	return 0;
 }
@@ -492,8 +494,15 @@ static int change_active_brdcast_src(void)
 {
 	int ret;
 
-	/* If the stream has been paused do not stop the sink again */
-	ret = bis_headset_cleanup(!playing_state);
+	if (active_stream.stream->ep->status.state == BT_BAP_EP_STATE_STREAMING) {
+		ret = bt_bap_broadcast_sink_stop(broadcast_sink);
+		if (ret) {
+			LOG_ERR("Failed to stop broadcast sink: %d", ret);
+			return ret;
+		}
+	}
+
+	ret = bis_headset_cleanup();
 	if (ret) {
 		LOG_ERR("Error cleaning up");
 		return ret;
@@ -631,7 +640,7 @@ int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_
 		return ret;
 	}
 
-	ret = bis_headset_cleanup(false);
+	ret = bis_headset_cleanup();
 	if (ret) {
 		LOG_ERR("Error cleaning up");
 		return ret;
@@ -653,7 +662,7 @@ int le_audio_disable(void)
 {
 	int ret;
 
-	ret = bis_headset_cleanup(false);
+	ret = bis_headset_cleanup();
 	if (ret) {
 		LOG_ERR("Error cleaning up");
 		return ret;

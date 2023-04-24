@@ -37,7 +37,7 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE, BT_GAP_ADV_FAST_INT_MIN_1,                      \
 			BT_GAP_ADV_FAST_INT_MAX_1, NULL)
 
-#if CONFIG_STREAM_BIDIRECTIONAL
+#if (CONFIG_BT_AUDIO_TX)
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 /* For being able to dynamically define iso_tx_pools */
 #define NET_BUF_POOL_ITERATE(i, _)                                                                 \
@@ -51,7 +51,7 @@ static atomic_t iso_tx_pool_alloc;
 static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ASCS_ASE_SRC_COUNT,
 							   NET_BUF_POOL_PTR_ITERATE, (,)) };
 /* clang-format on */
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+#endif /* (CONFIG_BT_AUDIO_TX) */
 
 #define CSIP_SET_SIZE 2
 enum csip_set_rank { CSIP_HL_RANK = 1, CSIP_HR_RANK = 2 };
@@ -120,9 +120,9 @@ static struct bt_codec lc3_codec = BT_CODEC_LC3(
 
 static enum bt_audio_dir caps_dirs[] = {
 	BT_AUDIO_DIR_SINK,
-#if CONFIG_STREAM_BIDIRECTIONAL
+#if (CONFIG_BT_AUDIO_TX)
 	BT_AUDIO_DIR_SOURCE,
-#endif
+#endif /* (CONFIG_BT_AUDIO_TX) */
 };
 
 static const struct bt_codec_qos_pref qos_pref =
@@ -136,11 +136,11 @@ static struct bt_pacs_cap caps[] = {
 				{
 					 .codec = &lc3_codec,
 				},
-#if CONFIG_STREAM_BIDIRECTIONAL
+#if (CONFIG_BT_AUDIO_TX)
 				{
 					 .codec = &lc3_codec,
 				}
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+#endif /* (CONFIG_BT_AUDIO_TX) */
 };
 /* clang-format on */
 
@@ -149,14 +149,14 @@ static struct bt_conn *default_conn;
 static struct bt_bap_stream
 	audio_streams[CONFIG_BT_ASCS_ASE_SNK_COUNT + CONFIG_BT_ASCS_ASE_SRC_COUNT];
 
-#if CONFIG_STREAM_BIDIRECTIONAL
+#if (CONFIG_BT_AUDIO_TX)
 BUILD_ASSERT(CONFIG_BT_ASCS_ASE_SRC_COUNT <= 1,
 	     "CIS headset only supports one source stream for now");
 static struct bt_audio_source {
 	struct bt_bap_stream *stream;
 	uint32_t seq_num;
 } sources[CONFIG_BT_ASCS_ASE_SRC_COUNT];
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+#endif /* (CONFIG_BT_AUDIO_TX) */
 
 /* Left or right channel headset */
 static enum audio_channel channel;
@@ -284,7 +284,7 @@ static void advertising_start(void)
 
 static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum bt_audio_dir dir,
 			 const struct bt_codec *codec, struct bt_bap_stream **stream,
-			 struct bt_codec_qos_pref *const pref)
+			 struct bt_codec_qos_pref *const pref, struct bt_bap_ascs_rsp *rsp)
 {
 	LOG_DBG("LC3 configure call-back");
 
@@ -310,7 +310,7 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 				print_codec(codec, dir);
 				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED);
 			}
-#if CONFIG_STREAM_BIDIRECTIONAL
+#if (CONFIG_BT_AUDIO_TX)
 			else if (dir == BT_AUDIO_DIR_SOURCE) {
 				LOG_DBG("BT_AUDIO_DIR_SOURCE");
 				print_codec(codec, dir);
@@ -318,7 +318,7 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 				/* CIS headset only supports one source stream for now */
 				sources[0].stream = audio_stream;
 			}
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+#endif /* (CONFIG_BT_AUDIO_TX) */
 			else {
 				LOG_ERR("UNKNOWN DIR");
 				return -EINVAL;
@@ -335,14 +335,16 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 }
 
 static int lc3_reconfig_cb(struct bt_bap_stream *stream, enum bt_audio_dir dir,
-			   const struct bt_codec *codec, struct bt_codec_qos_pref *const pref)
+			   const struct bt_codec *codec, struct bt_codec_qos_pref *const pref,
+			   struct bt_bap_ascs_rsp *rsp)
 {
 	LOG_DBG("ASE Codec Reconfig: stream %p", (void *)stream);
 
 	return 0;
 }
 
-static int lc3_qos_cb(struct bt_bap_stream *stream, const struct bt_codec_qos *qos)
+static int lc3_qos_cb(struct bt_bap_stream *stream, const struct bt_codec_qos *qos,
+		      struct bt_bap_ascs_rsp *rsp)
 {
 	le_audio_event_publish(LE_AUDIO_EVT_PRES_DELAY_SET);
 
@@ -352,7 +354,7 @@ static int lc3_qos_cb(struct bt_bap_stream *stream, const struct bt_codec_qos *q
 }
 
 static int lc3_enable_cb(struct bt_bap_stream *stream, const struct bt_codec_data *meta,
-			 size_t meta_count)
+			 size_t meta_count, struct bt_bap_ascs_rsp *rsp)
 {
 	int ret;
 
@@ -362,7 +364,7 @@ static int lc3_enable_cb(struct bt_bap_stream *stream, const struct bt_codec_dat
 	if (IS_ENABLED(CONFIG_BT_MCC)) {
 		ret = ble_mcs_discover(stream->conn);
 		if (ret == -EALREADY) {
-			LOG_INF("Discovery already run or in progress");
+			LOG_DBG("Discovery already run or in progress");
 		} else if (ret) {
 			LOG_ERR("Failed to start discovery of MCS: %d", ret);
 		}
@@ -371,20 +373,20 @@ static int lc3_enable_cb(struct bt_bap_stream *stream, const struct bt_codec_dat
 	return 0;
 }
 
-static int lc3_start_cb(struct bt_bap_stream *stream)
+static int lc3_start_cb(struct bt_bap_stream *stream, struct bt_bap_ascs_rsp *rsp)
 {
 	LOG_DBG("Start stream %p", (void *)stream);
 	return 0;
 }
 
 static int lc3_metadata_cb(struct bt_bap_stream *stream, const struct bt_codec_data *meta,
-			   size_t meta_count)
+			   size_t meta_count, struct bt_bap_ascs_rsp *rsp)
 {
 	LOG_DBG("Metadata: stream %p meta_count %d", (void *)stream, meta_count);
 	return 0;
 }
 
-static int lc3_disable_cb(struct bt_bap_stream *stream)
+static int lc3_disable_cb(struct bt_bap_stream *stream, struct bt_bap_ascs_rsp *rsp)
 {
 	LOG_DBG("Disable: stream %p", (void *)stream);
 
@@ -393,7 +395,7 @@ static int lc3_disable_cb(struct bt_bap_stream *stream)
 	return 0;
 }
 
-static int lc3_stop_cb(struct bt_bap_stream *stream)
+static int lc3_stop_cb(struct bt_bap_stream *stream, struct bt_bap_ascs_rsp *rsp)
 {
 	LOG_DBG("Stop: stream %p", (void *)stream);
 
@@ -402,7 +404,7 @@ static int lc3_stop_cb(struct bt_bap_stream *stream)
 	return 0;
 }
 
-static int lc3_release_cb(struct bt_bap_stream *stream)
+static int lc3_release_cb(struct bt_bap_stream *stream, struct bt_bap_ascs_rsp *rsp)
 {
 	LOG_DBG("Release: stream %p", (void *)stream);
 
@@ -423,12 +425,12 @@ static const struct bt_bap_unicast_server_cb unicast_server_cb = {
 	.release = lc3_release_cb,
 };
 
+#if (CONFIG_BT_AUDIO_TX)
 static void stream_sent_cb(struct bt_bap_stream *stream)
 {
-#if CONFIG_STREAM_BIDIRECTIONAL
 	atomic_dec(&iso_tx_pool_alloc);
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
 }
+#endif /* (CONFIG_BT_AUDIO_TX) */
 
 static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_recv_info *info,
 			   struct net_buf *buf)
@@ -496,9 +498,10 @@ static void stream_stop_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
 	LOG_DBG("Stream %p stopped. Reason: %d", stream, reason);
 
-#if CONFIG_STREAM_BIDIRECTIONAL
+#if (CONFIG_BT_AUDIO_TX)
 	atomic_clear(&iso_tx_pool_alloc);
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+#endif /* (CONFIG_BT_AUDIO_TX) */
+
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
 }
 
@@ -584,12 +587,18 @@ static struct bt_conn_cb conn_callbacks = {
 	.security_changed = security_changed_cb,
 };
 
-static struct bt_bap_stream_ops stream_ops = { .recv = stream_recv_cb,
-					       .sent = stream_sent_cb,
-					       .enabled = stream_enabled_cb,
-					       .started = stream_start_cb,
-					       .stopped = stream_stop_cb,
-					       .released = stream_released_cb };
+static struct bt_bap_stream_ops stream_ops = {
+	.enabled = stream_enabled_cb,
+	.started = stream_start_cb,
+	.stopped = stream_stop_cb,
+	.released = stream_released_cb,
+#if (CONFIG_BT_AUDIO_RX)
+	.recv = stream_recv_cb,
+#endif /* (CONFIG_BT_AUDIO_RX) */
+#if (CONFIG_BT_AUDIO_TX)
+	.sent = stream_sent_cb,
+#endif /* (CONFIG_BT_AUDIO_TX) */
+};
 
 static int initialize(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_cb)
 {
@@ -857,7 +866,7 @@ int le_audio_play_pause(void)
 
 int le_audio_send(struct encoded_audio enc_audio)
 {
-#if CONFIG_STREAM_BIDIRECTIONAL
+#if (CONFIG_BT_AUDIO_TX)
 	int ret;
 	struct net_buf *buf;
 	static bool hci_wrn_printed;
@@ -910,7 +919,7 @@ int le_audio_send(struct encoded_audio enc_audio)
 		net_buf_unref(buf);
 		atomic_dec(&iso_tx_pool_alloc);
 	}
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
+#endif /* (CONFIG_BT_AUDIO_TX) */
 
 	return 0;
 }
