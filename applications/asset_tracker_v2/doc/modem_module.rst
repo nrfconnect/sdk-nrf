@@ -67,7 +67,6 @@ The response for the three different data types is sent as separate events:
 
 * Static data as :c:enum:`MODEM_EVT_MODEM_STATIC_DATA_READY`
 * Dynamic data as :c:enum:`MODEM_EVT_MODEM_DYNAMIC_DATA_READY`
-* Battery voltage as :c:enum:`MODEM_EVT_BATTERY_DATA_READY`
 
 If the sampling of data fails, a corresponding error message is sent through one of the following events:
 

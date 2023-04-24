@@ -172,6 +172,7 @@ nRF9160: Asset Tracker v2
 
   * The application now uses the function :c:func:`nrf_cloud_location_request_msg_json_encode` to create an nRF Cloud location request message.
   * The application now uses defines from the :ref:`lib_nrf_cloud` library for string values related to nRF Cloud.
+  * Instead of sending a battery voltage, the PMIC's fuel gauge function is used to get a battery percentage. For nRF Cloud, the data ID "VOLTAGE" has been replaced with "BATTERY". For the other cloud backends, the name stays the same, but the range changes to 0-100.
 
 nRF9160: Serial LTE modem
 -------------------------

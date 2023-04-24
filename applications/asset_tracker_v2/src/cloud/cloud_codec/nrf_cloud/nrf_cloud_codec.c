@@ -31,7 +31,7 @@ enum batch_data_type {
 	 * in the nrf_cloud library; see CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS.
 	 */
 	MODEM_DYNAMIC,
-	VOLTAGE,
+	BATTERY,
 	IMPACT,
 };
 
@@ -658,18 +658,18 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 
 			break;
 		}
-		case VOLTAGE: {
+		case BATTERY: {
 			int err, len;
-			char voltage[5];
+			char batt_lvl[5];
 			struct cloud_data_battery *data = (struct cloud_data_battery *)buf;
 
-			len = snprintk(voltage, sizeof(voltage), "%d", data[i].bat);
-			if ((len < 0) || (len >= sizeof(voltage))) {
-				LOG_ERR("Cannot convert voltage to string, buffer too small");
+			len = snprintk(batt_lvl, sizeof(batt_lvl), "%d", data[i].bat);
+			if ((len < 0) || (len >= sizeof(batt_lvl))) {
+				LOG_ERR("Cannot convert battery level to string, buffer too small");
 				return -ENOMEM;
 			}
 
-			err = add_data(array, NULL, APP_ID_VOLTAGE, voltage, &data[i].bat_ts,
+			err = add_data(array, NULL, APP_ID_BATTERY, batt_lvl, &data[i].bat_ts,
 				       data[i].queued, NULL, true);
 			if (err && err != -ENODATA) {
 				return err;
@@ -1086,7 +1086,7 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 		goto exit;
 	}
 
-	err = add_batch_data(root_array, VOLTAGE, bat_buf, bat_buf_count);
+	err = add_batch_data(root_array, BATTERY, bat_buf, bat_buf_count);
 	if (err) {
 		LOG_ERR("Failed adding battery data to array, error: %d", err);
 		goto exit;

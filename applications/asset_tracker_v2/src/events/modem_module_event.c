@@ -36,8 +36,6 @@ static char *get_evt_type_str(enum modem_module_event_type type)
 		return "MODEM_EVT_MODEM_DYNAMIC_DATA_NOT_READY";
 	case MODEM_EVT_BATTERY_DATA_NOT_READY:
 		return "MODEM_EVT_BATTERY_DATA_NOT_READY";
-	case MODEM_EVT_BATTERY_DATA_READY:
-		return "MODEM_EVT_BATTERY_DATA_READY";
 	case MODEM_EVT_SHUTDOWN_READY:
 		return "MODEM_EVT_SHUTDOWN_READY";
 	case MODEM_EVT_ERROR:
