@@ -18,6 +18,12 @@ LOG_MODULE_REGISTER(dk_buttons_and_leds, CONFIG_DK_LIBRARY_LOG_LEVEL);
 #define BUTTONS_NODE DT_PATH(buttons)
 #define LEDS_NODE DT_PATH(leds)
 
+#define GPIO0_DEV DEVICE_DT_GET(DT_NODELABEL(gpio0))
+
+/* GPIO0 and GPIO expander devices require different interrupt flags. */
+#define FLAGS_GPIO0_ACTIVE GPIO_INT_LEVEL_ACTIVE
+#define FLAGS_GPIO_EXP_ACTIVE (GPIO_INT_EDGE | GPIO_INT_HIGH_1 | GPIO_INT_LOW_0 | GPIO_INT_ENABLE)
+
 #define GPIO_SPEC_AND_COMMA(button_or_led) GPIO_DT_SPEC_GET(button_or_led, gpios),
 
 static const struct gpio_dt_spec buttons[] = {
@@ -45,21 +51,28 @@ static struct gpio_callback gpio_cb;
 static struct k_spinlock lock;
 static sys_slist_t button_handlers;
 static struct k_mutex button_handler_mut;
+static bool irq_enabled;
 
 static int callback_ctrl(bool enable)
 {
-	gpio_flags_t flags = enable ?
-		(GPIO_INT_EDGE | GPIO_INT_HIGH_1 | GPIO_INT_LOW_0 | GPIO_INT_ENABLE) :
-		GPIO_INT_DISABLE;
 	int err = 0;
+	gpio_flags_t flags;
 
 	/* This must be done with irqs disabled to avoid pin callback
 	 * being fired before others are still not activated.
 	 */
 	for (size_t i = 0; (i < ARRAY_SIZE(buttons)) && !err; i++) {
+		if (enable) {
+			flags = ((buttons[i].port == GPIO0_DEV) ? FLAGS_GPIO0_ACTIVE :
+								  FLAGS_GPIO_EXP_ACTIVE);
+		} else {
+			flags = GPIO_INT_DISABLE;
+		}
+
 		err = gpio_pin_interrupt_configure_dt(&buttons[i], flags);
 		if (err) {
 			LOG_ERR("GPIO IRQ config failed, err: %d", err);
+			return err;
 		}
 	}
 
@@ -107,15 +120,18 @@ static void buttons_scan_fn(struct k_work *work)
 	int err;
 	static uint32_t last_button_scan;
 	static bool initial_run = true;
-	static bool irq_enabled;
 	uint32_t button_scan;
 
 	if (irq_enabled) {
-		/* Disable GPIO interrupt */
+		/* Disable GPIO interrupts for edge triggered devices.
+		 * Devices that are configured with active high interrupts are already disabled.
+		 */
 		err = callback_ctrl(false);
 		if (err) {
 			LOG_ERR("Cannot disable callbacks");
+			return;
 		}
+
 		irq_enabled = false;
 	}
 
@@ -181,10 +197,22 @@ int dk_leds_init(void)
 static void button_pressed(const struct device *gpio_dev, struct gpio_callback *cb,
 		    uint32_t pins)
 {
+	int err;
 	k_spinlock_key_t key = k_spin_lock(&lock);
 
 	switch (state) {
 	case STATE_WAITING:
+		if (gpio_dev == GPIO0_DEV) {
+			/* GPIO0 has active high triggered interrupts and must be disabled here
+			 * to avoid successive events from blocking the buttons_scan_fn function.
+			 */
+			err = callback_ctrl(false);
+			if (err) {
+				LOG_ERR("Failed disabling interrupts");
+			}
+			irq_enabled = false;
+		}
+
 		state = STATE_SCANNING;
 		k_work_reschedule(&buttons_scan, K_MSEC(1));
 		break;
