@@ -35,7 +35,7 @@ User interface
 The user interface of the sample depends on the hardware platform you are using.
 
 LED 1:
-   Blinks when the main loop is running (that is, the device is advertising) with a period of two seconds, duty cycle 50%.
+   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
 
 LED 2:
    Lit when the development kit is connected.
@@ -73,20 +73,20 @@ This sample uses the following |NCS| library:
 
 This sample uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``include/errno.h``
-* ``include/zephyr.h``
-* ``include/sys/printk.h``
-* ``include/sys/byteorder.h``
+* :file:`include/zephyr/types.h`
+* :file:`include/errno.h`
+* :file:`include/zephyr.h`
+* :file:`include/sys/printk.h`
+* :file:`include/sys/byteorder.h`
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :file:`include/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-* ``include/bluetooth/bluetooth.h``
-* ``include/bluetooth/conn.h``
-* ``include/bluetooth/uuid.h``
-* ``include/bluetooth/gatt.h``
-* ``include/bluetooth/services/bas.h``
-* ``include/bluetooth/services/hrs.h``
+* :file:`include/bluetooth/bluetooth.h`
+* :file:`include/bluetooth/conn.h`
+* :file:`include/bluetooth/uuid.h`
+* :file:`include/bluetooth/gatt.h`
+* :file:`include/bluetooth/services/bas.h`
+* :file:`include/bluetooth/services/hrs.h`

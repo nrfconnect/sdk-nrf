@@ -57,14 +57,14 @@ See `Fast Pair Advertising`_ for detailed information about discoverable and not
 Fast Pair device registration
 =============================
 
-Before a device can be used as a Fast Pair Provider, you must register the device model with Google.
+Before you can use a device as a Fast Pair Provider, you must register the device model with Google.
 This is required to obtain Model ID and Anti-Spoofing Private Key.
 See :ref:`ug_bt_fast_pair_provisioning` in the Fast Pair user guide for details.
 
 .. tip::
    The sample provides TX power in the Bluetooth advertising data.
    There is no need to provide the TX power value during device model registration.
-   The device is using only Bluetooth LE, so you must select **Skip connecting audio profiles (e.g. A2DP, HFP)** option when registering the device.
+   The device is using only Bluetooth LE, so you must select **Skip connecting audio profiles (e.g. A2DP or HFP)** option when registering the device.
 
 Seeker device
 =============
@@ -73,7 +73,7 @@ A Fast Pair Seeker device is required to test the Fast Pair procedure.
 This is one of the two `Fast Pair roles`_.
 
 For example, you can use an Android device as the Seeker device.
-To test with a debug mode Model ID, the Android device must be configured to include debug results while displaying the nearby Fast Pair Providers.
+To test with a debug mode Model ID, you must configure the Android device to include debug results while displaying the nearby Fast Pair Providers.
 For details, see `Verifying Fast Pair`_ in the GFPS documentation.
 
 Not discoverable advertising requirements
@@ -168,7 +168,7 @@ Testing
 1. |connect_terminal_specific|
    The sample provides Fast Pair debug logs to inform about state of the Fast Pair procedure.
 #. Reset the kit.
-#. Observe that **LED 1** is blinking (firmware is running) and **LED 3** is turned on (device is Fast Pair discoverable).
+#. Observe that **LED 1** is blinking (firmware is running) and **LED 3** is lit (device is Fast Pair discoverable).
    This means that the device is now working as Fast Pair Provider and is advertising.
 #. On the Android device, go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`, depending on your Android device configuration) > :guilabel:`Devices`.
 #. Move the Android device close to the Fast Pair Provider that is advertising.
@@ -181,14 +181,14 @@ Testing
 
    The device model name and displayed logo depend on the data provided during the device model registration.
 #. Tap the :guilabel:`Connect` button to initiate the connection and trigger the Fast Pair procedure.
-   After the procedure is finished, the pop-up is updated to inform about successfully completed Fast Pair procedure.
-   **LED 2** turns on to indicate that the device is connected with the Bluetooth Central.
+   After the procedure has completed, the pop-up is updated to inform about successfully completed Fast Pair procedure.
+   **LED 2** is lit to indicate that the device is connected with the Bluetooth Central.
 
    .. note::
       Some Android devices might disconnect right after the Fast Pair procedure has completed.
       Go to :guilabel:`Settings` > :guilabel:`Bluetooth` and tap on the bonded Fast Pair Provider to reconnect.
 
-   The connected Fast Pair Provider can now be used to control audio volume of the Bluetooth Central.
+   You can now use the connected Fast Pair Provider to control audio volume of the Bluetooth Central.
 #. Press **Button 2** to increase the audio volume.
 #. Press **Button 4** to decrease the audio volume.
 
@@ -237,13 +237,13 @@ Test not discoverable advertising by completing `Testing`_ and the following add
 
 #. In the show UI indication mode, when the notification appears, tap on it to trigger the Fast Pair procedure.
 #. Wait for the notification about successful Fast Pair procedure.
-   **LED 2** is turned on to inform that the device is connected with the Bluetooth Central.
+   **LED 2** is lit to inform that the device is connected with the Bluetooth Central.
 
    .. note::
       Some Android devices might disconnect right after Fast Pair procedure is finished.
       Go to :guilabel:`Settings` > :guilabel:`Bluetooth` and tap on the bonded Fast Pair Provider to reconnect.
 
-   The connected Fast Pair Provider can now be used to control the audio volume of the Bluetooth Central.
+   You can now use the connected Fast Pair Provider to control the audio volume of the Bluetooth Central.
 #. Press **Button 2** to increase the audio volume.
 #. Press **Button 4** to decrease the audio volume.
 
@@ -263,10 +263,10 @@ Testing Personalized Name extension is described in `Fast Pair Certification Gui
 Battery Notification extension
 ------------------------------
 
-Test `Fast Pair Battery Notification extension`_ by completing the following steps:
+Complete the following steps to test `Fast Pair Battery Notification extension`_:
 
 #. Pair the Fast Pair Provider with at least one Fast Pair Seeker.
-#. Put the Fast Pair Provider in not discoverable advertising mode.
+#. Set the Fast Pair Provider in not discoverable advertising mode.
 #. Verify that the Provider is advertising sample battery data using the `nRF Connect for Mobile`_ application.
 
 .. note::

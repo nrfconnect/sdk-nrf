@@ -24,7 +24,7 @@ Overview
 The sample demonstrates a basic Bluetooth® Low Energy Peripheral role functionality that exposes the Continuous Glucose Monitoring GATT Service.
 Once it connects to a Central device, it generates dummy glucose measurement values.
 You can use it together with the Continuous Glucose module in the nRF Toolbox app.
-You may also use nRF Connect app to interact with the CGMS module.
+You can also use the `nRF Connect for Mobile`_ to interact with the CGMS module.
 
 Building and running
 ********************
@@ -61,16 +61,16 @@ Dependencies
 
 This sample uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``include/errno.h``
-* ``include/zephyr.h``
-* ``include/sys/printk.h``
-* ``include/sys/byteorder.h``
+* :file:`include/zephyr/types.h`
+* :file:`include/errno.h`
+* :file:`include/zephyr.h`
+* :file:`include/sys/printk.h`
+* :file:`include/sys/byteorder.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-* ``include/bluetooth/bluetooth.h``
-* ``include/bluetooth/conn.h``
-* ``include/bluetooth/uuid.h``
-* ``include/bluetooth/gatt.h``
-* ``include/bluetooth/services/cgms.h``
+* :file:`include/bluetooth/bluetooth.h`
+* :file:`include/bluetooth/conn.h`
+* :file:`include/bluetooth/uuid.h`
+* :file:`include/bluetooth/gatt.h`
+* :file:`include/bluetooth/services/cgms.h`

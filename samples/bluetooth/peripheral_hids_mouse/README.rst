@@ -25,36 +25,36 @@ Overview
 ********
 
 The sample uses the buttons on a development kit to simulate the movement of a mouse.
-The four buttons simulate movement to the left, upward, to the right, and downward, respectively.
+The four buttons simulate movement to the left, up, right, and down, respectively.
 Mouse clicks are not simulated.
 
 This sample exposes the HID GATT Service.
 It uses a report map for a generic mouse.
 
-You can also disable directed advertising feature by clearing the BT_DIRECTED_ADVERTISING flag in the application configuration.
-This feature is enabled by default and it changes the way in which advertising works in comparison to the other Bluetooth® Low Energy samples.
+You can also disable the directed advertising feature by clearing the ``BT_DIRECTED_ADVERTISING`` flag in the application configuration.
+This feature is enabled by default and it changes the way how advertising works in comparison to the other Bluetooth® Low Energy samples.
 When the device wants to advertise, it starts with high duty cycle directed advertising provided that it has bonding information.
-If the timeout occurs, then the device starts directed advertising to the next bonded peer.
-If all bonding information is used and there is still no connection, then the regular advertising starts.
+If the timeout occurs, the device starts directed advertising to the next bonded peer.
+If all bonding information is used and there is still no connection, the regular advertising starts.
 
 User interface
 **************
 
 Button 1:
-   Simulate moving the mouse pointer 5 pixels to the left.
+   Simulate moving the mouse pointer five pixels to the left.
 
    When pairing, press this button to confirm the passkey value that is printed on the COM listener to pair with the other device.
 
 Button 2:
-   Simulate moving the mouse pointer 5 pixels upward.
+   Simulate moving the mouse pointer five pixels up.
 
    When pairing, press this button to reject the passkey value that is printed on the COM listener to prevent pairing with the other device.
 
 Button 3:
-   Simulate moving the mouse pointer 5 pixels to the right.
+   Simulate moving the mouse pointer five pixels to the right.
 
 Button 4:
-   Simulate moving the mouse pointer 5 pixels downward.
+   Simulate moving the mouse pointer five pixels down.
 
 Configuration
 *************
@@ -69,7 +69,7 @@ The HID service specification does not require encryption (:kconfig:option:`CONF
 Building and running
 ********************
 
-To build this sample with the :ref:`nrf_rpc_ipc_readme` library on the nRF5340 DK, set :makevar:`OVERLAY_CONFIG` option to the :file:`overlay-nrf_rpc.conf` file.
+To build this sample with the :ref:`nrf_rpc_ipc_readme` library on the nRF5340 DK, set the :makevar:`OVERLAY_CONFIG` option to the :file:`overlay-nrf_rpc.conf` file.
 
 .. code-block::
 
@@ -82,7 +82,7 @@ To build this sample with the :ref:`nrf_rpc_ipc_readme` library on the nRF5340 D
 Testing
 =======
 
-After programming the sample to your development kit, you can test it either by connecting the development kit as a mouse device to a Microsoft Windows computer or by connecting to it with `nRF Connect for Desktop`_.
+After programming the sample to your development kit, you can test it either by connecting the development kit as a mouse device to a Microsoft Windows computer or by connecting to it with the Bluetooth Low Energy app of the `nRF Connect for Desktop`_.
 
 Testing with a Microsoft Windows computer
 -----------------------------------------
@@ -112,7 +112,7 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
 #. Open the Bluetooth Low Energy app.
 #. Connect to the device from the app. The device is advertising as "NCS HIDS mouse"
 #. Optionally, bond to the device.
-   Click the settings button for the device in the app, select **Pair**, check :guilabel:`Perform Bonding`, and click :guilabel:`Pair`.
+   Click the :guilabel:`Settings` button for the device in the app, select **Pair**, check :guilabel:`Perform Bonding`, and click :guilabel:`Pair`.
    Optionally check :guilabel:`Enable MITM protection` to pair with MITM protection and use a button on the device to confirm or reject passkey value.
 #. Click :guilabel:`Match` in the app.
    Wait until the bond is established before you continue.
@@ -125,16 +125,16 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
    These are transmitted as 12-bit signed integers.
    The format used for mouse reports is the following byte array, where LSB/MSB is the least/most significant bit: ``[8 LSB (X), 4 LSB (Y) | 4 MSB(X), 8 MSB(Y)]``.
 
-   Therefore, ``FB0F00`` denotes an X-translation of FFB = -5 (two's complement format), which means a movement of 5 pixels to the left, and a Y-translation of 000 = 0.
+   Therefore, ``FB0F00`` denotes an X-translation of FFB = -5 (two's complement format), which means a movement of five pixels to the left, and a Y-translation of 000 = 0.
 #. Push **Button 2**.
    Observe that the value ``00B0FF`` is received on the same HID Report characteristic.
 #. Push **Button 3**.
    Observe that the value ``050000`` is received on the same HID Report characteristic.
 #. Push **Button 4**.
    Observe that the value ``005000`` is received on the same HID Report characteristic.
-#. Disconnect the device in nRF Connect.
+#. Disconnect the device in the Bluetooth Low Energy app of nRF Connect for Desktop.
    Observe that no new notifications are received and the device is advertising.
-#. As bond information is preserved by nRF Connect, you can immediately reconnect to the device by clicking the Connect button again.
+#. As bond information is preserved by the Bluetooth Low Energy app, you can immediately reconnect to the device by clicking the :guilabel:`Connect` button again.
 
 
 Dependencies
@@ -147,21 +147,21 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``lib/libc/minimal/include/assert.h``
-* ``lib/libc/minimal/include/errno.h``
-* ``include/sys/printk.h``
-* ``include/sys/byteorder.h``
+* :file:`include/zephyr/types.h`
+* :file:`lib/libc/minimal/include/assert.h`
+* :file:`lib/libc/minimal/include/errno.h`
+* :file:`include/sys/printk.h`
+* :file:`include/sys/byteorder.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
 * :ref:`zephyr:settings_api`
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/conn.h``
-  * ``include/bluetooth/uuid.h``
-  * ``include/bluetooth/gatt.h``
-  * ``samples/bluetooth/gatt/bas.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/hci.h`
+  * :file:`include/bluetooth/conn.h`
+  * :file:`include/bluetooth/uuid.h`
+  * :file:`include/bluetooth/gatt.h`
+  * :file:`samples/bluetooth/gatt/bas.h`
 
 The sample also uses the following secure firmware component:
 

@@ -46,18 +46,18 @@ RGB LED:
    The RGB LED channels are used independently to display the following information:
 
    * Red - If the main loop is running (that is, the device is advertising).
-     The LED blinks with a period of 2 seconds, duty cycle of 50%.
+     Blinks with a period of two seconds with the duty cycle set to 50% when the main loop is running and the device is advertising.
    * Green - If the device is connected.
 
    For example, if Thingy:53 is connected over Bluetooth, the LED color toggles between green and yellow.
    The green LED channel is kept on, and the red LED channel is blinking.
 
 Button 1:
-   Set Button 1 NSMS Status Characteristic to: "Pressed" or "Released".
+   Set **Button 1** NSMS Status Characteristic to: "Pressed" or "Released".
    Notify the client if notification is enabled.
 
 Button 2 (the one hidden under the cover):
-   Set Button 2 NSMS Status Characteristic to: "Pressed" or "Released".
+   Set **Button 2** NSMS Status Characteristic to: "Pressed" or "Released".
    Notify the client if notification is enabled.
    By default, this service requires the connection to be secured to read or notify.
 
@@ -65,17 +65,17 @@ Development kits
 ================
 
 LED 1:
-   Blinks when the main loop is running (that is, the device is advertising) with a period of 2 seconds, duty cycle of 50%.
+   Blinks with a period of two seconds with the duty cycle set to 50% when the main loop is running and the device is advertising.
 
 LED 2:
-   On when the development kit is connected.
+   Lit when the development kit is connected.
 
 Button 1:
-   Set Button 1 NSMS Status Characteristic to: "Pressed" or "Released".
+   Set **Button 1** NSMS Status Characteristic to: "Pressed" or "Released".
    Notify the client if notification is enabled.
 
 Button 2 (the one hidden under the cover):
-   Set Button 2 NSMS Status Characteristic to: "Pressed" or "Released".
+   Set **Button 2** NSMS Status Characteristic to: "Pressed" or "Released".
    Notify the client if notification is enabled.
    By default, this service requires the connection to be secured to read or notify.
 
@@ -117,7 +117,9 @@ After programming the sample to your dongle or development kit, test it by perfo
 #. Read **Nordic Status Message Service** message characteristic to check the initial status - if no button was pressed, it should be "Unknown".
 #. Enable notification for the characteristic found.
 #. Press the related button and observe the message change between "Pressed" and "Released".
-#. Note that performing the same for Button 2 characteristic must require a secured connection.
+
+.. note::
+   Performing the same for **Button 2** characteristic requires a secured connection.
 
 Dependencies
 ************
@@ -129,18 +131,18 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``lib/libc/minimal/include/errno.h``
-* ``include/sys/printk.h``
-* ``include/sys/byteorder.h``
+* :file:`include/zephyr/types.h`
+* :file:`lib/libc/minimal/include/errno.h`
+* :file:`include/sys/printk.h`
+* :file:`include/sys/byteorder.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/conn.h``
-  * ``include/bluetooth/uuid.h``
-  * ``include/bluetooth/gatt.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/hci.h`
+  * :file:`include/bluetooth/conn.h`
+  * :file:`include/bluetooth/uuid.h`
+  * :file:`include/bluetooth/gatt.h`
 
 The sample also uses the following secure firmware component:
 

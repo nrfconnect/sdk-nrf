@@ -39,9 +39,9 @@ LE Secure Out-of-Band pairing with NFC is enabled by default in this sample.
 You can disable this feature by clearing the `NFC_OOB_PAIRING` flag in the application configuration.
 The following paragraphs describe the application behavior when NFC pairing is enabled.
 
-When the application starts, it initializes and starts the NFCT peripheral, which is used for pairing.
+When the application starts, it initializes and starts the NFCT peripheral that is used for pairing.
 The application does not start advertising immediately, but only when the NFC tag is read by an NFC polling device, for example a smartphone or a tablet with NFC support.
-To trigger advertising without NFC, you can press **Button 4**.
+To trigger advertising without NFC, press **Button 4**.
 The NDEF message that the tag sends to the NFC device contains data required to initiate pairing.
 To start the NFC data transfer, the NFC device must touch the NFC antenna that is connected to the nRF52 device.
 
@@ -64,10 +64,10 @@ Button 2:
    When pairing, press this button to reject the passkey value which is printed on the COM listener to prevent pairing with the other device.
 
 LED 1:
-   Blinks with a period of 2 seconds (duty cycle 50%) when the device is advertising.
+   Blinks with a period of two seconds with the duty cycle set to 50% when the main loop is running and the device is advertising.
 
 LED 2:
-   On when at least one device is connected.
+   Lit when at least one device is connected.
 
 LED 3:
    Indicates if Caps Lock is enabled.
@@ -108,7 +108,7 @@ To test with a Microsoft Windows computer that has a Bluetooth® radio, complete
 
 1. Power on your development kit.
 #. Press **Button 4** on the kit if the device is not advertising.
-   Advertising is indicated by blinking **LED 1**.
+   A blinking **LED 1** indicates that the device is advertising.
 #. |connect_terminal|
 #. On your Windows computer, search for Bluetooth devices and connect to the device named "NCS HIDS keyboard".
 #. Observe that the connection state is indicated by **LED 2**.
@@ -133,14 +133,14 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
 
 1. Power on your development kit.
 #. Press **Button 4** on the kit if the device is not advertising.
-   Advertising is indicated by blinking **LED 1**.
+   A blinking **LED 1** indicates that the device is advertising.
 #. |connect_terminal|
 #. Start `nRF Connect for Desktop`_.
 #. Open the Bluetooth Low Energy app.
 #. Connect to the device from the app. The device is advertising as "NCS HIDS keyboard".
 #. Pair the devices:
 
-   a. Click the settings button for the device in the app.
+   a. Click the :guilabel:`Settings` button for the device in the app.
    #. Select :guilabel:`Pair`.
    #. Optionally, select :guilabel:`Perform Bonding`.
 
@@ -166,20 +166,20 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
    Observe that two notifications are received on one of the HID Report characteristics, denoting press and release for one character of the test message.
    The first one has the value ``02000F0000000000``, the second has the value ``0200000000000000``.
    These values correspond to press and release of character "l" with the Shift key pressed.
-#. In nRF Connect, select the HID Report (which has UUID 0x2A4D and the properties Read, WriteWithoutResponse, and Write).
+#. In the Bluetooth Low Energy app, select the HID Report (which has UUID ``0x2A4D`` and the properties ``Read``, ``WriteWithoutResponse``, and ``Write``).
    Enter ``02`` in the text box and click the :guilabel:`tick mark` button.
    This sets the modifier bit of the Output Report to 02, which simulates turning Caps Lock ON.
 
-   Observe that **LED 3** turns on.
+   Observe that **LED 3** is lit.
 #. Select the same HID Report again.
    Enter ``00`` in the text box and click :guilabel:`Write`.
    This sets the modifier bit to 00, which simulates turning Caps Lock OFF.
 
    Observe that **LED 3** turns off.
-#. Disconnect the device in nRF Connect.
+#. Disconnect the device in the Bluetooth Low Energy app.
    Observe that no new notifications are received.
 #. If the advertising did not start automatically, press **Button 4** to continue advertising.
-#. As bond information is preserved by nRF Connect, you can immediately reconnect to the device by clicking the Connect button again.
+#. As bond information is preserved by the Bluetooth Low Energy app, you can immediately reconnect to the device by clicking the :guilabel:`Connect` button again.
 
 
 Testing with Android using NFC for pairing
@@ -215,19 +215,19 @@ When the `NFC_OOB_PAIRING` feature is enabled, it also uses the Type 2 Tag libra
 
 The sample uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``include/sys/printk.h``
-* ``include/sys/byteorder.h``
+* :file:`include/zephyr/types.h`
+* :file:`include/sys/printk.h`
+* :file:`include/sys/byteorder.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
 * :ref:`zephyr:settings_api`
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/conn.h``
-  * ``include/bluetooth/uuid.h``
-  * ``include/bluetooth/gatt.h``
-  * ``samples/bluetooth/gatt/bas.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/hci.h`
+  * :file:`include/bluetooth/conn.h`
+  * :file:`include/bluetooth/uuid.h`
+  * :file:`include/bluetooth/gatt.h`
+  * :file:`samples/bluetooth/gatt/bas.h`
 
 References
 **********

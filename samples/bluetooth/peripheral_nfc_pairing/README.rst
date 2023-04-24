@@ -140,8 +140,8 @@ In addition, it uses the Type 4 Tag library from nrfxlib:
 
 It uses the following Zephyr libraries:
 
-* ``include/zephyr.h``
-* ``include/device.h``
+* :file:`include/zephyr.h`
+* :file:`include/device.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
 
 The sample also uses the following secure firmware component:

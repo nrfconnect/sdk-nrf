@@ -32,13 +32,13 @@ User interface
 **************
 
 LED 1:
-   * Blinks with a period of 2 seconds, duty cycle 50%, when the main loop is running.
+   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
 
 LED 2:
-   * On when connected.
+   Lit when connected.
 
 Button 1:
-   * Read the current time.
+   Read the current time.
 
 Building and running
 ********************
@@ -118,8 +118,8 @@ After programming the sample to your development kit, you can test it with `nRF 
           External update  0
           Manual update    0
 
-#. Disconnect the device in nRF Connect.
-#. As bond information is preserved by nRF Connect, you can immediately reconnect to the device by clicking the Connect button again.
+#. Disconnect the device in the Bluetooth Low Energy app.
+#. As bond information is preserved by the Bluetooth Low Energy app, you can immediately reconnect to the device by clicking the :guilabel:`Connect` button again.
 
 Dependencies
 ************
@@ -132,15 +132,15 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``lib/libc/minimal/include/errno.h``
-* ``include/sys/printk.h``
+* :file:`include/zephyr/types.h`
+* :file:`lib/libc/minimal/include/errno.h`
+* :file:`include/sys/printk.h`
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/conn.h``
-  * ``include/bluetooth/uuid.h``
-  * ``include/bluetooth/gatt.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/conn.h`
+  * :file:`include/bluetooth/uuid.h`
+  * :file:`include/bluetooth/gatt.h`
 
 The sample also uses the following secure firmware component:
 
