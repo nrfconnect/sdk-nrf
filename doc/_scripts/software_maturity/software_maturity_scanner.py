@@ -191,6 +191,8 @@ def soc_from_kconfig(kconfig: kconfiglib.Kconfig) -> str:
         SoC base name on the form "nrf1234".
     """
 
+    if not "CONFIG_SOC" in kconfig.variables:
+        return None
     soc = kconfig.variables["CONFIG_SOC"].value
     return soc.strip('"').split("_")[0].lower()
 
@@ -222,6 +224,8 @@ def find_experimental_symbols(logs: List[str]) -> Dict[str, Set[str]]:
                 continue
             kconf = kconfiglib.Kconfig(filename=config_path)
             soc = soc_from_kconfig(kconf)
+            if not soc:
+                continue
             for symbol in matches:
                 symbol = "CONFIG_" + symbol
                 if soc not in socs:
@@ -543,6 +547,8 @@ def generate_tables(
     for conf_file in all_conf_files:
         kconf = kconfiglib.Kconfig(filename=conf_file)
         soc = soc_from_kconfig(kconf)
+        if not soc:
+            continue
 
         # Look for technology symbols
         for tech, rule in top_table_info.items():
