@@ -37,7 +37,7 @@ extern "C" {
 
 /** @brief Structure containing battery data published to cloud. */
 struct cloud_data_battery {
-	/** Battery voltage level. */
+	/** Battery fuel gauge percentage. */
 	uint16_t bat;
 	/** Battery data timestamp. UNIX milliseconds. */
 	int64_t bat_ts;

@@ -28,7 +28,7 @@ The data types that are collected by the application are listed in the following
 +----------------+----------------------------+-----------------------------------------------+--------------------------------+
 | Modem          | LTE link data, device data | APP_DATA_MODEM_DYNAMIC, APP_DATA_MODEM_STATIC | NA                             |
 +----------------+----------------------------+-----------------------------------------------+--------------------------------+
-| Battery        | Voltage                    | APP_DATA_BATTERY                              | NA                             |
+| Battery        | Battery level              | APP_DATA_BATTERY                              | NA                             |
 +----------------+----------------------------+-----------------------------------------------+--------------------------------+
 
 Additionally, the following data types are supported that provide some asynchronous data:

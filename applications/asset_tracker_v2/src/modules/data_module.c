@@ -1332,10 +1332,10 @@ static void on_all_states(struct data_msg_data *msg)
 		requested_data_status_set(APP_DATA_BATTERY);
 	}
 
-	if (IS_EVENT(msg, modem, MODEM_EVT_BATTERY_DATA_READY)) {
+	if (IS_EVENT(msg, sensor, SENSOR_EVT_FUEL_GAUGE_READY)) {
 		struct cloud_data_battery new_battery_data = {
-			.bat = msg->module.modem.data.bat.battery_voltage,
-			.bat_ts = msg->module.modem.data.bat.timestamp,
+			.bat = msg->module.sensor.data.bat.battery_level,
+			.bat_ts = msg->module.sensor.data.bat.timestamp,
 			.queued = true
 		};
 

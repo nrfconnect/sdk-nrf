@@ -87,12 +87,6 @@ enum modem_module_event_type {
 	 */
 	MODEM_EVT_MODEM_DYNAMIC_DATA_NOT_READY,
 
-	/** Battery voltage has been sampled and is ready.
-	 *  The event has associated payload of type @ref modem_module_battery_data in
-	 *  the `data.bat` member.
-	 */
-	MODEM_EVT_BATTERY_DATA_READY,
-
 	/** Battery data could not be sampled will not be ready for this sampling interval.
 	 *  The event has no associated payload.
 	 */
@@ -183,11 +177,6 @@ struct modem_module_dynamic_modem_data {
 	enum lte_lc_lte_mode nw_mode;
 };
 
-struct modem_module_battery_data {
-	uint16_t battery_voltage;
-	int64_t timestamp;
-};
-
 /** @brief Modem event. */
 struct modem_module_event {
 	struct app_event_header header;
@@ -195,7 +184,6 @@ struct modem_module_event {
 	union {
 		struct modem_module_static_modem_data modem_static;
 		struct modem_module_dynamic_modem_data modem_dynamic;
-		struct modem_module_battery_data bat;
 		struct modem_module_cell cell;
 		struct modem_module_psm psm;
 		struct modem_module_edrx edrx;

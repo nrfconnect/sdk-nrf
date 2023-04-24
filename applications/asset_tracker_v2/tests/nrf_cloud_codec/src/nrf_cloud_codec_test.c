@@ -78,7 +78,7 @@ const static struct cloud_data_ui ui_data_example = {
 
 #define BAT_BATCH_EXAMPLE \
 "[{"\
-	"\"appId\":\"VOLTAGE\","\
+	"\"appId\":\"BATTERY\","\
 	"\"messageType\":\"DATA\","\
 	"\"ts\":1563968747123,"\
 	"\"data\":\"50\""\

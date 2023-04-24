@@ -13,6 +13,10 @@
 #include "ext_sensors.h"
 #endif
 
+#if defined(CONFIG_ADP536X)
+#include <adp536x.h>
+#endif
+
 #define MODULE sensor_module
 
 #include "modules_common.h"
@@ -242,6 +246,27 @@ static void apply_config(struct sensor_msg_data *msg)
 #endif /* CONFIG_EXTERNAL_SENSORS */
 }
 
+static void battery_data_get(void)
+{
+#if defined(CONFIG_ADP536X)
+	int err;
+	struct sensor_module_event *sensor_module_event;
+	uint8_t percentage;
+
+	err = adp536x_fg_soc(&percentage);
+	if (err) {
+		LOG_ERR("Failed to get battery level: %d", err);
+		return;
+	}
+
+	sensor_module_event = new_sensor_module_event();
+	sensor_module_event->data.bat.timestamp = k_uptime_get();
+	sensor_module_event->data.bat.battery_level = percentage;
+	sensor_module_event->type = SENSOR_EVT_FUEL_GAUGE_READY;
+	APP_EVENT_SUBMIT(sensor_module_event);
+#endif
+}
+
 static void environmental_data_get(void)
 {
 	struct sensor_module_event *sensor_module_event;
@@ -290,7 +315,7 @@ static void environmental_data_get(void)
 
 	/* This event must be sent even though environmental sensors are not
 	 * available on the nRF9160DK. This is because the Data module expects
-	 * responses from the different modules within a certain amounf of time
+	 * responses from the different modules within a certain amount of time
 	 * after the APP_EVT_DATA_GET event has been emitted.
 	 */
 	LOG_DBG("No external sensors, submitting dummy sensor data");
@@ -333,6 +358,18 @@ static bool environmental_data_requested(enum app_module_data_type *data_list,
 	return false;
 }
 
+static bool battery_data_requested(enum app_module_data_type *data_list,
+					 size_t count)
+{
+	for (size_t i = 0; i < count; i++) {
+		if (data_list[i] == APP_DATA_BATTERY) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 /* Message handler for STATE_INIT. */
 static void on_state_init(struct sensor_msg_data *msg)
 {
@@ -350,13 +387,14 @@ static void on_state_running(struct sensor_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, app, APP_EVT_DATA_GET)) {
-		if (!environmental_data_requested(
-			msg->module.app.data_list,
-			msg->module.app.count)) {
-			return;
+		if (environmental_data_requested(msg->module.app.data_list,
+						 msg->module.app.count)) {
+			environmental_data_get();
 		}
 
-		environmental_data_get();
+		if (battery_data_requested(msg->module.app.data_list, msg->module.app.count)) {
+			battery_data_get();
+		}
 	}
 }
 
