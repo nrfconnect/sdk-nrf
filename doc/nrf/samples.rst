@@ -27,6 +27,7 @@ Those samples are a good starting point for understanding how to put together yo
    samples/edge
    samples/gazell
    samples/matter
+   samples/multicore
    samples/net
    samples/nfc
    samples/nrf5340
@@ -36,4 +37,3 @@ Those samples are a good starting point for understanding how to put together yo
    samples/zigbee
    samples/wifi
    samples/other
-   samples/multicore
