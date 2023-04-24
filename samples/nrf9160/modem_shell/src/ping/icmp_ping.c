@@ -182,6 +182,9 @@ static uint32_t send_ping_wait_reply(struct icmp_ping_shell_cmd_argv *ping_args,
 		/* data[2..3] = checksum, calculated later */
 		/* data[4..5] = 0; */ /* Identifier */
 		/* data[6] = 0;  */ /* seqnr >> 8 */
+		if (seqnr == UINT8_MAX) {
+			seqnr = 0;
+		}
 		data[7] = ++seqnr;
 
 		/* Payload */
