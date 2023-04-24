@@ -3215,9 +3215,12 @@ struct nrf_wifi_umac_cmd_config_extended_ps {
 
 struct nrf_wifi_umac_event_power_save_info {
 	struct nrf_wifi_umac_hdr umac_hdr;
-	unsigned int ps_mode;
+	unsigned char ps_mode;
 	unsigned char enabled;
+	unsigned char extended_ps; /*1= ONN 0=OFF*/
 	unsigned char twt_responder;
+	signed int ps_timeout;
+	unsigned short listen_interval;
 	unsigned char num_twt_flows;
 	struct nrf_wifi_umac_config_twt_info twt_flow_info[0];
 } __NRF_WIFI_PKD;
