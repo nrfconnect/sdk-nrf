@@ -155,9 +155,9 @@ config NRF700X_BH_WQ_PRIORITY
 
 config NRF700X_IRQ_WQ_STACK_SIZE
 	int "Stack size of the workqueue for handling IRQs"
-	default 1024
+	default 2048
 
 config NRF700X_BH_WQ_STACK_SIZE
 	int "Stack size of the workqueue for handling bottom half"
-	default 1024
+	default 2048
 endif
