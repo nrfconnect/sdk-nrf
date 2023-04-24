@@ -21,18 +21,18 @@ The sample also requires a Bluetooth® Low Energy dongle and nRF Connect for Des
 Overview
 ********
 
-When connected, the sample waits for Client's requests to perform any bond deleting operation.
+When connected, the sample waits for the client's requests to perform any bond-deleting operation.
 
-It supports up to two simultaneous Client connections.
+It supports up to two simultaneous client connections.
 
 User interface
 **************
 
 LED 1:
-   Blinks with a period of 2 seconds with the duty cycle set to 50% when the main loop is running and the device is advertising.
+   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
 
 LED 2:
-   On when connected.
+   Lit when connected.
 
 Building and running
 ********************
@@ -91,13 +91,13 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``lib/libc/minimal/include/errno.h``
-* ``include/sys/printk.h``
+* :file:`include/zephyr/types.h`
+* :file:`lib/libc/minimal/include/errno.h`
+* :file:`include/sys/printk.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/conn.h``
-  * ``include/bluetooth/uuid.h``
-  * ``include/bluetooth/gatt.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/conn.h`
+  * :file:`include/bluetooth/uuid.h`
+  * :file:`include/bluetooth/gatt.h`

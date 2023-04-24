@@ -248,7 +248,7 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:pwm_api`:
 
-  * ``drivers/pwm.h``
+  * :file:`drivers/pwm.h`
 
 * :file:`include/sys/printk.h`
 * :file:`include/sys/byteorder.h`
@@ -257,4 +257,4 @@ In addition, it uses the following Zephyr libraries:
 
   * :file:`include/bluetooth/bluetooth.h`
   * :file:`include/bluetooth/scan.h`
-* ``ext/hal/nordic/nrfx/hal/nrf_radio.h``
+* :file:`ext/hal/nordic/nrfx/hal/nrf_radio.h`

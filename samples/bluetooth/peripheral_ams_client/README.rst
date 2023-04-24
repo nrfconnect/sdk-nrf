@@ -18,7 +18,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-The sample also requires a device running an AMS Server to connect with (for example, an iPhone which runs iOS, or a Bluetooth® Low Energy dongle and nRF Connect for Desktop).
+The sample also requires a device running an AMS Server to connect with (for example, an iPhone, or a computer with a Bluetooth® Low Energy dongle and nRF Connect for Desktop).
 
 Overview
 ********
@@ -33,10 +33,10 @@ User interface
 **************
 
 LED 1:
-   Blinks every two seconds, duty cycle 50%, when the main loop is running.
+   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
 
 LED 2:
-   On when connected.
+   Lit when connected.
 
 Button 1:
    Enable and disable MS track attributes notification.
@@ -87,9 +87,9 @@ Testing with nRF Connect for Desktop
 #. Reset the kit.
 #. Start the Bluetooth Low Energy app of `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
 #. Set up the server:
-    a. Select the :guilabel:`Server setup` tab.
-    #. Select :guilabel:`Dongle configuration` > :guilabel:`Load setup`.
-    #. Load the :file:`AMS_central.ncs` file located under :file:`samples/bluetooth/peripheral_ams_client` in the |NCS| folder structure.
+   a. Select the **Server setup** tab.
+   #. Select :guilabel:`Dongle configuration` > :guilabel:`Load setup`.
+   #. Load the :file:`AMS_central.ncs` file located under :file:`samples/bluetooth/peripheral_ams_client` in the |NCS| folder structure.
 #. Click :guilabel:`Apply to device`.
 #. Select the :guilabel:`Connection Map` tab.
 #. Select :guilabel:`Dongle configuration` > :guilabel:`Security parameters`.
@@ -245,14 +245,14 @@ To test the next track feature, complete the following steps:
 
       AMS EU: 02,03,00 180.000
 
-   The notification informs about the updated song duration.
+   The notification shows the updated song duration.
 
 #. Set the **Apple Entity Update** value to ``02 02 00 6E 52 46 35 33 20 53 65 72 69 65 73 20 73 6F 6E 67``.
 #. Verify that the UART output is as follows::
 
       AMS EU: 02,02,00 nRF53 Series song
 
-   The notification informs about the updated song title.
+   The notification shows the updated song title.
 
 Disconnect
 ^^^^^^^^^^
@@ -271,15 +271,15 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``lib/libc/minimal/include/errno.h``
-* ``include/sys/printk.h``
+* :file:`include/zephyr/types.h`
+* :file:`lib/libc/minimal/include/errno.h`
+* :file:`include/sys/printk.h`
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/conn.h``
-  * ``include/bluetooth/uuid.h``
-  * ``include/bluetooth/gatt.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/conn.h`
+  * :file:`include/bluetooth/uuid.h`
+  * :file:`include/bluetooth/gatt.h`
 
 The sample also uses the following secure firmware component:
 

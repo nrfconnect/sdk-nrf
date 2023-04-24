@@ -96,7 +96,7 @@ The UART async adapter creates and initializes an instance of the async module.
 This is needed because the USB CDC ACM implementation provides only the interrupt interface.
 The adapter uses data provided in the :c:struct:`uart_async_adapter_data` to connect to the UART device that does not use the asynchronous interface.
 
-The module requires the :kconfig:option:`CONFIG_BT_NUS_UART_ASYNC_ADAPTER` to be set to ``y``.
+The module requires the :ref:`CONFIG_BT_NUS_UART_ASYNC_ADAPTER <CONFIG_BT_NUS_UART_ASYNC_ADAPTER>` to be set to ``y``.
 For more information about the adapter, see the :file:`uart_async_adapter` source files available in the :file:`peripheral_uart/src` directory.
 
 MCUboot with serial recovery of the networking core image
@@ -114,10 +114,10 @@ Development kits
 ================
 
 LED 1:
-   Blinks with a period of 2 seconds, duty cycle 50%, when the main loop is running (device is advertising).
+   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
 
 LED 2:
-   On when connected.
+   Lit when connected.
 
 Button 1:
    Confirm the passkey value that is printed in the debug logs to pair/bond with the other device.
@@ -138,6 +138,21 @@ Button:
    Confirm the passkey value that is printed in the debug logs to pair/bond with the other device.
    Thingy:53 has only one button, therefore the passkey value cannot be rejected by pressing a button.
 
+Configuration
+*************
+
+|config|
+
+Configuration options
+=====================
+
+Check and configure the following configuration options for the sample:
+
+.. _CONFIG_BT_NUS_UART_ASYNC_ADAPTER:
+
+CONFIG_BT_NUS_UART_ASYNC_ADAPTER - Enable UART async adapter
+   Enables asynchronous adapter for UART drives that supports only IRQ interface.
+
 Building and running
 ********************
 
@@ -154,9 +169,9 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
 
 * For the minimal build variant, set :file:`prj_minimal.conf`.
 * For the USB CDC ACM extension, set :file:`prj_cdc.conf`.
-  Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
+  Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to the :file:`usb.overlay` file.
 * For the MCUboot with serial recovery of the networking core image feature, set the :file:`nrf5340dk_app_sr_net.conf` file.
-  You also need to set the :makevar:`mcuboot_OVERLAY_CONFIG` variant to :file:`nrf5340dk_mcuboot_sr_net.conf`.
+  You also need to set the :makevar:`mcuboot_OVERLAY_CONFIG` variant to the :file:`nrf5340dk_mcuboot_sr_net.conf` file.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
@@ -177,19 +192,19 @@ After programming the sample to your development kit, complete the following ste
 #. Observe that **LED 1** is blinking and that the device is advertising with the device name that is configured in :kconfig:option:`CONFIG_BT_DEVICE_NAME`.
 #. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
 #. Connect to the device using nRF Connect for Mobile.
-   Observe that **LED 2** is on.
+   Observe that **LED 2** is lit.
 #. Optionally, pair or bond with the device with MITM protection.
    This requires using the passkey value displayed in debug messages.
    See :ref:`peripheral_uart_debug` for details on how to access debug messages.
    To confirm pairing or bonding, press **Button 1** on the device and accept the passkey value on the smartphone.
 #. In the application, observe that the services are shown in the connected device.
-#. Select the UART RX characteristic value in nRF Connect.
+#. Select the UART RX characteristic value in nRF Connect for Mobile.
    You can write to the UART RX and get the text displayed on the COM listener.
-#. Type '0123456789' and tap :guilabel:`SEND`.
+#. Type "0123456789" and tap :guilabel:`SEND`.
    Verify that the text "0123456789" is displayed on the COM listener.
 #. To send data from the device to your phone or tablet, enter any text, for example, "Hello", and press Enter to see it on the COM listener.
    Observe that a notification is sent to the peer.
-#. Disconnect the device in nRF Connect.
+#. Disconnect the device in nRF Connect for Mobile.
    Observe that **LED 2** turns off.
 
 Dependencies
@@ -206,23 +221,23 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``boards/arm/nrf*/board.h``
+* :file:`include/zephyr/types.h`
+* :file:`boards/arm/nrf*/board.h`
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :file:`include/kernel.h`
 
 * :ref:`zephyr:api_peripherals`:
 
-   * ``include/gpio.h``
-   * ``include/uart.h``
+   * :file:`include/gpio.h`
+   * :file:`include/uart.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/gatt.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/uuid.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/gatt.h`
+  * :file:`include/bluetooth/hci.h`
+  * :file:`include/bluetooth/uuid.h`
 
 The sample also uses the following secure firmware component:
 

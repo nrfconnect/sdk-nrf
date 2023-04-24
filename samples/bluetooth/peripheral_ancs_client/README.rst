@@ -24,22 +24,22 @@ User interface
 **************
 
 LED 1:
-   * Blinks every two seconds, duty cycle 50%, when the main loop is running.
+   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
 
 LED 2:
-   * On when connected.
+   Lit when connected.
 
 Button 1:
-   * Request iOS notification attributes (content) on UART.
+   Request iOS notification attributes (content) on UART.
 
 Button 2:
-   * Request iOS app attributes on UART.
+   Request iOS app attributes on UART.
 
 Button 3:
-   * Perform a positive action as a response to the last received notification.
+   Perform a positive action as a response to the last received notification.
 
 Button 4:
-   * Perform a negative action as a response to the last received notification.
+   Perform a negative action as a response to the last received notification.
 
 Building and running
 ********************
@@ -144,8 +144,8 @@ The following table shows the format of the message that the application must se
    |                  | 01            | Negative                    |
    +------------------+---------------+-----------------------------+
 
-#. Press **Button 3** to perform a positive action and verify that the **Apple Control Point** value is updated to ``02 01 02 03 04 00``.
-#. You can also press **Button 4** and observe that the server receives a negative action ``02 01 02 03 04 01``.
+* Press **Button 3** to perform a positive action and verify that the **Apple Control Point** value is updated to ``02 01 02 03 04 00``.
+* You can also press **Button 4** and observe that the server receives a negative action ``02 01 02 03 04 01``.
 
 Retrieve notification attributes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -274,15 +274,15 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``lib/libc/minimal/include/errno.h``
-* ``include/sys/printk.h``
+* :file:`include/zephyr/types.h`
+* :file:`lib/libc/minimal/include/errno.h`
+* :file:`include/sys/printk.h`
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/conn.h``
-  * ``include/bluetooth/uuid.h``
-  * ``include/bluetooth/gatt.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/conn.h`
+  * :file:`include/bluetooth/uuid.h`
+  * :file:`include/bluetooth/gatt.h`
 
 The sample also uses the following secure firmware component:
 

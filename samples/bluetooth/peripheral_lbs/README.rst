@@ -41,7 +41,7 @@ nRF52840 Dongle
 ===============
 
 Green LED:
-   When the main loop is running (that is, the device is advertising), the LED blinks with a period of 2 seconds, duty cycle 50%.
+   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
 
 RGB LED:
    The RGB LED channels are used independently to display the following information:
@@ -59,7 +59,7 @@ RGB LED:
    The RGB LED channels are used independently to display the following information:
 
    * Red - If the main loop is running (that is, the device is advertising).
-     The LED blinks with a period of 2 seconds, duty cycle 50%.
+     The LED blinks with a period of two seconds, duty cycle 50%.
    * Green - If the device is connected.
    * Blue - If user set the LED using Nordic LED Button Service.
 
@@ -73,13 +73,13 @@ Development kits
 ================
 
 LED 1:
-   Blinks when the main loop is running (that is, the device is advertising) with a period of 2 seconds, duty cycle 50%.
+   Blinks when the main loop is running (that is, the device is advertising) with a period of two seconds, duty cycle 50%.
 
 LED 2:
-   On when the development kit is connected.
+   Lit when the development kit is connected.
 
 LED 3:
-   On when the development kit is controlled remotely from the connected device.
+   Lit when the development kit is controlled remotely from the connected device.
 
 Button 1:
    Send a notification with the button state: "pressed" or "released".
@@ -96,7 +96,7 @@ Minimal build
 You can build the sample with a minimum configuration as a demonstration of how to reduce code size and RAM usage, using the ``-DCONF_FILE='prj_minimal.conf'`` flag in your build.
 
 See :ref:`cmake_options` for instructions on how to add this option to your build.
-For example, when building on the command line, you can do so as follows:
+For example, when building on the command line, you can add the option as follows:
 
 .. code-block:: console
 
@@ -150,18 +150,18 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``lib/libc/minimal/include/errno.h``
-* ``include/sys/printk.h``
-* ``include/sys/byteorder.h``
+* :file:`include/zephyr/types.h`
+* :file:`lib/libc/minimal/include/errno.h`
+* :file:`include/sys/printk.h`
+* :file:`include/sys/byteorder.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/conn.h``
-  * ``include/bluetooth/uuid.h``
-  * ``include/bluetooth/gatt.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/hci.h`
+  * :file:`include/bluetooth/conn.h`
+  * :file:`include/bluetooth/uuid.h`
+  * :file:`include/bluetooth/gatt.h`
 
 The sample also uses the following secure firmware component:
 

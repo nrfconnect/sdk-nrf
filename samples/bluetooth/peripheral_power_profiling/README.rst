@@ -89,15 +89,15 @@ Service UUID
 
 This sample implements the vendor-specific service.
 
-The 128-bit service UUID is **00001630-1212-EFDE-1523-785FEABCD123**.
+The 128-bit service UUID is ``00001630-1212-EFDE-1523-785FEABCD123``.
 
 Characteristics
 ===============
 
-The 128-bit characteristic UUID is **00001630-1212-EFDE-1524-785FEABCD123**.
+The 128-bit characteristic UUID is ``00001630-1212-EFDE-1524-785FEABCD123``.
 This characteristic value can be read or sent by the notification mechanism.
 The value is an array filled with zeroes.
-You can configure the length of data using the :kconfig:option:`CONFIG_BT_POWER_PROFILING_DATA_LENGTH` Kconfig option.
+You can configure the length of data using the :ref:`CONFIG_BT_POWER_PROFILING_DATA_LENGTH <CONFIG_BT_POWER_PROFILING_DATA_LENGTH>` Kconfig option.
 
 This characteristic has a CCC descriptor associated with it.
 
@@ -107,8 +107,8 @@ User interface
 The sample uses buttons and LEDs to provide a simple user interface.
 
 LED 1:
-   Blinks when main loop is running with a period of two seconds, duty cycle 50%.
-    Off when the device is in system off state.
+   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+   Off when the device is in system off state.
 
 LED 2:
    Lit when an NFC field is detected.
@@ -131,30 +131,62 @@ Configuration
 
 The Peripheral Power Profiling sample allows configuring some of its settings using Kconfig.
 You can set different options to monitor the power consumption of your development kit.
-You can modify the following options:
+You can modify the following options (available in the Kconfig file at :file:`samples/bluetooth/peripheral_power_profiling`):
 
-   * :kconfig:option:`CONFIG_BT_POWER_PROFILING_DATA_LENGTH` - sets notification data length.
-   * :kconfig:option:`CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL` - sets notification sending interval in milliseconds.
+.. _CONFIG_BT_POWER_PROFILING_DATA_LENGTH:
 
-      Notifications are started when the central device enables it by writing to the characteristic CCC descriptor.
-   * :kconfig:option:`CONFIG_BT_POWER_PROFILING_NOTIFICATION_TIMEOUT` - sets notification timeout.
+CONFIG_BT_POWER_PROFILING_DATA_LENGTH - Notification data length
+   Sets the length of the data sent through notification mechanism.
 
-      Notifications are sent until this timeout is fired.
-      After that, the sample disconnects and enters the system off mode.
-   * :kconfig:option:`CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_DURATION` - sets connectable advertising duration in (N * 10) milliseconds.
+.. _CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL:
 
-      If the connection is not established during advertising, the device enters the system off state.
+CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL - Notification interval
+   Sets the notification send interval in milliseconds. Notification data is sent on every interval expiration.
+   Notifications are started when the central device enables it by writing to the characteristic CCC descriptor.
 
-   * :kconfig:option:`CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_DURATION` - sets non-connectable advertising duration in (N * 10) milliseconds.
+.. _CONFIG_BT_POWER_PROFILING_NOTIFICATION_TIMEOUT:
 
-      When the advertising ends, the device enters the system off state if there is no outgoing connection.
-   * :kconfig:option:`CONFIG_BT_POWER_PROFILING_NFC_ADV_DURATION` - sets advertising duration after the NFC field detection in (N * 10) milliseconds.
+CONFIG_BT_POWER_PROFILING_NOTIFICATION_TIMEOUT - Notification timeout
+   Sets the notification timeout in milliseconds. When this timeout fires the device will stop sending notifications.
+   After that, the sample disconnects and enters the system off mode.
 
-      If the connection was not established during advertising, the device enters the system off state.
-   * :kconfig:option:`CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_INTERVAL_MIN` - sets connectable advertising minimum interval in (N * 0.625) milliseconds.
-   * :kconfig:option:`CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_INTERVAL_MAX` - sets connectable advertising maximum interval in (N * 0.625) milliseconds.
-   * :kconfig:option:`CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_INTERVAL_MIN` - sets non-connectable advertising minimum interval in (N * 0.625) milliseconds.
-   * :kconfig:option:`CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_INTERVAL_MAX` - sets non-connectable advertising maximum interval in (N * 0.625) milliseconds.
+.. _CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_DURATION:
+
+CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_DURATION - Connectable advertising duration
+   Sets the connectable advertising duration in N*10 milliseconds unit.
+   If the connection is not established during advertising, the device enters the system off state.
+
+.. _CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_DURATION:
+
+CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_DURATION - Non-connectable advertising duration
+   Sets the non-connectable advertising duration in N*10 milliseconds unit.
+   When the advertising ends, the device enters the system off state if there is no outgoing connection.
+
+.. _CONFIG_BT_POWER_PROFILING_NFC_ADV_DURATION:
+
+CONFIG_BT_POWER_PROFILING_NFC_ADV_DURATION - Advertising duration when the NFC field is detected
+   Sets the advertising duration when the NFC field is detected in N*10 milliseconds unit.
+   If the connection was not established during advertising, the device enters the system off state.
+
+.. _CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_INTERVAL_MIN:
+
+CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_INTERVAL_MIN - Connectable advertising minimum interval
+   Sets the connectable advertising minimum interval in 0.625 milliseconds unit.
+
+.. _CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_INTERVAL_MAX:
+
+CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_INTERVAL_MAX - Connectable advertising maximum interval
+   Sets the connectable advertising maximum interval in 0.625 milliseconds unit.
+
+.. _CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_INTERVAL_MIN:
+
+CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_INTERVAL_MIN - Non-connectable advertising minimum interval
+   Sets the non-connectable advertising minimum interval in 0.625 milliseconds unit.
+
+.. _CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_INTERVAL_MAX:
+
+CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_INTERVAL_MAX - Non-connectable advertising maximum interval
+   Sets the non-connectable advertising maximum interval in 0.625 milliseconds unit.
 
 Building and running
 ********************
@@ -200,7 +232,7 @@ Testing with nRF Connect for Desktop and Power Profiler Kit II (PPK2)
 #. Observe that notifications are received.
 
    Monitor the power consumption during notification sending.
-#. After the timeout set by the :kconfig:option:`CONFIG_BT_POWER_PROFILING_NOTIFICATION_TIMEOUT` option, your development kit disconnects and enters the system off mode.
+#. After the timeout set by the :ref:`CONFIG_BT_POWER_PROFILING_NOTIFICATION_TIMEOUT <CONFIG_BT_POWER_PROFILING_NOTIFICATION_TIMEOUT>` option, your development kit disconnects and enters the system off mode.
 #. Repeat this test using different wake-up methods and different parameters, and monitor the power consumption for your new setup.
 
 Dependencies
@@ -220,17 +252,17 @@ It uses the Type 2 Tag library from `sdk-nrfxlib`_:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr/sys/kernel.h``
-* ``include/zephyr/sys/atomic.h``
+* :file`include/zephyr/sys/kernel.h`
+* :file:`include/zephyr/sys/atomic.h`
 * :ref:`zephyr:settings_api`
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/zephyr/bluetooth/bluetooth.h``
-  * ``include/zephyr/bluetooth/conn.h``
-  * ``include/zephyr/bluetooth/uuid.h``
-  * ``include/zephyr/bluetooth/gatt.h``
+  * :file:`include/zephyr/bluetooth/bluetooth.h`
+  * :file:`include/zephyr/bluetooth/conn.h`
+  * :file:`include/zephyr/bluetooth/uuid.h`
+  * :file:`include/zephyr/bluetooth/gatt.h`
 
 * :ref:`zephyr:pm-guide`:
 
-  * ``include/zephyr/pm/pm.h``
-  * ``include/zephyr/pm/policy.h``
+  * :file:`include/zephyr/pm/pm.h`
+  * :file:`include/zephyr/pm/policy.h`
