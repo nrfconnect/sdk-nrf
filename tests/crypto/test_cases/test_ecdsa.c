@@ -357,3 +357,23 @@ ITEM_REGISTER(test_case_ecdsa_data, test_case_t test_ecdsa_random) = {
 	.vectors_start = __start_test_vector_ecdsa_random_data,
 	.vectors_stop = __stop_test_vector_ecdsa_random_data,
 };
+
+ZTEST_SUITE(test_suite_ecdsa, NULL, NULL, NULL, NULL, NULL);
+
+ZTEST(test_suite_ecdsa, test_case_ecdsa_sign)
+{
+	ecdsa_setup_sign();
+	exec_test_case_ecdsa_sign();
+}
+
+ZTEST(test_suite_ecdsa, test_case_ecdsa_verify)
+{
+	ecdsa_setup_verify();
+	exec_test_case_ecdsa_verify();
+}
+
+ZTEST(test_suite_ecdsa, test_case_ecdsa_random)
+{
+	ecdsa_setup_random();
+	exec_test_case_ecdsa_random();
+}

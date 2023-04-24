@@ -413,3 +413,17 @@ ITEM_REGISTER(test_case_aes_ctr_data, test_case_t test_aes_encrypt) = {
 	.vectors_start = __start_test_vector_aes_ctr_data,
 	.vectors_stop = __stop_test_vector_aes_ctr_data,
 };
+
+ZTEST_SUITE(test_suite_aes_ctr, NULL, NULL, NULL, NULL, NULL);
+
+ZTEST(test_suite_aes_ctr, test_case_aes_ctr_functional)
+{
+	aes_ctr_setup_functional();
+	exec_test_case_aes_ctr_functional();
+}
+
+ZTEST(test_suite_aes_ctr, test_case_aes_ctr)
+{
+	aes_ctr_setup();
+	exec_test_case_aes_ctr();
+}

@@ -611,3 +611,41 @@ ITEM_REGISTER(test_case_aead_chachapoly_simple_data,
 	.vectors_start = __start_test_vector_aead_chachapoly_simple_data,
 	.vectors_stop = __stop_test_vector_aead_chachapoly_simple_data,
 };
+
+ZTEST_SUITE(test_suite_aead, NULL, NULL, NULL, NULL, NULL);
+
+ZTEST(test_suite_aead, test_case_aead_ccm)
+{
+	aead_ccm_setup();
+	exec_test_case_aead();
+}
+
+ZTEST(test_suite_aead, test_case_aead_ccm_simple)
+{
+	aead_ccm_setup_simple();
+	exec_test_case_aead_simple();
+}
+
+ZTEST(test_suite_aead, test_case_aead_gcm)
+{
+	aead_gcm_setup();
+	exec_test_case_aead();
+}
+
+ZTEST(test_suite_aead, test_case_aead_gcm_setup_simple)
+{
+	aead_gcm_setup_simple();
+	exec_test_case_aead_simple();
+}
+
+ZTEST(test_suite_aead, test_case_chachapoly)
+{
+	aead_chachapoly_setup();
+	exec_test_case_aead();
+}
+
+ZTEST(test_suite_aead, test_case_chachapoly_simple)
+{
+	aead_chachapoly_setup_simple();
+	exec_test_case_aead_simple();
+}

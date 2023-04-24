@@ -358,3 +358,17 @@ ITEM_REGISTER(test_case_ecjpake_data, test_case_t test_ecjpake_random) = {
 	.vectors_start = __start_test_vector_ecjpake_random_data,
 	.vectors_stop = __stop_test_vector_ecjpake_random_data,
 };
+
+ZTEST_SUITE(test_suite_ecjpake, NULL, NULL, NULL, NULL, NULL);
+
+ZTEST(test_suite_ecjpake, test_case_ecjpake_given)
+{
+	ecjpake_given_setup();
+	exec_test_case_ecjpake_given();
+}
+
+ZTEST(test_suite_ecjpake, test_case_ecjpake_random)
+{
+	ecjpake_random_setup();
+	exec_test_case_ecjpake_random();
+}
