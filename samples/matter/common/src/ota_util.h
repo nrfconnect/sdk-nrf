@@ -9,6 +9,7 @@
 #include <platform/nrfconnect/ExternalFlashManager.h>
 
 #if CONFIG_CHIP_OTA_REQUESTOR
+#include "ota_image_processor_base_impl.h"
 #include <platform/nrfconnect/OTAImageProcessorImpl.h>
 
 /**

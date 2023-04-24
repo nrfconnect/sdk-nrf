@@ -5,7 +5,6 @@
  */
 
 #include "ota_util.h"
-#include "ota_image_processor_base_impl.h"
 
 #if CONFIG_CHIP_OTA_REQUESTOR
 #include <app/clusters/ota-requestor/BDXDownloader.h>
