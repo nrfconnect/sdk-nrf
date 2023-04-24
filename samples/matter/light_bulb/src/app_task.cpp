@@ -196,6 +196,7 @@ CHIP_ERROR AppTask::Init()
 	SetDeviceAttestationCredentialsProvider(&mFactoryDataProvider);
 	SetCommissionableDataProvider(&mFactoryDataProvider);
 #else
+	SetDeviceInstanceInfoProvider(&DeviceInstanceInfoProviderMgrImpl());
 	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
 #endif
 
