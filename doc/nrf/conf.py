@@ -77,7 +77,6 @@ linkcheck_anchors_ignore = [r"page="]
 rst_epilog = """
 .. include:: /links.txt
 .. include:: /shortcuts.txt
-.. include:: /versions.txt
 """
 
 # Options for HTML output ------------------------------------------------------
