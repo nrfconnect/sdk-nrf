@@ -213,3 +213,11 @@ ITEM_REGISTER(test_case_aes_ecb_mac_data, test_case_t test_aes_ecb_mac) = {
 	.vectors_start = __start_test_vector_aes_ecb_mac_data,
 	.vectors_stop = __stop_test_vector_aes_ecb_mac_data,
 };
+
+ZTEST_SUITE(test_suite_aes_ecb_mac, NULL, NULL, NULL, NULL, NULL);
+
+ZTEST(test_suite_aes_ecb_mac, test_case_aes_ecb_mac)
+{
+	aes_setup_ecb_mac();
+	exec_test_case_aes_ecb_mac();
+}

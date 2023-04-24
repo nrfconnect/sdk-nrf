@@ -219,3 +219,19 @@ ITEM_REGISTER(test_case_sha_512_data, test_case_t test_sha_512_long) = {
 	.vectors_start = __start_test_vector_hash_512_long_data,
 	.vectors_stop = __stop_test_vector_hash_512_long_data,
 };
+
+ZTEST_SUITE(test_suite_sha_512, NULL, NULL, NULL, NULL, NULL);
+
+ZTEST(test_suite_sha_512, test_case_sha_256)
+{
+	sha_512_setup();
+	exec_test_case_sha_512();
+	sha_512_teardown();
+}
+
+ZTEST(test_suite_sha_512, test_case_sha_256_long)
+{
+	sha_512_long_setup();
+	exec_test_case_sha_512_long();
+	sha_512_long_teardown();
+}

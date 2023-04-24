@@ -448,3 +448,23 @@ ITEM_REGISTER(test_case_aes_ecb_data,
 	.vectors_start = __start_test_vector_aes_ecb_monte_carlo_data,
 	.vectors_stop = __stop_test_vector_aes_ecb_monte_carlo_data,
 };
+
+ZTEST_SUITE(test_suite_aes_ecb, NULL, NULL, NULL, NULL, NULL);
+
+ZTEST(test_suite_aes_ecb, test_case_aes_ecb_encrypt_functional)
+{
+	aes_setup_functional();
+	exec_test_case_aes_ecb_functional();
+}
+
+ZTEST(test_suite_aes_ecb, test_case_aes_ecb)
+{
+	aes_setup();
+	exec_test_case_aes_ecb();
+}
+
+ZTEST(test_suite_aes_ecb, test_case_aes_ecb_monte_carlo)
+{
+	aes_setup_monte_carlo();
+	exec_test_case_aes_ecb_monte_carlo();
+}

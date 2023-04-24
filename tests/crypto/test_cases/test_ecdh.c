@@ -460,3 +460,23 @@ ITEM_REGISTER(test_case_ecdh_data, test_case_t test_ecdh_det_full) = {
 	.vectors_start = __start_test_vector_ecdh_data_deterministic_full,
 	.vectors_stop = __stop_test_vector_ecdh_data_deterministic_full,
 };
+
+ZTEST_SUITE(test_suite_ecdh, NULL, NULL, NULL, NULL, NULL);
+
+ZTEST(test_suite_ecdh, test_case_ecdh_random)
+{
+	ecdh_setup_random();
+	exec_test_case_ecdh_random();
+}
+
+ZTEST(test_suite_ecdh, test_case_ecdh_deterministic)
+{
+	ecdh_setup_deterministic_simple();
+	exec_test_case_ecdh_deterministic();
+}
+
+ZTEST(test_suite_ecdh, test_case_ecdh_deterministic_full)
+{
+	ecdh_setup_deterministic_full();
+	exec_test_case_ecdh_deterministic_full();
+}
