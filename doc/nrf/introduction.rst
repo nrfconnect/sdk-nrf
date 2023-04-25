@@ -46,35 +46,21 @@ The revision of each of those repositories is determined by the current revision
 
 .. _intro_vers_revs:
 
-Versions and revisions
-**********************
+Versions
+********
 
 The |NCS| uses a versioning scheme similar to `Semantic versioning`_, but with important semantic differences.
-Every release of the |NCS| is identified with a version string, in the format ``MAJOR.MINOR.PATCH``.
-The version numbers are incremented based on the following criteria:
+Every release of the |NCS| is identified with a version string in the ``MAJOR.MINOR.PATCH`` format.
+Version numbers are changed according to the following criteria:
 
-* The ``MAJOR`` version number is increased seldom, whenever a release is deemed to be introducing a large number of substantial changes across the board.
-* The ``MINOR`` version number is increased every time a major release is cut.
-  Minor releases are the default types of an |NCS| release.
-  They introduce new functionality and may break APIs.
-* The ``PATCH`` version number is increased whenever a minor or bugfix release is cut.
-  Patch releases only address functional issues but do not introduce new functionality.
+* ``MAJOR`` - When there is a large number of substantial changes across the board.
+* ``MINOR`` - When a new functionality is introduced.
+* ``PATCH`` - Whenever there is a minor or a bugfix release.
 
-In between releases, |NCS| is not static.
-Instead, it changes its revision every time a Git commit is merged into the `sdk-nrf`_ repository.
-The revision of the SDK is considered to be equivalent to the repository revision of ``sdk-nrf``, because it is the :ref:`manifest repository <zephyr:west-manifests>`.
-This means that, by virtue of containing the `west manifest file`_, its revision uniquely identifies the revisions of all other repositories included in the SDK.
+Occasionally, ``99`` can be added in place of ``PATCH`` to mark that a given release is happening between two major releases.
+Whenever a new functionality in the development state is introduced, ``devN`` postfix can be added at the end of the version number.
 
-A special value of ``99`` for the ``PATCH`` version number indicates that the version string does not belong to a release, but rather a point in between two major releases.
-For example, ``2.2.99`` indicates that this particular revision of the |NCS| is somewhere between versions ``2.2.0`` and ``2.3.0``.
-
-.. include:: developing/code_base.rst
-   :start-after: dev_tag_definition_start
-   :end-before: dev_tag_definition_end
-
-Revisions can either be Git SHAs or tags, depending on whether the current revision is associated with a release (in which case it is a tag) or is just any revision in between releases.
-
-For a more formal description of versions and revisions, see :ref:`dm-revisions`.
+For a full description of versioning, see :ref:`dm-revisions`.
 
 Tools and configuration
 ***********************
@@ -172,8 +158,7 @@ Documentation pages
    :start-after: doc_structure_start
    :end-before: doc_structure_end
 
-To access different versions of the |NCS| documentation, use the version drop-down in the top right corner.
-A "99" at the end of the version number of this documentation indicates continuous updates on the main branch since the previous major.minor release.
+To access different versions of the nRF Connect SDK documentation, use the version drop-down in the top right corner. The documentation versions follow the :ref:`dm-revisions` of the SDK.
 
 The |NCS| documentation contains all information that is specific to the |NCS| and describes our libraries, samples, and applications.
 API documentation is extracted from the source code and included with the library documentation.

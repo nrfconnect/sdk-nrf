@@ -68,33 +68,60 @@ More information about manifests can be found in the :ref:`west manifest section
 
 .. _dm-revisions:
 
-Revisions
-*********
+Versions and revisions
+**********************
+
+The |NCS| version numbers are assigned based on very specific criteria.
+They follow the ``MAJOR.MINOR.PATCH`` pattern (also further called as ``X.Y.Z``), with possible additional postfixes depending on the release.
+
++-------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+| Release type                  | Release critera                                                            | Comments                                                                                        |
++===============================+============================================================================+=================================================================================================+
+| ``MAJOR``                     | Introduces a large number of substantial changes across the board          | Major version number is increased rarely and the release is accompanied by a migration guide.   |
++-------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+| ``MINOR``                     | Introduces one or more new functionalities.                                | Version number is increased every time a major release is cut.                                  |
+|                               |                                                                            | Minor releases are the default types of an |NCS| release.                                       |
+|                               |                                                                            | The new functionalities may break exisiting APIs.                                               |
++-------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+| ``PATCH``                     | Introduces bugfixes or minor changes to the existing functionalities.      | Patch releases only address functional issues and do not introduce new functionalities.         |
++-------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+| ``MAJOR.MINOR.99``            | The ``99`` added at the end of the version number indicates                | The number can be used between minor, major, or patch releases.                                 |
+|                               | that the version string is a point in between two releases.                |                                                                                                 |
+|                               | Such version does not belong to a release and corresponds to the           |                                                                                                 |
+|                               | current state of development.                                              |                                                                                                 |
++-------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
+| ``MAJOR.MINOR.PATCH-devN``    | Development tag, marked through a postfix added to the end of the version. | ``-devN`` version might not be subjected to the same amount of testing                          |
+|                               | Indicates a snapshot of the development state that is created to highlight | as the |NCS| release.                                                                           |
+|                               | the introduction of a new piece of functionality.                          |                                                                                                 |
++-------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
 
 There are two fundamental revisions that are relevant to most |NCS| users:
 
 * The ``main`` branch of the `sdk-nrf`_ repository
 * Any Git tag (that is, release, release candidate or development tag) of the `sdk-nrf`_ repository
 
-As discussed above, the revision of the manifest repository, `sdk-nrf`_, uniquely determines the revisions of all other repositories, so a discussion about |NCS| revisions can be essentially limited to the manifest repository revision.
+The ``main`` branch of the `sdk-nrf`_ repository always contains the latest development state of the |NCS| (``MAJOR.MINOR.99``).
+Since all development is done openly, you can use it if you are not particularly concerned about the stability and want to track the latest changes that are being merged continuously into different repositories.
 
-The ``main`` branch of the `sdk-nrf`_ repository always contains the latest development state of the |NCS|.
-Since all development is done openly, you can use it if you are not particularly concerned about stability and want to track the latest changes that are being merged continuously into the different repositories.
+The |NCS| revision entry changes every time a Git commit is merged into the `sdk-nrf`_ repository.
+The revision of the SDK is considered to be equivalent to the repository revision of ``sdk-nrf``, because it is the :ref:`manifest repository <zephyr:west-manifests>`.
+This means that, by virtue of containing the `west manifest file`_, its revision uniquely identifies the revisions of all other repositories included in the SDK.
+
+Git tags
+========
 
 The Git tags correspond to official releases tested and signed by the Nordic engineers.
 The format for nRF repositories is as follows::
 
   vX.Y.Z(-rcN)
 
-Where X, Y, and Z are the major, minor, and patch version respectively and, optionally, a release candidate postfix ``-rcN`` is attached if the tag identifies a candidate instead of the actual release.
+Where ``X``, ``Y`` and ``Z`` are the ``MAJOR``, ``MINOR`` and ``PATCH`` version respectively.
+A release candidate postfix ``-rcN`` can be optionally attached if the tag identifies a candidate instead of the actual release.
 
 The Git tags are composed as follows::
 
   vX.Y.Z(-rcN|-devN)
 
-X, Y, and Z are the major, minor, and patch version, respectively.
-
-A special value of ``99`` for the patch version number is reserved for any revision in between releases.
 Tags without a suffix correspond to official releases tested and signed by Nordic Semiconductor engineers.
 A release candidate suffix ``-rcN`` is attached if the tag identifies a candidate instead of the actual release.
 
@@ -111,7 +138,7 @@ In the case of OSS repositories, the git tag format reuses the upstream project'
 
   vX.Y.Z-ncsN(-rcM)
 
-In this format, X, Y and Z are the major, minor and patch versions of the upstream project, and ``-ncsN`` is used to identify the number of |NCS| releases based on that particular version.
+In this format, ``X``, ``Y`` and ``Z`` are the ``MAJOR``, ``MINOR`` and ``PATCH`` versions of the upstream project, and ``-ncsN`` is used to identify the number of |NCS| releases based on that particular version.
 
 .. _dm-oss-downstreams:
 
