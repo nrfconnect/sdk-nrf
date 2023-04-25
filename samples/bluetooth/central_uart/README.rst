@@ -68,9 +68,10 @@ Testing
 #. Program the :ref:`peripheral_uart` sample to the second development kit.
    See the documentation for that sample for detailed instructions.
 #. Observe that the kits connect.
+
    When service discovery is completed, the event logs are printed on the Central's terminal.
-#. Now you can send data between the two kits.
-   To do so, type some characters in the terminal of one of the kits and hit Enter.
+   Now you can send data between the two kits.
+#. To send data, type some characters in the terminal of one of the kits and press Enter.
    Observe that the data is displayed on the UART on the other kit.
 #. Disconnect the devices by, for example, pressing the Reset button on the Central.
    Observe that the kits automatically reconnect and that it is again possible to send data between the two kits.
@@ -86,22 +87,22 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``boards/arm/nrf*/board.h``
+* :file:`include/zephyr/types.h`
+* :file:`boards/arm/nrf*/board.h`
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :file:`include/kernel.h`
 
 * :ref:`zephyr:api_peripherals`:
 
-   * ``include/uart.h``
+   * :file:`include/uart.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/gatt.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/uuid.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/gatt.h`
+  * :file:`include/bluetooth/hci.h`
+  * :file:`include/bluetooth/uuid.h`
 
 The sample also uses the following secure firmware component:
 

@@ -36,6 +36,8 @@ You can also mix devices when testing this sample.
 For a simple echo test, you only need one additional device.
 Alternatively, you can use a smartphone providing the HRS functionality and a development kit running the :ref:`zephyr:bluetooth_central_hr` sample.
 
+For testing, you can also use `nRF Connect for Desktop`_.
+
 Overview
 ********
 
@@ -53,13 +55,13 @@ User interface
 **************
 
 LED 1:
-   Blinks when the main loop is running (that is, the device is advertising) with a period of two seconds, duty cycle 50%.
+   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
 
 LED 2:
-   On when the development kit is connected as central.
+   Lit when the development kit is connected as central.
 
 LED 3:
-  On when the development kit is connected as peripheral.
+  Lit when the development kit is connected as peripheral.
 
 Building and running
 ********************
@@ -73,7 +75,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it either by connecting to other development kits that are running the :ref:`zephyr:peripheral_hr` sample, or by using the `nRF Connect for Desktop`_ **Bluetooth Low Energy** application that emulates an HRS server.
+After programming the sample to your development kit, test it either by connecting to other development kits that are running the :ref:`zephyr:peripheral_hr` sample, or by using the Bluetooth Low Energy app from the `nRF Connect for Desktop`_, which emulates an HRS server.
 
 Testing with other development kits
 -----------------------------------
@@ -104,7 +106,7 @@ Testing with other development kits
 
         [NOTIFICATION] data 0x20006779 length 2
 
-The sample works as relay now.
+The sample works now as relay for the Heart Rate Service.
 
 Testing with nRF Connect for Desktop
 ------------------------------------
@@ -112,11 +114,11 @@ Testing with nRF Connect for Desktop
 #. Reset the development kit.
 #. Start `nRF Connect for Desktop`_.
 #. Open the Bluetooth Low Energy app and select the connected dongle that is used for communication.
-#. Open the :guilabel:`SERVER SETUP` tab.
+#. Open the **SERVER SETUP** tab.
 #. Click the dongle configuration and select :guilabel:`Load setup`.
 #. Load the :file:`hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
 #. Click :guilabel:`Apply to device`.
-#. Open the :guilabel:`CONNECTION MAP` tab.
+#. Open the **CONNECTION MAP** tab.
 #. Click the dongle configuration (gear icon) and select :guilabel:`Advertising setup`.
 
    The current version of nRF Connect can store the advertising setup.
@@ -128,9 +130,10 @@ Testing with nRF Connect for Desktop
 #. Click the gear icon to open the Adapter settings and select :guilabel:`Start advertising`.
 #. Wait until the development kit running the Central and Peripheral HRS connects.
    Observe that **LED 2** is lit.
-#. Explore the **Heart Rate Measurement** characteristic.
-#. Write value ``06 80`` and click the :guilabel:`Play` button to send a notification.
-   In the terminal window, check for information similar to the following::
+#. To explore the Heart Rate Measurement characteristic, complete the following steps:
+
+   a. Write value ``06 80`` and click the :guilabel:`Play` button to send a notification.
+      In the terminal window, check for information similar to the following::
 
         Heart Rate Sensor body location: Chest
         Heart Rate Measurement notification received:
@@ -143,11 +146,14 @@ Testing with nRF Connect for Desktop
 
             Heart Rate Measurement Value: 128 bpm
 
-#. The `nRF Connect for Desktop`_ also detects the Central and Peripheral HRS sample Heart Rate Service.
-#. Enable the notification for the **Heart Rate Measurement** characteristic.
-#. Write again value ``06 80`` and click the :guilabel:`Play` button to send a notification.
-   The same value appears for the **Heart Rate Measurement** characteristic.
-   The sample works as relay for the Heart Rate Service.
+      The Bluetooth Low Energy app also detects the Central and Peripheral HRS sample Heart Rate Service.
+
+   #. Enable the notification for the Heart Rate Measurement characteristic.
+   #. Write again value ``06 80`` and click the :guilabel:`Play` button to send a notification.
+
+      The same value appears for the Heart Rate Measurement characteristic.
+
+The sample works now as relay for the Heart Rate Service.
 
 Dependencies
 ************
@@ -161,16 +167,16 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr.h``
+* :file:`include/zephyr.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/gatt.h``
-  * ``include/bluetooth/conn.h``
-  * ``include/bluetooth/uuid.h``
-  * ``include/bluetooth/services/hrs.h``
-  * ``include/bluetooth/services/bas.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/gatt.h`
+  * :file:`include/bluetooth/conn.h`
+  * :file:`include/bluetooth/uuid.h`
+  * :file:`include/bluetooth/services/hrs.h`
+  * :file:`include/bluetooth/services/bas.h`
 
 The sample also uses the following secure firmware component:
 

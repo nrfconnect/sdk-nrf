@@ -76,18 +76,18 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``include/errno.h``
-* ``include/zephyr.h``
-* ``include/sys/printk.h``
-* ``include/sys/byteorder.h``
+* :file:`include/zephyr/types.h`
+* :file:`include/errno.h`
+* :file:`include/zephyr.h`
+* :file:`include/sys/printk.h`
+* :file:`include/sys/byteorder.h`
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :file:`include/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-* ``include/bluetooth/bluetooth.h``
-* ``include/bluetooth/conn.h``
-* ``include/bluetooth/gatt.h``
-* ``include/bluetooth/uuid.h``
+* :file:`include/bluetooth/bluetooth.h`
+* :file:`include/bluetooth/conn.h`
+* :file:`include/bluetooth/gatt.h`
+* :file:`include/bluetooth/uuid.h`

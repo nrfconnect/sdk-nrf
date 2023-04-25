@@ -94,8 +94,8 @@ Testing
    The content of the exchanged NDEF messages is printed there.
 #. Check the security level of the paring on the terminal.
 #. Move the NFC antenna away from the :ref:`st25r3911b_nfc_readme`.
-#. Press Button 3 when connected to turn on the :ref:`st25r3911b_nfc_readme` field and initialize new pairing.
-#. Press Button 4 for disconnect and erase bonding data.
+#. Press **Button 3** when connected to turn on the :ref:`st25r3911b_nfc_readme` field and initialize new pairing.
+#. Press **Button 4** to disconnect and erase bonding data.
 
 Dependencies
 ************
@@ -119,6 +119,6 @@ This sample uses the following |NCS| libraries:
 
 The sample uses the following Zephyr libraries:
 
-* ``include/zephyr.h``
-* ``include/device.h``
+* :file:`include/zephyr.h`
+* :file:`include/device.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
