@@ -19,20 +19,19 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-The sample also requires a HIDS device to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` or :ref:`peripheral_hids_keyboard` sample, or a Bluetooth® Low Energy dongle and nRF Connect for Desktop).
+The sample also requires a HIDS device to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` or :ref:`peripheral_hids_keyboard` sample, or a computer with a Bluetooth® Low Energy dongle and `nRF Connect for Desktop`_).
 
 Overview
 ********
 
 The sample scans available devices, searching for a HIDS server.
-If any HIDS server is found, the sample connects to it and discovers all characteristics.
+If a HIDS server is found, the sample connects to it and discovers all characteristics.
 
 If any input reports are detected, the sample subscribes to them to receive notifications.
 If any boot reports are detected, the behavior depends on if they are boot mouse reports or boot keyboard reports:
 
 * If a boot mouse report is detected, the sample subscribes to it.
-* If a boot keyboard report is detected, the sample subscribes to its input report, and the sample functionality of changing the CAPSLOCK LED is enabled (Button 1 and 3).
-
+* If a boot keyboard report is detected, the sample subscribes to its input report, and the sample functionality of changing the CAPSLOCK LED is enabled (**Button 1** and **3**).
 
 User interface
 **************
@@ -74,7 +73,7 @@ Testing with another development kit
 1. |connect_terminal_specific|
 #. Reset the kit.
 #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample and reset it.
-#. When connected, press Button 1 on both devices to confirm the passkey value used for bonding, or press Button 2 to reject it.
+#. When connected, press Button 1 on both devices to confirm the passkey value used for bonding, or press **Button 2** to reject it.
 #. Wait until the HIDS keyboard is detected by the central.
    All detected descriptors are listed.
    In the terminal window, check for information similar to the following::
@@ -134,7 +133,7 @@ Testing with nRF Connect for Desktop
    .. figure:: /images/bt_central_hids_nrfc_ad.png
       :alt: Advertising setup for HIDS keyboard simulator
 
-   Advertising setup for HIDS keyboard simulator
+      Advertising setup for HIDS keyboard simulator
 
    Complete the following steps to configure the advertising setup:
 
@@ -148,7 +147,7 @@ Testing with nRF Connect for Desktop
    #. Add a **Complete local name** of your choice to the **Scan response data**.
    #. Click :guilabel:`Apply` and :guilabel:`Close`.
 
-#. In the **Adapter settings**, choose :guilabel:`Start advertising`.
+#. In the **Adapter settings**, select :guilabel:`Start advertising`.
 #. Wait until the kit that runs the Central HIDS sample connects.
    All detected descriptors are listed.
    Check for information similar to the following::
@@ -174,17 +173,17 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/sys/byteorder.h``
-* ``include/zephyr/types.h``
-* ``lib/libc/minimal/include/errno.h``
-* ``include/sys/printk.h``
+* :file:`include/sys/byteorder.h`
+* :file:`include/zephyr/types.h`
+* :file:`lib/libc/minimal/include/errno.h`
+* :file:`include/sys/printk.h`
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/gatt.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/conn.h``
-  * ``include/bluetooth/uuid.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/gatt.h`
+  * :file:`include/bluetooth/hci.h`
+  * :file:`include/bluetooth/conn.h`
+  * :file:`include/bluetooth/uuid.h`
 
 The sample also uses the following secure firmware component:
 

@@ -73,7 +73,7 @@ Testing
 #. Observe that the kits connect.
    When service discovery is completed, the event logs are printed on the Central's terminal.
    If you connect to the Server with a terminal emulator, you can observe that it prints "connected".
-#. Press Button 1 on the Client.
+#. Press **Button 1** on the Client.
    Observe messages similar to the following::
 
       Echo test: 1
@@ -95,18 +95,18 @@ This sample uses the following |NCS| libraries:
 
 It uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
-* ``boards/arm/nrf*/board.h``
+* :file:`include/zephyr/types.h`
+* :file:`boards/arm/nrf*/board.h`
 * :ref:`zephyr:kernel_api`:
 
   * ``include/kernel.h``
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/gatt.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/uuid.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/gatt.h`
+  * :file:`include/bluetooth/hci.h`
+  * :file:`include/bluetooth/uuid.h`
 
 In addition, it uses the following external library that is distributed with Zephyr:
 
