@@ -186,21 +186,19 @@ static int nrf_wifi_util_set_he_ltf_gi(const struct shell *shell,
 		return -ENOEXEC;
 	}
 
-	if (ctx->conf_params.set_he_ltf_gi != val) {
-		status = wifi_nrf_fmac_conf_ltf_gi(ctx->rpu_ctx,
-						   ctx->conf_params.he_ltf,
-						   ctx->conf_params.he_gi,
-						   val);
+	status = wifi_nrf_fmac_conf_ltf_gi(ctx->rpu_ctx,
+					   ctx->conf_params.he_ltf,
+					   ctx->conf_params.he_gi,
+					   val);
 
-		if (status != WIFI_NRF_STATUS_SUCCESS) {
-			shell_fprintf(shell,
-				      SHELL_ERROR,
-				      "Programming ltf_gi failed\n");
-			return -ENOEXEC;
-		}
-
-		ctx->conf_params.set_he_ltf_gi = val;
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Programming ltf_gi failed\n");
+		return -ENOEXEC;
 	}
+
+	ctx->conf_params.set_he_ltf_gi = val;
 
 	return 0;
 }
