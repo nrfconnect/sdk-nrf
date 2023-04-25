@@ -525,6 +525,10 @@ Other libraries
 
   * The library now supports using the GPIO expander for the buttons, switches, and LEDs on the nRF9160 DK.
 
+* :ref:`mod_memfault`:
+
+  * Added support for ETB trace to be included in coredump.
+
 Common Application Framework (CAF)
 ----------------------------------
 
