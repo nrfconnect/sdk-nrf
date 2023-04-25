@@ -10,7 +10,7 @@
 #include "test_vector.c"
 
 
-void test_ecdsa_verify(void)
+ZTEST(bl_crypto_test, test_ecdsa_verify)
 {
 	uint32_t hash_len = ARRAY_SIZE(hash_sha256);
 
@@ -149,7 +149,7 @@ void test_sha256_string(const uint8_t * input, uint32_t input_len, const uint8_t
 const uint8_t input3[] = "test vector should fail";
 const uint8_t input2[] = "test vector";
 
-void test_sha256(void)
+ZTEST(bl_crypto_test, test_sha256)
 {
 	test_sha256_string(NULL, 0, sha256_empty_string, true);
 	test_sha256_string(input2, strlen(input2), sha256_test_vector_string, true);
@@ -178,7 +178,7 @@ void test_sha256(void)
 	test_sha256_string(hash_in, 65, hash_res65, true);
 }
 
-void test_bl_root_of_trust_verify(void)
+ZTEST(bl_crypto_test, test_bl_root_of_trust_verify)
 {
 
 	/* Success. */
@@ -209,12 +209,4 @@ void test_bl_root_of_trust_verify(void)
 	zassert_equal(-ESIGINV, retval, "retval was %d", retval);
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_bl_crypto,
-			 ztest_unit_test(test_bl_root_of_trust_verify),
-			 ztest_unit_test(test_sha256),
-			 ztest_unit_test(test_ecdsa_verify)
-	);
-	ztest_run_test_suite(test_bl_crypto);
-}
+ZTEST_SUITE(bl_crypto_test, NULL, NULL, NULL, NULL, NULL);
