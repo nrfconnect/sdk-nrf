@@ -126,6 +126,13 @@ static int nrf_wifi_util_set_he_ltf(const struct shell *shell,
 	char *ptr = NULL;
 	unsigned long he_ltf = 0;
 
+	if (ctx->conf_params.set_he_ltf_gi) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Disable 'set_he_ltf_gi', to set 'he_ltf'\n");
+		return -ENOEXEC;
+	}
+
 	he_ltf = strtoul(argv[1], &ptr, 10);
 
 	if (he_ltf > 2) {
@@ -149,6 +156,13 @@ static int nrf_wifi_util_set_he_gi(const struct shell *shell,
 {
 	char *ptr = NULL;
 	unsigned long he_gi = 0;
+
+	if (ctx->conf_params.set_he_ltf_gi) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Disable 'set_he_ltf_gi', to set 'he_gi'\n");
+		return -ENOEXEC;
+	}
 
 	he_gi = strtoul(argv[1], &ptr, 10);
 
