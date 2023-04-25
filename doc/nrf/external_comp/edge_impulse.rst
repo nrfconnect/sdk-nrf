@@ -10,27 +10,45 @@ Edge Impulse integration
 `Edge Impulse`_ is a development platform that can be used to enable `embedded machine learning`_ on |NCS| devices.
 You can use this platform to collect data from sensors, train machine learning model, and then deploy it to your Nordic Semiconductor's device.
 
-Overview
-********
+Integration prerequisites
+*************************
+
+Before you start the |NCS| integration with Edge Impulse, make sure that the following prerequisites are completed:
+
+   * :ref:`Setup of the nRF Connect SDK <getting_started>` environment.
+   * Setup of the required :term:`Development Kit (DK)`.
+   * Creation of an `Edge Impulse studio account <Edge Impulse studio signup_>`_ and an Edge Impulse project.
+
+Solution architecture
+*********************
 
 Support for `Edge Impulse`_ in the |NCS| is centered around the :ref:`ei_wrapper`, which is used for integrating the Edge Impulse machine learning model into an |NCS| application.
 The usage of the wrapper is demonstrated by the :ref:`ei_wrapper_sample` sample, while the :ref:`nrf_machine_learning_app` application demonstrates the complete out of the box reference design.
 
-Before integrating the Edge Impulse machine learning model to an |NCS| application, you must prepare and deploy the machine learning model for your embedded device.
+.. _ug_edge_impulse_adding:
+
+Integration overview
+********************
+
+Before integrating the Edge Impulse machine learning model into an |NCS| application, you must prepare and deploy the machine learning model for your embedded device.
 This model is prepared using the `Edge Impulse studio`_ external web tool.
 It relies on sensor data that can be provided by different sources, for example data forwarder.
 Check the :ref:`ei_data_forwarder_sample` sample for a demonstration of how you can send sensor data to Edge Impulse studio using `Edge Impulse's data forwarder`_.
 
-.. _ug_edge_impulse_adding:
-
-Adding Edge Impulse model to the |NCS|
-**************************************
-
 The machine learning model is distributed as a single :file:`zip` archive that includes C++ library sources.
 This file is used by the |NCS| build system to build the Edge Impulse library.
-See the following section for steps required to generate this archive and add it to the build system.
+
+Integration steps
+*****************
+
+Complete the following steps to generate the archive and add it to the build system:
+
+1. :ref:`ug_edge_impulse_adding_preparing`
+#. :ref:`ug_edge_impulse_adding_building`
 
 .. _ug_edge_impulse_adding_preparing:
+
+.. rst-class:: numbered-step
 
 Preparing the machine learning model
 ====================================
@@ -48,6 +66,10 @@ This tutorial will guide you through the following steps:
 #. Designing your machine learning model (an *impulse*).
 #. Deploying the machine learning model to use it on an embedded device.
    As part of this step, you must select the :guilabel:`C++ library` to generate the required :file:`zip` file that contains the source files for building the Edge Impulse library in |NCS|.
+
+.. _ug_edge_impulse_adding_building:
+
+.. rst-class:: numbered-step
 
 Building the machine learning model in |NCS|
 ============================================
@@ -163,3 +185,23 @@ Complete the following steps to download the model from a public Edge Impulse pr
 
    .. note::
       This URI includes the ``modelType=int8`` parameter because from public Edge Impulse projects you can only download quantized models created with Edge Impulse's EON Compiler.
+
+Applications and samples
+************************
+
+The following application uses the Edge Impulse integration in the |NCS|:
+
+* :ref:`nrf_machine_learning_app` - demonstrates a complete out of the box reference design.
+  The nRF Machine learning application can also be used to collect data from devices (for example, it supports Thingy:53 with an out-of-the-box accelerometer).
+
+The following samples demonstrate the Edge Impulse integration in the |NCS|:
+
+* :ref:`ei_wrapper_sample` sample - demonstrates the usage of the wrapper.
+* :ref:`ei_data_forwarder_sample` sample - demonstrates how you can send sensor data to Edge Impulse studio using `Edge Impulse's data forwarder`_.
+
+Library support
+***************
+
+The following |NCS| libraries support the Edge Impulse integration:
+
+* :ref:`ei_wrapper`
