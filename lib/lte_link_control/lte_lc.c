@@ -462,13 +462,14 @@ static void at_handler_xmodemsleep(const char *response)
 		return;
 	}
 
-	/* Link controller only supports PSM, RF inactivity, limited service and flight mode
-	 * modem sleep types.
+	/* Link controller only supports PSM, RF inactivity, limited service, flight mode
+	 * and proprietary PSM modem sleep types.
 	 */
 	if ((evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_PSM) &&
 		(evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_RF_INACTIVITY) &&
 		(evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_LIMITED_SERVICE) &&
-		(evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_FLIGHT_MODE)) {
+		(evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_FLIGHT_MODE) &&
+		(evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM)) {
 		return;
 	}
 

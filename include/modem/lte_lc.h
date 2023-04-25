@@ -412,12 +412,17 @@ enum lte_lc_modem_sleep_type {
 	LTE_LC_MODEM_SLEEP_LIMITED_SERVICE	= 3,
 	/** Flight mode. */
 	LTE_LC_MODEM_SLEEP_FLIGHT_MODE		= 4,
+	/** Proprietary PSM. This is valid only for modem firmware versions >= 2.0.0. */
+	LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM	= 7,
 };
 
 struct lte_lc_modem_sleep {
+	/** Sleep type. */
 	enum lte_lc_modem_sleep_type type;
 
-	/* If this value is set to -1, the sleep is considered infinite. */
+	/** Sleep time in milliseconds. If this value is set to -1,
+	 *  the sleep is considered infinite.
+	 */
 	int64_t time;
 };
 

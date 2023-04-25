@@ -33,11 +33,11 @@ link_shell_print_sleep_type_to_string(enum lte_lc_modem_sleep_type sleep_type, c
 		{ LTE_LC_MODEM_SLEEP_RF_INACTIVITY, "RF inactivity" },
 		{ LTE_LC_MODEM_SLEEP_LIMITED_SERVICE, "limited service"},
 		{ LTE_LC_MODEM_SLEEP_FLIGHT_MODE, "flight mode" },
+		{ LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM, "proprietary PSM" },
 		{ -1, NULL }
 	};
 
-	return link_shell_map_to_string(mapping_table, sleep_type,
-					 out_str_buff);
+	return link_shell_map_to_string(mapping_table, sleep_type, out_str_buff);
 }
 
 void link_shell_print_modem_sleep_notif(const struct lte_lc_evt *const evt)
