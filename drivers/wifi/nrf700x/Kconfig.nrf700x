@@ -151,7 +151,7 @@ config NRF700X_IRQ_WQ_PRIORITY
 
 config NRF700X_BH_WQ_PRIORITY
 	int "Priority of the workqueue for handling bottom half"
-	default 0
+	default -1
 
 config NRF700X_IRQ_WQ_STACK_SIZE
 	int "Stack size of the workqueue for handling IRQs"
