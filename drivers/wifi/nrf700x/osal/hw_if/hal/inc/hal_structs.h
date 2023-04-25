@@ -82,6 +82,7 @@ struct wifi_nrf_hal_cfg_params {
 	unsigned int max_tx_frms;
 	struct rx_buf_pool_params rx_buf_pool[MAX_NUM_OF_RX_QUEUES];
 	unsigned int max_tx_frm_sz;
+	unsigned int max_ampdu_len_per_token;
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 };
 
@@ -216,7 +217,7 @@ struct wifi_nrf_hal_dev_ctx {
 	unsigned long addr_rpu_pktram_base_tx;
 	unsigned long addr_rpu_pktram_base_rx;
 	unsigned long addr_rpu_pktram_base_rx_pool[MAX_NUM_OF_RX_QUEUES];
-	unsigned long addr_last_buf;
+	unsigned long tx_frame_offset;
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	enum RPU_PS_STATE rpu_ps_state;
 	void *rpu_ps_timer;

@@ -334,6 +334,9 @@ struct wifi_nrf_fmac_dev_ctx *wifi_nrf_fmac_dev_add(struct wifi_nrf_fmac_priv *f
 		fmac_dev_ctx = NULL;
 		goto out;
 	}
+#ifndef CONFIG_NRF700X_RADIO_TEST
+	fpriv->hpriv->cfg_params.max_ampdu_len_per_token = fpriv->max_ampdu_len_per_token;
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 out:
 	return fmac_dev_ctx;
 }

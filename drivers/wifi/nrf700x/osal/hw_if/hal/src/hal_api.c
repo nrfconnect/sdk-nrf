@@ -176,11 +176,14 @@ unsigned long wifi_nrf_hal_buf_map_tx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 				      unsigned long buf,
 				      unsigned int buf_len,
 				      unsigned int desc_id,
+				      unsigned int token,
 				      unsigned int buf_indx)
 {
 	struct wifi_nrf_hal_buf_map_info *tx_buf_info = NULL;
 	unsigned long addr_to_map = 0;
 	unsigned long bounce_buf_addr = 0;
+	unsigned long tx_token_base_addr = hal_dev_ctx->addr_rpu_pktram_base_tx +
+		(token * hal_dev_ctx->hpriv->cfg_params.max_ampdu_len_per_token);
 	unsigned long rpu_addr = 0;
 
 	tx_buf_info = &hal_dev_ctx->tx_buf_info[desc_id];
@@ -193,7 +196,6 @@ unsigned long wifi_nrf_hal_buf_map_tx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 	}
 
 	tx_buf_info->virt_addr = buf;
-	tx_buf_info->buf_len = buf_len;
 
 	if (buf_len > (hal_dev_ctx->hpriv->cfg_params.max_tx_frm_sz -
 		       hal_dev_ctx->hpriv->cfg_params.tx_buf_headroom_sz)) {
@@ -205,20 +207,28 @@ unsigned long wifi_nrf_hal_buf_map_tx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 		goto out;
 	}
 
-	bounce_buf_addr = hal_dev_ctx->addr_rpu_pktram_base_tx +
-		(desc_id * hal_dev_ctx->hpriv->cfg_params.max_tx_frm_sz) +
-		hal_dev_ctx->hpriv->cfg_params.tx_buf_headroom_sz;
-
 	if (buf_indx == 0) {
-		hal_dev_ctx->addr_last_buf = bounce_buf_addr;
-	} else {
-		bounce_buf_addr = hal_dev_ctx->addr_last_buf;
+		hal_dev_ctx->tx_frame_offset = tx_token_base_addr;
 	}
+
+	bounce_buf_addr = hal_dev_ctx->tx_frame_offset;
+
+	/* Align bounce buffer and buffer length to 4-byte boundary */
+	bounce_buf_addr = (bounce_buf_addr + 3) & ~3;
+	buf_len = (buf_len + 3) & ~3;
+
+	hal_dev_ctx->tx_frame_offset += (bounce_buf_addr - hal_dev_ctx->tx_frame_offset) +
+		buf_len + hal_dev_ctx->hpriv->cfg_params.tx_buf_headroom_sz;
 
 	rpu_addr = RPU_MEM_PKT_BASE + (bounce_buf_addr - hal_dev_ctx->addr_rpu_pktram_base);
 
-	/* Align the memory */
-	buf_len = (buf_len + 4) & 0xfffffffc;
+	wifi_nrf_osal_log_dbg(hal_dev_ctx->hpriv->opriv,
+	       "%s: bounce_buf_addr: 0x%lx, rpu_addr: 0x%lx, buf_len: %d off:%d\n",
+	       __func__,
+	       bounce_buf_addr,
+	       rpu_addr,
+	       buf_len,
+	       hal_dev_ctx->tx_frame_offset);
 
 	hal_rpu_mem_write(hal_dev_ctx,
 			  (unsigned int)rpu_addr,
@@ -238,13 +248,11 @@ unsigned long wifi_nrf_hal_buf_map_tx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 				      __func__);
 		goto out;
 	}
+	tx_buf_info->buf_len = buf_len;
 
 out:
 	if (tx_buf_info->phy_addr) {
 		tx_buf_info->mapped = true;
-
-		hal_dev_ctx->addr_last_buf += buf_len +
-			hal_dev_ctx->hpriv->cfg_params.tx_buf_headroom_sz;
 	}
 
 	return tx_buf_info->phy_addr;
