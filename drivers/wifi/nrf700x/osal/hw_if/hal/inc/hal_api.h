@@ -152,6 +152,7 @@ unsigned long wifi_nrf_hal_buf_map_tx(struct wifi_nrf_hal_dev_ctx *hal_ctx,
 				      unsigned long buf,
 				      unsigned int buf_len,
 				      unsigned int desc_id,
+				      unsigned int token,
 				      unsigned int buf_indx);
 
 unsigned long wifi_nrf_hal_buf_unmap_tx(struct wifi_nrf_hal_dev_ctx *hal_ctx,

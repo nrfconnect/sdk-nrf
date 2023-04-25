@@ -34,6 +34,8 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 
+/* 3 bytes for addreess, 3 bytes for length */
+#define MAX_PKT_RAM_TX_ALIGN_OVERHEAD 6
 #ifndef CONFIG_NRF700X_RADIO_TEST
 #ifdef CONFIG_NRF700X_DATA_TX
 
@@ -350,7 +352,6 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	data_config.reorder_buf_size = reorder_buf_size;
 	data_config.max_rxampdu_size = max_rxampdu_size;
 	data_config.rate_protection_type = rate_protection_type;
-
 	callbk_fns.if_carr_state_chg_callbk_fn = wifi_nrf_if_carr_state_chg;
 	callbk_fns.rx_frm_callbk_fn = wifi_nrf_if_rx_frm;
 #endif
@@ -396,6 +397,19 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 			__func__);
 		goto err;
 	}
+
+#ifdef CONFIG_NRF700X_DATA_TX
+	rpu_drv_priv_zep.fmac_priv->max_ampdu_len_per_token =
+		(RPU_PKTRAM_SIZE - (CONFIG_NRF700X_RX_NUM_BUFS * CONFIG_NRF700X_RX_MAX_DATA_SIZE)) /
+		CONFIG_NRF700X_MAX_TX_TOKENS;
+	/* Align to 4-byte */
+	rpu_drv_priv_zep.fmac_priv->max_ampdu_len_per_token &= ~0x3;
+
+	/* Alignment overhead for size based coalescing */
+	rpu_drv_priv_zep.fmac_priv->avail_ampdu_len_per_token =
+	rpu_drv_priv_zep.fmac_priv->max_ampdu_len_per_token -
+		(MAX_PKT_RAM_TX_ALIGN_OVERHEAD * max_tx_aggregation);
+#endif /* CONFIG_NRF700X_DATA_TX */
 
 	status = wifi_nrf_fmac_dev_add_zep(&rpu_drv_priv_zep);
 

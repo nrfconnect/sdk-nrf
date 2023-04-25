@@ -374,9 +374,8 @@ size_t _tx_pending_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	void *nwb = NULL;
 	void *first_nwb = NULL;
 	int max_txq_len = fmac_dev_ctx->fpriv->data_config.max_tx_aggregation;
+	int avail_ampdu_len_per_token = fmac_dev_ctx->fpriv->avail_ampdu_len_per_token;
 	int ampdu_len = 0;
-	int max_ampdu_len_per_token = (RPU_PKTRAM_SIZE - (CONFIG_NRF700X_RX_NUM_BUFS *
-			CONFIG_NRF700X_RX_MAX_DATA_SIZE)) / CONFIG_NRF700X_MAX_TX_TOKENS;
 
 	peer_id = tx_curr_peer_opp_get(fmac_dev_ctx, ac);
 
@@ -413,7 +412,7 @@ size_t _tx_pending_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			wifi_nrf_osal_nbuf_data_size(fmac_dev_ctx->fpriv->opriv,
 						     (void *)nwb);
 
-		if (ampdu_len >= max_ampdu_len_per_token) {
+		if (ampdu_len >= avail_ampdu_len_per_token) {
 			break;
 		}
 
@@ -506,6 +505,7 @@ enum wifi_nrf_status tx_cmd_prep_callbk_fn(void *callbk_data,
 					   nwb_data,
 					   buf_len,
 					   desc_id,
+					   config->tx_desc_num,
 					   frame_indx);
 
 	if (!phy_addr) {

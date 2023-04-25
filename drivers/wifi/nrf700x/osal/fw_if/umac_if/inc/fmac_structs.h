@@ -408,6 +408,8 @@ struct wifi_nrf_fmac_priv {
 	struct rx_buf_pool_params rx_buf_pools[MAX_NUM_OF_RX_QUEUES];
 	unsigned int rx_desc[MAX_NUM_OF_RX_QUEUES];
 	unsigned int num_rx_bufs;
+	unsigned int max_ampdu_len_per_token;
+	unsigned int avail_ampdu_len_per_token;
 
 	struct wifi_nrf_fmac_callbk_fns callbk_fns;
 
