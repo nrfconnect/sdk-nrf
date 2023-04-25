@@ -8,15 +8,9 @@
 #include <stdio.h>
 
 
-void test_external_flash(void)
+ZTEST(mcuboot_external_flash, test_external_flash)
 {
 	zassert_true(true, "Needed to pass.");
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_mcuboot_external_flash,
-			 ztest_unit_test(test_external_flash)
-	);
-	ztest_run_test_suite(test_mcuboot_external_flash);
-}
+ZTEST_SUITE(mcuboot_external_flash, NULL, NULL, NULL, NULL, NULL);
