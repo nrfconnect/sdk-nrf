@@ -192,12 +192,12 @@ void fill_with_repeating_pattern(void *out, size_t outsize)
 void make_cookie(char *cookie)
 {
     int len = strlen(CONFIG_NRF_IPERF3_HOST_NAME);
-    char hostname[len];
+    char hostname[len + 1];
     struct timeval tv = { .tv_sec = 0, .tv_usec = 0 };
     char temp[100];
 
     /* Generate a string based on hostname, time, randomness, and filler. */
-    (void) nrf_iperf3_mock_gethostname(hostname, sizeof(hostname) + 1);    
+    (void) nrf_iperf3_mock_gethostname(hostname, sizeof(hostname));
     (void) gettimeofday(&tv, 0);
     (void) snprintf(temp, sizeof(temp), "%s.%ld.%06ld.%08lx%08lx.%s", hostname, (unsigned long int) tv.tv_sec, (unsigned long int) tv.tv_usec, (unsigned long int) rand(), (unsigned long int) rand(), "1234567890123456789012345678901234567890");
 
