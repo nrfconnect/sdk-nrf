@@ -65,27 +65,27 @@ choice ESB_SYS_TIMER
 
 config ESB_SYS_TIMER0
 	bool "TIMER0"
-	depends on HAS_HW_NRF_TIMER0
+	depends on $(dt_nodelabel_has_compat,timer0,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	select NRFX_TIMER0
 
 config ESB_SYS_TIMER1
 	bool "TIMER1"
-	depends on HAS_HW_NRF_TIMER1
+	depends on $(dt_nodelabel_has_compat,timer1,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	select NRFX_TIMER1
 
 config ESB_SYS_TIMER2
 	bool "TIMER2"
-	depends on HAS_HW_NRF_TIMER2
+	depends on $(dt_nodelabel_has_compat,timer2,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	select NRFX_TIMER2
 
 config ESB_SYS_TIMER3
 	bool "TIMER3"
-	depends on HAS_HW_NRF_TIMER3
+	depends on $(dt_nodelabel_has_compat,timer3,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	select NRFX_TIMER3
 
 config ESB_SYS_TIMER4
 	bool "TIMER4"
-	depends on HAS_HW_NRF_TIMER4
+	depends on $(dt_nodelabel_has_compat,timer4,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	select NRFX_TIMER4
 
 endchoice
