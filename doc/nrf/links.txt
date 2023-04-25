@@ -863,6 +863,7 @@
 
 .. _`Edge Impulse`: https://www.edgeimpulse.com/
 .. _`Edge Impulse studio`: https://studio.edgeimpulse.com/login
+.. _`Edge Impulse studio signup`: https://studio.edgeimpulse.com/signup
 .. _`Edge Impulse getting started guide`: https://docs.edgeimpulse.com/docs/getting-started
 .. _`embedded machine learning`: https://docs.edgeimpulse.com/docs/what-is-embedded-machine-learning-anyway
 .. _`Continuous motion recognition tutorial`: https://docs.edgeimpulse.com/docs/continuous-motion-recognition
