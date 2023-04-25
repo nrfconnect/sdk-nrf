@@ -615,6 +615,10 @@ Other libraries
 
   * Removed the ``remote_event_name`` argument from the :c:func:`event_manager_proxy_subscribe` function.
 
+* :ref:`mod_memfault`:
+
+  * Added support for the ETB trace to be included in coredump.
+
 Common Application Framework (CAF)
 ----------------------------------
 
