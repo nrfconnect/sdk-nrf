@@ -167,6 +167,15 @@ config MEMFAULT_NCS_USE_DEFAULT_METRICS
 	select MEMFAULT_METRICS_EXTRA_DEFS_FILE
 	default y if (MEMFAULT_NCS_STACK_METRICS || MEMFAULT_NCS_LTE_METRICS || MEMFAULT_NCS_BT_METRICS)
 
+config MEMFAULT_NCS_ETB_CAPTURE
+	bool "Enable ETB trace capture"
+	depends on ETB_TRACE
+	select MEMFAULT_METRICS_EXTRA_DEFS_FILE
+	help
+	  Enable storing of the content in the Embedded Trace Buffer (ETB) on crash.
+	  This will include the content of the ETB buffer into the coredump as the global variable
+	  `etb_buf`.
+
 config MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 	bool "Save coredump to internal flash instead of RAM"
 	select MEMFAULT_COREDUMP_STORAGE_CUSTOM
@@ -174,6 +183,10 @@ config MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 	depends on FLASH
 	help
 	  Use internal flash to store coredump data
+
+config MEMFAULT_CDR_ENABLE
+	bool "Custom Data Recording"
+	default n
 
 if MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 config MEMFAULT_NCS_FLASH_REGION_SIZE
