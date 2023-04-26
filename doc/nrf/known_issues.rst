@@ -1031,8 +1031,8 @@ KRKNWK-16728: Sleepy device may consume much power when commissioned to a commer
      CHIP_ERROR SubscriptionApplicationCallback::OnSubscriptionRequested(chip::app::ReadHandler & aReadHandler,
                                                           chip::Transport::SecureSession & aSecureSession)
      {
-        /* Set the interval in seconds appropriate for your application use case, e.g. 15 seconds. */
-        uint32_t exampleMaxInterval = 15;
+        /* Set the interval in seconds appropriate for your application use case, e.g. 60 seconds. */
+        uint32_t exampleMaxInterval = 60;
         return aReadHandler.SetReportingIntervals(exampleMaxInterval);
      }
 
@@ -1042,6 +1042,13 @@ KRKNWK-16575: Applications with factory data support do not boot up properly on 
   When the Matter sample is built for ``nrf5340dk_nrf5340_cpuapp`` build target with the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option set to ``y`` the application returns prematurely the error code 200016 because the factory data partition is not aligned with the :kconfig:option:`CONFIG_FPROTECT_BLOCK_SIZE` Kconfig option.
 
   **Workaround:** Manually cherry-pick and apply commit from the main branch (commit hash: ``ec9ad82637b0383ebf91eb1155813450ad9fcffb``).
+
+.. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1
+
+KRKNWK-16783: Accessory may become unresponsive after several hours
+  A Matter accessory may stop sending Report Data messages due to an internal bug in the Matter stack v1.0.0.0 and thus become unresponsive for Matter controllers.
+
+  **Workaround:** Manually cherry-pick and apply commit from the `dedicated Matter fork`_ (commit hash: ``23f08242f92973a7a3308b4d62a82c59cf6cf6b3``).
 
 .. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1
 
