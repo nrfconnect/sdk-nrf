@@ -852,6 +852,8 @@ static void cmd_send(struct k_work *work)
 
 	ARG_UNUSED(work);
 
+	uart_receive_disable(false);
+
 	if (at_buf_overflow) {
 		rsp_send_error();
 		goto done;
@@ -955,8 +957,6 @@ static int cmd_rx_handler(uint8_t character)
 	return 0;
 
 send:
-	uart_receive_disable(false);
-
 	at_buf[at_cmd_len] = '\0';
 	at_buf_len = at_cmd_len;
 	k_work_submit(&cmd_send_work);
