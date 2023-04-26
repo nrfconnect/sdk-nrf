@@ -39,7 +39,7 @@ To program the nRF9160 development kit with the sample:
 
 1. Set the **SW10** switch, marked as debug/prog, in the **NRF52** position.
    In nRF9160 DK v0.9.0 and earlier, the switch is called **SW5**
-#. Build the :ref:`bluetooth-hci-lpuart-sample` sample for the nrf9160dk_nrf52840 build target and program the development kit with it.
+#. Build the :ref:`bluetooth-hci-lpuart-sample` sample for the ``nrf9160dk_nrf52840`` build target and program the development kit with it.
 
 Testing
 =======
