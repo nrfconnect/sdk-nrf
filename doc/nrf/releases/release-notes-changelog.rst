@@ -424,7 +424,11 @@ Bluetooth libraries and services
       The :c:member:`bt_fast_pair_info_cb.account_key_written` callback can be used to notify the application about the Account Key writes.
     * The :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_USER_RESET_ACTION` Kconfig option to enable a custom user reset action that executes together with the Fast Pair factory reset operation triggered by the :c:func:`bt_fast_pair_factory_reset` function.
 
-  * Updated the salt size in the Fast Pair not discoverable advertising from 1 byte to 2 bytes to align with the Fast Pair specification update.
+  * Updated:
+
+    * Salt size in the Fast Pair not discoverable advertising from 1 byte to 2 bytes, to align with the Fast Pair specification update.
+    * The :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_OBERON` Kconfig option is now the default Fast Pair cryptographic backend.
+
 
 Bootloader libraries
 --------------------

@@ -6,6 +6,7 @@ tests:
       - nrf52dk_nrf52832
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
+    extra_args: CONF_FILE=prj_mbedtls.conf
   fast_pair.crypto.oberon:
     platform_allow:
       nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160_ns
@@ -14,10 +15,10 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf9160dk_nrf9160_ns
-    extra_args: CONF_FILE=prj_oberon.conf
   fast_pair.crypto.tinycrypt:
     platform_allow:
-      nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160_ns qemu_cortex_m3
+      nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160_ns
+      qemu_cortex_m3
     integration_platforms:
       - nrf52dk_nrf52832
       - nrf52840dk_nrf52840
