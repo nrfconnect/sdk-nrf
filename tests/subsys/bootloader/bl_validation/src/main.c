@@ -14,7 +14,7 @@
 #include <zephyr/devicetree.h>
 
 
-void test_key_looping(void)
+ZTEST(bl_validation_test, test_key_looping)
 {
 	/* If this boots, the test passed. The public key is at the end of the
 	 * list, so the bootloader looped through all to validate this app.
@@ -27,7 +27,7 @@ void test_key_looping(void)
  * 4. Validate copy against wrong address. Expect failure.
  * 5. Validate mangled copy. Expect failure
  */
-void test_validation(void)
+ZTEST(bl_validation_test, test_validation)
 {
 	zassert_true(bl_validate_firmware(PM_ADDRESS, PM_ADDRESS),
 		"Fail 1. Failed to validate current app.\r\n");
@@ -70,7 +70,7 @@ void test_validation(void)
 }
 
 
-void test_s1(void)
+ZTEST(bl_validation_test, test_s1)
 {
 	zassert_true(bl_validate_firmware(PM_S1_ADDRESS, PM_S1_ADDRESS), NULL);
 
@@ -101,12 +101,4 @@ void test_s1(void)
 }
 
 
-void test_main(void)
-{
-	ztest_test_suite(test_bl_validation,
-			 ztest_unit_test(test_key_looping),
-			 ztest_unit_test(test_validation),
-			 ztest_unit_test(test_s1)
-	);
-	ztest_run_test_suite(test_bl_validation);
-}
+ZTEST_SUITE(bl_validation_test, NULL, NULL, NULL, NULL, NULL);
