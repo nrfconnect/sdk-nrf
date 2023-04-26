@@ -246,6 +246,13 @@ config BT_SDC_ADDITIONAL_MEMORY
 	help
 	  This is for testing and internal use only.
 
+config BT_CTLR_FAL_SIZE
+	int "Configures the maximum number of addresses in the Filter Accept List"
+	range 0 255
+	default 8
+	help
+	  Size of the Filter Accept List.
+
 if BT_CTLR_ECDH
 choice BT_CTLR_ECDH_LIB
 	prompt "SoftDevice Controller ECDH library"
