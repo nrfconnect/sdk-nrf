@@ -316,7 +316,7 @@ nRF9160 samples
 
 * :ref:`memfault_sample` sample:
 
-  * Added Kconfig fragment overlay to enable ETB trace.
+  * Added a Kconfig fragment overlay to enable ETB trace.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
@@ -406,8 +406,6 @@ Libraries
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
 
-* Added :ref:`etb_trace` library for instruction traces.
-
 Binary libraries
 ----------------
 
@@ -434,6 +432,11 @@ Bootloader libraries
 --------------------
 
 |no_changes_yet_note|
+
+Debug libraries
+---------------
+
+* Added the :ref:`etb_trace` library for instruction traces.
 
 Modem libraries
 ---------------
@@ -531,7 +534,7 @@ Other libraries
 
 * :ref:`mod_memfault`:
 
-  * Added support for ETB trace to be included in coredump.
+  * Added support for the ETB trace to be included in coredump.
 
 Common Application Framework (CAF)
 ----------------------------------
