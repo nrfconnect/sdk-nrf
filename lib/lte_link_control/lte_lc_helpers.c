@@ -120,7 +120,7 @@ void event_handler_list_dispatch(const struct lte_lc_evt *const evt)
 	k_mutex_lock(&list_mtx, K_FOREVER);
 
 	/* Dispatch events to all registered handlers */
-	LOG_DBG("Dispatching events:");
+	LOG_DBG("Dispatching event: type=%d", evt->type);
 	SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&handler_list, curr, tmp, node) {
 		LOG_DBG(" - handler=0x%08X", (uint32_t)curr->handler);
 		curr->handler(evt);
