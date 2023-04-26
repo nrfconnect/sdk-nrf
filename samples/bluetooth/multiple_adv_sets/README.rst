@@ -18,6 +18,8 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
+For testing this sample, you need to have the `nRF Connect for Mobile`_ app installed on your smartphone or tablet.
+
 Overview
 ********
 
@@ -35,17 +37,17 @@ Use your scanner device to observe the two advertisers:
 * ``Nordic multi adv sets`` that you can use to establish a connection with the device.
 
 Use your central device to establish the connection with this sample.
-When connected, the non-connectable advertiser is still presented on your scanner device.
+When connected, the non-connectable advertiser is still shown on your scanner device.
 After disconnection, the connectable advertising starts again.
 
 User interface
 **************
 
 LED 1:
-   Blinks when the main loop is running (that is, the device is advertising) with a period of two seconds, duty cycle 50%.
+   Blinks with a period of two seconds with the duty cycle set to 50% when the main loop is running and the device is advertising.
 
 LED 2:
-   On when the development kit is connected.
+   Lit when the development kit is connected.
 
 Building and running
 ********************
@@ -67,12 +69,12 @@ After programming the sample to your dongle or development kit, test it by perfo
    The device is advertising as ``Nordic multi adv sets`` and ``Nordic Beacon``.
 
 #. Select the connectable variant and connect to the device from the application.
-#. On the :guilabel:`scanner` tab check if ``Nordic Beacon`` still advertises.
+#. In the **SCANNER** tab check if ``Nordic Beacon`` is still advertising.
 
    You can use it to open the Nordic website.
 
 #. Disconnect from the device.
-#. In the :guilabel:`scanner` tab, check again if there is an advertiser with the name ``Nordic multi adv sets``.
+#. In the **SCANNER** tab, check again if there is an advertiser with the name ``Nordic multi adv sets``.
 
 Dependencies
 ************
@@ -83,14 +85,14 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/kernel.h``
+* :file:`include/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/conn.h``
-  * ``include/bluetooth/uuid.h``
-  * ``include/bluetooth/services/dis.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/conn.h`
+  * :file:`include/bluetooth/uuid.h`
+  * :file:`include/bluetooth/services/dis.h`
 
 The sample also uses the following secure firmware component:
 

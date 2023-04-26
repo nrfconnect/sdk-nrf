@@ -7,7 +7,7 @@ Bluetooth: nRF Distance Measurement with Bluetooth LE discovery
    :local:
    :depth: 2
 
-The nRF Distance Measurement sample demonstrates the functionality of the :ref:`mod_dm` subsystem.
+The nRF Distance Measurement sample demonstrates the functionality of the :ref:`mod_dm` (DM) subsystem.
 It shows how to use DM to measure the distance between devices.
 The Bluetooth® :ref:`ddfs_readme` is running simultaneously.
 
@@ -38,6 +38,8 @@ The synchronization step has two goals:
 This sample synchronizes devices using the scan and advertising facilities of the Bluetooth LE.
 Anchoring occurs after the exchange of ``SCAN_REQ`` and ``SCAN_RSP`` packets.
 
+The following chart shows the sequence of the synchronization process:
+
 .. msc::
    hscale = "1.3";
    DevA [label="Device A"],DevB [label="Device B"];
@@ -54,8 +56,6 @@ Anchoring occurs after the exchange of ``SCAN_REQ`` and ``SCAN_RSP`` packets.
    |||;
    DevA<=>DevB [label="Ranging"];
 
-The chart shows the sequence of the synchronization process.
-
 Both devices act as an advertiser and a scanner.
 Device B receives advertising from Device A and scans it.
 Device A sends a scan response that contains ``Manufacturer Specific Data``.
@@ -71,7 +71,7 @@ After a configurable delay, Device A and Device B try to range each other.
    * If a Device acts as an advertiser in synchronization, it will act as the reflector in the ranging procedure.
    * If a Device acts as a scanner in synchronization, it will act as the initiator in the ranging procedure.
 
-The synchronization will be performed cyclically.
+The synchronization is performed cyclically.
 
 Based on the ``SCAN_RSP`` response, the device recognizes peers that support the distance measurement functionality within its coverage.
 The addresses of these devices are stored in a list.
@@ -142,7 +142,7 @@ LED 2:
    Blinks every two seconds with the duty cycle set to 50% when the main loop is running and the device is advertising.
 
 LED 3:
-   On when connected.
+   Lit when connected.
 
 Building and running
 ********************

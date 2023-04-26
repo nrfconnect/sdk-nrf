@@ -19,7 +19,7 @@ The sample supports the following development kits:
 The sample also requires at least one :ref:`supported EnOcean device <bt_enocean_devices>`.
 
 .. note::
-    The sample supports up to four devices at a time that work with one kit.
+    The sample supports up to four devices at a time with one development kit.
 
 Overview
 ********
@@ -36,12 +36,12 @@ User interface
 The following LEDs are used by this sample:
 
 LED 1 and LED 2:
-   At the end of commissioning, blink four times to indicate a new EnOcean device has been commissioned.
+   At the end of commissioning, blink four times to indicate that a new EnOcean device has been commissioned.
 
    After commissioning, indicate whether a button is pressed on a commissioned light switch device.
 
    .. note::
-        If you are using EnOcean switches with a single rocker, toggling the rocker is indicated on LEDs 2 and 4.
+        If you are using EnOcean switches with a single rocker, toggling the rocker is indicated on **LEDs 2** and **4**.
 
 LED 3 and LED 4:
    Indicate the On/Off state of each button channel.
@@ -62,7 +62,7 @@ Testing
 
 1. :ref:`Commission one or more EnOcean devices <bt_enocean_commissioning>`.
    The LEDs will blink when each of the devices has been successfully commissioned.
-#. Connect the kit to the computer with an USB cable.
+#. Connect the kit to the computer with a USB cable.
    The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. |connect_terminal_specific|
 #. Depending on the EnOcean devices you commissioned:
@@ -72,7 +72,7 @@ Testing
    * Sensor devices will automatically start reporting their sensor values to the application.
      The values are printed to the console.
 
-The following code sample shows the light switch output when Button 4 on the EnOcean device was pressed and released:
+The following code sample shows the light switch output when **Button 4** on the EnOcean device was pressed and released:
 
 .. code-block:: c
    :caption: Light switch output
@@ -104,8 +104,8 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :file:`include/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
+  * :file:`include/bluetooth/bluetooth.h`

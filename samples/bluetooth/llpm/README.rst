@@ -17,7 +17,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-The sample also supports other development kits running SoftDevice Controller variants that support LLPM (see :ref:`SoftDevice Controller proprietary feature support <sdc_proprietary_feature_support>`.
+The sample also supports other development kits running SoftDevice Controller variants that support LLPM (see :ref:`SoftDevice Controller proprietary feature support <sdc_proprietary_feature_support>`).
 You can use any two of the development kits mentioned above and mix different development kits.
 
 Additionally, the sample requires a connection to a computer with a serial terminal for each of the development kits.
@@ -28,7 +28,7 @@ Overview
 The LLPM is designed for applications in which the interface response time is critical for the user.
 For example, for virtual reality headsets or gaming mouse and keyboard.
 
-See the following subsections for a description of the key LLPM elements.
+The key LLPM elements are:
 
 LLPM connection interval (1 ms)
    The connection interval defines how often the devices must listen on the radio.
@@ -55,24 +55,24 @@ GATT Latency Service
    When the sender writes its timestamp to the `BT_UUID_LATENC_CHAR` characteristic of the receiver, the Latency service of the receiver will automatically reply back.
    Whenever the sender receives a response, it will use its current time and the corresponding timestamp written before to estimate the round-trip time (RTT) of a writing characteristic procedure (see `Bluetooth Core Specification`_: Vol 3, Part F, 3.4.5 Writing attributes).
 
-.. list-table:: GATT Attributes
-   :header-rows: 1
+   .. list-table:: GATT Attributes
+      :header-rows: 1
 
-   * - Type
-     - UUID
-     - Property
-   * - Primary service
-     - BT_UUID_LATENCY
-     - Read only
-   * - Characteristic
-     - BT_UUID_LATENCY_CHAR
-     - BT_GATT_CHRC_WRITE, BT_GATT_PERM_WRITE
+      * - Type
+        - UUID
+        - Property
+      * - Primary service
+        - BT_UUID_LATENCY
+        - Read only
+      * - Characteristic
+        - BT_UUID_LATENCY_CHAR
+        - BT_GATT_CHRC_WRITE, BT_GATT_PERM_WRITE
 
 This sample transmits data between two development kits to measure the transmission latency in between.
 One of the devices is connected as a *central* and another is connected as a *peripheral*.
 The performance is evaluated with the transmission latency dividing the estimated round-trip time in half (RTT / 2).
 
-By default, the following values are used to demonstrates the interaction of the connection parameters:
+By default, the following values are used to demonstrate the interaction of the connection parameters:
 
 .. list-table:: Default parameter values
    :header-rows: 1
@@ -91,7 +91,6 @@ Building and running
 .. |sample path| replace:: :file:`samples/bluetooth/llpm`
 
 .. include:: /includes/build_and_run.txt
-
 
 Testing
 =======

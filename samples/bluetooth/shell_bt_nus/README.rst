@@ -14,7 +14,7 @@ Overview
 
 When the connection is established, you can connect to the sample through the :ref:`nus_service_readme` by using a host application.
 You can then send shell commands that are executed on the device running the sample, and see the logs.
-See :ref:`shell_bt_nus_host_tools` for more information about the host tools available, in |NCS|, for communicating with the sample.
+See :ref:`shell_bt_nus_host_tools` for more information about the host tools available in |NCS| for communicating with the sample.
 
 Requirements
 ************
@@ -40,17 +40,17 @@ Testing
 
 The |NCS| provides two alternatives for testing the sample:
 
-* `Testing using shell_bt_nus`_. It is a Python 3 script that requires a console application, like PuTTY, and a second development kit.
+* `Testing using the shell_bt_nus script`_. It is a Python 3 script that requires a console application, like PuTTY, and a second development kit.
 * `Testing using the Bluetooth LE Console`_. It is a stand-alone application for Linux.
 
-Testing using shell_bt_nus
-==========================
+Testing using the shell_bt_nus script
+=====================================
 
 .. include:: /libraries/shell/shell_bt_nus.rst
    :start-after: testing_bt_nus_shell_intro_start
    :end-before: testing_bt_nus_shell_intro_end
 
-After programming the sample to your development kits, test it by performing the following steps:
+After programming the sample to your development kits, complete the following steps to test it:
 
 1. Start a console application, like PuTTY, and connect through UART to the ``shell_bt_nus`` application running on the development kit to check the log.
    See :ref:`gs_testing` for more information on how to connect with PuTTY through UART.
@@ -67,7 +67,7 @@ After programming the sample to your development kits, test it by performing the
 
       bt_nus_shell.py --name BT_NUS_shell --com COM237 --family NRF52 --snr 682560213
 
-#. Open a console application, like PuTTY, and open a new session, setting the :guilabel:`Connection Type` to :guilabel:`Raw` and the :guilabel:`Destination Address` to ``127.0.0.1:8889``.
+#. Open a console application, like PuTTY, and open a new session, setting the **Connection Type** to **Raw** and the **Destination Address** to ``127.0.0.1:8889``.
 #. Press Enter in the terminal window.
    A console prompt is displayed showing a log message that indicates the active connection.
 #. Enter the commands that you want to execute.
@@ -89,11 +89,11 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/uuid.h``
-  * ``include/bluetooth/gatt.h``
-  * ``samples/bluetooth/gatt/bas.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/hci.h`
+  * :file:`include/bluetooth/uuid.h`
+  * :file:`include/bluetooth/gatt.h`
+  * :file:`samples/bluetooth/gatt/bas.h`
 * :ref:`zephyr:logging_api`
 
 The sample also uses the following secure firmware component:

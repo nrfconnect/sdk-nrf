@@ -30,7 +30,7 @@ Enter ``g`` to grant or ``d`` to deny Bluetooth radio activity.
 The application generates a grant signal on the pin selected by ``coex-pta-grant-gpios``.
 Connect this pin to the pin defined by the ``grant-gpios`` property in the DTS using a jumper cable.
 
-* On ``nrf52840dk_nrf52840``, the default pins are **P0.26** and **P0.02**.
+On the ``nrf52840dk_nrf52840`` target, the default pins are **P0.26** and **P0.02**.
 
 The board's :ref:`/zephyr,user <dt-zephyr-user>` node must have the ``coex-pta-grant-gpios`` property set in the devicetree.
 You can use this sample's board overlay as an example.
@@ -67,5 +67,5 @@ It also uses drivers from the `nrfx`_ libraries.
 
 It uses the following Zephyr libraries:
 
-* ``include/console/console.h``
+* :file:`include/console/console.h`
 * :ref:`zephyr:bluetooth_api`
