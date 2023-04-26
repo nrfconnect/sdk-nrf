@@ -13,19 +13,26 @@
 static volatile uint32_t etb_buf[ETB_BUFFER_SIZE / 4];
 static volatile uint32_t etb_buf_valid;
 
-/**
- * @brief When a fault occurs, save ETB trace data to RAM
- *
- * @param regs unused
- * @param reason unused
- */
-void memfault_platform_fault_handler(const sMfltRegState *regs, eMemfaultRebootReason reason)
+void memfault_ncs_etb_fault_handler(void)
 {
-	ARG_UNUSED(regs);
-	ARG_UNUSED(reason);
-
 	etb_trace_stop();
 	etb_data_get(etb_buf, ARRAY_SIZE(etb_buf));
 
 	etb_buf_valid = ETB_BUFFER_VALID_MAGIC;
+}
+
+size_t memfault_ncs_etb_get_regions(sMfltCoredumpRegion *regions, size_t num_regions)
+{
+	if (regions == NULL || num_regions < 1 || etb_buf_valid != ETB_BUFFER_VALID_MAGIC) {
+		return 0;
+	}
+
+	// Region size should be
+	regions[0] = (sMfltCoredumpRegion){
+		.type = kMfltCoredumpRegionType_MemoryWordAccessOnly,
+		.region_start = (const void *)etb_buf,
+		// Region size is in bytes, multiply by 4 as the ETB vars are in words
+		.region_size = (ARRAY_SIZE(etb_buf) << 2),
+	};
+	return 1;
 }
