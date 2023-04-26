@@ -434,7 +434,7 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_recv_info *info,
 			   struct net_buf *buf)
 {
-	static uint32_t recv_cnt, data_size_mismatch_cnt;
+	static uint32_t recv_cnt, bad_frame_cnt, data_size_mismatch_cnt;
 	bool bad_frame = false;
 
 	if (receive_cb == NULL) {
@@ -444,6 +444,7 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 
 	if (!(info->flags & BT_ISO_FLAGS_VALID)) {
 		bad_frame = true;
+		bad_frame_cnt++;
 	}
 
 	uint32_t octets_per_frame = bt_codec_cfg_get_octets_per_frame(stream->codec);
@@ -462,7 +463,7 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 
 	recv_cnt++;
 	if ((recv_cnt % 1000U) == 0U) {
-		LOG_DBG("Received %d total ISO packets", recv_cnt);
+		LOG_DBG("RX %d ISO packets. Bad/lost ISO packets %d10", recv_cnt, bad_frame_cnt);
 	}
 }
 
