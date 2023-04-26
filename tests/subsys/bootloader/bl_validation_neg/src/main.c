@@ -25,7 +25,7 @@ extern const struct fw_info m_firmware_info;
 #define VAL_INFO_MAX_SIZE 0x1000
 uint32_t val_info_buf[VAL_INFO_MAX_SIZE];
 
-void test_validation_neg1(void)
+ZTEST(test_bl_validation_neg, test_validation_neg1)
 {
 	uint32_t copy_len = ROUND_UP((uint32_t)_flash_used, 4);
 
@@ -109,7 +109,7 @@ void test_validation_neg1(void)
 }
 
 
-void test_validation_neg2(void)
+ZTEST(test_bl_validation_neg, test_validation_neg2)
 {
 #if PM_PROVISION_ADDRESS > 0xF00000
 	uint32_t num_public_keys = num_public_keys_read();
@@ -137,11 +137,4 @@ void test_validation_neg2(void)
 }
 
 
-void test_main(void)
-{
-	ztest_test_suite(test_bl_validation_neg,
-			 ztest_unit_test(test_validation_neg1),
-			 ztest_unit_test(test_validation_neg2)
-	);
-	ztest_run_test_suite(test_bl_validation_neg);
-}
+ZTEST_SUITE(test_bl_validation_neg, NULL, NULL, NULL, NULL, NULL);
