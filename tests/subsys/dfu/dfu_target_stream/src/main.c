@@ -34,9 +34,10 @@ static int page_size;
 		.fdev = fdev_, .buf = buf_, .len = len_, .offset = offset_,  \
 		.size = size_, .cb = cb_})
 
-static void test_dfu_target_stream_null_checks(void)
+ZTEST(dfu_target_stream_test, test_dfu_target_stream)
 {
 	int err;
+	size_t offset;
 
 	/* Null checks */
 	err = DFU_TARGET_STREAM_INIT(NULL, fdev, sbuf, sizeof(sbuf),
@@ -62,12 +63,6 @@ static void test_dfu_target_stream_null_checks(void)
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_2, fdev, sbuf, sizeof(sbuf),
 				     FLASH_BASE, 0, NULL);
 	zassert_true(err < 0, "Unexpected success: %d", err);
-}
-
-static void test_dfu_target_stream(void)
-{
-	int err;
-	size_t offset;
 
 	/* Perform write, and verify offset */
 	err = dfu_target_stream_write(write_buf, sizeof(write_buf));
@@ -100,7 +95,7 @@ static void test_dfu_target_stream(void)
 }
 
 #ifdef CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS
-static void test_dfu_target_stream_save_progress(void)
+ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
 {
 	int err;
 	size_t first_offset;
@@ -274,15 +269,14 @@ static void check_flash_base_at_page_start(const struct device *dev)
 
 #else
 
-static void test_dfu_target_stream_save_progress(void)
+ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
 {
 	ztest_test_skip();
 }
 
 #endif
 
-
-void test_main(void)
+static void *setup(void)
 {
 	__ASSERT_NO_MSG(device_is_ready(fdev));
 
@@ -297,11 +291,7 @@ void test_main(void)
 		 "BUF_LEN must be at least one page long");
 #endif
 
-	ztest_test_suite(lib_dfu_target_stream,
-	     ztest_unit_test(test_dfu_target_stream_null_checks),
-	     ztest_unit_test(test_dfu_target_stream),
-	     ztest_unit_test(test_dfu_target_stream_save_progress)
-	 );
-
-	ztest_run_test_suite(lib_dfu_target_stream);
+	return NULL;
 }
+
+ZTEST_SUITE(dfu_target_stream_test, NULL, setup, NULL, NULL, NULL);

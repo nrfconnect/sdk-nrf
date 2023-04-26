@@ -103,7 +103,7 @@ static void done(void)
 	(void)dfu_target_schedule_update(0);
 }
 
-static void test_init(void)
+ZTEST(dfu_target, test_init)
 {
 	int ret;
 	int err;
@@ -143,7 +143,7 @@ static void test_init(void)
 	done();
 }
 
-static void test_done(void)
+ZTEST(dfu_target, test_done)
 {
 	int err;
 
@@ -167,7 +167,7 @@ static void test_done(void)
 
 }
 
-static void test_schedule(void)
+ZTEST(dfu_target, test_schedule)
 {
 	int err;
 
@@ -185,7 +185,7 @@ static void test_schedule(void)
 
 }
 
-static void test_offset_get(void)
+ZTEST(dfu_target, test_offset_get)
 {
 	int err;
 	size_t offset = 0;
@@ -208,7 +208,7 @@ static void test_offset_get(void)
 	zassert_true(err < 0, "Expected negative error code");
 }
 
-static void test_write(void)
+ZTEST(dfu_target, test_write)
 {
 	int err;
 	int mybuf[100];
@@ -223,17 +223,4 @@ static void test_write(void)
 	zassert_true(err < 0, "Did not get error when writing uninitialized");
 }
 
-void test_main(void)
-{
-	ztest_test_suite(dfu_target_test,
-			 ztest_unit_test(test_write),
-			 ztest_unit_test(test_offset_get),
-			 ztest_unit_test(test_done),
-			 ztest_user_unit_test_setup_teardown(test_init,
-				test_setup, unit_test_noop),
-			 ztest_user_unit_test_setup_teardown(test_schedule,
-				test_setup, unit_test_noop)
-			 );
-
-	ztest_run_test_suite(dfu_target_test);
-}
+ZTEST_SUITE(dfu_target, NULL, NULL, NULL, NULL, NULL);
