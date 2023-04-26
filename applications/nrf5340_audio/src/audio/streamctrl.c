@@ -57,66 +57,16 @@ K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STA
 
 static enum stream_state strm_state = STATE_PAUSED;
 
-#if (CONFIG_BLE_ISO_TEST_PATTERN)
-
-struct iso_recv_stats {
-	uint32_t iso_rx_packets_received;
-	uint32_t iso_rx_packets_lost;
+struct rx_stats {
+	uint32_t recv_cnt;
+	uint32_t bad_frame_cnt;
+	uint32_t data_size_mismatch_cnt;
 };
-
-static struct iso_recv_stats stats_overall;
-
-/* Print statistics from test pattern run */
-static void stats_print(char const *const name, struct iso_recv_stats const *const stats)
-{
-	uint32_t total_packets;
-
-	total_packets = stats->iso_rx_packets_received + stats->iso_rx_packets_lost;
-
-	LOG_INF("%s: Received %u/%u (%.2f%%) - Lost %u", name, stats->iso_rx_packets_received,
-		total_packets, (float)stats->iso_rx_packets_received * 100 / total_packets,
-		stats->iso_rx_packets_lost);
-}
-
-/* Separate function for assessing link quality using a test pattern sent from gateway */
-static void ble_test_pattern_receive(uint8_t const *const p_data, size_t data_size, bool bad_frame)
-{
-	uint32_t total_packets;
-	static uint8_t expected_packet_value;
-
-	stats_overall.iso_rx_packets_received++;
-
-	if (bad_frame) {
-		LOG_WRN("Received bad frame");
-	}
-
-	total_packets = stats_overall.iso_rx_packets_received + stats_overall.iso_rx_packets_lost;
-
-	/* Only check first value in packet */
-	if (p_data[0] == expected_packet_value) {
-		expected_packet_value++;
-	} else {
-		/* First packet will always be a mismatch
-		 * if gateway hasn't been reset before connection
-		 */
-		if (stats_overall.iso_rx_packets_received != 1) {
-			stats_overall.iso_rx_packets_lost++;
-			LOG_WRN("Missing packet: value: %d, expected: %d", p_data[0],
-				expected_packet_value);
-		}
-
-		expected_packet_value = p_data[0] + 1;
-	}
-
-	if ((total_packets % 100) == 0) {
-		stats_print("Overall ", &stats_overall);
-	}
-}
-#endif /* (CONFIG_BLE_ISO_TEST_PATTERN) */
 
 /* Callback for handling BLE RX */
 static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, bool bad_frame,
-				     uint32_t sdu_ref, enum audio_channel channel_index)
+				     uint32_t sdu_ref, enum audio_channel channel_index,
+				     size_t desired_data_size)
 {
 	/* Capture timestamp of when audio frame is received */
 	uint32_t recv_frame_ts = nrfx_timer_capture(&audio_sync_timer_instance,
@@ -125,6 +75,30 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 	/* Since the audio datapath thread is preemptive, no actions on the
 	 * FIFO can happen whilst in this handler.
 	 */
+
+	bool data_size_mismatch = false;
+	static struct rx_stats rx_stats[AUDIO_CH_NUM];
+
+	rx_stats[channel_index].recv_cnt++;
+	if (data_size != desired_data_size && !bad_frame) {
+		data_size_mismatch = true;
+		rx_stats[channel_index].data_size_mismatch_cnt++;
+	}
+
+	if (bad_frame) {
+		rx_stats[channel_index].bad_frame_cnt++;
+	}
+
+	if ((rx_stats[channel_index].recv_cnt % 100) == 0 && rx_stats[channel_index].recv_cnt) {
+		LOG_WRN("ISO RX SDUs: Ch: %d Total: %d Bad: %d Size mismatch %d", channel_index,
+			rx_stats[channel_index].recv_cnt, rx_stats[channel_index].bad_frame_cnt,
+			rx_stats[channel_index].data_size_mismatch_cnt);
+	}
+
+	if (data_size_mismatch) {
+		/* Return if sizes do not match */
+		return;
+	}
 
 	if (strm_state != STATE_STREAMING) {
 		/* Throw away data */
@@ -136,29 +110,11 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 	struct ble_iso_data *iso_received = NULL;
 
 #if (CONFIG_AUDIO_DEV == GATEWAY)
-	static uint32_t packet_count_r;
-
-	switch (channel_index) {
-	case AUDIO_CH_L:
-		/* Proceed */
-		break;
-	case AUDIO_CH_R:
-		packet_count_r++;
-		if ((packet_count_r % 1000) == 0) {
-			LOG_DBG("Packets received from right channel: %d", packet_count_r);
-		}
-
-		return;
-	default:
-		LOG_ERR("Channel index not supported");
+	if (channel_index != AUDIO_CH_L) {
+		/* Only left channel RX data in use on gateway */
 		return;
 	}
 #endif /* (CONFIG_AUDIO_DEV == GATEWAY) */
-
-#if (CONFIG_BLE_ISO_TEST_PATTERN)
-	ble_test_pattern_receive(p_data, data_size, bad_frame);
-	return;
-#endif /* (CONFIG_BLE_ISO_TEST_PATTERN) */
 
 	uint32_t blocks_alloced_num, blocks_locked_num;
 
