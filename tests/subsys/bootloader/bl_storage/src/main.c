@@ -9,7 +9,7 @@
 #include "bl_storage.h"
 #include <zephyr/sys/reboot.h>
 
-void test_monotonic_counter(void)
+ZTEST(bl_storage_test, test_monotonic_counter)
 {
 	uint16_t counter_value;
 	uint16_t counter_slots;
@@ -54,7 +54,7 @@ void test_monotonic_counter(void)
 	sys_reboot(0);
 }
 
-void test_lcs_single(void)
+ZTEST(bl_storage_test, test_lcs_single)
 {
 	int ret;
 	enum lcs lcs;
@@ -75,11 +75,4 @@ void test_lcs_single(void)
  * tests.
  */
 
-void test_main(void)
-{
-	ztest_test_suite(test_bl_storage,
-			 ztest_unit_test(test_lcs_single),
-			 ztest_unit_test(test_monotonic_counter)
-	);
-	ztest_run_test_suite(test_bl_storage);
-}
+ZTEST_SUITE(bl_storage_test, NULL, NULL, NULL, NULL, NULL);
