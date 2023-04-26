@@ -239,6 +239,7 @@ nRF Desktop
     If a configuration supports both Fast Pair and a dedicated dongle peer (:ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE <config_desktop_app_options>`), the `Swift Pair`_ payload is, by default, included only for the dongle peer.
   * Set the max compiled-in log level to ``warning`` for the Bluetooth HCI core (:kconfig:option:`CONFIG_BT_HCI_CORE_LOG_LEVEL`).
     This is done to avoid flooding logs during application boot.
+  * The documentation with debug Fast Pair provisioning data obtained for development purposes.
 
 Samples
 =======
@@ -276,6 +277,10 @@ Bluetooth samples
 * :ref:`nrf_dm` sample:
 
   * Improved the scalability of the sample when it is being used with more devices.
+
+* :ref:`peripheral_fast_pair` sample:
+
+  * Added the default Fast Pair provisioning data that is used when no other provisioning data is specified.
 
 Bluetooth mesh samples
 ----------------------

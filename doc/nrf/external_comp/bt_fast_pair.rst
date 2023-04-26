@@ -47,7 +47,9 @@ The data is used for procedures defined by the Fast Pair standard.
 Registering Fast Pair Provider
 ==============================
 
-See the official `Fast Pair Model Registration`_ documentation for information how to register the device and obtain the Model ID and Anti-Spoofing Public/Private Key pair.
+See the official `Fast Pair Model Registration`_ documentation for information on how to register the device and obtain the Model ID and Anti-Spoofing Public/Private Key pair.
+Alternatively, you can use the debug Model ID and Anti-Spoofing Public/Private Key pair obtained by Nordic Semiconductor for the development purposes.
+See the :ref:`peripheral_fast_pair` sample and the :ref:`nrf_desktop` for details about the debug Fast Pair Providers registered by Nordic.
 
 Provisioning registration data onto device
 ==========================================
