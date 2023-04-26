@@ -154,6 +154,8 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 
 #define PERIPHERAL_COUNT CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT
 
+#define SDC_FAL_MEM_SIZE SDC_MEM_FAL(CONFIG_BT_CTLR_FAL_SIZE)
+
 #define SDC_EXTRA_MEMORY CONFIG_BT_SDC_ADDITIONAL_MEMORY
 
 #define MEMPOOL_SIZE ((PERIPHERAL_COUNT * PERIPHERAL_MEM_SIZE) + \
@@ -164,6 +166,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 		      (SDC_PERIODIC_SYNC_MEM_SIZE) + \
 		      (SDC_PERIODIC_ADV_LIST_MEM_SIZE) + \
 		      (SDC_SCAN_BUF_SIZE) + \
+		      (SDC_FAL_MEM_SIZE) + \
 		      (SDC_EXTRA_MEMORY))
 
 #if CONFIG_BT_SDC_ADDITIONAL_MEMORY
@@ -715,6 +718,15 @@ static int configure_memory_usage(void)
 		return required_memory;
 	}
 #endif
+
+	cfg.fal_size = CONFIG_BT_CTLR_FAL_SIZE;
+	required_memory =
+		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+					   SDC_CFG_TYPE_FAL_SIZE,
+					   &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
 
 	cfg.buffer_cfg.rx_packet_size = MAX_RX_PACKET_SIZE;
 	cfg.buffer_cfg.tx_packet_size = MAX_TX_PACKET_SIZE;
