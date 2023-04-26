@@ -185,7 +185,7 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 		bad_frame = true;
 	}
 
-	uint32_t octets_per_sdu = bt_codec_cfg_get_octets_per_frame(stream->codec);
+	uint32_t octets_per_sdu = active_stream.codec->octets_per_sdu;
 
 	if (buf->len != octets_per_sdu && bad_frame != true) {
 		data_size_mismatch_cnt++;
