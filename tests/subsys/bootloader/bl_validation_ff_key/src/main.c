@@ -6,7 +6,7 @@
 
 #include <zephyr/ztest.h>
 
-void test_ff_key(void)
+ZTEST(bl_validation_ff_test, test_ff_key)
 {
 	/* This test has been built with a public key whose hash contains
 	 * 0xFFFF, which can be manipulated when the key is in OTP. The
@@ -16,10 +16,4 @@ void test_ff_key(void)
 	zassert_true(false, "Should not have booted.");
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_bl_crypto_ff_key,
-			 ztest_unit_test(test_ff_key)
-	);
-	ztest_run_test_suite(test_bl_crypto_ff_key);
-}
+ZTEST_SUITE(bl_validation_ff_test, NULL, NULL, NULL, NULL, NULL);
