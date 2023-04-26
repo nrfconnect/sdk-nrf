@@ -154,7 +154,7 @@ static const struct expected two_image_package_expected = {
 	.image_count = 2,
 };
 
-static void test_two_image_package(void)
+ZTEST(dfu_multi_image_test, test_two_image_package)
 {
 	uint8_t buffer[128];
 
@@ -163,7 +163,7 @@ static void test_two_image_package(void)
 		   "DFU failed");
 }
 
-static void test_two_image_package_small_chunk(void)
+ZTEST(dfu_multi_image_test, test_two_image_package_small_chunk)
 {
 	uint8_t buffer[128];
 
@@ -172,7 +172,7 @@ static void test_two_image_package_small_chunk(void)
 		   "DFU failed");
 }
 
-static void test_too_small_buffer(void)
+ZTEST(dfu_multi_image_test, test_too_small_buffer)
 {
 	int err;
 	uint8_t buffer[31];
@@ -194,7 +194,7 @@ static void test_too_small_buffer(void)
 	zassert_equal(err, -EINVAL, "Invalid argument error expected but not occurred");
 }
 
-static void test_too_small_package(void)
+ZTEST(dfu_multi_image_test, test_too_small_package)
 {
 	int err;
 	uint8_t buffer[32];
@@ -210,7 +210,7 @@ static void test_too_small_package(void)
 	zassert_equal(err, -ESPIPE, "DFU passed despite of truncated package");
 }
 
-static void test_too_large_package(void)
+ZTEST(dfu_multi_image_test, test_too_large_package)
 {
 	int err;
 	uint8_t buffer[32];
@@ -227,7 +227,7 @@ static void test_too_large_package(void)
 	zassert_equal(err, -ESPIPE, "DFU passed despite of trailing data");
 }
 
-static void test_skipped_image(void)
+ZTEST(dfu_multi_image_test, test_skipped_image)
 {
 	uint8_t buffer[128];
 	struct expected expected = two_image_package_expected;
@@ -253,7 +253,7 @@ static const struct expected generated_dfu_package_expected = {
 	.image_count = 2,
 };
 
-static void test_generated_dfu_package(void)
+ZTEST(dfu_multi_image_test, test_generated_dfu_package)
 {
 	uint8_t buffer[128];
 	uint8_t package[strlen(DFU_PACKAGE_HEX) / 2];
@@ -267,14 +267,4 @@ static void test_generated_dfu_package(void)
 		   "DFU failed");
 }
 
-void test_main(void)
-{
-	ztest_test_suite(dfu_multi_image_test, ztest_unit_test(test_two_image_package),
-			 ztest_unit_test(test_two_image_package_small_chunk),
-			 ztest_unit_test(test_too_small_buffer),
-			 ztest_unit_test(test_too_small_package),
-			 ztest_unit_test(test_too_large_package),
-			 ztest_unit_test(test_skipped_image),
-			 ztest_unit_test(test_generated_dfu_package));
-	ztest_run_test_suite(dfu_multi_image_test);
-}
+ZTEST_SUITE(dfu_multi_image_test, NULL, NULL, NULL, NULL, NULL);
