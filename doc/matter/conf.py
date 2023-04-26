@@ -63,6 +63,7 @@ external_content_contents = [
     (MATTER_BASE / "docs" / "guides", "BUILDING.md"),
     (MATTER_BASE / "docs" / "guides", "chip_tool_guide.md"),
     (MATTER_BASE / "docs" / "guides", "access-control-guide.md"),
+    (MATTER_BASE / "src" / "tools" / "chip-cert", "README.md"),
 ]
 
 

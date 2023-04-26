@@ -42,17 +42,7 @@ Generating Certification Declaration for integration testing
 
 To generate CD for integration testing, complete the following steps:
 
-1. Install the chip-cert tool.
-   This is a Matter tool used for generating new certificates.
-   Complete the following steps:
-
-   a. Navigate to the :file:`connectedhomeip` root directory.
-   a. In a terminal, run the following command to build the tool executable file:
-
-      .. code-block:: console
-
-         cd src/tools/chip-cert && gn gen out && ninja -C out chip-cert
-
+1. :ref:`Install the chip-cert tool <ug_matter_gs_tools_cert_installation>`.
 2. Run the following command pattern to generate CD:
 
    .. parsed-literal::

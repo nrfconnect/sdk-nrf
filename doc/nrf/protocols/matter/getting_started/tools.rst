@@ -10,6 +10,8 @@ Matter tools
 
 Use tools listed on this page to test :ref:`matter_samples` and develop Matter applications in the |NCS|.
 
+.. _ug_matter_gs_tools_gn:
+
 GN tool
 *******
 
@@ -18,6 +20,8 @@ This system generates the Ninja files that the |NCS| uses.
 
 The GN is automatically installed with the |NCS|'s Toolchain Manager when you :ref:`install the SDK automatically <gs_assistant>`.
 If you are updating from the |NCS| version earlier than v1.5.0 or you are installing the |NCS| manually, see the :ref:`GN installation instructions <gs_installing_gn>`.
+
+.. _ug_matter_gs_tools_controller:
 
 Matter controller tools
 ***********************
@@ -32,6 +36,22 @@ The following figure shows the available Matter controllers in the |NCS|.
 
 You can read more about the Matter controller on the :ref:`Matter network topologies <ug_matter_configuring_controller>` page.
 For information about how to build and configure the Matter controller, see the pages in the :ref:`ug_matter_gs_testing` section.
+
+.. _ug_matter_gs_tools_chip:
+
+CHIP Tool for Linux or macOS
+============================
+
+The CHIP Tool for Linux or macOS is the default implementation of the Matter controller role, recommended for the nRF Connect platform.
+You can read more about it on the :doc:`matter:chip_tool_guide` page in the Matter documentation.
+
+Depending on your system, you can install the CHIP Tool in one of the following ways:
+
+* For Linux only - Use the prebuilt tool package from the `Matter nRF Connect releases`_ GitHub page.
+  Make sure that the package is compatible with your |NCS| version.
+* For both Linux and macOS - Build it manually from the source files available in the :file:`modules/lib/matter/examples/chip-tool` directory and using the building instructions from the :doc:`matter:chip_tool_guide` page in the Matter documentation.
+
+.. _ug_matter_gs_tools_zap:
 
 ZAP tool
 ********
@@ -183,6 +203,42 @@ You can also install the ZAP tool using one of the following methods:
 * Configure the tool and manually compile it using the instructions in the official `ZCL Advanced Platform`_ documentation.
 
 Both these methods still require adding the ZAP tool location to the system :envvar:`PATH` environment variables, as detailed in the step 3 above.
+
+.. _ug_matter_gs_tools_cert:
+
+CHIP Certificate Tool
+*********************
+
+Matter's CHIP Certificate Tool, in short chip-cert, is a command-line utility tool for generating and editing Matter certificates such as Certificate Declarations (CD), Device Attestation Certificates (DAC), Product Attestation Intermediate (PAI) certificates, and Product Attestation Authority (PAA) certificate, alongside their related keys.
+You can use it for integration testing purposes while working on a :ref:`Matter end product <ug_matter_intro_device>`.
+
+For more information about the chip-cert tool, see how to :ref:`generate custom certification declarations <ug_matter_device_configuring_cd_generating_steps>` for integration testing in the |NCS|.
+You can also take a look at the `CHIP Certificate Tool source files`_.
+
+.. _ug_matter_gs_tools_cert_installation:
+
+Installing CHIP Certificate Tool
+================================
+
+To install the chip-cert tool, complete the following steps:
+
+1. Navigate to the :file:`connectedhomeip` root directory.
+1. In a terminal, run the following command to build the tool executable file:
+
+   .. code-block:: console
+
+      cd src/tools/chip-cert && gn gen out && ninja -C out chip-cert
+
+1. Add the chip-cert tool to the system :envvar:`PATH` environment variable when built.
+
+Generating custom certificates in factory data
+==============================================
+
+Adding the chip-cert tool to to the system :envvar:`PATH` allows you to build :ref:`matter_samples` and the :ref:`Matter weather station <matter_weather_station_app>` application with custom certificates included in the factory data.
+This lets you for example change the test Vendor ID, Product ID, or other data.
+
+To build an Matter application in the |NCS| with custom certification data, make sure to set the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_USE_DEFAULT_CERTS` to ``n`` when :doc:`building an example with factory data <matter:nrfconnect_factory_data_configuration>`.
+.. _ug_matter_gs_tools_mot:
 
 Matter over Thread tools
 ************************

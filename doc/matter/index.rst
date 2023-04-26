@@ -21,3 +21,4 @@ This documentation set includes a selection of pages available in the `Matter <h
    nrfconnect_factory_data_configuration
    chip_tool_guide
    access-control-guide
+   README

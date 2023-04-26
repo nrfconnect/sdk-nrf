@@ -201,8 +201,7 @@ After building the target, the generated :file:`factory_data.hex` file will be m
    west flash --erase
 
 If you want to use Vendor ID, Product ID or other data that is not reserved for tests, you need custom test certificates.
-To build with custom certificates, you need to use the chip-cert tool.
-Follow the first step of the :ref:`ug_matter_device_configuring_cd_generating_steps` instruction and add the chip-cert tool to PATH when built.
+To build with custom certificates, you need to :ref:`install CHIP Certificate Tool <ug_matter_gs_tools_cert_installation>`.
 
 Testing
 =======
