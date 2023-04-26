@@ -862,11 +862,41 @@ Selecting a build type from command line
    :end-before: build_types_selection_cmd_end
 
 .. note::
-   If nRF Desktop is built with `Fast Pair`_ support, you must provide your own Fast Pair Model ID and Anti Spoofing private key as CMake options.
+   If nRF Desktop is built with `Fast Pair`_ support, you must provide Fast Pair Model ID and Anti Spoofing private key as CMake options.
+   You can use either your own provisioning data or the provisioning data obtained by Nordic Semiconductor for development purposes.
+   The following debug devices are meant to be used with the nRF Desktop and have been registered:
+
+   * NCS keyboard - The Fast Pair Provider meant to be used with keyboards:
+
+      * Device name: NCS keyboard
+      * Model ID: ``0x52FF02``
+      * Anti-spoofing key (base64, uncompressed): ``8E8ulwhSIp/skZeg27xmWv2SxRxTOagypHrf2OdrhGY=``
+      * Type: Input device
+      * Additional features: Data only connection, Support personalized name, Ringing device unsupported
+
+   * NCS gaming mouse - Fast Pair Provider meant to be used with gaming mice:
+
+      * Device name: NCS gaming mouse
+      * Model ID: ``0x8E717D``
+      * Anti-spoofing key (base64, uncompressed): ``dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=``
+      * Type: Input device
+      * Additional features: Data only connection, Support personalized name, Ringing device unsupported
+
    See :ref:`ug_bt_fast_pair_provisioning` documentation for the following information:
 
    * Registering a Fast Pair Provider
    * Provisioning a Fast Pair Provider in |NCS|
+
+.. nrf_desktop_fastpair_important_start
+
+.. important::
+   This is the debug Fast Pair provisioning data obtained by Nordic for the development purposes.
+   It should not be used in production.
+
+   To test with the debug mode Model ID, you must configure the Android device to include the debug results while displaying the nearby Fast Pair Providers.
+   For details, see `Verifying Fast Pair`_ in the GFPS documentation.
+
+.. nrf_desktop_fastpair_important_end
 
 .. _nrf_desktop_testing_steps:
 

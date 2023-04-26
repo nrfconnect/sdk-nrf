@@ -12,5 +12,3 @@ tests:
     tags: bluetooth ci_build
     platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
       nrf5340dk_nrf5340_cpuapp_ns
-    extra_args: FP_MODEL_ID=0xFFFFFF
-                FP_ANTI_SPOOFING_KEY=AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=

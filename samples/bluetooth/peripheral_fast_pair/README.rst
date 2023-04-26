@@ -57,9 +57,24 @@ See `Fast Pair Advertising`_ for detailed information about discoverable and not
 Fast Pair device registration
 =============================
 
-Before you can use a device as a Fast Pair Provider, you must register the device model with Google.
+Before you can use your device as a Fast Pair Provider, the device model must be registered with Google.
 This is required to obtain Model ID and Anti-Spoofing Private Key.
+You can register your own device or use the debug Model ID and Anti-Spoofing Public/Private Key pair obtained by Nordic for development purposes.
+By default, if Model ID and Anti-Spoofing Private Key are not specified, the following debug Fast Pair provider is used:
+
+* NCS Fast Pair demo - The input device Fast Pair provider:
+
+   * Device name: NCS Fast Pair demo
+   * Model ID: ``0x2A410B``
+   * Anti-spoofing key (base64, uncompressed): ``Unoh+nycK/ZJ7k3dHsdcNpiP1SfOy0P/Lx5XixyYois=``
+   * Type: Input device
+   * Additional features: Data only connection, Support personalized name, Ringing device unsupported
+
 See :ref:`ug_bt_fast_pair_provisioning` in the Fast Pair user guide for details.
+
+.. include:: /applications/nrf_desktop/README.rst
+   :start-after: nrf_desktop_fastpair_important_start
+   :end-before: nrf_desktop_fastpair_important_end
 
 .. tip::
    The sample provides TX power in the Bluetooth advertising data.
@@ -153,7 +168,8 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-When building the sample, you must provide the Fast Pair Model ID (:c:macro:`FP_MODEL_ID`) and the Fast Pair Anti Spoofing Key (:c:macro:`FP_ANTI_SPOOFING_KEY`) as CMake options.
+When building the sample, you can provide the Fast Pair Model ID (:c:macro:`FP_MODEL_ID`) and the Fast Pair Anti-Spoofing Key (:c:macro:`FP_ANTI_SPOOFING_KEY`) as CMake options.
+If the data is not provided, the sample uses the default provisioning data obtained for the *NCS Fast Pair demo* (the input device debug Fast Pair provider).
 See :ref:`ug_bt_fast_pair_provisioning` for detailed guide.
 
 .. note::
