@@ -15,3 +15,4 @@ The factory data parameters are read at the boot time of a device and can be use
 
 For a detailed guide that describes the process of creating and programming factory data in the Matter ecosystem using the nRF Connect platform from Nordic Semiconductor, read the :doc:`matter:nrfconnect_factory_data_configuration` guide in the Matter documentation.
 You need to complete this process for :ref:`ug_matter_device_attestation` and :ref:`ug_matter_device_certification`.
+You can also see `Matter factory data Kconfig options`_ for an overview of possible configuration variants.

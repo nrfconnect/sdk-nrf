@@ -108,6 +108,7 @@
 .. _`dedicated Matter fork`: https://github.com/nrfconnect/sdk-connectedhomeip
 .. _`Matter SDK version`: https://github.com/project-chip/connectedhomeip/releases
 .. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/c9ba5705/src/controller
+.. _`CHIP Certificate Tool source files`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/master/src/tools
 .. _`ZCL Advanced Platform`: https://github.com/project-chip/zap
 .. _`ZCL Advanced Platform releases`: https://github.com/project-chip/zap/releases
 .. _`Matter nRF Connect releases`: https://github.com/nrfconnect/sdk-connectedhomeip/releases
@@ -115,6 +116,7 @@
 .. _`Kconfig.mcuboot.defaults`: https://github.com/project-chip/connectedhomeip/blob/master/config/nrfconnect/chip-module/Kconfig.mcuboot.defaults
 .. _`Matter SDK tagged as v1.0.0`: https://github.com/project-chip/connectedhomeip/releases/tag/v1.0.0
 .. _`Testing with Apple Devices`: https://github.com/project-chip/connectedhomeip/blob/master/docs/guides/darwin.md
+.. _`Matter factory data Kconfig options`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/kconfig/index.html#!CHIP_FACTORY_DATA
 
 .. _`DCL Quick Start Guide`: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/quickStartGuide.adoc
 
