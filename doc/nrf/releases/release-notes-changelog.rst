@@ -365,4 +365,4 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Added a page on :ref:`ug_wireless_coexistence` in :ref:`protocols`.
