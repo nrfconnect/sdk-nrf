@@ -17,11 +17,11 @@
 #define LE_AUDIO_SDU_SIZE_OCTETS(bitrate) (bitrate / (1000000 / CONFIG_AUDIO_FRAME_DURATION_US) / 8)
 
 #if (CONFIG_SCAN_MODE_ACTIVE)
-#define NRF5340_AUDIO_GATEWAY_SCAN_TYPE    BT_LE_SCAN_TYPE_ACTIVE
-#define NRF5340_AUDIO_GATEWAY_SCAN_PARAMS  BT_LE_SCAN_ACTIVE
+#define NRF5340_AUDIO_GATEWAY_SCAN_TYPE BT_LE_SCAN_TYPE_ACTIVE
+#define NRF5340_AUDIO_GATEWAY_SCAN_PARAMS BT_LE_SCAN_ACTIVE
 #elif (CONFIG_SCAN_MODE_PASSIVE)
-#define NRF5340_AUDIO_GATEWAY_SCAN_TYPE    BT_LE_SCAN_TYPE_PASSIVE
-#define NRF5340_AUDIO_GATEWAY_SCAN_PARAMS  BT_LE_SCAN_PASSIVE
+#define NRF5340_AUDIO_GATEWAY_SCAN_TYPE BT_LE_SCAN_TYPE_PASSIVE
+#define NRF5340_AUDIO_GATEWAY_SCAN_PARAMS BT_LE_SCAN_PASSIVE
 #else
 #error "Please select either CONFIG_SCAN_MODE_ACTIVE or CONFIG_SCAN_MODE_PASSIVE"
 #endif
@@ -61,33 +61,27 @@
 
 #if CONFIG_TRANSPORT_CIS
 #if CONFIG_BT_BAP_UNICAST_CONFIGURABLE
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                             \
-	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
-				       BT_AUDIO_CONTEXT_TYPE_MEDIA,	                         \
+#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
+	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA,  \
 				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SINK)
 
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                           \
-	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
-				       BT_AUDIO_CONTEXT_TYPE_MEDIA,	                         \
+#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
+	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA,  \
 				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SRC)
 
 #elif CONFIG_BT_BAP_UNICAST_16_2_1
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                             \
-	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                           \
-					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
+#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
+	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                           \
-	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                           \
-					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
+#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
+	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
 #elif CONFIG_BT_BAP_UNICAST_24_2_1
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                             \
-	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                           \
-					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
+#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
+	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                           \
-	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                           \
-					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
+#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
+	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
 #else
 #error Unsupported LC3 codec preset for unicast
@@ -96,30 +90,29 @@
 
 #if CONFIG_TRANSPORT_BIS
 #if CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                \
-	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
-				       BT_AUDIO_CONTEXT_TYPE_MEDIA,	                         \
+#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
+	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA,  \
 				       CONFIG_BT_AUDIO_BITRATE_BROADCAST_SRC)
 
 #elif CONFIG_BT_BAP_BROADCAST_16_2_1
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                \
-	BT_BAP_LC3_BROADCAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                         \
-					     BT_AUDIO_CONTEXT_TYPE_MEDIA)
+#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
+	BT_BAP_LC3_BROADCAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                           \
+					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
 #elif CONFIG_BT_BAP_BROADCAST_24_2_1
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                \
-	BT_BAP_LC3_BROADCAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                         \
-					     BT_AUDIO_CONTEXT_TYPE_MEDIA)
+#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
+	BT_BAP_LC3_BROADCAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                           \
+					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
 #elif CONFIG_BT_BAP_BROADCAST_16_2_2
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                \
-	BT_BAP_LC3_BROADCAST_PRESET_16_2_2(BT_AUDIO_LOCATION_FRONT_LEFT,                         \
-					     BT_AUDIO_CONTEXT_TYPE_MEDIA)
+#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
+	BT_BAP_LC3_BROADCAST_PRESET_16_2_2(BT_AUDIO_LOCATION_FRONT_LEFT,                           \
+					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
 #elif CONFIG_BT_BAP_BROADCAST_24_2_2
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                \
-	BT_BAP_LC3_BROADCAST_PRESET_24_2_2(BT_AUDIO_LOCATION_FRONT_LEFT,                         \
-					     BT_AUDIO_CONTEXT_TYPE_MEDIA)
+#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
+	BT_BAP_LC3_BROADCAST_PRESET_24_2_2(BT_AUDIO_LOCATION_FRONT_LEFT,                           \
+					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
 #else
 #error Unsupported LC3 codec preset for broadcast
@@ -136,7 +129,8 @@
  * @param channel_index	Audio channel index
  */
 typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool bad_frame,
-				    uint32_t sdu_ref, enum audio_channel channel_index);
+				    uint32_t sdu_ref, enum audio_channel channel_index,
+				    size_t desired_size);
 
 /**
  * @brief Callback for using the timestamp of the previously sent audio packet

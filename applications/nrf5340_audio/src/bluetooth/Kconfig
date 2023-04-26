@@ -274,18 +274,6 @@ config NRF_21540_PRI_ADV_DBM
 	default 10 if NRF_21540_PRI_ADV_TX_POWER_10DBM
 	default 20 if NRF_21540_PRI_ADV_TX_POWER_20DBM
 
-config BLE_ISO_TEST_PATTERN
-	bool "Transmit a test pattern to measure link performance"
-	default n
-	help
-	  This will transmit the same amount of data as an audio stream, but the
-	  data will be an incrementing value ranging from 0-255 and repeating.
-	  Note that enabling this feature will disable the audio stream.
-
-config BLE_ISO_RX_STATS_S
-	int "Interval in seconds to print Bluetooth LE ISO RX stats. 0 to deactivate"
-	default 0
-
 config CODEC_CAP_COUNT_MAX
 	int "Max storage of codec capabilities"
 	default 5
