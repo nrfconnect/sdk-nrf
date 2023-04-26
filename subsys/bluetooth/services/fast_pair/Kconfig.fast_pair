@@ -58,12 +58,14 @@ config BT_FAST_PAIR_ADVERTISING
 	default y
 	select BT_PERIPHERAL
 	select BT_PRIVACY
+	select ENTROPY_GENERATOR
 	help
 	  Add Fast Pair advertising source files.
 
 config BT_FAST_PAIR_GATT_SERVICE
 	bool
 	default y
+	select ENTROPY_GENERATOR
 	help
 	  Add Fast Pair GATT Service source files.
 
