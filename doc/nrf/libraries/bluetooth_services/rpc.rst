@@ -8,22 +8,22 @@ Bluetooth Low Energy Remote Procedure Call
    :depth: 2
 
 The |NCS| supports Bluetooth® Low Energy (LE) stack serialization.
-The full Bluetooth LE stack can run on another device or CPU, such as the nRF5340 DK network core using :ref:`nrfxlib:nrf_rpc`.
+The full Bluetooth LE stack can run on another device or CPU, such as the nRF5340 DK network core using the :ref:`nrfxlib:nrf_rpc`.
 
 Network core
 ************
 
 The :ref:`ble_rpc_host` sample is designed specifically to enable the Bluetooth LE stack functionality on a remote MCU (for example, the nRF5340 network core) using the :ref:`nrfxlib:nrf_rpc`.
-You can program this sample to the network core to run standard Bluetooth Low Energy samples on nRF5340.
+You can program this sample to the network core to run standard Bluetooth Low Energy samples on the nRF5340 DK.
 You can use either the SoftDevice Controller or the Zephyr Bluetooth LE Controller for this sample.
 
 Application core
 ****************
 
 To use the Bluetooth LE stack through nRF RPC, an additional configuration is needed.
-When building samples for the application core, enable the :kconfig:option:`CONFIG_BT_RPC_STACK` to run the Bluetooth LE stack on the network core.
+When building samples for the application core, enable the :kconfig:option:`CONFIG_BT_RPC_STACK` Kconfig option to run the Bluetooth LE stack on the network core.
 This option builds :ref:`ble_rpc_host` automatically as a child image.
-For more details, see: :ref:`ug_nrf5340_building`.
+For more details, see :ref:`ug_nrf5340_building`.
 
 Open a command prompt in the build folder of the application sample and enter the following command to build the application for the application core, with :ref:`ble_rpc_host` as child image:
 

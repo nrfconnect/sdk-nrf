@@ -7,7 +7,7 @@ Bluetooth GATT attribute pools
    :local:
    :depth: 2
 
-GATT attribute pools can be used to dynamically create a service description, which can later be registered in the Zephyr GATT database.
+You can use GATT attribute pools to dynamically create a service description that can later be registered in the Zephyr GATT database.
 
 Every GATT service is essentially a set of GATT attributes that are ordered in a particular way.
 There are different types of attributes that can be registered to create a service:
@@ -19,7 +19,7 @@ There are different types of attributes that can be registered to create a servi
 
 The API of the GATT attribute pools module allows to register different types of GATT attributes listed above.
 After each registration, a part of the memory is reserved for each attribute.
-You can also unregister attributes that are no longer needed by using the module's API.
+You can also unregister unnecessary attributes using the module's API.
 In this case, the previously reserved memory is released.
 This can be useful when you want to restructure your service by using the Service Changed feature that is supported by the Zephyr Bluetooth® stack (see, for example, the :ref:`hids_readme`).
 

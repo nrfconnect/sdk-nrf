@@ -169,9 +169,7 @@ The :kconfig:option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_COUNT` Kconfig option adjusts 
 Samples using the library
 *************************
 
-The following |NCS| application uses this library:
-
-* :ref:`nrf_desktop`
+The :ref:`nrf_desktop` application uses this library.
 
 Dependencies
 ************

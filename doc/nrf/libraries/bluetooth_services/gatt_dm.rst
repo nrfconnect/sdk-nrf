@@ -20,7 +20,7 @@ The GATT Discovery Manager is used, for example, in the :ref:`bluetooth_central_
 Limitations
 ***********
 
-* Only one discovery procedure can be running at the same time.
+Only one discovery procedure at a time can be running.
 
 API documentation
 *****************
