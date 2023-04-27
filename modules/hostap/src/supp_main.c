@@ -311,6 +311,11 @@ static void z_wpas_event_sock_handler(int sock, void *eloop_ctx, void *sock_ctx)
 	}
 
 	if (msg.data) {
+		if (msg.event == EVENT_AUTH) {
+			union wpa_event_data *data = msg.data;
+
+			os_free((char *)data->auth.ies);
+		}
 		os_free(msg.data);
 	}
 }
