@@ -451,6 +451,11 @@ nRF5
 nRF5340
 =======
 
+.. rst-class:: v2-3-0
+
+NCSDK-20967: The :ref:`nrf_rpc_entropy_nrf53` sample does not work on the network core.
+  The network core will not work due a hard fault.
+
 .. rst-class:: v2-2-0
 
 NCSDK-20070: The :ref:`direct_test_mode` antenna switching does not work on the nRF5340 DK with the nRF21540 EK shield.
