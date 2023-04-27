@@ -17,7 +17,7 @@
 /* Only 'a' */
 static const uint8_t data[BUF_LEN] = {[0 ... BUF_LEN - 1] = 'a'};
 
-static void test_pcd_network_core_update(void)
+ZTEST(pcd_test, test_pcd_network_core_update)
 {
 	enum pcd_status status;
 	int err;
@@ -30,12 +30,4 @@ static void test_pcd_network_core_update(void)
 	zassert_equal(status, PCD_STATUS_COPY_FAILED, "Unexpected success");
 }
 
-
-void test_main(void)
-{
-	ztest_test_suite(pcd_test,
-			 ztest_unit_test(test_pcd_network_core_update)
-			 );
-
-	ztest_run_test_suite(pcd_test);
-}
+ZTEST_SUITE(pcd_test, NULL, NULL, NULL, NULL, NULL);
