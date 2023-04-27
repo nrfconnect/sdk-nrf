@@ -12,6 +12,10 @@
 
 #include "aws_fota_json.h"
 
+#if defined(CONFIG_HTTP_PARSER_URL)
+#include <zephyr/net/http/parser_url.h>
+#endif
+
 /**@brief Copy max maxlen bytes from src to dst. Insert null-terminator.
  */
 static void strncpy_nullterm(char *dst, const char *src, size_t maxlen)
@@ -115,7 +119,24 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 
 	cJSON *hostname = cJSON_GetObjectItemCaseSensitive(location, "host");
 	cJSON *path = cJSON_GetObjectItemCaseSensitive(location, "path");
+#if defined(CONFIG_HTTP_PARSER_URL)
+	cJSON *url = cJSON_GetObjectItemCaseSensitive(location, "url");
 
+	if (cJSON_GetStringValue(url) != NULL) {
+		struct http_parser_url u;
+
+		http_parser_url_init(&u);
+		http_parser_parse_url(url->valuestring,
+				 strlen(url->valuestring), false, &u);
+		strncpy_nullterm(hostname_buf, url->valuestring
+				 + u.field_data[UF_HOST].off,
+				 u.field_data[UF_HOST].len + 1);
+		strncpy_nullterm(file_path_buf, url->valuestring
+				 + u.field_data[UF_PATH].off + 1,
+				 u.field_data[UF_PATH].len
+				 + u.field_data[UF_QUERY].len + 1);
+	} else
+#endif
 	if ((cJSON_GetStringValue(hostname) != NULL)
 	   && (cJSON_GetStringValue(path) != NULL)) {
 		strncpy_nullterm(hostname_buf, hostname->valuestring,

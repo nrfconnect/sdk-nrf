@@ -40,7 +40,34 @@ void test_parse_job_execution(void)
 	TEST_ASSERT_EQUAL_STRING(expected_file_path, file_path);
 }
 
-void test_parse_malformed_job_execution(void)
+#if !defined(CONFIG_HTTP_PARSER_URL)
+void test_parse_job_execution_single_url(void)
+{
+	int ret;
+	int version_number;
+	int expected_version_number = 1;
+	char expected_job_id[] = "9b5caac6-3e8a-45dd-9273-c1b995762f4a";
+	char expected_hostname[] = "fota-update-bucket.s3.eu-central-1.amazonaws.com";
+	char expected_file_path[] = "update.bin?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAWXEL53DXIU7W72AE%2F20190606%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20190606T081505Z&X-Amz-Expires=604800&X-Amz-Signature=913e00b97efe5565a901df4ff0b87e4878a406941d711f59d45915035989adcc&X-Amz-SignedHeaders=host";
+	char encoded[] = "{\"timestamp\":1559808907,\"execution\":{\"jobId\":\"9b5caac6-3e8a-45dd-9273-c1b995762f4a\",\"status\":\"QUEUED\",\"queuedAt\":1559808906,\"lastUpdatedAt\":1559808906,\"versionNumber\":1,\"executionNumber\":1,\"jobDocument\":{\"operation\":\"app_fw_update\",\"fwversion\":\"2\",\"size\":181124,\"location\":{\"url\":\"https://fota-update-bucket.s3.eu-central-1.amazonaws.com/update.bin?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAWXEL53DXIU7W72AE%2F20190606%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20190606T081505Z&X-Amz-Expires=604800&X-Amz-Signature=913e00b97efe5565a901df4ff0b87e4878a406941d711f59d45915035989adcc&X-Amz-SignedHeaders=host\"}}}}";
+	char job_id[100];
+	char hostname[100];
+	char file_path[1000];
+
+	ret = aws_fota_parse_DescribeJobExecution_rsp(encoded,
+						      sizeof(encoded) - 1,
+						      job_id, hostname,
+						      file_path,
+						      &version_number);
+	TEST_ASSERT_EQUAL(ret, 1);
+	TEST_ASSERT_EQUAL_STRING(job_id, expected_job_id);
+	TEST_ASSERT_EQUAL(version_number, expected_version_number);
+	TEST_ASSERT_EQUAL_STRING(hostname, expected_hostname);
+	TEST_ASSERT_EQUAL_STRING(file_path, expected_file_path);
+}
+#endif
+
+static void test_parse_malformed_job_execution(void)
 {
 	int ret;
 	char job_id[100];
