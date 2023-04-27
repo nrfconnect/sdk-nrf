@@ -45,6 +45,8 @@ The data payload can be encoded in one of the following ways, either included on
 Manual Pairing Code must always be supported, while the QR Code is recommended.
 Different ecosystems can also define their own methods of providing the discriminator and setup passcode.
 
+.. _ug_matter_overview_commissioning_stages:
+
 Commissioning stages
 ********************
 
@@ -123,6 +125,8 @@ Operational discovery
 
 The commissioner discovers the commissionee node on the operational network using DNS-SD.
 This way, the commissioner learns the IP address of the node.
+
+.. _ug_matter_overview_commissioning_stages_case:
 
 Security setup with CASE
 ========================

@@ -95,11 +95,13 @@ Matter
     The Matter NUS implementation allows controlling the device regardless of whether the device is connected to a Matter network or not.
     The feature is dedicated for the Matter over Thread solution.
   * Documentation page about :ref:`ug_matter_device_configuring_cd`.
+  * Matter SDK fork :ref:`documentation pages <matter_index>` with the page about CHIP Certificate Tool.
 
 * Updated:
 
   * The :ref:`ug_matter` protocol page with a table that lists compatibility versions for the |NCS|, the Matter SDK, and the Matter specification.
   * The :ref:`ug_matter_tools` page with installation instructions for the ZAP tool, moved from the :ref:`ug_matter_creating_accessory` page.
+  * The :ref:`ug_matter_tools` page with information about CHIP Tool, CHIP Certificate Tool, and the Spake2+ Python tool.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 

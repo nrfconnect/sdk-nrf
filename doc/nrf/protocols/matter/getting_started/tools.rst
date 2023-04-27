@@ -223,13 +223,13 @@ Installing CHIP Certificate Tool
 To install the chip-cert tool, complete the following steps:
 
 1. Navigate to the :file:`connectedhomeip` root directory.
-1. In a terminal, run the following command to build the tool executable file:
+#. In a terminal, run the following command to build the tool executable file:
 
    .. code-block:: console
 
       cd src/tools/chip-cert && gn gen out && ninja -C out chip-cert
 
-1. Add the chip-cert tool to the system :envvar:`PATH` environment variable when built.
+#. Add the chip-cert tool to the system :envvar:`PATH` environment variable when built.
 
 Generating custom certificates in factory data
 ==============================================
@@ -237,7 +237,21 @@ Generating custom certificates in factory data
 Adding the chip-cert tool to to the system :envvar:`PATH` allows you to build :ref:`matter_samples` and the :ref:`Matter weather station <matter_weather_station_app>` application with custom certificates included in the factory data.
 This lets you for example change the test Vendor ID, Product ID, or other data.
 
-To build an Matter application in the |NCS| with custom certification data, make sure to set the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_USE_DEFAULT_CERTS` to ``n`` when :doc:`building an example with factory data <matter:nrfconnect_factory_data_configuration>`.
+To build a Matter application in the |NCS| with custom certification data, make sure to set the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_USE_DEFAULT_CERTS` to ``n`` when :doc:`building an example with factory data <matter:nrfconnect_factory_data_configuration>`.
+
+.. _ug_matter_gs_tools_spake2:
+
+SPAKE2+ Python tool
+*******************
+
+SPAKE2+ Python Tool is a Python script for generating SPAKE2+ protocol parameters.
+The protocol is used during Matter commissioning to :ref:`establish a secure session <ug_matter_overview_commissioning_stages_case>` between the commissioner and the commissionee.
+
+.. note::
+   Currently, the tool only supports generating Verifier parameters.
+
+For usage examples, see the `SPAKE2+ Python Tool page`_ in the Matter SDK official documentation.
+
 .. _ug_matter_gs_tools_mot:
 
 Matter over Thread tools
