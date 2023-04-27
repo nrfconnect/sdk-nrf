@@ -1603,7 +1603,9 @@ int esb_write_payload(const struct esb_payload *payload)
 
 	if (esb_cfg.mode == ESB_MODE_PTX &&
 	    esb_cfg.tx_mode == ESB_TXMODE_AUTO &&
-	    esb_state == ESB_STATE_IDLE) {
+	    (esb_state == ESB_STATE_IDLE ||
+	     (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX) ?
+	      esb_state == ESB_STATE_PTX_TXIDLE : 0))) {
 		start_tx_transaction();
 	}
 
