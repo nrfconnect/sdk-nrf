@@ -181,6 +181,8 @@
 .. _`How to work with build configurations`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_config.html
 .. _`Memory report`: https://nrfconnect.github.io/vscode-nrf-connect/guides/memory_overview.html
 
+.. _`SPAKE2+ Python Tool page`: https://project-chip.github.io/connectedhomeip-doc/scripts/tools/spake2p/README.html
+
 .. _`Azure SDK for Embedded C`: https://azure.github.io/azure-sdk-for-c/
 
 .. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/

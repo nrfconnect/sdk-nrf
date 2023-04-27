@@ -11,14 +11,27 @@ This documentation set includes a selection of pages available in the `Matter <h
 .. toctree::
    :maxdepth: 1
    :glob:
-   :caption: Contents
+   :caption: Matter SDK guides
+
+   BUILDING
+   chip_tool_guide
+   access-control-guide
+   README
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+   :caption: nRF Connect platform guides
 
    nrfconnect_platform_overview
-   BUILDING
    nrfconnect_examples_configuration
    nrfconnect_examples_cli
    nrfconnect_examples_software_update
    nrfconnect_factory_data_configuration
-   chip_tool_guide
-   access-control-guide
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+   :caption: Matter SDK development tools
+
    README
