@@ -157,7 +157,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 2e0320844049e041de9d5769d810c5a15b10842a
+      revision: c601469f41ecc4546cd1feb04d49b611cc872161
       groups:
         - nrf-802154
     - name: dragoon
