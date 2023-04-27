@@ -489,6 +489,10 @@ For further information about the test cases, see `Enabler Test Specification (I
 
 You can configure the sample either by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
 
+.. include:: /libraries/modem/nrf_modem_lib.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
 .. _build_lwm2m:
 
 Building and running
