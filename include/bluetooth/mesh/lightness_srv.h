@@ -166,10 +166,6 @@ struct bt_mesh_lightness_srv {
 	/** User handler functions. */
 	const struct bt_mesh_lightness_srv_handlers *const handlers;
 
-#if CONFIG_BT_SETTINGS
-	/** Storage timer */
-	struct k_work_delayable store_timer;
-#endif
 	/** Current Light Level Range. */
 	struct bt_mesh_lightness_range range;
 	/** Current Default Light Level. */

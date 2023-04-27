@@ -104,10 +104,6 @@ struct bt_mesh_ponoff_srv {
 			     enum bt_mesh_on_power_up old_on_power_up,
 			     enum bt_mesh_on_power_up new_on_power_up);
 
-#if CONFIG_BT_SETTINGS
-	/** Storage timer */
-	struct k_work_delayable store_timer;
-#endif
 	/** Current OnPowerUp state. */
 	enum bt_mesh_on_power_up on_power_up;
 };

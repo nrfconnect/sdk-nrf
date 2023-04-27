@@ -37,11 +37,9 @@ static struct bt_mesh_sensor *sensor_get(struct bt_mesh_sensor_srv *srv,
 }
 
 #if CONFIG_BT_SETTINGS
-static void store_timeout(struct k_work *work)
+static void sensor_srv_pending_store(struct bt_mesh_model *model)
 {
-	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
-	struct bt_mesh_sensor_srv *srv = CONTAINER_OF(
-		dwork, struct bt_mesh_sensor_srv, store_timer);
+	struct bt_mesh_sensor_srv *srv = model->user_data;
 
 	/* Cadence is stored as a sequence of cadence status messages */
 	NET_BUF_SIMPLE_DEFINE(buf, (CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX *
@@ -74,9 +72,7 @@ static void store_timeout(struct k_work *work)
 static void cadence_store(struct bt_mesh_sensor_srv *srv)
 {
 #if CONFIG_BT_SETTINGS
-	k_work_schedule(
-		&srv->store_timer,
-		K_SECONDS(CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT));
+	bt_mesh_model_data_store_schedule(srv->model);
 #endif
 }
 
@@ -976,10 +972,6 @@ static int sensor_srv_init(struct bt_mesh_model *model)
 
 	sys_slist_init(&srv->sensors);
 
-#if CONFIG_BT_SETTINGS
-	k_work_init_delayable(&srv->store_timer, store_timeout);
-#endif
-
 	/* Establish a sorted list of sensors, as this is a requirement when
 	 * sending multiple sensor values in one message.
 	 */
@@ -1113,6 +1105,9 @@ const struct bt_mesh_model_cb _bt_mesh_sensor_srv_cb = {
 	.init = sensor_srv_init,
 	.reset = sensor_srv_reset,
 	.settings_set = sensor_srv_settings_set,
+#if CONFIG_BT_SETTINGS
+	.pending_store = sensor_srv_pending_store,
+#endif
 };
 
 static int sensor_setup_srv_init(struct bt_mesh_model *model)

@@ -69,10 +69,6 @@ struct bt_mesh_sensor_srv {
 	/** Number of sensors. */
 	uint8_t sensor_count;
 
-#if CONFIG_BT_SETTINGS
-	/** Storage timer */
-	struct k_work_delayable store_timer;
-#endif
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

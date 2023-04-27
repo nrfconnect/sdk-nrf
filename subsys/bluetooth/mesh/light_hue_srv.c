@@ -28,11 +28,9 @@ struct settings_data {
 } __packed;
 
 #if CONFIG_BT_SETTINGS
-static void store_timeout(struct k_work *work)
+static void hue_srv_pending_store(struct bt_mesh_model *model)
 {
-	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
-	struct bt_mesh_light_hue_srv *srv = CONTAINER_OF(
-		dwork, struct bt_mesh_light_hue_srv, store_timer);
+	struct bt_mesh_light_hue_srv *srv = model->user_data;
 
 	struct settings_data data = {
 		.range = srv->range,
@@ -50,9 +48,7 @@ static void store_timeout(struct k_work *work)
 static void store(struct bt_mesh_light_hue_srv *srv)
 {
 #if CONFIG_BT_SETTINGS
-	k_work_schedule(
-		&srv->store_timer,
-		K_SECONDS(CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT));
+	bt_mesh_model_data_store_schedule(srv->model);
 #endif
 }
 
@@ -360,10 +356,7 @@ static int hue_srv_init(struct bt_mesh_model *model)
 	net_buf_simple_init_with_data(&srv->buf, srv->pub_data,
 				      ARRAY_SIZE(srv->pub_data));
 
-#if CONFIG_BT_SETTINGS
-	k_work_init_delayable(&srv->store_timer, store_timeout);
-
-#if IS_ENABLED(CONFIG_EMDS)
+#if IS_ENABLED(CONFIG_BT_SETTINGS) && IS_ENABLED(CONFIG_EMDS)
 	srv->emds_entry.entry.id = EMDS_MODEL_ID(model);
 	srv->emds_entry.entry.data = (uint8_t *)&srv->transient;
 	srv->emds_entry.entry.len = sizeof(srv->transient);
@@ -372,7 +365,6 @@ static int hue_srv_init(struct bt_mesh_model *model)
 	if (err) {
 		return err;
 	}
-#endif
 #endif
 
 	return bt_mesh_model_extend(model, srv->lvl.model);
@@ -420,6 +412,9 @@ const struct bt_mesh_model_cb _bt_mesh_light_hue_srv_cb = {
 	.init = hue_srv_init,
 	.settings_set = hue_srv_settings_set,
 	.reset = hue_srv_reset,
+#if CONFIG_BT_SETTINGS
+	.pending_store = hue_srv_pending_store,
+#endif
 };
 
 void bt_mesh_light_hue_srv_set(struct bt_mesh_light_hue_srv *srv,

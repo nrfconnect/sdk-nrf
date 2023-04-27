@@ -26,11 +26,9 @@ struct bt_mesh_plvl_srv_settings_data {
 } __packed;
 
 #if CONFIG_BT_SETTINGS
-static void store_timeout(struct k_work *work)
+static void bt_mesh_plvl_srv_pending_store(struct bt_mesh_model *model)
 {
-	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
-	struct bt_mesh_plvl_srv *srv = CONTAINER_OF(
-		dwork, struct bt_mesh_plvl_srv, store_timer);
+	struct bt_mesh_plvl_srv *srv = model->user_data;
 
 	struct bt_mesh_plvl_srv_settings_data data = {
 		.default_power = srv->default_power,
@@ -49,9 +47,7 @@ static void store_timeout(struct k_work *work)
 static void store_state(struct bt_mesh_plvl_srv *srv)
 {
 #if CONFIG_BT_SETTINGS
-	k_work_schedule(
-		&srv->store_timer,
-		K_SECONDS(CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT));
+	bt_mesh_model_data_store_schedule(srv->plvl_model);
 #endif
 }
 
@@ -691,10 +687,7 @@ static int bt_mesh_plvl_srv_init(struct bt_mesh_model *model)
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 				      sizeof(srv->pub_data));
 
-#if CONFIG_BT_SETTINGS
-	k_work_init_delayable(&srv->store_timer, store_timeout);
-
-#if IS_ENABLED(CONFIG_EMDS)
+#if IS_ENABLED(CONFIG_BT_SETTINGS) && IS_ENABLED(CONFIG_EMDS)
 	srv->emds_entry.entry.id = EMDS_MODEL_ID(model);
 	srv->emds_entry.entry.data = (uint8_t *)&srv->transient;
 	srv->emds_entry.entry.len = sizeof(srv->transient);
@@ -702,7 +695,6 @@ static int bt_mesh_plvl_srv_init(struct bt_mesh_model *model)
 	if (err) {
 		return err;
 	}
-#endif
 #endif
 
 	err = bt_mesh_model_extend(model, srv->ponoff.ponoff_model);
@@ -775,6 +767,7 @@ const struct bt_mesh_model_cb _bt_mesh_plvl_srv_cb = {
 #ifdef CONFIG_BT_SETTINGS
 	.settings_set = bt_mesh_plvl_srv_settings_set,
 	.start = bt_mesh_plvl_srv_start,
+	.pending_store = bt_mesh_plvl_srv_pending_store,
 #endif
 };
 

@@ -163,10 +163,6 @@ struct bt_mesh_prop_srv {
 	/** Which state is currently being published. */
 	enum bt_mesh_prop_srv_state pub_state;
 
-#if CONFIG_BT_SETTINGS
-	/** Storage timer */
-	struct k_work_delayable store_timer;
-#endif
 	/** List of properties supported by the server. */
 	struct bt_mesh_prop *const properties;
 	/** Number of properties supported by the server. */

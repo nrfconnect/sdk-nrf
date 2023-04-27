@@ -30,10 +30,6 @@ struct bt_mesh_dm_srv {
 	struct bt_mesh_tid_ctx prev_transaction;
 	/** Access model pointer. */
 	struct bt_mesh_model *model;
-#if CONFIG_BT_SETTINGS
-	/** Storage timer */
-	struct k_work_delayable store_timer;
-#endif
 	/** Flag indicating measurement in progress */
 	bool is_busy;
 	/** Default configuration */

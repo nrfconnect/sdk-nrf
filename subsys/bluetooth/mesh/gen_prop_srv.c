@@ -51,11 +51,9 @@ static struct bt_mesh_prop *prop_get(const struct bt_mesh_prop_srv *srv,
 }
 
 #if CONFIG_BT_SETTINGS
-static void store_timeout(struct k_work *work)
+static void bt_mesh_prop_srv_pending_store(struct bt_mesh_model *model)
 {
-	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
-	struct bt_mesh_prop_srv *srv = CONTAINER_OF(
-		dwork, struct bt_mesh_prop_srv, store_timer);
+	struct bt_mesh_prop_srv *srv = model->user_data;
 
 	uint8_t user_access[CONFIG_BT_MESH_PROP_MAXCOUNT];
 
@@ -72,9 +70,7 @@ static void store_timeout(struct k_work *work)
 static void store_props(struct bt_mesh_prop_srv *srv)
 {
 #if CONFIG_BT_SETTINGS
-	k_work_schedule(
-		&srv->store_timer,
-		K_SECONDS(CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT));
+	bt_mesh_model_data_store_schedule(srv->model);
 #endif
 }
 
@@ -622,10 +618,6 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *model)
 		}
 	}
 
-#if CONFIG_BT_SETTINGS
-	k_work_init_delayable(&srv->store_timer, store_timeout);
-#endif
-
 	if ((model->id == BT_MESH_MODEL_ID_GEN_MANUFACTURER_PROP_SRV ||
 	     model->id == BT_MESH_MODEL_ID_GEN_ADMIN_PROP_SRV)) {
 		int err;
@@ -698,6 +690,7 @@ const struct bt_mesh_model_cb _bt_mesh_prop_srv_cb = {
 	.reset = bt_mesh_prop_srv_reset,
 #ifdef CONFIG_BT_SETTINGS
 	.settings_set = bt_mesh_prop_srv_settings_set,
+	.pending_store = bt_mesh_prop_srv_pending_store,
 #endif
 };
 

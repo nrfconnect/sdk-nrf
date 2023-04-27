@@ -91,9 +91,7 @@ static void store(struct bt_mesh_light_ctrl_srv *srv, enum flags kind)
 #if CONFIG_BT_SETTINGS
 	atomic_set_bit(&srv->flags, kind);
 
-	k_work_schedule(
-		&srv->store_timer,
-		K_SECONDS(CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT));
+	bt_mesh_model_data_store_schedule(srv->model);
 #endif
 }
 
@@ -696,17 +694,14 @@ static void store_state_data(struct bt_mesh_light_ctrl_srv *srv)
 
 }
 
-static void store_timeout(struct k_work *work)
+static void ligth_ctrl_srv_pending_store(struct bt_mesh_model *model)
 {
-	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
-	struct bt_mesh_light_ctrl_srv *srv = CONTAINER_OF(
-		dwork, struct bt_mesh_light_ctrl_srv, store_timer);
-
-	store_cfg_data(srv);
-
-	store_state_data(srv);
+	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 
 	LOG_DBG("Store Timeout");
+
+	store_cfg_data(srv);
+	store_state_data(srv);
 }
 #endif
 /*******************************************************************************
@@ -1518,10 +1513,6 @@ static int light_ctrl_srv_init(struct bt_mesh_model *model)
 	k_work_init_delayable(&srv->timer, timeout);
 	k_work_init_delayable(&srv->action_delay, delayed_action_timeout);
 
-#if CONFIG_BT_SETTINGS
-	k_work_init_delayable(&srv->store_timer, store_timeout);
-#endif
-
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	if (srv->reg) {
 		struct bt_mesh_light_ctrl_reg_cfg reg_cfg = BT_MESH_LIGHT_CTRL_SRV_REG_CFG_INIT;
@@ -1685,6 +1676,9 @@ const struct bt_mesh_model_cb _bt_mesh_light_ctrl_srv_cb = {
 	.start = light_ctrl_srv_start,
 	.reset = light_ctrl_srv_reset,
 	.settings_set = light_ctrl_srv_settings_set,
+#if CONFIG_BT_SETTINGS
+	.pending_store = ligth_ctrl_srv_pending_store,
+#endif
 };
 
 static int lc_setup_srv_init(struct bt_mesh_model *model)
