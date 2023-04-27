@@ -626,6 +626,7 @@ ZTEST(test_suite_aead, test_case_aead_ccm_simple)
 	exec_test_case_aead_simple();
 }
 
+#if defined(CONFIG_OBERON_BACKEND) || defined(CONFIG_CC312_BACKEND)
 ZTEST(test_suite_aead, test_case_aead_gcm)
 {
 	aead_gcm_setup();
@@ -637,6 +638,7 @@ ZTEST(test_suite_aead, test_case_aead_gcm_setup_simple)
 	aead_gcm_setup_simple();
 	exec_test_case_aead_simple();
 }
+#endif
 
 ZTEST(test_suite_aead, test_case_chachapoly)
 {
