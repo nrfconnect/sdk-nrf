@@ -78,7 +78,7 @@ Any other data is managed by the application and must be stored separately.
 This applies for example to sensor settings or sample data.
 
 If :kconfig:option:`CONFIG_BT_SETTINGS` is enabled, the Sensor Server stores all its states persistently using a configurable storage delay to stagger storing.
-See :kconfig:option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
+See :kconfig:option:`CONFIG_BT_MESH_STORE_TIMEOUT`.
 
 API documentation
 =================

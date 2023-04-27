@@ -155,10 +155,6 @@ struct bt_mesh_light_ctrl_srv {
 	/** State timer */
 	struct k_work_delayable timer;
 
-#if CONFIG_BT_SETTINGS
-	/** Storage timer */
-	struct k_work_delayable store_timer;
-#endif
 	/** Timer for delayed action */
 	struct k_work_delayable action_delay;
 	/** Configuration parameters */

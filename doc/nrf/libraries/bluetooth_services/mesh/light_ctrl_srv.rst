@@ -370,7 +370,7 @@ Persistent Storage
 ******************
 
 If :kconfig:option:`CONFIG_BT_SETTINGS` is enabled, the Light LC Server stores all its states persistently using a configurable storage delay to stagger storing.
-See :kconfig:option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
+See :kconfig:option:`CONFIG_BT_MESH_STORE_TIMEOUT`.
 
 Changes to the configuration properties are stored and restored on power-up, so the compile time configuration is only valid the first time the device powers up, until the configuration is changed.
 

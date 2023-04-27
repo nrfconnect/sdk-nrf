@@ -147,10 +147,6 @@ struct bt_mesh_light_sat_srv {
 	/** Transaction ID tracker for the set messages. */
 	struct bt_mesh_tid_ctx prev_transaction;
 
-#if CONFIG_BT_SETTINGS
-	/** Storage timer */
-	struct k_work_delayable store_timer;
-#endif
 	/** Saturation range */
 	struct bt_mesh_light_hsl_range range;
 	/** Default Saturation level */

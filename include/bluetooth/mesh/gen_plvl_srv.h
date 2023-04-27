@@ -163,10 +163,6 @@ struct bt_mesh_plvl_srv {
 	/** User handler functions. */
 	const struct bt_mesh_plvl_srv_handlers *const handlers;
 
-#if CONFIG_BT_SETTINGS
-	/** Storage timer */
-	struct k_work_delayable store_timer;
-#endif
 	/** Current Power Range. */
 	struct bt_mesh_plvl_range range;
 	/** Current Default Power. */

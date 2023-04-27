@@ -31,18 +31,6 @@ config BT_MESH_MOD_ACKD_TIMEOUT_PER_HOP
 
 endmenu
 
-if BT_SETTINGS
-
-config BT_MESH_MODEL_SRV_STORE_TIMEOUT
-	int "Delay (in seconds) before storing changes to mesh model servers"
-	range 0 1000000
-	default 0
-	help
-	  Time to wait before storing changes to the mesh model servers.
-	  Effectively the minimum interval of changes.
-
-endif
-
 rsource "vnd/Kconfig"
 
 config BT_MESH_ONOFF_SRV

@@ -61,7 +61,7 @@ The Generic Manufacturer Property Server and Generic Admin Property Server model
 Any permanent changes to the property values themselves should be stored manually by the application.
 
 If :kconfig:option:`CONFIG_BT_SETTINGS` is enabled, the Generic Admin Property Server stores all its states persistently using a configurable storage delay to stagger storing.
-See :kconfig:option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
+See :kconfig:option:`CONFIG_BT_MESH_STORE_TIMEOUT`.
 
 API documentation
 =================
