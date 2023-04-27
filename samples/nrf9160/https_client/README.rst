@@ -48,6 +48,10 @@ Mbed TLS offers more configuration options than using the offloaded TLS handling
 
 When using TF-M and Mbed TLS with PSA crypto, all the crypto operations are run on the secure side on the device.
 
+.. include:: /libraries/modem/nrf_modem_lib.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
 Building and running
 ********************
 

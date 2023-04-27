@@ -126,6 +126,10 @@ The sample provides predefined configuration files for the following development
 
 They are located in :file:`samples/nrf9160/udp` folder.
 
+.. include:: /libraries/modem/nrf_modem_lib.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
 Building and running
 ********************
 

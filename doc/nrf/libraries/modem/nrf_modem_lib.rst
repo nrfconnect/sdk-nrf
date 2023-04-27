@@ -168,33 +168,22 @@ If the modem buffer is full, the modem drops modem traces until the buffer has s
 
 .. _modem_trace_backend_uart_nrf9160dk:
 
-Sending traces over UART on the nRF9160DK
-=========================================
+.. modem_lib_sending_traces_UART_start
 
-When sending modem traces over UART1 on the nRF9160DK, configuration must be added for the UART device in the devicetree.
-This is done by adding the following code snippet to the board devicetree or overlay file.
+Sending traces over UART on the nRF9160 DK
+==========================================
 
-.. code-block:: dts
+To send modem traces over UART on the nRF9160 DK, configuration must be added for the UART device in the devicetree and Kconfig.
+This is done by adding the :ref:`modem trace UART snippet <nrf91_modem_trace_uart_snippet>` when building and programming.
 
-   &uart1 {
-      status = "okay";
-      current-speed = <1000000>;
-   };
-
-   / {
-      chosen {
-         nordic,modem-trace-uart = &uart1;
-      };
-   };
-
-This is in addition to selecting the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART`, :kconfig:option:`CONFIG_UART_ASYNC_API` and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
+.. modem_lib_sending_traces_UART_end
 
 .. _modem_trace_backend_uart_custom_board:
 
 Sending traces over UART on a custom board
 ==========================================
 
-When sending modem traces over UART on a custom board, configuration must be added for the UART device in the devicetree.
+To send modem traces over UART on a custom board, configuration must be added for the UART device in the devicetree.
 This is done by adding the following code snippet to the board devicetree or overlay file, where the pin numbers (``0``, ``1``, ``14``, and ``15``) must be updated to match your board.
 The snippet uses UART1. However, any free UART instance can be selected.
 
@@ -238,7 +227,7 @@ The snippet uses UART1. However, any free UART instance can be selected.
       };
    };
 
-This is in addition to selecting the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART`, :kconfig:option:`CONFIG_UART_ASYNC_API` and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
+This is in addition to selecting the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART`, :kconfig:option:`CONFIG_UART_ASYNC_API`, and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
 
 .. _adding_custom_modem_trace_backends:
 

@@ -59,6 +59,10 @@ The following files are available:
 * :file:`overlay-esp-wifi.conf` - Config overlay for ESP8266 Wi-Fi chip support.
 * :file:`overlay-pgps.conf` - Config overlay for P-GPS support.
 
+.. include:: /libraries/modem/nrf_modem_lib.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
 Building and running
 ********************
 

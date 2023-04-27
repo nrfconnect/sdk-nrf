@@ -55,6 +55,16 @@ Build system
 
 |no_changes_yet_note|
 
+Working with nRF91 Series
+=========================
+
+* Added support for :ref:`nrf91_modem_trace_uart_snippet`.
+  Snippet is used for nRF91 modem tracing with the UART backend for the following applications and samples:
+
+  * :ref:`asset_tracker_v2`
+  * :ref:`serial_lte_modem`
+  * All samples that use nRF9160 DK except for nRF9160: SLM Shell, nRF9160: Modem trace external flash backend, and nRF9160: Modem trace backend samples
+
 Working with nRF52 Series
 =========================
 

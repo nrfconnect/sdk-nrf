@@ -166,7 +166,7 @@ tests:
       - CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR=y
     extra_args: >
       OVERLAY_CONFIG="overlay-lwm2m.conf;overlay-debug.conf"
-      DTC_OVERLAY_FILE="modem-trace-uart.overlay"
+      SNIPPET="nrf91-modem-trace-uart"
     tags: ci_build
   applications.asset_tracker_v2.lwm2m.memfault:
     build_only: true

@@ -190,6 +190,7 @@ Kconfig*                                  @tejlmand
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
+/snippets/nrf91-modem-trace-uart/         @eivindj-nordic
 /subsys/bluetooth/                        @alwa-nordic @carlescufi @KAGA164
 /subsys/bluetooth/mesh/                   @ludvigsj
 /subsys/bluetooth/controller/             @rugeGerritsen

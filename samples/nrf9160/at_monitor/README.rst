@@ -26,6 +26,10 @@ The sample then subscribes to both notifications and switches the modem to funct
 While the device is registering to the network, the sample uses one of the AT monitors to determine if the registration is complete and monitors the signal quality using the other monitor.
 Once the device registers with the network, the sample reads the modem PSM mode status, enables it, and reads the PSM mode status again.
 
+.. include:: /libraries/modem/nrf_modem_lib.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
 Building and running
 ********************
 

@@ -70,6 +70,10 @@ Check and configure the following library Kconfig options:
    To provide the device ID used in the connection towards Azure IoT Hub at run time, set the ``device_id`` member of the :c:struct:`azure_iot_hub_config` structure when calling the :c:func:`azure_iot_hub_connect` function.
    If the ``device_id.size`` buffer size is zero, the compile-time option :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID`` is used.
 
+.. include:: /libraries/modem/nrf_modem_lib.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
 Building and running
 ********************
 

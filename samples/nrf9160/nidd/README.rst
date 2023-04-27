@@ -56,6 +56,10 @@ CONFIG_NIDD_ALLOC_NEW_CID - Allocate new context identifier for NIDD connection
 CONFIG_NIDD_PAYLOAD - Payload for NIDD transmission
    This option sets the application payload to be sent as data.
 
+.. include:: /libraries/modem/nrf_modem_lib.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
 Building and running
 ********************
 

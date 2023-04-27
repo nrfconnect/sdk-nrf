@@ -241,6 +241,10 @@ When the DTS overlay filename matches the build target, the overlay is automatic
 
 See :ref:`app_build_system`: for more information on the |NCS| configuration system.
 
+.. include:: /libraries/modem/nrf_modem_lib.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
 .. _slm_native_tls:
 
 Native TLS

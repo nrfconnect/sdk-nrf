@@ -136,6 +136,10 @@ For Thingy:91, with TLS and debug logging enabled for the :ref:`lib_mqtt_helper`
 
    west build -b thingy91_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-tls-nrf9160.conf -DCONFIG_MQTT_HELPER_LOG_LEVEL_DBG=y
 
+.. include:: /libraries/modem/nrf_modem_lib.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
 Building and running
 ********************
 

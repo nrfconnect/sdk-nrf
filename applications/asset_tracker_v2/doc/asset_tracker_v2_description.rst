@@ -154,6 +154,10 @@ You can add the following optional configurations to configure the heap or to pr
    Devices that do not have the immutable bootloader cannot be upgraded over the air to use the immutable bootloader.
    To disable the :ref:`ug_bootloader`, set both :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT` Kconfig options to ``n``.
 
+.. include:: /libraries/modem/nrf_modem_lib.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
 .. _building_and_running:
 
 Building and running

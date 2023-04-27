@@ -94,6 +94,10 @@ CONFIG_AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID
    In certain LTE networks, the NAT timeout can be considerably lower than 1200 seconds.
    As a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, set the option :kconfig:option:`CONFIG_MQTT_KEEPALIVE` to the lowest timeout limit (Maximum allowed MQTT keepalive and NAT timeout).
 
+.. include:: /libraries/modem/nrf_modem_lib.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
 .. _aws_iot_sample_building_and_running:
 
 Building and running

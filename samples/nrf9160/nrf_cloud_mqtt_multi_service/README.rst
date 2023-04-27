@@ -574,6 +574,10 @@ CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH - Length of AT command request resp
    Modem responses longer than this length will be replaced with an error code message (-NRF_E2BIG).
    Cannot be less than 40 bytes.
 
+.. include:: /libraries/modem/nrf_modem_lib.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
 .. _nrf_cloud_mqtt_multi_service_building_and_running:
 
 Building and running
