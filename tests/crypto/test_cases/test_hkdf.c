@@ -152,6 +152,7 @@ ITEM_REGISTER(test_case_hkdf_data, test_case_t test_hkdf) = {
 	.vectors_stop = __stop_test_vector_hkdf_data,
 };
 
+#if defined(CONFIG_CRYPTO_TEST_HASH)
 ZTEST_SUITE(test_suite_hkdf, NULL, NULL, NULL, NULL, NULL);
 
 ZTEST(test_suite_hkdf, test_case_hkdf)
@@ -159,3 +160,4 @@ ZTEST(test_suite_hkdf, test_case_hkdf)
 	hkdf_setup();
 	exec_test_case_hkdf();
 }
+#endif

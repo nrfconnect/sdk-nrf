@@ -168,6 +168,7 @@ ITEM_REGISTER(test_case_hmac_data, test_case_t test_hmac_combined) = {
 	.vectors_stop = __stop_test_vector_hmac_data,
 };
 
+#if defined(CONFIG_CRYPTO_TEST_HASH)
 ZTEST_SUITE(test_suite_hmac, NULL, NULL, NULL, NULL, NULL);
 
 ZTEST(test_suite_hmac, test_case_hmac)
@@ -183,3 +184,4 @@ ZTEST(test_suite_hmac, test_case_hmac_combined)
 	exec_test_case_hmac_combined();
 	hmac_combined_teardown();
 }
+#endif
