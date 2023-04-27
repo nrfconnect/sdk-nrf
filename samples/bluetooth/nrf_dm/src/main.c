@@ -8,6 +8,7 @@
  *  @brief Nordic Distance Measurement sample
  */
 
+#include <stdint.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/sys/byteorder.h>
@@ -81,10 +82,14 @@ static struct bt_scan_init_param scan_init = {
 	.conn_param = NULL
 };
 
+static uint32_t scanner_random_share;
+
 static struct bt_le_ext_adv *adv;
 static void adv_work_handle(struct k_work *item);
 static K_WORK_DEFINE(adv_work, adv_work_handle);
 static void adv_update_data(void);
+static uint32_t scanner_addr_to_random_share(const bt_addr_t *p_scanner_addr);
+static uint32_t get_id_addr_random_share(void);
 
 static struct bt_scan_manufacturer_data scan_mfg_data = {
 	.data = (unsigned char *)&mfg_data,
@@ -104,7 +109,18 @@ static bool data_cb(struct bt_data *data, void *user_data)
 			bt_addr_le_copy(&req.bt_addr, user_data);
 			req.role = DM_ROLE_INITIATOR;
 			req.ranging_mode = peer_ranging_mode_get();
-			req.rng_seed = sys_le32_to_cpu(recv_mfg_data->rng_seed);
+			/* We need to make sure that we only initiate a ranging to a single peer.
+			 * A scan response that is received by this device can be received by
+			 * multiple other devices which can all start a ranging at the same time
+			 * as a consequence. To prevent this, we need to make sure that we set a
+			 * per-peer random as the random seed. This helps the ranging library to
+			 * avoid interference from other devices trying to range at the same time.
+			 *
+			 * This means that the initiator and the reflector need to set the same
+			 * value for the random seed.
+			 */
+			req.rng_seed =
+				sys_le32_to_cpu(recv_mfg_data->rng_seed) + scanner_random_share;
 			req.start_delay_us = 0;
 			req.extra_window_time_us = 0;
 
@@ -114,6 +130,25 @@ static bool data_cb(struct bt_data *data, void *user_data)
 	default:
 		return true;
 	}
+}
+
+static uint32_t get_id_addr_random_share(void)
+{
+	bt_addr_le_t addrs[CONFIG_BT_ID_MAX];
+	size_t count = CONFIG_BT_ID_MAX;
+
+	bt_id_get(addrs, &count);
+
+	__ASSERT(count == 1, "The sample assumes a single ID addr");
+
+	return scanner_addr_to_random_share(&addrs[0].a);
+}
+
+static uint32_t scanner_addr_to_random_share(const bt_addr_t *p_scanner_addr)
+{
+	return (p_scanner_addr->val[0] | p_scanner_addr->val[1] << 8 |
+		p_scanner_addr->val[2] << 16 | p_scanner_addr->val[3] << 24) +
+	       (p_scanner_addr->val[4] | p_scanner_addr->val[5] << 8);
 }
 
 static void scan_filter_match(struct bt_scan_device_info *device_info,
@@ -138,7 +173,18 @@ static void adv_scanned_cb(struct bt_le_ext_adv *adv,
 		bt_addr_le_copy(&req.bt_addr, info->addr);
 		req.role = DM_ROLE_REFLECTOR;
 		req.ranging_mode = peer_ranging_mode_get();
-		req.rng_seed = peer_rng_seed_get();
+
+		/* We need to make sure that we only initiate a ranging to a single peer.
+		 * A scan response from this device can be received by multiple peers which can
+		 * all start a ranging at the same time as a consequence. To prevent this,
+		 * we need to make sure that we set a per-peer random as the random seed.
+		 * This helps the ranging library to avoid interference from other devices
+		 * trying to range at the same time.
+		 *
+		 * This means that the initiator and the reflector need to set the same value
+		 * for the random seed.
+		 */
+		req.rng_seed = peer_rng_seed_get() + scanner_addr_to_random_share(&info->addr->a);
 		req.start_delay_us = 0;
 		req.extra_window_time_us = 0;
 
@@ -222,6 +268,8 @@ static int scan_start(void)
 		printk("Filters cannot be turned on (err %d)\n", err);
 		return err;
 	}
+
+	scanner_random_share = get_id_addr_random_share();
 
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {

@@ -272,6 +272,10 @@ Bluetooth samples
 
   * Fixed the unit of the :kconfig:option:`CONFIG_BT_NUS_UART_RX_WAIT_TIME` Kconfig option to comply with the UART API.
 
+* :ref:`nrf_dm` sample:
+
+  * Improved the scalability of the sample when it is being used with more devices.
+
 Bluetooth mesh samples
 ----------------------
 
