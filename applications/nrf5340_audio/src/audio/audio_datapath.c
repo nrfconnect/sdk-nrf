@@ -76,8 +76,6 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define DRIFT_ERR_THRESH_LOCK 16
 #define DRIFT_ERR_THRESH_UNLOCK 32
 
-#define PRES_COMP_ENABLE true
-
 /* 3000 us to allow BLE transmission and (host -> HCI -> controller) */
 #define JUST_IN_TIME_US (CONFIG_AUDIO_FRAME_DURATION_US - 3000)
 #define JUST_IN_TIME_THRESHOLD_US 1500
@@ -143,7 +141,7 @@ static struct {
 		uint16_t ctr; /* Count func calls. Used for waiting */
 		uint32_t meas_start_time_us;
 		uint32_t center_freq;
-		bool hfclkaudio_comp_enabled;
+		bool enabled;
 	} drift_comp;
 
 	struct {
@@ -151,6 +149,7 @@ static struct {
 		uint16_t ctr; /* Count func calls. Used for collecting data points and waiting */
 		int32_t sum_err_dly_us;
 		uint32_t pres_delay_us;
+		bool enabled;
 	} pres_comp;
 } ctrl_blk;
 
@@ -165,10 +164,6 @@ static void hfclkaudio_set(uint16_t freq_value)
 
 	freq_val = MIN(freq_val, APLL_FREQ_MAX);
 	freq_val = MAX(freq_val, APLL_FREQ_MIN);
-
-	if (!ctrl_blk.drift_comp.hfclkaudio_comp_enabled) {
-		return;
-	}
 
 	nrfx_clock_hfclkaudio_config_set(freq_val);
 }
@@ -349,10 +344,7 @@ static void audio_datapath_presentation_compensation(uint32_t recv_frame_ts_us, 
 			break;
 		}
 
-#if (PRES_COMP_ENABLE)
 		pres_adj_us = ctrl_blk.pres_comp.sum_err_dly_us / PRES_COMP_NUM_DATA_PTS;
-#endif /* (PRES_COMP_ENABLE) */
-
 		if ((pres_adj_us >= (BLK_PERIOD_US / 2)) || (pres_adj_us <= -(BLK_PERIOD_US / 2))) {
 			pres_comp_state_set(PRES_STATE_WAIT);
 		} else {
@@ -670,7 +662,9 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts, uint32_t *r
 	audio_i2s_set_next_buf(tx_buf, rx_buf);
 
 	/*** Drift compensation ***/
-	audio_datapath_drift_compensation(frame_start_ts);
+	if (ctrl_blk.drift_comp.enabled) {
+		audio_datapath_drift_compensation(frame_start_ts);
+	}
 }
 
 static void audio_datapath_i2s_start(void)
@@ -846,9 +840,10 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 	ctrl_blk.previous_sdu_ref_us = sdu_ref_us;
 
 	/*** Presentation compensation ***/
-
-	audio_datapath_presentation_compensation(recv_frame_ts_us, sdu_ref_us,
-						 sdu_ref_not_consecutive);
+	if (ctrl_blk.pres_comp.enabled) {
+		audio_datapath_presentation_compensation(recv_frame_ts_us, sdu_ref_us,
+							 sdu_ref_not_consecutive);
+	}
 
 	/*** Decode ***/
 
@@ -881,15 +876,15 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 	uint32_t out_blk_idx = ctrl_blk.out.prod_blk_idx;
 
 	for (uint32_t i = 0; i < NUM_BLKS_IN_FRAME; i++) {
-#if CONFIG_AUDIO_BIT_DEPTH_16
-		memcpy(&ctrl_blk.out.fifo[out_blk_idx * BLK_STEREO_NUM_SAMPS],
-		       &((int16_t *)ctrl_blk.decoded_data)[i * BLK_STEREO_NUM_SAMPS],
-		       BLK_STEREO_SIZE_OCTETS);
-#elif CONFIG_AUDIO_BIT_DEPTH_32
-		memcpy(&ctrl_blk.out.fifo[out_blk_idx * BLK_STEREO_NUM_SAMPS],
-		       &((int32_t *)ctrl_blk.decoded_data)[i * BLK_STEREO_NUM_SAMPS],
-		       BLK_STEREO_SIZE_OCTETS);
-#endif
+		if (IS_ENABLED(CONFIG_AUDIO_BIT_DEPTH_16)) {
+			memcpy(&ctrl_blk.out.fifo[out_blk_idx * BLK_STEREO_NUM_SAMPS],
+			       &((int16_t *)ctrl_blk.decoded_data)[i * BLK_STEREO_NUM_SAMPS],
+			       BLK_STEREO_SIZE_OCTETS);
+		} else if (IS_ENABLED(CONFIG_AUDIO_BIT_DEPTH_32)) {
+			memcpy(&ctrl_blk.out.fifo[out_blk_idx * BLK_STEREO_NUM_SAMPS],
+			       &((int32_t *)ctrl_blk.decoded_data)[i * BLK_STEREO_NUM_SAMPS],
+			       BLK_STEREO_SIZE_OCTETS);
+		}
 
 		/* Record producer block start reference */
 		ctrl_blk.out.prod_blk_ts[out_blk_idx] = recv_frame_ts_us + (i * BLK_PERIOD_US);
@@ -945,7 +940,8 @@ int audio_datapath_init(void)
 	audio_i2s_blk_comp_cb_register(audio_datapath_i2s_blk_complete);
 	audio_i2s_init();
 	ctrl_blk.datapath_initialized = true;
-	ctrl_blk.drift_comp.hfclkaudio_comp_enabled = true;
+	ctrl_blk.drift_comp.enabled = true;
+	ctrl_blk.pres_comp.enabled = true;
 	ctrl_blk.pres_comp.pres_delay_us = CONFIG_BT_AUDIO_PRESENTATION_DELAY_US;
 
 	return 0;
@@ -1021,7 +1017,7 @@ static int cmd_hfclkaudio_drift_comp_enable(const struct shell *shell, size_t ar
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
-	ctrl_blk.drift_comp.hfclkaudio_comp_enabled = true;
+	ctrl_blk.drift_comp.enabled = true;
 
 	shell_print(shell, "Audio PLL drift compensation enabled");
 
@@ -1034,24 +1030,65 @@ static int cmd_hfclkaudio_drift_comp_disable(const struct shell *shell, size_t a
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
-	ctrl_blk.drift_comp.hfclkaudio_comp_enabled = false;
+	if (ctrl_blk.pres_comp.enabled) {
+		shell_print(shell, "Pres comp must be disabled to disable drift comp");
+	} else {
+		ctrl_blk.drift_comp.enabled = false;
+		drift_comp_state_set(DRIFT_STATE_INIT);
 
-	shell_print(shell, "Audio PLL drift compensation disabled");
+		shell_print(shell, "Audio PLL drift compensation disabled");
+	}
 
 	return 0;
 }
 
-SHELL_STATIC_SUBCMD_SET_CREATE(test_cmd,
-			       SHELL_COND_CMD(CONFIG_SHELL, nrf_tone_start, NULL,
-					      "Start local tone from nRF5340.", cmd_i2s_tone_play),
-			       SHELL_COND_CMD(CONFIG_SHELL, nrf_tone_stop, NULL,
-					      "Stop local tone from nRF5340.", cmd_i2s_tone_stop),
-			       SHELL_COND_CMD(CONFIG_SHELL, pll_comp_enable, NULL,
-					      "Enable audio PLL auto drift compensation (default).",
-					      cmd_hfclkaudio_drift_comp_enable),
-			       SHELL_COND_CMD(CONFIG_SHELL, pll_comp_disable, NULL,
-					      "Disable audio PLL auto drift compensation",
-					      cmd_hfclkaudio_drift_comp_disable),
-			       SHELL_SUBCMD_SET_END);
+static int cmd_audio_pres_comp_enable(const struct shell *shell, size_t argc, const char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	if (ctrl_blk.drift_comp.enabled) {
+		ctrl_blk.pres_comp.enabled = true;
+
+		shell_print(shell, "Presentation compensation enabled");
+	} else {
+		shell_print(shell, "Drift comp must be enabled to enable pres comp");
+	}
+
+	return 0;
+}
+
+static int cmd_audio_pres_comp_disable(const struct shell *shell, size_t argc, const char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	ctrl_blk.pres_comp.enabled = false;
+	pres_comp_state_set(PRES_STATE_INIT);
+
+	shell_print(shell, "Presentation compensation disabled");
+
+	return 0;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	test_cmd,
+	SHELL_COND_CMD(CONFIG_SHELL, nrf_tone_start, NULL, "Start local tone from nRF5340",
+		       cmd_i2s_tone_play),
+	SHELL_COND_CMD(CONFIG_SHELL, nrf_tone_stop, NULL, "Stop local tone from nRF5340",
+		       cmd_i2s_tone_stop),
+	SHELL_COND_CMD(CONFIG_SHELL, pll_drift_comp_enable, NULL,
+		       "Enable audio PLL auto drift compensation (default)",
+		       cmd_hfclkaudio_drift_comp_enable),
+	SHELL_COND_CMD(CONFIG_SHELL, pll_drift_comp_disable, NULL,
+		       "Disable audio PLL auto drift compensation",
+		       cmd_hfclkaudio_drift_comp_disable),
+	SHELL_COND_CMD(CONFIG_SHELL, pll_pres_comp_enable, NULL,
+		       "Enable audio presentation compensation (default)",
+		       cmd_audio_pres_comp_enable),
+	SHELL_COND_CMD(CONFIG_SHELL, pll_pres_comp_disable, NULL,
+		       "Disable audio presentation compensation",
+		       cmd_audio_pres_comp_disable),
+	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(test, &test_cmd, "Test mode commands", NULL);
