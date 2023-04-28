@@ -17,26 +17,26 @@ The GATT Throughput Service is used in the :ref:`ble_throughput` sample.
 Service UUID
 ************
 
-The 128-bit service UUID is 0483DADD-6C9D-6CA9-5D41-03AD4FFF4ABB.
+The 128-bit service UUID is ``0483DADD-6C9D-6CA9-5D41-03AD4FFF4ABB``.
 
 Characteristics
 ***************
 
 This service has one characteristic.
 
-Throughput (0x1524)
-===================
+Throughput (``0x1524``)
+=======================
 
 Write Without Response
    * Write any data to the characteristic to measure throughput.
-   * Write 0 bytes to the characteristic to reset the metrics.
+   * Write one byte to the characteristic to reset the metrics.
 
 Read
    The read operation returns 3*4 bytes (12 bytes) that contain the metrics:
 
-   * 4 bytes unsigned: Number of GATT writes received
-   * 4 bytes unsigned: Total bytes received
-   * 4 bytes unsigned: Throughput in bits per second
+   * Four bytes unsigned: Number of GATT writes received
+   * Four bytes unsigned: Total bytes received
+   * Four bytes unsigned: Throughput in bits per second
 
 
 API documentation

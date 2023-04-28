@@ -12,22 +12,22 @@ The status can be either notified or directly read (without waiting for notifica
 
 The NSMS service is used in the :ref:`peripheral_status` sample.
 
-Multiple instances of the service can be implemented to show the status of different parts of the system.
-The instances can be distinguished by the client by its name provided in the Characteristic User Description (CUD).
+You can implement multiple instances of the service to show the status of different parts of the system.
+The client can distinguish different instances by the name provided in the Characteristic User Description (CUD).
 
 Service UUID
 ************
 
-The 128-bit vendor-specific service UUID is 57a70000-9350-11ed-a1eb-x0242ac120002.
+The 128-bit vendor-specific service UUID is ``57a70000-9350-11ed-a1eb-x0242ac120002``.
 
 Characteristics
 ***************
 
-This service has one characteristic with the CCC and CUD descriptors.
+This service has one characteristic with the Client Characteristic Configuration (CCC) and CUD descriptors.
 CUD holds the name of the Status Message and helps to distinguish between different instances of the NSMS on the same device.
 
-Status Characteristic (57a70001-9350-11ed-a1eb-0242ac120002)
-============================================================
+Status Characteristic (``57a70001-9350-11ed-a1eb-0242ac120002``)
+================================================================
 
 Notify
   Enable notifications for the Status Characteristic to receive notifications when the status message changes.

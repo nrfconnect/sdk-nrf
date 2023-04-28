@@ -18,18 +18,17 @@ It can also configure the Heart Rate Service on a remote device by writing speci
 Configuration
 *************
 
-Applications use the scanning module for detecting advertising devices that support the Heart Rate Service.
-If the advertising device is detected, the application will connect to it automatically and will start receiving HRS data.
+Applications use the :ref:`lib_nrf_bt_scan_readme` for detecting advertising devices that support the Heart Rate Service.
+If an advertising device is detected, the application connects to it automatically and starts receiving HRS data.
 
 Once a connection with a remote device providing a Heart Rate Service is established, the client needs service discovery to discover Heart Rate Service handles.
 If this succeeds, the handles of the Heart Rate Service must be assigned to a HRS client instance using the :c:func:`bt_hrs_client_handles_assign` function.
-
-The application is ready to operate with the remote Heart Rate Service.
+Now, the application is ready to operate with the remote Heart Rate Service.
 
 Usage
 *****
 
-Retrieve data from Heart Rate Service or configure its behavior using the following functions:
+Retrieve data from the Heart Rate Service or configure its behavior using the following functions:
 
 * :c:func:`bt_hrs_client_measurement_subscribe` - Enable notifications for the Heart Rate Measurement characteristic.
 

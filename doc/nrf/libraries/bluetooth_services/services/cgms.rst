@@ -23,7 +23,7 @@ Configuration
 Set the maximum number of glucose measurement records stored in the device using the :kconfig:option:`CONFIG_BT_CGMS_MAX_MEASUREMENT_RECORD` Kconfig option.
 The value of should be large enough to hold all records generated in a session.
 
-Set the logging level of the CGMS module using the :kconfig:option:`CONFIG_BT_CGMS_LOG_LEVEL` Kconfig option.
+Set the logging level of the CGMS module using the :kconfig:option:`CONFIG_BT_CGMS_LOG_LEVEL_CHOICE` Kconfig option.
 
 Usage
 *****

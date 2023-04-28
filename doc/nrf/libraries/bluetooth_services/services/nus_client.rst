@@ -16,14 +16,14 @@ The NUS Service Client is used in the :ref:`central_uart` sample.
 RX Characteristic
 *****************
 
-To send data to the RX Characteristic, use the send API of this module.
+To send data to the RX Characteristic, use the :c:func:`bt_nus_client_send` function of this module.
 The sending procedure is asynchronous, so the data to be sent must remain valid until a dedicated callback notifies you that the Write Request has been completed.
 
 TX Characteristic
 *****************
 
 To receive data coming from the TX Characteristic, enable notifications after the service discovery.
-After that, you can request to disable notifications again by returning the STOP value in the callback that is used to handle incoming data.
+After that, you can request to disable notifications again by returning the ``STOP`` value in the callback that is used to handle incoming data.
 Another dedicated callback is triggered when your request has been completed, to inform you that you have unsubscribed successfully.
 
 API documentation

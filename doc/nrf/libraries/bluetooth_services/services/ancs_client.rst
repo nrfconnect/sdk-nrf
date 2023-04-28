@@ -82,9 +82,7 @@ Use the following functions to perform activities related to notifications:
 
 Samples using the library
 *************************
-The following |NCS| sample uses this library:
-
-* :ref:`peripheral_ancs_client`
+The :ref:`peripheral_ancs_client` sample uses this library.
 
 Dependencies
 ************

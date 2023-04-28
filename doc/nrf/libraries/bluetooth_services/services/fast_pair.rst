@@ -7,7 +7,7 @@ Google Fast Pair Service (GFPS)
    :local:
    :depth: 2
 
-The Google Fast Pair Service (Fast Pair for short) implements a Bluetooth® LE GATT Service required when :ref:`ug_bt_fast_pair`.
+The Google Fast Pair Service (Fast Pair for short) implements a Bluetooth® Low Energy (LE) GATT Service required when :ref:`ug_bt_fast_pair`.
 
 Service UUID
 ************
@@ -23,7 +23,7 @@ The implementation in the |NCS| follows these requirements.
 Configuration
 *************
 
-Set the :kconfig:option:`CONFIG_BT_FAST_PAIR` to enable the module.
+Set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option to enable the module.
 
 The following Kconfig options are also available for this module:
 
@@ -54,19 +54,19 @@ During discoverable advertising session, the Resolvable Private Address (RPA) ro
 Therefore, consider the following points:
 
 * Make sure that your advertising session is shorter than the value in the :kconfig:option:`CONFIG_BT_RPA_TIMEOUT` option.
-* Call :c:func:`bt_le_oob_get_local` to trigger RPA rotation and reset the RPA timeout right before the start of advertising.
+* Call the :c:func:`bt_le_oob_get_local` function to trigger RPA rotation and reset the RPA timeout right before advertising starts.
 
 Bluetooth Security Manager Protocol (SMP)
 -----------------------------------------
 
-The service selects :kconfig:option:`CONFIG_BT_SMP`, :kconfig:option:`CONFIG_BT_SMP_APP_PAIRING_ACCEPT`, and :kconfig:option:`CONFIG_BT_SMP_ENFORCE_MITM`.
-The Fast Pair specification requires support for Bluetooth LE pairing and enforcing :term:`Man-in-the-Middle (MITM)` protection during the Fast Pair procedure.
+The service selects the Kconfig options :kconfig:option:`CONFIG_BT_SMP`, :kconfig:option:`CONFIG_BT_SMP_APP_PAIRING_ACCEPT`, and :kconfig:option:`CONFIG_BT_SMP_ENFORCE_MITM`.
+The Fast Pair specification requires support for Bluetooth® Low Energy pairing and enforcing :term:`Man-in-the-Middle (MITM)` protection during the Fast Pair procedure.
 
 Firmware Revision characteristic
 --------------------------------
 
 The Fast Pair specification requires enabling GATT Device Information Service and the Firmware Revision characteristic.
-For this reason, the default values of :kconfig:option:`CONFIG_BT_DIS` and :kconfig:option:`CONFIG_BT_DIS_FW_REV`, respectively, are set to enabled.
+For this reason, the default values of the Kconfig options :kconfig:option:`CONFIG_BT_DIS` and :kconfig:option:`CONFIG_BT_DIS_FW_REV`, respectively, are set to enabled.
 The default value of :kconfig:option:`CONFIG_BT_DIS_FW_REV_STR` is set to :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` if :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` is enabled.
 Otherwise, it is set to ``0.0.0+0``.
 
@@ -82,26 +82,26 @@ Because of this requirement, the default values of the following Kconfig options
 * :kconfig:option:`CONFIG_BT_CTLR_DATA_LENGTH_MAX`
 
 .. tip::
-   In case of :ref:`nRF53 Series <ug_nrf53>`, this part of the configuration cannot be automatically updated for the network core and you must manually align it.
-   The listed options must be set on the network core to default values specified by the GFPS Kconfig options.
+   When using :ref:`nRF53 Series <ug_nrf53>` devices, this part of the configuration cannot be automatically updated for the network core and you must manually align it.
+   The listed options must be set on the network core to the default values specified by the GFPS Kconfig options.
 
 Security re-establishment
 -------------------------
 
 By default, the Fast Pair service disables the automatic security re-establishment request as a peripheral (:kconfig:option:`CONFIG_BT_GATT_AUTO_SEC_REQ`).
-This is done to allow Fast Pair Seeker to control the security re-establishment.
+This allows a Fast Pair Seeker to control the security re-establishment.
 
 Partition Manager
 -----------------
 
 The Fast Pair provisioning data is preprogrammed to a dedicated flash memory partition.
-The GFPS selects :kconfig:option:`CONFIG_PM_SINGLE_IMAGE` to enable the :ref:`partition_manager`.
+The GFPS selects the :kconfig:option:`CONFIG_PM_SINGLE_IMAGE` Kconfig option to enable the :ref:`partition_manager`.
 
 Settings
 --------
 
 The GFPS uses Zephyr's :ref:`zephyr:settings_api` to store Account Keys and the Personalized Name.
-Because of this, the GFPS selects :kconfig:option:`CONFIG_SETTINGS`.
+Because of this, the GFPS selects the :kconfig:option:`CONFIG_SETTINGS` Kconfig option.
 
 Implementation details
 **********************
@@ -116,9 +116,9 @@ Bluetooth authentication
 The Bluetooth pairing is handled using a set of Bluetooth authentication callbacks (:c:struct:`bt_conn_auth_cb`).
 The pairing flow and the set of Bluetooth authentication callbacks in use depend on whether the connected peer follows the Fast Pair pairing flow:
 
-* If the peer follows the Fast Pair pairing flow, the Fast Pair service calls :c:func:`bt_conn_auth_cb_overlay` to automatically overlay the Bluetooth authentication callbacks.
+* If the peer follows the Fast Pair pairing flow, the Fast Pair service calls the :c:func:`bt_conn_auth_cb_overlay` function to automatically overlay the Bluetooth authentication callbacks.
   The function is called while handling the Key-based Pairing request.
-  Overlying callbacks allow the GFPS to take over Bluetooth authentication during `Fast Pair Procedure`_ and perform all of the required operations without interacting with the application.
+  Overlying callbacks allow the GFPS to take over Bluetooth authentication during the `Fast Pair Procedure`_ and perform all of the required operations without interacting with the application.
 * If the peer does not follow the Fast Pair pairing flow, normal Bluetooth LE pairing and global Bluetooth authentication callbacks are used.
 
 API documentation
