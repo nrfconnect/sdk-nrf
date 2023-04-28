@@ -53,6 +53,12 @@ else()
       list(APPEND application_vars ${var_name})
     endif()
 
+    # If 'CACHED_CONF_FILE' is specified instead of 'CONF_FILE', the build system does not determine
+    # build type automatically. In that case, the 'CONF_FILE_BUILD_TYPE' shall be passed explicitly.
+    if("${var_name}" MATCHES "CONF_FILE_BUILD_TYPE")
+      list(APPEND application_vars ${var_name})
+    endif()
+
     # '-DDTC_OVERLAY_FILE' is given helptext by the build system. Therefore
     # we need this special handling for passing the value to the variant image.
     if("${var_name}" MATCHES "DTC_OVERLAY_FILE")
