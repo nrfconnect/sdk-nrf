@@ -6,6 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/modem_info.h>
 #include <lwm2m_object.h>
 #include <net/lwm2m_client_utils.h>
@@ -66,7 +67,24 @@ static bool connected;
 static bool no_serv_suspended;
 static bool update_session_lifetime;
 
+static void cloud_lwm2m_init(void);
 static void cloud_lwm2m_rd_client_stop(void);
+
+NRF_MODEM_LIB_ON_INIT(cloud_lwm2m_init_hook, on_modem_lib_init, NULL);
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	ARG_UNUSED(ret);
+	ARG_UNUSED(ctx);
+
+	static bool initialized;
+
+	if (!initialized) {
+		cloud_lwm2m_init();
+
+		initialized = true;
+	}
+}
 
 static int cloud_lwm2m_init_device(char *serial_num)
 {
@@ -154,7 +172,7 @@ static void cloud_lwm2m_lte_lc_evt_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-static int cloud_lwm2m_init(void)
+static void cloud_lwm2m_init(void)
 {
 	int ret;
 
@@ -163,14 +181,14 @@ static int cloud_lwm2m_init(void)
 	ret = modem_info_init();
 	if (ret < 0) {
 		printk("LwM2M: Unable to init modem_info (%d)", ret);
-		return ret;
+		return;
 	}
 
 	/* Query IMEI. */
 	ret = modem_info_string_get(MODEM_INFO_IMEI, imei_buf, sizeof(imei_buf));
 	if (ret < 0) {
 		printk("LwM2M: Unable to get IMEI");
-		return ret;
+		return;
 	}
 
 	/* Use IMEI as unique endpoint name. */
@@ -191,8 +209,6 @@ static int cloud_lwm2m_init(void)
 				       sizeof(CONFIG_MOSH_LWM2M_PSK), true,
 				       endpoint_name);
 	}
-
-	return 0;
 }
 
 static void cloud_lwm2m_rd_client_update_lifetime(int srv_obj_inst)
@@ -347,5 +363,3 @@ void cloud_lwm2m_update(void)
 {
 	lwm2m_rd_client_update();
 }
-
-SYS_INIT(cloud_lwm2m_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
