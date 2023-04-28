@@ -547,6 +547,10 @@ On Ubuntu, run:
 Dependencies
 ************
 
+This sample uses the following |NCS| library:
+
+  * :ref:`fem_al_lib`
+
 This sample uses the following |NCS| driver:
 
   * :ref:`uart_ipc`

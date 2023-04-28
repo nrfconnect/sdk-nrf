@@ -4,13 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef FEM_H_
-#define FEM_H_
+#ifndef FEM_AL_H_
+#define FEM_AL_H_
 
 /**
- * @brief Front-end module API.
+ * @brief Front-end Abstraction layer library.
  *        This file is an abstraction for the MPSL FEM API and provides API for controlling
- *        front-end modules in samples.
+ *        front-end modules.
+ * @defgroup fem_al Front-end module abstraction layer
+ * @{
  */
 
 #ifdef __cplusplus
@@ -107,7 +109,7 @@ int fem_tx_configure(uint32_t ramp_up_time);
  */
 int fem_rx_configure(uint32_t ramp_up_time);
 
-/**@brief Clear up the configuration provided by the @fem_tx_configure
+/**@brief Clear up the configuration provided by the @ref fem_tx_configure
  *        or @ref fem_rx_configure.
  */
 int fem_txrx_configuration_clear(void);
@@ -180,7 +182,7 @@ int8_t fem_tx_output_power_check(int8_t power, uint16_t freq_mhz, bool tx_power_
 
 /**@brief Get the minimum Tx output power for the SoC with the front-end module.
  *
- * @param[in] freq_mHz Frequency in MHz. The minimum output power is valid only for this frequency.
+ * @param[in] freq_mhz Frequency in MHz. The minimum output power is valid only for this frequency.
  *
  * @return The minimum output power in dBm.
  */
@@ -192,7 +194,7 @@ static inline int8_t fem_tx_output_power_min_get(uint16_t freq_mhz)
 
 /**@brief Get the maximum Tx output power for the SoC with the front-end module.
  *
- * @param[in] freq_mHz Frequency in MHz. The maximum output power is valid only for this frequency.
+ * @param[in] freq_mhz Frequency in MHz. The maximum output power is valid only for this frequency.
  *
  * @return The maximum output power in dBm.
  */
@@ -202,13 +204,13 @@ static inline int8_t fem_tx_output_power_max_get(uint16_t freq_mhz)
 	return fem_tx_output_power_check(INT8_MAX, freq_mhz, true);
 }
 
-/** @brief Get the front-end module default Tx gain.
+/**@brief Get the front-end module default Tx gain.
  *
  * @return The front-end module default Tx gain value.
  */
 uint32_t fem_default_tx_gain_get(void);
 
-/** @brief Apply the workaround for the Errata 254, 255, 256, 257 when appropriate.
+/**@brief Apply the workaround for the Errata 254, 255, 256, 257 when appropriate.
  *
  * This workaround is applied only if used with the correct hardware configuration.
  *
@@ -220,4 +222,8 @@ void fem_errata_25X(nrf_radio_mode_t mode);
 }
 #endif
 
-#endif /* FEM_H_ */
+/**
+ * @}
+ */
+
+#endif /* FEM_AL_H_ */

@@ -33,20 +33,8 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(NONE)
 
 # Application sources
-target_sources_ifdef(CONFIG_FEM app
-			PRIVATE ../../bluetooth/direct_test_mode/src/fem/fem.c)
-
-if (CONFIG_MPSL_FEM_NRF21540_GPIO OR CONFIG_MPSL_FEM_NRF21540_GPIO_SPI)
-target_sources(app PRIVATE ../../bluetooth/direct_test_mode/src/fem/nrf21540.c)
-endif()
-
-if (CONFIG_MPSL_FEM_SIMPLE_GPIO)
-  target_sources(app PRIVATE ../../bluetooth/direct_test_mode/src/fem/generic_fem.c)
-endif()
-
-zephyr_include_directories(../../bluetooth/direct_test_mode/src/fem/)
-
 FILE(GLOB app_sources src/*.c)
+
 # NORDIC SDK APP START
 target_sources(app PRIVATE
 	${app_sources}

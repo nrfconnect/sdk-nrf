@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include "fem.h"
+#include "fem_al/fem_al.h"
 
 #include <hal/nrf_radio.h>
 

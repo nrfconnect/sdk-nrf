@@ -31,9 +31,6 @@ endif()
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(NONE)
 
-# Application sources
-add_subdirectory(src/fem)
-
 # NORDIC SDK APP START
 target_sources(app PRIVATE
   src/main.c

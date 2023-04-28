@@ -52,5 +52,4 @@ config DTM_POWER_CONTROL_AUTOMATIC
 	  possible value. If this option is disabled, user can set the SoC output power and the
 	  front-end module gain with the separate vendor specific commands.
 
-rsource "src/fem/Kconfig"
 source "Kconfig.zephyr"

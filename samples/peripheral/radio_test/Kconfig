@@ -24,5 +24,4 @@ config RADIO_TEST_POWER_CONTROL_AUTOMATIC
 	  not exceed the limits. If this option is disabled, user has to set SoC output power and
 	  fem gain with separate commands.
 
-rsource "../../bluetooth/direct_test_mode/src/fem/Kconfig"
 source "Kconfig.zephyr"

@@ -1,8 +1,14 @@
 #
-# Copyright (c) 2021 Nordic Semiconductor
+# Copyright (c) 2023 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
+
+config FEM_AL_LIB
+	bool "FEM Abstarction Layer library"
+	default n
+
+if FEM_AL_LIB
 
 config FEM
 	bool "Front-end module (FEM) support"
@@ -61,3 +67,4 @@ endchoice # SKYWORKS_MODE
 
 endif # MPSL_FEM_SIMPLE_GPIO
 endif # FEM
+endif # FEM_AL_LIB

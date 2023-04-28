@@ -12,7 +12,7 @@
 #include "dtm_hw_config.h"
 
 #if CONFIG_FEM
-#include <fem.h>
+#include <fem_al/fem_al.h>
 #endif /* CONFIG_FEM */
 
 #include <zephyr/kernel.h>
