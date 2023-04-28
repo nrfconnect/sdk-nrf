@@ -534,6 +534,7 @@ stop_provisioning:
 	}
 
 	/* Encoded size will replace max size */
+	LOG_DBG("Payload %p size %d", cctx->opkt, cctx->opkt_sz);
 	ret = cbor_encode_responses(cctx->opkt, cctx->opkt_sz,
 				    CDC_OFMT_RESPONSES_GET(cctx),
 				    CDC_OPKT_SZ_PTR(cctx));

@@ -43,9 +43,21 @@ config NRF_PROVISIONING_SAVE_CMD_ID
 	help
 	  Saves the latest command id to storage after successful Finished command.
 
+config NRF_PROVISIONING_CUSTOM_AT
+	bool "Custom AT commands"
+	depends on AT_CMD_CUSTOM
+	help
+	  Activate custom AT commands.
+
+config NRF_PROVISIONING_SETTINGS_STORAGE_PATH
+	string "Settings storage path for provisioning"
+	default "provisioning"
+
 rsource "Kconfig.nrf_provisioning_http"
 
 rsource "Kconfig.nrf_provisioning_at"
+
+rsource "Kconfig.nrf_provisioning_coap"
 
 module=NRF_PROVISIONING
 module-dep=LOG
