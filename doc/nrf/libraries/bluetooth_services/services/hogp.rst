@@ -44,10 +44,10 @@ The following functions are available to retrieve the readiness state of the ser
 Reading the report map
 ======================
 
-To read the report map, call :c:func:`bt_hogp_map_read`.
+To read the report map, call the :c:func:`bt_hogp_map_read` function.
 If the report map does not fit into a single PDU, call the function repeatedly with different offsets.
 
-There is no specific support for HIDS report map interpretation implemented in the HIDS Client.
+The HIDS report map interpretation implemented in the HIDS Client is not specifically supported.
 
 Accessing the reports
 =====================
@@ -67,7 +67,7 @@ The report size is always updated before the callback function is called while r
 It can be obtained by calling :c:func:`bt_hogp_rep_size`.
 
 All report operations require a report info pointer as input.
-How to retrieve this pointer depends on if you are processing a normal report or a boot report.
+How to retrieve this pointer depends on whether you are processing a normal report or a boot report.
 
 .. tabs::
 
@@ -88,7 +88,7 @@ How to retrieve this pointer depends on if you are processing a normal report or
       * For the keyboard boot protocol, the two functions :c:func:`bt_hogp_rep_boot_kbd_in` and :c:func:`bt_hogp_rep_boot_kbd_out` return a non-NULL value.
 
       All these functions return report pointers that may be used in the access functions.
-      Note, however, that these pointers cannot be used as a previous record pointer in :c:func:`bt_hogp_rep_next`.
+      However, these pointers cannot be used as a previous record pointer in :c:func:`bt_hogp_rep_next`.
 
 Changing protocol mode
 ======================

@@ -21,15 +21,15 @@ The SMP Service Client is used in the :ref:`bluetooth_central_dfu_smp` sample.
 Service UUID
 ************
 
-The 128-bit service UUID is 8D53DC1D-1DB7-4CD3-868B-8A527460AA84 (16-bit offset: 0x0001).
+The 128-bit service UUID is ``8D53DC1D-1DB7-4CD3-868B-8A527460AA84`` (16-bit offset: ``0x0001``).
 
 Characteristics
 ***************
 
 This service has one characteristic that is used for both requests and responses.
 
-SMP Characteristic (DA2E7828-FBCE-4E01-AE9E-261174997C48)
-=========================================================
+SMP Characteristic (``DA2E7828-FBCE-4E01-AE9E-261174997C48``)
+=============================================================
 
 Write Without Response
    * Write an SMP command with data.
@@ -54,23 +54,22 @@ For most operations, this requires a bigger MTU size than the default one.
 This requires MTU negotiation in the MTU exchange process (see :c:func:`bt_gatt_exchange_mtu`).
 Writing long characteristic values is not supported.
 
-Note that this is a limitation of the :ref:`zephyr:smp_svr_sample`, not of the SMP Client.
+This is a limitation of the :ref:`zephyr:smp_svr_sample`, not of the SMP Client.
 
 Sending a command
 =================
 
-To send a command, use :c:func:`bt_dfu_smp_command`.
-The command is provided as a raw binary buffer consisting of a :c:struct:`dfu_smp_header` and the payload.
-
+To send a command, use the :c:func:`bt_dfu_smp_command` function.
+The command is provided as a raw binary buffer consisting of a :c:struct:`bt_dfu_smp_header` and the payload.
 
 Processing the response
 =======================
 
-The response to a command is sent as notification.
-It is passed to the callback function that was provided when issuing the command with :c:func:`bt_dfu_smp_command`.
+The response to a command is sent as a notification.
+It is passed to the callback function that was provided when issuing the command with the :c:func:`bt_dfu_smp_command` function.
 
-Use :c:func:`bt_dfu_smp_rsp_state` to access the data of the current part of the response.
-As the response might be received in multiple notifications, use :c:func:`bt_dfu_smp_rsp_total_check` to verify if this is the last part of the response.
+Use the :c:func:`bt_dfu_smp_rsp_state` function to access the data of the current part of the response.
+As the response might be received in multiple notifications, use the :c:func:`bt_dfu_smp_rsp_total_check` function to verify if this is the last part of the response.
 The offset size of the current part and the total size are available in fields of the :c:struct:`bt_dfu_smp_rsp_state` structure.
 
 

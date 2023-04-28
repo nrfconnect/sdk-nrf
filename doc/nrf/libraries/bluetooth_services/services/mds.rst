@@ -7,7 +7,7 @@ Memfault Diagnostic Service (MDS)
    :local:
    :depth: 2
 
-The Bluetooth® LE GATT Memfault Diagnostic Service is a custom service that forwards diagnostic data collected by firmware through a Bluetooth gateway.
+The Bluetooth® Low Energy (LE) GATT Memfault Diagnostic Service is a custom service that forwards diagnostic data collected by firmware through a Bluetooth gateway.
 The diagnostic data is collected by the `Memfault SDK`_ integrated with the |NCS|.
 
 To get started with Memfault integration in |NCS|, see :ref:`ug_memfault`.
@@ -17,7 +17,7 @@ The MDS is used in the :ref:`peripheral_mds` sample.
 Service UUID
 ************
 
-The 128-bit service UUID is **54220000-f6a5-4007-a371-722f4ebd8436**.
+The 128-bit service UUID is ``54220000-f6a5-4007-a371-722f4ebd8436``.
 
 Characteristics
 ***************
@@ -32,7 +32,7 @@ The service implementation available in the |NCS| follows these requirements.
 Configuration
 *************
 
-Set the :kconfig:option:`CONFIG_BT_MDS` to enable the service.
+Set the :kconfig:option:`CONFIG_BT_MDS` Kconfig option to enable the service.
 
 The following configuration options are available for this module:
 
@@ -71,8 +71,8 @@ Restricting access
 
 The Memfault service characteristics data might contain sensitive data.
 It is recommended to use the Bluetooth privacy and encrypted link to access the diagnostic data.
-Enable the :kconfig:option:`CONFIG_BT_SMP` option to require encryption for access in the default configuration.
-It is also highly recommended to implement the :c:func:`access_enable` callback.
+Enable the :kconfig:option:`CONFIG_BT_SMP` Kconfig option to require encryption for access in the default configuration.
+It is also highly recommended to implement the :c:member:`access_enable` callback.
 See :ref:`peripheral_mds` for an implementation example.
 
 Bluetooth privacy

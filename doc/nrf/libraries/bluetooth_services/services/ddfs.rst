@@ -7,7 +7,7 @@ Direction and Distance Finding Service (DDFS)
    :local:
    :depth: 2
 
-The Bluetooth® LE GATT Direction and Distance Finding Service is a custom service that allows publication of distance, azimuth and elevation measurement data.
+The Bluetooth® Low Energy GATT Direction and Distance Finding Service is a custom service that allows publication of distance, azimuth and elevation measurement data.
 It also allows adjusting the measurement configuration parameters.
 
 .. note::
@@ -16,7 +16,7 @@ It also allows adjusting the measurement configuration parameters.
 Service UUID
 ************
 
-The 128-bit vendor-specific service UUID is 21490000-494a-4573-98af-f126af76f490.
+The 128-bit vendor-specific service UUID is ``21490000-494a-4573-98af-f126af76f490``.
 
 .. list-table:: Characteristic UUIDs
     :widths: auto
@@ -25,15 +25,15 @@ The 128-bit vendor-specific service UUID is 21490000-494a-4573-98af-f126af76f490
     * - Characteristic
       - UUID
     * - Distance Measurement
-      - 21490001-494a-4573-98af-f126af76f490
+      - ``21490001-494a-4573-98af-f126af76f490``
     * - Azimuth Measurement
-      - 21490002-494a-4573-98af-f126af76f490
+      - ``21490002-494a-4573-98af-f126af76f490``
     * - Elevation Measurement
-      - 21490003-494a-4573-98af-f126af76f490
+      - ``21490003-494a-4573-98af-f126af76f490``
     * - DDF Feature
-      - 21490004-494a-4573-98af-f126af76f490
+      - ``21490004-494a-4573-98af-f126af76f490``
     * - Control Point
-      - 21490005-494a-4573-98af-f126af76f490
+      - ``21490005-494a-4573-98af-f126af76f490``
 
 Characteristics
 ***************

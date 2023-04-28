@@ -24,38 +24,38 @@ Service declaration
 The Wi-Fi Provisioning Service is instantiated as a primary service.
 Set the service UUID value as defined in the following table.
 
-========================== ====================================
+========================== ========================================
 Service name               UUID
-Wi-Fi Provisioning Service 14387800-130c-49e7-b877-2881c89cb258
-========================== ====================================
+Wi-Fi Provisioning Service ``14387800-130c-49e7-b877-2881c89cb258``
+========================== ========================================
 
 Service characteristics
 =======================
 
 The UUID value of characteristics are defined in the following table.
 
-========================== ====================================
+========================== ========================================
 Characteristic name        UUID
-Information                14387801-130c-49e7-b877-2881c89cb258
-Operation Control Point    14387802-130c-49e7-b877-2881c89cb258
-Data Out                   14387803-130c-49e7-b877-2881c89cb258
-========================== ====================================
+Information                ``14387801-130c-49e7-b877-2881c89cb258``
+Operation Control Point    ``14387802-130c-49e7-b877-2881c89cb258``
+Data Out                   ``14387803-130c-49e7-b877-2881c89cb258``
+========================== ========================================
 
 The characteristic requirements of the Wi-Fi Provisioning Service are shown in the following table.
 
 +-----------------+-------------+-------------+-------------+-------------+
 | Characteristic  | Requirement | Mandatory   | Optional    | Security    |
-| Name            |             | Properties  | Properties  | Permissions |
+| name            |             | properties  | properties  | permissions |
 +=================+=============+=============+=============+=============+
-| Information     | Mandatory   | Read        |             | No Security |
+| Information     | Mandatory   | Read        |             | No security |
 |                 |             |             |             | required    |
 +-----------------+-------------+-------------+-------------+-------------+
 | Operation       | Mandatory   | Indicate,   |             | Encryption  |
-| Control         |             | Write       |             | Required    |
+| Control         |             | Write       |             | required    |
 | Point           |             |             |             |             |
 +-----------------+-------------+-------------+-------------+-------------+
 | Operation       | Mandatory   | Read, Write |             | Encryption  |
-| Control         |             |             |             | Required    |
+| Control         |             |             |             | required    |
 | Point           |             |             |             |             |
 | - Client        |             |             |             |             |
 | Characteristic  |             |             |             |             |
@@ -63,10 +63,10 @@ The characteristic requirements of the Wi-Fi Provisioning Service are shown in t
 | descriptor      |             |             |             |             |
 +-----------------+-------------+-------------+-------------+-------------+
 | Data Out        | Mandatory   | Notify      |             | Encryption  |
-|                 |             |             |             | Required    |
+|                 |             |             |             | required    |
 +-----------------+-------------+-------------+-------------+-------------+
 | Data Out        | Mandatory   | Read, Write |             | Encryption  |
-| - Client        |             |             |             | Required    |
+| - Client        |             |             |             | required    |
 | Characteristic  |             |             |             |             |
 | Configuration   |             |             |             |             |
 | descriptor      |             |             |             |             |

@@ -14,15 +14,15 @@ The LBS Service is used in the :ref:`peripheral_lbs` sample.
 Service UUID
 ************
 
-The 128-bit vendor-specific service UUID is 00001523-1212-EFDE-1523-785FEABCD123.
+The 128-bit vendor-specific service UUID is ``00001523-1212-EFDE-1523-785FEABCD123``.
 
 Characteristics
 ***************
 
 This service has two characteristics.
 
-Button Characteristic (00001524-1212-EFDE-1523-785FEABCD123)
-============================================================
+Button Characteristic (``00001524-1212-EFDE-1523-785FEABCD123``)
+================================================================
 
 Notify:
     Enable notifications for the Button Characteristic to receive button data from the application.
@@ -30,8 +30,8 @@ Notify:
 Read:
     Read button data from the application.
 
-LED Characteristic (00001525-1212-EFDE-1523-785FEABCD123)
-=========================================================
+LED Characteristic (``00001525-1212-EFDE-1523-785FEABCD123``)
+=============================================================
 
 Write:
     Write data to the LED Characteristic to change the LED state.
