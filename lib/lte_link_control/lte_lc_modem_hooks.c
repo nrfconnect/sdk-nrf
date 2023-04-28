@@ -17,6 +17,10 @@ NRF_MODEM_LIB_ON_SHUTDOWN(lte_lc_shutdown_hook, on_modem_shutdown, NULL);
 static void on_modem_init(int err, void *ctx)
 {
 	if (err) {
+		if (err == NRF_MODEM_DFU_RESULT_OK) {
+			LOG_DBG("Modem DFU, lte_lc not initialized");
+			return;
+		}
 		LOG_ERR("Modem library init error: %d, lte_lc not initialized", err);
 		return;
 	}
