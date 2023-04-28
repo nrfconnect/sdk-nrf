@@ -29,7 +29,10 @@
 #include "nrf_provisioning_http.h"
 #include "nrf_provisioning_codec.h"
 
+#include "nrf_provisioning_coap.h"
+
 #include "cert_amazon_root_ca1.h"
+#include "cert_coap_root_ca.h"
 
 LOG_MODULE_REGISTER(nrf_provisioning, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 
@@ -38,9 +41,10 @@ K_CONDVAR_DEFINE(np_cond);
 
 /* An arbitrary max backoff interval if connection to server times out [s] */
 #define SRV_TIMEOUT_BACKOFF_MAX_S 86400
-#define SETTINGS_STORAGE_PREFIX "provisioning"
+#define SETTINGS_STORAGE_PREFIX CONFIG_NRF_PROVISIONING_SETTINGS_STORAGE_PATH
 
 static bool nw_connected = true;
+
 
 /* nRF Provisioning context */
 static struct nrf_provisioning_http_context rest_ctx = {
@@ -49,6 +53,13 @@ static struct nrf_provisioning_http_context rest_ctx = {
 	.rx_buf = NULL,
 	.rx_buf_len = 0,
 	.auth = NULL,
+};
+
+/* nRF Provisioning context */
+static struct nrf_provisioning_coap_context coap_ctx = {
+	.connect_socket = -1,
+	.rx_buf = NULL,
+	.rx_buf_len = 0,
 };
 
 static bool initialized;
@@ -66,9 +77,15 @@ static int cert_provision(void)
 	bool exists;
 	int prev_mode;
 
-	/* Certificate for nRF Provisioning */
-	const uint8_t *cert = cert_amazon_root_ca1_pem;
-	const size_t cert_size = cert_amazon_root_ca1_pem_size;
+#if defined(CONFIG_NRF_PROVISIONING_HTTP)
+		/* Certificate for nRF HTTP Provisioning */
+		const uint8_t *cert = cert_amazon_root_ca1_pem;
+		const size_t cert_size = cert_amazon_root_ca1_pem_size;
+#else
+		/* Certificate for nRF COAP Provisioning */
+		const uint8_t *cert = cert_coap_root_ca_pem;
+		const size_t cert_size = cert_coap_root_ca_pem_size;
+#endif
 
 #if !defined(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG)
 #error CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG not defined!
@@ -333,7 +350,11 @@ int nrf_provisioning_init(struct nrf_provisioning_mm_change *mmode,
 		dm.user_data = dmode->user_data;
 	}
 
-	ret = nrf_provisioning_http_init((struct nrf_provisioning_http_mm_change *)&mm);
+	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
+		ret = nrf_provisioning_http_init((struct nrf_provisioning_http_mm_change *)&mm);
+	} else {
+		ret = nrf_provisioning_coap_init((struct nrf_provisioning_coap_mm_change *)&mm);
+	}
 	if (ret) {
 		goto exit;
 	}
@@ -515,8 +536,11 @@ int nrf_provisioning_req(void)
 			k_mutex_unlock(&np_mtx);
 		} while (!nw_connected);
 
-
-		ret = nrf_provisioning_http_req(&rest_ctx);
+		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
+			ret = nrf_provisioning_http_req(&rest_ctx);
+		} else {
+			ret = nrf_provisioning_coap_req(&coap_ctx);
+		}
 
 		while (ret == -EBUSY) {
 			/* Backoff */
@@ -527,8 +551,11 @@ int nrf_provisioning_req(void)
 			if (backoff > SRV_TIMEOUT_BACKOFF_MAX_S) {
 				backoff = SRV_TIMEOUT_BACKOFF_MAX_S;
 			}
-
-			ret = nrf_provisioning_http_req(&rest_ctx);
+			if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
+				ret = nrf_provisioning_http_req(&rest_ctx);
+			} else {
+				ret = nrf_provisioning_coap_req(&coap_ctx);
+			}
 		}
 
 		if (ret == -EINVAL) {

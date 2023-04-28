@@ -48,6 +48,7 @@ int nrf_provisioning_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, si
 		jwt.exp_delta_s = time_valid_s;
 	}
 
+	LOG_DBG("Generating JWT");
 	err = modem_jwt_generate(&jwt);
 	if (err) {
 		LOG_ERR("Failed to generate JWT, error: %d", err);
