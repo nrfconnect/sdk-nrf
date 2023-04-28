@@ -35,3 +35,5 @@ target_sources(app PRIVATE src/main.cpp)
 # Test uses ei_test_params.h file from edge_impuse_zip directory to verify if
 # ei_wrapper properly forwards the data between application and EI library.
 target_include_directories(app PRIVATE src/edge_impulse_zip/)
+
+add_dependencies(app edge_impulse edge_impulse_project offsets)
