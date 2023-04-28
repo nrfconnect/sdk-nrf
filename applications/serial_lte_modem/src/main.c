@@ -430,8 +430,7 @@ int main(void)
 #else
 			handle_nrf_modem_lib_init_ret(err);
 #endif /* CONFIG_SLM_CARRIER */
-		}
-		if (fota_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT ||
+		} else if (fota_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT ||
 			   fota_type == SLM_DFU_TARGET_IMAGE_TYPE_BL1) {
 			handle_mcuboot_swap_ret();
 		} else {
