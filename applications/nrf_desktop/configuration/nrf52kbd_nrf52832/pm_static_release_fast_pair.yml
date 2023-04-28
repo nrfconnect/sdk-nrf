@@ -1,43 +1,51 @@
-b0_container:
+app:
+  address: 0x6200
+  region: flash_primary
+  size: 0x3ae00
+mcuboot:
   address: 0x0
-  orig_span: &id001
-  - b0
-  - provision
+  region: flash_primary
   size: 0x6000
-  span: *id001
-b0:
-  address: 0x0
-  size: 0x5000
-provision:
-  address: 0x5000
-  size: 0x1000
-s0:
+mcuboot_pad:
   address: 0x6000
+  region: flash_primary
+  size: 0x200
+mcuboot_primary:
+  address: 0x6000
+  orig_span: &id001
+  - mcuboot_pad
+  - app
+  region: flash_primary
+  size: 0x3b000
+  span: *id001
+mcuboot_primary_app:
+  address: 0x6200
   orig_span: &id002
   - app
-  size: 0x3b000
+  region: flash_primary
+  size: 0x3ae00
   span: *id002
-s0_image:
-  address: 0x6000
+mcuboot_secondary:
+  address: 0x41000
   orig_span: &id003
-  - app
+  - mcuboot_secondary_pad
+  - mcuboot_secondary_app
+  region: flash_primary
   size: 0x3b000
   span: *id003
-app:
-  address: 0x6000
-  size: 0x3b000
-s1:
+mcuboot_secondary_pad:
+  region: flash_primary
   address: 0x41000
-  orig_span: &id004
-  - s1_image
-  size: 0x3b000
-  span: *id004
-s1_image:
-  address: 0x41000
-  size: 0x3b000
+  size: 0x200
+mcuboot_secondary_app:
+  region: flash_primary
+  address: 0x41200
+  size: 0x3ae00
 bt_fast_pair:
   address: 0x7c000
+  region: flash_primary
   size: 0x1000
 settings_storage:
   address: 0x7d000
+  region: flash_primary
   size: 0x3000
