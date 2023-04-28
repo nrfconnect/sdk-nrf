@@ -17,7 +17,7 @@
 #include <mpsl_fem_config_common.h>
 #include <mpsl_fem_protocol_api.h>
 
-#include "fem.h"
+#include "fem_al/fem_al.h"
 #include "fem_interface.h"
 #include "radio_def.h"
 

@@ -95,6 +95,7 @@ Kconfig*                                  @tejlmand
 /lib/gcf_sms/                             @eivindj-nordic
 /lib/nrf_modem_lib/                       @rlubos @lemrey
 /lib/edge_impulse/                        @pdunaj
+/lib/fem_al/                              @KAGA164
 /lib/fprotect/                            @hakonfam
 /lib/flash_patch/                         @hakonfam
 /lib/location/                            @trantanen @jhirsi @tokangas

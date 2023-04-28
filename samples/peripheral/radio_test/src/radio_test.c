@@ -23,7 +23,7 @@
 #include <helpers/nrfx_gppi.h>
 
 #if CONFIG_FEM
-#include "fem.h"
+#include "fem_al/fem_al.h"
 #endif /* CONFIG_FEM */
 
 /* IEEE 802.15.4 default frequency. */

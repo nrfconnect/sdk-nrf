@@ -14,7 +14,7 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
 
-#include "fem.h"
+#include "fem_al/fem_al.h"
 #include "fem_interface.h"
 
 
