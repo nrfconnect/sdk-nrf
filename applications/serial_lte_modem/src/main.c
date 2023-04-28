@@ -58,12 +58,15 @@ BUILD_ASSERT(CONFIG_SLM_WAKEUP_PIN >= 0, "Wake up pin not configured");
 #if defined(CONFIG_SLM_CARRIER)
 NRF_MODEM_LIB_ON_INIT(serial_lte_modem_init_hook, on_modem_lib_init, NULL);
 
+K_SEM_DEFINE(modem_sem, 0, 1);
+
 /* Initialized to value different than success (0) */
 static int modem_lib_init_result = -1;
 
 static void on_modem_lib_init(int ret, void *ctx)
 {
 	modem_lib_init_result = ret;
+	k_sem_give(&modem_sem);
 }
 #endif /* CONFIG_SLM_CARRIER */
 
@@ -414,13 +417,19 @@ int main(void)
 		LOG_WRN("Failed to init slm settings");
 	}
 
-	if (!IS_ENABLED(CONFIG_SLM_CARRIER)) {
-		err = nrf_modem_lib_init();
-		if (err < 0) {
-			LOG_ERR("Modem library init failed, err: %d", err);
-			return err;
-		}
+#if defined(CONFIG_SLM_CARRIER)
+	err = k_sem_take(&modem_sem, K_SECONDS(5));
+	if (err) {
+		LOG_ERR("Modem library initialization timed out");
+		return err;
 	}
+#else
+	err = nrf_modem_lib_init();
+	if (err < 0) {
+		LOG_ERR("Modem library init failed, err: %d", err);
+		return err;
+	}
+#endif
 
 	/* Post-FOTA handling */
 	if (fota_stage != FOTA_STAGE_INIT) {
