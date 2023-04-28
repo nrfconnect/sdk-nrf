@@ -116,20 +116,29 @@ static int do_fota_erase_mfw(void)
 {
 	int err;
 	size_t offset = 0;
+	int in_progress = false;
 
 	err = nrf_modem_delta_dfu_offset(&offset);
 	if (err) {
-		LOG_ERR("failed in delta dfu offset: %d", err);
-		return err;
+		if (err == NRF_MODEM_DELTA_DFU_ERASE_PENDING) {
+			in_progress = true;
+		} else {
+			LOG_ERR("failed in delta dfu offset: %d", err);
+			return err;
+		}
 	}
-	if (offset == 0) {
+
+	if (offset == 0 && !in_progress) {
 		/* no need of erasing */
 		return 0;
 	}
-	err = nrf_modem_delta_dfu_erase();
-	if (err) {
-		LOG_ERR("failed in delta dfu erase: %d", err);
-		return err;
+
+	if (!in_progress) {
+		err = nrf_modem_delta_dfu_erase();
+		if (err) {
+			LOG_ERR("failed in delta dfu erase: %d", err);
+			return err;
+		}
 	}
 
 	/* Based on measurement, erasing takes about 10 seconds */
