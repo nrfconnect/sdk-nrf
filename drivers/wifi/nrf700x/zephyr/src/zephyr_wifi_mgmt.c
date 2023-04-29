@@ -830,3 +830,68 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 	break;
 	}
 }
+
+#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
+void wifi_nrf_rx_bcn_prb_resp_frm(void *vif_ctx,
+				  void *nwb,
+				  unsigned short frequency,
+				  signed short signal)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = vif_ctx;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct wifi_raw_scan_result bcn_prb_resp_info;
+	int frame_length = 0;
+	int val = signal;
+
+	vif_ctx_zep = vif_ctx;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		return;
+	}
+
+	if (!vif_ctx_zep->scan_in_progress) {
+		/*LOG_INF("%s: Scan not in progress : raw scan data not available\n", __func__);*/
+		return;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
+		return;
+	}
+
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+
+	frame_length = wifi_nrf_osal_nbuf_data_size(fmac_dev_ctx->fpriv->opriv,
+						    nwb);
+
+	if (frame_length > CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH) {
+		wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+				      &bcn_prb_resp_info.data,
+				      wifi_nrf_osal_nbuf_data_get(
+						fmac_dev_ctx->fpriv->opriv,
+						nwb),
+				      CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH);
+
+	} else {
+		wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+				      &bcn_prb_resp_info.data,
+				      wifi_nrf_osal_nbuf_data_get(
+					      fmac_dev_ctx->fpriv->opriv,
+					      nwb),
+				      frame_length);
+	}
+
+#define MBM_TO_DBM 100
+	bcn_prb_resp_info.rssi = (val / MBM_TO_DBM); /* mBm to dBm */
+	bcn_prb_resp_info.frequency = frequency;
+	bcn_prb_resp_info.frame_length = frame_length;
+
+	wifi_mgmt_raise_raw_scan_result_event(vif_ctx_zep->zep_net_if_ctx,
+					      &bcn_prb_resp_info);
+
+}
+#endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */

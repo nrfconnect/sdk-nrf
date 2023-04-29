@@ -267,6 +267,12 @@ struct wifi_nrf_fmac_callbk_fns {
 	void (*get_conn_info_callbk_fn)(void *os_vif_ctx,
 					struct nrf_wifi_umac_event_conn_info *info,
 					unsigned int event_len);
+#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
+	void (*rx_bcn_prb_resp_callbk_fn)(void *os_vif_ctx,
+					  void *frm,
+					  unsigned short frequency,
+					  signed short signal);
+#endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 };
 
 
