@@ -56,4 +56,11 @@ int wifi_nrf_get_power_save_config(const struct device *dev,
 void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 		struct nrf_wifi_umac_event_power_save_info *ps_info,
 		unsigned int event_len);
+
+#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
+void wifi_nrf_rx_bcn_prb_resp_frm(void *vif_ctx,
+				  void *frm,
+				  unsigned short frequency,
+				  signed short signal);
+#endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 #endif /*  __ZEPHYR_DISP_SCAN_H__ */

@@ -412,6 +412,9 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	callbk_fns.event_get_reg = wifi_nrf_event_get_reg_zep;
 	callbk_fns.event_get_ps_info = wifi_nrf_event_proc_get_power_save_info;
 	callbk_fns.cookie_rsp_callbk_fn = wifi_nrf_event_proc_cookie_rsp;
+#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
+	callbk_fns.rx_bcn_prb_resp_callbk_fn = wifi_nrf_rx_bcn_prb_resp_frm;
+#endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 #ifdef CONFIG_WPA_SUPP
 	callbk_fns.scan_res_callbk_fn = wifi_nrf_wpa_supp_event_proc_scan_res;
 	callbk_fns.auth_resp_callbk_fn = wifi_nrf_wpa_supp_event_proc_auth_resp;

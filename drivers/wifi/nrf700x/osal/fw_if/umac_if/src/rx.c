@@ -316,6 +316,13 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx
 			fmac_dev_ctx->fpriv->callbk_fns.rx_frm_callbk_fn(vif_ctx->os_vif_ctx,
 									 nwb);
 		} else if (config->rx_pkt_type == NRF_WIFI_RX_PKT_BCN_PRB_RSP) {
+#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
+			fmac_dev_ctx->fpriv->callbk_fns.rx_bcn_prb_resp_callbk_fn(
+							vif_ctx->os_vif_ctx,
+							nwb,
+							config->frequency,
+							config->signal);
+#endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 			wifi_nrf_osal_nbuf_free(fmac_dev_ctx->fpriv->opriv,
 						nwb);
 		} else {
