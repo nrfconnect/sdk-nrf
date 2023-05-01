@@ -131,11 +131,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 482754ec38e976f927c36044188690d782907162
+      revision: 508e546ee92bf37100425bfef48418f66fe4215e
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: ab8140dd25da98356619ae7ed02b735404c5b962
+      revision: 13a4b367e9223cc59f080b4887ccfa4339986af0
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
