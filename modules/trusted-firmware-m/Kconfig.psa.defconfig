@@ -115,10 +115,10 @@ config PSA_WANT_ECC_BRAINPOOL_P_R1_256
 	default y
 config PSA_WANT_ECC_BRAINPOOL_P_R1_384
 	bool
-	default y
+	default n
 config PSA_WANT_ECC_BRAINPOOL_P_R1_512
 	bool
-	default y
+	default n
 config PSA_WANT_ECC_MONTGOMERY_255
 	bool
 	default y
