@@ -179,3 +179,8 @@ if(LOG_MEMORY_PROTECTION)
   src/log_memory_protection.c
   )
 endif()
+
+target_link_options(tfm_s
+  PRIVATE
+    $<$<C_COMPILER_ID:GNU>:-Wl,--print-memory-usage>
+)
