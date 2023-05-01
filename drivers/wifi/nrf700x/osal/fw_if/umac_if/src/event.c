@@ -231,6 +231,8 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 		break;
 #ifdef CONFIG_WPA_SUPP
 	case NRF_WIFI_UMAC_EVENT_SCAN_RESULT:
+	/* Scan result when connected */
+	case NRF_WIFI_UMAC_EVENT_BSS_INFO:
 		if (umac_hdr->seq != 0)
 			more_res = true;
 
