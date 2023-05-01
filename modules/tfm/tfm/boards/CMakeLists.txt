@@ -175,7 +175,7 @@ endif()
 
 if(LOG_MEMORY_PROTECTION)
   target_sources(platform_s
-	PRIVATE
-	src/log_memory_protection.c
-	)
+  PRIVATE
+  src/log_memory_protection.c
+  )
 endif()
