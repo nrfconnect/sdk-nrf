@@ -10,6 +10,7 @@
 #include <zephyr/init.h>
 #include <modem/lte_lc_trace.h>
 #include <memfault_ncs.h>
+#include <hw_id.h>
 
 #ifdef CONFIG_NRF_MODEM_LIB
 #include <modem/nrf_modem_lib.h>
@@ -47,8 +48,8 @@ BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_FW_VERSION_STATIC) > 1,
 	     "Firmware version must be configured");
 #endif
 
-#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI)
-	static char device_serial[IMEI_LEN + 1];
+#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI) || defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
+	static char device_serial[HW_ID_LEN + 1];
 #elif defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_STATIC)
 	BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_DEVICE_ID) > 1,
 		     "The device ID must be configured");
@@ -97,32 +98,19 @@ void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 }
 #endif /* defined(CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN) */
 
-#ifdef CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI
-static int request_imei(const char *cmd, char *buf, size_t buf_len)
-{
-	int err = nrf_modem_at_cmd(buf, buf_len, cmd);
-
-	if (err) {
-		LOG_ERR("nrf_modem_at_cmd failed, error: %d", err);
-		return -EFAULT;
-	}
-
-	return 0;
-}
-
+#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI) || defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
 static int device_info_init(void)
 {
 	int err;
-	char imei_buf[IMEI_LEN + 6 + 1]; /* Add 6 for \r\nOK\r\n and 1 for \0 */
+	char hw_id_buf[HW_ID_LEN];
 
-	err = request_imei("AT+CGSN", imei_buf, sizeof(imei_buf));
+	err = hw_id_get(hw_id_buf, sizeof(hw_id_buf));
 	if (err) {
 		strncat(device_serial, "Unknown",
 			sizeof(device_serial) - strlen(device_serial) - 1);
-		LOG_ERR("Failed to retrieve IMEI");
+		LOG_ERR("Failed to get HW ID, error: %d", err);
 	} else {
-		imei_buf[IMEI_LEN] = '\0';
-		strncat(device_serial, imei_buf,
+		strncat(device_serial, hw_id_buf,
 			sizeof(device_serial) - strlen(device_serial) - 1);
 	}
 
@@ -130,7 +118,7 @@ static int device_info_init(void)
 
 	return err;
 }
-#endif /* CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI */
+#endif /* CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI || defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC) */
 
 static int init(void)
 {
@@ -148,12 +136,12 @@ static int init(void)
 		}
 	}
 
-#ifdef CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI
+#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI) || defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
 	err = device_info_init();
 	if (err) {
 		LOG_ERR("Device info initialization failed, error: %d", err);
 	}
-#endif /* CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI */
+#endif /* CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI || CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC */
 
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_USE_DEFAULT_METRICS)) {
 		memfault_ncs_metrcics_init();
