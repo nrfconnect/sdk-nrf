@@ -290,6 +290,11 @@ typedef struct {
 } lwm2m_carrier_config_t;
 
 /**
+ * @brief Wait until SIM is ready.
+ */
+void lwm2m_carrier_sim_ready_wait(void);
+
+/**
  * @brief Initialize the LwM2M carrier library.
  *
  * @param[in] config Configuration parameters for the library. Optional.

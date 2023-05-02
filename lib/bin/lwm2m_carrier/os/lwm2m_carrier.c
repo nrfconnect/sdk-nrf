@@ -8,6 +8,7 @@
 #include <zephyr/kernel.h>
 #include <lwm2m_carrier.h>
 #include <modem/lte_lc.h>
+#include <nrf_modem_at.h>
 
 #define LWM2M_CARRIER_THREAD_STACK_SIZE 4096
 #define LWM2M_CARRIER_THREAD_PRIORITY K_LOWEST_APPLICATION_THREAD_PRIO
@@ -16,6 +17,28 @@ static void lte_event_handler(const struct lte_lc_evt *const evt)
 {
 	/* This event handler is not in use here. */
 	ARG_UNUSED(evt);
+}
+
+/* Some UICC will fail the OTA procedure if the AT command AT+CRSM is
+ * used. A previously unused UICC may need the OTA to receive MSISDN.
+ *
+ * The carrier library will use the AT+CRSM command during startup,
+ * and need the MSISDN for some operators. To avoid a failing OTA,
+ * delay carrier library startup until a successful AT+CNUM.
+ */
+void lwm2m_carrier_sim_ready_wait(void)
+{
+	int oper_id = 0;
+
+	/* Check for specific operators. */
+	nrf_modem_at_scanf("AT%XOPERID", "%%XOPERID: %u", &oper_id);
+
+	if (oper_id == 1) {
+		while (nrf_modem_at_printf("AT+CNUM") != 0) {
+			/* Try again in 1 minute. */
+			k_sleep(K_MINUTES(1));
+		}
+	}
 }
 
 __weak int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
@@ -28,6 +51,7 @@ __weak int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	switch (event->type) {
 	case LWM2M_CARRIER_EVENT_INIT:
 		err = lte_lc_init_and_connect_async(lte_event_handler);
+		lwm2m_carrier_sim_ready_wait();
 		break;
 	case LWM2M_CARRIER_EVENT_LTE_LINK_UP:
 		err = lte_lc_connect_async(NULL);
