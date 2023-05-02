@@ -19,7 +19,7 @@
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
-#define NRF7002_NODE DT_NODELABEL(nrf7002)
+#define NRF7002_NODE DT_NODELABEL(nrf700x)
 
 static struct qspi_config *spim_config;
 
