@@ -21,9 +21,9 @@
 #define MAX_HAL_RPU_READY_WAIT (1 * 1000 * 1000) /* 1 sec */
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
-#define RPU_PS_IDLE_TIMEOUT 10  /* msecs */
-#define RPU_PS_POLL_IDLE_TIMEOUT 10  /* msecs */
-#define RPU_PS_WAKE_TIMEOUT 1  /* secs */
+#define RPU_PS_IDLE_TIMEOUT_MS 10
+#define RPU_PS_WAKE_INTERVAL_MS 10
+#define RPU_PS_WAKE_TIMEOUT_S 1
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 
