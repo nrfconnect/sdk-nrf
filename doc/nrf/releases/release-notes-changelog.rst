@@ -277,9 +277,15 @@ nRF9160 samples
 
 * :ref:`modem_shell_application` sample:
 
-  * Updated the sample to use defines from the :ref:`lib_nrf_cloud` library for string values related to nRF Cloud.
-    Removed the inclusion of the file :file:`nrf_cloud_codec.h`.
-  * Added sending of GNSS data to carrier library when the library is enabled.
+  * Added:
+
+    * Sending of GNSS data to carrier library when the library is enabled.
+
+  * Updated:
+
+    * The sample now uses defines from the :ref:`lib_nrf_cloud` library for string values related to nRF Cloud.
+      Removed the inclusion of the file :file:`nrf_cloud_codec.h`.
+    * Modem FOTA now updates the firmware without rebooting the application.
 
 * :ref:`https_client` sample:
 
