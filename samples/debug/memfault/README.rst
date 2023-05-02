@@ -1,7 +1,7 @@
 .. _memfault_sample:
 
-nRF9160: Memfault
-#################
+Memfault
+########
 
 .. contents::
    :local:

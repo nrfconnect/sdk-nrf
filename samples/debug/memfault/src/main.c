@@ -6,8 +6,6 @@
 
 #include <zephyr/kernel.h>
 #include <stdio.h>
-#include <modem/lte_lc.h>
-#include <modem/nrf_modem_lib.h>
 #include <zephyr/net/socket.h>
 #include <dk_buttons_and_leds.h>
 
@@ -16,12 +14,18 @@
 #include <memfault/core/data_packetizer.h>
 #include <memfault/core/trace_event.h>
 
+#if IS_ENABLED(CONFIG_NRF_MODEM_LIB)
+#include <modem/nrf_modem_lib.h>
+#include <modem/lte_lc.h>
+#endif
+
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(memfault_sample, CONFIG_MEMFAULT_SAMPLE_LOG_LEVEL);
 
-static K_SEM_DEFINE(lte_connected, 0, 1);
+static K_SEM_DEFINE(nw_connected, 0, 1);
 
+#if IS_ENABLED(CONFIG_NRF_MODEM_LIB)
 static void lte_handler(const struct lte_lc_evt *const evt)
 {
 	switch (evt->type) {
@@ -35,7 +39,7 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
 			"Connected - home network" : "Connected - roaming");
 
-		k_sem_give(&lte_connected);
+		k_sem_give(&nw_connected);
 		break;
 	case LTE_LC_EVT_PSM_UPDATE:
 		LOG_DBG("PSM parameter update: TAU: %d, Active time: %d",
@@ -73,6 +77,8 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		break;
 	}
 }
+
+#endif /* IS_ENABLED(CONFIG_NRF_MODEM_LIB) */
 
 static void modem_configure(void)
 {
@@ -151,8 +157,9 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 	}
 }
 
-static void handle_lte_connection_started(void)
+static void on_connect(void)
 {
+#if IS_ENABLED(CONFIG_NRF_MODEM_LIB)
 	uint32_t time_to_lte_connection;
 
 	/* Retrieve the LTE time to connect metric. */
@@ -179,6 +186,7 @@ static void handle_lte_connection_started(void)
 	 * CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_INTERVAL_SECS.
 	 */
 	memfault_zephyr_port_post_data();
+#endif /* IS_ENABLED(CONFIG_NRF_MODEM_LIB) */
 }
 
 int main(void)
@@ -194,7 +202,7 @@ int main(void)
 		LOG_ERR("dk_buttons_init, error: %d", err);
 	}
 
-	LOG_INF("Connecting to LTE network, this may take several minutes...");
+	LOG_INF("Connecting to network, this may take several minutes...");
 
 	/* Performing in an infinite loop to be resilient against
 	 * re-connect bursts directly after boot, e.g. when connected
@@ -205,7 +213,7 @@ int main(void)
 	 * the latest data will be pushed to Memfault.
 	 */
 	while (1) {
-		k_sem_take(&lte_connected, K_FOREVER);
-		handle_lte_connection_started();
+		k_sem_take(&nw_connected, K_FOREVER);
+		on_connect();
 	}
 }
