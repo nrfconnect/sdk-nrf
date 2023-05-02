@@ -1,7 +1,7 @@
 sample:
   name: Memfault sample
 tests:
-  sample.nrf9160.memfault:
+  sample.debug.memfault:
     build_only: true
     extra_configs:
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="dummy-key"
