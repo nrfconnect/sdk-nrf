@@ -2514,6 +2514,16 @@ In addition to the known issues listed here, see also :ref:`softdevice_controlle
 
 .. rst-class:: v2-3-0
 
+DRGN-18424: Rare assert when stopping the Periodic Advertiser role
+  In rare cases, when a Periodic Advertiser instance is being stopped while another Periodic Advertiser instance is still running, the controller can assert.
+
+.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
+
+DRGN-18424: Rare assert when stopping the Periodic Sync role
+  In rare cases, when a Periodic Sync instance is being stopped while another Periodic Sync instance is still running, the controller can assert.
+
+.. rst-class:: v2-3-0
+
 DRGN-18651: Scanner may fail to deliver advertising reports
   There is a chance of failure if an advertising report is received just before the scanner times out or is disabled.
   This can lead to the scanner not delivering any further advertising reports when re-enabled.
