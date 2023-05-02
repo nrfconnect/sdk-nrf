@@ -349,7 +349,11 @@ nRF9160 samples
 
     * The Hello World message sent to nRF Cloud now contains a timestamp (message ID).
 
-* The :ref:`memfault_sample` sample was moved from :file:`nrf9160/memfault` to :file:`debug/memfault`.
+* :ref:`memfault_sample` sample:
+
+  * Moved from :file:`nrf9160/memfault` to :file:`debug/memfault`.
+  * Added support for the nRF7002 DK.
+
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
