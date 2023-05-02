@@ -242,6 +242,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/at_custom_cmd/                 @eivindj-nordic
 /tests/lib/date_time/                     @trantanen @tokangas
 /tests/lib/edge_impulse/                  @pdunaj @MarekPieta
+/tests/lib/nrf_fuel_gauge/                @nordic-auko @aasinclair
 /tests/lib/gcf_sms/                       @eivindj-nordic
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
 /tests/lib/hw_id/                         @maxd-nordic

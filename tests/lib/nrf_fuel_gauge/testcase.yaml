@@ -1,0 +1,26 @@
+tests:
+  unity.nrf_fuel_gauge_no_fpu:
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840 nrf52dk_nrf52832 nrf52dk_nrf52810
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf52840dk_nrf52840
+      - nrf52dk_nrf52832
+      - nrf52dk_nrf52810
+    tags: nrf_fuel_gauge
+    build_only: true
+    extra_args: CONFIG_FPU=n
+  unity.nrf_fuel_gauge_fpu:
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840 nrf52dk_nrf52832
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf52840dk_nrf52840
+      - nrf52dk_nrf52832
+    tags: nrf_fuel_gauge
+    build_only: true
+    extra_args: CONFIG_FPU=y
+  unity.nrf_fuel_gauge_qemu:
+    platform_allow: qemu_cortex_m3
+    integration_platforms:
+      - qemu_cortex_m3
+    tags: nrf_fuel_gauge
+    build_only: false
