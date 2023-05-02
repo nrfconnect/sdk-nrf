@@ -362,9 +362,10 @@ int z_wpa_supplicant_status(const struct device *dev,
 		if (!ret) {
 			status->rssi = signal_poll.rssi;
 		} else {
-			wpa_printf(MSG_ERROR, "%s:Failed to read RSSI\n",
+			wpa_printf(MSG_WARNING, "%s:Failed to read RSSI\n",
 				__func__);
 			status->rssi = -WPA_INVALID_NOISE;
+			ret = 0;
 		}
 
 		conn_info = os_zalloc(sizeof(struct wpa_conn_info));
@@ -379,9 +380,11 @@ int z_wpa_supplicant_status(const struct device *dev,
 			status->beacon_interval = conn_info->beacon_interval;
 			status->dtim_period = conn_info->dtim_period;
 		} else {
-			wpa_printf(MSG_ERROR, "%s: Failed to get connection info\n",
+			wpa_printf(MSG_WARNING, "%s: Failed to get connection info\n",
 				__func__);
-				goto out;
+				status->beacon_interval = 0;
+				status->dtim_period = 0;
+				ret = 0;
 		}
 	} else {
 		ret = 0;
