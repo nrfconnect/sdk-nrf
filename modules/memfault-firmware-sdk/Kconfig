@@ -32,12 +32,20 @@ endchoice
 choice
 	prompt "Memfault device ID generation method"
 	default MEMFAULT_NCS_DEVICE_ID_IMEI if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS)
+	default MEMFAULT_NCS_DEVICE_ID_NET_MAC if BOARD_NRF7002DK_NRF5340_CPUAPP
 	default MEMFAULT_NCS_DEVICE_ID_STATIC
 
 config MEMFAULT_NCS_DEVICE_ID_IMEI
 	bool "Use IMEI as Memfault device ID"
+	select HW_ID_LIBRARY
 	help
 	  Use the device's IMEI as Memfault device ID
+
+config MEMFAULT_NCS_DEVICE_ID_NET_MAC
+	bool "Use network interface MAC address as device ID"
+	select HW_ID_LIBRARY
+	help
+	  Use the device's network interface MAC address as Memfault device ID
 
 config MEMFAULT_NCS_DEVICE_ID_STATIC
 	bool "Set Memfault device ID in Kconfig"
@@ -76,6 +84,7 @@ config MEMFAULT_NCS_HW_VERSION
 config MEMFAULT_NCS_FW_TYPE
 	string "Firmware type"
 	default "nrf91ns-fw" if BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS
+	default "nrf7002_nrf53-fw" if BOARD_NRF7002DK_NRF5340_CPUAPP
 	default "nrf-ble-fw" if BT_MDS
 	help
 	  Firmware type running on the board
@@ -121,8 +130,7 @@ config MEMFAULT_NCS_INIT_PRIORITY
 
 config MEMFAULT_NCS_PROVISION_CERTIFICATES
 	bool "Provision certificates on initalization"
-	depends on MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM
-	default y
+	default y if MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM
 	help
 	  Provision required TLS root certificates for connecting to Memfault's
 	  endpoints. If this option is disabled, the user is responsible for
@@ -188,6 +196,24 @@ choice MEMFAULT_HTTP_PERIODIC_UPLOAD_CONTEXT
 	depends on MEMFAULT_HTTP_PERIODIC_UPLOAD
 	default MEMFAULT_HTTP_PERIODIC_UPLOAD_USE_DEDICATED_WORKQUEUE
 endchoice
+
+# Workaround to select the correct HW ID source
+
+if HW_ID_LIBRARY
+
+choice HW_ID_LIBRARY_SOURCE
+	default HW_ID_LIBRARY_SOURCE_IMEI if MEMFAULT_NCS_DEVICE_ID_IMEI
+	default HW_ID_LIBRARY_SOURCE_NET_MAC if MEMFAULT_NCS_DEVICE_ID_NET_MAC
+
+config HW_ID_LIBRARY_SOURCE_IMEI
+	bool "IMEI"
+
+config HW_ID_LIBRARY_SOURCE_NET_MAC
+	bool "Network interface MAC address"
+
+endchoice # HW_ID_LIBRARY_SOURCE
+
+endif # HW_ID_LIBRARY
 
 module = MEMFAULT_NCS
 module-dep = LOG
