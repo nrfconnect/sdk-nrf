@@ -58,6 +58,8 @@ Each is discussed in the following sections.
 
    Matter commissioning overview
 
+.. _ug_matter_network_topologies_commissioning_stages_discovery:
+
 Device discovery
 ================
 
