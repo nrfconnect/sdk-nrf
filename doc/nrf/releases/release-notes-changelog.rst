@@ -599,6 +599,10 @@ Libraries for Zigbee
 sdk-nrfxlib
 -----------
 
+* Added:
+
+  * New library :ref:`nrf_fuel_gauge`.
+
 See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
 
 DFU libraries
