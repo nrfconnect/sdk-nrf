@@ -411,7 +411,10 @@ Other samples
     * A workaround for the hardware `Errata 257`_ of the nRF52811 chip.
     * A workaround for the hardware `Errata 117`_ of the nRF5340 chip.
 
-* The :ref:`memfault_sample` sample was moved from :file:`nrf9160/memfault` to :file:`debug/memfault`.
+* :ref:`memfault_sample` sample:
+
+  * Moved from :file:`nrf9160/memfault` to :file:`debug/memfault`.
+  * Added support for the nRF7002 DK.
 
 Drivers
 =======
