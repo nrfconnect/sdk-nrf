@@ -380,7 +380,7 @@ out:
 	if (!hal_dev_ctx->irq_ctx) {
 		wifi_nrf_osal_timer_schedule(hal_dev_ctx->hpriv->opriv,
 					     hal_dev_ctx->rpu_ps_timer,
-					     RPU_PS_IDLE_TIMEOUT_MS);
+					     CONFIG_NRF700X_RPU_PS_IDLE_TIMEOUT_MS);
 	}
 	return status;
 }

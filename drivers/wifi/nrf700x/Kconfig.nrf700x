@@ -159,4 +159,12 @@ config NRF700X_IRQ_WQ_STACK_SIZE
 config NRF700X_BH_WQ_STACK_SIZE
 	int "Stack size of the workqueue for handling bottom half"
 	default 2048
+
+if NRF_WIFI_LOW_POWER
+
+config NRF700X_RPU_PS_IDLE_TIMEOUT_MS
+	int "RPU power save idle timeout in milliseconds"
+	default 10
+
+endif
 endif
