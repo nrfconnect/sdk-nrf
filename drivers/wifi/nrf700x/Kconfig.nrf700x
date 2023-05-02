@@ -40,11 +40,11 @@ config NET_CONFIG_INIT_TIMEOUT
 	default 0 if NET_CONFIG_SETTINGS
 
 config NRF700X_ON_QSPI
-	def_bool NRF7000_ON_QSPI || NRF7002_ON_QSPI
+	def_bool NRF7000_ON_QSPI || NRF7001_ON_QSPI || NRF7002_ON_QSPI
 	select NRFX_QSPI
 
 config NRF700X_ON_SPI
-	def_bool NRF7000_ON_SPI  || NRF7002_ON_SPI
+	def_bool NRF7000_ON_SPI || NRF7001_ON_SPI || NRF7002_ON_SPI
 	select SPI
 
 # RF switch based coexistence
